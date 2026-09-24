@@ -1,10 +1,19 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { getQueueStats, releaseAuthBlockedOperations } from "@/lib/offline-queue";
+import Link from "next/link";
+import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  getQueueStats,
+  releaseAuthBlockedOperations,
+  retryFailedOperations,
+  subscribeToQueueChanges,
+} from "@/lib/offline-queue";
 import { flushSubmissionQueue } from "@/lib/offline/flushQueue";
 import { getCacheStats, purgeExpiredPacks, purgePartitionPacks } from "@/lib/offline-cache";
 import { detectAndSetActiveSessionPartition, type SessionPartition } from "@/lib/offline-session";
+
+// Coalesces bursts of `online` events from a flapping 2G/3G connection.
+const RECONNECT_DEBOUNCE_MS = 2000;
 
 export default function SyncManager({
   isPlatformAdmin,
@@ -14,13 +23,17 @@ export default function SyncManager({
   const [syncing, setSyncing] = useState(false);
   const [syncResult, setSyncResult] = useState<string | null>(null);
   const [partition, setPartition] = useState<SessionPartition | null>(null);
+  const [online, setOnline] = useState(true);
   const [stats, setStats] = useState({
     queuePending: 0,
     queueConflicts: 0,
     queueDeadLetter: 0,
+    queueAuthRequired: 0,
     cachePacksCount: 0,
     cacheBytes: 0,
   });
+  const partitionRef = useRef<SessionPartition | null>(null);
+  partitionRef.current = partition;
 
   function formatBytes(bytes: number) {
     if (bytes < 1024) return `${bytes} B`;
@@ -28,89 +41,139 @@ export default function SyncManager({
     return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
   }
 
-  async function refreshStats(currentPartition: SessionPartition | null) {
-    const queueStats = await getQueueStats(currentPartition ?? undefined);
-    const cacheStats = await getCacheStats(currentPartition ?? undefined);
-    setStats({
-      ...queueStats,
-      ...cacheStats,
-    });
+  const refreshStats = useCallback(async () => {
+    const current = partitionRef.current ?? undefined;
+    try {
+      const queueStats = await getQueueStats(current);
+      const cacheStats = await getCacheStats(current);
+      setStats({ ...queueStats, ...cacheStats });
+    } catch {
+      // Storage unavailable: keep the last known state rather than a false zero.
+    }
+  }, []);
+
+  function flash(message: string) {
+    setSyncResult(message);
+    setTimeout(() => setSyncResult(null), 5000);
   }
 
-  async function doSync() {
+  const doSync = useCallback(async () => {
+    if (!partitionRef.current || (typeof navigator !== "undefined" && !navigator.onLine)) return;
     setSyncing(true);
     setSyncResult(null);
     try {
-      const result = await flushSubmissionQueue(partition ?? undefined);
-      if (result.flushed > 0) {
-        setSyncResult(`${result.flushed} item${result.flushed > 1 ? "s" : ""} synced`);
-        setTimeout(() => setSyncResult(null), 5000);
-      }
+      const result = await flushSubmissionQueue(partitionRef.current);
       if (result.conflicts > 0) {
-        setSyncResult(`${result.conflicts} item${result.conflicts > 1 ? "s" : ""} need${result.conflicts === 1 ? "s" : ""} review`);
-        setTimeout(() => setSyncResult(null), 5000);
+        flash(`${result.conflicts} item${result.conflicts > 1 ? "s" : ""} need${result.conflicts === 1 ? "s" : ""} review`);
       } else if (result.blocked > 0) {
-        setSyncResult("Sign in again to sync saved offline work");
-        setTimeout(() => setSyncResult(null), 5000);
+        flash("Sign in again to sync saved offline work");
+      } else if (result.flushed > 0) {
+        flash(`${result.flushed} item${result.flushed > 1 ? "s" : ""} synced`);
       }
-      await refreshStats(partition);
     } catch {
-      setSyncResult("Offline work could not sync yet. It remains saved on this device.");
+      flash("Offline work could not sync yet. It remains saved on this device.");
     } finally {
       setSyncing(false);
+      await refreshStats();
     }
-  }
+  }, [refreshStats]);
 
   useEffect(() => {
     detectAndSetActiveSessionPartition().then(async (detected) => {
+      partitionRef.current = detected;
       setPartition(detected);
       await releaseAuthBlockedOperations(detected);
       await purgeExpiredPacks(detected);
-      await refreshStats(detected);
+      await refreshStats();
     });
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [refreshStats]);
 
   useEffect(() => {
-    // Flush on mount / partition change if online
-    if (navigator.onLine) doSync();
+    if (!partition) return;
+    setOnline(navigator.onLine);
+    if (navigator.onLine) void doSync();
 
-    // Flush when coming back online (belt-and-suspenders for iOS Safari
-    // which doesn't support BackgroundSync)
-    const onOnline = () => doSync();
+    let reconnectTimer: ReturnType<typeof setTimeout> | null = null;
+    const onOnline = () => {
+      setOnline(true);
+      if (reconnectTimer) clearTimeout(reconnectTimer);
+      reconnectTimer = setTimeout(() => { void doSync(); }, RECONNECT_DEBOUNCE_MS);
+    };
+    const onOffline = () => {
+      setOnline(false);
+      if (reconnectTimer) clearTimeout(reconnectTimer);
+    };
+    // Resume after the OS froze or killed the background tab (low-RAM phones).
+    const onVisible = () => {
+      if (document.visibilityState === "visible" && navigator.onLine) void doSync();
+    };
     window.addEventListener("online", onOnline);
+    window.addEventListener("offline", onOffline);
+    document.addEventListener("visibilitychange", onVisible);
 
-    // SW notifies us after a BackgroundSync flush
     const onSwMessage = (e: MessageEvent) => {
-      if (e.data?.type === "offline-sync-complete" || e.data?.type === "FLUSH_SUBMISSION_QUEUE") {
-        refreshStats(partition);
+      if (e.data?.type === "offline-sync-complete") {
+        void refreshStats();
         if (e.data?.syncedCount > 0) {
-          setSyncResult(`${e.data.syncedCount} item${e.data.syncedCount > 1 ? "s" : ""} synced`);
-          setTimeout(() => setSyncResult(null), 5000);
+          flash(`${e.data.syncedCount} item${e.data.syncedCount > 1 ? "s" : ""} synced`);
         }
       }
     };
     navigator.serviceWorker?.addEventListener("message", onSwMessage);
+    // Event-driven status: every queue write (this tab or another) announces
+    // itself, so no IndexedDB polling loop is needed.
+    const unsubscribe = subscribeToQueueChanges(() => { void refreshStats(); });
 
     return () => {
+      if (reconnectTimer) clearTimeout(reconnectTimer);
       window.removeEventListener("online", onOnline);
+      window.removeEventListener("offline", onOffline);
+      document.removeEventListener("visibilitychange", onVisible);
       navigator.serviceWorker?.removeEventListener("message", onSwMessage);
+      unsubscribe();
     };
-  }, [partition]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  // Refresh badge count every 10 s so it stays current
-  useEffect(() => {
-    const interval = setInterval(() => refreshStats(partition), 10_000);
-    return () => clearInterval(interval);
-  }, [partition]);
+  }, [partition, doSync, refreshStats]);
 
   const pending = stats.queuePending;
+  const failed = stats.queueDeadLetter;
+  const authRequired = stats.queueAuthRequired;
+  const conflicts = stats.queueConflicts;
+  const idle = !syncing && !syncResult;
 
   return (
-    <div className="fixed bottom-4 right-4 z-50 flex flex-col items-end gap-2">
-      {/* Pending submissions badge — visible to all students when there's a queue */}
-      {pending > 0 && !syncing && !syncResult && (
+    <div className="fixed bottom-4 right-4 z-50 flex flex-col items-end gap-2" aria-live="polite">
+      {idle && authRequired > 0 && (
         <div className="rounded-lg bg-amber-100 border border-amber-300 px-4 py-2 text-sm text-amber-900 shadow">
-          {pending} item{pending > 1 ? "s" : ""} saved offline — will sync when you&apos;re back online
+          Your sign-in expired. {authRequired} saved item{authRequired > 1 ? "s" : ""} will sync after you{" "}
+          <Link href="/login" className="underline font-semibold">sign in again</Link>.
+        </div>
+      )}
+      {idle && pending - authRequired > 0 && (
+        <div className="rounded-lg bg-amber-100 border border-amber-300 px-4 py-2 text-sm text-amber-900 shadow">
+          {online
+            ? `${pending - authRequired} item${pending - authRequired > 1 ? "s" : ""} waiting to sync`
+            : `You are offline. ${pending - authRequired} item${pending - authRequired > 1 ? "s are" : " is"} saved on this device and will sync when you reconnect.`}
+        </div>
+      )}
+      {idle && failed > 0 && (
+        <div className="rounded-lg bg-red-50 border border-red-300 px-4 py-2 text-sm text-red-900 shadow">
+          {failed} item{failed > 1 ? "s" : ""} could not sync. It is still saved on this device.{" "}
+          <button
+            type="button"
+            className="underline font-semibold"
+            onClick={async () => {
+              await retryFailedOperations(undefined, partitionRef.current ?? undefined);
+              await doSync();
+            }}
+          >
+            Try again
+          </button>
+        </div>
+      )}
+      {idle && conflicts > 0 && (
+        <div className="rounded-lg bg-amber-100 border border-amber-300 px-4 py-2 text-sm text-amber-900 shadow">
+          {conflicts} item{conflicts > 1 ? "s" : ""} need{conflicts === 1 ? "s" : ""} review.{" "}
+          <Link href="/student/offline-status" className="underline font-semibold">See details</Link>
         </div>
       )}
 
@@ -137,7 +200,7 @@ export default function SyncManager({
             className="mt-2 px-3 py-1 rounded-md bg-[var(--ll-surface-muted)]/60 hover:bg-[var(--ll-surface-muted)] text-xs"
             onClick={async () => {
               await purgePartitionPacks(partition ?? undefined);
-              await refreshStats(partition);
+              await refreshStats();
             }}
           >
             Purge cache

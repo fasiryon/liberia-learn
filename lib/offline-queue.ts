@@ -45,6 +45,8 @@ export type QueueItem = {
   payload?: Record<string, unknown>;
   queuedAt?: string;
   retryCount?: number;
+  /** Sends abandoned because the device had no network; never terminal. */
+  networkDeferrals?: number;
   opId?: string;
   entity?: "studentProgress" | "attendance" | "submission";
   scheduledWorkId: string;
@@ -67,6 +69,7 @@ export type QueueStats = {
   queuePending: number;
   queueConflicts: number;
   queueDeadLetter: number;
+  queueAuthRequired: number;
 };
 
 function nowIso() {
@@ -86,6 +89,48 @@ function computeBackoff(attempts: number) {
 
 function queueKey(partition?: SessionPartitionInput) {
   return `${QUEUE_KEY_PREFIX}${resolveSessionPartition(partition).key}`;
+}
+
+export const QUEUE_CHANGED_EVENT = "liberialearn-queue-changed";
+const QUEUE_CHANNEL = "liberialearn-offline-queue";
+
+/** Event-driven status: UI listens for this instead of polling IndexedDB.
+ * BroadcastChannel carries the change to other open tabs. */
+export function notifyQueueChanged(): void {
+  if (typeof window === "undefined") return;
+  window.dispatchEvent(new Event(QUEUE_CHANGED_EVENT));
+  try {
+    if (typeof BroadcastChannel !== "undefined") {
+      const channel = new BroadcastChannel(QUEUE_CHANNEL);
+      channel.postMessage({ type: QUEUE_CHANGED_EVENT });
+      channel.close();
+    }
+  } catch {
+    // Cross-tab notification is best effort.
+  }
+}
+
+export function subscribeToQueueChanges(listener: () => void): () => void {
+  if (typeof window === "undefined") return () => {};
+  window.addEventListener(QUEUE_CHANGED_EVENT, listener);
+  let channel: BroadcastChannel | null = null;
+  try {
+    if (typeof BroadcastChannel !== "undefined") {
+      channel = new BroadcastChannel(QUEUE_CHANNEL);
+      channel.onmessage = () => listener();
+    }
+  } catch {
+    channel = null;
+  }
+  return () => {
+    window.removeEventListener(QUEUE_CHANGED_EVENT, listener);
+    channel?.close();
+  };
+}
+
+async function writeQueue(partition: SessionPartitionInput | undefined, queue: QueueItem[]): Promise<void> {
+  await set(queueKey(partition), queue);
+  notifyQueueChanged();
 }
 
 let queueMutation: Promise<unknown> = Promise.resolve();
@@ -135,9 +180,13 @@ export async function enqueueOfflineRequest(
     const resourceType = item.resourceType ?? inferred?.resourceType ?? null;
     const operationType = item.operationType ?? inferred?.operationType ?? null;
     const resourceId = item.resourceId ?? String(item.payload.scheduledWorkId ?? item.payload.assignmentId ?? item.payload.homeworkId ?? item.payload.sessionId ?? requestedOperationId);
+    // Coalesce only into an operation the server can never have seen. Reusing
+    // the ID of an in-flight or previously sent operation with a new payload
+    // would be rejected as an idempotency-key mismatch and quarantined.
     const existing = queue.find((entry) =>
       item.coalesceKey && entry.coalesceKey === item.coalesceKey &&
-      entry.status !== "failed" && entry.status !== "acknowledged" && entry.status !== "conflict",
+      entry.status === "pending" && entry.syncState === "LOCAL_PENDING" &&
+      (entry.attempts ?? 0) === 0 && !entry.networkDeferrals && !entry.syncReceivedAt,
     );
     const operationId = existing?.operationId ?? requestedOperationId;
     const clientEventId = item.clientEventId ?? operationId;
@@ -170,7 +219,7 @@ export async function enqueueOfflineRequest(
       existing.status = "pending";
       existing.syncState = "LOCAL_PENDING";
       existing.leaseExpiresAt = null;
-      await set(queueKey(partition), queue);
+      await writeQueue(partition, queue);
       return existing;
     }
     const createdAt = nowIso();
@@ -200,7 +249,7 @@ export async function enqueueOfflineRequest(
       updatedAt: createdAt,
     };
     queue.push(created);
-    await set(queueKey(partition), queue);
+    await writeQueue(partition, queue);
     return created;
   });
 }
@@ -307,7 +356,7 @@ export async function markSyncSending(ids: string[], partition?: SessionPartitio
       item.leaseExpiresAt = lease;
       item.updatedAt = nowIso();
     }
-    await set(queueKey(partition), queue);
+    await writeQueue(partition, queue);
   });
 }
 
@@ -342,7 +391,7 @@ export async function markSyncSuccess(ids: string[], partition?: SessionPartitio
   await withQueueLock(async () => {
     const queue = await getQueue(partition);
     const remaining = queue.filter((q) => !ids.includes(q.id));
-    await set(queueKey(partition), remaining);
+    await writeQueue(partition, remaining);
   });
 }
 
@@ -359,7 +408,7 @@ export async function markOperationAcknowledged(ids: string[], partition?: Sessi
       item.syncReceivedAt = nowIso();
       item.updatedAt = nowIso();
     }
-    await set(queueKey(partition), queue);
+    await writeQueue(partition, queue);
   });
 }
 
@@ -391,7 +440,7 @@ export async function markSyncFailure(
       item.nextRetryAt = new Date(now + backoff).toISOString();
     }
     }
-    await set(queueKey(partition), queue);
+    await writeQueue(partition, queue);
   });
 }
 
@@ -409,7 +458,7 @@ export async function markSyncAuthRequired(ids: string[], error: string, partiti
       item.leaseExpiresAt = null;
       item.updatedAt = nowIso();
     }
-    await set(queueKey(partition), queue);
+    await writeQueue(partition, queue);
   });
 }
 
@@ -422,7 +471,7 @@ export async function releaseAuthBlockedOperations(partition?: SessionPartitionI
       item.lastError = null;
       item.updatedAt = nowIso();
     }
-    await set(queueKey(partition), queue);
+    await writeQueue(partition, queue);
   });
 }
 
@@ -439,7 +488,7 @@ export async function markSyncTerminalFailure(ids: string[], error: string, part
       item.leaseExpiresAt = null;
       item.updatedAt = nowIso();
     }
-    await set(queueKey(partition), queue);
+    await writeQueue(partition, queue);
   });
 }
 
@@ -454,50 +503,118 @@ export async function markSyncConflict(
   partition?: SessionPartitionInput
 ): Promise<void> {
   if (items.length === 0) return;
-  const queue = await getQueue(partition);
-  const byId = new Map(items.map((i) => [i.id, i]));
-  for (const item of queue) {
-    const conflict = byId.get(item.id);
-    if (!conflict) continue;
-    item.status = "conflict";
-    item.syncState = "CONFLICT";
-    item.syncReceivedAt = nowIso();
-    item.nextRetryAt = null;
-    item.conflict = {
-      entity: conflict.entity,
-      serverState: conflict.serverState,
-      clientState: conflict.clientState,
-      resolutionHint: conflict.resolutionHint,
-    };
-    item.updatedAt = nowIso();
-  }
-  await set(queueKey(partition), queue);
+  await withQueueLock(async () => {
+    const queue = await getQueue(partition);
+    const byId = new Map(items.map((i) => [i.id, i]));
+    for (const item of queue) {
+      const conflict = byId.get(item.id);
+      if (!conflict) continue;
+      item.status = "conflict";
+      item.syncState = "CONFLICT";
+      item.syncReceivedAt = nowIso();
+      item.nextRetryAt = null;
+      item.leaseExpiresAt = null;
+      item.conflict = {
+        entity: conflict.entity,
+        serverState: conflict.serverState,
+        clientState: conflict.clientState,
+        resolutionHint: conflict.resolutionHint,
+      };
+      item.updatedAt = nowIso();
+    }
+    await writeQueue(partition, queue);
+  });
 }
 
 export async function retryConflicts(ids?: string[], partition?: SessionPartitionInput): Promise<void> {
-  const queue = await getQueue(partition);
-  const targetIds = ids ?? queue.filter((q) => q.status === "conflict").map((q) => q.id);
-  for (const item of queue) {
-    if (!targetIds.includes(item.id)) continue;
-    item.status = "pending";
-    item.syncState = "LOCAL_PENDING";
-    item.attempts = 0;
-    item.nextRetryAt = null;
-    item.conflict = null;
-    item.updatedAt = nowIso();
-  }
-  await set(queueKey(partition), queue);
+  await withQueueLock(async () => {
+    const queue = await getQueue(partition);
+    const targetIds = ids ?? queue.filter((q) => q.status === "conflict").map((q) => q.id);
+    for (const item of queue) {
+      if (!targetIds.includes(item.id)) continue;
+      item.status = "pending";
+      item.syncState = "LOCAL_PENDING";
+      item.attempts = 0;
+      item.nextRetryAt = null;
+      item.conflict = null;
+      item.updatedAt = nowIso();
+    }
+    await writeQueue(partition, queue);
+  });
 }
 
 export async function discardConflicts(ids?: string[], partition?: SessionPartitionInput): Promise<void> {
-  const queue = await getQueue(partition);
-  const targetIds = ids ?? queue.filter((q) => q.status === "conflict").map((q) => q.id);
-  const remaining = queue.filter((q) => !targetIds.includes(q.id));
-  await set(queueKey(partition), remaining);
+  await withQueueLock(async () => {
+    const queue = await getQueue(partition);
+    const targetIds = ids ?? queue.filter((q) => q.status === "conflict").map((q) => q.id);
+    const remaining = queue.filter((q) => !targetIds.includes(q.id));
+    await writeQueue(partition, remaining);
+  });
+}
+
+/** Connectivity loss is not a server verdict. Keep the operation pending
+ * without spending its retry budget so network flapping on 2G/3G cannot
+ * quarantine learner work. The next online/visibility trigger resends it. */
+export async function markSyncDeferred(ids: string[], reason: string, partition?: SessionPartitionInput): Promise<void> {
+  if (ids.length === 0) return;
+  await withQueueLock(async () => {
+    const queue = await getQueue(partition);
+    for (const item of queue) {
+      if (!ids.includes(item.id) || item.status === "conflict" || item.status === "failed") continue;
+      item.status = "pending";
+      item.syncState = "RETRYABLE_FAILURE";
+      item.networkDeferrals = (item.networkDeferrals ?? 0) + 1;
+      item.nextRetryAt = null;
+      item.leaseExpiresAt = null;
+      item.lastError = reason;
+      item.updatedAt = nowIso();
+    }
+    await writeQueue(partition, queue);
+  });
+}
+
+/** Return leased-but-unsent operations to the ready set after a flush stops
+ * early, instead of hiding them behind the lease until it expires. */
+export async function releaseSendingLeases(ids: string[], partition?: SessionPartitionInput): Promise<void> {
+  if (ids.length === 0) return;
+  await withQueueLock(async () => {
+    const queue = await getQueue(partition);
+    for (const item of queue) {
+      if (!ids.includes(item.id) || item.status !== "sending") continue;
+      item.status = "pending";
+      item.syncState = "LOCAL_PENDING";
+      item.leaseExpiresAt = null;
+      item.updatedAt = nowIso();
+    }
+    await writeQueue(partition, queue);
+  });
+}
+
+/** Explicit learner action: move quarantined (terminal) operations back to
+ * pending with a fresh retry budget. Nothing is deleted. */
+export async function retryFailedOperations(ids?: string[], partition?: SessionPartitionInput): Promise<number> {
+  return withQueueLock(async () => {
+    const queue = await getQueue(partition);
+    let released = 0;
+    for (const item of queue) {
+      if (item.status !== "failed" || (ids && !ids.includes(item.id))) continue;
+      item.status = "pending";
+      item.syncState = "LOCAL_PENDING";
+      item.attempts = 0;
+      item.retryCount = 0;
+      item.nextRetryAt = null;
+      item.leaseExpiresAt = null;
+      item.updatedAt = nowIso();
+      released++;
+    }
+    await writeQueue(partition, queue);
+    return released;
+  });
 }
 
 export async function clearQueue(partition?: SessionPartitionInput): Promise<void> {
   await del(queueKey(partition));
+  notifyQueueChanged();
 }
 
 export async function purgeQueuePartition(partition?: SessionPartitionInput): Promise<void> {
@@ -510,6 +627,7 @@ export async function getQueueStats(partition?: SessionPartitionInput): Promise<
     queuePending: queue.filter((q) => q.status === "pending").length,
     queueConflicts: queue.filter((q) => q.status === "conflict").length,
     queueDeadLetter: queue.filter((q) => q.status === "failed").length,
+    queueAuthRequired: queue.filter((q) => q.syncState === "AUTH_REQUIRED").length,
   };
 }
 

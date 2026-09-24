@@ -19,8 +19,10 @@ describe("browser certification", () => {
     const sw = fs.readFileSync(swPath, "utf8");
     expect(sw).toContain('pathname.startsWith("/api/")');
     expect(sw).toContain("isLessonPage(url.pathname)");
-    expect(sw).toContain("staleWhileRevalidate(event.request, CONTENT_CACHE)");
-    expect(sw).toContain('caches.match("/offline.html")');
+    // P5-E: lesson pages are cached per learner partition, network-first
+    // with a slow-network fallback (behavior covered by sw.hardening-v1).
+    expect(sw).toContain("learnerPage(event.request, { slowFallback: isLessonPage(url.pathname) })");
+    expect(sw).toContain('caches.match("/offline.html", { cacheName: SHELL_CACHE })');
   });
 
   it("exam session helpers save, restore, and clear state", () => {

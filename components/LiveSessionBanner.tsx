@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
+import { useVisibleInterval } from "@/lib/hooks/useVisibleInterval";
 import { useRouter } from "next/navigation";
 
 type LiveSession = {
@@ -13,7 +14,6 @@ export function LiveSessionBanner() {
   const router = useRouter();
   const [session, setSession] = useState<LiveSession | null>(null);
   const [dismissed, setDismissed] = useState(false);
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   async function checkActive() {
     try {
@@ -28,11 +28,8 @@ export function LiveSessionBanner() {
     }
   }
 
-  useEffect(() => {
-    checkActive();
-    intervalRef.current = setInterval(checkActive, 30000);
-    return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
-  }, []);
+  // Paused while hidden/offline so a backgrounded phone spends no data.
+  useVisibleInterval(checkActive, 30000);
 
   if (!session || dismissed) return null;
 

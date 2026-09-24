@@ -36,7 +36,7 @@ vi.mock("idb-keyval", () => ({
 
 // Predictable session partition so queue key is deterministic in tests
 vi.mock("@/lib/offline-session", () => ({
-  resolveSessionPartition: vi.fn(() => ({ key: "test-partition" })),
+  resolveSessionPartition: vi.fn(() => ({ key: "test-partition", userId: "student-1", schoolId: "school-1" })),
   detectAndSetActiveSessionPartition: vi.fn(() =>
     Promise.resolve({ key: "test-partition" })
   ),
@@ -254,7 +254,7 @@ describe("flushSubmissionQueue", () => {
     vi.stubGlobal("navigator", { onLine: true });
     vi.stubGlobal(
       "fetch",
-      vi.fn().mockResolvedValue({ ok: true, status: 200, json: () => Promise.resolve({}) })
+      vi.fn().mockResolvedValue({ ok: true, status: 200, json: () => Promise.resolve({ results: [{ status: "synced" }] }) })
     );
 
     await seedQueue(2);
@@ -266,6 +266,24 @@ describe("flushSubmissionQueue", () => {
 
     const { getQueue } = await import("@/lib/offline-queue");
     expect(await getQueue()).toHaveLength(0);
+  });
+
+  it("8b. keeps work when a 200 response carries no per-operation verdict", async () => {
+    vi.stubGlobal("navigator", { onLine: true });
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({ ok: true, status: 200, json: () => Promise.resolve({}) })
+    );
+
+    await seedQueue(2);
+    const { flushSubmissionQueue } = await import("@/lib/offline/flushQueue");
+    const result = await flushSubmissionQueue();
+
+    expect(result.flushed).toBe(0);
+    const { getQueue } = await import("@/lib/offline-queue");
+    const queue = await getQueue();
+    expect(queue).toHaveLength(2);
+    expect(queue.every((item) => item.lastError === "sync_response_unrecognized")).toBe(true);
   });
 
   it("9. retains 4xx action as a terminal failure for inspection", async () => {
@@ -305,14 +323,19 @@ describe("flushSubmissionQueue", () => {
     const { flushSubmissionQueue } = await import("@/lib/offline/flushQueue");
     const result = await flushSubmissionQueue();
 
-    // First item throws → loop breaks → only 1 failed, 2 untouched
+    // First item throws → loop breaks → all 3 deferred, none failed
     expect(result.flushed).toBe(0);
-    expect(result.failed).toBe(1);
+    expect(result.failed).toBe(0);
+    expect(result.deferred).toBe(3);
     // fetch was only called once — proves the loop stopped after the first error
     expect(mockFetch).toHaveBeenCalledTimes(1);
-    // All 3 remain in the queue (network error = retry later, not discard)
-    const { getQueue } = await import("@/lib/offline-queue");
-    expect(await getQueue()).toHaveLength(3);
+    // All 3 remain in the queue (network error = retry later, not discard),
+    // immediately ready again and without spending the retry budget.
+    const { getQueue, getReadyQueue } = await import("@/lib/offline-queue");
+    const queue = await getQueue();
+    expect(queue).toHaveLength(3);
+    expect(queue.every((item) => item.attempts === 0 && item.status === "pending")).toBe(true);
+    expect(await getReadyQueue()).toHaveLength(3);
   });
 });
 

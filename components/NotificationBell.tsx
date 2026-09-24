@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { Bell } from "lucide-react";
+import { useVisibleInterval } from "@/lib/hooks/useVisibleInterval";
 
 type InboxItem = {
   id: string;
@@ -42,11 +43,8 @@ export function NotificationBell() {
       .catch(() => null);
   }
 
-  useEffect(() => {
-    fetchInbox();
-    const interval = setInterval(fetchInbox, 60_000);
-    return () => clearInterval(interval);
-  }, []);
+  // Paused while hidden/offline so a backgrounded phone spends no data.
+  useVisibleInterval(fetchInbox, 60_000);
 
   // Close on outside click
   useEffect(() => {

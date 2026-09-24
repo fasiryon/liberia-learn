@@ -40,8 +40,11 @@ The state machine is:
 
 with `RETRYABLE_FAILURE`, `CONFLICT`, and `TERMINAL_FAILURE` retaining the
 operation and its diagnostic state. Retries use bounded exponential backoff
-(three attempts, capped at five minutes). A lease makes an interrupted send
-eligible for recovery. Dependency IDs prevent a dependent operation from
+(three attempts, capped at five minutes). Since P5-E, network loss defers an
+operation without spending that budget, only an explicit per-operation
+verdict removes an operation, and the service worker replays only the
+signed-in learner's partition (`docs/ops/OFFLINE_HARDENING_P5E.md`). A lease
+makes an interrupted send eligible for recovery. Dependency IDs prevent a dependent operation from
 dispatching before its prerequisite is acknowledged.
 
 ## Server idempotency and concurrency
@@ -73,8 +76,10 @@ The outbox and content/session references are partitioned by learner, school,
 and device. The server derives the learner from the authenticated session,
 checks learner ownership, school scope, and enrollment for progress,
 attendance, assignment, homework, and lab operations. Logout flushes best
-effort; if any unsynced or conflicted operation remains, logout is held and
-local work is retained for retry. Auth expiry holds the queue until the learner
+effort. Since P5-E, if unsynced work remains, the learner is warned and may
+still log out: shared-device privacy wins. The work stays in that learner's
+own partition, is never discarded, and replays only after the same learner
+signs in again (`docs/ops/OFFLINE_HARDENING_P5E.md`). Auth expiry holds the queue until the learner
 reauthenticates; it never replays under a different identity.
 
 ## Offline reopen and reconnect behavior

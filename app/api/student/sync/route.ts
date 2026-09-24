@@ -162,6 +162,13 @@ async function findReplaySourceEvent(input: {
 }
 
 async function assessContentTrust(operation: OfflineOperation | null) {
+  // Lesson completion is release-bound: it must name the exact published
+  // CurriculumContent version it was completed against, so a completion
+  // recorded offline against an older or different release cannot replay.
+  const releaseBound = operation?.resourceType === "lesson_progress";
+  if (releaseBound && (!operation?.contentId || !operation.contentVersion)) {
+    return { action: "reject" as const, status: "lesson_release_identity_required" };
+  }
   if (!operation?.contentId) return { action: "allow" as const, status: "legacy" };
   const contentModel = (prisma as typeof prisma & {
     curriculumContent?: { findUnique?: (args: unknown) => Promise<any> };
@@ -183,6 +190,9 @@ async function assessContentTrust(operation: OfflineOperation | null) {
   }
   if (operation.contentHash && row.hash && row.hash !== operation.contentHash) {
     return { action: "conflict" as const, status: "content_hash_mismatch", serverState: { hash: row.hash } };
+  }
+  if (releaseBound && row.hash && !operation.contentHash) {
+    return { action: "reject" as const, status: "lesson_release_identity_required" };
   }
   const revoked = row.provenance?.lifecycleState === "REVOKED" || !["published", "APPROVED"].includes(String(row.status));
   return { action: "allow" as const, status: revoked ? "revoked_at_sync" : "trusted" };
@@ -291,6 +301,11 @@ export async function POST(req: NextRequest) {
             : `offline.sync.${effectiveEntity}.accepted`;
       const operationFingerprint = canonical ? offlineOperationFingerprint(canonical) : null;
 
+      if (canonical && !canonical.learnerId) {
+        skipped++;
+        results.push({ status: "rejected", opId: opKey, entity: effectiveEntity, resolutionHint: "learner_identity_unbound" });
+        continue;
+      }
       if (canonical?.learnerId && canonical.learnerId !== user.id) {
         skipped++;
         results.push({ status: "rejected", opId: opKey, entity: effectiveEntity, resolutionHint: "learner_identity_mismatch" });
@@ -770,10 +785,26 @@ export async function POST(req: NextRequest) {
             continue;
           }
           const student = await prisma.student.findUnique({ where: { userId: user.id }, select: { id: true } });
-          const attemptModel = (prisma as typeof prisma & { assessmentAttempt?: { create?: (args: unknown) => Promise<any> } }).assessmentAttempt;
+          const attemptModel = (prisma as typeof prisma & { assessmentAttempt?: { create?: (args: unknown) => Promise<any>; findUnique?: (args: unknown) => Promise<any> } }).assessmentAttempt;
           if (!student || !attemptModel?.create) {
             skipped++;
             results.push({ opId: opKey, entity, status: "rejected", resolutionHint: "assessment_context_unavailable" });
+            continue;
+          }
+          // The online submit and the offline outbox share one attempt ID. If
+          // the online request reached the server before the connection
+          // dropped, this operation is a replay, not a second attempt.
+          const recordedAttempt = await attemptModel.findUnique?.({
+            where: { id: syncIdentity.clientEventId },
+            select: { id: true, userId: true },
+          });
+          if (recordedAttempt) {
+            if (recordedAttempt.userId !== user.id) {
+              skipped++;
+              results.push({ opId: opKey, entity, status: "rejected", resolutionHint: "assessment_attempt_id_conflict" });
+            } else {
+              results.push({ opId: opKey, entity, status: "skipped", resolutionHint: "assessment_attempt_already_recorded" });
+            }
             continue;
           }
           await attemptModel.create({

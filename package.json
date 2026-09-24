@@ -10,7 +10,7 @@
     "lint": "next lint",
     "generate-icons": "node scripts/generate-icons.mjs",
     "test": "vitest run",
-    "test:e2e:pwa": "playwright test e2e/p5c-pwa-lifecycle.spec.ts",
+    "test:e2e:pwa": "playwright test e2e/p5c-pwa-lifecycle.spec.ts e2e/p5e-offline-hardening.spec.ts",
     "test:watch": "vitest",
       "validate:changed": "node scripts/validate-changed.mjs",
       "curriculum:validate-releases": "tsx scripts/validate-curriculum-releases.ts",

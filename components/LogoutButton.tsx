@@ -1,27 +1,27 @@
 "use client";
 
-import { signOut } from "next-auth/react";
-import { useState } from "react";
-import { safeLogout } from "@/lib/safe-logout";
-import { flushSubmissionQueue } from "@/lib/offline/flushQueue";
+import { useSafeLogout } from "@/lib/hooks/useSafeLogout";
 
 export default function LogoutButton() {
-  const [message, setMessage] = useState<string | null>(null);
+  const { busy, warning, logout, confirmLogoutKeepingWork, cancel } = useSafeLogout();
 
   return (
     <div className="flex items-center gap-2">
-      {message && <span className="text-xs text-amber-200">{message}</span>}
+      {warning ? (
+        <span role="alert" className="flex flex-wrap items-center gap-2 text-xs text-amber-200">
+          {warning}
+          <button type="button" disabled={busy} onClick={confirmLogoutKeepingWork} className="underline font-semibold">
+            Log out anyway
+          </button>
+          <button type="button" onClick={cancel} className="underline">
+            Stay signed in
+          </button>
+        </span>
+      ) : null}
       <button
-        onClick={async () => {
-          const result = await safeLogout({
-            flushPendingSyncAttempt: async () => { await flushSubmissionQueue(); },
-          });
-          if (!result.completed) {
-            setMessage(`${result.unsyncedCount} offline item${result.unsyncedCount === 1 ? "" : "s"} still need to sync.`);
-            return;
-          }
-          await signOut({ callbackUrl: "/login" });
-        }}
+        type="button"
+        disabled={busy}
+        onClick={logout}
         className="rounded-xl border border-[var(--ll-border)] bg-white/5 hover:bg-white/10 px-4 py-2 text-sm text-[var(--ll-text)]"
       >
         Logout

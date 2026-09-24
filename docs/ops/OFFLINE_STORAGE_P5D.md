@@ -66,9 +66,10 @@ learner-created outbox records.
 ## Logout, account switching, and data clearing
 
 Safe logout attempts a best-effort sync. If pending, conflicted, or failed
-learner work remains, logout is held and local work is retained. Once all work
-is acknowledged, that account's queue and removable content partition may be
-cleared. Switching accounts does not merge partitions or expose the previous
+learner work remains, the learner is warned. Confirming completes logout
+anyway (P5-E shared-device policy). The work is retained under that learner's
+partition, and the lesson packs and rendered page caches are removed. Once
+all work is acknowledged, that account's queue is also cleared. Switching accounts does not merge partitions or expose the previous
 learner's state.
 
 The application cannot guarantee data preservation when a learner, browser,

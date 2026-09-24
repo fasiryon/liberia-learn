@@ -1,5 +1,7 @@
 "use client";
 
+import { publishActivePartition } from "@/lib/offline/activePartition";
+
 export type SessionPartitionInput = {
   userId?: string | null;
   kioskStudentId?: string | null;
@@ -112,7 +114,9 @@ export async function detectAndSetActiveSessionPartition(): Promise<SessionParti
   } catch {
     // Keep existing/stored identity if session lookup fails.
   }
-  return resolveSessionPartition();
+  const resolved = resolveSessionPartition();
+  await publishActivePartition(resolved.userId || resolved.kioskStudentId ? resolved.key : null);
+  return resolved;
 }
 
 export function resolveSessionPartition(partition?: SessionPartitionInput): SessionPartition {
