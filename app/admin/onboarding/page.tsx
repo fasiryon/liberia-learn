@@ -366,7 +366,7 @@ export default function OnboardingPage() {
               <button
                 onClick={handleStep1}
                 disabled={saving || !name}
-                className="w-full rounded-xl bg-[var(--ll-yellow)] px-6 py-3 text-sm font-semibold text-[var(--ll-text)] hover:bg-[var(--ll-yellow-soft)] disabled:opacity-50"
+                className="w-full rounded-xl bg-[var(--ll-yellow)] px-6 py-3 text-sm font-semibold text-[var(--ll-bg)] hover:opacity-90 disabled:opacity-50"
               >
                 {saving ? "Saving..." : "Continue →"}
               </button>
@@ -423,7 +423,7 @@ export default function OnboardingPage() {
               <button
                 onClick={handleStep2}
                 disabled={saving || (data?.teacherCount ?? 0) < 1}
-                className="w-full rounded-xl bg-[var(--ll-yellow)] px-6 py-3 text-sm font-semibold text-[var(--ll-text)] hover:bg-[var(--ll-yellow-soft)] disabled:opacity-50"
+                className="w-full rounded-xl bg-[var(--ll-yellow)] px-6 py-3 text-sm font-semibold text-[var(--ll-bg)] hover:opacity-90 disabled:opacity-50"
               >
                 {saving ? "Saving..." : (data?.teacherCount ?? 0) < 1 ? "Add at least 1 teacher first" : "Continue →"}
               </button>
@@ -475,7 +475,7 @@ export default function OnboardingPage() {
                   <button
                     onClick={handleStudentCsvImport}
                     disabled={studentImporting}
-                    className="rounded-xl bg-[var(--ll-yellow)] px-6 py-2.5 text-sm font-semibold text-[var(--ll-text)] hover:bg-[var(--ll-yellow-soft)] disabled:opacity-50"
+                    className="rounded-xl bg-[var(--ll-yellow)] px-6 py-2.5 text-sm font-semibold text-[var(--ll-bg)] hover:opacity-90 disabled:opacity-50"
                   >
                     {studentImporting ? `Importing ${csvTotal} students...` : `Confirm Import (${csvTotal} students)`}
                   </button>
@@ -485,7 +485,7 @@ export default function OnboardingPage() {
               <button
                 onClick={handleStep3}
                 disabled={saving || (data?.studentCount ?? 0) < 1}
-                className="w-full rounded-xl bg-[var(--ll-yellow)] px-6 py-3 text-sm font-semibold text-[var(--ll-text)] hover:bg-[var(--ll-yellow-soft)] disabled:opacity-50"
+                className="w-full rounded-xl bg-[var(--ll-yellow)] px-6 py-3 text-sm font-semibold text-[var(--ll-bg)] hover:opacity-90 disabled:opacity-50"
               >
                 {saving ? "Saving..." : (data?.studentCount ?? 0) < 1 ? "Import at least 1 student first" : "Continue →"}
               </button>
@@ -540,7 +540,7 @@ export default function OnboardingPage() {
                 <button
                   onClick={handleStep4}
                   disabled={saving}
-                  className="flex-1 rounded-xl bg-[var(--ll-yellow)] px-6 py-3 text-sm font-semibold text-[var(--ll-text)] hover:bg-[var(--ll-yellow-soft)] disabled:opacity-50"
+                  className="flex-1 rounded-xl bg-[var(--ll-yellow)] px-6 py-3 text-sm font-semibold text-[var(--ll-bg)] hover:opacity-90 disabled:opacity-50"
                 >
                   {saving ? "Saving..." : "Continue →"}
                 </button>
@@ -582,7 +582,7 @@ export default function OnboardingPage() {
               <button
                 onClick={handleComplete}
                 disabled={saving}
-                className="w-full rounded-xl bg-[var(--ll-yellow)] px-6 py-3 text-sm font-semibold text-[var(--ll-text)] hover:bg-[var(--ll-yellow-soft)] disabled:opacity-50"
+                className="w-full rounded-xl bg-[var(--ll-yellow)] px-6 py-3 text-sm font-semibold text-[var(--ll-bg)] hover:opacity-90 disabled:opacity-50"
               >
                 {saving ? "Completing..." : "Mark Setup Complete"}
               </button>

@@ -245,9 +245,9 @@ export default function GuardianDashboardClient() {
                   Icon: MessageCircle,
                 },
                 {
-                  title: "See assignments",
-                  description: "See what your child is working on this term.",
-                  href: "/guardian/assignments",
+                  title: "View progress",
+                  description: "See what your child is learning this term.",
+                  href: "/guardian/progress",
                   Icon: BookOpen,
                 },
               ]}

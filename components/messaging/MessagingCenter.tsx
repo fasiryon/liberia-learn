@@ -330,7 +330,7 @@ export function MessagingCenter({ role, emptyState }: MessagingCenterProps) {
                 <div
                   className={`max-w-[85%] rounded-xl px-4 py-3 text-sm ${
                     ownMessage
-                      ? "bg-[var(--ll-yellow)] text-[var(--ll-text-faint)]"
+                      ? "bg-[var(--ll-yellow)] text-[var(--ll-bg)]"
                       : "bg-[var(--ll-surface-muted)] text-[var(--ll-text-faint)]"
                   }`}
                 >

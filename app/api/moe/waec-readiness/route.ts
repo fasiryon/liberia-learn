@@ -1,10 +1,13 @@
+// route-policy: auth=session; scope=national; authority=elevated; rationale=MOE-only national aggregate with county small-cell suppression
 import { NextResponse } from "next/server";
 import { requireUser } from "@/lib/auth";
 import { getNationalWaecReadiness } from "@/lib/waec/aggregate";
 
 export const dynamic = "force-dynamic";
 
-const ALLOWED = new Set(["MOE_OFFICIAL", "MOE_SUPER_ADMIN", "ADMIN"]);
+// National aggregate: MOE roles only. School admins use the school/class
+// readiness surfaces, matching every other /api/moe aggregate route.
+const ALLOWED = new Set(["MOE_OFFICIAL", "MOE_SUPER_ADMIN"]);
 
 export async function GET() {
   try {

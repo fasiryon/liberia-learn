@@ -94,7 +94,7 @@ const r = await fetch(`/api/homework?classId=${encodeURIComponent(_classId)}`, {
           <button
             onClick={() => loadHomework(classId)}
             disabled={busy || !classId}
-            className="rounded-xl bg-[var(--ll-yellow)] hover:bg-[var(--ll-yellow-soft)] disabled:opacity-60 text-black font-semibold px-4 py-3"
+            className="rounded-xl bg-[var(--ll-yellow)] hover:opacity-90 disabled:opacity-60 text-black font-semibold px-4 py-3"
           >
             {busy ? "..." : "Refresh"}
           </button>

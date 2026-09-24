@@ -18,7 +18,16 @@ function debounce<T extends (...args: any[]) => void>(fn: T, delay: number): T {
   }) as T;
 }
 
-export function GlobalSearch() {
+type SearchAudience = "student" | "teacher";
+
+// Result links must open pages the viewer's role can reach.
+const RESULT_ROUTES: Record<SearchAudience, { lesson: (contentId: string) => string; events: string; assignments: string }> = {
+  student: { lesson: (contentId) => `/student/lesson/${contentId}`, events: "/student/events", assignments: "/assignments" },
+  teacher: { lesson: (contentId) => `/teacher/lesson/${contentId}`, events: "/teacher/events", assignments: "/teacher/assignments" },
+};
+
+export function GlobalSearch({ audience = "student" }: { audience?: SearchAudience } = {}) {
+  const routes = RESULT_ROUTES[audience];
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<SearchResults | null>(null);
@@ -32,21 +41,21 @@ export function GlobalSearch() {
           key: `lesson-${l.contentId}`,
           label: l.title ?? l.contentId,
           sub: `${l.subject.replace(/_/g, " ")} · Grade ${l.grade}`,
-          href: `/student/lesson/${l.contentId}`,
+          href: routes.lesson(l.contentId),
           section: "Lessons",
         })),
         ...results.events.map((e) => ({
           key: `event-${e.id}`,
           label: e.title,
           sub: new Date(e.eventDate).toLocaleDateString("en-LR"),
-          href: "/events",
+          href: routes.events,
           section: "Events",
         })),
         ...results.assignments.map((a) => ({
           key: `asgn-${a.id}`,
           label: a.title,
           sub: `${a.subject} ${a.dueAt ? "· due " + new Date(a.dueAt).toLocaleDateString("en-LR") : ""}`,
-          href: "/assignments",
+          href: routes.assignments,
           section: "Assignments",
         })),
       ]

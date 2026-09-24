@@ -147,7 +147,7 @@ type PlacementDistrict = {
   districtName: string;
   studentsPlaced: number;
   reviewedCount: number;
-  overrideRate: number;
+  overrideRate: number | null;
   avgAiConfidence: number | null;
   topOverrideReason: string | null;
   warning: string | null;
@@ -156,7 +156,7 @@ type PlacementDistrict = {
 type PlacementData = {
   totalStudentsPlaced: number;
   averageAiConfidence: number | null;
-  nationalOverrideRate: number;
+  nationalOverrideRate: number | null;
   mostCommonPlacementBand: string | null;
   byDistrict: PlacementDistrict[];
 };
@@ -1029,7 +1029,7 @@ export default function MoeDashboardPage() {
                   />
                   <StatCard
                     label="National Override Rate"
-                    value={`${placements?.nationalOverrideRate ?? 0}%`}
+                    value={placements?.nationalOverrideRate == null ? "--" : `${placements.nationalOverrideRate}%`}
                     valueClassName="text-[var(--ll-warning)]"
                   />
                   <StatCard
@@ -1065,7 +1065,7 @@ export default function MoeDashboardPage() {
                               </div>
                             </td>
                             <td className="px-4 py-2">{district.studentsPlaced}</td>
-                            <td className="px-4 py-2">{district.overrideRate}%</td>
+                            <td className="px-4 py-2">{district.overrideRate == null ? "--" : `${district.overrideRate}%`}</td>
                             <td className="px-4 py-2">
                               {district.avgAiConfidence == null
                                 ? "--"

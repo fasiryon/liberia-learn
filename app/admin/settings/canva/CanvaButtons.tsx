@@ -25,7 +25,7 @@ export function CanvaConnectButton({ disabled }: { disabled?: boolean }) {
     <button
       onClick={handleConnect}
       disabled={disabled || loading}
-      className="rounded-xl bg-[var(--ll-yellow)] px-4 py-2 text-sm font-semibold text-[var(--ll-text)] hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed transition-opacity"
+      className="rounded-xl bg-[var(--ll-yellow)] px-4 py-2 text-sm font-semibold text-[var(--ll-bg)] hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed transition-opacity"
     >
       {loading ? "Redirecting…" : "Connect Canva"}
     </button>

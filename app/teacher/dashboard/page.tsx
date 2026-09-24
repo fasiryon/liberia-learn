@@ -250,7 +250,7 @@ export default function TeacherDashboardPage() {
           subtitle={data?.schoolCode ? `Code: ${data.schoolCode}` : undefined}
           rightSlot={
             <div className="flex items-center gap-2">
-              <GlobalSearch />
+              <GlobalSearch audience="teacher" />
               <NotificationBell />
               <AlertBell
                 alerts={visibleAlerts}

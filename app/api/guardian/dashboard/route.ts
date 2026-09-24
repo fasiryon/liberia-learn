@@ -1,3 +1,4 @@
+// route-policy: auth=session; scope=record; authority=guardian-link; rationale=returns only linked children; AI scores appear only after review
 // app/api/guardian/dashboard/route.ts
 //
 // GET /api/guardian/dashboard
@@ -103,7 +104,12 @@ export async function GET() {
         // ── Recent grades ──────────────────────────────────────────────────
         const [hwSubmissions, assignmentSubmissions] = await Promise.all([
           prisma.homeworkSubmission.findMany({
-            where: { studentId },
+            // Visibility is part of the query so `take` counts only grades a
+            // guardian may see: teacher-scored, or AI-scored and reviewed.
+            where: {
+              studentId,
+              OR: [{ teacherScore: { not: null } }, { aiReviewed: true, aiScore: { not: null } }],
+            },
             orderBy: { submittedAt: "desc" },
             take: 5,
             include: {
@@ -130,11 +136,13 @@ export async function GET() {
 
         const recentGrades = [
           ...hwSubmissions
-            .filter((s) => s.teacherScore !== null || s.aiScore !== null)
+            // An AI score is shown only once the submission is marked
+            // reviewed, matching the other guardian and student surfaces.
+            .filter((s) => s.teacherScore !== null || (s.aiReviewed && s.aiScore !== null))
             .map((s) => ({
               subject: String(s.Homework.Class.subject),
               assignmentTitle: s.Homework.title,
-              score: s.teacherScore ?? s.aiScore ?? 0,
+              score: s.teacherScore ?? (s.aiReviewed ? s.aiScore : null) ?? 0,
               maxScore: 100,
               date: s.submittedAt.toISOString(),
             })),

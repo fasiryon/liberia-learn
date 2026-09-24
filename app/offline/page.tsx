@@ -6,7 +6,7 @@ export default function OfflinePage() {
       <div className="max-w-sm space-y-5 text-center">
         <h1 className="text-xl font-bold text-[var(--ll-text)]">You are offline.</h1>
         <p className="text-sm leading-relaxed text-[var(--ll-text-muted)]">
-          Your work has been saved and will sync when you reconnect.
+          Answers you saved on this device will sync when you reconnect. Anything not yet saved may need to be done again.
         </p>
         <button
           onClick={() => window.location.reload()}

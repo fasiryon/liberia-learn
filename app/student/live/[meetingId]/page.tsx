@@ -82,7 +82,7 @@ export default function StudentLivePage({ params }: { params: { meetingId: strin
     return (
       <div className="flex h-screen flex-col items-center justify-center gap-4 bg-[var(--ll-bg)] text-[var(--ll-text)]">
         <p className="text-lg font-semibold">This session has ended.</p>
-        <Link href="/student/today" className="rounded-lg bg-[var(--ll-accent)] px-4 py-2 text-sm font-semibold text-white">
+        <Link href="/student/today" className="rounded-lg bg-[var(--ll-accent)] px-4 py-2 text-sm font-semibold text-[var(--ll-bg)]">
           Back to Today
         </Link>
       </div>
@@ -94,7 +94,7 @@ export default function StudentLivePage({ params }: { params: { meetingId: strin
       <div className="flex h-screen flex-col items-center justify-center gap-4 bg-[var(--ll-bg)] text-[var(--ll-text)]">
         <p className="text-lg font-semibold">This session has not started yet.</p>
         <p className="text-sm text-[var(--ll-text-muted)]">Check back when your teacher starts the class.</p>
-        <Link href="/student/today" className="rounded-lg bg-[var(--ll-accent)] px-4 py-2 text-sm font-semibold text-white">
+        <Link href="/student/today" className="rounded-lg bg-[var(--ll-accent)] px-4 py-2 text-sm font-semibold text-[var(--ll-bg)]">
           Back to Today
         </Link>
       </div>
@@ -104,7 +104,7 @@ export default function StudentLivePage({ params }: { params: { meetingId: strin
   return (
     <div className="flex h-screen flex-col items-center justify-center gap-4 bg-[var(--ll-bg)] text-[var(--ll-text)]">
       <p className="text-sm text-[var(--ll-text-muted)]">Unable to join session. Please try again.</p>
-      <Link href="/student/today" className="rounded-lg bg-[var(--ll-accent)] px-4 py-2 text-sm font-semibold text-white">
+      <Link href="/student/today" className="rounded-lg bg-[var(--ll-accent)] px-4 py-2 text-sm font-semibold text-[var(--ll-bg)]">
         Back to Today
       </Link>
     </div>

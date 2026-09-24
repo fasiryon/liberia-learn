@@ -177,7 +177,7 @@ export default function ImportPage() {
                 key={s}
                 className={`flex h-6 w-6 items-center justify-center rounded-full font-bold ${
                   step === s
-                    ? "bg-[var(--ll-yellow)] text-[var(--ll-text-faint)]"
+                    ? "bg-[var(--ll-yellow)] text-[var(--ll-bg)]"
                     : step > s
                     ? "bg-[var(--ll-yellow)]/30 text-[var(--ll-yellow)]"
                     : "border border-[var(--ll-border)] text-[var(--ll-text-muted)]"

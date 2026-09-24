@@ -267,6 +267,7 @@ export default function TeacherTimetablePage() {
                 </h2>
                 <button
                   type="button"
+                  aria-label="Close"
                   onClick={closeAssign}
                   className="rounded-full p-1 hover:bg-[var(--ll-surface)]"
                 >

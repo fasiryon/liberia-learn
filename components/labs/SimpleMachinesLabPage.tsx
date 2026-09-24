@@ -243,7 +243,7 @@ export default function SimpleMachinesLabPage() {
         {(["lever", "pulley", "inclined-plane"] as Machine[]).map((m) => (
           <button key={m} type="button"
             onClick={() => setMachine(m)}
-            className={`rounded-lg px-3 py-1.5 text-xs font-semibold capitalize transition-colors ${machine === m ? "bg-[var(--ll-accent)] text-[var(--ll-text-faint)]" : "border border-[var(--ll-border)] text-[var(--ll-text)]"}`}>
+            className={`rounded-lg px-3 py-1.5 text-xs font-semibold capitalize transition-colors ${machine === m ? "bg-[var(--ll-accent)] text-[var(--ll-bg)]" : "border border-[var(--ll-border)] text-[var(--ll-text)]"}`}>
             {m.replace("-", " ")}
           </button>
         ))}

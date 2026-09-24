@@ -20,8 +20,8 @@ export default function Error({
         Something went wrong
       </h1>
       <p className="max-w-md text-sm text-[var(--ll-text-faint)]">
-        An unexpected error occurred. Your work has been saved.
-        Please try again or contact your school administrator.
+        An unexpected error occurred. Please try again. If it keeps happening,
+        tell your school administrator and share the error reference below.
       </p>
       {error.digest && (
         <p className="text-xs text-[var(--ll-text-faint)]">

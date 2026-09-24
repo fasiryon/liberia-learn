@@ -117,12 +117,12 @@ describe("POST /api/certificates/[id]/share", () => {
     expect(res.status).toBe(403);
   });
 
-  it("returns 403 when a school admin shares another school's certificate (hostile)", async () => {
+  it("returns 404 when a school admin shares another school's certificate (hostile)", async () => {
     vi.mocked(requireRole).mockResolvedValueOnce({
       id: "admin-9", role: "ADMIN", isPlatformAdmin: false, schoolId: "school-9",
     } as any);
     const res = await POST(makeReq("cert-test-1"), { params: { id: "cert-test-1" } });
-    expect(res.status).toBe(403);
+    expect(res.status).toBe(404);
     expect(prisma.certificateShare.upsert).not.toHaveBeenCalled();
   });
 

@@ -2,10 +2,10 @@
 
 import { signIn } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
+import { isSafeInternalPath } from "@/lib/auth/safeRedirect";
 
 function safeCallbackUrl(value: string | null): string {
-  if (!value || !value.startsWith("/") || value.startsWith("//")) return "/admin";
-  return value;
+  return isSafeInternalPath(value) ? value : "/admin";
 }
 
 export default function StepUpClient({ auth0Configured }: { auth0Configured: boolean }) {

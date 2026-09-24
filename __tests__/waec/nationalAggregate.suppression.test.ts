@@ -38,7 +38,7 @@ describe("getNationalWaecReadiness — small-cell suppression", () => {
     const gbarpolu = result.byCounty.find((c) => c.county === "Gbarpolu")!;
     expect(gbarpolu).toEqual({ county: "Gbarpolu", assessedStudents: null, avgReadiness: null, suppressed: true });
     const bong = result.byCounty.find((c) => c.county === "Bong")!;
-    expect(bong.suppressed).toBe(false);
+    expect(bong.suppressed).toBeFalsy();
     expect(bong.assessedStudents).toBe(6);
     expect(bong.avgReadiness).not.toBeNull();
     expect(result.subjects[0].suppressed).toBe(false);

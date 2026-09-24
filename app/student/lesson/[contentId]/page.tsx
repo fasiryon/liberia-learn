@@ -281,7 +281,7 @@ export default function LessonViewerPage() {
                 onClick={() => switchMode(entry)}
                 className={`rounded-lg px-3 py-2 text-sm font-semibold transition ${
                   mode === entry
-                    ? "bg-[var(--ll-yellow)] text-[var(--ll-text-faint)]"
+                    ? "bg-[var(--ll-yellow)] text-[var(--ll-bg)]"
                     : "bg-[var(--ll-surface)] text-[var(--ll-text-muted)] hover:text-[var(--ll-text)]"
                 }`}
                 aria-pressed={mode === entry}

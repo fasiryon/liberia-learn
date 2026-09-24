@@ -79,15 +79,14 @@ export async function getTeacherWaecReadiness(teacherUserId: string): Promise<{ 
   return { studentCount: studentIds.length, subjects: await aggregateWaecForStudents(studentIds) };
 }
 
-export type CountyAggregate = {
-  county: string;
-  assessedStudents: number | null;
-  avgReadiness: number | null;
-  suppressed: boolean;
-};
+export type CountyAggregate = { county: string; assessedStudents: number | null; avgReadiness: number | null; suppressed?: boolean };
 
-/** Same minimum cohort the other MOE aggregate surfaces use (app/api/moe/counties, dashboard). */
-export const NATIONAL_MIN_COHORT = 5;
+/** Same small-cell rule as the MOE county dashboard: a county average over
+ * fewer than this many assessed learners is withheld, not published. */
+export const WAEC_COUNTY_MIN_COHORT = 5;
+
+/** Subject rows use the same minimum as counties. */
+export const NATIONAL_MIN_COHORT = WAEC_COUNTY_MIN_COHORT;
 
 type SuppressibleSubjectAggregate = Omit<SubjectAggregate, "assessedStudents" | "atRisk" | "onTrack"> & {
   assessedStudents: number | null;
@@ -137,15 +136,10 @@ export async function getNationalWaecReadiness(): Promise<{
     c.sum += overall; c.n++; countyMap.set(county, c);
   }
   const byCounty = Array.from(countyMap.entries())
-    .map(([county, v]): CountyAggregate => {
-      const suppressed = v.n < NATIONAL_MIN_COHORT;
-      return {
-        county,
-        assessedStudents: suppressed ? null : v.n,
-        avgReadiness: suppressed ? null : Math.round(v.sum / v.n),
-        suppressed,
-      };
-    })
+    .map(([county, v]): CountyAggregate =>
+      v.n < WAEC_COUNTY_MIN_COHORT
+        ? { county, assessedStudents: null, avgReadiness: null, suppressed: true }
+        : { county, assessedStudents: v.n, avgReadiness: Math.round(v.sum / v.n) })
     .sort((a, b) => (b.avgReadiness ?? -1) - (a.avgReadiness ?? -1));
 
   return { studentCount: studentIds.length, subjects: subjects.map(suppressSubject), byCounty };

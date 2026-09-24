@@ -55,7 +55,7 @@ export function LanguageSelector({ compact = false }: { compact?: boolean }) {
           title={l.label}
           className={`rounded-lg px-2 py-1 text-xs transition-colors disabled:opacity-40 ${
             current === l.code
-              ? "bg-[var(--ll-yellow)] text-[var(--ll-text)] font-semibold"
+              ? "bg-[var(--ll-yellow)] text-[var(--ll-bg)] font-semibold"
               : "text-[var(--ll-text-muted)] hover:text-[var(--ll-text)]"
           }`}
         >

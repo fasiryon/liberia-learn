@@ -156,7 +156,7 @@ function StudentMessagesTab() {
                   isRetracted
                     ? "bg-[var(--ll-surface-muted)]/50 text-[var(--ll-text-faint)] italic"
                     : mine
-                    ? "bg-[var(--ll-yellow)] text-[var(--ll-text-faint)]"
+                    ? "bg-[var(--ll-yellow)] text-[var(--ll-bg)]"
                     : "bg-[var(--ll-surface-muted)] text-[var(--ll-text-faint)]"
                 }`}>
                   <p className="text-[11px] opacity-70 mb-1">{timeAgo(msg.createdAt)}</p>

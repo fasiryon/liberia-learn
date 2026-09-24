@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { buildPortfolioSummary } from "@/lib/portfolio/buildPortfolio";
+import { isPortfolioFlagEnabled } from "@/lib/flags";
 import { BookOpen, BarChart2, Award, Star, FlaskConical, Flame } from "lucide-react";
 
 export const dynamic = "force-dynamic";
@@ -8,6 +9,10 @@ export const dynamic = "force-dynamic";
 type Props = { params: { shareCode: string } };
 
 export default async function PublicPortfolioPage({ params }: Props) {
+  // Same gate as GET /api/portfolio/[shareCode]: a disabled feature must not
+  // keep serving a learner's name and school through the page route.
+  if (!(await isPortfolioFlagEnabled())) notFound();
+
   const share = await (prisma as any).portfolioShare.findUnique({
     where: { shareCode: params.shareCode },
     select: { studentId: true, isActive: true },

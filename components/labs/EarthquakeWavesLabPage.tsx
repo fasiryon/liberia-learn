@@ -164,7 +164,7 @@ export default function EarthquakeWavesLabPage() {
           <div className="flex gap-2">
             {(["both", "P", "S"] as const).map((t) => (
               <button key={t} type="button" onClick={() => setWaveType(t)}
-                className={`rounded-lg px-3 py-1 text-xs font-semibold ${waveType === t ? "bg-[var(--ll-accent)] text-[var(--ll-text-faint)]" : "border border-[var(--ll-border)] text-[var(--ll-text)]"}`}>
+                className={`rounded-lg px-3 py-1 text-xs font-semibold ${waveType === t ? "bg-[var(--ll-accent)] text-[var(--ll-bg)]" : "border border-[var(--ll-border)] text-[var(--ll-text)]"}`}>
                 {t === "both" ? "Both" : `${t}-waves`}
               </button>
             ))}

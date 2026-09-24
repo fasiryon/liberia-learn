@@ -5,6 +5,7 @@ import { FormEvent, useEffect, useState } from "react";
 import { signIn, getSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { FEATURE_FLAGS } from "@/lib/featureFlags";
+import { isSafeInternalPath } from "@/lib/auth/safeRedirect";
 import type { DemoHintGroup } from "@/lib/demoHints";
 import { DemoHints } from "@/components/DemoHints";
 import { PublicFooter } from "@/components/PublicFooter";
@@ -40,7 +41,7 @@ function defaultRouteForRole(role: string, mustChangePIN = false): string {
 }
 
 function isNextUrlSafeForRole(url: string, role: string): boolean {
-  if (!url.startsWith("/")) return false;
+  if (!isSafeInternalPath(url)) return false;
   if (role === "STUDENT" && (url.startsWith("/admin") || url.startsWith("/teacher"))) return false;
   if (role === "TEACHER" && url.startsWith("/admin")) return false;
   if (role === "GUARDIAN" && (url.startsWith("/admin") || url.startsWith("/teacher") || url.startsWith("/platform"))) return false;
@@ -342,7 +343,7 @@ export default function LoginClient({
             </p>
             <button
               type="button"
-              onClick={() => signIn("auth0", { callbackUrl: nextUrl ?? "/admin" })}
+              onClick={() => signIn("auth0", { callbackUrl: isSafeInternalPath(nextUrl) ? nextUrl : "/admin" })}
               className="flex min-h-12 w-full items-center justify-center rounded-xl bg-[var(--ll-yellow)] px-4 py-3 text-base font-semibold text-[var(--ll-bg)]"
             >
               Continue with secure administrator sign-in

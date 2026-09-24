@@ -143,7 +143,7 @@ export function TeacherDeliveryReport() {
               onClick={() => setRange(option.value)}
               className={`rounded-full px-4 py-2 text-sm font-semibold ${
                 range === option.value
-                  ? "bg-[var(--ll-yellow)] text-[var(--ll-text-faint)]"
+                  ? "bg-[var(--ll-yellow)] text-[var(--ll-bg)]"
                   : "border border-[var(--ll-border)] bg-[var(--ll-bg)] text-[var(--ll-text)]"
               }`}
             >
