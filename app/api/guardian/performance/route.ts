@@ -1,3 +1,4 @@
+// route-policy: auth=session; scope=record; authority=guardian-link; rationale=a guardian sees only linked children and evidence from the child school
 import { NextResponse } from "next/server";
 import { requireUser } from "@/lib/auth";
 import { logAudit } from "@/lib/audit";
@@ -32,7 +33,7 @@ function buildSupportSuggestions(input: {
   return suggestions.slice(0, 3);
 }
 
-export async function GET() {
+export async function GET(req?: Request) {
   try {
     if (!isGuardianProgressViewEnabled()) {
       return NextResponse.json({ error: "Not found" }, { status: 404 });
@@ -42,24 +43,59 @@ export async function GET() {
     if (user.role !== "GUARDIAN") {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
-    if (!user.schoolId) {
-      return NextResponse.json({ error: "schoolId required" }, { status: 400 });
-    }
 
-    const link = await prisma.studentGuardian.findFirst({
+    const links = await prisma.studentGuardian.findMany({
       where: { guardianId: user.id },
-      select: { studentId: true },
+      orderBy: { id: "asc" },
+      select: {
+        studentId: true,
+        student: { select: { user: { select: { name: true, schoolId: true } } } },
+      },
     });
-    if (!link) {
+    if (links.length === 0) {
       return NextResponse.json({ error: "No linked student found" }, { status: 404 });
     }
 
-    const summary = await getStudentPerformanceSummary(link.studentId, user.schoolId);
+    const requestedId = req ? new URL(req.url).searchParams.get("studentId") : null;
+    const link = requestedId ? links.find((l) => l.studentId === requestedId) : links[0];
+    if (!link) {
+      return NextResponse.json({ error: "You do not have access to this student" }, { status: 403 });
+    }
+
+    const children = links.map((l) => ({
+      studentId: l.studentId,
+      name: l.student?.user?.name ?? "Your child",
+    }));
+    const selected = {
+      studentId: link.studentId,
+      studentName: link.student?.user?.name ?? "Your child",
+      children,
+    };
+
+    // Evidence lives in the child's school, not the guardian's account school.
+    const childSchoolId = link.student?.user?.schoolId ?? null;
+    const summary = childSchoolId
+      ? await getStudentPerformanceSummary(link.studentId, childSchoolId)
+      : null;
+
+    await logAudit({
+      userId: user.id,
+      schoolId: childSchoolId ?? user.schoolId,
+      action: "guardian.progress.viewed",
+      resourceType: "guardian_progress",
+      resourceId: link.studentId,
+    });
+
+    // No scored work yet is "not enough information", never a zero score.
+    if (!summary || summary.evidenceCount === 0) {
+      return NextResponse.json({ ...selected, hasEvidence: false });
+    }
+
     const hasSuggestedSupport =
       (await (prisma as any).interventionRecommendation.count({
         where: {
           studentId: link.studentId,
-          schoolId: user.schoolId,
+          schoolId: childSchoolId,
           status: "pending",
           recommendationType: "guardian_support",
         },
@@ -68,14 +104,6 @@ export async function GET() {
       masteryLevel: summary.masteryLevel,
       improvementTrend: summary.improvementTrend,
       hasSuggestedSupport,
-    });
-
-    await logAudit({
-      userId: user.id,
-      schoolId: user.schoolId,
-      action: "guardian.progress.viewed",
-      resourceType: "guardian_progress",
-      resourceId: link.studentId,
     });
 
     const doingWell =
@@ -88,6 +116,8 @@ export async function GET() {
         : "Keep checking in on daily practice and confidence.";
 
     return NextResponse.json({
+      ...selected,
+      hasEvidence: true,
       avgScore: summary.avgScore,
       masteryLevel: summary.masteryLevel,
       improvementTrend: summary.improvementTrend,

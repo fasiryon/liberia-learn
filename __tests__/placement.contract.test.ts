@@ -78,7 +78,13 @@ describe("placement contract", () => {
           hint: "Add the two groups together.",
         },
       ],
-      answers: [{ questionId: "q1", difficulty: 2, correct: true, timeSpent: 12, selectedAnswer: 1 }],
+      answers: Array.from({ length: 10 }, (_, i) => ({
+        questionId: `q${i + 1}`,
+        difficulty: 2,
+        correct: i < 8,
+        timeSpent: 12,
+        selectedAnswer: 1,
+      })),
       aiAnalysis: {
         overallNarrative: "The student showed strong foundational number sense.",
         strengths: ["Accurate addition"],
@@ -119,5 +125,37 @@ describe("placement contract", () => {
         resourceId: "placement-1",
       })
     );
+  });
+
+  it.each([
+    ["rawScore above totalQuestions", { rawScore: 11, totalQuestions: 10 }],
+    ["estimatedGrade out of range", { estimatedGrade: 13 }],
+    ["non-integer grade", { estimatedGrade: 4.5 }],
+    ["answers not matching totalQuestions", { answers: [{ questionId: "q1", correct: true }] }],
+  ])("rejects an inconsistent client placement payload (hostile): %s", async (_label, override) => {
+    const { POST } = await import("@/app/api/student/placement/route");
+    const response = await POST(
+      new Request("http://localhost/api/student/placement", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ estimatedGrade: 4, rawScore: 8, totalQuestions: 10, ...override }),
+      })
+    );
+    expect(response.status).toBe(400);
+    expect(mockPlacementCreate).not.toHaveBeenCalled();
+  });
+
+  it("derives the band on the server instead of trusting the client label (hostile)", async () => {
+    const { POST } = await import("@/app/api/student/placement/route");
+    await POST(
+      new Request("http://localhost/api/student/placement", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ band: "advanced", levelLabel: "Advanced", estimatedGrade: 4, rawScore: 2, totalQuestions: 10 }),
+      })
+    );
+    expect(mockPlacementCreate).toHaveBeenCalledWith({
+      data: expect.objectContaining({ band: "foundational", levelLabel: "Foundational" }),
+    });
   });
 });

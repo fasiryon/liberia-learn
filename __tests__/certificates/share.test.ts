@@ -37,7 +37,7 @@ const mockCert = {
   awardedAt: new Date("2026-06-01T00:00:00Z"),
   student: {
     userId: "user-student-1",
-    user: { name: "Amara Konneh" },
+    user: { name: "Amara Konneh", schoolId: "school-1" },
   },
 };
 
@@ -115,6 +115,23 @@ describe("POST /api/certificates/[id]/share", () => {
     } as any);
     const res = await POST(makeReq("cert-test-1"), { params: { id: "cert-test-1" } });
     expect(res.status).toBe(403);
+  });
+
+  it("returns 404 when a school admin shares another school's certificate (hostile)", async () => {
+    vi.mocked(requireRole).mockResolvedValueOnce({
+      id: "admin-9", role: "ADMIN", isPlatformAdmin: false, schoolId: "school-9",
+    } as any);
+    const res = await POST(makeReq("cert-test-1"), { params: { id: "cert-test-1" } });
+    expect(res.status).toBe(404);
+    expect(prisma.certificateShare.upsert).not.toHaveBeenCalled();
+  });
+
+  it("allows a school admin to share a certificate in their own school", async () => {
+    vi.mocked(requireRole).mockResolvedValueOnce({
+      id: "admin-1", role: "ADMIN", isPlatformAdmin: false, schoolId: "school-1",
+    } as any);
+    const res = await POST(makeReq("cert-test-1"), { params: { id: "cert-test-1" } });
+    expect(res.status).toBe(200);
   });
 });
 

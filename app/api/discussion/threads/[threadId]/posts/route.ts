@@ -1,6 +1,8 @@
+// route-policy: auth=session; scope=tenant; authority=class-membership; rationale=child posts are readable only by class members and staff of the class school
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { requireRole } from "@/lib/auth";
+import { authorizeDiscussionThread } from "@/lib/discussion/access";
 
 export async function GET(
   req: NextRequest,
@@ -10,19 +12,8 @@ export async function GET(
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const { threadId } = params;
-  const thread = await prisma.discussionThread.findUnique({ where: { id: threadId } });
-  if (!thread) return NextResponse.json({ error: "Not found" }, { status: 404 });
-
-  // Scope check
-  if (user.role === "STUDENT") {
-    const enrollment = await prisma.enrollment.findFirst({
-      where: { classId: thread.classId, Student: { userId: user.id } },
-    });
-    if (!enrollment) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-  } else if (user.role === "TEACHER") {
-    const cls = await prisma.class.findFirst({ where: { id: thread.classId, schoolId: user.schoolId! } });
-    if (!cls) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-  }
+  const access = await authorizeDiscussionThread(user, threadId);
+  if (access instanceof NextResponse) return access;
 
   // Upsert lastRead
   await prisma.discussionLastRead.upsert({

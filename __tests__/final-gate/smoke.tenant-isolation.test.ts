@@ -20,7 +20,7 @@ vi.mock("@/lib/auth", () => ({
 
 vi.mock("@/lib/audit", () => ({ logAudit: vi.fn().mockResolvedValue(undefined) }));
 vi.mock("@/lib/intelligence/performanceAggregator", () => ({
-  getStudentPerformanceSummary: vi.fn(async () => ({ avgScore: 84, masteryLevel: "developing", improvementTrend: "improving" })),
+  getStudentPerformanceSummary: vi.fn(async () => ({ avgScore: 84, masteryLevel: "developing", improvementTrend: "improving", evidenceCount: 5 })),
   getClassPerformanceSummary: vi.fn(async () => ({ avgScore: 0.76 })),
 }));
 vi.mock("@/lib/reporting/teacherClassPerformance", () => ({
@@ -59,7 +59,10 @@ vi.mock("@/lib/db", () => ({
     exam: { count: vi.fn(async () => 1), findFirst: vi.fn(async (args: any) => args.where.schoolId === "school-a" && args.where.id === "exam-a" ? { id: "exam-a", questions: [{}, {}, {}, {}, {}], _count: { questions: 5 } } : null) },
     examAttempt: { findMany: vi.fn(async () => []), count: vi.fn(async () => 0), findFirst: vi.fn(async () => null), create: vi.fn(async () => ({ id: "attempt-a" })) },
     examCertification: { count: vi.fn(async () => 0) },
-    studentGuardian: { findFirst: vi.fn(async () => ({ studentId: "student-a" })) },
+    studentGuardian: {
+      findFirst: vi.fn(async () => ({ studentId: "student-a" })),
+      findMany: vi.fn(async () => [{ studentId: "student-a", student: { user: { name: "Student A", schoolId: "school-a" } } }]),
+    },
     placementTest: { findMany: vi.fn(async () => [{ band: "7-9", teacherDecision: "accepted", teacherReason: null, details: { confidence: "high" }, student: { user: { schoolId: "school-a" } } }]) },
     curriculumContent: { findMany: vi.fn(async () => [{ moeAlignments: { standards: [{ code: "M1" }] } }]) },
     standard: { findMany: vi.fn(async () => [{ code: "M1", subject: "MATH", band: "7-9" }]) },

@@ -118,6 +118,23 @@ export async function completeScheduledLesson(input: CompleteLessonInput) {
     : [];
   const exitTicketScore = scoreExitTicket(exitTicketQuestions, normalizedAnswers);
 
+  // Idempotent replay (double-tap, retry after a lost response): an already
+  // completed lesson resubmitted with the same answers must not re-run mastery,
+  // streak, certificate, or guardian-notification side effects.
+  const existing = await prisma.studentProgress.findUnique({
+    where: { studentId_scheduledWorkId: { studentId: input.user.id, scheduledWorkId: input.scheduledWorkId } },
+    select: { completedAt: true, exitTicketResponses: true, exitTicketScore: true },
+  });
+  if (
+    existing?.completedAt &&
+    JSON.stringify(existing.exitTicketResponses ?? []) === JSON.stringify(normalizedAnswers)
+  ) {
+    return {
+      completedAt: existing.completedAt,
+      exitTicketScore: existing.exitTicketScore ?? exitTicketScore,
+    };
+  }
+
   const now = new Date();
   const progress = await prisma.studentProgress.upsert({
     where: { studentId_scheduledWorkId: { studentId: input.user.id, scheduledWorkId: input.scheduledWorkId } },

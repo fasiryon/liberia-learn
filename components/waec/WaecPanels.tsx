@@ -4,10 +4,13 @@ import { useEffect, useState } from "react";
 import { GraduationCap } from "lucide-react";
 
 type SubjectAggregate = {
-  subjectId: string; name: string; assessedStudents: number;
-  avgReadiness: number | null; atRisk: number; onTrack: number;
+  subjectId: string; name: string; assessedStudents: number | null;
+  avgReadiness: number | null; atRisk: number | null; onTrack: number | null;
+  suppressed?: boolean;
 };
 type CountyAggregate = { county: string; assessedStudents: number | null; avgReadiness: number | null; suppressed?: boolean };
+
+const SUPPRESSED_LABEL = "Fewer than 5 students";
 
 function readinessColor(v: number | null): string {
   if (v == null) return "var(--ll-text-faint)";
@@ -31,7 +34,7 @@ function SubjectRow({ s }: { s: SubjectAggregate }) {
         </div>
       </div>
       <div className="shrink-0 text-right text-[11px] text-[var(--ll-text-faint)]">
-        {s.assessedStudents > 0 ? (
+        {s.suppressed ? SUPPRESSED_LABEL : (s.assessedStudents ?? 0) > 0 ? (
           <><span className="text-red-400">{s.atRisk} at risk</span> · <span className="text-emerald-400">{s.onTrack} on track</span></>
         ) : "no data"}
       </div>
@@ -92,7 +95,9 @@ export function WaecMoePanel() {
               <div key={c.county} className="flex items-center justify-between text-sm">
                 <span className="text-[var(--ll-text-muted)]">{i + 1}. {c.county}</span>
                 <span className="font-semibold" style={{ color: readinessColor(c.avgReadiness) }}>
-                  {c.suppressed ? "Too few learners to show" : c.avgReadiness == null ? "—" : `${c.avgReadiness}%`}
+                  {c.suppressed ? (
+                    <span className="text-xs font-normal text-[var(--ll-text-faint)]">{SUPPRESSED_LABEL}</span>
+                  ) : c.avgReadiness == null ? "—" : `${c.avgReadiness}%`}
                 </span>
               </div>
             ))}

@@ -1,6 +1,8 @@
+// route-policy: auth=session; scope=tenant; authority=class-membership; rationale=only class members or school staff may react to a class post
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { requireRole } from "@/lib/auth";
+import { authorizeDiscussionPost } from "@/lib/discussion/access";
 
 export async function PATCH(
   _req: NextRequest,
@@ -10,6 +12,8 @@ export async function PATCH(
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const { postId } = params;
+  const access = await authorizeDiscussionPost(user, postId);
+  if (access instanceof NextResponse) return access;
 
   // Check if already upvoted
   const existing = await prisma.discussionUpvote.findUnique({

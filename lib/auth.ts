@@ -10,6 +10,7 @@ import { prisma } from "@/lib/db";
 import { logAuditRequired } from "@/lib/audit";
 import { normalizeLoginId, normalizeCredentialPhone } from "@/lib/login-identifiers";
 import { checkRateLimit } from "@/lib/rateLimit";
+import { recordMetricEvent } from "@/lib/metrics/events";
 import { withRedisCache } from "@/lib/cache/redisCache";
 import {
   AUTH0_MFA_ACR,
@@ -122,6 +123,30 @@ export function resolveCredentialIdentifier(credentials: Record<string, string>)
     .slice(0, 160);
 }
 
+type LoginFailureReason =
+  | "rate_limited"
+  | "unknown_identifier"
+  | "bad_password"
+  | "school_inactive"
+  | "privileged_mfa_required";
+
+// Support can tell a deactivated school or lockout from a mistyped PIN.
+// Reason code and school only: never the identifier, name, or password.
+function recordLoginFailure(reason: LoginFailureReason, schoolId: string | null = null): null {
+  void recordMetricEvent(
+    "auth.login.failed",
+    { reason },
+    {
+      scope: schoolId ? "school" : "national",
+      scopeId: schoolId,
+      schoolId,
+      severity: reason === "school_inactive" || reason === "rate_limited" ? "warning" : "info",
+      pilotOnly: false,
+    }
+  ).catch(() => {});
+  return null;
+}
+
 export async function authorizeCredentials(rawCredentials?: RawCredentialInput | null) {
   const credentials = {
     email: rawCredentials?.email ?? "",
@@ -137,22 +162,24 @@ export async function authorizeCredentials(rawCredentials?: RawCredentialInput |
     windowMs: 15 * 60 * 1000,
     limit: 10,
   });
-  if (!identifierLimit.allowed) return null;
+  if (!identifierLimit.allowed) return recordLoginFailure("rate_limited");
 
   const user = await findUserForCredentials(credentials);
-  if (!user?.hashedPwd) return null;
+  if (!user?.hashedPwd) return recordLoginFailure("unknown_identifier");
 
   const ok = await bcrypt.compare(credentials.password, user.hashedPwd);
-  if (!ok) return null;
+  if (!ok) return recordLoginFailure("bad_password", user.schoolId ?? null);
 
   if (user.schoolId && !user.isPlatformAdmin && user.school?.status !== "ACTIVE") {
-    return null;
+    return recordLoginFailure("school_inactive", user.schoolId);
   }
 
   const privileged = isPrivilegedAccount(user);
   if (privileged && isPrivilegedMfaEnforced()) {
     const breakGlassUntil = user.privilegedIdentity?.breakGlassUntil;
-    if (!breakGlassUntil || breakGlassUntil.getTime() <= Date.now()) return null;
+    if (!breakGlassUntil || breakGlassUntil.getTime() <= Date.now()) {
+      return recordLoginFailure("privileged_mfa_required", user.schoolId ?? null);
+    }
 
     const now = Date.now();
     return {

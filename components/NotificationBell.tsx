@@ -86,7 +86,7 @@ export function NotificationBell() {
       </button>
 
       {open && (
-        <div className="absolute right-0 top-11 z-50 w-80 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] shadow-lg">
+        <div className="absolute right-0 top-11 z-50 w-80 max-w-[calc(100vw-2rem)] rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] shadow-lg">
           <div className="flex items-center justify-between border-b border-[var(--ll-border)] px-4 py-3">
             <p className="text-sm font-semibold text-[var(--ll-text)]">Notifications</p>
             {unreadCount > 0 && (
@@ -108,14 +108,9 @@ export function NotificationBell() {
               items.map((item) => {
                 const content = (
                   <div
-                    key={item.id}
-                    className={`flex gap-3 border-b border-[var(--ll-border)] px-4 py-3 transition hover:bg-[var(--ll-surface-muted)] ${
+                    className={`flex gap-3 border-b border-[var(--ll-border)] px-4 py-3 text-left transition hover:bg-[var(--ll-surface-muted)] ${
                       !item.isRead ? "bg-[var(--ll-yellow)]/5" : ""
                     }`}
-                    onClick={() => {
-                      if (!item.isRead) markRead(item.id);
-                      if (!item.url) setOpen(false);
-                    }}
                   >
                     {!item.isRead && (
                       <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-[var(--ll-yellow)]" aria-hidden="true" />
@@ -138,7 +133,19 @@ export function NotificationBell() {
                     </Link>
                   );
                 }
-                return <div key={item.id}>{content}</div>;
+                return (
+                  <button
+                    key={item.id}
+                    type="button"
+                    className="block w-full"
+                    onClick={() => {
+                      if (!item.isRead) markRead(item.id);
+                      setOpen(false);
+                    }}
+                  >
+                    {content}
+                  </button>
+                );
               })
             )}
           </div>

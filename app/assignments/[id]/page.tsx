@@ -42,8 +42,9 @@ export default async function HomeworkDetailPage({ params }: PageProps) {
   const homeworkId = params.id;
 
   // Load homework + this student's submission (if any)
-  const homework = await prisma.homework.findUnique({
-    where: { id: homeworkId },
+  // Only homework for a class this student is enrolled in.
+  const homework = await prisma.homework.findFirst({
+    where: { id: homeworkId, Class: { enrollments: { some: { studentId: student.id } } } },
     include: {
       Class: {
         include: {

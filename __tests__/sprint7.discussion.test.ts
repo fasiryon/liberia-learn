@@ -250,6 +250,9 @@ describe("PATCH /api/discussion/posts/[postId]/approve", () => {
 
   it("teacher approving a post sets pending=false", async () => {
     mockRequireRole.mockResolvedValueOnce(TEACHER_USER);
+    mockPrisma.discussionPost.findUnique.mockResolvedValueOnce(POST_RECORD);
+    mockPrisma.discussionThread.findUnique.mockResolvedValueOnce(THREAD);
+    mockPrisma.class.findFirst.mockResolvedValueOnce({ id: "class-1" });
     mockPrisma.discussionPost.update.mockResolvedValueOnce({ ...POST_RECORD, pending: false });
     mockLogAudit.mockResolvedValueOnce(undefined);
 
@@ -282,6 +285,7 @@ describe("PATCH /api/discussion/threads/[threadId]/pin", () => {
   it("teacher pins an unpinned thread → pinned toggles to true", async () => {
     mockRequireRole.mockResolvedValueOnce(TEACHER_USER);
     mockPrisma.discussionThread.findUnique.mockResolvedValueOnce({ ...THREAD, pinned: false });
+    mockPrisma.class.findFirst.mockResolvedValueOnce({ id: "class-1" });
     mockPrisma.discussionThread.update.mockResolvedValueOnce({ ...THREAD, pinned: true });
 
     const { PATCH } = await import("@/app/api/discussion/threads/[threadId]/pin/route");
@@ -304,6 +308,7 @@ describe("PATCH /api/discussion/threads/[threadId]/lock", () => {
   it("teacher locks an unlocked thread → locked toggles to true", async () => {
     mockRequireRole.mockResolvedValueOnce(TEACHER_USER);
     mockPrisma.discussionThread.findUnique.mockResolvedValueOnce({ ...THREAD, locked: false });
+    mockPrisma.class.findFirst.mockResolvedValueOnce({ id: "class-1" });
     mockPrisma.discussionThread.update.mockResolvedValueOnce({ ...THREAD, locked: true });
 
     const { PATCH } = await import("@/app/api/discussion/threads/[threadId]/lock/route");
@@ -352,6 +357,9 @@ describe("PATCH /api/discussion/posts/[postId]/upvote — idempotent", () => {
 
   it("returns 200 with 'Already upvoted' if user already upvoted", async () => {
     mockRequireRole.mockResolvedValueOnce(STUDENT_USER);
+    mockPrisma.discussionPost.findUnique.mockResolvedValueOnce(POST_RECORD);
+    mockPrisma.discussionThread.findUnique.mockResolvedValueOnce(THREAD);
+    mockPrisma.enrollment.findFirst.mockResolvedValueOnce({ id: "enr-1" });
     mockPrisma.discussionUpvote.findUnique.mockResolvedValueOnce({ id: "upvote-1", postId: "post-1", userId: "student-user-1" });
 
     const { PATCH } = await import("@/app/api/discussion/posts/[postId]/upvote/route");
@@ -366,6 +374,9 @@ describe("PATCH /api/discussion/posts/[postId]/upvote — idempotent", () => {
 
   it("creates upvote and increments count on first upvote", async () => {
     mockRequireRole.mockResolvedValueOnce(STUDENT_USER);
+    mockPrisma.discussionPost.findUnique.mockResolvedValueOnce(POST_RECORD);
+    mockPrisma.discussionThread.findUnique.mockResolvedValueOnce(THREAD);
+    mockPrisma.enrollment.findFirst.mockResolvedValueOnce({ id: "enr-1" });
     mockPrisma.discussionUpvote.findUnique.mockResolvedValueOnce(null);
     mockPrisma.$transaction.mockResolvedValueOnce([{ id: "upvote-new" }, { id: "post-1", upvotes: 1 }]);
 
@@ -453,6 +464,7 @@ describe("DELETE /api/discussion/threads/[threadId]", () => {
   it("teacher can delete a thread → 200", async () => {
     mockRequireRole.mockResolvedValueOnce(TEACHER_USER);
     mockPrisma.discussionThread.findUnique.mockResolvedValueOnce(THREAD);
+    mockPrisma.class.findFirst.mockResolvedValueOnce({ id: "class-1" });
     mockPrisma.discussionThread.delete.mockResolvedValueOnce(THREAD);
     mockLogAudit.mockResolvedValueOnce(undefined);
 
@@ -485,6 +497,8 @@ describe("DELETE /api/discussion/posts/[postId]", () => {
       ...POST_RECORD,
       authorId: "student-user-1",
     });
+    mockPrisma.discussionThread.findUnique.mockResolvedValueOnce(THREAD);
+    mockPrisma.enrollment.findFirst.mockResolvedValueOnce({ id: "enr-1" });
     mockPrisma.discussionPost.delete.mockResolvedValueOnce(POST_RECORD);
     mockLogAudit.mockResolvedValueOnce(undefined);
 
@@ -503,6 +517,8 @@ describe("DELETE /api/discussion/posts/[postId]", () => {
       ...POST_RECORD,
       authorId: "another-student", // different author
     });
+    mockPrisma.discussionThread.findUnique.mockResolvedValueOnce(THREAD);
+    mockPrisma.enrollment.findFirst.mockResolvedValueOnce({ id: "enr-1" });
 
     const { DELETE } = await import("@/app/api/discussion/posts/[postId]/route");
     const req = makeReq("/api/discussion/posts/post-1", { method: "DELETE" });
@@ -578,5 +594,84 @@ describe("GET /api/discussion/threads/[threadId]/posts — marks last read", () 
         create: expect.objectContaining({ userId: "student-user-1", threadId: "thread-1" }),
       })
     );
+  });
+});
+
+// Hostile: cross-school moderation and cross-class access are refused
+describe("discussion routes — tenant/class scope (hostile)", () => {
+  beforeEach(() => vi.clearAllMocks());
+  const OTHER_SCHOOL_TEACHER = { id: "teacher-9", role: "TEACHER", schoolId: "school-9", name: "Other" };
+  const OTHER_SCHOOL_ADMIN = { id: "admin-9", role: "ADMIN", schoolId: "school-9", name: "Other" };
+
+  it("teacher from another school cannot approve a held post", async () => {
+    mockRequireRole.mockResolvedValueOnce(OTHER_SCHOOL_TEACHER);
+    mockPrisma.discussionPost.findUnique.mockResolvedValueOnce({ ...POST_RECORD, pending: true });
+    mockPrisma.discussionThread.findUnique.mockResolvedValueOnce(THREAD);
+    mockPrisma.class.findFirst.mockResolvedValueOnce(null);
+    const { PATCH } = await import("@/app/api/discussion/posts/[postId]/approve/route");
+    const res = await PATCH(makeReq("/x", { method: "PATCH" }), { params: { postId: "post-1" } } as any);
+    expect(res.status).toBe(403);
+    expect(mockPrisma.class.findFirst).toHaveBeenCalledWith(
+      expect.objectContaining({ where: { id: "class-1", schoolId: "school-9" } })
+    );
+    expect(mockPrisma.discussionPost.update).not.toHaveBeenCalled();
+  });
+
+  it("teacher from another school cannot lock, pin, or delete a thread", async () => {
+    for (const mod of ["lock", "pin"] as const) {
+      mockRequireRole.mockResolvedValueOnce(OTHER_SCHOOL_TEACHER);
+      mockPrisma.discussionThread.findUnique.mockResolvedValueOnce(THREAD);
+      mockPrisma.class.findFirst.mockResolvedValueOnce(null);
+      const { PATCH } = await import(`@/app/api/discussion/threads/[threadId]/${mod}/route`);
+      const res = await PATCH(makeReq("/x", { method: "PATCH" }), { params: { threadId: "thread-1" } } as any);
+      expect(res.status).toBe(403);
+    }
+    mockRequireRole.mockResolvedValueOnce(OTHER_SCHOOL_TEACHER);
+    mockPrisma.discussionThread.findUnique.mockResolvedValueOnce(THREAD);
+    mockPrisma.class.findFirst.mockResolvedValueOnce(null);
+    const { DELETE } = await import("@/app/api/discussion/threads/[threadId]/route");
+    const res = await DELETE(makeReq("/x", { method: "DELETE" }), { params: { threadId: "thread-1" } } as any);
+    expect(res.status).toBe(403);
+    expect(mockPrisma.discussionThread.update).not.toHaveBeenCalled();
+    expect(mockPrisma.discussionThread.delete).not.toHaveBeenCalled();
+  });
+
+  it("admin from another school cannot read a thread's posts", async () => {
+    mockRequireRole.mockResolvedValueOnce(OTHER_SCHOOL_ADMIN);
+    mockPrisma.discussionThread.findUnique.mockResolvedValueOnce(THREAD);
+    mockPrisma.class.findFirst.mockResolvedValueOnce(null);
+    const { GET } = await import("@/app/api/discussion/threads/[threadId]/posts/route");
+    const res = await GET(makeReq("/x"), { params: { threadId: "thread-1" } } as any);
+    expect(res.status).toBe(403);
+    expect(mockPrisma.discussionPost.findMany).not.toHaveBeenCalled();
+  });
+
+  it("student not enrolled in the class cannot flag, upvote, or delete-own there", async () => {
+    mockRequireRole.mockResolvedValueOnce(STUDENT_USER);
+    mockPrisma.discussionPost.findUnique.mockResolvedValueOnce(POST_RECORD);
+    mockPrisma.discussionThread.findUnique.mockResolvedValueOnce(THREAD);
+    mockPrisma.enrollment.findFirst.mockResolvedValueOnce(null);
+    const flag = await import("@/app/api/discussion/posts/[postId]/flag/route");
+    const res = await flag.PATCH(makeReq("/x", { method: "PATCH" }), { params: { postId: "post-1" } } as any);
+    expect(res.status).toBe(403);
+    expect(mockPrisma.discussionPost.update).not.toHaveBeenCalled();
+
+    mockRequireRole.mockResolvedValueOnce(STUDENT_USER);
+    mockPrisma.discussionPost.findUnique.mockResolvedValueOnce(POST_RECORD);
+    mockPrisma.discussionThread.findUnique.mockResolvedValueOnce(THREAD);
+    mockPrisma.enrollment.findFirst.mockResolvedValueOnce(null);
+    const upvote = await import("@/app/api/discussion/posts/[postId]/upvote/route");
+    const res2 = await upvote.PATCH(makeReq("/x", { method: "PATCH" }), { params: { postId: "post-1" } } as any);
+    expect(res2.status).toBe(403);
+    expect(mockPrisma.$transaction).not.toHaveBeenCalled();
+  });
+
+  it("teacher without a school cannot moderate", async () => {
+    mockRequireRole.mockResolvedValueOnce({ ...TEACHER_USER, schoolId: null });
+    mockPrisma.discussionThread.findUnique.mockResolvedValueOnce(THREAD);
+    const { PATCH } = await import("@/app/api/discussion/threads/[threadId]/lock/route");
+    const res = await PATCH(makeReq("/x", { method: "PATCH" }), { params: { threadId: "thread-1" } } as any);
+    expect(res.status).toBe(403);
+    expect(mockPrisma.class.findFirst).not.toHaveBeenCalled();
   });
 });

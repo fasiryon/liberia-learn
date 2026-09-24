@@ -137,7 +137,7 @@ vi.mock("@/lib/db", () => ({
       findUnique: mockStudentFindUnique,
       count:      mockStudentCount,
     },
-    studentProgress:      { upsert: mockProgressUpsert, findMany: mockProgressFindMany },
+    studentProgress:      { upsert: mockProgressUpsert, findMany: mockProgressFindMany, findUnique: vi.fn().mockResolvedValue(null) },
     labSession: {
       findUnique: mockLabSessionFindUnique,
       update:     mockLabSessionUpdate,

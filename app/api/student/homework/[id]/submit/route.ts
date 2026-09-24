@@ -1,4 +1,5 @@
 // app/api/student/homework/[id]/submit/route.ts
+// route-policy: auth=session; scope=tenant; authority=class-enrollment; rationale=a student may submit only homework for a class they are enrolled in
 import { NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
@@ -27,7 +28,10 @@ export async function POST(req: Request, context: RouteContext) {
     const homeworkId = context.params.id;
 
     const homework = await prisma.homework.findFirst({
-      where: { id: homeworkId, Class: { schoolId: user.schoolId } },
+      where: {
+        id: homeworkId,
+        Class: { schoolId: user.schoolId, enrollments: { some: { studentId: student.id } } },
+      },
     });
 
     if (!homework) {

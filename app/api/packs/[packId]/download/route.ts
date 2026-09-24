@@ -1,3 +1,4 @@
+// route-policy: auth=session; scope=record; authority=pack-requester; rationale=teacher packs carry answer keys and school-private lessons so only the requester may download
 import { NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
@@ -16,11 +17,13 @@ export async function GET(
       where: { id: params.packId },
       select: { blobUrl: true, requestedById: true, status: true, weekStart: true },
     });
-    if (!pack?.blobUrl || pack.status !== "ready") {
+    // Same ownership rule as GET /api/packs/[packId]: only the requester may
+    // download. Teacher packs carry answer keys and school-private lessons.
+    if (!pack || pack.requestedById !== user.id) {
       return NextResponse.json({ error: "Pack not found or not ready" }, { status: 404 });
     }
-    if (pack.requestedById !== user.id && user.role === "STUDENT") {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    if (!pack.blobUrl || pack.status !== "ready") {
+      return NextResponse.json({ error: "Pack not found or not ready" }, { status: 404 });
     }
 
     const token = process.env.BLOB_READ_WRITE_TOKEN;
