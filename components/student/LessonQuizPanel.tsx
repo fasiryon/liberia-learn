@@ -36,6 +36,8 @@ type LessonQuizResult = {
   } | null;
   gapAnalysisError: string | null;
   congratulatoryMessage: string | null;
+  /** Saved offline: no score exists until the server reviews the attempt. */
+  pendingReview?: boolean;
   certificates?: {
     lessonAwarded: boolean;
     subjectAwarded: boolean;
@@ -47,6 +49,10 @@ type LessonQuiz = {
   quizId: string;
   questions: LessonQuizQuestion[];
 };
+
+function newAttemptId(): string {
+  return typeof crypto !== "undefined" && "randomUUID" in crypto ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`;
+}
 
 export function LessonQuizPanel({
   lessonId,
@@ -68,6 +74,10 @@ export function LessonQuizPanel({
   const [answers, setAnswers] = useState<Record<string, number>>({});
   const [result, setResult] = useState<LessonQuizResult | null>(null);
   const [startedAt, setStartedAt] = useState<string | null>(null);
+  // One ID per attempt, persisted with the draft. The online submit and the
+  // offline outbox both use it, so a lost response followed by an offline
+  // save (or a retry after restart) cannot record the attempt twice.
+  const [attemptId, setAttemptId] = useState<string | null>(null);
 
   const allAnswered = useMemo(() => {
     if (!quiz) {
@@ -77,11 +87,12 @@ export function LessonQuizPanel({
   }, [answers, quiz]);
 
   useEffect(() => {
-    void loadQuizDraft<LessonQuiz & { answers?: Record<string, number>; startedAt?: string }>(lessonId).then((draft) => {
+    void loadQuizDraft<LessonQuiz & { answers?: Record<string, number>; startedAt?: string; attemptId?: string }>(lessonId).then((draft) => {
       if (!draft || !Array.isArray(draft.questions)) return;
       setQuiz({ quizId: draft.quizId, questions: draft.questions });
       setAnswers(draft.answers ?? {});
       setStartedAt(draft.startedAt ?? null);
+      setAttemptId(draft.attemptId ?? newAttemptId());
     }).catch(() => {});
   }, [lessonId]);
 
@@ -100,8 +111,10 @@ export function LessonQuizPanel({
       setQuiz(payload);
       setAnswers({});
       const nextStartedAt = new Date().toISOString();
+      const nextAttemptId = newAttemptId();
       setStartedAt(nextStartedAt);
-      void saveQuizDraft(lessonId, { ...payload, answers: {}, startedAt: nextStartedAt }).catch(() => {});
+      setAttemptId(nextAttemptId);
+      void saveQuizDraft(lessonId, { ...payload, answers: {}, startedAt: nextStartedAt, attemptId: nextAttemptId }).catch(() => {});
     } catch (quizError: any) {
       setError(quizError?.message ?? "Failed to generate quiz.");
     } finally {
@@ -114,11 +127,13 @@ export function LessonQuizPanel({
       return;
     }
 
+    const currentAttemptId = attemptId ?? newAttemptId();
+    if (!attemptId) setAttemptId(currentAttemptId);
+
     async function saveOfflineAttempt() {
       const submittedAt = new Date().toISOString();
-      const attemptId = typeof crypto !== "undefined" && "randomUUID" in crypto ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`;
       await saveOfflineQuizAttempt({
-        id: attemptId,
+        id: currentAttemptId,
         contentId: contentId ?? lessonId,
         quizId: quiz.quizId,
         answers,
@@ -127,8 +142,10 @@ export function LessonQuizPanel({
         contentHash,
       });
       await removeQuizDraft(lessonId).catch(() => {});
+      // No local score: the device never grades. The attempt is evidence
+      // for server-side review once it syncs.
       setResult({
-        attemptId,
+        attemptId: currentAttemptId,
         score: 0,
         scorePercent: 0,
         correctCount: 0,
@@ -136,7 +153,8 @@ export function LessonQuizPanel({
         explanations: [],
         gapAnalysis: null,
         gapAnalysisError: null,
-        congratulatoryMessage: "Saved on this device. It will be reviewed when you reconnect.",
+        congratulatoryMessage: null,
+        pendingReview: true,
       });
     }
 
@@ -147,18 +165,28 @@ export function LessonQuizPanel({
         await saveOfflineAttempt();
         return;
       }
-      const response = await fetch(`/api/student/lessons/${lessonId}/quiz/submit`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          quizId: quiz.quizId,
-          startedAt,
-          answers: quiz.questions.map((question) => ({
-            questionId: question.id,
-            selectedIndex: answers[question.id],
-          })),
-        }),
-      });
+      let response: Response;
+      try {
+        response = await fetch(`/api/student/lessons/${lessonId}/quiz/submit`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            quizId: quiz.quizId,
+            clientAttemptId: currentAttemptId,
+            startedAt,
+            answers: quiz.questions.map((question) => ({
+              questionId: question.id,
+              selectedIndex: answers[question.id],
+            })),
+          }),
+        });
+      } catch {
+        // Connection dropped (including "lie-fi" where the browser still
+        // reports online). The shared attempt ID makes this safe even if the
+        // server received the request before the connection failed.
+        await saveOfflineAttempt();
+        return;
+      }
       const payload = await response.json().catch(() => null);
       if (!response.ok) {
         throw new Error(payload?.error ?? "Failed to submit quiz.");
@@ -294,9 +322,15 @@ export function LessonQuizPanel({
 
       {result ? (
         <div className="mt-5 space-y-4">
-          <div className="rounded-xl border border-emerald-500/30 bg-[var(--ll-yellow)]/10 px-4 py-4 text-sm text-[var(--ll-text)]">
-            Score {result.scorePercent}% ({result.correctCount}/{result.totalQuestions} correct)
-          </div>
+          {result.pendingReview ? (
+            <div role="status" className="rounded-xl border border-amber-500/30 bg-[var(--ll-yellow-soft)] px-4 py-4 text-sm text-[var(--ll-text)]">
+              Your answers are saved on this device. They have not been scored yet. They will be sent and checked when you are back online.
+            </div>
+          ) : (
+            <div className="rounded-xl border border-emerald-500/30 bg-[var(--ll-yellow)]/10 px-4 py-4 text-sm text-[var(--ll-text)]">
+              Score {result.scorePercent}% ({result.correctCount}/{result.totalQuestions} correct)
+            </div>
+          )}
 
           {result.congratulatoryMessage ? (
             <div className="rounded-xl border border-cyan-400/30 bg-[var(--ll-silver-soft)] px-4 py-4 text-sm text-[var(--ll-silver)]">

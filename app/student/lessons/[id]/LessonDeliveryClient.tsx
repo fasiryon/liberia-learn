@@ -435,13 +435,19 @@ function VideoSection({
     const el = videoRef.current;
     if (!el) return;
 
+    // Only report real progress: a paused, finished, or offline video sends
+    // nothing, which saves data and battery on metered connections.
+    let lastSentSecs = -1;
     function sendWatch() {
       if (!el) return;
+      const watchedSecs = Math.round(el.currentTime);
+      if (watchedSecs === lastSentSecs || (typeof navigator !== "undefined" && !navigator.onLine)) return;
+      lastSentSecs = watchedSecs;
       void fetch(`/api/student/video/${video.id}/watch`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          watchedSecs: Math.round(el.currentTime),
+          watchedSecs,
           totalSecs: Math.round(el.duration || video.durationSeconds || 0),
         }),
       }).catch(() => {});
@@ -449,10 +455,12 @@ function VideoSection({
 
     watchIntervalRef.current = setInterval(sendWatch, 30000);
     el.addEventListener("ended", sendWatch);
+    el.addEventListener("pause", sendWatch);
 
     return () => {
       if (watchIntervalRef.current) clearInterval(watchIntervalRef.current);
       el.removeEventListener("ended", sendWatch);
+      el.removeEventListener("pause", sendWatch);
     };
   }, [video.id, video.durationSeconds]);
 
@@ -884,6 +892,12 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
         answer: answers[index] ?? null,
       }));
       if (typeof navigator !== "undefined" && !navigator.onLine) {
+        // Offline completion must name the exact release the learner used;
+        // the server rejects completions without it, so do not queue one.
+        if (!lesson.contentId || !lesson.contentVersion) {
+          setSubmitMessage("This lesson can only be completed online. Your answers are kept on this page; reconnect to finish.");
+          return;
+        }
         await enqueueOfflineRequest({
           type: "lesson-complete",
           endpoint: "/api/student/sync",

@@ -75,7 +75,7 @@ export async function getOfflineStorageSnapshot(
   const [queue, queueItems] = await Promise.all([
     getQueueStats(partition).catch(() => {
       storageError = true;
-      return { queuePending: 0, queueConflicts: 0, queueDeadLetter: 0 };
+      return { queuePending: 0, queueConflicts: 0, queueDeadLetter: 0, queueAuthRequired: 0 };
     }),
     getQueue(partition).catch(() => {
       storageError = true;

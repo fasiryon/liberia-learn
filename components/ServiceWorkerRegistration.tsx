@@ -51,9 +51,16 @@ export function ServiceWorkerRegistration() {
         }
         announceUpdate();
         browserWindow?.addEventListener("online", announceUpdate);
-        const refreshTimer = browserWindow?.setInterval(() => {
+        // Update checks piggyback on the learner returning to the app instead
+        // of a background timer: a visible tab checks at most every 30 min.
+        let lastUpdateCheck = Date.now();
+        const checkForUpdate = () => {
+          if (browserWindow?.document?.visibilityState !== "visible" || !navigator.onLine) return;
+          if (Date.now() - lastUpdateCheck < 30 * 60 * 1000) return;
+          lastUpdateCheck = Date.now();
           registration.update().catch(() => null);
-        }, 30 * 60 * 1000);
+        };
+        browserWindow?.document?.addEventListener("visibilitychange", checkForUpdate);
 
         if (supportsBackgroundSync(registration)) {
           await registration.sync.register("liberialearn-sync").catch(() => null);
@@ -61,7 +68,7 @@ export function ServiceWorkerRegistration() {
 
         return () => {
           browserWindow?.removeEventListener("online", announceUpdate);
-          if (refreshTimer !== undefined) browserWindow?.clearInterval(refreshTimer);
+          browserWindow?.document?.removeEventListener("visibilitychange", checkForUpdate);
         };
       } catch (err) {
         dispatchState("install-failed");

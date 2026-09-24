@@ -29,13 +29,14 @@ describe("service worker cache rules", () => {
     expect(sw).toContain('"/offline.html"');
     expect(sw).toContain('url.pathname.startsWith("/_next/static/")');
     expect(sw).toContain("isLessonPage(url.pathname)");
-    expect(sw).toContain("staleWhileRevalidate(event.request, CONTENT_CACHE)");
-    expect(sw).toContain('await caches.match("/offline.html")');
+    expect(sw).toContain("learnerPage(event.request, { slowFallback: isLessonPage(url.pathname) })");
+    expect(sw).toContain('caches.match("/offline.html", { cacheName: SHELL_CACHE })');
+    expect(sw).toContain("!response.redirected");
   });
 
   it("cleans only versioned Cache Storage and never deletes IndexedDB", () => {
     const sw = fs.readFileSync(swPath, "utf8");
-    expect(sw).toMatch(/\.filter\(\(key\) => key\.startsWith\(CACHE_PREFIX\)/);
+    expect(sw).toMatch(/\.filter\(\(key\) =>\s*key\.startsWith\(CACHE_PREFIX\)/);
     expect(sw).toContain("caches.delete(key)");
     expect(sw).not.toContain("indexedDB.deleteDatabase");
     expect(sw).not.toMatch(/indexedDB[\s\S]{0,160}\.delete\s*\(/);

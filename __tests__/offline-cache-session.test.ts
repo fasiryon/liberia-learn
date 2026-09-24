@@ -78,11 +78,31 @@ describe("offline cache/session primitives", () => {
     const cacheAfterA = await getCacheStats(partitionA);
     const cacheAfterB = await getCacheStats(partitionB);
 
-    expect(result).toEqual({ completed: false, unsyncedCount: 1 });
+    expect(result).toEqual({ completed: false, unsyncedCount: 1, preservedCount: 0 });
     expect(queueAfterA).toHaveLength(1);
     expect(cacheAfterA.cachePacksCount).toBe(1);
     expect(queueAfterB).toHaveLength(1);
     expect(cacheAfterB.cachePacksCount).toBe(1);
+  });
+
+  it("confirmed logout completes on a shared device and keeps unsynced work isolated under the original learner", async () => {
+    await enqueueCompletion("sw-a", "2026-02-20T10:00:00.000Z", partitionA);
+    await enqueueCompletion("sw-b", "2026-02-20T10:01:00.000Z", partitionB);
+    await cachePack("scheduledWork", "sw-a", "v1", { body: "A" }, partitionA);
+    await cachePack("scheduledWork", "sw-b", "v1", { body: "B" }, partitionB);
+
+    const result = await safeLogout({ partition: partitionA, keepPendingWork: true });
+
+    expect(result).toEqual({ completed: true, unsyncedCount: 1, preservedCount: 1 });
+    // Pending work is never discarded and stays bound to learner A.
+    const queueAfterA = await getQueue(partitionA);
+    expect(queueAfterA).toHaveLength(1);
+    expect(queueAfterA[0].scheduledWorkId).toBe("sw-a");
+    // Learner A's local projection is removed from the shared device.
+    expect((await getCacheStats(partitionA)).cachePacksCount).toBe(0);
+    // Another learner's partition is untouched and cannot see A's work.
+    expect((await getQueue(partitionB)).map((item) => item.scheduledWorkId)).toEqual(["sw-b"]);
+    expect((await getCacheStats(partitionB)).cachePacksCount).toBe(1);
   });
 });
 

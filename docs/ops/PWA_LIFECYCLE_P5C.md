@@ -36,8 +36,12 @@ trusted lesson bytes:
 
 - `liberialearn-shell-<version>` contains the install shell and offline page.
 - `liberialearn-runtime-<version>` contains Next static runtime assets.
-- `liberialearn-content-<version>` contains lesson routes and media selected
-  by the trusted lesson cache.
+- `liberialearn-content-<version>` contains lesson media selected by the
+  trusted lesson cache.
+- `liberialearn-learner-<version>-<partition>` contains rendered learner
+  pages for the one signed-in learner only (P5-E,
+  `docs/ops/OFFLINE_HARDENING_P5E.md`). Redirects and errors are never
+  cached, and the cache is deleted when the learner changes or logs out.
 
 On activation, only obsolete LiberiaLearn cache names are removed. IndexedDB
 is never removed by service-worker activation. Downloaded content can be

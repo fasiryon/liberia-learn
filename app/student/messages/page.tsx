@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { useVisibleInterval } from "@/lib/hooks/useVisibleInterval";
 import { MessageCircle, Send, Trash2, Paperclip, X, ChevronLeft } from "lucide-react";
 
 type MessageItem = {
@@ -111,11 +112,8 @@ export default function StudentMessagesPage() {
   }, [loadThreads]);
 
   // 15s poll on active thread
-  useEffect(() => {
-    if (!activeThreadKey) return;
-    const interval = setInterval(() => { loadThreads(); }, 15_000);
-    return () => clearInterval(interval);
-  }, [activeThreadKey, loadThreads]);
+  // Paused while hidden/offline so a backgrounded phone spends no data.
+  useVisibleInterval(() => { loadThreads(); }, activeThreadKey ? 15_000 : null);
 
   const activeThread = threads.find((t) => t.threadKey === activeThreadKey) ?? threads[0] ?? null;
 

@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi, afterEach } from "vitest";
+import { beforeAll, describe, it, expect, beforeEach, vi, afterEach } from "vitest";
 import { MAX_CACHED_LESSONS } from "@/lib/lesson-offline-cache";
 
 // ── Module mocks ─────────────────────────────────────────────────────────────
@@ -63,7 +63,29 @@ describe("PwaInstallPrompt visibility", () => {
 
 // ── 2. assignmentDraftQueue ───────────────────────────────────────────────────
 
+async function partitionKeyOf() {
+  const { resolveSessionPartition } = await import("@/lib/offline-session");
+  return resolveSessionPartition().key;
+}
+let cachedPartitionKey = "";
+const partitionKey = () => cachedPartitionKey;
+
 describe("assignmentDraftQueue", () => {
+  beforeAll(async () => {
+    cachedPartitionKey = await partitionKeyOf();
+  });
+
+  it("isolates drafts by learner so a shared device never shows another learner's text", async () => {
+    const { saveDraftOffline, getDraftOffline } = await import("@/lib/offline/assignmentDraftQueue");
+    saveDraftOffline("asgn-shared", "learner A private draft", { userId: "learner-a", schoolId: "s1", deviceId: "d1" });
+    await new Promise((r) => setTimeout(r, 10));
+    expect(await getDraftOffline("asgn-shared", { userId: "learner-a", schoolId: "s1", deviceId: "d1" })).toMatchObject({ body: "learner A private draft" });
+    expect(await getDraftOffline("asgn-shared", { userId: "learner-b", schoolId: "s1", deviceId: "d1" })).toBeNull();
+    // Legacy unpartitioned drafts are never read by anyone.
+    idbStore["assignment-draft::asgn-legacy"] = { body: "unattributed", savedAt: "2026-05-13T10:00:00.000Z" };
+    expect(await getDraftOffline("asgn-legacy")).toBeNull();
+  });
+
   beforeEach(() => {
     clearStore();
     vi.clearAllMocks();
@@ -75,13 +97,13 @@ describe("assignmentDraftQueue", () => {
     // idb-keyval set is called fire-and-forget; flush microtasks
     await new Promise((r) => setTimeout(r, 10));
     expect(idbMock.set).toHaveBeenCalledWith(
-      "assignment-draft::asgn-001",
+      `assignment-draft::${partitionKey()}::asgn-001`,
       expect.objectContaining({ body: "My draft text", savedAt: expect.any(String) })
     );
   });
 
   it("getDraftOffline retrieves the correct draft", async () => {
-    idbStore["assignment-draft::asgn-002"] = { body: "Saved content", savedAt: "2026-05-13T10:00:00.000Z" };
+    idbStore[`assignment-draft::${partitionKey()}::asgn-002`] = { body: "Saved content", savedAt: "2026-05-13T10:00:00.000Z" };
     const { getDraftOffline } = await import("@/lib/offline/assignmentDraftQueue");
     const draft = await getDraftOffline("asgn-002");
     expect(draft).not.toBeNull();
@@ -95,10 +117,10 @@ describe("assignmentDraftQueue", () => {
   });
 
   it("removeDraftOffline clears the entry from IndexedDB", async () => {
-    idbStore["assignment-draft::asgn-003"] = { body: "To be removed", savedAt: "2026-05-13T11:00:00.000Z" };
+    idbStore[`assignment-draft::${partitionKey()}::asgn-003`] = { body: "To be removed", savedAt: "2026-05-13T11:00:00.000Z" };
     const { removeDraftOffline } = await import("@/lib/offline/assignmentDraftQueue");
     await removeDraftOffline("asgn-003");
-    expect(idbMock.del).toHaveBeenCalledWith("assignment-draft::asgn-003");
+    expect(idbMock.del).toHaveBeenCalledWith(`assignment-draft::${partitionKey()}::asgn-003`);
   });
 });
 

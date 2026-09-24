@@ -1,3 +1,4 @@
+// route-policy: auth=session; scope=tenant; authority=student-membership; rationale=scores only the authenticated learner's own sealed quiz session; client attempt IDs are replayed only for the same learner
 import { NextRequest, NextResponse } from "next/server";
 
 import { generateLessonGapAnalysis } from "@/lib/ai/lessonQuiz";
@@ -20,7 +21,69 @@ type QuizSubmissionBody = {
     selectedIndex?: number;
   }>;
   startedAt?: string;
+  clientAttemptId?: string;
 };
+
+const CLIENT_ATTEMPT_ID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+type StoredEvaluation = {
+  questions?: Array<{ id: string; question: string; correctIndex: number; explanation: string }>;
+  score?: number;
+  correctCount?: number;
+  totalQuestions?: number;
+  gapAnalysis?: unknown;
+  gapAnalysisError?: string | null;
+};
+
+/** Replays an attempt already recorded under the client's attempt ID (a lost
+ * response, a retry after restart, or an offline copy that synced first). No
+ * new evidence, mastery update, or certificate is produced. */
+function replayRecordedAttempt(attempt: { id: string; score: number | null; status: string | null; evaluation: unknown; rawResponse: unknown }) {
+  if (attempt.score === null || attempt.status === "offline_pending_review") {
+    return NextResponse.json({
+      attemptId: attempt.id,
+      replayed: true,
+      pendingReview: true,
+      score: 0,
+      scorePercent: 0,
+      correctCount: 0,
+      totalQuestions: 0,
+      explanations: [],
+      gapAnalysis: null,
+      gapAnalysisError: null,
+      congratulatoryMessage: null,
+    });
+  }
+  const evaluation = (attempt.evaluation ?? {}) as StoredEvaluation;
+  const submitted = ((attempt.rawResponse as { answers?: Array<{ questionId: string; selectedIndex: number }> } | null)?.answers) ?? [];
+  const questions = evaluation.questions ?? [];
+  return NextResponse.json({
+    attemptId: attempt.id,
+    replayed: true,
+    score: attempt.score,
+    scorePercent: Math.round(attempt.score * 100),
+    correctCount: evaluation.correctCount ?? 0,
+    totalQuestions: evaluation.totalQuestions ?? questions.length,
+    explanations: questions.map((question) => ({
+      questionId: question.id,
+      question: question.question,
+      explanation: question.explanation,
+      correctIndex: question.correctIndex,
+      selectedIndex: submitted.find((answer) => answer.questionId === question.id)?.selectedIndex ?? null,
+      options: [],
+    })),
+    gapAnalysis: evaluation.gapAnalysis ?? null,
+    gapAnalysisError: evaluation.gapAnalysisError ?? null,
+    congratulatoryMessage: null,
+  });
+}
+
+async function findRecordedAttempt(clientAttemptId: string) {
+  return prisma.assessmentAttempt.findUnique({
+    where: { id: clientAttemptId },
+    select: { id: true, userId: true, score: true, status: true, evaluation: true, rawResponse: true },
+  });
+}
 
 function normalizeSubmission(body: QuizSubmissionBody) {
   if (
@@ -42,10 +105,15 @@ function normalizeSubmission(body: QuizSubmissionBody) {
     };
   });
 
+  if (body.clientAttemptId !== undefined && (typeof body.clientAttemptId !== "string" || !CLIENT_ATTEMPT_ID_PATTERN.test(body.clientAttemptId))) {
+    throw Object.assign(new Error("invalid_client_attempt_id"), { status: 400 });
+  }
+
   return {
     quizId: body.quizId,
     answers,
     startedAt: typeof body.startedAt === "string" ? body.startedAt : null,
+    clientAttemptId: typeof body.clientAttemptId === "string" ? body.clientAttemptId.toLowerCase() : null,
   };
 }
 
@@ -57,6 +125,17 @@ export async function POST(
     const user = await requireRole("STUDENT");
     const submission = normalizeSubmission((await req.json()) as QuizSubmissionBody);
     const lesson = await resolveScheduledLessonContext(user, params.id);
+    // Idempotency precedes the one-shot quiz session: a retried request whose
+    // first response was lost must replay, not fail or record twice.
+    if (submission.clientAttemptId) {
+      const recorded = await findRecordedAttempt(submission.clientAttemptId);
+      if (recorded) {
+        if (recorded.userId !== user.id) {
+          throw Object.assign(new Error("client_attempt_id_conflict"), { status: 409 });
+        }
+        return replayRecordedAttempt(recorded);
+      }
+    }
     const session = openLessonQuizSession(req.cookies.get("lesson_quiz_session")?.value ?? "", user.id, params.id);
     if (!session || session.quizId !== submission.quizId) {
       throw Object.assign(new Error("quiz_session_invalid_or_expired"), { status: 400 });
@@ -148,8 +227,11 @@ export async function POST(
         )
       : 0;
 
-    const assessmentAttempt = await prisma.assessmentAttempt.create({
+    let assessmentAttempt: { id: string };
+    try {
+      assessmentAttempt = await prisma.assessmentAttempt.create({
       data: {
+        ...(submission.clientAttemptId ? { id: submission.clientAttemptId } : {}),
         assessmentId: submission.quizId,
         studentId: lesson.studentId,
         userId: user.id,
@@ -188,7 +270,16 @@ export async function POST(
         submittedAt: new Date(),
       },
       select: { id: true },
-    });
+      });
+    } catch (createError: any) {
+      // A concurrent duplicate (double tap, two tabs, lost-response retry)
+      // lost the race on the primary key: replay the stored attempt.
+      if (createError?.code === "P2002" && submission.clientAttemptId) {
+        const recorded = await findRecordedAttempt(submission.clientAttemptId);
+        if (recorded && recorded.userId === user.id) return replayRecordedAttempt(recorded);
+      }
+      throw createError;
+    }
 
     // Create per-question detail records (fire-and-forget)
     if (submission.answers.length > 0) {

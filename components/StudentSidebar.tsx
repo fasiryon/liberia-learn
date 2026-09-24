@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { BookOpen, ChevronDown, GraduationCap } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { useVisibleInterval } from "@/lib/hooks/useVisibleInterval";
 import { NotificationBell } from "@/components/NotificationBell";
 import { LanguageSelector } from "@/components/LanguageSelector";
 
@@ -26,17 +27,13 @@ export function StudentSidebar({
   const [moreOpen, setMoreOpen] = useState(false);
   const [unreadMessages, setUnreadMessages] = useState(0);
 
-  useEffect(() => {
-    function fetchUnread() {
-      fetch("/api/student/messages/unread-count", { cache: "no-store" })
-        .then((r) => r.json())
-        .then((d) => { if (typeof d?.count === "number") setUnreadMessages(d.count); })
-        .catch(() => null);
-    }
-    fetchUnread();
-    const interval = setInterval(fetchUnread, 60_000);
-    return () => clearInterval(interval);
-  }, []);
+  // Paused while hidden/offline so a backgrounded phone spends no data.
+  useVisibleInterval(() => {
+    fetch("/api/student/messages/unread-count", { cache: "no-store" })
+      .then((r) => r.json())
+      .then((d) => { if (typeof d?.count === "number") setUnreadMessages(d.count); })
+      .catch(() => null);
+  }, 60_000);
 
   return (
     <aside className="flex w-full flex-col gap-4 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-4 shadow-none md:w-64">
