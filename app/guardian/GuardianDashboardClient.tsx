@@ -245,9 +245,9 @@ export default function GuardianDashboardClient() {
                   Icon: MessageCircle,
                 },
                 {
-                  title: "Browse lessons",
-                  description: "See what your child is learning this term.",
-                  href: "/guardian/lessons",
+                  title: "See assignments",
+                  description: "See what your child is working on this term.",
+                  href: "/guardian/assignments",
                   Icon: BookOpen,
                 },
               ]}
@@ -340,7 +340,7 @@ export default function GuardianDashboardClient() {
                 </div>
                 <Link
                   href="/guardian/report-cards"
-                  className="shrink-0 min-h-9 rounded-full bg-[var(--ll-yellow)] px-4 text-xs font-semibold text-[var(--ll-text-faint)] inline-flex items-center"
+                  className="shrink-0 min-h-9 rounded-full bg-[var(--ll-yellow)] px-4 text-xs font-semibold text-[var(--ll-bg)] inline-flex items-center"
                 >
                   View
                 </Link>
@@ -444,7 +444,7 @@ export default function GuardianDashboardClient() {
                   </p>
                   <Link
                     href="/guardian/messages"
-                    className="ll-touch-target mt-2 inline-flex items-center rounded-lg bg-[var(--ll-accent)] px-4 py-1.5 text-xs font-semibold text-[var(--ll-text-faint)]"
+                    className="ll-touch-target mt-2 inline-flex items-center rounded-lg bg-[var(--ll-accent)] px-4 py-1.5 text-xs font-semibold text-[var(--ll-bg)]"
                   >
                     Open Messages
                   </Link>

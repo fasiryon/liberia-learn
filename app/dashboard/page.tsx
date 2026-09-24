@@ -90,7 +90,7 @@ export default async function DashboardPage() {
               </Link>
               <Link
                 href="/login"
-                className="rounded-full bg-[var(--ll-yellow)] px-3 py-1.5 text-xs font-semibold text-[var(--ll-text-faint)]"
+                className="rounded-full bg-[var(--ll-yellow)] px-3 py-1.5 text-xs font-semibold text-[var(--ll-bg)]"
               >
                 Login
               </Link>

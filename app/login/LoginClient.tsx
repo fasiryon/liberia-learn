@@ -298,7 +298,7 @@ export default function LoginClient({
       <div className="mx-auto w-full max-w-lg flex-1 flex items-center justify-center py-4">
       <div className="w-full space-y-5 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/75 p-5 shadow-none shadow-emerald-500/15 backdrop-blur sm:space-y-6 sm:p-7">
         <div className="flex flex-col items-center gap-3 text-center">
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[var(--ll-accent)] text-lg font-black text-[var(--ll-text-faint)]">
+          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[var(--ll-accent)] text-lg font-black text-[var(--ll-bg)]">
             L
           </div>
           <h1 className="text-xl font-semibold text-[var(--ll-text)]">Sign in to LiberiaLearn</h1>
@@ -343,7 +343,7 @@ export default function LoginClient({
             <button
               type="button"
               onClick={() => signIn("auth0", { callbackUrl: nextUrl ?? "/admin" })}
-              className="flex min-h-12 w-full items-center justify-center rounded-xl bg-[var(--ll-yellow)] px-4 py-3 text-base font-semibold text-[var(--ll-text-faint)]"
+              className="flex min-h-12 w-full items-center justify-center rounded-xl bg-[var(--ll-yellow)] px-4 py-3 text-base font-semibold text-[var(--ll-bg)]"
             >
               Continue with secure administrator sign-in
             </button>
@@ -403,7 +403,7 @@ export default function LoginClient({
           <button
             type="submit"
             disabled={loading}
-            className="mt-2 flex min-h-12 w-full items-center justify-center rounded-xl bg-[var(--ll-yellow)] px-4 py-3 text-base font-semibold text-[var(--ll-text-faint)] shadow-lg shadow-emerald-500/30 hover:bg-[var(--ll-yellow-soft)] disabled:opacity-60"
+            className="mt-2 flex min-h-12 w-full items-center justify-center rounded-xl bg-[var(--ll-yellow)] px-4 py-3 text-base font-semibold text-[var(--ll-bg)] shadow-lg shadow-emerald-500/30 hover:opacity-90 disabled:opacity-60"
           >
             {loading ? "Signing in..." : "Continue"}
           </button>

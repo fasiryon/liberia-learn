@@ -32,7 +32,7 @@ export default function Error({
         <button
           type="button"
           onClick={reset}
-          className="inline-flex min-h-[44px] items-center justify-center rounded-xl bg-[var(--ll-yellow)] px-5 py-2 text-sm font-semibold text-[var(--ll-text-faint)] hover:bg-[var(--ll-yellow-soft)]"
+          className="inline-flex min-h-[44px] items-center justify-center rounded-xl bg-[var(--ll-yellow)] px-5 py-2 text-sm font-semibold text-[var(--ll-bg)] hover:opacity-90"
         >
           Try again
         </button>

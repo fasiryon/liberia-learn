@@ -705,10 +705,6 @@ export default function MoeDashboardPage() {
                   {generatingReport ? "Generating..." : "Open in Canva"}
                 </span>
               </button>
-              <Link href="/moe/audit" className="ll-command ll-focus flex-col items-start">
-                <p className="text-sm font-semibold text-[var(--ll-text)]">View audit log</p>
-                <p className="text-xs text-[var(--ll-text-muted)]">National audit trail</p>
-              </Link>
             </div>
             {exportError && <p className="mt-3 text-xs text-[var(--ll-danger)]">{exportError}</p>}
           </details>

@@ -214,7 +214,7 @@ export default function EnrollmentManagementPage() {
               <button
                 type="submit"
                 disabled={saving}
-                className="rounded-xl bg-[var(--ll-yellow)] px-6 py-3 text-sm font-semibold text-[var(--ll-text-faint)] disabled:opacity-60"
+                className="rounded-xl bg-[var(--ll-yellow)] px-6 py-3 text-sm font-semibold text-[var(--ll-bg)] disabled:opacity-60"
               >
                 {saving ? "Saving..." : "Create Enrollment"}
               </button>

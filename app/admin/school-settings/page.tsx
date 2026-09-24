@@ -130,7 +130,7 @@ export default function SchoolSettingsPage() {
             <button
               onClick={handleSave}
               disabled={saving}
-              className="rounded-xl bg-[var(--ll-yellow)] px-6 py-3 text-sm font-semibold text-[var(--ll-text-faint)] shadow-lg shadow-emerald-500/30 hover:bg-[var(--ll-yellow-soft)] disabled:opacity-50"
+              className="rounded-xl bg-[var(--ll-yellow)] px-6 py-3 text-sm font-semibold text-[var(--ll-bg)] shadow-lg shadow-emerald-500/30 hover:opacity-90 disabled:opacity-50"
             >
               {saving ? "Saving..." : "Save Settings"}
             </button>

@@ -484,7 +484,7 @@ export default function LessonViewerPage() {
           ) : (
             <button
               onClick={handleComplete}
-              className="rounded-xl bg-[var(--ll-yellow)] px-5 py-2.5 text-sm font-semibold text-[var(--ll-text-faint)] shadow-lg shadow-emerald-500/40 hover:bg-[var(--ll-yellow-soft)]"
+              className="rounded-xl bg-[var(--ll-yellow)] px-5 py-2.5 text-sm font-semibold text-[var(--ll-bg)] shadow-lg shadow-emerald-500/40 hover:opacity-90"
             >
               Mark as Complete
             </button>

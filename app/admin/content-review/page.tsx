@@ -104,7 +104,7 @@ export default function ContentReviewPage() {
   return (
     <main className="ll-page-enter min-h-screen bg-[var(--ll-bg)] px-4 py-8 text-[var(--ll-text)]">
       <div className="ll-dashboard-shell mx-auto max-w-6xl space-y-5">
-        <Link href="/admin/dashboard" className="text-sm text-[var(--ll-yellow)]">&larr; Dashboard</Link>
+        <Link href="/admin" className="text-sm text-[var(--ll-yellow)]">&larr; Dashboard</Link>
         <AdminNav />
 
         <div className="flex items-center gap-3">

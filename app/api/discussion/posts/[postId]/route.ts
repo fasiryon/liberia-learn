@@ -1,7 +1,9 @@
+// route-policy: auth=session; scope=tenant; authority=author-or-same-school-moderator; rationale=students delete own posts and staff moderate only their school
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { requireRole } from "@/lib/auth";
 import { logAudit } from "@/lib/audit";
+import { authorizeDiscussionPost } from "@/lib/discussion/access";
 
 export async function DELETE(
   _req: NextRequest,
@@ -11,11 +13,11 @@ export async function DELETE(
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const { postId } = params;
-  const post = await prisma.discussionPost.findUnique({ where: { id: postId } });
-  if (!post) return NextResponse.json({ error: "Not found" }, { status: 404 });
+  const access = await authorizeDiscussionPost(user, postId);
+  if (access instanceof NextResponse) return access;
 
-  // Students can only delete own posts; teachers/admins can delete any
-  if (user.role === "STUDENT" && post.authorId !== user.id) {
+  // Students can only delete own posts; teachers/admins can delete any post in their school
+  if (user.role === "STUDENT" && access.post.authorId !== user.id) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 

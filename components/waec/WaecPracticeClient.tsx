@@ -125,7 +125,7 @@ export function WaecPracticeClient({ slug, subjectName }: { slug: string; subjec
 
         <div className="flex gap-2">
           <Link href={`/student/waec/${slug}`} className="rounded-lg border border-[var(--ll-border)] px-4 py-2 text-sm text-[var(--ll-text)]">Back to {subjectName}</Link>
-          <button onClick={() => { setResult(null); setAnswers({}); setIdx(0); setSeconds(0); setSession(null); setLoadError(null); location.reload(); }} className="rounded-lg bg-[var(--ll-yellow)] px-4 py-2 text-sm font-semibold text-[var(--ll-text-faint)]">New session</button>
+          <button onClick={() => { setResult(null); setAnswers({}); setIdx(0); setSeconds(0); setSession(null); setLoadError(null); location.reload(); }} className="rounded-lg bg-[var(--ll-yellow)] px-4 py-2 text-sm font-semibold text-[var(--ll-bg)]">New session</button>
         </div>
       </div>
     );
@@ -171,7 +171,7 @@ export function WaecPracticeClient({ slug, subjectName }: { slug: string; subjec
         {idx < total - 1 ? (
           <button onClick={() => setIdx((i) => Math.min(total - 1, i + 1))} className="rounded-lg bg-[var(--ll-surface-muted)] px-4 py-2 text-sm font-medium text-[var(--ll-text)]">Next</button>
         ) : (
-          <button onClick={submit} disabled={submitting || answeredCount === 0} className="inline-flex items-center gap-2 rounded-lg bg-[var(--ll-yellow)] px-4 py-2 text-sm font-semibold text-[var(--ll-text-faint)] disabled:opacity-50">
+          <button onClick={submit} disabled={submitting || answeredCount === 0} className="inline-flex items-center gap-2 rounded-lg bg-[var(--ll-yellow)] px-4 py-2 text-sm font-semibold text-[var(--ll-bg)] disabled:opacity-50">
             {submitting && <Loader2 className="h-4 w-4 animate-spin" />} Submit ({answeredCount}/{total})
           </button>
         )}

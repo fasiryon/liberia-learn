@@ -198,7 +198,7 @@ export function LessonAudioPlayer({
           type="button"
           aria-label={isPlaying ? "Pause audio" : "Play audio"}
           onClick={isPlaying ? pause : play}
-          className="rounded-lg bg-[var(--ll-yellow)] px-4 py-2 text-sm font-semibold text-[var(--ll-text-faint)]"
+          className="rounded-lg bg-[var(--ll-yellow)] px-4 py-2 text-sm font-semibold text-[var(--ll-bg)]"
         >
           {isPlaying ? "Pause" : "Play"}
         </button>

@@ -25,7 +25,7 @@ export default function ExamStatusControls({ examId, isAdmin, status }: { examId
   return (
     <div className="flex flex-wrap gap-3">
       {status !== "PUBLISHED" ? (
-        <button type="button" onClick={() => void call(`/api/admin/exams/${examId}/publish`, "POST")} className="rounded-xl bg-[var(--ll-yellow)] px-4 py-2 text-sm font-semibold text-[var(--ll-text-faint)]">
+        <button type="button" onClick={() => void call(`/api/admin/exams/${examId}/publish`, "POST")} className="rounded-xl bg-[var(--ll-yellow)] px-4 py-2 text-sm font-semibold text-[var(--ll-bg)]">
           Publish
         </button>
       ) : null}

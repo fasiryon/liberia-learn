@@ -298,7 +298,7 @@ export default function StudentProgressDashboard() {
                 {summary.examReadiness?.nextBestAction ? (
                   <Link
                     href={summary.examReadiness.nextBestAction.href}
-                    className="mt-4 inline-flex min-h-11 items-center rounded-full bg-[var(--ll-yellow)] px-4 py-2 text-sm font-semibold text-[var(--ll-text-faint)]"
+                    className="mt-4 inline-flex min-h-11 items-center rounded-full bg-[var(--ll-yellow)] px-4 py-2 text-sm font-semibold text-[var(--ll-bg)]"
                   >
                     {summary.examReadiness.nextBestAction.label}
                   </Link>

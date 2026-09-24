@@ -174,7 +174,7 @@ export default function TeacherReportCardsPage() {
                       type="button"
                       onClick={() => saveComment(s.reportCard!.id)}
                       disabled={saving === s.reportCard.id}
-                      className="min-h-9 rounded-full bg-[var(--ll-yellow)] px-4 text-sm font-semibold text-[var(--ll-text-faint)] disabled:opacity-60"
+                      className="min-h-9 rounded-full bg-[var(--ll-yellow)] px-4 text-sm font-semibold text-[var(--ll-bg)] disabled:opacity-60"
                     >
                       {saving === s.reportCard.id ? "Saving…" : "Save Comment"}
                     </button>

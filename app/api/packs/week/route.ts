@@ -1,3 +1,4 @@
+// route-policy: auth=session; scope=tenant; authority=class-membership; rationale=packs bind to a class the caller belongs to and students always receive the answer-free edition
 import { NextRequest, NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
@@ -15,20 +16,53 @@ export async function POST(req: NextRequest) {
   };
 
   const { weekStart, weekEnd } = resolveWeekBounds(body.weekStart);
-  const audience = body.audience ?? (user.role === "TEACHER" || user.role === "ADMIN" ? "teacher" : "student");
+  // Students always receive the stripped (answer-key-free) audience; only
+  // staff may request the teacher edition.
+  const audience =
+    user.role === "STUDENT"
+      ? "student"
+      : body.audience === "student"
+        ? "student"
+        : "teacher";
 
-  // Resolve classId for student packs
-  let classId = body.classId ?? null;
+  // Every pack is bound to one class the caller may see. Without a class the
+  // generator's scheduled-work query is unscoped (platform-wide).
+  let classId: string | null = null;
   let studentId: string | null = null;
 
-  if (user.role === "STUDENT" && !classId) {
-    // Use first active enrollment for the student
+  if (user.role === "STUDENT") {
     const student = await prisma.student.findUnique({
       where: { userId: user.id },
-      select: { id: true, enrollments: { take: 1, select: { classId: true } } },
+      select: { id: true, enrollments: { select: { classId: true } } },
     });
-    classId = student?.enrollments[0]?.classId ?? null;
+    const enrolled = student?.enrollments.map((e) => e.classId) ?? [];
+    classId = body.classId ? (enrolled.includes(body.classId) ? body.classId : null) : enrolled[0] ?? null;
+    if (body.classId && !classId) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
     studentId = student?.id ?? null;
+  } else {
+    if (!user.schoolId) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+    const cls = await prisma.class.findFirst({
+      where: body.classId
+        ? { id: body.classId, schoolId: user.schoolId }
+        : { schoolId: user.schoolId, teacherId: user.id },
+      select: { id: true },
+      orderBy: { createdAt: "asc" },
+    });
+    if (body.classId && !cls) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+    classId = cls?.id ?? null;
+  }
+
+  if (!classId) {
+    return NextResponse.json(
+      { error: "No class found for this offline pack. Join or select a class first." },
+      { status: 400 }
+    );
   }
 
   const pack = await prisma.offlinePack.create({

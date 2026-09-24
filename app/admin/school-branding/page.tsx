@@ -215,7 +215,7 @@ export default function SchoolBrandingPage() {
           <button
             type="submit"
             disabled={saving}
-            className="rounded-xl bg-[var(--ll-yellow)] px-6 py-3 text-sm font-semibold text-[var(--ll-text-faint)] shadow-lg shadow-emerald-500/30 hover:bg-[var(--ll-yellow-soft)] disabled:opacity-50 disabled:cursor-not-allowed"
+            className="rounded-xl bg-[var(--ll-yellow)] px-6 py-3 text-sm font-semibold text-[var(--ll-bg)] shadow-lg shadow-emerald-500/30 hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {saving ? "Saving..." : "Save Branding"}
           </button>

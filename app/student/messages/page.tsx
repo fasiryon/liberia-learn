@@ -235,7 +235,7 @@ export default function StudentMessagesPage() {
           <button
             type="button"
             onClick={() => { setComposeOpen(true); setDraft(""); setError(null); setPendingAttachment(null); }}
-            className="inline-flex items-center gap-2 rounded-xl bg-[var(--ll-yellow)] px-4 py-2 text-sm font-semibold text-[var(--ll-text-faint)] hover:opacity-90"
+            className="inline-flex items-center gap-2 rounded-xl bg-[var(--ll-yellow)] px-4 py-2 text-sm font-semibold text-[var(--ll-bg)] hover:opacity-90"
           >
             <MessageCircle className="h-4 w-4" strokeWidth={1.5} />
             New Message
@@ -297,7 +297,7 @@ export default function StudentMessagesPage() {
                 type="button"
                 onClick={() => handleSend(selectedTeacherId)}
                 disabled={sending || !selectedTeacherId || !draft.trim()}
-                className="inline-flex items-center gap-2 rounded-lg bg-[var(--ll-yellow)] px-4 py-2 text-sm font-semibold text-[var(--ll-text-faint)] disabled:opacity-50"
+                className="inline-flex items-center gap-2 rounded-lg bg-[var(--ll-yellow)] px-4 py-2 text-sm font-semibold text-[var(--ll-bg)] disabled:opacity-50"
               >
                 <Send className="h-3.5 w-3.5" strokeWidth={1.5} />
                 {sending ? "Sending…" : "Send"}
@@ -436,7 +436,7 @@ export default function StudentMessagesPage() {
                     type="button"
                     onClick={() => handleSend()}
                     disabled={sending || !draft.trim()}
-                    className="self-end rounded-xl bg-[var(--ll-yellow)] px-4 py-2.5 text-sm font-semibold text-[var(--ll-text-faint)] hover:opacity-90 disabled:opacity-50"
+                    className="self-end rounded-xl bg-[var(--ll-yellow)] px-4 py-2.5 text-sm font-semibold text-[var(--ll-bg)] hover:opacity-90 disabled:opacity-50"
                   >
                     {sending ? "…" : <Send className="h-4 w-4" strokeWidth={1.5} />}
                   </button>

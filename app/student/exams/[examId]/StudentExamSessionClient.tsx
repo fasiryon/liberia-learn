@@ -293,7 +293,7 @@ export default function StudentExamSessionClient({ examId }: { examId: string })
             </Link>
             <Link
               href="/student/certifications"
-              className="inline-flex min-h-11 min-w-11 items-center rounded-xl bg-[var(--ll-yellow)] px-4 py-2 text-sm font-semibold text-[var(--ll-text-faint)]"
+              className="inline-flex min-h-11 min-w-11 items-center rounded-xl bg-[var(--ll-yellow)] px-4 py-2 text-sm font-semibold text-[var(--ll-bg)]"
             >
               View Certifications
             </Link>
@@ -399,7 +399,7 @@ export default function StudentExamSessionClient({ examId }: { examId: string })
                   type="button"
                   disabled={!canSubmit || submitting}
                   onClick={() => setConfirmingSubmit(true)}
-                  className="ll-touch-target rounded-xl bg-[var(--ll-yellow)] px-5 py-3 text-sm font-semibold text-[var(--ll-text-faint)] disabled:opacity-50"
+                  className="ll-touch-target rounded-xl bg-[var(--ll-yellow)] px-5 py-3 text-sm font-semibold text-[var(--ll-bg)] disabled:opacity-50"
                 >
                   {submitting ? "Submitting..." : "Submit Exam"}
                 </button>
@@ -430,7 +430,7 @@ export default function StudentExamSessionClient({ examId }: { examId: string })
                   setConfirmingSubmit(false);
                   void submitExam();
                 }}
-                className="ll-touch-target rounded-xl bg-[var(--ll-yellow)] px-5 py-3 text-sm font-semibold text-[var(--ll-text-faint)]"
+                className="ll-touch-target rounded-xl bg-[var(--ll-yellow)] px-5 py-3 text-sm font-semibold text-[var(--ll-bg)]"
               >
                 Confirm submit
               </button>

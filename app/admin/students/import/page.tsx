@@ -255,7 +255,7 @@ export default function ImportPage() {
                 type="button"
                 disabled={rows.length === 0 || validating}
                 onClick={runValidation}
-                className="rounded-xl bg-[var(--ll-yellow)] px-6 py-3 text-sm font-bold text-[var(--ll-text-faint)] disabled:opacity-50"
+                className="rounded-xl bg-[var(--ll-yellow)] px-6 py-3 text-sm font-bold text-[var(--ll-bg)] disabled:opacity-50"
               >
                 {validating ? "Validating..." : "Validate →"}
               </button>
@@ -378,7 +378,7 @@ export default function ImportPage() {
                   <button
                     type="button"
                     onClick={() => setStep(3)}
-                    className="rounded-xl bg-[var(--ll-yellow)] px-6 py-2.5 text-sm font-bold text-[var(--ll-text-faint)]"
+                    className="rounded-xl bg-[var(--ll-yellow)] px-6 py-2.5 text-sm font-bold text-[var(--ll-bg)]"
                   >
                     Continue to Confirm →
                   </button>
@@ -429,7 +429,7 @@ export default function ImportPage() {
                 type="button"
                 disabled={!confirmed || importing}
                 onClick={runConfirm}
-                className="rounded-xl bg-[var(--ll-yellow)] px-6 py-2.5 text-sm font-bold text-[var(--ll-text-faint)] disabled:opacity-50"
+                className="rounded-xl bg-[var(--ll-yellow)] px-6 py-2.5 text-sm font-bold text-[var(--ll-bg)] disabled:opacity-50"
               >
                 {importing ? "Importing..." : `Confirm Import ${validRows.length} ${IMPORT_LABELS[importType]}`}
               </button>
@@ -477,7 +477,7 @@ export default function ImportPage() {
               <button
                 type="button"
                 onClick={reset}
-                className="rounded-xl bg-[var(--ll-yellow)] px-5 py-2.5 text-sm font-bold text-[var(--ll-text-faint)]"
+                className="rounded-xl bg-[var(--ll-yellow)] px-5 py-2.5 text-sm font-bold text-[var(--ll-bg)]"
               >
                 Import Another File
               </button>

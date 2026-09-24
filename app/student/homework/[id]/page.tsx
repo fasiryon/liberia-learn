@@ -169,7 +169,7 @@ export default function StudentHomeworkTake({
           <button
             onClick={submitHomework}
             disabled={submitStatus.kind === "submitting"}
-            className="rounded-xl bg-[var(--ll-yellow)] px-5 py-2 text-[var(--ll-text-faint)] font-semibold hover:bg-[var(--ll-yellow-soft)] disabled:opacity-40"
+            className="rounded-xl bg-[var(--ll-yellow)] px-5 py-2 text-[var(--ll-bg)] font-semibold hover:opacity-90 disabled:opacity-40"
           >
             {submitStatus.kind === "submitting" ? "Submitting…" : "Submit homework"}
           </button>

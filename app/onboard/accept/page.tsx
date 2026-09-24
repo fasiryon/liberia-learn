@@ -31,7 +31,7 @@ function AcceptInviteForm() {
           <p className="text-sm text-red-400">Invalid or missing invite link.</p>
           <Link
             href="/login"
-            className="inline-block rounded-xl bg-[var(--ll-yellow)] px-4 py-2.5 text-sm font-semibold text-[var(--ll-text-faint)] shadow-lg shadow-emerald-500/40 hover:bg-[var(--ll-yellow-soft)]"
+            className="inline-block rounded-xl bg-[var(--ll-yellow)] px-4 py-2.5 text-sm font-semibold text-[var(--ll-bg)] shadow-lg shadow-emerald-500/40 hover:opacity-90"
           >
             Go to Sign In
           </Link>
@@ -45,7 +45,7 @@ function AcceptInviteForm() {
       <main className="flex min-h-screen items-center justify-center bg-[var(--ll-bg)] px-4 py-8">
         <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,_#22c55e33,_transparent_55%),radial-gradient(circle_at_bottom,_#0ea5e933,_transparent_55%)]" />
         <div className="w-full max-w-md space-y-6 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-6 shadow-none shadow-emerald-500/20 backdrop-blur text-center">
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[var(--ll-yellow)] text-lg font-black text-[var(--ll-text-faint)] mx-auto">
+          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[var(--ll-yellow)] text-lg font-black text-[var(--ll-bg)] mx-auto">
             L
           </div>
           <h1 className="text-lg font-semibold text-[var(--ll-text)]">Account created!</h1>
@@ -54,7 +54,7 @@ function AcceptInviteForm() {
           </p>
           <Link
             href="/login"
-            className="inline-block rounded-xl bg-[var(--ll-yellow)] px-4 py-2.5 text-sm font-semibold text-[var(--ll-text-faint)] shadow-lg shadow-emerald-500/40 hover:bg-[var(--ll-yellow-soft)]"
+            className="inline-block rounded-xl bg-[var(--ll-yellow)] px-4 py-2.5 text-sm font-semibold text-[var(--ll-bg)] shadow-lg shadow-emerald-500/40 hover:opacity-90"
           >
             Sign In
           </Link>
@@ -103,7 +103,7 @@ function AcceptInviteForm() {
 
       <div className="w-full max-w-md space-y-6 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-6 shadow-none shadow-emerald-500/20 backdrop-blur">
         <div className="flex flex-col items-center gap-2 text-center">
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[var(--ll-yellow)] text-lg font-black text-[var(--ll-text-faint)]">
+          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[var(--ll-yellow)] text-lg font-black text-[var(--ll-bg)]">
             L
           </div>
           <h1 className="mt-1 text-lg font-semibold text-[var(--ll-text)]">
@@ -171,7 +171,7 @@ function AcceptInviteForm() {
           <button
             type="submit"
             disabled={loading}
-            className="mt-2 flex w-full items-center justify-center rounded-xl bg-[var(--ll-yellow)] px-4 py-2.5 text-sm font-semibold text-[var(--ll-text-faint)] shadow-lg shadow-emerald-500/40 hover:bg-[var(--ll-yellow-soft)] disabled:opacity-60"
+            className="mt-2 flex w-full items-center justify-center rounded-xl bg-[var(--ll-yellow)] px-4 py-2.5 text-sm font-semibold text-[var(--ll-bg)] shadow-lg shadow-emerald-500/40 hover:opacity-90 disabled:opacity-60"
           >
             {loading ? "Creating account..." : "Create Account"}
           </button>

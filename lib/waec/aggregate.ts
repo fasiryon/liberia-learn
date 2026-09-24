@@ -79,12 +79,35 @@ export async function getTeacherWaecReadiness(teacherUserId: string): Promise<{ 
   return { studentCount: studentIds.length, subjects: await aggregateWaecForStudents(studentIds) };
 }
 
-export type CountyAggregate = { county: string; assessedStudents: number; avgReadiness: number | null };
+export type CountyAggregate = {
+  county: string;
+  assessedStudents: number | null;
+  avgReadiness: number | null;
+  suppressed: boolean;
+};
+
+/** Same minimum cohort the other MOE aggregate surfaces use (app/api/moe/counties, dashboard). */
+export const NATIONAL_MIN_COHORT = 5;
+
+type SuppressibleSubjectAggregate = Omit<SubjectAggregate, "assessedStudents" | "atRisk" | "onTrack"> & {
+  assessedStudents: number | null;
+  atRisk: number | null;
+  onTrack: number | null;
+  suppressed: boolean;
+};
+
+function suppressSubject(s: SubjectAggregate): SuppressibleSubjectAggregate {
+  // Zero assessed stays visible as "no data"; 1-4 would re-identify learners.
+  const suppressed = s.assessedStudents > 0 && s.assessedStudents < NATIONAL_MIN_COHORT;
+  return suppressed
+    ? { ...s, assessedStudents: null, avgReadiness: null, atRisk: null, onTrack: null, suppressed }
+    : { ...s, suppressed };
+}
 
 /** National WAEC readiness + per-county ranking. */
 export async function getNationalWaecReadiness(): Promise<{
   studentCount: number;
-  subjects: SubjectAggregate[];
+  subjects: SuppressibleSubjectAggregate[];
   byCounty: CountyAggregate[];
 }> {
   const students = await prisma.student.findMany({
@@ -114,8 +137,16 @@ export async function getNationalWaecReadiness(): Promise<{
     c.sum += overall; c.n++; countyMap.set(county, c);
   }
   const byCounty = Array.from(countyMap.entries())
-    .map(([county, v]) => ({ county, assessedStudents: v.n, avgReadiness: v.n > 0 ? Math.round(v.sum / v.n) : null }))
+    .map(([county, v]): CountyAggregate => {
+      const suppressed = v.n < NATIONAL_MIN_COHORT;
+      return {
+        county,
+        assessedStudents: suppressed ? null : v.n,
+        avgReadiness: suppressed ? null : Math.round(v.sum / v.n),
+        suppressed,
+      };
+    })
     .sort((a, b) => (b.avgReadiness ?? -1) - (a.avgReadiness ?? -1));
 
-  return { studentCount: studentIds.length, subjects, byCounty };
+  return { studentCount: studentIds.length, subjects: subjects.map(suppressSubject), byCounty };
 }

@@ -232,7 +232,7 @@ export default function PackReviewPage() {
             <button
               onClick={handleApprove}
               disabled={approving}
-              className="rounded-xl bg-[var(--ll-yellow)] px-5 py-2.5 text-sm font-semibold text-[var(--ll-text-faint)] hover:bg-[var(--ll-yellow-soft)] disabled:opacity-50"
+              className="rounded-xl bg-[var(--ll-yellow)] px-5 py-2.5 text-sm font-semibold text-[var(--ll-bg)] hover:opacity-90 disabled:opacity-50"
             >
               {approving ? "Approving..." : "Approve & Publish"}
             </button>

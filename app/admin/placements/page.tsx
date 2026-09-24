@@ -154,7 +154,7 @@ export default function AdminPlacementsPage() {
               <button
                 type="button"
                 onClick={downloadCsv}
-                className="rounded-xl bg-[var(--ll-yellow)] px-4 py-2 text-sm font-semibold text-[var(--ll-text-faint)] hover:bg-[var(--ll-yellow-soft)]"
+                className="rounded-xl bg-[var(--ll-yellow)] px-4 py-2 text-sm font-semibold text-[var(--ll-bg)] hover:opacity-90"
               >
                 Download CSV
               </button>

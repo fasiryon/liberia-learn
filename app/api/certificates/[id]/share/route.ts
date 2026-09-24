@@ -1,3 +1,4 @@
+// route-policy: auth=session; scope=record; authority=certificate-owner-or-same-school-admin; rationale=a public share link exposes the learner name so only the learner or their school admin may mint it
 import { NextResponse } from "next/server";
 
 import { requireRole } from "@/lib/auth";
@@ -25,7 +26,7 @@ export async function POST(
         student: {
           select: {
             userId: true,
-            user: { select: { name: true } },
+            user: { select: { name: true, schoolId: true } },
           },
         },
       },
@@ -36,6 +37,14 @@ export async function POST(
     }
 
     if (user.role === "STUDENT" && certificate.student.userId !== user.id) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+    // A school ADMIN may only share certificates of students in their school.
+    if (
+      user.role === "ADMIN" &&
+      !user.isPlatformAdmin &&
+      (!user.schoolId || certificate.student.user?.schoolId !== user.schoolId)
+    ) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 

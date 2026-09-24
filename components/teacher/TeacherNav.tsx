@@ -32,7 +32,7 @@ type MessageSummary = { read: boolean; fromRole: "guardian" | "teacher" };
 function Badge({ count }: { count: number }) {
   if (count <= 0) return null;
   return (
-    <span className="rounded-full bg-[var(--ll-yellow)] px-2 py-0.5 text-[10px] font-semibold text-[var(--ll-text-faint)]">
+    <span className="rounded-full bg-[var(--ll-yellow)] px-2 py-0.5 text-[10px] font-semibold text-[var(--ll-bg)]">
       {count}
     </span>
   );

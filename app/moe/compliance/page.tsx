@@ -142,7 +142,7 @@ export default function MoeCompliancePage() {
             <button
               onClick={handleExport}
               disabled={exporting}
-              className="rounded-full bg-[var(--ll-yellow)] px-4 py-1.5 text-xs font-semibold text-[var(--ll-text-faint)] hover:bg-[var(--ll-yellow-soft)] disabled:opacity-60"
+              className="rounded-full bg-[var(--ll-yellow)] px-4 py-1.5 text-xs font-semibold text-[var(--ll-bg)] hover:opacity-90 disabled:opacity-60"
             >
               {exporting ? "Exporting..." : "Export Compliance Report (CSV)"}
             </button>

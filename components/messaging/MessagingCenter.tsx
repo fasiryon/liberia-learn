@@ -357,7 +357,7 @@ export function MessagingCenter({ role, emptyState }: MessagingCenterProps) {
               type="button"
               onClick={handleSend}
               disabled={sending || !draft.trim()}
-              className="min-h-11 rounded-xl bg-[var(--ll-yellow)] px-5 py-3 text-sm font-semibold text-[var(--ll-text-faint)] hover:bg-[var(--ll-yellow-soft)] disabled:opacity-60"
+              className="min-h-11 rounded-xl bg-[var(--ll-yellow)] px-5 py-3 text-sm font-semibold text-[var(--ll-bg)] hover:opacity-90 disabled:opacity-60"
             >
               {sending ? "Sending..." : "Send"}
             </button>

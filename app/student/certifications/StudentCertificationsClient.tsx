@@ -65,7 +65,7 @@ export default function StudentCertificationsClient() {
               <button
                 type="button"
                 onClick={() => window.print()}
-                className="mt-5 rounded-xl bg-[var(--ll-yellow)] px-4 py-2 text-sm font-semibold text-[var(--ll-text-faint)] print:hidden"
+                className="mt-5 rounded-xl bg-[var(--ll-yellow)] px-4 py-2 text-sm font-semibold text-[var(--ll-bg)] print:hidden"
               >
                 Download Certificate
               </button>

@@ -42,8 +42,9 @@ export default async function HomeworkDetailPage({ params }: PageProps) {
   const homeworkId = params.id;
 
   // Load homework + this student's submission (if any)
-  const homework = await prisma.homework.findUnique({
-    where: { id: homeworkId },
+  // Only homework for a class this student is enrolled in.
+  const homework = await prisma.homework.findFirst({
+    where: { id: homeworkId, Class: { enrollments: { some: { studentId: student.id } } } },
     include: {
       Class: {
         include: {
@@ -203,7 +204,7 @@ export default async function HomeworkDetailPage({ params }: PageProps) {
                 </p>
                 <button
                   type="submit"
-                  className="rounded-full bg-[var(--ll-yellow)] px-4 py-2 text-xs font-semibold text-[var(--ll-text-faint)] hover:bg-[var(--ll-yellow-soft)]"
+                  className="rounded-full bg-[var(--ll-yellow)] px-4 py-2 text-xs font-semibold text-[var(--ll-bg)] hover:opacity-90"
                 >
                   {submission ? "Update submission" : "Submit homework"}
                 </button>

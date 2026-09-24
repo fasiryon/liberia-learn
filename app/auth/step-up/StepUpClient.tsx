@@ -30,7 +30,7 @@ export default function StepUpClient({ auth0Configured }: { auth0Configured: boo
           <button
             type="button"
             onClick={() => signIn("auth0-step-up", { callbackUrl })}
-            className="flex min-h-12 w-full items-center justify-center rounded-xl bg-[var(--ll-yellow)] px-4 py-3 font-semibold text-[var(--ll-text-faint)]"
+            className="flex min-h-12 w-full items-center justify-center rounded-xl bg-[var(--ll-yellow)] px-4 py-3 font-semibold text-[var(--ll-bg)]"
           >
             Verify with MFA
           </button>

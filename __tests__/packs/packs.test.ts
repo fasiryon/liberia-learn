@@ -38,7 +38,7 @@ vi.mock("@/lib/db", () => ({
     },
     scheduledWork: { findMany: mockSWFindMany },
     student: { findUnique: mockStudentFindUnique },
-    class: { findUnique: mockClassFindUnique },
+    class: { findUnique: mockClassFindUnique, findFirst: vi.fn().mockResolvedValue({ id: "cls-1" }) },
     teacherLessonAssignment: { findMany: mockTLAFindMany },
     curriculumContent: { findMany: mockCCFindMany },
   },

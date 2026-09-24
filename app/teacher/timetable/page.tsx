@@ -322,7 +322,7 @@ export default function TeacherTimetablePage() {
                   <button
                     type="submit"
                     disabled={saving}
-                    className="flex-1 rounded-xl bg-[var(--ll-yellow)] px-4 py-3 text-sm font-semibold text-[var(--ll-text-faint)] hover:bg-[var(--ll-yellow-soft)] disabled:opacity-60"
+                    className="flex-1 rounded-xl bg-[var(--ll-yellow)] px-4 py-3 text-sm font-semibold text-[var(--ll-bg)] hover:opacity-90 disabled:opacity-60"
                   >
                     {saving ? "Saving…" : "Save Assignment"}
                   </button>

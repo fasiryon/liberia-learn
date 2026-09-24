@@ -190,7 +190,7 @@ function StudentMessagesTab() {
               type="button"
               onClick={handleReply}
               disabled={sending || !draft.trim()}
-              className="self-end rounded-xl bg-[var(--ll-yellow)] px-4 py-2.5 text-sm font-semibold text-[var(--ll-text-faint)] hover:opacity-90 disabled:opacity-50"
+              className="self-end rounded-xl bg-[var(--ll-yellow)] px-4 py-2.5 text-sm font-semibold text-[var(--ll-bg)] hover:opacity-90 disabled:opacity-50"
             >
               {sending ? "…" : <Send className="h-4 w-4" strokeWidth={1.5} />}
             </button>

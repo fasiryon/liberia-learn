@@ -5,6 +5,7 @@ const mockScheduledWorkFindUnique = vi.hoisted(() => vi.fn());
 const mockStudentFindUnique = vi.hoisted(() => vi.fn());
 const mockEnrollmentFindUnique = vi.hoisted(() => vi.fn());
 const mockStudentProgressUpsert = vi.hoisted(() => vi.fn());
+const mockStudentProgressFindUnique = vi.hoisted(() => vi.fn());
 const mockLogAudit = vi.hoisted(() => vi.fn());
 const mockNotifyLessonCompletion = vi.hoisted(() => vi.fn());
 const mockUpdateMasteryProfile = vi.hoisted(() => vi.fn());
@@ -22,7 +23,7 @@ vi.mock("@/lib/db", () => ({
     scheduledWork: { findUnique: mockScheduledWorkFindUnique },
     student: { findUnique: mockStudentFindUnique },
     enrollment: { findUnique: mockEnrollmentFindUnique },
-    studentProgress: { upsert: mockStudentProgressUpsert },
+    studentProgress: { upsert: mockStudentProgressUpsert, findUnique: mockStudentProgressFindUnique },
     strandCatalog: { findUnique: mockStrandFindUnique, findFirst: mockStrandFindFirst },
   },
 }));
@@ -46,6 +47,7 @@ describe("student lesson delivery", () => {
     // so mastery writes still resolve a valid StrandCatalog target.
     mockStrandFindUnique.mockResolvedValue(null);
     mockStrandFindFirst.mockResolvedValue({ strandKey: "fractions_decimals" });
+    mockStudentProgressFindUnique.mockResolvedValue(null);
   });
 
   // First test in this file to dynamically import @/lib/lessons, which now
@@ -117,6 +119,50 @@ describe("student lesson delivery", () => {
     await expect(response.json()).resolves.toMatchObject({ success: true, exitTicketScore: 100 });
     expect(mockNotifyLessonCompletion).toHaveBeenCalledOnce();
     expect(mockUpdateMasteryProfile).toHaveBeenCalledOnce();
+  }, ROUTE_TIMEOUT_MS);
+
+  it("treats an identical resubmission of a completed lesson as a no-op replay", async () => {
+    mockScheduledWorkFindUnique.mockResolvedValue({
+      id: "sw-1",
+      classId: "class-1",
+      class: { schoolId: "school-1", School: { name: "Capitol Hill Academy" } },
+      content: {
+        grade: 6,
+        subject: "MATH",
+        payload: {},
+        deliveryProfile: { exitTicket: { questions: [{ prompt: "1+0?", correctAnswer: "1" }] } },
+        moeAlignments: [],
+      },
+    });
+    mockStudentFindUnique.mockResolvedValue({ id: "student-1", user: { name: "Student One" } });
+    mockEnrollmentFindUnique.mockResolvedValue({ id: "enroll-1" });
+    const firstCompletedAt = new Date("2026-12-01T09:00:00.000Z");
+    mockStudentProgressFindUnique.mockResolvedValue({
+      completedAt: firstCompletedAt,
+      exitTicketResponses: [{ questionIndex: 0, answer: "1" }],
+      exitTicketScore: 100,
+    });
+    mockRequireRole.mockResolvedValue({ id: "user-1", role: "STUDENT", schoolId: "school-1" });
+
+    const { POST } = await import("@/app/api/student/lessons/[id]/complete/route");
+    const response = await POST(
+      new Request("http://localhost/api/student/lessons/sw-1/complete", {
+        method: "POST",
+        body: JSON.stringify({ exitTicketAnswers: [{ questionIndex: 0, answer: "1" }] }),
+        headers: { "Content-Type": "application/json" },
+      }) as any,
+      { params: { id: "sw-1" } }
+    );
+
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toMatchObject({
+      success: true,
+      exitTicketScore: 100,
+      completedAt: firstCompletedAt.toISOString(),
+    });
+    expect(mockStudentProgressUpsert).not.toHaveBeenCalled();
+    expect(mockUpdateMasteryProfile).not.toHaveBeenCalled();
+    expect(mockNotifyLessonCompletion).not.toHaveBeenCalled();
   }, ROUTE_TIMEOUT_MS);
 
   it("does not fail the lesson completion flow when guardian SMS fails", async () => {

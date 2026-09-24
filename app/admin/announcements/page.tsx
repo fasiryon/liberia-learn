@@ -106,7 +106,7 @@ export default function AdminAnnouncementsPage() {
     <main className="ll-dashboard-shell px-4 py-5">
       <div className="ll-page-enter mx-auto max-w-5xl space-y-5">
         <div>
-          <Link href="/admin/dashboard" className="inline-flex items-center gap-1 text-sm text-[var(--ll-yellow)] hover:underline">
+          <Link href="/admin" className="inline-flex items-center gap-1 text-sm text-[var(--ll-yellow)] hover:underline">
             <ChevronLeft className="h-4 w-4" strokeWidth={1.5} />
             Admin Dashboard
           </Link>

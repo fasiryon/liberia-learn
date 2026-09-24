@@ -1,34 +1,24 @@
 // app/teacher/student/[id]/page.tsx
 import { redirect } from "next/navigation";
-import { getServerSession } from "next-auth";
 import Link from "next/link";
 
-import { authOptions } from "@/lib/auth";
+import { getOptionalUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
-
-type AppSession = {
-  user?: {
-    id?: string;
-    role?: "STUDENT" | "TEACHER" | "ADMIN" | string;
-    email?: string | null;
-    name?: string | null;
-  };
-};
 
 type PageProps = {
   params: { id: string };
 };
 
 export default async function TeacherStudentProfilePage({ params }: PageProps) {
-  const rawSession = await getServerSession(authOptions);
-  const session = rawSession as AppSession | null;
+  const user = await getOptionalUser();
 
-  if (!session?.user?.id) redirect("/login");
-  if (session.user.role !== "TEACHER") redirect("/");
+  if (!user) redirect("/login");
+  if (user.role !== "TEACHER" || !user.schoolId) redirect("/");
 
-  const teacherId = session.user.id as string;
+  const teacherId = user.id;
+  const teacherSchoolId = user.schoolId;
   const studentId = params.id;
 
   // Load student + related data
@@ -75,24 +65,19 @@ export default async function TeacherStudentProfilePage({ params }: PageProps) {
     redirect("/teacher");
   }
 
-  // Optional safety: restrict to students this teacher actually teaches
-  const teachesStudent =
-    student.enrollments.some(
-      (enr: any) => enr.Class?.teacherId === teacherId
-    ) || student.homeworkSubmissions.some(
-      (s: any) => s.Homework?.classId &&
-        s.Homework.Class?.teacherId === teacherId
-    );
+  // Same roster rule as getTeacherScope: the student must be enrolled in a
+  // class this teacher teaches at the teacher's own school.
+  const teachesStudent = student.enrollments.some(
+    (enr: any) => enr.Class?.teacherId === teacherId && enr.Class?.schoolId === teacherSchoolId
+  );
 
   if (!teachesStudent) {
-    // For now just let them in – if you want, you can enforce:
-    // redirect("/teacher");
+    redirect("/teacher");
   }
 
   const studentName = student.user?.name ?? "Student";
   const email = student.user?.email ?? "";
-  const county = student.county ?? "Montserrado";
-  const community = student.community ?? "New Kru Town";
+  const location = [student.community, student.county].filter(Boolean).join(", ");
 
   const avgGrade =
     student.grades.length > 0
@@ -119,7 +104,7 @@ export default async function TeacherStudentProfilePage({ params }: PageProps) {
             </p>
             <h1 className="mt-1 text-2xl font-semibold">{studentName}</h1>
             <p className="mt-1 text-xs text-[var(--ll-text-muted)]">
-              {community}, {county}
+              {location || "Location not recorded"}
             </p>
             {email && (
               <p className="text-[11px] text-[var(--ll-text-faint)]">{email}</p>
@@ -127,7 +112,7 @@ export default async function TeacherStudentProfilePage({ params }: PageProps) {
           </div>
 
           <Link
-            href="/teacher/class"
+            href="/teacher/students"
             className="text-xs rounded-full border border-[var(--ll-border)] px-3 py-1.5 text-[var(--ll-text)] hover:text-[var(--ll-text)]"
           >
             ← Back to class list

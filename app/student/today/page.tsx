@@ -428,7 +428,7 @@ export default function StudentTodayPage() {
               </div>
               <Link
                 href={priorityHref}
-                className="ll-touch-target inline-flex items-center justify-center rounded-lg bg-[var(--ll-accent)] px-4 py-2 text-sm font-semibold text-[var(--ll-text-faint)]"
+                className="ll-touch-target inline-flex items-center justify-center rounded-lg bg-[var(--ll-accent)] px-4 py-2 text-sm font-semibold text-[var(--ll-bg)]"
               >
                 {priorityLabel}
               </Link>
@@ -580,7 +580,7 @@ function ScheduleTab({
                   <OfflineReadyBadge lessonId={item.contentId} href={item.lessonHref} />
                 </div>
               </div>
-              <Link href={item.lessonHref} className="ll-touch-target inline-flex items-center justify-center rounded-lg bg-[var(--ll-accent)] px-3 py-2 text-sm font-semibold text-[var(--ll-text-faint)]">
+              <Link href={item.lessonHref} className="ll-touch-target inline-flex items-center justify-center rounded-lg bg-[var(--ll-accent)] px-3 py-2 text-sm font-semibold text-[var(--ll-bg)]">
                 Open lesson
               </Link>
             </article>
@@ -597,7 +597,7 @@ function ScheduleTab({
         <Link href={adaptiveAction.href} className="mt-3 block rounded-lg border border-[var(--ll-border)] bg-[var(--ll-surface-muted)] p-3">
           <p className="text-sm font-semibold text-[var(--ll-text)]">{adaptiveAction.label}</p>
           <p className="mt-1 text-sm text-[var(--ll-text-muted)]">{adaptiveAction.reason}</p>
-          <span className="mt-3 inline-flex rounded-lg bg-[var(--ll-accent)] px-3 py-2 text-sm font-semibold text-[var(--ll-text-faint)]">
+          <span className="mt-3 inline-flex rounded-lg bg-[var(--ll-accent)] px-3 py-2 text-sm font-semibold text-[var(--ll-bg)]">
             Start lesson
           </span>
         </Link>
@@ -723,7 +723,7 @@ function TrueEmptyState({ compact = false }: { compact?: boolean }) {
         <Link href="/assignments" className="rounded-lg border border-[var(--ll-border)] px-3 py-2 text-sm font-semibold text-[var(--ll-text)]">
           View assignments
         </Link>
-        <Link href="/student/lessons" className="rounded-lg bg-[var(--ll-accent)] px-3 py-2 text-sm font-semibold text-[var(--ll-text-faint)]">
+        <Link href="/student/lessons" className="rounded-lg bg-[var(--ll-accent)] px-3 py-2 text-sm font-semibold text-[var(--ll-bg)]">
           Browse curriculum
         </Link>
       </div>

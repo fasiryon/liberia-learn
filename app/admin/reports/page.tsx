@@ -62,7 +62,7 @@ export default function AdminReportsPage() {
           <button
             onClick={loadReport}
             disabled={loading}
-            className="rounded-xl bg-[var(--ll-yellow)] px-4 py-2 text-sm font-semibold text-[var(--ll-text-faint)] hover:bg-[var(--ll-yellow-soft)] disabled:opacity-50"
+            className="rounded-xl bg-[var(--ll-yellow)] px-4 py-2 text-sm font-semibold text-[var(--ll-bg)] hover:opacity-90 disabled:opacity-50"
           >
             {loading ? "Loading..." : "Preview"}
           </button>

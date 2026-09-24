@@ -62,7 +62,7 @@ vi.mock("@/lib/db", () => ({
     },
     student: { findUnique: mockStudentFindUnique },
     enrollment: { findUnique: mockEnrollmentFindUnique },
-    studentProgress: { upsert: mockProgressUpsert },
+    studentProgress: { upsert: mockProgressUpsert, findUnique: vi.fn().mockResolvedValue(null) },
     labSession: {
       findUnique: mockLabSessionFindUnique,
       update: mockLabSessionUpdate,

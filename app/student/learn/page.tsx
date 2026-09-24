@@ -113,14 +113,14 @@ export default function GovernedLearningPage() {
         </label>)}
       </fieldset>
       {!result && <button type="button" disabled={busy || offline || selected === null} onClick={submit}
-        className="min-h-12 w-full rounded-lg bg-[var(--ll-accent)] px-5 py-3 font-semibold text-[var(--ll-text-faint)] disabled:opacity-50 sm:w-auto">Submit answer</button>}
+        className="min-h-12 w-full rounded-lg bg-[var(--ll-accent)] px-5 py-3 font-semibold text-[var(--ll-bg)] disabled:opacity-50 sm:w-auto">Submit answer</button>}
       {result && <div role="status" className="space-y-3 rounded-lg border border-[var(--ll-border)] p-4">
         <p className="font-semibold">{result.correct ? "Correct. Well done." : "Keep learning. Your answer is saved."}</p>
         <p className="text-sm">Understanding: {result.learnerState.mastery.level.replaceAll("_", " ").toLowerCase()} · Evidence confidence: {result.learnerState.confidence.level.toLowerCase()}</p>
         <p className="text-sm">This reflects your learning evidence, not a school grade.</p>
         {result.support?.hint && <p className="text-sm"><strong>Hint:</strong> {result.support.hint}</p>}
         {result.support?.workedExample && <p className="text-sm"><strong>Worked example:</strong> {result.support.workedExample}</p>}
-        <button type="button" onClick={() => void load()} className="min-h-12 rounded-lg bg-[var(--ll-accent)] px-5 font-semibold text-[var(--ll-text-faint)]">Get next action</button>
+        <button type="button" onClick={() => void load()} className="min-h-12 rounded-lg bg-[var(--ll-accent)] px-5 font-semibold text-[var(--ll-bg)]">Get next action</button>
         <Link href="/student/ai-tutor" className="ml-3 inline-block min-h-12 py-3 text-sm underline">Ask the tutor for help</Link>
       </div>}
       {action.toolPolicy.allowed.length > 0 && <div className="space-y-2 border-t border-[var(--ll-border)] pt-4">

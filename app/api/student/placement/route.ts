@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { logAudit } from "@/lib/audit";
 import { prisma } from "@/lib/db";
+import { getPlacementBand, placementBandLabels } from "@/lib/placement";
 
 export async function POST(req: Request) {
   try {
@@ -24,8 +25,6 @@ export async function POST(req: Request) {
     const body = await req.json();
 
     const {
-      band,
-      levelLabel,
       estimatedGrade,
       rawScore,
       totalQuestions,
@@ -35,18 +34,30 @@ export async function POST(req: Request) {
       aiAnalysis,
     } = body ?? {};
 
+    // The score is still client-computed (answer custody is client-side), but
+    // it must be internally consistent and in range before it becomes
+    // evidence a teacher can confirm into Student.currentGrade. The band is
+    // derived here, never accepted from the client.
     if (
-      typeof band !== "string" ||
-      typeof levelLabel !== "string" ||
-      typeof estimatedGrade !== "number" ||
-      typeof rawScore !== "number" ||
-      typeof totalQuestions !== "number"
+      !Number.isInteger(estimatedGrade) ||
+      estimatedGrade < 1 ||
+      estimatedGrade > 12 ||
+      !Number.isInteger(rawScore) ||
+      !Number.isInteger(totalQuestions) ||
+      totalQuestions < 1 ||
+      totalQuestions > 200 ||
+      rawScore < 0 ||
+      rawScore > totalQuestions ||
+      (Array.isArray(answers) && answers.length !== totalQuestions)
     ) {
       return NextResponse.json(
         { error: "Missing or invalid placement payload" },
         { status: 400 }
       );
     }
+
+    const band = getPlacementBand(rawScore, totalQuestions);
+    const levelLabel = placementBandLabels[band];
 
     const placementData: any = {
       studentId: student.id,

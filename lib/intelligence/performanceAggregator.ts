@@ -7,6 +7,8 @@ export type StudentPerformanceSummary = {
   improvementTrend: "improving" | "stable" | "declining";
   confusionCount: number;
   pendingInterventions: number;
+  /** Scored events behind avgScore; 0 means no evidence, not a zero score. */
+  evidenceCount: number;
 };
 
 export type ClassPerformanceSummary = {
@@ -111,6 +113,7 @@ export async function getStudentPerformanceSummary(
     improvementTrend: trendForScores(scores),
     confusionCount,
     pendingInterventions,
+    evidenceCount: scores.length,
   });
 }
 

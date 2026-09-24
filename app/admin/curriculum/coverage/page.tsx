@@ -171,7 +171,7 @@ export default function CoverageDashboardPage() {
                         <td className="px-4 py-3 text-right">
                           <Link
                             href={`/admin/curriculum?generate=1&grade=${desert.grade.replace("G", "")}&subject=${desert.subject}`}
-                            className="rounded-lg bg-[var(--ll-accent)] px-3 py-1.5 text-xs font-semibold text-[var(--ll-text-faint)]"
+                            className="rounded-lg bg-[var(--ll-accent)] px-3 py-1.5 text-xs font-semibold text-[var(--ll-bg)]"
                           >
                             Generate
                           </Link>
