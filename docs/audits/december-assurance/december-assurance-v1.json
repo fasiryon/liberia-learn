@@ -8,318 +8,722 @@
   },
   "summary": {
     "counts": {
-      "P0": { "total": 0, "fixed": 0, "documented": 0 },
-      "P1": { "total": 8, "fixed": 8, "documented": 0 },
-      "P2": { "total": 17, "fixed": 10, "documented": 7 },
-      "P3": { "total": 6, "fixed": 1, "documented": 5 }
+      "P0": {
+        "total": 0,
+        "fixed": 0,
+        "documented": 0
+      },
+      "P1": {
+        "total": 8,
+        "fixed": 8,
+        "documented": 0
+      },
+      "P2": {
+        "total": 17,
+        "fixed": 10,
+        "documented": 7
+      },
+      "P3": {
+        "total": 6,
+        "fixed": 1,
+        "documented": 5
+      }
     },
     "verdict": "No P0 defect was found. All eight P1 repository defects are fixed, and each is covered by a test that fails on the base commit and passes after the fix. The seven documented P2 items each need a child-privacy, educational-authority, product, or infrastructure decision; none is a hidden cross-tenant exposure. This change adds no parallel educational authority: every fix narrows an existing route or makes it consistent with an existing convention."
   },
   "findings": [
     {
-      "id": "DA-01", "severity": "P1", "lens": "security", "role": "all signed-in roles",
+      "id": "DA-01",
+      "severity": "P1",
+      "lens": "security",
+      "role": "all signed-in roles",
       "title": "Open redirect after login and step-up",
-      "location": ["app/login/LoginClient.tsx", "app/auth/step-up/StepUpClient.tsx", "lib/auth/safeRedirect.ts"],
+      "location": [
+        "app/login/LoginClient.tsx",
+        "app/auth/step-up/StepUpClient.tsx",
+        "lib/auth/safeRedirect.ts"
+      ],
       "evidence": "isNextUrlSafeForRole accepted any value starting with '/', so /login?next=//evil.example sent a user to another origin via router.push after a successful sign-in. The step-up check rejected '//' but not '/\\evil.example', which browsers normalise to '//'. The Auth0 button forwarded ?next= unvalidated.",
       "impact": "Credential phishing aimed at teachers, admins, and guardians right after a genuine login.",
-      "fix_status": "fixed", "fix": "Shared isSafeInternalPath rejects protocol-relative, backslash, and control-character paths; used by login, step-up, and the Auth0 callback.",
-      "test": "__tests__/december-assurance/login-safety.test.ts", "external": null
+      "fix_status": "fixed",
+      "fix": "Shared isSafeInternalPath rejects protocol-relative, backslash, and control-character paths; used by login, step-up, and the Auth0 callback.",
+      "test": "__tests__/december-assurance/login-safety.test.ts",
+      "external": null
     },
     {
-      "id": "DA-02", "severity": "P1", "lens": "operations + security", "role": "teacher, admin, guardian (email login)",
+      "id": "DA-02",
+      "severity": "P1",
+      "lens": "operations + security",
+      "role": "teacher, admin, guardian (email login)",
       "title": "All email logins shared one global rate-limit bucket",
-      "location": ["lib/auth.ts (resolveCredentialIdentifier)"],
+      "location": [
+        "lib/auth.ts (resolveCredentialIdentifier)"
+      ],
       "evidence": "studentId defaulted to \"\" and the key used '??', so every email login resolved to the key 'credentials:'. checkRateLimit counts every attempt (successful ones included) with a limit of 10 per 15 minutes, on the shared store in production.",
       "impact": "After about 10 email sign-ins nationwide in 15 minutes, every email login is refused with a generic failure: a national login outage that support cannot diagnose. It also means no per-account brute-force protection for email accounts.",
-      "fix_status": "fixed", "fix": "Identifiers fall through with '||'; email logins are keyed per address ('email:<address>').",
-      "test": "__tests__/december-assurance/login-safety.test.ts", "external": "Rate-limit backend (Redis) behaviour could not be observed live."
+      "fix_status": "fixed",
+      "fix": "Identifiers fall through with '||'; email logins are keyed per address ('email:<address>').",
+      "test": "__tests__/december-assurance/login-safety.test.ts",
+      "external": "Rate-limit backend (Redis) behaviour could not be observed live."
     },
     {
-      "id": "DA-03", "severity": "P1", "lens": "security (student-to-student isolation)", "role": "student",
+      "id": "DA-03",
+      "severity": "P1",
+      "lens": "security (student-to-student isolation)",
+      "role": "student",
       "title": "Grading idempotency keys replayed another learner's submission",
-      "location": ["app/api/grading/code/route.ts", "app/api/grading/ai-literacy/route.ts"],
+      "location": [
+        "app/api/grading/code/route.ts",
+        "app/api/grading/ai-literacy/route.ts"
+      ],
       "evidence": "Both routes returned gradedSubmission.findUnique({ clientSubmissionId }) without checking studentId. Homework and essay routes already bind the key to the learner.",
       "impact": "A student who obtained another student's client submission ID could read that student's response text, score, and feedback.",
-      "fix_status": "fixed", "fix": "A key bound to a different learner returns 409 idempotency_key_payload_mismatch, matching /api/homework/submit.",
-      "test": "__tests__/december-assurance/grading-idempotency.test.ts (fails on base)", "external": null
+      "fix_status": "fixed",
+      "fix": "A key bound to a different learner returns 409 idempotency_key_payload_mismatch, matching /api/homework/submit.",
+      "test": "__tests__/december-assurance/grading-idempotency.test.ts (fails on base)",
+      "external": null
     },
     {
-      "id": "DA-04", "severity": "P1", "lens": "admin/MOE + child privacy", "role": "MOE official",
+      "id": "DA-04",
+      "severity": "P1",
+      "lens": "admin/MOE + child privacy",
+      "role": "MOE official",
       "title": "Teacher free-text notes about one child published on the national dashboard",
-      "location": ["app/api/moe/placements/route.ts", "app/moe/dashboard/page.tsx"],
+      "location": [
+        "app/api/moe/placements/route.ts",
+        "app/moe/dashboard/page.tsx"
+      ],
       "evidence": "Each district's topOverrideReason was the most frequent teacherReason: free text of at least 20 characters written about one learner at placement override. Because free text rarely repeats, the 'top' reason was usually one child's note, shown verbatim to national officials.",
       "impact": "Individual learner circumstances (names, family situation) crossed from school scope to national scope, against the MOE 'aggregates only' contract.",
-      "fix_status": "fixed", "fix": "A reason is published only when at least 5 overrides share it (the same small-cell rule as the county dashboard); otherwise null ('--').",
-      "test": "__tests__/december-assurance/moe-aggregate-privacy.test.ts", "external": null
+      "fix_status": "fixed",
+      "fix": "A reason is published only when at least 5 overrides share it (the same small-cell rule as the county dashboard); otherwise null ('--').",
+      "test": "__tests__/december-assurance/moe-aggregate-privacy.test.ts",
+      "external": null
     },
     {
-      "id": "DA-05", "severity": "P1", "lens": "admin/MOE + child privacy", "role": "MOE official",
+      "id": "DA-05",
+      "severity": "P1",
+      "lens": "admin/MOE + child privacy",
+      "role": "MOE official",
       "title": "National WAEC readiness county ranking had no small-cell suppression",
-      "location": ["lib/waec/aggregate.ts (getNationalWaecReadiness)", "components/waec/WaecPanels.tsx"],
+      "location": [
+        "lib/waec/aggregate.ts (getNationalWaecReadiness)",
+        "components/waec/WaecPanels.tsx"
+      ],
       "evidence": "byCounty published avgReadiness and assessedStudents for every county, including counties with one assessed learner. The MOE county and dashboard routes suppress cohorts below 5.",
       "impact": "A county with a single Grade 9+ assessed learner revealed that learner's readiness score.",
-      "fix_status": "fixed", "fix": "Counties with fewer than 5 assessed learners return suppressed: true with null values; the panel shows 'Too few learners to show'.",
-      "test": "__tests__/december-assurance/moe-aggregate-privacy.test.ts", "external": null
+      "fix_status": "fixed",
+      "fix": "Counties with fewer than 5 assessed learners return suppressed: true with null values; the panel shows 'Too few learners to show'.",
+      "test": "__tests__/december-assurance/moe-aggregate-privacy.test.ts",
+      "external": null
     },
     {
-      "id": "DA-06", "severity": "P2", "lens": "admin/MOE", "role": "school admin",
+      "id": "DA-06",
+      "severity": "P2",
+      "lens": "admin/MOE",
+      "role": "school admin",
       "title": "School admins could read the national WAEC aggregate",
-      "location": ["app/api/moe/waec-readiness/route.ts"],
+      "location": [
+        "app/api/moe/waec-readiness/route.ts"
+      ],
       "evidence": "ALLOWED included ADMIN. Every other /api/moe aggregate uses isMoeSuperRole, and the only consumer (WaecMoePanel) renders on /moe/dashboard, which middleware blocks for ADMIN.",
       "impact": "School-scoped role reading national data it has no UI for.",
-      "fix_status": "fixed", "fix": "Limited to MOE_OFFICIAL, MOE_SUPER_ADMIN, and platform admin.",
-      "test": "__tests__/december-assurance/moe-aggregate-privacy.test.ts", "external": null
+      "fix_status": "fixed",
+      "fix": "Limited to MOE_OFFICIAL, MOE_SUPER_ADMIN, and platform admin.",
+      "test": "__tests__/december-assurance/moe-aggregate-privacy.test.ts",
+      "external": null
     },
     {
-      "id": "DA-07", "severity": "P2", "lens": "admin/MOE", "role": "MOE official",
+      "id": "DA-07",
+      "severity": "P2",
+      "lens": "admin/MOE",
+      "role": "MOE official",
       "title": "Unknown placement override rate shown as 0%",
-      "location": ["app/api/moe/placements/route.ts", "app/moe/dashboard/page.tsx"],
+      "location": [
+        "app/api/moe/placements/route.ts",
+        "app/moe/dashboard/page.tsx"
+      ],
       "evidence": "overrideRate and nationalOverrideRate returned 0 when no placement had been reviewed.",
       "impact": "Unknown presented as zero: suggests the AI placement is never overridden when nobody has reviewed it.",
-      "fix_status": "fixed", "fix": "Returns null; the dashboard renders '--'.",
-      "test": "__tests__/december-assurance/moe-aggregate-privacy.test.ts", "external": null
+      "fix_status": "fixed",
+      "fix": "Returns null; the dashboard renders '--'.",
+      "test": "__tests__/december-assurance/moe-aggregate-privacy.test.ts",
+      "external": null
     },
     {
-      "id": "DA-08", "severity": "P1", "lens": "security (tenant boundary)", "role": "school admin",
+      "id": "DA-08",
+      "severity": "P1",
+      "lens": "security (tenant boundary)",
+      "role": "school admin",
       "title": "Admin could mint a public share link for another school's learner",
-      "location": ["app/api/certificates/[id]/share/route.ts"],
+      "location": [
+        "app/api/certificates/[id]/share/route.ts"
+      ],
       "evidence": "Students were ownership-checked; ADMIN had no school check. The response creates a CertificateShare token and a public URL with WhatsApp text containing the learner's full name.",
       "impact": "Cross-tenant write that publishes a minor's name and achievement from another school.",
-      "fix_status": "fixed", "fix": "Non-platform admins must share the learner's school (404 otherwise), matching /api/certificates/generate.",
-      "test": "__tests__/december-assurance/tenant-and-recovery.test.ts", "external": null
+      "fix_status": "fixed",
+      "fix": "Non-platform admins must share the learner's school (404 otherwise), matching /api/certificates/generate.",
+      "test": "__tests__/december-assurance/tenant-and-recovery.test.ts",
+      "external": null
     },
     {
-      "id": "DA-09", "severity": "P2", "lens": "guardian", "role": "guardian",
+      "id": "DA-09",
+      "severity": "P2",
+      "lens": "guardian",
+      "role": "guardian",
       "title": "Guardian dashboard showed AI homework scores before review",
-      "location": ["app/api/guardian/dashboard/route.ts"],
+      "location": [
+        "app/api/guardian/dashboard/route.ts"
+      ],
       "evidence": "recentGrades used teacherScore ?? aiScore without checking aiReviewed. /api/guardian/students, /api/guardian/student/[id], and /api/homework/[id] all withhold aiScore until aiReviewed.",
       "impact": "Provisional machine scores shown to families as grades, unlabeled.",
-      "fix_status": "fixed", "fix": "AI score shown only when aiReviewed, matching the other guardian and student surfaces.",
-      "test": "__tests__/guardian.dashboard.test.ts ('AI score release')", "external": null
+      "fix_status": "fixed",
+      "fix": "AI score shown only when aiReviewed, matching the other guardian and student surfaces; the visibility predicate is part of the query so the 5-grade limit counts only visible grades.",
+      "test": "__tests__/guardian.dashboard.test.ts ('AI score release')",
+      "external": null
     },
     {
-      "id": "DA-10", "severity": "P2", "lens": "security (error leakage)", "role": "anonymous",
+      "id": "DA-10",
+      "severity": "P2",
+      "lens": "security (error leakage)",
+      "role": "anonymous",
       "title": "Public /api/health/db returned raw database driver errors",
-      "location": ["app/api/health/db/route.ts"],
+      "location": [
+        "app/api/health/db/route.ts"
+      ],
       "evidence": "On failure the unauthenticated route returned err.message, which for Prisma connection errors names the database host and port.",
       "impact": "Infrastructure reconnaissance from an unauthenticated endpoint.",
-      "fix_status": "fixed", "fix": "Returns 'database_unreachable' outside development; the full message stays in the server log.",
-      "test": "__tests__/december-assurance/tenant-and-recovery.test.ts", "external": null
+      "fix_status": "fixed",
+      "fix": "Returns 'database_unreachable' outside development; the full message stays in the server log.",
+      "test": "__tests__/december-assurance/tenant-and-recovery.test.ts",
+      "external": null
     },
     {
-      "id": "DA-11", "severity": "P1", "lens": "child privacy + data integrity", "role": "student, guardian, admin",
+      "id": "DA-11",
+      "severity": "P1",
+      "lens": "child privacy + data integrity",
+      "role": "student, guardian, admin",
       "title": "Learner transcripts and message attachments at predictable public blob URLs; transcript regeneration silently stale",
-      "location": ["app/api/student/portfolio/generate/route.ts", "app/api/admin/credentials/bulk-generate/route.ts", "app/api/messages/upload-attachment/route.ts"],
+      "location": [
+        "app/api/student/portfolio/generate/route.ts",
+        "app/api/admin/credentials/bulk-generate/route.ts",
+        "app/api/messages/upload-attachment/route.ts"
+      ],
       "evidence": "@vercel/blob 2.3.3 does not add a random suffix by default. Transcripts were written to public 'portfolios/{studentId}/{term}/transcript.html' and attachments to 'message-attachments/{userId}/{timestamp}_{name}'. Blob v2 also refuses to overwrite, so regenerating a transcript threw inside a swallowed catch and left the old public copy in place.",
       "impact": "A minor's name, school, scores, and attendance were retrievable by anyone who knew or guessed a learner ID and term. Regenerated credentials kept serving stale numbers.",
-      "fix_status": "fixed", "fix": "addRandomSuffix: true on all three public writes; each regeneration gets a new URL, which is stored on the credential.",
+      "fix_status": "fixed",
+      "fix": "addRandomSuffix: true on all three public writes; each regeneration gets a new URL, which is stored on the credential.",
       "test": "__tests__/december-assurance/ui-contracts.test.ts ('unguessable URLs')",
       "external": "Earlier blobs already written at predictable paths stay public until removed from the Vercel Blob store (needs Vercel access)."
     },
     {
-      "id": "DA-12", "severity": "P2", "lens": "failure/recovery", "role": "school admin, student, guardian",
+      "id": "DA-12",
+      "severity": "P2",
+      "lens": "failure/recovery",
+      "role": "school admin, student, guardian",
       "title": "Report card double-publish sent duplicate notifications",
-      "location": ["app/api/report-cards/[id]/publish/route.ts"],
+      "location": [
+        "app/api/report-cards/[id]/publish/route.ts"
+      ],
       "evidence": "Check-then-update: two concurrent PATCHes (double-click, retry) both saw DRAFT, both updated, and both sent push and inbox notifications to the student and every guardian.",
       "impact": "Duplicate family notifications; confusing publish state.",
-      "fix_status": "fixed", "fix": "Conditional updateMany (status != PUBLISHED); the losing request returns 'Already published' and sends nothing.",
-      "test": "__tests__/december-assurance/tenant-and-recovery.test.ts", "external": null
+      "fix_status": "fixed",
+      "fix": "Conditional updateMany (status != PUBLISHED); the losing request returns 'Already published' and sends nothing.",
+      "test": "__tests__/december-assurance/tenant-and-recovery.test.ts",
+      "external": null
     },
     {
-      "id": "DA-13", "severity": "P2", "lens": "teacher (governed overrides)", "role": "teacher, admin",
+      "id": "DA-13",
+      "severity": "P2",
+      "lens": "teacher (governed overrides)",
+      "role": "teacher, admin",
       "title": "Teacher override of AI essay/code grades was unaudited",
-      "location": ["app/api/grading/[submissionId]/override/route.ts"],
+      "location": [
+        "app/api/grading/[submissionId]/override/route.ts"
+      ],
       "evidence": "The route overwrote gradedSubmission.score with no audit record and no trace of the previous score. Assignment grading and placement review both audit.",
       "impact": "Grade changes invisible to reviewers; no way to tell an AI grade from a human override afterwards.",
-      "fix_status": "fixed", "fix": "Writes a grading.submission.override audit entry with the previous and new score.",
-      "test": "__tests__/december-assurance/tenant-and-recovery.test.ts", "external": null
+      "fix_status": "fixed",
+      "fix": "Writes a grading.submission.override audit entry with the previous and new score.",
+      "test": "__tests__/december-assurance/tenant-and-recovery.test.ts",
+      "external": null
     },
     {
-      "id": "DA-14", "severity": "P1", "lens": "teacher + product reachability", "role": "teacher",
+      "id": "DA-14",
+      "severity": "P1",
+      "lens": "teacher + product reachability",
+      "role": "teacher",
       "title": "'+ Create Homework' led to a missing homework page",
-      "location": ["app/teacher/homework/page.tsx"],
+      "location": [
+        "app/teacher/homework/page.tsx"
+      ],
       "evidence": "Both Create Homework buttons linked to /teacher/homework/create; the page is /teacher/homework/new, so 'create' was treated as a homework ID by /teacher/homework/[id].",
       "impact": "Teachers could not create homework from the Homework screen: a core December workflow dead end.",
-      "fix_status": "fixed", "fix": "Links point to /teacher/homework/new.",
-      "test": "__tests__/december-assurance/ui-contracts.test.ts", "external": null
+      "fix_status": "fixed",
+      "fix": "Links point to /teacher/homework/new.",
+      "test": "__tests__/december-assurance/ui-contracts.test.ts",
+      "external": null
     },
     {
-      "id": "DA-15", "severity": "P2", "lens": "product reachability", "role": "admin, guardian, MOE, teacher, public",
+      "id": "DA-15",
+      "severity": "P2",
+      "lens": "product reachability",
+      "role": "admin, guardian, MOE, teacher, public",
       "title": "Links to routes that do not exist",
-      "location": ["app/admin/* (8 back-links to /admin/dashboard)", "app/guardian/GuardianDashboardClient.tsx (/guardian/lessons)", "app/moe/dashboard/page.tsx (/moe/audit)", "lib/intelligence/teacherAlerts.ts (/teacher/interventions)", "app/share/certificate/[id]/page.tsx (/register)", "components/GlobalSearch.tsx (/events; student lesson links for teachers)"],
+      "location": [
+        "app/admin/* (8 back-links to /admin/dashboard)",
+        "app/guardian/GuardianDashboardClient.tsx (/guardian/lessons)",
+        "app/moe/dashboard/page.tsx (/moe/audit)",
+        "lib/intelligence/teacherAlerts.ts (/teacher/interventions)",
+        "app/share/certificate/[id]/page.tsx (/register)",
+        "components/GlobalSearch.tsx (/events; student lesson links for teachers)"
+      ],
       "evidence": "Static href scan against the app route tree (dynamic segments resolved) found these literal targets with no page.",
       "impact": "Navigation dead ends. The 'Review intervention' alert action (the teacher intervention follow-up) went to a 404.",
-      "fix_status": "fixed", "fix": "Pointed to existing routes: /admin, /guardian/progress, /teacher/intelligence (hosts the intervention table), /guardian/register, and role-aware search results. The MOE audit tile was removed; see DA-24.",
-      "test": "__tests__/december-assurance/ui-contracts.test.ts", "external": null
+      "fix_status": "fixed",
+      "fix": "Pointed to existing routes: /admin, /guardian/progress, /teacher/intelligence (hosts the intervention table), /guardian/register, and role-aware search results. The MOE audit tile was removed; see DA-24.",
+      "test": "__tests__/december-assurance/ui-contracts.test.ts",
+      "external": null
     },
     {
-      "id": "DA-16", "severity": "P2", "lens": "accessibility", "role": "all",
+      "id": "DA-16",
+      "severity": "P2",
+      "lens": "accessibility",
+      "role": "all",
       "title": "Primary buttons failed WCAG AA contrast",
-      "location": ["~110 buttons across app/ and components/ using bg-[var(--ll-yellow)] or bg-[var(--ll-accent)]"],
+      "location": [
+        "~110 buttons across app/ and components/ using bg-[var(--ll-yellow)] or bg-[var(--ll-accent)]"
+      ],
       "evidence": "Text token --ll-text-faint (#6b6460) on --ll-yellow (#E8B84B) measures 3.15:1; some buttons used --ll-text or white, which is lower still. Many switched on hover to the 11%-alpha yellow, which would make dark text disappear.",
       "impact": "Low-legibility primary actions (Sign in, Submit, Retry) on low-end, outdoor-lit phone screens.",
-      "fix_status": "fixed", "fix": "Solid yellow/accent surfaces use --ll-bg text (9.45:1) and hover:opacity-90. Colours and tokens are unchanged, so the visual identity holds.",
-      "test": "__tests__/december-assurance/ui-contracts.test.ts (token ratio + source sweep)", "external": null
+      "fix_status": "fixed",
+      "fix": "Solid yellow/accent surfaces use --ll-bg text (9.45:1) and hover:opacity-90. Colours and tokens are unchanged, so the visual identity holds.",
+      "test": "__tests__/december-assurance/ui-contracts.test.ts (token ratio + source sweep)",
+      "external": null
     },
     {
-      "id": "DA-17", "severity": "P3", "lens": "accessibility", "role": "student, teacher, guardian",
+      "id": "DA-17",
+      "severity": "P3",
+      "lens": "accessibility",
+      "role": "student, teacher, guardian",
       "title": "Icon-only controls without accessible names",
-      "location": ["components/EventCalendar.tsx", "app/teacher/timetable/page.tsx"],
+      "location": [
+        "components/EventCalendar.tsx",
+        "app/teacher/timetable/page.tsx"
+      ],
       "evidence": "Month navigation and a modal close button had only an icon; the calendar buttons were 28px touch targets.",
       "impact": "Screen readers announce 'button' with no purpose; small targets on phones.",
-      "fix_status": "fixed", "fix": "aria-labels added; calendar buttons use the 44px minimum target.",
-      "test": "__tests__/december-assurance/ui-contracts.test.ts", "external": null
+      "fix_status": "fixed",
+      "fix": "aria-labels added; calendar buttons use the 44px minimum target.",
+      "test": "__tests__/december-assurance/ui-contracts.test.ts",
+      "external": null
     },
     {
-      "id": "DA-18", "severity": "P2", "lens": "student + failure/recovery", "role": "student",
+      "id": "DA-18",
+      "severity": "P2",
+      "lens": "student + failure/recovery",
+      "role": "student",
       "title": "Error and offline pages falsely claimed work was saved",
-      "location": ["app/error.tsx", "app/offline/page.tsx", "public/offline.html", "public/sw.js"],
+      "location": [
+        "app/error.tsx",
+        "app/offline/page.tsx",
+        "public/offline.html",
+        "public/sw.js"
+      ],
       "evidence": "'Your work has been saved' was shown for every unexpected error and every offline navigation, including online-only flows that the offline queue reports as unsupported_offline.",
       "impact": "Misleading success state: learners do not redo work that was lost.",
-      "fix_status": "fixed", "fix": "Honest wording plus a pointer to the error reference; SW_VERSION bumped so installed clients refresh the precached offline page.",
-      "test": "__tests__/december-assurance/ui-contracts.test.ts; existing __tests__/sw.cache-rules.test.ts", "external": null
+      "fix_status": "fixed",
+      "fix": "Honest wording plus a pointer to the error reference; SW_VERSION bumped so installed clients refresh the precached offline page.",
+      "test": "__tests__/december-assurance/ui-contracts.test.ts; existing __tests__/sw.cache-rules.test.ts",
+      "external": null
     },
     {
-      "id": "DA-19", "severity": "P2", "lens": "child privacy", "role": "anyone signed in",
+      "id": "DA-19",
+      "severity": "P2",
+      "lens": "child privacy",
+      "role": "anyone signed in",
       "title": "Portfolio share page ignored the portfolio feature flag",
-      "location": ["app/portfolio/[shareCode]/page.tsx"],
+      "location": [
+        "app/portfolio/[shareCode]/page.tsx"
+      ],
       "evidence": "GET /api/portfolio/[shareCode] returns 404 when feature:portfolio is off; the page route read the share and rendered the learner's name and school regardless.",
       "impact": "Turning the feature off did not stop learner data being served.",
-      "fix_status": "fixed", "fix": "The page returns notFound() when the flag is off.",
-      "test": "__tests__/december-assurance/ui-contracts.test.ts", "external": null
+      "fix_status": "fixed",
+      "fix": "The page returns notFound() when the flag is off.",
+      "test": "__tests__/december-assurance/ui-contracts.test.ts",
+      "external": null
     },
     {
-      "id": "DA-20", "severity": "P2", "lens": "guardian + educational authority", "role": "guardian, student",
+      "id": "DA-20",
+      "severity": "P2",
+      "lens": "guardian + educational authority",
+      "role": "guardian, student",
       "title": "AI homework scores reach families without human approval",
-      "location": ["app/api/homework/review/route.ts", "app/api/guardian/*", "app/guardian/*"],
+      "location": [
+        "app/api/homework/review/route.ts",
+        "app/api/guardian/*",
+        "app/guardian/*"
+      ],
       "evidence": "aiReviewed is set by the AI review pipeline itself, not by a teacher. After DA-09 every guardian surface consistently shows aiScore once aiReviewed is set, labelled '(AI)'. AssignmentSubmission, by contrast, requires teacherApproved before a score is released.",
       "impact": "An LLM-produced score is released to families without teacher approval, which CORE_AGENT_RULES says only governed systems or humans may decide.",
-      "fix_status": "documented — material educational-authority decision (TRUE STOP)", "fix": null,
-      "test": null, "external": "Decision owner: curriculum/assessment governance. Options: gate on teacherScore, or add a teacherApproved flag like AssignmentSubmission."
+      "fix_status": "documented — material educational-authority decision (TRUE STOP)",
+      "fix": null,
+      "test": null,
+      "external": "Decision owner: curriculum/assessment governance. Options: gate on teacherScore, or add a teacherApproved flag like AssignmentSubmission."
     },
     {
-      "id": "DA-21", "severity": "P2", "lens": "student + educational authority", "role": "student",
+      "id": "DA-21",
+      "severity": "P2",
+      "lens": "student + educational authority",
+      "role": "student",
       "title": "'Advisory' LLM grades update adaptive mastery",
-      "location": ["app/api/grading/ai-literacy/route.ts", "app/api/grading/code/route.ts", "app/api/grading/essay/route.ts"],
+      "location": [
+        "app/api/grading/ai-literacy/route.ts",
+        "app/api/grading/code/route.ts",
+        "app/api/grading/essay/route.ts"
+      ],
       "evidence": "Route headers say the LLM grade is advisory, yet each calls recordAnswer(correct = score >= threshold) on the adaptive mastery store.",
       "impact": "An LLM judgement becomes mastery evidence without human review.",
-      "fix_status": "documented — material educational-authority decision (TRUE STOP)", "fix": null,
-      "test": null, "external": "Decision owner: learning-authority governance."
+      "fix_status": "documented — material educational-authority decision (TRUE STOP)",
+      "fix": null,
+      "test": null,
+      "external": "Decision owner: learning-authority governance."
     },
     {
-      "id": "DA-22", "severity": "P2", "lens": "child privacy + product reachability", "role": "student, external viewer",
+      "id": "DA-22",
+      "severity": "P2",
+      "lens": "child privacy + product reachability",
+      "role": "student, external viewer",
       "title": "Portfolio 'share' links require a LiberiaLearn login",
-      "location": ["middleware.ts (PUBLIC_PATHS)", "app/portfolio/[shareCode]/page.tsx"],
+      "location": [
+        "middleware.ts (PUBLIC_PATHS)",
+        "app/portfolio/[shareCode]/page.tsx"
+      ],
       "evidence": "/portfolio is not a public path, so external recipients hit the login redirect. Any signed-in user in any school can open a share code.",
       "impact": "The feature does not work for its intended audience, and its access model is undefined.",
-      "fix_status": "documented — material child-privacy policy decision (TRUE STOP)", "fix": null,
-      "test": null, "external": "Decision owner: child-privacy governance (public vs. authenticated share, expiry)."
+      "fix_status": "documented — material child-privacy policy decision (TRUE STOP)",
+      "fix": null,
+      "test": null,
+      "external": "Decision owner: child-privacy governance (public vs. authenticated share, expiry)."
     },
     {
-      "id": "DA-23", "severity": "P2", "lens": "child privacy", "role": "student, guardian",
+      "id": "DA-23",
+      "severity": "P2",
+      "lens": "child privacy",
+      "role": "student, guardian",
       "title": "Transcripts and message attachments remain public-access blobs",
-      "location": ["app/api/messages/upload-attachment/route.ts", "app/api/student/portfolio/generate/route.ts", "app/api/admin/credentials/bulk-generate/route.ts"],
+      "location": [
+        "app/api/messages/upload-attachment/route.ts",
+        "app/api/student/portfolio/generate/route.ts",
+        "app/api/admin/credentials/bulk-generate/route.ts"
+      ],
       "evidence": "After DA-11 the URLs are unguessable but still public and non-expiring.",
       "impact": "A forwarded link grants permanent access to a minor's attachment or transcript.",
-      "fix_status": "documented — needs infrastructure (private blob store + signed delivery route)", "fix": null,
-      "test": null, "external": "Vercel Blob private store and a policy decision on transcript sharing."
+      "fix_status": "documented — needs infrastructure (private blob store + signed delivery route)",
+      "fix": null,
+      "test": null,
+      "external": "Vercel Blob private store and a policy decision on transcript sharing."
     },
     {
-      "id": "DA-24", "severity": "P2", "lens": "admin/MOE + operations", "role": "MOE official",
+      "id": "DA-24",
+      "severity": "P2",
+      "lens": "admin/MOE + operations",
+      "role": "MOE official",
       "title": "No MOE audit-trail surface",
-      "location": ["app/moe/dashboard/page.tsx"],
+      "location": [
+        "app/moe/dashboard/page.tsx"
+      ],
       "evidence": "The dashboard linked to /moe/audit, which does not exist; the dead tile was removed (DA-15). /admin/audit is ADMIN-only.",
       "impact": "National officials cannot review access to national data.",
-      "fix_status": "documented — policy decision on what MOE may see of the audit log", "fix": null,
-      "test": null, "external": null
+      "fix_status": "documented — policy decision on what MOE may see of the audit log",
+      "fix": null,
+      "test": null,
+      "external": null
     },
     {
-      "id": "DA-25", "severity": "P2", "lens": "product reachability", "role": "student, teacher",
+      "id": "DA-25",
+      "severity": "P2",
+      "lens": "product reachability",
+      "role": "student, teacher",
       "title": "Implemented pages with no navigation entry",
-      "location": ["/student/packs", "/student/passport", "/teacher/packs", "/teacher/approvals", "/teacher/rag", "/teacher/video-analytics", "/teacher/help"],
+      "location": [
+        "/student/packs",
+        "/student/passport",
+        "/teacher/packs",
+        "/teacher/approvals",
+        "/teacher/rag",
+        "/teacher/video-analytics",
+        "/teacher/help"
+      ],
       "evidence": "Static scan found no literal or dynamic link to these pages. Labs are linked dynamically and are not included.",
       "impact": "Weekly offline packs, which matter for December offline delivery, and the learning passport are only reachable by typing the URL.",
-      "fix_status": "documented — product decision (nav placement, feature flag readiness)", "fix": null,
-      "test": null, "external": null
+      "fix_status": "documented — product decision (nav placement, feature flag readiness)",
+      "fix": null,
+      "test": null,
+      "external": null
     },
     {
-      "id": "DA-26", "severity": "P2", "lens": "operations + support", "role": "support/operator",
+      "id": "DA-26",
+      "severity": "P2",
+      "lens": "operations + support",
+      "role": "support/operator",
       "title": "No operator view of a learner's stuck offline queue",
-      "location": ["app/api/student/sync/route.ts", "app/admin/ops/*"],
+      "location": [
+        "app/api/student/sync/route.ts",
+        "app/admin/ops/*"
+      ],
       "evidence": "The sync route returns structured resolutionHint codes and emits an offline.queue.conflicts gauge, but no admin surface lists one learner's rejected or conflicted operations. withRequestLogging wraps only 6 of 579 API routes.",
       "impact": "Support can see that sync is failing in aggregate but cannot answer 'why is this learner's work missing'.",
-      "fix_status": "documented — new operator surface; outside a defect fix", "fix": null,
-      "test": null, "external": null
+      "fix_status": "documented — new operator surface; outside a defect fix",
+      "fix": null,
+      "test": null,
+      "external": null
     },
     {
-      "id": "DA-27", "severity": "P3", "lens": "security", "role": "public",
+      "id": "DA-27",
+      "severity": "P3",
+      "lens": "security",
+      "role": "public",
       "title": "Certificate share tokens cannot be revoked",
-      "location": ["lib/certificates/shareToken.ts"],
+      "location": [
+        "lib/certificates/shareToken.ts"
+      ],
       "evidence": "Tokens are a deterministic HMAC of the certificate ID with no expiry and a 'dev-fallback-secret' fallback when NEXTAUTH_SECRET is missing.",
       "impact": "A shared certificate stays public for good; the fallback secret is unsafe if production is ever misconfigured (NextAuth would also fail in that case).",
-      "fix_status": "documented", "fix": null, "test": null, "external": null
+      "fix_status": "documented",
+      "fix": null,
+      "test": null,
+      "external": null
     },
     {
-      "id": "DA-28", "severity": "P3", "lens": "teacher", "role": "teacher",
+      "id": "DA-28",
+      "severity": "P3",
+      "lens": "teacher",
+      "role": "teacher",
       "title": "Essay/code grade override is school-scoped, not class-scoped",
-      "location": ["app/api/grading/[submissionId]/override/route.ts"],
+      "location": [
+        "app/api/grading/[submissionId]/override/route.ts"
+      ],
       "evidence": "Any teacher in the school may override any learner's graded submission; the route-policy declares school-membership. The override is now audited (DA-13).",
       "impact": "Wider than assignment grading, which is limited to the class teacher.",
-      "fix_status": "documented — scoping decision", "fix": null, "test": null, "external": null
+      "fix_status": "documented — scoping decision",
+      "fix": null,
+      "test": null,
+      "external": null
     },
     {
-      "id": "DA-29", "severity": "P3", "lens": "product reachability", "role": "teacher",
+      "id": "DA-29",
+      "severity": "P3",
+      "lens": "product reachability",
+      "role": "teacher",
       "title": "Duplicate assignment creation page",
-      "location": ["app/teacher/assignments/create/page.tsx", "app/teacher/assignments/new/page.tsx"],
+      "location": [
+        "app/teacher/assignments/create/page.tsx",
+        "app/teacher/assignments/new/page.tsx"
+      ],
       "evidence": "Both post to /api/teacher/assignments; only /new is linked.",
       "impact": "Maintenance drift only; no parallel authority.",
-      "fix_status": "documented", "fix": null, "test": null, "external": null
+      "fix_status": "documented",
+      "fix": null,
+      "test": null,
+      "external": null
     },
     {
-      "id": "DA-30", "severity": "P3", "lens": "operations + support", "role": "admin",
+      "id": "DA-30",
+      "severity": "P3",
+      "lens": "operations + support",
+      "role": "admin",
       "title": "Ops health page links to a repository runbook the app does not serve",
-      "location": ["app/admin/ops/health/page.tsx (/docs/ops/RUNBOOK.md)"],
+      "location": [
+        "app/admin/ops/health/page.tsx (/docs/ops/RUNBOOK.md)"
+      ],
       "evidence": "No route serves /docs/*.",
       "impact": "Operator dead link during an incident.",
-      "fix_status": "documented", "fix": null, "test": null, "external": null
+      "fix_status": "documented",
+      "fix": null,
+      "test": null,
+      "external": null
     },
     {
-      "id": "DA-31", "severity": "P3", "lens": "security (error leakage)", "role": "all",
+      "id": "DA-31",
+      "severity": "P3",
+      "lens": "security (error leakage)",
+      "role": "all",
       "title": "Many routes return raw exception messages on 500",
-      "location": ["e.g. app/api/report-cards/[id]/route.ts, app/api/guardian/report-cards/route.ts, app/api/student/[id]/route.ts"],
+      "location": [
+        "e.g. app/api/report-cards/[id]/route.ts, app/api/guardian/report-cards/route.ts, app/api/student/[id]/route.ts"
+      ],
       "evidence": "Common pattern: NextResponse.json({ error: err?.message }). All of these routes require authentication.",
       "impact": "Possible internal detail disclosure to signed-in users; low individual risk.",
-      "fix_status": "documented — broad cleanup, best done through handleApiError", "fix": null, "test": null, "external": null
+      "fix_status": "documented — broad cleanup, best done through handleApiError",
+      "fix": null,
+      "test": null,
+      "external": null
     }
   ],
   "journeys": [
-    { "lens": "student", "check": "Quiz submit is scored from a sealed server session; retry and offline replay are idempotent", "result": "PASS", "evidence": "app/api/student/lessons/[id]/quiz/submit/route.ts; __tests__/quiz-attempt.idempotency.test.ts" },
-    { "lens": "student", "check": "Exit-ticket and quiz answer keys are never sent to learners", "result": "PASS", "evidence": "app/api/student/work/[scheduledWorkId]/route.ts (answerKey omitted, exit ticket sanitised)" },
-    { "lens": "student", "check": "Offline client cannot assert mastery; identity mismatch rejected", "result": "PASS", "evidence": "app/api/student/sync/route.ts resolutionHint offline_client_cannot_assert_mastery / learner_identity_mismatch; __tests__/student-sync.conflict.test.ts, __tests__/offline-hardening-v1.test.ts" },
-    { "lens": "student", "check": "No-evidence, weak-prerequisite, stale-release learner experience", "result": "PASS", "evidence": "__tests__/learning-authority/learner-experience-*.test.ts, release-manifests.test.ts, placement-containment.test.ts" },
-    { "lens": "student", "check": "Error/offline states are honest about unsaved work", "result": "FAIL → FIXED", "evidence": "DA-18" },
-    { "lens": "student", "check": "Learner submissions isolated from other learners", "result": "FAIL → FIXED", "evidence": "DA-03" },
-    { "lens": "teacher", "check": "Student detail and intelligence limited to the teacher's enrolled students", "result": "PASS", "evidence": "app/api/teacher/students/[studentId]/route.ts; app/api/teacher/intelligence/[studentId]/route.ts (getTeacherScope)" },
-    { "lens": "teacher", "check": "AI assignment grades need teacher approval before a score exists", "result": "PASS", "evidence": "app/api/teacher/assignments/submissions/[submissionId]/approve/route.ts" },
-    { "lens": "teacher", "check": "Placement override transactional and audited", "result": "PASS", "evidence": "app/api/teacher/placements/[id]/review/route.ts" },
-    { "lens": "teacher", "check": "Create homework from the Homework screen", "result": "FAIL → FIXED", "evidence": "DA-14" },
-    { "lens": "teacher", "check": "Intervention alert → review intervention", "result": "FAIL → FIXED", "evidence": "DA-15" },
-    { "lens": "teacher", "check": "Grade overrides are traceable", "result": "FAIL → FIXED", "evidence": "DA-13" },
-    { "lens": "guardian", "check": "Every child-data route verifies the guardian↔student link for the requested child", "result": "PASS", "evidence": "app/api/guardian/{grades,attendance,assignments,report-cards,student/[studentId],dashboard}/route.ts; __tests__/guardian.dashboard.test.ts" },
-    { "lens": "guardian", "check": "Messages go only to a teacher of the linked child; read receipts recipient-only", "result": "PASS", "evidence": "app/api/guardian/messages/route.ts; app/api/guardian/messages/[id]/read/route.ts" },
-    { "lens": "guardian", "check": "Only published report cards visible", "result": "PASS", "evidence": "app/api/guardian/report-cards/route.ts; app/api/report-cards/[id]/route.ts" },
-    { "lens": "guardian", "check": "No unreviewed machine scores", "result": "FAIL → FIXED (policy item DA-20 remains)", "evidence": "DA-09, DA-20" },
-    { "lens": "admin/MOE", "check": "MOE county and dashboard aggregates suppress cohorts below 5", "result": "PASS", "evidence": "app/api/moe/counties/route.ts; app/api/moe/dashboard/route.ts" },
-    { "lens": "admin/MOE", "check": "MOE WAEC and placement aggregates free of individual facts", "result": "FAIL → FIXED", "evidence": "DA-04, DA-05, DA-06" },
-    { "lens": "admin/MOE", "check": "Portal middleware: /moe MOE-only, /admin ADMIN-only, /platform platform-admin-only", "result": "PASS", "evidence": "middleware.ts" },
-    { "lens": "security", "check": "All 579 API routes scanned for missing authentication", "result": "PASS", "evidence": "Only intentional public routes lack session checks (health, auth, enroll/register, onboarding accept, SMS webhooks with provider checks, dev route blocked in production); cron routes verify CRON_SECRET" },
-    { "lens": "security", "check": "Tenant boundaries on ID-addressed routes (sampled 30+ [id] routes)", "result": "FAIL → FIXED", "evidence": "DA-08; all other sampled routes scope by schoolId, enrollment, or link" },
-    { "lens": "security", "check": "Post-login redirect and login throttling", "result": "FAIL → FIXED", "evidence": "DA-01, DA-02" },
-    { "lens": "accessibility", "check": "Primary action contrast and icon-button names", "result": "FAIL → FIXED", "evidence": "DA-16, DA-17" },
-    { "lens": "operations", "check": "Error pages expose a support reference (digest) without internals", "result": "PASS", "evidence": "app/error.tsx, app/global-error.tsx" },
-    { "lens": "failure/recovery", "check": "Double-submit of report card publish", "result": "FAIL → FIXED", "evidence": "DA-12" },
-    { "lens": "failure/recovery", "check": "Homework and quiz retry after lost response", "result": "PASS", "evidence": "app/api/homework/submit/route.ts (key bound to learner and payload); quiz clientAttemptId replay" },
-    { "lens": "reachability", "check": "Literal navigation targets resolve to routes", "result": "FAIL → FIXED", "evidence": "DA-14, DA-15; DA-25 documented" }
+    {
+      "lens": "student",
+      "check": "Quiz submit is scored from a sealed server session; retry and offline replay are idempotent",
+      "result": "PASS",
+      "evidence": "app/api/student/lessons/[id]/quiz/submit/route.ts; __tests__/quiz-attempt.idempotency.test.ts"
+    },
+    {
+      "lens": "student",
+      "check": "Exit-ticket and quiz answer keys are never sent to learners",
+      "result": "PASS",
+      "evidence": "app/api/student/work/[scheduledWorkId]/route.ts (answerKey omitted, exit ticket sanitised)"
+    },
+    {
+      "lens": "student",
+      "check": "Offline client cannot assert mastery; identity mismatch rejected",
+      "result": "PASS",
+      "evidence": "app/api/student/sync/route.ts resolutionHint offline_client_cannot_assert_mastery / learner_identity_mismatch; __tests__/student-sync.conflict.test.ts, __tests__/offline-hardening-v1.test.ts"
+    },
+    {
+      "lens": "student",
+      "check": "No-evidence, weak-prerequisite, stale-release learner experience",
+      "result": "PASS",
+      "evidence": "__tests__/learning-authority/learner-experience-*.test.ts, release-manifests.test.ts, placement-containment.test.ts"
+    },
+    {
+      "lens": "student",
+      "check": "Error/offline states are honest about unsaved work",
+      "result": "FAIL → FIXED",
+      "evidence": "DA-18"
+    },
+    {
+      "lens": "student",
+      "check": "Learner submissions isolated from other learners",
+      "result": "FAIL → FIXED",
+      "evidence": "DA-03"
+    },
+    {
+      "lens": "teacher",
+      "check": "Student detail and intelligence limited to the teacher's enrolled students",
+      "result": "PASS",
+      "evidence": "app/api/teacher/students/[studentId]/route.ts; app/api/teacher/intelligence/[studentId]/route.ts (getTeacherScope)"
+    },
+    {
+      "lens": "teacher",
+      "check": "AI assignment grades need teacher approval before a score exists",
+      "result": "PASS",
+      "evidence": "app/api/teacher/assignments/submissions/[submissionId]/approve/route.ts"
+    },
+    {
+      "lens": "teacher",
+      "check": "Placement override transactional and audited",
+      "result": "PASS",
+      "evidence": "app/api/teacher/placements/[id]/review/route.ts"
+    },
+    {
+      "lens": "teacher",
+      "check": "Create homework from the Homework screen",
+      "result": "FAIL → FIXED",
+      "evidence": "DA-14"
+    },
+    {
+      "lens": "teacher",
+      "check": "Intervention alert → review intervention",
+      "result": "FAIL → FIXED",
+      "evidence": "DA-15"
+    },
+    {
+      "lens": "teacher",
+      "check": "Grade overrides are traceable",
+      "result": "FAIL → FIXED",
+      "evidence": "DA-13"
+    },
+    {
+      "lens": "guardian",
+      "check": "Every child-data route verifies the guardian↔student link for the requested child",
+      "result": "PASS",
+      "evidence": "app/api/guardian/{grades,attendance,assignments,report-cards,student/[studentId],dashboard}/route.ts; __tests__/guardian.dashboard.test.ts"
+    },
+    {
+      "lens": "guardian",
+      "check": "Messages go only to a teacher of the linked child; read receipts recipient-only",
+      "result": "PASS",
+      "evidence": "app/api/guardian/messages/route.ts; app/api/guardian/messages/[id]/read/route.ts"
+    },
+    {
+      "lens": "guardian",
+      "check": "Only published report cards visible",
+      "result": "PASS",
+      "evidence": "app/api/guardian/report-cards/route.ts; app/api/report-cards/[id]/route.ts"
+    },
+    {
+      "lens": "guardian",
+      "check": "No unreviewed machine scores",
+      "result": "FAIL → FIXED (policy item DA-20 remains)",
+      "evidence": "DA-09, DA-20"
+    },
+    {
+      "lens": "admin/MOE",
+      "check": "MOE county and dashboard aggregates suppress cohorts below 5",
+      "result": "PASS",
+      "evidence": "app/api/moe/counties/route.ts; app/api/moe/dashboard/route.ts"
+    },
+    {
+      "lens": "admin/MOE",
+      "check": "MOE WAEC and placement aggregates free of individual facts",
+      "result": "FAIL → FIXED",
+      "evidence": "DA-04, DA-05, DA-06"
+    },
+    {
+      "lens": "admin/MOE",
+      "check": "Portal middleware: /moe MOE-only, /admin ADMIN-only, /platform platform-admin-only",
+      "result": "PASS",
+      "evidence": "middleware.ts"
+    },
+    {
+      "lens": "security",
+      "check": "All 579 API routes scanned for missing authentication",
+      "result": "PASS",
+      "evidence": "Only intentional public routes lack session checks (health, auth, enroll/register, onboarding accept, SMS webhooks with provider checks, dev route blocked in production); cron routes verify CRON_SECRET"
+    },
+    {
+      "lens": "security",
+      "check": "Tenant boundaries on ID-addressed routes (sampled 30+ [id] routes)",
+      "result": "FAIL → FIXED",
+      "evidence": "DA-08; all other sampled routes scope by schoolId, enrollment, or link"
+    },
+    {
+      "lens": "security",
+      "check": "Post-login redirect and login throttling",
+      "result": "FAIL → FIXED",
+      "evidence": "DA-01, DA-02"
+    },
+    {
+      "lens": "accessibility",
+      "check": "Primary action contrast and icon-button names",
+      "result": "FAIL → FIXED",
+      "evidence": "DA-16, DA-17"
+    },
+    {
+      "lens": "operations",
+      "check": "Error pages expose a support reference (digest) without internals",
+      "result": "PASS",
+      "evidence": "app/error.tsx, app/global-error.tsx"
+    },
+    {
+      "lens": "failure/recovery",
+      "check": "Double-submit of report card publish",
+      "result": "FAIL → FIXED",
+      "evidence": "DA-12"
+    },
+    {
+      "lens": "failure/recovery",
+      "check": "Homework and quiz retry after lost response",
+      "result": "PASS",
+      "evidence": "app/api/homework/submit/route.ts (key bound to learner and payload); quiz clientAttemptId replay"
+    },
+    {
+      "lens": "reachability",
+      "check": "Literal navigation targets resolve to routes",
+      "result": "FAIL → FIXED",
+      "evidence": "DA-14, DA-15; DA-25 documented"
+    }
   ],
   "external_only": [
     "Supabase: verify RLS, tenant data, and that no stale public transcripts exist at portfolios/{studentId}/… paths (DA-11).",

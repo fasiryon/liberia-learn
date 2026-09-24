@@ -739,3 +739,17 @@ describe("GET /api/guardian/dashboard — AI score release", () => {
     expect(JSON.stringify(data)).not.toContain('"score":35');
   });
 });
+
+describe("GET /api/guardian/dashboard — grade visibility is applied before the limit", () => {
+  it("queries only guardian-visible homework grades", async () => {
+    await dashboardGET();
+    expect(mockHomeworkSubmissionFindMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        take: 5,
+        where: expect.objectContaining({
+          OR: [{ teacherScore: { not: null } }, { aiReviewed: true, aiScore: { not: null } }],
+        }),
+      }),
+    );
+  });
+});

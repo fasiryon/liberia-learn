@@ -104,7 +104,12 @@ export async function GET() {
         // ── Recent grades ──────────────────────────────────────────────────
         const [hwSubmissions, assignmentSubmissions] = await Promise.all([
           prisma.homeworkSubmission.findMany({
-            where: { studentId },
+            // Visibility is part of the query so `take` counts only grades a
+            // guardian may see: teacher-scored, or AI-scored and reviewed.
+            where: {
+              studentId,
+              OR: [{ teacherScore: { not: null } }, { aiReviewed: true, aiScore: { not: null } }],
+            },
             orderBy: { submittedAt: "desc" },
             take: 5,
             include: {

@@ -113,7 +113,7 @@ No P0 defect was found. All eight P1 repository defects are fixed, and each is c
 - **Location:** `app/api/guardian/dashboard/route.ts`
 - **Evidence / reproduction:** recentGrades used teacherScore ?? aiScore without checking aiReviewed. /api/guardian/students, /api/guardian/student/[id], and /api/homework/[id] all withhold aiScore until aiReviewed.
 - **Authority / privacy impact:** Provisional machine scores shown to families as grades, unlabeled.
-- **Fix status:** fixed — AI score shown only when aiReviewed, matching the other guardian and student surfaces.
+- **Fix status:** fixed — AI score shown only when aiReviewed, matching the other guardian and student surfaces; the visibility predicate is part of the query so the 5-grade limit counts only visible grades.
 - **Closure test:** __tests__/guardian.dashboard.test.ts ('AI score release')
 - **External dependency:** none
 
