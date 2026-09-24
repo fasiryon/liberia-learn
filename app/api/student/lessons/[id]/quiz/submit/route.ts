@@ -13,6 +13,7 @@ import { recordPerformanceEvent } from "@/lib/intelligence/recordPerformanceEven
 import { resolveScheduledLessonContext } from "@/lib/student/resolveScheduledLessonContext";
 import { recordAnswer, buildSkillKey } from "@/lib/adaptive/updateMastery";
 import { openLessonQuizSession } from "@/lib/grading/lessonQuizSession";
+import { CLIENT_ATTEMPT_ID_PATTERN } from "@/lib/offline/attemptId";
 
 type QuizSubmissionBody = {
   quizId?: string;
@@ -24,7 +25,6 @@ type QuizSubmissionBody = {
   clientAttemptId?: string;
 };
 
-const CLIENT_ATTEMPT_ID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 type StoredEvaluation = {
   questions?: Array<{ id: string; question: string; correctIndex: number; explanation: string }>;

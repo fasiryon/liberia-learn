@@ -163,3 +163,39 @@ describe("quiz attempt idempotency — offline sync", () => {
     expect(prisma.assessmentAttempt.create).not.toHaveBeenCalled();
   });
 });
+
+describe("client attempt ID generation", () => {
+  it("always produces an ID the submit route accepts, including on WebViews without randomUUID", async () => {
+    const { newClientAttemptId, CLIENT_ATTEMPT_ID_PATTERN } = await import("@/lib/offline/attemptId");
+    expect(newClientAttemptId()).toMatch(CLIENT_ATTEMPT_ID_PATTERN);
+
+    const realCrypto = globalThis.crypto;
+    try {
+      vi.stubGlobal("crypto", { getRandomValues: realCrypto.getRandomValues.bind(realCrypto) });
+      const viaRandomValues = newClientAttemptId();
+      expect(viaRandomValues).toMatch(CLIENT_ATTEMPT_ID_PATTERN);
+      expect(viaRandomValues[14]).toBe("4");
+
+      vi.stubGlobal("crypto", undefined);
+      const ids = new Set(Array.from({ length: 50 }, () => newClientAttemptId()));
+      expect([...ids].every((id) => CLIENT_ATTEMPT_ID_PATTERN.test(id))).toBe(true);
+      expect(ids.size).toBe(50);
+    } finally {
+      vi.unstubAllGlobals();
+    }
+  });
+
+  it("the submit route accepts a fallback-generated ID", async () => {
+    vi.clearAllMocks();
+    const { newClientAttemptId } = await import("@/lib/offline/attemptId");
+    const realCrypto = globalThis.crypto;
+    vi.stubGlobal("crypto", { getRandomValues: realCrypto.getRandomValues.bind(realCrypto) });
+    const fallbackId = newClientAttemptId();
+    vi.unstubAllGlobals();
+    (prisma.assessmentAttempt.findUnique as any).mockResolvedValue({
+      id: fallbackId, userId: "student-1", score: null, status: "offline_pending_review", evaluation: null, rawResponse: null,
+    });
+    const response = await submitQuiz(submitRequest({ quizId: "quiz-1", clientAttemptId: fallbackId, answers }), { params: { id: "sw-1" } });
+    expect(response.status).toBe(200);
+  });
+});

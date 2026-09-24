@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import WhatsAppShareButton from "@/components/student/WhatsAppShareButton";
 import { saveOfflineQuizAttempt } from "@/lib/offline-quiz-attempts";
+import { newClientAttemptId as newAttemptId } from "@/lib/offline/attemptId";
 import { loadQuizDraft, removeQuizDraft, saveQuizDraft } from "@/lib/offline/quizDraft";
 
 type LessonQuizQuestion = {
@@ -50,9 +51,6 @@ type LessonQuiz = {
   questions: LessonQuizQuestion[];
 };
 
-function newAttemptId(): string {
-  return typeof crypto !== "undefined" && "randomUUID" in crypto ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`;
-}
 
 export function LessonQuizPanel({
   lessonId,
@@ -92,7 +90,11 @@ export function LessonQuizPanel({
       setQuiz({ quizId: draft.quizId, questions: draft.questions });
       setAnswers(draft.answers ?? {});
       setStartedAt(draft.startedAt ?? null);
-      setAttemptId(draft.attemptId ?? newAttemptId());
+      // A draft saved before attempt IDs existed gets one now, persisted
+      // immediately so a reopened page resubmits under the same ID.
+      const restoredAttemptId = draft.attemptId ?? newAttemptId();
+      setAttemptId(restoredAttemptId);
+      if (!draft.attemptId) void saveQuizDraft(lessonId, { ...draft, attemptId: restoredAttemptId }).catch(() => {});
     }).catch(() => {});
   }, [lessonId]);
 
@@ -277,7 +279,11 @@ export function LessonQuizPanel({
                           [question.id]: optionIndex,
                         };
                         setAnswers(nextAnswers);
-                        void saveQuizDraft(lessonId, { ...quiz, answers: nextAnswers, startedAt }).catch(() => {});
+                        const draftAttemptId = attemptId ?? newAttemptId();
+                        if (!attemptId) setAttemptId(draftAttemptId);
+                        // Every draft write keeps the attempt ID; dropping it would let a
+                        // reopened page resubmit under a new ID and duplicate evidence.
+                        void saveQuizDraft(lessonId, { ...quiz, answers: nextAnswers, startedAt, attemptId: draftAttemptId }).catch(() => {});
                       }}
                       className={`min-h-12 rounded-xl border px-4 py-3 text-left text-sm leading-6 transition-colors ${
                         showReview
