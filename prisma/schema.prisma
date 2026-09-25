@@ -1193,6 +1193,8 @@ model PlacementSession {
   student           Student                @relation(fields: [studentId], references: [id])
   items             PlacementSessionItem[]
 
+  // One ACTIVE session per student is enforced by the partial unique index
+  // PlacementSession_one_active_per_student_key (canonical migration only).
   @@index([studentId, status])
   @@index([schoolId, createdAt])
 }
@@ -4390,6 +4392,12 @@ model StudentProgress {
   exitTicketResponses Json?
   exitTicketScore     Int?
   createdAt           DateTime      @default(now())
+  /// Claim-once markers for completion side effects: set by a conditional
+  /// update immediately before the effect runs (see completeScheduledLesson).
+  masteryEffectAt     DateTime?
+  progressionEffectAt DateTime?
+  streakEffectAt      DateTime?
+  guardianNotifiedAt  DateTime?
   scheduledWork       ScheduledWork @relation(fields: [scheduledWorkId], references: [id])
   student             User          @relation(fields: [studentId], references: [id])
 

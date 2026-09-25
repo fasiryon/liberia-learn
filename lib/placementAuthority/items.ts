@@ -3,9 +3,9 @@
  *
  * Items are generated (or drawn from the fallback bank) on the server and
  * persisted with their answer key. Only toPublicItem / toRespondedItem shapes
- * ever reach a learner, and the key appears only after the response is stored.
+ * ever reach a learner, and neither carries the key.
  */
-import { createHash } from "crypto";
+import { createHash, randomInt } from "crypto";
 import { routedCompletion } from "@/lib/ai/routedCompletion";
 import { buildPrompt, getPromptMetadata } from "@/lib/ai/promptRegistry";
 import { PLACEMENT_ASSESSMENT_VERSION } from "@/lib/placementAuthority/scoring";
@@ -83,12 +83,47 @@ function parseGeneratedItem(content: string, difficulty: number): IssuedItemCont
   }
 }
 
-function bankItem(difficulty: number, usedPrompts: Set<string>): IssuedItemContent {
-  const unused = PLACEMENT_ITEM_BANK.filter((item) => !usedPrompts.has(item.prompt));
-  const pool = unused.length > 0 ? unused : PLACEMENT_ITEM_BANK;
-  const pick = [...pool].sort(
-    (a, b) => Math.abs(a.difficulty - difficulty) - Math.abs(b.difficulty - difficulty)
-  )[0];
+/** Uniform integer in [0, max). Injectable so tests can pin the draw. */
+export type RandomIndex = (max: number) => number;
+const secureRandomIndex: RandomIndex = (max) => randomInt(max);
+
+/**
+ * Fisher-Yates shuffle of an item's options, remapping the key. Positions are
+ * drawn per issuance, so a key learned in one session does not carry over as
+ * "option C" in the next.
+ */
+export function shuffleOptions(options: string[], correctIndex: number, random: RandomIndex = secureRandomIndex) {
+  const order = options.map((_, index) => index);
+  for (let i = order.length - 1; i > 0; i--) {
+    const j = random(i + 1);
+    [order[i], order[j]] = [order[j], order[i]];
+  }
+  return { options: order.map((index) => options[index]), correctIndex: order.indexOf(correctIndex) };
+}
+
+/**
+ * Draw a fallback item. Candidates exclude prompts already used in this
+ * session and, while any remain, prompts this learner saw in earlier sessions;
+ * among the closest-difficulty candidates one is chosen at random. Reuse of a
+ * previously seen prompt happens only once the approved bank is exhausted and
+ * is reported so the caller can audit it.
+ */
+export function drawBankItem(input: {
+  difficulty: number;
+  usedPrompts: Set<string>;
+  priorExposure: Set<string>;
+  random?: RandomIndex;
+}): IssuedItemContent & { reusedPriorExposure: boolean } {
+  const random = input.random ?? secureRandomIndex;
+  const unusedThisSession = PLACEMENT_ITEM_BANK.filter((item) => !input.usedPrompts.has(item.prompt));
+  const sessionPool = unusedThisSession.length > 0 ? unusedThisSession : PLACEMENT_ITEM_BANK;
+  const unseen = sessionPool.filter((item) => !input.priorExposure.has(item.prompt));
+  const pool = unseen.length > 0 ? unseen : sessionPool;
+  const distance = (item: { difficulty: number }) => Math.abs(item.difficulty - input.difficulty);
+  const nearest = Math.min(...pool.map(distance));
+  const candidates = pool.filter((item) => distance(item) === nearest);
+  const pick = candidates[random(candidates.length)];
+  const shuffled = shuffleOptions(pick.options, pick.correctIndex, random);
   return {
     source: "item_bank",
     difficulty: pick.difficulty,
@@ -96,9 +131,10 @@ function bankItem(difficulty: number, usedPrompts: Set<string>): IssuedItemConte
     strand: "general",
     moeStandard: null,
     prompt: pick.prompt,
-    options: [...pick.options],
-    correctIndex: pick.correctIndex,
+    options: shuffled.options,
+    correctIndex: shuffled.correctIndex,
     explanation: "",
+    reusedPriorExposure: unseen.length === 0,
   };
 }
 
@@ -109,9 +145,11 @@ function bankItem(difficulty: number, usedPrompts: Set<string>): IssuedItemConte
 export async function generatePlacementItem(input: {
   difficulty: number;
   usedPrompts: Set<string>;
+  /** Prompts this learner saw in earlier sessions; loaded only on fallback. */
+  loadPriorExposure: () => Promise<Set<string>>;
   schoolId: string;
   userId: string;
-}): Promise<IssuedItemContent> {
+}): Promise<IssuedItemContent & { reusedPriorExposure?: boolean }> {
   const promptMetadata = getPromptMetadata("placement.question.system");
   try {
     const completion = await routedCompletion({
@@ -149,7 +187,11 @@ export async function generatePlacementItem(input: {
   } catch {
     // fall through to the bank
   }
-  return bankItem(input.difficulty, input.usedPrompts);
+  return drawBankItem({
+    difficulty: input.difficulty,
+    usedPrompts: input.usedPrompts,
+    priorExposure: await input.loadPriorExposure(),
+  });
 }
 
 /** Learner view of an unanswered item: no key, no explanation, no correctness. */
@@ -165,13 +207,16 @@ export function toPublicItem(item: StoredItem) {
   };
 }
 
-/** Learner view after the response is recorded (the answer can no longer change). */
+/**
+ * Learner view after the response is recorded (the answer can no longer
+ * change). Correctness is shown, but the answer key and explanation stay
+ * server-side: revealing them let a learner harvest keys in one attempt and
+ * replay them in a new session. Reviewers see keys through staff APIs only.
+ */
 export function toRespondedItem(item: StoredItem) {
   return {
     ...toPublicItem(item),
     selectedIndex: item.selectedIndex,
     isCorrect: item.isCorrect,
-    correctIndex: item.correctIndex,
-    explanation: item.explanation || null,
   };
 }

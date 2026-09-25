@@ -33,7 +33,8 @@
     { "name": "Timetable_classId_dayOfWeek_idx", "table": "Timetable", "kind": "RETAINED_BTREE", "required": true, "definitionMd5": "57724bd17a75c838cedfaf65f988ca5f" },
     { "name": "VirtualLab_status_grade_schoolId_idx", "table": "VirtualLab", "kind": "RETAINED_BTREE", "required": true, "definitionMd5": "4c38aef714c8d87b140926d49e7b0bef" },
     { "name": "ReviewerCredential_id_reviewerProfileId_key", "table": "ReviewerCredential", "kind": "P2B_COMPOSITE_UNIQUE_SUPPORT", "required": true, "definitionMd5": "4daf99d1b2668fc8b6f959945e6894a8" },
-    { "name": "ReviewerCredentialScope_id_credentialId_key", "table": "ReviewerCredentialScope", "kind": "P2B_COMPOSITE_UNIQUE_SUPPORT", "required": true, "definitionMd5": "1779dbf2590d9c14a1d7e7c917870c82" }
+      { "name": "ReviewerCredentialScope_id_credentialId_key", "table": "ReviewerCredentialScope", "kind": "P2B_COMPOSITE_UNIQUE_SUPPORT", "required": true, "definitionMd5": "1779dbf2590d9c14a1d7e7c917870c82" },
+      { "name": "PlacementSession_one_active_per_student_key", "table": "PlacementSession", "kind": "LEARNING_EVIDENCE_INTEGRITY_PARTIAL_UNIQUE", "required": true, "predicate": "(status = 'ACTIVE')", "definitionMd5": "f0b078f1a5a1efb9e18b04cb21100ac0" }
   ],
   "constraints": [
     {

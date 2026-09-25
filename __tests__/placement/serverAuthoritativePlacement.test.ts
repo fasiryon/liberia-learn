@@ -30,6 +30,7 @@ import {
   completeSession,
   getSession,
 } from "@/lib/placementAuthority/sessionService";
+import { drawBankItem, shuffleOptions } from "@/lib/placementAuthority/items";
 import { recordPlacementReview, confirmOfficialPlacement } from "@/lib/placementAuthority/decisionService";
 import { PLACEMENT_MAX_ITEMS } from "@/lib/placementAuthority/scoring";
 
@@ -69,6 +70,25 @@ beforeEach(() => {
 });
 
 describe("answer custody", () => {
+  it("shuffles answer options and remaps the server-held key", () => {
+    const original = ["A", "B", "C", "D"];
+    const shuffled = shuffleOptions(original, 2, () => 0);
+    expect(shuffled.options).not.toEqual(original);
+    expect(shuffled.options[shuffled.correctIndex]).toBe("C");
+  });
+
+  it("prefers unseen prior-session prompts until the bank is exhausted", () => {
+    const first = drawBankItem({ difficulty: 1, usedPrompts: new Set(), priorExposure: new Set(), random: () => 0 });
+    const next = drawBankItem({
+      difficulty: 1,
+      usedPrompts: new Set(),
+      priorExposure: new Set([first.prompt]),
+      random: () => 0,
+    });
+    expect(next.prompt).not.toBe(first.prompt);
+    expect(next.reusedPriorExposure).toBe(false);
+  });
+
   it("never serializes the answer key, explanation, or correctness before a response", async () => {
     const session = await startOrResumeSession(LEARNER);
     const { item } = await issueNextItem(LEARNER, session.sessionId);
@@ -101,11 +121,12 @@ describe("answer custody", () => {
     expect(JSON.stringify(item)).not.toMatch(/correct|explanation|12 times 3/);
   });
 
-  it("reveals the key only after the response is stored", async () => {
+  it("reports correctness but never reveals the key, even after the response is stored", async () => {
     const session = await startOrResumeSession(LEARNER);
-    const result = await answerItem(LEARNER, session.sessionId, "wrong");
+    const result: any = await answerItem(LEARNER, session.sessionId, "wrong");
     expect(result.item.isCorrect).toBe(false);
-    expect(typeof result.item.correctIndex).toBe("number");
+    expect(result.item).not.toHaveProperty("correctIndex");
+    expect(result.item).not.toHaveProperty("explanation");
   });
 
   it("no client component bundles placement answer keys", () => {

@@ -30,6 +30,7 @@ export function createFakePlacementDb() {
       if (value && typeof value === "object" && !(value instanceof Date)) {
         if ("lte" in value) return row[key] <= value.lte;
         if ("in" in value) return value.in.includes(row[key]);
+        if ("not" in value) return row[key] !== value.not;
         if (key === "user") {
           const user = state.users.find((u) => u.id === row.userId);
           return !!user && matches(user, value);
@@ -58,7 +59,12 @@ export function createFakePlacementDb() {
         if (!row) return null;
         return include?.items ? { ...row, items: itemsFor(row.id) } : { ...row };
       },
+      count: async ({ where }: any) => state.sessions.filter((s) => matches(s, where)).length,
+      findMany: async ({ where }: any) => state.sessions.filter((s) => matches(s, where)).map((s) => ({ ...s })),
       create: async ({ data }: any) => {
+        if (state.sessions.some((s) => s.studentId === data.studentId && s.status === "ACTIVE")) {
+          throw unique("PlacementSession_one_active_per_student_key");
+        }
         const row = { id: id("session"), status: "ACTIVE", completedAt: null, placementTestId: null, createdAt: new Date(), ...data };
         state.sessions.push(row);
         return { ...row };
@@ -78,6 +84,7 @@ export function createFakePlacementDb() {
         state.items.push(row);
         return { ...row };
       },
+      findMany: async ({ where }: any) => state.items.filter((i) => matches(i, where)).map((i) => ({ ...i })),
       findFirst: async ({ where }: any) =>
         state.items.filter((i) => matches(i, where)).sort((a, b) => a.sequence - b.sequence)[0] ?? null,
       findUnique: async ({ where }: any) => {

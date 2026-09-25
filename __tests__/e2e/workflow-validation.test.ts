@@ -68,7 +68,9 @@ const mockEnrollmentFindUnique = vi.hoisted(() => vi.fn());
 const mockEnrollmentGroupBy    = vi.hoisted(() => vi.fn());
 const mockStudentFindUnique    = vi.hoisted(() => vi.fn());
 const mockStudentCount         = vi.hoisted(() => vi.fn());
-const mockProgressUpsert       = vi.hoisted(() => vi.fn());
+const mockProgressCreateMany   = vi.hoisted(() => vi.fn());
+const mockProgressUpdateMany   = vi.hoisted(() => vi.fn());
+const mockProgressFindUnique   = vi.hoisted(() => vi.fn());
 const mockProgressFindMany     = vi.hoisted(() => vi.fn());
 
 // Prisma — guardian dashboard
@@ -137,7 +139,7 @@ vi.mock("@/lib/db", () => ({
       findUnique: mockStudentFindUnique,
       count:      mockStudentCount,
     },
-    studentProgress:      { upsert: mockProgressUpsert, findMany: mockProgressFindMany, findUnique: vi.fn().mockResolvedValue(null) },
+    studentProgress:      { createMany: mockProgressCreateMany, updateMany: mockProgressUpdateMany, findMany: mockProgressFindMany, findUnique: mockProgressFindUnique },
     labSession: {
       findUnique: mockLabSessionFindUnique,
       update:     mockLabSessionUpdate,
@@ -405,7 +407,23 @@ describe("Step 3 — Student completes work (POST /api/student/work/[id]/complet
     });
     mockStudentFindUnique.mockResolvedValue({ id: "student-rec-a-1" });
     mockEnrollmentFindUnique.mockResolvedValue({ id: "enroll-1" });
-    mockProgressUpsert.mockResolvedValue({ completedAt: COMPLETED_AT });
+    mockProgressCreateMany.mockResolvedValue({ count: 1 });
+    mockProgressUpdateMany.mockResolvedValue({ count: 1 });
+    let progressLookupCount = 0;
+    mockProgressFindUnique.mockImplementation(async () => {
+      progressLookupCount += 1;
+      return progressLookupCount === 1
+        ? null
+        : {
+            id: "progress-1",
+            completedAt: COMPLETED_AT,
+            exitTicketScore: null,
+            masteryEffectAt: null,
+            progressionEffectAt: null,
+            streakEffectAt: null,
+            guardianNotifiedAt: null,
+          };
+    });
     mockLogAudit.mockResolvedValue(undefined);
   });
 
@@ -421,25 +439,29 @@ describe("Step 3 — Student completes work (POST /api/student/work/[id]/complet
     expect(body.completedAt).toBeDefined();
   });
 
-  it("studentProgress.upsert uses correct composite key (studentId + scheduledWorkId)", async () => {
+  it("claims completion with the learner + scheduled-work identity", async () => {
     const req = makePostReq({});
     await studentCompletePost(req as any, {
       params: Promise.resolve({ scheduledWorkId: "sw-1" }),
     });
 
-    expect(mockProgressUpsert).toHaveBeenCalledWith(
+    expect(mockProgressCreateMany).toHaveBeenCalledWith(
       expect.objectContaining({
-        where: {
-          studentId_scheduledWorkId: {
-            studentId: STUDENT_A.id,
-            scheduledWorkId: "sw-1",
-          },
-        },
-        create: expect.objectContaining({
+        data: [expect.objectContaining({
           studentId: STUDENT_A.id,
           scheduledWorkId: "sw-1",
+        })],
+        skipDuplicates: true,
+      })
+    );
+    expect(mockProgressUpdateMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({
+          studentId: STUDENT_A.id,
+          scheduledWorkId: "sw-1",
+          completedAt: null,
         }),
-        update: expect.objectContaining({ completedAt: expect.any(Date) }),
+        data: expect.objectContaining({ completedAt: expect.any(Date) }),
       })
     );
   });
@@ -467,7 +489,7 @@ describe("Step 3 — Student completes work (POST /api/student/work/[id]/complet
     });
 
     expect(res.status).toBe(404);
-    expect(mockProgressUpsert).not.toHaveBeenCalled();
+    expect(mockProgressCreateMany).not.toHaveBeenCalled();
   });
 
   it("isolation — student cannot complete work from another school (403)", async () => {
@@ -482,7 +504,7 @@ describe("Step 3 — Student completes work (POST /api/student/work/[id]/complet
     });
 
     expect(res.status).toBe(403);
-    expect(mockProgressUpsert).not.toHaveBeenCalled();
+    expect(mockProgressCreateMany).not.toHaveBeenCalled();
   });
 
   it("isolation — student cannot complete work they are not enrolled for (403)", async () => {
@@ -493,7 +515,7 @@ describe("Step 3 — Student completes work (POST /api/student/work/[id]/complet
     });
 
     expect(res.status).toBe(403);
-    expect(mockProgressUpsert).not.toHaveBeenCalled();
+    expect(mockProgressCreateMany).not.toHaveBeenCalled();
   });
 });
 
@@ -1139,7 +1161,7 @@ describe("Multi-school simultaneous validation — 3 concurrent schools (A, B, C
       });
 
       expect(res.status).toBe(403);
-      expect(mockProgressUpsert).not.toHaveBeenCalled();
+      expect(mockProgressCreateMany).not.toHaveBeenCalled();
     });
   });
 

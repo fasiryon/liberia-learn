@@ -1,14 +1,17 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { createFakeStudentProgress } from "./helpers/fakeStudentProgress";
 
 const mockRequireRole = vi.hoisted(() => vi.fn());
 const mockScheduledWorkFindUnique = vi.hoisted(() => vi.fn());
 const mockStudentFindUnique = vi.hoisted(() => vi.fn());
 const mockEnrollmentFindUnique = vi.hoisted(() => vi.fn());
-const mockStudentProgressUpsert = vi.hoisted(() => vi.fn());
-const mockStudentProgressFindUnique = vi.hoisted(() => vi.fn());
+const progress = vi.hoisted(() => ({ current: null as any }));
 const mockLogAudit = vi.hoisted(() => vi.fn());
 const mockNotifyLessonCompletion = vi.hoisted(() => vi.fn());
 const mockUpdateMasteryProfile = vi.hoisted(() => vi.fn());
+const mockUpdateStreak = vi.hoisted(() => vi.fn());
+const mockResolveActions = vi.hoisted(() => vi.fn());
+const mockCheckCertificate = vi.hoisted(() => vi.fn());
 const ROUTE_TIMEOUT_MS = 60_000;
 
 vi.mock("@/lib/auth", () => ({
@@ -23,7 +26,9 @@ vi.mock("@/lib/db", () => ({
     scheduledWork: { findUnique: mockScheduledWorkFindUnique },
     student: { findUnique: mockStudentFindUnique },
     enrollment: { findUnique: mockEnrollmentFindUnique },
-    studentProgress: { upsert: mockStudentProgressUpsert, findUnique: mockStudentProgressFindUnique },
+    get studentProgress() {
+      return progress.current.delegate;
+    },
     strandCatalog: { findUnique: mockStrandFindUnique, findFirst: mockStrandFindFirst },
   },
 }));
@@ -39,6 +44,9 @@ vi.mock("@/lib/lesson-notifications", () => ({
 vi.mock("@/lib/mastery/masteryService", () => ({
   updateMasteryProfile: mockUpdateMasteryProfile,
 }));
+vi.mock("@/lib/gamification/streakService", () => ({ updateStreak: mockUpdateStreak }));
+vi.mock("@/lib/intelligence/actionEngine", () => ({ resolveActionsOnLessonComplete: mockResolveActions }));
+vi.mock("@/lib/certificates/autoAwardCertificate", () => ({ checkAndAwardCertificate: mockCheckCertificate }));
 
 describe("student lesson delivery", () => {
   beforeEach(() => {
@@ -47,7 +55,7 @@ describe("student lesson delivery", () => {
     // so mastery writes still resolve a valid StrandCatalog target.
     mockStrandFindUnique.mockResolvedValue(null);
     mockStrandFindFirst.mockResolvedValue({ strandKey: "fractions_decimals" });
-    mockStudentProgressFindUnique.mockResolvedValue(null);
+    progress.current = createFakeStudentProgress();
   });
 
   // First test in this file to dynamically import @/lib/lessons, which now
@@ -99,10 +107,12 @@ describe("student lesson delivery", () => {
     });
     mockStudentFindUnique.mockResolvedValue({ id: "student-1", user: { name: "Student One" } });
     mockEnrollmentFindUnique.mockResolvedValue({ id: "enroll-1" });
-    mockStudentProgressUpsert.mockResolvedValue({ completedAt: new Date("2026-03-13T12:00:00.000Z") });
     mockLogAudit.mockResolvedValue(undefined);
     mockNotifyLessonCompletion.mockResolvedValue(undefined);
     mockUpdateMasteryProfile.mockResolvedValue(undefined);
+    mockUpdateStreak.mockResolvedValue(undefined);
+    mockResolveActions.mockResolvedValue(undefined);
+    mockCheckCertificate.mockResolvedValue(undefined);
     mockRequireRole.mockResolvedValue({ id: "user-1", role: "STUDENT", schoolId: "school-1" });
 
     const { POST } = await import("@/app/api/student/lessons/[id]/complete/route");
@@ -137,10 +147,16 @@ describe("student lesson delivery", () => {
     mockStudentFindUnique.mockResolvedValue({ id: "student-1", user: { name: "Student One" } });
     mockEnrollmentFindUnique.mockResolvedValue({ id: "enroll-1" });
     const firstCompletedAt = new Date("2026-12-01T09:00:00.000Z");
-    mockStudentProgressFindUnique.mockResolvedValue({
+    progress.current.seed({
+      studentId: "user-1",
+      scheduledWorkId: "sw-1",
       completedAt: firstCompletedAt,
       exitTicketResponses: [{ questionIndex: 0, answer: "1" }],
       exitTicketScore: 100,
+      masteryEffectAt: firstCompletedAt,
+      progressionEffectAt: firstCompletedAt,
+      streakEffectAt: firstCompletedAt,
+      guardianNotifiedAt: firstCompletedAt,
     });
     mockRequireRole.mockResolvedValue({ id: "user-1", role: "STUDENT", schoolId: "school-1" });
 
@@ -160,7 +176,9 @@ describe("student lesson delivery", () => {
       exitTicketScore: 100,
       completedAt: firstCompletedAt.toISOString(),
     });
-    expect(mockStudentProgressUpsert).not.toHaveBeenCalled();
+    expect(progress.current.rows).toHaveLength(1);
+    expect(progress.current.rows[0].completedAt).toBe(firstCompletedAt);
+    expect(mockLogAudit).not.toHaveBeenCalled();
     expect(mockUpdateMasteryProfile).not.toHaveBeenCalled();
     expect(mockNotifyLessonCompletion).not.toHaveBeenCalled();
   }, ROUTE_TIMEOUT_MS);
@@ -180,7 +198,6 @@ describe("student lesson delivery", () => {
     });
     mockStudentFindUnique.mockResolvedValue({ id: "student-1", user: { name: "Student One" } });
     mockEnrollmentFindUnique.mockResolvedValue({ id: "enroll-1" });
-    mockStudentProgressUpsert.mockResolvedValue({ completedAt: new Date("2026-03-13T12:00:00.000Z") });
     mockLogAudit.mockResolvedValue(undefined);
     mockNotifyLessonCompletion.mockRejectedValue(new Error("sms failed"));
     mockRequireRole.mockResolvedValue({ id: "user-1", role: "STUDENT", schoolId: "school-1" });
@@ -197,6 +214,58 @@ describe("student lesson delivery", () => {
 
     expect(response.status).toBe(200);
     await expect(response.json()).resolves.toMatchObject({ success: true });
+  });
+
+  it("keeps the first completion and recovers only unclaimed effects on replay", async () => {
+    mockScheduledWorkFindUnique.mockResolvedValue({
+      id: "sw-1",
+      classId: "class-1",
+      class: { schoolId: "school-1", School: { name: "Capitol Hill Academy" } },
+      content: {
+        grade: 6,
+        subject: "MATH",
+        payload: {},
+        deliveryProfile: { exitTicket: { questions: [{ prompt: "1+0?", correctAnswer: "1" }] } },
+        moeAlignments: [],
+      },
+    });
+    mockStudentFindUnique.mockResolvedValue({ id: "student-1", user: { name: "Student One" } });
+    mockEnrollmentFindUnique.mockResolvedValue({ id: "enroll-1" });
+    mockLogAudit.mockResolvedValue(undefined);
+    mockNotifyLessonCompletion.mockResolvedValue(undefined);
+    mockRequireRole.mockResolvedValue({ id: "user-1", role: "STUDENT", schoolId: "school-1" });
+
+    const { POST } = await import("@/app/api/student/lessons/[id]/complete/route");
+    const first = await POST(
+      new Request("http://localhost/api/student/lessons/sw-1/complete", {
+        method: "POST",
+        body: JSON.stringify({ exitTicketAnswers: [{ questionIndex: 0, answer: "1" }] }),
+        headers: { "Content-Type": "application/json" },
+      }) as any,
+      { params: { id: "sw-1" } },
+    );
+    const firstBody = await first.json();
+    const storedAt = progress.current.rows[0].completedAt;
+
+    const second = await POST(
+      new Request("http://localhost/api/student/lessons/sw-1/complete", {
+        method: "POST",
+        body: JSON.stringify({ exitTicketAnswers: [{ questionIndex: 0, answer: "wrong" }] }),
+        headers: { "Content-Type": "application/json" },
+      }) as any,
+      { params: { id: "sw-1" } },
+    );
+
+    expect(first.status).toBe(200);
+    expect(firstBody.exitTicketScore).toBe(100);
+    expect(second.status).toBe(200);
+    await expect(second.json()).resolves.toMatchObject({ exitTicketScore: 100, completedAt: storedAt.toISOString() });
+    expect(progress.current.rows[0].completedAt).toBe(storedAt);
+    expect(mockNotifyLessonCompletion).toHaveBeenCalledOnce();
+    expect(mockUpdateMasteryProfile).toHaveBeenCalledOnce();
+    expect(mockUpdateStreak).toHaveBeenCalledOnce();
+    expect(mockResolveActions).toHaveBeenCalledOnce();
+    expect(mockCheckCertificate).toHaveBeenCalledOnce();
   });
 
   it("builds sequential playable audio parts from generated audioParts", async () => {
