@@ -373,6 +373,7 @@ describe("districtupdate.getMilestoneCandidates", () => {
     mockPrisma.leagueWeekSnapshot.findMany.mockResolvedValue([]);
     mockAggregateWaecForStudents.mockResolvedValue([
       { subjectId: "waec_math", name: "WAEC Mathematics", assessedStudents: 10, avgReadiness: 80, atRisk: 0, onTrack: 8 },
+      { subjectId: "waec_chemistry", name: "WAEC Chemistry", assessedStudents: 3, avgReadiness: 90, atRisk: 0, onTrack: 3 },
       { subjectId: "waec_biology", name: "WAEC Biology", assessedStudents: 10, avgReadiness: 60, atRisk: 2, onTrack: 3 },
       { subjectId: "waec_physics", name: "WAEC Physics", assessedStudents: 0, avgReadiness: null, atRisk: 0, onTrack: 0 },
     ]);

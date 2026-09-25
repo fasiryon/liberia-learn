@@ -2,7 +2,6 @@ import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { getLiveDashboardData } from "@/lib/moe/liveDashboard";
-import { verifyLiveToken } from "@/lib/moe/liveToken";
 import LiveDashboardClient from "@/components/moe/LiveDashboardClient";
 
 export const dynamic = "force-dynamic";
@@ -11,25 +10,16 @@ export const metadata = {
   title: "LiberiaLearn — Live",
 };
 
-type Props = {
-  searchParams: { token?: string };
-};
-
-export default async function MoeLivePage({ searchParams }: Props) {
-  const token = searchParams.token ?? null;
-
-  let authorized = false;
-
-  if (token && verifyLiveToken(token)) {
-    authorized = true;
-  } else {
-    const session = await getServerSession(authOptions);
-    const user = session?.user as { role?: string; isPlatformAdmin?: boolean } | null;
-    authorized =
-      user?.role === "MOE_OFFICIAL" ||
-      user?.role === "MOE_SUPER_ADMIN" ||
-      user?.isPlatformAdmin === true;
-  }
+// The live display requires an authenticated MOE session. Signed display
+// tokens are not accepted until a governed kiosk/display credential is
+// separately approved.
+export default async function MoeLivePage() {
+  const session = await getServerSession(authOptions);
+  const user = session?.user as { role?: string; isPlatformAdmin?: boolean } | null;
+  const authorized =
+    user?.role === "MOE_OFFICIAL" ||
+    user?.role === "MOE_SUPER_ADMIN" ||
+    user?.isPlatformAdmin === true;
 
   if (!authorized) {
     redirect("/moe/login");
@@ -44,6 +34,6 @@ export default async function MoeLivePage({ searchParams }: Props) {
   }
 
   return (
-    <LiveDashboardClient initialData={initialData} token={token} />
+    <LiveDashboardClient initialData={initialData} token={null} />
   );
 }

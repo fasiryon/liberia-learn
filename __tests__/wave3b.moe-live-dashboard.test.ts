@@ -119,7 +119,7 @@ describe("GET /api/moe/live", () => {
     expect(body.counties).toHaveLength(1);
   });
 
-  it("returns data for valid signed token without session", async () => {
+  it("rejects a signed token without an MOE session (display stays authenticated)", async () => {
     vi.doMock("next-auth", () => ({
       getServerSession: vi.fn(async () => null),
     }));
@@ -128,7 +128,7 @@ describe("GET /api/moe/live", () => {
     const { GET } = await import("@/app/api/moe/live/route");
     const req = new Request("http://localhost/api/moe/live?token=valid-token");
     const res = await GET(req);
-    expect(res.status).toBe(200);
+    expect(res.status).toBe(401);
   });
 
   it("returns 401 for invalid token and no session", async () => {

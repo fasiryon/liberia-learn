@@ -1,24 +1,13 @@
+// route-policy: auth=session; scope=national; authority=elevated; rationale=display tokens are not issued until a governed kiosk credential is approved
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
-import { generateLiveToken } from "@/lib/moe/liveToken";
 
 export const dynamic = "force-dynamic";
 
+// Retired: the MOE live display stays behind an authenticated MOE session
+// until a governed kiosk/display credential is separately approved.
 export async function GET() {
-  const session = await getServerSession(authOptions);
-  const user = session?.user as { role?: string; isPlatformAdmin?: boolean } | null;
-
-  const authorized =
-    user?.role === "MOE_OFFICIAL" ||
-    user?.role === "MOE_SUPER_ADMIN" ||
-    user?.isPlatformAdmin === true;
-
-  if (!authorized) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  const { token, expiresAt } = generateLiveToken();
-  const url = `/moe/live?token=${token}`;
-  return NextResponse.json({ token, expiresAt, url });
+  return NextResponse.json(
+    { error: "Live display tokens are not issued. Sign in with an MOE account.", code: "live_token_retired" },
+    { status: 410 }
+  );
 }

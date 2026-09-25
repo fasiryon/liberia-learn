@@ -11,6 +11,8 @@ import { prisma } from "@/lib/db";
 import { computeSubjectReadiness, type StrandScore } from "@/lib/waec/readiness";
 import { getWaecSubjects, type WaecSubjectId } from "@/lib/waec/syllabus";
 import { WAEC_MIN_GRADE } from "@/lib/waec/eligibility";
+import { suppressSubject, type SuppressibleSubjectAggregate } from "@/lib/waec/suppression";
+export { NATIONAL_MIN_COHORT, suppressSubject, type SuppressibleSubjectAggregate } from "@/lib/waec/suppression";
 
 const ENUM_BUCKETS: Subject[] = ["MATH", "SCIENCE", "LITERACY"];
 const AT_RISK = 50;
@@ -84,24 +86,6 @@ export type CountyAggregate = { county: string; assessedStudents: number | null;
 /** Same small-cell rule as the MOE county dashboard: a county average over
  * fewer than this many assessed learners is withheld, not published. */
 export const WAEC_COUNTY_MIN_COHORT = 5;
-
-/** Subject rows use the same minimum as counties. */
-export const NATIONAL_MIN_COHORT = WAEC_COUNTY_MIN_COHORT;
-
-type SuppressibleSubjectAggregate = Omit<SubjectAggregate, "assessedStudents" | "atRisk" | "onTrack"> & {
-  assessedStudents: number | null;
-  atRisk: number | null;
-  onTrack: number | null;
-  suppressed: boolean;
-};
-
-function suppressSubject(s: SubjectAggregate): SuppressibleSubjectAggregate {
-  // Zero assessed stays visible as "no data"; 1-4 would re-identify learners.
-  const suppressed = s.assessedStudents > 0 && s.assessedStudents < NATIONAL_MIN_COHORT;
-  return suppressed
-    ? { ...s, assessedStudents: null, avgReadiness: null, atRisk: null, onTrack: null, suppressed }
-    : { ...s, suppressed };
-}
 
 /** National WAEC readiness + per-county ranking. */
 export async function getNationalWaecReadiness(): Promise<{

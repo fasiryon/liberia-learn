@@ -32,6 +32,7 @@ import {
   assignDistrictRanks,
 } from "@/lib/league/weeklyScore";
 import { aggregateWaecForStudents } from "@/lib/waec/aggregate";
+import { suppressSubject } from "@/lib/waec/suppression";
 import { WAEC_MIN_GRADE } from "@/lib/waec/eligibility";
 import { getDeliveryComplianceForSchool } from "@/lib/moe/deliveryCompliance";
 import type { ToolDefinition } from "@/lib/agents/types";
@@ -332,13 +333,14 @@ async function waecReadinessCandidates(userIds: string[]) {
     select: { id: true },
   });
   if (students.length === 0) return [];
-  const subjects = await aggregateWaecForStudents(students.map((s) => s.id));
+  // Same small-cell rule as the MOE surfaces: cohorts of 1-4 are withheld.
+  const subjects = (await aggregateWaecForStudents(students.map((s) => s.id))).map(suppressSubject);
   return subjects
-    .filter((s) => s.avgReadiness != null && s.avgReadiness >= 75 && s.assessedStudents > 0)
+    .filter((s) => !s.suppressed && s.avgReadiness != null && s.avgReadiness >= 75 && (s.assessedStudents ?? 0) > 0)
     .map((s) => ({
       type: "waec_readiness_on_track" as const,
       description: `${s.name} readiness is on track at an average of ${s.avgReadiness} across ${s.assessedStudents} assessed student(s).`,
-      detail: { subject: s.name, avgReadiness: s.avgReadiness as number, assessedStudents: s.assessedStudents },
+      detail: { subject: s.name, avgReadiness: s.avgReadiness as number, assessedStudents: s.assessedStudents as number },
     }));
 }
 

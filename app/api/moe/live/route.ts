@@ -1,9 +1,9 @@
+// route-policy: auth=session; scope=national; authority=elevated; rationale=live national aggregates are shown only to an authenticated MOE session with no signed-token bypass
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { Redis } from "@upstash/redis";
 import { getLiveDashboardData } from "@/lib/moe/liveDashboard";
-import { verifyLiveToken } from "@/lib/moe/liveToken";
 
 export const dynamic = "force-dynamic";
 
@@ -26,19 +26,12 @@ function isMoeAuthorized(user: { role?: string; isPlatformAdmin?: boolean } | nu
   );
 }
 
-export async function GET(request: Request) {
-  // Auth: session OR signed token
-  const { searchParams } = new URL(request.url);
-  const token = searchParams.get("token");
-
-  let authorized = false;
-  if (token && verifyLiveToken(token)) {
-    authorized = true;
-  } else {
-    const session = await getServerSession(authOptions);
-    const user = session?.user as { role?: string; isPlatformAdmin?: boolean } | null;
-    authorized = isMoeAuthorized(user);
-  }
+// Authenticated MOE session only. Signed display tokens are not accepted
+// until a governed kiosk/display credential is separately approved.
+export async function GET(_request?: Request) {
+  const session = await getServerSession(authOptions);
+  const user = session?.user as { role?: string; isPlatformAdmin?: boolean } | null;
+  const authorized = isMoeAuthorized(user);
 
   if (!authorized) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

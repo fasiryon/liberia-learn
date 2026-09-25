@@ -1,3 +1,4 @@
+// route-policy: auth=session; scope=tenant; authority=class-membership; rationale=posts are created only by class members or staff of the class school and replies must stay inside the same thread
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { requireRole } from "@/lib/auth";
@@ -55,7 +56,22 @@ export async function POST(req: NextRequest) {
     if (!cls) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
+  // A reply must attach to a post in this same thread.
+  if (parentPostId != null) {
+    if (typeof parentPostId !== "string") {
+      return NextResponse.json({ error: "parentPostId must be a string" }, { status: 400 });
+    }
+    const parent = await prisma.discussionPost.findFirst({
+      where: { id: parentPostId, threadId },
+      select: { id: true },
+    });
+    if (!parent) {
+      return NextResponse.json({ error: "Reply target not found in this thread" }, { status: 400 });
+    }
+  }
+
   const isPending = user.role === "STUDENT" && (thread.class.gradeLevel ?? 99) <= 6;
+
 
   const post = await prisma.discussionPost.create({
     data: {

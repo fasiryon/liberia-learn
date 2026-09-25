@@ -16,6 +16,7 @@ import { prisma } from "@/lib/db";
 import { registerTool } from "@/lib/agents/toolRegistry";
 import { enqueueEscalation } from "@/lib/agents/escalation";
 import { aggregateWaecForStudents } from "@/lib/waec/aggregate";
+import { suppressSubject } from "@/lib/waec/suppression";
 import { WAEC_MIN_GRADE } from "@/lib/waec/eligibility";
 import { getDeliveryComplianceByDistrict, getDeliveryComplianceForSchool } from "@/lib/moe/deliveryCompliance";
 import type { ToolDefinition } from "@/lib/agents/types";
@@ -30,10 +31,12 @@ type Significance = (typeof SIGNIFICANCE)[number];
 const subjectAggregateSchema = z.object({
   subjectId: z.string(),
   name: z.string(),
-  assessedStudents: z.number(),
+  // null + suppressed=true when fewer than 5 learners were assessed.
+  assessedStudents: z.number().nullable(),
   avgReadiness: z.number().nullable(),
-  atRisk: z.number(),
-  onTrack: z.number(),
+  atRisk: z.number().nullable(),
+  onTrack: z.number().nullable(),
+  suppressed: z.boolean().optional(),
 });
 
 const scopeDataSchema = z.object({
@@ -108,7 +111,7 @@ export const moereportGetScopeDataTool: ToolDefinition<
     const periodEnd = new Date(input.periodEnd);
 
     const [subjects, activeRows, deliveryCompliance] = await Promise.all([
-      aggregateWaecForStudents(waecEligibleIds),
+      aggregateWaecForStudents(waecEligibleIds).then((rows) => rows.map(suppressSubject)),
       allStudentIds.length === 0
         ? Promise.resolve([])
         : prisma.derivedStudentProgress.findMany({
