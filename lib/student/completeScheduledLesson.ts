@@ -216,7 +216,26 @@ export async function completeScheduledLesson(input: CompleteLessonInput) {
     return result.count === 1;
   };
 
-  if (await claim("masteryEffectAt")) {
+  const runClaimedEffect = async (effect: CompletionEffect, work: () => Promise<void>) => {
+    if (!(await claim(effect))) return;
+    try {
+      await work();
+    } catch (error) {
+      // A claim is only a short-lived concurrency guard. If the effect fails,
+      // release it so a later replay can retry instead of treating a failed
+      // effect as permanently complete.
+      await prisma.studentProgress.updateMany({
+        where: { id: canonical.id, [effect]: { not: null } },
+        data: { [effect]: null },
+      }).catch(() => null);
+      // Completion itself remains durable; the next replay will retry this
+      // consequential effect. Do not turn a successful completion into a
+      // client-visible failure because one downstream effect was unavailable.
+      void error;
+    }
+  };
+
+  await runClaimedEffect("masteryEffectAt", async () => {
     await recordMasteryEvidence({
       exitTicketScore: canonical.exitTicketScore,
       exitTicketQuestions,
@@ -225,9 +244,9 @@ export async function completeScheduledLesson(input: CompleteLessonInput) {
       studentId: student.id,
       schoolId: sw.class.schoolId,
     });
-  }
+  });
 
-  if (await claim("guardianNotifiedAt")) {
+  await runClaimedEffect("guardianNotifiedAt", async () => {
     await notifyLessonCompletion({
       actingUserId: input.user.id,
       schoolId: sw.class.schoolId,
@@ -235,17 +254,19 @@ export async function completeScheduledLesson(input: CompleteLessonInput) {
       studentId: student.id,
       studentName: student.user?.name?.trim() || "Student",
       subject: content.subject,
-    }).catch(() => null);
-  }
+    });
+  });
 
-  if (await claim("progressionEffectAt")) {
-    resolveActionsOnLessonComplete(student.id, input.scheduledWorkId).catch(() => null);
-    checkAndAwardCertificate(student.id, content.subject, content.grade, input.user.id).catch(() => {});
-  }
+  await runClaimedEffect("progressionEffectAt", async () => {
+    await Promise.all([
+      resolveActionsOnLessonComplete(student.id, input.scheduledWorkId),
+      checkAndAwardCertificate(student.id, content.subject, content.grade, input.user.id),
+    ]);
+  });
 
-  if (await claim("streakEffectAt")) {
-    void updateStreak(input.user.id).catch(() => null);
-  }
+  await runClaimedEffect("streakEffectAt", async () => {
+    await updateStreak(input.user.id);
+  });
 
   return {
     completedAt: canonical.completedAt,
@@ -296,12 +317,14 @@ async function recordMasteryEvidence(input: {
       aiAssistedAttempts: 0,
       recentScores: [normalizedScore],
     }).catch((err) => {
-      // Surface residual write failures instead of silently swallowing them.
+      // Surface residual write failures so the completion effect claim can be
+      // released and a later replay can retry the write.
       recordMetricEvent(
         "mastery.write_failed",
         { subject: strand.subject, strandKey: strand.strandKey, reason: err instanceof Error ? err.message : String(err) },
         { ...telemetryScope, severity: "warning" }
       ).catch(() => {});
+      throw err;
     });
   } else {
     recordMetricEvent(

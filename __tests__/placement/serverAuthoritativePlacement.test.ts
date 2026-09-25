@@ -30,6 +30,7 @@ import {
   completeSession,
   getSession,
 } from "@/lib/placementAuthority/sessionService";
+import { drawBankItem, shuffleOptions } from "@/lib/placementAuthority/items";
 import { recordPlacementReview, confirmOfficialPlacement } from "@/lib/placementAuthority/decisionService";
 import { PLACEMENT_MAX_ITEMS } from "@/lib/placementAuthority/scoring";
 
@@ -69,6 +70,25 @@ beforeEach(() => {
 });
 
 describe("answer custody", () => {
+  it("shuffles answer options and remaps the server-held key", () => {
+    const original = ["A", "B", "C", "D"];
+    const shuffled = shuffleOptions(original, 2, () => 0);
+    expect(shuffled.options).not.toEqual(original);
+    expect(shuffled.options[shuffled.correctIndex]).toBe("C");
+  });
+
+  it("prefers unseen prior-session prompts until the bank is exhausted", () => {
+    const first = drawBankItem({ difficulty: 1, usedPrompts: new Set(), priorExposure: new Set(), random: () => 0 });
+    const next = drawBankItem({
+      difficulty: 1,
+      usedPrompts: new Set(),
+      priorExposure: new Set([first.prompt]),
+      random: () => 0,
+    });
+    expect(next.prompt).not.toBe(first.prompt);
+    expect(next.reusedPriorExposure).toBe(false);
+  });
+
   it("never serializes the answer key, explanation, or correctness before a response", async () => {
     const session = await startOrResumeSession(LEARNER);
     const { item } = await issueNextItem(LEARNER, session.sessionId);

@@ -549,6 +549,38 @@
       "expectedInStaging": true,
       "expectedInCleanBootstrap": true,
       "allowedPrismaDiffKeys": []
+    },
+    {
+      "id": "learning-evidence-integrity-v1",
+      "objectType": "columnsAndPartialUniqueIndex",
+      "objectNames": [
+        "public.StudentProgress.masteryEffectAt",
+        "public.StudentProgress.progressionEffectAt",
+        "public.StudentProgress.streakEffectAt",
+        "public.StudentProgress.guardianNotifiedAt",
+        "public.PlacementSession_one_active_per_student_key"
+      ],
+      "prismaState": "DECLARED_WITH_PARTIAL_INDEX_IN_CANONICAL_MIGRATION",
+      "physicalState": "ADDITIVE_AND_DATABASE_ENFORCED",
+      "authorityLayer": "CANONICAL_MIGRATION",
+      "classification": "APPROVED_LEARNING_EVIDENCE_INTEGRITY",
+      "rationale": "Completion side-effect claims are persisted on StudentProgress, and PostgreSQL permits only one ACTIVE placement session per learner.",
+      "risk": "CRITICAL_IF_MISSING",
+      "owner": "application",
+      "introducedBy": ["20260925_000001_learning_evidence_integrity"],
+      "evidence": [
+        "prisma/canonical/migrations/20260925_000001_learning_evidence_integrity/migration.sql",
+        "lib/student/completeScheduledLesson.ts",
+        "lib/placementAuthority/sessionService.ts"
+      ],
+      "reviewCondition": "Replace only with an equal or stronger exactly-once completion and one-active-session invariant.",
+      "reviewDate": null,
+      "destructiveIfAutoConverged": true,
+      "acceptedAsIntentional": true,
+      "expectedInProduction": true,
+      "expectedInStaging": true,
+      "expectedInCleanBootstrap": true,
+      "allowedPrismaDiffKeys": []
     }
   ]
 }

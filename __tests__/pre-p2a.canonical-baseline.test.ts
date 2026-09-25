@@ -222,6 +222,7 @@ describe("canonical pre-P2-A baseline", () => {
       "20260901_000001_add_quality_review_tasks",
       "20260901_000002_add_quality_review_calibration",
       "20260924_000001_server_authoritative_placement",
+      "20260925_000001_learning_evidence_integrity",
     ]);
   });
 
