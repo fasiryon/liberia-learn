@@ -146,6 +146,9 @@ export default function AdminStudentDetailPage({ params }: { params: { id: strin
           </div>
           <div className="flex items-center gap-2 flex-wrap">
             <GenerateResetCodeButton studentId={params.id} />
+            <Link href={`/admin/support/sync-diagnostics/${encodeURIComponent(student.userId)}`} className="inline-flex rounded-xl border border-[var(--ll-border)] px-4 py-2 text-sm text-[var(--ll-text)] hover:bg-[var(--ll-surface)]">
+              Sync diagnostics
+            </Link>
             <Link href="/admin/students" className="inline-flex rounded-xl border border-[var(--ll-border)] px-4 py-2 text-sm text-[var(--ll-text)] hover:bg-[var(--ll-surface)]">
               Back to students
             </Link>

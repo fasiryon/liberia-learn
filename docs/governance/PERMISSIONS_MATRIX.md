@@ -58,8 +58,13 @@ PERMISSIONS = {
 | `ops:findings:read` | ✅ | ❌ | ❌ | ❌ | ✅ |
 | `ops:findings:manage` | ✅ | ❌ | ❌ | ❌ | ✅ |
 | `ops:ai_explain` | ✅ | ❌ | ❌ | ❌ | ✅ |
+| `support:sync_diagnostics:read` | ✅† | ❌ | ❌ | ❌ | ✅ |
 
 \* PII export also requires `ENABLE_GOV_STUDENT_PII_EXPORT=true` server flag.
+
+† Own-school learners only. Cross-school reads return 404, and every read
+requires a durable audit row before data is returned. See
+`docs/ops/LEARNER_SYNC_SUPPORT_DIAGNOSTICS_V1.md`.
 
 ## Governance Export Scope Rules
 
