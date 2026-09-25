@@ -9,6 +9,7 @@ import {
   subscribeToQueueChanges,
 } from "@/lib/offline-queue";
 import { flushSubmissionQueue } from "@/lib/offline/flushQueue";
+import { reportSyncDiagnostics } from "@/lib/offline/syncDiagnosticsReporter";
 import { getCacheStats, purgeExpiredPacks, purgePartitionPacks } from "@/lib/offline-cache";
 import { detectAndSetActiveSessionPartition, type SessionPartition } from "@/lib/offline-session";
 
@@ -75,6 +76,7 @@ export default function SyncManager({
     } finally {
       setSyncing(false);
       await refreshStats();
+      void reportSyncDiagnostics(partitionRef.current ?? undefined);
     }
   }, [refreshStats]);
 
@@ -85,6 +87,7 @@ export default function SyncManager({
       await releaseAuthBlockedOperations(detected);
       await purgeExpiredPacks(detected);
       await refreshStats();
+      void reportSyncDiagnostics(detected);
     });
   }, [refreshStats]);
 

@@ -13,6 +13,21 @@ import {
   validateOfflineOperation,
   type OfflineOperation,
 } from "@/lib/offline/syncProtocol";
+import {
+  MAX_RECORDED_OUTCOMES,
+  SYNC_RESULT_METRIC,
+  toServerSyncOutcome,
+} from "@/lib/offline/syncDiagnosticsContract";
+
+const ENTITY_CATEGORY: Record<string, string> = {
+  studentProgress: "lesson_progress",
+  attendance: "attendance",
+  submission: "homework_submission",
+  assignmentSubmission: "assignment_submission",
+  assessmentAttempt: "assessment_attempt",
+  labSession: "lab_session",
+  learningObservation: "learning_observation",
+};
 
 type SyncItem = {
   protocolVersion?: number;
@@ -1077,9 +1092,20 @@ export async function POST(req: NextRequest) {
     });
 
     const conflicts = results.filter((r) => r.status === "conflict").length;
+    // Payload-free per-operation verdicts for support diagnostics. Each item
+    // yields exactly one result, so results align with items by position.
+    const aligned = results.length === items.length;
+    const outcomes = results.slice(0, MAX_RECORDED_OUTCOMES).map((result, index) => {
+      const item = aligned ? (items as SyncItem[])[index] : undefined;
+      return toServerSyncOutcome(
+        result,
+        item?.operationId ?? item?.opId ?? item?.id ?? result.opId,
+        item?.resourceType ?? ENTITY_CATEGORY[result.entity ?? ""],
+      );
+    });
     await recordMetricEvent(
-      "sync.result",
-      { synced, skipped, conflicts, processed: items.length },
+      SYNC_RESULT_METRIC,
+      { synced, skipped, conflicts, processed: items.length, outcomes },
       {
         scope: "school",
         scopeId: user.schoolId ?? null,

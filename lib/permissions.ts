@@ -84,6 +84,10 @@ export const PERMISSIONS = {
   PLACEMENT_REVIEW: "placement:result:review",
   /** Make the official placement decision that sets Student.currentGrade. */
   PLACEMENT_CONFIRM: "placement:grade:confirm",
+
+  //  Learner support
+  /** Read-only, payload-free offline/sync diagnostics for one learner in the reader's school. */
+  SUPPORT_SYNC_DIAGNOSTICS_READ: "support:sync_diagnostics:read",
 } as const;
 
 export type Permission = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];
@@ -128,6 +132,8 @@ export const ROLE_PERMISSIONS: Record<string, ReadonlySet<Permission>> = {
     // School placement/enrollment authority
     PERMISSIONS.PLACEMENT_REVIEW,
     PERMISSIONS.PLACEMENT_CONFIRM,
+    // School support: learner sync diagnostics within the admin's own school
+    PERMISSIONS.SUPPORT_SYNC_DIAGNOSTICS_READ,
   ]),
   DISTRICT_ADMIN: new Set<Permission>([
     PERMISSIONS.DASHBOARD_SCHOOL_IMPACT,
