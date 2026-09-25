@@ -9,7 +9,7 @@ import {
   subscribeToQueueChanges,
 } from "@/lib/offline-queue";
 import { flushSubmissionQueue } from "@/lib/offline/flushQueue";
-import { reportSyncDiagnostics } from "@/lib/offline/syncDiagnosticsReporter";
+import { reportSyncDiagnostics, scheduleSyncDiagnosticsReport } from "@/lib/offline/syncDiagnosticsReporter";
 import { getCacheStats, purgeExpiredPacks, purgePartitionPacks } from "@/lib/offline-cache";
 import { detectAndSetActiveSessionPartition, type SessionPartition } from "@/lib/offline-session";
 
@@ -125,7 +125,10 @@ export default function SyncManager({
     navigator.serviceWorker?.addEventListener("message", onSwMessage);
     // Event-driven status: every queue write (this tab or another) announces
     // itself, so no IndexedDB polling loop is needed.
-    const unsubscribe = subscribeToQueueChanges(() => { void refreshStats(); });
+    const unsubscribe = subscribeToQueueChanges(() => {
+      void refreshStats();
+      scheduleSyncDiagnosticsReport(partitionRef.current ?? undefined);
+    });
 
     return () => {
       if (reconnectTimer) clearTimeout(reconnectTimer);
