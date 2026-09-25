@@ -101,11 +101,12 @@ describe("answer custody", () => {
     expect(JSON.stringify(item)).not.toMatch(/correct|explanation|12 times 3/);
   });
 
-  it("reveals the key only after the response is stored", async () => {
+  it("reports correctness but never reveals the key, even after the response is stored", async () => {
     const session = await startOrResumeSession(LEARNER);
-    const result = await answerItem(LEARNER, session.sessionId, "wrong");
+    const result: any = await answerItem(LEARNER, session.sessionId, "wrong");
     expect(result.item.isCorrect).toBe(false);
-    expect(typeof result.item.correctIndex).toBe("number");
+    expect(result.item).not.toHaveProperty("correctIndex");
+    expect(result.item).not.toHaveProperty("explanation");
   });
 
   it("no client component bundles placement answer keys", () => {

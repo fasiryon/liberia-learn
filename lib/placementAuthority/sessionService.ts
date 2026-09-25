@@ -94,29 +94,45 @@ export async function startOrResumeSession(user: Learner) {
     where: { studentId: learner.studentId, status: "ACTIVE", expiresAt: { lte: now } },
     data: { status: "EXPIRED" },
   });
-  const active = await prisma.placementSession.findFirst({
-    where: { studentId: learner.studentId, schoolId: learner.schoolId, status: "ACTIVE" },
-    include: { items: { orderBy: { sequence: "asc" } } },
-    orderBy: { createdAt: "desc" },
-  });
+  const findActive = () =>
+    prisma.placementSession.findFirst({
+      where: { studentId: learner.studentId, schoolId: learner.schoolId, status: "ACTIVE" },
+      include: { items: { orderBy: { sequence: "asc" } } },
+      orderBy: { createdAt: "desc" },
+    });
+  const active = await findActive();
   if (active) return { resumed: true, ...sessionView({ ...active, items: active.items.map(toStored) }) };
 
-  const created = await prisma.placementSession.create({
-    data: {
-      studentId: learner.studentId,
-      schoolId: learner.schoolId,
-      assessmentVersion: PLACEMENT_ASSESSMENT_VERSION,
-      maxItems: PLACEMENT_MAX_ITEMS,
-      expiresAt: new Date(now.getTime() + PLACEMENT_SESSION_TTL_MS),
-    },
-  });
+  // No retake cooldown exists (policy not yet set); every attempt is counted
+  // and audited so reviewers can see repeated attempts.
+  const priorAttempts = await prisma.placementSession.count({ where: { studentId: learner.studentId } });
+  let created;
+  try {
+    created = await prisma.placementSession.create({
+      data: {
+        studentId: learner.studentId,
+        schoolId: learner.schoolId,
+        assessmentVersion: PLACEMENT_ASSESSMENT_VERSION,
+        maxItems: PLACEMENT_MAX_ITEMS,
+        expiresAt: new Date(now.getTime() + PLACEMENT_SESSION_TTL_MS),
+      },
+    });
+  } catch (error) {
+    // A concurrent start won the one-ACTIVE-session-per-student index; resume it.
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
+      const winner = await findActive();
+      if (winner) return { resumed: true, ...sessionView({ ...winner, items: winner.items.map(toStored) }) };
+      throw fail(409, "Another placement session is already active", "session_conflict");
+    }
+    throw error;
+  }
   await logAudit({
     userId: user.id,
     schoolId: learner.schoolId,
     action: "placement.session.started",
     resourceType: "placement_session",
     resourceId: created.id,
-    details: { assessmentVersion: PLACEMENT_ASSESSMENT_VERSION },
+    details: { assessmentVersion: PLACEMENT_ASSESSMENT_VERSION, attemptNumber: priorAttempts + 1 },
   });
   return { resumed: false, ...sessionView({ ...created, items: [] }) };
 }
@@ -145,6 +161,7 @@ export async function issueNextItem(user: Learner, sessionId: string) {
   const content = await generatePlacementItem({
     difficulty,
     usedPrompts: new Set(session.items.map((item) => item.prompt)),
+    loadPriorExposure: () => priorExposure(learner.studentId, session.id),
     schoolId: learner.schoolId,
     userId: user.id,
   });
@@ -166,6 +183,16 @@ export async function issueNextItem(user: Learner, sessionId: string) {
         explanation: content.explanation,
       },
     });
+    if (content.reusedPriorExposure) {
+      await logAudit({
+        userId: user.id,
+        schoolId: learner.schoolId,
+        action: "placement.item.exposure_reused",
+        resourceType: "placement_session",
+        resourceId: session.id,
+        details: { itemId: created.id, sequence: created.sequence, reason: "fallback_bank_exhausted_for_learner" },
+      });
+    }
     return { item: toPublicItem(toStored(created)), reissued: false };
   } catch (error) {
     // A concurrent request issued this sequence first; return that item.
@@ -178,6 +205,20 @@ export async function issueNextItem(user: Learner, sessionId: string) {
     }
     throw error;
   }
+}
+
+/** Prompts this learner was shown in any earlier placement session. */
+async function priorExposure(studentId: string, currentSessionId: string) {
+  const sessions = await prisma.placementSession.findMany({
+    where: { studentId, id: { not: currentSessionId } },
+    select: { id: true },
+  });
+  if (sessions.length === 0) return new Set<string>();
+  const items = await prisma.placementSessionItem.findMany({
+    where: { sessionId: { in: sessions.map((row) => row.id) } },
+    select: { prompt: true },
+  });
+  return new Set(items.map((item) => item.prompt));
 }
 
 export type ResponseInput = {

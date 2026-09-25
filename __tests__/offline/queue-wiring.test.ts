@@ -14,6 +14,7 @@
  */
 
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { createFakeStudentProgress } from "../helpers/fakeStudentProgress";
 import { NextRequest } from "next/server";
 import { clearQueue, getQueue } from "@/lib/offline/offlineQueue";
 
@@ -24,7 +25,7 @@ const mockLogAudit = vi.hoisted(() => vi.fn().mockResolvedValue(undefined));
 const mockSwFindUnique = vi.hoisted(() => vi.fn());
 const mockStudentFindUnique = vi.hoisted(() => vi.fn());
 const mockEnrollmentFindUnique = vi.hoisted(() => vi.fn());
-const mockProgressUpsert = vi.hoisted(() => vi.fn());
+const progress = vi.hoisted(() => ({ current: null as any }));
 const mockLabSessionFindUnique = vi.hoisted(() => vi.fn());
 const mockLabSessionUpdate = vi.hoisted(() => vi.fn());
 const mockStrandFindFirst = vi.hoisted(() => vi.fn());
@@ -62,7 +63,9 @@ vi.mock("@/lib/db", () => ({
     },
     student: { findUnique: mockStudentFindUnique },
     enrollment: { findUnique: mockEnrollmentFindUnique },
-    studentProgress: { upsert: mockProgressUpsert, findUnique: vi.fn().mockResolvedValue(null) },
+    get studentProgress() {
+      return progress.current.delegate;
+    },
     labSession: {
       findUnique: mockLabSessionFindUnique,
       update: mockLabSessionUpdate,
@@ -99,6 +102,7 @@ const makeReq = (method = "POST", body?: object) =>
 describe("Gap 1: offline queue wiring", () => {
   beforeEach(() => {
     clearQueue();
+    progress.current = createFakeStudentProgress();
     vi.clearAllMocks();
     mockLogAudit.mockResolvedValue(undefined);
     mockIsVirtualLabsEnabled.mockReturnValue(true);
@@ -126,11 +130,6 @@ describe("Gap 1: offline queue wiring", () => {
       });
       mockStudentFindUnique.mockResolvedValue({ id: "student-rec-1", userId: "user-student-1" });
       mockEnrollmentFindUnique.mockResolvedValue({ studentId: "student-rec-1", classId: "class-1" });
-      mockProgressUpsert.mockResolvedValue({
-        studentId: "user-student-1",
-        scheduledWorkId: "sw-lesson-1",
-        completedAt: new Date("2026-03-02T08:00:00.000Z"),
-      });
     });
 
     it("returns 200 and enqueues a lesson.completed item", async () => {

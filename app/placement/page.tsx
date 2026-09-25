@@ -17,11 +17,10 @@ type PublicItem = {
   strand: string;
 };
 
+// The answer key never reaches the learner, even after answering.
 type RespondedItem = PublicItem & {
   selectedIndex: number;
   isCorrect: boolean;
-  correctIndex: number;
-  explanation: string | null;
 };
 
 type SessionState = {
@@ -236,7 +235,7 @@ export default function PlacementPage() {
               <legend className="sr-only">Choose one answer</legend>
               {item.options.map((option, index) => {
                 const chosen = selected === index;
-                const showCorrect = feedback && index === feedback.correctIndex;
+                const showCorrect = feedback && chosen && feedback.isCorrect;
                 const showWrong = feedback && chosen && !feedback.isCorrect;
                 return (
                   <label
@@ -268,7 +267,6 @@ export default function PlacementPage() {
             {feedback ? (
               <div className="mt-4 space-y-3" aria-live="polite">
                 <p className="text-sm font-semibold">{feedback.isCorrect ? "Correct." : "Not quite."}</p>
-                {feedback.explanation && <p className="text-sm text-[var(--ll-text-muted)]">{feedback.explanation}</p>}
                 {!session?.readyToComplete && (
                   <button
                     type="button"

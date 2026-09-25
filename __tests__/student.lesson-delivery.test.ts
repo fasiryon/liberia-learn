@@ -1,11 +1,11 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { createFakeStudentProgress } from "./helpers/fakeStudentProgress";
 
 const mockRequireRole = vi.hoisted(() => vi.fn());
 const mockScheduledWorkFindUnique = vi.hoisted(() => vi.fn());
 const mockStudentFindUnique = vi.hoisted(() => vi.fn());
 const mockEnrollmentFindUnique = vi.hoisted(() => vi.fn());
-const mockStudentProgressUpsert = vi.hoisted(() => vi.fn());
-const mockStudentProgressFindUnique = vi.hoisted(() => vi.fn());
+const progress = vi.hoisted(() => ({ current: null as any }));
 const mockLogAudit = vi.hoisted(() => vi.fn());
 const mockNotifyLessonCompletion = vi.hoisted(() => vi.fn());
 const mockUpdateMasteryProfile = vi.hoisted(() => vi.fn());
@@ -23,7 +23,9 @@ vi.mock("@/lib/db", () => ({
     scheduledWork: { findUnique: mockScheduledWorkFindUnique },
     student: { findUnique: mockStudentFindUnique },
     enrollment: { findUnique: mockEnrollmentFindUnique },
-    studentProgress: { upsert: mockStudentProgressUpsert, findUnique: mockStudentProgressFindUnique },
+    get studentProgress() {
+      return progress.current.delegate;
+    },
     strandCatalog: { findUnique: mockStrandFindUnique, findFirst: mockStrandFindFirst },
   },
 }));
@@ -47,7 +49,7 @@ describe("student lesson delivery", () => {
     // so mastery writes still resolve a valid StrandCatalog target.
     mockStrandFindUnique.mockResolvedValue(null);
     mockStrandFindFirst.mockResolvedValue({ strandKey: "fractions_decimals" });
-    mockStudentProgressFindUnique.mockResolvedValue(null);
+    progress.current = createFakeStudentProgress();
   });
 
   // First test in this file to dynamically import @/lib/lessons, which now
@@ -99,7 +101,6 @@ describe("student lesson delivery", () => {
     });
     mockStudentFindUnique.mockResolvedValue({ id: "student-1", user: { name: "Student One" } });
     mockEnrollmentFindUnique.mockResolvedValue({ id: "enroll-1" });
-    mockStudentProgressUpsert.mockResolvedValue({ completedAt: new Date("2026-03-13T12:00:00.000Z") });
     mockLogAudit.mockResolvedValue(undefined);
     mockNotifyLessonCompletion.mockResolvedValue(undefined);
     mockUpdateMasteryProfile.mockResolvedValue(undefined);
@@ -137,10 +138,16 @@ describe("student lesson delivery", () => {
     mockStudentFindUnique.mockResolvedValue({ id: "student-1", user: { name: "Student One" } });
     mockEnrollmentFindUnique.mockResolvedValue({ id: "enroll-1" });
     const firstCompletedAt = new Date("2026-12-01T09:00:00.000Z");
-    mockStudentProgressFindUnique.mockResolvedValue({
+    progress.current.seed({
+      studentId: "user-1",
+      scheduledWorkId: "sw-1",
       completedAt: firstCompletedAt,
       exitTicketResponses: [{ questionIndex: 0, answer: "1" }],
       exitTicketScore: 100,
+      masteryEffectAt: firstCompletedAt,
+      progressionEffectAt: firstCompletedAt,
+      streakEffectAt: firstCompletedAt,
+      guardianNotifiedAt: firstCompletedAt,
     });
     mockRequireRole.mockResolvedValue({ id: "user-1", role: "STUDENT", schoolId: "school-1" });
 
@@ -160,7 +167,9 @@ describe("student lesson delivery", () => {
       exitTicketScore: 100,
       completedAt: firstCompletedAt.toISOString(),
     });
-    expect(mockStudentProgressUpsert).not.toHaveBeenCalled();
+    expect(progress.current.rows).toHaveLength(1);
+    expect(progress.current.rows[0].completedAt).toBe(firstCompletedAt);
+    expect(mockLogAudit).not.toHaveBeenCalled();
     expect(mockUpdateMasteryProfile).not.toHaveBeenCalled();
     expect(mockNotifyLessonCompletion).not.toHaveBeenCalled();
   }, ROUTE_TIMEOUT_MS);
@@ -180,7 +189,6 @@ describe("student lesson delivery", () => {
     });
     mockStudentFindUnique.mockResolvedValue({ id: "student-1", user: { name: "Student One" } });
     mockEnrollmentFindUnique.mockResolvedValue({ id: "enroll-1" });
-    mockStudentProgressUpsert.mockResolvedValue({ completedAt: new Date("2026-03-13T12:00:00.000Z") });
     mockLogAudit.mockResolvedValue(undefined);
     mockNotifyLessonCompletion.mockRejectedValue(new Error("sms failed"));
     mockRequireRole.mockResolvedValue({ id: "user-1", role: "STUDENT", schoolId: "school-1" });
