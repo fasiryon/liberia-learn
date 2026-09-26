@@ -6,7 +6,7 @@ import { publishedReleaseForLearner } from "@/lib/learning-authority/publishedRe
 import { decideLearningAction } from "@/lib/learning-authority/learningDecisionStore";
 import { deterministicReleaseIdentity, admitEvidence } from "@/lib/learning-authority/governedGrade4Math";
 import { openDiagnosticSession, sealDiagnosticSession } from "@/lib/learning-authority/diagnosticSession";
-import { appendCanonicalMasteryUpdateFromEvidence } from "@/lib/learning-state/masteryWriter";
+import { appendCanonicalMasteryUpdate } from "@/lib/learning-state/masteryWriter";
 import { createGovernedEvidence } from "@/lib/learning-evidence/evidenceContract";
 import { toLearnerSafeStudentConceptState } from "@/lib/learning-state/studentLearningModel";
 
@@ -127,7 +127,7 @@ export async function POST(request: NextRequest) {
     if (admission.decision !== "ACCEPTED") return NextResponse.json({ error: admission.reason }, { status: 409 });
     const occurredAt = new Date().toISOString();
     const governedEvidence = createGovernedEvidence({
-      evidenceId: session.sessionId, idempotencyKey: session.sessionId, attemptId: session.sessionId,
+      evidenceId: `learning-evidence-v1-${session.sessionId}`, idempotencyKey: session.sessionId, attemptId: session.sessionId,
       tenantId: user.schoolId!, schoolId: user.schoolId!,
       learner: { studentId: student.id, studentUserId: user.id },
       objective: { conceptId: binding!.conceptId, objectiveId: binding!.learningTargetCode },
@@ -143,7 +143,9 @@ export async function POST(request: NextRequest) {
       offline: { isOffline: false, syncIdentity: null },
       curriculum: { ontologyReleaseId: release.id, ontologyReleaseIdentity: deterministicReleaseIdentity(release) },
     });
-    const mastery = await appendCanonicalMasteryUpdateFromEvidence({ release, evidence: governedEvidence });
+    const mastery = await appendCanonicalMasteryUpdate({ release, schoolId: user.schoolId!, studentId: student.id,
+      studentUserId: user.id, sessionId: session.sessionId, itemId: item.id, itemVersion: item.version,
+      selectedAnswerIndex: body.answerIndex as number, occurredAt, admission, governedEvidence });
     // A replayed decision keeps its first sealed attempt; scoring the replay
     // would let a learner probe the answer key without generating evidence.
     if (mastery.duplicate) return NextResponse.json({ error: "attempt_already_recorded" }, { status: 409 });

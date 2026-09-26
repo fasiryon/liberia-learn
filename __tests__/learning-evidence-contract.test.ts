@@ -35,11 +35,10 @@ describe("governed adaptive intelligence contract", () => {
     const states = release.concepts.map((concept) => replayStudentConceptState(
       concept.id === release.concepts[0].id ? [canonical] : [], { asOf, expectedScope: scope(concept.id) },
     ));
-    const candidates = generateLearningCandidates({ states });
     const result = await resolveLearningDecision({ states, currentRevision: async () => learnerStateRevision(states), idempotencyKey: "proof-1" });
     expect(canonical.scope.conceptId).toBe(release.concepts[0].id);
     expect(result.decision.status).toBe("SELECTED");
-    expect(result.decision.action?.id).toBe(candidates[0].id);
+    expect(result.decision.action?.id).toBe("g4-frac-bind-equivalence-v1:practice");
     expect(result.decision.mayWriteCanonicalMastery).toBe(false);
   });
 
@@ -58,7 +57,7 @@ describe("governed adaptive intelligence contract", () => {
 
   it("fails safely when governed inventory has no eligible candidate", async () => {
     const states = release.concepts.map((concept) => replayStudentConceptState([], { asOf, expectedScope: scope(concept.id) }));
-    const result = await resolveLearningDecision({ states, prohibitedTools: ["fraction_strips", "number_line"], currentRevision: async () => learnerStateRevision(states), idempotencyKey: "no-resource" });
+    const result = await resolveLearningDecision({ states, availableCandidateIds: [], currentRevision: async () => learnerStateRevision(states), idempotencyKey: "no-resource" });
     expect(result.decision.status).toBe("NO_VALID_RESOURCE");
     expect(result.decision.action).toBeNull();
     expect(result.recommendation.fallbackReason).toBe("NO_VALID_RESOURCE");

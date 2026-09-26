@@ -78,6 +78,8 @@ export function generateLearningCandidates(input: {
   states: readonly StudentConceptState[];
   release?: CurriculumOntologyRelease;
   prohibitedTools?: readonly ToolKey[];
+  /** Optional server-supplied inventory slice. Unknown ids are never admitted. */
+  availableCandidateIds?: readonly string[];
 }): readonly LearningAction[] {
   const release = input.release ?? compatibilityRelease();
   validateOntologyRelease(release);
@@ -102,7 +104,9 @@ export function generateLearningCandidates(input: {
         : "Published grade-level entry action.",
     }));
   }
-  return Object.freeze(candidates.sort((a, b) => a.id.localeCompare(b.id)));
+  const available = input.availableCandidateIds === undefined ? null : new Set(input.availableCandidateIds);
+  return Object.freeze(candidates.filter((candidate) => available === null || available.has(candidate.id))
+    .sort((a, b) => a.id.localeCompare(b.id)));
 }
 
 /** Read-only offline pack fallback when no trusted learner-state snapshot is available. */
@@ -163,6 +167,7 @@ export async function resolveLearningDecision(input: {
   teacherOverride?: TeacherOverride;
   offline?: boolean;
   prohibitedTools?: readonly ToolKey[];
+  availableCandidateIds?: readonly string[];
   idempotencyKey: string;
 }): Promise<{ recommendation: LearningRecommendation; resolution: LearningPolicyResolution; decision: LearningDecision }> {
   const release = input.release ?? compatibilityRelease();
