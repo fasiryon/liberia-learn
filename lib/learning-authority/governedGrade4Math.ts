@@ -55,6 +55,8 @@ export type CurriculumContentBinding = Readonly<{
   contentVersion: string;
   contentType: "LESSON" | "TEXTBOOK" | "LAB" | "SIMULATION";
   toolPolicyId: string;
+  /** sha256 of the bound payload (JSON.stringify). Absent in 2026.1, which predates payload pinning. */
+  contentSha256?: string;
 }>;
 
 export type CurriculumOntologyRelease = Readonly<{
@@ -266,6 +268,7 @@ export function validateOntologyRelease(release: CurriculumOntologyRelease): voi
     contentBindingIds.add(binding.id);
     if (!ids.has(binding.conceptId)) throw new Error("ontology_content_binding_unknown_concept");
     if (!binding.contentId.trim() || !binding.contentVersion.trim()) throw new Error("ontology_content_binding_identity_invalid");
+    if (binding.contentSha256 !== undefined && !/^[0-9a-f]{64}$/.test(binding.contentSha256)) throw new Error("ontology_content_binding_hash_invalid");
     const toolPolicy = release.toolPolicies.find((policy) => policy.id === binding.toolPolicyId);
     if (!toolPolicy || toolPolicy.context !== "INSTRUCTION") throw new Error("ontology_content_binding_policy_invalid");
   }

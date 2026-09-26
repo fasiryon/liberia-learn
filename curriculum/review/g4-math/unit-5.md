@@ -20,6 +20,15 @@ For each objective, record APPROVE / REVISE / REJECT in `review-ledger.json`. No
 
 **Known uncertainties:** none recorded.
 
+### Reviewer support (not a decision)
+
+- **Content risks:** none found.
+- **Answers:** VERIFIED: all answer keys recomputed; no errors.
+- **Wording provenance.** MOE-derived: The objective; outcome out1 (planning activities by the time they take) matches the estimate-then-time practical. LiberiaLearn explanatory: Title, explanation, worked examples, activities, all practice, homework, quiz, diagnostic and assessment items, teacher notes. Example data: None.
+- **Grade appropriateness:** Appropriate for Grade 4 and within the MOE scope for this objective.
+- **Component alignment:** Classwork, practice, homework, quiz and exit assessment all target this objective; the diagnostic checks a prerequisite.
+- **Interaction classification (PRACTICAL):** AGREE
+
 ### Explanation
 
 Time is measured in seconds, minutes, hours, days, weeks, months and years.
@@ -106,7 +115,20 @@ Duration: 45 minutes.
 
 **Known uncertainties:** 
 - No Grade 4-6 clock tool is enabled online; interaction relies on paper-plate clocks.
+  - **SOURCE_RESOLVED.** MOE's own method is a physical clock: act1 'Demonstrate finding elapsed time using a toy clock...' and mat1 'Toy or paper Clock'. The paper-plate clock is source-aligned; no online tool is needed for alignment. A Grade 4-6 online clock tool remains a non-blocking product gap.
+  - Evidence: moe-math-g4-s2-p5-measurement-act1 p46; moe-math-g4-s2-p5-measurement-mat1 p46
 - Interaction MANIPULATIVE_2D has no enabled online tool; offline fallback only.
+  - **SOURCE_RESOLVED.** Same as #known-1: the MOE material is a toy or paper clock.
+  - Evidence: moe-math-g4-s2-p5-measurement-mat1 p46
+
+### Reviewer support (not a decision)
+
+- **Content risks:** none found.
+- **Answers:** VERIFIED: all answer keys recomputed; no errors.
+- **Wording provenance.** MOE-derived: The objective; the paper-plate clock follows act1 and mat1 ('toy clock', 'Toy or paper Clock'). LiberiaLearn explanatory: Title, explanation, worked examples, activities, all practice, homework, quiz, diagnostic and assessment items, teacher notes. Example data: Bus schedule times (labeled example times).
+- **Grade appropriateness:** Appropriate for Grade 4 and within the MOE scope for this objective.
+- **Component alignment:** Classwork, practice, homework, quiz and exit assessment all target this objective; the diagnostic checks a prerequisite.
+- **Interaction classification (MANIPULATIVE_2D):** AGREE
 
 ### Explanation
 
@@ -197,6 +219,16 @@ Duration: 45 minutes.
 
 **Known uncertainties:** none recorded.
 
+### Reviewer support (not a decision)
+
+- **Content risks:** 
+  - The explanation says customary units are 'widely used in Liberia' (cloth, timber, height). This is a factual claim about Liberia the founder should confirm.
+- **Answers:** VERIFIED: all answer keys recomputed; no errors.
+- **Wording provenance.** MOE-derived: The objective; estimating desk and table lengths follows act2 ('Estimate the length of a pen, table'). LiberiaLearn explanatory: Title, explanation, worked examples, activities, all practice, homework, quiz, diagnostic and assessment items, teacher notes. Example data: None.
+- **Grade appropriateness:** Appropriate for Grade 4 and within the MOE scope for this objective.
+- **Component alignment:** Classwork, practice, homework, quiz and exit assessment all target this objective; the diagnostic checks a prerequisite.
+- **Interaction classification (PRACTICAL):** AGREE
+
 ### Explanation
 
 Customary units of length are the inch (in), foot (ft), yard (yd) and mile (mi). They are widely used in Liberia, for example for cloth, timber and height.
@@ -282,6 +314,15 @@ Duration: 45 minutes.
 | Example-data labels | none |
 
 **Known uncertainties:** none recorded.
+
+### Reviewer support (not a decision)
+
+- **Content risks:** none found.
+- **Answers:** VERIFIED: all answer keys recomputed; no errors.
+- **Wording provenance.** MOE-derived: The objective statement (verbatim MOE text). LiberiaLearn explanatory: Title, explanation, worked examples, activities, all practice, homework, quiz, diagnostic and assessment items, teacher notes. Example data: None.
+- **Grade appropriateness:** Appropriate for Grade 4 and within the MOE scope for this objective.
+- **Component alignment:** Classwork, practice, homework, quiz and exit assessment all target this objective; the diagnostic checks a prerequisite.
+- **Interaction classification (PRACTICAL):** AGREE
 
 ### Explanation
 
@@ -369,6 +410,19 @@ Duration: 45 minutes.
 
 **Known uncertainties:** 
 - The lesson treats weight and mass together, using everyday customary units (ounce, pound). Confirm terminology.
+  - **LIBERIALEARN_CLARIFICATION_REQUIRED.** MOE uses 'mass' (objectives 5 and 6, p46) and 'weight' (objectives 7 and 8, p47; out2 'weights') for the same idea, so the source does not choose. LiberiaLearn needs one stated convention.
+  - Evidence: moe-math-g4-s2-p5-measurement-obj5 p46; moe-math-g4-s2-p5-measurement-obj7 p47; moe-math-g4-s2-p5-measurement-out2 p46
+  - Proposed correction: Open 5.5 with 'Mass tells how heavy something is. People often call it weight.' and use 'mass' after that; keep MOE's 'weight' where objectives 7 and 8 use it.
+
+### Reviewer support (not a decision)
+
+- **Content risks:** 
+  - Benchmarks disagree across lessons: 5.5 treats a bag of sugar as 2 pounds in the explanation but gives 'a bag of sugar' as a 1-pound item in the homework answer, and 5.6 uses a bag of sugar as the 1 kg benchmark. Suggest the homework answer name only 'a tin of milk'.
+- **Answers:** VERIFIED: all answer keys recomputed; no errors.
+- **Wording provenance.** MOE-derived: The objective; cups and gallons follow MOE mat1 ('scale cups, gallons teaspoon'). LiberiaLearn explanatory: Title, explanation, worked examples, activities, all practice, homework, quiz, diagnostic and assessment items, teacher notes. Example data: None.
+- **Grade appropriateness:** Appropriate for Grade 4 and within the MOE scope for this objective.
+- **Component alignment:** Classwork, practice, homework, quiz and exit assessment all target this objective; the diagnostic checks a prerequisite.
+- **Interaction classification (PRACTICAL):** AGREE
 
 ### Explanation
 
@@ -450,6 +504,15 @@ Duration: 45 minutes.
 | Example-data labels | none |
 
 **Known uncertainties:** none recorded.
+
+### Reviewer support (not a decision)
+
+- **Content risks:** none found.
+- **Answers:** VERIFIED: all answer keys recomputed; no errors.
+- **Wording provenance.** MOE-derived: The objective statement (verbatim MOE text). LiberiaLearn explanatory: Title, explanation, worked examples, activities, all practice, homework, quiz, diagnostic and assessment items, teacher notes. Example data: None.
+- **Grade appropriateness:** Appropriate for Grade 4 and within the MOE scope for this objective.
+- **Component alignment:** Classwork, practice, homework, quiz and exit assessment all target this objective; the diagnostic checks a prerequisite.
+- **Interaction classification (PRACTICAL):** AGREE
 
 ### Explanation
 
@@ -538,6 +601,17 @@ Duration: 45 minutes.
 
 **Known uncertainties:** 
 - MOE extraction confidence MEDIUM (CONTINUATION_PAGE_ASSIGNMENT).
+  - **SOURCE_RESOLVED.** Page 47 is the second page of topic 5 (asr8-asr10 on p47; topic 6 starts on p48); con4 and con6 list converting units of measure.
+  - Evidence: moe-math-g4-s2-p5-measurement-con6 p46; moe-math-g4-s2-p5-measurement-asr8 p47
+
+### Reviewer support (not a decision)
+
+- **Content risks:** none found.
+- **Answers:** VERIFIED: all answer keys recomputed; no errors.
+- **Wording provenance.** MOE-derived: The objective statement (verbatim MOE text). LiberiaLearn explanatory: Title, explanation, worked examples, activities, all practice, homework, quiz, diagnostic and assessment items, teacher notes. Example data: Market bag weights (labeled example weights).
+- **Grade appropriateness:** Appropriate for Grade 4 and within the MOE scope for this objective.
+- **Component alignment:** Classwork, practice, homework, quiz and exit assessment all target this objective; the diagnostic checks a prerequisite.
+- **Interaction classification (NONE):** AGREE
 
 ### Explanation
 
@@ -626,6 +700,18 @@ Duration: 45 minutes.
 
 **Known uncertainties:** 
 - MOE extraction confidence MEDIUM (CONTINUATION_PAGE_ASSIGNMENT).
+  - **SOURCE_RESOLVED.** Page 47 is the second page of topic 5 (asr8-asr10 on p47; topic 6 starts on p48).
+  - Evidence: moe-math-g4-s2-p5-measurement-asr8 p47; moe-math-g4-s2-p6-geometry-and-statistics-obj1 p48
+
+### Reviewer support (not a decision)
+
+- **Content risks:** 
+  - Two malformed quiz distractors: '3 m 120 cm only' (suggest '3 m 120 cm') and '2,1000 g', which is not a valid numeral (suggest '2,300 g').
+- **Answers:** VERIFIED: all answer keys recomputed; no errors.
+- **Wording provenance.** MOE-derived: The objective statement (verbatim MOE text). LiberiaLearn explanatory: Title, explanation, worked examples, activities, all practice, homework, quiz, diagnostic and assessment items, teacher notes. Example data: Market scale weights (labeled example weights).
+- **Grade appropriateness:** Appropriate for Grade 4 and within the MOE scope for this objective.
+- **Component alignment:** Classwork, practice, homework, quiz and exit assessment all target this objective; the diagnostic checks a prerequisite.
+- **Interaction classification (NONE):** AGREE
 
 ### Explanation
 
@@ -712,8 +798,25 @@ Duration: 45 minutes.
 
 **Known uncertainties:** 
 - MOE extraction confidence MEDIUM (CONTINUATION_PAGE_ASSIGNMENT).
+  - **SOURCE_RESOLVED.** The topic's content column lists 'Perimeters' (con7) and 'Finding areas of squares and rectangles' (con8).
+  - Evidence: moe-math-g4-s2-p5-measurement-con7 p46; moe-math-g4-s2-p5-measurement-con8 p46
 - No Grade 4-6 grid tool is enabled online; interaction relies on squared paper.
+  - **HUMAN_POLICY_DECISION_REQUIRED.** The source names no grid material (mat1: rulers, meter stick, tapeline). Squared paper works offline. The coordinate-grid tool is enabled only for Grades 7+ (lib/toolkit/toolRegistry.ts). Non-blocking for lesson review.
+  - Evidence: moe-math-g4-s2-p5-measurement-mat1 p46
+  - Founder decision needed: Accept squared paper as the only modality for 2026.2, or schedule a Grade 4-6 grid tool.
 - Interaction MANIPULATIVE_2D has no enabled online tool; offline fallback only.
+  - **HUMAN_POLICY_DECISION_REQUIRED.** Same decision as #known-1.
+  - Evidence: lib/toolkit/toolRegistry.ts coordinate-grid gradeBands 7-9, 10-12
+  - Founder decision needed: Same as #known-1.
+
+### Reviewer support (not a decision)
+
+- **Content risks:** none found.
+- **Answers:** VERIFIED: all answer keys recomputed; no errors.
+- **Wording provenance.** MOE-derived: The objective statement (verbatim MOE text). LiberiaLearn explanatory: Title, explanation, worked examples, activities, all practice, homework, quiz, diagnostic and assessment items, teacher notes. Example data: None.
+- **Grade appropriateness:** Appropriate for Grade 4 and within the MOE scope for this objective.
+- **Component alignment:** Classwork, practice, homework, quiz and exit assessment all target this objective; the diagnostic checks a prerequisite.
+- **Interaction classification (MANIPULATIVE_2D):** AGREE
 
 ### Explanation
 

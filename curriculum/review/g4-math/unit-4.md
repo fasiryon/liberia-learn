@@ -20,6 +20,15 @@ For each objective, record APPROVE / REVISE / REJECT in `review-ledger.json`. No
 
 **Known uncertainties:** none recorded.
 
+### Reviewer support (not a decision)
+
+- **Content risks:** none found.
+- **Answers:** VERIFIED: all answer keys recomputed; no errors.
+- **Wording provenance.** MOE-derived: The objective; ordering chalk in hundreds follows act3 ('Order and distribute items in multiples of 10's, 100's or 1000's'). LiberiaLearn explanatory: Title, explanation, worked examples, activities, all practice, homework, quiz, diagnostic and assessment items, teacher notes. Example data: None.
+- **Grade appropriateness:** Appropriate for Grade 4 and within the MOE scope for this objective.
+- **Component alignment:** Classwork, practice, homework, quiz and exit assessment all target this objective; the diagnostic checks a prerequisite.
+- **Interaction classification (NONE):** AGREE
+
 ### Explanation
 
 To multiply numbers that end in zeros, multiply the non-zero parts, then add all the zeros from both numbers.
@@ -103,6 +112,15 @@ Duration: 45 minutes.
 | Example-data labels | (example price) |
 
 **Known uncertainties:** none recorded.
+
+### Reviewer support (not a decision)
+
+- **Content risks:** none found.
+- **Answers:** VERIFIED: all answer keys recomputed; no errors.
+- **Wording provenance.** MOE-derived: The objective statement (verbatim MOE text). LiberiaLearn explanatory: Title, explanation, worked examples, activities, all practice, homework, quiz, diagnostic and assessment items, teacher notes. Example data: Item and bus-trip prices (labeled example prices).
+- **Grade appropriateness:** Appropriate for Grade 4 and within the MOE scope for this objective.
+- **Component alignment:** Classwork, practice, homework, quiz and exit assessment all target this objective; the diagnostic checks a prerequisite.
+- **Interaction classification (NONE):** AGREE
 
 ### Explanation
 
@@ -188,6 +206,16 @@ Duration: 45 minutes.
 
 **Known uncertainties:** none recorded.
 
+### Reviewer support (not a decision)
+
+- **Content risks:** 
+  - The MOE text 'multiply 2, 3, or 4 - Digits multipliers' is ambiguous on its own; the lesson reads it as multiplying 2-, 3- and 4-digit numbers by 2-digit multipliers. The topic content supports that reading: con4 'Multiplying 2, 3, 4 - digits numbers' and con5 'Numerals by 2 - digits'.
+- **Answers:** VERIFIED: all answer keys recomputed; no errors.
+- **Wording provenance.** MOE-derived: The objective statement (verbatim MOE text). LiberiaLearn explanatory: Title, explanation, worked examples, activities, all practice, homework, quiz, diagnostic and assessment items, teacher notes. Example data: Desk price L$1,250 (labeled example price).
+- **Grade appropriateness:** Appropriate for Grade 4 and within the MOE scope for this objective.
+- **Component alignment:** Classwork, practice, homework, quiz and exit assessment all target this objective; the diagnostic checks a prerequisite.
+- **Interaction classification (NONE):** AGREE
+
 ### Explanation
 
 To multiply by a 2-digit number, split the multiplier into tens and ones, find two partial products, and add them.
@@ -272,6 +300,15 @@ Duration: 45 minutes.
 | Example-data labels | (example amount) |
 
 **Known uncertainties:** none recorded.
+
+### Reviewer support (not a decision)
+
+- **Content risks:** none found.
+- **Answers:** VERIFIED: all answer keys recomputed; no errors.
+- **Wording provenance.** MOE-derived: The objective statement (verbatim MOE text). LiberiaLearn explanatory: Title, explanation, worked examples, activities, all practice, homework, quiz, diagnostic and assessment items, teacher notes. Example data: L$6,000 shared among families (labeled example amount).
+- **Grade appropriateness:** Appropriate for Grade 4 and within the MOE scope for this objective.
+- **Component alignment:** Classwork, practice, homework, quiz and exit assessment all target this objective; the diagnostic checks a prerequisite.
+- **Interaction classification (NONE):** AGREE
 
 ### Explanation
 
@@ -359,6 +396,15 @@ Duration: 45 minutes.
 
 **Known uncertainties:** none recorded.
 
+### Reviewer support (not a decision)
+
+- **Content risks:** none found.
+- **Answers:** VERIFIED: all answer keys recomputed; no errors.
+- **Wording provenance.** MOE-derived: The objective statement (verbatim MOE text). LiberiaLearn explanatory: Title, explanation, worked examples, activities, all practice, homework, quiz, diagnostic and assessment items, teacher notes. Example data: None.
+- **Grade appropriateness:** Appropriate for Grade 4 and within the MOE scope for this objective.
+- **Component alignment:** Classwork, practice, homework, quiz and exit assessment all target this objective; the diagnostic checks a prerequisite.
+- **Interaction classification (NONE):** AGREE
+
 ### Explanation
 
 To estimate a quotient, use compatible numbers: numbers close to the real ones that divide easily.
@@ -439,7 +485,20 @@ Duration: 45 minutes.
 
 **Known uncertainties:** 
 - MOE extraction confidence MEDIUM (CONTINUATION_PAGE_ASSIGNMENT).
+  - **SOURCE_RESOLVED.** Page 45 is the second page of topic 4 (asr7-asr10 on p45; topic 5 starts on p46).
+  - Evidence: moe-math-g4-s2-p4-multiplication-and-division-of-2-digits-multipli-asr7 p45; moe-math-g4-s2-p5-measurement-obj1 p46
 - Source text is truncated ('Divide 2, 3, or 4-Digit numbers by 2-Digit'); read as 'by 2-digit divisors'. Letter spacing was repaired automatically.
+  - **SOURCE_RESOLVED.** The same topic's content column reads 'Dividing by 2' / 'Digit divisors' (con7, con8: one cell split across lines), and out1/out2 read 'multiplication and division of 2 / Digits multipliers and divisors'. 'Divide 2, 3, or 4-digit numbers by 2-digit divisors' is the source's own wording elsewhere in the table. Raw objective text kept verbatim.
+  - Evidence: moe-math-g4-s2-p4-multiplication-and-division-of-2-digits-multipli-con7 p44; moe-math-g4-s2-p4-multiplication-and-division-of-2-digits-multipli-con8 p44; moe-math-g4-s2-p4-multiplication-and-division-of-2-digits-multipli-out2 p44
+
+### Reviewer support (not a decision)
+
+- **Content risks:** none found.
+- **Answers:** VERIFIED: all answer keys recomputed; no errors.
+- **Wording provenance.** MOE-derived: The objective statement (verbatim MOE text). LiberiaLearn explanatory: Title, explanation, worked examples, activities, all practice, homework, quiz, diagnostic and assessment items, teacher notes. Example data: None.
+- **Grade appropriateness:** Appropriate for Grade 4 and within the MOE scope for this objective.
+- **Component alignment:** Classwork, practice, homework, quiz and exit assessment all target this objective; the diagnostic checks a prerequisite.
+- **Interaction classification (NONE):** AGREE
 
 ### Explanation
 
@@ -526,7 +585,20 @@ Duration: 45 minutes.
 
 **Known uncertainties:** 
 - MOE extraction confidence MEDIUM (CONTINUATION_PAGE_ASSIGNMENT).
+  - **SOURCE_RESOLVED.** The topic's content column lists 'Decimal numerals up to hundredths place Comparing and Ordering decimal numerals up to hundredths place' (con9), and out2 names 'decimals to hundredths'. The decimals objectives belong to this topic.
+  - Evidence: moe-math-g4-s2-p4-multiplication-and-division-of-2-digits-multipli-con9 p44; moe-math-g4-s2-p4-multiplication-and-division-of-2-digits-multipli-out2 p44
 - The MOE topic title says 'decimals to hundredths' while the objectives are mostly multiplication/division; confirm decimals belong in this unit.
+  - **SOURCE_RESOLVED.** Same evidence as #confidence (con9, out2).
+  - Evidence: moe-math-g4-s2-p4-multiplication-and-division-of-2-digits-multipli-con9 p44
+
+### Reviewer support (not a decision)
+
+- **Content risks:** none found.
+- **Answers:** VERIFIED: all answer keys recomputed; no errors.
+- **Wording provenance.** MOE-derived: The objective statement (verbatim MOE text). LiberiaLearn explanatory: Title, explanation, worked examples, activities, all practice, homework, quiz, diagnostic and assessment items, teacher notes. Example data: None.
+- **Grade appropriateness:** Appropriate for Grade 4 and within the MOE scope for this objective.
+- **Component alignment:** Classwork, practice, homework, quiz and exit assessment all target this objective; the diagnostic checks a prerequisite.
+- **Interaction classification (MANIPULATIVE_2D):** AGREE
 
 ### Explanation
 
@@ -613,6 +685,17 @@ Duration: 45 minutes.
 
 **Known uncertainties:** 
 - MOE extraction confidence MEDIUM (CONTINUATION_PAGE_ASSIGNMENT).
+  - **SOURCE_RESOLVED.** Same evidence as objective 7 (con9 names comparing and ordering decimals).
+  - Evidence: moe-math-g4-s2-p4-multiplication-and-division-of-2-digits-multipli-con9 p44
+
+### Reviewer support (not a decision)
+
+- **Content risks:** none found.
+- **Answers:** VERIFIED: all answer keys recomputed; no errors.
+- **Wording provenance.** MOE-derived: The objective statement (verbatim MOE text). LiberiaLearn explanatory: Title, explanation, worked examples, activities, all practice, homework, quiz, diagnostic and assessment items, teacher notes. Example data: Race times (labeled example data).
+- **Grade appropriateness:** Appropriate for Grade 4 and within the MOE scope for this objective.
+- **Component alignment:** Classwork, practice, homework, quiz and exit assessment all target this objective; the diagnostic checks a prerequisite.
+- **Interaction classification (MANIPULATIVE_2D):** AGREE
 
 ### Explanation
 

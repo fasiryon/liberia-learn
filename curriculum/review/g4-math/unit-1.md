@@ -20,6 +20,15 @@ For each objective, record APPROVE / REVISE / REJECT in `review-ledger.json`. No
 
 **Known uncertainties:** none recorded.
 
+### Reviewer support (not a decision)
+
+- **Content risks:** none found.
+- **Answers:** VERIFIED: all answer keys recomputed; no errors.
+- **Wording provenance.** MOE-derived: The objective; classwork 'read and write' mirrors act1 ('Read and write whole numbers up to hundred thousand'). LiberiaLearn explanatory: Title, explanation, worked examples, activities, all practice, homework, quiz, diagnostic and assessment items, teacher notes. Example data: None.
+- **Grade appropriateness:** Appropriate for Grade 4 and within the MOE scope for this objective.
+- **Component alignment:** Classwork, practice, homework, quiz and exit assessment all target this objective; the diagnostic checks a prerequisite.
+- **Interaction classification (NONE):** RECONSIDER: MOE mat1 lists a place value chart and place value strips (physical manipulatives). NONE could become MANIPULATIVE_2D with paper place-value strips offline; no online place-value tool is registered.
+
 ### Explanation
 
 Every digit in a number has a place, and the place tells its value. From the right, the places are ones, tens, hundreds, thousands, ten thousands and hundred thousands. In 47,305 the 4 is in the ten thousands place, so it is worth 40,000. The 7 is worth 7,000, the 3 is worth 300, the 0 means there are no tens, and the 5 is worth 5.
@@ -101,6 +110,15 @@ Duration: 45 minutes.
 
 **Known uncertainties:** none recorded.
 
+### Reviewer support (not a decision)
+
+- **Content risks:** none found.
+- **Answers:** VERIFIED: all answer keys recomputed; no errors.
+- **Wording provenance.** MOE-derived: The objective; classwork mirrors act2 ('Compare and Order whole numbers up to hundred thousand'). LiberiaLearn explanatory: Title, explanation, worked examples, activities, all practice, homework, quiz, diagnostic and assessment items, teacher notes. Example data: Market prices in the classwork (labeled illustrative).
+- **Grade appropriateness:** Appropriate for Grade 4 and within the MOE scope for this objective.
+- **Component alignment:** Classwork, practice, homework, quiz and exit assessment all target this objective; the diagnostic checks a prerequisite.
+- **Interaction classification (MANIPULATIVE_2D):** AGREE
+
 ### Explanation
 
 To compare two numbers, first count the digits. A number with more digits is greater: 10,200 is greater than 9,875 because it has five digits.
@@ -180,6 +198,15 @@ Duration: 45 minutes.
 | Example-data labels | none |
 
 **Known uncertainties:** none recorded.
+
+### Reviewer support (not a decision)
+
+- **Content risks:** none found.
+- **Answers:** VERIFIED: all answer keys recomputed; no errors.
+- **Wording provenance.** MOE-derived: The objective statement (verbatim MOE text). LiberiaLearn explanatory: Title, explanation, worked examples, activities, all practice, homework, quiz, diagnostic and assessment items, teacher notes. Example data: None.
+- **Grade appropriateness:** Appropriate for Grade 4 and within the MOE scope for this objective.
+- **Component alignment:** Classwork, practice, homework, quiz and exit assessment all target this objective; the diagnostic checks a prerequisite.
+- **Interaction classification (MANIPULATIVE_2D):** AGREE
 
 ### Explanation
 
@@ -263,7 +290,22 @@ Duration: 45 minutes.
 
 **Known uncertainties:** 
 - MOE extraction confidence MEDIUM (TAIL_BOUNDARY_UNCERTAIN).
+  - **SOURCE_RESOLVED.** The operation and data context are corroborated on the same page: act3 'Add two or more (births and deaths) from the pollution data', act4 'Subtract two or more components of (births and deaths) from the population data', out1 'Use population data of births and death to add and subtract whole numbers'. Text past the parsed boundary could not change the operation. ('pollution' in act3 is itself a source typo; act4 and out1 say population.) MOE text kept verbatim.
+  - Evidence: moe-math-g4-s1-p1-numeration-addition-and-subtraction-act3 p38; moe-math-g4-s1-p1-numeration-addition-and-subtraction-act4 p38; moe-math-g4-s1-p1-numeration-addition-and-subtraction-out1 p38
 - MOE table text may continue past the parsed boundary ('... births, deaths, and migration'). Population figures in the lesson are invented example data.
+  - **HUMAN_POLICY_DECISION_REQUIRED.** The tail-boundary part is source-resolved (see #confidence). What remains is data policy: MOE materials name a 'Life skills POPFLE Resource book' and a 'Poster sheet showing population data', i.e. MOE expects real population figures. The draft uses invented figures, labeled as example data. MOE activities mention births and deaths only; the lesson's migration items follow the objective text, which names migration.
+  - Evidence: moe-math-g4-s1-p1-numeration-addition-and-subtraction-mat1 p38
+  - Founder decision needed: Keep labeled invented figures, or source real figures (POPFLE resource or national census) with a citation.
+
+### Reviewer support (not a decision)
+
+- **Content risks:** 
+  - The estimate check in the explanation is loose: 48,000 + 1,000 - 400 = 48,600 is called reasonable for 49,213. Suggest rounding births to the nearest hundred: 48,000 + 1,400 - 400 = 49,000.
+- **Answers:** VERIFIED: all answer keys recomputed; no errors.
+- **Wording provenance.** MOE-derived: The objective; births and deaths from population data (act3, act4, out1). LiberiaLearn explanatory: Title, explanation, worked examples, activities, all practice, homework, quiz, diagnostic and assessment items, teacher notes. Example data: All population figures (labeled example data for made-up districts).
+- **Grade appropriateness:** Appropriate for Grade 4 and within the MOE scope for this objective.
+- **Component alignment:** Classwork, practice, homework, quiz and exit assessment all target this objective; the diagnostic checks a prerequisite.
+- **Interaction classification (NONE):** AGREE
 
 ### Explanation
 
