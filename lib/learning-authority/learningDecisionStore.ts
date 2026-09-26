@@ -61,8 +61,9 @@ async function decideLearningActionOnce(input: {
         decision.ontologyReleaseIdentity === identity &&
         decision?.learnerStateRevision === recommendation.learnerStateRevision &&
         decision.resolutionId === resolution.id && decision.recommendationId === recommendation.id &&
+        decision.status === "SELECTED" && decision.action !== null &&
         decision.action.id === resolution.selectedCandidateId &&
-        generateLearningCandidates({ states, release }).some((candidate) => candidate.id === decision.action.id) &&
+        generateLearningCandidates({ states, release }).some((candidate) => candidate.id === decision.action?.id) &&
         learnerStateRevision(await read(), release) === recommendation.learnerStateRevision &&
         await prisma.learningEvent.count({ where: {
           eventType: CANONICAL_MASTERY_EVENT_TYPE, source: CANONICAL_MASTERY_EVENT_SOURCE,

@@ -22,7 +22,7 @@ export type TeacherOverride = Readonly<{
 }>;
 export type LearningRecommendation = Readonly<{
   id: string;
-  candidateId: string;
+  candidateId: string | null;
   rankedCandidates: readonly RankedCandidate[];
   modelId: string;
   modelConfidence: number;
@@ -34,7 +34,7 @@ export type LearningRecommendation = Readonly<{
 export type LearningPolicyResolution = Readonly<{
   id: string;
   recommendationId: string;
-  selectedCandidateId: string;
+  selectedCandidateId: string | null;
   reason: string;
   teacherOverride: TeacherOverride | null;
   policyVersion: typeof LEARNING_DECISION_POLICY_VERSION;
@@ -44,7 +44,9 @@ export type LearningDecision = Readonly<{
   id: string;
   recommendationId: string;
   resolutionId: string;
-  action: LearningAction;
+  status: "SELECTED" | "NO_VALID_RESOURCE";
+  action: LearningAction | null;
+  reason: "GOVERNED_RANKING_ACCEPTED" | "AUTHORIZED_TEACHER_OVERRIDE" | "NO_VALID_RESOURCE";
   learnerStateRevision: string;
   ontologyReleaseId: string;
   ontologyReleaseIdentity: string;
@@ -166,8 +168,22 @@ export async function resolveLearningDecision(input: {
   const release = input.release ?? compatibilityRelease();
   const revision = learnerStateRevision(input.states, release);
   const candidates = generateLearningCandidates(input);
-  if (!candidates.length) throw new Error("no_governed_learning_action");
   const identity = deterministicReleaseIdentity(release);
+  const baseId = digest({ schoolId: input.states[0].scope.schoolId, studentId: input.states[0].scope.studentId,
+    revision, identity, idempotencyKey: input.idempotencyKey });
+  if (!candidates.length) {
+    const recommendation: LearningRecommendation = Object.freeze({ id: `recommendation-${baseId}`, candidateId: null,
+      rankedCandidates: [], modelId: deterministicDecisionModel.id, modelConfidence: 1,
+      fallbackReason: "NO_VALID_RESOURCE", shadowOutput: null, learnerStateRevision: revision, ontologyReleaseIdentity: identity });
+    const resolution: LearningPolicyResolution = Object.freeze({ id: `resolution-${baseId}`, recommendationId: recommendation.id,
+      selectedCandidateId: null, reason: "NO_VALID_RESOURCE", teacherOverride: null,
+      policyVersion: LEARNING_DECISION_POLICY_VERSION, eligibleCandidateIds: [] });
+    const decision: LearningDecision = Object.freeze({ id: `decision-${baseId}`, recommendationId: recommendation.id,
+      resolutionId: resolution.id, status: "NO_VALID_RESOURCE", action: null, reason: "NO_VALID_RESOURCE",
+      learnerStateRevision: revision, ontologyReleaseId: release.id, ontologyReleaseIdentity: identity,
+      effectiveAuthority: "GOVERNED_LEARNING_ORCHESTRATOR", mayWriteCanonicalMastery: false, mayChangeAdministrativeGrade: false });
+    return { recommendation, resolution, decision };
+  }
   const handoffs = input.states.map((state) => toDecisionModelLearnerState(state, candidates));
   const modelInput: DecisionModelInput = { contractVersion: "decision-model-input/1.0.0", authoritativeState: handoffs,
     candidates, learnerStateRevision: revision, ontologyReleaseIdentity: identity };
@@ -195,8 +211,6 @@ export async function resolveLearningDecision(input: {
   const action = candidates.find((candidate) => candidate.id === selected);
   if (!action) throw new Error("decision_candidate_not_governed");
   if (await input.currentRevision() !== revision) throw new Error("learner_state_stale");
-  const baseId = digest({ schoolId: input.states[0].scope.schoolId, studentId: input.states[0].scope.studentId,
-    revision, identity, idempotencyKey: input.idempotencyKey });
   const recommendation: LearningRecommendation = Object.freeze({ id: `recommendation-${baseId}`, candidateId: output.rankedCandidates[0].id,
     rankedCandidates: output.rankedCandidates, modelId: output.modelId, modelConfidence: output.confidence,
     fallbackReason, shadowOutput, learnerStateRevision: revision, ontologyReleaseIdentity: identity });
@@ -205,7 +219,8 @@ export async function resolveLearningDecision(input: {
     teacherOverride: input.teacherOverride ?? null, policyVersion: LEARNING_DECISION_POLICY_VERSION,
     eligibleCandidateIds: candidates.map((candidate) => candidate.id) });
   const decision: LearningDecision = Object.freeze({ id: `decision-${baseId}`, recommendationId: recommendation.id,
-    resolutionId: resolution.id, action, learnerStateRevision: revision, ontologyReleaseId: release.id,
+    resolutionId: resolution.id, status: "SELECTED", action, reason: input.teacherOverride ? "AUTHORIZED_TEACHER_OVERRIDE" : "GOVERNED_RANKING_ACCEPTED",
+    learnerStateRevision: revision, ontologyReleaseId: release.id,
     ontologyReleaseIdentity: identity, effectiveAuthority: "GOVERNED_LEARNING_ORCHESTRATOR",
     mayWriteCanonicalMastery: false, mayChangeAdministrativeGrade: false });
   return { recommendation, resolution, decision };
