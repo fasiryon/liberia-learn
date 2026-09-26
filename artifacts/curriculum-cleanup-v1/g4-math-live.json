@@ -1,0 +1,95 @@
+{
+ "capturedAt": "2026-09-26T09:07:15.873Z",
+ "database": {
+  "db": "postgres",
+  "addr": "2600:1f16:c40:6e02:e7dc:4ea6:7cf3:f2f0/128"
+ },
+ "lessons": [],
+ "units": [
+  {
+   "id": "cmoitx14600qxvovgq1iqlsnx",
+   "unitId": "yearmap-g4-math-u01",
+   "name": "Data",
+   "title": "Data",
+   "subject": "MATH",
+   "orderIndex": 1,
+   "weekStart": 1,
+   "weekEnd": 4,
+   "targetStandardCodes": [],
+   "weeks": 4
+  },
+  {
+   "id": "cmoitx29i00r6vovgmh3gf7bh",
+   "unitId": "yearmap-g4-math-u02",
+   "name": "Algebra",
+   "title": "Algebra",
+   "subject": "MATH",
+   "orderIndex": 2,
+   "weekStart": 5,
+   "weekEnd": 8,
+   "targetStandardCodes": [],
+   "weeks": 4
+  }
+ ],
+ "learningTargets": [],
+ "moeObjectives": [],
+ "standards": [
+  {
+   "code": "LR-MATH-G4_6-02",
+   "subject": "MATH",
+   "band": "G4_6"
+  },
+  {
+   "code": "LR-MATH-G4_6-03",
+   "subject": "MATH",
+   "band": "G4_6"
+  },
+  {
+   "code": "LR-MATH-G4_6-04",
+   "subject": "MATH",
+   "band": "G4_6"
+  },
+  {
+   "code": "LR-MATH-G4_6-01",
+   "subject": "MATH",
+   "band": "G4_6"
+  },
+  {
+   "code": "LR-MATH-G4_6-05",
+   "subject": "MATH",
+   "band": "G4_6"
+  }
+ ],
+ "skills": [
+  {
+   "id": "placement-skill-MATH-G4_6",
+   "subject": "MATH",
+   "band": "G4_6"
+  }
+ ],
+ "practiceItems": [
+  {
+   "skill": "placement-skill-MATH-G4_6",
+   "n": 2
+  }
+ ],
+ "homework": [],
+ "assignments": [],
+ "exams": [],
+ "textbooks": [],
+ "virtualLabs": [],
+ "releaseBindingProbe": {
+  "lesson": [],
+  "target": [],
+  "standard": [
+   {
+    "code": "LR-MATH-G4_6-02"
+   }
+  ],
+  "skill": [
+   {
+    "id": "placement-skill-MATH-G4_6"
+   }
+  ]
+ }
+}
