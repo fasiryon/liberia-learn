@@ -20,6 +20,15 @@ For each objective, record APPROVE / REVISE / REJECT in `review-ledger.json`. No
 
 **Known uncertainties:** none recorded.
 
+### Reviewer support (not a decision)
+
+- **Content risks:** none found.
+- **Answers:** VERIFIED: all answer keys recomputed; no errors.
+- **Wording provenance.** MOE-derived: The objective; the hundred-chart activity follows act1 ('Explore and write even and odd numbers as sets using number chart'). LiberiaLearn explanatory: Title, explanation, worked examples, activities, all practice, homework, quiz, diagnostic and assessment items, teacher notes. Example data: None.
+- **Grade appropriateness:** Appropriate for Grade 4 and within the MOE scope for this objective.
+- **Component alignment:** Classwork, practice, homework, quiz and exit assessment all target this objective; the diagnostic checks a prerequisite.
+- **Interaction classification (NONE):** AGREE
+
 ### Explanation
 
 An even number can be split into two equal groups with nothing left over. An odd number always has one left over. Pair up 8 bottle caps and every cap has a partner, so 8 is even. Pair up 9 and one cap is left alone, so 9 is odd.
@@ -102,6 +111,16 @@ Duration: 45 minutes.
 | Example-data labels | none |
 
 **Known uncertainties:** none recorded.
+
+### Reviewer support (not a decision)
+
+- **Content risks:** 
+  - MOE act2 'Determine the prime factors of a number' is not taught here or in 3.3; see the 3.3 disposition for the proposed addition.
+- **Answers:** VERIFIED: all answer keys recomputed; no errors.
+- **Wording provenance.** MOE-derived: The objective; factor and multiple lists follow act3 ('find factors and multiples of a Given number'). LiberiaLearn explanatory: Title, explanation, worked examples, activities, all practice, homework, quiz, diagnostic and assessment items, teacher notes. Example data: None.
+- **Grade appropriateness:** Appropriate for Grade 4 and within the MOE scope for this objective.
+- **Component alignment:** Classwork, practice, homework, quiz and exit assessment all target this objective; the diagnostic checks a prerequisite.
+- **Interaction classification (MANIPULATIVE_2D):** AGREE
 
 ### Explanation
 
@@ -186,6 +205,18 @@ Duration: 45 minutes.
 
 **Known uncertainties:** 
 - MOE says 'Find LCM and GCF'. The lesson uses listing methods only (no prime factorisation); confirm that depth is right for Grade 4.
+  - **SOURCE_RESOLVED.** Listing methods match MOE act4 'List multiples of a set of numbers and sort out common factor'. MOE act2 on the same page also asks learners to 'Determine the prime factors of a number', which neither 3.2 nor 3.3 teaches. The prime-factor method for LCM/GCF is not required by the source.
+  - Evidence: moe-math-g4-s1-p3-number-theory-and-fraction-act2 p42; moe-math-g4-s1-p3-number-theory-and-fraction-act4 p42
+  - Proposed correction: Add to 3.3 (or 3.2) one factor-tree activity ('Break 12 into factors until every factor is prime: 12 = 2 x 6 = 2 x 2 x 3') and two practice items: 'Write 12 as a product of prime factors.' Answer: 2 x 2 x 3. 'Write 30 as a product of prime factors.' Answer: 2 x 3 x 5. Keep LCM and GCF by listing.
+
+### Reviewer support (not a decision)
+
+- **Content risks:** none found.
+- **Answers:** VERIFIED: all answer keys recomputed; no errors.
+- **Wording provenance.** MOE-derived: The objective; listing multiples follows act4. LiberiaLearn explanatory: Title, explanation, worked examples, activities, all practice, homework, quiz, diagnostic and assessment items, teacher notes. Example data: None.
+- **Grade appropriateness:** Appropriate for Grade 4 and within the MOE scope for this objective.
+- **Component alignment:** Classwork, practice, homework, quiz and exit assessment all target this objective; the diagnostic checks a prerequisite.
+- **Interaction classification (NONE):** AGREE
 
 ### Explanation
 
@@ -276,6 +307,20 @@ Duration: 45 minutes.
 
 **Known uncertainties:** 
 - Covered by the founder-authored lesson (part of a whole). MOE says 'parts of a set'; the set model appears only in its activities.
+  - **SOURCE_RESOLVED.** MOE content item con5 'Parts of a set' and the objective itself require the set model; Grade 5 (p50) builds on it ('Write factor for parts of a set'). The 2026.1 lesson teaches parts of a whole and mentions sets only in an activity.
+  - Evidence: moe-math-g4-s1-p3-number-theory-and-fraction-con5 p42; Grade 5 OBJECTIVE p50 'Write factor for parts of a set.'
+  - Proposed correction: Implemented as a candidate, not in place: ll-g4-math-fractions-equal-parts-2026.2 v1.1.0 teaches parts of a set explicitly and adds practice, quiz and evidence items (release 2026.2 candidate). The 2026.1 lesson is unchanged. Pending founder review.
+
+### Reviewer support (not a decision)
+
+- **Content risks:** 
+  - The 2026.1 lesson (v1.0.0) has no practice set and no quiz in its payload; practice evidence for this objective does not exist in release 2026.1.
+  - A ledger decision for this objective should say which lesson was reviewed: 2026.1 v1.0.0, or the 2026.2 v1.1.0 candidate that fills these gaps.
+- **Answers:** VERIFIED: 1.0.0 assessment and diagnostic item correct; 2026.2 candidate items recomputed and correct.
+- **Wording provenance.** MOE-derived: The objective 'Find parts of a set'; MOE material 'Paper Orange Fraction Strips Made from paper' (mat1) in the folding activities. LiberiaLearn explanatory: Title, explanation, worked examples, activities, all practice, homework, quiz, diagnostic and assessment items, teacher notes. Example data: None.
+- **Grade appropriateness:** Appropriate for Grade 4 and within the MOE scope for this objective.
+- **Component alignment:** 2026.1: classwork, homework and exit assessment target parts of a whole; the set model appears only in an activity. The 2026.2 candidate aligns practice, quiz and exit evidence to both the whole and the set model.
+- **Interaction classification (MANIPULATIVE_2D):** AGREE
 
 ### Explanation
 
@@ -325,6 +370,87 @@ Not present as separate fields in the founder lesson payload; the activities use
 
 Duration: 45 minutes.
 
+### Candidate successor: Fractions as Equal Parts of a Whole and of a Set (`ll-g4-math-fractions-equal-parts-2026.2` v1.1.0)
+
+PENDING founder review. Supersedes `ll-g4-math-fractions-equal-parts-2026.1` v1.0.0 in the 2026.2 release candidate only; the 2026.1 lesson above is unchanged. A decision for this objective should name the version reviewed.
+
+#### Explanation
+
+A fraction names equal parts of one whole. The denominator is the bottom number and tells how many equal parts make the whole. The numerator is the top number and tells how many of those parts we are describing. If a cassava bread is cut into four equal pieces and we take three pieces, the fraction is 3/4. The pieces must be equal: three pieces cut from one side are not 3/4 unless the whole is divided into four equal parts.
+
+Look at 1/2, 2/4, and 3/4. In 1/2, the whole is divided into two equal parts and one is selected. In 2/4, the whole is divided into four equal parts and two are selected. Both examples describe a part of a whole, but their denominators tell us the size of the parts. A fraction can be less than one when the numerator is smaller than the denominator, equal to one when they are the same, and greater than one when the numerator is larger.
+
+To read a fraction, say the numerator first and the denominator second: 3/4 is three-fourths. To model one, draw a rectangle, divide it into four equal sections, and shade three. You can also fold paper, use bottle caps, or draw equal groups. In every model, check that the parts are equal before naming the fraction.
+
+Practice with a family sharing one loaf or a trader dividing a cloth into equal strips. Ask: What is the whole? How many equal parts are there? How many parts are selected? Those answers give the denominator and numerator. Fractions help us describe fair sharing at home, school, and the market.
+
+A fraction can also name part of a set, a group of separate objects. A set of 5 bottle caps has 2 red caps and 3 blue caps. The whole is the set of 5 caps, so the denominator is 5. The red caps are 2 of them, so 2/5 of the caps are red and 3/5 are blue. Here each object counts as one equal part, even if the caps are different colours.
+
+To name part of a set, ask the same three questions: What is the whole set? How many objects are in it? How many objects are we describing? If 8 learners sit on a bench and 3 of them are girls, the fraction of the learners who are girls is 3/8.
+
+#### Objectives
+
+- Identify the numerator and denominator in a fraction.
+- Represent a fraction as equal parts of one whole.
+- Explain why fraction parts must be equal.
+- Name the fraction of a set of objects.
+
+#### Classwork
+
+- Fold paper into halves and quarters and shade a named fraction.
+- Use bottle caps or stones to model 1/2, 2/4, and 3/4.
+- Explain the numerator and denominator to a partner using one drawing.
+- Sets of objects: groups make a set of 6 stones with some painted or marked, and name the fraction that is marked.
+
+#### Practice
+
+1. A cassava bread is cut into 8 equal pieces. 3 pieces are eaten. What fraction is eaten? **Answer:** 3/8
+2. There are 5 bottle caps. 2 are red. What fraction of the caps are red? **Answer:** 2/5
+3. In 5/6, which number is the denominator and what does it tell us? **Answer:** 6: the whole has 6 equal parts
+4. A cloth is cut into 4 pieces of different sizes. Is one piece 1/4 of the cloth? **Answer:** No, the 4 parts are not equal
+
+#### Homework
+
+1. Draw a rectangle, divide it into 6 equal parts and shade 4. Write the fraction shaded. **Answer:** 4/6
+2. A family has 7 children. 4 are boys. What fraction of the children are boys? **Answer:** 4/7
+3. Write the fraction for three-fifths. **Answer:** 3/5
+
+#### Quiz
+
+1. A set has 6 mangoes. 5 are ripe. What fraction of the mangoes are ripe? (5/6 / 1/6 / 6/5 / 5/11) **Answer:** 5/6
+2. Which picture shows 1/3? (A shape cut into 3 equal parts with 1 part shaded / A shape cut into 3 unequal parts with 1 part shaded / A shape cut into 4 equal parts with 1 part shaded / A shape cut into 3 equal parts with 2 parts shaded) **Answer:** A shape cut into 3 equal parts with 1 part shaded
+3. In 2/9, what does the 2 tell us? (How many parts are selected / How many equal parts make the whole / How many wholes there are / The size of each part) **Answer:** How many parts are selected
+
+#### Diagnostic check (before the lesson)
+
+A mango is cut into 2 equal pieces. Is each piece a half? (Yes, 2 equal pieces make halves / No, halves need 4 pieces / No, a half is the bigger piece / It depends on who eats it) **Answer:** Yes, 2 equal pieces make halves
+
+#### Exit assessment
+
+In 3/4, what does the 4 tell us? (How many equal parts make the whole / How many parts are selected / How many wholes there are / The answer to an addition problem) **Answer:** How many equal parts make the whole
+
+#### Governed evidence items (release 2026.2 candidate)
+
+- Diagnostic: `g4-frac-diagnostic-equal-parts` v1.0.0 (released in 2026.1, unchanged)
+- Practice: `g4-frac-practice-part-of-whole` v1.0.0: A cassava bread is cut into 8 equal pieces. 3 pieces are eaten. What fraction is eaten? (3/8 / 5/8 / 3/5 / 8/3) **Answer:** 3/8
+- Practice: `g4-frac-practice-part-of-set` v1.0.0: There are 5 bottle caps. 2 are red. What fraction of the caps are red? (2/5 / 3/5 / 2/3 / 5/2) **Answer:** 2/5
+- Practice: `g4-frac-practice-unequal-parts` v1.0.0: A cloth is cut into 4 pieces of different sizes. Can one piece be called 1/4 of the cloth? (No, the parts must be equal / Yes, there are 4 pieces / Yes, any piece is 1/4 / Only the biggest piece) **Answer:** No, the parts must be equal
+- End of lesson: `g4-frac-check-denominator-meaning` v1.0.0: In 3/4, what does the 4 tell us? (How many equal parts make the whole / How many parts are selected / How many wholes there are / The answer to an addition problem) **Answer:** How many equal parts make the whole
+
+#### Teacher notes
+
+Two errors to watch: reversing numerator and denominator (writing 4/3 for three-fourths) and naming unequal pieces as fractions. For sets, learners sometimes use the number of objects not selected as the denominator (writing 2/3 for 2 red caps out of 5); ask them to count the whole set first. Parts of a set follow the MOE objective 'Find parts of a set' (Grade 4 Mathematics, page 42); the examples and data are LiberiaLearn explanatory material.
+
+#### Materials
+
+Paper for folding, Bottle caps or stones, Exercise books
+
+#### Offline behavior
+
+Fully offline: paper folding, bottle caps and stones. Online, the fraction-visualizer tool shows equal-part strips; it does not model sets.
+
+Duration: 45 minutes.
+
 ---
 
 ## 3.5 Write equivalent fractions.
@@ -342,6 +468,15 @@ Duration: 45 minutes.
 | Example-data labels | none |
 
 **Known uncertainties:** none recorded.
+
+### Reviewer support (not a decision)
+
+- **Content risks:** none found.
+- **Answers:** VERIFIED: all answer keys recomputed; no errors.
+- **Wording provenance.** MOE-derived: The objective; fraction strips follow MOE mat1 (paper fraction strips). LiberiaLearn explanatory: Title, explanation, worked examples, activities, all practice, homework, quiz, diagnostic and assessment items, teacher notes. Example data: None.
+- **Grade appropriateness:** Appropriate for Grade 4 and within the MOE scope for this objective.
+- **Component alignment:** Classwork, practice, homework, quiz and exit assessment all target this objective; the diagnostic checks a prerequisite.
+- **Interaction classification (MANIPULATIVE_2D):** AGREE
 
 ### Explanation
 
@@ -427,6 +562,15 @@ Duration: 45 minutes.
 
 **Known uncertainties:** none recorded.
 
+### Reviewer support (not a decision)
+
+- **Content risks:** none found.
+- **Answers:** VERIFIED: all answer keys recomputed; no errors.
+- **Wording provenance.** MOE-derived: The objective (also MOE act7 'Simplify fractions'). LiberiaLearn explanatory: Title, explanation, worked examples, activities, all practice, homework, quiz, diagnostic and assessment items, teacher notes. Example data: None.
+- **Grade appropriateness:** Appropriate for Grade 4 and within the MOE scope for this objective.
+- **Component alignment:** Classwork, practice, homework, quiz and exit assessment all target this objective; the diagnostic checks a prerequisite.
+- **Interaction classification (MANIPULATIVE_2D):** AGREE
+
 ### Explanation
 
 A fraction is in simplest form when the numerator and denominator have no common factor except 1. Simplifying does not change the amount. It writes the same fraction with smaller numbers.
@@ -509,6 +653,20 @@ Duration: 45 minutes.
 
 **Known uncertainties:** 
 - MOE says 'Add fractions' without scope. The lesson covers like denominators plus related denominators (halves/quarters/eighths); confirm unlike denominators are out of scope for Grade 4.
+  - **SOURCE_RESOLVED.** MOE Grade 5 content (p54) lists 'Adding and subtracting fractions with unlike denominators' and 'Adding fractions and mixed numbers with like denominators', so unlike denominators, including the related denominators (halves, quarters, eighths) the draft teaches, are Grade 5 content. The Grade 4 activity act5 uses base-10 counters, which model like denominators (tenths). The draft's sentence 'The MOE activity uses counters...' overstates the source: MOE names base-10 counters; the 3/10 + 4/10 example is LiberiaLearn's.
+  - Evidence: Grade 5 CONTENT p54 'Adding and subtracting fractions with unlike denominators;'; Grade 5 CONTENT p54 'Adding fractions and mixed numbers with like denominators;'; moe-math-g4-s1-p3-number-theory-and-fraction-act5 p43
+  - Proposed correction: Restrict 3.7 to like denominators. Remove the related-denominator paragraph and objective 2. Replace: practice '1/2 + 1/4 = ?' with '1/4 + 2/4 = ?' (3/4); homework '1/3 + 1/6 = ? (simplest form)' with '1/6 + 2/6 = ? (simplest form)' (1/2); quiz '1/4 + 1/2' with '1/4 + 2/4 = ?' options 3/4, 3/8, 2/4, 1/4 (3/4); assessment '3/8 + 1/4' with '3/8 + 2/8 = ?' options 5/8, 5/16, 1/8, 6/8 (5/8); diagnostic '1/2 = ?/4' with 'How many eighths make one whole?' options 8, 4, 2, 16 (8). Reword the counters sentence to 'The MOE curriculum suggests base-10 counters: 3 counters out of 10 plus 4 counters out of 10 makes 7 out of 10.'
+
+### Reviewer support (not a decision)
+
+- **Content risks:** 
+  - Related-denominator addition (1/2 + 1/4, 1/3 + 1/6, exit assessment 3/8 + 1/4) is Grade 5 content per MOE p54; see the disposition for exact replacements.
+  - The sentence 'The MOE activity uses counters to show adding fractions: 3 counters out of 10...' attributes LiberiaLearn's example to MOE; MOE act5 says only 'Use base 10 counters'.
+- **Answers:** VERIFIED: all answer keys recomputed; no errors.
+- **Wording provenance.** MOE-derived: The objective; counters follow act5 ('Use base 10 counters to illustrate ... addition and subtraction of fractions'). LiberiaLearn explanatory: Title, explanation, worked examples, activities, all practice, homework, quiz, diagnostic and assessment items, teacher notes. Example data: None.
+- **Grade appropriateness:** PARTLY: like denominators are Grade 4; the related-denominator items are Grade 5 content per MOE.
+- **Component alignment:** The exit assessment (3/8 + 1/4) tests the out-of-scope related-denominator skill; after the proposed replacement all components test like denominators.
+- **Interaction classification (MANIPULATIVE_2D):** AGREE
 
 ### Explanation
 
@@ -595,6 +753,20 @@ Duration: 45 minutes.
 
 **Known uncertainties:** 
 - Same scope question as adding fractions.
+  - **SOURCE_RESOLVED.** Same Grade 5 p54 evidence as adding fractions.
+  - Evidence: Grade 5 CONTENT p54 'Adding and subtracting fractions with unlike denominators;'
+  - Proposed correction: Restrict 3.8 to like denominators and taking from a whole. Remove the related-denominator paragraph and objective 3. Replace: practice '5/6 - 1/3' with '5/6 - 2/6 = ? (simplest form)' (1/2); homework cloth '3/4 m, cut 1/2 m' with 'cut 1/4 m' (2/4 m = 1/2 m); quiz '1/2 - 1/4' with '3/4 - 1/4 = ?' options 1/2, 2/8, 1, 4/4 (1/2); assessment '7/8 - 1/4' with '7/8 - 2/8 = ?' options 5/8, 9/8, 5/16, 6/8 (5/8).
+
+### Reviewer support (not a decision)
+
+- **Content risks:** 
+  - Related-denominator subtraction (3/4 - 1/2, 5/6 - 1/3, exit assessment 7/8 - 1/4) is Grade 5 content per MOE p54.
+  - Quiz distractor '4/0' uses a zero denominator, which Grade 4 learners have not met; suggest '3/9'.
+- **Answers:** VERIFIED: all answer keys recomputed; no errors.
+- **Wording provenance.** MOE-derived: The objective statement (verbatim MOE text). LiberiaLearn explanatory: Title, explanation, worked examples, activities, all practice, homework, quiz, diagnostic and assessment items, teacher notes. Example data: None.
+- **Grade appropriateness:** PARTLY: like denominators and taking from a whole are Grade 4; related denominators are Grade 5 per MOE.
+- **Component alignment:** The exit assessment (7/8 - 1/4) tests the out-of-scope skill; see the disposition.
+- **Interaction classification (MANIPULATIVE_2D):** AGREE
 
 ### Explanation
 
@@ -681,7 +853,20 @@ Duration: 45 minutes.
 
 **Known uncertainties:** 
 - MOE extraction confidence MEDIUM (CONTINUATION_PAGE_ASSIGNMENT).
+  - **SOURCE_RESOLVED.** Page 43 is the second page of topic 3 (asr8-asr10 on p43; topic 4 starts on p44).
+  - Evidence: moe-math-g4-s1-p3-number-theory-and-fraction-asr8 p43; moe-math-g4-s2-p4-multiplication-and-division-of-2-digits-multipli-obj1 p44
 - MOE wording is circular ('Solve problems involving multi-step problems'); the lesson interprets it as multi-operation word problems.
+  - **SOURCE_RESOLVED.** MOE's own activity defines the circular objective: act6 'Solve problems involving multi-step problems; (using more than one operation).' That is the lesson's reading.
+  - Evidence: moe-math-g4-s1-p3-number-theory-and-fraction-act6 p43
+
+### Reviewer support (not a decision)
+
+- **Content risks:** none found.
+- **Answers:** VERIFIED: all answer keys recomputed; no errors.
+- **Wording provenance.** MOE-derived: The objective and its MOE gloss 'using more than one operation' (act6). LiberiaLearn explanatory: Title, explanation, worked examples, activities, all practice, homework, quiz, diagnostic and assessment items, teacher notes. Example data: Prices and amounts in Liberian dollars (labeled example prices).
+- **Grade appropriateness:** Appropriate for Grade 4 and within the MOE scope for this objective.
+- **Component alignment:** Classwork, practice, homework, quiz and exit assessment all target this objective; the diagnostic checks a prerequisite.
+- **Interaction classification (NONE):** AGREE
 
 ### Explanation
 

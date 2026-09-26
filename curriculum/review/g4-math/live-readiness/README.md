@@ -27,12 +27,14 @@ Production = Supabase project `bnphuinpvgpmebcsvmsp`. Note: `.env`, `.env.local`
 select id, email, role from "User" where id = '<founder user id>';
 ```
 
-**Command (founder runs it, after reviewing):**
+**Command (founder runs it, after reviewing).** Updated 2026-09-26: the script now takes `--lesson`, is a dry run unless `--apply` and `CONFIRM_PRODUCTION_WRITE` are both given, and refuses unless `../review-ledger.json` records the founder's APPROVE with `reviewedContentId` naming this lesson. It can also publish the 2026.2 candidate lesson; see [RELEASE_2026_2_AND_WRITE_PLAN.md](RELEASE_2026_2_AND_WRITE_PLAN.md).
 
 ```bash
+npx tsx scripts/author-grade4-fractions-authority.ts --lesson=ll-g4-math-fractions-equal-parts-2026.1   # dry run, no database
 DATABASE_URL="$(grep '^DATABASE_URL' .env.production | cut -d= -f2- | tr -d '"')" \
 LIBERIALEARN_FOUNDER_REVIEWER_ID=<founder user id> \
-npx tsx scripts/author-grade4-fractions-authority.ts
+CONFIRM_PRODUCTION_WRITE=ll-g4-math-fractions-equal-parts-2026.1 \
+npx tsx scripts/author-grade4-fractions-authority.ts --lesson=ll-g4-math-fractions-equal-parts-2026.1 --apply
 ```
 
 Expected result: one `CurriculumContent` row (`status published`, `visibility public`, `schoolId null`), a `CurriculumProvenance` (`VERIFIED`), one `HUMAN_CREATE` revision, and governance events `SUBMITTED` then `APPROVED` (HUMAN_REVIEW / PLATFORM). This is **not** MOE approval. The lesson becomes visible to Grade 4 learners.
@@ -111,9 +113,11 @@ Contract: `governed-cell-inventory/1.0.0`, built by `buildGovernedCellInventory(
 - `objectiveId` for extension concepts is `LIBERIALEARN_EXTENSION:<conceptId>` (today `g4-fractions-compare`), so they're never reported as MOE-aligned.
 - `excluded.draftLessons` (43) is a count only; draft ids and content aren't in the contract.
 
-PR #149's build is currently failing on its own branch. After it's repaired, it should replace its compatibility fixture with this inventory. No intelligence code changes are made here.
+Update 2026-09-26: PR #149 merged (a27d617d). `lib/learning-authority/governedInventoryRuntime.ts` now joins this inventory to the loop: the next-action route takes the evidence `objectiveId` from the inventory (the MOE objective id, or `LIBERIALEARN_EXTENSION:<conceptId>`) instead of the target code, `resolveObjective` returns `NO_VALID_RESOURCE` for objectives without a reviewed resource, and `teacherDecisionView` gives teacher-visible reasoning. The real-inventory proof is `__tests__/learning-authority/g4-math-governed-adaptive-loop.test.ts`. No ranking, scoring or mastery logic changed.
 
 ## 5. Founder decisions
+
+Superseded 2026-09-26 by the decision list in [RELEASE_2026_2_AND_WRITE_PLAN.md](RELEASE_2026_2_AND_WRITE_PLAN.md) and the uncertainty dispositions in [../README.md](../README.md). Kept for history:
 
 1. Review the fractions lesson (`../unit-3.md` §3.4) and, if approved, run §1 yourself with your own user id.
 2. Target `LR-MATH-G4_6-02`: seed it (§2), and choose `verificationStatus` PARTIAL vs VERIFIED and the code namespace. Or leave it unseeded, since nothing at runtime needs it; the certifier's release-live check then stays failing.

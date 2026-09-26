@@ -20,6 +20,15 @@ For each objective, record APPROVE / REVISE / REJECT in `review-ledger.json`. No
 
 **Known uncertainties:** none recorded.
 
+### Reviewer support (not a decision)
+
+- **Content risks:** none found.
+- **Answers:** VERIFIED: all answer keys recomputed; no errors.
+- **Wording provenance.** MOE-derived: The objective. MOE act1 suggests flash cards, doubles or graph paper; the lesson uses arrays of counters instead. LiberiaLearn explanatory: Title, explanation, worked examples, activities, all practice, homework, quiz, diagnostic and assessment items, teacher notes. Example data: None.
+- **Grade appropriateness:** Appropriate for Grade 4 and within the MOE scope for this objective.
+- **Component alignment:** Classwork, practice, homework, quiz and exit assessment all target this objective; the diagnostic checks a prerequisite.
+- **Interaction classification (MANIPULATIVE_2D):** AGREE
+
 ### Explanation
 
 Multiplication is repeated addition of equal groups. Four groups of 6 bottle caps is 6 + 6 + 6 + 6 = 24, written 4 x 6 = 24. An array (rows and columns) shows the same thing: 4 rows of 6.
@@ -103,6 +112,15 @@ Duration: 45 minutes.
 
 **Known uncertainties:** none recorded.
 
+### Reviewer support (not a decision)
+
+- **Content risks:** none found.
+- **Answers:** VERIFIED: all answer keys recomputed; no errors.
+- **Wording provenance.** MOE-derived: The objective statement (verbatim MOE text). LiberiaLearn explanatory: Title, explanation, worked examples, activities, all practice, homework, quiz, diagnostic and assessment items, teacher notes. Example data: Charcoal and notebook prices in Liberian dollars (labeled example prices).
+- **Grade appropriateness:** Appropriate for Grade 4 and within the MOE scope for this objective.
+- **Component alignment:** Classwork, practice, homework, quiz and exit assessment all target this objective; the diagnostic checks a prerequisite.
+- **Interaction classification (NONE):** AGREE
+
 ### Explanation
 
 Multiplying by 10 moves every digit one place to the left and puts a zero in the ones place: 7 x 10 = 70. Multiplying by 100 moves digits two places (7 x 100 = 700), and by 1,000 three places (7 x 1,000 = 7,000).
@@ -182,6 +200,15 @@ Duration: 45 minutes.
 | Example-data labels | none |
 
 **Known uncertainties:** none recorded.
+
+### Reviewer support (not a decision)
+
+- **Content risks:** none found.
+- **Answers:** VERIFIED: all answer keys recomputed; no errors.
+- **Wording provenance.** MOE-derived: The objective statement (verbatim MOE text). LiberiaLearn explanatory: Title, explanation, worked examples, activities, all practice, homework, quiz, diagnostic and assessment items, teacher notes. Example data: None.
+- **Grade appropriateness:** Appropriate for Grade 4 and within the MOE scope for this objective.
+- **Component alignment:** Classwork, practice, homework, quiz and exit assessment all target this objective; the diagnostic checks a prerequisite.
+- **Interaction classification (NONE):** RECONSIDER: MOE act2 'Use graph paper to show 4 by 26 rectangle to show multiplication concepts of 2, 3, or 4 digits numerals' is an area-model manipulative, and the lesson already has an area-model activity. NONE could become MANIPULATIVE_2D with graph paper offline; no Grade 4-6 grid tool is enabled online.
 
 ### Explanation
 
@@ -266,6 +293,15 @@ Duration: 45 minutes.
 | Example-data labels | none |
 
 **Known uncertainties:** none recorded.
+
+### Reviewer support (not a decision)
+
+- **Content risks:** none found.
+- **Answers:** VERIFIED: all answer keys recomputed; no errors.
+- **Wording provenance.** MOE-derived: The objective statement (verbatim MOE text). LiberiaLearn explanatory: Title, explanation, worked examples, activities, all practice, homework, quiz, diagnostic and assessment items, teacher notes. Example data: None.
+- **Grade appropriateness:** Appropriate for Grade 4 and within the MOE scope for this objective.
+- **Component alignment:** Classwork, practice, homework, quiz and exit assessment all target this objective; the diagnostic checks a prerequisite.
+- **Interaction classification (NONE):** AGREE
 
 ### Explanation
 
@@ -353,6 +389,15 @@ Duration: 45 minutes.
 
 **Known uncertainties:** none recorded.
 
+### Reviewer support (not a decision)
+
+- **Content risks:** none found.
+- **Answers:** VERIFIED: all answer keys recomputed; no errors.
+- **Wording provenance.** MOE-derived: The objective statement (verbatim MOE text). LiberiaLearn explanatory: Title, explanation, worked examples, activities, all practice, homework, quiz, diagnostic and assessment items, teacher notes. Example data: L$615 shared among 3 people (labeled example amount).
+- **Grade appropriateness:** Appropriate for Grade 4 and within the MOE scope for this objective.
+- **Component alignment:** Classwork, practice, homework, quiz and exit assessment all target this objective; the diagnostic checks a prerequisite.
+- **Interaction classification (NONE):** AGREE
+
 ### Explanation
 
 Sometimes a step in long division cannot make a group. Then we write 0 in that place of the quotient. Leaving it out gives a wrong answer.
@@ -437,7 +482,20 @@ Duration: 45 minutes.
 
 **Known uncertainties:** 
 - MOE extraction confidence MEDIUM (CONTINUATION_PAGE_ASSIGNMENT).
+  - **SOURCE_RESOLVED.** Page 41 is the second page of this topic's table: its assessment references asr8-asr10 are also on page 41 and the next topic (Number Theory and Fraction) starts on page 42. out1 'Apply computational skills about multiplication and division to real life situations' fits a division word-problem objective.
+  - Evidence: moe-math-g4-s1-p2-multiplication-and-division-of-whole-numbers-asr8 p41; moe-math-g4-s1-p3-number-theory-and-fraction-obj1 p42; moe-math-g4-s1-p2-multiplication-and-division-of-whole-numbers-out1 p40
 - Parsed from a continuation page; confirm it belongs to this topic on the source page.
+  - **SOURCE_RESOLVED.** Same evidence as #confidence: page 41 continues the topic 2 table.
+  - Evidence: moe-math-g4-s1-p2-multiplication-and-division-of-whole-numbers-asr8 p41
+
+### Reviewer support (not a decision)
+
+- **Content risks:** none found.
+- **Answers:** VERIFIED: all answer keys recomputed; no errors.
+- **Wording provenance.** MOE-derived: The objective statement (verbatim MOE text). LiberiaLearn explanatory: Title, explanation, worked examples, activities, all practice, homework, quiz, diagnostic and assessment items, teacher notes. Example data: Pen and pencil prices and amounts in Liberian dollars (labeled example prices).
+- **Grade appropriateness:** Appropriate for Grade 4 and within the MOE scope for this objective.
+- **Component alignment:** Classwork, practice, homework, quiz and exit assessment all target this objective; the diagnostic checks a prerequisite.
+- **Interaction classification (NONE):** AGREE
 
 ### Explanation
 

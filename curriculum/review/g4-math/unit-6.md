@@ -20,6 +20,18 @@ For each objective, record APPROVE / REVISE / REJECT in `review-ledger.json`. No
 
 **Known uncertainties:** 
 - MOE source says 'interesting lines'; read as 'intersecting lines'.
+  - **LIBERIALEARN_CLARIFICATION_REQUIRED.** No Grade 4 source item spells the term correctly. 'Intersecting' is the only geometric term that fits the list (line, line segments, rays, ___ lines, parallel lines); related source wording elsewhere is 'intersection' (Grade 5 p75 'Touching and intersection circles'). This is a LiberiaLearn reading, not a source fact.
+  - Evidence: moe-math-g4-s2-p6-geometry-and-statistics-act2 p48; Grade 5 CONTENT p75 'Touching and intersection circles'
+  - Proposed correction: Add to 6.1 teacher notes: 'The MOE objective reads "interesting lines"; LiberiaLearn reads this as "intersecting lines".' Keep the MOE text verbatim in the objective record.
+
+### Reviewer support (not a decision)
+
+- **Content risks:** none found.
+- **Answers:** VERIFIED: all answer keys recomputed; no errors.
+- **Wording provenance.** MOE-derived: The objective; point, line, ray and segment follow act2 ('Identify point, lines, rays, and line segment'). LiberiaLearn explanatory: Title, explanation, worked examples, activities, all practice, homework, quiz, diagnostic and assessment items, teacher notes. Example data: None.
+- **Grade appropriateness:** Appropriate for Grade 4 and within the MOE scope for this objective.
+- **Component alignment:** Classwork, practice, homework, quiz and exit assessment all target this objective; the diagnostic checks a prerequisite.
+- **Interaction classification (NONE):** AGREE
 
 ### Explanation
 
@@ -108,7 +120,20 @@ Duration: 45 minutes.
 
 **Known uncertainties:** 
 - Grade 4 does not measure degrees; the lesson uses a folded-paper right-angle tester. Protractor tool is enabled only for Grades 7+.
+  - **SOURCE_RESOLVED.** The objective sets its own scope: 'right angle, less than right angle, or greater than right angle', i.e. comparison with a right angle, not degree measurement. A folded-paper tester satisfies it; a protractor (enabled for Grades 7+) is not needed.
+  - Evidence: moe-math-g4-s2-p6-geometry-and-statistics-obj2 p48
 - Interaction MANIPULATIVE_2D has no enabled online tool; offline fallback only.
+  - **SOURCE_RESOLVED.** Same as #known-1: the objective needs a right-angle comparison, which the paper tester provides. The online gap is non-blocking.
+  - Evidence: moe-math-g4-s2-p6-geometry-and-statistics-obj2 p48
+
+### Reviewer support (not a decision)
+
+- **Content risks:** none found.
+- **Answers:** VERIFIED: all answer keys recomputed; no errors.
+- **Wording provenance.** MOE-derived: The objective statement (verbatim MOE text). LiberiaLearn explanatory: Title, explanation, worked examples, activities, all practice, homework, quiz, diagnostic and assessment items, teacher notes. Example data: None.
+- **Grade appropriateness:** Appropriate for Grade 4 and within the MOE scope for this objective.
+- **Component alignment:** Classwork, practice, homework, quiz and exit assessment all target this objective; the diagnostic checks a prerequisite.
+- **Interaction classification (MANIPULATIVE_2D):** AGREE
 
 ### Explanation
 
@@ -195,6 +220,17 @@ Duration: 45 minutes.
 
 **Known uncertainties:** 
 - MOE source says 'pentago n' (spacing artifact) for pentagon.
+  - **SOURCE_RESOLVED.** 'pentago n' is a text-extraction spacing artifact inside one word; the list (triangles, quadrilaterals, ___, hexagon) and act3 'Sort out polygons according to sides and identify each' admit only 'pentagon'. Raw text kept verbatim.
+  - Evidence: moe-math-g4-s2-p6-geometry-and-statistics-act3 p48
+
+### Reviewer support (not a decision)
+
+- **Content risks:** none found.
+- **Answers:** VERIFIED: all answer keys recomputed; no errors.
+- **Wording provenance.** MOE-derived: The objective; sorting shapes by sides follows act3 ('Sort out polygons according to sides and identify each'). LiberiaLearn explanatory: Title, explanation, worked examples, activities, all practice, homework, quiz, diagnostic and assessment items, teacher notes. Example data: None.
+- **Grade appropriateness:** Appropriate for Grade 4 and within the MOE scope for this objective.
+- **Component alignment:** Classwork, practice, homework, quiz and exit assessment all target this objective; the diagnostic checks a prerequisite.
+- **Interaction classification (NONE):** RECONSIDER: act3 and the lesson's stick-shape and cut-out sorting activities are hands-on. NONE could become MANIPULATIVE_2D (offline cut-outs).
 
 ### Explanation
 
@@ -282,6 +318,15 @@ Duration: 45 minutes.
 
 **Known uncertainties:** none recorded.
 
+### Reviewer support (not a decision)
+
+- **Content risks:** none found.
+- **Answers:** VERIFIED: all answer keys recomputed; no errors.
+- **Wording provenance.** MOE-derived: The objective; tracing, cutting and folding a paper circle follow act4 and act5. LiberiaLearn explanatory: Title, explanation, worked examples, activities, all practice, homework, quiz, diagnostic and assessment items, teacher notes. Example data: None.
+- **Grade appropriateness:** Appropriate for Grade 4 and within the MOE scope for this objective.
+- **Component alignment:** Classwork, practice, homework, quiz and exit assessment all target this objective; the diagnostic checks a prerequisite.
+- **Interaction classification (NONE):** RECONSIDER: MOE act4 and act5 ('Trace and cut out a circular shape', 'Fold the paper circle in halves to identify parts of a circle') are manipulative. NONE could become MANIPULATIVE_2D (offline paper circles).
+
 ### Explanation
 
 A circle is a round shape where every point on the edge is the same distance from the centre.
@@ -367,8 +412,26 @@ Duration: 45 minutes.
 
 **Known uncertainties:** 
 - MOE extraction confidence MEDIUM (CONTINUATION_PAGE_ASSIGNMENT).
+  - **SOURCE_RESOLVED.** The topic's content column lists 'Solid figures' (con5, p48); page 49 is the topic's second page.
+  - Evidence: moe-math-g4-s2-p6-geometry-and-statistics-con5 p48
 - Classified THREE_D; no 3D engine exists, so real objects are the required fallback.
+  - **HUMAN_POLICY_DECISION_REQUIRED.** The THREE_D classification is a LiberiaLearn judgment (rotating solids reveals hidden faces). No 3D engine exists, so real objects are the only modality. MOE out1 ties the topic to construction ('building roads, boxes, balls').
+  - Evidence: moe-math-g4-s2-p6-geometry-and-statistics-out1 p48
+  - Founder decision needed: Keep THREE_D with real objects as the required modality, or reclassify as PRACTICAL until a 3D manipulative exists.
 - Interaction THREE_D has no enabled online tool; offline fallback only.
+  - **HUMAN_POLICY_DECISION_REQUIRED.** Same decision as #known-1.
+  - Evidence: lib/labs/registry.ts (no 3D solids engine)
+  - Founder decision needed: Same as #known-1.
+
+### Reviewer support (not a decision)
+
+- **Content risks:** 
+  - Two everyday models are imprecise: a funnel is open at both ends (not a cone with a flat face) and a cup is open at the top (not a closed cylinder). Suggest a paper cone hat and a closed tin, which the cell's offline fallback already names.
+- **Answers:** VERIFIED: all answer keys recomputed; no errors.
+- **Wording provenance.** MOE-derived: The objective; 'geometry as foundation of ... construction' follows out1. LiberiaLearn explanatory: Title, explanation, worked examples, activities, all practice, homework, quiz, diagnostic and assessment items, teacher notes. Example data: None.
+- **Grade appropriateness:** Appropriate for Grade 4 and within the MOE scope for this objective.
+- **Component alignment:** Classwork, practice, homework, quiz and exit assessment all target this objective; the diagnostic checks a prerequisite.
+- **Interaction classification (THREE_D):** AGREE
 
 ### Explanation
 
@@ -457,7 +520,22 @@ Duration: 45 minutes.
 
 **Known uncertainties:** 
 - MOE extraction confidence MEDIUM (CONTINUATION_PAGE_ASSIGNMENT).
+  - **SOURCE_RESOLVED.** The topic's content column includes 'Reading and interpreting figures from charts and graphs such as Bar graphs, line graphs, pie chart' (con5, p48).
+  - Evidence: moe-math-g4-s2-p6-geometry-and-statistics-con5 p48
 - MOE combines graphs with 'mode, mean, median & average'. The lesson introduces the words only; calculation is in the next objective.
+  - **SOURCE_RESOLVED.** The source expects more than the words: out2 'Use population data to read and interpret bar graph, line graph, pie chart, and mean, mode, medium and average', and act6 'Collect data about family size and display the data on a bar graph, line graph, and pie chart.' The draft uses a fruit survey and does not assess reading a measure from a graph.
+  - Evidence: moe-math-g4-s2-p6-geometry-and-statistics-out2 p48; moe-math-g4-s2-p6-geometry-and-statistics-act6 p49
+  - Proposed correction: Make the class survey a voluntary, anonymous family-size survey (act6) and add: practice 'In the family-size bar graph, which family size has the tallest bar? That value is the mode.' and a quiz item reading the mode from a bar graph. Calculation of mean and median stays in 6.7.
+
+### Reviewer support (not a decision)
+
+- **Content risks:** 
+  - The source expects learners to read mode, mean, median and average from graphs of family-size data; the draft uses a fruit survey and only names the measures. See the disposition.
+- **Answers:** VERIFIED: all answer keys recomputed; no errors.
+- **Wording provenance.** MOE-derived: The objective statement (verbatim MOE text). LiberiaLearn explanatory: Title, explanation, worked examples, activities, all practice, homework, quiz, diagnostic and assessment items, teacher notes. Example data: Fruit survey, plant heights, books read, pie-chart counts (labeled example data).
+- **Grade appropriateness:** Appropriate for Grade 4 and within the MOE scope for this objective.
+- **Component alignment:** Graph reading is aligned; the measures named in the objective are not practiced or assessed.
+- **Interaction classification (NONE):** RECONSIDER: MOE act6 ('Collect data about family size and display the data on a bar graph, line graph, and pie chart') is a data-collection practical. NONE could become PRACTICAL with teacher-observed evidence.
 
 ### Explanation
 
@@ -544,7 +622,21 @@ Duration: 45 minutes.
 
 **Known uncertainties:** 
 - MOE extraction confidence LOW (AMBIGUOUS_COLUMN_ASSIGNMENT, CONTINUATION_PAGE_ASSIGNMENT).
+  - **LIBERIALEARN_CLARIFICATION_REQUIRED.** LOW confidence comes from an ambiguous column (objective vs activity). The instructional target is corroborated (out2 p48 lists mean, mode, median/'medium'; act6 p49 family-size data; Grade 3 p37 'Find the mean, mode and median of the data'), so the lesson content stands either way. The column itself can only be confirmed by a person reading page 49 of Math 1-6.pdf.
+  - Evidence: moe-math-g4-s2-p6-geometry-and-statistics-out2 p48; moe-math-g4-s2-p6-geometry-and-statistics-act6 p49; Grade 3 OBJECTIVE p37 'Find the mean, mode and median of the data.'
 - LOW extraction confidence (ambiguous column). MOE says 'medium'; read as 'median'. Data is invented example data.
+  - **SOURCE_RESOLVED.** The same MOE document spells 'median' correctly in Grade 4 objective 6 (p49) and Grade 3 (p37). 'Medium' recurs only as a consistent misspelling (Grade 3 act p36, Grade 4 out2 p48, this objective) and is not a statistical measure. The lesson says 'median'; the MOE text is preserved verbatim in the objective record and review package. The lesson's family-size data follows act6; figures are invented and labeled.
+  - Evidence: moe-math-g4-s2-p6-geometry-and-statistics-obj6 p49; Grade 3 OBJECTIVE p37 'Find the mean, mode and median of the data.'; moe-math-g4-s2-p6-geometry-and-statistics-act6 p49
+
+### Reviewer support (not a decision)
+
+- **Content risks:** 
+  - The explanation finds the mean from a second data set (the first data set's mean, 36 / 7, is not a whole number). This is deliberate (teacher notes keep means whole) but a reviewer may prefer to say so in the text.
+- **Answers:** VERIFIED: all answer keys recomputed; no errors.
+- **Wording provenance.** MOE-derived: The objective; family-size data follows act6. LiberiaLearn explanatory: Title, explanation, worked examples, activities, all practice, homework, quiz, diagnostic and assessment items, teacher notes. Example data: Family sizes, clinic births and rainfall (labeled example data).
+- **Grade appropriateness:** Appropriate for Grade 4 and within the MOE scope for this objective.
+- **Component alignment:** Classwork, practice, homework, quiz and exit assessment all target this objective; the diagnostic checks a prerequisite.
+- **Interaction classification (NONE):** AGREE
 
 ### Explanation
 
@@ -633,6 +725,17 @@ Duration: 45 minutes.
 
 **Known uncertainties:** 
 - MOE extraction confidence MEDIUM (CONTINUATION_PAGE_ASSIGNMENT).
+  - **SOURCE_RESOLVED.** Page 49 is the second page of topic 6 (asr8-asr10 on p49), the last Grade 4 topic.
+  - Evidence: moe-math-g4-s2-p6-geometry-and-statistics-asr8 p49
+
+### Reviewer support (not a decision)
+
+- **Content risks:** none found.
+- **Answers:** VERIFIED: all answer keys recomputed; no errors.
+- **Wording provenance.** MOE-derived: The objective statement (verbatim MOE text). LiberiaLearn explanatory: Title, explanation, worked examples, activities, all practice, homework, quiz, diagnostic and assessment items, teacher notes. Example data: None.
+- **Grade appropriateness:** Appropriate for Grade 4 and within the MOE scope for this objective.
+- **Component alignment:** Classwork, practice, homework, quiz and exit assessment all target this objective; the diagnostic checks a prerequisite.
+- **Interaction classification (NONE):** AGREE
 
 ### Explanation
 
