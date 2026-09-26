@@ -2,7 +2,7 @@
 //
 // Emails every user who holds PERMISSIONS.CURRICULUM_APPROVE (queried live via
 // hasPermission/ROLE_PERMISSIONS, not a hardcoded contact list - so ADMIN,
-// MOE_OFFICIAL, MOE_SUPER_ADMIN, and any future role granted the permission are
+// MOE_OFFICIAL, and any future persisted role granted the permission are
 // covered automatically) plus platform admins, when riskTriage.ts flags a
 // lesson for review. Best-effort: failures here must never block the
 // approval/flagging decision in riskTriage.ts.
@@ -35,7 +35,10 @@ export async function notifyRiskReviewers(
     where: {
       OR: [
         { isPlatformAdmin: true },
-        { role: { in: ["MOE_OFFICIAL", "MOE_SUPER_ADMIN"] as Role[] } },
+        // MOE_SUPER_ADMIN is declared in schema.prisma but absent from the
+        // database Role enum (schema-authority-registry: pending-moe-role-variants);
+        // filtering on it makes PostgreSQL reject the whole query (22P02).
+        { role: "MOE_OFFICIAL" as Role },
         ...(ownerSchoolId ? [{ role: "ADMIN" as Role, schoolId: ownerSchoolId }] : []),
       ],
     },
