@@ -1,4 +1,5 @@
-import type { CellObjective, InteractionSpec, TemplateCell } from "../templateCell";
+import type { CellLesson, CellObjective, CellUnit, InteractionSpec, TemplateCell } from "../templateCell";
+import { GRADE4_MATH_DRAFT_LESSONS } from "@/lib/curriculum/authority/grade4Math";
 
 /**
  * Grade 4 Math governed template cell (V1).
@@ -39,7 +40,25 @@ const NUMBER_LINE = manip("Learners place and move values on a number line to co
 const obj = (topic: keyof typeof T, n: number, interaction: InteractionSpec = none, conceptIds: string[] = []): CellObjective =>
   ({ moeItemId: `${T[topic]}-obj${n}`, conceptIds, interaction });
 
-export const GRADE4_MATH_TEMPLATE_CELL: TemplateCell = {
+/** Draft lessons bind to their MOE objective with every payload component; no concepts or governed items. */
+const draftLessonsFor = (unitId: string): CellLesson[] => GRADE4_MATH_DRAFT_LESSONS.filter((lesson) => lesson.unitId === unitId).map((lesson) => ({
+  contentId: lesson.contentId,
+  version: lesson.version,
+  authority: "DRAFT_UNREVIEWED",
+  conceptIds: [],
+  objectiveIds: [lesson.moeObjectiveId],
+  components: [
+    { kind: "CLASSWORK", source: "LESSON_PAYLOAD", ref: "activities" },
+    { kind: "PRACTICE", source: "LESSON_PAYLOAD", ref: "practice" },
+    { kind: "HOMEWORK", source: "LESSON_PAYLOAD", ref: "homework" },
+    { kind: "QUIZ", source: "LESSON_PAYLOAD", ref: "quiz" },
+    { kind: "DIAGNOSTIC", source: "LESSON_PAYLOAD", ref: "diagnosticCheck" },
+    { kind: "ASSESSMENT", source: "LESSON_PAYLOAD", ref: "assessment" },
+  ],
+}));
+const withDrafts = (unit: CellUnit): CellUnit => ({ ...unit, lessons: [...unit.lessons, ...draftLessonsFor(unit.id)] });
+
+const CELL: TemplateCell = {
   id: "cell-g4-math-v1",
   version: "1.0.0",
   grade: 4,
@@ -80,6 +99,7 @@ export const GRADE4_MATH_TEMPLATE_CELL: TemplateCell = {
         {
           contentId: "ll-g4-math-fractions-equal-parts-2026.1",
           version: "1.0.0",
+          authority: "GOVERNED",
           conceptIds: ["g4-fractions-equal-parts"],
           objectiveIds: [`${T.m3}-obj4`],
           components: [
@@ -138,3 +158,5 @@ export const GRADE4_MATH_TEMPLATE_CELL: TemplateCell = {
       note: "Comparing fractions is not a Grade 4 MOE objective in the structured source. Kept as a LiberiaLearn extension; it must not be reported as MOE-aligned." },
   ],
 };
+
+export const GRADE4_MATH_TEMPLATE_CELL: TemplateCell = { ...CELL, version: "1.1.0", units: CELL.units.map(withDrafts) };

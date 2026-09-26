@@ -46,6 +46,13 @@ export type ComponentBinding = Readonly<{
 export type CellLesson = Readonly<{
   contentId: string;
   version: string;
+  /**
+   * GOVERNED: human-reviewed and bound in the ontology release (counts as
+   * governed coverage, must be live). DRAFT_UNREVIEWED: repository draft
+   * only; never bound in a release, never counted as governed, never
+   * expected in production.
+   */
+  authority: "GOVERNED" | "DRAFT_UNREVIEWED";
   conceptIds: readonly string[];
   objectiveIds: readonly string[];
   components: readonly ComponentBinding[];
@@ -84,7 +91,7 @@ export type TemplateCell = Readonly<{
 }>;
 
 /** Repository lesson authority the cell may bind (contentId -> version + payload). */
-export type RepoLesson = Readonly<{ contentId: string; version: string; grade: number; subject: string; payload: Readonly<Record<string, unknown>> }>;
+export type RepoLesson = Readonly<{ contentId: string; version: string; grade: number; subject: string; authority: "GOVERNED" | "DRAFT_UNREVIEWED"; payload: Readonly<Record<string, unknown>> }>;
 
 export type LiveState = Readonly<{
   capturedAt: string;
@@ -115,7 +122,12 @@ export type ObjectiveCoverage = Readonly<{
   interaction: InteractionNeed;
   interactionImplemented: boolean;
   lessons: readonly string[];
+  governedLessons: readonly string[];
+  draftLessons: readonly string[];
+  /** Components from governed lessons and governed items only. */
   components: Readonly<Record<ComponentKind, number>>;
+  /** Components present in unreviewed drafts. */
+  draftComponents: Readonly<Record<ComponentKind, number>>;
   conceptIds: readonly string[];
 }>;
 
@@ -128,8 +140,11 @@ export type CellCertification = Readonly<{
   summary: Readonly<{
     moeObjectives: number;
     objectivesWithLesson: number;
+    objectivesWithGovernedLesson: number;
+    objectivesWithDraftLessonOnly: number;
     objectivesWithGovernedItem: number;
     componentCoverage: Readonly<Record<ComponentKind, number>>;
+    draftComponentCoverage: Readonly<Record<ComponentKind, number>>;
     interaction: Readonly<Record<InteractionNeed, number>>;
     interactionImplemented: number;
     interactionGaps: readonly string[];
@@ -216,14 +231,23 @@ export function certifyTemplateCell(input: CertificationInput): CellCertificatio
   const cellLessonIds = new Set<string>();
   for (const unit of cell.units) {
     for (const lesson of unit.lessons) {
+      if (cellLessonIds.has(lesson.contentId)) errors.push(`lesson_duplicate:${lesson.contentId}`);
       cellLessonIds.add(lesson.contentId);
       const repo = repoLessons.get(lesson.contentId);
       if (!repo) { errors.push(`lesson_missing:${lesson.contentId}`); continue; }
       if (repo.version !== lesson.version) errors.push(`lesson_version_mismatch:${lesson.contentId}`);
       if (repo.grade !== cell.grade || repo.subject !== cell.subject) errors.push(`lesson_scope_mismatch:${lesson.contentId}`);
+      if (repo.authority !== lesson.authority) errors.push(`lesson_authority_mismatch:${lesson.contentId}`);
       const binding = release.contentBindings.find((entry) => entry.contentId === lesson.contentId);
-      if (!binding) errors.push(`lesson_not_bound_in_release:${lesson.contentId}`);
-      else if (binding.contentVersion !== lesson.version) errors.push(`lesson_release_version_mismatch:${lesson.contentId}`);
+      if (lesson.authority === "GOVERNED") {
+        if (!binding) errors.push(`lesson_not_bound_in_release:${lesson.contentId}`);
+        else if (binding.contentVersion !== lesson.version) errors.push(`lesson_release_version_mismatch:${lesson.contentId}`);
+      } else {
+        // A draft can never be executable authority.
+        if (binding) errors.push(`draft_lesson_bound_in_release:${lesson.contentId}`);
+        if (lesson.conceptIds.length) errors.push(`draft_lesson_claims_concepts:${lesson.contentId}`);
+        if (lesson.components.some((component) => component.source === "GOVERNED_ITEM")) errors.push(`draft_lesson_uses_governed_item:${lesson.contentId}`);
+      }
       for (const conceptId of lesson.conceptIds) if (!conceptIds.has(conceptId)) errors.push(`lesson_concept_unknown:${lesson.contentId}:${conceptId}`);
       for (const id of lesson.objectiveIds) if (placed.get(id) !== unit.id) errors.push(`lesson_objective_not_in_unit:${lesson.contentId}:${id}`);
       for (const component of lesson.components) {
@@ -245,23 +269,34 @@ export function certifyTemplateCell(input: CertificationInput): CellCertificatio
   const objectives: ObjectiveCoverage[] = cell.units.flatMap((unit) => unit.objectives.map((objective) => {
     const item = items.get(objective.moeItemId);
     const lessons = unit.lessons.filter((lesson) => lesson.objectiveIds.includes(objective.moeItemId));
+    const governed = lessons.filter((lesson) => lesson.authority === "GOVERNED");
+    const drafts = lessons.filter((lesson) => lesson.authority === "DRAFT_UNREVIEWED");
     const components = emptyComponents();
-    for (const lesson of lessons) for (const component of lesson.components) components[component.kind] += 1;
+    for (const lesson of governed) for (const component of lesson.components) components[component.kind] += 1;
+    const draftComponents = emptyComponents();
+    for (const lesson of drafts) for (const component of lesson.components) draftComponents[component.kind] += 1;
     for (const conceptId of objective.conceptIds) {
       for (const binding of release.bindings.filter((entry) => entry.conceptId === conceptId)) {
         const kind = releaseItems.get(binding.itemId)?.context === "DIAGNOSTIC" ? "DIAGNOSTIC" : "PRACTICE";
-        if (!lessons.some((lesson) => lesson.components.some((component) => component.source === "GOVERNED_ITEM" && component.ref === binding.itemId))) components[kind] += 1;
+        if (!governed.some((lesson) => lesson.components.some((component) => component.source === "GOVERNED_ITEM" && component.ref === binding.itemId))) components[kind] += 1;
       }
     }
     return {
       moeItemId: objective.moeItemId, unitId: unit.id, text: item?.text ?? "", pages: item?.provenance.pages ?? [],
       interaction: objective.interaction.need, interactionImplemented: interactionImplemented(objective.interaction, input),
-      lessons: lessons.map((lesson) => lesson.contentId), components, conceptIds: objective.conceptIds,
+      lessons: lessons.map((lesson) => lesson.contentId), governedLessons: governed.map((lesson) => lesson.contentId),
+      draftLessons: drafts.map((lesson) => lesson.contentId), components, draftComponents, conceptIds: objective.conceptIds,
     };
   }));
 
   const componentCoverage = emptyComponents();
-  for (const objective of objectives) for (const kind of COMPONENT_KINDS) if (objective.components[kind] > 0) componentCoverage[kind] += 1;
+  const draftComponentCoverage = emptyComponents();
+  for (const objective of objectives) {
+    for (const kind of COMPONENT_KINDS) {
+      if (objective.components[kind] > 0) componentCoverage[kind] += 1;
+      if (objective.draftComponents[kind] > 0) draftComponentCoverage[kind] += 1;
+    }
+  }
   const interaction = Object.fromEntries((["NONE", "MANIPULATIVE_2D", "SIMULATION", "VIRTUAL_LAB", "PRACTICAL", "THREE_D"] as const).map((need) => [need, objectives.filter((o) => o.interaction === need).length])) as Record<InteractionNeed, number>;
   const topicItems = (topicKey: string, kind: StructuredCurriculumItem["kind"]) => cellItems.filter((item) => item.topicKey === topicKey && item.kind === kind);
 
@@ -280,7 +315,9 @@ export function certifyTemplateCell(input: CertificationInput): CellCertificatio
   // Live resolution (read-only snapshot).
   const missing: string[] = [];
   if (input.live) {
-    for (const id of cellLessonIds) if (!input.live.lessonContentIds.has(id)) missing.push(`lesson:${id}`);
+    // Only governed lessons are expected in production; drafts are never published by the cell.
+    const governedIds = cell.units.flatMap((unit) => unit.lessons.filter((lesson) => lesson.authority === "GOVERNED").map((lesson) => lesson.contentId));
+    for (const id of governedIds) if (!input.live.lessonContentIds.has(id)) missing.push(`lesson:${id}`);
     for (const binding of release.bindings) {
       if (!input.live.learningTargetCodes.has(binding.learningTargetCode)) missing.push(`learningTarget:${binding.learningTargetCode}`);
       if (!input.live.standardCodes.has(binding.standardCode)) missing.push(`standard:${binding.standardCode}`);
@@ -298,8 +335,11 @@ export function certifyTemplateCell(input: CertificationInput): CellCertificatio
     summary: {
       moeObjectives: objectives.length,
       objectivesWithLesson: objectives.filter((o) => o.lessons.length).length,
+      objectivesWithGovernedLesson: objectives.filter((o) => o.governedLessons.length).length,
+      objectivesWithDraftLessonOnly: objectives.filter((o) => o.draftLessons.length && !o.governedLessons.length).length,
       objectivesWithGovernedItem: objectives.filter((o) => o.conceptIds.some((id) => governedItemConcepts.has(id))).length,
       componentCoverage,
+      draftComponentCoverage,
       interaction,
       interactionImplemented: objectives.filter((o) => o.interaction !== "NONE" && o.interactionImplemented).length,
       interactionGaps: objectives.filter((o) => o.interaction !== "NONE" && !o.interactionImplemented).map((o) => `${o.moeItemId}:${o.interaction}`),

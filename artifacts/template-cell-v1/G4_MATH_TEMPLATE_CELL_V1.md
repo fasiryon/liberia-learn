@@ -13,15 +13,16 @@ MOE archive page → structured objective (`curriculum/structured/moe-structured
 | Measure | Covered |
 |---|---|
 | Objectives placed in a unit with interaction classified | 44/44 (100%) |
-| Objectives with a bound lesson | 1/44 (2%) |
+| Objectives with a governed (reviewed, release-bound) lesson | 1/44 (2%) |
+| Objectives with only a DRAFT_UNREVIEWED lesson | 43/44 (98%) |
 | Objectives with a governed item (diagnostic/practice) | 2/44 (5%) |
-| classwork | 1/44 (2%) |
-| homework | 1/44 (2%) |
-| practice | 1/44 (2%) |
-| quiz | 0/44 (0%) |
-| diagnostic | 1/44 (2%) |
-| assessment | 1/44 (2%) |
-| project | 0/44 (0%) |
+| classwork (governed / draft) | 1/44 (2%) / 43/44 (98%) |
+| homework (governed / draft) | 1/44 (2%) / 43/44 (98%) |
+| practice (governed / draft) | 1/44 (2%) / 43/44 (98%) |
+| quiz (governed / draft) | 0/44 (0%) / 43/44 (98%) |
+| diagnostic (governed / draft) | 1/44 (2%) / 43/44 (98%) |
+| assessment (governed / draft) | 1/44 (2%) / 43/44 (98%) |
+| project (governed / draft) | 0/44 (0%) / 0/44 (0%) |
 | MOE resources referenced (materials) | 42 items |
 | MOE assessment references (teacher metadata) | 60 items |
 | MOE activities (teacher metadata) | 24 items |
@@ -40,52 +41,52 @@ MOE archive page → structured objective (`curriculum/structured/moe-structured
 Implemented with an enabled tool, lab or practical protocol: 16. Gaps (need classified, no Grade 4-6 tool/engine exists): `obj2:MANIPULATIVE_2D` MANIPULATIVE_2D, `obj9:MANIPULATIVE_2D` MANIPULATIVE_2D, `obj2:MANIPULATIVE_2D` MANIPULATIVE_2D, `obj5:THREE_D` THREE_D.
 No objective needs a VIRTUAL_LAB or SIMULATION: the lab engine's 19 typed labs are all science, and none is claimed here.
 
-| Unit | Objective | Page | Interaction | Lessons | Components |
+| Unit | Objective | Page | Interaction | Lesson | Governed components |
 |---|---|---:|---|---|---|
-| u1-numeration-add-subtract | Read and write whole numbers up to hundred thousand | 38 | NONE | 0 | none |
-| u1-numeration-add-subtract | Compare and order whole numbers to hundred thousand | 38 | MANIPULATIVE_2D | 0 | none |
-| u1-numeration-add-subtract | Round whole numbers up to thousand | 38 | MANIPULATIVE_2D | 0 | none |
-| u1-numeration-add-subtract | Add and subtract whole numbers using population data on births, deaths, and migration | 38 | NONE | 0 | none |
-| u2-multiply-divide-whole | Identify multiplication facts and properties. | 40 | MANIPULATIVE_2D | 0 | none |
-| u2-multiply-divide-whole | Multiply multiples of 10’s, 100’s, and 1000’s. | 40 | NONE | 0 | none |
-| u2-multiply-divide-whole | Multiply 2, 3, or 4 digits by 1 - digit. | 40 | NONE | 0 | none |
-| u2-multiply-divide-whole | Divide 2, 3, or 4 - digit numbers by 1 - digit divisor. | 40 | NONE | 0 | none |
-| u2-multiply-divide-whole | Divide whole numbers with zero in the quotient. | 40 | NONE | 0 | none |
-| u2-multiply-divide-whole | Solve problem involving division. | 41 | NONE | 0 | none |
-| u3-number-theory-fractions | Identify even and odd numbers. | 42 | NONE | 0 | none |
-| u3-number-theory-fractions | Identify factors and multiples. | 42 | MANIPULATIVE_2D | 0 | none |
-| u3-number-theory-fractions | Find LCM and GCF of numbers. | 42 | NONE | 0 | none |
-| u3-number-theory-fractions | Find parts of a set. | 42 | MANIPULATIVE_2D | 1 | classwork, homework, diagnostic, assessment |
-| u3-number-theory-fractions | Write equivalent fractions. | 42 | MANIPULATIVE_2D | 0 | practice |
-| u3-number-theory-fractions | Simplify fractions. | 42 | MANIPULATIVE_2D | 0 | none |
-| u3-number-theory-fractions | Add fractions. | 42 | MANIPULATIVE_2D | 0 | none |
-| u3-number-theory-fractions | Subtract fractions. | 42 | MANIPULATIVE_2D | 0 | none |
-| u3-number-theory-fractions | Solve problems involving multi-step problems. | 43 | NONE | 0 | none |
-| u4-two-digit-decimals | Multiply 2 - Digits factors of multiples of 10’s, 100’s, and 1000’s. | 44 | NONE | 0 | none |
-| u4-two-digit-decimals | Estimate products involving 2 - Digits multipliers. | 44 | NONE | 0 | none |
-| u4-two-digit-decimals | multiply 2, 3, or 4 – Digits multipliers | 44 | NONE | 0 | none |
-| u4-two-digit-decimals | Divide multiples of 10’s, 100’s, and 1000’s by 2 - Digit Divisors mentally. | 44 | NONE | 0 | none |
-| u4-two-digit-decimals | Estimate quotient of 2 - Digit Divisors. | 44 | NONE | 0 | none |
-| u4-two-digit-decimals | Divide 2, 3, or 4 - Digit numbers by 2 - Digit | 45 | NONE | 0 | none |
-| u4-two-digit-decimals | Read and write decimal numerals up to hundredths place. | 45 | MANIPULATIVE_2D | 0 | none |
-| u4-two-digit-decimals | Compare and order decimal numerals up to hundredths place. | 45 | MANIPULATIVE_2D | 0 | none |
-| u5-measurement | Estimate time. | 46 | PRACTICAL | 0 | none |
-| u5-measurement | Find elapsed time. | 46 | MANIPULATIVE_2D (gap) | 0 | none |
-| u5-measurement | Estimate customary units of lengths. | 46 | PRACTICAL | 0 | none |
-| u5-measurement | Measure lengths using customary units. | 46 | PRACTICAL | 0 | none |
-| u5-measurement | Estimate customary units of mass and capacity. | 46 | PRACTICAL | 0 | none |
-| u5-measurement | Estimate metric units of lengths, capacity and mass. | 46 | PRACTICAL | 0 | none |
-| u5-measurement | Convert subunits of lengths and weight in the metric system. | 47 | NONE | 0 | none |
-| u5-measurement | Perform addition and subtraction of measurement of lengths and weights. | 47 | NONE | 0 | none |
-| u5-measurement | Find the perimeters and areas of squares and rectangles. | 47 | MANIPULATIVE_2D (gap) | 0 | none |
-| u6-geometry-statistics | Identify geometric figures of line, line segments, rays, interesting lines, parallel lines. | 48 | NONE | 0 | none |
-| u6-geometry-statistics | Identify angles by shapes as right angle, less than right angle, or greater than right angle; perpendicular lines. | 48 | MANIPULATIVE_2D (gap) | 0 | none |
-| u6-geometry-statistics | Identify triangles, quadrilaterals or pentago n, hexagon as polygon. | 48 | NONE | 0 | none |
-| u6-geometry-statistics | Identify parts of a circle. | 48 | NONE | 0 | none |
-| u6-geometry-statistics | Identify solid figures – spheres, cylinder, cones, cubes, rectangular prisms. | 49 | THREE_D (gap) | 0 | none |
-| u6-geometry-statistics | Read and interpret bar graphs, line graphs, pie chart, and mode, mean, median, & average. | 49 | NONE | 0 | none |
-| u6-geometry-statistics | Find the mode, medium, and mean using the given population data. | 49 | NONE | 0 | none |
-| u6-geometry-statistics | Solve word problems involving drawing of diagrams. | 49 | NONE | 0 | none |
+| u1-numeration-add-subtract | Read and write whole numbers up to hundred thousand | 38 | NONE | draft | none |
+| u1-numeration-add-subtract | Compare and order whole numbers to hundred thousand | 38 | MANIPULATIVE_2D | draft | none |
+| u1-numeration-add-subtract | Round whole numbers up to thousand | 38 | MANIPULATIVE_2D | draft | none |
+| u1-numeration-add-subtract | Add and subtract whole numbers using population data on births, deaths, and migration | 38 | NONE | draft | none |
+| u2-multiply-divide-whole | Identify multiplication facts and properties. | 40 | MANIPULATIVE_2D | draft | none |
+| u2-multiply-divide-whole | Multiply multiples of 10’s, 100’s, and 1000’s. | 40 | NONE | draft | none |
+| u2-multiply-divide-whole | Multiply 2, 3, or 4 digits by 1 - digit. | 40 | NONE | draft | none |
+| u2-multiply-divide-whole | Divide 2, 3, or 4 - digit numbers by 1 - digit divisor. | 40 | NONE | draft | none |
+| u2-multiply-divide-whole | Divide whole numbers with zero in the quotient. | 40 | NONE | draft | none |
+| u2-multiply-divide-whole | Solve problem involving division. | 41 | NONE | draft | none |
+| u3-number-theory-fractions | Identify even and odd numbers. | 42 | NONE | draft | none |
+| u3-number-theory-fractions | Identify factors and multiples. | 42 | MANIPULATIVE_2D | draft | none |
+| u3-number-theory-fractions | Find LCM and GCF of numbers. | 42 | NONE | draft | none |
+| u3-number-theory-fractions | Find parts of a set. | 42 | MANIPULATIVE_2D | governed | classwork, homework, diagnostic, assessment |
+| u3-number-theory-fractions | Write equivalent fractions. | 42 | MANIPULATIVE_2D | draft | practice |
+| u3-number-theory-fractions | Simplify fractions. | 42 | MANIPULATIVE_2D | draft | none |
+| u3-number-theory-fractions | Add fractions. | 42 | MANIPULATIVE_2D | draft | none |
+| u3-number-theory-fractions | Subtract fractions. | 42 | MANIPULATIVE_2D | draft | none |
+| u3-number-theory-fractions | Solve problems involving multi-step problems. | 43 | NONE | draft | none |
+| u4-two-digit-decimals | Multiply 2 - Digits factors of multiples of 10’s, 100’s, and 1000’s. | 44 | NONE | draft | none |
+| u4-two-digit-decimals | Estimate products involving 2 - Digits multipliers. | 44 | NONE | draft | none |
+| u4-two-digit-decimals | multiply 2, 3, or 4 – Digits multipliers | 44 | NONE | draft | none |
+| u4-two-digit-decimals | Divide multiples of 10’s, 100’s, and 1000’s by 2 - Digit Divisors mentally. | 44 | NONE | draft | none |
+| u4-two-digit-decimals | Estimate quotient of 2 - Digit Divisors. | 44 | NONE | draft | none |
+| u4-two-digit-decimals | Divide 2, 3, or 4 - Digit numbers by 2 - Digit | 45 | NONE | draft | none |
+| u4-two-digit-decimals | Read and write decimal numerals up to hundredths place. | 45 | MANIPULATIVE_2D | draft | none |
+| u4-two-digit-decimals | Compare and order decimal numerals up to hundredths place. | 45 | MANIPULATIVE_2D | draft | none |
+| u5-measurement | Estimate time. | 46 | PRACTICAL | draft | none |
+| u5-measurement | Find elapsed time. | 46 | MANIPULATIVE_2D (gap) | draft | none |
+| u5-measurement | Estimate customary units of lengths. | 46 | PRACTICAL | draft | none |
+| u5-measurement | Measure lengths using customary units. | 46 | PRACTICAL | draft | none |
+| u5-measurement | Estimate customary units of mass and capacity. | 46 | PRACTICAL | draft | none |
+| u5-measurement | Estimate metric units of lengths, capacity and mass. | 46 | PRACTICAL | draft | none |
+| u5-measurement | Convert subunits of lengths and weight in the metric system. | 47 | NONE | draft | none |
+| u5-measurement | Perform addition and subtraction of measurement of lengths and weights. | 47 | NONE | draft | none |
+| u5-measurement | Find the perimeters and areas of squares and rectangles. | 47 | MANIPULATIVE_2D (gap) | draft | none |
+| u6-geometry-statistics | Identify geometric figures of line, line segments, rays, interesting lines, parallel lines. | 48 | NONE | draft | none |
+| u6-geometry-statistics | Identify angles by shapes as right angle, less than right angle, or greater than right angle; perpendicular lines. | 48 | MANIPULATIVE_2D (gap) | draft | none |
+| u6-geometry-statistics | Identify triangles, quadrilaterals or pentago n, hexagon as polygon. | 48 | NONE | draft | none |
+| u6-geometry-statistics | Identify parts of a circle. | 48 | NONE | draft | none |
+| u6-geometry-statistics | Identify solid figures – spheres, cylinder, cones, cubes, rectangular prisms. | 49 | THREE_D (gap) | draft | none |
+| u6-geometry-statistics | Read and interpret bar graphs, line graphs, pie chart, and mode, mean, median, & average. | 49 | NONE | draft | none |
+| u6-geometry-statistics | Find the mode, medium, and mean using the given population data. | 49 | NONE | draft | none |
+| u6-geometry-statistics | Solve word problems involving drawing of diagrams. | 49 | NONE | draft | none |
 
 ## Teacher-facing metadata (from the MOE tables)
 

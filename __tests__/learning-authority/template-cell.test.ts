@@ -4,6 +4,7 @@ import { GRADE4_MATH_TEMPLATE_CELL } from "@/lib/learning-authority/cells/grade4
 import { certifyTemplateCell, type CertificationInput, type TemplateCell } from "@/lib/learning-authority/templateCell";
 import { GRADE4_MATH_ONTOLOGY_RELEASE } from "@/lib/learning-authority/governedGrade4Math";
 import { GRADE4_FRACTIONS_LESSON } from "@/lib/curriculum/authority/grade4FractionsLesson";
+import { GRADE4_MATH_DRAFT_LESSONS } from "@/lib/curriculum/authority/grade4Math";
 import type { StructuredCurriculumItem } from "@/lib/learning-authority/structuredCurriculumAuthority";
 
 const structured = JSON.parse(fs.readFileSync("curriculum/structured/moe-structured-v1.json", "utf8")) as { items: StructuredCurriculumItem[] };
@@ -13,7 +14,10 @@ const base = (): CertificationInput => ({
   cell: GRADE4_MATH_TEMPLATE_CELL,
   structuredItems: g4Items,
   release: GRADE4_MATH_ONTOLOGY_RELEASE,
-  repoLessons: [{ contentId: GRADE4_FRACTIONS_LESSON.contentId, version: GRADE4_FRACTIONS_LESSON.version, grade: 4, subject: "MATH", payload: GRADE4_FRACTIONS_LESSON.payload }],
+  repoLessons: [
+    { contentId: GRADE4_FRACTIONS_LESSON.contentId, version: GRADE4_FRACTIONS_LESSON.version, grade: 4, subject: "MATH", authority: "GOVERNED", payload: GRADE4_FRACTIONS_LESSON.payload },
+    ...GRADE4_MATH_DRAFT_LESSONS.map((l) => ({ contentId: l.contentId, version: l.version, grade: 4, subject: "MATH", authority: "DRAFT_UNREVIEWED" as const, payload: l.payload })),
+  ],
   toolIds: new Set(["fraction-visualizer", "number-line", "digital-ruler", "multiplication-table", "basic-calculator"]),
   releaseToolKeyMap: { fraction_strips: "fraction-visualizer", number_line: "number-line", calculator: "basic-calculator" },
   labIds: new Set(["pendulum-lab"]),
@@ -72,10 +76,10 @@ describe("governed template cell certification", () => {
   });
 
   it("requires release lessons to be bound in the cell and lesson components to resolve", () => {
-    const noLesson = certifyTemplateCell(withCell((cell) => mapUnits(cell, (unit) => ({ ...unit, lessons: [] }))));
+    const noLesson = certifyTemplateCell(withCell((cell) => mapUnits(cell, (unit) => ({ ...unit, lessons: unit.lessons.filter((l) => l.authority !== "GOVERNED") }))));
     expect(noLesson.errors).toContain("release_lesson_not_in_cell:ll-g4-math-fractions-equal-parts-2026.1");
     const badComponent = certifyTemplateCell(withCell((cell) => mapUnits(cell, (unit) => ({
-      ...unit, lessons: unit.lessons.map((lesson) => ({ ...lesson, components: [...lesson.components,
+      ...unit, lessons: unit.lessons.map((lesson) => lesson.authority !== "GOVERNED" ? lesson : ({ ...lesson, components: [...lesson.components,
         { kind: "QUIZ" as const, source: "LESSON_PAYLOAD" as const, ref: "quiz" },
         { kind: "PRACTICE" as const, source: "GOVERNED_ITEM" as const, ref: "g4-frac-diagnostic-compare" }] })),
     }))));
@@ -84,8 +88,24 @@ describe("governed template cell certification", () => {
       "component_item_concept_mismatch:ll-g4-math-fractions-equal-parts-2026.1:g4-frac-diagnostic-compare",
       "component_item_context_mismatch:ll-g4-math-fractions-equal-parts-2026.1:g4-frac-diagnostic-compare",
     ]));
-    const stale = certifyTemplateCell({ ...base(), repoLessons: [] });
+    const stale = certifyTemplateCell({ ...base(), repoLessons: base().repoLessons.filter((l) => l.authority !== "GOVERNED") });
     expect(stale.errors).toContain("lesson_missing:ll-g4-math-fractions-equal-parts-2026.1");
+  });
+
+  it("never lets a draft lesson act as governed authority", () => {
+    const report = certifyTemplateCell(withCell((cell) => mapUnits(cell, (unit) => ({
+      ...unit, lessons: unit.lessons.map((lesson) => lesson.authority !== "DRAFT_UNREVIEWED" || !lesson.contentId.includes("equivalent-fractions") ? lesson
+        : { ...lesson, conceptIds: ["g4-fractions-equivalence"], components: [...lesson.components, { kind: "PRACTICE" as const, source: "GOVERNED_ITEM" as const, ref: "g4-frac-practice-equivalence" }] }),
+    }))));
+    expect(report.errors).toEqual(expect.arrayContaining([
+      "draft_lesson_claims_concepts:ll-g4-math-equivalent-fractions-2026.1",
+      "draft_lesson_uses_governed_item:ll-g4-math-equivalent-fractions-2026.1",
+    ]));
+    const clean = certifyTemplateCell(base());
+    expect(clean.summary.objectivesWithGovernedLesson).toBe(1);
+    expect(clean.summary.objectivesWithDraftLessonOnly).toBe(43);
+    expect(clean.summary.componentCoverage.QUIZ).toBe(0);
+    expect(clean.summary.draftComponentCoverage.QUIZ).toBe(43);
   });
 
   it("requires every ToolPolicy key to map to an enabled toolkit tool", () => {
