@@ -9,6 +9,7 @@ import { openDiagnosticSession, sealDiagnosticSession } from "@/lib/learning-aut
 import { appendCanonicalMasteryUpdate } from "@/lib/learning-state/masteryWriter";
 import { createGovernedEvidence } from "@/lib/learning-evidence/evidenceContract";
 import { toLearnerSafeStudentConceptState } from "@/lib/learning-state/studentLearningModel";
+import { governedInventoryForRelease, resolveInventoryActivity } from "@/lib/learning-authority/governedInventoryRuntime";
 
 export const dynamic = "force-dynamic";
 const cookieName = "governed_learning_action";
@@ -125,12 +126,16 @@ export async function POST(request: NextRequest) {
       expectedSchoolId: user.schoolId!, expectedStudentId: student.id, expectedStudentUserId: user.id, serverScored: true,
     }, release);
     if (admission.decision !== "ACCEPTED") return NextResponse.json({ error: admission.reason }, { status: 409 });
+    // The evidence objective is the MOE objective (or declared LiberiaLearn
+    // extension) the governed inventory binds this item to, not a target code.
+    const activity = resolveInventoryActivity(governedInventoryForRelease(release), item.id, item.version);
+    if (activity.conceptId !== binding!.conceptId) throw new Error("inventory_binding_mismatch");
     const occurredAt = new Date().toISOString();
     const governedEvidence = createGovernedEvidence({
       evidenceId: `learning-evidence-v1-${session.sessionId}`, idempotencyKey: session.sessionId, attemptId: session.sessionId,
       tenantId: user.schoolId!, schoolId: user.schoolId!,
       learner: { studentId: student.id, studentUserId: user.id },
-      objective: { conceptId: binding!.conceptId, objectiveId: binding!.learningTargetCode },
+      objective: { conceptId: activity.conceptId, objectiveId: activity.objectiveId },
       activity: { activityId: item.id, activityVersion: item.version },
       evidenceType: item.context, modality: "TEXT", occurredAt,
       performance: { outcome: body.answerIndex === item.correctIndex ? "CORRECT" : "INCORRECT",
