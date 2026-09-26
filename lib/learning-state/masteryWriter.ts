@@ -25,6 +25,7 @@ import {
   MISCONCEPTION_SIGNAL_POLICY_VERSION,
   resolveGovernedMisconceptionSignal,
 } from "@/lib/learning-state/misconceptionPolicy";
+import { toCanonicalMasteryEvidence, type GovernedEvidence } from "@/lib/learning-evidence/evidenceContract";
 
 type AppendGovernedMasteryInput = Readonly<{
   release?: CurriculumOntologyRelease;
@@ -37,6 +38,7 @@ type AppendGovernedMasteryInput = Readonly<{
   selectedAnswerIndex: number;
   occurredAt: string;
   admission: EvidenceAdmissionResult;
+  governedEvidence?: GovernedEvidence;
 }>;
 
 export type CanonicalMasteryWriteResult = Readonly<{
@@ -70,6 +72,17 @@ function canonicalEventId(input: AppendGovernedMasteryInput): string {
 export function createGovernedMasteryEvidence(input: AppendGovernedMasteryInput): GovernedMasteryEvidence {
   const release = input.release ?? compatibilityRelease();
   validateOntologyRelease(release);
+  if (input.governedEvidence) {
+    const evidence = toCanonicalMasteryEvidence(input.governedEvidence, release);
+    if (evidence.scope.schoolId !== input.schoolId || evidence.scope.studentId !== input.studentId ||
+      evidence.scope.studentUserId !== input.studentUserId || evidence.itemId !== input.itemId ||
+      evidence.itemVersion !== input.itemVersion || evidence.selectedAnswerIndex !== input.selectedAnswerIndex ||
+      evidence.independenceKey !== input.sessionId || evidence.occurredAt !== input.occurredAt) {
+      throw new Error("canonical_mastery_contract_identity_mismatch");
+    }
+    validateCanonicalLearningStateEvent(evidence);
+    return evidence;
+  }
   if (input.admission.decision !== "ACCEPTED" || !input.admission.bindingId ||
     !input.admission.policyVersion || !input.admission.toolPolicyVersion) {
     throw new Error("canonical_mastery_requires_accepted_evidence");
@@ -124,6 +137,34 @@ export function createGovernedMasteryEvidence(input: AppendGovernedMasteryInput)
   });
   validateCanonicalLearningStateEvent(evidence);
   return evidence;
+}
+
+/** Persist a scored contract event through the existing canonical writer. */
+export async function appendCanonicalMasteryUpdateFromEvidence(input: {
+  release?: CurriculumOntologyRelease;
+  evidence: GovernedEvidence;
+}): Promise<CanonicalMasteryWriteResult> {
+  const release = input.release ?? compatibilityRelease();
+  const canonical = toCanonicalMasteryEvidence(input.evidence, release);
+  const binding = release.bindings.find((candidate) => candidate.id === canonical.bindingId);
+  if (!binding) throw new Error("canonical_mastery_binding_invalid");
+  return appendCanonicalMasteryUpdate({
+    release,
+    schoolId: canonical.scope.schoolId,
+    studentId: canonical.scope.studentId,
+    studentUserId: canonical.scope.studentUserId,
+    sessionId: canonical.independenceKey,
+    itemId: canonical.itemId,
+    itemVersion: canonical.itemVersion,
+    selectedAnswerIndex: canonical.selectedAnswerIndex,
+    occurredAt: canonical.occurredAt,
+    admission: {
+      decision: "ACCEPTED", reason: "governed_evidence_contract", bindingId: canonical.bindingId,
+      policyVersion: canonical.evidencePolicyVersion, toolPolicyVersion: canonical.toolPolicyVersion,
+      legacyMasteryProjectionAllowed: false,
+    },
+    governedEvidence: input.evidence,
+  });
 }
 
 type CanonicalEventRow = {
