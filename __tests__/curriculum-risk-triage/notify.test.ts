@@ -17,6 +17,30 @@ vi.mock("@/lib/email", () => ({ sendEmail: mockSendEmail }));
 vi.mock("@/lib/logger", () => ({ logger: { warn: mockWarn, error: vi.fn(), info: vi.fn() } }));
 
 import { notifyRiskReviewers } from "@/lib/curriculum/riskTriageNotify";
+import schemaAuthorityRegistry from "@/prisma/canonical/schema-authority-registry.json";
+
+// Role values declared in prisma/schema.prisma but physically ABSENT from the
+// database enum. Sending one in a query filter makes PostgreSQL reject the
+// whole query (22P02 invalid input value for enum "Role").
+const unpersistedRoles = new Set(
+  schemaAuthorityRegistry.entries
+    .filter((entry) => entry.objectType === "enumValue" && entry.physicalState === "ABSENT")
+    .flatMap((entry) => entry.objectNames)
+    .filter((name) => name.startsWith("public.Role."))
+    .map((name) => name.slice("public.Role.".length)),
+);
+
+function rolesInFilter(where: unknown): string[] {
+  const roles: string[] = [];
+  JSON.stringify(where, (key, value) => {
+    if (key === "role") {
+      if (typeof value === "string") roles.push(value);
+      else if (value && Array.isArray((value as { in?: unknown }).in)) roles.push(...(value as { in: string[] }).in);
+    }
+    return value;
+  });
+  return roles;
+}
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -32,7 +56,7 @@ describe("notifyRiskReviewers", () => {
     const callArgs = mockFindMany.mock.calls[0][0];
     expect(callArgs.where.OR).toEqual(expect.arrayContaining([
       { isPlatformAdmin: true },
-      { role: { in: ["MOE_OFFICIAL", "MOE_SUPER_ADMIN"] } },
+      { role: "MOE_OFFICIAL" },
       { role: "ADMIN", schoolId: "school-1" },
     ]));
     expect(mockSendEmail).toHaveBeenCalledTimes(2);
@@ -46,6 +70,16 @@ describe("notifyRiskReviewers", () => {
       })
     );
     expect(mockSendEmail.mock.calls[0]![0].text).toContain("grade_band_g1_3");
+  });
+
+  it("never filters on a Role value the database enum does not contain", async () => {
+    mockFindMany.mockResolvedValue([]);
+    await notifyRiskReviewers("content-1", 4, ["first_of_kind_cell"]);
+
+    expect(unpersistedRoles.size).toBeGreaterThan(0);
+    const roles = rolesInFilter(mockFindMany.mock.calls[0][0].where);
+    expect(roles.length).toBeGreaterThan(0);
+    expect(roles.filter((role) => unpersistedRoles.has(role))).toEqual([]);
   });
 
   it("warns without throwing when no reviewers are configured", async () => {
