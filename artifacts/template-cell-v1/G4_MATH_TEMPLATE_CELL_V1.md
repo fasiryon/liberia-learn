@@ -4,6 +4,22 @@
 - **Internally executable:** **YES**. Every reference resolves in repository authority.
 - **Live executable (production):** **NO**. Missing live: `learningTarget:LR-MATH-G4_6-02`, `lesson:ll-g4-math-fractions-equal-parts-2026.1` (snapshot 2026-09-26T09:07:15.873Z).
 
+## Live certification gate: **NOT CERTIFIED**
+
+| Result | Requirement | Detail |
+|---|---|---|
+| FAIL | 44/44 objectives have reviewed governed lessons | 43 failing: moe-math-g4-s1-p1-numeration-addition-and-subtraction-obj1, moe-math-g4-s1-p1-numeration-addition-and-subtraction-obj2, moe-math-g4-s1-p1-numeration-addition-and-subtraction-obj3, moe-math-g4-s1-p1-numeration-addition-and-subtraction-obj4, moe-math-g4-s1-p2-multiplication-and-division-of-whole-numbers-obj1, ... |
+| FAIL | classwork, homework and practice resolve from governed sources | 44 failing: moe-math-g4-s1-p1-numeration-addition-and-subtraction-obj1, moe-math-g4-s1-p1-numeration-addition-and-subtraction-obj2, moe-math-g4-s1-p1-numeration-addition-and-subtraction-obj3, moe-math-g4-s1-p1-numeration-addition-and-subtraction-obj4, moe-math-g4-s1-p2-multiplication-and-division-of-whole-numbers-obj1, ... |
+| FAIL | quiz, diagnostic check and exit assessment resolve from governed sources | 44 failing: moe-math-g4-s1-p1-numeration-addition-and-subtraction-obj1, moe-math-g4-s1-p1-numeration-addition-and-subtraction-obj2, moe-math-g4-s1-p1-numeration-addition-and-subtraction-obj3, moe-math-g4-s1-p1-numeration-addition-and-subtraction-obj4, moe-math-g4-s1-p2-multiplication-and-division-of-whole-numbers-obj1, ... |
+| PASS | evidence bindings and policies resolve | release valid |
+| PASS | ToolPolicies resolve to enabled toolkit tools | all keys mapped |
+| PASS | interaction classifications resolve | all classified |
+| PASS | every interaction has a valid offline behavior | all present |
+| FAIL | release references resolve in production | 2 failing: learningTarget:LR-MATH-G4_6-02, lesson:ll-g4-math-fractions-equal-parts-2026.1 |
+| PASS | no draft artifact is treated as governed | none |
+| PASS | no MOE approval is claimed without recorded evidence | NOT_CLAIMED |
+| PASS | cell is internally executable | no errors |
+
 ## Authority chain
 
 MOE archive page → structured objective (`curriculum/structured/moe-structured-v1.json`) → cell unit (`lib/learning-authority/cells/grade4Math.ts`) → concept (release) → lesson / governed item → evidence policy + ToolPolicy → ontology release (`lib/learning-authority/governedGrade4Math.ts`). The certifier is `lib/learning-authority/templateCell.ts` and is cell-agnostic.

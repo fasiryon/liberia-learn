@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import { describe, expect, it } from "vitest";
 import { GRADE4_MATH_TEMPLATE_CELL } from "@/lib/learning-authority/cells/grade4Math";
-import { certifyTemplateCell, type CertificationInput, type TemplateCell } from "@/lib/learning-authority/templateCell";
+import { certifyTemplateCell, liveCertificationChecklist, type CertificationInput, type TemplateCell } from "@/lib/learning-authority/templateCell";
 import { GRADE4_MATH_ONTOLOGY_RELEASE } from "@/lib/learning-authority/governedGrade4Math";
 import { GRADE4_FRACTIONS_LESSON } from "@/lib/curriculum/authority/grade4FractionsLesson";
 import { GRADE4_MATH_DRAFT_LESSONS } from "@/lib/curriculum/authority/grade4Math";
@@ -106,6 +106,19 @@ describe("governed template cell certification", () => {
     expect(clean.summary.objectivesWithDraftLessonOnly).toBe(43);
     expect(clean.summary.componentCoverage.QUIZ).toBe(0);
     expect(clean.summary.draftComponentCoverage.QUIZ).toBe(43);
+  });
+
+  it("live gate fails until every objective has governed lessons and live references resolve", () => {
+    const gate = liveCertificationChecklist(certifyTemplateCell({ ...base(), live: {
+      capturedAt: "2026-09-26T00:00:00Z", lessonContentIds: new Set(), learningTargetCodes: new Set(),
+      standardCodes: new Set(["LR-MATH-G4_6-02"]), skillIds: new Set(["placement-skill-MATH-G4_6"]), unitIds: [],
+    } }));
+    const byId = Object.fromEntries(gate.map((g) => [g.id, g.pass]));
+    expect(byId).toMatchObject({ "governed-lessons": false, "instruction-bindings": false, "assessment-bindings": false, "release-live": false,
+      "evidence-bindings": true, "tool-policies": true, interaction: true, offline: true, "no-draft-as-governed": true, "no-moe-claim": true, internal: true });
+    expect(gate.find((g) => g.id === "governed-lessons")!.detail).toMatch(/^43 failing/);
+    const unchecked = liveCertificationChecklist(certifyTemplateCell(base()));
+    expect(unchecked.find((g) => g.id === "release-live")!.pass).toBe(false);
   });
 
   it("requires every ToolPolicy key to map to an enabled toolkit tool", () => {
