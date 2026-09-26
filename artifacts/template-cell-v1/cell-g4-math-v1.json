@@ -1,0 +1,1245 @@
+{
+ "toolsEnabledForCell": [
+  "basic-calculator",
+  "digital-ruler",
+  "fraction-visualizer",
+  "multiplication-table",
+  "number-line",
+  "timer"
+ ],
+ "cellId": "cell-g4-math-v1",
+ "releaseId": "lr-moe-g4-math-fractions-2026.1",
+ "internallyExecutable": true,
+ "errors": [],
+ "objectives": [
+  {
+   "moeItemId": "moe-math-g4-s1-p1-numeration-addition-and-subtraction-obj1",
+   "unitId": "g4-math-u1-numeration-add-subtract",
+   "text": "Read and write whole numbers up to hundred thousand",
+   "pages": [
+    38
+   ],
+   "interaction": "NONE",
+   "interactionImplemented": true,
+   "lessons": [],
+   "components": {
+    "CLASSWORK": 0,
+    "HOMEWORK": 0,
+    "PRACTICE": 0,
+    "QUIZ": 0,
+    "DIAGNOSTIC": 0,
+    "ASSESSMENT": 0,
+    "PROJECT": 0
+   },
+   "conceptIds": []
+  },
+  {
+   "moeItemId": "moe-math-g4-s1-p1-numeration-addition-and-subtraction-obj2",
+   "unitId": "g4-math-u1-numeration-add-subtract",
+   "text": "Compare and order whole numbers to hundred thousand",
+   "pages": [
+    38
+   ],
+   "interaction": "MANIPULATIVE_2D",
+   "interactionImplemented": true,
+   "lessons": [],
+   "components": {
+    "CLASSWORK": 0,
+    "HOMEWORK": 0,
+    "PRACTICE": 0,
+    "QUIZ": 0,
+    "DIAGNOSTIC": 0,
+    "ASSESSMENT": 0,
+    "PROJECT": 0
+   },
+   "conceptIds": []
+  },
+  {
+   "moeItemId": "moe-math-g4-s1-p1-numeration-addition-and-subtraction-obj3",
+   "unitId": "g4-math-u1-numeration-add-subtract",
+   "text": "Round whole numbers up to thousand",
+   "pages": [
+    38
+   ],
+   "interaction": "MANIPULATIVE_2D",
+   "interactionImplemented": true,
+   "lessons": [],
+   "components": {
+    "CLASSWORK": 0,
+    "HOMEWORK": 0,
+    "PRACTICE": 0,
+    "QUIZ": 0,
+    "DIAGNOSTIC": 0,
+    "ASSESSMENT": 0,
+    "PROJECT": 0
+   },
+   "conceptIds": []
+  },
+  {
+   "moeItemId": "moe-math-g4-s1-p1-numeration-addition-and-subtraction-obj4",
+   "unitId": "g4-math-u1-numeration-add-subtract",
+   "text": "Add and subtract whole numbers using population data on births, deaths, and migration",
+   "pages": [
+    38
+   ],
+   "interaction": "NONE",
+   "interactionImplemented": true,
+   "lessons": [],
+   "components": {
+    "CLASSWORK": 0,
+    "HOMEWORK": 0,
+    "PRACTICE": 0,
+    "QUIZ": 0,
+    "DIAGNOSTIC": 0,
+    "ASSESSMENT": 0,
+    "PROJECT": 0
+   },
+   "conceptIds": []
+  },
+  {
+   "moeItemId": "moe-math-g4-s1-p2-multiplication-and-division-of-whole-numbers-obj1",
+   "unitId": "g4-math-u2-multiply-divide-whole",
+   "text": "Identify multiplication facts and properties.",
+   "pages": [
+    40
+   ],
+   "interaction": "MANIPULATIVE_2D",
+   "interactionImplemented": true,
+   "lessons": [],
+   "components": {
+    "CLASSWORK": 0,
+    "HOMEWORK": 0,
+    "PRACTICE": 0,
+    "QUIZ": 0,
+    "DIAGNOSTIC": 0,
+    "ASSESSMENT": 0,
+    "PROJECT": 0
+   },
+   "conceptIds": []
+  },
+  {
+   "moeItemId": "moe-math-g4-s1-p2-multiplication-and-division-of-whole-numbers-obj2",
+   "unitId": "g4-math-u2-multiply-divide-whole",
+   "text": "Multiply multiples of 10’s, 100’s, and 1000’s.",
+   "pages": [
+    40
+   ],
+   "interaction": "NONE",
+   "interactionImplemented": true,
+   "lessons": [],
+   "components": {
+    "CLASSWORK": 0,
+    "HOMEWORK": 0,
+    "PRACTICE": 0,
+    "QUIZ": 0,
+    "DIAGNOSTIC": 0,
+    "ASSESSMENT": 0,
+    "PROJECT": 0
+   },
+   "conceptIds": []
+  },
+  {
+   "moeItemId": "moe-math-g4-s1-p2-multiplication-and-division-of-whole-numbers-obj3",
+   "unitId": "g4-math-u2-multiply-divide-whole",
+   "text": "Multiply 2, 3, or 4 digits by 1 - digit.",
+   "pages": [
+    40
+   ],
+   "interaction": "NONE",
+   "interactionImplemented": true,
+   "lessons": [],
+   "components": {
+    "CLASSWORK": 0,
+    "HOMEWORK": 0,
+    "PRACTICE": 0,
+    "QUIZ": 0,
+    "DIAGNOSTIC": 0,
+    "ASSESSMENT": 0,
+    "PROJECT": 0
+   },
+   "conceptIds": []
+  },
+  {
+   "moeItemId": "moe-math-g4-s1-p2-multiplication-and-division-of-whole-numbers-obj4",
+   "unitId": "g4-math-u2-multiply-divide-whole",
+   "text": "Divide 2, 3, or 4 - digit numbers by 1 - digit divisor.",
+   "pages": [
+    40
+   ],
+   "interaction": "NONE",
+   "interactionImplemented": true,
+   "lessons": [],
+   "components": {
+    "CLASSWORK": 0,
+    "HOMEWORK": 0,
+    "PRACTICE": 0,
+    "QUIZ": 0,
+    "DIAGNOSTIC": 0,
+    "ASSESSMENT": 0,
+    "PROJECT": 0
+   },
+   "conceptIds": []
+  },
+  {
+   "moeItemId": "moe-math-g4-s1-p2-multiplication-and-division-of-whole-numbers-obj5",
+   "unitId": "g4-math-u2-multiply-divide-whole",
+   "text": "Divide whole numbers with zero in the quotient.",
+   "pages": [
+    40
+   ],
+   "interaction": "NONE",
+   "interactionImplemented": true,
+   "lessons": [],
+   "components": {
+    "CLASSWORK": 0,
+    "HOMEWORK": 0,
+    "PRACTICE": 0,
+    "QUIZ": 0,
+    "DIAGNOSTIC": 0,
+    "ASSESSMENT": 0,
+    "PROJECT": 0
+   },
+   "conceptIds": []
+  },
+  {
+   "moeItemId": "moe-math-g4-s1-p2-multiplication-and-division-of-whole-numbers-obj6",
+   "unitId": "g4-math-u2-multiply-divide-whole",
+   "text": "Solve problem involving division.",
+   "pages": [
+    41
+   ],
+   "interaction": "NONE",
+   "interactionImplemented": true,
+   "lessons": [],
+   "components": {
+    "CLASSWORK": 0,
+    "HOMEWORK": 0,
+    "PRACTICE": 0,
+    "QUIZ": 0,
+    "DIAGNOSTIC": 0,
+    "ASSESSMENT": 0,
+    "PROJECT": 0
+   },
+   "conceptIds": []
+  },
+  {
+   "moeItemId": "moe-math-g4-s1-p3-number-theory-and-fraction-obj1",
+   "unitId": "g4-math-u3-number-theory-fractions",
+   "text": "Identify even and odd numbers.",
+   "pages": [
+    42
+   ],
+   "interaction": "NONE",
+   "interactionImplemented": true,
+   "lessons": [],
+   "components": {
+    "CLASSWORK": 0,
+    "HOMEWORK": 0,
+    "PRACTICE": 0,
+    "QUIZ": 0,
+    "DIAGNOSTIC": 0,
+    "ASSESSMENT": 0,
+    "PROJECT": 0
+   },
+   "conceptIds": []
+  },
+  {
+   "moeItemId": "moe-math-g4-s1-p3-number-theory-and-fraction-obj2",
+   "unitId": "g4-math-u3-number-theory-fractions",
+   "text": "Identify factors and multiples.",
+   "pages": [
+    42
+   ],
+   "interaction": "MANIPULATIVE_2D",
+   "interactionImplemented": true,
+   "lessons": [],
+   "components": {
+    "CLASSWORK": 0,
+    "HOMEWORK": 0,
+    "PRACTICE": 0,
+    "QUIZ": 0,
+    "DIAGNOSTIC": 0,
+    "ASSESSMENT": 0,
+    "PROJECT": 0
+   },
+   "conceptIds": []
+  },
+  {
+   "moeItemId": "moe-math-g4-s1-p3-number-theory-and-fraction-obj3",
+   "unitId": "g4-math-u3-number-theory-fractions",
+   "text": "Find LCM and GCF of numbers.",
+   "pages": [
+    42
+   ],
+   "interaction": "NONE",
+   "interactionImplemented": true,
+   "lessons": [],
+   "components": {
+    "CLASSWORK": 0,
+    "HOMEWORK": 0,
+    "PRACTICE": 0,
+    "QUIZ": 0,
+    "DIAGNOSTIC": 0,
+    "ASSESSMENT": 0,
+    "PROJECT": 0
+   },
+   "conceptIds": []
+  },
+  {
+   "moeItemId": "moe-math-g4-s1-p3-number-theory-and-fraction-obj4",
+   "unitId": "g4-math-u3-number-theory-fractions",
+   "text": "Find parts of a set.",
+   "pages": [
+    42
+   ],
+   "interaction": "MANIPULATIVE_2D",
+   "interactionImplemented": true,
+   "lessons": [
+    "ll-g4-math-fractions-equal-parts-2026.1"
+   ],
+   "components": {
+    "CLASSWORK": 1,
+    "HOMEWORK": 1,
+    "PRACTICE": 0,
+    "QUIZ": 0,
+    "DIAGNOSTIC": 1,
+    "ASSESSMENT": 1,
+    "PROJECT": 0
+   },
+   "conceptIds": [
+    "g4-fractions-equal-parts"
+   ]
+  },
+  {
+   "moeItemId": "moe-math-g4-s1-p3-number-theory-and-fraction-obj5",
+   "unitId": "g4-math-u3-number-theory-fractions",
+   "text": "Write equivalent fractions.",
+   "pages": [
+    42
+   ],
+   "interaction": "MANIPULATIVE_2D",
+   "interactionImplemented": true,
+   "lessons": [],
+   "components": {
+    "CLASSWORK": 0,
+    "HOMEWORK": 0,
+    "PRACTICE": 1,
+    "QUIZ": 0,
+    "DIAGNOSTIC": 0,
+    "ASSESSMENT": 0,
+    "PROJECT": 0
+   },
+   "conceptIds": [
+    "g4-fractions-equivalence"
+   ]
+  },
+  {
+   "moeItemId": "moe-math-g4-s1-p3-number-theory-and-fraction-obj6",
+   "unitId": "g4-math-u3-number-theory-fractions",
+   "text": "Simplify fractions.",
+   "pages": [
+    42
+   ],
+   "interaction": "MANIPULATIVE_2D",
+   "interactionImplemented": true,
+   "lessons": [],
+   "components": {
+    "CLASSWORK": 0,
+    "HOMEWORK": 0,
+    "PRACTICE": 0,
+    "QUIZ": 0,
+    "DIAGNOSTIC": 0,
+    "ASSESSMENT": 0,
+    "PROJECT": 0
+   },
+   "conceptIds": []
+  },
+  {
+   "moeItemId": "moe-math-g4-s1-p3-number-theory-and-fraction-obj7",
+   "unitId": "g4-math-u3-number-theory-fractions",
+   "text": "Add fractions.",
+   "pages": [
+    42
+   ],
+   "interaction": "MANIPULATIVE_2D",
+   "interactionImplemented": true,
+   "lessons": [],
+   "components": {
+    "CLASSWORK": 0,
+    "HOMEWORK": 0,
+    "PRACTICE": 0,
+    "QUIZ": 0,
+    "DIAGNOSTIC": 0,
+    "ASSESSMENT": 0,
+    "PROJECT": 0
+   },
+   "conceptIds": []
+  },
+  {
+   "moeItemId": "moe-math-g4-s1-p3-number-theory-and-fraction-obj8",
+   "unitId": "g4-math-u3-number-theory-fractions",
+   "text": "Subtract fractions.",
+   "pages": [
+    42
+   ],
+   "interaction": "MANIPULATIVE_2D",
+   "interactionImplemented": true,
+   "lessons": [],
+   "components": {
+    "CLASSWORK": 0,
+    "HOMEWORK": 0,
+    "PRACTICE": 0,
+    "QUIZ": 0,
+    "DIAGNOSTIC": 0,
+    "ASSESSMENT": 0,
+    "PROJECT": 0
+   },
+   "conceptIds": []
+  },
+  {
+   "moeItemId": "moe-math-g4-s1-p3-number-theory-and-fraction-obj9",
+   "unitId": "g4-math-u3-number-theory-fractions",
+   "text": "Solve problems involving multi-step problems.",
+   "pages": [
+    43
+   ],
+   "interaction": "NONE",
+   "interactionImplemented": true,
+   "lessons": [],
+   "components": {
+    "CLASSWORK": 0,
+    "HOMEWORK": 0,
+    "PRACTICE": 0,
+    "QUIZ": 0,
+    "DIAGNOSTIC": 0,
+    "ASSESSMENT": 0,
+    "PROJECT": 0
+   },
+   "conceptIds": []
+  },
+  {
+   "moeItemId": "moe-math-g4-s2-p4-multiplication-and-division-of-2-digits-multipli-obj1",
+   "unitId": "g4-math-u4-two-digit-decimals",
+   "text": "Multiply 2 - Digits factors of multiples of 10’s, 100’s, and 1000’s.",
+   "pages": [
+    44
+   ],
+   "interaction": "NONE",
+   "interactionImplemented": true,
+   "lessons": [],
+   "components": {
+    "CLASSWORK": 0,
+    "HOMEWORK": 0,
+    "PRACTICE": 0,
+    "QUIZ": 0,
+    "DIAGNOSTIC": 0,
+    "ASSESSMENT": 0,
+    "PROJECT": 0
+   },
+   "conceptIds": []
+  },
+  {
+   "moeItemId": "moe-math-g4-s2-p4-multiplication-and-division-of-2-digits-multipli-obj2",
+   "unitId": "g4-math-u4-two-digit-decimals",
+   "text": "Estimate products involving 2 - Digits multipliers.",
+   "pages": [
+    44
+   ],
+   "interaction": "NONE",
+   "interactionImplemented": true,
+   "lessons": [],
+   "components": {
+    "CLASSWORK": 0,
+    "HOMEWORK": 0,
+    "PRACTICE": 0,
+    "QUIZ": 0,
+    "DIAGNOSTIC": 0,
+    "ASSESSMENT": 0,
+    "PROJECT": 0
+   },
+   "conceptIds": []
+  },
+  {
+   "moeItemId": "moe-math-g4-s2-p4-multiplication-and-division-of-2-digits-multipli-obj3",
+   "unitId": "g4-math-u4-two-digit-decimals",
+   "text": "multiply 2, 3, or 4 – Digits multipliers",
+   "pages": [
+    44
+   ],
+   "interaction": "NONE",
+   "interactionImplemented": true,
+   "lessons": [],
+   "components": {
+    "CLASSWORK": 0,
+    "HOMEWORK": 0,
+    "PRACTICE": 0,
+    "QUIZ": 0,
+    "DIAGNOSTIC": 0,
+    "ASSESSMENT": 0,
+    "PROJECT": 0
+   },
+   "conceptIds": []
+  },
+  {
+   "moeItemId": "moe-math-g4-s2-p4-multiplication-and-division-of-2-digits-multipli-obj4",
+   "unitId": "g4-math-u4-two-digit-decimals",
+   "text": "Divide multiples of 10’s, 100’s, and 1000’s by 2 - Digit Divisors mentally.",
+   "pages": [
+    44
+   ],
+   "interaction": "NONE",
+   "interactionImplemented": true,
+   "lessons": [],
+   "components": {
+    "CLASSWORK": 0,
+    "HOMEWORK": 0,
+    "PRACTICE": 0,
+    "QUIZ": 0,
+    "DIAGNOSTIC": 0,
+    "ASSESSMENT": 0,
+    "PROJECT": 0
+   },
+   "conceptIds": []
+  },
+  {
+   "moeItemId": "moe-math-g4-s2-p4-multiplication-and-division-of-2-digits-multipli-obj5",
+   "unitId": "g4-math-u4-two-digit-decimals",
+   "text": "Estimate quotient of 2 - Digit Divisors.",
+   "pages": [
+    44
+   ],
+   "interaction": "NONE",
+   "interactionImplemented": true,
+   "lessons": [],
+   "components": {
+    "CLASSWORK": 0,
+    "HOMEWORK": 0,
+    "PRACTICE": 0,
+    "QUIZ": 0,
+    "DIAGNOSTIC": 0,
+    "ASSESSMENT": 0,
+    "PROJECT": 0
+   },
+   "conceptIds": []
+  },
+  {
+   "moeItemId": "moe-math-g4-s2-p4-multiplication-and-division-of-2-digits-multipli-obj6",
+   "unitId": "g4-math-u4-two-digit-decimals",
+   "text": "Divide 2, 3, or 4 - Digit numbers by 2 - Digit",
+   "pages": [
+    45
+   ],
+   "interaction": "NONE",
+   "interactionImplemented": true,
+   "lessons": [],
+   "components": {
+    "CLASSWORK": 0,
+    "HOMEWORK": 0,
+    "PRACTICE": 0,
+    "QUIZ": 0,
+    "DIAGNOSTIC": 0,
+    "ASSESSMENT": 0,
+    "PROJECT": 0
+   },
+   "conceptIds": []
+  },
+  {
+   "moeItemId": "moe-math-g4-s2-p4-multiplication-and-division-of-2-digits-multipli-obj7",
+   "unitId": "g4-math-u4-two-digit-decimals",
+   "text": "Read and write decimal numerals up to hundredths place.",
+   "pages": [
+    45
+   ],
+   "interaction": "MANIPULATIVE_2D",
+   "interactionImplemented": true,
+   "lessons": [],
+   "components": {
+    "CLASSWORK": 0,
+    "HOMEWORK": 0,
+    "PRACTICE": 0,
+    "QUIZ": 0,
+    "DIAGNOSTIC": 0,
+    "ASSESSMENT": 0,
+    "PROJECT": 0
+   },
+   "conceptIds": []
+  },
+  {
+   "moeItemId": "moe-math-g4-s2-p4-multiplication-and-division-of-2-digits-multipli-obj8",
+   "unitId": "g4-math-u4-two-digit-decimals",
+   "text": "Compare and order decimal numerals up to hundredths place.",
+   "pages": [
+    45
+   ],
+   "interaction": "MANIPULATIVE_2D",
+   "interactionImplemented": true,
+   "lessons": [],
+   "components": {
+    "CLASSWORK": 0,
+    "HOMEWORK": 0,
+    "PRACTICE": 0,
+    "QUIZ": 0,
+    "DIAGNOSTIC": 0,
+    "ASSESSMENT": 0,
+    "PROJECT": 0
+   },
+   "conceptIds": []
+  },
+  {
+   "moeItemId": "moe-math-g4-s2-p5-measurement-obj1",
+   "unitId": "g4-math-u5-measurement",
+   "text": "Estimate time.",
+   "pages": [
+    46
+   ],
+   "interaction": "PRACTICAL",
+   "interactionImplemented": true,
+   "lessons": [],
+   "components": {
+    "CLASSWORK": 0,
+    "HOMEWORK": 0,
+    "PRACTICE": 0,
+    "QUIZ": 0,
+    "DIAGNOSTIC": 0,
+    "ASSESSMENT": 0,
+    "PROJECT": 0
+   },
+   "conceptIds": []
+  },
+  {
+   "moeItemId": "moe-math-g4-s2-p5-measurement-obj2",
+   "unitId": "g4-math-u5-measurement",
+   "text": "Find elapsed time.",
+   "pages": [
+    46
+   ],
+   "interaction": "MANIPULATIVE_2D",
+   "interactionImplemented": false,
+   "lessons": [],
+   "components": {
+    "CLASSWORK": 0,
+    "HOMEWORK": 0,
+    "PRACTICE": 0,
+    "QUIZ": 0,
+    "DIAGNOSTIC": 0,
+    "ASSESSMENT": 0,
+    "PROJECT": 0
+   },
+   "conceptIds": []
+  },
+  {
+   "moeItemId": "moe-math-g4-s2-p5-measurement-obj3",
+   "unitId": "g4-math-u5-measurement",
+   "text": "Estimate customary units of lengths.",
+   "pages": [
+    46
+   ],
+   "interaction": "PRACTICAL",
+   "interactionImplemented": true,
+   "lessons": [],
+   "components": {
+    "CLASSWORK": 0,
+    "HOMEWORK": 0,
+    "PRACTICE": 0,
+    "QUIZ": 0,
+    "DIAGNOSTIC": 0,
+    "ASSESSMENT": 0,
+    "PROJECT": 0
+   },
+   "conceptIds": []
+  },
+  {
+   "moeItemId": "moe-math-g4-s2-p5-measurement-obj4",
+   "unitId": "g4-math-u5-measurement",
+   "text": "Measure lengths using customary units.",
+   "pages": [
+    46
+   ],
+   "interaction": "PRACTICAL",
+   "interactionImplemented": true,
+   "lessons": [],
+   "components": {
+    "CLASSWORK": 0,
+    "HOMEWORK": 0,
+    "PRACTICE": 0,
+    "QUIZ": 0,
+    "DIAGNOSTIC": 0,
+    "ASSESSMENT": 0,
+    "PROJECT": 0
+   },
+   "conceptIds": []
+  },
+  {
+   "moeItemId": "moe-math-g4-s2-p5-measurement-obj5",
+   "unitId": "g4-math-u5-measurement",
+   "text": "Estimate customary units of mass and capacity.",
+   "pages": [
+    46
+   ],
+   "interaction": "PRACTICAL",
+   "interactionImplemented": true,
+   "lessons": [],
+   "components": {
+    "CLASSWORK": 0,
+    "HOMEWORK": 0,
+    "PRACTICE": 0,
+    "QUIZ": 0,
+    "DIAGNOSTIC": 0,
+    "ASSESSMENT": 0,
+    "PROJECT": 0
+   },
+   "conceptIds": []
+  },
+  {
+   "moeItemId": "moe-math-g4-s2-p5-measurement-obj6",
+   "unitId": "g4-math-u5-measurement",
+   "text": "Estimate metric units of lengths, capacity and mass.",
+   "pages": [
+    46
+   ],
+   "interaction": "PRACTICAL",
+   "interactionImplemented": true,
+   "lessons": [],
+   "components": {
+    "CLASSWORK": 0,
+    "HOMEWORK": 0,
+    "PRACTICE": 0,
+    "QUIZ": 0,
+    "DIAGNOSTIC": 0,
+    "ASSESSMENT": 0,
+    "PROJECT": 0
+   },
+   "conceptIds": []
+  },
+  {
+   "moeItemId": "moe-math-g4-s2-p5-measurement-obj7",
+   "unitId": "g4-math-u5-measurement",
+   "text": "Convert subunits of lengths and weight in the metric system.",
+   "pages": [
+    47
+   ],
+   "interaction": "NONE",
+   "interactionImplemented": true,
+   "lessons": [],
+   "components": {
+    "CLASSWORK": 0,
+    "HOMEWORK": 0,
+    "PRACTICE": 0,
+    "QUIZ": 0,
+    "DIAGNOSTIC": 0,
+    "ASSESSMENT": 0,
+    "PROJECT": 0
+   },
+   "conceptIds": []
+  },
+  {
+   "moeItemId": "moe-math-g4-s2-p5-measurement-obj8",
+   "unitId": "g4-math-u5-measurement",
+   "text": "Perform addition and subtraction of measurement of lengths and weights.",
+   "pages": [
+    47
+   ],
+   "interaction": "NONE",
+   "interactionImplemented": true,
+   "lessons": [],
+   "components": {
+    "CLASSWORK": 0,
+    "HOMEWORK": 0,
+    "PRACTICE": 0,
+    "QUIZ": 0,
+    "DIAGNOSTIC": 0,
+    "ASSESSMENT": 0,
+    "PROJECT": 0
+   },
+   "conceptIds": []
+  },
+  {
+   "moeItemId": "moe-math-g4-s2-p5-measurement-obj9",
+   "unitId": "g4-math-u5-measurement",
+   "text": "Find the perimeters and areas of squares and rectangles.",
+   "pages": [
+    47
+   ],
+   "interaction": "MANIPULATIVE_2D",
+   "interactionImplemented": false,
+   "lessons": [],
+   "components": {
+    "CLASSWORK": 0,
+    "HOMEWORK": 0,
+    "PRACTICE": 0,
+    "QUIZ": 0,
+    "DIAGNOSTIC": 0,
+    "ASSESSMENT": 0,
+    "PROJECT": 0
+   },
+   "conceptIds": []
+  },
+  {
+   "moeItemId": "moe-math-g4-s2-p6-geometry-and-statistics-obj1",
+   "unitId": "g4-math-u6-geometry-statistics",
+   "text": "Identify geometric figures of line, line segments, rays, interesting lines, parallel lines.",
+   "pages": [
+    48
+   ],
+   "interaction": "NONE",
+   "interactionImplemented": true,
+   "lessons": [],
+   "components": {
+    "CLASSWORK": 0,
+    "HOMEWORK": 0,
+    "PRACTICE": 0,
+    "QUIZ": 0,
+    "DIAGNOSTIC": 0,
+    "ASSESSMENT": 0,
+    "PROJECT": 0
+   },
+   "conceptIds": []
+  },
+  {
+   "moeItemId": "moe-math-g4-s2-p6-geometry-and-statistics-obj2",
+   "unitId": "g4-math-u6-geometry-statistics",
+   "text": "Identify angles by shapes as right angle, less than right angle, or greater than right angle; perpendicular lines.",
+   "pages": [
+    48
+   ],
+   "interaction": "MANIPULATIVE_2D",
+   "interactionImplemented": false,
+   "lessons": [],
+   "components": {
+    "CLASSWORK": 0,
+    "HOMEWORK": 0,
+    "PRACTICE": 0,
+    "QUIZ": 0,
+    "DIAGNOSTIC": 0,
+    "ASSESSMENT": 0,
+    "PROJECT": 0
+   },
+   "conceptIds": []
+  },
+  {
+   "moeItemId": "moe-math-g4-s2-p6-geometry-and-statistics-obj3",
+   "unitId": "g4-math-u6-geometry-statistics",
+   "text": "Identify triangles, quadrilaterals or pentago n, hexagon as polygon.",
+   "pages": [
+    48
+   ],
+   "interaction": "NONE",
+   "interactionImplemented": true,
+   "lessons": [],
+   "components": {
+    "CLASSWORK": 0,
+    "HOMEWORK": 0,
+    "PRACTICE": 0,
+    "QUIZ": 0,
+    "DIAGNOSTIC": 0,
+    "ASSESSMENT": 0,
+    "PROJECT": 0
+   },
+   "conceptIds": []
+  },
+  {
+   "moeItemId": "moe-math-g4-s2-p6-geometry-and-statistics-obj4",
+   "unitId": "g4-math-u6-geometry-statistics",
+   "text": "Identify parts of a circle.",
+   "pages": [
+    48
+   ],
+   "interaction": "NONE",
+   "interactionImplemented": true,
+   "lessons": [],
+   "components": {
+    "CLASSWORK": 0,
+    "HOMEWORK": 0,
+    "PRACTICE": 0,
+    "QUIZ": 0,
+    "DIAGNOSTIC": 0,
+    "ASSESSMENT": 0,
+    "PROJECT": 0
+   },
+   "conceptIds": []
+  },
+  {
+   "moeItemId": "moe-math-g4-s2-p6-geometry-and-statistics-obj5",
+   "unitId": "g4-math-u6-geometry-statistics",
+   "text": "Identify solid figures – spheres, cylinder, cones, cubes, rectangular prisms.",
+   "pages": [
+    49
+   ],
+   "interaction": "THREE_D",
+   "interactionImplemented": false,
+   "lessons": [],
+   "components": {
+    "CLASSWORK": 0,
+    "HOMEWORK": 0,
+    "PRACTICE": 0,
+    "QUIZ": 0,
+    "DIAGNOSTIC": 0,
+    "ASSESSMENT": 0,
+    "PROJECT": 0
+   },
+   "conceptIds": []
+  },
+  {
+   "moeItemId": "moe-math-g4-s2-p6-geometry-and-statistics-obj6",
+   "unitId": "g4-math-u6-geometry-statistics",
+   "text": "Read and interpret bar graphs, line graphs, pie chart, and mode, mean, median, & average.",
+   "pages": [
+    49
+   ],
+   "interaction": "NONE",
+   "interactionImplemented": true,
+   "lessons": [],
+   "components": {
+    "CLASSWORK": 0,
+    "HOMEWORK": 0,
+    "PRACTICE": 0,
+    "QUIZ": 0,
+    "DIAGNOSTIC": 0,
+    "ASSESSMENT": 0,
+    "PROJECT": 0
+   },
+   "conceptIds": []
+  },
+  {
+   "moeItemId": "moe-math-g4-s2-p6-geometry-and-statistics-obj7",
+   "unitId": "g4-math-u6-geometry-statistics",
+   "text": "Find the mode, medium, and mean using the given population data.",
+   "pages": [
+    49
+   ],
+   "interaction": "NONE",
+   "interactionImplemented": true,
+   "lessons": [],
+   "components": {
+    "CLASSWORK": 0,
+    "HOMEWORK": 0,
+    "PRACTICE": 0,
+    "QUIZ": 0,
+    "DIAGNOSTIC": 0,
+    "ASSESSMENT": 0,
+    "PROJECT": 0
+   },
+   "conceptIds": []
+  },
+  {
+   "moeItemId": "moe-math-g4-s2-p6-geometry-and-statistics-obj8",
+   "unitId": "g4-math-u6-geometry-statistics",
+   "text": "Solve word problems involving drawing of diagrams.",
+   "pages": [
+    49
+   ],
+   "interaction": "NONE",
+   "interactionImplemented": true,
+   "lessons": [],
+   "components": {
+    "CLASSWORK": 0,
+    "HOMEWORK": 0,
+    "PRACTICE": 0,
+    "QUIZ": 0,
+    "DIAGNOSTIC": 0,
+    "ASSESSMENT": 0,
+    "PROJECT": 0
+   },
+   "conceptIds": []
+  }
+ ],
+ "summary": {
+  "moeObjectives": 44,
+  "objectivesWithLesson": 1,
+  "objectivesWithGovernedItem": 2,
+  "componentCoverage": {
+   "CLASSWORK": 1,
+   "HOMEWORK": 1,
+   "PRACTICE": 1,
+   "QUIZ": 0,
+   "DIAGNOSTIC": 1,
+   "ASSESSMENT": 1,
+   "PROJECT": 0
+  },
+  "interaction": {
+   "NONE": 24,
+   "MANIPULATIVE_2D": 14,
+   "SIMULATION": 0,
+   "VIRTUAL_LAB": 0,
+   "PRACTICAL": 5,
+   "THREE_D": 1
+  },
+  "interactionImplemented": 16,
+  "interactionGaps": [
+   "moe-math-g4-s2-p5-measurement-obj2:MANIPULATIVE_2D",
+   "moe-math-g4-s2-p5-measurement-obj9:MANIPULATIVE_2D",
+   "moe-math-g4-s2-p6-geometry-and-statistics-obj2:MANIPULATIVE_2D",
+   "moe-math-g4-s2-p6-geometry-and-statistics-obj5:THREE_D"
+  ],
+  "resources": 42,
+  "teacherAssessmentReferences": 60,
+  "moeActivities": 24
+ },
+ "teacherMetadata": [
+  {
+   "unitId": "g4-math-u1-numeration-add-subtract",
+   "topic": "NUMERATION, ADDITION AND SUBTRACTION",
+   "semester": 1,
+   "period": 1,
+   "sourcePages": [
+    38,
+    39
+   ],
+   "materials": [
+    "moe-math-g4-s1-p1-numeration-addition-and-subtraction-mat1",
+    "moe-math-g4-s1-p1-numeration-addition-and-subtraction-mat2",
+    "moe-math-g4-s1-p1-numeration-addition-and-subtraction-mat3",
+    "moe-math-g4-s1-p1-numeration-addition-and-subtraction-mat4",
+    "moe-math-g4-s1-p1-numeration-addition-and-subtraction-mat5",
+    "moe-math-g4-s1-p1-numeration-addition-and-subtraction-mat6",
+    "moe-math-g4-s1-p1-numeration-addition-and-subtraction-mat7"
+   ],
+   "assessmentReferences": [
+    "moe-math-g4-s1-p1-numeration-addition-and-subtraction-asr1",
+    "moe-math-g4-s1-p1-numeration-addition-and-subtraction-asr2",
+    "moe-math-g4-s1-p1-numeration-addition-and-subtraction-asr3",
+    "moe-math-g4-s1-p1-numeration-addition-and-subtraction-asr4",
+    "moe-math-g4-s1-p1-numeration-addition-and-subtraction-asr5",
+    "moe-math-g4-s1-p1-numeration-addition-and-subtraction-asr6",
+    "moe-math-g4-s1-p1-numeration-addition-and-subtraction-asr7",
+    "moe-math-g4-s1-p1-numeration-addition-and-subtraction-asr8",
+    "moe-math-g4-s1-p1-numeration-addition-and-subtraction-asr9",
+    "moe-math-g4-s1-p1-numeration-addition-and-subtraction-asr10"
+   ],
+   "competencies": [
+    "moe-math-g4-s1-p1-numeration-addition-and-subtraction-cmp1",
+    "moe-math-g4-s1-p1-numeration-addition-and-subtraction-cmp2",
+    "moe-math-g4-s1-p1-numeration-addition-and-subtraction-cmp3"
+   ],
+   "activities": [
+    "moe-math-g4-s1-p1-numeration-addition-and-subtraction-act1",
+    "moe-math-g4-s1-p1-numeration-addition-and-subtraction-act2",
+    "moe-math-g4-s1-p1-numeration-addition-and-subtraction-act3",
+    "moe-math-g4-s1-p1-numeration-addition-and-subtraction-act4"
+   ]
+  },
+  {
+   "unitId": "g4-math-u2-multiply-divide-whole",
+   "topic": "MULTIPLICATION AND DIVISION OF WHOLE NUMBERS",
+   "semester": 1,
+   "period": 2,
+   "sourcePages": [
+    40,
+    41
+   ],
+   "materials": [
+    "moe-math-g4-s1-p2-multiplication-and-division-of-whole-numbers-mat1",
+    "moe-math-g4-s1-p2-multiplication-and-division-of-whole-numbers-mat2",
+    "moe-math-g4-s1-p2-multiplication-and-division-of-whole-numbers-mat3",
+    "moe-math-g4-s1-p2-multiplication-and-division-of-whole-numbers-mat4",
+    "moe-math-g4-s1-p2-multiplication-and-division-of-whole-numbers-mat5",
+    "moe-math-g4-s1-p2-multiplication-and-division-of-whole-numbers-mat6",
+    "moe-math-g4-s1-p2-multiplication-and-division-of-whole-numbers-mat7"
+   ],
+   "assessmentReferences": [
+    "moe-math-g4-s1-p2-multiplication-and-division-of-whole-numbers-asr1",
+    "moe-math-g4-s1-p2-multiplication-and-division-of-whole-numbers-asr2",
+    "moe-math-g4-s1-p2-multiplication-and-division-of-whole-numbers-asr3",
+    "moe-math-g4-s1-p2-multiplication-and-division-of-whole-numbers-asr4",
+    "moe-math-g4-s1-p2-multiplication-and-division-of-whole-numbers-asr5",
+    "moe-math-g4-s1-p2-multiplication-and-division-of-whole-numbers-asr6",
+    "moe-math-g4-s1-p2-multiplication-and-division-of-whole-numbers-asr7",
+    "moe-math-g4-s1-p2-multiplication-and-division-of-whole-numbers-asr8",
+    "moe-math-g4-s1-p2-multiplication-and-division-of-whole-numbers-asr9",
+    "moe-math-g4-s1-p2-multiplication-and-division-of-whole-numbers-asr10"
+   ],
+   "competencies": [
+    "moe-math-g4-s1-p2-multiplication-and-division-of-whole-numbers-cmp1",
+    "moe-math-g4-s1-p2-multiplication-and-division-of-whole-numbers-cmp2",
+    "moe-math-g4-s1-p2-multiplication-and-division-of-whole-numbers-cmp3"
+   ],
+   "activities": [
+    "moe-math-g4-s1-p2-multiplication-and-division-of-whole-numbers-act1",
+    "moe-math-g4-s1-p2-multiplication-and-division-of-whole-numbers-act2"
+   ]
+  },
+  {
+   "unitId": "g4-math-u3-number-theory-fractions",
+   "topic": "NUMBER THEORY AND FRACTION",
+   "semester": 1,
+   "period": 3,
+   "sourcePages": [
+    42,
+    43
+   ],
+   "materials": [
+    "moe-math-g4-s1-p3-number-theory-and-fraction-mat1",
+    "moe-math-g4-s1-p3-number-theory-and-fraction-mat2",
+    "moe-math-g4-s1-p3-number-theory-and-fraction-mat3",
+    "moe-math-g4-s1-p3-number-theory-and-fraction-mat4",
+    "moe-math-g4-s1-p3-number-theory-and-fraction-mat5",
+    "moe-math-g4-s1-p3-number-theory-and-fraction-mat6",
+    "moe-math-g4-s1-p3-number-theory-and-fraction-mat7"
+   ],
+   "assessmentReferences": [
+    "moe-math-g4-s1-p3-number-theory-and-fraction-asr1",
+    "moe-math-g4-s1-p3-number-theory-and-fraction-asr2",
+    "moe-math-g4-s1-p3-number-theory-and-fraction-asr3",
+    "moe-math-g4-s1-p3-number-theory-and-fraction-asr4",
+    "moe-math-g4-s1-p3-number-theory-and-fraction-asr5",
+    "moe-math-g4-s1-p3-number-theory-and-fraction-asr6",
+    "moe-math-g4-s1-p3-number-theory-and-fraction-asr7",
+    "moe-math-g4-s1-p3-number-theory-and-fraction-asr8",
+    "moe-math-g4-s1-p3-number-theory-and-fraction-asr9",
+    "moe-math-g4-s1-p3-number-theory-and-fraction-asr10"
+   ],
+   "competencies": [
+    "moe-math-g4-s1-p3-number-theory-and-fraction-cmp1",
+    "moe-math-g4-s1-p3-number-theory-and-fraction-cmp2",
+    "moe-math-g4-s1-p3-number-theory-and-fraction-cmp3"
+   ],
+   "activities": [
+    "moe-math-g4-s1-p3-number-theory-and-fraction-act1",
+    "moe-math-g4-s1-p3-number-theory-and-fraction-act2",
+    "moe-math-g4-s1-p3-number-theory-and-fraction-act3",
+    "moe-math-g4-s1-p3-number-theory-and-fraction-act4",
+    "moe-math-g4-s1-p3-number-theory-and-fraction-act5",
+    "moe-math-g4-s1-p3-number-theory-and-fraction-act6",
+    "moe-math-g4-s1-p3-number-theory-and-fraction-act7"
+   ]
+  },
+  {
+   "unitId": "g4-math-u4-two-digit-decimals",
+   "topic": "MULTIPLICATION AND DIVISION OF 2 - DIGITS MULTIPLIERS AND DIVISORS (DECIMALS TO HUNDREDTHS)",
+   "semester": 2,
+   "period": 4,
+   "sourcePages": [
+    44,
+    45
+   ],
+   "materials": [
+    "moe-math-g4-s2-p4-multiplication-and-division-of-2-digits-multipli-mat1",
+    "moe-math-g4-s2-p4-multiplication-and-division-of-2-digits-multipli-mat2",
+    "moe-math-g4-s2-p4-multiplication-and-division-of-2-digits-multipli-mat3",
+    "moe-math-g4-s2-p4-multiplication-and-division-of-2-digits-multipli-mat4",
+    "moe-math-g4-s2-p4-multiplication-and-division-of-2-digits-multipli-mat5",
+    "moe-math-g4-s2-p4-multiplication-and-division-of-2-digits-multipli-mat6",
+    "moe-math-g4-s2-p4-multiplication-and-division-of-2-digits-multipli-mat7"
+   ],
+   "assessmentReferences": [
+    "moe-math-g4-s2-p4-multiplication-and-division-of-2-digits-multipli-asr1",
+    "moe-math-g4-s2-p4-multiplication-and-division-of-2-digits-multipli-asr2",
+    "moe-math-g4-s2-p4-multiplication-and-division-of-2-digits-multipli-asr3",
+    "moe-math-g4-s2-p4-multiplication-and-division-of-2-digits-multipli-asr4",
+    "moe-math-g4-s2-p4-multiplication-and-division-of-2-digits-multipli-asr5",
+    "moe-math-g4-s2-p4-multiplication-and-division-of-2-digits-multipli-asr6",
+    "moe-math-g4-s2-p4-multiplication-and-division-of-2-digits-multipli-asr7",
+    "moe-math-g4-s2-p4-multiplication-and-division-of-2-digits-multipli-asr8",
+    "moe-math-g4-s2-p4-multiplication-and-division-of-2-digits-multipli-asr9",
+    "moe-math-g4-s2-p4-multiplication-and-division-of-2-digits-multipli-asr10"
+   ],
+   "competencies": [
+    "moe-math-g4-s2-p4-multiplication-and-division-of-2-digits-multipli-cmp1",
+    "moe-math-g4-s2-p4-multiplication-and-division-of-2-digits-multipli-cmp2",
+    "moe-math-g4-s2-p4-multiplication-and-division-of-2-digits-multipli-cmp3"
+   ],
+   "activities": [
+    "moe-math-g4-s2-p4-multiplication-and-division-of-2-digits-multipli-act1",
+    "moe-math-g4-s2-p4-multiplication-and-division-of-2-digits-multipli-act2",
+    "moe-math-g4-s2-p4-multiplication-and-division-of-2-digits-multipli-act3"
+   ]
+  },
+  {
+   "unitId": "g4-math-u5-measurement",
+   "topic": "MEASUREMENT",
+   "semester": 2,
+   "period": 5,
+   "sourcePages": [
+    46,
+    47
+   ],
+   "materials": [
+    "moe-math-g4-s2-p5-measurement-mat1",
+    "moe-math-g4-s2-p5-measurement-mat2",
+    "moe-math-g4-s2-p5-measurement-mat3",
+    "moe-math-g4-s2-p5-measurement-mat4",
+    "moe-math-g4-s2-p5-measurement-mat5",
+    "moe-math-g4-s2-p5-measurement-mat6",
+    "moe-math-g4-s2-p5-measurement-mat7"
+   ],
+   "assessmentReferences": [
+    "moe-math-g4-s2-p5-measurement-asr1",
+    "moe-math-g4-s2-p5-measurement-asr2",
+    "moe-math-g4-s2-p5-measurement-asr3",
+    "moe-math-g4-s2-p5-measurement-asr4",
+    "moe-math-g4-s2-p5-measurement-asr5",
+    "moe-math-g4-s2-p5-measurement-asr6",
+    "moe-math-g4-s2-p5-measurement-asr7",
+    "moe-math-g4-s2-p5-measurement-asr8",
+    "moe-math-g4-s2-p5-measurement-asr9",
+    "moe-math-g4-s2-p5-measurement-asr10"
+   ],
+   "competencies": [
+    "moe-math-g4-s2-p5-measurement-cmp1",
+    "moe-math-g4-s2-p5-measurement-cmp2",
+    "moe-math-g4-s2-p5-measurement-cmp3"
+   ],
+   "activities": [
+    "moe-math-g4-s2-p5-measurement-act1",
+    "moe-math-g4-s2-p5-measurement-act2"
+   ]
+  },
+  {
+   "unitId": "g4-math-u6-geometry-statistics",
+   "topic": "GEOMETRY AND STATISTICS",
+   "semester": 2,
+   "period": 6,
+   "sourcePages": [
+    48,
+    49
+   ],
+   "materials": [
+    "moe-math-g4-s2-p6-geometry-and-statistics-mat-u1",
+    "moe-math-g4-s2-p6-geometry-and-statistics-mat-u2",
+    "moe-math-g4-s2-p6-geometry-and-statistics-mat-u3",
+    "moe-math-g4-s2-p6-geometry-and-statistics-mat1",
+    "moe-math-g4-s2-p6-geometry-and-statistics-mat2",
+    "moe-math-g4-s2-p6-geometry-and-statistics-mat3",
+    "moe-math-g4-s2-p6-geometry-and-statistics-mat4"
+   ],
+   "assessmentReferences": [
+    "moe-math-g4-s2-p6-geometry-and-statistics-asr1",
+    "moe-math-g4-s2-p6-geometry-and-statistics-asr2",
+    "moe-math-g4-s2-p6-geometry-and-statistics-asr3",
+    "moe-math-g4-s2-p6-geometry-and-statistics-asr4",
+    "moe-math-g4-s2-p6-geometry-and-statistics-asr5",
+    "moe-math-g4-s2-p6-geometry-and-statistics-asr6",
+    "moe-math-g4-s2-p6-geometry-and-statistics-asr7",
+    "moe-math-g4-s2-p6-geometry-and-statistics-asr8",
+    "moe-math-g4-s2-p6-geometry-and-statistics-asr9",
+    "moe-math-g4-s2-p6-geometry-and-statistics-asr10"
+   ],
+   "competencies": [
+    "moe-math-g4-s2-p6-geometry-and-statistics-cmp1",
+    "moe-math-g4-s2-p6-geometry-and-statistics-cmp2",
+    "moe-math-g4-s2-p6-geometry-and-statistics-cmp3"
+   ],
+   "activities": [
+    "moe-math-g4-s2-p6-geometry-and-statistics-act1",
+    "moe-math-g4-s2-p6-geometry-and-statistics-act2",
+    "moe-math-g4-s2-p6-geometry-and-statistics-act3",
+    "moe-math-g4-s2-p6-geometry-and-statistics-act4",
+    "moe-math-g4-s2-p6-geometry-and-statistics-act5",
+    "moe-math-g4-s2-p6-geometry-and-statistics-act6"
+   ]
+  }
+ ],
+ "live": {
+  "checked": true,
+  "capturedAt": "2026-09-26T09:07:15.873Z",
+  "liveExecutable": false,
+  "missing": [
+   "learningTarget:LR-MATH-G4_6-02",
+   "lesson:ll-g4-math-fractions-equal-parts-2026.1"
+  ],
+  "productionUnitsNotInCell": [
+   "yearmap-g4-math-u01",
+   "yearmap-g4-math-u02"
+  ]
+ }
+}
