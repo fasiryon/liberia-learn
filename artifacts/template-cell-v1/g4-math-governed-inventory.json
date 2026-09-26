@@ -1,0 +1,129 @@
+{
+  "contractVersion": "governed-cell-inventory/1.0.0",
+  "cellId": "cell-g4-math-v1",
+  "grade": 4,
+  "subject": "MATH",
+  "releaseId": "lr-moe-g4-math-fractions-2026.1",
+  "releaseIdentity": "de256495ec6f72fe8160179331c7f891d0574a2087a21163fbe28b93f9d88540",
+  "moeApprovalState": "NOT_CLAIMED",
+  "concepts": [
+    {
+      "conceptId": "g4-fractions-equal-parts",
+      "objectiveId": "moe-math-g4-s1-p3-number-theory-and-fraction-obj4",
+      "objectiveBasis": "MOE_OBJECTIVE",
+      "prerequisiteConceptIds": []
+    },
+    {
+      "conceptId": "g4-fractions-equivalence",
+      "objectiveId": "moe-math-g4-s1-p3-number-theory-and-fraction-obj5",
+      "objectiveBasis": "MOE_OBJECTIVE",
+      "prerequisiteConceptIds": [
+        "g4-fractions-equal-parts"
+      ]
+    },
+    {
+      "conceptId": "g4-fractions-compare",
+      "objectiveId": "LIBERIALEARN_EXTENSION:g4-fractions-compare",
+      "objectiveBasis": "LIBERIALEARN_EXTENSION",
+      "prerequisiteConceptIds": [
+        "g4-fractions-equivalence"
+      ]
+    }
+  ],
+  "activities": [
+    {
+      "activityId": "g4-frac-diagnostic-compare",
+      "activityVersion": "1.0.0",
+      "evidenceType": "DIAGNOSTIC",
+      "bindingId": "g4-frac-bind-compare-v1",
+      "conceptId": "g4-fractions-compare",
+      "objectiveId": "LIBERIALEARN_EXTENSION:g4-fractions-compare",
+      "objectiveBasis": "LIBERIALEARN_EXTENSION",
+      "evidencePolicyId": "g4-math-diagnostic-evidence",
+      "toolPolicyId": "g4-math-diagnostic-tools"
+    },
+    {
+      "activityId": "g4-frac-diagnostic-equal-parts",
+      "activityVersion": "1.0.0",
+      "evidenceType": "DIAGNOSTIC",
+      "bindingId": "g4-frac-bind-equal-parts-v1",
+      "conceptId": "g4-fractions-equal-parts",
+      "objectiveId": "moe-math-g4-s1-p3-number-theory-and-fraction-obj4",
+      "objectiveBasis": "MOE_OBJECTIVE",
+      "evidencePolicyId": "g4-math-diagnostic-evidence",
+      "toolPolicyId": "g4-math-diagnostic-tools"
+    },
+    {
+      "activityId": "g4-frac-practice-equivalence",
+      "activityVersion": "1.0.0",
+      "evidenceType": "PRACTICE",
+      "bindingId": "g4-frac-bind-equivalence-v1",
+      "conceptId": "g4-fractions-equivalence",
+      "objectiveId": "moe-math-g4-s1-p3-number-theory-and-fraction-obj5",
+      "objectiveBasis": "MOE_OBJECTIVE",
+      "evidencePolicyId": "g4-math-practice-evidence",
+      "toolPolicyId": "g4-math-practice-tools"
+    }
+  ],
+  "lessons": [
+    {
+      "contentId": "ll-g4-math-fractions-equal-parts-2026.1",
+      "version": "1.0.0",
+      "conceptIds": [
+        "g4-fractions-equal-parts"
+      ],
+      "objectiveIds": [
+        "moe-math-g4-s1-p3-number-theory-and-fraction-obj4"
+      ],
+      "toolPolicyId": "g4-math-instruction-tools"
+    }
+  ],
+  "uncoveredObjectiveIds": [
+    "moe-math-g4-s1-p1-numeration-addition-and-subtraction-obj1",
+    "moe-math-g4-s1-p1-numeration-addition-and-subtraction-obj2",
+    "moe-math-g4-s1-p1-numeration-addition-and-subtraction-obj3",
+    "moe-math-g4-s1-p1-numeration-addition-and-subtraction-obj4",
+    "moe-math-g4-s1-p2-multiplication-and-division-of-whole-numbers-obj1",
+    "moe-math-g4-s1-p2-multiplication-and-division-of-whole-numbers-obj2",
+    "moe-math-g4-s1-p2-multiplication-and-division-of-whole-numbers-obj3",
+    "moe-math-g4-s1-p2-multiplication-and-division-of-whole-numbers-obj4",
+    "moe-math-g4-s1-p2-multiplication-and-division-of-whole-numbers-obj5",
+    "moe-math-g4-s1-p2-multiplication-and-division-of-whole-numbers-obj6",
+    "moe-math-g4-s1-p3-number-theory-and-fraction-obj1",
+    "moe-math-g4-s1-p3-number-theory-and-fraction-obj2",
+    "moe-math-g4-s1-p3-number-theory-and-fraction-obj3",
+    "moe-math-g4-s1-p3-number-theory-and-fraction-obj6",
+    "moe-math-g4-s1-p3-number-theory-and-fraction-obj7",
+    "moe-math-g4-s1-p3-number-theory-and-fraction-obj8",
+    "moe-math-g4-s1-p3-number-theory-and-fraction-obj9",
+    "moe-math-g4-s2-p4-multiplication-and-division-of-2-digits-multipli-obj1",
+    "moe-math-g4-s2-p4-multiplication-and-division-of-2-digits-multipli-obj2",
+    "moe-math-g4-s2-p4-multiplication-and-division-of-2-digits-multipli-obj3",
+    "moe-math-g4-s2-p4-multiplication-and-division-of-2-digits-multipli-obj4",
+    "moe-math-g4-s2-p4-multiplication-and-division-of-2-digits-multipli-obj5",
+    "moe-math-g4-s2-p4-multiplication-and-division-of-2-digits-multipli-obj6",
+    "moe-math-g4-s2-p4-multiplication-and-division-of-2-digits-multipli-obj7",
+    "moe-math-g4-s2-p4-multiplication-and-division-of-2-digits-multipli-obj8",
+    "moe-math-g4-s2-p5-measurement-obj1",
+    "moe-math-g4-s2-p5-measurement-obj2",
+    "moe-math-g4-s2-p5-measurement-obj3",
+    "moe-math-g4-s2-p5-measurement-obj4",
+    "moe-math-g4-s2-p5-measurement-obj5",
+    "moe-math-g4-s2-p5-measurement-obj6",
+    "moe-math-g4-s2-p5-measurement-obj7",
+    "moe-math-g4-s2-p5-measurement-obj8",
+    "moe-math-g4-s2-p5-measurement-obj9",
+    "moe-math-g4-s2-p6-geometry-and-statistics-obj1",
+    "moe-math-g4-s2-p6-geometry-and-statistics-obj2",
+    "moe-math-g4-s2-p6-geometry-and-statistics-obj3",
+    "moe-math-g4-s2-p6-geometry-and-statistics-obj4",
+    "moe-math-g4-s2-p6-geometry-and-statistics-obj5",
+    "moe-math-g4-s2-p6-geometry-and-statistics-obj6",
+    "moe-math-g4-s2-p6-geometry-and-statistics-obj7",
+    "moe-math-g4-s2-p6-geometry-and-statistics-obj8"
+  ],
+  "excluded": {
+    "draftLessons": 43,
+    "reason": "DRAFT_UNREVIEWED is never governed inventory"
+  }
+}

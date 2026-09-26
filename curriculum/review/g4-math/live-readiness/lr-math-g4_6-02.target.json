@@ -1,0 +1,35 @@
+{
+  "_status": "PREPARED, NOT WRITTEN. Requires explicit founder authorization and a published fractions lesson.",
+  "_decisionsForFounder": [
+    "verificationStatus PARTIAL vs VERIFIED: the compare concept in the release is a LiberiaLearn extension, not a Grade 4 MOE objective.",
+    "Code namespace: the release binds 'LR-MATH-G4_6-02' (the Standard code); existing targets use the 'LL.G<n>.<SUBJECT>...' pattern. Keeping the release code avoids a new release version.",
+    "minimumDepth COMPREHENSION with PROCEDURAL_FLUENCY and REASONING dimensions."
+  ],
+  "model": "CurriculumLearningTarget",
+  "data": {
+    "code": "LR-MATH-G4_6-02",
+    "version": 1,
+    "grade": 4,
+    "subject": "MATH",
+    "domain": "FRACTIONS",
+    "targetLevel": "MASTERY",
+    "statement": "A LiberiaLearn Grade 4 learner at mastery can represent a fraction as equal parts of a whole or of a set, write equivalent fractions, and compare fractions with related denominators. Grounded in the MOE Grade 4 Mathematics objectives 'Find parts of a set' and 'Write equivalent fractions' (GRADE-1-6/Math 1-6.pdf, page 42). Comparing fractions is a LiberiaLearn extension, not a Grade 4 MOE objective. This target makes no MOE approval claim.",
+    "minimumDepth": "COMPREHENSION",
+    "cognitiveDimensions": ["COMPREHENSION", "PROCEDURAL_FLUENCY", "REASONING"],
+    "moeObjectiveId": null,
+    "baselineCompetencyId": null,
+    "curriculumRevisionId": "<resolved at apply time: CurriculumProvenance.currentRevisionId of ll-g4-math-fractions-equal-parts-2026.1>",
+    "prerequisiteRefs": null,
+    "misconceptionRefs": null,
+    "evidenceRefs": [
+      { "id": "cmt1nt69k0002vopsjrim1ejv", "kind": "MOE_SOURCE_VERSION", "locator": "Math 1-6.pdf page 42" },
+      { "id": "moe-math-g4-s1-p3-number-theory-and-fraction-obj4", "kind": "STRUCTURED_MOE_OBJECTIVE", "locator": "curriculum/structured/moe-structured-v1.json" },
+      { "id": "moe-math-g4-s1-p3-number-theory-and-fraction-obj5", "kind": "STRUCTURED_MOE_OBJECTIVE", "locator": "curriculum/structured/moe-structured-v1.json" },
+      { "id": "lr-moe-g4-math-fractions-2026.1", "kind": "ONTOLOGY_RELEASE", "identity": "de256495ec6f72fe8160179331c7f891d0574a2087a21163fbe28b93f9d88540" },
+      { "id": "LR-MATH-G4_6-02", "kind": "STANDARD", "locator": "Standard cmlly543o0006vonc0bbpm41z: Add, subtract, and compare fractions and decimals" }
+    ],
+    "platformVersion": "G4_MATH_TEMPLATE_CELL_V1",
+    "verificationStatus": "PARTIAL"
+  },
+  "_whyMoeObjectiveIdIsNull": "Production has no MoeCurriculumObjective rows for Grade 4 (read-only check 2026-09-26). The MOE link is carried in evidenceRefs instead of inventing a row."
+}

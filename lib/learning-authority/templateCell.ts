@@ -386,3 +386,33 @@ function interactionImplemented(spec: InteractionSpec, input: CertificationInput
     default: return spec.tools.length > 0 && spec.tools.every((tool) => input.toolIds.has(tool)) || (!!spec.labId && input.labIds.has(spec.labId));
   }
 }
+
+export type LiveGateCheck = Readonly<{ id: string; requirement: string; pass: boolean; detail: string }>;
+
+/**
+ * Live certification gate. A cell is live-certified only when every check
+ * passes. Drafts never satisfy a governed requirement.
+ */
+export function liveCertificationChecklist(report: CellCertification): readonly LiveGateCheck[] {
+  const total = report.summary.moeObjectives;
+  const missingKind = (kinds: readonly ComponentKind[]) => report.objectives
+    .filter((objective) => kinds.some((kind) => objective.components[kind] === 0))
+    .map((objective) => objective.moeItemId);
+  const errorsMatching = (pattern: RegExp) => report.errors.filter((error) => pattern.test(error));
+  const check = (id: string, requirement: string, failures: readonly string[], ok = `${total}/${total}`): LiveGateCheck =>
+    ({ id, requirement, pass: failures.length === 0, detail: failures.length ? `${failures.length} failing: ${failures.slice(0, 5).join(", ")}${failures.length > 5 ? ", ..." : ""}` : ok });
+  return [
+    check("governed-lessons", `${total}/${total} objectives have reviewed governed lessons`,
+      report.objectives.filter((o) => !o.governedLessons.length).map((o) => o.moeItemId)),
+    check("instruction-bindings", "classwork, homework and practice resolve from governed sources", missingKind(["CLASSWORK", "HOMEWORK", "PRACTICE"])),
+    check("assessment-bindings", "quiz, diagnostic check and exit assessment resolve from governed sources", missingKind(["QUIZ", "DIAGNOSTIC", "ASSESSMENT"])),
+    check("evidence-bindings", "evidence bindings and policies resolve", errorsMatching(/^(release_invalid|component_item|ontology)/), "release valid"),
+    check("tool-policies", "ToolPolicies resolve to enabled toolkit tools", errorsMatching(/^tool_policy_/), "all keys mapped"),
+    check("interaction", "interaction classifications resolve", errorsMatching(/^(interaction_|virtual_lab_|practical_|three_d_)/).filter((e) => !/offline/.test(e)), "all classified"),
+    check("offline", "every interaction has a valid offline behavior", errorsMatching(/offline_fallback/), "all present"),
+    check("release-live", "release references resolve in production", report.live.checked ? report.live.missing : ["live snapshot not checked"], "all present live"),
+    check("no-draft-as-governed", "no draft artifact is treated as governed", errorsMatching(/^(draft_|lesson_authority_mismatch)/), "none"),
+    check("no-moe-claim", "no MOE approval is claimed without recorded evidence", errorsMatching(/^moe_approval_claimed/), "NOT_CLAIMED"),
+    check("internal", "cell is internally executable", report.errors, "no errors"),
+  ];
+}

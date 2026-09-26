@@ -7,6 +7,75 @@
   "number-line",
   "timer"
  ],
+ "liveCertified": false,
+ "liveGate": [
+  {
+   "id": "governed-lessons",
+   "requirement": "44/44 objectives have reviewed governed lessons",
+   "pass": false,
+   "detail": "43 failing: moe-math-g4-s1-p1-numeration-addition-and-subtraction-obj1, moe-math-g4-s1-p1-numeration-addition-and-subtraction-obj2, moe-math-g4-s1-p1-numeration-addition-and-subtraction-obj3, moe-math-g4-s1-p1-numeration-addition-and-subtraction-obj4, moe-math-g4-s1-p2-multiplication-and-division-of-whole-numbers-obj1, ..."
+  },
+  {
+   "id": "instruction-bindings",
+   "requirement": "classwork, homework and practice resolve from governed sources",
+   "pass": false,
+   "detail": "44 failing: moe-math-g4-s1-p1-numeration-addition-and-subtraction-obj1, moe-math-g4-s1-p1-numeration-addition-and-subtraction-obj2, moe-math-g4-s1-p1-numeration-addition-and-subtraction-obj3, moe-math-g4-s1-p1-numeration-addition-and-subtraction-obj4, moe-math-g4-s1-p2-multiplication-and-division-of-whole-numbers-obj1, ..."
+  },
+  {
+   "id": "assessment-bindings",
+   "requirement": "quiz, diagnostic check and exit assessment resolve from governed sources",
+   "pass": false,
+   "detail": "44 failing: moe-math-g4-s1-p1-numeration-addition-and-subtraction-obj1, moe-math-g4-s1-p1-numeration-addition-and-subtraction-obj2, moe-math-g4-s1-p1-numeration-addition-and-subtraction-obj3, moe-math-g4-s1-p1-numeration-addition-and-subtraction-obj4, moe-math-g4-s1-p2-multiplication-and-division-of-whole-numbers-obj1, ..."
+  },
+  {
+   "id": "evidence-bindings",
+   "requirement": "evidence bindings and policies resolve",
+   "pass": true,
+   "detail": "release valid"
+  },
+  {
+   "id": "tool-policies",
+   "requirement": "ToolPolicies resolve to enabled toolkit tools",
+   "pass": true,
+   "detail": "all keys mapped"
+  },
+  {
+   "id": "interaction",
+   "requirement": "interaction classifications resolve",
+   "pass": true,
+   "detail": "all classified"
+  },
+  {
+   "id": "offline",
+   "requirement": "every interaction has a valid offline behavior",
+   "pass": true,
+   "detail": "all present"
+  },
+  {
+   "id": "release-live",
+   "requirement": "release references resolve in production",
+   "pass": false,
+   "detail": "2 failing: learningTarget:LR-MATH-G4_6-02, lesson:ll-g4-math-fractions-equal-parts-2026.1"
+  },
+  {
+   "id": "no-draft-as-governed",
+   "requirement": "no draft artifact is treated as governed",
+   "pass": true,
+   "detail": "none"
+  },
+  {
+   "id": "no-moe-claim",
+   "requirement": "no MOE approval is claimed without recorded evidence",
+   "pass": true,
+   "detail": "NOT_CLAIMED"
+  },
+  {
+   "id": "internal",
+   "requirement": "cell is internally executable",
+   "pass": true,
+   "detail": "no errors"
+  }
+ ],
  "cellId": "cell-g4-math-v1",
  "releaseId": "lr-moe-g4-math-fractions-2026.1",
  "internallyExecutable": true,

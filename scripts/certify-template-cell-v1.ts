@@ -4,15 +4,17 @@
  * scripts/curriculum-cleanup-snapshot-v1.ts. Never touches a database.
  *
  * Output: artifacts/template-cell-v1/<cellId>.json and G4_MATH_TEMPLATE_CELL_V1.md
- * Exit code 1 when the cell is not internally executable.
+ * Exit code 1 when the cell is not internally executable, or with --live-gate
+ * when the live certification checklist does not fully pass.
  *
  * Usage: npx tsx scripts/certify-template-cell-v1.ts
  */
 import fs from "node:fs";
 import path from "node:path";
 import { GRADE4_MATH_TEMPLATE_CELL } from "@/lib/learning-authority/cells/grade4Math";
-import { certifyTemplateCell, COMPONENT_KINDS, type LiveState, type RepoLesson } from "@/lib/learning-authority/templateCell";
+import { certifyTemplateCell, COMPONENT_KINDS, liveCertificationChecklist, type LiveState, type RepoLesson } from "@/lib/learning-authority/templateCell";
 import { GRADE4_MATH_ONTOLOGY_RELEASE } from "@/lib/learning-authority/governedGrade4Math";
+import { buildGovernedCellInventory } from "@/lib/learning-authority/governedInventory";
 import { GRADE4_FRACTIONS_LESSON } from "@/lib/curriculum/authority/grade4FractionsLesson";
 import { GRADE4_MATH_DRAFT_LESSONS } from "@/lib/curriculum/authority/grade4Math";
 import { TOOL_REGISTRY_DEFINITIONS } from "@/lib/toolkit/toolRegistry";
@@ -59,8 +61,13 @@ function main() {
     toolIds, releaseToolKeyMap: RELEASE_TOOL_KEY_MAP, labIds: new Set<string>(LAB_IDS), live,
   });
 
+  const inventory = buildGovernedCellInventory(cell, GRADE4_MATH_ONTOLOGY_RELEASE);
   fs.mkdirSync(OUT, { recursive: true });
-  fs.writeFileSync(path.join(OUT, `${cell.id}.json`), `${JSON.stringify({ toolsEnabledForCell: [...toolIds].sort(), ...report }, null, 1)}\n`);
+  fs.writeFileSync(path.join(OUT, "g4-math-governed-inventory.json"), `${JSON.stringify(inventory, null, 2)}\n`);
+  const gate = liveCertificationChecklist(report);
+  const liveCertified = gate.every((entry) => entry.pass);
+  fs.mkdirSync(OUT, { recursive: true });
+  fs.writeFileSync(path.join(OUT, `${cell.id}.json`), `${JSON.stringify({ toolsEnabledForCell: [...toolIds].sort(), liveCertified, liveGate: gate, ...report }, null, 1)}\n`);
 
   const s = report.summary;
   const pct = (n: number) => `${n}/${s.moeObjectives} (${Math.round((100 * n) / s.moeObjectives)}%)`;
@@ -70,6 +77,12 @@ function main() {
 - **Internally executable:** ${report.internallyExecutable ? "**YES**. Every reference resolves in repository authority" : `**NO** (${report.errors.length} errors)`}.
 - **Live executable (production):** ${report.live.checked ? (report.live.liveExecutable ? "**YES**" : `**NO**. Missing live: ${report.live.missing.map((m) => `\`${m}\``).join(", ")}`) : "not checked"}${report.live.capturedAt ? ` (snapshot ${report.live.capturedAt})` : ""}.
 ${report.errors.length ? `\n## Errors\n\n${report.errors.map((e) => `- \`${e}\``).join("\n")}\n` : ""}
+## Live certification gate: ${liveCertified ? "**PASS**" : "**NOT CERTIFIED**"}
+
+| Result | Requirement | Detail |
+|---|---|---|
+${gate.map((g) => `| ${g.pass ? "PASS" : "FAIL"} | ${g.requirement} | ${g.detail} |`).join("\n")}
+
 ## Authority chain
 
 MOE archive page → structured objective (\`curriculum/structured/moe-structured-v1.json\`) → cell unit (\`lib/learning-authority/cells/grade4Math.ts\`) → concept (release) → lesson / governed item → evidence policy + ToolPolicy → ontology release (\`lib/learning-authority/governedGrade4Math.ts\`). The certifier is \`lib/learning-authority/templateCell.ts\` and is cell-agnostic.
@@ -113,8 +126,8 @@ Every non-NONE interaction carries an offline fallback (paper strips, drawn numb
 Production units for this cell not in the cell: ${report.live.productionUnitsNotInCell.map((u) => `\`${u}\``).join(", ") || "none"}. These are year-map placeholders whose titles don't match the MOE topics.
 `;
   fs.writeFileSync(path.join(OUT, "G4_MATH_TEMPLATE_CELL_V1.md"), md);
-  console.log(JSON.stringify({ internallyExecutable: report.internallyExecutable, errors: report.errors, summary: s, live: report.live }, null, 2));
-  if (!report.internallyExecutable) process.exitCode = 1;
+  console.log(JSON.stringify({ internallyExecutable: report.internallyExecutable, liveCertified, gate: gate.map((g) => `${g.pass ? "PASS" : "FAIL"} ${g.id}: ${g.detail}`), errors: report.errors, live: report.live }, null, 2));
+  if (!report.internallyExecutable || (process.argv.includes("--live-gate") && !liveCertified)) process.exitCode = 1;
 }
 
 main();
