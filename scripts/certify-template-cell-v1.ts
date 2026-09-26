@@ -14,6 +14,7 @@ import { GRADE4_MATH_TEMPLATE_CELL } from "@/lib/learning-authority/cells/grade4
 import { certifyTemplateCell, COMPONENT_KINDS, type LiveState, type RepoLesson } from "@/lib/learning-authority/templateCell";
 import { GRADE4_MATH_ONTOLOGY_RELEASE } from "@/lib/learning-authority/governedGrade4Math";
 import { GRADE4_FRACTIONS_LESSON } from "@/lib/curriculum/authority/grade4FractionsLesson";
+import { GRADE4_MATH_DRAFT_LESSONS } from "@/lib/curriculum/authority/grade4Math";
 import { TOOL_REGISTRY_DEFINITIONS } from "@/lib/toolkit/toolRegistry";
 import { LAB_IDS } from "@/lib/labs/registry";
 import type { StructuredCurriculumItem } from "@/lib/learning-authority/structuredCurriculumAuthority";
@@ -34,7 +35,10 @@ function main() {
   const band = cell.grade <= 3 ? "1-3" : cell.grade <= 6 ? "4-6" : cell.grade <= 9 ? "7-9" : "10-12";
   const subject = cell.subject.toLowerCase();
   const toolIds = new Set(TOOL_REGISTRY_DEFINITIONS.filter((tool) => tool.contexts.some((ctx) => ctx.gradeBand === band && ctx.subject === subject)).map((tool) => tool.id));
-  const repoLessons: RepoLesson[] = [{ contentId: GRADE4_FRACTIONS_LESSON.contentId, version: GRADE4_FRACTIONS_LESSON.version, grade: GRADE4_FRACTIONS_LESSON.grade, subject: GRADE4_FRACTIONS_LESSON.subject, payload: GRADE4_FRACTIONS_LESSON.payload }];
+  const repoLessons: RepoLesson[] = [
+    { contentId: GRADE4_FRACTIONS_LESSON.contentId, version: GRADE4_FRACTIONS_LESSON.version, grade: GRADE4_FRACTIONS_LESSON.grade, subject: GRADE4_FRACTIONS_LESSON.subject, authority: "GOVERNED", payload: GRADE4_FRACTIONS_LESSON.payload },
+    ...GRADE4_MATH_DRAFT_LESSONS.map((lesson) => ({ contentId: lesson.contentId, version: lesson.version, grade: lesson.grade, subject: lesson.subject, authority: lesson.authority.state, payload: lesson.payload })),
+  ];
 
   let live: LiveState | undefined;
   if (fs.existsSync(path.join(SNAP, "snapshot.json"))) {
@@ -75,9 +79,10 @@ MOE archive page → structured objective (\`curriculum/structured/moe-structure
 | Measure | Covered |
 |---|---|
 | Objectives placed in a unit with interaction classified | ${pct(s.moeObjectives)} |
-| Objectives with a bound lesson | ${pct(s.objectivesWithLesson)} |
+| Objectives with a governed (reviewed, release-bound) lesson | ${pct(s.objectivesWithGovernedLesson)} |
+| Objectives with only a DRAFT_UNREVIEWED lesson | ${pct(s.objectivesWithDraftLessonOnly)} |
 | Objectives with a governed item (diagnostic/practice) | ${pct(s.objectivesWithGovernedItem)} |
-${COMPONENT_KINDS.map((k) => `| ${k.toLowerCase()} | ${pct(s.componentCoverage[k])} |`).join("\n")}
+${COMPONENT_KINDS.map((k) => `| ${k.toLowerCase()} (governed / draft) | ${pct(s.componentCoverage[k])} / ${pct(s.draftComponentCoverage[k])} |`).join("\n")}
 | MOE resources referenced (materials) | ${s.resources} items |
 | MOE assessment references (teacher metadata) | ${s.teacherAssessmentReferences} items |
 | MOE activities (teacher metadata) | ${s.moeActivities} items |
@@ -91,9 +96,9 @@ ${Object.entries(s.interaction).map(([k, v]) => `| ${k} | ${v} |`).join("\n")}
 Implemented with an enabled tool, lab or practical protocol: ${s.interactionImplemented}. Gaps (need classified, no Grade 4-6 tool/engine exists): ${s.interactionGaps.map((g) => `\`${g.split("-").slice(-1)[0]}\` ${g.split(":")[1]}`).join(", ") || "none"}.
 No objective needs a VIRTUAL_LAB or SIMULATION: the lab engine's ${LAB_IDS.length} typed labs are all science, and none is claimed here.
 
-| Unit | Objective | Page | Interaction | Lessons | Components |
+| Unit | Objective | Page | Interaction | Lesson | Governed components |
 |---|---|---:|---|---|---|
-${report.objectives.map((o) => `| ${o.unitId.replace("g4-math-", "")} | ${o.text.replace(/\|/g, "/")} | ${o.pages.join(",")} | ${o.interaction}${o.interaction !== "NONE" && !o.interactionImplemented ? " (gap)" : ""} | ${o.lessons.length} | ${COMPONENT_KINDS.filter((k) => o.components[k]).map((k) => k.toLowerCase()).join(", ") || "none"} |`).join("\n")}
+${report.objectives.map((o) => `| ${o.unitId.replace("g4-math-", "")} | ${o.text.replace(/\|/g, "/")} | ${o.pages.join(",")} | ${o.interaction}${o.interaction !== "NONE" && !o.interactionImplemented ? " (gap)" : ""} | ${o.governedLessons.length ? "governed" : o.draftLessons.length ? "draft" : "none"} | ${COMPONENT_KINDS.filter((k) => o.components[k]).map((k) => k.toLowerCase()).join(", ") || "none"} |`).join("\n")}
 
 ## Teacher-facing metadata (from the MOE tables)
 

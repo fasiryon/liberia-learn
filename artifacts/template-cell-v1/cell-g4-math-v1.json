@@ -21,7 +21,13 @@
    ],
    "interaction": "NONE",
    "interactionImplemented": true,
-   "lessons": [],
+   "lessons": [
+    "ll-g4-math-read-write-numbers-to-100000-2026.1"
+   ],
+   "governedLessons": [],
+   "draftLessons": [
+    "ll-g4-math-read-write-numbers-to-100000-2026.1"
+   ],
    "components": {
     "CLASSWORK": 0,
     "HOMEWORK": 0,
@@ -29,6 +35,15 @@
     "QUIZ": 0,
     "DIAGNOSTIC": 0,
     "ASSESSMENT": 0,
+    "PROJECT": 0
+   },
+   "draftComponents": {
+    "CLASSWORK": 1,
+    "HOMEWORK": 1,
+    "PRACTICE": 1,
+    "QUIZ": 1,
+    "DIAGNOSTIC": 1,
+    "ASSESSMENT": 1,
     "PROJECT": 0
    },
    "conceptIds": []
@@ -42,7 +57,13 @@
    ],
    "interaction": "MANIPULATIVE_2D",
    "interactionImplemented": true,
-   "lessons": [],
+   "lessons": [
+    "ll-g4-math-compare-order-numbers-to-100000-2026.1"
+   ],
+   "governedLessons": [],
+   "draftLessons": [
+    "ll-g4-math-compare-order-numbers-to-100000-2026.1"
+   ],
    "components": {
     "CLASSWORK": 0,
     "HOMEWORK": 0,
@@ -50,6 +71,15 @@
     "QUIZ": 0,
     "DIAGNOSTIC": 0,
     "ASSESSMENT": 0,
+    "PROJECT": 0
+   },
+   "draftComponents": {
+    "CLASSWORK": 1,
+    "HOMEWORK": 1,
+    "PRACTICE": 1,
+    "QUIZ": 1,
+    "DIAGNOSTIC": 1,
+    "ASSESSMENT": 1,
     "PROJECT": 0
    },
    "conceptIds": []
@@ -63,7 +93,13 @@
    ],
    "interaction": "MANIPULATIVE_2D",
    "interactionImplemented": true,
-   "lessons": [],
+   "lessons": [
+    "ll-g4-math-rounding-whole-numbers-2026.1"
+   ],
+   "governedLessons": [],
+   "draftLessons": [
+    "ll-g4-math-rounding-whole-numbers-2026.1"
+   ],
    "components": {
     "CLASSWORK": 0,
     "HOMEWORK": 0,
@@ -71,6 +107,15 @@
     "QUIZ": 0,
     "DIAGNOSTIC": 0,
     "ASSESSMENT": 0,
+    "PROJECT": 0
+   },
+   "draftComponents": {
+    "CLASSWORK": 1,
+    "HOMEWORK": 1,
+    "PRACTICE": 1,
+    "QUIZ": 1,
+    "DIAGNOSTIC": 1,
+    "ASSESSMENT": 1,
     "PROJECT": 0
    },
    "conceptIds": []
@@ -84,7 +129,13 @@
    ],
    "interaction": "NONE",
    "interactionImplemented": true,
-   "lessons": [],
+   "lessons": [
+    "ll-g4-math-add-subtract-population-data-2026.1"
+   ],
+   "governedLessons": [],
+   "draftLessons": [
+    "ll-g4-math-add-subtract-population-data-2026.1"
+   ],
    "components": {
     "CLASSWORK": 0,
     "HOMEWORK": 0,
@@ -92,6 +143,15 @@
     "QUIZ": 0,
     "DIAGNOSTIC": 0,
     "ASSESSMENT": 0,
+    "PROJECT": 0
+   },
+   "draftComponents": {
+    "CLASSWORK": 1,
+    "HOMEWORK": 1,
+    "PRACTICE": 1,
+    "QUIZ": 1,
+    "DIAGNOSTIC": 1,
+    "ASSESSMENT": 1,
     "PROJECT": 0
    },
    "conceptIds": []
@@ -105,7 +165,13 @@
    ],
    "interaction": "MANIPULATIVE_2D",
    "interactionImplemented": true,
-   "lessons": [],
+   "lessons": [
+    "ll-g4-math-multiplication-facts-properties-2026.1"
+   ],
+   "governedLessons": [],
+   "draftLessons": [
+    "ll-g4-math-multiplication-facts-properties-2026.1"
+   ],
    "components": {
     "CLASSWORK": 0,
     "HOMEWORK": 0,
@@ -113,6 +179,15 @@
     "QUIZ": 0,
     "DIAGNOSTIC": 0,
     "ASSESSMENT": 0,
+    "PROJECT": 0
+   },
+   "draftComponents": {
+    "CLASSWORK": 1,
+    "HOMEWORK": 1,
+    "PRACTICE": 1,
+    "QUIZ": 1,
+    "DIAGNOSTIC": 1,
+    "ASSESSMENT": 1,
     "PROJECT": 0
    },
    "conceptIds": []
@@ -126,7 +201,13 @@
    ],
    "interaction": "NONE",
    "interactionImplemented": true,
-   "lessons": [],
+   "lessons": [
+    "ll-g4-math-multiply-multiples-of-10-2026.1"
+   ],
+   "governedLessons": [],
+   "draftLessons": [
+    "ll-g4-math-multiply-multiples-of-10-2026.1"
+   ],
    "components": {
     "CLASSWORK": 0,
     "HOMEWORK": 0,
@@ -134,6 +215,15 @@
     "QUIZ": 0,
     "DIAGNOSTIC": 0,
     "ASSESSMENT": 0,
+    "PROJECT": 0
+   },
+   "draftComponents": {
+    "CLASSWORK": 1,
+    "HOMEWORK": 1,
+    "PRACTICE": 1,
+    "QUIZ": 1,
+    "DIAGNOSTIC": 1,
+    "ASSESSMENT": 1,
     "PROJECT": 0
    },
    "conceptIds": []
@@ -147,7 +237,13 @@
    ],
    "interaction": "NONE",
    "interactionImplemented": true,
-   "lessons": [],
+   "lessons": [
+    "ll-g4-math-multiply-by-one-digit-2026.1"
+   ],
+   "governedLessons": [],
+   "draftLessons": [
+    "ll-g4-math-multiply-by-one-digit-2026.1"
+   ],
    "components": {
     "CLASSWORK": 0,
     "HOMEWORK": 0,
@@ -155,6 +251,15 @@
     "QUIZ": 0,
     "DIAGNOSTIC": 0,
     "ASSESSMENT": 0,
+    "PROJECT": 0
+   },
+   "draftComponents": {
+    "CLASSWORK": 1,
+    "HOMEWORK": 1,
+    "PRACTICE": 1,
+    "QUIZ": 1,
+    "DIAGNOSTIC": 1,
+    "ASSESSMENT": 1,
     "PROJECT": 0
    },
    "conceptIds": []
@@ -168,7 +273,13 @@
    ],
    "interaction": "NONE",
    "interactionImplemented": true,
-   "lessons": [],
+   "lessons": [
+    "ll-g4-math-divide-by-one-digit-2026.1"
+   ],
+   "governedLessons": [],
+   "draftLessons": [
+    "ll-g4-math-divide-by-one-digit-2026.1"
+   ],
    "components": {
     "CLASSWORK": 0,
     "HOMEWORK": 0,
@@ -176,6 +287,15 @@
     "QUIZ": 0,
     "DIAGNOSTIC": 0,
     "ASSESSMENT": 0,
+    "PROJECT": 0
+   },
+   "draftComponents": {
+    "CLASSWORK": 1,
+    "HOMEWORK": 1,
+    "PRACTICE": 1,
+    "QUIZ": 1,
+    "DIAGNOSTIC": 1,
+    "ASSESSMENT": 1,
     "PROJECT": 0
    },
    "conceptIds": []
@@ -189,7 +309,13 @@
    ],
    "interaction": "NONE",
    "interactionImplemented": true,
-   "lessons": [],
+   "lessons": [
+    "ll-g4-math-divide-zero-in-quotient-2026.1"
+   ],
+   "governedLessons": [],
+   "draftLessons": [
+    "ll-g4-math-divide-zero-in-quotient-2026.1"
+   ],
    "components": {
     "CLASSWORK": 0,
     "HOMEWORK": 0,
@@ -197,6 +323,15 @@
     "QUIZ": 0,
     "DIAGNOSTIC": 0,
     "ASSESSMENT": 0,
+    "PROJECT": 0
+   },
+   "draftComponents": {
+    "CLASSWORK": 1,
+    "HOMEWORK": 1,
+    "PRACTICE": 1,
+    "QUIZ": 1,
+    "DIAGNOSTIC": 1,
+    "ASSESSMENT": 1,
     "PROJECT": 0
    },
    "conceptIds": []
@@ -210,7 +345,13 @@
    ],
    "interaction": "NONE",
    "interactionImplemented": true,
-   "lessons": [],
+   "lessons": [
+    "ll-g4-math-division-word-problems-2026.1"
+   ],
+   "governedLessons": [],
+   "draftLessons": [
+    "ll-g4-math-division-word-problems-2026.1"
+   ],
    "components": {
     "CLASSWORK": 0,
     "HOMEWORK": 0,
@@ -218,6 +359,15 @@
     "QUIZ": 0,
     "DIAGNOSTIC": 0,
     "ASSESSMENT": 0,
+    "PROJECT": 0
+   },
+   "draftComponents": {
+    "CLASSWORK": 1,
+    "HOMEWORK": 1,
+    "PRACTICE": 1,
+    "QUIZ": 1,
+    "DIAGNOSTIC": 1,
+    "ASSESSMENT": 1,
     "PROJECT": 0
    },
    "conceptIds": []
@@ -231,7 +381,13 @@
    ],
    "interaction": "NONE",
    "interactionImplemented": true,
-   "lessons": [],
+   "lessons": [
+    "ll-g4-math-even-and-odd-numbers-2026.1"
+   ],
+   "governedLessons": [],
+   "draftLessons": [
+    "ll-g4-math-even-and-odd-numbers-2026.1"
+   ],
    "components": {
     "CLASSWORK": 0,
     "HOMEWORK": 0,
@@ -239,6 +395,15 @@
     "QUIZ": 0,
     "DIAGNOSTIC": 0,
     "ASSESSMENT": 0,
+    "PROJECT": 0
+   },
+   "draftComponents": {
+    "CLASSWORK": 1,
+    "HOMEWORK": 1,
+    "PRACTICE": 1,
+    "QUIZ": 1,
+    "DIAGNOSTIC": 1,
+    "ASSESSMENT": 1,
     "PROJECT": 0
    },
    "conceptIds": []
@@ -252,7 +417,13 @@
    ],
    "interaction": "MANIPULATIVE_2D",
    "interactionImplemented": true,
-   "lessons": [],
+   "lessons": [
+    "ll-g4-math-factors-and-multiples-2026.1"
+   ],
+   "governedLessons": [],
+   "draftLessons": [
+    "ll-g4-math-factors-and-multiples-2026.1"
+   ],
    "components": {
     "CLASSWORK": 0,
     "HOMEWORK": 0,
@@ -260,6 +431,15 @@
     "QUIZ": 0,
     "DIAGNOSTIC": 0,
     "ASSESSMENT": 0,
+    "PROJECT": 0
+   },
+   "draftComponents": {
+    "CLASSWORK": 1,
+    "HOMEWORK": 1,
+    "PRACTICE": 1,
+    "QUIZ": 1,
+    "DIAGNOSTIC": 1,
+    "ASSESSMENT": 1,
     "PROJECT": 0
    },
    "conceptIds": []
@@ -273,7 +453,13 @@
    ],
    "interaction": "NONE",
    "interactionImplemented": true,
-   "lessons": [],
+   "lessons": [
+    "ll-g4-math-lcm-and-gcf-2026.1"
+   ],
+   "governedLessons": [],
+   "draftLessons": [
+    "ll-g4-math-lcm-and-gcf-2026.1"
+   ],
    "components": {
     "CLASSWORK": 0,
     "HOMEWORK": 0,
@@ -281,6 +467,15 @@
     "QUIZ": 0,
     "DIAGNOSTIC": 0,
     "ASSESSMENT": 0,
+    "PROJECT": 0
+   },
+   "draftComponents": {
+    "CLASSWORK": 1,
+    "HOMEWORK": 1,
+    "PRACTICE": 1,
+    "QUIZ": 1,
+    "DIAGNOSTIC": 1,
+    "ASSESSMENT": 1,
     "PROJECT": 0
    },
    "conceptIds": []
@@ -297,6 +492,10 @@
    "lessons": [
     "ll-g4-math-fractions-equal-parts-2026.1"
    ],
+   "governedLessons": [
+    "ll-g4-math-fractions-equal-parts-2026.1"
+   ],
+   "draftLessons": [],
    "components": {
     "CLASSWORK": 1,
     "HOMEWORK": 1,
@@ -304,6 +503,15 @@
     "QUIZ": 0,
     "DIAGNOSTIC": 1,
     "ASSESSMENT": 1,
+    "PROJECT": 0
+   },
+   "draftComponents": {
+    "CLASSWORK": 0,
+    "HOMEWORK": 0,
+    "PRACTICE": 0,
+    "QUIZ": 0,
+    "DIAGNOSTIC": 0,
+    "ASSESSMENT": 0,
     "PROJECT": 0
    },
    "conceptIds": [
@@ -319,7 +527,13 @@
    ],
    "interaction": "MANIPULATIVE_2D",
    "interactionImplemented": true,
-   "lessons": [],
+   "lessons": [
+    "ll-g4-math-equivalent-fractions-2026.1"
+   ],
+   "governedLessons": [],
+   "draftLessons": [
+    "ll-g4-math-equivalent-fractions-2026.1"
+   ],
    "components": {
     "CLASSWORK": 0,
     "HOMEWORK": 0,
@@ -327,6 +541,15 @@
     "QUIZ": 0,
     "DIAGNOSTIC": 0,
     "ASSESSMENT": 0,
+    "PROJECT": 0
+   },
+   "draftComponents": {
+    "CLASSWORK": 1,
+    "HOMEWORK": 1,
+    "PRACTICE": 1,
+    "QUIZ": 1,
+    "DIAGNOSTIC": 1,
+    "ASSESSMENT": 1,
     "PROJECT": 0
    },
    "conceptIds": [
@@ -342,7 +565,13 @@
    ],
    "interaction": "MANIPULATIVE_2D",
    "interactionImplemented": true,
-   "lessons": [],
+   "lessons": [
+    "ll-g4-math-simplifying-fractions-2026.1"
+   ],
+   "governedLessons": [],
+   "draftLessons": [
+    "ll-g4-math-simplifying-fractions-2026.1"
+   ],
    "components": {
     "CLASSWORK": 0,
     "HOMEWORK": 0,
@@ -350,6 +579,15 @@
     "QUIZ": 0,
     "DIAGNOSTIC": 0,
     "ASSESSMENT": 0,
+    "PROJECT": 0
+   },
+   "draftComponents": {
+    "CLASSWORK": 1,
+    "HOMEWORK": 1,
+    "PRACTICE": 1,
+    "QUIZ": 1,
+    "DIAGNOSTIC": 1,
+    "ASSESSMENT": 1,
     "PROJECT": 0
    },
    "conceptIds": []
@@ -363,7 +601,13 @@
    ],
    "interaction": "MANIPULATIVE_2D",
    "interactionImplemented": true,
-   "lessons": [],
+   "lessons": [
+    "ll-g4-math-adding-fractions-2026.1"
+   ],
+   "governedLessons": [],
+   "draftLessons": [
+    "ll-g4-math-adding-fractions-2026.1"
+   ],
    "components": {
     "CLASSWORK": 0,
     "HOMEWORK": 0,
@@ -371,6 +615,15 @@
     "QUIZ": 0,
     "DIAGNOSTIC": 0,
     "ASSESSMENT": 0,
+    "PROJECT": 0
+   },
+   "draftComponents": {
+    "CLASSWORK": 1,
+    "HOMEWORK": 1,
+    "PRACTICE": 1,
+    "QUIZ": 1,
+    "DIAGNOSTIC": 1,
+    "ASSESSMENT": 1,
     "PROJECT": 0
    },
    "conceptIds": []
@@ -384,7 +637,13 @@
    ],
    "interaction": "MANIPULATIVE_2D",
    "interactionImplemented": true,
-   "lessons": [],
+   "lessons": [
+    "ll-g4-math-subtracting-fractions-2026.1"
+   ],
+   "governedLessons": [],
+   "draftLessons": [
+    "ll-g4-math-subtracting-fractions-2026.1"
+   ],
    "components": {
     "CLASSWORK": 0,
     "HOMEWORK": 0,
@@ -392,6 +651,15 @@
     "QUIZ": 0,
     "DIAGNOSTIC": 0,
     "ASSESSMENT": 0,
+    "PROJECT": 0
+   },
+   "draftComponents": {
+    "CLASSWORK": 1,
+    "HOMEWORK": 1,
+    "PRACTICE": 1,
+    "QUIZ": 1,
+    "DIAGNOSTIC": 1,
+    "ASSESSMENT": 1,
     "PROJECT": 0
    },
    "conceptIds": []
@@ -405,7 +673,13 @@
    ],
    "interaction": "NONE",
    "interactionImplemented": true,
-   "lessons": [],
+   "lessons": [
+    "ll-g4-math-multi-step-problems-2026.1"
+   ],
+   "governedLessons": [],
+   "draftLessons": [
+    "ll-g4-math-multi-step-problems-2026.1"
+   ],
    "components": {
     "CLASSWORK": 0,
     "HOMEWORK": 0,
@@ -413,6 +687,15 @@
     "QUIZ": 0,
     "DIAGNOSTIC": 0,
     "ASSESSMENT": 0,
+    "PROJECT": 0
+   },
+   "draftComponents": {
+    "CLASSWORK": 1,
+    "HOMEWORK": 1,
+    "PRACTICE": 1,
+    "QUIZ": 1,
+    "DIAGNOSTIC": 1,
+    "ASSESSMENT": 1,
     "PROJECT": 0
    },
    "conceptIds": []
@@ -426,7 +709,13 @@
    ],
    "interaction": "NONE",
    "interactionImplemented": true,
-   "lessons": [],
+   "lessons": [
+    "ll-g4-math-multiply-tens-by-tens-2026.1"
+   ],
+   "governedLessons": [],
+   "draftLessons": [
+    "ll-g4-math-multiply-tens-by-tens-2026.1"
+   ],
    "components": {
     "CLASSWORK": 0,
     "HOMEWORK": 0,
@@ -434,6 +723,15 @@
     "QUIZ": 0,
     "DIAGNOSTIC": 0,
     "ASSESSMENT": 0,
+    "PROJECT": 0
+   },
+   "draftComponents": {
+    "CLASSWORK": 1,
+    "HOMEWORK": 1,
+    "PRACTICE": 1,
+    "QUIZ": 1,
+    "DIAGNOSTIC": 1,
+    "ASSESSMENT": 1,
     "PROJECT": 0
    },
    "conceptIds": []
@@ -447,7 +745,13 @@
    ],
    "interaction": "NONE",
    "interactionImplemented": true,
-   "lessons": [],
+   "lessons": [
+    "ll-g4-math-estimate-products-2026.1"
+   ],
+   "governedLessons": [],
+   "draftLessons": [
+    "ll-g4-math-estimate-products-2026.1"
+   ],
    "components": {
     "CLASSWORK": 0,
     "HOMEWORK": 0,
@@ -455,6 +759,15 @@
     "QUIZ": 0,
     "DIAGNOSTIC": 0,
     "ASSESSMENT": 0,
+    "PROJECT": 0
+   },
+   "draftComponents": {
+    "CLASSWORK": 1,
+    "HOMEWORK": 1,
+    "PRACTICE": 1,
+    "QUIZ": 1,
+    "DIAGNOSTIC": 1,
+    "ASSESSMENT": 1,
     "PROJECT": 0
    },
    "conceptIds": []
@@ -468,7 +781,13 @@
    ],
    "interaction": "NONE",
    "interactionImplemented": true,
-   "lessons": [],
+   "lessons": [
+    "ll-g4-math-multiply-by-two-digit-2026.1"
+   ],
+   "governedLessons": [],
+   "draftLessons": [
+    "ll-g4-math-multiply-by-two-digit-2026.1"
+   ],
    "components": {
     "CLASSWORK": 0,
     "HOMEWORK": 0,
@@ -476,6 +795,15 @@
     "QUIZ": 0,
     "DIAGNOSTIC": 0,
     "ASSESSMENT": 0,
+    "PROJECT": 0
+   },
+   "draftComponents": {
+    "CLASSWORK": 1,
+    "HOMEWORK": 1,
+    "PRACTICE": 1,
+    "QUIZ": 1,
+    "DIAGNOSTIC": 1,
+    "ASSESSMENT": 1,
     "PROJECT": 0
    },
    "conceptIds": []
@@ -489,7 +817,13 @@
    ],
    "interaction": "NONE",
    "interactionImplemented": true,
-   "lessons": [],
+   "lessons": [
+    "ll-g4-math-divide-multiples-mentally-2026.1"
+   ],
+   "governedLessons": [],
+   "draftLessons": [
+    "ll-g4-math-divide-multiples-mentally-2026.1"
+   ],
    "components": {
     "CLASSWORK": 0,
     "HOMEWORK": 0,
@@ -497,6 +831,15 @@
     "QUIZ": 0,
     "DIAGNOSTIC": 0,
     "ASSESSMENT": 0,
+    "PROJECT": 0
+   },
+   "draftComponents": {
+    "CLASSWORK": 1,
+    "HOMEWORK": 1,
+    "PRACTICE": 1,
+    "QUIZ": 1,
+    "DIAGNOSTIC": 1,
+    "ASSESSMENT": 1,
     "PROJECT": 0
    },
    "conceptIds": []
@@ -510,7 +853,13 @@
    ],
    "interaction": "NONE",
    "interactionImplemented": true,
-   "lessons": [],
+   "lessons": [
+    "ll-g4-math-estimate-quotients-2026.1"
+   ],
+   "governedLessons": [],
+   "draftLessons": [
+    "ll-g4-math-estimate-quotients-2026.1"
+   ],
    "components": {
     "CLASSWORK": 0,
     "HOMEWORK": 0,
@@ -518,6 +867,15 @@
     "QUIZ": 0,
     "DIAGNOSTIC": 0,
     "ASSESSMENT": 0,
+    "PROJECT": 0
+   },
+   "draftComponents": {
+    "CLASSWORK": 1,
+    "HOMEWORK": 1,
+    "PRACTICE": 1,
+    "QUIZ": 1,
+    "DIAGNOSTIC": 1,
+    "ASSESSMENT": 1,
     "PROJECT": 0
    },
    "conceptIds": []
@@ -531,7 +889,13 @@
    ],
    "interaction": "NONE",
    "interactionImplemented": true,
-   "lessons": [],
+   "lessons": [
+    "ll-g4-math-divide-by-two-digit-2026.1"
+   ],
+   "governedLessons": [],
+   "draftLessons": [
+    "ll-g4-math-divide-by-two-digit-2026.1"
+   ],
    "components": {
     "CLASSWORK": 0,
     "HOMEWORK": 0,
@@ -539,6 +903,15 @@
     "QUIZ": 0,
     "DIAGNOSTIC": 0,
     "ASSESSMENT": 0,
+    "PROJECT": 0
+   },
+   "draftComponents": {
+    "CLASSWORK": 1,
+    "HOMEWORK": 1,
+    "PRACTICE": 1,
+    "QUIZ": 1,
+    "DIAGNOSTIC": 1,
+    "ASSESSMENT": 1,
     "PROJECT": 0
    },
    "conceptIds": []
@@ -552,7 +925,13 @@
    ],
    "interaction": "MANIPULATIVE_2D",
    "interactionImplemented": true,
-   "lessons": [],
+   "lessons": [
+    "ll-g4-math-read-write-decimals-hundredths-2026.1"
+   ],
+   "governedLessons": [],
+   "draftLessons": [
+    "ll-g4-math-read-write-decimals-hundredths-2026.1"
+   ],
    "components": {
     "CLASSWORK": 0,
     "HOMEWORK": 0,
@@ -560,6 +939,15 @@
     "QUIZ": 0,
     "DIAGNOSTIC": 0,
     "ASSESSMENT": 0,
+    "PROJECT": 0
+   },
+   "draftComponents": {
+    "CLASSWORK": 1,
+    "HOMEWORK": 1,
+    "PRACTICE": 1,
+    "QUIZ": 1,
+    "DIAGNOSTIC": 1,
+    "ASSESSMENT": 1,
     "PROJECT": 0
    },
    "conceptIds": []
@@ -573,7 +961,13 @@
    ],
    "interaction": "MANIPULATIVE_2D",
    "interactionImplemented": true,
-   "lessons": [],
+   "lessons": [
+    "ll-g4-math-compare-order-decimals-2026.1"
+   ],
+   "governedLessons": [],
+   "draftLessons": [
+    "ll-g4-math-compare-order-decimals-2026.1"
+   ],
    "components": {
     "CLASSWORK": 0,
     "HOMEWORK": 0,
@@ -581,6 +975,15 @@
     "QUIZ": 0,
     "DIAGNOSTIC": 0,
     "ASSESSMENT": 0,
+    "PROJECT": 0
+   },
+   "draftComponents": {
+    "CLASSWORK": 1,
+    "HOMEWORK": 1,
+    "PRACTICE": 1,
+    "QUIZ": 1,
+    "DIAGNOSTIC": 1,
+    "ASSESSMENT": 1,
     "PROJECT": 0
    },
    "conceptIds": []
@@ -594,7 +997,13 @@
    ],
    "interaction": "PRACTICAL",
    "interactionImplemented": true,
-   "lessons": [],
+   "lessons": [
+    "ll-g4-math-estimating-time-2026.1"
+   ],
+   "governedLessons": [],
+   "draftLessons": [
+    "ll-g4-math-estimating-time-2026.1"
+   ],
    "components": {
     "CLASSWORK": 0,
     "HOMEWORK": 0,
@@ -602,6 +1011,15 @@
     "QUIZ": 0,
     "DIAGNOSTIC": 0,
     "ASSESSMENT": 0,
+    "PROJECT": 0
+   },
+   "draftComponents": {
+    "CLASSWORK": 1,
+    "HOMEWORK": 1,
+    "PRACTICE": 1,
+    "QUIZ": 1,
+    "DIAGNOSTIC": 1,
+    "ASSESSMENT": 1,
     "PROJECT": 0
    },
    "conceptIds": []
@@ -615,7 +1033,13 @@
    ],
    "interaction": "MANIPULATIVE_2D",
    "interactionImplemented": false,
-   "lessons": [],
+   "lessons": [
+    "ll-g4-math-elapsed-time-2026.1"
+   ],
+   "governedLessons": [],
+   "draftLessons": [
+    "ll-g4-math-elapsed-time-2026.1"
+   ],
    "components": {
     "CLASSWORK": 0,
     "HOMEWORK": 0,
@@ -623,6 +1047,15 @@
     "QUIZ": 0,
     "DIAGNOSTIC": 0,
     "ASSESSMENT": 0,
+    "PROJECT": 0
+   },
+   "draftComponents": {
+    "CLASSWORK": 1,
+    "HOMEWORK": 1,
+    "PRACTICE": 1,
+    "QUIZ": 1,
+    "DIAGNOSTIC": 1,
+    "ASSESSMENT": 1,
     "PROJECT": 0
    },
    "conceptIds": []
@@ -636,7 +1069,13 @@
    ],
    "interaction": "PRACTICAL",
    "interactionImplemented": true,
-   "lessons": [],
+   "lessons": [
+    "ll-g4-math-estimate-customary-length-2026.1"
+   ],
+   "governedLessons": [],
+   "draftLessons": [
+    "ll-g4-math-estimate-customary-length-2026.1"
+   ],
    "components": {
     "CLASSWORK": 0,
     "HOMEWORK": 0,
@@ -644,6 +1083,15 @@
     "QUIZ": 0,
     "DIAGNOSTIC": 0,
     "ASSESSMENT": 0,
+    "PROJECT": 0
+   },
+   "draftComponents": {
+    "CLASSWORK": 1,
+    "HOMEWORK": 1,
+    "PRACTICE": 1,
+    "QUIZ": 1,
+    "DIAGNOSTIC": 1,
+    "ASSESSMENT": 1,
     "PROJECT": 0
    },
    "conceptIds": []
@@ -657,7 +1105,13 @@
    ],
    "interaction": "PRACTICAL",
    "interactionImplemented": true,
-   "lessons": [],
+   "lessons": [
+    "ll-g4-math-measure-customary-length-2026.1"
+   ],
+   "governedLessons": [],
+   "draftLessons": [
+    "ll-g4-math-measure-customary-length-2026.1"
+   ],
    "components": {
     "CLASSWORK": 0,
     "HOMEWORK": 0,
@@ -665,6 +1119,15 @@
     "QUIZ": 0,
     "DIAGNOSTIC": 0,
     "ASSESSMENT": 0,
+    "PROJECT": 0
+   },
+   "draftComponents": {
+    "CLASSWORK": 1,
+    "HOMEWORK": 1,
+    "PRACTICE": 1,
+    "QUIZ": 1,
+    "DIAGNOSTIC": 1,
+    "ASSESSMENT": 1,
     "PROJECT": 0
    },
    "conceptIds": []
@@ -678,7 +1141,13 @@
    ],
    "interaction": "PRACTICAL",
    "interactionImplemented": true,
-   "lessons": [],
+   "lessons": [
+    "ll-g4-math-estimate-customary-mass-capacity-2026.1"
+   ],
+   "governedLessons": [],
+   "draftLessons": [
+    "ll-g4-math-estimate-customary-mass-capacity-2026.1"
+   ],
    "components": {
     "CLASSWORK": 0,
     "HOMEWORK": 0,
@@ -686,6 +1155,15 @@
     "QUIZ": 0,
     "DIAGNOSTIC": 0,
     "ASSESSMENT": 0,
+    "PROJECT": 0
+   },
+   "draftComponents": {
+    "CLASSWORK": 1,
+    "HOMEWORK": 1,
+    "PRACTICE": 1,
+    "QUIZ": 1,
+    "DIAGNOSTIC": 1,
+    "ASSESSMENT": 1,
     "PROJECT": 0
    },
    "conceptIds": []
@@ -699,7 +1177,13 @@
    ],
    "interaction": "PRACTICAL",
    "interactionImplemented": true,
-   "lessons": [],
+   "lessons": [
+    "ll-g4-math-estimate-metric-units-2026.1"
+   ],
+   "governedLessons": [],
+   "draftLessons": [
+    "ll-g4-math-estimate-metric-units-2026.1"
+   ],
    "components": {
     "CLASSWORK": 0,
     "HOMEWORK": 0,
@@ -707,6 +1191,15 @@
     "QUIZ": 0,
     "DIAGNOSTIC": 0,
     "ASSESSMENT": 0,
+    "PROJECT": 0
+   },
+   "draftComponents": {
+    "CLASSWORK": 1,
+    "HOMEWORK": 1,
+    "PRACTICE": 1,
+    "QUIZ": 1,
+    "DIAGNOSTIC": 1,
+    "ASSESSMENT": 1,
     "PROJECT": 0
    },
    "conceptIds": []
@@ -720,7 +1213,13 @@
    ],
    "interaction": "NONE",
    "interactionImplemented": true,
-   "lessons": [],
+   "lessons": [
+    "ll-g4-math-convert-metric-units-2026.1"
+   ],
+   "governedLessons": [],
+   "draftLessons": [
+    "ll-g4-math-convert-metric-units-2026.1"
+   ],
    "components": {
     "CLASSWORK": 0,
     "HOMEWORK": 0,
@@ -728,6 +1227,15 @@
     "QUIZ": 0,
     "DIAGNOSTIC": 0,
     "ASSESSMENT": 0,
+    "PROJECT": 0
+   },
+   "draftComponents": {
+    "CLASSWORK": 1,
+    "HOMEWORK": 1,
+    "PRACTICE": 1,
+    "QUIZ": 1,
+    "DIAGNOSTIC": 1,
+    "ASSESSMENT": 1,
     "PROJECT": 0
    },
    "conceptIds": []
@@ -741,7 +1249,13 @@
    ],
    "interaction": "NONE",
    "interactionImplemented": true,
-   "lessons": [],
+   "lessons": [
+    "ll-g4-math-add-subtract-measurements-2026.1"
+   ],
+   "governedLessons": [],
+   "draftLessons": [
+    "ll-g4-math-add-subtract-measurements-2026.1"
+   ],
    "components": {
     "CLASSWORK": 0,
     "HOMEWORK": 0,
@@ -749,6 +1263,15 @@
     "QUIZ": 0,
     "DIAGNOSTIC": 0,
     "ASSESSMENT": 0,
+    "PROJECT": 0
+   },
+   "draftComponents": {
+    "CLASSWORK": 1,
+    "HOMEWORK": 1,
+    "PRACTICE": 1,
+    "QUIZ": 1,
+    "DIAGNOSTIC": 1,
+    "ASSESSMENT": 1,
     "PROJECT": 0
    },
    "conceptIds": []
@@ -762,7 +1285,13 @@
    ],
    "interaction": "MANIPULATIVE_2D",
    "interactionImplemented": false,
-   "lessons": [],
+   "lessons": [
+    "ll-g4-math-perimeter-area-rectangles-2026.1"
+   ],
+   "governedLessons": [],
+   "draftLessons": [
+    "ll-g4-math-perimeter-area-rectangles-2026.1"
+   ],
    "components": {
     "CLASSWORK": 0,
     "HOMEWORK": 0,
@@ -770,6 +1299,15 @@
     "QUIZ": 0,
     "DIAGNOSTIC": 0,
     "ASSESSMENT": 0,
+    "PROJECT": 0
+   },
+   "draftComponents": {
+    "CLASSWORK": 1,
+    "HOMEWORK": 1,
+    "PRACTICE": 1,
+    "QUIZ": 1,
+    "DIAGNOSTIC": 1,
+    "ASSESSMENT": 1,
     "PROJECT": 0
    },
    "conceptIds": []
@@ -783,7 +1321,13 @@
    ],
    "interaction": "NONE",
    "interactionImplemented": true,
-   "lessons": [],
+   "lessons": [
+    "ll-g4-math-lines-segments-rays-2026.1"
+   ],
+   "governedLessons": [],
+   "draftLessons": [
+    "ll-g4-math-lines-segments-rays-2026.1"
+   ],
    "components": {
     "CLASSWORK": 0,
     "HOMEWORK": 0,
@@ -791,6 +1335,15 @@
     "QUIZ": 0,
     "DIAGNOSTIC": 0,
     "ASSESSMENT": 0,
+    "PROJECT": 0
+   },
+   "draftComponents": {
+    "CLASSWORK": 1,
+    "HOMEWORK": 1,
+    "PRACTICE": 1,
+    "QUIZ": 1,
+    "DIAGNOSTIC": 1,
+    "ASSESSMENT": 1,
     "PROJECT": 0
    },
    "conceptIds": []
@@ -804,7 +1357,13 @@
    ],
    "interaction": "MANIPULATIVE_2D",
    "interactionImplemented": false,
-   "lessons": [],
+   "lessons": [
+    "ll-g4-math-angles-perpendicular-lines-2026.1"
+   ],
+   "governedLessons": [],
+   "draftLessons": [
+    "ll-g4-math-angles-perpendicular-lines-2026.1"
+   ],
    "components": {
     "CLASSWORK": 0,
     "HOMEWORK": 0,
@@ -812,6 +1371,15 @@
     "QUIZ": 0,
     "DIAGNOSTIC": 0,
     "ASSESSMENT": 0,
+    "PROJECT": 0
+   },
+   "draftComponents": {
+    "CLASSWORK": 1,
+    "HOMEWORK": 1,
+    "PRACTICE": 1,
+    "QUIZ": 1,
+    "DIAGNOSTIC": 1,
+    "ASSESSMENT": 1,
     "PROJECT": 0
    },
    "conceptIds": []
@@ -825,7 +1393,13 @@
    ],
    "interaction": "NONE",
    "interactionImplemented": true,
-   "lessons": [],
+   "lessons": [
+    "ll-g4-math-polygons-2026.1"
+   ],
+   "governedLessons": [],
+   "draftLessons": [
+    "ll-g4-math-polygons-2026.1"
+   ],
    "components": {
     "CLASSWORK": 0,
     "HOMEWORK": 0,
@@ -833,6 +1407,15 @@
     "QUIZ": 0,
     "DIAGNOSTIC": 0,
     "ASSESSMENT": 0,
+    "PROJECT": 0
+   },
+   "draftComponents": {
+    "CLASSWORK": 1,
+    "HOMEWORK": 1,
+    "PRACTICE": 1,
+    "QUIZ": 1,
+    "DIAGNOSTIC": 1,
+    "ASSESSMENT": 1,
     "PROJECT": 0
    },
    "conceptIds": []
@@ -846,7 +1429,13 @@
    ],
    "interaction": "NONE",
    "interactionImplemented": true,
-   "lessons": [],
+   "lessons": [
+    "ll-g4-math-parts-of-a-circle-2026.1"
+   ],
+   "governedLessons": [],
+   "draftLessons": [
+    "ll-g4-math-parts-of-a-circle-2026.1"
+   ],
    "components": {
     "CLASSWORK": 0,
     "HOMEWORK": 0,
@@ -854,6 +1443,15 @@
     "QUIZ": 0,
     "DIAGNOSTIC": 0,
     "ASSESSMENT": 0,
+    "PROJECT": 0
+   },
+   "draftComponents": {
+    "CLASSWORK": 1,
+    "HOMEWORK": 1,
+    "PRACTICE": 1,
+    "QUIZ": 1,
+    "DIAGNOSTIC": 1,
+    "ASSESSMENT": 1,
     "PROJECT": 0
    },
    "conceptIds": []
@@ -867,7 +1465,13 @@
    ],
    "interaction": "THREE_D",
    "interactionImplemented": false,
-   "lessons": [],
+   "lessons": [
+    "ll-g4-math-solid-figures-2026.1"
+   ],
+   "governedLessons": [],
+   "draftLessons": [
+    "ll-g4-math-solid-figures-2026.1"
+   ],
    "components": {
     "CLASSWORK": 0,
     "HOMEWORK": 0,
@@ -875,6 +1479,15 @@
     "QUIZ": 0,
     "DIAGNOSTIC": 0,
     "ASSESSMENT": 0,
+    "PROJECT": 0
+   },
+   "draftComponents": {
+    "CLASSWORK": 1,
+    "HOMEWORK": 1,
+    "PRACTICE": 1,
+    "QUIZ": 1,
+    "DIAGNOSTIC": 1,
+    "ASSESSMENT": 1,
     "PROJECT": 0
    },
    "conceptIds": []
@@ -888,7 +1501,13 @@
    ],
    "interaction": "NONE",
    "interactionImplemented": true,
-   "lessons": [],
+   "lessons": [
+    "ll-g4-math-read-interpret-graphs-2026.1"
+   ],
+   "governedLessons": [],
+   "draftLessons": [
+    "ll-g4-math-read-interpret-graphs-2026.1"
+   ],
    "components": {
     "CLASSWORK": 0,
     "HOMEWORK": 0,
@@ -896,6 +1515,15 @@
     "QUIZ": 0,
     "DIAGNOSTIC": 0,
     "ASSESSMENT": 0,
+    "PROJECT": 0
+   },
+   "draftComponents": {
+    "CLASSWORK": 1,
+    "HOMEWORK": 1,
+    "PRACTICE": 1,
+    "QUIZ": 1,
+    "DIAGNOSTIC": 1,
+    "ASSESSMENT": 1,
     "PROJECT": 0
    },
    "conceptIds": []
@@ -909,7 +1537,13 @@
    ],
    "interaction": "NONE",
    "interactionImplemented": true,
-   "lessons": [],
+   "lessons": [
+    "ll-g4-math-mode-median-mean-2026.1"
+   ],
+   "governedLessons": [],
+   "draftLessons": [
+    "ll-g4-math-mode-median-mean-2026.1"
+   ],
    "components": {
     "CLASSWORK": 0,
     "HOMEWORK": 0,
@@ -917,6 +1551,15 @@
     "QUIZ": 0,
     "DIAGNOSTIC": 0,
     "ASSESSMENT": 0,
+    "PROJECT": 0
+   },
+   "draftComponents": {
+    "CLASSWORK": 1,
+    "HOMEWORK": 1,
+    "PRACTICE": 1,
+    "QUIZ": 1,
+    "DIAGNOSTIC": 1,
+    "ASSESSMENT": 1,
     "PROJECT": 0
    },
    "conceptIds": []
@@ -930,7 +1573,13 @@
    ],
    "interaction": "NONE",
    "interactionImplemented": true,
-   "lessons": [],
+   "lessons": [
+    "ll-g4-math-word-problems-with-diagrams-2026.1"
+   ],
+   "governedLessons": [],
+   "draftLessons": [
+    "ll-g4-math-word-problems-with-diagrams-2026.1"
+   ],
    "components": {
     "CLASSWORK": 0,
     "HOMEWORK": 0,
@@ -940,12 +1589,23 @@
     "ASSESSMENT": 0,
     "PROJECT": 0
    },
+   "draftComponents": {
+    "CLASSWORK": 1,
+    "HOMEWORK": 1,
+    "PRACTICE": 1,
+    "QUIZ": 1,
+    "DIAGNOSTIC": 1,
+    "ASSESSMENT": 1,
+    "PROJECT": 0
+   },
    "conceptIds": []
   }
  ],
  "summary": {
   "moeObjectives": 44,
-  "objectivesWithLesson": 1,
+  "objectivesWithLesson": 44,
+  "objectivesWithGovernedLesson": 1,
+  "objectivesWithDraftLessonOnly": 43,
   "objectivesWithGovernedItem": 2,
   "componentCoverage": {
    "CLASSWORK": 1,
@@ -954,6 +1614,15 @@
    "QUIZ": 0,
    "DIAGNOSTIC": 1,
    "ASSESSMENT": 1,
+   "PROJECT": 0
+  },
+  "draftComponentCoverage": {
+   "CLASSWORK": 43,
+   "HOMEWORK": 43,
+   "PRACTICE": 43,
+   "QUIZ": 43,
+   "DIAGNOSTIC": 43,
+   "ASSESSMENT": 43,
    "PROJECT": 0
   },
   "interaction": {
