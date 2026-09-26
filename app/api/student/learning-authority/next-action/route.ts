@@ -7,6 +7,7 @@ import { decideLearningAction } from "@/lib/learning-authority/learningDecisionS
 import { deterministicReleaseIdentity, admitEvidence } from "@/lib/learning-authority/governedGrade4Math";
 import { openDiagnosticSession, sealDiagnosticSession } from "@/lib/learning-authority/diagnosticSession";
 import { appendCanonicalMasteryUpdate } from "@/lib/learning-state/masteryWriter";
+import { createGovernedEvidence } from "@/lib/learning-evidence/evidenceContract";
 import { toLearnerSafeStudentConceptState } from "@/lib/learning-state/studentLearningModel";
 
 export const dynamic = "force-dynamic";
@@ -39,6 +40,11 @@ export async function GET() {
     const result = await decideLearningAction({ schoolId: user.schoolId!, studentId: student.id,
       studentUserId: user.id, idempotencyKey: "student-next-action-v2", release });
     const action = result.decision.action;
+    if (result.decision.status === "NO_VALID_RESOURCE" || !action) {
+      return NextResponse.json({ available: false, status: "NO_VALID_RESOURCE", interventionRequired: true,
+        decisionId: result.decision.id, recommendationId: result.recommendation.id,
+        learnerStateRevision: result.decision.learnerStateRevision, releaseId: release.id });
+    }
     const item = release.items.find((candidate) => candidate.id === action.itemId);
     const binding = release.bindings.find((candidate) => candidate.itemId === item?.id && candidate.itemVersion === item.version);
     const policy = release.toolPolicies.find((candidate) => candidate.id === binding?.toolPolicyId);
@@ -119,9 +125,27 @@ export async function POST(request: NextRequest) {
       expectedSchoolId: user.schoolId!, expectedStudentId: student.id, expectedStudentUserId: user.id, serverScored: true,
     }, release);
     if (admission.decision !== "ACCEPTED") return NextResponse.json({ error: admission.reason }, { status: 409 });
+    const occurredAt = new Date().toISOString();
+    const governedEvidence = createGovernedEvidence({
+      evidenceId: `learning-evidence-v1-${session.sessionId}`, idempotencyKey: session.sessionId, attemptId: session.sessionId,
+      tenantId: user.schoolId!, schoolId: user.schoolId!,
+      learner: { studentId: student.id, studentUserId: user.id },
+      objective: { conceptId: binding!.conceptId, objectiveId: binding!.learningTargetCode },
+      activity: { activityId: item.id, activityVersion: item.version },
+      evidenceType: item.context, modality: "TEXT", occurredAt,
+      performance: { outcome: body.answerIndex === item.correctIndex ? "CORRECT" : "INCORRECT",
+        score: body.answerIndex === item.correctIndex ? 1 : 0, maxScore: 1,
+        correct: body.answerIndex === item.correctIndex, selectedAnswerIndex: body.answerIndex as number, signals: [] },
+      provenance: { source: "ONLINE", actorId: user.id, actorRole: "STUDENT", runtime: "WEB",
+        recordedAt: occurredAt, clientEventId: session.sessionId, syncBatchId: null },
+      strength: { serverScored: true, humanVerified: false, assistanceUsed: false, retryCount: 0, hintCount: 0,
+        independenceKey: session.sessionId, directness: "DIRECT", reliability: "VERIFIED", policyRef: admission.policyVersion! },
+      offline: { isOffline: false, syncIdentity: null },
+      curriculum: { ontologyReleaseId: release.id, ontologyReleaseIdentity: deterministicReleaseIdentity(release) },
+    });
     const mastery = await appendCanonicalMasteryUpdate({ release, schoolId: user.schoolId!, studentId: student.id,
       studentUserId: user.id, sessionId: session.sessionId, itemId: item.id, itemVersion: item.version,
-      selectedAnswerIndex: body.answerIndex as number, occurredAt: new Date().toISOString(), admission });
+      selectedAnswerIndex: body.answerIndex as number, occurredAt, admission, governedEvidence });
     // A replayed decision keeps its first sealed attempt; scoring the replay
     // would let a learner probe the answer key without generating evidence.
     if (mastery.duplicate) return NextResponse.json({ error: "attempt_already_recorded" }, { status: 409 });
