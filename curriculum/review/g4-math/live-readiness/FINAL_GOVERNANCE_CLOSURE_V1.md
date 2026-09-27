@@ -82,11 +82,11 @@ does not alter the MOE meaning or replace the physical fallback.
 
 | Binding | Candidate value |
 |---|---|
-| Lab definition | `lab-g4-solids-v2@2.0.0` (candidate; do not activate) |
+| Lab definition | `g4-solid-figures@2.0.0` (candidate; do not activate) |
 | Objective | `moe-math-g4-s2-p6-geometry-and-statistics-obj5` |
-| Concept | `g4-solid-figures` |
-| Learning checks | `g4-solids-check-identify@1.0.0`, `g4-solids-check-faces-edges-vertices@1.0.0`, `g4-solids-check-real-world-object@1.0.0` |
-| Evidence mappings | `g4-solids-bind-identify-v2`, `g4-solids-bind-parts-v2`, `g4-solids-bind-real-world-v2`; governed-check response only |
+| Concept | `g4-solid-figures-identification` |
+| Learning checks | `select-sphere@1.0.0`, `rotate-cube@1.0.0`, `cube-vertices@1.0.0` |
+| Evidence mappings | `SOLIDS_LEARNING_CHECK_AUTHORITY` rows for `select-sphere`, `rotate-cube`, `cube-vertices`; governed-check response only |
 | Release dependency | `lr-moe-g4-math-2026.2` and the exact approved identity below |
 | Activation | Not active; physical/practical modality remains valid |
 
@@ -153,14 +153,17 @@ this package.
 
 ## One-action founder approval package
 
-The deliberate human action must record, atomically and audibly:
+The deliberate human action must record, atomically and audibly, only after all
+identity-affecting implementation and binding work is complete:
 
 1. One decision for each matrix row, preserving the exact reviewed payload hash.
-2. Release approval for `lr-moe-g4-math-2026.2` naming the exact candidate
-   identity above.
-3. Accept/amend/reject the mastery mappings and misconception rows.
-4. Accept/amend/reject the solids V2 binding proposal.
-5. Confirm that `LR-MATH-G4_6-02` remains `PARTIAL`.
+2. Recompute the candidate after the selected lesson/item promotions,
+   concept-revision pins, and lab binding composition are final.
+3. Release approval for `lr-moe-g4-math-2026.2` naming that exact final
+   candidate identity.
+4. Accept/amend/reject the mastery mappings and misconception rows.
+5. Accept/amend/reject the solids V2 binding proposal.
+6. Confirm that `LR-MATH-G4_6-02` remains `PARTIAL`.
 
 No founder name, timestamp, approval decision, or approval attribution is
 entered by this document.

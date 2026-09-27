@@ -5,9 +5,9 @@ import type { InteractiveLabDefinition, LabState, LearningCheck } from "./types"
 export function evaluateCheck(check: LearningCheck, state: LabState, response: Record<string, unknown>): { correct: boolean; signals: { code: string; value: "PRESENT" | "ABSENT"; detail?: string }[] } {
   let correct = false;
   if (check.kind === "select") correct = state.selectedObjectId === check.answer.objectId;
-  if (check.kind === "manipulate") correct = state.rotations[String(check.answer.objectId)]?.[1] !== 0;
+  if (check.kind === "manipulate") correct = Math.abs(state.rotations[String(check.answer.objectId)]?.[1] ?? 0) > 0.5;
   if (check.kind === "feature") correct = (state.highlightedFeatures[String(check.answer.objectId)]?.indices.length ?? 0) >= Number(check.answer.count ?? 0);
-  if (check.kind === "compare") correct = JSON.stringify(response.objects) === JSON.stringify(check.answer.objects);
+  if (check.kind === "compare") correct = JSON.stringify(response.answer) === JSON.stringify(check.answer.objects?.[0] ?? check.answer.objects);
   return { correct, signals: [{ code: `lab.check.${check.id}`, value: correct ? "PRESENT" : "ABSENT" }] };
 }
 

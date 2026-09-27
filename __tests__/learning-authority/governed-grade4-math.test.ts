@@ -91,6 +91,16 @@ describe("governed Grade 4 mathematics authority", () => {
     expect(() => validateOntologyRelease({ ...changedContentBinding,
       contentBindings: [{ ...changedContentBinding.contentBindings[0], toolPolicyId: "g4-math-diagnostic-tools" }],
     })).toThrow("ontology_content_binding_policy_invalid");
+
+    const revised = {
+      ...GRADE4_MATH_ONTOLOGY_RELEASE,
+      concepts: GRADE4_MATH_ONTOLOGY_RELEASE.concepts.map((concept) => concept.id === "g4-fractions-equal-parts" ? { ...concept, revision: 2 } : concept),
+    } as CurriculumOntologyRelease;
+    expect(() => validateOntologyRelease(revised)).toThrow("ontology_binding_revision_pin_mismatch");
+    expect(() => validateOntologyRelease({ ...revised,
+      bindings: revised.bindings.map((binding) => binding.conceptId === "g4-fractions-equal-parts" ? { ...binding, conceptRevision: 2 } : binding),
+      contentBindings: revised.contentBindings.map((binding) => binding.conceptId === "g4-fractions-equal-parts" ? { ...binding, conceptRevision: 2 } : binding),
+    })).not.toThrow();
   });
 
   it("pins construct binding and item version", () => {

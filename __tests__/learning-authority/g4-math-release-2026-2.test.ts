@@ -16,7 +16,8 @@ const PARTS_OF_A_SET = "moe-math-g4-s1-p3-number-theory-and-fraction-obj4";
 const ledger = JSON.parse(fs.readFileSync("curriculum/review/g4-math/review-ledger.json", "utf8")) as ReviewLedger;
 /** Test-only simulation of a future founder decision. Never written to the repository ledger. */
 const simulatedLedger = (decisions: Record<string, "APPROVE">): ReviewLedger => Object.fromEntries(Object.entries(ledger).map(([id, entry]) =>
-  [id, decisions[id] ? { decision: decisions[id], reviewer: "simulated-founder", reviewedAt: "2026-10-01T00:00:00.000Z", notes: "" } : entry]));
+  [id, decisions[id] ? { decision: decisions[id], reviewer: "simulated-founder", reviewedAt: "2026-10-01T00:00:00.000Z", notes: "",
+    ...(id === PARTS_OF_A_SET ? { reviewedContentId: GRADE4_FRACTIONS_LESSON_2026_2.contentId, reviewedContentVersion: GRADE4_FRACTIONS_LESSON_2026_2.version, reviewedPayloadSha256: lessonPayloadSha256(GRADE4_FRACTIONS_LESSON_2026_2.payload) } : {}) } : entry]));
 
 describe("release 2026.1 stays immutable", () => {
   it("keeps the published identity and the 1.0.0 lesson payload unchanged", () => {

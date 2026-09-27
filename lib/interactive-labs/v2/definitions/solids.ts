@@ -19,8 +19,15 @@ export function initialSolidsState(): LabState {
 function validObject(id: string): boolean { return solids.some((object) => object.id === id); }
 
 function validate(state: LabState, action: LabAction) {
-  if (action.type === "select" || action.type === "focus" || action.type === "rotate" || action.type === "highlight-feature" || action.type === "toggle-net") return validObject(action.objectId) ? { ok: true } : { ok: false, reason: "Unknown scene object." };
-  if (action.type === "check") return solids.some((object) => object.id === action.checkId || action.checkId.length > 0) ? { ok: true } : { ok: false, reason: "Unknown learning check." };
+  if (action.type === "select" || action.type === "focus" || action.type === "rotate" || action.type === "toggle-net") return validObject(action.objectId) ? { ok: true } : { ok: false, reason: "Unknown scene object." };
+  if (action.type === "highlight-feature") {
+    const object = solids.find((candidate) => candidate.id === action.objectId);
+    const limit = object?.features?.[`${action.feature}s` as "faces" | "edges" | "vertices"];
+    return object && limit !== undefined && Number.isInteger(action.index) && action.index >= 0 && action.index < limit
+      ? { ok: true } : { ok: false, reason: "Feature index is invalid for this object." };
+  }
+  if (action.type === "check") return ["select-sphere", "rotate-cube", "cube-vertices", "no-flat-faces", "circular-faces", "cube-v-prism"].includes(action.checkId)
+    ? { ok: true } : { ok: false, reason: "Unknown learning check." };
   return { ok: true };
 }
 
