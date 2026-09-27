@@ -12,18 +12,23 @@ describe("interactive lab runtime v2", () => {
     const start = initialSolidsState();
     expect(acceptLabAction(solidsDefinition, start, { type: "select", objectId: "unknown" }).ok).toBe(false);
     const selected = acceptLabAction(solidsDefinition, start, { type: "select", objectId: "sphere" });
-    expect(selected.ok && selected.state.selectedObjectId).toBe("sphere");
+    if (selected.ok === false) throw new Error(selected.reason);
+    expect(selected.state.selectedObjectId).toBe("sphere");
     const rotated = acceptLabAction(solidsDefinition, selected.state, { type: "rotate", objectId: "cube", delta: [1, 0] });
-    expect(rotated.ok && rotated.state.rotations.cube[1]).toBeGreaterThan(0);
+    if (rotated.ok === false) throw new Error(rotated.reason);
+    expect(rotated.state.rotations.cube[1]).toBeGreaterThan(0);
   });
 
   it("requires manipulation for the cube check", () => {
     const start = initialSolidsState();
     const wrong = acceptLabAction(solidsDefinition, start, { type: "check", checkId: "rotate-cube", response: {} });
-    expect(wrong.ok && wrong.state.completedChecks).toEqual([]);
+    if (wrong.ok === false) throw new Error(wrong.reason);
+    expect(wrong.state.completedChecks).toEqual([]);
     const moved = acceptLabAction(solidsDefinition, start, { type: "rotate", objectId: "cube", delta: [1, 0] });
+    if (moved.ok === false) throw new Error(moved.reason);
     const right = acceptLabAction(solidsDefinition, moved.state, { type: "check", checkId: "rotate-cube", response: {} });
-    expect(right.ok && right.state.completedChecks).toContain("rotate-cube");
+    if (right.ok === false) throw new Error(right.reason);
+    expect(right.state.completedChecks).toContain("rotate-cube");
   });
 
   it("restores only matching, meaningful checkpoints", () => {

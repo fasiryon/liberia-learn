@@ -16,7 +16,7 @@ export async function POST(req: NextRequest, { params }: { params: { labId: stri
     const sessionId = typeof body?.sessionId === "string" ? body.sessionId : ""; if (!sessionId) return NextResponse.json({ error: "session_required" }, { status: 400 });
     const session = await prisma.labSession.findFirst({ where: { id: sessionId, labId: params.labId, studentId: user.id, schoolId: user.schoolId ?? "" } }); if (!session) return NextResponse.json({ error: "session_scope_invalid" }, { status: 403 });
     const stored = restoreSession(session.observations, definition); if (session.observations && !stored) return NextResponse.json({ error: "stale_or_corrupt_checkpoint" }, { status: 409 });
-    const state = stored?.state ?? definition.initialState; const action = body?.action; const result = acceptLabAction(definition, state, action); if (!result.ok) return NextResponse.json({ error: result.reason }, { status: 422 });
+    const state = stored?.state ?? definition.initialState; const action = body?.action; const result = acceptLabAction(definition, state, action); if (result.ok === false) return NextResponse.json({ error: result.reason }, { status: 422 });
     const nextState = result.state; const checkpoint = checkpointSession({ sessionId, labId: definition.id, labVersion: definition.version, learnerId: user.id, tenantId: user.schoolId ?? "", mode: nextState.mode, completedChecks: nextState.completedChecks, retries: nextState.retries, hints: nextState.hints, state: nextState });
     await prisma.labSession.update({ where: { id: sessionId }, data: { observations: checkpoint } });
     if (action?.type !== "check") return NextResponse.json({ ok: true, state: nextState });
@@ -26,7 +26,7 @@ export async function POST(req: NextRequest, { params }: { params: { labId: stri
     const priorEvidence = Array.isArray(priorAnalysis.interactiveLabEvidence) ? priorAnalysis.interactiveLabEvidence as Array<Record<string, unknown>> : [];
     const prior = priorEvidence.find((candidate) => candidate.idempotencyKey === evidence.idempotencyKey);
     if (prior && JSON.stringify(prior) !== JSON.stringify(evidence)) return NextResponse.json({ error: "evidence_idempotency_conflict" }, { status: 409 });
-    if (!prior) await prisma.labSession.update({ where: { id: sessionId }, data: { aiAnalysis: { ...priorAnalysis, interactiveLabEvidence: [...priorEvidence, evidence] } } });
+    if (!prior) await prisma.labSession.update({ where: { id: sessionId }, data: { aiAnalysis: { ...priorAnalysis, interactiveLabEvidence: [...priorEvidence, JSON.parse(JSON.stringify(evidence))] } } });
     const adaptation = adaptLabEvidence({ definition, check, evidence });
     return NextResponse.json({ ok: true, state: nextState, evidence: adaptation.governedEvidence, evidenceDisposition: preview ? "RAW_OBSERVATION" : adaptation.disposition, mastery: "not_mutated", reason: adaptation.reason });
   } catch (error) { return NextResponse.json({ error: error instanceof Error ? error.message : "interactive_lab_event_failed" }, { status: 500 }); }
