@@ -94,7 +94,14 @@ does not alter the MOE meaning or replace the physical fallback.
 
 Candidate release: `lr-moe-g4-math-2026.2`.
 
-Recomputed candidate identity from current main: `1a95cab355e2bac77e3aebb2c27a11e9ba46eb84f6dc7401ac33c54c204a895e`.
+Recomputed candidate identity after the required equal-parts revision-2
+change and revision-2 binding pins:
+`e8839952f194d3b3a3eb5eeb3b4b5a3c530c4c55b611f944b19eea35d5b62f41`.
+
+Superseded candidate identity: `1a95cab355e2bac77e3aebb2c27a11e9ba46eb84f6dc7401ac33c54c204a895e`.
+The intermediate revision-2-only candidate identity
+`3dc885266a6c5098539c26df89710da60fdedea667aac22b42daed56bbc25ee8` is also
+superseded. Neither prior identity may be approved or registered.
 
 This identity is void if any selected content, item, ledger-selected set,
 mapping, or release composition changes. It is not registered here.
@@ -109,8 +116,10 @@ item id/version/hash in the eventual reviewed mapping.
 | `cf-g4-math-2026.2-equivalence-v1` | `g4-fractions-equivalence`, rev 1 | `lr-moe-g4-math-fractions-2026.1` / `de256495ec6f72fe8160179331c7f891d0574a2087a21163fbe28b93f9d88540` | `lr-moe-g4-math-2026.2` / identity above, rev 1 | `g4-frac-practice-equivalence@1.0.0` / `bd851cc72d99854702dd46a6401b9bbb6cba0e57be6699cc5d46825b620da855` | Carry evidence only through explicit mapping |
 | `cf-g4-math-2026.2-compare-v1` | `g4-fractions-compare`, rev 1 | same 2026.1 identity | same 2026.2 identity, rev 1 | `g4-frac-diagnostic-compare@1.0.0` / `50dbae78c2e127db7d39bc215204384b2faca0eb141448b7188e00f939ce5666` | Carry evidence only through explicit mapping |
 
-`g4-fractions-equal-parts` changes from whole-only to whole-or-set and does not
-inherit mastery. It must be revision 2 and restart at the 2026.2 diagnostic.
+`g4-fractions-equal-parts` is revision 2 in the 2026.2 candidate: whole-or-set
+semantics, explicit revision-2 pins on its lesson and governed-item bindings,
+and diagnostic restart. It does not inherit mastery. The 2026.1 concept remains
+revision 1 and is unchanged.
 Raw lab interaction never increases mastery; only governed learning checks may
 produce canonical mastery evidence.
 
@@ -119,9 +128,13 @@ produce canonical mastery evidence.
 Proposed policy key: `misconception-signal-policy/1.1.0`, keyed to the exact
 2026.2 identity and leaving the 2026.1 policy byte-identical.
 
+Every equal-parts row below is scoped to candidate concept revision 2. This is
+a proposal only; no policy object is active and no raw lab interaction can
+generate a misconception or mastery result.
+
 | Signal | Triggering governed check | Concept/release | Result pattern | Evidence disposition |
 |---|---|---|---|---|
-| `g4-fractions-numerator-denominator-reversal` | `g4-frac-diagnostic-equal-parts@1.0.0`, binding `g4-frac-bind-equal-parts-v1`, option 3 `4/3` | `g4-fractions-equal-parts`, 2026.2 policy | reversed fraction | Governed misconception signal; not mastery evidence |
+| `g4-fractions-numerator-denominator-reversal` | `g4-frac-diagnostic-equal-parts@1.0.0`, binding `g4-frac-bind-equal-parts-v1`, option 3 `4/3` | `g4-fractions-equal-parts` rev 2, 2026.2 policy proposal | reversed fraction | Governed misconception signal; not mastery evidence |
 | same | `g4-frac-practice-part-of-whole@1.0.0`, `g4-frac-bind-part-of-whole-v1`, option 3 `8/3` | same | reversed fraction | Governed signal only |
 | same | `g4-frac-practice-part-of-set@1.0.0`, `g4-frac-bind-part-of-set-v1`, option 3 `5/2` | same | reversed fraction | Governed signal only |
 | same | `g4-frac-check-part-of-set@1.0.0`, `g4-frac-bind-check-part-of-set-v1`, option 3 `8/3` | same | reversed fraction | Governed signal only |
@@ -167,4 +180,5 @@ Only after the human approval record exists and the exact-head gates pass:
    promotion and live-certification gates are genuinely complete.
 8. Run read-only post-write certification and preserve audit evidence.
 
-This sequence is a plan, not an execution record.
+This sequence is a plan, not an execution record. The candidate identity in this
+sequence is the revision-2 identity above.

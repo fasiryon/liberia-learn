@@ -46,7 +46,7 @@ type Addition = Readonly<{
 }>;
 
 const equalPartsBinding = (id: string, itemId: string): CurriculumConstructBinding => ({
-  id, itemId, itemVersion: "1.0.0", conceptId: "g4-fractions-equal-parts", skillId: "placement-skill-MATH-G4_6",
+  id, itemId, itemVersion: "1.0.0", conceptId: "g4-fractions-equal-parts", conceptRevision: 2, skillId: "placement-skill-MATH-G4_6",
   learningTargetCode: "LR-MATH-G4_6-02", standardCode: "LR-MATH-G4_6-02",
   evidencePolicyId: "g4-math-practice-evidence", toolPolicyId: "g4-math-practice-tools",
 });
@@ -88,7 +88,7 @@ export const GRADE4_MATH_2026_2_ADDITIONS: readonly Addition[] = Object.freeze([
       equalPartsBinding("g4-frac-bind-check-part-of-set-v1", "g4-frac-check-part-of-set"),
     ],
     contentBindings: [{
-      id: "g4-frac-content-bind-equal-parts-v2", conceptId: "g4-fractions-equal-parts",
+      id: "g4-frac-content-bind-equal-parts-v2", conceptId: "g4-fractions-equal-parts", conceptRevision: 2,
       contentId: GRADE4_FRACTIONS_LESSON_2026_2.contentId, contentVersion: GRADE4_FRACTIONS_LESSON_2026_2.version,
       contentType: "LESSON", toolPolicyId: "g4-math-instruction-tools",
       contentSha256: lessonPayloadSha256(GRADE4_FRACTIONS_LESSON_2026_2.payload),
@@ -137,8 +137,16 @@ export function composeGrade4MathRelease2026_2(input: { ledger: ReviewLedger; ap
     id: GRADE4_MATH_RELEASE_2026_2_ID,
     version: "2026.2",
     provenanceRef: "Standard:LR-MATH-G4_6-02;structured-moe:curriculum/structured/moe-structured-v1.json;ledger:curriculum/review/g4-math/review-ledger.json",
+    concepts: base.concepts.map((concept) => concept.id === "g4-fractions-equal-parts"
+      ? { ...concept, revision: 2, label: "Recognize fractions as equal parts of a whole and of a set" }
+      : concept),
     items: [...base.items, ...accepted.flatMap((addition) => addition.items)],
-    bindings: [...base.bindings, ...accepted.flatMap((addition) => addition.bindings)],
+    bindings: [
+      ...base.bindings.map((binding) => binding.conceptId === "g4-fractions-equal-parts"
+        ? { ...binding, conceptRevision: 2 }
+        : binding),
+      ...accepted.flatMap((addition) => addition.bindings),
+    ],
     contentBindings: [...base.contentBindings.filter((binding) => !replaced.has(binding.id)), ...accepted.flatMap((addition) => addition.contentBindings)],
   };
   const approvable: CurriculumOntologyRelease = { ...candidate, status: "PUBLISHED", reviewStatus: "APPROVED" };
