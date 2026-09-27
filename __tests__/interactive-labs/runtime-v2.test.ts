@@ -4,6 +4,8 @@ import { resolveCapabilityProfile } from "@/lib/interactive-labs/v2/capabilities
 import { buildLabEvidence } from "@/lib/interactive-labs/v2/evidence";
 import { solidsDefinition, initialSolidsState } from "@/lib/interactive-labs/v2/definitions/solids";
 import { buildTeacherSummary } from "@/lib/interactive-labs/v2/summary";
+import { adaptLabEvidence, LAB_EVIDENCE_AUTHORITY_VERSION, type LabLearningCheckAuthority } from "@/lib/interactive-labs/v2/governance";
+import { GRADE4_MATH_ONTOLOGY_RELEASE, deterministicReleaseIdentity } from "@/lib/learning-authority/governedGrade4Math";
 
 describe("interactive lab runtime v2", () => {
   it("rejects unknown objects and transitions valid direct manipulation", () => {
@@ -44,5 +46,21 @@ describe("interactive lab runtime v2", () => {
     const summary = buildTeacherSummary(solidsDefinition.checks, { sessionId: "s", labId: solidsDefinition.id, labVersion: solidsDefinition.version, learnerId: "u", tenantId: "school", mode: "COMPLETE", completedChecks: state.completedChecks, retries: state.retries, hints: 0, state, updatedAt: new Date().toISOString() });
     expect(summary.status).toBe("COMPLETED");
     expect(summary.meaningfulManipulations).toContain("rotated:cube");
+  });
+
+  it("keeps raw manipulation provisional and proves canonical adaptation uses the existing scored-item semantics", () => {
+    const rotated = { ...initialSolidsState(), rotations: { ...initialSolidsState().rotations, cube: [0, 1, 0] as [number, number, number] } };
+    const raw = buildLabEvidence({ definition: solidsDefinition, check: solidsDefinition.checks[1], state: rotated, response: {}, tenantId: "school", schoolId: "school", studentId: "student", studentUserId: "user", sessionId: "session", retryCount: 0, hintCount: 0 });
+    expect(adaptLabEvidence({ definition: solidsDefinition, check: solidsDefinition.checks[1], evidence: raw }).disposition).toBe("PROVISIONAL");
+
+    const binding = GRADE4_MATH_ONTOLOGY_RELEASE.bindings[0];
+    const item = GRADE4_MATH_ONTOLOGY_RELEASE.items.find((candidate) => candidate.id === binding.itemId)!;
+    const governedDefinition = { ...solidsDefinition, objectiveIds: [binding.learningTargetCode], conceptIds: [binding.conceptId], releaseBinding: { releaseId: GRADE4_MATH_ONTOLOGY_RELEASE.id, releaseIdentity: deterministicReleaseIdentity(GRADE4_MATH_ONTOLOGY_RELEASE), activityId: solidsDefinition.id, activityVersion: solidsDefinition.version } };
+    const governedCheck = { ...solidsDefinition.checks[0], objectiveId: binding.learningTargetCode, conceptId: binding.conceptId };
+    const authority: LabLearningCheckAuthority = { contractVersion: LAB_EVIDENCE_AUTHORITY_VERSION, labId: governedDefinition.id, labVersion: governedDefinition.version, objectiveId: binding.learningTargetCode, conceptId: binding.conceptId, releaseId: GRADE4_MATH_ONTOLOGY_RELEASE.id, releaseIdentity: deterministicReleaseIdentity(GRADE4_MATH_ONTOLOGY_RELEASE), learningCheckId: governedCheck.id, evidenceKind: "LEARNING_CHECK_RESPONSE", acceptedState: { selectedAnswerIndex: 2 }, resultSemantics: "CORRECT_IF_SERVER_VALIDATED", evidencePolicyRef: binding.evidencePolicyId, disposition: "CANONICAL", canonicalActivity: { activityId: item.id, activityVersion: item.version, evidenceType: "DIAGNOSTIC" } };
+    const accepted = buildLabEvidence({ definition: governedDefinition, check: governedCheck, state: { ...initialSolidsState(), selectedObjectId: "sphere" }, response: { selectedAnswerIndex: 2 }, tenantId: "school", schoolId: "school", studentId: "student", studentUserId: "user", sessionId: "session-2", retryCount: 0, hintCount: 0 });
+    const canonical = adaptLabEvidence({ definition: governedDefinition, check: governedCheck, evidence: accepted, authority, release: GRADE4_MATH_ONTOLOGY_RELEASE });
+    expect(canonical.disposition).toBe("CANONICAL");
+    expect(canonical.canonicalEvidence?.itemId).toBe(item.id);
   });
 });

@@ -22,9 +22,11 @@ Profiles are deterministic and manually overrideable: `HIGH`, `STANDARD`, `LOW`,
 
 ## Evidence and authority
 
-The evidence adapter emits `governed-learning-evidence/1.0.0` with `canonicalMasteryMutation: false`. The API validates authenticated student scope, tenant/session scope, definition version, action validity, check identity, and checkpoint integrity. It rejects draft/unapproved definitions before ingestion.
+The evidence adapter emits `governed-learning-evidence/1.0.0` with `canonicalMasteryMutation: false`. `governance.ts` adds the versioned learning-check authority mapping. Raw rotation remains `PROVISIONAL`; only an explicit approved mapping with a released activity can be converted through `toCanonicalMasteryEvidence` and then routed through the existing `appendCanonicalMasteryUpdate` path. No new mastery formula or weighting policy is introduced.
 
-The Grade 4 solids activity is intentionally `IN_REVIEW` / `PENDING` because the current published ontology release has no binding for `moe-math-g4-s2-p6-geometry-and-statistics-obj5`. This prevents invented authority and prevents the client from writing mastery. After the governed release/activity binding is approved, the adapter must be connected through the existing governed mastery adapter; no special direct lab writer should be introduced.
+The API validates authenticated student scope, tenant/session scope, definition version, action validity, check identity, and checkpoint integrity. A `PREVIEW` request may exercise an unapproved definition, but its evidence is explicitly non-canonical and cannot mutate mastery. Governed requests reject draft/unapproved definitions before ingestion.
+
+The Grade 4 solids activity is intentionally `IN_REVIEW` / `PENDING` because the current published ontology release has no binding for `moe-math-g4-s2-p6-geometry-and-statistics-obj5`. `SOLIDS_LEARNING_CHECK_AUTHORITY` prepares the reviewed objective/concept/check identity and release-candidate references without activating them. This prevents invented authority and prevents the client from writing mastery. After the governed release/activity binding is approved, the existing adapter path can be enabled; no special direct lab writer should be introduced.
 
 ## Session and teacher view
 
