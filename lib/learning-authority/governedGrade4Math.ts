@@ -253,11 +253,16 @@ export function validateOntologyRelease(release: CurriculumOntologyRelease): voi
   const evidencePolicyIds = new Set(release.evidencePolicies.map((policy) => policy.id));
   const toolPolicyIds = new Set(release.toolPolicies.map((policy) => policy.id));
   const itemsById = new Map(release.items.map((item) => [item.id, item]));
+  const conceptsById = new Map(release.concepts.map((concept) => [concept.id, concept]));
   const bindingIds = new Set<string>();
   for (const binding of release.bindings) {
     if (bindingIds.has(binding.id)) throw new Error("ontology_binding_duplicate");
     bindingIds.add(binding.id);
     if (!ids.has(binding.conceptId)) throw new Error("ontology_binding_unknown_concept");
+    const concept = conceptsById.get(binding.conceptId)!;
+    if (concept.revision > 1 && binding.conceptRevision !== concept.revision) {
+      throw new Error("ontology_binding_revision_pin_mismatch");
+    }
     const item = itemsById.get(binding.itemId);
     if (!item || item.version !== binding.itemVersion) throw new Error("ontology_binding_unknown_item");
     if (!evidencePolicyIds.has(binding.evidencePolicyId) || !toolPolicyIds.has(binding.toolPolicyId)) {
@@ -271,6 +276,10 @@ export function validateOntologyRelease(release: CurriculumOntologyRelease): voi
     if (contentBindingIds.has(binding.id)) throw new Error("ontology_content_binding_duplicate");
     contentBindingIds.add(binding.id);
     if (!ids.has(binding.conceptId)) throw new Error("ontology_content_binding_unknown_concept");
+    const concept = conceptsById.get(binding.conceptId)!;
+    if (concept.revision > 1 && binding.conceptRevision !== concept.revision) {
+      throw new Error("ontology_content_binding_revision_pin_mismatch");
+    }
     if (!binding.contentId.trim() || !binding.contentVersion.trim()) throw new Error("ontology_content_binding_identity_invalid");
     if (binding.contentSha256 !== undefined && !/^[0-9a-f]{64}$/.test(binding.contentSha256)) throw new Error("ontology_content_binding_hash_invalid");
     const toolPolicy = release.toolPolicies.find((policy) => policy.id === binding.toolPolicyId);

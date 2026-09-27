@@ -30,7 +30,7 @@ export const GRADE4_MATH_RELEASE_2026_2_ID = "lr-moe-g4-math-2026.2";
 const PARTS_OF_A_SET = "moe-math-g4-s1-p3-number-theory-and-fraction-obj4";
 
 export type LedgerDecision = "PENDING" | "APPROVE" | "REVISE" | "REJECT";
-export type ReviewLedger = Readonly<Record<string, Readonly<{ decision: LedgerDecision; reviewer: string | null; reviewedAt: string | null; notes: string }>>>;
+export type ReviewLedger = Readonly<Record<string, Readonly<{ decision: LedgerDecision; reviewer: string | null; reviewedAt: string | null; notes: string; reviewedContentId?: string; reviewedContentVersion?: string; reviewedPayloadSha256?: string }>>>;
 
 /** A founder's release-level approval, recorded by a human outside this module. */
 export type ReleaseApproval = Readonly<{ releaseId: string; approvedIdentity: string; reviewer: string; reviewedAt: string }>;
@@ -115,10 +115,15 @@ const sha = (value: unknown) => createHash("sha256").update(JSON.stringify(value
 
 export function composeGrade4MathRelease2026_2(input: { ledger: ReviewLedger; approval?: ReleaseApproval | null }): ComposedRelease {
   const base = GRADE4_MATH_ONTOLOGY_RELEASE;
-  const approved = (objectiveId: string) => input.ledger[objectiveId]?.decision === "APPROVE";
-  const accepted = GRADE4_MATH_2026_2_ADDITIONS.filter((addition) => approved(addition.moeObjectiveId));
+  const approved = (addition: Addition) => {
+    const review = input.ledger[addition.moeObjectiveId];
+    return review?.decision === "APPROVE" && !!review.reviewer?.trim() && Number.isFinite(Date.parse(review.reviewedAt ?? "")) &&
+      (!addition.lesson || (review.reviewedContentId === addition.lesson.contentId && review.reviewedContentVersion === addition.lesson.version &&
+        review.reviewedPayloadSha256 === lessonPayloadSha256(addition.lesson.payload)));
+  };
+  const accepted = GRADE4_MATH_2026_2_ADDITIONS.filter(approved);
   const excluded: ReleaseExclusion[] = [];
-  for (const addition of GRADE4_MATH_2026_2_ADDITIONS.filter((entry) => !approved(entry.moeObjectiveId))) {
+  for (const addition of GRADE4_MATH_2026_2_ADDITIONS.filter((entry) => !approved(entry))) {
     const decision = input.ledger[addition.moeObjectiveId]?.decision ?? "MISSING";
     for (const id of [...(addition.lesson ? [addition.lesson.contentId] : []), ...addition.items.map((item) => item.id)]) {
       excluded.push({ moeObjectiveId: addition.moeObjectiveId, id, reason: `ledger decision ${decision}; only APPROVE is included` });

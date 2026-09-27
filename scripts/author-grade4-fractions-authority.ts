@@ -1,5 +1,5 @@
-import fs from "node:fs";
 import { createHash } from "node:crypto";
+import fs from "node:fs";
 import { createCurriculumContent } from "../lib/curriculum/mutations/repository";
 import { appendCurriculumGovernanceEvent } from "../lib/curriculum/mutations/governanceWriter";
 import { GRADE4_FRACTIONS_LESSON, GRADE4_FRACTIONS_LESSON_2026_2 } from "../lib/curriculum/authority/grade4FractionsLesson";
@@ -30,16 +30,16 @@ async function main() {
   if (!lesson) throw new Error(`--lesson must be one of: ${LESSONS.map((candidate) => candidate.contentId).join(", ")}`);
   const apply = process.argv.includes("--apply");
 
-  const ledger = JSON.parse(fs.readFileSync(LEDGER, "utf8")) as Record<string, { decision: string; reviewer: string | null; reviewedAt: string | null; reviewedContentId?: string }>;
+  const ledger = JSON.parse(fs.readFileSync(LEDGER, "utf8")) as Record<string, { decision: string; reviewer: string | null; reviewedAt: string | null; reviewedContentId?: string; reviewedContentVersion?: string; reviewedPayloadSha256?: string }>;
   const review = ledger[OBJECTIVE];
-  const reviewed = review?.decision === "APPROVE" && !!review.reviewer?.trim() && Number.isFinite(Date.parse(review.reviewedAt ?? "")) &&
-    review.reviewedContentId === lesson.contentId;
   const payloadSha256 = createHash("sha256").update(JSON.stringify(lesson.payload)).digest("hex");
+  const reviewed = review?.decision === "APPROVE" && !!review.reviewer?.trim() && Number.isFinite(Date.parse(review.reviewedAt ?? "")) &&
+    review.reviewedContentId === lesson.contentId && review.reviewedContentVersion === lesson.version && review.reviewedPayloadSha256 === payloadSha256;
   const keys = { create: `curriculum:${lesson.contentId}:${lesson.version}`, submitted: `curriculum:${lesson.contentId}:submitted`, approved: `curriculum:${lesson.contentId}:approved` };
 
   if (!apply) {
     console.log(JSON.stringify({ result: "DRY_RUN", contentId: lesson.contentId, version: lesson.version, payloadSha256, idempotencyKeys: keys,
-      founderReview: reviewed ? "APPROVE recorded for this lesson" : `missing: ${LEDGER} ${OBJECTIVE} needs decision APPROVE, reviewer, reviewedAt and reviewedContentId=${lesson.contentId}`,
+      founderReview: reviewed ? "APPROVE recorded for this exact lesson revision and payload" : `missing: ${LEDGER} ${OBJECTIVE} needs APPROVE metadata for ${lesson.contentId}@${lesson.version} payload ${payloadSha256}`,
       applyRequires: ["--apply", `CONFIRM_PRODUCTION_WRITE=${lesson.contentId}`, "LIBERIALEARN_FOUNDER_REVIEWER_ID=<founder User.id>"] }, null, 2));
     return;
   }
