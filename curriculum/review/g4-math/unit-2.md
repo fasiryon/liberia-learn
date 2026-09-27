@@ -15,8 +15,11 @@ For each objective, record APPROVE / REVISE / REJECT in `review-ledger.json`. No
 | Status | DRAFT_UNREVIEWED |
 | Interaction | MANIPULATIVE_2D via multiplication-table. Learners explore facts and properties (commutative, zero, one) by building arrays in the multiplication table. |
 | Interaction offline | Arrays of bottle caps or dots drawn in rows and columns. |
+| Planned enhancement | none |
 | Evidence | GOVERNED_ITEM_RESPONSE |
 | Example-data labels | none |
+| Reviewed content | `ll-g4-math-multiplication-facts-properties-2026.1` v0.1.0, payload sha256 `1c400bec6e6daaae6597b56c90f6e680a87c926b232b45311b919fbb89b1d2e9` |
+| Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision) |
 
 **Known uncertainties:** none recorded.
 
@@ -107,8 +110,11 @@ Duration: 45 minutes.
 | Status | DRAFT_UNREVIEWED |
 | Interaction | NONE |
 | Interaction offline | n/a |
+| Planned enhancement | none |
 | Evidence | NONE |
 | Example-data labels | (example price) |
+| Reviewed content | `ll-g4-math-multiply-multiples-of-10-2026.1` v0.1.0, payload sha256 `9af6a086e806f8b6f56479c4496e2c67225fa7647004f459839d030ac5c0aac6` |
+| Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision) |
 
 **Known uncertainties:** none recorded.
 
@@ -194,12 +200,19 @@ Duration: 45 minutes.
 | MOE approval | NOT_CLAIMED (source provenance is not approval) |
 | Lesson | Multiplying 2-, 3- and 4-Digit Numbers by a 1-Digit Number (`ll-g4-math-multiply-by-one-digit-2026.1` v0.1.0) |
 | Status | DRAFT_UNREVIEWED |
-| Interaction | NONE |
-| Interaction offline | n/a |
-| Evidence | NONE |
+| Interaction | MANIPULATIVE_2D. Learners draw and split an area model on graph paper and count squares to see each partial product (MOE act2: graph-paper rectangle). |
+| Interaction offline | Graph or squared exercise-book paper; rectangles drawn, split and shaded by hand. |
+| Planned enhancement | GRADE_4_6_GRID_MANIPULATIVE (MANIPULATIVE_2D), NOT IMPLEMENTED: No Grade 4-6 grid tool is enabled online; squared paper is the core modality. |
+| Evidence | GOVERNED_ITEM_RESPONSE |
 | Example-data labels | none |
+| Reviewed content | `ll-g4-math-multiply-by-one-digit-2026.1` v0.1.0, payload sha256 `34245c86f9c4a356ed8abbbb648fca03af50b825174d53b1c96080b16284bab7` |
+| Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision). Decisions applied: CPR-2026-09-26-R03 |
 
-**Known uncertainties:** none recorded.
+**Known uncertainties:** 
+- Interaction MANIPULATIVE_2D has no enabled online tool; offline fallback only.
+  - **HUMAN_POLICY_DECISION_REQUIRED.** The paper manipulative (graph-paper area model) is the core modality and fully offline; no online tool exists. Recorded as the non-blocking product gap GRADE_4_6_GRID_MANIPULATIVE.
+  - Evidence: moe-math-g4-s1-p2-multiplication-and-division-of-whole-numbers-act2 p40
+  - Settled by review decision CPR-2026-09-26-R03 (Area model; not founder approval): Reclassify NONE -> MANIPULATIVE_2D using the area-model / graph-paper activity.
 
 ### Reviewer support (not a decision)
 
@@ -208,7 +221,7 @@ Duration: 45 minutes.
 - **Wording provenance.** MOE-derived: The objective statement (verbatim MOE text). LiberiaLearn explanatory: Title, explanation, worked examples, activities, all practice, homework, quiz, diagnostic and assessment items, teacher notes. Example data: None.
 - **Grade appropriateness:** Appropriate for Grade 4 and within the MOE scope for this objective.
 - **Component alignment:** Classwork, practice, homework, quiz and exit assessment all target this objective; the diagnostic checks a prerequisite.
-- **Interaction classification (NONE):** RECONSIDER: MOE act2 'Use graph paper to show 4 by 26 rectangle to show multiplication concepts of 2, 3, or 4 digits numerals' is an area-model manipulative, and the lesson already has an area-model activity. NONE could become MANIPULATIVE_2D with graph paper offline; no Grade 4-6 grid tool is enabled online.
+- **Interaction classification (MANIPULATIVE_2D):** AGREE: MANIPULATIVE_2D with a graph-paper area model, following MOE act2 (reclassified from NONE by CPR-2026-09-26-R03). No Grade 4-6 grid tool is enabled online (product gap GRADE_4_6_GRID_MANIPULATIVE).
 
 ### Explanation
 
@@ -231,7 +244,8 @@ Estimate to check: 348 is about 350, and 350 x 6 = 2,100, so 2,088 is reasonable
 
 ### Classwork
 
-- Area model: draw a rectangle split into 300, 40 and 8 to show 348 x 6.
+- Graph-paper area model: on squared paper, draw a rectangle 6 squares tall and 24 squares long for 24 x 6. Split it into a 20-long part and a 4-long part, count the squares in each (120 and 24) and add them (144).
+- Area model for larger numbers: draw a rectangle split into 300, 40 and 8 to show 348 x 6, and write the partial product in each part.
 - Compare methods: half the class uses expanded form, half uses the standard method; compare answers.
 - Word problems: bundles of copybooks, crates of soft drinks, boxes of chalk.
 
@@ -264,15 +278,15 @@ What is 1,468 x 4? (5,872 / 5,862 / 4,872 / 5,672) **Answer:** 5,872
 
 ### Teacher notes
 
-The most common error is forgetting to add the carried digit, or adding it before multiplying. Have learners write carried digits small above the next column.
+The most common error is forgetting to add the carried digit, or adding it before multiplying. Have learners write carried digits small above the next column. The graph-paper area model follows the MOE activity for this topic; let learners count the squares at least once before moving to drawn area models.
 
 ### Materials
 
-Exercise books, Grid paper for area models
+Exercise books, Squared (graph) paper for area models
 
 ### Offline behavior
 
-Fully offline.
+Fully offline and the core modality: area models drawn and counted on squared paper. No Grade 4-6 grid tool is enabled online yet.
 
 Duration: 45 minutes.
 
@@ -289,8 +303,11 @@ Duration: 45 minutes.
 | Status | DRAFT_UNREVIEWED |
 | Interaction | NONE |
 | Interaction offline | n/a |
+| Planned enhancement | none |
 | Evidence | NONE |
 | Example-data labels | none |
+| Reviewed content | `ll-g4-math-divide-by-one-digit-2026.1` v0.1.0, payload sha256 `ceda2a0f5df426cd7165afe2f4e6e4fb70db3203d359e3aa6a5076d1a6ab8bc8` |
+| Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision) |
 
 **Known uncertainties:** none recorded.
 
@@ -384,8 +401,11 @@ Duration: 45 minutes.
 | Status | DRAFT_UNREVIEWED |
 | Interaction | NONE |
 | Interaction offline | n/a |
+| Planned enhancement | none |
 | Evidence | NONE |
 | Example-data labels | (example amount) |
+| Reviewed content | `ll-g4-math-divide-zero-in-quotient-2026.1` v0.1.0, payload sha256 `779fb8e8b6ffa3fb5936a066756866e49f9c3769a35cec604544b35fd2c42611` |
+| Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision) |
 
 **Known uncertainties:** none recorded.
 
@@ -477,8 +497,11 @@ Duration: 45 minutes.
 | Status | DRAFT_UNREVIEWED |
 | Interaction | NONE |
 | Interaction offline | n/a |
+| Planned enhancement | none |
 | Evidence | NONE |
 | Example-data labels | (example price), (example amount) |
+| Reviewed content | `ll-g4-math-division-word-problems-2026.1` v0.1.0, payload sha256 `c466ea6287fcd7c9482ab5892e6efb8beae79ce18238f5199ed4ea225392cd4a` |
+| Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision) |
 
 **Known uncertainties:** 
 - MOE extraction confidence MEDIUM (CONTINUATION_PAGE_ASSIGNMENT).

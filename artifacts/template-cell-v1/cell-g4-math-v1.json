@@ -88,8 +88,8 @@
    "pages": [
     38
    ],
-   "interaction": "NONE",
-   "interactionImplemented": true,
+   "interaction": "MANIPULATIVE_2D",
+   "interactionImplemented": false,
    "lessons": [
     "ll-g4-math-read-write-numbers-to-100000-2026.1"
    ],
@@ -304,8 +304,8 @@
    "pages": [
     40
    ],
-   "interaction": "NONE",
-   "interactionImplemented": true,
+   "interaction": "MANIPULATIVE_2D",
+   "interactionImplemented": false,
    "lessons": [
     "ll-g4-math-multiply-by-one-digit-2026.1"
    ],
@@ -1460,8 +1460,8 @@
    "pages": [
     48
    ],
-   "interaction": "NONE",
-   "interactionImplemented": true,
+   "interaction": "MANIPULATIVE_2D",
+   "interactionImplemented": false,
    "lessons": [
     "ll-g4-math-polygons-2026.1"
    ],
@@ -1496,8 +1496,8 @@
    "pages": [
     48
    ],
-   "interaction": "NONE",
-   "interactionImplemented": true,
+   "interaction": "MANIPULATIVE_2D",
+   "interactionImplemented": false,
    "lessons": [
     "ll-g4-math-parts-of-a-circle-2026.1"
    ],
@@ -1532,8 +1532,8 @@
    "pages": [
     49
    ],
-   "interaction": "THREE_D",
-   "interactionImplemented": false,
+   "interaction": "PRACTICAL",
+   "interactionImplemented": true,
    "lessons": [
     "ll-g4-math-solid-figures-2026.1"
    ],
@@ -1568,7 +1568,7 @@
    "pages": [
     49
    ],
-   "interaction": "NONE",
+   "interaction": "PRACTICAL",
    "interactionImplemented": true,
    "lessons": [
     "ll-g4-math-read-interpret-graphs-2026.1"
@@ -1695,19 +1695,22 @@
    "PROJECT": 0
   },
   "interaction": {
-   "NONE": 24,
-   "MANIPULATIVE_2D": 14,
+   "NONE": 19,
+   "MANIPULATIVE_2D": 18,
    "SIMULATION": 0,
    "VIRTUAL_LAB": 0,
-   "PRACTICAL": 5,
-   "THREE_D": 1
+   "PRACTICAL": 7,
+   "THREE_D": 0
   },
-  "interactionImplemented": 16,
+  "interactionImplemented": 18,
   "interactionGaps": [
+   "moe-math-g4-s1-p1-numeration-addition-and-subtraction-obj1:MANIPULATIVE_2D",
+   "moe-math-g4-s1-p2-multiplication-and-division-of-whole-numbers-obj3:MANIPULATIVE_2D",
    "moe-math-g4-s2-p5-measurement-obj2:MANIPULATIVE_2D",
    "moe-math-g4-s2-p5-measurement-obj9:MANIPULATIVE_2D",
    "moe-math-g4-s2-p6-geometry-and-statistics-obj2:MANIPULATIVE_2D",
-   "moe-math-g4-s2-p6-geometry-and-statistics-obj5:THREE_D"
+   "moe-math-g4-s2-p6-geometry-and-statistics-obj3:MANIPULATIVE_2D",
+   "moe-math-g4-s2-p6-geometry-and-statistics-obj4:MANIPULATIVE_2D"
   ],
   "resources": 42,
   "teacherAssessmentReferences": 60,

@@ -15,8 +15,11 @@ For each objective, record APPROVE / REVISE / REJECT in `review-ledger.json`. No
 | Status | DRAFT_UNREVIEWED |
 | Interaction | NONE |
 | Interaction offline | n/a |
+| Planned enhancement | none |
 | Evidence | NONE |
 | Example-data labels | none |
+| Reviewed content | `ll-g4-math-multiply-tens-by-tens-2026.1` v0.1.0, payload sha256 `6130851c11704212a2758ee2badcb6ece44b31dc4dbb01c8c129ac55c9a35866` |
+| Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision) |
 
 **Known uncertainties:** none recorded.
 
@@ -108,8 +111,11 @@ Duration: 45 minutes.
 | Status | DRAFT_UNREVIEWED |
 | Interaction | NONE |
 | Interaction offline | n/a |
+| Planned enhancement | none |
 | Evidence | NONE |
 | Example-data labels | (example price) |
+| Reviewed content | `ll-g4-math-estimate-products-2026.1` v0.1.0, payload sha256 `acb507d5c60720703aa588c717c7f58b7b57ad62969e5adcc8b489dc31783a70` |
+| Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision) |
 
 **Known uncertainties:** none recorded.
 
@@ -201,8 +207,11 @@ Duration: 45 minutes.
 | Status | DRAFT_UNREVIEWED |
 | Interaction | NONE |
 | Interaction offline | n/a |
+| Planned enhancement | none |
 | Evidence | NONE |
 | Example-data labels | (example price) |
+| Reviewed content | `ll-g4-math-multiply-by-two-digit-2026.1` v0.1.0, payload sha256 `1dccb423ce7139ab9c8cd40b37964b1abdfe8c3927b085e471c924a12e1ac66b` |
+| Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision). The MOE wording is ambiguous on its own; the lesson's reading (2-, 3-, 4-digit numbers by 2-digit multipliers) rests on con4/con5. |
 
 **Known uncertainties:** none recorded.
 
@@ -296,8 +305,11 @@ Duration: 45 minutes.
 | Status | DRAFT_UNREVIEWED |
 | Interaction | NONE |
 | Interaction offline | n/a |
+| Planned enhancement | none |
 | Evidence | NONE |
 | Example-data labels | (example amount) |
+| Reviewed content | `ll-g4-math-divide-multiples-mentally-2026.1` v0.1.0, payload sha256 `6ecebcf1d40402e029b1676f7b7b0614814d120f0cff2ce06bf5b87c9c20bb32` |
+| Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision) |
 
 **Known uncertainties:** none recorded.
 
@@ -391,8 +403,11 @@ Duration: 45 minutes.
 | Status | DRAFT_UNREVIEWED |
 | Interaction | NONE |
 | Interaction offline | n/a |
+| Planned enhancement | none |
 | Evidence | NONE |
 | Example-data labels | none |
+| Reviewed content | `ll-g4-math-estimate-quotients-2026.1` v0.1.0, payload sha256 `f1386c9225d3d3aed07ae2f535a22375de5590d738480e0304093fa17bb825b5` |
+| Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision) |
 
 **Known uncertainties:** none recorded.
 
@@ -480,8 +495,11 @@ Duration: 45 minutes.
 | Status | DRAFT_UNREVIEWED |
 | Interaction | NONE |
 | Interaction offline | n/a |
+| Planned enhancement | none |
 | Evidence | NONE |
 | Example-data labels | none |
+| Reviewed content | `ll-g4-math-divide-by-two-digit-2026.1` v0.1.0, payload sha256 `85558092b9de488ecab4e5824612d7cdd6cfce601d6ab763a9e58d6bbc40ceaf` |
+| Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision) |
 
 **Known uncertainties:** 
 - MOE extraction confidence MEDIUM (CONTINUATION_PAGE_ASSIGNMENT).
@@ -580,8 +598,11 @@ Duration: 45 minutes.
 | Status | DRAFT_UNREVIEWED |
 | Interaction | MANIPULATIVE_2D via number-line. Learners locate tenths and hundredths on a number line to connect decimal notation to place value. |
 | Interaction offline | Hundredths grid shaded in the exercise book. |
+| Planned enhancement | none |
 | Evidence | GOVERNED_ITEM_RESPONSE |
 | Example-data labels | none |
+| Reviewed content | `ll-g4-math-read-write-decimals-hundredths-2026.1` v0.1.0, payload sha256 `82aba61a28426c2e775b54cf11f6fe17cc44d8acf0a9d835c3523d5651c7f7fd` |
+| Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision) |
 
 **Known uncertainties:** 
 - MOE extraction confidence MEDIUM (CONTINUATION_PAGE_ASSIGNMENT).
@@ -680,8 +701,11 @@ Duration: 45 minutes.
 | Status | DRAFT_UNREVIEWED |
 | Interaction | MANIPULATIVE_2D via number-line. Learners place and move values on a number line to compare, order or round. |
 | Interaction offline | Number line drawn in the exercise book or on the floor with chalk. |
+| Planned enhancement | none |
 | Evidence | GOVERNED_ITEM_RESPONSE |
 | Example-data labels | (example data) |
+| Reviewed content | `ll-g4-math-compare-order-decimals-2026.1` v0.1.0, payload sha256 `1bde912750d87bc41dd4371c52256d3676a459e066432523435709f8c5ee8e37` |
+| Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision) |
 
 **Known uncertainties:** 
 - MOE extraction confidence MEDIUM (CONTINUATION_PAGE_ASSIGNMENT).

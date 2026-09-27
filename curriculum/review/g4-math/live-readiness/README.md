@@ -117,7 +117,7 @@ Update 2026-09-26: PR #149 merged (a27d617d). `lib/learning-authority/governedIn
 
 ## 5. Founder decisions
 
-Superseded 2026-09-26 by the decision list in [RELEASE_2026_2_AND_WRITE_PLAN.md](RELEASE_2026_2_AND_WRITE_PLAN.md) and the uncertainty dispositions in [../README.md](../README.md). Kept for history:
+Superseded 2026-09-26 by the decision list in [RELEASE_2026_2_AND_WRITE_PLAN.md](RELEASE_2026_2_AND_WRITE_PLAN.md) and the uncertainty dispositions in [../README.md](../README.md). The curriculum/product review CPR-2026-09-26 revisions, reviewer recommendations and the mastery/misconception proposal ([MASTERY_AND_MISCONCEPTION_POLICY_2026_2.md](MASTERY_AND_MISCONCEPTION_POLICY_2026_2.md), not active) followed the same day. Kept for history:
 
 1. Review the fractions lesson (`../unit-3.md` §3.4) and, if approved, run §1 yourself with your own user id.
 2. Target `LR-MATH-G4_6-02`: seed it (§2), and choose `verificationStatus` PARTIAL vs VERIFIED and the code namespace. Or leave it unseeded, since nothing at runtime needs it; the certifier's release-live check then stays failing.

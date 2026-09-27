@@ -75,12 +75,17 @@ export const GRADE4_MATH_2026_2_ADDITIONS: readonly Addition[] = Object.freeze([
       { id: "g4-frac-check-denominator-meaning", version: "1.0.0", context: "PRACTICE",
         prompt: "In 3/4, what does the 4 tell us?",
         options: ["How many equal parts make the whole", "How many parts are selected", "How many wholes there are", "The answer to an addition problem"], correctIndex: 0 },
+      // End-of-lesson check: assesses the MOE objective (parts of a set) directly.
+      { id: "g4-frac-check-part-of-set", version: "1.0.0", context: "PRACTICE",
+        prompt: "There are 8 mangoes. 3 are ripe. What fraction of the mangoes are ripe?",
+        options: ["3/8", "5/8", "3/5", "8/3"], correctIndex: 0 },
     ],
     bindings: [
       equalPartsBinding("g4-frac-bind-part-of-whole-v1", "g4-frac-practice-part-of-whole"),
       equalPartsBinding("g4-frac-bind-part-of-set-v1", "g4-frac-practice-part-of-set"),
       equalPartsBinding("g4-frac-bind-unequal-parts-v1", "g4-frac-practice-unequal-parts"),
       equalPartsBinding("g4-frac-bind-denominator-meaning-v1", "g4-frac-check-denominator-meaning"),
+      equalPartsBinding("g4-frac-bind-check-part-of-set-v1", "g4-frac-check-part-of-set"),
     ],
     contentBindings: [{
       id: "g4-frac-content-bind-equal-parts-v2", conceptId: "g4-fractions-equal-parts",

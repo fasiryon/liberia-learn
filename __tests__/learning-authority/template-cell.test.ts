@@ -49,13 +49,42 @@ describe("governed template cell certification", () => {
     const report = certifyTemplateCell(withCell((cell) => mapUnits(cell, (unit) => unit.sequence !== 6 ? unit : {
       ...unit,
       objectives: [
-        ...unit.objectives.map((o) => o.interaction.need !== "THREE_D" ? o : { ...o, interaction: { ...o.interaction, rationale: "Looks impressive.", evidence: "NONE" as const } }),
+        // A decorative 3D claim on the solids objective (real cell: PRACTICAL, 3D only planned).
+        ...unit.objectives.map((o) => !o.moeItemId.endsWith("obj5") ? o : { ...o, interaction: { ...o.interaction, need: "THREE_D" as const, rationale: "Looks impressive.", evidence: "NONE" as const } }),
         { moeItemId: "moe-math-g4-invented-obj1", conceptIds: [], interaction: { need: "VIRTUAL_LAB" as const, rationale: "x", tools: ["hologram"], labId: null, evidence: "NONE" as const, offlineFallback: null, safety: null } },
       ],
     })));
     expect(report.errors).toEqual(expect.arrayContaining([
       "objective_missing:moe-math-g4-invented-obj1",
       "interaction_evidence_required:moe-math-g4-s2-p6-geometry-and-statistics-obj5",
+      "three_d_rationale_not_spatial:moe-math-g4-s2-p6-geometry-and-statistics-obj5",
+    ]));
+  });
+
+  it("records planned enhancements as product gaps, never as implemented interaction", () => {
+    const report = certifyTemplateCell(withCell((cell) => cell));
+    const solids = report.objectives.find((o) => o.moeItemId.endsWith("p6-geometry-and-statistics-obj5"))!;
+    expect(solids.interaction).toBe("PRACTICAL");
+    expect(report.summary.interaction.THREE_D).toBe(0);
+    const specs = GRADE4_MATH_TEMPLATE_CELL.units.flatMap((unit) => unit.objectives);
+    const spec = (suffix: string) => specs.find((o) => o.moeItemId.endsWith(suffix))!.interaction;
+    expect(spec("p6-geometry-and-statistics-obj5").plannedEnhancement).toMatchObject({ gapCode: "GRADE_4_6_SOLIDS_3D_VIEWER", need: "THREE_D" });
+    expect(spec("p3-number-theory-and-fraction-obj4").plannedEnhancement?.gapCode).toBe("SET_FRACTION_MANIPULATIVE_REQUIRED");
+    expect(spec("p5-measurement-obj9").plannedEnhancement?.gapCode).toBe("GRADE_4_6_GRID_MANIPULATIVE");
+    // CPR-2026-09-26 reclassifications.
+    for (const suffix of ["p1-numeration-addition-and-subtraction-obj1", "p2-multiplication-and-division-of-whole-numbers-obj3", "p6-geometry-and-statistics-obj3", "p6-geometry-and-statistics-obj4"]) {
+      expect(spec(suffix).need, suffix).toBe("MANIPULATIVE_2D");
+      expect(spec(suffix).offlineFallback, suffix).toBeTruthy();
+    }
+    expect(spec("p6-geometry-and-statistics-obj6").need).toBe("PRACTICAL");
+    expect(spec("p6-geometry-and-statistics-obj6").safety).toMatch(/voluntary and anonymous/);
+
+    const bad = certifyTemplateCell(withCell((cell) => mapUnits(cell, (unit) => ({
+      ...unit, objectives: unit.objectives.map((o) => !o.moeItemId.endsWith("p6-geometry-and-statistics-obj5") ? o
+        : { ...o, interaction: { ...o.interaction, plannedEnhancement: { gapCode: "3d", need: "THREE_D" as const, description: "Looks impressive." } } }),
+    }))));
+    expect(bad.errors).toEqual(expect.arrayContaining([
+      "planned_enhancement_invalid:moe-math-g4-s2-p6-geometry-and-statistics-obj5",
       "three_d_rationale_not_spatial:moe-math-g4-s2-p6-geometry-and-statistics-obj5",
     ]));
   });
