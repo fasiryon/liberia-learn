@@ -38,6 +38,7 @@ describe("fractions exemplar 2026.2", () => {
     expect(lesson.supersedes).toEqual({ contentId: GRADE4_FRACTIONS_LESSON.contentId, version: GRADE4_FRACTIONS_LESSON.version });
     expect(lesson.provenance.reviewState).toBe("PENDING_FOUNDER_REVIEW");
     expect(lesson.provenance.authorityScope).toContain("not MOE approval");
+    expect(GRADE4_MATH_ONTOLOGY_RELEASE.concepts.find((concept) => concept.id === "g4-fractions-equal-parts")?.revision).toBe(1);
   });
 
   it("is at least as complete as the drafts and teaches parts of a set", () => {
@@ -91,6 +92,16 @@ describe("release 2026.2 candidate", () => {
     expect(excluded.has(GRADE4_FRACTIONS_LESSON_2026_2.contentId)).toBe(true);
     expect(composed.included.every((entry) => !GRADE4_MATH_DRAFT_LESSONS.some((draft) => draft.contentId === entry.id))).toBe(true);
     expect(composed.carriedForwardFrom).toEqual({ releaseId: GRADE4_MATH_ONTOLOGY_RELEASE.id, identity: deterministicReleaseIdentity(GRADE4_MATH_ONTOLOGY_RELEASE) });
+  });
+
+  it("uses equal-parts concept revision 2 only in the 2026.2 candidate", () => {
+    const approvedLedger = simulatedLedger({ [PARTS_OF_A_SET]: "APPROVE" });
+    const composed = composeGrade4MathRelease2026_2({ ledger: approvedLedger });
+    expect(GRADE4_MATH_ONTOLOGY_RELEASE.concepts.find((concept) => concept.id === "g4-fractions-equal-parts")?.revision).toBe(1);
+    expect(composed.release.concepts.find((concept) => concept.id === "g4-fractions-equal-parts")).toMatchObject({ revision: 2 });
+    expect(composed.release.bindings.filter((binding) => binding.conceptId === "g4-fractions-equal-parts").every((binding) => binding.conceptRevision === 2)).toBe(true);
+    expect(composed.release.contentBindings.find((binding) => binding.conceptId === "g4-fractions-equal-parts")?.conceptRevision).toBe(2);
+    expect(composed.approvableIdentity).toBe("e8839952f194d3b3a3eb5eeb3b4b5a3c530c4c55b611f944b19eea35d5b62f41");
   });
 
   it("is reproducible", () => {

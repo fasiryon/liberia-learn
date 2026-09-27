@@ -41,6 +41,8 @@ export type CurriculumConstructBinding = Readonly<{
   itemId: string;
   itemVersion: string;
   conceptId: string;
+  /** Candidate-only semantic revision pin; absent on immutable 2026.1 bindings. */
+  conceptRevision?: number;
   skillId: string;
   learningTargetCode: string;
   standardCode: string;
@@ -51,6 +53,8 @@ export type CurriculumConstructBinding = Readonly<{
 export type CurriculumContentBinding = Readonly<{
   id: string;
   conceptId: string;
+  /** Candidate-only semantic revision pin; absent on immutable 2026.1 bindings. */
+  conceptRevision?: number;
   contentId: string;
   contentVersion: string;
   contentType: "LESSON" | "TEXTBOOK" | "LAB" | "SIMULATION";
