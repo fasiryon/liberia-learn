@@ -46,8 +46,16 @@ describe("fractions exemplar 2026.2", () => {
     expect(lesson.payload.practice.length).toBeGreaterThanOrEqual(3);
     expect(lesson.payload.quiz.length).toBeGreaterThanOrEqual(3);
     for (const question of [...lesson.payload.quiz, lesson.payload.diagnosticCheck]) expect(question.options).toContain(question.answer);
-    expect(lesson.payload.body).toContain("part of a set");
-    expect(lesson.payload.objectives).toContain("Name the fraction of a set of objects.");
+    // CPR-2026-09-26: sets are taught from the opening definition, not as an extension.
+    expect(lesson.payload.body.split("\n\n")[0]).toMatch(/equal parts of a whole, or part of a set/);
+    expect(lesson.payload.objectives).toContain("Find parts of a set: name the fraction of a set of objects.");
+    // Fractions greater than one are an optional extension only, never in the taught body.
+    expect(lesson.payload.body).not.toMatch(/greater than one|more than one whole/);
+    expect(lesson.payload.optionalExtension).toMatch(/^Optional extension, not assessed/);
+    // Bottle caps or stones stay the required offline manipulative; the online gap is recorded, not faked.
+    expect(lesson.payload.materials[0]).toMatch(/^Bottle caps or stones \(required/);
+    expect(lesson.payload.offline).toContain("SET_FRACTION_MANIPULATIVE_REQUIRED");
+    expect(lesson.provenance.productGaps).toEqual(["SET_FRACTION_MANIPULATIVE_REQUIRED"]);
   });
 
   it("binds diagnostic, practice and end-of-lesson evidence to governed items", () => {
@@ -55,9 +63,16 @@ describe("fractions exemplar 2026.2", () => {
     expect(GRADE4_MATH_ONTOLOGY_RELEASE.items.some((item) => item.id === evidence.diagnostic.itemId && item.version === evidence.diagnostic.itemVersion)).toBe(true);
     const added = new Map(addition.items.map((item) => [item.id, item]));
     for (const ref of [...evidence.practice, evidence.endOfLesson]) expect(added.get(ref.itemId)?.version).toBe(ref.itemVersion);
+    for (const ref of evidence.supporting) expect(added.get(ref.itemId)?.version).toBe(ref.itemVersion);
+    // The governed end-of-lesson evidence assesses part of a set directly, and matches the exit assessment.
     const exit = added.get(evidence.endOfLesson.itemId)!;
-    expect(exit.prompt).toBe(GRADE4_FRACTIONS_LESSON.payload.assessment.question);
-    expect(exit.options[exit.correctIndex]).toBe(GRADE4_FRACTIONS_LESSON.payload.assessment.correctAnswer);
+    expect(exit.id).toBe("g4-frac-check-part-of-set");
+    expect(exit.prompt).toBe("There are 8 mangoes. 3 are ripe. What fraction of the mangoes are ripe?");
+    expect(exit.prompt).toBe(lesson.payload.assessment.question);
+    expect(exit.options[exit.correctIndex]).toBe("3/8");
+    expect(exit.options[exit.correctIndex]).toBe(lesson.payload.assessment.correctAnswer);
+    // The denominator-meaning check is supporting evidence, not the exit measure.
+    expect(evidence.supporting.map((ref) => ref.itemId)).toEqual(["g4-frac-check-denominator-meaning"]);
     for (const item of addition.items) expect(item.options[item.correctIndex]).toBeDefined();
     expect(addition.bindings.every((binding) => binding.conceptId === "g4-fractions-equal-parts")).toBe(true);
   });
@@ -94,10 +109,10 @@ describe("release 2026.2 candidate", () => {
     // Carried-forward items are identical; the lesson binding moves to 2026.2 with a payload hash pin.
     for (const item of GRADE4_MATH_ONTOLOGY_RELEASE.items) expect(composed.release.items).toContainEqual(item);
     expect(composed.release.contentBindings).toEqual([expect.objectContaining({
-      contentId: GRADE4_FRACTIONS_LESSON_2026_2.contentId, contentVersion: "1.1.0", contentSha256: lessonPayloadSha256(GRADE4_FRACTIONS_LESSON_2026_2.payload) })]);
+      contentId: GRADE4_FRACTIONS_LESSON_2026_2.contentId, contentVersion: "1.2.0", contentSha256: lessonPayloadSha256(GRADE4_FRACTIONS_LESSON_2026_2.payload) })]);
     expect(composed.included.filter((entry) => entry.moeObjectiveId === PARTS_OF_A_SET).map((entry) => entry.id)).toEqual([
       GRADE4_FRACTIONS_LESSON_2026_2.contentId, "g4-frac-practice-part-of-whole", "g4-frac-practice-part-of-set",
-      "g4-frac-practice-unequal-parts", "g4-frac-check-denominator-meaning"]);
+      "g4-frac-practice-unequal-parts", "g4-frac-check-denominator-meaning", "g4-frac-check-part-of-set"]);
 
     // An approval of a different identity, or with no reviewer, does not execute.
     expect(composeGrade4MathRelease2026_2({ ledger: approvedLedger, approval: { ...approval, approvedIdentity: "0".repeat(64) } }).executable).toBe(false);

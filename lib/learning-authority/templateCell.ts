@@ -31,6 +31,11 @@ export type InteractionSpec = Readonly<{
   /** What a learner does with no device or no connection. Required for anything but NONE. */
   offlineFallback: string | null;
   safety: string | null;
+  /**
+   * A digital modality that is planned but NOT implemented: a recorded
+   * product gap. It never counts as implemented and never replaces `need`.
+   */
+  plannedEnhancement?: Readonly<{ gapCode: string; need: InteractionNeed; description: string }> | null;
 }>;
 
 export type ComponentKind = "CLASSWORK" | "HOMEWORK" | "PRACTICE" | "QUIZ" | "DIAGNOSTIC" | "ASSESSMENT" | "PROJECT";
@@ -375,6 +380,12 @@ function interactionErrors(objective: CellObjective, input: CertificationInput):
   if (spec.need === "VIRTUAL_LAB" && !spec.labId) errors.push(`virtual_lab_requires_lab_engine:${id}`);
   if (spec.need === "PRACTICAL" && !spec.safety?.trim()) errors.push(`practical_safety_required:${id}`);
   if (spec.need === "THREE_D" && !/rotat|spatial|hidden|faces|view/i.test(spec.rationale)) errors.push(`three_d_rationale_not_spatial:${id}`);
+  const planned = spec.plannedEnhancement;
+  if (planned) {
+    if (!/^[A-Z][A-Z0-9_]+$/.test(planned.gapCode) || !planned.description.trim()) errors.push(`planned_enhancement_invalid:${id}`);
+    if (planned.need === "NONE") errors.push(`planned_enhancement_invalid:${id}`);
+    if (planned.need === "THREE_D" && !/rotat|spatial|hidden|faces|view/i.test(planned.description)) errors.push(`three_d_rationale_not_spatial:${id}`);
+  }
   return errors;
 }
 

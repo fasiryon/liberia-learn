@@ -13,21 +13,28 @@ For each objective, record APPROVE / REVISE / REJECT in `review-ledger.json`. No
 | MOE approval | NOT_CLAIMED (source provenance is not approval) |
 | Lesson | Reading and Writing Numbers to 100,000 (`ll-g4-math-read-write-numbers-to-100000-2026.1` v0.1.0) |
 | Status | DRAFT_UNREVIEWED |
-| Interaction | NONE |
-| Interaction offline | n/a |
-| Evidence | NONE |
+| Interaction | MANIPULATIVE_2D. Learners build and read numbers by placing digit cards or place-value strips in a place-value chart (MOE mat1: place value chart and strips). |
+| Interaction offline | Place-value chart drawn in exercise books or on the board, with paper digit cards and place-value strips. |
+| Planned enhancement | GRADE_4_6_PLACE_VALUE_MANIPULATIVE (MANIPULATIVE_2D), NOT IMPLEMENTED: No online place-value chart tool is registered; the paper chart and strips are the core modality. |
+| Evidence | GOVERNED_ITEM_RESPONSE |
 | Example-data labels | none |
+| Reviewed content | `ll-g4-math-read-write-numbers-to-100000-2026.1` v0.1.0, payload sha256 `2dc47abde1ab3d2351a9c82e0bbe65a8030e58b0ada746a7a73562e8aefa1777` |
+| Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision). Decisions applied: CPR-2026-09-26-R01 |
 
-**Known uncertainties:** none recorded.
+**Known uncertainties:** 
+- Interaction MANIPULATIVE_2D has no enabled online tool; offline fallback only.
+  - **HUMAN_POLICY_DECISION_REQUIRED.** The paper manipulative (place-value chart and paper strips) is the core modality and fully offline; no online tool exists. Recorded as the non-blocking product gap GRADE_4_6_PLACE_VALUE_MANIPULATIVE.
+  - Evidence: moe-math-g4-s1-p1-numeration-addition-and-subtraction-mat1 p38
+  - Settled by review decision CPR-2026-09-26-R01 (Place-value manipulative; not founder approval): Reclassify NONE -> MANIPULATIVE_2D with a place-value chart and strips; keep the offline paper implementation.
 
 ### Reviewer support (not a decision)
 
 - **Content risks:** none found.
 - **Answers:** VERIFIED: all answer keys recomputed; no errors.
-- **Wording provenance.** MOE-derived: The objective; classwork 'read and write' mirrors act1 ('Read and write whole numbers up to hundred thousand'). LiberiaLearn explanatory: Title, explanation, worked examples, activities, all practice, homework, quiz, diagnostic and assessment items, teacher notes. Example data: None.
+- **Wording provenance.** MOE-derived: The objective; classwork 'read and write' mirrors act1 ('Read and write whole numbers up to hundred thousand'); the place-value chart and strips follow mat1. LiberiaLearn explanatory: Title, explanation, worked examples, activities, all practice, homework, quiz, diagnostic and assessment items, teacher notes. Example data: None.
 - **Grade appropriateness:** Appropriate for Grade 4 and within the MOE scope for this objective.
 - **Component alignment:** Classwork, practice, homework, quiz and exit assessment all target this objective; the diagnostic checks a prerequisite.
-- **Interaction classification (NONE):** RECONSIDER: MOE mat1 lists a place value chart and place value strips (physical manipulatives). NONE could become MANIPULATIVE_2D with paper place-value strips offline; no online place-value tool is registered.
+- **Interaction classification (MANIPULATIVE_2D):** AGREE: MANIPULATIVE_2D with a paper place-value chart and strips (reclassified from NONE by CPR-2026-09-26-R01). No online place-value tool is registered (product gap GRADE_4_6_PLACE_VALUE_MANIPULATIVE).
 
 ### Explanation
 
@@ -47,8 +54,9 @@ Numbers this large appear in daily life: the number of people in a district, the
 
 ### Classwork
 
-- Draw a place-value chart (hundred thousands to ones) in exercise books and place teacher-called numbers in it.
-- Pairs: one learner writes a five-digit number, the partner reads it aloud and writes it in words.
+- Place-value chart: learners draw a chart (hundred thousands to ones) in their books and place paper digit cards in it for numbers the teacher calls, then read each number aloud.
+- Place-value strips: learners stack paper strips (for example 40,000, 7,000, 300 and 5) to build 47,305, then pull the strips apart to show its expanded form.
+- Pairs: one learner builds a five-digit number with cards in the chart, and the partner reads it aloud and writes it in words.
 - Card game: learners arrange five digit cards to make the largest and smallest possible numbers, then read them.
 
 ### Practice
@@ -80,15 +88,15 @@ Write in numerals: eighty thousand, three hundred four. (80,304 / 80,340 / 8,304
 
 ### Teacher notes
 
-Watch for learners who drop zeros (writing 8,304 for eighty thousand, three hundred four). Always have them build the number in a place-value chart first.
+Watch for learners who drop zeros (writing 8,304 for eighty thousand, three hundred four). Always have them build the number in a place-value chart first; an empty column in the chart is where the zero goes. The place-value chart and strips follow the MOE materials for this topic.
 
 ### Materials
 
-Exercise books, Digit cards 0-9, Chalk place-value chart
+Exercise books, Digit cards 0-9 (paper), Place-value strips (paper), Chalk place-value chart
 
 ### Offline behavior
 
-Fully offline: place-value chart drawn on the board and in books; digit cards cut from paper.
+Fully offline and the core modality: place-value chart drawn on the board and in books, with digit cards and place-value strips cut from paper. No online place-value tool exists yet.
 
 Duration: 45 minutes.
 
@@ -105,8 +113,11 @@ Duration: 45 minutes.
 | Status | DRAFT_UNREVIEWED |
 | Interaction | MANIPULATIVE_2D via number-line. Learners place and move values on a number line to compare, order or round. |
 | Interaction offline | Number line drawn in the exercise book or on the floor with chalk. |
+| Planned enhancement | none |
 | Evidence | GOVERNED_ITEM_RESPONSE |
 | Example-data labels | (illustrative) |
+| Reviewed content | `ll-g4-math-compare-order-numbers-to-100000-2026.1` v0.1.0, payload sha256 `58560bb8a7a0eee5df451dbb1b2dccc1c944a427eb836bf44fd1e8e88bdcac93` |
+| Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision) |
 
 **Known uncertainties:** none recorded.
 
@@ -194,8 +205,11 @@ Duration: 45 minutes.
 | Status | DRAFT_UNREVIEWED |
 | Interaction | MANIPULATIVE_2D via number-line. Learners place and move values on a number line to compare, order or round. |
 | Interaction offline | Number line drawn in the exercise book or on the floor with chalk. |
+| Planned enhancement | none |
 | Evidence | GOVERNED_ITEM_RESPONSE |
 | Example-data labels | none |
+| Reviewed content | `ll-g4-math-rounding-whole-numbers-2026.1` v0.1.0, payload sha256 `117ef8bce623393601e0b81c209bd72beb2203a73381aebb54e3a5da1c4272ca` |
+| Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision) |
 
 **Known uncertainties:** none recorded.
 
@@ -285,8 +299,11 @@ Duration: 45 minutes.
 | Status | DRAFT_UNREVIEWED |
 | Interaction | NONE |
 | Interaction offline | n/a |
+| Planned enhancement | none |
 | Evidence | NONE |
 | Example-data labels | example data, Example data |
+| Reviewed content | `ll-g4-math-add-subtract-population-data-2026.1` v0.1.0, payload sha256 `129db94ef65e82335defe9a71ebd2cd8c37d9b0c1a13fd3bcf29ab4c48eabf80` |
+| Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision). Decisions applied: CPR-2026-09-26-P1, CPR-2026-09-26-R02. Every population item now carries an 'Example data' label. |
 
 **Known uncertainties:** 
 - MOE extraction confidence MEDIUM (TAIL_BOUNDARY_UNCERTAIN).
@@ -295,14 +312,13 @@ Duration: 45 minutes.
 - MOE table text may continue past the parsed boundary ('... births, deaths, and migration'). Population figures in the lesson are invented example data.
   - **HUMAN_POLICY_DECISION_REQUIRED.** The tail-boundary part is source-resolved (see #confidence). What remains is data policy: MOE materials name a 'Life skills POPFLE Resource book' and a 'Poster sheet showing population data', i.e. MOE expects real population figures. The draft uses invented figures, labeled as example data. MOE activities mention births and deaths only; the lesson's migration items follow the objective text, which names migration.
   - Evidence: moe-math-g4-s1-p1-numeration-addition-and-subtraction-mat1 p38
-  - Founder decision needed: Keep labeled invented figures, or source real figures (POPFLE resource or national census) with a citation.
+  - Settled by review decision CPR-2026-09-26-P1 (Example data; not founder approval): Clearly labeled example data is acceptable for instructional arithmetic. Real authoritative data may be added where the learning goal requires interpreting real national data; it is not mandatory for basic operations.
 
 ### Reviewer support (not a decision)
 
-- **Content risks:** 
-  - The estimate check in the explanation is loose: 48,000 + 1,000 - 400 = 48,600 is called reasonable for 49,213. Suggest rounding births to the nearest hundred: 48,000 + 1,400 - 400 = 49,000.
+- **Content risks:** none found.
 - **Answers:** VERIFIED: all answer keys recomputed; no errors.
-- **Wording provenance.** MOE-derived: The objective; births and deaths from population data (act3, act4, out1). LiberiaLearn explanatory: Title, explanation, worked examples, activities, all practice, homework, quiz, diagnostic and assessment items, teacher notes. Example data: All population figures (labeled example data for made-up districts).
+- **Wording provenance.** MOE-derived: The objective; births and deaths from population data (act3, act4, out1). LiberiaLearn explanatory: Title, explanation, worked examples, activities, all practice, homework, quiz, diagnostic and assessment items, teacher notes. Example data: All population figures, labeled 'Example data' in every item and in the explanation (made-up districts). Real census figures are not required for this arithmetic objective (CPR-2026-09-26-P1).
 - **Grade appropriateness:** Appropriate for Grade 4 and within the MOE scope for this objective.
 - **Component alignment:** Classwork, practice, homework, quiz and exit assessment all target this objective; the diagnostic checks a prerequisite.
 - **Interaction classification (NONE):** AGREE
@@ -317,7 +333,7 @@ Suppose a district had 48,250 people at the start of a year. During the year the
 
 When adding or subtracting large numbers, line up the digits by place value, starting with the ones. Regroup (carry) when a column adds to 10 or more. When subtracting, regroup (borrow) from the next place if the top digit is smaller.
 
-Always check your answer. Estimate first by rounding (48,000 + 1,000 - 400 is about 48,600, so 49,213 is reasonable), and check subtraction by adding back: 49,213 + 412 = 49,625.
+Always check your answer. Estimate first by rounding (48,250 is about 48,000, 1,375 is about 1,400 and 412 is about 400, so 48,000 + 1,400 - 400 = 49,000, and 49,213 is reasonable), and check subtraction by adding back: 49,213 + 412 = 49,625.
 
 ### Objectives
 
@@ -335,20 +351,20 @@ Always check your answer. Estimate first by rounding (48,000 + 1,000 - 400 is ab
 
 1. Add: 36,487 + 12,758 **Answer:** 49,245
 2. Subtract: 50,000 - 17,364 **Answer:** 32,636
-3. A town had 23,640 people. 845 babies were born and 290 people died. What is the new population? **Answer:** 24,195
-4. In a year, 1,230 people moved into a district and 978 moved out. How many more people moved in than out? **Answer:** 252
+3. Example data: a town had 23,640 people. 845 babies were born and 290 people died. What is the new population? **Answer:** 24,195
+4. Example data: in a year, 1,230 people moved into a district and 978 moved out. How many more people moved in than out? **Answer:** 252
 
 ### Homework
 
 1. Add: 45,906 + 28,395 **Answer:** 74,301
 2. Subtract: 81,205 - 46,718 **Answer:** 34,487
-3. A district of 62,500 people had 1,104 births, 386 deaths and 520 people moving out. What is the new population? **Answer:** 62,698
+3. Example data: a district of 62,500 people had 1,104 births, 386 deaths and 520 people moving out. What is the new population? **Answer:** 62,698
 
 ### Quiz
 
 1. What is 27,568 + 14,736? (42,304 / 41,304 / 42,204 / 41,294) **Answer:** 42,304
 2. What is 60,402 - 25,819? (34,583 / 35,583 / 34,683 / 45,417) **Answer:** 34,583
-3. A town had 15,000 people. There were 600 births and 250 deaths. What is the new population? (15,350 / 15,850 / 14,650 / 15,600) **Answer:** 15,350
+3. Example data: a town had 15,000 people. There were 600 births and 250 deaths. What is the new population? (15,350 / 15,850 / 14,650 / 15,600) **Answer:** 15,350
 
 ### Diagnostic check (before the lesson)
 
@@ -356,7 +372,7 @@ What is 486 + 257? (733 / 743 / 643 / 7,313) **Answer:** 743
 
 ### Exit assessment
 
-A district had 34,280 people. 1,150 people moved in and 2,075 moved out. What is the new population? (33,355 / 35,430 / 37,505 / 32,205) **Answer:** 33,355
+Example data: a district had 34,280 people. 1,150 people moved in and 2,075 moved out. What is the new population? (33,355 / 35,430 / 37,505 / 32,205) **Answer:** 33,355
 
 ### Teacher notes
 

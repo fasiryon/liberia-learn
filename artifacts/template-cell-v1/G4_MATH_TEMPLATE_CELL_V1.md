@@ -47,25 +47,25 @@ MOE archive page → structured objective (`curriculum/structured/moe-structured
 
 | Need | Objectives |
 |---|---:|
-| NONE | 24 |
-| MANIPULATIVE_2D | 14 |
+| NONE | 19 |
+| MANIPULATIVE_2D | 18 |
 | SIMULATION | 0 |
 | VIRTUAL_LAB | 0 |
-| PRACTICAL | 5 |
-| THREE_D | 1 |
+| PRACTICAL | 7 |
+| THREE_D | 0 |
 
-Implemented with an enabled tool, lab or practical protocol: 16. Gaps (need classified, no Grade 4-6 tool/engine exists): `obj2:MANIPULATIVE_2D` MANIPULATIVE_2D, `obj9:MANIPULATIVE_2D` MANIPULATIVE_2D, `obj2:MANIPULATIVE_2D` MANIPULATIVE_2D, `obj5:THREE_D` THREE_D.
+Implemented with an enabled tool, lab or practical protocol: 18. Gaps (need classified, no Grade 4-6 tool/engine exists): `obj1:MANIPULATIVE_2D` MANIPULATIVE_2D, `obj3:MANIPULATIVE_2D` MANIPULATIVE_2D, `obj2:MANIPULATIVE_2D` MANIPULATIVE_2D, `obj9:MANIPULATIVE_2D` MANIPULATIVE_2D, `obj2:MANIPULATIVE_2D` MANIPULATIVE_2D, `obj3:MANIPULATIVE_2D` MANIPULATIVE_2D, `obj4:MANIPULATIVE_2D` MANIPULATIVE_2D.
 No objective needs a VIRTUAL_LAB or SIMULATION: the lab engine's 19 typed labs are all science, and none is claimed here.
 
 | Unit | Objective | Page | Interaction | Lesson | Governed components |
 |---|---|---:|---|---|---|
-| u1-numeration-add-subtract | Read and write whole numbers up to hundred thousand | 38 | NONE | draft | none |
+| u1-numeration-add-subtract | Read and write whole numbers up to hundred thousand | 38 | MANIPULATIVE_2D (gap) | draft | none |
 | u1-numeration-add-subtract | Compare and order whole numbers to hundred thousand | 38 | MANIPULATIVE_2D | draft | none |
 | u1-numeration-add-subtract | Round whole numbers up to thousand | 38 | MANIPULATIVE_2D | draft | none |
 | u1-numeration-add-subtract | Add and subtract whole numbers using population data on births, deaths, and migration | 38 | NONE | draft | none |
 | u2-multiply-divide-whole | Identify multiplication facts and properties. | 40 | MANIPULATIVE_2D | draft | none |
 | u2-multiply-divide-whole | Multiply multiples of 10’s, 100’s, and 1000’s. | 40 | NONE | draft | none |
-| u2-multiply-divide-whole | Multiply 2, 3, or 4 digits by 1 - digit. | 40 | NONE | draft | none |
+| u2-multiply-divide-whole | Multiply 2, 3, or 4 digits by 1 - digit. | 40 | MANIPULATIVE_2D (gap) | draft | none |
 | u2-multiply-divide-whole | Divide 2, 3, or 4 - digit numbers by 1 - digit divisor. | 40 | NONE | draft | none |
 | u2-multiply-divide-whole | Divide whole numbers with zero in the quotient. | 40 | NONE | draft | none |
 | u2-multiply-divide-whole | Solve problem involving division. | 41 | NONE | draft | none |
@@ -97,10 +97,10 @@ No objective needs a VIRTUAL_LAB or SIMULATION: the lab engine's 19 typed labs a
 | u5-measurement | Find the perimeters and areas of squares and rectangles. | 47 | MANIPULATIVE_2D (gap) | draft | none |
 | u6-geometry-statistics | Identify geometric figures of line, line segments, rays, interesting lines, parallel lines. | 48 | NONE | draft | none |
 | u6-geometry-statistics | Identify angles by shapes as right angle, less than right angle, or greater than right angle; perpendicular lines. | 48 | MANIPULATIVE_2D (gap) | draft | none |
-| u6-geometry-statistics | Identify triangles, quadrilaterals or pentago n, hexagon as polygon. | 48 | NONE | draft | none |
-| u6-geometry-statistics | Identify parts of a circle. | 48 | NONE | draft | none |
-| u6-geometry-statistics | Identify solid figures – spheres, cylinder, cones, cubes, rectangular prisms. | 49 | THREE_D (gap) | draft | none |
-| u6-geometry-statistics | Read and interpret bar graphs, line graphs, pie chart, and mode, mean, median, & average. | 49 | NONE | draft | none |
+| u6-geometry-statistics | Identify triangles, quadrilaterals or pentago n, hexagon as polygon. | 48 | MANIPULATIVE_2D (gap) | draft | none |
+| u6-geometry-statistics | Identify parts of a circle. | 48 | MANIPULATIVE_2D (gap) | draft | none |
+| u6-geometry-statistics | Identify solid figures – spheres, cylinder, cones, cubes, rectangular prisms. | 49 | PRACTICAL | draft | none |
+| u6-geometry-statistics | Read and interpret bar graphs, line graphs, pie chart, and mode, mean, median, & average. | 49 | PRACTICAL | draft | none |
 | u6-geometry-statistics | Find the mode, medium, and mean using the given population data. | 49 | NONE | draft | none |
 | u6-geometry-statistics | Solve word problems involving drawing of diagrams. | 49 | NONE | draft | none |
 

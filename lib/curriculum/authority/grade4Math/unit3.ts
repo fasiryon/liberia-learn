@@ -2,7 +2,7 @@ import { draftLesson, mcq, objectiveId, p, U } from "./types";
 
 const unit = U.m3;
 
-/** Objective 4 (parts of a set) is covered by ll-g4-math-fractions-equal-parts-2026.1. */
+/** Objective 4 (parts of a set) is covered by the founder-authored lessons in ../grade4FractionsLesson.ts (2026.1, and the 2026.2 candidate). */
 export const UNIT3_LESSONS = [
   draftLesson({
     slug: "even-and-odd-numbers", moeObjectiveId: objectiveId("m3", 1), unitId: unit,
@@ -45,36 +45,42 @@ export const UNIT3_LESSONS = [
     slug: "factors-and-multiples", moeObjectiveId: objectiveId("m3", 2), unitId: unit,
     payload: {
       title: "Factors and Multiples",
-      body: "Factors are numbers that multiply together to make a number. Since 3 x 4 = 12, 3 and 4 are factors of 12. The factors of 12 are 1, 2, 3, 4, 6 and 12. Every number has 1 and itself as factors.\n\nTo find all factors, look for factor pairs: 1 x 12, 2 x 6, 3 x 4. Stop when the pairs start to repeat.\n\nA multiple of a number is what you get when you multiply it by a whole number. The multiples of 4 are 4, 8, 12, 16, 20 and so on: the numbers you say when skip-counting by 4. The list of multiples never ends.\n\nFactors and multiples are linked: 3 is a factor of 12, and 12 is a multiple of 3.\n\nA number with exactly two factors (1 and itself) is prime, such as 2, 3, 5, 7, 11 and 13. A number with more than two factors, such as 12, is composite. The number 1 is neither.",
+      body: "Factors are numbers that multiply together to make a number. Since 3 x 4 = 12, 3 and 4 are factors of 12. The factors of 12 are 1, 2, 3, 4, 6 and 12. Every number has 1 and itself as factors.\n\nTo find all factors, look for factor pairs: 1 x 12, 2 x 6, 3 x 4. Stop when the pairs start to repeat.\n\nA multiple of a number is what you get when you multiply it by a whole number. The multiples of 4 are 4, 8, 12, 16, 20 and so on: the numbers you say when skip-counting by 4. The list of multiples never ends.\n\nFactors and multiples are linked: 3 is a factor of 12, and 12 is a multiple of 3.\n\nA number with exactly two factors (1 and itself) is prime, such as 2, 3, 5, 7, 11 and 13. A number with more than two factors, such as 12, is composite. The number 1 is neither.\n\nEvery composite number can be written as a product of prime factors. A factor tree finds them. Write the number at the top and split it into any factor pair. Keep splitting each composite factor until every branch ends in a prime.\n12 = 2 x 6, and 6 = 2 x 3, so 12 = 2 x 2 x 3.\n30 = 3 x 10, and 10 = 2 x 5, so 30 = 2 x 3 x 5.\nIt does not matter which factor pair you start with: 12 = 3 x 4 = 3 x 2 x 2 gives the same primes. Check by multiplying the primes back together.",
       objectives: [
         "Find all the factors of a number up to 100.",
         "List multiples of a number.",
         "Identify prime and composite numbers.",
+        "Write a number as a product of its prime factors using a factor tree.",
       ],
       activities: [
         "Array hunt: with 12 counters, learners make every possible rectangle array and record the factor pairs.",
         "Skip-count chant: count by 6s and 7s and write the first ten multiples.",
         "Sieve: on a hundred chart, cross out multiples of 2, 3, 5 and 7 (not the numbers themselves) to find primes.",
+        "Factor trees: learners draw factor trees for 12 and 30 in their books, circle each prime at the end of a branch, and check by multiplying the circled primes.",
       ],
       practice: [
         p("List all the factors of 18.", "1, 2, 3, 6, 9, 18"),
         p("List the first five multiples of 7.", "7, 14, 21, 28, 35"),
         p("Is 5 a factor of 45?", "Yes, 5 x 9 = 45"),
         p("Is 21 prime or composite?", "Composite (3 x 7)"),
+        p("Write 12 as a product of prime factors.", "2 x 2 x 3"),
+        p("Write 30 as a product of prime factors.", "2 x 3 x 5"),
       ],
       homework: [
         p("List all the factors of 24.", "1, 2, 3, 4, 6, 8, 12, 24"),
         p("List the first six multiples of 9.", "9, 18, 27, 36, 45, 54"),
         p("Write all the prime numbers between 20 and 30.", "23, 29"),
+        p("Draw a factor tree for 20 and write 20 as a product of prime factors.", "2 x 2 x 5"),
       ],
       quiz: [
         mcq("Which is NOT a factor of 20?", ["3", "4", "5", "10"], "3"),
         mcq("Which is a multiple of 6?", ["42", "32", "16", "26"], "42"),
         mcq("Which number is prime?", ["17", "15", "21", "27"], "17"),
+        mcq("Which shows 18 as a product of prime factors?", ["2 x 3 x 3", "2 x 9", "3 x 6", "1 x 18"], "2 x 3 x 3"),
       ],
       diagnosticCheck: mcq("What is 4 x 6?", ["24", "20", "28", "10"], "24"),
       assessment: mcq("Which list shows all the factors of 16?", ["1, 2, 4, 8, 16", "2, 4, 8", "1, 2, 4, 6, 8, 16", "16, 32, 48"], "1, 2, 4, 8, 16"),
-      teacherNotes: "Learners mix up factors and multiples. Anchor the words: factors are few and fit inside the number; multiples are many and grow bigger.",
+      teacherNotes: "Learners mix up factors and multiples. Anchor the words: factors are few and fit inside the number; multiples are many and grow bigger. In factor trees, learners often stop at a composite branch (12 = 2 x 6); ask 'Is every number at the end of a branch prime?' Prime factors follow the MOE activity 'Determine the prime factors of a number' for this topic. LCM and GCF (next lesson) stay listing-based.",
       materials: ["Counters", "Hundred chart"],
       offline: "Fully offline. Online, the multiplication-table tool helps learners read factor pairs.",
     },
@@ -195,10 +201,9 @@ export const UNIT3_LESSONS = [
     slug: "adding-fractions", moeObjectiveId: objectiveId("m3", 7), unitId: unit,
     payload: {
       title: "Adding Fractions",
-      body: "When fractions have the same denominator, the parts are the same size, so we add the numerators and keep the denominator.\n2/8 + 3/8 = 5/8 (2 eighths plus 3 eighths is 5 eighths).\n\nDo not add the denominators. 2/8 + 3/8 is not 5/16: eighths plus eighths are still eighths.\n\nIf the answer can be simplified, simplify it: 1/6 + 3/6 = 4/6 = 2/3. If the numerator is bigger than the denominator, the answer is more than one whole: 3/4 + 2/4 = 5/4 = 1 1/4.\n\nWhen denominators are different but related, first change one fraction to an equivalent fraction with the same denominator:\n1/2 + 1/4 = 2/4 + 1/4 = 3/4.\n\nThe MOE activity uses counters to show adding fractions: 3 counters out of 10 plus 4 counters out of 10 makes 7 out of 10.",
+      body: "When fractions have the same denominator, the parts are the same size, so we add the numerators and keep the denominator.\n2/8 + 3/8 = 5/8 (2 eighths plus 3 eighths is 5 eighths).\n\nDo not add the denominators. 2/8 + 3/8 is not 5/16: eighths plus eighths are still eighths.\n\nIf the answer can be simplified, simplify it: 1/6 + 3/6 = 4/6 = 2/3. If the numerator is bigger than the denominator, the answer is more than one whole: 3/4 + 2/4 = 5/4 = 1 1/4.\n\nIn Grade 4 we add only fractions with the same denominator.\n\nThe MOE curriculum suggests base-10 counters: 3 counters out of 10 plus 4 counters out of 10 makes 7 out of 10.",
       objectives: [
         "Add fractions with the same denominator.",
-        "Add fractions with related denominators by making equivalent fractions.",
         "Simplify sums and write sums greater than one as mixed numbers.",
       ],
       activities: [
@@ -209,22 +214,22 @@ export const UNIT3_LESSONS = [
       practice: [
         p("2/5 + 1/5 = ?", "3/5"),
         p("3/10 + 5/10 = ? (simplest form)", "4/5"),
-        p("1/2 + 1/4 = ?", "3/4"),
+        p("1/4 + 2/4 = ?", "3/4"),
         p("5/6 + 3/6 = ? (as a mixed number)", "1 1/3"),
       ],
       homework: [
         p("4/9 + 2/9 = ? (simplest form)", "2/3"),
-        p("1/3 + 1/6 = ? (simplest form)", "1/2"),
+        p("1/6 + 2/6 = ? (simplest form)", "1/2"),
         p("Musu walks 3/8 km to the pump and 3/8 km back. How far does she walk?", "6/8 km = 3/4 km"),
       ],
       quiz: [
         mcq("What is 3/7 + 2/7?", ["5/7", "5/14", "6/7", "1/7"], "5/7"),
-        mcq("What is 1/4 + 1/2?", ["3/4", "2/6", "2/4", "1/6"], "3/4"),
+        mcq("What is 1/4 + 2/4?", ["3/4", "3/8", "2/4", "1/4"], "3/4"),
         mcq("What is 2/3 + 2/3?", ["1 1/3", "4/6", "4/9", "2/3"], "1 1/3"),
       ],
-      diagnosticCheck: mcq("Complete: 1/2 = ?/4", ["2", "1", "4", "3"], "2"),
-      assessment: mcq("What is 3/8 + 1/4?", ["5/8", "4/12", "4/8", "1/2"], "5/8"),
-      teacherNotes: "The most common error is adding denominators (2/8 + 3/8 = 5/16). Ask: are the parts still eighths? Show it with strips.",
+      diagnosticCheck: mcq("How many eighths make one whole?", ["8", "4", "2", "16"], "8"),
+      assessment: mcq("What is 3/8 + 2/8?", ["5/8", "5/16", "1/8", "6/8"], "5/8"),
+      teacherNotes: "The most common error is adding denominators (2/8 + 3/8 = 5/16). Ask: are the parts still eighths? Show it with strips. Grade 4 adds like denominators only; adding related or unlike denominators is later (Grade 5) content. The counter example is LiberiaLearn's illustration of the MOE suggestion to use base-10 counters; it is not MOE text.",
       materials: ["Fraction strips", "Counters"],
       offline: "Fully offline with paper strips and counters. Online, the fraction-visualizer tool joins strips.",
     },
@@ -233,11 +238,10 @@ export const UNIT3_LESSONS = [
     slug: "subtracting-fractions", moeObjectiveId: objectiveId("m3", 8), unitId: unit,
     payload: {
       title: "Subtracting Fractions",
-      body: "Subtracting fractions with the same denominator works like adding. Subtract the numerators and keep the denominator.\n7/10 - 3/10 = 4/10 = 2/5.\n\nTaking away from a whole: 1 - 3/8. Write 1 as 8/8, then 8/8 - 3/8 = 5/8.\n\nWith related denominators, first make the denominators the same:\n3/4 - 1/2 = 3/4 - 2/4 = 1/4.\n\nCheck subtraction with addition: 1/4 + 2/4 = 3/4.\n\nIn a story: a bottle of palm oil is 5/6 full, and 2/6 is used for cooking. 5/6 - 2/6 = 3/6 = 1/2 of the bottle is left.",
+      body: "Subtracting fractions with the same denominator works like adding. Subtract the numerators and keep the denominator.\n7/10 - 3/10 = 4/10 = 2/5.\n\nTaking away from a whole: 1 - 3/8. Write 1 as 8/8, then 8/8 - 3/8 = 5/8.\n\nIn Grade 4 we subtract only fractions with the same denominator, including taking a fraction away from one whole.\n\nCheck subtraction with addition: 5/8 + 3/8 = 8/8 = 1.\n\nIn a story: a bottle of palm oil is 5/6 full, and 2/6 is used for cooking. 5/6 - 2/6 = 3/6 = 1/2 of the bottle is left.",
       objectives: [
         "Subtract fractions with the same denominator.",
         "Subtract a fraction from a whole.",
-        "Subtract fractions with related denominators.",
       ],
       activities: [
         "Strip removal: start with a 7/10 strip, cover 3/10 and read what is left.",
@@ -248,21 +252,21 @@ export const UNIT3_LESSONS = [
         p("5/7 - 2/7 = ?", "3/7"),
         p("9/12 - 3/12 = ? (simplest form)", "1/2"),
         p("1 - 2/5 = ?", "3/5"),
-        p("5/6 - 1/3 = ? (simplest form)", "1/2"),
+        p("5/6 - 2/6 = ? (simplest form)", "1/2"),
       ],
       homework: [
         p("7/8 - 5/8 = ? (simplest form)", "1/4"),
         p("1 - 5/9 = ?", "4/9"),
-        p("A cloth is 3/4 m long. Fatu cuts off 1/2 m. How much is left?", "1/4 m"),
+        p("A cloth is 3/4 m long. Fatu cuts off 1/4 m. How much is left?", "2/4 m = 1/2 m"),
       ],
       quiz: [
-        mcq("What is 6/9 - 2/9?", ["4/9", "4/0", "8/9", "4/18"], "4/9"),
+        mcq("What is 6/9 - 2/9?", ["4/9", "3/9", "8/9", "4/18"], "4/9"),
         mcq("What is 1 - 1/4?", ["3/4", "0/4", "1/3", "4/4"], "3/4"),
-        mcq("What is 1/2 - 1/4?", ["1/4", "0", "2/4", "1/2"], "1/4"),
+        mcq("What is 3/4 - 1/4?", ["1/2", "2/8", "1", "4/4"], "1/2"),
       ],
       diagnosticCheck: mcq("How many quarters make one whole?", ["4", "2", "3", "8"], "4"),
-      assessment: mcq("What is 7/8 - 1/4?", ["5/8", "6/4", "3/4", "6/8"], "5/8"),
-      teacherNotes: "Taking a fraction from 1 is hard for learners until they rename 1 as a fraction (8/8). Practise renaming wholes before subtracting.",
+      assessment: mcq("What is 7/8 - 2/8?", ["5/8", "9/8", "5/16", "6/8"], "5/8"),
+      teacherNotes: "Taking a fraction from 1 is hard for learners until they rename 1 as a fraction (8/8). Practise renaming wholes before subtracting. Grade 4 subtracts like denominators only, plus taking a fraction from a whole; related or unlike denominators are later (Grade 5) content.",
       materials: ["Fraction strips", "Paper for folding"],
       offline: "Fully offline. Online, the fraction-visualizer tool supports removal.",
     },

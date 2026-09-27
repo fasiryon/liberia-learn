@@ -14,8 +14,9 @@ export const UNIT1_LESSONS = [
         "Write a number in expanded form.",
       ],
       activities: [
-        "Draw a place-value chart (hundred thousands to ones) in exercise books and place teacher-called numbers in it.",
-        "Pairs: one learner writes a five-digit number, the partner reads it aloud and writes it in words.",
+        "Place-value chart: learners draw a chart (hundred thousands to ones) in their books and place paper digit cards in it for numbers the teacher calls, then read each number aloud.",
+        "Place-value strips: learners stack paper strips (for example 40,000, 7,000, 300 and 5) to build 47,305, then pull the strips apart to show its expanded form.",
+        "Pairs: one learner builds a five-digit number with cards in the chart, and the partner reads it aloud and writes it in words.",
         "Card game: learners arrange five digit cards to make the largest and smallest possible numbers, then read them.",
       ],
       practice: [
@@ -36,9 +37,9 @@ export const UNIT1_LESSONS = [
       ],
       diagnosticCheck: mcq("What is the value of 3 in 3,452?", ["3", "30", "300", "3,000"], "3,000"),
       assessment: mcq("Write in numerals: eighty thousand, three hundred four.", ["80,304", "80,340", "8,304", "800,304"], "80,304"),
-      teacherNotes: "Watch for learners who drop zeros (writing 8,304 for eighty thousand, three hundred four). Always have them build the number in a place-value chart first.",
-      materials: ["Exercise books", "Digit cards 0-9", "Chalk place-value chart"],
-      offline: "Fully offline: place-value chart drawn on the board and in books; digit cards cut from paper.",
+      teacherNotes: "Watch for learners who drop zeros (writing 8,304 for eighty thousand, three hundred four). Always have them build the number in a place-value chart first; an empty column in the chart is where the zero goes. The place-value chart and strips follow the MOE materials for this topic.",
+      materials: ["Exercise books", "Digit cards 0-9 (paper)", "Place-value strips (paper)", "Chalk place-value chart"],
+      offline: "Fully offline and the core modality: place-value chart drawn on the board and in books, with digit cards and place-value strips cut from paper. No online place-value tool exists yet.",
     },
   }),
   draftLesson({
@@ -119,7 +120,7 @@ export const UNIT1_LESSONS = [
     slug: "add-subtract-population-data", moeObjectiveId: objectiveId("m1", 4), unitId: unit,
     payload: {
       title: "Adding and Subtracting with Population Data",
-      body: "A population changes in three main ways: babies are born, people die, and people move in or out (migration). We use addition and subtraction to follow these changes.\n\nThe numbers in this lesson are example data for a made-up district. They are for practice and are not real statistics.\n\nSuppose a district had 48,250 people at the start of a year. During the year there were 1,375 births and 412 deaths. To find the new population, add the births and subtract the deaths: 48,250 + 1,375 = 49,625, then 49,625 - 412 = 49,213.\n\nWhen adding or subtracting large numbers, line up the digits by place value, starting with the ones. Regroup (carry) when a column adds to 10 or more. When subtracting, regroup (borrow) from the next place if the top digit is smaller.\n\nAlways check your answer. Estimate first by rounding (48,000 + 1,000 - 400 is about 48,600, so 49,213 is reasonable), and check subtraction by adding back: 49,213 + 412 = 49,625.",
+      body: "A population changes in three main ways: babies are born, people die, and people move in or out (migration). We use addition and subtraction to follow these changes.\n\nThe numbers in this lesson are example data for a made-up district. They are for practice and are not real statistics.\n\nSuppose a district had 48,250 people at the start of a year. During the year there were 1,375 births and 412 deaths. To find the new population, add the births and subtract the deaths: 48,250 + 1,375 = 49,625, then 49,625 - 412 = 49,213.\n\nWhen adding or subtracting large numbers, line up the digits by place value, starting with the ones. Regroup (carry) when a column adds to 10 or more. When subtracting, regroup (borrow) from the next place if the top digit is smaller.\n\nAlways check your answer. Estimate first by rounding (48,250 is about 48,000, 1,375 is about 1,400 and 412 is about 400, so 48,000 + 1,400 - 400 = 49,000, and 49,213 is reasonable), and check subtraction by adding back: 49,213 + 412 = 49,625.",
       objectives: [
         "Add and subtract whole numbers up to 100,000 with regrouping.",
         "Use births, deaths and migration data to find population change.",
@@ -133,21 +134,21 @@ export const UNIT1_LESSONS = [
       practice: [
         p("Add: 36,487 + 12,758", "49,245"),
         p("Subtract: 50,000 - 17,364", "32,636"),
-        p("A town had 23,640 people. 845 babies were born and 290 people died. What is the new population?", "24,195"),
-        p("In a year, 1,230 people moved into a district and 978 moved out. How many more people moved in than out?", "252"),
+        p("Example data: a town had 23,640 people. 845 babies were born and 290 people died. What is the new population?", "24,195"),
+        p("Example data: in a year, 1,230 people moved into a district and 978 moved out. How many more people moved in than out?", "252"),
       ],
       homework: [
         p("Add: 45,906 + 28,395", "74,301"),
         p("Subtract: 81,205 - 46,718", "34,487"),
-        p("A district of 62,500 people had 1,104 births, 386 deaths and 520 people moving out. What is the new population?", "62,698"),
+        p("Example data: a district of 62,500 people had 1,104 births, 386 deaths and 520 people moving out. What is the new population?", "62,698"),
       ],
       quiz: [
         mcq("What is 27,568 + 14,736?", ["42,304", "41,304", "42,204", "41,294"], "42,304"),
         mcq("What is 60,402 - 25,819?", ["34,583", "35,583", "34,683", "45,417"], "34,583"),
-        mcq("A town had 15,000 people. There were 600 births and 250 deaths. What is the new population?", ["15,350", "15,850", "14,650", "15,600"], "15,350"),
+        mcq("Example data: a town had 15,000 people. There were 600 births and 250 deaths. What is the new population?", ["15,350", "15,850", "14,650", "15,600"], "15,350"),
       ],
       diagnosticCheck: mcq("What is 486 + 257?", ["733", "743", "643", "7,313"], "743"),
-      assessment: mcq("A district had 34,280 people. 1,150 people moved in and 2,075 moved out. What is the new population?", ["33,355", "35,430", "37,505", "32,205"], "33,355"),
+      assessment: mcq("Example data: a district had 34,280 people. 1,150 people moved in and 2,075 moved out. What is the new population?", ["33,355", "35,430", "37,505", "32,205"], "33,355"),
       teacherNotes: "State clearly that all population figures are example data. Regrouping across zeros (as in 50,000 - 17,364) is the most frequent error; model it step by step.",
       materials: ["Example data cards (made-up towns)", "Exercise books"],
       offline: "Fully offline: data cards are printed or copied onto the board.",

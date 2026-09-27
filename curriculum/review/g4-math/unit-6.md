@@ -15,20 +15,24 @@ For each objective, record APPROVE / REVISE / REJECT in `review-ledger.json`. No
 | Status | DRAFT_UNREVIEWED |
 | Interaction | NONE |
 | Interaction offline | n/a |
+| Planned enhancement | none |
 | Evidence | NONE |
 | Example-data labels | none |
+| Reviewed content | `ll-g4-math-lines-segments-rays-2026.1` v0.1.0, payload sha256 `11e0928ef247a4afec1bbc799ed5efe15f896c25c4c42103256e4bdc1b0d4d32` |
+| Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision). Decisions applied: CPR-2026-09-26-P4, CPR-2026-09-26-R11 |
 
 **Known uncertainties:** 
 - MOE source says 'interesting lines'; read as 'intersecting lines'.
   - **LIBERIALEARN_CLARIFICATION_REQUIRED.** No Grade 4 source item spells the term correctly. 'Intersecting' is the only geometric term that fits the list (line, line segments, rays, ___ lines, parallel lines); related source wording elsewhere is 'intersection' (Grade 5 p75 'Touching and intersection circles'). This is a LiberiaLearn reading, not a source fact.
   - Evidence: moe-math-g4-s2-p6-geometry-and-statistics-act2 p48; Grade 5 CONTENT p75 'Touching and intersection circles'
-  - Proposed correction: Add to 6.1 teacher notes: 'The MOE objective reads "interesting lines"; LiberiaLearn reads this as "intersecting lines".' Keep the MOE text verbatim in the objective record.
+  - Correction: Add to 6.1 teacher notes: 'The MOE objective reads "interesting lines"; LiberiaLearn reads this as "intersecting lines".' Keep the MOE text verbatim in the objective record.
+  - Settled by review decision CPR-2026-09-26-P4 (Intersecting lines; not founder approval): MOE 'interesting lines' is interpreted by LiberiaLearn as 'intersecting lines'; the MOE text is preserved in provenance.
 
 ### Reviewer support (not a decision)
 
 - **Content risks:** none found.
 - **Answers:** VERIFIED: all answer keys recomputed; no errors.
-- **Wording provenance.** MOE-derived: The objective; point, line, ray and segment follow act2 ('Identify point, lines, rays, and line segment'). LiberiaLearn explanatory: Title, explanation, worked examples, activities, all practice, homework, quiz, diagnostic and assessment items, teacher notes. Example data: None.
+- **Wording provenance.** MOE-derived: The objective; point, line, ray and segment follow act2 ('Identify point, lines, rays, and line segment'). Teacher notes record that MOE reads 'interesting lines' and LiberiaLearn interprets 'intersecting lines' (CPR-2026-09-26-P4). LiberiaLearn explanatory: Title, explanation, worked examples, activities, all practice, homework, quiz, diagnostic and assessment items, teacher notes. Example data: None.
 - **Grade appropriateness:** Appropriate for Grade 4 and within the MOE scope for this objective.
 - **Component alignment:** Classwork, practice, homework, quiz and exit assessment all target this objective; the diagnostic checks a prerequisite.
 - **Interaction classification (NONE):** AGREE
@@ -90,7 +94,7 @@ Two roads cross at a junction. They are: (Intersecting lines / Parallel lines / 
 
 ### Teacher notes
 
-Learners confuse lines and segments. Stress the arrows: arrows mean the figure goes on forever.
+Learners confuse lines and segments. Stress the arrows: arrows mean the figure goes on forever. Provenance: the MOE objective reads "interesting lines"; LiberiaLearn interprets this as "intersecting lines". The MOE text is kept as written in the objective record.
 
 ### Materials
 
@@ -115,8 +119,11 @@ Duration: 45 minutes.
 | Status | DRAFT_UNREVIEWED |
 | Interaction | MANIPULATIVE_2D. Learners test angles against a right angle and turn rays to see smaller and larger angles. |
 | Interaction offline | Folded-paper right-angle tester used on classroom corners. |
+| Planned enhancement | GRADE_4_6_ANGLE_TESTER (MANIPULATIVE_2D), NOT IMPLEMENTED: No Grade 4-6 angle tool is enabled online (the protractor is Grades 7+ and Grade 4 does not measure degrees); the folded-paper tester is the core modality. |
 | Evidence | GOVERNED_ITEM_RESPONSE |
 | Example-data labels | none |
+| Reviewed content | `ll-g4-math-angles-perpendicular-lines-2026.1` v0.1.0, payload sha256 `a1bf10af25639d40b6f93a0eb13fc7af44023c6be2de357accd7ae3b616c6f8b` |
+| Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision) |
 
 **Known uncertainties:** 
 - Grade 4 does not measure degrees; the lesson uses a folded-paper right-angle tester. Protractor tool is enabled only for Grades 7+.
@@ -213,15 +220,22 @@ Duration: 45 minutes.
 | MOE approval | NOT_CLAIMED (source provenance is not approval) |
 | Lesson | Polygons: Triangles, Quadrilaterals, Pentagons and Hexagons (`ll-g4-math-polygons-2026.1` v0.1.0) |
 | Status | DRAFT_UNREVIEWED |
-| Interaction | NONE |
-| Interaction offline | n/a |
-| Evidence | NONE |
+| Interaction | MANIPULATIVE_2D. Learners build polygons from sticks and sort paper cut-outs by number of sides (MOE act3: sort polygons according to sides). |
+| Interaction offline | Sticks or straws and paper cut-out shapes. |
+| Planned enhancement | GRADE_4_6_SHAPE_SORT_MANIPULATIVE (MANIPULATIVE_2D), NOT IMPLEMENTED: No online shape-building or sorting tool is registered; sticks and cut-outs are the core modality. |
+| Evidence | GOVERNED_ITEM_RESPONSE |
 | Example-data labels | none |
+| Reviewed content | `ll-g4-math-polygons-2026.1` v0.1.0, payload sha256 `e05d6257ea37e366c6f79da8adfdff86240b78f041cd51a24cfe5652b767e081` |
+| Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision). Decisions applied: CPR-2026-09-26-R12 |
 
 **Known uncertainties:** 
 - MOE source says 'pentago n' (spacing artifact) for pentagon.
   - **SOURCE_RESOLVED.** 'pentago n' is a text-extraction spacing artifact inside one word; the list (triangles, quadrilaterals, ___, hexagon) and act3 'Sort out polygons according to sides and identify each' admit only 'pentagon'. Raw text kept verbatim.
   - Evidence: moe-math-g4-s2-p6-geometry-and-statistics-act3 p48
+- Interaction MANIPULATIVE_2D has no enabled online tool; offline fallback only.
+  - **HUMAN_POLICY_DECISION_REQUIRED.** The paper manipulative (sticks and paper cut-outs) is the core modality and fully offline; no online tool exists. Recorded as the non-blocking product gap GRADE_4_6_SHAPE_SORT_MANIPULATIVE.
+  - Evidence: moe-math-g4-s2-p6-geometry-and-statistics-act3 p48
+  - Settled by review decision CPR-2026-09-26-R12 (Polygon manipulative; not founder approval): Reclassify NONE -> MANIPULATIVE_2D with polygon cut-outs, sticks and sorting.
 
 ### Reviewer support (not a decision)
 
@@ -230,7 +244,7 @@ Duration: 45 minutes.
 - **Wording provenance.** MOE-derived: The objective; sorting shapes by sides follows act3 ('Sort out polygons according to sides and identify each'). LiberiaLearn explanatory: Title, explanation, worked examples, activities, all practice, homework, quiz, diagnostic and assessment items, teacher notes. Example data: None.
 - **Grade appropriateness:** Appropriate for Grade 4 and within the MOE scope for this objective.
 - **Component alignment:** Classwork, practice, homework, quiz and exit assessment all target this objective; the diagnostic checks a prerequisite.
-- **Interaction classification (NONE):** RECONSIDER: act3 and the lesson's stick-shape and cut-out sorting activities are hands-on. NONE could become MANIPULATIVE_2D (offline cut-outs).
+- **Interaction classification (MANIPULATIVE_2D):** AGREE: MANIPULATIVE_2D with sticks and paper cut-outs (reclassified from NONE by CPR-2026-09-26-R12). Product gap GRADE_4_6_SHAPE_SORT_MANIPULATIVE.
 
 ### Explanation
 
@@ -255,8 +269,9 @@ Polygons are everywhere: triangular roof ends, rectangular doors, and the hexago
 
 ### Classwork
 
-- Stick shapes: make polygons from sticks or straws and count sides and vertices.
-- Sort cut-out shapes into polygons and non-polygons, then by number of sides.
+- Stick shapes: groups build a triangle, a quadrilateral, a pentagon and a hexagon from sticks or straws, then count the sides and vertices of each.
+- Sort cut-outs: groups sort a pile of paper cut-out shapes (regular and irregular, plus a circle and an open shape) into polygons and non-polygons, then sort the polygons by number of sides and name each group.
+- Change the shape: move one stick to turn a quadrilateral into a triangle or a pentagon, and say the new name.
 - Shape walk: find polygons in the school building.
 
 ### Practice
@@ -288,15 +303,15 @@ Which shape has 6 straight sides? (Hexagon / Pentagon / Circle / Quadrilateral) 
 
 ### Teacher notes
 
-Learners may think only regular shapes count (for example, that a long thin triangle is not a triangle). Show many irregular examples.
+Learners may think only regular shapes count (for example, that a long thin triangle is not a triangle). Show many irregular examples. Sorting by sides follows the MOE activity 'Sort out polygons according to sides and identify each'; the MOE objective's 'pentago n' is a text-extraction spacing artifact for 'pentagon'.
 
 ### Materials
 
-Sticks or straws, Cut-out shapes
+Sticks or straws, Paper cut-out shapes (regular and irregular)
 
 ### Offline behavior
 
-Fully offline.
+Fully offline and the core modality: sticks, straws and paper cut-outs. No online shape-building or sorting tool exists yet.
 
 Duration: 45 minutes.
 
@@ -311,12 +326,19 @@ Duration: 45 minutes.
 | MOE approval | NOT_CLAIMED (source provenance is not approval) |
 | Lesson | Parts of a Circle (`ll-g4-math-parts-of-a-circle-2026.1` v0.1.0) |
 | Status | DRAFT_UNREVIEWED |
-| Interaction | NONE |
-| Interaction offline | n/a |
-| Evidence | NONE |
+| Interaction | MANIPULATIVE_2D. Learners trace, cut out and fold paper circles to find the centre, a diameter and a radius (MOE act4, act5). |
+| Interaction offline | Paper circles traced from a cup or lid, cut out and folded; string-and-chalk circles outdoors. |
+| Planned enhancement | GRADE_4_6_CIRCLE_MANIPULATIVE (MANIPULATIVE_2D), NOT IMPLEMENTED: No online circle-parts tool is registered; folded paper circles are the core modality. |
+| Evidence | GOVERNED_ITEM_RESPONSE |
 | Example-data labels | none |
+| Reviewed content | `ll-g4-math-parts-of-a-circle-2026.1` v0.1.0, payload sha256 `3914ac657241f03dfa12e3f336e14f896edb3f4e4c227fddd1b9b697a08253dc` |
+| Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision). Decisions applied: CPR-2026-09-26-R13 |
 
-**Known uncertainties:** none recorded.
+**Known uncertainties:** 
+- Interaction MANIPULATIVE_2D has no enabled online tool; offline fallback only.
+  - **HUMAN_POLICY_DECISION_REQUIRED.** The paper manipulative (traced, cut and folded paper circles) is the core modality and fully offline; no online tool exists. Recorded as the non-blocking product gap GRADE_4_6_CIRCLE_MANIPULATIVE.
+  - Evidence: moe-math-g4-s2-p6-geometry-and-statistics-act4 p49; moe-math-g4-s2-p6-geometry-and-statistics-act5 p49
+  - Settled by review decision CPR-2026-09-26-R13 (Circle manipulative; not founder approval): Reclassify NONE -> MANIPULATIVE_2D with tracing, folding and handling paper circles.
 
 ### Reviewer support (not a decision)
 
@@ -325,7 +347,7 @@ Duration: 45 minutes.
 - **Wording provenance.** MOE-derived: The objective; tracing, cutting and folding a paper circle follow act4 and act5. LiberiaLearn explanatory: Title, explanation, worked examples, activities, all practice, homework, quiz, diagnostic and assessment items, teacher notes. Example data: None.
 - **Grade appropriateness:** Appropriate for Grade 4 and within the MOE scope for this objective.
 - **Component alignment:** Classwork, practice, homework, quiz and exit assessment all target this objective; the diagnostic checks a prerequisite.
-- **Interaction classification (NONE):** RECONSIDER: MOE act4 and act5 ('Trace and cut out a circular shape', 'Fold the paper circle in halves to identify parts of a circle') are manipulative. NONE could become MANIPULATIVE_2D (offline paper circles).
+- **Interaction classification (MANIPULATIVE_2D):** AGREE: MANIPULATIVE_2D with traced, cut and folded paper circles (reclassified from NONE by CPR-2026-09-26-R13). Product gap GRADE_4_6_CIRCLE_MANIPULATIVE.
 
 ### Explanation
 
@@ -349,9 +371,10 @@ Circles appear in wheels, the rims of cooking pots and the top of a drum.
 
 ### Classwork
 
+- Trace and cut: learners trace round a cup or tin lid to draw a circle on paper and cut it out.
+- Fold to find: fold the paper circle in half and crease it (a diameter), then fold in half the other way; the creases cross at the centre. Mark a radius from the centre to the edge.
+- Measure radii of the folded circle to show they are all equal, and check that the diameter is twice the radius.
 - String circles: draw circles outside with a string and chalk; label the centre and radius.
-- Fold a paper circle in half to find a diameter, and again to find the centre.
-- Measure radii of a drawn circle to show they are all equal.
 
 ### Practice
 
@@ -382,15 +405,15 @@ The radius of a pot's rim is 9 cm. What is its diameter? (18 cm / 9 cm / 4.5 cm 
 
 ### Teacher notes
 
-Learners mix up radius and diameter. Tie the words to the actions: radius from the centre, diameter all the way across.
+Learners mix up radius and diameter. Tie the words to the actions: radius from the centre, diameter all the way across. Tracing, cutting and folding paper circles follow the MOE activities for this topic.
 
 ### Materials
 
-String and chalk, Paper circles
+Paper, Cups or tin lids to trace, Scissors (blunt-ended) or careful tearing, String and chalk, Rulers
 
 ### Offline behavior
 
-Fully offline.
+Fully offline and the core modality: traced, cut and folded paper circles. No online circle tool exists yet.
 
 Duration: 45 minutes.
 
@@ -405,33 +428,31 @@ Duration: 45 minutes.
 | MOE approval | NOT_CLAIMED (source provenance is not approval) |
 | Lesson | Solid Figures: Spheres, Cylinders, Cones, Cubes and Rectangular Prisms (`ll-g4-math-solid-figures-2026.1` v0.1.0) |
 | Status | DRAFT_UNREVIEWED |
-| Interaction | THREE_D. Rotating solids lets learners see hidden faces, edges and vertices that a flat picture cannot show; spatial manipulation materially changes what they can identify. |
-| Interaction offline | Real objects: cans (cylinder), balls (sphere), boxes (rectangular prism), cone-shaped paper hats (cone). |
-| Evidence | GOVERNED_ITEM_RESPONSE |
+| Interaction | PRACTICAL. Learners handle and turn real solids to find and count faces, edges and vertices, including the ones a picture hides. |
+| Interaction offline | Real objects: ball (sphere), closed tin (cylinder), paper cone hat (cone), die (cube), box or brick (rectangular prism). |
+| Planned enhancement | GRADE_4_6_SOLIDS_3D_VIEWER (THREE_D), NOT IMPLEMENTED: Planned, not implemented: a 3D solids viewer in which learners rotate each solid and inspect hidden faces, edges and vertices. It augments the real-object experience and never replaces it. No 3D runtime exists today. |
+| Evidence | TEACHER_OBSERVATION; safety: Use clean, unbroken objects; bricks stay on the desk and are not thrown or dropped. |
 | Example-data labels | none |
+| Reviewed content | `ll-g4-math-solid-figures-2026.1` v0.1.0, payload sha256 `62b790f016a42181a209197da137a3ce7056dc175edf35c8d5673a14bb43d733` |
+| Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision). Decisions applied: CPR-2026-09-26-P3, CPR-2026-09-26-R14 |
 
 **Known uncertainties:** 
 - MOE extraction confidence MEDIUM (CONTINUATION_PAGE_ASSIGNMENT).
   - **SOURCE_RESOLVED.** The topic's content column lists 'Solid figures' (con5, p48); page 49 is the topic's second page.
   - Evidence: moe-math-g4-s2-p6-geometry-and-statistics-con5 p48
-- Classified THREE_D; no 3D engine exists, so real objects are the required fallback.
-  - **HUMAN_POLICY_DECISION_REQUIRED.** The THREE_D classification is a LiberiaLearn judgment (rotating solids reveals hidden faces). No 3D engine exists, so real objects are the only modality. MOE out1 ties the topic to construction ('building roads, boxes, balls').
+- Solids benefit from spatial inspection (hidden faces), but no 3D engine exists; real objects must carry the objective.
+  - **HUMAN_POLICY_DECISION_REQUIRED.** Solids need spatial inspection of hidden faces, and no 3D runtime exists. Real physical solids are the required modality; a 3D solids viewer is a planned enhancement.
   - Evidence: moe-math-g4-s2-p6-geometry-and-statistics-out1 p48
-  - Founder decision needed: Keep THREE_D with real objects as the required modality, or reclassify as PRACTICAL until a 3D manipulative exists.
-- Interaction THREE_D has no enabled online tool; offline fallback only.
-  - **HUMAN_POLICY_DECISION_REQUIRED.** Same decision as #known-1.
-  - Evidence: lib/labs/registry.ts (no 3D solids engine)
-  - Founder decision needed: Same as #known-1.
+  - Settled by review decision CPR-2026-09-26-P3 (Solids; not founder approval): Real physical solids are the current required modality. 3D solids are a planned enhanced digital modality; no 3D runtime exists and none is presented as implemented.
 
 ### Reviewer support (not a decision)
 
-- **Content risks:** 
-  - Two everyday models are imprecise: a funnel is open at both ends (not a cone with a flat face) and a cup is open at the top (not a closed cylinder). Suggest a paper cone hat and a closed tin, which the cell's offline fallback already names.
+- **Content risks:** none found.
 - **Answers:** VERIFIED: all answer keys recomputed; no errors.
 - **Wording provenance.** MOE-derived: The objective; 'geometry as foundation of ... construction' follows out1. LiberiaLearn explanatory: Title, explanation, worked examples, activities, all practice, homework, quiz, diagnostic and assessment items, teacher notes. Example data: None.
 - **Grade appropriateness:** Appropriate for Grade 4 and within the MOE scope for this objective.
 - **Component alignment:** Classwork, practice, homework, quiz and exit assessment all target this objective; the diagnostic checks a prerequisite.
-- **Interaction classification (THREE_D):** AGREE
+- **Interaction classification (PRACTICAL):** AGREE: PRACTICAL with real solids (CPR-2026-09-26-P3, R14). THREE_D is recorded as a planned enhancement (GRADE_4_6_SOLIDS_3D_VIEWER: rotation and hidden-face inspection) and is not presented as implemented.
 
 ### Explanation
 
@@ -440,8 +461,8 @@ Solid (3D) figures take up space. They have length, width and height.
 Parts of solids: faces (flat surfaces), edges (where two faces meet) and vertices (corners).
 
 - Sphere: perfectly round, like a ball. No faces, edges or vertices.
-- Cylinder: two circular flat faces joined by a curved surface, like a tin of milk.
-- Cone: one circular flat face and a curved surface that comes to a point, like a funnel.
+- Cylinder: two circular flat faces joined by a curved surface, like a closed tin of milk.
+- Cone: one circular flat face and a curved surface that comes to a point, like a paper cone hat with a paper circle closing its base.
 - Cube: 6 square faces, 12 edges and 8 vertices, like a die.
 - Rectangular prism: 6 rectangular faces, 12 edges and 8 vertices, like a box of matches or a brick.
 
@@ -457,7 +478,8 @@ Geometry is the foundation of building: bricks are rectangular prisms, water tan
 
 ### Classwork
 
-- Object table: learners sort real objects (ball, tin, funnel, die, box, brick) into solid types.
+- Object table: learners sort real objects (ball, closed tin, paper cone hat, die, box, brick) into solid types.
+- Make a cone: cut a large slice from a paper circle, roll it into a cone hat, and tape a paper circle over the open end to show the cone's one flat face.
 - Turn and count: in pairs, turn a box around and tally its faces, edges and vertices.
 - Feel bag: identify a solid by touch only and explain what gave it away.
 
@@ -470,7 +492,7 @@ Geometry is the foundation of building: bricks are rectangular prisms, water tan
 
 ### Homework
 
-1. Find one object at home for each: sphere, cylinder, cube. **Answer:** Answers vary (for example, orange, cup, die)
+1. Find one object at home for each: sphere, cylinder, cube. **Answer:** Answers vary (for example, orange, closed tin, die)
 2. How many edges does a cube have? **Answer:** 12
 3. Which solid has no flat faces? **Answer:** Sphere
 
@@ -490,15 +512,15 @@ A brick has 6 rectangular faces. It is a: (Rectangular prism / Cube / Cylinder /
 
 ### Teacher notes
 
-This objective is classified THREE_D: rotating solids reveals hidden faces. No 3D engine exists yet, so real objects are the required manipulative. Do not substitute static 3D pictures and call it a lab.
+This is a practical lesson: learners handle and turn real solids, which shows the faces a picture hides. Real physical solids are the required modality. Use closed objects as models: a funnel is open at both ends and an open cup has no top face, so neither is a good cone or cylinder model. A 3D solids viewer (rotating solids, hidden-face inspection) is a planned enhancement; it does not exist today, and static 3D pictures must not be presented as a substitute. Record observations of learners counting faces, edges and vertices as teacher evidence.
 
 ### Materials
 
-Ball, Tin, Funnel or paper cone, Die, Box, Brick
+Ball, Closed tin, Paper cone hat with a closed paper base, Die, Box, Brick
 
 ### Offline behavior
 
-Fully offline with real objects; this is the required fallback until a 3D manipulative exists.
+Fully offline and the required modality: real objects handled by learners. No 3D tool exists online today.
 
 Duration: 45 minutes.
 
@@ -513,10 +535,13 @@ Duration: 45 minutes.
 | MOE approval | NOT_CLAIMED (source provenance is not approval) |
 | Lesson | Reading and Interpreting Bar Graphs, Line Graphs and Pie Charts (`ll-g4-math-read-interpret-graphs-2026.1` v0.1.0) |
 | Status | DRAFT_UNREVIEWED |
-| Interaction | NONE |
-| Interaction offline | n/a |
-| Evidence | NONE |
-| Example-data labels | example data |
+| Interaction | PRACTICAL. Learners collect voluntary, anonymous family-size data (MOE act6), display it as a bar graph and read the mode from it. |
+| Interaction offline | Tally anonymous slips on the board; draw the bar graph on squared paper or the board. |
+| Planned enhancement | none |
+| Evidence | TEACHER_OBSERVATION; safety: Participation is voluntary and anonymous: no names on slips, and a learner may decline without giving a reason. Evidence today is teacher-observed data collection; governed responses to the graph-reading items are the planned second evidence source. |
+| Example-data labels | example data, Example data |
+| Reviewed content | `ll-g4-math-read-interpret-graphs-2026.1` v0.1.0, payload sha256 `1f2811bee91e89b65f76a06c80961e298c947492ace2b484133aa7b1dfc093dc` |
+| Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision). Decisions applied: CPR-2026-09-26-R15 |
 
 **Known uncertainties:** 
 - MOE extraction confidence MEDIUM (CONTINUATION_PAGE_ASSIGNMENT).
@@ -525,17 +550,17 @@ Duration: 45 minutes.
 - MOE combines graphs with 'mode, mean, median & average'. The lesson introduces the words only; calculation is in the next objective.
   - **SOURCE_RESOLVED.** The source expects more than the words: out2 'Use population data to read and interpret bar graph, line graph, pie chart, and mean, mode, medium and average', and act6 'Collect data about family size and display the data on a bar graph, line graph, and pie chart.' The draft uses a fruit survey and does not assess reading a measure from a graph.
   - Evidence: moe-math-g4-s2-p6-geometry-and-statistics-out2 p48; moe-math-g4-s2-p6-geometry-and-statistics-act6 p49
-  - Proposed correction: Make the class survey a voluntary, anonymous family-size survey (act6) and add: practice 'In the family-size bar graph, which family size has the tallest bar? That value is the mode.' and a quiz item reading the mode from a bar graph. Calculation of mean and median stays in 6.7.
+  - Correction: Make the class survey a voluntary, anonymous family-size survey (act6) and add: practice 'In the family-size bar graph, which family size has the tallest bar? That value is the mode.' and a quiz item reading the mode from a bar graph. Calculation of mean and median stays in 6.7.
+  - Settled by review decision CPR-2026-09-26-R15 (Family-size data and mode; not founder approval): Voluntary, anonymous family-size data per MOE; teach and assess reading the mode from the graph (practice + quiz); keep mean/median calculation in 6.7; reclassify NONE -> PRACTICAL with teacher-observed evidence, governed item responses planned.
 
 ### Reviewer support (not a decision)
 
-- **Content risks:** 
-  - The source expects learners to read mode, mean, median and average from graphs of family-size data; the draft uses a fruit survey and only names the measures. See the disposition.
+- **Content risks:** none found.
 - **Answers:** VERIFIED: all answer keys recomputed; no errors.
-- **Wording provenance.** MOE-derived: The objective statement (verbatim MOE text). LiberiaLearn explanatory: Title, explanation, worked examples, activities, all practice, homework, quiz, diagnostic and assessment items, teacher notes. Example data: Fruit survey, plant heights, books read, pie-chart counts (labeled example data).
+- **Wording provenance.** MOE-derived: The objective; the family-size survey follows act6 ('Collect data about family size and display the data on a bar graph, line graph, and pie chart'). LiberiaLearn explanatory: Title, explanation, worked examples, activities, all practice, homework, quiz, diagnostic and assessment items, teacher notes. Example data: Family-size graphs, fruit survey, plant heights, books read, pie-chart counts (labeled example data). Class survey data is voluntary and anonymous.
 - **Grade appropriateness:** Appropriate for Grade 4 and within the MOE scope for this objective.
-- **Component alignment:** Graph reading is aligned; the measures named in the objective are not practiced or assessed.
-- **Interaction classification (NONE):** RECONSIDER: MOE act6 ('Collect data about family size and display the data on a bar graph, line graph, and pie chart') is a data-collection practical. NONE could become PRACTICAL with teacher-observed evidence.
+- **Component alignment:** Graph reading is aligned; the mode is taught, practised and quizzed by reading it from a family-size bar graph. Median and mean are named here and calculated in 6.7.
+- **Interaction classification (PRACTICAL):** AGREE: PRACTICAL (reclassified from NONE by CPR-2026-09-26-R15): voluntary, anonymous family-size data collection, teacher-observed; governed responses to the graph-reading items are the planned second evidence source.
 
 ### Explanation
 
@@ -549,17 +574,21 @@ A pie chart shows parts of a whole as slices of a circle. A half-circle slice is
 
 When reading any graph, ask: What is it about? What is the scale? What is the largest and smallest? What changed?
 
-The words mode, median and mean (average) describe data. You will calculate them in the next lesson.
+Reading the mode from a graph. The mode is the value that appears most often. On a bar graph it is the category with the tallest bar. Example data: a class counts the people living in each learner's home and makes a bar graph of family sizes: 3 people: 2 homes, 4 people: 6 homes, 5 people: 7 homes, 6 people: 3 homes, 7 people: 2 homes. The tallest bar is at 5 people, so the mode family size is 5. The mode is the family size (5 people), not the height of the bar (7 homes).
+
+The words median and mean (average) also describe data. You will calculate them in the next lesson.
 
 ### Objectives
 
 - Read and interpret bar graphs, line graphs and pie charts.
 - Answer comparison questions from graphs.
-- Recognise the words mode, median and mean.
+- Collect family-size data and display it on a bar graph.
+- Read the mode from a bar graph.
+- Recognise the words median and mean (average).
 
 ### Classwork
 
-- Class survey: collect favourite fruits and build a bar graph on the board.
+- Family-size survey (voluntary and anonymous): each learner who wishes writes only the number of people in their home on a slip, with no name. The class tallies the slips on the board, draws a bar graph of family sizes and reads the mode from the tallest bar.
 - Line graph: plot the example plant heights and describe the change.
 - Paper pie: fold a paper circle into halves and quarters to represent survey fractions.
 
@@ -569,6 +598,7 @@ The words mode, median and mean (average) describe data. You will calculate them
 2. How many learners were surveyed in the fruit graph? **Answer:** 34
 3. In the plant line graph (2, 5, 9, 12 cm), how much did the plant grow from week 1 to week 4? **Answer:** 10 cm
 4. A pie chart shows half of 30 learners like football. How many is that? **Answer:** 15
+5. Example data: a family-size bar graph shows 3 people: 2 homes, 4 people: 6 homes, 5 people: 7 homes, 6 people: 3 homes, 7 people: 2 homes. Which family size has the tallest bar? What is the mode? **Answer:** 5 people; the mode is 5
 
 ### Homework
 
@@ -581,6 +611,7 @@ The words mode, median and mean (average) describe data. You will calculate them
 1. Which graph best shows change over time? (Line graph / Pie chart / Bar graph of favourite colours / A table of names) **Answer:** Line graph
 2. A bar graph shows rice 15 bags, beans 9 bags. How many more bags of rice? (6 / 24 / 15 / 9) **Answer:** 6
 3. A pie chart slice is half the circle. What fraction of the data is it? (1/2 / 1/4 / 1/3 / 2/3) **Answer:** 1/2
+4. Example data: a bar graph of family sizes shows 4 people: 5 homes, 5 people: 3 homes, 6 people: 8 homes, 7 people: 2 homes. What is the mode family size? (6 people / 8 people / 4 people / 7 people) **Answer:** 6 people
 
 ### Diagnostic check (before the lesson)
 
@@ -592,15 +623,15 @@ A bar graph shows books read: Musa 6, Esther 9, Jallah 4. Who read the most? (Es
 
 ### Teacher notes
 
-State that graph data is example data. Learners often misread scales that count by 2s or 5s; practise reading bars that fall between gridlines.
+State that graph data is example data. Learners often misread scales that count by 2s or 5s; practise reading bars that fall between gridlines. The family-size survey follows the MOE activity 'Collect data about family size': it must be voluntary and anonymous (no names on slips; any learner may decline without saying why), and no learner's family size is read out. A common error when reading the mode is giving the height of the tallest bar (the number of homes) instead of its label (the family size). This is a practical lesson: record your observation of each group's tally and graph as teacher evidence. Mean and median are calculated in the next lesson.
 
 ### Materials
 
-Squared paper, Paper circles
+Blank slips of paper, Squared paper, Paper circles
 
 ### Offline behavior
 
-Fully offline.
+Fully offline: survey slips, a board tally and graphs drawn on squared paper.
 
 Duration: 45 minutes.
 
@@ -617,23 +648,26 @@ Duration: 45 minutes.
 | Status | DRAFT_UNREVIEWED |
 | Interaction | NONE |
 | Interaction offline | n/a |
+| Planned enhancement | none |
 | Evidence | NONE |
 | Example-data labels | example data, (example data) |
+| Reviewed content | `ll-g4-math-mode-median-mean-2026.1` v0.1.0, payload sha256 `168689885b3b1f25d8e51b5a21a6cde559e261d446bab39bcae482cadc421179` |
+| Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision). Decisions applied: CPR-2026-09-26-R16. Remaining source check (does not change lesson content): whether this page-49 text sits in the MOE objectives or activities column needs a person reading page 49 of Math 1-6.pdf. Its instructional target is corroborated by out2 (p48), act6 (p49) and Grade 3 (p37). Added in this revision: the text now says why the mean example uses a second data set. |
 
 **Known uncertainties:** 
 - MOE extraction confidence LOW (AMBIGUOUS_COLUMN_ASSIGNMENT, CONTINUATION_PAGE_ASSIGNMENT).
   - **LIBERIALEARN_CLARIFICATION_REQUIRED.** LOW confidence comes from an ambiguous column (objective vs activity). The instructional target is corroborated (out2 p48 lists mean, mode, median/'medium'; act6 p49 family-size data; Grade 3 p37 'Find the mean, mode and median of the data'), so the lesson content stands either way. The column itself can only be confirmed by a person reading page 49 of Math 1-6.pdf.
   - Evidence: moe-math-g4-s2-p6-geometry-and-statistics-out2 p48; moe-math-g4-s2-p6-geometry-and-statistics-act6 p49; Grade 3 OBJECTIVE p37 'Find the mean, mode and median of the data.'
 - LOW extraction confidence (ambiguous column). MOE says 'medium'; read as 'median'. Data is invented example data.
-  - **SOURCE_RESOLVED.** The same MOE document spells 'median' correctly in Grade 4 objective 6 (p49) and Grade 3 (p37). 'Medium' recurs only as a consistent misspelling (Grade 3 act p36, Grade 4 out2 p48, this objective) and is not a statistical measure. The lesson says 'median'; the MOE text is preserved verbatim in the objective record and review package. The lesson's family-size data follows act6; figures are invented and labeled.
+  - **SOURCE_RESOLVED.** The same MOE document spells 'median' correctly in Grade 4 objective 6 (p49) and Grade 3 (p37). 'Medium' recurs only as a consistent misspelling (Grade 3 act p36, Grade 4 out2 p48, this objective) and is not a statistical measure. The lesson says 'median'; the MOE text is preserved verbatim in the objective record and review package. The lesson's family-size data follows act6; figures are invented and labeled. The lesson's teacher notes state the interpretation and that the source text itself is not corrected.
   - Evidence: moe-math-g4-s2-p6-geometry-and-statistics-obj6 p49; Grade 3 OBJECTIVE p37 'Find the mean, mode and median of the data.'; moe-math-g4-s2-p6-geometry-and-statistics-act6 p49
+  - Settled by review decision CPR-2026-09-26-R16 (Median note; not founder approval): Keep 'median'; preserve raw MOE 'medium' in provenance; add a note that LiberiaLearn interprets 'medium' as 'median' because surrounding MOE materials corroborate it; do not claim the source text was corrected.
 
 ### Reviewer support (not a decision)
 
-- **Content risks:** 
-  - The explanation finds the mean from a second data set (the first data set's mean, 36 / 7, is not a whole number). This is deliberate (teacher notes keep means whole) but a reviewer may prefer to say so in the text.
+- **Content risks:** none found.
 - **Answers:** VERIFIED: all answer keys recomputed; no errors.
-- **Wording provenance.** MOE-derived: The objective; family-size data follows act6. LiberiaLearn explanatory: Title, explanation, worked examples, activities, all practice, homework, quiz, diagnostic and assessment items, teacher notes. Example data: Family sizes, clinic births and rainfall (labeled example data).
+- **Wording provenance.** MOE-derived: The objective; family-size data follows act6. Teacher notes record the MOE 'medium' wording and LiberiaLearn's 'median' interpretation (CPR-2026-09-26-R16). LiberiaLearn explanatory: Title, explanation, worked examples, activities, all practice, homework, quiz, diagnostic and assessment items, teacher notes. Example data: Family sizes, clinic births and rainfall (labeled example data).
 - **Grade appropriateness:** Appropriate for Grade 4 and within the MOE scope for this objective.
 - **Component alignment:** Classwork, practice, homework, quiz and exit assessment all target this objective; the diagnostic checks a prerequisite.
 - **Interaction classification (NONE):** AGREE
@@ -648,7 +682,7 @@ Mode: the value that appears most often. 4 appears three times, so the mode is 4
 
 Median: the middle value when the data is in order. Order: 4, 4, 4, 5, 5, 6, 8. The middle (4th) value is 5, so the median is 5. With an even number of values, the median is halfway between the two middle values.
 
-Mean (average): add all values and divide by how many there are. For a second example village with 6 homes of sizes 4, 6, 5, 4, 8, 3: the sum is 30, and 30 / 6 = 5. The mean is 5.
+Mean (average): add all values and divide by how many there are. The 7 homes above add to 36 people, and 36 / 7 is not a whole number, so we use a second example village with 6 homes of sizes 4, 6, 5, 4, 8, 3: the sum is 30, and 30 / 6 = 5. The mean is 5.
 
 The mean shares the total equally: if 30 people were spread evenly over 6 homes, each home would have 5.
 
@@ -695,7 +729,7 @@ Example population data: the number of births in a clinic over 5 months was 12, 
 
 ### Teacher notes
 
-Collect household data only voluntarily and without names. Learners often forget to order data before finding the median. Keep mean problems to whole-number answers at this grade.
+Collect household data only voluntarily and without names. Learners often forget to order data before finding the median. Keep mean problems to whole-number answers at this grade. Provenance: the MOE objective reads "Find the mode, medium, and mean". LiberiaLearn interprets "medium" as "median" because the surrounding MOE materials use median as the statistical concept (Grade 4 objective 6 on page 49 and Grade 3 on page 37 spell 'median'). The MOE source text itself is unchanged and is quoted as written.
 
 ### Materials
 
@@ -720,8 +754,11 @@ Duration: 45 minutes.
 | Status | DRAFT_UNREVIEWED |
 | Interaction | NONE |
 | Interaction offline | n/a |
+| Planned enhancement | none |
 | Evidence | NONE |
 | Example-data labels | none |
+| Reviewed content | `ll-g4-math-word-problems-with-diagrams-2026.1` v0.1.0, payload sha256 `7ada6a5c008a6dd2eeef897769c882d979feeeaf6114fbc7d090da3102db78f0` |
+| Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision) |
 
 **Known uncertainties:** 
 - MOE extraction confidence MEDIUM (CONTINUATION_PAGE_ASSIGNMENT).

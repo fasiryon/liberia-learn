@@ -49,16 +49,23 @@ export const GRADE4_FRACTIONS_LESSON = Object.freeze({
  * so the successor is a new content identity, not a version bump in place.
  *
  * What it adds, all of it PENDING founder review (ledger objective p3-obj4):
- * - the MOE "parts of a set" model taught explicitly, not only in activities;
+ * - the MOE objective "Find parts of a set" taught from the opening
+ *   definition: a fraction names equal parts of a whole OR part of a set;
  * - a practice set, a quiz, a prerequisite check, teacher notes, materials and
  *   offline behavior, in the same payload shape as the Grade 4 drafts;
  * - evidence bindings: the diagnostic reuses the released 2026.1 item
- *   unchanged, and practice/quiz/exit evidence comes from governed items in
- *   the 2026.2 candidate release (lib/learning-authority/releases/grade4Math2026_2.ts).
+ *   unchanged; practice and the end-of-lesson check come from governed items
+ *   in the 2026.2 candidate release (lib/learning-authority/releases/grade4Math2026_2.ts).
+ *   The end-of-lesson check assesses part of a set directly; the
+ *   denominator-meaning check is supporting evidence only.
+ *
+ * 1.2.0 (2026-09-26) applies the curriculum/product review CPR-2026-09-26:
+ * sets from the start, part-of-a-set exit evidence, fractions greater than
+ * one moved to an optional extension. 1.1.0 was never approved or published.
  */
 export const GRADE4_FRACTIONS_LESSON_2026_2 = Object.freeze({
   contentId: "ll-g4-math-fractions-equal-parts-2026.2",
-  version: "1.1.0",
+  version: "1.2.0",
   title: "Fractions as Equal Parts of a Whole and of a Set",
   grade: 4,
   subject: "MATH",
@@ -68,31 +75,40 @@ export const GRADE4_FRACTIONS_LESSON_2026_2 = Object.freeze({
   payload: Object.freeze({
     title: "Fractions as Equal Parts of a Whole and of a Set",
     body: [
-      GRADE4_FRACTIONS_LESSON.payload.body,
-      "A fraction can also name part of a set, a group of separate objects. A set of 5 bottle caps has 2 red caps and 3 blue caps. The whole is the set of 5 caps, so the denominator is 5. The red caps are 2 of them, so 2/5 of the caps are red and 3/5 are blue. Here each object counts as one equal part, even if the caps are different colours.",
-      "To name part of a set, ask the same three questions: What is the whole set? How many objects are in it? How many objects are we describing? If 8 learners sit on a bench and 3 of them are girls, the fraction of the learners who are girls is 3/8.",
+      "A fraction can name equal parts of a whole, or part of a set. Both use the same two numbers.\n- Part of a whole: a cassava bread is cut into 4 equal pieces and we take 3 pieces. The whole is the bread, cut into 4 equal parts, so we have 3/4 of the bread.\n- Part of a set: there are 5 bottle caps and 2 of them are red. The whole is the set of 5 caps, so 2/5 of the caps are red.",
+      "The denominator is the bottom number. It tells how many equal parts make the whole, or how many objects are in the whole set. The numerator is the top number. It tells how many of those parts or objects we are describing.",
+      "In a whole, the parts must be equal: three pieces cut from one side of a bread are not 3/4 unless the whole bread is divided into four equal parts. In a set, each object counts as one part, even if the objects are different sizes or colours.",
+      "To find a fraction, ask three questions. What is the whole: one object, or a set of objects? How many equal parts or objects make the whole? How many of them are we describing? If 8 learners sit on a bench and 3 of them are girls, the whole is the set of 8 learners, so 3/8 of the learners are girls.",
+      "To read a fraction, say the numerator first and the denominator second: 3/4 is three-fourths and 2/5 is two-fifths. To model a fraction, lay out a set of bottle caps or stones and mark some of them, or draw a rectangle, divide it into equal parts and shade some. In every model, decide what the whole is before naming the fraction.",
+      "Fractions describe fair sharing and groups at home, school and the market: part of one loaf, or part of a basket of mangoes.",
     ].join("\n\n"),
     objectives: [
-      ...GRADE4_FRACTIONS_LESSON.payload.objectives,
-      "Name the fraction of a set of objects.",
+      "Name a fraction as equal parts of a whole or as part of a set.",
+      "Find parts of a set: name the fraction of a set of objects.",
+      "Identify the numerator and denominator and say what each tells us.",
+      "Explain why the parts of a whole must be equal.",
     ],
     activities: [
-      ...GRADE4_FRACTIONS_LESSON.payload.activities,
-      "Sets of objects: groups make a set of 6 stones with some painted or marked, and name the fraction that is marked.",
+      "Sets first: groups lay out 6 bottle caps or stones, mark 2 of them and name the fraction marked (2/6). Repeat with sets of 5 and 8 objects.",
+      "Wholes: fold paper into halves and quarters and shade a named fraction.",
+      "Whole or set? The teacher holds up a folded paper and then a group of stones; for each, learners say what the whole is and name the fraction shown.",
+      "Explain the numerator and denominator to a partner using one set of objects and one drawing.",
     ],
     practice: Object.freeze([
-      Object.freeze({ prompt: "A cassava bread is cut into 8 equal pieces. 3 pieces are eaten. What fraction is eaten?", answer: "3/8" }),
       Object.freeze({ prompt: "There are 5 bottle caps. 2 are red. What fraction of the caps are red?", answer: "2/5" }),
-      Object.freeze({ prompt: "In 5/6, which number is the denominator and what does it tell us?", answer: "6: the whole has 6 equal parts" }),
+      Object.freeze({ prompt: "A basket has 10 mangoes. 7 are ripe. What fraction of the mangoes are not ripe?", answer: "3/10" }),
+      Object.freeze({ prompt: "A cassava bread is cut into 8 equal pieces. 3 pieces are eaten. What fraction is eaten?", answer: "3/8" }),
+      Object.freeze({ prompt: "In 5/6, which number is the denominator and what does it tell us?", answer: "6: the whole has 6 equal parts (or the set has 6 objects)" }),
       Object.freeze({ prompt: "A cloth is cut into 4 pieces of different sizes. Is one piece 1/4 of the cloth?", answer: "No, the 4 parts are not equal" }),
     ]),
     homework: Object.freeze([
-      Object.freeze({ prompt: "Draw a rectangle, divide it into 6 equal parts and shade 4. Write the fraction shaded.", answer: "4/6" }),
+      Object.freeze({ prompt: "Draw a set of 9 stones and circle 4 of them. Write the fraction of the stones circled.", answer: "4/9" }),
       Object.freeze({ prompt: "A family has 7 children. 4 are boys. What fraction of the children are boys?", answer: "4/7" }),
+      Object.freeze({ prompt: "Draw a rectangle, divide it into 6 equal parts and shade 4. Write the fraction shaded.", answer: "4/6" }),
       Object.freeze({ prompt: "Write the fraction for three-fifths.", answer: "3/5" }),
     ]),
     quiz: Object.freeze([
-      Object.freeze({ prompt: "A set has 6 mangoes. 5 are ripe. What fraction of the mangoes are ripe?", options: Object.freeze(["5/6", "1/6", "6/5", "5/11"]), answer: "5/6" }),
+      Object.freeze({ prompt: "A group has 9 learners. 4 of them wear sandals. What fraction of the group wear sandals?", options: Object.freeze(["4/9", "5/9", "4/5", "9/4"]), answer: "4/9" }),
       Object.freeze({ prompt: "Which picture shows 1/3?", options: Object.freeze(["A shape cut into 3 equal parts with 1 part shaded", "A shape cut into 3 unequal parts with 1 part shaded", "A shape cut into 4 equal parts with 1 part shaded", "A shape cut into 3 equal parts with 2 parts shaded"]), answer: "A shape cut into 3 equal parts with 1 part shaded" }),
       Object.freeze({ prompt: "In 2/9, what does the 2 tell us?", options: Object.freeze(["How many parts are selected", "How many equal parts make the whole", "How many wholes there are", "The size of each part"]), answer: "How many parts are selected" }),
     ]),
@@ -101,19 +117,27 @@ export const GRADE4_FRACTIONS_LESSON_2026_2 = Object.freeze({
       options: Object.freeze(["Yes, 2 equal pieces make halves", "No, halves need 4 pieces", "No, a half is the bigger piece", "It depends on who eats it"]),
       answer: "Yes, 2 equal pieces make halves",
     }),
-    assessment: GRADE4_FRACTIONS_LESSON.payload.assessment,
-    teacherNotes: "Two errors to watch: reversing numerator and denominator (writing 4/3 for three-fourths) and naming unequal pieces as fractions. For sets, learners sometimes use the number of objects not selected as the denominator (writing 2/3 for 2 red caps out of 5); ask them to count the whole set first. Parts of a set follow the MOE objective 'Find parts of a set' (Grade 4 Mathematics, page 42); the examples and data are LiberiaLearn explanatory material.",
-    materials: Object.freeze(["Paper for folding", "Bottle caps or stones", "Exercise books"]),
-    offline: "Fully offline: paper folding, bottle caps and stones. Online, the fraction-visualizer tool shows equal-part strips; it does not model sets.",
+    assessment: Object.freeze({
+      question: "There are 8 mangoes. 3 are ripe. What fraction of the mangoes are ripe?",
+      options: Object.freeze(["3/8", "5/8", "3/5", "8/3"]),
+      correctAnswer: "3/8",
+    }),
+    optionalExtension: "Optional extension, not assessed in this lesson: when the numerator and the denominator are the same, as in 4/4, the fraction is one whole. When the numerator is larger, as in 5/4, the fraction is more than one whole. Adding fractions (objective 3.7) returns to this.",
+    teacherNotes: "Teach the set model from the first minute, next to the whole model; parts of a set are the MOE objective 'Find parts of a set' (Grade 4 Mathematics, page 42), not an extension. Errors to watch: reversing numerator and denominator (writing 4/3 for three-fourths); naming unequal pieces of a whole as fractions; and, for sets, using the number of objects not described as the denominator (writing 3/5 for 3 ripe mangoes out of 8, which compares ripe to unripe). Ask learners to count the whole set first. The exit assessment checks part of a set; the check on what the denominator means is supporting evidence. Examples and data are LiberiaLearn explanatory material. Fractions greater than one are an optional extension only.",
+    materials: Object.freeze(["Bottle caps or stones (required; about 10 per group)", "Paper for folding", "Exercise books"]),
+    offline: "Fully offline, and the physical sets are required: bottle caps or stones for parts of a set, paper folding for parts of a whole. Online, the fraction-visualizer tool shows equal-part strips of one whole only; it does not let a learner build or mark a set (product gap SET_FRACTION_MANIPULATIVE_REQUIRED).",
     durationMins: 45,
     evidence: Object.freeze({
       diagnostic: Object.freeze({ itemId: "g4-frac-diagnostic-equal-parts", itemVersion: "1.0.0" }),
       practice: Object.freeze([
-        Object.freeze({ itemId: "g4-frac-practice-part-of-whole", itemVersion: "1.0.0" }),
         Object.freeze({ itemId: "g4-frac-practice-part-of-set", itemVersion: "1.0.0" }),
+        Object.freeze({ itemId: "g4-frac-practice-part-of-whole", itemVersion: "1.0.0" }),
         Object.freeze({ itemId: "g4-frac-practice-unequal-parts", itemVersion: "1.0.0" }),
       ]),
-      endOfLesson: Object.freeze({ itemId: "g4-frac-check-denominator-meaning", itemVersion: "1.0.0" }),
+      endOfLesson: Object.freeze({ itemId: "g4-frac-check-part-of-set", itemVersion: "1.0.0" }),
+      supporting: Object.freeze([
+        Object.freeze({ itemId: "g4-frac-check-denominator-meaning", itemVersion: "1.0.0" }),
+      ]),
     }),
   }),
   provenance: Object.freeze({
@@ -123,5 +147,6 @@ export const GRADE4_FRACTIONS_LESSON_2026_2 = Object.freeze({
     standardCode: "LR-MATH-G4_6-02",
     releaseId: "lr-moe-g4-math-2026.2",
     moeObjectiveIds: Object.freeze(["moe-math-g4-s1-p3-number-theory-and-fraction-obj4"]),
+    productGaps: Object.freeze(["SET_FRACTION_MANIPULATIVE_REQUIRED"]),
   }),
 });

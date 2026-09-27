@@ -87,7 +87,8 @@ export const UNIT2_LESSONS = [
         "Check a product by estimating.",
       ],
       activities: [
-        "Area model: draw a rectangle split into 300, 40 and 8 to show 348 x 6.",
+        "Graph-paper area model: on squared paper, draw a rectangle 6 squares tall and 24 squares long for 24 x 6. Split it into a 20-long part and a 4-long part, count the squares in each (120 and 24) and add them (144).",
+        "Area model for larger numbers: draw a rectangle split into 300, 40 and 8 to show 348 x 6, and write the partial product in each part.",
         "Compare methods: half the class uses expanded form, half uses the standard method; compare answers.",
         "Word problems: bundles of copybooks, crates of soft drinks, boxes of chalk.",
       ],
@@ -109,9 +110,9 @@ export const UNIT2_LESSONS = [
       ],
       diagnosticCheck: mcq("What is 7 x 8?", ["56", "54", "48", "63"], "56"),
       assessment: mcq("What is 1,468 x 4?", ["5,872", "5,862", "4,872", "5,672"], "5,872"),
-      teacherNotes: "The most common error is forgetting to add the carried digit, or adding it before multiplying. Have learners write carried digits small above the next column.",
-      materials: ["Exercise books", "Grid paper for area models"],
-      offline: "Fully offline.",
+      teacherNotes: "The most common error is forgetting to add the carried digit, or adding it before multiplying. Have learners write carried digits small above the next column. The graph-paper area model follows the MOE activity for this topic; let learners count the squares at least once before moving to drawn area models.",
+      materials: ["Exercise books", "Squared (graph) paper for area models"],
+      offline: "Fully offline and the core modality: area models drawn and counted on squared paper. No Grade 4-6 grid tool is enabled online yet.",
     },
   }),
   draftLesson({

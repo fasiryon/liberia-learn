@@ -1,7 +1,7 @@
 /**
  * Recomputes every Grade 4 Math answer key whose prompt is a plain
  * calculation (whole-number and fraction arithmetic, rounding, LCM/GCF,
- * simplifying, mode/median/mean). Word problems and conceptual items were
+ * simplifying, prime factorisation, mode/median/mean). Word problems and conceptual items were
  * checked by hand (see curriculum/review/g4-math/review-support.json); this
  * test keeps the computable part honest on every run.
  */
@@ -66,6 +66,14 @@ function expected(prompt: string): ((answer: string) => boolean) | null {
     const g = gcd(a, b);
     return (answer) => answer === `${a / g}/${b / g}`;
   }
+  if ((m = prompt.match(/^Write (\d+) as a product of prime factors\.$/))) {
+    const target = Number(m[1]);
+    const prime = (f: number) => f > 1 && Array.from({ length: f - 2 }, (_, i) => i + 2).every((d) => f % d !== 0);
+    return (answer) => {
+      const factors = answer.split(" x ").map(Number);
+      return factors.every(prime) && factors.reduce((product, f) => product * f, 1) === target;
+    };
+  }
   if ((m = prompt.match(/^(?:Find the|What is the) (mode|median|mean)(?: of)?:? ([\d, ]+?)\??$/))) {
     const values = m[2].split(",").map((entry) => Number(entry.trim())).sort((x, y) => x - y);
     let value: number;
@@ -100,7 +108,7 @@ describe("Grade 4 Math answer keys", () => {
     }
     expect(wrong).toEqual([]);
     // Guard against the parser silently matching less over time.
-    expect(checked).toBeGreaterThanOrEqual(165);
+    expect(checked).toBeGreaterThanOrEqual(166);
   });
 
   it("puts every multiple-choice answer among its options exactly once", () => {

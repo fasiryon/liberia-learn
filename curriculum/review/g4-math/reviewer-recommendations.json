@@ -1,0 +1,771 @@
+{
+  "_about": "Reviewer recommendations for the Grade 4 Math founder review. These are NOT founder decisions and NOT MOE approval: decisions live only in review-ledger.json and are made by the founder. Each recommendation pins the payload sha256 it was assessed against; scripts/build-g4-math-review-package.ts fails if the content changes without re-assessment.",
+  "review": {
+    "id": "CPR-2026-09-26",
+    "date": "2026-09-26",
+    "isFounderApproval": false,
+    "isMoeApproval": false,
+    "summary": "A substantive curriculum/product review (CPR-2026-09-26) required 16 content revisions and adopted 5 policies. The revisions are applied in the lessons and the cell; each objective was then re-assessed against the quality bar (MOE scope, mathematics, answers and distractors, Grade 4 difficulty, component alignment, meaningful interaction, credible offline implementation, context, labeled example data, honest provenance, no MOE-approval claim, no unavailable capability presented as implemented)."
+  },
+  "recommendedBy": "LiberiaLearn curriculum revision pass (AI-assisted), applying CPR-2026-09-26; not a founder decision",
+  "values": {
+    "READY_FOR_FOUNDER_APPROVAL": "Meets every point of the quality bar; ready for the founder's own review and ledger decision.",
+    "REVISE": "A content change is still needed before founder approval (the note says what).",
+    "BLOCKED_SOURCE": "MOE scope cannot be confirmed from the source evidence available.",
+    "BLOCKED_POLICY": "Needs a founder policy decision before the content can be judged."
+  },
+  "decisions": {
+    "CPR-2026-09-26-P1": {
+      "kind": "POLICY",
+      "title": "Example data",
+      "text": "Clearly labeled example data is acceptable for instructional arithmetic. Real authoritative data may be added where the learning goal requires interpreting real national data; it is not mandatory for basic operations."
+    },
+    "CPR-2026-09-26-P2": {
+      "kind": "POLICY",
+      "title": "Squared paper",
+      "text": "Squared paper is an acceptable required/core modality for Grade 4 area and perimeter today. A digital grid is an enhancement (GRADE_4_6_GRID_MANIPULATIVE) and does not block lesson approval."
+    },
+    "CPR-2026-09-26-P3": {
+      "kind": "POLICY",
+      "title": "Solids",
+      "text": "Real physical solids are the current required modality. 3D solids are a planned enhanced digital modality; no 3D runtime exists and none is presented as implemented."
+    },
+    "CPR-2026-09-26-P4": {
+      "kind": "POLICY",
+      "title": "Intersecting lines",
+      "text": "MOE 'interesting lines' is interpreted by LiberiaLearn as 'intersecting lines'; the MOE text is preserved in provenance."
+    },
+    "CPR-2026-09-26-P5": {
+      "kind": "POLICY",
+      "title": "Mass",
+      "text": "Use 'mass' pedagogically; preserve MOE 'weight' wording where it is quoted."
+    },
+    "CPR-2026-09-26-R01": {
+      "kind": "REVISION",
+      "objective": "1.1",
+      "title": "Place-value manipulative",
+      "text": "Reclassify NONE -> MANIPULATIVE_2D with a place-value chart and strips; keep the offline paper implementation."
+    },
+    "CPR-2026-09-26-R02": {
+      "kind": "REVISION",
+      "objective": "1.4",
+      "title": "Estimate",
+      "text": "Replace the loose estimate with 48,000 + 1,400 - 400 = 49,000; keep population figures labeled as example data; no external census data."
+    },
+    "CPR-2026-09-26-R03": {
+      "kind": "REVISION",
+      "objective": "2.3",
+      "title": "Area model",
+      "text": "Reclassify NONE -> MANIPULATIVE_2D using the area-model / graph-paper activity."
+    },
+    "CPR-2026-09-26-R04": {
+      "kind": "REVISION",
+      "objective": "3.2",
+      "title": "Prime factors",
+      "text": "Add factor-tree instruction (12 = 2 x 2 x 3, 30 = 2 x 3 x 5) with aligned practice and checks in 3.2; keep 3.3 LCM/GCF listing-based."
+    },
+    "CPR-2026-09-26-R05": {
+      "kind": "REVISION",
+      "objective": "3.4",
+      "title": "Fractions exemplar 2026.2",
+      "text": "Teach whole and set from the opening; make 'Find parts of a set' explicit throughout; exit evidence assesses part of a set; bottle caps/stones required offline; record SET_FRACTION_MANIPULATIVE_REQUIRED; move fractions greater than one to an optional extension. 2026.1 unchanged."
+    },
+    "CPR-2026-09-26-R06": {
+      "kind": "REVISION",
+      "objective": "3.7",
+      "title": "Add like denominators",
+      "text": "Restrict to like denominators with the documented replacements; remove related/unlike denominators; correct the provenance wording so LiberiaLearn examples are not attributed to MOE."
+    },
+    "CPR-2026-09-26-R07": {
+      "kind": "REVISION",
+      "objective": "3.8",
+      "title": "Subtract like denominators",
+      "text": "Restrict to like denominators and taking from a whole with the documented replacements; remove the 4/0 distractor."
+    },
+    "CPR-2026-09-26-R08": {
+      "kind": "REVISION",
+      "objective": "5.5",
+      "title": "Mass and benchmarks",
+      "text": "Open with 'Mass tells how heavy something is. People often call it weight.'; use 'mass' after that; replace inconsistent sugar-bag benchmarks with unambiguous (label-based) benchmarks."
+    },
+    "CPR-2026-09-26-R09": {
+      "kind": "REVISION",
+      "objective": "5.8",
+      "title": "Distractors",
+      "text": "Replace the malformed distractors '3 m 120 cm only' and '2,1000 g' with valid, plausible ones."
+    },
+    "CPR-2026-09-26-R10": {
+      "kind": "REVISION",
+      "objective": "5.9",
+      "title": "Grid gap",
+      "text": "Keep MANIPULATIVE_2D on squared paper; record GRADE_4_6_GRID_MANIPULATIVE; do not block approval on the digital tool."
+    },
+    "CPR-2026-09-26-R11": {
+      "kind": "REVISION",
+      "objective": "6.1",
+      "title": "Provenance note",
+      "text": "Keep the raw MOE objective; add the teacher/provenance note on 'interesting lines' -> 'intersecting lines'."
+    },
+    "CPR-2026-09-26-R12": {
+      "kind": "REVISION",
+      "objective": "6.3",
+      "title": "Polygon manipulative",
+      "text": "Reclassify NONE -> MANIPULATIVE_2D with polygon cut-outs, sticks and sorting."
+    },
+    "CPR-2026-09-26-R13": {
+      "kind": "REVISION",
+      "objective": "6.4",
+      "title": "Circle manipulative",
+      "text": "Reclassify NONE -> MANIPULATIVE_2D with tracing, folding and handling paper circles."
+    },
+    "CPR-2026-09-26-R14": {
+      "kind": "REVISION",
+      "objective": "6.5",
+      "title": "Solid models",
+      "text": "No funnel as the canonical cone or open cup as the canonical cylinder; use a paper cone hat, closed tin, ball, die/cube, box/brick. Execution PRACTICAL; planned THREE_D (rotation, hidden-face inspection) augments real objects and is not implemented."
+    },
+    "CPR-2026-09-26-R15": {
+      "kind": "REVISION",
+      "objective": "6.6",
+      "title": "Family-size data and mode",
+      "text": "Voluntary, anonymous family-size data per MOE; teach and assess reading the mode from the graph (practice + quiz); keep mean/median calculation in 6.7; reclassify NONE -> PRACTICAL with teacher-observed evidence, governed item responses planned."
+    },
+    "CPR-2026-09-26-R16": {
+      "kind": "REVISION",
+      "objective": "6.7",
+      "title": "Median note",
+      "text": "Keep 'median'; preserve raw MOE 'medium' in provenance; add a note that LiberiaLearn interprets 'medium' as 'median' because surrounding MOE materials corroborate it; do not claim the source text was corrected."
+    }
+  },
+  "productGaps": {
+    "GRADE_4_6_PLACE_VALUE_MANIPULATIVE": {
+      "kind": "TOOL",
+      "need": "MANIPULATIVE_2D",
+      "objectives": [
+        "moe-math-g4-s1-p1-numeration-addition-and-subtraction-obj1"
+      ],
+      "description": "No online place-value chart tool is registered; the paper chart and strips are the core modality.",
+      "blocksApproval": false
+    },
+    "GRADE_4_6_GRID_MANIPULATIVE": {
+      "kind": "TOOL",
+      "need": "MANIPULATIVE_2D",
+      "objectives": [
+        "moe-math-g4-s1-p2-multiplication-and-division-of-whole-numbers-obj3",
+        "moe-math-g4-s2-p5-measurement-obj9"
+      ],
+      "description": "No Grade 4-6 grid tool is enabled online (coordinate-grid is Grades 7+). Squared paper is the accepted core modality (CPR-2026-09-26-P2).",
+      "blocksApproval": false
+    },
+    "SET_FRACTION_MANIPULATIVE_REQUIRED": {
+      "kind": "TOOL",
+      "need": "MANIPULATIVE_2D",
+      "objectives": [
+        "moe-math-g4-s1-p3-number-theory-and-fraction-obj4"
+      ],
+      "description": "The fraction-visualizer partitions one whole into strips; it does not let a learner build a set of objects and mark part of it. Bottle caps or stones remain the required modality.",
+      "blocksApproval": false
+    },
+    "GRADE_4_6_CLOCK_MANIPULATIVE": {
+      "kind": "TOOL",
+      "need": "MANIPULATIVE_2D",
+      "objectives": [
+        "moe-math-g4-s2-p5-measurement-obj2"
+      ],
+      "description": "No Grade 4-6 clock tool is enabled online; the paper-plate clock is the MOE-aligned core modality (MOE mat1: toy or paper clock).",
+      "blocksApproval": false
+    },
+    "GRADE_4_6_ANGLE_TESTER": {
+      "kind": "TOOL",
+      "need": "MANIPULATIVE_2D",
+      "objectives": [
+        "moe-math-g4-s2-p6-geometry-and-statistics-obj2"
+      ],
+      "description": "No Grade 4-6 angle tool is enabled online (the protractor is Grades 7+ and Grade 4 does not measure degrees); the folded-paper tester is the core modality.",
+      "blocksApproval": false
+    },
+    "GRADE_4_6_SHAPE_SORT_MANIPULATIVE": {
+      "kind": "TOOL",
+      "need": "MANIPULATIVE_2D",
+      "objectives": [
+        "moe-math-g4-s2-p6-geometry-and-statistics-obj3"
+      ],
+      "description": "No online shape-building or sorting tool is registered; sticks and cut-outs are the core modality.",
+      "blocksApproval": false
+    },
+    "GRADE_4_6_CIRCLE_MANIPULATIVE": {
+      "kind": "TOOL",
+      "need": "MANIPULATIVE_2D",
+      "objectives": [
+        "moe-math-g4-s2-p6-geometry-and-statistics-obj4"
+      ],
+      "description": "No online circle-parts tool is registered; folded paper circles are the core modality.",
+      "blocksApproval": false
+    },
+    "GRADE_4_6_SOLIDS_3D_VIEWER": {
+      "kind": "TOOL",
+      "need": "THREE_D",
+      "objectives": [
+        "moe-math-g4-s2-p6-geometry-and-statistics-obj5"
+      ],
+      "description": "Planned, not implemented: a 3D solids viewer in which learners rotate each solid and inspect hidden faces, edges and vertices. It augments the real-object experience and never replaces it. No 3D runtime exists today.",
+      "blocksApproval": false
+    },
+    "G4_DATA_SURVEY_GOVERNED_EVIDENCE": {
+      "kind": "EVIDENCE",
+      "need": "PRACTICAL",
+      "objectives": [
+        "moe-math-g4-s2-p6-geometry-and-statistics-obj6"
+      ],
+      "description": "Evidence for the family-size survey is teacher observation today. Governed item responses for the graph-reading (mode) items need an authored promotion (governed items + binding) before they count as governed evidence.",
+      "blocksApproval": false
+    }
+  },
+  "objectives": {
+    "moe-math-g4-s1-p1-numeration-addition-and-subtraction-obj1": {
+      "recommendation": "READY_FOR_FOUNDER_APPROVAL",
+      "reviewedContent": {
+        "contentId": "ll-g4-math-read-write-numbers-to-100000-2026.1",
+        "version": "0.1.0",
+        "payloadSha256": "2dc47abde1ab3d2351a9c82e0bbe65a8030e58b0ada746a7a73562e8aefa1777"
+      },
+      "decisionsApplied": [
+        "CPR-2026-09-26-R01"
+      ],
+      "productGaps": [
+        "GRADE_4_6_PLACE_VALUE_MANIPULATIVE"
+      ],
+      "note": ""
+    },
+    "moe-math-g4-s1-p1-numeration-addition-and-subtraction-obj2": {
+      "recommendation": "READY_FOR_FOUNDER_APPROVAL",
+      "reviewedContent": {
+        "contentId": "ll-g4-math-compare-order-numbers-to-100000-2026.1",
+        "version": "0.1.0",
+        "payloadSha256": "58560bb8a7a0eee5df451dbb1b2dccc1c944a427eb836bf44fd1e8e88bdcac93"
+      },
+      "decisionsApplied": [],
+      "productGaps": [],
+      "note": ""
+    },
+    "moe-math-g4-s1-p1-numeration-addition-and-subtraction-obj3": {
+      "recommendation": "READY_FOR_FOUNDER_APPROVAL",
+      "reviewedContent": {
+        "contentId": "ll-g4-math-rounding-whole-numbers-2026.1",
+        "version": "0.1.0",
+        "payloadSha256": "117ef8bce623393601e0b81c209bd72beb2203a73381aebb54e3a5da1c4272ca"
+      },
+      "decisionsApplied": [],
+      "productGaps": [],
+      "note": ""
+    },
+    "moe-math-g4-s1-p1-numeration-addition-and-subtraction-obj4": {
+      "recommendation": "READY_FOR_FOUNDER_APPROVAL",
+      "reviewedContent": {
+        "contentId": "ll-g4-math-add-subtract-population-data-2026.1",
+        "version": "0.1.0",
+        "payloadSha256": "129db94ef65e82335defe9a71ebd2cd8c37d9b0c1a13fd3bcf29ab4c48eabf80"
+      },
+      "decisionsApplied": [
+        "CPR-2026-09-26-P1",
+        "CPR-2026-09-26-R02"
+      ],
+      "productGaps": [],
+      "note": "Every population item now carries an 'Example data' label."
+    },
+    "moe-math-g4-s1-p2-multiplication-and-division-of-whole-numbers-obj1": {
+      "recommendation": "READY_FOR_FOUNDER_APPROVAL",
+      "reviewedContent": {
+        "contentId": "ll-g4-math-multiplication-facts-properties-2026.1",
+        "version": "0.1.0",
+        "payloadSha256": "1c400bec6e6daaae6597b56c90f6e680a87c926b232b45311b919fbb89b1d2e9"
+      },
+      "decisionsApplied": [],
+      "productGaps": [],
+      "note": ""
+    },
+    "moe-math-g4-s1-p2-multiplication-and-division-of-whole-numbers-obj2": {
+      "recommendation": "READY_FOR_FOUNDER_APPROVAL",
+      "reviewedContent": {
+        "contentId": "ll-g4-math-multiply-multiples-of-10-2026.1",
+        "version": "0.1.0",
+        "payloadSha256": "9af6a086e806f8b6f56479c4496e2c67225fa7647004f459839d030ac5c0aac6"
+      },
+      "decisionsApplied": [],
+      "productGaps": [],
+      "note": ""
+    },
+    "moe-math-g4-s1-p2-multiplication-and-division-of-whole-numbers-obj3": {
+      "recommendation": "READY_FOR_FOUNDER_APPROVAL",
+      "reviewedContent": {
+        "contentId": "ll-g4-math-multiply-by-one-digit-2026.1",
+        "version": "0.1.0",
+        "payloadSha256": "34245c86f9c4a356ed8abbbb648fca03af50b825174d53b1c96080b16284bab7"
+      },
+      "decisionsApplied": [
+        "CPR-2026-09-26-R03"
+      ],
+      "productGaps": [
+        "GRADE_4_6_GRID_MANIPULATIVE"
+      ],
+      "note": ""
+    },
+    "moe-math-g4-s1-p2-multiplication-and-division-of-whole-numbers-obj4": {
+      "recommendation": "READY_FOR_FOUNDER_APPROVAL",
+      "reviewedContent": {
+        "contentId": "ll-g4-math-divide-by-one-digit-2026.1",
+        "version": "0.1.0",
+        "payloadSha256": "ceda2a0f5df426cd7165afe2f4e6e4fb70db3203d359e3aa6a5076d1a6ab8bc8"
+      },
+      "decisionsApplied": [],
+      "productGaps": [],
+      "note": ""
+    },
+    "moe-math-g4-s1-p2-multiplication-and-division-of-whole-numbers-obj5": {
+      "recommendation": "READY_FOR_FOUNDER_APPROVAL",
+      "reviewedContent": {
+        "contentId": "ll-g4-math-divide-zero-in-quotient-2026.1",
+        "version": "0.1.0",
+        "payloadSha256": "779fb8e8b6ffa3fb5936a066756866e49f9c3769a35cec604544b35fd2c42611"
+      },
+      "decisionsApplied": [],
+      "productGaps": [],
+      "note": ""
+    },
+    "moe-math-g4-s1-p2-multiplication-and-division-of-whole-numbers-obj6": {
+      "recommendation": "READY_FOR_FOUNDER_APPROVAL",
+      "reviewedContent": {
+        "contentId": "ll-g4-math-division-word-problems-2026.1",
+        "version": "0.1.0",
+        "payloadSha256": "c466ea6287fcd7c9482ab5892e6efb8beae79ce18238f5199ed4ea225392cd4a"
+      },
+      "decisionsApplied": [],
+      "productGaps": [],
+      "note": ""
+    },
+    "moe-math-g4-s1-p3-number-theory-and-fraction-obj1": {
+      "recommendation": "READY_FOR_FOUNDER_APPROVAL",
+      "reviewedContent": {
+        "contentId": "ll-g4-math-even-and-odd-numbers-2026.1",
+        "version": "0.1.0",
+        "payloadSha256": "d67d1042f0280bb34670e219f942e002a5feb9e893de89260d723a057e96924b"
+      },
+      "decisionsApplied": [],
+      "productGaps": [],
+      "note": ""
+    },
+    "moe-math-g4-s1-p3-number-theory-and-fraction-obj2": {
+      "recommendation": "READY_FOR_FOUNDER_APPROVAL",
+      "reviewedContent": {
+        "contentId": "ll-g4-math-factors-and-multiples-2026.1",
+        "version": "0.1.0",
+        "payloadSha256": "d9963da184eeb18365655da9cef3e0813f326c7557fbe97166d15092d679d311"
+      },
+      "decisionsApplied": [
+        "CPR-2026-09-26-R04"
+      ],
+      "productGaps": [],
+      "note": ""
+    },
+    "moe-math-g4-s1-p3-number-theory-and-fraction-obj3": {
+      "recommendation": "READY_FOR_FOUNDER_APPROVAL",
+      "reviewedContent": {
+        "contentId": "ll-g4-math-lcm-and-gcf-2026.1",
+        "version": "0.1.0",
+        "payloadSha256": "b44a01b48f8217cb936707566d6532acc3de93e6bbeb88c8f086f7ddc1ada2a7"
+      },
+      "decisionsApplied": [
+        "CPR-2026-09-26-R04"
+      ],
+      "productGaps": [],
+      "note": "No change to 3.3 content: the prime-factor requirement was met in 3.2 instead."
+    },
+    "moe-math-g4-s1-p3-number-theory-and-fraction-obj4": {
+      "recommendation": "READY_FOR_FOUNDER_APPROVAL",
+      "reviewedContent": {
+        "contentId": "ll-g4-math-fractions-equal-parts-2026.2",
+        "version": "1.2.0",
+        "payloadSha256": "7f6faf3133b258771c0d5222488d81709058df7d419de6f6bd7eb68d59d615e9"
+      },
+      "decisionsApplied": [
+        "CPR-2026-09-26-R05"
+      ],
+      "productGaps": [
+        "SET_FRACTION_MANIPULATIVE_REQUIRED"
+      ],
+      "note": "Assessed: the 2026.2 candidate v1.2.0. Lesson content is ready; release 2026.2 activation separately needs a release-level approval and the mastery-continuity and misconception-policy decisions (live-readiness/RELEASE_2026_2_AND_WRITE_PLAN.md). The founder's ledger entry must name reviewedContentId."
+    },
+    "moe-math-g4-s1-p3-number-theory-and-fraction-obj5": {
+      "recommendation": "READY_FOR_FOUNDER_APPROVAL",
+      "reviewedContent": {
+        "contentId": "ll-g4-math-equivalent-fractions-2026.1",
+        "version": "0.1.0",
+        "payloadSha256": "a97c281dfbf604ef931d4bbdd63e564d33ce3d6f29346534d80db1134b3de00d"
+      },
+      "decisionsApplied": [],
+      "productGaps": [],
+      "note": ""
+    },
+    "moe-math-g4-s1-p3-number-theory-and-fraction-obj6": {
+      "recommendation": "READY_FOR_FOUNDER_APPROVAL",
+      "reviewedContent": {
+        "contentId": "ll-g4-math-simplifying-fractions-2026.1",
+        "version": "0.1.0",
+        "payloadSha256": "5afd16da2e3c29314ef4cb0ed6ef60b1e8b536a4a25dd5c1755efa30d2208576"
+      },
+      "decisionsApplied": [],
+      "productGaps": [],
+      "note": ""
+    },
+    "moe-math-g4-s1-p3-number-theory-and-fraction-obj7": {
+      "recommendation": "READY_FOR_FOUNDER_APPROVAL",
+      "reviewedContent": {
+        "contentId": "ll-g4-math-adding-fractions-2026.1",
+        "version": "0.1.0",
+        "payloadSha256": "b99f69b88f7bf143f555a5be32933b8ce2f48056bc34e70c9b2e0250eff72355"
+      },
+      "decisionsApplied": [
+        "CPR-2026-09-26-R06"
+      ],
+      "productGaps": [],
+      "note": "Sums greater than one are written as mixed numbers inside this lesson; 3.4 now treats fractions greater than one only as an optional extension, so 3.7 is where learners first meet them in practice."
+    },
+    "moe-math-g4-s1-p3-number-theory-and-fraction-obj8": {
+      "recommendation": "READY_FOR_FOUNDER_APPROVAL",
+      "reviewedContent": {
+        "contentId": "ll-g4-math-subtracting-fractions-2026.1",
+        "version": "0.1.0",
+        "payloadSha256": "d6e6c18e774508c6dcca0be5ad6c0b873da2f332d3f8adf9ecb8104b332815b0"
+      },
+      "decisionsApplied": [
+        "CPR-2026-09-26-R07"
+      ],
+      "productGaps": [],
+      "note": ""
+    },
+    "moe-math-g4-s1-p3-number-theory-and-fraction-obj9": {
+      "recommendation": "READY_FOR_FOUNDER_APPROVAL",
+      "reviewedContent": {
+        "contentId": "ll-g4-math-multi-step-problems-2026.1",
+        "version": "0.1.0",
+        "payloadSha256": "8dd15953cee58437aed77ab0e0080bf9f4371a702de9a908c9d3c5144089f563"
+      },
+      "decisionsApplied": [],
+      "productGaps": [],
+      "note": ""
+    },
+    "moe-math-g4-s2-p4-multiplication-and-division-of-2-digits-multipli-obj1": {
+      "recommendation": "READY_FOR_FOUNDER_APPROVAL",
+      "reviewedContent": {
+        "contentId": "ll-g4-math-multiply-tens-by-tens-2026.1",
+        "version": "0.1.0",
+        "payloadSha256": "6130851c11704212a2758ee2badcb6ece44b31dc4dbb01c8c129ac55c9a35866"
+      },
+      "decisionsApplied": [],
+      "productGaps": [],
+      "note": ""
+    },
+    "moe-math-g4-s2-p4-multiplication-and-division-of-2-digits-multipli-obj2": {
+      "recommendation": "READY_FOR_FOUNDER_APPROVAL",
+      "reviewedContent": {
+        "contentId": "ll-g4-math-estimate-products-2026.1",
+        "version": "0.1.0",
+        "payloadSha256": "acb507d5c60720703aa588c717c7f58b7b57ad62969e5adcc8b489dc31783a70"
+      },
+      "decisionsApplied": [],
+      "productGaps": [],
+      "note": ""
+    },
+    "moe-math-g4-s2-p4-multiplication-and-division-of-2-digits-multipli-obj3": {
+      "recommendation": "READY_FOR_FOUNDER_APPROVAL",
+      "reviewedContent": {
+        "contentId": "ll-g4-math-multiply-by-two-digit-2026.1",
+        "version": "0.1.0",
+        "payloadSha256": "1dccb423ce7139ab9c8cd40b37964b1abdfe8c3927b085e471c924a12e1ac66b"
+      },
+      "decisionsApplied": [],
+      "productGaps": [],
+      "note": "The MOE wording is ambiguous on its own; the lesson's reading (2-, 3-, 4-digit numbers by 2-digit multipliers) rests on con4/con5."
+    },
+    "moe-math-g4-s2-p4-multiplication-and-division-of-2-digits-multipli-obj4": {
+      "recommendation": "READY_FOR_FOUNDER_APPROVAL",
+      "reviewedContent": {
+        "contentId": "ll-g4-math-divide-multiples-mentally-2026.1",
+        "version": "0.1.0",
+        "payloadSha256": "6ecebcf1d40402e029b1676f7b7b0614814d120f0cff2ce06bf5b87c9c20bb32"
+      },
+      "decisionsApplied": [],
+      "productGaps": [],
+      "note": ""
+    },
+    "moe-math-g4-s2-p4-multiplication-and-division-of-2-digits-multipli-obj5": {
+      "recommendation": "READY_FOR_FOUNDER_APPROVAL",
+      "reviewedContent": {
+        "contentId": "ll-g4-math-estimate-quotients-2026.1",
+        "version": "0.1.0",
+        "payloadSha256": "f1386c9225d3d3aed07ae2f535a22375de5590d738480e0304093fa17bb825b5"
+      },
+      "decisionsApplied": [],
+      "productGaps": [],
+      "note": ""
+    },
+    "moe-math-g4-s2-p4-multiplication-and-division-of-2-digits-multipli-obj6": {
+      "recommendation": "READY_FOR_FOUNDER_APPROVAL",
+      "reviewedContent": {
+        "contentId": "ll-g4-math-divide-by-two-digit-2026.1",
+        "version": "0.1.0",
+        "payloadSha256": "85558092b9de488ecab4e5824612d7cdd6cfce601d6ab763a9e58d6bbc40ceaf"
+      },
+      "decisionsApplied": [],
+      "productGaps": [],
+      "note": ""
+    },
+    "moe-math-g4-s2-p4-multiplication-and-division-of-2-digits-multipli-obj7": {
+      "recommendation": "READY_FOR_FOUNDER_APPROVAL",
+      "reviewedContent": {
+        "contentId": "ll-g4-math-read-write-decimals-hundredths-2026.1",
+        "version": "0.1.0",
+        "payloadSha256": "82aba61a28426c2e775b54cf11f6fe17cc44d8acf0a9d835c3523d5651c7f7fd"
+      },
+      "decisionsApplied": [],
+      "productGaps": [],
+      "note": ""
+    },
+    "moe-math-g4-s2-p4-multiplication-and-division-of-2-digits-multipli-obj8": {
+      "recommendation": "READY_FOR_FOUNDER_APPROVAL",
+      "reviewedContent": {
+        "contentId": "ll-g4-math-compare-order-decimals-2026.1",
+        "version": "0.1.0",
+        "payloadSha256": "1bde912750d87bc41dd4371c52256d3676a459e066432523435709f8c5ee8e37"
+      },
+      "decisionsApplied": [],
+      "productGaps": [],
+      "note": ""
+    },
+    "moe-math-g4-s2-p5-measurement-obj1": {
+      "recommendation": "READY_FOR_FOUNDER_APPROVAL",
+      "reviewedContent": {
+        "contentId": "ll-g4-math-estimating-time-2026.1",
+        "version": "0.1.0",
+        "payloadSha256": "935edfbf86f164331887d4c255dfc5020e5ea203b070f0c69d28720b88d97c70"
+      },
+      "decisionsApplied": [],
+      "productGaps": [],
+      "note": ""
+    },
+    "moe-math-g4-s2-p5-measurement-obj2": {
+      "recommendation": "READY_FOR_FOUNDER_APPROVAL",
+      "reviewedContent": {
+        "contentId": "ll-g4-math-elapsed-time-2026.1",
+        "version": "0.1.0",
+        "payloadSha256": "90ac87d0cc90490eece3724eb53551b6597c176deb0ec899589803b1b77b59d0"
+      },
+      "decisionsApplied": [],
+      "productGaps": [
+        "GRADE_4_6_CLOCK_MANIPULATIVE"
+      ],
+      "note": "Consequential fix outside the 16 review items: the malformed time distractor '5:65 p.m.' was replaced with '5:55 p.m.' (same standard as R09)."
+    },
+    "moe-math-g4-s2-p5-measurement-obj3": {
+      "recommendation": "READY_FOR_FOUNDER_APPROVAL",
+      "reviewedContent": {
+        "contentId": "ll-g4-math-estimate-customary-length-2026.1",
+        "version": "0.1.0",
+        "payloadSha256": "205dd90e839d3e594116b17aae91c918d441f1186606f5fb1334e7666f61719d"
+      },
+      "decisionsApplied": [],
+      "productGaps": [],
+      "note": "The explanation says customary units are widely used in Liberia; the founder should confirm this factual claim."
+    },
+    "moe-math-g4-s2-p5-measurement-obj4": {
+      "recommendation": "READY_FOR_FOUNDER_APPROVAL",
+      "reviewedContent": {
+        "contentId": "ll-g4-math-measure-customary-length-2026.1",
+        "version": "0.1.0",
+        "payloadSha256": "8fa3e417b2235ee1eec1244e5ccc763913dee8c3397fa5a64991b96d2de77d7d"
+      },
+      "decisionsApplied": [],
+      "productGaps": [],
+      "note": ""
+    },
+    "moe-math-g4-s2-p5-measurement-obj5": {
+      "recommendation": "READY_FOR_FOUNDER_APPROVAL",
+      "reviewedContent": {
+        "contentId": "ll-g4-math-estimate-customary-mass-capacity-2026.1",
+        "version": "0.1.0",
+        "payloadSha256": "9bea45b5f58750e369922e438e835efd9aa5388e8b0a5cefb93250bc9fb9bb8c"
+      },
+      "decisionsApplied": [
+        "CPR-2026-09-26-P5",
+        "CPR-2026-09-26-R08"
+      ],
+      "productGaps": [],
+      "note": ""
+    },
+    "moe-math-g4-s2-p5-measurement-obj6": {
+      "recommendation": "READY_FOR_FOUNDER_APPROVAL",
+      "reviewedContent": {
+        "contentId": "ll-g4-math-estimate-metric-units-2026.1",
+        "version": "0.1.0",
+        "payloadSha256": "28eaf833a8f14b5046d7c35a7506a4d40cb75c5c27eed59e4e1580cab10264de"
+      },
+      "decisionsApplied": [
+        "CPR-2026-09-26-R08"
+      ],
+      "productGaps": [],
+      "note": "Consequential fix: the 1 kg benchmark now names a labelled packet, matching 5.5 (R08)."
+    },
+    "moe-math-g4-s2-p5-measurement-obj7": {
+      "recommendation": "READY_FOR_FOUNDER_APPROVAL",
+      "reviewedContent": {
+        "contentId": "ll-g4-math-convert-metric-units-2026.1",
+        "version": "0.1.0",
+        "payloadSha256": "9f4397e58a7ed2af8e420a483aa3d2cd15bdeaaf14067c8246fb980bf5cf00f1"
+      },
+      "decisionsApplied": [],
+      "productGaps": [],
+      "note": ""
+    },
+    "moe-math-g4-s2-p5-measurement-obj8": {
+      "recommendation": "READY_FOR_FOUNDER_APPROVAL",
+      "reviewedContent": {
+        "contentId": "ll-g4-math-add-subtract-measurements-2026.1",
+        "version": "0.1.0",
+        "payloadSha256": "6718735b9fe41b9e2e8f86f10b8a964b4bc8f9dde2e9c57809acc2189821d549"
+      },
+      "decisionsApplied": [
+        "CPR-2026-09-26-R09"
+      ],
+      "productGaps": [],
+      "note": ""
+    },
+    "moe-math-g4-s2-p5-measurement-obj9": {
+      "recommendation": "READY_FOR_FOUNDER_APPROVAL",
+      "reviewedContent": {
+        "contentId": "ll-g4-math-perimeter-area-rectangles-2026.1",
+        "version": "0.1.0",
+        "payloadSha256": "495bf2f254b84b10322eda30df65ca004e279ca2c9acb5fd5975f3012cb80c8c"
+      },
+      "decisionsApplied": [
+        "CPR-2026-09-26-P2",
+        "CPR-2026-09-26-R10"
+      ],
+      "productGaps": [
+        "GRADE_4_6_GRID_MANIPULATIVE"
+      ],
+      "note": ""
+    },
+    "moe-math-g4-s2-p6-geometry-and-statistics-obj1": {
+      "recommendation": "READY_FOR_FOUNDER_APPROVAL",
+      "reviewedContent": {
+        "contentId": "ll-g4-math-lines-segments-rays-2026.1",
+        "version": "0.1.0",
+        "payloadSha256": "11e0928ef247a4afec1bbc799ed5efe15f896c25c4c42103256e4bdc1b0d4d32"
+      },
+      "decisionsApplied": [
+        "CPR-2026-09-26-P4",
+        "CPR-2026-09-26-R11"
+      ],
+      "productGaps": [],
+      "note": ""
+    },
+    "moe-math-g4-s2-p6-geometry-and-statistics-obj2": {
+      "recommendation": "READY_FOR_FOUNDER_APPROVAL",
+      "reviewedContent": {
+        "contentId": "ll-g4-math-angles-perpendicular-lines-2026.1",
+        "version": "0.1.0",
+        "payloadSha256": "a1bf10af25639d40b6f93a0eb13fc7af44023c6be2de357accd7ae3b616c6f8b"
+      },
+      "decisionsApplied": [],
+      "productGaps": [
+        "GRADE_4_6_ANGLE_TESTER"
+      ],
+      "note": ""
+    },
+    "moe-math-g4-s2-p6-geometry-and-statistics-obj3": {
+      "recommendation": "READY_FOR_FOUNDER_APPROVAL",
+      "reviewedContent": {
+        "contentId": "ll-g4-math-polygons-2026.1",
+        "version": "0.1.0",
+        "payloadSha256": "e05d6257ea37e366c6f79da8adfdff86240b78f041cd51a24cfe5652b767e081"
+      },
+      "decisionsApplied": [
+        "CPR-2026-09-26-R12"
+      ],
+      "productGaps": [
+        "GRADE_4_6_SHAPE_SORT_MANIPULATIVE"
+      ],
+      "note": ""
+    },
+    "moe-math-g4-s2-p6-geometry-and-statistics-obj4": {
+      "recommendation": "READY_FOR_FOUNDER_APPROVAL",
+      "reviewedContent": {
+        "contentId": "ll-g4-math-parts-of-a-circle-2026.1",
+        "version": "0.1.0",
+        "payloadSha256": "3914ac657241f03dfa12e3f336e14f896edb3f4e4c227fddd1b9b697a08253dc"
+      },
+      "decisionsApplied": [
+        "CPR-2026-09-26-R13"
+      ],
+      "productGaps": [
+        "GRADE_4_6_CIRCLE_MANIPULATIVE"
+      ],
+      "note": ""
+    },
+    "moe-math-g4-s2-p6-geometry-and-statistics-obj5": {
+      "recommendation": "READY_FOR_FOUNDER_APPROVAL",
+      "reviewedContent": {
+        "contentId": "ll-g4-math-solid-figures-2026.1",
+        "version": "0.1.0",
+        "payloadSha256": "62b790f016a42181a209197da137a3ce7056dc175edf35c8d5673a14bb43d733"
+      },
+      "decisionsApplied": [
+        "CPR-2026-09-26-P3",
+        "CPR-2026-09-26-R14"
+      ],
+      "productGaps": [
+        "GRADE_4_6_SOLIDS_3D_VIEWER"
+      ],
+      "note": ""
+    },
+    "moe-math-g4-s2-p6-geometry-and-statistics-obj6": {
+      "recommendation": "READY_FOR_FOUNDER_APPROVAL",
+      "reviewedContent": {
+        "contentId": "ll-g4-math-read-interpret-graphs-2026.1",
+        "version": "0.1.0",
+        "payloadSha256": "1f2811bee91e89b65f76a06c80961e298c947492ace2b484133aa7b1dfc093dc"
+      },
+      "decisionsApplied": [
+        "CPR-2026-09-26-R15"
+      ],
+      "productGaps": [
+        "G4_DATA_SURVEY_GOVERNED_EVIDENCE"
+      ],
+      "note": ""
+    },
+    "moe-math-g4-s2-p6-geometry-and-statistics-obj7": {
+      "recommendation": "READY_FOR_FOUNDER_APPROVAL",
+      "reviewedContent": {
+        "contentId": "ll-g4-math-mode-median-mean-2026.1",
+        "version": "0.1.0",
+        "payloadSha256": "168689885b3b1f25d8e51b5a21a6cde559e261d446bab39bcae482cadc421179"
+      },
+      "decisionsApplied": [
+        "CPR-2026-09-26-R16"
+      ],
+      "productGaps": [],
+      "note": "Remaining source check (does not change lesson content): whether this page-49 text sits in the MOE objectives or activities column needs a person reading page 49 of Math 1-6.pdf. Its instructional target is corroborated by out2 (p48), act6 (p49) and Grade 3 (p37). Added in this revision: the text now says why the mean example uses a second data set."
+    },
+    "moe-math-g4-s2-p6-geometry-and-statistics-obj8": {
+      "recommendation": "READY_FOR_FOUNDER_APPROVAL",
+      "reviewedContent": {
+        "contentId": "ll-g4-math-word-problems-with-diagrams-2026.1",
+        "version": "0.1.0",
+        "payloadSha256": "7ada6a5c008a6dd2eeef897769c882d979feeeaf6114fbc7d090da3102db78f0"
+      },
+      "decisionsApplied": [],
+      "productGaps": [],
+      "note": ""
+    }
+  }
+}
