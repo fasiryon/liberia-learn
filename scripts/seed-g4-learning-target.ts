@@ -15,14 +15,27 @@
  */
 import fs from "node:fs";
 import { PrismaClient, type Prisma } from "@prisma/client";
+import { publishedRelease } from "../lib/learning-authority/publishedReleases";
+import { deterministicReleaseIdentity } from "../lib/learning-authority/governedGrade4Math";
 
 const CODE = "LR-MATH-G4_6-02";
-const LESSON = "ll-g4-math-fractions-equal-parts-2026.1";
 const spec = JSON.parse(fs.readFileSync("curriculum/review/g4-math/live-readiness/lr-math-g4_6-02.target.json", "utf8"));
+const LESSON: string = spec.lessonContentId;
+
+/** The target's release evidence must name a published release, its exact identity, and a release that binds LESSON. */
+function checkReleaseBinding() {
+  const ref = (spec.data.evidenceRefs as { id: string; kind: string; identity?: string }[]).find((entry) => entry.kind === "ONTOLOGY_RELEASE");
+  const release = ref ? publishedRelease(ref.id) : null;
+  if (!ref || !release) throw new Error(`precondition_failed: target release ${ref?.id ?? "(none)"} is not a published release in this code`);
+  if (deterministicReleaseIdentity(release) !== ref.identity) throw new Error(`precondition_failed: target release identity ${ref.identity} does not match ${release.id}`);
+  if (!release.contentBindings.some((binding) => binding.contentId === LESSON)) throw new Error(`precondition_failed: ${release.id} does not bind ${LESSON}`);
+  if (release.bindings.some((binding) => binding.learningTargetCode !== CODE)) throw new Error(`precondition_failed: ${release.id} binds a learning target other than ${CODE}`);
+}
 
 async function main() {
   const apply = process.argv.includes("--apply");
   if (apply && process.env.CONFIRM_PRODUCTION_WRITE !== CODE) throw new Error(`--apply requires CONFIRM_PRODUCTION_WRITE=${CODE}`);
+  checkReleaseBinding();
   const url = process.env.DIRECT_URL?.trim();
   if (!url) throw new Error("DIRECT_URL is required");
   const prisma = new PrismaClient({ datasourceUrl: url, log: [] });

@@ -15,10 +15,22 @@ For each objective, record APPROVE / REVISE / REJECT in `review-ledger.json`. No
 | Status | DRAFT_UNREVIEWED |
 | Interaction | PRACTICAL. Estimating time needs lived duration: learners estimate, then time real classroom tasks. |
 | Interaction offline | Teacher-led timing with a wall clock or phone; learners record estimate vs actual. |
+| Planned enhancement | none |
 | Evidence | TEACHER_OBSERVATION; safety: None beyond normal classroom supervision. |
 | Example-data labels | none |
+| Reviewed content | `ll-g4-math-estimating-time-2026.1` v0.1.0, payload sha256 `935edfbf86f164331887d4c255dfc5020e5ea203b070f0c69d28720b88d97c70` |
+| Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision) |
 
 **Known uncertainties:** none recorded.
+
+### Reviewer support (not a decision)
+
+- **Content risks:** none found.
+- **Answers:** VERIFIED: all answer keys recomputed; no errors.
+- **Wording provenance.** MOE-derived: The objective; outcome out1 (planning activities by the time they take) matches the estimate-then-time practical. LiberiaLearn explanatory: Title, explanation, worked examples, activities, all practice, homework, quiz, diagnostic and assessment items, teacher notes. Example data: None.
+- **Grade appropriateness:** Appropriate for Grade 4 and within the MOE scope for this objective.
+- **Component alignment:** Classwork, practice, homework, quiz and exit assessment all target this objective; the diagnostic checks a prerequisite.
+- **Interaction classification (PRACTICAL):** AGREE
 
 ### Explanation
 
@@ -101,12 +113,28 @@ Duration: 45 minutes.
 | Status | DRAFT_UNREVIEWED |
 | Interaction | MANIPULATIVE_2D. Learners move clock hands to find elapsed time. |
 | Interaction offline | Paper-plate clock with a split-pin for the hands. |
+| Planned enhancement | GRADE_4_6_CLOCK_MANIPULATIVE (MANIPULATIVE_2D), NOT IMPLEMENTED: No Grade 4-6 clock tool is enabled online; the paper-plate clock is the MOE-aligned core modality (MOE mat1: toy or paper clock). |
 | Evidence | GOVERNED_ITEM_RESPONSE |
 | Example-data labels | (example times) |
+| Reviewed content | `ll-g4-math-elapsed-time-2026.1` v0.1.0, payload sha256 `90ac87d0cc90490eece3724eb53551b6597c176deb0ec899589803b1b77b59d0` |
+| Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision). Consequential fix outside the 16 review items: the malformed time distractor '5:65 p.m.' was replaced with '5:55 p.m.' (same standard as R09). |
 
-**Known uncertainties:** 
+**Known uncertainties:**
 - No Grade 4-6 clock tool is enabled online; interaction relies on paper-plate clocks.
+  - **SOURCE_RESOLVED.** MOE's own method is a physical clock: act1 'Demonstrate finding elapsed time using a toy clock...' and mat1 'Toy or paper Clock'. The paper-plate clock is source-aligned; no online tool is needed for alignment. A Grade 4-6 online clock tool remains a non-blocking product gap.
+  - Evidence: moe-math-g4-s2-p5-measurement-act1 p46; moe-math-g4-s2-p5-measurement-mat1 p46
 - Interaction MANIPULATIVE_2D has no enabled online tool; offline fallback only.
+  - **SOURCE_RESOLVED.** Same as #known-1: the MOE material is a toy or paper clock.
+  - Evidence: moe-math-g4-s2-p5-measurement-mat1 p46
+
+### Reviewer support (not a decision)
+
+- **Content risks:** none found.
+- **Answers:** VERIFIED: all answer keys recomputed; no errors.
+- **Wording provenance.** MOE-derived: The objective; the paper-plate clock follows act1 and mat1 ('toy clock', 'Toy or paper Clock'). LiberiaLearn explanatory: Title, explanation, worked examples, activities, all practice, homework, quiz, diagnostic and assessment items, teacher notes. Example data: Bus schedule times (labeled example times).
+- **Grade appropriateness:** Appropriate for Grade 4 and within the MOE scope for this objective.
+- **Component alignment:** Classwork, practice, homework, quiz and exit assessment all target this objective; the diagnostic checks a prerequisite.
+- **Interaction classification (MANIPULATIVE_2D):** AGREE
 
 ### Explanation
 
@@ -154,7 +182,7 @@ Crossing noon: from 11:20 a.m. to 1:05 p.m. is 40 minutes to noon, then 1 hour 5
 ### Quiz
 
 1. How long is it from 8:20 a.m. to 9:05 a.m.? (45 minutes / 85 minutes / 1 hour 15 minutes / 35 minutes) **Answer:** 45 minutes
-2. A film starts at 4:15 p.m. and lasts 1 hour 50 minutes. When does it end? (6:05 p.m. / 5:65 p.m. / 5:05 p.m. / 6:15 p.m.) **Answer:** 6:05 p.m.
+2. A film starts at 4:15 p.m. and lasts 1 hour 50 minutes. When does it end? (6:05 p.m. / 5:55 p.m. / 5:05 p.m. / 6:15 p.m.) **Answer:** 6:05 p.m.
 3. How long is it from 11:30 a.m. to 2:00 p.m.? (2 hours 30 minutes / 3 hours 30 minutes / 9 hours 30 minutes / 1 hour 30 minutes) **Answer:** 2 hours 30 minutes
 
 ### Diagnostic check (before the lesson)
@@ -192,10 +220,23 @@ Duration: 45 minutes.
 | Status | DRAFT_UNREVIEWED |
 | Interaction | PRACTICAL. Estimating length needs a physical benchmark (a hand span, a foot). |
 | Interaction offline | Estimate then measure classroom objects with body benchmarks. |
+| Planned enhancement | none |
 | Evidence | TEACHER_OBSERVATION; safety: Keep walkways clear when measuring the room. |
 | Example-data labels | none |
+| Reviewed content | `ll-g4-math-estimate-customary-length-2026.1` v0.1.0, payload sha256 `205dd90e839d3e594116b17aae91c918d441f1186606f5fb1334e7666f61719d` |
+| Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision). The explanation says customary units are widely used in Liberia; the founder should confirm this factual claim. |
 
 **Known uncertainties:** none recorded.
+
+### Reviewer support (not a decision)
+
+- **Content risks:**
+  - The explanation says customary units are 'widely used in Liberia' (cloth, timber, height). This is a factual claim about Liberia the founder should confirm.
+- **Answers:** VERIFIED: all answer keys recomputed; no errors.
+- **Wording provenance.** MOE-derived: The objective; estimating desk and table lengths follows act2 ('Estimate the length of a pen, table'). LiberiaLearn explanatory: Title, explanation, worked examples, activities, all practice, homework, quiz, diagnostic and assessment items, teacher notes. Example data: None.
+- **Grade appropriateness:** Appropriate for Grade 4 and within the MOE scope for this objective.
+- **Component alignment:** Classwork, practice, homework, quiz and exit assessment all target this objective; the diagnostic checks a prerequisite.
+- **Interaction classification (PRACTICAL):** AGREE
 
 ### Explanation
 
@@ -278,10 +319,22 @@ Duration: 45 minutes.
 | Status | DRAFT_UNREVIEWED |
 | Interaction | PRACTICAL via digital-ruler. Measuring requires handling a real ruler or tape and aligning zero. |
 | Interaction offline | Rulers or a marked string; learners record measurements. |
+| Planned enhancement | none |
 | Evidence | TEACHER_OBSERVATION; safety: No sharp tools; blunt-ended rulers only. |
 | Example-data labels | none |
+| Reviewed content | `ll-g4-math-measure-customary-length-2026.1` v0.1.0, payload sha256 `8fa3e417b2235ee1eec1244e5ccc763913dee8c3397fa5a64991b96d2de77d7d` |
+| Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision) |
 
 **Known uncertainties:** none recorded.
+
+### Reviewer support (not a decision)
+
+- **Content risks:** none found.
+- **Answers:** VERIFIED: all answer keys recomputed; no errors.
+- **Wording provenance.** MOE-derived: The objective statement (verbatim MOE text). LiberiaLearn explanatory: Title, explanation, worked examples, activities, all practice, homework, quiz, diagnostic and assessment items, teacher notes. Example data: None.
+- **Grade appropriateness:** Appropriate for Grade 4 and within the MOE scope for this objective.
+- **Component alignment:** Classwork, practice, homework, quiz and exit assessment all target this objective; the diagnostic checks a prerequisite.
+- **Interaction classification (PRACTICAL):** AGREE
 
 ### Explanation
 
@@ -364,22 +417,40 @@ Duration: 45 minutes.
 | Status | DRAFT_UNREVIEWED |
 | Interaction | PRACTICAL. Mass and capacity are only meaningful when learners lift and pour. |
 | Interaction offline | Compare containers and objects by lifting and filling with water or sand. |
+| Planned enhancement | none |
 | Evidence | TEACHER_OBSERVATION; safety: Use water or dry sand only; wipe spills to prevent slipping. |
 | Example-data labels | none |
+| Reviewed content | `ll-g4-math-estimate-customary-mass-capacity-2026.1` v0.1.0, payload sha256 `9bea45b5f58750e369922e438e835efd9aa5388e8b0a5cefb93250bc9fb9bb8c` |
+| Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision). Decisions applied: CPR-2026-09-26-P5, CPR-2026-09-26-R08 |
 
-**Known uncertainties:** 
+**Known uncertainties:**
 - The lesson treats weight and mass together, using everyday customary units (ounce, pound). Confirm terminology.
+  - **LIBERIALEARN_CLARIFICATION_REQUIRED.** MOE uses 'mass' (objectives 5 and 6, p46) and 'weight' (objectives 7 and 8, p47; out2 'weights') for the same idea, so the source does not choose. LiberiaLearn needs one stated convention.
+  - Evidence: moe-math-g4-s2-p5-measurement-obj5 p46; moe-math-g4-s2-p5-measurement-obj7 p47; moe-math-g4-s2-p5-measurement-out2 p46
+  - Correction: Open 5.5 with 'Mass tells how heavy something is. People often call it weight.' and use 'mass' after that; keep MOE's 'weight' where objectives 7 and 8 use it.
+  - Settled by review decision CPR-2026-09-26-P5 (Mass; not founder approval): Use 'mass' pedagogically; preserve MOE 'weight' wording where it is quoted.
+
+### Reviewer support (not a decision)
+
+- **Content risks:** none found.
+- **Answers:** VERIFIED: all answer keys recomputed; no errors.
+- **Wording provenance.** MOE-derived: The objective; cups and gallons follow MOE mat1 ('scale cups, gallons teaspoon'). 'Weight' is kept only where MOE text is quoted. LiberiaLearn explanatory: Title, explanation, worked examples, activities, all practice, homework, quiz, diagnostic and assessment items, teacher notes. Example data: None.
+- **Grade appropriateness:** Appropriate. Terminology per CPR-2026-09-26-P5: 'Mass tells how heavy something is. People often call it weight.', then 'mass'.
+- **Component alignment:** Classwork, practice, homework, quiz and exit assessment all target this objective; the diagnostic checks a prerequisite.
+- **Interaction classification (PRACTICAL):** AGREE
 
 ### Explanation
 
-Weight (mass) tells how heavy something is. Customary units are ounces (oz) and pounds (lb): 16 ounces = 1 pound.
-Benchmarks: a slice of bread weighs about 1 ounce, a cup of rice about 7 ounces, and a large tin of tomato paste about 2 pounds. Rice is often sold in 25-pound and 50-pound bags.
+Mass tells how heavy something is. People often call it weight. In this lesson we say mass.
+
+Customary units of mass are ounces (oz) and pounds (lb): 16 ounces = 1 pound.
+Benchmarks: a pencil has a mass of less than 1 ounce, and a slice of bread about 1 ounce. The best benchmarks are packets and bags with the mass printed on the label: a packet labelled 1 lb (16 oz) has a mass of 1 pound, and rice is sold in bags labelled 25 lb or 50 lb.
 
 Capacity tells how much a container holds. Customary units are cups, pints (pt), quarts (qt) and gallons (gal).
 2 cups = 1 pint, 2 pints = 1 quart, 4 quarts = 1 gallon.
 Benchmarks: a drinking cup holds about 1 cup, and a large water container holds several gallons. Palm oil and kerosene are often sold by the gallon.
 
-To estimate, compare with a benchmark: this bag feels like about 4 bags of sugar, so about 8 pounds if each sugar bag is 2 pounds.
+To estimate, compare with a benchmark: hold a 1 lb packet in one hand and a bag in the other. If the bag feels about as heavy as 5 of the packets, its mass is about 5 pounds.
 
 ### Objectives
 
@@ -388,7 +459,8 @@ To estimate, compare with a benchmark: this bag feels like about 4 bags of sugar
 
 ### Classwork
 
-- Lift and compare: learners hold two objects and predict which is heavier, then check with a balance or scale.
+- Lift and compare: learners hold two objects and predict which has the greater mass (which is heavier), then check with a balance or scale.
+- Label benchmark: learners hold a packet labelled 1 lb, then estimate the mass of three other objects in pounds or ounces.
 - Pouring station: find how many cups fill a pint, quart and gallon container using water or sand.
 - Market survey: list items sold by the pound or by the gallon.
 
@@ -396,18 +468,18 @@ To estimate, compare with a benchmark: this bag feels like about 4 bags of sugar
 
 1. How many ounces are in 2 pounds? **Answer:** 32 ounces
 2. How many cups are in 1 quart? **Answer:** 4 cups
-3. Which is heavier: a 50-pound bag of rice or 40 pounds of cassava? **Answer:** The 50-pound bag of rice
+3. Which has the greater mass: a 50-pound bag of rice or 40 pounds of cassava? **Answer:** The 50-pound bag of rice
 4. Is a bucket's capacity about 3 cups or 3 gallons? **Answer:** 3 gallons
 
 ### Homework
 
 1. How many quarts are in 2 gallons? **Answer:** 8 quarts
 2. How many pints are in 3 quarts? **Answer:** 6 pints
-3. Name one item at home that weighs about 1 pound. **Answer:** Answers vary (for example, a bag of sugar or a tin of milk)
+3. Find one item at home whose label shows a mass of about 1 pound (1 lb or 16 oz). **Answer:** Answers vary (any item labelled 1 lb or 16 oz)
 
 ### Quiz
 
-1. About how much does a pencil weigh? (1 ounce or less / 1 pound / 10 pounds / 1 gallon) **Answer:** 1 ounce or less
+1. About what is the mass of a pencil? (1 ounce or less / 1 pound / 10 pounds / 1 gallon) **Answer:** 1 ounce or less
 2. How many pints are in 1 gallon? (8 / 4 / 2 / 16) **Answer:** 8
 3. Which unit would measure the water in a large drum? (Gallons / Ounces / Cups / Inches) **Answer:** Gallons
 
@@ -421,11 +493,11 @@ A gallon of palm oil is poured into quart bottles. How many bottles are filled? 
 
 ### Teacher notes
 
-Use water or dry sand only, and wipe spills to prevent slipping. Record estimate-then-check results as teacher-observation evidence.
+Use water or dry sand only, and wipe spills to prevent slipping. Record estimate-then-check results as teacher-observation evidence. Terminology: open with 'Mass tells how heavy something is. People often call it weight.' and say 'mass' after that; where the MOE text says 'weight' (objectives 5.7 and 5.8), quote it as written. Use benchmarks whose mass is printed on the label, because bag and tin sizes vary between shops.
 
 ### Materials
 
-Containers (cup, pint, quart, gallon), Water or dry sand, Balance or bathroom scale if available
+Containers (cup, pint, quart, gallon), Water or dry sand, A packet labelled 1 lb (16 oz), Balance or bathroom scale if available
 
 ### Offline behavior
 
@@ -446,10 +518,23 @@ Duration: 45 minutes.
 | Status | DRAFT_UNREVIEWED |
 | Interaction | PRACTICAL. Metric estimation needs physical benchmarks (1 m stick, 1 L bottle, 1 kg bag). |
 | Interaction offline | Benchmark objects brought from home or market. |
+| Planned enhancement | none |
 | Evidence | TEACHER_OBSERVATION; safety: Use water or dry sand only; wipe spills to prevent slipping. |
 | Example-data labels | none |
+| Reviewed content | `ll-g4-math-estimate-metric-units-2026.1` v0.1.0, payload sha256 `28eaf833a8f14b5046d7c35a7506a4d40cb75c5c27eed59e4e1580cab10264de` |
+| Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision). Decisions applied: CPR-2026-09-26-R08. Consequential fix: the 1 kg benchmark now names a labelled packet, matching 5.5 (R08). |
 
 **Known uncertainties:** none recorded.
+
+### Reviewer support (not a decision)
+
+- **Content risks:**
+  - Benchmarks now name packets labelled 1 kg (bag sizes vary by shop); changed with 5.5 so the two lessons agree.
+- **Answers:** VERIFIED: all answer keys recomputed; no errors.
+- **Wording provenance.** MOE-derived: The objective statement (verbatim MOE text). LiberiaLearn explanatory: Title, explanation, worked examples, activities, all practice, homework, quiz, diagnostic and assessment items, teacher notes. Example data: None.
+- **Grade appropriateness:** Appropriate for Grade 4 and within the MOE scope for this objective.
+- **Component alignment:** Classwork, practice, homework, quiz and exit assessment all target this objective; the diagnostic checks a prerequisite.
+- **Interaction classification (PRACTICAL):** AGREE
 
 ### Explanation
 
@@ -461,7 +546,7 @@ Mass: gram (g), kilogram (kg).
 Benchmarks:
 - 1 mm: the thickness of a coin edge. 1 cm: the width of a finger. 1 m: a big step, or the height of a door handle. 1 km: about a 12-minute walk.
 - 1 mL: a few drops of water. 1 L: a large bottle of water.
-- 1 g: a paper clip. 1 kg: a bag of sugar or a large pineapple.
+- 1 g: a paper clip. 1 kg: a packet labelled 1 kg, or a large pineapple.
 
 Choose the unit that fits the size: an ant in millimetres, a book in centimetres, a football field in metres, the road to Kakata in kilometres.
 
@@ -488,7 +573,7 @@ Estimate, then measure, and compare. Each time the estimate should get closer.
 
 ### Homework
 
-1. Find one item at home that weighs about 1 kg. **Answer:** Answers vary (for example, a bag of sugar)
+1. Find one item at home whose label shows a mass of about 1 kg. **Answer:** Answers vary (any item labelled 1 kg or 1,000 g)
 2. Which unit would you use for the distance from Monrovia to Buchanan? **Answer:** Kilometres
 3. Estimate the capacity of a large water bottle in litres. **Answer:** About 1 to 2 L (answers vary)
 
@@ -533,11 +618,25 @@ Duration: 45 minutes.
 | Status | DRAFT_UNREVIEWED |
 | Interaction | NONE |
 | Interaction offline | n/a |
+| Planned enhancement | none |
 | Evidence | NONE |
 | Example-data labels | (example weights) |
+| Reviewed content | `ll-g4-math-convert-metric-units-2026.1` v0.1.0, payload sha256 `9f4397e58a7ed2af8e420a483aa3d2cd15bdeaaf14067c8246fb980bf5cf00f1` |
+| Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision) |
 
-**Known uncertainties:** 
+**Known uncertainties:**
 - MOE extraction confidence MEDIUM (CONTINUATION_PAGE_ASSIGNMENT).
+  - **SOURCE_RESOLVED.** Page 47 is the second page of topic 5 (asr8-asr10 on p47; topic 6 starts on p48); con4 and con6 list converting units of measure.
+  - Evidence: moe-math-g4-s2-p5-measurement-con6 p46; moe-math-g4-s2-p5-measurement-asr8 p47
+
+### Reviewer support (not a decision)
+
+- **Content risks:** none found.
+- **Answers:** VERIFIED: all answer keys recomputed; no errors.
+- **Wording provenance.** MOE-derived: The objective statement (verbatim MOE text). LiberiaLearn explanatory: Title, explanation, worked examples, activities, all practice, homework, quiz, diagnostic and assessment items, teacher notes. Example data: Market bag weights (labeled example weights).
+- **Grade appropriateness:** Appropriate for Grade 4 and within the MOE scope for this objective.
+- **Component alignment:** Classwork, practice, homework, quiz and exit assessment all target this objective; the diagnostic checks a prerequisite.
+- **Interaction classification (NONE):** AGREE
 
 ### Explanation
 
@@ -621,11 +720,25 @@ Duration: 45 minutes.
 | Status | DRAFT_UNREVIEWED |
 | Interaction | NONE |
 | Interaction offline | n/a |
+| Planned enhancement | none |
 | Evidence | NONE |
 | Example-data labels | (example weights) |
+| Reviewed content | `ll-g4-math-add-subtract-measurements-2026.1` v0.1.0, payload sha256 `6718735b9fe41b9e2e8f86f10b8a964b4bc8f9dde2e9c57809acc2189821d549` |
+| Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision). Decisions applied: CPR-2026-09-26-R09 |
 
-**Known uncertainties:** 
+**Known uncertainties:**
 - MOE extraction confidence MEDIUM (CONTINUATION_PAGE_ASSIGNMENT).
+  - **SOURCE_RESOLVED.** Page 47 is the second page of topic 5 (asr8-asr10 on p47; topic 6 starts on p48).
+  - Evidence: moe-math-g4-s2-p5-measurement-asr8 p47; moe-math-g4-s2-p6-geometry-and-statistics-obj1 p48
+
+### Reviewer support (not a decision)
+
+- **Content risks:** none found.
+- **Answers:** VERIFIED: all answer keys recomputed; no errors.
+- **Wording provenance.** MOE-derived: The objective statement (verbatim MOE text). LiberiaLearn explanatory: Title, explanation, worked examples, activities, all practice, homework, quiz, diagnostic and assessment items, teacher notes. Example data: Market scale weights (labeled example weights).
+- **Grade appropriateness:** Appropriate for Grade 4 and within the MOE scope for this objective.
+- **Component alignment:** Classwork, practice, homework, quiz and exit assessment all target this objective; the diagnostic checks a prerequisite.
+- **Interaction classification (NONE):** AGREE
 
 ### Explanation
 
@@ -668,9 +781,9 @@ Example: a tailor has 4 m of cloth and cuts 1 m 35 cm for a shirt. 400 cm - 135 
 
 ### Quiz
 
-1. What is 2 m 50 cm + 1 m 70 cm? (4 m 20 cm / 3 m 120 cm only / 3 m 20 cm / 4 m 120 cm) **Answer:** 4 m 20 cm
+1. What is 2 m 50 cm + 1 m 70 cm? (4 m 20 cm / 5 m 20 cm / 3 m 20 cm / 4 m 120 cm) **Answer:** 4 m 20 cm
 2. What is 5 kg - 1 kg 400 g? (3 kg 600 g / 4 kg 400 g / 4 kg 600 g / 3 kg 400 g) **Answer:** 3 kg 600 g
-3. How many grams is 2 kg 300 g + 700 g? (3,000 g / 2,1000 g / 2,370 g / 3,700 g) **Answer:** 3,000 g
+3. How many grams is 2 kg 300 g + 700 g? (3,000 g / 2,700 g / 2,370 g / 3,700 g) **Answer:** 3,000 g
 
 ### Diagnostic check (before the lesson)
 
@@ -706,14 +819,34 @@ Duration: 45 minutes.
 | Lesson | Perimeter and Area of Squares and Rectangles (`ll-g4-math-perimeter-area-rectangles-2026.1` v0.1.0) |
 | Status | DRAFT_UNREVIEWED |
 | Interaction | MANIPULATIVE_2D. Learners draw rectangles on a square grid and count unit squares and edge lengths. |
-| Interaction offline | Squared exercise-book paper or a chalk grid. |
+| Interaction offline | Squared exercise-book paper or a chalk grid: the accepted core modality for Grade 4 area and perimeter. |
+| Planned enhancement | GRADE_4_6_GRID_MANIPULATIVE (MANIPULATIVE_2D), NOT IMPLEMENTED: No Grade 4-6 grid tool is enabled online (coordinate-grid is Grades 7+). The digital grid is an enhancement and does not block lesson approval. |
 | Evidence | GOVERNED_ITEM_RESPONSE |
 | Example-data labels | none |
+| Reviewed content | `ll-g4-math-perimeter-area-rectangles-2026.1` v0.1.0, payload sha256 `495bf2f254b84b10322eda30df65ca004e279ca2c9acb5fd5975f3012cb80c8c` |
+| Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision). Decisions applied: CPR-2026-09-26-P2, CPR-2026-09-26-R10 |
 
-**Known uncertainties:** 
+**Known uncertainties:**
 - MOE extraction confidence MEDIUM (CONTINUATION_PAGE_ASSIGNMENT).
+  - **SOURCE_RESOLVED.** The topic's content column lists 'Perimeters' (con7) and 'Finding areas of squares and rectangles' (con8).
+  - Evidence: moe-math-g4-s2-p5-measurement-con7 p46; moe-math-g4-s2-p5-measurement-con8 p46
 - No Grade 4-6 grid tool is enabled online; interaction relies on squared paper.
+  - **HUMAN_POLICY_DECISION_REQUIRED.** The source names no grid material (mat1: rulers, meter stick, tapeline). Squared paper works offline. The coordinate-grid tool is enabled only for Grades 7+ (lib/toolkit/toolRegistry.ts). Non-blocking for lesson review.
+  - Evidence: moe-math-g4-s2-p5-measurement-mat1 p46
+  - Settled by review decision CPR-2026-09-26-P2 (Squared paper; not founder approval): Squared paper is an acceptable required/core modality for Grade 4 area and perimeter today. A digital grid is an enhancement (GRADE_4_6_GRID_MANIPULATIVE) and does not block lesson approval.
 - Interaction MANIPULATIVE_2D has no enabled online tool; offline fallback only.
+  - **HUMAN_POLICY_DECISION_REQUIRED.** Same decision as #known-1.
+  - Evidence: lib/toolkit/toolRegistry.ts coordinate-grid gradeBands 7-9, 10-12
+  - Settled by review decision CPR-2026-09-26-P2 (Squared paper; not founder approval): Squared paper is an acceptable required/core modality for Grade 4 area and perimeter today. A digital grid is an enhancement (GRADE_4_6_GRID_MANIPULATIVE) and does not block lesson approval.
+
+### Reviewer support (not a decision)
+
+- **Content risks:** none found.
+- **Answers:** VERIFIED: all answer keys recomputed; no errors.
+- **Wording provenance.** MOE-derived: The objective statement (verbatim MOE text). LiberiaLearn explanatory: Title, explanation, worked examples, activities, all practice, homework, quiz, diagnostic and assessment items, teacher notes. Example data: None.
+- **Grade appropriateness:** Appropriate for Grade 4 and within the MOE scope for this objective.
+- **Component alignment:** Classwork, practice, homework, quiz and exit assessment all target this objective; the diagnostic checks a prerequisite.
+- **Interaction classification (MANIPULATIVE_2D):** AGREE: MANIPULATIVE_2D on squared paper, the accepted core modality (CPR-2026-09-26-P2). The digital grid (GRADE_4_6_GRID_MANIPULATIVE) is an enhancement and does not block approval.
 
 ### Explanation
 
@@ -770,7 +903,7 @@ A rectangle is 9 m long and 4 m wide. What are its perimeter and area? (26 m and
 
 ### Teacher notes
 
-Learners confuse the two measures and their units. Always ask: around (perimeter, in m) or inside (area, in m²)? No Grade 4 grid tool is enabled online; use squared paper.
+Learners confuse the two measures and their units. Always ask: around (perimeter, in m) or inside (area, in m²)? Squared paper is the core modality for this lesson, not a stand-in: learners draw, count and compare on the grid.
 
 ### Materials
 
@@ -778,7 +911,7 @@ Squared paper, Chalk, Measuring tape
 
 ### Offline behavior
 
-Fully offline with squared paper and chalk grids. Online manipulative is an open gap (coordinate-grid tool is enabled only for Grades 7+).
+Fully offline and the core modality: squared paper and chalk grids. A Grade 4-6 online grid tool is a planned enhancement, not available today (the coordinate-grid tool is enabled only for Grades 7+).
 
 Duration: 45 minutes.
 

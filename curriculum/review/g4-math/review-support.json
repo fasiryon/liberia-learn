@@ -1,0 +1,412 @@
+{
+  "_about": "Reviewer support for the Grade 4 Math founder review. Prepared 2026-09-26 by LiberiaLearn curriculum tooling (AI-assisted); updated the same day to apply the curriculum/product review CPR-2026-09-26 (decisions in reviewer-recommendations.json). This file records NO review decision: decisions live only in review-ledger.json and are made by a human. MOE source text is never normalized in place; every reading below cites the structured MOE items it rests on (curriculum/structured/moe-structured-v1.json).",
+  "method": {
+    "answers": "Every practice, homework, quiz, diagnostic and exit-assessment answer in the 43 drafts and the 2026.2 fractions candidate was recomputed by hand on 2026-09-26, and again after the CPR-2026-09-26 revisions; __tests__/curriculum/g4-math-answer-keys.test.ts recomputes the plain-calculation items (whole-number and fraction arithmetic, rounding, LCM/GCF, simplifying, mode/median/mean) on every CI run; word problems and conceptual items are hand-checked. No wrong answer key was found.",
+    "classifications": {
+      "SOURCE_RESOLVED": "The structured MOE source (same page, same topic table, or an adjacent grade) settles the question. Any change proposed is supported by that evidence.",
+      "LIBERIALEARN_CLARIFICATION_REQUIRED": "The source cannot settle it; LiberiaLearn must state its reading or convention explicitly in the lesson, keeping the MOE text verbatim.",
+      "HUMAN_POLICY_DECISION_REQUIRED": "A product or curriculum policy choice that belongs to the founder, not a question of source reading."
+    },
+    "appliedDecision": "A disposition with appliedDecision was settled by the named decision of the curriculum/product review CPR-2026-09-26 (reviewer-recommendations.json), and the change is applied in the lesson or cell. That review is not founder approval and not MOE approval; it records no ledger decision."
+  },
+  "defaults": {
+    "answers": "VERIFIED: all answer keys recomputed; no errors.",
+    "wording": {
+      "moeDerived": "The objective statement (verbatim MOE text).",
+      "liberiaLearnExplanatory": "Title, explanation, worked examples, activities, all practice, homework, quiz, diagnostic and assessment items, teacher notes.",
+      "exampleData": "None."
+    },
+    "gradeAppropriate": "Appropriate for Grade 4 and within the MOE scope for this objective.",
+    "alignment": "Classwork, practice, homework, quiz and exit assessment all target this objective; the diagnostic checks a prerequisite.",
+    "interaction": "AGREE"
+  },
+  "uncertainties": {
+    "moe-math-g4-s1-p1-numeration-addition-and-subtraction-obj4#confidence": {
+      "classification": "SOURCE_RESOLVED",
+      "resolution": "The operation and data context are corroborated on the same page: act3 'Add two or more (births and deaths) from the pollution data', act4 'Subtract two or more components of (births and deaths) from the population data', out1 'Use population data of births and death to add and subtract whole numbers'. Text past the parsed boundary could not change the operation. ('pollution' in act3 is itself a source typo; act4 and out1 say population.) MOE text kept verbatim.",
+      "evidence": ["moe-math-g4-s1-p1-numeration-addition-and-subtraction-act3 p38", "moe-math-g4-s1-p1-numeration-addition-and-subtraction-act4 p38", "moe-math-g4-s1-p1-numeration-addition-and-subtraction-out1 p38"],
+      "proposedCorrection": null
+    },
+    "moe-math-g4-s1-p1-numeration-addition-and-subtraction-obj4#known-1": {
+      "classification": "HUMAN_POLICY_DECISION_REQUIRED",
+      "resolution": "The tail-boundary part is source-resolved (see #confidence). What remains is data policy: MOE materials name a 'Life skills POPFLE Resource book' and a 'Poster sheet showing population data', i.e. MOE expects real population figures. The draft uses invented figures, labeled as example data. MOE activities mention births and deaths only; the lesson's migration items follow the objective text, which names migration.",
+      "evidence": ["moe-math-g4-s1-p1-numeration-addition-and-subtraction-mat1 p38"],
+      "proposedCorrection": null,
+      "decisionNeeded": "Keep labeled invented figures, or source real figures (POPFLE resource or national census) with a citation.",
+      "appliedDecision": "CPR-2026-09-26-P1"
+    },
+    "moe-math-g4-s1-p2-multiplication-and-division-of-whole-numbers-obj6#confidence": {
+      "classification": "SOURCE_RESOLVED",
+      "resolution": "Page 41 is the second page of this topic's table: its assessment references asr8-asr10 are also on page 41 and the next topic (Number Theory and Fraction) starts on page 42. out1 'Apply computational skills about multiplication and division to real life situations' fits a division word-problem objective.",
+      "evidence": ["moe-math-g4-s1-p2-multiplication-and-division-of-whole-numbers-asr8 p41", "moe-math-g4-s1-p3-number-theory-and-fraction-obj1 p42", "moe-math-g4-s1-p2-multiplication-and-division-of-whole-numbers-out1 p40"],
+      "proposedCorrection": null
+    },
+    "moe-math-g4-s1-p2-multiplication-and-division-of-whole-numbers-obj6#known-1": {
+      "classification": "SOURCE_RESOLVED",
+      "resolution": "Same evidence as #confidence: page 41 continues the topic 2 table.",
+      "evidence": ["moe-math-g4-s1-p2-multiplication-and-division-of-whole-numbers-asr8 p41"],
+      "proposedCorrection": null
+    },
+    "moe-math-g4-s1-p3-number-theory-and-fraction-obj3#known-1": {
+      "classification": "SOURCE_RESOLVED",
+      "resolution": "Listing methods match MOE act4 'List multiples of a set of numbers and sort out common factor'. MOE act2 on the same page also asks learners to 'Determine the prime factors of a number', which neither 3.2 nor 3.3 teaches. The prime-factor method for LCM/GCF is not required by the source.",
+      "evidence": ["moe-math-g4-s1-p3-number-theory-and-fraction-act2 p42", "moe-math-g4-s1-p3-number-theory-and-fraction-act4 p42"],
+      "proposedCorrection": "Applied in 3.2, not 3.3: 3.2 now teaches factor trees (12 = 2 x 2 x 3, 30 = 2 x 3 x 5) with practice, homework and a quiz item. 3.3 keeps LCM and GCF by listing.",
+      "appliedDecision": "CPR-2026-09-26-R04"
+    },
+    "moe-math-g4-s1-p3-number-theory-and-fraction-obj4#known-1": {
+      "classification": "SOURCE_RESOLVED",
+      "resolution": "MOE content item con5 'Parts of a set' and the objective itself require the set model; Grade 5 (p50) builds on it ('Write factor for parts of a set'). The 2026.1 lesson teaches parts of a whole and mentions sets only in an activity.",
+      "evidence": ["moe-math-g4-s1-p3-number-theory-and-fraction-con5 p42", "Grade 5 OBJECTIVE p50 'Write factor for parts of a set.'"],
+      "proposedCorrection": "Implemented as a candidate, not in place: ll-g4-math-fractions-equal-parts-2026.2 v1.2.0 defines a fraction as equal parts of a whole or part of a set from the opening, teaches parts of a set throughout, and assesses part of a set in its governed end-of-lesson check (g4-frac-check-part-of-set). Fractions greater than one are an optional extension. The 2026.1 lesson is unchanged. Pending founder review.",
+      "appliedDecision": "CPR-2026-09-26-R05"
+    },
+    "moe-math-g4-s1-p3-number-theory-and-fraction-obj7#known-1": {
+      "classification": "SOURCE_RESOLVED",
+      "resolution": "MOE Grade 5 content (p54) lists 'Adding and subtracting fractions with unlike denominators' and 'Adding fractions and mixed numbers with like denominators', so unlike denominators, including the related denominators (halves, quarters, eighths) the draft teaches, are Grade 5 content. The Grade 4 activity act5 uses base-10 counters, which model like denominators (tenths). The draft's sentence 'The MOE activity uses counters...' overstates the source: MOE names base-10 counters; the 3/10 + 4/10 example is LiberiaLearn's.",
+      "evidence": ["Grade 5 CONTENT p54 'Adding and subtracting fractions with unlike denominators;'", "Grade 5 CONTENT p54 'Adding fractions and mixed numbers with like denominators;'", "moe-math-g4-s1-p3-number-theory-and-fraction-act5 p43"],
+      "proposedCorrection": "Restrict 3.7 to like denominators. Remove the related-denominator paragraph and objective 2. Replace: practice '1/2 + 1/4 = ?' with '1/4 + 2/4 = ?' (3/4); homework '1/3 + 1/6 = ? (simplest form)' with '1/6 + 2/6 = ? (simplest form)' (1/2); quiz '1/4 + 1/2' with '1/4 + 2/4 = ?' options 3/4, 3/8, 2/4, 1/4 (3/4); assessment '3/8 + 1/4' with '3/8 + 2/8 = ?' options 5/8, 5/16, 1/8, 6/8 (5/8); diagnostic '1/2 = ?/4' with 'How many eighths make one whole?' options 8, 4, 2, 16 (8). Reword the counters sentence to 'The MOE curriculum suggests base-10 counters: 3 counters out of 10 plus 4 counters out of 10 makes 7 out of 10.'",
+      "appliedDecision": "CPR-2026-09-26-R06"
+    },
+    "moe-math-g4-s1-p3-number-theory-and-fraction-obj8#known-1": {
+      "classification": "SOURCE_RESOLVED",
+      "resolution": "Same Grade 5 p54 evidence as adding fractions.",
+      "evidence": ["Grade 5 CONTENT p54 'Adding and subtracting fractions with unlike denominators;'"],
+      "proposedCorrection": "Restrict 3.8 to like denominators and taking from a whole. Remove the related-denominator paragraph and objective 3. Replace: practice '5/6 - 1/3' with '5/6 - 2/6 = ? (simplest form)' (1/2); homework cloth '3/4 m, cut 1/2 m' with 'cut 1/4 m' (2/4 m = 1/2 m); quiz '1/2 - 1/4' with '3/4 - 1/4 = ?' options 1/2, 2/8, 1, 4/4 (1/2); assessment '7/8 - 1/4' with '7/8 - 2/8 = ?' options 5/8, 9/8, 5/16, 6/8 (5/8).",
+      "appliedDecision": "CPR-2026-09-26-R07"
+    },
+    "moe-math-g4-s1-p3-number-theory-and-fraction-obj9#confidence": {
+      "classification": "SOURCE_RESOLVED",
+      "resolution": "Page 43 is the second page of topic 3 (asr8-asr10 on p43; topic 4 starts on p44).",
+      "evidence": ["moe-math-g4-s1-p3-number-theory-and-fraction-asr8 p43", "moe-math-g4-s2-p4-multiplication-and-division-of-2-digits-multipli-obj1 p44"],
+      "proposedCorrection": null
+    },
+    "moe-math-g4-s1-p3-number-theory-and-fraction-obj9#known-1": {
+      "classification": "SOURCE_RESOLVED",
+      "resolution": "MOE's own activity defines the circular objective: act6 'Solve problems involving multi-step problems; (using more than one operation).' That is the lesson's reading.",
+      "evidence": ["moe-math-g4-s1-p3-number-theory-and-fraction-act6 p43"],
+      "proposedCorrection": null
+    },
+    "moe-math-g4-s2-p4-multiplication-and-division-of-2-digits-multipli-obj6#confidence": {
+      "classification": "SOURCE_RESOLVED",
+      "resolution": "Page 45 is the second page of topic 4 (asr7-asr10 on p45; topic 5 starts on p46).",
+      "evidence": ["moe-math-g4-s2-p4-multiplication-and-division-of-2-digits-multipli-asr7 p45", "moe-math-g4-s2-p5-measurement-obj1 p46"],
+      "proposedCorrection": null
+    },
+    "moe-math-g4-s2-p4-multiplication-and-division-of-2-digits-multipli-obj6#known-1": {
+      "classification": "SOURCE_RESOLVED",
+      "resolution": "The same topic's content column reads 'Dividing by 2' / 'Digit divisors' (con7, con8: one cell split across lines), and out1/out2 read 'multiplication and division of 2 / Digits multipliers and divisors'. 'Divide 2, 3, or 4-digit numbers by 2-digit divisors' is the source's own wording elsewhere in the table. Raw objective text kept verbatim.",
+      "evidence": ["moe-math-g4-s2-p4-multiplication-and-division-of-2-digits-multipli-con7 p44", "moe-math-g4-s2-p4-multiplication-and-division-of-2-digits-multipli-con8 p44", "moe-math-g4-s2-p4-multiplication-and-division-of-2-digits-multipli-out2 p44"],
+      "proposedCorrection": null
+    },
+    "moe-math-g4-s2-p4-multiplication-and-division-of-2-digits-multipli-obj7#confidence": {
+      "classification": "SOURCE_RESOLVED",
+      "resolution": "The topic's content column lists 'Decimal numerals up to hundredths place Comparing and Ordering decimal numerals up to hundredths place' (con9), and out2 names 'decimals to hundredths'. The decimals objectives belong to this topic.",
+      "evidence": ["moe-math-g4-s2-p4-multiplication-and-division-of-2-digits-multipli-con9 p44", "moe-math-g4-s2-p4-multiplication-and-division-of-2-digits-multipli-out2 p44"],
+      "proposedCorrection": null
+    },
+    "moe-math-g4-s2-p4-multiplication-and-division-of-2-digits-multipli-obj7#known-1": {
+      "classification": "SOURCE_RESOLVED",
+      "resolution": "Same evidence as #confidence (con9, out2).",
+      "evidence": ["moe-math-g4-s2-p4-multiplication-and-division-of-2-digits-multipli-con9 p44"],
+      "proposedCorrection": null
+    },
+    "moe-math-g4-s2-p4-multiplication-and-division-of-2-digits-multipli-obj8#confidence": {
+      "classification": "SOURCE_RESOLVED",
+      "resolution": "Same evidence as objective 7 (con9 names comparing and ordering decimals).",
+      "evidence": ["moe-math-g4-s2-p4-multiplication-and-division-of-2-digits-multipli-con9 p44"],
+      "proposedCorrection": null
+    },
+    "moe-math-g4-s2-p5-measurement-obj2#known-1": {
+      "classification": "SOURCE_RESOLVED",
+      "resolution": "MOE's own method is a physical clock: act1 'Demonstrate finding elapsed time using a toy clock...' and mat1 'Toy or paper Clock'. The paper-plate clock is source-aligned; no online tool is needed for alignment. A Grade 4-6 online clock tool remains a non-blocking product gap.",
+      "evidence": ["moe-math-g4-s2-p5-measurement-act1 p46", "moe-math-g4-s2-p5-measurement-mat1 p46"],
+      "proposedCorrection": null
+    },
+    "moe-math-g4-s2-p5-measurement-obj2#tool-gap": {
+      "classification": "SOURCE_RESOLVED",
+      "resolution": "Same as #known-1: the MOE material is a toy or paper clock.",
+      "evidence": ["moe-math-g4-s2-p5-measurement-mat1 p46"],
+      "proposedCorrection": null
+    },
+    "moe-math-g4-s2-p5-measurement-obj5#known-1": {
+      "classification": "LIBERIALEARN_CLARIFICATION_REQUIRED",
+      "resolution": "MOE uses 'mass' (objectives 5 and 6, p46) and 'weight' (objectives 7 and 8, p47; out2 'weights') for the same idea, so the source does not choose. LiberiaLearn needs one stated convention.",
+      "evidence": ["moe-math-g4-s2-p5-measurement-obj5 p46", "moe-math-g4-s2-p5-measurement-obj7 p47", "moe-math-g4-s2-p5-measurement-out2 p46"],
+      "proposedCorrection": "Open 5.5 with 'Mass tells how heavy something is. People often call it weight.' and use 'mass' after that; keep MOE's 'weight' where objectives 7 and 8 use it.",
+      "appliedDecision": "CPR-2026-09-26-P5"
+    },
+    "moe-math-g4-s2-p5-measurement-obj7#confidence": {
+      "classification": "SOURCE_RESOLVED",
+      "resolution": "Page 47 is the second page of topic 5 (asr8-asr10 on p47; topic 6 starts on p48); con4 and con6 list converting units of measure.",
+      "evidence": ["moe-math-g4-s2-p5-measurement-con6 p46", "moe-math-g4-s2-p5-measurement-asr8 p47"],
+      "proposedCorrection": null
+    },
+    "moe-math-g4-s2-p5-measurement-obj8#confidence": {
+      "classification": "SOURCE_RESOLVED",
+      "resolution": "Page 47 is the second page of topic 5 (asr8-asr10 on p47; topic 6 starts on p48).",
+      "evidence": ["moe-math-g4-s2-p5-measurement-asr8 p47", "moe-math-g4-s2-p6-geometry-and-statistics-obj1 p48"],
+      "proposedCorrection": null
+    },
+    "moe-math-g4-s2-p5-measurement-obj9#confidence": {
+      "classification": "SOURCE_RESOLVED",
+      "resolution": "The topic's content column lists 'Perimeters' (con7) and 'Finding areas of squares and rectangles' (con8).",
+      "evidence": ["moe-math-g4-s2-p5-measurement-con7 p46", "moe-math-g4-s2-p5-measurement-con8 p46"],
+      "proposedCorrection": null
+    },
+    "moe-math-g4-s2-p5-measurement-obj9#known-1": {
+      "classification": "HUMAN_POLICY_DECISION_REQUIRED",
+      "resolution": "The source names no grid material (mat1: rulers, meter stick, tapeline). Squared paper works offline. The coordinate-grid tool is enabled only for Grades 7+ (lib/toolkit/toolRegistry.ts). Non-blocking for lesson review.",
+      "evidence": ["moe-math-g4-s2-p5-measurement-mat1 p46"],
+      "proposedCorrection": null,
+      "decisionNeeded": "Accept squared paper as the only modality for 2026.2, or schedule a Grade 4-6 grid tool.",
+      "appliedDecision": "CPR-2026-09-26-P2"
+    },
+    "moe-math-g4-s2-p5-measurement-obj9#tool-gap": {
+      "classification": "HUMAN_POLICY_DECISION_REQUIRED",
+      "resolution": "Same decision as #known-1.",
+      "evidence": ["lib/toolkit/toolRegistry.ts coordinate-grid gradeBands 7-9, 10-12"],
+      "proposedCorrection": null,
+      "decisionNeeded": "Same as #known-1.",
+      "appliedDecision": "CPR-2026-09-26-P2"
+    },
+    "moe-math-g4-s2-p6-geometry-and-statistics-obj1#known-1": {
+      "classification": "LIBERIALEARN_CLARIFICATION_REQUIRED",
+      "resolution": "No Grade 4 source item spells the term correctly. 'Intersecting' is the only geometric term that fits the list (line, line segments, rays, ___ lines, parallel lines); related source wording elsewhere is 'intersection' (Grade 5 p75 'Touching and intersection circles'). This is a LiberiaLearn reading, not a source fact.",
+      "evidence": ["moe-math-g4-s2-p6-geometry-and-statistics-act2 p48", "Grade 5 CONTENT p75 'Touching and intersection circles'"],
+      "proposedCorrection": "Add to 6.1 teacher notes: 'The MOE objective reads \"interesting lines\"; LiberiaLearn reads this as \"intersecting lines\".' Keep the MOE text verbatim in the objective record.",
+      "appliedDecision": "CPR-2026-09-26-P4"
+    },
+    "moe-math-g4-s2-p6-geometry-and-statistics-obj2#known-1": {
+      "classification": "SOURCE_RESOLVED",
+      "resolution": "The objective sets its own scope: 'right angle, less than right angle, or greater than right angle', i.e. comparison with a right angle, not degree measurement. A folded-paper tester satisfies it; a protractor (enabled for Grades 7+) is not needed.",
+      "evidence": ["moe-math-g4-s2-p6-geometry-and-statistics-obj2 p48"],
+      "proposedCorrection": null
+    },
+    "moe-math-g4-s2-p6-geometry-and-statistics-obj2#tool-gap": {
+      "classification": "SOURCE_RESOLVED",
+      "resolution": "Same as #known-1: the objective needs a right-angle comparison, which the paper tester provides. The online gap is non-blocking.",
+      "evidence": ["moe-math-g4-s2-p6-geometry-and-statistics-obj2 p48"],
+      "proposedCorrection": null
+    },
+    "moe-math-g4-s2-p6-geometry-and-statistics-obj3#known-1": {
+      "classification": "SOURCE_RESOLVED",
+      "resolution": "'pentago n' is a text-extraction spacing artifact inside one word; the list (triangles, quadrilaterals, ___, hexagon) and act3 'Sort out polygons according to sides and identify each' admit only 'pentagon'. Raw text kept verbatim.",
+      "evidence": ["moe-math-g4-s2-p6-geometry-and-statistics-act3 p48"],
+      "proposedCorrection": null
+    },
+    "moe-math-g4-s2-p6-geometry-and-statistics-obj5#confidence": {
+      "classification": "SOURCE_RESOLVED",
+      "resolution": "The topic's content column lists 'Solid figures' (con5, p48); page 49 is the topic's second page.",
+      "evidence": ["moe-math-g4-s2-p6-geometry-and-statistics-con5 p48"],
+      "proposedCorrection": null
+    },
+    "moe-math-g4-s2-p6-geometry-and-statistics-obj5#known-1": {
+      "classification": "HUMAN_POLICY_DECISION_REQUIRED",
+      "resolution": "Solids need spatial inspection of hidden faces, and no 3D runtime exists. Real physical solids are the required modality; a 3D solids viewer is a planned enhancement.",
+      "evidence": ["moe-math-g4-s2-p6-geometry-and-statistics-out1 p48"],
+      "proposedCorrection": null,
+      "decisionNeeded": "Keep THREE_D with real objects as the required modality, or reclassify as PRACTICAL until a 3D manipulative exists.",
+      "appliedDecision": "CPR-2026-09-26-P3"
+    },
+    "moe-math-g4-s2-p6-geometry-and-statistics-obj6#confidence": {
+      "classification": "SOURCE_RESOLVED",
+      "resolution": "The topic's content column includes 'Reading and interpreting figures from charts and graphs such as Bar graphs, line graphs, pie chart' (con5, p48).",
+      "evidence": ["moe-math-g4-s2-p6-geometry-and-statistics-con5 p48"],
+      "proposedCorrection": null
+    },
+    "moe-math-g4-s2-p6-geometry-and-statistics-obj6#known-1": {
+      "classification": "SOURCE_RESOLVED",
+      "resolution": "The source expects more than the words: out2 'Use population data to read and interpret bar graph, line graph, pie chart, and mean, mode, medium and average', and act6 'Collect data about family size and display the data on a bar graph, line graph, and pie chart.' The draft uses a fruit survey and does not assess reading a measure from a graph.",
+      "evidence": ["moe-math-g4-s2-p6-geometry-and-statistics-out2 p48", "moe-math-g4-s2-p6-geometry-and-statistics-act6 p49"],
+      "proposedCorrection": "Make the class survey a voluntary, anonymous family-size survey (act6) and add: practice 'In the family-size bar graph, which family size has the tallest bar? That value is the mode.' and a quiz item reading the mode from a bar graph. Calculation of mean and median stays in 6.7.",
+      "appliedDecision": "CPR-2026-09-26-R15"
+    },
+    "moe-math-g4-s2-p6-geometry-and-statistics-obj7#confidence": {
+      "classification": "LIBERIALEARN_CLARIFICATION_REQUIRED",
+      "resolution": "LOW confidence comes from an ambiguous column (objective vs activity). The instructional target is corroborated (out2 p48 lists mean, mode, median/'medium'; act6 p49 family-size data; Grade 3 p37 'Find the mean, mode and median of the data'), so the lesson content stands either way. The column itself can only be confirmed by a person reading page 49 of Math 1-6.pdf.",
+      "evidence": ["moe-math-g4-s2-p6-geometry-and-statistics-out2 p48", "moe-math-g4-s2-p6-geometry-and-statistics-act6 p49", "Grade 3 OBJECTIVE p37 'Find the mean, mode and median of the data.'"],
+      "proposedCorrection": null
+    },
+    "moe-math-g4-s2-p6-geometry-and-statistics-obj7#known-1": {
+      "classification": "SOURCE_RESOLVED",
+      "resolution": "The same MOE document spells 'median' correctly in Grade 4 objective 6 (p49) and Grade 3 (p37). 'Medium' recurs only as a consistent misspelling (Grade 3 act p36, Grade 4 out2 p48, this objective) and is not a statistical measure. The lesson says 'median'; the MOE text is preserved verbatim in the objective record and review package. The lesson's family-size data follows act6; figures are invented and labeled. The lesson's teacher notes state the interpretation and that the source text itself is not corrected.",
+      "evidence": ["moe-math-g4-s2-p6-geometry-and-statistics-obj6 p49", "Grade 3 OBJECTIVE p37 'Find the mean, mode and median of the data.'", "moe-math-g4-s2-p6-geometry-and-statistics-act6 p49"],
+      "proposedCorrection": null,
+      "appliedDecision": "CPR-2026-09-26-R16"
+    },
+    "moe-math-g4-s2-p6-geometry-and-statistics-obj8#confidence": {
+      "classification": "SOURCE_RESOLVED",
+      "resolution": "Page 49 is the second page of topic 6 (asr8-asr10 on p49), the last Grade 4 topic.",
+      "evidence": ["moe-math-g4-s2-p6-geometry-and-statistics-asr8 p49"],
+      "proposedCorrection": null
+    },
+    "moe-math-g4-s1-p1-numeration-addition-and-subtraction-obj1#tool-gap": {
+      "classification": "HUMAN_POLICY_DECISION_REQUIRED",
+      "resolution": "The paper manipulative (place-value chart and paper strips) is the core modality and fully offline; no online tool exists. Recorded as the non-blocking product gap GRADE_4_6_PLACE_VALUE_MANIPULATIVE.",
+      "evidence": ["moe-math-g4-s1-p1-numeration-addition-and-subtraction-mat1 p38"],
+      "proposedCorrection": null,
+      "decisionNeeded": "Accept the paper manipulative as the core modality, or require an online tool before approval.",
+      "appliedDecision": "CPR-2026-09-26-R01"
+    },
+    "moe-math-g4-s1-p2-multiplication-and-division-of-whole-numbers-obj3#tool-gap": {
+      "classification": "HUMAN_POLICY_DECISION_REQUIRED",
+      "resolution": "The paper manipulative (graph-paper area model) is the core modality and fully offline; no online tool exists. Recorded as the non-blocking product gap GRADE_4_6_GRID_MANIPULATIVE.",
+      "evidence": ["moe-math-g4-s1-p2-multiplication-and-division-of-whole-numbers-act2 p40"],
+      "proposedCorrection": null,
+      "decisionNeeded": "Accept the paper manipulative as the core modality, or require an online tool before approval.",
+      "appliedDecision": "CPR-2026-09-26-R03"
+    },
+    "moe-math-g4-s2-p6-geometry-and-statistics-obj3#tool-gap": {
+      "classification": "HUMAN_POLICY_DECISION_REQUIRED",
+      "resolution": "The paper manipulative (sticks and paper cut-outs) is the core modality and fully offline; no online tool exists. Recorded as the non-blocking product gap GRADE_4_6_SHAPE_SORT_MANIPULATIVE.",
+      "evidence": ["moe-math-g4-s2-p6-geometry-and-statistics-act3 p48"],
+      "proposedCorrection": null,
+      "decisionNeeded": "Accept the paper manipulative as the core modality, or require an online tool before approval.",
+      "appliedDecision": "CPR-2026-09-26-R12"
+    },
+    "moe-math-g4-s2-p6-geometry-and-statistics-obj4#tool-gap": {
+      "classification": "HUMAN_POLICY_DECISION_REQUIRED",
+      "resolution": "The paper manipulative (traced, cut and folded paper circles) is the core modality and fully offline; no online tool exists. Recorded as the non-blocking product gap GRADE_4_6_CIRCLE_MANIPULATIVE.",
+      "evidence": ["moe-math-g4-s2-p6-geometry-and-statistics-act4 p49", "moe-math-g4-s2-p6-geometry-and-statistics-act5 p49"],
+      "proposedCorrection": null,
+      "decisionNeeded": "Accept the paper manipulative as the core modality, or require an online tool before approval.",
+      "appliedDecision": "CPR-2026-09-26-R13"
+    }
+  },
+  "objectives": {
+    "moe-math-g4-s1-p1-numeration-addition-and-subtraction-obj1": {
+      "wording": { "moeDerived": "The objective; classwork 'read and write' mirrors act1 ('Read and write whole numbers up to hundred thousand'); the place-value chart and strips follow mat1." },
+      "interaction": "AGREE: MANIPULATIVE_2D with a paper place-value chart and strips (reclassified from NONE by CPR-2026-09-26-R01). No online place-value tool is registered (product gap GRADE_4_6_PLACE_VALUE_MANIPULATIVE)."
+    },
+    "moe-math-g4-s1-p1-numeration-addition-and-subtraction-obj2": {
+      "wording": { "moeDerived": "The objective; classwork mirrors act2 ('Compare and Order whole numbers up to hundred thousand').", "exampleData": "Market prices in the classwork (labeled illustrative)." }
+    },
+    "moe-math-g4-s1-p1-numeration-addition-and-subtraction-obj3": {},
+    "moe-math-g4-s1-p1-numeration-addition-and-subtraction-obj4": {
+      "wording": { "moeDerived": "The objective; births and deaths from population data (act3, act4, out1).", "exampleData": "All population figures, labeled 'Example data' in every item and in the explanation (made-up districts). Real census figures are not required for this arithmetic objective (CPR-2026-09-26-P1)." }
+    },
+    "moe-math-g4-s1-p2-multiplication-and-division-of-whole-numbers-obj1": {
+      "wording": { "moeDerived": "The objective. MOE act1 suggests flash cards, doubles or graph paper; the lesson uses arrays of counters instead." }
+    },
+    "moe-math-g4-s1-p2-multiplication-and-division-of-whole-numbers-obj2": {
+      "wording": { "exampleData": "Charcoal and notebook prices in Liberian dollars (labeled example prices)." }
+    },
+    "moe-math-g4-s1-p2-multiplication-and-division-of-whole-numbers-obj3": {
+      "interaction": "AGREE: MANIPULATIVE_2D with a graph-paper area model, following MOE act2 (reclassified from NONE by CPR-2026-09-26-R03). No Grade 4-6 grid tool is enabled online (product gap GRADE_4_6_GRID_MANIPULATIVE)."
+    },
+    "moe-math-g4-s1-p2-multiplication-and-division-of-whole-numbers-obj4": {},
+    "moe-math-g4-s1-p2-multiplication-and-division-of-whole-numbers-obj5": {
+      "wording": { "exampleData": "L$615 shared among 3 people (labeled example amount)." }
+    },
+    "moe-math-g4-s1-p2-multiplication-and-division-of-whole-numbers-obj6": {
+      "wording": { "exampleData": "Pen and pencil prices and amounts in Liberian dollars (labeled example prices)." }
+    },
+    "moe-math-g4-s1-p3-number-theory-and-fraction-obj1": {
+      "wording": { "moeDerived": "The objective; the hundred-chart activity follows act1 ('Explore and write even and odd numbers as sets using number chart')." }
+    },
+    "moe-math-g4-s1-p3-number-theory-and-fraction-obj2": {
+      "wording": { "moeDerived": "The objective; factor and multiple lists follow act3 ('find factors and multiples of a Given number'); factor trees follow act2 ('Determine the prime factors of a number')." },
+      "alignment": "Classwork, practice, homework, quiz and exit assessment target factors and multiples; factor-tree practice (12, 30), homework (20) and a quiz item (18) cover prime factors."
+    },
+    "moe-math-g4-s1-p3-number-theory-and-fraction-obj3": {
+      "wording": { "moeDerived": "The objective; listing multiples follows act4." }
+    },
+    "moe-math-g4-s1-p3-number-theory-and-fraction-obj4": {
+      "risks": ["The 2026.1 lesson (v1.0.0) has no practice set and no quiz in its payload, and defines a fraction as part of one whole only; it remains bound by release 2026.1, which cannot change.", "A ledger decision for this objective must name the lesson reviewed: 2026.1 v1.0.0, or the 2026.2 v1.2.0 candidate.", "The online fraction-visualizer does not model sets (product gap SET_FRACTION_MANIPULATIVE_REQUIRED); bottle caps or stones are required."],
+      "answers": "VERIFIED: 1.0.0 assessment and diagnostic item correct; every 2026.2 v1.2.0 answer and governed item recomputed and correct.",
+      "wording": { "moeDerived": "The objective 'Find parts of a set'; MOE material 'Paper Orange Fraction Strips Made from paper' (mat1) in the folding activities." },
+      "alignment": "2026.1: classwork, homework and exit assessment target parts of a whole; the set model appears only in an activity. 2026.2 v1.2.0: the opening definition, classwork, practice, homework, quiz and the governed end-of-lesson check all include parts of a set; the exit check assesses part of a set directly and the denominator-meaning check is supporting evidence.",
+      "interaction": "AGREE: MANIPULATIVE_2D. Bottle caps or stones are the required manipulative for sets; the online strips cover wholes only."
+    },
+    "moe-math-g4-s1-p3-number-theory-and-fraction-obj5": {
+      "wording": { "moeDerived": "The objective; fraction strips follow MOE mat1 (paper fraction strips)." }
+    },
+    "moe-math-g4-s1-p3-number-theory-and-fraction-obj6": {
+      "wording": { "moeDerived": "The objective (also MOE act7 'Simplify fractions')." }
+    },
+    "moe-math-g4-s1-p3-number-theory-and-fraction-obj7": {
+      "wording": { "moeDerived": "The objective; the counter illustration is LiberiaLearn's, attributed as 'The MOE curriculum suggests base-10 counters' (act5 says only 'Use base 10 counters to illustrate ... addition and subtraction of fractions')." },
+      "gradeAppropriate": "Appropriate: like denominators only, per MOE (related denominators are Grade 5 content, p54). Sums greater than one are written as mixed numbers, taught inside this lesson.",
+      "alignment": "After CPR-2026-09-26-R06 every component tests like denominators; the diagnostic checks renaming one whole in eighths."
+    },
+    "moe-math-g4-s1-p3-number-theory-and-fraction-obj8": {
+      "gradeAppropriate": "Appropriate: like denominators and taking from a whole, per MOE (related denominators are Grade 5 content, p54).",
+      "alignment": "After CPR-2026-09-26-R07 every component tests like denominators or taking from a whole; the zero-denominator distractor is gone."
+    },
+    "moe-math-g4-s1-p3-number-theory-and-fraction-obj9": {
+      "wording": { "moeDerived": "The objective and its MOE gloss 'using more than one operation' (act6).", "exampleData": "Prices and amounts in Liberian dollars (labeled example prices)." }
+    },
+    "moe-math-g4-s2-p4-multiplication-and-division-of-2-digits-multipli-obj1": {
+      "wording": { "moeDerived": "The objective; ordering chalk in hundreds follows act3 ('Order and distribute items in multiples of 10's, 100's or 1000's')." }
+    },
+    "moe-math-g4-s2-p4-multiplication-and-division-of-2-digits-multipli-obj2": {
+      "wording": { "exampleData": "Item and bus-trip prices (labeled example prices)." }
+    },
+    "moe-math-g4-s2-p4-multiplication-and-division-of-2-digits-multipli-obj3": {
+      "risks": ["The MOE text 'multiply 2, 3, or 4 - Digits multipliers' is ambiguous on its own; the lesson reads it as multiplying 2-, 3- and 4-digit numbers by 2-digit multipliers. The topic content supports that reading: con4 'Multiplying 2, 3, 4 - digits numbers' and con5 'Numerals by 2 - digits'."],
+      "wording": { "exampleData": "Desk price L$1,250 (labeled example price)." }
+    },
+    "moe-math-g4-s2-p4-multiplication-and-division-of-2-digits-multipli-obj4": {
+      "wording": { "exampleData": "L$6,000 shared among families (labeled example amount)." }
+    },
+    "moe-math-g4-s2-p4-multiplication-and-division-of-2-digits-multipli-obj5": {},
+    "moe-math-g4-s2-p4-multiplication-and-division-of-2-digits-multipli-obj6": {},
+    "moe-math-g4-s2-p4-multiplication-and-division-of-2-digits-multipli-obj7": {},
+    "moe-math-g4-s2-p4-multiplication-and-division-of-2-digits-multipli-obj8": {
+      "wording": { "exampleData": "Race times (labeled example data)." }
+    },
+    "moe-math-g4-s2-p5-measurement-obj1": {
+      "wording": { "moeDerived": "The objective; outcome out1 (planning activities by the time they take) matches the estimate-then-time practical." }
+    },
+    "moe-math-g4-s2-p5-measurement-obj2": {
+      "wording": { "moeDerived": "The objective; the paper-plate clock follows act1 and mat1 ('toy clock', 'Toy or paper Clock').", "exampleData": "Bus schedule times (labeled example times)." }
+    },
+    "moe-math-g4-s2-p5-measurement-obj3": {
+      "risks": ["The explanation says customary units are 'widely used in Liberia' (cloth, timber, height). This is a factual claim about Liberia the founder should confirm."],
+      "wording": { "moeDerived": "The objective; estimating desk and table lengths follows act2 ('Estimate the length of a pen, table')." }
+    },
+    "moe-math-g4-s2-p5-measurement-obj4": {},
+    "moe-math-g4-s2-p5-measurement-obj5": {
+      "wording": { "moeDerived": "The objective; cups and gallons follow MOE mat1 ('scale cups, gallons teaspoon'). 'Weight' is kept only where MOE text is quoted." },
+      "gradeAppropriate": "Appropriate. Terminology per CPR-2026-09-26-P5: 'Mass tells how heavy something is. People often call it weight.', then 'mass'."
+    },
+    "moe-math-g4-s2-p5-measurement-obj6": {
+      "risks": ["Benchmarks now name packets labelled 1 kg (bag sizes vary by shop); changed with 5.5 so the two lessons agree."]
+    },
+    "moe-math-g4-s2-p5-measurement-obj7": {
+      "wording": { "exampleData": "Market bag weights (labeled example weights)." }
+    },
+    "moe-math-g4-s2-p5-measurement-obj8": {
+      "wording": { "exampleData": "Market scale weights (labeled example weights)." }
+    },
+    "moe-math-g4-s2-p5-measurement-obj9": {
+      "interaction": "AGREE: MANIPULATIVE_2D on squared paper, the accepted core modality (CPR-2026-09-26-P2). The digital grid (GRADE_4_6_GRID_MANIPULATIVE) is an enhancement and does not block approval."
+    },
+    "moe-math-g4-s2-p6-geometry-and-statistics-obj1": {
+      "wording": { "moeDerived": "The objective; point, line, ray and segment follow act2 ('Identify point, lines, rays, and line segment'). Teacher notes record that MOE reads 'interesting lines' and LiberiaLearn interprets 'intersecting lines' (CPR-2026-09-26-P4)." }
+    },
+    "moe-math-g4-s2-p6-geometry-and-statistics-obj2": {},
+    "moe-math-g4-s2-p6-geometry-and-statistics-obj3": {
+      "wording": { "moeDerived": "The objective; sorting shapes by sides follows act3 ('Sort out polygons according to sides and identify each')." },
+      "interaction": "AGREE: MANIPULATIVE_2D with sticks and paper cut-outs (reclassified from NONE by CPR-2026-09-26-R12). Product gap GRADE_4_6_SHAPE_SORT_MANIPULATIVE."
+    },
+    "moe-math-g4-s2-p6-geometry-and-statistics-obj4": {
+      "wording": { "moeDerived": "The objective; tracing, cutting and folding a paper circle follow act4 and act5." },
+      "interaction": "AGREE: MANIPULATIVE_2D with traced, cut and folded paper circles (reclassified from NONE by CPR-2026-09-26-R13). Product gap GRADE_4_6_CIRCLE_MANIPULATIVE."
+    },
+    "moe-math-g4-s2-p6-geometry-and-statistics-obj5": {
+      "wording": { "moeDerived": "The objective; 'geometry as foundation of ... construction' follows out1." },
+      "interaction": "AGREE: PRACTICAL with real solids (CPR-2026-09-26-P3, R14). THREE_D is recorded as a planned enhancement (GRADE_4_6_SOLIDS_3D_VIEWER: rotation and hidden-face inspection) and is not presented as implemented."
+    },
+    "moe-math-g4-s2-p6-geometry-and-statistics-obj6": {
+      "wording": { "moeDerived": "The objective; the family-size survey follows act6 ('Collect data about family size and display the data on a bar graph, line graph, and pie chart').", "exampleData": "Family-size graphs, fruit survey, plant heights, books read, pie-chart counts (labeled example data). Class survey data is voluntary and anonymous." },
+      "alignment": "Graph reading is aligned; the mode is taught, practised and quizzed by reading it from a family-size bar graph. Median and mean are named here and calculated in 6.7.",
+      "interaction": "AGREE: PRACTICAL (reclassified from NONE by CPR-2026-09-26-R15): voluntary, anonymous family-size data collection, teacher-observed; governed responses to the graph-reading items are the planned second evidence source."
+    },
+    "moe-math-g4-s2-p6-geometry-and-statistics-obj7": {
+      "wording": { "moeDerived": "The objective; family-size data follows act6. Teacher notes record the MOE 'medium' wording and LiberiaLearn's 'median' interpretation (CPR-2026-09-26-R16).", "exampleData": "Family sizes, clinic births and rainfall (labeled example data)." }
+    },
+    "moe-math-g4-s2-p6-geometry-and-statistics-obj8": {}
+  }
+}
