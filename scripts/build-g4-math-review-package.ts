@@ -248,7 +248,7 @@ function main() {
           "#### Offline behavior", "", np.offline, "", `Duration: ${np.durationMins} minutes.`, "", "---", "");
       }
     });
-    files.set(`unit-${n}.md`, parts.join("\n"));
+    files.set(`unit-${n}.md`, parts.join("\n").replace(/[ \t]+(?=\r?$)/gm, ""));
   });
 
   for (const id of Object.keys(support.uncertainties)) if (!disposed.has(id)) errors.push(`orphan disposition: ${id}`);
@@ -323,7 +323,7 @@ function main() {
     "|---|---|---|---|---|---:|---|---|",
     ...rows,
     "",
-  ].join("\n"));
+  ].join("\n").replace(/[ \t]+(?=\r?$)/gm, ""));
   files.set("review-ledger.json", `${JSON.stringify(ledger, null, 2)}\n`);
 
   if (check) {

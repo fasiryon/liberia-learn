@@ -217,7 +217,7 @@ Duration: 45 minutes.
 
 ### Reviewer support (not a decision)
 
-- **Content risks:** 
+- **Content risks:**
   - The MOE text 'multiply 2, 3, or 4 - Digits multipliers' is ambiguous on its own; the lesson reads it as multiplying 2-, 3- and 4-digit numbers by 2-digit multipliers. The topic content supports that reading: con4 'Multiplying 2, 3, 4 - digits numbers' and con5 'Numerals by 2 - digits'.
 - **Answers:** VERIFIED: all answer keys recomputed; no errors.
 - **Wording provenance.** MOE-derived: The objective statement (verbatim MOE text). LiberiaLearn explanatory: Title, explanation, worked examples, activities, all practice, homework, quiz, diagnostic and assessment items, teacher notes. Example data: Desk price L$1,250 (labeled example price).
@@ -501,7 +501,7 @@ Duration: 45 minutes.
 | Reviewed content | `ll-g4-math-divide-by-two-digit-2026.1` v0.1.0, payload sha256 `85558092b9de488ecab4e5824612d7cdd6cfce601d6ab763a9e58d6bbc40ceaf` |
 | Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision) |
 
-**Known uncertainties:** 
+**Known uncertainties:**
 - MOE extraction confidence MEDIUM (CONTINUATION_PAGE_ASSIGNMENT).
   - **SOURCE_RESOLVED.** Page 45 is the second page of topic 4 (asr7-asr10 on p45; topic 5 starts on p46).
   - Evidence: moe-math-g4-s2-p4-multiplication-and-division-of-2-digits-multipli-asr7 p45; moe-math-g4-s2-p5-measurement-obj1 p46
@@ -604,7 +604,7 @@ Duration: 45 minutes.
 | Reviewed content | `ll-g4-math-read-write-decimals-hundredths-2026.1` v0.1.0, payload sha256 `82aba61a28426c2e775b54cf11f6fe17cc44d8acf0a9d835c3523d5651c7f7fd` |
 | Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision) |
 
-**Known uncertainties:** 
+**Known uncertainties:**
 - MOE extraction confidence MEDIUM (CONTINUATION_PAGE_ASSIGNMENT).
   - **SOURCE_RESOLVED.** The topic's content column lists 'Decimal numerals up to hundredths place Comparing and Ordering decimal numerals up to hundredths place' (con9), and out2 names 'decimals to hundredths'. The decimals objectives belong to this topic.
   - Evidence: moe-math-g4-s2-p4-multiplication-and-division-of-2-digits-multipli-con9 p44; moe-math-g4-s2-p4-multiplication-and-division-of-2-digits-multipli-out2 p44
@@ -707,7 +707,7 @@ Duration: 45 minutes.
 | Reviewed content | `ll-g4-math-compare-order-decimals-2026.1` v0.1.0, payload sha256 `1bde912750d87bc41dd4371c52256d3676a459e066432523435709f8c5ee8e37` |
 | Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision) |
 
-**Known uncertainties:** 
+**Known uncertainties:**
 - MOE extraction confidence MEDIUM (CONTINUATION_PAGE_ASSIGNMENT).
   - **SOURCE_RESOLVED.** Same evidence as objective 7 (con9 names comparing and ordering decimals).
   - Evidence: moe-math-g4-s2-p4-multiplication-and-division-of-2-digits-multipli-con9 p44

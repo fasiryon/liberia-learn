@@ -21,7 +21,7 @@ For each objective, record APPROVE / REVISE / REJECT in `review-ledger.json`. No
 | Reviewed content | `ll-g4-math-read-write-numbers-to-100000-2026.1` v0.1.0, payload sha256 `2dc47abde1ab3d2351a9c82e0bbe65a8030e58b0ada746a7a73562e8aefa1777` |
 | Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision). Decisions applied: CPR-2026-09-26-R01 |
 
-**Known uncertainties:** 
+**Known uncertainties:**
 - Interaction MANIPULATIVE_2D has no enabled online tool; offline fallback only.
   - **HUMAN_POLICY_DECISION_REQUIRED.** The paper manipulative (place-value chart and paper strips) is the core modality and fully offline; no online tool exists. Recorded as the non-blocking product gap GRADE_4_6_PLACE_VALUE_MANIPULATIVE.
   - Evidence: moe-math-g4-s1-p1-numeration-addition-and-subtraction-mat1 p38
@@ -305,7 +305,7 @@ Duration: 45 minutes.
 | Reviewed content | `ll-g4-math-add-subtract-population-data-2026.1` v0.1.0, payload sha256 `129db94ef65e82335defe9a71ebd2cd8c37d9b0c1a13fd3bcf29ab4c48eabf80` |
 | Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision). Decisions applied: CPR-2026-09-26-P1, CPR-2026-09-26-R02. Every population item now carries an 'Example data' label. |
 
-**Known uncertainties:** 
+**Known uncertainties:**
 - MOE extraction confidence MEDIUM (TAIL_BOUNDARY_UNCERTAIN).
   - **SOURCE_RESOLVED.** The operation and data context are corroborated on the same page: act3 'Add two or more (births and deaths) from the pollution data', act4 'Subtract two or more components of (births and deaths) from the population data', out1 'Use population data of births and death to add and subtract whole numbers'. Text past the parsed boundary could not change the operation. ('pollution' in act3 is itself a source typo; act4 and out1 say population.) MOE text kept verbatim.
   - Evidence: moe-math-g4-s1-p1-numeration-addition-and-subtraction-act3 p38; moe-math-g4-s1-p1-numeration-addition-and-subtraction-act4 p38; moe-math-g4-s1-p1-numeration-addition-and-subtraction-out1 p38

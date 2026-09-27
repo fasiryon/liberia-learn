@@ -21,7 +21,7 @@ For each objective, record APPROVE / REVISE / REJECT in `review-ledger.json`. No
 | Reviewed content | `ll-g4-math-lines-segments-rays-2026.1` v0.1.0, payload sha256 `11e0928ef247a4afec1bbc799ed5efe15f896c25c4c42103256e4bdc1b0d4d32` |
 | Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision). Decisions applied: CPR-2026-09-26-P4, CPR-2026-09-26-R11 |
 
-**Known uncertainties:** 
+**Known uncertainties:**
 - MOE source says 'interesting lines'; read as 'intersecting lines'.
   - **LIBERIALEARN_CLARIFICATION_REQUIRED.** No Grade 4 source item spells the term correctly. 'Intersecting' is the only geometric term that fits the list (line, line segments, rays, ___ lines, parallel lines); related source wording elsewhere is 'intersection' (Grade 5 p75 'Touching and intersection circles'). This is a LiberiaLearn reading, not a source fact.
   - Evidence: moe-math-g4-s2-p6-geometry-and-statistics-act2 p48; Grade 5 CONTENT p75 'Touching and intersection circles'
@@ -125,7 +125,7 @@ Duration: 45 minutes.
 | Reviewed content | `ll-g4-math-angles-perpendicular-lines-2026.1` v0.1.0, payload sha256 `a1bf10af25639d40b6f93a0eb13fc7af44023c6be2de357accd7ae3b616c6f8b` |
 | Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision) |
 
-**Known uncertainties:** 
+**Known uncertainties:**
 - Grade 4 does not measure degrees; the lesson uses a folded-paper right-angle tester. Protractor tool is enabled only for Grades 7+.
   - **SOURCE_RESOLVED.** The objective sets its own scope: 'right angle, less than right angle, or greater than right angle', i.e. comparison with a right angle, not degree measurement. A folded-paper tester satisfies it; a protractor (enabled for Grades 7+) is not needed.
   - Evidence: moe-math-g4-s2-p6-geometry-and-statistics-obj2 p48
@@ -228,7 +228,7 @@ Duration: 45 minutes.
 | Reviewed content | `ll-g4-math-polygons-2026.1` v0.1.0, payload sha256 `e05d6257ea37e366c6f79da8adfdff86240b78f041cd51a24cfe5652b767e081` |
 | Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision). Decisions applied: CPR-2026-09-26-R12 |
 
-**Known uncertainties:** 
+**Known uncertainties:**
 - MOE source says 'pentago n' (spacing artifact) for pentagon.
   - **SOURCE_RESOLVED.** 'pentago n' is a text-extraction spacing artifact inside one word; the list (triangles, quadrilaterals, ___, hexagon) and act3 'Sort out polygons according to sides and identify each' admit only 'pentagon'. Raw text kept verbatim.
   - Evidence: moe-math-g4-s2-p6-geometry-and-statistics-act3 p48
@@ -334,7 +334,7 @@ Duration: 45 minutes.
 | Reviewed content | `ll-g4-math-parts-of-a-circle-2026.1` v0.1.0, payload sha256 `3914ac657241f03dfa12e3f336e14f896edb3f4e4c227fddd1b9b697a08253dc` |
 | Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision). Decisions applied: CPR-2026-09-26-R13 |
 
-**Known uncertainties:** 
+**Known uncertainties:**
 - Interaction MANIPULATIVE_2D has no enabled online tool; offline fallback only.
   - **HUMAN_POLICY_DECISION_REQUIRED.** The paper manipulative (traced, cut and folded paper circles) is the core modality and fully offline; no online tool exists. Recorded as the non-blocking product gap GRADE_4_6_CIRCLE_MANIPULATIVE.
   - Evidence: moe-math-g4-s2-p6-geometry-and-statistics-act4 p49; moe-math-g4-s2-p6-geometry-and-statistics-act5 p49
@@ -436,7 +436,7 @@ Duration: 45 minutes.
 | Reviewed content | `ll-g4-math-solid-figures-2026.1` v0.1.0, payload sha256 `62b790f016a42181a209197da137a3ce7056dc175edf35c8d5673a14bb43d733` |
 | Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision). Decisions applied: CPR-2026-09-26-P3, CPR-2026-09-26-R14 |
 
-**Known uncertainties:** 
+**Known uncertainties:**
 - MOE extraction confidence MEDIUM (CONTINUATION_PAGE_ASSIGNMENT).
   - **SOURCE_RESOLVED.** The topic's content column lists 'Solid figures' (con5, p48); page 49 is the topic's second page.
   - Evidence: moe-math-g4-s2-p6-geometry-and-statistics-con5 p48
@@ -543,7 +543,7 @@ Duration: 45 minutes.
 | Reviewed content | `ll-g4-math-read-interpret-graphs-2026.1` v0.1.0, payload sha256 `1f2811bee91e89b65f76a06c80961e298c947492ace2b484133aa7b1dfc093dc` |
 | Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision). Decisions applied: CPR-2026-09-26-R15 |
 
-**Known uncertainties:** 
+**Known uncertainties:**
 - MOE extraction confidence MEDIUM (CONTINUATION_PAGE_ASSIGNMENT).
   - **SOURCE_RESOLVED.** The topic's content column includes 'Reading and interpreting figures from charts and graphs such as Bar graphs, line graphs, pie chart' (con5, p48).
   - Evidence: moe-math-g4-s2-p6-geometry-and-statistics-con5 p48
@@ -654,7 +654,7 @@ Duration: 45 minutes.
 | Reviewed content | `ll-g4-math-mode-median-mean-2026.1` v0.1.0, payload sha256 `168689885b3b1f25d8e51b5a21a6cde559e261d446bab39bcae482cadc421179` |
 | Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision). Decisions applied: CPR-2026-09-26-R16. Remaining source check (does not change lesson content): whether this page-49 text sits in the MOE objectives or activities column needs a person reading page 49 of Math 1-6.pdf. Its instructional target is corroborated by out2 (p48), act6 (p49) and Grade 3 (p37). Added in this revision: the text now says why the mean example uses a second data set. |
 
-**Known uncertainties:** 
+**Known uncertainties:**
 - MOE extraction confidence LOW (AMBIGUOUS_COLUMN_ASSIGNMENT, CONTINUATION_PAGE_ASSIGNMENT).
   - **LIBERIALEARN_CLARIFICATION_REQUIRED.** LOW confidence comes from an ambiguous column (objective vs activity). The instructional target is corroborated (out2 p48 lists mean, mode, median/'medium'; act6 p49 family-size data; Grade 3 p37 'Find the mean, mode and median of the data'), so the lesson content stands either way. The column itself can only be confirmed by a person reading page 49 of Math 1-6.pdf.
   - Evidence: moe-math-g4-s2-p6-geometry-and-statistics-out2 p48; moe-math-g4-s2-p6-geometry-and-statistics-act6 p49; Grade 3 OBJECTIVE p37 'Find the mean, mode and median of the data.'
@@ -760,7 +760,7 @@ Duration: 45 minutes.
 | Reviewed content | `ll-g4-math-word-problems-with-diagrams-2026.1` v0.1.0, payload sha256 `7ada6a5c008a6dd2eeef897769c882d979feeeaf6114fbc7d090da3102db78f0` |
 | Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision) |
 
-**Known uncertainties:** 
+**Known uncertainties:**
 - MOE extraction confidence MEDIUM (CONTINUATION_PAGE_ASSIGNMENT).
   - **SOURCE_RESOLVED.** Page 49 is the second page of topic 6 (asr8-asr10 on p49), the last Grade 4 topic.
   - Evidence: moe-math-g4-s2-p6-geometry-and-statistics-asr8 p49

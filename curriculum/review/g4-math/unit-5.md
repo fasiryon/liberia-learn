@@ -119,7 +119,7 @@ Duration: 45 minutes.
 | Reviewed content | `ll-g4-math-elapsed-time-2026.1` v0.1.0, payload sha256 `90ac87d0cc90490eece3724eb53551b6597c176deb0ec899589803b1b77b59d0` |
 | Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision). Consequential fix outside the 16 review items: the malformed time distractor '5:65 p.m.' was replaced with '5:55 p.m.' (same standard as R09). |
 
-**Known uncertainties:** 
+**Known uncertainties:**
 - No Grade 4-6 clock tool is enabled online; interaction relies on paper-plate clocks.
   - **SOURCE_RESOLVED.** MOE's own method is a physical clock: act1 'Demonstrate finding elapsed time using a toy clock...' and mat1 'Toy or paper Clock'. The paper-plate clock is source-aligned; no online tool is needed for alignment. A Grade 4-6 online clock tool remains a non-blocking product gap.
   - Evidence: moe-math-g4-s2-p5-measurement-act1 p46; moe-math-g4-s2-p5-measurement-mat1 p46
@@ -230,7 +230,7 @@ Duration: 45 minutes.
 
 ### Reviewer support (not a decision)
 
-- **Content risks:** 
+- **Content risks:**
   - The explanation says customary units are 'widely used in Liberia' (cloth, timber, height). This is a factual claim about Liberia the founder should confirm.
 - **Answers:** VERIFIED: all answer keys recomputed; no errors.
 - **Wording provenance.** MOE-derived: The objective; estimating desk and table lengths follows act2 ('Estimate the length of a pen, table'). LiberiaLearn explanatory: Title, explanation, worked examples, activities, all practice, homework, quiz, diagnostic and assessment items, teacher notes. Example data: None.
@@ -423,7 +423,7 @@ Duration: 45 minutes.
 | Reviewed content | `ll-g4-math-estimate-customary-mass-capacity-2026.1` v0.1.0, payload sha256 `9bea45b5f58750e369922e438e835efd9aa5388e8b0a5cefb93250bc9fb9bb8c` |
 | Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision). Decisions applied: CPR-2026-09-26-P5, CPR-2026-09-26-R08 |
 
-**Known uncertainties:** 
+**Known uncertainties:**
 - The lesson treats weight and mass together, using everyday customary units (ounce, pound). Confirm terminology.
   - **LIBERIALEARN_CLARIFICATION_REQUIRED.** MOE uses 'mass' (objectives 5 and 6, p46) and 'weight' (objectives 7 and 8, p47; out2 'weights') for the same idea, so the source does not choose. LiberiaLearn needs one stated convention.
   - Evidence: moe-math-g4-s2-p5-measurement-obj5 p46; moe-math-g4-s2-p5-measurement-obj7 p47; moe-math-g4-s2-p5-measurement-out2 p46
@@ -528,7 +528,7 @@ Duration: 45 minutes.
 
 ### Reviewer support (not a decision)
 
-- **Content risks:** 
+- **Content risks:**
   - Benchmarks now name packets labelled 1 kg (bag sizes vary by shop); changed with 5.5 so the two lessons agree.
 - **Answers:** VERIFIED: all answer keys recomputed; no errors.
 - **Wording provenance.** MOE-derived: The objective statement (verbatim MOE text). LiberiaLearn explanatory: Title, explanation, worked examples, activities, all practice, homework, quiz, diagnostic and assessment items, teacher notes. Example data: None.
@@ -624,7 +624,7 @@ Duration: 45 minutes.
 | Reviewed content | `ll-g4-math-convert-metric-units-2026.1` v0.1.0, payload sha256 `9f4397e58a7ed2af8e420a483aa3d2cd15bdeaaf14067c8246fb980bf5cf00f1` |
 | Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision) |
 
-**Known uncertainties:** 
+**Known uncertainties:**
 - MOE extraction confidence MEDIUM (CONTINUATION_PAGE_ASSIGNMENT).
   - **SOURCE_RESOLVED.** Page 47 is the second page of topic 5 (asr8-asr10 on p47; topic 6 starts on p48); con4 and con6 list converting units of measure.
   - Evidence: moe-math-g4-s2-p5-measurement-con6 p46; moe-math-g4-s2-p5-measurement-asr8 p47
@@ -726,7 +726,7 @@ Duration: 45 minutes.
 | Reviewed content | `ll-g4-math-add-subtract-measurements-2026.1` v0.1.0, payload sha256 `6718735b9fe41b9e2e8f86f10b8a964b4bc8f9dde2e9c57809acc2189821d549` |
 | Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision). Decisions applied: CPR-2026-09-26-R09 |
 
-**Known uncertainties:** 
+**Known uncertainties:**
 - MOE extraction confidence MEDIUM (CONTINUATION_PAGE_ASSIGNMENT).
   - **SOURCE_RESOLVED.** Page 47 is the second page of topic 5 (asr8-asr10 on p47; topic 6 starts on p48).
   - Evidence: moe-math-g4-s2-p5-measurement-asr8 p47; moe-math-g4-s2-p6-geometry-and-statistics-obj1 p48
@@ -826,7 +826,7 @@ Duration: 45 minutes.
 | Reviewed content | `ll-g4-math-perimeter-area-rectangles-2026.1` v0.1.0, payload sha256 `495bf2f254b84b10322eda30df65ca004e279ca2c9acb5fd5975f3012cb80c8c` |
 | Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision). Decisions applied: CPR-2026-09-26-P2, CPR-2026-09-26-R10 |
 
-**Known uncertainties:** 
+**Known uncertainties:**
 - MOE extraction confidence MEDIUM (CONTINUATION_PAGE_ASSIGNMENT).
   - **SOURCE_RESOLVED.** The topic's content column lists 'Perimeters' (con7) and 'Finding areas of squares and rectangles' (con8).
   - Evidence: moe-math-g4-s2-p5-measurement-con7 p46; moe-math-g4-s2-p5-measurement-con8 p46

@@ -222,7 +222,7 @@ Duration: 45 minutes.
 | Reviewed content | `ll-g4-math-lcm-and-gcf-2026.1` v0.1.0, payload sha256 `b44a01b48f8217cb936707566d6532acc3de93e6bbeb88c8f086f7ddc1ada2a7` |
 | Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision). Decisions applied: CPR-2026-09-26-R04. No change to 3.3 content: the prime-factor requirement was met in 3.2 instead. |
 
-**Known uncertainties:** 
+**Known uncertainties:**
 - MOE says 'Find LCM and GCF', and the topic's activities include prime factors. The lesson uses listing methods only (no prime factorisation); confirm that depth is right for Grade 4.
   - **SOURCE_RESOLVED.** Listing methods match MOE act4 'List multiples of a set of numbers and sort out common factor'. MOE act2 on the same page also asks learners to 'Determine the prime factors of a number', which neither 3.2 nor 3.3 teaches. The prime-factor method for LCM/GCF is not required by the source.
   - Evidence: moe-math-g4-s1-p3-number-theory-and-fraction-act2 p42; moe-math-g4-s1-p3-number-theory-and-fraction-act4 p42
@@ -328,7 +328,7 @@ Duration: 45 minutes.
 | Reviewed content | `ll-g4-math-fractions-equal-parts-2026.2` v1.2.0, payload sha256 `7f6faf3133b258771c0d5222488d81709058df7d419de6f6bd7eb68d59d615e9` |
 | Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision). Decisions applied: CPR-2026-09-26-R05. Assessed: the 2026.2 candidate v1.2.0. Lesson content is ready; release 2026.2 activation separately needs a release-level approval and the mastery-continuity and misconception-policy decisions (live-readiness/RELEASE_2026_2_AND_WRITE_PLAN.md). The founder's ledger entry must name reviewedContentId. |
 
-**Known uncertainties:** 
+**Known uncertainties:**
 - The 2026.1 founder-authored lesson teaches part of a whole; MOE says 'Find parts of a set', and in 2026.1 the set model appears only in its activities.
   - **SOURCE_RESOLVED.** MOE content item con5 'Parts of a set' and the objective itself require the set model; Grade 5 (p50) builds on it ('Write factor for parts of a set'). The 2026.1 lesson teaches parts of a whole and mentions sets only in an activity.
   - Evidence: moe-math-g4-s1-p3-number-theory-and-fraction-con5 p42; Grade 5 OBJECTIVE p50 'Write factor for parts of a set.'
@@ -337,7 +337,7 @@ Duration: 45 minutes.
 
 ### Reviewer support (not a decision)
 
-- **Content risks:** 
+- **Content risks:**
   - The 2026.1 lesson (v1.0.0) has no practice set and no quiz in its payload, and defines a fraction as part of one whole only; it remains bound by release 2026.1, which cannot change.
   - A ledger decision for this objective must name the lesson reviewed: 2026.1 v1.0.0, or the 2026.2 v1.2.0 candidate.
   - The online fraction-visualizer does not model sets (product gap SET_FRACTION_MANIPULATIVE_REQUIRED); bottle caps or stones are required.
@@ -694,7 +694,7 @@ Duration: 45 minutes.
 | Reviewed content | `ll-g4-math-adding-fractions-2026.1` v0.1.0, payload sha256 `b99f69b88f7bf143f555a5be32933b8ce2f48056bc34e70c9b2e0250eff72355` |
 | Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision). Decisions applied: CPR-2026-09-26-R06. Sums greater than one are written as mixed numbers inside this lesson; 3.4 now treats fractions greater than one only as an optional extension, so 3.7 is where learners first meet them in practice. |
 
-**Known uncertainties:** 
+**Known uncertainties:**
 - MOE says 'Add fractions' without scope. The lesson covers like denominators plus related denominators (halves/quarters/eighths); confirm unlike denominators are out of scope for Grade 4.
   - **SOURCE_RESOLVED.** MOE Grade 5 content (p54) lists 'Adding and subtracting fractions with unlike denominators' and 'Adding fractions and mixed numbers with like denominators', so unlike denominators, including the related denominators (halves, quarters, eighths) the draft teaches, are Grade 5 content. The Grade 4 activity act5 uses base-10 counters, which model like denominators (tenths). The draft's sentence 'The MOE activity uses counters...' overstates the source: MOE names base-10 counters; the 3/10 + 4/10 example is LiberiaLearn's.
   - Evidence: Grade 5 CONTENT p54 'Adding and subtracting fractions with unlike denominators;'; Grade 5 CONTENT p54 'Adding fractions and mixed numbers with like denominators;'; moe-math-g4-s1-p3-number-theory-and-fraction-act5 p43
@@ -794,7 +794,7 @@ Duration: 45 minutes.
 | Reviewed content | `ll-g4-math-subtracting-fractions-2026.1` v0.1.0, payload sha256 `d6e6c18e774508c6dcca0be5ad6c0b873da2f332d3f8adf9ecb8104b332815b0` |
 | Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision). Decisions applied: CPR-2026-09-26-R07 |
 
-**Known uncertainties:** 
+**Known uncertainties:**
 - Same scope question as adding fractions.
   - **SOURCE_RESOLVED.** Same Grade 5 p54 evidence as adding fractions.
   - Evidence: Grade 5 CONTENT p54 'Adding and subtracting fractions with unlike denominators;'
@@ -894,7 +894,7 @@ Duration: 45 minutes.
 | Reviewed content | `ll-g4-math-multi-step-problems-2026.1` v0.1.0, payload sha256 `8dd15953cee58437aed77ab0e0080bf9f4371a702de9a908c9d3c5144089f563` |
 | Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision) |
 
-**Known uncertainties:** 
+**Known uncertainties:**
 - MOE extraction confidence MEDIUM (CONTINUATION_PAGE_ASSIGNMENT).
   - **SOURCE_RESOLVED.** Page 43 is the second page of topic 3 (asr8-asr10 on p43; topic 4 starts on p44).
   - Evidence: moe-math-g4-s1-p3-number-theory-and-fraction-asr8 p43; moe-math-g4-s2-p4-multiplication-and-division-of-2-digits-multipli-obj1 p44

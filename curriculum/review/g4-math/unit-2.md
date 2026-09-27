@@ -208,7 +208,7 @@ Duration: 45 minutes.
 | Reviewed content | `ll-g4-math-multiply-by-one-digit-2026.1` v0.1.0, payload sha256 `34245c86f9c4a356ed8abbbb648fca03af50b825174d53b1c96080b16284bab7` |
 | Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision). Decisions applied: CPR-2026-09-26-R03 |
 
-**Known uncertainties:** 
+**Known uncertainties:**
 - Interaction MANIPULATIVE_2D has no enabled online tool; offline fallback only.
   - **HUMAN_POLICY_DECISION_REQUIRED.** The paper manipulative (graph-paper area model) is the core modality and fully offline; no online tool exists. Recorded as the non-blocking product gap GRADE_4_6_GRID_MANIPULATIVE.
   - Evidence: moe-math-g4-s1-p2-multiplication-and-division-of-whole-numbers-act2 p40
@@ -503,7 +503,7 @@ Duration: 45 minutes.
 | Reviewed content | `ll-g4-math-division-word-problems-2026.1` v0.1.0, payload sha256 `c466ea6287fcd7c9482ab5892e6efb8beae79ce18238f5199ed4ea225392cd4a` |
 | Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision) |
 
-**Known uncertainties:** 
+**Known uncertainties:**
 - MOE extraction confidence MEDIUM (CONTINUATION_PAGE_ASSIGNMENT).
   - **SOURCE_RESOLVED.** Page 41 is the second page of this topic's table: its assessment references asr8-asr10 are also on page 41 and the next topic (Number Theory and Fraction) starts on page 42. out1 'Apply computational skills about multiplication and division to real life situations' fits a division word-problem objective.
   - Evidence: moe-math-g4-s1-p2-multiplication-and-division-of-whole-numbers-asr8 p41; moe-math-g4-s1-p3-number-theory-and-fraction-obj1 p42; moe-math-g4-s1-p2-multiplication-and-division-of-whole-numbers-out1 p40
