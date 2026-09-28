@@ -12,8 +12,9 @@
  * MOE source provenance is not MOE approval: a cell may only claim
  * moeApprovalState=NOT_CLAIMED until MOE approval evidence exists.
  */
-import { validateOntologyRelease, type CurriculumOntologyRelease } from "./governedGrade4Math";
+import { deterministicReleaseIdentity, validateOntologyRelease, type CurriculumOntologyRelease } from "./governedGrade4Math";
 import type { StructuredCurriculumItem } from "./structuredCurriculumAuthority";
+import { validateLessonDepth } from "@/lib/curriculum/regenerationQualityGate";
 
 /** Internal LiberiaLearn interaction standard. */
 export type InteractionNeed = "NONE" | "MANIPULATIVE_2D" | "SIMULATION" | "VIRTUAL_LAB" | "PRACTICAL" | "THREE_D";
@@ -100,6 +101,9 @@ export type LiveState = Readonly<{
   standardCodes: ReadonlySet<string>;
   skillIds: ReadonlySet<string>;
   unitIds: readonly string[];
+  /** Exact production records behind the presence sets. Presence alone is not release authority. */
+  lessonRecords?: Readonly<Record<string, Readonly<{ status: string; version: string; revisionId: string | null }>>>;
+  constructRecords?: Readonly<Record<string, Readonly<{ status: string; version: number; releaseId: string; releaseIdentity: string }>>>;
 }>;
 
 export type CertificationInput = Readonly<{
@@ -136,6 +140,7 @@ export type CellCertification = Readonly<{
   releaseId: string;
   internallyExecutable: boolean;
   errors: readonly string[];
+  draftDepthFailures: readonly string[];
   objectives: readonly ObjectiveCoverage[];
   summary: Readonly<{
     moeObjectives: number;
@@ -158,6 +163,7 @@ export type CellCertification = Readonly<{
   }>[];
   live: Readonly<{
     checked: boolean;
+    exactBindingsChecked: boolean;
     capturedAt: string | null;
     liveExecutable: boolean;
     missing: readonly string[];
@@ -172,6 +178,7 @@ const nonEmpty = (value: unknown): boolean => value !== null && value !== undefi
 export function certifyTemplateCell(input: CertificationInput): CellCertification {
   const { cell, release } = input;
   const errors: string[] = [];
+  const draftDepthFailures: string[] = [];
   const items = new Map(input.structuredItems.map((item) => [item.id, item]));
   const cellItems = input.structuredItems.filter((item) => item.grade === cell.grade && item.subject === cell.subject);
   const conceptIds = new Set(release.concepts.map((concept) => concept.id));
@@ -238,6 +245,10 @@ export function certifyTemplateCell(input: CertificationInput): CellCertificatio
       if (repo.version !== lesson.version) errors.push(`lesson_version_mismatch:${lesson.contentId}`);
       if (repo.grade !== cell.grade || repo.subject !== cell.subject) errors.push(`lesson_scope_mismatch:${lesson.contentId}`);
       if (repo.authority !== lesson.authority) errors.push(`lesson_authority_mismatch:${lesson.contentId}`);
+      if (lesson.authority === "DRAFT_UNREVIEWED") {
+        const depth = validateLessonDepth(repo.payload, cell.grade);
+        if (!depth.valid) draftDepthFailures.push(`${lesson.contentId}:${depth.failReasons.join("|")}`);
+      }
       const binding = release.contentBindings.find((entry) => entry.contentId === lesson.contentId);
       if (lesson.authority === "GOVERNED") {
         if (!binding) errors.push(`lesson_not_bound_in_release:${lesson.contentId}`);
@@ -317,11 +328,23 @@ export function certifyTemplateCell(input: CertificationInput): CellCertificatio
   if (input.live) {
     // Only governed lessons are expected in production; drafts are never published by the cell.
     const governedIds = cell.units.flatMap((unit) => unit.lessons.filter((lesson) => lesson.authority === "GOVERNED").map((lesson) => lesson.contentId));
-    for (const id of governedIds) if (!input.live.lessonContentIds.has(id)) missing.push(`lesson:${id}`);
+    const exactBindingsChecked = !!input.live.lessonRecords && !!input.live.constructRecords;
+    for (const id of governedIds) {
+      if (!input.live.lessonContentIds.has(id)) missing.push(`lesson:${id}`);
+      const expected = release.contentBindings.find((binding) => binding.contentId === id);
+      const actual = input.live.lessonRecords?.[id];
+      if (exactBindingsChecked && (!actual || actual.status !== "published" || actual.version !== expected?.contentVersion || !actual.revisionId)) {
+        missing.push(`lesson_binding:${id}`);
+      }
+    }
     for (const binding of release.bindings) {
       if (!input.live.learningTargetCodes.has(binding.learningTargetCode)) missing.push(`learningTarget:${binding.learningTargetCode}`);
       if (!input.live.standardCodes.has(binding.standardCode)) missing.push(`standard:${binding.standardCode}`);
       if (!input.live.skillIds.has(binding.skillId)) missing.push(`skill:${binding.skillId}`);
+      const actual = input.live.constructRecords?.[binding.id];
+      if (exactBindingsChecked && (!actual || actual.status !== "PUBLISHED" || actual.version !== 1 || actual.releaseId !== release.id || actual.releaseIdentity !== deterministicReleaseIdentity(release))) {
+        missing.push(`construct_binding:${binding.id}`);
+      }
     }
   }
   const uniqueMissing = [...new Set(missing)].sort();
@@ -331,6 +354,7 @@ export function certifyTemplateCell(input: CertificationInput): CellCertificatio
     releaseId: release.id,
     internallyExecutable: errors.length === 0,
     errors,
+    draftDepthFailures,
     objectives,
     summary: {
       moeObjectives: objectives.length,
@@ -350,8 +374,9 @@ export function certifyTemplateCell(input: CertificationInput): CellCertificatio
     teacherMetadata,
     live: {
       checked: !!input.live,
+      exactBindingsChecked: !!input.live?.lessonRecords && !!input.live?.constructRecords,
       capturedAt: input.live?.capturedAt ?? null,
-      liveExecutable: !!input.live && errors.length === 0 && uniqueMissing.length === 0,
+      liveExecutable: !!input.live && !!input.live.lessonRecords && !!input.live.constructRecords && errors.length === 0 && uniqueMissing.length === 0,
       missing: uniqueMissing,
       productionUnitsNotInCell: input.live ? input.live.unitIds.filter((id) => !unitIds.has(id)) : [],
     },
@@ -410,7 +435,8 @@ export function liveCertificationChecklist(report: CellCertification): readonly 
     check("tool-policies", "ToolPolicies resolve to enabled toolkit tools", errorsMatching(/^tool_policy_/), "all keys mapped"),
     check("interaction", "interaction classifications resolve", errorsMatching(/^(interaction_|virtual_lab_|practical_|three_d_)/).filter((e) => !/offline/.test(e)), "all classified"),
     check("offline", "every interaction has a valid offline behavior", errorsMatching(/offline_fallback/), "all present"),
-    check("release-live", "release references resolve in production", report.live.checked ? report.live.missing : ["live snapshot not checked"], "all present live"),
+    check("release-live", "release references resolve in production", report.live.checked ? [...report.live.missing, ...(report.live.exactBindingsChecked ? [] : ["exact release bindings not checked"])] : ["live snapshot not checked"], "all present live"),
+    check("draft-depth", "draft lessons meet the Grade 4 depth gate", report.draftDepthFailures, "all drafts meet depth gate"),
     check("no-draft-as-governed", "no draft artifact is treated as governed", errorsMatching(/^(draft_|lesson_authority_mismatch)/), "none"),
     check("no-moe-claim", "no MOE approval is claimed without recorded evidence", errorsMatching(/^moe_approval_claimed/), "NOT_CLAIMED"),
     check("internal", "cell is internally executable", report.errors, "no errors"),

@@ -22,5 +22,9 @@
       "Bash(npx prisma migrate deploy:*)",
       "Bash(npx prisma db push:*)"
     ]
-  }
+  },
+  "enabledMcpjsonServers": [
+    "supabase"
+  ],
+  "enableAllProjectMcpServers": true
 }

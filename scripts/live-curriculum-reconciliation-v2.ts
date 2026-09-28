@@ -99,8 +99,9 @@ async function main() {
         left join "CurriculumProvenance" p on p."curriculumContentId" = c.id
         left join "CurriculumContentRevision" r on r.id = p."currentRevisionId"`),
       events: await q(`select e."eventType"::text event, e."approvalBasis"::text basis, e."reviewAuthority"::text authority, e."occurredAt", p."curriculumContentId" content_id
-        from "CurriculumGovernanceEvent" e join "CurriculumContentRevision" r on r.id = e."revisionId"
-        join "CurriculumProvenance" p on p.id = r."provenanceId"`),
+        from "CurriculumGovernanceEvent" e join "CurriculumProvenance" p on p."currentRevisionId" = e."revisionId"
+        left join "CurriculumGovernanceEvent" correction on correction."correctsEventId" = e.id
+        where correction.id is null`),
       evidence: await q(`select p."curriculumContentId" content_id, count(*)::int n from "CurriculumEvidence" e
         join "CurriculumContentRevision" r on r.id = e."revisionId" join "CurriculumProvenance" p on p.id = r."provenanceId" group by 1`),
       lessonPlans: await q(`select lp."curriculumContentId" content_id, u.grade, u.subject from "CurriculumLessonPlan" lp
@@ -113,7 +114,7 @@ async function main() {
       homework: await q(`select h."contentId", c."gradeLevel" grade, c.subject from "Homework" h join "Class" c on c.id = h."classId"`),
       assignments: await q(`select a."contentId", c."gradeLevel" grade, c.subject from "Assignment" a join "Class" c on c.id = a."classId"`),
       exams: await q(`select e.id, e.grade, e.subject, e.status::text status, (select count(*)::int from "ExamQuestion" x where x."examId" = e.id) questions from "Exam" e`),
-      waec: await q(`select grade, count(*)::int n from "WaecPracticeItem" group by 1`),
+      waec: await q(`select grade, "subjectId" subject_id, count(*)::int n from "WaecPracticeItem" group by 1,2`),
       practiceItems: await q(`select s.subject::text subject, s.band::text band, count(*)::int n from "PracticeItem" pi join "Skill" s on s.id = pi."skillId" group by 1,2`),
       aiLiteracy: await q(`select "lessonId" id, count(*)::int n from "AILiteracyExercise" group by 1`),
       codeExercises: await q(`select "lessonId" id, count(*)::int n from "CodeExercise" group by 1`),
@@ -236,6 +237,7 @@ async function main() {
   // ---------------- Per-cell matrix ----------------
   const bandOf = (g: number) => (g <= 3 ? "G1_3" : g <= 6 ? "G4_6" : g <= 9 ? "G7_9" : "G10_12");
   const subjMatch = (raw: string | null, s: string) => resolveSubject(raw).canonical === s;
+  const waecSubject = (subjectId: string | null, s: string) => subjectId?.toLowerCase() === `waec_${s.toLowerCase()}`;
   const cells = GRADES.flatMap((g) => SUBJECTS.map((s) => {
     const k = key(g, s);
     const lessons = analyses.filter((a) => a.cell === k);
@@ -274,14 +276,16 @@ async function main() {
         withReadyVideo: count((a) => a.video),
         payloadSections: sectionCounts,
         units: units.length, weeks: units.reduce((n, u) => n + u.weeks, 0),
-        moeObjectives: live.moeObjectives.filter((o) => o.grade === g && subjMatch(o.subject, s)).reduce((n, o) => n + o.n, 0),
-        learningTargets: live.learningTargets.filter((o) => o.grade === g && subjMatch(o.subject, s)).reduce((n, o) => n + o.n, 0),
+        moeObjectives: live.moeObjectives.filter((o) => o.grade === g && o.status === "VERIFIED" && subjMatch(o.subject, s)).reduce((n, o) => n + o.n, 0),
+        learningTargets: live.learningTargets.filter((o) => o.grade === g && o.status === "VERIFIED" && subjMatch(o.subject, s)).reduce((n, o) => n + o.n, 0),
         standardsForBand: live.standards.filter((x) => x.subject === s && x.band === bandOf(g)).reduce((n, x) => n + x.n, 0),
         practiceItemsForBand: live.practiceItems.filter((x) => x.subject === s && x.band === bandOf(g)).reduce((n, x) => n + x.n, 0),
         homework: hw.length, homeworkLinkedToLesson: hw.filter((h) => h.contentId).length,
         assignments: asg.length, assignmentsLinkedToLesson: asg.filter((h) => h.contentId).length,
         exams: exams.length, examsPublished: exams.filter((e) => e.status === "PUBLISHED").length, examQuestions: exams.reduce((n, e) => n + e.questions, 0),
-        waecPracticeItems: s === "MATH" ? (live.waec.find((w) => w.grade === g)?.n ?? 0) : null, // WAEC items carry subjectId only; subject join UNKNOWN except where verified
+        waecPracticeItems: live.waec.filter((w) => w.grade === g && waecSubject(w.subject_id, s)).reduce((n, w) => n + w.n, 0),
+        diagnosticBinding: cellReleases.some((r: Row) => (r.bindings ?? []).some((b: Row) =>
+          (r.items ?? []).some((i: Row) => i.id === b.itemId && i.context === "DIAGNOSTIC"))),
         textbooks: live.textbooks.filter((t) => t.grade === g && subjMatch(t.subject, s)).length,
         ragChunks: live.ragChunks.filter((r) => r.grade === g && subjMatch(r.subject, s)).reduce((n, r) => n + r.n, 0),
         virtualLabs: live.virtualLabs.filter((v) => v.grade === g && subjMatch(v.subject, s)).length,
@@ -412,7 +416,7 @@ function gapsFor(c: CellRow): string[] {
   if (!P.practice && !L.practiceItemsForBand) g.push("NO_PRACTICE");
   if (!P.quiz && !P.assessmentQuestions) g.push("NO_QUIZ_OR_ITEMS");
   if (!L.exams) g.push("NO_TEST_OR_EXAM");
-  g.push("NO_DIAGNOSTIC_BINDING");
+  if (!L.diagnosticBinding) g.push("NO_DIAGNOSTIC_BINDING");
   if (!L.units) g.push("NO_UNIT_STRUCTURE");
   if (!L.textbooks) g.push("NO_TEXTBOOK_RESOURCE");
   if (!R.executableReleases.length) g.push("NO_EXECUTABLE_RELEASE");

@@ -18,7 +18,23 @@ import { PrismaClient, type Prisma } from "@prisma/client";
 
 const CODE = "LR-MATH-G4_6-02";
 const LESSON = "ll-g4-math-fractions-equal-parts-2026.1";
+const LESSON_VERSION = "1.0.0";
 const spec = JSON.parse(fs.readFileSync("curriculum/review/g4-math/live-readiness/lr-math-g4_6-02.target.json", "utf8"));
+
+const normalizeJson = (value: unknown): unknown => {
+  if (Array.isArray(value)) return value.map(normalizeJson);
+  if (value && typeof value === "object") {
+    return Object.fromEntries(Object.entries(value as Record<string, unknown>).sort(([a], [b]) => a.localeCompare(b)).map(([key, child]) => [key, normalizeJson(child)]));
+  }
+  return value;
+};
+
+const sameTargetPayload = (existing: Record<string, unknown>, expected: Record<string, unknown>): boolean => {
+  const fields = ["code", "version", "grade", "subject", "domain", "targetLevel", "statement", "minimumDepth",
+    "cognitiveDimensions", "moeObjectiveId", "baselineCompetencyId", "curriculumRevisionId", "prerequisiteRefs",
+    "misconceptionRefs", "evidenceRefs", "platformVersion", "verificationStatus"];
+  return fields.every((field) => JSON.stringify(normalizeJson(existing[field])) === JSON.stringify(normalizeJson(expected[field])));
+};
 
 async function main() {
   const apply = process.argv.includes("--apply");
@@ -32,15 +48,16 @@ async function main() {
       const lesson = await tx.curriculumContent.findUnique({ where: { contentId: LESSON }, select: { id: true, status: true, version: true } });
       if (!lesson) throw new Error(`precondition_failed: ${LESSON} is not in the database (publish it first)`);
       if (lesson.status !== "published") throw new Error(`precondition_failed: ${LESSON} status is ${lesson.status}, expected published`);
+      if (lesson.version !== LESSON_VERSION) throw new Error(`precondition_failed: ${LESSON} version is ${lesson.version}, expected ${LESSON_VERSION}`);
       const provenance = await tx.curriculumProvenance.findUnique({ where: { curriculumContentId: lesson.id }, select: { currentRevisionId: true } });
       if (!provenance?.currentRevisionId) throw new Error("precondition_failed: lesson has no current revision");
-      const human = await tx.curriculumGovernanceEvent.findFirst({ where: { revisionId: provenance.currentRevisionId, eventType: "APPROVED", approvalBasis: "HUMAN_REVIEW" }, select: { id: true } });
+      const human = await tx.curriculumGovernanceEvent.findFirst({ where: { revisionId: provenance.currentRevisionId, eventType: "APPROVED", approvalBasis: "HUMAN_REVIEW", correctedBy: null }, select: { id: true } });
       if (!human) throw new Error("precondition_failed: current revision has no HUMAN_REVIEW approval");
 
       const data = { ...spec.data, curriculumRevisionId: provenance.currentRevisionId } as Prisma.CurriculumLearningTargetUncheckedCreateInput;
       const existing = await tx.curriculumLearningTarget.findUnique({ where: { code_version: { code: CODE, version: 1 } } });
       if (existing) {
-        const same = existing.statement === data.statement && existing.curriculumRevisionId === data.curriculumRevisionId && existing.grade === data.grade;
+        const same = sameTargetPayload(existing as unknown as Record<string, unknown>, data as unknown as Record<string, unknown>);
         if (!same) throw new Error(`abort: ${CODE} v1 exists with different content (${existing.id})`);
         console.log(JSON.stringify({ result: "ALREADY_PRESENT", id: existing.id }));
         return;
