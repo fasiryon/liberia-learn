@@ -1,0 +1,62 @@
+{
+  "recordVersion": "lab-production-record/1.0.0",
+  "labId": "mount-coffee-hydropower",
+  "labVersion": "1.0.0",
+  "tier": "HERO",
+  "tierReason": "The first complete hydropower lab is intended to set the subject benchmark and exercise all three production review rounds.",
+  "status": "DRAFT",
+  "authority": {
+    "governedObjective": false,
+    "objectiveIds": ["hydropower-cause-and-effect"],
+    "note": "Curriculum alignment is PROPOSED, not governed. Every check remains RAW_OBSERVATION; fixture release binding does not approve or release this lab."
+  },
+  "design": {
+    "pedagogyBrief": "docs/labs/mount-coffee-hydropower/design/01-PEDAGOGY_BRIEF.md",
+    "storyboard": "docs/labs/mount-coffee-hydropower/design/02-EXPERIENCE_STORYBOARD_AND_BENCHMARK.md",
+    "simulationSpec": "docs/labs/mount-coffee-hydropower/design/03-SIMULATION_SPEC.md",
+    "assetSpec": "docs/labs/mount-coffee-hydropower/design/04-ASSET_SPEC.md"
+  },
+  "benchmark": {
+    "references": [
+      { "id": "REF-CIRCUIT-OVERVIEW", "title": "Simple circuit overview", "source": "prior-lab", "capture": "artifacts/lab-review/fixture-simple-circuit/1.0.0/smoke/overview__HIGH__desktop.png", "approval": "LiberiaLearn prior-lab internal reference; composition only." },
+      { "id": "REF-CIRCUIT-CURRENT-MOTION", "title": "Circuit current motion", "source": "prior-lab", "capture": "artifacts/lab-review/fixture-simple-circuit/1.0.0/smoke/current-starts__HIGH__desktop__motion-sheet.png", "approval": "LiberiaLearn prior-lab internal reference; software GL, composition only." },
+      { "id": "REF-CIRCUIT-FALLBACK2D", "title": "Circuit 2D fallback", "source": "prior-lab", "capture": "artifacts/lab-review/fixture-simple-circuit/1.0.0/smoke/current-starts__FALLBACK_2D__desktop.png", "approval": "LiberiaLearn prior-lab internal reference; composition and labels only." },
+      { "id": "REF-SOLIDS-EXPLODED-HIGH", "title": "Solids exploded view", "source": "prior-lab", "capture": "artifacts/lab-review/g4-solid-figures/2.1.0/smoke/cube-exploded__HIGH__desktop.png", "approval": "LiberiaLearn prior-lab internal reference; software GL, composition only." },
+      { "id": "REF-SOLIDS-EXPLODED-LOW-MOBILE", "title": "Solids exploded view, LOW mobile", "source": "prior-lab", "capture": "artifacts/lab-review/g4-solid-figures/2.1.0/smoke/cube-exploded__LOW__mobile.png", "approval": "LiberiaLearn prior-lab internal reference; composition and labels only." },
+      { "id": "REF-SOLIDS-PRISM-LOW-MOBILE", "title": "Solids rebuilt prism, LOW mobile", "source": "prior-lab", "capture": "artifacts/lab-review/g4-solid-figures/2.1.0/smoke/prism-rebuilt__LOW__mobile.png", "approval": "LiberiaLearn prior-lab internal reference; composition and labels only." }
+    ],
+    "qualities": [
+      { "name": "Local relevance", "description": "A legible Liberian run-of-river plant and local context.", "referenceIds": ["REF-CIRCUIT-OVERVIEW", "REF-SOLIDS-EXPLODED-HIGH"] },
+      { "name": "Cause-to-consequence legibility", "description": "Water, generation and delivery changes are easy to follow.", "referenceIds": ["REF-CIRCUIT-CURRENT-MOTION"] },
+      { "name": "Reach on LOW and FALLBACK_2D", "description": "The causal scene and checks remain understandable on constrained profiles.", "referenceIds": ["REF-SOLIDS-EXPLODED-LOW-MOBILE", "REF-CIRCUIT-FALLBACK2D"] },
+      { "name": "Cutaway and exploded clarity", "description": "The unit 3 runner, shaft and generator are distinguishable.", "referenceIds": ["REF-SOLIDS-EXPLODED-HIGH"] },
+      { "name": "Camera choreography", "description": "Preset changes read as camera moves and frame the scene on portrait screens.", "referenceIds": ["REF-SOLIDS-EXPLODED-HIGH"] },
+      { "name": "Guided pacing and panel coherence", "description": "The seven guided beats retain clear learner context.", "referenceIds": ["REF-CIRCUIT-CURRENT-MOTION", "REF-SOLIDS-PRISM-LOW-MOBILE"] },
+      { "name": "Label legibility", "description": "Part names remain readable without collisions.", "referenceIds": ["REF-CIRCUIT-OVERVIEW", "REF-CIRCUIT-FALLBACK2D"] },
+      { "name": "Correct wow moment", "description": "Dry-season scarcity and overload reveal a clear, scientifically bounded consequence.", "referenceIds": ["REF-SOLIDS-EXPLODED-HIGH"] },
+      { "name": "Scene readability", "description": "Diorama context supports the process without obscuring the machine.", "referenceIds": ["REF-SOLIDS-EXPLODED-HIGH", "REF-SOLIDS-PRISM-LOW-MOBILE"] }
+    ]
+  },
+  "assets": [
+    { "id": "procedural-plant-and-waterway", "componentIds": ["headpond", "dam", "intake-1", "penstock-1", "tailrace", "river-downstream", "spillway-gate", "powerhouse"], "kind": "procedural", "license": "LiberiaLearn-original", "provenance": "Hand-authored procedural primitives from the asset specification; no external geometry or textures.", "bytes": 0, "profiles": ["HIGH", "STANDARD", "LOW", "FALLBACK_2D"] },
+    { "id": "procedural-machinery-and-grid", "componentIds": ["unit-1", "unit-1-marker", "unit-2", "unit-2-marker", "unit-3", "unit-3-marker", "unit-4", "unit-4-marker", "u3-runner", "u3-shaft", "u3-generator", "switchyard", "power-tower-1", "power-tower-2", "power-tower-3", "city-hospital", "hospital-sign", "city-homes", "city-shops", "distance-break"], "kind": "procedural", "license": "LiberiaLearn-original", "provenance": "Hand-authored primitive machinery, poles, city and place scale marker; internal unit 3 stack is builder merge from design/04-ASSET_SPEC.md.", "bytes": 0, "profiles": ["HIGH", "STANDARD", "LOW", "FALLBACK_2D"] },
+    { "id": "procedural-gauges-and-valley-decor", "componentIds": ["gauge-seg-1", "gauge-seg-2", "gauge-seg-3", "gauge-seg-4", "demand-hospital", "demand-homes", "demand-shops", "bank-lower", "bank-upper", "forest-1", "forest-2", "forest-3", "forest-4", "forest-5", "forest-6"], "kind": "procedural", "license": "LiberiaLearn-original", "provenance": "Hand-authored gauge and scenery primitives; scenery is decorative and omitted at LOW.", "bytes": 0, "profiles": ["HIGH", "STANDARD", "LOW", "FALLBACK_2D"] }
+  ],
+  "rounds": [],
+  "disagreements": [
+    { "id": "hydro-check-unit-target", "between": ["lab-simulation-architect", "lab-asset-director"], "topic": "find-generator originally targeted u1-generator, while the asset plan contains one detailed unit 3 stack.", "resolution": "The check identifies u3-generator; the model remains equivalent across units and no science claim depends on unit identity.", "precedence": "accessibility", "why": "Keeping one internal stack makes the cutaway and repair check reachable on LOW." },
+    { "id": "rx001-spin-glyph", "between": ["lab-asset-director", "lab-performance-reviewer"], "topic": "Whether the static spin glyph should appear only for reduced motion or across WebGL profiles.", "resolution": "Render the accessible static glyph for every active motion group on every profile; use the off-axis pole marker as the in-scene spin cue. Round 1 visual review must verify the captures.", "precedence": "accessibility", "why": "The glyph makes state perceivable without relying on animation, and the marker supports visual interpretation." },
+    { "id": "inactive-flow-palette", "between": ["lab-asset-director", "lab-design-director"], "topic": "The proposed #94a3b8 inactive grey cannot meet both the contrast and fuchsia-highlight separation gates with the selected highlight token.", "resolution": "Use shared #779ab2 after-alpha contrast and ΔE00 gates; retain active water #67e8f9 and spill #cffafe after palette checks.", "precedence": "accessibility", "why": "The measured token meets 3:1 contrast and the shared colour-separation gates." }
+  ],
+  "runtimeExtensions": [
+    { "id": "RX-001", "capability": "State-driven component motion", "proposal": "docs/architecture/runtime-extensions/RX-001-state-driven-component-motion.md", "status": "IMPLEMENTED", "reviewers": ["lab-performance-reviewer", "lab-design-director"], "tests": "__tests__/interactive-labs/runtime-extensions.test.ts; implementation checkpoint a3426aba" },
+    { "id": "RX-002", "capability": "Batched flow geometry", "proposal": "docs/architecture/runtime-extensions/RX-002-003-004-flow-batching-decor-highlight.md", "status": "IMPLEMENTED", "reviewers": ["lab-performance-reviewer", "lab-design-director"], "tests": "__tests__/interactive-labs/runtime-extensions.test.ts; implementation checkpoint a3426aba" },
+    { "id": "RX-003", "capability": "Instructionally isolated decor", "proposal": "docs/architecture/runtime-extensions/RX-002-003-004-flow-batching-decor-highlight.md", "status": "IMPLEMENTED", "reviewers": ["lab-performance-reviewer", "lab-design-director"], "tests": "__tests__/interactive-labs/runtime-extensions.test.ts; implementation checkpoint a3426aba" },
+    { "id": "RX-004", "capability": "Non-emissive shader rim highlight", "proposal": "docs/architecture/runtime-extensions/RX-002-003-004-flow-batching-decor-highlight.md", "status": "IMPLEMENTED", "reviewers": ["lab-performance-reviewer", "lab-design-director"], "tests": "__tests__/interactive-labs/runtime-extensions.test.ts; implementation checkpoint a3426aba" }
+  ],
+  "tradeoffs": [
+    { "what": "Mount Coffee hydraulics and feeder demands are intentionally simplified; several seasonal rates and every feeder MW value are model assumptions.", "why": "The model focuses on grade 8 cause and effect and is explicitly labelled as a non-scale instructional model." },
+    { "what": "The HIGH experience uses procedural primitives rather than photoreal terrain, fluid simulation, or downloaded assets.", "why": "The brief prioritizes comprehension, offline reach and reliable LOW/2D rendering." },
+    { "what": "Software GL captures can support composition and label review only.", "why": "They do not measure GPU/device performance, battery, memory or real-device frame rate." }
+  ]
+}

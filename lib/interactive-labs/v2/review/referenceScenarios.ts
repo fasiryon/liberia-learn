@@ -1,9 +1,10 @@
 // Review scenarios for the two reference labs. They validate the capture mechanism end to end and are
 // the worked examples future lab authors copy. They add no curriculum or evidence authority.
 import { CIRCUIT_LAB_ID } from "../definitions/circuit";
+import { HYDROPOWER_LAB_ID } from "../definitions/hydropower";
 import { SOLIDS_LAB_ID, SOLIDS_LAB_VERSION } from "../definitions/solids";
 import type { InteractiveLabDefinition, LabAction, LabState } from "../types";
-import { LAB_REVIEW_SCENARIO_VERSION, type LabReviewScenarioSet } from "./scenarios";
+import { LAB_REVIEW_SCENARIO_VERSION, type LabReviewScenario, type LabReviewScenarioSet } from "./scenarios";
 
 function prismRebuild(definition: InteractiveLabDefinition<LabState>): LabAction[] {
   const slots = definition.fidelity?.assemblies.find((assembly) => assembly.id === "prism-faces")?.slots ?? [];
@@ -64,10 +65,56 @@ export const CIRCUIT_REVIEW_SCENARIOS: LabReviewScenarioSet = {
   ],
 };
 
+const dry: LabAction = { type: "set-variable", variableId: "riverFlow", value: 49 };
+const rainy: LabAction = { type: "set-variable", variableId: "riverFlow", value: 430 };
+const flowFlood: LabAction = { type: "set-variable", variableId: "riverFlow", value: 557 };
+const units = (value: number): LabAction => ({ type: "set-variable", variableId: "unitsOnline", value });
+const feeder = (id: string, value: number): LabAction => ({ type: "set-variable", variableId: id, value });
+const unit3Parts: LabAction[] = [
+  { type: "clear-assembly", assemblyId: "unit-3" },
+  { type: "place-component", assemblyId: "unit-3", slotId: "slot-runner", componentId: "u3-runner" },
+  { type: "place-component", assemblyId: "unit-3", slotId: "slot-shaft", componentId: "u3-shaft" },
+  { type: "place-component", assemblyId: "unit-3", slotId: "slot-generator", componentId: "u3-generator" },
+];
+const traceHydro: LabAction[] = ["headpond", "intake-1", "penstock-1", "turbine-1", "tailrace-1", "river-downstream"].map((nodeId) => ({ type: "trace-node", flowId: "water-u1", nodeId }));
+const hydroScenario = (id: string, title: string, stage: LabReviewScenario["stage"], storyboardScene: string, actions: LabAction[], motion = false): LabReviewScenario => ({ id, title, stage, storyboardScene, actions, ...(motion ? { motion: { frames: 10, intervalMs: 90 } } : {}) });
+
+export const HYDROPOWER_REVIEW_SCENARIOS: LabReviewScenarioSet = {
+  scenarioVersion: LAB_REVIEW_SCENARIO_VERSION,
+  labId: HYDROPOWER_LAB_ID,
+  labVersion: "1.0.0",
+  scenarios: [
+    hydroScenario("hydro-overview", "S1 Meet the plant", "overview", "S1", []),
+    hydroScenario("hydro-guided-meet-to-water", "S1 Meet then move to water", "guided", "S1-S2", [{ type: "guided-step", index: 1 }], true),
+    hydroScenario("hydro-guided-trace-partial", "S2 Trace begins", "guided", "S2", [{ type: "guided-step", index: 1 }, { type: "trace-node", flowId: "water-u1", nodeId: "headpond" }]),
+    hydroScenario("hydro-guided-name-chain", "S7 Name the energy chain", "guided", "S7", [{ type: "guided-step", index: 2 }]),
+    hydroScenario("hydro-process-water-starts", "S2 Water starts through unit 1", "process", "S2", [dry], true),
+    hydroScenario("hydro-cutaway-powerhouse", "S3 Powerhouse section", "cutaway", "S3", [{ type: "camera-preset", presetId: "powerhouse-section" }, { type: "set-cutaway", cutawayId: "powerhouse-section" }], true),
+    hydroScenario("hydro-exploded-unit", "S3 Unit 3 stack exploded", "exploded", "S3", [{ type: "camera-preset", presetId: "unit-bench" }, { type: "set-explode", assemblyId: "unit-3", factor: 1 }], true),
+    hydroScenario("hydro-variable-rainy-full", "S4 Rainy season, full capability", "variable", "S4", [rainy], true),
+    hydroScenario("hydro-variable-flood-cap", "S4 Flood water spills", "variable", "S4", [flowFlood], true),
+    hydroScenario("hydro-variable-dry-drop", "S5 Dry season capability drop", "variable", "S5", [dry], true),
+    hydroScenario("hydro-guided-overload-beat", "S6 Guided overload beat: rainy season, three units", "guided", "S6", [rainy, units(3), { type: "guided-step", index: 4 }], true),
+    hydroScenario("hydro-fault-dry-all-units", "S5 Dry flow with four units", "fault", "S5", [dry, units(4)]),
+    hydroScenario("hydro-fault-zero-units-dark", "S6 No units, no supply", "fault", "S6", [units(0)], true),
+    hydroScenario("hydro-fault-overload-trip", "S6 Rainy season overload with three units", "fault", "S6", [rainy, feeder("feederHospital", 1), feeder("feederHomes", 1), feeder("feederShops", 1), units(3)], true),
+    hydroScenario("hydro-fault-shed-restore", "S6 Shed load to restore priority", "fault", "S6", [dry, feeder("feederHomes", 0), feeder("feederShops", 0)], true),
+    hydroScenario("hydro-challenge-start", "S8 Dry evening challenge starts", "challenge", "S8", [{ type: "mode", mode: "CHALLENGE" }, dry, feeder("feederHomes", 0), feeder("feederShops", 0)]),
+    hydroScenario("hydro-challenge-intuitive-fail", "S8 Four units cannot create water", "challenge", "S8", [{ type: "mode", mode: "CHALLENGE" }, dry, units(4)]),
+    hydroScenario("hydro-challenge-solved", "S8 Hospital remains supplied", "challenge", "S8", [{ type: "mode", mode: "CHALLENGE" }, dry, units(1), feeder("feederHomes", 0), feeder("feederShops", 0)], true),
+    hydroScenario("hydro-assessment-trace", "S9 Trace water", "assessment", "S9", [dry, ...traceHydro, { type: "mode", mode: "ASSESSMENT" }, { type: "check", checkId: "trace-water", response: {} }]),
+    hydroScenario("hydro-assessment-generator", "S9 Identify generator", "assessment", "S9", [{ type: "set-cutaway", cutawayId: "powerhouse-section" }, { type: "inspect-component", componentId: "u3-generator" }, { type: "mode", mode: "ASSESSMENT" }, { type: "check", checkId: "find-generator", response: {} }]),
+    hydroScenario("hydro-assessment-dry-output", "S9 Reach dry output", "assessment", "S9", [dry, units(1), { type: "mode", mode: "ASSESSMENT" }, { type: "check", checkId: "dry-season-output", response: {} }]),
+    hydroScenario("hydro-assessment-repair", "S9 Repair unit 3", "assessment", "S9", [...unit3Parts, { type: "mode", mode: "ASSESSMENT" }, { type: "check", checkId: "repair-unit-3", response: {} }], true),
+    hydroScenario("hydro-assessment-all-passed", "S9 Five direct manipulation checks", "assessment", "S9", [dry, units(1), feeder("feederHomes", 0), feeder("feederShops", 0), { type: "set-cutaway", cutawayId: "powerhouse-section" }, { type: "inspect-component", componentId: "u3-generator" }, ...traceHydro, ...unit3Parts, { type: "mode", mode: "ASSESSMENT" }, { type: "check", checkId: "trace-water", response: {} }, { type: "check", checkId: "find-generator", response: {} }, { type: "check", checkId: "dry-season-output", response: {} }, { type: "check", checkId: "dry-season-peak", response: {} }, { type: "check", checkId: "repair-unit-3", response: {} }], true),
+  ],
+};
+
 /** Registered scenario sets, keyed by lab id. A lab entering the production team adds its set here. */
 export const LAB_REVIEW_SCENARIO_SETS: Readonly<Record<string, LabReviewScenarioSet>> = Object.freeze({
   [SOLIDS_REVIEW_SCENARIOS.labId]: SOLIDS_REVIEW_SCENARIOS,
   [CIRCUIT_REVIEW_SCENARIOS.labId]: CIRCUIT_REVIEW_SCENARIOS,
+  [HYDROPOWER_REVIEW_SCENARIOS.labId]: HYDROPOWER_REVIEW_SCENARIOS,
 });
 
 export function getLabReviewScenarioSet(labId: string): LabReviewScenarioSet | null {
