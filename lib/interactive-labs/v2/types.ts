@@ -1,8 +1,10 @@
+import type { FidelityAction, FidelityCheck, FidelityState, HighFidelitySpec } from "./fidelity/types";
+
 export const INTERACTIVE_LAB_DEFINITION_VERSION = "interactive-lab-definition/2.0.0" as const;
 
 export type CapabilityProfile = "HIGH" | "STANDARD" | "LOW" | "FALLBACK_2D";
 export type LabMode = "GUIDED" | "EXPLORE" | "CHALLENGE" | "ASSESSMENT" | "COMPLETE";
-export type GeometryKind = "sphere" | "cylinder" | "cone" | "cube" | "rectangular-prism" | "lever";
+export type GeometryKind = "sphere" | "cylinder" | "cone" | "cube" | "rectangular-prism" | "lever" | "box" | "panel";
 export type FeatureKind = "face" | "edge" | "vertex";
 
 export type Transform = { position: [number, number, number]; rotation: [number, number, number]; scale: [number, number, number] };
@@ -23,15 +25,19 @@ export type LearningCheck = {
   prompt: string;
   objectiveId: string;
   conceptId: string;
-  kind: "select" | "manipulate" | "feature" | "compare";
+  kind: "select" | "manipulate" | "feature" | "compare" | "direct-manipulation";
   answer: Record<string, unknown>;
   hints: string[];
+  /** Required when kind is "direct-manipulation": the check is evaluated from scene state by the fidelity engine. */
+  fidelity?: FidelityCheck;
 };
 
 export type InteractiveLabDefinition<S = Record<string, unknown>> = {
   contractVersion: typeof INTERACTIVE_LAB_DEFINITION_VERSION;
   id: string;
   version: string;
+  title?: string;
+  summary?: string;
   grade: number;
   subject: string;
   objectiveIds: string[];
@@ -47,6 +53,8 @@ export type InteractiveLabDefinition<S = Record<string, unknown>> = {
   transition: (state: S, action: LabAction) => S;
   checks: LearningCheck[];
   accessibility: { touch: boolean; keyboard: boolean; reducedMotion: boolean; offline: boolean; fallback: CapabilityProfile };
+  /** Optional high-fidelity layer: components, assemblies, cutaways, flows, variables and simulation rules. */
+  fidelity?: HighFidelitySpec;
 };
 
 export type LabAction =
@@ -57,7 +65,8 @@ export type LabAction =
   | { type: "toggle-net"; objectId: string }
   | { type: "mode"; mode: Exclude<LabMode, "COMPLETE"> }
   | { type: "check"; checkId: string; response: Record<string, unknown> }
-  | { type: "reset" };
+  | { type: "reset" }
+  | FidelityAction;
 
 export type LabState = {
   mode: LabMode;
@@ -70,6 +79,8 @@ export type LabState = {
   retries: number;
   hints: number;
   lastFeedback: "correct" | "incorrect" | null;
+  /** Present only for definitions with a high-fidelity layer. */
+  fidelity?: FidelityState;
 };
 
 export type LabSessionCheckpoint = {

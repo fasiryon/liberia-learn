@@ -1,19 +1,22 @@
 import { createHash } from "crypto";
 import { createGovernedEvidence, validateGovernedEvidence, type GovernedEvidence } from "@/lib/learning-evidence/evidenceContract";
 import type { InteractiveLabDefinition, LabState, LearningCheck } from "./types";
+import type { HighFidelitySpec } from "./fidelity/types";
+import { evaluateFidelityCheck, initialFidelityState } from "./fidelity/engine";
 
-export function evaluateCheck(check: LearningCheck, state: LabState, response: Record<string, unknown>): { correct: boolean; signals: { code: string; value: "PRESENT" | "ABSENT"; detail?: string }[] } {
+export function evaluateCheck(check: LearningCheck, state: LabState, response: Record<string, unknown>, fidelity?: HighFidelitySpec): { correct: boolean; signals: { code: string; value: "PRESENT" | "ABSENT"; detail?: string }[] } {
   let correct = false;
   if (check.kind === "select") correct = state.selectedObjectId === check.answer.objectId;
   if (check.kind === "manipulate") correct = Math.abs(state.rotations[String(check.answer.objectId)]?.[1] ?? 0) > 0.5;
   if (check.kind === "feature") correct = (state.highlightedFeatures[String(check.answer.objectId)]?.indices.length ?? 0) >= Number(check.answer.count ?? 0);
+  if (check.kind === "direct-manipulation") correct = !!fidelity && !!check.fidelity && evaluateFidelityCheck(fidelity, state.fidelity ?? initialFidelityState(fidelity), check.fidelity);
   if (check.kind === "compare") correct = JSON.stringify(response.answer) === JSON.stringify(check.answer.objects?.[0] ?? check.answer.objects);
   return { correct, signals: [{ code: `lab.check.${check.id}`, value: correct ? "PRESENT" : "ABSENT" }] };
 }
 
 export function buildLabEvidence(input: { definition: InteractiveLabDefinition; check: LearningCheck; state: LabState; response: Record<string, unknown>; tenantId: string; schoolId: string; studentId: string; studentUserId: string; sessionId: string; retryCount: number; hintCount: number; occurredAt?: string }): GovernedEvidence {
   const occurredAt = input.occurredAt ?? new Date().toISOString();
-  const evaluated = evaluateCheck(input.check, input.state, input.response);
+  const evaluated = evaluateCheck(input.check, input.state, input.response, input.definition.fidelity);
   const idempotencyKey = `${input.sessionId}:${input.check.id}:${input.state.completedChecks.includes(input.check.id) ? "complete" : input.state.retries}`;
   const evidenceId = `lab-${createHash("sha256").update(idempotencyKey).digest("hex")}`;
   const evidence = createGovernedEvidence({

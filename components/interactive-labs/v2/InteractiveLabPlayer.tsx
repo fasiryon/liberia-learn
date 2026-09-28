@@ -1,19 +1,80 @@
 "use client";
 import dynamic from "next/dynamic";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { getInteractiveLabDefinition } from "@/lib/interactive-labs/v2/registry";
 import { initializeLab, acceptLabAction } from "@/lib/interactive-labs/v2/kernel";
 import { resolveCapabilityProfile } from "@/lib/interactive-labs/v2/capabilities";
-import type { CapabilityProfile, LabAction, LabMode, LabState } from "@/lib/interactive-labs/v2/types";
+import { downgradeProfile } from "@/lib/interactive-labs/v2/fidelity/profiles";
+import type { CapabilityProfile, LabAction, LabState } from "@/lib/interactive-labs/v2/types";
 import { Fallback2D } from "./Fallback2D";
-const WebGLScene = dynamic(() => import("./WebGLScene").then((m) => m.WebGLScene), { ssr: false, loading: () => <div className="flex h-full items-center justify-center text-slate-300">Loading the 3D lab…</div> });
+import { LabControlPanel } from "./LabControlPanel";
+import type { ScenePick } from "./picking";
+const WebGLScene = dynamic(() => import("./WebGLScene").then((m) => m.WebGLScene), { ssr: false, loading: () => <div className="flex h-[clamp(420px,62vh,640px)] items-center justify-center text-slate-300">Loading the 3D lab…</div> });
+
+function usePrefersReducedMotion(): boolean {
+  const [reduced, setReduced] = useState(false);
+  useEffect(() => {
+    const query = window.matchMedia?.("(prefers-reduced-motion: reduce)");
+    if (!query) return;
+    setReduced(query.matches);
+    const listener = (event: MediaQueryListEvent) => setReduced(event.matches);
+    query.addEventListener("change", listener);
+    return () => query.removeEventListener("change", listener);
+  }, []);
+  return reduced;
+}
 
 export function InteractiveLabPlayer({ labId = "g4-solid-figures", override }: { labId?: string; override?: CapabilityProfile }) {
-  const definition = getInteractiveLabDefinition(labId); const [state, setState] = useState<LabState>(() => definition ? initializeLab(definition) as LabState : initializeLab(getInteractiveLabDefinition("g4-solid-figures")!) as LabState); const [profile, setProfile] = useState<CapabilityProfile>(() => resolveCapabilityProfile({ requested: override, supportsWebGL: typeof window !== "undefined" && !!window.WebGLRenderingContext }));
-  const [intro, setIntro] = useState(true); const checks = useMemo(() => definition?.checks ?? [], [definition]); if (!definition || definition.reviewState !== "APPROVED" || definition.approvalState !== "APPROVED") return <p className="p-6">This lab is not available.</p>;
-  const dispatch = (action: LabAction) => { const result = acceptLabAction(definition, state, action); if (result.ok) setState(result.state as LabState); };
-  const activeCheck = checks.find((c) => !state.completedChecks.includes(c.id)); const progress = Math.round(state.completedChecks.length / Math.max(checks.length, 1) * 100);
-  if (intro) return <section className="mx-auto max-w-5xl rounded-3xl bg-slate-950 p-8 text-white shadow-2xl"><p className="text-sm font-semibold uppercase tracking-[.2em] text-cyan-300">Interactive lab</p><h1 className="mt-3 text-3xl font-bold">Meet solid figures</h1><p className="mt-4 max-w-2xl text-slate-300">Turn, inspect and compare five real 3D solids. You will need to use the scene—not just guess—to complete the checks.</p><button type="button" onClick={()=>setIntro(false)} className="mt-7 rounded-full bg-cyan-300 px-6 py-3 font-bold text-slate-950">Start exploring</button></section>;
-  const modes: Exclude<LabMode, "COMPLETE">[] = ["GUIDED", "EXPLORE", "CHALLENGE", "ASSESSMENT"];
-  return <section className="mx-auto max-w-6xl overflow-hidden rounded-3xl bg-slate-950 text-white shadow-2xl"><div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 px-5 py-4"><div><p className="text-xs font-semibold uppercase tracking-[.18em] text-cyan-300">Grade 4 · Geometry</p><h1 className="text-xl font-bold">Solid figures</h1></div><div className="flex items-center gap-2 text-sm"><span>{progress}% complete</span><label className="sr-only" htmlFor="profile">Visual quality</label><select id="profile" value={profile} onChange={(e)=>setProfile(e.target.value as CapabilityProfile)} className="rounded-full border border-white/15 bg-white/10 px-3 py-2 text-white"><option>HIGH</option><option>STANDARD</option><option>LOW</option><option>FALLBACK_2D</option></select></div></div><div className="grid gap-0 lg:grid-cols-[1fr_300px]"><div className="min-h-[470px] bg-[radial-gradient(circle_at_50%_38%,#263d72,#080d20_68%)]">{profile === "FALLBACK_2D" ? <Fallback2D definition={definition} state={state} dispatch={dispatch}/> : <WebGLScene definition={definition} state={state} profile={profile} dispatch={dispatch}/>}</div><aside className="border-l border-white/10 bg-white/[.03] p-5"><div className="flex gap-2" role="tablist">{modes.map((mode)=><button key={mode} type="button" onClick={()=>dispatch({type:"mode",mode})} className={`rounded-full px-3 py-2 text-xs font-bold ${state.mode===mode?"bg-cyan-300 text-slate-950":"bg-white/10 text-slate-300"}`}>{mode[0]+mode.slice(1).toLowerCase()}</button>)}</div><div className="mt-7"><p className="text-sm text-slate-400">Your next task</p><h2 className="mt-1 text-lg font-bold">{activeCheck?.prompt ?? "You completed every check!"}</h2>{activeCheck?.id === "cube-vertices" && <div className="mt-4 grid grid-cols-4 gap-2" aria-label="Cube vertices"><span className="col-span-4 text-xs text-slate-400">Tap each corner:</span>{Array.from({length: 8}, (_, index)=><button key={index} type="button" onClick={()=>dispatch({type:"highlight-feature",objectId:"cube",feature:"vertex",index})} className={`rounded-lg px-2 py-2 text-sm ${state.highlightedFeatures.cube?.indices.includes(index)?"bg-cyan-300 text-slate-950":"bg-white/10"}`}>{index+1}</button>)}</div>}{activeCheck && <button type="button" onClick={()=>dispatch({type:"check",checkId:activeCheck.id,response:{answer: state.selectedObjectId}})} className="mt-5 w-full rounded-2xl bg-emerald-300 px-4 py-3 font-bold text-slate-950">Check my work</button>}{state.lastFeedback && <p className={`mt-4 rounded-xl p-3 text-sm ${state.lastFeedback==="correct"?"bg-emerald-400/15 text-emerald-200":"bg-rose-400/15 text-rose-200"}`}>{state.lastFeedback === "correct" ? "Nice work—your action showed the idea." : "Try manipulating the scene again."}</p>}</div><div className="mt-8 flex gap-2"><button type="button" onClick={()=>dispatch({type:"reset"})} className="rounded-full border border-white/15 px-4 py-2 text-sm">Reset</button><button type="button" onClick={()=>dispatch({type:"focus",objectId:state.selectedObjectId??"cube"})} className="rounded-full border border-white/15 px-4 py-2 text-sm">Focus</button></div></aside></div></section>;
+  const definition = getInteractiveLabDefinition(labId);
+  const [state, setState] = useState<LabState>(() => initializeLab(definition ?? getInteractiveLabDefinition("g4-solid-figures")!));
+  const [profile, setProfile] = useState<CapabilityProfile>(() => resolveCapabilityProfile({ requested: override, supportsWebGL: typeof window !== "undefined" && !!window.WebGLRenderingContext }));
+  const [notice, setNotice] = useState<string | null>(null);
+  const reducedMotion = usePrefersReducedMotion();
+  const [intro, setIntro] = useState(true);
+  const checks = useMemo(() => definition?.checks ?? [], [definition]);
+  if (!definition || definition.reviewState !== "APPROVED" || definition.approvalState !== "APPROVED") return <p className="p-6">This lab is not available.</p>;
+
+  const dispatch = (action: LabAction) => setState((current) => { const result = acceptLabAction(definition, current, action); return result.ok ? result.state : current; });
+  const activeCheck = checks.find((check) => !state.completedChecks.includes(check.id));
+  const progress = Math.round(state.completedChecks.length / Math.max(checks.length, 1) * 100);
+  const traceFlowId = activeCheck?.fidelity?.kind === "trace-path" ? activeCheck.fidelity.flowId : null;
+  const onPick = (pick: ScenePick) => {
+    if (pick.kind === "node") dispatch({ type: "trace-node", flowId: pick.flowId, nodeId: pick.nodeId });
+    else if (pick.item.kind === "object") dispatch({ type: "select", objectId: pick.item.id });
+    else dispatch({ type: "inspect-component", componentId: pick.item.id });
+  };
+  const onDowngrade = (reason: "context" | "performance") => {
+    setProfile((current) => reason === "context" ? "FALLBACK_2D" : downgradeProfile(current));
+    setNotice(reason === "context" ? "3D is not available on this device, so the lab switched to the 2D view." : "The lab lowered its visual quality to keep things smooth.");
+  };
+
+  if (intro) return <section className="mx-auto max-w-5xl rounded-3xl bg-slate-950 p-8 text-white shadow-2xl"><p className="text-sm font-semibold uppercase tracking-[.2em] text-cyan-300">Interactive lab</p><h1 className="mt-3 text-3xl font-bold">{definition.title ?? "Interactive lab"}</h1><p className="mt-4 max-w-2xl text-slate-300">{definition.summary ?? "Use the scene to complete the checks."}</p><button type="button" onClick={() => setIntro(false)} className="mt-7 rounded-full bg-cyan-300 px-6 py-3 font-bold text-slate-950">Start exploring</button></section>;
+
+  return (
+    <section className="mx-auto max-w-6xl overflow-hidden rounded-3xl bg-slate-950 text-white shadow-2xl">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 px-5 py-4">
+        <div><p className="text-xs font-semibold uppercase tracking-[.18em] text-cyan-300">Grade {definition.grade} · {definition.subject[0] + definition.subject.slice(1).toLowerCase()}</p><h1 className="text-xl font-bold">{definition.title ?? definition.id}</h1></div>
+        <div className="flex items-center gap-2 text-sm">
+          <span>{progress}% complete</span>
+          <label className="sr-only" htmlFor="profile">Visual quality</label>
+          <select id="profile" value={profile} onChange={(event) => { setNotice(null); setProfile(event.target.value as CapabilityProfile); }} className="rounded-full border border-white/15 bg-white/10 px-3 py-2 text-white"><option>HIGH</option><option>STANDARD</option><option>LOW</option><option>FALLBACK_2D</option></select>
+        </div>
+      </div>
+      {notice && <p role="status" className="border-b border-white/10 bg-amber-300/10 px-5 py-2 text-xs text-amber-100">{notice}</p>}
+      <div className="grid gap-0 lg:grid-cols-[1fr_340px]">
+        <div className="bg-[radial-gradient(circle_at_50%_38%,#263d72,#080d20_68%)]">
+          {profile === "FALLBACK_2D"
+            ? <Fallback2D definition={definition} state={state} reducedMotion={reducedMotion} traceFlowId={traceFlowId} dispatch={dispatch} onPick={onPick} />
+            : <WebGLScene definition={definition} state={state} profile={profile} reducedMotion={reducedMotion} traceFlowId={traceFlowId} dispatch={dispatch} onPick={onPick} onDowngrade={onDowngrade} />}
+        </div>
+        <aside className="lg:max-h-[clamp(420px,62vh,640px)] lg:overflow-y-auto border-l border-white/10 bg-white/[.03] p-5">
+          <LabControlPanel definition={definition} state={state} activeCheck={activeCheck} dispatch={dispatch} />
+          <div className="mt-8 flex gap-2">
+            <button type="button" onClick={() => dispatch({ type: "reset" })} className="rounded-full border border-white/15 px-4 py-2 text-sm">Reset</button>
+            {definition.scene.objects.length > 0 && <button type="button" onClick={() => dispatch({ type: "focus", objectId: state.selectedObjectId ?? definition.scene.objects[0].id })} className="rounded-full border border-white/15 px-4 py-2 text-sm">Focus</button>}
+          </div>
+        </aside>
+      </div>
+    </section>
+  );
 }

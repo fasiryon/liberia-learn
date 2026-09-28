@@ -1,0 +1,167 @@
+"use client";
+import { useState } from "react";
+import type { InteractiveLabDefinition, LabAction, LabMode, LabState, LearningCheck } from "@/lib/interactive-labs/v2/types";
+import { deriveSimulation, explainState, isComponentRevealed } from "@/lib/interactive-labs/v2/fidelity/engine";
+import { formatVariable, stepVariable } from "@/lib/interactive-labs/v2/fidelity/variables";
+
+type Props = { definition: InteractiveLabDefinition<LabState>; state: LabState; activeCheck: LearningCheck | undefined; dispatch: (action: LabAction) => void };
+
+const chip = (active: boolean) => `rounded-full px-3 py-1.5 text-xs font-semibold transition ${active ? "bg-cyan-300 text-slate-950" : "bg-white/10 text-slate-200 hover:bg-white/15"}`;
+const MODES: Exclude<LabMode, "COMPLETE">[] = ["GUIDED", "EXPLORE", "CHALLENGE", "ASSESSMENT"];
+
+/**
+ * One control surface for every capability profile. Anything the scene can do by pointer is also here,
+ * so keyboard users and FALLBACK_2D learners reach every check.
+ */
+export function LabControlPanel({ definition, state, activeCheck, dispatch }: Props) {
+  const spec = definition.fidelity, fidelity = state.fidelity;
+  const [heldFace, setHeldFace] = useState<string | null>(null);
+  const modes = spec?.modes ?? MODES;
+  const guided = spec && fidelity && state.mode === "GUIDED" ? spec.guidedPath[fidelity.guidedStepIndex] : undefined;
+  const target = activeCheck?.fidelity;
+  const simulation = spec && fidelity ? deriveSimulation(spec, fidelity) : null;
+  const explanation = spec && fidelity ? explainState(spec, fidelity, definition.grade) : [];
+  const hint = state.lastFeedback === "incorrect" && activeCheck?.hints.length ? activeCheck.hints[Math.min(activeCheck.hints.length - 1, Math.max(0, state.retries - 1))] : null;
+
+  return (
+    <div className="space-y-6">
+      <div className="flex flex-wrap gap-2" role="group" aria-label="Lab mode">
+        {modes.map((mode) => <button key={mode} type="button" aria-pressed={state.mode === mode} onClick={() => dispatch({ type: "mode", mode })} className={chip(state.mode === mode)}>{mode[0] + mode.slice(1).toLowerCase()}</button>)}
+      </div>
+
+      {guided && spec && fidelity && (
+        <section aria-label="Guided path" className="rounded-2xl border border-cyan-300/20 bg-cyan-300/5 p-4">
+          <p className="text-xs font-semibold uppercase tracking-wider text-cyan-300">Step {fidelity.guidedStepIndex + 1} of {spec.guidedPath.length}</p>
+          <p className="mt-1 text-sm text-slate-100">{guided.prompt}</p>
+          <div className="mt-3 flex gap-2">
+            <button type="button" disabled={fidelity.guidedStepIndex === 0} onClick={() => dispatch({ type: "guided-step", index: fidelity.guidedStepIndex - 1 })} className={`${chip(false)} disabled:opacity-40`}>Back</button>
+            <button type="button" disabled={fidelity.guidedStepIndex >= spec.guidedPath.length - 1} onClick={() => dispatch({ type: "guided-step", index: fidelity.guidedStepIndex + 1 })} className={`${chip(true)} disabled:opacity-40`}>Next step</button>
+          </div>
+        </section>
+      )}
+
+      <section aria-label="Your task">
+        <p className="text-sm text-slate-400">Your next task</p>
+        <h2 className="mt-1 text-lg font-bold text-white">{activeCheck?.prompt ?? "You completed every check!"}</h2>
+
+        {activeCheck?.id === "cube-vertices" && (
+          <div className="mt-4 grid grid-cols-4 gap-2" aria-label="Cube vertices">
+            <span className="col-span-4 text-xs text-slate-400">Tap each corner:</span>
+            {Array.from({ length: 8 }, (_, index) => <button key={index} type="button" onClick={() => dispatch({ type: "highlight-feature", objectId: "cube", feature: "vertex", index })} className={`rounded-lg px-2 py-2 text-sm ${state.highlightedFeatures.cube?.indices.includes(index) ? "bg-cyan-300 text-slate-950" : "bg-white/10 text-white"}`}>{index + 1}</button>)}
+          </div>
+        )}
+
+        {target?.kind === "trace-path" && spec && fidelity && (() => {
+          const flow = spec.flows.find((candidate) => candidate.id === target.flowId)!;
+          const traced = fidelity.tracedPaths[flow.id] ?? [];
+          // Buttons are alphabetical so the list never gives away the order.
+          const nodes = flow.nodes.filter((node) => node.traceable).sort((a, b) => a.label.localeCompare(b.label));
+          return (
+            <div className="mt-4 space-y-2">
+              <p className="text-xs text-slate-400">Tap parts in the scene, or here:</p>
+              <div className="flex flex-wrap gap-2">{nodes.map((node) => <button key={node.id} type="button" onClick={() => dispatch({ type: "trace-node", flowId: flow.id, nodeId: node.id })} className={chip(traced.includes(node.id))}>{node.label}</button>)}</div>
+              <ol className="flex flex-wrap gap-1 text-xs text-amber-200" aria-label="Your path">{traced.map((nodeId, index) => <li key={`${nodeId}-${index}`}>{index + 1}. {flow.nodes.find((node) => node.id === nodeId)?.label}{index < traced.length - 1 ? " →" : ""}</li>)}</ol>
+              {traced.length > 0 && <button type="button" onClick={() => dispatch({ type: "clear-trace", flowId: flow.id })} className={chip(false)}>Clear path</button>}
+            </div>
+          );
+        })()}
+
+        {target?.kind === "assemble" && spec && fidelity && (() => {
+          const assembly = spec.assemblies.find((candidate) => candidate.id === target.assemblyId)!;
+          const placements = fidelity.placements[assembly.id] ?? {};
+          if (!fidelity.disassembled.includes(assembly.id)) return <button type="button" onClick={() => dispatch({ type: "clear-assembly", assemblyId: assembly.id })} className="mt-4 rounded-2xl bg-amber-300 px-4 py-2 text-sm font-bold text-slate-950">Take the {assembly.label.toLowerCase().replace(/ faces$/, "")} apart</button>;
+          const placed = new Set(Object.values(placements));
+          const loose = assembly.componentIds.filter((id) => !placed.has(id));
+          const face = (id: string) => spec.components.find((component) => component.id === id)!;
+          return (
+            <div className="mt-4 space-y-3">
+              <div>
+                <p className="text-xs text-slate-400">1. Pick up a face</p>
+                <div className="mt-2 flex flex-wrap gap-2">{loose.map((id) => { const c = face(id), [w, h] = [c.transform.scale[0], c.transform.scale[1]]; return (
+                  <button key={id} type="button" aria-pressed={heldFace === id} onClick={() => setHeldFace(heldFace === id ? null : id)} className={`flex flex-col items-center gap-1 rounded-xl p-2 text-[11px] ${heldFace === id ? "bg-cyan-300 text-slate-950" : "bg-white/10 text-white"}`}>
+                    <svg width={w * 16} height={h * 16} aria-hidden="true"><rect width={w * 16} height={h * 16} rx="2" fill={c.material.color} /></svg>{c.label}
+                  </button>); })}{loose.length === 0 && <span className="text-xs text-emerald-300">All faces placed.</span>}</div>
+              </div>
+              <div>
+                <p className="text-xs text-slate-400">2. Put it in a slot</p>
+                <div className="mt-2 grid grid-cols-2 gap-2">{assembly.slots!.map((slot) => { const current = placements[slot.id]; return (
+                  <div key={slot.id} className="flex items-center gap-1">
+                    <button type="button" disabled={!heldFace} onClick={() => { if (heldFace) { dispatch({ type: "place-component", assemblyId: assembly.id, slotId: slot.id, componentId: heldFace }); setHeldFace(null); } }} className="flex-1 rounded-lg border border-dashed border-white/20 px-2 py-1.5 text-left text-xs text-slate-200 disabled:opacity-60">{slot.label}: <b>{current ? face(current).label : "empty"}</b></button>
+                    {current && <button type="button" aria-label={`Remove ${face(current).label} from ${slot.label}`} onClick={() => dispatch({ type: "place-component", assemblyId: assembly.id, slotId: slot.id, componentId: null })} className="rounded-lg bg-white/10 px-2 py-1.5 text-xs">×</button>}
+                  </div>); })}</div>
+              </div>
+            </div>
+          );
+        })()}
+
+        {activeCheck && <button type="button" onClick={() => dispatch({ type: "check", checkId: activeCheck.id, response: { answer: state.selectedObjectId } })} className="mt-5 w-full rounded-2xl bg-emerald-300 px-4 py-3 font-bold text-slate-950">Check my work</button>}
+        {state.lastFeedback && <p role="status" className={`mt-4 rounded-xl p-3 text-sm ${state.lastFeedback === "correct" ? "bg-emerald-400/15 text-emerald-200" : "bg-rose-400/15 text-rose-200"}`}>{state.lastFeedback === "correct" ? "Nice work. Your action showed the idea." : `Not yet. ${hint ?? "Try changing the scene again."}`}</p>}
+      </section>
+
+      {spec && fidelity && (
+        <>
+          {spec.variables.some((variable) => variable.learnerControlled) && (
+            <section aria-label="Controls" className="space-y-3">
+              <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-400">Controls</h3>
+              {spec.variables.filter((variable) => variable.learnerControlled).map((variable) => {
+                const value = fidelity.variables[variable.id];
+                if (variable.kind === "toggle") return <button key={variable.id} type="button" role="switch" aria-checked={value === variable.max} onClick={() => dispatch({ type: "set-variable", variableId: variable.id, value: stepVariable(variable, value, 1) })} className={chip(value === variable.max)}>{variable.label}: {variable.id === "switch" ? (value === variable.max ? "Closed" : "Open") : formatVariable(variable, value)}</button>;
+                return (
+                  <div key={variable.id}>
+                    <label htmlFor={`var-${variable.id}`} className="flex justify-between text-xs text-slate-300"><span>{variable.label}</span><span className="font-mono text-cyan-200">{formatVariable(variable, value)}</span></label>
+                    <div className="mt-1 flex items-center gap-2">
+                      <button type="button" aria-label={`Decrease ${variable.label}`} onClick={() => dispatch({ type: "set-variable", variableId: variable.id, value: stepVariable(variable, value, -1) })} className="rounded-lg bg-white/10 px-2 text-white">−</button>
+                      <input id={`var-${variable.id}`} type="range" min={variable.min} max={variable.max} step={variable.step} value={value} onChange={(event) => dispatch({ type: "set-variable", variableId: variable.id, value: Number(event.target.value) })} className="w-full accent-cyan-300" />
+                      <button type="button" aria-label={`Increase ${variable.label}`} onClick={() => dispatch({ type: "set-variable", variableId: variable.id, value: stepVariable(variable, value, 1) })} className="rounded-lg bg-white/10 px-2 text-white">+</button>
+                    </div>
+                  </div>
+                );
+              })}
+            </section>
+          )}
+
+          <section aria-label="Look inside" className="space-y-2">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-400">Look inside</h3>
+            {spec.exploded.map((view) => {
+              const label = spec.assemblies.find((assembly) => assembly.id === view.assemblyId)?.label ?? view.assemblyId;
+              const factor = fidelity.explode[view.assemblyId] ?? 0;
+              return (
+                <div key={view.assemblyId}>
+                  <label htmlFor={`explode-${view.assemblyId}`} className="flex justify-between text-xs text-slate-300"><span>Explode: {label}</span><span className="font-mono">{Math.round(factor * 100)}%</span></label>
+                  <div className="mt-1 flex items-center gap-2">
+                    <button type="button" onClick={() => dispatch({ type: "set-explode", assemblyId: view.assemblyId, factor: factor > 0 ? 0 : 1 })} className={chip(factor > 0)}>{factor > 0 ? "Close" : "Explode"}</button>
+                    <input id={`explode-${view.assemblyId}`} type="range" min={0} max={1} step={0.05} value={factor} onChange={(event) => dispatch({ type: "set-explode", assemblyId: view.assemblyId, factor: Number(event.target.value) })} className="w-full accent-cyan-300" />
+                  </div>
+                </div>
+              );
+            })}
+            <div className="flex flex-wrap gap-2">
+              {spec.cutaways.map((cutaway) => <button key={cutaway.id} type="button" aria-pressed={fidelity.activeCutawayId === cutaway.id} onClick={() => dispatch({ type: "set-cutaway", cutawayId: fidelity.activeCutawayId === cutaway.id ? null : cutaway.id })} className={chip(fidelity.activeCutawayId === cutaway.id)}>{cutaway.label}</button>)}
+              {spec.layers.map((layer) => <button key={layer.id} type="button" aria-pressed={!fidelity.hiddenLayerIds.includes(layer.id)} onClick={() => dispatch({ type: "toggle-layer", layerId: layer.id })} className={chip(!fidelity.hiddenLayerIds.includes(layer.id))}>{layer.label}</button>)}
+              {spec.flows.map((flow) => <button key={flow.id} type="button" aria-pressed={!fidelity.hiddenFlowIds.includes(flow.id)} onClick={() => dispatch({ type: "toggle-flow", flowId: flow.id })} className={chip(!fidelity.hiddenFlowIds.includes(flow.id))}>Show {flow.label.toLowerCase()}</button>)}
+              <button type="button" aria-pressed={fidelity.labelsVisible} onClick={() => dispatch({ type: "toggle-labels" })} className={chip(fidelity.labelsVisible)}>Labels</button>
+              {fidelity.isolatedId
+                ? <button type="button" onClick={() => dispatch({ type: "isolate", targetId: null })} className={chip(true)}>Show everything</button>
+                : (fidelity.inspectedComponentId ?? state.selectedObjectId) && <button type="button" onClick={() => dispatch({ type: "isolate", targetId: fidelity.inspectedComponentId ?? state.selectedObjectId })} className={chip(false)}>Isolate selected</button>}
+            </div>
+            <div className="flex flex-wrap gap-2" aria-label="Parts you can see">
+              {spec.components.filter((component) => component.selectable !== false && isComponentRevealed(spec, fidelity, component.id)).sort((a, b) => a.label.localeCompare(b.label)).map((component) => <button key={component.id} type="button" aria-pressed={fidelity.inspectedComponentId === component.id} onClick={() => dispatch({ type: "inspect-component", componentId: component.id })} className={chip(fidelity.inspectedComponentId === component.id)}>{component.label}</button>)}
+            </div>
+            {fidelity.inspectedComponentId && <p className="text-xs text-slate-300">{spec.components.find((component) => component.id === fidelity.inspectedComponentId)?.description ?? ""}</p>}
+          </section>
+
+          <section aria-label="Camera" className="flex flex-wrap gap-2">
+            {spec.camera.presets.map((preset) => <button key={preset.id} type="button" aria-pressed={fidelity.cameraPresetId === preset.id} onClick={() => dispatch({ type: "camera-preset", presetId: preset.id })} className={chip(fidelity.cameraPresetId === preset.id)}>{preset.label}</button>)}
+          </section>
+
+          {(explanation.length > 0 || Object.keys(simulation?.quantities ?? {}).length > 0) && (
+            <section aria-label="What is happening" aria-live="polite" className="rounded-2xl bg-white/[.04] p-4">
+              <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-400">What is happening</h3>
+              <ul className="mt-2 space-y-1.5 text-sm text-slate-200">{explanation.map((line) => <li key={line.id}>{line.text}</li>)}</ul>
+            </section>
+          )}
+        </>
+      )}
+    </div>
+  );
+}
