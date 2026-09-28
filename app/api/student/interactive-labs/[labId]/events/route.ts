@@ -7,6 +7,7 @@ import { acceptLabAction, checkpointSession, restoreSession } from "@/lib/intera
 import { buildLabEvidence } from "@/lib/interactive-labs/v2/evidence";
 import { validateGovernedEvidence } from "@/lib/learning-evidence/evidenceContract";
 import { adaptLabEvidence } from "@/lib/interactive-labs/v2/governance";
+import { isEvidenceBearingAction } from "@/lib/interactive-labs/v2/fidelity/boundary";
 
 export const dynamic = "force-dynamic";
 export async function POST(req: NextRequest, { params }: { params: { labId: string } }) {
@@ -19,7 +20,7 @@ export async function POST(req: NextRequest, { params }: { params: { labId: stri
     const state = stored?.state ?? definition.initialState; const action = body?.action; const result = acceptLabAction(definition, state, action); if (result.ok === false) return NextResponse.json({ error: result.reason }, { status: 422 });
     const nextState = result.state; const checkpoint = checkpointSession({ sessionId, labId: definition.id, labVersion: definition.version, learnerId: user.id, tenantId: user.schoolId ?? "", mode: nextState.mode, completedChecks: nextState.completedChecks, retries: nextState.retries, hints: nextState.hints, state: nextState });
     await prisma.labSession.update({ where: { id: sessionId }, data: { observations: checkpoint } });
-    if (action?.type !== "check") return NextResponse.json({ ok: true, state: nextState });
+    if (!isEvidenceBearingAction(action) || action.type !== "check") return NextResponse.json({ ok: true, state: nextState });
     const check = definition.checks.find((candidate) => candidate.id === action.checkId); if (!check) return NextResponse.json({ error: "check_unknown" }, { status: 422 });
     const evidence = buildLabEvidence({ definition, check, state: nextState, response: action.response ?? {}, tenantId: user.schoolId ?? "", schoolId: user.schoolId ?? "", studentId: user.id, studentUserId: user.id, sessionId, retryCount: nextState.retries, hintCount: nextState.hints }); validateGovernedEvidence(evidence);
     const priorAnalysis = session.aiAnalysis && typeof session.aiAnalysis === "object" && !Array.isArray(session.aiAnalysis) ? session.aiAnalysis as Record<string, unknown> : {};

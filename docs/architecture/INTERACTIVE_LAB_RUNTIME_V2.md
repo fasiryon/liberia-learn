@@ -1,6 +1,8 @@
 # Interactive Lab Runtime V2
 
-Status: implementation baseline from `origin/main`; solids definition is in review and is not yet a governed production activity.
+Status: implementation baseline from `origin/main`; solids definition (2.1.0) is in review and is not yet a governed production activity.
+
+The high-fidelity layer (components, assemblies, exploded views, cutaways, flows, variables, simulation rules, direct-manipulation checks) is specified in [HIGH_FIDELITY_INTERACTIVE_LABS.md](./HIGH_FIDELITY_INTERACTIVE_LABS.md).
 
 ## Architecture
 
@@ -50,6 +52,7 @@ The definition declares touch, keyboard, reduced-motion, fallback, and offline c
 | tool policies | ADAPT | V2 definitions carry only references; policy remains governed outside renderers. |
 | Grade 4 solids | V2_NATIVE | First V2 definition; requires release approval before production. |
 | lever fixture | V2_ADAPTER | Non-production reuse proof. |
+| simple circuit fixture | V2_NATIVE | Non-production causal reference for the high-fidelity standard. |
 | remaining legacy labs | LEGACY_SUPPORTED | Migrate by vertical slice; do not force a flag-day rewrite. |
 
 ## Capability matrix
@@ -58,12 +61,15 @@ The definition declares touch, keyboard, reduced-motion, fallback, and offline c
 | --- | --- |
 | 2D manipulation | SUPPORTED |
 | 3D manipulation | SUPPORTED |
-| camera | PARTIAL |
+| camera | SUPPORTED (presets, constraints, eased transitions) |
 | animation | SUPPORTED |
 | labels | SUPPORTED |
-| exploded views | PARTIAL |
+| exploded views | SUPPORTED |
 | measurements | NOT_YET_SUPPORTED |
-| simple simulation rules | SUPPORTED |
+| simple simulation rules | SUPPORTED (SimulationModel) |
+| cutaways | SUPPORTED |
+| process flows | SUPPORTED |
+| direct-manipulation assessment | SUPPORTED |
 | physics | NOT_YET_SUPPORTED |
 | assessment | SUPPORTED |
 | evidence | PARTIAL (governed release pending) |

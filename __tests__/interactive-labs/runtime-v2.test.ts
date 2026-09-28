@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { acceptLabAction, checkpointSession, restoreSession } from "@/lib/interactive-labs/v2/kernel";
+import { acceptLabAction, checkpointSession, initializeLab, restoreSession } from "@/lib/interactive-labs/v2/kernel";
 import { resolveCapabilityProfile } from "@/lib/interactive-labs/v2/capabilities";
 import { buildLabEvidence } from "@/lib/interactive-labs/v2/evidence";
 import { solidsDefinition, initialSolidsState } from "@/lib/interactive-labs/v2/definitions/solids";
@@ -32,8 +32,9 @@ describe("interactive lab runtime v2", () => {
   });
 
   it("restores only matching, meaningful checkpoints", () => {
-    const checkpoint = checkpointSession({ sessionId: "s", labId: solidsDefinition.id, labVersion: solidsDefinition.version, learnerId: "u", tenantId: "school", mode: "GUIDED", completedChecks: [], retries: 0, hints: 0, state: initialSolidsState() });
+    const checkpoint = checkpointSession({ sessionId: "s", labId: solidsDefinition.id, labVersion: solidsDefinition.version, learnerId: "u", tenantId: "school", mode: "GUIDED", completedChecks: [], retries: 0, hints: 0, state: initializeLab(solidsDefinition) });
     expect(restoreSession(checkpoint, solidsDefinition)?.sessionId).toBe("s");
+    expect(restoreSession({ ...checkpoint, state: initialSolidsState() }, solidsDefinition)).toBeNull();
     expect(restoreSession({ ...checkpoint, labVersion: "stale" }, solidsDefinition)).toBeNull();
   });
 
