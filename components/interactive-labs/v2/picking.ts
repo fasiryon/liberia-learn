@@ -16,6 +16,6 @@ export function pickNearest(list: RenderList, project: (p: [number, number, numb
     for (const node of flow?.nodes ?? []) if (node.traceable) consider({ kind: "node", flowId: traceFlowId, nodeId: node.id }, project(node.position));
     if (best) return (best as { pick: ScenePick }).pick;
   }
-  for (const item of list.items) if (item.selectable && item.inFocus) consider({ kind: "item", item }, project(item.center));
+  for (const item of list.items) if (item.detail !== "decor" && item.selectable && item.inFocus) consider({ kind: "item", item }, project(item.center));
   return best ? (best as { pick: ScenePick }).pick : null;
 }

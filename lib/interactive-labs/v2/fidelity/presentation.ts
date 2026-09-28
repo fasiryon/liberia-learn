@@ -1,6 +1,7 @@
 // Camera, animation and flow primitives. Every animated quantity eases toward a target taken from lab
 // state, so animation always reflects simulation state instead of playing canned motion.
 import type { CameraConstraints, CameraPreset, FidelityState, FlowDefinition, HighFidelitySpec } from "./types";
+import type { ItemSpin } from "./renderList";
 import { clamp, distance, lerp, lerpVec3, multiply, rotate, translate, type Mat4, type Vec3 } from "./math";
 
 export type CameraPose = { target: Vec3; distance: number; yaw: number; pitch: number };
@@ -30,6 +31,14 @@ export function approachCamera(current: CameraPose, target: CameraPose, dt: numb
   const t = reducedMotion ? 1 : 1 - Math.exp(-5 * Math.max(0, dt));
   const pose = { target: lerpVec3(current.target, target.target, t), distance: lerp(current.distance, target.distance, t), yaw: lerp(current.yaw, target.yaw, t), pitch: lerp(current.pitch, target.pitch, t) };
   return distance(pose.target, target.target) < 1e-4 && Math.abs(pose.distance - target.distance) < 1e-4 && Math.abs(pose.yaw - target.yaw) < 1e-4 && Math.abs(pose.pitch - target.pitch) < 1e-4 ? target : pose;
+}
+
+/** Compose a rigid rotation about the authored shared pivot without scaling any group member. */
+export function spinMatrix(spin: ItemSpin, timeSeconds: number, reducedMotion: boolean): Mat4 {
+  const theta = reducedMotion ? 0 : timeSeconds * spin.radPerSec;
+  const angles: Vec3 = spin.axis === "x" ? [theta, 0, 0] : spin.axis === "y" ? [0, theta, 0] : [0, 0, theta];
+  const pivot = spin.pivot;
+  return multiply(spin.pre, multiply(translate(...pivot), multiply(rotate(...angles), multiply(translate(-pivot[0], -pivot[1], -pivot[2]), spin.local))));
 }
 
 export function viewMatrix(pose: CameraPose): Mat4 {

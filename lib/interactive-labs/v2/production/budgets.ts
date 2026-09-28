@@ -89,8 +89,8 @@ export function measureLabBudget(definition: InteractiveLabDefinition<LabState>,
       const list = buildRenderList({ definition, state, profile });
       const svg = profile === "FALLBACK_2D", low = list.budget.meshDetail === "low";
       triangles = Math.max(triangles, svg ? 0 : list.items.reduce((sum, item) => sum + geometryTriangles(item.geometry, low), 0));
-      // WebGLScene: one draw per item, a line strip + particle points per flow, a trace overlay, one marker batch.
-      drawCalls = Math.max(drawCalls, svg ? 0 : list.items.length + list.flows.length * 3 + (list.markers.length ? 1 : 0));
+      // WebGLScene: one draw per item, three shared flow batches, and one optional marker batch.
+      drawCalls = Math.max(drawCalls, svg ? 0 : list.items.length + (list.flows.length ? 3 : 0) + (list.markers.length ? 1 : 0));
       particles = Math.max(particles, list.flows.reduce((sum, flow) => sum + flow.particleCount, 0));
     }
     result[profile] = {
