@@ -3,7 +3,8 @@ import path from "node:path";
 import { describe, expect, it } from "vitest";
 
 const root = process.cwd();
-const read = (file: string) => readFileSync(path.join(root, file), "utf8");
+// core.autocrlf checkouts use CRLF; normalise so contract phrases match on every platform.
+const read = (file: string) => readFileSync(path.join(root, file), "utf8").replace(/\r\n/g, "\n");
 
 function parseAgent(file: string) {
   const text = read(file);
@@ -15,14 +16,15 @@ function parseAgent(file: string) {
 }
 
 const TEAM = {
-  "lab-pedagogy-director": ["LEARNING GOAL", "WHAT STUDENT SHOULD UNDERSTAND", "WHY SIMULATION HELPS", "WHAT MUST REMAIN PHYSICAL/PRACTICAL", "MISCONCEPTIONS", "GUIDED EXPERIENCE", "EXPLORE EXPERIENCE", "CHALLENGE", "DIRECT-MANIPULATION ASSESSMENT", "EVIDENCE BOUNDARY", "BLOCKED_ON_AUTHORITY"],
-  "lab-experience-director": ["EXPERIENCE SHOT LIST / INTERACTION STORYBOARD", "visual hierarchy", "camera", "pacing", "discoverability", "moments of delight", "Never propose copying proprietary", "RUNTIME_GAP"],
+  "lab-pedagogy-director": ["LEARNING GOAL", "WHAT STUDENT SHOULD UNDERSTAND", "WHY SIMULATION HELPS", "WHAT MUST REMAIN PHYSICAL/PRACTICAL", "MISCONCEPTIONS", "GUIDED EXPERIENCE", "EXPLORE EXPERIENCE", "CHALLENGE", "DIRECT-MANIPULATION ASSESSMENT", "EVIDENCE BOUNDARY", "BLOCKED_ON_AUTHORITY", "TIER", "PROPOSED — NOT GOVERNED"],
+  "lab-experience-director": ["EXPERIENCE SHOT LIST / INTERACTION STORYBOARD", "REFERENCE BENCHMARK", "3–6 reference captures", "visual hierarchy", "camera", "pacing", "discoverability", "moments of delight", "Never propose copying proprietary", "RUNTIME_GAP"],
+  "lab-asset-director": ["procedural", "glTF/GLB", "generated asset", "ART DIRECTION", "BUDGETS PER PROFILE", "LOD STRATEGY", "COMPRESSION AND OFFLINE PACKAGING", "REUSABLE LIBRARY", "PROVENANCE TABLE", "No proprietary, unlicensed"],
   "lab-simulation-architect": ["STATE VARIABLES", "SIMULATION RULES", "CONSTRAINTS AND INVALID STATES", "COMPONENT RELATIONSHIPS", "PROCESS FLOWS", "EXPECTED CONSEQUENCES", "DETERMINISTIC TEST FIXTURES", "Simulation truth is separate from renderer behaviour"],
   "lab-visual-reviewer": ["Review the rendered result, not the source", "FALLBACK_2D", "P0", "P1", "P2", "NOT REVIEWED"],
   "lab-interaction-reviewer": ["touch", "mouse", "keyboard", "Never target a deployed", "reset/recovery", "P0", "NOT REVIEWED"],
   "lab-science-reviewer": ["ACCURATE", "PEDAGOGICAL_SIMPLIFICATION", "MISLEADING", "INCORRECT", "Any INCORRECT scientific or mathematical behaviour, label or explanation is P0"],
-  "lab-performance-reviewer": ["HIGH", "STANDARD", "LOW", "FALLBACK_2D", "OFFLINE PACKAGE", "Never claim physical-device performance", "NOT MEASURED"],
-  "lab-design-director": ["WOULD A STUDENT WANT TO USE THIS?", "IS THE LEARNING PURPOSE OBVIOUS?", "TECH DEMO", "IS THE SIMULATION MEMORABLE?", "DOES IT SHIP?", "VERDICT: SHIP | DO_NOT_SHIP", "REVIEW_ROUNDS_INCOMPLETE", "not curriculum approval"],
+  "lab-performance-reviewer": ["HIGH", "STANDARD", "LOW", "FALLBACK_2D", "OFFLINE PACKAGE", "Never claim physical-device performance", "NOT MEASURED", "STATIC_BUDGETS", "valid for composition and labels only", "RUNTIME EXTENSION PROPOSALS"],
+  "lab-design-director": ["WOULD A STUDENT WANT TO USE THIS?", "IS THE LEARNING PURPOSE OBVIOUS?", "TECH DEMO", "IS THE SIMULATION MEMORABLE?", "DOES IT SHIP?", "VERDICT: SHIP | DO_NOT_SHIP", "REVIEW_ROUNDS_INCOMPLETE", "not curriculum approval", "BEATS", "BELOW", "SHIP_CANDIDATE", "RUNTIME EXTENSION PROPOSALS"],
 } as const;
 const EDIT_TOOLS = ["Edit", "Write", "NotebookEdit", "MultiEdit"];
 
@@ -72,7 +74,7 @@ describe("interactive lab production team", () => {
   it("the production-team doc names every agent and the protocol pieces", () => {
     const doc = read("docs/architecture/INTERACTIVE_LAB_PRODUCTION_TEAM.md");
     for (const name of Object.keys(TEAM)) expect(doc, name).toContain(`\`${name}\``);
-    for (const phrase of ["/lab-production", "P0", "P1", "P2", "Disagreements", "Checkpoints and rollback", "virtual clock", "FALLBACK_2D", "OFFLINE PACKAGE", "PHYSICAL PRACTICAL WHEN AVAILABLE", "Review log template"]) expect(doc, phrase).toContain(phrase);
+    for (const phrase of ["/lab-production", "P0", "P1", "P2", "Disagreements", "Checkpoints and rollback", "virtual clock", "FALLBACK_2D", "OFFLINE PACKAGE", "PHYSICAL PRACTICAL WHEN AVAILABLE", "Review log template", "Review tiers", "Reference benchmark and ship rule", "SHIP_VERIFIED", "Runtime extension path", "Numeric budgets (locked 2026-09-28)", "TARGET_LOW_DEVICE", "compare-lab-captures.ts"]) expect(doc, phrase).toContain(phrase);
     expect(read("docs/agents/CONTEXT_ROUTING.md")).toContain("INTERACTIVE_LAB_PRODUCTION_TEAM.md");
   });
 

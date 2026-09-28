@@ -62,7 +62,7 @@ export function replayReviewScenario(definition: InteractiveLabDefinition<LabSta
   let state = initializeLab(definition);
   for (const [index, action] of actions.entries()) {
     const result = acceptLabAction(definition, state, action);
-    if (!result.ok) return { ok: false, reason: result.reason, failedIndex: index, action };
+    if ("reason" in result) return { ok: false, reason: result.reason, failedIndex: index, action };
     state = result.state;
   }
   if (!options.holdFinalAction) {
@@ -95,7 +95,7 @@ export function validateScenarioSet(definition: InteractiveLabDefinition<LabStat
     if (ids.has(scenario.id)) problems.push(`Duplicate scenario id "${scenario.id}".`);
     ids.add(scenario.id);
     const replay = replayReviewScenario(definition, scenario);
-    if (!replay.ok) problems.push(`Scenario "${scenario.id}" does not replay: action ${replay.failedIndex} ${replay.action ? JSON.stringify(replay.action) : ""} — ${replay.reason}`.trim());
+    if ("reason" in replay) problems.push(`Scenario "${scenario.id}" does not replay: action ${replay.failedIndex} ${replay.action ? JSON.stringify(replay.action) : ""} — ${replay.reason}`.trim());
     if (scenario.motion && (scenario.motion.frames < LAB_REVIEW_MOTION_FRAMES.min || scenario.motion.frames > LAB_REVIEW_MOTION_FRAMES.max || scenario.motion.intervalMs <= 0)) problems.push(`Scenario "${scenario.id}" motion must sample ${LAB_REVIEW_MOTION_FRAMES.min}–${LAB_REVIEW_MOTION_FRAMES.max} frames at a positive interval.`);
     if (scenario.motion && scenarioActions(definition, scenario).length === 0) problems.push(`Scenario "${scenario.id}" has motion but no final action to animate.`);
   }

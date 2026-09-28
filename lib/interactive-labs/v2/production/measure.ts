@@ -14,7 +14,7 @@ export function measureRegisteredLab(labId: string, assets: LabAssetBytes[] = []
   const states: LabState[] = [initializeLab(definition)];
   for (const scenario of set.scenarios) {
     const replay = replayReviewScenario(definition, scenario);
-    if (!replay.ok) throw new Error(`${labId}/${scenario.id}: ${replay.reason}`);
+    if ("reason" in replay) throw new Error(`${labId}/${scenario.id}: ${replay.reason}`);
     states.push(replay.state);
   }
   return measureLabBudget(definition, states, assets);

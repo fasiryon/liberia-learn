@@ -1,6 +1,6 @@
 # Interactive Lab Production Team
 
-Status: V1 workflow. This is how every future high-fidelity LiberiaLearn lab is produced and reviewed. It builds on [High-Fidelity Interactive Labs](./HIGH_FIDELITY_INTERACTIVE_LABS.md) and [Interactive Lab Runtime V2](./INTERACTIVE_LAB_RUNTIME_V2.md), and changes neither. It adds no curriculum authority, no evidence authority and no mastery rule.
+Status: V1.1 workflow (V1 plus the V1.1 amendment: asset director, reference benchmark, runtime extension path, deterministic captures, locked budgets, review tiers, SHIP_CANDIDATE vs SHIP_VERIFIED). This is how every future high-fidelity LiberiaLearn lab is produced and reviewed. It builds on [High-Fidelity Interactive Labs](./HIGH_FIDELITY_INTERACTIVE_LABS.md) and [Interactive Lab Runtime V2](./INTERACTIVE_LAB_RUNTIME_V2.md), and changes neither. It adds no curriculum authority, no evidence authority and no mastery rule.
 
 The standard is not "it works". The standard is:
 
@@ -9,11 +9,11 @@ The standard is not "it works". The standard is:
 ## Lifecycle
 
 ```
-PEDAGOGY → REFERENCE / EXPERIENCE DESIGN → SIMULATION DESIGN → BUILD
+PEDAGOGY (+ tier) → REFERENCE / EXPERIENCE DESIGN (+ REFERENCE BENCHMARK) → SIMULATION DESIGN → ASSET DIRECTION → BUILD
 → ROUND 1 (visual · interaction · science) → FIX
 → ROUND 2 (visual · interaction · pedagogy) → FIX
 → ROUND 3 (design director · performance · science) → FIX
-→ GOVERNANCE
+→ SHIP_CANDIDATE → pilot with real students → SHIP_VERIFIED → GOVERNANCE
 ```
 
 For applicable labs the finished experience carries the whole chain:
@@ -29,14 +29,15 @@ Agents live in `.claude/agents/`. The builder is the main Claude Code session, d
 | Role | Agent | Stage | Edits? | Produces |
 | --- | --- | --- | --- | --- |
 | LAB-PEDAGOGY-DIRECTOR | `lab-pedagogy-director` | design, round 2 | no | Pedagogy brief: learning goal, understanding, why simulation, what stays physical, misconceptions, guided/explore/challenge, direct-manipulation assessment, evidence boundary, rejected ideas |
-| LAB-EXPERIENCE-DIRECTOR | `lab-experience-director` | design | no | Reference breakdown and the EXPERIENCE SHOT LIST / INTERACTION STORYBOARD |
+| LAB-EXPERIENCE-DIRECTOR | `lab-experience-director` | design | no | Reference breakdown, the EXPERIENCE SHOT LIST / INTERACTION STORYBOARD, and the REFERENCE BENCHMARK |
 | LAB-SIMULATION-ARCHITECT | `lab-simulation-architect` | design | no | State variables, rules/equations, constraints, flows, expected-consequence table, deterministic fixtures, review scenarios |
+| LAB-ASSET-DIRECTOR | `lab-asset-director` | design, on asset change | no | Per-component source (procedural / glTF / generated), art direction, per-profile budgets, LOD, compression, offline packaging, provenance table |
 | LAB-BUILDER | main session (`/lab-production`) | build, fix | **yes** | The lab on Runtime V2, tests, review scenarios, captures, review log |
 | LAB-VISUAL-REVIEWER | `lab-visual-reviewer` | rounds 1, 2 | no | P0/P1/P2 from the actual captures |
 | LAB-INTERACTION-REVIEWER | `lab-interaction-reviewer` | rounds 1, 2 | no | P0/P1/P2 from driving the lab with touch, mouse and keyboard |
 | LAB-SCIENCE-REVIEWER | `lab-science-reviewer` | rounds 1, 3 | no | Claims table (ACCURATE / PEDAGOGICAL_SIMPLIFICATION / MISLEADING / INCORRECT) and P0/P1/P2 |
-| LAB-PERFORMANCE-REVIEWER | `lab-performance-reviewer` | round 3 | no | Per-profile status, offline package, P0/P1/P2 |
-| LAB-DESIGN-DIRECTOR | `lab-design-director` | round 3 only | no | SHIP / DO_NOT_SHIP with P0/P1/P2 |
+| LAB-PERFORMANCE-REVIEWER | `lab-performance-reviewer` | round 3; runtime extension review | no | Per-profile status against the locked budgets, offline package, P0/P1/P2 |
+| LAB-DESIGN-DIRECTOR | `lab-design-director` | round 3 only; runtime extension review | no | Side-by-side benchmark scores, SHIP / DO_NOT_SHIP with P0/P1/P2 |
 
 Separations that must hold:
 
@@ -83,7 +84,7 @@ npx tsx scripts/labs/capture-lab-review.ts --lab <labId> --label round-1 --reduc
 Output goes to `artifacts/lab-review/<labId>/<version>/<label>/` (git-ignored):
 
 - `<scenario>__<PROFILE>__<viewport>.png`: settled still, full page.
-- `<scenario>__<PROFILE>__<viewport>__motion-NN.png` and `__motion-sheet.png`: the scenario's final action dispatched live, sampled every `intervalMs` on Playwright's **virtual clock**, so frames are deterministic and comparable between rounds. With `--reduced-motion`, the same strip is also captured with `__reduced` in the name; it must snap to the end state.
+- `<scenario>__<PROFILE>__<viewport>__motion-NN.png` and `__motion-sheet.png`: the scenario's final action dispatched live, sampled 8–16 times (`LAB_REVIEW_MOTION_FRAMES`) every `intervalMs` on Playwright's **virtual clock**, so frames are deterministic and comparable between rounds. With `--reduced-motion`, the same strip is also captured with `__reduced` in the name; it must snap to the end state.
 - `video/*.webm` with `--video`: real-time recording for human review. Not deterministic.
 - `perf.json` with `--perf`: rAF frame intervals, JS heap, transfer. Real clock, dev server, SwiftShader software GL. Use it for relative comparison only.
 - `interaction-probe.json` with `--probe`: Tab focus order and focus styling, targets under 44 CSS px, unnamed controls.
@@ -92,6 +93,12 @@ Output goes to `artifacts/lab-review/<labId>/<version>/<label>/` (git-ignored):
 Narrow a run with `--profiles`, `--viewports desktop|mobile` and `--scenarios`. The full matrix is slow on a dev server, so round 1 can use `--profiles HIGH,FALLBACK_2D` and rounds 2 and 3 capture everything.
 
 Minimum capture set for an important lab: overview, each guided step that moves the camera, exploded and/or cutaway, process and variable states (causal labs), a fault or misconception-exposing state where one exists, challenge, assessment with checks passed. Capture each at HIGH, STANDARD, LOW and FALLBACK_2D, on desktop and mobile.
+
+### Determinism and render honesty
+
+- Each scenario is a seeded simulation state: the model is pure and each scenario is a fixed action script, including camera presets and input. It can be tied to a storyboard scene (`storyboardScene`).
+- The virtual clock is installed and paused before navigation, so every animation frame runs at a fixed virtual time step. Two consecutive runs must produce byte-identical PNGs. Prove it with `npx tsx scripts/labs/compare-lab-captures.ts <runA> <runB>`, which exits non-zero on any difference.
+- `manifest.json` records the WebGL renderer. `software` (SwiftShader/llvmpipe) captures are valid for **composition and labels only**, never for performance or visual-fidelity sign-off. `--gpu` runs headed Chromium on the host GPU, fails if no GPU renderer is found, and is the only capture source whose `perf.json` may be used for sign-off, together with real devices.
 
 Reviewers must read the images. Reviewing source and inferring that the visuals are good is not a review.
 
@@ -118,9 +125,19 @@ Every finding uses one format so the builder can triage findings from all lenses
 
 Each report ends with what was **not** reviewed or measured. The builder verifies every P0 against the captures or code before acting. Reviewer output is evidence to check, not an instruction.
 
-## Three-round autonomous polish loop
+## Review tiers (cost control)
 
-For every serious lab:
+The pedagogy director assigns the tier. It is recorded in `production.json` with a reason.
+
+| Tier | When | Review loop |
+| --- | --- | --- |
+| HERO | Flagship labs that set the bar for a subject | The full three-round loop below, plus benchmark scoring |
+| STANDARD | Ordinary new labs | Round 1 (visual, interaction, science), then round 2 (design director, science) |
+| DERIVATIVE | Built from an existing hero lab's assets and patterns | One round: science, interaction, performance |
+
+`validateProductionRecord` enforces each tier's reviewer coverage.
+
+## Three-round autonomous polish loop (HERO)
 
 | Round | Reviewers (dispatch in parallel) | Builder must |
 | --- | --- | --- |
@@ -181,6 +198,60 @@ Open P0: none | <list>
 <what governance still has to decide; the team does not approve or release>
 ```
 
+## Reference benchmark and ship rule
+
+Before build, the experience director produces a REFERENCE BENCHMARK: 3–6 reference captures (approved inspiration, or LiberiaLearn's prior best labs) and named qualities to match or beat (model detail, material realism, camera choreography, cutaway clarity, cause→consequence legibility, guided pacing, "wow moment", local relevance, ...). In round 3 the design director puts each reference beside the matching capture of the built lab and scores every quality `BEATS`, `MATCHES` or `BELOW`, citing the pair of files compared.
+
+**Ship rule** (replaces "no P0s"; `benchmarkProblems` / `validateProductionRecord` enforce it):
+
+- zero open P0
+- no named quality `BELOW`, unless it is recorded as a deliberate trade-off for LOW, offline or accessibility, with the reason
+- at least one quality `BEATS` the reference (usually local relevance, evidence, or offline reach)
+
+"Nothing is broken" is not a ship criterion.
+
+## Production statuses and human evidence
+
+```
+DRAFT → SHIP_CANDIDATE (agent loop passed) → SHIP_VERIFIED (pilot evidence)
+```
+
+AI review cannot certify that students want to use a lab or learn from it. Before a lab is marked `SHIP_VERIFIED`, it is piloted with real students on real school devices, under the consent and authorization that governance requires. The pilot records completion, time on task, pre/post change on direct-manipulation items, common failure points and teacher notes. Predict→test prompts are authored as guided steps. Pre/post items are direct-manipulation checks, so their evidence travels the existing path: lab events → `buildLabEvidence` → performance events → `buildXapiExport`. No parallel evidence emitter exists or is allowed. Pilot findings come back as P0/P1/P2. None of these statuses changes `reviewState`, `approvalState`, release binding or evidence authority.
+
+The record lives at `docs/labs/<labId>/production.json` (`LabProductionRecord`, `lib/interactive-labs/v2/production/record.ts`). `__tests__/interactive-labs/lab-production-records.test.ts` fails CI when a record claims a status it does not prove.
+
+## Runtime extension path
+
+"No bespoke parallel engine" stands. When Runtime V2 lacks a capability the storyboard needs (cutaway, exploded view, flow visualisation, camera choreography, particle systems, quantity-driven motion, ...):
+
+1. LAB-BUILDER files a RUNTIME EXTENSION PROPOSAL at `docs/architecture/runtime-extensions/<id>.md`: capability, API, per-profile behaviour (HIGH/STANDARD/LOW/FALLBACK_2D), reduced-motion behaviour, fallback, evidence impact (normally none), tests.
+2. `lab-performance-reviewer` and `lab-design-director` review it. Their verdicts are recorded in the proposal and in `production.json` `runtimeExtensions`.
+3. It is implemented in the runtime (`lib/interactive-labs/v2/fidelity/`, the shared renderers), never inside one lab.
+4. Tests are added, and the capability becomes available to every lab.
+
+Never downgrade the experience to fit current runtime limits without recording it as a deliberate trade-off in `production.json` `tradeoffs`.
+
+## Numeric budgets (locked 2026-09-28)
+
+Defined in `lib/interactive-labs/v2/production/budgets.ts`, pinned by `__tests__/interactive-labs/lab-budgets.test.ts`, and enforced in CI against `budget-baseline.json` (more than 5% growth is a regression).
+
+**TARGET_LOW_DEVICE: Tecno Spark Go 2024** (Unisoc T606, Mali-G57 MP1, 3 GB RAM, Android 13 Go, 720p). Tecno is Liberia's largest phone vendor ([StatCounter, Aug 2026: 31.95%](https://gs.statcounter.com/vendor-market-share/mobile/liberia)), and the Spark Go is its entry tier ([GSMArena](https://www.gsmarena.com/tecno_spark_go_2024-12702.php)). Its GPU manages about 9 fps in 3DMark Sling Shot ([UL](https://benchmarks.ul.com/hardware/phone/Tecno+Spark+Go+2024+review)), so on this device LOW is the profile that must hold its target. The network baseline is 9 Mbps / 100 ms RTT ([Russell, 2026](https://infrequently.org/2025/11/performance-inequality-gap-2026/)).
+
+| Budget | HIGH | STANDARD | LOW | FALLBACK_2D | Enforced |
+| --- | --- | --- | --- | --- | --- |
+| Offline package | ≤ 5 MB | ≤ 5 MB (shared) | ≤ 1.5 MB | ≤ 300 KB | CI |
+| Triangles (worst scenario) | ≤ 100k | ≤ 60k | ≤ 15k | n/a | CI |
+| Draw calls | ≤ 120 | ≤ 90 | ≤ 40 | n/a | CI |
+| Max texture | 2048 px | 1024 px | 512 px | none | CI (declared assets) |
+| Flow particles | ≤ 200 | ≤ 120 | ≤ 48 | ≤ 72 | CI |
+| Sustained fps | ≥ 60 | ≥ 45 | ≥ 30 | ≥ 30 | device/GPU runs only |
+| First interactive (TARGET_LOW_DEVICE, LOW) | | | cold ≤ 5 s on 9 Mbps; warm/offline ≤ 3 s | | device only |
+| Memory (TARGET_LOW_DEVICE) | | | tab ≤ 200 MB; JS heap ≤ 64 MB | | device only |
+
+Package sizing: at Liberia's ~US$2.63/GB ([cable.co.uk via Statista, 2023](https://www.statista.com/statistics/1272810/price-for-mobile-data-in-liberia/)), a full HIGH pack costs a learner about 1.3 US cents. LOW fits well inside Russell's 3.7 MiB five-second page budget.
+
+**Automatic downgrade.** When the average frame time over 60 frames is slower than the profile's fps target (with 15% jitter allowance: HIGH 19.2 ms, STANDARD 25.6 ms, LOW 38.3 ms), `WebGLScene` steps down one profile. This now includes LOW → FALLBACK_2D. CI cannot certify fps, interactive time or memory. Those are claimed only from `gpu` capture runs or real devices, labelled as such.
+
 ## Reference use
 
 External references may be studied for interaction ideas, pacing, camera language, information hierarchy and presentation. Do not copy proprietary assets, code, characters or layouts. Every implementation is original LiberiaLearn work built from runtime primitives.
@@ -228,3 +299,4 @@ The two reference labs have registered scenario sets (`SOLIDS_REVIEW_SCENARIOS`,
 - Captures run on a local dev server with headless Chromium and SwiftShader software GL. They show what renders and how. They are not physical-device performance or frame-rate certification.
 - The capture script is a local tool. It is not wired into CI because CI has no running dev server or GPU. CI checks the scenario sets and agent contracts instead.
 - Motion frames are deterministic on the virtual clock. `--video` and `--perf` use the real clock and are not.
+- Software-rendered captures on this project's dev machines cannot sign off performance or visual fidelity. A `--gpu` run on a machine with a real GPU, or real TARGET_LOW_DEVICE sessions, are still needed for that.

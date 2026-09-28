@@ -30,7 +30,7 @@ describe("lab review scenarios", () => {
   it("causal scenarios reach the states their titles claim", () => {
     const quantities = (id: string) => {
       const replay = replayReviewScenario(circuitDefinition, CIRCUIT_REVIEW_SCENARIOS.scenarios.find((s) => s.id === id)!);
-      if (!replay.ok) throw new Error(replay.reason);
+      if ("reason" in replay) throw new Error(replay.reason);
       return buildRenderList({ definition: circuitDefinition, state: replay.state, profile: "HIGH" });
     };
     const open = quantities("open-circuit"), dim = quantities("high-resistance"), bright = quantities("max-brightness");

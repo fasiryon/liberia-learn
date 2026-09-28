@@ -20,7 +20,7 @@ export function LabReviewHarness({ labId, scenarioId, profile, holdFinalAction }
   const preview = useMemo<LabReviewPreview | null>(() => replay?.ok ? { initialState: replay.state, onReady } : null, [replay, onReady]);
 
   if (!definition || !scenario) return <p data-lab-review-error className="text-red-200">Unknown lab or scenario: {labId} / {scenarioId}</p>;
-  if (!replay?.ok || !preview) return <p data-lab-review-error className="text-red-200">Scenario {scenarioId} does not replay: {replay && !replay.ok ? replay.reason : "unknown"}</p>;
+  if (!replay?.ok || !preview) return <p data-lab-review-error className="text-red-200">Scenario {scenarioId} does not replay: {replay && "reason" in replay ? replay.reason : "unknown"}</p>;
   return (
     <div data-lab-review-ready data-lab-id={labId} data-lab-version={definition.version} data-scenario={scenarioId} data-profile={profile}>
       <p className="mx-auto mb-3 max-w-6xl rounded-full bg-fuchsia-500/15 px-4 py-1 text-xs font-semibold text-fuchsia-100">

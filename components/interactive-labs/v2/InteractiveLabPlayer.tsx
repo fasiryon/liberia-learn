@@ -47,7 +47,7 @@ export function InteractiveLabPlayer({ labId = "g4-solid-figures", override, rev
   const reviewDispatch = useCallback((action: LabAction) => {
     if (!definition) return { ok: false, reason: "Unknown lab." };
     const result = acceptLabAction(definition, latest.current, action);
-    if (!result.ok) return { ok: false, reason: result.reason };
+    if ("reason" in result) return { ok: false, reason: result.reason };
     latest.current = result.state;
     setState(result.state);
     return { ok: true };
