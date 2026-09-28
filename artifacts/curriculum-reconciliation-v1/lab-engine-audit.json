@@ -1,0 +1,40 @@
+{
+  "status": "REPOSITORY_AUDIT_COMPLETE_LIVE_LAB_COUNTS_UNAVAILABLE",
+  "liveLabInventory": "NOT_OBTAINED because Supabase read access failed",
+  "runtime": {
+    "existing": ["lib/labs/runtime/validateLabAction.ts", "lib/labs/runtime/applyLabAction.ts", "lib/labs/registry.ts", "lib/schemas/labSimulation.ts", "VirtualLab", "LabSession"],
+    "registeredTypedLabDefinitions": 12,
+    "declaredLabIds": 20,
+    "studentLabPages": 12,
+    "componentLabPages": 20,
+    "dataDrivenVirtualLabSeedRecords": 6
+  },
+  "findings": {
+    "runtimeModel": "Shared typed action/state validation and transition kernel exists, but each registered lab still has bespoke action/state/validator/runtime modules. VirtualLab payloads provide a separate procedure/observation data path.",
+    "reusableInfrastructure": ["action validation", "state transition functions", "lab registry", "LabSession ownership and teacher review", "LearningEvent logging for planned actions", "LabFallback and low-resource fallback components", "existing offline drafts/outbox", "safetyNotes/material/procedure fields"],
+    "learnerActionCapture": "Typed runtime actions are processed in-memory/client runtime; durable LabSession stores observations, conclusions, provisional score, completion, and teacher feedback. Action-by-action trace is not durably modeled in LabSession.",
+    "evidence": "Plan route emits LearningEvent; session completion emits RAW_OBSERVATION or PROVISIONAL plus AuditLog. This is not yet a governed lab evidence binding to a released concept/item.",
+    "mastery": "Current student session route forcibly keeps masteryUpdated=false. Existing governed authority explicitly prevents a client lab score from updating mastery. A richer simulation-to-mastery event contract is designed but not implemented.",
+    "modalities": {"twoD": "SUPPORTED by 2d_simulation definitions/components and data-driven simulation schema", "threeD": "NOT IMPLEMENTED; schema is future/planned and docs state no real 3D runtime"},
+    "learnPracticeAssessmentReuse": "PARTIAL_RUNTIME_SUPPORT; lesson-embedded panels and lab pages exist, but no single versioned simulation definition is the shared executable source across Learn, Practice, and controlled Assessment.",
+    "offline": "PARTIAL_RUNTIME_SUPPORT; drafts and pending submissions can queue, fallback components exist, but P5-E explicitly keeps mastery events and simulation state NOT_SUPPORTED_OFFLINE.",
+    "teacherVisibility": "SUPPORTED for scheduled LabSession GET/review, teacher feedback, and dashboard counts.",
+    "safety": "PARTIAL_RUNTIME_SUPPORT; VirtualLab and pseudo-lab contracts carry safetyNotes/material/risk fields, but typed action definitions do not encode a uniform safety policy gate.",
+    "scale": "PARTIAL_RUNTIME_SUPPORT; data-driven procedure labs can scale through payloads, while interactive labs require code registration and bespoke state/action modules. A governed reusable definition contract is still needed.",
+    "duplicateEngineDecision": "Do not create a second engine. Extend lib/labs/runtime and converge VirtualLab/simulation definitions onto one versioned definition contract."
+  },
+  "catalogClassification": [
+    {"labIds":["gravity-explorer","pendulum-lab","molecule-motion","human-heart","electric-circuit","wave-motion","cell-division","ecosystem-balance","chemical-reaction","periodic-table","weather-system","tectonic-plates"],"classification":"ENGINE_COMPATIBLE","reason":"Registered typed runtime with validate/apply state kernel."},
+    {"labIds":["lab-quadratic-explorer","lab-water-filtration","lab-fraction-multiplication","lab-titration-simulation","lab-coordinate-geometry","lab-plant-growth-observation"],"classification":"ENGINE_EXISTS_NEEDS_DEFINITION","reason":"VirtualLab data-driven definitions exist in seed payloads, but do not map to the shared typed action/state registry or governed mastery/evidence contract."},
+    {"labIds":["light-and-shadow","simple-machines","cell-structure","water-cycle","earthquake-waves","electric-circuits","chemical-reactions"],"classification":"BESPOKE_LEGACY","reason":"Component/page or alias references exist, but no matching registered typed runtime definition is present."},
+    {"labIds":["three-dimensional-labs"],"classification":"NEW_ENGINE_CAPABILITY_REQUIRED","reason":"No 3D runtime exists; only future/planned schema and fallback intent are present."}
+  ],
+  "gapDimensions": {
+    "missingLabContent": "Unknown until live VirtualLab/content rows are read; repository has multiple starter definitions only.",
+    "missingLabDefinition": "Yes for live/source-backed labs not represented by a versioned shared definition; exact cell count blocked by Supabase.",
+    "missingEngineCapability": ["3D runtime", "shared versioned definition execution across Learn/Practice/Assessment", "durable action trace", "governed simulation evidence adapter"],
+    "missingEvidenceBinding": "Yes: current raw/provisional session evidence is not bound to released objectives/concepts/items.",
+    "missingMasteryBinding": "Yes by design today: lab completion cannot update canonical mastery; a governed server-side adapter is still required.",
+    "missingSafetyOfflineSupport": ["uniform runtime safety policy enforcement", "offline simulation-state support or explicit safe fallback contract", "offline evidence reconciliation for simulation events"]
+  }
+}

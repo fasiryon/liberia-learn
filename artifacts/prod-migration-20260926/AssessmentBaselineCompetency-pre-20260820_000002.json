@@ -1,0 +1,345 @@
+{
+  "exportedAt": "2026-09-26T03:45:51.915Z",
+  "database": "bnphuinpvgpmebcsvmsp (production)",
+  "purpose": "Pre-migration recovery evidence for 20260820_000002_p2abc_integrity_enforcement_security UPDATE on AssessmentBaselineCompetency",
+  "filter": "evidenceSpecificity <> TOPIC_LEVEL AND (assessmentDepth <> NOT_ESTABLISHED OR cardinality(cognitiveDimensions) <> 0)",
+  "rowCount": 16,
+  "rows": [
+    {
+      "id": "cmt1nt9kn001uvopsudpve4et",
+      "code": "WAEC.LIBERIA.LPSCE.LANGUAGE_ARTS.SUBJECT_LEVEL",
+      "domain": "GRAMMAR_AND_COMPOSITION",
+      "createdAt": "2026-08-20T15:12:40.631",
+      "confidence": 0.55,
+      "criticality": "STANDARD",
+      "expectation": "Language Arts is a compulsory LPSCE subject (330); WAEC states its detailed syllabus is a distillation of the MOE National Curriculum, which includes dedicated grammar, punctuation, and composition units at Grade 6. No topic-by-topic WAEC Language Arts syllabus was recovered to confirm the exact expected depth for this specific competency.",
+      "officialWeight": null,
+      "assessmentDepth": "COMPREHENSION",
+      "evidenceLocator": "LPSCE subject table (code 330) + distillation statement",
+      "sourceVersionId": "cmt1nt7gi000hvopsp03jslpj",
+      "baselineSubjectId": "cmt1nt8cb000yvopsxg4062xq",
+      "verificationStatus": "PARTIAL",
+      "cognitiveDimensions": [
+        "COMPREHENSION",
+        "APPLICATION"
+      ],
+      "evidenceSpecificity": "SUBJECT_LEVEL",
+      "weightEvidenceLocator": null
+    },
+    {
+      "id": "cmt1nt9qg001yvops3mrb75s6",
+      "code": "WAEC.LIBERIA.LPSCE.SOCIAL_STUDIES.SUBJECT_LEVEL",
+      "domain": "LIBERIAN_HISTORY",
+      "createdAt": "2026-08-20T15:12:40.84",
+      "confidence": 0.55,
+      "criticality": "STANDARD",
+      "expectation": "Social Studies is a compulsory LPSCE subject (340); WAEC states its detailed syllabus is a distillation of the MOE National Curriculum, which includes dedicated Liberian History units at Grade 6. No topic-by-topic WAEC Social Studies syllabus was recovered to confirm the exact expected depth for this specific competency.",
+      "officialWeight": null,
+      "assessmentDepth": "COMPREHENSION",
+      "evidenceLocator": "LPSCE subject table (code 340) + distillation statement",
+      "sourceVersionId": "cmt1nt7gi000hvopsp03jslpj",
+      "baselineSubjectId": "cmt1nt8eu0010vopsux1c6fck",
+      "verificationStatus": "PARTIAL",
+      "cognitiveDimensions": [
+        "COMPREHENSION",
+        "ANALYSIS"
+      ],
+      "evidenceSpecificity": "SUBJECT_LEVEL",
+      "weightEvidenceLocator": null
+    },
+    {
+      "id": "cmt1nt9vq0022vopso2ju6xz0",
+      "code": "WAEC.LIBERIA.LPSCE.GENERAL_SCIENCE.SUBJECT_LEVEL",
+      "domain": "LIFE_SCIENCE",
+      "createdAt": "2026-08-20T15:12:41.031",
+      "confidence": 0.55,
+      "criticality": "STANDARD",
+      "expectation": "General Science is a compulsory LPSCE subject (320); WAEC states its detailed syllabus is a distillation of the MOE National Curriculum, which includes dedicated life-science classification units at Grade 6. No topic-by-topic WAEC General Science syllabus was recovered to confirm the exact expected depth for this specific competency.",
+      "officialWeight": null,
+      "assessmentDepth": "COMPREHENSION",
+      "evidenceLocator": "LPSCE subject table (code 320) + distillation statement",
+      "sourceVersionId": "cmt1nt7gi000hvopsp03jslpj",
+      "baselineSubjectId": "cmt1nt89d000wvops6w1y5m6r",
+      "verificationStatus": "PARTIAL",
+      "cognitiveDimensions": [
+        "COMPREHENSION",
+        "APPLICATION"
+      ],
+      "evidenceSpecificity": "SUBJECT_LEVEL",
+      "weightEvidenceLocator": null
+    },
+    {
+      "id": "cmt1nta0o0026vopstrpthgq5",
+      "code": "WAEC.LIBERIA.LJHSCE.LANGUAGE_ARTS.SUBJECT_LEVEL",
+      "domain": "COMPOSITION_AND_LITERATURE",
+      "createdAt": "2026-08-20T15:12:41.208",
+      "confidence": 0.55,
+      "criticality": "STANDARD",
+      "expectation": "Language Arts is a compulsory LJHSCE subject (230); WAEC states its detailed syllabus is a distillation of the MOE National Curriculum, which includes dedicated composition and reading-comprehension units at Grade 9. No topic-by-topic WAEC Language Arts syllabus was recovered to confirm the exact expected depth for this specific competency.",
+      "officialWeight": null,
+      "assessmentDepth": "COMPREHENSION",
+      "evidenceLocator": "LJHSCE subject table (code 230) + distillation statement",
+      "sourceVersionId": "cmt1nt71i000bvopsetunrs7k",
+      "baselineSubjectId": "cmt1nt8mq0016vopsh474ca4r",
+      "verificationStatus": "PARTIAL",
+      "cognitiveDimensions": [
+        "COMPREHENSION",
+        "APPLICATION"
+      ],
+      "evidenceSpecificity": "SUBJECT_LEVEL",
+      "weightEvidenceLocator": null
+    },
+    {
+      "id": "cmt1nta5r002avopss8rzg3tt",
+      "code": "WAEC.LIBERIA.LJHSCE.GENERAL_SCIENCE.SUBJECT_LEVEL",
+      "domain": "PHYSICAL_SCIENCE",
+      "createdAt": "2026-08-20T15:12:41.391",
+      "confidence": 0.55,
+      "criticality": "STANDARD",
+      "expectation": "General Science is a compulsory LJHSCE subject (220); WAEC states its detailed syllabus is a distillation of the MOE National Curriculum, which includes dedicated magnetism/electricity units at Grade 9. No topic-by-topic WAEC General Science syllabus was recovered to confirm the exact expected depth for this specific competency.",
+      "officialWeight": null,
+      "assessmentDepth": "COMPREHENSION",
+      "evidenceLocator": "LJHSCE subject table (code 220) + distillation statement",
+      "sourceVersionId": "cmt1nt71i000bvopsetunrs7k",
+      "baselineSubjectId": "cmt1nt8k50014vopsy87ji72z",
+      "verificationStatus": "PARTIAL",
+      "cognitiveDimensions": [
+        "COMPREHENSION",
+        "APPLICATION"
+      ],
+      "evidenceSpecificity": "SUBJECT_LEVEL",
+      "weightEvidenceLocator": null
+    },
+    {
+      "id": "cmt1ntac3002evops3lowpeki",
+      "code": "WAEC.LIBERIA.LJHSCE.SOCIAL_STUDIES.SUBJECT_LEVEL",
+      "domain": "REGIONAL_GEOGRAPHY",
+      "createdAt": "2026-08-20T15:12:41.619",
+      "confidence": 0.55,
+      "criticality": "STANDARD",
+      "expectation": "Social Studies is a compulsory LJHSCE subject (240); WAEC states its detailed syllabus is a distillation of the MOE National Curriculum, which includes dedicated regional-geography units at Grade 9. No topic-by-topic WAEC Social Studies syllabus was recovered to confirm the exact expected depth for this specific competency.",
+      "officialWeight": null,
+      "assessmentDepth": "COMPREHENSION",
+      "evidenceLocator": "LJHSCE subject table (code 240) + distillation statement",
+      "sourceVersionId": "cmt1nt71i000bvopsetunrs7k",
+      "baselineSubjectId": "cmt1nt8ow0018vopsfk5kio2p",
+      "verificationStatus": "PARTIAL",
+      "cognitiveDimensions": [
+        "COMPREHENSION",
+        "ANALYSIS"
+      ],
+      "evidenceSpecificity": "SUBJECT_LEVEL",
+      "weightEvidenceLocator": null
+    },
+    {
+      "id": "cmt1ntahd002ivops5dc6i51n",
+      "code": "WAEC.LIBERIA.LSHSCE.ENGLISH.SUBJECT_LEVEL",
+      "domain": "GRAMMAR",
+      "createdAt": "2026-08-20T15:12:41.809",
+      "confidence": 0.55,
+      "criticality": "STANDARD",
+      "expectation": "English Language is a compulsory LSHSCE Core subject (101); WAEC states its detailed syllabus is a distillation of the MOE National Curriculum, which includes dedicated grammar units at Grade 12. No topic-by-topic WAEC English Language syllabus was recovered to confirm the exact expected depth for this specific competency.",
+      "officialWeight": null,
+      "assessmentDepth": "APPLICATION",
+      "evidenceLocator": "LSHSCE subject table (code 101) + distillation statement",
+      "sourceVersionId": "cmt1nt7n6000kvops0wnmeq33",
+      "baselineSubjectId": "cmt1nt8rg001avops61bks2d1",
+      "verificationStatus": "PARTIAL",
+      "cognitiveDimensions": [
+        "APPLICATION",
+        "PROCEDURAL_FLUENCY"
+      ],
+      "evidenceSpecificity": "SUBJECT_LEVEL",
+      "weightEvidenceLocator": null
+    },
+    {
+      "id": "cmt1ntalt002mvopsyw02bi0e",
+      "code": "WAEC.LIBERIA.LSHSCE.ECONOMICS.SUBJECT_LEVEL",
+      "domain": "LIBERIAN_ECONOMY",
+      "createdAt": "2026-08-20T15:12:41.969",
+      "confidence": 0.55,
+      "criticality": "STANDARD",
+      "expectation": "Economics is a General-group LSHSCE subject (201); WAEC states its detailed syllabus is a distillation of the MOE National Curriculum, which includes dedicated Liberian economic-development units at Grade 12. No topic-by-topic WAEC Economics syllabus was recovered to confirm the exact expected depth for this specific competency.",
+      "officialWeight": null,
+      "assessmentDepth": "ANALYSIS",
+      "evidenceLocator": "LSHSCE subject table (code 201) + distillation statement",
+      "sourceVersionId": "cmt1nt7n6000kvops0wnmeq33",
+      "baselineSubjectId": "cmt1nt8yf001evopsj6c6qm5c",
+      "verificationStatus": "PARTIAL",
+      "cognitiveDimensions": [
+        "ANALYSIS",
+        "APPLICATION"
+      ],
+      "evidenceSpecificity": "SUBJECT_LEVEL",
+      "weightEvidenceLocator": null
+    },
+    {
+      "id": "cmt1ntasg002qvopsjnv8qjge",
+      "code": "WAEC.LIBERIA.LSHSCE.GEOGRAPHY.SUBJECT_LEVEL",
+      "domain": "PRACTICAL_GEOGRAPHY",
+      "createdAt": "2026-08-20T15:12:42.208",
+      "confidence": 0.55,
+      "criticality": "STANDARD",
+      "expectation": "Geography is a General-group LSHSCE subject (202); WAEC states its detailed syllabus is a distillation of the MOE National Curriculum, which includes dedicated practical map-reading units at Grade 12. No topic-by-topic WAEC Geography syllabus was recovered to confirm the exact expected depth for this specific competency. This PDF's own materials list cites WASSCE Q&A papers as a student study aid -- corroborating, not dispositive, evidence that WASSCE-branded material circulates as regional reference material in Liberia's own curriculum documents.",
+      "officialWeight": null,
+      "assessmentDepth": "APPLICATION",
+      "evidenceLocator": "LSHSCE subject table (code 202) + distillation statement",
+      "sourceVersionId": "cmt1nt7n6000kvops0wnmeq33",
+      "baselineSubjectId": "cmt1nt90q001gvopse4m3ai9w",
+      "verificationStatus": "PARTIAL",
+      "cognitiveDimensions": [
+        "APPLICATION",
+        "COMPREHENSION"
+      ],
+      "evidenceSpecificity": "SUBJECT_LEVEL",
+      "weightEvidenceLocator": null
+    },
+    {
+      "id": "cmt1ntawy002uvops5uvp43nl",
+      "code": "WAEC.LIBERIA.LSHSCE.HISTORY.SUBJECT_LEVEL",
+      "domain": "LIBERIAN_HISTORY",
+      "createdAt": "2026-08-20T15:12:42.37",
+      "confidence": 0.55,
+      "criticality": "STANDARD",
+      "expectation": "History is a General-group LSHSCE subject (203); WAEC states its detailed syllabus is a distillation of the MOE National Curriculum, which includes dedicated Liberian-history units at Grade 12. No topic-by-topic WAEC History syllabus was recovered to confirm the exact expected depth for this specific competency.",
+      "officialWeight": null,
+      "assessmentDepth": "ANALYSIS",
+      "evidenceLocator": "LSHSCE subject table (code 203) + distillation statement",
+      "sourceVersionId": "cmt1nt7n6000kvops0wnmeq33",
+      "baselineSubjectId": "cmt1nt93e001ivopsn5mq6ewu",
+      "verificationStatus": "PARTIAL",
+      "cognitiveDimensions": [
+        "ANALYSIS",
+        "EVALUATION"
+      ],
+      "evidenceSpecificity": "SUBJECT_LEVEL",
+      "weightEvidenceLocator": null
+    },
+    {
+      "id": "cmt1ntb3s002yvopsz4xb5v8s",
+      "code": "WAEC.LIBERIA.LSHSCE.LITERATURE.SUBJECT_LEVEL",
+      "domain": "AFRICAN_POETRY",
+      "createdAt": "2026-08-20T15:12:42.616",
+      "confidence": 0.55,
+      "criticality": "STANDARD",
+      "expectation": "Literature-in-English is a General-group LSHSCE subject (204); WAEC states its detailed syllabus is a distillation of the MOE National Curriculum, which includes dedicated African-poetry analysis units at Grade 12. No topic-by-topic WAEC Literature syllabus was recovered to confirm the exact expected depth for this specific competency.",
+      "officialWeight": null,
+      "assessmentDepth": "ANALYSIS",
+      "evidenceLocator": "LSHSCE subject table (code 204) + distillation statement",
+      "sourceVersionId": "cmt1nt7n6000kvops0wnmeq33",
+      "baselineSubjectId": "cmt1nt964001kvopsdxwzytca",
+      "verificationStatus": "PARTIAL",
+      "cognitiveDimensions": [
+        "ANALYSIS",
+        "EVALUATION"
+      ],
+      "evidenceSpecificity": "SUBJECT_LEVEL",
+      "weightEvidenceLocator": null
+    },
+    {
+      "id": "cmt1ntb8v0032vops4jc5l4gt",
+      "code": "WAEC.LIBERIA.LSHSCE.BIOLOGY.SUBJECT_LEVEL",
+      "domain": "CHORDATA",
+      "createdAt": "2026-08-20T15:12:42.799",
+      "confidence": 0.55,
+      "criticality": "STANDARD",
+      "expectation": "Biology is a Science-group LSHSCE subject (401); WAEC states its detailed syllabus is a distillation of the MOE National Curriculum, which includes dedicated Chordata units at Grade 12. No topic-by-topic WAEC Biology syllabus was recovered to confirm the exact expected depth for this specific competency.",
+      "officialWeight": null,
+      "assessmentDepth": "COMPREHENSION",
+      "evidenceLocator": "LSHSCE subject table (code 401) + distillation statement",
+      "sourceVersionId": "cmt1nt7n6000kvops0wnmeq33",
+      "baselineSubjectId": "cmt1nt98f001mvopsjqgol1u3",
+      "verificationStatus": "PARTIAL",
+      "cognitiveDimensions": [
+        "COMPREHENSION",
+        "ANALYSIS"
+      ],
+      "evidenceSpecificity": "SUBJECT_LEVEL",
+      "weightEvidenceLocator": null
+    },
+    {
+      "id": "cmt1ntbdn0036vops09g4gdm5",
+      "code": "WAEC.LIBERIA.LSHSCE.CHEMISTRY.SUBJECT_LEVEL",
+      "domain": "APPLIED_CHEMISTRY",
+      "createdAt": "2026-08-20T15:12:42.971",
+      "confidence": 0.55,
+      "criticality": "STANDARD",
+      "expectation": "Chemistry is a Science-group LSHSCE subject (402); WAEC states its detailed syllabus is a distillation of the MOE National Curriculum, which includes dedicated applied-chemistry/industry units at Grade 12. No topic-by-topic WAEC Chemistry syllabus was recovered to confirm the exact expected depth for this specific competency.",
+      "officialWeight": null,
+      "assessmentDepth": "COMPREHENSION",
+      "evidenceLocator": "LSHSCE subject table (code 402) + distillation statement",
+      "sourceVersionId": "cmt1nt7n6000kvops0wnmeq33",
+      "baselineSubjectId": "cmt1nt9b9001ovopsiueaz47x",
+      "verificationStatus": "PARTIAL",
+      "cognitiveDimensions": [
+        "COMPREHENSION",
+        "APPLICATION"
+      ],
+      "evidenceSpecificity": "SUBJECT_LEVEL",
+      "weightEvidenceLocator": null
+    },
+    {
+      "id": "cmt1ntbj6003avopsinmb4u8r",
+      "code": "WAEC.LIBERIA.LSHSCE.PHYSICS.SUBJECT_LEVEL",
+      "domain": "OPTICS",
+      "createdAt": "2026-08-20T15:12:43.17",
+      "confidence": 0.55,
+      "criticality": "STANDARD",
+      "expectation": "Physics is a Science-group LSHSCE subject (403); WAEC states its detailed syllabus is a distillation of the MOE National Curriculum, which includes dedicated optics units at Grade 12. No topic-by-topic WAEC Physics syllabus was recovered to confirm the exact expected depth for this specific competency.",
+      "officialWeight": null,
+      "assessmentDepth": "APPLICATION",
+      "evidenceLocator": "LSHSCE subject table (code 403) + distillation statement",
+      "sourceVersionId": "cmt1nt7n6000kvops0wnmeq33",
+      "baselineSubjectId": "cmt1nt9ek001qvopsadn1gkwx",
+      "verificationStatus": "PARTIAL",
+      "cognitiveDimensions": [
+        "APPLICATION",
+        "PROBLEM_MODELING"
+      ],
+      "evidenceSpecificity": "SUBJECT_LEVEL",
+      "weightEvidenceLocator": null
+    },
+    {
+      "id": "cmt1ntblk003cvops9opzu6mm",
+      "code": "WAEC.LIBERIA.LSHSCE.MATH.SUBJECT_LEVEL",
+      "domain": "MATHEMATICS_GENERAL",
+      "createdAt": "2026-08-20T15:12:43.256",
+      "confidence": 0.5,
+      "criticality": "STANDARD",
+      "expectation": "Mathematics is a compulsory LSHSCE Core subject (301); WAEC states its detailed syllabus is a distillation of the MOE senior-high National Curriculum. No topic-by-topic WAEC Mathematics syllabus was recovered, and no WAEC baseline competency for calculus/differentiation-and-integration specifically was found -- subject-level applicability only.",
+      "officialWeight": null,
+      "assessmentDepth": "APPLICATION",
+      "evidenceLocator": "LSHSCE(Regular) subject table (code 301) + distillation statement",
+      "sourceVersionId": "cmt1nt7n6000kvops0wnmeq33",
+      "baselineSubjectId": "cmt1nt8vr001cvopsy16f0q34",
+      "verificationStatus": "PARTIAL",
+      "cognitiveDimensions": [
+        "APPLICATION",
+        "PROBLEM_MODELING"
+      ],
+      "evidenceSpecificity": "SUBJECT_LEVEL",
+      "weightEvidenceLocator": null
+    },
+    {
+      "id": "cmt1ntbwo003kvopsmlv8d1bi",
+      "code": "WAEC.LIBERIA.MATH.SETS.SUBJECT_LEVEL",
+      "domain": "SETS",
+      "createdAt": "2026-08-20T15:12:43.657",
+      "confidence": 0.55,
+      "criticality": "STANDARD",
+      "expectation": "Mathematics is a compulsory WAEC Liberia subject at LJHSCE (210) and LSHSCE (301); WAEC states its detailed syllabus is a distillation of the MOE National Curriculum, which includes a dedicated Sets / Two-Set Problems unit at Grade 9. No topic-by-topic WAEC Mathematics syllabus was recovered to confirm the exact expected depth for this specific competency.",
+      "officialWeight": null,
+      "assessmentDepth": "APPLICATION",
+      "evidenceLocator": "waecliberia.org.lr/lshsceprivate/ (distillation statement) + waecliberia.org.lr/ljhsce/ (subject table)",
+      "sourceVersionId": "cmt1nt78t000evopsto2xda8n",
+      "baselineSubjectId": "cmt1nt8hq0012vopsa89hruie",
+      "verificationStatus": "PARTIAL",
+      "cognitiveDimensions": [
+        "APPLICATION",
+        "PROBLEM_MODELING"
+      ],
+      "evidenceSpecificity": "SUBJECT_LEVEL",
+      "weightEvidenceLocator": null
+    }
+  ]
+}

@@ -1,0 +1,213 @@
+*** Begin Patch
+*** Add File: packages/ledger/src/topup-authority-validation.ts
++import { AccountType, MobileMoneyDirection, MobileMoneyPaymentStatus, Prisma, TransactionType } from '@prisma/client';
++import { UNUSED_VALUE_AUTHORITY_VERSION } from './unused-value-authority-write';
++
++type Payment = Prisma.MobileMoneyPaymentGetPayload<Record<string, never>>;
++type Settlement = Prisma.TransactionGetPayload<{ include: { entries: { include: { debitAccount: { select: { accountType: true } } } } } }>;
++type Window = Prisma.TopupRefundWindowGetPayload<Record<string, never>>;
++
++/** The same immutable financial bindings govern replay, evaluation and reconciliation. */
++export function validateTopupAuthority(input: {
++  payment: Payment;
++  wallet: { id: string; userId: string; accountType: AccountType };
++  settlement: Settlement | null;
++  window: Window | null;
++  authority: { authorityVersion: number; permanentDebitVersion: bigint; policyExclusionVersion: bigint } | null;
++  cutover: { authorityVersion: number; cutoverVersion: number; activatedAt: Date | null };
++}): string | null {
++  const { payment, wallet, settlement, window, authority, cutover } = input;
++  if (cutover.authorityVersion !== UNUSED_VALUE_AUTHORITY_VERSION ||
++      (authority && authority.authorityVersion !== cutover.authorityVersion)) {
++    return 'Authority version does not match the supported cutover';
++  }
++  if (payment.direction !== MobileMoneyDirection.TOPUP ||
++      payment.status !== MobileMoneyPaymentStatus.SUCCEEDED || !payment.providerReference ||
++      payment.userId !== wallet.userId || wallet.accountType !== AccountType.USER_WALLET ||
++      !settlement || payment.settledTransactionId !== settlement.id) {
++    return 'Payment and wallet do not bind a successful TOPUP settlement';
++  }
++  const expectedFloat = payment.provider === 'ORANGE' ? AccountType.ORANGE_FLOAT : AccountType.MTN_FLOAT;
++  if (settlement.type !== TransactionType.TOPUP ||
++      settlement.idempotencyKey !== `mobile-money:TOPUP:${payment.id}` ||
++      settlement.totalAmountLrd !== payment.amountLrd || settlement.totalAmountUsd !== 0 ||
++      settlement.entries.length !== 1 ||
++      settlement.entries[0].debitAccount.accountType !== expectedFloat ||
++      settlement.entries[0].creditAccountId !== wallet.id ||
++      settlement.entries[0].amountLrd !== payment.amountLrd || settlement.entries[0].amountUsd !== 0) {
++    return 'TOPUP settlement ledger identity is invalid';
++  }
++  const postCutover = cutover.activatedAt !== null && settlement.createdAt >= cutover.activatedAt;
++  if (!postCutover) return window ? 'Pre-cutover TOPUP unexpectedly has a refund window' : null;
++  if (!authority || !window) return 'Post-cutover TOPUP authority or refund window is missing';
++  if (window.paymentId !== payment.id || window.walletId !== wallet.id ||
++      window.settledTransactionId !== settlement.id ||
++      window.createdAt.getTime() !== settlement.createdAt.getTime() ||
++      window.authorityVersion !== cutover.authorityVersion ||
++      window.cutoverVersion !== cutover.cutoverVersion ||
++      window.debitVersionAtSettlement < 0n || window.exclusionVersionAtSettlement < 0n ||
++      window.debitVersionAtSettlement > authority.permanentDebitVersion ||
++      window.exclusionVersionAtSettlement > authority.policyExclusionVersion) {
++    return 'Refund window bindings do not match canonical settlement and authority';
++  }
++  return null;
++}
+*** Update File: packages/ledger/src/topup-settlement.ts
+@@
+-import { lockAndGetWalletAuthority } from './unused-value-authority-write';
++import { lockAndGetWalletAuthority, lockLedgerWrite } from './unused-value-authority-write';
++import { validateTopupAuthority } from './topup-authority-validation';
+@@
+ ): Promise<PostTransactionResult> {
++  // Lock the supplied wallet identities before loading mutable payment identity.
++  // This is also the exact wallet set used by the later ledger write.
++  await lockLedgerWrite(tx, {
++    type: TransactionType.TOPUP,
++    idempotencyKey: `mobile-money:TOPUP:${input.paymentId}`,
++    totalAmountLrd: input.amountLrd,
++    entries: [{ debitAccountId: input.floatWalletId, creditAccountId: input.walletId, amountLrd: input.amountLrd }],
++  });
++  await tx.$queryRaw`SELECT "id" FROM "mobile_money_payments" WHERE "id" = ${input.paymentId} FOR UPDATE`;
+@@
+-      tx.transaction.findUniqueOrThrow({ where: { id: result.transactionId } }),
++      tx.transaction.findUniqueOrThrow({ where: { id: result.transactionId }, include: { entries: { include: { debitAccount: { select: { accountType: true } } } } } }),
+@@
+-    if (
+-      currentPayment.status !== MobileMoneyPaymentStatus.SUCCEEDED ||
+-      currentPayment.settledTransactionId !== settlement.id
+-    ) {
+-      throw new LedgerValidationError(
+-        'Existing topup ledger transaction has incomplete payment state',
+-      );
+-    }
+-    if (authority.activatedAt && settlement.createdAt >= authority.activatedAt && !window) {
+-      throw new LedgerValidationError('Post-cutover topup ledger transaction has no refund window');
+-    }
++    const invalid = validateTopupAuthority({ payment: currentPayment, wallet, settlement, window,
++      authority, cutover: authority });
++    if (invalid) throw new LedgerValidationError(invalid);
+@@
+       id: payment.id,
++      userId: payment.userId,
++      provider: payment.provider,
++      providerReference: payment.providerReference,
++      direction: payment.direction,
++      phone: payment.phone,
++      amountLrd: payment.amountLrd,
+*** Update File: packages/ledger/src/unused-value-authority-write.ts
+@@
+     const resultingDebitVersion = authority.permanentDebitVersion + 1n;
++    if (authority.authorityVersion !== plan.authorityVersion) {
++      throw new LedgerValidationError('Wallet debit authority version does not match cutover');
++    }
+@@
+     const resultingExclusionVersion = authority.policyExclusionVersion + 1n;
++    if (authority.authorityVersion !== plan.authorityVersion) {
++      throw new LedgerValidationError('Wallet exclusion authority version does not match cutover');
++    }
+@@
+   const authority = await tx.walletDebitAuthority.findUniqueOrThrow({ where: { walletId } });
++  if (authority.authorityVersion !== cutover.authorityVersion) {
++    throw new LedgerValidationError('Wallet authority version does not match cutover');
++  }
+*** Update File: packages/ledger/src/unused-value-authority.ts
+@@
+ } from './unused-value-authority-write';
++import { validateTopupAuthority } from './topup-authority-validation';
+@@
+-  if (!versionsAreSequential || !exclusionVersionsAreSequential) {
++  if (authority.authorityVersion !== UNUSED_VALUE_AUTHORITY_VERSION || !versionsAreSequential || !exclusionVersionsAreSequential) {
+@@
+ async function findActiveWithdrawalHolds(
+   tx: Prisma.TransactionClient,
+   wallet: { id: string; userId: string },
++  activatedAt: Date,
+@@
+-    else malformedPaymentIds.push(payment.id);
++    else {
++      // Active operations always matter. Historical terminal corruption is
++      // outside this explicitly prospective authority unless it overlaps cutover.
++      const terminal = payment.status === MobileMoneyPaymentStatus.SUCCEEDED || payment.status === MobileMoneyPaymentStatus.FAILED;
++      const relevant = !terminal || payment.createdAt >= activatedAt || payment.updatedAt >= activatedAt ||
++        [hold, settlement, returned].some((entry) => entry && entry.createdAt >= activatedAt);
++      if (relevant) malformedPaymentIds.push(payment.id);
++    }
+@@
+   await tx.$queryRaw`SELECT "id" FROM "wallets" WHERE "id" = ${wallet.id} FOR UPDATE`;
++  await tx.$queryRaw`SELECT "id" FROM "mobile_money_payments" WHERE "id" = ${paymentId} FOR UPDATE`;
++  await tx.$queryRaw`SELECT "walletId" FROM "wallet_debit_authorities" WHERE "walletId" = ${wallet.id} FOR UPDATE`;
+@@
+   if (!currentPayment || !cutover || cutover.authorityVersion !== UNUSED_VALUE_AUTHORITY_VERSION) {
+@@
+     return result;
+   }
++  if (currentPayment.userId !== wallet.userId || wallet.accountType !== AccountType.USER_WALLET) {
++    result.reason = 'Locked payment identity no longer matches the locked wallet';
++    return result;
++  }
+@@
+-  const expectedFloat =
+-    currentPayment.provider === 'ORANGE' ? AccountType.ORANGE_FLOAT : AccountType.MTN_FLOAT;
+-  const canonicalSettlement =
+-    settlement?.type === TransactionType.TOPUP &&
+-    settlement.idempotencyKey === `mobile-money:TOPUP:${currentPayment.id}` &&
+-    settlement.totalAmountLrd === currentPayment.amountLrd &&
+-    settlement.totalAmountUsd === 0 &&
+-    settlement.entries.length === 1 &&
+-    settlement.entries[0].debitAccount.accountType === expectedFloat &&
+-    settlement.entries[0].creditAccountId === wallet.id &&
+-    settlement.entries[0].amountLrd === currentPayment.amountLrd &&
+-    settlement.entries[0].amountUsd === 0;
+-  if (!canonicalSettlement || !authority || !window) {
++  const invalid = validateTopupAuthority({ payment: currentPayment, wallet, settlement, window, authority, cutover });
++  if (invalid || !settlement || !authority || !window) {
+@@
+-      reason: 'Post-cutover TOPUP settlement, authority, or refund window is incomplete',
++      reason: invalid ?? 'Post-cutover TOPUP settlement, authority, or refund window is incomplete',
+@@
+-  const holds = await findActiveWithdrawalHolds(tx, wallet);
++  const holds = await findActiveWithdrawalHolds(tx, wallet, cutover.activatedAt);
+@@
+ export async function reconcileUnusedValueAuthority(
+   prisma: PrismaClient,
+   walletId?: string,
+ ): Promise<UnusedValueReconciliationFinding[]> {
++  if (!walletId) {
++    // Bound lock lifetime to one wallet. Keyset pagination also covers wallets
++    // missing an authority row; scanning only authority rows would hide corruption.
++    const findings: UnusedValueReconciliationFinding[] = [];
++    let cursor: string | undefined;
++    for (;;) {
++      const batch = await prisma.wallet.findMany({
++        where: { accountType: AccountType.USER_WALLET, ...(cursor ? { id: { gt: cursor } } : {}) },
++        select: { id: true }, orderBy: { id: 'asc' }, take: 100,
++      });
++      if (batch.length === 0) return findings;
++      for (const wallet of batch) findings.push(...await reconcileUnusedValueAuthority(prisma, wallet.id));
++      cursor = batch[batch.length - 1].id;
++    }
++  }
+   return prisma.$transaction(
+@@
+       const scopedWallet = walletId
+@@
+         : null;
++      if (!scopedWallet) return [];
++      await tx.$queryRaw`SELECT "id" FROM "wallets" WHERE "id" = ${walletId} FOR UPDATE`;
+@@
+       });
+       for (const payment of payments) {
++        await tx.$queryRaw`SELECT "id" FROM "mobile_money_payments" WHERE "id" = ${payment.id} FOR UPDATE`;
+@@
+-          tx.transaction.findUnique({ where: { id: payment.settledTransactionId! } }),
++          tx.transaction.findUnique({ where: { id: payment.settledTransactionId! }, include: { entries: { include: { debitAccount: { select: { accountType: true } } } } } }),
+@@
+-        if (!settlement || settlement.createdAt < cutover.activatedAt) continue;
++        const currentPayment = await tx.mobileMoneyPayment.findUniqueOrThrow({ where: { id: payment.id } });
++        const authority = authorities.find((entry) => entry.walletId === wallet?.id) ?? null;
++        if (settlement && settlement.createdAt < cutover.activatedAt) continue;
++        const invalid = wallet ? validateTopupAuthority({ payment: currentPayment, wallet, settlement, window, authority, cutover }) : 'TOPUP wallet is missing';
++        if (invalid) findings.push({ code: 'TOPUP_WINDOW_TRANSACTION_MISMATCH', walletId: wallet?.id ?? null,
++          paymentId: payment.id, transactionId: payment.settledTransactionId, reason: invalid });
++        if (!settlement) continue;
+*** End Patch

@@ -1,0 +1,167 @@
+*** Begin Patch
+*** Add File: packages/ledger/src/withdrawal-settlement.ts
++import { AccountType, MobileMoneyDirection, MobileMoneyPaymentStatus, Prisma, TransactionType } from '@prisma/client';
++import { postTransactionInTransaction } from './ledger';
++import { lockLedgerWrite } from './unused-value-authority-write';
++import { LedgerValidationError } from './validate';
++import { PostTransactionInput, PostTransactionResult } from './types';
++
++export interface PostConfirmedWithdrawalSettlementInput {
++  paymentId: string;
++  walletId: string;
++  escrowWalletId: string;
++  floatWalletId: string;
++  amountLrd: number;
++  providerEvidenceId: string;
++}
++
++/** Consumes persisted verified provider evidence; never calls a provider. */
++export async function postConfirmedWithdrawalSettlement(
++  tx: Prisma.TransactionClient,
++  input: PostConfirmedWithdrawalSettlementInput,
++): Promise<PostTransactionResult> {
++  const evidenceHint = await tx.webhookDelivery.findUnique({ where: { id: input.providerEvidenceId } });
++  if (!evidenceHint?.providerReference) throw new LedgerValidationError('Verified withdrawal provider evidence is required');
++  // Match the webhook verifier's outcome barrier before financial row locks.
++  const outcomeKey = `liberiago:payout-outcome:${evidenceHint.provider}:${evidenceHint.providerReference}`;
++  await tx.$queryRaw`SELECT pg_advisory_xact_lock(hashtextextended(${outcomeKey}, 0))`;
++  await tx.$queryRaw`SELECT "id" FROM "webhook_deliveries" WHERE "id" = ${input.providerEvidenceId} FOR UPDATE`;
++  const ledgerInput: PostTransactionInput = {
++    type: TransactionType.WITHDRAWAL,
++    idempotencyKey: `mobile-money:WITHDRAWAL:settle:${input.paymentId}`,
++    totalAmountLrd: input.amountLrd,
++    entries: [{ debitAccountId: input.escrowWalletId, creditAccountId: input.floatWalletId,
++      amountLrd: input.amountLrd, description: 'Withdrawal payout confirmed' }],
++    walletEffects: [{ classification: 'PERMANENT_DEBIT', walletId: input.walletId,
++      entryIndexes: [], reason: 'CONFIRMED_WITHDRAWAL', sourcePaymentId: input.paymentId }],
++    metadata: { providerEvidenceId: input.providerEvidenceId },
++  };
++  await lockLedgerWrite(tx, ledgerInput);
++  await tx.$queryRaw`SELECT "id" FROM "mobile_money_payments" WHERE "id" = ${input.paymentId} FOR UPDATE`;
++  const [payment, wallet, escrow, float, evidence] = await Promise.all([
++    tx.mobileMoneyPayment.findUnique({ where: { id: input.paymentId } }),
++    tx.wallet.findUnique({ where: { id: input.walletId } }),
++    tx.wallet.findUnique({ where: { id: input.escrowWalletId } }),
++    tx.wallet.findUnique({ where: { id: input.floatWalletId } }),
++    tx.webhookDelivery.findUnique({ where: { id: input.providerEvidenceId } }),
++  ]);
++  const expectedFloat = payment?.provider === 'ORANGE' ? AccountType.ORANGE_FLOAT : AccountType.MTN_FLOAT;
++  if (!payment || !wallet || !escrow || !float || !evidence ||
++      wallet.userId !== payment.userId || wallet.accountType !== AccountType.USER_WALLET ||
++      escrow.accountType !== AccountType.ESCROW || float.accountType !== expectedFloat ||
++      payment.direction !== MobileMoneyDirection.WITHDRAWAL || payment.amountLrd !== input.amountLrd ||
++      !payment.providerReference || evidence.provider !== payment.provider ||
++      evidence.providerReference !== payment.providerReference || evidence.outcome !== 'SUCCESS' ||
++      evidence.amountLrd !== payment.amountLrd || !evidence.phone ||
++      evidence.phone.replace(/\D/g, '') !== payment.phone.replace(/\D/g, '') ||
++      !evidence.signatureIdentity || !evidence.payloadHash ||
++      (evidence.status !== 'RECEIVED' && !(evidence.status === 'PROCESSED' && payment.status === 'SUCCEEDED')) ||
++      !(['PENDING', 'EXPIRED', 'SUCCEEDED'] as string[]).includes(payment.status) ||
++      (payment.status === 'SUCCEEDED' ? !payment.settledTransactionId : payment.settledTransactionId !== null)) {
++    throw new LedgerValidationError('Confirmed withdrawal does not match locked payment and verified provider evidence');
++  }
++  const [hold, returned, existing] = await Promise.all([
++    tx.transaction.findUnique({ where: { idempotencyKey: `mobile-money:WITHDRAWAL:escrow:${payment.idempotencyKey}` }, include: { entries: true } }),
++    tx.transaction.findUnique({ where: { idempotencyKey: `mobile-money:WITHDRAWAL:refund:${payment.id}` } }),
++    tx.transaction.findUnique({ where: { idempotencyKey: ledgerInput.idempotencyKey }, include: { entries: true } }),
++  ]);
++  if (!hold || returned || hold.type !== TransactionType.WITHDRAWAL ||
++      hold.totalAmountLrd !== payment.amountLrd || hold.totalAmountUsd !== 0 || hold.entries.length !== 1 ||
++      hold.entries[0].debitAccountId !== wallet.id || hold.entries[0].creditAccountId !== escrow.id ||
++      hold.entries[0].amountLrd !== payment.amountLrd || hold.entries[0].amountUsd !== 0) {
++    throw new LedgerValidationError('Confirmed withdrawal has no canonical unreturned escrow hold');
++  }
++  if (existing) {
++    if (payment.status !== 'SUCCEEDED' || payment.settledTransactionId !== existing.id ||
++        existing.type !== TransactionType.WITHDRAWAL || existing.totalAmountLrd !== payment.amountLrd ||
++        existing.totalAmountUsd !== 0 || existing.entries.length !== 1 ||
++        existing.entries[0].debitAccountId !== escrow.id || existing.entries[0].creditAccountId !== float.id ||
++        existing.entries[0].amountLrd !== payment.amountLrd || existing.entries[0].amountUsd !== 0 ||
++        (existing.metadata as Record<string, unknown> | null)?.providerEvidenceId !== input.providerEvidenceId) {
++      throw new LedgerValidationError('Existing withdrawal settlement does not bind its canonical payment and evidence');
++    }
++    return { transactionId: existing.id, idempotencyKey: existing.idempotencyKey, alreadyExists: true };
++  }
++  if (payment.status === 'SUCCEEDED') throw new LedgerValidationError('Successful withdrawal has no canonical settlement');
++  const posted = await postTransactionInTransaction(tx, ledgerInput, false, true);
++  const updated = await tx.mobileMoneyPayment.updateMany({
++    where: { id: payment.id, userId: payment.userId, provider: payment.provider,
++      providerReference: payment.providerReference, amountLrd: payment.amountLrd, phone: payment.phone,
++      direction: MobileMoneyDirection.WITHDRAWAL, status: { in: ['PENDING', 'EXPIRED'] }, settledTransactionId: null },
++    data: { status: MobileMoneyPaymentStatus.SUCCEEDED, settledTransactionId: posted.transactionId, failureReason: null },
++  });
++  if (updated.count !== 1) throw new LedgerValidationError('Withdrawal payment changed during canonical settlement');
++  return posted;
++}
+*** Update File: packages/ledger/src/ledger.ts
+@@
+   allowCanonicalTopupSettlement = false,
++  allowCanonicalWithdrawalSettlement = false,
+@@
+   validateEntries(input.entries);
++  if (!allowCanonicalWithdrawalSettlement &&
++      (input.idempotencyKey.startsWith('mobile-money:WITHDRAWAL:settle:') ||
++       input.walletEffects?.some((effect) => effect.reason === 'CONFIRMED_WITHDRAWAL'))) {
++    throw new LedgerValidationError('Confirmed withdrawal must use postConfirmedWithdrawalSettlement with verified provider evidence');
++  }
+*** Update File: packages/ledger/src/index.ts
+@@
+ export { postTopupSettlement } from './topup-settlement';
++export { postConfirmedWithdrawalSettlement } from './withdrawal-settlement';
++export type { PostConfirmedWithdrawalSettlementInput } from './withdrawal-settlement';
+*** Update File: apps/api/src/mobile-money/mobile-money-payments.service.ts
+@@
+-import { postTransaction, postTopupSettlement } from '@liberiago/ledger';
++import { postTransaction, postTopupSettlement, postConfirmedWithdrawalSettlement } from '@liberiago/ledger';
+@@
+-        await this.processWebhook(tx, provider, event);
++        await this.processWebhook(tx, provider, event, deliveryId);
+@@
+-  private async processWebhook(db: PaymentDb, provider: 'ORANGE' | 'MTN', event: WebhookEvent) {
++  private async processWebhook(db: PaymentDb, provider: 'ORANGE' | 'MTN', event: WebhookEvent, deliveryId?: string) {
+@@
+-      await this.settleWithdrawal(db, payment, event.status);
++      await this.settleWithdrawal(db, payment, event.status, deliveryId);
+@@
+   private async settleWithdrawal(
+     db: PaymentDb,
+     payment: { id: string; userId: string; amountLrd: number; provider: 'ORANGE' | 'MTN' },
+     outcome: 'SUCCESS' | 'FAILED',
++    deliveryId?: string,
+@@
+     if (outcome === 'SUCCESS') {
+-      const ledgerResult = await postTransaction(db as never, {
+-        type: TransactionType.WITHDRAWAL,
+-        idempotencyKey: `mobile-money:WITHDRAWAL:settle:${payment.id}`,
+-        totalAmountLrd: payment.amountLrd,
+-        entries: [
+-          {
+-            debitAccountId: escrow.id,
+-            creditAccountId: float.id,
+-            amountLrd: payment.amountLrd,
+-            description: 'Withdrawal payout confirmed',
+-          },
+-        ],
+-        walletEffects: [
+-          {
+-            classification: 'PERMANENT_DEBIT',
+-            walletId: wallet.id,
+-            entryIndexes: [],
+-            reason: 'CONFIRMED_WITHDRAWAL',
+-            sourcePaymentId: payment.id,
+-          },
+-        ],
+-      });
+-      await db.mobileMoneyPayment.update({
+-        where: { id: payment.id },
+-        data: {
+-          status: MobileMoneyPaymentStatus.SUCCEEDED,
+-          settledTransactionId: ledgerResult.transactionId,
+-          failureReason: null,
+-        },
++      if (!deliveryId) throw new ConflictException('Verified provider delivery is required for withdrawal settlement');
++      await postConfirmedWithdrawalSettlement(db as Prisma.TransactionClient, {
++        paymentId: payment.id, walletId: wallet.id, escrowWalletId: escrow.id,
++        floatWalletId: float.id, amountLrd: payment.amountLrd, providerEvidenceId: deliveryId,
+       });
+*** End Patch

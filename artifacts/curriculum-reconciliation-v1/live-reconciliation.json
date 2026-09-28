@@ -1,0 +1,50 @@
+{
+  "mission": "LIBERIALEARN LIVE CURRICULUM INVENTORY + RECONCILIATION V1",
+  "goalStatus": "BLOCKED_LIVE_READ_UNAVAILABLE",
+  "readOnly": true,
+  "liveEvidence": {
+    "supabase": {
+      "production": "UNAVAILABLE: Supabase pooler returns FATAL ENOTFOUND tenant/user postgres.bnphuinpvgpmebcsvmsp not found",
+      "staging": "UNAVAILABLE: Supabase pooler returns FATAL ENOTFOUND tenant/user postgres.yonpfzjczoffhrgibxkz not found",
+      "writesAttempted": false
+    },
+    "vercel": {
+      "deploymentListing": "REACHABLE; latest listed production deployments are Ready",
+      "productionHome": "200",
+      "healthz": "503 {\"status\":\"degraded\",\"db\":\"error\"}",
+      "health": "503 {\"status\":\"unhealthy\",\"checks\":{\"database\":\"error\",\"migrations\":\"error\"}}",
+      "coverageRoute": "307 redirect to authentication"
+    },
+    "git": {
+      "pr145": "OPEN",
+      "currentOriginMain": "49da52d9b19a049d7ee2a4af1a60304a2bcbf79c",
+      "postMergeMainSha": null
+    }
+  },
+  "repositoryEvidence": {
+    "scopeCells": 228,
+    "acquiredMoeArchiveSourceBackedCells": 96,
+    "registeredExecutableReleases": 1,
+    "registeredReleaseIds": ["lr-moe-g4-math-fractions-2026.1"],
+    "registeredReleaseMoeApproval": "NOT_CLAIMED",
+    "archiveReviewState": "ACQUIRED_UNREVIEWED",
+    "persistedExecutableReleaseModel": false,
+    "note": "The repository explicitly separates source authority, LiberiaLearn review, MOE approval, and executable release. Source provenance is not approval."
+  },
+  "liveInventory": {
+    "status": "NOT_OBTAINED",
+    "counts": {
+      "gradeSubjectCells": null,
+      "objectives": null,
+      "lessons": null,
+      "assessments": null,
+      "textbooksResources": null,
+      "labsSimulations": null,
+      "releases": null,
+      "orphanedContent": null
+    },
+    "perCell": "NOT_GENERATED because live SELECT access failed before any record was read"
+  },
+  "labEngineAudit": "See lab-engine-audit.json. Repository runtime exists and is reusable, but live lab counts and bindings remain unavailable.",
+  "nextMission": "Restore Supabase project/tenant access and rerun scripts/live-curriculum-reconciliation-v1.ts with the production read-only environment, then join live VirtualLab/LabSession/evidence/mastery records to this repository lab-engine audit. Do not import, author, publish, or release until the live per-cell report is complete."
+}

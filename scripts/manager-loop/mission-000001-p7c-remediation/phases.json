@@ -1,0 +1,20 @@
+[
+  {
+    "sequence": 1,
+    "title": "Triage the stashed P7C work",
+    "objective": "Produce an evidence-backed inventory of the stashed P7C changes, their current repository status, and the remaining work needed for a later implementation phase.",
+    "acceptanceCriteria": [
+      {
+        "type": "command",
+        "label": "inventory file exists and is non-empty",
+        "command": "node -e \"const fs=require('fs'); const p='docs/ops/p7c-remediation-stash-inventory.md'; process.exit(fs.existsSync(p) && fs.statSync(p).size > 0 ? 0 : 1)\""
+      }
+    ],
+    "checklist": [
+      { "label": "Diff against the stash parent reviewed file-by-file" },
+      { "label": "Statistical-correctness changes in qualityOperations.ts documented with before and after behavior" },
+      { "label": "Operational dashboard file availability checked against current repository history" },
+      { "label": "Audit synthesis cross-checked against the canonical consolidated backlog" }
+    ]
+  }
+]
