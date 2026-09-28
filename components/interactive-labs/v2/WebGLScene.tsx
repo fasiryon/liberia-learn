@@ -6,6 +6,7 @@ import type { FidelityState } from "@/lib/interactive-labs/v2/fidelity/types";
 import { buildRenderList, type RenderList } from "@/lib/interactive-labs/v2/fidelity/renderList";
 import { approachCamera, constrainCamera, easeDisplayState, flowParticles, presetPose, viewMatrix, type CameraPose } from "@/lib/interactive-labs/v2/fidelity/presentation";
 import { shouldDowngrade } from "@/lib/interactive-labs/v2/fidelity/profiles";
+import { downgradeFrameBudgetMs } from "@/lib/interactive-labs/v2/production/budgets";
 import { IDENTITY, multiply, perspective, transformPoint, type Mat4, type Vec3 } from "@/lib/interactive-labs/v2/fidelity/math";
 import { buildMesh } from "./meshes";
 import { pickNearest, type ScenePick } from "./picking";
@@ -96,7 +97,7 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
     const draw = (now: number) => {
       const dt = Math.min(0.1, (now - last) / 1000); last = now;
       frameTimes.push(dt * 1000); if (frameTimes.length > 120) frameTimes.shift();
-      if (!downgraded && profile !== "LOW" && shouldDowngrade(frameTimes)) { downgraded = true; callbacks.current.onDowngrade("performance"); }
+      if (!downgraded && shouldDowngrade(frameTimes, downgradeFrameBudgetMs(profile))) { downgraded = true; callbacks.current.onDowngrade("performance"); }
       const current = stateRef.current, motionless = callbacks.current.reducedMotion;
       if (spec && current.fidelity) displayRef.current = easeDisplayState(spec, displayRef.current ?? current.fidelity, current.fidelity, dt, motionless);
       const list = buildRenderList({ definition, state: current, profile, displayFidelity: displayRef.current });

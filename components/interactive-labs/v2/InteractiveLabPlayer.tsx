@@ -1,6 +1,6 @@
 "use client";
 import dynamic from "next/dynamic";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { getInteractiveLabDefinition } from "@/lib/interactive-labs/v2/registry";
 import { initializeLab, acceptLabAction } from "@/lib/interactive-labs/v2/kernel";
 import { resolveCapabilityProfile } from "@/lib/interactive-labs/v2/capabilities";
@@ -24,15 +24,37 @@ function usePrefersReducedMotion(): boolean {
   return reduced;
 }
 
-export function InteractiveLabPlayer({ labId = "g4-solid-figures", override }: { labId?: string; override?: CapabilityProfile }) {
+/**
+ * Review-only rendering of an unapproved lab for the Interactive Lab Production Team. Only the dev-gated
+ * /lab-review harness passes this; learner routes never do. It starts from a replayed scenario state,
+ * skips the intro, and exposes a dispatcher for deterministic capture. It records no evidence.
+ */
+export type LabReviewPreview = {
+  initialState: LabState;
+  onReady?: (api: { dispatch: (action: LabAction) => { ok: boolean; reason?: string } }) => void;
+};
+
+export function InteractiveLabPlayer({ labId = "g4-solid-figures", override, reviewPreview }: { labId?: string; override?: CapabilityProfile; reviewPreview?: LabReviewPreview }) {
   const definition = getInteractiveLabDefinition(labId);
-  const [state, setState] = useState<LabState>(() => initializeLab(definition ?? getInteractiveLabDefinition("g4-solid-figures")!));
+  const [state, setState] = useState<LabState>(() => reviewPreview ? structuredClone(reviewPreview.initialState) : initializeLab(definition ?? getInteractiveLabDefinition("g4-solid-figures")!));
   const [profile, setProfile] = useState<CapabilityProfile>(() => resolveCapabilityProfile({ requested: override, supportsWebGL: typeof window !== "undefined" && !!window.WebGLRenderingContext }));
   const [notice, setNotice] = useState<string | null>(null);
   const reducedMotion = usePrefersReducedMotion();
-  const [intro, setIntro] = useState(true);
+  const [intro, setIntro] = useState(!reviewPreview);
   const checks = useMemo(() => definition?.checks ?? [], [definition]);
-  if (!definition || definition.reviewState !== "APPROVED" || definition.approvalState !== "APPROVED") return <p className="p-6">This lab is not available.</p>;
+  const latest = useRef(state);
+  useEffect(() => { latest.current = state; }, [state]);
+  const reviewDispatch = useCallback((action: LabAction) => {
+    if (!definition) return { ok: false, reason: "Unknown lab." };
+    const result = acceptLabAction(definition, latest.current, action);
+    if (!result.ok) return { ok: false, reason: result.reason };
+    latest.current = result.state;
+    setState(result.state);
+    return { ok: true };
+  }, [definition]);
+  const onReviewReady = reviewPreview?.onReady;
+  useEffect(() => { onReviewReady?.({ dispatch: reviewDispatch }); }, [onReviewReady, reviewDispatch]);
+  if (!definition || (!reviewPreview && (definition.reviewState !== "APPROVED" || definition.approvalState !== "APPROVED"))) return <p className="p-6">This lab is not available.</p>;
 
   const dispatch = (action: LabAction) => setState((current) => { const result = acceptLabAction(definition, current, action); return result.ok ? result.state : current; });
   const activeCheck = checks.find((check) => !state.completedChecks.includes(check.id));

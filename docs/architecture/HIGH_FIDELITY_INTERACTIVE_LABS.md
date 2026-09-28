@@ -86,6 +86,8 @@ LEARNING OBJECTIVE · WHY INTERACTIVE · SCENE · COMPONENTS · INTERNAL STRUCTU
 
 The gate also checks referential integrity: assemblies, slots, exploded offsets, cutaways, pose variables, flow endpoints, camera presets against their constraints, and guided camera references. It checks that variable bounds are valid and each initial value is on its step grid. It requires at least one bound direct-manipulation check.
 
+New labs are produced and reviewed by the [Interactive Lab Production Team](./INTERACTIVE_LAB_PRODUCTION_TEAM.md) (pedagogy → experience → simulation → build → three review rounds on real captures → governance).
+
 Do not require 3D where it adds no instructional value. Before authoring a scene, answer WHY INTERACTIVE. If manipulation teaches nothing, use a simpler activity.
 
 ## Reference implementations

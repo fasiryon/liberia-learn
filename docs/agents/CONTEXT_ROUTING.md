@@ -12,6 +12,7 @@ reading list.
 | Curriculum, grading, or educational authority | The relevant curriculum or governance document under `docs/` and, when generating artifacts, the applicable prompt under `docs/internal/agents/` |
 | Deployment, infrastructure, or live operations | The specific deployment or `docs/ops/` runbook; authorization is still required for mutation |
 | AI prompt or provider routing | The relevant prompt/provider contract under `lib/ai/` or `docs/` |
+| Building or reviewing a high-fidelity interactive lab | `docs/architecture/INTERACTIVE_LAB_PRODUCTION_TEAM.md`, then `docs/architecture/HIGH_FIDELITY_INTERACTIVE_LABS.md`; run `/lab-production` |
 
 Read linked supporting documents only when the selected route requires them.
 Do not load historical plans (`docs/roadmaps/MASTER_EXECUTION_PLAN.md`,
