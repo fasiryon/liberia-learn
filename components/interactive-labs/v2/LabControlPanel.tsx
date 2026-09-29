@@ -6,7 +6,7 @@ import { formatVariable, stepVariable } from "@/lib/interactive-labs/v2/fidelity
 
 type Props = { definition: InteractiveLabDefinition<LabState>; state: LabState; activeCheck: LearningCheck | undefined; dispatch: (action: LabAction) => void };
 
-const chip = (active: boolean) => `rounded-full px-3 py-1.5 text-xs font-semibold transition ${active ? "bg-cyan-300 text-slate-950" : "bg-white/10 text-slate-200 hover:bg-white/15"}`;
+const chip = (active: boolean) => `min-h-11 rounded-full px-3 py-1.5 text-xs font-semibold transition ${active ? "bg-cyan-300 text-slate-950" : "bg-white/10 text-slate-200 hover:bg-white/15"}`;
 const MODES: Exclude<LabMode, "COMPLETE">[] = ["GUIDED", "EXPLORE", "CHALLENGE", "ASSESSMENT"];
 
 /**
@@ -47,7 +47,7 @@ export function LabControlPanel({ definition, state, activeCheck, dispatch }: Pr
         {activeCheck?.id === "cube-vertices" && (
           <div className="mt-4 grid grid-cols-4 gap-2" aria-label="Cube vertices">
             <span className="col-span-4 text-xs text-slate-400">Tap each corner:</span>
-            {Array.from({ length: 8 }, (_, index) => <button key={index} type="button" onClick={() => dispatch({ type: "highlight-feature", objectId: "cube", feature: "vertex", index })} className={`rounded-lg px-2 py-2 text-sm ${state.highlightedFeatures.cube?.indices.includes(index) ? "bg-cyan-300 text-slate-950" : "bg-white/10 text-white"}`}>{index + 1}</button>)}
+            {Array.from({ length: 8 }, (_, index) => <button key={index} type="button" onClick={() => dispatch({ type: "highlight-feature", objectId: "cube", feature: "vertex", index })} className={`min-h-11 min-w-11 rounded-lg px-2 py-2 text-sm ${state.highlightedFeatures.cube?.indices.includes(index) ? "bg-cyan-300 text-slate-950" : "bg-white/10 text-white"}`}>{index + 1}</button>)}
           </div>
         )}
 
@@ -69,7 +69,7 @@ export function LabControlPanel({ definition, state, activeCheck, dispatch }: Pr
         {target?.kind === "assemble" && spec && fidelity && (() => {
           const assembly = spec.assemblies.find((candidate) => candidate.id === target.assemblyId)!;
           const placements = fidelity.placements[assembly.id] ?? {};
-          if (!fidelity.disassembled.includes(assembly.id)) return <button type="button" onClick={() => dispatch({ type: "clear-assembly", assemblyId: assembly.id })} className="mt-4 rounded-2xl bg-amber-300 px-4 py-2 text-sm font-bold text-slate-950">Take the {assembly.label.toLowerCase().replace(/ faces$/, "")} apart</button>;
+          if (!fidelity.disassembled.includes(assembly.id)) return <button type="button" onClick={() => dispatch({ type: "clear-assembly", assemblyId: assembly.id })} className="mt-4 min-h-11 rounded-2xl bg-amber-300 px-4 py-2 text-sm font-bold text-slate-950">Take the {assembly.label.toLowerCase().replace(/ faces$/, "")} apart</button>;
           const placed = new Set(Object.values(placements));
           const loose = assembly.componentIds.filter((id) => !placed.has(id));
           const face = (id: string) => spec.components.find((component) => component.id === id)!;
@@ -78,7 +78,7 @@ export function LabControlPanel({ definition, state, activeCheck, dispatch }: Pr
               <div>
                 <p className="text-xs text-slate-400">1. Pick up a face</p>
                 <div className="mt-2 flex flex-wrap gap-2">{loose.map((id) => { const c = face(id), [w, h] = [c.transform.scale[0], c.transform.scale[1]]; return (
-                  <button key={id} type="button" aria-pressed={heldFace === id} onClick={() => setHeldFace(heldFace === id ? null : id)} className={`flex flex-col items-center gap-1 rounded-xl p-2 text-[11px] ${heldFace === id ? "bg-cyan-300 text-slate-950" : "bg-white/10 text-white"}`}>
+                  <button key={id} type="button" aria-pressed={heldFace === id} onClick={() => setHeldFace(heldFace === id ? null : id)} className={`flex min-h-11 flex-col items-center gap-1 rounded-xl p-2 text-[11px] ${heldFace === id ? "bg-cyan-300 text-slate-950" : "bg-white/10 text-white"}`}>
                     <svg width={w * 16} height={h * 16} aria-hidden="true"><rect width={w * 16} height={h * 16} rx="2" fill={c.material.color} /></svg>{c.label}
                   </button>); })}{loose.length === 0 && <span className="text-xs text-emerald-300">All faces placed.</span>}</div>
               </div>
@@ -86,8 +86,8 @@ export function LabControlPanel({ definition, state, activeCheck, dispatch }: Pr
                 <p className="text-xs text-slate-400">2. Put it in a slot</p>
                 <div className="mt-2 grid grid-cols-2 gap-2">{assembly.slots!.map((slot) => { const current = placements[slot.id]; return (
                   <div key={slot.id} className="flex items-center gap-1">
-                    <button type="button" disabled={!heldFace} onClick={() => { if (heldFace) { dispatch({ type: "place-component", assemblyId: assembly.id, slotId: slot.id, componentId: heldFace }); setHeldFace(null); } }} className="flex-1 rounded-lg border border-dashed border-white/20 px-2 py-1.5 text-left text-xs text-slate-200 disabled:opacity-60">{slot.label}: <b>{current ? face(current).label : "empty"}</b></button>
-                    {current && <button type="button" aria-label={`Remove ${face(current).label} from ${slot.label}`} onClick={() => dispatch({ type: "place-component", assemblyId: assembly.id, slotId: slot.id, componentId: null })} className="rounded-lg bg-white/10 px-2 py-1.5 text-xs">×</button>}
+                    <button type="button" disabled={!heldFace} onClick={() => { if (heldFace) { dispatch({ type: "place-component", assemblyId: assembly.id, slotId: slot.id, componentId: heldFace }); setHeldFace(null); } }} className="min-h-11 flex-1 rounded-lg border border-dashed border-white/20 px-2 py-1.5 text-left text-xs text-slate-200 disabled:opacity-60">{slot.label}: <b>{current ? face(current).label : "empty"}</b></button>
+                    {current && <button type="button" aria-label={`Remove ${face(current).label} from ${slot.label}`} onClick={() => dispatch({ type: "place-component", assemblyId: assembly.id, slotId: slot.id, componentId: null })} className="grid h-11 w-11 shrink-0 place-items-center rounded-lg bg-white/10 text-xs">×</button>}
                   </div>); })}</div>
               </div>
             </div>
@@ -110,9 +110,9 @@ export function LabControlPanel({ definition, state, activeCheck, dispatch }: Pr
                   <div key={variable.id}>
                     <label htmlFor={`var-${variable.id}`} className="flex justify-between text-xs text-slate-300"><span>{variable.label}</span><span className="font-mono text-cyan-200">{formatVariable(variable, value)}</span></label>
                     <div className="mt-1 flex items-center gap-2">
-                      <button type="button" aria-label={`Decrease ${variable.label}`} onClick={() => dispatch({ type: "set-variable", variableId: variable.id, value: stepVariable(variable, value, -1) })} className="rounded-lg bg-white/10 px-2 text-white">−</button>
-                      <input id={`var-${variable.id}`} type="range" min={variable.min} max={variable.max} step={variable.step} value={value} onChange={(event) => dispatch({ type: "set-variable", variableId: variable.id, value: Number(event.target.value) })} className="w-full accent-cyan-300" />
-                      <button type="button" aria-label={`Increase ${variable.label}`} onClick={() => dispatch({ type: "set-variable", variableId: variable.id, value: stepVariable(variable, value, 1) })} className="rounded-lg bg-white/10 px-2 text-white">+</button>
+                      <button type="button" aria-label={`Decrease ${variable.label}`} onClick={() => dispatch({ type: "set-variable", variableId: variable.id, value: stepVariable(variable, value, -1) })} className="grid h-11 w-11 shrink-0 place-items-center rounded-lg bg-white/10 text-white">−</button>
+                      <input id={`var-${variable.id}`} type="range" min={variable.min} max={variable.max} step={variable.step} value={value} onChange={(event) => dispatch({ type: "set-variable", variableId: variable.id, value: Number(event.target.value) })} className="h-11 w-full accent-cyan-300" />
+                      <button type="button" aria-label={`Increase ${variable.label}`} onClick={() => dispatch({ type: "set-variable", variableId: variable.id, value: stepVariable(variable, value, 1) })} className="grid h-11 w-11 shrink-0 place-items-center rounded-lg bg-white/10 text-white">+</button>
                     </div>
                   </div>
                 );
@@ -130,7 +130,7 @@ export function LabControlPanel({ definition, state, activeCheck, dispatch }: Pr
                   <label htmlFor={`explode-${view.assemblyId}`} className="flex justify-between text-xs text-slate-300"><span>Explode: {label}</span><span className="font-mono">{Math.round(factor * 100)}%</span></label>
                   <div className="mt-1 flex items-center gap-2">
                     <button type="button" onClick={() => dispatch({ type: "set-explode", assemblyId: view.assemblyId, factor: factor > 0 ? 0 : 1 })} className={chip(factor > 0)}>{factor > 0 ? "Close" : "Explode"}</button>
-                    <input id={`explode-${view.assemblyId}`} type="range" min={0} max={1} step={0.05} value={factor} onChange={(event) => dispatch({ type: "set-explode", assemblyId: view.assemblyId, factor: Number(event.target.value) })} className="w-full accent-cyan-300" />
+                  <input id={`explode-${view.assemblyId}`} type="range" min={0} max={1} step={0.05} value={factor} onChange={(event) => dispatch({ type: "set-explode", assemblyId: view.assemblyId, factor: Number(event.target.value) })} className="h-11 w-full accent-cyan-300" />
                   </div>
                 </div>
               );

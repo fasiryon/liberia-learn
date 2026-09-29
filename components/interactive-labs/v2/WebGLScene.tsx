@@ -22,6 +22,7 @@ type Props = {
   dispatch: (action: LabAction) => void;
   onPick: (pick: ScenePick) => void;
   onDowngrade: (reason: "context" | "performance") => void;
+  allowPerformanceDowngrade?: boolean;
 };
 
 const vertexShader = `attribute vec3 position; attribute vec3 normal; attribute vec3 vcolor; uniform mat4 mvp; uniform mat4 model; uniform float pointSize; uniform float useVertexColor; varying vec3 vNormal; varying vec3 vWorld; varying vec3 vertexColor;
@@ -45,7 +46,7 @@ const LIGHTING = { full: 3, simplified: 2, minimal: 1, none: 0 } as const;
 
 function rgb(value: string): [number, number, number] { const n = Number.parseInt(value.replace("#", ""), 16); return [(n >> 16 & 255) / 255, (n >> 8 & 255) / 255, (n & 255) / 255]; }
 
-export function WebGLScene({ definition, state, profile, reducedMotion, traceFlowId, dispatch, onPick, onDowngrade }: Props) {
+export function WebGLScene({ definition, state, profile, reducedMotion, traceFlowId, dispatch, onPick, onDowngrade, allowPerformanceDowngrade = true }: Props) {
   const canvas = useRef<HTMLCanvasElement>(null);
   const labels = useRef<HTMLDivElement>(null);
   const motionStatus = useRef<HTMLDivElement>(null);
@@ -123,13 +124,20 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
 
     const fallbackPose: CameraPose = { target: [0, 0, 0], distance: 11, yaw: 0, pitch: 0 };
     let camera: CameraPose | null = null;
-    let frame = 0, last = performance.now(), labelTick = 0;
+    let frame = 0, last = performance.now(), labelTick = 0, reviewClockSeen = false;
+    let lastReviewTime: number | undefined;
     const frameTimes: number[] = [];
     let downgraded = false;
     const draw = (now: number) => {
-      const dt = Math.min(0.1, (now - last) / 1000); last = now;
+      const reviewTime = (window as Window & { __labReviewClockSeconds?: number }).__labReviewClockSeconds;
+      if (reviewTime !== undefined && !reviewClockSeen) { labelTick = Number.NEGATIVE_INFINITY; reviewClockSeen = true; }
+      const dt = reviewTime === undefined
+        ? Math.min(0.1, (now - last) / 1000)
+        : lastReviewTime === undefined ? 0 : Math.min(0.1, Math.max(0, reviewTime - lastReviewTime));
+      last = now;
+      if (reviewTime !== undefined) lastReviewTime = reviewTime;
       frameTimes.push(dt * 1000); if (frameTimes.length > 120) frameTimes.shift();
-      if (!downgraded && shouldDowngrade(frameTimes, downgradeFrameBudgetMs(profile))) { downgraded = true; callbacks.current.onDowngrade("performance"); }
+      if (allowPerformanceDowngrade && !downgraded && shouldDowngrade(frameTimes, downgradeFrameBudgetMs(profile))) { downgraded = true; callbacks.current.onDowngrade("performance"); }
       const current = stateRef.current, motionless = callbacks.current.reducedMotion;
       if (spec && current.fidelity) displayRef.current = easeDisplayState(spec, displayRef.current ?? current.fidelity, current.fidelity, dt, motionless);
       const list = buildRenderList({ definition, state: current, profile, displayFidelity: displayRef.current });
@@ -143,7 +151,7 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
       gl.clearColor(0.035, 0.055, 0.11, 0); gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
       const viewProj = multiply(perspective(definition.scene.camera.fov, w / h, 0.1, 100), viewMatrix(camera));
       frameRef.current = { list, viewProj, width: el.clientWidth, height: el.clientHeight };
-      const t = now / 1000;
+      const t = reviewTime ?? now / 1000;
       // Opaque first, then translucent without depth writes so cut-away glass and faded context blend correctly.
       const ordered = [...list.items].sort((a, b) => Number(a.alpha < 0.9) - Number(b.alpha < 0.9));
       for (const item of ordered) {
@@ -171,8 +179,9 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
       if (list.markers.length) drawPoints(list.markers.map((marker) => marker.position), gl.POINTS, MARKER_COLOR, 1, (list.budget.pulseHighlights && !motionless ? 12 + Math.sin(t * 5) * 3 : 12) * dpr, viewProj);
 
       // Labels are DOM text (sharp at any DPR) repositioned a few times per second rather than every frame.
-      if (labels.current && now - labelTick > 120) {
-        labelTick = now;
+      const labelNow = reviewTime ?? now;
+      if (labels.current && labelNow - labelTick > 120) {
+        labelTick = labelNow;
         const status = list.motions.filter((motion) => motion.active).map((motion) => `${motion.label}: turning`).join(". ");
         if (motionStatus.current && motionStatus.current.textContent !== status) motionStatus.current.textContent = status;
         const project = (p: Vec3) => { const c = transformPoint(viewProj, p); return c[2] > 1 ? null : { x: (c[0] * 0.5 + 0.5) * el.clientWidth, y: (0.5 - c[1] * 0.5) * el.clientHeight }; };
@@ -193,7 +202,7 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
     };
     frame = requestAnimationFrame(draw);
     return () => { cancelAnimationFrame(frame); meshes.forEach((mesh) => { gl.deleteBuffer(mesh.position); gl.deleteBuffer(mesh.normal); }); gl.deleteBuffer(lineBuffer); Object.values(flowBuffers).forEach((buffers) => { gl.deleteBuffer(buffers.positions); gl.deleteBuffer(buffers.colors); }); gl.deleteProgram(program); };
-  }, [definition, profile]);
+  }, [definition, profile, allowPerformanceDowngrade]);
 
   const pick = (clientX: number, clientY: number, target: HTMLElement) => {
     const { list, viewProj, width, height } = frameRef.current; if (!list) return;

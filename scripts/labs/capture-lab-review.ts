@@ -27,6 +27,7 @@ import { execSync } from "node:child_process";
 import { mkdirSync, writeFileSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { chromium, type Browser, type BrowserContext, type Page } from "@playwright/test";
+import sharp from "sharp";
 import { getInteractiveLabDefinition } from "../../lib/interactive-labs/v2/registry";
 import { getLabReviewScenarioSet } from "../../lib/interactive-labs/v2/review/referenceScenarios";
 import { LAB_REVIEW_PROFILES, validateScenarioSet, type LabReviewScenario } from "../../lib/interactive-labs/v2/review/scenarios";
@@ -85,16 +86,42 @@ async function detectRenderer(page: Page): Promise<RendererInfo> {
 }
 
 async function openScenario(page: Page, baseUrl: string, labId: string, scenario: string, profile: CapabilityProfile, hold: boolean, fakeClock: boolean) {
-  // Paused from the first instant: no animation frame ever runs on wall-clock time, so captures repeat exactly.
-  if (fakeClock) { await page.clock.install({ time: new Date("2026-01-01T00:00:00Z") }); await page.clock.pauseAt(new Date("2026-01-01T00:00:01Z")); }
+  // Pin the browser clock before navigation so no animation or adaptive-quality sample depends on wall time.
+  if (fakeClock) {
+    await page.clock.install({ time: new Date("2026-01-01T00:00:00Z") });
+    // The Next.js dev indicator is not part of the lab and changes between runs.
+    await page.addInitScript(`document.addEventListener("DOMContentLoaded", () => { const style = document.createElement("style"); style.textContent = "nextjs-portal, [role='status'].fixed { display: none !important; }"; document.head.appendChild(style); });`);
+  }
   const url = `${baseUrl}/lab-review/${encodeURIComponent(labId)}?scenario=${encodeURIComponent(scenario)}&profile=${profile}${hold ? "&hold=1" : ""}`;
-  const response = await page.goto(url, { waitUntil: "domcontentloaded" });
+  const response = await page.goto(url, { waitUntil: "domcontentloaded", timeout: 120_000 });
   if (!response || response.status() === 404) throw new Error(`${url} returned ${response?.status() ?? "no response"}. Is the dev server running with LAB_REVIEW_HARNESS=1?`);
   const error = page.locator("[data-lab-review-error]");
   const scene = page.locator("[data-lab-review-ready] canvas, [data-lab-review-ready] svg[role=group]").first();
   await Promise.race([scene.waitFor({ timeout: 90_000 }), error.waitFor({ timeout: 90_000 })]);
   if (await error.count()) throw new Error(await error.innerText());
-  if (fakeClock) await page.clock.runFor(SETTLE_MS);
+  if (fakeClock) {
+    await page.waitForFunction(() => Boolean((window as unknown as { __labReview?: unknown }).__labReview), null, { timeout: 30_000 });
+    // Let hydration and deferred renderer effects settle while the installed clock advances normally.
+    await page.clock.runFor(SETTLE_MS);
+    if (await page.locator("[data-lab-review-ready] canvas").count()) {
+      await page.waitForFunction(() => {
+        const canvas = document.querySelector<HTMLCanvasElement>("[data-lab-review-ready] canvas");
+        return !!canvas && canvas.width > 300;
+      }, null, { timeout: 30_000 });
+    } else {
+      await page.waitForFunction(() => Boolean((window as Window & { __labReviewClockReady?: boolean }).__labReviewClockReady), null, { timeout: 30_000 });
+    }
+    // Playwright's clock freezes Date, but browser performance/rAF timestamps can remain tied to wall time.
+    // Install this only after the player has built its canvas; the virtual time then advances with Date during runFor.
+    await page.evaluate(() => {
+      const origin = Date.now();
+      const nativeRequestAnimationFrame = window.requestAnimationFrame.bind(window);
+      Object.defineProperty(performance, "now", { configurable: true, value: () => Date.now() - origin });
+      window.requestAnimationFrame = (callback: FrameRequestCallback) => nativeRequestAnimationFrame(() => callback(performance.now()));
+      (window as Window & { __labReviewClockSeconds?: number }).__labReviewClockSeconds = 0;
+    });
+    await page.clock.runFor(SETTLE_MS);
+  }
   else await page.waitForTimeout(SETTLE_MS);
   return {
     notice: await page.locator("[data-lab-review-ready] [role=status]").allInnerTexts(),
@@ -138,9 +165,13 @@ async function probeInteraction(page: Page) {
   const targets = await page.evaluate(() => {
     const nodes = Array.from(document.querySelectorAll<HTMLElement | SVGElement>("[data-lab-review-ready] :is(button, a[href], input, select, textarea, [role=button], [tabindex]:not([tabindex='-1']))"));
     return nodes.map((node) => {
-      const box = node.getBoundingClientRect();
+      // FALLBACK_2D component groups can have a larger invisible SVG stroke for touch. Measure
+      // that pointer target instead of the component's visible silhouette.
+      const hitTarget = node.querySelector?.("[data-lab-touch-target]") ?? node;
+      const box = hitTarget.getBoundingClientRect();
+      const touchStroke = hitTarget.hasAttribute("data-lab-touch-target") ? Number.parseFloat(getComputedStyle(hitTarget).strokeWidth) : 0;
       const name = node.getAttribute("aria-label") || (node as HTMLElement).innerText?.trim() || node.getAttribute("title") || "";
-      return { tag: node.tagName.toLowerCase(), role: node.getAttribute("role"), name: name.slice(0, 80), width: Math.round(box.width), height: Math.round(box.height), visible: box.width > 0 && box.height > 0 };
+      return { tag: node.tagName.toLowerCase(), role: node.getAttribute("role"), name: name.slice(0, 80), width: Math.round(box.width + touchStroke), height: Math.round(box.height + touchStroke), visible: box.width > 0 && box.height > 0 };
     });
   });
   const focusOrder: { name: string; tag: string; outline: string }[] = [];
@@ -219,17 +250,37 @@ async function main() {
         const frames: { file: string; label: string }[] = [];
         const shoot = async (index: number) => {
           const file = path.join(out, `${base}${suffix}__motion-${String(index).padStart(2, "0")}.png`);
-          await motionPage.locator("[data-lab-review-ready] section").first().screenshot({ path: file });
+          // Flush one browser frame at the held review time; advancing Playwright's virtual clock
+          // alone can leave the previous SVG compositor frame visible to a clipped screenshot.
+          await motionPage.clock.runFor(34);
+          const section = motionPage.locator("[data-lab-review-ready] section").first();
+          const bounds = await section.boundingBox();
+          if (!bounds) throw new Error(`Review player has no bounds for ${scenario.id} frame ${index}.`);
+          const pageImage = await motionPage.screenshot({ fullPage: true });
+          const left = Math.max(0, Math.floor(bounds.x)), top = Math.max(0, Math.floor(bounds.y));
+          const width = Math.max(1, Math.ceil(bounds.width)), height = Math.max(1, Math.ceil(bounds.height));
+          await sharp(pageImage).extract({ left, top, width, height }).png().toFile(file);
           frames.push({ file, label: `t=${index * scenario.motion!.intervalMs}ms` });
           captures.push({ file, scenario: scenario.id, storyboardScene: scenario.storyboardScene, stage: scenario.stage, profile, viewport, kind: "motion-frame", reducedMotion, virtualMs: index * scenario.motion!.intervalMs });
         };
-        await shoot(0);
         const dispatched = await motionPage.evaluate(() => {
-          const review = (window as unknown as { __labReview?: { finalAction: unknown; dispatch: (action: unknown) => { ok: boolean; reason?: string } } }).__labReview;
-          return review?.finalAction ? review.dispatch(review.finalAction) : { ok: false, reason: "No review dispatcher or final action." };
+          (window as Window & { __labReviewClockSeconds?: number }).__labReviewClockSeconds = 0;
+          const reviewWindow = window as Window & { __labReviewStateRevision?: number; __labReview?: { finalAction: unknown; dispatch: (action: unknown) => { ok: boolean; reason?: string } } };
+          const review = reviewWindow.__labReview;
+          const stateRevision = reviewWindow.__labReviewStateRevision ?? 0;
+          return review?.finalAction ? { ...review.dispatch(review.finalAction), stateRevision } : { ok: false, reason: "No review dispatcher or final action.", stateRevision };
         });
         if (!dispatched.ok) throw new Error(`Motion action for ${scenario.id} was rejected: ${dispatched.reason}`);
-        for (let index = 1; index < scenario.motion.frames; index += 1) { await motionPage.clock.runFor(scenario.motion.intervalMs); await shoot(index); }
+        await motionPage.waitForFunction((revision) => ((window as Window & { __labReviewStateRevision?: number }).__labReviewStateRevision ?? 0) > revision, dispatched.stateRevision, { timeout: 30_000 });
+        // Let React commit the action and restart its display-state effect while review time remains at t=0.
+        // The extra virtual-clock frames make effect startup independent of page load and profile timing.
+        await motionPage.clock.runFor(150);
+        await shoot(0);
+        for (let index = 1; index < scenario.motion.frames; index += 1) {
+          await motionPage.evaluate((seconds) => { (window as Window & { __labReviewClockSeconds?: number }).__labReviewClockSeconds = seconds; }, index * scenario.motion.intervalMs / 1000);
+          await motionPage.clock.runFor(scenario.motion.intervalMs);
+          await shoot(index);
+        }
         const sheet = path.join(out, `${base}${suffix}__motion-sheet.png`);
         await contactSheet(browser, frames, sheet);
         captures.push({ file: sheet, scenario: scenario.id, storyboardScene: scenario.storyboardScene, stage: scenario.stage, profile, viewport, kind: "motion-sheet", reducedMotion });
