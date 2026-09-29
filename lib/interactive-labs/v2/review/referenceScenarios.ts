@@ -94,7 +94,7 @@ export const HYDROPOWER_REVIEW_SCENARIOS: LabReviewScenarioSet = {
     hydroScenario("hydro-variable-rainy-full", "S4 Rainy season, full capability", "variable", "S4", [rainy], true),
     hydroScenario("hydro-variable-flood-cap", "S4 Flood water spills", "variable", "S4", [flowFlood], true),
     hydroScenario("hydro-variable-dry-drop", "S5 Dry season capability drop", "variable", "S5", [dry], true),
-    hydroScenario("hydro-guided-overload-beat", "S6 Guided overload beat: rainy season, three units", "guided", "S6", [rainy, units(3), { type: "guided-step", index: 4 }], true),
+    hydroScenario("hydro-guided-overload-beat", "S6 Guided overload beat: rainy season, three units", "guided", "S6", [rainy, units(3), feeder("feederHomes", 0), feeder("feederShops", 0), { type: "guided-step", index: 4 }], true),
     hydroScenario("hydro-fault-dry-all-units", "S5 Dry flow with four units", "fault", "S5", [dry, units(4)]),
     hydroScenario("hydro-fault-zero-units-dark", "S6 No units, no supply", "fault", "S6", [units(0)], true),
     hydroScenario("hydro-fault-overload-trip", "S6 Rainy season overload with three units", "fault", "S6", [rainy, feeder("feederHospital", 1), feeder("feederHomes", 1), feeder("feederShops", 1), units(3)], true),

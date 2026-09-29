@@ -69,6 +69,7 @@ export function evaluateHydro(input: SimulationInput) {
 }
 
 function explain(r: ReturnType<typeof evaluateHydro>): ExplanationLine[] {
+  const hydraulicWatts = Math.round(1000 * 9.81 * r.usableFlow * 23.1 * 0.903);
   const lines: ExplanationLine[] = [
     { id: "context", text: "Mount Coffee is a real run-of-river hydropower plant on the Saint Paul River, about 30 km from Monrovia. This model is not to scale." },
     { id: "season", text: `River flow: ${r.riverFlow} m³/s (${seasonLabel(r.riverFlow)}). The headpond stays at the same level. What changes is how much water arrives each second.` },
@@ -83,7 +84,7 @@ function explain(r: ReturnType<typeof evaluateHydro>): ExplanationLine[] {
   if (r.statuses.includes("generating")) lines.push({ id: "constant-speed", text: "Every unit that is making power turns at the same steady speed: 142.86 turns per minute. More water gives more power, not a faster turbine." });
   lines.push({ id: "water-returns", text: "The water is not used up. After the turbine it flows out through the tailrace and back into the Saint Paul River." });
   lines.push({ id: "demand", text: `The city is asking for ${r.demandMW} MW. (Hospital 6 MW, homes 48 MW, shops 32 MW are model numbers, not real ones.)` });
-  if (r.tripped && r.outputMW > 0) lines.push({ id: "trip-overload", text: `The city asked for ${r.demandMW} MW but the plant can make only ${Math.round(r.outputMW)} MW. Protection switched the supply off and the units stopped, so the whole city went dark at once. Lights do not just get dimmer. Switch some feeders off; when the rest fits, operators switch the supply back on.` });
+  if (r.tripped && r.outputMW > 0) lines.push({ id: "trip-overload", text: `The city asked for ${r.demandMW} MW but the plant can make only ${Math.round(r.outputMW)} MW. In this simplified model, protection trips the city supply and stops the modeled units, so the whole city goes dark at once. Real plants can trip breakers or turbines in different ways, and restart steps depend on the cause. Lights do not just get dimmer. Switch some feeders off; when demand fits again, the model lets operators restore supply.` });
   else if (r.tripped) lines.push({ id: "no-supply", text: "No unit is making power, so no electricity reaches the city. Electricity is not stored in the dam or the wires." });
   else if (r.demandMW > 0) lines.push({ id: "supplied", text: `The plant is supplying the ${r.demandMW} MW the city asks for. Every feeder that is on gets full power.` });
   else lines.push({ id: "no-demand", text: "All feeders are off, so no electricity is sent to the city." });
@@ -91,7 +92,7 @@ function explain(r: ReturnType<typeof evaluateHydro>): ExplanationLine[] {
   lines.push(
     { id: "chain", text: "Energy chain: stored (potential) energy of the high water → movement (kinetic) energy of falling water → turning turbine and shaft → electrical energy in the generator → light (and some heat) in the city. At each step some energy becomes heat and sound; none is destroyed." },
     { id: "grade8-rule", text: "More water each second, or a higher drop, gives more power." },
-    { id: "power-equation", text: `P = ρ·g·Q·H·η = 1000 × 9.81 × ${r.usableFlow} × 23.1 × 0.903 ≈ ${r.outputMW.toFixed(1)} MW (η = 0.903 is a model assumption).`, minGrade: 9 },
+    { id: "power-equation", text: `P ≈ ρ·g·Q·H·η = 1000 × 9.81 × ${r.usableFlow} × 23.1 × 0.903 = ${hydraulicWatts.toLocaleString("en-US")} W; ${hydraulicWatts.toLocaleString("en-US")} W ÷ 1,000,000 W/MW ≈ ${r.outputMW.toFixed(1)} MW (η = 0.903 is a model assumption).`, minGrade: 9 },
     { id: "dynamo", text: "In the generator, the spinning rotor's magnet moves past coils of wire and makes a current, the same idea as a bicycle dynamo.", minGrade: 9 },
     { id: "safety-limits", text: "In class you would also pour the water yourself and feel the dynamo push back when the lamp lights. Never go near a real dam, spillway, intake or power line. The water and electricity there can kill." },
   );

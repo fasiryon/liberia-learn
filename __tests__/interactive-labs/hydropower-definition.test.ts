@@ -21,6 +21,16 @@ describe("Mount Coffee hydropower design stage", () => {
     }
   });
 
+  it("begins the guided overload beat below capability before the learner switches on demand", () => {
+    const step = hydropowerDefinition.fidelity?.guidedPath.find((candidate) => candidate.id === "overload");
+    expect(step?.prompt).toContain("keep the hospital on, then switch on homes and shops one at a time");
+    const scenario = HYDROPOWER_REVIEW_SCENARIOS.scenarios.find((candidate) => candidate.id === "hydro-guided-overload-beat");
+    expect(scenario).toBeDefined();
+    const replay = replayReviewScenario(hydropowerDefinition, scenario!);
+    if ("reason" in replay) throw new Error(replay.reason);
+    expect(replay.state.fidelity?.variables).toMatchObject({ riverFlow: 430, unitsOnline: 3, feederHospital: 1, feederHomes: 0, feederShops: 0 });
+  });
+
   it("keeps LOW render draw count within the locked 40 draw budget", () => {
     for (const scenario of HYDROPOWER_REVIEW_SCENARIOS.scenarios) {
       const result = replayReviewScenario(hydropowerDefinition, scenario);

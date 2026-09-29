@@ -97,7 +97,19 @@ async function openScenario(page: Page, baseUrl: string, labId: string, scenario
   if (!response || response.status() === 404) throw new Error(`${url} returned ${response?.status() ?? "no response"}. Is the dev server running with LAB_REVIEW_HARNESS=1?`);
   const error = page.locator("[data-lab-review-error]");
   const scene = page.locator("[data-lab-review-ready] canvas, [data-lab-review-ready] svg[role=group]").first();
-  await Promise.race([scene.waitFor({ timeout: 90_000 }), error.waitFor({ timeout: 90_000 })]);
+  try {
+    await Promise.race([scene.waitFor({ timeout: 90_000 }), error.waitFor({ timeout: 90_000 })]);
+  } catch (cause) {
+    const diagnostic = await page.evaluate(() => ({
+      url: location.href,
+      title: document.title,
+      ready: Boolean(document.querySelector("[data-lab-review-ready]")),
+      error: document.querySelector("[data-lab-review-error]")?.textContent?.trim() ?? null,
+      scene: Boolean(document.querySelector("[data-lab-review-ready] canvas, [data-lab-review-ready] svg[role=group]")),
+      text: document.body.innerText.slice(0, 400),
+    })).catch(() => null);
+    throw new Error(`Review scene did not render: ${JSON.stringify(diagnostic)}; cause=${cause instanceof Error ? cause.message : String(cause)}`);
+  }
   if (await error.count()) throw new Error(await error.innerText());
   if (fakeClock) {
     await page.waitForFunction(() => Boolean((window as unknown as { __labReview?: unknown }).__labReview), null, { timeout: 30_000 });

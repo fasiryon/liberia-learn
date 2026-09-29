@@ -114,7 +114,7 @@ const spec: HighFidelitySpec = {
     { id: "trace", prompt: "Follow the water from the headpond, through a turbine, and back to the river.", cameraPresetId: "water-path", highlightIds: ["headpond", "penstock-1", "tailrace"] },
     { id: "machine", prompt: "Open the powerhouse section and find the generator in unit 3.", cameraPresetId: "unit-bench", highlightIds: ["u3-generator"] },
     { id: "season", prompt: "Compare dry season with rainy season. What changes when less water arrives?", cameraPresetId: "valley" },
-    { id: "overload", prompt: "With three units in the rainy season, switch feeders until demand exceeds what the plant can make.", cameraPresetId: "grid-city" },
+    { id: "overload", prompt: "With three units in the rainy season, keep the hospital on, then switch on homes and shops one at a time. When does demand exceed the plant's 66 MW capacity?", cameraPresetId: "grid-city" },
     { id: "repair", prompt: "Rebuild unit 3 in order: runner, shaft, generator.", cameraPresetId: "unit-bench", highlightIds: ["u3-runner", "u3-shaft", "u3-generator"] },
     { id: "explore", prompt: "Explore how river flow, units online and feeder demand work together.", cameraPresetId: "valley" },
   ],

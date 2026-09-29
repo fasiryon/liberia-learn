@@ -42,6 +42,14 @@ describe("Mount Coffee hydropower model (spec fixtures)", () => {
     expect(ids(out)).not.toContain("constant-speed");
   });
 
+  it("shows the W-to-MW conversion and bounds the trip sequence as a model simplification", () => {
+    const rainy = run(430, 4, "HMS").explanation.find((line) => line.id === "power-equation")?.text;
+    expect(rainy).toMatch(/W ÷ 1,000,000 W\/MW ≈ 88\.0 MW/);
+    const tripped = run(49, 4, "HMS").explanation.find((line) => line.id === "trip-overload")?.text;
+    expect(tripped).toContain("In this simplified model");
+    expect(tripped).toContain("Real plants can trip breakers or turbines in different ways");
+  });
+
   it("F03 challenge pass: dry, hospital only — stable, three idle units", () => {
     const out = run(49, 4, "H");
     expect(q(out)).toMatchObject({ outputMW: DRY, demandMW: 6, tripped: 0, gridStableWithPriority: 1, u1PowerMW: DRY, u2PowerMW: 0 });
