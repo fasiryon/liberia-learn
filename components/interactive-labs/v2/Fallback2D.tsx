@@ -55,7 +55,7 @@ export function Fallback2D({ definition, state, reducedMotion, traceFlowId, disp
           );
         })}
         {list.markers.map((marker) => <g key={marker.id}><circle cx={marker.position[0]} cy={-marker.position[1]} r={0.16} fill={marker.color} />{marker.label && <text x={marker.position[0]} y={-marker.position[1] + 0.09} textAnchor="middle" fontSize={0.2} fill="#0f172a">{marker.label}</text>}</g>)}
-        {list.motions.filter((motion) => motion.active).map((motion) => <g key={motion.id} role="img" aria-label={`${motion.label}: turning`} transform={`translate(${motion.center[0]} ${-motion.center[1]})`}><title>{motion.label}: turning</title><text textAnchor="middle" dominantBaseline="central" fontSize={0.58} fontWeight={700} fill="#f0abfc">↻</text></g>)}
+        {list.motions.filter((motion) => motion.active).map((motion) => <g key={motion.id} role="img" aria-label={`${motion.label}: turning`} transform={`translate(${motion.center[0]} ${-motion.center[1]})`}><title>{`${motion.label}: turning`}</title><text textAnchor="middle" dominantBaseline="central" fontSize={0.58} fontWeight={700} fill="#f0abfc">↻</text></g>)}
         {traceFlowId && list.flows.filter((flow) => flow.id === traceFlowId).flatMap((flow) => flow.nodes.filter((node) => node.traceable).map((node) => {
           const order = flow.traced.indexOf(node.id);
           const pick: ScenePick = { kind: "node", flowId: flow.id, nodeId: node.id };

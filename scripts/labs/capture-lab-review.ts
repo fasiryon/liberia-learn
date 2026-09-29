@@ -112,7 +112,12 @@ async function openScenario(page: Page, baseUrl: string, labId: string, scenario
   }
   if (await error.count()) throw new Error(await error.innerText());
   if (fakeClock) {
-    await page.waitForFunction(() => Boolean((window as unknown as { __labReview?: unknown }).__labReview), null, { timeout: 30_000 });
+    try {
+      await page.waitForFunction(() => Boolean((window as unknown as { __labReview?: unknown }).__labReview), null, { timeout: 30_000 });
+    } catch (cause) {
+      const diagnostic = await page.evaluate(() => ({ url: location.href, body: document.body.innerText.slice(0, 500), ready: Boolean(document.querySelector("[data-lab-review-ready]")), error: document.querySelector("[data-lab-review-error]")?.textContent ?? null })).catch(() => null);
+      throw new Error(`Review dispatcher did not initialize: ${JSON.stringify(diagnostic)}; cause=${cause instanceof Error ? cause.message : String(cause)}`);
+    }
     // Let hydration and deferred renderer effects settle while the installed clock advances normally.
     await page.clock.runFor(SETTLE_MS);
     if (await page.locator("[data-lab-review-ready] canvas").count()) {
@@ -121,7 +126,12 @@ async function openScenario(page: Page, baseUrl: string, labId: string, scenario
         return !!canvas && canvas.width > 300;
       }, null, { timeout: 30_000 });
     } else {
-      await page.waitForFunction(() => Boolean((window as Window & { __labReviewClockReady?: boolean }).__labReviewClockReady), null, { timeout: 30_000 });
+      try {
+        await page.waitForFunction(() => Boolean((window as Window & { __labReviewClockReady?: boolean }).__labReviewClockReady), null, { timeout: 30_000 });
+      } catch (cause) {
+        const diagnostic = await page.evaluate(() => ({ url: location.href, clockReady: (window as Window & { __labReviewClockReady?: boolean }).__labReviewClockReady, body: document.body.innerText.slice(0, 500), error: document.querySelector("[data-lab-review-error]")?.textContent ?? null })).catch(() => null);
+        throw new Error(`Review clock did not initialize: ${JSON.stringify(diagnostic)}; cause=${cause instanceof Error ? cause.message : String(cause)}`);
+      }
     }
     // Playwright's clock freezes Date, but browser performance/rAF timestamps can remain tied to wall time.
     // Install this only after the player has built its canvas; the virtual time then advances with Date during runFor.
@@ -283,7 +293,12 @@ async function main() {
           return review?.finalAction ? { ...review.dispatch(review.finalAction), stateRevision } : { ok: false, reason: "No review dispatcher or final action.", stateRevision };
         });
         if (!dispatched.ok) throw new Error(`Motion action for ${scenario.id} was rejected: ${dispatched.reason}`);
-        await motionPage.waitForFunction((revision) => ((window as Window & { __labReviewStateRevision?: number }).__labReviewStateRevision ?? 0) > revision, dispatched.stateRevision, { timeout: 30_000 });
+        try {
+          await motionPage.waitForFunction((revision) => ((window as Window & { __labReviewStateRevision?: number }).__labReviewStateRevision ?? 0) > revision, dispatched.stateRevision, { timeout: 30_000 });
+        } catch (cause) {
+          const diagnostic = await motionPage.evaluate(() => ({ url: location.href, revision: (window as Window & { __labReviewStateRevision?: number }).__labReviewStateRevision, body: document.body.innerText.slice(0, 500) })).catch(() => null);
+          throw new Error(`Motion action did not update the review state: ${JSON.stringify(diagnostic)}; cause=${cause instanceof Error ? cause.message : String(cause)}`);
+        }
         // Let React commit the action and restart its display-state effect while review time remains at t=0.
         // The extra virtual-clock frames make effect startup independent of page load and profile timing.
         await motionPage.clock.runFor(150);

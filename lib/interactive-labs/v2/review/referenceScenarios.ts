@@ -88,7 +88,8 @@ export const HYDROPOWER_REVIEW_SCENARIOS: LabReviewScenarioSet = {
     hydroScenario("hydro-guided-meet-to-water", "S1 Meet then move to water", "guided", "S1-S2", [{ type: "guided-step", index: 1 }], true),
     hydroScenario("hydro-guided-trace-partial", "S2 Trace begins", "guided", "S2", [{ type: "guided-step", index: 1 }, { type: "trace-node", flowId: "water-u1", nodeId: "headpond" }]),
     hydroScenario("hydro-guided-name-chain", "S7 Name the energy chain", "guided", "S7", [{ type: "guided-step", index: 2 }]),
-    hydroScenario("hydro-process-water-starts", "S2 Water starts through unit 1", "process", "S2", [dry], true),
+    // Begin in rainy flow so the held final dry-flow action always changes state for the motion capture.
+    hydroScenario("hydro-process-water-starts", "S2 Water starts through unit 1", "process", "S2", [rainy, dry], true),
     hydroScenario("hydro-cutaway-powerhouse", "S3 Powerhouse section", "cutaway", "S3", [{ type: "camera-preset", presetId: "powerhouse-section" }, { type: "set-cutaway", cutawayId: "powerhouse-section" }], true),
     hydroScenario("hydro-exploded-unit", "S3 Unit 3 stack exploded", "exploded", "S3", [{ type: "camera-preset", presetId: "unit-bench" }, { type: "set-explode", assemblyId: "unit-3", factor: 1 }], true),
     hydroScenario("hydro-variable-rainy-full", "S4 Rainy season, full capability", "variable", "S4", [rainy], true),
