@@ -62,7 +62,7 @@ const flows: HighFidelitySpec["flows"] = [
       node(`water-u${unit}-tailrace`, "Tailrace", [UNIT_X[unit - 1], -1.0, 0.8], "tailrace"),
       node("river-downstream", "Saint Paul River", [1.0, -2.0, 2.0], "river-downstream"),
     ] })),
-  { id: "spillway", label: "Spillway", medium: "water", sourceNodeId: "spill-in", destinationNodeId: "spill-out", closedLoop: false, visibleByDefault: true, color: "#cffafe", nodes: [node("spill-in", "Spillway gate", [1, 2.4, -1], "spillway-gate"), node("spill-out", "Downstream river", [1, -1.5, 1], "river-downstream")] },
+  { id: "spillway", label: "Spillway", medium: "water", sourceNodeId: "spill-in", destinationNodeId: "spill-out", closedLoop: false, visibleByDefault: true, color: "#67e8f9", nodes: [node("spill-in", "Spillway gate", [1, 2.2, -0.7], "spillway-gate"), node("spill-face", "Dam face", [1, 1.15, 0.72]), node("spill-drop", "Spillway channel", [1, -0.1, 0.92]), node("spill-out", "Downstream river", [1, -1.5, 1.8], "river-downstream")] },
   { id: "power-line", label: "Transmission line", medium: "light", sourceNodeId: "power-source", destinationNodeId: "switchyard-node", closedLoop: false, visibleByDefault: true, color: "#facc15", nodes: [node("power-source", "Generator", [3, 0.2, 0], "switchyard"), node("switchyard-node", "Switchyard", [3.1, 0.2, 0], "switchyard")] },
   ...["hospital", "homes", "shops"].map((name, i) => ({ id: `feeder-${name}`, label: `${name} feeder`, medium: "light" as const, sourceNodeId: `feeder-${name}-in`, destinationNodeId: `feeder-${name}-out`, closedLoop: false, visibleByDefault: true, color: "#facc15", nodes: [node(`feeder-${name}-in`, "Switchyard", [3.1, 0.2, 0], "switchyard"), node(`feeder-${name}-out`, name, [5 + i * 1.3, 0.35, 0], `city-${name}`)] })),
 ];

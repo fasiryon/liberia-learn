@@ -120,7 +120,7 @@ describe("Mount Coffee hydropower design stage", () => {
     const spillway = list.flows.find((flow) => flow.id === "spillway");
     expect(spillway?.active).toBe(true);
     expect(list.quantities.spillFlow).toBeGreaterThan(0);
-    expect(spillway?.points).toHaveLength(2);
+    expect(spillway?.points).toHaveLength(4);
   });
 
   it("omits removed cutaway solids from the SVG fallback", () => {
