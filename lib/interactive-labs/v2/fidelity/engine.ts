@@ -31,15 +31,17 @@ export function initialFidelityState(spec: HighFidelitySpec): FidelityState {
 }
 
 export function assemblyOf(spec: HighFidelitySpec, componentId: string) {
-  return spec.assemblies.find((assembly) => assembly.componentIds.includes(componentId)) ?? null;
+  return spec.assemblies.find((assembly) => assembly.componentIds.includes(componentId) || assembly.rootComponentId === componentId) ?? null;
 }
 
 /** An open assembly renders its components instead of its root object. */
 export function isAssemblyOpen(spec: HighFidelitySpec, state: FidelityState, assemblyId: string): boolean {
   const assembly = spec.assemblies.find((candidate) => candidate.id === assemblyId);
   if (!assembly) return false;
-  if (!assembly.rootObjectId) return true;
+  if (!assembly.rootObjectId && !assembly.rootComponentId) return true;
   if ((state.explode[assemblyId] ?? 0) > 0 || state.disassembled.includes(assemblyId)) return true;
+  const cutaway = spec.cutaways.find((candidate) => candidate.id === state.activeCutawayId);
+  if (cutaway?.revealsComponentIds.some((id) => assembly.componentIds.includes(id))) return true;
   return spec.poseTransitions.some((pose) => pose.assemblyId === assemblyId && (state.variables[pose.variableId] ?? 0) > 0);
 }
 
@@ -50,8 +52,10 @@ export function isComponentRevealed(spec: HighFidelitySpec, state: FidelityState
   if (component.layerId && state.hiddenLayerIds.includes(component.layerId)) return false;
   const cutaway = spec.cutaways.find((candidate) => candidate.id === state.activeCutawayId);
   if (cutaway?.removesComponentIds.includes(componentId)) return false;
-  if (component.internal && !cutaway?.revealsComponentIds.includes(componentId)) return false;
   const assembly = assemblyOf(spec, componentId);
+  if (assembly?.rootComponentId === componentId) return !isAssemblyOpen(spec, state, assembly.id);
+  const rootBackedAssemblyOpen = !!assembly && (!!assembly.rootObjectId || !!assembly.rootComponentId) && isAssemblyOpen(spec, state, assembly.id);
+  if (component.internal && !cutaway?.revealsComponentIds.includes(componentId) && !rootBackedAssemblyOpen) return false;
   return !assembly || isAssemblyOpen(spec, state, assembly.id);
 }
 

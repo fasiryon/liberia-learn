@@ -53,6 +53,8 @@ export type ComponentAssemblyDefinition = {
   id: string;
   label: string;
   rootObjectId?: string;
+  /** Component shown when a component-based assembly is closed. */
+  rootComponentId?: string;
   componentIds: string[];
   /** Slots make the assembly buildable: a component sits at the slot transform when placed. */
   slots?: AssemblySlot[];

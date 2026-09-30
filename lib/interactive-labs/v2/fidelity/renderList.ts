@@ -79,7 +79,10 @@ export function buildRenderList(input: { definition: InteractiveLabDefinition<La
   const markers: RenderMarker[] = [];
   const isolatedId = fidelity?.isolatedId ?? null;
   const guided = spec && fidelity && (input.guidedHighlights ?? state.mode === "GUIDED") ? spec.guidedPath[fidelity.guidedStepIndex]?.highlightIds ?? [] : [];
-  const openRoots = new Set(spec && display ? spec.assemblies.filter((assembly) => assembly.rootObjectId && isAssemblyOpen(spec, display, assembly.id)).map((assembly) => assembly.rootObjectId!) : []);
+  const openRoots = new Set<string>();
+  if (spec && display) for (const assembly of spec.assemblies) if (isAssemblyOpen(spec, display, assembly.id)) {
+    if (assembly.rootObjectId) openRoots.add(assembly.rootObjectId);
+  }
   // An explicit isolation wins; otherwise opening a solid (explode, net, take apart) brings it into focus and fades the rest.
   const focusOf = (id: string, rootId?: string) => isolatedId ? isolatedId === id || (!!rootId && isolatedId === rootId) : openRoots.size === 0 || (!!rootId && openRoots.has(rootId));
 
@@ -110,13 +113,15 @@ export function buildRenderList(input: { definition: InteractiveLabDefinition<La
   for (const component of spec.components) {
     if (component.detail === "decor" && budget.meshDetail === "low") continue;
     const assembly = assemblyOf(spec, component.id);
+    if (assembly?.rootComponentId === component.id && isAssemblyOpen(spec, display, assembly.id)) continue;
     const rootObject = assembly?.rootObjectId ? definition.scene.objects.find((object) => object.id === assembly.rootObjectId) : undefined;
     if (rootObject && !openRoots.has(rootObject.id)) continue;
     if (component.layerId && fidelity.hiddenLayerIds.includes(component.layerId)) continue;
     const removed = !!cutaway?.removesComponentIds.includes(component.id);
     if (removed && !budget.shaderClipping) continue;
     // Opening an assembly by explosion or disassembly exposes its internal parts too.
-    if (component.internal && !cutaway?.revealsComponentIds.includes(component.id) && !(assembly && isAssemblyOpen(spec, display, assembly.id))) continue;
+    const rootBackedAssemblyOpen = !!assembly && (!!assembly.rootObjectId || !!assembly.rootComponentId) && isAssemblyOpen(spec, display, assembly.id);
+    if (component.internal && !cutaway?.revealsComponentIds.includes(component.id) && !rootBackedAssemblyOpen) continue;
     const inFocus = focusOf(component.id, rootObject?.id ?? assembly?.id);
     if (!inFocus && !budget.fadeContext) continue;
     const rootMatrix = rootObject ? multiply(translate(...rootObject.transform.position), rotate(...objectRotation(state, rootObject.id, rootObject.transform.rotation))) : IDENTITY;

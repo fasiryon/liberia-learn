@@ -78,6 +78,7 @@ export function validateHighFidelityDefinition(definition: InteractiveLabDefinit
   }
   for (const assembly of spec.assemblies) {
     if (assembly.rootObjectId && !objectIds.includes(assembly.rootObjectId)) errors.push(`assembly_root_unknown:${assembly.id}`);
+    if (assembly.rootComponentId && !known(assembly.rootComponentId)) errors.push(`assembly_root_component_unknown:${assembly.id}`);
     for (const id of assembly.componentIds) if (!known(id)) errors.push(`assembly_component_unknown:${assembly.id}:${id}`);
     for (const slot of assembly.slots ?? []) {
       if (!assembly.componentIds.includes(slot.initialComponentId)) errors.push(`slot_initial_unknown:${slot.id}`);

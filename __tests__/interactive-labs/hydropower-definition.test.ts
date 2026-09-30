@@ -66,6 +66,16 @@ describe("Mount Coffee hydropower design stage", () => {
     if ("reason" in exploded) throw new Error(exploded.reason);
     const list = buildRenderList({ definition: hydropowerDefinition, state: exploded.state, profile: "LOW" });
     expect(list.items.map((item) => item.id)).toEqual(expect.arrayContaining(["u3-runner", "u3-shaft", "u3-generator"]));
+    expect(list.items.map((item) => item.id)).not.toContain("unit-3");
+    const stackCenters = ["u3-runner", "u3-shaft", "u3-generator"].map((id) => list.items.find((item) => item.id === id)!.center[1]).sort((a, b) => a - b);
+    expect(stackCenters[1] - stackCenters[0]).toBeGreaterThan(0.8);
+    expect(stackCenters[2] - stackCenters[1]).toBeGreaterThan(0.8);
+
+    const overview = replayReviewScenario(hydropowerDefinition, HYDROPOWER_REVIEW_SCENARIOS.scenarios.find((scenario) => scenario.id === "hydro-overview")!);
+    if ("reason" in overview) throw new Error(overview.reason);
+    const overviewList = buildRenderList({ definition: hydropowerDefinition, state: overview.state, profile: "LOW" });
+    expect(overviewList.items.map((item) => item.id)).toContain("unit-3");
+    expect(overviewList.items.map((item) => item.id)).not.toContain("u3-generator");
 
     const challenge = hydropowerDefinition.fidelity!;
     expect(challenge.authoring.challenge).toContain("keep the hospital supplied");

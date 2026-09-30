@@ -91,10 +91,10 @@ const spec: HighFidelitySpec = {
     offlineFallback: "Procedural geometry and local rules only; no remote assets; FALLBACK_2D supports all controls and checks.",
   },
   components,
-  assemblies: [{ id: "unit-3", label: "Unit 3 machine", componentIds: [...UNIT3_STACK], slots: [
-    { id: "slot-runner", label: "Runner position", accepts: "runner", transform: tr([0.9, -0.25, 0.1], [1, 1, 1]), initialComponentId: "u3-runner" },
-    { id: "slot-shaft", label: "Shaft position", accepts: "shaft", transform: tr([0.9, 0.05, 0.1], [1, 1, 1]), initialComponentId: "u3-shaft" },
-    { id: "slot-generator", label: "Generator position", accepts: "generator", transform: tr([0.9, 0.48, 0.1], [1, 1, 1]), initialComponentId: "u3-generator" },
+  assemblies: [{ id: "unit-3", label: "Unit 3 machine", rootComponentId: "unit-3", componentIds: [...UNIT3_STACK], slots: [
+    { id: "slot-runner", label: "Runner position", accepts: "runner", transform: tr([0.9, -0.25, 0.1], [0.32, 0.18, 0.32]), initialComponentId: "u3-runner" },
+    { id: "slot-shaft", label: "Shaft position", accepts: "shaft", transform: tr([0.9, 0.05, 0.1], [0.09, 0.36, 0.09]), initialComponentId: "u3-shaft" },
+    { id: "slot-generator", label: "Generator position", accepts: "generator", transform: tr([0.9, 0.48, 0.1], [0.34, 0.28, 0.34]), initialComponentId: "u3-generator" },
   ], dependencies: [{ from: "u3-runner", to: "u3-shaft", label: "turns the" }, { from: "u3-shaft", to: "u3-generator", label: "drives the" }] }],
   exploded: [{ assemblyId: "unit-3", cameraPresetId: "unit-bench", offsets: { "u3-runner": [0, -1.05, 0.85], "u3-shaft": [0, 0, 1.05], "u3-generator": [0, 1.05, 0.85] } }],
   cutaways: [{ id: "powerhouse-section", label: "Open the powerhouse section", plane: { normal: [0, 0, 1], offset: 0 }, removesComponentIds: ["powerhouse"], revealsComponentIds: [...UNIT3_STACK], cameraPresetId: "powerhouse-section" }],
