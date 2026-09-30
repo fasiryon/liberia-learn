@@ -109,7 +109,7 @@ const spec: HighFidelitySpec = {
   motions: [1, 2, 3, 4].map((unit) => ({ id: `unit-${unit}-spin`, label: `Unit ${unit} rotation`, componentIds: [`unit-${unit}`, `unit-${unit}-marker`, ...(unit === 3 ? [...UNIT3_STACK] : [])], pivot: [UNIT_X[unit - 1], -0.15, 0.1] as [number, number, number], axis: "y" as const, rpm: SYNCHRONOUS_RPM, symmetryOrder: 1, activeWhen: { componentId: `unit-${unit}`, statuses: ["generating"] } })),
   flows,
   camera: { defaultPresetId: "valley", presets: [
-    { id: "valley", label: "Whole valley", target: [0.8, 0.7, 0], distance: 15, yaw: -0.2, pitch: 0.16 },
+    { id: "valley", label: "Whole valley", target: [0.8, 0.7, 0], distance: 18, yaw: -0.2, pitch: 0.16 },
     { id: "water-path", label: "Water route", target: [-1.3, 0.7, 0], distance: 8, yaw: 0.15, pitch: 0.2 },
     { id: "powerhouse-section", label: "Powerhouse section", target: [0.3, 0.2, 0.1], distance: 7, yaw: 0.2, pitch: 0.1 },
     { id: "unit-bench", label: "Unit 3 bench", target: [0.9, 0.2, 0.1], distance: 5, yaw: 0.2, pitch: 0.1 },
