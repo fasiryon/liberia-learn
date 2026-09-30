@@ -14,7 +14,18 @@ Objective: proposed `hydropower-cause-and-effect` — explain how river flow, av
 - Science follow-up: overview P0 resolved. All four unit water paths visibly return through the common tailrace to the Saint Paul River in WebGL and FALLBACK_2D. No new overview science finding. Dry-season, overload/trip, cutaway, repair, assessment and motion states remain unreviewed.
 - Visual follow-up: the former right-edge white slab now reads as separate city structures and remains within scene bounds. The mobile explanation panel shows “Scroll this panel for more details”; the still supports discoverability, while live scroll behavior remains untested. Distance, tower and Homes labels are separated; fallback halos remain clear.
 - Interaction follow-up: automated overview probe reports zero visible targets below 44 px for HIGH/FALLBACK_2D on desktop/mobile. FALLBACK_2D trace targets are 65×65 desktop and 53×53 mobile. Three heuristic “unnamed” controls are River flow, Units online and Explode sliders; each has an associated DOM label. No live input, keyboard, guided-task, challenge, assessment or scroll test was run.
-- Overall Round 1 remains OPEN because evidence and reviews cover only the overview, not process, fault, cutaway, guided, challenge, assessment or motion states.
+- Overall Round 1 remains OPEN because the full 23-scenario matrix predates later fixes, and the selected correction recaptures do not cover every scenario or live input.
+
+### Round 1 focused correction rechecks
+
+- Full baseline recapture at `853dbc96`: eight still-only profile/viewport directories, 23 scenarios each (184 stills). It exposed the seeded challenge starting already met, assessment previews out of order, an incorrectly framed exploded stack, mobile cutaway label clipping, fallback 2D label collisions, and an S7 capture that showed the machine task instead of the energy chain.
+- Correction set at `8a5f2573`: `artifacts/lab-review/mount-coffee-hydropower/1.0.0/round-1-8a5f2573-corrections/`, 40 stills across five selected scenarios, four profiles and two viewports. Visual review confirms the exploded stack is readable and the S7 task matches its title. Science review confirms the challenge-start state is unmet and its status is consistent with the synthetic model.
+- Final wording and repair-state set at `cdf990e5`: `.../round-1-cdf990e5-final-corrections/`, 16 stills for S7 and assessment repair across all profiles/viewports. S7 explicitly names gravitational potential energy and kinetic energy; the explanation panel presents the same chain. Assessment repair is the next task and no longer carries success feedback from the prior check.
+- Assembly-copy set at `3fd19aee`: `.../round-1-3fd19aee-repair-copy/`, eight repair stills across all profiles/viewports. The control says “Pick up a part” / “All parts placed,” which works for the runner, shaft and generator.
+- Remaining visual findings: some peripheral labels clip around the LOW mobile powerhouse cutaway; the Fallback 2D assessment capture still clips a transmission-tower label at the scene edge. The central exploded stack is readable. These P2 findings remain open.
+- Interaction review used replay assertions and seeded stills. It did not exercise live touch, keyboard input, active assessment completion or scrolling. Reduced-motion stills also cannot prove turbine animation. The latest correction sets are composition/label evidence only from SwiftShader software rendering.
+- No P0 was identified in these focused rechecks. Round 1 remains OPEN: the latest source has not been recaptured across all 23 scenarios and all profiles/viewports, the two P2 label findings remain, and live interaction evidence is missing.
+
 ## Round 2 — not run
 No reviewer verdict is recorded.
 
