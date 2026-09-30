@@ -34,6 +34,12 @@ Objective: proposed `hydropower-cause-and-effect` — explain how river flow, av
 - A new full 184-image recapture attempt at `round-1-ba3c05c2-full-stills-probe-perf` did not complete; only two images were written before the local Node processes disappeared. Do not use that incomplete set as evidence. A repeatable cold dev-route compilation bottleneck remains. The focused correction manifests are SwiftShader software rendering and support composition/labels only.
 - Round 1 remains OPEN. Live keyboard/touch/task completion, a complete latest-source matrix, and the final WebGL flood visibility review remain outstanding.
 
+### Latest focused verification
+
+- Science reviewer rechecked `round-1-a6caa9ad-spillway-cues/` (eight stills, four profiles × desktop/mobile, reduced motion, SwiftShader). The cyan spillway trail is visible in HIGH/STANDARD/LOW and clearer in FALLBACK_2D; the prior flood visibility P1 is closed. The stills show placement/state, not animated water movement.
+- `e604f1a2` widened valley framing; `e09cb4ee` refined the target while preserving scene scale. The eight-image `round-1-e09cb4ee-final-camera-fit/` shows pylons in frame and no cutaway slab. A fresh visual review says several fallback desktop labels (Intake, Unit 1/2 housing, Generator, Switchyard) remain crowded (P2).
+- Latest production finding statuses are in `production.json`. Round 1 remains OPEN because the full latest-source 184-still matrix did not complete and live interaction checks remain unperformed.
+
 ## Round 2 — not run
 No reviewer verdict is recorded.
 
