@@ -26,6 +26,14 @@ Objective: proposed `hydropower-cause-and-effect` — explain how river flow, av
 - Interaction review used replay assertions and seeded stills. It did not exercise live touch, keyboard input, active assessment completion or scrolling. Reduced-motion stills also cannot prove turbine animation. The latest correction sets are composition/label evidence only from SwiftShader software rendering.
 - No P0 was identified in these focused rechecks. Round 1 remains OPEN: the latest source has not been recaptured across all 23 scenarios and all profiles/viewports, the two P2 label findings remain, and live interaction evidence is missing.
 
+### Round 1 focused visual corrections after review checkpoint 56758033
+
+- `78afa069` changes FALLBACK_2D to omit removed cutaway solids and draws active instructional paths above SVG component geometry. The focused 16-image capture at `artifacts/lab-review/mount-coffee-hydropower/1.0.0/round-1-78afa069-corrections-retry/` has zero page/console errors. The flood route is visible in FALLBACK_2D.
+- `ba3c05c2` adds a valley camera action to the all-passed assessment scenario after the unit 3 inspection. The eight-image assessment capture at `artifacts/lab-review/mount-coffee-hydropower/1.0.0/round-1-ba3c05c2-assessment-correction/` shows the powerhouse and city within FALLBACK_2D frame with no pale cutaway slab. The former transmission-tower edge issue is improved; visual reviewer still reports partial right-edge clipping (P2).
+- `9161bca3` draws WebGL process lines above solids; `25d722f2` routes the spillway along the dam face with the active-water palette; `a6caa9ad` also places fixed particle cues above solids in reduced-motion captures. The newest eight-image flood set is `artifacts/lab-review/mount-coffee-hydropower/1.0.0/round-1-a6caa9ad-spillway-cues/`. Until a reviewer confirms the paused WebGL spill stream is unmistakable, the flood consequence finding remains OPEN.
+- A new full 184-image recapture attempt at `round-1-ba3c05c2-full-stills-probe-perf` did not complete; only two images were written before the local Node processes disappeared. Do not use that incomplete set as evidence. A repeatable cold dev-route compilation bottleneck remains. The focused correction manifests are SwiftShader software rendering and support composition/labels only.
+- Round 1 remains OPEN. Live keyboard/touch/task completion, a complete latest-source matrix, and the final WebGL flood visibility review remain outstanding.
+
 ## Round 2 — not run
 No reviewer verdict is recorded.
 
