@@ -1,7 +1,7 @@
 "use client";
 import { useMemo } from "react";
 import type { InteractiveLabDefinition, LabAction, LabState } from "@/lib/interactive-labs/v2/types";
-import { buildRenderList, orderFallbackItems } from "@/lib/interactive-labs/v2/fidelity/renderList";
+import { buildRenderList, fallbackVisibleItems } from "@/lib/interactive-labs/v2/fidelity/renderList";
 import { flowParticles } from "@/lib/interactive-labs/v2/fidelity/presentation";
 import { HIGHLIGHT_COLOR, INACTIVE_FLOW_COLOR, mixHexColor } from "@/lib/interactive-labs/v2/fidelity/palette";
 import { transformPoint } from "@/lib/interactive-labs/v2/fidelity/math";
@@ -27,7 +27,10 @@ export function Fallback2D({ definition, state, reducedMotion, traceFlowId, disp
   // Keep labels and trace markers at a stable screen size as focused presets zoom in.
   const screenScale = camera.distance / 15;
   const viewBox = `${camera.target[0] - width / 2} ${-camera.target[1] - height / 2} ${width} ${height}`;
-  const ordered = orderFallbackItems(list.items);
+  // FALLBACK_2D represents cutaways by hiding the removed solid, matching LOW's
+  // cutaway behavior. SVG has no clipping plane, so drawing the faded source
+  // mesh would obscure the revealed internals and instructional labels.
+  const ordered = fallbackVisibleItems(list.items);
   const activate = (pick: ScenePick) => (event: React.KeyboardEvent) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); onPick(pick); } };
   const selected = state.selectedObjectId && definition.scene.objects.some((object) => object.id === state.selectedObjectId) ? state.selectedObjectId : null;
 
@@ -38,7 +41,7 @@ export function Fallback2D({ definition, state, reducedMotion, traceFlowId, disp
           <marker id="flow-arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#facc15" /></marker>
           <filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="0.07" /></filter>
         </defs>
-        {list.flows.map((flow) => (
+        {list.flows.filter((flow) => !flow.active).map((flow) => (
           <g key={flow.id} aria-label={`${flow.label}: ${flow.active ? "flowing" : "not flowing"}`}>
             <polyline points={flow.points.map((p) => `${p[0]},${-p[1]}`).join(" ")} fill="none" stroke={flow.active ? flow.color : INACTIVE_FLOW_COLOR} strokeOpacity={1} strokeDasharray={flow.active ? undefined : "8 6"} strokeWidth={2.5} vectorEffect="non-scaling-stroke" strokeLinejoin="round" markerMid={flow.active && reducedMotion ? "url(#flow-arrow)" : undefined} />
             {!reducedMotion && flowParticles(flow.points, flow.particleCount, flow.rate, flow.direction, time, false).map((p, index) => <circle key={index} cx={p[0]} cy={-p[1]} r={0.09} fill={flow.color} />)}
@@ -56,6 +59,14 @@ export function Fallback2D({ definition, state, reducedMotion, traceFlowId, disp
             </g>
           );
         })}
+        {/* Active process paths sit above opaque SVG geometry so a real flow
+            cannot disappear behind the dam, gate, or housing it passes. */}
+        {list.flows.filter((flow) => flow.active).map((flow) => (
+          <g key={`${flow.id}-active-overlay`} aria-label={`${flow.label}: flowing`} pointerEvents="none">
+            <polyline points={flow.points.map((p) => `${p[0]},${-p[1]}`).join(" ")} fill="none" stroke={flow.color} strokeOpacity={1} strokeWidth={2.5} vectorEffect="non-scaling-stroke" strokeLinejoin="round" markerMid={reducedMotion ? "url(#flow-arrow)" : undefined} />
+            {!reducedMotion && flowParticles(flow.points, flow.particleCount, flow.rate, flow.direction, time, false).map((p, index) => <circle key={index} cx={p[0]} cy={-p[1]} r={0.09} fill={flow.color} />)}
+          </g>
+        ))}
         {list.markers.map((marker) => <g key={marker.id}><circle cx={marker.position[0]} cy={-marker.position[1]} r={0.16 * screenScale} fill={marker.color} />{marker.label && <text x={marker.position[0]} y={-marker.position[1] + 0.09 * screenScale} textAnchor="middle" fontSize={0.2 * screenScale} fill="#0f172a">{marker.label}</text>}</g>)}
         {list.motions.filter((motion) => motion.active).map((motion) => <g key={motion.id} role="img" aria-label={`${motion.label}: turning`} transform={`translate(${motion.center[0]} ${-motion.center[1]})`}><title>{`${motion.label}: turning`}</title><text textAnchor="middle" dominantBaseline="central" fontSize={0.58} fontWeight={700} fill="#f0abfc">↻</text></g>)}
         {traceFlowId && list.flows.filter((flow) => flow.id === traceFlowId).flatMap((flow) => flow.nodes.filter((node) => node.traceable).map((node) => {

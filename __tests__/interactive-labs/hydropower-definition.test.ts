@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { hydropowerDefinition } from "@/lib/interactive-labs/v2/definitions/hydropower";
-import { buildRenderList } from "@/lib/interactive-labs/v2/fidelity/renderList";
+import { buildRenderList, fallbackVisibleItems } from "@/lib/interactive-labs/v2/fidelity/renderList";
 import { validateHighFidelityDefinition } from "@/lib/interactive-labs/v2/fidelity/boundary";
 import { HYDROPOWER_REVIEW_SCENARIOS } from "@/lib/interactive-labs/v2/review/referenceScenarios";
 import { replayReviewScenario } from "@/lib/interactive-labs/v2/review/scenarios";
@@ -111,6 +111,25 @@ describe("Mount Coffee hydropower design stage", () => {
       expect(replay.state.completedChecks, id).toEqual(checks);
       if (id === "hydro-assessment-repair") expect(replay.state.lastFeedback).toBeNull();
     }
+  });
+
+  it("shows the spillway as active in the rainy three-unit flood state", () => {
+    const replay = replayReviewScenario(hydropowerDefinition, HYDROPOWER_REVIEW_SCENARIOS.scenarios.find((scenario) => scenario.id === "hydro-variable-flood-cap")!);
+    if ("reason" in replay) throw new Error(replay.reason);
+    const list = buildRenderList({ definition: hydropowerDefinition, state: replay.state, profile: "FALLBACK_2D" });
+    const spillway = list.flows.find((flow) => flow.id === "spillway");
+    expect(spillway?.active).toBe(true);
+    expect(list.quantities.spillFlow).toBeGreaterThan(0);
+    expect(spillway?.points).toHaveLength(2);
+  });
+
+  it("omits removed cutaway solids from the SVG fallback", () => {
+    const replay = replayReviewScenario(hydropowerDefinition, HYDROPOWER_REVIEW_SCENARIOS.scenarios.find((scenario) => scenario.id === "hydro-assessment-all-passed")!);
+    if ("reason" in replay) throw new Error(replay.reason);
+    const list = buildRenderList({ definition: hydropowerDefinition, state: replay.state, profile: "FALLBACK_2D" });
+    expect(list.items.find((item) => item.id === "powerhouse")?.clip).not.toBeNull();
+    expect(fallbackVisibleItems(list.items).map((item) => item.id)).not.toContain("powerhouse");
+    expect(fallbackVisibleItems(list.items).map((item) => item.id)).toEqual(expect.arrayContaining(["u3-runner", "u3-shaft", "u3-generator"]));
   });
 
   it("shows a spin glyph only for units the model says are generating", () => {

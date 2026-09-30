@@ -40,6 +40,11 @@ export function orderFallbackItems(items: readonly RenderItem[]): RenderItem[] {
   return [...items.filter((item) => item.detail === "decor"), ...items.filter((item) => item.detail !== "decor").sort((a, b) => a.center[2] - b.center[2])];
 }
 
+/** SVG has no clipping plane; represent cutaways by omitting the removed solid. */
+export function fallbackVisibleItems(items: readonly RenderItem[]): RenderItem[] {
+  return orderFallbackItems(items.filter((item) => !item.clip));
+}
+
 /** Corners of the box meshes used by cube / rectangular-prism, indexed like the vertex feature indices. */
 export function boxCorners(geometry: GeometryKind): Vec3[] {
   const [x, y, z] = geometry === "rectangular-prism" ? [1.25, 0.82, 0.72] : [1, 1, 1];
