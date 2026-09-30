@@ -44,7 +44,7 @@ describe("Mount Coffee hydropower design stage", () => {
 
   it("shows the energy-chain explanation as the seventh guided task", () => {
     const finalStep = hydropowerDefinition.fidelity?.guidedPath.at(-1);
-    expect(finalStep?.prompt).toContain("stored water → moving water → turning turbine and shaft → electricity → light and heat");
+    expect(finalStep?.prompt).toContain("gravitational potential energy of high water → kinetic energy of falling water");
     const replay = replayReviewScenario(hydropowerDefinition, HYDROPOWER_REVIEW_SCENARIOS.scenarios.find((scenario) => scenario.id === "hydro-guided-name-chain")!);
     if ("reason" in replay) throw new Error(replay.reason);
     expect(replay.state.fidelity?.guidedStepIndex).toBe(6);
@@ -109,6 +109,7 @@ describe("Mount Coffee hydropower design stage", () => {
       const replay = replayReviewScenario(hydropowerDefinition, HYDROPOWER_REVIEW_SCENARIOS.scenarios.find((scenario) => scenario.id === id)!);
       if ("reason" in replay) throw new Error(replay.reason);
       expect(replay.state.completedChecks, id).toEqual(checks);
+      if (id === "hydro-assessment-repair") expect(replay.state.lastFeedback).toBeNull();
     }
   });
 

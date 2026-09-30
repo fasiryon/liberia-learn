@@ -123,7 +123,7 @@ const spec: HighFidelitySpec = {
     { id: "season", prompt: "Compare dry season with rainy season. What changes when less water arrives?", cameraPresetId: "valley" },
     { id: "overload", prompt: "With three units in the rainy season, keep the hospital on, then switch on homes and shops one at a time. When does demand exceed the plant's 66 MW capacity?", cameraPresetId: "grid-city" },
     { id: "repair", prompt: "Rebuild unit 3 in order: runner, shaft, generator.", cameraPresetId: "unit-bench", highlightIds: ["u3-runner", "u3-shaft", "u3-generator"] },
-    { id: "energy-chain", prompt: "Name the energy chain: stored water → moving water → turning turbine and shaft → electricity → light and heat. Use the explanation panel to check your thinking.", cameraPresetId: "valley" },
+    { id: "energy-chain", prompt: "Name the energy chain: gravitational potential energy of high water → kinetic energy of falling water → turbine and shaft rotation → electrical energy → light and heat. Use the explanation panel to check your thinking.", cameraPresetId: "valley" },
   ],
   modes: ["GUIDED", "EXPLORE", "CHALLENGE", "ASSESSMENT"],
   challengeStatus: (quantities) => quantities.gridStableWithPriority === 1
