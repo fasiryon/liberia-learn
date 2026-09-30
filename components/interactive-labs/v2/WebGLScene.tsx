@@ -189,14 +189,14 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
       batchFlowGeometry(list, t, motionless, callbacks.current.traceFlowId, flowStorage);
       // Process paths are instructional overlays. Letting solid mesh depth hide
       // them made the flood spillway appear inactive in paused review frames.
-      // Draw the thin line layer above solids, then restore depth testing for
-      // particles, trace nodes, markers, and subsequent frames.
+      // Draw their thin lines and fixed reduced-motion particle cues above
+      // solids, then restore depth testing for trace nodes and markers.
       if (list.flows.length) {
         gl.disable(gl.DEPTH_TEST);
         drawBatch(flowStorage.lines, flowBuffers.lines, gl.LINES, 1, 1, viewProj);
+        drawBatch(flowStorage.particles, flowBuffers.particles, gl.POINTS, 1, (low ? 6 : 9) * dpr, viewProj);
         gl.enable(gl.DEPTH_TEST);
       }
-      if (list.flows.length) drawBatch(flowStorage.particles, flowBuffers.particles, gl.POINTS, 1, (low ? 6 : 9) * dpr, viewProj);
       if (list.flows.length) drawBatch(flowStorage.traceNodes, flowBuffers.traceNodes, gl.POINTS, 1, 12 * dpr, viewProj);
       if (list.markers.length) drawPoints(list.markers, gl.POINTS, MARKER_COLOR, 1, (list.budget.pulseHighlights && !motionless ? 12 + Math.sin(t * 5) * 3 : 12) * dpr, viewProj);
 
