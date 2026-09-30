@@ -83,6 +83,27 @@ describe("Mount Coffee hydropower design stage", () => {
     expect(challenge.challengeStatus?.({ gridStableWithPriority: 0 })).toContain("not yet stable");
   });
 
+  it("starts the challenge unmet, frames the exploded stack, and previews checks in order", () => {
+    const challenge = replayReviewScenario(hydropowerDefinition, HYDROPOWER_REVIEW_SCENARIOS.scenarios.find((scenario) => scenario.id === "hydro-challenge-start")!);
+    if ("reason" in challenge) throw new Error(challenge.reason);
+    expect(buildRenderList({ definition: hydropowerDefinition, state: challenge.state, profile: "HIGH" }).quantities.gridStableWithPriority).toBe(0);
+
+    const exploded = replayReviewScenario(hydropowerDefinition, HYDROPOWER_REVIEW_SCENARIOS.scenarios.find((scenario) => scenario.id === "hydro-exploded-unit")!);
+    if ("reason" in exploded) throw new Error(exploded.reason);
+    expect(buildRenderList({ definition: hydropowerDefinition, state: exploded.state, profile: "HIGH" }).camera?.distance).toBe(9);
+
+    const expected: Array<[string, string[]]> = [
+      ["hydro-assessment-generator", ["trace-water"]],
+      ["hydro-assessment-dry-output", ["trace-water", "find-generator"]],
+      ["hydro-assessment-repair", ["trace-water", "find-generator", "dry-season-output", "dry-season-peak"]],
+    ];
+    for (const [id, checks] of expected) {
+      const replay = replayReviewScenario(hydropowerDefinition, HYDROPOWER_REVIEW_SCENARIOS.scenarios.find((scenario) => scenario.id === id)!);
+      if ("reason" in replay) throw new Error(replay.reason);
+      expect(replay.state.completedChecks, id).toEqual(checks);
+    }
+  });
+
   it("shows a spin glyph only for units the model says are generating", () => {
     const dry = replayReviewScenario(hydropowerDefinition, HYDROPOWER_REVIEW_SCENARIOS.scenarios.find((scenario) => scenario.id === "hydro-variable-dry-drop")!);
     if ("reason" in dry) throw new Error(dry.reason);
