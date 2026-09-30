@@ -9,13 +9,12 @@ Objective: proposed `hydropower-cause-and-effect` — explain how river flow, av
 - Asset spec: [04-ASSET_SPEC.md](design/04-ASSET_SPEC.md) (2026-09-28)
 - Runtime extensions RX-001 through RX-004: implemented at checkpoint `a3426aba`; captures and round review remain pending.
 
-## Round 1 — in progress
-- Clean checkpoint reviewed: `a9f90f46`; bounded overview matrix only, all four profiles × desktop/mobile, reduced-motion, probe and perf. Evidence: `artifacts/lab-review/mount-coffee-hydropower/1.0.0/round-1-a9-overview-matrix/` (SwiftShader; composition/labels only, perf sign-off invalid).
-- Visual: OPEN. Two P1 findings: a bright white WebGL block beside the city loads, and the mobile explanation card does not make additional scroll content apparent. Existing mobile label and fallback halo findings were closed on this matrix.
-- Interaction: overview target-size probe found no visible targets below 44 px. OPEN; no live input/action coverage yet.
-- Science: OPEN. One P0: only Unit 1's flow appears to return through the tailrace while the copy says water returns after turbines. Corrected in the working tree by routing all four unit paths through the shared tailrace to the downstream river; focused regression added. Fresh-capture and reviewer confirmation pending.
-- Round 1 coverage is incomplete: overview only; process, fault, cutaway, guided, assessment, and motion states remain unreviewed.
-
+## Round 1 — partial; overall OPEN
+- Clean checkpoint: `e89075d3`. Overview still matrix: `artifacts/lab-review/mount-coffee-hydropower/1.0.0/round-1-e89075d3-stills/`; perf metadata: `.../round-1-e89075d3-perf/`; automated interaction probe: `.../round-1-e89075d3-interaction-probe/`. All four profiles × desktop/mobile. SwiftShader software rendering supports composition and label review only; every perf row has `signOffValid: false`.
+- Science follow-up: overview P0 resolved. All four unit water paths visibly return through the common tailrace to the Saint Paul River in WebGL and FALLBACK_2D. No new overview science finding. Dry-season, overload/trip, cutaway, repair, assessment and motion states remain unreviewed.
+- Visual follow-up: the former right-edge white slab now reads as separate city structures and remains within scene bounds. The mobile explanation panel shows “Scroll this panel for more details”; the still supports discoverability, while live scroll behavior remains untested. Distance, tower and Homes labels are separated; fallback halos remain clear.
+- Interaction follow-up: automated overview probe reports zero visible targets below 44 px for HIGH/FALLBACK_2D on desktop/mobile. FALLBACK_2D trace targets are 65×65 desktop and 53×53 mobile. Three heuristic “unnamed” controls are River flow, Units online and Explode sliders; each has an associated DOM label. No live input, keyboard, guided-task, challenge, assessment or scroll test was run.
+- Overall Round 1 remains OPEN because evidence and reviews cover only the overview, not process, fault, cutaway, guided, challenge, assessment or motion states.
 ## Round 2 — not run
 No reviewer verdict is recorded.
 
@@ -24,7 +23,7 @@ No benchmark scores or design director verdict are recorded.
 
 Disagreements:
 - Simulation architect proposed `u1-generator`; the asset director and builder selected `u3-generator` for the single detailed internal stack. Recorded in `production.json`.
-- Asset director requested a persistent spin glyph; it is now present at every profile, with Round 1 visual confirmation pending.
+- Asset director requested a persistent spin glyph; the e89075d3 stills show it across all profiles. The visual reviewer confirms desktop legibility but cannot establish individual glyph legibility on mobile; revisit in later review.
 - Shared inactive flow is `#779ab2` after the palette gate showed that `#94a3b8` could not meet both color-separation constraints with the shared highlight.
 
 Reverted fixes: none.
