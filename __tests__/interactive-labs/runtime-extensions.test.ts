@@ -3,10 +3,11 @@ import { acceptLabAction, initializeLab } from "@/lib/interactive-labs/v2/kernel
 import { batchFlowGeometry, createFlowBatchStorage } from "@/lib/interactive-labs/v2/fidelity/flowBatch";
 import { validateHighFidelityDefinition } from "@/lib/interactive-labs/v2/fidelity/boundary";
 import { buildRenderList, instructionalView, orderFallbackItems, type RenderList } from "@/lib/interactive-labs/v2/fidelity/renderList";
-import { spinMatrix } from "@/lib/interactive-labs/v2/fidelity/presentation";
+import { flowParticles, flowPoints, spinMatrix } from "@/lib/interactive-labs/v2/fidelity/presentation";
+import { shouldScheduleWebGLFrame } from "@/lib/interactive-labs/v2/fidelity/renderLoop";
 import { contrastRatio, compositeHex, deltaE00, highlightColor, HIGHLIGHT_COLOR, INACTIVE_FLOW_COLOR, MARKER_COLOR } from "@/lib/interactive-labs/v2/fidelity/palette";
 import { RENDER_BUDGETS } from "@/lib/interactive-labs/v2/fidelity/profiles";
-import { multiply, transformMatrix, transformPoint } from "@/lib/interactive-labs/v2/fidelity/math";
+import { fitHorizontalFieldOfView, multiply, transformMatrix, transformPoint } from "@/lib/interactive-labs/v2/fidelity/math";
 import { circuitDefinition, CIRCUIT_FIDELITY } from "@/lib/interactive-labs/v2/definitions/circuit";
 import { CIRCUIT_REVIEW_SCENARIOS } from "@/lib/interactive-labs/v2/review/referenceScenarios";
 import { replayReviewScenario } from "@/lib/interactive-labs/v2/review/scenarios";
@@ -100,6 +101,47 @@ describe("shared interactive-lab runtime extensions", () => {
     expect(storage.traceNodes.count).toBe(2);
     batchFlowGeometry(list, 1, false, "flow", storage);
     expect(storage.lines.positions).toBe(capacity);
+  });
+
+  it("writes active particle positions into reusable storage without per-particle arrays", () => {
+    const points: [number, number, number][] = [[0, 0, 0], [3, 0, 0], [3, 4, 0]];
+    const list: RenderList = { items: [], markers: [], motions: [], camera: null, budget: RENDER_BUDGETS.HIGH, explanation: [], quantities: {}, flows: [{
+      id: "active", label: "Active", color: "#22d3ee", points, active: true, rate: 0.7, direction: -1, particleCount: 5,
+      nodes: [], traced: [],
+    }] };
+    const storage = createFlowBatchStorage();
+    batchFlowGeometry(list, 1.25, false, null, storage);
+    const positions = storage.particles.positions, metrics = storage.pathMetrics.get("active")!;
+    const expected = flowParticles(points, 5, 0.7, -1, 1.25, false);
+    for (let index = 0; index < expected.length; index += 1) expect(Array.from(storage.particles.positions.slice(index * 3, index * 3 + 3))).toEqual(expected[index].map((value) => expect.closeTo(value, 5)));
+
+    batchFlowGeometry(list, 1.5, false, null, storage);
+    expect(storage.particles.positions).toBe(positions);
+    expect(storage.pathMetrics.get("active")).toBe(metrics);
+    expect(storage.particles.count).toBe(5);
+  });
+
+  it("caches immutable flow path point lists by definition", () => {
+    const flow = CIRCUIT_FIDELITY.flows[0];
+    const points = flowPoints(flow);
+    expect(flowPoints(flow)).toBe(points);
+    expect(points).toHaveLength(flow.nodes.length + (flow.closedLoop && flow.nodes.length > 1 ? 1 : 0));
+  });
+
+  it("idles WebGL when settled and resumes for visible or review-clock frames", () => {
+    const settled = { reviewClockActive: false, reducedMotion: false, fidelityMoving: false, cameraMoving: false, flowMoving: false, spinMoving: false, pulseMoving: false };
+    expect(shouldScheduleWebGLFrame(settled)).toBe(false);
+    expect(shouldScheduleWebGLFrame({ ...settled, flowMoving: true })).toBe(true);
+    expect(shouldScheduleWebGLFrame({ ...settled, reducedMotion: true, flowMoving: true, spinMoving: true })).toBe(false);
+    expect(shouldScheduleWebGLFrame({ ...settled, reducedMotion: true, reviewClockActive: true })).toBe(true);
+  });
+
+  it("keeps landscape scene width in portrait WebGL viewports", () => {
+    const horizontalFieldOfView = (verticalFov: number, aspect: number) => 2 * Math.atan(Math.tan(verticalFov * Math.PI / 360) * aspect) * 180 / Math.PI;
+    const desktopAspect = 1.45, portraitAspect = 0.75, sourceFov = 45;
+    expect(fitHorizontalFieldOfView(sourceFov, portraitAspect, desktopAspect)).toBeGreaterThan(sourceFov);
+    expect(horizontalFieldOfView(fitHorizontalFieldOfView(sourceFov, portraitAspect, desktopAspect), portraitAspect)).toBeCloseTo(horizontalFieldOfView(sourceFov, desktopAspect));
+    expect(fitHorizontalFieldOfView(sourceFov, desktopAspect, desktopAspect)).toBe(sourceFov);
   });
 
   it("keeps flow, highlight, marker and emissive palettes separated after compositing", () => {

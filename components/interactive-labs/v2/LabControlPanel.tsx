@@ -17,7 +17,8 @@ export function LabControlPanel({ definition, state, activeCheck, dispatch }: Pr
   const spec = definition.fidelity, fidelity = state.fidelity;
   const [heldFace, setHeldFace] = useState<string | null>(null);
   const modes = spec?.modes ?? MODES;
-  const guided = spec && fidelity && state.mode === "GUIDED" ? spec.guidedPath[fidelity.guidedStepIndex] : undefined;
+  const guidedIndex = spec && fidelity ? Math.max(fidelity.guidedStepIndex, Math.min(state.completedChecks.length, spec.guidedPath.length - 1)) : 0;
+  const guided = spec && fidelity && state.mode === "GUIDED" ? spec.guidedPath[guidedIndex] : undefined;
   const target = activeCheck?.fidelity;
   const simulation = spec && fidelity ? deriveSimulation(spec, fidelity) : null;
   const explanation = spec && fidelity ? explainState(spec, fidelity, definition.grade) : [];
@@ -29,19 +30,26 @@ export function LabControlPanel({ definition, state, activeCheck, dispatch }: Pr
         {modes.map((mode) => <button key={mode} type="button" aria-pressed={state.mode === mode} onClick={() => dispatch({ type: "mode", mode })} className={chip(state.mode === mode)}>{mode[0] + mode.slice(1).toLowerCase()}</button>)}
       </div>
 
+      {(explanation.length > 0 || Object.keys(simulation?.quantities ?? {}).length > 0) && (
+        <section aria-label="What is happening" aria-live="polite" className="sticky top-1 z-20 max-h-[28vh] overflow-y-auto rounded-2xl border border-white/10 bg-slate-950/95 p-3 shadow-xl backdrop-blur">
+          <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-400">What is happening</h3>
+          <ul className="mt-2 space-y-1 text-sm text-slate-200">{explanation.map((line) => <li key={line.id}>{line.text}</li>)}</ul>
+        </section>
+      )}
+
       {guided && spec && fidelity && (
         <section aria-label="Guided path" className="rounded-2xl border border-cyan-300/20 bg-cyan-300/5 p-4">
-          <p className="text-xs font-semibold uppercase tracking-wider text-cyan-300">Step {fidelity.guidedStepIndex + 1} of {spec.guidedPath.length}</p>
+          <p className="text-xs font-semibold uppercase tracking-wider text-cyan-300">Step {guidedIndex + 1} of {spec.guidedPath.length}</p>
           <p className="mt-1 text-sm text-slate-100">{guided.prompt}</p>
           <div className="mt-3 flex gap-2">
-            <button type="button" disabled={fidelity.guidedStepIndex === 0} onClick={() => dispatch({ type: "guided-step", index: fidelity.guidedStepIndex - 1 })} className={`${chip(false)} disabled:opacity-40`}>Back</button>
-            <button type="button" disabled={fidelity.guidedStepIndex >= spec.guidedPath.length - 1} onClick={() => dispatch({ type: "guided-step", index: fidelity.guidedStepIndex + 1 })} className={`${chip(true)} disabled:opacity-40`}>Next step</button>
+            <button type="button" disabled={guidedIndex === 0} onClick={() => dispatch({ type: "guided-step", index: guidedIndex - 1 })} className={`${chip(false)} disabled:opacity-40`}>Back</button>
+            <button type="button" disabled={guidedIndex >= spec.guidedPath.length - 1} onClick={() => dispatch({ type: "guided-step", index: guidedIndex + 1 })} className={`${chip(true)} disabled:opacity-40`}>Next step</button>
           </div>
         </section>
       )}
 
       <section aria-label="Your task">
-        <p className="text-sm text-slate-400">Your next task</p>
+        <p className="text-sm text-slate-400">{state.mode === "GUIDED" ? "Current check" : "Your next task"}</p>
         <h2 className="mt-1 text-lg font-bold text-white">{activeCheck?.prompt ?? "You completed every check!"}</h2>
 
         {activeCheck?.id === "cube-vertices" && (
@@ -154,12 +162,6 @@ export function LabControlPanel({ definition, state, activeCheck, dispatch }: Pr
             {spec.camera.presets.map((preset) => <button key={preset.id} type="button" aria-pressed={fidelity.cameraPresetId === preset.id} onClick={() => dispatch({ type: "camera-preset", presetId: preset.id })} className={chip(fidelity.cameraPresetId === preset.id)}>{preset.label}</button>)}
           </section>
 
-          {(explanation.length > 0 || Object.keys(simulation?.quantities ?? {}).length > 0) && (
-            <section aria-label="What is happening" aria-live="polite" className="rounded-2xl bg-white/[.04] p-4">
-              <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-400">What is happening</h3>
-              <ul className="mt-2 space-y-1.5 text-sm text-slate-200">{explanation.map((line) => <li key={line.id}>{line.text}</li>)}</ul>
-            </section>
-          )}
         </>
       )}
     </div>

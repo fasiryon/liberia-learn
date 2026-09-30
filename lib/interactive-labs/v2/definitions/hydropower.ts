@@ -13,31 +13,32 @@ function component(id: string, label: string, geometry: "box" | "cylinder" | "co
 }
 
 const components: HighFidelitySpec["components"] = [
-  component("headpond", "Headpond", "rectangular-prism", [-1.5, 2.9, -2.5], [4.7, 0.18, 1.4], "#2f8fe8"),
-  component("dam", "Dam", "rectangular-prism", [-1.5, 2.15, -1.2], [4.8, 1.5, 0.38], "#c9c2b4"),
-  component("intake-1", "Intake", "box", [-1.5, 1.6, -0.9], [0.54, 0.28, 0.5], "#9fb2c6"),
-  component("penstock-1", "Penstock", "cylinder", [-1.5, 0.72, -0.35], [0.2, 1.25, 0.2], "#6f86a0"),
-  component("tailrace", "Tailrace", "rectangular-prism", [-1.5, -1.15, 0.8], [2.5, 0.16, 0.52], "#2f8fe8"),
-  component("river-downstream", "Saint Paul River", "rectangular-prism", [0, -1.8, 1.6], [5.8, 0.12, 0.5], "#2f8fe8"),
-  component("spillway-gate", "Spillway gate", "box", [1.0, 2.4, -1.0], [0.65, 0.8, 0.18], "#9fb2c6"),
-  component("powerhouse", "Powerhouse", "rectangular-prism", [0.3, 0.15, 0.1], [4.5, 1.7, 1.5], "#c9c2b4", { material: mat("#c9c2b4", 0.55) }),
+  component("headpond", "Headpond", "rectangular-prism", [-1.5, 2.9, -2.5], [4.7, 0.18, 1.4], "#2f8fe8", { labelOffset: [-0.35, 0.9, 0] }),
+  component("dam", "Dam", "rectangular-prism", [-1.5, 2.15, -1.2], [4.8, 1.5, 0.38], "#c9c2b4", { labelOffset: [-2.8, -0.15, 0] }),
+  component("intake-1", "Intake", "box", [-1.5, 1.6, -0.9], [0.54, 0.28, 0.5], "#9fb2c6", { labelOffset: [-0.1, 0.65, 0] }),
+  component("penstock-1", "Penstock", "cylinder", [-1.5, 0.72, -0.35], [0.2, 1.25, 0.2], "#6f86a0", { labelOffset: [-2.6, -1.1, 0] }),
+  component("tailrace", "Tailrace", "rectangular-prism", [-1.5, -1.15, 0.8], [2.5, 0.16, 0.52], "#2f8fe8", { labelOffset: [-0.3, -0.45, 0] }),
+  component("river-downstream", "Saint Paul River", "rectangular-prism", [0, -1.8, 1.6], [5.8, 0.12, 0.5], "#2f8fe8", { labelOffset: [1.7, -0.3, 0] }),
+  component("spillway-gate", "Spillway gate", "box", [1.0, 2.4, -1.0], [0.65, 0.8, 0.18], "#9fb2c6", { labelOffset: [0.55, 0.45, 0], mobileLabel: false }),
+  component("powerhouse", "Powerhouse", "rectangular-prism", [0.3, 0.15, 0.1], [4.5, 1.7, 1.5], "#c9c2b4", { material: mat("#c9c2b4", 0.55), labelOffset: [-2.0, -1.0, 0], mobileLabel: false }),
   ...UNIT_X.flatMap((x, i) => {
     const unit = i + 1;
-    return [component(`unit-${unit}`, `Unit ${unit} housing`, "cylinder", [x, -0.15, 0.1], [0.52, 0.72, 0.52], "#5fb8a8"),
-      component(`unit-${unit}-marker`, `Unit ${unit} rotation marker`, "box", [x + 0.34, -0.15, 0.1], [0.16, 0.08, 0.08], "#facc15")];
+    const offsets: Array<[number, number, number]> = [[-1.8, 0.65, 0], [-0.45, 1.8, 0], [0.5, 0.55, 0], [1.15, 1.3, 0]];
+    return [component(`unit-${unit}`, `Unit ${unit} housing`, "cylinder", [x, -0.15, 0.1], [0.52, 0.72, 0.52], "#5fb8a8", { labelOffset: unit === 1 ? [-0.9, 0.95, 0] : offsets[i], ...(unit !== 3 ? { mobileLabel: false } : {}) }),
+      component(`unit-${unit}-marker`, `Unit ${unit} rotation marker`, "box", [x + 0.34, -0.15, 0.1], [0.16, 0.08, 0.08], "#facc15", { showLabel: false })];
   }),
-  component("u3-runner", "Runner", "cylinder", [0.9, -0.25, 0.1], [0.32, 0.18, 0.32], "#cfe0ea", { internal: true, layerId: "unit-3-internals", shapeKey: "runner" }),
-  component("u3-shaft", "Shaft", "cylinder", [0.9, 0.05, 0.1], [0.09, 0.36, 0.09], "#5f6d7e", { internal: true, layerId: "unit-3-internals", shapeKey: "shaft" }),
-  component("u3-generator", "Generator", "cylinder", [0.9, 0.48, 0.1], [0.34, 0.28, 0.34], "#ee8f52", { internal: true, layerId: "unit-3-internals", shapeKey: "generator" }),
-  component("switchyard", "Switchyard", "panel", [3.1, 0.2, 0.1], [0.9, 0.8, 0.18], "#aab4c0"),
-  component("power-tower-1", "Transmission tower", "cone", [4.0, 1.4, 0], [0.48, 1.3, 0.48], "#aab4c0"),
+  component("u3-runner", "Runner", "cylinder", [0.9, -0.25, 0.1], [0.32, 0.18, 0.32], "#cfe0ea", { internal: true, layerId: "unit-3-internals", shapeKey: "runner", labelOffset: [-0.55, -0.2, 0] }),
+  component("u3-shaft", "Shaft", "cylinder", [0.9, 0.05, 0.1], [0.09, 0.36, 0.09], "#5f6d7e", { internal: true, layerId: "unit-3-internals", shapeKey: "shaft", labelOffset: [0.55, 0, 0] }),
+  component("u3-generator", "Generator", "cylinder", [0.9, 0.48, 0.1], [0.34, 0.28, 0.34], "#ee8f52", { internal: true, layerId: "unit-3-internals", shapeKey: "generator", labelOffset: [0.65, 0.2, 0] }),
+  component("switchyard", "Switchyard", "panel", [3.1, 0.2, 0.1], [0.9, 0.8, 0.18], "#aab4c0", { mobileLabel: false }),
+  component("power-tower-1", "Transmission tower", "cone", [4.0, 1.4, 0], [0.48, 1.3, 0.48], "#aab4c0", { labelOffset: [0.15, 0.95, 0], mobileLabel: false }),
   component("city-hospital", "Hospital", "rectangular-prism", [5.0, 0.35, 0], [0.8, 0.95, 0.5], "#96a3b6"),
-  component("hospital-sign", "Hospital H sign", "panel", [5.0, 1.1, 0.28], [0.22, 0.2, 0.06], "#2f6fe0"),
-  component("city-homes", "Homes", "rectangular-prism", [6.4, 0.25, 0], [1.15, 0.75, 0.5], "#7a869a"),
-  component("city-shops", "Shops", "rectangular-prism", [7.7, 0.25, 0], [0.9, 0.75, 0.5], "#7a869a"),
-  ...[1, 2, 3, 4].map((n) => component(`gauge-seg-${n}`, `Power gauge ${n}`, "box", [4.6 + n * 0.24, 2.3, 0], [0.18, 0.22, 0.08], "#8c9ab0")),
-  ...["hospital", "homes", "shops"].map((name, i) => component(`demand-${name}`, `${name} demand segment`, "box", [5.2 + i * 0.28, 2.3, 0], [0.2, 0.22, 0.08], "#c98a4b")),
-  component("distance-break", "Approx. 30 km to Monrovia", "panel", [7.8, 2.1, 0.2], [0.5, 0.08, 0.04], "#f8fafc"),
+  component("hospital-sign", "Hospital H sign", "panel", [5.0, 1.1, 0.28], [0.22, 0.2, 0.06], "#2f6fe0", { showLabel: false }),
+  component("city-homes", "Homes", "rectangular-prism", [6.4, 0.25, 0], [1.15, 0.75, 0.5], "#7a869a", { labelOffset: [-1.6, 1.1, 0] }),
+  component("city-shops", "Shops", "rectangular-prism", [7.7, 0.25, 0], [0.9, 0.75, 0.5], "#7a869a", { labelOffset: [-2.7, 1.9, 0] }),
+  ...[1, 2, 3, 4].map((n) => component(`gauge-seg-${n}`, `Power gauge ${n}`, "box", [4.6 + n * 0.24, 2.3, 0], [0.18, 0.22, 0.08], "#8c9ab0", { showLabel: false })),
+  ...["hospital", "homes", "shops"].map((name, i) => component(`demand-${name}`, `${name} demand segment`, "box", [5.2 + i * 0.28, 2.3, 0], [0.2, 0.22, 0.08], "#c98a4b", { showLabel: false })),
+  component("distance-break", "Approx. 30 km to Monrovia", "panel", [7.8, 2.1, 0.2], [0.5, 0.08, 0.04], "#f8fafc", { labelOffset: [-1.2, 1.4, 0], mobileLabel: false }),
   // Decorative valley scenery: no labels, state, picking, or instructional references.
   component("bank-lower", "", "rectangular-prism", [-3, 0.6, -2.2], [5, 0.18, 0.18], "#4a7a45", { detail: "decor", selectable: false }),
   component("bank-upper", "", "rectangular-prism", [1, 1.0, -2.4], [4, 0.16, 0.16], "#b06a42", { detail: "decor", selectable: false }),
@@ -110,7 +111,7 @@ const spec: HighFidelitySpec = {
     { id: "grid-city", label: "Power and city", target: [5, 1, 0], distance: 8, yaw: -0.1, pitch: 0.12 },
   ], constraints: { minDistance: 4, maxDistance: 20, minPitch: -0.4, maxPitch: 0.8, minYaw: -1, maxYaw: 1 } },
   guidedPath: [
-    { id: "meet", prompt: "Water flows down from the headpond through the plant and returns to the river.", cameraPresetId: "valley" },
+    { id: "meet", prompt: "Trace the water through the six nodes, in order. It starts at the headpond and returns to the river.", cameraPresetId: "valley" },
     { id: "trace", prompt: "Follow the water from the headpond, through a turbine, and back to the river.", cameraPresetId: "water-path", highlightIds: ["headpond", "penstock-1", "tailrace"] },
     { id: "machine", prompt: "Open the powerhouse section and find the generator in unit 3.", cameraPresetId: "unit-bench", highlightIds: ["u3-generator"] },
     { id: "season", prompt: "Compare dry season with rainy season. What changes when less water arrives?", cameraPresetId: "valley" },

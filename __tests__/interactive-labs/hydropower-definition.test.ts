@@ -12,6 +12,26 @@ describe("Mount Coffee hydropower design stage", () => {
     expect(hydropowerDefinition.checks).toHaveLength(5);
   });
 
+  it("keeps instructional labels available at every profile and separates crowded process callouts", () => {
+    const start = replayReviewScenario(hydropowerDefinition, HYDROPOWER_REVIEW_SCENARIOS.scenarios.find((scenario) => scenario.id === "hydro-process-water-starts")!);
+    if ("reason" in start) throw new Error(start.reason);
+    const labels = (profile: "HIGH" | "STANDARD" | "LOW") => buildRenderList({ definition: hydropowerDefinition, state: start.state, profile }).items.filter((item) => item.showLabel).map((item) => item.id).sort();
+    expect(labels("LOW")).toEqual(labels("STANDARD"));
+    expect(labels("HIGH")).toEqual(labels("STANDARD"));
+    const list = buildRenderList({ definition: hydropowerDefinition, state: start.state, profile: "STANDARD" });
+    expect(list.items.find((item) => item.id === "unit-1")?.labelOffset).toBeDefined();
+    expect(list.items.find((item) => item.id === "unit-1")?.mobileLabel).toBe(false);
+    expect(list.items.find((item) => item.id === "unit-2")?.mobileLabel).toBe(false);
+    expect(list.items.find((item) => item.id === "headpond")?.mobileLabel).toBeUndefined();
+    expect(list.items.find((item) => item.id === "unit-1-marker")?.showLabel).toBe(false);
+    expect(list.items.filter((item) => item.id.startsWith("gauge-seg-") || item.id.startsWith("demand-")).every((item) => !item.showLabel)).toBe(true);
+  });
+
+  it("aligns the first guided direction with the first water-trace check", () => {
+    expect(hydropowerDefinition.fidelity?.guidedPath[0].prompt).toContain("Trace the water through the six nodes, in order");
+    expect(hydropowerDefinition.checks[0].prompt).toBe("Trace the water through the six nodes, in order.");
+  });
+
   it("covers all 22 storyboard captures and replays them", () => {
     expect(HYDROPOWER_REVIEW_SCENARIOS.scenarios.length).toBeGreaterThanOrEqual(22);
     expect(HYDROPOWER_REVIEW_SCENARIOS.scenarios.every((scenario) => scenario.storyboardScene)).toBe(true);

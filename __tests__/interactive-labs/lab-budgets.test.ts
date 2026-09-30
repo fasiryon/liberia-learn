@@ -2,7 +2,7 @@ import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { buildMesh } from "@/components/interactive-labs/v2/meshes";
-import { shouldDowngrade } from "@/lib/interactive-labs/v2/fidelity/profiles";
+import { RENDER_BUDGETS, shouldDowngrade } from "@/lib/interactive-labs/v2/fidelity/profiles";
 import { buildOfflineManifest } from "@/lib/interactive-labs/v2/fidelity/boundary";
 import { getInteractiveLabDefinition } from "@/lib/interactive-labs/v2/registry";
 import { LAB_REVIEW_SCENARIO_SETS } from "@/lib/interactive-labs/v2/review/referenceScenarios";
@@ -67,5 +67,12 @@ describe("lab budgets (locked 2026-09-28)", () => {
     expect(shouldDowngrade(sustained(20), downgradeFrameBudgetMs("LOW"))).toBe(true);
     // WebGLScene clamps a frame to 100 ms, so one long hitch cannot trigger a downgrade on its own.
     expect(shouldDowngrade([...sustained(60).slice(0, 59), 100], downgradeFrameBudgetMs("HIGH"))).toBe(false);
+  });
+
+  it("limits pulsing highlights to HIGH and keeps reduced profiles steady", () => {
+    expect(RENDER_BUDGETS.HIGH.pulseHighlights).toBe(true);
+    expect(RENDER_BUDGETS.STANDARD.pulseHighlights).toBe(false);
+    expect(RENDER_BUDGETS.LOW.pulseHighlights).toBe(false);
+    expect(RENDER_BUDGETS.FALLBACK_2D.pulseHighlights).toBe(false);
   });
 });

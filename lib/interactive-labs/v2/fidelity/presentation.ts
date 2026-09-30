@@ -63,9 +63,15 @@ export function isSettled(a: FidelityState, b: FidelityState): boolean {
   return Object.entries(b.explode).every(([id, value]) => a.explode[id] === value) && Object.entries(b.variables).every(([id, value]) => a.variables[id] === value);
 }
 
+const flowPointCache = new WeakMap<FlowDefinition, Vec3[]>();
+
 export function flowPoints(flow: FlowDefinition): Vec3[] {
+  const cached = flowPointCache.get(flow);
+  if (cached) return cached;
   const points = flow.nodes.map((node) => node.position);
-  return flow.closedLoop && points.length > 1 ? [...points, points[0]] : points;
+  const path = flow.closedLoop && points.length > 1 ? [...points, points[0]] : points;
+  flowPointCache.set(flow, path);
+  return path;
 }
 
 export function samplePath(points: readonly Vec3[], u: number): Vec3 {
@@ -79,6 +85,40 @@ export function samplePath(points: readonly Vec3[], u: number): Vec3 {
     remaining -= lengths[index];
   }
   return points[points.length - 1];
+}
+
+export type FlowPathMetrics = { lengths: number[]; total: number };
+
+export function measureFlowPath(points: readonly Vec3[]): FlowPathMetrics {
+  const lengths: number[] = [];
+  let total = 0;
+  for (let index = 0; index < points.length - 1; index += 1) {
+    const length = distance(points[index], points[index + 1]);
+    lengths.push(length);
+    total += length;
+  }
+  return { lengths, total: total || 1 };
+}
+
+/** Write particle coordinates directly into caller-owned storage without per-particle arrays or tuples. */
+export function writeFlowParticles(points: readonly Vec3[], metrics: FlowPathMetrics, count: number, rate: number, direction: 1 | -1, timeSeconds: number, reducedMotion: boolean, output: Float32Array, vertexOffset: number): number {
+  if (count <= 0 || rate <= 0 || points.length < 2) return 0;
+  const phase = reducedMotion ? 0 : direction * timeSeconds * 0.12 * rate;
+  for (let index = 0; index < count; index += 1) {
+    let remaining = (((index / count + phase) % 1) + 1) % 1 * metrics.total;
+    let segment = 0;
+    while (segment < metrics.lengths.length - 1 && remaining > metrics.lengths[segment]) {
+      remaining -= metrics.lengths[segment];
+      segment += 1;
+    }
+    const length = metrics.lengths[segment];
+    const ratio = length ? Math.max(0, Math.min(1, remaining / length)) : 0;
+    const from = points[segment], to = points[segment + 1], offset = (vertexOffset + index) * 3;
+    output[offset] = from[0] + (to[0] - from[0]) * ratio;
+    output[offset + 1] = from[1] + (to[1] - from[1]) * ratio;
+    output[offset + 2] = from[2] + (to[2] - from[2]) * ratio;
+  }
+  return count;
 }
 
 /**

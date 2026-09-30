@@ -34,7 +34,7 @@ export function Fallback2D({ definition, state, reducedMotion, traceFlowId, disp
       <svg viewBox={viewBox} className="h-[clamp(420px,62vh,640px)] w-full" role="group" aria-label={`${definition.title ?? "Lab"} scene (2D view)`}>
         <defs>
           <marker id="flow-arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#facc15" /></marker>
-          <filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="0.18" /></filter>
+          <filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="0.07" /></filter>
         </defs>
         {list.flows.map((flow) => (
           <g key={flow.id} aria-label={`${flow.label}: ${flow.active ? "flowing" : "not flowing"}`}>
@@ -47,10 +47,10 @@ export function Fallback2D({ definition, state, reducedMotion, traceFlowId, disp
           const pick: ScenePick = { kind: "item", item };
           return (
             <g key={item.id} opacity={item.alpha < 0.5 && item.inFocus ? 0.45 : item.alpha} {...(item.detail === "decor" ? { pointerEvents: "none" as const } : item.selectable && item.inFocus ? { role: "button", tabIndex: 0, "aria-label": item.label, "aria-pressed": item.highlighted, onClick: () => onPick(pick), onKeyDown: activate(pick), className: "cursor-pointer outline-none focus-visible:[&>polygon]:stroke-cyan-200" } : {})}>
-              {item.selectable && item.inFocus && item.detail !== "decor" && <polygon data-lab-touch-target points={hull.map((p) => p.join(",")).join(" ")} fill="transparent" stroke="#fff" strokeOpacity={0.001} strokeWidth={40} vectorEffect="non-scaling-stroke" pointerEvents="stroke" aria-hidden="true" />}
-              {item.emissive > 0 && <circle cx={item.center[0]} cy={-item.center[1]} r={0.9 * item.emissive + 0.2} fill="#fde68a" opacity={item.emissive} filter="url(#glow)" />}
+              {item.selectable && item.inFocus && item.detail !== "decor" && <polygon data-lab-touch-target points={hull.map((p) => p.join(",")).join(" ")} fill="transparent" stroke="#fff" strokeOpacity={0.001} strokeWidth={48} vectorEffect="non-scaling-stroke" pointerEvents="stroke" aria-hidden="true" />}
+              {item.emissive > 0 && <circle cx={item.center[0]} cy={-item.center[1]} r={0.08 * item.emissive + 0.04} fill="#fde68a" opacity={Math.min(0.08, item.emissive * 0.08)} filter="url(#glow)" />}
               <polygon points={hull.map((p) => p.join(",")).join(" ")} fill={item.highlighted ? mixHexColor(item.color, HIGHLIGHT_COLOR, 0.2) : item.color} stroke={item.highlighted ? HIGHLIGHT_COLOR : "#0f172a"} strokeWidth={item.highlighted ? 3 : 1} vectorEffect="non-scaling-stroke" />
-              {item.showLabel && item.inFocus && <text x={item.center[0]} y={-item.center[1] - 0.15} textAnchor="middle" fontSize={0.3} fill="#f8fafc" className="pointer-events-none select-none" style={{ paintOrder: "stroke", stroke: "#020617", strokeWidth: 0.06 }}>{item.label}</text>}
+              {item.showLabel && item.inFocus && <text x={item.center[0] + (item.labelOffset?.[0] ?? 0)} y={-(item.center[1] + (item.labelOffset?.[1] ?? 0)) - 0.15} textAnchor="middle" fontSize={0.3} fill="#f8fafc" className={`pointer-events-none select-none${item.mobileLabel === false ? " max-[500px]:hidden" : ""}`} style={{ paintOrder: "stroke", stroke: "#020617", strokeWidth: 0.06 }}>{item.label}</text>}
             </g>
           );
         })}
@@ -61,6 +61,7 @@ export function Fallback2D({ definition, state, reducedMotion, traceFlowId, disp
           const pick: ScenePick = { kind: "node", flowId: flow.id, nodeId: node.id };
           return (
             <g key={node.id} role="button" tabIndex={0} aria-label={`Trace: ${node.label}`} onClick={() => onPick(pick)} onKeyDown={activate(pick)} className="cursor-pointer">
+              <circle data-lab-touch-target cx={node.position[0]} cy={-node.position[1]} r={0.24} fill="transparent" stroke="transparent" strokeWidth={44} vectorEffect="non-scaling-stroke" pointerEvents="stroke" aria-hidden="true" />
               <circle cx={node.position[0]} cy={-node.position[1]} r={0.24} fill={order >= 0 ? "#facc15" : "#e2e8f0"} stroke="#0f172a" strokeWidth={1} vectorEffect="non-scaling-stroke" />
               {order >= 0 && <text x={node.position[0]} y={-node.position[1] + 0.1} textAnchor="middle" fontSize={0.26} fill="#0f172a">{order + 1}</text>}
             </g>

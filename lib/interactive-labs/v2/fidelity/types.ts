@@ -25,6 +25,10 @@ export type ComponentDefinition = {
   detail?: "decor";
   /** Decorative components cannot expose instructional text. */
   showLabel?: boolean;
+  /** Suppress secondary callouts on narrow screens; controls retain the complete component inventory. */
+  mobileLabel?: boolean;
+  /** World-space offset for a visible scene label when nearby parts need separate callouts. */
+  labelOffset?: Vec3;
   carriesSymbol?: boolean;
   carriesScale?: boolean;
   carriesPlaceIdentity?: boolean;

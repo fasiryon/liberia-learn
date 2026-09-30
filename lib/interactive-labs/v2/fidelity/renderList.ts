@@ -23,6 +23,8 @@ export type RenderItem = {
   highlighted: boolean;
   selectable: boolean;
   showLabel: boolean;
+  mobileLabel?: boolean;
+  labelOffset?: Vec3;
   /** False when the item is only faded context around an isolated part. */
   inFocus: boolean;
   detail?: "decor";
@@ -123,7 +125,7 @@ export function buildRenderList(input: { definition: InteractiveLabDefinition<La
     const motion = motionByComponent.get(component.id);
     const spin = motion && motionActive.get(motion.id) ? { pre: rootMatrix, local: localMatrix, pivot: motion.pivot, axis: motion.axis, radPerSec: motion.rpm * Math.PI / 30 } : undefined;
     const highlighted = fidelity.inspectedComponentId === component.id || guided.includes(component.id);
-    items.push({ id: component.id, label: component.label, kind: "component", geometry: component.geometry, matrix, center: transformPoint(matrix, [0, 0, 0]), color: component.material.color, alpha: !inFocus ? 0.12 : removed ? 0.35 : component.material.opacity ?? 0.96, emissive: simulation.componentStates[component.id]?.intensity ?? 0, clip: removed && cutaway ? cutaway.plane : null, highlighted, selectable: component.detail !== "decor" && component.selectable !== false && !removed && isComponentRevealed(spec, fidelity, component.id), showLabel: component.detail !== "decor" && fidelity.labelsVisible && component.selectable !== false && !removed, inFocus, detail: component.detail, spin });
+    items.push({ id: component.id, label: component.label, kind: "component", geometry: component.geometry, matrix, center: transformPoint(matrix, [0, 0, 0]), ...(component.labelOffset ? { labelOffset: component.labelOffset } : {}), ...(component.mobileLabel === false ? { mobileLabel: false } : {}), color: component.material.color, alpha: !inFocus ? 0.12 : removed ? 0.35 : component.material.opacity ?? 0.96, emissive: simulation.componentStates[component.id]?.intensity ?? 0, clip: removed && cutaway ? cutaway.plane : null, highlighted, selectable: component.detail !== "decor" && component.selectable !== false && !removed && isComponentRevealed(spec, fidelity, component.id), showLabel: component.detail !== "decor" && component.showLabel !== false && fidelity.labelsVisible && component.selectable !== false && !removed, inFocus, detail: component.detail, spin });
   }
 
   const flows: RenderFlow[] = spec.flows.filter((flow) => !fidelity.hiddenFlowIds.includes(flow.id)).map((flow) => {

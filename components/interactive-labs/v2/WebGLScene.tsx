@@ -4,11 +4,12 @@ import { useEffect, useRef } from "react";
 import type { CapabilityProfile, GeometryKind, InteractiveLabDefinition, LabAction, LabState } from "@/lib/interactive-labs/v2/types";
 import type { FidelityState } from "@/lib/interactive-labs/v2/fidelity/types";
 import { buildRenderList, type RenderList } from "@/lib/interactive-labs/v2/fidelity/renderList";
-import { approachCamera, constrainCamera, easeDisplayState, presetPose, spinMatrix, viewMatrix, type CameraPose } from "@/lib/interactive-labs/v2/fidelity/presentation";
+import { approachCamera, constrainCamera, easeDisplayState, isSettled, presetPose, spinMatrix, viewMatrix, type CameraPose } from "@/lib/interactive-labs/v2/fidelity/presentation";
 import { shouldDowngrade } from "@/lib/interactive-labs/v2/fidelity/profiles";
 import { downgradeFrameBudgetMs } from "@/lib/interactive-labs/v2/production/budgets";
-import { IDENTITY, multiply, perspective, transformPoint, type Mat4, type Vec3 } from "@/lib/interactive-labs/v2/fidelity/math";
+import { fitHorizontalFieldOfView, IDENTITY, multiply, perspective, transformPoint, type Mat4, type Vec3 } from "@/lib/interactive-labs/v2/fidelity/math";
 import { batchFlowGeometry, createFlowBatchStorage, type FlowVertexBatch } from "@/lib/interactive-labs/v2/fidelity/flowBatch";
+import { shouldScheduleWebGLFrame } from "@/lib/interactive-labs/v2/fidelity/renderLoop";
 import { HIGHLIGHT_COLOR, MARKER_COLOR } from "@/lib/interactive-labs/v2/fidelity/palette";
 import { buildMesh } from "./meshes";
 import { pickNearest, type ScenePick } from "./picking";
@@ -56,6 +57,7 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
   const zoomRef = useRef(1);
   const frameRef = useRef<{ list: RenderList | null; viewProj: Mat4; width: number; height: number }>({ list: null, viewProj: IDENTITY, width: 1, height: 1 });
   const callbacks = useRef({ onDowngrade, reducedMotion, traceFlowId });
+  const requestDrawRef = useRef<() => void>(() => {});
   stateRef.current = state;
   callbacks.current = { onDowngrade, reducedMotion, traceFlowId };
 
@@ -128,7 +130,9 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
     let lastReviewTime: number | undefined;
     const frameTimes: number[] = [];
     let downgraded = false;
+    const scheduleDraw = () => { if (!frame) frame = requestAnimationFrame(draw); };
     const draw = (now: number) => {
+      frame = 0;
       const reviewTime = (window as Window & { __labReviewClockSeconds?: number }).__labReviewClockSeconds;
       if (reviewTime !== undefined && !reviewClockSeen) { labelTick = Number.NEGATIVE_INFINITY; reviewClockSeen = true; }
       const dt = reviewTime === undefined
@@ -149,7 +153,9 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
       if (el.width !== w || el.height !== h) { el.width = w; el.height = h; }
       gl.viewport(0, 0, w, h); gl.enable(gl.DEPTH_TEST); gl.enable(gl.BLEND); gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
       gl.clearColor(0.035, 0.055, 0.11, 0); gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-      const viewProj = multiply(perspective(definition.scene.camera.fov, w / h, 0.1, 100), viewMatrix(camera));
+      const aspect = w / h;
+      const fov = fitHorizontalFieldOfView(definition.scene.camera.fov, aspect);
+      const viewProj = multiply(perspective(fov, aspect, 0.1, 100), viewMatrix(camera));
       frameRef.current = { list, viewProj, width: el.clientWidth, height: el.clientHeight };
       const t = reviewTime ?? now / 1000;
       // Opaque first, then translucent without depth writes so cut-away glass and faded context blend correctly.
@@ -186,23 +192,38 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
         if (motionStatus.current && motionStatus.current.textContent !== status) motionStatus.current.textContent = status;
         const project = (p: Vec3) => { const c = transformPoint(viewProj, p); return c[2] > 1 ? null : { x: (c[0] * 0.5 + 0.5) * el.clientWidth, y: (0.5 - c[1] * 0.5) * el.clientHeight }; };
         const entries = [
-          ...list.items.filter((item) => item.showLabel && item.inFocus && (!low || item.highlighted)).map((item) => ({ text: item.label, at: project(item.spin ? transformPoint(spinMatrix(item.spin, t, motionless), [0, 0, 0]) : item.center), title: undefined, glyph: false })),
-          ...list.motions.filter((motion) => motion.active).map((motion) => ({ text: "↻", at: project(motion.center), title: `${motion.label}: turning`, glyph: true })),
+          ...list.items.filter((item) => item.showLabel && item.inFocus).map((item) => {
+            const center = item.spin ? transformPoint(spinMatrix(item.spin, t, motionless), [0, 0, 0]) : item.center;
+            const offset = item.labelOffset ?? [0, 0, 0];
+            return { text: item.label, at: project([center[0] + offset[0], center[1] + offset[1], center[2] + offset[2]]), title: undefined, glyph: false, mobileLabel: item.mobileLabel !== false };
+          }),
+          ...list.motions.filter((motion) => motion.active).map((motion) => ({ text: "↻", at: project(motion.center), title: `${motion.label}: turning`, glyph: true, mobileLabel: true })),
         ];
         labels.current.replaceChildren(...entries.filter((entry) => entry.at).map((entry) => {
           const node = document.createElement("span");
           node.textContent = entry.text;
           if (entry.title) { node.title = entry.title; node.setAttribute("aria-label", entry.title); node.setAttribute("role", "img"); }
-          node.className = entry.glyph ? "pointer-events-none absolute -translate-x-1/2 -translate-y-1/2 text-lg font-bold text-fuchsia-300 drop-shadow" : "pointer-events-none absolute -translate-x-1/2 -translate-y-[160%] whitespace-nowrap rounded-full bg-slate-950/70 px-2 py-0.5 text-[11px] font-semibold text-slate-100";
+          node.className = entry.glyph ? "pointer-events-none absolute -translate-x-1/2 -translate-y-1/2 text-lg font-bold text-fuchsia-300 drop-shadow" : `pointer-events-none absolute -translate-x-1/2 -translate-y-[160%] whitespace-nowrap rounded-full bg-slate-950/70 px-2 py-0.5 text-[11px] font-semibold text-slate-100${entry.mobileLabel === false ? " max-[500px]:hidden" : ""}`;
           node.style.left = `${entry.at!.x}px`; node.style.top = `${entry.at!.y}px`;
           return node;
         }));
       }
-      frame = requestAnimationFrame(draw);
+      const fidelityMoving = !!(spec && current.fidelity && displayRef.current && !isSettled(displayRef.current, current.fidelity));
+      const cameraMoving = !motionless && (Math.abs(camera.distance - targetPose.distance) > 1e-4 || Math.abs(camera.yaw - targetPose.yaw) > 1e-4 || Math.abs(camera.pitch - targetPose.pitch) > 1e-4 || camera.target.some((value, index) => Math.abs(value - targetPose.target[index]) > 1e-4));
+      const flowMoving = list.flows.some((flow) => flow.active && flow.particleCount > 0);
+      const spinMoving = list.motions.some((motion) => motion.active);
+      const pulseMoving = list.budget.pulseHighlights && list.items.some((item) => item.highlighted);
+      // Review captures advance an authored virtual clock and need a frame for every tick.
+      // Learner sessions request frames only while something visible is moving.
+      if (shouldScheduleWebGLFrame({ reviewClockActive: reviewTime !== undefined, reducedMotion: motionless, fidelityMoving, cameraMoving, flowMoving, spinMoving, pulseMoving })) scheduleDraw();
     };
-    frame = requestAnimationFrame(draw);
-    return () => { cancelAnimationFrame(frame); meshes.forEach((mesh) => { gl.deleteBuffer(mesh.position); gl.deleteBuffer(mesh.normal); }); gl.deleteBuffer(lineBuffer); Object.values(flowBuffers).forEach((buffers) => { gl.deleteBuffer(buffers.positions); gl.deleteBuffer(buffers.colors); }); gl.deleteProgram(program); };
+    requestDrawRef.current = scheduleDraw;
+    const resizeObserver = new ResizeObserver(scheduleDraw); resizeObserver.observe(el);
+    scheduleDraw();
+    return () => { requestDrawRef.current = () => {}; resizeObserver.disconnect(); cancelAnimationFrame(frame); meshes.forEach((mesh) => { gl.deleteBuffer(mesh.position); gl.deleteBuffer(mesh.normal); }); gl.deleteBuffer(lineBuffer); Object.values(flowBuffers).forEach((buffers) => { gl.deleteBuffer(buffers.positions); gl.deleteBuffer(buffers.colors); }); gl.deleteProgram(program); };
   }, [definition, profile, allowPerformanceDowngrade]);
+
+  useEffect(() => { requestDrawRef.current(); }, [state, reducedMotion, traceFlowId]);
 
   const pick = (clientX: number, clientY: number, target: HTMLElement) => {
     const { list, viewProj, width, height } = frameRef.current; if (!list) return;
@@ -225,7 +246,7 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
           if (drag.current.moved > 6 && selected && definition.scene.objects.some((object) => object.id === selected)) dispatch({ type: "rotate", objectId: selected, delta: [dx * 0.012, dy * 0.012] });
         }}
         onPointerUp={(e) => { const wasClick = drag.current.moved < 6; drag.current.active = false; if (wasClick) pick(e.clientX, e.clientY, e.currentTarget); }}
-        onWheel={(e) => { if (!constraints) return; zoomRef.current = Math.min(constraints.maxDistance / constraints.minDistance, Math.max(0.5, zoomRef.current * (e.deltaY > 0 ? 1.08 : 0.92))); }}
+        onWheel={(e) => { if (!constraints) return; zoomRef.current = Math.min(constraints.maxDistance / constraints.minDistance, Math.max(0.5, zoomRef.current * (e.deltaY > 0 ? 1.08 : 0.92))); requestDrawRef.current(); }}
       />
       <div ref={labels} className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true" />
       <div ref={motionStatus} className="sr-only" role="status" aria-live="polite" />
