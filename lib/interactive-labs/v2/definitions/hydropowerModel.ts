@@ -90,12 +90,13 @@ function explain(r: ReturnType<typeof evaluateHydro>): ExplanationLine[] {
   else lines.push({ id: "no-demand", text: "All feeders are off, so no electricity is sent to the city." });
   if (r.gridStableWithPriority) lines.push({ id: "priority-stable", text: "Dry season, evening peak: the grid is stable and the hospital is lit." });
   lines.push(
-    { id: "chain", text: "Energy chain: stored (potential) energy of the high water → movement (kinetic) energy of falling water → turning turbine and shaft → electrical energy in the generator → light (and some heat) in the city. At each step some energy becomes heat and sound; none is destroyed." },
     { id: "grade8-rule", text: "More water each second, or a higher drop, gives more power." },
     { id: "power-equation", text: `P ≈ ρ·g·Q·H·η = 1000 × 9.81 × ${r.usableFlow} × 23.1 × 0.903 = ${hydraulicWatts.toLocaleString("en-US")} W; ${hydraulicWatts.toLocaleString("en-US")} W ÷ 1,000,000 W/MW ≈ ${r.outputMW.toFixed(1)} MW (η = 0.903 is a model assumption).`, minGrade: 9 },
     { id: "dynamo", text: "In the generator, the spinning rotor's magnet moves past coils of wire and makes a current, the same idea as a bicycle dynamo.", minGrade: 9 },
     { id: "safety-limits", text: "In class you would also pour the water yourself and feel the dynamo push back when the lamp lights. Never go near a real dam, spillway, intake or power line. The water and electricity there can kill." },
   );
+  // Keep the storyboard's S7 energy-chain explanation in the first visible scroll-panel row.
+  lines.unshift({ id: "chain", text: "Energy chain: stored (potential) energy of the high water → movement (kinetic) energy of falling water → turning turbine and shaft → electrical energy in the generator → light (and some heat) in the city. At each step some energy becomes heat and sound; none is destroyed." });
   return lines;
 }
 

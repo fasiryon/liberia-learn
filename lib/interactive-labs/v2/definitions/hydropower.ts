@@ -31,7 +31,7 @@ const components: HighFidelitySpec["components"] = [
   component("u3-shaft", "Shaft", "cylinder", [0.9, 0.05, 0.1], [0.09, 0.36, 0.09], "#5f6d7e", { internal: true, layerId: "unit-3-internals", shapeKey: "shaft", labelOffset: [0, 0.2, 0], mobileLabel: false }),
   component("u3-generator", "Generator", "cylinder", [0.9, 0.48, 0.1], [0.34, 0.28, 0.34], "#ee8f52", { internal: true, layerId: "unit-3-internals", shapeKey: "generator", labelOffset: [0.8, 0.4, 0], mobileLabel: false }),
   component("switchyard", "Switchyard", "panel", [3.1, 0.2, 0.1], [0.9, 0.8, 0.18], "#aab4c0", { mobileLabel: false }),
-  component("power-tower-1", "Transmission tower", "cone", [4.0, 1.4, 0], [0.48, 1.3, 0.48], "#aab4c0", { labelOffset: [0.15, 0.95, 0], mobileLabel: false }),
+  component("power-tower-1", "Transmission tower", "cone", [4.0, 1.4, 0], [0.48, 1.3, 0.48], "#aab4c0", { showLabel: false }),
   component("city-hospital", "Hospital", "rectangular-prism", [5.0, 0.35, 0], [0.4, 0.95, 0.5], "#96a3b6", { mobileLabel: false }),
   component("hospital-sign", "Hospital H sign", "panel", [5.0, 1.1, 0.28], [0.22, 0.2, 0.06], "#2f6fe0", { showLabel: false }),
   component("city-homes", "Homes", "rectangular-prism", [6.4, 0.25, 0], [0.45, 0.75, 0.5], "#7a869a", { labelOffset: [-1.6, 1.1, 0], mobileLabel: false }),
@@ -123,7 +123,7 @@ const spec: HighFidelitySpec = {
     { id: "season", prompt: "Compare dry season with rainy season. What changes when less water arrives?", cameraPresetId: "valley" },
     { id: "overload", prompt: "With three units in the rainy season, keep the hospital on, then switch on homes and shops one at a time. When does demand exceed the plant's 66 MW capacity?", cameraPresetId: "grid-city" },
     { id: "repair", prompt: "Rebuild unit 3 in order: runner, shaft, generator.", cameraPresetId: "unit-bench", highlightIds: ["u3-runner", "u3-shaft", "u3-generator"] },
-    { id: "explore", prompt: "Explore how river flow, units online and feeder demand work together.", cameraPresetId: "valley" },
+    { id: "energy-chain", prompt: "Name the energy chain: stored water → moving water → turning turbine and shaft → electricity → light and heat. Use the explanation panel to check your thinking.", cameraPresetId: "valley" },
   ],
   modes: ["GUIDED", "EXPLORE", "CHALLENGE", "ASSESSMENT"],
   challengeStatus: (quantities) => quantities.gridStableWithPriority === 1

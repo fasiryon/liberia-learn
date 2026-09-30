@@ -42,6 +42,14 @@ describe("Mount Coffee hydropower design stage", () => {
     expect(hydropowerDefinition.checks[0].prompt).toBe("Trace the water through the six nodes, in order.");
   });
 
+  it("shows the energy-chain explanation as the seventh guided task", () => {
+    const finalStep = hydropowerDefinition.fidelity?.guidedPath.at(-1);
+    expect(finalStep?.prompt).toContain("stored water → moving water → turning turbine and shaft → electricity → light and heat");
+    const replay = replayReviewScenario(hydropowerDefinition, HYDROPOWER_REVIEW_SCENARIOS.scenarios.find((scenario) => scenario.id === "hydro-guided-name-chain")!);
+    if ("reason" in replay) throw new Error(replay.reason);
+    expect(replay.state.fidelity?.guidedStepIndex).toBe(6);
+  });
+
   it("covers all 22 storyboard captures and replays them", () => {
     expect(HYDROPOWER_REVIEW_SCENARIOS.scenarios.length).toBeGreaterThanOrEqual(22);
     expect(HYDROPOWER_REVIEW_SCENARIOS.scenarios.every((scenario) => scenario.storyboardScene)).toBe(true);

@@ -117,6 +117,7 @@ describe("Mount Coffee hydropower model (spec fixtures)", () => {
 
   it("grade gating: the equation and dynamo lines are marked minGrade 9", () => {
     const lines = run(430, 4, "HMS").explanation;
+    expect(lines[0].id).toBe("chain");
     expect(lines.filter((line) => line.minGrade === 9).map((line) => line.id)).toEqual(["power-equation", "dynamo"]);
   });
 });
