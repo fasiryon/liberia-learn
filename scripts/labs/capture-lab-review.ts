@@ -11,7 +11,7 @@
  * Usage:
  *   npx tsx scripts/labs/capture-lab-review.ts --lab fixture-simple-circuit --label round-1
  *     [--base-url http://localhost:3000] [--profiles HIGH,STANDARD,LOW,FALLBACK_2D]
- *     [--viewports desktop,mobile] [--scenarios overview,current-starts] [--reduced-motion]
+ *     [--viewports desktop,mobile] [--scenarios overview,current-starts] [--reduced-motion] [--still-only]
  *     [--perf] [--probe] [--video] [--out artifacts/lab-review/...]
  *
  * Determinism: stills and motion frames run on Playwright's virtual clock, paused before navigation, so every
@@ -252,17 +252,18 @@ async function main() {
   try {
     for (const viewport of viewports) for (const profile of profiles) for (const scenario of scenarios) {
       const base = `${scenario.id}__${profile}__${viewport}`;
-      const context = await newContext(browser, viewport, false);
+      const stillReducedMotion = flag("reduced-motion");
+      const context = await newContext(browser, viewport, stillReducedMotion);
       const page = await context.newPage();
       const issues = watch(page);
       const opened = await openScenario(page, baseUrl, labId, scenario.id, profile, false, true);
       const still = path.join(out, `${base}.png`);
       await page.screenshot({ path: still, fullPage: true });
-      captures.push({ file: still, scenario: scenario.id, storyboardScene: scenario.storyboardScene, stage: scenario.stage, profile, viewport, kind: "still", reducedMotion: false });
+      captures.push({ file: still, scenario: scenario.id, storyboardScene: scenario.storyboardScene, stage: scenario.stage, profile, viewport, kind: "still", reducedMotion: stillReducedMotion });
       await context.close();
       runs.push({ scenario: scenario.id, profile, viewport, kind: "still", ...opened, ...issues });
 
-      if (!scenario.motion) continue;
+      if (!scenario.motion || flag("still-only")) continue;
       for (const reducedMotion of motionModes) {
         const motionContext = await newContext(browser, viewport, reducedMotion);
         const motionPage = await motionContext.newPage();
