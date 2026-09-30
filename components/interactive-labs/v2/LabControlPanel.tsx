@@ -89,11 +89,11 @@ export function LabControlPanel({ definition, state, activeCheck, dispatch }: Pr
           return (
             <div className="mt-4 space-y-3">
               <div>
-                <p className="text-xs text-slate-400">1. Pick up a face</p>
+                <p className="text-xs text-slate-400">1. Pick up a part</p>
                 <div className="mt-2 flex flex-wrap gap-2">{loose.map((id) => { const c = face(id), [w, h] = [c.transform.scale[0], c.transform.scale[1]]; return (
                   <button key={id} type="button" aria-pressed={heldFace === id} onClick={() => setHeldFace(heldFace === id ? null : id)} className={`flex min-h-11 flex-col items-center gap-1 rounded-xl p-2 text-[11px] ${heldFace === id ? "bg-cyan-300 text-slate-950" : "bg-white/10 text-white"}`}>
                     <svg width={w * 16} height={h * 16} aria-hidden="true"><rect width={w * 16} height={h * 16} rx="2" fill={c.material.color} /></svg>{c.label}
-                  </button>); })}{loose.length === 0 && <span className="text-xs text-emerald-300">All faces placed.</span>}</div>
+                  </button>); })}{loose.length === 0 && <span className="text-xs text-emerald-300">All parts placed.</span>}</div>
               </div>
               <div>
                 <p className="text-xs text-slate-400">2. Put it in a slot</p>
