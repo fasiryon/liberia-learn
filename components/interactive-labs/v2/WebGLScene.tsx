@@ -3,14 +3,14 @@
 import { useEffect, useRef } from "react";
 import type { CapabilityProfile, GeometryKind, InteractiveLabDefinition, LabAction, LabState } from "@/lib/interactive-labs/v2/types";
 import type { FidelityState } from "@/lib/interactive-labs/v2/fidelity/types";
-import { buildRenderList, type RenderList } from "@/lib/interactive-labs/v2/fidelity/renderList";
+import { buildRenderList, type RenderList, type RenderMarker } from "@/lib/interactive-labs/v2/fidelity/renderList";
 import { approachCamera, constrainCamera, easeDisplayState, isSettled, presetPose, spinMatrix, viewMatrix, type CameraPose } from "@/lib/interactive-labs/v2/fidelity/presentation";
 import { shouldDowngrade } from "@/lib/interactive-labs/v2/fidelity/profiles";
 import { downgradeFrameBudgetMs } from "@/lib/interactive-labs/v2/production/budgets";
 import { fitHorizontalFieldOfView, IDENTITY, multiply, perspective, transformPoint, type Mat4, type Vec3 } from "@/lib/interactive-labs/v2/fidelity/math";
-import { batchFlowGeometry, createFlowBatchStorage, type FlowVertexBatch } from "@/lib/interactive-labs/v2/fidelity/flowBatch";
+import { batchFlowGeometry, createFlowBatchStorage, createPointBatchStorage, writeMarkerPositions, type FlowVertexBatch } from "@/lib/interactive-labs/v2/fidelity/flowBatch";
 import { shouldScheduleWebGLFrame } from "@/lib/interactive-labs/v2/fidelity/renderLoop";
-import { HIGHLIGHT_COLOR, MARKER_COLOR } from "@/lib/interactive-labs/v2/fidelity/palette";
+import { highlightBaseMix, HIGHLIGHT_COLOR, MARKER_COLOR } from "@/lib/interactive-labs/v2/fidelity/palette";
 import { buildMesh } from "./meshes";
 import { pickNearest, type ScenePick } from "./picking";
 
@@ -89,6 +89,8 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
       return mesh;
     };
     const lineBuffer = gl.createBuffer()!;
+    const pointStorage = createPointBatchStorage();
+    let pointGpuCapacity = 0;
     const flowStorage = createFlowBatchStorage();
     const flowBuffers = Object.fromEntries(["lines", "particles", "traceNodes"].map((key) => [key, { positions: gl.createBuffer()!, colors: gl.createBuffer()!, capacity: 0 }])) as Record<"lines" | "particles" | "traceNodes", { positions: WebGLBuffer; colors: WebGLBuffer; capacity: number }>;
     const uploadBatch = (batch: FlowVertexBatch, gpu: { positions: WebGLBuffer; colors: WebGLBuffer; capacity: number }) => {
@@ -102,16 +104,21 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
         gl.bindBuffer(gl.ARRAY_BUFFER, gpu.colors); gl.bufferSubData(gl.ARRAY_BUFFER, 0, batch.colors);
       }
     };
-    const drawPoints = (points: Vec3[], mode: number, color: string, alpha: number, size: number, viewProj: Mat4) => {
-      if (points.length === 0) return;
-      gl.bindBuffer(gl.ARRAY_BUFFER, lineBuffer); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(points.flat()), gl.DYNAMIC_DRAW);
+    const drawPoints = (markers: RenderMarker[], mode: number, color: string, alpha: number, size: number, viewProj: Mat4) => {
+      if (markers.length === 0) return;
+      writeMarkerPositions(markers, pointStorage);
+      if (pointGpuCapacity < pointStorage.positions.byteLength) {
+        pointGpuCapacity = pointStorage.positions.byteLength;
+        gl.bindBuffer(gl.ARRAY_BUFFER, lineBuffer); gl.bufferData(gl.ARRAY_BUFFER, pointGpuCapacity, gl.DYNAMIC_DRAW);
+      }
+      gl.bindBuffer(gl.ARRAY_BUFFER, lineBuffer); gl.bufferSubData(gl.ARRAY_BUFFER, 0, pointStorage.positions);
       gl.enableVertexAttribArray(attr.position); gl.vertexAttribPointer(attr.position, 3, gl.FLOAT, false, 0, 0);
       gl.disableVertexAttribArray(attr.normal); gl.vertexAttrib3f(attr.normal, 0, 0, 1);
       gl.disableVertexAttribArray(attr.color); gl.vertexAttrib3f(attr.color, 1, 1, 1);
       gl.uniformMatrix4fv(uni.mvp, false, new Float32Array(viewProj)); gl.uniformMatrix4fv(uni.model, false, new Float32Array(IDENTITY));
       gl.uniform3fv(uni.color, rgb(color)); gl.uniform3fv(uni.highlightColor, rgb(HIGHLIGHT_COLOR)); gl.uniform1f(uni.highlightMix, 0); gl.uniform1f(uni.hasHighlight, 0); gl.uniform1f(uni.useVertexColor, 0);
       gl.uniform1f(uni.alpha, alpha); gl.uniform1f(uni.emissive, 0); gl.uniform1f(uni.lighting, 0); gl.uniform1f(uni.clipEnabled, 0); gl.uniform1f(uni.pointSize, size);
-      gl.drawArrays(mode, 0, points.length);
+      gl.drawArrays(mode, 0, markers.length);
     };
     const drawBatch = (batch: FlowVertexBatch, gpu: { positions: WebGLBuffer; colors: WebGLBuffer; capacity: number }, mode: number, alpha: number, size: number, viewProj: Mat4) => {
       if (!batch.count) return;
@@ -172,7 +179,7 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
         const base = rgb(item.color);
         const pulse = item.highlighted && list.budget.pulseHighlights && !motionless ? Math.sin(t * 4) * 0.04 : 0;
         gl.uniform3fv(uni.color, base); gl.uniform3fv(uni.highlightColor, rgb(HIGHLIGHT_COLOR));
-        gl.uniform1f(uni.highlightMix, item.highlighted ? 0.2 + pulse : 0); gl.uniform1f(uni.hasHighlight, item.highlighted ? 1 : 0);
+        gl.uniform1f(uni.highlightMix, item.highlighted ? highlightBaseMix(item.color) + pulse : 0); gl.uniform1f(uni.hasHighlight, item.highlighted ? 1 : 0);
         gl.uniform1f(uni.alpha, item.highlighted ? Math.max(item.alpha, 0.65) : item.alpha); gl.uniform1f(uni.emissive, item.emissive); gl.uniform1f(uni.lighting, LIGHTING[list.budget.lighting]);
         gl.uniform1f(uni.clipEnabled, item.clip ? 1 : 0); if (item.clip) gl.uniform4f(uni.clipPlane, item.clip.normal[0], item.clip.normal[1], item.clip.normal[2], item.clip.offset);
         gl.uniform1f(uni.pointSize, 1);
@@ -183,7 +190,7 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
       if (list.flows.length) drawBatch(flowStorage.lines, flowBuffers.lines, gl.LINES, 1, 1, viewProj);
       if (list.flows.length) drawBatch(flowStorage.particles, flowBuffers.particles, gl.POINTS, 1, (low ? 6 : 9) * dpr, viewProj);
       if (list.flows.length) drawBatch(flowStorage.traceNodes, flowBuffers.traceNodes, gl.POINTS, 1, 12 * dpr, viewProj);
-      if (list.markers.length) drawPoints(list.markers.map((marker) => marker.position), gl.POINTS, MARKER_COLOR, 1, (list.budget.pulseHighlights && !motionless ? 12 + Math.sin(t * 5) * 3 : 12) * dpr, viewProj);
+      if (list.markers.length) drawPoints(list.markers, gl.POINTS, MARKER_COLOR, 1, (list.budget.pulseHighlights && !motionless ? 12 + Math.sin(t * 5) * 3 : 12) * dpr, viewProj);
 
       // Labels are DOM text (sharp at any DPR) repositioned a few times per second rather than every frame.
       const labelNow = reviewTime ?? now;

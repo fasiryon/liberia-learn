@@ -3,6 +3,8 @@
 // initializeLab. Reviewers inspect captures of these states in the actual renderer; nothing here
 // renders, records evidence, or writes mastery. See docs/architecture/INTERACTIVE_LAB_PRODUCTION_TEAM.md.
 import { acceptLabAction, initializeLab } from "../kernel";
+import { buildRenderList } from "../fidelity/renderList";
+import { deriveSimulation, initialFidelityState } from "../fidelity/engine";
 import type { CapabilityProfile, InteractiveLabDefinition, LabAction, LabState } from "../types";
 
 export const LAB_REVIEW_SCENARIO_VERSION = "lab-review-scenario/1.0.0" as const;
@@ -90,12 +92,24 @@ export function validateScenarioSet(definition: InteractiveLabDefinition<LabStat
   if (set.labId !== definition.id) problems.push(`Scenario set is for ${set.labId}, not ${definition.id}.`);
   if (set.labVersion !== definition.version) problems.push(`Scenario set targets ${set.labId}@${set.labVersion} but the definition is ${definition.version}.`);
   const ids = new Set<string>();
+  const hasDecor = definition.fidelity?.components.some((component) => component.detail === "decor") ?? false;
+  const decorIds = new Set(definition.fidelity?.components.filter((component) => component.detail === "decor").map((component) => component.id) ?? []);
+  const stateDrivenDecor = (state: LabState) => {
+    if (!definition.fidelity?.simulation) return false;
+    const componentStates = deriveSimulation(definition.fidelity, state.fidelity ?? initialFidelityState(definition.fidelity)).componentStates;
+    return [...decorIds].some((id) => Object.hasOwn(componentStates, id));
+  };
+  const decorSignature = (state: LabState) => JSON.stringify(buildRenderList({ definition, state, profile: "HIGH" }).items
+    .filter((item) => item.detail === "decor")
+    .map(({ id, matrix, center, color, alpha, emissive, highlighted, selectable, showLabel }) => ({ id, matrix, center, color, alpha, emissive, highlighted, selectable, showLabel })));
+  const initialDecor = hasDecor ? decorSignature(initializeLab(definition)) : "";
   for (const scenario of set.scenarios) {
     if (!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(scenario.id)) problems.push(`Scenario id "${scenario.id}" must be kebab-case (it names capture files).`);
     if (ids.has(scenario.id)) problems.push(`Duplicate scenario id "${scenario.id}".`);
     ids.add(scenario.id);
     const replay = replayReviewScenario(definition, scenario);
     if ("reason" in replay) problems.push(`Scenario "${scenario.id}" does not replay: action ${replay.failedIndex} ${replay.action ? JSON.stringify(replay.action) : ""} — ${replay.reason}`.trim());
+    else if (hasDecor && (stateDrivenDecor(replay.state) || decorSignature(replay.state) !== initialDecor)) problems.push(`Scenario "${scenario.id}" changes a decorative render property at HIGH.`);
     if (scenario.motion && (scenario.motion.frames < LAB_REVIEW_MOTION_FRAMES.min || scenario.motion.frames > LAB_REVIEW_MOTION_FRAMES.max || scenario.motion.intervalMs <= 0)) problems.push(`Scenario "${scenario.id}" motion must sample ${LAB_REVIEW_MOTION_FRAMES.min}–${LAB_REVIEW_MOTION_FRAMES.max} frames at a positive interval.`);
     if (scenario.motion && scenarioActions(definition, scenario).length === 0) problems.push(`Scenario "${scenario.id}" has motion but no final action to animate.`);
   }

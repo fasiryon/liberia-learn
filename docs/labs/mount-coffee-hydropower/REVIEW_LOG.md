@@ -37,6 +37,13 @@ Disagreements:
 - Asset director requested a persistent spin glyph; the e89075d3 stills show it across all profiles. The visual reviewer confirms desktop legibility but cannot establish individual glyph legibility on mobile; revisit in later review.
 - Shared inactive flow is `#779ab2` after the palette gate showed that `#94a3b8` could not meet both color-separation constraints with the shared highlight.
 
+## Runtime performance review follow-up
+
+- `lab-performance-reviewer` returned APPROVE_WITH_CHANGES (0 P0, 2 P1, 1 P2). It identified a highlight gate that checked only the maximum rim, a decor gate that inspected only initial simulation state, and per-frame marker typed-array allocation.
+- The shared runtime now adapts the highlight's base mix per material to retain a minimum Delta E 00 of 15, and gates both its minimum effective mix and maximum rim. It sweeps replayed review scenarios for state-driven decor and uses reusable CPU/GPU marker storage.
+- Validation: the runtime extensions, review scenarios, hydro definition and hydro model suites passed (4 files, 53 tests); `validate:changed -- --no-types` passed (61 tests); ESLint on all changed TS/TSX files passed. A subsequent `validate:changed` attempt passed tests but stalled during type-checking and was cancelled; full type-check is not certified by this run.
+- No GPU/device performance run was performed. Performance, memory, battery, and real-device frame rate remain NOT MEASURED. This code follow-up does not close the open round 1 label findings or the round 2/3 review gates.
+
 Reverted fixes: none.
 
 ## Round 3 verdict

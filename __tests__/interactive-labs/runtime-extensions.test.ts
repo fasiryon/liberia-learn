@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { acceptLabAction, initializeLab } from "@/lib/interactive-labs/v2/kernel";
-import { batchFlowGeometry, createFlowBatchStorage } from "@/lib/interactive-labs/v2/fidelity/flowBatch";
+import { batchFlowGeometry, createFlowBatchStorage, createPointBatchStorage, writeMarkerPositions } from "@/lib/interactive-labs/v2/fidelity/flowBatch";
 import { validateHighFidelityDefinition } from "@/lib/interactive-labs/v2/fidelity/boundary";
 import { buildRenderList, instructionalView, orderFallbackItems, type RenderList } from "@/lib/interactive-labs/v2/fidelity/renderList";
 import { flowParticles, flowPoints, spinMatrix } from "@/lib/interactive-labs/v2/fidelity/presentation";
@@ -10,7 +10,7 @@ import { RENDER_BUDGETS } from "@/lib/interactive-labs/v2/fidelity/profiles";
 import { fitHorizontalFieldOfView, multiply, transformMatrix, transformPoint } from "@/lib/interactive-labs/v2/fidelity/math";
 import { circuitDefinition, CIRCUIT_FIDELITY } from "@/lib/interactive-labs/v2/definitions/circuit";
 import { CIRCUIT_REVIEW_SCENARIOS } from "@/lib/interactive-labs/v2/review/referenceScenarios";
-import { replayReviewScenario } from "@/lib/interactive-labs/v2/review/scenarios";
+import { replayReviewScenario, validateScenarioSet } from "@/lib/interactive-labs/v2/review/scenarios";
 import { pickNearest } from "@/components/interactive-labs/v2/picking";
 import type { HighFidelitySpec } from "@/lib/interactive-labs/v2/fidelity/types";
 
@@ -85,6 +85,25 @@ describe("shared interactive-lab runtime extensions", () => {
     expect(validateHighFidelityDefinition(bad)).toEqual(expect.arrayContaining(["decor_has_label:hospital-sign", "decor_instructional_identity:hospital-sign", "decor_named_instructional_landmark:hospital-sign"]));
   });
 
+  it("rejects decor that becomes simulation-driven only after a review action", () => {
+    const original = CIRCUIT_FIDELITY.simulation!;
+    const definition = withDecor() as typeof circuitDefinition;
+    definition.fidelity.simulation = {
+      ...original,
+      evaluate: (input) => {
+        const output = original.evaluate(input);
+        return input.variables.switch === 1
+          ? { ...output, componentStates: { ...output.componentStates, "decor-tree": { color: "#ff0000" } } }
+          : output;
+      },
+    };
+    const set = { ...CIRCUIT_REVIEW_SCENARIOS, scenarios: [...CIRCUIT_REVIEW_SCENARIOS.scenarios, {
+      id: "decor-state-change", title: "State-driven decor", stage: "overview" as const,
+      actions: [{ type: "set-variable" as const, variableId: "switch", value: 1 }],
+    }] };
+    expect(validateScenarioSet(definition, set)).toContain('Scenario "decor-state-change" changes a decorative render property at HIGH.');
+  });
+
   it("batches inactive paths as alternating segment pairs and reuses capacity", () => {
     const list: RenderList = { items: [], markers: [], motions: [], camera: null, budget: RENDER_BUDGETS.HIGH, explanation: [], quantities: {}, flows: [{
       id: "flow", label: "Flow", color: "#22d3ee", points: [[0, 0, 0], [1, 0, 0], [2, 0, 0], [3, 0, 0]], active: false, rate: 0, direction: 1, particleCount: 0,
@@ -121,6 +140,18 @@ describe("shared interactive-lab runtime extensions", () => {
     expect(storage.particles.count).toBe(5);
   });
 
+  it("reuses marker position storage across moving frames and grows only when needed", () => {
+    const storage = createPointBatchStorage();
+    const markers = [{ position: [1, 2, 3] as [number, number, number] }, { position: [-1, 0, 4] as [number, number, number] }];
+    writeMarkerPositions(markers, storage);
+    const positions = storage.positions;
+    expect(Array.from(positions.slice(0, 6))).toEqual([1, 2, 3, -1, 0, 4]);
+    writeMarkerPositions([{ position: [3, 2, 1] }], storage);
+    expect(storage.positions).toBe(positions);
+    expect(storage.count).toBe(1);
+    expect(Array.from(storage.positions.slice(0, 3))).toEqual([3, 2, 1]);
+  });
+
   it("caches immutable flow path point lists by definition", () => {
     const flow = CIRCUIT_FIDELITY.flows[0];
     const points = flowPoints(flow);
@@ -155,7 +186,10 @@ describe("shared interactive-lab runtime extensions", () => {
     expect(deltaE00(HIGHLIGHT_COLOR, "#fde68a")).toBeGreaterThanOrEqual(25);
     expect(deltaE00(HIGHLIGHT_COLOR, MARKER_COLOR)).toBeGreaterThanOrEqual(25);
     const materials = ["#2f8fe8", "#c9c2b4", "#9fb2c6", "#aab4c0", "#6f86a0", "#5f6d7e", "#cfe0ea", "#ee8f52", "#5fb8a8", "#4a7a45", "#b06a42", "#7a869a", "#96a3b6", "#2f6fe0", "#f8fafc", "#8c9ab0", "#c98a4b"];
-    for (const base of materials) expect(deltaE00(base, highlightColor(base, true, false))).toBeGreaterThanOrEqual(15);
+    for (const base of materials) {
+      expect(deltaE00(base, highlightColor(base, true, false, 0))).toBeGreaterThanOrEqual(15);
+      expect(deltaE00(base, highlightColor(base, true, false, 1))).toBeGreaterThanOrEqual(15);
+    }
     expect(highlightColor("#7a869a", false, false)).toBe("#7a869a");
   });
 });

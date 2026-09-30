@@ -19,10 +19,27 @@ export function compositeHex(foreground: string, background: string, alpha: numb
   return mixHexColor(background, foreground, Math.min(1, Math.max(0, alpha)));
 }
 
+const highlightMixCache = new Map<string, number>();
+/** Keep the intended 20% base mix when it meets the contrast gate; increase only as needed per material. */
+export function highlightBaseMix(base: string): number {
+  const cached = highlightMixCache.get(base);
+  if (cached !== undefined) return cached;
+  let low = 0.2, high = 0.9;
+  if (deltaE00(base, mixHexColor(base, HIGHLIGHT_COLOR, high)) >= 15) {
+    for (let iteration = 0; iteration < 12; iteration += 1) {
+      const middle = (low + high) / 2;
+      if (deltaE00(base, mixHexColor(base, HIGHLIGHT_COLOR, middle)) >= 15) high = middle;
+      else low = middle;
+    }
+  }
+  highlightMixCache.set(base, high);
+  return high;
+}
+
 /** CPU reference for the non-emissive shader highlight at a full rim sample. */
 export function highlightColor(base: string, highlighted: boolean, pulse: boolean, rim = 1): string {
   if (!highlighted) return base;
-  return mixHexColor(base, HIGHLIGHT_COLOR, 0.2 + (pulse ? 0.04 : 0) + 0.55 * Math.min(1, Math.max(0, rim)));
+  return mixHexColor(base, HIGHLIGHT_COLOR, Math.min(0.9, highlightBaseMix(base) + (pulse ? 0.04 : 0) + 0.55 * Math.min(1, Math.max(0, rim))));
 }
 
 function linear(c: number): number { return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4; }

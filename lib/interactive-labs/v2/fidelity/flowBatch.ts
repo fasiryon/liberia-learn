@@ -4,6 +4,22 @@ import { INACTIVE_FLOW_COLOR, MARKER_COLOR, parseHexColor } from "./palette";
 import type { Vec3 } from "./math";
 
 export type FlowVertexBatch = { positions: Float32Array; colors: Float32Array; count: number };
+export type PointBatchStorage = { positions: Float32Array; count: number };
+export const createPointBatchStorage = (): PointBatchStorage => ({ positions: new Float32Array(0), count: 0 });
+/** Write moving scene markers into reusable CPU storage; capacity changes only when the list grows. */
+export function writeMarkerPositions(markers: readonly { position: Vec3 }[], storage: PointBatchStorage): PointBatchStorage {
+  if (storage.positions.length < markers.length * 3) {
+    let capacity = Math.max(24, storage.positions.length);
+    while (capacity < markers.length * 3) capacity *= 2;
+    storage.positions = new Float32Array(capacity);
+  }
+  storage.count = markers.length;
+  for (let index = 0; index < markers.length; index += 1) {
+    const position = markers[index].position, offset = index * 3;
+    storage.positions[offset] = position[0]; storage.positions[offset + 1] = position[1]; storage.positions[offset + 2] = position[2];
+  }
+  return storage;
+}
 export type FlowBatchStorage = { lines: FlowVertexBatch; particles: FlowVertexBatch; traceNodes: FlowVertexBatch; pathMetrics: Map<string, { coordinates: number[]; metrics: FlowPathMetrics }> };
 const emptyBatch = (): FlowVertexBatch => ({ positions: new Float32Array(0), colors: new Float32Array(0), count: 0 });
 export const createFlowBatchStorage = (): FlowBatchStorage => ({ lines: emptyBatch(), particles: emptyBatch(), traceNodes: emptyBatch(), pathMetrics: new Map() });

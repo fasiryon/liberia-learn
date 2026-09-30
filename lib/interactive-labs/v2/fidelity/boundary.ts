@@ -109,7 +109,11 @@ export function validateHighFidelityDefinition(definition: InteractiveLabDefinit
   if (deltaE00(HIGHLIGHT_COLOR, INACTIVE_FLOW_COLOR) < 25) errors.push("highlight_too_close_to_inactive_flow");
   if (deltaE00(HIGHLIGHT_COLOR, "#fde68a") < 25) errors.push("highlight_too_close_to_emissive_glow");
   for (const material of [...definition.scene.objects.map((object) => object.material), ...spec.components.map((component) => component.material)]) {
-    try { if (deltaE00(material.color, highlightColor(material.color, true, false)) < 15) errors.push(`highlight_material_difference_too_small:${material.color}`); }
+    try {
+      // Gate the least visible (20% base mix, zero rim) highlight and the most visible rim separately.
+      if (deltaE00(material.color, highlightColor(material.color, true, false, 0)) < 15) errors.push(`highlight_material_minimum_difference_too_small:${material.color}`);
+      if (deltaE00(material.color, highlightColor(material.color, true, false, 1)) < 15) errors.push(`highlight_material_rim_difference_too_small:${material.color}`);
+    }
     catch { errors.push(`material_color_invalid:${material.color}`); }
   }
   const presetIds = spec.camera.presets.map((preset) => preset.id);

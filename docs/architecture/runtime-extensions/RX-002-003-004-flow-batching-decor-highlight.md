@@ -1,7 +1,7 @@
 # RX-002 / RX-003 / RX-004: flow batching, decor detail, non-emissive highlight
 
 - **Filed by:** LAB-BUILDER on 2026-09-28, from the `lab-asset-director` spec for `mount-coffee-hydropower` (`docs/labs/mount-coffee-hydropower/design/04-ASSET_SPEC.md`).
-- **Status:** PROPOSED.
+- **Status:** IMPLEMENTED in the shared runtime; evidence and remaining measurement limits are recorded below.
 - **Runtime:** shared runtime only; nothing is lab-local.
 
 ## Why
@@ -48,7 +48,7 @@ The locked LOW budget is 40 draw calls, sized for TARGET_LOW_DEVICE (Tecno Spark
 - **What.** In WebGL, a highlight currently adds a warm emissive pulse (0.04–0.20) plus 0.12 to the base colour. On an unlit building this reads as "dimly lit", which is misconception 7 (on overload, everyone just gets dimmer lights). The change:
   - Both renderers use the shared `HIGHLIGHT_COLOR = #f0abfc` token instead of cyan `#67e8f9`.
   - A palette gate requires the token to be CIEDE2000 ΔE00 ≥ 25 from every active flow colour, the emissive-glow colour and the inactive-flow grey.
-  - WebGL carries the highlight mainly as a shader rim/Fresnel term with about a 20% base-colour mix. For every material, the final highlighted colour must remain ΔE00 ≥ 15 from its unhighlighted base.
+  - WebGL carries the highlight mainly as a shader rim/Fresnel term with a 20% base-colour mix floor that rises only as needed per material to meet the ΔE00 ≥ 15 gate; the validator checks both the minimum effective mix and maximum rim mix.
   - Highlighted items have an explicit alpha floor, preserving their visibility when the emissive alpha boost is removed.
   - At HIGH only, and only when `budget.pulseHighlights && !reducedMotion`, the rim/mix pulses. Otherwise the highlight is steady.
   - Highlights never contribute emissive. Only the simulation's `intensity` produces emissive.
@@ -64,8 +64,10 @@ The locked LOW budget is 40 draw calls, sized for TARGET_LOW_DEVICE (Tecno Spark
 
 The independent design review returned **APPROVE_WITH_CHANGES** for RX-002, RX-003 and RX-004 (0 P0, 7 P1, 5 P2). The requirements above record its required changes before implementation. The design review ran before `04-ASSET_SPEC.md` existed; the additional asset-specific exclusions below are now mandatory for RX-003: the hospital H sign, ≈30 km break, river bend and tower silhouettes remain instructional landmarks. No extension is considered implemented until the runtime code and tests enforce these requirements.
 
-**Implementation status remains PROPOSED.** The performance review is complete with changes required. Its findings and evidence are recorded below; no shared runtime implementation has started.
+**Implementation status: IMPLEMENTED.** Shared code is in `lib/interactive-labs/v2/fidelity/` and `components/interactive-labs/v2/WebGLScene.tsx`; focused runtime tests cover batching/storage reuse, decor scenario sweeps, palette gates and motion behavior. The proposed APIs are implemented in the common runtime, with no hydro-only renderer branch.
 
-**`lab-performance-reviewer` verdict: APPROVE_WITH_CHANGES** (P0 0, P1 4, P2 0). The four P1s were: reuse flow-batch storage across frames; share and gate inactive-flow contrast/palette/dash semantics across WebGL and 2D; keep decor out of instructional and interactive paths with a HIGH scenario state sweep plus 2D ordering/picking/overlap rules; and preserve highlight visibility/parity with colour separation, rim treatment, alpha floor, pulse gating and captures. The latter three are specified above. The first is specified under RX-002 steady-state storage and requires implementation tests. The review found no physical-device or renderer certification evidence.
+**`lab-performance-reviewer` verdict: APPROVE_WITH_CHANGES** (P0 0, P1 2, P2 1). The two P1 findings were that highlight testing gated only the maximum rim mix, and the shared decor validator checked only initial simulation state. The P2 finding was per-frame marker typed-array allocation. The shared material gate now checks the effective minimum mix and rim, decor validation checks every replayed scenario plus simulated component state, and WebGL marker CPU/GPU buffers grow only when capacity is insufficient. Focused tests cover these fixes. No physical-device or renderer certification evidence was produced.
 
-**Per-profile review state:** HIGH, STANDARD, LOW and FALLBACK_2D remain NOT MEASURED for implementation performance. RX-002 targets the locked LOW budget; no counts or frame rates are claimed. **OFFLINE PACKAGE:** NOT MEASURED until a lab definition and manifest exist. **NOT MEASURED:** GPU run, real device, offline manifest, draw-count baseline, frame timing, heap, memory, load time and battery impact.
+The fixed 20% highlight mix did not satisfy the required Delta E 00 15 for many pale and neutral authored materials. `highlightBaseMix` therefore retains 20% as its floor and increases the mix only as needed per material (bounded by the shader's 90% cap); both ends are checked by the shared gate. This preserves a rim/Fresnel contribution while making the promised minimum visible difference enforceable.
+
+**Per-profile review state:** HIGH, STANDARD, LOW and FALLBACK_2D remain NOT MEASURED for implementation performance. RX-002 targets the locked LOW budget; no device frame-rate, memory, load-time or battery claim is made by these tests. **OFFLINE PACKAGE:** NOT MEASURED until a lab definition and manifest exist. **NOT MEASURED:** GPU run, real device, frame timing, heap, memory, load time and battery impact.
