@@ -27,9 +27,9 @@ const components: HighFidelitySpec["components"] = [
     return [component(`unit-${unit}`, `Unit ${unit} housing`, "cylinder", [x, -0.15, 0.1], [0.52, 0.72, 0.52], "#5fb8a8", { labelOffset: unit === 1 ? [-0.9, 0.95, 0] : offsets[i], ...(unit !== 3 ? { mobileLabel: false } : {}) }),
       component(`unit-${unit}-marker`, `Unit ${unit} rotation marker`, "box", [x + 0.34, -0.15, 0.1], [0.16, 0.08, 0.08], "#facc15", { showLabel: false })];
   }),
-  component("u3-runner", "Runner", "cylinder", [0.9, -0.25, 0.1], [0.32, 0.18, 0.32], "#cfe0ea", { internal: true, layerId: "unit-3-internals", shapeKey: "runner", labelOffset: [-0.55, -0.2, 0] }),
-  component("u3-shaft", "Shaft", "cylinder", [0.9, 0.05, 0.1], [0.09, 0.36, 0.09], "#5f6d7e", { internal: true, layerId: "unit-3-internals", shapeKey: "shaft", labelOffset: [0.55, 0, 0] }),
-  component("u3-generator", "Generator", "cylinder", [0.9, 0.48, 0.1], [0.34, 0.28, 0.34], "#ee8f52", { internal: true, layerId: "unit-3-internals", shapeKey: "generator", labelOffset: [0.65, 0.2, 0] }),
+  component("u3-runner", "Runner", "cylinder", [0.9, -0.25, 0.1], [0.32, 0.18, 0.32], "#cfe0ea", { internal: true, layerId: "unit-3-internals", shapeKey: "runner", labelOffset: [-0.8, -0.3, 0], mobileLabel: false }),
+  component("u3-shaft", "Shaft", "cylinder", [0.9, 0.05, 0.1], [0.09, 0.36, 0.09], "#5f6d7e", { internal: true, layerId: "unit-3-internals", shapeKey: "shaft", labelOffset: [0, 0.2, 0], mobileLabel: false }),
+  component("u3-generator", "Generator", "cylinder", [0.9, 0.48, 0.1], [0.34, 0.28, 0.34], "#ee8f52", { internal: true, layerId: "unit-3-internals", shapeKey: "generator", labelOffset: [0.8, 0.4, 0], mobileLabel: false }),
   component("switchyard", "Switchyard", "panel", [3.1, 0.2, 0.1], [0.9, 0.8, 0.18], "#aab4c0", { mobileLabel: false }),
   component("power-tower-1", "Transmission tower", "cone", [4.0, 1.4, 0], [0.48, 1.3, 0.48], "#aab4c0", { labelOffset: [0.15, 0.95, 0], mobileLabel: false }),
   component("city-hospital", "Hospital", "rectangular-prism", [5.0, 0.35, 0], [0.4, 0.95, 0.5], "#96a3b6"),
@@ -41,7 +41,7 @@ const components: HighFidelitySpec["components"] = [
   component("distance-break", "Approx. 30 km to Monrovia", "panel", [7.8, 2.1, 0.2], [0.5, 0.08, 0.04], "#f8fafc", { labelOffset: [-1.2, 1.4, 0], mobileLabel: false }),
   // Decorative valley scenery: no labels, state, picking, or instructional references.
   component("bank-lower", "", "rectangular-prism", [-3, 0.6, -2.2], [5, 0.18, 0.18], "#4a7a45", { detail: "decor", selectable: false }),
-  component("bank-upper", "", "rectangular-prism", [1, 1.0, -2.4], [4, 0.16, 0.16], "#b06a42", { detail: "decor", selectable: false }),
+  component("bank-upper", "", "rectangular-prism", [-5, -0.8, -2.4], [4, 0.16, 0.16], "#b06a42", { detail: "decor", selectable: false }),
   ...[0, 1, 2].map((n) => component(`transmission-pylon-${n + 1}`, `Transmission pylon ${n + 1}`, "cone", [3.3 + n * 0.7, 1.4, -1.2], [0.2, 0.85, 0.2], "#5f6d7e", { selectable: false })),
   ...[0, 1, 2, 3, 4, 5].map((n) => component(`forest-${n + 1}`, "", "cone", [-5.3 + n * 0.45, 0.4, -2.0], [0.28, 0.55, 0.28], "#4a7a45", { detail: "decor", selectable: false })),
 ];
@@ -96,7 +96,7 @@ const spec: HighFidelitySpec = {
     { id: "slot-shaft", label: "Shaft position", accepts: "shaft", transform: tr([0.9, 0.05, 0.1], [1, 1, 1]), initialComponentId: "u3-shaft" },
     { id: "slot-generator", label: "Generator position", accepts: "generator", transform: tr([0.9, 0.48, 0.1], [1, 1, 1]), initialComponentId: "u3-generator" },
   ], dependencies: [{ from: "u3-runner", to: "u3-shaft", label: "turns the" }, { from: "u3-shaft", to: "u3-generator", label: "drives the" }] }],
-  exploded: [{ assemblyId: "unit-3", cameraPresetId: "unit-bench", offsets: { "u3-runner": [0, -0.7, 0], "u3-shaft": [0, 0, 0], "u3-generator": [0, 0.7, 0] } }],
+  exploded: [{ assemblyId: "unit-3", cameraPresetId: "unit-bench", offsets: { "u3-runner": [0, -1.05, 0.85], "u3-shaft": [0, 0, 1.05], "u3-generator": [0, 1.05, 0.85] } }],
   cutaways: [{ id: "powerhouse-section", label: "Open the powerhouse section", plane: { normal: [0, 0, 1], offset: 0 }, removesComponentIds: ["powerhouse"], revealsComponentIds: [...UNIT3_STACK], cameraPresetId: "powerhouse-section" }],
   layers: [{ id: "unit-3-internals", label: "Unit 3 internal machine", defaultVisible: true }],
   poseTransitions: [],
@@ -125,6 +125,9 @@ const spec: HighFidelitySpec = {
     { id: "explore", prompt: "Explore how river flow, units online and feeder demand work together.", cameraPresetId: "valley" },
   ],
   modes: ["GUIDED", "EXPLORE", "CHALLENGE", "ASSESSMENT"],
+  challengeStatus: (quantities) => quantities.gridStableWithPriority === 1
+    ? "Hospital supply is stable in the dry season. Challenge met."
+    : "Hospital supply is not yet stable in the dry season. Adjust river flow, units and feeder demand.",
   offline: { remoteAssets: [], maxPackageBytes: 96_000 },
 };
 

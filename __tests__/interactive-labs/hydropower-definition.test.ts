@@ -61,6 +61,35 @@ describe("Mount Coffee hydropower design stage", () => {
     expect(replay.state.fidelity?.variables).toMatchObject({ riverFlow: 430, unitsOnline: 3, feederHospital: 1, feederHomes: 0, feederShops: 0 });
   });
 
+  it("reveals the unit 3 stack during explosion and supplies live challenge feedback", () => {
+    const exploded = replayReviewScenario(hydropowerDefinition, HYDROPOWER_REVIEW_SCENARIOS.scenarios.find((scenario) => scenario.id === "hydro-exploded-unit")!);
+    if ("reason" in exploded) throw new Error(exploded.reason);
+    const list = buildRenderList({ definition: hydropowerDefinition, state: exploded.state, profile: "LOW" });
+    expect(list.items.map((item) => item.id)).toEqual(expect.arrayContaining(["u3-runner", "u3-shaft", "u3-generator"]));
+
+    const challenge = hydropowerDefinition.fidelity!;
+    expect(challenge.authoring.challenge).toContain("keep the hospital supplied");
+    expect(challenge.challengeStatus?.({ gridStableWithPriority: 1 })).toContain("Challenge met");
+    expect(challenge.challengeStatus?.({ gridStableWithPriority: 0 })).toContain("not yet stable");
+  });
+
+  it("shows a spin glyph only for units the model says are generating", () => {
+    const dry = replayReviewScenario(hydropowerDefinition, HYDROPOWER_REVIEW_SCENARIOS.scenarios.find((scenario) => scenario.id === "hydro-variable-dry-drop")!);
+    if ("reason" in dry) throw new Error(dry.reason);
+    const dryList = buildRenderList({ definition: hydropowerDefinition, state: dry.state, profile: "LOW" });
+    expect(dryList.motions.filter((motion) => motion.active)).toHaveLength(0);
+
+    const solved = replayReviewScenario(hydropowerDefinition, HYDROPOWER_REVIEW_SCENARIOS.scenarios.find((scenario) => scenario.id === "hydro-challenge-solved")!);
+    if ("reason" in solved) throw new Error(solved.reason);
+    const solvedList = buildRenderList({ definition: hydropowerDefinition, state: solved.state, profile: "LOW" });
+    expect(solvedList.motions.filter((motion) => motion.active).map((motion) => motion.id)).toEqual(["unit-1-spin"]);
+
+    const off = replayReviewScenario(hydropowerDefinition, HYDROPOWER_REVIEW_SCENARIOS.scenarios.find((scenario) => scenario.id === "hydro-fault-zero-units-dark")!);
+    if ("reason" in off) throw new Error(off.reason);
+    const offList = buildRenderList({ definition: hydropowerDefinition, state: off.state, profile: "LOW" });
+    expect(offList.motions.filter((motion) => motion.active)).toHaveLength(0);
+  });
+
   it("keeps LOW render draw count within the locked 40 draw budget", () => {
     for (const scenario of HYDROPOWER_REVIEW_SCENARIOS.scenarios) {
       const result = replayReviewScenario(hydropowerDefinition, scenario);
@@ -80,7 +109,8 @@ describe("Mount Coffee hydropower design stage", () => {
     const traceNodes = baseline.flows.flatMap((flow) => flow.nodes.filter((node) => node.traceable).map((node) => node.position));
     for (const item of decor) {
       const nearby = [...traceNodes, ...baseline.items.filter((other) => other.detail !== "decor" && other.showLabel).map((other) => other.center)];
-      expect(nearby.every((point) => Math.hypot(point[0] - item.center[0], point[1] - item.center[1]) > 0.75), item.id).toBe(true);
+      const overlaps = nearby.filter((point) => Math.hypot(point[0] - item.center[0], point[1] - item.center[1]) <= 0.75);
+      expect(overlaps, item.id).toEqual([]);
     }
     for (const scenario of HYDROPOWER_REVIEW_SCENARIOS.scenarios) {
       const replay = replayReviewScenario(hydropowerDefinition, scenario);

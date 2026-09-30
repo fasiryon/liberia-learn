@@ -19,8 +19,10 @@ export function LabControlPanel({ definition, state, activeCheck, dispatch }: Pr
   const modes = spec?.modes ?? MODES;
   const guidedIndex = spec && fidelity ? Math.max(fidelity.guidedStepIndex, Math.min(state.completedChecks.length, spec.guidedPath.length - 1)) : 0;
   const guided = spec && fidelity && state.mode === "GUIDED" ? spec.guidedPath[guidedIndex] : undefined;
-  const target = activeCheck?.fidelity;
   const simulation = spec && fidelity ? deriveSimulation(spec, fidelity) : null;
+  const modeOwnsTask = state.mode === "GUIDED" || state.mode === "CHALLENGE";
+  const target = modeOwnsTask ? undefined : activeCheck?.fidelity;
+  const taskPrompt = guided?.prompt ?? (state.mode === "CHALLENGE" && spec ? spec.authoring.challenge : activeCheck?.prompt ?? "You completed every check!");
   const explanation = spec && fidelity ? explainState(spec, fidelity, definition.grade) : [];
   const hint = state.lastFeedback === "incorrect" && activeCheck?.hints.length ? activeCheck.hints[Math.min(activeCheck.hints.length - 1, Math.max(0, state.retries - 1))] : null;
 
@@ -50,8 +52,10 @@ export function LabControlPanel({ definition, state, activeCheck, dispatch }: Pr
       )}
 
       <section aria-label="Your task">
-        <p className="text-sm text-slate-400">{state.mode === "GUIDED" ? "Current check" : "Your next task"}</p>
-        <h2 className="mt-1 text-lg font-bold text-white">{activeCheck?.prompt ?? "You completed every check!"}</h2>
+        <p className="text-sm text-slate-400">{state.mode === "GUIDED" ? `Guided step ${guidedIndex + 1}` : state.mode === "CHALLENGE" ? "Challenge objective" : "Your next task"}</p>
+        <h2 className="mt-1 text-lg font-bold text-white">{taskPrompt}</h2>
+        {state.mode === "CHALLENGE" && spec?.challengeStatus && simulation && <p role="status" className="mt-2 text-sm text-amber-100">{spec.challengeStatus(simulation.quantities)}</p>}
+        {modeOwnsTask && activeCheck && <p className="mt-3 text-xs text-slate-400">Knowledge checks are available in Assessment mode.</p>}
 
         {activeCheck?.id === "cube-vertices" && (
           <div className="mt-4 grid grid-cols-4 gap-2" aria-label="Cube vertices">
@@ -103,7 +107,7 @@ export function LabControlPanel({ definition, state, activeCheck, dispatch }: Pr
           );
         })()}
 
-        {activeCheck && <button type="button" onClick={() => dispatch({ type: "check", checkId: activeCheck.id, response: { answer: state.selectedObjectId } })} className="mt-5 w-full rounded-2xl bg-emerald-300 px-4 py-3 font-bold text-slate-950">Check my work</button>}
+        {!modeOwnsTask && activeCheck && <button type="button" onClick={() => dispatch({ type: "check", checkId: activeCheck.id, response: { answer: state.selectedObjectId } })} className="mt-5 w-full rounded-2xl bg-emerald-300 px-4 py-3 font-bold text-slate-950">Check my work</button>}
         {state.lastFeedback && <p role="status" className={`mt-4 rounded-xl p-3 text-sm ${state.lastFeedback === "correct" ? "bg-emerald-400/15 text-emerald-200" : "bg-rose-400/15 text-rose-200"}`}>{state.lastFeedback === "correct" ? "Nice work. Your action showed the idea." : `Not yet. ${hint ?? "Try changing the scene again."}`}</p>}
       </section>
 

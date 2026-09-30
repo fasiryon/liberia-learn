@@ -115,7 +115,8 @@ export function buildRenderList(input: { definition: InteractiveLabDefinition<La
     if (component.layerId && fidelity.hiddenLayerIds.includes(component.layerId)) continue;
     const removed = !!cutaway?.removesComponentIds.includes(component.id);
     if (removed && !budget.shaderClipping) continue;
-    if (component.internal && !cutaway?.revealsComponentIds.includes(component.id)) continue;
+    // Opening an assembly by explosion or disassembly exposes its internal parts too.
+    if (component.internal && !cutaway?.revealsComponentIds.includes(component.id) && !(assembly && isAssemblyOpen(spec, display, assembly.id))) continue;
     const inFocus = focusOf(component.id, rootObject?.id ?? assembly?.id);
     if (!inFocus && !budget.fadeContext) continue;
     const rootMatrix = rootObject ? multiply(translate(...rootObject.transform.position), rotate(...objectRotation(state, rootObject.id, rootObject.transform.rotation))) : IDENTITY;

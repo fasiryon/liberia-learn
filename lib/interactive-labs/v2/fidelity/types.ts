@@ -177,6 +177,8 @@ export type HighFidelitySpec = {
   camera: { defaultPresetId: string; presets: CameraPreset[]; constraints: CameraConstraints };
   guidedPath: GuidedStep[];
   modes: Exclude<LabMode, "COMPLETE">[];
+  /** Optional live feedback for the active challenge, derived only from simulation quantities. */
+  challengeStatus?: (quantities: Record<string, number>) => string;
   /** Grade-appropriate explanation for structural labs without a simulation model. */
   explain?: (state: FidelityState) => ExplanationLine[];
   offline: { remoteAssets: string[]; maxPackageBytes: number };
