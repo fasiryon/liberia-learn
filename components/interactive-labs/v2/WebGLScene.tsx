@@ -37,7 +37,8 @@ void main(){
   float ambient = lighting > 2.5 ? 0.38 : 0.5;
   float shade = lighting < 0.5 ? 1.0 : ambient + (1.0 - ambient) * diffuse;
   float spec = lighting > 2.5 ? pow(max(dot(n, normalize(l + vec3(0.0, 0.0, 1.0))), 0.0), 28.0) * 0.28 : 0.0;
-  vec3 glow = emissive * vec3(1.0, 0.86, 0.45);
+  // State emission must brighten an item without washing the full surface to white.
+  vec3 glow = emissive * vec3(0.22, 0.19, 0.10);
   vec3 base = color * vertexColor * shade + spec + glow;
   float rim = pow(1.0 - abs(dot(n, normalize(vec3(0.0, 0.0, 1.0)))), 3.0);
   vec3 highlighted = mix(base, highlightColor, clamp(highlightMix + rim * 0.55, 0.0, 0.9));

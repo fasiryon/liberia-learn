@@ -32,10 +32,10 @@ const components: HighFidelitySpec["components"] = [
   component("u3-generator", "Generator", "cylinder", [0.9, 0.48, 0.1], [0.34, 0.28, 0.34], "#ee8f52", { internal: true, layerId: "unit-3-internals", shapeKey: "generator", labelOffset: [0.65, 0.2, 0] }),
   component("switchyard", "Switchyard", "panel", [3.1, 0.2, 0.1], [0.9, 0.8, 0.18], "#aab4c0", { mobileLabel: false }),
   component("power-tower-1", "Transmission tower", "cone", [4.0, 1.4, 0], [0.48, 1.3, 0.48], "#aab4c0", { labelOffset: [0.15, 0.95, 0], mobileLabel: false }),
-  component("city-hospital", "Hospital", "rectangular-prism", [5.0, 0.35, 0], [0.8, 0.95, 0.5], "#96a3b6"),
+  component("city-hospital", "Hospital", "rectangular-prism", [5.0, 0.35, 0], [0.4, 0.95, 0.5], "#96a3b6"),
   component("hospital-sign", "Hospital H sign", "panel", [5.0, 1.1, 0.28], [0.22, 0.2, 0.06], "#2f6fe0", { showLabel: false }),
-  component("city-homes", "Homes", "rectangular-prism", [6.4, 0.25, 0], [1.15, 0.75, 0.5], "#7a869a", { labelOffset: [-1.6, 1.1, 0] }),
-  component("city-shops", "Shops", "rectangular-prism", [7.7, 0.25, 0], [0.9, 0.75, 0.5], "#7a869a", { labelOffset: [-2.7, 1.9, 0] }),
+  component("city-homes", "Homes", "rectangular-prism", [6.4, 0.25, 0], [0.45, 0.75, 0.5], "#7a869a", { labelOffset: [-1.6, 1.1, 0] }),
+  component("city-shops", "Shops", "rectangular-prism", [7.7, 0.25, 0], [0.4, 0.75, 0.5], "#7a869a", { labelOffset: [-2.7, 1.9, 0] }),
   ...[1, 2, 3, 4].map((n) => component(`gauge-seg-${n}`, `Power gauge ${n}`, "box", [4.6 + n * 0.24, 2.3, 0], [0.18, 0.22, 0.08], "#8c9ab0", { showLabel: false })),
   ...["hospital", "homes", "shops"].map((name, i) => component(`demand-${name}`, `${name} demand segment`, "box", [5.2 + i * 0.28, 2.3, 0], [0.2, 0.22, 0.08], "#c98a4b", { showLabel: false })),
   component("distance-break", "Approx. 30 km to Monrovia", "panel", [7.8, 2.1, 0.2], [0.5, 0.08, 0.04], "#f8fafc", { labelOffset: [-1.2, 1.4, 0], mobileLabel: false }),
@@ -56,7 +56,12 @@ const flows: HighFidelitySpec["flows"] = [
   { id: "river-in", label: "River flow", medium: "water", sourceNodeId: "river-source", destinationNodeId: "headpond-node", closedLoop: false, visibleByDefault: true, color: "#67e8f9", nodes: [node("river-source", "River", [-4, 2.9, -2.5]), node("headpond-node", "Headpond", [-1.5, 2.9, -2.5], "headpond")] },
   ...[1, 2, 3, 4].map((unit) => unit === 1
     ? ({ id: "water-u1", label: "Unit 1 water", medium: "water" as const, sourceNodeId: "headpond", destinationNodeId: "river-downstream", closedLoop: false, visibleByDefault: true, color: "#67e8f9", nodes: tracePositions.map(([i, label, position, componentId]) => node(i === 0 ? "headpond" : i === 5 ? "river-downstream" : `${label}-1`, label, position, componentId, true)) })
-    : ({ id: `water-u${unit}`, label: `Unit ${unit} water`, medium: "water" as const, sourceNodeId: `water-u${unit}-in`, destinationNodeId: `water-u${unit}-out`, closedLoop: false, visibleByDefault: true, color: "#67e8f9", nodes: [node(`water-u${unit}-in`, "Intake", [-1.5 + (unit - 1) * 0.5, 1.2, -0.4]), node(`water-u${unit}-out`, `Unit ${unit}`, [UNIT_X[unit - 1], -0.15, 0.1], `unit-${unit}`)] })),
+    : ({ id: `water-u${unit}`, label: `Unit ${unit} water`, medium: "water" as const, sourceNodeId: `water-u${unit}-in`, destinationNodeId: "river-downstream", closedLoop: false, visibleByDefault: true, color: "#67e8f9", nodes: [
+      node(`water-u${unit}-in`, "Intake", [-1.5 + (unit - 1) * 0.5, 1.2, -0.4]),
+      node(`water-u${unit}-turbine`, `Unit ${unit}`, [UNIT_X[unit - 1], -0.15, 0.1], `unit-${unit}`),
+      node(`water-u${unit}-tailrace`, "Tailrace", [UNIT_X[unit - 1], -1.0, 0.8], "tailrace"),
+      node("river-downstream", "Saint Paul River", [1.0, -2.0, 2.0], "river-downstream"),
+    ] })),
   { id: "spillway", label: "Spillway", medium: "water", sourceNodeId: "spill-in", destinationNodeId: "spill-out", closedLoop: false, visibleByDefault: true, color: "#cffafe", nodes: [node("spill-in", "Spillway gate", [1, 2.4, -1], "spillway-gate"), node("spill-out", "Downstream river", [1, -1.5, 1], "river-downstream")] },
   { id: "power-line", label: "Transmission line", medium: "light", sourceNodeId: "power-source", destinationNodeId: "switchyard-node", closedLoop: false, visibleByDefault: true, color: "#facc15", nodes: [node("power-source", "Generator", [3, 0.2, 0], "switchyard"), node("switchyard-node", "Switchyard", [3.1, 0.2, 0], "switchyard")] },
   ...["hospital", "homes", "shops"].map((name, i) => ({ id: `feeder-${name}`, label: `${name} feeder`, medium: "light" as const, sourceNodeId: `feeder-${name}-in`, destinationNodeId: `feeder-${name}-out`, closedLoop: false, visibleByDefault: true, color: "#facc15", nodes: [node(`feeder-${name}-in`, "Switchyard", [3.1, 0.2, 0], "switchyard"), node(`feeder-${name}-out`, name, [5 + i * 1.3, 0.35, 0], `city-${name}`)] })),

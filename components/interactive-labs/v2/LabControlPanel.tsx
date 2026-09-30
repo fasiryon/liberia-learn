@@ -33,6 +33,7 @@ export function LabControlPanel({ definition, state, activeCheck, dispatch }: Pr
       {(explanation.length > 0 || Object.keys(simulation?.quantities ?? {}).length > 0) && (
         <section aria-label="What is happening" aria-live="polite" className="sticky top-1 z-20 max-h-[28vh] overflow-y-auto rounded-2xl border border-white/10 bg-slate-950/95 p-3 shadow-xl backdrop-blur">
           <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-400">What is happening</h3>
+          <p className="mt-1 text-[10px] text-slate-400 sm:hidden">Scroll this panel for more details</p>
           <ul className="mt-2 space-y-1 text-sm text-slate-200">{explanation.map((line) => <li key={line.id}>{line.text}</li>)}</ul>
         </section>
       )}

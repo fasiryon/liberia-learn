@@ -9,8 +9,12 @@ Objective: proposed `hydropower-cause-and-effect` — explain how river flow, av
 - Asset spec: [04-ASSET_SPEC.md](design/04-ASSET_SPEC.md) (2026-09-28)
 - Runtime extensions RX-001 through RX-004: implemented at checkpoint `a3426aba`; captures and round review remain pending.
 
-## Round 1 — not run
-Fresh captures for all profiles and desktop/mobile, reduced-motion, probe and perf have not been produced. No reviewer verdict is recorded.
+## Round 1 — in progress
+- Clean checkpoint reviewed: `a9f90f46`; bounded overview matrix only, all four profiles × desktop/mobile, reduced-motion, probe and perf. Evidence: `artifacts/lab-review/mount-coffee-hydropower/1.0.0/round-1-a9-overview-matrix/` (SwiftShader; composition/labels only, perf sign-off invalid).
+- Visual: OPEN. Two P1 findings: a bright white WebGL block beside the city loads, and the mobile explanation card does not make additional scroll content apparent. Existing mobile label and fallback halo findings were closed on this matrix.
+- Interaction: overview target-size probe found no visible targets below 44 px. OPEN; no live input/action coverage yet.
+- Science: OPEN. One P0: only Unit 1's flow appears to return through the tailrace while the copy says water returns after turbines. Corrected in the working tree by routing all four unit paths through the shared tailrace to the downstream river; focused regression added. Fresh-capture and reviewer confirmation pending.
+- Round 1 coverage is incomplete: overview only; process, fault, cutaway, guided, assessment, and motion states remain unreviewed.
 
 ## Round 2 — not run
 No reviewer verdict is recorded.

@@ -12,6 +12,16 @@ describe("Mount Coffee hydropower design stage", () => {
     expect(hydropowerDefinition.checks).toHaveLength(5);
   });
 
+  it("shows every turbine water path returning through the tailrace to the river", () => {
+    const flows = hydropowerDefinition.fidelity?.flows.filter((flow) => flow.id.startsWith("water-u")) ?? [];
+    expect(flows).toHaveLength(4);
+    for (const flow of flows) {
+      expect(flow.destinationNodeId).toBe("river-downstream");
+      expect(flow.nodes.some((node) => node.label.toLowerCase() === "tailrace")).toBe(true);
+      expect(flow.nodes.at(-1)?.id).toBe("river-downstream");
+    }
+  });
+
   it("keeps instructional labels available at every profile and separates crowded process callouts", () => {
     const start = replayReviewScenario(hydropowerDefinition, HYDROPOWER_REVIEW_SCENARIOS.scenarios.find((scenario) => scenario.id === "hydro-process-water-starts")!);
     if ("reason" in start) throw new Error(start.reason);
