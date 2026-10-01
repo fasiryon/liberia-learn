@@ -138,7 +138,7 @@ Every row is `kind: procedural`, `license: LiberiaLearn-original`, `bytes: 0`, b
 - **P1:** red/green lamps alone fail colour-vision checks; pair them with text and glyphs.
 - **P1:** HIGH-only cues (vortex, boil, sandbars) need LOW/2D equivalents in `instructionalView`.
 - **P2:** turbine type. Answered: Francis (Voith, per COMMISSION.md).
-- **P2:** every baseline metric grows more than 5%, so `budget-baseline.json` needs a reviewed update.
+- **P2:** every baseline metric grows more than 5%, so `budget-baseline.json` needs a reviewed update. This was measured and dispositioned below for the shared parametric descriptors.
 
 ## Trade-offs to record
 
@@ -146,4 +146,8 @@ Every row is `kind: procedural`, `license: LiberiaLearn-original`, `bytes: 0`, b
 - No reflection or refraction.
 - STANDARD has no real-time shadows.
 - Penstocks are now opaque, reversing v1.0.
-- LOW and 2D keep the dark stage unless a daylight backdrop passes the contrast gates. The design director decides, because a dark stage could read as "night".
+- The shared environment contract selects DAYLIGHT for Mount Coffee and STUDIO by default for circuits and solids. LOW uses a CSS backdrop; FALLBACK_2D uses the same palette in SVG.
+
+## RX-005 / RX-006 implementation evidence (2026-10-01)
+
+Mount Coffee now consumes shared pipe, generator-housing and lattice-tower kits. Its declarative geometry variants add 2,767 UTF-8 bytes to the offline definition manifest (25,929 → 28,696 bytes); `measureLabBudget` reproduced 28,696 bytes for all four profiles. The baseline records that measured addition. It remains well below the 300 KiB FALLBACK_2D manifest ceiling and adds no remote asset. The existing all-profile budget test is the evidence source; this entry is not a physical-device performance claim.

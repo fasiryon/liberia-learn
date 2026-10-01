@@ -13,6 +13,9 @@ import { batchFlowGeometry, createFlowBatchStorage, createPointBatchStorage, wri
 import { shouldScheduleWebGLFrame } from "@/lib/interactive-labs/v2/fidelity/renderLoop";
 import { highlightBaseMix, HIGHLIGHT_COLOR, MARKER_COLOR } from "@/lib/interactive-labs/v2/fidelity/palette";
 import { buildMesh } from "./meshes";
+import { buildParametricGeometry } from "@/lib/interactive-labs/v2/fidelity/geometry/builders";
+import { planLowBatches } from "@/lib/interactive-labs/v2/fidelity/lowBatch";
+import type { MeshData } from "./meshes";
 import { pickNearest, type ScenePick } from "./picking";
 
 type Props = {
@@ -100,15 +103,26 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
     const spec = definition.fidelity;
     const low = profile === "LOW";
     // Meshes are built once per geometry and profile, never per frame.
-    const meshes = new Map<GeometryKind, { position: WebGLBuffer; normal: WebGLBuffer; count: number }>();
-    const meshFor = (kind: GeometryKind) => {
-      let mesh = meshes.get(kind);
+    const meshes = new Map<string, { position: WebGLBuffer; normal: WebGLBuffer; count: number }>();
+    const cpuMeshes = new Map<string, MeshData>();
+    const lowBatchBuffers = new Map<string, { position: WebGLBuffer; normal: WebGLBuffer; count: number; signature: string }>();
+    const dataFor = (item: RenderList["items"][number]): MeshData => {
+      const key = item.parametricGeometry ? JSON.stringify(item.parametricGeometry) : item.geometry;
+      const cached = cpuMeshes.get(key); if (cached) return cached;
+      const data = item.parametricGeometry
+        ? (() => { const built = buildParametricGeometry(item.parametricGeometry!, low ? "LOW" : profile === "STANDARD" ? "STANDARD" : "HIGH"); const positions = new Float32Array(built.indices.length * 3), normals = new Float32Array(built.indices.length * 3); built.indices.forEach((index, offset) => { positions.set(built.positions.subarray(index * 3, index * 3 + 3), offset * 3); normals.set(built.normals.subarray(index * 3, index * 3 + 3), offset * 3); }); return { positions, normals, count: built.indices.length }; })()
+        : buildMesh(item.geometry, low);
+      cpuMeshes.set(key, data); return data;
+    };
+    const meshFor = (item: RenderList["items"][number]) => {
+      const key = item.parametricGeometry ? JSON.stringify(item.parametricGeometry) : item.geometry;
+      let mesh = meshes.get(key);
       if (!mesh) {
-        const data = buildMesh(kind, low);
+        const data = dataFor(item);
         const position = gl.createBuffer()!, normal = gl.createBuffer()!;
         gl.bindBuffer(gl.ARRAY_BUFFER, position); gl.bufferData(gl.ARRAY_BUFFER, data.positions, gl.STATIC_DRAW);
         gl.bindBuffer(gl.ARRAY_BUFFER, normal); gl.bufferData(gl.ARRAY_BUFFER, data.normals, gl.STATIC_DRAW);
-        mesh = { position, normal, count: data.count }; meshes.set(kind, mesh);
+        mesh = { position, normal, count: data.count }; meshes.set(key, mesh);
       }
       return mesh;
     };
@@ -191,21 +205,19 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
       const dpr = Math.min(window.devicePixelRatio || 1, list.budget.maxDevicePixelRatio), w = Math.max(1, Math.floor(el.clientWidth * dpr)), h = Math.max(1, Math.floor(el.clientHeight * dpr));
       if (el.width !== w || el.height !== h) { el.width = w; el.height = h; }
       gl.viewport(0, 0, w, h); gl.enable(gl.DEPTH_TEST); gl.enable(gl.BLEND); gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-      gl.clearColor(0.035, 0.055, 0.11, 0); gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+      if (list.environment === "DAYLIGHT") gl.clearColor(0.86, 0.91, 0.94, 0);
+      else gl.clearColor(0.035, 0.055, 0.11, 0);
+      gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
       const aspect = w / h;
       const fov = fitHorizontalFieldOfView(definition.scene.camera.fov, aspect);
       const viewProj = multiply(perspective(fov, aspect, 0.1, 100), viewMatrix(camera));
       frameRef.current = { list, viewProj, width: el.clientWidth, height: el.clientHeight };
       const t = reviewTime ?? now / 1000;
-      // Opaque first, then translucent without depth writes so cut-away glass and faded context blend correctly.
-      const ordered = [...list.items].sort((a, b) => Number(a.alpha < 0.9) - Number(b.alpha < 0.9));
-      for (const item of ordered) {
-        const mesh = meshFor(item.geometry);
+      const drawItem = (item: RenderList["items"][number], mesh: { position: WebGLBuffer; normal: WebGLBuffer; count: number }, modelMatrix: Mat4) => {
         gl.depthMask(item.alpha >= 0.9);
         gl.bindBuffer(gl.ARRAY_BUFFER, mesh.position); gl.enableVertexAttribArray(attr.position); gl.vertexAttribPointer(attr.position, 3, gl.FLOAT, false, 0, 0);
         gl.bindBuffer(gl.ARRAY_BUFFER, mesh.normal); gl.enableVertexAttribArray(attr.normal); gl.vertexAttribPointer(attr.normal, 3, gl.FLOAT, false, 0, 0);
         gl.disableVertexAttribArray(attr.color); gl.vertexAttrib3f(attr.color, 1, 1, 1); gl.uniform1f(uni.useVertexColor, 0);
-        const modelMatrix = item.spin ? spinMatrix(item.spin, t, motionless) : item.matrix;
         gl.uniformMatrix4fv(uni.mvp, false, new Float32Array(multiply(viewProj, modelMatrix))); gl.uniformMatrix4fv(uni.model, false, new Float32Array(modelMatrix));
         const base = rgb(item.color);
         const pulse = item.highlighted && list.budget.pulseHighlights && !motionless ? Math.sin(t * 4) * 0.04 : 0;
@@ -215,6 +227,39 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
         gl.uniform1f(uni.clipEnabled, item.clip ? 1 : 0); if (item.clip) gl.uniform4f(uni.clipPlane, item.clip.normal[0], item.clip.normal[1], item.clip.normal[2], item.clip.offset);
         gl.uniform1f(uni.pointSize, 1);
         gl.drawArrays(gl.TRIANGLES, 0, mesh.count);
+      };
+      // RX-006 merges repeated LOW geometry in CPU space. Source ids stay in the
+      // plan for picking/labels, while per-part state stays individual.
+      if (low) {
+        const plan = planLowBatches(list);
+        const activeBatchKeys = new Set(plan.batches.map((batch) => batch.key));
+        for (const batch of plan.batches) {
+          const signature = JSON.stringify(batch.items.map((item) => [item.id, item.matrix]));
+          let gpu = lowBatchBuffers.get(batch.key);
+          if (!gpu) { gpu = { position: gl.createBuffer()!, normal: gl.createBuffer()!, count: 0, signature: "" }; lowBatchBuffers.set(batch.key, gpu); }
+          if (gpu.signature !== signature) {
+            const positions: number[] = [], normals: number[] = [];
+            for (const item of batch.items) {
+              const data = dataFor(item), origin = transformPoint(item.matrix, [0, 0, 0]);
+              for (let i = 0; i < data.positions.length; i += 3) {
+                const point = transformPoint(item.matrix, [data.positions[i], data.positions[i + 1], data.positions[i + 2]]);
+                positions.push(...point);
+                const transformed = transformPoint(item.matrix, [data.normals[i], data.normals[i + 1], data.normals[i + 2]]);
+                let nx = transformed[0] - origin[0], ny = transformed[1] - origin[1], nz = transformed[2] - origin[2]; const length = Math.hypot(nx, ny, nz) || 1; nx /= length; ny /= length; nz /= length; normals.push(nx, ny, nz);
+              }
+            }
+            gpu.count = positions.length / 3; gpu.signature = signature;
+            gl.bindBuffer(gl.ARRAY_BUFFER, gpu.position); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
+            gl.bindBuffer(gl.ARRAY_BUFFER, gpu.normal); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(normals), gl.STATIC_DRAW);
+          }
+          const source = batch.items[0]; drawItem(source, gpu, IDENTITY);
+        }
+        for (const [key, buffers] of lowBatchBuffers) if (!activeBatchKeys.has(key)) { gl.deleteBuffer(buffers.position); gl.deleteBuffer(buffers.normal); lowBatchBuffers.delete(key); }
+        const singles = [...plan.singles].sort((a, b) => Number(a.alpha < 0.9) - Number(b.alpha < 0.9));
+        for (const item of singles) drawItem(item, meshFor(item), item.spin ? spinMatrix(item.spin, t, motionless) : item.matrix);
+      } else {
+        const ordered = [...list.items].sort((a, b) => Number(a.alpha < 0.9) - Number(b.alpha < 0.9));
+        for (const item of ordered) drawItem(item, meshFor(item), item.spin ? spinMatrix(item.spin, t, motionless) : item.matrix);
       }
       gl.depthMask(true);
       batchFlowGeometry(list, t, motionless, callbacks.current.traceFlowId, flowStorage);
@@ -277,6 +322,7 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
       cancelAnimationFrame(frame);
       el.removeEventListener("webglcontextlost", handleContextLost);
       meshes.forEach((mesh) => { gl.deleteBuffer(mesh.position); gl.deleteBuffer(mesh.normal); });
+      lowBatchBuffers.forEach((buffers) => { gl.deleteBuffer(buffers.position); gl.deleteBuffer(buffers.normal); });
       gl.deleteBuffer(lineBuffer);
       Object.values(flowBuffers).forEach((buffers) => { gl.deleteBuffer(buffers.positions); gl.deleteBuffer(buffers.colors); });
       gl.deleteProgram(program);

@@ -6,6 +6,8 @@
 import { buildOfflineManifest } from "../fidelity/boundary";
 import { buildRenderList } from "../fidelity/renderList";
 import { RENDER_BUDGETS } from "../fidelity/profiles";
+import { planLowBatches } from "../fidelity/lowBatch";
+import { parametricTriangleCount } from "../fidelity/geometry/builders";
 import type { CapabilityProfile, GeometryKind, InteractiveLabDefinition, LabState } from "../types";
 
 export const LAB_BUDGET_VERSION = "lab-budgets/1.0.0" as const;
@@ -88,9 +90,10 @@ export function measureLabBudget(definition: InteractiveLabDefinition<LabState>,
     for (const state of states) {
       const list = buildRenderList({ definition, state, profile });
       const svg = profile === "FALLBACK_2D", low = list.budget.meshDetail === "low";
-      triangles = Math.max(triangles, svg ? 0 : list.items.reduce((sum, item) => sum + geometryTriangles(item.geometry, low), 0));
+      const geometryProfile = profile === "LOW" ? "LOW" : profile === "STANDARD" ? "STANDARD" : "HIGH";
+      triangles = Math.max(triangles, svg ? 0 : list.items.reduce((sum, item) => sum + (item.parametricGeometry ? parametricTriangleCount(item.parametricGeometry, geometryProfile) : geometryTriangles(item.geometry, low)), 0));
       // WebGLScene: one draw per item, three shared flow batches, and one optional marker batch.
-      drawCalls = Math.max(drawCalls, svg ? 0 : list.items.length + (list.flows.length ? 3 : 0) + (list.markers.length ? 1 : 0));
+      drawCalls = Math.max(drawCalls, svg ? 0 : profile === "LOW" ? planLowBatches(list).drawCalls : list.items.length + (list.flows.length ? 3 : 0) + (list.markers.length ? 1 : 0));
       particles = Math.max(particles, list.flows.reduce((sum, flow) => sum + flow.particleCount, 0));
     }
     result[profile] = {

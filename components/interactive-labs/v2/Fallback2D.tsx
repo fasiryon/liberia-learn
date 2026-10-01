@@ -31,6 +31,7 @@ export function Fallback2D({ definition, state, reducedMotion, traceFlowId, disp
   // cutaway behavior. SVG has no clipping plane, so drawing the faded source
   // mesh would obscure the revealed internals and instructional labels.
   const ordered = fallbackVisibleItems(list.items);
+  const placedLabels: { x:number; y:number; halfWidth:number }[] = [];
   const activate = (pick: ScenePick) => (event: React.KeyboardEvent) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); onPick(pick); } };
   const selected = state.selectedObjectId && definition.scene.objects.some((object) => object.id === state.selectedObjectId) ? state.selectedObjectId : null;
 
@@ -41,6 +42,7 @@ export function Fallback2D({ definition, state, reducedMotion, traceFlowId, disp
           <marker id="flow-arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#facc15" /></marker>
           <filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="0.07" /></filter>
         </defs>
+        <rect x={camera.target[0] - width / 2} y={-camera.target[1] - height / 2} width={width} height={height} fill={list.environment === "DAYLIGHT" ? "#e7eef1" : "#0b1223"} />
         {list.flows.filter((flow) => !flow.active).map((flow) => (
           <g key={flow.id} aria-label={`${flow.label}: ${flow.active ? "flowing" : "not flowing"}`}>
             <polyline points={flow.points.map((p) => `${p[0]},${-p[1]}`).join(" ")} fill="none" stroke={flow.active ? flow.color : INACTIVE_FLOW_COLOR} strokeOpacity={1} strokeDasharray={flow.active ? undefined : "8 6"} strokeWidth={2.5} vectorEffect="non-scaling-stroke" strokeLinejoin="round" markerMid={flow.active && reducedMotion ? "url(#flow-arrow)" : undefined} />
@@ -48,14 +50,19 @@ export function Fallback2D({ definition, state, reducedMotion, traceFlowId, disp
           </g>
         ))}
         {ordered.map((item) => {
-          const hull = convexHull(silhouetteSamples(item.geometry).map((sample) => { const p = transformPoint(item.matrix, sample); return [round(p[0]), round(-p[1])] as [number, number]; }));
+          const sourcePoints = item.fallbackSilhouette?.points.map(([x, y]) => [x, y, 0] as const) ?? silhouetteSamples(item.geometry);
+          const hull = convexHull(sourcePoints.map((sample) => { const p = transformPoint(item.matrix, sample); return [round(p[0]), round(-p[1])] as [number, number]; }));
+          const labelX=item.center[0]+(item.labelOffset?.[0]??0)*screenScale,labelY=-(item.center[1]+(item.labelOffset?.[1]??0)*screenScale)-.15*screenScale,labelHalfWidth=item.label.length*.09*screenScale;
+          const labelCrowded=placedLabels.some(previous=>Math.abs(previous.y-labelY)<.34*screenScale&&Math.abs(previous.x-labelX)<previous.halfWidth+labelHalfWidth+.16*screenScale);
+          const labelVisible=item.showLabel&&item.inFocus&&!labelCrowded;
+          if(labelVisible)placedLabels.push({x:labelX,y:labelY,halfWidth:labelHalfWidth});
           const pick: ScenePick = { kind: "item", item };
           return (
             <g key={item.id} opacity={item.alpha < 0.5 && item.inFocus ? 0.45 : item.alpha} {...(item.detail === "decor" ? { pointerEvents: "none" as const } : item.selectable && item.inFocus ? { role: "button", tabIndex: 0, "aria-label": item.label, "aria-pressed": item.highlighted, onClick: () => onPick(pick), onKeyDown: activate(pick), className: "cursor-pointer outline-none focus-visible:[&>polygon]:stroke-cyan-200" } : {})}>
               {item.selectable && item.inFocus && item.detail !== "decor" && <polygon data-lab-touch-target points={hull.map((p) => p.join(",")).join(" ")} fill="transparent" stroke="#fff" strokeOpacity={0.001} strokeWidth={48} vectorEffect="non-scaling-stroke" pointerEvents="stroke" aria-hidden="true" />}
               {item.emissive > 0 && <circle cx={item.center[0]} cy={-item.center[1]} r={0.08 * item.emissive + 0.04} fill="#fde68a" opacity={Math.min(0.08, item.emissive * 0.08)} filter="url(#glow)" />}
               <polygon points={hull.map((p) => p.join(",")).join(" ")} fill={item.highlighted ? mixHexColor(item.color, HIGHLIGHT_COLOR, 0.2) : item.color} stroke={item.highlighted ? HIGHLIGHT_COLOR : "#0f172a"} strokeWidth={item.highlighted ? 3 : 1} vectorEffect="non-scaling-stroke" />
-              {item.showLabel && item.inFocus && <text x={item.center[0] + (item.labelOffset?.[0] ?? 0) * screenScale} y={-(item.center[1] + (item.labelOffset?.[1] ?? 0) * screenScale) - 0.15 * screenScale} textAnchor="middle" fontSize={0.3 * screenScale} fill="#f8fafc" className={`pointer-events-none select-none${item.mobileLabel === false ? " max-[500px]:hidden" : ""}`} style={{ paintOrder: "stroke", stroke: "#020617", strokeWidth: 0.06 * screenScale }}>{item.label}</text>}
+              {labelVisible && <text x={labelX} y={labelY} textAnchor="middle" fontSize={0.3 * screenScale} fill={list.environment === "DAYLIGHT" ? "#111827" : "#f8fafc"} className={`pointer-events-none select-none${item.mobileLabel === false ? " max-[500px]:hidden" : ""}`} style={{ paintOrder: "stroke", stroke: list.environment === "DAYLIGHT" ? "#f8fafc" : "#020617", strokeWidth: 0.06 * screenScale }}>{item.label}</text>}
             </g>
           );
         })}

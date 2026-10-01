@@ -1,6 +1,7 @@
 import type { InteractiveLabDefinition, LabState, Transform } from "../types";
 import { composeHighFidelity } from "../fidelity/engine";
 import { HIGH_FIDELITY_SPEC_VERSION, type HighFidelitySpec } from "../fidelity/types";
+import { generatorHousingKit, latticeTowerKit, pipeKit } from "../fidelity/kits";
 import { hydropowerModel, RIVER_FLOW_STEPS, SYNCHRONOUS_RPM, UNIT3_STACK, UNIT_X } from "./hydropowerModel";
 
 export const HYDROPOWER_LAB_ID = "mount-coffee-hydropower";
@@ -16,7 +17,7 @@ const components: HighFidelitySpec["components"] = [
   component("headpond", "Headpond", "rectangular-prism", [-1.5, 2.9, -2.5], [4.7, 0.18, 1.4], "#2f8fe8", { labelOffset: [-0.35, 0.9, 0] }),
   component("dam", "Dam", "rectangular-prism", [-1.5, 2.15, -1.2], [4.8, 1.5, 0.38], "#c9c2b4", { labelOffset: [-2.8, -0.15, 0] }),
   component("intake-1", "Intake", "box", [-1.5, 1.6, -0.9], [0.54, 0.28, 0.5], "#9fb2c6", { labelOffset: [-0.1, 0.65, 0] }),
-  component("penstock-1", "Penstock", "cylinder", [-1.5, 0.72, -0.35], [0.2, 1.25, 0.2], "#6f86a0", { labelOffset: [-2.6, -1.1, 0] }),
+  { ...pipeKit({ id: "penstock-1", label: "Penstock", transform: tr([-1.5, 0.72, -0.35], [0.2, 1.25, 0.2]), color: "#6f86a0", points: [[0,-1,0],[0,1,0]], radius: 1 }), labelOffset: [-2.6, -1.1, 0] },
   component("tailrace", "Tailrace", "rectangular-prism", [-1.5, -1.15, 0.8], [2.5, 0.16, 0.52], "#2f8fe8", { labelOffset: [-0.3, -0.45, 0] }),
   component("river-downstream", "Saint Paul River", "rectangular-prism", [0, -1.8, 1.6], [5.8, 0.12, 0.5], "#2f8fe8", { labelOffset: [1.7, -0.3, 0] }),
   component("spillway-gate", "Spillway gate", "box", [1.0, 2.4, -1.0], [0.65, 0.8, 0.18], "#9fb2c6", { labelOffset: [0.55, 0.45, 0], mobileLabel: false }),
@@ -29,9 +30,9 @@ const components: HighFidelitySpec["components"] = [
   }),
   component("u3-runner", "Runner", "cylinder", [0.9, -0.25, 0.1], [0.32, 0.18, 0.32], "#cfe0ea", { internal: true, layerId: "unit-3-internals", shapeKey: "runner", labelOffset: [-0.8, -0.3, 0], mobileLabel: false }),
   component("u3-shaft", "Shaft", "cylinder", [0.9, 0.05, 0.1], [0.09, 0.36, 0.09], "#5f6d7e", { internal: true, layerId: "unit-3-internals", shapeKey: "shaft", labelOffset: [0, 0.2, 0], mobileLabel: false }),
-  component("u3-generator", "Generator", "cylinder", [0.9, 0.48, 0.1], [0.34, 0.28, 0.34], "#ee8f52", { internal: true, layerId: "unit-3-internals", shapeKey: "generator", labelOffset: [0.8, 0.4, 0], mobileLabel: false }),
+  { ...generatorHousingKit({ id: "u3-generator", label: "Generator", transform: tr([0.9, 0.48, 0.1], [0.34, 0.28, 0.34]), color: "#ee8f52", radius: 1, height: 2 }), internal: true, layerId: "unit-3-internals", shapeKey: "generator", labelOffset: [0.8, 0.4, 0], mobileLabel: false },
   component("switchyard", "Switchyard", "panel", [3.1, 0.2, 0.1], [0.9, 0.8, 0.18], "#aab4c0", { mobileLabel: false }),
-  component("power-tower-1", "Transmission tower", "cone", [4.0, 1.4, 0], [0.48, 1.3, 0.48], "#aab4c0", { showLabel: false }),
+  { ...latticeTowerKit({ id:"power-tower-1",label:"Transmission tower",transform:tr([4.0,1.4,0],[0.48,1.3,0.48]),color:"#aab4c0",width:1,height:2,depth:1 }), showLabel:false },
   component("city-hospital", "Hospital", "rectangular-prism", [5.0, 0.35, 0], [0.4, 0.95, 0.5], "#96a3b6", { mobileLabel: false }),
   component("hospital-sign", "Hospital H sign", "panel", [5.0, 1.1, 0.28], [0.22, 0.2, 0.06], "#2f6fe0", { showLabel: false }),
   component("city-homes", "Homes", "rectangular-prism", [6.4, 0.25, 0], [0.45, 0.75, 0.5], "#7a869a", { labelOffset: [-1.6, 1.1, 0], mobileLabel: false }),
@@ -70,6 +71,7 @@ const flows: HighFidelitySpec["flows"] = [
 
 const spec: HighFidelitySpec = {
   specVersion: HIGH_FIDELITY_SPEC_VERSION,
+  environment: "DAYLIGHT",
   authoring: {
     learningObjective: "Explain how river flow, available turbine units and electricity demand affect hydropower generation and delivery.",
     whyInteractive: "Learners can change season, unit availability and feeder demand, then inspect the linked water, machine and grid consequences.",

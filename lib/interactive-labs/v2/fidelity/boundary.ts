@@ -4,6 +4,7 @@ import { HIGH_FIDELITY_SPEC_VERSION, type HighFidelityAuthoringRecord, type High
 import { deriveSimulation, initialFidelityState } from "./engine";
 import { validateVariableValue } from "./variables";
 import { compositeHex, contrastRatio, deltaE00, highlightColor, HIGHLIGHT_COLOR, INACTIVE_FLOW_COLOR } from "./palette";
+import { resolveGeometryVariant } from "./geometry/builders";
 
 /**
  * Visual interaction is not learning evidence. Only a governed learning check may produce evidence, and
@@ -37,6 +38,10 @@ export function validateHighFidelityDefinition(definition: InteractiveLabDefinit
   const objectIds = definition.scene.objects.map((object) => object.id);
   for (const id of duplicates([...componentIds, ...objectIds])) errors.push(`duplicate_id:${id}`);
   const known = (id: string) => componentIds.includes(id);
+  for (const component of spec.components) if (component.geometryVariants) {
+    try { for (const profile of ["HIGH", "STANDARD", "LOW", "FALLBACK_2D"] as const) resolveGeometryVariant(component.geometryVariants, profile); }
+    catch (error) { errors.push(`geometry_variants_invalid:${component.id}:${error instanceof Error ? error.message : "unknown"}`); }
+  }
   for (const component of spec.components.filter((candidate) => candidate.detail === "decor")) {
     const id = component.id;
     if (component.label.trim()) errors.push(`decor_has_label:${id}`);
