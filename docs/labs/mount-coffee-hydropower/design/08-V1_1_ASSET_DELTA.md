@@ -132,7 +132,7 @@ Every row is `kind: procedural`, `license: LiberiaLearn-original`, `bytes: 0`, b
 ## Risks
 
 - **P0 · ASSET:** LOW needs about 59 draws against a limit of 40. RX-006 instancing fixes it. Without RX-006, cut in this order: pylons 2–3, the hospital sign, the desk body, then breakers into one row. Never cut instructional parts.
-- **P1:** `measureLabBudget` models `WebGLScene` only. It needs per-renderer accounting, checked against `renderer.info` on GPU runs.
+- **P1:** `measureLabBudget` models WebGL draw calls. Addressed for RX-005: LOW uses its batch planner; HIGH/STANDARD count Three.js item, environment-ground, flow-line, active-particle and marker draws. GPU-backed comparison with `renderer.info` remains future device validation.
 - **P1:** three.js must be a dynamic `import()` for HIGH/STANDARD only. Precompile shaders behind the loading state.
 - **P1:** re-run palette contrast against the sky and terrain.
 - **P1:** red/green lamps alone fail colour-vision checks; pair them with text and glyphs.
@@ -151,3 +151,5 @@ Every row is `kind: procedural`, `license: LiberiaLearn-original`, `bytes: 0`, b
 ## RX-005 / RX-006 implementation evidence (2026-10-01)
 
 Mount Coffee now consumes shared pipe, generator-housing and lattice-tower kits. Its declarative geometry variants add 2,767 UTF-8 bytes to the offline definition manifest (25,929 → 28,696 bytes); `measureLabBudget` reproduced 28,696 bytes for all four profiles. The baseline records that measured addition. It remains well below the 300 KiB FALLBACK_2D manifest ceiling and adds no remote asset. The existing all-profile budget test is the evidence source; this entry is not a physical-device performance claim.
+
+The renderer-aware HIGH/STANDARD draw-call estimate is 64 for Mount Coffee, up from the legacy estimate of 47. The old formula counted three shared flow batches; Three.js issues one draw for each flow line, each active particle system and the environment ground. The corrected 64 remains below HIGH (120) and STANDARD (90) limits. `lab-budgets.test.ts` verifies the new accounting and baseline; this software estimate is not physical-device performance evidence.

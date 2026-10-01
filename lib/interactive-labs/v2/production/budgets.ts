@@ -92,8 +92,15 @@ export function measureLabBudget(definition: InteractiveLabDefinition<LabState>,
       const svg = profile === "FALLBACK_2D", low = list.budget.meshDetail === "low";
       const geometryProfile = profile === "LOW" ? "LOW" : profile === "STANDARD" ? "STANDARD" : "HIGH";
       triangles = Math.max(triangles, svg ? 0 : list.items.reduce((sum, item) => sum + (item.parametricGeometry ? parametricTriangleCount(item.parametricGeometry, geometryProfile) : geometryTriangles(item.geometry, low)), 0));
-      // WebGLScene: one draw per item, three shared flow batches, and one optional marker batch.
-      drawCalls = Math.max(drawCalls, svg ? 0 : profile === "LOW" ? planLowBatches(list).drawCalls : list.items.length + (list.flows.length ? 3 : 0) + (list.markers.length ? 1 : 0));
+      // ThreeScene: one ground and item draw, each flow line, active particle flow,
+      // plus the shared marker batch when instructional markers or trace nodes exist.
+      const threeFlowDraws = list.flows.length
+        + list.flows.filter((flow) => flow.active && flow.particleCount > 0).length;
+      const hasTraceNodes = list.flows.some((flow) => flow.nodes.some((node) => node.traceable));
+      const threeMarkerDraw = list.markers.length > 0 || hasTraceNodes ? 1 : 0;
+      drawCalls = Math.max(drawCalls, svg ? 0 : profile === "LOW"
+        ? planLowBatches(list).drawCalls
+        : list.items.length + 1 + threeFlowDraws + threeMarkerDraw);
       particles = Math.max(particles, list.flows.reduce((sum, flow) => sum + flow.particleCount, 0));
     }
     result[profile] = {
