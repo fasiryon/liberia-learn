@@ -121,7 +121,12 @@ export function transitionFidelity(spec: HighFidelitySpec, state: FidelityState,
     case "set-cutaway": {
       const cutaway = spec.cutaways.find((candidate) => candidate.id === action.cutawayId);
       const next = { ...state, activeCutawayId: action.cutawayId, cameraPresetId: cutaway?.cameraPresetId ?? state.cameraPresetId };
-      return next.inspectedComponentId && !isComponentRevealed(spec, next, next.inspectedComponentId) ? { ...next, inspectedComponentId: null } : next;
+      const cleared = {
+        ...next,
+        ...(next.inspectedComponentId && !isComponentRevealed(spec, next, next.inspectedComponentId) ? { inspectedComponentId: null } : {}),
+        ...(next.isolatedId && !isComponentRevealed(spec, next, next.isolatedId) ? { isolatedId: null } : {}),
+      };
+      return cleared;
     }
     case "toggle-layer":
       return { ...state, hiddenLayerIds: toggle(state.hiddenLayerIds, action.layerId) };

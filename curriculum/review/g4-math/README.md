@@ -5,7 +5,7 @@ Generated from `lib/curriculum/authority/grade4Math/`, `lib/curriculum/authority
 ## How to review
 
 1. Take one batch (one unit file) at a time. Each objective shows the MOE text and page, the lesson in full with answers, the interaction classification and known uncertainties.
-2. Record a decision per objective in `review-ledger.json`: `APPROVE`, `REVISE` (put what to change in `notes`) or `REJECT`, with your name as `reviewer` and an ISO `reviewedAt`. For 3.4 (two lesson versions exist) also add `reviewedContentId` naming the lesson you reviewed; the publication script refuses without it.
+2. Record a decision per objective in `review-ledger.json`: `APPROVE`, `REVISE` (put what to change in `notes`) or `REJECT`, with your name as `reviewer` and an ISO `reviewedAt`. For 3.4 (two lesson versions exist), an APPROVE must also add `reviewedContentId`, `reviewedContentVersion`, and `reviewedPayloadSha256` for the exact lesson payload you reviewed; the publication and release composers refuse an incomplete or mismatched approval.
 3. A ledger decision is a record of your review, not a publication. Promotion to a governed lesson and publication are separate, explicitly authorized steps through the canonical curriculum workflow.
 4. Nothing here is MOE approval. MOE approval needs its own recorded evidence.
 5. `reviewer-recommendations.json` holds a reviewer's recommendation per objective (below). A recommendation is input to your decision, not a decision: it never changes the ledger.

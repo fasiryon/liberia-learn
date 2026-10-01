@@ -4,11 +4,11 @@
  * decisions: a recommendation never writes the ledger and never claims
  * founder or MOE approval.
  */
-import { createHash } from "node:crypto";
 import fs from "node:fs";
 import { describe, expect, it } from "vitest";
 import { GRADE4_MATH_DRAFT_LESSONS, type DraftLesson } from "@/lib/curriculum/authority/grade4Math";
 import { GRADE4_FRACTIONS_LESSON_2026_2 } from "@/lib/curriculum/authority/grade4FractionsLesson";
+import { lessonPayloadSha256 } from "@/lib/learning-authority/releases/grade4Math2026_2";
 
 const DIR = "curriculum/review/g4-math";
 const ledger = JSON.parse(fs.readFileSync(`${DIR}/review-ledger.json`, "utf8")) as Record<string, { decision: string; reviewer: string | null }>;
@@ -41,7 +41,7 @@ describe("reviewer recommendations (CPR-2026-09-26)", () => {
       const content = GRADE4_MATH_DRAFT_LESSONS.find((l) => l.moeObjectiveId === id) ?? GRADE4_FRACTIONS_LESSON_2026_2;
       expect(rec.reviewedContent, id).toEqual({
         contentId: content.contentId, version: content.version,
-        payloadSha256: createHash("sha256").update(JSON.stringify(content.payload)).digest("hex"),
+        payloadSha256: lessonPayloadSha256(content.payload),
       });
     }
   });

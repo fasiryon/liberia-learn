@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { InteractiveLabDefinition, LabState } from "@/lib/interactive-labs/v2/types";
 import type { FidelityState } from "@/lib/interactive-labs/v2/fidelity/types";
+import { deriveSimulation } from "@/lib/interactive-labs/v2/fidelity/engine";
 import { easeDisplayState, isSettled } from "@/lib/interactive-labs/v2/fidelity/presentation";
 
 /**
@@ -16,6 +17,9 @@ export function useDisplayFidelity(definition: InteractiveLabDefinition<LabState
   useEffect(() => {
     if (!spec || !state.fidelity) { setDisplay(state.fidelity); return; }
     const target = state.fidelity;
+    const simulation = deriveSimulation(spec, target);
+    const hasActiveVisibleFlow = animateFlows && !reducedMotion && spec.flows.some((flow) =>
+      !target.hiddenFlowIds.includes(flow.id) && simulation.flows[flow.id]?.active);
     let frame = 0, last = performance.now(), lastPaint = 0;
     let lastReviewTime: number | undefined, reviewClockSeen = false;
     const tick = (now: number) => {
@@ -33,9 +37,9 @@ export function useDisplayFidelity(definition: InteractiveLabDefinition<LabState
       const settled = isSettled(next, target);
       // ~30 fps is plenty for SVG and keeps low-end devices cool.
       // Review captures use authored timestamps and must publish each one exactly; the learner path
-      // keeps the ~30 fps throttle to reduce work on low-end devices.
-      if (reviewTime !== undefined || renderTime - lastPaint > 33 || settled) { lastPaint = renderTime; setDisplay(next); if (animateFlows && !reducedMotion) setTime(reviewTime ?? now / 1000); }
-      if (!settled || (animateFlows && !reducedMotion)) frame = requestAnimationFrame(tick);
+      // keeps the ~30 fps throttle and stops ticking once settled with no visible active flow.
+      if (reviewTime !== undefined || renderTime - lastPaint > 33 || settled) { lastPaint = renderTime; setDisplay(next); if (hasActiveVisibleFlow) setTime(reviewTime ?? now / 1000); }
+      if (!settled || hasActiveVisibleFlow || reviewTime !== undefined) frame = requestAnimationFrame(tick);
     };
     frame = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(frame);

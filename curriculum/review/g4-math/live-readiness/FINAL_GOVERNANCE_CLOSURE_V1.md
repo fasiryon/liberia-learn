@@ -1,5 +1,7 @@
 # Grade 4 Math final governance closure v1
 
+> **Superseded hashes (2026-10-01):** lesson payload hashes are now canonical key-sorted JSON, so the stored Postgres `jsonb` row can match. The 3.4 payload sha256 below (`7f6faf31...`) is now `404de6f02a454151f2e5744ab18686d423834e737a1350cf95ecc94d41417f82` (same payload), and the candidate identity `e8839952...` is now `08b983215643f4fe99477e1c0d65f9b1f70f21fc71bdecfe040982d728945101`. See `RELEASE_2026_2_AND_WRITE_PLAN.md`. The rest of this record is unchanged.
+
 Status: **approval package only**. No founder decision, production write,
 publication, release registration, or policy activation is recorded here.
 Base: `5c9938e5cd04ad4a9b091e55e7db3c6cc5140845`.

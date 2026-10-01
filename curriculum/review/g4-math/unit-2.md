@@ -18,7 +18,7 @@ For each objective, record APPROVE / REVISE / REJECT in `review-ledger.json`. No
 | Planned enhancement | none |
 | Evidence | GOVERNED_ITEM_RESPONSE |
 | Example-data labels | none |
-| Reviewed content | `ll-g4-math-multiplication-facts-properties-2026.1` v0.1.0, payload sha256 `1c400bec6e6daaae6597b56c90f6e680a87c926b232b45311b919fbb89b1d2e9` |
+| Reviewed content | `ll-g4-math-multiplication-facts-properties-2026.1` v0.1.0, payload sha256 `8fc8d2fa656f6548ab84ef3acd1a3a02f315fc40aa72955595399058ab77a14f` |
 | Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision) |
 
 **Known uncertainties:** none recorded.
@@ -113,7 +113,7 @@ Duration: 45 minutes.
 | Planned enhancement | none |
 | Evidence | NONE |
 | Example-data labels | (example price) |
-| Reviewed content | `ll-g4-math-multiply-multiples-of-10-2026.1` v0.1.0, payload sha256 `9af6a086e806f8b6f56479c4496e2c67225fa7647004f459839d030ac5c0aac6` |
+| Reviewed content | `ll-g4-math-multiply-multiples-of-10-2026.1` v0.1.0, payload sha256 `20a29c19df31a8ecb9dc143728cf527f0bd59e0a173099ed618041377c7ad5e5` |
 | Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision) |
 
 **Known uncertainties:** none recorded.
@@ -205,7 +205,7 @@ Duration: 45 minutes.
 | Planned enhancement | GRADE_4_6_GRID_MANIPULATIVE (MANIPULATIVE_2D), NOT IMPLEMENTED: No Grade 4-6 grid tool is enabled online; squared paper is the core modality. |
 | Evidence | GOVERNED_ITEM_RESPONSE |
 | Example-data labels | none |
-| Reviewed content | `ll-g4-math-multiply-by-one-digit-2026.1` v0.1.0, payload sha256 `34245c86f9c4a356ed8abbbb648fca03af50b825174d53b1c96080b16284bab7` |
+| Reviewed content | `ll-g4-math-multiply-by-one-digit-2026.1` v0.1.0, payload sha256 `c20ddb50d505c7f6e399e40c82b83b43f94e691aa2f5681ca9aea889688a63cc` |
 | Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision). Decisions applied: CPR-2026-09-26-R03 |
 
 **Known uncertainties:**
@@ -306,7 +306,7 @@ Duration: 45 minutes.
 | Planned enhancement | none |
 | Evidence | NONE |
 | Example-data labels | none |
-| Reviewed content | `ll-g4-math-divide-by-one-digit-2026.1` v0.1.0, payload sha256 `ceda2a0f5df426cd7165afe2f4e6e4fb70db3203d359e3aa6a5076d1a6ab8bc8` |
+| Reviewed content | `ll-g4-math-divide-by-one-digit-2026.1` v0.1.0, payload sha256 `18622729389d5fc58d46724e7176d511004a85341fd6f1a655cfdfe6b7d0fdc9` |
 | Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision) |
 
 **Known uncertainties:** none recorded.
@@ -404,7 +404,7 @@ Duration: 45 minutes.
 | Planned enhancement | none |
 | Evidence | NONE |
 | Example-data labels | (example amount) |
-| Reviewed content | `ll-g4-math-divide-zero-in-quotient-2026.1` v0.1.0, payload sha256 `779fb8e8b6ffa3fb5936a066756866e49f9c3769a35cec604544b35fd2c42611` |
+| Reviewed content | `ll-g4-math-divide-zero-in-quotient-2026.1` v0.1.0, payload sha256 `0d23b73e3be5cb661e53a49d449650b0cb7cc97736f521e6efe0498facefb81a` |
 | Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision) |
 
 **Known uncertainties:** none recorded.
@@ -500,7 +500,7 @@ Duration: 45 minutes.
 | Planned enhancement | none |
 | Evidence | NONE |
 | Example-data labels | (example price), (example amount) |
-| Reviewed content | `ll-g4-math-division-word-problems-2026.1` v0.1.0, payload sha256 `c466ea6287fcd7c9482ab5892e6efb8beae79ce18238f5199ed4ea225392cd4a` |
+| Reviewed content | `ll-g4-math-division-word-problems-2026.1` v0.1.0, payload sha256 `9bbddd74def664bbb7fd342f0e193efe16a9a9d8cfe78fc931f32a47b2ae97b8` |
 | Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision) |
 
 **Known uncertainties:**

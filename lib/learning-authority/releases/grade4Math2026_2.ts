@@ -24,6 +24,7 @@ import {
   type CurriculumConstructBinding, type CurriculumContentBinding, type CurriculumOntologyRelease, type GovernedItem,
 } from "../governedGrade4Math";
 import { GRADE4_FRACTIONS_LESSON_2026_2 } from "@/lib/curriculum/authority/grade4FractionsLesson";
+import { canonicalizeJson } from "@/lib/curriculum/provenance/hash";
 import { GRADE4_MATH_DRAFT_LESSONS } from "@/lib/curriculum/authority/grade4Math";
 
 export const GRADE4_MATH_RELEASE_2026_2_ID = "lr-moe-g4-math-2026.2";
@@ -51,11 +52,15 @@ const equalPartsBinding = (id: string, itemId: string): CurriculumConstructBindi
   evidencePolicyId: "g4-math-practice-evidence", toolPolicyId: "g4-math-practice-tools",
 });
 
+/**
+ * Key-order independent: the stored payload is Postgres jsonb, which re-sorts object keys, so a
+ * plain JSON.stringify of the row would never match the hash of the authored payload.
+ */
 export function lessonPayloadSha256(payload: unknown): string {
-  return createHash("sha256").update(JSON.stringify(payload)).digest("hex");
+  return createHash("sha256").update(canonicalizeJson(payload)).digest("hex");
 }
 
-/** The reviewed-content additions 2026.2 can carry. Each is included only when its objective is APPROVED. */
+/** The reviewed-content additions 2026.2 can carry. Each is included only when its exact lesson review is APPROVED. */
 export const GRADE4_MATH_2026_2_ADDITIONS: readonly Addition[] = Object.freeze([
   {
     moeObjectiveId: PARTS_OF_A_SET,
@@ -117,9 +122,11 @@ export function composeGrade4MathRelease2026_2(input: { ledger: ReviewLedger; ap
   const base = GRADE4_MATH_ONTOLOGY_RELEASE;
   const approved = (addition: Addition) => {
     const review = input.ledger[addition.moeObjectiveId];
-    return review?.decision === "APPROVE" && !!review.reviewer?.trim() && Number.isFinite(Date.parse(review.reviewedAt ?? "")) &&
-      (!addition.lesson || (review.reviewedContentId === addition.lesson.contentId && review.reviewedContentVersion === addition.lesson.version &&
-        review.reviewedPayloadSha256 === lessonPayloadSha256(addition.lesson.payload)));
+    if (review?.decision !== "APPROVE" || !review.reviewer?.trim() || !Number.isFinite(Date.parse(review.reviewedAt ?? ""))) return false;
+    if (!addition.lesson) return false;
+    return review.reviewedContentId === addition.lesson.contentId &&
+      review.reviewedContentVersion === addition.lesson.version &&
+      review.reviewedPayloadSha256 === lessonPayloadSha256(addition.lesson.payload);
   };
   const accepted = GRADE4_MATH_2026_2_ADDITIONS.filter(approved);
   const excluded: ReleaseExclusion[] = [];

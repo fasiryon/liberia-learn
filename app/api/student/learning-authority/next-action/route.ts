@@ -10,6 +10,7 @@ import { appendCanonicalMasteryUpdate } from "@/lib/learning-state/masteryWriter
 import { createGovernedEvidence } from "@/lib/learning-evidence/evidenceContract";
 import { toLearnerSafeStudentConceptState } from "@/lib/learning-state/studentLearningModel";
 import { governedInventoryForRelease, resolveInventoryActivity } from "@/lib/learning-authority/governedInventoryRuntime";
+import { lessonPayloadSha256 } from "@/lib/learning-authority/releases/grade4Math2026_2";
 
 export const dynamic = "force-dynamic";
 const cookieName = "governed_learning_action";
@@ -59,8 +60,11 @@ export async function GET() {
         grade: release.grade, subject: release.subject,
         schoolId: null, status: { in: ["published", "APPROVED"] },
         provenance: { lifecycleState: "APPROVED", currentRevisionId: { not: null } },
-      }, select: { contentId: true } });
+      }, select: { contentId: true, payload: true } });
       if (!lesson) throw new Error("governed_lesson_unavailable");
+      if (lessonBinding.contentSha256 && lessonPayloadSha256(lesson.payload) !== lessonBinding.contentSha256) {
+        throw new Error("governed_lesson_payload_mismatch");
+      }
       lessonHref = `/student/lesson/${encodeURIComponent(lesson.contentId)}`;
     }
     const { correctIndex: _answer, hint: _hint, workedExample: _example, ...learnerItem } = item;

@@ -18,7 +18,7 @@ For each objective, record APPROVE / REVISE / REJECT in `review-ledger.json`. No
 | Planned enhancement | none |
 | Evidence | NONE |
 | Example-data labels | none |
-| Reviewed content | `ll-g4-math-even-and-odd-numbers-2026.1` v0.1.0, payload sha256 `d67d1042f0280bb34670e219f942e002a5feb9e893de89260d723a057e96924b` |
+| Reviewed content | `ll-g4-math-even-and-odd-numbers-2026.1` v0.1.0, payload sha256 `b99ac7fd3efafd2675fb38948165cab6c1a964e63624dfafa87d27f84cd84ef1` |
 | Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision) |
 
 **Known uncertainties:** none recorded.
@@ -113,7 +113,7 @@ Duration: 45 minutes.
 | Planned enhancement | none |
 | Evidence | GOVERNED_ITEM_RESPONSE |
 | Example-data labels | none |
-| Reviewed content | `ll-g4-math-factors-and-multiples-2026.1` v0.1.0, payload sha256 `d9963da184eeb18365655da9cef3e0813f326c7557fbe97166d15092d679d311` |
+| Reviewed content | `ll-g4-math-factors-and-multiples-2026.1` v0.1.0, payload sha256 `d459af97f15f8857d4a02efe2eea1bf82d2d185d4260edda0717ee7fb2cff1ca` |
 | Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision). Decisions applied: CPR-2026-09-26-R04 |
 
 **Known uncertainties:** none recorded.
@@ -219,7 +219,7 @@ Duration: 45 minutes.
 | Planned enhancement | none |
 | Evidence | NONE |
 | Example-data labels | none |
-| Reviewed content | `ll-g4-math-lcm-and-gcf-2026.1` v0.1.0, payload sha256 `b44a01b48f8217cb936707566d6532acc3de93e6bbeb88c8f086f7ddc1ada2a7` |
+| Reviewed content | `ll-g4-math-lcm-and-gcf-2026.1` v0.1.0, payload sha256 `3c85efed774e381b8d925e07996601597f5c29e3ac725cacab5b8ba2e113e07c` |
 | Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision). Decisions applied: CPR-2026-09-26-R04. No change to 3.3 content: the prime-factor requirement was met in 3.2 instead. |
 
 **Known uncertainties:**
@@ -325,7 +325,7 @@ Duration: 45 minutes.
 | Planned enhancement | SET_FRACTION_MANIPULATIVE_REQUIRED (MANIPULATIVE_2D), NOT IMPLEMENTED: The fraction-visualizer partitions one whole into strips; it does not let a learner build a set of objects and mark part of it. Bottle caps or stones remain the required modality. |
 | Evidence | GOVERNED_ITEM_RESPONSE |
 | Example-data labels | none |
-| Reviewed content | `ll-g4-math-fractions-equal-parts-2026.2` v1.2.0, payload sha256 `7f6faf3133b258771c0d5222488d81709058df7d419de6f6bd7eb68d59d615e9` |
+| Reviewed content | `ll-g4-math-fractions-equal-parts-2026.2` v1.2.0, payload sha256 `404de6f02a454151f2e5744ab18686d423834e737a1350cf95ecc94d41417f82` |
 | Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision). Decisions applied: CPR-2026-09-26-R05. Assessed: the 2026.2 candidate v1.2.0. Lesson content is ready; release 2026.2 activation separately needs a release-level approval and the mastery-continuity and misconception-policy decisions (live-readiness/RELEASE_2026_2_AND_WRITE_PLAN.md). The founder's ledger entry must name reviewedContentId. |
 
 **Known uncertainties:**
@@ -501,7 +501,7 @@ Duration: 45 minutes.
 | Planned enhancement | none |
 | Evidence | GOVERNED_ITEM_RESPONSE |
 | Example-data labels | none |
-| Reviewed content | `ll-g4-math-equivalent-fractions-2026.1` v0.1.0, payload sha256 `a97c281dfbf604ef931d4bbdd63e564d33ce3d6f29346534d80db1134b3de00d` |
+| Reviewed content | `ll-g4-math-equivalent-fractions-2026.1` v0.1.0, payload sha256 `2a53656a8ff3a1ce1ac0f2efbf5174e988c3823770678e20e8897cb4745dbb70` |
 | Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision) |
 
 **Known uncertainties:** none recorded.
@@ -597,7 +597,7 @@ Duration: 45 minutes.
 | Planned enhancement | none |
 | Evidence | GOVERNED_ITEM_RESPONSE |
 | Example-data labels | none |
-| Reviewed content | `ll-g4-math-simplifying-fractions-2026.1` v0.1.0, payload sha256 `5afd16da2e3c29314ef4cb0ed6ef60b1e8b536a4a25dd5c1755efa30d2208576` |
+| Reviewed content | `ll-g4-math-simplifying-fractions-2026.1` v0.1.0, payload sha256 `aa0c9f45b0115e6fc3ec6909f282739de6b00182fc1cb90933bef89a264aa9e1` |
 | Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision) |
 
 **Known uncertainties:** none recorded.
@@ -691,7 +691,7 @@ Duration: 45 minutes.
 | Planned enhancement | none |
 | Evidence | GOVERNED_ITEM_RESPONSE |
 | Example-data labels | none |
-| Reviewed content | `ll-g4-math-adding-fractions-2026.1` v0.1.0, payload sha256 `b99f69b88f7bf143f555a5be32933b8ce2f48056bc34e70c9b2e0250eff72355` |
+| Reviewed content | `ll-g4-math-adding-fractions-2026.1` v0.1.0, payload sha256 `fb80848fed07455953ffaf74dc1dbaf41b44e35fe705c839d4751766eab199be` |
 | Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision). Decisions applied: CPR-2026-09-26-R06. Sums greater than one are written as mixed numbers inside this lesson; 3.4 now treats fractions greater than one only as an optional extension, so 3.7 is where learners first meet them in practice. |
 
 **Known uncertainties:**
@@ -791,7 +791,7 @@ Duration: 45 minutes.
 | Planned enhancement | none |
 | Evidence | GOVERNED_ITEM_RESPONSE |
 | Example-data labels | none |
-| Reviewed content | `ll-g4-math-subtracting-fractions-2026.1` v0.1.0, payload sha256 `d6e6c18e774508c6dcca0be5ad6c0b873da2f332d3f8adf9ecb8104b332815b0` |
+| Reviewed content | `ll-g4-math-subtracting-fractions-2026.1` v0.1.0, payload sha256 `1f7da8236348307bd1bc1615dbc608996c8beb8472774f6ab35336d5fbf31cd8` |
 | Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision). Decisions applied: CPR-2026-09-26-R07 |
 
 **Known uncertainties:**
@@ -891,7 +891,7 @@ Duration: 45 minutes.
 | Planned enhancement | none |
 | Evidence | NONE |
 | Example-data labels | (example prices), (example amount) |
-| Reviewed content | `ll-g4-math-multi-step-problems-2026.1` v0.1.0, payload sha256 `8dd15953cee58437aed77ab0e0080bf9f4371a702de9a908c9d3c5144089f563` |
+| Reviewed content | `ll-g4-math-multi-step-problems-2026.1` v0.1.0, payload sha256 `555da3bfd403ae29972ba585b5f1139a147d0f0a61621850d3bb4ab122851ba0` |
 | Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision) |
 
 **Known uncertainties:**
