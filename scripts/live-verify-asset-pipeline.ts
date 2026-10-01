@@ -24,6 +24,7 @@ async function main() {
 
   const { GET } = await import("@/app/api/health/canva/route");
   const { prisma } = await import("@/lib/db");
+  const { createCurriculumContent } = await import("@/lib/curriculum/mutations/repository");
   const { handleGenerateCourseThumbnailJob } = await import("@/worker/handlers/courseThumbnail");
   const { handleGenerateSchoolOnboardingKitJob } = await import("@/worker/handlers/onboardingKit");
   const { handleGenerateCertificationAssetsJob } = await import("@/worker/handlers/certificationAssets");
@@ -73,24 +74,30 @@ async function main() {
     },
   });
 
-  const course = await prisma.curriculumContent.upsert({
-    where: { contentId: `${runId}-course` },
-    update: {
-      thumbnailUrl: null,
-      thumbnailStatus: "pending",
-      thumbnailError: null,
-    },
-    create: {
+  // Fixture goes through the governed writer (P2-A guard): a draft, scoped to this run's test
+  // school, never an approved/global lesson. runId is unique per run, so this is always a create.
+  const { content: course } = await createCurriculumContent(
+    {
       contentId: `${runId}-course`,
       title: "Live Asset Pipeline Mathematics",
       grade: 9,
       subject: "MATH",
       contentType: "lesson",
-      status: "approved",
+      status: "draft",
       version: "live-verify",
+      schoolId: school.id,
       payload: { title: "Live Asset Pipeline Mathematics", body: "Safe verification lesson." },
     },
-  });
+    {
+      revisionKind: "ORIGINAL_GENERATION",
+      originKind: "DETERMINISTIC_GENERATED",
+      generatorName: "live-verify-asset-pipeline",
+      actorUserId: actor.id,
+      auditAction: "curriculum.live_verify_fixture.created",
+      schoolId: school.id,
+      traceId: runId,
+    },
+  );
 
   await handleGenerateCourseThumbnailJob({
     contentId: course.contentId,
