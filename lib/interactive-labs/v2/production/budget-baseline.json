@@ -61,28 +61,28 @@
   },
   "mount-coffee-hydropower": {
     "HIGH": {
-      "offlinePackageBytes": 28696,
-      "triangles": 1976,
-      "drawCalls": 64,
+      "offlinePackageBytes": 32247,
+      "triangles": 2064,
+      "drawCalls": 76,
       "particles": 180,
       "maxTexturePx": 0
     },
     "STANDARD": {
-      "offlinePackageBytes": 28696,
-      "triangles": 1976,
-      "drawCalls": 64,
+      "offlinePackageBytes": 32247,
+      "triangles": 1956,
+      "drawCalls": 76,
       "particles": 100,
       "maxTexturePx": 0
     },
     "LOW": {
-      "offlinePackageBytes": 28696,
-      "triangles": 836,
-      "drawCalls": 38,
+      "offlinePackageBytes": 32247,
+      "triangles": 952,
+      "drawCalls": 28,
       "particles": 40,
       "maxTexturePx": 0
     },
     "FALLBACK_2D": {
-      "offlinePackageBytes": 28696,
+      "offlinePackageBytes": 32247,
       "triangles": 0,
       "drawCalls": 0,
       "particles": 60,

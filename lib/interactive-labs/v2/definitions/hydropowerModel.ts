@@ -1,4 +1,5 @@
-// Mount Coffee run-of-river rule layer (docs/labs/mount-coffee-hydropower/design/03-SIMULATION_SPEC.md).
+// Mount Coffee run-of-river rule layer (docs/labs/mount-coffee-hydropower/design/03-SIMULATION_SPEC.md,
+// amended by 06-V1_1_SIMULATION_DELTA.md: smaller feeder blocks, founder decision 2026-10-01).
 // Pure, deterministic and memoryless. Invalid input throws; nothing is defaulted or clamped.
 // Verified facts: 23.1 m head, 4 × 22 MW Francis units, 142.86 rpm, ≈10 MW dependable in the dry season.
 // Model assumptions are marked; feeder demands are fictional.
@@ -15,8 +16,12 @@ export const EFFICIENCY = UNIT_RATING_MW * 1e6 / (1000 * 9.81 * HEAD_M * DESIGN_
 export const RIVER_FLOW_STEPS = Object.freeze([49, 176, 303, 430, 557]);
 export const DRY_FLOW = 49;
 export const MAX_RIVER_FLOW = 557;
-/** MODEL ASSUMPTION (fictional feeders). */
-export const FEEDER_DEMAND_MW = Object.freeze({ feederHospital: 6, feederHomes: 48, feederShops: 32 });
+/** MODEL ASSUMPTION (fictional feeders). Homes and shops are switched in blocks so the dry-season challenge needs arithmetic. */
+export const HOSPITAL_MW = 4;
+export const HOMES_BLOCK_MW = 12;
+export const SHOPS_BLOCK_MW = 4;
+export const BLOCKS_PER_DISTRICT = 4;
+export const BLOCK_STEPS = Object.freeze([0, 1, 2, 3, 4]);
 export const UNIT_X = Object.freeze([-1.5, -0.3, 0.9, 2.1]);
 /** Unit 3's detailed machine stack: revealed by the powerhouse cutaway, identified, and rebuilt in the repair check. */
 export const UNIT3_STACK = Object.freeze(["u3-runner", "u3-shaft", "u3-generator"]);
@@ -38,8 +43,8 @@ export function evaluateHydro(input: SimulationInput) {
   const riverFlow = requireStep(input.variables, "riverFlow", RIVER_FLOW_STEPS);
   const unitsOnline = requireStep(input.variables, "unitsOnline", [0, 1, 2, 3, 4]);
   const hospital = requireStep(input.variables, "feederHospital", [0, 1]);
-  const homes = requireStep(input.variables, "feederHomes", [0, 1]);
-  const shops = requireStep(input.variables, "feederShops", [0, 1]);
+  const homes = requireStep(input.variables, "homesBlocks", BLOCK_STEPS);
+  const shops = requireStep(input.variables, "shopsBlocks", BLOCK_STEPS);
 
   // 1. Unit 3 is available only when rebuilt exactly (fail-closed).
   const u3 = input.placements["unit-3"];
@@ -56,16 +61,20 @@ export function evaluateHydro(input: SimulationInput) {
   const unitPower = (unit: number) => round6(UNIT_RATING_MW * shares[unit] / DESIGN_FLOW_PER_UNIT);
   const outputMW = round6(UNIT_RATING_MW * usableFlow / DESIGN_FLOW_PER_UNIT);
   // 5–7. Demand, protection, delivery.
-  const demandMW = FEEDER_DEMAND_MW.feederHospital * hospital + FEEDER_DEMAND_MW.feederHomes * homes + FEEDER_DEMAND_MW.feederShops * shops;
+  const demandMW = HOSPITAL_MW * hospital + HOMES_BLOCK_MW * homes + SHOPS_BLOCK_MW * shops;
   const tripped = demandMW > outputMW + 1e-9 ? 1 : 0;
+  const headroomMW = round6(outputMW - demandMW);
   const suppliedMW = tripped ? 0 : demandMW;
   const turbineFlow = tripped ? 0 : usableFlow;
   const spillFlow = round6(riverFlow - turbineFlow);
   // 8. Status per unit.
   const status = (unit: number): UnitStatus => unit === 3 && !unit3Ready ? "out-for-repair" : !running.includes(unit) ? "off" : tripped ? "tripped" : shares[unit] > 0 ? "generating" : "idle";
   const statuses = [1, 2, 3, 4].map(status);
-  const gridStableWithPriority = riverFlow === DRY_FLOW && hospital === 1 && tripped === 0 ? 1 : 0;
-  return { riverFlow, unitsOnline, feeders: { hospital, homes, shops }, unit3Ready, running, shares, usableFlow, outputMW, unitPower, demandMW, tripped, suppliedMW, turbineFlow, spillFlow, statuses, gridStableWithPriority };
+  // S9: "maximum load served" = hospital on, no trip, and no further block fits (not the best possible mix).
+  const noBlockFits = (homes === BLOCKS_PER_DISTRICT || HOMES_BLOCK_MW > headroomMW + 1e-9) && (shops === BLOCKS_PER_DISTRICT || SHOPS_BLOCK_MW > headroomMW + 1e-9) ? 1 : 0;
+  const maxLoadServed = hospital === 1 && tripped === 0 && noBlockFits === 1 ? 1 : 0;
+  const gridStableWithPriority = riverFlow === DRY_FLOW && maxLoadServed === 1 ? 1 : 0;
+  return { riverFlow, unitsOnline, feeders: { hospital, homes, shops }, unit3Ready, running, shares, usableFlow, outputMW, unitPower, demandMW, headroomMW, noBlockFits, maxLoadServed, tripped, suppliedMW, turbineFlow, spillFlow, statuses, gridStableWithPriority };
 }
 
 function explain(r: ReturnType<typeof evaluateHydro>): ExplanationLine[] {
@@ -83,12 +92,14 @@ function explain(r: ReturnType<typeof evaluateHydro>): ExplanationLine[] {
   if (!r.tripped && r.spillFlow > 0) lines.push({ id: "spillway-cap", text: `The river brings more water than the running turbines can take (${r.usableFlow} m³/s). The other ${r.spillFlow} m³/s goes over the spillway, so power stays at ${Math.round(r.outputMW)} MW.` });
   if (r.statuses.includes("generating")) lines.push({ id: "constant-speed", text: "Every unit that is making power turns at the same steady speed: 142.86 turns per minute. More water gives more power, not a faster turbine." });
   lines.push({ id: "water-returns", text: "The water is not used up. After the turbine it flows out through the tailrace and back into the Saint Paul River." });
-  lines.push({ id: "demand", text: `The city is asking for ${r.demandMW} MW. (Hospital 6 MW, homes 48 MW, shops 32 MW are model numbers, not real ones.)` });
-  if (r.tripped && r.outputMW > 0) lines.push({ id: "trip-overload", text: `The city asked for ${r.demandMW} MW but the plant can make only ${Math.round(r.outputMW)} MW. In this simplified model, protection trips the city supply and stops the modeled units, so the whole city goes dark at once. Real plants can trip breakers or turbines in different ways, and restart steps depend on the cause. Lights do not just get dimmer. Switch some feeders off; when demand fits again, the model lets operators restore supply.` });
+  lines.push({ id: "demand", text: `The city is asking for ${r.demandMW} MW: hospital ${r.feeders.hospital ? "on" : "off"}, ${r.feeders.homes} of 4 homes blocks, ${r.feeders.shops} of 4 shops blocks. (Hospital 4 MW; homes blocks 12 MW each; shops blocks 4 MW each. These are model numbers, not real ones.)` });
+  if (!r.tripped && r.outputMW > 0) lines.push({ id: "headroom", text: `About ${Math.round(r.headroomMW * 10) / 10} MW spare. A homes block needs 12 MW and a shops block needs 4 MW.` });
+  if (r.tripped && r.outputMW > 0) lines.push({ id: "trip-overload", text: `The city asked for ${r.demandMW} MW but the plant can make only ${Math.round(r.outputMW)} MW. In this simplified model, protection trips the city supply and stops the modeled units, so the whole city goes dark at once. Real plants can trip breakers or turbines in different ways, and restart steps depend on the cause. Lights do not just get dimmer. Switch some blocks off; when demand fits again, the model lets operators restore supply.` });
   else if (r.tripped) lines.push({ id: "no-supply", text: "No unit is making power, so no electricity reaches the city. Electricity is not stored in the dam or the wires." });
   else if (r.demandMW > 0) lines.push({ id: "supplied", text: `The plant is supplying the ${r.demandMW} MW the city asks for. Every feeder that is on gets full power.` });
   else lines.push({ id: "no-demand", text: "All feeders are off, so no electricity is sent to the city." });
-  if (r.gridStableWithPriority) lines.push({ id: "priority-stable", text: "Dry season, evening peak: the grid is stable and the hospital is lit." });
+  if (r.maxLoadServed) lines.push({ id: "max-served", text: "The hospital is lit and no further block fits without tripping the plant: the most load this supply can carry." });
+  if (r.gridStableWithPriority) lines.push({ id: "priority-stable", text: "Dry season, evening peak: the grid is stable, the hospital is lit, and every block that fits is on." });
   lines.push(
     { id: "grade8-rule", text: "More water each second, or a higher drop, gives more power." },
     { id: "power-equation", text: `P ≈ ρ·g·Q·H·η = 1000 × 9.81 × ${r.usableFlow} × 23.1 × 0.903 = ${hydraulicWatts.toLocaleString("en-US")} W; ${hydraulicWatts.toLocaleString("en-US")} W ÷ 1,000,000 W/MW ≈ ${r.outputMW.toFixed(1)} MW (η = 0.903 is a model assumption).`, minGrade: 9 },
@@ -100,9 +111,29 @@ function explain(r: ReturnType<typeof evaluateHydro>): ExplanationLine[] {
   return lines;
 }
 
+const lanes = (q: number) => q <= 0 ? 0 : Math.ceil(q / DESIGN_FLOW_PER_UNIT - 1e-9);
+
+/** Water quantities a renderer may draw (06 water section). Derived here so no renderer computes a consequence. */
+function waterQuantities(r: ReturnType<typeof evaluateHydro>): Record<string, number> {
+  const generating = (unit: number) => r.statuses[unit - 1] === "generating";
+  const unitFlow = (unit: number) => generating(unit) ? round6(r.shares[unit]) : 0;
+  const tailraceFlow = round6([1, 2, 3, 4].reduce((sum, unit) => sum + unitFlow(unit), 0));
+  const width = (q: number) => round6(Math.sqrt(q / MAX_RIVER_FLOW));
+  return {
+    upstreamFlow: r.riverFlow, headpondInflow: r.riverFlow, tailraceFlow, downstreamFlow: round6(tailraceFlow + r.spillFlow), headpondLevel: 1,
+    upstreamWidthFactor: width(r.riverFlow), downstreamWidthFactor: width(r.riverFlow),
+    upstreamDepthFactor: round6(Math.cbrt(r.riverFlow / MAX_RIVER_FLOW)), downstreamDepthFactor: round6(Math.cbrt(r.riverFlow / MAX_RIVER_FLOW)),
+    tailraceWidthFactor: width(tailraceFlow), spillWidthFactor: width(r.spillFlow),
+    riverLanes: lanes(r.riverFlow), downstreamLanes: lanes(r.riverFlow), tailraceLanes: [1, 2, 3, 4].filter(generating).length, spillLanes: lanes(r.spillFlow),
+    ...Object.fromEntries([1, 2, 3, 4].flatMap((unit) => [
+      [`u${unit}Flow`, unitFlow(unit)], [`u${unit}FillFactor`, round6(unitFlow(unit) / DESIGN_FLOW_PER_UNIT)], [`u${unit}Idle`, r.statuses[unit - 1] === "idle" ? 1 : 0],
+    ])),
+  };
+}
+
 export const hydropowerModel: SimulationModel = {
   id: "mount-coffee-run-of-river",
-  version: "1.0.0",
+  version: "1.1.0",
   kind: "deterministic-rules",
   evaluate: (input): SimulationOutput => {
     const r = evaluateHydro(input);
@@ -111,25 +142,29 @@ export const hydropowerModel: SimulationModel = {
       riverFlow: r.riverFlow, usableFlow: round6(r.usableFlow), outputMW: r.outputMW, demandMW: r.demandMW, suppliedMW: r.suppliedMW,
       tripped: r.tripped, turbineFlow: round6(r.turbineFlow), spillFlow: r.spillFlow, unit3Ready: r.unit3Ready,
       unitsAvailable: r.unit3Ready ? 4 : 3, unitsRunning: r.running.length, unitsGenerating: [1, 2, 3, 4].filter(generating).length,
-      gridStableWithPriority: r.gridStableWithPriority,
+      gridStableWithPriority: r.gridStableWithPriority, headroomMW: r.headroomMW, maxLoadServed: r.maxLoadServed,
+      ...waterQuantities(r),
       ...Object.fromEntries([1, 2, 3, 4].flatMap((unit) => [[`u${unit}PowerMW`, r.unitPower(unit)], [`u${unit}Generating`, generating(unit) ? 1 : 0]])),
     };
     const flow = (active: boolean, rate: number) => ({ active, rate: active ? round6(rate) : 0, direction: 1 as const });
-    const feederOn = { hospital: r.feeders.hospital === 1, homes: r.feeders.homes === 1, shops: r.feeders.shops === 1 };
+    const feederOn = { hospital: r.feeders.hospital === 1, homes: r.feeders.homes > 0, shops: r.feeders.shops > 0 };
     const flows: SimulationOutput["flows"] = {
       "river-in": flow(true, r.riverFlow / MAX_RIVER_FLOW),
       ...Object.fromEntries([1, 2, 3, 4].map((unit) => [`water-u${unit}`, flow(generating(unit), r.shares[unit] / DESIGN_FLOW_PER_UNIT)])),
       spillway: flow(r.spillFlow > 0, r.spillFlow / MAX_RIVER_FLOW),
       "power-line": flow(r.suppliedMW > 0, r.suppliedMW / 88),
-      "feeder-hospital": flow(feederOn.hospital && !r.tripped, FEEDER_DEMAND_MW.feederHospital / 48),
-      "feeder-homes": flow(feederOn.homes && !r.tripped, FEEDER_DEMAND_MW.feederHomes / 48),
-      "feeder-shops": flow(feederOn.shops && !r.tripped, FEEDER_DEMAND_MW.feederShops / 48),
+      "feeder-hospital": flow(feederOn.hospital && !r.tripped, HOSPITAL_MW / 48),
+      "feeder-homes": flow(feederOn.homes && !r.tripped, r.feeders.homes / 4),
+      "feeder-shops": flow(feederOn.shops && !r.tripped, r.feeders.shops / 12),
     };
     const componentStates: SimulationOutput["componentStates"] = {};
     for (let k = 1; k <= 4; k += 1) componentStates[`gauge-seg-${k}`] = { intensity: round6(Math.min(1, Math.max(0, (r.outputMW - 22 * (k - 1)) / 22))) };
-    for (const [feeder, on] of Object.entries(feederOn)) {
-      componentStates[`demand-${feeder}`] = { intensity: on ? 1 : 0 };
-      componentStates[`city-${feeder}`] = { intensity: on && !r.tripped ? 1 : 0 };
+    componentStates["demand-hospital"] = { intensity: feederOn.hospital ? 1 : 0 };
+    componentStates["city-hospital"] = { intensity: feederOn.hospital && !r.tripped ? 1 : 0 };
+    for (const district of ["homes", "shops"] as const) for (let k = 1; k <= BLOCKS_PER_DISTRICT; k += 1) {
+      const on = k <= r.feeders[district];
+      componentStates[`demand-${district}-b${k}`] = { intensity: on ? 1 : 0 };
+      componentStates[`city-${district}-b${k}`] = { intensity: on && !r.tripped ? 1 : 0 };
     }
     // Every unit's housing and pole marker carry its status (RX-001 motion driver); unit 3's internal stack does too.
     for (let unit = 1; unit <= 4; unit += 1) for (const id of [`unit-${unit}`, `unit-${unit}-marker`]) componentStates[id] = { status: r.statuses[unit - 1] };

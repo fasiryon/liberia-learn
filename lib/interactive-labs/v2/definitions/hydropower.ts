@@ -35,10 +35,12 @@ const components: HighFidelitySpec["components"] = [
   { ...latticeTowerKit({ id:"power-tower-1",label:"Transmission tower",transform:tr([4.0,1.4,0],[0.48,1.3,0.48]),color:"#aab4c0",width:1,height:2,depth:1 }), showLabel:false },
   component("city-hospital", "Hospital", "rectangular-prism", [5.0, 0.35, 0], [0.4, 0.95, 0.5], "#96a3b6", { mobileLabel: false }),
   component("hospital-sign", "Hospital H sign", "panel", [5.0, 1.1, 0.28], [0.22, 0.2, 0.06], "#2f6fe0", { showLabel: false }),
-  component("city-homes", "Homes", "rectangular-prism", [6.4, 0.25, 0], [0.45, 0.75, 0.5], "#7a869a", { labelOffset: [-1.6, 1.1, 0], mobileLabel: false }),
-  component("city-shops", "Shops", "rectangular-prism", [7.7, 0.25, 0], [0.4, 0.75, 0.5], "#7a869a", { labelOffset: [-2.7, 1.9, 0], mobileLabel: false }),
+  // v1.1 feeder blocks (06-V1_1_SIMULATION_DELTA): four homes blocks and four shops blocks, each lit or dark on its own.
+  ...[1, 2, 3, 4].map((k) => component(`city-homes-b${k}`, k === 1 ? "Homes" : `Homes block ${k}`, "rectangular-prism", [5.85 + (k - 1) * 0.36, 0.2 + (k % 2) * 0.08, 0.15], [0.3, 0.62 + (k % 2) * 0.16, 0.42], "#7a869a", k === 1 ? { labelOffset: [0.4, 1.1, 0], mobileLabel: false } : { showLabel: false })),
+  ...[1, 2, 3, 4].map((k) => component(`city-shops-b${k}`, k === 1 ? "Shops" : `Shops block ${k}`, "rectangular-prism", [7.35 + (k - 1) * 0.3, 0.15, -0.1], [0.24, 0.5, 0.36], "#7a869a", k === 1 ? { labelOffset: [0.3, 1.0, 0], mobileLabel: false } : { showLabel: false })),
   ...[1, 2, 3, 4].map((n) => component(`gauge-seg-${n}`, `Power gauge ${n}`, "box", [4.6 + n * 0.24, 2.3, 0], [0.18, 0.22, 0.08], "#8c9ab0", { showLabel: false })),
-  ...["hospital", "homes", "shops"].map((name, i) => component(`demand-${name}`, `${name} demand segment`, "box", [5.2 + i * 0.28, 2.3, 0], [0.2, 0.22, 0.08], "#c98a4b", { showLabel: false })),
+  component("demand-hospital", "hospital demand segment", "box", [5.2, 2.3, 0], [0.12, 0.22, 0.08], "#c98a4b", { showLabel: false }),
+  ...(["homes", "shops"] as const).flatMap((name, d) => [1, 2, 3, 4].map((k) => component(`demand-${name}-b${k}`, `${name} block ${k} demand segment`, "box", [5.4 + d * 0.62 + (k - 1) * 0.14, 2.3, 0], [0.1, 0.22, 0.08], "#c98a4b", { showLabel: false }))),
   component("distance-break", "Approx. 30 km to Monrovia", "panel", [7.8, 2.1, 0.2], [0.5, 0.08, 0.04], "#f8fafc", { labelOffset: [-1.2, 1.4, 0], mobileLabel: false }),
   // Decorative valley scenery: no labels, state, picking, or instructional references.
   component("bank-lower", "", "rectangular-prism", [-3, 0.6, -2.2], [5, 0.18, 0.18], "#4a7a45", { detail: "decor", selectable: false }),
@@ -65,9 +67,9 @@ const flows: HighFidelitySpec["flows"] = [
     ] })),
   { id: "spillway", label: "Spillway", medium: "water", sourceNodeId: "spill-in", destinationNodeId: "spill-out", closedLoop: false, visibleByDefault: true, color: "#67e8f9", nodes: [node("spill-in", "Spillway gate", [1, 2.2, -0.7], "spillway-gate"), node("spill-face", "Dam face", [1, 1.15, 0.72]), node("spill-drop", "Spillway channel", [1, -0.1, 0.92]), node("spill-out", "Downstream river", [1, -1.5, 1.8], "river-downstream")] },
   { id: "power-line", label: "Transmission line", medium: "light", sourceNodeId: "power-source", destinationNodeId: "switchyard-node", closedLoop: false, visibleByDefault: true, color: "#facc15", nodes: [node("power-source", "Generator", [3, 0.2, 0], "switchyard"), node("switchyard-node", "Switchyard", [3.1, 0.2, 0], "switchyard")] },
-  ...["hospital", "homes", "shops"].map((name, i) => ({ id: `feeder-${name}`, label: `${name} feeder`, medium: "light" as const, sourceNodeId: `feeder-${name}-in`, destinationNodeId: `feeder-${name}-out`, closedLoop: false, visibleByDefault: true, color: "#facc15", nodes: [node(`feeder-${name}-in`, "Switchyard", [3.1, 0.2, 0], "switchyard"), node(`feeder-${name}-out`, name, [5 + i * 1.3, 0.35, 0], `city-${name}`)] })),
+  ...["hospital", "homes", "shops"].map((name, i) => ({ id: `feeder-${name}`, label: `${name} feeder`, medium: "light" as const, sourceNodeId: `feeder-${name}-in`, destinationNodeId: `feeder-${name}-out`, closedLoop: false, visibleByDefault: true, color: "#facc15", nodes: [node(`feeder-${name}-in`, "Switchyard", [3.1, 0.2, 0], "switchyard"), node(`feeder-${name}-out`, name, [5 + i * 1.3, 0.35, 0], name === "hospital" ? "city-hospital" : `city-${name}-b1`)] })),
 ];
-// Ten physical flows: river-in, four turbine feeds, spillway, power-line and three city feeders. Unit 1 carries the trace nodes.
+// Ten physical flows: river-in, four turbine feeds, spillway, power-line and three city feeders (one per district). Unit 1 carries the trace nodes.
 
 const spec: HighFidelitySpec = {
   specVersion: HIGH_FIDELITY_SPEC_VERSION,
@@ -78,13 +80,13 @@ const spec: HighFidelitySpec = {
     scene: "A simplified section view of the Mount Coffee run-of-river plant, Saint Paul River, powerhouse, switchyard and city feeders.",
     components: "Procedural dam, intake, penstock, turbine housings, transmission yard, city loads and a compact section stack for unit 3.",
     internalStructures: "Unit 3 runner, shaft and generator are exposed by the powerhouse cutaway and rebuilt in the repair check.",
-    variables: "River flow has five discrete seasonal values; unit count and three feeder switches are learner controlled.",
+    variables: "River flow has five discrete seasonal values; units online, the hospital feeder and four-block homes and shops districts are learner controlled.",
     simulationRules: "Deterministic capability model: water is dispatched in unit order; demand above capability trips delivery; remaining water spills.",
-    learnerControls: "Season, units online, three feeder toggles, trace path, unit 3 cutaway and repair assembly.",
+    learnerControls: "Season, units online, hospital feeder, homes and shops blocks, trace path, unit 3 cutaway and repair assembly.",
     visualConsequences: "Water flow, unit rotation status, power gauge, spillway flow, feeder flow and city lighting follow the simulation.",
     guidedPath: "Meet the plant, follow water, inspect unit 3, compare seasons, test overload, repair the unit, then explore the grid.",
     exploreMode: "Change all controls and inspect the explanation and energy path.",
-    challenge: "In the dry season, keep the hospital supplied while other feeders may be switched off.",
+    challenge: "In the dry season, keep the hospital lit and serve as much other load as fits without tripping the plant.",
     assessment: "Trace water, identify the generator, reach dry-season capability, stabilize priority supply and rebuild unit 3.",
     evidence: "All five checks remain RAW_OBSERVATION; the release binding is a fixture and this definition is DRAFT.",
     misconceptions: "A full headpond guarantees high output; more turbines create more water; generators spin faster with more water; a trip merely dims loads.",
@@ -105,7 +107,9 @@ const spec: HighFidelitySpec = {
   variables: [
     { id: "riverFlow", label: "River flow", unit: "m³/s", kind: "discrete", min: 49, max: 557, step: 127, initial: 430, learnerControlled: true, description: "Choose a seasonal flow scenario." },
     { id: "unitsOnline", label: "Units online", kind: "discrete", min: 0, max: 4, step: 1, initial: 4, learnerControlled: true },
-    ...["feederHospital", "feederHomes", "feederShops"].map((id) => ({ id, label: id.replace("feeder", "Feeder "), kind: "toggle" as const, min: 0, max: 1, step: 1, initial: 1, learnerControlled: true })),
+    { id: "feederHospital", label: "Hospital feeder", kind: "toggle", min: 0, max: 1, step: 1, initial: 1, learnerControlled: true, description: "The hospital is always the priority load (4 MW)." },
+    { id: "homesBlocks", label: "Homes blocks on", kind: "discrete", min: 0, max: 4, step: 1, initial: 4, learnerControlled: true, description: "Each homes block needs 12 MW (model number)." },
+    { id: "shopsBlocks", label: "Shops blocks on", kind: "discrete", min: 0, max: 4, step: 1, initial: 4, learnerControlled: true, description: "Each shops block needs 4 MW (model number)." },
   ],
   simulation: hydropowerModel,
   motions: [1, 2, 3, 4].map((unit) => ({ id: `unit-${unit}-spin`, label: `Unit ${unit} rotation`, componentIds: [`unit-${unit}`, `unit-${unit}-marker`, ...(unit === 3 ? [...UNIT3_STACK] : [])], pivot: [UNIT_X[unit - 1], -0.15, 0.1] as [number, number, number], axis: "y" as const, rpm: SYNCHRONOUS_RPM, symmetryOrder: 1, activeWhen: { componentId: `unit-${unit}`, statuses: ["generating"] } })),
@@ -119,24 +123,24 @@ const spec: HighFidelitySpec = {
     { id: "grid-city", label: "Power and city", target: [5, 1, 0], distance: 8, yaw: -0.1, pitch: 0.12 },
   ], constraints: { minDistance: 4, maxDistance: 20, minPitch: -0.4, maxPitch: 0.8, minYaw: -1, maxYaw: 1 } },
   guidedPath: [
-    { id: "meet", prompt: "Trace the water through the six nodes, in order. It starts at the headpond and returns to the river.", cameraPresetId: "valley" },
+    { id: "meet", prompt: "Meet the plant: the Saint Paul River feeds a narrow headpond behind the dam. Find the powerhouse, the switchyard and the city it supplies.", cameraPresetId: "valley" },
     { id: "trace", prompt: "Follow the water from the headpond, through a turbine, and back to the river.", cameraPresetId: "water-path", highlightIds: ["headpond", "penstock-1", "tailrace"] },
     { id: "machine", prompt: "Open the powerhouse section and find the generator in unit 3.", cameraPresetId: "unit-bench", highlightIds: ["u3-generator"] },
-    { id: "season", prompt: "Compare dry season with rainy season. What changes when less water arrives?", cameraPresetId: "valley" },
-    { id: "overload", prompt: "With three units in the rainy season, keep the hospital on, then switch on homes and shops one at a time. When does demand exceed the plant's 66 MW capacity?", cameraPresetId: "grid-city" },
+    { id: "season", prompt: "Predict: will the headpond drop in the dry season? Then compare dry season with rainy season. What changes when less water arrives?", cameraPresetId: "valley" },
+    { id: "overload", prompt: "With three units in the rainy season (66 MW), keep the hospital on and set homes to all 4 blocks, then add shops blocks one at a time. Which block trips the plant?", cameraPresetId: "grid-city" },
     { id: "repair", prompt: "Rebuild unit 3 in order: runner, shaft, generator.", cameraPresetId: "unit-bench", highlightIds: ["u3-runner", "u3-shaft", "u3-generator"] },
     { id: "energy-chain", prompt: "Name the energy chain: gravitational potential energy of high water → kinetic energy of falling water → turbine and shaft rotation → electrical energy → light and heat. Use the explanation panel to check your thinking.", cameraPresetId: "valley" },
   ],
   modes: ["GUIDED", "EXPLORE", "CHALLENGE", "ASSESSMENT"],
   challengeStatus: (quantities) => quantities.gridStableWithPriority === 1
     ? "Hospital supply is stable in the dry season. Challenge met."
-    : "Hospital supply is not yet stable in the dry season. Adjust river flow, units and feeder demand.",
+    : "Not met yet: in the dry season, keep the hospital lit and switch on every block that still fits without a trip.",
   offline: { remoteAssets: [], maxPackageBytes: 96_000 },
 };
 
 const base: InteractiveLabDefinition<LabState> = {
-  contractVersion: "interactive-lab-definition/2.0.0", id: HYDROPOWER_LAB_ID, version: "1.0.0", title: "Mount Coffee hydropower", summary: "Explore how water, turbines and electricity demand shape the power supplied by a run-of-river plant.", grade: 8, subject: "SCIENCE",
-  objectiveIds: [OBJECTIVE_ID], conceptIds: [CONCEPT_ID], releaseBinding: { releaseId: "fixture-unreleased", releaseIdentity: "fixture", activityId: HYDROPOWER_LAB_ID, activityVersion: "1.0.0" },
+  contractVersion: "interactive-lab-definition/2.0.0", id: HYDROPOWER_LAB_ID, version: "1.1.0", title: "Mount Coffee hydropower", summary: "Explore how water, turbines and electricity demand shape the power supplied by a run-of-river plant.", grade: 8, subject: "SCIENCE",
+  objectiveIds: [OBJECTIVE_ID], conceptIds: [CONCEPT_ID], releaseBinding: { releaseId: "fixture-unreleased", releaseIdentity: "fixture", activityId: HYDROPOWER_LAB_ID, activityVersion: "1.1.0" },
   provenance: { source: "Mount Coffee design-stage lab", reference: "docs/labs/mount-coffee-hydropower/", author: "LiberiaLearn Interactive Lab Production Team" },
   reviewState: "DRAFT", approvalState: "PENDING", scene: { objects: [], lighting: { ambient: "#9aa8c7", key: "#fff1d0" }, camera: { fov: 42, minDistance: 4, maxDistance: 20 } },
   interactions: ["set-variable", "trace", "cutaway", "assemble", "inspect", "camera", "answer/check"],
@@ -146,8 +150,8 @@ const base: InteractiveLabDefinition<LabState> = {
   checks: [
     { id: "trace-water", prompt: "Trace the water through the six nodes, in order.", objectiveId: OBJECTIVE_ID, conceptId: CONCEPT_ID, kind: "direct-manipulation", answer: { flowId: "water-u1" }, fidelity: { kind: "trace-path", flowId: "water-u1" }, hints: ["Start at the headpond and follow the water back to the river."] },
     { id: "find-generator", prompt: "Open the powerhouse section and identify unit 3's generator.", objectiveId: OBJECTIVE_ID, conceptId: CONCEPT_ID, kind: "direct-manipulation", answer: { componentId: "u3-generator" }, fidelity: { kind: "identify-component", componentId: "u3-generator" }, hints: ["Use the powerhouse section cutaway."] },
-    { id: "dry-season-output", prompt: "Set dry season flow with at least one unit. Reach 8–12 MW capability.", objectiveId: OBJECTIVE_ID, conceptId: CONCEPT_ID, kind: "direct-manipulation", answer: { quantityId: "outputMW", min: 8, max: 12 }, fidelity: { kind: "reach-target", quantityId: "outputMW", min: 8, max: 12 }, hints: ["Dry season flow is 49 m³/s."] },
-    { id: "dry-season-peak", prompt: "In the dry season, keep the hospital supplied without a trip.", objectiveId: OBJECTIVE_ID, conceptId: CONCEPT_ID, kind: "direct-manipulation", answer: { quantityId: "gridStableWithPriority", value: 1 }, fidelity: { kind: "reach-target", quantityId: "gridStableWithPriority", min: 1, max: 1 }, hints: ["Switch off other feeders if demand is too high."] },
+    { id: "dry-season-output", prompt: "With all four units on, make the plant produce about 10 MW (8–12).", objectiveId: OBJECTIVE_ID, conceptId: CONCEPT_ID, kind: "direct-manipulation", answer: { quantityId: "outputMW", min: 8, max: 12 }, fidelity: { kind: "reach-target", quantityId: "outputMW", min: 8, max: 12 }, hints: ["Units alone cannot do it: what limits how much water arrives each second?"] },
+    { id: "dry-season-peak", prompt: "In the dry season, keep the hospital lit and switch on as much other load as fits without a trip.", objectiveId: OBJECTIVE_ID, conceptId: CONCEPT_ID, kind: "direct-manipulation", answer: { quantityId: "gridStableWithPriority", value: 1 }, fidelity: { kind: "reach-target", quantityId: "gridStableWithPriority", min: 1, max: 1 }, hints: ["Compare the spare MW with the size of a homes block (12 MW) and a shops block (4 MW)."] },
     { id: "repair-unit-3", prompt: "Rebuild unit 3 with its runner, shaft and generator in the matching slots.", objectiveId: OBJECTIVE_ID, conceptId: CONCEPT_ID, kind: "direct-manipulation", answer: { assemblyId: "unit-3" }, fidelity: { kind: "assemble", assemblyId: "unit-3" }, hints: ["Start by clearing the assembly, then place each matching part."] },
   ],
   accessibility: { touch: true, keyboard: true, reducedMotion: true, offline: true, fallback: "FALLBACK_2D" },

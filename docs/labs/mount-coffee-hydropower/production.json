@@ -1,7 +1,7 @@
 {
   "recordVersion": "lab-production-record/1.0.0",
   "labId": "mount-coffee-hydropower",
-  "labVersion": "1.0.0",
+  "labVersion": "1.1.0",
   "tier": "HERO",
   "tierReason": "The first complete hydropower lab is intended to set the subject benchmark and exercise all three production review rounds.",
   "status": "DRAFT",
