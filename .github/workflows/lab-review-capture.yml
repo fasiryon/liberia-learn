@@ -1,0 +1,152 @@
+name: Lab review capture
+
+# Manually triggered visual-evidence capture for the Interactive Lab Production Team. It runs the dev-only
+# /lab-review harness on a GitHub-hosted runner instead of a developer machine, one profile per job, and fails a
+# capture whose actual renderer/profile differs from the requested one (no silent fallback counts as evidence).
+# Evidence proves rendering correctness, composition, layout and renderer routing only — never device performance.
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: "Branch, tag or full SHA to capture (empty = the ref this workflow runs from)"
+        required: false
+        default: ""
+      lab:
+        description: "Lab id"
+        required: true
+        default: "mount-coffee-hydropower"
+      profiles:
+        description: "ALL or a comma list of HIGH,STANDARD,LOW,FALLBACK_2D (one job per profile, run one at a time)"
+        required: true
+        default: "ALL"
+      scenarios:
+        description: "ALL or a comma list of review scenario ids"
+        required: true
+        default: "ALL"
+      viewports:
+        description: "Comma list of desktop,mobile"
+        required: true
+        default: "desktop,mobile"
+      still_only:
+        description: "Stills only (skip motion strips)"
+        type: boolean
+        default: true
+      batch:
+        description: "Optional batch label (kept in the artifact name)"
+        required: false
+        default: ""
+
+permissions:
+  contents: read
+
+concurrency:
+  group: lab-review-capture-${{ inputs.lab }}-${{ inputs.ref || github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      profiles: ${{ steps.plan.outputs.profiles }}
+    steps:
+      - id: plan
+        env:
+          PROFILES: ${{ inputs.profiles }}
+        run: |
+          set -euo pipefail
+          if [ "$PROFILES" = "ALL" ]; then
+            echo 'profiles=["HIGH","STANDARD","LOW","FALLBACK_2D"]' >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          json="["
+          for p in $(echo "$PROFILES" | tr ',' ' '); do
+            case "$p" in HIGH|STANDARD|LOW|FALLBACK_2D) ;; *) echo "Unknown profile: $p"; exit 1 ;; esac
+            json="$json\"$p\","
+          done
+          echo "profiles=${json%,}]" >> "$GITHUB_OUTPUT"
+
+  capture:
+    needs: plan
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      # One profile at a time: no parallel browser/dev-server memory spikes and no interleaved artifacts.
+      max-parallel: 1
+      matrix:
+        profile: ${{ fromJSON(needs.plan.outputs.profiles) }}
+    env:
+      LAB_REVIEW_HARNESS: "1"
+      NEXT_TELEMETRY_DISABLED: "1"
+      # Placeholders only (same as CI): the review harness needs no database, login or provider.
+      DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/test"
+      DIRECT_URL: "postgresql://postgres:postgres@localhost:5432/test"
+      NEXTAUTH_SECRET: "ci-secret-not-real"
+      NEXTAUTH_URL: "http://localhost:3000"
+      OPENAI_API_KEY: "sk-test"
+      GROQ_API_KEY: "gsk-test"
+      RESEND_API_KEY: "re_test"
+      EMAIL_FROM: "test@test.com"
+      LAB: ${{ inputs.lab }}
+      PROFILE: ${{ matrix.profile }}
+      SCENARIOS: ${{ inputs.scenarios }}
+      VIEWPORTS: ${{ inputs.viewports }}
+      STILL_ONLY: ${{ inputs.still_only }}
+      BATCH: ${{ inputs.batch }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+      - name: Record the exact commit captured
+        id: sha
+        run: |
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          echo "short=$(git rev-parse --short=8 HEAD)" >> "$GITHUB_OUTPUT"
+          git rev-parse HEAD
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Cache npm dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
+      - run: npm ci
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Start the review dev server
+        run: |
+          nohup npx next dev -p 3000 > dev-server.log 2>&1 &
+          echo $! > dev-server.pid
+      - name: Wait for the review harness (bounded)
+        run: |
+          url="http://localhost:3000/lab-review/${LAB}?profile=${PROFILE}"
+          for i in $(seq 1 60); do
+            code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 240 "$url" || true)
+            if [ "$code" = "200" ]; then echo "Harness ready after attempt $i"; exit 0; fi
+            echo "Attempt $i: HTTP $code"; sleep 10
+          done
+          echo "The review harness never became ready."; tail -n 80 dev-server.log; exit 1
+      - name: Capture ${{ matrix.profile }}
+        run: |
+          label="ci-${GITHUB_RUN_ID}-${PROFILE}${BATCH:+-$BATCH}"
+          args=(--lab "$LAB" --label "$label" --profiles "$PROFILE" --viewports "$VIEWPORTS" --restart-every 6)
+          if [ "$SCENARIOS" != "ALL" ]; then args+=(--scenarios "$SCENARIOS"); fi
+          if [ "$STILL_ONLY" = "true" ]; then args+=(--still-only); fi
+          timeout 80m npx tsx scripts/labs/capture-lab-review.ts "${args[@]}"
+      - name: Stop the dev server
+        if: always()
+        run: |
+          if [ -f dev-server.pid ]; then pkill -P "$(cat dev-server.pid)" || true; kill "$(cat dev-server.pid)" || true; fi
+      - name: Upload capture evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lab-review-${{ inputs.lab }}-${{ matrix.profile }}-${{ steps.sha.outputs.short }}-run${{ github.run_id }}${{ inputs.batch && format('-{0}', inputs.batch) || '' }}
+          path: |
+            artifacts/lab-review/
+            dev-server.log
+          if-no-files-found: warn
+          retention-days: 30
