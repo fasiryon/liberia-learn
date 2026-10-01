@@ -18,7 +18,7 @@ For each objective, record APPROVE / REVISE / REJECT in `review-ledger.json`. No
 | Planned enhancement | none |
 | Evidence | NONE |
 | Example-data labels | none |
-| Reviewed content | `ll-g4-math-lines-segments-rays-2026.1` v0.1.0, payload sha256 `11e0928ef247a4afec1bbc799ed5efe15f896c25c4c42103256e4bdc1b0d4d32` |
+| Reviewed content | `ll-g4-math-lines-segments-rays-2026.1` v0.1.0, payload sha256 `756385e89ad1679f0fd74ba170e4937e944dd5843b5dc692deca35c997552b36` |
 | Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision). Decisions applied: CPR-2026-09-26-P4, CPR-2026-09-26-R11 |
 
 **Known uncertainties:**
@@ -122,7 +122,7 @@ Duration: 45 minutes.
 | Planned enhancement | GRADE_4_6_ANGLE_TESTER (MANIPULATIVE_2D), NOT IMPLEMENTED: No Grade 4-6 angle tool is enabled online (the protractor is Grades 7+ and Grade 4 does not measure degrees); the folded-paper tester is the core modality. |
 | Evidence | GOVERNED_ITEM_RESPONSE |
 | Example-data labels | none |
-| Reviewed content | `ll-g4-math-angles-perpendicular-lines-2026.1` v0.1.0, payload sha256 `a1bf10af25639d40b6f93a0eb13fc7af44023c6be2de357accd7ae3b616c6f8b` |
+| Reviewed content | `ll-g4-math-angles-perpendicular-lines-2026.1` v0.1.0, payload sha256 `5f4ddb6a145e63ea9de59424b21baa06681dff7e065786d1a473499fb1dc4167` |
 | Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision) |
 
 **Known uncertainties:**
@@ -225,7 +225,7 @@ Duration: 45 minutes.
 | Planned enhancement | GRADE_4_6_SHAPE_SORT_MANIPULATIVE (MANIPULATIVE_2D), NOT IMPLEMENTED: No online shape-building or sorting tool is registered; sticks and cut-outs are the core modality. |
 | Evidence | GOVERNED_ITEM_RESPONSE |
 | Example-data labels | none |
-| Reviewed content | `ll-g4-math-polygons-2026.1` v0.1.0, payload sha256 `e05d6257ea37e366c6f79da8adfdff86240b78f041cd51a24cfe5652b767e081` |
+| Reviewed content | `ll-g4-math-polygons-2026.1` v0.1.0, payload sha256 `8f5e3d96a60d799854c4508356ba50697f16240e584ef8e7b08455cf99c48cc9` |
 | Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision). Decisions applied: CPR-2026-09-26-R12 |
 
 **Known uncertainties:**
@@ -331,7 +331,7 @@ Duration: 45 minutes.
 | Planned enhancement | GRADE_4_6_CIRCLE_MANIPULATIVE (MANIPULATIVE_2D), NOT IMPLEMENTED: No online circle-parts tool is registered; folded paper circles are the core modality. |
 | Evidence | GOVERNED_ITEM_RESPONSE |
 | Example-data labels | none |
-| Reviewed content | `ll-g4-math-parts-of-a-circle-2026.1` v0.1.0, payload sha256 `3914ac657241f03dfa12e3f336e14f896edb3f4e4c227fddd1b9b697a08253dc` |
+| Reviewed content | `ll-g4-math-parts-of-a-circle-2026.1` v0.1.0, payload sha256 `2635e968df7b911a7e27ce571bdf12b7186ad5465f6af49cc9c9208b5d435d2f` |
 | Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision). Decisions applied: CPR-2026-09-26-R13 |
 
 **Known uncertainties:**
@@ -433,7 +433,7 @@ Duration: 45 minutes.
 | Planned enhancement | GRADE_4_6_SOLIDS_3D_VIEWER (THREE_D), NOT IMPLEMENTED: Planned, not implemented: a 3D solids viewer in which learners rotate each solid and inspect hidden faces, edges and vertices. It augments the real-object experience and never replaces it. No 3D runtime exists today. |
 | Evidence | TEACHER_OBSERVATION; safety: Use clean, unbroken objects; bricks stay on the desk and are not thrown or dropped. |
 | Example-data labels | none |
-| Reviewed content | `ll-g4-math-solid-figures-2026.1` v0.1.0, payload sha256 `62b790f016a42181a209197da137a3ce7056dc175edf35c8d5673a14bb43d733` |
+| Reviewed content | `ll-g4-math-solid-figures-2026.1` v0.1.0, payload sha256 `f05718d110f6dae7c6a6233c44ec986b0356b94c5092f7e2468d0ba335e54af8` |
 | Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision). Decisions applied: CPR-2026-09-26-P3, CPR-2026-09-26-R14 |
 
 **Known uncertainties:**
@@ -540,7 +540,7 @@ Duration: 45 minutes.
 | Planned enhancement | none |
 | Evidence | TEACHER_OBSERVATION; safety: Participation is voluntary and anonymous: no names on slips, and a learner may decline without giving a reason. Evidence today is teacher-observed data collection; governed responses to the graph-reading items are the planned second evidence source. |
 | Example-data labels | example data, Example data |
-| Reviewed content | `ll-g4-math-read-interpret-graphs-2026.1` v0.1.0, payload sha256 `1f2811bee91e89b65f76a06c80961e298c947492ace2b484133aa7b1dfc093dc` |
+| Reviewed content | `ll-g4-math-read-interpret-graphs-2026.1` v0.1.0, payload sha256 `643c2d035a75999d6bc74cd64b388ca6d031aa7d05a7281ca9888c4018844262` |
 | Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision). Decisions applied: CPR-2026-09-26-R15 |
 
 **Known uncertainties:**
@@ -651,7 +651,7 @@ Duration: 45 minutes.
 | Planned enhancement | none |
 | Evidence | NONE |
 | Example-data labels | example data, (example data) |
-| Reviewed content | `ll-g4-math-mode-median-mean-2026.1` v0.1.0, payload sha256 `168689885b3b1f25d8e51b5a21a6cde559e261d446bab39bcae482cadc421179` |
+| Reviewed content | `ll-g4-math-mode-median-mean-2026.1` v0.1.0, payload sha256 `cd6db1941eea66bcbca0ae28b50c8e11dddbdcfb28bbef6f5c567f3b93161684` |
 | Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision). Decisions applied: CPR-2026-09-26-R16. Remaining source check (does not change lesson content): whether this page-49 text sits in the MOE objectives or activities column needs a person reading page 49 of Math 1-6.pdf. Its instructional target is corroborated by out2 (p48), act6 (p49) and Grade 3 (p37). Added in this revision: the text now says why the mean example uses a second data set. |
 
 **Known uncertainties:**
@@ -757,7 +757,7 @@ Duration: 45 minutes.
 | Planned enhancement | none |
 | Evidence | NONE |
 | Example-data labels | none |
-| Reviewed content | `ll-g4-math-word-problems-with-diagrams-2026.1` v0.1.0, payload sha256 `7ada6a5c008a6dd2eeef897769c882d979feeeaf6114fbc7d090da3102db78f0` |
+| Reviewed content | `ll-g4-math-word-problems-with-diagrams-2026.1` v0.1.0, payload sha256 `54494a4b41a9fdce88de68cf3af4b753d61842aefd43ef704ee766ba858e30d5` |
 | Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision) |
 
 **Known uncertainties:**

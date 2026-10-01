@@ -27,7 +27,7 @@ Production = Supabase project `bnphuinpvgpmebcsvmsp`. Note: `.env`, `.env.local`
 select id, email, role from "User" where id = '<founder user id>';
 ```
 
-**Command (founder runs it, after reviewing).** Updated 2026-09-26: the script now takes `--lesson`, is a dry run unless `--apply` and `CONFIRM_PRODUCTION_WRITE` are both given, and refuses unless `../review-ledger.json` records the founder's APPROVE with `reviewedContentId` naming this lesson. It can also publish the 2026.2 candidate lesson; see [RELEASE_2026_2_AND_WRITE_PLAN.md](RELEASE_2026_2_AND_WRITE_PLAN.md).
+**Command (founder runs it, after reviewing).** Updated 2026-09-26: the script now takes `--lesson`, is a dry run unless `--apply` and `CONFIRM_PRODUCTION_WRITE` are both given, and refuses unless `../review-ledger.json` records the founder's APPROVE with `reviewedContentId`, `reviewedContentVersion`, and `reviewedPayloadSha256` matching this exact lesson. It can also publish the 2026.2 candidate lesson; see [RELEASE_2026_2_AND_WRITE_PLAN.md](RELEASE_2026_2_AND_WRITE_PLAN.md).
 
 ```bash
 npx tsx scripts/author-grade4-fractions-authority.ts --lesson=ll-g4-math-fractions-equal-parts-2026.1   # dry run, no database

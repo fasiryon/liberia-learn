@@ -102,7 +102,7 @@ describe("release 2026.2 candidate", () => {
     expect(composed.release.concepts.find((concept) => concept.id === "g4-fractions-equal-parts")).toMatchObject({ revision: 2 });
     expect(composed.release.bindings.filter((binding) => binding.conceptId === "g4-fractions-equal-parts").every((binding) => binding.conceptRevision === 2)).toBe(true);
     expect(composed.release.contentBindings.find((binding) => binding.conceptId === "g4-fractions-equal-parts")?.conceptRevision).toBe(2);
-    expect(composed.approvableIdentity).toBe("e8839952f194d3b3a3eb5eeb3b4b5a3c530c4c55b611f944b19eea35d5b62f41");
+    expect(composed.approvableIdentity).toBe("08b983215643f4fe99477e1c0d65f9b1f70f21fc71bdecfe040982d728945101");
   });
 
   it("is reproducible", () => {
@@ -130,6 +130,27 @@ describe("release 2026.2 candidate", () => {
     expect(composeGrade4MathRelease2026_2({ ledger: approvedLedger, approval: { ...approval, approvedIdentity: "0".repeat(64) } }).executable).toBe(false);
     expect(composeGrade4MathRelease2026_2({ ledger: approvedLedger, approval: { ...approval, reviewer: " " } }).executable).toBe(false);
     expect(composeGrade4MathRelease2026_2({ ledger, approval }).executable).toBe(false);
+  });
+
+  it("hashes a lesson payload independently of object key order (jsonb round trip)", () => {
+    // Postgres jsonb returns object keys shortest-first, not in authored order.
+    const jsonbOrder = (value: unknown): unknown => Array.isArray(value) ? value.map(jsonbOrder)
+      : value && typeof value === "object"
+        ? Object.fromEntries(Object.keys(value).sort((a, b) => a.length - b.length || (a < b ? -1 : a > b ? 1 : 0))
+          .map((key) => [key, jsonbOrder((value as Record<string, unknown>)[key])]))
+        : value;
+    const payload = GRADE4_FRACTIONS_LESSON_2026_2.payload;
+    expect(JSON.stringify(jsonbOrder(payload))).not.toBe(JSON.stringify(payload));
+    expect(lessonPayloadSha256(jsonbOrder(payload))).toBe(lessonPayloadSha256(payload));
+  });
+
+  it("rejects an approval that names the wrong lesson payload", () => {
+    const approvedLedger = simulatedLedger({ [PARTS_OF_A_SET]: "APPROVE" });
+    const review = approvedLedger[PARTS_OF_A_SET]!;
+    const mismatched = { ...approvedLedger, [PARTS_OF_A_SET]: { ...review, reviewedPayloadSha256: "0".repeat(64) } };
+    const composed = composeGrade4MathRelease2026_2({ ledger: mismatched });
+    expect(composed.release.contentBindings).toEqual(GRADE4_MATH_ONTOLOGY_RELEASE.contentBindings);
+    expect(composed.included.some((entry) => entry.id === GRADE4_FRACTIONS_LESSON_2026_2.contentId)).toBe(false);
   });
 
   it("keeps an APPROVED draft out until its promotion is authored (simulated)", () => {

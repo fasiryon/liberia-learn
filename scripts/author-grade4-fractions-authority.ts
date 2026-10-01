@@ -1,8 +1,8 @@
-import { createHash } from "node:crypto";
 import fs from "node:fs";
 import { createCurriculumContent } from "../lib/curriculum/mutations/repository";
 import { appendCurriculumGovernanceEvent } from "../lib/curriculum/mutations/governanceWriter";
 import { GRADE4_FRACTIONS_LESSON, GRADE4_FRACTIONS_LESSON_2026_2 } from "../lib/curriculum/authority/grade4FractionsLesson";
+import { lessonPayloadSha256 } from "../lib/learning-authority/releases/grade4Math2026_2";
 
 /**
  * Publishes one founder-reviewed Grade 4 fractions lesson through the
@@ -32,7 +32,7 @@ async function main() {
 
   const ledger = JSON.parse(fs.readFileSync(LEDGER, "utf8")) as Record<string, { decision: string; reviewer: string | null; reviewedAt: string | null; reviewedContentId?: string; reviewedContentVersion?: string; reviewedPayloadSha256?: string }>;
   const review = ledger[OBJECTIVE];
-  const payloadSha256 = createHash("sha256").update(JSON.stringify(lesson.payload)).digest("hex");
+  const payloadSha256 = lessonPayloadSha256(lesson.payload);
   const reviewed = review?.decision === "APPROVE" && !!review.reviewer?.trim() && Number.isFinite(Date.parse(review.reviewedAt ?? "")) &&
     review.reviewedContentId === lesson.contentId && review.reviewedContentVersion === lesson.version && review.reviewedPayloadSha256 === payloadSha256;
   const keys = { create: `curriculum:${lesson.contentId}:${lesson.version}`, submitted: `curriculum:${lesson.contentId}:submitted`, approved: `curriculum:${lesson.contentId}:approved` };
