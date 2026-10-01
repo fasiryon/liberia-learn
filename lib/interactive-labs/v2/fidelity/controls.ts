@@ -4,9 +4,9 @@ import type { FidelityAction, FidelityState, HighFidelitySpec } from "./types";
 
 /** `group` places related controls in one chip row (default: one row per variable). */
 export type SceneControl =
-  | { kind: "set-variable"; variableId: string; value: number; label: string; group?: string }
-  | { kind: "step-variable"; variableId: string; direction: 1 | -1; label: string; group?: string }
-  | { kind: "toggle-variable"; variableId: string; label: string; group?: string };
+  | { kind: "set-variable"; variableId: string; value: number; label: string; group?: string; groupLabel?: string }
+  | { kind: "step-variable"; variableId: string; direction: 1 | -1; label: string; group?: string; groupLabel?: string }
+  | { kind: "toggle-variable"; variableId: string; label: string; group?: string; groupLabel?: string };
 
 /**
  * The action a control would dispatch in this state, or null when it would do nothing (already at the value

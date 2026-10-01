@@ -57,7 +57,7 @@ const flag = (name: string) => process.argv.includes(`--${name}`);
 const list = (name: string) => arg(name)?.split(",").map((value) => value.trim()).filter(Boolean);
 
 function gitSha(): string {
-  try { return execSync("git rev-parse HEAD", { encoding: "utf8" }).trim() + (execSync("git status --porcelain", { encoding: "utf8" }).trim() ? "-dirty" : ""); } catch { return process.env.GITHUB_SHA ?? "unknown"; }
+  try { return execSync("git rev-parse HEAD", { encoding: "utf8" }).trim() + (execSync("git status --porcelain --untracked-files=no", { encoding: "utf8" }).trim() ? "-dirty" : ""); } catch { return process.env.GITHUB_SHA ?? "unknown"; }
 }
 
 /** What actually drew the page: the player's resolved profile and the mounted renderer's own identity marker. */

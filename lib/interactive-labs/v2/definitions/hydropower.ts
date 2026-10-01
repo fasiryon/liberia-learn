@@ -79,16 +79,16 @@ const components: HighFidelitySpec["components"] = [
   // River-gauge post upstream: the season is a condition to test, chosen where the water arrives.
   component("river-gauge-post", "River gauge: choose a season to test", "cylinder", [-5.55, 3.35, -1.75], [0.05, 0.75, 0.05], "#5f6d7e", { showLabel: false }),
   ...([[49, "Dry"], [176, "Early rains"], [303, "Heavy rains"], [430, "Rainy, full"], [557, "Flood"]] as const).map(([value, name], i) =>
-    component(`gauge-band-${i + 1}`, `Season: ${name}`, "box", [-5.35, 2.75 + i * 0.29, -1.75], [0.16, 0.12, 0.05], CONTROL_COLOR, { showLabel: false, control: { kind: "set-variable", variableId: "riverFlow", value, label: name } })),
+    component(`gauge-band-${i + 1}`, `Season: ${name}`, "box", [-5.35, 2.75 + i * 0.29, -1.75], [0.16, 0.12, 0.05], CONTROL_COLOR, { showLabel: false, control: { kind: "set-variable", variableId: "riverFlow", value, label: name, groupLabel: "Season (river gauge)" } })),
   // Powerhouse control desk: units start and stop in the fixed dispatch order, so the desk offers next/last only.
-  component("desk-start-next", "Start the next unit", "box", [-0.15, -0.72, 1.35], [0.2, 0.12, 0.14], CONTROL_COLOR, { showLabel: false, control: { kind: "step-variable", variableId: "unitsOnline", direction: 1, label: "Start next unit", group: "desk" } }),
-  component("desk-stop-last", "Stop the last unit", "box", [0.35, -0.72, 1.35], [0.2, 0.12, 0.14], CONTROL_COLOR, { showLabel: false, control: { kind: "step-variable", variableId: "unitsOnline", direction: -1, label: "Stop last unit", group: "desk" } }),
+  component("desk-start-next", "Start the next unit", "box", [-0.15, -0.72, 1.35], [0.2, 0.12, 0.14], CONTROL_COLOR, { showLabel: false, control: { kind: "step-variable", variableId: "unitsOnline", direction: 1, label: "Start next unit", group: "desk", groupLabel: "Units (powerhouse desk)" } }),
+  component("desk-stop-last", "Stop the last unit", "box", [0.35, -0.72, 1.35], [0.2, 0.12, 0.14], CONTROL_COLOR, { showLabel: false, control: { kind: "step-variable", variableId: "unitsOnline", direction: -1, label: "Stop last unit", group: "desk", groupLabel: "Units (powerhouse desk)" } }),
   // Switchyard breakers, in the same frame as the city they feed.
-  component("breaker-hospital", "Hospital breaker", "box", [2.6, -0.45, 0.55], [0.14, 0.2, 0.1], CONTROL_COLOR, { showLabel: false, control: { kind: "toggle-variable", variableId: "feederHospital", label: "Hospital on/off", group: "switchyard" } }),
-  component("breaker-homes-less", "Homes: one block off", "box", [2.95, -0.45, 0.55], [0.12, 0.16, 0.1], CONTROL_COLOR, { showLabel: false, control: { kind: "step-variable", variableId: "homesBlocks", direction: -1, label: "Homes −", group: "switchyard" } }),
-  component("breaker-homes-more", "Homes: one block on", "box", [3.2, -0.45, 0.55], [0.12, 0.16, 0.1], CONTROL_COLOR, { showLabel: false, control: { kind: "step-variable", variableId: "homesBlocks", direction: 1, label: "Homes +", group: "switchyard" } }),
-  component("breaker-shops-less", "Shops: one block off", "box", [3.55, -0.45, 0.55], [0.12, 0.16, 0.1], CONTROL_COLOR, { showLabel: false, control: { kind: "step-variable", variableId: "shopsBlocks", direction: -1, label: "Shops −", group: "switchyard" } }),
-  component("breaker-shops-more", "Shops: one block on", "box", [3.8, -0.45, 0.55], [0.12, 0.16, 0.1], CONTROL_COLOR, { showLabel: false, control: { kind: "step-variable", variableId: "shopsBlocks", direction: 1, label: "Shops +", group: "switchyard" } }),
+  component("breaker-hospital", "Hospital breaker", "box", [2.6, -0.45, 0.55], [0.14, 0.2, 0.1], CONTROL_COLOR, { showLabel: false, control: { kind: "toggle-variable", variableId: "feederHospital", label: "Hospital on/off", group: "switchyard", groupLabel: "Load (switchyard breakers)" } }),
+  component("breaker-homes-less", "Homes: one block off", "box", [2.95, -0.45, 0.55], [0.12, 0.16, 0.1], CONTROL_COLOR, { showLabel: false, control: { kind: "step-variable", variableId: "homesBlocks", direction: -1, label: "Homes −", group: "switchyard", groupLabel: "Load (switchyard breakers)" } }),
+  component("breaker-homes-more", "Homes: one block on", "box", [3.2, -0.45, 0.55], [0.12, 0.16, 0.1], CONTROL_COLOR, { showLabel: false, control: { kind: "step-variable", variableId: "homesBlocks", direction: 1, label: "Homes +", group: "switchyard", groupLabel: "Load (switchyard breakers)" } }),
+  component("breaker-shops-less", "Shops: one block off", "box", [3.55, -0.45, 0.55], [0.12, 0.16, 0.1], CONTROL_COLOR, { showLabel: false, control: { kind: "step-variable", variableId: "shopsBlocks", direction: -1, label: "Shops −", group: "switchyard", groupLabel: "Load (switchyard breakers)" } }),
+  component("breaker-shops-more", "Shops: one block on", "box", [3.8, -0.45, 0.55], [0.12, 0.16, 0.1], CONTROL_COLOR, { showLabel: false, control: { kind: "step-variable", variableId: "shopsBlocks", direction: 1, label: "Shops +", group: "switchyard", groupLabel: "Load (switchyard breakers)" } }),
   component("distance-break", "Approx. 30 km to Monrovia", "panel", [7.8, 2.1, 0.2], [0.5, 0.08, 0.04], "#f8fafc", { labelOffset: [-1.2, 1.4, 0], mobileLabel: false }),
   // Decorative valley scenery: no labels, state, picking, or instructional references.
   component("bank-lower", "", "rectangular-prism", [-3, 0.6, -2.2], [5, 0.18, 0.18], "#4a7a45", { detail: "decor", selectable: false }),
@@ -131,7 +131,7 @@ const flows: HighFidelitySpec["flows"] = [
 // river always matches the upstream river because turbine water plus spill equals river flow.
 const surfaces: HighFidelitySpec["surfaces"] = [
   { id: "water-upstream", label: "Saint Paul River (upstream)", kind: "channel", medium: "water", path: [[-6.6, 2.93, -2.5], [-5.2, 2.93, -2.6], [-3.7, 2.93, -2.5]], baseWidth: 1.5, widthQuantity: "upstreamWidthFactor", activeQuantity: "upstreamFlow", rateQuantity: "upstreamWidthFactor" },
-  { id: "water-headpond", label: "Headpond (operating level stays the same)", kind: "pool", medium: "water", path: [[-3.8, 2.97, -2.5], [0.8, 2.97, -2.5]], baseWidth: 1.7, activeQuantity: "headpondLevel", componentId: "headpond" },
+  { id: "water-headpond", label: "Headpond (operating level stays the same)", kind: "pool", medium: "water", path: [[-3.8, 3.22, -2.5], [0.8, 3.22, -2.5]], baseWidth: 1.7, activeQuantity: "headpondLevel", componentId: "headpond" },
   { id: "water-tailrace", label: "Tailrace", kind: "channel", medium: "water", path: [[-2.4, -1.06, 0.8], [1.8, -1.06, 0.8]], baseWidth: 1.0, widthQuantity: "tailraceWidthFactor", activeQuantity: "tailraceFlow", rateQuantity: "tailraceWidthFactor", componentId: "tailrace" },
   { id: "water-downstream", label: "Saint Paul River (downstream)", kind: "channel", medium: "water", path: [[-4.6, -1.73, 1.6], [1.5, -1.73, 1.75], [7.6, -1.73, 1.6]], baseWidth: 1.6, widthQuantity: "downstreamWidthFactor", activeQuantity: "downstreamFlow", rateQuantity: "downstreamWidthFactor", componentId: "river-downstream" },
   { id: "water-spill", label: "Spillway water", kind: "sheet", medium: "water", path: [[1, 2.2, -0.7], [1, 1.15, 0.72], [1, -0.1, 0.92], [1, -1.5, 1.8]], baseWidth: 1.4, widthQuantity: "spillWidthFactor", activeQuantity: "spillFlow", rateQuantity: "spillWidthFactor" },
@@ -182,7 +182,7 @@ const spec: HighFidelitySpec = {
   motions: [1, 2, 3, 4].map((unit) => ({ id: `unit-${unit}-spin`, label: `Unit ${unit} rotation`, componentIds: [`unit-${unit}`, `unit-${unit}-marker`, ...(unit === 3 ? [...UNIT3_STACK] : [])], pivot: [UNIT_X[unit - 1], -0.15, 0.1] as [number, number, number], axis: "y" as const, rpm: SYNCHRONOUS_RPM, symmetryOrder: 1, activeWhen: { componentId: `unit-${unit}`, statuses: ["generating"] } })),
   flows,
   camera: { defaultPresetId: "valley", presets: [
-    { id: "valley", label: "Whole valley", target: [0.6, 0.6, 0], distance: 16, yaw: -0.55, pitch: 0.42 },
+    { id: "valley", label: "Whole valley", target: [1.8, 0.3, 0.2], distance: 17.5, yaw: -0.48, pitch: 0.56 },
     { id: "water-path", label: "Water route", target: [-1.3, 0.7, 0], distance: 8, yaw: 0.15, pitch: 0.2 },
     { id: "powerhouse-section", label: "Powerhouse section", target: [0.3, 0.2, 0.1], distance: 7, yaw: 0.2, pitch: 0.1 },
     { id: "unit-bench", label: "Unit 3 bench", target: [0.9, 0.2, 0.1], distance: 5, yaw: 0.2, pitch: 0.1 },

@@ -9,6 +9,7 @@ import { loadChunkWithRetry } from "@/lib/interactive-labs/v2/loadChunk";
 import type { CapabilityProfile, LabAction, LabState } from "@/lib/interactive-labs/v2/types";
 import { Fallback2D } from "./Fallback2D";
 import { LabControlPanel } from "./LabControlPanel";
+import { SceneControlBar } from "./SceneControlBar";
 import type { ScenePick } from "./picking";
 const loadWebGLScene = () => loadChunkWithRetry(() => import("./WebGLScene"));
 const WebGLScene = dynamic(() => loadWebGLScene().then((m) => m.WebGLScene), { ssr: false, loading: () => <div className="flex h-[clamp(420px,62vh,640px)] items-center justify-center text-slate-300">Loading the 3D lab…</div> });
@@ -133,7 +134,7 @@ export function InteractiveLabPlayer({ labId = "g4-solid-figures", override, rev
       </div>
       {notice && <p role="status" className="border-b border-white/10 bg-amber-300/10 px-5 py-2 text-xs text-amber-100">{notice}</p>}
       <div className="grid gap-0 lg:grid-cols-[1fr_340px]">
-        <div className={definition.fidelity?.environment === "DAYLIGHT" ? "bg-[linear-gradient(#dbeafe,#f1f5f9_58%,#dce7d4)] text-slate-900" : "bg-[radial-gradient(circle_at_50%_38%,#263d72,#080d20_68%)]"}>
+        <div className={`relative ${definition.fidelity?.environment === "DAYLIGHT" ? "bg-[linear-gradient(#dbeafe,#f1f5f9_58%,#dce7d4)] text-slate-900" : "bg-[radial-gradient(circle_at_50%_38%,#263d72,#080d20_68%)]"}`}>
           {profile === "FALLBACK_2D"
             ? <Fallback2D definition={definition} state={state} reducedMotion={reducedMotion} traceFlowId={traceFlowId} dispatch={dispatch} onPick={onPick} />
             : <SceneLoadBoundary key={profile} onError={onRendererLoadError} fallback={<Fallback2D definition={definition} state={state} reducedMotion={reducedMotion} traceFlowId={traceFlowId} dispatch={dispatch} onPick={onPick} />}>
@@ -141,6 +142,7 @@ export function InteractiveLabPlayer({ labId = "g4-solid-figures", override, rev
                   ? <ThreeScene definition={definition} state={state} profile={profile} reducedMotion={reducedMotion} traceFlowId={traceFlowId} dispatch={dispatch} onPick={onPick} onDowngrade={onDowngrade} onUpgradeReady={onUpgradeReady} allowProfileUpgrade={canUpgrade} allowPerformanceDowngrade={!reviewPreview} />
                   : <WebGLScene definition={definition} state={state} profile={profile} reducedMotion={reducedMotion} traceFlowId={traceFlowId} dispatch={dispatch} onPick={onPick} onDowngrade={onDowngrade} onUpgradeReady={onUpgradeReady} allowProfileUpgrade={canUpgrade} allowPerformanceDowngrade={!reviewPreview} />}
               </SceneLoadBoundary>}
+          <SceneControlBar definition={definition} state={state} dispatch={dispatch} />
         </div>
         <aside className="lg:max-h-[clamp(420px,62vh,640px)] lg:overflow-y-auto border-l border-white/10 bg-white/[.03] p-5">
           <LabControlPanel definition={definition} state={state} activeCheck={activeCheck} dispatch={dispatch} />
