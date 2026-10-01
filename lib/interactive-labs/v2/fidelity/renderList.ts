@@ -1,7 +1,7 @@
 // Renderer-agnostic scene presentation. WebGL (HIGH/STANDARD/LOW) and the SVG fallback draw the same list,
 // which is what keeps FALLBACK_2D instructionally equivalent.
 import type { CapabilityProfile, GeometryKind, InteractiveLabDefinition, LabState, Transform } from "../types";
-import type { ExplanationLine, FidelityState, FlowNode, HighFidelitySpec } from "./types";
+import type { ExplanationLine, FidelityAction, FidelityState, FlowNode, HighFidelitySpec } from "./types";
 import type { GeometrySilhouette, ParametricDescriptor } from "./geometry/types";
 import { resolveGeometryVariant } from "./geometry/builders";
 import { assemblyOf, deriveSimulation, explainState, isAssemblyOpen, isComponentRevealed } from "./engine";
@@ -9,6 +9,7 @@ import { flowPoints, presetPose, type CameraPose } from "./presentation";
 import { RENDER_BUDGETS, type RenderBudget } from "./profiles";
 import { MARKER_COLOR } from "./palette";
 import { resolveSurfaces, type RenderSurface } from "./surfaces";
+import { controlAction, controlSelected } from "./controls";
 import { IDENTITY, addVec3, lerpTransform, multiply, rotate, scaleVec3, transformMatrix, transformPoint, translate, type Mat4, type Vec3 } from "./math";
 
 export type ItemSpin = { pre: Mat4; local: Mat4; pivot: Vec3; axis: "x" | "y" | "z"; radPerSec: number };
@@ -34,6 +35,8 @@ export type RenderItem = {
   inFocus: boolean;
   detail?: "decor";
   spin?: ItemSpin;
+  /** RX-005c: the action this control part would dispatch now (null = disabled), and whether it is selected. */
+  control?: { label: string; action: Extract<FidelityAction, { type: "set-variable" }> | null; selected: boolean };
 };
 export type RenderMarker = { id: string; position: Vec3; color: string; label?: string };
 export type RenderFlow = { id: string; label: string; color: string; points: Vec3[]; active: boolean; rate: number; direction: 1 | -1; particleCount: number; nodes: FlowNode[]; traced: string[] };
@@ -142,7 +145,7 @@ export function buildRenderList(input: { definition: InteractiveLabDefinition<La
     const spin = motion && motionActive.get(motion.id) ? { pre: rootMatrix, local: localMatrix, pivot: motion.pivot, axis: motion.axis, radPerSec: motion.rpm * Math.PI / 30 } : undefined;
     const highlighted = fidelity.inspectedComponentId === component.id || guided.includes(component.id);
     const resolvedGeometry = component.geometryVariants ? resolveGeometryVariant(component.geometryVariants, profile) : undefined;
-    items.push({ id: component.id, label: component.label, kind: "component", geometry: component.geometry, ...(resolvedGeometry?.descriptor ? { parametricGeometry: resolvedGeometry.descriptor } : {}), ...(resolvedGeometry?.silhouette ? { fallbackSilhouette: resolvedGeometry.silhouette } : {}), matrix, center: transformPoint(matrix, [0, 0, 0]), ...(component.labelOffset ? { labelOffset: component.labelOffset } : {}), ...(component.mobileLabel === false ? { mobileLabel: false } : {}), color: component.material.color, alpha: !inFocus ? 0.12 : removed ? 0.35 : component.material.opacity ?? 0.96, emissive: simulation.componentStates[component.id]?.intensity ?? 0, clip: removed && cutaway ? cutaway.plane : null, highlighted, selectable: component.detail !== "decor" && component.selectable !== false && !removed && isComponentRevealed(spec, fidelity, component.id), showLabel: component.detail !== "decor" && component.showLabel !== false && fidelity.labelsVisible && component.selectable !== false && !removed, inFocus, detail: component.detail, spin });
+    items.push({ id: component.id, label: component.label, kind: "component", geometry: component.geometry, ...(resolvedGeometry?.descriptor ? { parametricGeometry: resolvedGeometry.descriptor } : {}), ...(resolvedGeometry?.silhouette ? { fallbackSilhouette: resolvedGeometry.silhouette } : {}), matrix, center: transformPoint(matrix, [0, 0, 0]), ...(component.labelOffset ? { labelOffset: component.labelOffset } : {}), ...(component.mobileLabel === false ? { mobileLabel: false } : {}), color: component.material.color, alpha: !inFocus ? 0.12 : removed ? 0.35 : component.material.opacity ?? 0.96, emissive: simulation.componentStates[component.id]?.intensity ?? 0, clip: removed && cutaway ? cutaway.plane : null, highlighted, selectable: component.detail !== "decor" && component.selectable !== false && !removed && isComponentRevealed(spec, fidelity, component.id), showLabel: component.detail !== "decor" && component.showLabel !== false && fidelity.labelsVisible && component.selectable !== false && !removed, inFocus, detail: component.detail, spin , ...(component.control ? { control: { label: component.control.label, action: controlAction(spec, fidelity, component.control), selected: controlSelected(fidelity, component.control) } } : {}) });
   }
 
   const flows: RenderFlow[] = spec.flows.filter((flow) => !fidelity.hiddenFlowIds.includes(flow.id)).map((flow) => {

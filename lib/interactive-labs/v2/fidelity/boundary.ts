@@ -6,6 +6,7 @@ import { validateVariableValue } from "./variables";
 import { compositeHex, contrastRatio, deltaE00, highlightColor, HIGHLIGHT_COLOR, INACTIVE_FLOW_COLOR } from "./palette";
 import { resolveGeometryVariant } from "./geometry/builders";
 import { validateSurfaces } from "./surfaces";
+import { validateControls } from "./controls";
 
 /**
  * Visual interaction is not learning evidence. Only a governed learning check may produce evidence, and
@@ -139,6 +140,7 @@ export function validateHighFidelityDefinition(definition: InteractiveLabDefinit
   }
   if (spec.offline.remoteAssets.length > 0 && definition.accessibility.offline) errors.push("offline_claim_with_remote_assets");
   if (spec.modes.length === 0) errors.push("modes_missing");
+  errors.push(...validateControls(spec));
   if (spec.surfaces?.length) errors.push(...validateSurfaces(spec, spec.simulation ? deriveSimulation(spec, initialFidelityState(spec)).quantities : {}));
   return errors;
 }

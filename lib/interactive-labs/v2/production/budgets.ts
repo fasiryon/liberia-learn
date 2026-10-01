@@ -101,10 +101,13 @@ export function measureLabBudget(definition: InteractiveLabDefinition<LabState>,
         + list.flows.filter((flow) => flow.active && flow.particleCount > 0).length;
       const hasTraceNodes = list.flows.some((flow) => flow.nodes.some((node) => node.traceable));
       const threeMarkerDraw = list.markers.length > 0 || hasTraceNodes ? 1 : 0;
-      // Surfaces: one mesh each in ThreeScene; one shared triangle batch on LOW.
+      // Items: both renderers draw identical static parts as one batch (LOW merged buffers, ThreeScene InstancedMesh),
+      // planned by planLowBatches. Surfaces: one mesh each in ThreeScene; one shared triangle batch on LOW.
+      const plan = planLowBatches(list);
+      const itemDraws = plan.batches.length + plan.singles.length;
       drawCalls = Math.max(drawCalls, svg ? 0 : profile === "LOW"
-        ? planLowBatches(list).drawCalls + (activeSurfaces.length ? 1 : 0)
-        : list.items.length + 1 + threeFlowDraws + threeMarkerDraw + activeSurfaces.length);
+        ? plan.drawCalls + (activeSurfaces.length ? 1 : 0)
+        : itemDraws + 1 + threeFlowDraws + threeMarkerDraw + activeSurfaces.length);
       particles = Math.max(particles, list.flows.reduce((sum, flow) => sum + flow.particleCount, 0));
     }
     result[profile] = {

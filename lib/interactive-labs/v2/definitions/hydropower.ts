@@ -13,6 +13,9 @@ function component(id: string, label: string, geometry: "box" | "cylinder" | "co
   return { id, label, geometry, transform: tr(position, scale), material: mat(color), ...extra };
 }
 
+/** One shared control colour so LOW batches every control part into one draw; the labelled chips carry meaning (not colour). */
+const CONTROL_COLOR = "#e2e8f0";
+
 const components: HighFidelitySpec["components"] = [
   // Water components are the instructional (pickable, labelled) parts; RX-005b surfaces draw the water itself.
   component("headpond", "Headpond", "rectangular-prism", [-1.5, 2.9, -2.5], [4.7, 0.18, 1.4], "#2f8fe8", { labelOffset: [-0.35, 0.9, 0], material: mat("#2f8fe8", 0.3) }),
@@ -42,6 +45,20 @@ const components: HighFidelitySpec["components"] = [
   ...[1, 2, 3, 4].map((n) => component(`gauge-seg-${n}`, `Power gauge ${n}`, "box", [4.6 + n * 0.24, 2.3, 0], [0.18, 0.22, 0.08], "#8c9ab0", { showLabel: false })),
   component("demand-hospital", "hospital demand segment", "box", [5.2, 2.3, 0], [0.12, 0.22, 0.08], "#c98a4b", { showLabel: false }),
   ...(["homes", "shops"] as const).flatMap((name, d) => [1, 2, 3, 4].map((k) => component(`demand-${name}-b${k}`, `${name} block ${k} demand segment`, "box", [5.4 + d * 0.62 + (k - 1) * 0.14, 2.3, 0], [0.1, 0.22, 0.08], "#c98a4b", { showLabel: false }))),
+  // RX-005c in-scene controls (05 pedagogy delta §2): each dispatches the same set-variable as its panel twin.
+  // River-gauge post upstream: the season is a condition to test, chosen where the water arrives.
+  component("river-gauge-post", "River gauge: choose a season to test", "cylinder", [-5.55, 3.35, -1.75], [0.05, 0.75, 0.05], "#5f6d7e", { showLabel: false }),
+  ...([[49, "Dry"], [176, "Early rains"], [303, "Heavy rains"], [430, "Rainy, full"], [557, "Flood"]] as const).map(([value, name], i) =>
+    component(`gauge-band-${i + 1}`, `Season: ${name}`, "box", [-5.35, 2.75 + i * 0.29, -1.75], [0.16, 0.12, 0.05], CONTROL_COLOR, { showLabel: false, control: { kind: "set-variable", variableId: "riverFlow", value, label: name } })),
+  // Powerhouse control desk: units start and stop in the fixed dispatch order, so the desk offers next/last only.
+  component("desk-start-next", "Start the next unit", "box", [-0.15, -0.72, 1.35], [0.2, 0.12, 0.14], CONTROL_COLOR, { showLabel: false, control: { kind: "step-variable", variableId: "unitsOnline", direction: 1, label: "Start next unit" } }),
+  component("desk-stop-last", "Stop the last unit", "box", [0.35, -0.72, 1.35], [0.2, 0.12, 0.14], CONTROL_COLOR, { showLabel: false, control: { kind: "step-variable", variableId: "unitsOnline", direction: -1, label: "Stop last unit" } }),
+  // Switchyard breakers, in the same frame as the city they feed.
+  component("breaker-hospital", "Hospital breaker", "box", [2.6, -0.45, 0.55], [0.14, 0.2, 0.1], CONTROL_COLOR, { showLabel: false, control: { kind: "toggle-variable", variableId: "feederHospital", label: "Hospital on/off" } }),
+  component("breaker-homes-less", "Homes: one block off", "box", [2.95, -0.45, 0.55], [0.12, 0.16, 0.1], CONTROL_COLOR, { showLabel: false, control: { kind: "step-variable", variableId: "homesBlocks", direction: -1, label: "Homes −" } }),
+  component("breaker-homes-more", "Homes: one block on", "box", [3.2, -0.45, 0.55], [0.12, 0.16, 0.1], CONTROL_COLOR, { showLabel: false, control: { kind: "step-variable", variableId: "homesBlocks", direction: 1, label: "Homes +" } }),
+  component("breaker-shops-less", "Shops: one block off", "box", [3.55, -0.45, 0.55], [0.12, 0.16, 0.1], CONTROL_COLOR, { showLabel: false, control: { kind: "step-variable", variableId: "shopsBlocks", direction: -1, label: "Shops −" } }),
+  component("breaker-shops-more", "Shops: one block on", "box", [3.8, -0.45, 0.55], [0.12, 0.16, 0.1], CONTROL_COLOR, { showLabel: false, control: { kind: "step-variable", variableId: "shopsBlocks", direction: 1, label: "Shops +" } }),
   component("distance-break", "Approx. 30 km to Monrovia", "panel", [7.8, 2.1, 0.2], [0.5, 0.08, 0.04], "#f8fafc", { labelOffset: [-1.2, 1.4, 0], mobileLabel: false }),
   // Decorative valley scenery: no labels, state, picking, or instructional references.
   component("bank-lower", "", "rectangular-prism", [-3, 0.6, -2.2], [5, 0.18, 0.18], "#4a7a45", { detail: "decor", selectable: false }),
@@ -94,7 +111,7 @@ const spec: HighFidelitySpec = {
     internalStructures: "Unit 3 runner, shaft and generator are exposed by the powerhouse cutaway and rebuilt in the repair check.",
     variables: "River flow has five discrete seasonal values; units online, the hospital feeder and four-block homes and shops districts are learner controlled.",
     simulationRules: "Deterministic capability model: water is dispatched in unit order; demand above capability trips delivery; remaining water spills.",
-    learnerControls: "Season, units online, hospital feeder, homes and shops blocks, trace path, unit 3 cutaway and repair assembly.",
+    learnerControls: "In the scene: river-gauge season bands, a powerhouse desk (start next / stop last unit) and switchyard breakers (hospital, homes ±, shops ±); every one has a panel twin. Also trace path, unit 3 cutaway and repair assembly.",
     visualConsequences: "River and tailrace width, spill sheet, water flow, unit rotation status, power gauge, feeder flow and city lighting follow the simulation; the headpond level never changes.",
     guidedPath: "Meet the plant, follow water, inspect unit 3, compare seasons, test overload, repair the unit, then explore the grid.",
     exploreMode: "Change all controls and inspect the explanation and energy path.",

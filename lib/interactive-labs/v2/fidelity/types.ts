@@ -5,6 +5,7 @@ import type { GeometryKind, LabMode, MaterialSpec, Transform } from "../types";
 import type { Vec3 } from "./math";
 import type { InstructionalGeometryVariants } from "./geometry/types";
 import type { SurfaceDefinition } from "./surfaces";
+import type { SceneControl } from "./controls";
 
 export const HIGH_FIDELITY_SPEC_VERSION = "high-fidelity-lab/1.0.0" as const;
 
@@ -36,6 +37,8 @@ export type ComponentDefinition = {
   carriesSymbol?: boolean;
   carriesScale?: boolean;
   carriesPlaceIdentity?: boolean;
+  /** RX-005c: an in-scene control. Activating the part dispatches the same set-variable as its panel twin. */
+  control?: SceneControl;
 };
 
 export type ComponentMotionDefinition = {

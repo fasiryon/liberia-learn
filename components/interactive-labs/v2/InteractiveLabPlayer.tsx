@@ -88,6 +88,9 @@ export function InteractiveLabPlayer({ labId = "g4-solid-figures", override, rev
   const traceFlowId = activeCheck?.fidelity?.kind === "trace-path" ? activeCheck.fidelity.flowId : null;
   const onPick = (pick: ScenePick) => {
     if (pick.kind === "node") dispatch({ type: "trace-node", flowId: pick.flowId, nodeId: pick.nodeId });
+    // RX-005c tap rule: tapping a control part operates it (same set-variable as the panel twin); a disabled
+    // control does nothing. Inspecting a control part goes through the parts list.
+    else if (pick.item.control) { if (pick.item.control.action) dispatch(pick.item.control.action); }
     else if (pick.item.kind === "object") dispatch({ type: "select", objectId: pick.item.id });
     else dispatch({ type: "inspect-component", componentId: pick.item.id });
   };
