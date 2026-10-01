@@ -2,6 +2,8 @@
 // which is what keeps FALLBACK_2D instructionally equivalent.
 import type { CapabilityProfile, GeometryKind, InteractiveLabDefinition, LabState, Transform } from "../types";
 import type { ExplanationLine, FidelityState, FlowNode, HighFidelitySpec } from "./types";
+import type { GeometrySilhouette, ParametricDescriptor } from "./geometry/types";
+import { resolveGeometryVariant } from "./geometry/builders";
 import { assemblyOf, deriveSimulation, explainState, isAssemblyOpen, isComponentRevealed } from "./engine";
 import { flowPoints, presetPose, type CameraPose } from "./presentation";
 import { RENDER_BUDGETS, type RenderBudget } from "./profiles";
@@ -14,6 +16,8 @@ export type RenderItem = {
   label: string;
   kind: "object" | "component";
   geometry: GeometryKind;
+  parametricGeometry?: ParametricDescriptor;
+  fallbackSilhouette?: GeometrySilhouette;
   matrix: Mat4;
   center: Vec3;
   color: string;
@@ -33,7 +37,7 @@ export type RenderItem = {
 export type RenderMarker = { id: string; position: Vec3; color: string; label?: string };
 export type RenderFlow = { id: string; label: string; color: string; points: Vec3[]; active: boolean; rate: number; direction: 1 | -1; particleCount: number; nodes: FlowNode[]; traced: string[] };
 export type RenderMotion = { id: string; label: string; active: boolean; center: Vec3 };
-export type RenderList = { items: RenderItem[]; markers: RenderMarker[]; flows: RenderFlow[]; motions: RenderMotion[]; camera: CameraPose | null; budget: RenderBudget; explanation: ExplanationLine[]; quantities: Record<string, number> };
+export type RenderList = { items: RenderItem[]; markers: RenderMarker[]; flows: RenderFlow[]; motions: RenderMotion[]; camera: CameraPose | null; budget: RenderBudget; explanation: ExplanationLine[]; quantities: Record<string, number>; environment: "DAYLIGHT" | "STUDIO" };
 
 /** Paint decorative 2D scenery first so trace nodes, labels and controls remain above it. */
 export function orderFallbackItems(items: readonly RenderItem[]): RenderItem[] {
@@ -101,7 +105,7 @@ export function buildRenderList(input: { definition: InteractiveLabDefinition<La
     if (features?.kind === "vertex") for (const index of features.indices) markers.push({ id: `${object.id}:vertex:${index}`, position: transformPoint(matrix, boxCorners(object.geometry)[index] ?? [0, 0, 0]), color: MARKER_COLOR, label: String(index + 1) });
   }
 
-  if (!spec || !fidelity || !display) return { items, markers, flows: [], motions: [], camera: null, budget, explanation: [], quantities: {} };
+  if (!spec || !fidelity || !display) return { items, markers, flows: [], motions: [], camera: null, budget, explanation: [], quantities: {}, environment: spec?.environment ?? "STUDIO" };
 
   const simulation = deriveSimulation(spec, fidelity);
   const motionDefinitions = spec.motions ?? [];
@@ -136,7 +140,8 @@ export function buildRenderList(input: { definition: InteractiveLabDefinition<La
     const motion = motionByComponent.get(component.id);
     const spin = motion && motionActive.get(motion.id) ? { pre: rootMatrix, local: localMatrix, pivot: motion.pivot, axis: motion.axis, radPerSec: motion.rpm * Math.PI / 30 } : undefined;
     const highlighted = fidelity.inspectedComponentId === component.id || guided.includes(component.id);
-    items.push({ id: component.id, label: component.label, kind: "component", geometry: component.geometry, matrix, center: transformPoint(matrix, [0, 0, 0]), ...(component.labelOffset ? { labelOffset: component.labelOffset } : {}), ...(component.mobileLabel === false ? { mobileLabel: false } : {}), color: component.material.color, alpha: !inFocus ? 0.12 : removed ? 0.35 : component.material.opacity ?? 0.96, emissive: simulation.componentStates[component.id]?.intensity ?? 0, clip: removed && cutaway ? cutaway.plane : null, highlighted, selectable: component.detail !== "decor" && component.selectable !== false && !removed && isComponentRevealed(spec, fidelity, component.id), showLabel: component.detail !== "decor" && component.showLabel !== false && fidelity.labelsVisible && component.selectable !== false && !removed, inFocus, detail: component.detail, spin });
+    const resolvedGeometry = component.geometryVariants ? resolveGeometryVariant(component.geometryVariants, profile) : undefined;
+    items.push({ id: component.id, label: component.label, kind: "component", geometry: component.geometry, ...(resolvedGeometry?.descriptor ? { parametricGeometry: resolvedGeometry.descriptor } : {}), ...(resolvedGeometry?.silhouette ? { fallbackSilhouette: resolvedGeometry.silhouette } : {}), matrix, center: transformPoint(matrix, [0, 0, 0]), ...(component.labelOffset ? { labelOffset: component.labelOffset } : {}), ...(component.mobileLabel === false ? { mobileLabel: false } : {}), color: component.material.color, alpha: !inFocus ? 0.12 : removed ? 0.35 : component.material.opacity ?? 0.96, emissive: simulation.componentStates[component.id]?.intensity ?? 0, clip: removed && cutaway ? cutaway.plane : null, highlighted, selectable: component.detail !== "decor" && component.selectable !== false && !removed && isComponentRevealed(spec, fidelity, component.id), showLabel: component.detail !== "decor" && component.showLabel !== false && fidelity.labelsVisible && component.selectable !== false && !removed, inFocus, detail: component.detail, spin });
   }
 
   const flows: RenderFlow[] = spec.flows.filter((flow) => !fidelity.hiddenFlowIds.includes(flow.id)).map((flow) => {
@@ -144,7 +149,7 @@ export function buildRenderList(input: { definition: InteractiveLabDefinition<La
     return { id: flow.id, label: flow.label, color: flow.color, points: flowPoints(flow), active: simulated.active, rate: simulated.rate, direction: simulated.direction, particleCount: simulated.active ? budget.particlesPerFlow : 0, nodes: flow.nodes, traced: fidelity.tracedPaths[flow.id] ?? [] };
   });
 
-  return { items, markers, flows, motions, camera: presetPose(spec, fidelity.cameraPresetId), budget, explanation: explainState(spec, fidelity, definition.grade), quantities: simulation.quantities };
+  return { items, markers, flows, motions, camera: presetPose(spec, fidelity.cameraPresetId), budget, explanation: explainState(spec, fidelity, definition.grade), quantities: simulation.quantities, environment: spec.environment ?? "STUDIO" };
 }
 
 /**

@@ -44,7 +44,15 @@ Every link is a separate layer in code:
 7. **Multiple learning modes.** GUIDED, EXPLORE, CHALLENGE and ASSESSMENT share one simulation state. GUIDED walks `guidedPath` steps, each with an optional camera preset and highlights.
 8. **Direct-manipulation assessment.** Every high-fidelity definition needs at least one `kind: "direct-manipulation"` check: `reach-target`, `trace-path`, `assemble` or `identify-component`. The authoring gate enforces this.
 9. **State explanation.** The explanation lines, including simplified equations, are gated by grade.
-10. **Camera.** Presets, constraints on distance, pitch and yaw, eased transitions, and guided camera moves. There is no unconstrained free camera.
+10. **Camera.** There is no unconstrained free camera.
+    - **Limits.** Each lab declares distance, pitch and yaw limits for each mode. If it allows panning, it also declares a target box. Without a target box, the camera target follows presets only.
+    - **Learner control.** Within those limits the learner may orbit, zoom and pan by touch, mouse and keyboard. Outside them the camera cannot go.
+    - **Safety.** The camera never enters a solid part, and never drops below a declared ground or water surface.
+    - **Guided steps** hold the view near the step's preset and offer Recentre.
+    - **Presets and rails** are presentation only.
+    - **No task needs camera freedom.** Every check, control and trace target is framed by a preset or rail stop that is reachable in one action, and the same action exists in FALLBACK_2D.
+
+    *Amended 2026-10-01 by RX-005 A16 (founder approved).*
 11. **Animation.** `approach`, `approachCamera`, `easeDisplayState`, `samplePath` and `flowParticles`. Every animated value eases *toward state*. Pose transitions (`PoseTransitionDefinition`) drive assembly/disassembly, nets, a switch lever, valves and so on from a variable. Reduced motion snaps everything to its final state.
 12. **Simulation rule layer.** `SimulationModel.kind` is `deterministic-rules`, `equation` or `state-machine`. Do not add a physics engine unless the objective needs one.
 13. **Component model.** Components, parent/child assemblies, ports, layers, internal flags, shape keys and exploded transforms.

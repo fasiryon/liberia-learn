@@ -3,6 +3,7 @@
 // Everything here is data or a pure function so the same definition drives HIGH/STANDARD/LOW WebGL and FALLBACK_2D.
 import type { GeometryKind, LabMode, MaterialSpec, Transform } from "../types";
 import type { Vec3 } from "./math";
+import type { InstructionalGeometryVariants } from "./geometry/types";
 
 export const HIGH_FIDELITY_SPEC_VERSION = "high-fidelity-lab/1.0.0" as const;
 
@@ -12,6 +13,8 @@ export type ComponentDefinition = {
   label: string;
   description?: string;
   geometry: GeometryKind;
+  /** Parametric replacement for the primitive mesh; all four profile mappings are mandatory. */
+  geometryVariants?: InstructionalGeometryVariants;
   transform: Transform;
   material: MaterialSpec;
   /** Internal structures stay hidden until a cutaway reveals them. */
@@ -184,6 +187,8 @@ export type HighFidelitySpec = {
   /** Grade-appropriate explanation for structural labs without a simulation model. */
   explain?: (state: FidelityState) => ExplanationLine[];
   offline: { remoteAssets: string[]; maxPackageBytes: number };
+  /** Shared presentation intent. Existing labs default to STUDIO. */
+  environment?: "DAYLIGHT" | "STUDIO";
 };
 
 export type FidelityState = {

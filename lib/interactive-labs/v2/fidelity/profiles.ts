@@ -27,6 +27,16 @@ const DOWNGRADE: Readonly<Record<CapabilityProfile, CapabilityProfile>> = Object
 /** One step down. Used when a WebGL context fails or sustained frame time exceeds the budget. */
 export function downgradeProfile(profile: CapabilityProfile): CapabilityProfile { return DOWNGRADE[profile]; }
 
+const FRAME_SAMPLE_WINDOW = 120;
+
+/** Record only a frame that follows a continuously scheduled loop; idle/intentional gaps reset the window. */
+export function recordFrameSample(samples: readonly number[], dtMs: number, backToBack: boolean): number[] {
+  if (!backToBack) return [];
+  if (!Number.isFinite(dtMs) || dtMs < 0) return samples as number[];
+  const next = [...samples, dtMs];
+  return next.length > FRAME_SAMPLE_WINDOW ? next.slice(-FRAME_SAMPLE_WINDOW) : next;
+}
+
 /** Sustained slow frames (not a single hitch) trigger a downgrade. */
 export function shouldDowngrade(frameTimesMs: readonly number[], budgetMs = 50, window = 60): boolean {
   if (frameTimesMs.length < window) return false;
