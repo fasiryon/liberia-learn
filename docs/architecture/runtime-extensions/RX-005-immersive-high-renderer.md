@@ -1,6 +1,10 @@
 # RX-005: Immersive HIGH renderer (three.js) and scene-first interaction
 
-- **Status:** PROPOSED. Awaiting `lab-performance-reviewer` and `lab-design-director` review.
+- **Status:** PROPOSED.
+  - Both reviewers returned **APPROVE_WITH_CHANGES** on 2026-10-01.
+  - The amendments in "Review verdicts and binding amendments" (end of this document) are binding. **They supersede any earlier section they conflict with.**
+  - Before implementation starts, the design director re-checks the P0 text.
+  - Two founder decisions are pending.
 - **Filed by:** LAB-BUILDER on 2026-10-01, after the founder review of `mount-coffee-hydropower` 1.0.0 (`HYDRO-FOUNDER-IMMERSION-001`). The founder decided to adopt three.js as the HIGH-profile renderer **for every lab**, with LOW and FALLBACK_2D unchanged.
 - **Runtime:** Interactive Lab Runtime V2, high-fidelity layer. Everything here is shared; nothing is lab-local.
 - **Design inputs:**
@@ -173,7 +177,9 @@ Measured or estimated in `08-V1_1_ASSET_DELTA.md`, for the hydro worst-case scen
 
 The triangle, draw-call and particle numbers are estimates until RX-005g measures them. Per-renderer accounting must be checked against `renderer.info` on a `--gpu` run.
 
-### Companion: RX-006 (LOW instanced batching)
+### Companion: RX-006 (LOW batching)
+
+RX-006 is now its own proposal: [RX-006-low-batching.md](RX-006-low-batching.md). The paragraph below is kept for history.
 
 LOW is already at 38 of 40 draw calls (`budget-baseline.json`), and v1.1 adds instructional parts: city blocks, gauge bands, desk and breakers.
 
@@ -183,6 +189,223 @@ RX-006 adds instanced or merged static buffers to `WebGLScene` for repeated geom
 
 RX-006 is filed alongside RX-005 and reviewed with it.
 
-## Review verdicts
+## Review verdicts and binding amendments
 
-*Pending.*
+### Verdicts (2026-10-01)
+
+| Reviewer | Verdict | Findings | Builder verification |
+|---|---|---|---|
+| `lab-design-director` | APPROVE_WITH_CHANGES | P0 1 · P1 13 · P2 4 | **P0-01 confirmed:** `GeometryKind` is a closed set of 8 (`lib/interactive-labs/v2/types.ts:7`). **Backdrop claim confirmed:** a dark CSS stage at `InteractiveLabPlayer.tsx:93`, with WebGL clearing at alpha 0 (`WebGLScene.tsx:163`). |
+| `lab-performance-reviewer` | APPROVE_WITH_CHANGES | P0 3 · P1 9 · P2 6 | **P0-1 confirmed:** `capabilities.ts:6` defaults to 4 GB and the player passes no memory hint. **P0-2 confirmed:** `public/sw.js` caches `/_next/static/` on fetch only, and the import has no error path. **P0-3 already fixed** on `main` by PR #163 (`hasActiveVisibleFlow`), merged into this branch at `03555cb8`. **three.js size reproduced:** 568 / 145 / 119 KB. |
+
+### A1. Parametric geometry contract (design P0-01), new RX-005h
+
+**Core descriptors** live in `lib/interactive-labs/v2/fidelity/geometry/`. They emit plain typed arrays, have no `three` import, and each has a deterministic triangle count:
+- `lathe`
+- `sweep` (a tube along a spline)
+- `extrude`
+- `heightfield`
+- `scatter` (instanced)
+- `dimensionLine`
+
+**Per-profile variants.** A component declares `variants: { HIGH, STANDARD, LOW, FALLBACK_2D }`, where the 2D entry is a silhouette. The authoring gate:
+- requires a LOW variant and a 2D silhouette for every instructional component;
+- requires that parts a check depends on keep distinct silhouettes on every profile (for example, runner vs generator for `find-generator`).
+
+**Kits layer.** Shared builders in `fidelity/kits/`, made only from the core descriptors:
+- machinery: `bladedRunner`, `rotatingMachineStack`
+- controls: `selectorPost`, `leverCabinet(n)`, `pushButton`
+- grid: `latticeTower`
+
+**Lab data stays in the lab definition:** the river spline, the dam profile and the band values.
+
+**glTF is contract only; the loader is deferred.** No lab may declare a glTF asset until a later extension ships the loader together with a fixture test.
+
+### A2. Profile selection: start at the floor, upgrade on evidence (performance P0-1)
+
+- Render FALLBACK_2D immediately, or LOW when WebGL is available.
+- `import("three")` only when all of these hold:
+  - `navigator.deviceMemory ≥ 4`;
+  - no `Save-Data`;
+  - `effectiveType` is not 2g or 3g;
+  - a short LOW frame-time probe shows headroom.
+- Persist the resolved profile, and any downgrade, per device and runtime version.
+- A manual profile choice always wins.
+- Tests:
+  - hints like the target device (deviceMemory 2) resolve to LOW;
+  - a spy proves the three loader is never invoked in that case.
+
+### A3. Loader failure and offline downgrade (performance P0-2)
+
+- **Loader failure:** both renderer loaders retry once. Then they downgrade with a notice, to LOW if that chunk is available, otherwise to FALLBACK_2D.
+- **Prefetch:** while HIGH or STANDARD loads, prefetch the `WebGLScene` chunk.
+- **Offline pack:** the HIGH/STANDARD offline pack is the definition + the three chunk + the `ThreeScene` chunk + the `WebGLScene` chunk.
+- **Harness test:** abort the three chunk with `page.route`. The lab must land in 2D with every check completable.
+
+### A4. Downgrade detector (performance P1-1)
+
+- Sample only back-to-back scheduled frames. Drop the first frame after an idle gap, and any frame after an intentional skip.
+- Both WebGL renderers share one sampler.
+- Tests: an idle-gap sequence and a 30 fps-cap sequence must not downgrade.
+
+### A5. GL lifecycle (performance P1-2)
+
+- **Context loss:** both renderers handle `webglcontextlost` by calling `preventDefault`, then `onDowngrade("context")`.
+- **ThreeScene unmount:** dispose geometries, materials, textures and render targets (including the shadow map), then call `renderer.dispose()` and `forceContextLoss()`.
+- **WebGLScene unmount:** call `WEBGL_lose_context`.
+- **STANDARD** always gets a fresh renderer with `antialias: false`.
+- **Test:** 20× mount/unmount in real Chromium (Playwright), with no context warnings, and `renderer.info.memory` back at baseline.
+
+### A6. Loop and idle policy (performance P1-3)
+
+- **Scheduling:** use `shouldScheduleWebGLFrame`, extended with surface and emitter flags, instead of `setAnimationLoop`.
+- **Frame-rate cap:** ambient-only frames (surface scroll, spin, particles) are capped at 30 fps. Camera moves and eases run at full rate.
+- **Pausing:** pause on `visibilitychange` and when the scene is off-screen (IntersectionObserver).
+- **Shadows:** never render the shadow pass on ambient frames.
+- **Test:** the scheduling predicate is unit-tested.
+
+### A7. Shadow policy (performance P1-4)
+
+- `shadowMap.autoUpdate = false`. Set `needsUpdate` only when a pure hash of the caster matrices changes.
+- Fit the shadow camera to the lab's `targetBox`.
+- Spin groups, surfaces and emitters never cast shadows.
+- The shadow map counts against `maxTexturePx`: 2048 on fine-pointer devices, 1024 otherwise.
+- CI counts the worst frame as the main pass plus the shadow pass.
+
+### A8. Budget accounting (performance P1-5, P1-6)
+
+- **One planner:** a pure per-renderer draw and triangle planner, shared by the renderer and by `measureLabBudget`. Check it against `renderer.info` on a `--gpu` run. Measurement code never imports `three`.
+- **Textures:** runtime-generated textures and the shadow map are counted per profile.
+- **Bytes:** record both `transferBytes` (brotli) and `storageBytes` (minified).
+- **three version and size:**
+  - pin `three` to an exact version;
+  - add a separate renderer-chunk size gate at 5%, measured in CI by an esbuild import-list script;
+  - confirm that gate once against `next build` output.
+- **Re-baseline:** one dedicated, reviewed commit that lists before and after for every lab.
+- **Import-graph test:** no value import of `three` outside ThreeScene and its private modules.
+- **Capture assertion:** LOW and FALLBACK_2D runs make zero requests for the three chunk. Record this in `manifest.json`.
+
+### A9. Determinism (performance P1-7)
+
+- Wrap time on the CPU modulo a declared, tileable period.
+- Use a seeded PRNG for scatter, emitters and texture generation. Never use `Math.random`.
+- In review mode:
+  - compile synchronously (`renderer.compile`);
+  - set `data-lab-scene-ready` after the first full frame, and make the harness wait for it.
+- The harness records `data-lab-renderer` (`three@REVISION`, `webgl-pass` or `svg`) and the downgrade path in the manifest (performance P2).
+
+### A10. Environment rigs (design P1-02)
+
+- **Declared per lab.** `fidelity.environment` is one of:
+  - `studio` (the default; existing labs keep it);
+  - `outdoor-daylight`;
+  - `dark-field` / `space`.
+- **One backdrop token per rig** is used by all four profiles. On LOW and 2D it is CSS or SVG, at zero GPU cost.
+- **Hydro uses `outdoor-daylight` on every profile.** This keeps "dark = tripped" unambiguous, and a downgrade never reads as day turning to night.
+- **Contrast:** every palette and contrast gate is re-run against each rig's backdrop and terrain samples.
+- **Cased lines:** flows and markers are drawn as cased lines (dark casing, light core).
+
+### A11. Immersion acceptance checklist (design P1-03)
+
+Every lab's round 1 checks these from its captures:
+- **Stage coverage:** the scene fills at least 60% of the desktop stage and at least 58vh on mobile.
+- **Environment:** the rig shows a ground plane and a horizon or backdrop.
+- **Depth:**
+  - the establishing preset is not frontal (pitch about 15° or more);
+  - instructional parts sit on at least two depth planes.
+- **Operability:** every cause can be operated in the scene, or is one tap away from the frame where its consequence appears.
+- **Same-frame feedback:** every state change shows in the same frame as its control, or in a HUD chip.
+- **Label budget:** outside guided focus, at most 8 labels (highlighted, hovered and step-relevant parts only). The rest go in the drawer.
+- **Motion:** motion only on active flows.
+
+### A12. Benchmark rules (design P1-04)
+
+- **Founder decision:** approve or replace the three inspiration references. Ideally, also supply one or two examples of what "immersive" means.
+- Approved reference captures are stored, git-ignored, under `artifacts/lab-review/<labId>/benchmark/` with the source URL and date.
+- For immersion qualities, a BEATS against a v1.0 "before" capture does not count toward the ship rule.
+
+### A13. LOW immersion floor (design P1-05)
+
+At near-zero GPU cost, LOW gets:
+- the rig backdrop;
+- a ground plane;
+- two-tone vertex-coloured water ribbons;
+- cased flow lines;
+- the shared shell and in-scene controls.
+
+Anything beyond this is recorded as a deliberate LOW trade-off.
+
+### A14. In-scene controls (design P1-06, P1-07)
+
+- **Rail navigation:** advance only through the focused Next button, or with → when the scene has focus and no control is focused. Space is not a global rail key.
+- **Pending confirm:**
+  - announced via `aria-live`;
+  - cancelled by Escape, blur or a Cancel target, never by a timer;
+  - drawn with the highlight token and a "Confirm?" label only, never with state tokens (lamp colour, spin, boil).
+- **Affordance:** a shared control-affordance token (glyph, ring and cursor) on every profile, including 2D.
+- **Tap rule:** tapping a control part operates it. Inspecting it goes through the drawer or a long-press.
+- **Drag control:** a new `{ kind: "drag-variable"; variableId; axis; worldRange }`.
+  - It snaps to the step grid.
+  - It dispatches `set-variable` only when it crosses a step boundary.
+  - Arrow keys step it, and it keeps its panel twin.
+- **Picking:**
+  - control parts are picked by projected bounds;
+  - one shared pick policy applies across profiles;
+  - raycasts are restricted to selectable parts (performance P2).
+
+### A15. Cues, salience and caps (design P1-08 to P1-10)
+
+- **Equivalent cues:** the authoring gate requires a `lowProxy` and a `staticCue` for every surface or emitter bound to a quantity that a check or the explanation uses.
+- **Reduced motion:** keep static direction chevrons on active flows and surfaces.
+- **Fog:**
+  - it may not push the farthest instructional part below 3:1 contrast;
+  - instructional, status and emissive materials are exempt from fog.
+- **Tone mapping:** status, emissive, flow and highlight materials use `toneMapped: false`, and the colour gates are evaluated on the final colour.
+- **Cutaways:** parts revealed by a cutaway get fill light and do not receive shadow.
+- **Decor:** a salience cap keeps decor at lower saturation and contrast than instructional parts.
+- **Section caps:** clipped solids show capped faces in the shared "section cream" material, proven by a capture test.
+
+### A16. Camera wording (design P1-11)
+
+Proposed replacement for principle 10. **It needs founder sign-off, because it amends the platform standard.**
+
+> "Camera. There is no unconstrained free camera. Each lab declares distance, pitch and yaw limits per mode and, if it allows panning, a target box; without one, the target follows presets only. Within those limits the learner may orbit, zoom and pan by touch, mouse and keyboard; outside them the camera cannot go. The camera never enters a solid part or drops below a declared ground or water surface. Guided steps hold the view near the step's preset and offer Recentre. Presets and rails are presentation only. No check, control or trace target may require camera freedom: each is framed by a preset or rail stop reachable in one action, and the same action exists in FALLBACK_2D."
+
+Under reduced motion, camera moves are a 0 ms cut (the documented "snap"), not a crossfade (performance P2-1).
+
+### A17. Shell (design P1-12, P2-18)
+
+- **Desktop:** the explanation is open by default.
+- **Mobile peek:** shows the task, the status chips and the latest causal explanation line.
+- **HUD chips:** each lab declares one for every quantity that a check or the explanation depends on. Structural labs with no quantities show the task and the part-focus line instead.
+- **Mobile landscape:** the scene on the left, a 40% sheet on the right.
+- **Loading:** while three loads, the current state's 2D render shows under a loading veil.
+
+### A18. 2D framing, flows and swap continuity (design P1-13, P1-14)
+
+- **2D framing:** a preset's `frame: { componentIds }` must fit the 2D view-box. Prove it with a test and with 2D mobile captures at every rail stop.
+- **Flows on HIGH/STANDARD:** screen-space-width or tube lines with round sprites, and dashed conductors.
+- **Downgrade continuity:** camera, selection, rail position and pending state carry over, and a non-modal notice says "Switched to lighter graphics".
+
+### A19. Naming, scope and documentation (design P2-15 to P2-17; performance P1-9, P2-3, P2-6)
+
+- **Generic names:**
+  - surface kinds: `channel`, `pool`, `sheet`, `plume`;
+  - emitters: `stream`, `spray`, `upwell`, `bubble`, `pulse`;
+  - `SurfaceFlowMaterial` is parameterised by `FlowMedium`.
+- **Status lamps:** each status carries a glyph and text, not colour alone. G5 (state-aware prompts) is part of RX-005f.
+- **Shader programs:** limited to the shared material set. Record `renderer.info.programs.length` on `--gpu` runs.
+- **Fallback2D:** memoize hulls and isolate the particle layer.
+- **Registry:** before Phase 4 of the programme, per-lab definitions load dynamically. A test proves one lab's 2D first-load set stays within 300 KB.
+- **Out of scope**, deferred to later extensions:
+  - ambient audio (RX-008: procedural WebAudio, off by default, never the only carrier of meaning);
+  - selective bloom;
+  - periodic motion bound to a quantity (needs science review against the RX-001 rule);
+  - translucency for nested membranes;
+  - trip latching (G8);
+  - the glTF loader.
+
+### Founder decisions pending
+
+1. Approve or replace the inspiration references (A12).
+2. Sign off on the principle 10 wording (A16).

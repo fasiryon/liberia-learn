@@ -55,7 +55,13 @@ Builder diagnosis (verified in code, not inferred from captures):
 
 Founder decision (2026-10-01): adopt **three.js as the HIGH-profile renderer** through a runtime extension (RX-005). STANDARD follows HIGH only where the budgets allow. LOW and FALLBACK_2D stay on the existing renderers. The simulation model, checks, evidence boundary, authority status (PROPOSED, DRAFT, RAW_OBSERVATION) and "no unconstrained free camera" (principle 10) are unchanged.
 
-Gates for v1.1 (none recorded yet):
+Gate progress (2026-10-01):
+- Design deltas recorded: [05 pedagogy](design/05-V1_1_PEDAGOGY_DELTA.md), [06 simulation](design/06-V1_1_SIMULATION_DELTA.md), [07 experience](design/07-V1_1_EXPERIENCE_DELTA.md), [08 asset](design/08-V1_1_ASSET_DELTA.md).
+- Founder decision: fix the blind-toggle P0 with smaller feeder blocks (specified in 06).
+- RX-005 review: `lab-design-director` APPROVE_WITH_CHANGES (P0 1, P1 13, P2 4); `lab-performance-reviewer` APPROVE_WITH_CHANGES (P0 3, P1 9, P2 6). Every P0 was verified by the builder; performance P0-3 was already fixed on `main` by PR #163. The binding amendments A1–A19 are in RX-005. RX-006 is split into its own proposal.
+- Pending founder decisions: inspiration references (RX-005 A12) and principle 10 wording (A16). Pending reviewer action: the design director re-checks the P0-01 text (A1).
+
+Original gate list:
 1. Design deltas: pedagogy (in-scene manipulation), experience storyboard and immersive REFERENCE BENCHMARK, simulation (water quantities the renderer may show), asset direction (glTF vs procedural, textures, three.js budgets).
 2. RX-005 proposal reviewed by `lab-performance-reviewer` and `lab-design-director`.
 3. Build in the shared runtime with tests, then three review rounds on new captures, including a `--gpu` or real-device run before any fidelity or performance sign-off.
