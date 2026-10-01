@@ -3,8 +3,8 @@
 - **Status:** PROPOSED.
   - Both reviewers returned **APPROVE_WITH_CHANGES** on 2026-10-01.
   - The amendments in "Review verdicts and binding amendments" (end of this document) are binding. **They supersede any earlier section they conflict with.**
-  - Before implementation starts, the design director re-checks the P0 text.
-  - Two founder decisions are pending.
+  - The independent design-director re-check of A1 returned APPROVE_WITH_CHANGES; its final amendments were re-reviewed and APPROVED on 2026-10-01.
+  - Founder decisions on inspiration references and camera wording were recorded on 2026-10-01.
 - **Filed by:** LAB-BUILDER on 2026-10-01, after the founder review of `mount-coffee-hydropower` 1.0.0 (`HYDRO-FOUNDER-IMMERSION-001`). The founder decided to adopt three.js as the HIGH-profile renderer **for every lab**, with LOW and FALLBACK_2D unchanged.
 - **Runtime:** Interactive Lab Runtime V2, high-fidelity layer. Everything here is shared; nothing is lab-local.
 - **Design inputs:**
@@ -52,7 +52,7 @@ The contract in `HIGH_FIDELITY_INTERACTIVE_LABS.md` is unchanged except for the 
 
 - Mesh sources:
   - the existing procedural `GeometryKind`s, built once and cached;
-  - optional declared glTF assets per component (§ asset contract), loaded from the app bundle, never a remote URL.
+  - shared parametric descriptors and kit geometry; glTF is deferred under A20.
 - Clipping: cutaways use three.js clipping planes from `item.clip`. Highlight and rim use the RX-004 material rules, ported.
 - Labels stay DOM, using the existing overlay, plus a shared collision-avoiding layout.
 - Downgrade chain: context loss goes straight to FALLBACK_2D. Sustained slow frames step HIGH → STANDARD → LOW (`WebGLScene`) → FALLBACK_2D, using the existing `shouldDowngrade` thresholds.
@@ -121,10 +121,7 @@ The contract in `HIGH_FIDELITY_INTERACTIVE_LABS.md` is unchanged except for the 
 
 ## Asset contract
 
-Assets are declared per component in the definition's `fidelity.assets` and recorded in `production.json` `assets` (kind, licence, provenance, bytes, profiles, maxTexturePx). The rules:
-- glTF only from the app bundle (`/public/labs/<labId>/...` or a shared `/public/labs/_shared/...`), inside `offline.maxPackageBytes`.
-- Every asset has a procedural fallback for LOW and FALLBACK_2D.
-- A generated asset needs a generator, its terms, and a human reviewer.
+Assets are declared per component in the definition's `fidelity.assets` and recorded in `production.json` `assets` (kind, licence, provenance, bytes, profiles, maxTexturePx). RX-005 V1 supports procedural descriptors only. glTF and generated binary assets remain deferred until a separately reviewed extension defines formats, local loading, failure behavior, per-profile fallbacks, provenance, byte/triangle/texture/decoder budgets, and fixture coverage. No lab may declare or load glTF under RX-005 V1.
 
 The asset director's v1.1 spec (`08-V1_1_ASSET_DELTA.md`) decides which components use glTF, the texture formats, and whether any decoder is justified.
 
@@ -200,7 +197,21 @@ RX-006 is filed alongside RX-005 and reviewed with it.
 
 ### A1. Parametric geometry contract (design P0-01), new RX-005h
 
-**Core descriptors** live in `lib/interactive-labs/v2/fidelity/geometry/`. They emit plain typed arrays, have no `three` import, and each has a deterministic triangle count:
+**Independent re-check (2026-10-01): APPROVE_WITH_CHANGES.** The design director required a typed descriptor contract and deterministic budget semantics; explicit enforcement of all four profile variants; semantic cues for check-critical parts on LOW and FALLBACK_2D; and a shared RenderList-to-SVG mapping. Those requirements are incorporated below. This proposal review is not a product round or SHIP verdict.
+
+**Core descriptors** live in `lib/interactive-labs/v2/fidelity/geometry/`. The descriptor API is renderer-independent and emits plain typed arrays; it has no `three` import. Coordinates use the existing V2 right-handed world space (Y up); lengths are world units. NaN/infinite values, self-intersecting or degenerate profiles, fewer than the minimum distinct points, negative radii, invalid grids, and out-of-range transforms are rejected, never silently repaired. Positions/normals use Float32Array; UVs are optional Float32Array; triangles use counter-clockwise winding viewed from outside. Every output reports exact triangle/vertex counts, verified from its index data. Geometry generation is deterministic; scatter requires an explicit integer seed and a shared seeded PRNG, never Math.random.
+
+Normative inputs and output shape:
+- `lathe`: `{ profile: readonly [radius, y][], radialSegments }`; profile radius is non-negative and has at least two distinct points. Output is a revolved indexed surface with normals and UVs.
+- `sweep` / tube: `{ points: readonly Vec3[], radius, radialSegments, closed? }`; at least two distinct points, positive radius and a stable transported frame. Output is a tube surface; `closed` joins ends but does not cap them.
+- `extrude`: `{ contour: readonly [x, y][], depth }`; simple non-self-intersecting polygon with at least three vertices and positive depth. Output includes side walls and both triangulated caps.
+- `heightfield`: `{ rows, columns, size: [width, depth], heights: Float32Array }`; rows/columns are at least 2 and the array length is exact. Output is a gridded surface with finite heights and normals.
+- `scatter`: `{ seed, count, prototype, transforms }`; count matches the transforms length, seed is a signed 32-bit integer, and each transform is finite. Output retains deterministic per-instance transforms and the prototype's exact triangle count; it does not expand copies into one oversized index buffer.
+- `dimensionLine`: `{ start: Vec3, end: Vec3, ticks?, labelKey? }`; endpoints must differ and ticks are bounded non-negative integers. Output is a line/marker descriptor, not a triangle mesh.
+
+The renderer maps all six to deterministic quality presets: HIGH lathe 48 radial segments, sweep 16, heightfield at most 128×64; STANDARD 32, 10, 96×48; LOW 12, 6, 32×16. Extrude retains the authored contour and caps at every profile. Scatter instance count is constrained by the profile's global triangle/draw-call budget and may not be truncated if instructional. A dimension line uses at most 12 tick segments. Per descriptor, hard ceilings are 20,000 triangles (dimensionLine excluded); the locked aggregate profile limits remain authoritative.
+
+For WebGL1 without `OES_element_index_uint`, each triangle mesh is split deterministically at triangle boundaries into chunks of at most 65,535 vertices and uses Uint16 indices. Uint32 indices are used only when the context advertises the extension. The same logical descriptor remains intact in the render list and SVG projection.
 - `lathe`
 - `sweep` (a tube along a spline)
 - `extrude`
@@ -208,9 +219,9 @@ RX-006 is filed alongside RX-005 and reviewed with it.
 - `scatter` (instanced)
 - `dimensionLine`
 
-**Per-profile variants.** A component declares `variants: { HIGH, STANDARD, LOW, FALLBACK_2D }`, where the 2D entry is a silhouette. The authoring gate:
-- requires a LOW variant and a 2D silhouette for every instructional component;
-- requires that parts a check depends on keep distinct silhouettes on every profile (for example, runner vs generator for `find-generator`).
+**Per-profile variants.** An instructional geometry declaration supplies `variants: { HIGH, STANDARD, LOW, FALLBACK_2D }`; each is an explicit descriptor/quality pair or named silhouette. HIGH/STANDARD may share a variant only through an explicit `sameAs` declaration; LOW must use a low-cost descriptor. FALLBACK_2D is a semantic SVG silhouette from the same descriptor data, never a blank placeholder. The authoring gate rejects a missing variant.
+
+For every part a check, prompt, or explanation requires the learner to distinguish, the definition declares required semantic cues (shape, label, glyph, non-colour state cue, or interaction target). Tests assert those cues in LOW and FALLBACK_2D and equivalent component identities/instructional view across profiles. Geometric inequality alone does not prove distinguishability. Parametric entries use typed geometry descriptors in the shared RenderList; WebGL renderers consume the resolved descriptor and FALLBACK_2D projects its semantic silhouette to SVG. `scatter` describes repeated instances and transforms; merging or GPU instancing is a renderer policy, not implied by the descriptor.
 
 **Kits layer.** Shared builders in `fidelity/kits/`, made only from the core descriptors:
 - machinery: `bladedRunner`, `rotatingMachineStack`
@@ -418,20 +429,18 @@ Under reduced motion, camera moves are a 0 ms cut (the documented "snap"), not a
    - **How it is used:** study only. No assets, layouts or code are copied. Its reference captures must be stored under `artifacts/lab-review/<labId>/benchmark/`, with the source URL and date, before round 3 can score against it.
 2. **Principle 10: adopted.** The founder approved, and delegated the camera choice to the builder. The A16 wording is now in `HIGH_FIDELITY_INTERACTIVE_LABS.md` principle 10.
 
-### A20. glTF loader brought back into Phase 0 (builder, after the founder named the airsup benchmark), new RX-005i
+### A20. glTF loader proposal disposition (2026-10-01)
 
-**Why.** Photoreal hero machinery and organic forms (a heart, engines, molecules) are unlikely to reach the airsup bar from procedural descriptors alone. A1's "loader deferred" is therefore withdrawn.
+The proposed RX-005i loader is **REJECTED for Phase 0 as written** by the independent design-director review and **APPROVE_WITH_CHANGES** by the independent performance review. RX-005 V1 therefore does not implement or declare a loader. This resolves the conflict with A1's explicit deferral and the all-procedural Mount Coffee asset specification.
 
-**What RX-005i ships:**
-- a GLTFLoader path (meshopt-compressed geometry; KTX2 textures only if a lab declares them);
-- loading from the app bundle only;
-- a fixture asset and test;
-- per-asset byte and triangle accounting in `measureLabBudget`;
-- licence and provenance rows in `production.json`;
-- a required procedural LOW variant and 2D silhouette for each asset.
+The reviews found inconsistent loader references in RX-005a and the asset contract, no bounded supported format/decoder contract, no measured loader/decoder budget, and incomplete local-load failure, cancellation, disposal, provenance, or invalid-fixture requirements. A future RX-005i may be resubmitted as a separate extension after defining those details, enforcing byte/triangle/texture/decoder caps in CI, and proving zero loader/asset requests on LOW and FALLBACK_2D. KTX2 remains out of scope unless separately measured and reviewed. Mount Coffee 1.1 remains procedural.
 
-**Which decoders are counted against budgets:** the meshopt decoder (≈ 10 KB gzip, estimate). The KTX2/Basis transcoder (≈ 200 KB+, estimate) counts only when a lab uses it.
+This is a proposal disposition, not a product-quality verdict.
 
-**Hydro 1.1.0** stays procedural, per the asset director. The loader is proven on a fixture first.
+### Independent review record
 
-**Review:** this needs `lab-performance-reviewer` and `lab-design-director` review before implementation.
+| Reviewer | Scope | Verdict | Disposition |
+|---|---|---|---|
+| lab-design-director | A1 parametric geometry P0 re-check | APPROVE_WITH_CHANGES; amended proposal APPROVED | Typed API, budget, profile variant, semantic-equivalence, schema, coordinate, preset and WebGL1 index requirements incorporated. |
+| lab-design-director | A20 glTF proposal | REJECT | Loader remains deferred in RX-005 V1; a future loader must be a separate reviewed extension. |
+| lab-performance-reviewer | A20 glTF proposal | APPROVE_WITH_CHANGES | Cost, format, lifecycle, fallback and loader verification requirements recorded in A20 disposition. |

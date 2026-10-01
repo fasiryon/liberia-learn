@@ -59,7 +59,7 @@ Gate progress (2026-10-01):
 - Design deltas recorded: [05 pedagogy](design/05-V1_1_PEDAGOGY_DELTA.md), [06 simulation](design/06-V1_1_SIMULATION_DELTA.md), [07 experience](design/07-V1_1_EXPERIENCE_DELTA.md), [08 asset](design/08-V1_1_ASSET_DELTA.md).
 - Founder decision: fix the blind-toggle P0 with smaller feeder blocks (specified in 06).
 - RX-005 review: `lab-design-director` APPROVE_WITH_CHANGES (P0 1, P1 13, P2 4); `lab-performance-reviewer` APPROVE_WITH_CHANGES (P0 3, P1 9, P2 6). Every P0 was verified by the builder; performance P0-3 was already fixed on `main` by PR #163. The binding amendments A1–A19 are in RX-005. RX-006 is split into its own proposal.
-- Pending founder decisions: inspiration references (RX-005 A12) and principle 10 wording (A16). Pending reviewer action: the design director re-checks the P0-01 text (A1).
+- Founder decisions are recorded: the approved experience references and principle 10 camera wording. The A1 geometry P0 re-check is complete; see the Phase 0 proposal gate record below.
 
 Original gate list:
 1. Design deltas: pedagogy (in-scene manipulation), experience storyboard and immersive REFERENCE BENCHMARK, simulation (water quantities the renderer may show), asset direction (glTF vs procedural, textures, three.js budgets).
@@ -68,6 +68,28 @@ Original gate list:
 
 ## Round 2 — not run
 No reviewer verdict is recorded.
+
+## RX-005 / RX-006 proposal gates — 2026-10-01
+
+These are runtime-extension proposal reviews, separate from Mount Coffee's product rounds. They do not close Round 1, certify implementation, grant a product verdict, or alter governance.
+
+| Proposal / reviewer | Verdict | Recorded disposition |
+|---|---|---|
+| RX-005 A1 · lab-design-director | APPROVE_WITH_CHANGES; amended proposal APPROVED | Added typed descriptor schemas, coordinate and degeneracy rules, deterministic count/budget requirements, bounded quality presets, four-profile variants and semantic cues, RenderList/SVG mapping, and WebGL1 16-bit split policy. |
+| RX-005 A20 · lab-design-director | REJECT | glTF remains deferred in RX-005 V1; a future loader must be separately scoped/reviewed with bounded formats, costs, fallbacks, provenance and fixtures. |
+| RX-005 A20 · lab-performance-reviewer | APPROVE_WITH_CHANGES | Identified missing byte/triangle/texture/decoder accounting, local loading/failure lifecycle, and LOW/2D no-request proof; all stay mandatory for any future proposal. |
+| RX-006 · lab-design-director | APPROVE_WITH_CHANGES; amended proposal APPROVED | Added state synchronization/invalidation, cross-profile actionable identity/cue parity, deterministic picking, and ANGLE-path parity tests. |
+| RX-006 · lab-performance-reviewer | APPROVE_WITH_CHANGES; amended proposal APPROVED | Added deterministic batch/planner rules, memory and WebGL1 bounds, exact budget parity, lifecycle/allocation and representative state captures. |
+
+RX-005 and RX-006 implementation remains incomplete. No device performance, GPU performance, or battery claim is made.
+
+### Phase 0 runtime increment 0.1 — 2026-10-01
+
+- Profile selection begins at LOW when WebGL is available and FALLBACK_2D otherwise; a manual/remembered choice is honored. Save-Data, slow connection types, and known memory below 4 GB veto upgrades. With available headroom, 30 consecutive LOW samples averaging at most 12 ms permit HIGH, or STANDARD under reduced motion. The resolved profile is remembered under the RX-005 runtime key.
+- The performance sampler counts only frames that continue a scheduled render loop. An idle gap or intentional skipped frame resets the window; genuinely slow continuously scheduled frames remain eligible for downgrade.
+- The WebGL pass handles context loss by preventing default and moving to FALLBACK_2D; it releases buffers/programs and requests context loss on teardown. Renderer chunk loading retries once, then an error boundary serves FALLBACK_2D with a status notice.
+- Validation: `npm run validate:changed` passed (7 selected test files / 75 tests, API route policy audit, and TypeScript check). A final focused profile/high-fidelity/budget/production-record run passed (4 files / 43 tests).
+- NOT MEASURED: GPU performance, physical-device performance, memory, and battery. The Three.js renderer, RX-005h geometry/kits implementation, RX-006 batching implementation, and Mount Coffee production rounds remain outstanding.
 
 ## Round 3 — not run
 No benchmark scores or design director verdict are recorded.

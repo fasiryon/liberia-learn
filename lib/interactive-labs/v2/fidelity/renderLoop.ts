@@ -7,6 +7,7 @@ export function shouldScheduleWebGLFrame(state: {
   flowMoving: boolean;
   spinMoving: boolean;
   pulseMoving: boolean;
+  profileProbeActive?: boolean;
 }): boolean {
-  return state.reviewClockActive || (!state.reducedMotion && (state.fidelityMoving || state.cameraMoving || state.flowMoving || state.spinMoving || state.pulseMoving));
+  return state.reviewClockActive || !!state.profileProbeActive || (!state.reducedMotion && (state.fidelityMoving || state.cameraMoving || state.flowMoving || state.spinMoving || state.pulseMoving));
 }

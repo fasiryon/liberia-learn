@@ -5,7 +5,8 @@ import type { CapabilityProfile, GeometryKind, InteractiveLabDefinition, LabActi
 import type { FidelityState } from "@/lib/interactive-labs/v2/fidelity/types";
 import { buildRenderList, type RenderList, type RenderMarker } from "@/lib/interactive-labs/v2/fidelity/renderList";
 import { approachCamera, constrainCamera, easeDisplayState, isSettled, presetPose, spinMatrix, viewMatrix, type CameraPose } from "@/lib/interactive-labs/v2/fidelity/presentation";
-import { shouldDowngrade } from "@/lib/interactive-labs/v2/fidelity/profiles";
+import { recordFrameSample, shouldDowngrade } from "@/lib/interactive-labs/v2/fidelity/profiles";
+import { probeAllowsUpgrade } from "@/lib/interactive-labs/v2/capabilities";
 import { downgradeFrameBudgetMs } from "@/lib/interactive-labs/v2/production/budgets";
 import { fitHorizontalFieldOfView, IDENTITY, multiply, perspective, transformPoint, type Mat4, type Vec3 } from "@/lib/interactive-labs/v2/fidelity/math";
 import { batchFlowGeometry, createFlowBatchStorage, createPointBatchStorage, writeMarkerPositions, type FlowVertexBatch } from "@/lib/interactive-labs/v2/fidelity/flowBatch";
@@ -23,6 +24,8 @@ type Props = {
   dispatch: (action: LabAction) => void;
   onPick: (pick: ScenePick) => void;
   onDowngrade: (reason: "context" | "performance") => void;
+  onUpgradeReady?: () => void;
+  allowProfileUpgrade?: boolean;
   allowPerformanceDowngrade?: boolean;
 };
 
@@ -48,7 +51,7 @@ const LIGHTING = { full: 3, simplified: 2, minimal: 1, none: 0 } as const;
 
 function rgb(value: string): [number, number, number] { const n = Number.parseInt(value.replace("#", ""), 16); return [(n >> 16 & 255) / 255, (n >> 8 & 255) / 255, (n & 255) / 255]; }
 
-export function WebGLScene({ definition, state, profile, reducedMotion, traceFlowId, dispatch, onPick, onDowngrade, allowPerformanceDowngrade = true }: Props) {
+export function WebGLScene({ definition, state, profile, reducedMotion, traceFlowId, dispatch, onPick, onDowngrade, onUpgradeReady, allowProfileUpgrade = false, allowPerformanceDowngrade = true }: Props) {
   const canvas = useRef<HTMLCanvasElement>(null);
   const labels = useRef<HTMLDivElement>(null);
   const motionStatus = useRef<HTMLDivElement>(null);
@@ -57,19 +60,40 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
   const displayRef = useRef<FidelityState | undefined>(state.fidelity);
   const zoomRef = useRef(1);
   const frameRef = useRef<{ list: RenderList | null; viewProj: Mat4; width: number; height: number }>({ list: null, viewProj: IDENTITY, width: 1, height: 1 });
-  const callbacks = useRef({ onDowngrade, reducedMotion, traceFlowId });
+  const callbacks = useRef({ onDowngrade, onUpgradeReady, reducedMotion, traceFlowId });
   const requestDrawRef = useRef<() => void>(() => {});
+  const pendingContextLoss = useRef<number | null>(null);
   stateRef.current = state;
-  callbacks.current = { onDowngrade, reducedMotion, traceFlowId };
+  callbacks.current = { onDowngrade, onUpgradeReady, reducedMotion, traceFlowId };
 
   useEffect(() => {
+    if (pendingContextLoss.current !== null) {
+      window.clearTimeout(pendingContextLoss.current);
+      pendingContextLoss.current = null;
+    }
     const el = canvas.current; if (!el) return;
-    const gl = el.getContext("webgl", { antialias: profile === "HIGH", alpha: true, premultipliedAlpha: false });
+    let gl: WebGLRenderingContext | null = null;
+    try { gl = el.getContext("webgl", { antialias: profile === "HIGH", alpha: true, premultipliedAlpha: false }); }
+    catch { /* blocked WebGL is equivalent to an unavailable context */ }
     if (!gl) { callbacks.current.onDowngrade("context"); return; }
+    let downgraded = false;
+    const handleContextLost = (event: Event) => {
+      event.preventDefault();
+      if (downgraded) return;
+      downgraded = true;
+      callbacks.current.onDowngrade("context");
+    };
+    el.addEventListener("webglcontextlost", handleContextLost);
     const compile = (type: number, source: string) => { const shader = gl.createShader(type)!; gl.shaderSource(shader, source); gl.compileShader(shader); return shader; };
     const program = gl.createProgram()!;
     gl.attachShader(program, compile(gl.VERTEX_SHADER, vertexShader)); gl.attachShader(program, compile(gl.FRAGMENT_SHADER, fragmentShader)); gl.linkProgram(program);
-    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) { callbacks.current.onDowngrade("context"); return; }
+    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+      gl.deleteProgram(program);
+      el.removeEventListener("webglcontextlost", handleContextLost);
+      gl.getExtension("WEBGL_lose_context")?.loseContext();
+      callbacks.current.onDowngrade("context");
+      return;
+    }
     gl.useProgram(program);
     const attr = { position: gl.getAttribLocation(program, "position"), normal: gl.getAttribLocation(program, "normal"), color: gl.getAttribLocation(program, "vcolor") };
     const uni = Object.fromEntries(["mvp", "model", "pointSize", "color", "highlightColor", "highlightMix", "hasHighlight", "useVertexColor", "alpha", "emissive", "lighting", "clipPlane", "clipEnabled"].map((name) => [name, gl.getUniformLocation(program, name)])) as Record<string, WebGLUniformLocation | null>;
@@ -136,11 +160,14 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
     let camera: CameraPose | null = null;
     let frame = 0, last = performance.now(), labelTick = 0, reviewClockSeen = false;
     let lastReviewTime: number | undefined;
-    const frameTimes: number[] = [];
-    let downgraded = false;
+    let frameTimes: number[] = [];
+    let upgradeNotified = false;
+    let previousFrameScheduled = false;
     const scheduleDraw = () => { if (!frame) frame = requestAnimationFrame(draw); };
     const draw = (now: number) => {
       frame = 0;
+      const followedScheduledFrame = previousFrameScheduled;
+      previousFrameScheduled = false;
       const reviewTime = (window as Window & { __labReviewClockSeconds?: number }).__labReviewClockSeconds;
       if (reviewTime !== undefined && !reviewClockSeen) { labelTick = Number.NEGATIVE_INFINITY; reviewClockSeen = true; }
       const dt = reviewTime === undefined
@@ -148,8 +175,12 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
         : lastReviewTime === undefined ? 0 : Math.min(0.1, Math.max(0, reviewTime - lastReviewTime));
       last = now;
       if (reviewTime !== undefined) lastReviewTime = reviewTime;
-      frameTimes.push(dt * 1000); if (frameTimes.length > 120) frameTimes.shift();
+      if (reviewTime === undefined) frameTimes = recordFrameSample(frameTimes, dt * 1000, followedScheduledFrame);
       if (allowPerformanceDowngrade && !downgraded && shouldDowngrade(frameTimes, downgradeFrameBudgetMs(profile))) { downgraded = true; callbacks.current.onDowngrade("performance"); }
+      if (allowProfileUpgrade && !upgradeNotified && profile === "LOW" && probeAllowsUpgrade(frameTimes)) {
+        upgradeNotified = true;
+        callbacks.current.onUpgradeReady?.();
+      }
       const current = stateRef.current, motionless = callbacks.current.reducedMotion;
       if (spec && current.fidelity) displayRef.current = easeDisplayState(spec, displayRef.current ?? current.fidelity, current.fidelity, dt, motionless);
       const list = buildRenderList({ definition, state: current, profile, displayFidelity: displayRef.current });
@@ -231,13 +262,31 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
       const pulseMoving = list.budget.pulseHighlights && list.items.some((item) => item.highlighted);
       // Review captures advance an authored virtual clock and need a frame for every tick.
       // Learner sessions request frames only while something visible is moving.
-      if (shouldScheduleWebGLFrame({ reviewClockActive: reviewTime !== undefined, reducedMotion: motionless, fidelityMoving, cameraMoving, flowMoving, spinMoving, pulseMoving })) scheduleDraw();
+      const profileProbeActive = allowProfileUpgrade && !upgradeNotified && profile === "LOW" && frameTimes.length < 30;
+      if (shouldScheduleWebGLFrame({ reviewClockActive: reviewTime !== undefined, reducedMotion: motionless, fidelityMoving, cameraMoving, flowMoving, spinMoving, pulseMoving, profileProbeActive })) {
+        previousFrameScheduled = true;
+        scheduleDraw();
+      }
     };
     requestDrawRef.current = scheduleDraw;
     const resizeObserver = new ResizeObserver(scheduleDraw); resizeObserver.observe(el);
     scheduleDraw();
-    return () => { requestDrawRef.current = () => {}; resizeObserver.disconnect(); cancelAnimationFrame(frame); meshes.forEach((mesh) => { gl.deleteBuffer(mesh.position); gl.deleteBuffer(mesh.normal); }); gl.deleteBuffer(lineBuffer); Object.values(flowBuffers).forEach((buffers) => { gl.deleteBuffer(buffers.positions); gl.deleteBuffer(buffers.colors); }); gl.deleteProgram(program); };
-  }, [definition, profile, allowPerformanceDowngrade]);
+    return () => {
+      requestDrawRef.current = () => {};
+      resizeObserver.disconnect();
+      cancelAnimationFrame(frame);
+      el.removeEventListener("webglcontextlost", handleContextLost);
+      meshes.forEach((mesh) => { gl.deleteBuffer(mesh.position); gl.deleteBuffer(mesh.normal); });
+      gl.deleteBuffer(lineBuffer);
+      Object.values(flowBuffers).forEach((buffers) => { gl.deleteBuffer(buffers.positions); gl.deleteBuffer(buffers.colors); });
+      gl.deleteProgram(program);
+      // Defer forced loss one task so React StrictMode's development remount can reuse the live context.
+      pendingContextLoss.current = window.setTimeout(() => {
+        gl.getExtension("WEBGL_lose_context")?.loseContext();
+        pendingContextLoss.current = null;
+      }, 0);
+    };
+  }, [definition, profile, allowPerformanceDowngrade, allowProfileUpgrade]);
 
   useEffect(() => { requestDrawRef.current(); }, [state, reducedMotion, traceFlowId]);
 
