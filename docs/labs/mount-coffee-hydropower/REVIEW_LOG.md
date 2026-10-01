@@ -40,6 +40,26 @@ Objective: proposed `hydropower-cause-and-effect` — explain how river flow, av
 - `e604f1a2` widened valley framing; `e09cb4ee` refined the target while preserving scene scale. The eight-image `round-1-e09cb4ee-final-camera-fit/` shows pylons in frame and no cutaway slab. A fresh visual review says several fallback desktop labels (Intake, Unit 1/2 housing, Generator, Switchyard) remain crowded (P2).
 - Latest production finding statuses are in `production.json`. Round 1 remains OPEN because the full latest-source 184-still matrix did not complete and live interaction checks remain unperformed.
 
+## v1.1 immersive pass — opened 2026-10-01
+
+Trigger: founder hands-on review of v1.0 on the local review harness (HIGH, desktop), recorded as `HYDRO-FOUNDER-IMMERSION-001` (P1, DESIGN, OPEN) in round 1 of `production.json`.
+
+> "Impressed but a little disappointed. The water animation has to be better, and the interface and interactiveness. It's more like a 2D than a 3D immersive lab."
+
+Builder diagnosis (verified in code, not inferred from captures):
+- Water is `gl.LINES` (1 px) plus `gl.POINTS` square particles (`WebGLScene.tsx` flow batch). There is no water surface, volume, foam or current, so water reads as a diagram.
+- The whole HIGH renderer is a ~270-line hand-written WebGL pass: one directional light, Lambert plus weak specular, flat colours, no shadows, sky, fog or textures, and only procedural box/cylinder/cone primitives.
+- Camera constraints are yaw ±1 rad and pitch -0.4..0.8, and most views come from presets, so the plant behaves like a diorama.
+- Causes are driven from `LabControlPanel` sliders. The scene supports picking and tracing, but not operating the gate, units or feeders.
+- v1.0 recorded this as a deliberate trade-off ("procedural primitives rather than photoreal terrain or fluid simulation") for TARGET_LOW_DEVICE. That bar was too low for a HERO lab on capable devices.
+
+Founder decision (2026-10-01): adopt **three.js as the HIGH-profile renderer** through a runtime extension (RX-005). STANDARD follows HIGH only where the budgets allow. LOW and FALLBACK_2D stay on the existing renderers. The simulation model, checks, evidence boundary, authority status (PROPOSED, DRAFT, RAW_OBSERVATION) and "no unconstrained free camera" (principle 10) are unchanged.
+
+Gates for v1.1 (none recorded yet):
+1. Design deltas: pedagogy (in-scene manipulation), experience storyboard and immersive REFERENCE BENCHMARK, simulation (water quantities the renderer may show), asset direction (glTF vs procedural, textures, three.js budgets).
+2. RX-005 proposal reviewed by `lab-performance-reviewer` and `lab-design-director`.
+3. Build in the shared runtime with tests, then three review rounds on new captures, including a `--gpu` or real-device run before any fidelity or performance sign-off.
+
 ## Round 2 — not run
 No reviewer verdict is recorded.
 
