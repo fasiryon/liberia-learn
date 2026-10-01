@@ -39,6 +39,8 @@ const PUBLIC_PATHS = [
   "/share/certificate",
   "/verify",
   "/api/certificates",
+  // Lab review harness: dev builds only. The page itself also 404s unless LAB_REVIEW_HARNESS=1.
+  ...(process.env.NODE_ENV !== "production" ? ["/lab-review"] : []),
 ];
 
 function isPublicPath(pathname: string) {

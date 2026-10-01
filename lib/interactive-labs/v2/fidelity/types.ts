@@ -21,6 +21,29 @@ export type ComponentDefinition = {
   /** Assembly slot matching key (e.g. face size). */
   shapeKey?: string;
   ports?: { id: string; position: Vec3 }[];
+  /** Non-instructional scenery. LOW may omit it; it must never carry state or interaction. */
+  detail?: "decor";
+  /** Decorative components cannot expose instructional text. */
+  showLabel?: boolean;
+  /** Suppress secondary callouts on narrow screens; controls retain the complete component inventory. */
+  mobileLabel?: boolean;
+  /** World-space offset for a visible scene label when nearby parts need separate callouts. */
+  labelOffset?: Vec3;
+  carriesSymbol?: boolean;
+  carriesScale?: boolean;
+  carriesPlaceIdentity?: boolean;
+};
+
+export type ComponentMotionDefinition = {
+  id: string;
+  label: string;
+  componentIds: string[];
+  /** Shared pivot in the components' root frame, or world space without a root object. */
+  pivot: Vec3;
+  axis: "x" | "y" | "z";
+  rpm: number;
+  symmetryOrder: number;
+  activeWhen: { componentId: string; statuses: string[] };
 };
 
 export type AssemblySlot = { id: string; label: string; accepts: string; transform: Transform; initialComponentId: string };
@@ -30,6 +53,8 @@ export type ComponentAssemblyDefinition = {
   id: string;
   label: string;
   rootObjectId?: string;
+  /** Component shown when a component-based assembly is closed. */
+  rootComponentId?: string;
   componentIds: string[];
   /** Slots make the assembly buildable: a component sits at the slot transform when placed. */
   slots?: AssemblySlot[];
@@ -77,7 +102,7 @@ export type ExplanationLine = { id: string; text: string; minGrade?: number };
 export type SimulationOutput = {
   quantities: Record<string, number>;
   flows: Record<string, { active: boolean; rate: number; direction: 1 | -1 }>;
-  componentStates: Record<string, { intensity?: number; status?: string }>;
+  componentStates: Record<string, { intensity?: number; status?: string; color?: string; alpha?: number; pose?: number }>;
   explanation: ExplanationLine[];
 };
 
@@ -149,10 +174,13 @@ export type HighFidelitySpec = {
   poseTransitions: PoseTransitionDefinition[];
   variables: VariableDefinition[];
   simulation?: SimulationModel;
+  motions?: ComponentMotionDefinition[];
   flows: FlowDefinition[];
   camera: { defaultPresetId: string; presets: CameraPreset[]; constraints: CameraConstraints };
   guidedPath: GuidedStep[];
   modes: Exclude<LabMode, "COMPLETE">[];
+  /** Optional live feedback for the active challenge, derived only from simulation quantities. */
+  challengeStatus?: (quantities: Record<string, number>) => string;
   /** Grade-appropriate explanation for structural labs without a simulation model. */
   explain?: (state: FidelityState) => ExplanationLine[];
   offline: { remoteAssets: string[]; maxPackageBytes: number };

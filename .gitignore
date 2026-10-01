@@ -136,3 +136,6 @@ scripts/finetune/data/
 
 # Subagent-driven-development scratch workspaces (per-plan, not for git)
 .superpowers/
+
+# Interactive lab review captures (scripts/labs/capture-lab-review.ts)
+/artifacts/lab-review/

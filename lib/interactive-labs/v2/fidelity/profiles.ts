@@ -17,7 +17,7 @@ export type RenderBudget = {
 
 export const RENDER_BUDGETS: Readonly<Record<CapabilityProfile, RenderBudget>> = Object.freeze({
   HIGH: { profile: "HIGH", particlesPerFlow: 18, shaderClipping: true, fadeContext: true, meshDetail: "full", lighting: "full", antialias: true, maxDevicePixelRatio: 2, pulseHighlights: true },
-  STANDARD: { profile: "STANDARD", particlesPerFlow: 10, shaderClipping: true, fadeContext: true, meshDetail: "full", lighting: "simplified", antialias: false, maxDevicePixelRatio: 1.5, pulseHighlights: true },
+  STANDARD: { profile: "STANDARD", particlesPerFlow: 10, shaderClipping: true, fadeContext: true, meshDetail: "full", lighting: "simplified", antialias: false, maxDevicePixelRatio: 1.5, pulseHighlights: false },
   LOW: { profile: "LOW", particlesPerFlow: 4, shaderClipping: false, fadeContext: false, meshDetail: "low", lighting: "minimal", antialias: false, maxDevicePixelRatio: 1, pulseHighlights: false },
   FALLBACK_2D: { profile: "FALLBACK_2D", particlesPerFlow: 6, shaderClipping: false, fadeContext: true, meshDetail: "svg", lighting: "none", antialias: false, maxDevicePixelRatio: 1, pulseHighlights: false },
 });

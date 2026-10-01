@@ -3,10 +3,14 @@
 import { useEffect, useRef } from "react";
 import type { CapabilityProfile, GeometryKind, InteractiveLabDefinition, LabAction, LabState } from "@/lib/interactive-labs/v2/types";
 import type { FidelityState } from "@/lib/interactive-labs/v2/fidelity/types";
-import { buildRenderList, type RenderList } from "@/lib/interactive-labs/v2/fidelity/renderList";
-import { approachCamera, constrainCamera, easeDisplayState, flowParticles, presetPose, viewMatrix, type CameraPose } from "@/lib/interactive-labs/v2/fidelity/presentation";
+import { buildRenderList, type RenderList, type RenderMarker } from "@/lib/interactive-labs/v2/fidelity/renderList";
+import { approachCamera, constrainCamera, easeDisplayState, isSettled, presetPose, spinMatrix, viewMatrix, type CameraPose } from "@/lib/interactive-labs/v2/fidelity/presentation";
 import { shouldDowngrade } from "@/lib/interactive-labs/v2/fidelity/profiles";
-import { IDENTITY, multiply, perspective, transformPoint, type Mat4, type Vec3 } from "@/lib/interactive-labs/v2/fidelity/math";
+import { downgradeFrameBudgetMs } from "@/lib/interactive-labs/v2/production/budgets";
+import { fitHorizontalFieldOfView, IDENTITY, multiply, perspective, transformPoint, type Mat4, type Vec3 } from "@/lib/interactive-labs/v2/fidelity/math";
+import { batchFlowGeometry, createFlowBatchStorage, createPointBatchStorage, writeMarkerPositions, type FlowVertexBatch } from "@/lib/interactive-labs/v2/fidelity/flowBatch";
+import { shouldScheduleWebGLFrame } from "@/lib/interactive-labs/v2/fidelity/renderLoop";
+import { highlightBaseMix, HIGHLIGHT_COLOR, MARKER_COLOR } from "@/lib/interactive-labs/v2/fidelity/palette";
 import { buildMesh } from "./meshes";
 import { pickNearest, type ScenePick } from "./picking";
 
@@ -19,11 +23,12 @@ type Props = {
   dispatch: (action: LabAction) => void;
   onPick: (pick: ScenePick) => void;
   onDowngrade: (reason: "context" | "performance") => void;
+  allowPerformanceDowngrade?: boolean;
 };
 
-const vertexShader = `attribute vec3 position; attribute vec3 normal; uniform mat4 mvp; uniform mat4 model; uniform float pointSize; varying vec3 vNormal; varying vec3 vWorld;
-void main(){ vec4 world = model * vec4(position, 1.0); vWorld = world.xyz; vNormal = mat3(model) * normal; gl_Position = mvp * vec4(position, 1.0); gl_PointSize = pointSize; }`;
-const fragmentShader = `precision mediump float; varying vec3 vNormal; varying vec3 vWorld; uniform vec3 color; uniform float alpha; uniform float emissive; uniform float lighting; uniform vec4 clipPlane; uniform float clipEnabled;
+const vertexShader = `attribute vec3 position; attribute vec3 normal; attribute vec3 vcolor; uniform mat4 mvp; uniform mat4 model; uniform float pointSize; uniform float useVertexColor; varying vec3 vNormal; varying vec3 vWorld; varying vec3 vertexColor;
+void main(){ vec4 world = model * vec4(position, 1.0); vWorld = world.xyz; vNormal = mat3(model) * normal; vertexColor = mix(vec3(1.0), vcolor, useVertexColor); gl_Position = mvp * vec4(position, 1.0); gl_PointSize = pointSize; }`;
+const fragmentShader = `precision mediump float; varying vec3 vNormal; varying vec3 vWorld; varying vec3 vertexColor; uniform vec3 color; uniform vec3 highlightColor; uniform float highlightMix; uniform float hasHighlight; uniform float alpha; uniform float emissive; uniform float lighting; uniform vec4 clipPlane; uniform float clipEnabled;
 void main(){
   if (clipEnabled > 0.5 && dot(clipPlane.xyz, vWorld) > clipPlane.w) discard;
   vec3 n = normalize(vNormal); if (!gl_FrontFacing) n = -n;
@@ -32,22 +37,28 @@ void main(){
   float ambient = lighting > 2.5 ? 0.38 : 0.5;
   float shade = lighting < 0.5 ? 1.0 : ambient + (1.0 - ambient) * diffuse;
   float spec = lighting > 2.5 ? pow(max(dot(n, normalize(l + vec3(0.0, 0.0, 1.0))), 0.0), 28.0) * 0.28 : 0.0;
-  vec3 glow = emissive * vec3(1.0, 0.86, 0.45);
-  gl_FragColor = vec4(color * shade + spec + glow, clamp(alpha + emissive * 0.4, 0.0, 1.0));
+  // State emission must brighten an item without washing the full surface to white.
+  vec3 glow = emissive * vec3(0.22, 0.19, 0.10);
+  vec3 base = color * vertexColor * shade + spec + glow;
+  float rim = pow(1.0 - abs(dot(n, normalize(vec3(0.0, 0.0, 1.0)))), 3.0);
+  vec3 highlighted = mix(base, highlightColor, clamp(highlightMix + rim * 0.55, 0.0, 0.9));
+  gl_FragColor = vec4(mix(base, highlighted, hasHighlight), clamp(alpha + emissive * 0.4, 0.0, 1.0));
 }`;
 const LIGHTING = { full: 3, simplified: 2, minimal: 1, none: 0 } as const;
 
 function rgb(value: string): [number, number, number] { const n = Number.parseInt(value.replace("#", ""), 16); return [(n >> 16 & 255) / 255, (n >> 8 & 255) / 255, (n & 255) / 255]; }
 
-export function WebGLScene({ definition, state, profile, reducedMotion, traceFlowId, dispatch, onPick, onDowngrade }: Props) {
+export function WebGLScene({ definition, state, profile, reducedMotion, traceFlowId, dispatch, onPick, onDowngrade, allowPerformanceDowngrade = true }: Props) {
   const canvas = useRef<HTMLCanvasElement>(null);
   const labels = useRef<HTMLDivElement>(null);
+  const motionStatus = useRef<HTMLDivElement>(null);
   const drag = useRef({ x: 0, y: 0, active: false, moved: 0 });
   const stateRef = useRef(state);
   const displayRef = useRef<FidelityState | undefined>(state.fidelity);
   const zoomRef = useRef(1);
   const frameRef = useRef<{ list: RenderList | null; viewProj: Mat4; width: number; height: number }>({ list: null, viewProj: IDENTITY, width: 1, height: 1 });
   const callbacks = useRef({ onDowngrade, reducedMotion, traceFlowId });
+  const requestDrawRef = useRef<() => void>(() => {});
   stateRef.current = state;
   callbacks.current = { onDowngrade, reducedMotion, traceFlowId };
 
@@ -60,8 +71,8 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
     gl.attachShader(program, compile(gl.VERTEX_SHADER, vertexShader)); gl.attachShader(program, compile(gl.FRAGMENT_SHADER, fragmentShader)); gl.linkProgram(program);
     if (!gl.getProgramParameter(program, gl.LINK_STATUS)) { callbacks.current.onDowngrade("context"); return; }
     gl.useProgram(program);
-    const attr = { position: gl.getAttribLocation(program, "position"), normal: gl.getAttribLocation(program, "normal") };
-    const uni = Object.fromEntries(["mvp", "model", "pointSize", "color", "alpha", "emissive", "lighting", "clipPlane", "clipEnabled"].map((name) => [name, gl.getUniformLocation(program, name)])) as Record<string, WebGLUniformLocation | null>;
+    const attr = { position: gl.getAttribLocation(program, "position"), normal: gl.getAttribLocation(program, "normal"), color: gl.getAttribLocation(program, "vcolor") };
+    const uni = Object.fromEntries(["mvp", "model", "pointSize", "color", "highlightColor", "highlightMix", "hasHighlight", "useVertexColor", "alpha", "emissive", "lighting", "clipPlane", "clipEnabled"].map((name) => [name, gl.getUniformLocation(program, name)])) as Record<string, WebGLUniformLocation | null>;
     const spec = definition.fidelity;
     const low = profile === "LOW";
     // Meshes are built once per geometry and profile, never per frame.
@@ -78,25 +89,67 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
       return mesh;
     };
     const lineBuffer = gl.createBuffer()!;
-    const drawPoints = (points: Vec3[], mode: number, color: string, alpha: number, size: number, viewProj: Mat4) => {
-      if (points.length === 0) return;
-      gl.bindBuffer(gl.ARRAY_BUFFER, lineBuffer); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(points.flat()), gl.DYNAMIC_DRAW);
+    const pointStorage = createPointBatchStorage();
+    let pointGpuCapacity = 0;
+    const flowStorage = createFlowBatchStorage();
+    const flowBuffers = Object.fromEntries(["lines", "particles", "traceNodes"].map((key) => [key, { positions: gl.createBuffer()!, colors: gl.createBuffer()!, capacity: 0 }])) as Record<"lines" | "particles" | "traceNodes", { positions: WebGLBuffer; colors: WebGLBuffer; capacity: number }>;
+    const uploadBatch = (batch: FlowVertexBatch, gpu: { positions: WebGLBuffer; colors: WebGLBuffer; capacity: number }) => {
+      if (gpu.capacity < batch.positions.length) {
+        gpu.capacity = batch.positions.length;
+        gl.bindBuffer(gl.ARRAY_BUFFER, gpu.positions); gl.bufferData(gl.ARRAY_BUFFER, gpu.capacity * Float32Array.BYTES_PER_ELEMENT, gl.DYNAMIC_DRAW);
+        gl.bindBuffer(gl.ARRAY_BUFFER, gpu.colors); gl.bufferData(gl.ARRAY_BUFFER, gpu.capacity * Float32Array.BYTES_PER_ELEMENT, gl.DYNAMIC_DRAW);
+      }
+      if (gpu.capacity > 0) {
+        gl.bindBuffer(gl.ARRAY_BUFFER, gpu.positions); gl.bufferSubData(gl.ARRAY_BUFFER, 0, batch.positions);
+        gl.bindBuffer(gl.ARRAY_BUFFER, gpu.colors); gl.bufferSubData(gl.ARRAY_BUFFER, 0, batch.colors);
+      }
+    };
+    const drawPoints = (markers: RenderMarker[], mode: number, color: string, alpha: number, size: number, viewProj: Mat4) => {
+      if (markers.length === 0) return;
+      writeMarkerPositions(markers, pointStorage);
+      if (pointGpuCapacity < pointStorage.positions.byteLength) {
+        pointGpuCapacity = pointStorage.positions.byteLength;
+        gl.bindBuffer(gl.ARRAY_BUFFER, lineBuffer); gl.bufferData(gl.ARRAY_BUFFER, pointGpuCapacity, gl.DYNAMIC_DRAW);
+      }
+      gl.bindBuffer(gl.ARRAY_BUFFER, lineBuffer); gl.bufferSubData(gl.ARRAY_BUFFER, 0, pointStorage.positions);
       gl.enableVertexAttribArray(attr.position); gl.vertexAttribPointer(attr.position, 3, gl.FLOAT, false, 0, 0);
       gl.disableVertexAttribArray(attr.normal); gl.vertexAttrib3f(attr.normal, 0, 0, 1);
+      gl.disableVertexAttribArray(attr.color); gl.vertexAttrib3f(attr.color, 1, 1, 1);
       gl.uniformMatrix4fv(uni.mvp, false, new Float32Array(viewProj)); gl.uniformMatrix4fv(uni.model, false, new Float32Array(IDENTITY));
-      gl.uniform3fv(uni.color, rgb(color)); gl.uniform1f(uni.alpha, alpha); gl.uniform1f(uni.emissive, 0); gl.uniform1f(uni.lighting, 0); gl.uniform1f(uni.clipEnabled, 0); gl.uniform1f(uni.pointSize, size);
-      gl.drawArrays(mode, 0, points.length);
+      gl.uniform3fv(uni.color, rgb(color)); gl.uniform3fv(uni.highlightColor, rgb(HIGHLIGHT_COLOR)); gl.uniform1f(uni.highlightMix, 0); gl.uniform1f(uni.hasHighlight, 0); gl.uniform1f(uni.useVertexColor, 0);
+      gl.uniform1f(uni.alpha, alpha); gl.uniform1f(uni.emissive, 0); gl.uniform1f(uni.lighting, 0); gl.uniform1f(uni.clipEnabled, 0); gl.uniform1f(uni.pointSize, size);
+      gl.drawArrays(mode, 0, markers.length);
+    };
+    const drawBatch = (batch: FlowVertexBatch, gpu: { positions: WebGLBuffer; colors: WebGLBuffer; capacity: number }, mode: number, alpha: number, size: number, viewProj: Mat4) => {
+      if (!batch.count) return;
+      uploadBatch(batch, gpu);
+      gl.bindBuffer(gl.ARRAY_BUFFER, gpu.positions); gl.enableVertexAttribArray(attr.position); gl.vertexAttribPointer(attr.position, 3, gl.FLOAT, false, 0, 0);
+      gl.bindBuffer(gl.ARRAY_BUFFER, gpu.colors); gl.enableVertexAttribArray(attr.color); gl.vertexAttribPointer(attr.color, 3, gl.FLOAT, false, 0, 0);
+      gl.disableVertexAttribArray(attr.normal); gl.vertexAttrib3f(attr.normal, 0, 0, 1);
+      gl.uniformMatrix4fv(uni.mvp, false, new Float32Array(viewProj)); gl.uniformMatrix4fv(uni.model, false, new Float32Array(IDENTITY));
+      gl.uniform3f(uni.color, 1, 1, 1); gl.uniform3fv(uni.highlightColor, rgb(HIGHLIGHT_COLOR)); gl.uniform1f(uni.highlightMix, 0); gl.uniform1f(uni.hasHighlight, 0); gl.uniform1f(uni.useVertexColor, 1);
+      gl.uniform1f(uni.alpha, alpha); gl.uniform1f(uni.emissive, 0); gl.uniform1f(uni.lighting, 0); gl.uniform1f(uni.clipEnabled, 0); gl.uniform1f(uni.pointSize, size);
+      gl.drawArrays(mode, 0, batch.count);
     };
 
     const fallbackPose: CameraPose = { target: [0, 0, 0], distance: 11, yaw: 0, pitch: 0 };
     let camera: CameraPose | null = null;
-    let frame = 0, last = performance.now(), labelTick = 0;
+    let frame = 0, last = performance.now(), labelTick = 0, reviewClockSeen = false;
+    let lastReviewTime: number | undefined;
     const frameTimes: number[] = [];
     let downgraded = false;
+    const scheduleDraw = () => { if (!frame) frame = requestAnimationFrame(draw); };
     const draw = (now: number) => {
-      const dt = Math.min(0.1, (now - last) / 1000); last = now;
+      frame = 0;
+      const reviewTime = (window as Window & { __labReviewClockSeconds?: number }).__labReviewClockSeconds;
+      if (reviewTime !== undefined && !reviewClockSeen) { labelTick = Number.NEGATIVE_INFINITY; reviewClockSeen = true; }
+      const dt = reviewTime === undefined
+        ? Math.min(0.1, (now - last) / 1000)
+        : lastReviewTime === undefined ? 0 : Math.min(0.1, Math.max(0, reviewTime - lastReviewTime));
+      last = now;
+      if (reviewTime !== undefined) lastReviewTime = reviewTime;
       frameTimes.push(dt * 1000); if (frameTimes.length > 120) frameTimes.shift();
-      if (!downgraded && profile !== "LOW" && shouldDowngrade(frameTimes)) { downgraded = true; callbacks.current.onDowngrade("performance"); }
+      if (allowPerformanceDowngrade && !downgraded && shouldDowngrade(frameTimes, downgradeFrameBudgetMs(profile))) { downgraded = true; callbacks.current.onDowngrade("performance"); }
       const current = stateRef.current, motionless = callbacks.current.reducedMotion;
       if (spec && current.fidelity) displayRef.current = easeDisplayState(spec, displayRef.current ?? current.fidelity, current.fidelity, dt, motionless);
       const list = buildRenderList({ definition, state: current, profile, displayFidelity: displayRef.current });
@@ -108,9 +161,11 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
       if (el.width !== w || el.height !== h) { el.width = w; el.height = h; }
       gl.viewport(0, 0, w, h); gl.enable(gl.DEPTH_TEST); gl.enable(gl.BLEND); gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
       gl.clearColor(0.035, 0.055, 0.11, 0); gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-      const viewProj = multiply(perspective(definition.scene.camera.fov, w / h, 0.1, 100), viewMatrix(camera));
+      const aspect = w / h;
+      const fov = fitHorizontalFieldOfView(definition.scene.camera.fov, aspect);
+      const viewProj = multiply(perspective(fov, aspect, 0.1, 100), viewMatrix(camera));
       frameRef.current = { list, viewProj, width: el.clientWidth, height: el.clientHeight };
-      const t = now / 1000;
+      const t = reviewTime ?? now / 1000;
       // Opaque first, then translucent without depth writes so cut-away glass and faded context blend correctly.
       const ordered = [...list.items].sort((a, b) => Number(a.alpha < 0.9) - Number(b.alpha < 0.9));
       for (const item of ordered) {
@@ -118,41 +173,73 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
         gl.depthMask(item.alpha >= 0.9);
         gl.bindBuffer(gl.ARRAY_BUFFER, mesh.position); gl.enableVertexAttribArray(attr.position); gl.vertexAttribPointer(attr.position, 3, gl.FLOAT, false, 0, 0);
         gl.bindBuffer(gl.ARRAY_BUFFER, mesh.normal); gl.enableVertexAttribArray(attr.normal); gl.vertexAttribPointer(attr.normal, 3, gl.FLOAT, false, 0, 0);
-        gl.uniformMatrix4fv(uni.mvp, false, new Float32Array(multiply(viewProj, item.matrix))); gl.uniformMatrix4fv(uni.model, false, new Float32Array(item.matrix));
-        const pulse = item.highlighted && list.budget.pulseHighlights && !motionless ? 0.12 + Math.sin(t * 4) * 0.08 : item.highlighted ? 0.12 : 0;
+        gl.disableVertexAttribArray(attr.color); gl.vertexAttrib3f(attr.color, 1, 1, 1); gl.uniform1f(uni.useVertexColor, 0);
+        const modelMatrix = item.spin ? spinMatrix(item.spin, t, motionless) : item.matrix;
+        gl.uniformMatrix4fv(uni.mvp, false, new Float32Array(multiply(viewProj, modelMatrix))); gl.uniformMatrix4fv(uni.model, false, new Float32Array(modelMatrix));
         const base = rgb(item.color);
-        gl.uniform3fv(uni.color, item.highlighted ? base.map((c) => Math.min(1, c + 0.12)) : base);
-        gl.uniform1f(uni.alpha, item.alpha); gl.uniform1f(uni.emissive, Math.max(item.emissive, pulse)); gl.uniform1f(uni.lighting, LIGHTING[list.budget.lighting]);
+        const pulse = item.highlighted && list.budget.pulseHighlights && !motionless ? Math.sin(t * 4) * 0.04 : 0;
+        gl.uniform3fv(uni.color, base); gl.uniform3fv(uni.highlightColor, rgb(HIGHLIGHT_COLOR));
+        gl.uniform1f(uni.highlightMix, item.highlighted ? highlightBaseMix(item.color) + pulse : 0); gl.uniform1f(uni.hasHighlight, item.highlighted ? 1 : 0);
+        gl.uniform1f(uni.alpha, item.highlighted ? Math.max(item.alpha, 0.65) : item.alpha); gl.uniform1f(uni.emissive, item.emissive); gl.uniform1f(uni.lighting, LIGHTING[list.budget.lighting]);
         gl.uniform1f(uni.clipEnabled, item.clip ? 1 : 0); if (item.clip) gl.uniform4f(uni.clipPlane, item.clip.normal[0], item.clip.normal[1], item.clip.normal[2], item.clip.offset);
         gl.uniform1f(uni.pointSize, 1);
         gl.drawArrays(gl.TRIANGLES, 0, mesh.count);
       }
       gl.depthMask(true);
-      for (const flow of list.flows) {
-        drawPoints(flow.points, gl.LINE_STRIP, flow.active ? flow.color : "#64748b", flow.active ? 0.75 : 0.5, 1, viewProj);
-        drawPoints(flowParticles(flow.points, flow.particleCount, flow.rate, flow.direction, t, motionless), gl.POINTS, flow.color, 1, (low ? 6 : 9) * dpr, viewProj);
-        if (callbacks.current.traceFlowId === flow.id) drawPoints(flow.nodes.filter((node) => node.traceable).map((node) => node.position), gl.POINTS, "#e2e8f0", 0.9, 12 * dpr, viewProj);
+      batchFlowGeometry(list, t, motionless, callbacks.current.traceFlowId, flowStorage);
+      // Process paths are instructional overlays. Letting solid mesh depth hide
+      // them made the flood spillway appear inactive in paused review frames.
+      // Draw their thin lines and fixed reduced-motion particle cues above
+      // solids, then restore depth testing for trace nodes and markers.
+      if (list.flows.length) {
+        gl.disable(gl.DEPTH_TEST);
+        drawBatch(flowStorage.lines, flowBuffers.lines, gl.LINES, 1, 1, viewProj);
+        drawBatch(flowStorage.particles, flowBuffers.particles, gl.POINTS, 1, (low ? 6 : 9) * dpr, viewProj);
+        gl.enable(gl.DEPTH_TEST);
       }
-      if (list.markers.length) drawPoints(list.markers.map((marker) => marker.position), gl.POINTS, "#67e8f9", 1, (list.budget.pulseHighlights && !motionless ? 12 + Math.sin(t * 5) * 3 : 12) * dpr, viewProj);
+      if (list.flows.length) drawBatch(flowStorage.traceNodes, flowBuffers.traceNodes, gl.POINTS, 1, 12 * dpr, viewProj);
+      if (list.markers.length) drawPoints(list.markers, gl.POINTS, MARKER_COLOR, 1, (list.budget.pulseHighlights && !motionless ? 12 + Math.sin(t * 5) * 3 : 12) * dpr, viewProj);
 
       // Labels are DOM text (sharp at any DPR) repositioned a few times per second rather than every frame.
-      if (labels.current && now - labelTick > 120) {
-        labelTick = now;
+      const labelNow = reviewTime ?? now;
+      if (labels.current && labelNow - labelTick > 120) {
+        labelTick = labelNow;
+        const status = list.motions.filter((motion) => motion.active).map((motion) => `${motion.label}: turning`).join(". ");
+        if (motionStatus.current && motionStatus.current.textContent !== status) motionStatus.current.textContent = status;
         const project = (p: Vec3) => { const c = transformPoint(viewProj, p); return c[2] > 1 ? null : { x: (c[0] * 0.5 + 0.5) * el.clientWidth, y: (0.5 - c[1] * 0.5) * el.clientHeight }; };
-        const entries = list.items.filter((item) => item.showLabel && item.inFocus && (!low || item.highlighted)).map((item) => ({ text: item.label, at: project(item.center) }));
+        const entries = [
+          ...list.items.filter((item) => item.showLabel && item.inFocus).map((item) => {
+            const center = item.spin ? transformPoint(spinMatrix(item.spin, t, motionless), [0, 0, 0]) : item.center;
+            const offset = item.labelOffset ?? [0, 0, 0];
+            return { text: item.label, at: project([center[0] + offset[0], center[1] + offset[1], center[2] + offset[2]]), title: undefined, glyph: false, mobileLabel: item.mobileLabel !== false };
+          }),
+          ...list.motions.filter((motion) => motion.active).map((motion) => ({ text: "↻", at: project(motion.center), title: `${motion.label}: turning`, glyph: true, mobileLabel: true })),
+        ];
         labels.current.replaceChildren(...entries.filter((entry) => entry.at).map((entry) => {
           const node = document.createElement("span");
           node.textContent = entry.text;
-          node.className = "pointer-events-none absolute -translate-x-1/2 -translate-y-[160%] whitespace-nowrap rounded-full bg-slate-950/70 px-2 py-0.5 text-[11px] font-semibold text-slate-100";
+          if (entry.title) { node.title = entry.title; node.setAttribute("aria-label", entry.title); node.setAttribute("role", "img"); }
+          node.className = entry.glyph ? "pointer-events-none absolute -translate-x-1/2 -translate-y-1/2 text-lg font-bold text-fuchsia-300 drop-shadow" : `pointer-events-none absolute -translate-x-1/2 -translate-y-[160%] whitespace-nowrap rounded-full bg-slate-950/70 px-2 py-0.5 text-[11px] font-semibold text-slate-100${entry.mobileLabel === false ? " max-[500px]:hidden" : ""}`;
           node.style.left = `${entry.at!.x}px`; node.style.top = `${entry.at!.y}px`;
           return node;
         }));
       }
-      frame = requestAnimationFrame(draw);
+      const fidelityMoving = !!(spec && current.fidelity && displayRef.current && !isSettled(displayRef.current, current.fidelity));
+      const cameraMoving = !motionless && (Math.abs(camera.distance - targetPose.distance) > 1e-4 || Math.abs(camera.yaw - targetPose.yaw) > 1e-4 || Math.abs(camera.pitch - targetPose.pitch) > 1e-4 || camera.target.some((value, index) => Math.abs(value - targetPose.target[index]) > 1e-4));
+      const flowMoving = list.flows.some((flow) => flow.active && flow.particleCount > 0);
+      const spinMoving = list.motions.some((motion) => motion.active);
+      const pulseMoving = list.budget.pulseHighlights && list.items.some((item) => item.highlighted);
+      // Review captures advance an authored virtual clock and need a frame for every tick.
+      // Learner sessions request frames only while something visible is moving.
+      if (shouldScheduleWebGLFrame({ reviewClockActive: reviewTime !== undefined, reducedMotion: motionless, fidelityMoving, cameraMoving, flowMoving, spinMoving, pulseMoving })) scheduleDraw();
     };
-    frame = requestAnimationFrame(draw);
-    return () => { cancelAnimationFrame(frame); meshes.forEach((mesh) => { gl.deleteBuffer(mesh.position); gl.deleteBuffer(mesh.normal); }); gl.deleteBuffer(lineBuffer); gl.deleteProgram(program); };
-  }, [definition, profile]);
+    requestDrawRef.current = scheduleDraw;
+    const resizeObserver = new ResizeObserver(scheduleDraw); resizeObserver.observe(el);
+    scheduleDraw();
+    return () => { requestDrawRef.current = () => {}; resizeObserver.disconnect(); cancelAnimationFrame(frame); meshes.forEach((mesh) => { gl.deleteBuffer(mesh.position); gl.deleteBuffer(mesh.normal); }); gl.deleteBuffer(lineBuffer); Object.values(flowBuffers).forEach((buffers) => { gl.deleteBuffer(buffers.positions); gl.deleteBuffer(buffers.colors); }); gl.deleteProgram(program); };
+  }, [definition, profile, allowPerformanceDowngrade]);
+
+  useEffect(() => { requestDrawRef.current(); }, [state, reducedMotion, traceFlowId]);
 
   const pick = (clientX: number, clientY: number, target: HTMLElement) => {
     const { list, viewProj, width, height } = frameRef.current; if (!list) return;
@@ -175,9 +262,10 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
           if (drag.current.moved > 6 && selected && definition.scene.objects.some((object) => object.id === selected)) dispatch({ type: "rotate", objectId: selected, delta: [dx * 0.012, dy * 0.012] });
         }}
         onPointerUp={(e) => { const wasClick = drag.current.moved < 6; drag.current.active = false; if (wasClick) pick(e.clientX, e.clientY, e.currentTarget); }}
-        onWheel={(e) => { if (!constraints) return; zoomRef.current = Math.min(constraints.maxDistance / constraints.minDistance, Math.max(0.5, zoomRef.current * (e.deltaY > 0 ? 1.08 : 0.92))); }}
+        onWheel={(e) => { if (!constraints) return; zoomRef.current = Math.min(constraints.maxDistance / constraints.minDistance, Math.max(0.5, zoomRef.current * (e.deltaY > 0 ? 1.08 : 0.92))); requestDrawRef.current(); }}
       />
       <div ref={labels} className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true" />
+      <div ref={motionStatus} className="sr-only" role="status" aria-live="polite" />
     </div>
   );
 }

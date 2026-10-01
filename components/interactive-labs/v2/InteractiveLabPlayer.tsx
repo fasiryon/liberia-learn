@@ -1,6 +1,6 @@
 "use client";
 import dynamic from "next/dynamic";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { getInteractiveLabDefinition } from "@/lib/interactive-labs/v2/registry";
 import { initializeLab, acceptLabAction } from "@/lib/interactive-labs/v2/kernel";
 import { resolveCapabilityProfile } from "@/lib/interactive-labs/v2/capabilities";
@@ -24,15 +24,43 @@ function usePrefersReducedMotion(): boolean {
   return reduced;
 }
 
-export function InteractiveLabPlayer({ labId = "g4-solid-figures", override }: { labId?: string; override?: CapabilityProfile }) {
+/**
+ * Review-only rendering of an unapproved lab for the Interactive Lab Production Team. Only the dev-gated
+ * /lab-review harness passes this; learner routes never do. It starts from a replayed scenario state,
+ * skips the intro, and exposes a dispatcher for deterministic capture. It records no evidence.
+ */
+export type LabReviewPreview = {
+  initialState: LabState;
+  onReady?: (api: { dispatch: (action: LabAction) => { ok: boolean; reason?: string } }) => void;
+};
+
+export function InteractiveLabPlayer({ labId = "g4-solid-figures", override, reviewPreview }: { labId?: string; override?: CapabilityProfile; reviewPreview?: LabReviewPreview }) {
   const definition = getInteractiveLabDefinition(labId);
-  const [state, setState] = useState<LabState>(() => initializeLab(definition ?? getInteractiveLabDefinition("g4-solid-figures")!));
+  const [state, setState] = useState<LabState>(() => reviewPreview ? structuredClone(reviewPreview.initialState) : initializeLab(definition ?? getInteractiveLabDefinition("g4-solid-figures")!));
   const [profile, setProfile] = useState<CapabilityProfile>(() => resolveCapabilityProfile({ requested: override, supportsWebGL: typeof window !== "undefined" && !!window.WebGLRenderingContext }));
   const [notice, setNotice] = useState<string | null>(null);
   const reducedMotion = usePrefersReducedMotion();
-  const [intro, setIntro] = useState(true);
+  const [intro, setIntro] = useState(!reviewPreview);
   const checks = useMemo(() => definition?.checks ?? [], [definition]);
-  if (!definition || definition.reviewState !== "APPROVED" || definition.approvalState !== "APPROVED") return <p className="p-6">This lab is not available.</p>;
+  const latest = useRef(state);
+  useEffect(() => {
+    latest.current = state;
+    if (reviewPreview && typeof window !== "undefined") {
+      const reviewWindow = window as Window & { __labReviewStateRevision?: number };
+      reviewWindow.__labReviewStateRevision = (reviewWindow.__labReviewStateRevision ?? 0) + 1;
+    }
+  }, [state, reviewPreview]);
+  const reviewDispatch = useCallback((action: LabAction) => {
+    if (!definition) return { ok: false, reason: "Unknown lab." };
+    const result = acceptLabAction(definition, latest.current, action);
+    if ("reason" in result) return { ok: false, reason: result.reason };
+    latest.current = result.state;
+    setState(result.state);
+    return { ok: true };
+  }, [definition]);
+  const onReviewReady = reviewPreview?.onReady;
+  useLayoutEffect(() => { onReviewReady?.({ dispatch: reviewDispatch }); }, [onReviewReady, reviewDispatch]);
+  if (!definition || (!reviewPreview && (definition.reviewState !== "APPROVED" || definition.approvalState !== "APPROVED"))) return <p className="p-6">This lab is not available.</p>;
 
   const dispatch = (action: LabAction) => setState((current) => { const result = acceptLabAction(definition, current, action); return result.ok ? result.state : current; });
   const activeCheck = checks.find((check) => !state.completedChecks.includes(check.id));
@@ -57,7 +85,7 @@ export function InteractiveLabPlayer({ labId = "g4-solid-figures", override }: {
         <div className="flex items-center gap-2 text-sm">
           <span>{progress}% complete</span>
           <label className="sr-only" htmlFor="profile">Visual quality</label>
-          <select id="profile" value={profile} onChange={(event) => { setNotice(null); setProfile(event.target.value as CapabilityProfile); }} className="rounded-full border border-white/15 bg-white/10 px-3 py-2 text-white"><option>HIGH</option><option>STANDARD</option><option>LOW</option><option>FALLBACK_2D</option></select>
+          <select id="profile" value={profile} onChange={(event) => { setNotice(null); setProfile(event.target.value as CapabilityProfile); }} className="min-h-11 rounded-full border border-white/15 bg-white/10 px-3 py-2 text-white"><option>HIGH</option><option>STANDARD</option><option>LOW</option><option>FALLBACK_2D</option></select>
         </div>
       </div>
       {notice && <p role="status" className="border-b border-white/10 bg-amber-300/10 px-5 py-2 text-xs text-amber-100">{notice}</p>}
@@ -65,13 +93,13 @@ export function InteractiveLabPlayer({ labId = "g4-solid-figures", override }: {
         <div className="bg-[radial-gradient(circle_at_50%_38%,#263d72,#080d20_68%)]">
           {profile === "FALLBACK_2D"
             ? <Fallback2D definition={definition} state={state} reducedMotion={reducedMotion} traceFlowId={traceFlowId} dispatch={dispatch} onPick={onPick} />
-            : <WebGLScene definition={definition} state={state} profile={profile} reducedMotion={reducedMotion} traceFlowId={traceFlowId} dispatch={dispatch} onPick={onPick} onDowngrade={onDowngrade} />}
+            : <WebGLScene definition={definition} state={state} profile={profile} reducedMotion={reducedMotion} traceFlowId={traceFlowId} dispatch={dispatch} onPick={onPick} onDowngrade={onDowngrade} allowPerformanceDowngrade={!reviewPreview} />}
         </div>
         <aside className="lg:max-h-[clamp(420px,62vh,640px)] lg:overflow-y-auto border-l border-white/10 bg-white/[.03] p-5">
           <LabControlPanel definition={definition} state={state} activeCheck={activeCheck} dispatch={dispatch} />
           <div className="mt-8 flex gap-2">
-            <button type="button" onClick={() => dispatch({ type: "reset" })} className="rounded-full border border-white/15 px-4 py-2 text-sm">Reset</button>
-            {definition.scene.objects.length > 0 && <button type="button" onClick={() => dispatch({ type: "focus", objectId: state.selectedObjectId ?? definition.scene.objects[0].id })} className="rounded-full border border-white/15 px-4 py-2 text-sm">Focus</button>}
+            <button type="button" onClick={() => dispatch({ type: "reset" })} className="min-h-11 rounded-full border border-white/15 px-4 py-2 text-sm">Reset</button>
+            {definition.scene.objects.length > 0 && <button type="button" onClick={() => dispatch({ type: "focus", objectId: state.selectedObjectId ?? definition.scene.objects[0].id })} className="min-h-11 rounded-full border border-white/15 px-4 py-2 text-sm">Focus</button>}
           </div>
         </aside>
       </div>

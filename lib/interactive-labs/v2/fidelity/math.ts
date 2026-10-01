@@ -16,6 +16,12 @@ export function perspective(fov: number, aspect: number, near: number, far: numb
   const f = 1 / Math.tan(fov * Math.PI / 360), nf = 1 / (near - far);
   return [f / aspect, 0, 0, 0, 0, f, 0, 0, 0, 0, (far + near) * nf, -1, 0, 0, 2 * far * near * nf, 0];
 }
+/** Expands the vertical field of view on portrait canvases so a wide lesson scene keeps its landscape width. */
+export function fitHorizontalFieldOfView(fovDegrees: number, aspect: number, referenceAspect = 1.45): number {
+  if (!Number.isFinite(aspect) || aspect <= 0 || aspect >= referenceAspect) return fovDegrees;
+  const referenceHalfWidth = Math.tan(fovDegrees * Math.PI / 360) * referenceAspect;
+  return 2 * Math.atan(referenceHalfWidth / aspect) * 180 / Math.PI;
+}
 export function translate(x: number, y: number, z: number): Mat4 { return [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, x, y, z, 1]; }
 export function scaleMatrix(x: number, y: number, z: number): Mat4 { return [x, 0, 0, 0, 0, y, 0, 0, 0, 0, z, 0, 0, 0, 0, 1]; }
 export function rotate(x: number, y: number, z: number): Mat4 {
