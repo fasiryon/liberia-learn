@@ -13,6 +13,36 @@ function component(id: string, label: string, geometry: "box" | "cylinder" | "co
   return { id, label, geometry, transform: tr(position, scale), material: mat(color), ...extra };
 }
 
+// Valley decor (HIGH/STANDARD only; LOW drops decor): the plant sits in terrain instead of floating above a flat
+// floor. Deterministic heights; no state, labels or picking (RX-003). Heights are relative to the ground plane.
+const GROUND_Y = -2.25;
+const smooth = (a: number, b: number, t: number) => { const u = Math.min(1, Math.max(0, (t - a) / (b - a))); return u * u * (3 - 2 * u); };
+/** Terrain height above GROUND_Y at world (x, z): river floodplain, powerhouse terrace, city rise, headpond plateau, hills. */
+export function valleyHeight(x: number, z: number): number {
+  let h = 0.45;                                                      // floodplain just under the downstream river
+  h += 0.6 * smooth(1.2, -0.2, z);                                   // terrace behind the river (powerhouse)
+  h += 1.3 * smooth(2.6, 4.8, x) * smooth(0.9, 0.2, z);              // city rise, kept clear of the river channel
+  h += 4.05 * smooth(-0.7, -1.7, z) * (1 - smooth(4.2, 5.6, x));     // plateau at the headpond level behind the dam
+  h += 0.5 * smooth(2.6, 4.2, z);                                    // far bank
+  h += (2.4 + 0.8 * Math.sin(x * 0.55)) * smooth(-5.5, -9.5, z);     // hills behind the headpond
+  h += 2.2 * smooth(-9, -15, x) + 2.2 * smooth(10, 16, x);           // valley sides
+  return Math.round(h * 1000) / 1000;
+}
+const VALLEY = { rows: 24, columns: 48, size: [36, 20] as const, centre: [0.5, -1.5] as const, anchorDrop: 4 };
+const FOREST_ANCHOR: [number, number, number] = [0, -8, 0];
+const valleyHeights = Array.from({ length: VALLEY.rows * VALLEY.columns }, (_, i) => {
+  const r = Math.floor(i / VALLEY.columns), c = i % VALLEY.columns;
+  return VALLEY.anchorDrop + valleyHeight(VALLEY.centre[0] + (c / (VALLEY.columns - 1) - 0.5) * VALLEY.size[0], VALLEY.centre[1] + (r / (VALLEY.rows - 1) - 0.5) * VALLEY.size[1]);
+});
+const treePositions = Array.from({ length: 56 }, (_, i) => {
+  // Deterministic placement on the hills and valley sides (golden-angle spread, no randomness).
+  const t = i * 2.39996323, x = -16 + ((i * 7.31) % 34), z = -6.2 - ((i * 3.17 + Math.sin(t) * 2) % 4.6);
+  const sideX = i % 4 === 0 ? (i % 8 === 0 ? -11.5 - (i % 3) : 11 + (i % 3)) : x;
+  const sideZ = i % 4 === 0 ? -1 + ((i * 1.3) % 6) : z;
+  return [sideX - FOREST_ANCHOR[0], GROUND_Y + valleyHeight(sideX, sideZ) - FOREST_ANCHOR[1], sideZ - FOREST_ANCHOR[2]] as [number, number, number];
+});
+const treeProfile: readonly (readonly [number, number])[] = [[0, 0], [0.34, 0.18], [0.05, 1.05], [0, 1.1]];
+
 /** One shared control colour so LOW batches every control part into one draw; the labelled chips carry meaning (not colour). */
 const CONTROL_COLOR = "#e2e8f0";
 
@@ -25,7 +55,7 @@ const components: HighFidelitySpec["components"] = [
   component("tailrace", "Tailrace", "rectangular-prism", [-1.5, -1.15, 0.8], [2.5, 0.16, 0.52], "#2f8fe8", { labelOffset: [-0.3, -0.45, 0], material: mat("#2f8fe8", 0.08) }),
   component("river-downstream", "Saint Paul River", "rectangular-prism", [0, -1.8, 1.6], [5.8, 0.12, 0.5], "#2f8fe8", { labelOffset: [1.7, -0.3, 0], material: mat("#2f8fe8", 0.08) }),
   component("spillway-gate", "Spillway gate", "box", [1.0, 2.4, -1.0], [0.65, 0.8, 0.18], "#9fb2c6", { labelOffset: [0.55, 0.45, 0], mobileLabel: false }),
-  component("powerhouse", "Powerhouse", "rectangular-prism", [0.3, 0.15, 0.1], [4.5, 1.7, 1.5], "#c9c2b4", { material: mat("#c9c2b4", 0.55), labelOffset: [-2.0, -1.0, 0], mobileLabel: false }),
+  component("powerhouse", "Powerhouse", "rectangular-prism", [0.3, 0.15, 0.1], [4.5, 1.7, 1.5], "#d8d2c4", { material: mat("#d8d2c4", 0.32), labelOffset: [-2.0, -1.0, 0], mobileLabel: false }),
   ...UNIT_X.flatMap((x, i) => {
     const unit = i + 1;
     const offsets: Array<[number, number, number]> = [[-1.8, 0.65, 0], [-0.45, 1.8, 0], [0.5, 0.55, 0], [1.15, 1.3, 0]];
@@ -65,6 +95,14 @@ const components: HighFidelitySpec["components"] = [
   component("bank-upper", "", "rectangular-prism", [-5, -0.8, -2.4], [4, 0.16, 0.16], "#b06a42", { detail: "decor", selectable: false }),
   ...[0, 1, 2].map((n) => component(`transmission-pylon-${n + 1}`, `Transmission pylon ${n + 1}`, "cone", [3.3 + n * 0.7, 1.4, -1.2], [0.2, 0.85, 0.2], "#5f6d7e", { selectable: false })),
   ...[0, 1, 2, 3, 4, 5].map((n) => component(`forest-${n + 1}`, "", "cone", [-5.3 + n * 0.45, 0.4, -2.0], [0.28, 0.55, 0.28], "#4a7a45", { detail: "decor", selectable: false })),
+  { ...component("valley-terrain", "", "box", [VALLEY.centre[0], GROUND_Y - VALLEY.anchorDrop, VALLEY.centre[1]], [1, 1, 1], "#8aa676", { detail: "decor", selectable: false }),
+    geometryVariants: { HIGH: { kind: "heightfield", rows: VALLEY.rows, columns: VALLEY.columns, size: VALLEY.size, heights: valleyHeights }, STANDARD: { kind: "sameAs", profile: "HIGH" },
+      LOW: { kind: "heightfield", rows: 2, columns: 2, size: VALLEY.size, heights: [0, 0, 0, 0] },
+      FALLBACK_2D: { kind: "polygon", points: [[-18, VALLEY.anchorDrop], [18, VALLEY.anchorDrop], [18, VALLEY.anchorDrop + 0.15], [-18, VALLEY.anchorDrop + 0.15]], semanticLabel: "Saint Paul River valley floor" } } },
+  { ...component("valley-forest", "", "cone", FOREST_ANCHOR, [1, 1, 1], "#3f6b3a", { detail: "decor", selectable: false }),
+    geometryVariants: { HIGH: { kind: "scatter", seed: 23, prototype: { kind: "lathe", profile: treeProfile, radialSegments: 8 }, transforms: treePositions.map((position, i) => ({ position, rotation: [0, i * 0.7, 0] as [number, number, number], scale: [0.9 + (i % 3) * 0.15, 0.9 + (i % 4) * 0.2, 0.9 + (i % 3) * 0.15] as [number, number, number] })) },
+      STANDARD: { kind: "sameAs", profile: "HIGH" }, LOW: { kind: "lathe", profile: treeProfile, radialSegments: 4 },
+      FALLBACK_2D: { kind: "polygon", points: [[-14.3, 9], [-13.7, 9], [-14, 10]], semanticLabel: "forest" } } },
 ];
 
 const tracePositions: Array<[number, string, [number, number, number], string?]> = [
