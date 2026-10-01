@@ -49,7 +49,7 @@ export function applyEnvironmentRig(renderer: THREE.WebGLRenderer, scene: THREE.
     renderer.toneMapping = THREE.NeutralToneMapping;
     renderer.toneMappingExposure = 1;
     renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.shadowMap.type = THREE.PCFShadowMap;
     renderer.shadowMap.autoUpdate = false;
     sun.castShadow = true;
     const size = options.finePointer ? 2048 : 1024;

@@ -31,6 +31,9 @@ import sharp from "sharp";
 import { getInteractiveLabDefinition } from "../../lib/interactive-labs/v2/registry";
 import { getLabReviewScenarioSet } from "../../lib/interactive-labs/v2/review/referenceScenarios";
 import { LAB_REVIEW_PROFILES, validateScenarioSet, type LabReviewScenario } from "../../lib/interactive-labs/v2/review/scenarios";
+
+// Software-GL (SwiftShader) frames of the three.js HIGH renderer can take ~10 s each; captures are composition evidence only.
+const SCREENSHOT_TIMEOUT_MS = 120_000;
 import type { CapabilityProfile } from "../../lib/interactive-labs/v2/types";
 
 const VIEWPORTS = {
@@ -155,7 +158,7 @@ async function contactSheet(browser: Browser, frames: { file: string; label: str
   const page = await browser.newPage({ viewport: { width: 1600, height: 900 } });
   const cells = frames.map((frame) => `<figure><img src="data:image/png;base64,${readFileSync(frame.file).toString("base64")}"/><figcaption>${frame.label}</figcaption></figure>`).join("");
   await page.setContent(`<html><body style="margin:0;background:#0b1020;color:#e2e8f0;font:14px system-ui"><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:8px">${cells}</div><style>figure{margin:0}img{width:100%;display:block;border:1px solid #334155}figcaption{padding:2px 4px}</style></body></html>`);
-  await page.screenshot({ path: out, fullPage: true });
+  await page.screenshot({ path: out, fullPage: true, timeout: SCREENSHOT_TIMEOUT_MS });
   await page.close();
 }
 
@@ -258,7 +261,7 @@ async function main() {
       const issues = watch(page);
       const opened = await openScenario(page, baseUrl, labId, scenario.id, profile, false, true);
       const still = path.join(out, `${base}.png`);
-      await page.screenshot({ path: still, fullPage: true });
+      await page.screenshot({ path: still, fullPage: true, timeout: SCREENSHOT_TIMEOUT_MS });
       captures.push({ file: still, scenario: scenario.id, storyboardScene: scenario.storyboardScene, stage: scenario.stage, profile, viewport, kind: "still", reducedMotion: stillReducedMotion });
       await context.close();
       runs.push({ scenario: scenario.id, profile, viewport, kind: "still", ...opened, ...issues });
@@ -279,7 +282,7 @@ async function main() {
           const section = motionPage.locator("[data-lab-review-ready] section").first();
           const bounds = await section.boundingBox();
           if (!bounds) throw new Error(`Review player has no bounds for ${scenario.id} frame ${index}.`);
-          const pageImage = await motionPage.screenshot({ fullPage: true });
+          const pageImage = await motionPage.screenshot({ fullPage: true, timeout: SCREENSHOT_TIMEOUT_MS });
           const left = Math.max(0, Math.floor(bounds.x)), top = Math.max(0, Math.floor(bounds.y));
           const width = Math.max(1, Math.ceil(bounds.width)), height = Math.max(1, Math.ceil(bounds.height));
           await sharp(pageImage).extract({ left, top, width, height }).png().toFile(file);

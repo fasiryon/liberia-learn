@@ -18,12 +18,12 @@ const CONTROL_COLOR = "#e2e8f0";
 
 const components: HighFidelitySpec["components"] = [
   // Water components are the instructional (pickable, labelled) parts; RX-005b surfaces draw the water itself.
-  component("headpond", "Headpond", "rectangular-prism", [-1.5, 2.9, -2.5], [4.7, 0.18, 1.4], "#2f8fe8", { labelOffset: [-0.35, 0.9, 0], material: mat("#2f8fe8", 0.3) }),
+  component("headpond", "Headpond", "rectangular-prism", [-1.5, 2.9, -2.5], [4.7, 0.18, 1.4], "#2f8fe8", { labelOffset: [-0.35, 0.9, 0], material: mat("#2f8fe8", 0.08) }),
   component("dam", "Dam", "rectangular-prism", [-1.5, 2.15, -1.2], [4.8, 1.5, 0.38], "#c9c2b4", { labelOffset: [-2.8, -0.15, 0] }),
   component("intake-1", "Intake", "box", [-1.5, 1.6, -0.9], [0.54, 0.28, 0.5], "#9fb2c6", { labelOffset: [-0.1, 0.65, 0] }),
   { ...pipeKit({ id: "penstock-1", label: "Penstock", transform: tr([-1.5, 0.72, -0.35], [0.2, 1.25, 0.2]), color: "#6f86a0", points: [[0,-1,0],[0,1,0]], radius: 1 }), labelOffset: [-2.6, -1.1, 0] },
-  component("tailrace", "Tailrace", "rectangular-prism", [-1.5, -1.15, 0.8], [2.5, 0.16, 0.52], "#2f8fe8", { labelOffset: [-0.3, -0.45, 0], material: mat("#2f8fe8", 0.3) }),
-  component("river-downstream", "Saint Paul River", "rectangular-prism", [0, -1.8, 1.6], [5.8, 0.12, 0.5], "#2f8fe8", { labelOffset: [1.7, -0.3, 0], material: mat("#2f8fe8", 0.3) }),
+  component("tailrace", "Tailrace", "rectangular-prism", [-1.5, -1.15, 0.8], [2.5, 0.16, 0.52], "#2f8fe8", { labelOffset: [-0.3, -0.45, 0], material: mat("#2f8fe8", 0.08) }),
+  component("river-downstream", "Saint Paul River", "rectangular-prism", [0, -1.8, 1.6], [5.8, 0.12, 0.5], "#2f8fe8", { labelOffset: [1.7, -0.3, 0], material: mat("#2f8fe8", 0.08) }),
   component("spillway-gate", "Spillway gate", "box", [1.0, 2.4, -1.0], [0.65, 0.8, 0.18], "#9fb2c6", { labelOffset: [0.55, 0.45, 0], mobileLabel: false }),
   component("powerhouse", "Powerhouse", "rectangular-prism", [0.3, 0.15, 0.1], [4.5, 1.7, 1.5], "#c9c2b4", { material: mat("#c9c2b4", 0.55), labelOffset: [-2.0, -1.0, 0], mobileLabel: false }),
   ...UNIT_X.flatMap((x, i) => {
@@ -51,14 +51,14 @@ const components: HighFidelitySpec["components"] = [
   ...([[49, "Dry"], [176, "Early rains"], [303, "Heavy rains"], [430, "Rainy, full"], [557, "Flood"]] as const).map(([value, name], i) =>
     component(`gauge-band-${i + 1}`, `Season: ${name}`, "box", [-5.35, 2.75 + i * 0.29, -1.75], [0.16, 0.12, 0.05], CONTROL_COLOR, { showLabel: false, control: { kind: "set-variable", variableId: "riverFlow", value, label: name } })),
   // Powerhouse control desk: units start and stop in the fixed dispatch order, so the desk offers next/last only.
-  component("desk-start-next", "Start the next unit", "box", [-0.15, -0.72, 1.35], [0.2, 0.12, 0.14], CONTROL_COLOR, { showLabel: false, control: { kind: "step-variable", variableId: "unitsOnline", direction: 1, label: "Start next unit" } }),
-  component("desk-stop-last", "Stop the last unit", "box", [0.35, -0.72, 1.35], [0.2, 0.12, 0.14], CONTROL_COLOR, { showLabel: false, control: { kind: "step-variable", variableId: "unitsOnline", direction: -1, label: "Stop last unit" } }),
+  component("desk-start-next", "Start the next unit", "box", [-0.15, -0.72, 1.35], [0.2, 0.12, 0.14], CONTROL_COLOR, { showLabel: false, control: { kind: "step-variable", variableId: "unitsOnline", direction: 1, label: "Start next unit", group: "desk" } }),
+  component("desk-stop-last", "Stop the last unit", "box", [0.35, -0.72, 1.35], [0.2, 0.12, 0.14], CONTROL_COLOR, { showLabel: false, control: { kind: "step-variable", variableId: "unitsOnline", direction: -1, label: "Stop last unit", group: "desk" } }),
   // Switchyard breakers, in the same frame as the city they feed.
-  component("breaker-hospital", "Hospital breaker", "box", [2.6, -0.45, 0.55], [0.14, 0.2, 0.1], CONTROL_COLOR, { showLabel: false, control: { kind: "toggle-variable", variableId: "feederHospital", label: "Hospital on/off" } }),
-  component("breaker-homes-less", "Homes: one block off", "box", [2.95, -0.45, 0.55], [0.12, 0.16, 0.1], CONTROL_COLOR, { showLabel: false, control: { kind: "step-variable", variableId: "homesBlocks", direction: -1, label: "Homes −" } }),
-  component("breaker-homes-more", "Homes: one block on", "box", [3.2, -0.45, 0.55], [0.12, 0.16, 0.1], CONTROL_COLOR, { showLabel: false, control: { kind: "step-variable", variableId: "homesBlocks", direction: 1, label: "Homes +" } }),
-  component("breaker-shops-less", "Shops: one block off", "box", [3.55, -0.45, 0.55], [0.12, 0.16, 0.1], CONTROL_COLOR, { showLabel: false, control: { kind: "step-variable", variableId: "shopsBlocks", direction: -1, label: "Shops −" } }),
-  component("breaker-shops-more", "Shops: one block on", "box", [3.8, -0.45, 0.55], [0.12, 0.16, 0.1], CONTROL_COLOR, { showLabel: false, control: { kind: "step-variable", variableId: "shopsBlocks", direction: 1, label: "Shops +" } }),
+  component("breaker-hospital", "Hospital breaker", "box", [2.6, -0.45, 0.55], [0.14, 0.2, 0.1], CONTROL_COLOR, { showLabel: false, control: { kind: "toggle-variable", variableId: "feederHospital", label: "Hospital on/off", group: "switchyard" } }),
+  component("breaker-homes-less", "Homes: one block off", "box", [2.95, -0.45, 0.55], [0.12, 0.16, 0.1], CONTROL_COLOR, { showLabel: false, control: { kind: "step-variable", variableId: "homesBlocks", direction: -1, label: "Homes −", group: "switchyard" } }),
+  component("breaker-homes-more", "Homes: one block on", "box", [3.2, -0.45, 0.55], [0.12, 0.16, 0.1], CONTROL_COLOR, { showLabel: false, control: { kind: "step-variable", variableId: "homesBlocks", direction: 1, label: "Homes +", group: "switchyard" } }),
+  component("breaker-shops-less", "Shops: one block off", "box", [3.55, -0.45, 0.55], [0.12, 0.16, 0.1], CONTROL_COLOR, { showLabel: false, control: { kind: "step-variable", variableId: "shopsBlocks", direction: -1, label: "Shops −", group: "switchyard" } }),
+  component("breaker-shops-more", "Shops: one block on", "box", [3.8, -0.45, 0.55], [0.12, 0.16, 0.1], CONTROL_COLOR, { showLabel: false, control: { kind: "step-variable", variableId: "shopsBlocks", direction: 1, label: "Shops +", group: "switchyard" } }),
   component("distance-break", "Approx. 30 km to Monrovia", "panel", [7.8, 2.1, 0.2], [0.5, 0.08, 0.04], "#f8fafc", { labelOffset: [-1.2, 1.4, 0], mobileLabel: false }),
   // Decorative valley scenery: no labels, state, picking, or instructional references.
   component("bank-lower", "", "rectangular-prism", [-3, 0.6, -2.2], [5, 0.18, 0.18], "#4a7a45", { detail: "decor", selectable: false }),
@@ -144,13 +144,13 @@ const spec: HighFidelitySpec = {
   motions: [1, 2, 3, 4].map((unit) => ({ id: `unit-${unit}-spin`, label: `Unit ${unit} rotation`, componentIds: [`unit-${unit}`, `unit-${unit}-marker`, ...(unit === 3 ? [...UNIT3_STACK] : [])], pivot: [UNIT_X[unit - 1], -0.15, 0.1] as [number, number, number], axis: "y" as const, rpm: SYNCHRONOUS_RPM, symmetryOrder: 1, activeWhen: { componentId: `unit-${unit}`, statuses: ["generating"] } })),
   flows,
   camera: { defaultPresetId: "valley", presets: [
-    { id: "valley", label: "Whole valley", target: [1.3, 0.7, 0], distance: 15, yaw: -0.2, pitch: 0.16 },
+    { id: "valley", label: "Whole valley", target: [0.6, 0.6, 0], distance: 16, yaw: -0.55, pitch: 0.42 },
     { id: "water-path", label: "Water route", target: [-1.3, 0.7, 0], distance: 8, yaw: 0.15, pitch: 0.2 },
     { id: "powerhouse-section", label: "Powerhouse section", target: [0.3, 0.2, 0.1], distance: 7, yaw: 0.2, pitch: 0.1 },
     { id: "unit-bench", label: "Unit 3 bench", target: [0.9, 0.2, 0.1], distance: 5, yaw: 0.2, pitch: 0.1 },
     { id: "exploded-bench", label: "Exploded unit 3", target: [0.9, 0.15, 0.1], distance: 9, yaw: 0.2, pitch: 0.1 },
     { id: "grid-city", label: "Power and city", target: [5, 1, 0], distance: 8, yaw: -0.1, pitch: 0.12 },
-  ], constraints: { minDistance: 4, maxDistance: 20, minPitch: -0.4, maxPitch: 0.8, minYaw: -1, maxYaw: 1 } },
+  ], constraints: { minDistance: 2.5, maxDistance: 28, minPitch: 0.02, maxPitch: 1.25, minYaw: -1.75, maxYaw: 1.75 } },
   guidedPath: [
     { id: "meet", prompt: "Meet the plant: the Saint Paul River feeds a narrow headpond behind the dam. Find the powerhouse, the switchyard and the city it supplies.", cameraPresetId: "valley" },
     { id: "trace", prompt: "Follow the water from the headpond, through a turbine, and back to the river.", cameraPresetId: "water-path", highlightIds: ["headpond", "penstock-1", "tailrace"] },

@@ -2,10 +2,11 @@
 // action its panel twin dispatches, so validation and evidence classification are unchanged (RAW_OBSERVATION).
 import type { FidelityAction, FidelityState, HighFidelitySpec } from "./types";
 
+/** `group` places related controls in one chip row (default: one row per variable). */
 export type SceneControl =
-  | { kind: "set-variable"; variableId: string; value: number; label: string }
-  | { kind: "step-variable"; variableId: string; direction: 1 | -1; label: string }
-  | { kind: "toggle-variable"; variableId: string; label: string };
+  | { kind: "set-variable"; variableId: string; value: number; label: string; group?: string }
+  | { kind: "step-variable"; variableId: string; direction: 1 | -1; label: string; group?: string }
+  | { kind: "toggle-variable"; variableId: string; label: string; group?: string };
 
 /**
  * The action a control would dispatch in this state, or null when it would do nothing (already at the value
@@ -44,4 +45,22 @@ export function validateControls(spec: HighFidelitySpec): string[] {
     if (control.kind === "toggle-variable" && variable.kind !== "toggle") errors.push(`control_toggle_not_toggle:${component.id}`);
   }
   return errors;
+}
+
+/** A row of related in-scene controls (e.g. the five season bands) drawn as one chip group at their mean position. */
+export type ControlGroupLayout<T extends { id: string; center: [number, number, number]; control?: { label: string } }> = { key: string; anchor: [number, number, number]; items: T[] };
+
+/** Group control items by their declared group (default: the variable) so chips never stack on each other. */
+export function layoutControlGroups<T extends { id: string; center: [number, number, number]; control?: { label: string; group?: string; variableId?: string } }>(items: readonly T[]): ControlGroupLayout<T>[] {
+  const groups = new Map<string, T[]>();
+  for (const item of items) {
+    if (!item.control) continue;
+    const key = item.control.group ?? item.control.variableId ?? item.id;
+    groups.set(key, [...(groups.get(key) ?? []), item]);
+  }
+  return [...groups.entries()].map(([key, members]) => ({
+    key,
+    anchor: [0, 1, 2].map((axis) => members.reduce((sum, member) => sum + member.center[axis], 0) / members.length) as [number, number, number],
+    items: members,
+  }));
 }

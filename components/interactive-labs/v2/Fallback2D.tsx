@@ -9,6 +9,7 @@ import { convexHull, silhouetteSamples } from "./meshes";
 import type { ScenePick } from "./picking";
 import { useDisplayFidelity } from "./useDisplayFidelity";
 import { SURFACE_SHALLOW } from "@/lib/interactive-labs/v2/fidelity/surfaces";
+import { layoutControlGroups } from "@/lib/interactive-labs/v2/fidelity/controls";
 
 // Fixed precision keeps server and client SVG output identical (no hydration mismatch from float noise).
 const round = (value: number) => Math.round(value * 1000) / 1000;
@@ -66,13 +67,36 @@ export function Fallback2D({ definition, state, reducedMotion, traceFlowId, disp
           if(labelVisible)placedLabels.push({x:labelX,y:labelY,halfWidth:labelHalfWidth});
           const pick: ScenePick = { kind: "item", item };
           return (
-            <g key={item.id} opacity={item.alpha < 0.5 && item.inFocus ? 0.45 : item.alpha} {...(item.detail === "decor" ? { pointerEvents: "none" as const } : item.selectable && item.inFocus ? { role: "button", tabIndex: 0, "aria-label": item.label, "aria-pressed": item.control ? item.control.selected : item.highlighted, ...(item.control && !item.control.action ? { "aria-disabled": true } : {}), ...(item.control ? { "data-lab-control": item.id } : {}), onClick: () => onPick(pick), onKeyDown: activate(pick), className: "cursor-pointer outline-none focus-visible:[&>polygon]:stroke-cyan-200" } : {})}>
+            <g key={item.id} opacity={item.alpha < 0.5 && item.inFocus ? 0.45 : item.alpha} {...(item.detail === "decor" ? { pointerEvents: "none" as const } : item.control && item.inFocus ? { "aria-hidden": true, onClick: () => onPick(pick), className: "cursor-pointer" } : item.selectable && item.inFocus ? { role: "button", tabIndex: 0, "aria-label": item.label, "aria-pressed": item.highlighted, onClick: () => onPick(pick), onKeyDown: activate(pick), className: "cursor-pointer outline-none focus-visible:[&>polygon]:stroke-cyan-200" } : {})}>
               {item.selectable && item.inFocus && item.detail !== "decor" && <polygon data-lab-touch-target points={hull.map((p) => p.join(",")).join(" ")} fill="transparent" stroke="#fff" strokeOpacity={0.001} strokeWidth={48} vectorEffect="non-scaling-stroke" pointerEvents="stroke" aria-hidden="true" />}
               {item.emissive > 0 && <circle cx={item.center[0]} cy={-item.center[1]} r={0.08 * item.emissive + 0.04} fill="#fde68a" opacity={Math.min(0.08, item.emissive * 0.08)} filter="url(#glow)" />}
               <polygon points={hull.map((p) => p.join(",")).join(" ")} fill={item.highlighted ? mixHexColor(item.color, HIGHLIGHT_COLOR, 0.2) : item.color} stroke={item.highlighted ? HIGHLIGHT_COLOR : "#0f172a"} strokeWidth={item.highlighted ? 3 : 1} vectorEffect="non-scaling-stroke" />
               {labelVisible && <text x={labelX} y={labelY} textAnchor="middle" fontSize={0.3 * screenScale} fill={list.environment === "DAYLIGHT" ? "#111827" : "#f8fafc"} className={`pointer-events-none select-none${item.mobileLabel === false ? " max-[500px]:hidden" : ""}`} style={{ paintOrder: "stroke", stroke: list.environment === "DAYLIGHT" ? "#f8fafc" : "#020617", strokeWidth: 0.06 * screenScale }}>{item.label}</text>}
-              {/* RX-005c: control parts carry visible action text on 2D too (A14 affordance). */}
-              {item.control && item.inFocus && <text x={item.center[0]} y={-item.center[1] - 0.22 * screenScale} textAnchor="middle" fontSize={0.2 * screenScale} fontWeight={700} fill={item.control.selected ? "#92400e" : list.environment === "DAYLIGHT" ? "#0f172a" : "#f8fafc"} opacity={item.control.action || item.control.selected ? 1 : 0.5} className="pointer-events-none">{item.control.label}</text>}
+            </g>
+          );
+        })}
+        {/* RX-005c on FALLBACK_2D: one row of labelled chips per control group (A14); each chip is a 44 px touch
+            target (non-scaling invisible stroke) and a keyboard button with pressed / disabled state. */}
+        {layoutControlGroups(ordered.filter((item) => item.control && item.inFocus)).map((group) => {
+          const widths = group.items.map((item) => (item.control!.label.length * 0.13 + 0.38) * screenScale);
+          const gap = 0.1 * screenScale, chipHeight = 0.46 * screenScale;
+          const total = widths.reduce((sum, w) => sum + w, 0) + gap * (widths.length - 1);
+          let x = group.anchor[0] - total / 2;
+          const y = -group.anchor[1] - 0.6 * screenScale - chipHeight;
+          return (
+            <g key={`controls-${group.key}`} role="group" aria-label={group.key === "switchyard" ? "Switchyard breakers" : group.key === "desk" ? "Powerhouse control desk" : group.key === "riverFlow" ? "River gauge: choose a season to test" : group.key}>
+              {group.items.map((item, index) => {
+                const control = item.control!, w = widths[index], left = x; x += w + gap;
+                const pick: ScenePick = { kind: "item", item };
+                return (
+                  <g key={item.id} role="button" tabIndex={control.action ? 0 : -1} aria-label={item.label} aria-pressed={control.selected} aria-disabled={!control.action} data-lab-control={item.id}
+                    onClick={() => onPick(pick)} onKeyDown={activate(pick)} className={control.action ? "cursor-pointer outline-none focus-visible:[&>rect]:stroke-[3px]" : "cursor-not-allowed"}>
+                    <rect x={left} y={y} width={w} height={chipHeight} rx={chipHeight / 2} fill="transparent" stroke="#fff" strokeOpacity={0.001} strokeWidth={44} vectorEffect="non-scaling-stroke" aria-hidden="true" />
+                    <rect x={left} y={y} width={w} height={chipHeight} rx={chipHeight / 2} fill={control.selected ? "#fcd34d" : "#ffffff"} stroke="#0f172a" strokeWidth={1.5} vectorEffect="non-scaling-stroke" opacity={control.action || control.selected ? 1 : 0.5} />
+                    <text x={left + w / 2} y={y + chipHeight * 0.68} textAnchor="middle" fontSize={0.24 * screenScale} fontWeight={700} fill="#0f172a" className="pointer-events-none">{control.label}</text>
+                  </g>
+                );
+              })}
             </g>
           );
         })}
