@@ -10,24 +10,6 @@ const EXCEPTIONS: Record<string, { owner: string; reason: string; environment: s
     environment: "development",
     expiry: "2026-12-31",
   },
-  "scripts/wave4fix-repro-create.ts": {
-    owner: "platform-engineering",
-    reason: "local reproduction fixture",
-    environment: "development",
-    expiry: "2026-09-30",
-  },
-  "scripts/wave4fix-cleanup-orphan.ts": {
-    owner: "platform-engineering",
-    reason: "local reproduction cleanup",
-    environment: "development",
-    expiry: "2026-09-30",
-  },
-  "scripts/live-verify-asset-pipeline.ts": {
-    owner: "platform-engineering",
-    reason: "ephemeral staging asset-pipeline fixture",
-    environment: "staging-test",
-    expiry: "2026-09-30",
-  },
 };
 
 const directMutation = /\bcurriculumContent\s*\.\s*(?:create|update|updateMany|upsert|delete|deleteMany)\s*\(/g;
