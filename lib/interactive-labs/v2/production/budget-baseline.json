@@ -63,9 +63,9 @@
     "HIGH": {
       "offlinePackageBytes": 38092,
       "triangles": 2352,
-      "drawCalls": 57,
+      "drawCalls": 77,
       "particles": 180,
-      "maxTexturePx": 0
+      "maxTexturePx": 2048
     },
     "STANDARD": {
       "offlinePackageBytes": 38092,

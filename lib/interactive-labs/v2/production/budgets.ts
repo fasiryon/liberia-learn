@@ -84,6 +84,7 @@ export type LabBudgetMeasurement = Record<CapabilityProfile, { offlinePackageByt
 export function measureLabBudget(definition: InteractiveLabDefinition<LabState>, states: LabState[], assets: LabAssetBytes[] = []): LabBudgetMeasurement {
   const definitionBytes = buildOfflineManifest(definition).bytes;
   const result = {} as LabBudgetMeasurement;
+  const daylight = definition.fidelity?.environment === "DAYLIGHT";
   for (const profile of Object.keys(RENDER_BUDGETS) as CapabilityProfile[]) {
     const profileAssets = assets.filter((asset) => asset.profiles.includes(profile));
     let triangles = 0, drawCalls = 0, particles = 0;
@@ -105,19 +106,27 @@ export function measureLabBudget(definition: InteractiveLabDefinition<LabState>,
       // planned by planLowBatches. Surfaces: one mesh each in ThreeScene; one shared triangle batch on LOW.
       const plan = planLowBatches(list);
       const itemDraws = plan.batches.length + plan.singles.length;
+      // A7: HIGH daylight redraws a sun shadow pass when casters move; the worst frame is main pass + shadow pass.
+      const shadowDraws = profile === "HIGH" && daylight
+        ? plan.batches.length + plan.singles.filter((item) => !item.spin && item.alpha >= 0.9 && item.detail !== "decor").length
+        : 0;
       drawCalls = Math.max(drawCalls, svg ? 0 : profile === "LOW"
         ? plan.drawCalls + (activeSurfaces.length ? 1 : 0)
-        : itemDraws + 1 + threeFlowDraws + threeMarkerDraw + activeSurfaces.length);
+        : itemDraws + 1 + threeFlowDraws + threeMarkerDraw + activeSurfaces.length + shadowDraws);
       particles = Math.max(particles, list.flows.reduce((sum, flow) => sum + flow.particleCount, 0));
     }
     result[profile] = {
       offlinePackageBytes: definitionBytes + profileAssets.reduce((sum, asset) => sum + asset.bytes, 0),
       triangles, drawCalls, particles,
-      maxTexturePx: profileAssets.reduce((max, asset) => Math.max(max, asset.maxTexturePx ?? 0), 0),
+      // The HIGH daylight shadow map is a runtime texture (A7): up to 2048 px on fine-pointer devices.
+      maxTexturePx: Math.max(profile === "HIGH" && daylight ? DAYLIGHT_SHADOW_MAP_PX : 0, profileAssets.reduce((max, asset) => Math.max(max, asset.maxTexturePx ?? 0), 0)),
     };
   }
   return result;
 }
+
+/** Largest runtime shadow map ThreeScene allocates for a DAYLIGHT lab on HIGH (fine pointer); 1024 otherwise. */
+export const DAYLIGHT_SHADOW_MAP_PX = 2048;
 
 /** Budget violations and regressions against a committed baseline. Empty means the lab passes. */
 export function checkLabBudget(labId: string, measured: LabBudgetMeasurement, baseline?: LabBudgetMeasurement): string[] {
