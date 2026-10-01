@@ -10,7 +10,7 @@ Updated 2026-09-26 on branch `feat/g4-math-curriculum-review-revisions-v1` (base
 |---|---|
 | Release `lr-moe-g4-math-fractions-2026.1` | PUBLISHED/APPROVED in code, identity `de256495ec6f72fe8160179331c7f891d0574a2087a21163fbe28b93f9d88540`. **Unchanged** (pinned by `__tests__/learning-authority/g4-math-release-2026-2.test.ts`). |
 | Lesson `ll-g4-math-fractions-equal-parts-2026.1` v1.0.0 | Bound by 2026.1. Payload sha256 `3138edc3...f447` unchanged. **Not in production** (0 rows, read-only check 2026-09-26). |
-| Lesson `ll-g4-math-fractions-equal-parts-2026.2` v1.2.0 | New candidate (supersedes the unreviewed v1.1.0): a fraction is equal parts of a whole or part of a set from the opening; parts of a set taught throughout; governed end-of-lesson check assesses part of a set; fractions greater than one moved to an optional extension. Payload sha256 `7f6faf3133b258771c0d5222488d81709058df7d419de6f6bd7eb68d59d615e9`. PENDING founder review (reviewer recommendation READY_FOR_FOUNDER_APPROVAL, not a decision). |
+| Lesson `ll-g4-math-fractions-equal-parts-2026.2` v1.2.0 | New candidate (supersedes the unreviewed v1.1.0): a fraction is equal parts of a whole or part of a set from the opening; parts of a set taught throughout; governed end-of-lesson check assesses part of a set; fractions greater than one moved to an optional extension. Payload sha256 `404de6f02a454151f2e5744ab18686d423834e737a1350cf95ecc94d41417f82` (canonical key-sorted JSON; the earlier `7f6faf31...` value hashed the same payload in authored key order and is void). PENDING founder review (reviewer recommendation READY_FOR_FOUNDER_APPROVAL, not a decision). |
 | Release `lr-moe-g4-math-2026.2` | Candidate, composed by `composeGrade4MathRelease2026_2` in `lib/learning-authority/releases/grade4Math2026_2.ts`. Today `IN_REVIEW/PENDING`, which `validateOntologyRelease` refuses. Not registered in `publishedReleases.ts`. |
 | Review ledger | 0/44 decided. Nothing is founder-approved in the ledger. Reviewer recommendations (CPR-2026-09-26, separate file): 44/44 READY_FOR_FOUNDER_APPROVAL. |
 | Target `LR-MATH-G4_6-02` | Not in production. Spec `lr-math-g4_6-02.target.json`, `verificationStatus PARTIAL`. |
@@ -36,14 +36,14 @@ With only the fractions addition approved, the composed release is:
 | ITEM (carried) | g4-frac-diagnostic-equal-parts@1.0.0 | 3c73bd555847 |
 | ITEM (carried) | g4-frac-practice-equivalence@1.0.0 | bd851cc72d99 |
 | ITEM (carried) | g4-frac-diagnostic-compare@1.0.0 | 50dbae78c2e1 |
-| LESSON | ll-g4-math-fractions-equal-parts-2026.2@1.2.0 | 7f6faf3133b2 |
+| LESSON | ll-g4-math-fractions-equal-parts-2026.2@1.2.0 | 404de6f02a45 |
 | ITEM | g4-frac-practice-part-of-whole@1.0.0 | c923ad0e8073 |
 | ITEM | g4-frac-practice-part-of-set@1.0.0 | 584c13ad0cfc |
 | ITEM | g4-frac-practice-unequal-parts@1.0.0 | 99b5933e8477 |
 | ITEM | g4-frac-check-denominator-meaning@1.0.0 | 52b155054a83 |
 | ITEM | g4-frac-check-part-of-set@1.0.0 | 69979f8bf211 |
 
-Approvable identity for that composition: `1a95cab355e2bac77e3aebb2c27a11e9ba46eb84f6dc7401ac33c54c204a895e` (was `2e790d58...` for the unreviewed v1.1.0 composition; that identity is void). Any later change to the lesson, the items or the ledger-selected set gives a different identity, and an approval of this one no longer executes.
+Approvable identity for that composition: `08b983215643f4fe99477e1c0d65f9b1f70f21fc71bdecfe040982d728945101` (lesson payloads are hashed as key-sorted canonical JSON so the stored jsonb row matches). The superseded identities `e8839952f194d3b3a3eb5eeb3b4b5a3c530c4c55b611f944b19eea35d5b62f41` and `1a95cab355e2bac77e3aebb2c27a11e9ba46eb84f6dc7401ac33c54c204a895e` (and the earlier `2e790d58...` identity for the unreviewed v1.1.0 composition) are void. Any later change to the lesson, the items or the ledger-selected set gives a different identity, and an approval of this one no longer executes.
 
 **Code work required before 2026.2 can be registered** (each is a reviewed PR, none done yet):
 
@@ -70,7 +70,7 @@ Founder chooses **one** path (decision D1):
 
 | Aspect | Detail |
 |---|---|
-| Precondition (repo) | `review-ledger.json` entry `...-obj4`: `decision APPROVE`, `reviewer` = founder name, `reviewedAt`, `reviewedContentId` = the chosen contentId. Written by the founder, never by tooling. |
+| Precondition (repo) | `review-ledger.json` entry `...-obj4`: `decision APPROVE`, `reviewer` = founder name, `reviewedAt`, and `reviewedContentId`, `reviewedContentVersion`, `reviewedPayloadSha256` matching the chosen lesson exactly. Written by the founder, never by tooling. |
 | Precondition (prod, read-only) | `select count(*) from "CurriculumContent" where "contentId" = '<contentId>';` expect 0 (or an identical row from a prior partial run). Founder `User.id` exists: `select id, email, role from "User" where id = '<id>';` |
 | Dry run | `npx tsx scripts/author-grade4-fractions-authority.ts --lesson=<contentId>` prints payload sha256, idempotency keys and whether the founder review is recorded. Touches no database. |
 | Apply (founder) | `DATABASE_URL=<prod> LIBERIALEARN_FOUNDER_REVIEWER_ID=<founder User.id> CONFIRM_PRODUCTION_WRITE=<contentId> npx tsx scripts/author-grade4-fractions-authority.ts --lesson=<contentId> --apply` |

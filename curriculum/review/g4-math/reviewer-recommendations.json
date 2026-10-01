@@ -227,7 +227,7 @@
       "reviewedContent": {
         "contentId": "ll-g4-math-read-write-numbers-to-100000-2026.1",
         "version": "0.1.0",
-        "payloadSha256": "2dc47abde1ab3d2351a9c82e0bbe65a8030e58b0ada746a7a73562e8aefa1777"
+        "payloadSha256": "a01d3572a0d4757fe262e412ef1a51b5cbcf38165cedfda120339e770604f92b"
       },
       "decisionsApplied": [
         "CPR-2026-09-26-R01"
@@ -242,7 +242,7 @@
       "reviewedContent": {
         "contentId": "ll-g4-math-compare-order-numbers-to-100000-2026.1",
         "version": "0.1.0",
-        "payloadSha256": "58560bb8a7a0eee5df451dbb1b2dccc1c944a427eb836bf44fd1e8e88bdcac93"
+        "payloadSha256": "37a18b7f77281e9ec3adf419b9dbc735d9a11612fab87ea96227fb534210fe89"
       },
       "decisionsApplied": [],
       "productGaps": [],
@@ -253,7 +253,7 @@
       "reviewedContent": {
         "contentId": "ll-g4-math-rounding-whole-numbers-2026.1",
         "version": "0.1.0",
-        "payloadSha256": "117ef8bce623393601e0b81c209bd72beb2203a73381aebb54e3a5da1c4272ca"
+        "payloadSha256": "380c92eb404e64ff6a67ec5f349d0e8c6e4033b39ffdc3b9b061cc0c7891be67"
       },
       "decisionsApplied": [],
       "productGaps": [],
@@ -264,7 +264,7 @@
       "reviewedContent": {
         "contentId": "ll-g4-math-add-subtract-population-data-2026.1",
         "version": "0.1.0",
-        "payloadSha256": "129db94ef65e82335defe9a71ebd2cd8c37d9b0c1a13fd3bcf29ab4c48eabf80"
+        "payloadSha256": "8f996781777e38009fdf57c7d9347e2cb204e737b0316fe0358be5b2c936f659"
       },
       "decisionsApplied": [
         "CPR-2026-09-26-P1",
@@ -278,7 +278,7 @@
       "reviewedContent": {
         "contentId": "ll-g4-math-multiplication-facts-properties-2026.1",
         "version": "0.1.0",
-        "payloadSha256": "1c400bec6e6daaae6597b56c90f6e680a87c926b232b45311b919fbb89b1d2e9"
+        "payloadSha256": "8fc8d2fa656f6548ab84ef3acd1a3a02f315fc40aa72955595399058ab77a14f"
       },
       "decisionsApplied": [],
       "productGaps": [],
@@ -289,7 +289,7 @@
       "reviewedContent": {
         "contentId": "ll-g4-math-multiply-multiples-of-10-2026.1",
         "version": "0.1.0",
-        "payloadSha256": "9af6a086e806f8b6f56479c4496e2c67225fa7647004f459839d030ac5c0aac6"
+        "payloadSha256": "20a29c19df31a8ecb9dc143728cf527f0bd59e0a173099ed618041377c7ad5e5"
       },
       "decisionsApplied": [],
       "productGaps": [],
@@ -300,7 +300,7 @@
       "reviewedContent": {
         "contentId": "ll-g4-math-multiply-by-one-digit-2026.1",
         "version": "0.1.0",
-        "payloadSha256": "34245c86f9c4a356ed8abbbb648fca03af50b825174d53b1c96080b16284bab7"
+        "payloadSha256": "c20ddb50d505c7f6e399e40c82b83b43f94e691aa2f5681ca9aea889688a63cc"
       },
       "decisionsApplied": [
         "CPR-2026-09-26-R03"
@@ -315,7 +315,7 @@
       "reviewedContent": {
         "contentId": "ll-g4-math-divide-by-one-digit-2026.1",
         "version": "0.1.0",
-        "payloadSha256": "ceda2a0f5df426cd7165afe2f4e6e4fb70db3203d359e3aa6a5076d1a6ab8bc8"
+        "payloadSha256": "18622729389d5fc58d46724e7176d511004a85341fd6f1a655cfdfe6b7d0fdc9"
       },
       "decisionsApplied": [],
       "productGaps": [],
@@ -326,7 +326,7 @@
       "reviewedContent": {
         "contentId": "ll-g4-math-divide-zero-in-quotient-2026.1",
         "version": "0.1.0",
-        "payloadSha256": "779fb8e8b6ffa3fb5936a066756866e49f9c3769a35cec604544b35fd2c42611"
+        "payloadSha256": "0d23b73e3be5cb661e53a49d449650b0cb7cc97736f521e6efe0498facefb81a"
       },
       "decisionsApplied": [],
       "productGaps": [],
@@ -337,7 +337,7 @@
       "reviewedContent": {
         "contentId": "ll-g4-math-division-word-problems-2026.1",
         "version": "0.1.0",
-        "payloadSha256": "c466ea6287fcd7c9482ab5892e6efb8beae79ce18238f5199ed4ea225392cd4a"
+        "payloadSha256": "9bbddd74def664bbb7fd342f0e193efe16a9a9d8cfe78fc931f32a47b2ae97b8"
       },
       "decisionsApplied": [],
       "productGaps": [],
@@ -348,7 +348,7 @@
       "reviewedContent": {
         "contentId": "ll-g4-math-even-and-odd-numbers-2026.1",
         "version": "0.1.0",
-        "payloadSha256": "d67d1042f0280bb34670e219f942e002a5feb9e893de89260d723a057e96924b"
+        "payloadSha256": "b99ac7fd3efafd2675fb38948165cab6c1a964e63624dfafa87d27f84cd84ef1"
       },
       "decisionsApplied": [],
       "productGaps": [],
@@ -359,7 +359,7 @@
       "reviewedContent": {
         "contentId": "ll-g4-math-factors-and-multiples-2026.1",
         "version": "0.1.0",
-        "payloadSha256": "d9963da184eeb18365655da9cef3e0813f326c7557fbe97166d15092d679d311"
+        "payloadSha256": "d459af97f15f8857d4a02efe2eea1bf82d2d185d4260edda0717ee7fb2cff1ca"
       },
       "decisionsApplied": [
         "CPR-2026-09-26-R04"
@@ -372,7 +372,7 @@
       "reviewedContent": {
         "contentId": "ll-g4-math-lcm-and-gcf-2026.1",
         "version": "0.1.0",
-        "payloadSha256": "b44a01b48f8217cb936707566d6532acc3de93e6bbeb88c8f086f7ddc1ada2a7"
+        "payloadSha256": "3c85efed774e381b8d925e07996601597f5c29e3ac725cacab5b8ba2e113e07c"
       },
       "decisionsApplied": [
         "CPR-2026-09-26-R04"
@@ -385,7 +385,7 @@
       "reviewedContent": {
         "contentId": "ll-g4-math-fractions-equal-parts-2026.2",
         "version": "1.2.0",
-        "payloadSha256": "7f6faf3133b258771c0d5222488d81709058df7d419de6f6bd7eb68d59d615e9"
+        "payloadSha256": "404de6f02a454151f2e5744ab18686d423834e737a1350cf95ecc94d41417f82"
       },
       "decisionsApplied": [
         "CPR-2026-09-26-R05"
@@ -400,7 +400,7 @@
       "reviewedContent": {
         "contentId": "ll-g4-math-equivalent-fractions-2026.1",
         "version": "0.1.0",
-        "payloadSha256": "a97c281dfbf604ef931d4bbdd63e564d33ce3d6f29346534d80db1134b3de00d"
+        "payloadSha256": "2a53656a8ff3a1ce1ac0f2efbf5174e988c3823770678e20e8897cb4745dbb70"
       },
       "decisionsApplied": [],
       "productGaps": [],
@@ -411,7 +411,7 @@
       "reviewedContent": {
         "contentId": "ll-g4-math-simplifying-fractions-2026.1",
         "version": "0.1.0",
-        "payloadSha256": "5afd16da2e3c29314ef4cb0ed6ef60b1e8b536a4a25dd5c1755efa30d2208576"
+        "payloadSha256": "aa0c9f45b0115e6fc3ec6909f282739de6b00182fc1cb90933bef89a264aa9e1"
       },
       "decisionsApplied": [],
       "productGaps": [],
@@ -422,7 +422,7 @@
       "reviewedContent": {
         "contentId": "ll-g4-math-adding-fractions-2026.1",
         "version": "0.1.0",
-        "payloadSha256": "b99f69b88f7bf143f555a5be32933b8ce2f48056bc34e70c9b2e0250eff72355"
+        "payloadSha256": "fb80848fed07455953ffaf74dc1dbaf41b44e35fe705c839d4751766eab199be"
       },
       "decisionsApplied": [
         "CPR-2026-09-26-R06"
@@ -435,7 +435,7 @@
       "reviewedContent": {
         "contentId": "ll-g4-math-subtracting-fractions-2026.1",
         "version": "0.1.0",
-        "payloadSha256": "d6e6c18e774508c6dcca0be5ad6c0b873da2f332d3f8adf9ecb8104b332815b0"
+        "payloadSha256": "1f7da8236348307bd1bc1615dbc608996c8beb8472774f6ab35336d5fbf31cd8"
       },
       "decisionsApplied": [
         "CPR-2026-09-26-R07"
@@ -448,7 +448,7 @@
       "reviewedContent": {
         "contentId": "ll-g4-math-multi-step-problems-2026.1",
         "version": "0.1.0",
-        "payloadSha256": "8dd15953cee58437aed77ab0e0080bf9f4371a702de9a908c9d3c5144089f563"
+        "payloadSha256": "555da3bfd403ae29972ba585b5f1139a147d0f0a61621850d3bb4ab122851ba0"
       },
       "decisionsApplied": [],
       "productGaps": [],
@@ -459,7 +459,7 @@
       "reviewedContent": {
         "contentId": "ll-g4-math-multiply-tens-by-tens-2026.1",
         "version": "0.1.0",
-        "payloadSha256": "6130851c11704212a2758ee2badcb6ece44b31dc4dbb01c8c129ac55c9a35866"
+        "payloadSha256": "93e7c6c54d487a57919dd50c061abb22a8e9b62c59e25f3a9a4fce8344861b37"
       },
       "decisionsApplied": [],
       "productGaps": [],
@@ -470,7 +470,7 @@
       "reviewedContent": {
         "contentId": "ll-g4-math-estimate-products-2026.1",
         "version": "0.1.0",
-        "payloadSha256": "acb507d5c60720703aa588c717c7f58b7b57ad62969e5adcc8b489dc31783a70"
+        "payloadSha256": "dad7e2f5627d74b464d10e9415bbfbc1ad9c36b898cc87060d59de9ce7dbb830"
       },
       "decisionsApplied": [],
       "productGaps": [],
@@ -481,7 +481,7 @@
       "reviewedContent": {
         "contentId": "ll-g4-math-multiply-by-two-digit-2026.1",
         "version": "0.1.0",
-        "payloadSha256": "1dccb423ce7139ab9c8cd40b37964b1abdfe8c3927b085e471c924a12e1ac66b"
+        "payloadSha256": "84889ff6113e26e7d8638c3cd96e95a34b05ff48964848d5f6c9b7140260c449"
       },
       "decisionsApplied": [],
       "productGaps": [],
@@ -492,7 +492,7 @@
       "reviewedContent": {
         "contentId": "ll-g4-math-divide-multiples-mentally-2026.1",
         "version": "0.1.0",
-        "payloadSha256": "6ecebcf1d40402e029b1676f7b7b0614814d120f0cff2ce06bf5b87c9c20bb32"
+        "payloadSha256": "85fd6af5172079e4f6d819dde5c76dadc34baa67a233833f3546f7154c22312b"
       },
       "decisionsApplied": [],
       "productGaps": [],
@@ -503,7 +503,7 @@
       "reviewedContent": {
         "contentId": "ll-g4-math-estimate-quotients-2026.1",
         "version": "0.1.0",
-        "payloadSha256": "f1386c9225d3d3aed07ae2f535a22375de5590d738480e0304093fa17bb825b5"
+        "payloadSha256": "fce4d52f4f964192cc64ed1303d07fc23a36db95f189d727f20dc1d416d77a8d"
       },
       "decisionsApplied": [],
       "productGaps": [],
@@ -514,7 +514,7 @@
       "reviewedContent": {
         "contentId": "ll-g4-math-divide-by-two-digit-2026.1",
         "version": "0.1.0",
-        "payloadSha256": "85558092b9de488ecab4e5824612d7cdd6cfce601d6ab763a9e58d6bbc40ceaf"
+        "payloadSha256": "140f39f5e8ac3a4a3617934176399c6670b5beca175fa6bea233949060810910"
       },
       "decisionsApplied": [],
       "productGaps": [],
@@ -525,7 +525,7 @@
       "reviewedContent": {
         "contentId": "ll-g4-math-read-write-decimals-hundredths-2026.1",
         "version": "0.1.0",
-        "payloadSha256": "82aba61a28426c2e775b54cf11f6fe17cc44d8acf0a9d835c3523d5651c7f7fd"
+        "payloadSha256": "57dc380561a78ac8b73bbd14568f2400b652430f6c232714c52abc83f4f6188a"
       },
       "decisionsApplied": [],
       "productGaps": [],
@@ -536,7 +536,7 @@
       "reviewedContent": {
         "contentId": "ll-g4-math-compare-order-decimals-2026.1",
         "version": "0.1.0",
-        "payloadSha256": "1bde912750d87bc41dd4371c52256d3676a459e066432523435709f8c5ee8e37"
+        "payloadSha256": "d4b57725d514e4b3c41026694d3973b658a413e7894f7dc23c2f9e749b3bd780"
       },
       "decisionsApplied": [],
       "productGaps": [],
@@ -547,7 +547,7 @@
       "reviewedContent": {
         "contentId": "ll-g4-math-estimating-time-2026.1",
         "version": "0.1.0",
-        "payloadSha256": "935edfbf86f164331887d4c255dfc5020e5ea203b070f0c69d28720b88d97c70"
+        "payloadSha256": "30cdd37037b8e7b6f16d3755ed662f023504b08dc54fdb6016507102f3e0e1a8"
       },
       "decisionsApplied": [],
       "productGaps": [],
@@ -558,7 +558,7 @@
       "reviewedContent": {
         "contentId": "ll-g4-math-elapsed-time-2026.1",
         "version": "0.1.0",
-        "payloadSha256": "90ac87d0cc90490eece3724eb53551b6597c176deb0ec899589803b1b77b59d0"
+        "payloadSha256": "e1e8b84dab3ec00d9cb38ccb80a4f1b8953b7a1216418179f5a291ba531ef433"
       },
       "decisionsApplied": [],
       "productGaps": [
@@ -571,7 +571,7 @@
       "reviewedContent": {
         "contentId": "ll-g4-math-estimate-customary-length-2026.1",
         "version": "0.1.0",
-        "payloadSha256": "205dd90e839d3e594116b17aae91c918d441f1186606f5fb1334e7666f61719d"
+        "payloadSha256": "7c0f4524410c005af2038afc674315dfbe8fe0223684cfce7a117de01623b4ab"
       },
       "decisionsApplied": [],
       "productGaps": [],
@@ -582,7 +582,7 @@
       "reviewedContent": {
         "contentId": "ll-g4-math-measure-customary-length-2026.1",
         "version": "0.1.0",
-        "payloadSha256": "8fa3e417b2235ee1eec1244e5ccc763913dee8c3397fa5a64991b96d2de77d7d"
+        "payloadSha256": "a5f1f03b2f57cb0370ef92f4cd7f65647ed1b9d75239df79dafd6677ce93ea19"
       },
       "decisionsApplied": [],
       "productGaps": [],
@@ -593,7 +593,7 @@
       "reviewedContent": {
         "contentId": "ll-g4-math-estimate-customary-mass-capacity-2026.1",
         "version": "0.1.0",
-        "payloadSha256": "9bea45b5f58750e369922e438e835efd9aa5388e8b0a5cefb93250bc9fb9bb8c"
+        "payloadSha256": "5a7b8277b4ee378b67047af65b608047a7a709af1388bacbcc9c80888ba65394"
       },
       "decisionsApplied": [
         "CPR-2026-09-26-P5",
@@ -607,7 +607,7 @@
       "reviewedContent": {
         "contentId": "ll-g4-math-estimate-metric-units-2026.1",
         "version": "0.1.0",
-        "payloadSha256": "28eaf833a8f14b5046d7c35a7506a4d40cb75c5c27eed59e4e1580cab10264de"
+        "payloadSha256": "0d282a3af89237550a20246f2fada4e863c1aa48cf41a743b5c549cd2657c4ad"
       },
       "decisionsApplied": [
         "CPR-2026-09-26-R08"
@@ -620,7 +620,7 @@
       "reviewedContent": {
         "contentId": "ll-g4-math-convert-metric-units-2026.1",
         "version": "0.1.0",
-        "payloadSha256": "9f4397e58a7ed2af8e420a483aa3d2cd15bdeaaf14067c8246fb980bf5cf00f1"
+        "payloadSha256": "0cb758bb8d96aaf5f02c455b3c0253fefb3f31f5b13c667524356a549cbb6ced"
       },
       "decisionsApplied": [],
       "productGaps": [],
@@ -631,7 +631,7 @@
       "reviewedContent": {
         "contentId": "ll-g4-math-add-subtract-measurements-2026.1",
         "version": "0.1.0",
-        "payloadSha256": "6718735b9fe41b9e2e8f86f10b8a964b4bc8f9dde2e9c57809acc2189821d549"
+        "payloadSha256": "9fa4d1daa65e79780ef71f3b77b04e83dcac31d7a9043cdaab0d8d20ccae669f"
       },
       "decisionsApplied": [
         "CPR-2026-09-26-R09"
@@ -644,7 +644,7 @@
       "reviewedContent": {
         "contentId": "ll-g4-math-perimeter-area-rectangles-2026.1",
         "version": "0.1.0",
-        "payloadSha256": "495bf2f254b84b10322eda30df65ca004e279ca2c9acb5fd5975f3012cb80c8c"
+        "payloadSha256": "cefd1f4ad9ba7415f56683737f1b2fdc2587ba0f4a5c922c9a4bf795e7b8d1e0"
       },
       "decisionsApplied": [
         "CPR-2026-09-26-P2",
@@ -660,7 +660,7 @@
       "reviewedContent": {
         "contentId": "ll-g4-math-lines-segments-rays-2026.1",
         "version": "0.1.0",
-        "payloadSha256": "11e0928ef247a4afec1bbc799ed5efe15f896c25c4c42103256e4bdc1b0d4d32"
+        "payloadSha256": "756385e89ad1679f0fd74ba170e4937e944dd5843b5dc692deca35c997552b36"
       },
       "decisionsApplied": [
         "CPR-2026-09-26-P4",
@@ -674,7 +674,7 @@
       "reviewedContent": {
         "contentId": "ll-g4-math-angles-perpendicular-lines-2026.1",
         "version": "0.1.0",
-        "payloadSha256": "a1bf10af25639d40b6f93a0eb13fc7af44023c6be2de357accd7ae3b616c6f8b"
+        "payloadSha256": "5f4ddb6a145e63ea9de59424b21baa06681dff7e065786d1a473499fb1dc4167"
       },
       "decisionsApplied": [],
       "productGaps": [
@@ -687,7 +687,7 @@
       "reviewedContent": {
         "contentId": "ll-g4-math-polygons-2026.1",
         "version": "0.1.0",
-        "payloadSha256": "e05d6257ea37e366c6f79da8adfdff86240b78f041cd51a24cfe5652b767e081"
+        "payloadSha256": "8f5e3d96a60d799854c4508356ba50697f16240e584ef8e7b08455cf99c48cc9"
       },
       "decisionsApplied": [
         "CPR-2026-09-26-R12"
@@ -702,7 +702,7 @@
       "reviewedContent": {
         "contentId": "ll-g4-math-parts-of-a-circle-2026.1",
         "version": "0.1.0",
-        "payloadSha256": "3914ac657241f03dfa12e3f336e14f896edb3f4e4c227fddd1b9b697a08253dc"
+        "payloadSha256": "2635e968df7b911a7e27ce571bdf12b7186ad5465f6af49cc9c9208b5d435d2f"
       },
       "decisionsApplied": [
         "CPR-2026-09-26-R13"
@@ -717,7 +717,7 @@
       "reviewedContent": {
         "contentId": "ll-g4-math-solid-figures-2026.1",
         "version": "0.1.0",
-        "payloadSha256": "62b790f016a42181a209197da137a3ce7056dc175edf35c8d5673a14bb43d733"
+        "payloadSha256": "f05718d110f6dae7c6a6233c44ec986b0356b94c5092f7e2468d0ba335e54af8"
       },
       "decisionsApplied": [
         "CPR-2026-09-26-P3",
@@ -733,7 +733,7 @@
       "reviewedContent": {
         "contentId": "ll-g4-math-read-interpret-graphs-2026.1",
         "version": "0.1.0",
-        "payloadSha256": "1f2811bee91e89b65f76a06c80961e298c947492ace2b484133aa7b1dfc093dc"
+        "payloadSha256": "643c2d035a75999d6bc74cd64b388ca6d031aa7d05a7281ca9888c4018844262"
       },
       "decisionsApplied": [
         "CPR-2026-09-26-R15"
@@ -748,7 +748,7 @@
       "reviewedContent": {
         "contentId": "ll-g4-math-mode-median-mean-2026.1",
         "version": "0.1.0",
-        "payloadSha256": "168689885b3b1f25d8e51b5a21a6cde559e261d446bab39bcae482cadc421179"
+        "payloadSha256": "cd6db1941eea66bcbca0ae28b50c8e11dddbdcfb28bbef6f5c567f3b93161684"
       },
       "decisionsApplied": [
         "CPR-2026-09-26-R16"
@@ -761,7 +761,7 @@
       "reviewedContent": {
         "contentId": "ll-g4-math-word-problems-with-diagrams-2026.1",
         "version": "0.1.0",
-        "payloadSha256": "7ada6a5c008a6dd2eeef897769c882d979feeeaf6114fbc7d090da3102db78f0"
+        "payloadSha256": "54494a4b41a9fdce88de68cf3af4b753d61842aefd43ef704ee766ba858e30d5"
       },
       "decisionsApplied": [],
       "productGaps": [],

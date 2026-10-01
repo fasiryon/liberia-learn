@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import { GRADE4_FRACTIONS_LESSON, GRADE4_FRACTIONS_LESSON_2026_2 } from "@/lib/curriculum/authority/grade4FractionsLesson";
 import { GRADE4_MATH_DRAFT_LESSONS } from "@/lib/curriculum/authority/grade4Math";
 
-const ledger = JSON.parse(fs.readFileSync("curriculum/review/g4-math/review-ledger.json", "utf8")) as Record<string, { decision: string; reviewer: string | null; reviewedAt: string | null; notes: string; reviewedContentId?: string }>;
+const ledger = JSON.parse(fs.readFileSync("curriculum/review/g4-math/review-ledger.json", "utf8")) as Record<string, { decision: string; reviewer: string | null; reviewedAt: string | null; notes: string; reviewedContentId?: string; reviewedContentVersion?: string; reviewedPayloadSha256?: string }>;
 
 describe("Grade 4 Math review ledger", () => {
   it("covers all 44 MOE objectives", () => {
@@ -18,6 +18,10 @@ describe("Grade 4 Math review ledger", () => {
       expect(entry.reviewer, id).not.toMatch(/claude|ai|system|bot|automat/i);
       expect(Number.isFinite(Date.parse(entry.reviewedAt ?? "")), id).toBe(true);
       if (entry.decision !== "APPROVE") expect(entry.notes.trim(), id).toBeTruthy();
+      if (entry.reviewedContentId !== undefined) {
+        expect(entry.reviewedContentVersion, id).toBeTruthy();
+        expect(entry.reviewedPayloadSha256, id).toMatch(/^[0-9a-f]{64}$/);
+      }
     }
   });
 

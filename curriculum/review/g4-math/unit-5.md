@@ -18,7 +18,7 @@ For each objective, record APPROVE / REVISE / REJECT in `review-ledger.json`. No
 | Planned enhancement | none |
 | Evidence | TEACHER_OBSERVATION; safety: None beyond normal classroom supervision. |
 | Example-data labels | none |
-| Reviewed content | `ll-g4-math-estimating-time-2026.1` v0.1.0, payload sha256 `935edfbf86f164331887d4c255dfc5020e5ea203b070f0c69d28720b88d97c70` |
+| Reviewed content | `ll-g4-math-estimating-time-2026.1` v0.1.0, payload sha256 `30cdd37037b8e7b6f16d3755ed662f023504b08dc54fdb6016507102f3e0e1a8` |
 | Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision) |
 
 **Known uncertainties:** none recorded.
@@ -116,7 +116,7 @@ Duration: 45 minutes.
 | Planned enhancement | GRADE_4_6_CLOCK_MANIPULATIVE (MANIPULATIVE_2D), NOT IMPLEMENTED: No Grade 4-6 clock tool is enabled online; the paper-plate clock is the MOE-aligned core modality (MOE mat1: toy or paper clock). |
 | Evidence | GOVERNED_ITEM_RESPONSE |
 | Example-data labels | (example times) |
-| Reviewed content | `ll-g4-math-elapsed-time-2026.1` v0.1.0, payload sha256 `90ac87d0cc90490eece3724eb53551b6597c176deb0ec899589803b1b77b59d0` |
+| Reviewed content | `ll-g4-math-elapsed-time-2026.1` v0.1.0, payload sha256 `e1e8b84dab3ec00d9cb38ccb80a4f1b8953b7a1216418179f5a291ba531ef433` |
 | Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision). Consequential fix outside the 16 review items: the malformed time distractor '5:65 p.m.' was replaced with '5:55 p.m.' (same standard as R09). |
 
 **Known uncertainties:**
@@ -223,7 +223,7 @@ Duration: 45 minutes.
 | Planned enhancement | none |
 | Evidence | TEACHER_OBSERVATION; safety: Keep walkways clear when measuring the room. |
 | Example-data labels | none |
-| Reviewed content | `ll-g4-math-estimate-customary-length-2026.1` v0.1.0, payload sha256 `205dd90e839d3e594116b17aae91c918d441f1186606f5fb1334e7666f61719d` |
+| Reviewed content | `ll-g4-math-estimate-customary-length-2026.1` v0.1.0, payload sha256 `7c0f4524410c005af2038afc674315dfbe8fe0223684cfce7a117de01623b4ab` |
 | Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision). The explanation says customary units are widely used in Liberia; the founder should confirm this factual claim. |
 
 **Known uncertainties:** none recorded.
@@ -322,7 +322,7 @@ Duration: 45 minutes.
 | Planned enhancement | none |
 | Evidence | TEACHER_OBSERVATION; safety: No sharp tools; blunt-ended rulers only. |
 | Example-data labels | none |
-| Reviewed content | `ll-g4-math-measure-customary-length-2026.1` v0.1.0, payload sha256 `8fa3e417b2235ee1eec1244e5ccc763913dee8c3397fa5a64991b96d2de77d7d` |
+| Reviewed content | `ll-g4-math-measure-customary-length-2026.1` v0.1.0, payload sha256 `a5f1f03b2f57cb0370ef92f4cd7f65647ed1b9d75239df79dafd6677ce93ea19` |
 | Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision) |
 
 **Known uncertainties:** none recorded.
@@ -420,7 +420,7 @@ Duration: 45 minutes.
 | Planned enhancement | none |
 | Evidence | TEACHER_OBSERVATION; safety: Use water or dry sand only; wipe spills to prevent slipping. |
 | Example-data labels | none |
-| Reviewed content | `ll-g4-math-estimate-customary-mass-capacity-2026.1` v0.1.0, payload sha256 `9bea45b5f58750e369922e438e835efd9aa5388e8b0a5cefb93250bc9fb9bb8c` |
+| Reviewed content | `ll-g4-math-estimate-customary-mass-capacity-2026.1` v0.1.0, payload sha256 `5a7b8277b4ee378b67047af65b608047a7a709af1388bacbcc9c80888ba65394` |
 | Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision). Decisions applied: CPR-2026-09-26-P5, CPR-2026-09-26-R08 |
 
 **Known uncertainties:**
@@ -521,7 +521,7 @@ Duration: 45 minutes.
 | Planned enhancement | none |
 | Evidence | TEACHER_OBSERVATION; safety: Use water or dry sand only; wipe spills to prevent slipping. |
 | Example-data labels | none |
-| Reviewed content | `ll-g4-math-estimate-metric-units-2026.1` v0.1.0, payload sha256 `28eaf833a8f14b5046d7c35a7506a4d40cb75c5c27eed59e4e1580cab10264de` |
+| Reviewed content | `ll-g4-math-estimate-metric-units-2026.1` v0.1.0, payload sha256 `0d282a3af89237550a20246f2fada4e863c1aa48cf41a743b5c549cd2657c4ad` |
 | Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision). Decisions applied: CPR-2026-09-26-R08. Consequential fix: the 1 kg benchmark now names a labelled packet, matching 5.5 (R08). |
 
 **Known uncertainties:** none recorded.
@@ -621,7 +621,7 @@ Duration: 45 minutes.
 | Planned enhancement | none |
 | Evidence | NONE |
 | Example-data labels | (example weights) |
-| Reviewed content | `ll-g4-math-convert-metric-units-2026.1` v0.1.0, payload sha256 `9f4397e58a7ed2af8e420a483aa3d2cd15bdeaaf14067c8246fb980bf5cf00f1` |
+| Reviewed content | `ll-g4-math-convert-metric-units-2026.1` v0.1.0, payload sha256 `0cb758bb8d96aaf5f02c455b3c0253fefb3f31f5b13c667524356a549cbb6ced` |
 | Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision) |
 
 **Known uncertainties:**
@@ -723,7 +723,7 @@ Duration: 45 minutes.
 | Planned enhancement | none |
 | Evidence | NONE |
 | Example-data labels | (example weights) |
-| Reviewed content | `ll-g4-math-add-subtract-measurements-2026.1` v0.1.0, payload sha256 `6718735b9fe41b9e2e8f86f10b8a964b4bc8f9dde2e9c57809acc2189821d549` |
+| Reviewed content | `ll-g4-math-add-subtract-measurements-2026.1` v0.1.0, payload sha256 `9fa4d1daa65e79780ef71f3b77b04e83dcac31d7a9043cdaab0d8d20ccae669f` |
 | Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision). Decisions applied: CPR-2026-09-26-R09 |
 
 **Known uncertainties:**
@@ -823,7 +823,7 @@ Duration: 45 minutes.
 | Planned enhancement | GRADE_4_6_GRID_MANIPULATIVE (MANIPULATIVE_2D), NOT IMPLEMENTED: No Grade 4-6 grid tool is enabled online (coordinate-grid is Grades 7+). The digital grid is an enhancement and does not block lesson approval. |
 | Evidence | GOVERNED_ITEM_RESPONSE |
 | Example-data labels | none |
-| Reviewed content | `ll-g4-math-perimeter-area-rectangles-2026.1` v0.1.0, payload sha256 `495bf2f254b84b10322eda30df65ca004e279ca2c9acb5fd5975f3012cb80c8c` |
+| Reviewed content | `ll-g4-math-perimeter-area-rectangles-2026.1` v0.1.0, payload sha256 `cefd1f4ad9ba7415f56683737f1b2fdc2587ba0f4a5c922c9a4bf795e7b8d1e0` |
 | Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision). Decisions applied: CPR-2026-09-26-P2, CPR-2026-09-26-R10 |
 
 **Known uncertainties:**

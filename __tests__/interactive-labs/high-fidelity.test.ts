@@ -111,6 +111,13 @@ describe("cutaway primitive", () => {
     expect(inspected.fidelity?.inspectedComponentId).toBe("bulb-filament");
     const closedAgain = run(circuitDefinition, [{ type: "set-cutaway", cutawayId: null }], inspected);
     expect(closedAgain.fidelity?.inspectedComponentId).toBeNull();
+
+    const isolatedGlassThenCut = run(circuitDefinition, [
+      { type: "isolate", targetId: "bulb-glass" },
+      { type: "set-cutaway", cutawayId: "bulb-cutaway" },
+    ]);
+    expect(isolatedGlassThenCut.fidelity?.isolatedId).toBeNull();
+    expect(buildRenderList({ definition: circuitDefinition, state: isolatedGlassThenCut, profile: "LOW" }).items.map((item) => item.id)).toContain("bulb-filament");
   });
 
   it("hides layered components and restores them", () => {

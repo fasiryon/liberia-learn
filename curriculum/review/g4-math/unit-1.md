@@ -18,7 +18,7 @@ For each objective, record APPROVE / REVISE / REJECT in `review-ledger.json`. No
 | Planned enhancement | GRADE_4_6_PLACE_VALUE_MANIPULATIVE (MANIPULATIVE_2D), NOT IMPLEMENTED: No online place-value chart tool is registered; the paper chart and strips are the core modality. |
 | Evidence | GOVERNED_ITEM_RESPONSE |
 | Example-data labels | none |
-| Reviewed content | `ll-g4-math-read-write-numbers-to-100000-2026.1` v0.1.0, payload sha256 `2dc47abde1ab3d2351a9c82e0bbe65a8030e58b0ada746a7a73562e8aefa1777` |
+| Reviewed content | `ll-g4-math-read-write-numbers-to-100000-2026.1` v0.1.0, payload sha256 `a01d3572a0d4757fe262e412ef1a51b5cbcf38165cedfda120339e770604f92b` |
 | Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision). Decisions applied: CPR-2026-09-26-R01 |
 
 **Known uncertainties:**
@@ -116,7 +116,7 @@ Duration: 45 minutes.
 | Planned enhancement | none |
 | Evidence | GOVERNED_ITEM_RESPONSE |
 | Example-data labels | (illustrative) |
-| Reviewed content | `ll-g4-math-compare-order-numbers-to-100000-2026.1` v0.1.0, payload sha256 `58560bb8a7a0eee5df451dbb1b2dccc1c944a427eb836bf44fd1e8e88bdcac93` |
+| Reviewed content | `ll-g4-math-compare-order-numbers-to-100000-2026.1` v0.1.0, payload sha256 `37a18b7f77281e9ec3adf419b9dbc735d9a11612fab87ea96227fb534210fe89` |
 | Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision) |
 
 **Known uncertainties:** none recorded.
@@ -208,7 +208,7 @@ Duration: 45 minutes.
 | Planned enhancement | none |
 | Evidence | GOVERNED_ITEM_RESPONSE |
 | Example-data labels | none |
-| Reviewed content | `ll-g4-math-rounding-whole-numbers-2026.1` v0.1.0, payload sha256 `117ef8bce623393601e0b81c209bd72beb2203a73381aebb54e3a5da1c4272ca` |
+| Reviewed content | `ll-g4-math-rounding-whole-numbers-2026.1` v0.1.0, payload sha256 `380c92eb404e64ff6a67ec5f349d0e8c6e4033b39ffdc3b9b061cc0c7891be67` |
 | Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision) |
 
 **Known uncertainties:** none recorded.
@@ -302,7 +302,7 @@ Duration: 45 minutes.
 | Planned enhancement | none |
 | Evidence | NONE |
 | Example-data labels | example data, Example data |
-| Reviewed content | `ll-g4-math-add-subtract-population-data-2026.1` v0.1.0, payload sha256 `129db94ef65e82335defe9a71ebd2cd8c37d9b0c1a13fd3bcf29ab4c48eabf80` |
+| Reviewed content | `ll-g4-math-add-subtract-population-data-2026.1` v0.1.0, payload sha256 `8f996781777e38009fdf57c7d9347e2cb204e737b0316fe0358be5b2c936f659` |
 | Reviewer recommendation | **READY_FOR_FOUNDER_APPROVAL** (CPR-2026-09-26; not a founder decision). Decisions applied: CPR-2026-09-26-P1, CPR-2026-09-26-R02. Every population item now carries an 'Example data' label. |
 
 **Known uncertainties:**

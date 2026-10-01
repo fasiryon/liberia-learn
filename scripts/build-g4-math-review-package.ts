@@ -19,13 +19,12 @@
  *
  * Usage: npx tsx scripts/build-g4-math-review-package.ts [--check]
  */
-import { createHash } from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import { GRADE4_MATH_TEMPLATE_CELL } from "@/lib/learning-authority/cells/grade4Math";
 import { GRADE4_MATH_DRAFT_LESSONS, type DraftLesson } from "@/lib/curriculum/authority/grade4Math";
 import { GRADE4_FRACTIONS_LESSON, GRADE4_FRACTIONS_LESSON_2026_2 } from "@/lib/curriculum/authority/grade4FractionsLesson";
-import { GRADE4_MATH_2026_2_ADDITIONS } from "@/lib/learning-authority/releases/grade4Math2026_2";
+import { GRADE4_MATH_2026_2_ADDITIONS, lessonPayloadSha256 } from "@/lib/learning-authority/releases/grade4Math2026_2";
 import type { StructuredCurriculumItem } from "@/lib/learning-authority/structuredCurriculumAuthority";
 
 const OUT = path.resolve("curriculum/review/g4-math");
@@ -46,7 +45,8 @@ type Recommendations = {
   productGaps: Record<string, { kind: "TOOL" | "EVIDENCE"; need: string; objectives: string[]; description: string; blocksApproval: false }>;
   objectives: Record<string, { recommendation: Recommendation; reviewedContent: { contentId: string; version: string; payloadSha256: string }; decisionsApplied: string[]; productGaps: string[]; note: string }>;
 };
-const payloadSha256 = (payload: unknown) => createHash("sha256").update(JSON.stringify(payload)).digest("hex");
+// Same definition the release composer, author script and next-action route use (key-order independent).
+const payloadSha256 = lessonPayloadSha256;
 type ObjectiveSupport = { risks?: string[]; answers?: string; wording?: { moeDerived?: string; liberiaLearnExplanatory?: string; exampleData?: string }; gradeAppropriate?: string; alignment?: string; interaction?: string };
 type Support = {
   defaults: { answers: string; wording: { moeDerived: string; liberiaLearnExplanatory: string; exampleData: string }; gradeAppropriate: string; alignment: string; interaction: string };
@@ -77,7 +77,7 @@ const KNOWN_UNCERTAINTIES: Record<string, string[]> = {
   "p6-geometry-and-statistics-obj7": ["LOW extraction confidence (ambiguous column). MOE says 'medium'; read as 'median'. Data is invented example data."],
 };
 
-type Ledger = Record<string, { decision: "PENDING" | "APPROVE" | "REVISE" | "REJECT"; reviewer: string | null; reviewedAt: string | null; notes: string; reviewedContentId?: string }>;
+type Ledger = Record<string, { decision: "PENDING" | "APPROVE" | "REVISE" | "REJECT"; reviewer: string | null; reviewedAt: string | null; notes: string; reviewedContentId?: string; reviewedContentVersion?: string; reviewedPayloadSha256?: string }>;
 
 function main() {
   const check = process.argv.includes("--check");
@@ -274,7 +274,7 @@ function main() {
     "## How to review",
     "",
     "1. Take one batch (one unit file) at a time. Each objective shows the MOE text and page, the lesson in full with answers, the interaction classification and known uncertainties.",
-    "2. Record a decision per objective in `review-ledger.json`: `APPROVE`, `REVISE` (put what to change in `notes`) or `REJECT`, with your name as `reviewer` and an ISO `reviewedAt`. For 3.4 (two lesson versions exist) also add `reviewedContentId` naming the lesson you reviewed; the publication script refuses without it.",
+    "2. Record a decision per objective in `review-ledger.json`: `APPROVE`, `REVISE` (put what to change in `notes`) or `REJECT`, with your name as `reviewer` and an ISO `reviewedAt`. For 3.4 (two lesson versions exist), an APPROVE must also add `reviewedContentId`, `reviewedContentVersion`, and `reviewedPayloadSha256` for the exact lesson payload you reviewed; the publication and release composers refuse an incomplete or mismatched approval.",
     "3. A ledger decision is a record of your review, not a publication. Promotion to a governed lesson and publication are separate, explicitly authorized steps through the canonical curriculum workflow.",
     "4. Nothing here is MOE approval. MOE approval needs its own recorded evidence.",
     "5. `reviewer-recommendations.json` holds a reviewer's recommendation per objective (below). A recommendation is input to your decision, not a decision: it never changes the ledger.",
