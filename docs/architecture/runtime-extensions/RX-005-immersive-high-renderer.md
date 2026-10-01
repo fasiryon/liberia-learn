@@ -405,7 +405,33 @@ Under reduced motion, camera moves are a 0 ms cut (the documented "snap"), not a
   - trip latching (G8);
   - the glTF loader.
 
-### Founder decisions pending
+### Founder decisions (recorded 2026-10-01)
 
-1. Approve or replace the inspiration references (A12).
-2. Sign off on the principle 10 wording (A16).
+1. **References: approved.** The three inspiration references (A12) are approved.
+   - **Primary immersion target added:** the founder named **airsup.ai lab** (`https://airsup.ai/rocket-engine`, 15 machines). The bar is "at that level or better".
+   - **What the builder studied there** (text only; screenshots could not be captured because the browser extension was not connected):
+     - photoreal materials;
+     - orbit, pinch-zoom and pan;
+     - cutaways and exploded views;
+     - animated "follow the flow" systems;
+     - parameter sliders and scenario presets.
+   - **How it is used:** study only. No assets, layouts or code are copied. Its reference captures must be stored under `artifacts/lab-review/<labId>/benchmark/`, with the source URL and date, before round 3 can score against it.
+2. **Principle 10: adopted.** The founder approved, and delegated the camera choice to the builder. The A16 wording is now in `HIGH_FIDELITY_INTERACTIVE_LABS.md` principle 10.
+
+### A20. glTF loader brought back into Phase 0 (builder, after the founder named the airsup benchmark), new RX-005i
+
+**Why.** Photoreal hero machinery and organic forms (a heart, engines, molecules) are unlikely to reach the airsup bar from procedural descriptors alone. A1's "loader deferred" is therefore withdrawn.
+
+**What RX-005i ships:**
+- a GLTFLoader path (meshopt-compressed geometry; KTX2 textures only if a lab declares them);
+- loading from the app bundle only;
+- a fixture asset and test;
+- per-asset byte and triangle accounting in `measureLabBudget`;
+- licence and provenance rows in `production.json`;
+- a required procedural LOW variant and 2D silhouette for each asset.
+
+**Which decoders are counted against budgets:** the meshopt decoder (≈ 10 KB gzip, estimate). The KTX2/Basis transcoder (≈ 200 KB+, estimate) counts only when a lab uses it.
+
+**Hydro 1.1.0** stays procedural, per the asset director. The loader is proven on a fixture first.
+
+**Review:** this needs `lab-performance-reviewer` and `lab-design-director` review before implementation.
