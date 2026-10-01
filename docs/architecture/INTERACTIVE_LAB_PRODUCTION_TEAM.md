@@ -94,6 +94,37 @@ Narrow a run with `--profiles`, `--viewports desktop|mobile` and `--scenarios`. 
 
 Minimum capture set for an important lab: overview, each guided step that moves the camera, exploded and/or cutaway, process and variable states (causal labs), a fault or misconception-exposing state where one exists, challenge, assessment with checks passed. Capture each at HIGH, STANDARD, LOW and FALLBACK_2D, on desktop and mobile.
 
+### Running captures on GitHub Actions (preferred)
+
+Local captures run a dev server and headless Chromium together, and the project's 8 GB dev machines run out of memory doing this. Use the manual workflow `.github/workflows/lab-review-capture.yml` (Actions → "Lab review capture" → Run workflow) instead.
+
+**Inputs**
+- ref (branch or SHA)
+- lab (default `mount-coffee-hydropower`)
+- profiles (`ALL` or a list)
+- scenarios (`ALL` or a list)
+- viewports
+- stills only
+- an optional batch label
+
+**How it runs**
+- Each profile is a separate job, and the jobs run one at a time.
+- The capture script restarts the browser every 6 scenario runs.
+- Each scenario fails or passes on its own.
+- The manifest is written even if the run is interrupted.
+
+**Renderer identity is enforced.** Every run records what actually drew the page:
+- the player's resolved profile (`data-lab-active-profile`);
+- the mounted renderer's own identity (`data-lab-renderer`: `three@<rev>`, `webgl-pass` or `svg`);
+- frames drawn;
+- last-frame draw calls.
+
+`verifyRendererIdentity` (`lib/interactive-labs/v2/review/rendererIdentity.ts`) marks a run FAIL when HIGH or STANDARD was not drawn by three.js, LOW by the WebGL pass, or FALLBACK_2D by SVG, at the requested profile, with at least one frame. The job then fails. A silent fallback is never evidence.
+
+**Retention.** Captures are workflow artifacts, kept for 30 days and named `lab-review-<lab>-<profile>-<sha8>-run<id>[-batch]`. Each contains the PNGs, `manifest.json` and the dev-server log. Screenshots are not committed to git. The review log cites the run id and artifact name. If a lab needs a small curated set kept longer, attach those few images to the review PR or a release, and record the link in `REVIEW_LOG.md`.
+
+**Device boundary.** GitHub-hosted runners use SwiftShader software GL. Their captures prove rendering correctness, composition, layout, interaction automation and renderer/profile routing. They do not prove low-end GPU performance, touch latency, thermal behaviour or mobile memory pressure; those stay DEVICE_REQUIRED.
+
 ### Determinism and render honesty
 
 - Each scenario is a seeded simulation state: the model is pure and each scenario is a fixed action script, including camera presets and input. It can be tied to a storyboard scene (`storyboardScene`).

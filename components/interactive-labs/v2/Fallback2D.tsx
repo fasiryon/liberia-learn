@@ -38,7 +38,7 @@ export function Fallback2D({ definition, state, reducedMotion, traceFlowId, disp
   const selected = state.selectedObjectId && definition.scene.objects.some((object) => object.id === state.selectedObjectId) ? state.selectedObjectId : null;
 
   return (
-    <div className="relative" aria-label="2D lab scene">
+    <div className="relative" aria-label="2D lab scene" data-lab-renderer="svg" data-lab-frames-rendered="1">
       <svg viewBox={viewBox} className="h-[clamp(420px,62vh,640px)] w-full" role="group" aria-label={`${definition.title ?? "Lab"} scene (2D view)`}>
         <defs>
           <marker id="flow-arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#facc15" /></marker>

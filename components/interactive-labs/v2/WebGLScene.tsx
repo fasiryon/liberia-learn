@@ -57,6 +57,8 @@ function rgb(value: string): [number, number, number] { const n = Number.parseIn
 
 export function WebGLScene({ definition, state, profile, reducedMotion, traceFlowId, dispatch, onPick, onDowngrade, onUpgradeReady, allowProfileUpgrade = false, allowPerformanceDowngrade = true }: Props) {
   const canvas = useRef<HTMLCanvasElement>(null);
+  // Review evidence: identity, frames drawn and last-frame draw calls on the root (rendererIdentity.ts).
+  const root = useRef<HTMLDivElement>(null);
   const labels = useRef<HTMLDivElement>(null);
   const motionStatus = useRef<HTMLDivElement>(null);
   const drag = useRef({ x: 0, y: 0, active: false, moved: 0 });
@@ -182,6 +184,10 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
     let upgradeNotified = false;
     let previousFrameScheduled = false;
     const scheduleDraw = () => { if (!frame) frame = requestAnimationFrame(draw); };
+    // Count real draw calls per frame for review manifests (gl.drawArrays is the only draw entry point here).
+    const nativeDrawArrays = gl.drawArrays.bind(gl);
+    let frameDraws = 0, framesRendered = 0;
+    gl.drawArrays = (mode: number, first: number, count: number) => { frameDraws += 1; nativeDrawArrays(mode, first, count); };
     const draw = (now: number) => {
       frame = 0;
       const followedScheduledFrame = previousFrameScheduled;
@@ -313,6 +319,9 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
       // Review captures advance an authored virtual clock and need a frame for every tick.
       // Learner sessions request frames only while something visible is moving.
       const profileProbeActive = allowProfileUpgrade && !upgradeNotified && profile === "LOW" && frameTimes.length < 30;
+      framesRendered += 1;
+      if (root.current) { root.current.dataset.labDrawCalls = String(frameDraws); root.current.dataset.labFramesRendered = String(framesRendered); }
+      frameDraws = 0;
       if (shouldScheduleWebGLFrame({ reviewClockActive: reviewTime !== undefined, reducedMotion: motionless, fidelityMoving, cameraMoving, flowMoving, spinMoving, pulseMoving, profileProbeActive })) {
         previousFrameScheduled = true;
         scheduleDraw();
@@ -352,7 +361,7 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
 
   const constraints = definition.fidelity?.camera.constraints;
   return (
-    <div className="relative h-[clamp(420px,62vh,640px)] w-full">
+    <div ref={root} data-lab-renderer="webgl-pass" className="relative h-[clamp(420px,62vh,640px)] w-full">
       <canvas ref={canvas} aria-label={`${definition.title ?? "Interactive"} 3D scene. Every scene action is also available in the controls panel.`} className="h-full w-full touch-none"
         onPointerDown={(e) => { drag.current = { x: e.clientX, y: e.clientY, active: true, moved: 0 }; e.currentTarget.setPointerCapture(e.pointerId); }}
         onPointerMove={(e) => {

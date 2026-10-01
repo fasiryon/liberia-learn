@@ -122,7 +122,7 @@ export function InteractiveLabPlayer({ labId = "g4-solid-figures", override, rev
   if (intro) return <section className="mx-auto max-w-5xl rounded-3xl bg-slate-950 p-8 text-white shadow-2xl"><p className="text-sm font-semibold uppercase tracking-[.2em] text-cyan-300">Interactive lab</p><h1 className="mt-3 text-3xl font-bold">{definition.title ?? "Interactive lab"}</h1><p className="mt-4 max-w-2xl text-slate-300">{definition.summary ?? "Use the scene to complete the checks."}</p><button type="button" onClick={() => setIntro(false)} className="mt-7 rounded-full bg-cyan-300 px-6 py-3 font-bold text-slate-950">Start exploring</button></section>;
 
   return (
-    <section className="mx-auto max-w-6xl overflow-hidden rounded-3xl bg-slate-950 text-white shadow-2xl">
+    <section data-lab-active-profile={profile} className="mx-auto max-w-6xl overflow-hidden rounded-3xl bg-slate-950 text-white shadow-2xl">
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 px-5 py-4">
         <div><p className="text-xs font-semibold uppercase tracking-[.18em] text-cyan-300">Grade {definition.grade} · {definition.subject[0] + definition.subject.slice(1).toLowerCase()}</p><h1 className="text-xl font-bold">{definition.title ?? definition.id}</h1></div>
         <div className="flex items-center gap-2 text-sm">
