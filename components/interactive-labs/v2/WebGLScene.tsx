@@ -5,7 +5,8 @@ import type { CapabilityProfile, GeometryKind, InteractiveLabDefinition, LabActi
 import type { FidelityState } from "@/lib/interactive-labs/v2/fidelity/types";
 import { buildRenderList, type RenderList, type RenderMarker } from "@/lib/interactive-labs/v2/fidelity/renderList";
 import { approachCamera, constrainCamera, easeDisplayState, isSettled, presetPose, spinMatrix, viewMatrix, type CameraPose } from "@/lib/interactive-labs/v2/fidelity/presentation";
-import { shouldDowngrade } from "@/lib/interactive-labs/v2/fidelity/profiles";
+import { recordFrameSample, shouldDowngrade } from "@/lib/interactive-labs/v2/fidelity/profiles";
+import { PROBE_MIN_SAMPLES } from "@/lib/interactive-labs/v2/capabilities";
 import { downgradeFrameBudgetMs } from "@/lib/interactive-labs/v2/production/budgets";
 import { fitHorizontalFieldOfView, IDENTITY, multiply, perspective, transformPoint, type Mat4, type Vec3 } from "@/lib/interactive-labs/v2/fidelity/math";
 import { batchFlowGeometry, createFlowBatchStorage, createPointBatchStorage, writeMarkerPositions, type FlowVertexBatch } from "@/lib/interactive-labs/v2/fidelity/flowBatch";
@@ -14,6 +15,7 @@ import { highlightBaseMix, HIGHLIGHT_COLOR, MARKER_COLOR } from "@/lib/interacti
 import { buildMesh } from "./meshes";
 import { pickNearest, type ScenePick } from "./picking";
 
+export type WebGLSceneProps = Props;
 type Props = {
   definition: InteractiveLabDefinition<LabState>;
   state: LabState;
@@ -22,8 +24,10 @@ type Props = {
   traceFlowId: string | null;
   dispatch: (action: LabAction) => void;
   onPick: (pick: ScenePick) => void;
-  onDowngrade: (reason: "context" | "performance") => void;
+  onDowngrade: (reason: "context" | "performance" | "load") => void;
   allowPerformanceDowngrade?: boolean;
+  /** RX-005 A2: when set, render a short warm-up and report back-to-back frame times for the upgrade probe. */
+  onProbeSamples?: (samples: readonly number[]) => void;
 };
 
 const vertexShader = `attribute vec3 position; attribute vec3 normal; attribute vec3 vcolor; uniform mat4 mvp; uniform mat4 model; uniform float pointSize; uniform float useVertexColor; varying vec3 vNormal; varying vec3 vWorld; varying vec3 vertexColor;
@@ -48,7 +52,7 @@ const LIGHTING = { full: 3, simplified: 2, minimal: 1, none: 0 } as const;
 
 function rgb(value: string): [number, number, number] { const n = Number.parseInt(value.replace("#", ""), 16); return [(n >> 16 & 255) / 255, (n >> 8 & 255) / 255, (n & 255) / 255]; }
 
-export function WebGLScene({ definition, state, profile, reducedMotion, traceFlowId, dispatch, onPick, onDowngrade, allowPerformanceDowngrade = true }: Props) {
+export function WebGLScene({ definition, state, profile, reducedMotion, traceFlowId, dispatch, onPick, onDowngrade, allowPerformanceDowngrade = true, onProbeSamples }: Props) {
   const canvas = useRef<HTMLCanvasElement>(null);
   const labels = useRef<HTMLDivElement>(null);
   const motionStatus = useRef<HTMLDivElement>(null);
@@ -57,15 +61,19 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
   const displayRef = useRef<FidelityState | undefined>(state.fidelity);
   const zoomRef = useRef(1);
   const frameRef = useRef<{ list: RenderList | null; viewProj: Mat4; width: number; height: number }>({ list: null, viewProj: IDENTITY, width: 1, height: 1 });
-  const callbacks = useRef({ onDowngrade, reducedMotion, traceFlowId });
+  const callbacks = useRef({ onDowngrade, reducedMotion, traceFlowId, onProbeSamples });
   const requestDrawRef = useRef<() => void>(() => {});
   stateRef.current = state;
-  callbacks.current = { onDowngrade, reducedMotion, traceFlowId };
+  callbacks.current = { onDowngrade, reducedMotion, traceFlowId, onProbeSamples };
 
   useEffect(() => {
     const el = canvas.current; if (!el) return;
     const gl = el.getContext("webgl", { antialias: profile === "HIGH", alpha: true, premultipliedAlpha: false });
     if (!gl) { callbacks.current.onDowngrade("context"); return; }
+    // RX-005 A5: a context lost at runtime (backgrounding, GPU memory pressure) drops to 2D instead of a blank canvas.
+    let contextLost = false;
+    const onContextLost = (event: Event) => { event.preventDefault(); contextLost = true; callbacks.current.onDowngrade("context"); };
+    el.addEventListener("webglcontextlost", onContextLost);
     const compile = (type: number, source: string) => { const shader = gl.createShader(type)!; gl.shaderSource(shader, source); gl.compileShader(shader); return shader; };
     const program = gl.createProgram()!;
     gl.attachShader(program, compile(gl.VERTEX_SHADER, vertexShader)); gl.attachShader(program, compile(gl.FRAGMENT_SHADER, fragmentShader)); gl.linkProgram(program);
@@ -136,11 +144,16 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
     let camera: CameraPose | null = null;
     let frame = 0, last = performance.now(), labelTick = 0, reviewClockSeen = false;
     let lastReviewTime: number | undefined;
-    const frameTimes: number[] = [];
+    let frameTimes: number[] = [];
     let downgraded = false;
+    // A frame counts towards the downgrade detector and probe only if the previous frame scheduled it (A4).
+    let scheduledByLoop = false;
+    let probeFrames = callbacks.current.onProbeSamples ? PROBE_MIN_SAMPLES + 1 : 0;
     const scheduleDraw = () => { if (!frame) frame = requestAnimationFrame(draw); };
     const draw = (now: number) => {
       frame = 0;
+      if (contextLost) return;
+      const backToBack = scheduledByLoop; scheduledByLoop = false;
       const reviewTime = (window as Window & { __labReviewClockSeconds?: number }).__labReviewClockSeconds;
       if (reviewTime !== undefined && !reviewClockSeen) { labelTick = Number.NEGATIVE_INFINITY; reviewClockSeen = true; }
       const dt = reviewTime === undefined
@@ -148,7 +161,8 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
         : lastReviewTime === undefined ? 0 : Math.min(0.1, Math.max(0, reviewTime - lastReviewTime));
       last = now;
       if (reviewTime !== undefined) lastReviewTime = reviewTime;
-      frameTimes.push(dt * 1000); if (frameTimes.length > 120) frameTimes.shift();
+      if (reviewTime === undefined) frameTimes = recordFrameSample(frameTimes, dt * 1000, backToBack);
+      if (probeFrames > 0 && backToBack) { probeFrames--; callbacks.current.onProbeSamples?.(frameTimes); }
       if (allowPerformanceDowngrade && !downgraded && shouldDowngrade(frameTimes, downgradeFrameBudgetMs(profile))) { downgraded = true; callbacks.current.onDowngrade("performance"); }
       const current = stateRef.current, motionless = callbacks.current.reducedMotion;
       if (spec && current.fidelity) displayRef.current = easeDisplayState(spec, displayRef.current ?? current.fidelity, current.fidelity, dt, motionless);
@@ -231,12 +245,12 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
       const pulseMoving = list.budget.pulseHighlights && list.items.some((item) => item.highlighted);
       // Review captures advance an authored virtual clock and need a frame for every tick.
       // Learner sessions request frames only while something visible is moving.
-      if (shouldScheduleWebGLFrame({ reviewClockActive: reviewTime !== undefined, reducedMotion: motionless, fidelityMoving, cameraMoving, flowMoving, spinMoving, pulseMoving })) scheduleDraw();
+      if (probeFrames > 0 || shouldScheduleWebGLFrame({ reviewClockActive: reviewTime !== undefined, reducedMotion: motionless, fidelityMoving, cameraMoving, flowMoving, spinMoving, pulseMoving })) { scheduledByLoop = true; scheduleDraw(); }
     };
     requestDrawRef.current = scheduleDraw;
     const resizeObserver = new ResizeObserver(scheduleDraw); resizeObserver.observe(el);
     scheduleDraw();
-    return () => { requestDrawRef.current = () => {}; resizeObserver.disconnect(); cancelAnimationFrame(frame); meshes.forEach((mesh) => { gl.deleteBuffer(mesh.position); gl.deleteBuffer(mesh.normal); }); gl.deleteBuffer(lineBuffer); Object.values(flowBuffers).forEach((buffers) => { gl.deleteBuffer(buffers.positions); gl.deleteBuffer(buffers.colors); }); gl.deleteProgram(program); };
+    return () => { requestDrawRef.current = () => {}; resizeObserver.disconnect(); cancelAnimationFrame(frame); meshes.forEach((mesh) => { gl.deleteBuffer(mesh.position); gl.deleteBuffer(mesh.normal); }); gl.deleteBuffer(lineBuffer); Object.values(flowBuffers).forEach((buffers) => { gl.deleteBuffer(buffers.positions); gl.deleteBuffer(buffers.colors); }); gl.deleteProgram(program); el.removeEventListener("webglcontextlost", onContextLost); gl.getExtension("WEBGL_lose_context")?.loseContext(); };
   }, [definition, profile, allowPerformanceDowngrade]);
 
   useEffect(() => { requestDrawRef.current(); }, [state, reducedMotion, traceFlowId]);
@@ -252,7 +266,8 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
   const constraints = definition.fidelity?.camera.constraints;
   return (
     <div className="relative h-[clamp(420px,62vh,640px)] w-full">
-      <canvas ref={canvas} aria-label={`${definition.title ?? "Interactive"} 3D scene. Every scene action is also available in the controls panel.`} className="h-full w-full touch-none"
+      {/* A new canvas per profile: context attributes (antialias) cannot change once created (A5). */}
+      <canvas key={profile} ref={canvas} aria-label={`${definition.title ?? "Interactive"} 3D scene. Every scene action is also available in the controls panel.`} className="h-full w-full touch-none"
         onPointerDown={(e) => { drag.current = { x: e.clientX, y: e.clientY, active: true, moved: 0 }; e.currentTarget.setPointerCapture(e.pointerId); }}
         onPointerMove={(e) => {
           if (!drag.current.active) return;

@@ -3,13 +3,20 @@ import dynamic from "next/dynamic";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { getInteractiveLabDefinition } from "@/lib/interactive-labs/v2/registry";
 import { initializeLab, acceptLabAction } from "@/lib/interactive-labs/v2/kernel";
-import { resolveCapabilityProfile } from "@/lib/interactive-labs/v2/capabilities";
+import { probeAllowsUpgrade, PROBE_MIN_SAMPLES, readDeviceHints, recallProfile, rememberProfile, resolveInitialProfile, upgradeEligibility, upgradeTarget } from "@/lib/interactive-labs/v2/capabilities";
+import { loadWithRetry } from "@/lib/interactive-labs/v2/fidelity/loader";
 import { downgradeProfile } from "@/lib/interactive-labs/v2/fidelity/profiles";
 import type { CapabilityProfile, LabAction, LabState } from "@/lib/interactive-labs/v2/types";
 import { Fallback2D } from "./Fallback2D";
 import { LabControlPanel } from "./LabControlPanel";
 import type { ScenePick } from "./picking";
-const WebGLScene = dynamic(() => import("./WebGLScene").then((m) => m.WebGLScene), { ssr: false, loading: () => <div className="flex h-[clamp(420px,62vh,640px)] items-center justify-center text-slate-300">Loading the 3D lab…</div> });
+type SceneProps = import("./WebGLScene").WebGLSceneProps;
+/** RX-005 A3: a renderer chunk that cannot load (offline, flaky network) downgrades instead of crashing. */
+function SceneLoadFailed({ onDowngrade }: SceneProps) {
+  useEffect(() => { onDowngrade("load"); }, [onDowngrade]);
+  return null;
+}
+const WebGLScene = dynamic<SceneProps>(() => loadWithRetry(() => import("./WebGLScene")).then((m) => m.WebGLScene, () => SceneLoadFailed), { ssr: false, loading: () => <div className="flex h-[clamp(420px,62vh,640px)] items-center justify-center text-slate-300">Loading the 3D lab…</div> });
 
 function usePrefersReducedMotion(): boolean {
   const [reduced, setReduced] = useState(false);
@@ -37,7 +44,16 @@ export type LabReviewPreview = {
 export function InteractiveLabPlayer({ labId = "g4-solid-figures", override, reviewPreview }: { labId?: string; override?: CapabilityProfile; reviewPreview?: LabReviewPreview }) {
   const definition = getInteractiveLabDefinition(labId);
   const [state, setState] = useState<LabState>(() => reviewPreview ? structuredClone(reviewPreview.initialState) : initializeLab(definition ?? getInteractiveLabDefinition("g4-solid-figures")!));
-  const [profile, setProfile] = useState<CapabilityProfile>(() => resolveCapabilityProfile({ requested: override, supportsWebGL: typeof window !== "undefined" && !!window.WebGLRenderingContext }));
+  const [profile, setProfile] = useState<CapabilityProfile>(() => resolveInitialProfile({
+    requested: override,
+    supportsWebGL: typeof window !== "undefined" && !!window.WebGLRenderingContext,
+    remembered: override || typeof window === "undefined" ? null : recallProfile(safeLocalStorage()),
+  }));
+  // RX-005 A2: probe LOW once for headroom before ever loading a heavier renderer. Never in review, never
+  // after a manual choice, never when the device hints already rule an upgrade out.
+  const probeRef = useRef<"pending" | "done">("pending");
+  const canProbe = !override && !reviewPreview && profile === "LOW" && probeRef.current === "pending" &&
+    typeof window !== "undefined" && recallProfile(safeLocalStorage()) === null && upgradeEligibility(readDeviceHints(window.navigator));
   const [notice, setNotice] = useState<string | null>(null);
   const reducedMotion = usePrefersReducedMotion();
   const [intro, setIntro] = useState(!reviewPreview);
@@ -60,6 +76,29 @@ export function InteractiveLabPlayer({ labId = "g4-solid-figures", override, rev
   }, [definition]);
   const onReviewReady = reviewPreview?.onReady;
   useLayoutEffect(() => { onReviewReady?.({ dispatch: reviewDispatch }); }, [onReviewReady, reviewDispatch]);
+  const onDowngrade = useCallback((reason: "context" | "performance" | "load") => {
+    probeRef.current = "done";
+    setProfile((current) => {
+      const next = reason === "performance" ? downgradeProfile(current) : "FALLBACK_2D";
+      rememberProfile(safeLocalStorage(), next);
+      return next;
+    });
+    setNotice(reason === "context" ? "3D is not available on this device, so the lab switched to the 2D view."
+      : reason === "load" ? "The 3D view could not load, so the lab switched to the 2D view."
+      : "The lab lowered its visual quality to keep things smooth.");
+  }, []);
+  const onProbeSamples = useCallback((samples: readonly number[]) => {
+    if (probeRef.current === "done") return;
+    if (probeAllowsUpgrade(samples)) {
+      probeRef.current = "done";
+      const target = upgradeTarget({ reducedMotion });
+      rememberProfile(safeLocalStorage(), target);
+      setProfile(target);
+    } else if (samples.length >= PROBE_MIN_SAMPLES) {
+      probeRef.current = "done";
+      rememberProfile(safeLocalStorage(), "LOW");
+    }
+  }, [reducedMotion]);
   if (!definition || (!reviewPreview && (definition.reviewState !== "APPROVED" || definition.approvalState !== "APPROVED"))) return <p className="p-6">This lab is not available.</p>;
 
   const dispatch = (action: LabAction) => setState((current) => { const result = acceptLabAction(definition, current, action); return result.ok ? result.state : current; });
@@ -71,10 +110,6 @@ export function InteractiveLabPlayer({ labId = "g4-solid-figures", override, rev
     else if (pick.item.kind === "object") dispatch({ type: "select", objectId: pick.item.id });
     else dispatch({ type: "inspect-component", componentId: pick.item.id });
   };
-  const onDowngrade = (reason: "context" | "performance") => {
-    setProfile((current) => reason === "context" ? "FALLBACK_2D" : downgradeProfile(current));
-    setNotice(reason === "context" ? "3D is not available on this device, so the lab switched to the 2D view." : "The lab lowered its visual quality to keep things smooth.");
-  };
 
   if (intro) return <section className="mx-auto max-w-5xl rounded-3xl bg-slate-950 p-8 text-white shadow-2xl"><p className="text-sm font-semibold uppercase tracking-[.2em] text-cyan-300">Interactive lab</p><h1 className="mt-3 text-3xl font-bold">{definition.title ?? "Interactive lab"}</h1><p className="mt-4 max-w-2xl text-slate-300">{definition.summary ?? "Use the scene to complete the checks."}</p><button type="button" onClick={() => setIntro(false)} className="mt-7 rounded-full bg-cyan-300 px-6 py-3 font-bold text-slate-950">Start exploring</button></section>;
 
@@ -85,7 +120,7 @@ export function InteractiveLabPlayer({ labId = "g4-solid-figures", override, rev
         <div className="flex items-center gap-2 text-sm">
           <span>{progress}% complete</span>
           <label className="sr-only" htmlFor="profile">Visual quality</label>
-          <select id="profile" value={profile} onChange={(event) => { setNotice(null); setProfile(event.target.value as CapabilityProfile); }} className="min-h-11 rounded-full border border-white/15 bg-white/10 px-3 py-2 text-white"><option>HIGH</option><option>STANDARD</option><option>LOW</option><option>FALLBACK_2D</option></select>
+          <select id="profile" value={profile} onChange={(event) => { const chosen = event.target.value as CapabilityProfile; probeRef.current = "done"; setNotice(null); rememberProfile(safeLocalStorage(), chosen); setProfile(chosen); }} className="min-h-11 rounded-full border border-white/15 bg-white/10 px-3 py-2 text-white"><option>HIGH</option><option>STANDARD</option><option>LOW</option><option>FALLBACK_2D</option></select>
         </div>
       </div>
       {notice && <p role="status" className="border-b border-white/10 bg-amber-300/10 px-5 py-2 text-xs text-amber-100">{notice}</p>}
@@ -93,7 +128,7 @@ export function InteractiveLabPlayer({ labId = "g4-solid-figures", override, rev
         <div className="bg-[radial-gradient(circle_at_50%_38%,#263d72,#080d20_68%)]">
           {profile === "FALLBACK_2D"
             ? <Fallback2D definition={definition} state={state} reducedMotion={reducedMotion} traceFlowId={traceFlowId} dispatch={dispatch} onPick={onPick} />
-            : <WebGLScene definition={definition} state={state} profile={profile} reducedMotion={reducedMotion} traceFlowId={traceFlowId} dispatch={dispatch} onPick={onPick} onDowngrade={onDowngrade} allowPerformanceDowngrade={!reviewPreview} />}
+            : <WebGLScene definition={definition} state={state} profile={profile} reducedMotion={reducedMotion} traceFlowId={traceFlowId} dispatch={dispatch} onPick={onPick} onDowngrade={onDowngrade} allowPerformanceDowngrade={!reviewPreview} onProbeSamples={canProbe ? onProbeSamples : undefined} />}
         </div>
         <aside className="lg:max-h-[clamp(420px,62vh,640px)] lg:overflow-y-auto border-l border-white/10 bg-white/[.03] p-5">
           <LabControlPanel definition={definition} state={state} activeCheck={activeCheck} dispatch={dispatch} />
@@ -105,4 +140,8 @@ export function InteractiveLabPlayer({ labId = "g4-solid-figures", override, rev
       </div>
     </section>
   );
+}
+
+function safeLocalStorage(): Storage | null {
+  try { return typeof window === "undefined" ? null : window.localStorage; } catch { return null; }
 }
