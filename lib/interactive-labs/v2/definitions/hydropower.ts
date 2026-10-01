@@ -14,12 +14,13 @@ function component(id: string, label: string, geometry: "box" | "cylinder" | "co
 }
 
 const components: HighFidelitySpec["components"] = [
-  component("headpond", "Headpond", "rectangular-prism", [-1.5, 2.9, -2.5], [4.7, 0.18, 1.4], "#2f8fe8", { labelOffset: [-0.35, 0.9, 0] }),
+  // Water components are the instructional (pickable, labelled) parts; RX-005b surfaces draw the water itself.
+  component("headpond", "Headpond", "rectangular-prism", [-1.5, 2.9, -2.5], [4.7, 0.18, 1.4], "#2f8fe8", { labelOffset: [-0.35, 0.9, 0], material: mat("#2f8fe8", 0.3) }),
   component("dam", "Dam", "rectangular-prism", [-1.5, 2.15, -1.2], [4.8, 1.5, 0.38], "#c9c2b4", { labelOffset: [-2.8, -0.15, 0] }),
   component("intake-1", "Intake", "box", [-1.5, 1.6, -0.9], [0.54, 0.28, 0.5], "#9fb2c6", { labelOffset: [-0.1, 0.65, 0] }),
   { ...pipeKit({ id: "penstock-1", label: "Penstock", transform: tr([-1.5, 0.72, -0.35], [0.2, 1.25, 0.2]), color: "#6f86a0", points: [[0,-1,0],[0,1,0]], radius: 1 }), labelOffset: [-2.6, -1.1, 0] },
-  component("tailrace", "Tailrace", "rectangular-prism", [-1.5, -1.15, 0.8], [2.5, 0.16, 0.52], "#2f8fe8", { labelOffset: [-0.3, -0.45, 0] }),
-  component("river-downstream", "Saint Paul River", "rectangular-prism", [0, -1.8, 1.6], [5.8, 0.12, 0.5], "#2f8fe8", { labelOffset: [1.7, -0.3, 0] }),
+  component("tailrace", "Tailrace", "rectangular-prism", [-1.5, -1.15, 0.8], [2.5, 0.16, 0.52], "#2f8fe8", { labelOffset: [-0.3, -0.45, 0], material: mat("#2f8fe8", 0.3) }),
+  component("river-downstream", "Saint Paul River", "rectangular-prism", [0, -1.8, 1.6], [5.8, 0.12, 0.5], "#2f8fe8", { labelOffset: [1.7, -0.3, 0], material: mat("#2f8fe8", 0.3) }),
   component("spillway-gate", "Spillway gate", "box", [1.0, 2.4, -1.0], [0.65, 0.8, 0.18], "#9fb2c6", { labelOffset: [0.55, 0.45, 0], mobileLabel: false }),
   component("powerhouse", "Powerhouse", "rectangular-prism", [0.3, 0.15, 0.1], [4.5, 1.7, 1.5], "#c9c2b4", { material: mat("#c9c2b4", 0.55), labelOffset: [-2.0, -1.0, 0], mobileLabel: false }),
   ...UNIT_X.flatMap((x, i) => {
@@ -71,9 +72,20 @@ const flows: HighFidelitySpec["flows"] = [
 ];
 // Ten physical flows: river-in, four turbine feeds, spillway, power-line and three city feeders (one per district). Unit 1 carries the trace nodes.
 
+// RX-005b water (07 water language): volume follows the model; the headpond level never moves; the downstream
+// river always matches the upstream river because turbine water plus spill equals river flow.
+const surfaces: HighFidelitySpec["surfaces"] = [
+  { id: "water-upstream", label: "Saint Paul River (upstream)", kind: "channel", medium: "water", path: [[-6.6, 2.93, -2.5], [-5.2, 2.93, -2.6], [-3.7, 2.93, -2.5]], baseWidth: 1.5, widthQuantity: "upstreamWidthFactor", activeQuantity: "upstreamFlow", rateQuantity: "upstreamWidthFactor" },
+  { id: "water-headpond", label: "Headpond (operating level stays the same)", kind: "pool", medium: "water", path: [[-3.8, 2.97, -2.5], [0.8, 2.97, -2.5]], baseWidth: 1.7, activeQuantity: "headpondLevel", componentId: "headpond" },
+  { id: "water-tailrace", label: "Tailrace", kind: "channel", medium: "water", path: [[-2.4, -1.06, 0.8], [1.8, -1.06, 0.8]], baseWidth: 1.0, widthQuantity: "tailraceWidthFactor", activeQuantity: "tailraceFlow", rateQuantity: "tailraceWidthFactor", componentId: "tailrace" },
+  { id: "water-downstream", label: "Saint Paul River (downstream)", kind: "channel", medium: "water", path: [[-4.6, -1.73, 1.6], [1.5, -1.73, 1.75], [7.6, -1.73, 1.6]], baseWidth: 1.6, widthQuantity: "downstreamWidthFactor", activeQuantity: "downstreamFlow", rateQuantity: "downstreamWidthFactor", componentId: "river-downstream" },
+  { id: "water-spill", label: "Spillway water", kind: "sheet", medium: "water", path: [[1, 2.2, -0.7], [1, 1.15, 0.72], [1, -0.1, 0.92], [1, -1.5, 1.8]], baseWidth: 1.4, widthQuantity: "spillWidthFactor", activeQuantity: "spillFlow", rateQuantity: "spillWidthFactor" },
+];
+
 const spec: HighFidelitySpec = {
   specVersion: HIGH_FIDELITY_SPEC_VERSION,
   environment: "DAYLIGHT",
+  surfaces,
   authoring: {
     learningObjective: "Explain how river flow, available turbine units and electricity demand affect hydropower generation and delivery.",
     whyInteractive: "Learners can change season, unit availability and feeder demand, then inspect the linked water, machine and grid consequences.",
@@ -83,7 +95,7 @@ const spec: HighFidelitySpec = {
     variables: "River flow has five discrete seasonal values; units online, the hospital feeder and four-block homes and shops districts are learner controlled.",
     simulationRules: "Deterministic capability model: water is dispatched in unit order; demand above capability trips delivery; remaining water spills.",
     learnerControls: "Season, units online, hospital feeder, homes and shops blocks, trace path, unit 3 cutaway and repair assembly.",
-    visualConsequences: "Water flow, unit rotation status, power gauge, spillway flow, feeder flow and city lighting follow the simulation.",
+    visualConsequences: "River and tailrace width, spill sheet, water flow, unit rotation status, power gauge, feeder flow and city lighting follow the simulation; the headpond level never changes.",
     guidedPath: "Meet the plant, follow water, inspect unit 3, compare seasons, test overload, repair the unit, then explore the grid.",
     exploreMode: "Change all controls and inspect the explanation and energy path.",
     challenge: "In the dry season, keep the hospital lit and serve as much other load as fits without tripping the plant.",

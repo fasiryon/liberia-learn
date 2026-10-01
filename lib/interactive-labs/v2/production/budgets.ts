@@ -91,16 +91,20 @@ export function measureLabBudget(definition: InteractiveLabDefinition<LabState>,
       const list = buildRenderList({ definition, state, profile });
       const svg = profile === "FALLBACK_2D", low = list.budget.meshDetail === "low";
       const geometryProfile = profile === "LOW" ? "LOW" : profile === "STANDARD" ? "STANDARD" : "HIGH";
-      triangles = Math.max(triangles, svg ? 0 : list.items.reduce((sum, item) => sum + (item.parametricGeometry ? parametricTriangleCount(item.parametricGeometry, geometryProfile) : geometryTriangles(item.geometry, low)), 0));
+      // RX-005b surfaces: a ribbon is 2 triangles per span (three.js); LOW splits each span at the centre line (4).
+      const activeSurfaces = list.surfaces.filter((surface) => surface.active && surface.width > 0);
+      const surfaceTriangles = activeSurfaces.reduce((sum, surface) => sum + (surface.points.length - 1) * (low ? 4 : 2), 0);
+      triangles = Math.max(triangles, svg ? 0 : surfaceTriangles + list.items.reduce((sum, item) => sum + (item.parametricGeometry ? parametricTriangleCount(item.parametricGeometry, geometryProfile) : geometryTriangles(item.geometry, low)), 0));
       // ThreeScene: one ground and item draw, each flow line, active particle flow,
       // plus the shared marker batch when instructional markers or trace nodes exist.
       const threeFlowDraws = list.flows.length
         + list.flows.filter((flow) => flow.active && flow.particleCount > 0).length;
       const hasTraceNodes = list.flows.some((flow) => flow.nodes.some((node) => node.traceable));
       const threeMarkerDraw = list.markers.length > 0 || hasTraceNodes ? 1 : 0;
+      // Surfaces: one mesh each in ThreeScene; one shared triangle batch on LOW.
       drawCalls = Math.max(drawCalls, svg ? 0 : profile === "LOW"
-        ? planLowBatches(list).drawCalls
-        : list.items.length + 1 + threeFlowDraws + threeMarkerDraw);
+        ? planLowBatches(list).drawCalls + (activeSurfaces.length ? 1 : 0)
+        : list.items.length + 1 + threeFlowDraws + threeMarkerDraw + activeSurfaces.length);
       particles = Math.max(particles, list.flows.reduce((sum, flow) => sum + flow.particleCount, 0));
     }
     result[profile] = {

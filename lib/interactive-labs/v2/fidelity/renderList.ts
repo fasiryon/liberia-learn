@@ -8,6 +8,7 @@ import { assemblyOf, deriveSimulation, explainState, isAssemblyOpen, isComponent
 import { flowPoints, presetPose, type CameraPose } from "./presentation";
 import { RENDER_BUDGETS, type RenderBudget } from "./profiles";
 import { MARKER_COLOR } from "./palette";
+import { resolveSurfaces, type RenderSurface } from "./surfaces";
 import { IDENTITY, addVec3, lerpTransform, multiply, rotate, scaleVec3, transformMatrix, transformPoint, translate, type Mat4, type Vec3 } from "./math";
 
 export type ItemSpin = { pre: Mat4; local: Mat4; pivot: Vec3; axis: "x" | "y" | "z"; radPerSec: number };
@@ -37,7 +38,7 @@ export type RenderItem = {
 export type RenderMarker = { id: string; position: Vec3; color: string; label?: string };
 export type RenderFlow = { id: string; label: string; color: string; points: Vec3[]; active: boolean; rate: number; direction: 1 | -1; particleCount: number; nodes: FlowNode[]; traced: string[] };
 export type RenderMotion = { id: string; label: string; active: boolean; center: Vec3 };
-export type RenderList = { items: RenderItem[]; markers: RenderMarker[]; flows: RenderFlow[]; motions: RenderMotion[]; camera: CameraPose | null; budget: RenderBudget; explanation: ExplanationLine[]; quantities: Record<string, number>; environment: "DAYLIGHT" | "STUDIO" };
+export type RenderList = { items: RenderItem[]; markers: RenderMarker[]; flows: RenderFlow[]; surfaces: RenderSurface[]; motions: RenderMotion[]; camera: CameraPose | null; budget: RenderBudget; explanation: ExplanationLine[]; quantities: Record<string, number>; environment: "DAYLIGHT" | "STUDIO" };
 
 /** Paint decorative 2D scenery first so trace nodes, labels and controls remain above it. */
 export function orderFallbackItems(items: readonly RenderItem[]): RenderItem[] {
@@ -105,7 +106,7 @@ export function buildRenderList(input: { definition: InteractiveLabDefinition<La
     if (features?.kind === "vertex") for (const index of features.indices) markers.push({ id: `${object.id}:vertex:${index}`, position: transformPoint(matrix, boxCorners(object.geometry)[index] ?? [0, 0, 0]), color: MARKER_COLOR, label: String(index + 1) });
   }
 
-  if (!spec || !fidelity || !display) return { items, markers, flows: [], motions: [], camera: null, budget, explanation: [], quantities: {}, environment: spec?.environment ?? "STUDIO" };
+  if (!spec || !fidelity || !display) return { items, markers, flows: [], surfaces: [], motions: [], camera: null, budget, explanation: [], quantities: {}, environment: spec?.environment ?? "STUDIO" };
 
   const simulation = deriveSimulation(spec, fidelity);
   const motionDefinitions = spec.motions ?? [];
@@ -149,7 +150,7 @@ export function buildRenderList(input: { definition: InteractiveLabDefinition<La
     return { id: flow.id, label: flow.label, color: flow.color, points: flowPoints(flow), active: simulated.active, rate: simulated.rate, direction: simulated.direction, particleCount: simulated.active ? budget.particlesPerFlow : 0, nodes: flow.nodes, traced: fidelity.tracedPaths[flow.id] ?? [] };
   });
 
-  return { items, markers, flows, motions, camera: presetPose(spec, fidelity.cameraPresetId), budget, explanation: explainState(spec, fidelity, definition.grade), quantities: simulation.quantities, environment: spec.environment ?? "STUDIO" };
+  return { items, markers, flows, surfaces: resolveSurfaces(spec, simulation.quantities), motions, camera: presetPose(spec, fidelity.cameraPresetId), budget, explanation: explainState(spec, fidelity, definition.grade), quantities: simulation.quantities, environment: spec.environment ?? "STUDIO" };
 }
 
 /**
@@ -160,6 +161,7 @@ export function instructionalView(list: RenderList) {
   return {
     actionable: list.items.filter((item) => item.selectable && item.inFocus).map((item) => item.id).sort(),
     flows: list.flows.map((flow) => ({ id: flow.id, active: flow.active, rate: flow.rate, traced: flow.traced })),
+    surfaces: list.surfaces.map((surface) => ({ id: surface.id, active: surface.active, width: surface.width, rate: surface.rate })),
     quantities: list.quantities,
     explanation: list.explanation.map((line) => line.id),
     markers: list.markers.map((marker) => marker.id).sort(),

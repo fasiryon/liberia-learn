@@ -15,6 +15,7 @@ import { highlightBaseMix, HIGHLIGHT_COLOR, MARKER_COLOR } from "@/lib/interacti
 import { buildMesh } from "./meshes";
 import { buildParametricGeometry } from "@/lib/interactive-labs/v2/fidelity/geometry/builders";
 import { planLowBatches } from "@/lib/interactive-labs/v2/fidelity/lowBatch";
+import { createSurfaceTriangleStorage, writeSurfaceTriangles } from "@/lib/interactive-labs/v2/fidelity/surfaces";
 import type { MeshData } from "./meshes";
 import { pickNearest, type ScenePick } from "./picking";
 
@@ -130,6 +131,9 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
     const pointStorage = createPointBatchStorage();
     let pointGpuCapacity = 0;
     const flowStorage = createFlowBatchStorage();
+    // RX-005b on LOW: all water surfaces in one flat two-tone triangle batch (A13).
+    const surfaceStorage = createSurfaceTriangleStorage();
+    const surfaceBuffers = { positions: gl.createBuffer()!, colors: gl.createBuffer()!, capacity: 0 };
     const flowBuffers = Object.fromEntries(["lines", "particles", "traceNodes"].map((key) => [key, { positions: gl.createBuffer()!, colors: gl.createBuffer()!, capacity: 0 }])) as Record<"lines" | "particles" | "traceNodes", { positions: WebGLBuffer; colors: WebGLBuffer; capacity: number }>;
     const uploadBatch = (batch: FlowVertexBatch, gpu: { positions: WebGLBuffer; colors: WebGLBuffer; capacity: number }) => {
       if (gpu.capacity < batch.positions.length) {
@@ -262,6 +266,7 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
         for (const item of ordered) drawItem(item, meshFor(item), item.spin ? spinMatrix(item.spin, t, motionless) : item.matrix);
       }
       gl.depthMask(true);
+      if (list.surfaces.length) drawBatch(writeSurfaceTriangles(list.surfaces, surfaceStorage), surfaceBuffers, gl.TRIANGLES, 1, 1, viewProj);
       batchFlowGeometry(list, t, motionless, callbacks.current.traceFlowId, flowStorage);
       // Process paths are instructional overlays. Letting solid mesh depth hide
       // them made the flood spillway appear inactive in paused review frames.
@@ -325,6 +330,7 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
       lowBatchBuffers.forEach((buffers) => { gl.deleteBuffer(buffers.position); gl.deleteBuffer(buffers.normal); });
       gl.deleteBuffer(lineBuffer);
       Object.values(flowBuffers).forEach((buffers) => { gl.deleteBuffer(buffers.positions); gl.deleteBuffer(buffers.colors); });
+      gl.deleteBuffer(surfaceBuffers.positions); gl.deleteBuffer(surfaceBuffers.colors);
       gl.deleteProgram(program);
       // Defer forced loss one task so React StrictMode's development remount can reuse the live context.
       pendingContextLoss.current = window.setTimeout(() => {

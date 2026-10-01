@@ -8,6 +8,7 @@ import { transformPoint } from "@/lib/interactive-labs/v2/fidelity/math";
 import { convexHull, silhouetteSamples } from "./meshes";
 import type { ScenePick } from "./picking";
 import { useDisplayFidelity } from "./useDisplayFidelity";
+import { SURFACE_SHALLOW } from "@/lib/interactive-labs/v2/fidelity/surfaces";
 
 // Fixed precision keeps server and client SVG output identical (no hydration mismatch from float noise).
 const round = (value: number) => Math.round(value * 1000) / 1000;
@@ -43,6 +44,13 @@ export function Fallback2D({ definition, state, reducedMotion, traceFlowId, disp
           <filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="0.07" /></filter>
         </defs>
         <rect x={camera.target[0] - width / 2} y={-camera.target[1] - height / 2} width={width} height={height} fill={list.environment === "DAYLIGHT" ? "#e7eef1" : "#0b1223"} />
+        {/* RX-005b on FALLBACK_2D: each active water surface as a band whose thickness follows the model's width
+            factor (the front projection hides channel depth, so thickness carries the volume cue). */}
+        {list.surfaces.filter((surface) => surface.active && surface.width > 0).map((surface) => (
+          <polyline key={surface.id} data-lab-surface={surface.id} role="img" aria-label={`${surface.label}: ${surface.kind === "pool" ? "level unchanged" : `width ${Math.round(surface.width * 100) / 100}`}`}
+            points={surface.points.map((p) => `${p[0]},${-p[1]}`).join(" ")} fill="none" stroke={SURFACE_SHALLOW} strokeOpacity={0.85}
+            strokeWidth={Math.max(0.06, surface.width * 0.32)} strokeLinecap="round" strokeLinejoin="round" pointerEvents="none" />
+        ))}
         {list.flows.filter((flow) => !flow.active).map((flow) => (
           <g key={flow.id} aria-label={`${flow.label}: ${flow.active ? "flowing" : "not flowing"}`}>
             <polyline points={flow.points.map((p) => `${p[0]},${-p[1]}`).join(" ")} fill="none" stroke={flow.active ? flow.color : INACTIVE_FLOW_COLOR} strokeOpacity={1} strokeDasharray={flow.active ? undefined : "8 6"} strokeWidth={2.5} vectorEffect="non-scaling-stroke" strokeLinejoin="round" markerMid={flow.active && reducedMotion ? "url(#flow-arrow)" : undefined} />

@@ -4,6 +4,7 @@
 import type { GeometryKind, LabMode, MaterialSpec, Transform } from "../types";
 import type { Vec3 } from "./math";
 import type { InstructionalGeometryVariants } from "./geometry/types";
+import type { SurfaceDefinition } from "./surfaces";
 
 export const HIGH_FIDELITY_SPEC_VERSION = "high-fidelity-lab/1.0.0" as const;
 
@@ -189,6 +190,8 @@ export type HighFidelitySpec = {
   offline: { remoteAssets: string[]; maxPackageBytes: number };
   /** Shared presentation intent. Existing labs default to STUDIO. */
   environment?: "DAYLIGHT" | "STUDIO";
+  /** RX-005b: quantity-bound water (or other medium) surfaces. */
+  surfaces?: SurfaceDefinition[];
 };
 
 export type FidelityState = {
