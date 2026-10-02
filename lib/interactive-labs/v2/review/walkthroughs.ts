@@ -16,12 +16,10 @@ const HYDROPOWER: LabWalkthrough = {
   labId: "mount-coffee-hydropower",
   scenario: "hydro-overview",
   steps: [
-    { press: "Challenge", note: "challenge mode" },
-    { press: "Season: Dry" },
-    { press: "Homes: one block off", repeat: 4 },
-    { press: "Shops: one block off", repeat: 3 },
+    { press: "Challenge", note: "challenge mode: starts dry, four units, hospital only (under-loaded)" },
+    { press: "Shops: one block on", note: "add what fits: 4 + 4 MW of about 10 MW" },
     { expectStatus: "Challenge met", note: "dry-season challenge solved by keyboard alone" },
-    { press: "Assessment" },
+    { press: "Assessment", note: "assessment starts fresh: rainy season, full load" },
     // trace-water: the panel lists the traceable nodes alphabetically; press them in water order.
     ...["headpond", "intake", "penstock", "turbine", "tailrace", "downstream"].map((label) => ({ press: label })),
     CHECK, CORRECT,
@@ -30,8 +28,12 @@ const HYDROPOWER: LabWalkthrough = {
     { press: "Parts and traces" },
     { press: "Generator" },
     CHECK, CORRECT,
-    // dry-season-output and dry-season-peak are already satisfied by the challenge state.
+    // dry-season-output: four units are already on; the season sets what the river allows.
+    { press: "Season: Dry" },
     CHECK, CORRECT,
+    // dry-season-peak: shed what does not fit (keep the hospital and one shops block).
+    { press: "Homes: one block off", repeat: 4 },
+    { press: "Shops: one block off", repeat: 3 },
     CHECK, CORRECT,
     // repair-unit-3: take unit 3 apart and rebuild it in its slots.
     { press: "Take the", match: "prefix" },

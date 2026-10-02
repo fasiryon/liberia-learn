@@ -1,7 +1,7 @@
 import type { InteractiveLabDefinition, LabState, Transform } from "../types";
 import { composeHighFidelity } from "../fidelity/engine";
 import { HIGH_FIDELITY_SPEC_VERSION, type HighFidelitySpec } from "../fidelity/types";
-import { generatorHousingKit, latticeTowerKit, pipeKit } from "../fidelity/kits";
+import { bladedRunnerKit, generatorHousingKit, latticeTowerKit, pipeKit } from "../fidelity/kits";
 import { hydropowerModel, RIVER_FLOW_STEPS, SYNCHRONOUS_RPM, UNIT3_STACK, UNIT_X } from "./hydropowerModel";
 
 export const HYDROPOWER_LAB_ID = "mount-coffee-hydropower";
@@ -51,18 +51,19 @@ const components: HighFidelitySpec["components"] = [
   component("headpond", "Headpond", "rectangular-prism", [-1.5, 2.9, -2.5], [4.7, 0.18, 1.4], "#2f8fe8", { labelOffset: [-0.35, 0.9, 0], material: mat("#2f8fe8", 0.08) }),
   component("dam", "Dam", "rectangular-prism", [-1.5, 2.15, -1.2], [4.8, 1.5, 0.38], "#c9c2b4", { labelOffset: [-2.8, -0.15, 0] }),
   component("intake-1", "Intake", "box", [-1.5, 1.6, -0.9], [0.54, 0.28, 0.5], "#9fb2c6", { labelOffset: [-0.1, 0.65, 0] }),
-  { ...pipeKit({ id: "penstock-1", label: "Penstock", transform: tr([-1.5, 0.72, -0.35], [0.2, 1.25, 0.2]), color: "#6f86a0", points: [[0,-1,0],[0,1,0]], radius: 1 }), labelOffset: [-2.6, -1.1, 0] },
+  { ...pipeKit({ id: "penstock-1", label: "Penstock", transform: tr([-1.5, 0.72, -0.35], [0.2, 1.25, 0.2]), color: "#6f86a0", points: [[0,-1,0],[0,1,0]], radius: 1 }), labelOffset: [-0.55, 0.15, 0] },
   component("tailrace", "Tailrace", "rectangular-prism", [-1.5, -1.15, 0.8], [2.5, 0.16, 0.52], "#2f8fe8", { labelOffset: [-0.3, -0.45, 0], material: mat("#2f8fe8", 0.08) }),
   component("river-downstream", "Saint Paul River", "rectangular-prism", [0, -1.8, 1.6], [5.8, 0.12, 0.5], "#2f8fe8", { labelOffset: [1.7, -0.3, 0], material: mat("#2f8fe8", 0.08) }),
-  component("spillway-gate", "Spillway gate", "box", [1.0, 2.4, -1.0], [0.65, 0.8, 0.18], "#9fb2c6", { labelOffset: [0.55, 0.45, 0], mobileLabel: false }),
-  component("powerhouse", "Powerhouse", "rectangular-prism", [0.3, 0.15, 0.1], [4.5, 1.7, 1.5], "#d8d2c4", { material: mat("#d8d2c4", 0.32), labelOffset: [-2.0, -1.0, 0], mobileLabel: false }),
+  component("spillway-gate", "Spillway gate", "box", [-3.3, 2.4, -1.0], [0.65, 0.8, 0.18], "#9fb2c6", { labelOffset: [0.55, 0.45, 0], mobileLabel: false }),
+  component("powerhouse", "Powerhouse", "rectangular-prism", [0.3, 0.15, 0.1], [2.15, 1.7, 1.5], "#d8d2c4", { material: mat("#d8d2c4", 0.22), labelOffset: [-2.0, -1.0, 0], mobileLabel: false }),
   ...UNIT_X.flatMap((x, i) => {
     const unit = i + 1;
     const offsets: Array<[number, number, number]> = [[-1.8, 0.65, 0], [-0.45, 1.8, 0], [0.5, 0.55, 0], [1.15, 1.3, 0]];
     return [component(`unit-${unit}`, `Unit ${unit} housing`, "cylinder", [x, -0.15, 0.1], [0.52, 0.72, 0.52], "#5fb8a8", { labelOffset: unit === 1 ? [-0.9, 0.95, 0] : offsets[i], ...(unit !== 3 ? { mobileLabel: false } : {}) }),
       component(`unit-${unit}-marker`, `Unit ${unit} rotation marker`, "box", [x + 0.34, -0.15, 0.1], [0.16, 0.08, 0.08], "#facc15", { showLabel: false, selectable: false })];
   }),
-  component("u3-runner", "Runner", "cylinder", [0.9, -0.25, 0.1], [0.32, 0.18, 0.32], "#cfe0ea", { internal: true, layerId: "unit-3-internals", shapeKey: "runner", labelOffset: [-0.8, -0.3, 0], mobileLabel: false }),
+  { ...component("u3-runner", "Runner", "cylinder", [0.9, -0.25, 0.1], [0.32, 0.18, 0.32], "#cfe0ea", { internal: true, layerId: "unit-3-internals", shapeKey: "runner", labelOffset: [-0.8, -0.3, 0], mobileLabel: false }),
+    geometryVariants: bladedRunnerKit({ id: "u3-runner-shape", label: "Runner", transform: tr([0, 0, 0], [1, 1, 1]), color: "#cfe0ea", radius: 1, bladeCount: 9 })[1].geometryVariants },
   component("u3-shaft", "Shaft", "cylinder", [0.9, 0.05, 0.1], [0.09, 0.36, 0.09], "#5f6d7e", { internal: true, layerId: "unit-3-internals", shapeKey: "shaft", labelOffset: [0, 0.2, 0], mobileLabel: false }),
   { ...generatorHousingKit({ id: "u3-generator", label: "Generator", transform: tr([0.9, 0.48, 0.1], [0.34, 0.28, 0.34]), color: "#ee8f52", radius: 1, height: 2 }), internal: true, layerId: "unit-3-internals", shapeKey: "generator", labelOffset: [0.8, 0.4, 0], mobileLabel: false },
   component("switchyard", "Switchyard", "panel", [3.1, 0.2, 0.1], [0.9, 0.8, 0.18], "#aab4c0", { mobileLabel: false }),
@@ -70,11 +71,13 @@ const components: HighFidelitySpec["components"] = [
   component("city-hospital", "Hospital", "rectangular-prism", [5.0, 0.35, 0], [0.4, 0.95, 0.5], "#96a3b6", { mobileLabel: false }),
   component("hospital-sign", "Hospital H sign", "panel", [5.0, 1.1, 0.28], [0.22, 0.2, 0.06], "#2f6fe0", { showLabel: false, selectable: false }),
   // v1.1 feeder blocks (06-V1_1_SIMULATION_DELTA): four homes blocks and four shops blocks, each lit or dark on its own.
-  ...[1, 2, 3, 4].map((k) => component(`city-homes-b${k}`, k === 1 ? "Homes" : `Homes block ${k}`, "rectangular-prism", [5.85 + (k - 1) * 0.36, 0.2 + (k % 2) * 0.08, 0.15], [0.3, 0.62 + (k % 2) * 0.16, 0.42], "#7a869a", k === 1 ? { labelOffset: [0.4, 1.1, 0], mobileLabel: false } : { showLabel: false, selectable: false })),
-  ...[1, 2, 3, 4].map((k) => component(`city-shops-b${k}`, k === 1 ? "Shops" : `Shops block ${k}`, "rectangular-prism", [7.35 + (k - 1) * 0.3, 0.15, -0.1], [0.24, 0.5, 0.36], "#7a869a", k === 1 ? { labelOffset: [0.3, 1.0, 0], mobileLabel: false } : { showLabel: false, selectable: false })),
-  ...[1, 2, 3, 4].map((n) => component(`gauge-seg-${n}`, `Power gauge ${n}`, "box", [4.6 + n * 0.24, 2.3, 0], [0.18, 0.22, 0.08], "#8c9ab0", { showLabel: false, selectable: false })),
-  component("demand-hospital", "hospital demand segment", "box", [5.2, 2.3, 0], [0.12, 0.22, 0.08], "#c98a4b", { showLabel: false, selectable: false }),
-  ...(["homes", "shops"] as const).flatMap((name, d) => [1, 2, 3, 4].map((k) => component(`demand-${name}-b${k}`, `${name} block ${k} demand segment`, "box", [5.4 + d * 0.62 + (k - 1) * 0.14, 2.3, 0], [0.1, 0.22, 0.08], "#c98a4b", { showLabel: false, selectable: false }))),
+  ...[1, 2, 3, 4].map((k) => component(`city-homes-b${k}`, k === 1 ? "Homes" : `Homes block ${k}`, "rectangular-prism", [5.55 + (k - 1) * 0.5, 0.25 + (k % 2) * 0.08, 0.15], [0.38, 0.72 + (k % 2) * 0.16, 0.48], "#7a869a", k === 1 ? { labelOffset: [0.4, 1.1, 0], mobileLabel: false } : { showLabel: false, selectable: false })),
+  ...[1, 2, 3, 4].map((k) => component(`city-shops-b${k}`, k === 1 ? "Shops" : `Shops block ${k}`, "rectangular-prism", [7.75 + (k - 1) * 0.42, 0.15, -0.1], [0.3, 0.6, 0.42], "#7a869a", k === 1 ? { labelOffset: [0.3, 1.0, 0], mobileLabel: false } : { showLabel: false, selectable: false })),
+  // Gauge rows (R2 P1-7): supply above (4 × 22 MW), demand below; box half-width = MW × 0.01 so length ∝ MW.
+  ...[1, 2, 3, 4].map((n) => component(`gauge-seg-${n}`, `Power gauge ${n}`, "box", [4.6 + (n - 0.5) * 0.46, 2.55, 0], [0.21, 0.1, 0.06], "#8c9ab0", { showLabel: false, selectable: false })),
+  component("demand-hospital", "hospital demand segment", "box", [4.6 + 0.04, 2.25, 0], [0.04, 0.1, 0.06], "#c98a4b", { showLabel: false, selectable: false }),
+  ...[1, 2, 3, 4].map((k) => component(`demand-homes-b${k}`, `homes block ${k} demand segment`, "box", [4.6 + 0.08 + (k - 0.5) * 0.25, 2.25, 0], [0.115, 0.1, 0.06], "#c98a4b", { showLabel: false, selectable: false })),
+  ...[1, 2, 3, 4].map((k) => component(`demand-shops-b${k}`, `shops block ${k} demand segment`, "box", [4.6 + 1.08 + (k - 0.5) * 0.09, 2.25, 0], [0.035, 0.1, 0.06], "#c98a4b", { showLabel: false, selectable: false })),
   // RX-005c in-scene controls (05 pedagogy delta §2): each dispatches the same set-variable as its panel twin.
   // River-gauge post upstream: the season is a condition to test, chosen where the water arrives.
   component("river-gauge-post", "River gauge: choose a season to test", "cylinder", [-5.55, 3.35, -1.75], [0.05, 0.75, 0.05], "#5f6d7e", { showLabel: false }),
@@ -121,7 +124,7 @@ const flows: HighFidelitySpec["flows"] = [
       node(`water-u${unit}-tailrace`, "Tailrace", [UNIT_X[unit - 1], -1.0, 0.8], "tailrace"),
       node("river-downstream", "Saint Paul River", [1.0, -2.0, 2.0], "river-downstream"),
     ] })),
-  { id: "spillway", label: "Spillway", medium: "water", sourceNodeId: "spill-in", destinationNodeId: "spill-out", closedLoop: false, visibleByDefault: true, color: "#67e8f9", nodes: [node("spill-in", "Spillway gate", [1, 2.2, -0.7], "spillway-gate"), node("spill-face", "Dam face", [1, 1.15, 0.72]), node("spill-drop", "Spillway channel", [1, -0.1, 0.92]), node("spill-out", "Downstream river", [1, -1.5, 1.8], "river-downstream")] },
+  { id: "spillway", label: "Spillway", medium: "water", sourceNodeId: "spill-in", destinationNodeId: "spill-out", closedLoop: false, visibleByDefault: true, color: "#67e8f9", nodes: [node("spill-in", "Spillway gate", [-3.3, 2.2, -0.7], "spillway-gate"), node("spill-face", "Dam face", [-3.3, 1.15, 0.72]), node("spill-drop", "Spillway channel", [-3.3, -0.1, 0.92]), node("spill-out", "Downstream river", [-3.3, -1.5, 1.8], "river-downstream")] },
   { id: "power-line", label: "Transmission line", medium: "light", sourceNodeId: "power-source", destinationNodeId: "switchyard-node", closedLoop: false, visibleByDefault: true, color: "#facc15", nodes: [node("power-source", "Generator", [3, 0.2, 0], "switchyard"), node("switchyard-node", "Switchyard", [3.1, 0.2, 0], "switchyard")] },
   ...["hospital", "homes", "shops"].map((name, i) => ({ id: `feeder-${name}`, label: `${name} feeder`, medium: "light" as const, sourceNodeId: `feeder-${name}-in`, destinationNodeId: `feeder-${name}-out`, closedLoop: false, visibleByDefault: true, color: "#facc15", nodes: [node(`feeder-${name}-in`, "Switchyard", [3.1, 0.2, 0], "switchyard"), node(`feeder-${name}-out`, name, [5 + i * 1.3, 0.35, 0], name === "hospital" ? "city-hospital" : `city-${name}-b1`)] })),
 ];
@@ -134,7 +137,7 @@ const surfaces: HighFidelitySpec["surfaces"] = [
   { id: "water-headpond", label: "Headpond (operating level stays the same)", kind: "pool", medium: "water", path: [[-3.8, 3.22, -2.5], [0.8, 3.22, -2.5]], baseWidth: 1.7, activeQuantity: "headpondLevel", componentId: "headpond" },
   { id: "water-tailrace", label: "Tailrace", kind: "channel", medium: "water", path: [[-2.4, -1.06, 0.8], [1.8, -1.06, 0.8]], baseWidth: 1.0, widthQuantity: "tailraceWidthFactor", activeQuantity: "tailraceFlow", rateQuantity: "tailraceWidthFactor", componentId: "tailrace" },
   { id: "water-downstream", label: "Saint Paul River (downstream)", kind: "channel", medium: "water", path: [[-4.6, -1.73, 1.6], [1.5, -1.73, 1.75], [7.6, -1.73, 1.6]], baseWidth: 1.6, widthQuantity: "downstreamWidthFactor", activeQuantity: "downstreamFlow", rateQuantity: "downstreamWidthFactor", componentId: "river-downstream" },
-  { id: "water-spill", label: "Spillway water", kind: "sheet", medium: "water", path: [[1, 2.2, -0.7], [1, 1.15, 0.72], [1, -0.1, 0.92], [1, -1.5, 1.8]], baseWidth: 1.4, widthQuantity: "spillWidthFactor", activeQuantity: "spillFlow", rateQuantity: "spillWidthFactor" },
+  { id: "water-spill", label: "Spillway water", kind: "sheet", medium: "water", path: [[-3.3, 2.2, -0.7], [-3.3, 1.15, 0.72], [-3.3, -0.1, 0.92], [-3.3, -1.5, 1.8]], baseWidth: 1.4, widthQuantity: "spillWidthFactor", activeQuantity: "spillFlow", rateQuantity: "spillWidthFactor" },
 ];
 
 const spec: HighFidelitySpec = {
@@ -153,7 +156,7 @@ const spec: HighFidelitySpec = {
     visualConsequences: "River and tailrace width, spill sheet, water flow, unit rotation status, power gauge, feeder flow and city lighting follow the simulation; the headpond level never changes.",
     guidedPath: "Meet the plant, follow water, inspect unit 3, compare seasons, test overload, repair the unit, then explore the grid.",
     exploreMode: "Change all controls and inspect the explanation and energy path.",
-    challenge: "In the dry season, keep the hospital lit and serve as much other load as fits without tripping the plant.",
+    challenge: "Dry season, hospital lit: predict first, then switch on as much other load as fits without tripping the plant. Compare the spare MW with a homes block (12 MW) and a shops block (4 MW).",
     assessment: "Trace water, identify the generator, reach dry-season capability, stabilize priority supply and rebuild unit 3.",
     evidence: "All five checks remain RAW_OBSERVATION; the release binding is a fixture and this definition is DRAFT.",
     misconceptions: "A full headpond guarantees high output; more turbines create more water; generators spin faster with more water; a trip merely dims loads.",
@@ -187,7 +190,7 @@ const spec: HighFidelitySpec = {
     { id: "powerhouse-section", label: "Powerhouse section", target: [0.3, 0.2, 0.1], distance: 7, yaw: 0.2, pitch: 0.1 },
     { id: "unit-bench", label: "Unit 3 bench", target: [0.9, 0.2, 0.1], distance: 5, yaw: 0.2, pitch: 0.1 },
     { id: "exploded-bench", label: "Exploded unit 3", target: [0.9, 0.15, 0.1], distance: 9, yaw: 0.2, pitch: 0.1 },
-    { id: "grid-city", label: "Power and city", target: [5, 1, 0], distance: 8, yaw: -0.1, pitch: 0.12 },
+    { id: "grid-city", label: "Power and city", target: [6, 0.9, 0.2], distance: 8.5, yaw: -0.18, pitch: 0.3 },
   ], constraints: { minDistance: 2.5, maxDistance: 28, minPitch: 0.02, maxPitch: 1.25, minYaw: -1.75, maxYaw: 1.75 } },
   guidedPath: [
     { id: "meet", prompt: "Meet the plant: the Saint Paul River feeds a narrow headpond behind the dam. Find the powerhouse, the switchyard and the city it supplies.", cameraPresetId: "valley" },
@@ -199,6 +202,22 @@ const spec: HighFidelitySpec = {
     { id: "energy-chain", prompt: "Name the energy chain: gravitational potential energy of high water → kinetic energy of falling water → turbine and shaft rotation → electrical energy → light and heat. Use the explanation panel to check your thinking.", cameraPresetId: "valley" },
   ],
   modes: ["GUIDED", "EXPLORE", "CHALLENGE", "ASSESSMENT"],
+  // R2 pedagogy P1-1 / P1-3: the challenge starts under-loaded (learner must add what fits, not shed until lit);
+  // assessment starts from the lab's initial conditions so no check is pre-solved by the challenge.
+  modeStart: {
+    CHALLENGE: { variables: { riverFlow: 49, unitsOnline: 4, feederHospital: 1, homesBlocks: 0, shopsBlocks: 0 }, cameraPresetId: "grid-city" },
+    ASSESSMENT: { variables: { riverFlow: 430, unitsOnline: 4, feederHospital: 1, homesBlocks: 4, shopsBlocks: 4 } },
+  },
+  hud: [
+    { quantityId: "outputMW", label: "Plant can make", unit: "MW", digits: 0 },
+    { quantityId: "demandMW", label: "City asks for", unit: "MW", digits: 0 },
+    { quantityId: "headroomMW", label: "Spare", unit: "MW", digits: 1 },
+    { quantityId: "riverFlow", label: "River", unit: "m³/s", digits: 0 },
+    { quantityId: "unitsRunning", label: "Units on", digits: 0 },
+  ],
+  hudAlert: (q) => q.tripped === 1
+    ? { text: q.outputMW > 0 ? "Tripped: the city asked for more than the plant can make, so the city is dark" : "No unit is running: no supply", tone: "danger" }
+    : q.spillFlow > 0 ? { text: `Spilling ${Math.round(q.spillFlow)} m³/s: more water than the running turbines can take`, tone: "info" } : null,
   challengeStatus: (quantities) => quantities.gridStableWithPriority === 1
     ? "Hospital supply is stable in the dry season. Challenge met."
     : "Not met yet: in the dry season, keep the hospital lit and switch on every block that still fits without a trip.",
@@ -217,7 +236,7 @@ const base: InteractiveLabDefinition<LabState> = {
   checks: [
     { id: "trace-water", prompt: "Trace the water through the six nodes, in order.", objectiveId: OBJECTIVE_ID, conceptId: CONCEPT_ID, kind: "direct-manipulation", answer: { flowId: "water-u1" }, fidelity: { kind: "trace-path", flowId: "water-u1" }, hints: ["Start at the headpond and follow the water back to the river."] },
     { id: "find-generator", prompt: "Open the powerhouse section and identify unit 3's generator.", objectiveId: OBJECTIVE_ID, conceptId: CONCEPT_ID, kind: "direct-manipulation", answer: { componentId: "u3-generator" }, fidelity: { kind: "identify-component", componentId: "u3-generator" }, hints: ["Use the powerhouse section cutaway."] },
-    { id: "dry-season-output", prompt: "With all four units on, make the plant produce about 10 MW (8–12).", objectiveId: OBJECTIVE_ID, conceptId: CONCEPT_ID, kind: "direct-manipulation", answer: { quantityId: "outputMW", min: 8, max: 12 }, fidelity: { kind: "reach-target", quantityId: "outputMW", min: 8, max: 12 }, hints: ["Units alone cannot do it: what limits how much water arrives each second?"] },
+    { id: "dry-season-output", prompt: "With all four units on, set the season so the plant can make only about 10 MW (8–12).", objectiveId: OBJECTIVE_ID, conceptId: CONCEPT_ID, kind: "direct-manipulation", answer: { quantityId: "capabilityAllUnitsMW", min: 8, max: 12 }, fidelity: { kind: "reach-target", quantityId: "capabilityAllUnitsMW", min: 8, max: 12 }, hints: ["Units alone cannot do it: what limits how much water arrives each second?"] },
     { id: "dry-season-peak", prompt: "In the dry season, keep the hospital lit and switch on as much other load as fits without a trip.", objectiveId: OBJECTIVE_ID, conceptId: CONCEPT_ID, kind: "direct-manipulation", answer: { quantityId: "gridStableWithPriority", value: 1 }, fidelity: { kind: "reach-target", quantityId: "gridStableWithPriority", min: 1, max: 1 }, hints: ["Compare the spare MW with the size of a homes block (12 MW) and a shops block (4 MW)."] },
     { id: "repair-unit-3", prompt: "Rebuild unit 3 with its runner, shaft and generator in the matching slots.", objectiveId: OBJECTIVE_ID, conceptId: CONCEPT_ID, kind: "direct-manipulation", answer: { assemblyId: "unit-3" }, fidelity: { kind: "assemble", assemblyId: "unit-3" }, hints: ["Start by clearing the assembly, then place each matching part."] },
   ],

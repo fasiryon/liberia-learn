@@ -99,15 +99,21 @@ function explain(r: ReturnType<typeof evaluateHydro>): ExplanationLine[] {
   else if (r.demandMW > 0) lines.push({ id: "supplied", text: `The plant is supplying the ${r.demandMW} MW the city asks for. Every feeder that is on gets full power.` });
   else lines.push({ id: "no-demand", text: "All feeders are off, so no electricity is sent to the city." });
   if (r.maxLoadServed) lines.push({ id: "max-served", text: "The hospital is lit and no further block fits without tripping the plant: the most load this supply can carry." });
-  if (r.gridStableWithPriority) lines.push({ id: "priority-stable", text: "Dry season, evening peak: the grid is stable, the hospital is lit, and every block that fits is on." });
+  if (r.gridStableWithPriority) lines.push({ id: "priority-stable", text: "Dry season: the grid is stable, the hospital is lit, and every block that fits is on." });
+  if (r.riverFlow === DRY_FLOW) lines.push({ id: "bottle-wheel", text: "Like the bottle-cap water wheel in class: a thin stream turns it slowly and a full stream turns it fast. Less water each second means less power." });
   lines.push(
     { id: "grade8-rule", text: "More water each second, or a higher drop, gives more power." },
     { id: "power-equation", text: `P ≈ ρ·g·Q·H·η = 1000 × 9.81 × ${r.usableFlow} × 23.1 × 0.903 = ${hydraulicWatts.toLocaleString("en-US")} W; ${hydraulicWatts.toLocaleString("en-US")} W ÷ 1,000,000 W/MW ≈ ${r.outputMW.toFixed(1)} MW (η = 0.903 is a model assumption).`, minGrade: 9 },
     { id: "dynamo", text: "In the generator, the spinning rotor's magnet moves past coils of wire and makes a current, the same idea as a bicycle dynamo.", minGrade: 9 },
     { id: "safety-limits", text: "In class you would also pour the water yourself and feel the dynamo push back when the lamp lights. Never go near a real dam, spillway, intake or power line. The water and electricity there can kill." },
   );
-  // Keep the storyboard's S7 energy-chain explanation in the first visible scroll-panel row.
-  lines.unshift({ id: "chain", text: "Energy chain: stored (potential) energy of the high water → movement (kinetic) energy of falling water → turning turbine and shaft → electrical energy in the generator → light (and some heat) in the city. At each step some energy becomes heat and sound; none is destroyed." });
+  // State lines first (R2 pedagogy P1-6): what just happened leads; the static chain and context follow.
+  // In flood or trip states the safety line leads.
+  const priority = ["trip-overload", "no-supply", "headroom", "max-served", "priority-stable", "dry-limit", "idle-units", "spillway-cap", "unit3-out", "unit3-no-water", "plant-output", "demand", "season"];
+  const rank = (id: string) => { const i = priority.indexOf(id); return i < 0 ? priority.length : i; };
+  lines.sort((a, b) => rank(a.id) - rank(b.id));
+  if (r.tripped || r.spillFlow > 0) { const safety = lines.findIndex((line) => line.id === "safety-limits"); if (safety > 0) lines.unshift(...lines.splice(safety, 1)); }
+  lines.push({ id: "chain", text: "Energy chain: stored (potential) energy of the high water → movement (kinetic) energy of falling water → turning turbine and shaft → electrical energy in the generator → light (and some heat) in the city. At each step some energy becomes heat and sound; none is destroyed." });
   return lines;
 }
 
@@ -143,6 +149,8 @@ export const hydropowerModel: SimulationModel = {
       tripped: r.tripped, turbineFlow: round6(r.turbineFlow), spillFlow: r.spillFlow, unit3Ready: r.unit3Ready,
       unitsAvailable: r.unit3Ready ? 4 : 3, unitsRunning: r.running.length, unitsGenerating: [1, 2, 3, 4].filter(generating).length,
       gridStableWithPriority: r.gridStableWithPriority, headroomMW: r.headroomMW, maxLoadServed: r.maxLoadServed,
+      // dry-season-output: capability (not delivery) with all four units switched on; more units cannot add water.
+      capabilityAllUnitsMW: r.unitsOnline === 4 ? r.outputMW : 0, unitsOnline: r.unitsOnline,
       ...waterQuantities(r),
       ...Object.fromEntries([1, 2, 3, 4].flatMap((unit) => [[`u${unit}PowerMW`, r.unitPower(unit)], [`u${unit}Generating`, generating(unit) ? 1 : 0]])),
     };
@@ -167,7 +175,11 @@ export const hydropowerModel: SimulationModel = {
       componentStates[`city-${district}-b${k}`] = { intensity: on && !r.tripped ? 1 : 0 };
     }
     // Every unit's housing and pole marker carry its status (RX-001 motion driver); unit 3's internal stack does too.
-    for (let unit = 1; unit <= 4; unit += 1) for (const id of [`unit-${unit}`, `unit-${unit}-marker`]) componentStates[id] = { status: r.statuses[unit - 1] };
+    for (let unit = 1; unit <= 4; unit += 1) {
+      componentStates[`unit-${unit}`] = { status: r.statuses[unit - 1] };
+      // The unit lamp glows only while the unit is generating (idle, off, tripped and out-for-repair stay dark).
+      componentStates[`unit-${unit}-marker`] = { status: r.statuses[unit - 1], intensity: r.statuses[unit - 1] === "generating" ? 1 : 0 };
+    }
     for (const part of UNIT3_STACK) componentStates[part] = { status: r.statuses[2] };
     return { quantities, flows, componentStates, explanation: explain(r) };
   },

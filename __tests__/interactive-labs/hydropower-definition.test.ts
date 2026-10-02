@@ -4,6 +4,7 @@ import { buildRenderList, fallbackVisibleItems } from "@/lib/interactive-labs/v2
 import { validateHighFidelityDefinition } from "@/lib/interactive-labs/v2/fidelity/boundary";
 import { HYDROPOWER_REVIEW_SCENARIOS } from "@/lib/interactive-labs/v2/review/referenceScenarios";
 import { replayReviewScenario } from "@/lib/interactive-labs/v2/review/scenarios";
+import { hydropowerModel } from "@/lib/interactive-labs/v2/definitions/hydropowerModel";
 import { planLowBatches } from "@/lib/interactive-labs/v2/fidelity/lowBatch";
 
 describe("Mount Coffee hydropower design stage", () => {
@@ -42,7 +43,7 @@ describe("Mount Coffee hydropower design stage", () => {
     expect(hydropowerDefinition.fidelity?.guidedPath[0].prompt).toContain("Meet the plant");
     expect(hydropowerDefinition.fidelity?.guidedPath[0].prompt).not.toContain("Trace the water");
     expect(hydropowerDefinition.checks[0].prompt).toBe("Trace the water through the six nodes, in order.");
-    expect(hydropowerDefinition.checks.find((check) => check.id === "dry-season-output")?.prompt).toBe("With all four units on, make the plant produce about 10 MW (8–12).");
+    expect(hydropowerDefinition.checks.find((check) => check.id === "dry-season-output")?.prompt).toBe("With all four units on, set the season so the plant can make only about 10 MW (8–12).");
   });
 
   it("shows the energy-chain explanation as the seventh guided task", () => {
@@ -89,9 +90,34 @@ describe("Mount Coffee hydropower design stage", () => {
     expect(overviewList.items.map((item) => item.id)).not.toContain("u3-generator");
 
     const challenge = hydropowerDefinition.fidelity!;
-    expect(challenge.authoring.challenge).toContain("keep the hospital lit and serve as much other load as fits");
+    expect(challenge.authoring.challenge).toContain("predict first, then switch on as much other load as fits");
     expect(challenge.challengeStatus?.({ gridStableWithPriority: 1 })).toContain("Challenge met");
     expect(challenge.challengeStatus?.({ gridStableWithPriority: 0 })).toContain("Not met yet");
+  });
+
+  it("R2 P1-1/P1-3: the challenge starts dry and under-loaded on the city; assessment starts fresh", () => {
+    const challenge = replayReviewScenario(hydropowerDefinition, HYDROPOWER_REVIEW_SCENARIOS.scenarios.find((scenario) => scenario.id === "hydro-challenge-start")!);
+    if ("reason" in challenge) throw new Error(challenge.reason);
+    expect(challenge.state.fidelity?.variables).toMatchObject({ riverFlow: 49, unitsOnline: 4, feederHospital: 1, homesBlocks: 0, shopsBlocks: 0 });
+    expect(challenge.state.fidelity?.cameraPresetId).toBe("grid-city");
+    const q = buildRenderList({ definition: hydropowerDefinition, state: challenge.state, profile: "HIGH" }).quantities;
+    expect(q.tripped).toBe(0);
+    expect(q.gridStableWithPriority).toBe(0);
+    // The learner must ADD load to meet it (not shed until lit).
+    const solved = replayReviewScenario(hydropowerDefinition, HYDROPOWER_REVIEW_SCENARIOS.scenarios.find((scenario) => scenario.id === "hydro-challenge-solved")!);
+    if ("reason" in solved) throw new Error(solved.reason);
+    expect(buildRenderList({ definition: hydropowerDefinition, state: solved.state, profile: "HIGH" }).quantities.gridStableWithPriority).toBe(1);
+    const assessment = replayReviewScenario(hydropowerDefinition, { ...HYDROPOWER_REVIEW_SCENARIOS.scenarios.find((scenario) => scenario.id === "hydro-challenge-solved")!, actions: [...HYDROPOWER_REVIEW_SCENARIOS.scenarios.find((scenario) => scenario.id === "hydro-challenge-solved")!.actions, { type: "mode", mode: "ASSESSMENT" }] });
+    if ("reason" in assessment) throw new Error(assessment.reason);
+    expect(assessment.state.fidelity?.variables).toMatchObject({ riverFlow: 430, homesBlocks: 4, shopsBlocks: 4 });
+  });
+
+  it("R2 P1-2: dry-season-output measures four-unit capability, so a tripped or one-unit plant does not pass", () => {
+    const q = (variables: Record<string, number>) => hydropowerModel.evaluate({ variables: { riverFlow: 49, unitsOnline: 4, feederHospital: 1, homesBlocks: 4, shopsBlocks: 4, ...variables }, placements: { "unit-3": { "slot-runner": "u3-runner", "slot-shaft": "u3-shaft", "slot-generator": "u3-generator" } } }).quantities;
+    expect(q({}).capabilityAllUnitsMW).toBeGreaterThanOrEqual(8);
+    expect(q({}).capabilityAllUnitsMW).toBeLessThanOrEqual(12);
+    expect(q({ unitsOnline: 1 }).capabilityAllUnitsMW).toBe(0);
+    expect(q({ riverFlow: 430 }).capabilityAllUnitsMW).toBeGreaterThan(12);
   });
 
   it("starts the challenge unmet, frames the exploded stack, and previews checks in order", () => {
