@@ -33,7 +33,7 @@ import { getLabReviewScenarioSet } from "../../lib/interactive-labs/v2/review/re
 import { LAB_REVIEW_PROFILES, validateScenarioSet, type LabReviewScenario } from "../../lib/interactive-labs/v2/review/scenarios";
 
 // Software-GL (SwiftShader) frames of the three.js HIGH renderer can take ~10 s each; captures are composition evidence only.
-const SCREENSHOT_TIMEOUT_MS = 120_000;
+const SCREENSHOT_TIMEOUT_MS = 240_000;
 import type { CapabilityProfile } from "../../lib/interactive-labs/v2/types";
 import { verifyRendererIdentity } from "../../lib/interactive-labs/v2/review/rendererIdentity";
 
@@ -212,8 +212,12 @@ async function probeInteraction(page: Page) {
       const hitTarget = node.querySelector?.("[data-lab-touch-target]") ?? node;
       const box = hitTarget.getBoundingClientRect();
       const touchStroke = hitTarget.hasAttribute("data-lab-touch-target") ? Number.parseFloat(getComputedStyle(hitTarget).strokeWidth) : 0;
-      const name = node.getAttribute("aria-label") || (node as HTMLElement).innerText?.trim() || node.getAttribute("title") || "";
-      return { tag: node.tagName.toLowerCase(), role: node.getAttribute("role"), name: name.slice(0, 80), width: Math.round(box.width + touchStroke), height: Math.round(box.height + touchStroke), visible: box.width > 0 && box.height > 0 };
+      // Name as assistive technology would: aria-label, an associated <label for>, then raw text content (not innerText,
+      // which is empty inside collapsed <details> and transformed by CSS).
+      const labelFor = node.id ? document.querySelector(`label[for="${CSS.escape(node.id)}"]`)?.textContent?.trim() : "";
+      const name = node.getAttribute("aria-label") || labelFor || node.textContent?.trim() || node.getAttribute("title") || "";
+      const collapsed = !!node.closest("details:not([open]) > :not(summary)");
+      return { tag: node.tagName.toLowerCase(), role: node.getAttribute("role"), name: name.slice(0, 80), width: Math.round(box.width + touchStroke), height: Math.round(box.height + touchStroke), visible: !collapsed && box.width > 0 && box.height > 0 };
     });
   });
   const focusOrder: { name: string; tag: string; outline: string }[] = [];

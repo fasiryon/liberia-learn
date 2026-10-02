@@ -52,7 +52,7 @@ async function main() {
     await page.locator("[data-lab-review-ready]").first().focus().catch(() => undefined);
 
     const focusedName = () => page.evaluate(`(() => { const e = document.activeElement; if (!e || !e.closest("[data-lab-review-ready]")) return null;
-      const label = e.getAttribute("aria-label"); return (label || e.innerText || e.textContent || "").trim().replace(/\\s+/g, " "); })()`) as Promise<string | null>;
+      const label = e.getAttribute("aria-label"); return (label || e.textContent || "").trim().replace(/\\s+/g, " "); })()`) as Promise<string | null>;
     for (const step of walkthrough.steps as WalkthroughStep[]) {
       if ("expectStatus" in step) {
         const texts = await page.locator("[data-lab-review-ready] [role=status]").allInnerTexts();
@@ -63,7 +63,9 @@ async function main() {
       }
       for (let repeat = 0; repeat < (step.repeat ?? 1); repeat += 1) {
         let tabs = 0, found = false;
-        const matches = (name: string | null) => !!name && (step.match === "prefix" ? name.startsWith(step.press) : name === step.press);
+        // Accessible names compare as a screen reader hears them: raw text, case-insensitive (CSS uppercase is presentation).
+        const wanted = step.press.toLowerCase();
+        const matches = (name: string | null) => !!name && (step.match === "prefix" ? name.toLowerCase().startsWith(wanted) : name.toLowerCase() === wanted);
         // Reset to the top each time so a step never depends on where the previous one left focus.
         await page.locator("[data-lab-review-ready]").first().evaluate((element) => { (element as HTMLElement).tabIndex = -1; (element as HTMLElement).focus(); });
         while (tabs < MAX_TABS) {
