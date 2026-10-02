@@ -1,5 +1,5 @@
 "use client";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { InteractiveLabDefinition, LabAction, LabState } from "@/lib/interactive-labs/v2/types";
 import { buildRenderList, fallbackVisibleItems } from "@/lib/interactive-labs/v2/fidelity/renderList";
 import { flowParticles } from "@/lib/interactive-labs/v2/fidelity/presentation";
@@ -19,19 +19,37 @@ type Props = { definition: InteractiveLabDefinition<LabState>; state: LabState; 
  * FALLBACK_2D draws the same render list as WebGL with a front orthographic projection, so every part,
  * flow, cutaway reveal and marker a check depends on is present. Every shape is a keyboard-focusable button.
  */
+/** True when the 2D stage is phone-width: frame tighter and keep text legible instead of letterboxing the valley. */
+function useNarrowContainer(): boolean {
+  const [narrow, setNarrow] = useState(false);
+  useEffect(() => {
+    if (typeof window === "undefined" || typeof window.matchMedia !== "function") return;
+    const query = window.matchMedia("(max-width: 639px)");
+    const update = () => setNarrow(query.matches);
+    update();
+    query.addEventListener("change", update);
+    return () => query.removeEventListener("change", update);
+  }, []);
+  return narrow;
+}
+
 export function Fallback2D({ definition, state, reducedMotion, traceFlowId, dispatch, onPick }: Props) {
   const hasFlows = !!definition.fidelity?.flows.length;
   const { display, time } = useDisplayFidelity(definition, state, reducedMotion, hasFlows);
   const list = useMemo(() => buildRenderList({ definition, state, profile: "FALLBACK_2D", displayFidelity: display }), [definition, state, display]);
   const camera = list.camera ?? { target: [0.25, 0, 0] as [number, number, number], distance: 11 };
-  const width = camera.distance * 1.25, height = width * 0.62;
-  // Keep labels and trace markers at a stable screen size as focused presets zoom in.
-  const screenScale = camera.distance / 15;
+  const narrow = useNarrowContainer();
+  const width = camera.distance * (narrow ? 0.72 : 1.25), height = width * (narrow ? 1.3 : 0.62);
+  // Keep labels and trace markers at a stable screen size as focused presets zoom in (and larger on phones).
+  const screenScale = (camera.distance / 15) * (narrow ? 1.1 : 1);
   const viewBox = `${camera.target[0] - width / 2} ${-camera.target[1] - height / 2} ${width} ${height}`;
   // FALLBACK_2D represents cutaways by hiding the removed solid, matching LOW's
   // cutaway behavior. SVG has no clipping plane, so drawing the faded source
   // mesh would obscure the revealed internals and instructional labels.
   const ordered = fallbackVisibleItems(list.items);
+  const drawnBySurface = new Set(list.surfaces.filter((surface) => surface.active).map((surface) => definition.fidelity?.surfaces?.find((declared) => declared.id === surface.id)?.componentId).filter(Boolean) as string[]);
+  // A11 label budget on 2D as on 3D: highlighted parts first, at most 8 scene labels.
+  const labelAllowed = new Set([...ordered.filter((item) => item.showLabel && item.inFocus && item.highlighted), ...ordered.filter((item) => item.showLabel && item.inFocus && !item.highlighted)].slice(0, 8).map((item) => item.id));
   const placedLabels: { x:number; y:number; halfWidth:number }[] = [];
   const activate = (pick: ScenePick) => (event: React.KeyboardEvent) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); onPick(pick); } };
   const selected = state.selectedObjectId && definition.scene.objects.some((object) => object.id === state.selectedObjectId) ? state.selectedObjectId : null;
@@ -62,14 +80,14 @@ export function Fallback2D({ definition, state, reducedMotion, traceFlowId, disp
           const hull = convexHull(sourcePoints.map((sample) => { const p = transformPoint(item.matrix, sample); return [round(p[0]), round(-p[1])] as [number, number]; }));
           const labelX=item.center[0]+(item.labelOffset?.[0]??0)*screenScale,labelY=-(item.center[1]+(item.labelOffset?.[1]??0)*screenScale)-.15*screenScale,labelHalfWidth=item.label.length*.09*screenScale;
           const labelCrowded=placedLabels.some(previous=>Math.abs(previous.y-labelY)<.34*screenScale&&Math.abs(previous.x-labelX)<previous.halfWidth+labelHalfWidth+.16*screenScale);
-          const labelVisible=item.showLabel&&item.inFocus&&!labelCrowded;
+          const labelVisible=item.showLabel&&item.inFocus&&labelAllowed.has(item.id)&&!labelCrowded;
           if(labelVisible)placedLabels.push({x:labelX,y:labelY,halfWidth:labelHalfWidth});
           const pick: ScenePick = { kind: "item", item };
           return (
             <g key={item.id} opacity={item.alpha < 0.5 && item.inFocus ? 0.45 : item.alpha} {...(item.detail === "decor" ? { pointerEvents: "none" as const } : item.control && item.inFocus ? { "aria-hidden": true, onClick: () => onPick(pick), className: "cursor-pointer" } : item.selectable && item.inFocus ? { role: "button", tabIndex: 0, "aria-label": item.label, "aria-pressed": item.highlighted, onClick: () => onPick(pick), onKeyDown: activate(pick), className: "cursor-pointer outline-none focus-visible:[&>polygon]:stroke-cyan-200" } : {})}>
               {item.selectable && item.inFocus && item.detail !== "decor" && <polygon data-lab-touch-target points={hull.map((p) => p.join(",")).join(" ")} fill="transparent" stroke="#fff" strokeOpacity={0.001} strokeWidth={48} vectorEffect="non-scaling-stroke" pointerEvents="stroke" aria-hidden="true" />}
               {item.emissive > 0 && <circle cx={item.center[0]} cy={-item.center[1]} r={0.08 * item.emissive + 0.04} fill="#fde68a" opacity={Math.min(0.08, item.emissive * 0.08)} filter="url(#glow)" />}
-              <polygon points={hull.map((p) => p.join(",")).join(" ")} fill={item.highlighted ? mixHexColor(item.color, HIGHLIGHT_COLOR, 0.2) : item.color} stroke={item.highlighted ? HIGHLIGHT_COLOR : "#0f172a"} strokeWidth={item.highlighted ? 3 : 1} vectorEffect="non-scaling-stroke" />
+              <polygon points={hull.map((p) => p.join(",")).join(" ")} fill={drawnBySurface.has(item.id) && !item.highlighted ? "none" : item.highlighted ? mixHexColor(item.color, HIGHLIGHT_COLOR, 0.2) : item.color} stroke={item.highlighted ? HIGHLIGHT_COLOR : "#0f172a"} strokeWidth={item.highlighted ? 3 : 1} vectorEffect="non-scaling-stroke" />
               {labelVisible && <text x={labelX} y={labelY} textAnchor="middle" fontSize={0.3 * screenScale} fill={list.environment === "DAYLIGHT" ? "#111827" : "#f8fafc"} className={`pointer-events-none select-none${item.mobileLabel === false ? " max-[500px]:hidden" : ""}`} style={{ paintOrder: "stroke", stroke: list.environment === "DAYLIGHT" ? "#f8fafc" : "#020617", strokeWidth: 0.06 * screenScale }}>{item.label}</text>}
             </g>
           );

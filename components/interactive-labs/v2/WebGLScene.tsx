@@ -56,6 +56,9 @@ const LIGHTING = { full: 3, simplified: 2, minimal: 1, none: 0 } as const;
 /** A11: at most 8 scene labels, highlighted parts first; the parts list carries the rest. */
 function labelBudget<T extends { highlighted: boolean }>(items: T[]): T[] { return [...items.filter((item) => item.highlighted), ...items.filter((item) => !item.highlighted)].slice(0, 8); }
 
+/** Shared with ThreeScene's daylight ground plane. */
+const GROUND_Y = -2.25;
+
 function rgb(value: string): [number, number, number] { const n = Number.parseInt(value.replace("#", ""), 16); return [(n >> 16 & 255) / 255, (n >> 8 & 255) / 255, (n & 255) / 255]; }
 
 export function WebGLScene({ definition, state, profile, reducedMotion, traceFlowId, dispatch, onPick, onDowngrade, onUpgradeReady, allowProfileUpgrade = false, allowPerformanceDowngrade = true }: Props) {
@@ -139,6 +142,9 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
     // RX-005b on LOW: all water surfaces in one flat two-tone triangle batch (A13).
     const surfaceStorage = createSurfaceTriangleStorage();
     const surfaceBuffers = { positions: gl.createBuffer()!, colors: gl.createBuffer()!, capacity: 0 };
+    // A13 LOW floor: daylight labs get one flat ground quad (one draw) so the plant does not float on the backdrop.
+    const groundBatch: FlowVertexBatch = { positions: new Float32Array([-40, GROUND_Y, -40, 40, GROUND_Y, -40, 40, GROUND_Y, 40, -40, GROUND_Y, -40, 40, GROUND_Y, 40, -40, GROUND_Y, 40]), colors: new Float32Array(Array.from({ length: 6 }, () => [0.79, 0.85, 0.77]).flat()), count: 6 };
+    const groundBuffers = { positions: gl.createBuffer()!, colors: gl.createBuffer()!, capacity: 0 };
     const flowBuffers = Object.fromEntries(["lines", "particles", "traceNodes"].map((key) => [key, { positions: gl.createBuffer()!, colors: gl.createBuffer()!, capacity: 0 }])) as Record<"lines" | "particles" | "traceNodes", { positions: WebGLBuffer; colors: WebGLBuffer; capacity: number }>;
     const uploadBatch = (batch: FlowVertexBatch, gpu: { positions: WebGLBuffer; colors: WebGLBuffer; capacity: number }) => {
       if (gpu.capacity < batch.positions.length) {
@@ -275,6 +281,7 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
         for (const item of ordered) drawItem(item, meshFor(item), item.spin ? spinMatrix(item.spin, t, motionless) : item.matrix);
       }
       gl.depthMask(true);
+      if (list.environment === "DAYLIGHT") drawBatch(groundBatch, groundBuffers, gl.TRIANGLES, 1, 1, viewProj);
       if (list.surfaces.length) drawBatch(writeSurfaceTriangles(list.surfaces, surfaceStorage), surfaceBuffers, gl.TRIANGLES, 1, 1, viewProj);
       batchFlowGeometry(list, t, motionless, callbacks.current.traceFlowId, flowStorage);
       // Process paths are instructional overlays. Letting solid mesh depth hide
@@ -342,7 +349,7 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
       lowBatchBuffers.forEach((buffers) => { gl.deleteBuffer(buffers.position); gl.deleteBuffer(buffers.normal); });
       gl.deleteBuffer(lineBuffer);
       Object.values(flowBuffers).forEach((buffers) => { gl.deleteBuffer(buffers.positions); gl.deleteBuffer(buffers.colors); });
-      gl.deleteBuffer(surfaceBuffers.positions); gl.deleteBuffer(surfaceBuffers.colors);
+      gl.deleteBuffer(surfaceBuffers.positions); gl.deleteBuffer(surfaceBuffers.colors); gl.deleteBuffer(groundBuffers.positions); gl.deleteBuffer(groundBuffers.colors);
       gl.deleteProgram(program);
       // Defer forced loss one task so React StrictMode's development remount can reuse the live context.
       pendingContextLoss.current = window.setTimeout(() => {

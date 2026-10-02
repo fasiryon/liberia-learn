@@ -111,7 +111,7 @@ export function measureLabBudget(definition: InteractiveLabDefinition<LabState>,
         ? plan.batches.length + plan.singles.filter((item) => !item.spin && !item.clip && item.alpha >= 0.9 && item.detail !== "decor").length
         : 0;
       drawCalls = Math.max(drawCalls, svg ? 0 : profile === "LOW"
-        ? plan.drawCalls + (activeSurfaces.length ? 1 : 0)
+        ? plan.drawCalls + (activeSurfaces.length ? 1 : 0) + (daylight ? 1 : 0)
         : itemDraws + 1 + threeFlowDraws + threeMarkerDraw + activeSurfaces.length + shadowDraws);
       particles = Math.max(particles, list.flows.reduce((sum, flow) => sum + flow.particleCount, 0));
     }
