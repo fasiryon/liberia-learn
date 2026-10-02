@@ -36,6 +36,18 @@ on:
         description: "Optional batch label (kept in the artifact name)"
         required: false
         default: ""
+      probe:
+        description: "Also record the interaction probe (Tab order, focus styling, touch-target sizes)"
+        type: boolean
+        default: false
+      walkthrough:
+        description: "Also run the keyboard-only walkthrough (scripts/labs/interaction-walkthrough.ts) on desktop and mobile"
+        type: boolean
+        default: false
+      reduced_motion:
+        description: "Capture with prefers-reduced-motion (adds reduced-motion strips when motion is captured)"
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -95,6 +107,9 @@ jobs:
       VIEWPORTS: ${{ inputs.viewports }}
       STILL_ONLY: ${{ inputs.still_only }}
       BATCH: ${{ inputs.batch }}
+      PROBE: ${{ inputs.probe }}
+      WALKTHROUGH: ${{ inputs.walkthrough }}
+      REDUCED_MOTION: ${{ inputs.reduced_motion }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -135,7 +150,17 @@ jobs:
           args=(--lab "$LAB" --label "$label" --profiles "$PROFILE" --viewports "$VIEWPORTS" --restart-every 6)
           if [ "$SCENARIOS" != "ALL" ]; then args+=(--scenarios "$SCENARIOS"); fi
           if [ "$STILL_ONLY" = "true" ]; then args+=(--still-only); fi
+          if [ "$PROBE" = "true" ]; then args+=(--probe); fi
+          if [ "$REDUCED_MOTION" = "true" ]; then args+=(--reduced-motion); fi
           timeout 80m npx tsx scripts/labs/capture-lab-review.ts "${args[@]}"
+      - name: Keyboard walkthrough ${{ matrix.profile }}
+        if: ${{ always() && inputs.walkthrough && hashFiles('scripts/labs/interaction-walkthrough.ts') != '' }}
+        run: |
+          status=0
+          for viewport in $(echo "$VIEWPORTS" | tr ',' ' '); do
+            timeout 20m npx tsx scripts/labs/interaction-walkthrough.ts --lab "$LAB" --profile "$PROFILE" --viewport "$viewport" || status=1
+          done
+          exit $status
       - name: Stop the dev server
         if: always()
         run: |
