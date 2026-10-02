@@ -7,6 +7,9 @@ import { deriveSimulation, isValidFidelityState, protectionStatus } from "@/lib/
 import { classifyLabAction, isEvidenceBearingAction, validateHighFidelityDefinition } from "@/lib/interactive-labs/v2/fidelity/boundary";
 import { acceptLabAction, initializeLab } from "@/lib/interactive-labs/v2/kernel";
 import type { LabAction, LabState } from "@/lib/interactive-labs/v2/types";
+import { controlSelected } from "@/lib/interactive-labs/v2/fidelity/controls";
+import { HYDROPOWER_REVIEW_SCENARIOS } from "@/lib/interactive-labs/v2/review/referenceScenarios";
+import { replayReviewScenario } from "@/lib/interactive-labs/v2/review/scenarios";
 
 const spec = hydropowerDefinition.fidelity!;
 const set = (variableId: string, value: number): LabAction => ({ type: "set-variable", variableId, value });
@@ -170,5 +173,52 @@ describe("Mount Coffee latched trip and Reset plant", () => {
     expect(isEvidenceBearingAction(RESET)).toBe(false);
     const state = play([...OVERLOAD, set("shopsBlocks", 3), RESET]);
     expect(state.completedChecks).toEqual([]);
+  });
+});
+
+describe("Mount Coffee R3 interaction and fixture fixes", () => {
+  const guided = (id: string) => spec.guidedPath.findIndex((step) => step.id === id);
+
+  it("guided steps start in their intended, untripped state even after a trip", () => {
+    const tripped = play([set("riverFlow", 49)]);
+    expect(q(tripped).tripped).toBe(1);
+    const season = play([{ type: "guided-step", index: guided("season") }], tripped);
+    expect(q(season)).toMatchObject({ tripped: 0, protectionLatched: 0, demandMW: 8 });
+    // The season step can now go dry without a trip: 8 MW fits about 10 MW.
+    expect(q(play([set("riverFlow", 49)], season)).tripped).toBe(0);
+    const overload = play([{ type: "guided-step", index: guided("overload") }], tripped);
+    expect(q(overload)).toMatchObject({ tripped: 0, outputMW: 66, demandMW: 52, unitsOnline: 3 });
+    const repair = play([{ type: "guided-step", index: guided("repair") }, { type: "clear-assembly", assemblyId: "unit-3" }], tripped);
+    expect(q(repair)).toMatchObject({ unit3Ready: 0, outputMW: 66, demandMW: 60, tripped: 0 });
+    for (const step of spec.guidedPath) expect(Object.keys(step.variables ?? {}).every((id) => id !== "protectionLatched")).toBe(true);
+  });
+
+  it("the authoring gate rejects a guided-step variable that is not learner controlled or off its grid", () => {
+    const bad = { ...hydropowerDefinition, fidelity: { ...spec, guidedPath: [{ id: "x", prompt: "p", variables: { protectionLatched: 1, riverFlow: 50 } }] } };
+    expect(validateHighFidelityDefinition(bad)).toEqual(expect.arrayContaining(["guided_step_variable_invalid:x:protectionLatched", "guided_step_variable_invalid:x:riverFlow"]));
+  });
+
+  it("the hospital breaker chip reports its on state", () => {
+    const hospital = spec.components.find((component) => component.id === "breaker-hospital")!.control!;
+    expect(controlSelected(initializeLab(hydropowerDefinition).fidelity!, hospital)).toBe(true);
+    expect(controlSelected(play([set("feederHospital", 0)]).fidelity!, hospital)).toBe(false);
+  });
+
+  it("with no unit running, the reset blocker names the missing units first", () => {
+    expect(status(play([set("unitsOnline", 0)])).blocker).toBe("Reset unavailable: no unit is making power. Bring at least one unit online.");
+  });
+
+  it("S2 fixture: unit 1 generates and the water goes through the turbine, not over the spillway", () => {
+    const replay = replayReviewScenario(hydropowerDefinition, HYDROPOWER_REVIEW_SCENARIOS.scenarios.find((scenario) => scenario.id === "hydro-process-water-starts")!);
+    if ("reason" in replay) throw new Error(replay.reason);
+    expect(q(replay.state)).toMatchObject({ tripped: 0, u1Generating: 1, u1Flow: 107.5, spillFlow: 322.5 });
+  });
+
+  it("S3 and S6 fault fixtures carry their own guided step", () => {
+    for (const [id, step] of [["hydro-cutaway-powerhouse", "machine"], ["hydro-exploded-unit", "machine"], ["hydro-fault-overload-trip", "overload"], ["hydro-fault-zero-units-dark", "overload"], ["hydro-fault-shed-not-reset", "overload"]] as const) {
+      const replay = replayReviewScenario(hydropowerDefinition, HYDROPOWER_REVIEW_SCENARIOS.scenarios.find((scenario) => scenario.id === id)!);
+      if ("reason" in replay) throw new Error(replay.reason);
+      expect(replay.state.fidelity!.guidedStepIndex, id).toBe(guided(step));
+    }
   });
 });

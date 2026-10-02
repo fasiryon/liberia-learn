@@ -25,6 +25,8 @@ export function controlAction(spec: HighFidelitySpec, state: FidelityState, cont
 
 /** Whether a set-variable control currently shows the selected value (for pressed/selected state). */
 export function controlSelected(state: FidelityState, control: SceneControl): boolean {
+  // A toggle is "selected" while on (R3 interaction P1: the hospital chip announced "not pressed" while lit).
+  if (control.kind === "toggle-variable") return state.variables[control.variableId] === 1;
   return control.kind === "set-variable" && state.variables[control.variableId] === control.value;
 }
 

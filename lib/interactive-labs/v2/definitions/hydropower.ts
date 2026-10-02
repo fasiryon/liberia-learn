@@ -55,15 +55,15 @@ const components: HighFidelitySpec["components"] = [
   component("tailrace", "Tailrace", "rectangular-prism", [-1.5, -1.15, 0.8], [2.5, 0.16, 0.52], "#2f8fe8", { labelOffset: [-0.3, -0.45, 0], material: mat("#2f8fe8", 0.08) }),
   component("river-downstream", "Saint Paul River", "rectangular-prism", [0, -1.8, 1.6], [5.8, 0.12, 0.5], "#2f8fe8", { labelOffset: [1.7, -0.3, 0], material: mat("#2f8fe8", 0.08) }),
   component("spillway-gate", "Spillway gate", "box", [-3.3, 2.4, -1.0], [0.65, 0.8, 0.18], "#9fb2c6", { labelOffset: [0.55, 0.45, 0], mobileLabel: false }),
-  component("powerhouse", "Powerhouse", "rectangular-prism", [0.3, 0.15, 0.1], [2.15, 1.7, 1.5], "#d8d2c4", { material: mat("#d8d2c4", 0.22), labelOffset: [-2.0, -1.0, 0], mobileLabel: false }),
+  component("powerhouse", "Powerhouse", "rectangular-prism", [0.3, 0.15, 0.1], [2.15, 1.7, 1.5], "#d8d2c4", { material: mat("#d8d2c4", 0.22), labelOffset: [0, 1.05, 0], mobileLabel: false }),
   ...UNIT_X.flatMap((x, i) => {
     const unit = i + 1;
     const offsets: Array<[number, number, number]> = [[-1.8, 0.65, 0], [-0.45, 1.8, 0], [0.5, 0.55, 0], [1.15, 1.3, 0]];
     return [component(`unit-${unit}`, `Unit ${unit} housing`, "cylinder", [x, -0.15, 0.1], [0.52, 0.72, 0.52], "#5fb8a8", { labelOffset: unit === 1 ? [-0.9, 0.95, 0] : offsets[i], ...(unit !== 3 ? { mobileLabel: false } : {}) }),
       component(`unit-${unit}-marker`, `Unit ${unit} rotation marker`, "box", [x + 0.34, -0.15, 0.1], [0.16, 0.08, 0.08], "#facc15", { showLabel: false, selectable: false })];
   }),
-  { ...component("u3-runner", "Runner", "cylinder", [0.9, -0.25, 0.1], [0.32, 0.18, 0.32], "#cfe0ea", { internal: true, layerId: "unit-3-internals", shapeKey: "runner", labelOffset: [-0.8, -0.3, 0], mobileLabel: false }),
-    geometryVariants: bladedRunnerKit({ id: "u3-runner-shape", label: "Runner", transform: tr([0, 0, 0], [1, 1, 1]), color: "#cfe0ea", radius: 1, bladeCount: 9 })[1].geometryVariants },
+  { ...component("u3-runner", "Runner", "cylinder", [0.9, -0.25, 0.1], [0.32, 0.18, 0.32], "#9a6b2f", { internal: true, layerId: "unit-3-internals", shapeKey: "runner", labelOffset: [-0.8, -0.3, 0], mobileLabel: false }),
+    geometryVariants: bladedRunnerKit({ id: "u3-runner-shape", label: "Runner", transform: tr([0, 0, 0], [1, 1, 1]), color: "#9a6b2f", radius: 1, bladeCount: 9 })[1].geometryVariants },
   component("u3-shaft", "Shaft", "cylinder", [0.9, 0.05, 0.1], [0.09, 0.36, 0.09], "#5f6d7e", { internal: true, layerId: "unit-3-internals", shapeKey: "shaft", labelOffset: [0, 0.2, 0], mobileLabel: false }),
   { ...generatorHousingKit({ id: "u3-generator", label: "Generator", transform: tr([0.9, 0.48, 0.1], [0.34, 0.28, 0.34]), color: "#ee8f52", radius: 1, height: 2 }), internal: true, layerId: "unit-3-internals", shapeKey: "generator", labelOffset: [0.8, 0.4, 0], mobileLabel: false },
   component("switchyard", "Switchyard", "panel", [3.1, 0.2, 0.1], [0.9, 0.8, 0.18], "#aab4c0", { mobileLabel: false }),
@@ -192,16 +192,18 @@ const spec: HighFidelitySpec = {
     { id: "powerhouse-section", label: "Powerhouse section", target: [0.3, 0.2, 0.1], distance: 7, yaw: 0.2, pitch: 0.1 },
     { id: "unit-bench", label: "Unit 3 bench", target: [0.9, 0.2, 0.1], distance: 5, yaw: 0.2, pitch: 0.1 },
     { id: "exploded-bench", label: "Exploded unit 3", target: [0.9, 0.15, 0.1], distance: 9, yaw: 0.2, pitch: 0.1 },
-    { id: "grid-city", label: "Power and city", target: [6, 0.9, 0.2], distance: 8.5, yaw: -0.18, pitch: 0.3 },
+    { id: "grid-city", label: "Power and city", target: [6.6, 0.9, 0.2], distance: 8.5, yaw: -0.18, pitch: 0.3 },
   ], constraints: { minDistance: 2.5, maxDistance: 28, minPitch: 0.02, maxPitch: 1.25, minYaw: -1.75, maxYaw: 1.75 } },
   guidedPath: [
     { id: "meet", prompt: "Meet the plant: the Saint Paul River feeds a narrow headpond behind the dam. Find the powerhouse, the switchyard and the city it supplies.", cameraPresetId: "valley" },
     { id: "trace", prompt: "Follow the water from the headpond, through a turbine, and back to the river.", cameraPresetId: "water-path", highlightIds: ["headpond", "penstock-1", "tailrace"] },
     { id: "machine", prompt: "Open the powerhouse section and find the generator in unit 3.", cameraPresetId: "unit-bench", highlightIds: ["u3-generator"] },
-    { id: "season", prompt: "Predict: will the headpond drop in the dry season? Then compare dry season with rainy season. What changes when less water arrives?", cameraPresetId: "valley" },
-    { id: "overload", prompt: "With three units in the rainy season (66 MW), keep the hospital on and set homes to all 4 blocks, then add shops blocks one at a time. Which block trips the plant?", cameraPresetId: "grid-city" },
-    { id: "repair", prompt: "Rebuild unit 3 in order: runner, shaft, generator.", cameraPresetId: "unit-bench", highlightIds: ["u3-runner", "u3-shaft", "u3-generator"] },
-    { id: "energy-chain", prompt: "Name the energy chain: gravitational potential energy of high water → kinetic energy of falling water → turbine and shaft rotation → electrical energy → light and heat. Use the explanation panel to check your thinking.", cameraPresetId: "valley" },
+    // R3 interaction P1: each load-bearing step starts in its intended, untripped state (hospital + one shops block
+    // fits even the dry season), so the guided path never inherits a latched trip from an earlier step.
+    { id: "season", prompt: "Predict: will the headpond drop in the dry season? Then compare dry season with rainy season. What changes when less water arrives?", cameraPresetId: "valley", variables: { riverFlow: 430, unitsOnline: 4, feederHospital: 1, homesBlocks: 0, shopsBlocks: 1 } },
+    { id: "overload", prompt: "Three units in the rainy season make 66 MW. The hospital and all 4 homes blocks are on (52 MW). Add shops blocks one at a time: which block trips the plant? Then switch that block off and press Reset plant to bring the power back.", cameraPresetId: "grid-city", variables: { riverFlow: 430, unitsOnline: 3, feederHospital: 1, homesBlocks: 4, shopsBlocks: 0 } },
+    { id: "repair", prompt: "Rebuild unit 3 in order: runner, shaft, generator.", cameraPresetId: "unit-bench", highlightIds: ["u3-runner", "u3-shaft", "u3-generator"], variables: { riverFlow: 430, unitsOnline: 4, feederHospital: 1, homesBlocks: 4, shopsBlocks: 2 } },
+    { id: "energy-chain", prompt: "Name the energy chain: gravitational potential energy of high water → kinetic energy of falling water → turbine and shaft rotation → electrical energy → light and heat. Use the explanation panel to check your thinking.", cameraPresetId: "valley", variables: { riverFlow: 430, unitsOnline: 4, feederHospital: 1, homesBlocks: 4, shopsBlocks: 4 } },
   ],
   modes: ["GUIDED", "EXPLORE", "CHALLENGE", "ASSESSMENT"],
   // R2 pedagogy P1-1 / P1-3: the challenge starts under-loaded (learner must add what fits, not shed until lit);

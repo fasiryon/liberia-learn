@@ -12,6 +12,7 @@ import { fitHorizontalFieldOfView, IDENTITY, multiply, perspective, transformPoi
 import { batchFlowGeometry, createFlowBatchStorage, createPointBatchStorage, writeMarkerPositions, type FlowVertexBatch } from "@/lib/interactive-labs/v2/fidelity/flowBatch";
 import { shouldScheduleWebGLFrame } from "@/lib/interactive-labs/v2/fidelity/renderLoop";
 import { highlightBaseMix, HIGHLIGHT_COLOR, MARKER_COLOR } from "@/lib/interactive-labs/v2/fidelity/palette";
+import { placeSceneLabels } from "@/lib/interactive-labs/v2/fidelity/labelLayout";
 import { buildMesh } from "./meshes";
 import { buildParametricGeometry } from "@/lib/interactive-labs/v2/fidelity/geometry/builders";
 import { planLowBatches } from "@/lib/interactive-labs/v2/fidelity/lowBatch";
@@ -54,7 +55,6 @@ void main(){
 const LIGHTING = { full: 3, simplified: 2, minimal: 1, none: 0 } as const;
 
 /** A11: at most 8 scene labels, highlighted parts first; the parts list carries the rest. */
-function labelBudget<T extends { highlighted: boolean }>(items: T[]): T[] { return [...items.filter((item) => item.highlighted), ...items.filter((item) => !item.highlighted)].slice(0, 8); }
 
 /** Shared with ThreeScene's daylight ground plane. */
 const GROUND_Y = -2.25;
@@ -304,13 +304,22 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
         const status = list.motions.filter((motion) => motion.active).map((motion) => `${motion.label}: turning`).join(". ");
         if (motionStatus.current && motionStatus.current.textContent !== status) motionStatus.current.textContent = status;
         const project = (p: Vec3) => { const c = transformPoint(viewProj, p); return c[2] > 1 ? null : { x: (c[0] * 0.5 + 0.5) * el.clientWidth, y: (0.5 - c[1] * 0.5) * el.clientHeight }; };
+        // Spin glyphs are placed first and act as obstacles; labels then go only where they fit wholly on screen
+        // without overlapping a glyph or another label (R3 visual: LOW pile-ups and edge fragments).
+        const glyphs = list.motions.filter((motion) => motion.active).map((motion) => ({ text: "↻", at: project(motion.center), title: `${motion.label}: turning`, glyph: true, mobileLabel: true }));
+        const glyphBoxes = glyphs.flatMap((glyph) => glyph.at ? [{ left: glyph.at.x - 10, top: glyph.at.y - 12, right: glyph.at.x + 10, bottom: glyph.at.y + 12 }] : []);
+        const narrowViewport = typeof window !== "undefined" && window.innerWidth <= 500;
+        const labelItems = list.items.filter((item) => item.showLabel && item.inFocus && !(narrowViewport && item.mobileLabel === false));
+        const placed = placeSceneLabels(labelItems.flatMap((item) => {
+          const center = item.spin ? transformPoint(spinMatrix(item.spin, t, motionless), [0, 0, 0]) : item.center;
+          const offset = item.labelOffset ?? [0, 0, 0];
+          const at = project([center[0] + offset[0], center[1] + offset[1], center[2] + offset[2]]);
+          // The pill is drawn translated up by 160 % of its height, so its bottom sits 12 px above the anchor.
+          return at ? [{ id: item.id, text: item.label, x: at.x, y: at.y - 12, highlighted: item.highlighted }] : [];
+        }), { width: el.clientWidth, height: el.clientHeight }, 8, glyphBoxes);
         const entries = [
-          ...labelBudget(list.items.filter((item) => item.showLabel && item.inFocus)).map((item) => {
-            const center = item.spin ? transformPoint(spinMatrix(item.spin, t, motionless), [0, 0, 0]) : item.center;
-            const offset = item.labelOffset ?? [0, 0, 0];
-            return { text: item.label, at: project([center[0] + offset[0], center[1] + offset[1], center[2] + offset[2]]), title: undefined, glyph: false, mobileLabel: item.mobileLabel !== false };
-          }),
-          ...list.motions.filter((motion) => motion.active).map((motion) => ({ text: "↻", at: project(motion.center), title: `${motion.label}: turning`, glyph: true, mobileLabel: true })),
+          ...placed.map((label) => ({ text: label.text, at: { x: label.x, y: label.y + 12 }, title: undefined, glyph: false, mobileLabel: true })),
+          ...glyphs,
         ];
         labels.current.replaceChildren(...entries.filter((entry) => entry.at).map((entry) => {
           const node = document.createElement("span");

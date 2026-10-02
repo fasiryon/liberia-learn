@@ -66,7 +66,9 @@ describe("Mount Coffee hydropower design stage", () => {
 
   it("begins the guided overload beat below capability before the learner switches on demand", () => {
     const step = hydropowerDefinition.fidelity?.guidedPath.find((candidate) => candidate.id === "overload");
-    expect(step?.prompt).toContain("set homes to all 4 blocks, then add shops blocks one at a time");
+    expect(step?.prompt).toContain("Add shops blocks one at a time");
+    expect(step?.prompt).toContain("press Reset plant");
+    expect(step?.variables).toEqual({ riverFlow: 430, unitsOnline: 3, feederHospital: 1, homesBlocks: 4, shopsBlocks: 0 });
     const scenario = HYDROPOWER_REVIEW_SCENARIOS.scenarios.find((candidate) => candidate.id === "hydro-guided-overload-beat");
     expect(scenario).toBeDefined();
     const replay = replayReviewScenario(hydropowerDefinition, scenario!);

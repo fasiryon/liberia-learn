@@ -132,8 +132,9 @@ function explain(r: ReturnType<typeof evaluateHydro>): ExplanationLine[] {
 /** Learner-facing reason a plant reset would fail now, or null when it is safe. */
 export function resetBlocker(quantities: Record<string, number>): string | null {
   const shortMW = quantities.demandMW - quantities.outputMW;
-  if (quantities.overload === 1) return `Reset unavailable: demand is still ${formatMW(shortMW)} MW above available generation.`;
+  // No running unit is the first thing to fix (R3 interaction P2), whatever the demand.
   if (!(quantities.outputMW > 0)) return "Reset unavailable: no unit is making power. Bring at least one unit online.";
+  if (quantities.overload === 1) return `Reset unavailable: demand is still ${formatMW(shortMW)} MW above available generation.`;
   return null;
 }
 const formatMW = (mw: number) => String(Math.round(mw * 10) / 10);

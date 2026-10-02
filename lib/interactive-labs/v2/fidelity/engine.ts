@@ -191,7 +191,8 @@ function applyFidelityAction(spec: HighFidelitySpec, state: FidelityState, actio
       return { ...state, inspectedComponentId: action.componentId };
     case "guided-step": {
       const step = spec.guidedPath[action.index];
-      return { ...state, guidedStepIndex: action.index, cameraPresetId: step.cameraPresetId ?? state.cameraPresetId };
+      const next = { ...state, guidedStepIndex: action.index, cameraPresetId: step.cameraPresetId ?? state.cameraPresetId };
+      return step.variables ? applyStartVariables(spec, next, step.variables) : next;
     }
     case "toggle-flow":
       return { ...state, hiddenFlowIds: toggle(state.hiddenFlowIds, action.flowId) };
@@ -311,13 +312,20 @@ export function composeHighFidelity(base: InteractiveLabDefinition<LabState>, sp
 function applyModeStart(spec: HighFidelitySpec, state: LabState, mode: LabState["mode"]): LabState {
   const start = spec.modeStart?.[mode as keyof NonNullable<HighFidelitySpec["modeStart"]>];
   if (!start || !state.fidelity) return state;
-  const variables = { ...state.fidelity.variables };
-  for (const [id, value] of Object.entries(start.variables ?? {})) {
+  const cameraPresetId = start.cameraPresetId && spec.camera.presets.some((preset) => preset.id === start.cameraPresetId) ? start.cameraPresetId : state.fidelity.cameraPresetId;
+  return { ...state, fidelity: applyStartVariables(spec, { ...state.fidelity, cameraPresetId }, start.variables ?? {}) };
+}
+
+/**
+ * A mode or guided-step start: set learner variables on their step grid (invalid entries are ignored). It is a fresh
+ * start, so the protection is cleared, then re-latched if the start itself is an overload.
+ */
+function applyStartVariables(spec: HighFidelitySpec, fidelity: FidelityState, start: Record<string, number>): FidelityState {
+  const variables = { ...fidelity.variables };
+  for (const [id, value] of Object.entries(start)) {
     const variable = spec.variables.find((candidate) => candidate.id === id);
     if (variable?.learnerControlled && validateVariableValue(variable, value).ok) variables[id] = value;
   }
-  // A mode start is a fresh start: the protection is cleared, then re-latched if the start itself is an overload.
   if (spec.protection) variables[spec.protection.latchVariableId] = 0;
-  const cameraPresetId = start.cameraPresetId && spec.camera.presets.some((preset) => preset.id === start.cameraPresetId) ? start.cameraPresetId : state.fidelity.cameraPresetId;
-  return { ...state, fidelity: applyProtection(spec, { ...state.fidelity, variables, cameraPresetId }) };
+  return applyProtection(spec, { ...fidelity, variables });
 }

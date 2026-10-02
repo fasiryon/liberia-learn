@@ -40,7 +40,7 @@ export function SceneControlBar({ definition, state, dispatch }: Props) {
             const action = controlAction(spec, fidelity, control);
             const selected = controlSelected(fidelity, control);
             return (
-              <button key={id} type="button" data-lab-control={id} aria-label={name} aria-pressed={selected} disabled={!action} title={name}
+              <button key={id} type="button" data-lab-control={id} aria-label={name} aria-pressed={control.kind === "step-variable" ? undefined : selected} disabled={!action} title={name}
                 onClick={() => { if (action) dispatch(action); }}
                 className={`min-h-11 min-w-11 whitespace-nowrap rounded-full border-2 px-3 text-xs font-bold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white disabled:cursor-not-allowed disabled:opacity-45 ${selected ? "border-white bg-amber-300 text-slate-950" : "border-slate-600 bg-white text-slate-900 hover:bg-amber-100"}`}>
                 {control.label}

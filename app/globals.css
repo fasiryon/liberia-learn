@@ -321,6 +321,25 @@ a:focus-visible,
   box-shadow: var(--ll-focus);
 }
 
+/* Interactive labs sit on dark panels and light daylight scenes: an opaque white ring with a dark halo reads at
+   ≥ 3:1 on both (R3 interaction P1). SVG parts get a heavy dark outline stroke instead, since outlines on <g> are
+   not painted reliably. */
+[data-lab-active-profile] button:focus-visible,
+[data-lab-active-profile] a:focus-visible,
+[data-lab-active-profile] [role="button"]:focus-visible {
+  outline: 3px solid #ffffff;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 5px #020617;
+}
+[data-lab-renderer="svg"] [role="button"]:focus-visible > polygon:not([data-lab-touch-target]),
+[data-lab-renderer="svg"] [role="button"]:focus-visible > circle:not([data-lab-touch-target]) {
+  stroke: #020617;
+  stroke-width: 4px;
+}
+@media (forced-colors: active) {
+  [data-lab-active-profile] :focus-visible { outline: 3px solid Highlight; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;

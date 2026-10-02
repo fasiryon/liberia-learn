@@ -61,6 +61,8 @@ export function InteractiveLabPlayer({ labId = "g4-solid-figures", override, rev
   const deviceHints = typeof navigator === "undefined" ? {} : readDeviceHints(navigator);
   const canUpgrade = !reviewPreview && override === undefined && !manualProfileChoice.current && profile === "LOW" && upgradeEligibility(deviceHints);
   const [intro, setIntro] = useState(!reviewPreview);
+  // R3 interaction P1: restarting wipes progress, so it asks once inline (no browser dialog) and never reads as "Reset plant".
+  const [confirmRestart, setConfirmRestart] = useState(false);
   const checks = useMemo(() => definition?.checks ?? [], [definition]);
   const latest = useRef(state);
   useEffect(() => {
@@ -151,7 +153,12 @@ export function InteractiveLabPlayer({ labId = "g4-solid-figures", override, rev
         <aside id="lab-controls" tabIndex={-1} aria-label="Lab controls" className="lg:max-h-[clamp(420px,62vh,640px)] lg:overflow-y-auto border-l border-white/10 bg-white/[.03] p-5">
           <LabControlPanel definition={definition} state={state} activeCheck={activeCheck} dispatch={dispatch} />
           <div className="mt-8 flex gap-2">
-            <button type="button" onClick={() => dispatch({ type: "reset" })} className="min-h-11 rounded-full border border-white/15 px-4 py-2 text-sm">Reset</button>
+            {confirmRestart
+              ? <>
+                  <button type="button" onClick={() => { setConfirmRestart(false); dispatch({ type: "reset" }); }} className="min-h-11 rounded-full border border-red-300 bg-red-700 px-4 py-2 text-sm font-bold text-white">Yes, restart the lab</button>
+                  <button type="button" onClick={() => setConfirmRestart(false)} className="min-h-11 rounded-full border border-white/15 px-4 py-2 text-sm">Keep my progress</button>
+                </>
+              : <button type="button" onClick={() => setConfirmRestart(true)} className="min-h-11 rounded-full border border-white/15 px-4 py-2 text-sm">Restart lab (clears progress)</button>}
             {definition.scene.objects.length > 0 && <button type="button" onClick={() => dispatch({ type: "focus", objectId: state.selectedObjectId ?? definition.scene.objects[0].id })} className="min-h-11 rounded-full border border-white/15 px-4 py-2 text-sm">Focus</button>}
           </div>
         </aside>

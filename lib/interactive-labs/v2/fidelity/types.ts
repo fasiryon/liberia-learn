@@ -140,7 +140,8 @@ export type FlowDefinition = {
 export type CameraPreset = { id: string; label: string; target: Vec3; distance: number; yaw: number; pitch: number };
 export type CameraConstraints = { minDistance: number; maxDistance: number; minPitch: number; maxPitch: number; minYaw: number; maxYaw: number };
 
-export type GuidedStep = { id: string; prompt: string; cameraPresetId?: string; highlightIds?: string[] };
+/** `variables` puts the step in its intended state (validated like a mode start), so a step never inherits a trip. */
+export type GuidedStep = { id: string; prompt: string; cameraPresetId?: string; highlightIds?: string[]; variables?: Record<string, number> };
 
 /** Direct-manipulation learning checks. Evaluated from scene state, never from a free-text claim. */
 export type FidelityCheck =
