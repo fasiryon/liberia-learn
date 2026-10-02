@@ -139,6 +139,13 @@ describe("Mount Coffee latched trip and Reset plant", () => {
     expect(passed.completedChecks).toContain("dry-season-peak");
   });
 
+  it("the explanation leads with the trip diagnosis, then safety, while tripped", () => {
+    const lines = (state: LabState) => deriveSimulation(spec, state.fidelity!).explanation.map((line) => line.id);
+    expect(lines(play(OVERLOAD)).slice(0, 3)).toEqual(["plant-tripped", "safety-limits", "trip-overload"]);
+    expect(lines(play([...OVERLOAD, set("shopsBlocks", 3)])).slice(0, 3)).toEqual(["plant-tripped", "safety-limits", "trip-latched"]);
+    expect(lines(play([set("riverFlow", 557)]))[0]).toBe("safety-limits");
+  });
+
   it("is deterministic: the same actions always give the same state and quantities", () => {
     const actions = [...OVERLOAD, set("unitsOnline", 4), set("shopsBlocks", 2), RESET, set("riverFlow", 176)];
     const a = play(actions), b = play(actions);

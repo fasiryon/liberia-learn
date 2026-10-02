@@ -115,11 +115,16 @@ function explain(r: ReturnType<typeof evaluateHydro>): ExplanationLine[] {
     { id: "safety-limits", text: "In class you would also pour the water yourself and feel the dynamo push back when the lamp lights. Never go near a real dam, spillway, intake or power line. The water and electricity there can kill." },
   );
   // State lines first (R2 pedagogy P1-6): what just happened leads; the static chain and context follow.
-  // In flood or trip states the safety line leads.
+  // In flood or trip states the safety line comes first, except that a trip's diagnosis (PLANT TRIPPED and what to do)
+  // stays above it, so the learner sees the immediate consequence and the recovery step without scrolling.
   const priority = ["plant-tripped", "trip-overload", "trip-latched", "no-supply", "headroom", "max-served", "priority-stable", "dry-limit", "idle-units", "spillway-cap", "unit3-out", "unit3-no-water", "plant-output", "demand", "season"];
   const rank = (id: string) => { const i = priority.indexOf(id); return i < 0 ? priority.length : i; };
   lines.sort((a, b) => rank(a.id) - rank(b.id));
-  if (r.tripped || r.spillFlow > 0) { const safety = lines.findIndex((line) => line.id === "safety-limits"); if (safety > 0) lines.unshift(...lines.splice(safety, 1)); }
+  if (r.tripped || r.spillFlow > 0) {
+    const safety = lines.findIndex((line) => line.id === "safety-limits");
+    const at = r.tripped ? 1 : 0;
+    if (safety > at) lines.splice(at, 0, ...lines.splice(safety, 1));
+  }
   lines.push({ id: "chain", text: "Energy chain: stored (potential) energy of the high water → movement (kinetic) energy of falling water → turning turbine and shaft → electrical energy in the generator → light (and some heat) in the city. At each step some energy becomes heat and sound; none is destroyed." });
   return lines;
 }
