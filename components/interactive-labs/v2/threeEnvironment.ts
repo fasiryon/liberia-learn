@@ -52,7 +52,8 @@ export function applyEnvironmentRig(renderer: THREE.WebGLRenderer, scene: THREE.
     renderer.shadowMap.type = THREE.PCFShadowMap;
     renderer.shadowMap.autoUpdate = false;
     sun.castShadow = true;
-    const size = options.finePointer ? 2048 : 1024;
+    // 1024 px everywhere: 2048 sat at the HIGH texture limit and, with clipped cutaway materials, cost too much per frame.
+    const size = 1024;
     sun.shadow.mapSize.set(size, size);
     Object.assign(sun.shadow.camera, { left: -11, right: 11, top: 9, bottom: -9, near: 1, far: 40 });
     sun.shadow.camera.updateProjectionMatrix();
