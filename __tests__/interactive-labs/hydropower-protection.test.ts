@@ -91,7 +91,7 @@ describe("Mount Coffee latched trip and Reset plant", () => {
   it("reset is blocked when no unit is making power, even with no demand", () => {
     const state = play([set("unitsOnline", 0), set("feederHospital", 0), set("homesBlocks", 0), set("shopsBlocks", 0)]);
     expect(q(state)).toMatchObject({ overload: 0, tripped: 1, outputMW: 0 });
-    expect(status(state).blocker).toBe("Reset unavailable: no unit is making power. Bring at least one unit online.");
+    expect(status(state).blocker).toBe("Reset unavailable: no unit is switched on. Start at least one unit.");
     expect(step(state, RESET)).toMatchObject({ reason: "protection_reset_blocked" });
   });
 
@@ -144,8 +144,8 @@ describe("Mount Coffee latched trip and Reset plant", () => {
 
   it("the explanation leads with the trip diagnosis, then safety, while tripped", () => {
     const lines = (state: LabState) => deriveSimulation(spec, state.fidelity!).explanation.map((line) => line.id);
-    expect(lines(play(OVERLOAD)).slice(0, 3)).toEqual(["plant-tripped", "safety-limits", "trip-overload"]);
-    expect(lines(play([...OVERLOAD, set("shopsBlocks", 3)])).slice(0, 3)).toEqual(["plant-tripped", "safety-limits", "trip-latched"]);
+    expect(lines(play(OVERLOAD)).slice(0, 3)).toEqual(["plant-tripped", "trip-overload", "safety-limits"]);
+    expect(lines(play([...OVERLOAD, set("shopsBlocks", 3)])).slice(0, 3)).toEqual(["plant-tripped", "trip-latched", "safety-limits"]);
     expect(lines(play([set("riverFlow", 557)]))[0]).toBe("safety-limits");
   });
 
@@ -205,7 +205,7 @@ describe("Mount Coffee R3 interaction and fixture fixes", () => {
   });
 
   it("with no unit running, the reset blocker names the missing units first", () => {
-    expect(status(play([set("unitsOnline", 0)])).blocker).toBe("Reset unavailable: no unit is making power. Bring at least one unit online.");
+    expect(status(play([set("unitsOnline", 0)])).blocker).toBe("Reset unavailable: no unit is switched on. Start at least one unit.");
   });
 
   it("S2 fixture: unit 1 generates and the water goes through the turbine, not over the spillway", () => {
@@ -220,5 +220,28 @@ describe("Mount Coffee R3 interaction and fixture fixes", () => {
       if ("reason" in replay) throw new Error(replay.reason);
       expect(replay.state.fidelity!.guidedStepIndex, id).toBe(guided(step));
     }
+  });
+});
+
+describe("Mount Coffee R3 science fixes", () => {
+  it("never claims 'no further block fits' while power is to spare with every feeder on", () => {
+    const initial = deriveSimulation(spec, initializeLab(hydropowerDefinition).fidelity!).explanation;
+    expect(initial.map((line) => line.id)).not.toContain("max-served");
+    expect(initial.find((line) => line.id === "all-on")?.text).toBe("Every feeder is on, with about 20 MW spare.");
+    // The dry-season challenge solution still names the limit.
+    const solved = play([set("riverFlow", 49), set("homesBlocks", 0), set("shopsBlocks", 1), RESET]);
+    expect(deriveSimulation(spec, solved.fidelity!).explanation.find((line) => line.id === "max-served")?.text).toBe("The hospital is lit and no further block can be switched on without tripping the plant.");
+  });
+
+  it("the bottle-cap analogy does not say a fuller stream makes the turbine faster", () => {
+    const text = deriveSimulation(spec, play([set("homesBlocks", 0), set("shopsBlocks", 1), set("riverFlow", 49)]).fidelity!).explanation.find((line) => line.id === "bottle-wheel")!.text;
+    expect(text).not.toMatch(/turns it fast/);
+    expect(text).toContain("held at a steady speed");
+  });
+
+  it("supply gauge segment length follows MW", () => {
+    const states = deriveSimulation(spec, play([set("homesBlocks", 0), set("shopsBlocks", 1), set("riverFlow", 49)]).fidelity!).componentStates;
+    expect(states["gauge-seg-1"].fill).toBeCloseTo(10.027907 / 22, 5);
+    expect([2, 3, 4].map((k) => states[`gauge-seg-${k}`].fill)).toEqual([0, 0, 0]);
   });
 });

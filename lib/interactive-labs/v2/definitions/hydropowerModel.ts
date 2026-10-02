@@ -88,7 +88,7 @@ function explain(r: ReturnType<typeof evaluateHydro>): ExplanationLine[] {
     { id: "context", text: "Mount Coffee is a real run-of-river hydropower plant on the Saint Paul River, about 30 km from Monrovia. This model is not to scale." },
     { id: "season", text: `River flow: ${r.riverFlow} m³/s (${seasonLabel(r.riverFlow)}). The headpond stays at the same level. What changes is how much water arrives each second.` },
   ];
-  if (r.riverFlow === DRY_FLOW) lines.push({ id: "dry-limit", text: "In the dry season only about 49 m³/s arrives each second. That is enough water for about one unit, so the plant can make only about 10 MW, even though the headpond looks full. There is no big lake saved up." });
+  if (r.riverFlow === DRY_FLOW) lines.push({ id: "dry-limit", text: "In the dry season only about 49 m³/s arrives each second. That is less than half of what one unit can take, so only one unit turns and the plant can make only about 10 MW, even though the headpond looks full. There is no big lake saved up." });
   lines.push({ id: "plant-output", text: `Power the plant can make now: about ${Math.round(r.outputMW)} MW, with ${r.running.length} unit${r.running.length === 1 ? "" : "s"} switched on.` });
   if (!r.unit3Ready) lines.push({ id: "unit3-out", text: "Unit 3 is taken apart for repair, so it cannot run." });
   if (r.unit3Ready && r.running.includes(3) && r.shares[3] === 0 && !r.tripped) lines.push({ id: "unit3-no-water", text: "Unit 3 is ready, but the river has no water left for it, so it makes nothing. Repair adds a machine, not water." });
@@ -99,30 +99,34 @@ function explain(r: ReturnType<typeof evaluateHydro>): ExplanationLine[] {
   lines.push({ id: "water-returns", text: "The water is not used up. After the turbine it flows out through the tailrace and back into the Saint Paul River." });
   lines.push({ id: "demand", text: `The city is asking for ${r.demandMW} MW: hospital ${r.feeders.hospital ? "on" : "off"}, ${r.feeders.homes} of 4 homes blocks, ${r.feeders.shops} of 4 shops blocks. (Hospital 4 MW; homes blocks 12 MW each; shops blocks 4 MW each. These are model numbers, not real ones.)` });
   if (!r.tripped && r.outputMW > 0) lines.push({ id: "headroom", text: `About ${Math.round(r.headroomMW * 10) / 10} MW spare. A homes block needs 12 MW and a shops block needs 4 MW.` });
-  if (r.tripped) lines.push({ id: "plant-tripped", text: `PLANT TRIPPED — Demand exceeded available generation. ${resetAdvice(r)}` });
+  if (r.tripped) lines.push({ id: "plant-tripped", text: `PLANT TRIPPED (simplified model) — Demand exceeded available generation. ${resetAdvice(r)}` });
+  if (r.tripped) lines.push({ id: "trip-spill", text: "While tripped, the units are stopped, so all the river's water goes over the spillway and back into the river." });
   if (r.overload && r.outputMW > 0) lines.push({ id: "trip-overload", text: `The city asks for ${r.demandMW} MW but the plant can make only ${Math.round(r.outputMW)} MW. In this simplified model, protection trips the city supply and stops the modeled units, so the whole city goes dark at once. Real plants can trip breakers or turbines in different ways, and restart steps depend on the cause. Lights do not just get dimmer. Switch some blocks off or bring more units online; once demand fits, operators must reset the plant before supply returns.` });
-  else if (r.tripped && !r.overload) lines.push({ id: "trip-latched", text: `Demand now fits: the city asks for ${r.demandMW} MW and the plant can make about ${Math.round(r.outputMW)} MW. The protection stays tripped and the city stays dark until an operator resets the plant. Power never comes back by itself.` });
+  else if (r.tripped && !r.overload) lines.push({ id: "trip-latched", text: `Demand now fits: the city asks for ${r.demandMW} MW and the plant could make about ${Math.round(r.outputMW)} MW. In this model, the protection stays tripped and the city stays dark until an operator resets the plant; here, power does not come back by itself. (Real grids also use automatic protection, such as switching off some areas so the rest stay on.)` });
   else if (r.tripped) lines.push({ id: "no-supply", text: "No unit is making power, so no electricity reaches the city. Electricity is not stored in the dam or the wires." });
   else if (r.demandMW > 0) lines.push({ id: "supplied", text: `The plant is supplying the ${r.demandMW} MW the city asks for. Every feeder that is on gets full power.` });
   else lines.push({ id: "no-demand", text: "All feeders are off, so no electricity is sent to the city." });
-  if (r.maxLoadServed) lines.push({ id: "max-served", text: "The hospital is lit and no further block fits without tripping the plant: the most load this supply can carry." });
+  // R3 science P0: with every feeder already on there may be power to spare, so only claim "nothing more fits" when a block is still off.
+  if (r.maxLoadServed && (r.feeders.homes < BLOCKS_PER_DISTRICT || r.feeders.shops < BLOCKS_PER_DISTRICT)) lines.push({ id: "max-served", text: "The hospital is lit and no further block can be switched on without tripping the plant." });
+  else if (r.maxLoadServed) lines.push({ id: "all-on", text: `Every feeder is on, with about ${Math.round(r.headroomMW * 10) / 10} MW spare.` });
   if (r.gridStableWithPriority) lines.push({ id: "priority-stable", text: "Dry season: the grid is stable, the hospital is lit, and every block that fits is on." });
-  if (r.riverFlow === DRY_FLOW) lines.push({ id: "bottle-wheel", text: "Like the bottle-cap water wheel in class: a thin stream turns it slowly and a full stream turns it fast. Less water each second means less power." });
+  // R3 science P0: the analogy must not suggest the turbine spins faster with more water (misconception 3).
+  if (r.riverFlow === DRY_FLOW) lines.push({ id: "bottle-wheel", text: "Like the bottle-cap water wheel in class: a thin stream pushes it more weakly than a full stream, so the wheel slows down. A real generator is held at a steady speed, so the weaker push shows up as less power instead. Less water each second means less power." });
   lines.push(
     { id: "grade8-rule", text: "More water each second, or a higher drop, gives more power." },
     { id: "power-equation", text: `P ≈ ρ·g·Q·H·η = 1000 × 9.81 × ${r.usableFlow} × 23.1 × 0.903 = ${hydraulicWatts.toLocaleString("en-US")} W; ${hydraulicWatts.toLocaleString("en-US")} W ÷ 1,000,000 W/MW ≈ ${r.outputMW.toFixed(1)} MW (η = 0.903 is a model assumption).`, minGrade: 9 },
-    { id: "dynamo", text: "In the generator, the spinning rotor's magnet moves past coils of wire and makes a current, the same idea as a bicycle dynamo.", minGrade: 9 },
+    { id: "dynamo", text: "In the generator, the spinning rotor's magnet (an electromagnet in big generators) moves past coils of wire and makes a current, the same idea as a bicycle dynamo.", minGrade: 9 },
     { id: "safety-limits", text: "In class you would also pour the water yourself and feel the dynamo push back when the lamp lights. Never go near a real dam, spillway, intake or power line. The water and electricity there can kill." },
   );
   // State lines first (R2 pedagogy P1-6): what just happened leads; the static chain and context follow.
   // In flood or trip states the safety line comes first, except that a trip's diagnosis (PLANT TRIPPED and what to do)
   // stays above it, so the learner sees the immediate consequence and the recovery step without scrolling.
-  const priority = ["plant-tripped", "trip-overload", "trip-latched", "no-supply", "headroom", "max-served", "priority-stable", "dry-limit", "idle-units", "spillway-cap", "unit3-out", "unit3-no-water", "plant-output", "demand", "season"];
+  const priority = ["plant-tripped", "trip-overload", "trip-latched", "trip-spill", "no-supply", "headroom", "max-served", "priority-stable", "dry-limit", "idle-units", "spillway-cap", "unit3-out", "unit3-no-water", "plant-output", "demand", "season"];
   const rank = (id: string) => { const i = priority.indexOf(id); return i < 0 ? priority.length : i; };
   lines.sort((a, b) => rank(a.id) - rank(b.id));
   if (r.tripped || r.spillFlow > 0) {
     const safety = lines.findIndex((line) => line.id === "safety-limits");
-    const at = r.tripped ? 1 : 0;
+    const at = r.tripped ? 2 : 0; // PLANT TRIPPED, then its caveated explanation (R3 science P1), then safety
     if (safety > at) lines.splice(at, 0, ...lines.splice(safety, 1));
   }
   lines.push({ id: "chain", text: "Energy chain: stored (potential) energy of the high water → movement (kinetic) energy of falling water → turning turbine and shaft → electrical energy in the generator → light (and some heat) in the city. At each step some energy becomes heat and sound; none is destroyed." });
@@ -133,7 +137,7 @@ function explain(r: ReturnType<typeof evaluateHydro>): ExplanationLine[] {
 export function resetBlocker(quantities: Record<string, number>): string | null {
   const shortMW = quantities.demandMW - quantities.outputMW;
   // No running unit is the first thing to fix (R3 interaction P2), whatever the demand.
-  if (!(quantities.outputMW > 0)) return "Reset unavailable: no unit is making power. Bring at least one unit online.";
+  if (!(quantities.outputMW > 0)) return "Reset unavailable: no unit is switched on. Start at least one unit.";
   if (quantities.overload === 1) return `Reset unavailable: demand is still ${formatMW(shortMW)} MW above available generation.`;
   return null;
 }
@@ -141,7 +145,8 @@ const formatMW = (mw: number) => String(Math.round(mw * 10) / 10);
 
 function resetAdvice(r: ReturnType<typeof evaluateHydro>): string {
   const blocker = resetBlocker({ overload: r.overload, demandMW: r.demandMW, outputMW: r.outputMW });
-  return blocker ? `Reduce demand or bring enough units online, then reset the plant. ${blocker}` : "Conditions are safe now: press Reset plant to restore power.";
+  if (!blocker) return "Conditions are safe now: press Reset plant to restore power.";
+  return `${r.demandMW > 0 ? "Reduce demand or bring enough units online" : "Start a unit"}, then reset the plant. ${blocker}`;
 }
 
 const lanes = (q: number) => q <= 0 ? 0 : Math.ceil(q / DESIGN_FLOW_PER_UNIT - 1e-9);
@@ -193,7 +198,8 @@ export const hydropowerModel: SimulationModel = {
       "feeder-shops": flow(feederOn.shops && !r.tripped, r.feeders.shops / 12),
     };
     const componentStates: SimulationOutput["componentStates"] = {};
-    for (let k = 1; k <= 4; k += 1) componentStates[`gauge-seg-${k}`] = { intensity: round6(Math.min(1, Math.max(0, (r.outputMW - 22 * (k - 1)) / 22))) };
+    // Each supply segment is one unit's 22 MW: its length (fill) and glow follow the MW the plant can make in that band.
+  for (let k = 1; k <= 4; k += 1) { const part = round6(Math.min(1, Math.max(0, (r.outputMW - 22 * (k - 1)) / 22))); componentStates[`gauge-seg-${k}`] = { intensity: part, fill: part }; }
     componentStates["demand-hospital"] = { intensity: feederOn.hospital ? 1 : 0 };
     componentStates["city-hospital"] = { intensity: feederOn.hospital && !r.tripped ? 1 : 0 };
     for (const district of ["homes", "shops"] as const) for (let k = 1; k <= BLOCKS_PER_DISTRICT; k += 1) {

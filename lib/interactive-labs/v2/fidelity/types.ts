@@ -109,7 +109,8 @@ export type ExplanationLine = { id: string; text: string; minGrade?: number };
 export type SimulationOutput = {
   quantities: Record<string, number>;
   flows: Record<string, { active: boolean; rate: number; direction: 1 | -1 }>;
-  componentStates: Record<string, { intensity?: number; status?: string; color?: string; alpha?: number; pose?: number }>;
+  /** fill (0–1) draws a part at that fraction of its length along x, anchored at its left end (e.g. a gauge segment). */
+  componentStates: Record<string, { intensity?: number; status?: string; color?: string; alpha?: number; pose?: number; fill?: number }>;
   explanation: ExplanationLine[];
 };
 

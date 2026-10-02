@@ -55,6 +55,19 @@ export function rememberProfile(storage: ProfileStorage | null | undefined, prof
   try { storage?.setItem(PROFILE_STORAGE_KEY, profile); } catch { /* storage may be disabled */ }
 }
 
+/**
+ * RX-005 A2 / R3 performance P1: once this device has been downgraded for performance, it is never auto-upgraded
+ * again (per runtime version), so a fast LOW probe on a high-refresh screen cannot loop HIGH → LOW → HIGH.
+ * A learner's manual choice still applies.
+ */
+const DOWNGRADE_STORAGE_KEY = "ll-lab-downgraded/rx005-1";
+export function rememberPerformanceDowngrade(storage: ProfileStorage | null | undefined): void {
+  try { storage?.setItem(DOWNGRADE_STORAGE_KEY, "1"); } catch { /* storage may be disabled */ }
+}
+export function recallPerformanceDowngrade(storage: ProfileStorage | null | undefined): boolean {
+  try { return storage?.getItem(DOWNGRADE_STORAGE_KEY) === "1"; } catch { return false; }
+}
+
 export function recallProfile(storage: ProfileStorage | null | undefined): CapabilityProfile | null {
   try {
     const value = storage?.getItem(PROFILE_STORAGE_KEY);

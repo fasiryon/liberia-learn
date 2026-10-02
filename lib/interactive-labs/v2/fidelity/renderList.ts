@@ -138,7 +138,12 @@ export function buildRenderList(input: { definition: InteractiveLabDefinition<La
     const inFocus = focusOf(component.id, rootObject?.id ?? assembly?.id);
     if (!inFocus && !budget.fadeContext) continue;
     const rootMatrix = rootObject ? multiply(translate(...rootObject.transform.position), rotate(...objectRotation(state, rootObject.id, rootObject.transform.rotation))) : IDENTITY;
-    const localTransform = componentLocalTransform(spec, display, component.id, component.transform);
+    const baseLocal = componentLocalTransform(spec, display, component.id, component.transform);
+    // R3 science P1: a fill state shortens the part along x from its left end, so a gauge segment's length carries MW.
+    const fill = simulation.componentStates[component.id]?.fill;
+    const localTransform = typeof fill === "number" && Number.isFinite(fill) && fill < 1
+      ? { ...baseLocal, position: [baseLocal.position[0] - (1 - Math.max(fill, 0.02)) * baseLocal.scale[0] / 2, baseLocal.position[1], baseLocal.position[2]] as typeof baseLocal.position, scale: [baseLocal.scale[0] * Math.max(fill, 0.02), baseLocal.scale[1], baseLocal.scale[2]] as typeof baseLocal.scale }
+      : baseLocal;
     const localMatrix = transformMatrix(localTransform);
     const matrix = multiply(rootMatrix, localMatrix);
     const motion = motionByComponent.get(component.id);

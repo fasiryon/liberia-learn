@@ -3,7 +3,7 @@ import dynamic from "next/dynamic";
 import { Component, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { getInteractiveLabDefinition } from "@/lib/interactive-labs/v2/registry";
 import { initializeLab, acceptLabAction } from "@/lib/interactive-labs/v2/kernel";
-import { recallProfile, readDeviceHints, rememberProfile, resolveInitialProfile, upgradeEligibility, upgradeTarget } from "@/lib/interactive-labs/v2/capabilities";
+import { recallPerformanceDowngrade, recallProfile, readDeviceHints, rememberPerformanceDowngrade, rememberProfile, resolveInitialProfile, upgradeEligibility, upgradeTarget } from "@/lib/interactive-labs/v2/capabilities";
 import { downgradeProfile } from "@/lib/interactive-labs/v2/fidelity/profiles";
 import { loadChunkWithRetry } from "@/lib/interactive-labs/v2/loadChunk";
 import type { CapabilityProfile, LabAction, LabState } from "@/lib/interactive-labs/v2/types";
@@ -59,7 +59,9 @@ export function InteractiveLabPlayer({ labId = "g4-solid-figures", override, rev
   const [notice, setNotice] = useState<string | null>(null);
   const reducedMotion = usePrefersReducedMotion();
   const deviceHints = typeof navigator === "undefined" ? {} : readDeviceHints(navigator);
-  const canUpgrade = !reviewPreview && override === undefined && !manualProfileChoice.current && profile === "LOW" && upgradeEligibility(deviceHints);
+  // A performance downgrade in this session, or remembered from an earlier one, blocks every later auto-upgrade.
+  const performanceDowngraded = useRef(false);
+  const canUpgrade = !reviewPreview && override === undefined && !manualProfileChoice.current && !performanceDowngraded.current && profile === "LOW" && upgradeEligibility(deviceHints) && !recallPerformanceDowngrade(getProfileStorage());
   const [intro, setIntro] = useState(!reviewPreview);
   // R3 interaction P1: restarting wipes progress, so it asks once inline (no browser dialog) and never reads as "Reset plant".
   const [confirmRestart, setConfirmRestart] = useState(false);
@@ -102,6 +104,7 @@ export function InteractiveLabPlayer({ labId = "g4-solid-figures", override, rev
     setProfile((current) => {
       const next = reason === "context" ? "FALLBACK_2D" : downgradeProfile(current);
       rememberProfile(getProfileStorage(), next);
+      if (reason === "performance") { performanceDowngraded.current = true; rememberPerformanceDowngrade(getProfileStorage()); }
       return next;
     });
     setNotice(reason === "context" ? "3D is not available on this device, so the lab switched to the 2D view." : "The lab lowered its visual quality to keep things smooth.");
