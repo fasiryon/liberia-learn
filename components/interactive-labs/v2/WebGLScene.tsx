@@ -53,6 +53,9 @@ void main(){
 }`;
 const LIGHTING = { full: 3, simplified: 2, minimal: 1, none: 0 } as const;
 
+/** A11: at most 8 scene labels, highlighted parts first; the parts list carries the rest. */
+function labelBudget<T extends { highlighted: boolean }>(items: T[]): T[] { return [...items.filter((item) => item.highlighted), ...items.filter((item) => !item.highlighted)].slice(0, 8); }
+
 function rgb(value: string): [number, number, number] { const n = Number.parseInt(value.replace("#", ""), 16); return [(n >> 16 & 255) / 255, (n >> 8 & 255) / 255, (n & 255) / 255]; }
 
 export function WebGLScene({ definition, state, profile, reducedMotion, traceFlowId, dispatch, onPick, onDowngrade, onUpgradeReady, allowProfileUpgrade = false, allowPerformanceDowngrade = true }: Props) {
@@ -295,7 +298,7 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
         if (motionStatus.current && motionStatus.current.textContent !== status) motionStatus.current.textContent = status;
         const project = (p: Vec3) => { const c = transformPoint(viewProj, p); return c[2] > 1 ? null : { x: (c[0] * 0.5 + 0.5) * el.clientWidth, y: (0.5 - c[1] * 0.5) * el.clientHeight }; };
         const entries = [
-          ...list.items.filter((item) => item.showLabel && item.inFocus).map((item) => {
+          ...labelBudget(list.items.filter((item) => item.showLabel && item.inFocus)).map((item) => {
             const center = item.spin ? transformPoint(spinMatrix(item.spin, t, motionless), [0, 0, 0]) : item.center;
             const offset = item.labelOffset ?? [0, 0, 0];
             return { text: item.label, at: project([center[0] + offset[0], center[1] + offset[1], center[2] + offset[2]]), title: undefined, glyph: false, mobileLabel: item.mobileLabel !== false };

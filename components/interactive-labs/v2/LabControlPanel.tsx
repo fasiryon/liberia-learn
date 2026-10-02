@@ -151,15 +151,20 @@ export function LabControlPanel({ definition, state, activeCheck, dispatch }: Pr
             <div className="flex flex-wrap gap-2">
               {spec.cutaways.map((cutaway) => <button key={cutaway.id} type="button" aria-pressed={fidelity.activeCutawayId === cutaway.id} onClick={() => dispatch({ type: "set-cutaway", cutawayId: fidelity.activeCutawayId === cutaway.id ? null : cutaway.id })} className={chip(fidelity.activeCutawayId === cutaway.id)}>{cutaway.label}</button>)}
               {spec.layers.map((layer) => <button key={layer.id} type="button" aria-pressed={!fidelity.hiddenLayerIds.includes(layer.id)} onClick={() => dispatch({ type: "toggle-layer", layerId: layer.id })} className={chip(!fidelity.hiddenLayerIds.includes(layer.id))}>{layer.label}</button>)}
-              {spec.flows.map((flow) => <button key={flow.id} type="button" aria-pressed={!fidelity.hiddenFlowIds.includes(flow.id)} onClick={() => dispatch({ type: "toggle-flow", flowId: flow.id })} className={chip(!fidelity.hiddenFlowIds.includes(flow.id))}>Show {flow.label.toLowerCase()}</button>)}
               <button type="button" aria-pressed={fidelity.labelsVisible} onClick={() => dispatch({ type: "toggle-labels" })} className={chip(fidelity.labelsVisible)}>Labels</button>
               {fidelity.isolatedId
                 ? <button type="button" onClick={() => dispatch({ type: "isolate", targetId: null })} className={chip(true)}>Show everything</button>
                 : (fidelity.inspectedComponentId ?? state.selectedObjectId) && <button type="button" onClick={() => dispatch({ type: "isolate", targetId: fidelity.inspectedComponentId ?? state.selectedObjectId })} className={chip(false)}>Isolate selected</button>}
             </div>
-            <div className="flex flex-wrap gap-2" aria-label="Parts you can see">
-              {spec.components.filter((component) => component.selectable !== false && isComponentRevealed(spec, fidelity, component.id)).sort((a, b) => a.label.localeCompare(b.label)).map((component) => <button key={component.id} type="button" aria-pressed={fidelity.inspectedComponentId === component.id} onClick={() => dispatch({ type: "inspect-component", componentId: component.id })} className={chip(fidelity.inspectedComponentId === component.id)}>{component.label}</button>)}
+            <details className="rounded-xl border border-white/10 p-2">
+              <summary className="min-h-11 cursor-pointer py-2 text-xs font-semibold uppercase tracking-wider text-slate-300">Parts and traces</summary>
+              <div className="mt-2 flex flex-wrap gap-2" aria-label="Process paths">
+                {spec.flows.map((flow) => <button key={flow.id} type="button" aria-pressed={!fidelity.hiddenFlowIds.includes(flow.id)} onClick={() => dispatch({ type: "toggle-flow", flowId: flow.id })} className={chip(!fidelity.hiddenFlowIds.includes(flow.id))}>Show {flow.label.toLowerCase()}</button>)}
+              </div>
+            <div className="mt-2 flex flex-wrap gap-2" aria-label="Parts you can see">
+              {spec.components.filter((component) => component.selectable !== false && !component.control && isComponentRevealed(spec, fidelity, component.id)).sort((a, b) => a.label.localeCompare(b.label)).map((component) => <button key={component.id} type="button" aria-pressed={fidelity.inspectedComponentId === component.id} onClick={() => dispatch({ type: "inspect-component", componentId: component.id })} className={chip(fidelity.inspectedComponentId === component.id)}>{component.label}</button>)}
             </div>
+            </details>
             {fidelity.inspectedComponentId && <p className="text-xs text-slate-300">{spec.components.find((component) => component.id === fidelity.inspectedComponentId)?.description ?? ""}</p>}
           </section>
 

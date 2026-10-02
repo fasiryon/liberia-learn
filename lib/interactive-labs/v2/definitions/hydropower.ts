@@ -60,7 +60,7 @@ const components: HighFidelitySpec["components"] = [
     const unit = i + 1;
     const offsets: Array<[number, number, number]> = [[-1.8, 0.65, 0], [-0.45, 1.8, 0], [0.5, 0.55, 0], [1.15, 1.3, 0]];
     return [component(`unit-${unit}`, `Unit ${unit} housing`, "cylinder", [x, -0.15, 0.1], [0.52, 0.72, 0.52], "#5fb8a8", { labelOffset: unit === 1 ? [-0.9, 0.95, 0] : offsets[i], ...(unit !== 3 ? { mobileLabel: false } : {}) }),
-      component(`unit-${unit}-marker`, `Unit ${unit} rotation marker`, "box", [x + 0.34, -0.15, 0.1], [0.16, 0.08, 0.08], "#facc15", { showLabel: false })];
+      component(`unit-${unit}-marker`, `Unit ${unit} rotation marker`, "box", [x + 0.34, -0.15, 0.1], [0.16, 0.08, 0.08], "#facc15", { showLabel: false, selectable: false })];
   }),
   component("u3-runner", "Runner", "cylinder", [0.9, -0.25, 0.1], [0.32, 0.18, 0.32], "#cfe0ea", { internal: true, layerId: "unit-3-internals", shapeKey: "runner", labelOffset: [-0.8, -0.3, 0], mobileLabel: false }),
   component("u3-shaft", "Shaft", "cylinder", [0.9, 0.05, 0.1], [0.09, 0.36, 0.09], "#5f6d7e", { internal: true, layerId: "unit-3-internals", shapeKey: "shaft", labelOffset: [0, 0.2, 0], mobileLabel: false }),
@@ -68,13 +68,13 @@ const components: HighFidelitySpec["components"] = [
   component("switchyard", "Switchyard", "panel", [3.1, 0.2, 0.1], [0.9, 0.8, 0.18], "#aab4c0", { mobileLabel: false }),
   { ...latticeTowerKit({ id:"power-tower-1",label:"Transmission tower",transform:tr([4.0,1.4,0],[0.48,1.3,0.48]),color:"#aab4c0",width:1,height:2,depth:1 }), showLabel:false },
   component("city-hospital", "Hospital", "rectangular-prism", [5.0, 0.35, 0], [0.4, 0.95, 0.5], "#96a3b6", { mobileLabel: false }),
-  component("hospital-sign", "Hospital H sign", "panel", [5.0, 1.1, 0.28], [0.22, 0.2, 0.06], "#2f6fe0", { showLabel: false }),
+  component("hospital-sign", "Hospital H sign", "panel", [5.0, 1.1, 0.28], [0.22, 0.2, 0.06], "#2f6fe0", { showLabel: false, selectable: false }),
   // v1.1 feeder blocks (06-V1_1_SIMULATION_DELTA): four homes blocks and four shops blocks, each lit or dark on its own.
-  ...[1, 2, 3, 4].map((k) => component(`city-homes-b${k}`, k === 1 ? "Homes" : `Homes block ${k}`, "rectangular-prism", [5.85 + (k - 1) * 0.36, 0.2 + (k % 2) * 0.08, 0.15], [0.3, 0.62 + (k % 2) * 0.16, 0.42], "#7a869a", k === 1 ? { labelOffset: [0.4, 1.1, 0], mobileLabel: false } : { showLabel: false })),
-  ...[1, 2, 3, 4].map((k) => component(`city-shops-b${k}`, k === 1 ? "Shops" : `Shops block ${k}`, "rectangular-prism", [7.35 + (k - 1) * 0.3, 0.15, -0.1], [0.24, 0.5, 0.36], "#7a869a", k === 1 ? { labelOffset: [0.3, 1.0, 0], mobileLabel: false } : { showLabel: false })),
-  ...[1, 2, 3, 4].map((n) => component(`gauge-seg-${n}`, `Power gauge ${n}`, "box", [4.6 + n * 0.24, 2.3, 0], [0.18, 0.22, 0.08], "#8c9ab0", { showLabel: false })),
-  component("demand-hospital", "hospital demand segment", "box", [5.2, 2.3, 0], [0.12, 0.22, 0.08], "#c98a4b", { showLabel: false }),
-  ...(["homes", "shops"] as const).flatMap((name, d) => [1, 2, 3, 4].map((k) => component(`demand-${name}-b${k}`, `${name} block ${k} demand segment`, "box", [5.4 + d * 0.62 + (k - 1) * 0.14, 2.3, 0], [0.1, 0.22, 0.08], "#c98a4b", { showLabel: false }))),
+  ...[1, 2, 3, 4].map((k) => component(`city-homes-b${k}`, k === 1 ? "Homes" : `Homes block ${k}`, "rectangular-prism", [5.85 + (k - 1) * 0.36, 0.2 + (k % 2) * 0.08, 0.15], [0.3, 0.62 + (k % 2) * 0.16, 0.42], "#7a869a", k === 1 ? { labelOffset: [0.4, 1.1, 0], mobileLabel: false } : { showLabel: false, selectable: false })),
+  ...[1, 2, 3, 4].map((k) => component(`city-shops-b${k}`, k === 1 ? "Shops" : `Shops block ${k}`, "rectangular-prism", [7.35 + (k - 1) * 0.3, 0.15, -0.1], [0.24, 0.5, 0.36], "#7a869a", k === 1 ? { labelOffset: [0.3, 1.0, 0], mobileLabel: false } : { showLabel: false, selectable: false })),
+  ...[1, 2, 3, 4].map((n) => component(`gauge-seg-${n}`, `Power gauge ${n}`, "box", [4.6 + n * 0.24, 2.3, 0], [0.18, 0.22, 0.08], "#8c9ab0", { showLabel: false, selectable: false })),
+  component("demand-hospital", "hospital demand segment", "box", [5.2, 2.3, 0], [0.12, 0.22, 0.08], "#c98a4b", { showLabel: false, selectable: false }),
+  ...(["homes", "shops"] as const).flatMap((name, d) => [1, 2, 3, 4].map((k) => component(`demand-${name}-b${k}`, `${name} block ${k} demand segment`, "box", [5.4 + d * 0.62 + (k - 1) * 0.14, 2.3, 0], [0.1, 0.22, 0.08], "#c98a4b", { showLabel: false, selectable: false }))),
   // RX-005c in-scene controls (05 pedagogy delta §2): each dispatches the same set-variable as its panel twin.
   // River-gauge post upstream: the season is a condition to test, chosen where the water arrives.
   component("river-gauge-post", "River gauge: choose a season to test", "cylinder", [-5.55, 3.35, -1.75], [0.05, 0.75, 0.05], "#5f6d7e", { showLabel: false }),

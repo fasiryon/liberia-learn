@@ -1,7 +1,7 @@
 "use client";
 // RX-005c / A14 / A17: the lab's in-scene controls as one docked bar, identical on every profile (HIGH, STANDARD,
-// LOW and FALLBACK_2D). It overlays the top of the scene (sky) on wider screens and sits under the scene on phones, so
-// controls never cover the parts they act on. Each chip dispatches the same validated set-variable as its panel twin;
+// LOW and FALLBACK_2D). It sits directly under the scene on every screen size, so controls never cover the parts
+// they act on. Each chip dispatches the same validated set-variable as its panel twin;
 // tapping the control part in the scene still operates it too.
 import type { InteractiveLabDefinition, LabAction, LabState } from "@/lib/interactive-labs/v2/types";
 import { controlAction, controlSelected, type SceneControl } from "@/lib/interactive-labs/v2/fidelity/controls";
@@ -21,9 +21,9 @@ export function SceneControlBar({ definition, state, dispatch }: Props) {
   }
   if (!groups.size) return null;
   return (
-    <div data-lab-scene-controls className="flex flex-wrap gap-2 bg-slate-950/90 p-2 sm:pointer-events-none sm:absolute sm:inset-x-2 sm:top-2 sm:bg-transparent sm:p-0">
+    <div data-lab-scene-controls className="flex flex-wrap gap-2 border-t border-white/10 bg-slate-950 p-2">
       {[...groups.entries()].map(([key, group]) => (
-        <div key={key} role="group" aria-label={group.label} className="pointer-events-auto flex flex-wrap items-center gap-1 rounded-2xl bg-slate-950/80 p-1 pl-2 shadow-lg backdrop-blur">
+        <div key={key} role="group" aria-label={group.label} className="flex flex-wrap items-center gap-1 rounded-2xl bg-white/5 p-1 pl-2">
           <span className="mr-1 text-[11px] font-semibold uppercase tracking-wide text-slate-200">{group.label}</span>
           {group.controls.map(({ id, name, control }) => {
             const action = controlAction(spec, fidelity, control);
