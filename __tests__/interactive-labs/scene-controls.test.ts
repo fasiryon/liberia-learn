@@ -38,14 +38,18 @@ describe("in-scene controls", () => {
     expect(start.find((item) => item.id === "breaker-hospital")?.control?.action).toEqual({ type: "set-variable", variableId: "feederHospital", value: 0 });
   });
 
-  it("can solve the dry-season challenge by touching the plant alone", () => {
+  it("can solve the dry-season challenge by touching the plant, then the explicit Reset plant", () => {
     const history: LabAction[] = [];
     let state = play([]);
     const tap = (id: string) => { const action = itemsWithControls(state).find((item) => item.id === id)?.control?.action; if (!action) throw new Error(`${id} disabled`); history.push(action); state = play(history); };
     tap("gauge-band-1");
     for (let i = 0; i < 4; i += 1) tap("breaker-homes-less");
     for (let i = 0; i < 3; i += 1) tap("breaker-shops-less");
-    expect(state.fidelity?.variables).toMatchObject({ riverFlow: 49, homesBlocks: 0, shopsBlocks: 1, feederHospital: 1 });
+    // Dropping to dry season with the city fully loaded tripped the plant; shedding load alone never restores power.
+    expect(state.fidelity?.variables).toMatchObject({ riverFlow: 49, homesBlocks: 0, shopsBlocks: 1, feederHospital: 1, protectionLatched: 1 });
+    expect(buildRenderList({ definition: hydropowerDefinition, state, profile: "LOW" }).quantities.gridStableWithPriority).toBe(0);
+    history.push({ type: "reset-protection" });
+    state = play(history);
     expect(buildRenderList({ definition: hydropowerDefinition, state, profile: "LOW" }).quantities.gridStableWithPriority).toBe(1);
   });
 

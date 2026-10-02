@@ -204,6 +204,24 @@ export type HighFidelitySpec = {
   hud?: { quantityId: string; label: string; unit?: string; digits?: number }[];
   /** Optional state banner for the HUD (e.g. "Tripped: the city is dark"). */
   hudAlert?: (quantities: Record<string, number>) => { text: string; tone: "danger" | "ok" | "info" } | null;
+  /** Latched protection (a plant trip, a fuse): see ProtectionDefinition. */
+  protection?: ProtectionDefinition;
+};
+
+/**
+ * A latched protection. Whenever a state change makes the overload quantity 1, the engine sets the latch variable to 1
+ * and leaves every learner choice as it was. Nothing clears the latch except an explicit reset-protection action,
+ * which the engine accepts only while resetBlocker returns null. The model reads the latch and keeps the supply off.
+ */
+export type ProtectionDefinition = {
+  /** Non-learner toggle variable (0/1, initial 0) that holds the latch. */
+  latchVariableId: string;
+  /** Simulation quantity that is 1 while the present conditions are an overload, whatever the latch says. */
+  overloadQuantityId: string;
+  /** Learner-facing name of the reset control, e.g. "Reset plant". */
+  resetLabel: string;
+  /** Why a reset would fail for these quantities (learner-facing), or null when it is safe. */
+  resetBlocker: (quantities: Record<string, number>) => string | null;
 };
 
 export type FidelityState = {
@@ -236,6 +254,7 @@ export type FidelityAction =
   | { type: "clear-trace"; flowId: string }
   | { type: "inspect-component"; componentId: string }
   | { type: "guided-step"; index: number }
-  | { type: "toggle-flow"; flowId: string };
+  | { type: "toggle-flow"; flowId: string }
+  | { type: "reset-protection" };
 
-export const FIDELITY_ACTION_TYPES = Object.freeze(["set-variable", "set-explode", "set-cutaway", "toggle-layer", "isolate", "toggle-labels", "camera-preset", "clear-assembly", "place-component", "trace-node", "clear-trace", "inspect-component", "guided-step", "toggle-flow"] as const);
+export const FIDELITY_ACTION_TYPES = Object.freeze(["set-variable", "set-explode", "set-cutaway", "toggle-layer", "isolate", "toggle-labels", "camera-preset", "clear-assembly", "place-component", "trace-node", "clear-trace", "inspect-component", "guided-step", "toggle-flow", "reset-protection"] as const);

@@ -9,7 +9,7 @@ const W = { "unit-3": { "slot-runner": "u3-generator", "slot-shaft": "u3-shaft",
 type Placements = Record<string, Record<string, string | null>>;
 /** (Q, units, hospital, homes blocks, shops blocks) as in the 06 fixture notation. */
 const run = (riverFlow: number, unitsOnline: number, feederHospital: number, homesBlocks: number, shopsBlocks: number, placements: Placements = I) =>
-  hydropowerModel.evaluate({ variables: { riverFlow, unitsOnline, feederHospital, homesBlocks, shopsBlocks }, placements });
+  hydropowerModel.evaluate({ variables: { riverFlow, unitsOnline, feederHospital, homesBlocks, shopsBlocks, protectionLatched: 0 }, placements });
 const q = (out: ReturnType<typeof run>) => out.quantities;
 const statuses = (out: ReturnType<typeof run>) => [1, 2, 3, 4].map((unit) => out.componentStates[`unit-${unit}`]?.status);
 const blocks = (out: ReturnType<typeof run>, district: "homes" | "shops") => [1, 2, 3, 4].map((k) => out.componentStates[`city-${district}-b${k}`]?.intensity);
@@ -18,11 +18,11 @@ const gauge = (out: ReturnType<typeof run>) => [1, 2, 3, 4].map((k) => out.compo
 const ids = (out: ReturnType<typeof run>) => out.explanation.map((line) => line.id);
 const DRY = 10.027907;
 
-describe("Mount Coffee hydropower model 1.1.0 (spec fixtures)", () => {
+describe("Mount Coffee hydropower model 1.2.0 (spec fixtures)", () => {
   it("η is the stated model assumption (≈0.903) and one unit at design flow makes 22 MW", () => {
     expect(EFFICIENCY).toBeCloseTo(0.903094566, 9);
     expect(q(run(430, 1, 1, 0, 0)).outputMW).toBe(22);
-    expect(hydropowerModel.version).toBe("1.1.0");
+    expect(hydropowerModel.version).toBe("1.2.0");
   });
 
   it("V01 rainy, 4 units, every block on: 88 MW, 68 MW demand, 20 MW spare, whole city lit", () => {
@@ -149,7 +149,7 @@ describe("Mount Coffee hydropower model 1.1.0 (spec fixtures)", () => {
   });
 });
 
-describe("Mount Coffee hydropower model 1.1.0 (properties over all 2,500 states)", () => {
+describe("Mount Coffee hydropower model 1.2.0 (properties over all 2,500 states)", () => {
   const steps = [0, 1, 2, 3, 4];
   const states = RIVER_FLOW_STEPS.flatMap((flow) => steps.flatMap((units) => [0, 1].flatMap((h) => steps.flatMap((homes) => steps.flatMap((shops) =>
     [I, E].map((placements) => ({ flow, units, h, homes, shops, placements, out: run(flow, units, h, homes, shops, placements) })))))));
@@ -244,7 +244,7 @@ describe("Mount Coffee hydropower model 1.1.0 (properties over all 2,500 states)
   });
 
   it("is pure: same input, same output, input not mutated", () => {
-    const input = { variables: { riverFlow: 430, unitsOnline: 4, feederHospital: 1, homesBlocks: 4, shopsBlocks: 4 }, placements: structuredClone(I) as Placements };
+    const input = { variables: { riverFlow: 430, unitsOnline: 4, feederHospital: 1, homesBlocks: 4, shopsBlocks: 4, protectionLatched: 0 }, placements: structuredClone(I) as Placements };
     const frozen = structuredClone(input);
     expect(hydropowerModel.evaluate(input)).toEqual(hydropowerModel.evaluate(input));
     expect(input).toEqual(frozen);

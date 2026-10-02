@@ -148,6 +148,12 @@ export function validateHighFidelityDefinition(definition: InteractiveLabDefinit
     }
     if (start?.cameraPresetId && !spec.camera.presets.some((preset) => preset.id === start.cameraPresetId)) errors.push(`mode_start_camera_unknown:${mode}`);
   }
+  if (spec.protection) {
+    const latch = spec.variables.find((variable) => variable.id === spec.protection!.latchVariableId);
+    if (!latch || latch.learnerControlled || latch.kind !== "toggle" || latch.min !== 0 || latch.max !== 1 || latch.initial !== 0) errors.push("protection_latch_invalid");
+    else if (spec.simulation && deriveSimulation(spec, initialFidelityState(spec)).quantities[spec.protection.overloadQuantityId] === undefined) errors.push("protection_overload_quantity_missing");
+    if (!spec.protection.resetLabel.trim()) errors.push("protection_reset_label_missing");
+  }
   if (spec.surfaces?.length) errors.push(...validateSurfaces(spec, spec.simulation ? deriveSimulation(spec, initialFidelityState(spec)).quantities : {}));
   return errors;
 }

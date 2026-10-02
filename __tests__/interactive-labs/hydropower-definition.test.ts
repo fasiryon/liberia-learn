@@ -6,6 +6,7 @@ import { HYDROPOWER_REVIEW_SCENARIOS } from "@/lib/interactive-labs/v2/review/re
 import { replayReviewScenario } from "@/lib/interactive-labs/v2/review/scenarios";
 import { hydropowerModel } from "@/lib/interactive-labs/v2/definitions/hydropowerModel";
 import { planLowBatches } from "@/lib/interactive-labs/v2/fidelity/lowBatch";
+import type { LabAction } from "@/lib/interactive-labs/v2/types";
 
 describe("Mount Coffee hydropower design stage", () => {
   it("satisfies the shared authoring and colour gates with ten flows and five checks", () => {
@@ -107,13 +108,13 @@ describe("Mount Coffee hydropower design stage", () => {
     const solved = replayReviewScenario(hydropowerDefinition, HYDROPOWER_REVIEW_SCENARIOS.scenarios.find((scenario) => scenario.id === "hydro-challenge-solved")!);
     if ("reason" in solved) throw new Error(solved.reason);
     expect(buildRenderList({ definition: hydropowerDefinition, state: solved.state, profile: "HIGH" }).quantities.gridStableWithPriority).toBe(1);
-    const assessment = replayReviewScenario(hydropowerDefinition, { ...HYDROPOWER_REVIEW_SCENARIOS.scenarios.find((scenario) => scenario.id === "hydro-challenge-solved")!, actions: [...HYDROPOWER_REVIEW_SCENARIOS.scenarios.find((scenario) => scenario.id === "hydro-challenge-solved")!.actions, { type: "mode", mode: "ASSESSMENT" }] });
+    const assessment = replayReviewScenario(hydropowerDefinition, { ...HYDROPOWER_REVIEW_SCENARIOS.scenarios.find((scenario) => scenario.id === "hydro-challenge-solved")!, actions: [...(HYDROPOWER_REVIEW_SCENARIOS.scenarios.find((scenario) => scenario.id === "hydro-challenge-solved")!.actions as LabAction[]), { type: "mode", mode: "ASSESSMENT" }] });
     if ("reason" in assessment) throw new Error(assessment.reason);
     expect(assessment.state.fidelity?.variables).toMatchObject({ riverFlow: 430, homesBlocks: 4, shopsBlocks: 4 });
   });
 
   it("R2 P1-2: dry-season-output measures four-unit capability, so a tripped or one-unit plant does not pass", () => {
-    const q = (variables: Record<string, number>) => hydropowerModel.evaluate({ variables: { riverFlow: 49, unitsOnline: 4, feederHospital: 1, homesBlocks: 4, shopsBlocks: 4, ...variables }, placements: { "unit-3": { "slot-runner": "u3-runner", "slot-shaft": "u3-shaft", "slot-generator": "u3-generator" } } }).quantities;
+    const q = (variables: Record<string, number>) => hydropowerModel.evaluate({ variables: { riverFlow: 49, unitsOnline: 4, feederHospital: 1, homesBlocks: 4, shopsBlocks: 4, protectionLatched: 0, ...variables }, placements: { "unit-3": { "slot-runner": "u3-runner", "slot-shaft": "u3-shaft", "slot-generator": "u3-generator" } } }).quantities;
     expect(q({}).capabilityAllUnitsMW).toBeGreaterThanOrEqual(8);
     expect(q({}).capabilityAllUnitsMW).toBeLessThanOrEqual(12);
     expect(q({ unitsOnline: 1 }).capabilityAllUnitsMW).toBe(0);

@@ -145,7 +145,7 @@ export function InteractiveLabPlayer({ labId = "g4-solid-figures", override, rev
                   ? <ThreeScene definition={definition} state={state} profile={profile} reducedMotion={reducedMotion} traceFlowId={traceFlowId} dispatch={dispatch} onPick={onPick} onDowngrade={onDowngrade} onUpgradeReady={onUpgradeReady} allowProfileUpgrade={canUpgrade} allowPerformanceDowngrade={!reviewPreview} />
                   : <WebGLScene definition={definition} state={state} profile={profile} reducedMotion={reducedMotion} traceFlowId={traceFlowId} dispatch={dispatch} onPick={onPick} onDowngrade={onDowngrade} onUpgradeReady={onUpgradeReady} allowProfileUpgrade={canUpgrade} allowPerformanceDowngrade={!reviewPreview} />}
               </SceneLoadBoundary>}
-          <SceneHud definition={definition} state={state} />
+          <SceneHud definition={definition} state={state} dispatch={dispatch} />
           <SceneControlBar definition={definition} state={state} dispatch={dispatch} />
         </div>
         <aside id="lab-controls" tabIndex={-1} aria-label="Lab controls" className="lg:max-h-[clamp(420px,62vh,640px)] lg:overflow-y-auto border-l border-white/10 bg-white/[.03] p-5">

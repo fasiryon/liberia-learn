@@ -1,6 +1,8 @@
 // Mount Coffee run-of-river rule layer (docs/labs/mount-coffee-hydropower/design/03-SIMULATION_SPEC.md,
 // amended by 06-V1_1_SIMULATION_DELTA.md: smaller feeder blocks, founder decision 2026-10-01).
 // Pure, deterministic and memoryless. Invalid input throws; nothing is defaulted or clamped.
+// The one piece of memory, the latched trip (founder decision 2026-10-02), is an input: protectionLatched is held by
+// the engine (spec.protection), set on any overload and cleared only by an explicit, validated "Reset plant".
 // Verified facts: 23.1 m head, 4 × 22 MW Francis units, 142.86 rpm, ≈10 MW dependable in the dry season.
 // Model assumptions are marked; feeder demands are fictional.
 import type { ExplanationLine, SimulationInput, SimulationModel, SimulationOutput } from "../fidelity/types";
@@ -45,6 +47,7 @@ export function evaluateHydro(input: SimulationInput) {
   const hospital = requireStep(input.variables, "feederHospital", [0, 1]);
   const homes = requireStep(input.variables, "homesBlocks", BLOCK_STEPS);
   const shops = requireStep(input.variables, "shopsBlocks", BLOCK_STEPS);
+  const latched = requireStep(input.variables, "protectionLatched", [0, 1]);
 
   // 1. Unit 3 is available only when rebuilt exactly (fail-closed).
   const u3 = input.placements["unit-3"];
@@ -62,7 +65,9 @@ export function evaluateHydro(input: SimulationInput) {
   const outputMW = round6(UNIT_RATING_MW * usableFlow / DESIGN_FLOW_PER_UNIT);
   // 5–7. Demand, protection, delivery.
   const demandMW = HOSPITAL_MW * hospital + HOMES_BLOCK_MW * homes + SHOPS_BLOCK_MW * shops;
-  const tripped = demandMW > outputMW + 1e-9 ? 1 : 0;
+  // An overload trips the plant; the trip stays latched (supply off) until the learner resets it, even once demand fits.
+  const overload = demandMW > outputMW + 1e-9 ? 1 : 0;
+  const tripped = overload || latched ? 1 : 0;
   const headroomMW = round6(outputMW - demandMW);
   const suppliedMW = tripped ? 0 : demandMW;
   const turbineFlow = tripped ? 0 : usableFlow;
@@ -74,7 +79,7 @@ export function evaluateHydro(input: SimulationInput) {
   const noBlockFits = (homes === BLOCKS_PER_DISTRICT || HOMES_BLOCK_MW > headroomMW + 1e-9) && (shops === BLOCKS_PER_DISTRICT || SHOPS_BLOCK_MW > headroomMW + 1e-9) ? 1 : 0;
   const maxLoadServed = hospital === 1 && tripped === 0 && noBlockFits === 1 ? 1 : 0;
   const gridStableWithPriority = riverFlow === DRY_FLOW && maxLoadServed === 1 ? 1 : 0;
-  return { riverFlow, unitsOnline, feeders: { hospital, homes, shops }, unit3Ready, running, shares, usableFlow, outputMW, unitPower, demandMW, headroomMW, noBlockFits, maxLoadServed, tripped, suppliedMW, turbineFlow, spillFlow, statuses, gridStableWithPriority };
+  return { riverFlow, unitsOnline, feeders: { hospital, homes, shops }, unit3Ready, running, shares, usableFlow, outputMW, unitPower, demandMW, headroomMW, noBlockFits, maxLoadServed, overload, latched, tripped, suppliedMW, turbineFlow, spillFlow, statuses, gridStableWithPriority };
 }
 
 function explain(r: ReturnType<typeof evaluateHydro>): ExplanationLine[] {
@@ -94,7 +99,9 @@ function explain(r: ReturnType<typeof evaluateHydro>): ExplanationLine[] {
   lines.push({ id: "water-returns", text: "The water is not used up. After the turbine it flows out through the tailrace and back into the Saint Paul River." });
   lines.push({ id: "demand", text: `The city is asking for ${r.demandMW} MW: hospital ${r.feeders.hospital ? "on" : "off"}, ${r.feeders.homes} of 4 homes blocks, ${r.feeders.shops} of 4 shops blocks. (Hospital 4 MW; homes blocks 12 MW each; shops blocks 4 MW each. These are model numbers, not real ones.)` });
   if (!r.tripped && r.outputMW > 0) lines.push({ id: "headroom", text: `About ${Math.round(r.headroomMW * 10) / 10} MW spare. A homes block needs 12 MW and a shops block needs 4 MW.` });
-  if (r.tripped && r.outputMW > 0) lines.push({ id: "trip-overload", text: `The city asked for ${r.demandMW} MW but the plant can make only ${Math.round(r.outputMW)} MW. In this simplified model, protection trips the city supply and stops the modeled units, so the whole city goes dark at once. Real plants can trip breakers or turbines in different ways, and restart steps depend on the cause. Lights do not just get dimmer. Switch some blocks off; when demand fits again, the model lets operators restore supply.` });
+  if (r.tripped) lines.push({ id: "plant-tripped", text: `PLANT TRIPPED — Demand exceeded available generation. ${resetAdvice(r)}` });
+  if (r.overload && r.outputMW > 0) lines.push({ id: "trip-overload", text: `The city asks for ${r.demandMW} MW but the plant can make only ${Math.round(r.outputMW)} MW. In this simplified model, protection trips the city supply and stops the modeled units, so the whole city goes dark at once. Real plants can trip breakers or turbines in different ways, and restart steps depend on the cause. Lights do not just get dimmer. Switch some blocks off or bring more units online; once demand fits, operators must reset the plant before supply returns.` });
+  else if (r.tripped && !r.overload) lines.push({ id: "trip-latched", text: `Demand now fits: the city asks for ${r.demandMW} MW and the plant can make about ${Math.round(r.outputMW)} MW. The protection stays tripped and the city stays dark until an operator resets the plant. Power never comes back by itself.` });
   else if (r.tripped) lines.push({ id: "no-supply", text: "No unit is making power, so no electricity reaches the city. Electricity is not stored in the dam or the wires." });
   else if (r.demandMW > 0) lines.push({ id: "supplied", text: `The plant is supplying the ${r.demandMW} MW the city asks for. Every feeder that is on gets full power.` });
   else lines.push({ id: "no-demand", text: "All feeders are off, so no electricity is sent to the city." });
@@ -109,12 +116,26 @@ function explain(r: ReturnType<typeof evaluateHydro>): ExplanationLine[] {
   );
   // State lines first (R2 pedagogy P1-6): what just happened leads; the static chain and context follow.
   // In flood or trip states the safety line leads.
-  const priority = ["trip-overload", "no-supply", "headroom", "max-served", "priority-stable", "dry-limit", "idle-units", "spillway-cap", "unit3-out", "unit3-no-water", "plant-output", "demand", "season"];
+  const priority = ["plant-tripped", "trip-overload", "trip-latched", "no-supply", "headroom", "max-served", "priority-stable", "dry-limit", "idle-units", "spillway-cap", "unit3-out", "unit3-no-water", "plant-output", "demand", "season"];
   const rank = (id: string) => { const i = priority.indexOf(id); return i < 0 ? priority.length : i; };
   lines.sort((a, b) => rank(a.id) - rank(b.id));
   if (r.tripped || r.spillFlow > 0) { const safety = lines.findIndex((line) => line.id === "safety-limits"); if (safety > 0) lines.unshift(...lines.splice(safety, 1)); }
   lines.push({ id: "chain", text: "Energy chain: stored (potential) energy of the high water → movement (kinetic) energy of falling water → turning turbine and shaft → electrical energy in the generator → light (and some heat) in the city. At each step some energy becomes heat and sound; none is destroyed." });
   return lines;
+}
+
+/** Learner-facing reason a plant reset would fail now, or null when it is safe. */
+export function resetBlocker(quantities: Record<string, number>): string | null {
+  const shortMW = quantities.demandMW - quantities.outputMW;
+  if (quantities.overload === 1) return `Reset unavailable: demand is still ${formatMW(shortMW)} MW above available generation.`;
+  if (!(quantities.outputMW > 0)) return "Reset unavailable: no unit is making power. Bring at least one unit online.";
+  return null;
+}
+const formatMW = (mw: number) => String(Math.round(mw * 10) / 10);
+
+function resetAdvice(r: ReturnType<typeof evaluateHydro>): string {
+  const blocker = resetBlocker({ overload: r.overload, demandMW: r.demandMW, outputMW: r.outputMW });
+  return blocker ? `Reduce demand or bring enough units online, then reset the plant. ${blocker}` : "Conditions are safe now: press Reset plant to restore power.";
 }
 
 const lanes = (q: number) => q <= 0 ? 0 : Math.ceil(q / DESIGN_FLOW_PER_UNIT - 1e-9);
@@ -139,14 +160,14 @@ function waterQuantities(r: ReturnType<typeof evaluateHydro>): Record<string, nu
 
 export const hydropowerModel: SimulationModel = {
   id: "mount-coffee-run-of-river",
-  version: "1.1.0",
+  version: "1.2.0",
   kind: "deterministic-rules",
   evaluate: (input): SimulationOutput => {
     const r = evaluateHydro(input);
     const generating = (unit: number) => r.statuses[unit - 1] === "generating";
     const quantities: Record<string, number> = {
       riverFlow: r.riverFlow, usableFlow: round6(r.usableFlow), outputMW: r.outputMW, demandMW: r.demandMW, suppliedMW: r.suppliedMW,
-      tripped: r.tripped, turbineFlow: round6(r.turbineFlow), spillFlow: r.spillFlow, unit3Ready: r.unit3Ready,
+      tripped: r.tripped, overload: r.overload, protectionLatched: r.latched, turbineFlow: round6(r.turbineFlow), spillFlow: r.spillFlow, unit3Ready: r.unit3Ready,
       unitsAvailable: r.unit3Ready ? 4 : 3, unitsRunning: r.running.length, unitsGenerating: [1, 2, 3, 4].filter(generating).length,
       gridStableWithPriority: r.gridStableWithPriority, headroomMW: r.headroomMW, maxLoadServed: r.maxLoadServed,
       // dry-season-output: capability (not delivery) with all four units switched on; more units cannot add water.

@@ -18,6 +18,7 @@ describe("keyboard walkthroughs", () => {
         ...spec.cutaways.map((cutaway) => cutaway.label),
         ...spec.flows.flatMap((flow) => flow.nodes.map((node) => node.label)),
         ...spec.assemblies.flatMap((assembly) => (assembly.slots ?? []).map((slot) => slot.label)),
+        ...(spec.protection ? [spec.protection.resetLabel] : []),
       ]);
       for (const step of walkthrough.steps) {
         if (!("press" in step)) continue;

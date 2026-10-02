@@ -3,6 +3,7 @@ import { useState } from "react";
 import type { InteractiveLabDefinition, LabAction, LabMode, LabState, LearningCheck } from "@/lib/interactive-labs/v2/types";
 import { deriveSimulation, explainState, isComponentRevealed } from "@/lib/interactive-labs/v2/fidelity/engine";
 import { formatVariable, stepVariable } from "@/lib/interactive-labs/v2/fidelity/variables";
+import { ProtectionReset } from "./ProtectionReset";
 
 type Props = { definition: InteractiveLabDefinition<LabState>; state: LabState; activeCheck: LearningCheck | undefined; dispatch: (action: LabAction) => void };
 
@@ -116,6 +117,7 @@ export function LabControlPanel({ definition, state, activeCheck, dispatch }: Pr
           {spec.variables.some((variable) => variable.learnerControlled) && (
             <section aria-label="Controls" className="space-y-3">
               <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-400">Controls</h3>
+              <ProtectionReset definition={definition} state={state} dispatch={dispatch} surface="panel" />
               {spec.variables.filter((variable) => variable.learnerControlled).map((variable) => {
                 const value = fidelity.variables[variable.id];
                 if (variable.kind === "toggle") return <button key={variable.id} type="button" role="switch" aria-checked={value === variable.max} onClick={() => dispatch({ type: "set-variable", variableId: variable.id, value: stepVariable(variable, value, 1) })} className={chip(value === variable.max)}>{variable.label}: {variable.id === "switch" ? (value === variable.max ? "Closed" : "Open") : formatVariable(variable, value)}</button>;

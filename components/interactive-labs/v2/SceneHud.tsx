@@ -2,14 +2,15 @@
 // RX-005e / A17: an always-visible readout strip under the scene, identical on every profile. It shows the model
 // quantities the lab declares (spec.hud), a state banner (spec.hudAlert) and the challenge status, so the
 // cause-and-effect numbers are readable without scrolling the side panel. Values come only from the model.
-import type { InteractiveLabDefinition, LabState } from "@/lib/interactive-labs/v2/types";
+import type { InteractiveLabDefinition, LabAction, LabState } from "@/lib/interactive-labs/v2/types";
 import { deriveSimulation } from "@/lib/interactive-labs/v2/fidelity/engine";
+import { ProtectionReset } from "./ProtectionReset";
 
-type Props = { definition: InteractiveLabDefinition<LabState>; state: LabState };
+type Props = { definition: InteractiveLabDefinition<LabState>; state: LabState; dispatch: (action: LabAction) => void };
 
 const TONE = { danger: "border-red-300 bg-red-700 text-white", info: "border-sky-300 bg-sky-900 text-sky-50", ok: "border-emerald-300 bg-emerald-800 text-white" } as const;
 
-export function SceneHud({ definition, state }: Props) {
+export function SceneHud({ definition, state, dispatch }: Props) {
   const spec = definition.fidelity, fidelity = state.fidelity;
   if (!spec || !fidelity || !spec.hud?.length) return null;
   const quantities = deriveSimulation(spec, fidelity).quantities;
@@ -29,7 +30,8 @@ export function SceneHud({ definition, state }: Props) {
           );
         })}
       </dl>
-      {alert && <p data-lab-hud-alert={alert.tone} className={`mt-1.5 rounded-xl border px-2.5 py-1 text-sm font-bold ${TONE[alert.tone]}`}>{alert.text}</p>}
+      {alert && <p role="status" data-lab-hud-alert={alert.tone} className={`mt-1.5 rounded-xl border px-2.5 py-1 text-sm font-bold ${TONE[alert.tone]}`}>{alert.text}</p>}
+      <ProtectionReset definition={definition} state={state} dispatch={dispatch} surface="hud" />
       {challenge && <p data-lab-hud-challenge className="mt-1.5 rounded-xl border border-amber-300 bg-amber-300/15 px-2.5 py-1 text-sm font-semibold text-amber-100">{challenge}</p>}
     </div>
   );

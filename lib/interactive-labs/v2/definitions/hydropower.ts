@@ -2,7 +2,7 @@ import type { InteractiveLabDefinition, LabState, Transform } from "../types";
 import { composeHighFidelity } from "../fidelity/engine";
 import { HIGH_FIDELITY_SPEC_VERSION, type HighFidelitySpec } from "../fidelity/types";
 import { bladedRunnerKit, generatorHousingKit, latticeTowerKit, pipeKit } from "../fidelity/kits";
-import { hydropowerModel, RIVER_FLOW_STEPS, SYNCHRONOUS_RPM, UNIT3_STACK, UNIT_X } from "./hydropowerModel";
+import { hydropowerModel, resetBlocker, RIVER_FLOW_STEPS, SYNCHRONOUS_RPM, UNIT3_STACK, UNIT_X } from "./hydropowerModel";
 
 export const HYDROPOWER_LAB_ID = "mount-coffee-hydropower";
 const OBJECTIVE_ID = "hydropower-cause-and-effect";
@@ -151,8 +151,8 @@ const spec: HighFidelitySpec = {
     components: "Procedural dam, intake, penstock, turbine housings, transmission yard, city loads and a compact section stack for unit 3.",
     internalStructures: "Unit 3 runner, shaft and generator are exposed by the powerhouse cutaway and rebuilt in the repair check.",
     variables: "River flow has five discrete seasonal values; units online, the hospital feeder and four-block homes and shops districts are learner controlled.",
-    simulationRules: "Deterministic capability model: water is dispatched in unit order; demand above capability trips delivery; remaining water spills.",
-    learnerControls: "In the scene: river-gauge season bands, a powerhouse desk (start next / stop last unit) and switchyard breakers (hospital, homes ±, shops ±); every one has a panel twin. Also trace path, unit 3 cutaway and repair assembly.",
+    simulationRules: "Deterministic capability model: water is dispatched in unit order; demand above capability trips delivery and the trip stays latched (learner choices kept, no automatic recovery) until an explicit Reset plant, which is accepted only when demand fits and a unit is generating; remaining water spills.",
+    learnerControls: "In the scene: river-gauge season bands, a powerhouse desk (start next / stop last unit) and switchyard breakers (hospital, homes ±, shops ±); every one has a panel twin. Reset plant (HUD and panel) clears a latched trip once conditions are safe, and explains why when they are not. Also trace path, unit 3 cutaway and repair assembly.",
     visualConsequences: "River and tailrace width, spill sheet, water flow, unit rotation status, power gauge, feeder flow and city lighting follow the simulation; the headpond level never changes.",
     guidedPath: "Meet the plant, follow water, inspect unit 3, compare seasons, test overload, repair the unit, then explore the grid.",
     exploreMode: "Change all controls and inspect the explanation and energy path.",
@@ -180,6 +180,8 @@ const spec: HighFidelitySpec = {
     { id: "feederHospital", label: "Hospital feeder", kind: "toggle", min: 0, max: 1, step: 1, initial: 1, learnerControlled: true, description: "The hospital is always the priority load (4 MW)." },
     { id: "homesBlocks", label: "Homes blocks on", kind: "discrete", min: 0, max: 4, step: 1, initial: 4, learnerControlled: true, description: "Each homes block needs 12 MW (model number)." },
     { id: "shopsBlocks", label: "Shops blocks on", kind: "discrete", min: 0, max: 4, step: 1, initial: 4, learnerControlled: true, description: "Each shops block needs 4 MW (model number)." },
+    // Founder decision 2026-10-02: overload protection trips are latched. Held by the engine, never set directly.
+    { id: "protectionLatched", label: "Plant tripped", kind: "toggle", min: 0, max: 1, step: 1, initial: 0, learnerControlled: false },
   ],
   simulation: hydropowerModel,
   motions: [1, 2, 3, 4].map((unit) => ({ id: `unit-${unit}-spin`, label: `Unit ${unit} rotation`, componentIds: [`unit-${unit}`, `unit-${unit}-marker`, ...(unit === 3 ? [...UNIT3_STACK] : [])], pivot: [UNIT_X[unit - 1], -0.15, 0.1] as [number, number, number], axis: "y" as const, rpm: SYNCHRONOUS_RPM, symmetryOrder: 1, activeWhen: { componentId: `unit-${unit}`, statuses: ["generating"] } })),
@@ -216,10 +218,12 @@ const spec: HighFidelitySpec = {
     { quantityId: "unitsRunning", label: "Units on", digits: 0 },
   ],
   hudAlert: (q) => q.tripped === 1
-    ? { text: q.outputMW > 0 ? "Tripped: the city asked for more than the plant can make, so the city is dark" : "No unit is running: no supply", tone: "danger" }
+    ? { text: `PLANT TRIPPED — Demand exceeded available generation. ${resetBlocker(q) ?? "Demand fits now: press Reset plant to restore power."}`, tone: "danger" }
     : q.spillFlow > 0 ? { text: `Spilling ${Math.round(q.spillFlow)} m³/s: more water than the running turbines can take`, tone: "info" } : null,
+  protection: { latchVariableId: "protectionLatched", overloadQuantityId: "overload", resetLabel: "Reset plant", resetBlocker },
   challengeStatus: (quantities) => quantities.gridStableWithPriority === 1
     ? "Hospital supply is stable in the dry season. Challenge met."
+    : quantities.tripped === 1 ? "Tripped: work out which change was too much, put it right, then reset the plant."
     : "Not met yet: in the dry season, keep the hospital lit and switch on every block that still fits without a trip.",
   offline: { remoteAssets: [], maxPackageBytes: 96_000 },
 };
