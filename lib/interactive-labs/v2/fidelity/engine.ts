@@ -264,7 +264,21 @@ export function composeHighFidelity(base: InteractiveLabDefinition<LabState>, sp
       if (isFidelityAction(action)) return { ...state, fidelity: transitionFidelity(spec, current(state), action), lastFeedback: null };
       const fidelityCheck = action.type === "check" ? fidelityChecks.get(action.checkId) : undefined;
       if (action.type === "check" && fidelityCheck) return recordCheckResult(state, base.checks, action.checkId, evaluateFidelityCheck(spec, current(state), fidelityCheck));
-      return { ...base.transition(state, action), fidelity: current(state) };
+      const next = { ...base.transition(state, action), fidelity: current(state) };
+      return action.type === "mode" ? applyModeStart(spec, next, action.mode) : next;
     },
   };
+}
+
+/** Apply a declared mode start (variables on their step grid, known camera preset); invalid entries are ignored. */
+function applyModeStart(spec: HighFidelitySpec, state: LabState, mode: LabState["mode"]): LabState {
+  const start = spec.modeStart?.[mode as keyof NonNullable<HighFidelitySpec["modeStart"]>];
+  if (!start || !state.fidelity) return state;
+  const variables = { ...state.fidelity.variables };
+  for (const [id, value] of Object.entries(start.variables ?? {})) {
+    const variable = spec.variables.find((candidate) => candidate.id === id);
+    if (variable?.learnerControlled && validateVariableValue(variable, value).ok) variables[id] = value;
+  }
+  const cameraPresetId = start.cameraPresetId && spec.camera.presets.some((preset) => preset.id === start.cameraPresetId) ? start.cameraPresetId : state.fidelity.cameraPresetId;
+  return { ...state, fidelity: { ...state.fidelity, variables, cameraPresetId } };
 }

@@ -10,6 +10,7 @@ import type { CapabilityProfile, LabAction, LabState } from "@/lib/interactive-l
 import { Fallback2D } from "./Fallback2D";
 import { LabControlPanel } from "./LabControlPanel";
 import { SceneControlBar } from "./SceneControlBar";
+import { SceneHud } from "./SceneHud";
 import type { ScenePick } from "./picking";
 const loadWebGLScene = () => loadChunkWithRetry(() => import("./WebGLScene"));
 const WebGLScene = dynamic(() => loadWebGLScene().then((m) => m.WebGLScene), { ssr: false, loading: () => <div className="flex h-[clamp(420px,62vh,640px)] items-center justify-center text-slate-300">Loading the 3D lab…</div> });
@@ -142,6 +143,7 @@ export function InteractiveLabPlayer({ labId = "g4-solid-figures", override, rev
                   ? <ThreeScene definition={definition} state={state} profile={profile} reducedMotion={reducedMotion} traceFlowId={traceFlowId} dispatch={dispatch} onPick={onPick} onDowngrade={onDowngrade} onUpgradeReady={onUpgradeReady} allowProfileUpgrade={canUpgrade} allowPerformanceDowngrade={!reviewPreview} />
                   : <WebGLScene definition={definition} state={state} profile={profile} reducedMotion={reducedMotion} traceFlowId={traceFlowId} dispatch={dispatch} onPick={onPick} onDowngrade={onDowngrade} onUpgradeReady={onUpgradeReady} allowProfileUpgrade={canUpgrade} allowPerformanceDowngrade={!reviewPreview} />}
               </SceneLoadBoundary>}
+          <SceneHud definition={definition} state={state} />
           <SceneControlBar definition={definition} state={state} dispatch={dispatch} />
         </div>
         <aside className="lg:max-h-[clamp(420px,62vh,640px)] lg:overflow-y-auto border-l border-white/10 bg-white/[.03] p-5">

@@ -6,6 +6,17 @@
 import type { InteractiveLabDefinition, LabAction, LabState } from "@/lib/interactive-labs/v2/types";
 import { controlAction, controlSelected, type SceneControl } from "@/lib/interactive-labs/v2/fidelity/controls";
 
+/**
+ * The group's current values: " 2/4" for a count, " 49 m³/s" for a quantity; a group over several variables names each
+ * (" · Homes blocks on 0/4 · Shops blocks on 1/4"). Toggles show nothing (the pressed chip says it).
+ */
+function groupValue(variables: { id: string; label: string; kind: string; max: number; unit?: string }[], values: Record<string, number>, variableIds: string[]): string {
+  const shown = [...new Set(variableIds)].map((id) => variables.find((candidate) => candidate.id === id)).filter((variable) => variable && variable.kind !== "toggle" && values[variable.id] !== undefined) as { id: string; label: string; max: number; unit?: string }[];
+  const format = (variable: (typeof shown)[number]) => variable.unit ? `${values[variable.id]} ${variable.unit}` : `${values[variable.id]}/${variable.max}`;
+  if (shown.length === 1 && new Set(variableIds).size === 1) return ` ${format(shown[0])}`;
+  return shown.map((variable) => ` · ${variable.label} ${format(variable)}`).join("");
+}
+
 type Props = { definition: InteractiveLabDefinition<LabState>; state: LabState; dispatch: (action: LabAction) => void };
 
 export function SceneControlBar({ definition, state, dispatch }: Props) {
@@ -24,7 +35,7 @@ export function SceneControlBar({ definition, state, dispatch }: Props) {
     <div data-lab-scene-controls className="flex flex-wrap gap-2 border-t border-white/10 bg-slate-950 p-2">
       {[...groups.entries()].map(([key, group]) => (
         <div key={key} role="group" aria-label={group.label} className="flex flex-wrap items-center gap-1 rounded-2xl bg-white/5 p-1 pl-2">
-          <span className="mr-1 text-[11px] font-semibold uppercase tracking-wide text-slate-200">{group.label}</span>
+          <span className="mr-1 text-[11px] font-semibold uppercase tracking-wide text-slate-200">{group.label}{groupValue(spec.variables, fidelity.variables, group.controls.map(({ control }) => control.variableId))}</span>
           {group.controls.map(({ id, name, control }) => {
             const action = controlAction(spec, fidelity, control);
             const selected = controlSelected(fidelity, control);

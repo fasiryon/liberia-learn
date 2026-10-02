@@ -141,6 +141,13 @@ export function validateHighFidelityDefinition(definition: InteractiveLabDefinit
   if (spec.offline.remoteAssets.length > 0 && definition.accessibility.offline) errors.push("offline_claim_with_remote_assets");
   if (spec.modes.length === 0) errors.push("modes_missing");
   errors.push(...validateControls(spec));
+  for (const [mode, start] of Object.entries(spec.modeStart ?? {})) {
+    for (const [id, value] of Object.entries(start?.variables ?? {})) {
+      const variable = spec.variables.find((candidate) => candidate.id === id);
+      if (!variable?.learnerControlled || !validateVariableValue(variable, value).ok) errors.push(`mode_start_variable_invalid:${mode}:${id}`);
+    }
+    if (start?.cameraPresetId && !spec.camera.presets.some((preset) => preset.id === start.cameraPresetId)) errors.push(`mode_start_camera_unknown:${mode}`);
+  }
   if (spec.surfaces?.length) errors.push(...validateSurfaces(spec, spec.simulation ? deriveSimulation(spec, initialFidelityState(spec)).quantities : {}));
   return errors;
 }

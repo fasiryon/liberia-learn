@@ -195,6 +195,15 @@ export type HighFidelitySpec = {
   environment?: "DAYLIGHT" | "STUDIO";
   /** RX-005b: quantity-bound water (or other medium) surfaces. */
   surfaces?: SurfaceDefinition[];
+  /**
+   * Where a mode starts: entering the mode sets these learner variables and camera preset (validated like any
+   * set-variable). Lets a challenge start under-loaded and an assessment start fresh instead of inheriting a solved state.
+   */
+  modeStart?: Partial<Record<LabMode, { variables?: Record<string, number>; cameraPresetId?: string }>>;
+  /** RX-005e / A17: model quantities shown as always-visible scene chips (same on every profile). */
+  hud?: { quantityId: string; label: string; unit?: string; digits?: number }[];
+  /** Optional state banner for the HUD (e.g. "Tripped: the city is dark"). */
+  hudAlert?: (quantities: Record<string, number>) => { text: string; tone: "danger" | "ok" | "info" } | null;
 };
 
 export type FidelityState = {
