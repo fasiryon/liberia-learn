@@ -100,6 +100,38 @@ Tiers are the builder's **proposals**. The pedagogy director assigns the tier at
 
 Totals: 3 HERO, 9 STANDARD, 5 DERIVATIVE (17). Review cost scales with tier: HERO runs three rounds plus the benchmark, STANDARD runs two, and DERIVATIVE runs one.
 
+## Legacy disposition: KEEP / UPGRADE / REBUILD / RETIRE
+
+Audit of `components/labs/` (2026-10-02, branch `feat/mount-coffee-review-closure`). Every one of the 17 legacy labs is a single 2D `<canvas>` page (one is a static SVG), 135–390 lines. None uses three.js or the V2 runtime. None has direct-manipulation checks or governed evidence. Keyboard and ARIA support is minimal: zero or one handler per lab. That is why no legacy lab is a final **KEEP**. Under rule 2 below, each stays live (KEEP *until replaced*) until its V2 replacement passes governed approval.
+
+- **REBUILD**: a new V2 definition and model in the shared runtime; the legacy code is only a parity reference.
+- **UPGRADE**: move to the V2 shell, checks and accessibility while keeping a 2D-first scene.
+- **RETIRE**: superseded by an existing V2 lab once parity is shown.
+
+| Lab | Disposition | Reason | Runtime dependencies |
+|---|---|---|---|
+| human-heart | REBUILD (HERO) | Blood flow and valves need surfaces, cutaway and time | RX-005 (surfaces, cutaway), RX-006, **RX-007** (cardiac cycle) |
+| molecule-motion | REBUILD (HERO) | Particle speed versus temperature is a 3D, many-instance scene | RX-005, RX-006 instancing; RX-007 |
+| tectonic-plates | REBUILD (HERO) | Needs a terrain heightfield and a cross-section | RX-005 (terrain, cutaway); RX-007 (geological time) |
+| cell-division | REBUILD (STANDARD) | Mitosis stages are a time sequence; the canvas animation is not learner-controlled | RX-005; **RX-007** |
+| chemical-reaction | REBUILD (STANDARD) | Reuses molecule-motion patterns | RX-005, RX-006; RX-007 |
+| wave-motion | REBUILD (STANDARD) | Water and string surfaces | RX-005b surfaces; RX-007 |
+| pendulum-lab | REBUILD (STANDARD) | Period checks become direct-manipulation checks | RX-001 motion; RX-007 for timing checks |
+| gravity-explorer | REBUILD (STANDARD) | Orbits need a camera and a time scrub. Its `GravityLessonLabPanel` embed must keep working until the switch | RX-005; RX-007 |
+| weather-system | REBUILD (STANDARD) | Reuses the hydro daylight, sky and water rig | RX-005 daylight rig, surfaces; RX-007 |
+| ecosystem-balance | REBUILD (STANDARD) | Populations over time; instanced organisms | RX-006 instancing; RX-007 |
+| light-and-shadow (embedded) | REBUILD (STANDARD) | Needs a new ray/optics pattern | RX-005 plus a new optics kit (proposal needed) |
+| water-cycle (embedded) | REBUILD (DERIVATIVE) | Built from the hydro water rig and weather | RX-005b surfaces; RX-007 |
+| earthquake-waves (embedded) | REBUILD (DERIVATIVE) | Built from tectonics and waves | as tectonic-plates and wave-motion |
+| simple-machines (embedded) | REBUILD (DERIVATIVE) | Extends `fixture-lever` to pulleys and inclines | V2 assemblies; RX-005 |
+| periodic-table | UPGRADE (2D-first) | A table is the right representation; 3D adds nothing. Needs the V2 shell, checks and keyboard access | V2 shell and FALLBACK_2D only |
+| cell-structure (embedded) | UPGRADE (2D-first → cutaway later) | Static SVG diagram; first gain is checks and accessibility. A 3D cutaway is optional after the heart HERO | V2 shell; optionally RX-005 cutaway |
+| electric-circuit | RETIRE (after parity) | Superseded by the V2 `series-circuit-ohms-law` lab. Retire once a parity inventory shows nothing is lost | none new |
+
+Totals: REBUILD 14, UPGRADE 2, RETIRE 1, final KEEP 0. These are the builder's proposals. The pedagogy director confirms each at the lab's start (see the tier note above), and the founder or governance approves every switch-over.
+
+**RX-007 status: PLANNED only.** There is no proposal review, no code, and no lab depends on it shipping. Labs above marked RX-007 still ship their first V2 release without a time axis if RX-007 is not ready.
+
 ## Rules for every migration
 
 1. **Parity inventory first.** List everything the legacy lab lets a learner do and learn. The V2 version must cover all of it, or record each drop as a reviewed trade-off.

@@ -38,4 +38,36 @@ This is the authoritative list of review findings for the production-review clos
 | HYDRO-VISUAL-FRONTAL-CAMERA-001 | RX-005 A11 / design review | P1 | Frontal establishing view | FIXED: 3/4 valley preset, widened limits | 3dfee8df | builder-inspect-3 |
 | RX-005i | Codex disposition | — | glTF loader rejected for Phase 0, against the founder's "glTF into Phase 0" | Recorded for founder follow-up; not needed by procedural Mount Coffee | — | RX-005 A20 disposition |
 
-Rounds 2 and 3 append below as they run.
+## Round 2 (CI captures at 3fe1837a / 6050f0f1; fixes at 7a409dfe..ad4f47cb)
+
+Reviewers: `lab-visual-reviewer`, `lab-pedagogy-director` on GitHub Actions captures (SwiftShader; composition only). The keyboard walkthrough and probe ran on CI at 81dc28c7. "FIXED" means fixed in code with a test; each is re-verified on the r2-fixes recapture (run 37059436767) before Round 3.
+
+| Id | Reviewer | Sev | Finding | Status | Fix | Evidence |
+|---|---|---|---|---|---|---|
+| HYDRO-R2-V-INSIDE-UNIT-001 | visual | **P0** | Unit 3 internals and generating units missing or vanishing on 3D | FIXED. Root cause: near-opaque parts (alpha 0.96) were drawn as transparent and depth-sorted behind the depth-writing translucent shell. Now alpha ≥ 0.95 is opaque, and translucent parts never write depth. | 7a409dfe | r2-fixes cutaway/exploded stills |
+| HYDRO-R2-V-FEEDBACK-001 / HYDRO-R2-P-P0-1 | visual + pedagogy | **P0** | Trip and city feedback, and supply against demand, not readable in the scene | FIXED: scene HUD (Plant can make / City asks for / Spare / River / Units on), red trip banner, challenge status under the scene; larger, separated city blocks; challenge opens on the city camera | 0a409a6f, 4ccd8966 | `SceneHud.tsx`; r2-fixes challenge stills |
+| HYDRO-R2-V-MOBILE-001 | visual | **P0** | Mobile 2D and LOW unreadable | FIXED: horizontal-FOV fit on portrait (3D), narrow-screen framing and 8-label budget (2D), LOW ground plane | 7a409dfe | r2-fixes mobile stills |
+| HYDRO-R2-V-SPILL-PATH-001 | visual | P1 | Spill path drawn through the powerhouse | FIXED: spillway gate, flow and surface moved beside the powerhouse (x −3.3) | 4ccd8966 | flood stills |
+| HYDRO-R2-V-RIGHT-COLUMN-001 | visual | P1 | Right column clips Next and challenge status | FIXED: shorter explanation panel; challenge status also in the HUD | 0a409a6f | desktop stills |
+| HYDRO-R2-V-LABEL-LEAK-001 | visual | P1 | Labels and inspect targets leak outside the scene | FIXED: overlays clip to the scene | 7a409dfe | — |
+| HYDRO-R2-V-PENSTOCK-001 | visual | P1 | Penstock label sits off the pipe; highlight is yellow (yellow means electricity) | FIXED: label on the pipe; highlight uses the shared token | 7a409dfe, 4ccd8966 | — |
+| HYDRO-R2-V-FIXTURES-001 / HYDRO-R2-P-P1-8 | visual + pedagogy | P1 | Scenario fixtures showed the wrong state or no guided step | FIXED: S2 starts unit 1 from zero; S4/S5/S6 carry their guided step; added the idle-units dry scene | 2717eb52 | `referenceScenarios.ts`, definition tests |
+| HYDRO-R2-V-2D-BANDS-001 | visual | P1 | 2D water drawn twice (part fill + surface) and label collisions | FIXED: surface-drawn parts get no fill; label budget | 7a409dfe | FALLBACK_2D stills |
+| HYDRO-R2-V-CONTROL-COUNTS-001 | visual | P1 | Control bar gives no counts | FIXED: groups show values (e.g. "Homes blocks on 0/4", "49 m³/s") | 0a409a6f | — |
+| HYDRO-R2-V-LOW-GROUND-001 | visual | P1 | LOW has no ground | FIXED: one ground draw (counted in the LOW budget) | 7a409dfe | `lab-budgets.test.ts` |
+| HYDRO-R2-P-P1-1 | pedagogy | P1 | Challenge solvable by shedding everything until the hospital is lit | PARTLY FIXED: the challenge now starts under-loaded (hospital only) and asks for a prediction, so the learner must add load that fits. **Founder decision still open:** trip latching / commit-before-energise. | 4ccd8966 | definition test "R2 P1-1/P1-3" |
+| HYDRO-R2-P-P1-2 | pedagogy | P1 | `dry-season-output` passed while tripped or with one unit | FIXED: the check reads `capabilityAllUnitsMW` (0 unless four units are on) | 4ccd8966 | definition test "R2 P1-2" |
+| HYDRO-R2-P-P1-3 | pedagogy | P1 | Assessment pre-satisfied by the challenge state | FIXED: `modeStart.ASSESSMENT` restores initial conditions | 0a409a6f, 4ccd8966 | definition test |
+| HYDRO-R2-P-P1-4 | pedagogy | P1 | S5 tripped by default, hiding the capability drop | FIXED: S5 sheds load first | 2717eb52 | spin-glyph test |
+| HYDRO-R2-P-P1-5 | pedagogy | P1 | Generator not visible after the cutaway | FIXED (same root cause as INSIDE-UNIT-001); narrower shell; bladed runner distinguishes runner from generator | 7a409dfe, 4ccd8966 | cutaway stills |
+| HYDRO-R2-P-P1-6 | pedagogy | P1 | Explanation led with the static chain | FIXED: state lines first; safety first when tripped or spilling | 4ccd8966 | model test |
+| HYDRO-R2-P-P1-7 | pedagogy | P1 | Gauge segments misstated MW | FIXED: supply and demand rows, length ∝ MW | 4ccd8966 | — |
+| HYDRO-R2-P-UNIT-LAMP-001 | pedagogy | P2 | Idle units' lamps glowed | FIXED: lamp intensity 1 only when generating | 4ccd8966 | — |
+| HYDRO-R2-P-EVENING-PEAK-001 | pedagogy | P2 | "Evening peak" implied a time model the lab lacks | FIXED: removed | 4ccd8966 | — |
+| HYDRO-R2-P-BOTTLE-CAP-001 | pedagogy | P2 | Missing the local bottle-cap wheel analogy | FIXED: dry-season line | 4ccd8966 | — |
+| HYDRO-R2-V-RAIN-FLOOD-001 | visual | P2 | Rainy and flood look similar | WONT_FIX (this release): widths follow the approved √(Q/557) mapping; flood is distinguished by the spill surface and HUD banner | — | 06 water sheet |
+| HYDRO-R2-V-ROUTE-LINES-001 | visual | P2 | Trace routes still drawn as lines | WONT_FIX: routes are the trace affordance; water itself is drawn by surfaces | — | RX-005b |
+| HYDRO-R2-V-DECOR-SALIENCE-001 | visual | P2 | Grey-box decor reads as placeholder | DEFERRED to Round 3 design director | — | — |
+| HYDRO-R2-I-WALKTHROUGH-2D-001 | interaction (CI walkthrough) | P1 | FALLBACK_2D keyboard walkthrough failed 9 steps | FIXED in the harness, not the lab: the 2D part "Headpond" matched before the panel trace chip, and the panel was more than 160 Tabs away. Panel-scoped steps; 400-Tab cap. The Tab count to reach the panel on 2D is itself recorded as an interaction finding for Round 3. | ad4f47cb | r2-fixes walkthrough.json |
+
+Round 3 appends below.
