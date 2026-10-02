@@ -165,7 +165,12 @@ describe("Mount Coffee hydropower design stage", () => {
     const dry = replayReviewScenario(hydropowerDefinition, HYDROPOWER_REVIEW_SCENARIOS.scenarios.find((scenario) => scenario.id === "hydro-variable-dry-drop")!);
     if ("reason" in dry) throw new Error(dry.reason);
     const dryList = buildRenderList({ definition: hydropowerDefinition, state: dry.state, profile: "LOW" });
-    expect(dryList.motions.filter((motion) => motion.active)).toHaveLength(0);
+    // Dry season with load that fits: the little water there is turns one unit; the others stay still.
+    expect(dryList.motions.filter((motion) => motion.active).map((motion) => motion.id)).toEqual(["unit-1-spin"]);
+
+    const trip = replayReviewScenario(hydropowerDefinition, HYDROPOWER_REVIEW_SCENARIOS.scenarios.find((scenario) => scenario.id === "hydro-fault-overload-trip")!);
+    if ("reason" in trip) throw new Error(trip.reason);
+    expect(buildRenderList({ definition: hydropowerDefinition, state: trip.state, profile: "LOW" }).motions.filter((motion) => motion.active)).toHaveLength(0);
 
     const solved = replayReviewScenario(hydropowerDefinition, HYDROPOWER_REVIEW_SCENARIOS.scenarios.find((scenario) => scenario.id === "hydro-challenge-solved")!);
     if ("reason" in solved) throw new Error(solved.reason);
