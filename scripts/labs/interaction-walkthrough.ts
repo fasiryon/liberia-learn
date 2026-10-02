@@ -17,7 +17,8 @@ import { getInteractiveLabDefinition } from "../../lib/interactive-labs/v2/regis
 import type { CapabilityProfile } from "../../lib/interactive-labs/v2/types";
 
 const arg = (name: string) => { const i = process.argv.indexOf(`--${name}`); return i >= 0 ? process.argv[i + 1] : undefined; };
-const MAX_TABS = 160;
+// The 2D view makes every part focusable, so the panel can sit a few hundred Tabs from the top.
+const MAX_TABS = 400;
 
 async function main() {
   const labId = arg("lab") ?? "mount-coffee-hydropower";
@@ -51,7 +52,8 @@ async function main() {
     // Start keyboard navigation from the top of the review harness.
     await page.locator("[data-lab-review-ready]").first().focus().catch(() => undefined);
 
-    const focusedName = () => page.evaluate(`(() => { const e = document.activeElement; if (!e || !e.closest("[data-lab-review-ready]")) return null;
+    const focusedName = (scope?: "panel") => page.evaluate(`(() => { const e = document.activeElement; if (!e || !e.closest("[data-lab-review-ready]")) return null;
+      if (${JSON.stringify(scope ?? "")} === "panel" && e.closest("[data-lab-renderer], [data-three-controls], [data-lab-scene-controls]")) return null;
       const label = e.getAttribute("aria-label"); return (label || e.textContent || "").trim().replace(/\\s+/g, " "); })()`) as Promise<string | null>;
     for (const step of walkthrough.steps as WalkthroughStep[]) {
       if ("expectStatus" in step) {
@@ -70,7 +72,7 @@ async function main() {
         await page.locator("[data-lab-review-ready]").first().evaluate((element) => { (element as HTMLElement).tabIndex = -1; (element as HTMLElement).focus(); });
         while (tabs < MAX_TABS) {
           await page.keyboard.press("Tab"); tabs += 1;
-          if (matches(await focusedName())) { found = true; break; }
+          if (matches(await focusedName(step.scope))) { found = true; break; }
         }
         if (found) { await page.keyboard.press("Enter"); await page.waitForTimeout(700); }
         const outline = found ? await page.evaluate(`(() => { const s = getComputedStyle(document.activeElement); return s.outlineStyle + " " + s.outlineWidth; })()`) : null;

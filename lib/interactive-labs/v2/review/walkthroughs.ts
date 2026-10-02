@@ -3,7 +3,8 @@
 // is scripts/labs/interaction-walkthrough.ts.
 
 export type WalkthroughStep =
-  | { press: string; match?: "exact" | "prefix"; repeat?: number; note?: string }
+  /** scope "panel": only a control outside the scene and the scene control bar counts (the 2D scene has same-named parts). */
+  | { press: string; match?: "exact" | "prefix"; repeat?: number; scope?: "panel"; note?: string }
   | { expectStatus: string; note?: string };
 
 export type LabWalkthrough = { labId: string; scenario: string; steps: WalkthroughStep[] };
@@ -21,12 +22,12 @@ const HYDROPOWER: LabWalkthrough = {
     { expectStatus: "Challenge met", note: "dry-season challenge solved by keyboard alone" },
     { press: "Assessment", note: "assessment starts fresh: rainy season, full load" },
     // trace-water: the panel lists the traceable nodes alphabetically; press them in water order.
-    ...["headpond", "intake", "penstock", "turbine", "tailrace", "downstream"].map((label) => ({ press: label })),
+    ...["headpond", "intake", "penstock", "turbine", "tailrace", "downstream"].map((label) => ({ press: label, scope: "panel" as const })),
     CHECK, CORRECT,
     // find-generator: open the cutaway, then inspect the generator from the collapsed parts list.
     { press: "Open the powerhouse section" },
     { press: "Parts and traces" },
-    { press: "Generator" },
+    { press: "Generator", scope: "panel" },
     CHECK, CORRECT,
     // dry-season-output: four units are already on; the season sets what the river allows.
     { press: "Season: Dry" },
@@ -37,9 +38,9 @@ const HYDROPOWER: LabWalkthrough = {
     CHECK, CORRECT,
     // repair-unit-3: take unit 3 apart and rebuild it in its slots.
     { press: "Take the", match: "prefix" },
-    { press: "Runner" }, { press: "Runner position", match: "prefix" },
-    { press: "Shaft" }, { press: "Shaft position", match: "prefix" },
-    { press: "Generator" }, { press: "Generator position", match: "prefix" },
+    { press: "Runner", scope: "panel" }, { press: "Runner position", match: "prefix", scope: "panel" },
+    { press: "Shaft", scope: "panel" }, { press: "Shaft position", match: "prefix", scope: "panel" },
+    { press: "Generator", scope: "panel" }, { press: "Generator position", match: "prefix", scope: "panel" },
     CHECK, CORRECT,
   ],
 };
