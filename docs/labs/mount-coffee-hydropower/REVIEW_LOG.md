@@ -66,8 +66,22 @@ Original gate list:
 2. RX-005 proposal reviewed by `lab-performance-reviewer` and `lab-design-director`.
 3. Build in the shared runtime with tests, then three review rounds on new captures, including a `--gpu` or real-device run before any fidelity or performance sign-off.
 
-## Round 2 — not run
-No reviewer verdict is recorded.
+## Round 2 — 2026-10-02
+
+- **Captures:** GitHub Actions `lab-review-capture.yml`, SwiftShader software GL (composition and labels only, never performance). Renderer identity was verified per scenario:
+  - STANDARD, LOW and FALLBACK_2D: 54/54 PASS at 3fe1837a and 6050f0f1.
+  - HIGH: 43/51 at 6050f0f1; the missing stills were recaptured after the held-clock and screenshot-timeout fixes.
+- **Reviewers:** `lab-visual-reviewer` (3 P0, 13 P1, several P2) and `lab-pedagogy-director` (1 P0, 8 P1, P2s). The keyboard walkthrough and probe ran on CI at 81dc28c7: HIGH, STANDARD and LOW passed. FALLBACK_2D failed 9 steps from a harness naming collision, not a lab defect (see ledger).
+- **Builder verification of the P0s:**
+  - The inside-unit and vanishing-unit P0 was reproduced from code. Its root cause was transparent-sort plus depth-write on the shell.
+  - The feedback-readability P0 and the mobile P0 were confirmed on the stills.
+- **Fixes:** 7a409dfe (renderer), 0a409a6f (modeStart, HUD, control values), 4ccd8966 (hydro pedagogy and visual), 2717eb52 (fixtures), ad4f47cb (walkthrough scope), ecf8952c (skip link). Every P0 and every P1 is fixed or partly fixed with a test. Each finding, status and evidence is in `ISSUE_LEDGER.md`.
+- **Deferred P2s, with rationale:**
+  - Rainy and flood widths follow the approved √ mapping.
+  - Route lines remain the trace affordance.
+  - Decor salience goes to the Round 3 design director.
+- **Founder decision open:** trip latching or commit-before-energise for the challenge (P1-1). The under-loaded start plus predict prompt removes the "shed until lit" path at the start, but a learner can still toggle freely.
+- **Re-capture for verification:** run 37059436767 at ad4f47cb, four profiles with probe and walkthrough. Its result is recorded under Round 3 inputs.
 
 ## RX-005 / RX-006 proposal gates — 2026-10-01
 
