@@ -38,10 +38,11 @@ export function useDisplayFidelity(definition: InteractiveLabDefinition<LabState
       // ~30 fps is plenty for SVG and keeps low-end devices cool.
       // Review captures use authored timestamps and must publish each one exactly; the learner path
       // keeps the ~30 fps throttle and stops ticking once settled with no visible active flow.
-      // Under a held review clock, republishing an unchanged settled state would make the scene redraw every frame
-      // for nothing (software GL then never yields a frame to the capture); publish only when review time moves.
+      // Under a held review clock, time does not advance, so easing cannot progress (an open assembly's context fade
+      // never settles at dt = 0). Republishing would only make the scene redraw every frame and starve the capture;
+      // publish only when the review time actually moves.
       const publish = reviewTime !== undefined
-        ? !settled || renderTime !== lastPublishedReviewTime
+        ? renderTime !== lastPublishedReviewTime
         : renderTime - lastPaint > 33 || settled;
       if (publish) { lastPaint = renderTime; if (reviewTime !== undefined) lastPublishedReviewTime = renderTime; setDisplay(next); if (hasActiveVisibleFlow) setTime(reviewTime ?? now / 1000); }
       if (!settled || hasActiveVisibleFlow || reviewTime !== undefined) frame = requestAnimationFrame(tick);
