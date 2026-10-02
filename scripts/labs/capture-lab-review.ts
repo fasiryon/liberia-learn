@@ -292,11 +292,13 @@ async function main() {
           status: identity.verdict.ok ? "PASS" : "FAIL", ...(identity.verdict.ok ? {} : { failureReason: identity.verdict.reason }),
           actualProfile: identity.actualProfile, actualRenderer: identity.actualRenderer, framesRendered: identity.framesRendered, drawCalls: identity.drawCalls,
           ...opened, warnings: issues.consoleErrors, consoleErrors: issues.consoleErrors, pageErrors: issues.pageErrors });
+        writeManifest();
         if (!identity.verdict.ok) { console.error(`FAIL ${base}: ${identity.verdict.reason}`); continue; }
       } catch (cause) {
         const reason = cause instanceof Error ? cause.message.slice(0, 600) : String(cause);
         console.error(`ERROR ${base}: ${reason}`);
         runs.push({ scenario: scenario.id, profile, viewport, kind: "still", status: "ERROR", failureReason: reason });
+        writeManifest();
         continue;
       } finally {
         await context.close().catch(() => undefined);
