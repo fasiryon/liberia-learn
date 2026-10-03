@@ -68,11 +68,11 @@ const components: HighFidelitySpec["components"] = [
   { ...generatorHousingKit({ id: "u3-generator", label: "Generator", transform: tr([0.9, 0.48, 0.1], [0.34, 0.28, 0.34]), color: "#ee8f52", radius: 1, height: 2 }), internal: true, layerId: "unit-3-internals", shapeKey: "generator", labelOffset: [0.8, 0.4, 0], mobileLabel: false },
   component("switchyard", "Switchyard", "panel", [3.1, 0.2, 0.1], [0.9, 0.8, 0.18], "#aab4c0", { mobileLabel: false }),
   { ...latticeTowerKit({ id:"power-tower-1",label:"Transmission tower",transform:tr([4.0,1.4,0],[0.48,1.3,0.48]),color:"#aab4c0",width:1,height:2,depth:1 }), showLabel:false },
-  component("city-hospital", "Hospital", "rectangular-prism", [5.0, 0.35, 0], [0.4, 0.95, 0.5], "#96a3b6", { mobileLabel: false }),
+  component("city-hospital", "Hospital", "rectangular-prism", [5.0, 0.35, 0], [0.4, 0.95, 0.5], "#96a3b6"),
   component("hospital-sign", "Hospital H sign", "panel", [5.0, 1.1, 0.28], [0.22, 0.2, 0.06], "#2f6fe0", { showLabel: false, selectable: false }),
   // v1.1 feeder blocks (06-V1_1_SIMULATION_DELTA): four homes blocks and four shops blocks, each lit or dark on its own.
-  ...[1, 2, 3, 4].map((k) => component(`city-homes-b${k}`, k === 1 ? "Homes" : `Homes block ${k}`, "rectangular-prism", [5.55 + (k - 1) * 0.5, 0.25 + (k % 2) * 0.08, 0.15], [0.38, 0.72 + (k % 2) * 0.16, 0.48], "#7a869a", k === 1 ? { labelOffset: [0.4, 1.1, 0], mobileLabel: false } : { showLabel: false, selectable: false })),
-  ...[1, 2, 3, 4].map((k) => component(`city-shops-b${k}`, k === 1 ? "Shops" : `Shops block ${k}`, "rectangular-prism", [7.75 + (k - 1) * 0.42, 0.15, -0.1], [0.3, 0.6, 0.42], "#7a869a", k === 1 ? { labelOffset: [0.3, 1.0, 0], mobileLabel: false } : { showLabel: false, selectable: false })),
+  ...[1, 2, 3, 4].map((k) => component(`city-homes-b${k}`, k === 1 ? "Homes" : `Homes block ${k}`, "rectangular-prism", [5.55 + (k - 1) * 0.5, 0.25 + (k % 2) * 0.08, 0.15], [0.38, 0.72 + (k % 2) * 0.16, 0.48], "#7a869a", k === 1 ? { labelOffset: [0.4, 1.1, 0] } : { showLabel: false, selectable: false })),
+  ...[1, 2, 3, 4].map((k) => component(`city-shops-b${k}`, k === 1 ? "Shops" : `Shops block ${k}`, "rectangular-prism", [7.75 + (k - 1) * 0.42, 0.15, -0.1], [0.3, 0.6, 0.42], "#7a869a", k === 1 ? { labelOffset: [0.3, 1.0, 0] } : { showLabel: false, selectable: false })),
   // Gauge rows (R2 P1-7): supply above (4 × 22 MW), demand below; box half-width = MW × 0.01 so length ∝ MW.
   ...[1, 2, 3, 4].map((n) => component(`gauge-seg-${n}`, `Power gauge ${n}`, "box", [4.6 + (n - 0.5) * 0.46, 2.55, 0], [0.21, 0.1, 0.06], "#8c9ab0", { showLabel: false, selectable: false })),
   component("demand-hospital", "hospital demand segment", "box", [4.6 + 0.04, 2.25, 0], [0.04, 0.1, 0.06], "#c98a4b", { showLabel: false, selectable: false }),
