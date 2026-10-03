@@ -21,7 +21,7 @@ This is the authoritative list of review findings for the production-review clos
 | HYDRO-FALLBACK-LABEL-EDGE-001 | R1 visual | P2 | Crowded 2D labels in the completed-assessment scene | assessment-all-passed / FALLBACK_2D | OPEN, re-review in Round 2 (2D now has grouped control chips; scene labels still use crowd-avoidance) | — | — |
 | HYDRO-MOBILE-CUTAWAY-LABELS-001 | R1 visual | P2 | LOW mobile cutaway labels crowded | cutaway / LOW mobile | FIXED | a3426aba | round-1-56758033-stills-probe-perf |
 | HYDRO-FLOOD-SPILLWAY-VISIBILITY-001 | R1 science | P1 | Flood spill not readable in WebGL | flood / WebGL | FIXED (v1.0); re-check against the v1.1 spill sheet | a6caa9ad | round-1-a6caa9ad-spillway-cues |
-| HYDRO-FOUNDER-IMMERSION-001 | Founder | P1 | Reads as a 2D diagram: water lines, flat primitives, panel-driven | all / HIGH | **In progress.** Built: water surfaces (`ff98d3c6`), in-scene controls (`ddbf8e41`), daylight rig (`298f7181`), working three.js renderer and grouped controls (`3dfee8df`). Design-director verdict pending. | see Status column | builder-inspect captures; Round 3 |
+| HYDRO-FOUNDER-IMMERSION-001 | Founder | P1 | Reads as a 2D diagram: water lines, flat primitives, panel-driven | all / HIGH | **In progress.** Built: water surfaces (`ff98d3c6`), in-scene controls (`ddbf8e41`), daylight rig (`298f7181`), working three.js renderer and grouped controls (`3dfee8df`). Round 3 design director: still OPEN (HYDRO-R3D-007); terrain, trees, sky and water surfaces are a real improvement, but the machine and city read as placeholders. | see Status column | builder-inspect captures; Round 3 |
 
 ## v1.1 design and review findings
 
@@ -48,14 +48,14 @@ Reviewers: `lab-visual-reviewer`, `lab-pedagogy-director` on GitHub Actions capt
 | HYDRO-R2-V-FEEDBACK-001 / HYDRO-R2-P-P0-1 | visual + pedagogy | **P0** | Trip and city feedback, and supply against demand, not readable in the scene | FIXED: scene HUD (Plant can make / City asks for / Spare / River / Units on), red trip banner, challenge status under the scene; larger, separated city blocks; challenge opens on the city camera | 0a409a6f, 4ccd8966 | `SceneHud.tsx`; r2-fixes challenge stills |
 | HYDRO-R2-V-MOBILE-001 | visual | **P0** | Mobile 2D and LOW unreadable | FIXED: horizontal-FOV fit on portrait (3D), narrow-screen framing and 8-label budget (2D), LOW ground plane | 7a409dfe | r2-fixes mobile stills |
 | HYDRO-R2-V-SPILL-PATH-001 | visual | P1 | Spill path drawn through the powerhouse | FIXED: spillway gate, flow and surface moved beside the powerhouse (x −3.3) | 4ccd8966 | flood stills |
-| HYDRO-R2-V-RIGHT-COLUMN-001 | visual | P1 | Right column clips Next and challenge status | FIXED: shorter explanation panel; challenge status also in the HUD | 0a409a6f | desktop stills |
+| HYDRO-R2-V-RIGHT-COLUMN-001 | visual | P1 | Right column clips Next and challenge status | REOPENED as HYDRO-R3D-005 (design director, r3-final): the desktop right column still clips Next step / challenge status. The challenge status is also in the HUD | 0a409a6f | desktop stills |
 | HYDRO-R2-V-LABEL-LEAK-001 | visual | P1 | Labels and inspect targets leak outside the scene | FIXED: overlays clip to the scene | 7a409dfe | — |
 | HYDRO-R2-V-PENSTOCK-001 | visual | P1 | Penstock label sits off the pipe; highlight is yellow (yellow means electricity) | FIXED: label on the pipe; highlight uses the shared token | 7a409dfe, 4ccd8966 | — |
 | HYDRO-R2-V-FIXTURES-001 / HYDRO-R2-P-P1-8 | visual + pedagogy | P1 | Scenario fixtures showed the wrong state or no guided step | FIXED: S2 starts unit 1 from zero; S4/S5/S6 carry their guided step; added the idle-units dry scene | 2717eb52 | `referenceScenarios.ts`, definition tests |
 | HYDRO-R2-V-2D-BANDS-001 | visual | P1 | 2D water drawn twice (part fill + surface) and label collisions | FIXED: surface-drawn parts get no fill; label budget | 7a409dfe | FALLBACK_2D stills |
 | HYDRO-R2-V-CONTROL-COUNTS-001 | visual | P1 | Control bar gives no counts | FIXED: groups show values (e.g. "Homes blocks on 0/4", "49 m³/s") | 0a409a6f | — |
 | HYDRO-R2-V-LOW-GROUND-001 | visual | P1 | LOW has no ground | FIXED: one ground draw (counted in the LOW budget) | 7a409dfe | `lab-budgets.test.ts` |
-| HYDRO-R2-P-P1-1 | pedagogy | P1 | Challenge solvable by shedding everything until the hospital is lit | PARTLY FIXED: the challenge now starts under-loaded (hospital only) and asks for a prediction, so the learner must add load that fits. **Founder decision still open:** trip latching / commit-before-energise. | 4ccd8966 | definition test "R2 P1-1/P1-3" |
+| HYDRO-R2-P-P1-1 | pedagogy | P1 | Challenge solvable by shedding everything until the hospital is lit | FIXED: the challenge starts under-loaded (4ccd8966), and the founder decision of 2026-10-02 makes trips latched. Shedding load never restores power by itself; the learner must diagnose, correct, then press Reset plant. | 4ccd8966, a91d3a80 | `hydropower-protection.test.ts`; CI walkthrough (trip → refused reset → correct → reset → challenge met) on 4 profiles × desktop/mobile, run 37061766748 |
 | HYDRO-R2-P-P1-2 | pedagogy | P1 | `dry-season-output` passed while tripped or with one unit | FIXED: the check reads `capabilityAllUnitsMW` (0 unless four units are on) | 4ccd8966 | definition test "R2 P1-2" |
 | HYDRO-R2-P-P1-3 | pedagogy | P1 | Assessment pre-satisfied by the challenge state | FIXED: `modeStart.ASSESSMENT` restores initial conditions | 0a409a6f, 4ccd8966 | definition test |
 | HYDRO-R2-P-P1-4 | pedagogy | P1 | S5 tripped by default, hiding the capability drop | FIXED: S5 sheds load first | 2717eb52 | spin-glyph test |
@@ -67,7 +67,131 @@ Reviewers: `lab-visual-reviewer`, `lab-pedagogy-director` on GitHub Actions capt
 | HYDRO-R2-P-BOTTLE-CAP-001 | pedagogy | P2 | Missing the local bottle-cap wheel analogy | FIXED: dry-season line | 4ccd8966 | — |
 | HYDRO-R2-V-RAIN-FLOOD-001 | visual | P2 | Rainy and flood look similar | WONT_FIX (this release): widths follow the approved √(Q/557) mapping; flood is distinguished by the spill surface and HUD banner | — | 06 water sheet |
 | HYDRO-R2-V-ROUTE-LINES-001 | visual | P2 | Trace routes still drawn as lines | WONT_FIX: routes are the trace affordance; water itself is drawn by surfaces | — | RX-005b |
-| HYDRO-R2-V-DECOR-SALIENCE-001 | visual | P2 | Grey-box decor reads as placeholder | DEFERRED to Round 3 design director | — | — |
-| HYDRO-R2-I-WALKTHROUGH-2D-001 | interaction (CI walkthrough) | P1 | FALLBACK_2D keyboard walkthrough failed 9 steps | FIXED in the harness, not the lab: the 2D part "Headpond" matched before the panel trace chip, and the panel was more than 160 Tabs away. Panel-scoped steps; 400-Tab cap. The Tab count to reach the panel on 2D is itself recorded as an interaction finding for Round 3. | ad4f47cb | r2-fixes walkthrough.json |
+| HYDRO-R2-V-DECOR-SALIENCE-001 | visual | P2 | Grey-box decor reads as placeholder | Absorbed into HYDRO-R3D-007 (grey-box dominance, OPEN) | — | — |
+| HYDRO-R2-I-WALKTHROUGH-2D-001 | interaction (CI walkthrough) | P1 | FALLBACK_2D keyboard walkthrough failed 9 steps | FIXED in the harness, not the lab: the 2D part "Headpond" matched before the panel trace chip, and the panel was more than 160 Tabs away. Panel-scoped steps; 400-Tab cap. Round 3 closed it: on FALLBACK_2D, "Challenge" is 38 Tabs from the top (it was more than 160), and the skip link is the 2nd Tab stop. | ad4f47cb | r2-fixes walkthrough.json |
 
-Round 3 appends below.
+## Latched trip / Reset plant (founder decision 2026-10-02)
+
+The founder locked the rule: overload trips are LATCHED. Load and unit changes apply immediately. An overload trips the plant, and learner choices are kept. Power never returns automatically. An explicit **Reset plant** is accepted only when demand ≤ available generation and a unit is generating; otherwise the UI states the exact reason. There is no commit-load workflow.
+
+| Item | Status | Evidence |
+|---|---|---|
+| Engine: generic `spec.protection` (latch variable, overload quantity, reset blocker), `reset-protection` action; mode and guided-step starts clear the latch | IMPLEMENTED | a91d3a80, 22c5a2ed; `engine.ts` |
+| Model 1.2.0: `tripped = overload ∨ latched`; the reset blocker names the shortfall (or that no unit is on) | IMPLEMENTED | `hydropowerModel.ts`; `hydropower-protection.test.ts` (latch, no auto-recovery, units/loads while tripped, blocked/accepted reset, re-trip, challenge, assessment, determinism, checkpoint validity, RAW_OBSERVATION only) |
+| HUD and panel Reset plant (aria-disabled + described reason while blocked; focused "power restored" status after) | IMPLEMENTED | `ProtectionReset.tsx`; stills `hydro-fault-overload-trip`, `hydro-fault-shed-not-reset`, `hydro-challenge-reset-solved` (runs 37061766748, 37065728208) |
+| Keyboard flow: trip → refused reset → correct → reset → challenge met; assessment resets before `dry-season-peak` | PASS | `walkthroughs.ts`; 8/8 walkthroughs, 0 failed steps (run 37061766748) |
+
+## Round 2 fix verification (lab-visual-reviewer, run 37059436767 at ad4f47cb, 224/224 stills PASS renderer identity)
+
+Of 18 Round 2 items, 9 were VERIFIED, 9 PARTLY verified, and none REGRESSED. The trip/reset UI was VERIFIED. The reviewer raised the new findings below. Every row marked FIXED is re-checked on the final capture (r3-final, run 37073814606); see the Round 3 verdict.
+
+| Id | Sev | Finding | Status | Fix |
+|---|---|---|---|---|
+| HYDRO-R3V-001 | **P0** | The S2 "water starts" fixture showed a tripped plant (1 unit against 68 MW) | FIXED: the fixture switches load off first. Test: unit 1 generates, 107.5 m³/s through the turbine | 22c5a2ed |
+| HYDRO-R3V-002 | **P0** | FALLBACK_2D city had no lit/dark state | FIXED: energised parts get a warm fill in 2D (the same `intensity` the 3D emissive uses) | 22c5a2ed |
+| HYDRO-R3V-003 | **P0** | Phone-portrait 2D unreadable (thin strip in a tall frame) | FIXED: a tighter near-square 2D window on phones; city preset re-centred on the city (x 6 → 6.6) | 22c5a2ed |
+| HYDRO-R3V-004 | P1 | 2D labels covered by trace nodes and geometry | FIXED: labels drawn last, on plates | 22c5a2ed |
+| HYDRO-R3V-005 | P1 | "Spillway gate" drawn over "Headpond" in the powerhouse camera | FIXED: shared screen-space label placer (`labelLayout.ts`) skips overlapping labels | 22c5a2ed |
+| HYDRO-R3V-006 | P1 | "Powerhouse" label anchored on the spill chute | FIXED: anchored on the roof | 22c5a2ed |
+| HYDRO-R3V-007 | P1 | Unit internals unlabelled; runner low contrast | FIXED: labels rank by distance from the frame centre (focused cameras name what they frame); bronze runner | 22c5a2ed |
+| HYDRO-R3V-008 | P1 | Yellow (electricity) trace/selection markers | FIXED: 3D and 2D trace markers use the shared lime MARKER_COLOR | 22c5a2ed |
+| HYDRO-R3V-009 | P1 | City camera had no Hospital/Homes/Shops labels | FIXED: only on-screen labels count against the budget | 22c5a2ed |
+| HYDRO-R3V-010 | P1 | S3 and S6-fault fixtures showed "Step 1 of 7" | FIXED: they carry the machine / overload step (test) | 22c5a2ed |
+| HYDRO-R3V-011 | P1 | Desktop "What is happening" cut mid-line with no cue | FIXED: scroll cue on all sizes plus a fade | 22c5a2ed |
+| HYDRO-R3V-012 | P1 | Gauge unlabelled; supply row at full length in the dry season | FIXED for length (with HYDRO-R3S-004). Row labels are DEFERRED (P2): the HUD carries labelled supply/demand numbers on every profile | bcb40c42 |
+| HYDRO-R3V-013 | P1 | LOW labels pile up; spin glyphs cover them | FIXED: glyphs are obstacles for label placement | 22c5a2ed |
+| HYDRO-R3V-014 | P2 | Edge-clipped label fragments | FIXED on WebGL (labels must fit wholly on screen) | 22c5a2ed |
+| HYDRO-R3V-015 | P2 | Uppercase "M³/S"; "SWIT CHYARD" gap | DEFERRED | — |
+| HYDRO-R3V-016 | P2 | "Challenge met" uses the amber style | DEFERRED | — |
+| HYDRO-R3V-017 | P2 | Trip message repeated (banner, status, panel) | PARTLY: generic Reset renamed (HYDRO-R3I-006); merging is DEFERRED | 22c5a2ed |
+| HYDRO-R3V-018 | P2 | Mobile shows two control surfaces | DEFERRED (the panel twin is the accessible slider form) | — |
+| HYDRO-R3V-019 | P2 | Unexplained brown bar / outline in some 2D states | DEFERRED | — |
+| HYDRO-R3V-020 | P2 | 2D highlighted tailrace drawn twice | DEFERRED | — |
+
+## Interaction review (lab-interaction-reviewer, runs 37061766748 / 37065728208): PASS_WITH_FIXES, 0 P0, 6 P1, 8 P2
+
+| Id | Sev | Finding | Status | Fix |
+|---|---|---|---|---|
+| HYDRO-R3I-001 | P1 | The guided path hits the latch unannounced (step 4 dry trips; step 5 starts with shops 4/4) | FIXED: guided steps carry start states (`GuidedStep.variables`, validated, clear the latch); the overload prompt names Reset plant | 22c5a2ed |
+| HYDRO-R3I-002 | P1 | A check made before reset gave an arithmetic hint | FIXED: while tripped, the hint names the reset (or the blocker) | 22c5a2ed |
+| HYDRO-R3I-003 | P1 | A successful reset dropped focus to the body with no confirmation | FIXED: a focused "Plant reset: power restored" status | 22c5a2ed |
+| HYDRO-R3I-004 | P1 | Hospital chip `aria-pressed` was always false | FIXED: toggles report on; step chips carry no `aria-pressed` | 22c5a2ed |
+| HYDRO-R3I-005 | P1 | Focus ring about 1.6:1; 2D parts have almost none | FIXED: lab-scoped opaque white ring with a dark halo; 4 px dark stroke on focused SVG parts; forced-colors fallback | 22c5a2ed |
+| HYDRO-R3I-006 | P1 | Generic "Reset" wipes progress and reads like Reset plant | FIXED: "Restart lab (clears progress)" with an inline confirm (no browser dialog) | 22c5a2ed |
+| HYDRO-R3I-007 | P2 | A refused reset gives no new feedback | DEFERRED: the reason is visible beside the button and is its description | — |
+| HYDRO-R3I-008 | P2 | Live-region behaviour (alert mounting, chatty explanation list) | DEFERRED: needs a real screen-reader test | — |
+| HYDRO-R3I-009 | P2 | `dry-season-output` raises an expected trip banner | DEFERRED | — |
+| HYDRO-R3I-010 | P2 | Zero-units blocker led with a demand shortfall | FIXED | 22c5a2ed, bcb40c42 |
+| HYDRO-R3I-011 | P2 | Why power did not return ranked below safety | FIXED: trip diagnosis, then its caveated explanation, then safety | 1ab0a316, bcb40c42 |
+| HYDRO-R3I-012 | P2 | Visible chip text differs from the accessible name (WCAG 2.5.3); selected season chip is `disabled` | DEFERRED | — |
+| HYDRO-R3I-013 | P2 | Walkthrough never uses the skip link or the panel twin; probe covers the overview only | DEFERRED | — |
+| HYDRO-R3I-014 | P2 | Sticky panel overlap, update toast, `touch-none` scene swallows page scroll on mobile | DEFERRED | — |
+
+## Round 3 science (lab-science-reviewer, model 1.2.0): PASS_WITH_FIXES, 2 P0, 2 P1, 7 P2; no STOP
+
+42 claims checked: 28 ACCURATE, 9 PEDAGOGICAL_SIMPLIFICATION, 4 MISLEADING, 1 INCORRECT. The latched trip is an acceptable educational simplification: restoration is operator-driven, and load is reconnected only when generation can carry it.
+
+| Id | Sev | Finding | Status | Fix |
+|---|---|---|---|---|
+| HYDRO-R3S-001 | **P0** | `max-served` claimed "the most load this supply can carry" with 20 MW spare (initial state) | FIXED: only when a block is still off; all-on states say how much is spare (test) | bcb40c42 |
+| HYDRO-R3S-002 | **P0** | Bottle-cap line said a fuller stream turns the wheel faster (misconception 3) | FIXED: bridges to the generator's steady speed (test) | bcb40c42 |
+| HYDRO-R3S-003 | P1 | The latch was stated as real-world fact; the caveat was hidden | FIXED: "(simplified model)", "In this model … here", mention of real automatic load shedding; caveated line above safety | bcb40c42 |
+| HYDRO-R3S-004 | P1 | Supply gauge length did not follow MW | FIXED: `componentStates.fill`, a left-anchored length (test) | bcb40c42 |
+| HYDRO-R3S-005 | P2 | Capability vs output wording ("make 66 MW", HUD while tripped) | PARTLY: the latched line says "could make"; the rest is DEFERRED | bcb40c42 |
+| HYDRO-R3S-006 | P2 | Tripped spill not explained | FIXED: `trip-spill` line | bcb40c42 |
+| HYDRO-R3S-007 | P2 | "No unit is making power" is true in every trip | FIXED: "no unit is switched on"; advice is conditional on demand | bcb40c42 |
+| HYDRO-R3S-008 | P2 | "About one unit" in the dry season | FIXED: "less than half of what one unit can take" | bcb40c42 |
+| HYDRO-R3S-009 | P2 | Mention automatic partial load shedding | FIXED (caveat) | bcb40c42 |
+| HYDRO-R3S-010 | P2 | Rotor magnet is an electromagnet in big generators | FIXED | bcb40c42 |
+| HYDRO-R3S-011 | P2 | Powerhouse label by the spill chute; yellow unit lamps | Label FIXED (HYDRO-R3V-006); the lamp colour is DEFERRED to the design director | 22c5a2ed |
+
+## Round 3 performance (lab-performance-reviewer): PASS_WITH_FIXES, 0 P0, 5 P1, 4 P2; physical devices UNVERIFIED
+
+Measured on SwiftShader (draw calls are deterministic; timings do not count). HIGH has 79 planned draws against a limit of 120, STANDARD 59 against 90 (63 measured), and LOW 34 against 40 (34 measured). The offline package is 59,045 of 96,000 bytes with no remote assets.
+
+| Id | Sev | Finding | Status | Fix |
+|---|---|---|---|---|
+| HYDRO-R3P-001 | P1 | Profile oscillation: a downgrade never blocked a re-upgrade | FIXED: the downgrade is remembered per runtime version and blocks auto-upgrade (test) | bcb40c42 |
+| HYDRO-R3P-002 | P1 | ThreeScene rebuilt the overlay DOM every rendered frame | FIXED: at most every 120 ms or on a state change, with a trailing refresh | bcb40c42 |
+| HYDRO-R3P-003 | P1 | The HIGH/STANDARD draw planner does not match three.js `renderer.info` (−10 to +5); the shadow pass is never measured | **OPEN.** This is an RX-005 A8 / RX-006 test-1 acceptance item and blocks RX-005 IMPLEMENTED | — |
+| HYDRO-R3P-004 | P1 | Baseline re-based across 7 commits without the required record | FIXED: one dedicated baseline commit with before and after for every lab | 8898c3ab |
+| HYDRO-R3P-005 | P1 | The frame-monitor rAF never idles, ignores visibility, and samples idle frames | PARTLY FIXED: samples only while rendering and while the page is visible. IntersectionObserver pausing and the 30 fps-cap test are still RX-005 A4/A6 acceptance items | bcb40c42 |
+| HYDRO-R3P-006 | P2 | LOW has no 30 fps ambient cap and allocates per frame | OPEN (RX-006 acceptance) | — |
+| HYDRO-R3P-007 | P2 | The ThreeScene material cache grows with continuous emissive values | OPEN | — |
+| HYDRO-R3P-008 | P2 | Context-loss handler lacks `preventDefault`; shadow box not fitted; passive-wheel `preventDefault` | OPEN | — |
+| HYDRO-R3P-009 | P2 | Protection code costs | No change needed | — |
+
+Runtime extensions, per the performance reviewer:
+- **RX-005: PROPOSED.** The renderer ships, but its acceptance list is incomplete: 20× remount leak test, two-run determinism proof, three-chunk byte accounting and import-graph/zero-request test, chunk-abort harness, planner/`renderer.info` parity with a measured shadow pass, persisted downgrade ceiling (now done), IntersectionObserver pausing.
+- **RX-006: PROPOSED, partly implemented.** CPU-merged LOW batching works as a budget fix (34/40). Missing: bound per-part state attributes, per-frame allocation removal, capacity caps, and tests 1–6.
+
+## Round 3 design director (lab-design-director, r3-final at 8898c3ab): DO_NOT_SHIP, 0 P0, 9 P1, 4 P2
+
+The director inspected 16 HIGH stills (desktop and mobile). Before its turn limit it did not inspect the STANDARD, LOW or FALLBACK_2D stills, the assessment scenarios, the motion strips or the probe; that coverage gap is itself recorded as a blocker. The six benchmark reference captures listed in `production.json` (`fixture-simple-circuit/1.0.0/smoke/*`, `g4-solid-figures/2.1.0/smoke/*`) are not on disk, so scores were made against the written reference breakdown in design/02 and are marked UNVERIFIED-REFERENCE.
+
+| Id | Sev | Finding | Status |
+|---|---|---|---|
+| HYDRO-R3D-001 | P1 | The city's trip/restore consequence is carried by the banner, not the scene (lit is pale blue-white; mobile shows no difference) | OPEN: needs warm window/facade emissive for lit, dark windows for off, and a prominent H sign |
+| HYDRO-R3D-002 | P1 | Phone grid-city framing: the city is small and unlabelled | PARTLY FIXED: city labels shown on phones (0a40f111, recapture run 37086350967). A portrait-fitted city camera is OPEN |
+| HYDRO-R3D-003 | P1 | Cutaway/exploded: the runner has low salience; the phone exploded view frames the valley | OPEN: fit unit-bench and exploded presets to the stack bounds, a larger bladed runner, hide routes in S3 |
+| HYDRO-R3D-004 | P1 | Guided prompts contradict the scene in S6 and S4 flood fixtures | OPEN: S6 fixtures should follow the guided correction; flood needs its own S4 prompt; a state-aware "you left this step's premise" addendum |
+| HYDRO-R3D-005 | P1 | The desktop right column clips Next step and the challenge status | OPEN (regresses HYDRO-R2-V-RIGHT-COLUMN-001, now reopened) |
+| HYDRO-R3D-006 | P1 | On phones the challenge objective is about 1,800 px below the scene | OPEN: a one-line objective chip under the HUD (07 bottom-sheet peek) |
+| HYDRO-R3D-007 | P1 | Grey-box dominance: the plant and city still read as placeholders; a beige occluder in the city camera | OPEN. Keeps HYDRO-FOUNDER-IMMERSION-001 OPEN (partly addressed) and absorbs HYDRO-R2-V-DECOR-SALIENCE-001 |
+| HYDRO-R3D-008 | P1 | Idle and generating units look the same at the valley camera | OPEN: frame the powerhouse for that beat; larger lamp and MW-plate cues |
+| HYDRO-R3D-009 | P1 | Benchmark reference captures are missing; LOW/2D reach is unscored | OPEN: restore or regenerate the references, then re-score with real file pairs |
+| HYDRO-R3D-010 | P2 | Unlabelled supply/demand bars in the scene | DEFERRED (with HYDRO-R3V-012) |
+| HYDRO-R3D-011 | P2 | Trace route dots clutter non-trace beats | DEFERRED |
+| HYDRO-R3D-012 | P2 | "Challenge met" uses the warning style; the trip message appears three times | DEFERRED (with HYDRO-R3V-016/017) |
+| HYDRO-R3D-013 | P2 | In-scene controls lack a visible affordance in stills | DEFERRED |
+
+Benchmark scores: Local relevance BEATS; Cause-to-consequence, Guided pacing, Label legibility, Correct wow moment and Scene readability MATCHES; **Cutaway and exploded clarity BELOW** and **Camera choreography BELOW** (no LOW/offline/accessibility trade-off applies); **Reach on LOW and FALLBACK_2D UNSCORED**. Every score is UNVERIFIED-REFERENCE.
+
+## Final verdict (2026-10-03): DO_NOT_SHIP
+
+Product-quality readiness only. This is not curriculum, founder or MOE approval, and it does not release anything. Mount Coffee remains DRAFT, approval PENDING, unreleased, curriculum linkage inactive and student-inaccessible.
+
+- **Open P0: 0.** Every P0 from Rounds 1–3 is FIXED and verified on new captures. The Round 2 P0s and the Round 3 visual P0s (S2 fixture, 2D lit state, 2D phone framing) are verified in the r3-final stills; the science P0s (max-served, bottle-cap) are verified by tests.
+- **Open P1: 12.** The nine design-director P1s HYDRO-R3D-001 to -009 (R3D-002 partly fixed), HYDRO-R3P-003 (planner/`renderer.info` parity), HYDRO-R3P-005 (partly fixed; IntersectionObserver and 30 fps-cap acceptance) and HYDRO-FOUNDER-IMMERSION-001. HYDRO-R2-V-RIGHT-COLUMN-001 is reopened as HYDRO-R3D-005.
+- **Runtime governance:** RX-005 and RX-006 stay PROPOSED because their acceptance lists are incomplete. `validateProductionRecord` refuses SHIP_CANDIDATE while either is PROPOSED, so this is an independent blocker.
+- **Blockers to clear before SHIP_CANDIDATE:** the open design P1s; benchmark references restored and every quality scored with no BELOW; a full director pass over STANDARD, LOW and FALLBACK_2D; and the RX-005/RX-006 acceptance items, with planner parity as the first.

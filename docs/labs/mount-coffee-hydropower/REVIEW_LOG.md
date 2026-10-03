@@ -80,8 +80,39 @@ Original gate list:
   - Rainy and flood widths follow the approved √ mapping.
   - Route lines remain the trace affordance.
   - Decor salience goes to the Round 3 design director.
-- **Founder decision open:** trip latching or commit-before-energise for the challenge (P1-1). The under-loaded start plus predict prompt removes the "shed until lit" path at the start, but a learner can still toggle freely.
-- **Re-capture for verification:** run 37059436767 at ad4f47cb, four profiles with probe and walkthrough. Its result is recorded under Round 3 inputs.
+- **Founder decision (2026-10-02): overload trips are LATCHED** (closes P1-1). See "Latched trip" below.
+- **Re-capture for verification:** run 37059436767 at ad4f47cb: 28 scenarios × 4 profiles × desktop/mobile, 224/224 stills PASS renderer identity, 8/8 keyboard walkthroughs with 0 failed steps.
+
+### Round 2 final verification — 2026-10-02
+- `lab-visual-reviewer` checked every Round 2 fix on run 37059436767. Result: 9 VERIFIED, 9 PARTLY, 0 REGRESSED.
+- It raised 3 P0s, 10 P1s and 7 P2s (HYDRO-R3V-*):
+  - P0: the S2 fixture showed a tripped plant; FALLBACK_2D had no lit/dark city; phone-portrait 2D was unreadable.
+  - P1s: labels, markers, framing.
+- All P0s and P1s were fixed at 22c5a2ed and bcb40c42. They were verified on the r3-final capture: the S2 fixture is untripped and unit 1 generates; 2D lit homes are warm; the 2D phone city is framed; cutaway parts are labelled. HYDRO-R3V-012 gauge row labels are deferred to P2. Each finding is in ISSUE_LEDGER.md.
+
+### Latched trip — founder decision 2026-10-02
+Load and unit changes apply immediately. An overload trips the plant: generation delivered goes to 0, the city goes dark, and the trip latches. While tripped the learner may still change loads and units and inspect. Power never returns automatically. **Reset plant** (HUD and panel) is accepted only when demand ≤ available generation and a unit is generating; otherwise it stays focusable, and the reason is shown and used as its description ("Reset unavailable: demand is still 2 MW above available generation."). Learner choices are preserved. There is no commit-load workflow.
+
+How it is built:
+- Engine: generic `spec.protection` and a `reset-protection` action (a91d3a80). Mode and guided-step starts clear the latch.
+- Model 1.2.0: `tripped = overload ∨ latched`.
+- Tests: `hydropower-protection.test.ts`.
+- Keyboard walkthrough: trip → refused reset → correct → reset → challenge met, on every profile.
+- Scenarios: corrected-not-reset, reset-restored, tripped unit change, challenge trip/correct/reset.
+- Captures: run 37061766748 at b1df62a6 (15 scenarios × 4 profiles, motion, probe, walkthroughs, all PASS) and run 37065728208 at 1ab0a316.
+
+### Interaction review — 2026-10-02
+`lab-interaction-reviewer` (runs 37061766748 / 37065728208; walkthrough JSON, probe, stills, engine replays) returned PASS_WITH_FIXES: 0 P0, 6 P1, 8 P2.
+- All 8 walkthroughs pass. The panel is 33–38 Tabs from the top, the skip link is the 2nd stop, and no focus trap was found.
+- All 6 P1s were fixed at 22c5a2ed:
+  - guided-step start states;
+  - a tripped-check hint;
+  - a focused "power restored" status;
+  - the Hospital chip state;
+  - an opaque lab focus ring;
+  - "Restart lab (clears progress)" with an inline confirm.
+- P2s are fixed or deferred as listed in the ledger.
+- Not verified: real touch, screen readers, physical devices.
 
 ## RX-005 / RX-006 proposal gates — 2026-10-01
 
@@ -105,8 +136,29 @@ RX-005 and RX-006 implementation remains incomplete. No device performance, GPU 
 - Validation: `npm run validate:changed` passed (7 selected test files / 75 tests, API route policy audit, and TypeScript check). A final focused profile/high-fidelity/budget/production-record run passed (4 files / 43 tests).
 - NOT MEASURED: GPU performance, physical-device performance, memory, and battery. The Three.js renderer, RX-005h geometry/kits implementation, RX-006 batching implementation, and Mount Coffee production rounds remain outstanding.
 
-## Round 3 — not run
-No benchmark scores or design director verdict are recorded.
+## Round 3 — 2026-10-02/03
+
+**Final capture.** r3-final, run 37073814606 at 8898c3ab, plus the HIGH-mobile top-up run 37080819114: 32 scenarios × HIGH/STANDARD/LOW/FALLBACK_2D × desktop/mobile.
+- 256/256 stills PASS renderer identity, with 0 console errors.
+- 8/8 keyboard walkthroughs, 0 failed steps.
+- LOW at most 34 draws.
+
+The HIGH job's first pass hit its 80-minute timeout three stills short; the top-up run captured them. City-label follow-up: run 37086350967 at 0a40f111.
+
+**Interpreting the evidence.** It is all SwiftShader software GL, so it shows composition, labels, layout and automation only.
+
+| Reviewer | Verdict | Counts | Outcome |
+|---|---|---|---|
+| `lab-science-reviewer` (model 1.2.0) | PASS_WITH_FIXES; no STOP | P0 2, P1 2, P2 7 (42 claims: 28 accurate, 9 simplification, 4 misleading, 1 incorrect) | The latched trip is accepted as an honest, caveated simplification. Both P0s (max-served overclaim, bottle-cap speed misconception) and both P1s (latch caveat, gauge length) were fixed at bcb40c42, with tests |
+| `lab-performance-reviewer` | PASS_WITH_FIXES | P0 0, P1 5, P2 4 | Within every static and offline budget (HIGH 79/120, STANDARD 59/90, LOW 34/40 draws; package 59 KB/96 KB). Fixed: downgrade ceiling, overlay throttle, idle monitor, dedicated baseline commit 8898c3ab. OPEN: planner/`renderer.info` parity (R3P-003). **RX-005 and RX-006 stay PROPOSED**: their acceptance lists are incomplete |
+| `lab-design-director` | **DO_NOT_SHIP** | P0 0, P1 9, P2 4 | Scene consequence at the city too weak; phone city and exploded framing; runner salience; guided prompts contradicting fixture states; desktop right column clips Next; phone objective below the fold; grey-box dominance (founder immersion finding still open); idle units indistinguishable; benchmark references missing. Coverage was partial (16 HIGH stills; STANDARD, LOW and 2D not inspected before its turn limit) |
+
+**Benchmark.**
+- Local relevance BEATS.
+- Five qualities MATCH.
+- Cutaway/exploded clarity and Camera choreography are BELOW with no trade-off.
+- Reach on LOW/FALLBACK_2D is UNSCORED.
+- The six reference captures are not on disk, so every score is UNVERIFIED-REFERENCE.
 
 Disagreements:
 - Simulation architect proposed `u1-generator`; the asset director and builder selected `u3-generator` for the single detailed internal stack. Recorded in `production.json`.
@@ -122,9 +174,30 @@ Disagreements:
 
 Reverted fixes: none.
 
-## Round 3 verdict
-Design director: not run.
-Open P0: not assessed.
+## Round 3 verdict — DO_NOT_SHIP (2026-10-03)
+
+This is a product-quality readiness verdict only. It is not curriculum approval, founder approval or MOE approval, and it does not release anything.
+
+| Item | Status |
+|---|---|
+| Open P0 | **0**. Every P0 from Rounds 1–3 is fixed and verified on new captures or by tests |
+| Open P1 | **12**: HYDRO-R3D-001 to -009 (R3D-002 partly fixed), HYDRO-R3P-003, HYDRO-R3P-005 (partly fixed), HYDRO-FOUNDER-IMMERSION-001 |
+| Deferred P2 | Listed in ISSUE_LEDGER.md: R3V-015 to -020, R3I-007/008/009/012/013/014, R3S-005, R3P-006 to -008, R3D-010 to -013, R2 rain/flood and route lines |
+| Profiles | HIGH, STANDARD, LOW and FALLBACK_2D all render, route and complete by keyboard (256/256 stills, 8/8 walkthroughs). The director did not inspect STANDARD, LOW or 2D, and LOW/2D reach is unscored |
+| Accessibility | Keyboard complete on every profile; opaque lab focus ring; focusable aria-disabled Reset plant with its reason; skip link. Screen readers, real touch and forced-colors are NOT tested |
+| Performance | Within all static and offline budgets on software GL. Planner/`renderer.info` parity is OPEN. RX-005/RX-006 are PROPOSED |
+| Science | PASS_WITH_FIXES; both P0s and both P1s fixed; the latched trip is accepted as a caveated simplification |
+| Physical devices | **UNVERIFIED.** No real device or `--gpu` run; no frame-rate, memory, battery or thermal claim |
+| Design director | DO_NOT_SHIP |
+| Runtime governance | `validateProductionRecord` refuses SHIP_CANDIDATE while RX-005/RX-006 are PROPOSED. This is an independent blocker |
+
+**To reach SHIP_CANDIDATE:**
+1. Close the design-director P1s.
+2. Restore the benchmark references and re-score every quality (no BELOW, LOW/2D scored).
+3. Run a full director pass over all profiles.
+4. Complete the RX-005 and RX-006 acceptance items, starting with planner parity, the remount leak test, the determinism proof, chunk accounting and the abort harness.
+
+Mount Coffee remains DRAFT, approval PENDING, unreleased, curriculum linkage inactive and student-inaccessible.
 
 ## Governance handoff
 Curriculum alignment remains PROPOSED, not governed. All five checks remain RAW_OBSERVATION. The lab is DRAFT, fixture-bound, unapproved and unreleased. `SHIP_CANDIDATE` requires completed three-round HERO review and benchmark scoring. `SHIP_VERIFIED` requires a separately authorized real-school pilot; this team cannot approve, release or bind the lab.
