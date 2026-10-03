@@ -12,9 +12,11 @@ import { fitHorizontalFieldOfView, IDENTITY, multiply, perspective, transformPoi
 import { batchFlowGeometry, createFlowBatchStorage, createPointBatchStorage, writeMarkerPositions, type FlowVertexBatch } from "@/lib/interactive-labs/v2/fidelity/flowBatch";
 import { shouldScheduleWebGLFrame } from "@/lib/interactive-labs/v2/fidelity/renderLoop";
 import { highlightBaseMix, HIGHLIGHT_COLOR, MARKER_COLOR } from "@/lib/interactive-labs/v2/fidelity/palette";
+import { placeSceneLabels } from "@/lib/interactive-labs/v2/fidelity/labelLayout";
 import { buildMesh } from "./meshes";
 import { buildParametricGeometry } from "@/lib/interactive-labs/v2/fidelity/geometry/builders";
 import { planLowBatches } from "@/lib/interactive-labs/v2/fidelity/lowBatch";
+import { createSurfaceTriangleStorage, writeSurfaceTriangles } from "@/lib/interactive-labs/v2/fidelity/surfaces";
 import type { MeshData } from "./meshes";
 import { pickNearest, type ScenePick } from "./picking";
 
@@ -52,10 +54,17 @@ void main(){
 }`;
 const LIGHTING = { full: 3, simplified: 2, minimal: 1, none: 0 } as const;
 
+/** A11: at most 8 scene labels, highlighted parts first; the parts list carries the rest. */
+
+/** Shared with ThreeScene's daylight ground plane. */
+const GROUND_Y = -2.25;
+
 function rgb(value: string): [number, number, number] { const n = Number.parseInt(value.replace("#", ""), 16); return [(n >> 16 & 255) / 255, (n >> 8 & 255) / 255, (n & 255) / 255]; }
 
 export function WebGLScene({ definition, state, profile, reducedMotion, traceFlowId, dispatch, onPick, onDowngrade, onUpgradeReady, allowProfileUpgrade = false, allowPerformanceDowngrade = true }: Props) {
   const canvas = useRef<HTMLCanvasElement>(null);
+  // Review evidence: identity, frames drawn and last-frame draw calls on the root (rendererIdentity.ts).
+  const root = useRef<HTMLDivElement>(null);
   const labels = useRef<HTMLDivElement>(null);
   const motionStatus = useRef<HTMLDivElement>(null);
   const drag = useRef({ x: 0, y: 0, active: false, moved: 0 });
@@ -130,6 +139,12 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
     const pointStorage = createPointBatchStorage();
     let pointGpuCapacity = 0;
     const flowStorage = createFlowBatchStorage();
+    // RX-005b on LOW: all water surfaces in one flat two-tone triangle batch (A13).
+    const surfaceStorage = createSurfaceTriangleStorage();
+    const surfaceBuffers = { positions: gl.createBuffer()!, colors: gl.createBuffer()!, capacity: 0 };
+    // A13 LOW floor: daylight labs get one flat ground quad (one draw) so the plant does not float on the backdrop.
+    const groundBatch: FlowVertexBatch = { positions: new Float32Array([-40, GROUND_Y, -40, 40, GROUND_Y, -40, 40, GROUND_Y, 40, -40, GROUND_Y, -40, 40, GROUND_Y, 40, -40, GROUND_Y, 40]), colors: new Float32Array(Array.from({ length: 6 }, () => [0.79, 0.85, 0.77]).flat()), count: 6 };
+    const groundBuffers = { positions: gl.createBuffer()!, colors: gl.createBuffer()!, capacity: 0 };
     const flowBuffers = Object.fromEntries(["lines", "particles", "traceNodes"].map((key) => [key, { positions: gl.createBuffer()!, colors: gl.createBuffer()!, capacity: 0 }])) as Record<"lines" | "particles" | "traceNodes", { positions: WebGLBuffer; colors: WebGLBuffer; capacity: number }>;
     const uploadBatch = (batch: FlowVertexBatch, gpu: { positions: WebGLBuffer; colors: WebGLBuffer; capacity: number }) => {
       if (gpu.capacity < batch.positions.length) {
@@ -178,6 +193,10 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
     let upgradeNotified = false;
     let previousFrameScheduled = false;
     const scheduleDraw = () => { if (!frame) frame = requestAnimationFrame(draw); };
+    // Count real draw calls per frame for review manifests (gl.drawArrays is the only draw entry point here).
+    const nativeDrawArrays = gl.drawArrays.bind(gl);
+    let frameDraws = 0, framesRendered = 0;
+    gl.drawArrays = (mode: number, first: number, count: number) => { frameDraws += 1; nativeDrawArrays(mode, first, count); };
     const draw = (now: number) => {
       frame = 0;
       const followedScheduledFrame = previousFrameScheduled;
@@ -262,6 +281,8 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
         for (const item of ordered) drawItem(item, meshFor(item), item.spin ? spinMatrix(item.spin, t, motionless) : item.matrix);
       }
       gl.depthMask(true);
+      if (list.environment === "DAYLIGHT") drawBatch(groundBatch, groundBuffers, gl.TRIANGLES, 1, 1, viewProj);
+      if (list.surfaces.length) drawBatch(writeSurfaceTriangles(list.surfaces, surfaceStorage), surfaceBuffers, gl.TRIANGLES, 1, 1, viewProj);
       batchFlowGeometry(list, t, motionless, callbacks.current.traceFlowId, flowStorage);
       // Process paths are instructional overlays. Letting solid mesh depth hide
       // them made the flood spillway appear inactive in paused review frames.
@@ -283,13 +304,22 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
         const status = list.motions.filter((motion) => motion.active).map((motion) => `${motion.label}: turning`).join(". ");
         if (motionStatus.current && motionStatus.current.textContent !== status) motionStatus.current.textContent = status;
         const project = (p: Vec3) => { const c = transformPoint(viewProj, p); return c[2] > 1 ? null : { x: (c[0] * 0.5 + 0.5) * el.clientWidth, y: (0.5 - c[1] * 0.5) * el.clientHeight }; };
+        // Spin glyphs are placed first and act as obstacles; labels then go only where they fit wholly on screen
+        // without overlapping a glyph or another label (R3 visual: LOW pile-ups and edge fragments).
+        const glyphs = list.motions.filter((motion) => motion.active).map((motion) => ({ text: "↻", at: project(motion.center), title: `${motion.label}: turning`, glyph: true, mobileLabel: true }));
+        const glyphBoxes = glyphs.flatMap((glyph) => glyph.at ? [{ left: glyph.at.x - 10, top: glyph.at.y - 12, right: glyph.at.x + 10, bottom: glyph.at.y + 12 }] : []);
+        const narrowViewport = typeof window !== "undefined" && window.innerWidth <= 500;
+        const labelItems = list.items.filter((item) => item.showLabel && item.inFocus && !(narrowViewport && item.mobileLabel === false));
+        const placed = placeSceneLabels(labelItems.flatMap((item) => {
+          const center = item.spin ? transformPoint(spinMatrix(item.spin, t, motionless), [0, 0, 0]) : item.center;
+          const offset = item.labelOffset ?? [0, 0, 0];
+          const at = project([center[0] + offset[0], center[1] + offset[1], center[2] + offset[2]]);
+          // The pill is drawn translated up by 160 % of its height, so its bottom sits 12 px above the anchor.
+          return at ? [{ id: item.id, text: item.label, x: at.x, y: at.y - 12, highlighted: item.highlighted }] : [];
+        }), { width: el.clientWidth, height: el.clientHeight }, 8, glyphBoxes);
         const entries = [
-          ...list.items.filter((item) => item.showLabel && item.inFocus).map((item) => {
-            const center = item.spin ? transformPoint(spinMatrix(item.spin, t, motionless), [0, 0, 0]) : item.center;
-            const offset = item.labelOffset ?? [0, 0, 0];
-            return { text: item.label, at: project([center[0] + offset[0], center[1] + offset[1], center[2] + offset[2]]), title: undefined, glyph: false, mobileLabel: item.mobileLabel !== false };
-          }),
-          ...list.motions.filter((motion) => motion.active).map((motion) => ({ text: "↻", at: project(motion.center), title: `${motion.label}: turning`, glyph: true, mobileLabel: true })),
+          ...placed.map((label) => ({ text: label.text, at: { x: label.x, y: label.y + 12 }, title: undefined, glyph: false, mobileLabel: true })),
+          ...glyphs,
         ];
         labels.current.replaceChildren(...entries.filter((entry) => entry.at).map((entry) => {
           const node = document.createElement("span");
@@ -308,6 +338,9 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
       // Review captures advance an authored virtual clock and need a frame for every tick.
       // Learner sessions request frames only while something visible is moving.
       const profileProbeActive = allowProfileUpgrade && !upgradeNotified && profile === "LOW" && frameTimes.length < 30;
+      framesRendered += 1;
+      if (root.current) { root.current.dataset.labDrawCalls = String(frameDraws); root.current.dataset.labFramesRendered = String(framesRendered); }
+      frameDraws = 0;
       if (shouldScheduleWebGLFrame({ reviewClockActive: reviewTime !== undefined, reducedMotion: motionless, fidelityMoving, cameraMoving, flowMoving, spinMoving, pulseMoving, profileProbeActive })) {
         previousFrameScheduled = true;
         scheduleDraw();
@@ -325,6 +358,7 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
       lowBatchBuffers.forEach((buffers) => { gl.deleteBuffer(buffers.position); gl.deleteBuffer(buffers.normal); });
       gl.deleteBuffer(lineBuffer);
       Object.values(flowBuffers).forEach((buffers) => { gl.deleteBuffer(buffers.positions); gl.deleteBuffer(buffers.colors); });
+      gl.deleteBuffer(surfaceBuffers.positions); gl.deleteBuffer(surfaceBuffers.colors); gl.deleteBuffer(groundBuffers.positions); gl.deleteBuffer(groundBuffers.colors);
       gl.deleteProgram(program);
       // Defer forced loss one task so React StrictMode's development remount can reuse the live context.
       pendingContextLoss.current = window.setTimeout(() => {
@@ -346,7 +380,7 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
 
   const constraints = definition.fidelity?.camera.constraints;
   return (
-    <div className="relative h-[clamp(420px,62vh,640px)] w-full">
+    <div ref={root} data-lab-renderer="webgl-pass" className="relative h-[clamp(420px,62vh,640px)] w-full">
       <canvas ref={canvas} aria-label={`${definition.title ?? "Interactive"} 3D scene. Every scene action is also available in the controls panel.`} className="h-full w-full touch-none"
         onPointerDown={(e) => { drag.current = { x: e.clientX, y: e.clientY, active: true, moved: 0 }; e.currentTarget.setPointerCapture(e.pointerId); }}
         onPointerMove={(e) => {

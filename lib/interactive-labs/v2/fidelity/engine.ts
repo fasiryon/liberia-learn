@@ -103,7 +103,29 @@ export function validateFidelityAction(spec: HighFidelitySpec, state: FidelitySt
     }
     case "guided-step":
       return Number.isInteger(action.index) && action.index >= 0 && action.index < spec.guidedPath.length ? OK : reject("guided_step_out_of_range");
+    case "reset-protection": {
+      const status = protectionStatus(spec, state);
+      if (!status) return reject("protection_undeclared");
+      if (!status.latched) return reject("protection_not_tripped");
+      return status.blocker === null ? OK : reject("protection_reset_blocked");
+    }
   }
+}
+
+/** The latch, and why a reset would fail now (null when it is safe). Null when the lab declares no protection. */
+export function protectionStatus(spec: HighFidelitySpec, state: FidelityState): { latched: boolean; blocker: string | null; resetLabel: string } | null {
+  const protection = spec.protection;
+  if (!protection) return null;
+  const latched = state.variables[protection.latchVariableId] === 1;
+  return { latched, blocker: latched ? protection.resetBlocker(deriveSimulation(spec, state).quantities) : null, resetLabel: protection.resetLabel };
+}
+
+/** Latch the protection when the new state is an overload; otherwise the latch keeps its value (no automatic recovery). */
+function applyProtection(spec: HighFidelitySpec, state: FidelityState): FidelityState {
+  const protection = spec.protection;
+  if (!protection || state.variables[protection.latchVariableId] === 1) return state;
+  if (deriveSimulation(spec, state).quantities[protection.overloadQuantityId] !== 1) return state;
+  return { ...state, variables: { ...state.variables, [protection.latchVariableId]: 1 } };
 }
 
 function toggle(list: readonly string[], id: string): string[] {
@@ -111,6 +133,19 @@ function toggle(list: readonly string[], id: string): string[] {
 }
 
 export function transitionFidelity(spec: HighFidelitySpec, state: FidelityState, action: FidelityAction): FidelityState {
+  switch (action.type) {
+    case "set-variable":
+    case "clear-assembly":
+    case "place-component":
+      return applyProtection(spec, applyFidelityAction(spec, state, action));
+    case "reset-protection":
+      return { ...state, variables: { ...state.variables, [spec.protection!.latchVariableId]: 0 } };
+    default:
+      return applyFidelityAction(spec, state, action);
+  }
+}
+
+function applyFidelityAction(spec: HighFidelitySpec, state: FidelityState, action: Exclude<FidelityAction, { type: "reset-protection" }>): FidelityState {
   switch (action.type) {
     case "set-variable":
       return { ...state, variables: { ...state.variables, [action.variableId]: action.value } };
@@ -156,7 +191,8 @@ export function transitionFidelity(spec: HighFidelitySpec, state: FidelityState,
       return { ...state, inspectedComponentId: action.componentId };
     case "guided-step": {
       const step = spec.guidedPath[action.index];
-      return { ...state, guidedStepIndex: action.index, cameraPresetId: step.cameraPresetId ?? state.cameraPresetId };
+      const next = { ...state, guidedStepIndex: action.index, cameraPresetId: step.cameraPresetId ?? state.cameraPresetId };
+      return step.variables ? applyStartVariables(spec, next, step.variables) : next;
     }
     case "toggle-flow":
       return { ...state, hiddenFlowIds: toggle(state.hiddenFlowIds, action.flowId) };
@@ -232,6 +268,8 @@ export function isValidFidelityState(spec: HighFidelitySpec, value: unknown): va
     return !!assembly && Object.entries(slots ?? {}).every(([slotId, componentId]) => assembly.slots?.some((slot) => slot.id === slotId) && assembly.componentIds.includes(componentId));
   })) return false;
   if (!state.tracedPaths || !Object.entries(state.tracedPaths).every(([flowId, nodes]) => Array.isArray(nodes) && nodes.every((nodeId) => spec.flows.find((flow) => flow.id === flowId)?.nodes.some((node) => node.id === nodeId)))) return false;
+  // An overload with the protection unlatched cannot arise through the engine.
+  if (spec.protection && state.variables[spec.protection.latchVariableId] !== 1 && deriveSimulation(spec, state).quantities[spec.protection.overloadQuantityId] === 1) return false;
   return true;
 }
 
@@ -264,7 +302,30 @@ export function composeHighFidelity(base: InteractiveLabDefinition<LabState>, sp
       if (isFidelityAction(action)) return { ...state, fidelity: transitionFidelity(spec, current(state), action), lastFeedback: null };
       const fidelityCheck = action.type === "check" ? fidelityChecks.get(action.checkId) : undefined;
       if (action.type === "check" && fidelityCheck) return recordCheckResult(state, base.checks, action.checkId, evaluateFidelityCheck(spec, current(state), fidelityCheck));
-      return { ...base.transition(state, action), fidelity: current(state) };
+      const next = { ...base.transition(state, action), fidelity: current(state) };
+      return action.type === "mode" ? applyModeStart(spec, next, action.mode) : next;
     },
   };
+}
+
+/** Apply a declared mode start (variables on their step grid, known camera preset); invalid entries are ignored. */
+function applyModeStart(spec: HighFidelitySpec, state: LabState, mode: LabState["mode"]): LabState {
+  const start = spec.modeStart?.[mode as keyof NonNullable<HighFidelitySpec["modeStart"]>];
+  if (!start || !state.fidelity) return state;
+  const cameraPresetId = start.cameraPresetId && spec.camera.presets.some((preset) => preset.id === start.cameraPresetId) ? start.cameraPresetId : state.fidelity.cameraPresetId;
+  return { ...state, fidelity: applyStartVariables(spec, { ...state.fidelity, cameraPresetId }, start.variables ?? {}) };
+}
+
+/**
+ * A mode or guided-step start: set learner variables on their step grid (invalid entries are ignored). It is a fresh
+ * start, so the protection is cleared, then re-latched if the start itself is an overload.
+ */
+function applyStartVariables(spec: HighFidelitySpec, fidelity: FidelityState, start: Record<string, number>): FidelityState {
+  const variables = { ...fidelity.variables };
+  for (const [id, value] of Object.entries(start)) {
+    const variable = spec.variables.find((candidate) => candidate.id === id);
+    if (variable?.learnerControlled && validateVariableValue(variable, value).ok) variables[id] = value;
+  }
+  if (spec.protection) variables[spec.protection.latchVariableId] = 0;
+  return applyProtection(spec, { ...fidelity, variables });
 }

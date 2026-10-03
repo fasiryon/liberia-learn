@@ -31,7 +31,11 @@ import sharp from "sharp";
 import { getInteractiveLabDefinition } from "../../lib/interactive-labs/v2/registry";
 import { getLabReviewScenarioSet } from "../../lib/interactive-labs/v2/review/referenceScenarios";
 import { LAB_REVIEW_PROFILES, validateScenarioSet, type LabReviewScenario } from "../../lib/interactive-labs/v2/review/scenarios";
+
+// Software-GL (SwiftShader) frames of the three.js HIGH renderer can take ~10 s each; captures are composition evidence only.
+const SCREENSHOT_TIMEOUT_MS = 240_000;
 import type { CapabilityProfile } from "../../lib/interactive-labs/v2/types";
+import { verifyRendererIdentity } from "../../lib/interactive-labs/v2/review/rendererIdentity";
 
 const VIEWPORTS = {
   desktop: { viewport: { width: 1366, height: 900 }, isMobile: false, hasTouch: false },
@@ -53,7 +57,23 @@ const flag = (name: string) => process.argv.includes(`--${name}`);
 const list = (name: string) => arg(name)?.split(",").map((value) => value.trim()).filter(Boolean);
 
 function gitSha(): string {
-  try { return execSync("git rev-parse --short HEAD", { encoding: "utf8" }).trim() + (execSync("git status --porcelain", { encoding: "utf8" }).trim() ? "-dirty" : ""); } catch { return "unknown"; }
+  try { return execSync("git rev-parse HEAD", { encoding: "utf8" }).trim() + (execSync("git status --porcelain --untracked-files=no", { encoding: "utf8" }).trim() ? "-dirty" : ""); } catch { return process.env.GITHUB_SHA ?? "unknown"; }
+}
+
+/** What actually drew the page: the player's resolved profile and the mounted renderer's own identity marker. */
+async function observeRenderer(page: Page, requestedProfile: CapabilityProfile) {
+  const seen = await page.evaluate(`(() => {
+    const scope = document.querySelector("[data-lab-review-ready]");
+    const player = scope && scope.querySelector("[data-lab-active-profile]");
+    const renderer = scope && scope.querySelector("[data-lab-renderer]");
+    return {
+      actualProfile: player ? player.getAttribute("data-lab-active-profile") : null,
+      actualRenderer: renderer ? renderer.getAttribute("data-lab-renderer") : null,
+      framesRendered: renderer ? Number(renderer.getAttribute("data-lab-frames-rendered") || 0) : 0,
+      drawCalls: renderer && renderer.hasAttribute("data-lab-draw-calls") ? Number(renderer.getAttribute("data-lab-draw-calls")) : null,
+    };
+  })()`) as { actualProfile: string | null; actualRenderer: string | null; framesRendered: number; drawCalls: number | null };
+  return { ...seen, verdict: verifyRendererIdentity({ requestedProfile, ...seen }) };
 }
 
 async function newContext(browser: Browser, viewport: ViewportName, reducedMotion: boolean, video?: string): Promise<BrowserContext> {
@@ -155,7 +175,7 @@ async function contactSheet(browser: Browser, frames: { file: string; label: str
   const page = await browser.newPage({ viewport: { width: 1600, height: 900 } });
   const cells = frames.map((frame) => `<figure><img src="data:image/png;base64,${readFileSync(frame.file).toString("base64")}"/><figcaption>${frame.label}</figcaption></figure>`).join("");
   await page.setContent(`<html><body style="margin:0;background:#0b1020;color:#e2e8f0;font:14px system-ui"><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:8px">${cells}</div><style>figure{margin:0}img{width:100%;display:block;border:1px solid #334155}figcaption{padding:2px 4px}</style></body></html>`);
-  await page.screenshot({ path: out, fullPage: true });
+  await page.screenshot({ path: out, fullPage: true, timeout: SCREENSHOT_TIMEOUT_MS });
   await page.close();
 }
 
@@ -192,8 +212,12 @@ async function probeInteraction(page: Page) {
       const hitTarget = node.querySelector?.("[data-lab-touch-target]") ?? node;
       const box = hitTarget.getBoundingClientRect();
       const touchStroke = hitTarget.hasAttribute("data-lab-touch-target") ? Number.parseFloat(getComputedStyle(hitTarget).strokeWidth) : 0;
-      const name = node.getAttribute("aria-label") || (node as HTMLElement).innerText?.trim() || node.getAttribute("title") || "";
-      return { tag: node.tagName.toLowerCase(), role: node.getAttribute("role"), name: name.slice(0, 80), width: Math.round(box.width + touchStroke), height: Math.round(box.height + touchStroke), visible: box.width > 0 && box.height > 0 };
+      // Name as assistive technology would: aria-label, an associated <label for>, then raw text content (not innerText,
+      // which is empty inside collapsed <details> and transformed by CSS).
+      const labelFor = node.id ? document.querySelector(`label[for="${CSS.escape(node.id)}"]`)?.textContent?.trim() : "";
+      const name = node.getAttribute("aria-label") || labelFor || node.textContent?.trim() || node.getAttribute("title") || "";
+      const collapsed = !!node.closest("details:not([open]) > :not(summary)");
+      return { tag: node.tagName.toLowerCase(), role: node.getAttribute("role"), name: name.slice(0, 80), width: Math.round(box.width + touchStroke), height: Math.round(box.height + touchStroke), visible: !collapsed && box.width > 0 && box.height > 0 };
     });
   });
   const focusOrder: { name: string; tag: string; outline: string }[] = [];
@@ -239,9 +263,13 @@ async function main() {
   for (const viewport of viewports) if (!(viewport in VIEWPORTS)) throw new Error(`Unknown viewport ${viewport}`);
   mkdirSync(out, { recursive: true });
 
-  const browser = flag("gpu")
-    ? await chromium.launch({ headless: false, args: ["--ignore-gpu-blocklist", "--enable-gpu-rasterization"] })
-    : await chromium.launch({ args: ["--use-angle=swiftshader", "--enable-unsafe-swiftshader", "--ignore-gpu-blocklist"] });
+  const launch = () => flag("gpu")
+    ? chromium.launch({ headless: false, args: ["--ignore-gpu-blocklist", "--enable-gpu-rasterization"] })
+    : chromium.launch({ args: ["--use-angle=swiftshader", "--enable-unsafe-swiftshader", "--ignore-gpu-blocklist"] });
+  // Memory safety: a fresh browser every N scenario runs (default 6) so one long run never accumulates GPU/JS memory.
+  const restartEvery = Math.max(1, Number(arg("restart-every") ?? 6));
+  let browser = await launch();
+  let runsSinceLaunch = 0;
   const probePage = await browser.newPage();
   const renderer = await detectRenderer(probePage);
   await probePage.close();
@@ -251,17 +279,34 @@ async function main() {
   const motionModes = flag("reduced-motion") ? [false, true] : [false];
   try {
     for (const viewport of viewports) for (const profile of profiles) for (const scenario of scenarios) {
+      if (runsSinceLaunch >= restartEvery) { await browser.close(); browser = await launch(); runsSinceLaunch = 0; }
+      runsSinceLaunch += 1;
       const base = `${scenario.id}__${profile}__${viewport}`;
       const stillReducedMotion = flag("reduced-motion");
       const context = await newContext(browser, viewport, stillReducedMotion);
-      const page = await context.newPage();
-      const issues = watch(page);
-      const opened = await openScenario(page, baseUrl, labId, scenario.id, profile, false, true);
       const still = path.join(out, `${base}.png`);
-      await page.screenshot({ path: still, fullPage: true });
-      captures.push({ file: still, scenario: scenario.id, storyboardScene: scenario.storyboardScene, stage: scenario.stage, profile, viewport, kind: "still", reducedMotion: stillReducedMotion });
-      await context.close();
-      runs.push({ scenario: scenario.id, profile, viewport, kind: "still", ...opened, ...issues });
+      try {
+        const page = await context.newPage();
+        const issues = watch(page);
+        const opened = await openScenario(page, baseUrl, labId, scenario.id, profile, false, true);
+        const identity = await observeRenderer(page, profile);
+        await page.screenshot({ path: still, fullPage: true, timeout: SCREENSHOT_TIMEOUT_MS });
+        captures.push({ file: still, scenario: scenario.id, storyboardScene: scenario.storyboardScene, stage: scenario.stage, profile, viewport, kind: "still", reducedMotion: stillReducedMotion });
+        runs.push({ scenario: scenario.id, profile, viewport, kind: "still", screenshot: path.relative(out, still).replace(/\\/g, "/"),
+          status: identity.verdict.ok ? "PASS" : "FAIL", ...(identity.verdict.ok ? {} : { failureReason: identity.verdict.reason }),
+          actualProfile: identity.actualProfile, actualRenderer: identity.actualRenderer, framesRendered: identity.framesRendered, drawCalls: identity.drawCalls,
+          ...opened, warnings: issues.consoleErrors, consoleErrors: issues.consoleErrors, pageErrors: issues.pageErrors });
+        writeManifest();
+        if (!identity.verdict.ok) { console.error(`FAIL ${base}: ${identity.verdict.reason}`); continue; }
+      } catch (cause) {
+        const reason = cause instanceof Error ? cause.message.slice(0, 600) : String(cause);
+        console.error(`ERROR ${base}: ${reason}`);
+        runs.push({ scenario: scenario.id, profile, viewport, kind: "still", status: "ERROR", failureReason: reason });
+        writeManifest();
+        continue;
+      } finally {
+        await context.close().catch(() => undefined);
+      }
 
       if (!scenario.motion || flag("still-only")) continue;
       for (const reducedMotion of motionModes) {
@@ -279,7 +324,7 @@ async function main() {
           const section = motionPage.locator("[data-lab-review-ready] section").first();
           const bounds = await section.boundingBox();
           if (!bounds) throw new Error(`Review player has no bounds for ${scenario.id} frame ${index}.`);
-          const pageImage = await motionPage.screenshot({ fullPage: true });
+          const pageImage = await motionPage.screenshot({ fullPage: true, timeout: SCREENSHOT_TIMEOUT_MS });
           const left = Math.max(0, Math.floor(bounds.x)), top = Math.max(0, Math.floor(bounds.y));
           const width = Math.max(1, Math.ceil(bounds.width)), height = Math.max(1, Math.ceil(bounds.height));
           await sharp(pageImage).extract({ left, top, width, height }).png().toFile(file);
@@ -354,19 +399,26 @@ async function main() {
       writeFileSync(path.join(out, "interaction-probe.json"), JSON.stringify(probes, null, 2));
     }
   } finally {
-    await browser.close();
+    await browser.close().catch(() => undefined);
+    writeManifest();
   }
 
+  function writeManifest() {
   const manifest = {
     labId, labVersion: definition.version, reviewState: definition.reviewState, label, gitSha: gitSha(), capturedAt: new Date().toISOString(),
-    environment: `local dev server, ${flag("gpu") ? "headed" : "headless"} Chromium, virtual clock paused from navigation for stills and motion frames`,
+    environment: `${process.env.GITHUB_ACTIONS ? `GitHub Actions (${process.env.RUNNER_OS ?? "runner"}, run ${process.env.GITHUB_RUN_ID ?? "?"})` : "local"} dev server, ${flag("gpu") ? "headed" : "headless"} Chromium, virtual clock paused from navigation for stills and motion frames`,
+    rendererIdentityRule: "HIGH/STANDARD must be drawn by three@*, LOW by webgl-pass, FALLBACK_2D by svg, at the requested profile, with at least one frame drawn; otherwise status FAIL.",
+    deviceBoundary: "Headless browser evidence proves rendering correctness, composition, layout, interaction automation and renderer/profile routing only. It does not prove low-end GPU performance, touch latency, thermal behaviour or mobile memory pressure (DEVICE_REQUIRED).",
     renderer,
     profiles, viewports, captures: captures.map((capture) => ({ ...capture, file: path.relative(out, capture.file).replace(/\\/g, "/") })), runs,
   };
   writeFileSync(path.join(out, "manifest.json"), JSON.stringify(manifest, null, 2));
+  }
   const errors = runs.filter((run) => (run.pageErrors as string[] | undefined)?.length);
-  console.log(`Captured ${captures.length} files for ${labId}@${definition.version} into ${out}`);
+  const failed = runs.filter((run) => run.status === "FAIL" || run.status === "ERROR");
+  console.log(`Captured ${captures.length} files for ${labId}@${definition.version} into ${out}; ${runs.filter((run) => run.status === "PASS").length} PASS, ${failed.length} FAIL/ERROR.`);
   if (errors.length) { console.error(`${errors.length} capture run(s) had page errors; see manifest.json.`); process.exitCode = 1; }
+  if (failed.length) { console.error(`${failed.length} capture run(s) failed renderer identity or errored; they are not review evidence. See manifest.json.`); process.exitCode = 1; }
 }
 
 main().catch((error) => { console.error(error instanceof Error ? error.message : error); process.exit(1); });

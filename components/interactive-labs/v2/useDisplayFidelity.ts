@@ -21,7 +21,7 @@ export function useDisplayFidelity(definition: InteractiveLabDefinition<LabState
     const hasActiveVisibleFlow = animateFlows && !reducedMotion && spec.flows.some((flow) =>
       !target.hiddenFlowIds.includes(flow.id) && simulation.flows[flow.id]?.active);
     let frame = 0, last = performance.now(), lastPaint = 0;
-    let lastReviewTime: number | undefined, reviewClockSeen = false;
+    let lastReviewTime: number | undefined, reviewClockSeen = false, lastPublishedReviewTime: number | undefined;
     const tick = (now: number) => {
       if (typeof window !== "undefined" && (window as Window & { __labReview?: unknown }).__labReview) {
         (window as Window & { __labReviewClockReady?: boolean }).__labReviewClockReady = true;
@@ -38,7 +38,13 @@ export function useDisplayFidelity(definition: InteractiveLabDefinition<LabState
       // ~30 fps is plenty for SVG and keeps low-end devices cool.
       // Review captures use authored timestamps and must publish each one exactly; the learner path
       // keeps the ~30 fps throttle and stops ticking once settled with no visible active flow.
-      if (reviewTime !== undefined || renderTime - lastPaint > 33 || settled) { lastPaint = renderTime; setDisplay(next); if (hasActiveVisibleFlow) setTime(reviewTime ?? now / 1000); }
+      // Under a held review clock, time does not advance, so easing cannot progress (an open assembly's context fade
+      // never settles at dt = 0). Republishing would only make the scene redraw every frame and starve the capture;
+      // publish only when the review time actually moves.
+      const publish = reviewTime !== undefined
+        ? renderTime !== lastPublishedReviewTime
+        : renderTime - lastPaint > 33 || settled;
+      if (publish) { lastPaint = renderTime; if (reviewTime !== undefined) lastPublishedReviewTime = renderTime; setDisplay(next); if (hasActiveVisibleFlow) setTime(reviewTime ?? now / 1000); }
       if (!settled || hasActiveVisibleFlow || reviewTime !== undefined) frame = requestAnimationFrame(tick);
     };
     frame = requestAnimationFrame(tick);

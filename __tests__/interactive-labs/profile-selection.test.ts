@@ -73,3 +73,17 @@ describe("RX-005 profile selection", () => {
     expect(attempts).toBe(2);
   });
 });
+
+describe("R3 performance P1: a performance downgrade blocks later auto-upgrades", () => {
+  it("remembers the downgrade per runtime version and survives disabled storage", async () => {
+    const { rememberPerformanceDowngrade, recallPerformanceDowngrade } = await import("@/lib/interactive-labs/v2/capabilities");
+    const values = new Map<string, string>();
+    const storage = { getItem: (key: string) => values.get(key) ?? null, setItem: (key: string, value: string) => { values.set(key, value); } };
+    expect(recallPerformanceDowngrade(storage)).toBe(false);
+    rememberPerformanceDowngrade(storage);
+    expect(recallPerformanceDowngrade(storage)).toBe(true);
+    const broken = { getItem: () => { throw new Error("blocked"); }, setItem: () => { throw new Error("blocked"); } };
+    expect(() => rememberPerformanceDowngrade(broken)).not.toThrow();
+    expect(recallPerformanceDowngrade(broken)).toBe(false);
+  });
+});

@@ -4,6 +4,9 @@ import { buildRenderList, fallbackVisibleItems } from "@/lib/interactive-labs/v2
 import { validateHighFidelityDefinition } from "@/lib/interactive-labs/v2/fidelity/boundary";
 import { HYDROPOWER_REVIEW_SCENARIOS } from "@/lib/interactive-labs/v2/review/referenceScenarios";
 import { replayReviewScenario } from "@/lib/interactive-labs/v2/review/scenarios";
+import { hydropowerModel } from "@/lib/interactive-labs/v2/definitions/hydropowerModel";
+import { planLowBatches } from "@/lib/interactive-labs/v2/fidelity/lowBatch";
+import type { LabAction } from "@/lib/interactive-labs/v2/types";
 
 describe("Mount Coffee hydropower design stage", () => {
   it("satisfies the shared authoring and colour gates with ten flows and five checks", () => {
@@ -37,9 +40,11 @@ describe("Mount Coffee hydropower design stage", () => {
     expect(list.items.filter((item) => item.id.startsWith("gauge-seg-") || item.id.startsWith("demand-")).every((item) => !item.showLabel)).toBe(true);
   });
 
-  it("aligns the first guided direction with the first water-trace check", () => {
-    expect(hydropowerDefinition.fidelity?.guidedPath[0].prompt).toContain("Trace the water through the six nodes, in order");
+  it("opens with a meet-the-plant beat that does not give away the trace assessment (v1.1 pedagogy P1)", () => {
+    expect(hydropowerDefinition.fidelity?.guidedPath[0].prompt).toContain("Meet the plant");
+    expect(hydropowerDefinition.fidelity?.guidedPath[0].prompt).not.toContain("Trace the water");
     expect(hydropowerDefinition.checks[0].prompt).toBe("Trace the water through the six nodes, in order.");
+    expect(hydropowerDefinition.checks.find((check) => check.id === "dry-season-output")?.prompt).toBe("With all four units on, set the season so the plant can make only about 10 MW (8–12).");
   });
 
   it("shows the energy-chain explanation as the seventh guided task", () => {
@@ -61,12 +66,14 @@ describe("Mount Coffee hydropower design stage", () => {
 
   it("begins the guided overload beat below capability before the learner switches on demand", () => {
     const step = hydropowerDefinition.fidelity?.guidedPath.find((candidate) => candidate.id === "overload");
-    expect(step?.prompt).toContain("keep the hospital on, then switch on homes and shops one at a time");
+    expect(step?.prompt).toContain("Add shops blocks one at a time");
+    expect(step?.prompt).toContain("press Reset plant");
+    expect(step?.variables).toEqual({ riverFlow: 430, unitsOnline: 3, feederHospital: 1, homesBlocks: 4, shopsBlocks: 0 });
     const scenario = HYDROPOWER_REVIEW_SCENARIOS.scenarios.find((candidate) => candidate.id === "hydro-guided-overload-beat");
     expect(scenario).toBeDefined();
     const replay = replayReviewScenario(hydropowerDefinition, scenario!);
     if ("reason" in replay) throw new Error(replay.reason);
-    expect(replay.state.fidelity?.variables).toMatchObject({ riverFlow: 430, unitsOnline: 3, feederHospital: 1, feederHomes: 0, feederShops: 0 });
+    expect(replay.state.fidelity?.variables).toMatchObject({ riverFlow: 430, unitsOnline: 3, feederHospital: 1, homesBlocks: 4, shopsBlocks: 0 });
   });
 
   it("reveals the unit 3 stack during explosion and supplies live challenge feedback", () => {
@@ -86,9 +93,34 @@ describe("Mount Coffee hydropower design stage", () => {
     expect(overviewList.items.map((item) => item.id)).not.toContain("u3-generator");
 
     const challenge = hydropowerDefinition.fidelity!;
-    expect(challenge.authoring.challenge).toContain("keep the hospital supplied");
+    expect(challenge.authoring.challenge).toContain("predict first, then switch on as much other load as fits");
     expect(challenge.challengeStatus?.({ gridStableWithPriority: 1 })).toContain("Challenge met");
-    expect(challenge.challengeStatus?.({ gridStableWithPriority: 0 })).toContain("not yet stable");
+    expect(challenge.challengeStatus?.({ gridStableWithPriority: 0 })).toContain("Not met yet");
+  });
+
+  it("R2 P1-1/P1-3: the challenge starts dry and under-loaded on the city; assessment starts fresh", () => {
+    const challenge = replayReviewScenario(hydropowerDefinition, HYDROPOWER_REVIEW_SCENARIOS.scenarios.find((scenario) => scenario.id === "hydro-challenge-start")!);
+    if ("reason" in challenge) throw new Error(challenge.reason);
+    expect(challenge.state.fidelity?.variables).toMatchObject({ riverFlow: 49, unitsOnline: 4, feederHospital: 1, homesBlocks: 0, shopsBlocks: 0 });
+    expect(challenge.state.fidelity?.cameraPresetId).toBe("grid-city");
+    const q = buildRenderList({ definition: hydropowerDefinition, state: challenge.state, profile: "HIGH" }).quantities;
+    expect(q.tripped).toBe(0);
+    expect(q.gridStableWithPriority).toBe(0);
+    // The learner must ADD load to meet it (not shed until lit).
+    const solved = replayReviewScenario(hydropowerDefinition, HYDROPOWER_REVIEW_SCENARIOS.scenarios.find((scenario) => scenario.id === "hydro-challenge-solved")!);
+    if ("reason" in solved) throw new Error(solved.reason);
+    expect(buildRenderList({ definition: hydropowerDefinition, state: solved.state, profile: "HIGH" }).quantities.gridStableWithPriority).toBe(1);
+    const assessment = replayReviewScenario(hydropowerDefinition, { ...HYDROPOWER_REVIEW_SCENARIOS.scenarios.find((scenario) => scenario.id === "hydro-challenge-solved")!, actions: [...(HYDROPOWER_REVIEW_SCENARIOS.scenarios.find((scenario) => scenario.id === "hydro-challenge-solved")!.actions as LabAction[]), { type: "mode", mode: "ASSESSMENT" }] });
+    if ("reason" in assessment) throw new Error(assessment.reason);
+    expect(assessment.state.fidelity?.variables).toMatchObject({ riverFlow: 430, homesBlocks: 4, shopsBlocks: 4 });
+  });
+
+  it("R2 P1-2: dry-season-output measures four-unit capability, so a tripped or one-unit plant does not pass", () => {
+    const q = (variables: Record<string, number>) => hydropowerModel.evaluate({ variables: { riverFlow: 49, unitsOnline: 4, feederHospital: 1, homesBlocks: 4, shopsBlocks: 4, protectionLatched: 0, ...variables }, placements: { "unit-3": { "slot-runner": "u3-runner", "slot-shaft": "u3-shaft", "slot-generator": "u3-generator" } } }).quantities;
+    expect(q({}).capabilityAllUnitsMW).toBeGreaterThanOrEqual(8);
+    expect(q({}).capabilityAllUnitsMW).toBeLessThanOrEqual(12);
+    expect(q({ unitsOnline: 1 }).capabilityAllUnitsMW).toBe(0);
+    expect(q({ riverFlow: 430 }).capabilityAllUnitsMW).toBeGreaterThan(12);
   });
 
   it("starts the challenge unmet, frames the exploded stack, and previews checks in order", () => {
@@ -136,7 +168,12 @@ describe("Mount Coffee hydropower design stage", () => {
     const dry = replayReviewScenario(hydropowerDefinition, HYDROPOWER_REVIEW_SCENARIOS.scenarios.find((scenario) => scenario.id === "hydro-variable-dry-drop")!);
     if ("reason" in dry) throw new Error(dry.reason);
     const dryList = buildRenderList({ definition: hydropowerDefinition, state: dry.state, profile: "LOW" });
-    expect(dryList.motions.filter((motion) => motion.active)).toHaveLength(0);
+    // Dry season with load that fits: the little water there is turns one unit; the others stay still.
+    expect(dryList.motions.filter((motion) => motion.active).map((motion) => motion.id)).toEqual(["unit-1-spin"]);
+
+    const trip = replayReviewScenario(hydropowerDefinition, HYDROPOWER_REVIEW_SCENARIOS.scenarios.find((scenario) => scenario.id === "hydro-fault-overload-trip")!);
+    if ("reason" in trip) throw new Error(trip.reason);
+    expect(buildRenderList({ definition: hydropowerDefinition, state: trip.state, profile: "LOW" }).motions.filter((motion) => motion.active)).toHaveLength(0);
 
     const solved = replayReviewScenario(hydropowerDefinition, HYDROPOWER_REVIEW_SCENARIOS.scenarios.find((scenario) => scenario.id === "hydro-challenge-solved")!);
     if ("reason" in solved) throw new Error(solved.reason);
@@ -154,7 +191,8 @@ describe("Mount Coffee hydropower design stage", () => {
       const result = replayReviewScenario(hydropowerDefinition, scenario);
       if ("reason" in result) throw new Error(`${scenario.id}: ${result.reason}`);
       const list = buildRenderList({ definition: hydropowerDefinition, state: result.state, profile: "LOW" });
-      const draws = list.items.length + (list.flows.length ? 3 : 0) + (list.markers.length ? 1 : 0);
+      // RX-006: LOW renders through the batch planner, so the budget is the planner's draw count.
+      const draws = planLowBatches(list).drawCalls;
       expect(draws, scenario.id).toBeLessThanOrEqual(40);
     }
   });

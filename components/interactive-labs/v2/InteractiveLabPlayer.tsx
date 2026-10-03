@@ -3,12 +3,14 @@ import dynamic from "next/dynamic";
 import { Component, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { getInteractiveLabDefinition } from "@/lib/interactive-labs/v2/registry";
 import { initializeLab, acceptLabAction } from "@/lib/interactive-labs/v2/kernel";
-import { recallProfile, readDeviceHints, rememberProfile, resolveInitialProfile, upgradeEligibility, upgradeTarget } from "@/lib/interactive-labs/v2/capabilities";
+import { recallPerformanceDowngrade, recallProfile, readDeviceHints, rememberPerformanceDowngrade, rememberProfile, resolveInitialProfile, upgradeEligibility, upgradeTarget } from "@/lib/interactive-labs/v2/capabilities";
 import { downgradeProfile } from "@/lib/interactive-labs/v2/fidelity/profiles";
 import { loadChunkWithRetry } from "@/lib/interactive-labs/v2/loadChunk";
 import type { CapabilityProfile, LabAction, LabState } from "@/lib/interactive-labs/v2/types";
 import { Fallback2D } from "./Fallback2D";
 import { LabControlPanel } from "./LabControlPanel";
+import { SceneControlBar } from "./SceneControlBar";
+import { SceneHud } from "./SceneHud";
 import type { ScenePick } from "./picking";
 const loadWebGLScene = () => loadChunkWithRetry(() => import("./WebGLScene"));
 const WebGLScene = dynamic(() => loadWebGLScene().then((m) => m.WebGLScene), { ssr: false, loading: () => <div className="flex h-[clamp(420px,62vh,640px)] items-center justify-center text-slate-300">Loading the 3D lab…</div> });
@@ -57,8 +59,12 @@ export function InteractiveLabPlayer({ labId = "g4-solid-figures", override, rev
   const [notice, setNotice] = useState<string | null>(null);
   const reducedMotion = usePrefersReducedMotion();
   const deviceHints = typeof navigator === "undefined" ? {} : readDeviceHints(navigator);
-  const canUpgrade = !reviewPreview && override === undefined && !manualProfileChoice.current && profile === "LOW" && upgradeEligibility(deviceHints);
+  // A performance downgrade in this session, or remembered from an earlier one, blocks every later auto-upgrade.
+  const performanceDowngraded = useRef(false);
+  const canUpgrade = !reviewPreview && override === undefined && !manualProfileChoice.current && !performanceDowngraded.current && profile === "LOW" && upgradeEligibility(deviceHints) && !recallPerformanceDowngrade(getProfileStorage());
   const [intro, setIntro] = useState(!reviewPreview);
+  // R3 interaction P1: restarting wipes progress, so it asks once inline (no browser dialog) and never reads as "Reset plant".
+  const [confirmRestart, setConfirmRestart] = useState(false);
   const checks = useMemo(() => definition?.checks ?? [], [definition]);
   const latest = useRef(state);
   useEffect(() => {
@@ -88,6 +94,9 @@ export function InteractiveLabPlayer({ labId = "g4-solid-figures", override, rev
   const traceFlowId = activeCheck?.fidelity?.kind === "trace-path" ? activeCheck.fidelity.flowId : null;
   const onPick = (pick: ScenePick) => {
     if (pick.kind === "node") dispatch({ type: "trace-node", flowId: pick.flowId, nodeId: pick.nodeId });
+    // RX-005c tap rule: tapping a control part operates it (same set-variable as the panel twin); a disabled
+    // control does nothing. Inspecting a control part goes through the parts list.
+    else if (pick.item.control) { if (pick.item.control.action) dispatch(pick.item.control.action); }
     else if (pick.item.kind === "object") dispatch({ type: "select", objectId: pick.item.id });
     else dispatch({ type: "inspect-component", componentId: pick.item.id });
   };
@@ -95,6 +104,7 @@ export function InteractiveLabPlayer({ labId = "g4-solid-figures", override, rev
     setProfile((current) => {
       const next = reason === "context" ? "FALLBACK_2D" : downgradeProfile(current);
       rememberProfile(getProfileStorage(), next);
+      if (reason === "performance") { performanceDowngraded.current = true; rememberPerformanceDowngrade(getProfileStorage()); }
       return next;
     });
     setNotice(reason === "context" ? "3D is not available on this device, so the lab switched to the 2D view." : "The lab lowered its visual quality to keep things smooth.");
@@ -119,7 +129,7 @@ export function InteractiveLabPlayer({ labId = "g4-solid-figures", override, rev
   if (intro) return <section className="mx-auto max-w-5xl rounded-3xl bg-slate-950 p-8 text-white shadow-2xl"><p className="text-sm font-semibold uppercase tracking-[.2em] text-cyan-300">Interactive lab</p><h1 className="mt-3 text-3xl font-bold">{definition.title ?? "Interactive lab"}</h1><p className="mt-4 max-w-2xl text-slate-300">{definition.summary ?? "Use the scene to complete the checks."}</p><button type="button" onClick={() => setIntro(false)} className="mt-7 rounded-full bg-cyan-300 px-6 py-3 font-bold text-slate-950">Start exploring</button></section>;
 
   return (
-    <section className="mx-auto max-w-6xl overflow-hidden rounded-3xl bg-slate-950 text-white shadow-2xl">
+    <section data-lab-active-profile={profile} className="relative mx-auto max-w-6xl overflow-hidden rounded-3xl bg-slate-950 text-white shadow-2xl">
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 px-5 py-4">
         <div><p className="text-xs font-semibold uppercase tracking-[.18em] text-cyan-300">Grade {definition.grade} · {definition.subject[0] + definition.subject.slice(1).toLowerCase()}</p><h1 className="text-xl font-bold">{definition.title ?? definition.id}</h1></div>
         <div className="flex items-center gap-2 text-sm">
@@ -129,8 +139,10 @@ export function InteractiveLabPlayer({ labId = "g4-solid-figures", override, rev
         </div>
       </div>
       {notice && <p role="status" className="border-b border-white/10 bg-amber-300/10 px-5 py-2 text-xs text-amber-100">{notice}</p>}
+      {/* Keyboard users skip the scene's focusable parts (every part is a button in the 2D view). */}
+      <a href="#lab-controls" className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:m-2 focus:rounded-full focus:bg-white focus:px-4 focus:py-2 focus:font-bold focus:text-slate-950">Skip to lab controls</a>
       <div className="grid gap-0 lg:grid-cols-[1fr_340px]">
-        <div className={definition.fidelity?.environment === "DAYLIGHT" ? "bg-[linear-gradient(#dbeafe,#f1f5f9_58%,#dce7d4)] text-slate-900" : "bg-[radial-gradient(circle_at_50%_38%,#263d72,#080d20_68%)]"}>
+        <div className={`relative ${definition.fidelity?.environment === "DAYLIGHT" ? "bg-[linear-gradient(#dbeafe,#f1f5f9_58%,#dce7d4)] text-slate-900" : "bg-[radial-gradient(circle_at_50%_38%,#263d72,#080d20_68%)]"}`}>
           {profile === "FALLBACK_2D"
             ? <Fallback2D definition={definition} state={state} reducedMotion={reducedMotion} traceFlowId={traceFlowId} dispatch={dispatch} onPick={onPick} />
             : <SceneLoadBoundary key={profile} onError={onRendererLoadError} fallback={<Fallback2D definition={definition} state={state} reducedMotion={reducedMotion} traceFlowId={traceFlowId} dispatch={dispatch} onPick={onPick} />}>
@@ -138,11 +150,18 @@ export function InteractiveLabPlayer({ labId = "g4-solid-figures", override, rev
                   ? <ThreeScene definition={definition} state={state} profile={profile} reducedMotion={reducedMotion} traceFlowId={traceFlowId} dispatch={dispatch} onPick={onPick} onDowngrade={onDowngrade} onUpgradeReady={onUpgradeReady} allowProfileUpgrade={canUpgrade} allowPerformanceDowngrade={!reviewPreview} />
                   : <WebGLScene definition={definition} state={state} profile={profile} reducedMotion={reducedMotion} traceFlowId={traceFlowId} dispatch={dispatch} onPick={onPick} onDowngrade={onDowngrade} onUpgradeReady={onUpgradeReady} allowProfileUpgrade={canUpgrade} allowPerformanceDowngrade={!reviewPreview} />}
               </SceneLoadBoundary>}
+          <SceneHud definition={definition} state={state} dispatch={dispatch} />
+          <SceneControlBar definition={definition} state={state} dispatch={dispatch} />
         </div>
-        <aside className="lg:max-h-[clamp(420px,62vh,640px)] lg:overflow-y-auto border-l border-white/10 bg-white/[.03] p-5">
+        <aside id="lab-controls" tabIndex={-1} aria-label="Lab controls" className="lg:max-h-[clamp(420px,62vh,640px)] lg:overflow-y-auto border-l border-white/10 bg-white/[.03] p-5">
           <LabControlPanel definition={definition} state={state} activeCheck={activeCheck} dispatch={dispatch} />
           <div className="mt-8 flex gap-2">
-            <button type="button" onClick={() => dispatch({ type: "reset" })} className="min-h-11 rounded-full border border-white/15 px-4 py-2 text-sm">Reset</button>
+            {confirmRestart
+              ? <>
+                  <button type="button" onClick={() => { setConfirmRestart(false); dispatch({ type: "reset" }); }} className="min-h-11 rounded-full border border-red-300 bg-red-700 px-4 py-2 text-sm font-bold text-white">Yes, restart the lab</button>
+                  <button type="button" onClick={() => setConfirmRestart(false)} className="min-h-11 rounded-full border border-white/15 px-4 py-2 text-sm">Keep my progress</button>
+                </>
+              : <button type="button" onClick={() => setConfirmRestart(true)} className="min-h-11 rounded-full border border-white/15 px-4 py-2 text-sm">Restart lab (clears progress)</button>}
             {definition.scene.objects.length > 0 && <button type="button" onClick={() => dispatch({ type: "focus", objectId: state.selectedObjectId ?? definition.scene.objects[0].id })} className="min-h-11 rounded-full border border-white/15 px-4 py-2 text-sm">Focus</button>}
           </div>
         </aside>

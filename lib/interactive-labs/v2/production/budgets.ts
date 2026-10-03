@@ -84,6 +84,7 @@ export type LabBudgetMeasurement = Record<CapabilityProfile, { offlinePackageByt
 export function measureLabBudget(definition: InteractiveLabDefinition<LabState>, states: LabState[], assets: LabAssetBytes[] = []): LabBudgetMeasurement {
   const definitionBytes = buildOfflineManifest(definition).bytes;
   const result = {} as LabBudgetMeasurement;
+  const daylight = definition.fidelity?.environment === "DAYLIGHT";
   for (const profile of Object.keys(RENDER_BUDGETS) as CapabilityProfile[]) {
     const profileAssets = assets.filter((asset) => asset.profiles.includes(profile));
     let triangles = 0, drawCalls = 0, particles = 0;
@@ -91,26 +92,41 @@ export function measureLabBudget(definition: InteractiveLabDefinition<LabState>,
       const list = buildRenderList({ definition, state, profile });
       const svg = profile === "FALLBACK_2D", low = list.budget.meshDetail === "low";
       const geometryProfile = profile === "LOW" ? "LOW" : profile === "STANDARD" ? "STANDARD" : "HIGH";
-      triangles = Math.max(triangles, svg ? 0 : list.items.reduce((sum, item) => sum + (item.parametricGeometry ? parametricTriangleCount(item.parametricGeometry, geometryProfile) : geometryTriangles(item.geometry, low)), 0));
+      // RX-005b surfaces: a ribbon is 2 triangles per span (three.js); LOW splits each span at the centre line (4).
+      const activeSurfaces = list.surfaces.filter((surface) => surface.active && surface.width > 0);
+      const surfaceTriangles = activeSurfaces.reduce((sum, surface) => sum + (surface.points.length - 1) * (low ? 4 : 2), 0);
+      triangles = Math.max(triangles, svg ? 0 : surfaceTriangles + list.items.reduce((sum, item) => sum + (item.parametricGeometry ? parametricTriangleCount(item.parametricGeometry, geometryProfile) : geometryTriangles(item.geometry, low)), 0));
       // ThreeScene: one ground and item draw, each flow line, active particle flow,
       // plus the shared marker batch when instructional markers or trace nodes exist.
       const threeFlowDraws = list.flows.length
         + list.flows.filter((flow) => flow.active && flow.particleCount > 0).length;
       const hasTraceNodes = list.flows.some((flow) => flow.nodes.some((node) => node.traceable));
       const threeMarkerDraw = list.markers.length > 0 || hasTraceNodes ? 1 : 0;
+      // Items: both renderers draw identical static parts as one batch (LOW merged buffers, ThreeScene InstancedMesh),
+      // planned by planLowBatches. Surfaces: one mesh each in ThreeScene; one shared triangle batch on LOW.
+      const plan = planLowBatches(list);
+      const itemDraws = plan.batches.length + plan.singles.length;
+      // A7: HIGH daylight redraws a sun shadow pass when casters move; the worst frame is main pass + shadow pass.
+      const shadowDraws = profile === "HIGH" && daylight
+        ? plan.batches.length + plan.singles.filter((item) => !item.spin && !item.clip && item.alpha >= 0.9 && item.detail !== "decor").length
+        : 0;
       drawCalls = Math.max(drawCalls, svg ? 0 : profile === "LOW"
-        ? planLowBatches(list).drawCalls
-        : list.items.length + 1 + threeFlowDraws + threeMarkerDraw);
+        ? plan.drawCalls + (activeSurfaces.length ? 1 : 0) + (daylight ? 1 : 0)
+        : itemDraws + 1 + threeFlowDraws + threeMarkerDraw + activeSurfaces.length + shadowDraws);
       particles = Math.max(particles, list.flows.reduce((sum, flow) => sum + flow.particleCount, 0));
     }
     result[profile] = {
       offlinePackageBytes: definitionBytes + profileAssets.reduce((sum, asset) => sum + asset.bytes, 0),
       triangles, drawCalls, particles,
-      maxTexturePx: profileAssets.reduce((max, asset) => Math.max(max, asset.maxTexturePx ?? 0), 0),
+      // The HIGH daylight shadow map is a runtime texture (A7).
+      maxTexturePx: Math.max(profile === "HIGH" && daylight ? DAYLIGHT_SHADOW_MAP_PX : 0, profileAssets.reduce((max, asset) => Math.max(max, asset.maxTexturePx ?? 0), 0)),
     };
   }
   return result;
 }
+
+/** Runtime shadow map ThreeScene allocates for a DAYLIGHT lab on HIGH. */
+export const DAYLIGHT_SHADOW_MAP_PX = 1024;
 
 /** Budget violations and regressions against a committed baseline. Empty means the lab passes. */
 export function checkLabBudget(labId: string, measured: LabBudgetMeasurement, baseline?: LabBudgetMeasurement): string[] {

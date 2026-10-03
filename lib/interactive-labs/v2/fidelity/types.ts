@@ -4,6 +4,8 @@
 import type { GeometryKind, LabMode, MaterialSpec, Transform } from "../types";
 import type { Vec3 } from "./math";
 import type { InstructionalGeometryVariants } from "./geometry/types";
+import type { SurfaceDefinition } from "./surfaces";
+import type { SceneControl } from "./controls";
 
 export const HIGH_FIDELITY_SPEC_VERSION = "high-fidelity-lab/1.0.0" as const;
 
@@ -35,6 +37,8 @@ export type ComponentDefinition = {
   carriesSymbol?: boolean;
   carriesScale?: boolean;
   carriesPlaceIdentity?: boolean;
+  /** RX-005c: an in-scene control. Activating the part dispatches the same set-variable as its panel twin. */
+  control?: SceneControl;
 };
 
 export type ComponentMotionDefinition = {
@@ -105,7 +109,8 @@ export type ExplanationLine = { id: string; text: string; minGrade?: number };
 export type SimulationOutput = {
   quantities: Record<string, number>;
   flows: Record<string, { active: boolean; rate: number; direction: 1 | -1 }>;
-  componentStates: Record<string, { intensity?: number; status?: string; color?: string; alpha?: number; pose?: number }>;
+  /** fill (0–1) draws a part at that fraction of its length along x, anchored at its left end (e.g. a gauge segment). */
+  componentStates: Record<string, { intensity?: number; status?: string; color?: string; alpha?: number; pose?: number; fill?: number }>;
   explanation: ExplanationLine[];
 };
 
@@ -136,7 +141,8 @@ export type FlowDefinition = {
 export type CameraPreset = { id: string; label: string; target: Vec3; distance: number; yaw: number; pitch: number };
 export type CameraConstraints = { minDistance: number; maxDistance: number; minPitch: number; maxPitch: number; minYaw: number; maxYaw: number };
 
-export type GuidedStep = { id: string; prompt: string; cameraPresetId?: string; highlightIds?: string[] };
+/** `variables` puts the step in its intended state (validated like a mode start), so a step never inherits a trip. */
+export type GuidedStep = { id: string; prompt: string; cameraPresetId?: string; highlightIds?: string[]; variables?: Record<string, number> };
 
 /** Direct-manipulation learning checks. Evaluated from scene state, never from a free-text claim. */
 export type FidelityCheck =
@@ -189,6 +195,35 @@ export type HighFidelitySpec = {
   offline: { remoteAssets: string[]; maxPackageBytes: number };
   /** Shared presentation intent. Existing labs default to STUDIO. */
   environment?: "DAYLIGHT" | "STUDIO";
+  /** RX-005b: quantity-bound water (or other medium) surfaces. */
+  surfaces?: SurfaceDefinition[];
+  /**
+   * Where a mode starts: entering the mode sets these learner variables and camera preset (validated like any
+   * set-variable). Lets a challenge start under-loaded and an assessment start fresh instead of inheriting a solved state.
+   */
+  modeStart?: Partial<Record<LabMode, { variables?: Record<string, number>; cameraPresetId?: string }>>;
+  /** RX-005e / A17: model quantities shown as always-visible scene chips (same on every profile). */
+  hud?: { quantityId: string; label: string; unit?: string; digits?: number }[];
+  /** Optional state banner for the HUD (e.g. "Tripped: the city is dark"). */
+  hudAlert?: (quantities: Record<string, number>) => { text: string; tone: "danger" | "ok" | "info" } | null;
+  /** Latched protection (a plant trip, a fuse): see ProtectionDefinition. */
+  protection?: ProtectionDefinition;
+};
+
+/**
+ * A latched protection. Whenever a state change makes the overload quantity 1, the engine sets the latch variable to 1
+ * and leaves every learner choice as it was. Nothing clears the latch except an explicit reset-protection action,
+ * which the engine accepts only while resetBlocker returns null. The model reads the latch and keeps the supply off.
+ */
+export type ProtectionDefinition = {
+  /** Non-learner toggle variable (0/1, initial 0) that holds the latch. */
+  latchVariableId: string;
+  /** Simulation quantity that is 1 while the present conditions are an overload, whatever the latch says. */
+  overloadQuantityId: string;
+  /** Learner-facing name of the reset control, e.g. "Reset plant". */
+  resetLabel: string;
+  /** Why a reset would fail for these quantities (learner-facing), or null when it is safe. */
+  resetBlocker: (quantities: Record<string, number>) => string | null;
 };
 
 export type FidelityState = {
@@ -221,6 +256,7 @@ export type FidelityAction =
   | { type: "clear-trace"; flowId: string }
   | { type: "inspect-component"; componentId: string }
   | { type: "guided-step"; index: number }
-  | { type: "toggle-flow"; flowId: string };
+  | { type: "toggle-flow"; flowId: string }
+  | { type: "reset-protection" };
 
-export const FIDELITY_ACTION_TYPES = Object.freeze(["set-variable", "set-explode", "set-cutaway", "toggle-layer", "isolate", "toggle-labels", "camera-preset", "clear-assembly", "place-component", "trace-node", "clear-trace", "inspect-component", "guided-step", "toggle-flow"] as const);
+export const FIDELITY_ACTION_TYPES = Object.freeze(["set-variable", "set-explode", "set-cutaway", "toggle-layer", "isolate", "toggle-labels", "camera-preset", "clear-assembly", "place-component", "trace-node", "clear-trace", "inspect-component", "guided-step", "toggle-flow", "reset-protection"] as const);

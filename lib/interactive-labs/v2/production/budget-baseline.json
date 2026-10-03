@@ -3,14 +3,14 @@
     "HIGH": {
       "offlinePackageBytes": 10005,
       "triangles": 1072,
-      "drawCalls": 10,
+      "drawCalls": 11,
       "particles": 18,
       "maxTexturePx": 0
     },
     "STANDARD": {
       "offlinePackageBytes": 10005,
       "triangles": 1072,
-      "drawCalls": 10,
+      "drawCalls": 11,
       "particles": 10,
       "maxTexturePx": 0
     },
@@ -33,21 +33,21 @@
     "HIGH": {
       "offlinePackageBytes": 14882,
       "triangles": 1044,
-      "drawCalls": 10,
+      "drawCalls": 6,
       "particles": 0,
       "maxTexturePx": 0
     },
     "STANDARD": {
       "offlinePackageBytes": 14882,
       "triangles": 1044,
-      "drawCalls": 10,
+      "drawCalls": 6,
       "particles": 0,
       "maxTexturePx": 0
     },
     "LOW": {
       "offlinePackageBytes": 14882,
       "triangles": 300,
-      "drawCalls": 6,
+      "drawCalls": 5,
       "particles": 0,
       "maxTexturePx": 0
     },
@@ -61,31 +61,31 @@
   },
   "mount-coffee-hydropower": {
     "HIGH": {
-      "offlinePackageBytes": 28696,
-      "triangles": 1976,
-      "drawCalls": 64,
-      "particles": 180,
-      "maxTexturePx": 0
+      "offlinePackageBytes": 59045,
+      "triangles": 7182,
+      "drawCalls": 79,
+      "particles": 162,
+      "maxTexturePx": 1024
     },
     "STANDARD": {
-      "offlinePackageBytes": 28696,
-      "triangles": 1976,
-      "drawCalls": 64,
-      "particles": 100,
+      "offlinePackageBytes": 59045,
+      "triangles": 7074,
+      "drawCalls": 59,
+      "particles": 90,
       "maxTexturePx": 0
     },
     "LOW": {
-      "offlinePackageBytes": 28696,
-      "triangles": 836,
-      "drawCalls": 38,
-      "particles": 40,
+      "offlinePackageBytes": 59045,
+      "triangles": 1228,
+      "drawCalls": 34,
+      "particles": 36,
       "maxTexturePx": 0
     },
     "FALLBACK_2D": {
-      "offlinePackageBytes": 28696,
+      "offlinePackageBytes": 59045,
       "triangles": 0,
       "drawCalls": 0,
-      "particles": 60,
+      "particles": 54,
       "maxTexturePx": 0
     }
   }

@@ -1,8 +1,9 @@
 "use client";
 import { useState } from "react";
 import type { InteractiveLabDefinition, LabAction, LabMode, LabState, LearningCheck } from "@/lib/interactive-labs/v2/types";
-import { deriveSimulation, explainState, isComponentRevealed } from "@/lib/interactive-labs/v2/fidelity/engine";
+import { deriveSimulation, explainState, isComponentRevealed, protectionStatus } from "@/lib/interactive-labs/v2/fidelity/engine";
 import { formatVariable, stepVariable } from "@/lib/interactive-labs/v2/fidelity/variables";
+import { ProtectionReset } from "./ProtectionReset";
 
 type Props = { definition: InteractiveLabDefinition<LabState>; state: LabState; activeCheck: LearningCheck | undefined; dispatch: (action: LabAction) => void };
 
@@ -24,7 +25,10 @@ export function LabControlPanel({ definition, state, activeCheck, dispatch }: Pr
   const target = modeOwnsTask ? undefined : activeCheck?.fidelity;
   const taskPrompt = guided?.prompt ?? (state.mode === "CHALLENGE" && spec ? spec.authoring.challenge : activeCheck?.prompt ?? "You completed every check!");
   const explanation = spec && fidelity ? explainState(spec, fidelity, definition.grade) : [];
-  const hint = state.lastFeedback === "incorrect" && activeCheck?.hints.length ? activeCheck.hints[Math.min(activeCheck.hints.length - 1, Math.max(0, state.retries - 1))] : null;
+  // R3 interaction P1: a check made while the plant is still tripped fails for that reason, not the learner's arithmetic.
+  const protection = spec && state.fidelity ? protectionStatus(spec, state.fidelity) : null;
+  const trippedHint = protection?.latched ? (protection.blocker ?? `Your setting may be right, but the plant is still tripped. Press ${protection.resetLabel}, then check again.`) : null;
+  const hint = state.lastFeedback === "incorrect" ? trippedHint ?? (activeCheck?.hints.length ? activeCheck.hints[Math.min(activeCheck.hints.length - 1, Math.max(0, state.retries - 1))] : null) : null;
 
   return (
     <div className="space-y-6">
@@ -33,10 +37,12 @@ export function LabControlPanel({ definition, state, activeCheck, dispatch }: Pr
       </div>
 
       {(explanation.length > 0 || Object.keys(simulation?.quantities ?? {}).length > 0) && (
-        <section aria-label="What is happening" aria-live="polite" className="sticky top-1 z-20 max-h-[28vh] overflow-y-auto rounded-2xl border border-white/10 bg-slate-950/95 p-3 shadow-xl backdrop-blur">
+        <section aria-label="What is happening" aria-live="polite" className="sticky top-1 z-20 max-h-[20vh] overflow-y-auto rounded-2xl border border-white/10 bg-slate-950/95 p-3 shadow-xl backdrop-blur">
           <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-400">What is happening</h3>
-          <p className="mt-1 text-[10px] text-slate-400 sm:hidden">Scroll this panel for more details</p>
+          {/* R3 visual P1: the cue shows on every screen size; a fade marks the cut-off line. */}
+          <p className="mt-1 text-[10px] text-slate-400">Scroll this panel for more details</p>
           <ul className="mt-2 space-y-1 text-sm text-slate-200">{explanation.map((line) => <li key={line.id}>{line.text}</li>)}</ul>
+          <div aria-hidden="true" className="pointer-events-none sticky -bottom-3 -mx-3 -mb-3 h-6 bg-gradient-to-t from-slate-950 to-transparent" />
         </section>
       )}
 
@@ -116,6 +122,7 @@ export function LabControlPanel({ definition, state, activeCheck, dispatch }: Pr
           {spec.variables.some((variable) => variable.learnerControlled) && (
             <section aria-label="Controls" className="space-y-3">
               <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-400">Controls</h3>
+              <ProtectionReset definition={definition} state={state} dispatch={dispatch} surface="panel" />
               {spec.variables.filter((variable) => variable.learnerControlled).map((variable) => {
                 const value = fidelity.variables[variable.id];
                 if (variable.kind === "toggle") return <button key={variable.id} type="button" role="switch" aria-checked={value === variable.max} onClick={() => dispatch({ type: "set-variable", variableId: variable.id, value: stepVariable(variable, value, 1) })} className={chip(value === variable.max)}>{variable.label}: {variable.id === "switch" ? (value === variable.max ? "Closed" : "Open") : formatVariable(variable, value)}</button>;
@@ -151,15 +158,20 @@ export function LabControlPanel({ definition, state, activeCheck, dispatch }: Pr
             <div className="flex flex-wrap gap-2">
               {spec.cutaways.map((cutaway) => <button key={cutaway.id} type="button" aria-pressed={fidelity.activeCutawayId === cutaway.id} onClick={() => dispatch({ type: "set-cutaway", cutawayId: fidelity.activeCutawayId === cutaway.id ? null : cutaway.id })} className={chip(fidelity.activeCutawayId === cutaway.id)}>{cutaway.label}</button>)}
               {spec.layers.map((layer) => <button key={layer.id} type="button" aria-pressed={!fidelity.hiddenLayerIds.includes(layer.id)} onClick={() => dispatch({ type: "toggle-layer", layerId: layer.id })} className={chip(!fidelity.hiddenLayerIds.includes(layer.id))}>{layer.label}</button>)}
-              {spec.flows.map((flow) => <button key={flow.id} type="button" aria-pressed={!fidelity.hiddenFlowIds.includes(flow.id)} onClick={() => dispatch({ type: "toggle-flow", flowId: flow.id })} className={chip(!fidelity.hiddenFlowIds.includes(flow.id))}>Show {flow.label.toLowerCase()}</button>)}
               <button type="button" aria-pressed={fidelity.labelsVisible} onClick={() => dispatch({ type: "toggle-labels" })} className={chip(fidelity.labelsVisible)}>Labels</button>
               {fidelity.isolatedId
                 ? <button type="button" onClick={() => dispatch({ type: "isolate", targetId: null })} className={chip(true)}>Show everything</button>
                 : (fidelity.inspectedComponentId ?? state.selectedObjectId) && <button type="button" onClick={() => dispatch({ type: "isolate", targetId: fidelity.inspectedComponentId ?? state.selectedObjectId })} className={chip(false)}>Isolate selected</button>}
             </div>
-            <div className="flex flex-wrap gap-2" aria-label="Parts you can see">
-              {spec.components.filter((component) => component.selectable !== false && isComponentRevealed(spec, fidelity, component.id)).sort((a, b) => a.label.localeCompare(b.label)).map((component) => <button key={component.id} type="button" aria-pressed={fidelity.inspectedComponentId === component.id} onClick={() => dispatch({ type: "inspect-component", componentId: component.id })} className={chip(fidelity.inspectedComponentId === component.id)}>{component.label}</button>)}
+            <details className="rounded-xl border border-white/10 p-2">
+              <summary className="min-h-11 cursor-pointer py-2 text-xs font-semibold uppercase tracking-wider text-slate-300">Parts and traces</summary>
+              <div className="mt-2 flex flex-wrap gap-2" aria-label="Process paths">
+                {spec.flows.map((flow) => <button key={flow.id} type="button" aria-pressed={!fidelity.hiddenFlowIds.includes(flow.id)} onClick={() => dispatch({ type: "toggle-flow", flowId: flow.id })} className={chip(!fidelity.hiddenFlowIds.includes(flow.id))}>Show {flow.label.toLowerCase()}</button>)}
+              </div>
+            <div className="mt-2 flex flex-wrap gap-2" aria-label="Parts you can see">
+              {spec.components.filter((component) => component.selectable !== false && !component.control && isComponentRevealed(spec, fidelity, component.id)).sort((a, b) => a.label.localeCompare(b.label)).map((component) => <button key={component.id} type="button" aria-pressed={fidelity.inspectedComponentId === component.id} onClick={() => dispatch({ type: "inspect-component", componentId: component.id })} className={chip(fidelity.inspectedComponentId === component.id)}>{component.label}</button>)}
             </div>
+            </details>
             {fidelity.inspectedComponentId && <p className="text-xs text-slate-300">{spec.components.find((component) => component.id === fidelity.inspectedComponentId)?.description ?? ""}</p>}
           </section>
 
