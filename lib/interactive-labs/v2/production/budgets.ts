@@ -105,7 +105,7 @@ export function measureLabBudget(definition: InteractiveLabDefinition<LabState>,
       triangles = Math.max(triangles, frame.triangles + frame.shadowTriangles);
       drawCalls = Math.max(drawCalls, frame.drawCalls + frame.shadowDrawCalls);
       texturePx = Math.max(texturePx, ...frame.textures.map((texture) => texture.px));
-      particles = Math.max(particles, list.flows.reduce((sum, flow) => sum + flow.particleCount, 0));
+      particles = Math.max(particles, list.flows.reduce((sum, flow) => sum + flow.particleCount, 0) + list.emitters.reduce((sum, emitter) => sum + emitter.particleCount, 0));
     }
     result[profile] = {
       offlinePackageBytes: definitionBytes + chunks.storageBytes + assetBytes,

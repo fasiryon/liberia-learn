@@ -6,7 +6,8 @@ import type { RenderItem, RenderList } from "@/lib/interactive-labs/v2/fidelity/
 import { buildParametricGeometry } from "@/lib/interactive-labs/v2/fidelity/geometry/builders";
 import { flowParticles, spinMatrix } from "@/lib/interactive-labs/v2/fidelity/presentation";
 import { planLowBatches, type LowBatchPlan } from "@/lib/interactive-labs/v2/fidelity/lowBatch";
-import { castsShadow, threeTransparent } from "@/lib/interactive-labs/v2/fidelity/framePlan";
+import { castsShadow, runningEmitters, threeTransparent } from "@/lib/interactive-labs/v2/fidelity/framePlan";
+import { emitterParticles } from "@/lib/interactive-labs/v2/fidelity/emitters";
 import { HIGHLIGHT_COLOR, MARKER_COLOR } from "@/lib/interactive-labs/v2/fidelity/palette";
 import { disposeSurfaces, syncSurfaces, type SurfaceStore } from "./threeSurfaces";
 
@@ -20,12 +21,13 @@ export type ThreeSceneStores = {
   markers: THREE.Points | null;
   surfaces: SurfaceStore;
   instanced: Map<string, THREE.InstancedMesh>;
+  emitters: Map<string, THREE.Points<THREE.BufferGeometry, THREE.ShaderMaterial>>;
   shadows: boolean;
   shadowHash: string;
 };
 
 export function createThreeSceneStores(scene: THREE.Scene, shadows: boolean): ThreeSceneStores {
-  return { scene, objects: new Map(), geometries: new Map(), materials: new Map(), flowLines: new Map(), flowParticles: new Map(), markers: null, surfaces: new Map(), instanced: new Map(), shadows, shadowHash: "" };
+  return { scene, objects: new Map(), geometries: new Map(), materials: new Map(), flowLines: new Map(), flowParticles: new Map(), markers: null, surfaces: new Map(), instanced: new Map(), emitters: new Map(), shadows, shadowHash: "" };
 }
 
 /** The primitive meshes ThreeScene builds; their triangle counts are THREE_PRIMITIVE_TRIANGLES in framePlan.ts. */
@@ -122,6 +124,7 @@ export function syncThreeScene(stores: ThreeSceneStores, list: RenderList, optio
   for (const [key, material] of stores.materials) if (!usedMaterials.has(key)) { material.dispose(); stores.materials.delete(key); }
 
   syncSurfaces(scene, stores.surfaces, list.surfaces, options.time, options.reducedMotion, options.profile);
+  syncEmitters(stores, list, options);
 
   const activeFlowIds = new Set(list.flows.map((flow) => flow.id));
   for (const [id, line] of stores.flowLines) if (!activeFlowIds.has(id)) line.removeFromParent();
@@ -175,6 +178,31 @@ export function syncThreeScene(stores: ThreeSceneStores, list: RenderList, optio
   return plan;
 }
 
+// A18 round sprites for emitter particles: a disc cut in the fragment shader, no texture.
+const spriteVertex = `uniform float uSize; void main() { gl_PointSize = uSize; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`;
+const spriteFragment = `uniform vec3 uColor; void main() { vec2 c = gl_PointCoord - 0.5; if (dot(c, c) > 0.25) discard; gl_FragColor = vec4(uColor, 1.0); #include <colorspace_fragment> }`;
+
+function syncEmitters(stores: ThreeSceneStores, list: RenderList, options: ThreeSyncOptions) {
+  const running = runningEmitters(list), live = new Set(running.map((emitter) => emitter.id));
+  for (const [id, points] of stores.emitters) if (!live.has(id)) points.removeFromParent();
+  for (const emitter of running) {
+    const positionsNow = emitterParticles(emitter, options.time, options.reducedMotion);
+    let points = stores.emitters.get(emitter.id);
+    if (!points) {
+      const material = new THREE.ShaderMaterial({ vertexShader: spriteVertex, fragmentShader: spriteFragment, depthTest: false, toneMapped: false, uniforms: { uColor: { value: new THREE.Color(emitter.color) }, uSize: { value: options.profile === "HIGH" ? 7 : 6 } } });
+      points = new THREE.Points(new THREE.BufferGeometry(), material);
+      points.renderOrder = 7; points.userData.labEmitter = emitter.id; points.frustumCulled = false;
+      stores.emitters.set(emitter.id, points);
+    }
+    let attribute = points.geometry.getAttribute("position") as THREE.BufferAttribute | undefined;
+    if (!attribute || attribute.count !== positionsNow.length) { attribute = new THREE.BufferAttribute(new Float32Array(positionsNow.length * 3), 3); points.geometry.setAttribute("position", attribute); }
+    positionsNow.forEach((point, index) => attribute!.array.set(point, index * 3));
+    attribute.needsUpdate = true;
+    points.material.uniforms.uColor.value.set(emitter.color);
+    if (!points.parent) stores.scene.add(points);
+  }
+}
+
 /** A7: a pure hash of the shadow casters' matrices; the shadow map redraws only when it changes. */
 export function shadowCasterHash(list: RenderList): string {
   return list.items.filter(castsShadow).map((item) => item.id + ":" + item.matrix.map((value) => value.toFixed(3)).join(",")).join("|");
@@ -189,6 +217,8 @@ export function disposeThreeSceneStores(stores: ThreeSceneStores): void {
   if (stores.markers) { stores.markers.removeFromParent(); stores.markers.geometry.dispose(); (stores.markers.material as THREE.Material).dispose(); stores.markers = null; }
   disposeSurfaces(stores.surfaces);
   for (const instanced of stores.instanced.values()) { instanced.removeFromParent(); instanced.dispose(); }
+  for (const points of stores.emitters.values()) { points.removeFromParent(); points.geometry.dispose(); points.material.dispose(); }
+  stores.emitters.clear();
   stores.objects.clear(); stores.geometries.clear(); stores.materials.clear(); stores.flowLines.clear(); stores.flowParticles.clear(); stores.instanced.clear();
 }
 

@@ -99,6 +99,8 @@ export const CIRCUIT_FIDELITY: HighFidelitySpec = {
       { id: "battery-negative", label: "Battery − end", position: [-3, -0.9, 0], componentId: "battery", traceable: true },
     ],
   }],
+  // RX-005b reference emitter: light pulses out of the bulb only while current flows, scaled by brightness.
+  emitters: [{ id: "bulb-light", label: "Light from the bulb", kind: "pulse", medium: "light", origin: [0.4, -1.3, 0.3], direction: [0, 0, 1], reach: 1.1, activeQuantity: "brightness", rateQuantity: "brightness", color: "#fde047", componentId: "bulb-glass", lowProxy: { kind: "glyph", glyph: "✺" }, staticCue: { kind: "glyph", glyph: "✺" } }],
   camera: {
     defaultPresetId: "overview",
     presets: [

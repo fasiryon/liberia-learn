@@ -6,6 +6,7 @@ import type { Vec3 } from "./math";
 import type { InstructionalGeometryVariants } from "./geometry/types";
 import type { SurfaceDefinition } from "./surfaces";
 import type { SceneControl } from "./controls";
+import type { EmitterDefinition } from "./emitters";
 
 export const HIGH_FIDELITY_SPEC_VERSION = "high-fidelity-lab/1.0.0" as const;
 
@@ -205,6 +206,8 @@ export type HighFidelitySpec = {
   environment?: "DAYLIGHT" | "STUDIO";
   /** RX-005b: quantity-bound water (or other medium) surfaces. */
   surfaces?: SurfaceDefinition[];
+  /** RX-005b: quantity-bound emitters (stream, spray, upwell, bubble, pulse). */
+  emitters?: EmitterDefinition[];
   /**
    * Where a mode starts: entering the mode sets these learner variables and camera preset (validated like any
    * set-variable). Lets a challenge start under-loaded and an assessment start fresh instead of inheriting a solved state.

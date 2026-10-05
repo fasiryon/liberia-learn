@@ -23,6 +23,7 @@ import { publishFramePlan, type ReviewFrameProbe } from "@/lib/interactive-labs/
 import { createSurfaceTriangleStorage, writeSurfaceTriangles } from "@/lib/interactive-labs/v2/fidelity/surfaces";
 import type { MeshData } from "./meshes";
 import { pickNearest, type ScenePick } from "./picking";
+import { cueElements } from "./sceneCues";
 
 type Props = {
   definition: InteractiveLabDefinition<LabState>;
@@ -361,6 +362,9 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
           node.style.left = `${entry.at!.x}px`; node.style.top = `${entry.at!.y}px`;
           return node;
         }));
+        // A15: reduced motion keeps static direction cues; LOW shows an emitter's glyph proxy in place of particles.
+        const glyphProxies = list.emitters.filter((emitter) => emitter.active && emitter.lowProxy.kind === "glyph").map((emitter) => ({ id: `proxy:${emitter.id}`, kind: "glyph" as const, glyph: emitter.lowProxy.kind === "glyph" ? emitter.lowProxy.glyph : "", position: emitter.origin, direction: emitter.direction, color: emitter.color }));
+        labels.current.append(...cueElements([...(motionless ? list.cues : []), ...glyphProxies], project));
       }
       const fidelityMoving = !!(spec && current.fidelity && displayRef.current && !isSettled(displayRef.current, current.fidelity));
       const cameraMoving = !motionless && (Math.abs(camera.distance - targetPose.distance) > 1e-4 || Math.abs(camera.yaw - targetPose.yaw) > 1e-4 || Math.abs(camera.pitch - targetPose.pitch) > 1e-4 || camera.target.some((value, index) => Math.abs(value - targetPose.target[index]) > 1e-4));

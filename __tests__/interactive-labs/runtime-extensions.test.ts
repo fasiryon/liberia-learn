@@ -105,7 +105,7 @@ describe("shared interactive-lab runtime extensions", () => {
   });
 
   it("batches inactive paths as alternating segment pairs and reuses capacity", () => {
-    const list: RenderList = { items: [], markers: [], surfaces: [], motions: [], camera: null, budget: RENDER_BUDGETS.HIGH, explanation: [], quantities: {}, environment: "STUDIO", flows: [{
+    const list: RenderList = { items: [], markers: [], surfaces: [], emitters: [], cues: [], motions: [], camera: null, budget: RENDER_BUDGETS.HIGH, explanation: [], quantities: {}, environment: "STUDIO", flows: [{
       id: "flow", label: "Flow", color: "#22d3ee", points: [[0, 0, 0], [1, 0, 0], [2, 0, 0], [3, 0, 0]], active: false, rate: 0, direction: 1, particleCount: 0,
       nodes: [{ id: "a", label: "A", position: [0, 0, 0], traceable: true }, { id: "b", label: "B", position: [1, 0, 0], traceable: true }], traced: [],
     }] };
@@ -124,7 +124,7 @@ describe("shared interactive-lab runtime extensions", () => {
 
   it("writes active particle positions into reusable storage without per-particle arrays", () => {
     const points: [number, number, number][] = [[0, 0, 0], [3, 0, 0], [3, 4, 0]];
-    const list: RenderList = { items: [], markers: [], surfaces: [], motions: [], camera: null, budget: RENDER_BUDGETS.HIGH, explanation: [], quantities: {}, environment: "STUDIO", flows: [{
+    const list: RenderList = { items: [], markers: [], surfaces: [], emitters: [], cues: [], motions: [], camera: null, budget: RENDER_BUDGETS.HIGH, explanation: [], quantities: {}, environment: "STUDIO", flows: [{
       id: "active", label: "Active", color: "#22d3ee", points, active: true, rate: 0.7, direction: -1, particleCount: 5,
       nodes: [], traced: [],
     }] };

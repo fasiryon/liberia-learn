@@ -1,6 +1,7 @@
 import type { RenderFlow, RenderList } from "./renderList";
 import { measureFlowPath, type FlowPathMetrics, writeFlowParticles } from "./presentation";
 import { INACTIVE_FLOW_COLOR, MARKER_COLOR, parseHexColor } from "./palette";
+import { emitterParticles } from "./emitters";
 import type { Vec3 } from "./math";
 
 export type FlowVertexBatch = { positions: Float32Array; colors: Float32Array; count: number };
@@ -89,6 +90,8 @@ export function batchFlowGeometry(list: RenderList, timeSeconds: number, reduced
     }
     if (traceFlowId === flow.id) for (const node of flow.nodes) if (node.traceable) push(storage.traceNodes, node.position, MARKER_COLOR);
   }
+  // A15 LOW proxy: an emitter whose lowProxy is "points" shows a few static points in the same particle batch.
+  for (const emitter of list.emitters) if (emitter.particleCount > 0 && emitter.lowProxy.kind === "points") for (const point of emitterParticles(emitter, 0, true)) push(storage.particles, point, emitter.color);
   return storage;
 }
 

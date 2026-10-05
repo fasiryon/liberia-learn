@@ -8,6 +8,7 @@ import { resolveGeometryVariant } from "./geometry/builders";
 import { validateSurfaces } from "./surfaces";
 import { validateControls } from "./controls";
 import { validateCamera } from "./camera";
+import { validateEmitters } from "./emitters";
 import { buildRenderList, type RenderItem } from "./renderList";
 
 /**
@@ -161,6 +162,7 @@ export function validateHighFidelityDefinition(definition: InteractiveLabDefinit
     if (!spec.protection.resetLabel.trim()) errors.push("protection_reset_label_missing");
   }
   if (spec.surfaces?.length) errors.push(...validateSurfaces(spec, spec.simulation ? deriveSimulation(spec, initialFidelityState(spec)).quantities : {}));
+  if (spec.emitters?.length) errors.push(...validateEmitters(spec, spec.simulation ? deriveSimulation(spec, initialFidelityState(spec)).quantities : {}));
   // RX-005d / A16: limits, target box, presets, frames, rails, and every learner target framed by some preset.
   let items: RenderItem[] = [];
   try { items = buildRenderList({ definition, state: definition.initialState, profile: "HIGH" }).items; } catch { errors.push("camera_frame_items_unavailable"); }

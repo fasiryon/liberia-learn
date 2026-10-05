@@ -52,7 +52,11 @@ function itemTriangles(item: RenderItem, profile: Exclude<CapabilityProfile, "FA
   return profile === "LOW" ? lowPrimitiveTriangles(item.geometry) : THREE_PRIMITIVE_TRIANGLES[item.geometry];
 }
 const activeSurfaces = (list: Pick<RenderList, "surfaces">) => list.surfaces.filter((surface) => surface.active && surface.width > 0);
-const hasParticles = (list: Pick<RenderList, "flows">) => list.flows.some((flow) => flow.active && flow.particleCount > 0 && flow.rate > 0 && flow.points.length >= 2);
+/** LOW draws flow particles and the static points of emitters whose lowProxy is "points" as one shared batch. */
+const hasParticles = (list: Pick<RenderList, "flows" | "emitters">) => list.flows.some((flow) => flow.active && flow.particleCount > 0 && flow.rate > 0 && flow.points.length >= 2)
+  || list.emitters.some((emitter) => emitter.particleCount > 0 && emitter.lowProxy.kind === "points");
+/** ThreeScene draws one round-sprite point cloud per running emitter. */
+export const runningEmitters = (list: Pick<RenderList, "emitters">) => list.emitters.filter((emitter) => emitter.active && emitter.particleCount > 0);
 const hasTraceNodes = (list: Pick<RenderList, "flows">, traceFlowId: string | null) => !!traceFlowId && list.flows.some((flow) => flow.id === traceFlowId && flow.nodes.some((node) => node.traceable));
 const hasLines = (list: Pick<RenderList, "flows">) => list.flows.some((flow) => flow.points.length >= 2);
 
@@ -79,7 +83,7 @@ export function planThreeFrame(list: RenderList, options: { profile: "HIGH" | "S
   const particleFlows = list.flows.filter((flow) => flow.active && flow.particleCount > 0 && flow.rate > 0 && flow.points.length >= 2).length;
   const markerCloud = list.markers.length > 0 || hasTraceNodes(list, options.traceFlowId) ? 1 : 0;
   const itemDraws = plan.batches.reduce((sum, batch) => sum + threePasses(batch.items[0]), 0) + plan.singles.reduce((sum, item) => sum + threePasses(item), 0);
-  const drawCalls = 1 + (daylight ? 1 : 0) + itemDraws + surfaces.length + list.flows.length + particleFlows + markerCloud;
+  const drawCalls = 1 + (daylight ? 1 : 0) + itemDraws + surfaces.length + list.flows.length + particleFlows + runningEmitters(list).length + markerCloud;
   const tri = (item: RenderItem) => itemTriangles(item, options.profile);
   // The shadow pass draws each caster once; the main pass draws transparent DoubleSide parts twice.
   const shadowBatchTriangles = plan.batches.reduce((sum, batch) => sum + tri(batch.items[0]) * batch.items.length, 0);

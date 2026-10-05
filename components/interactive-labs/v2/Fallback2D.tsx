@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import type { InteractiveLabDefinition, LabAction, LabState } from "@/lib/interactive-labs/v2/types";
 import { buildRenderList, fallbackVisibleItems } from "@/lib/interactive-labs/v2/fidelity/renderList";
 import { flowParticles } from "@/lib/interactive-labs/v2/fidelity/presentation";
+import { emitterParticles } from "@/lib/interactive-labs/v2/fidelity/emitters";
 import { HIGHLIGHT_COLOR, INACTIVE_FLOW_COLOR, MARKER_COLOR, mixHexColor } from "@/lib/interactive-labs/v2/fidelity/palette";
 import { transformPoint } from "@/lib/interactive-labs/v2/fidelity/math";
 import { fallbackFrame, findPreset } from "@/lib/interactive-labs/v2/fidelity/camera";
@@ -110,6 +111,16 @@ export function Fallback2D({ definition, state, reducedMotion, traceFlowId, disp
             {!reducedMotion && flowParticles(flow.points, flow.particleCount, flow.rate, flow.direction, time, false).map((p, index) => <circle key={index} cx={p[0]} cy={-p[1]} r={0.09} fill={flow.color} />)}
           </g>
         ))}
+        {/* RX-005b emitters: the same seeded particles as 3D (frozen under reduced motion), and A15 static cues for
+            moving surfaces and emitters under reduced motion (active flows already carry arrowheads). */}
+        {list.emitters.filter((emitter) => emitter.active).map((emitter) => (
+          <g key={`emitter-${emitter.id}`} aria-label={`${emitter.label}: active`} pointerEvents="none">
+            {emitterParticles(emitter, time, reducedMotion).map((p, index) => <circle key={index} cx={p[0]} cy={-p[1]} r={0.08} fill={emitter.color} />)}
+          </g>
+        ))}
+        {reducedMotion && list.cues.filter((cue) => !list.flows.some((flow) => cue.id.startsWith(`${flow.id}:`))).map((cue) => cue.kind === "glyph"
+          ? <text key={cue.id} data-lab-cue={cue.id} x={cue.position[0]} y={-cue.position[1]} fontSize={0.4 * screenScale} textAnchor="middle" dominantBaseline="central" fill={cue.color} aria-hidden="true">{cue.glyph}</text>
+          : <path key={cue.id} data-lab-cue={cue.id} d="M -0.18 -0.14 L 0.18 0 L -0.18 0.14 Z" fill={cue.color} stroke="#0f172a" strokeWidth={0.03} aria-hidden="true" transform={`translate(${cue.position[0]} ${-cue.position[1]}) rotate(${(Math.atan2(-cue.direction[1], cue.direction[0]) * 180 / Math.PI).toFixed(2)}) scale(${screenScale.toFixed(3)})`} />)}
         {list.markers.map((marker) => <g key={marker.id}><circle cx={marker.position[0]} cy={-marker.position[1]} r={0.16 * screenScale} fill={marker.color} />{marker.label && <text x={marker.position[0]} y={-marker.position[1] + 0.09 * screenScale} textAnchor="middle" fontSize={0.2 * screenScale} fill="#0f172a">{marker.label}</text>}</g>)}
         {list.motions.filter((motion) => motion.active).map((motion) => <g key={motion.id} role="img" aria-label={`${motion.label}: turning`} transform={`translate(${motion.center[0]} ${-motion.center[1]})`}><title>{`${motion.label}: turning`}</title><text textAnchor="middle" dominantBaseline="central" fontSize={0.58} fontWeight={700} fill="#f0abfc">↻</text></g>)}
         {traceFlowId && list.flows.filter((flow) => flow.id === traceFlowId).flatMap((flow) => flow.nodes.filter((node) => node.traceable).map((node) => {
