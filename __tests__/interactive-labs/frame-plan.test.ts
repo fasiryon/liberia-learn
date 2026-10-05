@@ -4,7 +4,7 @@ import { getInteractiveLabDefinition } from "@/lib/interactive-labs/v2/registry"
 import { initializeLab } from "@/lib/interactive-labs/v2/kernel";
 import { LAB_REVIEW_SCENARIO_SETS } from "@/lib/interactive-labs/v2/review/referenceScenarios";
 import { replayReviewScenario } from "@/lib/interactive-labs/v2/review/scenarios";
-import { buildRenderList, type RenderList } from "@/lib/interactive-labs/v2/fidelity/renderList";
+import { buildRenderList, type RenderItem, type RenderList } from "@/lib/interactive-labs/v2/fidelity/renderList";
 import { activeTraceFlowId, planLowFrame, planThreeFrame, THREE_GROUND_TRIANGLES, THREE_PRIMITIVE_TRIANGLES, THREE_SKY_TRIANGLES } from "@/lib/interactive-labs/v2/fidelity/framePlan";
 import { createLowBatchCache, MAX_LOW_BATCH_VERTICES, planLowBatches, syncLowBatchCache } from "@/lib/interactive-labs/v2/fidelity/lowBatch";
 import { compareFramePlan } from "@/lib/interactive-labs/v2/review/framePlanEvidence";
@@ -159,6 +159,49 @@ describe("RX-006 test 1: the LOW frame planner", () => {
     expect(next).not.toBe(initial);
     expect(next.batches.flatMap((batch) => batch.itemIds)).not.toContain(batchedId);
     expect(next.singles.find((item) => item.id === batchedId)?.highlighted).toBe(true);
+  });
+
+  it.each([
+    { change: "leaves focus", update: (item: RenderItem): RenderItem => ({ ...item, inFocus: false }) },
+    { change: "is highlighted/selected", update: (item: RenderItem): RenderItem => ({ ...item, highlighted: true }) },
+    { change: "is isolated/faded", update: (item: RenderItem): RenderItem => ({ ...item, inFocus: false, alpha: 0.12 }) },
+    { change: "is clipped", update: (item: RenderItem): RenderItem => ({ ...item, clip: { normal: [0, 1, 0], offset: 0 } }) },
+    { change: "starts spinning", update: (item: RenderItem): RenderItem => ({ ...item, spin: { pre: item.matrix, local: item.matrix, pivot: [0, 0, 0], axis: "y", radPerSec: 1 } }) },
+    { change: "changes geometry", update: (item: RenderItem): RenderItem => ({ ...item, geometry: "sphere" }) },
+    { change: "becomes translucent", update: (item: RenderItem): RenderItem => ({ ...item, alpha: 0.5 }) },
+  ])("rebuilds membership when a batched component $change", ({ update }) => {
+    const definition = getInteractiveLabDefinition("mount-coffee-hydropower")!;
+    const list = buildRenderList({ definition, state: initializeLab(definition), profile: "LOW" });
+    const cache = createLowBatchCache(), initial = syncLowBatchCache(cache, list), id = initial.batches[0].itemIds[0];
+    const items = list.items.map((item) => item.id === id ? update(item) : item);
+    const next = syncLowBatchCache(cache, { ...list, items });
+    expect(next).not.toBe(initial);
+    expect(next.batches.flatMap((batch) => batch.itemIds)).not.toContain(id);
+    expect(next.singles.find((item) => item.id === id)).toEqual(items.find((item) => item.id === id));
+  });
+
+  it("keeps membership stable when a batched component's pose changes", () => {
+    const definition = getInteractiveLabDefinition("mount-coffee-hydropower")!;
+    const list = buildRenderList({ definition, state: initializeLab(definition), profile: "LOW" });
+    const cache = createLowBatchCache(), initial = syncLowBatchCache(cache, list), id = initial.batches[0].itemIds[0];
+    const items = list.items.map((item) => {
+      if (item.id !== id) return item;
+      const matrix = [...item.matrix]; matrix[12] += 0.25;
+      return { ...item, matrix };
+    });
+    const next = syncLowBatchCache(cache, { ...list, items });
+    expect(next).toBe(initial);
+    expect(next.batches.find((batch) => batch.itemIds.includes(id))?.items.find((item) => item.id === id)?.matrix[12]).toBe(items.find((item) => item.id === id)?.matrix[12]);
+  });
+
+  it("rebuilds membership when a component becomes invisible", () => {
+    const definition = getInteractiveLabDefinition("mount-coffee-hydropower")!;
+    const list = buildRenderList({ definition, state: initializeLab(definition), profile: "LOW" });
+    const cache = createLowBatchCache(), initial = syncLowBatchCache(cache, list), id = initial.batches[0].itemIds[0];
+    const next = syncLowBatchCache(cache, { ...list, items: list.items.filter((item) => item.id !== id) });
+    expect(next).not.toBe(initial);
+    expect(next.batches.flatMap((batch) => batch.itemIds)).not.toContain(id);
+    expect(next.singles.some((item) => item.id === id)).toBe(false);
   });
 
   it("keeps every Mount Coffee storyboard scenario within the measured LOW draw budget", () => {
