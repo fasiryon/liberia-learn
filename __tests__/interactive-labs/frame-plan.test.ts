@@ -24,8 +24,10 @@ function countDraws(scene: THREE.Scene, pass: "main" | "shadow") {
     if (!material.visible) return;
     const instances = drawable instanceof THREE.InstancedMesh ? drawable.count : 1;
     if (instances === 0 || triangles(drawable.geometry) === 0 && drawable instanceof THREE.Mesh) return;
-    drawCalls += 1;
-    if (drawable instanceof THREE.Mesh) tris += triangles(drawable.geometry) * instances;
+    // WebGLRenderer.renderObject draws a transparent DoubleSide material twice (back faces, then front faces).
+    const passes = pass === "main" && drawable instanceof THREE.Mesh && material.transparent && material.side === THREE.DoubleSide && !material.forceSinglePass ? 2 : 1;
+    drawCalls += passes;
+    if (drawable instanceof THREE.Mesh) tris += triangles(drawable.geometry) * instances * passes;
   });
   return { drawCalls, triangles: tris };
 }

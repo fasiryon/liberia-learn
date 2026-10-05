@@ -6,7 +6,7 @@ import type { RenderItem, RenderList } from "@/lib/interactive-labs/v2/fidelity/
 import { buildParametricGeometry } from "@/lib/interactive-labs/v2/fidelity/geometry/builders";
 import { flowParticles, spinMatrix } from "@/lib/interactive-labs/v2/fidelity/presentation";
 import { planLowBatches, type LowBatchPlan } from "@/lib/interactive-labs/v2/fidelity/lowBatch";
-import { castsShadow } from "@/lib/interactive-labs/v2/fidelity/framePlan";
+import { castsShadow, threeTransparent } from "@/lib/interactive-labs/v2/fidelity/framePlan";
 import { HIGHLIGHT_COLOR, MARKER_COLOR } from "@/lib/interactive-labs/v2/fidelity/palette";
 import { disposeSurfaces, syncSurfaces, type SurfaceStore } from "./threeSurfaces";
 
@@ -75,7 +75,7 @@ export function syncThreeScene(stores: ThreeSceneStores, list: RenderList, optio
     usedMaterials.add(key);
     let material = stores.materials.get(key);
     if (!material) {
-      material = new THREE.MeshStandardMaterial({ color: item.highlighted ? HIGHLIGHT_COLOR : item.color, roughness: 0.64, metalness: 0.18, transparent: item.alpha < 0.95, depthWrite: item.alpha >= 0.95, opacity: item.alpha >= 0.95 ? 1 : item.alpha, emissive: item.emissive > 0 ? item.color : "#000000", emissiveIntensity: Math.round(item.emissive * 100) / 100, side: THREE.DoubleSide, clippingPlanes: item.clip ? [new THREE.Plane(new THREE.Vector3(...item.clip.normal), -item.clip.offset)] : [] });
+      material = new THREE.MeshStandardMaterial({ color: item.highlighted ? HIGHLIGHT_COLOR : item.color, roughness: 0.64, metalness: 0.18, transparent: threeTransparent(item), depthWrite: !threeTransparent(item), opacity: threeTransparent(item) ? item.alpha : 1, emissive: item.emissive > 0 ? item.color : "#000000", emissiveIntensity: Math.round(item.emissive * 100) / 100, side: THREE.DoubleSide, clippingPlanes: item.clip ? [new THREE.Plane(new THREE.Vector3(...item.clip.normal), -item.clip.offset)] : [] });
       stores.materials.set(key, material);
     }
     return material;

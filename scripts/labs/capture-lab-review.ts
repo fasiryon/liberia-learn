@@ -148,12 +148,16 @@ async function openScenario(page: Page, baseUrl: string, labId: string, scenario
     }
     // Let hydration and deferred renderer effects settle while the installed clock advances normally.
     await page.clock.runFor(SETTLE_MS);
-    if (await page.locator("[data-lab-review-ready] canvas").count()) {
-      // A9: wait for the renderer's first full frame (it compiles every program first in review mode).
+    if (profile !== "FALLBACK_2D") {
+      // A9: wait for the WebGL renderer's first full frame (it compiles every program first in review mode). The 2D
+      // view under the loading veil is not the scene: the chunk may still be loading when the page first paints.
       await page.waitForFunction(() => {
+        const ready = document.querySelector("[data-lab-review-ready] [data-lab-scene-ready]");
         const canvas = document.querySelector<HTMLCanvasElement>("[data-lab-review-ready] canvas");
-        return !!canvas && canvas.width > 300 && !!document.querySelector("[data-lab-review-ready] [data-lab-scene-ready]");
-      }, null, { timeout: 60_000 });
+        // A downgrade to 2D (lost context) never becomes scene-ready; identity then reports it as a FAIL.
+        if (document.querySelector("[data-lab-review-ready] [data-lab-active-profile=FALLBACK_2D]")) return true;
+        return !!ready && !!canvas && canvas.width > 300 && !document.querySelector("[data-lab-review-ready] [data-lab-loading-veil]");
+      }, null, { timeout: 120_000 });
     } else {
       try {
         await page.waitForFunction(() => Boolean((window as Window & { __labReviewClockReady?: boolean }).__labReviewClockReady), null, { timeout: 30_000 });

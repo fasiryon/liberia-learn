@@ -30,6 +30,14 @@ export const LOW_GROUND_TRIANGLES = 2;
 export const DAYLIGHT_SHADOW_MAP_PX = 1024;
 export const DAYLIGHT_ENVIRONMENT_PX = 1024;
 
+/** ThreeScene gives a part a transparent material below this alpha. */
+export const threeTransparent = (item: RenderItem) => item.alpha < 0.95;
+/**
+ * Main-pass draws per mesh: three.js draws a transparent DoubleSide material in two passes (back faces, then front
+ * faces; WebGLRenderer renderObject, forceSinglePass false), so such a part costs two draws and twice its triangles.
+ */
+export const threePasses = (item: RenderItem) => threeTransparent(item) ? 2 : 1;
+
 /** The shadow-caster rule ThreeScene applies to individually drawn parts; batches of opaque static parts always cast. */
 export const castsShadow = (item: RenderItem) => !item.spin && !item.clip && item.alpha >= 0.9 && item.detail !== "decor";
 
@@ -70,16 +78,19 @@ export function planThreeFrame(list: RenderList, options: { profile: "HIGH" | "S
   const surfaces = activeSurfaces(list);
   const particleFlows = list.flows.filter((flow) => flow.active && flow.particleCount > 0 && flow.rate > 0 && flow.points.length >= 2).length;
   const markerCloud = list.markers.length > 0 || hasTraceNodes(list, options.traceFlowId) ? 1 : 0;
-  const drawCalls = 1 + (daylight ? 1 : 0) + plan.batches.length + plan.singles.length + surfaces.length + list.flows.length + particleFlows + markerCloud;
+  const itemDraws = plan.batches.reduce((sum, batch) => sum + threePasses(batch.items[0]), 0) + plan.singles.reduce((sum, item) => sum + threePasses(item), 0);
+  const drawCalls = 1 + (daylight ? 1 : 0) + itemDraws + surfaces.length + list.flows.length + particleFlows + markerCloud;
   const tri = (item: RenderItem) => itemTriangles(item, options.profile);
-  const batchTriangles = plan.batches.reduce((sum, batch) => sum + tri(batch.items[0]) * batch.items.length, 0);
-  const triangles = THREE_GROUND_TRIANGLES + (daylight ? THREE_SKY_TRIANGLES : 0) + batchTriangles + plan.singles.reduce((sum, item) => sum + tri(item), 0)
+  // The shadow pass draws each caster once; the main pass draws transparent DoubleSide parts twice.
+  const shadowBatchTriangles = plan.batches.reduce((sum, batch) => sum + tri(batch.items[0]) * batch.items.length, 0);
+  const batchTriangles = plan.batches.reduce((sum, batch) => sum + tri(batch.items[0]) * batch.items.length * threePasses(batch.items[0]), 0);
+  const triangles = THREE_GROUND_TRIANGLES + (daylight ? THREE_SKY_TRIANGLES : 0) + batchTriangles + plan.singles.reduce((sum, item) => sum + tri(item) * threePasses(item), 0)
     + surfaces.reduce((sum, surface) => sum + (surface.points.length - 1) * 2, 0);
   const casters = shadows ? plan.singles.filter(castsShadow) : [];
   return {
     drawCalls, triangles,
     shadowDrawCalls: shadows ? plan.batches.length + casters.length : 0,
-    shadowTriangles: shadows ? batchTriangles + casters.reduce((sum, item) => sum + tri(item), 0) : 0,
+    shadowTriangles: shadows ? shadowBatchTriangles + casters.reduce((sum, item) => sum + tri(item), 0) : 0,
     textures: shadows ? [{ id: "sun-shadow-map", px: DAYLIGHT_SHADOW_MAP_PX }, { id: "pmrem-environment", px: DAYLIGHT_ENVIRONMENT_PX }] : [],
   };
 }
