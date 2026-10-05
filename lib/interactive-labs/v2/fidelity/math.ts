@@ -12,6 +12,15 @@ export function multiply(a: Mat4, b: Mat4): Mat4 {
   for (let r = 0; r < 4; r++) for (let c = 0; c < 4; c++) for (let k = 0; k < 4; k++) o[c * 4 + r] += a[k * 4 + r] * b[c * 4 + k];
   return o;
 }
+/** Multiply column-major matrices into caller-owned storage for render loops with no scratch-array churn. */
+export function multiplyInto(out: Float32Array, a: Mat4, b: Mat4): Float32Array {
+  for (let r = 0; r < 4; r++) for (let c = 0; c < 4; c++) {
+    let value = 0;
+    for (let k = 0; k < 4; k++) value += a[k * 4 + r] * b[c * 4 + k];
+    out[c * 4 + r] = value;
+  }
+  return out;
+}
 export function perspective(fov: number, aspect: number, near: number, far: number): Mat4 {
   const f = 1 / Math.tan(fov * Math.PI / 360), nf = 1 / (near - far);
   return [f / aspect, 0, 0, 0, 0, f, 0, 0, 0, 0, (far + near) * nf, -1, 0, 0, 2 * far * near * nf, 0];

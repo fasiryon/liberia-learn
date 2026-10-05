@@ -9,7 +9,7 @@ import { findPreset, framedPose } from "@/lib/interactive-labs/v2/fidelity/camer
 import { recordFrameSample, shouldDowngrade } from "@/lib/interactive-labs/v2/fidelity/profiles";
 import { probeAllowsUpgrade } from "@/lib/interactive-labs/v2/capabilities";
 import { downgradeFrameBudgetMs } from "@/lib/interactive-labs/v2/production/budgets";
-import { fitHorizontalFieldOfView, IDENTITY, multiply, perspective, transformPoint, type Mat4, type Vec3 } from "@/lib/interactive-labs/v2/fidelity/math";
+import { fitHorizontalFieldOfView, IDENTITY, multiply, multiplyInto, perspective, transformPoint, type Mat4, type Vec3 } from "@/lib/interactive-labs/v2/fidelity/math";
 import { batchFlowGeometry, createFlowBatchStorage, createPointBatchStorage, writeMarkerPositions, type FlowVertexBatch } from "@/lib/interactive-labs/v2/fidelity/flowBatch";
 import { shouldScheduleWebGLFrame } from "@/lib/interactive-labs/v2/fidelity/renderLoop";
 import { browserVisibilityDeps, shouldDrawFrame, watchSceneVisibility } from "@/lib/interactive-labs/v2/fidelity/sceneActivity";
@@ -126,6 +126,8 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
     const uni = Object.fromEntries(["mvp", "model", "pointSize", "color", "highlightColor", "highlightMix", "hasHighlight", "useVertexColor", "alpha", "emissive", "lighting", "clipPlane", "clipEnabled"].map((name) => [name, gl.getUniformLocation(program, name)])) as Record<string, WebGLUniformLocation | null>;
     const spec = definition.fidelity;
     const low = profile === "LOW";
+    const modelMatrixScratch = new Float32Array(16);
+    const mvpScratch = new Float32Array(16);
     // Meshes are built once per geometry and profile, never per frame.
     const meshes = new Map<string, { position: WebGLBuffer; normal: WebGLBuffer; count: number }>();
     const cpuMeshes = new Map<string, MeshData>();
@@ -268,7 +270,8 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
         gl.bindBuffer(gl.ARRAY_BUFFER, mesh.position); gl.enableVertexAttribArray(attr.position); gl.vertexAttribPointer(attr.position, 3, gl.FLOAT, false, 0, 0);
         gl.bindBuffer(gl.ARRAY_BUFFER, mesh.normal); gl.enableVertexAttribArray(attr.normal); gl.vertexAttribPointer(attr.normal, 3, gl.FLOAT, false, 0, 0);
         gl.disableVertexAttribArray(attr.color); gl.vertexAttrib3f(attr.color, 1, 1, 1); gl.uniform1f(uni.useVertexColor, 0);
-        gl.uniformMatrix4fv(uni.mvp, false, new Float32Array(multiply(viewProj, modelMatrix))); gl.uniformMatrix4fv(uni.model, false, new Float32Array(modelMatrix));
+        multiplyInto(mvpScratch, viewProj, modelMatrix); modelMatrixScratch.set(modelMatrix);
+        gl.uniformMatrix4fv(uni.mvp, false, mvpScratch); gl.uniformMatrix4fv(uni.model, false, modelMatrixScratch);
         const base = rgb(item.color);
         const pulse = item.highlighted && list.budget.pulseHighlights && !motionless ? Math.sin(t * 4) * 0.04 : 0;
         gl.uniform3fv(uni.color, base); gl.uniform3fv(uni.highlightColor, rgb(HIGHLIGHT_COLOR));

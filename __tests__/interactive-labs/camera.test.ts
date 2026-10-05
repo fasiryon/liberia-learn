@@ -5,7 +5,7 @@ import { buildRenderList } from "@/lib/interactive-labs/v2/fidelity/renderList";
 import { advanceRail, cameraHeight, constrainOrbit, fallbackFrame, findPreset, fitDistance, framedPose, framedSphere, GATE_ASPECTS, projectPoint, railStop, tweenPose, validateCamera } from "@/lib/interactive-labs/v2/fidelity/camera";
 import { classifyLabAction, validateHighFidelityDefinition } from "@/lib/interactive-labs/v2/fidelity/boundary";
 import { CIRCUIT_LAB_ID } from "@/lib/interactive-labs/v2/definitions/circuit";
-import { fitHorizontalFieldOfView } from "@/lib/interactive-labs/v2/fidelity/math";
+import { fitHorizontalFieldOfView, multiply, multiplyInto } from "@/lib/interactive-labs/v2/fidelity/math";
 import { LAB_REVIEW_SCENARIO_SETS } from "@/lib/interactive-labs/v2/review/referenceScenarios";
 import type { CameraPose } from "@/lib/interactive-labs/v2/fidelity/presentation";
 import type { CameraConstraints } from "@/lib/interactive-labs/v2/fidelity/types";
@@ -17,6 +17,16 @@ const circuit = () => getInteractiveLabDefinition(CIRCUIT_LAB_ID)!;
 const itemsOf = (definition: InteractiveLabDefinition<LabState>) => buildRenderList({ definition, state: initializeLab(definition), profile: "HIGH" }).items;
 const withCamera = (definition: InteractiveLabDefinition<LabState>, camera: Partial<NonNullable<InteractiveLabDefinition<LabState>["fidelity"]>["camera"]>) =>
   ({ ...definition, fidelity: { ...definition.fidelity!, camera: { ...definition.fidelity!.camera, ...camera } } }) as InteractiveLabDefinition<LabState>;
+
+describe("caller-owned matrix scratch", () => {
+  it("matches allocating matrix multiplication while reusing the output buffer", () => {
+    const a = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16];
+    const b = [...a].reverse();
+    const output = new Float32Array(16);
+    expect(multiplyInto(output, a, b)).toBe(output);
+    expect([...output]).toEqual(multiply(a, b));
+  });
+});
 
 describe("RX-005d / A16: constrained orbit", () => {
   it("pins the target to the preset without a target box, and pans only inside a declared box", () => {
