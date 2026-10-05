@@ -19,6 +19,7 @@ import { buildMesh } from "./meshes";
 import { buildParametricGeometry } from "@/lib/interactive-labs/v2/fidelity/geometry/builders";
 import { createLowBatchCache, syncLowBatchCache } from "@/lib/interactive-labs/v2/fidelity/lowBatch";
 import { planLowFrame, type FramePlan } from "@/lib/interactive-labs/v2/fidelity/framePlan";
+import { LOW_BATCH_COLOR_CHANGED, LOW_BATCH_EMISSIVE_CHANGED, syncLowBatchItemState, type LowBatchStateRange } from "@/lib/interactive-labs/v2/fidelity/lowBatchState";
 import { publishFramePlan, type ReviewFrameProbe } from "@/lib/interactive-labs/v2/review/framePlanEvidence";
 import { createSurfaceTriangleStorage, writeSurfaceTriangles } from "@/lib/interactive-labs/v2/fidelity/surfaces";
 import type { MeshData } from "./meshes";
@@ -73,10 +74,6 @@ const LIGHTING = { full: 3, simplified: 2, minimal: 1, none: 0 } as const;
 const GROUND_Y = -2.25;
 
 function rgb(value: string): [number, number, number] { const n = Number.parseInt(value.replace("#", ""), 16); return [(n >> 16 & 255) / 255, (n >> 8 & 255) / 255, (n & 255) / 255]; }
-function fillRgb(target: Float32Array, value: string): void {
-  const n = Number.parseInt(value.replace("#", ""), 16), red = (n >> 16 & 255) / 255, green = (n >> 8 & 255) / 255, blue = (n & 255) / 255;
-  for (let offset = 0; offset < target.length; offset += 3) { target[offset] = red; target[offset + 1] = green; target[offset + 2] = blue; }
-}
 
 export function WebGLScene({ definition, state, profile, reducedMotion, traceFlowId, dispatch, onPick, onDowngrade, onUpgradeReady, allowProfileUpgrade = false, allowPerformanceDowngrade = true, review = false, onReady, railActive = false, recenter = 0 }: Props) {
   const canvas = useRef<HTMLCanvasElement>(null);
@@ -135,7 +132,7 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
     // Meshes are built once per geometry and profile, never per frame.
     const meshes = new Map<string, { position: WebGLBuffer; normal: WebGLBuffer; count: number }>();
     const cpuMeshes = new Map<string, MeshData>();
-    const lowBatchBuffers = new Map<string, { position: WebGLBuffer; normal: WebGLBuffer; color: WebGLBuffer; emissive: WebGLBuffer; count: number; itemRanges: Map<string, { first: number; count: number; color: string; emissive: number; matrix: Mat4; colorData: Float32Array; emissiveData: Float32Array }> }>();
+    const lowBatchBuffers = new Map<string, { position: WebGLBuffer; normal: WebGLBuffer; color: WebGLBuffer; emissive: WebGLBuffer; count: number; itemRanges: Map<string, LowBatchStateRange & { first: number; count: number; matrix: Mat4 }> }>();
     const lowBatchCache = createLowBatchCache();
     let uploadedLowPlan: ReturnType<typeof syncLowBatchCache> | null = null;
     const dataFor = (item: RenderList["items"][number]): MeshData => {
@@ -334,14 +331,9 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
             for (const item of batch.items) {
               const range = gpu.itemRanges.get(item.id);
               if (!range) continue;
-              if (range.color !== item.color) {
-                const data = range.colorData; fillRgb(data, item.color);
-                gl.bindBuffer(gl.ARRAY_BUFFER, gpu.color); gl.bufferSubData(gl.ARRAY_BUFFER, range.first * 3 * Float32Array.BYTES_PER_ELEMENT, data); range.color = item.color;
-              }
-              if (range.emissive !== item.emissive) {
-                const data = range.emissiveData; data.fill(item.emissive);
-                gl.bindBuffer(gl.ARRAY_BUFFER, gpu.emissive); gl.bufferSubData(gl.ARRAY_BUFFER, range.first * Float32Array.BYTES_PER_ELEMENT, data); range.emissive = item.emissive;
-              }
+              const changed = syncLowBatchItemState(range, item);
+              if (changed & LOW_BATCH_COLOR_CHANGED) { gl.bindBuffer(gl.ARRAY_BUFFER, gpu.color); gl.bufferSubData(gl.ARRAY_BUFFER, range.first * 3 * Float32Array.BYTES_PER_ELEMENT, range.colorData); }
+              if (changed & LOW_BATCH_EMISSIVE_CHANGED) { gl.bindBuffer(gl.ARRAY_BUFFER, gpu.emissive); gl.bufferSubData(gl.ARRAY_BUFFER, range.first * Float32Array.BYTES_PER_ELEMENT, range.emissiveData); }
             }
           }
           const source = batch.items[0];
