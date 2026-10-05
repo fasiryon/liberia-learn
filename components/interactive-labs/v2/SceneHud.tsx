@@ -33,6 +33,7 @@ export function SceneHud({ definition, state, dispatch }: Props) {
       {alert && <p role="status" data-lab-hud-alert={alert.tone} className={`mt-1.5 rounded-xl border px-2.5 py-1 text-sm font-bold ${TONE[alert.tone]}`}>{alert.text}</p>}
       <ProtectionReset definition={definition} state={state} dispatch={dispatch} surface="hud" />
       {challenge && <p data-lab-hud-challenge className="mt-1.5 rounded-xl border border-amber-300 bg-amber-300/15 px-2.5 py-1 text-sm font-semibold text-amber-100">{challenge}</p>}
+      {state.mode === "CHALLENGE" && <p data-lab-challenge-peek title={spec.authoring.challenge} className="mt-1.5 truncate rounded-lg border border-amber-200/50 bg-amber-200/10 px-2.5 py-1 text-xs font-bold text-amber-50 lg:hidden">Goal: {spec.authoring.challenge}</p>}
     </div>
   );
 }

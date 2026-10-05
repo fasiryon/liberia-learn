@@ -68,6 +68,7 @@ export function InteractiveLabPlayer({ labId = "g4-solid-figures", override, rev
   const [profile, setProfile] = useState<CapabilityProfile>(() => override ?? "LOW");
   const manualProfileChoice = useRef(false);
   const [notice, setNotice] = useState<string | null>(null);
+  const [controlsOpen, setControlsOpen] = useState(false);
   // A9 review evidence: every profile change that was not requested (context loss, slow frames, failed chunk).
   const downgradePath = useRef<string[]>([]);
   // A17: the WebGL renderer reports its first full frame; until then the 2D render shows under a veil.
@@ -142,6 +143,12 @@ export function InteractiveLabPlayer({ labId = "g4-solid-figures", override, rev
     event.preventDefault(); event.stopPropagation(); nextRailStop();
   };
   const activeCheck = checks.find((check) => !state.completedChecks.includes(check.id));
+  useEffect(() => {
+    const desktop = window.matchMedia("(min-width: 1024px)");
+    const sync = () => setControlsOpen(desktop.matches);
+    sync(); desktop.addEventListener("change", sync);
+    return () => desktop.removeEventListener("change", sync);
+  }, []);
   const progress = Math.round(state.completedChecks.length / Math.max(checks.length, 1) * 100);
   const traceFlowId = activeCheck?.fidelity?.kind === "trace-path" ? activeCheck.fidelity.flowId : null;
   const onPick = (pick: ScenePick) => {
@@ -210,7 +217,12 @@ export function InteractiveLabPlayer({ labId = "g4-solid-figures", override, rev
           <SceneHud definition={definition} state={state} dispatch={dispatch} />
           <SceneControlBar definition={definition} state={state} dispatch={dispatch} />
         </div>
-        <aside id="lab-controls" tabIndex={-1} aria-label="Lab controls" className="lg:max-h-[clamp(420px,62vh,640px)] lg:overflow-y-auto border-l border-white/10 bg-white/[.03] p-5">
+        <aside id="lab-controls" aria-label="Lab controls" className="border-l border-white/10 bg-white/[.03] lg:max-h-[clamp(420px,62vh,640px)] lg:overflow-y-auto">
+          <details open={controlsOpen} onToggle={(event) => setControlsOpen(event.currentTarget.open)} className="group">
+            <summary className="sticky bottom-0 z-30 flex min-h-14 cursor-pointer items-center justify-between border-y border-white/10 bg-slate-900 px-4 py-3 text-sm font-bold text-white shadow-[0_-8px_24px_rgba(0,0,0,.3)] lg:hidden">
+              <span>Lab controls and next step</span><span aria-hidden="true" className="text-cyan-200 group-open:rotate-180">⌃</span>
+            </summary>
+            <div className="p-5">
           <LabControlPanel definition={definition} state={state} activeCheck={activeCheck} dispatch={dispatch} onStartRail={startRail} />
           <div className="mt-8 flex gap-2">
             {confirmRestart
@@ -221,6 +233,8 @@ export function InteractiveLabPlayer({ labId = "g4-solid-figures", override, rev
               : <button type="button" onClick={() => setConfirmRestart(true)} className="min-h-11 rounded-full border border-white/15 px-4 py-2 text-sm">Restart lab (clears progress)</button>}
             {definition.scene.objects.length > 0 && <button type="button" onClick={() => dispatch({ type: "focus", objectId: state.selectedObjectId ?? definition.scene.objects[0].id })} className="min-h-11 rounded-full border border-white/15 px-4 py-2 text-sm">Focus</button>}
           </div>
+            </div>
+          </details>
         </aside>
       </div>
     </section>
