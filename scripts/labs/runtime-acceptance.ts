@@ -25,10 +25,20 @@ const CONTEXT_WARNING = /too many active webgl contexts|context lost|CONTEXT_LOS
 type ReviewWindow = Window & { __labReviewRemount?: () => number; __labReviewLiveRenderers?: number; __labReviewFrameProbe?: () => FrameProbeResult | null; gc?: () => void };
 
 async function waitForScene(page: Page) {
-  await page.waitForFunction(() => {
-    const scope = document.querySelector("[data-lab-review-ready]");
-    return !!scope?.querySelector("[data-lab-scene-ready]") && !scope.querySelector("[data-lab-loading-veil]");
-  }, null, { timeout: 120_000 });
+  const scope = page.locator("[data-lab-review-ready]");
+  try {
+    await scope.locator("[data-lab-scene-ready]").waitFor({ state: "attached", timeout: 120_000 });
+    await scope.locator("[data-lab-loading-veil]").waitFor({ state: "detached", timeout: 120_000 });
+  } catch (cause) {
+    const state = await page.evaluate(() => {
+      const player = document.querySelector("[data-lab-active-profile]");
+      const renderer = document.querySelector("[data-lab-review-ready] [data-lab-renderer]");
+      return { activeProfile: player?.getAttribute("data-lab-active-profile") ?? null, downgradePath: player?.getAttribute("data-lab-downgrade-path") ?? null,
+        renderer: renderer?.getAttribute("data-lab-renderer") ?? null, sceneReady: !!document.querySelector("[data-lab-review-ready] [data-lab-scene-ready]"),
+        loadingVeil: !!document.querySelector("[data-lab-review-ready] [data-lab-loading-veil]"), liveRenderers: (window as ReviewWindow).__labReviewLiveRenderers ?? null };
+    }).catch(() => null);
+    throw new Error(`scene readiness failed: ${JSON.stringify(state)}; ${cause instanceof Error ? cause.message : String(cause)}`);
+  }
 }
 
 async function heapMB(page: Page): Promise<number | null> {
@@ -84,6 +94,8 @@ async function main() {
   try {
     for (const profile of profiles) {
       const context = await browser.newContext({ viewport: { width: 1366, height: 900 } });
+      // tsx/esbuild keeps callback names with a __name wrapper; page.evaluate/waitForFunction need it defined.
+      await context.addInitScript("globalThis.__name = globalThis.__name || ((fn) => fn);");
       await context.addInitScript(`try { localStorage.setItem("liberialearn_session_cookie_notice_dismissed", "true"); } catch (e) {}`);
       const page = await context.newPage();
       const pageErrors: string[] = [];

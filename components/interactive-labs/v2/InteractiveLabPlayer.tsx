@@ -72,9 +72,9 @@ export function InteractiveLabPlayer({ labId = "g4-solid-figures", override, rev
   // A9 review evidence: every profile change that was not requested (context loss, slow frames, failed chunk).
   const downgradePath = useRef<string[]>([]);
   // A17: the WebGL renderer reports its first full frame; until then the 2D render shows under a veil.
-  const [sceneReady, setSceneReady] = useState(false);
-  useEffect(() => { setSceneReady(false); }, [profile]);
-  const onSceneReady = useCallback(() => setSceneReady(true), []);
+  const [sceneReadyProfile, setSceneReadyProfile] = useState<CapabilityProfile | null>(null);
+  const sceneReady = sceneReadyProfile === profile;
+  const onSceneReady = useCallback(() => setSceneReadyProfile(profile), [profile]);
   // A3: while the HIGH/STANDARD renderer loads, prefetch the LOW chunk so an offline downgrade still has a renderer.
   useEffect(() => { if (profile === "HIGH" || profile === "STANDARD") void loadWebGLScene().catch(() => undefined); }, [profile]);
   const reducedMotion = usePrefersReducedMotion();
