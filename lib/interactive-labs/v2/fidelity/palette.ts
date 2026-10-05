@@ -3,6 +3,25 @@ export const INACTIVE_FLOW_COLOR = "#779ab2";
 export const HIGHLIGHT_COLOR = "#f0abfc";
 export const MARKER_COLOR = "#a3e635";
 
+/**
+ * State colours are semantic runtime output, not authoring decoration. Keep
+ * them shared by HIGH, STANDARD, LOW and FALLBACK_2D so a learner can read a
+ * unit's state without depending on motion or a particular renderer.
+ */
+export const UNIT_STATUS_COLORS = Object.freeze({
+  generating: "#22c55e",
+  idle: "#f59e0b",
+  off: "#64748b",
+  tripped: "#ef4444",
+  "out-for-repair": "#a855f7",
+} as const);
+
+export function statusVisual(status: string | undefined): { color?: string; emissive: number } {
+  if (!status) return { emissive: 0 };
+  const color = UNIT_STATUS_COLORS[status as keyof typeof UNIT_STATUS_COLORS];
+  return color ? { color, emissive: status === "generating" ? 1 : status === "tripped" ? 0.45 : 0.18 } : { emissive: 0 };
+}
+
 export function parseHexColor(hex: string): [number, number, number] {
   const normalized = hex.replace("#", "");
   if (!/^[0-9a-f]{6}$/i.test(normalized)) throw new Error(`Expected a six-digit hex colour, got ${hex}`);
