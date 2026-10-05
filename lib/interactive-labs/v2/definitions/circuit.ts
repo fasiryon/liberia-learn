@@ -103,10 +103,13 @@ export const CIRCUIT_FIDELITY: HighFidelitySpec = {
     defaultPresetId: "overview",
     presets: [
       { id: "overview", label: "Whole circuit", target: [0, 0, 0], distance: 10, yaw: 0, pitch: 0.12 },
-      { id: "bulb-close", label: "Bulb close-up", target: [0.4, -1.3, 0], distance: 5, yaw: 0.35, pitch: 0.2 },
+      // RX-005d: the close-up refits to the bulb's parts on any stage shape (and frames the 2D view).
+      { id: "bulb-close", label: "Bulb close-up", target: [0.4, -1.3, 0], distance: 5, yaw: 0.35, pitch: 0.2, frame: { componentIds: ["bulb-glass", "bulb-base"] } },
       { id: "switch-close", label: "Switch close-up", target: [-0.8, 2, 0], distance: 5, yaw: -0.2, pitch: 0.3 },
     ],
     constraints: { minDistance: 4, maxDistance: 14, minPitch: -0.5, maxPitch: 0.8, minYaw: -1, maxYaw: 1 },
+    // RX-005d reference rail: the learner advances it stop by stop (Next, or → on the focused scene).
+    rails: [{ id: "follow-current", label: "Follow the current", stops: [{ presetId: "overview" }, { presetId: "switch-close", durationMs: 800 }, { presetId: "bulb-close", durationMs: 800 }, { presetId: "overview", durationMs: 600, easing: "linear" }] }],
   },
   guidedPath: [
     { id: "meet", prompt: "This loop has a battery, a switch, a resistor and a bulb, joined by wire.", cameraPresetId: "overview" },

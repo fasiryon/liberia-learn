@@ -5,6 +5,7 @@ import { buildRenderList, fallbackVisibleItems } from "@/lib/interactive-labs/v2
 import { flowParticles } from "@/lib/interactive-labs/v2/fidelity/presentation";
 import { HIGHLIGHT_COLOR, INACTIVE_FLOW_COLOR, MARKER_COLOR, mixHexColor } from "@/lib/interactive-labs/v2/fidelity/palette";
 import { transformPoint } from "@/lib/interactive-labs/v2/fidelity/math";
+import { fallbackFrame, findPreset } from "@/lib/interactive-labs/v2/fidelity/camera";
 import { convexHull, silhouetteSamples } from "./meshes";
 import type { ScenePick } from "./picking";
 import { useDisplayFidelity } from "./useDisplayFidelity";
@@ -39,14 +40,15 @@ export function Fallback2D({ definition, state, reducedMotion, traceFlowId, disp
   const hasFlows = !!definition.fidelity?.flows.length;
   const { display, time } = useDisplayFidelity(definition, state, reducedMotion, hasFlows);
   const list = useMemo(() => buildRenderList({ definition, state, profile: "FALLBACK_2D", displayFidelity: display }), [definition, state, display]);
-  const camera = list.camera ?? { target: [0.25, 0, 0] as [number, number, number], distance: 11 };
   const narrow = useNarrowContainer();
   // The valley's front view is wide and short. On a phone, frame a tighter, near-square window (presets still move
-  // it) instead of a tall one that letterboxes the plant into a thin strip (R3 visual P0).
-  const width = camera.distance * (narrow ? 0.62 : 1.25), height = width * (narrow ? 0.95 : 0.62);
+  // it) instead of a tall one that letterboxes the plant into a thin strip (R3 visual P0). A18: a preset with a frame
+  // (a rail stop, a check view) is fitted to its parts so it always fits the 2D stage.
+  const preset = definition.fidelity && state.fidelity ? findPreset(definition.fidelity, state.fidelity.cameraPresetId) : undefined;
+  const frame = fallbackFrame(list.items, preset, narrow);
   // Keep labels and trace markers at a stable screen size as focused presets zoom in (and larger on phones).
-  const screenScale = (camera.distance / 15) * (narrow ? 1.1 : 1);
-  const viewBox = `${camera.target[0] - width / 2} ${-camera.target[1] - height / 2} ${width} ${height}`;
+  const screenScale = (frame.distance / 15) * (narrow ? 1.1 : 1);
+  const viewBox = `${frame.x} ${frame.y} ${frame.width} ${frame.height}`;
   // FALLBACK_2D represents cutaways by hiding the removed solid, matching LOW's
   // cutaway behavior. SVG has no clipping plane, so drawing the faded source
   // mesh would obscure the revealed internals and instructional labels.
@@ -74,7 +76,7 @@ export function Fallback2D({ definition, state, reducedMotion, traceFlowId, disp
           <marker id="flow-arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#0f172a" /></marker>
           <filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="0.07" /></filter>
         </defs>
-        <rect x={camera.target[0] - width / 2} y={-camera.target[1] - height / 2} width={width} height={height} fill={list.environment === "DAYLIGHT" ? "#e7eef1" : "#0b1223"} />
+        <rect x={frame.x} y={frame.y} width={frame.width} height={frame.height} fill={list.environment === "DAYLIGHT" ? "#e7eef1" : "#0b1223"} />
         {/* RX-005b on FALLBACK_2D: each active water surface as a band whose thickness follows the model's width
             factor (the front projection hides channel depth, so thickness carries the volume cue). */}
         {list.surfaces.filter((surface) => surface.active && surface.width > 0).map((surface) => (

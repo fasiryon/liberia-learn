@@ -138,11 +138,19 @@ export type FlowDefinition = {
   color: string;
 };
 
-export type CameraPreset = { id: string; label: string; target: Vec3; distance: number; yaw: number; pitch: number };
-export type CameraConstraints = { minDistance: number; maxDistance: number; minPitch: number; maxPitch: number; minYaw: number; maxYaw: number };
+/** RX-005d: `frame` refits the preset's target and distance to these parts for any aspect ratio (and frames 2D). */
+export type CameraPreset = { id: string; label: string; target: Vec3; distance: number; yaw: number; pitch: number; frame?: { componentIds: string[] } };
+/**
+ * RX-005d / A16 camera limits. Without a `targetBox` the target follows presets only (no panning); with one, the
+ * learner may pan inside it. `groundY` keeps the camera above the declared ground or water. `guided` limits how far
+ * the learner may orbit away from a guided step's preset (they can always Recentre).
+ */
+export type CameraConstraints = { minDistance: number; maxDistance: number; minPitch: number; maxPitch: number; minYaw: number; maxYaw: number; targetBox?: { min: Vec3; max: Vec3 }; groundY?: number; guided?: { distance: number; yaw: number; pitch: number } };
+/** RX-005d: an ordered camera tour. Presentation only: each stop is a camera-preset, advanced by the learner. */
+export type CameraRail = { id: string; label: string; stops: { presetId: string; durationMs?: number; easing?: "ease-in-out" | "linear" }[] };
 
 /** `variables` puts the step in its intended state (validated like a mode start), so a step never inherits a trip. */
-export type GuidedStep = { id: string; prompt: string; cameraPresetId?: string; highlightIds?: string[]; variables?: Record<string, number> };
+export type GuidedStep = { id: string; prompt: string; cameraPresetId?: string; railId?: string; highlightIds?: string[]; variables?: Record<string, number> };
 
 /** Direct-manipulation learning checks. Evaluated from scene state, never from a free-text claim. */
 export type FidelityCheck =
@@ -185,7 +193,7 @@ export type HighFidelitySpec = {
   simulation?: SimulationModel;
   motions?: ComponentMotionDefinition[];
   flows: FlowDefinition[];
-  camera: { defaultPresetId: string; presets: CameraPreset[]; constraints: CameraConstraints };
+  camera: { defaultPresetId: string; presets: CameraPreset[]; constraints: CameraConstraints; rails?: CameraRail[] };
   guidedPath: GuidedStep[];
   modes: Exclude<LabMode, "COMPLETE">[];
   /** Optional live feedback for the active challenge, derived only from simulation quantities. */

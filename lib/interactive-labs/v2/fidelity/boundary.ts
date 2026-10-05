@@ -7,6 +7,8 @@ import { compositeHex, contrastRatio, deltaE00, highlightColor, HIGHLIGHT_COLOR,
 import { resolveGeometryVariant } from "./geometry/builders";
 import { validateSurfaces } from "./surfaces";
 import { validateControls } from "./controls";
+import { validateCamera } from "./camera";
+import { buildRenderList, type RenderItem } from "./renderList";
 
 /**
  * Visual interaction is not learning evidence. Only a governed learning check may produce evidence, and
@@ -159,6 +161,10 @@ export function validateHighFidelityDefinition(definition: InteractiveLabDefinit
     if (!spec.protection.resetLabel.trim()) errors.push("protection_reset_label_missing");
   }
   if (spec.surfaces?.length) errors.push(...validateSurfaces(spec, spec.simulation ? deriveSimulation(spec, initialFidelityState(spec)).quantities : {}));
+  // RX-005d / A16: limits, target box, presets, frames, rails, and every learner target framed by some preset.
+  let items: RenderItem[] = [];
+  try { items = buildRenderList({ definition, state: definition.initialState, profile: "HIGH" }).items; } catch { errors.push("camera_frame_items_unavailable"); }
+  errors.push(...validateCamera(definition, items));
   return errors;
 }
 

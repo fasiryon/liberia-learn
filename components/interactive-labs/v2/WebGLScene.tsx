@@ -4,7 +4,8 @@ import { useEffect, useRef } from "react";
 import type { CapabilityProfile, GeometryKind, InteractiveLabDefinition, LabAction, LabState } from "@/lib/interactive-labs/v2/types";
 import type { FidelityState } from "@/lib/interactive-labs/v2/fidelity/types";
 import { buildRenderList, type RenderList, type RenderMarker } from "@/lib/interactive-labs/v2/fidelity/renderList";
-import { approachCamera, constrainCamera, easeDisplayState, isSettled, presetPose, spinMatrix, viewMatrix, type CameraPose } from "@/lib/interactive-labs/v2/fidelity/presentation";
+import { approachCamera, constrainCamera, easeDisplayState, isSettled, spinMatrix, viewMatrix, type CameraPose } from "@/lib/interactive-labs/v2/fidelity/presentation";
+import { findPreset, framedPose } from "@/lib/interactive-labs/v2/fidelity/camera";
 import { recordFrameSample, shouldDowngrade } from "@/lib/interactive-labs/v2/fidelity/profiles";
 import { probeAllowsUpgrade } from "@/lib/interactive-labs/v2/capabilities";
 import { downgradeFrameBudgetMs } from "@/lib/interactive-labs/v2/production/budgets";
@@ -39,6 +40,10 @@ type Props = {
   review?: boolean;
   /** Called once, after the first full frame (A9 data-lab-scene-ready; A17 lifts the 2D loading veil). */
   onReady?: () => void;
+  /** RX-005d on LOW: rail legs are cuts, not eases. */
+  railActive?: boolean;
+  /** A16: bumping this returns the view to the current preset. */
+  recenter?: number;
 };
 
 const vertexShader = `attribute vec3 position; attribute vec3 normal; attribute vec3 vcolor; uniform mat4 mvp; uniform mat4 model; uniform float pointSize; uniform float useVertexColor; varying vec3 vNormal; varying vec3 vWorld; varying vec3 vertexColor;
@@ -68,7 +73,7 @@ const GROUND_Y = -2.25;
 
 function rgb(value: string): [number, number, number] { const n = Number.parseInt(value.replace("#", ""), 16); return [(n >> 16 & 255) / 255, (n >> 8 & 255) / 255, (n & 255) / 255]; }
 
-export function WebGLScene({ definition, state, profile, reducedMotion, traceFlowId, dispatch, onPick, onDowngrade, onUpgradeReady, allowProfileUpgrade = false, allowPerformanceDowngrade = true, review = false, onReady }: Props) {
+export function WebGLScene({ definition, state, profile, reducedMotion, traceFlowId, dispatch, onPick, onDowngrade, onUpgradeReady, allowProfileUpgrade = false, allowPerformanceDowngrade = true, review = false, onReady, railActive = false, recenter = 0 }: Props) {
   const canvas = useRef<HTMLCanvasElement>(null);
   // Review evidence: identity, frames drawn and last-frame draw calls on the root (rendererIdentity.ts).
   const root = useRef<HTMLDivElement>(null);
@@ -79,11 +84,11 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
   const displayRef = useRef<FidelityState | undefined>(state.fidelity);
   const zoomRef = useRef(1);
   const frameRef = useRef<{ list: RenderList | null; viewProj: Mat4; width: number; height: number }>({ list: null, viewProj: IDENTITY, width: 1, height: 1 });
-  const callbacks = useRef({ onDowngrade, onUpgradeReady, reducedMotion, traceFlowId, onReady });
+  const callbacks = useRef({ onDowngrade, onUpgradeReady, reducedMotion, traceFlowId, onReady, railActive });
   const requestDrawRef = useRef<() => void>(() => {});
   const pendingContextLoss = useRef<number | null>(null);
   stateRef.current = state;
-  callbacks.current = { onDowngrade, onUpgradeReady, reducedMotion, traceFlowId, onReady };
+  callbacks.current = { onDowngrade, onUpgradeReady, reducedMotion, traceFlowId, onReady, railActive };
 
   useEffect(() => {
     if (pendingContextLoss.current !== null) {
@@ -240,9 +245,11 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
       const current = stateRef.current, motionless = callbacks.current.reducedMotion;
       if (spec && current.fidelity) displayRef.current = easeDisplayState(spec, displayRef.current ?? current.fidelity, current.fidelity, dt, motionless);
       const list = buildRenderList({ definition, state: current, profile, displayFidelity: displayRef.current });
-      const preset = spec && current.fidelity ? presetPose(spec, current.fidelity.cameraPresetId) : fallbackPose;
+      // RX-005d: presets with a frame refit to the stage's aspect; rail legs on LOW are cuts.
+      const stageAspect = Math.max(1, el.clientWidth) / Math.max(1, el.clientHeight);
+      const preset = spec && current.fidelity ? framedPose(spec, findPreset(spec, current.fidelity.cameraPresetId), list.items, definition.scene.camera.fov, stageAspect) : fallbackPose;
       const targetPose = spec ? constrainCamera({ ...preset, distance: preset.distance * zoomRef.current }, spec.camera.constraints) : { ...preset, distance: preset.distance * zoomRef.current };
-      camera = camera ? approachCamera(camera, targetPose, dt, motionless) : targetPose;
+      camera = camera && !callbacks.current.railActive ? approachCamera(camera, targetPose, dt, motionless) : targetPose;
 
       const dpr = Math.min(window.devicePixelRatio || 1, list.budget.maxDevicePixelRatio), w = Math.max(1, Math.floor(el.clientWidth * dpr)), h = Math.max(1, Math.floor(el.clientHeight * dpr));
       if (el.width !== w || el.height !== h) { el.width = w; el.height = h; }
@@ -404,6 +411,7 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
   }, [definition, profile, allowPerformanceDowngrade, allowProfileUpgrade, review]);
 
   useEffect(() => { requestDrawRef.current(); }, [state, reducedMotion, traceFlowId]);
+  useEffect(() => { zoomRef.current = 1; requestDrawRef.current(); }, [recenter]);
 
   const pick = (clientX: number, clientY: number, target: HTMLElement) => {
     const { list, viewProj, width, height } = frameRef.current; if (!list) return;

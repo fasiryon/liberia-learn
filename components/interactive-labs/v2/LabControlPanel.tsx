@@ -5,7 +5,7 @@ import { deriveSimulation, explainState, isComponentRevealed, protectionStatus }
 import { formatVariable, stepVariable } from "@/lib/interactive-labs/v2/fidelity/variables";
 import { ProtectionReset } from "./ProtectionReset";
 
-type Props = { definition: InteractiveLabDefinition<LabState>; state: LabState; activeCheck: LearningCheck | undefined; dispatch: (action: LabAction) => void };
+type Props = { definition: InteractiveLabDefinition<LabState>; state: LabState; activeCheck: LearningCheck | undefined; dispatch: (action: LabAction) => void; onStartRail?: (railId: string) => void };
 
 const chip = (active: boolean) => `min-h-11 rounded-full px-3 py-1.5 text-xs font-semibold transition ${active ? "bg-cyan-300 text-slate-950" : "bg-white/10 text-slate-200 hover:bg-white/15"}`;
 const MODES: Exclude<LabMode, "COMPLETE">[] = ["GUIDED", "EXPLORE", "CHALLENGE", "ASSESSMENT"];
@@ -14,7 +14,7 @@ const MODES: Exclude<LabMode, "COMPLETE">[] = ["GUIDED", "EXPLORE", "CHALLENGE",
  * One control surface for every capability profile. Anything the scene can do by pointer is also here,
  * so keyboard users and FALLBACK_2D learners reach every check.
  */
-export function LabControlPanel({ definition, state, activeCheck, dispatch }: Props) {
+export function LabControlPanel({ definition, state, activeCheck, dispatch, onStartRail }: Props) {
   const spec = definition.fidelity, fidelity = state.fidelity;
   const [heldFace, setHeldFace] = useState<string | null>(null);
   const modes = spec?.modes ?? MODES;
@@ -177,6 +177,7 @@ export function LabControlPanel({ definition, state, activeCheck, dispatch }: Pr
 
           <section aria-label="Camera" className="flex flex-wrap gap-2">
             {spec.camera.presets.map((preset) => <button key={preset.id} type="button" aria-pressed={fidelity.cameraPresetId === preset.id} onClick={() => dispatch({ type: "camera-preset", presetId: preset.id })} className={chip(fidelity.cameraPresetId === preset.id)}>{preset.label}</button>)}
+            {onStartRail && spec.camera.rails?.map((rail) => <button key={rail.id} type="button" onClick={() => onStartRail(rail.id)} className={chip(false)}>Tour: {rail.label}</button>)}
           </section>
 
         </>

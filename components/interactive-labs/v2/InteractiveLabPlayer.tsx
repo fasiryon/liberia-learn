@@ -11,6 +11,9 @@ import { Fallback2D } from "./Fallback2D";
 import { LabControlPanel } from "./LabControlPanel";
 import { SceneControlBar } from "./SceneControlBar";
 import { SceneHud } from "./SceneHud";
+import { CameraRailBar } from "./CameraRailBar";
+import { advanceRail, DEFAULT_LEG, findRail, railStop, type CameraLeg, type RailPosition } from "@/lib/interactive-labs/v2/fidelity/camera";
+import type { CameraPose } from "@/lib/interactive-labs/v2/fidelity/presentation";
 import type { ScenePick } from "./picking";
 const loadWebGLScene = () => loadChunkWithRetry(() => import("./WebGLScene"));
 // A17: while a renderer chunk loads, the current state's 2D render shows under a loading veil (see SceneLoadingVeil).
@@ -105,6 +108,39 @@ export function InteractiveLabPlayer({ labId = "g4-solid-figures", override, rev
     setProfile(next);
   }, [override]);
   const dispatch = (action: LabAction) => setState((current) => { const result = acceptLabAction(definition, current, action); return result.ok ? result.state : current; });
+  // RX-005d camera rails and Recentre (presentation only; each rail stop is an ordinary camera-preset action).
+  const [rail, setRail] = useState<RailPosition | null>(null);
+  const [cameraLeg, setCameraLeg] = useState<CameraLeg>(DEFAULT_LEG);
+  const [recenter, setRecenter] = useState(0);
+  // A18: the view of the current preset carries over when the renderer changes profile.
+  const cameraPose = useRef<{ presetId: string; pose: CameraPose } | null>(null);
+  const onPoseChange = useCallback((presetId: string, pose: CameraPose) => { cameraPose.current = { presetId, pose }; }, []);
+  const goToRailStop = (position: RailPosition) => {
+    const stop = definition?.fidelity ? railStop(definition.fidelity, position) : null;
+    if (!stop) { setRail(null); return; }
+    setRail(position); setCameraLeg(stop.leg);
+    dispatch({ type: "camera-preset", presetId: stop.presetId });
+  };
+  const startRail = (railId: string) => goToRailStop({ railId, index: 0 });
+  const nextRailStop = () => { if (!rail || !definition?.fidelity) return; const next = advanceRail(definition.fidelity, rail); if (next) goToRailStop(next); else { setRail(null); setCameraLeg(DEFAULT_LEG); } };
+  const skipRail = () => { if (!rail || !definition?.fidelity) return; const stops = findRail(definition.fidelity, rail.railId)?.stops ?? []; if (stops.length) goToRailStop({ railId: rail.railId, index: stops.length - 1 }); setRail(null); setCameraLeg(DEFAULT_LEG); };
+  // A guided step that names a rail starts it.
+  const guidedRailId = state.mode === "GUIDED" && definition?.fidelity && state.fidelity ? definition.fidelity.guidedPath[state.fidelity.guidedStepIndex]?.railId : undefined;
+  const startedGuidedRail = useRef<string | null>(null);
+  useEffect(() => {
+    if (!guidedRailId) { startedGuidedRail.current = null; return; }
+    if (startedGuidedRail.current === guidedRailId) return;
+    startedGuidedRail.current = guidedRailId;
+    startRail(guidedRailId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- start once per guided step that names a rail
+  }, [guidedRailId]);
+  /** A14: → advances the rail only while the scene itself has focus (no control focused). */
+  const onSceneKeyDownCapture = (event: React.KeyboardEvent) => {
+    if (!rail || event.key !== "ArrowRight" || event.shiftKey) return;
+    const target = event.target as HTMLElement;
+    if (!target.matches?.("[data-lab-renderer][tabindex]")) return;
+    event.preventDefault(); event.stopPropagation(); nextRailStop();
+  };
   const activeCheck = checks.find((check) => !state.completedChecks.includes(check.id));
   const progress = Math.round(state.completedChecks.length / Math.max(checks.length, 1) * 100);
   const traceFlowId = activeCheck?.fidelity?.kind === "trace-path" ? activeCheck.fidelity.flowId : null;
@@ -160,20 +196,22 @@ export function InteractiveLabPlayer({ labId = "g4-solid-figures", override, rev
       {/* Keyboard users skip the scene's focusable parts (every part is a button in the 2D view). */}
       <a href="#lab-controls" className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:m-2 focus:rounded-full focus:bg-white focus:px-4 focus:py-2 focus:font-bold focus:text-slate-950">Skip to lab controls</a>
       <div className="grid gap-0 lg:grid-cols-[1fr_340px]">
-        <div className={`relative ${definition.fidelity?.environment === "DAYLIGHT" ? "bg-[linear-gradient(#dbeafe,#f1f5f9_58%,#dce7d4)] text-slate-900" : "bg-[radial-gradient(circle_at_50%_38%,#263d72,#080d20_68%)]"}`}>
+        <div onKeyDownCapture={onSceneKeyDownCapture} className={`relative ${definition.fidelity?.environment === "DAYLIGHT" ? "bg-[linear-gradient(#dbeafe,#f1f5f9_58%,#dce7d4)] text-slate-900" : "bg-[radial-gradient(circle_at_50%_38%,#263d72,#080d20_68%)]"}`}>
           {profile === "FALLBACK_2D"
             ? <Fallback2D definition={definition} state={state} reducedMotion={reducedMotion} traceFlowId={traceFlowId} dispatch={dispatch} onPick={onPick} />
             : <SceneLoadBoundary key={profile} onError={onRendererLoadError} fallback={<Fallback2D definition={definition} state={state} reducedMotion={reducedMotion} traceFlowId={traceFlowId} dispatch={dispatch} onPick={onPick} />}>
                 {profile === "HIGH" || profile === "STANDARD"
-                  ? <ThreeScene definition={definition} state={state} profile={profile} reducedMotion={reducedMotion} traceFlowId={traceFlowId} dispatch={dispatch} onPick={onPick} onDowngrade={onDowngrade} onUpgradeReady={onUpgradeReady} onReady={onSceneReady} allowProfileUpgrade={canUpgrade} allowPerformanceDowngrade={!reviewPreview} review={!!reviewPreview} />
-                  : <WebGLScene definition={definition} state={state} profile={profile} reducedMotion={reducedMotion} traceFlowId={traceFlowId} dispatch={dispatch} onPick={onPick} onDowngrade={onDowngrade} onUpgradeReady={onUpgradeReady} onReady={onSceneReady} allowProfileUpgrade={canUpgrade} allowPerformanceDowngrade={!reviewPreview} review={!!reviewPreview} />}
+                  ? <ThreeScene definition={definition} state={state} profile={profile} reducedMotion={reducedMotion} traceFlowId={traceFlowId} dispatch={dispatch} onPick={onPick} onDowngrade={onDowngrade} onUpgradeReady={onUpgradeReady} onReady={onSceneReady} allowProfileUpgrade={canUpgrade} allowPerformanceDowngrade={!reviewPreview} review={!!reviewPreview} cameraLeg={cameraLeg} recenter={recenter} initialPose={cameraPose.current} onPoseChange={onPoseChange} />
+                  : <WebGLScene definition={definition} state={state} profile={profile} reducedMotion={reducedMotion} traceFlowId={traceFlowId} dispatch={dispatch} onPick={onPick} onDowngrade={onDowngrade} onUpgradeReady={onUpgradeReady} onReady={onSceneReady} allowProfileUpgrade={canUpgrade} allowPerformanceDowngrade={!reviewPreview} review={!!reviewPreview} railActive={!!rail} recenter={recenter} />}
               </SceneLoadBoundary>}
+          {profile !== "FALLBACK_2D" && <button type="button" onClick={() => setRecenter((value) => value + 1)} className="absolute right-2 top-2 z-20 min-h-11 rounded-full border border-white/25 bg-slate-950/75 px-3 text-xs font-bold text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-white">Recentre</button>}
           {profile !== "FALLBACK_2D" && !sceneReady && <SceneLoadingVeil label={profile === "LOW" ? "Loading the 3D lab…" : "Loading the high-quality 3D lab…"}><Fallback2D definition={definition} state={state} reducedMotion={reducedMotion} traceFlowId={traceFlowId} dispatch={dispatch} onPick={onPick} /></SceneLoadingVeil>}
+          {rail && definition.fidelity && <CameraRailBar spec={definition.fidelity} position={rail} onNext={nextRailStop} onSkip={skipRail} />}
           <SceneHud definition={definition} state={state} dispatch={dispatch} />
           <SceneControlBar definition={definition} state={state} dispatch={dispatch} />
         </div>
         <aside id="lab-controls" tabIndex={-1} aria-label="Lab controls" className="lg:max-h-[clamp(420px,62vh,640px)] lg:overflow-y-auto border-l border-white/10 bg-white/[.03] p-5">
-          <LabControlPanel definition={definition} state={state} activeCheck={activeCheck} dispatch={dispatch} />
+          <LabControlPanel definition={definition} state={state} activeCheck={activeCheck} dispatch={dispatch} onStartRail={startRail} />
           <div className="mt-8 flex gap-2">
             {confirmRestart
               ? <>

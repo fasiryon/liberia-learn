@@ -44,6 +44,9 @@ export const CIRCUIT_REVIEW_SCENARIOS: LabReviewScenarioSet = {
     { id: "open-circuit", title: "Fault: switch reopened, loop broken", stage: "fault", actions: [closeSwitch, { type: "set-variable", variableId: "switch", value: 0 }], motion: { frames: 8, intervalMs: 80 } },
     { id: "bulb-exploded", title: "Bulb exploded view", stage: "exploded", actions: [{ type: "set-explode", assemblyId: "bulb", factor: 1 }], motion: { frames: 8, intervalMs: 90 } },
     { id: "bulb-cutaway", title: "Bulb cut open, filament glowing", stage: "cutaway", actions: [closeSwitch, { type: "set-cutaway", cutawayId: "bulb-cutaway" }] },
+    // RX-005d / A18: the "Follow the current" rail stops that are not the overview (each must frame in 2D and on mobile).
+    { id: "rail-switch-stop", title: "Rail stop 2: the switch", stage: "guided", actions: [{ type: "camera-preset", presetId: "switch-close" }] },
+    { id: "rail-bulb-stop", title: "Rail stop 3: the bulb, framed to its parts", stage: "guided", actions: [{ type: "camera-preset", presetId: "bulb-close" }] },
     { id: "challenge-start", title: "Challenge: reach medium brightness", stage: "challenge", actions: [{ type: "mode", mode: "CHALLENGE" }, closeSwitch] },
     {
       id: "assessment-complete", title: "Assessment: all four direct-manipulation checks passed", stage: "assessment",
