@@ -6,6 +6,7 @@ import { LAB_REVIEW_SCENARIO_SETS } from "@/lib/interactive-labs/v2/review/refer
 import { replayReviewScenario } from "@/lib/interactive-labs/v2/review/scenarios";
 import { buildRenderList, type RenderList } from "@/lib/interactive-labs/v2/fidelity/renderList";
 import { activeTraceFlowId, planLowFrame, planThreeFrame, THREE_GROUND_TRIANGLES, THREE_PRIMITIVE_TRIANGLES, THREE_SKY_TRIANGLES } from "@/lib/interactive-labs/v2/fidelity/framePlan";
+import { MAX_LOW_BATCH_VERTICES, planLowBatches } from "@/lib/interactive-labs/v2/fidelity/lowBatch";
 import { compareFramePlan } from "@/lib/interactive-labs/v2/review/framePlanEvidence";
 import { createThreeSceneStores, disposeThreeSceneStores, primitiveGeometry, syncThreeScene } from "@/components/interactive-labs/v2/threeSceneSync";
 import { skyGeometry } from "@/components/interactive-labs/v2/threeEnvironment";
@@ -107,5 +108,16 @@ describe("RX-006 test 1: the LOW frame planner", () => {
     const traced = list.flows.find((flow) => flow.nodes.some((node) => node.traceable));
     if (traced) expect(planLowFrame(list, { traceFlowId: traced.id }).drawCalls).toBe(frame.drawCalls + 1);
     expect(planLowFrame(list, { traceFlowId: "no-such-flow" }).drawCalls).toBe(frame.drawCalls);
+  });
+
+  it("splits large merged batches below the WebGL1 16-bit vertex boundary", () => {
+    const definition = getInteractiveLabDefinition("mount-coffee-hydropower")!;
+    const list = buildRenderList({ definition, state: initializeLab(definition), profile: "LOW" });
+    const source = list.items.find((item) => !item.parametricGeometry && item.geometry === "box" && item.alpha >= 0.9 && item.inFocus && !item.highlighted && !item.clip && !item.spin)!;
+    const many = { ...list, items: Array.from({ length: 1900 }, (_, index) => ({ ...source, id: `batch-${index}` })) };
+    const plan = planLowBatches(many);
+    expect(plan.batches.length).toBeGreaterThan(1);
+    expect(plan.batches.flatMap((batch) => batch.itemIds)).toHaveLength(1900);
+    expect(plan.batches.every((batch) => batch.items.length * 36 <= MAX_LOW_BATCH_VERTICES)).toBe(true);
   });
 });
