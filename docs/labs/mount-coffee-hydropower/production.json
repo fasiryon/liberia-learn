@@ -764,7 +764,7 @@
         "lab-performance-reviewer",
         "lab-design-director"
       ],
-      "tests": "Partial: frame-plan.test.ts (planner parity model, WebGL1 vertex cap, LOW budget across review scenarios, plan reuse and eligibility transitions), low-batch-state.test.ts (per-item color/emissive range updates and reusable storage), hydropower-definition.test.ts, parametric-geometry.test.ts. LOW budget is 26/40 draws in the current Mount Coffee baseline. Still requires browser proof of renderer parity/state synchronization across all profiles, GPU buffer identity and allocation/lifecycle behavior, capture/picking/focus parity, and fresh current-head CI evidence. No current-head CI run; remains PROPOSED."
+      "tests": "Partial: frame-plan.test.ts (planner parity model, WebGL1 vertex cap, LOW budget across review scenarios, plan reuse and eligibility transitions), low-batch-state.test.ts (per-item color/emissive range updates and reusable storage), picking.test.ts (nearest visible depth, stable tie-break and camera-depth clipping), hydropower-definition.test.ts, parametric-geometry.test.ts. LOW budget is 26/40 draws in the current Mount Coffee baseline. Still requires browser proof of renderer parity/state synchronization across all profiles, GPU buffer identity and allocation/lifecycle behavior, capture/picking/focus parity, and fresh current-head CI evidence. No current-head CI run; remains PROPOSED."
     },
     {
       "id": "RX-005i",
