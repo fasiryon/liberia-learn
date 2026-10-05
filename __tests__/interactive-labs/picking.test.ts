@@ -27,4 +27,11 @@ describe("RX-006 CPU picking across merged geometry", () => {
     const hit = pickNearest({ ...list, items: [behind, visible] }, project, { x: 0, y: 0 }, null);
     expect(hit).toMatchObject({ kind: "item", item: { id: "visible" } });
   });
+
+  it("does not pick a projected center outside the viewport", () => {
+    const offscreen = item("offscreen", 0), visible = item("visible", 0.4);
+    const clippedProjection = (point: [number, number, number]) => point[0] > 1 ? null : project(point);
+    const hit = pickNearest({ ...list, items: [{ ...offscreen, center: [2, 0, 0] }, visible] }, clippedProjection, { x: 0, y: 0 }, null);
+    expect(hit).toMatchObject({ kind: "item", item: { id: "visible" } });
+  });
 });

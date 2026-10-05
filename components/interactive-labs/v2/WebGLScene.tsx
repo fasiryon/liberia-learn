@@ -463,7 +463,7 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
   const pick = (clientX: number, clientY: number, target: HTMLElement) => {
     const { list, viewProj, width, height } = frameRef.current; if (!list) return;
     const rect = target.getBoundingClientRect();
-    const project = (p: Vec3) => { const c = transformPoint(viewProj, p); return c[2] < -1 || c[2] > 1 ? null : { x: (c[0] * 0.5 + 0.5) * width, y: (0.5 - c[1] * 0.5) * height, depth: c[2] }; };
+    const project = (p: Vec3) => { const c = transformPoint(viewProj, p); return c[0] < -1 || c[0] > 1 || c[1] < -1 || c[1] > 1 || c[2] < -1 || c[2] > 1 ? null : { x: (c[0] * 0.5 + 0.5) * width, y: (0.5 - c[1] * 0.5) * height, depth: c[2] }; };
     const hit = pickNearest(list, project, { x: clientX - rect.left, y: clientY - rect.top }, traceFlowId);
     if (hit) onPick(hit);
   };
