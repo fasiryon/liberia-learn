@@ -17,6 +17,7 @@ const MODES: Exclude<LabMode, "COMPLETE">[] = ["GUIDED", "EXPLORE", "CHALLENGE",
 export function LabControlPanel({ definition, state, activeCheck, dispatch, onStartRail }: Props) {
   const spec = definition.fidelity, fidelity = state.fidelity;
   const [heldFace, setHeldFace] = useState<string | null>(null);
+  const [pendingSlot, setPendingSlot] = useState<string | null>(null);
   const modes = spec?.modes ?? MODES;
   const guidedIndex = spec && fidelity ? Math.max(fidelity.guidedStepIndex, Math.min(state.completedChecks.length, spec.guidedPath.length - 1)) : 0;
   const guided = spec && fidelity && state.mode === "GUIDED" ? spec.guidedPath[guidedIndex] : undefined;
@@ -97,7 +98,7 @@ export function LabControlPanel({ definition, state, activeCheck, dispatch, onSt
               <div>
                 <p className="text-xs text-slate-400">1. Pick up a part</p>
                 <div className="mt-2 flex flex-wrap gap-2">{loose.map((id) => { const c = face(id), [w, h] = [c.transform.scale[0], c.transform.scale[1]]; return (
-                  <button key={id} type="button" aria-pressed={heldFace === id} onClick={() => setHeldFace(heldFace === id ? null : id)} className={`flex min-h-11 flex-col items-center gap-1 rounded-xl p-2 text-[11px] ${heldFace === id ? "bg-cyan-300 text-slate-950" : "bg-white/10 text-white"}`}>
+                  <button key={id} type="button" draggable aria-grabbed={heldFace === id} onDragStart={() => setHeldFace(id)} onClick={() => setHeldFace(heldFace === id ? null : id)} className={`flex min-h-11 flex-col items-center gap-1 rounded-xl p-2 text-[11px] ${heldFace === id ? "bg-cyan-300 text-slate-950" : "bg-white/10 text-white"}`}>
                     <svg width={w * 16} height={h * 16} aria-hidden="true"><rect width={w * 16} height={h * 16} rx="2" fill={c.material.color} /></svg>{c.label}
                   </button>); })}{loose.length === 0 && <span className="text-xs text-emerald-300">All parts placed.</span>}</div>
               </div>
@@ -105,7 +106,8 @@ export function LabControlPanel({ definition, state, activeCheck, dispatch, onSt
                 <p className="text-xs text-slate-400">2. Put it in a slot</p>
                 <div className="mt-2 grid grid-cols-2 gap-2">{assembly.slots!.map((slot) => { const current = placements[slot.id]; return (
                   <div key={slot.id} className="flex items-center gap-1">
-                    <button type="button" disabled={!heldFace} onClick={() => { if (heldFace) { dispatch({ type: "place-component", assemblyId: assembly.id, slotId: slot.id, componentId: heldFace }); setHeldFace(null); } }} className="min-h-11 flex-1 rounded-lg border border-dashed border-white/20 px-2 py-1.5 text-left text-xs text-slate-200 disabled:opacity-60">{slot.label}: <b>{current ? face(current).label : "empty"}</b></button>
+                    <button type="button" disabled={!heldFace} onDragOver={(event) => event.preventDefault()} onDrop={(event) => { event.preventDefault(); if (heldFace) { setPendingSlot(slot.id); } }} onClick={() => { if (heldFace) setPendingSlot(slot.id); }} className="min-h-11 flex-1 rounded-lg border border-dashed border-white/20 px-2 py-1.5 text-left text-xs text-slate-200 disabled:opacity-60">{slot.label}: <b>{current ? face(current).label : "empty"}</b></button>
+                    {pendingSlot === slot.id && heldFace && <button type="button" onClick={() => { dispatch({ type: "place-component", assemblyId: assembly.id, slotId: slot.id, componentId: heldFace }); setHeldFace(null); setPendingSlot(null); }} className="min-h-11 rounded-lg bg-emerald-300 px-2 text-xs font-bold text-slate-950">Confirm</button>}
                     {current && <button type="button" aria-label={`Remove ${face(current).label} from ${slot.label}`} onClick={() => dispatch({ type: "place-component", assemblyId: assembly.id, slotId: slot.id, componentId: null })} className="grid h-11 w-11 shrink-0 place-items-center rounded-lg bg-white/10 text-xs">×</button>}
                   </div>); })}</div>
               </div>
