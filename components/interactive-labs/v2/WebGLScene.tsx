@@ -37,6 +37,8 @@ type Props = {
   allowPerformanceDowngrade?: boolean;
   /** Dev-only review harness: installs the frame-plan parity probe. */
   review?: boolean;
+  /** Called once, after the first full frame (A9 data-lab-scene-ready; A17 lifts the 2D loading veil). */
+  onReady?: () => void;
 };
 
 const vertexShader = `attribute vec3 position; attribute vec3 normal; attribute vec3 vcolor; uniform mat4 mvp; uniform mat4 model; uniform float pointSize; uniform float useVertexColor; varying vec3 vNormal; varying vec3 vWorld; varying vec3 vertexColor;
@@ -66,7 +68,7 @@ const GROUND_Y = -2.25;
 
 function rgb(value: string): [number, number, number] { const n = Number.parseInt(value.replace("#", ""), 16); return [(n >> 16 & 255) / 255, (n >> 8 & 255) / 255, (n & 255) / 255]; }
 
-export function WebGLScene({ definition, state, profile, reducedMotion, traceFlowId, dispatch, onPick, onDowngrade, onUpgradeReady, allowProfileUpgrade = false, allowPerformanceDowngrade = true, review = false }: Props) {
+export function WebGLScene({ definition, state, profile, reducedMotion, traceFlowId, dispatch, onPick, onDowngrade, onUpgradeReady, allowProfileUpgrade = false, allowPerformanceDowngrade = true, review = false, onReady }: Props) {
   const canvas = useRef<HTMLCanvasElement>(null);
   // Review evidence: identity, frames drawn and last-frame draw calls on the root (rendererIdentity.ts).
   const root = useRef<HTMLDivElement>(null);
@@ -77,16 +79,18 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
   const displayRef = useRef<FidelityState | undefined>(state.fidelity);
   const zoomRef = useRef(1);
   const frameRef = useRef<{ list: RenderList | null; viewProj: Mat4; width: number; height: number }>({ list: null, viewProj: IDENTITY, width: 1, height: 1 });
-  const callbacks = useRef({ onDowngrade, onUpgradeReady, reducedMotion, traceFlowId });
+  const callbacks = useRef({ onDowngrade, onUpgradeReady, reducedMotion, traceFlowId, onReady });
   const requestDrawRef = useRef<() => void>(() => {});
   const pendingContextLoss = useRef<number | null>(null);
   stateRef.current = state;
-  callbacks.current = { onDowngrade, onUpgradeReady, reducedMotion, traceFlowId };
+  callbacks.current = { onDowngrade, onUpgradeReady, reducedMotion, traceFlowId, onReady };
 
   useEffect(() => {
     if (pendingContextLoss.current !== null) {
       window.clearTimeout(pendingContextLoss.current);
       pendingContextLoss.current = null;
+      // The previous instance's context is reused rather than lost; it no longer counts as a live renderer.
+      if (review) { const reviewWindow = window as Window & { __labReviewLiveRenderers?: number }; reviewWindow.__labReviewLiveRenderers = (reviewWindow.__labReviewLiveRenderers ?? 1) - 1; }
     }
     const el = canvas.current; if (!el) return;
     let gl: WebGLRenderingContext | null = null;
@@ -208,8 +212,8 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
     gl.drawArrays = (mode: number, first: number, count: number) => { frameDraws += 1; if (mode === gl.TRIANGLES) frameTriangles += count / 3; nativeDrawArrays(mode, first, count); };
     // RX-006 test 1 review probe: the planner must equal what this pass counted for the same frame.
     const probe: ReviewFrameProbe = () => lastFrame.plan ? { renderer: "webgl-pass", planned: lastFrame.plan, measured: { drawCalls: lastFrame.draws, triangles: lastFrame.triangles, shadowDrawCalls: 0, shadowTriangles: 0 } } : null;
-    const reviewWindow = window as Window & { __labReviewFrameProbe?: ReviewFrameProbe };
-    if (review) reviewWindow.__labReviewFrameProbe = probe;
+    const reviewWindow = window as Window & { __labReviewFrameProbe?: ReviewFrameProbe; __labReviewLiveRenderers?: number };
+    if (review) { reviewWindow.__labReviewFrameProbe = probe; reviewWindow.__labReviewLiveRenderers = (reviewWindow.__labReviewLiveRenderers ?? 0) + 1; }
     const draw = (now: number) => {
       frame = 0;
       const followedScheduledFrame = previousFrameScheduled;
@@ -360,7 +364,7 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
       // Learner sessions request frames only while something visible is moving.
       const profileProbeActive = allowProfileUpgrade && !upgradeNotified && profile === "LOW" && frameTimes.length < 30;
       framesRendered += 1;
-      if (root.current) { root.current.dataset.labDrawCalls = String(frameDraws); root.current.dataset.labFramesRendered = String(framesRendered); publishFramePlan(root.current, framePlan, false); }
+      if (root.current) { root.current.dataset.labDrawCalls = String(frameDraws); root.current.dataset.labFramesRendered = String(framesRendered); publishFramePlan(root.current, framePlan, false); if (!root.current.dataset.labSceneReady) { root.current.dataset.labSceneReady = "true"; callbacks.current.onReady?.(); } }
       lastFrame = { draws: frameDraws, triangles: frameTriangles, plan: framePlan };
       frameDraws = 0; frameTriangles = 0;
       ambientOnly = reviewTime === undefined && !fidelityMoving && !cameraMoving && !profileProbeActive && (flowMoving || spinMoving || pulseMoving);
@@ -394,6 +398,7 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
       pendingContextLoss.current = window.setTimeout(() => {
         gl.getExtension("WEBGL_lose_context")?.loseContext();
         pendingContextLoss.current = null;
+        if (review) reviewWindow.__labReviewLiveRenderers = (reviewWindow.__labReviewLiveRenderers ?? 1) - 1;
       }, 0);
     };
   }, [definition, profile, allowPerformanceDowngrade, allowProfileUpgrade, review]);

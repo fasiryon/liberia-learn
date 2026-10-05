@@ -13,9 +13,17 @@ import { SceneControlBar } from "./SceneControlBar";
 import { SceneHud } from "./SceneHud";
 import type { ScenePick } from "./picking";
 const loadWebGLScene = () => loadChunkWithRetry(() => import("./WebGLScene"));
-const WebGLScene = dynamic(() => loadWebGLScene().then((m) => m.WebGLScene), { ssr: false, loading: () => <div className="flex h-[clamp(420px,62vh,640px)] items-center justify-center text-slate-300">Loading the 3D lab…</div> });
+// A17: while a renderer chunk loads, the current state's 2D render shows under a loading veil (see SceneLoadingVeil).
+const WebGLScene = dynamic(() => loadWebGLScene().then((m) => m.WebGLScene), { ssr: false, loading: () => <div className="h-[clamp(420px,62vh,640px)]" /> });
 const loadThreeScene = () => loadChunkWithRetry(() => import("./ThreeScene"));
-const ThreeScene = dynamic(() => loadThreeScene().then((m) => m.ThreeScene), { ssr: false, loading: () => <div className="flex h-[clamp(420px,62vh,640px)] items-center justify-center text-slate-300">Loading the high-quality 3D lab…</div> });
+const ThreeScene = dynamic(() => loadThreeScene().then((m) => m.ThreeScene), { ssr: false, loading: () => <div className="h-[clamp(420px,62vh,640px)]" /> });
+
+/** The 2D view of the same state, inert under a veil, until the WebGL renderer reports its first full frame (A17). */
+function SceneLoadingVeil({ label, children }: { label: string; children: ReactNode }) {
+  const inertRef = useRef<HTMLDivElement>(null);
+  useLayoutEffect(() => { inertRef.current?.setAttribute("inert", ""); }, []);
+  return <div className="absolute inset-0 z-10" data-lab-loading-veil><div ref={inertRef} aria-hidden="true" className="pointer-events-none h-full opacity-60">{children}</div><p role="status" className="absolute inset-x-0 top-3 mx-auto w-fit rounded-full bg-slate-950/80 px-4 py-1.5 text-sm font-semibold text-white">{label}</p></div>;
+}
 
 class SceneLoadBoundary extends Component<{ fallback: ReactNode; onError: () => void; children: ReactNode }, { failed: boolean }> {
   state = { failed: false };
@@ -57,6 +65,14 @@ export function InteractiveLabPlayer({ labId = "g4-solid-figures", override, rev
   const [profile, setProfile] = useState<CapabilityProfile>(() => override ?? "LOW");
   const manualProfileChoice = useRef(false);
   const [notice, setNotice] = useState<string | null>(null);
+  // A9 review evidence: every profile change that was not requested (context loss, slow frames, failed chunk).
+  const downgradePath = useRef<string[]>([]);
+  // A17: the WebGL renderer reports its first full frame; until then the 2D render shows under a veil.
+  const [sceneReady, setSceneReady] = useState(false);
+  useEffect(() => { setSceneReady(false); }, [profile]);
+  const onSceneReady = useCallback(() => setSceneReady(true), []);
+  // A3: while the HIGH/STANDARD renderer loads, prefetch the LOW chunk so an offline downgrade still has a renderer.
+  useEffect(() => { if (profile === "HIGH" || profile === "STANDARD") void loadWebGLScene().catch(() => undefined); }, [profile]);
   const reducedMotion = usePrefersReducedMotion();
   const deviceHints = typeof navigator === "undefined" ? {} : readDeviceHints(navigator);
   // A performance downgrade in this session, or remembered from an earlier one, blocks every later auto-upgrade.
@@ -103,6 +119,7 @@ export function InteractiveLabPlayer({ labId = "g4-solid-figures", override, rev
   const onDowngrade = (reason: "context" | "performance") => {
     setProfile((current) => {
       const next = reason === "context" ? "FALLBACK_2D" : downgradeProfile(current);
+      downgradePath.current = [...downgradePath.current, `${current}>${next}:${reason}`];
       rememberProfile(getProfileStorage(), next);
       if (reason === "performance") { performanceDowngraded.current = true; rememberPerformanceDowngrade(getProfileStorage()); }
       return next;
@@ -119,6 +136,7 @@ export function InteractiveLabPlayer({ labId = "g4-solid-figures", override, rev
   }, [canUpgrade, reducedMotion]);
   const onRendererLoadError = useCallback(() => {
     const next: CapabilityProfile = profile === "HIGH" || profile === "STANDARD" ? "LOW" : "FALLBACK_2D";
+    downgradePath.current = [...downgradePath.current, `${profile}>${next}:load`];
     setProfile(next);
     rememberProfile(getProfileStorage(), next);
     setNotice(next === "LOW" ? "The detailed graphics could not load, so the lab switched to LOW graphics." : "3D graphics could not load, so the lab switched to the 2D view.");
@@ -129,7 +147,7 @@ export function InteractiveLabPlayer({ labId = "g4-solid-figures", override, rev
   if (intro) return <section className="mx-auto max-w-5xl rounded-3xl bg-slate-950 p-8 text-white shadow-2xl"><p className="text-sm font-semibold uppercase tracking-[.2em] text-cyan-300">Interactive lab</p><h1 className="mt-3 text-3xl font-bold">{definition.title ?? "Interactive lab"}</h1><p className="mt-4 max-w-2xl text-slate-300">{definition.summary ?? "Use the scene to complete the checks."}</p><button type="button" onClick={() => setIntro(false)} className="mt-7 rounded-full bg-cyan-300 px-6 py-3 font-bold text-slate-950">Start exploring</button></section>;
 
   return (
-    <section data-lab-active-profile={profile} className="relative mx-auto max-w-6xl overflow-hidden rounded-3xl bg-slate-950 text-white shadow-2xl">
+    <section data-lab-active-profile={profile} data-lab-downgrade-path={downgradePath.current.join(" ")} className="relative mx-auto max-w-6xl overflow-hidden rounded-3xl bg-slate-950 text-white shadow-2xl">
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 px-5 py-4">
         <div><p className="text-xs font-semibold uppercase tracking-[.18em] text-cyan-300">Grade {definition.grade} · {definition.subject[0] + definition.subject.slice(1).toLowerCase()}</p><h1 className="text-xl font-bold">{definition.title ?? definition.id}</h1></div>
         <div className="flex items-center gap-2 text-sm">
@@ -147,9 +165,10 @@ export function InteractiveLabPlayer({ labId = "g4-solid-figures", override, rev
             ? <Fallback2D definition={definition} state={state} reducedMotion={reducedMotion} traceFlowId={traceFlowId} dispatch={dispatch} onPick={onPick} />
             : <SceneLoadBoundary key={profile} onError={onRendererLoadError} fallback={<Fallback2D definition={definition} state={state} reducedMotion={reducedMotion} traceFlowId={traceFlowId} dispatch={dispatch} onPick={onPick} />}>
                 {profile === "HIGH" || profile === "STANDARD"
-                  ? <ThreeScene definition={definition} state={state} profile={profile} reducedMotion={reducedMotion} traceFlowId={traceFlowId} dispatch={dispatch} onPick={onPick} onDowngrade={onDowngrade} onUpgradeReady={onUpgradeReady} allowProfileUpgrade={canUpgrade} allowPerformanceDowngrade={!reviewPreview} review={!!reviewPreview} />
-                  : <WebGLScene definition={definition} state={state} profile={profile} reducedMotion={reducedMotion} traceFlowId={traceFlowId} dispatch={dispatch} onPick={onPick} onDowngrade={onDowngrade} onUpgradeReady={onUpgradeReady} allowProfileUpgrade={canUpgrade} allowPerformanceDowngrade={!reviewPreview} review={!!reviewPreview} />}
+                  ? <ThreeScene definition={definition} state={state} profile={profile} reducedMotion={reducedMotion} traceFlowId={traceFlowId} dispatch={dispatch} onPick={onPick} onDowngrade={onDowngrade} onUpgradeReady={onUpgradeReady} onReady={onSceneReady} allowProfileUpgrade={canUpgrade} allowPerformanceDowngrade={!reviewPreview} review={!!reviewPreview} />
+                  : <WebGLScene definition={definition} state={state} profile={profile} reducedMotion={reducedMotion} traceFlowId={traceFlowId} dispatch={dispatch} onPick={onPick} onDowngrade={onDowngrade} onUpgradeReady={onUpgradeReady} onReady={onSceneReady} allowProfileUpgrade={canUpgrade} allowPerformanceDowngrade={!reviewPreview} review={!!reviewPreview} />}
               </SceneLoadBoundary>}
+          {profile !== "FALLBACK_2D" && !sceneReady && <SceneLoadingVeil label={profile === "LOW" ? "Loading the 3D lab…" : "Loading the high-quality 3D lab…"}><Fallback2D definition={definition} state={state} reducedMotion={reducedMotion} traceFlowId={traceFlowId} dispatch={dispatch} onPick={onPick} /></SceneLoadingVeil>}
           <SceneHud definition={definition} state={state} dispatch={dispatch} />
           <SceneControlBar definition={definition} state={state} dispatch={dispatch} />
         </div>

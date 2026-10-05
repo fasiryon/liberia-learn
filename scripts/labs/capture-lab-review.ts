@@ -67,14 +67,15 @@ async function observeRenderer(page: Page, requestedProfile: CapabilityProfile) 
   const seen = await page.evaluate(`(() => {
     const scope = document.querySelector("[data-lab-review-ready]");
     const player = scope && scope.querySelector("[data-lab-active-profile]");
-    const renderer = scope && scope.querySelector("[data-lab-renderer]");
+    const renderer = scope && scope.querySelector("[data-lab-renderer]:not([data-lab-loading-veil] *)");
     return {
       actualProfile: player ? player.getAttribute("data-lab-active-profile") : null,
+      downgradePath: player ? player.getAttribute("data-lab-downgrade-path") || "" : "",
       actualRenderer: renderer ? renderer.getAttribute("data-lab-renderer") : null,
       framesRendered: renderer ? Number(renderer.getAttribute("data-lab-frames-rendered") || 0) : 0,
       drawCalls: renderer && renderer.hasAttribute("data-lab-draw-calls") ? Number(renderer.getAttribute("data-lab-draw-calls")) : null,
     };
-  })()`) as { actualProfile: string | null; actualRenderer: string | null; framesRendered: number; drawCalls: number | null };
+  })()`) as { actualProfile: string | null; downgradePath: string; actualRenderer: string | null; framesRendered: number; drawCalls: number | null };
   return { ...seen, verdict: verifyRendererIdentity({ requestedProfile, ...seen }) };
 }
 
@@ -148,10 +149,11 @@ async function openScenario(page: Page, baseUrl: string, labId: string, scenario
     // Let hydration and deferred renderer effects settle while the installed clock advances normally.
     await page.clock.runFor(SETTLE_MS);
     if (await page.locator("[data-lab-review-ready] canvas").count()) {
+      // A9: wait for the renderer's first full frame (it compiles every program first in review mode).
       await page.waitForFunction(() => {
         const canvas = document.querySelector<HTMLCanvasElement>("[data-lab-review-ready] canvas");
-        return !!canvas && canvas.width > 300;
-      }, null, { timeout: 30_000 });
+        return !!canvas && canvas.width > 300 && !!document.querySelector("[data-lab-review-ready] [data-lab-scene-ready]");
+      }, null, { timeout: 60_000 });
     } else {
       try {
         await page.waitForFunction(() => Boolean((window as Window & { __labReviewClockReady?: boolean }).__labReviewClockReady), null, { timeout: 30_000 });
@@ -310,7 +312,7 @@ async function main() {
         runs.push({ scenario: scenario.id, profile, viewport, kind: "still", screenshot: path.relative(out, still).replace(/\\/g, "/"),
           status: failure ? "FAIL" : "PASS", ...(failure ? { failureReason: failure } : {}),
           framePlan: frameProbe, frameParity, threeChunkRequests: issues.threeChunkRequests,
-          actualProfile: identity.actualProfile, actualRenderer: identity.actualRenderer, framesRendered: identity.framesRendered, drawCalls: identity.drawCalls,
+          actualProfile: identity.actualProfile, downgradePath: identity.downgradePath, actualRenderer: identity.actualRenderer, framesRendered: identity.framesRendered, drawCalls: identity.drawCalls,
           ...opened, warnings: issues.consoleErrors, consoleErrors: issues.consoleErrors, pageErrors: issues.pageErrors });
         writeManifest();
         if (failure) { console.error(`FAIL ${base}: ${failure}`); if (!identity.verdict.ok) continue; }

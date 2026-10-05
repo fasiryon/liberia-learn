@@ -6,6 +6,10 @@
  * capture evidence; any failed step exits non-zero.
  *
  *   npx tsx scripts/labs/interaction-walkthrough.ts --lab mount-coffee-hydropower --profile HIGH [--viewport desktop]
+ *     [--abort-three-chunk]
+ *
+ * --abort-three-chunk (RX-005 A3 harness): every request for the HIGH renderer's chunks is aborted. The lab must land
+ * on LOW with a notice, and the whole walkthrough (every check) must still complete.
  */
 import { mkdirSync, writeFileSync } from "node:fs";
 import path from "node:path";
@@ -29,7 +33,8 @@ async function main() {
   const walkthrough = LAB_WALKTHROUGHS[labId];
   const definition = getInteractiveLabDefinition(labId);
   if (!walkthrough || !definition) throw new Error(`No walkthrough or definition for ${labId}.`);
-  const out = arg("out") ?? path.join("artifacts", "lab-review", labId, definition.version, `walkthrough-${profile}-${viewport}`);
+  const abortThree = process.argv.includes("--abort-three-chunk");
+  const out = arg("out") ?? path.join("artifacts", "lab-review", labId, definition.version, `walkthrough-${profile}-${viewport}${abortThree ? "-three-aborted" : ""}`);
   mkdirSync(out, { recursive: true });
 
   const browser = await chromium.launch({ args: ["--use-angle=swiftshader", "--enable-unsafe-swiftshader", "--ignore-gpu-blocklist"] });
@@ -38,17 +43,32 @@ async function main() {
   const page = await context.newPage();
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.message.slice(0, 300)));
+  const aborted: string[] = [];
+  if (abortThree) await page.route("**/_next/static/**", (route) => {
+    const url = route.request().url();
+    if (/ThreeScene|threeScene|node_modules[_/]three[_/]/.test(url)) { aborted.push(url.slice(0, 200)); return route.abort("failed"); }
+    return route.continue();
+  });
+  // When the HIGH chunk is aborted the player must fall back to LOW (A3), so that is the renderer the walkthrough expects.
+  const expectedProfile: CapabilityProfile = abortThree && (profile === "HIGH" || profile === "STANDARD") ? "LOW" : profile;
   const results: Record<string, unknown>[] = [];
   let failed = 0;
   try {
     await page.goto(`${baseUrl}/lab-review/${labId}?scenario=${walkthrough.scenario}&profile=${profile}`, { waitUntil: "domcontentloaded", timeout: 180_000 });
-    await page.waitForSelector("[data-lab-review-ready] [data-lab-renderer]", { timeout: 120_000 });
+    // The 2D render under the loading veil is not the scene: wait for the renderer's first full frame (or the real 2D view).
+    await page.waitForSelector("[data-lab-review-ready] [data-lab-scene-ready], [data-lab-review-ready] [data-lab-active-profile=FALLBACK_2D] [data-lab-renderer]", { timeout: 180_000 });
     await page.waitForTimeout(4000);
-    const identity = await page.evaluate(`(() => { const s = document.querySelector("[data-lab-review-ready]"); const p = s && s.querySelector("[data-lab-active-profile]"); const r = s && s.querySelector("[data-lab-renderer]");
-      return { actualProfile: p ? p.getAttribute("data-lab-active-profile") : null, actualRenderer: r ? r.getAttribute("data-lab-renderer") : null, framesRendered: r ? Number(r.getAttribute("data-lab-frames-rendered") || 0) : 0 }; })()`) as { actualProfile: string | null; actualRenderer: string | null; framesRendered: number };
-    const verdict = verifyRendererIdentity({ requestedProfile: profile, ...identity });
-    results.push({ step: "renderer-identity", ...identity, ok: verdict.ok, ...(verdict.ok ? {} : { reason: verdict.reason }) });
+    const identity = await page.evaluate(`(() => { const s = document.querySelector("[data-lab-review-ready]"); const p = s && s.querySelector("[data-lab-active-profile]"); const r = s && s.querySelector("[data-lab-renderer]:not([data-lab-loading-veil] *)");
+      return { actualProfile: p ? p.getAttribute("data-lab-active-profile") : null, downgradePath: p ? p.getAttribute("data-lab-downgrade-path") : null, actualRenderer: r ? r.getAttribute("data-lab-renderer") : null, framesRendered: r ? Number(r.getAttribute("data-lab-frames-rendered") || 0) : 0 }; })()`) as { actualProfile: string | null; downgradePath: string | null; actualRenderer: string | null; framesRendered: number };
+    const verdict = verifyRendererIdentity({ requestedProfile: expectedProfile, ...identity });
+    results.push({ step: "renderer-identity", requestedProfile: profile, expectedProfile, ...identity, ok: verdict.ok, ...(verdict.ok ? {} : { reason: verdict.reason }) });
     if (!verdict.ok) failed += 1;
+    if (abortThree) {
+      const notice = (await page.locator("[data-lab-review-ready] [role=status]").allInnerTexts()).find((text) => /could not load/i.test(text)) ?? null;
+      const ok = aborted.length > 0 && !!notice && (identity.downgradePath ?? "").includes(":load");
+      results.push({ step: "three-chunk-aborted", ok, abortedRequests: aborted, notice, downgradePath: identity.downgradePath });
+      if (!ok) failed += 1;
+    }
     // Start keyboard navigation from the top of the review harness.
     await page.locator("[data-lab-review-ready]").first().focus().catch(() => undefined);
 
@@ -83,11 +103,11 @@ async function main() {
     await page.screenshot({ path: path.join(out, "walkthrough-end.png"), fullPage: true, timeout: 120_000 }).catch(() => undefined);
   } finally {
     const sha = (() => { try { return execSync("git rev-parse HEAD", { encoding: "utf8" }).trim(); } catch { return process.env.GITHUB_SHA ?? "unknown"; } })();
-    writeFileSync(path.join(out, "walkthrough.json"), JSON.stringify({ labId, labVersion: definition.version, profile, viewport, gitSha: sha, input: "keyboard only (Tab + Enter)", failedSteps: failed, pageErrors: errors, results,
+    writeFileSync(path.join(out, "walkthrough.json"), JSON.stringify({ labId, labVersion: definition.version, profile, expectedProfile, abortThreeChunk: abortThree, viewport, gitSha: sha, input: "keyboard only (Tab + Enter)", failedSteps: failed, pageErrors: errors, results,
       boundary: "Automated keyboard walkthrough in headless Chromium. It does not test real touch latency, screen readers or physical devices." }, null, 2));
     await browser.close();
   }
-  console.log(`Walkthrough ${labId} ${profile}/${viewport}: ${failed} failed step(s).`);
+  console.log(`Walkthrough ${labId} ${profile}${abortThree ? " (three chunk aborted)" : ""}/${viewport}: ${failed} failed step(s).`);
   if (failed) process.exitCode = 1;
 }
 
