@@ -146,4 +146,30 @@ describe("RX-006 test 1: the LOW frame planner", () => {
       ?? nextPlan.singles.find((item) => item.id === nextItems[0].id);
     expect(updated).toMatchObject({ color: "#ff0000", emissive: 1, label: "Updated live label" });
   });
+
+  it("rebuilds membership when a batched component becomes highlighted", () => {
+    const definition = getInteractiveLabDefinition("mount-coffee-hydropower")!;
+    const list = buildRenderList({ definition, state: initializeLab(definition), profile: "LOW" });
+    const cache = createLowBatchCache(), initial = syncLowBatchCache(cache, list);
+    const batchedId = initial.batches[0].itemIds[0];
+    const highlightedItems = list.items.map((item) => item.id === batchedId ? { ...item, highlighted: true } : item);
+    const next = syncLowBatchCache(cache, { ...list, items: highlightedItems });
+    expect(next).not.toBe(initial);
+    expect(next.batches.flatMap((batch) => batch.itemIds)).not.toContain(batchedId);
+    expect(next.singles.find((item) => item.id === batchedId)?.highlighted).toBe(true);
+  });
+
+  it("keeps every Mount Coffee storyboard scenario within the measured LOW draw budget", () => {
+    const definition = getInteractiveLabDefinition("mount-coffee-hydropower")!;
+    for (const scenario of LAB_REVIEW_SCENARIO_SETS[definition.id].scenarios) {
+      const replay = replayReviewScenario(definition, scenario);
+      expect(replay.ok, scenario.id).toBe(true);
+      if (!replay.ok) continue;
+      const list = buildRenderList({ definition, state: replay.state, profile: "LOW" });
+      const plan = planLowBatches(list);
+      const frame = planLowFrame(list, { traceFlowId: activeTraceFlowId(definition, replay.state), plan });
+      expect(frame.drawCalls, scenario.id).toBeLessThanOrEqual(40);
+      expect(plan.drawCalls, scenario.id).toBeLessThanOrEqual(frame.drawCalls);
+    }
+  });
 });

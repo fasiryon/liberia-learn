@@ -73,6 +73,10 @@ const LIGHTING = { full: 3, simplified: 2, minimal: 1, none: 0 } as const;
 const GROUND_Y = -2.25;
 
 function rgb(value: string): [number, number, number] { const n = Number.parseInt(value.replace("#", ""), 16); return [(n >> 16 & 255) / 255, (n >> 8 & 255) / 255, (n & 255) / 255]; }
+function fillRgb(target: Float32Array, value: string): void {
+  const n = Number.parseInt(value.replace("#", ""), 16), red = (n >> 16 & 255) / 255, green = (n >> 8 & 255) / 255, blue = (n & 255) / 255;
+  for (let offset = 0; offset < target.length; offset += 3) { target[offset] = red; target[offset + 1] = green; target[offset + 2] = blue; }
+}
 
 export function WebGLScene({ definition, state, profile, reducedMotion, traceFlowId, dispatch, onPick, onDowngrade, onUpgradeReady, allowProfileUpgrade = false, allowPerformanceDowngrade = true, review = false, onReady, railActive = false, recenter = 0 }: Props) {
   const canvas = useRef<HTMLCanvasElement>(null);
@@ -331,8 +335,7 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
               const range = gpu.itemRanges.get(item.id);
               if (!range) continue;
               if (range.color !== item.color) {
-                const baseColor = rgb(item.color), data = range.colorData;
-                for (let i = 0; i < range.count; i++) data.set(baseColor, i * 3);
+                const data = range.colorData; fillRgb(data, item.color);
                 gl.bindBuffer(gl.ARRAY_BUFFER, gpu.color); gl.bufferSubData(gl.ARRAY_BUFFER, range.first * 3 * Float32Array.BYTES_PER_ELEMENT, data); range.color = item.color;
               }
               if (range.emissive !== item.emissive) {
