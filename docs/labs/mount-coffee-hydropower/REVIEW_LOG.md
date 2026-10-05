@@ -201,3 +201,11 @@ Mount Coffee remains DRAFT, approval PENDING, unreleased, curriculum linkage ina
 
 ## Governance handoff
 Curriculum alignment remains PROPOSED, not governed. All five checks remain RAW_OBSERVATION. The lab is DRAFT, fixture-bound, unapproved and unreleased. `SHIP_CANDIDATE` requires completed three-round HERO review and benchmark scoring. `SHIP_VERIFIED` requires a separately authorized real-school pilot; this team cannot approve, release or bind the lab.
+
+## RX-005 / RX-006 implementation continuation — 2026-10-05
+
+Work resumed on `feat/rx005-rx006-acceptance-closure` from `18eed1b0`. Added output-driven status lamps, confirmed drag assembly controls, the mobile controls sheet and objective peek, WebGL matrix scratch reuse, WebGL1-safe LOW batch caps, per-vertex LOW color/emission, and cached LOW batch membership. LOW batches now retain source-item ranges; color and emission changes update only those ranges with `bufferSubData`, and live render-list records are refreshed in the reused plan so labels and picks do not go stale.
+
+The latest focused frame-planner run passed 9/9 tests; the preceding paired frame-planner/hydropower run passed 23 tests before two additional planner scenarios were added. The full lab suite reported 215 passed and one renderer-chunk size-gate failure before the chunk record was remeasured. The local 20× Chromium lifecycle run did not complete: the dev server attempted to fetch Inter from Google Fonts and outbound network access was denied. TypeScript and ESLint commands also stalled without results. No fresh CI capture or reviewer re-check has run, so RX-005 and RX-006 remain PROPOSED.
+
+RX-005 A8 renderer chunk remeasurement, in its own change: prior `webglPass` 54,952 stored / 18,462 Brotli bytes; current 60,325 / 19,634 (+9.78% / +6.35%). `threeRenderer` moved from 601,056 / 130,179 to 602,175 / 130,503 (+0.19% / +0.25%). The `webglPass` increase includes the RX-006 required per-component color/emission ranges and persistent membership metadata, plus the resumed RX slices since the previous recorded measurement. This is a measured re-baseline proposal, not reviewer acceptance; the >5% change needs fresh CI and performance-reviewer re-check. The CI tolerance remains 5% from the newly recorded values.
