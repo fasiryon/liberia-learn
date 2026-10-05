@@ -6,8 +6,7 @@
 import { buildOfflineManifest } from "../fidelity/boundary";
 import { buildRenderList } from "../fidelity/renderList";
 import { RENDER_BUDGETS } from "../fidelity/profiles";
-import { planLowBatches } from "../fidelity/lowBatch";
-import { parametricTriangleCount } from "../fidelity/geometry/builders";
+import { activeTraceFlowId, lowPrimitiveTriangles, planFrame, THREE_PRIMITIVE_TRIANGLES } from "../fidelity/framePlan";
 import type { CapabilityProfile, GeometryKind, InteractiveLabDefinition, LabState } from "../types";
 
 export const LAB_BUDGET_VERSION = "lab-budgets/1.0.0" as const;
@@ -65,14 +64,9 @@ export const STATIC_BUDGETS: Readonly<Record<CapabilityProfile, StaticBudget>> =
 /** How far a measured value may grow over the committed baseline before CI calls it a regression. */
 export const BUDGET_REGRESSION_TOLERANCE = 0.05;
 
-/** Triangles per procedural mesh; kept in step with components/interactive-labs/v2/meshes.ts by test. */
+/** Triangles per procedural mesh; kept in step with components/interactive-labs/v2/meshes.ts (LOW) and three.js (HIGH/STANDARD) by test. */
 export function geometryTriangles(kind: GeometryKind, low: boolean): number {
-  switch (kind) {
-    case "sphere": return low ? 12 * 8 * 2 : 24 * 16 * 2;
-    case "cylinder": return (low ? 14 : 32) * 4;
-    case "cone": return (low ? 14 : 32) * 2;
-    default: return 12;
-  }
+  return low ? lowPrimitiveTriangles(kind) : THREE_PRIMITIVE_TRIANGLES[kind];
 }
 
 /** A binary asset declared by the lab-asset-director. Procedural geometry has no entry here. */
@@ -80,53 +74,33 @@ export type LabAssetBytes = { id: string; bytes: number; profiles: CapabilityPro
 
 export type LabBudgetMeasurement = Record<CapabilityProfile, { offlinePackageBytes: number; triangles: number; drawCalls: number; maxTexturePx: number; particles: number }>;
 
-/** Worst case across the given learner states (normally every review scenario) for every profile. */
+/**
+ * Worst case across the given learner states (normally every review scenario) for every profile. Draws and
+ * triangles come from the renderers' own frame planners (framePlan.ts); the worst HIGH frame is the main pass plus
+ * the sun-shadow pass (A7). Runtime textures (shadow map, environment) count toward maxTexturePx (A8).
+ */
 export function measureLabBudget(definition: InteractiveLabDefinition<LabState>, states: LabState[], assets: LabAssetBytes[] = []): LabBudgetMeasurement {
   const definitionBytes = buildOfflineManifest(definition).bytes;
   const result = {} as LabBudgetMeasurement;
-  const daylight = definition.fidelity?.environment === "DAYLIGHT";
   for (const profile of Object.keys(RENDER_BUDGETS) as CapabilityProfile[]) {
     const profileAssets = assets.filter((asset) => asset.profiles.includes(profile));
-    let triangles = 0, drawCalls = 0, particles = 0;
+    let triangles = 0, drawCalls = 0, particles = 0, texturePx = 0;
     for (const state of states) {
       const list = buildRenderList({ definition, state, profile });
-      const svg = profile === "FALLBACK_2D", low = list.budget.meshDetail === "low";
-      const geometryProfile = profile === "LOW" ? "LOW" : profile === "STANDARD" ? "STANDARD" : "HIGH";
-      // RX-005b surfaces: a ribbon is 2 triangles per span (three.js); LOW splits each span at the centre line (4).
-      const activeSurfaces = list.surfaces.filter((surface) => surface.active && surface.width > 0);
-      const surfaceTriangles = activeSurfaces.reduce((sum, surface) => sum + (surface.points.length - 1) * (low ? 4 : 2), 0);
-      triangles = Math.max(triangles, svg ? 0 : surfaceTriangles + list.items.reduce((sum, item) => sum + (item.parametricGeometry ? parametricTriangleCount(item.parametricGeometry, geometryProfile) : geometryTriangles(item.geometry, low)), 0));
-      // ThreeScene: one ground and item draw, each flow line, active particle flow,
-      // plus the shared marker batch when instructional markers or trace nodes exist.
-      const threeFlowDraws = list.flows.length
-        + list.flows.filter((flow) => flow.active && flow.particleCount > 0).length;
-      const hasTraceNodes = list.flows.some((flow) => flow.nodes.some((node) => node.traceable));
-      const threeMarkerDraw = list.markers.length > 0 || hasTraceNodes ? 1 : 0;
-      // Items: both renderers draw identical static parts as one batch (LOW merged buffers, ThreeScene InstancedMesh),
-      // planned by planLowBatches. Surfaces: one mesh each in ThreeScene; one shared triangle batch on LOW.
-      const plan = planLowBatches(list);
-      const itemDraws = plan.batches.length + plan.singles.length;
-      // A7: HIGH daylight redraws a sun shadow pass when casters move; the worst frame is main pass + shadow pass.
-      const shadowDraws = profile === "HIGH" && daylight
-        ? plan.batches.length + plan.singles.filter((item) => !item.spin && !item.clip && item.alpha >= 0.9 && item.detail !== "decor").length
-        : 0;
-      drawCalls = Math.max(drawCalls, svg ? 0 : profile === "LOW"
-        ? plan.drawCalls + (activeSurfaces.length ? 1 : 0) + (daylight ? 1 : 0)
-        : itemDraws + 1 + threeFlowDraws + threeMarkerDraw + activeSurfaces.length + shadowDraws);
+      const frame = planFrame(list, profile, activeTraceFlowId(definition, state));
+      triangles = Math.max(triangles, frame.triangles + frame.shadowTriangles);
+      drawCalls = Math.max(drawCalls, frame.drawCalls + frame.shadowDrawCalls);
+      texturePx = Math.max(texturePx, ...frame.textures.map((texture) => texture.px));
       particles = Math.max(particles, list.flows.reduce((sum, flow) => sum + flow.particleCount, 0));
     }
     result[profile] = {
       offlinePackageBytes: definitionBytes + profileAssets.reduce((sum, asset) => sum + asset.bytes, 0),
       triangles, drawCalls, particles,
-      // The HIGH daylight shadow map is a runtime texture (A7).
-      maxTexturePx: Math.max(profile === "HIGH" && daylight ? DAYLIGHT_SHADOW_MAP_PX : 0, profileAssets.reduce((max, asset) => Math.max(max, asset.maxTexturePx ?? 0), 0)),
+      maxTexturePx: Math.max(texturePx, profileAssets.reduce((max, asset) => Math.max(max, asset.maxTexturePx ?? 0), 0)),
     };
   }
   return result;
 }
-
-/** Runtime shadow map ThreeScene allocates for a DAYLIGHT lab on HIGH. */
-export const DAYLIGHT_SHADOW_MAP_PX = 1024;
 
 /** Budget violations and regressions against a committed baseline. Empty means the lab passes. */
 export function checkLabBudget(labId: string, measured: LabBudgetMeasurement, baseline?: LabBudgetMeasurement): string[] {

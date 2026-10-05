@@ -13,11 +13,14 @@ void main() {
   #include <colorspace_fragment>
 }`;
 
+/** The sky dome mesh; its triangle count is THREE_SKY_TRIANGLES in framePlan.ts (checked by test). */
+export const skyGeometry = (radius: number) => new THREE.SphereGeometry(radius, 32, 16);
+
 function skyDome(radius: number): THREE.Mesh<THREE.SphereGeometry, THREE.ShaderMaterial> {
   const material = new THREE.ShaderMaterial({ vertexShader: skyVertex, fragmentShader: skyFragment, side: THREE.BackSide, depthWrite: false, fog: false, uniforms: {
     uZenith: { value: new THREE.Color(DAYLIGHT_SKY.zenith) }, uHorizon: { value: new THREE.Color(DAYLIGHT_SKY.horizon) }, uGround: { value: new THREE.Color(DAYLIGHT_SKY.ground) },
   } });
-  const mesh = new THREE.Mesh(new THREE.SphereGeometry(radius, 32, 16), material);
+  const mesh = new THREE.Mesh(skyGeometry(radius), material);
   mesh.name = "environment-sky"; mesh.renderOrder = -10; mesh.frustumCulled = false;
   return mesh;
 }

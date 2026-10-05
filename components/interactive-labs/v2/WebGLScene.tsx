@@ -11,11 +11,14 @@ import { downgradeFrameBudgetMs } from "@/lib/interactive-labs/v2/production/bud
 import { fitHorizontalFieldOfView, IDENTITY, multiply, perspective, transformPoint, type Mat4, type Vec3 } from "@/lib/interactive-labs/v2/fidelity/math";
 import { batchFlowGeometry, createFlowBatchStorage, createPointBatchStorage, writeMarkerPositions, type FlowVertexBatch } from "@/lib/interactive-labs/v2/fidelity/flowBatch";
 import { shouldScheduleWebGLFrame } from "@/lib/interactive-labs/v2/fidelity/renderLoop";
+import { browserVisibilityDeps, shouldDrawFrame, watchSceneVisibility } from "@/lib/interactive-labs/v2/fidelity/sceneActivity";
 import { highlightBaseMix, HIGHLIGHT_COLOR, MARKER_COLOR } from "@/lib/interactive-labs/v2/fidelity/palette";
 import { placeSceneLabels } from "@/lib/interactive-labs/v2/fidelity/labelLayout";
 import { buildMesh } from "./meshes";
 import { buildParametricGeometry } from "@/lib/interactive-labs/v2/fidelity/geometry/builders";
 import { planLowBatches } from "@/lib/interactive-labs/v2/fidelity/lowBatch";
+import { planLowFrame, type FramePlan } from "@/lib/interactive-labs/v2/fidelity/framePlan";
+import { publishFramePlan, type ReviewFrameProbe } from "@/lib/interactive-labs/v2/review/framePlanEvidence";
 import { createSurfaceTriangleStorage, writeSurfaceTriangles } from "@/lib/interactive-labs/v2/fidelity/surfaces";
 import type { MeshData } from "./meshes";
 import { pickNearest, type ScenePick } from "./picking";
@@ -32,6 +35,8 @@ type Props = {
   onUpgradeReady?: () => void;
   allowProfileUpgrade?: boolean;
   allowPerformanceDowngrade?: boolean;
+  /** Dev-only review harness: installs the frame-plan parity probe. */
+  review?: boolean;
 };
 
 const vertexShader = `attribute vec3 position; attribute vec3 normal; attribute vec3 vcolor; uniform mat4 mvp; uniform mat4 model; uniform float pointSize; uniform float useVertexColor; varying vec3 vNormal; varying vec3 vWorld; varying vec3 vertexColor;
@@ -61,7 +66,7 @@ const GROUND_Y = -2.25;
 
 function rgb(value: string): [number, number, number] { const n = Number.parseInt(value.replace("#", ""), 16); return [(n >> 16 & 255) / 255, (n >> 8 & 255) / 255, (n & 255) / 255]; }
 
-export function WebGLScene({ definition, state, profile, reducedMotion, traceFlowId, dispatch, onPick, onDowngrade, onUpgradeReady, allowProfileUpgrade = false, allowPerformanceDowngrade = true }: Props) {
+export function WebGLScene({ definition, state, profile, reducedMotion, traceFlowId, dispatch, onPick, onDowngrade, onUpgradeReady, allowProfileUpgrade = false, allowPerformanceDowngrade = true, review = false }: Props) {
   const canvas = useRef<HTMLCanvasElement>(null);
   // Review evidence: identity, frames drawn and last-frame draw calls on the root (rendererIdentity.ts).
   const root = useRef<HTMLDivElement>(null);
@@ -187,28 +192,42 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
 
     const fallbackPose: CameraPose = { target: [0, 0, 0], distance: 11, yaw: 0, pitch: 0 };
     let camera: CameraPose | null = null;
-    let frame = 0, last = performance.now(), labelTick = 0, reviewClockSeen = false;
+    let frame = 0, last = performance.now(), lastTick = last, lastDrawnAt = -Infinity, labelTick = 0, reviewClockSeen = false;
+    // A6: paused while hidden or off-screen; ambient-only frames are capped at 30 fps. State changes and resizes force a frame.
+    let active = true, ambientOnly = false, forceDraw = true;
     let lastReviewTime: number | undefined;
     let frameTimes: number[] = [];
     let upgradeNotified = false;
     let previousFrameScheduled = false;
-    const scheduleDraw = () => { if (!frame) frame = requestAnimationFrame(draw); };
+    const scheduleDraw = () => { if (active && !frame) frame = requestAnimationFrame(draw); };
+    const requestDraw = () => { forceDraw = true; scheduleDraw(); };
     // Count real draw calls per frame for review manifests (gl.drawArrays is the only draw entry point here).
     const nativeDrawArrays = gl.drawArrays.bind(gl);
-    let frameDraws = 0, framesRendered = 0;
-    gl.drawArrays = (mode: number, first: number, count: number) => { frameDraws += 1; nativeDrawArrays(mode, first, count); };
+    let frameDraws = 0, frameTriangles = 0, framesRendered = 0;
+    let lastFrame: { draws: number; triangles: number; plan: FramePlan | null } = { draws: 0, triangles: 0, plan: null };
+    gl.drawArrays = (mode: number, first: number, count: number) => { frameDraws += 1; if (mode === gl.TRIANGLES) frameTriangles += count / 3; nativeDrawArrays(mode, first, count); };
+    // RX-006 test 1 review probe: the planner must equal what this pass counted for the same frame.
+    const probe: ReviewFrameProbe = () => lastFrame.plan ? { renderer: "webgl-pass", planned: lastFrame.plan, measured: { drawCalls: lastFrame.draws, triangles: lastFrame.triangles, shadowDrawCalls: 0, shadowTriangles: 0 } } : null;
+    const reviewWindow = window as Window & { __labReviewFrameProbe?: ReviewFrameProbe };
+    if (review) reviewWindow.__labReviewFrameProbe = probe;
     const draw = (now: number) => {
       frame = 0;
       const followedScheduledFrame = previousFrameScheduled;
       previousFrameScheduled = false;
       const reviewTime = (window as Window & { __labReviewClockSeconds?: number }).__labReviewClockSeconds;
+      // A4: one downgrade sample per scheduled animation frame (the display cadence), whether it draws or not.
+      if (reviewTime === undefined) frameTimes = recordFrameSample(frameTimes, Math.min(100, now - lastTick), followedScheduledFrame);
+      lastTick = now;
+      if (reviewTime === undefined && !forceDraw && !shouldDrawFrame({ ambient: ambientOnly, eased: !ambientOnly }, now, lastDrawnAt)) {
+        previousFrameScheduled = true; frame = requestAnimationFrame(draw); return;
+      }
+      forceDraw = false; lastDrawnAt = now;
       if (reviewTime !== undefined && !reviewClockSeen) { labelTick = Number.NEGATIVE_INFINITY; reviewClockSeen = true; }
       const dt = reviewTime === undefined
         ? Math.min(0.1, (now - last) / 1000)
         : lastReviewTime === undefined ? 0 : Math.min(0.1, Math.max(0, reviewTime - lastReviewTime));
       last = now;
       if (reviewTime !== undefined) lastReviewTime = reviewTime;
-      if (reviewTime === undefined) frameTimes = recordFrameSample(frameTimes, dt * 1000, followedScheduledFrame);
       if (allowPerformanceDowngrade && !downgraded && shouldDowngrade(frameTimes, downgradeFrameBudgetMs(profile))) { downgraded = true; callbacks.current.onDowngrade("performance"); }
       if (allowProfileUpgrade && !upgradeNotified && profile === "LOW" && probeAllowsUpgrade(frameTimes)) {
         upgradeNotified = true;
@@ -249,8 +268,10 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
       };
       // RX-006 merges repeated LOW geometry in CPU space. Source ids stay in the
       // plan for picking/labels, while per-part state stays individual.
+      let framePlan: FramePlan | null = null;
       if (low) {
         const plan = planLowBatches(list);
+        framePlan = planLowFrame(list, { traceFlowId: callbacks.current.traceFlowId, plan });
         const activeBatchKeys = new Set(plan.batches.map((batch) => batch.key));
         for (const batch of plan.batches) {
           const signature = JSON.stringify(batch.items.map((item) => [item.id, item.matrix]));
@@ -339,19 +360,28 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
       // Learner sessions request frames only while something visible is moving.
       const profileProbeActive = allowProfileUpgrade && !upgradeNotified && profile === "LOW" && frameTimes.length < 30;
       framesRendered += 1;
-      if (root.current) { root.current.dataset.labDrawCalls = String(frameDraws); root.current.dataset.labFramesRendered = String(framesRendered); }
-      frameDraws = 0;
+      if (root.current) { root.current.dataset.labDrawCalls = String(frameDraws); root.current.dataset.labFramesRendered = String(framesRendered); publishFramePlan(root.current, framePlan, false); }
+      lastFrame = { draws: frameDraws, triangles: frameTriangles, plan: framePlan };
+      frameDraws = 0; frameTriangles = 0;
+      ambientOnly = reviewTime === undefined && !fidelityMoving && !cameraMoving && !profileProbeActive && (flowMoving || spinMoving || pulseMoving);
       if (shouldScheduleWebGLFrame({ reviewClockActive: reviewTime !== undefined, reducedMotion: motionless, fidelityMoving, cameraMoving, flowMoving, spinMoving, pulseMoving, profileProbeActive })) {
         previousFrameScheduled = true;
         scheduleDraw();
       }
     };
-    requestDrawRef.current = scheduleDraw;
-    const resizeObserver = new ResizeObserver(scheduleDraw); resizeObserver.observe(el);
-    scheduleDraw();
+    requestDrawRef.current = requestDraw;
+    const resizeObserver = new ResizeObserver(requestDraw); resizeObserver.observe(el);
+    const stopWatching = review ? () => {} : watchSceneVisibility(el, (next) => {
+      active = next;
+      if (next) requestDraw();
+      else { cancelAnimationFrame(frame); frame = 0; previousFrameScheduled = false; }
+    }, browserVisibilityDeps());
+    requestDraw();
     return () => {
       requestDrawRef.current = () => {};
+      if (reviewWindow.__labReviewFrameProbe === probe) delete reviewWindow.__labReviewFrameProbe;
       resizeObserver.disconnect();
+      stopWatching();
       cancelAnimationFrame(frame);
       el.removeEventListener("webglcontextlost", handleContextLost);
       meshes.forEach((mesh) => { gl.deleteBuffer(mesh.position); gl.deleteBuffer(mesh.normal); });
@@ -366,7 +396,7 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
         pendingContextLoss.current = null;
       }, 0);
     };
-  }, [definition, profile, allowPerformanceDowngrade, allowProfileUpgrade]);
+  }, [definition, profile, allowPerformanceDowngrade, allowProfileUpgrade, review]);
 
   useEffect(() => { requestDrawRef.current(); }, [state, reducedMotion, traceFlowId]);
 
