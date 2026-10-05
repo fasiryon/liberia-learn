@@ -192,7 +192,7 @@ describe("Mount Coffee hydropower design stage", () => {
       if ("reason" in result) throw new Error(`${scenario.id}: ${result.reason}`);
       const list = buildRenderList({ definition: hydropowerDefinition, state: result.state, profile: "LOW" });
       // RX-006: LOW renders through the batch planner, so the budget is the planner's draw count.
-      const draws = planLowBatches(list).drawCalls;
+      const draws = planLowBatches(list, { perItemState: true }).drawCalls;
       expect(draws, scenario.id).toBeLessThanOrEqual(40);
     }
   });

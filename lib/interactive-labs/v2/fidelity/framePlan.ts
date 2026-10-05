@@ -62,7 +62,7 @@ const hasLines = (list: Pick<RenderList, "flows">) => list.flows.some((flow) => 
 
 /** WebGLScene (LOW): merged batches, singles, ground, one surface batch, and the shared line/particle/trace/marker batches. */
 export function planLowFrame(list: RenderList, options: { traceFlowId: string | null; plan?: LowBatchPlan }): FramePlan {
-  const plan = options.plan ?? planLowBatches(list);
+  const plan = options.plan ?? planLowBatches(list, { perItemState: true });
   const daylight = list.environment === "DAYLIGHT", surfaces = activeSurfaces(list);
   const drawCalls = plan.batches.length + plan.singles.length + (daylight ? 1 : 0) + (surfaces.length ? 1 : 0)
     + (hasLines(list) ? 1 : 0) + (hasParticles(list) ? 1 : 0) + (list.flows.length && hasTraceNodes(list, options.traceFlowId) ? 1 : 0) + (list.markers.length ? 1 : 0);

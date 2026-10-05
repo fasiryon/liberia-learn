@@ -26,14 +26,16 @@ function itemVertexCount(item: RenderItem): number {
 }
 
 /** Deterministic LOW grouping. Each item retains its id and current render-list record for picking and labels. */
-export function planLowBatches(list: Pick<RenderList,"items"|"flows"|"markers">): LowBatchPlan {
+export function planLowBatches(list: Pick<RenderList,"items"|"flows"|"markers">, options: { perItemState?: boolean } = {}): LowBatchPlan {
   const groups = new Map<string, LowBatch>(), singles: RenderItem[] = [];
   const active = new Map<string, { key: string; vertices: number; index: number }>();
   for (const item of list.items) {
     if (!mayBatch(item)) { singles.push(item); continue; }
-    // Color and emission are vertex state, so they must not fragment otherwise
-    // compatible geometry into separate batches.
-    const materialKey = JSON.stringify([item.parametricGeometry ?? item.geometry, item.alpha]);
+    // LOW carries color/emission on each merged vertex. Three.js still uses one
+    // material per instanced batch, so its planner keeps those values in the key.
+    const materialKey = options.perItemState
+      ? JSON.stringify([item.parametricGeometry ?? item.geometry, item.alpha])
+      : JSON.stringify([item.parametricGeometry ?? item.geometry, item.color, item.alpha, item.emissive]);
     const vertexCount = itemVertexCount(item);
     let chunk = active.get(materialKey);
     if (!chunk || chunk.vertices + vertexCount > MAX_LOW_BATCH_VERTICES) {
@@ -63,7 +65,7 @@ export function syncLowBatchCache(cache: LowBatchCache, list: Pick<RenderList,"i
     if (previous.id !== item.id || previous.geometry !== item.geometry || previous.descriptor !== item.parametricGeometry || previous.alpha !== item.alpha || previous.eligible !== mayBatch(item) || previous.vertices !== itemVertexCount(item)) { rebuild = true; break; }
   }
   if (rebuild) {
-    cache.plan = planLowBatches(list);
+    cache.plan = planLowBatches(list, { perItemState: true });
     cache.signature.length = 0;
     cache.locations.clear();
     for (const batch of cache.plan.batches) for (let i = 0; i < batch.items.length; i++) cache.locations.set(batch.itemIds[i], { items: batch.items, index: i });

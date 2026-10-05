@@ -127,9 +127,11 @@ describe("RX-006 test 1: the LOW frame planner", () => {
     const candidates = list.items.filter((item) => !item.parametricGeometry && item.geometry === "box" && item.alpha >= 0.9 && item.inFocus && !item.highlighted && !item.clip && !item.spin).slice(0, 2);
     expect(candidates).toHaveLength(2);
     const [first, second] = candidates;
-    const plan = planLowBatches({ ...list, items: [{ ...first, color: "#ff0000", emissive: 0 }, { ...second, color: "#0000ff", emissive: 1 }] });
-    expect(plan.batches).toHaveLength(1);
-    expect(plan.batches[0].itemIds).toEqual([first.id, second.id]);
+    const lowPlan = planLowBatches({ ...list, items: [{ ...first, color: "#ff0000", emissive: 0 }, { ...second, color: "#0000ff", emissive: 1 }] }, { perItemState: true });
+    const threePlan = planLowBatches({ ...list, items: [{ ...first, color: "#ff0000", emissive: 0 }, { ...second, color: "#0000ff", emissive: 1 }] });
+    expect(lowPlan.batches).toHaveLength(1);
+    expect(lowPlan.batches[0].itemIds).toEqual([first.id, second.id]);
+    expect(threePlan.batches).toHaveLength(0);
   });
 
   it("reuses the LOW batch plan and its arrays for state-only changes, while refreshing live render items", () => {
