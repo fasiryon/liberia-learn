@@ -1,24 +1,24 @@
 {
   "fixture-simple-circuit": {
     "HIGH": {
-      "offlinePackageBytes": 673462,
-      "transferBytes": 160886,
+      "offlinePackageBytes": 674076,
+      "transferBytes": 160827,
       "triangles": 2738,
       "drawCalls": 12,
       "particles": 36,
       "maxTexturePx": 0
     },
     "STANDARD": {
-      "offlinePackageBytes": 673462,
-      "transferBytes": 160886,
+      "offlinePackageBytes": 674076,
+      "transferBytes": 160827,
       "triangles": 2738,
       "drawCalls": 12,
       "particles": 20,
       "maxTexturePx": 0
     },
     "LOW": {
-      "offlinePackageBytes": 71189,
-      "transferBytes": 30328,
+      "offlinePackageBytes": 71506,
+      "transferBytes": 30394,
       "triangles": 340,
       "drawCalls": 5,
       "particles": 8,
@@ -35,24 +35,24 @@
   },
   "g4-solid-figures": {
     "HIGH": {
-      "offlinePackageBytes": 677704,
-      "transferBytes": 165128,
+      "offlinePackageBytes": 678318,
+      "transferBytes": 165069,
       "triangles": 2914,
       "drawCalls": 11,
       "particles": 0,
       "maxTexturePx": 0
     },
     "STANDARD": {
-      "offlinePackageBytes": 677704,
-      "transferBytes": 165128,
+      "offlinePackageBytes": 678318,
+      "transferBytes": 165069,
       "triangles": 2914,
       "drawCalls": 11,
       "particles": 0,
       "maxTexturePx": 0
     },
     "LOW": {
-      "offlinePackageBytes": 75431,
-      "transferBytes": 34570,
+      "offlinePackageBytes": 75748,
+      "transferBytes": 34636,
       "triangles": 300,
       "drawCalls": 5,
       "particles": 0,
@@ -69,24 +69,24 @@
   },
   "mount-coffee-hydropower": {
     "HIGH": {
-      "offlinePackageBytes": 721807,
-      "transferBytes": 209231,
+      "offlinePackageBytes": 722421,
+      "transferBytes": 209172,
       "triangles": 10436,
       "drawCalls": 84,
       "particles": 162,
       "maxTexturePx": 1024
     },
     "STANDARD": {
-      "offlinePackageBytes": 721807,
-      "transferBytes": 209231,
+      "offlinePackageBytes": 722421,
+      "transferBytes": 209172,
       "triangles": 8084,
       "drawCalls": 64,
       "particles": 90,
       "maxTexturePx": 0
     },
     "LOW": {
-      "offlinePackageBytes": 119534,
-      "transferBytes": 78673,
+      "offlinePackageBytes": 119851,
+      "transferBytes": 78739,
       "triangles": 1230,
       "drawCalls": 26,
       "particles": 36,

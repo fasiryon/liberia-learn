@@ -214,8 +214,8 @@ Shared offline-package budget remeasurement, in its own change: the renderer chu
 
 | Lab | HIGH/STANDARD stored bytes before → after | HIGH/STANDARD transfer bytes before → after | LOW stored bytes before → after | LOW transfer bytes before → after | LOW draws before → after |
 |---|---:|---:|---:|---:|---:|
-| fixture-simple-circuit | 666,648 → 673,462 | 159,281 → 160,886 | 65,592 → 71,189 | 29,102 → 30,328 | 8 → 5 |
-| g4-solid-figures | 670,890 → 677,704 | 163,523 → 165,128 | 69,834 → 75,431 | 33,344 → 34,570 | 8 → 5 |
-| mount-coffee-hydropower | 714,993 → 721,807 | 207,626 → 209,231 | 113,937 → 119,534 | 77,447 → 78,673 | 34 → 26 |
+| fixture-simple-circuit | 666,648 → 674,076 | 159,281 → 160,827 | 65,592 → 71,506 | 29,102 → 30,394 | 8 → 5 |
+| g4-solid-figures | 670,890 → 678,318 | 163,523 → 165,069 | 69,834 → 75,748 | 33,344 → 34,636 | 8 → 5 |
+| mount-coffee-hydropower | 714,993 → 722,421 | 207,626 → 209,172 | 113,937 → 119,851 | 77,447 → 78,739 | 34 → 26 |
 
-The LOW package increases are the shared WebGL chunk cost; LOW draw counts fall because compatible opaque parts now share batches with per-vertex state. HIGH/STANDARD draw counts remain unchanged after the planner split. The final LOW-state upload helper added 90 stored / 52 transfer bytes to each affected profile's just-recorded package baseline; this latest before/after is recorded in the same dedicated baseline change. The absolute static ceilings and 5% regression tolerance are unchanged. G4 LOW's cumulative baseline increase exceeds 5% from its prior recorded value and remains subject to performance-reviewer re-check.
+The LOW package increases are the shared WebGL chunk cost; LOW draw counts fall because compatible opaque parts now share batches with per-vertex state. HIGH/STANDARD draw counts remain unchanged after the planner split. The final CPU-picking renderer remeasurement changed each lab's HIGH/STANDARD package by +614 stored / −59 transfer bytes and LOW by +317 / +66; this before/after is recorded in this dedicated baseline change. The absolute static ceilings and 5% regression tolerance are unchanged. G4 LOW's cumulative baseline increase exceeds 5% from its prior recorded value and remains subject to performance-reviewer re-check.
