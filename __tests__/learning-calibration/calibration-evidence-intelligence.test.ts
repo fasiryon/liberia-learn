@@ -37,14 +37,15 @@ const intervention = (snap: Awaited<ReturnType<typeof last>>, kind: string, conc
   snap.interventions.find((entry) => entry.kind === kind && entry.conceptId === conceptId);
 
 /** Three independent correct observations on every concept, one canonical and two prior-history imports. */
-const priorHistorySteps: SimulatedStep[] = [A, B, C].flatMap((conceptId) => [
-  { day: -40, kind: "PRIOR_HISTORY" as const, conceptId, correct: true, occasion: `prior-term-1-${conceptId}` },
-  { day: -20, kind: "PRIOR_HISTORY" as const, conceptId, correct: true, occasion: `prior-term-2-${conceptId}` },
-]).concat([
+const priorHistorySteps: SimulatedStep[] = [
+  ...[A, B, C].flatMap((conceptId): SimulatedStep[] => [
+    { day: -40, kind: "PRIOR_HISTORY", conceptId, correct: true, occasion: `prior-term-1-${conceptId}` },
+    { day: -20, kind: "PRIOR_HISTORY", conceptId, correct: true, occasion: `prior-term-2-${conceptId}` },
+  ]),
   { day: 1, kind: "RELEASED_ITEM", conceptId: A, correct: true },
   { day: 1, kind: "RELEASED_ITEM", conceptId: B, correct: true },
   { day: 1, kind: "RELEASED_ITEM", conceptId: C, correct: true },
-]);
+];
 
 describe("calibration lifecycle (SYNTHETIC learners)", () => {
   it("brand-new learner starts INITIAL, gets a grade-level entry action and an evidence-collection prompt", async () => {
