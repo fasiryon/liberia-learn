@@ -4,20 +4,20 @@
   "chunks": {
     "threeRenderer": {
       "entry": "components/interactive-labs/v2/ThreeScene.tsx",
-      "storageBytes": 602175,
-      "gzipBytes": 157271,
-      "transferBytes": 130503,
+      "storageBytes": 602273,
+      "gzipBytes": 157298,
+      "transferBytes": 130558,
       "three": {
         "storageBytes": 544822,
-        "gzipBytes": 136272,
-        "transferBytes": 111601
+        "gzipBytes": 136267,
+        "transferBytes": 111599
       }
     },
     "webglPass": {
       "entry": "components/interactive-labs/v2/WebGLScene.tsx",
-      "storageBytes": 60325,
-      "gzipBytes": 21930,
-      "transferBytes": 19634
+      "storageBytes": 60459,
+      "gzipBytes": 21968,
+      "transferBytes": 19636
     }
   }
 }
