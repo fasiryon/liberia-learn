@@ -15,9 +15,9 @@
     },
     "webglPass": {
       "entry": "components/interactive-labs/v2/WebGLScene.tsx",
-      "storageBytes": 60866,
-      "gzipBytes": 22113,
-      "transferBytes": 19754
+      "storageBytes": 60900,
+      "gzipBytes": 22125,
+      "transferBytes": 19770
     }
   }
 }
