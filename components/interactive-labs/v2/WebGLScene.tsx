@@ -17,7 +17,7 @@ import { highlightBaseMix, HIGHLIGHT_COLOR, MARKER_COLOR } from "@/lib/interacti
 import { placeSceneLabels } from "@/lib/interactive-labs/v2/fidelity/labelLayout";
 import { buildMesh } from "./meshes";
 import { buildParametricGeometry } from "@/lib/interactive-labs/v2/fidelity/geometry/builders";
-import { planLowBatches } from "@/lib/interactive-labs/v2/fidelity/lowBatch";
+import { createLowBatchCache, syncLowBatchCache } from "@/lib/interactive-labs/v2/fidelity/lowBatch";
 import { planLowFrame, type FramePlan } from "@/lib/interactive-labs/v2/fidelity/framePlan";
 import { publishFramePlan, type ReviewFrameProbe } from "@/lib/interactive-labs/v2/review/framePlanEvidence";
 import { createSurfaceTriangleStorage, writeSurfaceTriangles } from "@/lib/interactive-labs/v2/fidelity/surfaces";
@@ -63,7 +63,7 @@ void main(){
   vec3 base = color * vertexColor * shade + spec + glow;
   float rim = pow(1.0 - abs(dot(n, normalize(vec3(0.0, 0.0, 1.0)))), 3.0);
   vec3 highlighted = mix(base, highlightColor, clamp(highlightMix + rim * 0.55, 0.0, 0.9));
-  gl_FragColor = vec4(mix(base, highlighted, hasHighlight), clamp(alpha + emissive * 0.4, 0.0, 1.0));
+  gl_FragColor = vec4(mix(base, highlighted, hasHighlight), clamp(alpha + (emissive + vertexEmissive) * 0.4, 0.0, 1.0));
 }`;
 const LIGHTING = { full: 3, simplified: 2, minimal: 1, none: 0 } as const;
 
@@ -131,7 +131,9 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
     // Meshes are built once per geometry and profile, never per frame.
     const meshes = new Map<string, { position: WebGLBuffer; normal: WebGLBuffer; count: number }>();
     const cpuMeshes = new Map<string, MeshData>();
-    const lowBatchBuffers = new Map<string, { position: WebGLBuffer; normal: WebGLBuffer; color: WebGLBuffer; emissive: WebGLBuffer; count: number; signature: string; itemRanges: Map<string, { first: number; count: number; color: string; emissive: number; colorData: Float32Array; emissiveData: Float32Array }> }>();
+    const lowBatchBuffers = new Map<string, { position: WebGLBuffer; normal: WebGLBuffer; color: WebGLBuffer; emissive: WebGLBuffer; count: number; itemRanges: Map<string, { first: number; count: number; color: string; emissive: number; matrix: Mat4; colorData: Float32Array; emissiveData: Float32Array }> }>();
+    const lowBatchCache = createLowBatchCache();
+    let uploadedLowPlan: ReturnType<typeof syncLowBatchCache> | null = null;
     const dataFor = (item: RenderList["items"][number]): MeshData => {
       const key = item.parametricGeometry ? JSON.stringify(item.parametricGeometry) : item.geometry;
       const cached = cpuMeshes.get(key); if (cached) return cached;
@@ -289,14 +291,20 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
       // plan for picking/labels, while per-part state stays individual.
       let framePlan: FramePlan | null = null;
       if (low) {
-        const plan = planLowBatches(list);
+        const plan = syncLowBatchCache(lowBatchCache, list);
         framePlan = planLowFrame(list, { traceFlowId: callbacks.current.traceFlowId, plan });
-        const activeBatchKeys = new Set(plan.batches.map((batch) => batch.key));
+        const planChanged = uploadedLowPlan !== plan;
         for (const batch of plan.batches) {
-          const signature = JSON.stringify(batch.items.map((item) => [item.id, item.matrix]));
           let gpu = lowBatchBuffers.get(batch.key);
-          if (!gpu) { gpu = { position: gl.createBuffer()!, normal: gl.createBuffer()!, color: gl.createBuffer()!, emissive: gl.createBuffer()!, count: 0, signature: "", itemRanges: new Map() }; lowBatchBuffers.set(batch.key, gpu); }
-          if (gpu.signature !== signature) {
+          if (!gpu) { gpu = { position: gl.createBuffer()!, normal: gl.createBuffer()!, color: gl.createBuffer()!, emissive: gl.createBuffer()!, count: 0, itemRanges: new Map() }; lowBatchBuffers.set(batch.key, gpu); }
+          let poseChanged = gpu.count === 0 || gpu.itemRanges.size !== batch.items.length;
+          if (!poseChanged) for (const item of batch.items) {
+            const range = gpu.itemRanges.get(item.id);
+            if (!range) { poseChanged = true; break; }
+            for (let index = 0; index < range.matrix.length; index++) if (range.matrix[index] !== item.matrix[index]) { poseChanged = true; break; }
+            if (poseChanged) break;
+          }
+          if (poseChanged) {
             const vertexCount = batch.items.reduce((count, item) => count + dataFor(item).count, 0);
             const positions = new Float32Array(vertexCount * 3), normals = new Float32Array(vertexCount * 3), colors = new Float32Array(vertexCount * 3), emissions = new Float32Array(vertexCount);
             gpu.itemRanges.clear();
@@ -311,9 +319,9 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
                 normals.set([nx, ny, nz], vertexOffset * 3); colors.set(baseColor, vertexOffset * 3); emissions[vertexOffset] = item.emissive; vertexOffset++;
               }
               const itemVertexCount = vertexOffset - first;
-              gpu.itemRanges.set(item.id, { first, count: itemVertexCount, color: item.color, emissive: item.emissive, colorData: new Float32Array(itemVertexCount * 3), emissiveData: new Float32Array(itemVertexCount) });
+              gpu.itemRanges.set(item.id, { first, count: itemVertexCount, color: item.color, emissive: item.emissive, matrix: [...item.matrix], colorData: new Float32Array(itemVertexCount * 3), emissiveData: new Float32Array(itemVertexCount) });
             }
-            gpu.count = vertexCount; gpu.signature = signature;
+            gpu.count = vertexCount;
             gl.bindBuffer(gl.ARRAY_BUFFER, gpu.position); gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
             gl.bindBuffer(gl.ARRAY_BUFFER, gpu.normal); gl.bufferData(gl.ARRAY_BUFFER, normals, gl.STATIC_DRAW);
             gl.bindBuffer(gl.ARRAY_BUFFER, gpu.color); gl.bufferData(gl.ARRAY_BUFFER, colors, gl.DYNAMIC_DRAW);
@@ -344,9 +352,11 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
           gl.uniform1f(uni.useVertexColor, 1); gl.uniform1f(uni.useVertexEmissive, 1); gl.uniform1f(uni.alpha, source.alpha); gl.uniform1f(uni.emissive, 0); gl.uniform1f(uni.lighting, LIGHTING[list.budget.lighting]); gl.uniform1f(uni.clipEnabled, 0); gl.uniform1f(uni.pointSize, 1);
           gl.drawArrays(gl.TRIANGLES, 0, gpu.count);
         }
-        for (const [key, buffers] of lowBatchBuffers) if (!activeBatchKeys.has(key)) { gl.deleteBuffer(buffers.position); gl.deleteBuffer(buffers.normal); gl.deleteBuffer(buffers.color); gl.deleteBuffer(buffers.emissive); lowBatchBuffers.delete(key); }
-        const singles = [...plan.singles].sort((a, b) => Number(a.alpha < 0.9) - Number(b.alpha < 0.9));
-        for (const item of singles) drawItem(item, meshFor(item), item.spin ? spinMatrix(item.spin, t, motionless) : item.matrix);
+        if (planChanged) {
+          for (const [key, buffers] of lowBatchBuffers) if (!plan.batches.some((batch) => batch.key === key)) { gl.deleteBuffer(buffers.position); gl.deleteBuffer(buffers.normal); gl.deleteBuffer(buffers.color); gl.deleteBuffer(buffers.emissive); lowBatchBuffers.delete(key); }
+          uploadedLowPlan = plan;
+        }
+        for (const item of plan.singles) drawItem(item, meshFor(item), item.spin ? spinMatrix(item.spin, t, motionless) : item.matrix);
       } else {
         const ordered = [...list.items].sort((a, b) => Number(a.alpha < 0.9) - Number(b.alpha < 0.9));
         for (const item of ordered) drawItem(item, meshFor(item), item.spin ? spinMatrix(item.spin, t, motionless) : item.matrix);

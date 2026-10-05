@@ -6,7 +6,7 @@ import { LAB_REVIEW_SCENARIO_SETS } from "@/lib/interactive-labs/v2/review/refer
 import { replayReviewScenario } from "@/lib/interactive-labs/v2/review/scenarios";
 import { buildRenderList, type RenderList } from "@/lib/interactive-labs/v2/fidelity/renderList";
 import { activeTraceFlowId, planLowFrame, planThreeFrame, THREE_GROUND_TRIANGLES, THREE_PRIMITIVE_TRIANGLES, THREE_SKY_TRIANGLES } from "@/lib/interactive-labs/v2/fidelity/framePlan";
-import { MAX_LOW_BATCH_VERTICES, planLowBatches } from "@/lib/interactive-labs/v2/fidelity/lowBatch";
+import { createLowBatchCache, MAX_LOW_BATCH_VERTICES, planLowBatches, syncLowBatchCache } from "@/lib/interactive-labs/v2/fidelity/lowBatch";
 import { compareFramePlan } from "@/lib/interactive-labs/v2/review/framePlanEvidence";
 import { createThreeSceneStores, disposeThreeSceneStores, primitiveGeometry, syncThreeScene } from "@/components/interactive-labs/v2/threeSceneSync";
 import { skyGeometry } from "@/components/interactive-labs/v2/threeEnvironment";
@@ -130,5 +130,20 @@ describe("RX-006 test 1: the LOW frame planner", () => {
     const plan = planLowBatches({ ...list, items: [{ ...first, color: "#ff0000", emissive: 0 }, { ...second, color: "#0000ff", emissive: 1 }] });
     expect(plan.batches).toHaveLength(1);
     expect(plan.batches[0].itemIds).toEqual([first.id, second.id]);
+  });
+
+  it("reuses the LOW batch plan and its arrays for state-only changes, while refreshing live render items", () => {
+    const definition = getInteractiveLabDefinition("mount-coffee-hydropower")!;
+    const list = buildRenderList({ definition, state: initializeLab(definition), profile: "LOW" });
+    const cache = createLowBatchCache(), firstPlan = syncLowBatchCache(cache, list);
+    const batch = firstPlan.batches[0], singles = firstPlan.singles;
+    const nextItems = list.items.map((item, index) => index === 0 ? { ...item, color: "#ff0000", emissive: 1, label: "Updated live label" } : item);
+    const nextPlan = syncLowBatchCache(cache, { ...list, items: nextItems });
+    expect(nextPlan).toBe(firstPlan);
+    expect(nextPlan.batches[0]).toBe(batch);
+    expect(nextPlan.singles).toBe(singles);
+    const updated = nextPlan.batches.find((candidate) => candidate.itemIds.includes(nextItems[0].id))?.items.find((item) => item.id === nextItems[0].id)
+      ?? nextPlan.singles.find((item) => item.id === nextItems[0].id);
+    expect(updated).toMatchObject({ color: "#ff0000", emissive: 1, label: "Updated live label" });
   });
 });
