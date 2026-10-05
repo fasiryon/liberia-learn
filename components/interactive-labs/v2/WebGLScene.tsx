@@ -47,9 +47,9 @@ type Props = {
   recenter?: number;
 };
 
-const vertexShader = `attribute vec3 position; attribute vec3 normal; attribute vec3 vcolor; uniform mat4 mvp; uniform mat4 model; uniform float pointSize; uniform float useVertexColor; varying vec3 vNormal; varying vec3 vWorld; varying vec3 vertexColor;
-void main(){ vec4 world = model * vec4(position, 1.0); vWorld = world.xyz; vNormal = mat3(model) * normal; vertexColor = mix(vec3(1.0), vcolor, useVertexColor); gl_Position = mvp * vec4(position, 1.0); gl_PointSize = pointSize; }`;
-const fragmentShader = `precision mediump float; varying vec3 vNormal; varying vec3 vWorld; varying vec3 vertexColor; uniform vec3 color; uniform vec3 highlightColor; uniform float highlightMix; uniform float hasHighlight; uniform float alpha; uniform float emissive; uniform float lighting; uniform vec4 clipPlane; uniform float clipEnabled;
+const vertexShader = `attribute vec3 position; attribute vec3 normal; attribute vec3 vcolor; attribute float vemissive; uniform mat4 mvp; uniform mat4 model; uniform float pointSize; uniform float useVertexColor; uniform float useVertexEmissive; varying vec3 vNormal; varying vec3 vWorld; varying vec3 vertexColor; varying float vertexEmissive;
+void main(){ vec4 world = model * vec4(position, 1.0); vWorld = world.xyz; vNormal = mat3(model) * normal; vertexColor = mix(vec3(1.0), vcolor, useVertexColor); vertexEmissive = vemissive * useVertexEmissive; gl_Position = mvp * vec4(position, 1.0); gl_PointSize = pointSize; }`;
+const fragmentShader = `precision mediump float; varying vec3 vNormal; varying vec3 vWorld; varying vec3 vertexColor; varying float vertexEmissive; uniform vec3 color; uniform vec3 highlightColor; uniform float highlightMix; uniform float hasHighlight; uniform float alpha; uniform float emissive; uniform float lighting; uniform vec4 clipPlane; uniform float clipEnabled;
 void main(){
   if (clipEnabled > 0.5 && dot(clipPlane.xyz, vWorld) > clipPlane.w) discard;
   vec3 n = normalize(vNormal); if (!gl_FrontFacing) n = -n;
@@ -59,7 +59,7 @@ void main(){
   float shade = lighting < 0.5 ? 1.0 : ambient + (1.0 - ambient) * diffuse;
   float spec = lighting > 2.5 ? pow(max(dot(n, normalize(l + vec3(0.0, 0.0, 1.0))), 0.0), 28.0) * 0.28 : 0.0;
   // State emission must brighten an item without washing the full surface to white.
-  vec3 glow = emissive * vec3(0.22, 0.19, 0.10);
+  vec3 glow = (emissive + vertexEmissive) * vec3(0.22, 0.19, 0.10);
   vec3 base = color * vertexColor * shade + spec + glow;
   float rim = pow(1.0 - abs(dot(n, normalize(vec3(0.0, 0.0, 1.0)))), 3.0);
   vec3 highlighted = mix(base, highlightColor, clamp(highlightMix + rim * 0.55, 0.0, 0.9));
@@ -122,8 +122,8 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
       return;
     }
     gl.useProgram(program);
-    const attr = { position: gl.getAttribLocation(program, "position"), normal: gl.getAttribLocation(program, "normal"), color: gl.getAttribLocation(program, "vcolor") };
-    const uni = Object.fromEntries(["mvp", "model", "pointSize", "color", "highlightColor", "highlightMix", "hasHighlight", "useVertexColor", "alpha", "emissive", "lighting", "clipPlane", "clipEnabled"].map((name) => [name, gl.getUniformLocation(program, name)])) as Record<string, WebGLUniformLocation | null>;
+    const attr = { position: gl.getAttribLocation(program, "position"), normal: gl.getAttribLocation(program, "normal"), color: gl.getAttribLocation(program, "vcolor"), emissive: gl.getAttribLocation(program, "vemissive") };
+    const uni = Object.fromEntries(["mvp", "model", "pointSize", "color", "highlightColor", "highlightMix", "hasHighlight", "useVertexColor", "useVertexEmissive", "alpha", "emissive", "lighting", "clipPlane", "clipEnabled"].map((name) => [name, gl.getUniformLocation(program, name)])) as Record<string, WebGLUniformLocation | null>;
     const spec = definition.fidelity;
     const low = profile === "LOW";
     const modelMatrixScratch = new Float32Array(16);
@@ -131,7 +131,7 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
     // Meshes are built once per geometry and profile, never per frame.
     const meshes = new Map<string, { position: WebGLBuffer; normal: WebGLBuffer; count: number }>();
     const cpuMeshes = new Map<string, MeshData>();
-    const lowBatchBuffers = new Map<string, { position: WebGLBuffer; normal: WebGLBuffer; count: number; signature: string }>();
+    const lowBatchBuffers = new Map<string, { position: WebGLBuffer; normal: WebGLBuffer; color: WebGLBuffer; emissive: WebGLBuffer; count: number; signature: string; itemRanges: Map<string, { first: number; count: number; color: string; emissive: number; colorData: Float32Array; emissiveData: Float32Array }> }>();
     const dataFor = (item: RenderList["items"][number]): MeshData => {
       const key = item.parametricGeometry ? JSON.stringify(item.parametricGeometry) : item.geometry;
       const cached = cpuMeshes.get(key); if (cached) return cached;
@@ -185,8 +185,10 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
       gl.enableVertexAttribArray(attr.position); gl.vertexAttribPointer(attr.position, 3, gl.FLOAT, false, 0, 0);
       gl.disableVertexAttribArray(attr.normal); gl.vertexAttrib3f(attr.normal, 0, 0, 1);
       gl.disableVertexAttribArray(attr.color); gl.vertexAttrib3f(attr.color, 1, 1, 1);
+      gl.disableVertexAttribArray(attr.emissive); gl.vertexAttrib1f(attr.emissive, 0);
+      gl.disableVertexAttribArray(attr.emissive); gl.vertexAttrib1f(attr.emissive, 0); gl.uniform1f(uni.useVertexEmissive, 0);
       gl.uniformMatrix4fv(uni.mvp, false, new Float32Array(viewProj)); gl.uniformMatrix4fv(uni.model, false, new Float32Array(IDENTITY));
-      gl.uniform3fv(uni.color, rgb(color)); gl.uniform3fv(uni.highlightColor, rgb(HIGHLIGHT_COLOR)); gl.uniform1f(uni.highlightMix, 0); gl.uniform1f(uni.hasHighlight, 0); gl.uniform1f(uni.useVertexColor, 0);
+      gl.uniform3fv(uni.color, rgb(color)); gl.uniform3fv(uni.highlightColor, rgb(HIGHLIGHT_COLOR)); gl.uniform1f(uni.highlightMix, 0); gl.uniform1f(uni.hasHighlight, 0); gl.uniform1f(uni.useVertexColor, 0); gl.uniform1f(uni.useVertexEmissive, 0);
       gl.uniform1f(uni.alpha, alpha); gl.uniform1f(uni.emissive, 0); gl.uniform1f(uni.lighting, 0); gl.uniform1f(uni.clipEnabled, 0); gl.uniform1f(uni.pointSize, size);
       gl.drawArrays(mode, 0, markers.length);
     };
@@ -196,8 +198,9 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
       gl.bindBuffer(gl.ARRAY_BUFFER, gpu.positions); gl.enableVertexAttribArray(attr.position); gl.vertexAttribPointer(attr.position, 3, gl.FLOAT, false, 0, 0);
       gl.bindBuffer(gl.ARRAY_BUFFER, gpu.colors); gl.enableVertexAttribArray(attr.color); gl.vertexAttribPointer(attr.color, 3, gl.FLOAT, false, 0, 0);
       gl.disableVertexAttribArray(attr.normal); gl.vertexAttrib3f(attr.normal, 0, 0, 1);
+      gl.disableVertexAttribArray(attr.emissive); gl.vertexAttrib1f(attr.emissive, 0);
       gl.uniformMatrix4fv(uni.mvp, false, new Float32Array(viewProj)); gl.uniformMatrix4fv(uni.model, false, new Float32Array(IDENTITY));
-      gl.uniform3f(uni.color, 1, 1, 1); gl.uniform3fv(uni.highlightColor, rgb(HIGHLIGHT_COLOR)); gl.uniform1f(uni.highlightMix, 0); gl.uniform1f(uni.hasHighlight, 0); gl.uniform1f(uni.useVertexColor, 1);
+      gl.uniform3f(uni.color, 1, 1, 1); gl.uniform3fv(uni.highlightColor, rgb(HIGHLIGHT_COLOR)); gl.uniform1f(uni.highlightMix, 0); gl.uniform1f(uni.hasHighlight, 0); gl.uniform1f(uni.useVertexColor, 1); gl.uniform1f(uni.useVertexEmissive, 0);
       gl.uniform1f(uni.alpha, alpha); gl.uniform1f(uni.emissive, 0); gl.uniform1f(uni.lighting, 0); gl.uniform1f(uni.clipEnabled, 0); gl.uniform1f(uni.pointSize, size);
       gl.drawArrays(mode, 0, batch.count);
     };
@@ -270,6 +273,7 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
         gl.bindBuffer(gl.ARRAY_BUFFER, mesh.position); gl.enableVertexAttribArray(attr.position); gl.vertexAttribPointer(attr.position, 3, gl.FLOAT, false, 0, 0);
         gl.bindBuffer(gl.ARRAY_BUFFER, mesh.normal); gl.enableVertexAttribArray(attr.normal); gl.vertexAttribPointer(attr.normal, 3, gl.FLOAT, false, 0, 0);
         gl.disableVertexAttribArray(attr.color); gl.vertexAttrib3f(attr.color, 1, 1, 1); gl.uniform1f(uni.useVertexColor, 0);
+        gl.disableVertexAttribArray(attr.emissive); gl.vertexAttrib1f(attr.emissive, 0); gl.uniform1f(uni.useVertexEmissive, 0);
         multiplyInto(mvpScratch, viewProj, modelMatrix); modelMatrixScratch.set(modelMatrix);
         gl.uniformMatrix4fv(uni.mvp, false, mvpScratch); gl.uniformMatrix4fv(uni.model, false, modelMatrixScratch);
         const base = rgb(item.color);
@@ -291,25 +295,56 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
         for (const batch of plan.batches) {
           const signature = JSON.stringify(batch.items.map((item) => [item.id, item.matrix]));
           let gpu = lowBatchBuffers.get(batch.key);
-          if (!gpu) { gpu = { position: gl.createBuffer()!, normal: gl.createBuffer()!, count: 0, signature: "" }; lowBatchBuffers.set(batch.key, gpu); }
+          if (!gpu) { gpu = { position: gl.createBuffer()!, normal: gl.createBuffer()!, color: gl.createBuffer()!, emissive: gl.createBuffer()!, count: 0, signature: "", itemRanges: new Map() }; lowBatchBuffers.set(batch.key, gpu); }
           if (gpu.signature !== signature) {
-            const positions: number[] = [], normals: number[] = [];
+            const vertexCount = batch.items.reduce((count, item) => count + dataFor(item).count, 0);
+            const positions = new Float32Array(vertexCount * 3), normals = new Float32Array(vertexCount * 3), colors = new Float32Array(vertexCount * 3), emissions = new Float32Array(vertexCount);
+            gpu.itemRanges.clear();
+            let vertexOffset = 0;
             for (const item of batch.items) {
-              const data = dataFor(item), origin = transformPoint(item.matrix, [0, 0, 0]);
+              const data = dataFor(item), origin = transformPoint(item.matrix, [0, 0, 0]), baseColor = rgb(item.color), first = vertexOffset;
               for (let i = 0; i < data.positions.length; i += 3) {
                 const point = transformPoint(item.matrix, [data.positions[i], data.positions[i + 1], data.positions[i + 2]]);
-                positions.push(...point);
+                positions.set(point, vertexOffset * 3);
                 const transformed = transformPoint(item.matrix, [data.normals[i], data.normals[i + 1], data.normals[i + 2]]);
-                let nx = transformed[0] - origin[0], ny = transformed[1] - origin[1], nz = transformed[2] - origin[2]; const length = Math.hypot(nx, ny, nz) || 1; nx /= length; ny /= length; nz /= length; normals.push(nx, ny, nz);
+                let nx = transformed[0] - origin[0], ny = transformed[1] - origin[1], nz = transformed[2] - origin[2]; const length = Math.hypot(nx, ny, nz) || 1; nx /= length; ny /= length; nz /= length;
+                normals.set([nx, ny, nz], vertexOffset * 3); colors.set(baseColor, vertexOffset * 3); emissions[vertexOffset] = item.emissive; vertexOffset++;
+              }
+              const itemVertexCount = vertexOffset - first;
+              gpu.itemRanges.set(item.id, { first, count: itemVertexCount, color: item.color, emissive: item.emissive, colorData: new Float32Array(itemVertexCount * 3), emissiveData: new Float32Array(itemVertexCount) });
+            }
+            gpu.count = vertexCount; gpu.signature = signature;
+            gl.bindBuffer(gl.ARRAY_BUFFER, gpu.position); gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
+            gl.bindBuffer(gl.ARRAY_BUFFER, gpu.normal); gl.bufferData(gl.ARRAY_BUFFER, normals, gl.STATIC_DRAW);
+            gl.bindBuffer(gl.ARRAY_BUFFER, gpu.color); gl.bufferData(gl.ARRAY_BUFFER, colors, gl.DYNAMIC_DRAW);
+            gl.bindBuffer(gl.ARRAY_BUFFER, gpu.emissive); gl.bufferData(gl.ARRAY_BUFFER, emissions, gl.DYNAMIC_DRAW);
+          } else {
+            for (const item of batch.items) {
+              const range = gpu.itemRanges.get(item.id);
+              if (!range) continue;
+              if (range.color !== item.color) {
+                const baseColor = rgb(item.color), data = range.colorData;
+                for (let i = 0; i < range.count; i++) data.set(baseColor, i * 3);
+                gl.bindBuffer(gl.ARRAY_BUFFER, gpu.color); gl.bufferSubData(gl.ARRAY_BUFFER, range.first * 3 * Float32Array.BYTES_PER_ELEMENT, data); range.color = item.color;
+              }
+              if (range.emissive !== item.emissive) {
+                const data = range.emissiveData; data.fill(item.emissive);
+                gl.bindBuffer(gl.ARRAY_BUFFER, gpu.emissive); gl.bufferSubData(gl.ARRAY_BUFFER, range.first * Float32Array.BYTES_PER_ELEMENT, data); range.emissive = item.emissive;
               }
             }
-            gpu.count = positions.length / 3; gpu.signature = signature;
-            gl.bindBuffer(gl.ARRAY_BUFFER, gpu.position); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
-            gl.bindBuffer(gl.ARRAY_BUFFER, gpu.normal); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(normals), gl.STATIC_DRAW);
           }
-          const source = batch.items[0]; drawItem(source, gpu, IDENTITY);
+          const source = batch.items[0];
+          gl.depthMask(source.alpha >= 0.9);
+          gl.bindBuffer(gl.ARRAY_BUFFER, gpu.position); gl.enableVertexAttribArray(attr.position); gl.vertexAttribPointer(attr.position, 3, gl.FLOAT, false, 0, 0);
+          gl.bindBuffer(gl.ARRAY_BUFFER, gpu.normal); gl.enableVertexAttribArray(attr.normal); gl.vertexAttribPointer(attr.normal, 3, gl.FLOAT, false, 0, 0);
+          gl.bindBuffer(gl.ARRAY_BUFFER, gpu.color); gl.enableVertexAttribArray(attr.color); gl.vertexAttribPointer(attr.color, 3, gl.FLOAT, false, 0, 0);
+          gl.bindBuffer(gl.ARRAY_BUFFER, gpu.emissive); gl.enableVertexAttribArray(attr.emissive); gl.vertexAttribPointer(attr.emissive, 1, gl.FLOAT, false, 0, 0);
+          multiplyInto(mvpScratch, viewProj, IDENTITY); modelMatrixScratch.set(IDENTITY); gl.uniformMatrix4fv(uni.mvp, false, mvpScratch); gl.uniformMatrix4fv(uni.model, false, modelMatrixScratch);
+          gl.uniform3f(uni.color, 1, 1, 1); gl.uniform3fv(uni.highlightColor, rgb(HIGHLIGHT_COLOR)); gl.uniform1f(uni.highlightMix, 0); gl.uniform1f(uni.hasHighlight, 0);
+          gl.uniform1f(uni.useVertexColor, 1); gl.uniform1f(uni.useVertexEmissive, 1); gl.uniform1f(uni.alpha, source.alpha); gl.uniform1f(uni.emissive, 0); gl.uniform1f(uni.lighting, LIGHTING[list.budget.lighting]); gl.uniform1f(uni.clipEnabled, 0); gl.uniform1f(uni.pointSize, 1);
+          gl.drawArrays(gl.TRIANGLES, 0, gpu.count);
         }
-        for (const [key, buffers] of lowBatchBuffers) if (!activeBatchKeys.has(key)) { gl.deleteBuffer(buffers.position); gl.deleteBuffer(buffers.normal); lowBatchBuffers.delete(key); }
+        for (const [key, buffers] of lowBatchBuffers) if (!activeBatchKeys.has(key)) { gl.deleteBuffer(buffers.position); gl.deleteBuffer(buffers.normal); gl.deleteBuffer(buffers.color); gl.deleteBuffer(buffers.emissive); lowBatchBuffers.delete(key); }
         const singles = [...plan.singles].sort((a, b) => Number(a.alpha < 0.9) - Number(b.alpha < 0.9));
         for (const item of singles) drawItem(item, meshFor(item), item.spin ? spinMatrix(item.spin, t, motionless) : item.matrix);
       } else {
@@ -403,7 +438,7 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
       cancelAnimationFrame(frame);
       el.removeEventListener("webglcontextlost", handleContextLost);
       meshes.forEach((mesh) => { gl.deleteBuffer(mesh.position); gl.deleteBuffer(mesh.normal); });
-      lowBatchBuffers.forEach((buffers) => { gl.deleteBuffer(buffers.position); gl.deleteBuffer(buffers.normal); });
+      lowBatchBuffers.forEach((buffers) => { gl.deleteBuffer(buffers.position); gl.deleteBuffer(buffers.normal); gl.deleteBuffer(buffers.color); gl.deleteBuffer(buffers.emissive); });
       gl.deleteBuffer(lineBuffer);
       Object.values(flowBuffers).forEach((buffers) => { gl.deleteBuffer(buffers.positions); gl.deleteBuffer(buffers.colors); });
       gl.deleteBuffer(surfaceBuffers.positions); gl.deleteBuffer(surfaceBuffers.colors); gl.deleteBuffer(groundBuffers.positions); gl.deleteBuffer(groundBuffers.colors);

@@ -28,7 +28,9 @@ export function planLowBatches(list: Pick<RenderList,"items"|"flows"|"markers">)
   const active = new Map<string, { key: string; vertices: number; index: number }>();
   for (const item of list.items) {
     if (!mayBatch(item)) { singles.push(item); continue; }
-    const materialKey = JSON.stringify([item.parametricGeometry ?? item.geometry, item.color, item.alpha, item.emissive]);
+    // Color and emission are vertex state, so they must not fragment otherwise
+    // compatible geometry into separate batches.
+    const materialKey = JSON.stringify([item.parametricGeometry ?? item.geometry, item.alpha]);
     const vertexCount = itemVertexCount(item);
     let chunk = active.get(materialKey);
     if (!chunk || chunk.vertices + vertexCount > MAX_LOW_BATCH_VERTICES) {

@@ -120,4 +120,15 @@ describe("RX-006 test 1: the LOW frame planner", () => {
     expect(plan.batches.flatMap((batch) => batch.itemIds)).toHaveLength(1900);
     expect(plan.batches.every((batch) => batch.items.length * 36 <= MAX_LOW_BATCH_VERTICES)).toBe(true);
   });
+
+  it("keeps compatible geometry batched across per-component color and emission states", () => {
+    const definition = getInteractiveLabDefinition("mount-coffee-hydropower")!;
+    const list = buildRenderList({ definition, state: initializeLab(definition), profile: "LOW" });
+    const candidates = list.items.filter((item) => !item.parametricGeometry && item.geometry === "box" && item.alpha >= 0.9 && item.inFocus && !item.highlighted && !item.clip && !item.spin).slice(0, 2);
+    expect(candidates).toHaveLength(2);
+    const [first, second] = candidates;
+    const plan = planLowBatches({ ...list, items: [{ ...first, color: "#ff0000", emissive: 0 }, { ...second, color: "#0000ff", emissive: 1 }] });
+    expect(plan.batches).toHaveLength(1);
+    expect(plan.batches[0].itemIds).toEqual([first.id, second.id]);
+  });
 });
