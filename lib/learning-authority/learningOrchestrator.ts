@@ -8,6 +8,11 @@ import {
   toDecisionModelLearnerState, type StudentConceptState, type DecisionModelLearnerState,
   type DecisionModel, type DecisionModelInput, type DecisionModelOutput,
 } from "@/lib/learning-state/studentLearningModel";
+import { PREREQUISITE_PROGRESSION_THRESHOLD } from "@/lib/learning-authority/progressionPolicy";
+import type { LearnerCalibration } from "@/lib/learning-calibration/calibrationState";
+import {
+  applyEarlyLearningPolicy, type EarlyLearningPolicy, type EarlyLearningResolution,
+} from "@/lib/learning-calibration/earlyLearningPolicy";
 
 export type { DecisionModel, DecisionModelInput, DecisionModelOutput } from "@/lib/learning-state/studentLearningModel";
 
@@ -39,6 +44,8 @@ export type LearningPolicyResolution = Readonly<{
   teacherOverride: TeacherOverride | null;
   policyVersion: typeof LEARNING_DECISION_POLICY_VERSION;
   eligibleCandidateIds: readonly string[];
+  /** Present only when a calibration snapshot was supplied; records the early-learning choice. */
+  earlyLearning?: EarlyLearningResolution | null;
 }>;
 export type LearningDecision = Readonly<{
   id: string;
@@ -94,7 +101,7 @@ export function generateLearningCandidates(input: {
     const prerequisites = release.prerequisites.filter((edge) => edge.toConceptId === binding.conceptId);
     if (prerequisites.some((edge) => {
       const prior = byConcept.get(edge.fromConceptId);
-      return !prior || prior.mastery.observedScore === null || prior.mastery.observedScore < 0.8;
+      return !prior || prior.mastery.observedScore === null || prior.mastery.observedScore < PREREQUISITE_PROGRESSION_THRESHOLD;
     })) continue;
     candidates.push(Object.freeze({
       id: `${binding.id}:${item.context.toLowerCase()}`,
@@ -168,6 +175,13 @@ export async function resolveLearningDecision(input: {
   offline?: boolean;
   prohibitedTools?: readonly ToolKey[];
   availableCandidateIds?: readonly string[];
+  /**
+   * Optional calibration snapshot derived from the same canonical states. When
+   * supplied, the early-learning policy chooses among the ranked governed
+   * candidates. A teacher override always takes precedence.
+   */
+  calibration?: LearnerCalibration;
+  earlyLearningPolicy?: EarlyLearningPolicy;
   idempotencyKey: string;
 }): Promise<{ recommendation: LearningRecommendation; resolution: LearningPolicyResolution; decision: LearningDecision }> {
   const release = input.release ?? compatibilityRelease();
@@ -210,7 +224,14 @@ export async function resolveLearningDecision(input: {
     } catch { /* Shadow execution cannot block instruction. */ }
   }
   if (!validOutput(output, candidates)) throw new Error("baseline_model_invalid");
-  const selected = input.teacherOverride?.candidateId ?? output.rankedCandidates[0].id;
+  const earlyLearning = input.calibration && !input.teacherOverride
+    ? applyEarlyLearningPolicy({
+      calibration: input.calibration, states: input.states, release, candidates,
+      ranked: output.rankedCandidates, learnerStateRevision: revision,
+      idempotencyKey: input.idempotencyKey, policy: input.earlyLearningPolicy,
+    })
+    : null;
+  const selected = input.teacherOverride?.candidateId ?? earlyLearning?.selectedCandidateId ?? output.rankedCandidates[0].id;
   if (input.teacherOverride && (!input.teacherOverride.actorId || !input.teacherOverride.reason.trim() ||
     !["TEACHER", "ADMIN"].includes(input.teacherOverride.role))) throw new Error("teacher_override_authority_invalid");
   const action = candidates.find((candidate) => candidate.id === selected);
@@ -222,7 +243,8 @@ export async function resolveLearningDecision(input: {
   const resolution: LearningPolicyResolution = Object.freeze({ id: `resolution-${baseId}`, recommendationId: recommendation.id,
     selectedCandidateId: action.id, reason: input.teacherOverride ? "AUTHORIZED_TEACHER_OVERRIDE" : "GOVERNED_RANKING_ACCEPTED",
     teacherOverride: input.teacherOverride ?? null, policyVersion: LEARNING_DECISION_POLICY_VERSION,
-    eligibleCandidateIds: candidates.map((candidate) => candidate.id) });
+    eligibleCandidateIds: candidates.map((candidate) => candidate.id),
+    ...(input.calibration ? { earlyLearning } : {}) });
   const decision: LearningDecision = Object.freeze({ id: `decision-${baseId}`, recommendationId: recommendation.id,
     resolutionId: resolution.id, status: "SELECTED", action, reason: input.teacherOverride ? "AUTHORIZED_TEACHER_OVERRIDE" : "GOVERNED_RANKING_ACCEPTED",
     learnerStateRevision: revision, ontologyReleaseId: release.id,
