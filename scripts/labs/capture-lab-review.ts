@@ -36,6 +36,8 @@ import { LAB_REVIEW_PROFILES, validateScenarioSet, type LabReviewScenario } from
 const SCREENSHOT_TIMEOUT_MS = 240_000;
 import type { CapabilityProfile } from "../../lib/interactive-labs/v2/types";
 import { verifyRendererIdentity } from "../../lib/interactive-labs/v2/review/rendererIdentity";
+import { compareFramePlan, type FrameProbeResult } from "../../lib/interactive-labs/v2/review/framePlanEvidence";
+import { isThreeChunk } from "../../lib/interactive-labs/v2/review/rendererChunks";
 
 const VIEWPORTS = {
   desktop: { viewport: { width: 1366, height: 900 }, isMobile: false, hasTouch: false },
@@ -47,7 +49,7 @@ const COOKIE_NOTICE_KEY = "liberialearn_session_cookie_notice_dismissed";
 
 type RendererInfo = { kind: "gpu" | "software" | "none"; renderer: string; validFor: string[] };
 type Capture = { file: string; scenario: string; storyboardScene?: string; stage: string; profile: CapabilityProfile; viewport: ViewportName; kind: "still" | "motion-frame" | "motion-sheet" | "video"; reducedMotion: boolean; virtualMs?: number };
-type PageIssues = { consoleErrors: string[]; pageErrors: string[] };
+type PageIssues = { consoleErrors: string[]; pageErrors: string[]; threeChunkRequests: string[] };
 
 function arg(name: string): string | undefined {
   const index = process.argv.indexOf(`--${name}`);
@@ -85,7 +87,12 @@ async function newContext(browser: Browser, viewport: ViewportName, reducedMotio
 }
 
 function watch(page: Page): PageIssues {
-  const issues: PageIssues = { consoleErrors: [], pageErrors: [] };
+  const issues: PageIssues = { consoleErrors: [], pageErrors: [], threeChunkRequests: [] };
+  // A8 capture assertion: record every script response that carries three.js (by URL or, in dev, by module path).
+  page.on("response", (response) => {
+    if (response.request().resourceType() !== "script") return;
+    void response.text().then((body) => { if (isThreeChunk(response.url(), body)) issues.threeChunkRequests.push(response.url().slice(0, 200)); }).catch(() => undefined);
+  });
   page.on("console", (message) => { if (message.type() === "error") issues.consoleErrors.push(message.text().slice(0, 400)); });
   page.on("pageerror", (error) => issues.pageErrors.push(error.message.slice(0, 400)));
   return issues;
@@ -290,14 +297,23 @@ async function main() {
         const issues = watch(page);
         const opened = await openScenario(page, baseUrl, labId, scenario.id, profile, false, true);
         const identity = await observeRenderer(page, profile);
+        // A8: the planner must equal what the renderer drew (worst frame: culling off, shadow pass forced on HIGH).
+        const frameProbe = profile === "FALLBACK_2D" ? null : await page.evaluate(() => (window as Window & { __labReviewFrameProbe?: () => unknown }).__labReviewFrameProbe?.() ?? null) as FrameProbeResult | null;
+        const frameParity = frameProbe ? compareFramePlan(frameProbe) : null;
+        const threeRequestViolation = (profile === "LOW" || profile === "FALLBACK_2D") && issues.threeChunkRequests.length > 0;
         await page.screenshot({ path: still, fullPage: true, timeout: SCREENSHOT_TIMEOUT_MS });
         captures.push({ file: still, scenario: scenario.id, storyboardScene: scenario.storyboardScene, stage: scenario.stage, profile, viewport, kind: "still", reducedMotion: stillReducedMotion });
+        const failure = !identity.verdict.ok ? identity.verdict.reason
+          : profile !== "FALLBACK_2D" && !frameProbe ? "frame_probe_missing: the renderer installed no __labReviewFrameProbe"
+          : frameParity && !frameParity.ok ? `frame_plan_mismatch: ${frameParity.mismatches.join("; ")}`
+          : threeRequestViolation ? `three_chunk_requested_on_${profile}: ${issues.threeChunkRequests.join(", ")}` : undefined;
         runs.push({ scenario: scenario.id, profile, viewport, kind: "still", screenshot: path.relative(out, still).replace(/\\/g, "/"),
-          status: identity.verdict.ok ? "PASS" : "FAIL", ...(identity.verdict.ok ? {} : { failureReason: identity.verdict.reason }),
+          status: failure ? "FAIL" : "PASS", ...(failure ? { failureReason: failure } : {}),
+          framePlan: frameProbe, frameParity, threeChunkRequests: issues.threeChunkRequests,
           actualProfile: identity.actualProfile, actualRenderer: identity.actualRenderer, framesRendered: identity.framesRendered, drawCalls: identity.drawCalls,
           ...opened, warnings: issues.consoleErrors, consoleErrors: issues.consoleErrors, pageErrors: issues.pageErrors });
         writeManifest();
-        if (!identity.verdict.ok) { console.error(`FAIL ${base}: ${identity.verdict.reason}`); continue; }
+        if (failure) { console.error(`FAIL ${base}: ${failure}`); if (!identity.verdict.ok) continue; }
       } catch (cause) {
         const reason = cause instanceof Error ? cause.message.slice(0, 600) : String(cause);
         console.error(`ERROR ${base}: ${reason}`);
@@ -408,6 +424,8 @@ async function main() {
     labId, labVersion: definition.version, reviewState: definition.reviewState, label, gitSha: gitSha(), capturedAt: new Date().toISOString(),
     environment: `${process.env.GITHUB_ACTIONS ? `GitHub Actions (${process.env.RUNNER_OS ?? "runner"}, run ${process.env.GITHUB_RUN_ID ?? "?"})` : "local"} dev server, ${flag("gpu") ? "headed" : "headless"} Chromium, virtual clock paused from navigation for stills and motion frames`,
     rendererIdentityRule: "HIGH/STANDARD must be drawn by three@*, LOW by webgl-pass, FALLBACK_2D by svg, at the requested profile, with at least one frame drawn; otherwise status FAIL.",
+    framePlanRule: "RX-005 A8 / RX-006 test 1: the shared frame planner must equal the renderer's own count for the probed frame (three.js: renderer.info with frustum culling off and the shadow pass forced; LOW: counted drawArrays); otherwise status FAIL.",
+    threeChunkRule: "RX-005 A8: LOW and FALLBACK_2D runs must make zero requests for a script carrying three.js; otherwise status FAIL.",
     deviceBoundary: "Headless browser evidence proves rendering correctness, composition, layout, interaction automation and renderer/profile routing only. It does not prove low-end GPU performance, touch latency, thermal behaviour or mobile memory pressure (DEVICE_REQUIRED).",
     renderer,
     profiles, viewports, captures: captures.map((capture) => ({ ...capture, file: path.relative(out, capture.file).replace(/\\/g, "/") })), runs,

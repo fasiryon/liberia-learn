@@ -1,0 +1,23 @@
+{
+  "tool": "esbuild 0.27.3 (minify, tree-shaken, es2020; gzip level 9, brotli q11)",
+  "three": "0.186.1",
+  "chunks": {
+    "threeRenderer": {
+      "entry": "components/interactive-labs/v2/ThreeScene.tsx",
+      "storageBytes": 590252,
+      "gzipBytes": 153327,
+      "transferBytes": 127158,
+      "three": {
+        "storageBytes": 544753,
+        "gzipBytes": 136208,
+        "transferBytes": 111709
+      }
+    },
+    "webglPass": {
+      "entry": "components/interactive-labs/v2/WebGLScene.tsx",
+      "storageBytes": 48340,
+      "gzipBytes": 18342,
+      "transferBytes": 16405
+    }
+  }
+}

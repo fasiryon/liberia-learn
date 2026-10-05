@@ -8,6 +8,7 @@ import { buildRenderList } from "../fidelity/renderList";
 import { RENDER_BUDGETS } from "../fidelity/profiles";
 import { activeTraceFlowId, lowPrimitiveTriangles, planFrame, THREE_PRIMITIVE_TRIANGLES } from "../fidelity/framePlan";
 import type { CapabilityProfile, GeometryKind, InteractiveLabDefinition, LabState } from "../types";
+import rendererChunks from "./renderer-chunks.json";
 
 export const LAB_BUDGET_VERSION = "lab-budgets/1.0.0" as const;
 export const LAB_BUDGET_LOCKED_ON = "2026-09-28";
@@ -72,7 +73,19 @@ export function geometryTriangles(kind: GeometryKind, low: boolean): number {
 /** A binary asset declared by the lab-asset-director. Procedural geometry has no entry here. */
 export type LabAssetBytes = { id: string; bytes: number; profiles: CapabilityProfile[]; maxTexturePx?: number };
 
-export type LabBudgetMeasurement = Record<CapabilityProfile, { offlinePackageBytes: number; triangles: number; drawCalls: number; maxTexturePx: number; particles: number }>;
+export type LabBudgetMeasurement = Record<CapabilityProfile, { offlinePackageBytes: number; transferBytes: number; triangles: number; drawCalls: number; maxTexturePx: number; particles: number }>;
+
+/**
+ * A3/A8 offline pack per profile: the renderer chunks it stores (minified) and transfers (brotli), measured by
+ * scripts/labs/measure-renderer-chunks.ts and size-gated in CI. HIGH/STANDARD keep the WebGLScene chunk for the LOW
+ * downgrade; LOW and FALLBACK_2D never fetch the three chunk.
+ */
+export function rendererPackage(profile: CapabilityProfile): { storageBytes: number; transferBytes: number } {
+  const { threeRenderer, webglPass } = rendererChunks.chunks;
+  if (profile === "HIGH" || profile === "STANDARD") return { storageBytes: threeRenderer.storageBytes + webglPass.storageBytes, transferBytes: threeRenderer.transferBytes + webglPass.transferBytes };
+  if (profile === "LOW") return { storageBytes: webglPass.storageBytes, transferBytes: webglPass.transferBytes };
+  return { storageBytes: 0, transferBytes: 0 };
+}
 
 /**
  * Worst case across the given learner states (normally every review scenario) for every profile. Draws and
@@ -84,6 +97,7 @@ export function measureLabBudget(definition: InteractiveLabDefinition<LabState>,
   const result = {} as LabBudgetMeasurement;
   for (const profile of Object.keys(RENDER_BUDGETS) as CapabilityProfile[]) {
     const profileAssets = assets.filter((asset) => asset.profiles.includes(profile));
+    const assetBytes = profileAssets.reduce((sum, asset) => sum + asset.bytes, 0), chunks = rendererPackage(profile);
     let triangles = 0, drawCalls = 0, particles = 0, texturePx = 0;
     for (const state of states) {
       const list = buildRenderList({ definition, state, profile });
@@ -94,7 +108,9 @@ export function measureLabBudget(definition: InteractiveLabDefinition<LabState>,
       particles = Math.max(particles, list.flows.reduce((sum, flow) => sum + flow.particleCount, 0));
     }
     result[profile] = {
-      offlinePackageBytes: definitionBytes + profileAssets.reduce((sum, asset) => sum + asset.bytes, 0),
+      offlinePackageBytes: definitionBytes + chunks.storageBytes + assetBytes,
+      // The definition and declared assets are counted uncompressed: an upper bound on what the learner downloads.
+      transferBytes: definitionBytes + chunks.transferBytes + assetBytes,
       triangles, drawCalls, particles,
       maxTexturePx: Math.max(texturePx, profileAssets.reduce((max, asset) => Math.max(max, asset.maxTexturePx ?? 0), 0)),
     };
