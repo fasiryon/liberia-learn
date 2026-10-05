@@ -753,7 +753,7 @@
         "lab-performance-reviewer",
         "lab-design-director"
       ],
-      "tests": "Partial: renderer-identity.test.ts, runtime-extensions.test.ts, surfaces.test.ts, lab-budgets.test.ts, profile-selection.test.ts. Acceptance incomplete per Round 3 lab-performance-reviewer: 20x remount leak test, two-run determinism proof, three-chunk accounting/import graph/zero-request test, chunk-abort harness, planner vs renderer.info parity with a measured shadow pass (HYDRO-R3P-003), IntersectionObserver pausing. Stays PROPOSED."
+      "tests": "Partial: renderer-identity.test.ts, runtime-extensions.test.ts, surfaces.test.ts, lab-budgets.test.ts, profile-selection.test.ts, frame-plan.test.ts, scene-activity.test.ts, determinism.test.ts, renderer-chunks.test.ts, mobile-shell.test.tsx, scene-controls.test.ts, emitters.test.ts, parametric-geometry.test.ts, walkthroughs.test.ts. Local planner parity, chunk measurement, budget, camera/control and lifecycle unit coverage is present. Still requires fresh current-head Chromium evidence for 20x remount, two-run capture determinism, built Next chunk/import graph and zero-request proof, chunk-abort walkthrough, actual renderer.info parity including the shadow pass (HYDRO-R3P-003), and CI verification of IntersectionObserver/30 fps acceptance. No current-head CI run; remains PROPOSED."
     },
     {
       "id": "RX-006",
@@ -764,7 +764,7 @@
         "lab-performance-reviewer",
         "lab-design-director"
       ],
-      "tests": "Partial: LOW budget test only (34/40 draws measured). Missing: bound per-part state attributes, per-frame allocation removal, capacity caps, RX-006 tests 1-6. Stays PROPOSED."
+      "tests": "Partial: frame-plan.test.ts (planner parity model, WebGL1 vertex cap, LOW budget across review scenarios, plan reuse and eligibility transitions), low-batch-state.test.ts (per-item color/emissive range updates and reusable storage), hydropower-definition.test.ts, parametric-geometry.test.ts. LOW budget is 26/40 draws in the current Mount Coffee baseline. Still requires browser proof of renderer parity/state synchronization across all profiles, GPU buffer identity and allocation/lifecycle behavior, capture/picking/focus parity, and fresh current-head CI evidence. No current-head CI run; remains PROPOSED."
     },
     {
       "id": "RX-005i",

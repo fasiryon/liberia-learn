@@ -153,17 +153,17 @@ Measured on SwiftShader (draw calls are deterministic; timings do not count). HI
 |---|---|---|---|---|
 | HYDRO-R3P-001 | P1 | Profile oscillation: a downgrade never blocked a re-upgrade | FIXED: the downgrade is remembered per runtime version and blocks auto-upgrade (test) | bcb40c42 |
 | HYDRO-R3P-002 | P1 | ThreeScene rebuilt the overlay DOM every rendered frame | FIXED: at most every 120 ms or on a state change, with a trailing refresh | bcb40c42 |
-| HYDRO-R3P-003 | P1 | The HIGH/STANDARD draw planner does not match three.js `renderer.info` (−10 to +5); the shadow pass is never measured | **OPEN.** This is an RX-005 A8 / RX-006 test-1 acceptance item and blocks RX-005 IMPLEMENTED | — |
+| HYDRO-R3P-003 | P1 | The HIGH/STANDARD draw planner does not match three.js `renderer.info` (−10 to +5); the shadow pass is never measured | **OPEN pending fresh current-head browser evidence.** `frame-plan.test.ts` verifies scene-graph parity including a measured shadow pass; current-head capture/CI parity has not run | `__tests__/interactive-labs/frame-plan.test.ts` |
 | HYDRO-R3P-004 | P1 | Baseline re-based across 7 commits without the required record | FIXED: one dedicated baseline commit with before and after for every lab | 8898c3ab |
-| HYDRO-R3P-005 | P1 | The frame-monitor rAF never idles, ignores visibility, and samples idle frames | PARTLY FIXED: samples only while rendering and while the page is visible. IntersectionObserver pausing and the 30 fps-cap test are still RX-005 A4/A6 acceptance items | bcb40c42 |
-| HYDRO-R3P-006 | P2 | LOW has no 30 fps ambient cap and allocates per frame | OPEN (RX-006 acceptance) | — |
+| HYDRO-R3P-005 | P1 | The frame-monitor rAF never idles, ignores visibility, and samples idle frames | **Implementation and unit tests complete; fresh current-head CI evidence pending.** Offscreen/hidden pausing and the 30 fps ambient cap are covered by scene-activity tests | `__tests__/interactive-labs/scene-activity.test.ts` |
+| HYDRO-R3P-006 | P2 | LOW has no 30 fps ambient cap and allocates per frame | PARTLY FIXED: LOW batch plans, state ranges and typed-array staging reuse storage; browser allocation/GPU-buffer identity proof and full runtime acceptance remain open | `__tests__/interactive-labs/frame-plan.test.ts`, `__tests__/interactive-labs/low-batch-state.test.ts` |
 | HYDRO-R3P-007 | P2 | The ThreeScene material cache grows with continuous emissive values | OPEN | — |
 | HYDRO-R3P-008 | P2 | Context-loss handler lacks `preventDefault`; shadow box not fitted; passive-wheel `preventDefault` | OPEN | — |
 | HYDRO-R3P-009 | P2 | Protection code costs | No change needed | — |
 
 Runtime extensions, per the performance reviewer:
-- **RX-005: PROPOSED.** The renderer ships, but its acceptance list is incomplete: 20× remount leak test, two-run determinism proof, three-chunk byte accounting and import-graph/zero-request test, chunk-abort harness, planner/`renderer.info` parity with a measured shadow pass, persisted downgrade ceiling (now done), IntersectionObserver pausing.
-- **RX-006: PROPOSED, partly implemented.** CPU-merged LOW batching works as a budget fix (34/40). Missing: bound per-part state attributes, per-frame allocation removal, capacity caps, and tests 1–6.
+- **RX-005: PROPOSED.** Local code/tests cover renderer parity planning, scene activity, determinism, chunk size and the shared runtime slices. Fresh current-head Chromium evidence remains outstanding for 20× remounts, byte-identical captures, built chunk/import/zero-request checks, abort fallback and measured renderer.info/shadow parity.
+- **RX-006: PROPOSED, partly implemented.** LOW uses per-vertex color/emission, reusable per-component ranges, cached membership and WebGL1-safe chunk caps; Mount Coffee measures 26/40 LOW draws. State-transition/planner tests pass. Browser proof for actual buffer identity/allocation, picking and cross-profile challenge-state capture parity remains outstanding.
 
 ## Round 3 design director (lab-design-director, r3-final at 8898c3ab): DO_NOT_SHIP, 0 P0, 9 P1, 4 P2
 
