@@ -84,13 +84,15 @@ export function Fallback2D({ definition, state, reducedMotion, traceFlowId, disp
   // A11 label budget on 2D as on 3D: highlighted parts first, then the parts a check names (A1 label cue), then the
   // rest in authored order; up to 8 labels that do not crowd one another. The anchor is the part's own label offset
   // through its matrix, exactly as on the WebGL profiles.
-  const rank = (item: (typeof ordered)[number]) => item.highlighted ? 0 : item.labelCritical ? 1 : 2;
+  const rank = (item: (typeof ordered)[number]) => preset?.frame?.componentIds.includes(item.id) ? 0 : item.highlighted ? 1 : item.labelCritical ? 2 : 3;
   const placedLabels: { x:number; y:number; halfWidth:number }[] = [];
   const labels: { id: string; text: string; x: number; y: number; halfWidth: number; mobileHidden: boolean }[] = [];
   for (const item of ordered.filter((candidate) => candidate.showLabel && candidate.inFocus).sort((a, b) => rank(a) - rank(b))) {
     if (labels.length >= 8) break;
     const anchor = transformPoint(item.matrix, item.labelOffset ?? [0, 0, 0]);
-    const labelX = anchor[0], labelY = -anchor[1] - .15 * screenScale, labelHalfWidth = item.label.length * .09 * screenScale;
+    const labelY = -anchor[1] - .15 * screenScale, labelHalfWidth = item.label.length * .09 * screenScale;
+    if (anchor[0] < frame.x || anchor[0] > frame.x + frame.width || labelY < frame.y + .3 * screenScale || labelY > frame.y + frame.height) continue;
+    const labelX = Math.max(frame.x + labelHalfWidth + .12 * screenScale, Math.min(frame.x + frame.width - labelHalfWidth - .12 * screenScale, anchor[0]));
     const labelCrowded = placedLabels.some(previous => Math.abs(previous.y - labelY) < .34 * screenScale && Math.abs(previous.x - labelX) < previous.halfWidth + labelHalfWidth + .16 * screenScale);
     if (labelCrowded) continue;
     placedLabels.push({ x: labelX, y: labelY, halfWidth: labelHalfWidth });
@@ -126,7 +128,7 @@ export function Fallback2D({ definition, state, reducedMotion, traceFlowId, disp
               {item.control && item.inFocus && <g aria-hidden="true" pointerEvents="none"><circle data-lab-control-affordance={item.id} cx={item.center[0]} cy={-item.center[1]} r={0.2 * screenScale} fill="#020617" fillOpacity={0.4} stroke={item.control.pending ? HIGHLIGHT_COLOR : "#fcd34d"} strokeWidth={2} vectorEffect="non-scaling-stroke" /><text x={item.center[0]} y={-item.center[1]} textAnchor="middle" dominantBaseline="central" fontSize={0.2 * screenScale} fontWeight={800} fill="#fef3c7">{controlGlyph(item.control)}</text>{item.control.pending && <text data-lab-pending-label={item.id} x={item.center[0]} y={-item.center[1] - 0.36 * screenScale} textAnchor="middle" fontSize={0.24 * screenScale} fontWeight={800} fill={HIGHLIGHT_COLOR} stroke="#020617" strokeWidth={0.04 * screenScale} paintOrder="stroke">Confirm?</text>}</g>}
               {item.emissive > 0 && <circle cx={item.center[0]} cy={-item.center[1]} r={0.08 * item.emissive + 0.04} fill="#fde68a" opacity={Math.min(0.08, item.emissive * 0.08)} filter="url(#glow)" />}
               {/* A19 / G3: a status lamp's glyph, so its state is never colour alone. */}
-              {item.status && item.selectable && item.inFocus && <text data-lab-status={item.id} x={item.center[0]} y={-item.center[1] + 0.42 * screenScale} textAnchor="middle" dominantBaseline="central" fontSize={0.3 * screenScale} fontWeight={800} fill="#0f172a" stroke="#f8fafc" strokeWidth={0.04 * screenScale} paintOrder="stroke" aria-hidden="true">{item.status.glyph}</text>}
+              {item.status && item.selectable && item.inFocus && <text data-lab-status={item.id} x={item.center[0]} y={-item.center[1] + 0.42 * screenScale} textAnchor="middle" dominantBaseline="central" fontSize={0.4 * screenScale} fontWeight={800} fill="#0f172a" stroke="#f8fafc" strokeWidth={0.04 * screenScale} paintOrder="stroke" aria-hidden="true">{item.status.glyph}</text>}
               <polygon points={hull} fill={drawnBySurface.has(item.id) && !item.highlighted ? "none" : item.highlighted ? mixHexColor(item.color, HIGHLIGHT_COLOR, 0.2) : item.emissive > 0 ? mixHexColor(item.color, LIT_COLOR, Math.min(0.8, 0.8 * item.emissive)) : item.color} stroke={item.highlighted ? HIGHLIGHT_COLOR : "#0f172a"} strokeWidth={item.highlighted ? 3 : 1} vectorEffect="non-scaling-stroke" />
             </g>
           );
@@ -146,7 +148,7 @@ export function Fallback2D({ definition, state, reducedMotion, traceFlowId, disp
         return { x: at.x - box.left, y: at.y - box.top };
       };
       const focused = (document.activeElement as HTMLElement | null)?.dataset.labHitProxy;
-      layer.replaceChildren(...controlTargetElements(list.items, project, box.width, box.height, (pick) => onPickRef.current(pick)));
+      layer.replaceChildren(...controlTargetElements(list.items, project, box.width, box.height, (pick) => onPickRef.current(pick), box.top));
       if (focused) Array.from(layer.querySelectorAll<HTMLButtonElement>("button")).find(button => button.dataset.labHitProxy === focused)?.focus();
     };
     update();

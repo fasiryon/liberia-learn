@@ -197,6 +197,8 @@ const spec: HighFidelitySpec = {
     { id: "unit-bench", label: "Unit 3 bench", target: [0.9, 0.2, 0.1], distance: 3, yaw: 0.2, pitch: 0.22, frame: { componentIds: [...UNIT3_STACK] } },
     { id: "exploded-bench", label: "Exploded unit 3", target: [0.9, 0.15, 0.1], distance: 5, yaw: 0.2, pitch: 0.22, frame: { componentIds: [...UNIT3_STACK] } },
     { id: "grid-city", label: "Power and city", target: [6.8, 0.9, 0.2], distance: 8.5, yaw: -0.18, pitch: 0.3, frame: { componentIds: components.filter((part) => part.id.startsWith("city-")).map((part) => part.id) } },
+    { id: "river-controls", label: "Season controls", target: [-5.35, 3.3, -1.75], distance: 4, yaw: 0, pitch: 0.15, frame: { componentIds: components.filter((part) => part.id.startsWith("gauge-band-")).map((part) => part.id) } },
+    { id: "switchyard-controls", label: "Feeder controls", target: [3.2, -0.45, 0.55], distance: 3, yaw: 0, pitch: 0.15, frame: { componentIds: components.filter((part) => part.id.startsWith("breaker-")).map((part) => part.id) } },
   ], constraints: { minDistance: 2.5, maxDistance: 28, minPitch: 0.02, maxPitch: 1.25, minYaw: -1.75, maxYaw: 1.75 } },
   guidedPath: [
     { id: "meet", prompt: "Meet the plant: the Saint Paul River feeds a narrow headpond behind the dam. Find the powerhouse, the switchyard and the city it supplies.", cameraPresetId: "valley" },

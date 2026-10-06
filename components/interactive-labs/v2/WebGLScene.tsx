@@ -443,7 +443,7 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
         // A15: reduced motion keeps static direction cues; LOW shows an emitter's glyph proxy in place of particles.
         const glyphProxies = list.emitters.filter((emitter) => emitter.active && emitter.lowProxy.kind === "glyph").map((emitter) => ({ id: `proxy:${emitter.id}`, kind: "glyph" as const, glyph: emitter.lowProxy.kind === "glyph" ? emitter.lowProxy.glyph : "", position: emitter.origin, direction: emitter.direction, color: emitter.color }));
         const focusedControl = (document.activeElement as HTMLElement | null)?.dataset.labHitProxy;
-        controlTargets.current?.replaceChildren(...controlTargetElements(list.items, project, el.clientWidth, el.clientHeight, (pick) => onPickRef.current(pick)));
+        controlTargets.current?.replaceChildren(...controlTargetElements(list.items, project, el.clientWidth, el.clientHeight, (pick) => onPickRef.current(pick), el.getBoundingClientRect().top));
         if (focusedControl) controlTargets.current?.querySelector<HTMLButtonElement>(`[data-lab-hit-proxy="${focusedControl}"]`)?.focus();
         labels.current.append(...cueElements([...(motionless ? list.cues : []), ...glyphProxies], project), ...statusBadgeElements(list.items, project), ...controlAffordanceElements(list.items, project));
       }

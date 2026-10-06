@@ -44,4 +44,11 @@ describe("Mount Coffee Stage B state and interaction", () => {
       }
     }
   });
+
+  it("keeps controls above a phone sheet without changing their model-space anchors", () => {
+    const items = buildRenderList({ definition, state: definition.initialState, profile: "LOW" }).items.filter(item => item.control);
+    const targets = layoutControlTargets(items, () => ({ x: 195, y: 400 }), 390, 524, 240);
+    expect(targets).toHaveLength(items.length);
+    expect(targets.every(target => target.center.y + 22 <= 240 && target.anchor.y === 400)).toBe(true);
+  });
 });

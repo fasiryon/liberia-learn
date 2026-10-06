@@ -278,6 +278,23 @@ async function probeInteraction(page: Page) {
   };
 }
 
+/** Measure the actual hit proxies, including occlusion by the mobile sheet, rather than their model geometry. */
+async function measureControlHitTargets(page: Page) {
+  return page.evaluate(() => {
+    const scene = document.querySelector("[data-lab-review-ready] canvas, [data-lab-review-ready] svg[role=group]")?.getBoundingClientRect();
+    const expected = scene && innerWidth < 1024 ? Array.from(document.querySelectorAll<HTMLElement>("[data-lab-control-affordance]")).filter((node) => {
+      const box = node.getBoundingClientRect(), x = box.left + box.width / 2, y = box.top + box.height / 2;
+      return x >= scene.left && x <= scene.right && y >= scene.top && y <= scene.bottom;
+    }).map(node => node.dataset.labControlAffordance!) : [];
+    const targets = Array.from(document.querySelectorAll<HTMLButtonElement>("[data-lab-hit-proxy]")).map((button) => {
+    const box = button.getBoundingClientRect();
+    const points = [1, 0.5, 0].flatMap((x) => [1, 0.5, 0].map((y) => ({ x: box.left + 5 + x * (box.width - 10), y: box.top + 5 + y * (box.height - 10) })));
+    return { id: button.dataset.labHitProxy!, width: box.width, height: box.height, name: button.getAttribute("aria-label"), hittable: points.every((point) => button.contains(document.elementFromPoint(point.x, point.y))) };
+    });
+    return { expectedIds: expected, targets, missingIds: expected.filter(id => !targets.some(target => target.id === id)) };
+  });
+}
+
 async function main() {
   const labId = arg("lab");
   if (!labId) throw new Error("--lab is required");
@@ -336,14 +353,17 @@ async function main() {
         captures.push({ file: still, scenario: scenario.id, storyboardScene: scenario.storyboardScene, stage: scenario.stage, profile, viewport, kind: "still", reducedMotion: stillReducedMotion });
         // R4 P1-1: a shader that fails to compile still counts draws, so parity alone cannot catch it.
         const shaderErrors = issues.consoleErrors.filter((text) => SHADER_ERROR.test(text));
+        const controlHitTargets = await measureControlHitTargets(page);
+        const targetFailure = controlHitTargets.missingIds.length > 0 || controlHitTargets.targets.some((target) => target.width < 44 || target.height < 44 || !target.name || !target.hittable);
         const failure = !identity.verdict.ok ? identity.verdict.reason
           : shaderErrors.length ? `shader_error: ${shaderErrors[0].slice(0, 200)}`
           : profile !== "FALLBACK_2D" && !frameProbe ? "frame_probe_missing: the renderer installed no __labReviewFrameProbe"
           : frameParity && !frameParity.ok ? `frame_plan_mismatch: ${frameParity.mismatches.join("; ")}`
-          : threeRequestViolation ? `three_chunk_requested_on_${profile}: ${issues.threeChunkRequests.join(", ")}` : undefined;
+          : threeRequestViolation ? `three_chunk_requested_on_${profile}: ${issues.threeChunkRequests.join(", ")}`
+          : targetFailure ? "phone_control_hit_proxy_small_or_occluded" : undefined;
         runs.push({ scenario: scenario.id, profile, viewport, kind: "still", screenshot: path.relative(out, still).replace(/\\/g, "/"),
           status: failure ? "FAIL" : "PASS", ...(failure ? { failureReason: failure } : {}),
-          framePlan: frameProbe, frameParity, threeChunkRequests: issues.threeChunkRequests,
+          framePlan: frameProbe, frameParity, threeChunkRequests: issues.threeChunkRequests, controlHitTargets,
           actualProfile: identity.actualProfile, downgradePath: identity.downgradePath, actualRenderer: identity.actualRenderer, framesRendered: identity.framesRendered, drawCalls: identity.drawCalls,
           ...opened, warnings: issues.consoleErrors, consoleErrors: issues.consoleErrors, pageErrors: issues.pageErrors });
         writeManifest();

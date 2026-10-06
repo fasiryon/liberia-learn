@@ -8,16 +8,16 @@ type Point = { x: number; y: number };
 export type ControlTarget = { item: RenderItem; anchor: Point; center: Point };
 
 /** Screen-space hit proxies, never model geometry. Stable order and disjoint 44px squares. */
-export function layoutControlTargets(items: readonly RenderItem[], project: (point: Vec3) => Point | null, width: number, height: number): ControlTarget[] {
-  if (width < CONTROL_TARGET_SIZE || height < CONTROL_TARGET_SIZE) return [];
+export function layoutControlTargets(items: readonly RenderItem[], project: (point: Vec3) => Point | null, width: number, height: number, availableHeight = height): ControlTarget[] {
+  if (width < CONTROL_TARGET_SIZE || availableHeight < CONTROL_TARGET_SIZE) return [];
   const targets: ControlTarget[] = [];
   const half = CONTROL_TARGET_SIZE / 2;
   const clamp = (n: number, max: number) => Math.max(half, Math.min(max - half, n));
   for (const item of items.filter((part) => part.control && !part.control.dragAxis && part.inFocus && part.selectable)) {
     const anchor = project(item.center);
     if (!anchor || anchor.x < 0 || anchor.x > width || anchor.y < 0 || anchor.y > height) continue;
-    const candidates: Point[] = [{ x: clamp(anchor.x, width), y: clamp(anchor.y, height) }];
-    for (let y = half; y <= height - half; y += CONTROL_TARGET_SIZE + GAP) {
+    const candidates: Point[] = [{ x: clamp(anchor.x, width), y: clamp(anchor.y, availableHeight) }];
+    for (let y = half; y <= availableHeight - half; y += CONTROL_TARGET_SIZE + GAP) {
       for (let x = half; x <= width - half; x += CONTROL_TARGET_SIZE + GAP) candidates.push({ x, y });
     }
     candidates.sort((a, b) => Math.hypot(a.x - anchor.x, a.y - anchor.y) - Math.hypot(b.x - anchor.x, b.y - anchor.y) || a.y - b.y || a.x - b.x);
@@ -28,9 +28,11 @@ export function layoutControlTargets(items: readonly RenderItem[], project: (poi
 }
 
 /** All renderers use the same labelled phone controls and action path. Docked twins remain keyboard alternatives. */
-export function controlTargetElements(items: readonly RenderItem[], project: (point: Vec3) => Point | null, width: number, height: number, onPick: (pick: ScenePick) => void): HTMLElement[] {
+export function controlTargetElements(items: readonly RenderItem[], project: (point: Vec3) => Point | null, width: number, height: number, onPick: (pick: ScenePick) => void, stageTop = 0): HTMLElement[] {
   if (!window.matchMedia("(max-width: 1023px)").matches) return [];
-  return layoutControlTargets(items, project, width, height).flatMap(({ item, anchor, center }) => {
+  const sheetTop = document.querySelector("[data-lab-sheet]")?.getBoundingClientRect().top ?? window.innerHeight;
+  const availableHeight = Math.min(height, window.innerHeight - stageTop, sheetTop - stageTop);
+  return layoutControlTargets(items, project, width, height, availableHeight).flatMap(({ item, anchor, center }) => {
     const line = document.createElement("span");
     line.setAttribute("aria-hidden", "true");
     line.className = "pointer-events-none absolute origin-left border-t-2 border-slate-900";
