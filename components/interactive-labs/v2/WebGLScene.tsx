@@ -26,6 +26,7 @@ import { publishFramePlan, type ReviewFrameProbe } from "@/lib/interactive-labs/
 import { createSurfaceTriangleStorage, writeSurfaceTriangles } from "@/lib/interactive-labs/v2/fidelity/surfaces";
 import type { MeshData } from "./meshes";
 import { pickNearest, type ScenePick } from "./picking";
+import { controlTargetElements } from "./controlTargets";
 import { controlAffordanceElements, controlCursor, cueElements, statusBadgeElements } from "./sceneCues";
 
 type Props = {
@@ -97,6 +98,8 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
   const displayRef = useRef<FidelityState | undefined>(state.fidelity);
   const zoomRef = useRef(1);
   const carriedPose = useRef(initialPose);
+  const controlTargets = useRef<HTMLDivElement>(null);
+  const onPickRef = useRef(onPick); onPickRef.current = onPick;
   const frameRef = useRef<{ list: RenderList | null; viewProj: Mat4; width: number; height: number }>({ list: null, viewProj: IDENTITY, width: 1, height: 1 });
   const callbacks = useRef({ onDowngrade, onUpgradeReady, reducedMotion, traceFlowId, onReady, railActive });
   const requestDrawRef = useRef<() => void>(() => {});
@@ -439,6 +442,9 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
         }));
         // A15: reduced motion keeps static direction cues; LOW shows an emitter's glyph proxy in place of particles.
         const glyphProxies = list.emitters.filter((emitter) => emitter.active && emitter.lowProxy.kind === "glyph").map((emitter) => ({ id: `proxy:${emitter.id}`, kind: "glyph" as const, glyph: emitter.lowProxy.kind === "glyph" ? emitter.lowProxy.glyph : "", position: emitter.origin, direction: emitter.direction, color: emitter.color }));
+        const focusedControl = (document.activeElement as HTMLElement | null)?.dataset.labHitProxy;
+        controlTargets.current?.replaceChildren(...controlTargetElements(list.items, project, el.clientWidth, el.clientHeight, (pick) => onPickRef.current(pick)));
+        if (focusedControl) controlTargets.current?.querySelector<HTMLButtonElement>(`[data-lab-hit-proxy="${focusedControl}"]`)?.focus();
         labels.current.append(...cueElements([...(motionless ? list.cues : []), ...glyphProxies], project), ...statusBadgeElements(list.items, project), ...controlAffordanceElements(list.items, project));
       }
       const fidelityMoving = !!(spec && current.fidelity && displayRef.current && !isSettled(displayRef.current, current.fidelity));
@@ -529,6 +535,7 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
         onPointerUp={(e) => { const wasClick = drag.current.moved < 6; drag.current.active = false; if (wasClick) pick(e.clientX, e.clientY, e.currentTarget); }}
         onWheel={(e) => { if (!constraints) return; zoomRef.current = Math.min(constraints.maxDistance / constraints.minDistance, Math.max(0.5, zoomRef.current * (e.deltaY > 0 ? 1.08 : 0.92))); requestDrawRef.current(); }}
       />
+      <div ref={controlTargets} className="pointer-events-none absolute inset-0 overflow-hidden" />
       <div ref={labels} className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true" />
       <div ref={motionStatus} className="sr-only" role="status" aria-live="polite" />
     </div>

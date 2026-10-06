@@ -18,6 +18,7 @@ import { createThreeSceneStores, disposeThreeSceneStores, shadowCasterHash, sync
 import { planThreeFrame, type FramePlan } from "@/lib/interactive-labs/v2/fidelity/framePlan";
 import { publishFramePlan, type ReviewFrameProbe } from "@/lib/interactive-labs/v2/review/framePlanEvidence";
 import { placeSceneLabels } from "@/lib/interactive-labs/v2/fidelity/labelLayout";
+import { controlTargetElements } from "./controlTargets";
 import { controlAffordanceElements, controlCursor, cueElements, statusBadgeElements } from "./sceneCues";
 import { ENVIRONMENT_BACKDROP } from "@/lib/interactive-labs/v2/fidelity/palette";
 import { dragParameter } from "@/lib/interactive-labs/v2/fidelity/controls";
@@ -69,7 +70,7 @@ export function ThreeScene({definition,state,profile,reducedMotion,traceFlowId,o
     const controls=host.current?.querySelector<HTMLDivElement>("[data-three-controls]");if(controls){const focusedPartId=(document.activeElement as HTMLElement|null)?.dataset.partId;const pickable=currentList.items.filter(item=>item.selectable&&item.inFocus&&item.detail!=="decor");
       // Inspect targets: keyboard-reachable 44 px buttons that stay out of sight until hovered or focused.
       const inspect=pickable.filter(item=>!item.control).map(item=>{const at=projectScreen(item),button=document.createElement("button");button.type="button";button.dataset.partId=item.id;button.setAttribute("aria-label",`Inspect ${item.label}`);button.setAttribute("aria-pressed",String(item.highlighted));button.title=`Inspect ${item.label}`;button.className="absolute h-11 w-11 -translate-x-1/2 -translate-y-1/2 rounded-full border border-slate-900/60 bg-white/70 text-slate-900 opacity-0 hover:opacity-100 focus-visible:opacity-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-900";button.textContent="?";button.style.left=`${Math.round(at.x)}px`;button.style.top=`${Math.round(at.y)}px`;button.hidden=!at.visible;button.addEventListener("click",()=>callbacks.current.onPick({kind:"item",item}));return button;});
-controls.replaceChildren(...inspect);if(focusedPartId)Array.from(controls.querySelectorAll<HTMLButtonElement>("button")).find(button=>button.dataset.partId===focusedPartId)?.focus();}};
+controls.replaceChildren(...inspect, ...controlTargetElements(currentList.items,toScreen,r.renderer.domElement.clientWidth,r.renderer.domElement.clientHeight,(pick)=>callbacks.current.onPick(pick)));if(focusedPartId)Array.from(controls.querySelectorAll<HTMLButtonElement>("button")).find(button=>button.dataset.partId===focusedPartId)?.focus();}};
     const overlayNow=performance.now();lastRenderAt.current=overlayNow;wakeMonitor.current();clearTimeout(overlayTimer.current);
     if(overlayState.current!==state||overlayNow-overlayAt.current>=120){overlayState.current=state;overlayAt.current=overlayNow;refreshOverlays.current();}
     else overlayTimer.current=setTimeout(()=>{overlayAt.current=performance.now();refreshOverlays.current();},130);

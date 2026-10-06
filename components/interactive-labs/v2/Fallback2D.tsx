@@ -12,6 +12,7 @@ import { fallbackFrame, findPreset } from "@/lib/interactive-labs/v2/fidelity/ca
 import { convexHull, silhouetteSamples } from "./meshes";
 import type { ScenePick } from "./picking";
 import { useDisplayFidelity } from "./useDisplayFidelity";
+import { controlTargetElements } from "./controlTargets";
 import { controlGlyph } from "./sceneCues";
 import { SURFACE_SHALLOW } from "@/lib/interactive-labs/v2/fidelity/surfaces";
 import { FLOW_CASING_COLOR } from "@/lib/interactive-labs/v2/fidelity/flowTubes";
@@ -51,6 +52,7 @@ export function Fallback2D({ definition, state, reducedMotion, traceFlowId, disp
   const { display, time } = useDisplayFidelity(definition, state, reducedMotion, hasFlows);
   const list = useMemo(() => buildRenderList({ definition, state, profile: "FALLBACK_2D", displayFidelity: display, pendingControlId }), [definition, state, display, pendingControlId]);
   // A14 drag-variable on 2D: the front projection maps world (x, y) to SVG (x, -y), so the drag runs in SVG units.
+  const controlTargets = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
   const dragging = useRef<{ id: string; axis: [[number, number, number], [number, number, number]]; x: number; y: number; moved: boolean } | null>(null);
   const dragToRef = useRef<(event: ReactPointerEvent) => void>(() => {});
@@ -133,6 +135,24 @@ export function Fallback2D({ definition, state, reducedMotion, traceFlowId, disp
   ), [ordered, screenScale, drawnKey]);
   const selected = state.selectedObjectId && definition.scene.objects.some((object) => object.id === state.selectedObjectId) ? state.selectedObjectId : null;
 
+  useEffect(() => {
+    const svg = svgRef.current, layer = controlTargets.current;
+    if (!svg || !layer || typeof svg.getScreenCTM !== "function" || typeof ResizeObserver === "undefined") return;
+    const update = () => {
+      const matrix = svg.getScreenCTM(), box = svg.getBoundingClientRect();
+      if (!matrix) return;
+      const project = (point: [number, number, number]) => {
+        const at = new DOMPoint(point[0], -point[1]).matrixTransform(matrix);
+        return { x: at.x - box.left, y: at.y - box.top };
+      };
+      const focused = (document.activeElement as HTMLElement | null)?.dataset.labHitProxy;
+      layer.replaceChildren(...controlTargetElements(list.items, project, box.width, box.height, (pick) => onPickRef.current(pick)));
+      if (focused) Array.from(layer.querySelectorAll<HTMLButtonElement>("button")).find(button => button.dataset.labHitProxy === focused)?.focus();
+    };
+    update();
+    const observer = new ResizeObserver(update); observer.observe(svg);
+    return () => observer.disconnect();
+  }, [list, viewBox]);
   return (
     <div className="relative" aria-label="2D lab scene" data-lab-renderer="svg" data-lab-frames-rendered="1">
       <svg ref={svgRef} viewBox={viewBox} className={narrow ? "aspect-[100/95] h-auto w-full" : `${SCENE_HEIGHT} w-full`} role="group" aria-label={`${definition.title ?? "Lab"} scene (2D view)`}>
@@ -196,6 +216,7 @@ export function Fallback2D({ definition, state, reducedMotion, traceFlowId, disp
           </g>
         ))}
       </svg>
+      <div ref={controlTargets} className="pointer-events-none absolute inset-0 overflow-hidden" />
       {selected && (
         <div className="absolute bottom-3 left-3 flex gap-2">
           <button type="button" onClick={() => dispatch({ type: "rotate", objectId: selected, delta: [0.3, 0] })} className="rounded-full bg-white/10 px-3 py-1.5 text-xs text-white">Turn {definition.scene.objects.find((object) => object.id === selected)?.label.toLowerCase()} ({(state.rotations[selected]?.[1] ?? 0).toFixed(1)})</button>
