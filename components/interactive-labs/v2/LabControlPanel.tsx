@@ -5,7 +5,7 @@ import { deriveSimulation, explainState, isComponentRevealed, protectionStatus }
 import { formatVariable, stepVariable } from "@/lib/interactive-labs/v2/fidelity/variables";
 import { ProtectionReset } from "./ProtectionReset";
 
-type Props = { definition: InteractiveLabDefinition<LabState>; state: LabState; activeCheck: LearningCheck | undefined; dispatch: (action: LabAction) => void };
+type Props = { definition: InteractiveLabDefinition<LabState>; state: LabState; activeCheck: LearningCheck | undefined; dispatch: (action: LabAction) => void; onStartRail?: (railId: string) => void };
 
 const chip = (active: boolean) => `min-h-11 rounded-full px-3 py-1.5 text-xs font-semibold transition ${active ? "bg-cyan-300 text-slate-950" : "bg-white/10 text-slate-200 hover:bg-white/15"}`;
 const MODES: Exclude<LabMode, "COMPLETE">[] = ["GUIDED", "EXPLORE", "CHALLENGE", "ASSESSMENT"];
@@ -14,16 +14,25 @@ const MODES: Exclude<LabMode, "COMPLETE">[] = ["GUIDED", "EXPLORE", "CHALLENGE",
  * One control surface for every capability profile. Anything the scene can do by pointer is also here,
  * so keyboard users and FALLBACK_2D learners reach every check.
  */
-export function LabControlPanel({ definition, state, activeCheck, dispatch }: Props) {
+/** The learner's current task, as the panel states it: the guided step, the challenge, or the next check (A17 peek). */
+export function labTaskPrompt(definition: InteractiveLabDefinition<LabState>, state: LabState, activeCheck: LearningCheck | undefined): string {
+  const spec = definition.fidelity, fidelity = state.fidelity;
+  const guidedIndex = spec && fidelity ? Math.max(fidelity.guidedStepIndex, Math.min(state.completedChecks.length, spec.guidedPath.length - 1)) : 0;
+  const guided = spec && fidelity && state.mode === "GUIDED" ? spec.guidedPath[guidedIndex] : undefined;
+  return guided?.prompt ?? (state.mode === "CHALLENGE" && spec ? spec.authoring.challenge : activeCheck?.prompt ?? "You completed every check!");
+}
+
+export function LabControlPanel({ definition, state, activeCheck, dispatch, onStartRail }: Props) {
   const spec = definition.fidelity, fidelity = state.fidelity;
   const [heldFace, setHeldFace] = useState<string | null>(null);
+  const [pendingSlot, setPendingSlot] = useState<string | null>(null);
   const modes = spec?.modes ?? MODES;
   const guidedIndex = spec && fidelity ? Math.max(fidelity.guidedStepIndex, Math.min(state.completedChecks.length, spec.guidedPath.length - 1)) : 0;
   const guided = spec && fidelity && state.mode === "GUIDED" ? spec.guidedPath[guidedIndex] : undefined;
   const simulation = spec && fidelity ? deriveSimulation(spec, fidelity) : null;
   const modeOwnsTask = state.mode === "GUIDED" || state.mode === "CHALLENGE";
   const target = modeOwnsTask ? undefined : activeCheck?.fidelity;
-  const taskPrompt = guided?.prompt ?? (state.mode === "CHALLENGE" && spec ? spec.authoring.challenge : activeCheck?.prompt ?? "You completed every check!");
+  const taskPrompt = labTaskPrompt(definition, state, activeCheck);
   const explanation = spec && fidelity ? explainState(spec, fidelity, definition.grade) : [];
   // R3 interaction P1: a check made while the plant is still tripped fails for that reason, not the learner's arithmetic.
   const protection = spec && state.fidelity ? protectionStatus(spec, state.fidelity) : null;
@@ -97,7 +106,7 @@ export function LabControlPanel({ definition, state, activeCheck, dispatch }: Pr
               <div>
                 <p className="text-xs text-slate-400">1. Pick up a part</p>
                 <div className="mt-2 flex flex-wrap gap-2">{loose.map((id) => { const c = face(id), [w, h] = [c.transform.scale[0], c.transform.scale[1]]; return (
-                  <button key={id} type="button" aria-pressed={heldFace === id} onClick={() => setHeldFace(heldFace === id ? null : id)} className={`flex min-h-11 flex-col items-center gap-1 rounded-xl p-2 text-[11px] ${heldFace === id ? "bg-cyan-300 text-slate-950" : "bg-white/10 text-white"}`}>
+                  <button key={id} type="button" draggable aria-grabbed={heldFace === id} onDragStart={() => setHeldFace(id)} onClick={() => setHeldFace(heldFace === id ? null : id)} className={`flex min-h-11 flex-col items-center gap-1 rounded-xl p-2 text-[11px] ${heldFace === id ? "bg-cyan-300 text-slate-950" : "bg-white/10 text-white"}`}>
                     <svg width={w * 16} height={h * 16} aria-hidden="true"><rect width={w * 16} height={h * 16} rx="2" fill={c.material.color} /></svg>{c.label}
                   </button>); })}{loose.length === 0 && <span className="text-xs text-emerald-300">All parts placed.</span>}</div>
               </div>
@@ -105,7 +114,8 @@ export function LabControlPanel({ definition, state, activeCheck, dispatch }: Pr
                 <p className="text-xs text-slate-400">2. Put it in a slot</p>
                 <div className="mt-2 grid grid-cols-2 gap-2">{assembly.slots!.map((slot) => { const current = placements[slot.id]; return (
                   <div key={slot.id} className="flex items-center gap-1">
-                    <button type="button" disabled={!heldFace} onClick={() => { if (heldFace) { dispatch({ type: "place-component", assemblyId: assembly.id, slotId: slot.id, componentId: heldFace }); setHeldFace(null); } }} className="min-h-11 flex-1 rounded-lg border border-dashed border-white/20 px-2 py-1.5 text-left text-xs text-slate-200 disabled:opacity-60">{slot.label}: <b>{current ? face(current).label : "empty"}</b></button>
+                    <button type="button" disabled={!heldFace} onDragOver={(event) => event.preventDefault()} onDrop={(event) => { event.preventDefault(); if (heldFace) { setPendingSlot(slot.id); } }} onClick={() => { if (heldFace) setPendingSlot(slot.id); }} className="min-h-11 flex-1 rounded-lg border border-dashed border-white/20 px-2 py-1.5 text-left text-xs text-slate-200 disabled:opacity-60">{slot.label}: <b>{current ? face(current).label : "empty"}</b></button>
+                    {pendingSlot === slot.id && heldFace && <button type="button" onClick={() => { dispatch({ type: "place-component", assemblyId: assembly.id, slotId: slot.id, componentId: heldFace }); setHeldFace(null); setPendingSlot(null); }} className="min-h-11 rounded-lg bg-emerald-300 px-2 text-xs font-bold text-slate-950">Confirm</button>}
                     {current && <button type="button" aria-label={`Remove ${face(current).label} from ${slot.label}`} onClick={() => dispatch({ type: "place-component", assemblyId: assembly.id, slotId: slot.id, componentId: null })} className="grid h-11 w-11 shrink-0 place-items-center rounded-lg bg-white/10 text-xs">×</button>}
                   </div>); })}</div>
               </div>
@@ -171,12 +181,21 @@ export function LabControlPanel({ definition, state, activeCheck, dispatch }: Pr
             <div className="mt-2 flex flex-wrap gap-2" aria-label="Parts you can see">
               {spec.components.filter((component) => component.selectable !== false && !component.control && isComponentRevealed(spec, fidelity, component.id)).sort((a, b) => a.label.localeCompare(b.label)).map((component) => <button key={component.id} type="button" aria-pressed={fidelity.inspectedComponentId === component.id} onClick={() => dispatch({ type: "inspect-component", componentId: component.id })} className={chip(fidelity.inspectedComponentId === component.id)}>{component.label}</button>)}
             </div>
+            {/* A14 tap rule: tapping a control part operates it, so its inspection lives here (collapsed, so the
+                control parts do not lengthen the mobile page; R1 layout). */}
+            {spec.components.some((component) => component.control) && <details className="mt-2">
+              <summary className="min-h-11 cursor-pointer py-2 text-xs font-semibold text-slate-300">Learn about the controls</summary>
+              <div className="flex flex-wrap gap-2" aria-label="Controls you can inspect">
+                {spec.components.filter((component) => component.control && component.selectable !== false && isComponentRevealed(spec, fidelity, component.id)).map((component) => <button key={component.id} type="button" data-lab-inspect-control={component.id} aria-pressed={fidelity.inspectedComponentId === component.id} onClick={() => dispatch({ type: "inspect-component", componentId: component.id })} className={chip(fidelity.inspectedComponentId === component.id)}>{component.label}</button>)}
+              </div>
+            </details>}
             </details>
             {fidelity.inspectedComponentId && <p className="text-xs text-slate-300">{spec.components.find((component) => component.id === fidelity.inspectedComponentId)?.description ?? ""}</p>}
           </section>
 
           <section aria-label="Camera" className="flex flex-wrap gap-2">
             {spec.camera.presets.map((preset) => <button key={preset.id} type="button" aria-pressed={fidelity.cameraPresetId === preset.id} onClick={() => dispatch({ type: "camera-preset", presetId: preset.id })} className={chip(fidelity.cameraPresetId === preset.id)}>{preset.label}</button>)}
+            {onStartRail && spec.camera.rails?.map((rail) => <button key={rail.id} type="button" onClick={() => onStartRail(rail.id)} className={chip(false)}>Tour: {rail.label}</button>)}
           </section>
 
         </>

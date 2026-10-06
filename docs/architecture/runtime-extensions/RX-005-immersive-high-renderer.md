@@ -1,6 +1,6 @@
 # RX-005: Immersive HIGH renderer (three.js) and scene-first interaction
 
-- **Status:** PROPOSED.
+- **Status:** IMPLEMENTED. All binding acceptance items are proven or explicitly accepted by the authorized reviewers; see the final acceptance closure below.
   - Both reviewers returned **APPROVE_WITH_CHANGES** on 2026-10-01.
   - The amendments in "Review verdicts and binding amendments" (end of this document) are binding. **They supersede any earlier section they conflict with.**
   - The independent design-director re-check of A1 returned APPROVE_WITH_CHANGES; its final amendments were re-reviewed and APPROVED on 2026-10-01.
@@ -444,3 +444,59 @@ This is a proposal disposition, not a product-quality verdict.
 | lab-design-director | A1 parametric geometry P0 re-check | APPROVE_WITH_CHANGES; amended proposal APPROVED | Typed API, budget, profile variant, semantic-equivalence, schema, coordinate, preset and WebGL1 index requirements incorporated. |
 | lab-design-director | A20 glTF proposal | REJECT | Loader remains deferred in RX-005 V1; a future loader must be a separate reviewed extension. |
 | lab-performance-reviewer | A20 glTF proposal | APPROVE_WITH_CHANGES | Cost, format, lifecycle, fallback and loader verification requirements recorded in A20 disposition. |
+
+### A7 and A8/A19 amendments (performance re-check, 2026-10-06)
+
+- **A7 shadow-map size, amended:** the sun shadow map is 1024 px on every device (commit 5a6e0b6e). It is strictly cheaper than 2048 (about a quarter of the memory and fill), stays inside HIGH `maxTexturePx` (2048), and the planner and budget record 1024 consistently. Desktop shadow quality was ACCEPTED by the independent design director in the final closure below. The unused fine-pointer option has been removed.
+- **A8/A19 "--gpu run", amended:** three.js counts `renderer.info` draws and triangles in JavaScript, and the LOW pass counts its own `drawArrays`, so planner parity measured on SwiftShader is valid accounting evidence. `programs.length` depends only on material parameters and is recorded per still. A real-GPU or device run is still required before any claim about frame rate, memory, battery or thermals; none is made.
+
+## Acceptance record (2026-10-06; historical checkpoints)
+
+The following checkpoints preserve their original evidence state. They are superseded by the final acceptance closure below.
+
+Branch `feat/rx005-rx006-acceptance-closure` (draft PR #169). Evidence is GitHub-hosted headless Chromium on SwiftShader: it proves rendering correctness, routing, accounting, determinism and lifecycle, never device performance.
+
+**Proven** (CI run 37429556324 at c0e77a6d for Mount Coffee, all four profiles; PR CI build 37429560860 green):
+- Test 1, render list: surfaces and emitters are pure functions of quantities, and `instructionalView` is identical across profiles (unit tests, including status text and semantic cues).
+- Test 2, controls: every control dispatches its panel twin's action; the authoring gate rejects invalid controls; the confirm preview never reaches `acceptLabAction` (spy test); keyboard activation works.
+- Test 3, camera: rails and presets satisfy constraints and the target box; reduced motion cuts.
+- Test 4, budgets: surfaces, emitters, section caps, cased flow tubes and the `three` chunk are measured; every lab is within its locked limits (Mount Coffee HIGH 76/120 draws and 12,816/100k triangles, LOW 27/40 and 2,410/15k). Every re-baseline has its own before-to-after commit.
+- Test 5, lifecycle: 20x remount leaves exactly one live renderer, with no context warnings and constant `renderer.info.memory`, on HIGH, STANDARD and LOW.
+- Test 6, determinism: two capture runs are byte-identical, 96/96 stills on each of the four profiles (Mount Coffee).
+- Test 7, existing suites: 271/271 interactive-lab tests pass; the full PR CI is green.
+- A3: with the three chunk aborted, the lab lands on LOW with the notice and every keyboard check completes (52/52 steps).
+- A8: planner parity with `renderer.info`, including the HIGH shadow pass, holds on 96/96 HIGH, STANDARD and LOW stills; LOW and FALLBACK_2D make zero requests for the three chunk; the import-graph test and the Next-build chunk check pass.
+- A1, A10, A13, A14, A15, A17, A18 and A19 runtime pieces landed on this branch (semantic-cue gate, rigs, cased flows, confirm and drag controls, section caps, bottom sheet and landscape, downgrade notice, status glyph and text), each with unit tests.
+
+**Fixed after the reviewer re-check, awaiting the final evidence run** (90eff6c6): the round-sprite shader compile error (no sprite drew on HIGH/STANDARD) and a capture gate that now fails on any shader error; a browser context-loss to FALLBACK_2D test (Test 5); circuit determinism (Test 6 names both reference labs); landscape captures and walkthroughs at true phone-landscape size; the Challenge-mode phone overflow; control-first picking inside overlapping bounds; WebGL2 gating and the load-failure upgrade loop.
+
+**Closed after the first record** (00ba7f52, 316/316 interactive-lab tests):
+- A2: `three-loader-gate.test.tsx` proves the three renderer module is never loaded for deviceMemory 2 and is loaded exactly once after a passing probe on a capable WebGL2 device.
+- A14: a shared control-affordance token on every profile (ring with a tap or drag-axis glyph, pointer/grab cursor) and an in-scene "Confirm?" label in the highlight token while a confirm is pending.
+- A18: a downgrade carries the learner's camera pose into the LOW renderer until the preset changes or Recentre.
+- A19: `renderer-chunks.test.ts` proves one lab's 2D first-load set is 162 KB stored (48 KB brotli), within 300 KB, with both WebGL renderers lazy; Fallback2D's part layer and hulls are memoized away from the animation clock. Per-lab dynamic definition loading stays scheduled before programme Phase 4, as this amendment states; the size test guards it until then.
+- Labels: every renderer anchors labels in the part's own space and ranks highlighted, then A1 label-cue parts, then the rest (FALLBACK_2D label parity and LOW anchoring findings).
+- CI: `lab-runtime-gate.yml` runs parity (incl. shadow pass), zero three requests on LOW/2D, shader-error and two-run determinism checks on every PR touching the lab runtime; `RENDERER_CHUNK_CEILINGS` caps cumulative chunk growth.
+
+**Remaining before IMPLEMENTED:**
+1. A clean full evidence sweep (`lab-review-capture.yml`, Mount Coffee and circuit, all profiles and viewports, determinism, runtime acceptance incl. context loss, walkthroughs) at the final head, and a green `lab-runtime-gate` on PR #169.
+2. Performance-reviewer re-check of the post-review changes and the >5% budget steps recorded since, and the design director's call on desktop shadow quality (A7 amendment).
+3. Known P2 follow-up: uncaught "Loading chunk failed" page errors during the chunk-abort walkthrough (dev server).
+
+No physical-device or real-GPU performance claim is made.
+
+## Final acceptance closure (2026-10-06)
+
+Evidence source: `ae3a1ec05967fb249b3490f4d3598f7989640611`. Mount Coffee [run 37489886085](https://github.com/fasiryon/liberia-learn/actions/runs/37489886085) and circuit [run 37489902558](https://github.com/fasiryon/liberia-learn/actions/runs/37489902558) both completed SUCCESS. Mount Coffee: 34 scenarios × four profiles × desktop/mobile/landscape = 408 PASS stills and 408/408 byte-identical determinism pairs. Circuit: 12 scenarios × the same matrix = 144 PASS stills and 144/144 identical pairs. Correct renderer identity, planner parity (including HIGH shadows), zero three.js requests on LOW/2D and no shader errors passed. HIGH/STANDARD/LOW on both labs pass 20 remounts with one live renderer and context-loss convergence to FALLBACK_2D. Warmed LOW buffer sweeps create zero buffers and call bufferData zero times (hydro 878 and circuit 420 bufferSubData range updates).
+
+Mount Coffee keyboard walkthroughs pass all 12 profile/viewport combinations (51/51 steps each, zero page errors). Its blocked-three.js desktop walkthrough completes all 52 steps on LOW. Circuit sweep inputs intentionally skip keyboard/abort; no claim is made that those steps ran in this sweep. The inherited accepted control/picking and keyboard evidence is preserved. Local interactive-lab validation: 33 files, 316 tests PASS on unchanged `13c0496d`. Source PR CI 37488994275 / runtime gate 37488994191 and handoff-head CI 37490114877 / runtime gate 37490114964 are SUCCESS. The final documentation head must independently pass PR CI before merge.
+
+**Independent final performance reviewer: ACCEPT**, bounded strictly to `c0e77a6d..13c0496d92713c4264dfc5073cff46423c1645c9`: 0 introduced/regressed P0, P1 or P2. Sprite shader/error gate, WebGL2 and failed-load guards, cached flow tubes, control tokens, pose carry, label placement/priority and 2D memoization introduce no demonstrated regression. Packages, dedicated re-baselines, unchanged 5% tolerance and cumulative chunk ceilings are accepted. threeRenderer is 609,291 stored / 132,842 Brotli bytes (ceilings 640,000 / 140,000); webglPass is 69,278 / 22,260 (72,000 / 24,000). LOW/FALLBACK_2D design and renderer lifecycle remain acceptable. This accepts the incremental design; it does not claim universally allocation-free JavaScript execution.
+
+**Independent design director: ACCEPT A7 desktop 1024 px shadows**, based on personal inspection of the three Intel Graphics / ANGLE Direct3D11 GPU stills at `13c0496d92713c4264dfc5073cff46423c1645c9`: overview cast shading grounds equipment; cutaway generator/shaft/runner retain readable fill and separation; exploded parts remain readable. Inspected files: `hydro-overview__HIGH__desktop.png`, `hydro-cutaway-powerhouse__HIGH__desktop.png`, `hydro-exploded-unit__HIGH__desktop.png` and `manifest.json`. The unaltered manifest and PNGs are retained in [desktop GPU evidence](../../labs/mount-coffee-hydropower/evidence/rx-a7-desktop-gpu/). Findings: 0 P0, 0 P1, 1 P2 (coarse/stepped ground-shadow edges beneath the right-hand breaker blocks in cutaway/exploded views). This minor edge polish does not obscure parts or make their placement ambiguous; future smoothing must preserve the accepted cost bound. This is only a desktop still-shadow judgment, not temporal stability, arbitrary cameras, benchmark or product SHIP.
+
+**Accepted amendments:** A7 uses a 1024 px sun-shadow map on all devices, accepted on cost and now desktop still quality. A8/A19 allow SwiftShader renderer accounting, program counts, routing, determinism and lifecycle evidence; they do not certify device performance. A19 permits the current registry until before programme Phase 4, guarded by the 162 KB stored / 48 KB Brotli 2D first-load test (300 KB limit). RX-006 optional instancing is not implemented and is not applicable: merged batching alone meets the budget.
+
+**Remaining limitations:** real-phone frame rate, target-device cold/warm load time, tab/JS/GPU memory, battery, thermals and physical touch latency remain UNVERIFIED / NOT MEASURED. The Intel GPU captures measure no performance. The known dev-server aborted-chunk walkthrough has two uncaught loading errors but completes 52/52 steps; that accepted P2 remains open. Small phone scene targets, art/immersion, benchmark and other Mount Coffee product polish remain separate. Mount Coffee remains DRAFT, approval PENDING, UNRELEASED, curriculum inactive and student inaccessible; overall design verdict DO_NOT_SHIP.
+
+**Decision: RX-005 = IMPLEMENTED.** Tests 1–7 and binding amendments A1–A20 are closed through the direct evidence and accepted dispositions recorded above. A20 keeps the glTF loader REJECTED/deferred. No partial promotion or device-performance inference.

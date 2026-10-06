@@ -6,6 +6,8 @@ import type { Vec3 } from "./math";
 import type { InstructionalGeometryVariants } from "./geometry/types";
 import type { SurfaceDefinition } from "./surfaces";
 import type { SceneControl } from "./controls";
+import type { SemanticCue } from "./semanticCues";
+import type { EmitterDefinition } from "./emitters";
 
 export const HIGH_FIDELITY_SPEC_VERSION = "high-fidelity-lab/1.0.0" as const;
 
@@ -32,13 +34,15 @@ export type ComponentDefinition = {
   showLabel?: boolean;
   /** Suppress secondary callouts on narrow screens; controls retain the complete component inventory. */
   mobileLabel?: boolean;
-  /** World-space offset for a visible scene label when nearby parts need separate callouts. */
+  /** Label anchor offset in the part's own (pre-transform) space, used identically by every renderer. */
   labelOffset?: Vec3;
   carriesSymbol?: boolean;
   carriesScale?: boolean;
   carriesPlaceIdentity?: boolean;
   /** RX-005c: an in-scene control. Activating the part dispatches the same set-variable as its panel twin. */
   control?: SceneControl;
+  /** RX-005 A1: how a check-critical part is told apart on every profile (see fidelity/semanticCues.ts). */
+  semanticCues?: readonly SemanticCue[];
 };
 
 export type ComponentMotionDefinition = {
@@ -138,11 +142,19 @@ export type FlowDefinition = {
   color: string;
 };
 
-export type CameraPreset = { id: string; label: string; target: Vec3; distance: number; yaw: number; pitch: number };
-export type CameraConstraints = { minDistance: number; maxDistance: number; minPitch: number; maxPitch: number; minYaw: number; maxYaw: number };
+/** RX-005d: `frame` refits the preset's target and distance to these parts for any aspect ratio (and frames 2D). */
+export type CameraPreset = { id: string; label: string; target: Vec3; distance: number; yaw: number; pitch: number; frame?: { componentIds: string[] } };
+/**
+ * RX-005d / A16 camera limits. Without a `targetBox` the target follows presets only (no panning); with one, the
+ * learner may pan inside it. `groundY` keeps the camera above the declared ground or water. `guided` limits how far
+ * the learner may orbit away from a guided step's preset (they can always Recentre).
+ */
+export type CameraConstraints = { minDistance: number; maxDistance: number; minPitch: number; maxPitch: number; minYaw: number; maxYaw: number; targetBox?: { min: Vec3; max: Vec3 }; groundY?: number; guided?: { distance: number; yaw: number; pitch: number } };
+/** RX-005d: an ordered camera tour. Presentation only: each stop is a camera-preset, advanced by the learner. */
+export type CameraRail = { id: string; label: string; stops: { presetId: string; durationMs?: number; easing?: "ease-in-out" | "linear" }[] };
 
 /** `variables` puts the step in its intended state (validated like a mode start), so a step never inherits a trip. */
-export type GuidedStep = { id: string; prompt: string; cameraPresetId?: string; highlightIds?: string[]; variables?: Record<string, number> };
+export type GuidedStep = { id: string; prompt: string; cameraPresetId?: string; railId?: string; highlightIds?: string[]; variables?: Record<string, number> };
 
 /** Direct-manipulation learning checks. Evaluated from scene state, never from a free-text claim. */
 export type FidelityCheck =
@@ -185,7 +197,7 @@ export type HighFidelitySpec = {
   simulation?: SimulationModel;
   motions?: ComponentMotionDefinition[];
   flows: FlowDefinition[];
-  camera: { defaultPresetId: string; presets: CameraPreset[]; constraints: CameraConstraints };
+  camera: { defaultPresetId: string; presets: CameraPreset[]; constraints: CameraConstraints; rails?: CameraRail[] };
   guidedPath: GuidedStep[];
   modes: Exclude<LabMode, "COMPLETE">[];
   /** Optional live feedback for the active challenge, derived only from simulation quantities. */
@@ -194,9 +206,12 @@ export type HighFidelitySpec = {
   explain?: (state: FidelityState) => ExplanationLine[];
   offline: { remoteAssets: string[]; maxPackageBytes: number };
   /** Shared presentation intent. Existing labs default to STUDIO. */
-  environment?: "DAYLIGHT" | "STUDIO";
+  /** A10 environment rig (default STUDIO). One backdrop token per rig is shared by all four profiles. */
+  environment?: "DAYLIGHT" | "STUDIO" | "DARK_FIELD";
   /** RX-005b: quantity-bound water (or other medium) surfaces. */
   surfaces?: SurfaceDefinition[];
+  /** RX-005b: quantity-bound emitters (stream, spray, upwell, bubble, pulse). */
+  emitters?: EmitterDefinition[];
   /**
    * Where a mode starts: entering the mode sets these learner variables and camera preset (validated like any
    * set-variable). Lets a challenge start under-loaded and an assessment start fresh instead of inheriting a solved state.

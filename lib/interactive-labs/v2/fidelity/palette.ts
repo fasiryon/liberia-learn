@@ -2,6 +2,40 @@
 export const INACTIVE_FLOW_COLOR = "#779ab2";
 export const HIGHLIGHT_COLOR = "#f0abfc";
 export const MARKER_COLOR = "#a3e635";
+/** A10: one backdrop token per environment rig, used by every profile (three.js sky/background, CSS stage, SVG). */
+export const ENVIRONMENT_BACKDROP = Object.freeze({ DAYLIGHT: "#e7eef1", STUDIO: "#0b1223", DARK_FIELD: "#02040a" } as const);
+export type EnvironmentRigId = keyof typeof ENVIRONMENT_BACKDROP;
+/** A15: the shared "section cream" that caps every clipped solid on HIGH/STANDARD. */
+export const SECTION_CREAM = "#f3e7c9";
+
+/**
+ * State colours are semantic runtime output, not authoring decoration. Keep
+ * them shared by HIGH, STANDARD, LOW and FALLBACK_2D so a learner can read a
+ * unit's state without depending on motion or a particular renderer.
+ */
+export const UNIT_STATUS_COLORS = Object.freeze({
+  generating: "#22c55e",
+  idle: "#f59e0b",
+  off: "#64748b",
+  tripped: "#ef4444",
+  "out-for-repair": "#a855f7",
+} as const);
+
+/** A19 / G3: every status also carries a glyph and text, so a lamp is never read by colour alone. */
+export const UNIT_STATUS_CUES = Object.freeze({
+  generating: { glyph: "●", text: "Generating" },
+  idle: { glyph: "◐", text: "Idle" },
+  off: { glyph: "○", text: "Off" },
+  tripped: { glyph: "✕", text: "Tripped" },
+  "out-for-repair": { glyph: "⚒", text: "Out for repair" },
+} as const);
+
+export function statusVisual(status: string | undefined): { color?: string; emissive: number; cue?: { glyph: string; text: string } } {
+  if (!status) return { emissive: 0 };
+  const color = UNIT_STATUS_COLORS[status as keyof typeof UNIT_STATUS_COLORS];
+  const cue = UNIT_STATUS_CUES[status as keyof typeof UNIT_STATUS_CUES];
+  return color ? { color, emissive: status === "generating" ? 1 : status === "tripped" ? 0.45 : 0.18, cue } : { emissive: 0 };
+}
 
 export function parseHexColor(hex: string): [number, number, number] {
   const normalized = hex.replace("#", "");

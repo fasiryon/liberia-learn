@@ -104,27 +104,30 @@ describe("shared interactive-lab runtime extensions", () => {
     expect(validateScenarioSet(definition, set)).toContain('Scenario "decor-state-change" changes a decorative render property at HIGH.');
   });
 
-  it("batches inactive paths as alternating segment pairs and reuses capacity", () => {
-    const list: RenderList = { items: [], markers: [], surfaces: [], motions: [], camera: null, budget: RENDER_BUDGETS.HIGH, explanation: [], quantities: {}, environment: "STUDIO", flows: [{
+  it("batches an inactive path as dashed cased tubes in the inactive colour and reuses capacity", () => {
+    const list: RenderList = { items: [], markers: [], surfaces: [], emitters: [], cues: [], motions: [], camera: null, budget: RENDER_BUDGETS.HIGH, explanation: [], quantities: {}, environment: "STUDIO", flows: [{
       id: "flow", label: "Flow", color: "#22d3ee", points: [[0, 0, 0], [1, 0, 0], [2, 0, 0], [3, 0, 0]], active: false, rate: 0, direction: 1, particleCount: 0,
       nodes: [{ id: "a", label: "A", position: [0, 0, 0], traceable: true }, { id: "b", label: "B", position: [1, 0, 0], traceable: true }], traced: [],
     }] };
     const storage = createFlowBatchStorage();
     batchFlowGeometry(list, 0, false, "flow", storage);
-    const capacity = storage.lines.positions;
-    expect(storage.lines.count).toBe(4);
-    expect(storage.lines.colors[0]).toBeCloseTo(119 / 255, 6);
-    expect(storage.lines.colors[1]).toBeCloseTo(154 / 255, 6);
-    expect(storage.lines.colors[2]).toBeCloseTo(178 / 255, 6);
+    const capacity = storage.tubes.core.positions;
+    // 3 units of path in 0.32 dashes with 0.22 gaps = 2 dashes per unit segment, 4 radial quads (24 vertices) each.
+    expect(storage.tubes.core.count).toBe(6 * 24);
+    expect(storage.tubes.casing.count).toBe(storage.tubes.core.count);
+    expect(storage.tubes.core.colors[0]).toBeCloseTo(0x94 / 255, 6);
+    expect(storage.tubes.core.colors[1]).toBeCloseTo(0xa3 / 255, 6);
+    expect(storage.tubes.core.colors[2]).toBeCloseTo(0xb8 / 255, 6);
+    expect(storage.tubes.casing.colors[0]).toBeCloseTo(15 / 255, 6);
     expect(storage.particles.count).toBe(0);
     expect(storage.traceNodes.count).toBe(2);
     batchFlowGeometry(list, 1, false, "flow", storage);
-    expect(storage.lines.positions).toBe(capacity);
+    expect(storage.tubes.core.positions).toBe(capacity);
   });
 
   it("writes active particle positions into reusable storage without per-particle arrays", () => {
     const points: [number, number, number][] = [[0, 0, 0], [3, 0, 0], [3, 4, 0]];
-    const list: RenderList = { items: [], markers: [], surfaces: [], motions: [], camera: null, budget: RENDER_BUDGETS.HIGH, explanation: [], quantities: {}, environment: "STUDIO", flows: [{
+    const list: RenderList = { items: [], markers: [], surfaces: [], emitters: [], cues: [], motions: [], camera: null, budget: RENDER_BUDGETS.HIGH, explanation: [], quantities: {}, environment: "STUDIO", flows: [{
       id: "active", label: "Active", color: "#22d3ee", points, active: true, rate: 0.7, direction: -1, particleCount: 5,
       nodes: [], traced: [],
     }] };

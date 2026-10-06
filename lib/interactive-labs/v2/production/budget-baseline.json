@@ -1,58 +1,66 @@
 {
   "fixture-simple-circuit": {
     "HIGH": {
-      "offlinePackageBytes": 10005,
-      "triangles": 1072,
-      "drawCalls": 11,
-      "particles": 18,
+      "offlinePackageBytes": 689628,
+      "transferBytes": 166161,
+      "triangles": 4242,
+      "drawCalls": 14,
+      "particles": 36,
       "maxTexturePx": 0
     },
     "STANDARD": {
-      "offlinePackageBytes": 10005,
-      "triangles": 1072,
-      "drawCalls": 11,
-      "particles": 10,
+      "offlinePackageBytes": 689628,
+      "transferBytes": 166161,
+      "triangles": 4170,
+      "drawCalls": 14,
+      "particles": 20,
       "maxTexturePx": 0
     },
     "LOW": {
-      "offlinePackageBytes": 10005,
-      "triangles": 340,
-      "drawCalls": 9,
-      "particles": 4,
+      "offlinePackageBytes": 80337,
+      "transferBytes": 33319,
+      "triangles": 1044,
+      "drawCalls": 6,
+      "particles": 8,
       "maxTexturePx": 0
     },
     "FALLBACK_2D": {
-      "offlinePackageBytes": 10005,
+      "offlinePackageBytes": 11059,
+      "transferBytes": 11059,
       "triangles": 0,
       "drawCalls": 0,
-      "particles": 6,
+      "particles": 12,
       "maxTexturePx": 0
     }
   },
   "g4-solid-figures": {
     "HIGH": {
-      "offlinePackageBytes": 14882,
-      "triangles": 1044,
-      "drawCalls": 6,
+      "offlinePackageBytes": 693703,
+      "transferBytes": 170236,
+      "triangles": 2914,
+      "drawCalls": 11,
       "particles": 0,
       "maxTexturePx": 0
     },
     "STANDARD": {
-      "offlinePackageBytes": 14882,
-      "triangles": 1044,
-      "drawCalls": 6,
+      "offlinePackageBytes": 693703,
+      "transferBytes": 170236,
+      "triangles": 2914,
+      "drawCalls": 11,
       "particles": 0,
       "maxTexturePx": 0
     },
     "LOW": {
-      "offlinePackageBytes": 14882,
+      "offlinePackageBytes": 84412,
+      "transferBytes": 37394,
       "triangles": 300,
       "drawCalls": 5,
       "particles": 0,
       "maxTexturePx": 0
     },
     "FALLBACK_2D": {
-      "offlinePackageBytes": 14882,
+      "offlinePackageBytes": 15134,
+      "transferBytes": 15134,
       "triangles": 0,
       "drawCalls": 0,
       "particles": 0,
@@ -61,28 +69,32 @@
   },
   "mount-coffee-hydropower": {
     "HIGH": {
-      "offlinePackageBytes": 59045,
-      "triangles": 7182,
-      "drawCalls": 79,
+      "offlinePackageBytes": 738406,
+      "transferBytes": 214939,
+      "triangles": 12816,
+      "drawCalls": 76,
       "particles": 162,
       "maxTexturePx": 1024
     },
     "STANDARD": {
-      "offlinePackageBytes": 59045,
-      "triangles": 7074,
-      "drawCalls": 59,
+      "offlinePackageBytes": 738406,
+      "transferBytes": 214939,
+      "triangles": 9872,
+      "drawCalls": 56,
       "particles": 90,
       "maxTexturePx": 0
     },
     "LOW": {
-      "offlinePackageBytes": 59045,
-      "triangles": 1228,
-      "drawCalls": 34,
+      "offlinePackageBytes": 129115,
+      "transferBytes": 82097,
+      "triangles": 2410,
+      "drawCalls": 27,
       "particles": 36,
       "maxTexturePx": 0
     },
     "FALLBACK_2D": {
-      "offlinePackageBytes": 59045,
+      "offlinePackageBytes": 59837,
+      "transferBytes": 59837,
       "triangles": 0,
       "drawCalls": 0,
       "particles": 54,

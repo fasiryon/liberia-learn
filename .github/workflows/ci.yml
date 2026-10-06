@@ -42,6 +42,8 @@ jobs:
       - name: Run OS vault context security tests
         run: npm --prefix os-vault/daemon test
       - run: npm run build
+      - name: Confirm the renderer chunk record against the Next build (RX-005 A8)
+        run: npx tsx scripts/labs/check-next-renderer-chunk.ts
       - name: Install Chromium for PWA E2E
         run: npx playwright install --with-deps chromium
       - name: Run real-browser PWA E2E

@@ -34,9 +34,9 @@ describe("lab budgets (locked 2026-09-28)", () => {
     });
   });
 
-  it("triangle accounting matches the procedural meshes the renderer draws", () => {
+  it("LOW triangle accounting matches the procedural meshes WebGLScene draws", () => {
     for (const kind of ["sphere", "cylinder", "cone", "cube", "rectangular-prism", "box", "panel", "lever"] as GeometryKind[]) {
-      for (const low of [false, true]) expect(geometryTriangles(kind, low), `${kind} low=${low}`).toBe(buildMesh(kind, low).count / 3);
+      expect(geometryTriangles(kind, true), kind).toBe(buildMesh(kind, true).count / 3);
     }
   });
 

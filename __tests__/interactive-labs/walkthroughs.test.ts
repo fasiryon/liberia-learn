@@ -4,7 +4,8 @@ import { LAB_WALKTHROUGHS } from "@/lib/interactive-labs/v2/review/walkthroughs"
 import { getInteractiveLabDefinition } from "@/lib/interactive-labs/v2/registry";
 import { getLabReviewScenarioSet } from "@/lib/interactive-labs/v2/review/referenceScenarios";
 
-const FIXED_UI = ["Challenge", "Assessment", "Guided", "Explore", "Check my work", "Parts and traces", "Take the"];
+// Confirm is conditionally rendered after a learner picks a component and a target slot.
+const FIXED_UI = ["Challenge", "Assessment", "Guided", "Explore", "Check my work", "Parts and traces", "Take the", "Confirm"];
 
 describe("keyboard walkthroughs", () => {
   for (const walkthrough of Object.values(LAB_WALKTHROUGHS)) {

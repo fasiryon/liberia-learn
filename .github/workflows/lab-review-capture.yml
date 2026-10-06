@@ -25,7 +25,7 @@ on:
         required: true
         default: "ALL"
       viewports:
-        description: "Comma list of desktop,mobile"
+        description: "Comma list of desktop,mobile,landscape (landscape = phone held sideways, A17)"
         required: true
         default: "desktop,mobile"
       still_only:
@@ -46,6 +46,22 @@ on:
         default: false
       reduced_motion:
         description: "Capture with prefers-reduced-motion (adds reduced-motion strips when motion is captured)"
+        type: boolean
+        default: false
+      capture:
+        description: "Run the still/motion capture (turn off to run only the acceptance checks below)"
+        type: boolean
+        default: true
+      determinism:
+        description: "RX-005 A9: capture the selected scenarios twice with reduced motion and require byte-identical PNGs"
+        type: boolean
+        default: false
+      runtime_acceptance:
+        description: "RX-005 A5: 20x remount loop (live renderers, context warnings, renderer.info.memory, heap)"
+        type: boolean
+        default: false
+      abort_three_chunk:
+        description: "RX-005 A3: on HIGH, abort the three.js chunk; the lab must land on LOW and every check must complete"
         type: boolean
         default: false
 
@@ -82,7 +98,8 @@ jobs:
   capture:
     needs: plan
     runs-on: ubuntu-latest
-    timeout-minutes: 90
+    # Full still captures plus determinism, remount and walkthrough acceptance can exceed 90 minutes.
+    timeout-minutes: 180
     strategy:
       fail-fast: false
       # One profile at a time: no parallel browser/dev-server memory spikes and no interleaved artifacts.
@@ -110,6 +127,7 @@ jobs:
       PROBE: ${{ inputs.probe }}
       WALKTHROUGH: ${{ inputs.walkthrough }}
       REDUCED_MOTION: ${{ inputs.reduced_motion }}
+      CAPTURE: ${{ inputs.capture }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -145,6 +163,7 @@ jobs:
           done
           echo "The review harness never became ready."; tail -n 80 dev-server.log; exit 1
       - name: Capture ${{ matrix.profile }}
+        if: ${{ inputs.capture }}
         run: |
           label="ci-${GITHUB_RUN_ID}-${PROFILE}${BATCH:+-$BATCH}"
           args=(--lab "$LAB" --label "$label" --profiles "$PROFILE" --viewports "$VIEWPORTS" --restart-every 6)
@@ -153,6 +172,21 @@ jobs:
           if [ "$PROBE" = "true" ]; then args+=(--probe); fi
           if [ "$REDUCED_MOTION" = "true" ]; then args+=(--reduced-motion); fi
           timeout 80m npx tsx scripts/labs/capture-lab-review.ts "${args[@]}"
+      - name: Determinism ${{ matrix.profile }} (two runs, byte-identical)
+        if: ${{ always() && inputs.determinism }}
+        run: |
+          args=(--lab "$LAB" --profiles "$PROFILE" --viewports "$VIEWPORTS" --restart-every 6 --still-only --reduced-motion)
+          if [ "$SCENARIOS" != "ALL" ]; then args+=(--scenarios "$SCENARIOS"); fi
+          base="artifacts/lab-review/${LAB}/determinism-${GITHUB_RUN_ID}-${PROFILE}"
+          timeout 40m npx tsx scripts/labs/capture-lab-review.ts "${args[@]}" --label det-a --out "$base/a"
+          timeout 40m npx tsx scripts/labs/capture-lab-review.ts "${args[@]}" --label det-b --out "$base/b"
+          npx tsx scripts/labs/compare-lab-captures.ts "$base/a" "$base/b" --report "$base/compare.json"
+      - name: Runtime acceptance ${{ matrix.profile }} (A5 remount loop)
+        if: ${{ always() && inputs.runtime_acceptance && (matrix.profile == 'HIGH' || matrix.profile == 'STANDARD' || matrix.profile == 'LOW') }}
+        run: timeout 20m npx tsx scripts/labs/runtime-acceptance.ts --lab "$LAB" --profiles "$PROFILE" --out "artifacts/lab-review/${LAB}/runtime-acceptance-${GITHUB_RUN_ID}-${PROFILE}"
+      - name: Three chunk aborted (A3), keyboard walkthrough on HIGH
+        if: ${{ always() && inputs.abort_three_chunk && matrix.profile == 'HIGH' && hashFiles('scripts/labs/interaction-walkthrough.ts') != '' }}
+        run: timeout 25m npx tsx scripts/labs/interaction-walkthrough.ts --lab "$LAB" --profile HIGH --viewport desktop --abort-three-chunk
       - name: Keyboard walkthrough ${{ matrix.profile }}
         if: ${{ always() && inputs.walkthrough && hashFiles('scripts/labs/interaction-walkthrough.ts') != '' }}
         run: |

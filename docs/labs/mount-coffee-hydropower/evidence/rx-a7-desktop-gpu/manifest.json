@@ -1,0 +1,228 @@
+{
+  "labId": "mount-coffee-hydropower",
+  "labVersion": "1.1.0",
+  "reviewState": "DRAFT",
+  "label": "rx-a7-desktop-gpu",
+  "gitSha": "13c0496d92713c4264dfc5073cff46423c1645c9",
+  "capturedAt": "2026-10-06T16:25:41.905Z",
+  "environment": "local dev server, headed Chromium, virtual clock paused from navigation for stills and motion frames",
+  "rendererIdentityRule": "HIGH/STANDARD must be drawn by three@*, LOW by webgl-pass, FALLBACK_2D by svg, at the requested profile, with at least one frame drawn; otherwise status FAIL.",
+  "framePlanRule": "RX-005 A8 / RX-006 test 1: the shared frame planner must equal the renderer's own count for the probed frame (three.js: renderer.info with frustum culling off and the shadow pass forced; LOW: counted drawArrays); otherwise status FAIL.",
+  "threeChunkRule": "RX-005 A8: LOW and FALLBACK_2D runs must make zero requests for a script carrying three.js; otherwise status FAIL.",
+  "deviceBoundary": "Headless browser evidence proves rendering correctness, composition, layout, interaction automation and renderer/profile routing only. It does not prove low-end GPU performance, touch latency, thermal behaviour or mobile memory pressure (DEVICE_REQUIRED).",
+  "renderer": {
+    "kind": "gpu",
+    "renderer": "ANGLE (Intel, Intel(R) Graphics (0x00007D45) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "validFor": [
+      "composition",
+      "labels",
+      "visual-fidelity",
+      "performance"
+    ]
+  },
+  "profiles": [
+    "HIGH"
+  ],
+  "viewports": [
+    "desktop"
+  ],
+  "captures": [
+    {
+      "file": "hydro-overview__HIGH__desktop.png",
+      "scenario": "hydro-overview",
+      "storyboardScene": "S1",
+      "stage": "overview",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "still",
+      "reducedMotion": true
+    },
+    {
+      "file": "hydro-cutaway-powerhouse__HIGH__desktop.png",
+      "scenario": "hydro-cutaway-powerhouse",
+      "storyboardScene": "S3",
+      "stage": "cutaway",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "still",
+      "reducedMotion": true
+    },
+    {
+      "file": "hydro-exploded-unit__HIGH__desktop.png",
+      "scenario": "hydro-exploded-unit",
+      "storyboardScene": "S3",
+      "stage": "exploded",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "still",
+      "reducedMotion": true
+    }
+  ],
+  "runs": [
+    {
+      "scenario": "hydro-overview",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "still",
+      "screenshot": "hydro-overview__HIGH__desktop.png",
+      "status": "PASS",
+      "framePlan": {
+        "renderer": "three",
+        "planned": {
+          "drawCalls": 53,
+          "triangles": 8752,
+          "shadowDrawCalls": 15,
+          "shadowTriangles": 1288,
+          "textures": [
+            {
+              "id": "sun-shadow-map",
+              "px": 1024
+            },
+            {
+              "id": "pmrem-environment",
+              "px": 1024
+            }
+          ]
+        },
+        "measured": {
+          "drawCalls": 53,
+          "triangles": 8752,
+          "shadowDrawCalls": 15,
+          "shadowTriangles": 1288
+        },
+        "programs": 11,
+        "memory": {
+          "geometries": 27,
+          "textures": 4
+        }
+      },
+      "frameParity": {
+        "ok": true,
+        "mismatches": []
+      },
+      "threeChunkRequests": [
+        "http://localhost:3000/_next/static/chunks/_app-pages-browser_components_interactive-labs_v2_ThreeScene_tsx.js"
+      ],
+      "actualProfile": "HIGH",
+      "downgradePath": "",
+      "actualRenderer": "three@186",
+      "framesRendered": 3,
+      "drawCalls": 53,
+      "notice": [],
+      "surface": "webgl",
+      "warnings": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "scenario": "hydro-cutaway-powerhouse",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "still",
+      "screenshot": "hydro-cutaway-powerhouse__HIGH__desktop.png",
+      "status": "PASS",
+      "framePlan": {
+        "renderer": "three",
+        "planned": {
+          "drawCalls": 56,
+          "triangles": 9160,
+          "shadowDrawCalls": 15,
+          "shadowTriangles": 1288,
+          "textures": [
+            {
+              "id": "sun-shadow-map",
+              "px": 1024
+            },
+            {
+              "id": "pmrem-environment",
+              "px": 1024
+            }
+          ]
+        },
+        "measured": {
+          "drawCalls": 56,
+          "triangles": 9160,
+          "shadowDrawCalls": 15,
+          "shadowTriangles": 1288
+        },
+        "programs": 14,
+        "memory": {
+          "geometries": 29,
+          "textures": 4
+        }
+      },
+      "frameParity": {
+        "ok": true,
+        "mismatches": []
+      },
+      "threeChunkRequests": [
+        "http://localhost:3000/_next/static/chunks/_app-pages-browser_components_interactive-labs_v2_ThreeScene_tsx.js"
+      ],
+      "actualProfile": "HIGH",
+      "downgradePath": "",
+      "actualRenderer": "three@186",
+      "framesRendered": 3,
+      "drawCalls": 51,
+      "notice": [],
+      "surface": "webgl",
+      "warnings": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "scenario": "hydro-exploded-unit",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "still",
+      "screenshot": "hydro-exploded-unit__HIGH__desktop.png",
+      "status": "PASS",
+      "framePlan": {
+        "renderer": "three",
+        "planned": {
+          "drawCalls": 55,
+          "triangles": 9148,
+          "shadowDrawCalls": 15,
+          "shadowTriangles": 1288,
+          "textures": [
+            {
+              "id": "sun-shadow-map",
+              "px": 1024
+            },
+            {
+              "id": "pmrem-environment",
+              "px": 1024
+            }
+          ]
+        },
+        "measured": {
+          "drawCalls": 55,
+          "triangles": 9148,
+          "shadowDrawCalls": 15,
+          "shadowTriangles": 1288
+        },
+        "programs": 11,
+        "memory": {
+          "geometries": 29,
+          "textures": 4
+        }
+      },
+      "frameParity": {
+        "ok": true,
+        "mismatches": []
+      },
+      "threeChunkRequests": [
+        "http://localhost:3000/_next/static/chunks/_app-pages-browser_components_interactive-labs_v2_ThreeScene_tsx.js"
+      ],
+      "actualProfile": "HIGH",
+      "downgradePath": "",
+      "actualRenderer": "three@186",
+      "framesRendered": 3,
+      "drawCalls": 54,
+      "notice": [],
+      "surface": "webgl",
+      "warnings": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    }
+  ]
+}

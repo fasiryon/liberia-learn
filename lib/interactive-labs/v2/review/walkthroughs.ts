@@ -49,9 +49,9 @@ const HYDROPOWER: LabWalkthrough = {
     CHECK, CORRECT,
     // repair-unit-3: take unit 3 apart and rebuild it in its slots.
     { press: "Take the", match: "prefix" },
-    { press: "Runner", scope: "panel" }, { press: "Runner position", match: "prefix", scope: "panel" },
-    { press: "Shaft", scope: "panel" }, { press: "Shaft position", match: "prefix", scope: "panel" },
-    { press: "Generator", scope: "panel" }, { press: "Generator position", match: "prefix", scope: "panel" },
+    { press: "Runner", scope: "panel" }, { press: "Runner position", match: "prefix", scope: "panel" }, { press: "Confirm", scope: "panel" },
+    { press: "Shaft", scope: "panel" }, { press: "Shaft position", match: "prefix", scope: "panel" }, { press: "Confirm", scope: "panel" },
+    { press: "Generator", scope: "panel" }, { press: "Generator position", match: "prefix", scope: "panel" }, { press: "Confirm", scope: "panel" },
     CHECK, CORRECT,
   ],
 };

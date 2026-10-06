@@ -1,9 +1,11 @@
 import type { RenderFlow, RenderList } from "./renderList";
 import { measureFlowPath, type FlowPathMetrics, writeFlowParticles } from "./presentation";
-import { INACTIVE_FLOW_COLOR, MARKER_COLOR, parseHexColor } from "./palette";
+import { MARKER_COLOR, parseHexColor } from "./palette";
+import { emitterParticles } from "./emitters";
 import type { Vec3 } from "./math";
+import { createFlowTubeStorage, flowTubeSignature, writeFlowTubes, type FlowTubeStorage } from "./flowTubes";
 
-export type FlowVertexBatch = { positions: Float32Array; colors: Float32Array; count: number };
+export type FlowVertexBatch = { positions: Float32Array; colors: Float32Array; count: number; /** When set, a renderer may skip re-uploading an unchanged version. */ version?: number };
 export type PointBatchStorage = { positions: Float32Array; count: number };
 export const createPointBatchStorage = (): PointBatchStorage => ({ positions: new Float32Array(0), count: 0 });
 /** Write moving scene markers into reusable CPU storage; capacity changes only when the list grows. */
@@ -20,9 +22,10 @@ export function writeMarkerPositions(markers: readonly { position: Vec3 }[], sto
   }
   return storage;
 }
-export type FlowBatchStorage = { lines: FlowVertexBatch; particles: FlowVertexBatch; traceNodes: FlowVertexBatch; pathMetrics: Map<string, { coordinates: number[]; metrics: FlowPathMetrics }> };
+/** LOW flow geometry: cased tubes (A10/A13), particles and trace nodes, all in reusable storage. */
+export type FlowBatchStorage = { tubes: FlowTubeStorage; particles: FlowVertexBatch; traceNodes: FlowVertexBatch; pathMetrics: Map<string, { coordinates: number[]; metrics: FlowPathMetrics }> };
 const emptyBatch = (): FlowVertexBatch => ({ positions: new Float32Array(0), colors: new Float32Array(0), count: 0 });
-export const createFlowBatchStorage = (): FlowBatchStorage => ({ lines: emptyBatch(), particles: emptyBatch(), traceNodes: emptyBatch(), pathMetrics: new Map() });
+export const createFlowBatchStorage = (): FlowBatchStorage => ({ tubes: createFlowTubeStorage(), particles: emptyBatch(), traceNodes: emptyBatch(), pathMetrics: new Map() });
 const colorCache = new Map<string, [number, number, number]>();
 function colorRgb(color: string) {
   let value = colorCache.get(color);
@@ -66,16 +69,13 @@ function metricsFor(storage: FlowBatchStorage, flow: RenderFlow): FlowPathMetric
   return cached!.metrics;
 }
 
-/** Refill reusable CPU storage for three renderer calls: paths, particles, and trace nodes. */
+/** Refill reusable CPU storage for the LOW renderer: cased flow tubes, particles, and trace nodes. */
 export function batchFlowGeometry(list: RenderList, timeSeconds: number, reducedMotion: boolean, traceFlowId: string | null, storage: FlowBatchStorage): FlowBatchStorage {
-  storage.lines.count = 0; storage.particles.count = 0; storage.traceNodes.count = 0;
+  storage.particles.count = 0; storage.traceNodes.count = 0;
+  // The tubes are static between flow changes: rewrite (and so re-upload) them only when their signature moves.
+  const drawable = list.flows.filter((flow) => flow.points.length >= 2), signature = flowTubeSignature(drawable);
+  if (signature !== storage.tubes.signature) { writeFlowTubes(drawable, "LOW", storage.tubes); storage.tubes.signature = signature; }
   for (const flow of list.flows) {
-    const lineColor = flow.active ? flow.color : INACTIVE_FLOW_COLOR;
-    for (let segment = 0; segment < flow.points.length - 1; segment += 1) {
-      if (!flow.active && segment % 2 === 1) continue;
-      push(storage.lines, flow.points[segment], lineColor);
-      push(storage.lines, flow.points[segment + 1], lineColor);
-    }
     if (flow.active && flow.particleCount > 0) {
       const batch = storage.particles, start = batch.count;
       reserve(batch, start + flow.particleCount);
@@ -89,12 +89,8 @@ export function batchFlowGeometry(list: RenderList, timeSeconds: number, reduced
     }
     if (traceFlowId === flow.id) for (const node of flow.nodes) if (node.traceable) push(storage.traceNodes, node.position, MARKER_COLOR);
   }
+  // A15 LOW proxy: an emitter whose lowProxy is "points" shows a few static points in the same particle batch.
+  for (const emitter of list.emitters) if (emitter.particleCount > 0 && emitter.lowProxy.kind === "points") for (const point of emitterParticles(emitter, 0, true)) push(storage.particles, point, emitter.color);
   return storage;
 }
 
-/** Add a loop's repeated first endpoint without mutating the authoring flow. */
-export function flowLinePointCount(flow: RenderFlow): number {
-  let count = 0;
-  for (let segment = 0; segment < flow.points.length - 1; segment += 1) if (flow.active || segment % 2 === 0) count += 2;
-  return count;
-}

@@ -1,0 +1,94 @@
+name: Lab runtime gate
+
+# RX-005 A8/A9 and RX-006 test 1 on every pull request that touches the interactive-lab runtime: a bounded set of
+# reference scenarios on all four profiles must show planner/renderer.info parity (incl. the HIGH shadow pass), zero
+# three.js requests on LOW and FALLBACK_2D, no shader/GL errors, and two byte-identical capture runs. The full
+# evidence sweep stays in lab-review-capture.yml (manual). SwiftShader evidence: never device performance.
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "components/interactive-labs/**"
+      - "lib/interactive-labs/**"
+      - "scripts/labs/**"
+      - "app/lab-review/**"
+      - ".github/workflows/lab-runtime-gate.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: lab-runtime-gate-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    env:
+      LAB_REVIEW_HARNESS: "1"
+      NEXT_TELEMETRY_DISABLED: "1"
+      # Placeholders only (same as CI): the review harness needs no database, login or provider.
+      DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/test"
+      DIRECT_URL: "postgresql://postgres:postgres@localhost:5432/test"
+      NEXTAUTH_SECRET: "ci-secret-not-real"
+      NEXTAUTH_URL: "http://localhost:3000"
+      OPENAI_API_KEY: "sk-test"
+      GROQ_API_KEY: "gsk-test"
+      RESEND_API_KEY: "re_test"
+      EMAIL_FROM: "test@test.com"
+      PROFILES: "HIGH,STANDARD,LOW,FALLBACK_2D"
+      HYDRO_SCENARIOS: "hydro-guided-overload-beat,hydro-cutaway-powerhouse,hydro-inspect-breaker"
+      CIRCUIT_SCENARIOS: "current-starts,bulb-cutaway"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Cache npm dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
+      - run: npm ci
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Start the review dev server
+        run: |
+          nohup npx next dev -p 3000 > dev-server.log 2>&1 &
+          echo $! > dev-server.pid
+      - name: Wait for the review harness (bounded)
+        run: |
+          for i in $(seq 1 60); do
+            code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 240 "http://localhost:3000/lab-review/mount-coffee-hydropower?profile=LOW" || true)
+            if [ "$code" = "200" ]; then echo "Harness ready after attempt $i"; exit 0; fi
+            echo "Attempt $i: HTTP $code"; sleep 10
+          done
+          echo "The review harness never became ready."; tail -n 80 dev-server.log; exit 1
+      - name: Parity, zero-request and shader gate, then two-run determinism
+        run: |
+          set -euo pipefail
+          gate() {
+            lab="$1"; scenarios="$2"; base="artifacts/lab-review/runtime-gate/$lab"
+            args=(--lab "$lab" --profiles "$PROFILES" --scenarios "$scenarios" --viewports desktop --still-only --reduced-motion --restart-every 6)
+            timeout 25m npx tsx scripts/labs/capture-lab-review.ts "${args[@]}" --label gate-a --out "$base/a"
+            timeout 25m npx tsx scripts/labs/capture-lab-review.ts "${args[@]}" --label gate-b --out "$base/b"
+            npx tsx scripts/labs/compare-lab-captures.ts "$base/a" "$base/b" --report "$base/compare.json"
+          }
+          gate mount-coffee-hydropower "$HYDRO_SCENARIOS"
+          gate fixture-simple-circuit "$CIRCUIT_SCENARIOS"
+      - name: Stop the dev server
+        if: always()
+        run: |
+          if [ -f dev-server.pid ]; then kill "$(cat dev-server.pid)" || true; fi
+      - name: Upload gate evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lab-runtime-gate-${{ github.sha }}
+          path: |
+            artifacts/lab-review/runtime-gate/
+            dev-server.log
+          retention-days: 14
+          if-no-files-found: warn

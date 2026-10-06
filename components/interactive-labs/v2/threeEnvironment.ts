@@ -13,11 +13,14 @@ void main() {
   #include <colorspace_fragment>
 }`;
 
+/** The sky dome mesh; its triangle count is THREE_SKY_TRIANGLES in framePlan.ts (checked by test). */
+export const skyGeometry = (radius: number) => new THREE.SphereGeometry(radius, 32, 16);
+
 function skyDome(radius: number): THREE.Mesh<THREE.SphereGeometry, THREE.ShaderMaterial> {
   const material = new THREE.ShaderMaterial({ vertexShader: skyVertex, fragmentShader: skyFragment, side: THREE.BackSide, depthWrite: false, fog: false, uniforms: {
     uZenith: { value: new THREE.Color(DAYLIGHT_SKY.zenith) }, uHorizon: { value: new THREE.Color(DAYLIGHT_SKY.horizon) }, uGround: { value: new THREE.Color(DAYLIGHT_SKY.ground) },
   } });
-  const mesh = new THREE.Mesh(new THREE.SphereGeometry(radius, 32, 16), material);
+  const mesh = new THREE.Mesh(skyGeometry(radius), material);
   mesh.name = "environment-sky"; mesh.renderOrder = -10; mesh.frustumCulled = false;
   return mesh;
 }
@@ -29,7 +32,7 @@ export type EnvironmentRig = { shadows: boolean; dispose: () => void };
  * mapping, light haze and one sun shadow map that is redrawn only when shadow casters move (A7).
  * DAYLIGHT on STANDARD: sky dome and haze only. STUDIO keeps the existing plain backdrop.
  */
-export function applyEnvironmentRig(renderer: THREE.WebGLRenderer, scene: THREE.Scene, sun: THREE.DirectionalLight, options: { daylight: boolean; profile: "HIGH" | "STANDARD"; finePointer: boolean }): EnvironmentRig {
+export function applyEnvironmentRig(renderer: THREE.WebGLRenderer, scene: THREE.Scene, sun: THREE.DirectionalLight, options: { daylight: boolean; profile: "HIGH" | "STANDARD"; targetBox?: { min: readonly number[]; max: readonly number[] } }): EnvironmentRig {
   if (!options.daylight) return { shadows: false, dispose: () => {} };
   const sky = skyDome(140);
   scene.add(sky);
@@ -52,10 +55,20 @@ export function applyEnvironmentRig(renderer: THREE.WebGLRenderer, scene: THREE.
     renderer.shadowMap.type = THREE.PCFShadowMap;
     renderer.shadowMap.autoUpdate = false;
     sun.castShadow = true;
-    // 1024 px everywhere: 2048 sat at the HIGH texture limit and, with clipped cutaway materials, cost too much per frame.
+    // A7 as amended (performance re-check 2026-10-06): 1024 px on every device; 2048 sat at the HIGH texture limit and,
+    // with clipped cutaway materials, cost too much per frame.
     const size = 1024;
     sun.shadow.mapSize.set(size, size);
-    Object.assign(sun.shadow.camera, { left: -11, right: 11, top: 9, bottom: -9, near: 1, far: 40 });
+    // A7: fit the shadow camera to the lab's target box when it declares one (the region the camera can look at).
+    const box = options.targetBox;
+    if (box) {
+      const center = new THREE.Vector3((box.min[0] + box.max[0]) / 2, (box.min[1] + box.max[1]) / 2, (box.min[2] + box.max[2]) / 2);
+      const radius = Math.max(4, 0.5 * Math.hypot(box.max[0] - box.min[0], box.max[1] - box.min[1], box.max[2] - box.min[2]) + 4);
+      const direction = sun.position.clone().sub(sun.target.position).normalize();
+      sun.target.position.copy(center); scene.add(sun.target);
+      sun.position.copy(center).addScaledVector(direction, radius * 2);
+      Object.assign(sun.shadow.camera, { left: -radius, right: radius, top: radius, bottom: -radius, near: 0.5, far: radius * 4 });
+    } else Object.assign(sun.shadow.camera, { left: -11, right: 11, top: 9, bottom: -9, near: 1, far: 40 });
     sun.shadow.camera.updateProjectionMatrix();
     sun.shadow.bias = -0.0006;
     sun.shadow.normalBias = 0.02;

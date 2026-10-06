@@ -36,18 +36,39 @@ import { LAB_REVIEW_PROFILES, validateScenarioSet, type LabReviewScenario } from
 const SCREENSHOT_TIMEOUT_MS = 240_000;
 import type { CapabilityProfile } from "../../lib/interactive-labs/v2/types";
 import { verifyRendererIdentity } from "../../lib/interactive-labs/v2/review/rendererIdentity";
+import { compareFramePlan, type FrameProbeResult } from "../../lib/interactive-labs/v2/review/framePlanEvidence";
+import { isThreeChunk } from "../../lib/interactive-labs/v2/review/rendererChunks";
 
 const VIEWPORTS = {
   desktop: { viewport: { width: 1366, height: 900 }, isMobile: false, hasTouch: false },
   mobile: { viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true },
+  // A17: a phone held sideways (scene left, 40% controls sheet right). Opt-in: --viewports desktop,mobile,landscape.
+  landscape: { viewport: { width: 844, height: 390 }, isMobile: true, hasTouch: true },
 } as const;
 type ViewportName = keyof typeof VIEWPORTS;
+/**
+ * A full-page shot grows the viewport to the page height. In landscape that lifts the height past the A17
+ * max-height:500px query mid-capture and re-lays the page out (run 37429567958: 3 circuit landscape stills differed);
+ * a phone held sideways only ever shows its viewport, so landscape captures the viewport.
+ */
+const fullPageFor = (viewport: ViewportName) => viewport !== "landscape";
+/** WebGL/three.js shader or GL errors in the console fail a still. */
+const SHADER_ERROR = /Shader Error|VALIDATE_STATUS|THREE\.WebGLProgram|WebGL: INVALID|GL_INVALID|undeclared identifier/i;
 const SETTLE_MS = 2500;
+/**
+ * RX-005 A9 determinism on the software path. WebGL already renders identically run to run on SwiftShader; these
+ * flags pin the DOM around it (CPU tile raster, no partial/threaded raster or animation, fixed text AA and colour
+ * profile) so translucent rounded chips and label pills composite byte-identically too (run 37408210917: 14/64 stills
+ * differed only in DOM chips by <= 9 levels). They change no layout; the --gpu sign-off path does not use them.
+ */
+const DETERMINISTIC_RASTER_FLAGS = ["--disable-gpu-rasterization", "--disable-partial-raster", "--disable-skia-runtime-opts", "--run-all-compositor-stages-before-draw",
+  "--disable-threaded-animation", "--disable-threaded-scrolling", "--disable-checker-imaging", "--disable-image-animation-resync", "--disable-lcd-text",
+  "--font-render-hinting=none", "--force-color-profile=srgb", "--hide-scrollbars"];
 const COOKIE_NOTICE_KEY = "liberialearn_session_cookie_notice_dismissed";
 
 type RendererInfo = { kind: "gpu" | "software" | "none"; renderer: string; validFor: string[] };
 type Capture = { file: string; scenario: string; storyboardScene?: string; stage: string; profile: CapabilityProfile; viewport: ViewportName; kind: "still" | "motion-frame" | "motion-sheet" | "video"; reducedMotion: boolean; virtualMs?: number };
-type PageIssues = { consoleErrors: string[]; pageErrors: string[] };
+type PageIssues = { consoleErrors: string[]; pageErrors: string[]; threeChunkRequests: string[] };
 
 function arg(name: string): string | undefined {
   const index = process.argv.indexOf(`--${name}`);
@@ -65,14 +86,15 @@ async function observeRenderer(page: Page, requestedProfile: CapabilityProfile) 
   const seen = await page.evaluate(`(() => {
     const scope = document.querySelector("[data-lab-review-ready]");
     const player = scope && scope.querySelector("[data-lab-active-profile]");
-    const renderer = scope && scope.querySelector("[data-lab-renderer]");
+    const renderer = scope && scope.querySelector("[data-lab-renderer]:not([data-lab-loading-veil] *)");
     return {
       actualProfile: player ? player.getAttribute("data-lab-active-profile") : null,
+      downgradePath: player ? player.getAttribute("data-lab-downgrade-path") || "" : "",
       actualRenderer: renderer ? renderer.getAttribute("data-lab-renderer") : null,
       framesRendered: renderer ? Number(renderer.getAttribute("data-lab-frames-rendered") || 0) : 0,
       drawCalls: renderer && renderer.hasAttribute("data-lab-draw-calls") ? Number(renderer.getAttribute("data-lab-draw-calls")) : null,
     };
-  })()`) as { actualProfile: string | null; actualRenderer: string | null; framesRendered: number; drawCalls: number | null };
+  })()`) as { actualProfile: string | null; downgradePath: string; actualRenderer: string | null; framesRendered: number; drawCalls: number | null };
   return { ...seen, verdict: verifyRendererIdentity({ requestedProfile, ...seen }) };
 }
 
@@ -85,7 +107,12 @@ async function newContext(browser: Browser, viewport: ViewportName, reducedMotio
 }
 
 function watch(page: Page): PageIssues {
-  const issues: PageIssues = { consoleErrors: [], pageErrors: [] };
+  const issues: PageIssues = { consoleErrors: [], pageErrors: [], threeChunkRequests: [] };
+  // A8 capture assertion: record every script response that carries three.js (by URL or, in dev, by module path).
+  page.on("response", (response) => {
+    if (response.request().resourceType() !== "script") return;
+    void response.text().then((body) => { if (isThreeChunk(response.url(), body)) issues.threeChunkRequests.push(response.url().slice(0, 200)); }).catch(() => undefined);
+  });
   page.on("console", (message) => { if (message.type() === "error") issues.consoleErrors.push(message.text().slice(0, 400)); });
   page.on("pageerror", (error) => issues.pageErrors.push(error.message.slice(0, 400)));
   return issues;
@@ -109,6 +136,7 @@ async function openScenario(page: Page, baseUrl: string, labId: string, scenario
   // Pin the browser clock before navigation so no animation or adaptive-quality sample depends on wall time.
   if (fakeClock) {
     await page.clock.install({ time: new Date("2026-01-01T00:00:00Z") });
+    await page.addInitScript("globalThis.__labReviewClockSeconds = 0;");
     // The Next.js dev indicator is not part of the lab and changes between runs.
     await page.addInitScript(`document.addEventListener("DOMContentLoaded", () => { const style = document.createElement("style"); style.textContent = "nextjs-portal, [role='status'].fixed { display: none !important; }"; document.head.appendChild(style); });`);
   }
@@ -132,6 +160,9 @@ async function openScenario(page: Page, baseUrl: string, labId: string, scenario
   }
   if (await error.count()) throw new Error(await error.innerText());
   if (fakeClock) {
+    // Advance the installed clock once before waiting on the review dispatcher; React's client hydration may
+    // schedule work on controlled timers, and the scene clock is already fixed at zero from document start.
+    await page.clock.runFor(SETTLE_MS);
     try {
       await page.waitForFunction(() => Boolean((window as unknown as { __labReview?: unknown }).__labReview), null, { timeout: 30_000 });
     } catch (cause) {
@@ -140,11 +171,16 @@ async function openScenario(page: Page, baseUrl: string, labId: string, scenario
     }
     // Let hydration and deferred renderer effects settle while the installed clock advances normally.
     await page.clock.runFor(SETTLE_MS);
-    if (await page.locator("[data-lab-review-ready] canvas").count()) {
+    if (profile !== "FALLBACK_2D") {
+      // A9: wait for the WebGL renderer's first full frame (it compiles every program first in review mode). The 2D
+      // view under the loading veil is not the scene: the chunk may still be loading when the page first paints.
       await page.waitForFunction(() => {
+        const ready = document.querySelector("[data-lab-review-ready] [data-lab-scene-ready]");
         const canvas = document.querySelector<HTMLCanvasElement>("[data-lab-review-ready] canvas");
-        return !!canvas && canvas.width > 300;
-      }, null, { timeout: 30_000 });
+        // A downgrade to 2D (lost context) never becomes scene-ready; identity then reports it as a FAIL.
+        if (document.querySelector("[data-lab-review-ready] [data-lab-active-profile=FALLBACK_2D]")) return true;
+        return !!ready && !!canvas && canvas.width > 300 && !document.querySelector("[data-lab-review-ready] [data-lab-loading-veil]");
+      }, null, { timeout: 120_000 });
     } else {
       try {
         await page.waitForFunction(() => Boolean((window as Window & { __labReviewClockReady?: boolean }).__labReviewClockReady), null, { timeout: 30_000 });
@@ -175,7 +211,7 @@ async function contactSheet(browser: Browser, frames: { file: string; label: str
   const page = await browser.newPage({ viewport: { width: 1600, height: 900 } });
   const cells = frames.map((frame) => `<figure><img src="data:image/png;base64,${readFileSync(frame.file).toString("base64")}"/><figcaption>${frame.label}</figcaption></figure>`).join("");
   await page.setContent(`<html><body style="margin:0;background:#0b1020;color:#e2e8f0;font:14px system-ui"><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:8px">${cells}</div><style>figure{margin:0}img{width:100%;display:block;border:1px solid #334155}figcaption{padding:2px 4px}</style></body></html>`);
-  await page.screenshot({ path: out, fullPage: true, timeout: SCREENSHOT_TIMEOUT_MS });
+  await page.screenshot({ path: out, fullPage: true, animations: "disabled", caret: "hide", timeout: SCREENSHOT_TIMEOUT_MS });
   await page.close();
 }
 
@@ -265,7 +301,7 @@ async function main() {
 
   const launch = () => flag("gpu")
     ? chromium.launch({ headless: false, args: ["--ignore-gpu-blocklist", "--enable-gpu-rasterization"] })
-    : chromium.launch({ args: ["--use-angle=swiftshader", "--enable-unsafe-swiftshader", "--ignore-gpu-blocklist"] });
+    : chromium.launch({ args: ["--use-angle=swiftshader", "--enable-unsafe-swiftshader", "--ignore-gpu-blocklist", ...DETERMINISTIC_RASTER_FLAGS] });
   // Memory safety: a fresh browser every N scenario runs (default 6) so one long run never accumulates GPU/JS memory.
   const restartEvery = Math.max(1, Number(arg("restart-every") ?? 6));
   let browser = await launch();
@@ -290,14 +326,28 @@ async function main() {
         const issues = watch(page);
         const opened = await openScenario(page, baseUrl, labId, scenario.id, profile, false, true);
         const identity = await observeRenderer(page, profile);
-        await page.screenshot({ path: still, fullPage: true, timeout: SCREENSHOT_TIMEOUT_MS });
+        // A8: the planner must equal what the renderer drew (worst frame: culling off, shadow pass forced on HIGH).
+        const frameProbe = profile === "FALLBACK_2D" ? null : await page.evaluate(() => (window as Window & { __labReviewFrameProbe?: () => unknown }).__labReviewFrameProbe?.() ?? null) as FrameProbeResult | null;
+        const frameParity = frameProbe ? compareFramePlan(frameProbe) : null;
+        const threeRequestViolation = (profile === "LOW" || profile === "FALLBACK_2D") && issues.threeChunkRequests.length > 0;
+        // A9: every web font settled before the still, so text never rasterises with a fallback face in one run only.
+        await page.evaluate(() => document.fonts.ready.then(() => true));
+        await page.screenshot({ path: still, fullPage: fullPageFor(viewport), animations: "disabled", caret: "hide", timeout: SCREENSHOT_TIMEOUT_MS });
         captures.push({ file: still, scenario: scenario.id, storyboardScene: scenario.storyboardScene, stage: scenario.stage, profile, viewport, kind: "still", reducedMotion: stillReducedMotion });
+        // R4 P1-1: a shader that fails to compile still counts draws, so parity alone cannot catch it.
+        const shaderErrors = issues.consoleErrors.filter((text) => SHADER_ERROR.test(text));
+        const failure = !identity.verdict.ok ? identity.verdict.reason
+          : shaderErrors.length ? `shader_error: ${shaderErrors[0].slice(0, 200)}`
+          : profile !== "FALLBACK_2D" && !frameProbe ? "frame_probe_missing: the renderer installed no __labReviewFrameProbe"
+          : frameParity && !frameParity.ok ? `frame_plan_mismatch: ${frameParity.mismatches.join("; ")}`
+          : threeRequestViolation ? `three_chunk_requested_on_${profile}: ${issues.threeChunkRequests.join(", ")}` : undefined;
         runs.push({ scenario: scenario.id, profile, viewport, kind: "still", screenshot: path.relative(out, still).replace(/\\/g, "/"),
-          status: identity.verdict.ok ? "PASS" : "FAIL", ...(identity.verdict.ok ? {} : { failureReason: identity.verdict.reason }),
-          actualProfile: identity.actualProfile, actualRenderer: identity.actualRenderer, framesRendered: identity.framesRendered, drawCalls: identity.drawCalls,
+          status: failure ? "FAIL" : "PASS", ...(failure ? { failureReason: failure } : {}),
+          framePlan: frameProbe, frameParity, threeChunkRequests: issues.threeChunkRequests,
+          actualProfile: identity.actualProfile, downgradePath: identity.downgradePath, actualRenderer: identity.actualRenderer, framesRendered: identity.framesRendered, drawCalls: identity.drawCalls,
           ...opened, warnings: issues.consoleErrors, consoleErrors: issues.consoleErrors, pageErrors: issues.pageErrors });
         writeManifest();
-        if (!identity.verdict.ok) { console.error(`FAIL ${base}: ${identity.verdict.reason}`); continue; }
+        if (failure) { console.error(`FAIL ${base}: ${failure}`); if (!identity.verdict.ok) continue; }
       } catch (cause) {
         const reason = cause instanceof Error ? cause.message.slice(0, 600) : String(cause);
         console.error(`ERROR ${base}: ${reason}`);
@@ -324,7 +374,7 @@ async function main() {
           const section = motionPage.locator("[data-lab-review-ready] section").first();
           const bounds = await section.boundingBox();
           if (!bounds) throw new Error(`Review player has no bounds for ${scenario.id} frame ${index}.`);
-          const pageImage = await motionPage.screenshot({ fullPage: true, timeout: SCREENSHOT_TIMEOUT_MS });
+          const pageImage = await motionPage.screenshot({ fullPage: fullPageFor(viewport), animations: "disabled", caret: "hide", timeout: SCREENSHOT_TIMEOUT_MS });
           const left = Math.max(0, Math.floor(bounds.x)), top = Math.max(0, Math.floor(bounds.y));
           const width = Math.max(1, Math.ceil(bounds.width)), height = Math.max(1, Math.ceil(bounds.height));
           await sharp(pageImage).extract({ left, top, width, height }).png().toFile(file);
@@ -408,6 +458,8 @@ async function main() {
     labId, labVersion: definition.version, reviewState: definition.reviewState, label, gitSha: gitSha(), capturedAt: new Date().toISOString(),
     environment: `${process.env.GITHUB_ACTIONS ? `GitHub Actions (${process.env.RUNNER_OS ?? "runner"}, run ${process.env.GITHUB_RUN_ID ?? "?"})` : "local"} dev server, ${flag("gpu") ? "headed" : "headless"} Chromium, virtual clock paused from navigation for stills and motion frames`,
     rendererIdentityRule: "HIGH/STANDARD must be drawn by three@*, LOW by webgl-pass, FALLBACK_2D by svg, at the requested profile, with at least one frame drawn; otherwise status FAIL.",
+    framePlanRule: "RX-005 A8 / RX-006 test 1: the shared frame planner must equal the renderer's own count for the probed frame (three.js: renderer.info with frustum culling off and the shadow pass forced; LOW: counted drawArrays); otherwise status FAIL.",
+    threeChunkRule: "RX-005 A8: LOW and FALLBACK_2D runs must make zero requests for a script carrying three.js; otherwise status FAIL.",
     deviceBoundary: "Headless browser evidence proves rendering correctness, composition, layout, interaction automation and renderer/profile routing only. It does not prove low-end GPU performance, touch latency, thermal behaviour or mobile memory pressure (DEVICE_REQUIRED).",
     renderer,
     profiles, viewports, captures: captures.map((capture) => ({ ...capture, file: path.relative(out, capture.file).replace(/\\/g, "/") })), runs,
