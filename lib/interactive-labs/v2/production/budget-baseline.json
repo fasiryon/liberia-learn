@@ -1,26 +1,26 @@
 {
   "fixture-simple-circuit": {
     "HIGH": {
-      "offlinePackageBytes": 682755,
-      "transferBytes": 164014,
-      "triangles": 3954,
-      "drawCalls": 13,
+      "offlinePackageBytes": 684870,
+      "transferBytes": 165144,
+      "triangles": 4242,
+      "drawCalls": 14,
       "particles": 36,
       "maxTexturePx": 0
     },
     "STANDARD": {
-      "offlinePackageBytes": 682755,
-      "transferBytes": 164014,
-      "triangles": 3954,
-      "drawCalls": 13,
+      "offlinePackageBytes": 684870,
+      "transferBytes": 165144,
+      "triangles": 4170,
+      "drawCalls": 14,
       "particles": 20,
       "maxTexturePx": 0
     },
     "LOW": {
-      "offlinePackageBytes": 75793,
-      "transferBytes": 32141,
-      "triangles": 340,
-      "drawCalls": 5,
+      "offlinePackageBytes": 77767,
+      "transferBytes": 32709,
+      "triangles": 1044,
+      "drawCalls": 6,
       "particles": 8,
       "maxTexturePx": 0
     },
@@ -35,24 +35,24 @@
   },
   "g4-solid-figures": {
     "HIGH": {
-      "offlinePackageBytes": 686829,
-      "transferBytes": 168088,
+      "offlinePackageBytes": 688944,
+      "transferBytes": 169218,
       "triangles": 2914,
       "drawCalls": 11,
       "particles": 0,
       "maxTexturePx": 0
     },
     "STANDARD": {
-      "offlinePackageBytes": 686829,
-      "transferBytes": 168088,
+      "offlinePackageBytes": 688944,
+      "transferBytes": 169218,
       "triangles": 2914,
       "drawCalls": 11,
       "particles": 0,
       "maxTexturePx": 0
     },
     "LOW": {
-      "offlinePackageBytes": 79867,
-      "transferBytes": 36215,
+      "offlinePackageBytes": 81841,
+      "transferBytes": 36783,
       "triangles": 300,
       "drawCalls": 5,
       "particles": 0,
@@ -69,26 +69,26 @@
   },
   "mount-coffee-hydropower": {
     "HIGH": {
-      "offlinePackageBytes": 731403,
-      "transferBytes": 212662,
-      "triangles": 10448,
-      "drawCalls": 84,
+      "offlinePackageBytes": 733518,
+      "transferBytes": 213792,
+      "triangles": 12816,
+      "drawCalls": 76,
       "particles": 162,
       "maxTexturePx": 1024
     },
     "STANDARD": {
-      "offlinePackageBytes": 731403,
-      "transferBytes": 212662,
-      "triangles": 8096,
-      "drawCalls": 64,
+      "offlinePackageBytes": 733518,
+      "transferBytes": 213792,
+      "triangles": 9872,
+      "drawCalls": 56,
       "particles": 90,
       "maxTexturePx": 0
     },
     "LOW": {
-      "offlinePackageBytes": 124441,
-      "transferBytes": 80789,
-      "triangles": 1230,
-      "drawCalls": 26,
+      "offlinePackageBytes": 126415,
+      "transferBytes": 81357,
+      "triangles": 2410,
+      "drawCalls": 27,
       "particles": 36,
       "maxTexturePx": 0
     },
