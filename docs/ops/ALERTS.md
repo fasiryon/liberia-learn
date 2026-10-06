@@ -1,5 +1,12 @@
 # NR-15 Alert Catalog
 
+> Historical provider-specific catalog. The unified NR-15 alert model is now
+> defined in `lib/ops/operationalAlerts.ts` and documented in
+> `docs/ops/NR15_OPERATIONAL_READINESS.md`. External delivery is not certified:
+> the typed adapter is intentionally no-op, and the historical email path has
+> no verified sending domain. Entries below are operational setup guidance and
+> historical drill evidence, not a claim that current paging works.
+
 Each alert has a trigger, a recipient, and a "what to do when it fires" note.
 All alerts land in **OPS_ALERT_EMAIL** (set this in Vercel env vars before pilot).
 Alerts 1 and 5 should also go to **OPS_ALERT_PHONE** (SMS) because they are page-me incidents.
