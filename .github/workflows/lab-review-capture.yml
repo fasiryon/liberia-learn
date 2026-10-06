@@ -98,7 +98,8 @@ jobs:
   capture:
     needs: plan
     runs-on: ubuntu-latest
-    timeout-minutes: 90
+    # Full still captures plus determinism, remount and walkthrough acceptance can exceed 90 minutes.
+    timeout-minutes: 180
     strategy:
       fail-fast: false
       # One profile at a time: no parallel browser/dev-server memory spikes and no interleaved artifacts.
