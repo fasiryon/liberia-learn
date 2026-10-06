@@ -128,8 +128,8 @@ export function Fallback2D({ definition, state, reducedMotion, traceFlowId, disp
               {item.control && item.inFocus && <g aria-hidden="true" pointerEvents="none"><circle data-lab-control-affordance={item.id} cx={item.center[0]} cy={-item.center[1]} r={0.2 * screenScale} fill="#020617" fillOpacity={0.4} stroke={item.control.pending ? HIGHLIGHT_COLOR : "#fcd34d"} strokeWidth={2} vectorEffect="non-scaling-stroke" /><text x={item.center[0]} y={-item.center[1]} textAnchor="middle" dominantBaseline="central" fontSize={0.2 * screenScale} fontWeight={800} fill="#fef3c7">{controlGlyph(item.control)}</text>{item.control.pending && <text data-lab-pending-label={item.id} x={item.center[0]} y={-item.center[1] - 0.36 * screenScale} textAnchor="middle" fontSize={0.24 * screenScale} fontWeight={800} fill={HIGHLIGHT_COLOR} stroke="#020617" strokeWidth={0.04 * screenScale} paintOrder="stroke">Confirm?</text>}</g>}
               {item.emissive > 0 && <circle cx={item.center[0]} cy={-item.center[1]} r={0.08 * item.emissive + 0.04} fill="#fde68a" opacity={Math.min(0.08, item.emissive * 0.08)} filter="url(#glow)" />}
               {/* A19 / G3: a status lamp's glyph, so its state is never colour alone. */}
-              {item.status && item.selectable && item.inFocus && <text data-lab-status={item.id} x={item.center[0]} y={-item.center[1] + 0.42 * screenScale} textAnchor="middle" dominantBaseline="central" fontSize={0.4 * screenScale} fontWeight={800} fill="#0f172a" stroke="#f8fafc" strokeWidth={0.04 * screenScale} paintOrder="stroke" aria-hidden="true">{item.status.glyph}</text>}
               <polygon points={hull} fill={drawnBySurface.has(item.id) && !item.highlighted ? "none" : item.highlighted ? mixHexColor(item.color, HIGHLIGHT_COLOR, 0.2) : item.emissive > 0 ? mixHexColor(item.color, LIT_COLOR, Math.min(0.8, 0.8 * item.emissive)) : item.color} stroke={item.highlighted ? HIGHLIGHT_COLOR : "#0f172a"} strokeWidth={item.highlighted ? 3 : 1} vectorEffect="non-scaling-stroke" />
+              {item.status && item.selectable && item.inFocus && <text data-lab-status={item.id} x={item.center[0]} y={-item.center[1] + 0.42 * screenScale} textAnchor="middle" dominantBaseline="central" fontSize={0.4 * screenScale} fontWeight={800} fill="#0f172a" stroke="#f8fafc" strokeWidth={0.04 * screenScale} paintOrder="stroke" aria-hidden="true">{item.status.glyph}</text>}
             </g>
           );
         })}</>
@@ -148,7 +148,7 @@ export function Fallback2D({ definition, state, reducedMotion, traceFlowId, disp
         return { x: at.x - box.left, y: at.y - box.top };
       };
       const focused = (document.activeElement as HTMLElement | null)?.dataset.labHitProxy;
-      layer.replaceChildren(...controlTargetElements(list.items, project, box.width, box.height, (pick) => onPickRef.current(pick), box.top));
+      layer.replaceChildren(...controlTargetElements(list.items, project, box.width, box.height, (pick) => onPickRef.current(pick), box.top, box.left));
       if (focused) Array.from(layer.querySelectorAll<HTMLButtonElement>("button")).find(button => button.dataset.labHitProxy === focused)?.focus();
     };
     update();
@@ -212,7 +212,7 @@ export function Fallback2D({ definition, state, reducedMotion, traceFlowId, disp
           );
         }))}
         {labels.map((label) => (
-          <g key={`label-${label.id}`} aria-hidden="true" className={`pointer-events-none select-none${label.mobileHidden ? " max-[500px]:hidden" : ""}`}>
+          <g key={`label-${label.id}`} data-lab-scene-label={label.id} aria-hidden="true" className={`pointer-events-none select-none${label.mobileHidden ? " max-[500px]:hidden" : ""}`}>
             <rect x={label.x - label.halfWidth - 0.08 * screenScale} y={label.y - 0.27 * screenScale} width={2 * label.halfWidth + 0.16 * screenScale} height={0.36 * screenScale} rx={0.08 * screenScale} fill={list.environment === "DAYLIGHT" ? "#f8fafc" : "#020617"} fillOpacity={0.88} />
             <text x={label.x} y={label.y} textAnchor="middle" fontSize={0.3 * screenScale} fill={list.environment === "DAYLIGHT" ? "#111827" : "#f8fafc"}>{label.text}</text>
           </g>

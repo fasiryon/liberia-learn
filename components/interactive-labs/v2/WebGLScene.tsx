@@ -433,7 +433,7 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
         ];
         labels.current.replaceChildren(...entries.filter((entry) => entry.at).map((entry) => {
           const node = document.createElement("span");
-          node.textContent = entry.text;
+          node.textContent = entry.text; node.dataset.labSceneLabel = entry.id;
           if (entry.title) { node.title = entry.title; node.setAttribute("aria-label", entry.title); node.setAttribute("role", "img"); }
           node.className = entry.glyph ? "pointer-events-none absolute -translate-x-1/2 -translate-y-1/2 text-lg font-bold text-fuchsia-300 drop-shadow" : `pointer-events-none absolute -translate-x-1/2 -translate-y-[160%] whitespace-nowrap rounded-full bg-slate-950/70 px-2 py-0.5 text-[11px] font-semibold text-slate-100${entry.mobileLabel === false ? " max-[500px]:hidden" : ""}`;
           // Whole pixels: a fractional position rasterises its pill edge differently run to run (A9 determinism).
@@ -443,7 +443,7 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
         // A15: reduced motion keeps static direction cues; LOW shows an emitter's glyph proxy in place of particles.
         const glyphProxies = list.emitters.filter((emitter) => emitter.active && emitter.lowProxy.kind === "glyph").map((emitter) => ({ id: `proxy:${emitter.id}`, kind: "glyph" as const, glyph: emitter.lowProxy.kind === "glyph" ? emitter.lowProxy.glyph : "", position: emitter.origin, direction: emitter.direction, color: emitter.color }));
         const focusedControl = (document.activeElement as HTMLElement | null)?.dataset.labHitProxy;
-        controlTargets.current?.replaceChildren(...controlTargetElements(list.items, project, el.clientWidth, el.clientHeight, (pick) => onPickRef.current(pick), el.getBoundingClientRect().top));
+        controlTargets.current?.replaceChildren(...controlTargetElements(list.items, project, el.clientWidth, el.clientHeight, (pick) => onPickRef.current(pick), el.getBoundingClientRect().top, el.getBoundingClientRect().left));
         if (focusedControl) controlTargets.current?.querySelector<HTMLButtonElement>(`[data-lab-hit-proxy="${focusedControl}"]`)?.focus();
         labels.current.append(...cueElements([...(motionless ? list.cues : []), ...glyphProxies], project), ...statusBadgeElements(list.items, project), ...controlAffordanceElements(list.items, project));
       }

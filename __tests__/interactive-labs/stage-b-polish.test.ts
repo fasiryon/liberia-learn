@@ -51,4 +51,12 @@ describe("Mount Coffee Stage B state and interaction", () => {
     expect(targets).toHaveLength(items.length);
     expect(targets.every(target => target.center.y + 22 <= 240 && target.anchor.y === 400)).toBe(true);
   });
+
+  it("keeps proxy hit regions clear of instructional label plates", () => {
+    const items = buildRenderList({ definition, state: definition.initialState, profile: "LOW" }).items.filter(item => item.control);
+    const rect = { left: 100, right: 290, top: 190, bottom: 230 };
+    const targets = layoutControlTargets(items, () => ({ x: 195, y: 210 }), 390, 420, 420, [rect]);
+    expect(targets).toHaveLength(items.length);
+    expect(targets.every(({ center }) => center.x + 26 <= rect.left || center.x - 26 >= rect.right || center.y + 26 <= rect.top || center.y - 26 >= rect.bottom)).toBe(true);
+  });
 });
