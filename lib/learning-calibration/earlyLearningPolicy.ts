@@ -105,12 +105,16 @@ export function applyEarlyLearningPolicy(input: {
   candidates: readonly LearningAction[];
   ranked: readonly RankedCandidate[];
   learnerStateRevision: string;
+  /** calibrationInputRevision over the current canonical states, corroborating evidence and as-of time. */
+  calibrationInputRevision: string;
   idempotencyKey: string;
   policy?: EarlyLearningPolicy;
 }): EarlyLearningResolution {
   const policy = input.policy ?? EARLY_LEARNING_POLICY_V1;
   validateEarlyLearningPolicy(policy);
   if (input.calibration.learnerStateRevision !== input.learnerStateRevision) throw new Error("calibration_state_stale");
+  // The canonical revision misses corroborating-evidence and as-of changes; the input revision covers them.
+  if (input.calibration.inputRevision !== input.calibrationInputRevision) throw new Error("calibration_inputs_stale");
   if (input.calibration.scope.ontologyReleaseId !== input.release.id) throw new Error("calibration_release_mismatch");
   // Revisions of learners with no evidence can coincide, so identity is checked explicitly.
   const learner = input.states[0]?.scope;

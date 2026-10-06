@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import { GRADE4_MATH_ONTOLOGY_RELEASE, deterministicReleaseIdentity } from "@/lib/learning-authority/governedGrade4Math";
 import { generateLearningCandidates, resolveLearningDecision, learnerStateRevision, type DecisionModel } from "@/lib/learning-authority/learningOrchestrator";
 import { createGovernedEvidence, type GovernedEvidence } from "@/lib/learning-evidence/evidenceContract";
-import { calibrateLearner } from "@/lib/learning-calibration/calibrationState";
+import { assessEvidenceSufficiency, calibrateLearner, calibrationInputRevision } from "@/lib/learning-calibration/calibrationState";
 import { assessEvidenceQuality } from "@/lib/learning-calibration/evidenceQualityPolicy";
 import {
   applyEarlyLearningPolicy, EARLY_LEARNING_POLICY_V1, validateEarlyLearningPolicy, type EarlyLearningPolicy,
@@ -259,6 +259,15 @@ describe("placement orchestration", () => {
     expect(() => deriveInstructionalReadiness({ enrollmentGrade: 3, calibration: snap.calibration, estimates: snap.estimates }))
       .toThrow("readiness_enrollment_grade_mismatch");
   });
+
+  it("never reports a competency ready while its prerequisite has no evidence", async () => {
+    const snap = await last(scenario("unknown-prereq", [{ day: 0, kind: "RELEASED_ITEM", conceptId: B, correct: true }]));
+    expect(est(snap, B).prerequisite.status).toBe("UNKNOWN");
+    const readiness = deriveInstructionalReadiness({ enrollmentGrade: 4, calibration: snap.calibration, estimates: snap.estimates });
+    const entry = readiness.competencies.find((competency) => competency.conceptId === B)!;
+    expect(entry.readiness).toBe("PREREQUISITE_UNKNOWN");
+    expect(entry.reasons).toContain(`UNKNOWN_PREREQUISITE:${A}`);
+  });
 });
 
 describe("early-calibration learning policy", () => {
@@ -279,12 +288,39 @@ describe("early-calibration learning policy", () => {
     const two = await last(scenario("det", [{ day: 0, kind: "RELEASED_ITEM", conceptId: A, correct: true }]));
     expect(two.resolution.earlyLearning).toEqual(one.resolution.earlyLearning);
     const candidates = generateLearningCandidates({ states: one.states });
+    const current = { learnerStateRevision: one.calibration.learnerStateRevision, calibrationInputRevision: one.calibration.inputRevision };
     expect(() => applyEarlyLearningPolicy({ calibration: one.calibration, states: one.states, release, candidates,
-      ranked: one.recommendation.rankedCandidates, learnerStateRevision: "other", idempotencyKey: "k" })).toThrow("calibration_state_stale");
+      ranked: one.recommendation.rankedCandidates, ...current, learnerStateRevision: "other", idempotencyKey: "k" })).toThrow("calibration_state_stale");
     const otherLearner = { ...one.calibration, scope: { ...one.calibration.scope, studentId: "another-student" } };
     expect(() => applyEarlyLearningPolicy({ calibration: otherLearner, states: one.states, release, candidates,
-      ranked: one.recommendation.rankedCandidates, learnerStateRevision: one.calibration.learnerStateRevision, idempotencyKey: "k" }))
+      ranked: one.recommendation.rankedCandidates, ...current, idempotencyKey: "k" }))
       .toThrow("calibration_learner_mismatch");
+  });
+
+  it("rejects a calibration whose corroborating evidence or as-of time changed under the same canonical revision", async () => {
+    const one = await last(scenario("inputs", [{ day: 0, kind: "RELEASED_ITEM", conceptId: A, correct: true }]));
+    const candidates = generateLearningCandidates({ states: one.states });
+    const homework = createGovernedEvidence({
+      evidenceId: "hw1", idempotencyKey: "hw1", attemptId: "hw1", tenantId: "synthetic-tenant", schoolId: "synthetic-school",
+      learner: { studentId: "synthetic-student", studentUserId: "synthetic-user" }, objective: { conceptId: A, objectiveId: "o" },
+      activity: { activityId: "hw", activityVersion: "1" }, evidenceType: "QUIZ", modality: "INTERACTIVE", occurredAt: START,
+      performance: { outcome: "CORRECT", score: 9, maxScore: 10, correct: null, signals: [] },
+      provenance: { source: "TEACHER", actorId: "t", actorRole: "TEACHER", runtime: "WEB", recordedAt: START, clientEventId: null, syncBatchId: null },
+      strength: { serverScored: false, humanVerified: true, assistanceUsed: false, retryCount: 0, hintCount: 0, independenceKey: "hw-1", directness: "DIRECT", reliability: "REVIEWED", policyRef: "p" },
+      offline: { isOffline: false, syncIdentity: null },
+      curriculum: { ontologyReleaseId: release.id, ontologyReleaseIdentity: deterministicReleaseIdentity(release) },
+    });
+    const revision = one.calibration.learnerStateRevision;
+    const withHomework = calibrationInputRevision({ learnerStateRevision: revision, asOf: one.asOf, corroboratingEvidence: [homework] });
+    const later = calibrationInputRevision({ learnerStateRevision: revision, asOf: "2026-12-01T00:00:00.000Z" });
+    for (const calibrationInputRevision of [withHomework, later]) {
+      expect(calibrationInputRevision).not.toBe(one.calibration.inputRevision);
+      expect(() => applyEarlyLearningPolicy({ calibration: one.calibration, states: one.states, release, candidates,
+        ranked: one.recommendation.rankedCandidates, learnerStateRevision: revision, calibrationInputRevision, idempotencyKey: "k" }))
+        .toThrow("calibration_inputs_stale");
+    }
+    await expect(resolveLearningDecision({ states: one.states, release, calibration: one.calibration,
+      currentRevision: async () => revision, idempotencyKey: "k" })).rejects.toThrow("calibration_revision_source_required");
   });
 });
 
@@ -374,6 +410,24 @@ describe("duplicate evidence and no LLM authority", () => {
       corroboratingEvidence: [quiz, { ...quiz, performance: { ...quiz.performance, score: 1 } } as GovernedEvidence] })).toThrow("evidence_idempotency_conflict");
   });
 
+  it("equal-class records for one occasion resolve the same in any input order", async () => {
+    const snap = await last(scenario("tie", [{ day: 0, kind: "RELEASED_ITEM", conceptId: A, correct: true }]));
+    const record = (id: string, correct: boolean) => assessEvidenceQuality(createGovernedEvidence({
+      evidenceId: id, idempotencyKey: id, attemptId: id, tenantId: "synthetic-tenant", schoolId: "synthetic-school",
+      learner: { studentId: "synthetic-student", studentUserId: "synthetic-user" }, objective: { conceptId: A, objectiveId: "o" },
+      activity: { activityId: "q", activityVersion: "1" }, evidenceType: "QUIZ", modality: "INTERACTIVE", occurredAt: START,
+      performance: { outcome: correct ? "CORRECT" : "INCORRECT", score: correct ? 10 : 0, maxScore: 10, correct: null, signals: [] },
+      provenance: { source: "ONLINE", actorId: null, actorRole: "STUDENT", runtime: "WEB", recordedAt: START, clientEventId: null, syncBatchId: null },
+      strength: { serverScored: true, humanVerified: false, assistanceUsed: false, retryCount: 0, hintCount: 0, independenceKey: "same-occasion", directness: "DIRECT", reliability: "UNASSESSED", policyRef: "p" },
+      offline: { isOffline: false, syncIdentity: null },
+      curriculum: { ontologyReleaseId: release.id, ontologyReleaseIdentity: deterministicReleaseIdentity(release) },
+    }), { asOf: snap.asOf });
+    const state = snap.states.find((entry) => entry.scope.conceptId === A)!;
+    const pass = record("tie-a", true), fail = record("tie-b", false);
+    expect(pass.corroboration).toBe(fail.corroboration);
+    expect(assessEvidenceSufficiency({ state, corroborating: [fail, pass] })).toEqual(assessEvidenceSufficiency({ state, corroborating: [pass, fail] }));
+  });
+
   it("AI tutor practice and model rankings cannot change canonical mastery", async () => {
     const withTutor = await last(scenario("tutor", [
       { day: 0, kind: "RELEASED_ITEM", conceptId: A, correct: false },
@@ -385,7 +439,8 @@ describe("duplicate evidence and no LLM authority", () => {
     const before = JSON.stringify(withTutor.states);
     const hostile: DecisionModel = { id: "llm", rank: async () => ({ modelId: "llm", confidence: 1, rankedCandidates: [{ id: "promote-to-grade-6", probability: 1 }] }) };
     const result = await resolveLearningDecision({ states: withTutor.states, release, calibration: withTutor.calibration, model: hostile,
-      currentRevision: async () => learnerStateRevision(withTutor.states, release), idempotencyKey: "llm" });
+      currentRevision: async () => learnerStateRevision(withTutor.states, release),
+      currentCalibrationRevision: async () => withTutor.calibration.inputRevision, idempotencyKey: "llm" });
     expect(result.recommendation.fallbackReason).toBe("MODEL_UNAVAILABLE_OR_INVALID");
     expect(JSON.stringify(withTutor.states)).toBe(before);
     expect(withTutor.calibration.authority).toMatchObject({ llmMayWrite: false, mayWriteCanonicalMastery: false, mayChangeAdministrativeGrade: false });
@@ -438,17 +493,55 @@ describe("offline calibration model", () => {
     const q2 = offlineQuiz("q2");
     const foreign = offlineQuiz("q3", { learner: { studentId: "other", studentUserId: "other-user" } });
     const conflicting = offlineQuiz("q4", { idempotencyKey: "idem-q2" });
-    const first = reconcileOfflineObservations({ projection, queued: [q1, q2, q1, foreign, conflicting], alreadyAdmittedIdempotencyKeys: new Set() });
+    const first = reconcileOfflineObservations({ projection, verify, release, queued: [q1, q2, q1, foreign, conflicting], alreadyAdmittedIdempotencyKeys: new Set() });
     expect(first.accepted.map((entry) => entry.evidenceId)).toEqual(["q1"]);
     expect(first.duplicateIds).toEqual(["q1"]);
     expect(first.rejected.map((entry) => entry.reason).sort()).toEqual(["evidence_idempotency_conflict", "evidence_idempotency_conflict", "offline_learner_mismatch"]);
-    const replay = reconcileOfflineObservations({ projection, queued: [q1], alreadyAdmittedIdempotencyKeys: new Set(["idem-q1"]) });
+    const replay = reconcileOfflineObservations({ projection, verify, release, queued: [q1], alreadyAdmittedIdempotencyKeys: new Set(["idem-q1"]) });
     expect(replay.accepted).toHaveLength(0);
     expect(replay.projectionSuperseded).toBe(false);
-    const online = calibrateLearner({ states: snap.states, release, enrollmentGrade: 4, asOf: snap.asOf, corroboratingEvidence: [q1] });
-    const afterSync = calibrateLearner({ states: snap.states, release, enrollmentGrade: 4, asOf: snap.asOf, corroboratingEvidence: [...first.accepted, q1] });
+    const online = calibrateLearner({ states: snap.states, release, enrollmentGrade: 4, asOf: snap.asOf, corroboratingEvidence: first.accepted });
+    const afterSync = calibrateLearner({ states: snap.states, release, enrollmentGrade: 4, asOf: snap.asOf, corroboratingEvidence: [...first.accepted, ...first.accepted] });
     expect(afterSync.calibration).toEqual(online.calibration);
     expect(first.accepted.every((entry) => entry.canonicalMasteryMutation === false)).toBe(true);
+  });
+
+  it("authenticates the projection before using its scope", async () => {
+    const snap = await last(scenario("offline-forged", [{ day: 0, kind: "RELEASED_ITEM", conceptId: A, correct: true }]));
+    const projection = buildSignedOfflineCalibrationProjection({ calibration: snap.calibration, estimates: snap.estimates, issuedAt: snap.asOf, ttlHours: 24, sign });
+    const forged = { ...projection, payload: { ...projection.payload, scope: { ...projection.payload.scope, studentId: "victim", studentUserId: "victim-user" } } };
+    const victimQuiz = offlineQuiz("v1", { learner: { studentId: "victim", studentUserId: "victim-user" } });
+    expect(() => reconcileOfflineObservations({ projection: forged, verify, release, queued: [victimQuiz], alreadyAdmittedIdempotencyKeys: new Set() }))
+      .toThrow("offline_projection_untrusted");
+    expect(() => reconcileOfflineObservations({ projection: { ...projection, keyId: "unknown" }, verify, release, queued: [], alreadyAdmittedIdempotencyKeys: new Set() }))
+      .toThrow("offline_projection_untrusted");
+  });
+
+  it("re-admits device records: asserted trust is discarded and scorable items are re-scored", async () => {
+    const snap = await last(scenario("offline-readmit", [{ day: 0, kind: "RELEASED_ITEM", conceptId: A, correct: true }]));
+    const projection = buildSignedOfflineCalibrationProjection({ calibration: snap.calibration, estimates: snap.estimates, issuedAt: snap.asOf, ttlHours: 24, sign });
+    const claimed = offlineQuiz("c1");
+    const forgedTrust = offlineQuiz("c2", { strength: { ...claimed.strength, independenceKey: "offline-c2", serverScored: true, humanVerified: true, reliability: "VERIFIED" } });
+    const teacherClaim = offlineQuiz("c3", { provenance: { ...claimed.provenance, source: "TEACHER", actorRole: "TEACHER" } });
+    const result = reconcileOfflineObservations({ projection, verify, release, queued: [forgedTrust, teacherClaim], alreadyAdmittedIdempotencyKeys: new Set() });
+    expect(result.rejected).toEqual([{ evidenceId: "c3", reason: "offline_provenance_invalid" }]);
+    expect(result.accepted[0].strength).toMatchObject({ serverScored: false, humanVerified: false, reliability: "UNASSESSED" });
+    const assessedAt = "2026-09-03T00:00:00.000Z";
+    expect(assessEvidenceQuality(result.accepted[0], { asOf: assessedAt }).corroboration)
+      .not.toBe(assessEvidenceQuality(forgedTrust, { asOf: assessedAt }).corroboration);
+
+    const binding = release.bindings.find((entry) => entry.conceptId === A)!;
+    const item = release.items.find((entry) => entry.id === binding.itemId && entry.version === binding.itemVersion)!;
+    const wrongIndex = (item.correctIndex + 1) % item.options.length;
+    const scored = (id: string, selectedAnswerIndex: number, correct: boolean) => offlineQuiz(id, {
+      evidenceType: item.context === "DIAGNOSTIC" ? "DIAGNOSTIC" : "PRACTICE",
+      activity: { activityId: item.id, activityVersion: item.version },
+      performance: { outcome: correct ? "CORRECT" : "INCORRECT", score: null, maxScore: null, correct, selectedAnswerIndex, signals: [] },
+    });
+    const honest = scored("s1", item.correctIndex, true), lying = scored("s2", wrongIndex, true);
+    const rescored = reconcileOfflineObservations({ projection, verify, release, queued: [honest, lying], alreadyAdmittedIdempotencyKeys: new Set() });
+    expect(rescored.accepted.map((entry) => [entry.evidenceId, entry.strength.serverScored, entry.performance.correct])).toEqual([["s1", true, true]]);
+    expect(rescored.rejected).toEqual([{ evidenceId: "s2", reason: "evidence_result_mismatch" }]);
   });
 });
 

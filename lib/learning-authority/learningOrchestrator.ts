@@ -181,6 +181,8 @@ export async function resolveLearningDecision(input: {
    * candidates. A teacher override always takes precedence.
    */
   calibration?: LearnerCalibration;
+  /** Required with calibration: calibrationInputRevision over the learner's current calibration inputs. */
+  currentCalibrationRevision?: () => Promise<string>;
   earlyLearningPolicy?: EarlyLearningPolicy;
   idempotencyKey: string;
 }): Promise<{ recommendation: LearningRecommendation; resolution: LearningPolicyResolution; decision: LearningDecision }> {
@@ -224,10 +226,12 @@ export async function resolveLearningDecision(input: {
     } catch { /* Shadow execution cannot block instruction. */ }
   }
   if (!validOutput(output, candidates)) throw new Error("baseline_model_invalid");
-  const earlyLearning = input.calibration && !input.teacherOverride
+  if (input.calibration && !input.teacherOverride && !input.currentCalibrationRevision) throw new Error("calibration_revision_source_required");
+  const earlyLearning = input.calibration && !input.teacherOverride && input.currentCalibrationRevision
     ? applyEarlyLearningPolicy({
       calibration: input.calibration, states: input.states, release, candidates,
       ranked: output.rankedCandidates, learnerStateRevision: revision,
+      calibrationInputRevision: await input.currentCalibrationRevision(),
       idempotencyKey: input.idempotencyKey, policy: input.earlyLearningPolicy,
     })
     : null;

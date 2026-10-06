@@ -9,6 +9,7 @@ import {
   assessEvidenceQuality, EVIDENCE_QUALITY_POLICY_V1, type CorroborationClass, type EvidenceQualityAssessment,
 } from "@/lib/learning-calibration/evidenceQualityPolicy";
 import { buildCompetencyEstimate, type CompetencyEstimate } from "@/lib/learning-calibration/competencyEstimate";
+import { canonicalizeJson } from "@/lib/curriculum/provenance/hash";
 
 /**
  * Learner calibration lifecycle.
@@ -61,6 +62,13 @@ export type LearnerCalibration = Readonly<{
   /** Official enrollment grade, echoed for display. Calibration can never change it. */
   enrollment: Readonly<{ grade: number; source: "STUDENT_RECORD"; mutableByCalibration: false }>;
   learnerStateRevision: string;
+  /**
+   * Digest of every calibration input: the canonical revision, the as-of time,
+   * the full content of the corroborating evidence, and the policy. A consumer
+   * compares it with calibrationInputRevision over current inputs, because the
+   * canonical revision alone misses corroborating-evidence and as-of changes.
+   */
+  inputRevision: string;
   stage: CalibrationStage;
   sufficientShare: number;
   competencies: readonly Readonly<{ conceptId: string; sufficiency: EvidenceSufficiency }>[];
@@ -73,6 +81,19 @@ export type LearnerCalibration = Readonly<{
     llmMayWrite: false;
   }>;
 }>;
+
+export function calibrationInputRevision(input: {
+  learnerStateRevision: string;
+  asOf: string;
+  corroboratingEvidence?: readonly GovernedEvidence[];
+  policyVersion?: string;
+}): string {
+  const evidence = [...deduplicateGovernedEvidence(input.corroboratingEvidence ?? [])]
+    .sort((a, b) => a.evidenceId.localeCompare(b.evidenceId) || a.idempotencyKey.localeCompare(b.idempotencyKey));
+  return "calibration-input-" + createHash("sha256").update(canonicalizeJson({
+    revision: input.learnerStateRevision, asOf: input.asOf, policy: input.policyVersion ?? CALIBRATION_POLICY_VERSION, evidence,
+  })).digest("hex");
+}
 
 function round(value: number): number {
   return Math.round(value * 10_000) / 10_000;
@@ -97,7 +118,11 @@ export function assessEvidenceSufficiency(input: {
     if (canonicalIds.has(assessment.evidenceId)) continue;
     counts[assessment.corroboration] += 1;
     const prior = byOccasion.get(assessment.independenceKey);
-    if (!prior || rank[assessment.corroboration] > rank[prior.corroboration]) byOccasion.set(assessment.independenceKey, assessment);
+    // Equal-class records for one occasion resolve by evidence id, so input order never changes the result.
+    if (!prior || rank[assessment.corroboration] > rank[prior.corroboration] ||
+      (rank[assessment.corroboration] === rank[prior.corroboration] && assessment.evidenceId < prior.evidenceId)) {
+      byOccasion.set(assessment.independenceKey, assessment);
+    }
   }
   const canonicalOccasions = state.confidence.independentOccasions;
   const corroborationCredit = [...byOccasion.values()].reduce((sum, entry) => sum + policy.occasionCredit[entry.corroboration], 0);
@@ -173,6 +198,9 @@ export function calibrateLearner(input: {
     if (state.asOf !== input.asOf) throw new Error("calibration_state_as_of_mismatch");
   }
   const corroborating = deduplicateGovernedEvidence(input.corroboratingEvidence ?? []);
+  const inputRevision = calibrationInputRevision({
+    learnerStateRevision: revision, asOf: input.asOf, corroboratingEvidence: corroborating, policyVersion: policy.version,
+  });
   const assessments = corroborating.map((evidence) => {
     if (evidence.schoolId !== first.schoolId || evidence.learner.studentId !== first.studentId ||
       evidence.learner.studentUserId !== first.studentUserId) throw new Error("corroborating_evidence_identity_mismatch");
@@ -203,9 +231,7 @@ export function calibrateLearner(input: {
 
   const calibration: LearnerCalibration = Object.freeze({
     policyVersion: CALIBRATION_POLICY_VERSION,
-    id: "calibration-" + createHash("sha256").update(JSON.stringify({
-      revision, asOf: input.asOf, corroborating: assessments.map((entry) => entry.evidenceId).sort(), policy: policy.version,
-    })).digest("hex"),
+    id: "calibration-" + inputRevision.slice("calibration-input-".length),
     asOf: input.asOf,
     scope: Object.freeze({
       schoolId: first.schoolId, studentId: first.studentId, studentUserId: first.studentUserId,
@@ -214,6 +240,7 @@ export function calibrateLearner(input: {
     }),
     enrollment: Object.freeze({ grade: input.enrollmentGrade, source: "STUDENT_RECORD" as const, mutableByCalibration: false as const }),
     learnerStateRevision: revision,
+    inputRevision,
     stage,
     sufficientShare: share,
     competencies: Object.freeze(competencies),

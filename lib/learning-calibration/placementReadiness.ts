@@ -113,7 +113,8 @@ export function placementToGovernedEvidence(input: {
   });
 }
 
-export type CompetencyReadiness = "READY_AT_GRADE" | "PREREQUISITE_GAP" | "NOT_YET_EVIDENCED" | "EXTENSION_READY" | "NEEDS_PRACTICE";
+export type CompetencyReadiness =
+  | "READY_AT_GRADE" | "PREREQUISITE_GAP" | "PREREQUISITE_UNKNOWN" | "NOT_YET_EVIDENCED" | "EXTENSION_READY" | "NEEDS_PRACTICE";
 
 export type InstructionalReadiness = Readonly<{
   policyVersion: typeof PLACEMENT_READINESS_POLICY_VERSION;
@@ -148,6 +149,9 @@ export function deriveInstructionalReadiness(input: {
     let readiness: CompetencyReadiness;
     if (estimate.prerequisite.status === "UNMET") {
       readiness = "PREREQUISITE_GAP"; reasons.push(...estimate.prerequisite.unmetConceptIds.map((id) => `UNMET_PREREQUISITE:${id}`));
+    } else if (estimate.prerequisite.status === "UNKNOWN") {
+      // The orchestrator will not progress past an unevidenced prerequisite, so readiness must not claim more.
+      readiness = "PREREQUISITE_UNKNOWN"; reasons.push(...estimate.prerequisite.unknownConceptIds.map((id) => `UNKNOWN_PREREQUISITE:${id}`));
     } else if (estimate.mastery.estimate === null || estimate.sufficiency.level === "NONE") {
       readiness = "NOT_YET_EVIDENCED"; reasons.push("NO_CANONICAL_MASTERY_ESTIMATE");
     } else if (estimate.mastery.level === "SECURE" && estimate.sufficiency.level === "SUFFICIENT" && estimate.misconception.state === "NONE") {
