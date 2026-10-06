@@ -206,7 +206,8 @@ export type HighFidelitySpec = {
   explain?: (state: FidelityState) => ExplanationLine[];
   offline: { remoteAssets: string[]; maxPackageBytes: number };
   /** Shared presentation intent. Existing labs default to STUDIO. */
-  environment?: "DAYLIGHT" | "STUDIO";
+  /** A10 environment rig (default STUDIO). One backdrop token per rig is shared by all four profiles. */
+  environment?: "DAYLIGHT" | "STUDIO" | "DARK_FIELD";
   /** RX-005b: quantity-bound water (or other medium) surfaces. */
   surfaces?: SurfaceDefinition[];
   /** RX-005b: quantity-bound emitters (stream, spray, upwell, bubble, pulse). */

@@ -13,6 +13,7 @@ import { SceneControlBar } from "./SceneControlBar";
 import { SceneHud } from "./SceneHud";
 import { CameraRailBar } from "./CameraRailBar";
 import { PHONE_LANDSCAPE_QUERY, SCENE_HEIGHT } from "./sceneLayout";
+import { MobileSheet, type SheetSnap } from "./MobileSheet";
 import { advanceRail, DEFAULT_LEG, findRail, railStop, type CameraLeg, type RailPosition } from "@/lib/interactive-labs/v2/fidelity/camera";
 import type { CameraPose } from "@/lib/interactive-labs/v2/fidelity/presentation";
 import type { ScenePick } from "./picking";
@@ -70,7 +71,9 @@ export function InteractiveLabPlayer({ labId = "g4-solid-figures", override, rev
   const [profile, setProfile] = useState<CapabilityProfile>(() => override ?? "LOW");
   const manualProfileChoice = useRef(false);
   const [notice, setNotice] = useState<string | null>(null);
-  const [controlsOpen, setControlsOpen] = useState(false);
+  // RX-005e: phone portrait puts the controls in a bottom sheet; desktop and phone landscape keep the side column.
+  const [sheetMode, setSheetMode] = useState(false);
+  const [sheetSnap, setSheetSnap] = useState<SheetSnap>("peek");
   // A9 review evidence: every profile change that was not requested (context loss, slow frames, failed chunk).
   const downgradePath = useRef<string[]>([]);
   // A17: the WebGL renderer reports its first full frame; until then the 2D render shows under a veil.
@@ -168,9 +171,9 @@ export function InteractiveLabPlayer({ labId = "g4-solid-figures", override, rev
   };
   const activeCheck = checks.find((check) => !state.completedChecks.includes(check.id));
   useEffect(() => {
-    // A17: the controls sheet starts open on desktop and beside the scene on a phone in landscape.
+    // A17: the controls column sits beside the scene on desktop and on a phone in landscape; otherwise a bottom sheet.
     const desktop = window.matchMedia(`(min-width: 1024px), ${PHONE_LANDSCAPE_QUERY}`);
-    const sync = () => setControlsOpen(desktop.matches);
+    const sync = () => setSheetMode(!desktop.matches);
     sync(); desktop.addEventListener("change", sync);
     return () => desktop.removeEventListener("change", sync);
   }, []);
@@ -215,8 +218,23 @@ export function InteractiveLabPlayer({ labId = "g4-solid-figures", override, rev
 
   if (intro) return <section className="mx-auto max-w-5xl rounded-3xl bg-slate-950 p-8 text-white shadow-2xl"><p className="text-sm font-semibold uppercase tracking-[.2em] text-cyan-300">Interactive lab</p><h1 className="mt-3 text-3xl font-bold">{definition.title ?? "Interactive lab"}</h1><p className="mt-4 max-w-2xl text-slate-300">{definition.summary ?? "Use the scene to complete the checks."}</p><button type="button" onClick={() => setIntro(false)} className="mt-7 rounded-full bg-cyan-300 px-6 py-3 font-bold text-slate-950">Start exploring</button></section>;
 
+  const controlsBody = (
+    <>
+      <LabControlPanel definition={definition} state={state} activeCheck={activeCheck} dispatch={dispatch} onStartRail={startRail} />
+      <div className="mt-8 flex gap-2">
+        {confirmRestart
+          ? <>
+              <button type="button" onClick={() => { setConfirmRestart(false); dispatch({ type: "reset" }); }} className="min-h-11 rounded-full border border-red-300 bg-red-700 px-4 py-2 text-sm font-bold text-white">Yes, restart the lab</button>
+              <button type="button" onClick={() => setConfirmRestart(false)} className="min-h-11 rounded-full border border-white/15 px-4 py-2 text-sm">Keep my progress</button>
+            </>
+          : <button type="button" onClick={() => setConfirmRestart(true)} className="min-h-11 rounded-full border border-white/15 px-4 py-2 text-sm">Restart lab (clears progress)</button>}
+        {definition.scene.objects.length > 0 && <button type="button" onClick={() => dispatch({ type: "focus", objectId: state.selectedObjectId ?? definition.scene.objects[0].id })} className="min-h-11 rounded-full border border-white/15 px-4 py-2 text-sm">Focus</button>}
+      </div>
+    </>
+  );
+
   return (
-    <section data-lab-active-profile={profile} data-lab-downgrade-path={downgradePath.current.join(" ")} className="relative mx-auto max-w-6xl overflow-hidden rounded-3xl bg-slate-950 text-white shadow-2xl">
+    <section style={sheetMode ? { paddingBottom: "11rem" } : undefined} data-lab-active-profile={profile} data-lab-downgrade-path={downgradePath.current.join(" ")} className="relative mx-auto max-w-6xl overflow-hidden rounded-3xl bg-slate-950 text-white shadow-2xl">
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 px-5 py-4">
         <div><p className="text-xs font-semibold uppercase tracking-[.18em] text-cyan-300">Grade {definition.grade} · {definition.subject[0] + definition.subject.slice(1).toLowerCase()}</p><h1 className="text-xl font-bold">{definition.title ?? definition.id}</h1></div>
         <div className="flex items-center gap-2 text-sm">
@@ -232,7 +250,7 @@ export function InteractiveLabPlayer({ labId = "g4-solid-figures", override, rev
         <div onKeyDownCapture={onSceneKeyDownCapture}
           onKeyDown={(event) => { if (event.key === "Escape" && pendingControl) { event.preventDefault(); setPendingControl(null); } }}
           onBlur={(event) => { if (pendingControl && !event.currentTarget.contains(event.relatedTarget as Node | null)) setPendingControl(null); }}
-          className={`relative ${definition.fidelity?.environment === "DAYLIGHT" ? "bg-[linear-gradient(#dbeafe,#f1f5f9_58%,#dce7d4)] text-slate-900" : "bg-[radial-gradient(circle_at_50%_38%,#263d72,#080d20_68%)]"}`}>
+          className={`relative ${definition.fidelity?.environment === "DAYLIGHT" ? "bg-[linear-gradient(#dbeafe,#f1f5f9_58%,#dce7d4)] text-slate-900" : definition.fidelity?.environment === "DARK_FIELD" ? "bg-[#02040a]" : "bg-[radial-gradient(circle_at_50%_38%,#263d72,#080d20_68%)]"}`}>
           {profile === "FALLBACK_2D"
             ? <Fallback2D definition={definition} state={state} reducedMotion={reducedMotion} traceFlowId={traceFlowId} dispatch={dispatch} onPick={onPick} pendingControlId={pendingControl?.componentId ?? null} onDragControl={onDragControl} />
             : <SceneLoadBoundary key={profile} onError={onRendererLoadError} fallback={<Fallback2D definition={definition} state={state} reducedMotion={reducedMotion} traceFlowId={traceFlowId} dispatch={dispatch} onPick={onPick} pendingControlId={pendingControl?.componentId ?? null} onDragControl={onDragControl} />}>
@@ -251,25 +269,9 @@ export function InteractiveLabPlayer({ labId = "g4-solid-figures", override, rev
           </div>}
           <SceneControlBar definition={definition} state={state} dispatch={dispatch} pendingControlId={pendingControl?.componentId ?? null} onActivate={activateControlPart} />
         </div>
-        <aside id="lab-controls" aria-label="Lab controls" className="border-l border-white/10 bg-white/[.03] lg:max-h-[clamp(420px,62vh,640px)] lg:overflow-y-auto [@media(orientation:landscape)_and_(max-height:500px)]:max-h-[calc(100dvh-4.5rem)] [@media(orientation:landscape)_and_(max-height:500px)]:overflow-y-auto">
-          <details open={controlsOpen} onToggle={(event) => setControlsOpen(event.currentTarget.open)} className="group">
-            <summary className="sticky bottom-0 z-30 flex min-h-14 cursor-pointer items-center justify-between border-y border-white/10 bg-slate-900 px-4 py-3 text-sm font-bold text-white shadow-[0_-8px_24px_rgba(0,0,0,.3)] lg:hidden [@media(orientation:landscape)_and_(max-height:500px)]:hidden">
-              <span>Lab controls and next step</span><span aria-hidden="true" className="text-cyan-200 group-open:rotate-180">⌃</span>
-            </summary>
-            <div className="p-5">
-          <LabControlPanel definition={definition} state={state} activeCheck={activeCheck} dispatch={dispatch} onStartRail={startRail} />
-          <div className="mt-8 flex gap-2">
-            {confirmRestart
-              ? <>
-                  <button type="button" onClick={() => { setConfirmRestart(false); dispatch({ type: "reset" }); }} className="min-h-11 rounded-full border border-red-300 bg-red-700 px-4 py-2 text-sm font-bold text-white">Yes, restart the lab</button>
-                  <button type="button" onClick={() => setConfirmRestart(false)} className="min-h-11 rounded-full border border-white/15 px-4 py-2 text-sm">Keep my progress</button>
-                </>
-              : <button type="button" onClick={() => setConfirmRestart(true)} className="min-h-11 rounded-full border border-white/15 px-4 py-2 text-sm">Restart lab (clears progress)</button>}
-            {definition.scene.objects.length > 0 && <button type="button" onClick={() => dispatch({ type: "focus", objectId: state.selectedObjectId ?? definition.scene.objects[0].id })} className="min-h-11 rounded-full border border-white/15 px-4 py-2 text-sm">Focus</button>}
-          </div>
-            </div>
-          </details>
-        </aside>
+        {sheetMode
+          ? <MobileSheet definition={definition} state={state} activeCheck={activeCheck} snap={sheetSnap} onSnap={setSheetSnap}><div className="p-5">{controlsBody}</div></MobileSheet>
+          : <aside id="lab-controls" aria-label="Lab controls" className="border-l border-white/10 bg-white/[.03] p-5 lg:max-h-[clamp(420px,62vh,640px)] lg:overflow-y-auto [@media(orientation:landscape)_and_(max-height:500px)]:max-h-[calc(100dvh-4.5rem)] [@media(orientation:landscape)_and_(max-height:500px)]:overflow-y-auto">{controlsBody}</aside>}
       </div>
     </section>
   );

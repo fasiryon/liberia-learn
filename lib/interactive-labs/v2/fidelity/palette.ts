@@ -2,6 +2,9 @@
 export const INACTIVE_FLOW_COLOR = "#779ab2";
 export const HIGHLIGHT_COLOR = "#f0abfc";
 export const MARKER_COLOR = "#a3e635";
+/** A10: one backdrop token per environment rig, used by every profile (three.js sky/background, CSS stage, SVG). */
+export const ENVIRONMENT_BACKDROP = Object.freeze({ DAYLIGHT: "#e7eef1", STUDIO: "#0b1223", DARK_FIELD: "#02040a" } as const);
+export type EnvironmentRigId = keyof typeof ENVIRONMENT_BACKDROP;
 /** A15: the shared "section cream" that caps every clipped solid on HIGH/STANDARD. */
 export const SECTION_CREAM = "#f3e7c9";
 

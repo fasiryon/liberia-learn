@@ -14,6 +14,7 @@ import type { ScenePick } from "./picking";
 import { useDisplayFidelity } from "./useDisplayFidelity";
 import { SURFACE_SHALLOW } from "@/lib/interactive-labs/v2/fidelity/surfaces";
 import { FLOW_CASING_COLOR } from "@/lib/interactive-labs/v2/fidelity/flowTubes";
+import { ENVIRONMENT_BACKDROP } from "@/lib/interactive-labs/v2/fidelity/palette";
 
 // Fixed precision keeps server and client SVG output identical (no hydration mismatch from float noise).
 const round = (value: number) => Math.round(value * 1000) / 1000;
@@ -94,7 +95,7 @@ export function Fallback2D({ definition, state, reducedMotion, traceFlowId, disp
           <marker id="flow-arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#0f172a" /></marker>
           <filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="0.07" /></filter>
         </defs>
-        <rect x={frame.x} y={frame.y} width={frame.width} height={frame.height} fill={list.environment === "DAYLIGHT" ? "#e7eef1" : "#0b1223"} />
+        <rect x={frame.x} y={frame.y} width={frame.width} height={frame.height} fill={ENVIRONMENT_BACKDROP[list.environment]} />
         {/* RX-005b on FALLBACK_2D: each active water surface as a band whose thickness follows the model's width
             factor (the front projection hides channel depth, so thickness carries the volume cue). */}
         {list.surfaces.filter((surface) => surface.active && surface.width > 0).map((surface) => (

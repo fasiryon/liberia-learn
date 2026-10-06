@@ -51,7 +51,7 @@ export type RenderItem = {
 export type RenderMarker = { id: string; position: Vec3; color: string; label?: string };
 export type RenderFlow = { id: string; label: string; color: string; points: Vec3[]; active: boolean; rate: number; direction: 1 | -1; particleCount: number; nodes: FlowNode[]; traced: string[] };
 export type RenderMotion = { id: string; label: string; active: boolean; center: Vec3 };
-export type RenderList = { items: RenderItem[]; markers: RenderMarker[]; flows: RenderFlow[]; surfaces: RenderSurface[]; emitters: RenderEmitter[]; cues: RenderCue[]; motions: RenderMotion[]; camera: CameraPose | null; budget: RenderBudget; explanation: ExplanationLine[]; quantities: Record<string, number>; environment: "DAYLIGHT" | "STUDIO" };
+export type RenderList = { items: RenderItem[]; markers: RenderMarker[]; flows: RenderFlow[]; surfaces: RenderSurface[]; emitters: RenderEmitter[]; cues: RenderCue[]; motions: RenderMotion[]; camera: CameraPose | null; budget: RenderBudget; explanation: ExplanationLine[]; quantities: Record<string, number>; environment: "DAYLIGHT" | "STUDIO" | "DARK_FIELD" };
 
 /** Paint decorative 2D scenery first so trace nodes, labels and controls remain above it. */
 export function orderFallbackItems(items: readonly RenderItem[]): RenderItem[] {
