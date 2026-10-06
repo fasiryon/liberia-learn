@@ -753,7 +753,7 @@
         "lab-performance-reviewer",
         "lab-design-director"
       ],
-      "tests": "Partial: renderer-identity.test.ts, runtime-extensions.test.ts, surfaces.test.ts, lab-budgets.test.ts, profile-selection.test.ts, frame-plan.test.ts, scene-activity.test.ts, determinism.test.ts, renderer-chunks.test.ts, mobile-shell.test.tsx, scene-controls.test.ts, emitters.test.ts, parametric-geometry.test.ts, walkthroughs.test.ts. Local planner parity, chunk measurement, budget, camera/control and lifecycle unit coverage is present. Still requires fresh current-head Chromium evidence for 20x remount, two-run capture determinism, built Next chunk/import graph and zero-request proof, chunk-abort walkthrough, actual renderer.info parity including the shadow pass (HYDRO-R3P-003), and CI verification of IntersectionObserver/30 fps acceptance. No current-head CI run; remains PROPOSED."
+      "tests": "Unit: 271/271 interactive-lab tests (incl. control-confirm-drag, semantic-cues, status-cues, mobile-sheet, environment-rigs, frame-plan, picking). Browser (SwiftShader, run 37429556324 at c0e77a6d): 96/96 planner parity incl. shadow pass, zero three requests on LOW/2D, determinism 96/96 on all profiles, 20x remount one live renderer, chunk-abort walkthrough. Remains PROPOSED: unmet items listed in the RX-005 acceptance record (2026-10-06); final run at 90eff6c6 pending."
     },
     {
       "id": "RX-006",
@@ -764,7 +764,7 @@
         "lab-performance-reviewer",
         "lab-design-director"
       ],
-      "tests": "Partial: frame-plan.test.ts (planner parity model, WebGL1 vertex cap, LOW budget across review scenarios, plan reuse and eligibility transitions), low-batch-state.test.ts (per-item color/emissive range updates and reusable storage), picking.test.ts (nearest visible depth, stable tie-break and camera-depth clipping), hydropower-definition.test.ts, parametric-geometry.test.ts. LOW budget is 26/40 draws in the current Mount Coffee baseline. Still requires browser proof of renderer parity/state synchronization across all profiles, GPU buffer identity and allocation/lifecycle behavior, capture/picking/focus parity, and fresh current-head CI evidence. No current-head CI run; remains PROPOSED."
+      "tests": "Unit: frame-plan, low-batch-state, picking (projected bounds, every gauge band and breaker). Browser (run 37429556324): LOW planner parity 96/96, buffer identity after warm-up (create 0, bufferData 0, 742 bufferSubData), LOW 27/40 draws. Remains PROPOSED: tests 3 (scene-tap/phone challenge parity) and 8 (before/after captures) open; parity gate not yet on PR CI."
     },
     {
       "id": "RX-005i",

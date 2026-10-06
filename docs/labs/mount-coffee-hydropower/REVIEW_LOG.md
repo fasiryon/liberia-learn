@@ -219,3 +219,16 @@ Shared offline-package budget remeasurement, in its own change: the renderer chu
 | mount-coffee-hydropower | 714,993 → 722,455 | 207,626 → 209,188 | 113,937 → 119,885 | 77,447 → 78,755 | 34 → 26 |
 
 The LOW package increases are the shared WebGL chunk cost; LOW draw counts fall because compatible opaque parts now share batches with per-vertex state. HIGH/STANDARD draw counts remain unchanged after the planner split. The CPU-picking renderer remeasurement added +34 stored / +16 transfer bytes to each profile's package; these before/after values are in this dedicated baseline change. The absolute static ceilings and 5% regression tolerance are unchanged. G4 LOW's cumulative baseline increase exceeds 5% from its prior recorded value and remains subject to performance-reviewer re-check.
+
+## RX-005 / RX-006 takeover and bounded re-check, 2026-10-06
+
+Claude Code took over `feat/rx005-rx006-acceptance-closure` from Codex at 3bcc3bee (the remaining `codex.exe` was the idle app-server daemon; the worktree was clean). It implemented the missing binding items: A14 confirm preview and drag controls, A15 section caps and revealed-part fill, A17 phone landscape and the RX-005e bottom sheet, A18 downgrade notice, A19/G3 status glyph and text, the A1 semantic-cue gate, the A10 dark-field rig and A10/A13/A18 cased flow tubes. For RX-006 it added projected-bounds picking (gauge band 2 had been unreachable), persistent geometrically growing batch buffers and a browser buffer-identity test. Every budget and chunk change has its own before-to-after commit.
+
+CI run 37429556324 (c0e77a6d, Mount Coffee, SwiftShader) passed every still, 96/96 planner parity on HIGH, STANDARD and LOW, zero three requests on LOW and 2D, byte-identical determinism on all four profiles, 20x remount with one live renderer, LOW buffer identity (create 0, bufferData 0), the chunk-abort walkthrough and all keyboard walkthroughs. PR CI build 37429560860 was green.
+
+Bounded re-check on those captures:
+- `lab-performance-reviewer`: 0 P0, 5 P1, 7 P2. Accepted the A7 1024 px shadow map as an amendment and ruled SwiftShader parity sufficient for A8/A19 accounting (device performance stays unmeasured). Accepted every budget step above 5% as specified cost. HYDRO-R3P-003 and -005 CLOSED; -006 reopened then fixed.
+- `lab-interaction-reviewer`: 0 P0, 8 P1, 5 P2. HYDRO-R3D-006 closed for its symptom, with a Challenge-mode regression (fixed).
+- `lab-visual-reviewer`: 3 P0, 5 P1, 4 P2. HYDRO-R3D-001 and -006 improved, -008 closed on the 3D profiles.
+
+Fixes landed in 90eff6c6; the final evidence run is pending. RX-005 and RX-006 remain **PROPOSED** with the exact unmet items in their acceptance records. Mount Coffee remains DRAFT, approval PENDING, unreleased, curriculum linkage inactive and inaccessible to students; HYDRO-R3D-007 and HYDRO-FOUNDER-IMMERSION-001 (the art and immersion program) remain open and out of scope here.

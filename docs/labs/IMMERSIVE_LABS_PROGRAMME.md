@@ -22,8 +22,8 @@ The 17 legacy labs:
 | Id | Capability | Status |
 |---|---|---|
 | RX-001 to RX-004 | State-driven motion, batched flows, isolated decor, rim highlight | IMPLEMENTED (PR #161) |
-| **RX-005** | three.js HIGH/STANDARD renderer, quantity-bound water/surfaces and emitters, in-scene controls, camera rails and widened constraints, scene-first player shell, output-driven poses and status lamps, budget accounting | PROPOSED, under performance and design review |
-| **RX-006** | LOW instanced batching with CPU picking (LOW is already at 38 of 40 draw calls) | PROPOSED with RX-005 |
+| **RX-005** | three.js HIGH/STANDARD renderer, quantity-bound water/surfaces and emitters, in-scene controls, camera rails and widened constraints, scene-first player shell, output-driven poses and status lamps, budget accounting | PROPOSED: most items implemented and CI-proven; exact unmet items in the RX-005 acceptance record (2026-10-06) |
+| **RX-006** | LOW instanced batching with CPU picking (LOW is already at 38 of 40 draw calls) | PROPOSED: batching, picking and buffer identity proven; tests 3 and 8 open (RX-006 acceptance record) |
 | **RX-007** | **Time axis ("4D")**: a learner-controlled timeline to scrub, pause, rewind and change speed, plus "find the moment when…" checks | PLANNED, after RX-005 |
 | RX-008 | Haptics and sound: vibration on faults and trips, captioned ambient audio, with an off switch | PLANNED, after RX-007 |
 

@@ -1,6 +1,6 @@
 # RX-006: LOW draw-call batching with per-part state
 
-- **Status:** PROPOSED; both independent reviewers returned APPROVE_WITH_CHANGES on 2026-10-01. The mandatory clarifications below are binding.
+- **Status:** PROPOSED; both independent reviewers returned APPROVE_WITH_CHANGES on 2026-10-01. The mandatory clarifications below are binding. Implementation evidence and the exact unmet items are in "Acceptance record (2026-10-06)" below.
 - **Filed by:** LAB-BUILDER on 2026-10-01.
 - **Runtime:** Interactive Lab Runtime V2. The change is in the shared `WebGLScene` (LOW) pass only.
 
@@ -70,3 +70,20 @@ None. This is rendering only.
 | `lab-design-director` | APPROVE_WITH_CHANGES initially; APPROVE on amended re-review | Specified synchronization/invalidation for per-item visual and interaction state, challenge-state render/picking parity across all profiles, and ANGLE-present/absent parity tests. |
 
 These are proposal reviews only, not implementation verification or a product SHIP verdict. The approved-with-changes requirements above remain implementation gates.
+
+## Acceptance record (2026-10-06)
+
+Branch `feat/rx005-rx006-acceptance-closure` (draft PR #169). CI evidence is headless Chromium on SwiftShader (run 37429556324 at c0e77a6d), never device performance.
+
+| Test | Result | Evidence |
+|---|---|---|
+| 1. Planner | PROVEN | The LOW planner equals the wrapped `drawArrays` count on 96/96 stills; `frame-plan.test.ts`. The FAIL-on-mismatch gate runs in the manual capture workflow, not yet on PR CI. |
+| 2. State sync | PROVEN (unit) | Entering and leaving each excluded state (focus, highlight, isolation, clip, spin, geometry, translucency), visibility, pose, colour/emissive ranges, live label and pick refresh: `frame-plan.test.ts`, `low-batch-state.test.ts`. |
+| 3. Challenge parity | PARTLY | Keyboard challenge walkthroughs pass on all four profiles at desktop and mobile; chip ids equal control ids. Scene-tap parity has no test, and phone scene targets are far below 44 px at the Mount Coffee presets. |
+| 4. Picking | PROVEN (unit) | Projected oriented bounds; control parts outrank non-controls inside real bounds; then nearest depth, distance and id. Every gauge band and breaker is the deterministic hit at its own centre. Phone-size and off-centre cases are still to add. |
+| 5. Optional instancing | NOT APPLICABLE | Not implemented (a test asserts there is no instanced branch); the merged path alone meets the budget (Mount Coffee 27/40). |
+| 6. Allocation/lifecycle | PROVEN | After warm-up a full variable sweep creates 0 buffers and calls `bufferData` 0 times (742 `bufferSubData` range updates); batch buffers grow geometrically and persist until context teardown. The per-frame flow-tube rewrite found in review is fixed at 90eff6c6 (signature-cached, version-skipped upload). |
+| 7. Budget | PROVEN | Mount Coffee LOW at most 27 draws and 2,410 triangles across every scenario. |
+| 8. Captures | PARTLY | LOW stills byte-identical 96/96. Dedicated before/after review captures of city blocks, gauge bands and breaker rows in their focus/selection combinations are not yet assembled. |
+
+RX-006 stays **PROPOSED** until tests 3 and 8 are complete and the parity gate runs on PR CI.

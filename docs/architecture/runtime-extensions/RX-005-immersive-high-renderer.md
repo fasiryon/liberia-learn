@@ -1,6 +1,6 @@
 # RX-005: Immersive HIGH renderer (three.js) and scene-first interaction
 
-- **Status:** PROPOSED.
+- **Status:** PROPOSED. Most acceptance items are implemented and proven in CI; the exact unmet items are listed in "Acceptance record (2026-10-06)" at the end of this document.
   - Both reviewers returned **APPROVE_WITH_CHANGES** on 2026-10-01.
   - The amendments in "Review verdicts and binding amendments" (end of this document) are binding. **They supersede any earlier section they conflict with.**
   - The independent design-director re-check of A1 returned APPROVE_WITH_CHANGES; its final amendments were re-reviewed and APPROVED on 2026-10-01.
@@ -444,3 +444,37 @@ This is a proposal disposition, not a product-quality verdict.
 | lab-design-director | A1 parametric geometry P0 re-check | APPROVE_WITH_CHANGES; amended proposal APPROVED | Typed API, budget, profile variant, semantic-equivalence, schema, coordinate, preset and WebGL1 index requirements incorporated. |
 | lab-design-director | A20 glTF proposal | REJECT | Loader remains deferred in RX-005 V1; a future loader must be a separate reviewed extension. |
 | lab-performance-reviewer | A20 glTF proposal | APPROVE_WITH_CHANGES | Cost, format, lifecycle, fallback and loader verification requirements recorded in A20 disposition. |
+
+### A7 and A8/A19 amendments (performance re-check, 2026-10-06)
+
+- **A7 shadow-map size, amended:** the sun shadow map is 1024 px on every device (commit 5a6e0b6e). It is strictly cheaper than 2048 (about a quarter of the memory and fill), stays inside HIGH `maxTexturePx` (2048), and the planner and budget record 1024 consistently. Desktop shadow quality is the design director's call. The unused fine-pointer option is to be removed.
+- **A8/A19 "--gpu run", amended:** three.js counts `renderer.info` draws and triangles in JavaScript, and the LOW pass counts its own `drawArrays`, so planner parity measured on SwiftShader is valid accounting evidence. `programs.length` depends only on material parameters and is recorded per still. A real-GPU or device run is still required before any claim about frame rate, memory, battery or thermals; none is made.
+
+## Acceptance record (2026-10-06)
+
+Branch `feat/rx005-rx006-acceptance-closure` (draft PR #169). Evidence is GitHub-hosted headless Chromium on SwiftShader: it proves rendering correctness, routing, accounting, determinism and lifecycle, never device performance.
+
+**Proven** (CI run 37429556324 at c0e77a6d for Mount Coffee, all four profiles; PR CI build 37429560860 green):
+- Test 1, render list: surfaces and emitters are pure functions of quantities, and `instructionalView` is identical across profiles (unit tests, including status text and semantic cues).
+- Test 2, controls: every control dispatches its panel twin's action; the authoring gate rejects invalid controls; the confirm preview never reaches `acceptLabAction` (spy test); keyboard activation works.
+- Test 3, camera: rails and presets satisfy constraints and the target box; reduced motion cuts.
+- Test 4, budgets: surfaces, emitters, section caps, cased flow tubes and the `three` chunk are measured; every lab is within its locked limits (Mount Coffee HIGH 76/120 draws and 12,816/100k triangles, LOW 27/40 and 2,410/15k). Every re-baseline has its own before-to-after commit.
+- Test 5, lifecycle: 20x remount leaves exactly one live renderer, with no context warnings and constant `renderer.info.memory`, on HIGH, STANDARD and LOW.
+- Test 6, determinism: two capture runs are byte-identical, 96/96 stills on each of the four profiles (Mount Coffee).
+- Test 7, existing suites: 271/271 interactive-lab tests pass; the full PR CI is green.
+- A3: with the three chunk aborted, the lab lands on LOW with the notice and every keyboard check completes (52/52 steps).
+- A8: planner parity with `renderer.info`, including the HIGH shadow pass, holds on 96/96 HIGH, STANDARD and LOW stills; LOW and FALLBACK_2D make zero requests for the three chunk; the import-graph test and the Next-build chunk check pass.
+- A1, A10, A13, A14, A15, A17, A18 and A19 runtime pieces landed on this branch (semantic-cue gate, rigs, cased flows, confirm and drag controls, section caps, bottom sheet and landscape, downgrade notice, status glyph and text), each with unit tests.
+
+**Fixed after the reviewer re-check, awaiting the final evidence run** (90eff6c6): the round-sprite shader compile error (no sprite drew on HIGH/STANDARD) and a capture gate that now fails on any shader error; a browser context-loss to FALLBACK_2D test (Test 5); circuit determinism (Test 6 names both reference labs); landscape captures and walkthroughs at true phone-landscape size; the Challenge-mode phone overflow; control-first picking inside overlapping bounds; WebGL2 gating and the load-failure upgrade loop.
+
+**Unmet (RX-005 stays PROPOSED until each is closed):**
+1. A14: the pending confirm shows "Confirm?" only in the chip and the strip below the scene, not as an in-scene label.
+2. A14: no shared control-affordance token (glyph, ring and cursor) on every profile.
+3. A2: no spy test proving the three loader is never invoked for target-device hints (deviceMemory 2).
+4. A18: a HIGH to LOW downgrade keeps the preset but not the learner's orbited camera pose (WebGLScene takes no initial pose).
+5. A19: the per-lab dynamic registry with a 300 KB 2D first-load test, and Fallback2D hull memoization, are not implemented (the amendment schedules them before programme Phase 4).
+6. The final evidence run at 90eff6c6 must pass (sprites re-captured, context loss, circuit determinism, landscape).
+7. Reviewer follow-ups recorded in `docs/labs/mount-coffee-hydropower/REVIEW_LOG.md`: FALLBACK_2D label parity with the 3D profiles, LOW label anchoring, uncaught chunk-abort page errors, a cumulative anchor for the renderer-chunk gate, and moving the parity, zero-request and determinism gates onto PR CI.
+
+No physical-device or real-GPU performance claim is made.
