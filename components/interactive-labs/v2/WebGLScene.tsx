@@ -424,7 +424,8 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
           node.textContent = entry.text;
           if (entry.title) { node.title = entry.title; node.setAttribute("aria-label", entry.title); node.setAttribute("role", "img"); }
           node.className = entry.glyph ? "pointer-events-none absolute -translate-x-1/2 -translate-y-1/2 text-lg font-bold text-fuchsia-300 drop-shadow" : `pointer-events-none absolute -translate-x-1/2 -translate-y-[160%] whitespace-nowrap rounded-full bg-slate-950/70 px-2 py-0.5 text-[11px] font-semibold text-slate-100${entry.mobileLabel === false ? " max-[500px]:hidden" : ""}`;
-          node.style.left = `${entry.at!.x}px`; node.style.top = `${entry.at!.y}px`;
+          // Whole pixels: a fractional position rasterises its pill edge differently run to run (A9 determinism).
+          node.style.left = `${Math.round(entry.at!.x)}px`; node.style.top = `${Math.round(entry.at!.y)}px`;
           return node;
         }));
         // A15: reduced motion keeps static direction cues; LOW shows an emitter's glyph proxy in place of particles.

@@ -18,7 +18,7 @@ export function cueElements(cues: readonly RenderCue[], project: Project): HTMLE
     node.setAttribute("aria-hidden", "true");
     node.className = "pointer-events-none absolute text-sm font-black leading-none [text-shadow:0_0_2px_#0f172a,0_0_2px_#0f172a]";
     node.style.color = cue.color;
-    node.style.left = `${at.x}px`; node.style.top = `${at.y}px`;
+    node.style.left = `${Math.round(at.x)}px`; node.style.top = `${Math.round(at.y)}px`;
     node.style.transform = `translate(-50%, -50%)${cue.kind === "chevron" ? ` rotate(${angle.toFixed(3)}rad)` : ""}`;
     return [node];
   });
@@ -42,7 +42,7 @@ export function statusBadgeElements(items: readonly { id: string; center: Vec3; 
     node.dataset.labStatus = item.id;
     node.setAttribute("aria-hidden", "true");
     node.className = "pointer-events-none absolute flex h-5 min-w-5 items-center justify-center rounded-full bg-slate-950/85 px-1 text-xs font-black leading-none text-white ring-1 ring-white/60";
-    node.style.left = `${at.x}px`; node.style.top = `${at.y + 16}px`;
+    node.style.left = `${Math.round(at.x)}px`; node.style.top = `${Math.round(at.y) + 16}px`;
     node.style.transform = "translate(-50%, -50%)";
     return [node];
   });
