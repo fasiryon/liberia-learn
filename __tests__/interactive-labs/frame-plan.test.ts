@@ -233,6 +233,21 @@ describe("RX-006 test 1: the LOW frame planner", () => {
     expect(next.singles.some((item) => item.id === id)).toBe(false);
   });
 
+  it.each([
+    { change: "is highlighted/selected", update: (item: RenderItem): RenderItem => ({ ...item, highlighted: true }) },
+    { change: "is clipped", update: (item: RenderItem): RenderItem => ({ ...item, clip: { normal: [0, 1, 0], offset: 0 } }) },
+    { change: "becomes translucent", update: (item: RenderItem): RenderItem => ({ ...item, alpha: 0.5 }) },
+    { change: "leaves focus", update: (item: RenderItem): RenderItem => ({ ...item, inFocus: false }) },
+  ])("returns a component to its batch when it stops being excluded (it $change, then reverts)", ({ update }) => {
+    const definition = getInteractiveLabDefinition("mount-coffee-hydropower")!;
+    const list = buildRenderList({ definition, state: initializeLab(definition), profile: "LOW" });
+    const cache = createLowBatchCache(), initial = syncLowBatchCache(cache, list), id = initial.batches[0].itemIds[0], key = initial.batches[0].key;
+    syncLowBatchCache(cache, { ...list, items: list.items.map((item) => item.id === id ? update(item) : item) });
+    const restored = syncLowBatchCache(cache, list);
+    expect(restored.batches.find((batch) => batch.itemIds.includes(id))?.key).toBe(key);
+    expect(restored.singles.map((item) => item.id)).not.toContain(id);
+  });
+
   it("keeps every Mount Coffee storyboard scenario within the measured LOW draw budget", () => {
     const definition = getInteractiveLabDefinition("mount-coffee-hydropower")!;
     for (const scenario of LAB_REVIEW_SCENARIO_SETS[definition.id].scenarios) {

@@ -68,6 +68,30 @@ function localRadius(item: RenderItem): number {
   return radius;
 }
 
+/** Local half-extents of each primitive as ThreeScene and the LOW meshes build it (BoxGeometry(2,2,2), sphere r1, ...). */
+const BASE_HALF: Record<RenderItem["geometry"], Vec3> = { sphere: [1, 1, 1], cylinder: [1, 1, 1], cone: [1, 1, 1], cube: [1, 1, 1], box: [1, 1, 1], lever: [1, 1, 1], "rectangular-prism": [1.25, 0.82, 0.72], panel: [0.5, 0.5, 0.02] };
+const parametricBox = new Map<string, { min: Vec3; max: Vec3 }>();
+function localBox(item: RenderItem): { min: Vec3; max: Vec3 } {
+  if (!item.parametricGeometry) { const h = BASE_HALF[item.geometry]; return { min: [-h[0], -h[1], -h[2]], max: h }; }
+  const key = JSON.stringify(item.parametricGeometry);
+  let box = parametricBox.get(key);
+  if (!box) {
+    const positions = buildParametricGeometry(item.parametricGeometry, "LOW").positions;
+    const min: Vec3 = [Infinity, Infinity, Infinity], max: Vec3 = [-Infinity, -Infinity, -Infinity];
+    for (let index = 0; index < positions.length; index += 3) for (let axis = 0; axis < 3; axis += 1) { min[axis] = Math.min(min[axis], positions[index + axis]); max[axis] = Math.max(max[axis], positions[index + axis]); }
+    box = { min, max }; parametricBox.set(key, box);
+  }
+  return box;
+}
+
+/** RX-006 picking bounds: the eight world-space corners of a render item's oriented local box. */
+export function itemCorners(item: RenderItem): Vec3[] {
+  const { min, max } = localBox(item);
+  const corners: Vec3[] = [];
+  for (const x of [min[0], max[0]]) for (const y of [min[1], max[1]]) for (const z of [min[2], max[2]]) corners.push(transformPoint(item.matrix, [x, y, z]));
+  return corners;
+}
+
 /** World-space bounding sphere of a render item (its matrix may scale non-uniformly: use the largest axis). */
 export function itemSphere(item: RenderItem): { center: Vec3; radius: number } {
   const m = item.matrix;

@@ -47,6 +47,15 @@ const VIEWPORTS = {
 } as const;
 type ViewportName = keyof typeof VIEWPORTS;
 const SETTLE_MS = 2500;
+/**
+ * RX-005 A9 determinism on the software path. WebGL already renders identically run to run on SwiftShader; these
+ * flags pin the DOM around it (CPU tile raster, no partial/threaded raster or animation, fixed text AA and colour
+ * profile) so translucent rounded chips and label pills composite byte-identically too (run 37408210917: 14/64 stills
+ * differed only in DOM chips by <= 9 levels). They change no layout; the --gpu sign-off path does not use them.
+ */
+const DETERMINISTIC_RASTER_FLAGS = ["--disable-gpu-rasterization", "--disable-partial-raster", "--disable-skia-runtime-opts", "--run-all-compositor-stages-before-draw",
+  "--disable-threaded-animation", "--disable-threaded-scrolling", "--disable-checker-imaging", "--disable-image-animation-resync", "--disable-lcd-text",
+  "--font-render-hinting=none", "--force-color-profile=srgb", "--hide-scrollbars"];
 const COOKIE_NOTICE_KEY = "liberialearn_session_cookie_notice_dismissed";
 
 type RendererInfo = { kind: "gpu" | "software" | "none"; renderer: string; validFor: string[] };
@@ -194,7 +203,7 @@ async function contactSheet(browser: Browser, frames: { file: string; label: str
   const page = await browser.newPage({ viewport: { width: 1600, height: 900 } });
   const cells = frames.map((frame) => `<figure><img src="data:image/png;base64,${readFileSync(frame.file).toString("base64")}"/><figcaption>${frame.label}</figcaption></figure>`).join("");
   await page.setContent(`<html><body style="margin:0;background:#0b1020;color:#e2e8f0;font:14px system-ui"><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:8px">${cells}</div><style>figure{margin:0}img{width:100%;display:block;border:1px solid #334155}figcaption{padding:2px 4px}</style></body></html>`);
-  await page.screenshot({ path: out, fullPage: true, timeout: SCREENSHOT_TIMEOUT_MS });
+  await page.screenshot({ path: out, fullPage: true, animations: "disabled", caret: "hide", timeout: SCREENSHOT_TIMEOUT_MS });
   await page.close();
 }
 
@@ -284,7 +293,7 @@ async function main() {
 
   const launch = () => flag("gpu")
     ? chromium.launch({ headless: false, args: ["--ignore-gpu-blocklist", "--enable-gpu-rasterization"] })
-    : chromium.launch({ args: ["--use-angle=swiftshader", "--enable-unsafe-swiftshader", "--ignore-gpu-blocklist"] });
+    : chromium.launch({ args: ["--use-angle=swiftshader", "--enable-unsafe-swiftshader", "--ignore-gpu-blocklist", ...DETERMINISTIC_RASTER_FLAGS] });
   // Memory safety: a fresh browser every N scenario runs (default 6) so one long run never accumulates GPU/JS memory.
   const restartEvery = Math.max(1, Number(arg("restart-every") ?? 6));
   let browser = await launch();
@@ -313,7 +322,9 @@ async function main() {
         const frameProbe = profile === "FALLBACK_2D" ? null : await page.evaluate(() => (window as Window & { __labReviewFrameProbe?: () => unknown }).__labReviewFrameProbe?.() ?? null) as FrameProbeResult | null;
         const frameParity = frameProbe ? compareFramePlan(frameProbe) : null;
         const threeRequestViolation = (profile === "LOW" || profile === "FALLBACK_2D") && issues.threeChunkRequests.length > 0;
-        await page.screenshot({ path: still, fullPage: true, timeout: SCREENSHOT_TIMEOUT_MS });
+        // A9: every web font settled before the still, so text never rasterises with a fallback face in one run only.
+        await page.evaluate(() => document.fonts.ready.then(() => true));
+        await page.screenshot({ path: still, fullPage: true, animations: "disabled", caret: "hide", timeout: SCREENSHOT_TIMEOUT_MS });
         captures.push({ file: still, scenario: scenario.id, storyboardScene: scenario.storyboardScene, stage: scenario.stage, profile, viewport, kind: "still", reducedMotion: stillReducedMotion });
         const failure = !identity.verdict.ok ? identity.verdict.reason
           : profile !== "FALLBACK_2D" && !frameProbe ? "frame_probe_missing: the renderer installed no __labReviewFrameProbe"
@@ -352,7 +363,7 @@ async function main() {
           const section = motionPage.locator("[data-lab-review-ready] section").first();
           const bounds = await section.boundingBox();
           if (!bounds) throw new Error(`Review player has no bounds for ${scenario.id} frame ${index}.`);
-          const pageImage = await motionPage.screenshot({ fullPage: true, timeout: SCREENSHOT_TIMEOUT_MS });
+          const pageImage = await motionPage.screenshot({ fullPage: true, animations: "disabled", caret: "hide", timeout: SCREENSHOT_TIMEOUT_MS });
           const left = Math.max(0, Math.floor(bounds.x)), top = Math.max(0, Math.floor(bounds.y));
           const width = Math.max(1, Math.ceil(bounds.width)), height = Math.max(1, Math.ceil(bounds.height));
           await sharp(pageImage).extract({ left, top, width, height }).png().toFile(file);

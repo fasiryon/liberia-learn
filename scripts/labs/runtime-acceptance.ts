@@ -7,6 +7,10 @@
  * - every mount's renderer.info.memory (three.js) equals the first mount's, and
  * - the gc'd JS heap grows by less than 8 MB over the loop (recorded; the heap is not a GPU leak proof on its own).
  *
+ * LOW buffer identity (RX-006 test 6, LOW only): after a warm-up pass through every learner-controlled variable's
+ * values, a second identical pass must create no WebGL buffer and reallocate none (no bufferData); state-only changes
+ * reach the GPU only as bufferSubData range updates.
+ *
  *   npx tsx scripts/labs/runtime-acceptance.ts --lab mount-coffee-hydropower --profiles HIGH,LOW [--mounts 20]
  */
 import { execSync } from "node:child_process";
@@ -22,7 +26,8 @@ const arg = (name: string) => { const index = process.argv.indexOf(`--${name}`);
 const HEAP_GROWTH_LIMIT_MB = 8;
 const CONTEXT_WARNING = /too many active webgl contexts|context lost|CONTEXT_LOST_WEBGL/i;
 
-type ReviewWindow = Window & { __labReviewRemount?: () => number; __labReviewLiveRenderers?: number; __labReviewFrameProbe?: () => FrameProbeResult | null; gc?: () => void };
+type GlCounts = { create: number; data: number; sub: number; del: number };
+type ReviewWindow = Window & { __glBuffers?: GlCounts; __labReview?: { dispatch: (action: unknown) => { ok: boolean; reason?: string } }; __labReviewRemount?: () => number; __labReviewLiveRenderers?: number; __labReviewFrameProbe?: () => FrameProbeResult | null; gc?: () => void };
 
 async function waitForScene(page: Page) {
   const scope = page.locator("[data-lab-review-ready]");
@@ -78,6 +83,57 @@ async function remountLoop(page: Page, profile: CapabilityProfile, mounts: numbe
   return { profile, mounts, ok: problems.length === 0, problems, live, warnings, firstMountMemory: first, perMount, heapBeforeMB: heapBefore, heapAfterMB: heapAfter, heapGrowthMB };
 }
 
+/** Counts buffer creation and (re)allocation on every WebGL context in the page. Installed before any script runs. */
+const GL_BUFFER_COUNTER = `(() => {
+  const counts = { create: 0, data: 0, sub: 0, del: 0 };
+  window.__glBuffers = counts;
+  for (const Ctx of [window.WebGLRenderingContext, window.WebGL2RenderingContext]) {
+    if (!Ctx) continue;
+    const proto = Ctx.prototype;
+    const wrap = (name, key) => { const original = proto[name]; proto[name] = function (...args) { counts[key] += 1; return original.apply(this, args); }; };
+    wrap("createBuffer", "create"); wrap("bufferData", "data"); wrap("bufferSubData", "sub"); wrap("deleteBuffer", "del");
+  }
+})();`;
+
+/** Every value of every learner-controlled variable, in order: the state-only toggles the LOW pass must absorb. */
+function variableSweep(labId: string): { type: "set-variable"; variableId: string; value: number }[] {
+  const spec = getInteractiveLabDefinition(labId)?.fidelity;
+  if (!spec) return [];
+  return spec.variables.filter((variable) => variable.learnerControlled).flatMap((variable) => {
+    const values: number[] = [];
+    for (let value = variable.min; value <= variable.max + 1e-9; value += variable.step) values.push(Number(value.toFixed(9)));
+    return [...values, variable.initial].map((value) => ({ type: "set-variable" as const, variableId: variable.id, value }));
+  });
+}
+
+async function lowBufferIdentity(page: Page, labId: string) {
+  await waitForScene(page);
+  const sweep = variableSweep(labId);
+  const counts = () => page.evaluate(() => ({ ...(window as ReviewWindow).__glBuffers! }));
+  const pass = async () => {
+    let applied = 0;
+    for (const action of sweep) {
+      const result = await page.evaluate((next) => (window as ReviewWindow).__labReview?.dispatch(next) ?? { ok: false, reason: "no dispatcher" }, action);
+      if (result.ok) applied += 1;
+      await page.waitForTimeout(120);
+    }
+    await page.waitForTimeout(600);
+    return applied;
+  };
+  const warmApplied = await pass();
+  const before = await counts();
+  const applied = await pass();
+  const after = await counts();
+  const delta = { create: after.create - before.create, data: after.data - before.data, sub: after.sub - before.sub, del: after.del - before.del };
+  const problems = [
+    ...(sweep.length && applied > 0 ? [] : ["no state-only change was applied"]),
+    ...(delta.create === 0 ? [] : [`${delta.create} buffers created after warm-up`]),
+    ...(delta.data === 0 ? [] : [`${delta.data} buffer reallocations (bufferData) after warm-up`]),
+    ...(delta.sub > 0 ? [] : ["no bufferSubData range update observed"]),
+  ];
+  return { profile: "LOW" as const, ok: problems.length === 0, problems, toggles: sweep.length, warmApplied, applied, before, after, delta };
+}
+
 async function main() {
   const labId = arg("lab") ?? "mount-coffee-hydropower";
   const profiles = (arg("profiles") ?? "HIGH,LOW").split(",") as CapabilityProfile[];
@@ -104,6 +160,20 @@ async function main() {
         await page.goto(`${baseUrl}/lab-review/${encodeURIComponent(labId)}?scenario=${encodeURIComponent(scenario.id)}&profile=${profile}`, { waitUntil: "domcontentloaded", timeout: 180_000 });
         const result = await remountLoop(page, profile, mounts);
         results.push({ test: "remount-loop", ...result, pageErrors, ok: result.ok && pageErrors.length === 0 });
+        if (profile === "LOW") {
+          // RX-006 test 6 on a fresh page so the counter sees the renderer from its first frame.
+          const identityPage = await context.newPage();
+          await identityPage.addInitScript(GL_BUFFER_COUNTER);
+          const identityErrors: string[] = [];
+          identityPage.on("pageerror", (error) => identityErrors.push(error.message.slice(0, 300)));
+          try {
+            await identityPage.goto(`${baseUrl}/lab-review/${encodeURIComponent(labId)}?scenario=${encodeURIComponent(scenario.id)}&profile=LOW`, { waitUntil: "domcontentloaded", timeout: 180_000 });
+            const identity = await lowBufferIdentity(identityPage, labId);
+            results.push({ test: "low-buffer-identity", ...identity, pageErrors: identityErrors, ok: identity.ok && identityErrors.length === 0 });
+          } catch (cause) {
+            results.push({ test: "low-buffer-identity", profile, ok: false, error: cause instanceof Error ? cause.message.slice(0, 600) : String(cause), pageErrors: identityErrors });
+          } finally { await identityPage.close(); }
+        }
       } catch (cause) {
         results.push({ test: "remount-loop", profile, ok: false, error: cause instanceof Error ? cause.message.slice(0, 600) : String(cause), pageErrors });
       } finally {

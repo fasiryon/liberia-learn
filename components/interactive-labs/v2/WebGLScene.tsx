@@ -19,9 +19,9 @@ import { highlightBaseMix, HIGHLIGHT_COLOR, MARKER_COLOR } from "@/lib/interacti
 import { placeSceneLabels } from "@/lib/interactive-labs/v2/fidelity/labelLayout";
 import { buildMesh } from "./meshes";
 import { buildParametricGeometry } from "@/lib/interactive-labs/v2/fidelity/geometry/builders";
-import { createLowBatchCache, syncLowBatchCache } from "@/lib/interactive-labs/v2/fidelity/lowBatch";
+import { createLowBatchCache, MAX_LOW_BATCH_VERTICES, syncLowBatchCache } from "@/lib/interactive-labs/v2/fidelity/lowBatch";
 import { planLowFrame, type FramePlan } from "@/lib/interactive-labs/v2/fidelity/framePlan";
-import { LOW_BATCH_COLOR_CHANGED, LOW_BATCH_EMISSIVE_CHANGED, syncLowBatchItemState, type LowBatchStateRange } from "@/lib/interactive-labs/v2/fidelity/lowBatchState";
+import { createLowBatchScratch, ensureLowBatchScratch, LOW_BATCH_COLOR_CHANGED, LOW_BATCH_EMISSIVE_CHANGED, syncLowBatchItemState, type LowBatchScratch, type LowBatchStateRange } from "@/lib/interactive-labs/v2/fidelity/lowBatchState";
 import { publishFramePlan, type ReviewFrameProbe } from "@/lib/interactive-labs/v2/review/framePlanEvidence";
 import { createSurfaceTriangleStorage, writeSurfaceTriangles } from "@/lib/interactive-labs/v2/fidelity/surfaces";
 import type { MeshData } from "./meshes";
@@ -143,7 +143,9 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
     // Meshes are built once per geometry and profile, never per frame.
     const meshes = new Map<string, { position: WebGLBuffer; normal: WebGLBuffer; count: number }>();
     const cpuMeshes = new Map<string, MeshData>();
-    const lowBatchBuffers = new Map<string, { position: WebGLBuffer; normal: WebGLBuffer; color: WebGLBuffer; emissive: WebGLBuffer; count: number; itemRanges: Map<string, LowBatchStateRange & { first: number; count: number; matrix: Mat4 }> }>();
+    // RX-006: one set of buffers per batch key, kept (with their identities) until the context is torn down; they grow
+    // geometrically only during a rebuild, so state-only changes and in-capacity rebuilds never reallocate.
+    const lowBatchBuffers = new Map<string, { position: WebGLBuffer; normal: WebGLBuffer; color: WebGLBuffer; emissive: WebGLBuffer; count: number; scratch: LowBatchScratch; itemRanges: Map<string, LowBatchStateRange & { first: number; count: number; matrix: Mat4 }> }>();
     const lowBatchCache = createLowBatchCache();
     let uploadedLowPlan: ReturnType<typeof syncLowBatchCache> | null = null;
     const dataFor = (item: RenderList["items"][number]): MeshData => {
@@ -308,7 +310,7 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
         const planChanged = uploadedLowPlan !== plan;
         for (const batch of plan.batches) {
           let gpu = lowBatchBuffers.get(batch.key);
-          if (!gpu) { gpu = { position: gl.createBuffer()!, normal: gl.createBuffer()!, color: gl.createBuffer()!, emissive: gl.createBuffer()!, count: 0, itemRanges: new Map() }; lowBatchBuffers.set(batch.key, gpu); }
+          if (!gpu) { gpu = { position: gl.createBuffer()!, normal: gl.createBuffer()!, color: gl.createBuffer()!, emissive: gl.createBuffer()!, count: 0, scratch: createLowBatchScratch(), itemRanges: new Map() }; lowBatchBuffers.set(batch.key, gpu); }
           let poseChanged = gpu.count === 0 || gpu.itemRanges.size !== batch.items.length;
           if (!poseChanged) for (const item of batch.items) {
             const range = gpu.itemRanges.get(item.id);
@@ -318,7 +320,9 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
           }
           if (poseChanged) {
             const vertexCount = batch.items.reduce((count, item) => count + dataFor(item).count, 0);
-            const positions = new Float32Array(vertexCount * 3), normals = new Float32Array(vertexCount * 3), colors = new Float32Array(vertexCount * 3), emissions = new Float32Array(vertexCount);
+            const grew = ensureLowBatchScratch(gpu.scratch, vertexCount, MAX_LOW_BATCH_VERTICES);
+            const { positions, normals, colors, emissions } = gpu.scratch;
+            const previousRanges = new Map(gpu.itemRanges);
             gpu.itemRanges.clear();
             let vertexOffset = 0;
             for (const item of batch.items) {
@@ -330,14 +334,19 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
                 let nx = transformed[0] - origin[0], ny = transformed[1] - origin[1], nz = transformed[2] - origin[2]; const length = Math.hypot(nx, ny, nz) || 1; nx /= length; ny /= length; nz /= length;
                 normals.set([nx, ny, nz], vertexOffset * 3); colors.set(baseColor, vertexOffset * 3); emissions[vertexOffset] = item.emissive; vertexOffset++;
               }
-              const itemVertexCount = vertexOffset - first;
-              gpu.itemRanges.set(item.id, { first, count: itemVertexCount, color: item.color, emissive: item.emissive, matrix: [...item.matrix], colorData: new Float32Array(itemVertexCount * 3), emissiveData: new Float32Array(itemVertexCount) });
+              const itemVertexCount = vertexOffset - first, previous = previousRanges.get(item.id);
+              // Reuse the item's range staging when its size is unchanged (no allocation on a pose-only rebuild).
+              const reuse = previous && previous.count === itemVertexCount;
+              gpu.itemRanges.set(item.id, { first, count: itemVertexCount, color: item.color, emissive: item.emissive, matrix: reuse ? Object.assign(previous.matrix, item.matrix) : [...item.matrix], colorData: reuse ? previous.colorData : new Float32Array(itemVertexCount * 3), emissiveData: reuse ? previous.emissiveData : new Float32Array(itemVertexCount) });
             }
             gpu.count = vertexCount;
-            gl.bindBuffer(gl.ARRAY_BUFFER, gpu.position); gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
-            gl.bindBuffer(gl.ARRAY_BUFFER, gpu.normal); gl.bufferData(gl.ARRAY_BUFFER, normals, gl.STATIC_DRAW);
-            gl.bindBuffer(gl.ARRAY_BUFFER, gpu.color); gl.bufferData(gl.ARRAY_BUFFER, colors, gl.DYNAMIC_DRAW);
-            gl.bindBuffer(gl.ARRAY_BUFFER, gpu.emissive); gl.bufferData(gl.ARRAY_BUFFER, emissions, gl.DYNAMIC_DRAW);
+            const upload = (buffer: WebGLBuffer, data: Float32Array, used: number, usage: number) => {
+              gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+              if (grew) gl.bufferData(gl.ARRAY_BUFFER, data.byteLength, usage);
+              gl.bufferSubData(gl.ARRAY_BUFFER, 0, data.subarray(0, used));
+            };
+            upload(gpu.position, positions, vertexCount * 3, gl.DYNAMIC_DRAW); upload(gpu.normal, normals, vertexCount * 3, gl.DYNAMIC_DRAW);
+            upload(gpu.color, colors, vertexCount * 3, gl.DYNAMIC_DRAW); upload(gpu.emissive, emissions, vertexCount, gl.DYNAMIC_DRAW);
           } else {
             for (const item of batch.items) {
               const range = gpu.itemRanges.get(item.id);
@@ -359,7 +368,8 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
           gl.drawArrays(gl.TRIANGLES, 0, gpu.count);
         }
         if (planChanged) {
-          for (const [key, buffers] of lowBatchBuffers) if (!plan.batches.some((batch) => batch.key === key)) { gl.deleteBuffer(buffers.position); gl.deleteBuffer(buffers.normal); gl.deleteBuffer(buffers.color); gl.deleteBuffer(buffers.emissive); lowBatchBuffers.delete(key); }
+          // A batch key that empties keeps its buffers (bounded by the lab's finite batch keys) for when it refills.
+          for (const [key, buffers] of lowBatchBuffers) if (!plan.batches.some((batch) => batch.key === key)) { buffers.count = 0; buffers.itemRanges.clear(); }
           uploadedLowPlan = plan;
         }
         for (const item of plan.singles) drawItem(item, meshFor(item), item.spin ? spinMatrix(item.spin, t, motionless) : item.matrix);

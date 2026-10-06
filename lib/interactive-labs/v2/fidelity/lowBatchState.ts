@@ -29,3 +29,28 @@ export function syncLowBatchItemState(range: LowBatchStateRange, item: { color: 
   }
   return changed;
 }
+
+/**
+ * RX-006 capacity rule: a merged batch's GPU buffers (and CPU scratch) grow geometrically, and only during a rebuild,
+ * never past the WebGL1-safe batch cap; a rebuild that fits writes into the existing buffers with bufferSubData.
+ */
+export function growLowBatchCapacity(current: number, needed: number, max: number): number {
+  if (needed > max) throw new Error(`low_batch_over_capacity:${needed}>${max}`);
+  if (needed <= current) return current;
+  return Math.min(max, Math.max(needed, Math.ceil(Math.max(current, 1) * 2)));
+}
+
+/** Reusable CPU staging for one batch rebuild, sized to the batch capacity in vertices. */
+export type LowBatchScratch = { capacity: number; positions: Float32Array; normals: Float32Array; colors: Float32Array; emissions: Float32Array };
+export function createLowBatchScratch(): LowBatchScratch {
+  return { capacity: 0, positions: new Float32Array(0), normals: new Float32Array(0), colors: new Float32Array(0), emissions: new Float32Array(0) };
+}
+/** Grow `scratch` to hold `vertices`; returns true when it (and so the GPU buffers) had to grow. */
+export function ensureLowBatchScratch(scratch: LowBatchScratch, vertices: number, max: number): boolean {
+  const capacity = growLowBatchCapacity(scratch.capacity, vertices, max);
+  if (capacity === scratch.capacity) return false;
+  scratch.capacity = capacity;
+  scratch.positions = new Float32Array(capacity * 3); scratch.normals = new Float32Array(capacity * 3);
+  scratch.colors = new Float32Array(capacity * 3); scratch.emissions = new Float32Array(capacity);
+  return true;
+}
