@@ -74,6 +74,8 @@ export function InteractiveLabPlayer({ labId = "g4-solid-figures", override, rev
   // RX-005e: phone portrait puts the controls in a bottom sheet; desktop and phone landscape keep the side column.
   const [sheetMode, setSheetMode] = useState(false);
   const [sheetSnap, setSheetSnap] = useState<SheetSnap>("peek");
+  // The page reserves the peek's measured height, so the HUD and alerts are never under the collapsed sheet.
+  const [peekHeight, setPeekHeight] = useState(0);
   // A9 review evidence: every profile change that was not requested (context loss, slow frames, failed chunk).
   const downgradePath = useRef<string[]>([]);
   // A17: the WebGL renderer reports its first full frame; until then the 2D render shows under a veil.
@@ -83,7 +85,7 @@ export function InteractiveLabPlayer({ labId = "g4-solid-figures", override, rev
   // A3: while the HIGH/STANDARD renderer loads, prefetch the LOW chunk so an offline downgrade still has a renderer.
   useEffect(() => { if (profile === "HIGH" || profile === "STANDARD") void loadWebGLScene().catch(() => undefined); }, [profile]);
   const reducedMotion = usePrefersReducedMotion();
-  const deviceHints = typeof navigator === "undefined" ? {} : readDeviceHints(navigator);
+  const deviceHints = typeof navigator === "undefined" ? {} : { ...readDeviceHints(navigator), webgl2: typeof window !== "undefined" && typeof window.WebGL2RenderingContext === "function" };
   // A performance downgrade in this session, or remembered from an earlier one, blocks every later auto-upgrade.
   const performanceDowngraded = useRef(false);
   const canUpgrade = !reviewPreview && override === undefined && !manualProfileChoice.current && !performanceDowngraded.current && profile === "LOW" && upgradeEligibility(deviceHints) && !recallPerformanceDowngrade(getProfileStorage());
@@ -187,16 +189,18 @@ export function InteractiveLabPlayer({ labId = "g4-solid-figures", override, rev
     else if (pick.item.kind === "object") dispatch({ type: "select", objectId: pick.item.id });
     else dispatch({ type: "inspect-component", componentId: pick.item.id });
   };
-  const onDowngrade = (reason: "context" | "performance") => {
+  const onDowngrade = (reason: "context" | "performance" | "creation") => {
     setProfile((current) => {
-      const next = reason === "context" ? "FALLBACK_2D" : downgradeProfile(current);
+      // A lost context goes to 2D (A5); a renderer that cannot be created falls to the LOW pass (R4 P1-3).
+      const next = reason === "context" ? "FALLBACK_2D" : reason === "creation" ? "LOW" : downgradeProfile(current);
       downgradePath.current = [...downgradePath.current, `${current}>${next}:${reason}`];
       rememberProfile(getProfileStorage(), next);
-      if (reason === "performance") { performanceDowngraded.current = true; rememberPerformanceDowngrade(getProfileStorage()); }
+      // Any forced downgrade blocks later auto-upgrades, so the lab cannot cycle back to a renderer that failed.
+      performanceDowngraded.current = true; rememberPerformanceDowngrade(getProfileStorage());
       return next;
     });
     // A18: one non-modal notice; camera, selection, rail position and a pending confirm carry over (they live here).
-    setNotice(reason === "context" ? "Switched to lighter graphics: 3D is not available on this device, so the lab shows the 2D view." : "Switched to lighter graphics to keep things smooth.");
+    setNotice(reason === "context" ? "Switched to lighter graphics: 3D is not available on this device, so the lab shows the 2D view." : reason === "creation" ? "Switched to lighter graphics: detailed 3D is not available on this device." : "Switched to lighter graphics to keep things smooth.");
   };
   const onUpgradeReady = useCallback(() => {
     setProfile((current) => {
@@ -211,6 +215,8 @@ export function InteractiveLabPlayer({ labId = "g4-solid-figures", override, rev
     downgradePath.current = [...downgradePath.current, `${profile}>${next}:load`];
     setProfile(next);
     rememberProfile(getProfileStorage(), next);
+    // R4 P1-2: a failed chunk must not be retried by the LOW probe's auto-upgrade (an offline loop).
+    performanceDowngraded.current = true; rememberPerformanceDowngrade(getProfileStorage());
     setNotice(next === "LOW" ? "Switched to lighter graphics: the detailed graphics could not load." : "Switched to lighter graphics: 3D graphics could not load, so the lab shows the 2D view.");
   }, [profile]);
 
@@ -234,7 +240,7 @@ export function InteractiveLabPlayer({ labId = "g4-solid-figures", override, rev
   );
 
   return (
-    <section style={sheetMode ? { paddingBottom: "11rem" } : undefined} data-lab-active-profile={profile} data-lab-downgrade-path={downgradePath.current.join(" ")} className="relative mx-auto max-w-6xl overflow-hidden rounded-3xl bg-slate-950 text-white shadow-2xl">
+    <section style={sheetMode ? { paddingBottom: `${Math.max(176, Math.ceil(peekHeight) + 16)}px` } : undefined} data-lab-active-profile={profile} data-lab-downgrade-path={downgradePath.current.join(" ")} className="relative mx-auto max-w-6xl overflow-hidden rounded-3xl bg-slate-950 text-white shadow-2xl">
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 px-5 py-4">
         <div><p className="text-xs font-semibold uppercase tracking-[.18em] text-cyan-300">Grade {definition.grade} · {definition.subject[0] + definition.subject.slice(1).toLowerCase()}</p><h1 className="text-xl font-bold">{definition.title ?? definition.id}</h1></div>
         <div className="flex items-center gap-2 text-sm">
@@ -250,7 +256,7 @@ export function InteractiveLabPlayer({ labId = "g4-solid-figures", override, rev
         <div onKeyDownCapture={onSceneKeyDownCapture}
           onKeyDown={(event) => { if (event.key === "Escape" && pendingControl) { event.preventDefault(); setPendingControl(null); } }}
           onBlur={(event) => { if (pendingControl && !event.currentTarget.contains(event.relatedTarget as Node | null)) setPendingControl(null); }}
-          className={`relative ${definition.fidelity?.environment === "DAYLIGHT" ? "bg-[linear-gradient(#dbeafe,#f1f5f9_58%,#dce7d4)] text-slate-900" : definition.fidelity?.environment === "DARK_FIELD" ? "bg-[#02040a]" : "bg-[radial-gradient(circle_at_50%_38%,#263d72,#080d20_68%)]"}`}>
+          className={`relative min-w-0 ${definition.fidelity?.environment === "DAYLIGHT" ? "bg-[linear-gradient(#dbeafe,#f1f5f9_58%,#dce7d4)] text-slate-900" : definition.fidelity?.environment === "DARK_FIELD" ? "bg-[#02040a]" : "bg-[radial-gradient(circle_at_50%_38%,#263d72,#080d20_68%)]"}`}>
           {profile === "FALLBACK_2D"
             ? <Fallback2D definition={definition} state={state} reducedMotion={reducedMotion} traceFlowId={traceFlowId} dispatch={dispatch} onPick={onPick} pendingControlId={pendingControl?.componentId ?? null} onDragControl={onDragControl} />
             : <SceneLoadBoundary key={profile} onError={onRendererLoadError} fallback={<Fallback2D definition={definition} state={state} reducedMotion={reducedMotion} traceFlowId={traceFlowId} dispatch={dispatch} onPick={onPick} pendingControlId={pendingControl?.componentId ?? null} onDragControl={onDragControl} />}>
@@ -263,15 +269,17 @@ export function InteractiveLabPlayer({ labId = "g4-solid-figures", override, rev
           {rail && definition.fidelity && <CameraRailBar spec={definition.fidelity} position={rail} onNext={nextRailStop} onSkip={skipRail} />}
           <SceneHud definition={definition} state={state} dispatch={dispatch} />
           {pendingControl && <div data-lab-pending-control={pendingControl.componentId} className="flex flex-wrap items-center gap-2 border-t border-amber-200/40 bg-slate-900 px-3 py-2 text-sm text-white">
-            <span aria-live="assertive" className="font-bold">Confirm? {pendingControl.label}</span>
+            <span className="font-bold">Confirm? {pendingControl.label}</span>
             <button type="button" onClick={() => activateControlPart(pendingControl.componentId)} className="min-h-11 rounded-full bg-amber-300 px-4 text-xs font-bold text-slate-950 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white">Confirm</button>
             <button type="button" onClick={() => setPendingControl(null)} className="min-h-11 rounded-full border border-white/30 px-4 text-xs font-bold focus-visible:outline focus-visible:outline-2 focus-visible:outline-white">Cancel</button>
           </div>}
+          {/* A14: one live region mounted for the player's lifetime, so the pending confirm is reliably announced. */}
+          <p aria-live="assertive" className="sr-only">{pendingControl ? `Confirm? ${pendingControl.label}` : ""}</p>
           <SceneControlBar definition={definition} state={state} dispatch={dispatch} pendingControlId={pendingControl?.componentId ?? null} onActivate={activateControlPart} />
         </div>
         {sheetMode
-          ? <MobileSheet definition={definition} state={state} activeCheck={activeCheck} snap={sheetSnap} onSnap={setSheetSnap}><div className="p-5">{controlsBody}</div></MobileSheet>
-          : <aside id="lab-controls" aria-label="Lab controls" className="border-l border-white/10 bg-white/[.03] p-5 lg:max-h-[clamp(420px,62vh,640px)] lg:overflow-y-auto [@media(orientation:landscape)_and_(max-height:500px)]:max-h-[calc(100dvh-4.5rem)] [@media(orientation:landscape)_and_(max-height:500px)]:overflow-y-auto">{controlsBody}</aside>}
+          ? <MobileSheet definition={definition} state={state} activeCheck={activeCheck} snap={sheetSnap} onSnap={setSheetSnap} onPeekHeight={setPeekHeight}><div className="p-5">{controlsBody}</div></MobileSheet>
+          : <aside id="lab-controls" aria-label="Lab controls" className="min-w-0 border-l border-white/10 bg-white/[.03] p-5 lg:max-h-[clamp(420px,62vh,640px)] lg:overflow-y-auto [@media(orientation:landscape)_and_(max-height:500px)]:max-h-[calc(100dvh-4.5rem)] [@media(orientation:landscape)_and_(max-height:500px)]:overflow-y-auto">{controlsBody}</aside>}
       </div>
     </section>
   );

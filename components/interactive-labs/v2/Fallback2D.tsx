@@ -51,10 +51,13 @@ export function Fallback2D({ definition, state, reducedMotion, traceFlowId, disp
   const list = useMemo(() => buildRenderList({ definition, state, profile: "FALLBACK_2D", displayFidelity: display, pendingControlId }), [definition, state, display, pendingControlId]);
   // A14 drag-variable on 2D: the front projection maps world (x, y) to SVG (x, -y), so the drag runs in SVG units.
   const svgRef = useRef<SVGSVGElement>(null);
-  const dragging = useRef<{ id: string; axis: [[number, number, number], [number, number, number]] } | null>(null);
+  const dragging = useRef<{ id: string; axis: [[number, number, number], [number, number, number]]; x: number; y: number; moved: boolean } | null>(null);
   const dragTo = (event: ReactPointerEvent) => {
     const active = dragging.current, matrix = svgRef.current?.getScreenCTM();
     if (!active || !matrix) return;
+    // A14 dead-zone, as on the WebGL profiles: a tap never jumps the value.
+    if (!active.moved && Math.hypot(event.clientX - active.x, event.clientY - active.y) < 6) return;
+    active.moved = true;
     const local = new DOMPoint(event.clientX, event.clientY).matrixTransform(matrix.inverse());
     const [a, b] = active.axis;
     onDragControl?.(active.id, dragParameter({ x: a[0], y: -a[1] }, { x: b[0], y: -b[1] }, { x: local.x, y: local.y }));
@@ -117,7 +120,7 @@ export function Fallback2D({ definition, state, reducedMotion, traceFlowId, disp
           const pick: ScenePick = { kind: "item", item };
           return (
             <g key={item.id} opacity={item.alpha < 0.5 && item.inFocus ? 0.45 : item.alpha} {...(item.detail === "decor" ? { pointerEvents: "none" as const } : item.control && item.inFocus ? { "aria-hidden": true, onClick: () => onPick(pick), className: item.control.dragAxis ? "cursor-grab touch-none" : "cursor-pointer",
-              ...(item.control.dragAxis ? { onPointerDown: (event: ReactPointerEvent<SVGGElement>) => { dragging.current = { id: item.id, axis: item.control!.dragAxis! }; event.currentTarget.setPointerCapture(event.pointerId); dragTo(event); }, onPointerMove: dragTo, onPointerUp: () => { dragging.current = null; }, onPointerCancel: () => { dragging.current = null; } } : {}) } : item.selectable && item.inFocus ? { role: "button", tabIndex: 0, "aria-label": item.status ? `${item.label}: ${item.status.text}` : item.label, "aria-pressed": item.highlighted, onClick: () => onPick(pick), onKeyDown: activate(pick), className: "cursor-pointer outline-none focus-visible:[&>polygon]:stroke-cyan-200" } : {})}>
+              ...(item.control.dragAxis ? { onPointerDown: (event: ReactPointerEvent<SVGGElement>) => { dragging.current = { id: item.id, axis: item.control!.dragAxis!, x: event.clientX, y: event.clientY, moved: false }; event.currentTarget.setPointerCapture(event.pointerId); }, onPointerMove: dragTo, onPointerUp: () => { dragging.current = null; }, onPointerCancel: () => { dragging.current = null; } } : {}) } : item.selectable && item.inFocus ? { role: "button", tabIndex: 0, "aria-label": item.status ? `${item.label}: ${item.status.text}` : item.label, "aria-pressed": item.highlighted, onClick: () => onPick(pick), onKeyDown: activate(pick), className: "cursor-pointer outline-none focus-visible:[&>polygon]:stroke-cyan-200" } : {})}>
               {item.selectable && item.inFocus && item.detail !== "decor" && <polygon data-lab-touch-target points={hull.map((p) => p.join(",")).join(" ")} fill="transparent" stroke="#fff" strokeOpacity={0.001} strokeWidth={48} vectorEffect="non-scaling-stroke" pointerEvents="stroke" aria-hidden="true" />}
               {item.emissive > 0 && <circle cx={item.center[0]} cy={-item.center[1]} r={0.08 * item.emissive + 0.04} fill="#fde68a" opacity={Math.min(0.08, item.emissive * 0.08)} filter="url(#glow)" />}
               {/* A19 / G3: a status lamp's glyph, so its state is never colour alone. */}

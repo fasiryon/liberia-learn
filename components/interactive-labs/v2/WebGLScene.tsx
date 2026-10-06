@@ -36,7 +36,7 @@ type Props = {
   traceFlowId: string | null;
   dispatch: (action: LabAction) => void;
   onPick: (pick: ScenePick) => void;
-  onDowngrade: (reason: "context" | "performance") => void;
+  onDowngrade: (reason: "context" | "performance" | "creation") => void;
   onUpgradeReady?: () => void;
   allowProfileUpgrade?: boolean;
   allowPerformanceDowngrade?: boolean;
@@ -178,8 +178,11 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
     // A13 LOW floor: daylight labs get one flat ground quad (one draw) so the plant does not float on the backdrop.
     const groundBatch: FlowVertexBatch = { positions: new Float32Array([-40, GROUND_Y, -40, 40, GROUND_Y, -40, 40, GROUND_Y, 40, -40, GROUND_Y, -40, 40, GROUND_Y, 40, -40, GROUND_Y, 40]), colors: new Float32Array(Array.from({ length: 6 }, () => [0.79, 0.85, 0.77]).flat()), count: 6 };
     const groundBuffers = { positions: gl.createBuffer()!, colors: gl.createBuffer()!, capacity: 0 };
-    const flowBuffers = Object.fromEntries(["casing", "core", "particles", "traceNodes"].map((key) => [key, { positions: gl.createBuffer()!, colors: gl.createBuffer()!, capacity: 0 }])) as Record<"casing" | "core" | "particles" | "traceNodes", { positions: WebGLBuffer; colors: WebGLBuffer; capacity: number }>;
-    const uploadBatch = (batch: FlowVertexBatch, gpu: { positions: WebGLBuffer; colors: WebGLBuffer; capacity: number }) => {
+    const flowBuffers = Object.fromEntries(["casing", "core", "particles", "traceNodes"].map((key) => [key, { positions: gl.createBuffer()!, colors: gl.createBuffer()!, capacity: 0 }])) as Record<"casing" | "core" | "particles" | "traceNodes", { positions: WebGLBuffer; colors: WebGLBuffer; capacity: number; version?: number }>;
+    const uploadBatch = (batch: FlowVertexBatch, gpu: { positions: WebGLBuffer; colors: WebGLBuffer; capacity: number; version?: number }) => {
+      // A versioned batch (the static flow tubes) is uploaded only when it was rewritten (RX-006 test 6).
+      if (batch.version !== undefined && gpu.version === batch.version) return;
+      gpu.version = batch.version;
       if (gpu.capacity < batch.positions.length) {
         gpu.capacity = batch.positions.length;
         gl.bindBuffer(gl.ARRAY_BUFFER, gpu.positions); gl.bufferData(gl.ARRAY_BUFFER, gpu.capacity * Float32Array.BYTES_PER_ELEMENT, gl.DYNAMIC_DRAW);
@@ -208,7 +211,7 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
       gl.uniform1f(uni.alpha, alpha); gl.uniform1f(uni.emissive, 0); gl.uniform1f(uni.lighting, 0); gl.uniform1f(uni.clipEnabled, 0); gl.uniform1f(uni.pointSize, size);
       gl.drawArrays(mode, 0, markers.length);
     };
-    const drawBatch = (batch: FlowVertexBatch, gpu: { positions: WebGLBuffer; colors: WebGLBuffer; capacity: number }, mode: number, alpha: number, size: number, viewProj: Mat4) => {
+    const drawBatch = (batch: FlowVertexBatch, gpu: { positions: WebGLBuffer; colors: WebGLBuffer; capacity: number; version?: number }, mode: number, alpha: number, size: number, viewProj: Mat4) => {
       if (!batch.count) return;
       uploadBatch(batch, gpu);
       gl.bindBuffer(gl.ARRAY_BUFFER, gpu.positions); gl.enableVertexAttribArray(attr.position); gl.vertexAttribPointer(attr.position, 3, gl.FLOAT, false, 0, 0);
@@ -509,6 +512,7 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
           drag.current = { ...drag.current, x: e.clientX, y: e.clientY, moved: drag.current.moved + Math.abs(dx) + Math.abs(dy) };
           const control = drag.current.control;
           if (control?.control?.dragAxis) {
+            if (drag.current.moved < 6) return; // A14 dead-zone: a tap never jumps the value.
             const project = projector(), rect = e.currentTarget.getBoundingClientRect(), [a, b] = control.control.dragAxis, start = project(a), end = project(b);
             if (start && end) onDragControl?.(control.id, dragParameter(start, end, { x: e.clientX - rect.left, y: e.clientY - rect.top }));
             return;

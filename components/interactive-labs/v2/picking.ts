@@ -10,19 +10,22 @@ export const MIN_TARGET_PX = 44;
 /**
  * RX-006 picking from the current render list (never GPU ids), identical for merged, instanced and single draws.
  * Tiers, best first:
- *   0. the pointer is inside the part's projected bounds: the nearest (smallest depth) wins, so a part in front
- *      occludes one behind it;
+ *   0. the pointer is inside the part's projected bounds: a control part first, then the nearest (smallest depth),
+ *      so a part in front occludes one behind it;
  *   1. the pointer is inside the part's bounds grown to the minimum touch target;
  *   2. the pointer is within `radius` of the part's projected centre.
  * Tiers 1 and 2 pick the smallest screen distance to the centre (so adjacent small controls such as gauge bands stay
  * individually reachable), then depth; every tier ends with stable component-id order. Trace mode picks flow nodes.
  */
 export function pickNearest(list: RenderList, project: (p: [number, number, number]) => ScreenPoint | null, pointer: ScreenPoint, traceFlowId: string | null, radius = 56): ScenePick | null {
-  type Candidate = { pick: ScenePick; tier: number; d: number; depth: number; id: string };
+  type Candidate = { pick: ScenePick; tier: number; d: number; depth: number; id: string; control: boolean };
   let best: Candidate | null = null;
   const better = (a: Candidate, b: Candidate) => {
     if (a.tier !== b.tier) return a.tier < b.tier;
     const byDepth = a.tier === 0;
+    // A large part's screen box also covers small controls beside it (the dam around the season gauge, R4 P1-02):
+    // inside real bounds a control part wins over a non-control; between equals the nearest depth wins (occlusion).
+    if (byDepth && a.control !== b.control) return a.control;
     if (byDepth && a.depth !== b.depth) return a.depth < b.depth;
     if (a.d !== b.d) return a.d < b.d;
     if (!byDepth && a.depth !== b.depth) return a.depth < b.depth;
@@ -41,7 +44,7 @@ export function pickNearest(list: RenderList, project: (p: [number, number, numb
       }
     }
     if (tier === Infinity) return;
-    const candidate: Candidate = { pick, tier, d, depth: at.depth ?? 0, id: pick.kind === "item" ? pick.item.id : pick.nodeId };
+    const candidate: Candidate = { pick, tier, d, depth: at.depth ?? 0, id: pick.kind === "item" ? pick.item.id : pick.nodeId, control: pick.kind === "item" && !!pick.item.control };
     if (!best || better(candidate, best)) best = candidate;
   };
   if (traceFlowId) {

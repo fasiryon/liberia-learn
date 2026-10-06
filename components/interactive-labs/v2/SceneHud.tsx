@@ -3,7 +3,7 @@
 // quantities the lab declares (spec.hud), a state banner (spec.hudAlert) and the challenge status, so the
 // cause-and-effect numbers are readable without scrolling the side panel. Values come only from the model.
 import type { InteractiveLabDefinition, LabAction, LabState } from "@/lib/interactive-labs/v2/types";
-import { deriveSimulation, isComponentRevealed } from "@/lib/interactive-labs/v2/fidelity/engine";
+import { deriveSimulation } from "@/lib/interactive-labs/v2/fidelity/engine";
 import { statusVisual } from "@/lib/interactive-labs/v2/fidelity/palette";
 import { ProtectionReset } from "./ProtectionReset";
 
@@ -18,7 +18,7 @@ export function SceneHud({ definition, state, dispatch }: Props) {
   // A19 / G3: every visible status lamp stated in text, with its glyph (the scene glyph and colour say the same).
   const lamps = spec.components.flatMap((component) => {
     const cue = statusVisual(simulation.componentStates[component.id]?.status).cue;
-    return cue && !component.internal && component.selectable !== false && component.detail !== "decor" && isComponentRevealed(spec, fidelity, component.id) ? [{ id: component.id, label: component.label, ...cue }] : [];
+    return cue && !component.internal && component.selectable !== false && component.detail !== "decor" ? [{ id: component.id, label: component.label, ...cue }] : [];
   });
   const alert = spec.hudAlert?.(quantities) ?? null;
   const challenge = state.mode === "CHALLENGE" && spec.challengeStatus ? spec.challengeStatus(quantities) : null;

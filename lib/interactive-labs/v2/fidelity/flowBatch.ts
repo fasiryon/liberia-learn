@@ -3,9 +3,9 @@ import { measureFlowPath, type FlowPathMetrics, writeFlowParticles } from "./pre
 import { MARKER_COLOR, parseHexColor } from "./palette";
 import { emitterParticles } from "./emitters";
 import type { Vec3 } from "./math";
-import { createFlowTubeStorage, writeFlowTubes, type FlowTubeStorage } from "./flowTubes";
+import { createFlowTubeStorage, flowTubeSignature, writeFlowTubes, type FlowTubeStorage } from "./flowTubes";
 
-export type FlowVertexBatch = { positions: Float32Array; colors: Float32Array; count: number };
+export type FlowVertexBatch = { positions: Float32Array; colors: Float32Array; count: number; /** When set, a renderer may skip re-uploading an unchanged version. */ version?: number };
 export type PointBatchStorage = { positions: Float32Array; count: number };
 export const createPointBatchStorage = (): PointBatchStorage => ({ positions: new Float32Array(0), count: 0 });
 /** Write moving scene markers into reusable CPU storage; capacity changes only when the list grows. */
@@ -72,7 +72,9 @@ function metricsFor(storage: FlowBatchStorage, flow: RenderFlow): FlowPathMetric
 /** Refill reusable CPU storage for the LOW renderer: cased flow tubes, particles, and trace nodes. */
 export function batchFlowGeometry(list: RenderList, timeSeconds: number, reducedMotion: boolean, traceFlowId: string | null, storage: FlowBatchStorage): FlowBatchStorage {
   storage.particles.count = 0; storage.traceNodes.count = 0;
-  writeFlowTubes(list.flows.filter((flow) => flow.points.length >= 2), "LOW", storage.tubes);
+  // The tubes are static between flow changes: rewrite (and so re-upload) them only when their signature moves.
+  const drawable = list.flows.filter((flow) => flow.points.length >= 2), signature = flowTubeSignature(drawable);
+  if (signature !== storage.tubes.signature) { writeFlowTubes(drawable, "LOW", storage.tubes); storage.tubes.signature = signature; }
   for (const flow of list.flows) {
     if (flow.active && flow.particleCount > 0) {
       const batch = storage.particles, start = batch.count;

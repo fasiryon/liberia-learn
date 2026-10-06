@@ -11,7 +11,8 @@ export function resolveCapabilityProfile(input: { requested?: CapabilityProfile;
 const PROFILE_ORDER: readonly CapabilityProfile[] = ["HIGH", "STANDARD", "LOW", "FALLBACK_2D"];
 const PROFILE_STORAGE_KEY = "ll-lab-profile/rx005-1";
 
-export type DeviceHints = { deviceMemoryGb?: number; saveData?: boolean; effectiveType?: string };
+/** `webgl2: false` vetoes an upgrade: the HIGH/STANDARD renderer (three.js r186) is WebGL2-only. */
+export type DeviceHints = { deviceMemoryGb?: number; saveData?: boolean; effectiveType?: string; webgl2?: boolean };
 type ProfileStorage = Pick<Storage, "getItem" | "setItem">;
 
 /** Start with a cheap, universally available experience. Explicit learner choice takes precedence. */
@@ -23,6 +24,7 @@ export function resolveInitialProfile(input: { supportsWebGL: boolean; requested
 
 /** Hints can veto an upgrade; when a browser omits a hint the measured frame probe still decides. */
 export function upgradeEligibility(hints: DeviceHints): boolean {
+  if (hints.webgl2 === false) return false;
   if (hints.saveData) return false;
   if (hints.effectiveType && ["slow-2g", "2g", "3g"].includes(hints.effectiveType.toLowerCase())) return false;
   if (hints.deviceMemoryGb !== undefined && hints.deviceMemoryGb < 4) return false;

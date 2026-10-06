@@ -52,6 +52,8 @@ type ViewportName = keyof typeof VIEWPORTS;
  * a phone held sideways only ever shows its viewport, so landscape captures the viewport.
  */
 const fullPageFor = (viewport: ViewportName) => viewport !== "landscape";
+/** WebGL/three.js shader or GL errors in the console fail a still. */
+const SHADER_ERROR = /Shader Error|VALIDATE_STATUS|THREE\.WebGLProgram|WebGL: INVALID|GL_INVALID|undeclared identifier/i;
 const SETTLE_MS = 2500;
 /**
  * RX-005 A9 determinism on the software path. WebGL already renders identically run to run on SwiftShader; these
@@ -332,7 +334,10 @@ async function main() {
         await page.evaluate(() => document.fonts.ready.then(() => true));
         await page.screenshot({ path: still, fullPage: fullPageFor(viewport), animations: "disabled", caret: "hide", timeout: SCREENSHOT_TIMEOUT_MS });
         captures.push({ file: still, scenario: scenario.id, storyboardScene: scenario.storyboardScene, stage: scenario.stage, profile, viewport, kind: "still", reducedMotion: stillReducedMotion });
+        // R4 P1-1: a shader that fails to compile still counts draws, so parity alone cannot catch it.
+        const shaderErrors = issues.consoleErrors.filter((text) => SHADER_ERROR.test(text));
         const failure = !identity.verdict.ok ? identity.verdict.reason
+          : shaderErrors.length ? `shader_error: ${shaderErrors[0].slice(0, 200)}`
           : profile !== "FALLBACK_2D" && !frameProbe ? "frame_probe_missing: the renderer installed no __labReviewFrameProbe"
           : frameParity && !frameParity.ok ? `frame_plan_mismatch: ${frameParity.mismatches.join("; ")}`
           : threeRequestViolation ? `three_chunk_requested_on_${profile}: ${issues.threeChunkRequests.join(", ")}` : undefined;

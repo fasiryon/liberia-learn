@@ -56,7 +56,7 @@ describe("A14 control contract", () => {
   it("projects the pointer onto the drag axis on screen", () => {
     expect(dragParameter({ x: 0, y: 100 }, { x: 0, y: 0 }, { x: 40, y: 25 })).toBeCloseTo(0.75);
     expect(dragParameter({ x: 0, y: 0 }, { x: 0, y: 0 }, { x: 5, y: 5 })).toBe(0);
-    expect(dragAxisEnds(resistorControl, [3, 0.3, 0])).toEqual([[3, 0.05, 0], [3, 0.55, 0]]);
+    expect(dragAxisEnds(resistorControl, [3, 0.3, 0])).toEqual([[3, -1.2, 0], [3, 1.8, 0]]);
   });
 
   it("a confirm control previews first and dispatches only on the second activation of the same part", () => {
@@ -79,7 +79,7 @@ describe("A14 control contract", () => {
       const lever = list.items.find((item) => item.id === "switch-lever")!;
       expect(lever.highlighted).toBe(true);
       expect(lever.control?.pending).toBe(true);
-      expect(list.items.find((item) => item.id === "resistor")!.control?.dragAxis).toEqual([[3, 0.05, 0], [3, 0.55, 0]]);
+      expect(list.items.find((item) => item.id === "resistor")!.control?.dragAxis).toEqual([[3, -1.2, 0], [3, 1.8, 0]]);
       expect(instructionalView(list)).toEqual(instructionalView(buildRenderList({ definition: circuitDefinition, state, profile })));
     }
   });
@@ -104,7 +104,9 @@ describe("A14 confirm preview in the player", () => {
     kernelCalls.length = 0;
     act(() => chip().click());
     expect(strip()?.textContent).toContain("Confirm? Switch on/off");
-    expect(strip()?.querySelector("[aria-live]")).not.toBeNull();
+    // Announced through the player's permanently mounted live region; the chip's name carries the pending state.
+    expect(host.querySelector("[aria-live=assertive]")?.textContent).toBe("Confirm? Switch on/off");
+    expect(chip().getAttribute("aria-label")).toBe("Confirm? Switch lever");
     expect(kernelCalls).toEqual([]);
     expect(chip().getAttribute("aria-pressed")).toBe("false");
     act(() => [...strip()!.querySelectorAll("button")].find((button) => button.textContent === "Confirm")!.click());

@@ -41,7 +41,7 @@ export function statusBadgeElements(items: readonly { id: string; center: Vec3; 
     node.title = item.status!.text;
     node.dataset.labStatus = item.id;
     node.setAttribute("aria-hidden", "true");
-    node.className = "pointer-events-none absolute flex h-5 min-w-5 items-center justify-center rounded-full bg-slate-950/85 px-1 text-xs font-black leading-none text-white ring-1 ring-white/60";
+    node.className = "pointer-events-none absolute flex h-6 min-w-6 items-center justify-center rounded-full bg-slate-950/85 px-1 text-sm font-black leading-none text-white ring-1 ring-white/60";
     node.style.left = `${Math.round(at.x)}px`; node.style.top = `${Math.round(at.y) + 16}px`;
     node.style.transform = "translate(-50%, -50%)";
     return [node];

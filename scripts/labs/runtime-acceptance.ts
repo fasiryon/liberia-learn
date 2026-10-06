@@ -7,6 +7,9 @@
  * - every mount's renderer.info.memory (three.js) equals the first mount's, and
  * - the gc'd JS heap grows by less than 8 MB over the loop (recorded; the heap is not a GPU leak proof on its own).
  *
+ * Context loss (A5 / Test 5, WebGL profiles): a forced WEBGL_lose_context must land the lab on FALLBACK_2D with the
+ * "Switched to lighter graphics" notice.
+ *
  * LOW buffer identity (RX-006 test 6, LOW only): after a warm-up pass through every learner-controlled variable's
  * values, a second identical pass must create no WebGL buffer and reallocate none (no bufferData); state-only changes
  * reach the GPU only as bufferSubData range updates.
@@ -134,6 +137,24 @@ async function lowBufferIdentity(page: Page, labId: string) {
   return { profile: "LOW" as const, ok: problems.length === 0, problems, toggles: sweep.length, warmApplied, applied, before, after, delta };
 }
 
+/** RX-005 A5 / Test 5: losing the WebGL context sends the lab to FALLBACK_2D with the non-modal notice. */
+async function contextLoss(page: Page, profile: CapabilityProfile) {
+  await waitForScene(page);
+  const lost = await page.evaluate(() => {
+    const canvas = document.querySelector<HTMLCanvasElement>("[data-lab-review-ready] canvas");
+    const gl = (canvas?.getContext("webgl2") ?? canvas?.getContext("webgl")) as WebGLRenderingContext | null;
+    const extension = gl?.getExtension("WEBGL_lose_context");
+    if (!extension) return false;
+    extension.loseContext();
+    return true;
+  });
+  let landed = false;
+  if (lost) landed = await page.locator("[data-lab-active-profile=FALLBACK_2D]").waitFor({ state: "attached", timeout: 20_000 }).then(() => true, () => false);
+  const state = await page.evaluate(() => ({ profile: document.querySelector("[data-lab-active-profile]")?.getAttribute("data-lab-active-profile") ?? null, path: document.querySelector("[data-lab-active-profile]")?.getAttribute("data-lab-downgrade-path") ?? null, notice: [...document.querySelectorAll("[data-lab-review-ready] [role=status]")].map((node) => node.textContent ?? "").find((text) => /lighter graphics/i.test(text)) ?? null }));
+  const problems = [...(lost ? [] : ["could not force a context loss"]), ...(landed ? [] : [`expected FALLBACK_2D, got ${state.profile}`]), ...(state.notice ? [] : ["no lighter-graphics notice"])];
+  return { profile, ok: problems.length === 0, problems, ...state };
+}
+
 async function main() {
   const labId = arg("lab") ?? "mount-coffee-hydropower";
   const profiles = (arg("profiles") ?? "HIGH,LOW").split(",") as CapabilityProfile[];
@@ -160,6 +181,15 @@ async function main() {
         await page.goto(`${baseUrl}/lab-review/${encodeURIComponent(labId)}?scenario=${encodeURIComponent(scenario.id)}&profile=${profile}`, { waitUntil: "domcontentloaded", timeout: 180_000 });
         const result = await remountLoop(page, profile, mounts);
         results.push({ test: "remount-loop", ...result, pageErrors, ok: result.ok && pageErrors.length === 0 });
+        if (profile !== "FALLBACK_2D") {
+          const lossPage = await context.newPage();
+          try {
+            await lossPage.goto(`${baseUrl}/lab-review/${encodeURIComponent(labId)}?scenario=${encodeURIComponent(scenario.id)}&profile=${profile}`, { waitUntil: "domcontentloaded", timeout: 180_000 });
+            results.push({ test: "context-loss", ...(await contextLoss(lossPage, profile)) });
+          } catch (cause) {
+            results.push({ test: "context-loss", profile, ok: false, error: cause instanceof Error ? cause.message.slice(0, 600) : String(cause) });
+          } finally { await lossPage.close(); }
+        }
         if (profile === "LOW") {
           // RX-006 test 6 on a fresh page so the counter sees the renderer from its first frame.
           const identityPage = await context.newPage();

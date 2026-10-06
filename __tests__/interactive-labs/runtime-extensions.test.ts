@@ -115,9 +115,9 @@ describe("shared interactive-lab runtime extensions", () => {
     // 3 units of path in 0.32 dashes with 0.22 gaps = 2 dashes per unit segment, 4 radial quads (24 vertices) each.
     expect(storage.tubes.core.count).toBe(6 * 24);
     expect(storage.tubes.casing.count).toBe(storage.tubes.core.count);
-    expect(storage.tubes.core.colors[0]).toBeCloseTo(119 / 255, 6);
-    expect(storage.tubes.core.colors[1]).toBeCloseTo(154 / 255, 6);
-    expect(storage.tubes.core.colors[2]).toBeCloseTo(178 / 255, 6);
+    expect(storage.tubes.core.colors[0]).toBeCloseTo(0x94 / 255, 6);
+    expect(storage.tubes.core.colors[1]).toBeCloseTo(0xa3 / 255, 6);
+    expect(storage.tubes.core.colors[2]).toBeCloseTo(0xb8 / 255, 6);
     expect(storage.tubes.casing.colors[0]).toBeCloseTo(15 / 255, 6);
     expect(storage.particles.count).toBe(0);
     expect(storage.traceNodes.count).toBe(2);

@@ -38,7 +38,8 @@ async function main() {
   mkdirSync(out, { recursive: true });
 
   const browser = await chromium.launch({ args: ["--use-angle=swiftshader", "--enable-unsafe-swiftshader", "--ignore-gpu-blocklist"] });
-  const context = await browser.newContext(viewport === "mobile" ? { viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true } : { viewport: { width: 1366, height: 900 } });
+  const context = await browser.newContext(viewport === "mobile" ? { viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true }
+    : viewport === "landscape" ? { viewport: { width: 844, height: 390 }, isMobile: true, hasTouch: true } : { viewport: { width: 1366, height: 900 } });
   await context.addInitScript(`try { localStorage.setItem("liberialearn_session_cookie_notice_dismissed", "true"); } catch (e) {}`);
   const page = await context.newPage();
   const errors: string[] = [];

@@ -10,7 +10,7 @@ import { castsShadow, runningEmitters, threeTransparent } from "@/lib/interactiv
 import { emitterParticles } from "@/lib/interactive-labs/v2/fidelity/emitters";
 import { HIGHLIGHT_COLOR, MARKER_COLOR, SECTION_CREAM } from "@/lib/interactive-labs/v2/fidelity/palette";
 import { disposeSurfaces, syncSurfaces, type SurfaceStore } from "./threeSurfaces";
-import { createFlowTubeStorage, writeFlowTubes, type FlowTubeStorage } from "@/lib/interactive-labs/v2/fidelity/flowTubes";
+import { createFlowTubeStorage, flowTubeSignature, writeFlowTubes, type FlowTubeStorage } from "@/lib/interactive-labs/v2/fidelity/flowTubes";
 
 export type ThreeSceneStores = {
   scene: THREE.Scene;
@@ -18,7 +18,7 @@ export type ThreeSceneStores = {
   geometries: Map<string, THREE.BufferGeometry>;
   materials: Map<string, THREE.MeshStandardMaterial>;
   /** A10/A18: every flow's core tubes and their dark casing, each merged into one vertex-coloured mesh. */
-  flowTubes: { storage: FlowTubeStorage; signature: string; core: THREE.Mesh; casing: THREE.Mesh } | null;
+  flowTubes: { storage: FlowTubeStorage; signature: number; core: THREE.Mesh; casing: THREE.Mesh } | null;
   flowParticles: Map<string, THREE.Points>;
   markers: THREE.Points | null;
   surfaces: SurfaceStore;
@@ -183,7 +183,8 @@ export function syncThreeScene(stores: ThreeSceneStores, list: RenderList, optio
     if (!stores.markers) {
       const geometry = new THREE.BufferGeometry();
       geometry.setAttribute("position", new THREE.BufferAttribute(new Float32Array(markerPoints.length * 3), 3));
-      stores.markers = new THREE.Points(geometry, new THREE.PointsMaterial({ color: MARKER_COLOR, size: 12, sizeAttenuation: false, depthTest: false }));
+      // A18: markers and trace nodes are round sprites too (the shared disc shader).
+      stores.markers = new THREE.Points(geometry, new THREE.ShaderMaterial({ vertexShader: spriteVertex, fragmentShader: spriteFragment, depthTest: false, toneMapped: false, uniforms: { uColor: { value: new THREE.Color(MARKER_COLOR) }, uSize: { value: 12 } } }));
       stores.markers.userData.labMarker = true; stores.markers.renderOrder = 6;
     }
     const attribute = stores.markers.geometry.getAttribute("position") as THREE.BufferAttribute;
@@ -203,10 +204,10 @@ export function syncThreeScene(stores: ThreeSceneStores, list: RenderList, optio
  */
 function syncFlowTubes(stores: ThreeSceneStores, list: RenderList, profile: "HIGH" | "STANDARD") {
   const flows = list.flows.filter((flow) => flow.points.length >= 2);
-  const signature = JSON.stringify(flows.map((flow) => [flow.id, flow.active, flow.color, flow.points]));
+  const signature = flowTubeSignature(flows);
   if (!stores.flowTubes) {
     const make = (renderOrder: number, depthWrite: boolean) => { const mesh = new THREE.Mesh(new THREE.BufferGeometry(), new THREE.MeshBasicMaterial({ vertexColors: true, toneMapped: false, depthWrite })); mesh.matrixAutoUpdate = false; mesh.renderOrder = renderOrder; mesh.frustumCulled = false; return mesh; };
-    stores.flowTubes = { storage: createFlowTubeStorage(), signature: "", core: make(5, true), casing: make(4, false) };
+    stores.flowTubes = { storage: createFlowTubeStorage(), signature: Number.NaN, core: make(5, true), casing: make(4, false) };
     stores.flowTubes.core.userData.flowTubes = "core"; stores.flowTubes.casing.userData.flowTubes = "casing";
   }
   const tubes = stores.flowTubes;
@@ -226,7 +227,15 @@ function syncFlowTubes(stores: ThreeSceneStores, list: RenderList, profile: "HIG
 
 // A18 round sprites for emitter particles: a disc cut in the fragment shader, no texture.
 const spriteVertex = `uniform float uSize; void main() { gl_PointSize = uSize; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`;
-const spriteFragment = `uniform vec3 uColor; void main() { vec2 c = gl_PointCoord - 0.5; if (dot(c, c) > 0.25) discard; gl_FragColor = vec4(uColor, 1.0); #include <colorspace_fragment> }`;
+// three.js resolves `#include` only at the start of a line (a mid-line include failed to compile on every HIGH/STANDARD
+// still, so no sprite drew - R4 performance P1-1).
+const spriteFragment = `uniform vec3 uColor;
+void main() {
+  vec2 c = gl_PointCoord - 0.5;
+  if (dot(c, c) > 0.25) discard;
+  gl_FragColor = vec4(uColor, 1.0);
+  #include <colorspace_fragment>
+}`;
 
 function syncEmitters(stores: ThreeSceneStores, list: RenderList, options: ThreeSyncOptions) {
   const running = runningEmitters(list), live = new Set(running.map((emitter) => emitter.id));

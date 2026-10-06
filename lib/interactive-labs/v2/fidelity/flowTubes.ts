@@ -3,7 +3,7 @@
 // rim around the light core while solids still hide both. A flow that is not running is drawn dashed in the inactive
 // colour. Pure and `three`-free: ThreeScene, WebGLScene and the frame planner share these exact triangles.
 import type { RenderFlow } from "./renderList";
-import { INACTIVE_FLOW_COLOR, parseHexColor } from "./palette";
+import { parseHexColor } from "./palette";
 import type { Vec3 } from "./math";
 
 export type FlowTubeProfile = "HIGH" | "STANDARD" | "LOW";
@@ -13,12 +13,31 @@ export const FLOW_CASING_SCALE = 1.9;
 export const FLOW_CASING_COLOR = "#0f172a";
 /** Dash and gap lengths (world units) of a flow that is not running. */
 export const FLOW_DASH = 0.32, FLOW_GAP = 0.22;
+/** A flow that is not running recedes: a thinner tube in a neutral grey, never the water or current colour. */
+export const FLOW_IDLE_SCALE = 0.55, FLOW_IDLE_COLOR = "#94a3b8";
 
 /** Non-indexed triangle storage with per-vertex colour, reused across frames (grows geometrically, never shrinks). */
-export type TubeBatch = { positions: Float32Array; colors: Float32Array; count: number };
-export const createTubeBatch = (): TubeBatch => ({ positions: new Float32Array(0), colors: new Float32Array(0), count: 0 });
-export type FlowTubeStorage = { core: TubeBatch; casing: TubeBatch };
-export const createFlowTubeStorage = (): FlowTubeStorage => ({ core: createTubeBatch(), casing: createTubeBatch() });
+export type TubeBatch = { positions: Float32Array; colors: Float32Array; count: number; /** Bumped on every rewrite, so a renderer uploads only changed tubes. */ version?: number };
+export const createTubeBatch = (): TubeBatch => ({ positions: new Float32Array(0), colors: new Float32Array(0), count: 0, version: 0 });
+/** `signature` is the flowTubeSignature the tubes were last written for (NaN before the first write). */
+export type FlowTubeStorage = { core: TubeBatch; casing: TubeBatch; signature: number };
+export const createFlowTubeStorage = (): FlowTubeStorage => ({ core: createTubeBatch(), casing: createTubeBatch(), signature: Number.NaN });
+
+/**
+ * An allocation-free hash of everything the tubes depend on (each flow's running state, colour and path), so a
+ * renderer rewrites and re-uploads its static tubes only when one of them changes, never every frame.
+ */
+export function flowTubeSignature(flows: readonly Pick<RenderFlow, "points" | "active" | "color">[]): number {
+  let hash = 2166136261;
+  const mix = (value: number) => { hash = Math.imul(hash ^ (value | 0), 16777619) >>> 0; };
+  for (const flow of flows) {
+    mix(flow.active ? 1 : 2);
+    for (let index = 0; index < flow.color.length; index += 1) mix(flow.color.charCodeAt(index));
+    mix(flow.points.length);
+    for (const point of flow.points) { mix(Math.round(point[0] * 1e4)); mix(Math.round(point[1] * 1e4)); mix(Math.round(point[2] * 1e4)); }
+  }
+  return hash;
+}
 
 function reserve(batch: TubeBatch, vertices: number) {
   if (batch.positions.length >= vertices * 3) return;
@@ -68,10 +87,12 @@ function writeTube(batch: TubeBatch, a: Vec3, b: Vec3, radius: number, radial: n
 /** Refill the reusable core and casing triangles for every flow (both empty when there are no drawable flows). */
 export function writeFlowTubes(flows: readonly Pick<RenderFlow, "points" | "active" | "color">[], profile: FlowTubeProfile, storage: FlowTubeStorage): FlowTubeStorage {
   storage.core.count = 0; storage.casing.count = 0;
+  storage.core.version = (storage.core.version ?? 0) + 1; storage.casing.version = (storage.casing.version ?? 0) + 1;
   const { radius, radial } = FLOW_TUBE[profile], casing = parseHexColor(FLOW_CASING_COLOR);
-  for (const flow of flows) {
-    const core = parseHexColor(flow.active ? flow.color : INACTIVE_FLOW_COLOR);
-    for (const [a, b] of flowPieces(flow)) { writeTube(storage.core, a, b, radius, radial, core); writeTube(storage.casing, a, b, radius * FLOW_CASING_SCALE, radial, casing); }
+  // Idle flows first, running flows last, so a running flow is never overdrawn where paths share a segment.
+  for (const flow of [...flows.filter((candidate) => !candidate.active), ...flows.filter((candidate) => candidate.active)]) {
+    const core = parseHexColor(flow.active ? flow.color : FLOW_IDLE_COLOR), r = flow.active ? radius : radius * FLOW_IDLE_SCALE;
+    for (const [a, b] of flowPieces(flow)) { writeTube(storage.core, a, b, r, radial, core); writeTube(storage.casing, a, b, r * FLOW_CASING_SCALE, radial, casing); }
   }
   return storage;
 }
