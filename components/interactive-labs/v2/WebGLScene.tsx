@@ -73,7 +73,8 @@ const LIGHTING = { full: 3, simplified: 2, minimal: 1, none: 0 } as const;
 /** Shared with ThreeScene's daylight ground plane. */
 const GROUND_Y = -2.25;
 
-function rgb(value: string): [number, number, number] { const n = Number.parseInt(value.replace("#", ""), 16); return [(n >> 16 & 255) / 255, (n >> 8 & 255) / 255, (n & 255) / 255]; }
+const rgbCache = new Map<string, [number, number, number]>();
+function rgb(value: string): [number, number, number] { let color = rgbCache.get(value); if (!color) { const n = Number.parseInt(value.replace("#", ""), 16); color = [(n >> 16 & 255) / 255, (n >> 8 & 255) / 255, (n & 255) / 255]; rgbCache.set(value, color); } return color; }
 
 export function WebGLScene({ definition, state, profile, reducedMotion, traceFlowId, dispatch, onPick, onDowngrade, onUpgradeReady, allowProfileUpgrade = false, allowPerformanceDowngrade = true, review = false, onReady, railActive = false, recenter = 0 }: Props) {
   const canvas = useRef<HTMLCanvasElement>(null);
@@ -129,6 +130,8 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
     const low = profile === "LOW";
     const modelMatrixScratch = new Float32Array(16);
     const mvpScratch = new Float32Array(16);
+    const batchMvpScratch = new Float32Array(16);
+    const identityScratch = new Float32Array(IDENTITY);
     // Meshes are built once per geometry and profile, never per frame.
     const meshes = new Map<string, { position: WebGLBuffer; normal: WebGLBuffer; count: number }>();
     const cpuMeshes = new Map<string, MeshData>();
@@ -190,7 +193,7 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
       gl.disableVertexAttribArray(attr.color); gl.vertexAttrib3f(attr.color, 1, 1, 1);
       gl.disableVertexAttribArray(attr.emissive); gl.vertexAttrib1f(attr.emissive, 0);
       gl.disableVertexAttribArray(attr.emissive); gl.vertexAttrib1f(attr.emissive, 0); gl.uniform1f(uni.useVertexEmissive, 0);
-      gl.uniformMatrix4fv(uni.mvp, false, new Float32Array(viewProj)); gl.uniformMatrix4fv(uni.model, false, new Float32Array(IDENTITY));
+      batchMvpScratch.set(viewProj); gl.uniformMatrix4fv(uni.mvp, false, batchMvpScratch); gl.uniformMatrix4fv(uni.model, false, identityScratch);
       gl.uniform3fv(uni.color, rgb(color)); gl.uniform3fv(uni.highlightColor, rgb(HIGHLIGHT_COLOR)); gl.uniform1f(uni.highlightMix, 0); gl.uniform1f(uni.hasHighlight, 0); gl.uniform1f(uni.useVertexColor, 0); gl.uniform1f(uni.useVertexEmissive, 0);
       gl.uniform1f(uni.alpha, alpha); gl.uniform1f(uni.emissive, 0); gl.uniform1f(uni.lighting, 0); gl.uniform1f(uni.clipEnabled, 0); gl.uniform1f(uni.pointSize, size);
       gl.drawArrays(mode, 0, markers.length);
@@ -202,7 +205,7 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
       gl.bindBuffer(gl.ARRAY_BUFFER, gpu.colors); gl.enableVertexAttribArray(attr.color); gl.vertexAttribPointer(attr.color, 3, gl.FLOAT, false, 0, 0);
       gl.disableVertexAttribArray(attr.normal); gl.vertexAttrib3f(attr.normal, 0, 0, 1);
       gl.disableVertexAttribArray(attr.emissive); gl.vertexAttrib1f(attr.emissive, 0);
-      gl.uniformMatrix4fv(uni.mvp, false, new Float32Array(viewProj)); gl.uniformMatrix4fv(uni.model, false, new Float32Array(IDENTITY));
+      batchMvpScratch.set(viewProj); gl.uniformMatrix4fv(uni.mvp, false, batchMvpScratch); gl.uniformMatrix4fv(uni.model, false, identityScratch);
       gl.uniform3f(uni.color, 1, 1, 1); gl.uniform3fv(uni.highlightColor, rgb(HIGHLIGHT_COLOR)); gl.uniform1f(uni.highlightMix, 0); gl.uniform1f(uni.hasHighlight, 0); gl.uniform1f(uni.useVertexColor, 1); gl.uniform1f(uni.useVertexEmissive, 0);
       gl.uniform1f(uni.alpha, alpha); gl.uniform1f(uni.emissive, 0); gl.uniform1f(uni.lighting, 0); gl.uniform1f(uni.clipEnabled, 0); gl.uniform1f(uni.pointSize, size);
       gl.drawArrays(mode, 0, batch.count);
