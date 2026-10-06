@@ -116,6 +116,8 @@ model User {
   portfolioCredentials              PortfolioCredential[]
   // Wave 4A
   teacherLessonAssignments          TeacherLessonAssignment[]         @relation("TeacherLessonAssignments")
+  governedEvidenceAsLearner         GovernedLearningEvidence[]        @relation("GovernedEvidenceLearner")
+  governedEvidenceAsActor           GovernedLearningEvidence[]        @relation("GovernedEvidenceActor")
 }
 
 model District {
@@ -137,15 +139,15 @@ model District {
 }
 
 model School {
-  id                          String                    @id @default(cuid())
+  id                          String                     @id @default(cuid())
   name                        String
-  code                        String?                   @unique
-  timezone                    String                    @default("Africa/Monrovia")
+  code                        String?                    @unique
+  timezone                    String                     @default("Africa/Monrovia")
   primaryHex                  String?
   secondaryHex                String?
   accentHex                   String?
   logoUrl                     String?
-  createdAt                   DateTime                  @default(now())
+  createdAt                   DateTime                   @default(now())
   contactEmail                String?
   contactName                 String?
   contactPhone                String?
@@ -153,19 +155,19 @@ model School {
   district                    String?
   districtId                  String?
   motto                       String?
-  status                      String                    @default("ACTIVE")
+  status                      String                     @default("ACTIVE")
   welcomeMsg                  String?
-  allowBlueprintAdoption      Boolean                   @default(true)
-  allowTeacherPublish         Boolean                   @default(false)
-  approvalRequired            Boolean                   @default(true)
-  onboardingStep              Int                       @default(0)
+  allowBlueprintAdoption      Boolean                    @default(true)
+  allowTeacherPublish         Boolean                    @default(false)
+  approvalRequired            Boolean                    @default(true)
+  onboardingStep              Int                        @default(0)
   pilotStatus                 String?
   pilotCohort                 String?
   pilotStartDate              DateTime?
   pilotNotes                  String?
-  contactEmailVerified        Boolean                   @default(false)
-  contactPhoneVerified        Boolean                   @default(false)
-  googleSsoEnabled            Boolean                   @default(true)
+  contactEmailVerified        Boolean                    @default(false)
+  contactPhoneVerified        Boolean                    @default(false)
+  googleSsoEnabled            Boolean                    @default(true)
   schoolType                  String?
   estimatedEnrollment         Int?
   approvedAt                  DateTime?
@@ -176,7 +178,7 @@ model School {
   // Nullable during migration; required for pilot schools during onboarding
   // (not enforced at the DB level - see docs/agents/GUARDIAN_SAFEGUARDING.md).
   designatedSafetyStaffUserId String?
-  designatedSafetyStaff       User?                     @relation("SchoolDesignatedSafetyStaff", fields: [designatedSafetyStaffUserId], references: [id])
+  designatedSafetyStaff       User?                      @relation("SchoolDesignatedSafetyStaff", fields: [designatedSafetyStaffUserId], references: [id])
   AuditLog                    AuditLog[]
   classes                     Class[]
   inviteTokens                InviteToken[]
@@ -186,7 +188,7 @@ model School {
   guardianConsents            GuardianConsent[]
   smsDeliveryLogs             SMSDeliveryLog[]
   metricEvents                MetricEvent[]
-  District                    District?                 @relation(fields: [districtId], references: [id])
+  District                    District?                  @relation(fields: [districtId], references: [id])
   interventionLogs            InterventionLog[]
   // Part 4: unit grouping
   curriculumUnits             CurriculumUnit[]
@@ -212,7 +214,7 @@ model School {
   studentImportBatches        StudentImportBatch[]
   certificates                Certificate[]
   onboardingKitUrl            String?
-  onboardingKitStatus         String                    @default("pending")
+  onboardingKitStatus         String                     @default("pending")
   onboardingGeneratedAt       DateTime?
   schoolEvents                SchoolEvent[]
   generatedDocuments          GeneratedDocument[]
@@ -228,6 +230,9 @@ model School {
   // Sprint 26: league table snapshots
   leagueSnapshots             LeagueSnapshot[]
   qualityReviewTasks          QualityReviewTask[]
+  governedLearningEvidence    GovernedLearningEvidence[]
+  studentConceptStates        StudentConceptState[]
+  masteryUpdates              MasteryUpdate[]
 }
 
 model Class {
@@ -311,6 +316,9 @@ model Student {
   adaptiveMastery             AdaptiveMasteryRecord[]
   learningPathQueue           LearningPathQueue[]
   gradedSubmissions           GradedSubmission[]
+  governedLearningEvidence    GovernedLearningEvidence[]
+  conceptStates               StudentConceptState[]
+  masteryUpdates              MasteryUpdate[]
 }
 
 model Exam {
@@ -1614,6 +1622,118 @@ model SloEvent {
   @@index([service, createdAt])
   @@index([createdAt])
   @@index([schoolId, createdAt])
+}
+
+/// Canonical admitted evidence for the governed Grade 4 fractions slice.
+/// Rows are append-only at the database layer. Raw LearningEvent and client
+/// observations are never inserted here without server-governed admission.
+model GovernedLearningEvidence {
+  id                      String         @id
+  schoolId                String
+  studentId               String
+  learnerUserId           String
+  actorUserId             String
+  actorRole               String
+  ontologyReleaseId       String
+  ontologyReleaseIdentity String
+  conceptId               String
+  conceptRevision         Int
+  bindingId               String
+  itemId                  String
+  itemVersion             String
+  evidencePolicyId        String
+  evidencePolicyVersion   String
+  toolPolicyId            String
+  toolPolicyVersion       String
+  context                 String
+  source                  String
+  diagnosticKind          String?
+  correct                 Boolean
+  idempotencyKey          String
+  observationFingerprint  String
+  ledgerSequence          Int
+  observedAt              DateTime
+  admittedAt              DateTime       @default(now())
+  school                  School         @relation(fields: [schoolId], references: [id], onDelete: Restrict)
+  student                 Student        @relation(fields: [studentId], references: [id], onDelete: Restrict)
+  learnerUser             User           @relation("GovernedEvidenceLearner", fields: [learnerUserId], references: [id], onDelete: Restrict)
+  actorUser               User           @relation("GovernedEvidenceActor", fields: [actorUserId], references: [id], onDelete: Restrict)
+  masteryUpdate           MasteryUpdate?
+
+  @@unique([schoolId, studentId, idempotencyKey], name: "GovernedEvidence_school_student_idempotency_key")
+  @@unique([schoolId, studentId, ontologyReleaseIdentity, conceptId, conceptRevision, ledgerSequence], name: "GovernedEvidence_partition_sequence_key")
+  @@index([schoolId, studentId, ontologyReleaseIdentity, conceptId, conceptRevision, admittedAt])
+  @@index([learnerUserId, admittedAt])
+  @@index([actorUserId, admittedAt])
+}
+
+/// Singular materialized concept-level learner state for the bounded release.
+/// MasteryUpdate plus GovernedLearningEvidence are the replay authority.
+model StudentConceptState {
+  id                      String          @id
+  schoolId                String
+  studentId               String
+  ontologyReleaseId       String
+  ontologyReleaseIdentity String
+  conceptId               String
+  conceptRevision         Int
+  masteryEstimate         Float
+  confidence              Float
+  uncertainty             Float
+  evidenceCount           Int
+  firstObservedAt         DateTime
+  lastObservedAt          DateTime
+  lastPracticedAt         DateTime?
+  stateRevision           Int
+  algorithmVersion        String
+  evidenceState           String
+  reasonCodes             Json
+  throughEvidenceSequence Int
+  stateHash               String
+  updatedAt               DateTime        @updatedAt
+  school                  School          @relation(fields: [schoolId], references: [id], onDelete: Restrict)
+  student                 Student         @relation(fields: [studentId], references: [id], onDelete: Restrict)
+  updates                 MasteryUpdate[]
+
+  @@unique([schoolId, studentId, ontologyReleaseIdentity, conceptId, conceptRevision], name: "StudentConceptState_partition_key")
+  @@index([schoolId, studentId, updatedAt])
+  @@index([studentId, conceptId])
+}
+
+/// Append-only revision ledger. Every canonical state revision has exactly one
+/// update and every accepted evidence row can drive at most one revision.
+model MasteryUpdate {
+  id                      String                   @id
+  stateId                 String
+  schoolId                String
+  studentId               String
+  acceptedEvidenceId      String                   @unique
+  ontologyReleaseId       String
+  ontologyReleaseIdentity String
+  conceptId               String
+  conceptRevision         Int
+  priorRevision           Int
+  newRevision             Int
+  algorithmVersion        String
+  policyVersion           String
+  priorEstimate           Float?
+  newEstimate             Float
+  priorConfidence         Float?
+  newConfidence           Float
+  priorUncertainty        Float?
+  newUncertainty          Float
+  reason                  String
+  reasonCodes             Json
+  stateHash               String
+  createdAt               DateTime                 @default(now())
+  state                   StudentConceptState      @relation(fields: [stateId], references: [id], onDelete: Restrict)
+  school                  School                   @relation(fields: [schoolId], references: [id], onDelete: Restrict)
+  student                 Student                  @relation(fields: [studentId], references: [id], onDelete: Restrict)
+  acceptedEvidence        GovernedLearningEvidence @relation(fields: [acceptedEvidenceId], references: [id], onDelete: Restrict)
+
+  @@unique([stateId, newRevision], name: "MasteryUpdate_state_revision_key")
+  @@index([schoolId, studentId, conceptId, createdAt])
+  @@index([stateId, createdAt])
 }
 
 /// Sprint 2: immutable learning event log.
@@ -5312,7 +5432,6 @@ model SmsResponse {
 
   @@index([sessionId])
 }
-
 
 /// Sprint 26: weekly school performance snapshot for the national league table.
 model LeagueSnapshot {
