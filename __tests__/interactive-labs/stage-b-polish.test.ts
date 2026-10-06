@@ -1,0 +1,47 @@
+import { describe, expect, it } from "vitest";
+import { hydropowerDefinition as definition } from "@/lib/interactive-labs/v2/definitions/hydropower";
+import { acceptLabAction } from "@/lib/interactive-labs/v2/kernel";
+import { guidedPrompt } from "@/lib/interactive-labs/v2/fidelity/guidance";
+import { buildRenderList } from "@/lib/interactive-labs/v2/fidelity/renderList";
+import { layoutControlTargets } from "@/components/interactive-labs/v2/controlTargets";
+import type { LabAction, LabState } from "@/lib/interactive-labs/v2/types";
+
+const act = (state: LabState, action: LabAction) => {
+  const result = acceptLabAction(definition, state, action);
+  if (!result.ok) throw new Error(JSON.stringify(result));
+  return result.state;
+};
+
+describe("Mount Coffee Stage B state and interaction", () => {
+  it("follows open internals, changed demand, trip correction and explicit reset", () => {
+    let state = act(definition.initialState, { type: "guided-step", index: 2 });
+    expect(guidedPrompt(definition.fidelity!, state.fidelity!)).toContain("Open the powerhouse");
+    state = act(state, { type: "set-cutaway", cutawayId: "powerhouse-section" });
+    expect(guidedPrompt(definition.fidelity!, state.fidelity!)).toContain("Unit 3 is open");
+    state = act(state, { type: "guided-step", index: 4 });
+    state = act(state, { type: "set-variable", variableId: "shopsBlocks", value: 2 });
+    expect(guidedPrompt(definition.fidelity!, state.fidelity!)).toContain("60 MW");
+    state = act(state, { type: "set-variable", variableId: "shopsBlocks", value: 4 });
+    expect(guidedPrompt(definition.fidelity!, state.fidelity!)).toContain("tripped");
+    state = act(state, { type: "set-variable", variableId: "shopsBlocks", value: 2 });
+    expect(guidedPrompt(definition.fidelity!, state.fidelity!)).toContain("does not restore it automatically");
+    expect(buildRenderList({ definition, state, profile: "LOW" }).quantities.suppliedMW).toBe(0);
+    state = act(state, { type: "reset-protection" });
+    expect(buildRenderList({ definition, state, profile: "LOW" }).quantities.suppliedMW).toBe(60);
+  });
+
+  it("allocates all close-packed controls disjoint 44px hit proxies within phone bounds", () => {
+    const items = buildRenderList({ definition, state: definition.initialState, profile: "LOW" }).items.filter(item => item.control);
+    for (const [width, height] of [[390, 420], [506, 318]]) {
+      const targets = layoutControlTargets(items, () => ({ x: width / 2, y: height / 2 }), width, height);
+      expect(targets).toHaveLength(items.length);
+      for (const target of targets) {
+        expect(target.center.x - 22).toBeGreaterThanOrEqual(0);
+        expect(target.center.x + 22).toBeLessThanOrEqual(width);
+        expect(target.center.y - 22).toBeGreaterThanOrEqual(0);
+        expect(target.center.y + 22).toBeLessThanOrEqual(height);
+        for (const other of targets.filter(t => t !== target)) expect(Math.abs(target.center.x - other.center.x) >= 48 || Math.abs(target.center.y - other.center.y) >= 48).toBe(true);
+      }
+    }
+  });
+});

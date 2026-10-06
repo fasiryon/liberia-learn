@@ -201,11 +201,11 @@ export const hydropowerModel: SimulationModel = {
     // Each supply segment is one unit's 22 MW: its length (fill) and glow follow the MW the plant can make in that band.
   for (let k = 1; k <= 4; k += 1) { const part = round6(Math.min(1, Math.max(0, (r.outputMW - 22 * (k - 1)) / 22))); componentStates[`gauge-seg-${k}`] = { intensity: part, fill: part }; }
     componentStates["demand-hospital"] = { intensity: feederOn.hospital ? 1 : 0 };
-    componentStates["city-hospital"] = { intensity: feederOn.hospital && !r.tripped ? 1 : 0 };
+    componentStates["city-hospital"] = { intensity: feederOn.hospital && !r.tripped ? 1 : 0, ...(feederOn.hospital && !r.tripped ? { color: "#ffd166" } : {}) };
     for (const district of ["homes", "shops"] as const) for (let k = 1; k <= BLOCKS_PER_DISTRICT; k += 1) {
       const on = k <= r.feeders[district];
       componentStates[`demand-${district}-b${k}`] = { intensity: on ? 1 : 0 };
-      componentStates[`city-${district}-b${k}`] = { intensity: on && !r.tripped ? 1 : 0 };
+      componentStates[`city-${district}-b${k}`] = { intensity: on && !r.tripped ? 1 : 0, ...(on && !r.tripped ? { color: "#ffd166" } : {}) };
     }
     // Every unit's housing and pole marker carry its status (RX-001 motion driver); unit 3's internal stack does too.
     for (let unit = 1; unit <= 4; unit += 1) {

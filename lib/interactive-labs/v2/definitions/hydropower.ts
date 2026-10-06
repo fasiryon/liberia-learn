@@ -62,10 +62,10 @@ const components: HighFidelitySpec["components"] = [
     return [component(`unit-${unit}`, `Unit ${unit} housing`, "cylinder", [x, -0.15, 0.1], [0.52, 0.72, 0.52], "#5fb8a8", { labelOffset: unit === 1 ? [-0.9, 0.95, 0] : offsets[i], ...(unit !== 3 ? { mobileLabel: false } : {}) }),
       component(`unit-${unit}-marker`, `Unit ${unit} rotation marker`, "box", [x + 0.34, -0.15, 0.1], [0.16, 0.08, 0.08], "#facc15", { showLabel: false, selectable: false })];
   }),
-  { ...component("u3-runner", "Runner", "cylinder", [0.9, -0.25, 0.1], [0.32, 0.18, 0.32], "#9a6b2f", { internal: true, layerId: "unit-3-internals", shapeKey: "runner", labelOffset: [-0.8, -0.3, 0], mobileLabel: false }),
+  { ...component("u3-runner", "Runner", "cylinder", [0.9, -0.25, 0.1], [0.32, 0.18, 0.32], "#d9a14b", { internal: true, layerId: "unit-3-internals", shapeKey: "runner", labelOffset: [-0.8, -0.3, 0] }),
     geometryVariants: bladedRunnerKit({ id: "u3-runner-shape", label: "Runner", transform: tr([0, 0, 0], [1, 1, 1]), color: "#9a6b2f", radius: 1, bladeCount: 9 })[1].geometryVariants },
-  component("u3-shaft", "Shaft", "cylinder", [0.9, 0.05, 0.1], [0.09, 0.36, 0.09], "#5f6d7e", { internal: true, layerId: "unit-3-internals", shapeKey: "shaft", labelOffset: [0, 0.2, 0], mobileLabel: false }),
-  { ...generatorHousingKit({ id: "u3-generator", label: "Generator", transform: tr([0.9, 0.48, 0.1], [0.34, 0.28, 0.34]), color: "#ee8f52", radius: 1, height: 2 }), internal: true, layerId: "unit-3-internals", shapeKey: "generator", labelOffset: [0.8, 0.4, 0], mobileLabel: false },
+  component("u3-shaft", "Shaft", "cylinder", [0.9, 0.05, 0.1], [0.09, 0.36, 0.09], "#5f6d7e", { internal: true, layerId: "unit-3-internals", shapeKey: "shaft", labelOffset: [0, 0.2, 0] }),
+  { ...generatorHousingKit({ id: "u3-generator", label: "Generator", transform: tr([0.9, 0.48, 0.1], [0.34, 0.28, 0.34]), color: "#ee8f52", radius: 1, height: 2 }), internal: true, layerId: "unit-3-internals", shapeKey: "generator", labelOffset: [0.8, 0.4, 0] },
   component("switchyard", "Switchyard", "panel", [3.1, 0.2, 0.1], [0.9, 0.8, 0.18], "#aab4c0", { mobileLabel: false }),
   { ...latticeTowerKit({ id:"power-tower-1",label:"Transmission tower",transform:tr([4.0,1.4,0],[0.48,1.3,0.48]),color:"#aab4c0",width:1,height:2,depth:1 }), showLabel:false },
   component("city-hospital", "Hospital", "rectangular-prism", [5.0, 0.35, 0], [0.4, 0.95, 0.5], "#96a3b6"),
@@ -193,20 +193,24 @@ const spec: HighFidelitySpec = {
   camera: { defaultPresetId: "valley", presets: [
     { id: "valley", label: "Whole valley", target: [1.8, 0.3, 0.2], distance: 17.5, yaw: -0.48, pitch: 0.56 },
     { id: "water-path", label: "Water route", target: [-1.3, 0.7, 0], distance: 8, yaw: 0.15, pitch: 0.2 },
-    { id: "powerhouse-section", label: "Powerhouse section", target: [0.3, 0.2, 0.1], distance: 7, yaw: 0.2, pitch: 0.1 },
-    { id: "unit-bench", label: "Unit 3 bench", target: [0.9, 0.2, 0.1], distance: 5, yaw: 0.2, pitch: 0.1 },
-    { id: "exploded-bench", label: "Exploded unit 3", target: [0.9, 0.15, 0.1], distance: 9, yaw: 0.2, pitch: 0.1 },
-    { id: "grid-city", label: "Power and city", target: [6.6, 0.9, 0.2], distance: 8.5, yaw: -0.18, pitch: 0.3 },
+    { id: "powerhouse-section", label: "Powerhouse section", target: [0.9, 0.2, 0.1], distance: 3, yaw: 0.2, pitch: 0.22, frame: { componentIds: [...UNIT3_STACK] } },
+    { id: "unit-bench", label: "Unit 3 bench", target: [0.9, 0.2, 0.1], distance: 3, yaw: 0.2, pitch: 0.22, frame: { componentIds: [...UNIT3_STACK] } },
+    { id: "exploded-bench", label: "Exploded unit 3", target: [0.9, 0.15, 0.1], distance: 5, yaw: 0.2, pitch: 0.22, frame: { componentIds: [...UNIT3_STACK] } },
+    { id: "grid-city", label: "Power and city", target: [6.8, 0.9, 0.2], distance: 8.5, yaw: -0.18, pitch: 0.3, frame: { componentIds: components.filter((part) => part.id.startsWith("city-")).map((part) => part.id) } },
   ], constraints: { minDistance: 2.5, maxDistance: 28, minPitch: 0.02, maxPitch: 1.25, minYaw: -1.75, maxYaw: 1.75 } },
   guidedPath: [
     { id: "meet", prompt: "Meet the plant: the Saint Paul River feeds a narrow headpond behind the dam. Find the powerhouse, the switchyard and the city it supplies.", cameraPresetId: "valley" },
     { id: "trace", prompt: "Follow the water from the headpond, through a turbine, and back to the river.", cameraPresetId: "water-path", highlightIds: ["headpond", "penstock-1", "tailrace"] },
-    { id: "machine", prompt: "Open the powerhouse section and find the generator in unit 3.", cameraPresetId: "unit-bench", highlightIds: ["u3-generator"] },
+    { id: "machine", prompt: "Open the powerhouse section and find the generator in unit 3.", promptForState: (state) => state.activeCutawayId === "powerhouse-section" || (state.explode["unit-3"] ?? 0) > 0 ? "Unit 3 is open. Find the bladed runner, the connecting shaft and the generator above it. Which part makes electricity?" : "Open the powerhouse section to expose unit 3. Find the bladed runner, the shaft and the generator above it.", cameraPresetId: "unit-bench", highlightIds: [...UNIT3_STACK] },
     // R3 interaction P1: each load-bearing step starts in its intended, untripped state (hospital + one shops block
     // fits even the dry season), so the guided path never inherits a latched trip from an earlier step.
     { id: "season", prompt: "Predict: will the headpond drop in the dry season? Then compare dry season with rainy season. What changes when less water arrives?", cameraPresetId: "valley", variables: { riverFlow: 430, unitsOnline: 4, feederHospital: 1, homesBlocks: 0, shopsBlocks: 1 } },
-    { id: "overload", prompt: "Three units in the rainy season make 66 MW. The hospital and all 4 homes blocks are on (52 MW). Add shops blocks one at a time: which block trips the plant? Then switch that block off and press Reset plant to bring the power back.", cameraPresetId: "grid-city", variables: { riverFlow: 430, unitsOnline: 3, feederHospital: 1, homesBlocks: 4, shopsBlocks: 0 } },
-    { id: "repair", prompt: "Rebuild unit 3 in order: runner, shaft, generator.", cameraPresetId: "unit-bench", highlightIds: ["u3-runner", "u3-shaft", "u3-generator"], variables: { riverFlow: 430, unitsOnline: 4, feederHospital: 1, homesBlocks: 4, shopsBlocks: 2 } },
+    { id: "overload", prompt: "Compare available generation with demand. Add shops blocks one at a time: which block trips the plant? Correct the unsafe condition, then press Reset plant.", promptForState: (_state, simulation) => {
+      const q = simulation.quantities;
+      if (q.tripped === 1) return `The plant is tripped: no electricity reaches the city. ${resetBlocker(q) ?? "Demand fits now. Press Reset plant to restore power; switching blocks off does not restore it automatically."}`;
+      return `The plant can make ${Math.round(q.outputMW)} MW; the city asks for ${q.demandMW} MW. Add shops blocks one at a time: which block trips the plant? Then correct the unsafe condition and press Reset plant.`;
+    }, cameraPresetId: "grid-city", variables: { riverFlow: 430, unitsOnline: 3, feederHospital: 1, homesBlocks: 4, shopsBlocks: 0 } },
+    { id: "repair", prompt: "Inspect unit 3: runner, shaft, generator. To practise rebuilding it, choose Assessment and use the repair check's Take apart control.", cameraPresetId: "unit-bench", highlightIds: ["u3-runner", "u3-shaft", "u3-generator"], variables: { riverFlow: 430, unitsOnline: 4, feederHospital: 1, homesBlocks: 4, shopsBlocks: 2 } },
     { id: "energy-chain", prompt: "Name the energy chain: gravitational potential energy of high water → kinetic energy of falling water → turbine and shaft rotation → electrical energy → light and heat. Use the explanation panel to check your thinking.", cameraPresetId: "valley", variables: { riverFlow: 430, unitsOnline: 4, feederHospital: 1, homesBlocks: 4, shopsBlocks: 4 } },
   ],
   modes: ["GUIDED", "EXPLORE", "CHALLENGE", "ASSESSMENT"],
@@ -217,14 +221,15 @@ const spec: HighFidelitySpec = {
     ASSESSMENT: { variables: { riverFlow: 430, unitsOnline: 4, feederHospital: 1, homesBlocks: 4, shopsBlocks: 4 } },
   },
   hud: [
-    { quantityId: "outputMW", label: "Plant can make", unit: "MW", digits: 0 },
+    { quantityId: "outputMW", label: "Available capacity", unit: "MW", digits: 0 },
+    { quantityId: "suppliedMW", label: "Delivered to city", unit: "MW", digits: 0 },
     { quantityId: "demandMW", label: "City asks for", unit: "MW", digits: 0 },
     { quantityId: "headroomMW", label: "Spare", unit: "MW", digits: 1 },
     { quantityId: "riverFlow", label: "River", unit: "m³/s", digits: 0 },
     { quantityId: "unitsRunning", label: "Units on", digits: 0 },
   ],
   hudAlert: (q) => q.tripped === 1
-    ? { text: `PLANT TRIPPED — Demand exceeded available generation. ${resetBlocker(q) ?? "Demand fits now: press Reset plant to restore power."}`, tone: "danger" }
+    ? { text: `PLANT TRIPPED — 0 MW delivered; the whole city is dark. ${resetBlocker(q) ?? "Demand fits now: press Reset plant to restore power."}`, tone: "danger" }
     : q.spillFlow > 0 ? { text: `Spilling ${Math.round(q.spillFlow)} m³/s: more water than the running turbines can take`, tone: "info" } : null,
   protection: { latchVariableId: "protectionLatched", overloadQuantityId: "overload", resetLabel: "Reset plant", resetBlocker },
   challengeStatus: (quantities) => quantities.gridStableWithPriority === 1

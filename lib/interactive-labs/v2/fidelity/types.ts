@@ -154,7 +154,7 @@ export type CameraConstraints = { minDistance: number; maxDistance: number; minP
 export type CameraRail = { id: string; label: string; stops: { presetId: string; durationMs?: number; easing?: "ease-in-out" | "linear" }[] };
 
 /** `variables` puts the step in its intended state (validated like a mode start), so a step never inherits a trip. */
-export type GuidedStep = { id: string; prompt: string; cameraPresetId?: string; railId?: string; highlightIds?: string[]; variables?: Record<string, number> };
+export type GuidedStep = { id: string; prompt: string; promptForState?: (state: FidelityState, simulation: SimulationOutput) => string; cameraPresetId?: string; railId?: string; highlightIds?: string[]; variables?: Record<string, number> };
 
 /** Direct-manipulation learning checks. Evaluated from scene state, never from a free-text claim. */
 export type FidelityCheck =
