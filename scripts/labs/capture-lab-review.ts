@@ -46,6 +46,12 @@ const VIEWPORTS = {
   landscape: { viewport: { width: 844, height: 390 }, isMobile: true, hasTouch: true },
 } as const;
 type ViewportName = keyof typeof VIEWPORTS;
+/**
+ * A full-page shot grows the viewport to the page height. In landscape that lifts the height past the A17
+ * max-height:500px query mid-capture and re-lays the page out (run 37429567958: 3 circuit landscape stills differed);
+ * a phone held sideways only ever shows its viewport, so landscape captures the viewport.
+ */
+const fullPageFor = (viewport: ViewportName) => viewport !== "landscape";
 const SETTLE_MS = 2500;
 /**
  * RX-005 A9 determinism on the software path. WebGL already renders identically run to run on SwiftShader; these
@@ -324,7 +330,7 @@ async function main() {
         const threeRequestViolation = (profile === "LOW" || profile === "FALLBACK_2D") && issues.threeChunkRequests.length > 0;
         // A9: every web font settled before the still, so text never rasterises with a fallback face in one run only.
         await page.evaluate(() => document.fonts.ready.then(() => true));
-        await page.screenshot({ path: still, fullPage: true, animations: "disabled", caret: "hide", timeout: SCREENSHOT_TIMEOUT_MS });
+        await page.screenshot({ path: still, fullPage: fullPageFor(viewport), animations: "disabled", caret: "hide", timeout: SCREENSHOT_TIMEOUT_MS });
         captures.push({ file: still, scenario: scenario.id, storyboardScene: scenario.storyboardScene, stage: scenario.stage, profile, viewport, kind: "still", reducedMotion: stillReducedMotion });
         const failure = !identity.verdict.ok ? identity.verdict.reason
           : profile !== "FALLBACK_2D" && !frameProbe ? "frame_probe_missing: the renderer installed no __labReviewFrameProbe"
@@ -363,7 +369,7 @@ async function main() {
           const section = motionPage.locator("[data-lab-review-ready] section").first();
           const bounds = await section.boundingBox();
           if (!bounds) throw new Error(`Review player has no bounds for ${scenario.id} frame ${index}.`);
-          const pageImage = await motionPage.screenshot({ fullPage: true, animations: "disabled", caret: "hide", timeout: SCREENSHOT_TIMEOUT_MS });
+          const pageImage = await motionPage.screenshot({ fullPage: fullPageFor(viewport), animations: "disabled", caret: "hide", timeout: SCREENSHOT_TIMEOUT_MS });
           const left = Math.max(0, Math.floor(bounds.x)), top = Math.max(0, Math.floor(bounds.y));
           const width = Math.max(1, Math.ceil(bounds.width)), height = Math.max(1, Math.ceil(bounds.height));
           await sharp(pageImage).extract({ left, top, width, height }).png().toFile(file);
