@@ -3,6 +3,7 @@
 // text, so they are hidden from assistive technology.
 import type { RenderCue } from "@/lib/interactive-labs/v2/fidelity/emitters";
 import type { Vec3 } from "@/lib/interactive-labs/v2/fidelity/math";
+import { HIGHLIGHT_COLOR } from "@/lib/interactive-labs/v2/fidelity/palette";
 
 type Project = (point: Vec3) => { x: number; y: number } | null;
 
@@ -47,3 +48,43 @@ export function statusBadgeElements(items: readonly { id: string; center: Vec3; 
     return [node];
   });
 }
+
+type ControlItem = { id: string; center: Vec3; inFocus: boolean; selectable: boolean; control?: { pending: boolean; dragAxis?: [Vec3, Vec3] } };
+
+/** A14 shared control-affordance glyph: a dot for tap controls, an arrow along the drag axis for drag controls. */
+export function controlGlyph(control: { dragAxis?: [Vec3, Vec3] }): string {
+  if (!control.dragAxis) return "◉";
+  const [a, b] = control.dragAxis;
+  return Math.abs(b[1] - a[1]) >= Math.abs(b[0] - a[0]) ? "↕" : "↔";
+}
+
+/**
+ * A14 control affordance on HIGH/STANDARD/LOW: a ring with the control glyph on every visible control part, and a
+ * "Confirm?" label (highlight token, no state token) on a part whose confirm preview is pending. Decorative: the chip
+ * twins carry the names and the pending state for assistive technology.
+ */
+export function controlAffordanceElements(items: readonly ControlItem[], project: Project): HTMLElement[] {
+  return items.filter((item) => item.control && item.inFocus && item.selectable).flatMap((item) => {
+    const at = project(item.center);
+    if (!at) return [];
+    const ring = document.createElement("span");
+    ring.textContent = controlGlyph(item.control!);
+    ring.dataset.labControlAffordance = item.id;
+    ring.setAttribute("aria-hidden", "true");
+    ring.className = "pointer-events-none absolute flex h-6 w-6 items-center justify-center rounded-full border-2 bg-slate-950/40 text-[11px] font-black leading-none text-amber-100";
+    ring.style.borderColor = item.control!.pending ? HIGHLIGHT_COLOR : "#fcd34d";
+    ring.style.left = `${Math.round(at.x)}px`; ring.style.top = `${Math.round(at.y)}px`; ring.style.transform = "translate(-50%, -50%)";
+    if (!item.control!.pending) return [ring];
+    const label = document.createElement("span");
+    label.textContent = "Confirm?";
+    label.dataset.labPendingLabel = item.id;
+    label.setAttribute("aria-hidden", "true");
+    label.className = "pointer-events-none absolute whitespace-nowrap rounded-full px-2 py-0.5 text-[11px] font-bold text-slate-950";
+    label.style.background = HIGHLIGHT_COLOR;
+    label.style.left = `${Math.round(at.x)}px`; label.style.top = `${Math.round(at.y) - 22}px`; label.style.transform = "translate(-50%, -100%)";
+    return [ring, label];
+  });
+}
+
+/** A14 cursor over a scene part: grab for drag controls, pointer for tap controls, default elsewhere. */
+export const controlCursor = (control: { dragAxis?: unknown } | undefined): string => !control ? "" : control.dragAxis ? "grab" : "pointer";

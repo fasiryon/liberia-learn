@@ -80,6 +80,16 @@ export type LabBudgetMeasurement = Record<CapabilityProfile, { offlinePackageByt
  * scripts/labs/measure-renderer-chunks.ts and size-gated in CI. HIGH/STANDARD keep the WebGLScene chunk for the LOW
  * downgrade; LOW and FALLBACK_2D never fetch the three chunk.
  */
+/**
+ * Reviewed absolute ceilings for the renderer chunks (R4 performance P2-4). The 5% gate compares with the last record,
+ * so many small re-records could add up unnoticed (webglPass grew 38% over the RX-005 branch in steps of at most 5%).
+ * A re-record above a ceiling fails; raising a ceiling needs a performance-reviewer sign-off in its own commit.
+ */
+export const RENDERER_CHUNK_CEILINGS = Object.freeze({
+  threeRenderer: { storageBytes: 640_000, transferBytes: 140_000 },
+  webglPass: { storageBytes: 72_000, transferBytes: 24_000 },
+} as const);
+
 export function rendererPackage(profile: CapabilityProfile): { storageBytes: number; transferBytes: number } {
   const { threeRenderer, webglPass } = rendererChunks.chunks;
   if (profile === "HIGH" || profile === "STANDARD") return { storageBytes: threeRenderer.storageBytes + webglPass.storageBytes, transferBytes: threeRenderer.transferBytes + webglPass.transferBytes };

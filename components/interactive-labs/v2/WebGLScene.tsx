@@ -26,7 +26,7 @@ import { publishFramePlan, type ReviewFrameProbe } from "@/lib/interactive-labs/
 import { createSurfaceTriangleStorage, writeSurfaceTriangles } from "@/lib/interactive-labs/v2/fidelity/surfaces";
 import type { MeshData } from "./meshes";
 import { pickNearest, type ScenePick } from "./picking";
-import { cueElements, statusBadgeElements } from "./sceneCues";
+import { controlAffordanceElements, controlCursor, cueElements, statusBadgeElements } from "./sceneCues";
 
 type Props = {
   definition: InteractiveLabDefinition<LabState>;
@@ -50,6 +50,8 @@ type Props = {
   recenter?: number;
   /** A14: the control part whose confirm preview is pending (drawn highlighted). */
   pendingControlId?: string | null;
+  /** A18: the view carried over from the renderer this one replaced, kept until the preset changes or Recentre. */
+  initialPose?: { presetId: string; pose: CameraPose } | null;
   /** A14: a drag on a drag-variable control part, as the pointer's parameter along the part's axis. */
   onDragControl?: (componentId: string, t: number) => void;
 };
@@ -82,7 +84,7 @@ const GROUND_Y = -2.25;
 const rgbCache = new Map<string, [number, number, number]>();
 function rgb(value: string): [number, number, number] { let color = rgbCache.get(value); if (!color) { const n = Number.parseInt(value.replace("#", ""), 16); color = [(n >> 16 & 255) / 255, (n >> 8 & 255) / 255, (n & 255) / 255]; rgbCache.set(value, color); } return color; }
 
-export function WebGLScene({ definition, state, profile, reducedMotion, traceFlowId, dispatch, onPick, onDowngrade, onUpgradeReady, allowProfileUpgrade = false, allowPerformanceDowngrade = true, review = false, onReady, railActive = false, recenter = 0, pendingControlId = null, onDragControl }: Props) {
+export function WebGLScene({ definition, state, profile, reducedMotion, traceFlowId, dispatch, onPick, onDowngrade, onUpgradeReady, allowProfileUpgrade = false, allowPerformanceDowngrade = true, review = false, onReady, railActive = false, recenter = 0, pendingControlId = null, onDragControl, initialPose = null }: Props) {
   const canvas = useRef<HTMLCanvasElement>(null);
   // Review evidence: identity, frames drawn and last-frame draw calls on the root (rendererIdentity.ts).
   const root = useRef<HTMLDivElement>(null);
@@ -94,6 +96,7 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
   pendingRef.current = pendingControlId;
   const displayRef = useRef<FidelityState | undefined>(state.fidelity);
   const zoomRef = useRef(1);
+  const carriedPose = useRef(initialPose);
   const frameRef = useRef<{ list: RenderList | null; viewProj: Mat4; width: number; height: number }>({ list: null, viewProj: IDENTITY, width: 1, height: 1 });
   const callbacks = useRef({ onDowngrade, onUpgradeReady, reducedMotion, traceFlowId, onReady, railActive });
   const requestDrawRef = useRef<() => void>(() => {});
@@ -273,7 +276,10 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
       // RX-005d: presets with a frame refit to the stage's aspect; rail legs on LOW are cuts.
       const stageAspect = Math.max(1, el.clientWidth) / Math.max(1, el.clientHeight);
       const preset = spec && current.fidelity ? framedPose(spec, findPreset(spec, current.fidelity.cameraPresetId), list.items, definition.scene.camera.fov, stageAspect) : fallbackPose;
-      const targetPose = spec ? constrainCamera({ ...preset, distance: preset.distance * zoomRef.current }, spec.camera.constraints) : { ...preset, distance: preset.distance * zoomRef.current };
+      // A18 continuity: a downgrade keeps the learner's view of the same preset until they change preset or Recentre.
+      if (carriedPose.current && carriedPose.current.presetId !== current.fidelity?.cameraPresetId) carriedPose.current = null;
+      const base = carriedPose.current?.pose ?? preset;
+      const targetPose = spec ? constrainCamera({ ...base, distance: base.distance * zoomRef.current }, spec.camera.constraints) : { ...base, distance: base.distance * zoomRef.current };
       camera = camera && !callbacks.current.railActive ? approachCamera(camera, targetPose, dt, motionless) : targetPose;
 
       const dpr = Math.min(window.devicePixelRatio || 1, list.budget.maxDevicePixelRatio), w = Math.max(1, Math.floor(el.clientWidth * dpr)), h = Math.max(1, Math.floor(el.clientHeight * dpr));
@@ -412,11 +418,11 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
         const narrowViewport = typeof window !== "undefined" && window.innerWidth <= 500;
         const labelItems = list.items.filter((item) => item.showLabel && item.inFocus && !(narrowViewport && item.mobileLabel === false));
         const placed = placeSceneLabels(labelItems.flatMap((item) => {
-          const center = item.spin ? transformPoint(spinMatrix(item.spin, t, motionless), [0, 0, 0]) : item.center;
-          const offset = item.labelOffset ?? [0, 0, 0];
-          const at = project([center[0] + offset[0], center[1] + offset[1], center[2] + offset[2]]);
+          // The label offset is in the part's own space, exactly as on HIGH/STANDARD (R4 visual: world-space offsets
+          // put a small part's label on its neighbour).
+          const at = project(transformPoint(item.spin ? spinMatrix(item.spin, t, motionless) : item.matrix, item.labelOffset ?? [0, 0, 0]));
           // The pill is drawn translated up by 160 % of its height, so its bottom sits 12 px above the anchor.
-          return at ? [{ id: item.id, text: item.label, x: at.x, y: at.y - 12, highlighted: item.highlighted }] : [];
+          return at ? [{ id: item.id, text: item.label, x: at.x, y: at.y - 12, highlighted: item.highlighted, critical: !!item.labelCritical }] : [];
         }), { width: el.clientWidth, height: el.clientHeight }, 8, glyphBoxes);
         const entries = [
           ...placed.map((label) => ({ text: label.text, at: { x: label.x, y: label.y + 12 }, title: undefined, glyph: false, mobileLabel: true })),
@@ -433,7 +439,7 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
         }));
         // A15: reduced motion keeps static direction cues; LOW shows an emitter's glyph proxy in place of particles.
         const glyphProxies = list.emitters.filter((emitter) => emitter.active && emitter.lowProxy.kind === "glyph").map((emitter) => ({ id: `proxy:${emitter.id}`, kind: "glyph" as const, glyph: emitter.lowProxy.kind === "glyph" ? emitter.lowProxy.glyph : "", position: emitter.origin, direction: emitter.direction, color: emitter.color }));
-        labels.current.append(...cueElements([...(motionless ? list.cues : []), ...glyphProxies], project), ...statusBadgeElements(list.items, project));
+        labels.current.append(...cueElements([...(motionless ? list.cues : []), ...glyphProxies], project), ...statusBadgeElements(list.items, project), ...controlAffordanceElements(list.items, project));
       }
       const fidelityMoving = !!(spec && current.fidelity && displayRef.current && !isSettled(displayRef.current, current.fidelity));
       const cameraMoving = !motionless && (Math.abs(camera.distance - targetPose.distance) > 1e-4 || Math.abs(camera.yaw - targetPose.yaw) > 1e-4 || Math.abs(camera.pitch - targetPose.pitch) > 1e-4 || camera.target.some((value, index) => Math.abs(value - targetPose.target[index]) > 1e-4));
@@ -484,7 +490,7 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
   }, [definition, profile, allowPerformanceDowngrade, allowProfileUpgrade, review]);
 
   useEffect(() => { requestDrawRef.current(); }, [state, reducedMotion, traceFlowId, pendingControlId]);
-  useEffect(() => { zoomRef.current = 1; requestDrawRef.current(); }, [recenter]);
+  useEffect(() => { if (recenter) carriedPose.current = null; zoomRef.current = 1; requestDrawRef.current(); }, [recenter]);
 
   const projector = () => { const { viewProj, width, height } = frameRef.current; return (p: Vec3) => { const c = transformPoint(viewProj, p); return c[0] < -1 || c[0] > 1 || c[1] < -1 || c[1] > 1 || c[2] < -1 || c[2] > 1 ? null : { x: (c[0] * 0.5 + 0.5) * width, y: (0.5 - c[1] * 0.5) * height, depth: c[2] }; }; };
   const pick = (clientX: number, clientY: number, target: HTMLElement) => {
@@ -507,7 +513,7 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
       <canvas ref={canvas} aria-label={`${definition.title ?? "Interactive"} 3D scene. Every scene action is also available in the controls panel.`} className="h-full w-full touch-none"
         onPointerDown={(e) => { drag.current = { x: e.clientX, y: e.clientY, active: true, moved: 0, control: dragControlAt(e.clientX, e.clientY, e.currentTarget) }; e.currentTarget.setPointerCapture(e.pointerId); }}
         onPointerMove={(e) => {
-          if (!drag.current.active) return;
+          if (!drag.current.active) { if (e.pointerType === "mouse") { const control = dragControlAt(e.clientX, e.clientY, e.currentTarget) ?? null; const { list } = frameRef.current; const rect = e.currentTarget.getBoundingClientRect(); const hit = list ? pickNearest(list, projector(), { x: e.clientX - rect.left, y: e.clientY - rect.top }, null) : null; e.currentTarget.style.cursor = controlCursor(control?.control ?? (hit?.kind === "item" ? hit.item.control : undefined)); } return; }
           const dx = e.clientX - drag.current.x, dy = e.clientY - drag.current.y;
           drag.current = { ...drag.current, x: e.clientX, y: e.clientY, moved: drag.current.moved + Math.abs(dx) + Math.abs(dy) };
           const control = drag.current.control;

@@ -48,7 +48,9 @@ describe("RX-005 A1 semantic cues", () => {
         const high = buildRenderList({ definition, state, profile: "HIGH" }).items;
         const low = buildRenderList({ definition, state, profile: "LOW" }).items;
         const flat = fallbackVisibleItems(buildRenderList({ definition, state, profile: "FALLBACK_2D" }).items);
-        for (const componentId of checkCriticalComponentIds(definition)) {
+        // Every check-critical part, and every other part that declares cues (e.g. unit status lamps).
+        const declared = [...new Set([...checkCriticalComponentIds(definition), ...spec.components.filter((component) => component.semanticCues?.length).map((component) => component.id)])];
+        for (const componentId of declared) {
           const reference = high.find((item) => item.id === componentId);
           // A part cut away by a section is shown only where the device can clip it; nothing a check needs is cut.
           if (!reference || reference.clip) continue;

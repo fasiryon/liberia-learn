@@ -32,7 +32,7 @@ export type EnvironmentRig = { shadows: boolean; dispose: () => void };
  * mapping, light haze and one sun shadow map that is redrawn only when shadow casters move (A7).
  * DAYLIGHT on STANDARD: sky dome and haze only. STUDIO keeps the existing plain backdrop.
  */
-export function applyEnvironmentRig(renderer: THREE.WebGLRenderer, scene: THREE.Scene, sun: THREE.DirectionalLight, options: { daylight: boolean; profile: "HIGH" | "STANDARD"; finePointer: boolean; targetBox?: { min: readonly number[]; max: readonly number[] } }): EnvironmentRig {
+export function applyEnvironmentRig(renderer: THREE.WebGLRenderer, scene: THREE.Scene, sun: THREE.DirectionalLight, options: { daylight: boolean; profile: "HIGH" | "STANDARD"; targetBox?: { min: readonly number[]; max: readonly number[] } }): EnvironmentRig {
   if (!options.daylight) return { shadows: false, dispose: () => {} };
   const sky = skyDome(140);
   scene.add(sky);
@@ -55,7 +55,8 @@ export function applyEnvironmentRig(renderer: THREE.WebGLRenderer, scene: THREE.
     renderer.shadowMap.type = THREE.PCFShadowMap;
     renderer.shadowMap.autoUpdate = false;
     sun.castShadow = true;
-    // 1024 px everywhere: 2048 sat at the HIGH texture limit and, with clipped cutaway materials, cost too much per frame.
+    // A7 as amended (performance re-check 2026-10-06): 1024 px on every device; 2048 sat at the HIGH texture limit and,
+    // with clipped cutaway materials, cost too much per frame.
     const size = 1024;
     sun.shadow.mapSize.set(size, size);
     // A7: fit the shadow camera to the lab's target box when it declares one (the region the camera can look at).

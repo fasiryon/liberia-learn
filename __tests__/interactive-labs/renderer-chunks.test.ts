@@ -4,7 +4,7 @@ import path from "node:path";
 import { build } from "esbuild";
 import { describe, expect, it } from "vitest";
 import { checkRendererChunks, measureRendererChunks, type RendererChunks } from "@/scripts/labs/renderer-chunks";
-import { rendererPackage } from "@/lib/interactive-labs/v2/production/budgets";
+import { RENDERER_CHUNK_CEILINGS, rendererPackage } from "@/lib/interactive-labs/v2/production/budgets";
 import { isThreeChunk } from "@/lib/interactive-labs/v2/review/rendererChunks";
 
 const root = process.cwd();
@@ -32,6 +32,14 @@ describe("RX-005 A8: renderer chunk accounting", () => {
     expect(measured.chunks.threeRenderer.three!.storageBytes).toBeGreaterThan(400_000);
     expect(measured.chunks.webglPass.storageBytes).toBeLessThan(100_000);
   }, 120_000);
+
+  it("keeps every recorded chunk under its reviewed absolute ceiling (cumulative growth gate)", () => {
+    for (const [chunk, ceiling] of Object.entries(RENDERER_CHUNK_CEILINGS)) {
+      const recorded = committed.chunks[chunk as keyof typeof RENDERER_CHUNK_CEILINGS];
+      expect(recorded.storageBytes, `${chunk} stored`).toBeLessThanOrEqual(ceiling.storageBytes);
+      expect(recorded.transferBytes, `${chunk} transfer`).toBeLessThanOrEqual(ceiling.transferBytes);
+    }
+  });
 
   it("charges the three chunk to HIGH/STANDARD only", () => {
     expect(rendererPackage("HIGH").storageBytes).toBe(committed.chunks.threeRenderer.storageBytes + committed.chunks.webglPass.storageBytes);

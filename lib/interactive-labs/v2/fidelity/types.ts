@@ -34,7 +34,7 @@ export type ComponentDefinition = {
   showLabel?: boolean;
   /** Suppress secondary callouts on narrow screens; controls retain the complete component inventory. */
   mobileLabel?: boolean;
-  /** World-space offset for a visible scene label when nearby parts need separate callouts. */
+  /** Label anchor offset in the part's own (pre-transform) space, used identically by every renderer. */
   labelOffset?: Vec3;
   carriesSymbol?: boolean;
   carriesScale?: boolean;

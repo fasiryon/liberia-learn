@@ -167,7 +167,7 @@ const spec: HighFidelitySpec = {
   // RX-005 A1: every check-critical part is named and tappable on every profile; the unit-1 lamp also carries status.
   components: components.map((component) => {
     const critical = /^(gauge-band-\d|desk-(start-next|stop-last)|breaker-.+|headpond|intake-1|penstock-1|tailrace|river-downstream|u3-(runner|shaft|generator))$/.test(component.id);
-    return component.id === "unit-1" ? { ...component, semanticCues: ["label", "target", "status"] as const } : critical ? { ...component, semanticCues: ["label", "target"] as const } : component;
+    return /^unit-[1-4]$/.test(component.id) ? { ...component, semanticCues: ["label", "target", "status"] as const } : critical ? { ...component, semanticCues: ["label", "target"] as const } : component;
   }),
   assemblies: [{ id: "unit-3", label: "Unit 3 machine", rootComponentId: "unit-3", componentIds: [...UNIT3_STACK], slots: [
     { id: "slot-runner", label: "Runner position", accepts: "runner", transform: tr([0.9, -0.25, 0.1], [0.32, 0.18, 0.32]), initialComponentId: "u3-runner" },

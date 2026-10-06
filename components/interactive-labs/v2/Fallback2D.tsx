@@ -12,6 +12,7 @@ import { fallbackFrame, findPreset } from "@/lib/interactive-labs/v2/fidelity/ca
 import { convexHull, silhouetteSamples } from "./meshes";
 import type { ScenePick } from "./picking";
 import { useDisplayFidelity } from "./useDisplayFidelity";
+import { controlGlyph } from "./sceneCues";
 import { SURFACE_SHALLOW } from "@/lib/interactive-labs/v2/fidelity/surfaces";
 import { FLOW_CASING_COLOR } from "@/lib/interactive-labs/v2/fidelity/flowTubes";
 import { ENVIRONMENT_BACKDROP } from "@/lib/interactive-labs/v2/fidelity/palette";
@@ -76,16 +77,19 @@ export function Fallback2D({ definition, state, reducedMotion, traceFlowId, disp
   // mesh would obscure the revealed internals and instructional labels.
   const ordered = fallbackVisibleItems(list.items);
   const drawnBySurface = new Set(list.surfaces.filter((surface) => surface.active).map((surface) => definition.fidelity?.surfaces?.find((declared) => declared.id === surface.id)?.componentId).filter(Boolean) as string[]);
-  // A11 label budget on 2D as on 3D: highlighted parts first, at most 8 scene labels.
-  const labelAllowed = new Set([...ordered.filter((item) => item.showLabel && item.inFocus && item.highlighted), ...ordered.filter((item) => item.showLabel && item.inFocus && !item.highlighted)].slice(0, 8).map((item) => item.id));
-  // Labels are placed in one pass and drawn last, on plates, so no part, flow or trace node covers them.
+  // A11 label budget on 2D as on 3D: highlighted parts first, then the parts a check names (A1 label cue), then the
+  // rest in authored order; up to 8 labels that do not crowd one another. The anchor is the part's own label offset
+  // through its matrix, exactly as on the WebGL profiles.
+  const rank = (item: (typeof ordered)[number]) => item.highlighted ? 0 : item.labelCritical ? 1 : 2;
   const placedLabels: { x:number; y:number; halfWidth:number }[] = [];
   const labels: { id: string; text: string; x: number; y: number; halfWidth: number; mobileHidden: boolean }[] = [];
-  for (const item of ordered) {
-    const labelX=item.center[0]+(item.labelOffset?.[0]??0)*screenScale,labelY=-(item.center[1]+(item.labelOffset?.[1]??0)*screenScale)-.15*screenScale,labelHalfWidth=item.label.length*.09*screenScale;
-    const labelCrowded=placedLabels.some(previous=>Math.abs(previous.y-labelY)<.34*screenScale&&Math.abs(previous.x-labelX)<previous.halfWidth+labelHalfWidth+.16*screenScale);
-    if(!(item.showLabel&&item.inFocus&&labelAllowed.has(item.id)&&!labelCrowded))continue;
-    placedLabels.push({x:labelX,y:labelY,halfWidth:labelHalfWidth});
+  for (const item of ordered.filter((candidate) => candidate.showLabel && candidate.inFocus).sort((a, b) => rank(a) - rank(b))) {
+    if (labels.length >= 8) break;
+    const anchor = transformPoint(item.matrix, item.labelOffset ?? [0, 0, 0]);
+    const labelX = anchor[0], labelY = -anchor[1] - .15 * screenScale, labelHalfWidth = item.label.length * .09 * screenScale;
+    const labelCrowded = placedLabels.some(previous => Math.abs(previous.y - labelY) < .34 * screenScale && Math.abs(previous.x - labelX) < previous.halfWidth + labelHalfWidth + .16 * screenScale);
+    if (labelCrowded) continue;
+    placedLabels.push({ x: labelX, y: labelY, halfWidth: labelHalfWidth });
     labels.push({ id: item.id, text: item.label, x: labelX, y: labelY, halfWidth: labelHalfWidth, mobileHidden: item.mobileLabel === false });
   }
   const activate = (pick: ScenePick) => (event: React.KeyboardEvent) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); onPick(pick); } };
@@ -122,6 +126,8 @@ export function Fallback2D({ definition, state, reducedMotion, traceFlowId, disp
             <g key={item.id} opacity={item.alpha < 0.5 && item.inFocus ? 0.45 : item.alpha} {...(item.detail === "decor" ? { pointerEvents: "none" as const } : item.control && item.inFocus ? { "aria-hidden": true, onClick: () => onPick(pick), className: item.control.dragAxis ? "cursor-grab touch-none" : "cursor-pointer",
               ...(item.control.dragAxis ? { onPointerDown: (event: ReactPointerEvent<SVGGElement>) => { dragging.current = { id: item.id, axis: item.control!.dragAxis!, x: event.clientX, y: event.clientY, moved: false }; event.currentTarget.setPointerCapture(event.pointerId); }, onPointerMove: dragTo, onPointerUp: () => { dragging.current = null; }, onPointerCancel: () => { dragging.current = null; } } : {}) } : item.selectable && item.inFocus ? { role: "button", tabIndex: 0, "aria-label": item.status ? `${item.label}: ${item.status.text}` : item.label, "aria-pressed": item.highlighted, onClick: () => onPick(pick), onKeyDown: activate(pick), className: "cursor-pointer outline-none focus-visible:[&>polygon]:stroke-cyan-200" } : {})}>
               {item.selectable && item.inFocus && item.detail !== "decor" && <polygon data-lab-touch-target points={hull.map((p) => p.join(",")).join(" ")} fill="transparent" stroke="#fff" strokeOpacity={0.001} strokeWidth={48} vectorEffect="non-scaling-stroke" pointerEvents="stroke" aria-hidden="true" />}
+              {/* A14 control affordance (same token as WebGL): a ring with the control glyph; Confirm? while pending. */}
+              {item.control && item.inFocus && <g aria-hidden="true" pointerEvents="none"><circle data-lab-control-affordance={item.id} cx={item.center[0]} cy={-item.center[1]} r={0.2 * screenScale} fill="#020617" fillOpacity={0.4} stroke={item.control.pending ? HIGHLIGHT_COLOR : "#fcd34d"} strokeWidth={2} vectorEffect="non-scaling-stroke" /><text x={item.center[0]} y={-item.center[1]} textAnchor="middle" dominantBaseline="central" fontSize={0.2 * screenScale} fontWeight={800} fill="#fef3c7">{controlGlyph(item.control)}</text>{item.control.pending && <text data-lab-pending-label={item.id} x={item.center[0]} y={-item.center[1] - 0.36 * screenScale} textAnchor="middle" fontSize={0.24 * screenScale} fontWeight={800} fill={HIGHLIGHT_COLOR} stroke="#020617" strokeWidth={0.04 * screenScale} paintOrder="stroke">Confirm?</text>}</g>}
               {item.emissive > 0 && <circle cx={item.center[0]} cy={-item.center[1]} r={0.08 * item.emissive + 0.04} fill="#fde68a" opacity={Math.min(0.08, item.emissive * 0.08)} filter="url(#glow)" />}
               {/* A19 / G3: a status lamp's glyph, so its state is never colour alone. */}
               {item.status && item.selectable && item.inFocus && <text data-lab-status={item.id} x={item.center[0]} y={-item.center[1] + 0.42 * screenScale} textAnchor="middle" dominantBaseline="central" fontSize={0.3 * screenScale} fontWeight={800} fill="#0f172a" stroke="#f8fafc" strokeWidth={0.04 * screenScale} paintOrder="stroke" aria-hidden="true">{item.status.glyph}</text>}

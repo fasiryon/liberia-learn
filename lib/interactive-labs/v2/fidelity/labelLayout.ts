@@ -2,7 +2,8 @@
 // A label is shown only when its whole box is inside the scene and it does not overlap a label or obstacle already
 // placed. Highlighted parts go first, then nearest the frame centre; at most `budget` labels. Pure and deterministic.
 
-export type LabelCandidate = { id: string; text: string; x: number; y: number; highlighted: boolean };
+/** `critical`: a part a check names (A1 `label` cue); it outranks other unhighlighted parts for the budget. */
+export type LabelCandidate = { id: string; text: string; x: number; y: number; highlighted: boolean; critical?: boolean };
 export type LabelBox = { left: number; top: number; right: number; bottom: number };
 export type PlacedLabel = LabelCandidate & { box: LabelBox };
 
@@ -19,7 +20,9 @@ export function placeSceneLabels(candidates: readonly LabelCandidate[], viewport
   // Highlighted parts first; then the parts nearest the centre of the frame, so a focused camera (city, powerhouse
   // section, exploded bench) names what it frames instead of spending the budget on parts at the edges.
   const centre = (candidate: LabelCandidate) => Math.hypot(candidate.x - viewport.width / 2, candidate.y - viewport.height / 2);
-  const ranked = [...candidates.filter((candidate) => candidate.highlighted), ...candidates.filter((candidate) => !candidate.highlighted).sort((a, b) => centre(a) - centre(b))];
+  // Then the parts a check names (R4 visual: runner/shaft and unit labels lost the budget to decor-adjacent parts).
+  const rank = (candidate: LabelCandidate) => candidate.highlighted ? 0 : candidate.critical ? 1 : 2;
+  const ranked = [...candidates].sort((a, b) => rank(a) - rank(b) || (rank(a) === 0 ? 0 : centre(a) - centre(b)));
   const placed: PlacedLabel[] = [];
   for (const candidate of ranked) {
     if (placed.length >= budget) break;

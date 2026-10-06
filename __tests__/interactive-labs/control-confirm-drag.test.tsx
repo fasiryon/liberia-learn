@@ -149,3 +149,26 @@ describe("A14 confirm preview in the player", () => {
     expect([range.min, range.max, range.step, range.value]).toEqual(["2", "20", "2", "6"]);
   });
 });
+
+describe("A14 control affordance token", () => {
+  it("FALLBACK_2D rings every control part with its glyph and labels a pending part Confirm?", async () => {
+    const { renderToStaticMarkup } = await import("react-dom/server");
+    const { Fallback2D } = await import("@/components/interactive-labs/v2/Fallback2D");
+    const render = (pendingControlId: string | null) => renderToStaticMarkup(<Fallback2D definition={circuitDefinition} state={initializeLab(circuitDefinition)} reducedMotion traceFlowId={null} dispatch={() => {}} onPick={() => {}} pendingControlId={pendingControlId} />);
+    const idle = render(null);
+    expect(idle).toContain('data-lab-control-affordance="switch-lever"');
+    expect(idle).toContain('data-lab-control-affordance="resistor"');
+    expect(idle).toContain(">↕</text>");
+    expect(idle).not.toContain("data-lab-pending-label");
+    expect(render("switch-lever")).toContain('data-lab-pending-label="switch-lever"');
+  });
+
+  it("the WebGL overlay draws the same token and the pending label", async () => {
+    const { controlAffordanceElements, controlCursor } = await import("@/components/interactive-labs/v2/sceneCues");
+    const items = buildRenderList({ definition: circuitDefinition, state: initializeLab(circuitDefinition), profile: "LOW", pendingControlId: "switch-lever" }).items;
+    const nodes = controlAffordanceElements(items, (point) => ({ x: point[0] * 10, y: point[1] * 10 }));
+    expect(nodes.map((node) => node.dataset.labControlAffordance ?? `label:${node.dataset.labPendingLabel}`).sort()).toEqual(["label:switch-lever", "resistor", "switch-lever"]);
+    expect(nodes.find((node) => node.dataset.labControlAffordance === "resistor")!.textContent).toBe("↕");
+    expect([controlCursor(undefined), controlCursor({}), controlCursor({ dragAxis: [[0, 0, 0], [0, 1, 0]] })]).toEqual(["", "pointer", "grab"]);
+  });
+});

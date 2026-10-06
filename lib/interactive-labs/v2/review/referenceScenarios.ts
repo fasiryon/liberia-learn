@@ -114,6 +114,10 @@ export const HYDROPOWER_REVIEW_SCENARIOS: LabReviewScenarioSet = {
     // v1.1 feeder blocks: the v1.0 pass state (hospital only) is now under-served, and one block too many trips.
     hydroScenario("hydro-challenge-hospital-only-underserved", "S8 Hospital only: stable but not the most load", "challenge", "S8", [{ type: "mode", mode: "CHALLENGE" }, feeder("homesBlocks", 0), feeder("shopsBlocks", 0)]),
     hydroScenario("hydro-challenge-one-block-too-many", "S8 One shops block too many trips the plant", "challenge", "S8", [{ type: "mode", mode: "CHALLENGE" }, feeder("homesBlocks", 0), feeder("shopsBlocks", 2)]),
+    // RX-006 test 8: the stateful focus/selection combinations of the merged LOW controls - an inspected gauge band and an
+    // inspected breaker, each highlighted on its own while the rest of its row stays batched.
+    hydroScenario("hydro-inspect-gauge-band", "RX-006 Inspected season gauge band", "challenge", "S8", [{ type: "mode", mode: "CHALLENGE" }, { type: "inspect-component", componentId: "gauge-band-3" }]),
+    hydroScenario("hydro-inspect-breaker", "RX-006 Inspected hospital breaker, one shops block lit", "challenge", "S8", [{ type: "mode", mode: "CHALLENGE" }, feeder("homesBlocks", 0), feeder("shopsBlocks", 1), { type: "inspect-component", componentId: "breaker-hospital" }]),
     hydroScenario("hydro-challenge-homes-block-too-big", "S8 A homes block is bigger than the spare power", "challenge", "S8", [{ type: "mode", mode: "CHALLENGE" }, feeder("homesBlocks", 1), feeder("shopsBlocks", 0)]),
     hydroScenario("hydro-challenge-corrected-not-reset", "S8 Trip diagnosed and corrected, reset not yet pressed", "challenge", "S8", [{ type: "mode", mode: "CHALLENGE" }, feeder("shopsBlocks", 2), feeder("shopsBlocks", 1)]),
     hydroScenario("hydro-challenge-reset-solved", "S8 Trip, correct, reset: hospital supplied again", "challenge", "S8", [{ type: "mode", mode: "CHALLENGE" }, feeder("shopsBlocks", 2), feeder("shopsBlocks", 1), { type: "reset-protection" }], true),

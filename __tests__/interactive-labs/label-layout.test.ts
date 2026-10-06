@@ -25,3 +25,15 @@ describe("placeSceneLabels", () => {
     expect(placeSceneLabels(input, viewport, 8)).toEqual(placeSceneLabels(input, viewport, 8));
   });
 });
+
+describe("label priority (A1 label cue, R4 visual)", () => {
+  it("a part a check names outranks a nearer-centre part for a scarce budget, after highlighted parts", () => {
+    const viewport = { width: 1000, height: 600 };
+    const placed = placeSceneLabels([
+      { id: "decor-near-centre", text: "Road", x: 500, y: 300, highlighted: false },
+      { id: "runner", text: "Runner", x: 120, y: 520, highlighted: false, critical: true },
+      { id: "inspected", text: "Generator", x: 880, y: 90, highlighted: true },
+    ], viewport, 2);
+    expect(placed.map((label) => label.id)).toEqual(["inspected", "runner"]);
+  });
+});
