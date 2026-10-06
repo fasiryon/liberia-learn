@@ -111,7 +111,7 @@ export function resolveCues(flows: readonly RenderFlow[], surfaces: readonly Ren
     cues.push({ id: `surface:${surface.id}`, kind: "chevron", position: [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2 + 0.05, (a[2] + b[2]) / 2], direction: normalise([b[0] - a[0], b[1] - a[1], b[2] - a[2]]), color: "#e0f2fe" });
   }
   for (const emitter of emitters) {
-    if (!emitter.active) continue;
+    if (!emitter.active || emitter.rate <= 0) continue;
     const tip: Vec3 = [emitter.origin[0] + emitter.direction[0] * emitter.reach * 0.5, emitter.origin[1] + emitter.direction[1] * emitter.reach * 0.5, emitter.origin[2] + emitter.direction[2] * emitter.reach * 0.5];
     cues.push(emitter.staticCue.kind === "glyph"
       ? { id: `emitter:${emitter.id}`, kind: "glyph", glyph: emitter.staticCue.glyph, position: tip, direction: emitter.direction, color: emitter.color }

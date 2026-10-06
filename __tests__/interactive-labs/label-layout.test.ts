@@ -1,6 +1,9 @@
 // R3 visual findings: scene labels are placed only on screen, never overlapping, nearest the frame centre first.
 import { describe, expect, it } from "vitest";
 import { labelBox, placeSceneLabels } from "@/lib/interactive-labs/v2/fidelity/labelLayout";
+import { hydropowerDefinition } from "@/lib/interactive-labs/v2/definitions/hydropower";
+import { buildRenderList } from "@/lib/interactive-labs/v2/fidelity/renderList";
+import { transformPoint } from "@/lib/interactive-labs/v2/fidelity/math";
 
 const viewport = { width: 400, height: 300 };
 const c = (id: string, x: number, y: number, highlighted = false) => ({ id, text: id, x, y, highlighted });
@@ -23,6 +26,19 @@ describe("placeSceneLabels", () => {
   it("is deterministic", () => {
     const input = [c("A", 100, 100), c("B", 300, 200), c("C", 200, 150)];
     expect(placeSceneLabels(input, viewport, 8)).toEqual(placeSceneLabels(input, viewport, 8));
+  });
+});
+
+describe("label anchors stay on their part (part-local offsets)", () => {
+  // A world-space offset read as part-local sends the dam/river labels 9-13 units away, off the scene.
+  it("every Mount Coffee label offset, scaled through its part, lands near that part", () => {
+    const list = buildRenderList({ definition: hydropowerDefinition, state: hydropowerDefinition.initialState, profile: "HIGH" });
+    const far = list.items.filter((item) => item.labelOffset).flatMap((item) => {
+      const anchor = transformPoint(item.matrix, item.labelOffset!);
+      const distance = Math.hypot(anchor[0] - item.center[0], anchor[1] - item.center[1], anchor[2] - item.center[2]);
+      return distance > 3.5 ? [`${item.id}: ${distance.toFixed(2)}`] : [];
+    });
+    expect(far).toEqual([]);
   });
 });
 

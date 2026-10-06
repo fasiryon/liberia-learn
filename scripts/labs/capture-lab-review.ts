@@ -294,6 +294,8 @@ async function main() {
   const profiles = (list("profiles") ?? [...LAB_REVIEW_PROFILES]) as CapabilityProfile[];
   const viewports = (list("viewports") ?? ["desktop", "mobile"]) as ViewportName[];
   const wanted = list("scenarios");
+  const unknownScenarios = (wanted ?? []).filter((id) => !set.scenarios.some((scenario) => scenario.id === id));
+  if (unknownScenarios.length) throw new Error(`Unknown scenario id(s) for ${labId}: ${unknownScenarios.join(", ")}. Known: ${set.scenarios.map((scenario) => scenario.id).join(", ")}`);
   const scenarios: LabReviewScenario[] = wanted ? set.scenarios.filter((scenario) => wanted.includes(scenario.id)) : set.scenarios;
   for (const profile of profiles) if (!LAB_REVIEW_PROFILES.includes(profile)) throw new Error(`Unknown profile ${profile}`);
   for (const viewport of viewports) if (!(viewport in VIEWPORTS)) throw new Error(`Unknown viewport ${viewport}`);

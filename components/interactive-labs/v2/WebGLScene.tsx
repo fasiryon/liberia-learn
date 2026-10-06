@@ -405,7 +405,7 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
       if (list.markers.length) drawPoints(list.markers, gl.POINTS, MARKER_COLOR, 1, (list.budget.pulseHighlights && !motionless ? 12 + Math.sin(t * 5) * 3 : 12) * dpr, viewProj);
 
       // Labels are DOM text (sharp at any DPR) repositioned a few times per second rather than every frame.
-      const labelNow = reviewTime ?? now;
+      const labelNow = reviewTime === undefined ? now : reviewTime * 1000; // the review clock counts seconds; the throttle is in ms
       if (labels.current && labelNow - labelTick > 120) {
         labelTick = labelNow;
         const status = list.motions.filter((motion) => motion.active).map((motion) => `${motion.label}: turning`).join(". ");

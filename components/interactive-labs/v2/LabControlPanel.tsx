@@ -17,7 +17,7 @@ const MODES: Exclude<LabMode, "COMPLETE">[] = ["GUIDED", "EXPLORE", "CHALLENGE",
 /** The learner's current task, as the panel states it: the guided step, the challenge, or the next check (A17 peek). */
 export function labTaskPrompt(definition: InteractiveLabDefinition<LabState>, state: LabState, activeCheck: LearningCheck | undefined): string {
   const spec = definition.fidelity, fidelity = state.fidelity;
-  const guidedIndex = spec && fidelity ? Math.max(fidelity.guidedStepIndex, Math.min(state.completedChecks.length, spec.guidedPath.length - 1)) : 0;
+  const guidedIndex = fidelity?.guidedStepIndex ?? 0;
   const guided = spec && fidelity && state.mode === "GUIDED" ? spec.guidedPath[guidedIndex] : undefined;
   return guided?.prompt ?? (state.mode === "CHALLENGE" && spec ? spec.authoring.challenge : activeCheck?.prompt ?? "You completed every check!");
 }
@@ -27,7 +27,7 @@ export function LabControlPanel({ definition, state, activeCheck, dispatch, onSt
   const [heldFace, setHeldFace] = useState<string | null>(null);
   const [pendingSlot, setPendingSlot] = useState<string | null>(null);
   const modes = spec?.modes ?? MODES;
-  const guidedIndex = spec && fidelity ? Math.max(fidelity.guidedStepIndex, Math.min(state.completedChecks.length, spec.guidedPath.length - 1)) : 0;
+  const guidedIndex = fidelity?.guidedStepIndex ?? 0;
   const guided = spec && fidelity && state.mode === "GUIDED" ? spec.guidedPath[guidedIndex] : undefined;
   const simulation = spec && fidelity ? deriveSimulation(spec, fidelity) : null;
   const modeOwnsTask = state.mode === "GUIDED" || state.mode === "CHALLENGE";

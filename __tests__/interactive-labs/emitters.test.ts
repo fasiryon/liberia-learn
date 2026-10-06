@@ -73,6 +73,12 @@ describe("A15 cues and the emitter gate", () => {
     expect(resolveCues([], [], [emitter])).toEqual([expect.objectContaining({ id: "emitter:e", kind: "glyph", glyph: "≈" })]);
   });
 
+  it("gives no static cue to an emitter that is switched on but running at zero rate", () => {
+    const [stopped] = resolveEmitters(spec([base]), { on: 1, rate: 0 }, 18);
+    expect(stopped).toMatchObject({ active: true, rate: 0, particleCount: 0 });
+    expect(resolveCues([], [], [stopped])).toEqual([]);
+  });
+
   it("rejects unknown quantities, bad geometry and missing LOW proxies or static cues", () => {
     const quantities = { on: 1, rate: 1 };
     expect(validateEmitters(spec([base]), quantities)).toEqual([]);

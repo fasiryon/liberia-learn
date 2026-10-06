@@ -159,7 +159,8 @@ function applyFidelityAction(spec: HighFidelitySpec, state: FidelityState, actio
       const cleared = {
         ...next,
         ...(next.inspectedComponentId && !isComponentRevealed(spec, next, next.inspectedComponentId) ? { inspectedComponentId: null } : {}),
-        ...(next.isolatedId && !isComponentRevealed(spec, next, next.isolatedId) ? { isolatedId: null } : {}),
+        // A plain scene object (not a spec component) is never hidden by a cutaway, so its isolation is kept.
+        ...(next.isolatedId && spec.components.some((component) => component.id === next.isolatedId) && !isComponentRevealed(spec, next, next.isolatedId) ? { isolatedId: null } : {}),
       };
       return cleared;
     }

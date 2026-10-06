@@ -48,12 +48,13 @@ const CONTROL_COLOR = "#e2e8f0";
 
 const components: HighFidelitySpec["components"] = [
   // Water components are the instructional (pickable, labelled) parts; RX-005b surfaces draw the water itself.
+  // Label offsets are in part-local space (scaled by the part), so the long dam and river use small fractions of their span.
   component("headpond", "Headpond", "rectangular-prism", [-1.5, 2.9, -2.5], [4.7, 0.18, 1.4], "#2f8fe8", { labelOffset: [-0.35, 0.9, 0], material: mat("#2f8fe8", 0.08) }),
-  component("dam", "Dam", "rectangular-prism", [-1.5, 2.15, -1.2], [4.8, 1.5, 0.38], "#c9c2b4", { labelOffset: [-2.8, -0.15, 0] }),
+  component("dam", "Dam", "rectangular-prism", [-1.5, 2.15, -1.2], [4.8, 1.5, 0.38], "#c9c2b4", { labelOffset: [-0.58, -0.1, 0] }),
   component("intake-1", "Intake", "box", [-1.5, 1.6, -0.9], [0.54, 0.28, 0.5], "#9fb2c6", { labelOffset: [-0.1, 0.65, 0] }),
   { ...pipeKit({ id: "penstock-1", label: "Penstock", transform: tr([-1.5, 0.72, -0.35], [0.2, 1.25, 0.2]), color: "#6f86a0", points: [[0,-1,0],[0,1,0]], radius: 1 }), labelOffset: [-0.55, 0.15, 0] },
   component("tailrace", "Tailrace", "rectangular-prism", [-1.5, -1.15, 0.8], [2.5, 0.16, 0.52], "#2f8fe8", { labelOffset: [-0.3, -0.45, 0], material: mat("#2f8fe8", 0.08) }),
-  component("river-downstream", "Saint Paul River", "rectangular-prism", [0, -1.8, 1.6], [5.8, 0.12, 0.5], "#2f8fe8", { labelOffset: [1.7, -0.3, 0], material: mat("#2f8fe8", 0.08) }),
+  component("river-downstream", "Saint Paul River", "rectangular-prism", [0, -1.8, 1.6], [5.8, 0.12, 0.5], "#2f8fe8", { labelOffset: [0.29, -2.5, 0], material: mat("#2f8fe8", 0.08) }),
   component("spillway-gate", "Spillway gate", "box", [-3.3, 2.4, -1.0], [0.65, 0.8, 0.18], "#9fb2c6", { labelOffset: [0.55, 0.45, 0], mobileLabel: false }),
   component("powerhouse", "Powerhouse", "rectangular-prism", [0.3, 0.15, 0.1], [2.15, 1.7, 1.5], "#d8d2c4", { material: mat("#d8d2c4", 0.22), labelOffset: [0, 1.05, 0], mobileLabel: false }),
   ...UNIT_X.flatMap((x, i) => {
