@@ -569,8 +569,10 @@
           "severity": "P1",
           "lens": "PERFORMANCE",
           "summary": "HIGH/STANDARD draw planner does not match three.js renderer.info; shadow pass never measured.",
-          "status": "OPEN",
-          "resolution": "RX-005 A8 / RX-006 test-1 acceptance item."
+          "status": "FIXED",
+          "resolution": "Planner parity including HIGH shadow pass proven in final runs; accounting only.",
+          "commit": "ae3a1ec05967fb249b3490f4d3598f7989640611",
+          "verifiedOn": "Final acceptance closure, REVIEW_LOG.md; runs37489886085/37489902558"
         },
         {
           "id": "HYDRO-R3P-004",
@@ -586,8 +588,10 @@
           "severity": "P1",
           "lens": "PERFORMANCE",
           "summary": "Frame-monitor rAF never idled or paused.",
-          "status": "OPEN",
-          "resolution": "Partly fixed in bcb40c42 (samples only while rendering and visible); IntersectionObserver pausing and the 30 fps-cap test remain RX-005 A4/A6 items."
+          "status": "FIXED",
+          "resolution": "Scene activity/visibility pause and 30 fps cap tests accepted; device FPS unmeasured.",
+          "commit": "ae3a1ec05967fb249b3490f4d3598f7989640611",
+          "verifiedOn": "Final acceptance closure, REVIEW_LOG.md; runs37489886085/37489902558"
         },
         {
           "id": "HYDRO-R3D-001",
@@ -748,23 +752,23 @@
       "id": "RX-005",
       "capability": "Immersive three.js HIGH/STANDARD renderer, quantity-bound surfaces and emitters, parametric geometry, in-scene controls, camera rails, scene-first shell",
       "proposal": "docs/architecture/runtime-extensions/RX-005-immersive-high-renderer.md",
-      "status": "PROPOSED",
+      "status": "IMPLEMENTED",
       "reviewers": [
         "lab-performance-reviewer",
         "lab-design-director"
       ],
-      "tests": "Unit: 271/271 interactive-lab tests (incl. control-confirm-drag, semantic-cues, status-cues, mobile-sheet, environment-rigs, frame-plan, picking). Browser (SwiftShader, run 37429556324 at c0e77a6d): 96/96 planner parity incl. shadow pass, zero three requests on LOW/2D, determinism 96/96 on all profiles, 20x remount one live renderer, chunk-abort walkthrough. Remains PROPOSED: unmet items listed in the RX-005 acceptance record (2026-10-06); final run at 90eff6c6 pending."
+      "tests": "Final evidence ae3a1ec05967fb249b3490f4d3598f7989640611: hydro 37489886085 (408 PASS/408 deterministic), circuit 37489902558 (144 PASS/144 deterministic); planner parity, zero three LOW/2D, shader gate, 20x remount/context fallback, LOW create 0 / bufferData 0 (hydro 878 / circuit 420 range updates); hydro 12 keyboard walkthroughs and blocked-three completion. 33 files / 316 local tests. Independent bounded performance ACCEPT c0e77a6d..13c0496d; A7 desktop1024 shadow quality ACCEPT on Intel GPU three stills at 13c0496d. See REVIEW_LOG final closure for accepted amendments and physical-phone UNVERIFIED limitations. Exact-head CI required before merge."
     },
     {
       "id": "RX-006",
       "capability": "LOW draw-call batching with per-part state",
       "proposal": "docs/architecture/runtime-extensions/RX-006-low-batching.md",
-      "status": "PROPOSED",
+      "status": "IMPLEMENTED",
       "reviewers": [
         "lab-performance-reviewer",
         "lab-design-director"
       ],
-      "tests": "Unit: frame-plan, low-batch-state, picking (projected bounds, every gauge band and breaker). Browser (run 37429556324): LOW planner parity 96/96, buffer identity after warm-up (create 0, bufferData 0, 742 bufferSubData), LOW 27/40 draws. Remains PROPOSED: tests 3 (scene-tap/phone challenge parity) and 8 (before/after captures) open; parity gate not yet on PR CI."
+      "tests": "Final evidence ae3a1ec05967fb249b3490f4d3598f7989640611: hydro 37489886085 (408 PASS/408 deterministic), circuit 37489902558 (144 PASS/144 deterministic); planner parity, zero three LOW/2D, shader gate, 20x remount/context fallback, LOW create 0 / bufferData 0 (hydro 878 / circuit 420 range updates); hydro 12 keyboard walkthroughs and blocked-three completion. 33 files / 316 local tests. Independent bounded performance ACCEPT c0e77a6d..13c0496d; A7 desktop1024 shadow quality ACCEPT on Intel GPU three stills at 13c0496d. See REVIEW_LOG final closure for accepted amendments and physical-phone UNVERIFIED limitations. Exact-head CI required before merge."
     },
     {
       "id": "RX-005i",
@@ -794,6 +798,10 @@
     {
       "what": "Overload protection trips are latched and cleared only by an explicit, validated Reset plant (founder decision 2026-10-02); no commit-load workflow.",
       "why": "Prediction, action, consequence, diagnosis, correction and explicit recovery; the science reviewer accepted it as a caveated simplification of operator-driven restoration."
+    },
+    {
+      "what": "A7 sun shadow map is 1024 px on every device; desktop still quality accepted with minor stepped ground-shadow edges.",
+      "why": "Independent performance and design reviewers ACCEPT the bounded cost/readability amendment; GPU stills in evidence/rx-a7-desktop-gpu. Physical-phone performance remains UNVERIFIED."
     }
   ],
   "designVerdict": {

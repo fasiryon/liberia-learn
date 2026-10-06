@@ -156,7 +156,7 @@ Measured on SwiftShader (draw calls are deterministic; timings do not count). HI
 | HYDRO-R3P-003 | P1 | The HIGH/STANDARD draw planner does not match three.js `renderer.info` (−10 to +5); the shadow pass is never measured | **CLOSED (accounting).** Planner equals `renderer.info` on 96/96 HIGH, STANDARD and LOW stills, HIGH including the measured shadow pass (performance re-check 2026-10-06) | CI run 37429556324 at c0e77a6d |
 | HYDRO-R3P-004 | P1 | Baseline re-based across 7 commits without the required record | FIXED: one dedicated baseline commit with before and after for every lab | 8898c3ab |
 | HYDRO-R3P-005 | P1 | The frame-monitor rAF never idles, ignores visibility, and samples idle frames | **CLOSED (code and unit tests).** Offscreen/hidden pausing and the 30 fps ambient cap; browser pausing and fps are not measured | `scene-activity.test.ts`; performance re-check 2026-10-06 |
-| HYDRO-R3P-006 | P2 | LOW has no 30 fps ambient cap and allocates per frame | **FIXED, final evidence pending.** LOW 30 fps cap; batch buffers persist and grow geometrically (create 0 / bufferData 0 after warm-up). The per-frame flow-tube rewrite found in review is signature-cached at 90eff6c6 | run 37429556324; 90eff6c6 |
+| HYDRO-R3P-006 | P2 | LOW has no 30 fps ambient cap and allocates per frame | **CLOSED (accounting/lifecycle), final run 37489886085.** LOW 30 fps cap; batch buffers persist and grow geometrically (create 0 / bufferData 0 after warm-up). The per-frame flow-tube rewrite found in review is signature-cached at 90eff6c6 | run 37429556324; 90eff6c6 |
 | HYDRO-R3P-007 | P2 | The ThreeScene material cache grows with continuous emissive values | OPEN | — |
 | HYDRO-R3P-008 | P2 | Context-loss handler lacks `preventDefault`; shadow box not fitted; passive-wheel `preventDefault` | OPEN | — |
 | HYDRO-R3P-009 | P2 | Protection code costs | No change needed | — |
@@ -198,7 +198,7 @@ Product-quality readiness only. This is not curriculum, founder or MOE approval,
 
 ## RX-005 / RX-006 bounded re-check (2026-10-06)
 
-Performance, interaction and visual reviewers re-checked the runtime-related blockers on CI run 37429556324 (c0e77a6d). Findings fixed in 90eff6c6 (final evidence run pending):
+Performance, interaction and visual reviewers re-checked the runtime-related blockers on CI run 37429556324 (c0e77a6d). Findings fixed in 90eff6c6 and verified CLOSED by final run 37489886085 at ae3a1ec0:
 
 | ID | Lens | Sev | Finding | Status |
 |---|---|---|---|---|
@@ -216,14 +216,20 @@ Performance, interaction and visual reviewers re-checked the runtime-related blo
 | HYDRO-R4V-001 | visual | P1 | Status lamps stacked on unit 3's section parts; unit 3 missing from the HUD list | FIXED (90eff6c6) |
 | HYDRO-R4V-002 | visual | P1 | Idle dashed tubes dominated the frame and overdrew running flows on LOW | FIXED (90eff6c6): thinner neutral idle tubes drawn first |
 
-Still open after this re-check:
+Disposition after final acceptance closure (2026-10-06):
 
 | ID | Lens | Sev | Finding | Owner |
 |---|---|---|---|---|
-| HYDRO-R4V-003 | visual | P0 | FALLBACK_2D drops part and unit labels the 3D profiles carry (runner, shaft, unit housings) | runtime label budget / Mount Coffee polish |
-| HYDRO-R4V-004 | visual | P1 | LOW labels drift onto the wrong parts (no leaders; step-relevant parts not prioritised) | runtime |
+| HYDRO-R4V-003 | visual | P0 | FALLBACK_2D drops part and unit labels the 3D profiles carry (runner, shaft, unit housings) | CLOSED: shared label parity/priority at d3581b42; final 408 captures PASS |
+| HYDRO-R4V-004 | visual | P1 | LOW labels drift onto the wrong parts (no leaders; step-relevant parts not prioritised) | CLOSED: part-space anchoring and priority at d3581b42; final LOW 102 captures PASS |
 | HYDRO-R4I-007 | interaction | P1 | Phone scene targets for breakers and gauge bands are 6 to 16 px | Mount Coffee polish (phone control preset, hit proxies) |
-| HYDRO-R4I-008 | interaction | P2 | A14 in-scene "Confirm?" label and shared affordance token missing | RX-005 |
-| HYDRO-R4I-009 | interaction | P2 | HIGH to LOW downgrade does not carry the orbited pose | RX-005 A18 |
+| HYDRO-R4I-008 | interaction | P2 | A14 in-scene "Confirm?" label and shared affordance token missing | CLOSED: shared token/label at d3581b42; tests and final captures |
+| HYDRO-R4I-009 | interaction | P2 | HIGH to LOW downgrade does not carry the orbited pose | CLOSED: carried pose at d3581b42; continuity tests |
 | HYDRO-R4V-005 | visual | P2 | Lit-city colour differs by profile; idle glyph small; gauge strip unlabelled | Mount Coffee polish |
-| HYDRO-R4P-006 | performance | P2 | Uncaught chunk-abort page errors; chunk gate needs a cumulative anchor; parity gates not on PR CI | runtime / CI |
+| HYDRO-R4P-006 | performance | P2 | Uncaught chunk-abort page errors; chunk gate needs a cumulative anchor; parity gates not on PR CI | OPEN only for known chunk-abort page errors; cumulative cap and automatic PR parity CLOSED |
+
+## Current runtime acceptance — 2026-10-06
+
+RX-005 and RX-006 are **IMPLEMENTED** together; historical PROPOSED and pending-evidence statements above are superseded. Final runs 37489886085 / 37489902558 at ae3a1ec05967fb249b3490f4d3598f7989640611 verify the R4 fixes, 552 captures and 552 deterministic pairs. R4P-001–005, R4I-001–006 and R4V-001–004 are CLOSED for their runtime symptoms. R4I-008/009 are CLOSED. R3P-003/005/006 are closed for accounting/code/lifecycle, without phone performance certification. Both required final reviewers ACCEPT; exact rationale and limitations are in REVIEW_LOG.md.
+
+New bounded design P2 HYDRO-RX-A7-EDGE-001: coarse desktop ground-shadow edges beneath right-hand breaker blocks in cutaway/exploded GPU stills. Nonblocking A7 acceptance; any later smoothing must retain the accepted 1024 px cost. R4P-006 remains open only for the two dev-server aborted-chunk page errors (52/52 walkthrough steps complete). R4I-007 and R4V-005, the named product/benchmark/art/immersion findings and physical-device limitations remain open. Mount Coffee remains DRAFT/PENDING/UNRELEASED, curriculum inactive, student inaccessible, DO_NOT_SHIP.

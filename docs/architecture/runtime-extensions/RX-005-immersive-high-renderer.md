@@ -1,6 +1,6 @@
 # RX-005: Immersive HIGH renderer (three.js) and scene-first interaction
 
-- **Status:** PROPOSED. Most acceptance items are implemented and proven in CI; the exact unmet items are listed in "Acceptance record (2026-10-06)" at the end of this document.
+- **Status:** IMPLEMENTED. All binding acceptance items are proven or explicitly accepted by the authorized reviewers; see the final acceptance closure below.
   - Both reviewers returned **APPROVE_WITH_CHANGES** on 2026-10-01.
   - The amendments in "Review verdicts and binding amendments" (end of this document) are binding. **They supersede any earlier section they conflict with.**
   - The independent design-director re-check of A1 returned APPROVE_WITH_CHANGES; its final amendments were re-reviewed and APPROVED on 2026-10-01.
@@ -447,10 +447,12 @@ This is a proposal disposition, not a product-quality verdict.
 
 ### A7 and A8/A19 amendments (performance re-check, 2026-10-06)
 
-- **A7 shadow-map size, amended:** the sun shadow map is 1024 px on every device (commit 5a6e0b6e). It is strictly cheaper than 2048 (about a quarter of the memory and fill), stays inside HIGH `maxTexturePx` (2048), and the planner and budget record 1024 consistently. Desktop shadow quality is the design director's call. The unused fine-pointer option is to be removed.
+- **A7 shadow-map size, amended:** the sun shadow map is 1024 px on every device (commit 5a6e0b6e). It is strictly cheaper than 2048 (about a quarter of the memory and fill), stays inside HIGH `maxTexturePx` (2048), and the planner and budget record 1024 consistently. Desktop shadow quality was ACCEPTED by the independent design director in the final closure below. The unused fine-pointer option has been removed.
 - **A8/A19 "--gpu run", amended:** three.js counts `renderer.info` draws and triangles in JavaScript, and the LOW pass counts its own `drawArrays`, so planner parity measured on SwiftShader is valid accounting evidence. `programs.length` depends only on material parameters and is recorded per still. A real-GPU or device run is still required before any claim about frame rate, memory, battery or thermals; none is made.
 
-## Acceptance record (2026-10-06)
+## Acceptance record (2026-10-06; historical checkpoints)
+
+The following checkpoints preserve their original evidence state. They are superseded by the final acceptance closure below.
 
 Branch `feat/rx005-rx006-acceptance-closure` (draft PR #169). Evidence is GitHub-hosted headless Chromium on SwiftShader: it proves rendering correctness, routing, accounting, determinism and lifecycle, never device performance.
 
@@ -482,3 +484,19 @@ Branch `feat/rx005-rx006-acceptance-closure` (draft PR #169). Evidence is GitHub
 3. Known P2 follow-up: uncaught "Loading chunk failed" page errors during the chunk-abort walkthrough (dev server).
 
 No physical-device or real-GPU performance claim is made.
+
+## Final acceptance closure (2026-10-06)
+
+Evidence source: `ae3a1ec05967fb249b3490f4d3598f7989640611`. Mount Coffee [run 37489886085](https://github.com/fasiryon/liberia-learn/actions/runs/37489886085) and circuit [run 37489902558](https://github.com/fasiryon/liberia-learn/actions/runs/37489902558) both completed SUCCESS. Mount Coffee: 34 scenarios × four profiles × desktop/mobile/landscape = 408 PASS stills and 408/408 byte-identical determinism pairs. Circuit: 12 scenarios × the same matrix = 144 PASS stills and 144/144 identical pairs. Correct renderer identity, planner parity (including HIGH shadows), zero three.js requests on LOW/2D and no shader errors passed. HIGH/STANDARD/LOW on both labs pass 20 remounts with one live renderer and context-loss convergence to FALLBACK_2D. Warmed LOW buffer sweeps create zero buffers and call bufferData zero times (hydro 878 and circuit 420 bufferSubData range updates).
+
+Mount Coffee keyboard walkthroughs pass all 12 profile/viewport combinations (51/51 steps each, zero page errors). Its blocked-three.js desktop walkthrough completes all 52 steps on LOW. Circuit sweep inputs intentionally skip keyboard/abort; no claim is made that those steps ran in this sweep. The inherited accepted control/picking and keyboard evidence is preserved. Local interactive-lab validation: 33 files, 316 tests PASS on unchanged `13c0496d`. Source PR CI 37488994275 / runtime gate 37488994191 and handoff-head CI 37490114877 / runtime gate 37490114964 are SUCCESS. The final documentation head must independently pass PR CI before merge.
+
+**Independent final performance reviewer: ACCEPT**, bounded strictly to `c0e77a6d..13c0496d92713c4264dfc5073cff46423c1645c9`: 0 introduced/regressed P0, P1 or P2. Sprite shader/error gate, WebGL2 and failed-load guards, cached flow tubes, control tokens, pose carry, label placement/priority and 2D memoization introduce no demonstrated regression. Packages, dedicated re-baselines, unchanged 5% tolerance and cumulative chunk ceilings are accepted. threeRenderer is 609,291 stored / 132,842 Brotli bytes (ceilings 640,000 / 140,000); webglPass is 69,278 / 22,260 (72,000 / 24,000). LOW/FALLBACK_2D design and renderer lifecycle remain acceptable. This accepts the incremental design; it does not claim universally allocation-free JavaScript execution.
+
+**Independent design director: ACCEPT A7 desktop 1024 px shadows**, based on personal inspection of the three Intel Graphics / ANGLE Direct3D11 GPU stills at `13c0496d92713c4264dfc5073cff46423c1645c9`: overview cast shading grounds equipment; cutaway generator/shaft/runner retain readable fill and separation; exploded parts remain readable. Inspected files: `hydro-overview__HIGH__desktop.png`, `hydro-cutaway-powerhouse__HIGH__desktop.png`, `hydro-exploded-unit__HIGH__desktop.png` and `manifest.json`. The unaltered manifest and PNGs are retained in [desktop GPU evidence](../../labs/mount-coffee-hydropower/evidence/rx-a7-desktop-gpu/). Findings: 0 P0, 0 P1, 1 P2 (coarse/stepped ground-shadow edges beneath the right-hand breaker blocks in cutaway/exploded views). This minor edge polish does not obscure parts or make their placement ambiguous; future smoothing must preserve the accepted cost bound. This is only a desktop still-shadow judgment, not temporal stability, arbitrary cameras, benchmark or product SHIP.
+
+**Accepted amendments:** A7 uses a 1024 px sun-shadow map on all devices, accepted on cost and now desktop still quality. A8/A19 allow SwiftShader renderer accounting, program counts, routing, determinism and lifecycle evidence; they do not certify device performance. A19 permits the current registry until before programme Phase 4, guarded by the 162 KB stored / 48 KB Brotli 2D first-load test (300 KB limit). RX-006 optional instancing is not implemented and is not applicable: merged batching alone meets the budget.
+
+**Remaining limitations:** real-phone frame rate, target-device cold/warm load time, tab/JS/GPU memory, battery, thermals and physical touch latency remain UNVERIFIED / NOT MEASURED. The Intel GPU captures measure no performance. The known dev-server aborted-chunk walkthrough has two uncaught loading errors but completes 52/52 steps; that accepted P2 remains open. Small phone scene targets, art/immersion, benchmark and other Mount Coffee product polish remain separate. Mount Coffee remains DRAFT, approval PENDING, UNRELEASED, curriculum inactive and student inaccessible; overall design verdict DO_NOT_SHIP.
+
+**Decision: RX-005 = IMPLEMENTED.** Tests 1–7 and binding amendments A1–A20 are closed through the direct evidence and accepted dispositions recorded above. A20 keeps the glTF loader REJECTED/deferred. No partial promotion or device-performance inference.

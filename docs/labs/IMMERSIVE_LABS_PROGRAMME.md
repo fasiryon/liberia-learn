@@ -22,8 +22,8 @@ The 17 legacy labs:
 | Id | Capability | Status |
 |---|---|---|
 | RX-001 to RX-004 | State-driven motion, batched flows, isolated decor, rim highlight | IMPLEMENTED (PR #161) |
-| **RX-005** | three.js HIGH/STANDARD renderer, quantity-bound water/surfaces and emitters, in-scene controls, camera rails and widened constraints, scene-first player shell, output-driven poses and status lamps, budget accounting | PROPOSED: most items implemented and CI-proven; exact unmet items in the RX-005 acceptance record (2026-10-06) |
-| **RX-006** | LOW instanced batching with CPU picking (LOW is already at 38 of 40 draw calls) | PROPOSED: batching, picking and buffer identity proven; tests 3 and 8 open (RX-006 acceptance record) |
+| **RX-005** | three.js HIGH/STANDARD renderer, quantity-bound water/surfaces and emitters, in-scene controls, camera rails and widened constraints, scene-first player shell, output-driven poses and status lamps, budget accounting | IMPLEMENTED: final acceptance closure 2026-10-06, runs 37489886085 / 37489902558 and both reviewer ACCEPT decisions |
+| **RX-006** | LOW merged batching with per-part state and CPU picking (hydro 27 of 40 draws; optional instancing not implemented) | IMPLEMENTED: tests 1–8 proven or explicitly dispositioned in RX-006 final acceptance closure |
 | **RX-007** | **Time axis ("4D")**: a learner-controlled timeline to scrub, pause, rewind and change speed, plus "find the moment when…" checks | PLANNED, after RX-005 |
 | RX-008 | Haptics and sound: vibration on faults and trips, captioned ambient audio, with an off switch | PLANNED, after RX-007 |
 
@@ -57,6 +57,8 @@ Today those are either canned animation (forbidden by the standard when the stat
 - Implement and test them as specified, after their reviews.
 - Prove determinism: two byte-identical capture runs.
 - Gate: performance and design reviewers' verdicts are recorded, all suites are green, and budgets are re-baselined with review.
+
+Phase 0 runtime acceptance is complete. Physical-phone performance remains UNVERIFIED; this does not close Phase 1 product or governance gates.
 
 ### Phase 1: Mount Coffee 1.1.0 (HERO, the proof)
 - Feeder-block model (founder P0 decision), in-scene controls, immersive water, scene-first shell.
