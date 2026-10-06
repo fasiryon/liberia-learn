@@ -53,6 +53,7 @@ export function Fallback2D({ definition, state, reducedMotion, traceFlowId, disp
   // A14 drag-variable on 2D: the front projection maps world (x, y) to SVG (x, -y), so the drag runs in SVG units.
   const svgRef = useRef<SVGSVGElement>(null);
   const dragging = useRef<{ id: string; axis: [[number, number, number], [number, number, number]]; x: number; y: number; moved: boolean } | null>(null);
+  const dragToRef = useRef<(event: ReactPointerEvent) => void>(() => {});
   const dragTo = (event: ReactPointerEvent) => {
     const active = dragging.current, matrix = svgRef.current?.getScreenCTM();
     if (!active || !matrix) return;
@@ -63,6 +64,7 @@ export function Fallback2D({ definition, state, reducedMotion, traceFlowId, disp
     const [a, b] = active.axis;
     onDragControl?.(active.id, dragParameter({ x: a[0], y: -a[1] }, { x: b[0], y: -b[1] }, { x: local.x, y: local.y }));
   };
+  dragToRef.current = dragTo;
   const narrow = useNarrowContainer();
   // The valley's front view is wide and short. On a phone, frame a tighter, near-square window (presets still move
   // it) instead of a tall one that letterboxes the plant into a thin strip (R3 visual P0). A18: a preset with a frame
@@ -75,7 +77,7 @@ export function Fallback2D({ definition, state, reducedMotion, traceFlowId, disp
   // FALLBACK_2D represents cutaways by hiding the removed solid, matching LOW's
   // cutaway behavior. SVG has no clipping plane, so drawing the faded source
   // mesh would obscure the revealed internals and instructional labels.
-  const ordered = fallbackVisibleItems(list.items);
+  const ordered = useMemo(() => fallbackVisibleItems(list.items), [list]);
   const drawnBySurface = new Set(list.surfaces.filter((surface) => surface.active).map((surface) => definition.fidelity?.surfaces?.find((declared) => declared.id === surface.id)?.componentId).filter(Boolean) as string[]);
   // A11 label budget on 2D as on 3D: highlighted parts first, then the parts a check names (A1 label cue), then the
   // rest in authored order; up to 8 labels that do not crowd one another. The anchor is the part's own label offset
@@ -92,7 +94,43 @@ export function Fallback2D({ definition, state, reducedMotion, traceFlowId, disp
     placedLabels.push({ x: labelX, y: labelY, halfWidth: labelHalfWidth });
     labels.push({ id: item.id, text: item.label, x: labelX, y: labelY, halfWidth: labelHalfWidth, mobileHidden: item.mobileLabel === false });
   }
-  const activate = (pick: ScenePick) => (event: React.KeyboardEvent) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); onPick(pick); } };
+  // A19: the part layer depends only on the render list (and the stage scale), never on the animation clock, so it is
+  // built once per list and reused on every particle tick; hulls are cached per part transform. Handlers go through
+  // refs so the cached layer never calls stale props.
+  const onPickRef = useRef(onPick); onPickRef.current = onPick;
+  const activate = (pick: ScenePick) => (event: React.KeyboardEvent) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); onPickRef.current(pick); } };
+  const hullCache = useRef(new Map<string, string>());
+  const hullPoints = (item: (typeof ordered)[number]) => {
+    const key = `${item.id}|${item.geometry}|${item.matrix.join(",")}|${item.fallbackSilhouette ? JSON.stringify(item.fallbackSilhouette.points) : ""}`;
+    let points = hullCache.current.get(key);
+    if (points === undefined) {
+      const sourcePoints = item.fallbackSilhouette?.points.map(([x, y]) => [x, y, 0] as const) ?? silhouetteSamples(item.geometry);
+      points = convexHull(sourcePoints.map((sample) => { const p = transformPoint(item.matrix, sample); return [round(p[0]), round(-p[1])] as [number, number]; })).map((p) => p.join(",")).join(" ");
+      if (hullCache.current.size > 512) hullCache.current.clear();
+      hullCache.current.set(key, points);
+    }
+    return points;
+  };
+  const drawnKey = [...drawnBySurface].sort().join(",");
+  const partsLayer = useMemo(() => (
+    <>{ordered.map((item) => {
+          const hull = hullPoints(item);
+          const pick: ScenePick = { kind: "item", item };
+          return (
+            <g key={item.id} opacity={item.alpha < 0.5 && item.inFocus ? 0.45 : item.alpha} {...(item.detail === "decor" ? { pointerEvents: "none" as const } : item.control && item.inFocus ? { "aria-hidden": true, onClick: () => onPickRef.current(pick), className: item.control.dragAxis ? "cursor-grab touch-none" : "cursor-pointer",
+              ...(item.control.dragAxis ? { onPointerDown: (event: ReactPointerEvent<SVGGElement>) => { dragging.current = { id: item.id, axis: item.control!.dragAxis!, x: event.clientX, y: event.clientY, moved: false }; event.currentTarget.setPointerCapture(event.pointerId); }, onPointerMove: (event: ReactPointerEvent<SVGGElement>) => dragToRef.current(event), onPointerUp: () => { dragging.current = null; }, onPointerCancel: () => { dragging.current = null; } } : {}) } : item.selectable && item.inFocus ? { role: "button", tabIndex: 0, "aria-label": item.status ? `${item.label}: ${item.status.text}` : item.label, "aria-pressed": item.highlighted, onClick: () => onPickRef.current(pick), onKeyDown: activate(pick), className: "cursor-pointer outline-none focus-visible:[&>polygon]:stroke-cyan-200" } : {})}>
+              {item.selectable && item.inFocus && item.detail !== "decor" && <polygon data-lab-touch-target points={hull} fill="transparent" stroke="#fff" strokeOpacity={0.001} strokeWidth={48} vectorEffect="non-scaling-stroke" pointerEvents="stroke" aria-hidden="true" />}
+              {/* A14 control affordance (same token as WebGL): a ring with the control glyph; Confirm? while pending. */}
+              {item.control && item.inFocus && <g aria-hidden="true" pointerEvents="none"><circle data-lab-control-affordance={item.id} cx={item.center[0]} cy={-item.center[1]} r={0.2 * screenScale} fill="#020617" fillOpacity={0.4} stroke={item.control.pending ? HIGHLIGHT_COLOR : "#fcd34d"} strokeWidth={2} vectorEffect="non-scaling-stroke" /><text x={item.center[0]} y={-item.center[1]} textAnchor="middle" dominantBaseline="central" fontSize={0.2 * screenScale} fontWeight={800} fill="#fef3c7">{controlGlyph(item.control)}</text>{item.control.pending && <text data-lab-pending-label={item.id} x={item.center[0]} y={-item.center[1] - 0.36 * screenScale} textAnchor="middle" fontSize={0.24 * screenScale} fontWeight={800} fill={HIGHLIGHT_COLOR} stroke="#020617" strokeWidth={0.04 * screenScale} paintOrder="stroke">Confirm?</text>}</g>}
+              {item.emissive > 0 && <circle cx={item.center[0]} cy={-item.center[1]} r={0.08 * item.emissive + 0.04} fill="#fde68a" opacity={Math.min(0.08, item.emissive * 0.08)} filter="url(#glow)" />}
+              {/* A19 / G3: a status lamp's glyph, so its state is never colour alone. */}
+              {item.status && item.selectable && item.inFocus && <text data-lab-status={item.id} x={item.center[0]} y={-item.center[1] + 0.42 * screenScale} textAnchor="middle" dominantBaseline="central" fontSize={0.3 * screenScale} fontWeight={800} fill="#0f172a" stroke="#f8fafc" strokeWidth={0.04 * screenScale} paintOrder="stroke" aria-hidden="true">{item.status.glyph}</text>}
+              <polygon points={hull} fill={drawnBySurface.has(item.id) && !item.highlighted ? "none" : item.highlighted ? mixHexColor(item.color, HIGHLIGHT_COLOR, 0.2) : item.emissive > 0 ? mixHexColor(item.color, LIT_COLOR, Math.min(0.8, 0.8 * item.emissive)) : item.color} stroke={item.highlighted ? HIGHLIGHT_COLOR : "#0f172a"} strokeWidth={item.highlighted ? 3 : 1} vectorEffect="non-scaling-stroke" />
+            </g>
+          );
+        })}</>
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- handlers read refs; the layer follows the list, the stage scale and the surface-drawn set
+  ), [ordered, screenScale, drawnKey]);
   const selected = state.selectedObjectId && definition.scene.objects.some((object) => object.id === state.selectedObjectId) ? state.selectedObjectId : null;
 
   return (
@@ -118,23 +156,7 @@ export function Fallback2D({ definition, state, reducedMotion, traceFlowId, disp
             {!reducedMotion && flowParticles(flow.points, flow.particleCount, flow.rate, flow.direction, time, false).map((p, index) => <circle key={index} cx={p[0]} cy={-p[1]} r={0.09} fill={flow.color} />)}
           </g>
         ))}
-        {ordered.map((item) => {
-          const sourcePoints = item.fallbackSilhouette?.points.map(([x, y]) => [x, y, 0] as const) ?? silhouetteSamples(item.geometry);
-          const hull = convexHull(sourcePoints.map((sample) => { const p = transformPoint(item.matrix, sample); return [round(p[0]), round(-p[1])] as [number, number]; }));
-          const pick: ScenePick = { kind: "item", item };
-          return (
-            <g key={item.id} opacity={item.alpha < 0.5 && item.inFocus ? 0.45 : item.alpha} {...(item.detail === "decor" ? { pointerEvents: "none" as const } : item.control && item.inFocus ? { "aria-hidden": true, onClick: () => onPick(pick), className: item.control.dragAxis ? "cursor-grab touch-none" : "cursor-pointer",
-              ...(item.control.dragAxis ? { onPointerDown: (event: ReactPointerEvent<SVGGElement>) => { dragging.current = { id: item.id, axis: item.control!.dragAxis!, x: event.clientX, y: event.clientY, moved: false }; event.currentTarget.setPointerCapture(event.pointerId); }, onPointerMove: dragTo, onPointerUp: () => { dragging.current = null; }, onPointerCancel: () => { dragging.current = null; } } : {}) } : item.selectable && item.inFocus ? { role: "button", tabIndex: 0, "aria-label": item.status ? `${item.label}: ${item.status.text}` : item.label, "aria-pressed": item.highlighted, onClick: () => onPick(pick), onKeyDown: activate(pick), className: "cursor-pointer outline-none focus-visible:[&>polygon]:stroke-cyan-200" } : {})}>
-              {item.selectable && item.inFocus && item.detail !== "decor" && <polygon data-lab-touch-target points={hull.map((p) => p.join(",")).join(" ")} fill="transparent" stroke="#fff" strokeOpacity={0.001} strokeWidth={48} vectorEffect="non-scaling-stroke" pointerEvents="stroke" aria-hidden="true" />}
-              {/* A14 control affordance (same token as WebGL): a ring with the control glyph; Confirm? while pending. */}
-              {item.control && item.inFocus && <g aria-hidden="true" pointerEvents="none"><circle data-lab-control-affordance={item.id} cx={item.center[0]} cy={-item.center[1]} r={0.2 * screenScale} fill="#020617" fillOpacity={0.4} stroke={item.control.pending ? HIGHLIGHT_COLOR : "#fcd34d"} strokeWidth={2} vectorEffect="non-scaling-stroke" /><text x={item.center[0]} y={-item.center[1]} textAnchor="middle" dominantBaseline="central" fontSize={0.2 * screenScale} fontWeight={800} fill="#fef3c7">{controlGlyph(item.control)}</text>{item.control.pending && <text data-lab-pending-label={item.id} x={item.center[0]} y={-item.center[1] - 0.36 * screenScale} textAnchor="middle" fontSize={0.24 * screenScale} fontWeight={800} fill={HIGHLIGHT_COLOR} stroke="#020617" strokeWidth={0.04 * screenScale} paintOrder="stroke">Confirm?</text>}</g>}
-              {item.emissive > 0 && <circle cx={item.center[0]} cy={-item.center[1]} r={0.08 * item.emissive + 0.04} fill="#fde68a" opacity={Math.min(0.08, item.emissive * 0.08)} filter="url(#glow)" />}
-              {/* A19 / G3: a status lamp's glyph, so its state is never colour alone. */}
-              {item.status && item.selectable && item.inFocus && <text data-lab-status={item.id} x={item.center[0]} y={-item.center[1] + 0.42 * screenScale} textAnchor="middle" dominantBaseline="central" fontSize={0.3 * screenScale} fontWeight={800} fill="#0f172a" stroke="#f8fafc" strokeWidth={0.04 * screenScale} paintOrder="stroke" aria-hidden="true">{item.status.glyph}</text>}
-              <polygon points={hull.map((p) => p.join(",")).join(" ")} fill={drawnBySurface.has(item.id) && !item.highlighted ? "none" : item.highlighted ? mixHexColor(item.color, HIGHLIGHT_COLOR, 0.2) : item.emissive > 0 ? mixHexColor(item.color, LIT_COLOR, Math.min(0.8, 0.8 * item.emissive)) : item.color} stroke={item.highlighted ? HIGHLIGHT_COLOR : "#0f172a"} strokeWidth={item.highlighted ? 3 : 1} vectorEffect="non-scaling-stroke" />
-            </g>
-          );
-        })}
+        {partsLayer}
         {/* Active process paths sit above opaque SVG geometry so a real flow
             cannot disappear behind the dam, gate, or housing it passes. */}
         {list.flows.filter((flow) => flow.active).map((flow) => (

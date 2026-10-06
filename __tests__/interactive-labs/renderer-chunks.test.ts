@@ -101,3 +101,20 @@ describe("RX-005 A8: import graph", () => {
     expect(Object.values(outputs).some((output) => output.imports.some((imported) => imported.path === "three"))).toBe(true);
   }, 120_000);
 });
+
+describe("RX-005 A19: one lab's 2D first-load set", () => {
+  it("stays within the 300 KB FALLBACK_2D package limit (player, registry, definitions and SVG renderer; WebGL renderers lazy)", async () => {
+    const result = await build({ entryPoints: [path.join(root, "components/interactive-labs/v2/InteractiveLabPlayer.tsx")], bundle: true, splitting: true, format: "esm", outdir: path.join(root, ".a19-out"), write: false, minify: true, metafile: true, platform: "browser", jsx: "automatic", tsconfig: path.join(root, "tsconfig.json"), external: ["react", "react-dom", "next", "next/*", "three"], define: { "process.env.NODE_ENV": "\"production\"" }, logLevel: "error" });
+    const outputs = result.metafile.outputs;
+    const entry = Object.keys(outputs).find((key) => key.includes("InteractiveLabPlayer") && key.endsWith(".js"))!;
+    const firstLoad = new Set<string>();
+    const walk = (key: string) => { if (firstLoad.has(key)) return; firstLoad.add(key); for (const imported of outputs[key].imports) if (imported.kind === "import-statement" && outputs[imported.path]) walk(imported.path); };
+    walk(entry);
+    const bytes = [...firstLoad].reduce((sum, key) => sum + outputs[key].bytes, 0);
+    const lazy = Object.keys(outputs).filter((key) => !firstLoad.has(key) && key.endsWith(".js"));
+    expect(bytes).toBeLessThanOrEqual(300 * 1024);
+    // Both WebGL renderers stay out of the first-load set.
+    expect(lazy.some((key) => key.includes("ThreeScene"))).toBe(true);
+    expect(lazy.some((key) => key.includes("WebGLScene"))).toBe(true);
+  }, 120_000);
+});
