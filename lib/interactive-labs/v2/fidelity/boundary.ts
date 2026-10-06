@@ -7,6 +7,7 @@ import { compositeHex, contrastRatio, deltaE00, highlightColor, HIGHLIGHT_COLOR,
 import { resolveGeometryVariant } from "./geometry/builders";
 import { validateSurfaces } from "./surfaces";
 import { validateControls } from "./controls";
+import { validateSemanticCues } from "./semanticCues";
 import { validateCamera } from "./camera";
 import { validateEmitters } from "./emitters";
 import { buildRenderList, type RenderItem } from "./renderList";
@@ -144,6 +145,7 @@ export function validateHighFidelityDefinition(definition: InteractiveLabDefinit
   if (spec.offline.remoteAssets.length > 0 && definition.accessibility.offline) errors.push("offline_claim_with_remote_assets");
   if (spec.modes.length === 0) errors.push("modes_missing");
   errors.push(...validateControls(spec));
+  errors.push(...validateSemanticCues(definition));
   for (const [mode, start] of Object.entries(spec.modeStart ?? {})) {
     for (const [id, value] of Object.entries(start?.variables ?? {})) {
       const variable = spec.variables.find((candidate) => candidate.id === id);

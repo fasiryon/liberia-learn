@@ -42,6 +42,8 @@ import { isThreeChunk } from "../../lib/interactive-labs/v2/review/rendererChunk
 const VIEWPORTS = {
   desktop: { viewport: { width: 1366, height: 900 }, isMobile: false, hasTouch: false },
   mobile: { viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true },
+  // A17: a phone held sideways (scene left, 40% controls sheet right). Opt-in: --viewports desktop,mobile,landscape.
+  landscape: { viewport: { width: 844, height: 390 }, isMobile: true, hasTouch: true },
 } as const;
 type ViewportName = keyof typeof VIEWPORTS;
 const SETTLE_MS = 2500;

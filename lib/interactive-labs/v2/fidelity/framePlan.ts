@@ -73,7 +73,7 @@ export function planLowFrame(list: RenderList, options: { traceFlowId: string | 
 
 /**
  * ThreeScene (HIGH/STANDARD) with frustum culling off, i.e. the worst frame. Main pass: ground, daylight sky, one
- * InstancedMesh per batch, singles, one mesh per active surface, one line per flow, one point cloud per particle flow
+ * InstancedMesh per batch, singles, one section cap per clipped part (A15), one mesh per active surface, one line per flow, one point cloud per particle flow
  * and the shared marker cloud. Shadow pass (HIGH daylight only): every caster again.
  */
 export function planThreeFrame(list: RenderList, options: { profile: "HIGH" | "STANDARD"; traceFlowId: string | null; plan?: LowBatchPlan }): FramePlan {
@@ -83,12 +83,15 @@ export function planThreeFrame(list: RenderList, options: { profile: "HIGH" | "S
   const particleFlows = list.flows.filter((flow) => flow.active && flow.particleCount > 0 && flow.rate > 0 && flow.points.length >= 2).length;
   const markerCloud = list.markers.length > 0 || hasTraceNodes(list, options.traceFlowId) ? 1 : 0;
   const itemDraws = plan.batches.reduce((sum, batch) => sum + threePasses(batch.items[0]), 0) + plan.singles.reduce((sum, item) => sum + threePasses(item), 0);
-  const drawCalls = 1 + (daylight ? 1 : 0) + itemDraws + surfaces.length + list.flows.length + particleFlows + runningEmitters(list).length + markerCloud;
+  // A15: every clipped part also draws its opaque back-face section cap.
+  const caps = plan.singles.filter((item) => item.clip);
+  const drawCalls = 1 + (daylight ? 1 : 0) + itemDraws + caps.length + surfaces.length + list.flows.length + particleFlows + runningEmitters(list).length + markerCloud;
   const tri = (item: RenderItem) => itemTriangles(item, options.profile);
   // The shadow pass draws each caster once; the main pass draws transparent DoubleSide parts twice.
   const shadowBatchTriangles = plan.batches.reduce((sum, batch) => sum + tri(batch.items[0]) * batch.items.length, 0);
   const batchTriangles = plan.batches.reduce((sum, batch) => sum + tri(batch.items[0]) * batch.items.length * threePasses(batch.items[0]), 0);
   const triangles = THREE_GROUND_TRIANGLES + (daylight ? THREE_SKY_TRIANGLES : 0) + batchTriangles + plan.singles.reduce((sum, item) => sum + tri(item) * threePasses(item), 0)
+    + caps.reduce((sum, item) => sum + tri(item), 0)
     + surfaces.reduce((sum, surface) => sum + (surface.points.length - 1) * 2, 0);
   const casters = shadows ? plan.singles.filter(castsShadow) : [];
   return {

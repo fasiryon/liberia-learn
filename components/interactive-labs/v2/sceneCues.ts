@@ -23,3 +23,27 @@ export function cueElements(cues: readonly RenderCue[], project: Project): HTMLE
     return [node];
   });
 }
+
+/** The parts whose status glyph is drawn in the scene: visible, instructional status lamps (A19 / G3). */
+export const statusBadgeItems = <T extends { status?: { glyph: string; text: string }; inFocus: boolean; selectable: boolean; detail?: "decor" }>(items: readonly T[]) =>
+  items.filter((item) => item.status && item.inFocus && item.selectable && item.detail !== "decor");
+
+/**
+ * A19 / G3: each status lamp's glyph beside it, so its state is never colour alone. Decorative (the HUD states every
+ * lamp in text), so hidden from assistive technology.
+ */
+export function statusBadgeElements(items: readonly { id: string; center: Vec3; status?: { glyph: string; text: string }; inFocus: boolean; selectable: boolean; detail?: "decor" }[], project: Project): HTMLElement[] {
+  return statusBadgeItems(items).flatMap((item) => {
+    const at = project(item.center);
+    if (!at) return [];
+    const node = document.createElement("span");
+    node.textContent = item.status!.glyph;
+    node.title = item.status!.text;
+    node.dataset.labStatus = item.id;
+    node.setAttribute("aria-hidden", "true");
+    node.className = "pointer-events-none absolute flex h-5 min-w-5 items-center justify-center rounded-full bg-slate-950/85 px-1 text-xs font-black leading-none text-white ring-1 ring-white/60";
+    node.style.left = `${at.x}px`; node.style.top = `${at.y + 16}px`;
+    node.style.transform = "translate(-50%, -50%)";
+    return [node];
+  });
+}

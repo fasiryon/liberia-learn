@@ -17,9 +17,10 @@ function groupValue(variables: { id: string; label: string; kind: string; max: n
   return shown.map((variable) => ` · ${variable.label} ${format(variable)}`).join("");
 }
 
-type Props = { definition: InteractiveLabDefinition<LabState>; state: LabState; dispatch: (action: LabAction) => void };
+/** `onActivate` runs the shared activation (A14 confirm preview included) for a chip and its scene part alike. */
+type Props = { definition: InteractiveLabDefinition<LabState>; state: LabState; dispatch: (action: LabAction) => void; pendingControlId?: string | null; onActivate?: (componentId: string) => void };
 
-export function SceneControlBar({ definition, state, dispatch }: Props) {
+export function SceneControlBar({ definition, state, dispatch, pendingControlId = null, onActivate }: Props) {
   const spec = definition.fidelity, fidelity = state.fidelity;
   if (!spec || !fidelity) return null;
   const groups = new Map<string, { label: string; controls: { id: string; name: string; control: SceneControl }[] }>();
@@ -37,13 +38,26 @@ export function SceneControlBar({ definition, state, dispatch }: Props) {
         <div key={key} role="group" aria-label={group.label} className="flex flex-wrap items-center gap-1 rounded-2xl bg-white/5 p-1 pl-2">
           <span className="mr-1 text-[11px] font-semibold uppercase tracking-wide text-slate-200">{group.label}{groupValue(spec.variables, fidelity.variables, group.controls.map(({ control }) => control.variableId))}</span>
           {group.controls.map(({ id, name, control }) => {
+            // A14 drag-variable twin: a native range input on the same step grid; arrow keys step it.
+            if (control.kind === "drag-variable") {
+              const variable = spec.variables.find((candidate) => candidate.id === control.variableId);
+              if (!variable) return null;
+              const value = fidelity.variables[control.variableId] ?? variable.initial;
+              return (
+                <input key={id} type="range" data-lab-control={id} aria-label={name} min={variable.min} max={variable.max} step={variable.step} value={value}
+                  aria-valuetext={`${value}${variable.unit ? ` ${variable.unit}` : ""}`}
+                  onChange={(event) => { const next = Number(event.target.value); if (next !== value) dispatch({ type: "set-variable", variableId: control.variableId, value: next }); }}
+                  className="min-h-11 w-36 accent-amber-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white" />
+              );
+            }
             const action = controlAction(spec, fidelity, control);
+            const pending = pendingControlId === id;
             const selected = controlSelected(fidelity, control);
             return (
               <button key={id} type="button" data-lab-control={id} aria-label={name} aria-pressed={control.kind === "step-variable" ? undefined : selected} disabled={!action} title={name}
-                onClick={() => { if (action) dispatch(action); }}
-                className={`min-h-11 min-w-11 whitespace-nowrap rounded-full border-2 px-3 text-xs font-bold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white disabled:cursor-not-allowed disabled:opacity-45 ${selected ? "border-white bg-amber-300 text-slate-950" : "border-slate-600 bg-white text-slate-900 hover:bg-amber-100"}`}>
-                {control.label}
+                onClick={() => { if (!action) return; if (onActivate) onActivate(id); else dispatch(action); }}
+                className={`min-h-11 min-w-11 whitespace-nowrap rounded-full border-2 px-3 text-xs font-bold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white disabled:cursor-not-allowed disabled:opacity-45 ${pending ? "border-cyan-200 bg-slate-900 text-white" : selected ? "border-white bg-amber-300 text-slate-950" : "border-slate-600 bg-white text-slate-900 hover:bg-amber-100"}`}>
+                {pending ? `Confirm? ${control.label}` : control.label}
               </button>
             );
           })}

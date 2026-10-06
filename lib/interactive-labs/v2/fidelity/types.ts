@@ -6,6 +6,7 @@ import type { Vec3 } from "./math";
 import type { InstructionalGeometryVariants } from "./geometry/types";
 import type { SurfaceDefinition } from "./surfaces";
 import type { SceneControl } from "./controls";
+import type { SemanticCue } from "./semanticCues";
 import type { EmitterDefinition } from "./emitters";
 
 export const HIGH_FIDELITY_SPEC_VERSION = "high-fidelity-lab/1.0.0" as const;
@@ -40,6 +41,8 @@ export type ComponentDefinition = {
   carriesPlaceIdentity?: boolean;
   /** RX-005c: an in-scene control. Activating the part dispatches the same set-variable as its panel twin. */
   control?: SceneControl;
+  /** RX-005 A1: how a check-critical part is told apart on every profile (see fidelity/semanticCues.ts). */
+  semanticCues?: readonly SemanticCue[];
 };
 
 export type ComponentMotionDefinition = {

@@ -164,7 +164,11 @@ const spec: HighFidelitySpec = {
     deviceProfile: "LOW omits scenery and batches flow geometry; all instructional components remain within the locked profile budget.",
     offlineFallback: "Procedural geometry and local rules only; no remote assets; FALLBACK_2D supports all controls and checks.",
   },
-  components,
+  // RX-005 A1: every check-critical part is named and tappable on every profile; the unit-1 lamp also carries status.
+  components: components.map((component) => {
+    const critical = /^(gauge-band-\d|desk-(start-next|stop-last)|breaker-.+|headpond|intake-1|penstock-1|tailrace|river-downstream|u3-(runner|shaft|generator))$/.test(component.id);
+    return component.id === "unit-1" ? { ...component, semanticCues: ["label", "target", "status"] as const } : critical ? { ...component, semanticCues: ["label", "target"] as const } : component;
+  }),
   assemblies: [{ id: "unit-3", label: "Unit 3 machine", rootComponentId: "unit-3", componentIds: [...UNIT3_STACK], slots: [
     { id: "slot-runner", label: "Runner position", accepts: "runner", transform: tr([0.9, -0.25, 0.1], [0.32, 0.18, 0.32]), initialComponentId: "u3-runner" },
     { id: "slot-shaft", label: "Shaft position", accepts: "shaft", transform: tr([0.9, 0.05, 0.1], [0.09, 0.36, 0.09]), initialComponentId: "u3-shaft" },

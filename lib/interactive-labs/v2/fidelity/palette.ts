@@ -2,6 +2,8 @@
 export const INACTIVE_FLOW_COLOR = "#779ab2";
 export const HIGHLIGHT_COLOR = "#f0abfc";
 export const MARKER_COLOR = "#a3e635";
+/** A15: the shared "section cream" that caps every clipped solid on HIGH/STANDARD. */
+export const SECTION_CREAM = "#f3e7c9";
 
 /**
  * State colours are semantic runtime output, not authoring decoration. Keep
@@ -16,10 +18,20 @@ export const UNIT_STATUS_COLORS = Object.freeze({
   "out-for-repair": "#a855f7",
 } as const);
 
-export function statusVisual(status: string | undefined): { color?: string; emissive: number } {
+/** A19 / G3: every status also carries a glyph and text, so a lamp is never read by colour alone. */
+export const UNIT_STATUS_CUES = Object.freeze({
+  generating: { glyph: "●", text: "Generating" },
+  idle: { glyph: "◐", text: "Idle" },
+  off: { glyph: "○", text: "Off" },
+  tripped: { glyph: "✕", text: "Tripped" },
+  "out-for-repair": { glyph: "⚒", text: "Out for repair" },
+} as const);
+
+export function statusVisual(status: string | undefined): { color?: string; emissive: number; cue?: { glyph: string; text: string } } {
   if (!status) return { emissive: 0 };
   const color = UNIT_STATUS_COLORS[status as keyof typeof UNIT_STATUS_COLORS];
-  return color ? { color, emissive: status === "generating" ? 1 : status === "tripped" ? 0.45 : 0.18 } : { emissive: 0 };
+  const cue = UNIT_STATUS_CUES[status as keyof typeof UNIT_STATUS_CUES];
+  return color ? { color, emissive: status === "generating" ? 1 : status === "tripped" ? 0.45 : 0.18, cue } : { emissive: 0 };
 }
 
 export function parseHexColor(hex: string): [number, number, number] {

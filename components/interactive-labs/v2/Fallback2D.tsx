@@ -1,5 +1,7 @@
 "use client";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
+import { dragParameter } from "@/lib/interactive-labs/v2/fidelity/controls";
+import { SCENE_HEIGHT } from "./sceneLayout";
 import type { InteractiveLabDefinition, LabAction, LabState } from "@/lib/interactive-labs/v2/types";
 import { buildRenderList, fallbackVisibleItems } from "@/lib/interactive-labs/v2/fidelity/renderList";
 import { flowParticles } from "@/lib/interactive-labs/v2/fidelity/presentation";
@@ -17,7 +19,11 @@ const round = (value: number) => Math.round(value * 1000) / 1000;
 /** An energised part (lit city block, live gauge segment) is filled warm in 2D; a dead one keeps its base colour. */
 const LIT_COLOR = "#fde68a";
 
-type Props = { definition: InteractiveLabDefinition<LabState>; state: LabState; reducedMotion: boolean; traceFlowId: string | null; dispatch: (action: LabAction) => void; onPick: (pick: ScenePick) => void };
+type Props = { definition: InteractiveLabDefinition<LabState>; state: LabState; reducedMotion: boolean; traceFlowId: string | null; dispatch: (action: LabAction) => void; onPick: (pick: ScenePick) => void;
+  /** A14: the control part whose confirm preview is pending (drawn highlighted). */
+  pendingControlId?: string | null;
+  /** A14: a drag on a drag-variable control part, as the pointer's parameter along the part's axis. */
+  onDragControl?: (componentId: string, t: number) => void };
 
 /**
  * FALLBACK_2D draws the same render list as WebGL with a front orthographic projection, so every part,
@@ -37,10 +43,20 @@ function useNarrowContainer(): boolean {
   return narrow;
 }
 
-export function Fallback2D({ definition, state, reducedMotion, traceFlowId, dispatch, onPick }: Props) {
+export function Fallback2D({ definition, state, reducedMotion, traceFlowId, dispatch, onPick, pendingControlId = null, onDragControl }: Props) {
   const hasFlows = !!definition.fidelity?.flows.length;
   const { display, time } = useDisplayFidelity(definition, state, reducedMotion, hasFlows);
-  const list = useMemo(() => buildRenderList({ definition, state, profile: "FALLBACK_2D", displayFidelity: display }), [definition, state, display]);
+  const list = useMemo(() => buildRenderList({ definition, state, profile: "FALLBACK_2D", displayFidelity: display, pendingControlId }), [definition, state, display, pendingControlId]);
+  // A14 drag-variable on 2D: the front projection maps world (x, y) to SVG (x, -y), so the drag runs in SVG units.
+  const svgRef = useRef<SVGSVGElement>(null);
+  const dragging = useRef<{ id: string; axis: [[number, number, number], [number, number, number]] } | null>(null);
+  const dragTo = (event: ReactPointerEvent) => {
+    const active = dragging.current, matrix = svgRef.current?.getScreenCTM();
+    if (!active || !matrix) return;
+    const local = new DOMPoint(event.clientX, event.clientY).matrixTransform(matrix.inverse());
+    const [a, b] = active.axis;
+    onDragControl?.(active.id, dragParameter({ x: a[0], y: -a[1] }, { x: b[0], y: -b[1] }, { x: local.x, y: local.y }));
+  };
   const narrow = useNarrowContainer();
   // The valley's front view is wide and short. On a phone, frame a tighter, near-square window (presets still move
   // it) instead of a tall one that letterboxes the plant into a thin strip (R3 visual P0). A18: a preset with a frame
@@ -72,7 +88,7 @@ export function Fallback2D({ definition, state, reducedMotion, traceFlowId, disp
 
   return (
     <div className="relative" aria-label="2D lab scene" data-lab-renderer="svg" data-lab-frames-rendered="1">
-      <svg viewBox={viewBox} className={narrow ? "aspect-[100/95] h-auto w-full" : "h-[clamp(420px,62vh,640px)] w-full"} role="group" aria-label={`${definition.title ?? "Lab"} scene (2D view)`}>
+      <svg ref={svgRef} viewBox={viewBox} className={narrow ? "aspect-[100/95] h-auto w-full" : `${SCENE_HEIGHT} w-full`} role="group" aria-label={`${definition.title ?? "Lab"} scene (2D view)`}>
         <defs>
           <marker id="flow-arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#0f172a" /></marker>
           <filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="0.07" /></filter>
@@ -96,9 +112,12 @@ export function Fallback2D({ definition, state, reducedMotion, traceFlowId, disp
           const hull = convexHull(sourcePoints.map((sample) => { const p = transformPoint(item.matrix, sample); return [round(p[0]), round(-p[1])] as [number, number]; }));
           const pick: ScenePick = { kind: "item", item };
           return (
-            <g key={item.id} opacity={item.alpha < 0.5 && item.inFocus ? 0.45 : item.alpha} {...(item.detail === "decor" ? { pointerEvents: "none" as const } : item.control && item.inFocus ? { "aria-hidden": true, onClick: () => onPick(pick), className: "cursor-pointer" } : item.selectable && item.inFocus ? { role: "button", tabIndex: 0, "aria-label": item.label, "aria-pressed": item.highlighted, onClick: () => onPick(pick), onKeyDown: activate(pick), className: "cursor-pointer outline-none focus-visible:[&>polygon]:stroke-cyan-200" } : {})}>
+            <g key={item.id} opacity={item.alpha < 0.5 && item.inFocus ? 0.45 : item.alpha} {...(item.detail === "decor" ? { pointerEvents: "none" as const } : item.control && item.inFocus ? { "aria-hidden": true, onClick: () => onPick(pick), className: item.control.dragAxis ? "cursor-grab touch-none" : "cursor-pointer",
+              ...(item.control.dragAxis ? { onPointerDown: (event: ReactPointerEvent<SVGGElement>) => { dragging.current = { id: item.id, axis: item.control!.dragAxis! }; event.currentTarget.setPointerCapture(event.pointerId); dragTo(event); }, onPointerMove: dragTo, onPointerUp: () => { dragging.current = null; }, onPointerCancel: () => { dragging.current = null; } } : {}) } : item.selectable && item.inFocus ? { role: "button", tabIndex: 0, "aria-label": item.status ? `${item.label}: ${item.status.text}` : item.label, "aria-pressed": item.highlighted, onClick: () => onPick(pick), onKeyDown: activate(pick), className: "cursor-pointer outline-none focus-visible:[&>polygon]:stroke-cyan-200" } : {})}>
               {item.selectable && item.inFocus && item.detail !== "decor" && <polygon data-lab-touch-target points={hull.map((p) => p.join(",")).join(" ")} fill="transparent" stroke="#fff" strokeOpacity={0.001} strokeWidth={48} vectorEffect="non-scaling-stroke" pointerEvents="stroke" aria-hidden="true" />}
               {item.emissive > 0 && <circle cx={item.center[0]} cy={-item.center[1]} r={0.08 * item.emissive + 0.04} fill="#fde68a" opacity={Math.min(0.08, item.emissive * 0.08)} filter="url(#glow)" />}
+              {/* A19 / G3: a status lamp's glyph, so its state is never colour alone. */}
+              {item.status && item.selectable && item.inFocus && <text data-lab-status={item.id} x={item.center[0]} y={-item.center[1] + 0.42 * screenScale} textAnchor="middle" dominantBaseline="central" fontSize={0.3 * screenScale} fontWeight={800} fill="#0f172a" stroke="#f8fafc" strokeWidth={0.04 * screenScale} paintOrder="stroke" aria-hidden="true">{item.status.glyph}</text>}
               <polygon points={hull.map((p) => p.join(",")).join(" ")} fill={drawnBySurface.has(item.id) && !item.highlighted ? "none" : item.highlighted ? mixHexColor(item.color, HIGHLIGHT_COLOR, 0.2) : item.emissive > 0 ? mixHexColor(item.color, LIT_COLOR, Math.min(0.8, 0.8 * item.emissive)) : item.color} stroke={item.highlighted ? HIGHLIGHT_COLOR : "#0f172a"} strokeWidth={item.highlighted ? 3 : 1} vectorEffect="non-scaling-stroke" />
             </g>
           );

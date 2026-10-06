@@ -62,15 +62,20 @@ export const CIRCUIT_FIDELITY: HighFidelitySpec = {
     deviceProfile: "HIGH: 18 particles per flow and a clipping cutaway. STANDARD: 10 particles. LOW: 4 particles; the cutaway hides the glass instead of clipping it. FALLBACK_2D: an SVG schematic from the same render list.",
     offlineFallback: "Procedural geometry only; no remote assets. All checks can be completed in FALLBACK_2D.",
   },
-  components: [
+  // RX-005 A1: every part the trace, identify and control checks name is labelled and tappable on every profile.
+  components: ([
     { id: "battery", label: "Battery", description: "Pushes charge around the loop. Higher voltage pushes harder.", geometry: "cylinder", transform: { position: [-3, 0, 0], rotation: [0, 0, 0], scale: [0.45, 0.9, 0.45] }, material: { color: "#38bdf8", roughness: 0.3, metalness: 0.2 } },
     { id: "switch-base", label: "Switch", description: "Opens or closes the loop.", geometry: "box", transform: { position: [-0.8, 2, 0], rotation: [0, 0, 0], scale: [0.55, 0.12, 0.3] }, material: { color: "#64748b", roughness: 0.5, metalness: 0.1 } },
-    { id: "switch-lever", label: "Switch lever", geometry: "box", transform: { position: [-0.8, 2.12, 0], rotation: [0, 0, 0], scale: [0.5, 0.06, 0.12] }, material: { color: "#f8fafc", roughness: 0.3, metalness: 0.4 } },
-    { id: "resistor", label: "Resistor", description: "Resists the current. More resistance, less current.", geometry: "box", transform: { position: [3, 0.3, 0], rotation: [0, 0, 0], scale: [0.18, 0.55, 0.18] }, material: { color: "#d97706", roughness: 0.45, metalness: 0.05 } },
+    { id: "switch-lever", label: "Switch lever", geometry: "box", transform: { position: [-0.8, 2.12, 0], rotation: [0, 0, 0], scale: [0.5, 0.06, 0.12] }, material: { color: "#f8fafc", roughness: 0.3, metalness: 0.4 },
+      // RX-005c/A14 reference: a two-step (confirm) toggle in the scene.
+      control: { kind: "toggle-variable", variableId: "switch", label: "Switch on/off", confirm: true } },
+    { id: "resistor", label: "Resistor", description: "Resists the current. More resistance, less current.", geometry: "box", transform: { position: [3, 0.3, 0], rotation: [0, 0, 0], scale: [0.18, 0.55, 0.18] }, material: { color: "#d97706", roughness: 0.45, metalness: 0.05 },
+      // A14 reference drag control: slide the resistor's wiper up its body to raise the resistance.
+      control: { kind: "drag-variable", variableId: "resistance", axis: "y", worldRange: [0.05, 0.55], label: "Resistance" } },
     { id: "bulb-glass", label: "Bulb glass", geometry: "sphere", transform: { position: [0.4, -1.3, 0], rotation: [0, 0, 0], scale: [0.62, 0.62, 0.62] }, material: { color: "#fde68a", roughness: 0.1, metalness: 0, opacity: 0.55 } },
     { id: "bulb-filament", label: "Filament", description: "A thin wire that gets hot and glows when current flows through it.", geometry: "box", internal: true, transform: { position: [0.4, -1.3, 0], rotation: [0, 0, 0], scale: [0.28, 0.035, 0.035] }, material: { color: "#fb923c", roughness: 0.4, metalness: 0.3 } },
     { id: "bulb-base", label: "Bulb base", geometry: "cylinder", transform: { position: [0.4, -2.05, 0], rotation: [0, 0, 0], scale: [0.3, 0.22, 0.3] }, material: { color: "#94a3b8", roughness: 0.3, metalness: 0.6 } },
-  ],
+  ] as HighFidelitySpec["components"]).map((component) => ["battery", "switch-base", "switch-lever", "resistor", "bulb-filament", "bulb-base"].includes(component.id) ? { ...component, semanticCues: ["label", "target"] as const } : component),
   assemblies: [
     { id: "bulb", label: "Light bulb", componentIds: ["bulb-glass", "bulb-filament", "bulb-base"], dependencies: [{ from: "bulb-base", to: "bulb-filament", label: "carries current to" }] },
     { id: "switch", label: "Switch", componentIds: ["switch-base", "switch-lever"] },

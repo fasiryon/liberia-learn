@@ -25,7 +25,7 @@ on:
         required: true
         default: "ALL"
       viewports:
-        description: "Comma list of desktop,mobile"
+        description: "Comma list of desktop,mobile,landscape (landscape = phone held sideways, A17)"
         required: true
         default: "desktop,mobile"
       still_only:

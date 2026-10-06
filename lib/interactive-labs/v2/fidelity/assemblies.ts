@@ -50,6 +50,8 @@ export function boxFaceAssembly(options: { assemblyId: string; label: string; ro
     geometry: "panel",
     transform: options.build ? trayTransform(face.name, face.size) : face.folded,
     material: { color, roughness: 0.35, metalness: 0.05 },
+    // A1: a buildable face is matched by its size (shape) and named by its neutral "Face n" label and tray target.
+    ...(options.build ? { semanticCues: ["shape", "label", "target"] as const } : {}),
     shapeKey: shapeKey(face.size),
   }));
   const slots: AssemblySlot[] | undefined = options.build ? faces.map((face) => ({ id: `${assemblyId}-slot-${face.name}`, label: LABELS[face.name], accepts: shapeKey(face.size), transform: face.folded, initialComponentId: componentIdFor(face.name) })) : undefined;

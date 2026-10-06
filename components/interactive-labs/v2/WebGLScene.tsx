@@ -1,9 +1,11 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { SCENE_HEIGHT } from "./sceneLayout";
 import type { CapabilityProfile, GeometryKind, InteractiveLabDefinition, LabAction, LabState } from "@/lib/interactive-labs/v2/types";
 import type { FidelityState } from "@/lib/interactive-labs/v2/fidelity/types";
-import { buildRenderList, type RenderList, type RenderMarker } from "@/lib/interactive-labs/v2/fidelity/renderList";
+import { buildRenderList, type RenderItem, type RenderList, type RenderMarker } from "@/lib/interactive-labs/v2/fidelity/renderList";
+import { dragParameter } from "@/lib/interactive-labs/v2/fidelity/controls";
 import { approachCamera, constrainCamera, easeDisplayState, isSettled, spinMatrix, viewMatrix, type CameraPose } from "@/lib/interactive-labs/v2/fidelity/presentation";
 import { findPreset, framedPose } from "@/lib/interactive-labs/v2/fidelity/camera";
 import { recordFrameSample, shouldDowngrade } from "@/lib/interactive-labs/v2/fidelity/profiles";
@@ -24,7 +26,7 @@ import { publishFramePlan, type ReviewFrameProbe } from "@/lib/interactive-labs/
 import { createSurfaceTriangleStorage, writeSurfaceTriangles } from "@/lib/interactive-labs/v2/fidelity/surfaces";
 import type { MeshData } from "./meshes";
 import { pickNearest, type ScenePick } from "./picking";
-import { cueElements } from "./sceneCues";
+import { cueElements, statusBadgeElements } from "./sceneCues";
 
 type Props = {
   definition: InteractiveLabDefinition<LabState>;
@@ -46,6 +48,10 @@ type Props = {
   railActive?: boolean;
   /** A16: bumping this returns the view to the current preset. */
   recenter?: number;
+  /** A14: the control part whose confirm preview is pending (drawn highlighted). */
+  pendingControlId?: string | null;
+  /** A14: a drag on a drag-variable control part, as the pointer's parameter along the part's axis. */
+  onDragControl?: (componentId: string, t: number) => void;
 };
 
 const vertexShader = `attribute vec3 position; attribute vec3 normal; attribute vec3 vcolor; attribute float vemissive; uniform mat4 mvp; uniform mat4 model; uniform float pointSize; uniform float useVertexColor; uniform float useVertexEmissive; varying vec3 vNormal; varying vec3 vWorld; varying vec3 vertexColor; varying float vertexEmissive;
@@ -76,14 +82,16 @@ const GROUND_Y = -2.25;
 const rgbCache = new Map<string, [number, number, number]>();
 function rgb(value: string): [number, number, number] { let color = rgbCache.get(value); if (!color) { const n = Number.parseInt(value.replace("#", ""), 16); color = [(n >> 16 & 255) / 255, (n >> 8 & 255) / 255, (n & 255) / 255]; rgbCache.set(value, color); } return color; }
 
-export function WebGLScene({ definition, state, profile, reducedMotion, traceFlowId, dispatch, onPick, onDowngrade, onUpgradeReady, allowProfileUpgrade = false, allowPerformanceDowngrade = true, review = false, onReady, railActive = false, recenter = 0 }: Props) {
+export function WebGLScene({ definition, state, profile, reducedMotion, traceFlowId, dispatch, onPick, onDowngrade, onUpgradeReady, allowProfileUpgrade = false, allowPerformanceDowngrade = true, review = false, onReady, railActive = false, recenter = 0, pendingControlId = null, onDragControl }: Props) {
   const canvas = useRef<HTMLCanvasElement>(null);
   // Review evidence: identity, frames drawn and last-frame draw calls on the root (rendererIdentity.ts).
   const root = useRef<HTMLDivElement>(null);
   const labels = useRef<HTMLDivElement>(null);
   const motionStatus = useRef<HTMLDivElement>(null);
-  const drag = useRef({ x: 0, y: 0, active: false, moved: 0 });
+  const drag = useRef<{ x: number; y: number; active: boolean; moved: number; control: RenderItem | null }>({ x: 0, y: 0, active: false, moved: 0, control: null });
   const stateRef = useRef(state);
+  const pendingRef = useRef(pendingControlId);
+  pendingRef.current = pendingControlId;
   const displayRef = useRef<FidelityState | undefined>(state.fidelity);
   const zoomRef = useRef(1);
   const frameRef = useRef<{ list: RenderList | null; viewProj: Mat4; width: number; height: number }>({ list: null, viewProj: IDENTITY, width: 1, height: 1 });
@@ -256,7 +264,7 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
       }
       const current = stateRef.current, motionless = callbacks.current.reducedMotion;
       if (spec && current.fidelity) displayRef.current = easeDisplayState(spec, displayRef.current ?? current.fidelity, current.fidelity, dt, motionless);
-      const list = buildRenderList({ definition, state: current, profile, displayFidelity: displayRef.current });
+      const list = buildRenderList({ definition, state: current, profile, displayFidelity: displayRef.current, pendingControlId: pendingRef.current });
       // RX-005d: presets with a frame refit to the stage's aspect; rail legs on LOW are cuts.
       const stageAspect = Math.max(1, el.clientWidth) / Math.max(1, el.clientHeight);
       const preset = spec && current.fidelity ? framedPose(spec, findPreset(spec, current.fidelity.cameraPresetId), list.items, definition.scene.camera.fov, stageAspect) : fallbackPose;
@@ -410,7 +418,7 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
         }));
         // A15: reduced motion keeps static direction cues; LOW shows an emitter's glyph proxy in place of particles.
         const glyphProxies = list.emitters.filter((emitter) => emitter.active && emitter.lowProxy.kind === "glyph").map((emitter) => ({ id: `proxy:${emitter.id}`, kind: "glyph" as const, glyph: emitter.lowProxy.kind === "glyph" ? emitter.lowProxy.glyph : "", position: emitter.origin, direction: emitter.direction, color: emitter.color }));
-        labels.current.append(...cueElements([...(motionless ? list.cues : []), ...glyphProxies], project));
+        labels.current.append(...cueElements([...(motionless ? list.cues : []), ...glyphProxies], project), ...statusBadgeElements(list.items, project));
       }
       const fidelityMoving = !!(spec && current.fidelity && displayRef.current && !isSettled(displayRef.current, current.fidelity));
       const cameraMoving = !motionless && (Math.abs(camera.distance - targetPose.distance) > 1e-4 || Math.abs(camera.yaw - targetPose.yaw) > 1e-4 || Math.abs(camera.pitch - targetPose.pitch) > 1e-4 || camera.target.some((value, index) => Math.abs(value - targetPose.target[index]) > 1e-4));
@@ -460,26 +468,39 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
     };
   }, [definition, profile, allowPerformanceDowngrade, allowProfileUpgrade, review]);
 
-  useEffect(() => { requestDrawRef.current(); }, [state, reducedMotion, traceFlowId]);
+  useEffect(() => { requestDrawRef.current(); }, [state, reducedMotion, traceFlowId, pendingControlId]);
   useEffect(() => { zoomRef.current = 1; requestDrawRef.current(); }, [recenter]);
 
+  const projector = () => { const { viewProj, width, height } = frameRef.current; return (p: Vec3) => { const c = transformPoint(viewProj, p); return c[0] < -1 || c[0] > 1 || c[1] < -1 || c[1] > 1 || c[2] < -1 || c[2] > 1 ? null : { x: (c[0] * 0.5 + 0.5) * width, y: (0.5 - c[1] * 0.5) * height, depth: c[2] }; }; };
   const pick = (clientX: number, clientY: number, target: HTMLElement) => {
-    const { list, viewProj, width, height } = frameRef.current; if (!list) return;
+    const { list } = frameRef.current; if (!list) return;
     const rect = target.getBoundingClientRect();
-    const project = (p: Vec3) => { const c = transformPoint(viewProj, p); return c[0] < -1 || c[0] > 1 || c[1] < -1 || c[1] > 1 || c[2] < -1 || c[2] > 1 ? null : { x: (c[0] * 0.5 + 0.5) * width, y: (0.5 - c[1] * 0.5) * height, depth: c[2] }; };
-    const hit = pickNearest(list, project, { x: clientX - rect.left, y: clientY - rect.top }, traceFlowId);
+    const hit = pickNearest(list, projector(), { x: clientX - rect.left, y: clientY - rect.top }, traceFlowId);
     if (hit) onPick(hit);
+  };
+  /** A14: the drag-variable control part under the pointer, if any (drags it instead of rotating). */
+  const dragControlAt = (clientX: number, clientY: number, target: HTMLElement): RenderItem | null => {
+    const { list } = frameRef.current; if (!list) return null;
+    const rect = target.getBoundingClientRect();
+    const hit = pickNearest(list, projector(), { x: clientX - rect.left, y: clientY - rect.top }, null);
+    return hit?.kind === "item" && hit.item.control?.dragAxis ? hit.item : null;
   };
 
   const constraints = definition.fidelity?.camera.constraints;
   return (
-    <div ref={root} data-lab-renderer="webgl-pass" className="relative h-[clamp(420px,62vh,640px)] w-full">
+    <div ref={root} data-lab-renderer="webgl-pass" className={`relative ${SCENE_HEIGHT} w-full`}>
       <canvas ref={canvas} aria-label={`${definition.title ?? "Interactive"} 3D scene. Every scene action is also available in the controls panel.`} className="h-full w-full touch-none"
-        onPointerDown={(e) => { drag.current = { x: e.clientX, y: e.clientY, active: true, moved: 0 }; e.currentTarget.setPointerCapture(e.pointerId); }}
+        onPointerDown={(e) => { drag.current = { x: e.clientX, y: e.clientY, active: true, moved: 0, control: dragControlAt(e.clientX, e.clientY, e.currentTarget) }; e.currentTarget.setPointerCapture(e.pointerId); }}
         onPointerMove={(e) => {
           if (!drag.current.active) return;
           const dx = e.clientX - drag.current.x, dy = e.clientY - drag.current.y;
-          drag.current = { x: e.clientX, y: e.clientY, active: true, moved: drag.current.moved + Math.abs(dx) + Math.abs(dy) };
+          drag.current = { ...drag.current, x: e.clientX, y: e.clientY, moved: drag.current.moved + Math.abs(dx) + Math.abs(dy) };
+          const control = drag.current.control;
+          if (control?.control?.dragAxis) {
+            const project = projector(), rect = e.currentTarget.getBoundingClientRect(), [a, b] = control.control.dragAxis, start = project(a), end = project(b);
+            if (start && end) onDragControl?.(control.id, dragParameter(start, end, { x: e.clientX - rect.left, y: e.clientY - rect.top }));
+            return;
+          }
           const selected = state.selectedObjectId;
           if (drag.current.moved > 6 && selected && definition.scene.objects.some((object) => object.id === selected)) dispatch({ type: "rotate", objectId: selected, delta: [dx * 0.012, dy * 0.012] });
         }}

@@ -3,7 +3,8 @@
 // quantities the lab declares (spec.hud), a state banner (spec.hudAlert) and the challenge status, so the
 // cause-and-effect numbers are readable without scrolling the side panel. Values come only from the model.
 import type { InteractiveLabDefinition, LabAction, LabState } from "@/lib/interactive-labs/v2/types";
-import { deriveSimulation } from "@/lib/interactive-labs/v2/fidelity/engine";
+import { deriveSimulation, isComponentRevealed } from "@/lib/interactive-labs/v2/fidelity/engine";
+import { statusVisual } from "@/lib/interactive-labs/v2/fidelity/palette";
 import { ProtectionReset } from "./ProtectionReset";
 
 type Props = { definition: InteractiveLabDefinition<LabState>; state: LabState; dispatch: (action: LabAction) => void };
@@ -13,7 +14,12 @@ const TONE = { danger: "border-red-300 bg-red-700 text-white", info: "border-sky
 export function SceneHud({ definition, state, dispatch }: Props) {
   const spec = definition.fidelity, fidelity = state.fidelity;
   if (!spec || !fidelity || !spec.hud?.length) return null;
-  const quantities = deriveSimulation(spec, fidelity).quantities;
+  const simulation = deriveSimulation(spec, fidelity), quantities = simulation.quantities;
+  // A19 / G3: every visible status lamp stated in text, with its glyph (the scene glyph and colour say the same).
+  const lamps = spec.components.flatMap((component) => {
+    const cue = statusVisual(simulation.componentStates[component.id]?.status).cue;
+    return cue && !component.internal && component.selectable !== false && component.detail !== "decor" && isComponentRevealed(spec, fidelity, component.id) ? [{ id: component.id, label: component.label, ...cue }] : [];
+  });
   const alert = spec.hudAlert?.(quantities) ?? null;
   const challenge = state.mode === "CHALLENGE" && spec.challengeStatus ? spec.challengeStatus(quantities) : null;
   return (
@@ -30,6 +36,9 @@ export function SceneHud({ definition, state, dispatch }: Props) {
           );
         })}
       </dl>
+      {lamps.length > 0 && <ul aria-label="Status lamps" className="mt-1.5 flex flex-wrap gap-1.5">
+        {lamps.map((lamp) => <li key={lamp.id} data-lab-hud-status={lamp.id} className="rounded-xl bg-white/10 px-2.5 py-1 text-xs font-semibold"><span aria-hidden="true" className="mr-1">{lamp.glyph}</span>{lamp.label}: {lamp.text}</li>)}
+      </ul>}
       {alert && <p role="status" data-lab-hud-alert={alert.tone} className={`mt-1.5 rounded-xl border px-2.5 py-1 text-sm font-bold ${TONE[alert.tone]}`}>{alert.text}</p>}
       <ProtectionReset definition={definition} state={state} dispatch={dispatch} surface="hud" />
       {challenge && <p data-lab-hud-challenge className="mt-1.5 rounded-xl border border-amber-300 bg-amber-300/15 px-2.5 py-1 text-sm font-semibold text-amber-100">{challenge}</p>}

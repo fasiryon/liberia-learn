@@ -173,6 +173,14 @@ export function LabControlPanel({ definition, state, activeCheck, dispatch, onSt
             <div className="mt-2 flex flex-wrap gap-2" aria-label="Parts you can see">
               {spec.components.filter((component) => component.selectable !== false && !component.control && isComponentRevealed(spec, fidelity, component.id)).sort((a, b) => a.label.localeCompare(b.label)).map((component) => <button key={component.id} type="button" aria-pressed={fidelity.inspectedComponentId === component.id} onClick={() => dispatch({ type: "inspect-component", componentId: component.id })} className={chip(fidelity.inspectedComponentId === component.id)}>{component.label}</button>)}
             </div>
+            {/* A14 tap rule: tapping a control part operates it, so its inspection lives here (collapsed, so the
+                control parts do not lengthen the mobile page; R1 layout). */}
+            {spec.components.some((component) => component.control) && <details className="mt-2">
+              <summary className="min-h-11 cursor-pointer py-2 text-xs font-semibold text-slate-300">Learn about the controls</summary>
+              <div className="flex flex-wrap gap-2" aria-label="Controls you can inspect">
+                {spec.components.filter((component) => component.control && component.selectable !== false && isComponentRevealed(spec, fidelity, component.id)).map((component) => <button key={component.id} type="button" data-lab-inspect-control={component.id} aria-pressed={fidelity.inspectedComponentId === component.id} onClick={() => dispatch({ type: "inspect-component", componentId: component.id })} className={chip(fidelity.inspectedComponentId === component.id)}>{component.label}</button>)}
+              </div>
+            </details>}
             </details>
             {fidelity.inspectedComponentId && <p className="text-xs text-slate-300">{spec.components.find((component) => component.id === fidelity.inspectedComponentId)?.description ?? ""}</p>}
           </section>

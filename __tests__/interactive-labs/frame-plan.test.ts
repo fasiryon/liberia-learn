@@ -1,14 +1,15 @@
 import * as THREE from "three";
 import { describe, expect, it } from "vitest";
 import { getInteractiveLabDefinition } from "@/lib/interactive-labs/v2/registry";
-import { initializeLab } from "@/lib/interactive-labs/v2/kernel";
+import { acceptLabAction, initializeLab } from "@/lib/interactive-labs/v2/kernel";
+import { SECTION_CREAM } from "@/lib/interactive-labs/v2/fidelity/palette";
 import { LAB_REVIEW_SCENARIO_SETS } from "@/lib/interactive-labs/v2/review/referenceScenarios";
 import { replayReviewScenario } from "@/lib/interactive-labs/v2/review/scenarios";
 import { buildRenderList, type RenderItem, type RenderList } from "@/lib/interactive-labs/v2/fidelity/renderList";
 import { activeTraceFlowId, planLowFrame, planThreeFrame, THREE_GROUND_TRIANGLES, THREE_PRIMITIVE_TRIANGLES, THREE_SKY_TRIANGLES } from "@/lib/interactive-labs/v2/fidelity/framePlan";
 import { createLowBatchCache, MAX_LOW_BATCH_VERTICES, planLowBatches, syncLowBatchCache } from "@/lib/interactive-labs/v2/fidelity/lowBatch";
 import { compareFramePlan } from "@/lib/interactive-labs/v2/review/framePlanEvidence";
-import { createThreeSceneStores, disposeThreeSceneStores, primitiveGeometry, syncThreeScene } from "@/components/interactive-labs/v2/threeSceneSync";
+import { createThreeSceneStores, disposeThreeSceneStores, primitiveGeometry, REVEALED_FILL, syncThreeScene } from "@/components/interactive-labs/v2/threeSceneSync";
 import { skyGeometry } from "@/components/interactive-labs/v2/threeEnvironment";
 import type { GeometryKind, InteractiveLabDefinition, LabState } from "@/lib/interactive-labs/v2/types";
 
@@ -91,6 +92,34 @@ describe("RX-005 A8: the three.js frame planner", () => {
     }
     syncThreeScene(stores, list, { profile: "HIGH", time: 0, reducedMotion: false, traceFlowId: null });
     expect(stores.materials.size).toBe(baseline);
+    disposeThreeSceneStores(stores);
+  });
+});
+
+describe("RX-005 A15: section caps", () => {
+  it("caps every clipped solid in section cream (back faces, same plane, no shadow), and removes the cap with the cutaway", () => {
+    const definition = getInteractiveLabDefinition("fixture-simple-circuit")!;
+    const cut = acceptLabAction(definition, initializeLab(definition), { type: "set-cutaway", cutawayId: "bulb-cutaway" });
+    if ("reason" in cut) throw new Error(cut.reason);
+    const list = buildRenderList({ definition, state: cut.state, profile: "HIGH" });
+    const clipped = list.items.filter((item) => item.clip);
+    expect(clipped.map((item) => item.id)).toEqual(["bulb-glass"]);
+    const { scene, stores, plan } = buildFrameScene(list, "HIGH", null);
+    const caps = [...stores.caps.values()];
+    expect(caps.map((cap) => cap.userData.sectionCapOf)).toEqual(["bulb-glass"]);
+    const material = caps[0].material as THREE.MeshBasicMaterial;
+    expect([material.color.getHexString(), material.side, material.toneMapped, material.clippingPlanes?.length, caps[0].castShadow, caps[0].receiveShadow]).toEqual([SECTION_CREAM.slice(1), THREE.BackSide, false, 1, false, false]);
+    expect(material.clippingPlanes![0].normal.toArray()).toEqual(clipped[0].clip!.normal);
+    expect(caps[0].geometry).toBe(stores.objects.get("bulb-glass")!.geometry);
+    const planned = planThreeFrame(list, { profile: "HIGH", traceFlowId: null, plan });
+    expect(compareFramePlan({ renderer: "three", planned, measured: { ...countDraws(scene, "main"), shadowDrawCalls: 0, shadowTriangles: 0 } }).mismatches).toEqual([]);
+    // Revealed parts get fill light and never receive shadow (A15).
+    const filament = stores.objects.get("bulb-filament")!;
+    expect(list.items.find((item) => item.id === "bulb-filament")!.revealed).toBe(true);
+    expect([(filament.material as THREE.MeshStandardMaterial).emissiveIntensity >= REVEALED_FILL, filament.receiveShadow]).toEqual([true, false]);
+    // Closing the cutaway removes the cap and disposes its material.
+    syncThreeScene(stores, buildRenderList({ definition, state: initializeLab(definition), profile: "HIGH" }), { profile: "HIGH", time: 0, reducedMotion: false, traceFlowId: null });
+    expect([stores.caps.size, stores.capMaterials.size, caps[0].parent]).toEqual([0, 0, null]);
     disposeThreeSceneStores(stores);
   });
 });

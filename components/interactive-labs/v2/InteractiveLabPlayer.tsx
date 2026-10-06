@@ -12,14 +12,16 @@ import { LabControlPanel } from "./LabControlPanel";
 import { SceneControlBar } from "./SceneControlBar";
 import { SceneHud } from "./SceneHud";
 import { CameraRailBar } from "./CameraRailBar";
+import { PHONE_LANDSCAPE_QUERY, SCENE_HEIGHT } from "./sceneLayout";
 import { advanceRail, DEFAULT_LEG, findRail, railStop, type CameraLeg, type RailPosition } from "@/lib/interactive-labs/v2/fidelity/camera";
 import type { CameraPose } from "@/lib/interactive-labs/v2/fidelity/presentation";
 import type { ScenePick } from "./picking";
+import { activateControl, controlAction, dragAction, type PendingControl } from "@/lib/interactive-labs/v2/fidelity/controls";
 const loadWebGLScene = () => loadChunkWithRetry(() => import("./WebGLScene"));
 // A17: while a renderer chunk loads, the current state's 2D render shows under a loading veil (see SceneLoadingVeil).
-const WebGLScene = dynamic(() => loadWebGLScene().then((m) => m.WebGLScene), { ssr: false, loading: () => <div className="h-[clamp(420px,62vh,640px)]" /> });
+const WebGLScene = dynamic(() => loadWebGLScene().then((m) => m.WebGLScene), { ssr: false, loading: () => <div className={SCENE_HEIGHT} /> });
 const loadThreeScene = () => loadChunkWithRetry(() => import("./ThreeScene"));
-const ThreeScene = dynamic(() => loadThreeScene().then((m) => m.ThreeScene), { ssr: false, loading: () => <div className="h-[clamp(420px,62vh,640px)]" /> });
+const ThreeScene = dynamic(() => loadThreeScene().then((m) => m.ThreeScene), { ssr: false, loading: () => <div className={SCENE_HEIGHT} /> });
 
 /** The 2D view of the same state, inert under a veil, until the WebGL renderer reports its first full frame (A17). */
 function SceneLoadingVeil({ label, children }: { label: string; children: ReactNode }) {
@@ -109,6 +111,28 @@ export function InteractiveLabPlayer({ labId = "g4-solid-figures", override, rev
     setProfile(next);
   }, [override]);
   const dispatch = (action: LabAction) => setState((current) => { const result = acceptLabAction(definition, current, action); return result.ok ? result.state : current; });
+  // A14 pending confirm: presentation only. It lives here, never in LabState, so it never reaches acceptLabAction
+  // or the events route (IGNORED). Escape, blur or Cancel clears it; there is no timer.
+  const [pendingControl, setPendingControl] = useState<PendingControl | null>(null);
+  /** One activation of a control part, from a scene tap or its chip twin (same action either way). */
+  const activateControlPart = (componentId: string) => {
+    const component = definition?.fidelity?.components.find((candidate) => candidate.id === componentId);
+    if (!component?.control || !definition?.fidelity || !state.fidelity) return;
+    const result = activateControl(pendingControl, componentId, component.control, controlAction(definition.fidelity, state.fidelity, component.control));
+    setPendingControl(result.pending);
+    if (result.dispatch) dispatch(result.dispatch);
+  };
+  /** A14 drag control: `t` is the pointer's position along the part's drag axis; only a new step dispatches. */
+  const onDragControl = (componentId: string, t: number) => {
+    const control = definition?.fidelity?.components.find((candidate) => candidate.id === componentId)?.control;
+    if (!control || !definition?.fidelity) return;
+    setState((current) => {
+      const action = current.fidelity ? dragAction(definition.fidelity!, current.fidelity, control, t) : null;
+      if (!action) return current;
+      const result = acceptLabAction(definition, current, action);
+      return result.ok ? result.state : current;
+    });
+  };
   // RX-005d camera rails and Recentre (presentation only; each rail stop is an ordinary camera-preset action).
   const [rail, setRail] = useState<RailPosition | null>(null);
   const [cameraLeg, setCameraLeg] = useState<CameraLeg>(DEFAULT_LEG);
@@ -144,7 +168,8 @@ export function InteractiveLabPlayer({ labId = "g4-solid-figures", override, rev
   };
   const activeCheck = checks.find((check) => !state.completedChecks.includes(check.id));
   useEffect(() => {
-    const desktop = window.matchMedia("(min-width: 1024px)");
+    // A17: the controls sheet starts open on desktop and beside the scene on a phone in landscape.
+    const desktop = window.matchMedia(`(min-width: 1024px), ${PHONE_LANDSCAPE_QUERY}`);
     const sync = () => setControlsOpen(desktop.matches);
     sync(); desktop.addEventListener("change", sync);
     return () => desktop.removeEventListener("change", sync);
@@ -155,7 +180,7 @@ export function InteractiveLabPlayer({ labId = "g4-solid-figures", override, rev
     if (pick.kind === "node") dispatch({ type: "trace-node", flowId: pick.flowId, nodeId: pick.nodeId });
     // RX-005c tap rule: tapping a control part operates it (same set-variable as the panel twin); a disabled
     // control does nothing. Inspecting a control part goes through the parts list.
-    else if (pick.item.control) { if (pick.item.control.action) dispatch(pick.item.control.action); }
+    else if (pick.item.control) activateControlPart(pick.item.id);
     else if (pick.item.kind === "object") dispatch({ type: "select", objectId: pick.item.id });
     else dispatch({ type: "inspect-component", componentId: pick.item.id });
   };
@@ -167,7 +192,8 @@ export function InteractiveLabPlayer({ labId = "g4-solid-figures", override, rev
       if (reason === "performance") { performanceDowngraded.current = true; rememberPerformanceDowngrade(getProfileStorage()); }
       return next;
     });
-    setNotice(reason === "context" ? "3D is not available on this device, so the lab switched to the 2D view." : "The lab lowered its visual quality to keep things smooth.");
+    // A18: one non-modal notice; camera, selection, rail position and a pending confirm carry over (they live here).
+    setNotice(reason === "context" ? "Switched to lighter graphics: 3D is not available on this device, so the lab shows the 2D view." : "Switched to lighter graphics to keep things smooth.");
   };
   const onUpgradeReady = useCallback(() => {
     setProfile((current) => {
@@ -182,7 +208,7 @@ export function InteractiveLabPlayer({ labId = "g4-solid-figures", override, rev
     downgradePath.current = [...downgradePath.current, `${profile}>${next}:load`];
     setProfile(next);
     rememberProfile(getProfileStorage(), next);
-    setNotice(next === "LOW" ? "The detailed graphics could not load, so the lab switched to LOW graphics." : "3D graphics could not load, so the lab switched to the 2D view.");
+    setNotice(next === "LOW" ? "Switched to lighter graphics: the detailed graphics could not load." : "Switched to lighter graphics: 3D graphics could not load, so the lab shows the 2D view.");
   }, [profile]);
 
   if (!definition || (!reviewPreview && (definition.reviewState !== "APPROVED" || definition.approvalState !== "APPROVED"))) return <p className="p-6">This lab is not available.</p>;
@@ -202,24 +228,32 @@ export function InteractiveLabPlayer({ labId = "g4-solid-figures", override, rev
       {notice && <p role="status" className="border-b border-white/10 bg-amber-300/10 px-5 py-2 text-xs text-amber-100">{notice}</p>}
       {/* Keyboard users skip the scene's focusable parts (every part is a button in the 2D view). */}
       <a href="#lab-controls" className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:m-2 focus:rounded-full focus:bg-white focus:px-4 focus:py-2 focus:font-bold focus:text-slate-950">Skip to lab controls</a>
-      <div className="grid gap-0 lg:grid-cols-[1fr_340px]">
-        <div onKeyDownCapture={onSceneKeyDownCapture} className={`relative ${definition.fidelity?.environment === "DAYLIGHT" ? "bg-[linear-gradient(#dbeafe,#f1f5f9_58%,#dce7d4)] text-slate-900" : "bg-[radial-gradient(circle_at_50%_38%,#263d72,#080d20_68%)]"}`}>
+      <div className="grid gap-0 lg:grid-cols-[1fr_340px] [@media(orientation:landscape)_and_(max-height:500px)]:grid-cols-[60%_40%]">
+        <div onKeyDownCapture={onSceneKeyDownCapture}
+          onKeyDown={(event) => { if (event.key === "Escape" && pendingControl) { event.preventDefault(); setPendingControl(null); } }}
+          onBlur={(event) => { if (pendingControl && !event.currentTarget.contains(event.relatedTarget as Node | null)) setPendingControl(null); }}
+          className={`relative ${definition.fidelity?.environment === "DAYLIGHT" ? "bg-[linear-gradient(#dbeafe,#f1f5f9_58%,#dce7d4)] text-slate-900" : "bg-[radial-gradient(circle_at_50%_38%,#263d72,#080d20_68%)]"}`}>
           {profile === "FALLBACK_2D"
-            ? <Fallback2D definition={definition} state={state} reducedMotion={reducedMotion} traceFlowId={traceFlowId} dispatch={dispatch} onPick={onPick} />
-            : <SceneLoadBoundary key={profile} onError={onRendererLoadError} fallback={<Fallback2D definition={definition} state={state} reducedMotion={reducedMotion} traceFlowId={traceFlowId} dispatch={dispatch} onPick={onPick} />}>
+            ? <Fallback2D definition={definition} state={state} reducedMotion={reducedMotion} traceFlowId={traceFlowId} dispatch={dispatch} onPick={onPick} pendingControlId={pendingControl?.componentId ?? null} onDragControl={onDragControl} />
+            : <SceneLoadBoundary key={profile} onError={onRendererLoadError} fallback={<Fallback2D definition={definition} state={state} reducedMotion={reducedMotion} traceFlowId={traceFlowId} dispatch={dispatch} onPick={onPick} pendingControlId={pendingControl?.componentId ?? null} onDragControl={onDragControl} />}>
                 {profile === "HIGH" || profile === "STANDARD"
-                  ? <ThreeScene definition={definition} state={state} profile={profile} reducedMotion={reducedMotion} traceFlowId={traceFlowId} dispatch={dispatch} onPick={onPick} onDowngrade={onDowngrade} onUpgradeReady={onUpgradeReady} onReady={onSceneReady} allowProfileUpgrade={canUpgrade} allowPerformanceDowngrade={!reviewPreview} review={!!reviewPreview} cameraLeg={cameraLeg} recenter={recenter} initialPose={cameraPose.current} onPoseChange={onPoseChange} />
-                  : <WebGLScene definition={definition} state={state} profile={profile} reducedMotion={reducedMotion} traceFlowId={traceFlowId} dispatch={dispatch} onPick={onPick} onDowngrade={onDowngrade} onUpgradeReady={onUpgradeReady} onReady={onSceneReady} allowProfileUpgrade={canUpgrade} allowPerformanceDowngrade={!reviewPreview} review={!!reviewPreview} railActive={!!rail} recenter={recenter} />}
+                  ? <ThreeScene definition={definition} state={state} profile={profile} reducedMotion={reducedMotion} traceFlowId={traceFlowId} dispatch={dispatch} onPick={onPick} onDowngrade={onDowngrade} onUpgradeReady={onUpgradeReady} onReady={onSceneReady} allowProfileUpgrade={canUpgrade} allowPerformanceDowngrade={!reviewPreview} review={!!reviewPreview} cameraLeg={cameraLeg} recenter={recenter} initialPose={cameraPose.current} onPoseChange={onPoseChange} pendingControlId={pendingControl?.componentId ?? null} onDragControl={onDragControl} />
+                  : <WebGLScene definition={definition} state={state} profile={profile} reducedMotion={reducedMotion} traceFlowId={traceFlowId} dispatch={dispatch} onPick={onPick} onDowngrade={onDowngrade} onUpgradeReady={onUpgradeReady} onReady={onSceneReady} allowProfileUpgrade={canUpgrade} allowPerformanceDowngrade={!reviewPreview} review={!!reviewPreview} railActive={!!rail} recenter={recenter} pendingControlId={pendingControl?.componentId ?? null} onDragControl={onDragControl} />}
               </SceneLoadBoundary>}
           {profile !== "FALLBACK_2D" && <button type="button" onClick={() => setRecenter((value) => value + 1)} className="absolute right-2 top-2 z-20 min-h-11 rounded-full border border-white/25 bg-slate-950/75 px-3 text-xs font-bold text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-white">Recentre</button>}
           {profile !== "FALLBACK_2D" && !sceneReady && <SceneLoadingVeil label={profile === "LOW" ? "Loading the 3D lab…" : "Loading the high-quality 3D lab…"}><Fallback2D definition={definition} state={state} reducedMotion={reducedMotion} traceFlowId={traceFlowId} dispatch={dispatch} onPick={onPick} /></SceneLoadingVeil>}
           {rail && definition.fidelity && <CameraRailBar spec={definition.fidelity} position={rail} onNext={nextRailStop} onSkip={skipRail} />}
           <SceneHud definition={definition} state={state} dispatch={dispatch} />
-          <SceneControlBar definition={definition} state={state} dispatch={dispatch} />
+          {pendingControl && <div data-lab-pending-control={pendingControl.componentId} className="flex flex-wrap items-center gap-2 border-t border-amber-200/40 bg-slate-900 px-3 py-2 text-sm text-white">
+            <span aria-live="assertive" className="font-bold">Confirm? {pendingControl.label}</span>
+            <button type="button" onClick={() => activateControlPart(pendingControl.componentId)} className="min-h-11 rounded-full bg-amber-300 px-4 text-xs font-bold text-slate-950 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white">Confirm</button>
+            <button type="button" onClick={() => setPendingControl(null)} className="min-h-11 rounded-full border border-white/30 px-4 text-xs font-bold focus-visible:outline focus-visible:outline-2 focus-visible:outline-white">Cancel</button>
+          </div>}
+          <SceneControlBar definition={definition} state={state} dispatch={dispatch} pendingControlId={pendingControl?.componentId ?? null} onActivate={activateControlPart} />
         </div>
-        <aside id="lab-controls" aria-label="Lab controls" className="border-l border-white/10 bg-white/[.03] lg:max-h-[clamp(420px,62vh,640px)] lg:overflow-y-auto">
+        <aside id="lab-controls" aria-label="Lab controls" className="border-l border-white/10 bg-white/[.03] lg:max-h-[clamp(420px,62vh,640px)] lg:overflow-y-auto [@media(orientation:landscape)_and_(max-height:500px)]:max-h-[calc(100dvh-4.5rem)] [@media(orientation:landscape)_and_(max-height:500px)]:overflow-y-auto">
           <details open={controlsOpen} onToggle={(event) => setControlsOpen(event.currentTarget.open)} className="group">
-            <summary className="sticky bottom-0 z-30 flex min-h-14 cursor-pointer items-center justify-between border-y border-white/10 bg-slate-900 px-4 py-3 text-sm font-bold text-white shadow-[0_-8px_24px_rgba(0,0,0,.3)] lg:hidden">
+            <summary className="sticky bottom-0 z-30 flex min-h-14 cursor-pointer items-center justify-between border-y border-white/10 bg-slate-900 px-4 py-3 text-sm font-bold text-white shadow-[0_-8px_24px_rgba(0,0,0,.3)] lg:hidden [@media(orientation:landscape)_and_(max-height:500px)]:hidden">
               <span>Lab controls and next step</span><span aria-hidden="true" className="text-cyan-200 group-open:rotate-180">⌃</span>
             </summary>
             <div className="p-5">

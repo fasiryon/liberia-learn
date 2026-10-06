@@ -8,7 +8,7 @@ import { flowParticles, spinMatrix } from "@/lib/interactive-labs/v2/fidelity/pr
 import { planLowBatches, type LowBatchPlan } from "@/lib/interactive-labs/v2/fidelity/lowBatch";
 import { castsShadow, runningEmitters, threeTransparent } from "@/lib/interactive-labs/v2/fidelity/framePlan";
 import { emitterParticles } from "@/lib/interactive-labs/v2/fidelity/emitters";
-import { HIGHLIGHT_COLOR, MARKER_COLOR } from "@/lib/interactive-labs/v2/fidelity/palette";
+import { HIGHLIGHT_COLOR, MARKER_COLOR, SECTION_CREAM } from "@/lib/interactive-labs/v2/fidelity/palette";
 import { disposeSurfaces, syncSurfaces, type SurfaceStore } from "./threeSurfaces";
 
 export type ThreeSceneStores = {
@@ -21,13 +21,16 @@ export type ThreeSceneStores = {
   markers: THREE.Points | null;
   surfaces: SurfaceStore;
   instanced: Map<string, THREE.InstancedMesh>;
+  /** A15 section caps: one back-face cream mesh per clipped part, and their materials by clip plane. */
+  caps: Map<string, THREE.Mesh>;
+  capMaterials: Map<string, THREE.MeshBasicMaterial>;
   emitters: Map<string, THREE.Points<THREE.BufferGeometry, THREE.ShaderMaterial>>;
   shadows: boolean;
   shadowHash: string;
 };
 
 export function createThreeSceneStores(scene: THREE.Scene, shadows: boolean): ThreeSceneStores {
-  return { scene, objects: new Map(), geometries: new Map(), materials: new Map(), flowLines: new Map(), flowParticles: new Map(), markers: null, surfaces: new Map(), instanced: new Map(), emitters: new Map(), shadows, shadowHash: "" };
+  return { scene, objects: new Map(), geometries: new Map(), materials: new Map(), flowLines: new Map(), flowParticles: new Map(), markers: null, surfaces: new Map(), instanced: new Map(), caps: new Map(), capMaterials: new Map(), emitters: new Map(), shadows, shadowHash: "" };
 }
 
 /** The primitive meshes ThreeScene builds; their triangle counts are THREE_PRIMITIVE_TRIANGLES in framePlan.ts. */
@@ -54,7 +57,9 @@ function geometryFor(item: RenderItem, profile: "HIGH" | "STANDARD"): THREE.Buff
 }
 
 /** Material cache key. Emissive is quantised to 1/100 so continuous model values reuse materials. */
-export const materialKey = (item: RenderItem) => JSON.stringify([item.color, item.alpha, item.highlighted, Math.round(item.emissive * 100) / 100, item.clip]);
+export const materialKey = (item: RenderItem) => JSON.stringify([item.color, item.alpha, item.highlighted, Math.round(item.emissive * 100) / 100, item.clip, !!item.revealed]);
+/** A15: a part revealed by a cutaway sits inside a shell that shades it, so it gets a fill-light floor of its own colour. */
+export const REVEALED_FILL = 0.22;
 
 export type ThreeSyncOptions = { profile: "HIGH" | "STANDARD"; time: number; reducedMotion: boolean; traceFlowId: string | null };
 
@@ -77,7 +82,7 @@ export function syncThreeScene(stores: ThreeSceneStores, list: RenderList, optio
     usedMaterials.add(key);
     let material = stores.materials.get(key);
     if (!material) {
-      material = new THREE.MeshStandardMaterial({ color: item.highlighted ? HIGHLIGHT_COLOR : item.color, roughness: 0.64, metalness: 0.18, transparent: threeTransparent(item), depthWrite: !threeTransparent(item), opacity: threeTransparent(item) ? item.alpha : 1, emissive: item.emissive > 0 ? item.color : "#000000", emissiveIntensity: Math.round(item.emissive * 100) / 100, side: THREE.DoubleSide, clippingPlanes: item.clip ? [new THREE.Plane(new THREE.Vector3(...item.clip.normal), -item.clip.offset)] : [] });
+      material = new THREE.MeshStandardMaterial({ color: item.highlighted ? HIGHLIGHT_COLOR : item.color, roughness: 0.64, metalness: 0.18, transparent: threeTransparent(item), depthWrite: !threeTransparent(item), opacity: threeTransparent(item) ? item.alpha : 1, emissive: item.emissive > 0 || item.revealed ? item.color : "#000000", emissiveIntensity: Math.max(Math.round(item.emissive * 100) / 100, item.revealed ? REVEALED_FILL : 0), side: THREE.DoubleSide, clippingPlanes: item.clip ? [new THREE.Plane(new THREE.Vector3(...item.clip.normal), -item.clip.offset)] : [] });
       stores.materials.set(key, material);
     }
     return material;
@@ -96,9 +101,31 @@ export function syncThreeScene(stores: ThreeSceneStores, list: RenderList, optio
     object.matrix.fromArray(item.spin ? spinMatrix(item.spin, options.time, options.reducedMotion) : item.matrix);
     object.visible = true;
     object.castShadow = stores.shadows && castsShadow(item);
-    object.receiveShadow = stores.shadows && !item.clip;
+    object.receiveShadow = stores.shadows && !item.clip && !item.revealed;
   }
   for (const [id, object] of stores.objects) if (!seen.has(id)) { object.removeFromParent(); stores.objects.delete(id); }
+
+  // A15 section caps: a clipped solid shows its cut face in section cream. The cap is the part's own geometry drawn
+  // back-face only and clipped by the same plane, so through the cut the learner sees a solid cream section rather
+  // than the hollow inside of the shell. One opaque draw per clipped part (planned in framePlan.ts); it never casts.
+  const usedCaps = new Set<string>();
+  for (const item of plan.singles) {
+    if (!item.clip) continue;
+    const planeKey = JSON.stringify(item.clip);
+    usedCaps.add(planeKey);
+    let capMaterial = stores.capMaterials.get(planeKey);
+    if (!capMaterial) {
+      capMaterial = new THREE.MeshBasicMaterial({ color: SECTION_CREAM, side: THREE.BackSide, toneMapped: false, clippingPlanes: [new THREE.Plane(new THREE.Vector3(...item.clip.normal), -item.clip.offset)] });
+      stores.capMaterials.set(planeKey, capMaterial);
+    }
+    let cap = stores.caps.get(item.id);
+    if (!cap) { cap = new THREE.Mesh(geometryOf(item), capMaterial); cap.matrixAutoUpdate = false; cap.userData.sectionCapOf = item.id; scene.add(cap); stores.caps.set(item.id, cap); }
+    else { cap.geometry = geometryOf(item); cap.material = capMaterial; }
+    cap.matrix.fromArray(item.spin ? spinMatrix(item.spin, options.time, options.reducedMotion) : item.matrix);
+    cap.castShadow = false; cap.receiveShadow = false;
+  }
+  for (const [id, cap] of stores.caps) if (!seen.has(id) || !plan.singles.some((item) => item.id === id && item.clip)) { cap.removeFromParent(); stores.caps.delete(id); }
+  for (const [key, material] of stores.capMaterials) if (!usedCaps.has(key)) { material.dispose(); stores.capMaterials.delete(key); }
 
   const liveBatches = new Set<string>();
   const instanceMatrix = new THREE.Matrix4();
@@ -217,6 +244,8 @@ export function disposeThreeSceneStores(stores: ThreeSceneStores): void {
   if (stores.markers) { stores.markers.removeFromParent(); stores.markers.geometry.dispose(); (stores.markers.material as THREE.Material).dispose(); stores.markers = null; }
   disposeSurfaces(stores.surfaces);
   for (const instanced of stores.instanced.values()) { instanced.removeFromParent(); instanced.dispose(); }
+  for (const cap of stores.caps.values()) cap.removeFromParent();
+  for (const material of stores.capMaterials.values()) material.dispose();
   for (const points of stores.emitters.values()) { points.removeFromParent(); points.geometry.dispose(); points.material.dispose(); }
   stores.emitters.clear();
   stores.objects.clear(); stores.geometries.clear(); stores.materials.clear(); stores.flowLines.clear(); stores.flowParticles.clear(); stores.instanced.clear();

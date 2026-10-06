@@ -10,7 +10,8 @@ import { RENDER_BUDGETS, type RenderBudget } from "./profiles";
 import { MARKER_COLOR, statusVisual } from "./palette";
 import { resolveSurfaces, type RenderSurface } from "./surfaces";
 import { resolveCues, resolveEmitters, type RenderCue, type RenderEmitter } from "./emitters";
-import { controlAction, controlSelected } from "./controls";
+import { controlAction, controlSelected, dragAxisEnds } from "./controls";
+import type { SceneControl } from "./controls";
 import { IDENTITY, addVec3, lerpTransform, multiply, rotate, scaleVec3, transformMatrix, transformPoint, translate, type Mat4, type Vec3 } from "./math";
 
 export type ItemSpin = { pre: Mat4; local: Mat4; pivot: Vec3; axis: "x" | "y" | "z"; radPerSec: number };
@@ -37,7 +38,15 @@ export type RenderItem = {
   detail?: "decor";
   spin?: ItemSpin;
   /** RX-005c: the action this control part would dispatch now (null = disabled), and whether it is selected. */
-  control?: { label: string; group: string; variableId: string; action: Extract<FidelityAction, { type: "set-variable" }> | null; selected: boolean };
+  /** A19 / G3: the status glyph and text a status lamp carries besides its colour. */
+  status?: { glyph: string; text: string };
+  /** A15: shown because the active cutaway reveals it (fill light, never receives shadow). */
+  revealed?: true;
+  control?: { label: string; group: string; variableId: string; kind: SceneControl["kind"]; action: Extract<FidelityAction, { type: "set-variable" }> | null; selected: boolean;
+    /** A14: true while this part's confirm preview is pending (drawn with the highlight token only). */
+    pending: boolean;
+    /** A14 drag-variable: the world-space ends of the drag axis through the part (t = 0 and t = 1). */
+    dragAxis?: [[number, number, number], [number, number, number]] };
 };
 export type RenderMarker = { id: string; position: Vec3; color: string; label?: string };
 export type RenderFlow = { id: string; label: string; color: string; points: Vec3[]; active: boolean; rate: number; direction: 1 | -1; particleCount: number; nodes: FlowNode[]; traced: string[] };
@@ -83,7 +92,7 @@ function componentLocalTransform(spec: HighFidelitySpec, display: FidelityState,
   return offset && factor > 0 ? { ...local, position: addVec3(local.position, scaleVec3(offset, factor)) } : local;
 }
 
-export function buildRenderList(input: { definition: InteractiveLabDefinition<LabState>; state: LabState; profile: CapabilityProfile; displayFidelity?: FidelityState; guidedHighlights?: boolean }): RenderList {
+export function buildRenderList(input: { definition: InteractiveLabDefinition<LabState>; state: LabState; profile: CapabilityProfile; displayFidelity?: FidelityState; guidedHighlights?: boolean; /** A14 presentation-only pending confirm. */ pendingControlId?: string | null }): RenderList {
   const { definition, state, profile } = input;
   const budget = RENDER_BUDGETS[profile];
   const spec = definition.fidelity;
@@ -149,11 +158,12 @@ export function buildRenderList(input: { definition: InteractiveLabDefinition<La
     const matrix = multiply(rootMatrix, localMatrix);
     const motion = motionByComponent.get(component.id);
     const spin = motion && motionActive.get(motion.id) ? { pre: rootMatrix, local: localMatrix, pivot: motion.pivot, axis: motion.axis, radPerSec: motion.rpm * Math.PI / 30 } : undefined;
-    const highlighted = fidelity.inspectedComponentId === component.id || guided.includes(component.id);
+    const pending = !!component.control && input.pendingControlId === component.id;
+    const highlighted = fidelity.inspectedComponentId === component.id || guided.includes(component.id) || pending;
     const resolvedGeometry = component.geometryVariants ? resolveGeometryVariant(component.geometryVariants, profile) : undefined;
     const componentState = simulation.componentStates[component.id];
     const visual = statusVisual(componentState?.status);
-    items.push({ id: component.id, label: component.label, kind: "component", geometry: component.geometry, ...(resolvedGeometry?.descriptor ? { parametricGeometry: resolvedGeometry.descriptor } : {}), ...(resolvedGeometry?.silhouette ? { fallbackSilhouette: resolvedGeometry.silhouette } : {}), matrix, center: transformPoint(matrix, [0, 0, 0]), ...(component.labelOffset ? { labelOffset: component.labelOffset } : {}), ...(component.mobileLabel === false ? { mobileLabel: false } : {}), color: componentState?.color ?? visual.color ?? component.material.color, alpha: !inFocus ? 0.12 : removed ? 0.35 : component.material.opacity ?? 0.96, emissive: Math.max(componentState?.intensity ?? 0, visual.emissive), clip: removed && cutaway ? cutaway.plane : null, highlighted, selectable: component.detail !== "decor" && component.selectable !== false && !removed && isComponentRevealed(spec, fidelity, component.id), showLabel: component.detail !== "decor" && component.showLabel !== false && fidelity.labelsVisible && component.selectable !== false && !removed, inFocus, detail: component.detail, spin , ...(component.control ? { control: { label: component.control.label, group: component.control.group ?? component.control.variableId, variableId: component.control.variableId, action: controlAction(spec, fidelity, component.control), selected: controlSelected(fidelity, component.control) } } : {}) });
+    items.push({ id: component.id, label: component.label, kind: "component", geometry: component.geometry, ...(resolvedGeometry?.descriptor ? { parametricGeometry: resolvedGeometry.descriptor } : {}), ...(resolvedGeometry?.silhouette ? { fallbackSilhouette: resolvedGeometry.silhouette } : {}), matrix, center: transformPoint(matrix, [0, 0, 0]), ...(component.labelOffset ? { labelOffset: component.labelOffset } : {}), ...(component.mobileLabel === false ? { mobileLabel: false } : {}), color: componentState?.color ?? visual.color ?? component.material.color, alpha: !inFocus ? 0.12 : removed ? 0.35 : component.material.opacity ?? 0.96, emissive: Math.max(componentState?.intensity ?? 0, visual.emissive), clip: removed && cutaway ? cutaway.plane : null, highlighted, selectable: component.detail !== "decor" && component.selectable !== false && !removed && isComponentRevealed(spec, fidelity, component.id), showLabel: component.detail !== "decor" && component.showLabel !== false && fidelity.labelsVisible && component.selectable !== false && !removed, inFocus, detail: component.detail, spin , ...(cutaway?.revealsComponentIds.includes(component.id) ? { revealed: true as const } : {}), ...(visual.cue ? { status: visual.cue } : {}), ...(component.control ? { control: { label: component.control.label, group: component.control.group ?? component.control.variableId, variableId: component.control.variableId, kind: component.control.kind, action: controlAction(spec, fidelity, component.control), selected: controlSelected(fidelity, component.control), pending, ...(component.control.kind === "drag-variable" ? { dragAxis: dragAxisEnds(component.control, transformPoint(matrix, [0, 0, 0])) } : {}) } } : {}) });
   }
 
   const flows: RenderFlow[] = spec.flows.filter((flow) => !fidelity.hiddenFlowIds.includes(flow.id)).map((flow) => {
@@ -180,5 +190,7 @@ export function instructionalView(list: RenderList) {
     explanation: list.explanation.map((line) => line.id),
     markers: list.markers.map((marker) => marker.id).sort(),
     spinning: list.motions.filter((motion) => motion.active).map((motion) => motion.id).sort(),
+    /** A19 / G3: every visible status lamp's text (the glyph and colour carry the same state). */
+    statuses: Object.fromEntries(list.items.filter((item) => item.status && item.inFocus && item.selectable).map((item) => [item.id, item.status!.text]).sort(([a], [b]) => a.localeCompare(b))),
   };
 }
