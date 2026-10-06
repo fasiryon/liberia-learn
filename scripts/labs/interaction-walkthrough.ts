@@ -75,6 +75,23 @@ async function main() {
     const focusedName = (scope?: "panel") => page.evaluate(`(() => { const e = document.activeElement; if (!e || !e.closest("[data-lab-review-ready]")) return null;
       if (${JSON.stringify(scope ?? "")} === "panel" && e.closest("[data-lab-renderer], [data-three-controls], [data-lab-scene-controls]")) return null;
       const label = e.getAttribute("aria-label"); return (label || e.textContent || "").trim().replace(/\\s+/g, " "); })()`) as Promise<string | null>;
+    if (viewport === "mobile") {
+      // The mobile controls live in a disclosure. Open it through the real Tab + Enter path so the
+      // walkthrough exercises the same keyboard-accessible shell a learner sees on a phone.
+      let opened = false;
+      for (let tabs = 0; tabs < MAX_TABS; tabs += 1) {
+        await page.keyboard.press("Tab");
+        if ((await focusedName())?.startsWith("Lab controls and next step")) {
+          await page.keyboard.press("Enter");
+          opened = true;
+          break;
+        }
+      }
+      if (!opened) {
+        results.push({ step: "open mobile lab controls", ok: false, note: "The mobile controls disclosure was not reachable by keyboard." });
+        failed += 1;
+      }
+    }
     for (const step of walkthrough.steps as WalkthroughStep[]) {
       if ("expectStatus" in step) {
         const texts = await page.locator("[data-lab-review-ready] [role=status]").allInnerTexts();
@@ -85,6 +102,7 @@ async function main() {
       }
       for (let repeat = 0; repeat < (step.repeat ?? 1); repeat += 1) {
         let tabs = 0, found = false;
+        const recentFocus: string[] = [];
         // Accessible names compare as a screen reader hears them: raw text, case-insensitive (CSS uppercase is presentation).
         const wanted = step.press.toLowerCase();
         const matches = (name: string | null) => !!name && (step.match === "prefix" ? name.toLowerCase().startsWith(wanted) : name.toLowerCase() === wanted);
@@ -92,11 +110,16 @@ async function main() {
         await page.locator("[data-lab-review-ready]").first().evaluate((element) => { (element as HTMLElement).tabIndex = -1; (element as HTMLElement).focus(); });
         while (tabs < MAX_TABS) {
           await page.keyboard.press("Tab"); tabs += 1;
-          if (matches(await focusedName(step.scope))) { found = true; break; }
+          const name = await focusedName(step.scope);
+          if (name) {
+            recentFocus.push(name.slice(0, 100));
+            if (recentFocus.length > 20) recentFocus.shift();
+          }
+          if (matches(name)) { found = true; break; }
         }
         if (found) { await page.keyboard.press("Enter"); await page.waitForTimeout(700); }
         const outline = found ? await page.evaluate(`(() => { const s = getComputedStyle(document.activeElement); return s.outlineStyle + " " + s.outlineWidth; })()`) : null;
-        results.push({ step: `press "${step.press}"${step.repeat ? ` (${repeat + 1}/${step.repeat})` : ""}`, ok: found, tabs, focusOutline: outline, note: step.note });
+        results.push({ step: `press "${step.press}"${step.repeat ? ` (${repeat + 1}/${step.repeat})` : ""}`, ok: found, tabs, focusOutline: outline, note: step.note, ...(!found ? { recentFocus } : {}) });
         if (!found) { failed += 1; break; }
       }
     }

@@ -117,6 +117,7 @@ async function openScenario(page: Page, baseUrl: string, labId: string, scenario
   // Pin the browser clock before navigation so no animation or adaptive-quality sample depends on wall time.
   if (fakeClock) {
     await page.clock.install({ time: new Date("2026-01-01T00:00:00Z") });
+    await page.addInitScript("globalThis.__labReviewClockSeconds = 0;");
     // The Next.js dev indicator is not part of the lab and changes between runs.
     await page.addInitScript(`document.addEventListener("DOMContentLoaded", () => { const style = document.createElement("style"); style.textContent = "nextjs-portal, [role='status'].fixed { display: none !important; }"; document.head.appendChild(style); });`);
   }
@@ -140,6 +141,9 @@ async function openScenario(page: Page, baseUrl: string, labId: string, scenario
   }
   if (await error.count()) throw new Error(await error.innerText());
   if (fakeClock) {
+    // Advance the installed clock once before waiting on the review dispatcher; React's client hydration may
+    // schedule work on controlled timers, and the scene clock is already fixed at zero from document start.
+    await page.clock.runFor(SETTLE_MS);
     try {
       await page.waitForFunction(() => Boolean((window as unknown as { __labReview?: unknown }).__labReview), null, { timeout: 30_000 });
     } catch (cause) {

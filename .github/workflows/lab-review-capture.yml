@@ -53,7 +53,7 @@ on:
         type: boolean
         default: true
       determinism:
-        description: "RX-005 A9: capture the selected scenarios twice and require byte-identical PNGs"
+        description: "RX-005 A9: capture the selected scenarios twice with reduced motion and require byte-identical PNGs"
         type: boolean
         default: false
       runtime_acceptance:
@@ -175,7 +175,7 @@ jobs:
       - name: Determinism ${{ matrix.profile }} (two runs, byte-identical)
         if: ${{ always() && inputs.determinism }}
         run: |
-          args=(--lab "$LAB" --profiles "$PROFILE" --viewports "$VIEWPORTS" --restart-every 6 --still-only)
+          args=(--lab "$LAB" --profiles "$PROFILE" --viewports "$VIEWPORTS" --restart-every 6 --still-only --reduced-motion)
           if [ "$SCENARIOS" != "ALL" ]; then args+=(--scenarios "$SCENARIOS"); fi
           base="artifacts/lab-review/${LAB}/determinism-${GITHUB_RUN_ID}-${PROFILE}"
           timeout 40m npx tsx scripts/labs/capture-lab-review.ts "${args[@]}" --label det-a --out "$base/a"
