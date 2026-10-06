@@ -5,6 +5,7 @@ import type { CapabilityProfile, GeometryKind, InteractiveLabDefinition, LabStat
 import type { RenderItem, RenderList } from "./renderList";
 import { planLowBatches, type LowBatchPlan } from "./lowBatch";
 import { parametricTriangleCount } from "./geometry/builders";
+import { flowTubeTriangles } from "./flowTubes";
 
 /** One planned frame. Shadow figures are the extra sun-shadow pass ThreeScene draws only when casters moved (A7). */
 export type FramePlan = { drawCalls: number; triangles: number; shadowDrawCalls: number; shadowTriangles: number; textures: { id: string; px: number }[] };
@@ -58,22 +59,23 @@ const hasParticles = (list: Pick<RenderList, "flows" | "emitters">) => list.flow
 /** ThreeScene draws one round-sprite point cloud per running emitter. */
 export const runningEmitters = (list: Pick<RenderList, "emitters">) => list.emitters.filter((emitter) => emitter.active && emitter.particleCount > 0);
 const hasTraceNodes = (list: Pick<RenderList, "flows">, traceFlowId: string | null) => !!traceFlowId && list.flows.some((flow) => flow.id === traceFlowId && flow.nodes.some((node) => node.traceable));
-const hasLines = (list: Pick<RenderList, "flows">) => list.flows.some((flow) => flow.points.length >= 2);
 
 /** WebGLScene (LOW): merged batches, singles, ground, one surface batch, and the shared line/particle/trace/marker batches. */
 export function planLowFrame(list: RenderList, options: { traceFlowId: string | null; plan?: LowBatchPlan }): FramePlan {
   const plan = options.plan ?? planLowBatches(list, { perItemState: true });
   const daylight = list.environment === "DAYLIGHT", surfaces = activeSurfaces(list);
+  // A10/A13: flows draw as two shared triangle batches (dark casing, then coloured core).
+  const tubeTriangles = flowTubeTriangles(list.flows.filter((flow) => flow.points.length >= 2), "LOW");
   const drawCalls = plan.batches.length + plan.singles.length + (daylight ? 1 : 0) + (surfaces.length ? 1 : 0)
-    + (hasLines(list) ? 1 : 0) + (hasParticles(list) ? 1 : 0) + (list.flows.length && hasTraceNodes(list, options.traceFlowId) ? 1 : 0) + (list.markers.length ? 1 : 0);
+    + (tubeTriangles ? 2 : 0) + (hasParticles(list) ? 1 : 0) + (list.flows.length && hasTraceNodes(list, options.traceFlowId) ? 1 : 0) + (list.markers.length ? 1 : 0);
   const triangles = list.items.reduce((sum, item) => sum + itemTriangles(item, "LOW"), 0) + (daylight ? LOW_GROUND_TRIANGLES : 0)
-    + surfaces.reduce((sum, surface) => sum + (surface.points.length - 1) * 4, 0);
+    + surfaces.reduce((sum, surface) => sum + (surface.points.length - 1) * 4, 0) + tubeTriangles * 2;
   return { drawCalls, triangles, shadowDrawCalls: 0, shadowTriangles: 0, textures: [] };
 }
 
 /**
  * ThreeScene (HIGH/STANDARD) with frustum culling off, i.e. the worst frame. Main pass: ground, daylight sky, one
- * InstancedMesh per batch, singles, one section cap per clipped part (A15), one mesh per active surface, one line per flow, one point cloud per particle flow
+ * InstancedMesh per batch, singles, one section cap per clipped part (A15), one mesh per active surface, the flow casing and core meshes, one point cloud per particle flow
  * and the shared marker cloud. Shadow pass (HIGH daylight only): every caster again.
  */
 export function planThreeFrame(list: RenderList, options: { profile: "HIGH" | "STANDARD"; traceFlowId: string | null; plan?: LowBatchPlan }): FramePlan {
@@ -85,13 +87,15 @@ export function planThreeFrame(list: RenderList, options: { profile: "HIGH" | "S
   const itemDraws = plan.batches.reduce((sum, batch) => sum + threePasses(batch.items[0]), 0) + plan.singles.reduce((sum, item) => sum + threePasses(item), 0);
   // A15: every clipped part also draws its opaque back-face section cap.
   const caps = plan.singles.filter((item) => item.clip);
-  const drawCalls = 1 + (daylight ? 1 : 0) + itemDraws + caps.length + surfaces.length + list.flows.length + particleFlows + runningEmitters(list).length + markerCloud;
+  // A10/A18: all flows draw as two merged meshes (dark casing, then coloured core).
+  const tubeTriangles = flowTubeTriangles(list.flows.filter((flow) => flow.points.length >= 2), options.profile);
+  const drawCalls = 1 + (daylight ? 1 : 0) + itemDraws + caps.length + surfaces.length + (tubeTriangles ? 2 : 0) + particleFlows + runningEmitters(list).length + markerCloud;
   const tri = (item: RenderItem) => itemTriangles(item, options.profile);
   // The shadow pass draws each caster once; the main pass draws transparent DoubleSide parts twice.
   const shadowBatchTriangles = plan.batches.reduce((sum, batch) => sum + tri(batch.items[0]) * batch.items.length, 0);
   const batchTriangles = plan.batches.reduce((sum, batch) => sum + tri(batch.items[0]) * batch.items.length * threePasses(batch.items[0]), 0);
   const triangles = THREE_GROUND_TRIANGLES + (daylight ? THREE_SKY_TRIANGLES : 0) + batchTriangles + plan.singles.reduce((sum, item) => sum + tri(item) * threePasses(item), 0)
-    + caps.reduce((sum, item) => sum + tri(item), 0)
+    + caps.reduce((sum, item) => sum + tri(item), 0) + tubeTriangles * 2
     + surfaces.reduce((sum, surface) => sum + (surface.points.length - 1) * 2, 0);
   const casters = shadows ? plan.singles.filter(castsShadow) : [];
   return {

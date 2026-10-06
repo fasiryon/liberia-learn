@@ -13,6 +13,7 @@ import { convexHull, silhouetteSamples } from "./meshes";
 import type { ScenePick } from "./picking";
 import { useDisplayFidelity } from "./useDisplayFidelity";
 import { SURFACE_SHALLOW } from "@/lib/interactive-labs/v2/fidelity/surfaces";
+import { FLOW_CASING_COLOR } from "@/lib/interactive-labs/v2/fidelity/flowTubes";
 
 // Fixed precision keeps server and client SVG output identical (no hydration mismatch from float noise).
 const round = (value: number) => Math.round(value * 1000) / 1000;
@@ -103,6 +104,8 @@ export function Fallback2D({ definition, state, reducedMotion, traceFlowId, disp
         ))}
         {list.flows.filter((flow) => !flow.active).map((flow) => (
           <g key={flow.id} aria-label={`${flow.label}: ${flow.active ? "flowing" : "not flowing"}`}>
+            {/* A10: cased line - a dark casing under the light core. */}
+            <polyline data-lab-flow-casing={flow.id} points={flow.points.map((p) => `${p[0]},${-p[1]}`).join(" ")} fill="none" stroke={FLOW_CASING_COLOR} strokeWidth={5} strokeDasharray={flow.active ? undefined : "8 6"} vectorEffect="non-scaling-stroke" strokeLinejoin="round" />
             <polyline points={flow.points.map((p) => `${p[0]},${-p[1]}`).join(" ")} fill="none" stroke={flow.active ? flow.color : INACTIVE_FLOW_COLOR} strokeOpacity={1} strokeDasharray={flow.active ? undefined : "8 6"} strokeWidth={2.5} vectorEffect="non-scaling-stroke" strokeLinejoin="round" markerMid={flow.active && reducedMotion ? "url(#flow-arrow)" : undefined} />
             {!reducedMotion && flowParticles(flow.points, flow.particleCount, flow.rate, flow.direction, time, false).map((p, index) => <circle key={index} cx={p[0]} cy={-p[1]} r={0.09} fill={flow.color} />)}
           </g>
@@ -126,6 +129,7 @@ export function Fallback2D({ definition, state, reducedMotion, traceFlowId, disp
             cannot disappear behind the dam, gate, or housing it passes. */}
         {list.flows.filter((flow) => flow.active).map((flow) => (
           <g key={`${flow.id}-active-overlay`} aria-label={`${flow.label}: flowing`} pointerEvents="none">
+            <polyline data-lab-flow-casing={flow.id} points={flow.points.map((p) => `${p[0]},${-p[1]}`).join(" ")} fill="none" stroke={FLOW_CASING_COLOR} strokeWidth={5} vectorEffect="non-scaling-stroke" strokeLinejoin="round" />
             <polyline points={flow.points.map((p) => `${p[0]},${-p[1]}`).join(" ")} fill="none" stroke={flow.color} strokeOpacity={1} strokeWidth={2.5} vectorEffect="non-scaling-stroke" strokeLinejoin="round" markerMid={reducedMotion ? "url(#flow-arrow)" : undefined} />
             {!reducedMotion && flowParticles(flow.points, flow.particleCount, flow.rate, flow.direction, time, false).map((p, index) => <circle key={index} cx={p[0]} cy={-p[1]} r={0.09} fill={flow.color} />)}
           </g>

@@ -178,7 +178,7 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
     // A13 LOW floor: daylight labs get one flat ground quad (one draw) so the plant does not float on the backdrop.
     const groundBatch: FlowVertexBatch = { positions: new Float32Array([-40, GROUND_Y, -40, 40, GROUND_Y, -40, 40, GROUND_Y, 40, -40, GROUND_Y, -40, 40, GROUND_Y, 40, -40, GROUND_Y, 40]), colors: new Float32Array(Array.from({ length: 6 }, () => [0.79, 0.85, 0.77]).flat()), count: 6 };
     const groundBuffers = { positions: gl.createBuffer()!, colors: gl.createBuffer()!, capacity: 0 };
-    const flowBuffers = Object.fromEntries(["lines", "particles", "traceNodes"].map((key) => [key, { positions: gl.createBuffer()!, colors: gl.createBuffer()!, capacity: 0 }])) as Record<"lines" | "particles" | "traceNodes", { positions: WebGLBuffer; colors: WebGLBuffer; capacity: number }>;
+    const flowBuffers = Object.fromEntries(["casing", "core", "particles", "traceNodes"].map((key) => [key, { positions: gl.createBuffer()!, colors: gl.createBuffer()!, capacity: 0 }])) as Record<"casing" | "core" | "particles" | "traceNodes", { positions: WebGLBuffer; colors: WebGLBuffer; capacity: number }>;
     const uploadBatch = (batch: FlowVertexBatch, gpu: { positions: WebGLBuffer; colors: WebGLBuffer; capacity: number }) => {
       if (gpu.capacity < batch.positions.length) {
         gpu.capacity = batch.positions.length;
@@ -383,11 +383,12 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
       batchFlowGeometry(list, t, motionless, callbacks.current.traceFlowId, flowStorage);
       // Process paths are instructional overlays. Letting solid mesh depth hide
       // them made the flood spillway appear inactive in paused review frames.
-      // Draw their thin lines and fixed reduced-motion particle cues above
-      // solids, then restore depth testing for trace nodes and markers.
+      // Draw their cased tubes (A10/A13: dark casing first, coloured core over it) and fixed reduced-motion particle
+      // cues above solids, then restore depth testing for trace nodes and markers.
       if (list.flows.length) {
         gl.disable(gl.DEPTH_TEST);
-        drawBatch(flowStorage.lines, flowBuffers.lines, gl.LINES, 1, 1, viewProj);
+        drawBatch(flowStorage.tubes.casing, flowBuffers.casing, gl.TRIANGLES, 1, 1, viewProj);
+        drawBatch(flowStorage.tubes.core, flowBuffers.core, gl.TRIANGLES, 1, 1, viewProj);
         drawBatch(flowStorage.particles, flowBuffers.particles, gl.POINTS, 1, (low ? 6 : 9) * dpr, viewProj);
         gl.enable(gl.DEPTH_TEST);
       }

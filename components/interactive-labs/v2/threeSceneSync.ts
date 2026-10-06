@@ -10,13 +10,15 @@ import { castsShadow, runningEmitters, threeTransparent } from "@/lib/interactiv
 import { emitterParticles } from "@/lib/interactive-labs/v2/fidelity/emitters";
 import { HIGHLIGHT_COLOR, MARKER_COLOR, SECTION_CREAM } from "@/lib/interactive-labs/v2/fidelity/palette";
 import { disposeSurfaces, syncSurfaces, type SurfaceStore } from "./threeSurfaces";
+import { createFlowTubeStorage, writeFlowTubes, type FlowTubeStorage } from "@/lib/interactive-labs/v2/fidelity/flowTubes";
 
 export type ThreeSceneStores = {
   scene: THREE.Scene;
   objects: Map<string, THREE.Mesh>;
   geometries: Map<string, THREE.BufferGeometry>;
   materials: Map<string, THREE.MeshStandardMaterial>;
-  flowLines: Map<string, THREE.Line>;
+  /** A10/A18: every flow's core tubes and their dark casing, each merged into one vertex-coloured mesh. */
+  flowTubes: { storage: FlowTubeStorage; signature: string; core: THREE.Mesh; casing: THREE.Mesh } | null;
   flowParticles: Map<string, THREE.Points>;
   markers: THREE.Points | null;
   surfaces: SurfaceStore;
@@ -30,7 +32,7 @@ export type ThreeSceneStores = {
 };
 
 export function createThreeSceneStores(scene: THREE.Scene, shadows: boolean): ThreeSceneStores {
-  return { scene, objects: new Map(), geometries: new Map(), materials: new Map(), flowLines: new Map(), flowParticles: new Map(), markers: null, surfaces: new Map(), instanced: new Map(), caps: new Map(), capMaterials: new Map(), emitters: new Map(), shadows, shadowHash: "" };
+  return { scene, objects: new Map(), geometries: new Map(), materials: new Map(), flowTubes: null, flowParticles: new Map(), markers: null, surfaces: new Map(), instanced: new Map(), caps: new Map(), capMaterials: new Map(), emitters: new Map(), shadows, shadowHash: "" };
 }
 
 /** The primitive meshes ThreeScene builds; their triangle counts are THREE_PRIMITIVE_TRIANGLES in framePlan.ts. */
@@ -153,19 +155,8 @@ export function syncThreeScene(stores: ThreeSceneStores, list: RenderList, optio
   syncSurfaces(scene, stores.surfaces, list.surfaces, options.time, options.reducedMotion, options.profile);
   syncEmitters(stores, list, options);
 
+  syncFlowTubes(stores, list, options.profile);
   const activeFlowIds = new Set(list.flows.map((flow) => flow.id));
-  for (const [id, line] of stores.flowLines) if (!activeFlowIds.has(id)) line.removeFromParent();
-  for (const flow of list.flows) {
-    let line = stores.flowLines.get(flow.id);
-    if (!line) {
-      line = new THREE.Line(new THREE.BufferGeometry().setFromPoints(flow.points.map((point) => new THREE.Vector3(...point))), new THREE.LineBasicMaterial());
-      line.renderOrder = 5; line.userData.flowLine = true; stores.flowLines.set(flow.id, line);
-    }
-    const lineMaterial = line.material as THREE.LineBasicMaterial;
-    lineMaterial.color.set(flow.active ? flow.color : "#64748b");
-    lineMaterial.transparent = !flow.active; lineMaterial.opacity = flow.active ? 0.92 : 0.55;
-    if (!line.parent) scene.add(line);
-  }
   for (const [id, particles] of stores.flowParticles) if (!activeFlowIds.has(id)) particles.removeFromParent();
   for (const flow of list.flows) {
     const positionsNow = flowParticles(flow.points, flow.particleCount, flow.rate, flow.direction, options.time, options.reducedMotion);
@@ -174,7 +165,8 @@ export function syncThreeScene(stores: ThreeSceneStores, list: RenderList, optio
     if (!particles) {
       const geometry = new THREE.BufferGeometry();
       geometry.setAttribute("position", new THREE.BufferAttribute(new Float32Array(positionsNow.length * 3), 3));
-      particles = new THREE.Points(geometry, new THREE.PointsMaterial({ color: flow.color, size: 7, sizeAttenuation: false, depthTest: false }));
+      // A18: round sprites (the shared disc shader), not square GL points.
+      particles = new THREE.Points(geometry, new THREE.ShaderMaterial({ vertexShader: spriteVertex, fragmentShader: spriteFragment, depthTest: false, toneMapped: false, uniforms: { uColor: { value: new THREE.Color(flow.color) }, uSize: { value: 7 } } }));
       particles.userData.labMarker = true; particles.renderOrder = 7; stores.flowParticles.set(flow.id, particles);
     }
     const attribute = particles.geometry.getAttribute("position") as THREE.BufferAttribute;
@@ -182,7 +174,7 @@ export function syncThreeScene(stores: ThreeSceneStores, list: RenderList, optio
     const positions = particles.geometry.getAttribute("position") as THREE.BufferAttribute;
     positionsNow.forEach((point, index) => positions.array.set(point, index * 3));
     positions.needsUpdate = true;
-    (particles.material as THREE.PointsMaterial).color.set(flow.color);
+    (particles.material as THREE.ShaderMaterial).uniforms.uColor.value.set(flow.color);
     if (!particles.parent) scene.add(particles);
   }
 
@@ -203,6 +195,33 @@ export function syncThreeScene(stores: ThreeSceneStores, list: RenderList, optio
   } else stores.markers?.removeFromParent();
 
   return plan;
+}
+
+/**
+ * A10/A18 cased flow tubes. Rebuilt only when a flow's path, colour or running state changes (never per frame). The
+ * casing draws first without depth writes, so the core covers it except at the rim; neither casts or receives shadow.
+ */
+function syncFlowTubes(stores: ThreeSceneStores, list: RenderList, profile: "HIGH" | "STANDARD") {
+  const flows = list.flows.filter((flow) => flow.points.length >= 2);
+  const signature = JSON.stringify(flows.map((flow) => [flow.id, flow.active, flow.color, flow.points]));
+  if (!stores.flowTubes) {
+    const make = (renderOrder: number, depthWrite: boolean) => { const mesh = new THREE.Mesh(new THREE.BufferGeometry(), new THREE.MeshBasicMaterial({ vertexColors: true, toneMapped: false, depthWrite })); mesh.matrixAutoUpdate = false; mesh.renderOrder = renderOrder; mesh.frustumCulled = false; return mesh; };
+    stores.flowTubes = { storage: createFlowTubeStorage(), signature: "", core: make(5, true), casing: make(4, false) };
+    stores.flowTubes.core.userData.flowTubes = "core"; stores.flowTubes.casing.userData.flowTubes = "casing";
+  }
+  const tubes = stores.flowTubes;
+  if (tubes.signature !== signature) {
+    tubes.signature = signature;
+    writeFlowTubes(flows, profile, tubes.storage);
+    for (const [mesh, batch] of [[tubes.core, tubes.storage.core], [tubes.casing, tubes.storage.casing]] as const) {
+      mesh.geometry.dispose();
+      const geometry = new THREE.BufferGeometry();
+      geometry.setAttribute("position", new THREE.BufferAttribute(batch.positions.slice(0, batch.count * 3), 3));
+      geometry.setAttribute("color", new THREE.BufferAttribute(batch.colors.slice(0, batch.count * 3), 3));
+      mesh.geometry = geometry;
+    }
+  }
+  for (const mesh of [tubes.casing, tubes.core]) { if (tubes.storage.core.count && !mesh.parent) stores.scene.add(mesh); if (!tubes.storage.core.count) mesh.removeFromParent(); }
 }
 
 // A18 round sprites for emitter particles: a disc cut in the fragment shader, no texture.
@@ -239,7 +258,8 @@ export function disposeThreeSceneStores(stores: ThreeSceneStores): void {
   for (const mesh of stores.objects.values()) mesh.removeFromParent();
   for (const geometry of stores.geometries.values()) geometry.dispose();
   for (const material of stores.materials.values()) material.dispose();
-  for (const line of stores.flowLines.values()) { line.removeFromParent(); line.geometry.dispose(); (line.material as THREE.Material).dispose(); }
+  if (stores.flowTubes) for (const mesh of [stores.flowTubes.core, stores.flowTubes.casing]) { mesh.removeFromParent(); mesh.geometry.dispose(); (mesh.material as THREE.Material).dispose(); }
+  stores.flowTubes = null;
   for (const points of stores.flowParticles.values()) { points.removeFromParent(); points.geometry.dispose(); (points.material as THREE.Material).dispose(); }
   if (stores.markers) { stores.markers.removeFromParent(); stores.markers.geometry.dispose(); (stores.markers.material as THREE.Material).dispose(); stores.markers = null; }
   disposeSurfaces(stores.surfaces);
@@ -248,6 +268,6 @@ export function disposeThreeSceneStores(stores: ThreeSceneStores): void {
   for (const material of stores.capMaterials.values()) material.dispose();
   for (const points of stores.emitters.values()) { points.removeFromParent(); points.geometry.dispose(); points.material.dispose(); }
   stores.emitters.clear();
-  stores.objects.clear(); stores.geometries.clear(); stores.materials.clear(); stores.flowLines.clear(); stores.flowParticles.clear(); stores.instanced.clear();
+  stores.objects.clear(); stores.geometries.clear(); stores.materials.clear(); stores.flowParticles.clear(); stores.instanced.clear();
 }
 
