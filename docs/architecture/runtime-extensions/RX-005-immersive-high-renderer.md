@@ -468,13 +468,17 @@ Branch `feat/rx005-rx006-acceptance-closure` (draft PR #169). Evidence is GitHub
 
 **Fixed after the reviewer re-check, awaiting the final evidence run** (90eff6c6): the round-sprite shader compile error (no sprite drew on HIGH/STANDARD) and a capture gate that now fails on any shader error; a browser context-loss to FALLBACK_2D test (Test 5); circuit determinism (Test 6 names both reference labs); landscape captures and walkthroughs at true phone-landscape size; the Challenge-mode phone overflow; control-first picking inside overlapping bounds; WebGL2 gating and the load-failure upgrade loop.
 
-**Unmet (RX-005 stays PROPOSED until each is closed):**
-1. A14: the pending confirm shows "Confirm?" only in the chip and the strip below the scene, not as an in-scene label.
-2. A14: no shared control-affordance token (glyph, ring and cursor) on every profile.
-3. A2: no spy test proving the three loader is never invoked for target-device hints (deviceMemory 2).
-4. A18: a HIGH to LOW downgrade keeps the preset but not the learner's orbited camera pose (WebGLScene takes no initial pose).
-5. A19: the per-lab dynamic registry with a 300 KB 2D first-load test, and Fallback2D hull memoization, are not implemented (the amendment schedules them before programme Phase 4).
-6. The final evidence run at 90eff6c6 must pass (sprites re-captured, context loss, circuit determinism, landscape).
-7. Reviewer follow-ups recorded in `docs/labs/mount-coffee-hydropower/REVIEW_LOG.md`: FALLBACK_2D label parity with the 3D profiles, LOW label anchoring, uncaught chunk-abort page errors, a cumulative anchor for the renderer-chunk gate, and moving the parity, zero-request and determinism gates onto PR CI.
+**Closed after the first record** (00ba7f52, 316/316 interactive-lab tests):
+- A2: `three-loader-gate.test.tsx` proves the three renderer module is never loaded for deviceMemory 2 and is loaded exactly once after a passing probe on a capable WebGL2 device.
+- A14: a shared control-affordance token on every profile (ring with a tap or drag-axis glyph, pointer/grab cursor) and an in-scene "Confirm?" label in the highlight token while a confirm is pending.
+- A18: a downgrade carries the learner's camera pose into the LOW renderer until the preset changes or Recentre.
+- A19: `renderer-chunks.test.ts` proves one lab's 2D first-load set is 162 KB stored (48 KB brotli), within 300 KB, with both WebGL renderers lazy; Fallback2D's part layer and hulls are memoized away from the animation clock. Per-lab dynamic definition loading stays scheduled before programme Phase 4, as this amendment states; the size test guards it until then.
+- Labels: every renderer anchors labels in the part's own space and ranks highlighted, then A1 label-cue parts, then the rest (FALLBACK_2D label parity and LOW anchoring findings).
+- CI: `lab-runtime-gate.yml` runs parity (incl. shadow pass), zero three requests on LOW/2D, shader-error and two-run determinism checks on every PR touching the lab runtime; `RENDERER_CHUNK_CEILINGS` caps cumulative chunk growth.
+
+**Remaining before IMPLEMENTED:**
+1. A clean full evidence sweep (`lab-review-capture.yml`, Mount Coffee and circuit, all profiles and viewports, determinism, runtime acceptance incl. context loss, walkthroughs) at the final head, and a green `lab-runtime-gate` on PR #169.
+2. Performance-reviewer re-check of the post-review changes and the >5% budget steps recorded since, and the design director's call on desktop shadow quality (A7 amendment).
+3. Known P2 follow-up: uncaught "Loading chunk failed" page errors during the chunk-abort walkthrough (dev server).
 
 No physical-device or real-GPU performance claim is made.
