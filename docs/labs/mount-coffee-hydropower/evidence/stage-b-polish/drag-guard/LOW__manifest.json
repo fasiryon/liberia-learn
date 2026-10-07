@@ -1,0 +1,161 @@
+{
+  "labId": "fixture-simple-circuit",
+  "labVersion": "1.0.0",
+  "reviewState": "DRAFT",
+  "label": "ci-37654041330-LOW-stage-b-drag-guard",
+  "gitSha": "5fe8f3ca17dad18b020e30b77eb536ef6d2604cd",
+  "capturedAt": "2026-10-07T16:43:36.806Z",
+  "environment": "GitHub Actions (Linux, run 37654041330) dev server, headless Chromium, virtual clock paused from navigation for stills and motion frames",
+  "rendererIdentityRule": "HIGH/STANDARD must be drawn by three@*, LOW by webgl-pass, FALLBACK_2D by svg, at the requested profile, with at least one frame drawn; otherwise status FAIL.",
+  "framePlanRule": "RX-005 A8 / RX-006 test 1: the shared frame planner must equal the renderer's own count for the probed frame (three.js: renderer.info with frustum culling off and the shadow pass forced; LOW: counted drawArrays); otherwise status FAIL.",
+  "threeChunkRule": "RX-005 A8: LOW and FALLBACK_2D runs must make zero requests for a script carrying three.js; otherwise status FAIL.",
+  "deviceBoundary": "Headless browser evidence proves rendering correctness, composition, layout, interaction automation and renderer/profile routing only. It does not prove low-end GPU performance, touch latency, thermal behaviour or mobile memory pressure (DEVICE_REQUIRED).",
+  "renderer": {
+    "kind": "software",
+    "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+    "validFor": [
+      "composition",
+      "labels"
+    ]
+  },
+  "profiles": [
+    "LOW"
+  ],
+  "viewports": [
+    "mobile"
+  ],
+  "captures": [
+    {
+      "file": "overview__LOW__mobile.png",
+      "scenario": "overview",
+      "stage": "overview",
+      "profile": "LOW",
+      "viewport": "mobile",
+      "kind": "still",
+      "reducedMotion": false
+    },
+    {
+      "file": "current-starts__LOW__mobile.png",
+      "scenario": "current-starts",
+      "stage": "process",
+      "profile": "LOW",
+      "viewport": "mobile",
+      "kind": "still",
+      "reducedMotion": false
+    }
+  ],
+  "runs": [
+    {
+      "scenario": "overview",
+      "profile": "LOW",
+      "viewport": "mobile",
+      "kind": "still",
+      "screenshot": "overview__LOW__mobile.png",
+      "status": "PASS",
+      "framePlan": {
+        "renderer": "webgl-pass",
+        "planned": {
+          "drawCalls": 5,
+          "triangles": 1044,
+          "shadowDrawCalls": 0,
+          "shadowTriangles": 0,
+          "textures": []
+        },
+        "measured": {
+          "drawCalls": 5,
+          "triangles": 1044,
+          "shadowDrawCalls": 0,
+          "shadowTriangles": 0
+        }
+      },
+      "frameParity": {
+        "ok": true,
+        "mismatches": []
+      },
+      "threeChunkRequests": [],
+      "controlHitTargets": {
+        "expectedIds": [
+          "switch-lever"
+        ],
+        "targets": [
+          {
+            "id": "switch-lever",
+            "width": 44,
+            "height": 44,
+            "name": "Switch lever",
+            "hittable": true
+          }
+        ],
+        "missingIds": []
+      },
+      "actualProfile": "LOW",
+      "downgradePath": "",
+      "actualRenderer": "webgl-pass",
+      "framesRendered": 188,
+      "drawCalls": 5,
+      "notice": [
+        ""
+      ],
+      "surface": "webgl",
+      "warnings": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "scenario": "current-starts",
+      "profile": "LOW",
+      "viewport": "mobile",
+      "kind": "still",
+      "screenshot": "current-starts__LOW__mobile.png",
+      "status": "PASS",
+      "framePlan": {
+        "renderer": "webgl-pass",
+        "planned": {
+          "drawCalls": 6,
+          "triangles": 484,
+          "shadowDrawCalls": 0,
+          "shadowTriangles": 0,
+          "textures": []
+        },
+        "measured": {
+          "drawCalls": 6,
+          "triangles": 484,
+          "shadowDrawCalls": 0,
+          "shadowTriangles": 0
+        }
+      },
+      "frameParity": {
+        "ok": true,
+        "mismatches": []
+      },
+      "threeChunkRequests": [],
+      "controlHitTargets": {
+        "expectedIds": [
+          "switch-lever"
+        ],
+        "targets": [
+          {
+            "id": "switch-lever",
+            "width": 44,
+            "height": 44,
+            "name": "Switch lever",
+            "hittable": true
+          }
+        ],
+        "missingIds": []
+      },
+      "actualProfile": "LOW",
+      "downgradePath": "",
+      "actualRenderer": "webgl-pass",
+      "framesRendered": 274,
+      "drawCalls": 6,
+      "notice": [
+        ""
+      ],
+      "surface": "webgl",
+      "warnings": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    }
+  ]
+}

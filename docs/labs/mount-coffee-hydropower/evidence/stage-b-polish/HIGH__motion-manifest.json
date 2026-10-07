@@ -1,0 +1,1033 @@
+{
+  "labId": "mount-coffee-hydropower",
+  "labVersion": "1.1.0",
+  "reviewState": "DRAFT",
+  "label": "ci-37648357989-HIGH-stage-b-final-motion",
+  "gitSha": "78fb4f92c6b74de3532781ee78b2e217bd8d5e05",
+  "capturedAt": "2026-10-07T16:43:11.554Z",
+  "environment": "GitHub Actions (Linux, run 37648357989) dev server, headless Chromium, virtual clock paused from navigation for stills and motion frames",
+  "rendererIdentityRule": "HIGH/STANDARD must be drawn by three@*, LOW by webgl-pass, FALLBACK_2D by svg, at the requested profile, with at least one frame drawn; otherwise status FAIL.",
+  "framePlanRule": "RX-005 A8 / RX-006 test 1: the shared frame planner must equal the renderer's own count for the probed frame (three.js: renderer.info with frustum culling off and the shadow pass forced; LOW: counted drawArrays); otherwise status FAIL.",
+  "threeChunkRule": "RX-005 A8: LOW and FALLBACK_2D runs must make zero requests for a script carrying three.js; otherwise status FAIL.",
+  "deviceBoundary": "Headless browser evidence proves rendering correctness, composition, layout, interaction automation and renderer/profile routing only. It does not prove low-end GPU performance, touch latency, thermal behaviour or mobile memory pressure (DEVICE_REQUIRED).",
+  "renderer": {
+    "kind": "software",
+    "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+    "validFor": [
+      "composition",
+      "labels"
+    ]
+  },
+  "profiles": [
+    "HIGH"
+  ],
+  "viewports": [
+    "desktop"
+  ],
+  "captures": [
+    {
+      "file": "hydro-exploded-unit__HIGH__desktop.png",
+      "scenario": "hydro-exploded-unit",
+      "storyboardScene": "S3",
+      "stage": "exploded",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "still",
+      "reducedMotion": true
+    },
+    {
+      "file": "hydro-exploded-unit__HIGH__desktop__motion-00.png",
+      "scenario": "hydro-exploded-unit",
+      "storyboardScene": "S3",
+      "stage": "exploded",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": false,
+      "virtualMs": 0
+    },
+    {
+      "file": "hydro-exploded-unit__HIGH__desktop__motion-01.png",
+      "scenario": "hydro-exploded-unit",
+      "storyboardScene": "S3",
+      "stage": "exploded",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": false,
+      "virtualMs": 90
+    },
+    {
+      "file": "hydro-exploded-unit__HIGH__desktop__motion-02.png",
+      "scenario": "hydro-exploded-unit",
+      "storyboardScene": "S3",
+      "stage": "exploded",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": false,
+      "virtualMs": 180
+    },
+    {
+      "file": "hydro-exploded-unit__HIGH__desktop__motion-03.png",
+      "scenario": "hydro-exploded-unit",
+      "storyboardScene": "S3",
+      "stage": "exploded",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": false,
+      "virtualMs": 270
+    },
+    {
+      "file": "hydro-exploded-unit__HIGH__desktop__motion-04.png",
+      "scenario": "hydro-exploded-unit",
+      "storyboardScene": "S3",
+      "stage": "exploded",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": false,
+      "virtualMs": 360
+    },
+    {
+      "file": "hydro-exploded-unit__HIGH__desktop__motion-05.png",
+      "scenario": "hydro-exploded-unit",
+      "storyboardScene": "S3",
+      "stage": "exploded",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": false,
+      "virtualMs": 450
+    },
+    {
+      "file": "hydro-exploded-unit__HIGH__desktop__motion-06.png",
+      "scenario": "hydro-exploded-unit",
+      "storyboardScene": "S3",
+      "stage": "exploded",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": false,
+      "virtualMs": 540
+    },
+    {
+      "file": "hydro-exploded-unit__HIGH__desktop__motion-07.png",
+      "scenario": "hydro-exploded-unit",
+      "storyboardScene": "S3",
+      "stage": "exploded",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": false,
+      "virtualMs": 630
+    },
+    {
+      "file": "hydro-exploded-unit__HIGH__desktop__motion-08.png",
+      "scenario": "hydro-exploded-unit",
+      "storyboardScene": "S3",
+      "stage": "exploded",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": false,
+      "virtualMs": 720
+    },
+    {
+      "file": "hydro-exploded-unit__HIGH__desktop__motion-09.png",
+      "scenario": "hydro-exploded-unit",
+      "storyboardScene": "S3",
+      "stage": "exploded",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": false,
+      "virtualMs": 810
+    },
+    {
+      "file": "hydro-exploded-unit__HIGH__desktop__motion-sheet.png",
+      "scenario": "hydro-exploded-unit",
+      "storyboardScene": "S3",
+      "stage": "exploded",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "motion-sheet",
+      "reducedMotion": false
+    },
+    {
+      "file": "hydro-exploded-unit__HIGH__desktop__reduced__motion-00.png",
+      "scenario": "hydro-exploded-unit",
+      "storyboardScene": "S3",
+      "stage": "exploded",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": true,
+      "virtualMs": 0
+    },
+    {
+      "file": "hydro-exploded-unit__HIGH__desktop__reduced__motion-01.png",
+      "scenario": "hydro-exploded-unit",
+      "storyboardScene": "S3",
+      "stage": "exploded",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": true,
+      "virtualMs": 90
+    },
+    {
+      "file": "hydro-exploded-unit__HIGH__desktop__reduced__motion-02.png",
+      "scenario": "hydro-exploded-unit",
+      "storyboardScene": "S3",
+      "stage": "exploded",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": true,
+      "virtualMs": 180
+    },
+    {
+      "file": "hydro-exploded-unit__HIGH__desktop__reduced__motion-03.png",
+      "scenario": "hydro-exploded-unit",
+      "storyboardScene": "S3",
+      "stage": "exploded",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": true,
+      "virtualMs": 270
+    },
+    {
+      "file": "hydro-exploded-unit__HIGH__desktop__reduced__motion-04.png",
+      "scenario": "hydro-exploded-unit",
+      "storyboardScene": "S3",
+      "stage": "exploded",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": true,
+      "virtualMs": 360
+    },
+    {
+      "file": "hydro-exploded-unit__HIGH__desktop__reduced__motion-05.png",
+      "scenario": "hydro-exploded-unit",
+      "storyboardScene": "S3",
+      "stage": "exploded",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": true,
+      "virtualMs": 450
+    },
+    {
+      "file": "hydro-exploded-unit__HIGH__desktop__reduced__motion-06.png",
+      "scenario": "hydro-exploded-unit",
+      "storyboardScene": "S3",
+      "stage": "exploded",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": true,
+      "virtualMs": 540
+    },
+    {
+      "file": "hydro-exploded-unit__HIGH__desktop__reduced__motion-07.png",
+      "scenario": "hydro-exploded-unit",
+      "storyboardScene": "S3",
+      "stage": "exploded",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": true,
+      "virtualMs": 630
+    },
+    {
+      "file": "hydro-exploded-unit__HIGH__desktop__reduced__motion-08.png",
+      "scenario": "hydro-exploded-unit",
+      "storyboardScene": "S3",
+      "stage": "exploded",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": true,
+      "virtualMs": 720
+    },
+    {
+      "file": "hydro-exploded-unit__HIGH__desktop__reduced__motion-09.png",
+      "scenario": "hydro-exploded-unit",
+      "storyboardScene": "S3",
+      "stage": "exploded",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": true,
+      "virtualMs": 810
+    },
+    {
+      "file": "hydro-exploded-unit__HIGH__desktop__reduced__motion-sheet.png",
+      "scenario": "hydro-exploded-unit",
+      "storyboardScene": "S3",
+      "stage": "exploded",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "motion-sheet",
+      "reducedMotion": true
+    },
+    {
+      "file": "hydro-variable-dry-drop__HIGH__desktop.png",
+      "scenario": "hydro-variable-dry-drop",
+      "storyboardScene": "S5",
+      "stage": "variable",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "still",
+      "reducedMotion": true
+    },
+    {
+      "file": "hydro-variable-dry-drop__HIGH__desktop__motion-00.png",
+      "scenario": "hydro-variable-dry-drop",
+      "storyboardScene": "S5",
+      "stage": "variable",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": false,
+      "virtualMs": 0
+    },
+    {
+      "file": "hydro-variable-dry-drop__HIGH__desktop__motion-01.png",
+      "scenario": "hydro-variable-dry-drop",
+      "storyboardScene": "S5",
+      "stage": "variable",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": false,
+      "virtualMs": 90
+    },
+    {
+      "file": "hydro-variable-dry-drop__HIGH__desktop__motion-02.png",
+      "scenario": "hydro-variable-dry-drop",
+      "storyboardScene": "S5",
+      "stage": "variable",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": false,
+      "virtualMs": 180
+    },
+    {
+      "file": "hydro-variable-dry-drop__HIGH__desktop__motion-03.png",
+      "scenario": "hydro-variable-dry-drop",
+      "storyboardScene": "S5",
+      "stage": "variable",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": false,
+      "virtualMs": 270
+    },
+    {
+      "file": "hydro-variable-dry-drop__HIGH__desktop__motion-04.png",
+      "scenario": "hydro-variable-dry-drop",
+      "storyboardScene": "S5",
+      "stage": "variable",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": false,
+      "virtualMs": 360
+    },
+    {
+      "file": "hydro-variable-dry-drop__HIGH__desktop__motion-05.png",
+      "scenario": "hydro-variable-dry-drop",
+      "storyboardScene": "S5",
+      "stage": "variable",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": false,
+      "virtualMs": 450
+    },
+    {
+      "file": "hydro-variable-dry-drop__HIGH__desktop__motion-06.png",
+      "scenario": "hydro-variable-dry-drop",
+      "storyboardScene": "S5",
+      "stage": "variable",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": false,
+      "virtualMs": 540
+    },
+    {
+      "file": "hydro-variable-dry-drop__HIGH__desktop__motion-07.png",
+      "scenario": "hydro-variable-dry-drop",
+      "storyboardScene": "S5",
+      "stage": "variable",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": false,
+      "virtualMs": 630
+    },
+    {
+      "file": "hydro-variable-dry-drop__HIGH__desktop__motion-08.png",
+      "scenario": "hydro-variable-dry-drop",
+      "storyboardScene": "S5",
+      "stage": "variable",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": false,
+      "virtualMs": 720
+    },
+    {
+      "file": "hydro-variable-dry-drop__HIGH__desktop__motion-09.png",
+      "scenario": "hydro-variable-dry-drop",
+      "storyboardScene": "S5",
+      "stage": "variable",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": false,
+      "virtualMs": 810
+    },
+    {
+      "file": "hydro-variable-dry-drop__HIGH__desktop__motion-sheet.png",
+      "scenario": "hydro-variable-dry-drop",
+      "storyboardScene": "S5",
+      "stage": "variable",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "motion-sheet",
+      "reducedMotion": false
+    },
+    {
+      "file": "hydro-variable-dry-drop__HIGH__desktop__reduced__motion-00.png",
+      "scenario": "hydro-variable-dry-drop",
+      "storyboardScene": "S5",
+      "stage": "variable",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": true,
+      "virtualMs": 0
+    },
+    {
+      "file": "hydro-variable-dry-drop__HIGH__desktop__reduced__motion-01.png",
+      "scenario": "hydro-variable-dry-drop",
+      "storyboardScene": "S5",
+      "stage": "variable",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": true,
+      "virtualMs": 90
+    },
+    {
+      "file": "hydro-variable-dry-drop__HIGH__desktop__reduced__motion-02.png",
+      "scenario": "hydro-variable-dry-drop",
+      "storyboardScene": "S5",
+      "stage": "variable",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": true,
+      "virtualMs": 180
+    },
+    {
+      "file": "hydro-variable-dry-drop__HIGH__desktop__reduced__motion-03.png",
+      "scenario": "hydro-variable-dry-drop",
+      "storyboardScene": "S5",
+      "stage": "variable",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": true,
+      "virtualMs": 270
+    },
+    {
+      "file": "hydro-variable-dry-drop__HIGH__desktop__reduced__motion-04.png",
+      "scenario": "hydro-variable-dry-drop",
+      "storyboardScene": "S5",
+      "stage": "variable",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": true,
+      "virtualMs": 360
+    },
+    {
+      "file": "hydro-variable-dry-drop__HIGH__desktop__reduced__motion-05.png",
+      "scenario": "hydro-variable-dry-drop",
+      "storyboardScene": "S5",
+      "stage": "variable",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": true,
+      "virtualMs": 450
+    },
+    {
+      "file": "hydro-variable-dry-drop__HIGH__desktop__reduced__motion-06.png",
+      "scenario": "hydro-variable-dry-drop",
+      "storyboardScene": "S5",
+      "stage": "variable",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": true,
+      "virtualMs": 540
+    },
+    {
+      "file": "hydro-variable-dry-drop__HIGH__desktop__reduced__motion-07.png",
+      "scenario": "hydro-variable-dry-drop",
+      "storyboardScene": "S5",
+      "stage": "variable",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": true,
+      "virtualMs": 630
+    },
+    {
+      "file": "hydro-variable-dry-drop__HIGH__desktop__reduced__motion-08.png",
+      "scenario": "hydro-variable-dry-drop",
+      "storyboardScene": "S5",
+      "stage": "variable",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": true,
+      "virtualMs": 720
+    },
+    {
+      "file": "hydro-variable-dry-drop__HIGH__desktop__reduced__motion-09.png",
+      "scenario": "hydro-variable-dry-drop",
+      "storyboardScene": "S5",
+      "stage": "variable",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": true,
+      "virtualMs": 810
+    },
+    {
+      "file": "hydro-variable-dry-drop__HIGH__desktop__reduced__motion-sheet.png",
+      "scenario": "hydro-variable-dry-drop",
+      "storyboardScene": "S5",
+      "stage": "variable",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "motion-sheet",
+      "reducedMotion": true
+    },
+    {
+      "file": "hydro-fault-shed-restore__HIGH__desktop.png",
+      "scenario": "hydro-fault-shed-restore",
+      "storyboardScene": "S6",
+      "stage": "fault",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "still",
+      "reducedMotion": true
+    },
+    {
+      "file": "hydro-fault-shed-restore__HIGH__desktop__motion-00.png",
+      "scenario": "hydro-fault-shed-restore",
+      "storyboardScene": "S6",
+      "stage": "fault",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": false,
+      "virtualMs": 0
+    },
+    {
+      "file": "hydro-fault-shed-restore__HIGH__desktop__motion-01.png",
+      "scenario": "hydro-fault-shed-restore",
+      "storyboardScene": "S6",
+      "stage": "fault",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": false,
+      "virtualMs": 90
+    },
+    {
+      "file": "hydro-fault-shed-restore__HIGH__desktop__motion-02.png",
+      "scenario": "hydro-fault-shed-restore",
+      "storyboardScene": "S6",
+      "stage": "fault",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": false,
+      "virtualMs": 180
+    },
+    {
+      "file": "hydro-fault-shed-restore__HIGH__desktop__motion-03.png",
+      "scenario": "hydro-fault-shed-restore",
+      "storyboardScene": "S6",
+      "stage": "fault",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": false,
+      "virtualMs": 270
+    },
+    {
+      "file": "hydro-fault-shed-restore__HIGH__desktop__motion-04.png",
+      "scenario": "hydro-fault-shed-restore",
+      "storyboardScene": "S6",
+      "stage": "fault",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": false,
+      "virtualMs": 360
+    },
+    {
+      "file": "hydro-fault-shed-restore__HIGH__desktop__motion-05.png",
+      "scenario": "hydro-fault-shed-restore",
+      "storyboardScene": "S6",
+      "stage": "fault",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": false,
+      "virtualMs": 450
+    },
+    {
+      "file": "hydro-fault-shed-restore__HIGH__desktop__motion-06.png",
+      "scenario": "hydro-fault-shed-restore",
+      "storyboardScene": "S6",
+      "stage": "fault",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": false,
+      "virtualMs": 540
+    },
+    {
+      "file": "hydro-fault-shed-restore__HIGH__desktop__motion-07.png",
+      "scenario": "hydro-fault-shed-restore",
+      "storyboardScene": "S6",
+      "stage": "fault",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": false,
+      "virtualMs": 630
+    },
+    {
+      "file": "hydro-fault-shed-restore__HIGH__desktop__motion-08.png",
+      "scenario": "hydro-fault-shed-restore",
+      "storyboardScene": "S6",
+      "stage": "fault",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": false,
+      "virtualMs": 720
+    },
+    {
+      "file": "hydro-fault-shed-restore__HIGH__desktop__motion-09.png",
+      "scenario": "hydro-fault-shed-restore",
+      "storyboardScene": "S6",
+      "stage": "fault",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": false,
+      "virtualMs": 810
+    },
+    {
+      "file": "hydro-fault-shed-restore__HIGH__desktop__motion-sheet.png",
+      "scenario": "hydro-fault-shed-restore",
+      "storyboardScene": "S6",
+      "stage": "fault",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "motion-sheet",
+      "reducedMotion": false
+    },
+    {
+      "file": "hydro-fault-shed-restore__HIGH__desktop__reduced__motion-00.png",
+      "scenario": "hydro-fault-shed-restore",
+      "storyboardScene": "S6",
+      "stage": "fault",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": true,
+      "virtualMs": 0
+    },
+    {
+      "file": "hydro-fault-shed-restore__HIGH__desktop__reduced__motion-01.png",
+      "scenario": "hydro-fault-shed-restore",
+      "storyboardScene": "S6",
+      "stage": "fault",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": true,
+      "virtualMs": 90
+    },
+    {
+      "file": "hydro-fault-shed-restore__HIGH__desktop__reduced__motion-02.png",
+      "scenario": "hydro-fault-shed-restore",
+      "storyboardScene": "S6",
+      "stage": "fault",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": true,
+      "virtualMs": 180
+    },
+    {
+      "file": "hydro-fault-shed-restore__HIGH__desktop__reduced__motion-03.png",
+      "scenario": "hydro-fault-shed-restore",
+      "storyboardScene": "S6",
+      "stage": "fault",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": true,
+      "virtualMs": 270
+    },
+    {
+      "file": "hydro-fault-shed-restore__HIGH__desktop__reduced__motion-04.png",
+      "scenario": "hydro-fault-shed-restore",
+      "storyboardScene": "S6",
+      "stage": "fault",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": true,
+      "virtualMs": 360
+    },
+    {
+      "file": "hydro-fault-shed-restore__HIGH__desktop__reduced__motion-05.png",
+      "scenario": "hydro-fault-shed-restore",
+      "storyboardScene": "S6",
+      "stage": "fault",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": true,
+      "virtualMs": 450
+    },
+    {
+      "file": "hydro-fault-shed-restore__HIGH__desktop__reduced__motion-06.png",
+      "scenario": "hydro-fault-shed-restore",
+      "storyboardScene": "S6",
+      "stage": "fault",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": true,
+      "virtualMs": 540
+    },
+    {
+      "file": "hydro-fault-shed-restore__HIGH__desktop__reduced__motion-07.png",
+      "scenario": "hydro-fault-shed-restore",
+      "storyboardScene": "S6",
+      "stage": "fault",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": true,
+      "virtualMs": 630
+    },
+    {
+      "file": "hydro-fault-shed-restore__HIGH__desktop__reduced__motion-08.png",
+      "scenario": "hydro-fault-shed-restore",
+      "storyboardScene": "S6",
+      "stage": "fault",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": true,
+      "virtualMs": 720
+    },
+    {
+      "file": "hydro-fault-shed-restore__HIGH__desktop__reduced__motion-09.png",
+      "scenario": "hydro-fault-shed-restore",
+      "storyboardScene": "S6",
+      "stage": "fault",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": true,
+      "virtualMs": 810
+    },
+    {
+      "file": "hydro-fault-shed-restore__HIGH__desktop__reduced__motion-sheet.png",
+      "scenario": "hydro-fault-shed-restore",
+      "storyboardScene": "S6",
+      "stage": "fault",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "motion-sheet",
+      "reducedMotion": true
+    }
+  ],
+  "runs": [
+    {
+      "scenario": "hydro-exploded-unit",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "still",
+      "screenshot": "hydro-exploded-unit__HIGH__desktop.png",
+      "status": "PASS",
+      "framePlan": {
+        "renderer": "three",
+        "planned": {
+          "drawCalls": 42,
+          "triangles": 8188,
+          "shadowDrawCalls": 14,
+          "shadowTriangles": 1288,
+          "textures": [
+            {
+              "id": "sun-shadow-map",
+              "px": 1024
+            },
+            {
+              "id": "pmrem-environment",
+              "px": 1024
+            }
+          ]
+        },
+        "measured": {
+          "drawCalls": 42,
+          "triangles": 8188,
+          "shadowDrawCalls": 14,
+          "shadowTriangles": 1288
+        },
+        "programs": 9,
+        "memory": {
+          "geometries": 17,
+          "textures": 4
+        }
+      },
+      "frameParity": {
+        "ok": true,
+        "mismatches": []
+      },
+      "threeChunkRequests": [
+        "http://localhost:3000/_next/static/chunks/_app-pages-browser_components_interactive-labs_v2_ThreeScene_tsx.js"
+      ],
+      "controlHitTargets": {
+        "expectedIds": [],
+        "targets": [],
+        "missingIds": []
+      },
+      "actualProfile": "HIGH",
+      "downgradePath": "",
+      "actualRenderer": "three@186",
+      "framesRendered": 3,
+      "drawCalls": 38,
+      "notice": [],
+      "surface": "webgl",
+      "warnings": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "scenario": "hydro-exploded-unit",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "motion",
+      "reducedMotion": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "threeChunkRequests": [
+        "http://localhost:3000/_next/static/chunks/_app-pages-browser_components_interactive-labs_v2_ThreeScene_tsx.js"
+      ]
+    },
+    {
+      "scenario": "hydro-exploded-unit",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "motion",
+      "reducedMotion": true,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "threeChunkRequests": [
+        "http://localhost:3000/_next/static/chunks/_app-pages-browser_components_interactive-labs_v2_ThreeScene_tsx.js"
+      ]
+    },
+    {
+      "scenario": "hydro-variable-dry-drop",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "still",
+      "screenshot": "hydro-variable-dry-drop__HIGH__desktop.png",
+      "status": "PASS",
+      "framePlan": {
+        "renderer": "three",
+        "planned": {
+          "drawCalls": 47,
+          "triangles": 9648,
+          "shadowDrawCalls": 19,
+          "shadowTriangles": 1708,
+          "textures": [
+            {
+              "id": "sun-shadow-map",
+              "px": 1024
+            },
+            {
+              "id": "pmrem-environment",
+              "px": 1024
+            }
+          ]
+        },
+        "measured": {
+          "drawCalls": 47,
+          "triangles": 9648,
+          "shadowDrawCalls": 19,
+          "shadowTriangles": 1708
+        },
+        "programs": 11,
+        "memory": {
+          "geometries": 23,
+          "textures": 4
+        }
+      },
+      "frameParity": {
+        "ok": true,
+        "mismatches": []
+      },
+      "threeChunkRequests": [
+        "http://localhost:3000/_next/static/chunks/_app-pages-browser_components_interactive-labs_v2_ThreeScene_tsx.js"
+      ],
+      "controlHitTargets": {
+        "expectedIds": [],
+        "targets": [],
+        "missingIds": []
+      },
+      "actualProfile": "HIGH",
+      "downgradePath": "",
+      "actualRenderer": "three@186",
+      "framesRendered": 3,
+      "drawCalls": 47,
+      "notice": [],
+      "surface": "webgl",
+      "warnings": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "scenario": "hydro-variable-dry-drop",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "motion",
+      "reducedMotion": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "threeChunkRequests": [
+        "http://localhost:3000/_next/static/chunks/_app-pages-browser_components_interactive-labs_v2_ThreeScene_tsx.js"
+      ]
+    },
+    {
+      "scenario": "hydro-variable-dry-drop",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "motion",
+      "reducedMotion": true,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "threeChunkRequests": [
+        "http://localhost:3000/_next/static/chunks/_app-pages-browser_components_interactive-labs_v2_ThreeScene_tsx.js"
+      ]
+    },
+    {
+      "scenario": "hydro-fault-shed-restore",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "still",
+      "screenshot": "hydro-fault-shed-restore__HIGH__desktop.png",
+      "status": "PASS",
+      "framePlan": {
+        "renderer": "three",
+        "planned": {
+          "drawCalls": 49,
+          "triangles": 9648,
+          "shadowDrawCalls": 21,
+          "shadowTriangles": 1708,
+          "textures": [
+            {
+              "id": "sun-shadow-map",
+              "px": 1024
+            },
+            {
+              "id": "pmrem-environment",
+              "px": 1024
+            }
+          ]
+        },
+        "measured": {
+          "drawCalls": 49,
+          "triangles": 9648,
+          "shadowDrawCalls": 21,
+          "shadowTriangles": 1708
+        },
+        "programs": 11,
+        "memory": {
+          "geometries": 23,
+          "textures": 4
+        }
+      },
+      "frameParity": {
+        "ok": true,
+        "mismatches": []
+      },
+      "threeChunkRequests": [
+        "http://localhost:3000/_next/static/chunks/_app-pages-browser_components_interactive-labs_v2_ThreeScene_tsx.js"
+      ],
+      "controlHitTargets": {
+        "expectedIds": [],
+        "targets": [],
+        "missingIds": []
+      },
+      "actualProfile": "HIGH",
+      "downgradePath": "",
+      "actualRenderer": "three@186",
+      "framesRendered": 3,
+      "drawCalls": 40,
+      "notice": [],
+      "surface": "webgl",
+      "warnings": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "scenario": "hydro-fault-shed-restore",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "motion",
+      "reducedMotion": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "threeChunkRequests": [
+        "http://localhost:3000/_next/static/chunks/_app-pages-browser_components_interactive-labs_v2_ThreeScene_tsx.js"
+      ]
+    },
+    {
+      "scenario": "hydro-fault-shed-restore",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "motion",
+      "reducedMotion": true,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "threeChunkRequests": [
+        "http://localhost:3000/_next/static/chunks/_app-pages-browser_components_interactive-labs_v2_ThreeScene_tsx.js"
+      ]
+    }
+  ]
+}
