@@ -1,0 +1,650 @@
+{
+  "labId": "g4-solid-figures",
+  "labVersion": "2.1.0",
+  "reviewState": "IN_REVIEW",
+  "label": "ci-37528781631-LOW-stage-b-benchmark",
+  "gitSha": "8ca0dd9da09bf80f28a07796cc9f0f244ef48b8f",
+  "capturedAt": "2026-10-06T20:50:31.171Z",
+  "environment": "GitHub Actions (Linux, run 37528781631) dev server, headless Chromium, virtual clock paused from navigation for stills and motion frames",
+  "rendererIdentityRule": "HIGH/STANDARD must be drawn by three@*, LOW by webgl-pass, FALLBACK_2D by svg, at the requested profile, with at least one frame drawn; otherwise status FAIL.",
+  "framePlanRule": "RX-005 A8 / RX-006 test 1: the shared frame planner must equal the renderer's own count for the probed frame (three.js: renderer.info with frustum culling off and the shadow pass forced; LOW: counted drawArrays); otherwise status FAIL.",
+  "threeChunkRule": "RX-005 A8: LOW and FALLBACK_2D runs must make zero requests for a script carrying three.js; otherwise status FAIL.",
+  "deviceBoundary": "Headless browser evidence proves rendering correctness, composition, layout, interaction automation and renderer/profile routing only. It does not prove low-end GPU performance, touch latency, thermal behaviour or mobile memory pressure (DEVICE_REQUIRED).",
+  "renderer": {
+    "kind": "software",
+    "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+    "validFor": [
+      "composition",
+      "labels"
+    ]
+  },
+  "profiles": [
+    "LOW"
+  ],
+  "viewports": [
+    "desktop",
+    "mobile"
+  ],
+  "captures": [
+    {
+      "file": "cube-exploded__LOW__desktop.png",
+      "scenario": "cube-exploded",
+      "stage": "exploded",
+      "profile": "LOW",
+      "viewport": "desktop",
+      "kind": "still",
+      "reducedMotion": true
+    },
+    {
+      "file": "cube-exploded__LOW__desktop__motion-00.png",
+      "scenario": "cube-exploded",
+      "stage": "exploded",
+      "profile": "LOW",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": false,
+      "virtualMs": 0
+    },
+    {
+      "file": "cube-exploded__LOW__desktop__motion-01.png",
+      "scenario": "cube-exploded",
+      "stage": "exploded",
+      "profile": "LOW",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": false,
+      "virtualMs": 90
+    },
+    {
+      "file": "cube-exploded__LOW__desktop__motion-02.png",
+      "scenario": "cube-exploded",
+      "stage": "exploded",
+      "profile": "LOW",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": false,
+      "virtualMs": 180
+    },
+    {
+      "file": "cube-exploded__LOW__desktop__motion-03.png",
+      "scenario": "cube-exploded",
+      "stage": "exploded",
+      "profile": "LOW",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": false,
+      "virtualMs": 270
+    },
+    {
+      "file": "cube-exploded__LOW__desktop__motion-04.png",
+      "scenario": "cube-exploded",
+      "stage": "exploded",
+      "profile": "LOW",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": false,
+      "virtualMs": 360
+    },
+    {
+      "file": "cube-exploded__LOW__desktop__motion-05.png",
+      "scenario": "cube-exploded",
+      "stage": "exploded",
+      "profile": "LOW",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": false,
+      "virtualMs": 450
+    },
+    {
+      "file": "cube-exploded__LOW__desktop__motion-06.png",
+      "scenario": "cube-exploded",
+      "stage": "exploded",
+      "profile": "LOW",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": false,
+      "virtualMs": 540
+    },
+    {
+      "file": "cube-exploded__LOW__desktop__motion-07.png",
+      "scenario": "cube-exploded",
+      "stage": "exploded",
+      "profile": "LOW",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": false,
+      "virtualMs": 630
+    },
+    {
+      "file": "cube-exploded__LOW__desktop__motion-sheet.png",
+      "scenario": "cube-exploded",
+      "stage": "exploded",
+      "profile": "LOW",
+      "viewport": "desktop",
+      "kind": "motion-sheet",
+      "reducedMotion": false
+    },
+    {
+      "file": "cube-exploded__LOW__desktop__reduced__motion-00.png",
+      "scenario": "cube-exploded",
+      "stage": "exploded",
+      "profile": "LOW",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": true,
+      "virtualMs": 0
+    },
+    {
+      "file": "cube-exploded__LOW__desktop__reduced__motion-01.png",
+      "scenario": "cube-exploded",
+      "stage": "exploded",
+      "profile": "LOW",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": true,
+      "virtualMs": 90
+    },
+    {
+      "file": "cube-exploded__LOW__desktop__reduced__motion-02.png",
+      "scenario": "cube-exploded",
+      "stage": "exploded",
+      "profile": "LOW",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": true,
+      "virtualMs": 180
+    },
+    {
+      "file": "cube-exploded__LOW__desktop__reduced__motion-03.png",
+      "scenario": "cube-exploded",
+      "stage": "exploded",
+      "profile": "LOW",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": true,
+      "virtualMs": 270
+    },
+    {
+      "file": "cube-exploded__LOW__desktop__reduced__motion-04.png",
+      "scenario": "cube-exploded",
+      "stage": "exploded",
+      "profile": "LOW",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": true,
+      "virtualMs": 360
+    },
+    {
+      "file": "cube-exploded__LOW__desktop__reduced__motion-05.png",
+      "scenario": "cube-exploded",
+      "stage": "exploded",
+      "profile": "LOW",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": true,
+      "virtualMs": 450
+    },
+    {
+      "file": "cube-exploded__LOW__desktop__reduced__motion-06.png",
+      "scenario": "cube-exploded",
+      "stage": "exploded",
+      "profile": "LOW",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": true,
+      "virtualMs": 540
+    },
+    {
+      "file": "cube-exploded__LOW__desktop__reduced__motion-07.png",
+      "scenario": "cube-exploded",
+      "stage": "exploded",
+      "profile": "LOW",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": true,
+      "virtualMs": 630
+    },
+    {
+      "file": "cube-exploded__LOW__desktop__reduced__motion-sheet.png",
+      "scenario": "cube-exploded",
+      "stage": "exploded",
+      "profile": "LOW",
+      "viewport": "desktop",
+      "kind": "motion-sheet",
+      "reducedMotion": true
+    },
+    {
+      "file": "prism-rebuilt__LOW__desktop.png",
+      "scenario": "prism-rebuilt",
+      "stage": "assessment",
+      "profile": "LOW",
+      "viewport": "desktop",
+      "kind": "still",
+      "reducedMotion": true
+    },
+    {
+      "file": "cube-exploded__LOW__mobile.png",
+      "scenario": "cube-exploded",
+      "stage": "exploded",
+      "profile": "LOW",
+      "viewport": "mobile",
+      "kind": "still",
+      "reducedMotion": true
+    },
+    {
+      "file": "cube-exploded__LOW__mobile__motion-00.png",
+      "scenario": "cube-exploded",
+      "stage": "exploded",
+      "profile": "LOW",
+      "viewport": "mobile",
+      "kind": "motion-frame",
+      "reducedMotion": false,
+      "virtualMs": 0
+    },
+    {
+      "file": "cube-exploded__LOW__mobile__motion-01.png",
+      "scenario": "cube-exploded",
+      "stage": "exploded",
+      "profile": "LOW",
+      "viewport": "mobile",
+      "kind": "motion-frame",
+      "reducedMotion": false,
+      "virtualMs": 90
+    },
+    {
+      "file": "cube-exploded__LOW__mobile__motion-02.png",
+      "scenario": "cube-exploded",
+      "stage": "exploded",
+      "profile": "LOW",
+      "viewport": "mobile",
+      "kind": "motion-frame",
+      "reducedMotion": false,
+      "virtualMs": 180
+    },
+    {
+      "file": "cube-exploded__LOW__mobile__motion-03.png",
+      "scenario": "cube-exploded",
+      "stage": "exploded",
+      "profile": "LOW",
+      "viewport": "mobile",
+      "kind": "motion-frame",
+      "reducedMotion": false,
+      "virtualMs": 270
+    },
+    {
+      "file": "cube-exploded__LOW__mobile__motion-04.png",
+      "scenario": "cube-exploded",
+      "stage": "exploded",
+      "profile": "LOW",
+      "viewport": "mobile",
+      "kind": "motion-frame",
+      "reducedMotion": false,
+      "virtualMs": 360
+    },
+    {
+      "file": "cube-exploded__LOW__mobile__motion-05.png",
+      "scenario": "cube-exploded",
+      "stage": "exploded",
+      "profile": "LOW",
+      "viewport": "mobile",
+      "kind": "motion-frame",
+      "reducedMotion": false,
+      "virtualMs": 450
+    },
+    {
+      "file": "cube-exploded__LOW__mobile__motion-06.png",
+      "scenario": "cube-exploded",
+      "stage": "exploded",
+      "profile": "LOW",
+      "viewport": "mobile",
+      "kind": "motion-frame",
+      "reducedMotion": false,
+      "virtualMs": 540
+    },
+    {
+      "file": "cube-exploded__LOW__mobile__motion-07.png",
+      "scenario": "cube-exploded",
+      "stage": "exploded",
+      "profile": "LOW",
+      "viewport": "mobile",
+      "kind": "motion-frame",
+      "reducedMotion": false,
+      "virtualMs": 630
+    },
+    {
+      "file": "cube-exploded__LOW__mobile__motion-sheet.png",
+      "scenario": "cube-exploded",
+      "stage": "exploded",
+      "profile": "LOW",
+      "viewport": "mobile",
+      "kind": "motion-sheet",
+      "reducedMotion": false
+    },
+    {
+      "file": "cube-exploded__LOW__mobile__reduced__motion-00.png",
+      "scenario": "cube-exploded",
+      "stage": "exploded",
+      "profile": "LOW",
+      "viewport": "mobile",
+      "kind": "motion-frame",
+      "reducedMotion": true,
+      "virtualMs": 0
+    },
+    {
+      "file": "cube-exploded__LOW__mobile__reduced__motion-01.png",
+      "scenario": "cube-exploded",
+      "stage": "exploded",
+      "profile": "LOW",
+      "viewport": "mobile",
+      "kind": "motion-frame",
+      "reducedMotion": true,
+      "virtualMs": 90
+    },
+    {
+      "file": "cube-exploded__LOW__mobile__reduced__motion-02.png",
+      "scenario": "cube-exploded",
+      "stage": "exploded",
+      "profile": "LOW",
+      "viewport": "mobile",
+      "kind": "motion-frame",
+      "reducedMotion": true,
+      "virtualMs": 180
+    },
+    {
+      "file": "cube-exploded__LOW__mobile__reduced__motion-03.png",
+      "scenario": "cube-exploded",
+      "stage": "exploded",
+      "profile": "LOW",
+      "viewport": "mobile",
+      "kind": "motion-frame",
+      "reducedMotion": true,
+      "virtualMs": 270
+    },
+    {
+      "file": "cube-exploded__LOW__mobile__reduced__motion-04.png",
+      "scenario": "cube-exploded",
+      "stage": "exploded",
+      "profile": "LOW",
+      "viewport": "mobile",
+      "kind": "motion-frame",
+      "reducedMotion": true,
+      "virtualMs": 360
+    },
+    {
+      "file": "cube-exploded__LOW__mobile__reduced__motion-05.png",
+      "scenario": "cube-exploded",
+      "stage": "exploded",
+      "profile": "LOW",
+      "viewport": "mobile",
+      "kind": "motion-frame",
+      "reducedMotion": true,
+      "virtualMs": 450
+    },
+    {
+      "file": "cube-exploded__LOW__mobile__reduced__motion-06.png",
+      "scenario": "cube-exploded",
+      "stage": "exploded",
+      "profile": "LOW",
+      "viewport": "mobile",
+      "kind": "motion-frame",
+      "reducedMotion": true,
+      "virtualMs": 540
+    },
+    {
+      "file": "cube-exploded__LOW__mobile__reduced__motion-07.png",
+      "scenario": "cube-exploded",
+      "stage": "exploded",
+      "profile": "LOW",
+      "viewport": "mobile",
+      "kind": "motion-frame",
+      "reducedMotion": true,
+      "virtualMs": 630
+    },
+    {
+      "file": "cube-exploded__LOW__mobile__reduced__motion-sheet.png",
+      "scenario": "cube-exploded",
+      "stage": "exploded",
+      "profile": "LOW",
+      "viewport": "mobile",
+      "kind": "motion-sheet",
+      "reducedMotion": true
+    },
+    {
+      "file": "prism-rebuilt__LOW__mobile.png",
+      "scenario": "prism-rebuilt",
+      "stage": "assessment",
+      "profile": "LOW",
+      "viewport": "mobile",
+      "kind": "still",
+      "reducedMotion": true
+    }
+  ],
+  "runs": [
+    {
+      "scenario": "cube-exploded",
+      "profile": "LOW",
+      "viewport": "desktop",
+      "kind": "still",
+      "screenshot": "cube-exploded__LOW__desktop.png",
+      "status": "PASS",
+      "framePlan": {
+        "renderer": "webgl-pass",
+        "planned": {
+          "drawCalls": 1,
+          "triangles": 72,
+          "shadowDrawCalls": 0,
+          "shadowTriangles": 0,
+          "textures": []
+        },
+        "measured": {
+          "drawCalls": 1,
+          "triangles": 72,
+          "shadowDrawCalls": 0,
+          "shadowTriangles": 0
+        }
+      },
+      "frameParity": {
+        "ok": true,
+        "mismatches": []
+      },
+      "threeChunkRequests": [],
+      "controlHitTargets": {
+        "expectedIds": [],
+        "targets": [],
+        "missingIds": []
+      },
+      "actualProfile": "LOW",
+      "downgradePath": "",
+      "actualRenderer": "webgl-pass",
+      "framesRendered": 295,
+      "drawCalls": 1,
+      "notice": [
+        ""
+      ],
+      "surface": "webgl",
+      "warnings": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "scenario": "cube-exploded",
+      "profile": "LOW",
+      "viewport": "desktop",
+      "kind": "motion",
+      "reducedMotion": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "threeChunkRequests": []
+    },
+    {
+      "scenario": "cube-exploded",
+      "profile": "LOW",
+      "viewport": "desktop",
+      "kind": "motion",
+      "reducedMotion": true,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "threeChunkRequests": []
+    },
+    {
+      "scenario": "prism-rebuilt",
+      "profile": "LOW",
+      "viewport": "desktop",
+      "kind": "still",
+      "screenshot": "prism-rebuilt__LOW__desktop.png",
+      "status": "PASS",
+      "framePlan": {
+        "renderer": "webgl-pass",
+        "planned": {
+          "drawCalls": 1,
+          "triangles": 72,
+          "shadowDrawCalls": 0,
+          "shadowTriangles": 0,
+          "textures": []
+        },
+        "measured": {
+          "drawCalls": 1,
+          "triangles": 72,
+          "shadowDrawCalls": 0,
+          "shadowTriangles": 0
+        }
+      },
+      "frameParity": {
+        "ok": true,
+        "mismatches": []
+      },
+      "threeChunkRequests": [],
+      "controlHitTargets": {
+        "expectedIds": [],
+        "targets": [],
+        "missingIds": []
+      },
+      "actualProfile": "LOW",
+      "downgradePath": "",
+      "actualRenderer": "webgl-pass",
+      "framesRendered": 306,
+      "drawCalls": 1,
+      "notice": [
+        "",
+        "Nice work. Your action showed the idea."
+      ],
+      "surface": "webgl",
+      "warnings": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "scenario": "cube-exploded",
+      "profile": "LOW",
+      "viewport": "mobile",
+      "kind": "still",
+      "screenshot": "cube-exploded__LOW__mobile.png",
+      "status": "PASS",
+      "framePlan": {
+        "renderer": "webgl-pass",
+        "planned": {
+          "drawCalls": 1,
+          "triangles": 72,
+          "shadowDrawCalls": 0,
+          "shadowTriangles": 0,
+          "textures": []
+        },
+        "measured": {
+          "drawCalls": 1,
+          "triangles": 72,
+          "shadowDrawCalls": 0,
+          "shadowTriangles": 0
+        }
+      },
+      "frameParity": {
+        "ok": true,
+        "mismatches": []
+      },
+      "threeChunkRequests": [],
+      "controlHitTargets": {
+        "expectedIds": [],
+        "targets": [],
+        "missingIds": []
+      },
+      "actualProfile": "LOW",
+      "downgradePath": "",
+      "actualRenderer": "webgl-pass",
+      "framesRendered": 310,
+      "drawCalls": 1,
+      "notice": [
+        ""
+      ],
+      "surface": "webgl",
+      "warnings": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "scenario": "cube-exploded",
+      "profile": "LOW",
+      "viewport": "mobile",
+      "kind": "motion",
+      "reducedMotion": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "threeChunkRequests": []
+    },
+    {
+      "scenario": "cube-exploded",
+      "profile": "LOW",
+      "viewport": "mobile",
+      "kind": "motion",
+      "reducedMotion": true,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "threeChunkRequests": []
+    },
+    {
+      "scenario": "prism-rebuilt",
+      "profile": "LOW",
+      "viewport": "mobile",
+      "kind": "still",
+      "screenshot": "prism-rebuilt__LOW__mobile.png",
+      "status": "PASS",
+      "framePlan": {
+        "renderer": "webgl-pass",
+        "planned": {
+          "drawCalls": 1,
+          "triangles": 72,
+          "shadowDrawCalls": 0,
+          "shadowTriangles": 0,
+          "textures": []
+        },
+        "measured": {
+          "drawCalls": 1,
+          "triangles": 72,
+          "shadowDrawCalls": 0,
+          "shadowTriangles": 0
+        }
+      },
+      "frameParity": {
+        "ok": true,
+        "mismatches": []
+      },
+      "threeChunkRequests": [],
+      "controlHitTargets": {
+        "expectedIds": [],
+        "targets": [],
+        "missingIds": []
+      },
+      "actualProfile": "LOW",
+      "downgradePath": "",
+      "actualRenderer": "webgl-pass",
+      "framesRendered": 311,
+      "drawCalls": 1,
+      "notice": [
+        "",
+        "Nice work. Your action showed the idea."
+      ],
+      "surface": "webgl",
+      "warnings": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    }
+  ]
+}
