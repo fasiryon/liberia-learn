@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { BookOpen, CalendarCheck, FlaskConical, LifeBuoy, TrendingUp } from "lucide-react";
 import { STUDENT_PRIMARY_NAV, type PrimaryDestination } from "@/lib/learner-experience/studentNavigation";
+import { ReserveBottomBar } from "./ReserveBottomBar";
 
 const ICONS: Record<PrimaryDestination, typeof BookOpen> = { TODAY: CalendarCheck, LEARN: BookOpen, LABS: FlaskConical, PROGRESS: TrendingUp, HELP: LifeBuoy };
 
@@ -12,6 +13,7 @@ const ICONS: Record<PrimaryDestination, typeof BookOpen> = { TODAY: CalendarChec
 export function StudentPrimaryNav({ active }: { active: PrimaryDestination | null }) {
   return (
     <>
+      <ReserveBottomBar height="calc(3.5rem + env(safe-area-inset-bottom, 0px))" />
       <nav aria-label="Student" className="hidden border-b border-[var(--ll-border)] sm:block">
         <ul className="mx-auto flex max-w-6xl gap-1 px-4">
           {STUDENT_PRIMARY_NAV.map((item) => {

@@ -63,7 +63,7 @@ export default async function StudentLabsPage({ searchParams }: { searchParams?:
     const entries = tab[active.key];
 
     return (
-      <div className="ll-dashboard-shell pb-20 sm:pb-0">
+      <div className="ll-dashboard-shell">
         <StudentPrimaryNav active="LABS" />
         <main className="px-4 py-5">
           <div className="mx-auto max-w-6xl space-y-5">

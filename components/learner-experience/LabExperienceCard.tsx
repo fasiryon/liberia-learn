@@ -10,7 +10,8 @@ const KIND_LABEL: Record<LabExperience["runtime"]["kind"], string> = {
 
 /** One card for every lab, whatever runtime runs it. */
 export function LabExperienceCard({ lab, session, reason }: { lab: LabExperience; session: LabSessionSummary | null; reason: string | null }) {
-  const action = session ? (session.completedAt ? "Review lab" : session.startedAt ? "Continue lab" : "Start lab") : "Open lab";
+  // A session row exists from assignment (startedAt defaults to creation), so it cannot tell "started" apart.
+  const action = session?.completedAt ? "Review lab" : session ? "Go to lab" : "Open lab";
   return (
     <article className="flex min-h-56 flex-col rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-4" data-lab-runtime={lab.runtime.kind}>
       <div className="flex flex-wrap items-center gap-2 text-[11px] font-medium">

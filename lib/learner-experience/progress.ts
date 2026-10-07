@@ -4,7 +4,7 @@
  * convenience: it is never evidence, scoring or mastery.
  */
 import type { LessonExperience, Scene } from "./types";
-import type { LabReturnObservation } from "./labLaunch";
+import { isLabReturnObservation, type LabReturnObservation } from "./labLaunch";
 
 export const EXPERIENCE_PROGRESS_VERSION = 1 as const;
 
@@ -43,7 +43,7 @@ export function restoreProgress(experience: LessonExperience, raw: unknown): Exp
     completedSceneIds: Array.isArray(saved.completedSceneIds) ? saved.completedSceneIds.filter((id) => sceneIds.has(id)) : [],
     responses: saved.responses && typeof saved.responses === "object" ? saved.responses : {},
     revealed: saved.revealed && typeof saved.revealed === "object" ? saved.revealed : {},
-    lab: saved.lab && typeof saved.lab === "object" ? saved.lab : fresh.lab,
+    lab: restoreLab(saved.lab),
     updatedAt: typeof saved.updatedAt === "string" ? saved.updatedAt : fresh.updatedAt,
   };
 }
@@ -123,4 +123,17 @@ export function chooseLabFallback(progress: ExperienceProgress): ExperienceProgr
 
 export function percentComplete(experience: LessonExperience, progress: ExperienceProgress): number {
   return Math.round((progress.completedSceneIds.length / experience.scenes.length) * 100);
+}
+
+const LAB_STATUSES = new Set(["NOT_STARTED", "LAUNCHED", "RETURNED", "FALLBACK_USED"]);
+
+/** Stored lab state is re-validated: a tampered or stale observation is dropped, never forwarded as evidence. */
+function restoreLab(raw: unknown): ExperienceProgress["lab"] {
+  const fresh: ExperienceProgress["lab"] = { status: "NOT_STARTED", observation: null };
+  if (!raw || typeof raw !== "object") return fresh;
+  const lab = raw as { status?: unknown; observation?: unknown };
+  if (typeof lab.status !== "string" || !LAB_STATUSES.has(lab.status)) return fresh;
+  const observation = isLabReturnObservation(lab.observation) ? lab.observation : null;
+  if (lab.status === "RETURNED" && !observation) return fresh;
+  return { status: lab.status as ExperienceProgress["lab"]["status"], observation };
 }

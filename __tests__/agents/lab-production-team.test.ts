@@ -93,9 +93,12 @@ describe("review harness cannot expose unapproved labs to learners", () => {
   });
 
   it("only the review harness passes reviewPreview to the player", () => {
-    const learnerPage = read("app/student/interactive-labs/[labId]/page.tsx");
+    // Product Redesign V1: interactive labs render on the unified /student/labs/[labId] route; the old route redirects.
+    const learnerPage = read("app/student/labs/[labId]/page.tsx");
     expect(learnerPage).not.toContain("reviewPreview");
-    expect(learnerPage).toContain('definition.reviewState !== "APPROVED"');
+    expect(learnerPage).not.toContain("internalPreview");
+    expect(learnerPage).toContain('interactive.reviewState !== "APPROVED"');
+    expect(read("app/student/interactive-labs/[labId]/page.tsx")).not.toContain("InteractiveLabPlayer");
     expect(read("components/interactive-labs/v2/review/LabReviewHarness.tsx")).toContain("reviewPreview={preview}");
   });
 

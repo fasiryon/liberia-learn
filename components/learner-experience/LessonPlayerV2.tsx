@@ -9,7 +9,7 @@ import type { LearningExperienceLink } from "@/lib/learner-experience/links";
 import type { LabExperience } from "@/lib/learner-experience/labExperience";
 import type { SceneToolView } from "@/lib/learner-experience/tools";
 import { advance, applyLabReturn, chooseLabFallback, goToScene, initialProgress, isSceneComplete, markLabLaunched, percentComplete, recordResponse, restoreProgress, retreat, revealStep, sceneIndexOf, type ExperienceProgress } from "@/lib/learner-experience/progress";
-import { buildLabLaunchHref, isLabReturnObservation, labReturnStorageKey } from "@/lib/learner-experience/labLaunch";
+import { buildLabLaunchHref, isLabReturnObservation, labReturnStorageKey, type LabReturnObservation } from "@/lib/learner-experience/labLaunch";
 import { buildEvidenceEnvelope, type ExperienceEvidenceEnvelope } from "@/lib/learner-experience/evidenceHandoff";
 import { loadExperienceProgress, saveExperienceProgress } from "@/lib/learner-experience/progressStore";
 import { TOOL_COMPONENTS } from "@/components/toolkit/toolComponents";
@@ -72,34 +72,46 @@ export function LessonPlayerV2({ experience, links, labs, toolsByScene, basePath
       // A superseded run must not consume the one-shot lab hand-back slot.
       if (cancelled) return;
       let next = restoreProgress(experience, saved);
-      // Only a pending launch is consumed (return link or browser Back). A reload of an old return URL must not
-      // pull the learner back to the lab scene, so the return parameters are also stripped from the address.
-      const labSceneId = next.lab.status === "LAUNCHED" ? returnSceneId ?? next.sceneId : null;
+      // The lab's one-shot hand-back, accepted only for a link this lesson actually placed.
+      let observation: LabReturnObservation | null = null;
+      try {
+        const raw = window.sessionStorage.getItem(labReturnStorageKey(experience.id));
+        const parsed = raw ? JSON.parse(raw) : null;
+        if (isLabReturnObservation(parsed) && links.some((candidate) => candidate.linkId === parsed.linkId && candidate.experience.labId === parsed.labId)) observation = parsed;
+      } catch { /* storage unavailable */ }
+      // A pending launch (return link or browser Back) is consumed. If IndexedDB lost the launch marker, a valid
+      // hand-back with the return link still restores the scene. A reload of an old return URL has no hand-back
+      // left, so it never pulls the learner backwards; the return parameters are also stripped from the address.
+      const labSceneId = next.lab.status === "LAUNCHED" ? returnSceneId ?? next.sceneId : returnSceneId && observation ? returnSceneId : null;
       if (returnSceneId) window.history.replaceState(window.history.state, "", window.location.pathname);
       if (labSceneId) {
-        let observation = null;
-        try {
-          const raw = window.sessionStorage.getItem(labReturnStorageKey(experience.id));
-          const parsed = raw ? JSON.parse(raw) : null;
-          observation = isLabReturnObservation(parsed) ? parsed : null;
-          window.sessionStorage.removeItem(labReturnStorageKey(experience.id));
-        } catch { /* storage unavailable: still restore the scene */ }
+        try { window.sessionStorage.removeItem(labReturnStorageKey(experience.id)); } catch { /* storage unavailable */ }
         next = applyLabReturn(experience, next, labSceneId, observation);
       }
       if (!cancelled) setProgress(next);
     })();
     return () => { cancelled = true; };
-  }, [experience, returnSceneId]);
+  }, [experience, links, returnSceneId]);
 
   useEffect(() => {
     if (progress) void saveExperienceProgress(progress).catch(() => undefined);
   }, [progress]);
 
-  // Global status toasts lift above the fixed Previous / Continue bar instead of covering it.
-  useEffect(() => {
-    document.documentElement.style.setProperty("--ll-fixed-footer", "5rem");
-    return () => document.documentElement.style.removeProperty("--ll-fixed-footer");
+  // Global status toasts lift above the fixed Previous / Continue bar, measured (it grows when the hint shows).
+  const [footerHeight, setFooterHeight] = useState(96);
+  const footerObserver = useRef<ResizeObserver | null>(null);
+  const footerRef = useCallback((node: HTMLElement | null) => {
+    footerObserver.current?.disconnect();
+    footerObserver.current = null;
+    if (!node) return;
+    const sync = () => setFooterHeight(Math.ceil(node.getBoundingClientRect().height));
+    sync();
+    if (typeof ResizeObserver === "function") { footerObserver.current = new ResizeObserver(sync); footerObserver.current.observe(node); }
   }, []);
+  useEffect(() => {
+    document.documentElement.style.setProperty("--ll-fixed-footer", `${footerHeight}px`);
+  }, [footerHeight]);
+  useEffect(() => () => { footerObserver.current?.disconnect(); document.documentElement.style.removeProperty("--ll-fixed-footer"); }, []);
 
   const index = progress ? sceneIndexOf(experience, progress) : 0;
   const scene = experience.scenes[index];
@@ -110,13 +122,17 @@ export function LessonPlayerV2({ experience, links, labs, toolsByScene, basePath
   const objectives = useMemo(() => experience.objectives.filter((objective) => scene.objectiveIds.includes(objective.id)), [experience.objectives, scene.objectiveIds]);
   const tools = toolsByScene[scene.id] ?? [];
 
-  // Move focus to the new scene's heading so keyboard and screen-reader users land on it.
+  // Move focus to the heading only when the scene changes (never on an answer or keystroke), so keyboard and
+  // screen-reader users land on the new scene. The first scene keeps normal page focus unless it is a lab return.
+  const loaded = progress !== null;
   useEffect(() => {
-    if (!progress) return;
+    if (!loaded) return;
     if (restoredScene.current === null) { restoredScene.current = scene.id; if (!returnSceneId) return; }
+    else if (restoredScene.current === scene.id) return;
+    restoredScene.current = scene.id;
     headingRef.current?.focus();
     setOpenTool(null);
-  }, [scene.id, progress, returnSceneId]);
+  }, [scene.id, loaded, returnSceneId]);
 
   const update = useCallback((change: (current: ExperienceProgress) => ExperienceProgress) => setProgress((current) => (current ? change(current) : current)), []);
 
@@ -131,7 +147,8 @@ export function LessonPlayerV2({ experience, links, labs, toolsByScene, basePath
   const finish = () => {
     if (!progress || !complete) return;
     // Governed handoff: observations only. The existing authority decides what happens next.
-    setSubmitted(buildEvidenceEnvelope(experience, advance(experience, progress), links[0] ?? null));
+    const labLink = links.find((candidate) => experience.scenes.some((item) => item.interaction.kind === "LAB_LAUNCH" && item.interaction.linkId === candidate.linkId)) ?? null;
+    setSubmitted(buildEvidenceEnvelope(experience, advance(experience, progress), labLink));
     update((current) => advance(experience, current));
   };
 
@@ -179,7 +196,7 @@ export function LessonPlayerV2({ experience, links, labs, toolsByScene, basePath
           <Link href={exitHref} aria-label="Leave lesson" className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-xl border border-[var(--ll-border)]"><ChevronLeft size={20} aria-hidden="true" /></Link>
           <div className="min-w-0 flex-1">
             <p className="truncate text-sm font-semibold leading-5">{experience.title}</p>
-            <p className="text-xs text-[var(--ll-text-muted)]" aria-live="polite">Scene {index + 1} of {experience.scenes.length} · {TYPE_LABEL[scene.type]}</p>
+            <p className="text-xs text-[var(--ll-text-muted)]">Scene {index + 1} of {experience.scenes.length} · {TYPE_LABEL[scene.type]}</p>
           </div>
           {experience.authority.status !== "APPROVED_RELEASE" && <span className="hidden shrink-0 rounded-full border border-[var(--ll-border)] px-3 py-1 text-xs text-[var(--ll-text-muted)] sm:inline">Internal prototype</span>}
         </div>
@@ -188,7 +205,7 @@ export function LessonPlayerV2({ experience, links, labs, toolsByScene, basePath
         </div>
       </header>
 
-      <div className="mx-auto grid max-w-7xl gap-6 px-4 pb-36 pt-6 lg:grid-cols-[220px_minmax(0,1fr)_260px]">
+      <div className="mx-auto grid max-w-7xl gap-6 px-4 pt-6 lg:grid-cols-[220px_minmax(0,1fr)_260px]" style={{ paddingBottom: footerHeight + 32 }}>
         <nav aria-label="Lesson outline" className="hidden lg:block">
           <ol className="sticky top-24 space-y-1">
             {experience.scenes.map((candidate, candidateIndex) => {
@@ -221,9 +238,9 @@ export function LessonPlayerV2({ experience, links, labs, toolsByScene, basePath
             {submitted && (
               <section role="status" aria-labelledby="handoff-title" className="mt-6 rounded-2xl border border-[var(--ll-accent)] bg-[var(--ll-surface)] p-5">
                 <h2 id="handoff-title" className="text-lg font-semibold">Lesson finished</h2>
-                <p className="mt-2 text-base leading-7">Your answers and lab work were handed to your learning plan as {submitted.observations.length} observations. Your next step is chosen by your learning plan, not by this lesson.</p>
+                <p className="mt-2 text-base leading-7">Your answers and lab work are ready as {submitted.observations.length} observations for your learning plan. Your next step is chosen by your learning plan, not by this lesson.</p>
                 <p className="mt-2 text-xs leading-5 text-[var(--ll-text-muted)]" data-evidence-dispositions={submitted.observations.map((o) => o.disposition).join(" ")}>
-                  Prototype: nothing is saved or scored. Every observation is recorded as a raw observation because this lesson and lab are not released.
+                  Prototype: nothing is sent, saved or scored. In a released lesson these observations go to the school&apos;s evidence system; here each one is a raw observation because this lesson and lab are not released.
                 </p>
                 <Link href="/student/learn" className="mt-4 inline-flex min-h-12 items-center rounded-xl bg-[var(--ll-accent)] px-5 py-3 text-base font-semibold text-[var(--ll-bg)]">See my next step</Link>
               </section>
@@ -238,18 +255,18 @@ export function LessonPlayerV2({ experience, links, labs, toolsByScene, basePath
         <aside aria-label="Lesson context" className="hidden lg:block"><div className="sticky top-24">{contextPanel}</div></aside>
       </div>
 
-      <footer className="fixed inset-x-0 bottom-0 z-30 border-t border-[var(--ll-border)] bg-[var(--ll-bg)]/95 backdrop-blur" style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }}>
-        <div className="mx-auto flex max-w-2xl items-center gap-3 px-4 py-3">
+      <footer ref={footerRef} className="fixed inset-x-0 bottom-0 z-30 border-t border-[var(--ll-border)] bg-[var(--ll-bg)]/95 backdrop-blur" style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }}>
+        {!complete && <p id="continue-hint" className="mx-auto max-w-2xl px-4 pt-2 text-center text-sm leading-5 text-[var(--ll-text-muted)]">{BLOCKED_HINT[scene.completion.kind]}</p>}
+        <div className="mx-auto flex max-w-2xl items-center justify-between gap-3 px-4 py-3">
           <button type="button" onClick={() => update((current) => retreat(experience, current))} disabled={index === 0} className="inline-flex min-h-12 items-center gap-1 rounded-xl border border-[var(--ll-border)] px-4 py-3 text-base font-semibold disabled:opacity-40">
             <ChevronLeft size={18} aria-hidden="true" /> Previous
           </button>
-          <p id="continue-hint" className="min-w-0 flex-1 text-center text-xs leading-5 text-[var(--ll-text-muted)]">{complete ? "" : BLOCKED_HINT[scene.completion.kind]}</p>
           {isLast ? (
-            <button type="button" onClick={finish} disabled={!complete || !!submitted} aria-describedby="continue-hint" className="inline-flex min-h-12 items-center gap-1 rounded-xl bg-[var(--ll-accent)] px-5 py-3 text-base font-semibold text-[var(--ll-bg)] disabled:opacity-40">
+            <button type="button" onClick={finish} disabled={!complete || !!submitted} aria-describedby={complete ? undefined : "continue-hint"} className="inline-flex min-h-12 items-center gap-1 rounded-xl bg-[var(--ll-accent)] px-5 py-3 text-base font-semibold text-[var(--ll-bg)] disabled:opacity-40">
               {submitted ? "Finished" : "Finish"} <Check size={18} aria-hidden="true" />
             </button>
           ) : (
-            <button type="button" onClick={() => update((current) => advance(experience, current))} disabled={!complete} aria-describedby="continue-hint" className="inline-flex min-h-12 items-center gap-1 rounded-xl bg-[var(--ll-accent)] px-5 py-3 text-base font-semibold text-[var(--ll-bg)] disabled:opacity-40">
+            <button type="button" onClick={() => update((current) => advance(experience, current))} disabled={!complete} aria-describedby={complete ? undefined : "continue-hint"} className="inline-flex min-h-12 items-center gap-1 rounded-xl bg-[var(--ll-accent)] px-5 py-3 text-base font-semibold text-[var(--ll-bg)] disabled:opacity-40">
               Continue <ChevronRight size={18} aria-hidden="true" />
             </button>
           )}

@@ -6,6 +6,7 @@ import { LabSessionClient } from "@/app/student/labs/LabSessionClient";
 import { projectStudentLabPayload } from "@/lib/curriculum/studentLessonProjection";
 import { InteractiveLabPlayer } from "@/components/interactive-labs/v2/InteractiveLabPlayer";
 import { getInteractiveLabDefinition } from "@/lib/interactive-labs/v2/registry";
+import { fromInteractiveLab, isStudentAccessible } from "@/lib/learner-experience/labExperience";
 
 export const dynamic = "force-dynamic";
 
@@ -18,10 +19,10 @@ export default async function StudentLabDetailPage({
     const user = await requireRole("STUDENT");
 
     // Unified lab namespace: interactive V2 labs open here too (formerly /student/interactive-labs/[labId]).
-    // Only approved definitions render; the player enforces the same gate.
     const interactive = getInteractiveLabDefinition(params.labId);
     if (interactive) {
-      if (interactive.reviewState !== "APPROVED" || interactive.approvalState !== "APPROVED") {
+      // Same rule as the Labs tab: approved definition and a real release binding.
+      if (interactive.reviewState !== "APPROVED" || interactive.approvalState !== "APPROVED" || !isStudentAccessible(fromInteractiveLab(interactive))) {
         return <main className="min-h-screen bg-slate-900 px-4 py-8 text-white">This lab is not available.</main>;
       }
       return (

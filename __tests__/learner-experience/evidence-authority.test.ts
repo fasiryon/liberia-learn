@@ -9,6 +9,7 @@ import { buildEvidenceEnvelope, observationDisposition } from "@/lib/learner-exp
 import { adaptEnvelope } from "@/lib/learner-experience/evidenceAdapter";
 import { validateGovernedEvidence } from "@/lib/learning-evidence/evidenceContract";
 
+const server = { experience: lesson, links: [link] };
 const learner = { tenantId: "school-a", schoolId: "school-a", studentId: "student-a", studentUserId: "user-a", sessionId: "session-a" };
 
 function completedProgress() {
@@ -37,7 +38,7 @@ describe("lab and lesson evidence never mutate mastery", () => {
   });
 
   it("adapts into valid governed evidence through existing lab governance without calling the mastery writer", () => {
-    const adapted = adaptEnvelope(buildEvidenceEnvelope(lesson, completedProgress(), link), learner, "2026-10-07T00:00:00.000Z");
+    const adapted = adaptEnvelope(buildEvidenceEnvelope(lesson, completedProgress(), link), server, learner, "2026-10-07T00:00:00.000Z");
     const all = adapted.flatMap((entry) => entry.evidence);
     expect(all.length).toBeGreaterThanOrEqual(5);
     for (const evidence of all) {
@@ -54,7 +55,24 @@ describe("lab and lesson evidence never mutate mastery", () => {
 
   it("rejects an envelope whose invariants were tampered with", () => {
     const envelope = buildEvidenceEnvelope(lesson, completedProgress(), link);
-    expect(() => adaptEnvelope({ ...envelope, masteryMutation: true as unknown as false }, learner)).toThrow("experience_envelope_invariant_violated");
+    expect(() => adaptEnvelope({ ...envelope, masteryMutation: true as unknown as false }, server, learner)).toThrow("experience_envelope_invariant_violated");
+  });
+
+  it("ignores authority, disposition and evidence type claimed by the client envelope", () => {
+    const envelope = buildEvidenceEnvelope(lesson, completedProgress(), link);
+    const forged = {
+      ...envelope,
+      authorityStatus: "APPROVED_RELEASE" as const,
+      observations: envelope.observations.map((o) => ({ ...o, disposition: "PROVISIONAL" as const, evidenceType: "EXAM_TEST" as const, objectiveIds: ["forged-objective"] })),
+    };
+    const adapted = adaptEnvelope(forged, server, learner, "2026-10-07T00:00:00.000Z");
+    expect(adapted.every((entry) => entry.disposition === "RAW_OBSERVATION")).toBe(true);
+    for (const evidence of adapted.flatMap((entry) => entry.evidence)) {
+      expect(evidence.evidenceType).not.toBe("EXAM_TEST");
+      expect(evidence.objective.objectiveId).not.toBe("forged-objective");
+      expect(evidence.curriculum.ontologyReleaseId).toBe("unreleased");
+    }
+    expect(() => adaptEnvelope({ ...envelope, experienceVersion: "9.9.9" }, server, learner)).toThrow("experience_envelope_lesson_mismatch");
   });
 
   it("only an approved release can raise disposition, and mastery always goes to the assessment authority", () => {

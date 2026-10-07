@@ -57,6 +57,8 @@ export function validateLessonExperience(experience: LessonExperience): void {
     if (rule === "ALL_RESPONSES_WRITTEN" && kind !== "FREE_RESPONSE") fail(`scene_completion_mismatch:${scene.id}`);
     if (rule === "LAB_RETURNED_OR_FALLBACK" && kind !== "LAB_LAUNCH") fail(`scene_completion_mismatch:${scene.id}`);
     if (scene.type === "MASTERY_CHECK" && (kind !== "ASSESSMENT_HANDOFF" || scene.evidence.kind !== "MASTERY_RESPONSE")) fail(`scene_mastery_requires_assessment_handoff:${scene.id}`);
+    // Mastery evidence only ever comes through the assessment seam, so no mastery key can ship in a formative item.
+    if (scene.evidence.kind === "MASTERY_RESPONSE" && kind !== "ASSESSMENT_HANDOFF") fail(`scene_mastery_evidence_requires_assessment_handoff:${scene.id}`);
     if (kind === "MULTIPLE_CHOICE") for (const item of scene.interaction.items) if (!Number.isInteger(item.correctIndex) || item.correctIndex < 0 || item.correctIndex >= item.options.length) fail(`scene_item_key_invalid:${scene.id}`);
   }
 }

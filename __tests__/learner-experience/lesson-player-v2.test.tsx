@@ -100,6 +100,37 @@ describe("Lesson Player V2", () => {
     expect(sceneId()).toBe("mastery");
   });
 
+  it("keeps focus in the reflection box while the learner types (focus moves only on scene change)", async () => {
+    store.set(experience.id, { v: 1, experienceId: experience.id, experienceVersion: experience.version, sceneId: "reflection", completedSceneIds: [], responses: {}, revealed: {}, lab: { status: "RETURNED", observation: null }, updatedAt: "2026-10-07T00:00:00.000Z" });
+    await render();
+    const box = host.querySelector("#reflect-why-trip") as HTMLTextAreaElement;
+    box.focus();
+    const setter = Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, "value")!.set!;
+    for (const text of ["T", "Th", "The"]) {
+      await act(async () => { setter.call(box, text); box.dispatchEvent(new Event("input", { bubbles: true })); });
+      expect(document.activeElement).toBe(box);
+    }
+    await act(async () => { setter.call(box, "The city asked for too much power."); box.dispatchEvent(new Event("input", { bubbles: true })); });
+    const other = host.querySelector("#reflect-before-reset") as HTMLTextAreaElement;
+    await act(async () => { setter.call(other, "Switch off some shops blocks first."); other.dispatchEvent(new Event("input", { bubbles: true })); });
+    await click(button("Continue"));
+    expect(sceneId()).toBe("review");
+    expect(document.activeElement?.id).toBe("scene-title");
+  });
+
+  it("restores the lab scene from a valid hand-back even if IndexedDB lost the launch marker", async () => {
+    window.sessionStorage.setItem(labReturnStorageKey(experience.id), JSON.stringify({ labId: "mount-coffee-hydropower", labVersion: "1.1.0", linkId: links[0].linkId, completedCheckIds: [], totalChecks: 5, tripObserved: false, resetObserved: false, finalProfile: "LOW", minutesInLab: 1, exit: "RETURNED_EARLY" }));
+    await render("lab");
+    expect(sceneId()).toBe("lab");
+    expect(host.textContent).toContain("Welcome back");
+  });
+
+  it("ignores a hand-back for a link this lesson did not place", async () => {
+    window.sessionStorage.setItem(labReturnStorageKey(experience.id), JSON.stringify({ labId: "g4-solid-figures", labVersion: "2.1.0", linkId: "forged", completedCheckIds: [], totalChecks: 3, tripObserved: false, resetObserved: false, finalProfile: "LOW", minutesInLab: 1, exit: "RETURNED_EARLY" }));
+    await render("lab");
+    expect(sceneId()).toBe("intro");
+  });
+
   it("offers a non-3D fallback that lets the learner continue", async () => {
     store.set(experience.id, { v: 1, experienceId: experience.id, experienceVersion: experience.version, sceneId: "lab", completedSceneIds: [], responses: {}, revealed: {}, lab: { status: "NOT_STARTED", observation: null }, updatedAt: "2026-10-07T00:00:00.000Z" });
     await render();

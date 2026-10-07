@@ -27,7 +27,7 @@ export function LabExperienceHost({ context, lessonTitle, sceneTitle, labVersion
   // Global status toasts clear the lab's phone bottom sheet (its peek is at least 176px).
   useEffect(() => {
     document.documentElement.style.setProperty("--ll-fixed-footer", "11.5rem");
-    return () => document.documentElement.style.removeProperty("--ll-fixed-footer");
+    return () => { document.documentElement.style.removeProperty("--ll-fixed-footer"); };
   }, []);
   const tracking = useRef<Tracking>({ startedAt: Date.now(), tripped: false, reset: false, latest: null, profile: "LOW" });
 

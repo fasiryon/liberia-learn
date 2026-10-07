@@ -169,8 +169,12 @@ lesson context stays visible in the lab's "Back to lesson" bar. Captured at
 1440×900 and 390×844: zero horizontal overflow at every step.
 
 Finding fixed in Phase A: the global PWA status toast (`PwaLifecycleStatus`)
-sat on top of fixed bottom bars. It now offsets by `--ll-fixed-footer`, which
-the lesson player and lab host set.
+sat on top of fixed bottom bars. It now offsets by `--ll-fixed-footer`: the
+lesson player measures its footer (the completion hint sits on its own row),
+the lab host reserves the lab's phone sheet, and the phone primary nav
+reserves its bar and pads the page so the legal footer stays reachable.
+Not yet covered: `PwaInstallPrompt` and `CookieNotice` still ignore the
+variable until dismissed (Phase B).
 
 ## 11. Age adaptation
 
@@ -199,8 +203,10 @@ lab, reflection, mastery response). The envelope carries
 Disposition is set by governance, not the client: anything from a non-released
 lesson or unapproved link is `RAW_OBSERVATION`; mastery responses go to the
 assessment authority unscored (no answer key on the device). The server
-adapter (`evidenceAdapter.ts`) builds `GovernedEvidence` with the existing
-contract and runs lab checks through the existing `adaptLabEvidence`; it never
+adapter (`evidenceAdapter.ts`) treats the envelope as untrusted: authority,
+disposition, evidence type, objectives and activity are recomputed from the
+server's copy of the lesson and links; only responses come from the device. It
+builds `GovernedEvidence` with the existing contract and runs lab checks through the existing `adaptLabEvidence`; it never
 calls the mastery writer (asserted with a mocked writer). The lesson's
 "See my next step" goes to `/student/learn`, where the existing Orchestrator
 decides. Phase A persists nothing. SLM, DecisionModel and Orchestrator code is
@@ -254,6 +260,15 @@ Findings:
 - `ToolkitOverlay` is mounted nowhere and would collide with fixed controls.
 - Fixed global toasts covered fixed bottom bars (fixed).
 - A stale return URL could move a learner backwards on reload (fixed, tested).
+- Independent review (UX/mobile/accessibility; governance/lab runtime/offline)
+  found and Phase A fixed: focus jumping to the heading on every keystroke;
+  hooks after an early return; fixed bars hidden by toasts; the server adapter
+  trusting client-claimed authority (now recomputed from the server lesson);
+  a lost IndexedDB launch marker dropping the lab return; restored lab state
+  not re-validated; a direct lab URL using a looser release rule than the
+  Labs tab. Deferred: the Mount Coffee lab's crowded phone hotspots (lab
+  runtime, predates Phase A); the finished state is not persisted across
+  reloads (no evidence is persisted in Phase A either).
 
 ## 18. Remaining boundaries
 

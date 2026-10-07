@@ -19,13 +19,13 @@ export function LabScene({ scene, lab, link, progress, online, onLaunch, onFallb
   onLaunch: () => void;
   onFallback: () => void;
 }) {
-  if (scene.interaction.kind !== "LAB_LAUNCH") return null;
   const observation = progress.lab.observation;
   const returned = progress.lab.status === "RETURNED";
   const unavailable = !lab || !link;
   const welcomeRef = useRef<HTMLDivElement>(null);
   // On a phone the return summary is below the fold: bring it into view once, when the learner comes back.
   useEffect(() => { if (returned && observation) welcomeRef.current?.scrollIntoView?.({ block: "center" }); }, [returned, observation]);
+  if (scene.interaction.kind !== "LAB_LAUNCH") return null;
   return (
     <div className="mt-6 space-y-4">
       <section aria-labelledby="lab-card-title" className="rounded-2xl border border-[var(--ll-accent)] bg-[var(--ll-surface)] p-5">
@@ -33,7 +33,7 @@ export function LabScene({ scene, lab, link, progress, online, onLaunch, onFallb
           <span aria-hidden="true" className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[var(--ll-accent)] text-[var(--ll-bg)]"><FlaskConical size={22} /></span>
           <div className="min-w-0">
             <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[var(--ll-text-muted)]">Lab</p>
-            <h3 id="lab-card-title" className="text-lg font-semibold leading-7 text-[var(--ll-text)]">{lab?.title ?? "Lab unavailable"}</h3>
+            <h2 id="lab-card-title" className="text-lg font-semibold leading-7 text-[var(--ll-text)]">{lab?.title ?? "Lab unavailable"}</h2>
             {lab?.summary && <p className="mt-1 text-sm leading-6 text-[var(--ll-text-muted)]">{lab.summary}</p>}
           </div>
         </div>
