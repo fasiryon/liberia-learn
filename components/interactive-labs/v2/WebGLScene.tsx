@@ -433,7 +433,7 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
         ];
         labels.current.replaceChildren(...entries.filter((entry) => entry.at).map((entry) => {
           const node = document.createElement("span");
-          node.textContent = entry.text; node.dataset.labSceneLabel = entry.id;
+          node.textContent = entry.text; node.dataset.labSceneLabel = "";
           if (entry.title) { node.title = entry.title; node.setAttribute("aria-label", entry.title); node.setAttribute("role", "img"); }
           node.className = entry.glyph ? "pointer-events-none absolute -translate-x-1/2 -translate-y-1/2 text-lg font-bold text-fuchsia-300 drop-shadow" : `pointer-events-none absolute -translate-x-1/2 -translate-y-[160%] whitespace-nowrap rounded-full bg-slate-950/70 px-2 py-0.5 text-[11px] font-semibold text-slate-100${entry.mobileLabel === false ? " max-[500px]:hidden" : ""}`;
           // Whole pixels: a fractional position rasterises its pill edge differently run to run (A9 determinism).

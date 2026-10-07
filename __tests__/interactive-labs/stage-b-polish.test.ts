@@ -13,6 +13,12 @@ const act = (state: LabState, action: LabAction) => {
 };
 
 describe("Mount Coffee Stage B state and interaction", () => {
+  it("describes the selected flood fixture and the simplified steady headpond", () => {
+    let state = act(definition.initialState, { type: "guided-step", index: 3 });
+    expect(guidedPrompt(definition.fidelity!, state.fidelity!)).toContain("headpond level steady");
+    state = act(state, { type: "set-variable", variableId: "riverFlow", value: 557 });
+    expect(guidedPrompt(definition.fidelity!, state.fidelity!)).toContain("Flood flow is selected");
+  });
   it("follows open internals, changed demand, trip correction and explicit reset", () => {
     let state = act(definition.initialState, { type: "guided-step", index: 2 });
     expect(guidedPrompt(definition.fidelity!, state.fidelity!)).toContain("Open the powerhouse");
