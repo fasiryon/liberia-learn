@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { getInteractiveLabDefinition } from "@/lib/interactive-labs/v2/registry";
 import { acceptLabAction, initializeLab } from "@/lib/interactive-labs/v2/kernel";
 import { buildRenderList, instructionalView } from "@/lib/interactive-labs/v2/fidelity/renderList";
-import { emitterParticles, hash01, resolveCues, resolveEmitters, validateEmitters, type EmitterDefinition, type RenderEmitter } from "@/lib/interactive-labs/v2/fidelity/emitters";
+import { emitterParticles, hash01, resolveCues, resolveEmitters, resolveLowGlyphProxies, validateEmitters, type EmitterDefinition, type RenderEmitter } from "@/lib/interactive-labs/v2/fidelity/emitters";
 import { validateHighFidelityDefinition } from "@/lib/interactive-labs/v2/fidelity/boundary";
 import { planLowFrame, planThreeFrame } from "@/lib/interactive-labs/v2/fidelity/framePlan";
 import { CIRCUIT_LAB_ID } from "@/lib/interactive-labs/v2/definitions/circuit";
@@ -77,6 +77,19 @@ describe("A15 cues and the emitter gate", () => {
     const [stopped] = resolveEmitters(spec([base]), { on: 1, rate: 0 }, 18);
     expect(stopped).toMatchObject({ active: true, rate: 0, particleCount: 0 });
     expect(resolveCues([], [], [stopped])).toEqual([]);
+  });
+
+  it("shows a LOW glyph proxy only while the emitter is active with a positive rate", () => {
+    const glyph = { ...base, lowProxy: { kind: "glyph" as const, glyph: "≈" } };
+    const [stopped] = resolveEmitters(spec([glyph]), { on: 1, rate: 0 }, 18);
+    expect(stopped).toMatchObject({ active: true, rate: 0, particleCount: 0 });
+    expect(resolveLowGlyphProxies([stopped])).toEqual([]);
+    const [off] = resolveEmitters(spec([glyph]), { on: 0, rate: 1 }, 18);
+    expect(resolveLowGlyphProxies([off])).toEqual([]);
+    const [running] = resolveEmitters(spec([glyph]), { on: 1, rate: 0.5 }, 18);
+    expect(resolveLowGlyphProxies([running])).toEqual([{ id: "proxy:e", kind: "glyph", glyph: "≈", position: [1, 2, 3], direction: [1, 0, 0], color: "#38bdf8" }]);
+    const [points] = resolveEmitters(spec([base]), { on: 1, rate: 1 }, 18);
+    expect(resolveLowGlyphProxies([points])).toEqual([]);
   });
 
   it("rejects unknown quantities, bad geometry and missing LOW proxies or static cues", () => {

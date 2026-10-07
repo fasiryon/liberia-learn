@@ -120,6 +120,16 @@ export function resolveCues(flows: readonly RenderFlow[], surfaces: readonly Ren
   return cues;
 }
 
+/** A15 LOW glyph proxies: shown in place of particles only while the emitter actually emits (active with a positive rate). */
+export function resolveLowGlyphProxies(emitters: readonly RenderEmitter[]): RenderCue[] {
+  const proxies: RenderCue[] = [];
+  for (const emitter of emitters) {
+    if (!emitter.active || emitter.rate <= 0 || emitter.lowProxy.kind !== "glyph") continue;
+    proxies.push({ id: `proxy:${emitter.id}`, kind: "glyph", glyph: emitter.lowProxy.glyph, position: emitter.origin, direction: emitter.direction, color: emitter.color });
+  }
+  return proxies;
+}
+
 /** Authoring checks: geometry, quantities the simulation really emits, components, and the A15 cue requirements. */
 export function validateEmitters(spec: HighFidelitySpec, quantities: Record<string, number>): string[] {
   const errors: string[] = [], seen = new Set<string>(), componentIds = new Set(spec.components.map((component) => component.id));
