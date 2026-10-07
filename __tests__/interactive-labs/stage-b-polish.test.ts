@@ -18,6 +18,9 @@ describe("Mount Coffee Stage B state and interaction", () => {
     expect(guidedPrompt(definition.fidelity!, state.fidelity!)).toContain("headpond level steady");
     state = act(state, { type: "set-variable", variableId: "riverFlow", value: 557 });
     expect(guidedPrompt(definition.fidelity!, state.fidelity!)).toContain("Flood flow is selected");
+    expect(guidedPrompt(definition.fidelity!, state.fidelity!)).toContain("Turbine water also returns");
+    state = act(state, { type: "set-variable", variableId: "unitsOnline", value: 0 });
+    expect(guidedPrompt(definition.fidelity!, state.fidelity!)).toContain("No turbine water is flowing now");
   });
 
   it("keeps process routes out of machine inspection across profiles without changing simulation", () => {
