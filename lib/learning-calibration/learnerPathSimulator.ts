@@ -12,7 +12,7 @@ import {
   createGovernedMisconceptionReview, replayStudentConceptState,
   type CanonicalLearningStateEvent, type StudentConceptState,
 } from "@/lib/learning-state/studentLearningModel";
-import { calibrateLearner, type LearnerCalibration } from "@/lib/learning-calibration/calibrationState";
+import { calibrateLearner, calibrationInputRevision, type LearnerCalibration } from "@/lib/learning-calibration/calibrationState";
 import type { CompetencyEstimate } from "@/lib/learning-calibration/competencyEstimate";
 import { deriveParticipationSignals, type ParticipationObservation, type ParticipationSnapshot } from "@/lib/learning-calibration/participationSignals";
 import { generateInterventionCandidates, type InterventionCandidate } from "@/lib/learning-calibration/teacherInterventions";
@@ -189,15 +189,17 @@ export async function simulateLearnerPath(scenario: SimulationScenario, release:
     const states = release.concepts.map((concept) => replayStudentConceptState(
       (canonical.get(concept.id) ?? []).filter((event) => (canonicalDays.get(event) ?? 0) <= day),
       { asOf, expectedScope: scope(concept.id, release) }));
+    const corroboratingEvidence = corroborating.filter((entry) => entry.day <= day).map((entry) => entry.evidence);
     const { calibration, estimates } = calibrateLearner({
-      states, release, enrollmentGrade: scenario.enrollmentGrade, asOf,
-      corroboratingEvidence: corroborating.filter((entry) => entry.day <= day).map((entry) => entry.evidence),
+      states, release, enrollmentGrade: scenario.enrollmentGrade, asOf, corroboratingEvidence,
     });
     const revision = learnerStateRevision(states, release);
     const override = scenario.teacherOverride && scenario.teacherOverride.atDay === day ? scenario.teacherOverride.override : undefined;
     const { recommendation, resolution, decision } = await resolveLearningDecision({
       states, release, calibration, teacherOverride: override,
-      currentRevision: async () => revision, idempotencyKey: `${scenario.name}:day-${day}`,
+      currentRevision: async () => revision,
+      currentCalibrationRevision: async () => calibrationInputRevision({ learnerStateRevision: revision, asOf, corroboratingEvidence }),
+      idempotencyKey: `${scenario.name}:day-${day}`,
     });
     const lastEvidenceAt = states.map((state) => state.recency.lastEvidenceAt).filter((value): value is string => value !== null).sort().at(-1) ?? null;
     const participation = deriveParticipationSignals({ observations: scenario.participation ?? [], lastGovernedEvidenceAt: lastEvidenceAt, asOf });

@@ -98,7 +98,9 @@ Every SLM field is copied verbatim and traced back by `inputDigest` and
   title or difficulty.
 - `deriveInstructionalReadiness` reports subject readiness (placement-indicated
   grade compared with enrollment) and competency readiness (READY_AT_GRADE,
-  PREREQUISITE_GAP, NOT_YET_EVIDENCED, NEEDS_PRACTICE or EXTENSION_READY).
+  PREREQUISITE_GAP, PREREQUISITE_UNKNOWN, NOT_YET_EVIDENCED, NEEDS_PRACTICE or
+  EXTENSION_READY). A competency whose prerequisite has no evidence is
+  PREREQUISITE_UNKNOWN, never ready, matching the orchestrator.
   It always returns `officialGradeChange: "REQUIRES_HUMAN_PLACEMENT_CONFIRMATION"`.
 
 ### 2.5 Early-calibration learning policy (`earlyLearningPolicy.ts`, `early-learning-policy/1.0.0`)
@@ -172,6 +174,15 @@ ungoverned candidate is rejected. Candidates are advisory only, with
   STALE_REVISION.
 - **Queued observations.** `reconcileOfflineObservations` admits queued
   governed evidence with these rules:
+  - It verifies the projection's signature before using its scope as the
+    admission boundary (expiry does not block, since a queue can outlive the
+    cached projection).
+  - It re-admits every record: device-asserted server scoring, human
+    verification and reliability are discarded, teacher provenance is refused,
+    and any practice, quiz or diagnostic record with a selected answer is
+    scored on the server against the governed item, whether or not the device
+    reported a result (a disagreeing device result, or an item the release does
+    not bind, is rejected).
   - It requires offline sync identity.
   - It rejects records from another learner or another release.
   - It rejects conflicting duplicates.
@@ -228,7 +239,12 @@ next action → intervention candidates. It then prints each stage.
   placement confirmation for any official change.
 - Duplicate evidence never inflates sufficiency, and conflicting duplicates
   fail closed.
-- A stale calibration, where the revision differs from the current states, is
-  rejected by the early-learning policy.
+- A stale calibration is rejected by the early-learning policy: the canonical
+  revision must match, and so must `inputRevision`, a digest of every
+  calibration input (canonical revision, as-of time, full corroborating
+  evidence, and the full content of the calibration and evidence-quality
+  policies, so a value changed under the same version also invalidates it).
+  The orchestrator requires `currentCalibrationRevision`
+  whenever a calibration is supplied.
 - A teacher override bypasses the early-learning policy and is still limited
   to governed candidates.

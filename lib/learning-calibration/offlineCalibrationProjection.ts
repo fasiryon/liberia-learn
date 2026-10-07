@@ -1,5 +1,8 @@
 import { createHash } from "crypto";
-import { deduplicateGovernedEvidence, validateGovernedEvidence, type GovernedEvidence } from "@/lib/learning-evidence/evidenceContract";
+import {
+  deduplicateGovernedEvidence, toCanonicalMasteryEvidence, validateGovernedEvidence, type GovernedEvidence,
+} from "@/lib/learning-evidence/evidenceContract";
+import { deterministicReleaseIdentity, type CurriculumOntologyRelease } from "@/lib/learning-authority/governedGrade4Math";
 import type { CalibrationStage, LearnerCalibration, SufficiencyLevel } from "@/lib/learning-calibration/calibrationState";
 import type { CompetencyEstimate } from "@/lib/learning-calibration/competencyEstimate";
 
@@ -126,28 +129,82 @@ export type OfflineReplayResult = Readonly<{
   replayDigest: string;
 }>;
 
+const OFFLINE_SCORABLE_TYPES: ReadonlySet<GovernedEvidence["evidenceType"]> = new Set(["PRACTICE", "QUIZ", "DIAGNOSTIC"]);
+
 /**
- * Server-side admission of queued offline observations. Replays of the same
- * queue are idempotent; conflicting duplicates and cross-learner records are
- * rejected. The result is evidence to replay, never a mastery value.
+ * Re-admit one queued record on the server. Trust a device can only assert
+ * (server scoring, human verification, reviewed reliability, teacher source)
+ * is discarded; a record the release can score is re-scored against the
+ * governed item, and a device result that disagrees is rejected.
+ */
+function readmitOfflineEvidence(evidence: GovernedEvidence, release: CurriculumOntologyRelease): GovernedEvidence {
+  if (evidence.provenance.source !== "OFFLINE" || evidence.provenance.actorRole !== "STUDENT") throw new Error("offline_provenance_invalid");
+  const untrusted: GovernedEvidence = Object.freeze({
+    ...evidence,
+    strength: Object.freeze({ ...evidence.strength, serverScored: false, humanVerified: false, reliability: "UNASSESSED" as const }),
+  });
+  // Scorability depends on the item type and the selected answer, never on the device's own result.
+  const { selectedAnswerIndex, correct } = untrusted.performance;
+  if (!OFFLINE_SCORABLE_TYPES.has(untrusted.evidenceType) || selectedAnswerIndex === undefined) return untrusted;
+  // A device that reported no result gets the server's answer key; one that did is checked against it
+  // (evidence_result_mismatch). An item the release does not bind is rejected either way.
+  const item = release.items.find((candidate) => candidate.id === untrusted.activity.activityId && candidate.version === untrusted.activity.activityVersion);
+  const claimed = correct ?? (item !== undefined && selectedAnswerIndex === item.correctIndex);
+  const rescored = toCanonicalMasteryEvidence({
+    ...untrusted,
+    performance: { ...untrusted.performance, correct: claimed },
+    strength: { ...untrusted.strength, serverScored: true },
+  }, release);
+  return Object.freeze({
+    ...untrusted,
+    performance: Object.freeze({ ...untrusted.performance, correct: rescored.result === "CORRECT", outcome: rescored.result }),
+    strength: Object.freeze({ ...untrusted.strength, serverScored: true }),
+  });
+}
+
+/**
+ * Server-side admission of queued offline observations. The projection is
+ * authenticated before its scope is used as the admission boundary (expiry
+ * does not block: a queue legitimately outlives the cached projection, and the
+ * scope is still the server's own signed statement). Every record is
+ * re-admitted through readmitOfflineEvidence. Replays of the same queue are
+ * idempotent; conflicting duplicates and cross-learner records are rejected.
+ * The result is evidence to replay, never a mastery value.
  */
 export function reconcileOfflineObservations(input: {
   projection: SignedOfflineCalibrationProjection;
+  verify: ProjectionVerifier;
+  release: CurriculumOntologyRelease;
   queued: readonly GovernedEvidence[];
   alreadyAdmittedIdempotencyKeys: ReadonlySet<string>;
 }): OfflineReplayResult {
-  const { scope } = input.projection.payload;
+  const { projection } = input;
+  let authentic = false;
+  try {
+    authentic = projection.payload.projectionVersion === OFFLINE_CALIBRATION_PROJECTION_VERSION &&
+      projection.payload.authority.deviceMayWrite === false &&
+      input.verify(serializeOfflineCalibrationPayload(projection.payload), projection.signature, projection.keyId);
+  } catch { authentic = false; }
+  if (!authentic) throw new Error("offline_projection_untrusted");
+  const { scope } = projection.payload;
+  if (input.release.id !== scope.ontologyReleaseId || deterministicReleaseIdentity(input.release) !== scope.ontologyReleaseIdentity) {
+    throw new Error("offline_projection_release_mismatch");
+  }
   const rejected: { evidenceId: string; reason: string }[] = [];
   const candidates: GovernedEvidence[] = [];
-  for (const evidence of input.queued) {
-    try { validateGovernedEvidence(evidence); } catch (error) {
-      rejected.push({ evidenceId: evidence.evidenceId, reason: (error as Error).message }); continue;
+  for (const queued of input.queued) {
+    let evidence: GovernedEvidence;
+    try { validateGovernedEvidence(queued); } catch (error) {
+      rejected.push({ evidenceId: queued.evidenceId, reason: (error as Error).message }); continue;
     }
-    if (!evidence.offline.isOffline || !evidence.offline.syncIdentity) { rejected.push({ evidenceId: evidence.evidenceId, reason: "offline_identity_required" }); continue; }
-    if (evidence.schoolId !== scope.schoolId || evidence.learner.studentId !== scope.studentId ||
-      evidence.learner.studentUserId !== scope.studentUserId) { rejected.push({ evidenceId: evidence.evidenceId, reason: "offline_learner_mismatch" }); continue; }
-    if (evidence.curriculum.ontologyReleaseId !== scope.ontologyReleaseId ||
-      evidence.curriculum.ontologyReleaseIdentity !== scope.ontologyReleaseIdentity) { rejected.push({ evidenceId: evidence.evidenceId, reason: "offline_release_mismatch" }); continue; }
+    if (!queued.offline.isOffline || !queued.offline.syncIdentity) { rejected.push({ evidenceId: queued.evidenceId, reason: "offline_identity_required" }); continue; }
+    if (queued.schoolId !== scope.schoolId || queued.learner.studentId !== scope.studentId ||
+      queued.learner.studentUserId !== scope.studentUserId) { rejected.push({ evidenceId: queued.evidenceId, reason: "offline_learner_mismatch" }); continue; }
+    if (queued.curriculum.ontologyReleaseId !== scope.ontologyReleaseId ||
+      queued.curriculum.ontologyReleaseIdentity !== scope.ontologyReleaseIdentity) { rejected.push({ evidenceId: queued.evidenceId, reason: "offline_release_mismatch" }); continue; }
+    try { evidence = readmitOfflineEvidence(queued, input.release); } catch (error) {
+      rejected.push({ evidenceId: queued.evidenceId, reason: (error as Error).message }); continue;
+    }
     candidates.push(evidence);
   }
   // Conflicting payloads under one idempotency key are a hard failure for that key.
