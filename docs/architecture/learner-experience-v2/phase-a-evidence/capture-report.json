@@ -1,0 +1,124 @@
+[
+  {
+    "viewport": "desktop",
+    "step": "01-intro",
+    "horizontalOverflowPx": 0,
+    "scene": "intro"
+  },
+  {
+    "viewport": "desktop",
+    "step": "02-explanation",
+    "horizontalOverflowPx": 0,
+    "scene": "explain"
+  },
+  {
+    "viewport": "desktop",
+    "step": "03-energy-chain",
+    "horizontalOverflowPx": 0,
+    "scene": "energy-chain"
+  },
+  {
+    "viewport": "desktop",
+    "step": "04-quick-check",
+    "horizontalOverflowPx": 0,
+    "scene": "quick-check"
+  },
+  {
+    "viewport": "desktop",
+    "step": "05-lab-scene",
+    "horizontalOverflowPx": 0,
+    "scene": "lab"
+  },
+  {
+    "viewport": "desktop",
+    "step": "06-lab",
+    "horizontalOverflowPx": 0,
+    "scene": null
+  },
+  {
+    "viewport": "desktop",
+    "step": "07-returned-to-lab-scene",
+    "horizontalOverflowPx": 0,
+    "scene": "lab"
+  },
+  {
+    "viewport": "desktop",
+    "step": "08-reflection",
+    "horizontalOverflowPx": 0,
+    "scene": "reflection"
+  },
+  {
+    "viewport": "desktop",
+    "step": "09-handoff",
+    "horizontalOverflowPx": 0,
+    "scene": "mastery"
+  },
+  {
+    "viewport": "desktop",
+    "step": "10-reload-resume",
+    "scene": "mastery",
+    "dispositions": "RAW_OBSERVATION RAW_OBSERVATION RAW_OBSERVATION RAW_OBSERVATION",
+    "errors": []
+  },
+  {
+    "viewport": "phone",
+    "step": "01-intro",
+    "horizontalOverflowPx": 0,
+    "scene": "intro"
+  },
+  {
+    "viewport": "phone",
+    "step": "02-explanation",
+    "horizontalOverflowPx": 0,
+    "scene": "explain"
+  },
+  {
+    "viewport": "phone",
+    "step": "03-energy-chain",
+    "horizontalOverflowPx": 0,
+    "scene": "energy-chain"
+  },
+  {
+    "viewport": "phone",
+    "step": "04-quick-check",
+    "horizontalOverflowPx": 0,
+    "scene": "quick-check"
+  },
+  {
+    "viewport": "phone",
+    "step": "05-lab-scene",
+    "horizontalOverflowPx": 0,
+    "scene": "lab"
+  },
+  {
+    "viewport": "phone",
+    "step": "06-lab",
+    "horizontalOverflowPx": 0,
+    "scene": null
+  },
+  {
+    "viewport": "phone",
+    "step": "07-returned-to-lab-scene",
+    "horizontalOverflowPx": 0,
+    "scene": "lab"
+  },
+  {
+    "viewport": "phone",
+    "step": "08-reflection",
+    "horizontalOverflowPx": 0,
+    "scene": "reflection"
+  },
+  {
+    "viewport": "phone",
+    "step": "09-handoff",
+    "horizontalOverflowPx": 0,
+    "scene": "mastery"
+  },
+  {
+    "viewport": "phone",
+    "step": "10-reload-resume",
+    "scene": "mastery",
+    "dispositions": "RAW_OBSERVATION RAW_OBSERVATION RAW_OBSERVATION RAW_OBSERVATION",
+    "errors": []
+  }
+]

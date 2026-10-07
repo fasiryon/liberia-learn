@@ -1,3 +1,8 @@
+/**
+ * COMPATIBILITY FALLBACK (Product Redesign V1). Infers slides from a finished lesson body, so a long
+ * body without headings can still become one giant slide. It is NOT the canonical lesson structure:
+ * native LessonExperience scenes are (lib/learner-experience/sceneContract.ts, resolveLessonScenes).
+ */
 export type LessonSlide = {
   index: number;
   title: string;

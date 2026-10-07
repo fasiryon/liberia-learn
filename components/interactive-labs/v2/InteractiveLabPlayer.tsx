@@ -65,7 +65,14 @@ export type LabReviewPreview = {
   onReady?: (api: { dispatch: (action: LabAction) => { ok: boolean; reason?: string } }) => void;
 };
 
-export function InteractiveLabPlayer({ labId = "g4-solid-figures", override, reviewPreview }: { labId?: string; override?: CapabilityProfile; reviewPreview?: LabReviewPreview }) {
+/**
+ * Learner Experience V2 host hooks. `internalPreview` lets an internal, non-production prototype route open an
+ * unapproved lab with normal learner behaviour (intro, auto profile, downgrades); it records no evidence.
+ * `onStateChange` lets a host observe presentation state (e.g. to return to a lesson); it cannot change it.
+ */
+export type LabHostHooks = { internalPreview?: boolean; onStateChange?: (state: LabState, profile: CapabilityProfile) => void };
+
+export function InteractiveLabPlayer({ labId = "g4-solid-figures", override, reviewPreview, internalPreview, onStateChange }: { labId?: string; override?: CapabilityProfile; reviewPreview?: LabReviewPreview } & LabHostHooks) {
   const definition = getInteractiveLabDefinition(labId);
   const [state, setState] = useState<LabState>(() => reviewPreview ? structuredClone(reviewPreview.initialState) : initializeLab(definition ?? getInteractiveLabDefinition("g4-solid-figures")!));
   const [profile, setProfile] = useState<CapabilityProfile>(() => override ?? "LOW");
@@ -109,6 +116,7 @@ export function InteractiveLabPlayer({ labId = "g4-solid-figures", override, rev
     setState(result.state);
     return { ok: true };
   }, [definition]);
+  useEffect(() => { onStateChange?.(state, profile); }, [onStateChange, state, profile]);
   const onReviewReady = reviewPreview?.onReady;
   useLayoutEffect(() => { onReviewReady?.({ dispatch: reviewDispatch }); }, [onReviewReady, reviewDispatch]);
   useEffect(() => {
@@ -220,7 +228,7 @@ export function InteractiveLabPlayer({ labId = "g4-solid-figures", override, rev
     setNotice(next === "LOW" ? "Switched to lighter graphics: the detailed graphics could not load." : "Switched to lighter graphics: 3D graphics could not load, so the lab shows the 2D view.");
   }, [profile]);
 
-  if (!definition || (!reviewPreview && (definition.reviewState !== "APPROVED" || definition.approvalState !== "APPROVED"))) return <p className="p-6">This lab is not available.</p>;
+  if (!definition || (!reviewPreview && !internalPreview && (definition.reviewState !== "APPROVED" || definition.approvalState !== "APPROVED"))) return <p className="p-6">This lab is not available.</p>;
 
   if (intro) return <section className="mx-auto max-w-5xl rounded-3xl bg-slate-950 p-8 text-white shadow-2xl"><p className="text-sm font-semibold uppercase tracking-[.2em] text-cyan-300">Interactive lab</p><h1 className="mt-3 text-3xl font-bold">{definition.title ?? "Interactive lab"}</h1><p className="mt-4 max-w-2xl text-slate-300">{definition.summary ?? "Use the scene to complete the checks."}</p><button type="button" onClick={() => setIntro(false)} className="mt-7 rounded-full bg-cyan-300 px-6 py-3 font-bold text-slate-950">Start exploring</button></section>;
 

@@ -1,5 +1,11 @@
 import type { LabId } from "@/lib/labs/types";
 
+/**
+ * COMPATIBILITY ONLY (Product Redesign V1). Subject + grade matching is not curricular authority.
+ * Future lesson labs attach through a governed LearningExperienceLink that names the objective the lab
+ * supports (lib/learner-experience/links.ts). Keep this for legacy lessons until they are migrated.
+ */
+
 export type LessonLabLink = {
   labId: LabId;
   label: string;
