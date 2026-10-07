@@ -13,7 +13,7 @@ interface ToolkitProviderProps {
   children: React.ReactNode;
 }
 
-function getEnabledToolkitCategories(): string[] {
+export function getEnabledToolkitCategories(): string[] {
   const categories = ["math", "science", "language", "utility", "core"];
   if (isToolkitCalculatorEnabled()) categories.push("calculator");
   if (isToolkitScienceToolsEnabled()) categories.push("science-tools");

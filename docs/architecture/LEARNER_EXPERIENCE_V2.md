@@ -53,3 +53,14 @@ lesson, practice, diagnostic, and offline flows before enabling them.
 The in-process E2E test exercises the real decision store, orchestrator,
 admission policy, mastery writer, replay, and API handlers with an in-memory
 event store. Live database and device E2E certification remain separate gates.
+
+## Product Redesign V1 refinement
+
+`docs/architecture/learner-experience-v2/PRODUCT_REDESIGN_V1.md` refines this
+document with the student information architecture (Today, Learn, Labs,
+Progress, Help), the Lesson Player V2 scene contract, the unified Lab
+Experience, governed lesson–lab links, the Labs tab and the route and slide
+migration plans. It does not change any rule above: lessons and labs emit
+observations only, the server scores, and the existing DecisionModel and
+Learning Orchestrator choose the next action. The Phase B contract for
+Curriculum V2 is `docs/architecture/learner-experience-v2/CURRICULUM_V2_HANDOFF.md`.
