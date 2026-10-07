@@ -7,6 +7,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import path from "node:path";
 import { build } from "esbuild";
+import { RENDERER_CHUNK_CEILINGS } from "../../lib/interactive-labs/v2/production/budgets";
 
 export type ChunkSize = { storageBytes: number; gzipBytes: number; transferBytes: number };
 export type RendererChunk = ChunkSize & { entry: string; three?: ChunkSize };
@@ -63,6 +64,8 @@ export function checkRendererChunks(measured: RendererChunks, committed: Rendere
   for (const key of Object.keys(committed.chunks) as (keyof RendererChunks["chunks"])[]) {
     for (const field of ["storageBytes", "transferBytes"] as const) {
       const before = committed.chunks[key][field], now = measured.chunks[key][field];
+      const ceiling = RENDERER_CHUNK_CEILINGS[key][field];
+      if (now > ceiling) problems.push(`${key} ${field} is ${now}, above the reviewed absolute ceiling ${ceiling}.`);
       if (now > Math.ceil(before * (1 + tolerance))) problems.push(`${key} ${field} grew from ${before} to ${now} (> ${tolerance * 100}%). Re-measure with a reviewed reason.`);
     }
   }

@@ -19,6 +19,18 @@ describe("Mount Coffee Stage B state and interaction", () => {
     state = act(state, { type: "set-variable", variableId: "riverFlow", value: 557 });
     expect(guidedPrompt(definition.fidelity!, state.fidelity!)).toContain("Flood flow is selected");
   });
+
+  it("keeps process routes out of machine inspection across profiles without changing simulation", () => {
+    let state = act(definition.initialState, { type: "guided-step", index: 2 });
+    state = act(state, { type: "set-cutaway", cutawayId: "powerhouse-section" });
+    for (const profile of ["HIGH", "STANDARD", "LOW", "FALLBACK_2D"] as const) {
+      const list = buildRenderList({ definition, state, profile });
+      expect(list.flows).toEqual([]);
+      expect(list.items.some(item => item.id === "u3-runner")).toBe(true);
+      expect(list.quantities.outputMW).toBeGreaterThan(0);
+      expect(list.surfaces.length).toBeGreaterThan(0);
+    }
+  });
   it("follows open internals, changed demand, trip correction and explicit reset", () => {
     let state = act(definition.initialState, { type: "guided-step", index: 2 });
     expect(guidedPrompt(definition.fidelity!, state.fidelity!)).toContain("Open the powerhouse");

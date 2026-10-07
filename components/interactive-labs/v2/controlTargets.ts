@@ -43,7 +43,8 @@ export function controlTargetElements(items: readonly RenderItem[], project: (po
     line.setAttribute("aria-hidden", "true");
     line.className = "pointer-events-none absolute origin-left border-t-2 border-slate-900";
     line.style.cssText = `left:${Math.round(anchor.x)}px;top:${Math.round(anchor.y)}px;width:${Math.round(Math.hypot(center.x - anchor.x, center.y - anchor.y))}px;transform:rotate(${Math.atan2(center.y - anchor.y, center.x - anchor.x)}rad)`;
-    const button = document.createElement("button");
+    // Retain node identity between pointer down/up during overlay refreshes.
+    const button = document.querySelector<HTMLButtonElement>(`[data-lab-hit-proxy="${item.id}"]`) ?? document.createElement("button");
     button.type = "button";
     button.dataset.labHitProxy = item.id;
     button.dataset.partId = item.id;
@@ -52,7 +53,7 @@ export function controlTargetElements(items: readonly RenderItem[], project: (po
     button.setAttribute("aria-disabled", String(!control.action));
     if (control.kind !== "step-variable") button.setAttribute("aria-pressed", String(control.selected));
     button.textContent = control.pending ? "Confirm?" : control.label;
-    button.className = "pointer-events-auto absolute rounded-lg border-2 border-slate-900 bg-amber-100 text-center text-[10px] leading-tight text-slate-950 focus-visible:outline focus-visible:outline-white";
+    button.className = "lab-phone-control";
     button.style.cssText = `width:${CONTROL_TARGET_SIZE}px;height:${CONTROL_TARGET_SIZE}px;left:${Math.round(center.x - CONTROL_TARGET_SIZE / 2)}px;top:${Math.round(center.y - CONTROL_TARGET_SIZE / 2)}px`;
     button.onpointerdown = (event) => event.stopPropagation();
     button.onclick = (event) => { event.stopPropagation(); if (control.action) onPick({ kind: "item", item }); };

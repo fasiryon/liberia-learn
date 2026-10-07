@@ -193,9 +193,9 @@ const spec: HighFidelitySpec = {
   camera: { defaultPresetId: "valley", presets: [
     { id: "valley", label: "Whole valley", target: [1.8, 0.3, 0.2], distance: 17.5, yaw: -0.48, pitch: 0.56 },
     { id: "water-path", label: "Water route", target: [-1.3, 0.7, 0], distance: 8, yaw: 0.15, pitch: 0.2 },
-    { id: "powerhouse-section", label: "Powerhouse section", target: [0.9, 0.2, 0.1], distance: 3, yaw: 0.2, pitch: 0.22, frame: { componentIds: [...UNIT3_STACK] } },
-    { id: "unit-bench", label: "Unit 3 bench", target: [0.9, 0.2, 0.1], distance: 3, yaw: 0.2, pitch: 0.22, frame: { componentIds: [...UNIT3_STACK] } },
-    { id: "exploded-bench", label: "Exploded unit 3", target: [0.9, 0.15, 0.1], distance: 5, yaw: 0.2, pitch: 0.22, frame: { componentIds: [...UNIT3_STACK] } },
+    { id: "powerhouse-section", label: "Powerhouse section", target: [0.9, 0.2, 0.1], distance: 3, yaw: 0.2, pitch: 0.22, frame: { componentIds: [...UNIT3_STACK] }, hideFlows: true },
+    { id: "unit-bench", label: "Unit 3 bench", target: [0.9, 0.2, 0.1], distance: 3, yaw: 0.2, pitch: 0.22, frame: { componentIds: [...UNIT3_STACK] }, hideFlows: true },
+    { id: "exploded-bench", label: "Exploded unit 3", target: [0.9, 0.15, 0.1], distance: 5, yaw: 0.2, pitch: 0.22, frame: { componentIds: [...UNIT3_STACK] }, hideFlows: true },
     { id: "grid-city", label: "Power and city", target: [6.8, 0.9, 0.2], distance: 8.5, yaw: -0.18, pitch: 0.3, frame: { componentIds: components.filter((part) => part.id.startsWith("city-")).map((part) => part.id) } },
     { id: "river-controls", label: "Season controls", target: [-5.35, 3.3, -1.75], distance: 4, yaw: 0, pitch: 0.15, frame: { componentIds: components.filter((part) => part.id.startsWith("gauge-band-")).map((part) => part.id) } },
     { id: "switchyard-controls", label: "Feeder controls", target: [3.2, -0.45, 0.55], distance: 3, yaw: 0, pitch: 0.15, frame: { componentIds: components.filter((part) => part.id.startsWith("breaker-")).map((part) => part.id) } },

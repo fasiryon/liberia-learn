@@ -1,5 +1,11 @@
 @import "tailwindcss";
 
+@layer components {
+  .lab-phone-control {
+    @apply pointer-events-auto absolute rounded-lg border-2 border-slate-900 bg-amber-100 text-center text-[10px] leading-tight text-slate-950 focus-visible:outline focus-visible:outline-white;
+  }
+}
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
