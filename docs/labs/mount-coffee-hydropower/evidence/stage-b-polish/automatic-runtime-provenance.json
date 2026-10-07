@@ -1,0 +1,13 @@
+{
+  "run": 37647419464,
+  "head": "78fb4f92c6b74de3532781ee78b2e217bd8d5e05",
+  "capturedMergeCommit": "caf21a25b611d1809ccb4ffac8a3bde45a217ade",
+  "parents": [
+    "5062b46290465d04a320cead78e9b4efe4a7fc92",
+    "78fb4f92c6b74de3532781ee78b2e217bd8d5e05"
+  ],
+  "headTree": "b13657fe03d50a86df1f6a4b4c457127348e1770",
+  "capturedTree": "b13657fe03d50a86df1f6a4b4c457127348e1770",
+  "diffEmpty": true,
+  "verification": "git fetch origin caf21a25; git rev-parse both^{tree}; git show parents; git diff, independently re-verified by performance reviewer"
+}

@@ -1,0 +1,154 @@
+{
+  "before": {
+    "tool": "esbuild 0.27.3 (minify, tree-shaken, es2020; gzip level 9, brotli q11)",
+    "three": "0.186.1",
+    "chunks": {
+      "threeRenderer": {
+        "entry": "components/interactive-labs/v2/ThreeScene.tsx",
+        "storageBytes": 609291,
+        "gzipBytes": 159886,
+        "transferBytes": 132842,
+        "three": {
+          "storageBytes": 541975,
+          "gzipBytes": 135715,
+          "transferBytes": 111145
+        }
+      },
+      "webglPass": {
+        "entry": "components/interactive-labs/v2/WebGLScene.tsx",
+        "storageBytes": 69278,
+        "gzipBytes": 24967,
+        "transferBytes": 22260
+      }
+    }
+  },
+  "after": {
+    "tool": "esbuild 0.27.3 (minify, tree-shaken, es2020; gzip level 9, brotli q11)",
+    "three": "0.186.1",
+    "chunks": {
+      "threeRenderer": {
+        "entry": "components/interactive-labs/v2/ThreeScene.tsx",
+        "storageBytes": 611694,
+        "gzipBytes": 160725,
+        "transferBytes": 133693,
+        "three": {
+          "storageBytes": 541972,
+          "gzipBytes": 135730,
+          "transferBytes": 111276
+        }
+      },
+      "webglPass": {
+        "entry": "components/interactive-labs/v2/WebGLScene.tsx",
+        "storageBytes": 71842,
+        "gzipBytes": 25878,
+        "transferBytes": 23082
+      }
+    }
+  },
+  "problems": [],
+  "staticBefore": {
+    "HIGH": {
+      "offlinePackageBytes": 738406,
+      "transferBytes": 214939,
+      "triangles": 12816,
+      "drawCalls": 76,
+      "particles": 162,
+      "maxTexturePx": 1024
+    },
+    "STANDARD": {
+      "offlinePackageBytes": 738406,
+      "transferBytes": 214939,
+      "triangles": 9872,
+      "drawCalls": 56,
+      "particles": 90,
+      "maxTexturePx": 0
+    },
+    "LOW": {
+      "offlinePackageBytes": 129115,
+      "transferBytes": 82097,
+      "triangles": 2410,
+      "drawCalls": 27,
+      "particles": 36,
+      "maxTexturePx": 0
+    },
+    "FALLBACK_2D": {
+      "offlinePackageBytes": 59837,
+      "transferBytes": 59837,
+      "triangles": 0,
+      "drawCalls": 0,
+      "particles": 54,
+      "maxTexturePx": 0
+    }
+  },
+  "staticAfter": {
+    "HIGH": {
+      "offlinePackageBytes": 739283,
+      "transferBytes": 215816,
+      "triangles": 12160,
+      "drawCalls": 74,
+      "particles": 162,
+      "maxTexturePx": 1024
+    },
+    "STANDARD": {
+      "offlinePackageBytes": 739283,
+      "transferBytes": 215816,
+      "triangles": 9560,
+      "drawCalls": 55,
+      "particles": 90,
+      "maxTexturePx": 0
+    },
+    "LOW": {
+      "offlinePackageBytes": 129992,
+      "transferBytes": 82974,
+      "triangles": 2242,
+      "drawCalls": 25,
+      "particles": 36,
+      "maxTexturePx": 0
+    },
+    "FALLBACK_2D": {
+      "offlinePackageBytes": 60714,
+      "transferBytes": 60714,
+      "triangles": 0,
+      "drawCalls": 0,
+      "particles": 54,
+      "maxTexturePx": 0
+    }
+  },
+  "acceptedBaseSha": "5062b46290465d04a320cead78e9b4efe4a7fc92",
+  "sourceSha": "5fe8f3ca17dad18b020e30b77eb536ef6d2604cd",
+  "actualAfter": {
+    "HIGH": {
+      "offlinePackageBytes": 744250,
+      "transferBytes": 217489,
+      "triangles": 12160,
+      "drawCalls": 74,
+      "particles": 162,
+      "maxTexturePx": 1024
+    },
+    "STANDARD": {
+      "offlinePackageBytes": 744250,
+      "transferBytes": 217489,
+      "triangles": 9560,
+      "drawCalls": 55,
+      "particles": 90,
+      "maxTexturePx": 0
+    },
+    "LOW": {
+      "offlinePackageBytes": 132556,
+      "transferBytes": 83796,
+      "triangles": 2242,
+      "drawCalls": 25,
+      "particles": 36,
+      "maxTexturePx": 0
+    },
+    "FALLBACK_2D": {
+      "offlinePackageBytes": 60714,
+      "transferBytes": 60714,
+      "triangles": 0,
+      "drawCalls": 0,
+      "particles": 54,
+      "maxTexturePx": 0
+    }
+  },
+  "note": "actualAfter corrects static accounting (which uses the accepted committed chunk record) with measured renderer deltas. Shared compiled global CSS is outside this JS/definition estimate; no device load-time or whole-network-transfer claim."
+}

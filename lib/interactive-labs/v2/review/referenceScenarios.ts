@@ -88,6 +88,8 @@ export const HYDROPOWER_REVIEW_SCENARIOS: LabReviewScenarioSet = {
   labVersion: "1.1.0",
   scenarios: [
     hydroScenario("hydro-overview", "S1 Meet the plant", "overview", "S1", []),
+    hydroScenario("hydro-season-controls", "Season gauge control close-up", "variable", "S5", [{ type: "mode", mode: "EXPLORE" }, { type: "camera-preset", presetId: "river-controls" }]),
+    hydroScenario("hydro-feeder-controls", "Switchyard breaker control close-up", "variable", "S6", [{ type: "mode", mode: "EXPLORE" }, { type: "camera-preset", presetId: "switchyard-controls" }]),
     hydroScenario("hydro-guided-meet-to-water", "S1 Meet then move to water", "guided", "S1-S2", [{ type: "guided-step", index: 1 }], true),
     hydroScenario("hydro-guided-trace-partial", "S2 Trace begins", "guided", "S2", [{ type: "guided-step", index: 1 }, { type: "trace-node", flowId: "water-u1", nodeId: "headpond" }]),
     hydroScenario("hydro-guided-name-chain", "S7 Review the energy chain: potential, kinetic, rotation, electrical, light and heat", "guided", "S7", [{ type: "guided-step", index: 6 }]),

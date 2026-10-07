@@ -1,0 +1,717 @@
+{
+  "labId": "mount-coffee-hydropower",
+  "labVersion": "1.1.0",
+  "reviewState": "DRAFT",
+  "label": "gate-a",
+  "gitSha": "caf21a25b611d1809ccb4ffac8a3bde45a217ade",
+  "capturedAt": "2026-10-07T16:06:23.461Z",
+  "environment": "GitHub Actions (Linux, run 37647419464) dev server, headless Chromium, virtual clock paused from navigation for stills and motion frames",
+  "rendererIdentityRule": "HIGH/STANDARD must be drawn by three@*, LOW by webgl-pass, FALLBACK_2D by svg, at the requested profile, with at least one frame drawn; otherwise status FAIL.",
+  "framePlanRule": "RX-005 A8 / RX-006 test 1: the shared frame planner must equal the renderer's own count for the probed frame (three.js: renderer.info with frustum culling off and the shadow pass forced; LOW: counted drawArrays); otherwise status FAIL.",
+  "threeChunkRule": "RX-005 A8: LOW and FALLBACK_2D runs must make zero requests for a script carrying three.js; otherwise status FAIL.",
+  "deviceBoundary": "Headless browser evidence proves rendering correctness, composition, layout, interaction automation and renderer/profile routing only. It does not prove low-end GPU performance, touch latency, thermal behaviour or mobile memory pressure (DEVICE_REQUIRED).",
+  "renderer": {
+    "kind": "software",
+    "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+    "validFor": [
+      "composition",
+      "labels"
+    ]
+  },
+  "profiles": [
+    "HIGH",
+    "STANDARD",
+    "LOW",
+    "FALLBACK_2D"
+  ],
+  "viewports": [
+    "desktop"
+  ],
+  "captures": [
+    {
+      "file": "hydro-cutaway-powerhouse__HIGH__desktop.png",
+      "scenario": "hydro-cutaway-powerhouse",
+      "storyboardScene": "S3",
+      "stage": "cutaway",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "still",
+      "reducedMotion": true
+    },
+    {
+      "file": "hydro-guided-overload-beat__HIGH__desktop.png",
+      "scenario": "hydro-guided-overload-beat",
+      "storyboardScene": "S6",
+      "stage": "guided",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "still",
+      "reducedMotion": true
+    },
+    {
+      "file": "hydro-inspect-breaker__HIGH__desktop.png",
+      "scenario": "hydro-inspect-breaker",
+      "storyboardScene": "S8",
+      "stage": "challenge",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "still",
+      "reducedMotion": true
+    },
+    {
+      "file": "hydro-cutaway-powerhouse__STANDARD__desktop.png",
+      "scenario": "hydro-cutaway-powerhouse",
+      "storyboardScene": "S3",
+      "stage": "cutaway",
+      "profile": "STANDARD",
+      "viewport": "desktop",
+      "kind": "still",
+      "reducedMotion": true
+    },
+    {
+      "file": "hydro-guided-overload-beat__STANDARD__desktop.png",
+      "scenario": "hydro-guided-overload-beat",
+      "storyboardScene": "S6",
+      "stage": "guided",
+      "profile": "STANDARD",
+      "viewport": "desktop",
+      "kind": "still",
+      "reducedMotion": true
+    },
+    {
+      "file": "hydro-inspect-breaker__STANDARD__desktop.png",
+      "scenario": "hydro-inspect-breaker",
+      "storyboardScene": "S8",
+      "stage": "challenge",
+      "profile": "STANDARD",
+      "viewport": "desktop",
+      "kind": "still",
+      "reducedMotion": true
+    },
+    {
+      "file": "hydro-cutaway-powerhouse__LOW__desktop.png",
+      "scenario": "hydro-cutaway-powerhouse",
+      "storyboardScene": "S3",
+      "stage": "cutaway",
+      "profile": "LOW",
+      "viewport": "desktop",
+      "kind": "still",
+      "reducedMotion": true
+    },
+    {
+      "file": "hydro-guided-overload-beat__LOW__desktop.png",
+      "scenario": "hydro-guided-overload-beat",
+      "storyboardScene": "S6",
+      "stage": "guided",
+      "profile": "LOW",
+      "viewport": "desktop",
+      "kind": "still",
+      "reducedMotion": true
+    },
+    {
+      "file": "hydro-inspect-breaker__LOW__desktop.png",
+      "scenario": "hydro-inspect-breaker",
+      "storyboardScene": "S8",
+      "stage": "challenge",
+      "profile": "LOW",
+      "viewport": "desktop",
+      "kind": "still",
+      "reducedMotion": true
+    },
+    {
+      "file": "hydro-cutaway-powerhouse__FALLBACK_2D__desktop.png",
+      "scenario": "hydro-cutaway-powerhouse",
+      "storyboardScene": "S3",
+      "stage": "cutaway",
+      "profile": "FALLBACK_2D",
+      "viewport": "desktop",
+      "kind": "still",
+      "reducedMotion": true
+    },
+    {
+      "file": "hydro-guided-overload-beat__FALLBACK_2D__desktop.png",
+      "scenario": "hydro-guided-overload-beat",
+      "storyboardScene": "S6",
+      "stage": "guided",
+      "profile": "FALLBACK_2D",
+      "viewport": "desktop",
+      "kind": "still",
+      "reducedMotion": true
+    },
+    {
+      "file": "hydro-inspect-breaker__FALLBACK_2D__desktop.png",
+      "scenario": "hydro-inspect-breaker",
+      "storyboardScene": "S8",
+      "stage": "challenge",
+      "profile": "FALLBACK_2D",
+      "viewport": "desktop",
+      "kind": "still",
+      "reducedMotion": true
+    }
+  ],
+  "runs": [
+    {
+      "scenario": "hydro-cutaway-powerhouse",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "still",
+      "screenshot": "hydro-cutaway-powerhouse__HIGH__desktop.png",
+      "status": "PASS",
+      "framePlan": {
+        "renderer": "three",
+        "planned": {
+          "drawCalls": 43,
+          "triangles": 8200,
+          "shadowDrawCalls": 14,
+          "shadowTriangles": 1288,
+          "textures": [
+            {
+              "id": "sun-shadow-map",
+              "px": 1024
+            },
+            {
+              "id": "pmrem-environment",
+              "px": 1024
+            }
+          ]
+        },
+        "measured": {
+          "drawCalls": 43,
+          "triangles": 8200,
+          "shadowDrawCalls": 14,
+          "shadowTriangles": 1288
+        },
+        "programs": 12,
+        "memory": {
+          "geometries": 17,
+          "textures": 4
+        }
+      },
+      "frameParity": {
+        "ok": true,
+        "mismatches": []
+      },
+      "threeChunkRequests": [
+        "http://localhost:3000/_next/static/chunks/_app-pages-browser_components_interactive-labs_v2_ThreeScene_tsx.js"
+      ],
+      "controlHitTargets": {
+        "expectedIds": [],
+        "targets": [],
+        "missingIds": []
+      },
+      "actualProfile": "HIGH",
+      "downgradePath": "",
+      "actualRenderer": "three@186",
+      "framesRendered": 3,
+      "drawCalls": 33,
+      "notice": [],
+      "surface": "webgl",
+      "warnings": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "scenario": "hydro-guided-overload-beat",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "still",
+      "screenshot": "hydro-guided-overload-beat__HIGH__desktop.png",
+      "status": "PASS",
+      "framePlan": {
+        "renderer": "three",
+        "planned": {
+          "drawCalls": 55,
+          "triangles": 9046,
+          "shadowDrawCalls": 19,
+          "shadowTriangles": 1428,
+          "textures": [
+            {
+              "id": "sun-shadow-map",
+              "px": 1024
+            },
+            {
+              "id": "pmrem-environment",
+              "px": 1024
+            }
+          ]
+        },
+        "measured": {
+          "drawCalls": 55,
+          "triangles": 9046,
+          "shadowDrawCalls": 19,
+          "shadowTriangles": 1428
+        },
+        "programs": 11,
+        "memory": {
+          "geometries": 27,
+          "textures": 4
+        }
+      },
+      "frameParity": {
+        "ok": true,
+        "mismatches": []
+      },
+      "threeChunkRequests": [
+        "http://localhost:3000/_next/static/chunks/_app-pages-browser_components_interactive-labs_v2_ThreeScene_tsx.js"
+      ],
+      "controlHitTargets": {
+        "expectedIds": [],
+        "targets": [],
+        "missingIds": []
+      },
+      "actualProfile": "HIGH",
+      "downgradePath": "",
+      "actualRenderer": "three@186",
+      "framesRendered": 3,
+      "drawCalls": 42,
+      "notice": [
+        "Spilling 108 m³/s: more water than the running turbines can take"
+      ],
+      "surface": "webgl",
+      "warnings": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "scenario": "hydro-inspect-breaker",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "still",
+      "screenshot": "hydro-inspect-breaker__HIGH__desktop.png",
+      "status": "PASS",
+      "framePlan": {
+        "renderer": "three",
+        "planned": {
+          "drawCalls": 48,
+          "triangles": 9648,
+          "shadowDrawCalls": 20,
+          "shadowTriangles": 1708,
+          "textures": [
+            {
+              "id": "sun-shadow-map",
+              "px": 1024
+            },
+            {
+              "id": "pmrem-environment",
+              "px": 1024
+            }
+          ]
+        },
+        "measured": {
+          "drawCalls": 48,
+          "triangles": 9648,
+          "shadowDrawCalls": 20,
+          "shadowTriangles": 1708
+        },
+        "programs": 11,
+        "memory": {
+          "geometries": 23,
+          "textures": 4
+        }
+      },
+      "frameParity": {
+        "ok": true,
+        "mismatches": []
+      },
+      "threeChunkRequests": [
+        "http://localhost:3000/_next/static/chunks/_app-pages-browser_components_interactive-labs_v2_ThreeScene_tsx.js"
+      ],
+      "controlHitTargets": {
+        "expectedIds": [],
+        "targets": [],
+        "missingIds": []
+      },
+      "actualProfile": "HIGH",
+      "downgradePath": "",
+      "actualRenderer": "three@186",
+      "framesRendered": 3,
+      "drawCalls": 39,
+      "notice": [
+        "Hospital supply is stable in the dry season. Challenge met."
+      ],
+      "surface": "webgl",
+      "warnings": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "scenario": "hydro-cutaway-powerhouse",
+      "profile": "STANDARD",
+      "viewport": "desktop",
+      "kind": "still",
+      "screenshot": "hydro-cutaway-powerhouse__STANDARD__desktop.png",
+      "status": "PASS",
+      "framePlan": {
+        "renderer": "three",
+        "planned": {
+          "drawCalls": 43,
+          "triangles": 8092,
+          "shadowDrawCalls": 0,
+          "shadowTriangles": 0,
+          "textures": []
+        },
+        "measured": {
+          "drawCalls": 43,
+          "triangles": 8092,
+          "shadowDrawCalls": 0,
+          "shadowTriangles": 0
+        },
+        "programs": 10,
+        "memory": {
+          "geometries": 17,
+          "textures": 1
+        }
+      },
+      "frameParity": {
+        "ok": true,
+        "mismatches": []
+      },
+      "threeChunkRequests": [
+        "http://localhost:3000/_next/static/chunks/_app-pages-browser_components_interactive-labs_v2_ThreeScene_tsx.js"
+      ],
+      "controlHitTargets": {
+        "expectedIds": [],
+        "targets": [],
+        "missingIds": []
+      },
+      "actualProfile": "STANDARD",
+      "downgradePath": "",
+      "actualRenderer": "three@186",
+      "framesRendered": 3,
+      "drawCalls": 33,
+      "notice": [],
+      "surface": "webgl",
+      "warnings": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "scenario": "hydro-guided-overload-beat",
+      "profile": "STANDARD",
+      "viewport": "desktop",
+      "kind": "still",
+      "screenshot": "hydro-guided-overload-beat__STANDARD__desktop.png",
+      "status": "PASS",
+      "framePlan": {
+        "renderer": "three",
+        "planned": {
+          "drawCalls": 55,
+          "triangles": 8722,
+          "shadowDrawCalls": 0,
+          "shadowTriangles": 0,
+          "textures": []
+        },
+        "measured": {
+          "drawCalls": 55,
+          "triangles": 8722,
+          "shadowDrawCalls": 0,
+          "shadowTriangles": 0
+        },
+        "programs": 9,
+        "memory": {
+          "geometries": 27,
+          "textures": 1
+        }
+      },
+      "frameParity": {
+        "ok": true,
+        "mismatches": []
+      },
+      "threeChunkRequests": [
+        "http://localhost:3000/_next/static/chunks/_app-pages-browser_components_interactive-labs_v2_ThreeScene_tsx.js"
+      ],
+      "controlHitTargets": {
+        "expectedIds": [],
+        "targets": [],
+        "missingIds": []
+      },
+      "actualProfile": "STANDARD",
+      "downgradePath": "",
+      "actualRenderer": "three@186",
+      "framesRendered": 3,
+      "drawCalls": 42,
+      "notice": [
+        "Spilling 108 m³/s: more water than the running turbines can take"
+      ],
+      "surface": "webgl",
+      "warnings": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "scenario": "hydro-inspect-breaker",
+      "profile": "STANDARD",
+      "viewport": "desktop",
+      "kind": "still",
+      "screenshot": "hydro-inspect-breaker__STANDARD__desktop.png",
+      "status": "PASS",
+      "framePlan": {
+        "renderer": "three",
+        "planned": {
+          "drawCalls": 48,
+          "triangles": 9172,
+          "shadowDrawCalls": 0,
+          "shadowTriangles": 0,
+          "textures": []
+        },
+        "measured": {
+          "drawCalls": 48,
+          "triangles": 9172,
+          "shadowDrawCalls": 0,
+          "shadowTriangles": 0
+        },
+        "programs": 9,
+        "memory": {
+          "geometries": 23,
+          "textures": 1
+        }
+      },
+      "frameParity": {
+        "ok": true,
+        "mismatches": []
+      },
+      "threeChunkRequests": [
+        "http://localhost:3000/_next/static/chunks/_app-pages-browser_components_interactive-labs_v2_ThreeScene_tsx.js"
+      ],
+      "controlHitTargets": {
+        "expectedIds": [],
+        "targets": [],
+        "missingIds": []
+      },
+      "actualProfile": "STANDARD",
+      "downgradePath": "",
+      "actualRenderer": "three@186",
+      "framesRendered": 3,
+      "drawCalls": 39,
+      "notice": [
+        "Hospital supply is stable in the dry season. Challenge met."
+      ],
+      "surface": "webgl",
+      "warnings": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "scenario": "hydro-cutaway-powerhouse",
+      "profile": "LOW",
+      "viewport": "desktop",
+      "kind": "still",
+      "screenshot": "hydro-cutaway-powerhouse__LOW__desktop.png",
+      "status": "PASS",
+      "framePlan": {
+        "renderer": "webgl-pass",
+        "planned": {
+          "drawCalls": 22,
+          "triangles": 1218,
+          "shadowDrawCalls": 0,
+          "shadowTriangles": 0,
+          "textures": []
+        },
+        "measured": {
+          "drawCalls": 22,
+          "triangles": 1218,
+          "shadowDrawCalls": 0,
+          "shadowTriangles": 0
+        }
+      },
+      "frameParity": {
+        "ok": true,
+        "mismatches": []
+      },
+      "threeChunkRequests": [],
+      "controlHitTargets": {
+        "expectedIds": [],
+        "targets": [],
+        "missingIds": []
+      },
+      "actualProfile": "LOW",
+      "downgradePath": "",
+      "actualRenderer": "webgl-pass",
+      "framesRendered": 307,
+      "drawCalls": 22,
+      "notice": [
+        "Unit 1 rotation: turning. Unit 2 rotation: turning. Unit 3 rotation: turning. Unit 4 rotation: turning"
+      ],
+      "surface": "webgl",
+      "warnings": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "scenario": "hydro-guided-overload-beat",
+      "profile": "LOW",
+      "viewport": "desktop",
+      "kind": "still",
+      "screenshot": "hydro-guided-overload-beat__LOW__desktop.png",
+      "status": "PASS",
+      "framePlan": {
+        "renderer": "webgl-pass",
+        "planned": {
+          "drawCalls": 23,
+          "triangles": 1686,
+          "shadowDrawCalls": 0,
+          "shadowTriangles": 0,
+          "textures": []
+        },
+        "measured": {
+          "drawCalls": 23,
+          "triangles": 1686,
+          "shadowDrawCalls": 0,
+          "shadowTriangles": 0
+        }
+      },
+      "frameParity": {
+        "ok": true,
+        "mismatches": []
+      },
+      "threeChunkRequests": [],
+      "controlHitTargets": {
+        "expectedIds": [],
+        "targets": [],
+        "missingIds": []
+      },
+      "actualProfile": "LOW",
+      "downgradePath": "",
+      "actualRenderer": "webgl-pass",
+      "framesRendered": 309,
+      "drawCalls": 23,
+      "notice": [
+        "Unit 1 rotation: turning. Unit 2 rotation: turning. Unit 3 rotation: turning",
+        "Spilling 108 m³/s: more water than the running turbines can take"
+      ],
+      "surface": "webgl",
+      "warnings": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "scenario": "hydro-inspect-breaker",
+      "profile": "LOW",
+      "viewport": "desktop",
+      "kind": "still",
+      "screenshot": "hydro-inspect-breaker__LOW__desktop.png",
+      "status": "PASS",
+      "framePlan": {
+        "renderer": "webgl-pass",
+        "planned": {
+          "drawCalls": 20,
+          "triangles": 1978,
+          "shadowDrawCalls": 0,
+          "shadowTriangles": 0,
+          "textures": []
+        },
+        "measured": {
+          "drawCalls": 20,
+          "triangles": 1978,
+          "shadowDrawCalls": 0,
+          "shadowTriangles": 0
+        }
+      },
+      "frameParity": {
+        "ok": true,
+        "mismatches": []
+      },
+      "threeChunkRequests": [],
+      "controlHitTargets": {
+        "expectedIds": [],
+        "targets": [],
+        "missingIds": []
+      },
+      "actualProfile": "LOW",
+      "downgradePath": "",
+      "actualRenderer": "webgl-pass",
+      "framesRendered": 311,
+      "drawCalls": 20,
+      "notice": [
+        "Unit 1 rotation: turning",
+        "Hospital supply is stable in the dry season. Challenge met."
+      ],
+      "surface": "webgl",
+      "warnings": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "scenario": "hydro-cutaway-powerhouse",
+      "profile": "FALLBACK_2D",
+      "viewport": "desktop",
+      "kind": "still",
+      "screenshot": "hydro-cutaway-powerhouse__FALLBACK_2D__desktop.png",
+      "status": "PASS",
+      "framePlan": null,
+      "frameParity": null,
+      "threeChunkRequests": [],
+      "controlHitTargets": {
+        "expectedIds": [],
+        "targets": [],
+        "missingIds": []
+      },
+      "actualProfile": "FALLBACK_2D",
+      "downgradePath": "",
+      "actualRenderer": "svg",
+      "framesRendered": 1,
+      "drawCalls": null,
+      "notice": [],
+      "surface": "svg",
+      "warnings": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "scenario": "hydro-guided-overload-beat",
+      "profile": "FALLBACK_2D",
+      "viewport": "desktop",
+      "kind": "still",
+      "screenshot": "hydro-guided-overload-beat__FALLBACK_2D__desktop.png",
+      "status": "PASS",
+      "framePlan": null,
+      "frameParity": null,
+      "threeChunkRequests": [],
+      "controlHitTargets": {
+        "expectedIds": [],
+        "targets": [],
+        "missingIds": []
+      },
+      "actualProfile": "FALLBACK_2D",
+      "downgradePath": "",
+      "actualRenderer": "svg",
+      "framesRendered": 1,
+      "drawCalls": null,
+      "notice": [
+        "Spilling 108 m³/s: more water than the running turbines can take"
+      ],
+      "surface": "svg",
+      "warnings": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "scenario": "hydro-inspect-breaker",
+      "profile": "FALLBACK_2D",
+      "viewport": "desktop",
+      "kind": "still",
+      "screenshot": "hydro-inspect-breaker__FALLBACK_2D__desktop.png",
+      "status": "PASS",
+      "framePlan": null,
+      "frameParity": null,
+      "threeChunkRequests": [],
+      "controlHitTargets": {
+        "expectedIds": [],
+        "targets": [],
+        "missingIds": []
+      },
+      "actualProfile": "FALLBACK_2D",
+      "downgradePath": "",
+      "actualRenderer": "svg",
+      "framesRendered": 1,
+      "drawCalls": null,
+      "notice": [
+        "Hospital supply is stable in the dry season. Challenge met."
+      ],
+      "surface": "svg",
+      "warnings": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    }
+  ]
+}

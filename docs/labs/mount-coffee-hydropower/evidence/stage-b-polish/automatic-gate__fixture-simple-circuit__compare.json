@@ -1,0 +1,10 @@
+{
+  "a": "artifacts/lab-review/runtime-gate/fixture-simple-circuit/a",
+  "b": "artifacts/lab-review/runtime-gate/fixture-simple-circuit/b",
+  "compared": 8,
+  "identical": 8,
+  "differing": [],
+  "onlyInA": [],
+  "onlyInB": [],
+  "deterministic": true
+}

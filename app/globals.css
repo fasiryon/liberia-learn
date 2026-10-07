@@ -1,5 +1,14 @@
 @import "tailwindcss";
 
+@layer components {
+  .lab-control-affordance {
+    @apply pointer-events-none absolute flex h-6 w-6 items-center justify-center rounded-full border-2 bg-slate-950/40 text-[11px] font-black leading-none text-amber-100;
+  }
+  .lab-phone-control {
+    @apply pointer-events-auto absolute rounded-lg border-2 border-slate-900 bg-amber-100 text-center text-[10px] leading-tight text-slate-950 focus-visible:outline focus-visible:outline-white;
+  }
+}
+
 :root {
   --background: #ffffff;
   --foreground: #171717;

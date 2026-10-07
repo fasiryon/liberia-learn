@@ -1,0 +1,161 @@
+{
+  "labId": "mount-coffee-hydropower",
+  "labVersion": "1.1.0",
+  "gitSha": "78fb4f92c6b74de3532781ee78b2e217bd8d5e05",
+  "environment": "headless Chromium, SwiftShader WebGL",
+  "results": [
+    {
+      "test": "remount-loop",
+      "profile": "LOW",
+      "mounts": 20,
+      "ok": true,
+      "problems": [],
+      "live": 1,
+      "warnings": [],
+      "firstMountMemory": null,
+      "perMount": [
+        {
+          "mount": 1,
+          "live": 1,
+          "memory": null
+        },
+        {
+          "mount": 2,
+          "live": 1,
+          "memory": null
+        },
+        {
+          "mount": 3,
+          "live": 1,
+          "memory": null
+        },
+        {
+          "mount": 4,
+          "live": 1,
+          "memory": null
+        },
+        {
+          "mount": 5,
+          "live": 1,
+          "memory": null
+        },
+        {
+          "mount": 6,
+          "live": 1,
+          "memory": null
+        },
+        {
+          "mount": 7,
+          "live": 1,
+          "memory": null
+        },
+        {
+          "mount": 8,
+          "live": 1,
+          "memory": null
+        },
+        {
+          "mount": 9,
+          "live": 1,
+          "memory": null
+        },
+        {
+          "mount": 10,
+          "live": 1,
+          "memory": null
+        },
+        {
+          "mount": 11,
+          "live": 1,
+          "memory": null
+        },
+        {
+          "mount": 12,
+          "live": 1,
+          "memory": null
+        },
+        {
+          "mount": 13,
+          "live": 1,
+          "memory": null
+        },
+        {
+          "mount": 14,
+          "live": 1,
+          "memory": null
+        },
+        {
+          "mount": 15,
+          "live": 1,
+          "memory": null
+        },
+        {
+          "mount": 16,
+          "live": 1,
+          "memory": null
+        },
+        {
+          "mount": 17,
+          "live": 1,
+          "memory": null
+        },
+        {
+          "mount": 18,
+          "live": 1,
+          "memory": null
+        },
+        {
+          "mount": 19,
+          "live": 1,
+          "memory": null
+        },
+        {
+          "mount": 20,
+          "live": 1,
+          "memory": null
+        }
+      ],
+      "heapBeforeMB": 43.69,
+      "heapAfterMB": 44.7,
+      "heapGrowthMB": 1.01,
+      "pageErrors": []
+    },
+    {
+      "test": "context-loss",
+      "profile": "FALLBACK_2D",
+      "ok": true,
+      "problems": [],
+      "path": "LOW>FALLBACK_2D:context LOW>FALLBACK_2D:context",
+      "notice": "Switched to lighter graphics: 3D is not available on this device, so the lab shows the 2D view."
+    },
+    {
+      "test": "low-buffer-identity",
+      "profile": "LOW",
+      "ok": true,
+      "problems": [],
+      "toggles": 27,
+      "warmApplied": 27,
+      "applied": 27,
+      "before": {
+        "create": 56,
+        "data": 52,
+        "sub": 708,
+        "del": 13
+      },
+      "after": {
+        "create": 56,
+        "data": 52,
+        "sub": 1362,
+        "del": 13
+      },
+      "delta": {
+        "create": 0,
+        "data": 0,
+        "sub": 654,
+        "del": 0
+      },
+      "pageErrors": []
+    }
+  ],
+  "boundary": "Software-GL lifecycle evidence: renderer disposal, context release and memory stability. Not a device performance or GPU-memory measurement."
+}

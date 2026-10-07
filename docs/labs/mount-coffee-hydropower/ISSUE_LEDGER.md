@@ -171,16 +171,16 @@ The director inspected 16 HIGH stills (desktop and mobile). Before its turn limi
 
 | Id | Sev | Finding | Status |
 |---|---|---|---|
-| HYDRO-R3D-001 | P1 | **IMPROVED, still OPEN.** Trip and restore now show in the scene on every desktop profile; the lit tint is pale on HIGH/STANDARD, the city is tiny on a LOW phone and out of frame in phone Challenge mode | run 37429556324 (visual re-check) |
-| HYDRO-R3D-002 | P1 | Phone grid-city framing: the city is small and unlabelled | PARTLY FIXED: city labels shown on phones (0a40f111, recapture run 37086350967). A portrait-fitted city camera is OPEN |
-| HYDRO-R3D-003 | P1 | Cutaway/exploded: the runner has low salience; the phone exploded view frames the valley | OPEN: fit unit-bench and exploded presets to the stack bounds, a larger bladed runner, hide routes in S3 |
-| HYDRO-R3D-004 | P1 | Guided prompts contradict the scene in S6 and S4 flood fixtures | OPEN: S6 fixtures should follow the guided correction; flood needs its own S4 prompt; a state-aware "you left this step's premise" addendum |
-| HYDRO-R3D-005 | P1 | The desktop right column clips Next step and the challenge status | OPEN (regresses HYDRO-R2-V-RIGHT-COLUMN-001, now reopened) |
+| HYDRO-R3D-001 | P1 | Trip/restoration consequences across profiles | FIXED: Warm energized city material, separate available capacity/delivered MW, zero-delivery trip and exact blocker/reset state. Trip, safe-not-reset and restored scenes reviewed. See Stage B closure below. |
+| HYDRO-R3D-002 | P1 | Portrait city framing | FIXED: Fit all city block bounds, preserve Hospital/Homes/Shops labels and keep phone controls clear of labels. See Stage B closure below. |
+| HYDRO-R3D-003 | P1 | Cutaway/exploded instructional framing and runner salience | BLOCKED: Engineering framing, runner annotation and route obstruction are FIXED. Remaining slender-spoke rotor form/salience requires the separately scoped asset track (R3D-007 / FOUNDER-IMMERSION); no major asset rebuild or new mechanics in Stage B. Cutaway/exploded benchmark remains BELOW. See Stage B closure below. |
+| HYDRO-R3D-004 | P1 | Guided prompts contradict actual state | FIXED: Use actual guided index, exposed stack, live capacity/demand/latch/reset reason, and selected seasonal/turbine flow. Zero-turbine flood wording is covered by a state-transition regression test and independent source-copy re-review. See Stage B closure below. |
+| HYDRO-R3D-005 | P1 | Desktop Next step/challenge clipping | FIXED: Remove sticky explanation overlay; independently scroll explanation and outer control column. Actual desktop Next and challenge HUD/panel reviewed; keyboard reaches downstream controls. See Stage B closure below. |
 | HYDRO-R3D-006 | P1 | **IMPROVED.** The phone bottom-sheet peek shows the challenge objective on first paint; the Challenge-mode overflow it exposed is fixed at 90eff6c6 | run 37429556324; 90eff6c6 |
 | HYDRO-R3D-007 | P1 | Grey-box dominance: the plant and city still read as placeholders; a beige occluder in the city camera | OPEN. Keeps HYDRO-FOUNDER-IMMERSION-001 OPEN (partly addressed) and absorbs HYDRO-R2-V-DECOR-SALIENCE-001 |
-| HYDRO-R3D-008 | P1 | **CLOSED on HIGH/STANDARD/LOW, IMPROVED on 2D.** Every unit carries a status glyph and text (HUD list on all profiles); 2D shows the glyph in the scene and names the status in the part's accessible name | run 37429556324; 90eff6c6 |
-| HYDRO-R3D-009 | P1 | Benchmark reference captures are missing; LOW/2D reach is unscored | OPEN: restore or regenerate the references, then re-score with real file pairs |
-| HYDRO-R3D-010 | P2 | Unlabelled supply/demand bars in the scene | DEFERRED (with HYDRO-R3V-012) |
+| HYDRO-R3D-008 | P1 | Idle/generating unit readability | FIXED: Naturally touched by R4V-005: every profile has readable status glyph and named HUD state; 2D glyph now painted after its polygon. See Stage B closure below. |
+| HYDRO-R3D-009 | P1 | Missing benchmark references and inferred scores | FIXED: Regenerate six legitimate internal references via documented tooling on 8ca0dd9d; retain manifests/provenance and re-score nine dimensions using actual file pairs. Eight MEETS, one BELOW; device/art evidence remains UNVERIFIED. See Stage B closure below. |
+| HYDRO-R3D-010 | P2 | Unlabelled gauge strip | FIXED: Naturally touched: scene legend explains upper available capacity (22 MW per segment), lower demand and zero delivery during trip. See Stage B closure below. |
 | HYDRO-R3D-011 | P2 | Trace route dots clutter non-trace beats | DEFERRED |
 | HYDRO-R3D-012 | P2 | "Challenge met" uses the warning style; the trip message appears three times | DEFERRED (with HYDRO-R3V-016/017) |
 | HYDRO-R3D-013 | P2 | In-scene controls lack a visible affordance in stills | DEFERRED |
@@ -222,10 +222,10 @@ Disposition after final acceptance closure (2026-10-06):
 |---|---|---|---|---|
 | HYDRO-R4V-003 | visual | P0 | FALLBACK_2D drops part and unit labels the 3D profiles carry (runner, shaft, unit housings) | CLOSED: shared label parity/priority at d3581b42; final 408 captures PASS |
 | HYDRO-R4V-004 | visual | P1 | LOW labels drift onto the wrong parts (no leaders; step-relevant parts not prioritised) | CLOSED: part-space anchoring and priority at d3581b42; final LOW 102 captures PASS |
-| HYDRO-R4I-007 | interaction | P1 | Phone scene targets for breakers and gauge bands are 6 to 16 px | Mount Coffee polish (phone control preset, hit proxies) |
+| HYDRO-R4I-007 | interaction | P1 | Phone scene targets for breakers and gauge bands are 6 to 16 px | FIXED: 44 CSS px native-button hit proxies, 4 px separation, measured nine-point hit coverage and expected visible-control completeness. Dedicated season/feeder presets and panel twins preserve actual geometry and keyboard actions. See Stage B closure below. |
 | HYDRO-R4I-008 | interaction | P2 | A14 in-scene "Confirm?" label and shared affordance token missing | CLOSED: shared token/label at d3581b42; tests and final captures |
 | HYDRO-R4I-009 | interaction | P2 | HIGH to LOW downgrade does not carry the orbited pose | CLOSED: carried pose at d3581b42; continuity tests |
-| HYDRO-R4V-005 | visual | P2 | Lit-city colour differs by profile; idle glyph small; gauge strip unlabelled | Mount Coffee polish |
+| HYDRO-R4V-005 | visual | P2 | Lit-city colour differs by profile; idle glyph small; gauge strip unlabelled | FIXED: Shared warm energized material, larger readable status glyphs (SVG drawn above its shape), textual status list and upper-capacity/lower-demand legend. See Stage B closure below. |
 | HYDRO-R4P-006 | performance | P2 | Uncaught chunk-abort page errors; chunk gate needs a cumulative anchor; parity gates not on PR CI | OPEN only for known chunk-abort page errors; cumulative cap and automatic PR parity CLOSED |
 
 ## Current runtime acceptance — 2026-10-06
@@ -233,3 +233,23 @@ Disposition after final acceptance closure (2026-10-06):
 RX-005 and RX-006 are **IMPLEMENTED** together; historical PROPOSED and pending-evidence statements above are superseded. Final runs 37489886085 / 37489902558 at ae3a1ec05967fb249b3490f4d3598f7989640611 verify the R4 fixes, 552 captures and 552 deterministic pairs. R4P-001–005, R4I-001–006 and R4V-001–004 are CLOSED for their runtime symptoms. R4I-008/009 are CLOSED. R3P-003/005/006 are closed for accounting/code/lifecycle, without phone performance certification. Both required final reviewers ACCEPT; exact rationale and limitations are in REVIEW_LOG.md.
 
 New bounded design P2 HYDRO-RX-A7-EDGE-001: coarse desktop ground-shadow edges beneath right-hand breaker blocks in cutaway/exploded GPU stills. Nonblocking A7 acceptance; any later smoothing must retain the accepted 1024 px cost. R4P-006 remains open only for the two dev-server aborted-chunk page errors (52/52 walkthrough steps complete). R4I-007 and R4V-005, the named product/benchmark/art/immersion findings and physical-device limitations remain open. Mount Coffee remains DRAFT/PENDING/UNRELEASED, curriculum inactive, student inaccessible, DO_NOT_SHIP.
+
+
+## Stage B current disposition — 2026-10-07
+
+This section supersedes historical product statuses/scores above; RX-005/RX-006 remain IMPLEMENTED. Source `5fe8f3ca17dad18b020e30b77eb536ef6d2604cd`, PR #170, independent bounded review in [STAGE_B_REVIEW.md](STAGE_B_REVIEW.md). FIXED means CLOSED within the stated scope; source/capture evidence is preserved in [evidence/stage-b-polish](evidence/stage-b-polish/).
+
+| Finding | Current status | Disposition |
+|---|---|---|
+| HYDRO-R3D-001 | FIXED | Warm energized city material, separate available capacity/delivered MW, zero-delivery trip and exact blocker/reset state. Trip, safe-not-reset and restored scenes reviewed. |
+| HYDRO-R3D-002 | FIXED | Fit all city block bounds, preserve Hospital/Homes/Shops labels and keep phone controls clear of labels. |
+| HYDRO-R3D-003 | BLOCKED | Engineering framing, runner annotation and route obstruction are FIXED. Remaining slender-spoke rotor form/salience requires the separately scoped asset track (R3D-007 / FOUNDER-IMMERSION); no major asset rebuild or new mechanics in Stage B. Cutaway/exploded benchmark remains BELOW. |
+| HYDRO-R3D-004 | FIXED | Use actual guided index, exposed stack, live capacity/demand/latch/reset reason, and selected seasonal/turbine flow. Zero-turbine flood wording is covered by a state-transition regression test and independent source-copy re-review. |
+| HYDRO-R3D-005 | FIXED | Remove sticky explanation overlay; independently scroll explanation and outer control column. Actual desktop Next and challenge HUD/panel reviewed; keyboard reaches downstream controls. |
+| HYDRO-R3D-009 | FIXED | Regenerate six legitimate internal references via documented tooling on 8ca0dd9d; retain manifests/provenance and re-score nine dimensions using actual file pairs. Eight MEETS, one BELOW; device/art evidence remains UNVERIFIED. |
+| HYDRO-R4I-007 | FIXED | 44 CSS px native-button hit proxies, 4 px separation, measured nine-point hit coverage and expected visible-control completeness. Dedicated season/feeder presets and panel twins preserve actual geometry and keyboard actions. |
+| HYDRO-R4V-005 | FIXED | Shared warm energized material, larger readable status glyphs (SVG drawn above its shape), textual status list and upper-capacity/lower-demand legend. |
+| HYDRO-R3D-008 | FIXED | Naturally touched by R4V-005: every profile has readable status glyph and named HUD state; 2D glyph now painted after its polygon. |
+| HYDRO-R3D-010 | FIXED | Naturally touched: scene legend explains upper available capacity (22 MW per segment), lower demand and zero delivery during trip. |
+
+No engineering-fixable P0/P1 remains in the bounded Stage B target set. R3D-003 is BLOCKED only on separately scoped runner art/salience, not runtime or missing references. R3D-007 and FOUNDER-IMMERSION remain OPEN; unrelated deferred findings are unchanged. Benchmark: eight MEETS (one BEATS, seven MATCHES), one BELOW; physical-device dimensions UNVERIFIED. Overall DO_NOT_SHIP, DRAFT, approval PENDING, curriculum inactive, student access disabled. Exact-head CI/runtime checks are mandatory before merge; final checks are linked from PR #170.

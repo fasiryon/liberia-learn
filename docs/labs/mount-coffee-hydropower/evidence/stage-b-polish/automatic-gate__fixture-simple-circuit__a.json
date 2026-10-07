@@ -1,0 +1,454 @@
+{
+  "labId": "fixture-simple-circuit",
+  "labVersion": "1.0.0",
+  "reviewState": "DRAFT",
+  "label": "gate-a",
+  "gitSha": "caf21a25b611d1809ccb4ffac8a3bde45a217ade",
+  "capturedAt": "2026-10-07T16:07:53.854Z",
+  "environment": "GitHub Actions (Linux, run 37647419464) dev server, headless Chromium, virtual clock paused from navigation for stills and motion frames",
+  "rendererIdentityRule": "HIGH/STANDARD must be drawn by three@*, LOW by webgl-pass, FALLBACK_2D by svg, at the requested profile, with at least one frame drawn; otherwise status FAIL.",
+  "framePlanRule": "RX-005 A8 / RX-006 test 1: the shared frame planner must equal the renderer's own count for the probed frame (three.js: renderer.info with frustum culling off and the shadow pass forced; LOW: counted drawArrays); otherwise status FAIL.",
+  "threeChunkRule": "RX-005 A8: LOW and FALLBACK_2D runs must make zero requests for a script carrying three.js; otherwise status FAIL.",
+  "deviceBoundary": "Headless browser evidence proves rendering correctness, composition, layout, interaction automation and renderer/profile routing only. It does not prove low-end GPU performance, touch latency, thermal behaviour or mobile memory pressure (DEVICE_REQUIRED).",
+  "renderer": {
+    "kind": "software",
+    "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+    "validFor": [
+      "composition",
+      "labels"
+    ]
+  },
+  "profiles": [
+    "HIGH",
+    "STANDARD",
+    "LOW",
+    "FALLBACK_2D"
+  ],
+  "viewports": [
+    "desktop"
+  ],
+  "captures": [
+    {
+      "file": "current-starts__HIGH__desktop.png",
+      "scenario": "current-starts",
+      "stage": "process",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "still",
+      "reducedMotion": true
+    },
+    {
+      "file": "bulb-cutaway__HIGH__desktop.png",
+      "scenario": "bulb-cutaway",
+      "stage": "cutaway",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "still",
+      "reducedMotion": true
+    },
+    {
+      "file": "current-starts__STANDARD__desktop.png",
+      "scenario": "current-starts",
+      "stage": "process",
+      "profile": "STANDARD",
+      "viewport": "desktop",
+      "kind": "still",
+      "reducedMotion": true
+    },
+    {
+      "file": "bulb-cutaway__STANDARD__desktop.png",
+      "scenario": "bulb-cutaway",
+      "stage": "cutaway",
+      "profile": "STANDARD",
+      "viewport": "desktop",
+      "kind": "still",
+      "reducedMotion": true
+    },
+    {
+      "file": "current-starts__LOW__desktop.png",
+      "scenario": "current-starts",
+      "stage": "process",
+      "profile": "LOW",
+      "viewport": "desktop",
+      "kind": "still",
+      "reducedMotion": true
+    },
+    {
+      "file": "bulb-cutaway__LOW__desktop.png",
+      "scenario": "bulb-cutaway",
+      "stage": "cutaway",
+      "profile": "LOW",
+      "viewport": "desktop",
+      "kind": "still",
+      "reducedMotion": true
+    },
+    {
+      "file": "current-starts__FALLBACK_2D__desktop.png",
+      "scenario": "current-starts",
+      "stage": "process",
+      "profile": "FALLBACK_2D",
+      "viewport": "desktop",
+      "kind": "still",
+      "reducedMotion": true
+    },
+    {
+      "file": "bulb-cutaway__FALLBACK_2D__desktop.png",
+      "scenario": "bulb-cutaway",
+      "stage": "cutaway",
+      "profile": "FALLBACK_2D",
+      "viewport": "desktop",
+      "kind": "still",
+      "reducedMotion": true
+    }
+  ],
+  "runs": [
+    {
+      "scenario": "current-starts",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "still",
+      "screenshot": "current-starts__HIGH__desktop.png",
+      "status": "PASS",
+      "framePlan": {
+        "renderer": "three",
+        "planned": {
+          "drawCalls": 12,
+          "triangles": 3014,
+          "shadowDrawCalls": 0,
+          "shadowTriangles": 0,
+          "textures": []
+        },
+        "measured": {
+          "drawCalls": 12,
+          "triangles": 3014,
+          "shadowDrawCalls": 0,
+          "shadowTriangles": 0
+        },
+        "programs": 6,
+        "memory": {
+          "geometries": 8,
+          "textures": 1
+        }
+      },
+      "frameParity": {
+        "ok": true,
+        "mismatches": []
+      },
+      "threeChunkRequests": [
+        "http://localhost:3000/_next/static/chunks/_app-pages-browser_components_interactive-labs_v2_ThreeScene_tsx.js"
+      ],
+      "controlHitTargets": {
+        "expectedIds": [],
+        "targets": [],
+        "missingIds": []
+      },
+      "actualProfile": "HIGH",
+      "downgradePath": "",
+      "actualRenderer": "three@186",
+      "framesRendered": 3,
+      "drawCalls": 12,
+      "notice": [],
+      "surface": "webgl",
+      "warnings": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "scenario": "bulb-cutaway",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "still",
+      "screenshot": "bulb-cutaway__HIGH__desktop.png",
+      "status": "PASS",
+      "framePlan": {
+        "renderer": "three",
+        "planned": {
+          "drawCalls": 14,
+          "triangles": 4242,
+          "shadowDrawCalls": 0,
+          "shadowTriangles": 0,
+          "textures": []
+        },
+        "measured": {
+          "drawCalls": 14,
+          "triangles": 4242,
+          "shadowDrawCalls": 0,
+          "shadowTriangles": 0
+        },
+        "programs": 7,
+        "memory": {
+          "geometries": 8,
+          "textures": 1
+        }
+      },
+      "frameParity": {
+        "ok": true,
+        "mismatches": []
+      },
+      "threeChunkRequests": [
+        "http://localhost:3000/_next/static/chunks/_app-pages-browser_components_interactive-labs_v2_ThreeScene_tsx.js"
+      ],
+      "controlHitTargets": {
+        "expectedIds": [],
+        "targets": [],
+        "missingIds": []
+      },
+      "actualProfile": "HIGH",
+      "downgradePath": "",
+      "actualRenderer": "three@186",
+      "framesRendered": 3,
+      "drawCalls": 12,
+      "notice": [],
+      "surface": "webgl",
+      "warnings": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "scenario": "current-starts",
+      "profile": "STANDARD",
+      "viewport": "desktop",
+      "kind": "still",
+      "screenshot": "current-starts__STANDARD__desktop.png",
+      "status": "PASS",
+      "framePlan": {
+        "renderer": "three",
+        "planned": {
+          "drawCalls": 12,
+          "triangles": 2942,
+          "shadowDrawCalls": 0,
+          "shadowTriangles": 0,
+          "textures": []
+        },
+        "measured": {
+          "drawCalls": 12,
+          "triangles": 2942,
+          "shadowDrawCalls": 0,
+          "shadowTriangles": 0
+        },
+        "programs": 6,
+        "memory": {
+          "geometries": 8,
+          "textures": 1
+        }
+      },
+      "frameParity": {
+        "ok": true,
+        "mismatches": []
+      },
+      "threeChunkRequests": [
+        "http://localhost:3000/_next/static/chunks/_app-pages-browser_components_interactive-labs_v2_ThreeScene_tsx.js"
+      ],
+      "controlHitTargets": {
+        "expectedIds": [],
+        "targets": [],
+        "missingIds": []
+      },
+      "actualProfile": "STANDARD",
+      "downgradePath": "",
+      "actualRenderer": "three@186",
+      "framesRendered": 3,
+      "drawCalls": 12,
+      "notice": [],
+      "surface": "webgl",
+      "warnings": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "scenario": "bulb-cutaway",
+      "profile": "STANDARD",
+      "viewport": "desktop",
+      "kind": "still",
+      "screenshot": "bulb-cutaway__STANDARD__desktop.png",
+      "status": "PASS",
+      "framePlan": {
+        "renderer": "three",
+        "planned": {
+          "drawCalls": 14,
+          "triangles": 4170,
+          "shadowDrawCalls": 0,
+          "shadowTriangles": 0,
+          "textures": []
+        },
+        "measured": {
+          "drawCalls": 14,
+          "triangles": 4170,
+          "shadowDrawCalls": 0,
+          "shadowTriangles": 0
+        },
+        "programs": 7,
+        "memory": {
+          "geometries": 8,
+          "textures": 1
+        }
+      },
+      "frameParity": {
+        "ok": true,
+        "mismatches": []
+      },
+      "threeChunkRequests": [
+        "http://localhost:3000/_next/static/chunks/_app-pages-browser_components_interactive-labs_v2_ThreeScene_tsx.js"
+      ],
+      "controlHitTargets": {
+        "expectedIds": [],
+        "targets": [],
+        "missingIds": []
+      },
+      "actualProfile": "STANDARD",
+      "downgradePath": "",
+      "actualRenderer": "three@186",
+      "framesRendered": 3,
+      "drawCalls": 12,
+      "notice": [],
+      "surface": "webgl",
+      "warnings": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "scenario": "current-starts",
+      "profile": "LOW",
+      "viewport": "desktop",
+      "kind": "still",
+      "screenshot": "current-starts__LOW__desktop.png",
+      "status": "PASS",
+      "framePlan": {
+        "renderer": "webgl-pass",
+        "planned": {
+          "drawCalls": 6,
+          "triangles": 484,
+          "shadowDrawCalls": 0,
+          "shadowTriangles": 0,
+          "textures": []
+        },
+        "measured": {
+          "drawCalls": 6,
+          "triangles": 484,
+          "shadowDrawCalls": 0,
+          "shadowTriangles": 0
+        }
+      },
+      "frameParity": {
+        "ok": true,
+        "mismatches": []
+      },
+      "threeChunkRequests": [],
+      "controlHitTargets": {
+        "expectedIds": [],
+        "targets": [],
+        "missingIds": []
+      },
+      "actualProfile": "LOW",
+      "downgradePath": "",
+      "actualRenderer": "webgl-pass",
+      "framesRendered": 305,
+      "drawCalls": 6,
+      "notice": [
+        ""
+      ],
+      "surface": "webgl",
+      "warnings": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "scenario": "bulb-cutaway",
+      "profile": "LOW",
+      "viewport": "desktop",
+      "kind": "still",
+      "screenshot": "bulb-cutaway__LOW__desktop.png",
+      "status": "PASS",
+      "framePlan": {
+        "renderer": "webgl-pass",
+        "planned": {
+          "drawCalls": 5,
+          "triangles": 304,
+          "shadowDrawCalls": 0,
+          "shadowTriangles": 0,
+          "textures": []
+        },
+        "measured": {
+          "drawCalls": 5,
+          "triangles": 304,
+          "shadowDrawCalls": 0,
+          "shadowTriangles": 0
+        }
+      },
+      "frameParity": {
+        "ok": true,
+        "mismatches": []
+      },
+      "threeChunkRequests": [],
+      "controlHitTargets": {
+        "expectedIds": [],
+        "targets": [],
+        "missingIds": []
+      },
+      "actualProfile": "LOW",
+      "downgradePath": "",
+      "actualRenderer": "webgl-pass",
+      "framesRendered": 305,
+      "drawCalls": 5,
+      "notice": [
+        ""
+      ],
+      "surface": "webgl",
+      "warnings": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "scenario": "current-starts",
+      "profile": "FALLBACK_2D",
+      "viewport": "desktop",
+      "kind": "still",
+      "screenshot": "current-starts__FALLBACK_2D__desktop.png",
+      "status": "PASS",
+      "framePlan": null,
+      "frameParity": null,
+      "threeChunkRequests": [],
+      "controlHitTargets": {
+        "expectedIds": [],
+        "targets": [],
+        "missingIds": []
+      },
+      "actualProfile": "FALLBACK_2D",
+      "downgradePath": "",
+      "actualRenderer": "svg",
+      "framesRendered": 1,
+      "drawCalls": null,
+      "notice": [],
+      "surface": "svg",
+      "warnings": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "scenario": "bulb-cutaway",
+      "profile": "FALLBACK_2D",
+      "viewport": "desktop",
+      "kind": "still",
+      "screenshot": "bulb-cutaway__FALLBACK_2D__desktop.png",
+      "status": "PASS",
+      "framePlan": null,
+      "frameParity": null,
+      "threeChunkRequests": [],
+      "controlHitTargets": {
+        "expectedIds": [],
+        "targets": [],
+        "missingIds": []
+      },
+      "actualProfile": "FALLBACK_2D",
+      "downgradePath": "",
+      "actualRenderer": "svg",
+      "framesRendered": 1,
+      "drawCalls": null,
+      "notice": [],
+      "surface": "svg",
+      "warnings": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    }
+  ]
+}

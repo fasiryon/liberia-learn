@@ -24,43 +24,43 @@
         "id": "REF-CIRCUIT-OVERVIEW",
         "title": "Simple circuit overview",
         "source": "prior-lab",
-        "capture": "artifacts/lab-review/fixture-simple-circuit/1.0.0/smoke/overview__HIGH__desktop.png",
-        "approval": "LiberiaLearn prior-lab internal reference; composition only."
+        "capture": "docs/labs/mount-coffee-hydropower/evidence/stage-b-benchmark/overview__HIGH__desktop.png",
+        "approval": "LiberiaLearn internal reference regenerated through documented capture tooling, not a historical smoke file. Source 8ca0dd9da09bf80f28a07796cc9f0f244ef48b8f; runs 37528777619 / 37528781631; provenance.json. SwiftShader composition/labels only."
       },
       {
         "id": "REF-CIRCUIT-CURRENT-MOTION",
         "title": "Circuit current motion",
         "source": "prior-lab",
-        "capture": "artifacts/lab-review/fixture-simple-circuit/1.0.0/smoke/current-starts__HIGH__desktop__motion-sheet.png",
-        "approval": "LiberiaLearn prior-lab internal reference; software GL, composition only."
+        "capture": "docs/labs/mount-coffee-hydropower/evidence/stage-b-benchmark/current-starts__HIGH__desktop__motion-sheet.png",
+        "approval": "LiberiaLearn internal reference regenerated through documented capture tooling, not a historical smoke file. Source 8ca0dd9da09bf80f28a07796cc9f0f244ef48b8f; runs 37528777619 / 37528781631; provenance.json. SwiftShader composition/labels only."
       },
       {
         "id": "REF-CIRCUIT-FALLBACK2D",
         "title": "Circuit 2D fallback",
         "source": "prior-lab",
-        "capture": "artifacts/lab-review/fixture-simple-circuit/1.0.0/smoke/current-starts__FALLBACK_2D__desktop.png",
-        "approval": "LiberiaLearn prior-lab internal reference; composition and labels only."
+        "capture": "docs/labs/mount-coffee-hydropower/evidence/stage-b-benchmark/current-starts__FALLBACK_2D__desktop.png",
+        "approval": "LiberiaLearn internal reference regenerated through documented capture tooling, not a historical smoke file. Source 8ca0dd9da09bf80f28a07796cc9f0f244ef48b8f; runs 37528777619 / 37528781631; provenance.json. SwiftShader composition/labels only."
       },
       {
         "id": "REF-SOLIDS-EXPLODED-HIGH",
         "title": "Solids exploded view",
         "source": "prior-lab",
-        "capture": "artifacts/lab-review/g4-solid-figures/2.1.0/smoke/cube-exploded__HIGH__desktop.png",
-        "approval": "LiberiaLearn prior-lab internal reference; software GL, composition only."
+        "capture": "docs/labs/mount-coffee-hydropower/evidence/stage-b-benchmark/cube-exploded__HIGH__desktop.png",
+        "approval": "LiberiaLearn internal reference regenerated through documented capture tooling, not a historical smoke file. Source 8ca0dd9da09bf80f28a07796cc9f0f244ef48b8f; runs 37528777619 / 37528781631; provenance.json. SwiftShader composition/labels only."
       },
       {
         "id": "REF-SOLIDS-EXPLODED-LOW-MOBILE",
         "title": "Solids exploded view, LOW mobile",
         "source": "prior-lab",
-        "capture": "artifacts/lab-review/g4-solid-figures/2.1.0/smoke/cube-exploded__LOW__mobile.png",
-        "approval": "LiberiaLearn prior-lab internal reference; composition and labels only."
+        "capture": "docs/labs/mount-coffee-hydropower/evidence/stage-b-benchmark/cube-exploded__LOW__mobile.png",
+        "approval": "LiberiaLearn internal reference regenerated through documented capture tooling, not a historical smoke file. Source 8ca0dd9da09bf80f28a07796cc9f0f244ef48b8f; runs 37528777619 / 37528781631; provenance.json. SwiftShader composition/labels only."
       },
       {
         "id": "REF-SOLIDS-PRISM-LOW-MOBILE",
         "title": "Solids rebuilt prism, LOW mobile",
         "source": "prior-lab",
-        "capture": "artifacts/lab-review/g4-solid-figures/2.1.0/smoke/prism-rebuilt__LOW__mobile.png",
-        "approval": "LiberiaLearn prior-lab internal reference; composition and labels only."
+        "capture": "docs/labs/mount-coffee-hydropower/evidence/stage-b-benchmark/prism-rebuilt__LOW__mobile.png",
+        "approval": "LiberiaLearn internal reference regenerated through documented capture tooling, not a historical smoke file. Source 8ca0dd9da09bf80f28a07796cc9f0f244ef48b8f; runs 37528777619 / 37528781631; provenance.json. SwiftShader composition/labels only."
       }
     ],
     "qualities": [
@@ -72,7 +72,7 @@
           "REF-SOLIDS-EXPLODED-HIGH"
         ],
         "score": "BEATS",
-        "evidence": "hydro-overview__HIGH__desktop.png and hydro-fault-overload-trip__HIGH__desktop.png (r3-final) vs the design/02 breakdown of REF-CIRCUIT-OVERVIEW / REF-SOLIDS-EXPLODED-HIGH; UNVERIFIED-REFERENCE: reference PNGs not on disk"
+        "evidence": "MEETS: docs/labs/mount-coffee-hydropower/evidence/stage-b-polish/hydro-overview__HIGH__desktop.png versus docs/labs/mount-coffee-hydropower/evidence/stage-b-benchmark/overview__HIGH__desktop.png, docs/labs/mount-coffee-hydropower/evidence/stage-b-benchmark/cube-exploded__HIGH__desktop.png. Independent bounded design review; composition/labels and sampled transition arrangement only.  Physical performance, visual fidelity and student engagement are UNVERIFIED."
       },
       {
         "name": "Cause-to-consequence legibility",
@@ -81,7 +81,7 @@
           "REF-CIRCUIT-CURRENT-MOTION"
         ],
         "score": "MATCHES",
-        "evidence": "hydro-variable-dry-drop vs hydro-overview __HIGH__desktop.png (r3-final) vs the design/02 breakdown of REF-CIRCUIT-CURRENT-MOTION; UNVERIFIED-REFERENCE"
+        "evidence": "MEETS: docs/labs/mount-coffee-hydropower/evidence/stage-b-polish/hydro-variable-dry-drop__HIGH__desktop__motion-sheet.png, docs/labs/mount-coffee-hydropower/evidence/stage-b-polish/hydro-fault-shed-restore__HIGH__desktop__motion-sheet.png, docs/labs/mount-coffee-hydropower/evidence/stage-b-polish/hydro-fault-overload-trip__HIGH__desktop.png, docs/labs/mount-coffee-hydropower/evidence/stage-b-polish/hydro-fault-shed-not-reset__HIGH__desktop.png, docs/labs/mount-coffee-hydropower/evidence/stage-b-polish/hydro-challenge-reset-solved__HIGH__desktop.png versus docs/labs/mount-coffee-hydropower/evidence/stage-b-benchmark/current-starts__HIGH__desktop__motion-sheet.png. Independent bounded design review; composition/labels and sampled transition arrangement only.  Physical performance, visual fidelity and student engagement are UNVERIFIED."
       },
       {
         "name": "Reach on LOW and FALLBACK_2D",
@@ -89,7 +89,9 @@
         "referenceIds": [
           "REF-SOLIDS-EXPLODED-LOW-MOBILE",
           "REF-CIRCUIT-FALLBACK2D"
-        ]
+        ],
+        "score": "MATCHES",
+        "evidence": "MEETS: docs/labs/mount-coffee-hydropower/evidence/stage-b-polish/hydro-challenge-reset-solved__LOW__mobile.png, docs/labs/mount-coffee-hydropower/evidence/stage-b-polish/hydro-exploded-unit__LOW__mobile.png, docs/labs/mount-coffee-hydropower/evidence/stage-b-polish/hydro-fault-overload-trip__FALLBACK_2D__desktop.png versus docs/labs/mount-coffee-hydropower/evidence/stage-b-benchmark/cube-exploded__LOW__mobile.png, docs/labs/mount-coffee-hydropower/evidence/stage-b-benchmark/current-starts__FALLBACK_2D__desktop.png. Independent bounded design review; composition/labels and sampled transition arrangement only.  Physical performance, visual fidelity and student engagement are UNVERIFIED."
       },
       {
         "name": "Cutaway and exploded clarity",
@@ -98,7 +100,7 @@
           "REF-SOLIDS-EXPLODED-HIGH"
         ],
         "score": "BELOW",
-        "evidence": "hydro-cutaway-powerhouse / hydro-exploded-unit __HIGH__desktop and __mobile.png (r3-final) vs the design/02 breakdown of REF-SOLIDS-EXPLODED-HIGH; finding HYDRO-R3D-003"
+        "evidence": "BELOW: docs/labs/mount-coffee-hydropower/evidence/stage-b-polish/hydro-exploded-unit__HIGH__desktop.png, docs/labs/mount-coffee-hydropower/evidence/stage-b-polish/hydro-exploded-unit__LOW__mobile.png versus docs/labs/mount-coffee-hydropower/evidence/stage-b-benchmark/cube-exploded__HIGH__desktop.png, docs/labs/mount-coffee-hydropower/evidence/stage-b-benchmark/cube-exploded__LOW__mobile.png. Independent bounded design review; composition/labels and sampled transition arrangement only. Residual runner art/salience is BLOCKED on the asset track. Physical performance, visual fidelity and student engagement are UNVERIFIED."
       },
       {
         "name": "Camera choreography",
@@ -106,8 +108,8 @@
         "referenceIds": [
           "REF-SOLIDS-EXPLODED-HIGH"
         ],
-        "score": "BELOW",
-        "evidence": "hydro-exploded-unit__HIGH__mobile.png and hydro-challenge-one-block-too-many__HIGH__mobile.png (r3-final) vs REF-SOLIDS-EXPLODED-HIGH; findings HYDRO-R3D-002/003"
+        "score": "MATCHES",
+        "evidence": "MEETS: docs/labs/mount-coffee-hydropower/evidence/stage-b-polish/hydro-exploded-unit__HIGH__desktop__motion-sheet.png versus docs/labs/mount-coffee-hydropower/evidence/stage-b-benchmark/cube-exploded__HIGH__desktop__motion-sheet.png. Independent bounded design review; composition/labels and sampled transition arrangement only.  Physical performance, visual fidelity and student engagement are UNVERIFIED."
       },
       {
         "name": "Guided pacing and panel coherence",
@@ -117,7 +119,7 @@
           "REF-SOLIDS-PRISM-LOW-MOBILE"
         ],
         "score": "MATCHES",
-        "evidence": "hydro-fault-shed-not-reset / hydro-variable-flood-cap __HIGH__desktop.png (r3-final) vs the design/02 breakdown of REF-CIRCUIT-CURRENT-MOTION / REF-SOLIDS-PRISM-LOW-MOBILE; UNVERIFIED-REFERENCE"
+        "evidence": "MEETS: docs/labs/mount-coffee-hydropower/evidence/stage-b-polish/hydro-cutaway-powerhouse__HIGH__desktop.png, docs/labs/mount-coffee-hydropower/evidence/stage-b-polish/hydro-fault-overload-trip__HIGH__desktop.png, docs/labs/mount-coffee-hydropower/evidence/stage-b-polish/hydro-fault-shed-not-reset__HIGH__desktop.png versus docs/labs/mount-coffee-hydropower/evidence/stage-b-benchmark/current-starts__HIGH__desktop__motion-sheet.png, docs/labs/mount-coffee-hydropower/evidence/stage-b-benchmark/prism-rebuilt__LOW__mobile.png. Independent bounded design review; composition/labels and sampled transition arrangement only. Changed guided beats only. Physical performance, visual fidelity and student engagement are UNVERIFIED."
       },
       {
         "name": "Label legibility",
@@ -127,7 +129,7 @@
           "REF-CIRCUIT-FALLBACK2D"
         ],
         "score": "MATCHES",
-        "evidence": "hydro-overview / hydro-cutaway-powerhouse __HIGH__desktop.png (r3-final) vs the design/02 breakdown of REF-CIRCUIT-OVERVIEW / REF-CIRCUIT-FALLBACK2D; UNVERIFIED-REFERENCE"
+        "evidence": "MEETS: docs/labs/mount-coffee-hydropower/evidence/stage-b-polish/hydro-cutaway-powerhouse__LOW__mobile.png, docs/labs/mount-coffee-hydropower/evidence/stage-b-polish/hydro-exploded-unit__LOW__mobile.png, docs/labs/mount-coffee-hydropower/evidence/stage-b-polish/hydro-cutaway-powerhouse__FALLBACK_2D__mobile.png versus docs/labs/mount-coffee-hydropower/evidence/stage-b-benchmark/overview__HIGH__desktop.png, docs/labs/mount-coffee-hydropower/evidence/stage-b-benchmark/current-starts__FALLBACK_2D__desktop.png. Independent bounded design review; composition/labels and sampled transition arrangement only.  Physical performance, visual fidelity and student engagement are UNVERIFIED."
       },
       {
         "name": "Correct wow moment",
@@ -136,7 +138,7 @@
           "REF-SOLIDS-EXPLODED-HIGH"
         ],
         "score": "MATCHES",
-        "evidence": "hydro-variable-dry-drop__HIGH__desktop.png and hydro-fault-overload-trip vs hydro-challenge-reset-solved (r3-final) vs REF-SOLIDS-EXPLODED-HIGH; UNVERIFIED-REFERENCE"
+        "evidence": "MEETS: docs/labs/mount-coffee-hydropower/evidence/stage-b-polish/hydro-fault-overload-trip__HIGH__desktop.png, docs/labs/mount-coffee-hydropower/evidence/stage-b-polish/hydro-challenge-reset-solved__HIGH__desktop.png, docs/labs/mount-coffee-hydropower/evidence/stage-b-polish/hydro-variable-dry-drop__HIGH__desktop__motion-sheet.png versus docs/labs/mount-coffee-hydropower/evidence/stage-b-benchmark/cube-exploded__HIGH__desktop.png, docs/labs/mount-coffee-hydropower/evidence/stage-b-benchmark/cube-exploded__HIGH__desktop__motion-sheet.png. Independent bounded design review; composition/labels and sampled transition arrangement only.  Physical performance, visual fidelity and student engagement are UNVERIFIED."
       },
       {
         "name": "Scene readability",
@@ -146,7 +148,7 @@
           "REF-SOLIDS-PRISM-LOW-MOBILE"
         ],
         "score": "MATCHES",
-        "evidence": "hydro-challenge-*__HIGH__desktop.png and hydro-cutaway-powerhouse__HIGH__desktop.png (r3-final) vs REF-SOLIDS-EXPLODED-HIGH / REF-SOLIDS-PRISM-LOW-MOBILE; UNVERIFIED-REFERENCE"
+        "evidence": "MEETS: docs/labs/mount-coffee-hydropower/evidence/stage-b-polish/hydro-challenge-reset-solved__HIGH__desktop.png, docs/labs/mount-coffee-hydropower/evidence/stage-b-polish/hydro-challenge-reset-solved__LOW__mobile.png, docs/labs/mount-coffee-hydropower/evidence/stage-b-polish/hydro-cutaway-powerhouse__HIGH__desktop.png versus docs/labs/mount-coffee-hydropower/evidence/stage-b-benchmark/cube-exploded__HIGH__desktop.png, docs/labs/mount-coffee-hydropower/evidence/stage-b-benchmark/prism-rebuilt__LOW__mobile.png. Independent bounded design review; composition/labels and sampled transition arrangement only.  Physical performance, visual fidelity and student engagement are UNVERIFIED."
       }
     ]
   },
@@ -597,41 +599,51 @@
           "id": "HYDRO-R3D-001",
           "severity": "P1",
           "lens": "DESIGN",
-          "summary": "City trip/restore consequence carried by the banner, not the scene.",
-          "status": "OPEN",
-          "resolution": "Warm lit facades/windows, dark when off, prominent H sign."
+          "summary": "Trip/restoration consequences across profiles",
+          "status": "FIXED",
+          "resolution": "Warm energized city material, separate available capacity/delivered MW, zero-delivery trip and exact blocker/reset state. Trip, safe-not-reset and restored scenes reviewed.",
+          "commit": "5fe8f3ca17dad18b020e30b77eb536ef6d2604cd",
+          "verifiedOn": "STAGE_B_REVIEW.md; evidence/stage-b-polish/summary.json; independent bounded review"
         },
         {
           "id": "HYDRO-R3D-002",
           "severity": "P1",
           "lens": "DESIGN",
-          "summary": "Phone grid-city framing loses the consequence object.",
-          "status": "OPEN",
-          "resolution": "City labels on phones fixed (0a40f111); portrait-fitted city camera still open."
+          "summary": "Portrait city framing",
+          "status": "FIXED",
+          "resolution": "Fit all city block bounds, preserve Hospital/Homes/Shops labels and keep phone controls clear of labels.",
+          "commit": "5fe8f3ca17dad18b020e30b77eb536ef6d2604cd",
+          "verifiedOn": "STAGE_B_REVIEW.md; evidence/stage-b-polish/summary.json; independent bounded review"
         },
         {
           "id": "HYDRO-R3D-003",
           "severity": "P1",
           "lens": "DESIGN",
-          "summary": "Cutaway/exploded: runner salience and phone framing.",
-          "status": "OPEN",
-          "resolution": "Fit presets to the stack bounds; larger bladed runner; hide routes in S3."
+          "summary": "Cutaway/exploded instructional framing and runner salience",
+          "status": "BLOCKED",
+          "resolution": "Engineering framing, runner annotation and route obstruction are FIXED. Remaining slender-spoke rotor form/salience requires the separately scoped asset track (R3D-007 / FOUNDER-IMMERSION); no major asset rebuild or new mechanics in Stage B. Cutaway/exploded benchmark remains BELOW.",
+          "commit": "5fe8f3ca17dad18b020e30b77eb536ef6d2604cd",
+          "verifiedOn": "STAGE_B_REVIEW.md; evidence/stage-b-polish/summary.json; independent bounded review"
         },
         {
           "id": "HYDRO-R3D-004",
           "severity": "P1",
           "lens": "DESIGN",
-          "summary": "Guided prompts contradict the scene in S6 and S4-flood fixtures.",
-          "status": "OPEN",
-          "resolution": "Fixtures follow the guided correction; flood prompt; state-aware premise addendum."
+          "summary": "Guided prompts contradict actual state",
+          "status": "FIXED",
+          "resolution": "Use actual guided index, exposed stack, live capacity/demand/latch/reset reason, and selected seasonal/turbine flow. Zero-turbine flood wording is covered by a state-transition regression test and independent source-copy re-review.",
+          "commit": "5fe8f3ca17dad18b020e30b77eb536ef6d2604cd",
+          "verifiedOn": "STAGE_B_REVIEW.md; evidence/stage-b-polish/summary.json; independent bounded review"
         },
         {
           "id": "HYDRO-R3D-005",
           "severity": "P1",
           "lens": "DESIGN",
-          "summary": "Desktop right column clips Next step and challenge status.",
-          "status": "OPEN",
-          "resolution": "Own scroll region or step card first."
+          "summary": "Desktop Next step/challenge clipping",
+          "status": "FIXED",
+          "resolution": "Remove sticky explanation overlay; independently scroll explanation and outer control column. Actual desktop Next and challenge HUD/panel reviewed; keyboard reaches downstream controls.",
+          "commit": "5fe8f3ca17dad18b020e30b77eb536ef6d2604cd",
+          "verifiedOn": "STAGE_B_REVIEW.md; evidence/stage-b-polish/summary.json; independent bounded review"
         },
         {
           "id": "HYDRO-R3D-006",
@@ -653,17 +665,137 @@
           "id": "HYDRO-R3D-008",
           "severity": "P1",
           "lens": "DESIGN",
-          "summary": "Idle and generating units indistinguishable at the valley camera.",
-          "status": "OPEN",
-          "resolution": "Frame the powerhouse for that beat; larger lamp and MW-plate cues."
+          "summary": "Idle/generating unit readability",
+          "status": "FIXED",
+          "resolution": "Naturally touched by R4V-005: every profile has readable status glyph and named HUD state; 2D glyph now painted after its polygon.",
+          "commit": "5fe8f3ca17dad18b020e30b77eb536ef6d2604cd",
+          "verifiedOn": "STAGE_B_REVIEW.md; evidence/stage-b-polish/summary.json; independent bounded review"
         },
         {
           "id": "HYDRO-R3D-009",
           "severity": "P1",
           "lens": "DESIGN",
-          "summary": "Benchmark reference captures missing; LOW/2D reach unscored.",
-          "status": "OPEN",
-          "resolution": "Restore or regenerate the six references and re-score with real file pairs."
+          "summary": "Missing benchmark references and inferred scores",
+          "status": "FIXED",
+          "resolution": "Regenerate six legitimate internal references via documented tooling on 8ca0dd9d; retain manifests/provenance and re-score nine dimensions using actual file pairs. Eight MEETS, one BELOW; device/art evidence remains UNVERIFIED.",
+          "commit": "5fe8f3ca17dad18b020e30b77eb536ef6d2604cd",
+          "verifiedOn": "STAGE_B_REVIEW.md; evidence/stage-b-polish/summary.json; independent bounded review"
+        }
+      ]
+    },
+    {
+      "round": 4,
+      "label": "Stage B bounded non-asset polish; engineering ACCEPT, product DO_NOT_SHIP",
+      "date": "2026-10-07",
+      "captures": "docs/labs/mount-coffee-hydropower/evidence/stage-b-polish/; matrix run 37648349891, motion run 37648357989; primary source 78fb4f92c6b74de3532781ee78b2e217bd8d5e05; tap/drag runs 37654034076/37654041330 source 5fe8f3ca17dad18b020e30b77eb536ef6d2604cd",
+      "checkpoint": "5fe8f3ca17dad18b020e30b77eb536ef6d2604cd",
+      "reviewers": [
+        "lab-design-director",
+        "lab-interaction-reviewer",
+        "lab-science-reviewer",
+        "lab-performance-reviewer"
+      ],
+      "renderer": "Headless Chromium / SwiftShader; composition, label/layout, deterministic interaction/routing, accounting and lifecycle only. Physical devices UNVERIFIED.",
+      "findings": [
+        {
+          "id": "HYDRO-R3D-001",
+          "severity": "P1",
+          "lens": "DESIGN",
+          "summary": "Trip/restoration consequences across profiles",
+          "status": "FIXED",
+          "resolution": "Warm energized city material, separate available capacity/delivered MW, zero-delivery trip and exact blocker/reset state. Trip, safe-not-reset and restored scenes reviewed.",
+          "commit": "5fe8f3ca17dad18b020e30b77eb536ef6d2604cd",
+          "verifiedOn": "STAGE_B_REVIEW.md; evidence/stage-b-polish/summary.json; independent bounded review"
+        },
+        {
+          "id": "HYDRO-R3D-002",
+          "severity": "P1",
+          "lens": "DESIGN",
+          "summary": "Portrait city framing",
+          "status": "FIXED",
+          "resolution": "Fit all city block bounds, preserve Hospital/Homes/Shops labels and keep phone controls clear of labels.",
+          "commit": "5fe8f3ca17dad18b020e30b77eb536ef6d2604cd",
+          "verifiedOn": "STAGE_B_REVIEW.md; evidence/stage-b-polish/summary.json; independent bounded review"
+        },
+        {
+          "id": "HYDRO-R3D-003",
+          "severity": "P1",
+          "lens": "DESIGN",
+          "summary": "Cutaway/exploded instructional framing and runner salience",
+          "status": "BLOCKED",
+          "resolution": "Engineering framing, runner annotation and route obstruction are FIXED. Remaining slender-spoke rotor form/salience requires the separately scoped asset track (R3D-007 / FOUNDER-IMMERSION); no major asset rebuild or new mechanics in Stage B. Cutaway/exploded benchmark remains BELOW.",
+          "commit": "5fe8f3ca17dad18b020e30b77eb536ef6d2604cd",
+          "verifiedOn": "STAGE_B_REVIEW.md; evidence/stage-b-polish/summary.json; independent bounded review"
+        },
+        {
+          "id": "HYDRO-R3D-004",
+          "severity": "P1",
+          "lens": "DESIGN",
+          "summary": "Guided prompts contradict actual state",
+          "status": "FIXED",
+          "resolution": "Use actual guided index, exposed stack, live capacity/demand/latch/reset reason, and selected seasonal/turbine flow. Zero-turbine flood wording is covered by a state-transition regression test and independent source-copy re-review.",
+          "commit": "5fe8f3ca17dad18b020e30b77eb536ef6d2604cd",
+          "verifiedOn": "STAGE_B_REVIEW.md; evidence/stage-b-polish/summary.json; independent bounded review"
+        },
+        {
+          "id": "HYDRO-R3D-005",
+          "severity": "P1",
+          "lens": "DESIGN",
+          "summary": "Desktop Next step/challenge clipping",
+          "status": "FIXED",
+          "resolution": "Remove sticky explanation overlay; independently scroll explanation and outer control column. Actual desktop Next and challenge HUD/panel reviewed; keyboard reaches downstream controls.",
+          "commit": "5fe8f3ca17dad18b020e30b77eb536ef6d2604cd",
+          "verifiedOn": "STAGE_B_REVIEW.md; evidence/stage-b-polish/summary.json; independent bounded review"
+        },
+        {
+          "id": "HYDRO-R3D-009",
+          "severity": "P1",
+          "lens": "DESIGN",
+          "summary": "Missing benchmark references and inferred scores",
+          "status": "FIXED",
+          "resolution": "Regenerate six legitimate internal references via documented tooling on 8ca0dd9d; retain manifests/provenance and re-score nine dimensions using actual file pairs. Eight MEETS, one BELOW; device/art evidence remains UNVERIFIED.",
+          "commit": "5fe8f3ca17dad18b020e30b77eb536ef6d2604cd",
+          "verifiedOn": "STAGE_B_REVIEW.md; evidence/stage-b-polish/summary.json; independent bounded review"
+        },
+        {
+          "id": "HYDRO-R4I-007",
+          "severity": "P1",
+          "lens": "INTERACTION",
+          "summary": "Small phone breaker/gauge targets",
+          "status": "FIXED",
+          "resolution": "44 CSS px native-button hit proxies, 4 px separation, measured nine-point hit coverage and expected visible-control completeness. Dedicated season/feeder presets and panel twins preserve actual geometry and keyboard actions.",
+          "commit": "5fe8f3ca17dad18b020e30b77eb536ef6d2604cd",
+          "verifiedOn": "STAGE_B_REVIEW.md; evidence/stage-b-polish/summary.json; independent bounded review"
+        },
+        {
+          "id": "HYDRO-R4V-005",
+          "severity": "P2",
+          "lens": "VISUAL",
+          "summary": "Lit-city profile consistency, idle glyphs and gauge legend",
+          "status": "FIXED",
+          "resolution": "Shared warm energized material, larger readable status glyphs (SVG drawn above its shape), textual status list and upper-capacity/lower-demand legend.",
+          "commit": "5fe8f3ca17dad18b020e30b77eb536ef6d2604cd",
+          "verifiedOn": "STAGE_B_REVIEW.md; evidence/stage-b-polish/summary.json; independent bounded review"
+        },
+        {
+          "id": "HYDRO-R3D-008",
+          "severity": "P1",
+          "lens": "DESIGN",
+          "summary": "Idle/generating unit readability",
+          "status": "FIXED",
+          "resolution": "Naturally touched by R4V-005: every profile has readable status glyph and named HUD state; 2D glyph now painted after its polygon.",
+          "commit": "5fe8f3ca17dad18b020e30b77eb536ef6d2604cd",
+          "verifiedOn": "STAGE_B_REVIEW.md; evidence/stage-b-polish/summary.json; independent bounded review"
+        },
+        {
+          "id": "HYDRO-R3D-010",
+          "severity": "P2",
+          "lens": "DESIGN",
+          "summary": "Unlabelled gauge strip",
+          "status": "FIXED",
+          "resolution": "Naturally touched: scene legend explains upper available capacity (22 MW per segment), lower demand and zero delivery during trip.",
+          "commit": "5fe8f3ca17dad18b020e30b77eb536ef6d2604cd",
+          "verifiedOn": "STAGE_B_REVIEW.md; evidence/stage-b-polish/summary.json; independent bounded review"
         }
       ]
     }
@@ -806,7 +938,7 @@
   ],
   "designVerdict": {
     "verdict": "DO_NOT_SHIP",
-    "round": 3,
-    "date": "2026-10-03"
+    "round": 4,
+    "date": "2026-10-07"
   }
 }

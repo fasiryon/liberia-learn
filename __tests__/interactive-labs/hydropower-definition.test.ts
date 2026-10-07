@@ -7,6 +7,8 @@ import { replayReviewScenario } from "@/lib/interactive-labs/v2/review/scenarios
 import { hydropowerModel } from "@/lib/interactive-labs/v2/definitions/hydropowerModel";
 import { planLowBatches } from "@/lib/interactive-labs/v2/fidelity/lowBatch";
 import type { LabAction } from "@/lib/interactive-labs/v2/types";
+import { framedPose, itemCorners, projectPoint } from "@/lib/interactive-labs/v2/fidelity/camera";
+import { fitHorizontalFieldOfView } from "@/lib/interactive-labs/v2/fidelity/math";
 
 describe("Mount Coffee hydropower design stage", () => {
   it("satisfies the shared authoring and colour gates with ten flows and five checks", () => {
@@ -130,7 +132,19 @@ describe("Mount Coffee hydropower design stage", () => {
 
     const exploded = replayReviewScenario(hydropowerDefinition, HYDROPOWER_REVIEW_SCENARIOS.scenarios.find((scenario) => scenario.id === "hydro-exploded-unit")!);
     if ("reason" in exploded) throw new Error(exploded.reason);
-    expect(buildRenderList({ definition: hydropowerDefinition, state: exploded.state, profile: "HIGH" }).camera?.distance).toBe(9);
+    const list = buildRenderList({ definition: hydropowerDefinition, state: exploded.state, profile: "HIGH" });
+    const spec = hydropowerDefinition.fidelity!;
+    const preset = spec.camera.presets.find((camera) => camera.id === "exploded-bench")!;
+    for (const aspect of [0.8, 1.5]) {
+      const pose = framedPose(spec, preset, list.items, 42, aspect);
+      for (const item of list.items.filter((part) => preset.frame!.componentIds.includes(part.id))) {
+        for (const corner of itemCorners(item)) {
+          const point = projectPoint(pose, corner, fitHorizontalFieldOfView(42, aspect), aspect)!;
+          expect(Math.abs(point[0])).toBeLessThan(1);
+          expect(Math.abs(point[1])).toBeLessThan(1);
+        }
+      }
+    }
 
     const expected: Array<[string, string[]]> = [
       ["hydro-assessment-generator", ["trace-water"]],

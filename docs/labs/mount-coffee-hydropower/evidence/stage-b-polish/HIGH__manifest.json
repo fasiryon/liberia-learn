@@ -1,0 +1,3511 @@
+{
+  "labId": "mount-coffee-hydropower",
+  "labVersion": "1.1.0",
+  "reviewState": "DRAFT",
+  "label": "ci-37648349891-HIGH-stage-b-final",
+  "gitSha": "78fb4f92c6b74de3532781ee78b2e217bd8d5e05",
+  "capturedAt": "2026-10-07T16:08:37.780Z",
+  "environment": "GitHub Actions (Linux, run 37648349891) dev server, headless Chromium, virtual clock paused from navigation for stills and motion frames",
+  "rendererIdentityRule": "HIGH/STANDARD must be drawn by three@*, LOW by webgl-pass, FALLBACK_2D by svg, at the requested profile, with at least one frame drawn; otherwise status FAIL.",
+  "framePlanRule": "RX-005 A8 / RX-006 test 1: the shared frame planner must equal the renderer's own count for the probed frame (three.js: renderer.info with frustum culling off and the shadow pass forced; LOW: counted drawArrays); otherwise status FAIL.",
+  "threeChunkRule": "RX-005 A8: LOW and FALLBACK_2D runs must make zero requests for a script carrying three.js; otherwise status FAIL.",
+  "deviceBoundary": "Headless browser evidence proves rendering correctness, composition, layout, interaction automation and renderer/profile routing only. It does not prove low-end GPU performance, touch latency, thermal behaviour or mobile memory pressure (DEVICE_REQUIRED).",
+  "renderer": {
+    "kind": "software",
+    "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+    "validFor": [
+      "composition",
+      "labels"
+    ]
+  },
+  "profiles": [
+    "HIGH"
+  ],
+  "viewports": [
+    "desktop",
+    "mobile",
+    "landscape"
+  ],
+  "captures": [
+    {
+      "file": "hydro-overview__HIGH__desktop.png",
+      "scenario": "hydro-overview",
+      "storyboardScene": "S1",
+      "stage": "overview",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "still",
+      "reducedMotion": false
+    },
+    {
+      "file": "hydro-season-controls__HIGH__desktop.png",
+      "scenario": "hydro-season-controls",
+      "storyboardScene": "S5",
+      "stage": "variable",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "still",
+      "reducedMotion": false
+    },
+    {
+      "file": "hydro-feeder-controls__HIGH__desktop.png",
+      "scenario": "hydro-feeder-controls",
+      "storyboardScene": "S6",
+      "stage": "variable",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "still",
+      "reducedMotion": false
+    },
+    {
+      "file": "hydro-cutaway-powerhouse__HIGH__desktop.png",
+      "scenario": "hydro-cutaway-powerhouse",
+      "storyboardScene": "S3",
+      "stage": "cutaway",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "still",
+      "reducedMotion": false
+    },
+    {
+      "file": "hydro-exploded-unit__HIGH__desktop.png",
+      "scenario": "hydro-exploded-unit",
+      "storyboardScene": "S3",
+      "stage": "exploded",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "still",
+      "reducedMotion": false
+    },
+    {
+      "file": "hydro-variable-flood-cap__HIGH__desktop.png",
+      "scenario": "hydro-variable-flood-cap",
+      "storyboardScene": "S4",
+      "stage": "variable",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "still",
+      "reducedMotion": false
+    },
+    {
+      "file": "hydro-variable-idle-units-dry__HIGH__desktop.png",
+      "scenario": "hydro-variable-idle-units-dry",
+      "storyboardScene": "S5",
+      "stage": "variable",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "still",
+      "reducedMotion": false
+    },
+    {
+      "file": "hydro-fault-overload-trip__HIGH__desktop.png",
+      "scenario": "hydro-fault-overload-trip",
+      "storyboardScene": "S6",
+      "stage": "fault",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "still",
+      "reducedMotion": false
+    },
+    {
+      "file": "hydro-fault-shed-not-reset__HIGH__desktop.png",
+      "scenario": "hydro-fault-shed-not-reset",
+      "storyboardScene": "S6",
+      "stage": "fault",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "still",
+      "reducedMotion": false
+    },
+    {
+      "file": "hydro-challenge-start__HIGH__desktop.png",
+      "scenario": "hydro-challenge-start",
+      "storyboardScene": "S8",
+      "stage": "challenge",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "still",
+      "reducedMotion": false
+    },
+    {
+      "file": "hydro-challenge-reset-solved__HIGH__desktop.png",
+      "scenario": "hydro-challenge-reset-solved",
+      "storyboardScene": "S8",
+      "stage": "challenge",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "still",
+      "reducedMotion": false
+    },
+    {
+      "file": "hydro-overview__HIGH__mobile.png",
+      "scenario": "hydro-overview",
+      "storyboardScene": "S1",
+      "stage": "overview",
+      "profile": "HIGH",
+      "viewport": "mobile",
+      "kind": "still",
+      "reducedMotion": false
+    },
+    {
+      "file": "hydro-season-controls__HIGH__mobile.png",
+      "scenario": "hydro-season-controls",
+      "storyboardScene": "S5",
+      "stage": "variable",
+      "profile": "HIGH",
+      "viewport": "mobile",
+      "kind": "still",
+      "reducedMotion": false
+    },
+    {
+      "file": "hydro-feeder-controls__HIGH__mobile.png",
+      "scenario": "hydro-feeder-controls",
+      "storyboardScene": "S6",
+      "stage": "variable",
+      "profile": "HIGH",
+      "viewport": "mobile",
+      "kind": "still",
+      "reducedMotion": false
+    },
+    {
+      "file": "hydro-cutaway-powerhouse__HIGH__mobile.png",
+      "scenario": "hydro-cutaway-powerhouse",
+      "storyboardScene": "S3",
+      "stage": "cutaway",
+      "profile": "HIGH",
+      "viewport": "mobile",
+      "kind": "still",
+      "reducedMotion": false
+    },
+    {
+      "file": "hydro-exploded-unit__HIGH__mobile.png",
+      "scenario": "hydro-exploded-unit",
+      "storyboardScene": "S3",
+      "stage": "exploded",
+      "profile": "HIGH",
+      "viewport": "mobile",
+      "kind": "still",
+      "reducedMotion": false
+    },
+    {
+      "file": "hydro-variable-flood-cap__HIGH__mobile.png",
+      "scenario": "hydro-variable-flood-cap",
+      "storyboardScene": "S4",
+      "stage": "variable",
+      "profile": "HIGH",
+      "viewport": "mobile",
+      "kind": "still",
+      "reducedMotion": false
+    },
+    {
+      "file": "hydro-variable-idle-units-dry__HIGH__mobile.png",
+      "scenario": "hydro-variable-idle-units-dry",
+      "storyboardScene": "S5",
+      "stage": "variable",
+      "profile": "HIGH",
+      "viewport": "mobile",
+      "kind": "still",
+      "reducedMotion": false
+    },
+    {
+      "file": "hydro-fault-overload-trip__HIGH__mobile.png",
+      "scenario": "hydro-fault-overload-trip",
+      "storyboardScene": "S6",
+      "stage": "fault",
+      "profile": "HIGH",
+      "viewport": "mobile",
+      "kind": "still",
+      "reducedMotion": false
+    },
+    {
+      "file": "hydro-fault-shed-not-reset__HIGH__mobile.png",
+      "scenario": "hydro-fault-shed-not-reset",
+      "storyboardScene": "S6",
+      "stage": "fault",
+      "profile": "HIGH",
+      "viewport": "mobile",
+      "kind": "still",
+      "reducedMotion": false
+    },
+    {
+      "file": "hydro-challenge-start__HIGH__mobile.png",
+      "scenario": "hydro-challenge-start",
+      "storyboardScene": "S8",
+      "stage": "challenge",
+      "profile": "HIGH",
+      "viewport": "mobile",
+      "kind": "still",
+      "reducedMotion": false
+    },
+    {
+      "file": "hydro-challenge-reset-solved__HIGH__mobile.png",
+      "scenario": "hydro-challenge-reset-solved",
+      "storyboardScene": "S8",
+      "stage": "challenge",
+      "profile": "HIGH",
+      "viewport": "mobile",
+      "kind": "still",
+      "reducedMotion": false
+    },
+    {
+      "file": "hydro-overview__HIGH__landscape.png",
+      "scenario": "hydro-overview",
+      "storyboardScene": "S1",
+      "stage": "overview",
+      "profile": "HIGH",
+      "viewport": "landscape",
+      "kind": "still",
+      "reducedMotion": false
+    },
+    {
+      "file": "hydro-season-controls__HIGH__landscape.png",
+      "scenario": "hydro-season-controls",
+      "storyboardScene": "S5",
+      "stage": "variable",
+      "profile": "HIGH",
+      "viewport": "landscape",
+      "kind": "still",
+      "reducedMotion": false
+    },
+    {
+      "file": "hydro-feeder-controls__HIGH__landscape.png",
+      "scenario": "hydro-feeder-controls",
+      "storyboardScene": "S6",
+      "stage": "variable",
+      "profile": "HIGH",
+      "viewport": "landscape",
+      "kind": "still",
+      "reducedMotion": false
+    },
+    {
+      "file": "hydro-cutaway-powerhouse__HIGH__landscape.png",
+      "scenario": "hydro-cutaway-powerhouse",
+      "storyboardScene": "S3",
+      "stage": "cutaway",
+      "profile": "HIGH",
+      "viewport": "landscape",
+      "kind": "still",
+      "reducedMotion": false
+    },
+    {
+      "file": "hydro-exploded-unit__HIGH__landscape.png",
+      "scenario": "hydro-exploded-unit",
+      "storyboardScene": "S3",
+      "stage": "exploded",
+      "profile": "HIGH",
+      "viewport": "landscape",
+      "kind": "still",
+      "reducedMotion": false
+    },
+    {
+      "file": "hydro-variable-flood-cap__HIGH__landscape.png",
+      "scenario": "hydro-variable-flood-cap",
+      "storyboardScene": "S4",
+      "stage": "variable",
+      "profile": "HIGH",
+      "viewport": "landscape",
+      "kind": "still",
+      "reducedMotion": false
+    },
+    {
+      "file": "hydro-variable-idle-units-dry__HIGH__landscape.png",
+      "scenario": "hydro-variable-idle-units-dry",
+      "storyboardScene": "S5",
+      "stage": "variable",
+      "profile": "HIGH",
+      "viewport": "landscape",
+      "kind": "still",
+      "reducedMotion": false
+    },
+    {
+      "file": "hydro-fault-overload-trip__HIGH__landscape.png",
+      "scenario": "hydro-fault-overload-trip",
+      "storyboardScene": "S6",
+      "stage": "fault",
+      "profile": "HIGH",
+      "viewport": "landscape",
+      "kind": "still",
+      "reducedMotion": false
+    },
+    {
+      "file": "hydro-fault-shed-not-reset__HIGH__landscape.png",
+      "scenario": "hydro-fault-shed-not-reset",
+      "storyboardScene": "S6",
+      "stage": "fault",
+      "profile": "HIGH",
+      "viewport": "landscape",
+      "kind": "still",
+      "reducedMotion": false
+    },
+    {
+      "file": "hydro-challenge-start__HIGH__landscape.png",
+      "scenario": "hydro-challenge-start",
+      "storyboardScene": "S8",
+      "stage": "challenge",
+      "profile": "HIGH",
+      "viewport": "landscape",
+      "kind": "still",
+      "reducedMotion": false
+    },
+    {
+      "file": "hydro-challenge-reset-solved__HIGH__landscape.png",
+      "scenario": "hydro-challenge-reset-solved",
+      "storyboardScene": "S8",
+      "stage": "challenge",
+      "profile": "HIGH",
+      "viewport": "landscape",
+      "kind": "still",
+      "reducedMotion": false
+    }
+  ],
+  "runs": [
+    {
+      "scenario": "hydro-overview",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "still",
+      "screenshot": "hydro-overview__HIGH__desktop.png",
+      "status": "PASS",
+      "framePlan": {
+        "renderer": "three",
+        "planned": {
+          "drawCalls": 52,
+          "triangles": 8752,
+          "shadowDrawCalls": 14,
+          "shadowTriangles": 1288,
+          "textures": [
+            {
+              "id": "sun-shadow-map",
+              "px": 1024
+            },
+            {
+              "id": "pmrem-environment",
+              "px": 1024
+            }
+          ]
+        },
+        "measured": {
+          "drawCalls": 52,
+          "triangles": 8752,
+          "shadowDrawCalls": 14,
+          "shadowTriangles": 1288
+        },
+        "programs": 11,
+        "memory": {
+          "geometries": 27,
+          "textures": 4
+        }
+      },
+      "frameParity": {
+        "ok": true,
+        "mismatches": []
+      },
+      "threeChunkRequests": [
+        "http://localhost:3000/_next/static/chunks/_app-pages-browser_components_interactive-labs_v2_ThreeScene_tsx.js"
+      ],
+      "controlHitTargets": {
+        "expectedIds": [],
+        "targets": [],
+        "missingIds": []
+      },
+      "actualProfile": "HIGH",
+      "downgradePath": "",
+      "actualRenderer": "three@186",
+      "framesRendered": 3,
+      "drawCalls": 52,
+      "notice": [],
+      "surface": "webgl",
+      "warnings": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "scenario": "hydro-season-controls",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "still",
+      "screenshot": "hydro-season-controls__HIGH__desktop.png",
+      "status": "PASS",
+      "framePlan": {
+        "renderer": "three",
+        "planned": {
+          "drawCalls": 52,
+          "triangles": 8752,
+          "shadowDrawCalls": 14,
+          "shadowTriangles": 1288,
+          "textures": [
+            {
+              "id": "sun-shadow-map",
+              "px": 1024
+            },
+            {
+              "id": "pmrem-environment",
+              "px": 1024
+            }
+          ]
+        },
+        "measured": {
+          "drawCalls": 52,
+          "triangles": 8752,
+          "shadowDrawCalls": 14,
+          "shadowTriangles": 1288
+        },
+        "programs": 11,
+        "memory": {
+          "geometries": 27,
+          "textures": 4
+        }
+      },
+      "frameParity": {
+        "ok": true,
+        "mismatches": []
+      },
+      "threeChunkRequests": [
+        "http://localhost:3000/_next/static/chunks/_app-pages-browser_components_interactive-labs_v2_ThreeScene_tsx.js"
+      ],
+      "controlHitTargets": {
+        "expectedIds": [],
+        "targets": [],
+        "missingIds": []
+      },
+      "actualProfile": "HIGH",
+      "downgradePath": "",
+      "actualRenderer": "three@186",
+      "framesRendered": 3,
+      "drawCalls": 23,
+      "notice": [],
+      "surface": "webgl",
+      "warnings": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "scenario": "hydro-feeder-controls",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "still",
+      "screenshot": "hydro-feeder-controls__HIGH__desktop.png",
+      "status": "PASS",
+      "framePlan": {
+        "renderer": "three",
+        "planned": {
+          "drawCalls": 52,
+          "triangles": 8752,
+          "shadowDrawCalls": 14,
+          "shadowTriangles": 1288,
+          "textures": [
+            {
+              "id": "sun-shadow-map",
+              "px": 1024
+            },
+            {
+              "id": "pmrem-environment",
+              "px": 1024
+            }
+          ]
+        },
+        "measured": {
+          "drawCalls": 52,
+          "triangles": 8752,
+          "shadowDrawCalls": 14,
+          "shadowTriangles": 1288
+        },
+        "programs": 11,
+        "memory": {
+          "geometries": 27,
+          "textures": 4
+        }
+      },
+      "frameParity": {
+        "ok": true,
+        "mismatches": []
+      },
+      "threeChunkRequests": [
+        "http://localhost:3000/_next/static/chunks/_app-pages-browser_components_interactive-labs_v2_ThreeScene_tsx.js"
+      ],
+      "controlHitTargets": {
+        "expectedIds": [],
+        "targets": [],
+        "missingIds": []
+      },
+      "actualProfile": "HIGH",
+      "downgradePath": "",
+      "actualRenderer": "three@186",
+      "framesRendered": 3,
+      "drawCalls": 38,
+      "notice": [],
+      "surface": "webgl",
+      "warnings": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "scenario": "hydro-cutaway-powerhouse",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "still",
+      "screenshot": "hydro-cutaway-powerhouse__HIGH__desktop.png",
+      "status": "PASS",
+      "framePlan": {
+        "renderer": "three",
+        "planned": {
+          "drawCalls": 43,
+          "triangles": 8200,
+          "shadowDrawCalls": 14,
+          "shadowTriangles": 1288,
+          "textures": [
+            {
+              "id": "sun-shadow-map",
+              "px": 1024
+            },
+            {
+              "id": "pmrem-environment",
+              "px": 1024
+            }
+          ]
+        },
+        "measured": {
+          "drawCalls": 43,
+          "triangles": 8200,
+          "shadowDrawCalls": 14,
+          "shadowTriangles": 1288
+        },
+        "programs": 12,
+        "memory": {
+          "geometries": 17,
+          "textures": 4
+        }
+      },
+      "frameParity": {
+        "ok": true,
+        "mismatches": []
+      },
+      "threeChunkRequests": [
+        "http://localhost:3000/_next/static/chunks/_app-pages-browser_components_interactive-labs_v2_ThreeScene_tsx.js"
+      ],
+      "controlHitTargets": {
+        "expectedIds": [],
+        "targets": [],
+        "missingIds": []
+      },
+      "actualProfile": "HIGH",
+      "downgradePath": "",
+      "actualRenderer": "three@186",
+      "framesRendered": 3,
+      "drawCalls": 33,
+      "notice": [],
+      "surface": "webgl",
+      "warnings": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "scenario": "hydro-exploded-unit",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "still",
+      "screenshot": "hydro-exploded-unit__HIGH__desktop.png",
+      "status": "PASS",
+      "framePlan": {
+        "renderer": "three",
+        "planned": {
+          "drawCalls": 42,
+          "triangles": 8188,
+          "shadowDrawCalls": 14,
+          "shadowTriangles": 1288,
+          "textures": [
+            {
+              "id": "sun-shadow-map",
+              "px": 1024
+            },
+            {
+              "id": "pmrem-environment",
+              "px": 1024
+            }
+          ]
+        },
+        "measured": {
+          "drawCalls": 42,
+          "triangles": 8188,
+          "shadowDrawCalls": 14,
+          "shadowTriangles": 1288
+        },
+        "programs": 9,
+        "memory": {
+          "geometries": 17,
+          "textures": 4
+        }
+      },
+      "frameParity": {
+        "ok": true,
+        "mismatches": []
+      },
+      "threeChunkRequests": [
+        "http://localhost:3000/_next/static/chunks/_app-pages-browser_components_interactive-labs_v2_ThreeScene_tsx.js"
+      ],
+      "controlHitTargets": {
+        "expectedIds": [],
+        "targets": [],
+        "missingIds": []
+      },
+      "actualProfile": "HIGH",
+      "downgradePath": "",
+      "actualRenderer": "three@186",
+      "framesRendered": 3,
+      "drawCalls": 38,
+      "notice": [],
+      "surface": "webgl",
+      "warnings": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "scenario": "hydro-variable-flood-cap",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "still",
+      "screenshot": "hydro-variable-flood-cap__HIGH__desktop.png",
+      "status": "PASS",
+      "framePlan": {
+        "renderer": "three",
+        "planned": {
+          "drawCalls": 55,
+          "triangles": 8662,
+          "shadowDrawCalls": 16,
+          "shadowTriangles": 1288,
+          "textures": [
+            {
+              "id": "sun-shadow-map",
+              "px": 1024
+            },
+            {
+              "id": "pmrem-environment",
+              "px": 1024
+            }
+          ]
+        },
+        "measured": {
+          "drawCalls": 55,
+          "triangles": 8662,
+          "shadowDrawCalls": 16,
+          "shadowTriangles": 1288
+        },
+        "programs": 11,
+        "memory": {
+          "geometries": 28,
+          "textures": 4
+        }
+      },
+      "frameParity": {
+        "ok": true,
+        "mismatches": []
+      },
+      "threeChunkRequests": [
+        "http://localhost:3000/_next/static/chunks/_app-pages-browser_components_interactive-labs_v2_ThreeScene_tsx.js"
+      ],
+      "controlHitTargets": {
+        "expectedIds": [],
+        "targets": [],
+        "missingIds": []
+      },
+      "actualProfile": "HIGH",
+      "downgradePath": "",
+      "actualRenderer": "three@186",
+      "framesRendered": 3,
+      "drawCalls": 55,
+      "notice": [
+        "Spilling 127 m³/s: more water than the running turbines can take"
+      ],
+      "surface": "webgl",
+      "warnings": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "scenario": "hydro-variable-idle-units-dry",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "still",
+      "screenshot": "hydro-variable-idle-units-dry__HIGH__desktop.png",
+      "status": "PASS",
+      "framePlan": {
+        "renderer": "three",
+        "planned": {
+          "drawCalls": 47,
+          "triangles": 9648,
+          "shadowDrawCalls": 19,
+          "shadowTriangles": 1708,
+          "textures": [
+            {
+              "id": "sun-shadow-map",
+              "px": 1024
+            },
+            {
+              "id": "pmrem-environment",
+              "px": 1024
+            }
+          ]
+        },
+        "measured": {
+          "drawCalls": 47,
+          "triangles": 9648,
+          "shadowDrawCalls": 19,
+          "shadowTriangles": 1708
+        },
+        "programs": 11,
+        "memory": {
+          "geometries": 23,
+          "textures": 4
+        }
+      },
+      "frameParity": {
+        "ok": true,
+        "mismatches": []
+      },
+      "threeChunkRequests": [
+        "http://localhost:3000/_next/static/chunks/_app-pages-browser_components_interactive-labs_v2_ThreeScene_tsx.js"
+      ],
+      "controlHitTargets": {
+        "expectedIds": [],
+        "targets": [],
+        "missingIds": []
+      },
+      "actualProfile": "HIGH",
+      "downgradePath": "",
+      "actualRenderer": "three@186",
+      "framesRendered": 3,
+      "drawCalls": 47,
+      "notice": [],
+      "surface": "webgl",
+      "warnings": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "scenario": "hydro-fault-overload-trip",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "still",
+      "screenshot": "hydro-fault-overload-trip__HIGH__desktop.png",
+      "status": "PASS",
+      "framePlan": {
+        "renderer": "three",
+        "planned": {
+          "drawCalls": 43,
+          "triangles": 10164,
+          "shadowDrawCalls": 20,
+          "shadowTriangles": 1848,
+          "textures": [
+            {
+              "id": "sun-shadow-map",
+              "px": 1024
+            },
+            {
+              "id": "pmrem-environment",
+              "px": 1024
+            }
+          ]
+        },
+        "measured": {
+          "drawCalls": 43,
+          "triangles": 10164,
+          "shadowDrawCalls": 20,
+          "shadowTriangles": 1848
+        },
+        "programs": 11,
+        "memory": {
+          "geometries": 20,
+          "textures": 4
+        }
+      },
+      "frameParity": {
+        "ok": true,
+        "mismatches": []
+      },
+      "threeChunkRequests": [
+        "http://localhost:3000/_next/static/chunks/_app-pages-browser_components_interactive-labs_v2_ThreeScene_tsx.js"
+      ],
+      "controlHitTargets": {
+        "expectedIds": [],
+        "targets": [],
+        "missingIds": []
+      },
+      "actualProfile": "HIGH",
+      "downgradePath": "",
+      "actualRenderer": "three@186",
+      "framesRendered": 3,
+      "drawCalls": 34,
+      "notice": [
+        "PLANT TRIPPED — 0 MW delivered; the whole city is dark. Reset unavailable: demand is still 2 MW above available generation."
+      ],
+      "surface": "webgl",
+      "warnings": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "scenario": "hydro-fault-shed-not-reset",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "still",
+      "screenshot": "hydro-fault-shed-not-reset__HIGH__desktop.png",
+      "status": "PASS",
+      "framePlan": {
+        "renderer": "three",
+        "planned": {
+          "drawCalls": 44,
+          "triangles": 10164,
+          "shadowDrawCalls": 21,
+          "shadowTriangles": 1848,
+          "textures": [
+            {
+              "id": "sun-shadow-map",
+              "px": 1024
+            },
+            {
+              "id": "pmrem-environment",
+              "px": 1024
+            }
+          ]
+        },
+        "measured": {
+          "drawCalls": 44,
+          "triangles": 10164,
+          "shadowDrawCalls": 21,
+          "shadowTriangles": 1848
+        },
+        "programs": 11,
+        "memory": {
+          "geometries": 20,
+          "textures": 4
+        }
+      },
+      "frameParity": {
+        "ok": true,
+        "mismatches": []
+      },
+      "threeChunkRequests": [
+        "http://localhost:3000/_next/static/chunks/_app-pages-browser_components_interactive-labs_v2_ThreeScene_tsx.js"
+      ],
+      "controlHitTargets": {
+        "expectedIds": [],
+        "targets": [],
+        "missingIds": []
+      },
+      "actualProfile": "HIGH",
+      "downgradePath": "",
+      "actualRenderer": "three@186",
+      "framesRendered": 3,
+      "drawCalls": 35,
+      "notice": [
+        "PLANT TRIPPED — 0 MW delivered; the whole city is dark. Demand fits now: press Reset plant to restore power."
+      ],
+      "surface": "webgl",
+      "warnings": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "scenario": "hydro-challenge-start",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "still",
+      "screenshot": "hydro-challenge-start__HIGH__desktop.png",
+      "status": "PASS",
+      "framePlan": {
+        "renderer": "three",
+        "planned": {
+          "drawCalls": 46,
+          "triangles": 9904,
+          "shadowDrawCalls": 19,
+          "shadowTriangles": 1708,
+          "textures": [
+            {
+              "id": "sun-shadow-map",
+              "px": 1024
+            },
+            {
+              "id": "pmrem-environment",
+              "px": 1024
+            }
+          ]
+        },
+        "measured": {
+          "drawCalls": 46,
+          "triangles": 9904,
+          "shadowDrawCalls": 19,
+          "shadowTriangles": 1708
+        },
+        "programs": 11,
+        "memory": {
+          "geometries": 22,
+          "textures": 4
+        }
+      },
+      "frameParity": {
+        "ok": true,
+        "mismatches": []
+      },
+      "threeChunkRequests": [
+        "http://localhost:3000/_next/static/chunks/_app-pages-browser_components_interactive-labs_v2_ThreeScene_tsx.js"
+      ],
+      "controlHitTargets": {
+        "expectedIds": [],
+        "targets": [],
+        "missingIds": []
+      },
+      "actualProfile": "HIGH",
+      "downgradePath": "",
+      "actualRenderer": "three@186",
+      "framesRendered": 3,
+      "drawCalls": 37,
+      "notice": [
+        "Not met yet: in the dry season, keep the hospital lit and switch on every block that still fits without a trip."
+      ],
+      "surface": "webgl",
+      "warnings": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "scenario": "hydro-challenge-reset-solved",
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "kind": "still",
+      "screenshot": "hydro-challenge-reset-solved__HIGH__desktop.png",
+      "status": "PASS",
+      "framePlan": {
+        "renderer": "three",
+        "planned": {
+          "drawCalls": 47,
+          "triangles": 9648,
+          "shadowDrawCalls": 19,
+          "shadowTriangles": 1708,
+          "textures": [
+            {
+              "id": "sun-shadow-map",
+              "px": 1024
+            },
+            {
+              "id": "pmrem-environment",
+              "px": 1024
+            }
+          ]
+        },
+        "measured": {
+          "drawCalls": 47,
+          "triangles": 9648,
+          "shadowDrawCalls": 19,
+          "shadowTriangles": 1708
+        },
+        "programs": 11,
+        "memory": {
+          "geometries": 23,
+          "textures": 4
+        }
+      },
+      "frameParity": {
+        "ok": true,
+        "mismatches": []
+      },
+      "threeChunkRequests": [
+        "http://localhost:3000/_next/static/chunks/_app-pages-browser_components_interactive-labs_v2_ThreeScene_tsx.js"
+      ],
+      "controlHitTargets": {
+        "expectedIds": [],
+        "targets": [],
+        "missingIds": []
+      },
+      "actualProfile": "HIGH",
+      "downgradePath": "",
+      "actualRenderer": "three@186",
+      "framesRendered": 3,
+      "drawCalls": 38,
+      "notice": [
+        "Hospital supply is stable in the dry season. Challenge met."
+      ],
+      "surface": "webgl",
+      "warnings": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "scenario": "hydro-overview",
+      "profile": "HIGH",
+      "viewport": "mobile",
+      "kind": "still",
+      "screenshot": "hydro-overview__HIGH__mobile.png",
+      "status": "PASS",
+      "framePlan": {
+        "renderer": "three",
+        "planned": {
+          "drawCalls": 52,
+          "triangles": 8752,
+          "shadowDrawCalls": 14,
+          "shadowTriangles": 1288,
+          "textures": [
+            {
+              "id": "sun-shadow-map",
+              "px": 1024
+            },
+            {
+              "id": "pmrem-environment",
+              "px": 1024
+            }
+          ]
+        },
+        "measured": {
+          "drawCalls": 52,
+          "triangles": 8752,
+          "shadowDrawCalls": 14,
+          "shadowTriangles": 1288
+        },
+        "programs": 11,
+        "memory": {
+          "geometries": 27,
+          "textures": 4
+        }
+      },
+      "frameParity": {
+        "ok": true,
+        "mismatches": []
+      },
+      "threeChunkRequests": [
+        "http://localhost:3000/_next/static/chunks/_app-pages-browser_components_interactive-labs_v2_ThreeScene_tsx.js"
+      ],
+      "controlHitTargets": {
+        "expectedIds": [
+          "gauge-band-1",
+          "gauge-band-2",
+          "gauge-band-3",
+          "gauge-band-4",
+          "gauge-band-5",
+          "desk-start-next",
+          "desk-stop-last",
+          "breaker-hospital",
+          "breaker-homes-less",
+          "breaker-homes-more",
+          "breaker-shops-less",
+          "breaker-shops-more"
+        ],
+        "targets": [
+          {
+            "id": "gauge-band-1",
+            "width": 44,
+            "height": 44,
+            "name": "Season: Dry",
+            "hittable": true
+          },
+          {
+            "id": "gauge-band-2",
+            "width": 44,
+            "height": 44,
+            "name": "Season: Early rains",
+            "hittable": true
+          },
+          {
+            "id": "gauge-band-3",
+            "width": 44,
+            "height": 44,
+            "name": "Season: Heavy rains",
+            "hittable": true
+          },
+          {
+            "id": "gauge-band-4",
+            "width": 44,
+            "height": 44,
+            "name": "Season: Rainy, full",
+            "hittable": true
+          },
+          {
+            "id": "gauge-band-5",
+            "width": 44,
+            "height": 44,
+            "name": "Season: Flood",
+            "hittable": true
+          },
+          {
+            "id": "desk-start-next",
+            "width": 44,
+            "height": 44,
+            "name": "Start the next unit",
+            "hittable": true
+          },
+          {
+            "id": "desk-stop-last",
+            "width": 44,
+            "height": 44,
+            "name": "Stop the last unit",
+            "hittable": true
+          },
+          {
+            "id": "breaker-hospital",
+            "width": 44,
+            "height": 44,
+            "name": "Hospital breaker",
+            "hittable": true
+          },
+          {
+            "id": "breaker-homes-less",
+            "width": 44,
+            "height": 44,
+            "name": "Homes: one block off",
+            "hittable": true
+          },
+          {
+            "id": "breaker-homes-more",
+            "width": 44,
+            "height": 44,
+            "name": "Homes: one block on",
+            "hittable": true
+          },
+          {
+            "id": "breaker-shops-less",
+            "width": 44,
+            "height": 44,
+            "name": "Shops: one block off",
+            "hittable": true
+          },
+          {
+            "id": "breaker-shops-more",
+            "width": 44,
+            "height": 44,
+            "name": "Shops: one block on",
+            "hittable": true
+          }
+        ],
+        "missingIds": []
+      },
+      "actualProfile": "HIGH",
+      "downgradePath": "",
+      "actualRenderer": "three@186",
+      "framesRendered": 3,
+      "drawCalls": 52,
+      "notice": [],
+      "surface": "webgl",
+      "warnings": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "scenario": "hydro-season-controls",
+      "profile": "HIGH",
+      "viewport": "mobile",
+      "kind": "still",
+      "screenshot": "hydro-season-controls__HIGH__mobile.png",
+      "status": "PASS",
+      "framePlan": {
+        "renderer": "three",
+        "planned": {
+          "drawCalls": 52,
+          "triangles": 8752,
+          "shadowDrawCalls": 14,
+          "shadowTriangles": 1288,
+          "textures": [
+            {
+              "id": "sun-shadow-map",
+              "px": 1024
+            },
+            {
+              "id": "pmrem-environment",
+              "px": 1024
+            }
+          ]
+        },
+        "measured": {
+          "drawCalls": 52,
+          "triangles": 8752,
+          "shadowDrawCalls": 14,
+          "shadowTriangles": 1288
+        },
+        "programs": 11,
+        "memory": {
+          "geometries": 27,
+          "textures": 4
+        }
+      },
+      "frameParity": {
+        "ok": true,
+        "mismatches": []
+      },
+      "threeChunkRequests": [
+        "http://localhost:3000/_next/static/chunks/_app-pages-browser_components_interactive-labs_v2_ThreeScene_tsx.js"
+      ],
+      "controlHitTargets": {
+        "expectedIds": [
+          "gauge-band-1",
+          "gauge-band-2",
+          "gauge-band-3",
+          "gauge-band-4",
+          "gauge-band-5"
+        ],
+        "targets": [
+          {
+            "id": "gauge-band-1",
+            "width": 44,
+            "height": 44,
+            "name": "Season: Dry",
+            "hittable": true
+          },
+          {
+            "id": "gauge-band-2",
+            "width": 44,
+            "height": 44,
+            "name": "Season: Early rains",
+            "hittable": true
+          },
+          {
+            "id": "gauge-band-3",
+            "width": 44,
+            "height": 44,
+            "name": "Season: Heavy rains",
+            "hittable": true
+          },
+          {
+            "id": "gauge-band-4",
+            "width": 44,
+            "height": 44,
+            "name": "Season: Rainy, full",
+            "hittable": true
+          },
+          {
+            "id": "gauge-band-5",
+            "width": 44,
+            "height": 44,
+            "name": "Season: Flood",
+            "hittable": true
+          }
+        ],
+        "missingIds": []
+      },
+      "actualProfile": "HIGH",
+      "downgradePath": "",
+      "actualRenderer": "three@186",
+      "framesRendered": 3,
+      "drawCalls": 25,
+      "notice": [],
+      "surface": "webgl",
+      "warnings": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "scenario": "hydro-feeder-controls",
+      "profile": "HIGH",
+      "viewport": "mobile",
+      "kind": "still",
+      "screenshot": "hydro-feeder-controls__HIGH__mobile.png",
+      "status": "PASS",
+      "framePlan": {
+        "renderer": "three",
+        "planned": {
+          "drawCalls": 52,
+          "triangles": 8752,
+          "shadowDrawCalls": 14,
+          "shadowTriangles": 1288,
+          "textures": [
+            {
+              "id": "sun-shadow-map",
+              "px": 1024
+            },
+            {
+              "id": "pmrem-environment",
+              "px": 1024
+            }
+          ]
+        },
+        "measured": {
+          "drawCalls": 52,
+          "triangles": 8752,
+          "shadowDrawCalls": 14,
+          "shadowTriangles": 1288
+        },
+        "programs": 11,
+        "memory": {
+          "geometries": 27,
+          "textures": 4
+        }
+      },
+      "frameParity": {
+        "ok": true,
+        "mismatches": []
+      },
+      "threeChunkRequests": [
+        "http://localhost:3000/_next/static/chunks/_app-pages-browser_components_interactive-labs_v2_ThreeScene_tsx.js"
+      ],
+      "controlHitTargets": {
+        "expectedIds": [
+          "breaker-hospital",
+          "breaker-homes-less",
+          "breaker-homes-more",
+          "breaker-shops-less",
+          "breaker-shops-more"
+        ],
+        "targets": [
+          {
+            "id": "breaker-hospital",
+            "width": 44,
+            "height": 44,
+            "name": "Hospital breaker",
+            "hittable": true
+          },
+          {
+            "id": "breaker-homes-less",
+            "width": 44,
+            "height": 44,
+            "name": "Homes: one block off",
+            "hittable": true
+          },
+          {
+            "id": "breaker-homes-more",
+            "width": 44,
+            "height": 44,
+            "name": "Homes: one block on",
+            "hittable": true
+          },
+          {
+            "id": "breaker-shops-less",
+            "width": 44,
+            "height": 44,
+            "name": "Shops: one block off",
+            "hittable": true
+          },
+          {
+            "id": "breaker-shops-more",
+            "width": 44,
+            "height": 44,
+            "name": "Shops: one block on",
+            "hittable": true
+          }
+        ],
+        "missingIds": []
+      },
+      "actualProfile": "HIGH",
+      "downgradePath": "",
+      "actualRenderer": "three@186",
+      "framesRendered": 3,
+      "drawCalls": 40,
+      "notice": [],
+      "surface": "webgl",
+      "warnings": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "scenario": "hydro-cutaway-powerhouse",
+      "profile": "HIGH",
+      "viewport": "mobile",
+      "kind": "still",
+      "screenshot": "hydro-cutaway-powerhouse__HIGH__mobile.png",
+      "status": "PASS",
+      "framePlan": {
+        "renderer": "three",
+        "planned": {
+          "drawCalls": 43,
+          "triangles": 8200,
+          "shadowDrawCalls": 14,
+          "shadowTriangles": 1288,
+          "textures": [
+            {
+              "id": "sun-shadow-map",
+              "px": 1024
+            },
+            {
+              "id": "pmrem-environment",
+              "px": 1024
+            }
+          ]
+        },
+        "measured": {
+          "drawCalls": 43,
+          "triangles": 8200,
+          "shadowDrawCalls": 14,
+          "shadowTriangles": 1288
+        },
+        "programs": 12,
+        "memory": {
+          "geometries": 17,
+          "textures": 4
+        }
+      },
+      "frameParity": {
+        "ok": true,
+        "mismatches": []
+      },
+      "threeChunkRequests": [
+        "http://localhost:3000/_next/static/chunks/_app-pages-browser_components_interactive-labs_v2_ThreeScene_tsx.js"
+      ],
+      "controlHitTargets": {
+        "expectedIds": [
+          "desk-stop-last"
+        ],
+        "targets": [
+          {
+            "id": "desk-stop-last",
+            "width": 44,
+            "height": 44,
+            "name": "Stop the last unit",
+            "hittable": true
+          }
+        ],
+        "missingIds": []
+      },
+      "actualProfile": "HIGH",
+      "downgradePath": "",
+      "actualRenderer": "three@186",
+      "framesRendered": 3,
+      "drawCalls": 33,
+      "notice": [],
+      "surface": "webgl",
+      "warnings": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "scenario": "hydro-exploded-unit",
+      "profile": "HIGH",
+      "viewport": "mobile",
+      "kind": "still",
+      "screenshot": "hydro-exploded-unit__HIGH__mobile.png",
+      "status": "PASS",
+      "framePlan": {
+        "renderer": "three",
+        "planned": {
+          "drawCalls": 42,
+          "triangles": 8188,
+          "shadowDrawCalls": 14,
+          "shadowTriangles": 1288,
+          "textures": [
+            {
+              "id": "sun-shadow-map",
+              "px": 1024
+            },
+            {
+              "id": "pmrem-environment",
+              "px": 1024
+            }
+          ]
+        },
+        "measured": {
+          "drawCalls": 42,
+          "triangles": 8188,
+          "shadowDrawCalls": 14,
+          "shadowTriangles": 1288
+        },
+        "programs": 9,
+        "memory": {
+          "geometries": 17,
+          "textures": 4
+        }
+      },
+      "frameParity": {
+        "ok": true,
+        "mismatches": []
+      },
+      "threeChunkRequests": [
+        "http://localhost:3000/_next/static/chunks/_app-pages-browser_components_interactive-labs_v2_ThreeScene_tsx.js"
+      ],
+      "controlHitTargets": {
+        "expectedIds": [
+          "desk-start-next",
+          "desk-stop-last",
+          "breaker-hospital",
+          "breaker-homes-less",
+          "breaker-homes-more"
+        ],
+        "targets": [
+          {
+            "id": "desk-start-next",
+            "width": 44,
+            "height": 44,
+            "name": "Start the next unit",
+            "hittable": true
+          },
+          {
+            "id": "desk-stop-last",
+            "width": 44,
+            "height": 44,
+            "name": "Stop the last unit",
+            "hittable": true
+          },
+          {
+            "id": "breaker-hospital",
+            "width": 44,
+            "height": 44,
+            "name": "Hospital breaker",
+            "hittable": true
+          },
+          {
+            "id": "breaker-homes-less",
+            "width": 44,
+            "height": 44,
+            "name": "Homes: one block off",
+            "hittable": true
+          },
+          {
+            "id": "breaker-homes-more",
+            "width": 44,
+            "height": 44,
+            "name": "Homes: one block on",
+            "hittable": true
+          }
+        ],
+        "missingIds": []
+      },
+      "actualProfile": "HIGH",
+      "downgradePath": "",
+      "actualRenderer": "three@186",
+      "framesRendered": 3,
+      "drawCalls": 37,
+      "notice": [],
+      "surface": "webgl",
+      "warnings": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "scenario": "hydro-variable-flood-cap",
+      "profile": "HIGH",
+      "viewport": "mobile",
+      "kind": "still",
+      "screenshot": "hydro-variable-flood-cap__HIGH__mobile.png",
+      "status": "PASS",
+      "framePlan": {
+        "renderer": "three",
+        "planned": {
+          "drawCalls": 55,
+          "triangles": 8662,
+          "shadowDrawCalls": 16,
+          "shadowTriangles": 1288,
+          "textures": [
+            {
+              "id": "sun-shadow-map",
+              "px": 1024
+            },
+            {
+              "id": "pmrem-environment",
+              "px": 1024
+            }
+          ]
+        },
+        "measured": {
+          "drawCalls": 55,
+          "triangles": 8662,
+          "shadowDrawCalls": 16,
+          "shadowTriangles": 1288
+        },
+        "programs": 11,
+        "memory": {
+          "geometries": 28,
+          "textures": 4
+        }
+      },
+      "frameParity": {
+        "ok": true,
+        "mismatches": []
+      },
+      "threeChunkRequests": [
+        "http://localhost:3000/_next/static/chunks/_app-pages-browser_components_interactive-labs_v2_ThreeScene_tsx.js"
+      ],
+      "controlHitTargets": {
+        "expectedIds": [
+          "gauge-band-1",
+          "gauge-band-2",
+          "gauge-band-3",
+          "gauge-band-4",
+          "gauge-band-5",
+          "desk-start-next",
+          "desk-stop-last",
+          "breaker-hospital",
+          "breaker-homes-less",
+          "breaker-homes-more",
+          "breaker-shops-less",
+          "breaker-shops-more"
+        ],
+        "targets": [
+          {
+            "id": "gauge-band-1",
+            "width": 44,
+            "height": 44,
+            "name": "Season: Dry",
+            "hittable": true
+          },
+          {
+            "id": "gauge-band-2",
+            "width": 44,
+            "height": 44,
+            "name": "Season: Early rains",
+            "hittable": true
+          },
+          {
+            "id": "gauge-band-3",
+            "width": 44,
+            "height": 44,
+            "name": "Season: Heavy rains",
+            "hittable": true
+          },
+          {
+            "id": "gauge-band-4",
+            "width": 44,
+            "height": 44,
+            "name": "Season: Rainy, full",
+            "hittable": true
+          },
+          {
+            "id": "gauge-band-5",
+            "width": 44,
+            "height": 44,
+            "name": "Season: Flood",
+            "hittable": true
+          },
+          {
+            "id": "desk-start-next",
+            "width": 44,
+            "height": 44,
+            "name": "Start the next unit",
+            "hittable": true
+          },
+          {
+            "id": "desk-stop-last",
+            "width": 44,
+            "height": 44,
+            "name": "Stop the last unit",
+            "hittable": true
+          },
+          {
+            "id": "breaker-hospital",
+            "width": 44,
+            "height": 44,
+            "name": "Hospital breaker",
+            "hittable": true
+          },
+          {
+            "id": "breaker-homes-less",
+            "width": 44,
+            "height": 44,
+            "name": "Homes: one block off",
+            "hittable": true
+          },
+          {
+            "id": "breaker-homes-more",
+            "width": 44,
+            "height": 44,
+            "name": "Homes: one block on",
+            "hittable": true
+          },
+          {
+            "id": "breaker-shops-less",
+            "width": 44,
+            "height": 44,
+            "name": "Shops: one block off",
+            "hittable": true
+          },
+          {
+            "id": "breaker-shops-more",
+            "width": 44,
+            "height": 44,
+            "name": "Shops: one block on",
+            "hittable": true
+          }
+        ],
+        "missingIds": []
+      },
+      "actualProfile": "HIGH",
+      "downgradePath": "",
+      "actualRenderer": "three@186",
+      "framesRendered": 3,
+      "drawCalls": 55,
+      "notice": [
+        "Spilling 127 m³/s: more water than the running turbines can take"
+      ],
+      "surface": "webgl",
+      "warnings": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "scenario": "hydro-variable-idle-units-dry",
+      "profile": "HIGH",
+      "viewport": "mobile",
+      "kind": "still",
+      "screenshot": "hydro-variable-idle-units-dry__HIGH__mobile.png",
+      "status": "PASS",
+      "framePlan": {
+        "renderer": "three",
+        "planned": {
+          "drawCalls": 47,
+          "triangles": 9648,
+          "shadowDrawCalls": 19,
+          "shadowTriangles": 1708,
+          "textures": [
+            {
+              "id": "sun-shadow-map",
+              "px": 1024
+            },
+            {
+              "id": "pmrem-environment",
+              "px": 1024
+            }
+          ]
+        },
+        "measured": {
+          "drawCalls": 47,
+          "triangles": 9648,
+          "shadowDrawCalls": 19,
+          "shadowTriangles": 1708
+        },
+        "programs": 11,
+        "memory": {
+          "geometries": 23,
+          "textures": 4
+        }
+      },
+      "frameParity": {
+        "ok": true,
+        "mismatches": []
+      },
+      "threeChunkRequests": [
+        "http://localhost:3000/_next/static/chunks/_app-pages-browser_components_interactive-labs_v2_ThreeScene_tsx.js"
+      ],
+      "controlHitTargets": {
+        "expectedIds": [
+          "gauge-band-1",
+          "gauge-band-2",
+          "gauge-band-3",
+          "gauge-band-4",
+          "gauge-band-5",
+          "desk-start-next",
+          "desk-stop-last",
+          "breaker-hospital",
+          "breaker-homes-less",
+          "breaker-homes-more",
+          "breaker-shops-less",
+          "breaker-shops-more"
+        ],
+        "targets": [
+          {
+            "id": "gauge-band-1",
+            "width": 44,
+            "height": 44,
+            "name": "Season: Dry",
+            "hittable": true
+          },
+          {
+            "id": "gauge-band-2",
+            "width": 44,
+            "height": 44,
+            "name": "Season: Early rains",
+            "hittable": true
+          },
+          {
+            "id": "gauge-band-3",
+            "width": 44,
+            "height": 44,
+            "name": "Season: Heavy rains",
+            "hittable": true
+          },
+          {
+            "id": "gauge-band-4",
+            "width": 44,
+            "height": 44,
+            "name": "Season: Rainy, full",
+            "hittable": true
+          },
+          {
+            "id": "gauge-band-5",
+            "width": 44,
+            "height": 44,
+            "name": "Season: Flood",
+            "hittable": true
+          },
+          {
+            "id": "desk-start-next",
+            "width": 44,
+            "height": 44,
+            "name": "Start the next unit",
+            "hittable": true
+          },
+          {
+            "id": "desk-stop-last",
+            "width": 44,
+            "height": 44,
+            "name": "Stop the last unit",
+            "hittable": true
+          },
+          {
+            "id": "breaker-hospital",
+            "width": 44,
+            "height": 44,
+            "name": "Hospital breaker",
+            "hittable": true
+          },
+          {
+            "id": "breaker-homes-less",
+            "width": 44,
+            "height": 44,
+            "name": "Homes: one block off",
+            "hittable": true
+          },
+          {
+            "id": "breaker-homes-more",
+            "width": 44,
+            "height": 44,
+            "name": "Homes: one block on",
+            "hittable": true
+          },
+          {
+            "id": "breaker-shops-less",
+            "width": 44,
+            "height": 44,
+            "name": "Shops: one block off",
+            "hittable": true
+          },
+          {
+            "id": "breaker-shops-more",
+            "width": 44,
+            "height": 44,
+            "name": "Shops: one block on",
+            "hittable": true
+          }
+        ],
+        "missingIds": []
+      },
+      "actualProfile": "HIGH",
+      "downgradePath": "",
+      "actualRenderer": "three@186",
+      "framesRendered": 3,
+      "drawCalls": 47,
+      "notice": [],
+      "surface": "webgl",
+      "warnings": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "scenario": "hydro-fault-overload-trip",
+      "profile": "HIGH",
+      "viewport": "mobile",
+      "kind": "still",
+      "screenshot": "hydro-fault-overload-trip__HIGH__mobile.png",
+      "status": "PASS",
+      "framePlan": {
+        "renderer": "three",
+        "planned": {
+          "drawCalls": 43,
+          "triangles": 10164,
+          "shadowDrawCalls": 20,
+          "shadowTriangles": 1848,
+          "textures": [
+            {
+              "id": "sun-shadow-map",
+              "px": 1024
+            },
+            {
+              "id": "pmrem-environment",
+              "px": 1024
+            }
+          ]
+        },
+        "measured": {
+          "drawCalls": 43,
+          "triangles": 10164,
+          "shadowDrawCalls": 20,
+          "shadowTriangles": 1848
+        },
+        "programs": 11,
+        "memory": {
+          "geometries": 20,
+          "textures": 4
+        }
+      },
+      "frameParity": {
+        "ok": true,
+        "mismatches": []
+      },
+      "threeChunkRequests": [
+        "http://localhost:3000/_next/static/chunks/_app-pages-browser_components_interactive-labs_v2_ThreeScene_tsx.js"
+      ],
+      "controlHitTargets": {
+        "expectedIds": [
+          "breaker-homes-more",
+          "breaker-shops-less",
+          "breaker-shops-more"
+        ],
+        "targets": [
+          {
+            "id": "breaker-homes-more",
+            "width": 44,
+            "height": 44,
+            "name": "Homes: one block on",
+            "hittable": true
+          },
+          {
+            "id": "breaker-shops-less",
+            "width": 44,
+            "height": 44,
+            "name": "Shops: one block off",
+            "hittable": true
+          },
+          {
+            "id": "breaker-shops-more",
+            "width": 44,
+            "height": 44,
+            "name": "Shops: one block on",
+            "hittable": true
+          }
+        ],
+        "missingIds": []
+      },
+      "actualProfile": "HIGH",
+      "downgradePath": "",
+      "actualRenderer": "three@186",
+      "framesRendered": 3,
+      "drawCalls": 29,
+      "notice": [
+        "PLANT TRIPPED — 0 MW delivered; the whole city is dark. Reset unavailable: demand is still 2 MW above available generation."
+      ],
+      "surface": "webgl",
+      "warnings": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "scenario": "hydro-fault-shed-not-reset",
+      "profile": "HIGH",
+      "viewport": "mobile",
+      "kind": "still",
+      "screenshot": "hydro-fault-shed-not-reset__HIGH__mobile.png",
+      "status": "PASS",
+      "framePlan": {
+        "renderer": "three",
+        "planned": {
+          "drawCalls": 44,
+          "triangles": 10164,
+          "shadowDrawCalls": 21,
+          "shadowTriangles": 1848,
+          "textures": [
+            {
+              "id": "sun-shadow-map",
+              "px": 1024
+            },
+            {
+              "id": "pmrem-environment",
+              "px": 1024
+            }
+          ]
+        },
+        "measured": {
+          "drawCalls": 44,
+          "triangles": 10164,
+          "shadowDrawCalls": 21,
+          "shadowTriangles": 1848
+        },
+        "programs": 11,
+        "memory": {
+          "geometries": 20,
+          "textures": 4
+        }
+      },
+      "frameParity": {
+        "ok": true,
+        "mismatches": []
+      },
+      "threeChunkRequests": [
+        "http://localhost:3000/_next/static/chunks/_app-pages-browser_components_interactive-labs_v2_ThreeScene_tsx.js"
+      ],
+      "controlHitTargets": {
+        "expectedIds": [
+          "breaker-homes-more",
+          "breaker-shops-less",
+          "breaker-shops-more"
+        ],
+        "targets": [
+          {
+            "id": "breaker-homes-more",
+            "width": 44,
+            "height": 44,
+            "name": "Homes: one block on",
+            "hittable": true
+          },
+          {
+            "id": "breaker-shops-less",
+            "width": 44,
+            "height": 44,
+            "name": "Shops: one block off",
+            "hittable": true
+          },
+          {
+            "id": "breaker-shops-more",
+            "width": 44,
+            "height": 44,
+            "name": "Shops: one block on",
+            "hittable": true
+          }
+        ],
+        "missingIds": []
+      },
+      "actualProfile": "HIGH",
+      "downgradePath": "",
+      "actualRenderer": "three@186",
+      "framesRendered": 3,
+      "drawCalls": 30,
+      "notice": [
+        "PLANT TRIPPED — 0 MW delivered; the whole city is dark. Demand fits now: press Reset plant to restore power."
+      ],
+      "surface": "webgl",
+      "warnings": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "scenario": "hydro-challenge-start",
+      "profile": "HIGH",
+      "viewport": "mobile",
+      "kind": "still",
+      "screenshot": "hydro-challenge-start__HIGH__mobile.png",
+      "status": "PASS",
+      "framePlan": {
+        "renderer": "three",
+        "planned": {
+          "drawCalls": 46,
+          "triangles": 9904,
+          "shadowDrawCalls": 19,
+          "shadowTriangles": 1708,
+          "textures": [
+            {
+              "id": "sun-shadow-map",
+              "px": 1024
+            },
+            {
+              "id": "pmrem-environment",
+              "px": 1024
+            }
+          ]
+        },
+        "measured": {
+          "drawCalls": 46,
+          "triangles": 9904,
+          "shadowDrawCalls": 19,
+          "shadowTriangles": 1708
+        },
+        "programs": 11,
+        "memory": {
+          "geometries": 22,
+          "textures": 4
+        }
+      },
+      "frameParity": {
+        "ok": true,
+        "mismatches": []
+      },
+      "threeChunkRequests": [
+        "http://localhost:3000/_next/static/chunks/_app-pages-browser_components_interactive-labs_v2_ThreeScene_tsx.js"
+      ],
+      "controlHitTargets": {
+        "expectedIds": [
+          "breaker-homes-more",
+          "breaker-shops-less",
+          "breaker-shops-more"
+        ],
+        "targets": [
+          {
+            "id": "breaker-homes-more",
+            "width": 44,
+            "height": 44,
+            "name": "Homes: one block on",
+            "hittable": true
+          },
+          {
+            "id": "breaker-shops-less",
+            "width": 44,
+            "height": 44,
+            "name": "Shops: one block off",
+            "hittable": true
+          },
+          {
+            "id": "breaker-shops-more",
+            "width": 44,
+            "height": 44,
+            "name": "Shops: one block on",
+            "hittable": true
+          }
+        ],
+        "missingIds": []
+      },
+      "actualProfile": "HIGH",
+      "downgradePath": "",
+      "actualRenderer": "three@186",
+      "framesRendered": 3,
+      "drawCalls": 33,
+      "notice": [
+        "Not met yet: in the dry season, keep the hospital lit and switch on every block that still fits without a trip."
+      ],
+      "surface": "webgl",
+      "warnings": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "scenario": "hydro-challenge-reset-solved",
+      "profile": "HIGH",
+      "viewport": "mobile",
+      "kind": "still",
+      "screenshot": "hydro-challenge-reset-solved__HIGH__mobile.png",
+      "status": "PASS",
+      "framePlan": {
+        "renderer": "three",
+        "planned": {
+          "drawCalls": 47,
+          "triangles": 9648,
+          "shadowDrawCalls": 19,
+          "shadowTriangles": 1708,
+          "textures": [
+            {
+              "id": "sun-shadow-map",
+              "px": 1024
+            },
+            {
+              "id": "pmrem-environment",
+              "px": 1024
+            }
+          ]
+        },
+        "measured": {
+          "drawCalls": 47,
+          "triangles": 9648,
+          "shadowDrawCalls": 19,
+          "shadowTriangles": 1708
+        },
+        "programs": 11,
+        "memory": {
+          "geometries": 23,
+          "textures": 4
+        }
+      },
+      "frameParity": {
+        "ok": true,
+        "mismatches": []
+      },
+      "threeChunkRequests": [
+        "http://localhost:3000/_next/static/chunks/_app-pages-browser_components_interactive-labs_v2_ThreeScene_tsx.js"
+      ],
+      "controlHitTargets": {
+        "expectedIds": [
+          "breaker-homes-more",
+          "breaker-shops-less",
+          "breaker-shops-more"
+        ],
+        "targets": [
+          {
+            "id": "breaker-homes-more",
+            "width": 44,
+            "height": 44,
+            "name": "Homes: one block on",
+            "hittable": true
+          },
+          {
+            "id": "breaker-shops-less",
+            "width": 44,
+            "height": 44,
+            "name": "Shops: one block off",
+            "hittable": true
+          },
+          {
+            "id": "breaker-shops-more",
+            "width": 44,
+            "height": 44,
+            "name": "Shops: one block on",
+            "hittable": true
+          }
+        ],
+        "missingIds": []
+      },
+      "actualProfile": "HIGH",
+      "downgradePath": "",
+      "actualRenderer": "three@186",
+      "framesRendered": 3,
+      "drawCalls": 34,
+      "notice": [
+        "Hospital supply is stable in the dry season. Challenge met."
+      ],
+      "surface": "webgl",
+      "warnings": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "scenario": "hydro-overview",
+      "profile": "HIGH",
+      "viewport": "landscape",
+      "kind": "still",
+      "screenshot": "hydro-overview__HIGH__landscape.png",
+      "status": "PASS",
+      "framePlan": {
+        "renderer": "three",
+        "planned": {
+          "drawCalls": 52,
+          "triangles": 8752,
+          "shadowDrawCalls": 14,
+          "shadowTriangles": 1288,
+          "textures": [
+            {
+              "id": "sun-shadow-map",
+              "px": 1024
+            },
+            {
+              "id": "pmrem-environment",
+              "px": 1024
+            }
+          ]
+        },
+        "measured": {
+          "drawCalls": 52,
+          "triangles": 8752,
+          "shadowDrawCalls": 14,
+          "shadowTriangles": 1288
+        },
+        "programs": 11,
+        "memory": {
+          "geometries": 27,
+          "textures": 4
+        }
+      },
+      "frameParity": {
+        "ok": true,
+        "mismatches": []
+      },
+      "threeChunkRequests": [
+        "http://localhost:3000/_next/static/chunks/_app-pages-browser_components_interactive-labs_v2_ThreeScene_tsx.js"
+      ],
+      "controlHitTargets": {
+        "expectedIds": [
+          "gauge-band-1",
+          "gauge-band-2",
+          "gauge-band-3",
+          "gauge-band-4",
+          "gauge-band-5",
+          "desk-start-next",
+          "desk-stop-last",
+          "breaker-hospital",
+          "breaker-homes-less",
+          "breaker-homes-more",
+          "breaker-shops-less",
+          "breaker-shops-more"
+        ],
+        "targets": [
+          {
+            "id": "gauge-band-1",
+            "width": 44,
+            "height": 44,
+            "name": "Season: Dry",
+            "hittable": true
+          },
+          {
+            "id": "gauge-band-2",
+            "width": 44,
+            "height": 44,
+            "name": "Season: Early rains",
+            "hittable": true
+          },
+          {
+            "id": "gauge-band-3",
+            "width": 44,
+            "height": 44,
+            "name": "Season: Heavy rains",
+            "hittable": true
+          },
+          {
+            "id": "gauge-band-4",
+            "width": 44,
+            "height": 44,
+            "name": "Season: Rainy, full",
+            "hittable": true
+          },
+          {
+            "id": "gauge-band-5",
+            "width": 44,
+            "height": 44,
+            "name": "Season: Flood",
+            "hittable": true
+          },
+          {
+            "id": "desk-start-next",
+            "width": 44,
+            "height": 44,
+            "name": "Start the next unit",
+            "hittable": true
+          },
+          {
+            "id": "desk-stop-last",
+            "width": 44,
+            "height": 44,
+            "name": "Stop the last unit",
+            "hittable": true
+          },
+          {
+            "id": "breaker-hospital",
+            "width": 44,
+            "height": 44,
+            "name": "Hospital breaker",
+            "hittable": true
+          },
+          {
+            "id": "breaker-homes-less",
+            "width": 44,
+            "height": 44,
+            "name": "Homes: one block off",
+            "hittable": true
+          },
+          {
+            "id": "breaker-homes-more",
+            "width": 44,
+            "height": 44,
+            "name": "Homes: one block on",
+            "hittable": true
+          },
+          {
+            "id": "breaker-shops-less",
+            "width": 44,
+            "height": 44,
+            "name": "Shops: one block off",
+            "hittable": true
+          },
+          {
+            "id": "breaker-shops-more",
+            "width": 44,
+            "height": 44,
+            "name": "Shops: one block on",
+            "hittable": true
+          }
+        ],
+        "missingIds": []
+      },
+      "actualProfile": "HIGH",
+      "downgradePath": "",
+      "actualRenderer": "three@186",
+      "framesRendered": 3,
+      "drawCalls": 52,
+      "notice": [],
+      "surface": "webgl",
+      "warnings": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "scenario": "hydro-season-controls",
+      "profile": "HIGH",
+      "viewport": "landscape",
+      "kind": "still",
+      "screenshot": "hydro-season-controls__HIGH__landscape.png",
+      "status": "PASS",
+      "framePlan": {
+        "renderer": "three",
+        "planned": {
+          "drawCalls": 52,
+          "triangles": 8752,
+          "shadowDrawCalls": 14,
+          "shadowTriangles": 1288,
+          "textures": [
+            {
+              "id": "sun-shadow-map",
+              "px": 1024
+            },
+            {
+              "id": "pmrem-environment",
+              "px": 1024
+            }
+          ]
+        },
+        "measured": {
+          "drawCalls": 52,
+          "triangles": 8752,
+          "shadowDrawCalls": 14,
+          "shadowTriangles": 1288
+        },
+        "programs": 11,
+        "memory": {
+          "geometries": 27,
+          "textures": 4
+        }
+      },
+      "frameParity": {
+        "ok": true,
+        "mismatches": []
+      },
+      "threeChunkRequests": [
+        "http://localhost:3000/_next/static/chunks/_app-pages-browser_components_interactive-labs_v2_ThreeScene_tsx.js"
+      ],
+      "controlHitTargets": {
+        "expectedIds": [
+          "gauge-band-1",
+          "gauge-band-2",
+          "gauge-band-3",
+          "gauge-band-4",
+          "gauge-band-5"
+        ],
+        "targets": [
+          {
+            "id": "gauge-band-1",
+            "width": 44,
+            "height": 44,
+            "name": "Season: Dry",
+            "hittable": true
+          },
+          {
+            "id": "gauge-band-2",
+            "width": 44,
+            "height": 44,
+            "name": "Season: Early rains",
+            "hittable": true
+          },
+          {
+            "id": "gauge-band-3",
+            "width": 44,
+            "height": 44,
+            "name": "Season: Heavy rains",
+            "hittable": true
+          },
+          {
+            "id": "gauge-band-4",
+            "width": 44,
+            "height": 44,
+            "name": "Season: Rainy, full",
+            "hittable": true
+          },
+          {
+            "id": "gauge-band-5",
+            "width": 44,
+            "height": 44,
+            "name": "Season: Flood",
+            "hittable": true
+          }
+        ],
+        "missingIds": []
+      },
+      "actualProfile": "HIGH",
+      "downgradePath": "",
+      "actualRenderer": "three@186",
+      "framesRendered": 3,
+      "drawCalls": 23,
+      "notice": [],
+      "surface": "webgl",
+      "warnings": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "scenario": "hydro-feeder-controls",
+      "profile": "HIGH",
+      "viewport": "landscape",
+      "kind": "still",
+      "screenshot": "hydro-feeder-controls__HIGH__landscape.png",
+      "status": "PASS",
+      "framePlan": {
+        "renderer": "three",
+        "planned": {
+          "drawCalls": 52,
+          "triangles": 8752,
+          "shadowDrawCalls": 14,
+          "shadowTriangles": 1288,
+          "textures": [
+            {
+              "id": "sun-shadow-map",
+              "px": 1024
+            },
+            {
+              "id": "pmrem-environment",
+              "px": 1024
+            }
+          ]
+        },
+        "measured": {
+          "drawCalls": 52,
+          "triangles": 8752,
+          "shadowDrawCalls": 14,
+          "shadowTriangles": 1288
+        },
+        "programs": 11,
+        "memory": {
+          "geometries": 27,
+          "textures": 4
+        }
+      },
+      "frameParity": {
+        "ok": true,
+        "mismatches": []
+      },
+      "threeChunkRequests": [
+        "http://localhost:3000/_next/static/chunks/_app-pages-browser_components_interactive-labs_v2_ThreeScene_tsx.js"
+      ],
+      "controlHitTargets": {
+        "expectedIds": [
+          "breaker-hospital",
+          "breaker-homes-less",
+          "breaker-homes-more",
+          "breaker-shops-less",
+          "breaker-shops-more"
+        ],
+        "targets": [
+          {
+            "id": "breaker-hospital",
+            "width": 44,
+            "height": 44,
+            "name": "Hospital breaker",
+            "hittable": true
+          },
+          {
+            "id": "breaker-homes-less",
+            "width": 44,
+            "height": 44,
+            "name": "Homes: one block off",
+            "hittable": true
+          },
+          {
+            "id": "breaker-homes-more",
+            "width": 44,
+            "height": 44,
+            "name": "Homes: one block on",
+            "hittable": true
+          },
+          {
+            "id": "breaker-shops-less",
+            "width": 44,
+            "height": 44,
+            "name": "Shops: one block off",
+            "hittable": true
+          },
+          {
+            "id": "breaker-shops-more",
+            "width": 44,
+            "height": 44,
+            "name": "Shops: one block on",
+            "hittable": true
+          }
+        ],
+        "missingIds": []
+      },
+      "actualProfile": "HIGH",
+      "downgradePath": "",
+      "actualRenderer": "three@186",
+      "framesRendered": 3,
+      "drawCalls": 38,
+      "notice": [],
+      "surface": "webgl",
+      "warnings": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "scenario": "hydro-cutaway-powerhouse",
+      "profile": "HIGH",
+      "viewport": "landscape",
+      "kind": "still",
+      "screenshot": "hydro-cutaway-powerhouse__HIGH__landscape.png",
+      "status": "PASS",
+      "framePlan": {
+        "renderer": "three",
+        "planned": {
+          "drawCalls": 43,
+          "triangles": 8200,
+          "shadowDrawCalls": 14,
+          "shadowTriangles": 1288,
+          "textures": [
+            {
+              "id": "sun-shadow-map",
+              "px": 1024
+            },
+            {
+              "id": "pmrem-environment",
+              "px": 1024
+            }
+          ]
+        },
+        "measured": {
+          "drawCalls": 43,
+          "triangles": 8200,
+          "shadowDrawCalls": 14,
+          "shadowTriangles": 1288
+        },
+        "programs": 12,
+        "memory": {
+          "geometries": 17,
+          "textures": 4
+        }
+      },
+      "frameParity": {
+        "ok": true,
+        "mismatches": []
+      },
+      "threeChunkRequests": [
+        "http://localhost:3000/_next/static/chunks/_app-pages-browser_components_interactive-labs_v2_ThreeScene_tsx.js"
+      ],
+      "controlHitTargets": {
+        "expectedIds": [],
+        "targets": [],
+        "missingIds": []
+      },
+      "actualProfile": "HIGH",
+      "downgradePath": "",
+      "actualRenderer": "three@186",
+      "framesRendered": 3,
+      "drawCalls": 34,
+      "notice": [],
+      "surface": "webgl",
+      "warnings": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "scenario": "hydro-exploded-unit",
+      "profile": "HIGH",
+      "viewport": "landscape",
+      "kind": "still",
+      "screenshot": "hydro-exploded-unit__HIGH__landscape.png",
+      "status": "PASS",
+      "framePlan": {
+        "renderer": "three",
+        "planned": {
+          "drawCalls": 42,
+          "triangles": 8188,
+          "shadowDrawCalls": 14,
+          "shadowTriangles": 1288,
+          "textures": [
+            {
+              "id": "sun-shadow-map",
+              "px": 1024
+            },
+            {
+              "id": "pmrem-environment",
+              "px": 1024
+            }
+          ]
+        },
+        "measured": {
+          "drawCalls": 42,
+          "triangles": 8188,
+          "shadowDrawCalls": 14,
+          "shadowTriangles": 1288
+        },
+        "programs": 9,
+        "memory": {
+          "geometries": 17,
+          "textures": 4
+        }
+      },
+      "frameParity": {
+        "ok": true,
+        "mismatches": []
+      },
+      "threeChunkRequests": [
+        "http://localhost:3000/_next/static/chunks/_app-pages-browser_components_interactive-labs_v2_ThreeScene_tsx.js"
+      ],
+      "controlHitTargets": {
+        "expectedIds": [
+          "desk-start-next",
+          "desk-stop-last",
+          "breaker-hospital",
+          "breaker-homes-less",
+          "breaker-homes-more",
+          "breaker-shops-less",
+          "breaker-shops-more"
+        ],
+        "targets": [
+          {
+            "id": "desk-start-next",
+            "width": 44,
+            "height": 44,
+            "name": "Start the next unit",
+            "hittable": true
+          },
+          {
+            "id": "desk-stop-last",
+            "width": 44,
+            "height": 44,
+            "name": "Stop the last unit",
+            "hittable": true
+          },
+          {
+            "id": "breaker-hospital",
+            "width": 44,
+            "height": 44,
+            "name": "Hospital breaker",
+            "hittable": true
+          },
+          {
+            "id": "breaker-homes-less",
+            "width": 44,
+            "height": 44,
+            "name": "Homes: one block off",
+            "hittable": true
+          },
+          {
+            "id": "breaker-homes-more",
+            "width": 44,
+            "height": 44,
+            "name": "Homes: one block on",
+            "hittable": true
+          },
+          {
+            "id": "breaker-shops-less",
+            "width": 44,
+            "height": 44,
+            "name": "Shops: one block off",
+            "hittable": true
+          },
+          {
+            "id": "breaker-shops-more",
+            "width": 44,
+            "height": 44,
+            "name": "Shops: one block on",
+            "hittable": true
+          }
+        ],
+        "missingIds": []
+      },
+      "actualProfile": "HIGH",
+      "downgradePath": "",
+      "actualRenderer": "three@186",
+      "framesRendered": 3,
+      "drawCalls": 38,
+      "notice": [],
+      "surface": "webgl",
+      "warnings": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "scenario": "hydro-variable-flood-cap",
+      "profile": "HIGH",
+      "viewport": "landscape",
+      "kind": "still",
+      "screenshot": "hydro-variable-flood-cap__HIGH__landscape.png",
+      "status": "PASS",
+      "framePlan": {
+        "renderer": "three",
+        "planned": {
+          "drawCalls": 55,
+          "triangles": 8662,
+          "shadowDrawCalls": 16,
+          "shadowTriangles": 1288,
+          "textures": [
+            {
+              "id": "sun-shadow-map",
+              "px": 1024
+            },
+            {
+              "id": "pmrem-environment",
+              "px": 1024
+            }
+          ]
+        },
+        "measured": {
+          "drawCalls": 55,
+          "triangles": 8662,
+          "shadowDrawCalls": 16,
+          "shadowTriangles": 1288
+        },
+        "programs": 11,
+        "memory": {
+          "geometries": 28,
+          "textures": 4
+        }
+      },
+      "frameParity": {
+        "ok": true,
+        "mismatches": []
+      },
+      "threeChunkRequests": [
+        "http://localhost:3000/_next/static/chunks/_app-pages-browser_components_interactive-labs_v2_ThreeScene_tsx.js"
+      ],
+      "controlHitTargets": {
+        "expectedIds": [
+          "gauge-band-1",
+          "gauge-band-2",
+          "gauge-band-3",
+          "gauge-band-4",
+          "gauge-band-5",
+          "desk-start-next",
+          "desk-stop-last",
+          "breaker-hospital",
+          "breaker-homes-less",
+          "breaker-homes-more",
+          "breaker-shops-less",
+          "breaker-shops-more"
+        ],
+        "targets": [
+          {
+            "id": "gauge-band-1",
+            "width": 44,
+            "height": 44,
+            "name": "Season: Dry",
+            "hittable": true
+          },
+          {
+            "id": "gauge-band-2",
+            "width": 44,
+            "height": 44,
+            "name": "Season: Early rains",
+            "hittable": true
+          },
+          {
+            "id": "gauge-band-3",
+            "width": 44,
+            "height": 44,
+            "name": "Season: Heavy rains",
+            "hittable": true
+          },
+          {
+            "id": "gauge-band-4",
+            "width": 44,
+            "height": 44,
+            "name": "Season: Rainy, full",
+            "hittable": true
+          },
+          {
+            "id": "gauge-band-5",
+            "width": 44,
+            "height": 44,
+            "name": "Season: Flood",
+            "hittable": true
+          },
+          {
+            "id": "desk-start-next",
+            "width": 44,
+            "height": 44,
+            "name": "Start the next unit",
+            "hittable": true
+          },
+          {
+            "id": "desk-stop-last",
+            "width": 44,
+            "height": 44,
+            "name": "Stop the last unit",
+            "hittable": true
+          },
+          {
+            "id": "breaker-hospital",
+            "width": 44,
+            "height": 44,
+            "name": "Hospital breaker",
+            "hittable": true
+          },
+          {
+            "id": "breaker-homes-less",
+            "width": 44,
+            "height": 44,
+            "name": "Homes: one block off",
+            "hittable": true
+          },
+          {
+            "id": "breaker-homes-more",
+            "width": 44,
+            "height": 44,
+            "name": "Homes: one block on",
+            "hittable": true
+          },
+          {
+            "id": "breaker-shops-less",
+            "width": 44,
+            "height": 44,
+            "name": "Shops: one block off",
+            "hittable": true
+          },
+          {
+            "id": "breaker-shops-more",
+            "width": 44,
+            "height": 44,
+            "name": "Shops: one block on",
+            "hittable": true
+          }
+        ],
+        "missingIds": []
+      },
+      "actualProfile": "HIGH",
+      "downgradePath": "",
+      "actualRenderer": "three@186",
+      "framesRendered": 3,
+      "drawCalls": 55,
+      "notice": [
+        "Spilling 127 m³/s: more water than the running turbines can take"
+      ],
+      "surface": "webgl",
+      "warnings": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "scenario": "hydro-variable-idle-units-dry",
+      "profile": "HIGH",
+      "viewport": "landscape",
+      "kind": "still",
+      "screenshot": "hydro-variable-idle-units-dry__HIGH__landscape.png",
+      "status": "PASS",
+      "framePlan": {
+        "renderer": "three",
+        "planned": {
+          "drawCalls": 47,
+          "triangles": 9648,
+          "shadowDrawCalls": 19,
+          "shadowTriangles": 1708,
+          "textures": [
+            {
+              "id": "sun-shadow-map",
+              "px": 1024
+            },
+            {
+              "id": "pmrem-environment",
+              "px": 1024
+            }
+          ]
+        },
+        "measured": {
+          "drawCalls": 47,
+          "triangles": 9648,
+          "shadowDrawCalls": 19,
+          "shadowTriangles": 1708
+        },
+        "programs": 11,
+        "memory": {
+          "geometries": 23,
+          "textures": 4
+        }
+      },
+      "frameParity": {
+        "ok": true,
+        "mismatches": []
+      },
+      "threeChunkRequests": [
+        "http://localhost:3000/_next/static/chunks/_app-pages-browser_components_interactive-labs_v2_ThreeScene_tsx.js"
+      ],
+      "controlHitTargets": {
+        "expectedIds": [
+          "gauge-band-1",
+          "gauge-band-2",
+          "gauge-band-3",
+          "gauge-band-4",
+          "gauge-band-5",
+          "desk-start-next",
+          "desk-stop-last",
+          "breaker-hospital",
+          "breaker-homes-less",
+          "breaker-homes-more",
+          "breaker-shops-less",
+          "breaker-shops-more"
+        ],
+        "targets": [
+          {
+            "id": "gauge-band-1",
+            "width": 44,
+            "height": 44,
+            "name": "Season: Dry",
+            "hittable": true
+          },
+          {
+            "id": "gauge-band-2",
+            "width": 44,
+            "height": 44,
+            "name": "Season: Early rains",
+            "hittable": true
+          },
+          {
+            "id": "gauge-band-3",
+            "width": 44,
+            "height": 44,
+            "name": "Season: Heavy rains",
+            "hittable": true
+          },
+          {
+            "id": "gauge-band-4",
+            "width": 44,
+            "height": 44,
+            "name": "Season: Rainy, full",
+            "hittable": true
+          },
+          {
+            "id": "gauge-band-5",
+            "width": 44,
+            "height": 44,
+            "name": "Season: Flood",
+            "hittable": true
+          },
+          {
+            "id": "desk-start-next",
+            "width": 44,
+            "height": 44,
+            "name": "Start the next unit",
+            "hittable": true
+          },
+          {
+            "id": "desk-stop-last",
+            "width": 44,
+            "height": 44,
+            "name": "Stop the last unit",
+            "hittable": true
+          },
+          {
+            "id": "breaker-hospital",
+            "width": 44,
+            "height": 44,
+            "name": "Hospital breaker",
+            "hittable": true
+          },
+          {
+            "id": "breaker-homes-less",
+            "width": 44,
+            "height": 44,
+            "name": "Homes: one block off",
+            "hittable": true
+          },
+          {
+            "id": "breaker-homes-more",
+            "width": 44,
+            "height": 44,
+            "name": "Homes: one block on",
+            "hittable": true
+          },
+          {
+            "id": "breaker-shops-less",
+            "width": 44,
+            "height": 44,
+            "name": "Shops: one block off",
+            "hittable": true
+          },
+          {
+            "id": "breaker-shops-more",
+            "width": 44,
+            "height": 44,
+            "name": "Shops: one block on",
+            "hittable": true
+          }
+        ],
+        "missingIds": []
+      },
+      "actualProfile": "HIGH",
+      "downgradePath": "",
+      "actualRenderer": "three@186",
+      "framesRendered": 3,
+      "drawCalls": 47,
+      "notice": [],
+      "surface": "webgl",
+      "warnings": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "scenario": "hydro-fault-overload-trip",
+      "profile": "HIGH",
+      "viewport": "landscape",
+      "kind": "still",
+      "screenshot": "hydro-fault-overload-trip__HIGH__landscape.png",
+      "status": "PASS",
+      "framePlan": {
+        "renderer": "three",
+        "planned": {
+          "drawCalls": 43,
+          "triangles": 10164,
+          "shadowDrawCalls": 20,
+          "shadowTriangles": 1848,
+          "textures": [
+            {
+              "id": "sun-shadow-map",
+              "px": 1024
+            },
+            {
+              "id": "pmrem-environment",
+              "px": 1024
+            }
+          ]
+        },
+        "measured": {
+          "drawCalls": 43,
+          "triangles": 10164,
+          "shadowDrawCalls": 20,
+          "shadowTriangles": 1848
+        },
+        "programs": 11,
+        "memory": {
+          "geometries": 20,
+          "textures": 4
+        }
+      },
+      "frameParity": {
+        "ok": true,
+        "mismatches": []
+      },
+      "threeChunkRequests": [
+        "http://localhost:3000/_next/static/chunks/_app-pages-browser_components_interactive-labs_v2_ThreeScene_tsx.js"
+      ],
+      "controlHitTargets": {
+        "expectedIds": [
+          "breaker-hospital",
+          "breaker-homes-less",
+          "breaker-homes-more",
+          "breaker-shops-less",
+          "breaker-shops-more"
+        ],
+        "targets": [
+          {
+            "id": "breaker-hospital",
+            "width": 44,
+            "height": 44,
+            "name": "Hospital breaker",
+            "hittable": true
+          },
+          {
+            "id": "breaker-homes-less",
+            "width": 44,
+            "height": 44,
+            "name": "Homes: one block off",
+            "hittable": true
+          },
+          {
+            "id": "breaker-homes-more",
+            "width": 44,
+            "height": 44,
+            "name": "Homes: one block on",
+            "hittable": true
+          },
+          {
+            "id": "breaker-shops-less",
+            "width": 44,
+            "height": 44,
+            "name": "Shops: one block off",
+            "hittable": true
+          },
+          {
+            "id": "breaker-shops-more",
+            "width": 44,
+            "height": 44,
+            "name": "Shops: one block on",
+            "hittable": true
+          }
+        ],
+        "missingIds": []
+      },
+      "actualProfile": "HIGH",
+      "downgradePath": "",
+      "actualRenderer": "three@186",
+      "framesRendered": 3,
+      "drawCalls": 35,
+      "notice": [
+        "PLANT TRIPPED — 0 MW delivered; the whole city is dark. Reset unavailable: demand is still 2 MW above available generation."
+      ],
+      "surface": "webgl",
+      "warnings": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "scenario": "hydro-fault-shed-not-reset",
+      "profile": "HIGH",
+      "viewport": "landscape",
+      "kind": "still",
+      "screenshot": "hydro-fault-shed-not-reset__HIGH__landscape.png",
+      "status": "PASS",
+      "framePlan": {
+        "renderer": "three",
+        "planned": {
+          "drawCalls": 44,
+          "triangles": 10164,
+          "shadowDrawCalls": 21,
+          "shadowTriangles": 1848,
+          "textures": [
+            {
+              "id": "sun-shadow-map",
+              "px": 1024
+            },
+            {
+              "id": "pmrem-environment",
+              "px": 1024
+            }
+          ]
+        },
+        "measured": {
+          "drawCalls": 44,
+          "triangles": 10164,
+          "shadowDrawCalls": 21,
+          "shadowTriangles": 1848
+        },
+        "programs": 11,
+        "memory": {
+          "geometries": 20,
+          "textures": 4
+        }
+      },
+      "frameParity": {
+        "ok": true,
+        "mismatches": []
+      },
+      "threeChunkRequests": [
+        "http://localhost:3000/_next/static/chunks/_app-pages-browser_components_interactive-labs_v2_ThreeScene_tsx.js"
+      ],
+      "controlHitTargets": {
+        "expectedIds": [
+          "breaker-hospital",
+          "breaker-homes-less",
+          "breaker-homes-more",
+          "breaker-shops-less",
+          "breaker-shops-more"
+        ],
+        "targets": [
+          {
+            "id": "breaker-hospital",
+            "width": 44,
+            "height": 44,
+            "name": "Hospital breaker",
+            "hittable": true
+          },
+          {
+            "id": "breaker-homes-less",
+            "width": 44,
+            "height": 44,
+            "name": "Homes: one block off",
+            "hittable": true
+          },
+          {
+            "id": "breaker-homes-more",
+            "width": 44,
+            "height": 44,
+            "name": "Homes: one block on",
+            "hittable": true
+          },
+          {
+            "id": "breaker-shops-less",
+            "width": 44,
+            "height": 44,
+            "name": "Shops: one block off",
+            "hittable": true
+          },
+          {
+            "id": "breaker-shops-more",
+            "width": 44,
+            "height": 44,
+            "name": "Shops: one block on",
+            "hittable": true
+          }
+        ],
+        "missingIds": []
+      },
+      "actualProfile": "HIGH",
+      "downgradePath": "",
+      "actualRenderer": "three@186",
+      "framesRendered": 3,
+      "drawCalls": 36,
+      "notice": [
+        "PLANT TRIPPED — 0 MW delivered; the whole city is dark. Demand fits now: press Reset plant to restore power."
+      ],
+      "surface": "webgl",
+      "warnings": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "scenario": "hydro-challenge-start",
+      "profile": "HIGH",
+      "viewport": "landscape",
+      "kind": "still",
+      "screenshot": "hydro-challenge-start__HIGH__landscape.png",
+      "status": "PASS",
+      "framePlan": {
+        "renderer": "three",
+        "planned": {
+          "drawCalls": 46,
+          "triangles": 9904,
+          "shadowDrawCalls": 19,
+          "shadowTriangles": 1708,
+          "textures": [
+            {
+              "id": "sun-shadow-map",
+              "px": 1024
+            },
+            {
+              "id": "pmrem-environment",
+              "px": 1024
+            }
+          ]
+        },
+        "measured": {
+          "drawCalls": 46,
+          "triangles": 9904,
+          "shadowDrawCalls": 19,
+          "shadowTriangles": 1708
+        },
+        "programs": 11,
+        "memory": {
+          "geometries": 22,
+          "textures": 4
+        }
+      },
+      "frameParity": {
+        "ok": true,
+        "mismatches": []
+      },
+      "threeChunkRequests": [
+        "http://localhost:3000/_next/static/chunks/_app-pages-browser_components_interactive-labs_v2_ThreeScene_tsx.js"
+      ],
+      "controlHitTargets": {
+        "expectedIds": [
+          "breaker-hospital",
+          "breaker-homes-less",
+          "breaker-homes-more",
+          "breaker-shops-less",
+          "breaker-shops-more"
+        ],
+        "targets": [
+          {
+            "id": "breaker-hospital",
+            "width": 44,
+            "height": 44,
+            "name": "Hospital breaker",
+            "hittable": true
+          },
+          {
+            "id": "breaker-homes-less",
+            "width": 44,
+            "height": 44,
+            "name": "Homes: one block off",
+            "hittable": true
+          },
+          {
+            "id": "breaker-homes-more",
+            "width": 44,
+            "height": 44,
+            "name": "Homes: one block on",
+            "hittable": true
+          },
+          {
+            "id": "breaker-shops-less",
+            "width": 44,
+            "height": 44,
+            "name": "Shops: one block off",
+            "hittable": true
+          },
+          {
+            "id": "breaker-shops-more",
+            "width": 44,
+            "height": 44,
+            "name": "Shops: one block on",
+            "hittable": true
+          }
+        ],
+        "missingIds": []
+      },
+      "actualProfile": "HIGH",
+      "downgradePath": "",
+      "actualRenderer": "three@186",
+      "framesRendered": 3,
+      "drawCalls": 38,
+      "notice": [
+        "Not met yet: in the dry season, keep the hospital lit and switch on every block that still fits without a trip."
+      ],
+      "surface": "webgl",
+      "warnings": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "scenario": "hydro-challenge-reset-solved",
+      "profile": "HIGH",
+      "viewport": "landscape",
+      "kind": "still",
+      "screenshot": "hydro-challenge-reset-solved__HIGH__landscape.png",
+      "status": "PASS",
+      "framePlan": {
+        "renderer": "three",
+        "planned": {
+          "drawCalls": 47,
+          "triangles": 9648,
+          "shadowDrawCalls": 19,
+          "shadowTriangles": 1708,
+          "textures": [
+            {
+              "id": "sun-shadow-map",
+              "px": 1024
+            },
+            {
+              "id": "pmrem-environment",
+              "px": 1024
+            }
+          ]
+        },
+        "measured": {
+          "drawCalls": 47,
+          "triangles": 9648,
+          "shadowDrawCalls": 19,
+          "shadowTriangles": 1708
+        },
+        "programs": 11,
+        "memory": {
+          "geometries": 23,
+          "textures": 4
+        }
+      },
+      "frameParity": {
+        "ok": true,
+        "mismatches": []
+      },
+      "threeChunkRequests": [
+        "http://localhost:3000/_next/static/chunks/_app-pages-browser_components_interactive-labs_v2_ThreeScene_tsx.js"
+      ],
+      "controlHitTargets": {
+        "expectedIds": [
+          "breaker-hospital",
+          "breaker-homes-less",
+          "breaker-homes-more",
+          "breaker-shops-less",
+          "breaker-shops-more"
+        ],
+        "targets": [
+          {
+            "id": "breaker-hospital",
+            "width": 44,
+            "height": 44,
+            "name": "Hospital breaker",
+            "hittable": true
+          },
+          {
+            "id": "breaker-homes-less",
+            "width": 44,
+            "height": 44,
+            "name": "Homes: one block off",
+            "hittable": true
+          },
+          {
+            "id": "breaker-homes-more",
+            "width": 44,
+            "height": 44,
+            "name": "Homes: one block on",
+            "hittable": true
+          },
+          {
+            "id": "breaker-shops-less",
+            "width": 44,
+            "height": 44,
+            "name": "Shops: one block off",
+            "hittable": true
+          },
+          {
+            "id": "breaker-shops-more",
+            "width": 44,
+            "height": 44,
+            "name": "Shops: one block on",
+            "hittable": true
+          }
+        ],
+        "missingIds": []
+      },
+      "actualProfile": "HIGH",
+      "downgradePath": "",
+      "actualRenderer": "three@186",
+      "framesRendered": 3,
+      "drawCalls": 39,
+      "notice": [
+        "Hospital supply is stable in the dry season. Challenge met."
+      ],
+      "surface": "webgl",
+      "warnings": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    }
+  ]
+}

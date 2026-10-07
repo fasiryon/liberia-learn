@@ -1,0 +1,546 @@
+{
+  "labId": "mount-coffee-hydropower",
+  "labVersion": "1.1.0",
+  "reviewState": "DRAFT",
+  "label": "ci-37654034076-LOW-stage-b-tap-guard",
+  "gitSha": "5fe8f3ca17dad18b020e30b77eb536ef6d2604cd",
+  "capturedAt": "2026-10-07T16:49:50.664Z",
+  "environment": "GitHub Actions (Linux, run 37654034076) dev server, headless Chromium, virtual clock paused from navigation for stills and motion frames",
+  "rendererIdentityRule": "HIGH/STANDARD must be drawn by three@*, LOW by webgl-pass, FALLBACK_2D by svg, at the requested profile, with at least one frame drawn; otherwise status FAIL.",
+  "framePlanRule": "RX-005 A8 / RX-006 test 1: the shared frame planner must equal the renderer's own count for the probed frame (three.js: renderer.info with frustum culling off and the shadow pass forced; LOW: counted drawArrays); otherwise status FAIL.",
+  "threeChunkRule": "RX-005 A8: LOW and FALLBACK_2D runs must make zero requests for a script carrying three.js; otherwise status FAIL.",
+  "deviceBoundary": "Headless browser evidence proves rendering correctness, composition, layout, interaction automation and renderer/profile routing only. It does not prove low-end GPU performance, touch latency, thermal behaviour or mobile memory pressure (DEVICE_REQUIRED).",
+  "renderer": {
+    "kind": "software",
+    "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+    "validFor": [
+      "composition",
+      "labels"
+    ]
+  },
+  "profiles": [
+    "LOW"
+  ],
+  "viewports": [
+    "mobile",
+    "landscape"
+  ],
+  "captures": [
+    {
+      "file": "hydro-season-controls__LOW__mobile.png",
+      "scenario": "hydro-season-controls",
+      "storyboardScene": "S5",
+      "stage": "variable",
+      "profile": "LOW",
+      "viewport": "mobile",
+      "kind": "still",
+      "reducedMotion": false
+    },
+    {
+      "file": "hydro-feeder-controls__LOW__mobile.png",
+      "scenario": "hydro-feeder-controls",
+      "storyboardScene": "S6",
+      "stage": "variable",
+      "profile": "LOW",
+      "viewport": "mobile",
+      "kind": "still",
+      "reducedMotion": false
+    },
+    {
+      "file": "hydro-cutaway-powerhouse__LOW__mobile.png",
+      "scenario": "hydro-cutaway-powerhouse",
+      "storyboardScene": "S3",
+      "stage": "cutaway",
+      "profile": "LOW",
+      "viewport": "mobile",
+      "kind": "still",
+      "reducedMotion": false
+    },
+    {
+      "file": "hydro-season-controls__LOW__landscape.png",
+      "scenario": "hydro-season-controls",
+      "storyboardScene": "S5",
+      "stage": "variable",
+      "profile": "LOW",
+      "viewport": "landscape",
+      "kind": "still",
+      "reducedMotion": false
+    },
+    {
+      "file": "hydro-feeder-controls__LOW__landscape.png",
+      "scenario": "hydro-feeder-controls",
+      "storyboardScene": "S6",
+      "stage": "variable",
+      "profile": "LOW",
+      "viewport": "landscape",
+      "kind": "still",
+      "reducedMotion": false
+    },
+    {
+      "file": "hydro-cutaway-powerhouse__LOW__landscape.png",
+      "scenario": "hydro-cutaway-powerhouse",
+      "storyboardScene": "S3",
+      "stage": "cutaway",
+      "profile": "LOW",
+      "viewport": "landscape",
+      "kind": "still",
+      "reducedMotion": false
+    }
+  ],
+  "runs": [
+    {
+      "scenario": "hydro-season-controls",
+      "profile": "LOW",
+      "viewport": "mobile",
+      "kind": "still",
+      "screenshot": "hydro-season-controls__LOW__mobile.png",
+      "status": "PASS",
+      "framePlan": {
+        "renderer": "webgl-pass",
+        "planned": {
+          "drawCalls": 25,
+          "triangles": 1530,
+          "shadowDrawCalls": 0,
+          "shadowTriangles": 0,
+          "textures": []
+        },
+        "measured": {
+          "drawCalls": 25,
+          "triangles": 1530,
+          "shadowDrawCalls": 0,
+          "shadowTriangles": 0
+        }
+      },
+      "frameParity": {
+        "ok": true,
+        "mismatches": []
+      },
+      "threeChunkRequests": [],
+      "controlHitTargets": {
+        "expectedIds": [
+          "gauge-band-1",
+          "gauge-band-2",
+          "gauge-band-3",
+          "gauge-band-4",
+          "gauge-band-5"
+        ],
+        "targets": [
+          {
+            "id": "gauge-band-1",
+            "width": 44,
+            "height": 44,
+            "name": "Season: Dry",
+            "hittable": true
+          },
+          {
+            "id": "gauge-band-2",
+            "width": 44,
+            "height": 44,
+            "name": "Season: Early rains",
+            "hittable": true
+          },
+          {
+            "id": "gauge-band-3",
+            "width": 44,
+            "height": 44,
+            "name": "Season: Heavy rains",
+            "hittable": true
+          },
+          {
+            "id": "gauge-band-4",
+            "width": 44,
+            "height": 44,
+            "name": "Season: Rainy, full",
+            "hittable": true
+          },
+          {
+            "id": "gauge-band-5",
+            "width": 44,
+            "height": 44,
+            "name": "Season: Flood",
+            "hittable": true
+          }
+        ],
+        "missingIds": []
+      },
+      "actualProfile": "LOW",
+      "downgradePath": "",
+      "actualRenderer": "webgl-pass",
+      "framesRendered": 303,
+      "drawCalls": 25,
+      "notice": [
+        "Unit 1 rotation: turning. Unit 2 rotation: turning. Unit 3 rotation: turning. Unit 4 rotation: turning"
+      ],
+      "surface": "webgl",
+      "warnings": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "scenario": "hydro-feeder-controls",
+      "profile": "LOW",
+      "viewport": "mobile",
+      "kind": "still",
+      "screenshot": "hydro-feeder-controls__LOW__mobile.png",
+      "status": "PASS",
+      "framePlan": {
+        "renderer": "webgl-pass",
+        "planned": {
+          "drawCalls": 25,
+          "triangles": 1530,
+          "shadowDrawCalls": 0,
+          "shadowTriangles": 0,
+          "textures": []
+        },
+        "measured": {
+          "drawCalls": 25,
+          "triangles": 1530,
+          "shadowDrawCalls": 0,
+          "shadowTriangles": 0
+        }
+      },
+      "frameParity": {
+        "ok": true,
+        "mismatches": []
+      },
+      "threeChunkRequests": [],
+      "controlHitTargets": {
+        "expectedIds": [
+          "breaker-hospital",
+          "breaker-homes-less",
+          "breaker-homes-more",
+          "breaker-shops-less",
+          "breaker-shops-more"
+        ],
+        "targets": [
+          {
+            "id": "breaker-hospital",
+            "width": 44,
+            "height": 44,
+            "name": "Hospital breaker",
+            "hittable": true
+          },
+          {
+            "id": "breaker-homes-less",
+            "width": 44,
+            "height": 44,
+            "name": "Homes: one block off",
+            "hittable": true
+          },
+          {
+            "id": "breaker-homes-more",
+            "width": 44,
+            "height": 44,
+            "name": "Homes: one block on",
+            "hittable": true
+          },
+          {
+            "id": "breaker-shops-less",
+            "width": 44,
+            "height": 44,
+            "name": "Shops: one block off",
+            "hittable": true
+          },
+          {
+            "id": "breaker-shops-more",
+            "width": 44,
+            "height": 44,
+            "name": "Shops: one block on",
+            "hittable": true
+          }
+        ],
+        "missingIds": []
+      },
+      "actualProfile": "LOW",
+      "downgradePath": "",
+      "actualRenderer": "webgl-pass",
+      "framesRendered": 313,
+      "drawCalls": 25,
+      "notice": [
+        "Unit 1 rotation: turning. Unit 2 rotation: turning. Unit 3 rotation: turning. Unit 4 rotation: turning"
+      ],
+      "surface": "webgl",
+      "warnings": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "scenario": "hydro-cutaway-powerhouse",
+      "profile": "LOW",
+      "viewport": "mobile",
+      "kind": "still",
+      "screenshot": "hydro-cutaway-powerhouse__LOW__mobile.png",
+      "status": "PASS",
+      "framePlan": {
+        "renderer": "webgl-pass",
+        "planned": {
+          "drawCalls": 22,
+          "triangles": 1218,
+          "shadowDrawCalls": 0,
+          "shadowTriangles": 0,
+          "textures": []
+        },
+        "measured": {
+          "drawCalls": 22,
+          "triangles": 1218,
+          "shadowDrawCalls": 0,
+          "shadowTriangles": 0
+        }
+      },
+      "frameParity": {
+        "ok": true,
+        "mismatches": []
+      },
+      "threeChunkRequests": [],
+      "controlHitTargets": {
+        "expectedIds": [
+          "desk-stop-last"
+        ],
+        "targets": [
+          {
+            "id": "desk-stop-last",
+            "width": 44,
+            "height": 44,
+            "name": "Stop the last unit",
+            "hittable": true
+          }
+        ],
+        "missingIds": []
+      },
+      "actualProfile": "LOW",
+      "downgradePath": "",
+      "actualRenderer": "webgl-pass",
+      "framesRendered": 312,
+      "drawCalls": 22,
+      "notice": [
+        "Unit 1 rotation: turning. Unit 2 rotation: turning. Unit 3 rotation: turning. Unit 4 rotation: turning"
+      ],
+      "surface": "webgl",
+      "warnings": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "scenario": "hydro-season-controls",
+      "profile": "LOW",
+      "viewport": "landscape",
+      "kind": "still",
+      "screenshot": "hydro-season-controls__LOW__landscape.png",
+      "status": "PASS",
+      "framePlan": {
+        "renderer": "webgl-pass",
+        "planned": {
+          "drawCalls": 25,
+          "triangles": 1530,
+          "shadowDrawCalls": 0,
+          "shadowTriangles": 0,
+          "textures": []
+        },
+        "measured": {
+          "drawCalls": 25,
+          "triangles": 1530,
+          "shadowDrawCalls": 0,
+          "shadowTriangles": 0
+        }
+      },
+      "frameParity": {
+        "ok": true,
+        "mismatches": []
+      },
+      "threeChunkRequests": [],
+      "controlHitTargets": {
+        "expectedIds": [
+          "gauge-band-1",
+          "gauge-band-2",
+          "gauge-band-3",
+          "gauge-band-4",
+          "gauge-band-5"
+        ],
+        "targets": [
+          {
+            "id": "gauge-band-1",
+            "width": 44,
+            "height": 44,
+            "name": "Season: Dry",
+            "hittable": true
+          },
+          {
+            "id": "gauge-band-2",
+            "width": 44,
+            "height": 44,
+            "name": "Season: Early rains",
+            "hittable": true
+          },
+          {
+            "id": "gauge-band-3",
+            "width": 44,
+            "height": 44,
+            "name": "Season: Heavy rains",
+            "hittable": true
+          },
+          {
+            "id": "gauge-band-4",
+            "width": 44,
+            "height": 44,
+            "name": "Season: Rainy, full",
+            "hittable": true
+          },
+          {
+            "id": "gauge-band-5",
+            "width": 44,
+            "height": 44,
+            "name": "Season: Flood",
+            "hittable": true
+          }
+        ],
+        "missingIds": []
+      },
+      "actualProfile": "LOW",
+      "downgradePath": "",
+      "actualRenderer": "webgl-pass",
+      "framesRendered": 301,
+      "drawCalls": 25,
+      "notice": [
+        "Unit 1 rotation: turning. Unit 2 rotation: turning. Unit 3 rotation: turning. Unit 4 rotation: turning"
+      ],
+      "surface": "webgl",
+      "warnings": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "scenario": "hydro-feeder-controls",
+      "profile": "LOW",
+      "viewport": "landscape",
+      "kind": "still",
+      "screenshot": "hydro-feeder-controls__LOW__landscape.png",
+      "status": "PASS",
+      "framePlan": {
+        "renderer": "webgl-pass",
+        "planned": {
+          "drawCalls": 25,
+          "triangles": 1530,
+          "shadowDrawCalls": 0,
+          "shadowTriangles": 0,
+          "textures": []
+        },
+        "measured": {
+          "drawCalls": 25,
+          "triangles": 1530,
+          "shadowDrawCalls": 0,
+          "shadowTriangles": 0
+        }
+      },
+      "frameParity": {
+        "ok": true,
+        "mismatches": []
+      },
+      "threeChunkRequests": [],
+      "controlHitTargets": {
+        "expectedIds": [
+          "breaker-hospital",
+          "breaker-homes-less",
+          "breaker-homes-more",
+          "breaker-shops-less",
+          "breaker-shops-more"
+        ],
+        "targets": [
+          {
+            "id": "breaker-hospital",
+            "width": 44,
+            "height": 44,
+            "name": "Hospital breaker",
+            "hittable": true
+          },
+          {
+            "id": "breaker-homes-less",
+            "width": 44,
+            "height": 44,
+            "name": "Homes: one block off",
+            "hittable": true
+          },
+          {
+            "id": "breaker-homes-more",
+            "width": 44,
+            "height": 44,
+            "name": "Homes: one block on",
+            "hittable": true
+          },
+          {
+            "id": "breaker-shops-less",
+            "width": 44,
+            "height": 44,
+            "name": "Shops: one block off",
+            "hittable": true
+          },
+          {
+            "id": "breaker-shops-more",
+            "width": 44,
+            "height": 44,
+            "name": "Shops: one block on",
+            "hittable": true
+          }
+        ],
+        "missingIds": []
+      },
+      "actualProfile": "LOW",
+      "downgradePath": "",
+      "actualRenderer": "webgl-pass",
+      "framesRendered": 304,
+      "drawCalls": 25,
+      "notice": [
+        "Unit 1 rotation: turning. Unit 2 rotation: turning. Unit 3 rotation: turning. Unit 4 rotation: turning"
+      ],
+      "surface": "webgl",
+      "warnings": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "scenario": "hydro-cutaway-powerhouse",
+      "profile": "LOW",
+      "viewport": "landscape",
+      "kind": "still",
+      "screenshot": "hydro-cutaway-powerhouse__LOW__landscape.png",
+      "status": "PASS",
+      "framePlan": {
+        "renderer": "webgl-pass",
+        "planned": {
+          "drawCalls": 22,
+          "triangles": 1218,
+          "shadowDrawCalls": 0,
+          "shadowTriangles": 0,
+          "textures": []
+        },
+        "measured": {
+          "drawCalls": 22,
+          "triangles": 1218,
+          "shadowDrawCalls": 0,
+          "shadowTriangles": 0
+        }
+      },
+      "frameParity": {
+        "ok": true,
+        "mismatches": []
+      },
+      "threeChunkRequests": [],
+      "controlHitTargets": {
+        "expectedIds": [],
+        "targets": [],
+        "missingIds": []
+      },
+      "actualProfile": "LOW",
+      "downgradePath": "",
+      "actualRenderer": "webgl-pass",
+      "framesRendered": 457,
+      "drawCalls": 22,
+      "notice": [
+        "Unit 1 rotation: turning. Unit 2 rotation: turning. Unit 3 rotation: turning. Unit 4 rotation: turning"
+      ],
+      "surface": "webgl",
+      "warnings": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    }
+  ]
+}

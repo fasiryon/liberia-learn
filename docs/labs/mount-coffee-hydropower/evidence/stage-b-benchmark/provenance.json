@@ -1,0 +1,55 @@
+{
+  "sourceSha": "8ca0dd9da09bf80f28a07796cc9f0f244ef48b8f",
+  "newReferences": true,
+  "workflowRuns": [
+    37528777619,
+    37528781631
+  ],
+  "compositionOnly": true,
+  "files": [
+    {
+      "file": "current-starts__FALLBACK_2D__desktop.png",
+      "source": "artifacts/lab-review/stage-b-benchmark-circuit/lab-review-fixture-simple-circuit-FALLBACK_2D-8ca0dd9d-run37528777619-stage-b-benchmark/artifacts/lab-review/fixture-simple-circuit/1.0.0/ci-37528777619-FALLBACK_2D-stage-b-benchmark/current-starts__FALLBACK_2D__desktop.png"
+    },
+    {
+      "file": "ci-37528777619-FALLBACK_2D-stage-b-benchmark-manifest.json",
+      "source": "artifacts/lab-review/stage-b-benchmark-circuit/lab-review-fixture-simple-circuit-FALLBACK_2D-8ca0dd9d-run37528777619-stage-b-benchmark/artifacts/lab-review/fixture-simple-circuit/1.0.0/ci-37528777619-FALLBACK_2D-stage-b-benchmark/manifest.json"
+    },
+    {
+      "file": "current-starts__HIGH__desktop__motion-sheet.png",
+      "source": "artifacts/lab-review/stage-b-benchmark-circuit/lab-review-fixture-simple-circuit-HIGH-8ca0dd9d-run37528777619-stage-b-benchmark/artifacts/lab-review/fixture-simple-circuit/1.0.0/ci-37528777619-HIGH-stage-b-benchmark/current-starts__HIGH__desktop__motion-sheet.png"
+    },
+    {
+      "file": "ci-37528777619-HIGH-stage-b-benchmark-manifest.json",
+      "source": "artifacts/lab-review/stage-b-benchmark-circuit/lab-review-fixture-simple-circuit-HIGH-8ca0dd9d-run37528777619-stage-b-benchmark/artifacts/lab-review/fixture-simple-circuit/1.0.0/ci-37528777619-HIGH-stage-b-benchmark/manifest.json"
+    },
+    {
+      "file": "overview__HIGH__desktop.png",
+      "source": "artifacts/lab-review/stage-b-benchmark-circuit/lab-review-fixture-simple-circuit-HIGH-8ca0dd9d-run37528777619-stage-b-benchmark/artifacts/lab-review/fixture-simple-circuit/1.0.0/ci-37528777619-HIGH-stage-b-benchmark/overview__HIGH__desktop.png"
+    },
+    {
+      "file": "cube-exploded__HIGH__desktop.png",
+      "source": "artifacts/lab-review/stage-b-benchmark-solids/lab-review-g4-solid-figures-HIGH-8ca0dd9d-run37528781631-stage-b-benchmark/artifacts/lab-review/g4-solid-figures/2.1.0/ci-37528781631-HIGH-stage-b-benchmark/cube-exploded__HIGH__desktop.png"
+    },
+    {
+      "file": "cube-exploded__HIGH__desktop__motion-sheet.png",
+      "source": "artifacts/lab-review/stage-b-benchmark-solids/lab-review-g4-solid-figures-HIGH-8ca0dd9d-run37528781631-stage-b-benchmark/artifacts/lab-review/g4-solid-figures/2.1.0/ci-37528781631-HIGH-stage-b-benchmark/cube-exploded__HIGH__desktop__motion-sheet.png"
+    },
+    {
+      "file": "ci-37528781631-HIGH-stage-b-benchmark-manifest.json",
+      "source": "artifacts/lab-review/stage-b-benchmark-solids/lab-review-g4-solid-figures-HIGH-8ca0dd9d-run37528781631-stage-b-benchmark/artifacts/lab-review/g4-solid-figures/2.1.0/ci-37528781631-HIGH-stage-b-benchmark/manifest.json"
+    },
+    {
+      "file": "cube-exploded__LOW__mobile.png",
+      "source": "artifacts/lab-review/stage-b-benchmark-solids/lab-review-g4-solid-figures-LOW-8ca0dd9d-run37528781631-stage-b-benchmark/artifacts/lab-review/g4-solid-figures/2.1.0/ci-37528781631-LOW-stage-b-benchmark/cube-exploded__LOW__mobile.png"
+    },
+    {
+      "file": "ci-37528781631-LOW-stage-b-benchmark-manifest.json",
+      "source": "artifacts/lab-review/stage-b-benchmark-solids/lab-review-g4-solid-figures-LOW-8ca0dd9d-run37528781631-stage-b-benchmark/artifacts/lab-review/g4-solid-figures/2.1.0/ci-37528781631-LOW-stage-b-benchmark/manifest.json"
+    },
+    {
+      "file": "prism-rebuilt__LOW__mobile.png",
+      "source": "artifacts/lab-review/stage-b-benchmark-solids/lab-review-g4-solid-figures-LOW-8ca0dd9d-run37528781631-stage-b-benchmark/artifacts/lab-review/g4-solid-figures/2.1.0/ci-37528781631-LOW-stage-b-benchmark/prism-rebuilt__LOW__mobile.png"
+    }
+  ]
+}

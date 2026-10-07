@@ -4,6 +4,7 @@ import type { InteractiveLabDefinition, LabAction, LabMode, LabState, LearningCh
 import { deriveSimulation, explainState, isComponentRevealed, protectionStatus } from "@/lib/interactive-labs/v2/fidelity/engine";
 import { formatVariable, stepVariable } from "@/lib/interactive-labs/v2/fidelity/variables";
 import { ProtectionReset } from "./ProtectionReset";
+import { guidedPrompt } from "@/lib/interactive-labs/v2/fidelity/guidance";
 
 type Props = { definition: InteractiveLabDefinition<LabState>; state: LabState; activeCheck: LearningCheck | undefined; dispatch: (action: LabAction) => void; onStartRail?: (railId: string) => void };
 
@@ -19,7 +20,7 @@ export function labTaskPrompt(definition: InteractiveLabDefinition<LabState>, st
   const spec = definition.fidelity, fidelity = state.fidelity;
   const guidedIndex = fidelity?.guidedStepIndex ?? 0;
   const guided = spec && fidelity && state.mode === "GUIDED" ? spec.guidedPath[guidedIndex] : undefined;
-  return guided?.prompt ?? (state.mode === "CHALLENGE" && spec ? spec.authoring.challenge : activeCheck?.prompt ?? "You completed every check!");
+  return (guided && spec && fidelity ? guidedPrompt(spec, fidelity) : undefined) ?? (state.mode === "CHALLENGE" && spec ? spec.authoring.challenge : activeCheck?.prompt ?? "You completed every check!");
 }
 
 export function LabControlPanel({ definition, state, activeCheck, dispatch, onStartRail }: Props) {
@@ -46,7 +47,7 @@ export function LabControlPanel({ definition, state, activeCheck, dispatch, onSt
       </div>
 
       {(explanation.length > 0 || Object.keys(simulation?.quantities ?? {}).length > 0) && (
-        <section aria-label="What is happening" aria-live="polite" className="sticky top-1 z-20 max-h-[20vh] overflow-y-auto rounded-2xl border border-white/10 bg-slate-950/95 p-3 shadow-xl backdrop-blur">
+        <section aria-label="What is happening" aria-live="polite" className="max-h-[20vh] overflow-y-auto rounded-2xl border border-white/10 bg-slate-950/95 p-3 shadow-xl backdrop-blur">
           <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-400">What is happening</h3>
           {/* R3 visual P1: the cue shows on every screen size; a fade marks the cut-off line. */}
           <p className="mt-1 text-[10px] text-slate-400">Scroll this panel for more details</p>
@@ -58,7 +59,7 @@ export function LabControlPanel({ definition, state, activeCheck, dispatch, onSt
       {guided && spec && fidelity && (
         <section aria-label="Guided path" className="rounded-2xl border border-cyan-300/20 bg-cyan-300/5 p-4">
           <p className="text-xs font-semibold uppercase tracking-wider text-cyan-300">Step {guidedIndex + 1} of {spec.guidedPath.length}</p>
-          <p className="mt-1 text-sm text-slate-100">{guided.prompt}</p>
+          <p className="mt-1 text-sm text-slate-100">{taskPrompt}</p>
           <div className="mt-3 flex gap-2">
             <button type="button" disabled={guidedIndex === 0} onClick={() => dispatch({ type: "guided-step", index: guidedIndex - 1 })} className={`${chip(false)} disabled:opacity-40`}>Back</button>
             <button type="button" disabled={guidedIndex >= spec.guidedPath.length - 1} onClick={() => dispatch({ type: "guided-step", index: guidedIndex + 1 })} className={`${chip(true)} disabled:opacity-40`}>Next step</button>

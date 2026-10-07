@@ -1,0 +1,196 @@
+{
+  "labId": "mount-coffee-hydropower",
+  "labVersion": "1.1.0",
+  "gitSha": "78fb4f92c6b74de3532781ee78b2e217bd8d5e05",
+  "environment": "headless Chromium, SwiftShader WebGL",
+  "results": [
+    {
+      "test": "remount-loop",
+      "profile": "HIGH",
+      "mounts": 20,
+      "ok": true,
+      "problems": [],
+      "live": 1,
+      "warnings": [],
+      "firstMountMemory": {
+        "geometries": 27,
+        "textures": 4
+      },
+      "perMount": [
+        {
+          "mount": 1,
+          "live": 1,
+          "memory": {
+            "geometries": 27,
+            "textures": 4
+          }
+        },
+        {
+          "mount": 2,
+          "live": 1,
+          "memory": {
+            "geometries": 27,
+            "textures": 4
+          }
+        },
+        {
+          "mount": 3,
+          "live": 1,
+          "memory": {
+            "geometries": 27,
+            "textures": 4
+          }
+        },
+        {
+          "mount": 4,
+          "live": 1,
+          "memory": {
+            "geometries": 27,
+            "textures": 4
+          }
+        },
+        {
+          "mount": 5,
+          "live": 1,
+          "memory": {
+            "geometries": 27,
+            "textures": 4
+          }
+        },
+        {
+          "mount": 6,
+          "live": 1,
+          "memory": {
+            "geometries": 27,
+            "textures": 4
+          }
+        },
+        {
+          "mount": 7,
+          "live": 1,
+          "memory": {
+            "geometries": 27,
+            "textures": 4
+          }
+        },
+        {
+          "mount": 8,
+          "live": 1,
+          "memory": {
+            "geometries": 27,
+            "textures": 4
+          }
+        },
+        {
+          "mount": 9,
+          "live": 1,
+          "memory": {
+            "geometries": 27,
+            "textures": 4
+          }
+        },
+        {
+          "mount": 10,
+          "live": 1,
+          "memory": {
+            "geometries": 27,
+            "textures": 4
+          }
+        },
+        {
+          "mount": 11,
+          "live": 1,
+          "memory": {
+            "geometries": 27,
+            "textures": 4
+          }
+        },
+        {
+          "mount": 12,
+          "live": 1,
+          "memory": {
+            "geometries": 27,
+            "textures": 4
+          }
+        },
+        {
+          "mount": 13,
+          "live": 1,
+          "memory": {
+            "geometries": 27,
+            "textures": 4
+          }
+        },
+        {
+          "mount": 14,
+          "live": 1,
+          "memory": {
+            "geometries": 27,
+            "textures": 4
+          }
+        },
+        {
+          "mount": 15,
+          "live": 1,
+          "memory": {
+            "geometries": 27,
+            "textures": 4
+          }
+        },
+        {
+          "mount": 16,
+          "live": 1,
+          "memory": {
+            "geometries": 27,
+            "textures": 4
+          }
+        },
+        {
+          "mount": 17,
+          "live": 1,
+          "memory": {
+            "geometries": 27,
+            "textures": 4
+          }
+        },
+        {
+          "mount": 18,
+          "live": 1,
+          "memory": {
+            "geometries": 27,
+            "textures": 4
+          }
+        },
+        {
+          "mount": 19,
+          "live": 1,
+          "memory": {
+            "geometries": 27,
+            "textures": 4
+          }
+        },
+        {
+          "mount": 20,
+          "live": 1,
+          "memory": {
+            "geometries": 27,
+            "textures": 4
+          }
+        }
+      ],
+      "heapBeforeMB": 74.8,
+      "heapAfterMB": 61.08,
+      "heapGrowthMB": -13.72,
+      "pageErrors": []
+    },
+    {
+      "test": "context-loss",
+      "profile": "FALLBACK_2D",
+      "ok": true,
+      "problems": [],
+      "path": "HIGH>FALLBACK_2D:context HIGH>FALLBACK_2D:context",
+      "notice": "Switched to lighter graphics: 3D is not available on this device, so the lab shows the 2D view."
+    }
+  ],
+  "boundary": "Software-GL lifecycle evidence: renderer disposal, context release and memory stability. Not a device performance or GPU-memory measurement."
+}
