@@ -1,0 +1,10 @@
+{
+  "a": "artifacts/lab-review/runtime-gate/mount-coffee-hydropower/a",
+  "b": "artifacts/lab-review/runtime-gate/mount-coffee-hydropower/b",
+  "compared": 12,
+  "identical": 12,
+  "differing": [],
+  "onlyInA": [],
+  "onlyInB": [],
+  "deterministic": true
+}

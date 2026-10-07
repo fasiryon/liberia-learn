@@ -1,0 +1,145 @@
+{
+  "sourceSha": "78fb4f92c6b74de3532781ee78b2e217bd8d5e05",
+  "matrixRun": 37648349891,
+  "motionRun": 37648357989,
+  "stills": 132,
+  "targets": 544,
+  "missing": 0,
+  "badTargets": 0,
+  "parityFailures": 0,
+  "lowThreeRequests": 0,
+  "pageErrors": 0,
+  "keyboard": [
+    {
+      "profile": "FALLBACK_2D",
+      "viewport": "desktop",
+      "steps": 51,
+      "failedSteps": 0,
+      "pageErrors": 0
+    },
+    {
+      "profile": "FALLBACK_2D",
+      "viewport": "landscape",
+      "steps": 51,
+      "failedSteps": 0,
+      "pageErrors": 0
+    },
+    {
+      "profile": "FALLBACK_2D",
+      "viewport": "mobile",
+      "steps": 51,
+      "failedSteps": 0,
+      "pageErrors": 0
+    },
+    {
+      "profile": "HIGH",
+      "viewport": "desktop",
+      "steps": 51,
+      "failedSteps": 0,
+      "pageErrors": 0
+    },
+    {
+      "profile": "HIGH",
+      "viewport": "landscape",
+      "steps": 51,
+      "failedSteps": 0,
+      "pageErrors": 0
+    },
+    {
+      "profile": "HIGH",
+      "viewport": "mobile",
+      "steps": 51,
+      "failedSteps": 0,
+      "pageErrors": 0
+    },
+    {
+      "profile": "LOW",
+      "viewport": "desktop",
+      "steps": 51,
+      "failedSteps": 0,
+      "pageErrors": 0
+    },
+    {
+      "profile": "LOW",
+      "viewport": "landscape",
+      "steps": 51,
+      "failedSteps": 0,
+      "pageErrors": 0
+    },
+    {
+      "profile": "LOW",
+      "viewport": "mobile",
+      "steps": 51,
+      "failedSteps": 0,
+      "pageErrors": 0
+    },
+    {
+      "profile": "STANDARD",
+      "viewport": "desktop",
+      "steps": 51,
+      "failedSteps": 0,
+      "pageErrors": 0
+    },
+    {
+      "profile": "STANDARD",
+      "viewport": "landscape",
+      "steps": 51,
+      "failedSteps": 0,
+      "pageErrors": 0
+    },
+    {
+      "profile": "STANDARD",
+      "viewport": "mobile",
+      "steps": 51,
+      "failedSteps": 0,
+      "pageErrors": 0
+    }
+  ],
+  "lifecycle": [
+    {
+      "profile": "HIGH",
+      "test": "remount-loop",
+      "mounts": 20,
+      "ok": true,
+      "live": 1
+    },
+    {
+      "profile": "FALLBACK_2D",
+      "test": "context-loss",
+      "ok": true,
+      "path": "HIGH>FALLBACK_2D:context HIGH>FALLBACK_2D:context"
+    },
+    {
+      "profile": "LOW",
+      "test": "remount-loop",
+      "mounts": 20,
+      "ok": true,
+      "live": 1
+    },
+    {
+      "profile": "FALLBACK_2D",
+      "test": "context-loss",
+      "ok": true,
+      "path": "LOW>FALLBACK_2D:context LOW>FALLBACK_2D:context"
+    },
+    {
+      "profile": "LOW",
+      "test": "low-buffer-identity",
+      "ok": true
+    },
+    {
+      "profile": "STANDARD",
+      "test": "remount-loop",
+      "mounts": 20,
+      "ok": true,
+      "live": 1
+    },
+    {
+      "profile": "FALLBACK_2D",
+      "test": "context-loss",
+      "ok": true,
+      "path": "STANDARD>FALLBACK_2D:context STANDARD>FALLBACK_2D:context"
+    }
+  ],
+  "compositionOnly": true
+}

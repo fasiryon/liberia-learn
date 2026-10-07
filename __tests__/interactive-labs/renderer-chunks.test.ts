@@ -41,6 +41,12 @@ describe("RX-005 A8: renderer chunk accounting", () => {
     }
   });
 
+  it("rejects actual absolute overages even when relative growth is within tolerance", () => {
+    const candidate = structuredClone(committed);
+    candidate.chunks.webglPass.storageBytes = 72_001;
+    expect(checkRendererChunks(candidate, committed)).toContain("webglPass storageBytes is 72001, above the reviewed absolute ceiling 72000.");
+  });
+
   it("charges the three chunk to HIGH/STANDARD only", () => {
     expect(rendererPackage("HIGH").storageBytes).toBe(committed.chunks.threeRenderer.storageBytes + committed.chunks.webglPass.storageBytes);
     expect(rendererPackage("STANDARD")).toEqual(rendererPackage("HIGH"));

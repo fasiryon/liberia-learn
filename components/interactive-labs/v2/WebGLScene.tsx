@@ -26,6 +26,7 @@ import { publishFramePlan, type ReviewFrameProbe } from "@/lib/interactive-labs/
 import { createSurfaceTriangleStorage, writeSurfaceTriangles } from "@/lib/interactive-labs/v2/fidelity/surfaces";
 import type { MeshData } from "./meshes";
 import { pickNearest, type ScenePick } from "./picking";
+import { controlTargetElements } from "./controlTargets";
 import { controlAffordanceElements, controlCursor, cueElements, statusBadgeElements } from "./sceneCues";
 
 type Props = {
@@ -97,6 +98,8 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
   const displayRef = useRef<FidelityState | undefined>(state.fidelity);
   const zoomRef = useRef(1);
   const carriedPose = useRef(initialPose);
+  const controlTargets = useRef<HTMLDivElement>(null);
+  const onPickRef = useRef(onPick); onPickRef.current = onPick;
   const frameRef = useRef<{ list: RenderList | null; viewProj: Mat4; width: number; height: number }>({ list: null, viewProj: IDENTITY, width: 1, height: 1 });
   const callbacks = useRef({ onDowngrade, onUpgradeReady, reducedMotion, traceFlowId, onReady, railActive });
   const requestDrawRef = useRef<() => void>(() => {});
@@ -420,7 +423,8 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
         const placed = placeSceneLabels(labelItems.flatMap((item) => {
           // The label offset is in the part's own space, exactly as on HIGH/STANDARD (R4 visual: world-space offsets
           // put a small part's label on its neighbour).
-          const at = project(transformPoint(item.spin ? spinMatrix(item.spin, t, motionless) : item.matrix, item.labelOffset ?? [0, 0, 0]));
+          // Annotation anchors do not spin with their mechanism or drift into its status glyph.
+          const at = project(transformPoint(item.matrix, item.labelOffset ?? [0, 0, 0]));
           // The pill is drawn translated up by 160 % of its height, so its bottom sits 12 px above the anchor.
           return at ? [{ id: item.id, text: item.label, x: at.x, y: at.y - 12, highlighted: item.highlighted, critical: !!item.labelCritical }] : [];
         }), { width: el.clientWidth, height: el.clientHeight }, 8, glyphBoxes);
@@ -430,7 +434,7 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
         ];
         labels.current.replaceChildren(...entries.filter((entry) => entry.at).map((entry) => {
           const node = document.createElement("span");
-          node.textContent = entry.text;
+          node.textContent = entry.text; node.dataset.labSceneLabel = "";
           if (entry.title) { node.title = entry.title; node.setAttribute("aria-label", entry.title); node.setAttribute("role", "img"); }
           node.className = entry.glyph ? "pointer-events-none absolute -translate-x-1/2 -translate-y-1/2 text-lg font-bold text-fuchsia-300 drop-shadow" : `pointer-events-none absolute -translate-x-1/2 -translate-y-[160%] whitespace-nowrap rounded-full bg-slate-950/70 px-2 py-0.5 text-[11px] font-semibold text-slate-100${entry.mobileLabel === false ? " max-[500px]:hidden" : ""}`;
           // Whole pixels: a fractional position rasterises its pill edge differently run to run (A9 determinism).
@@ -439,6 +443,9 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
         }));
         // A15: reduced motion keeps static direction cues; LOW shows an emitter's glyph proxy in place of particles.
         const glyphProxies = list.emitters.filter((emitter) => emitter.active && emitter.lowProxy.kind === "glyph").map((emitter) => ({ id: `proxy:${emitter.id}`, kind: "glyph" as const, glyph: emitter.lowProxy.kind === "glyph" ? emitter.lowProxy.glyph : "", position: emitter.origin, direction: emitter.direction, color: emitter.color }));
+        const focusedControl = (document.activeElement as HTMLElement | null)?.dataset.labHitProxy;
+        controlTargets.current?.replaceChildren(...controlTargetElements(list.items, project, el.clientWidth, el.clientHeight, (pick) => onPickRef.current(pick), el.getBoundingClientRect().top, el.getBoundingClientRect().left));
+        if (focusedControl) controlTargets.current?.querySelector<HTMLButtonElement>(`[data-lab-hit-proxy="${focusedControl}"]`)?.focus();
         labels.current.append(...cueElements([...(motionless ? list.cues : []), ...glyphProxies], project), ...statusBadgeElements(list.items, project), ...controlAffordanceElements(list.items, project));
       }
       const fidelityMoving = !!(spec && current.fidelity && displayRef.current && !isSettled(displayRef.current, current.fidelity));
@@ -529,6 +536,7 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
         onPointerUp={(e) => { const wasClick = drag.current.moved < 6; drag.current.active = false; if (wasClick) pick(e.clientX, e.clientY, e.currentTarget); }}
         onWheel={(e) => { if (!constraints) return; zoomRef.current = Math.min(constraints.maxDistance / constraints.minDistance, Math.max(0.5, zoomRef.current * (e.deltaY > 0 ? 1.08 : 0.92))); requestDrawRef.current(); }}
       />
+      <div ref={controlTargets} className="pointer-events-none absolute inset-0 overflow-hidden" />
       <div ref={labels} className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true" />
       <div ref={motionStatus} className="sr-only" role="status" aria-live="polite" />
     </div>

@@ -35,7 +35,8 @@ describe("mobile bottom sheet", () => {
     expect(sheet.dataset.labSheet).toBe("peek");
     const peek = sheet.querySelector("[data-lab-sheet-peek]")!.textContent!;
     expect(peek).toContain(hydropowerDefinition.fidelity!.guidedPath[0].prompt);
-    expect(peek).toContain("Plant can make");
+    expect(peek).toContain("Available capacity");
+    expect(peek).toContain("Delivered to city");
     expect(sheet.querySelector<HTMLElement>("#lab-sheet-body")!.hidden).toBe(true);
     const handle = sheet.querySelector<HTMLButtonElement>("button[aria-controls=lab-sheet-body]")!;
     expect(handle.getAttribute("aria-label")).toMatch(/^Lab controls and next step/);

@@ -1,0 +1,339 @@
+{
+  "labId": "fixture-simple-circuit",
+  "labVersion": "1.0.0",
+  "reviewState": "DRAFT",
+  "label": "ci-37528777619-FALLBACK_2D-stage-b-benchmark",
+  "gitSha": "8ca0dd9da09bf80f28a07796cc9f0f244ef48b8f",
+  "capturedAt": "2026-10-06T20:49:35.399Z",
+  "environment": "GitHub Actions (Linux, run 37528777619) dev server, headless Chromium, virtual clock paused from navigation for stills and motion frames",
+  "rendererIdentityRule": "HIGH/STANDARD must be drawn by three@*, LOW by webgl-pass, FALLBACK_2D by svg, at the requested profile, with at least one frame drawn; otherwise status FAIL.",
+  "framePlanRule": "RX-005 A8 / RX-006 test 1: the shared frame planner must equal the renderer's own count for the probed frame (three.js: renderer.info with frustum culling off and the shadow pass forced; LOW: counted drawArrays); otherwise status FAIL.",
+  "threeChunkRule": "RX-005 A8: LOW and FALLBACK_2D runs must make zero requests for a script carrying three.js; otherwise status FAIL.",
+  "deviceBoundary": "Headless browser evidence proves rendering correctness, composition, layout, interaction automation and renderer/profile routing only. It does not prove low-end GPU performance, touch latency, thermal behaviour or mobile memory pressure (DEVICE_REQUIRED).",
+  "renderer": {
+    "kind": "software",
+    "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+    "validFor": [
+      "composition",
+      "labels"
+    ]
+  },
+  "profiles": [
+    "FALLBACK_2D"
+  ],
+  "viewports": [
+    "desktop"
+  ],
+  "captures": [
+    {
+      "file": "overview__FALLBACK_2D__desktop.png",
+      "scenario": "overview",
+      "stage": "overview",
+      "profile": "FALLBACK_2D",
+      "viewport": "desktop",
+      "kind": "still",
+      "reducedMotion": true
+    },
+    {
+      "file": "current-starts__FALLBACK_2D__desktop.png",
+      "scenario": "current-starts",
+      "stage": "process",
+      "profile": "FALLBACK_2D",
+      "viewport": "desktop",
+      "kind": "still",
+      "reducedMotion": true
+    },
+    {
+      "file": "current-starts__FALLBACK_2D__desktop__motion-00.png",
+      "scenario": "current-starts",
+      "stage": "process",
+      "profile": "FALLBACK_2D",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": false,
+      "virtualMs": 0
+    },
+    {
+      "file": "current-starts__FALLBACK_2D__desktop__motion-01.png",
+      "scenario": "current-starts",
+      "stage": "process",
+      "profile": "FALLBACK_2D",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": false,
+      "virtualMs": 80
+    },
+    {
+      "file": "current-starts__FALLBACK_2D__desktop__motion-02.png",
+      "scenario": "current-starts",
+      "stage": "process",
+      "profile": "FALLBACK_2D",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": false,
+      "virtualMs": 160
+    },
+    {
+      "file": "current-starts__FALLBACK_2D__desktop__motion-03.png",
+      "scenario": "current-starts",
+      "stage": "process",
+      "profile": "FALLBACK_2D",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": false,
+      "virtualMs": 240
+    },
+    {
+      "file": "current-starts__FALLBACK_2D__desktop__motion-04.png",
+      "scenario": "current-starts",
+      "stage": "process",
+      "profile": "FALLBACK_2D",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": false,
+      "virtualMs": 320
+    },
+    {
+      "file": "current-starts__FALLBACK_2D__desktop__motion-05.png",
+      "scenario": "current-starts",
+      "stage": "process",
+      "profile": "FALLBACK_2D",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": false,
+      "virtualMs": 400
+    },
+    {
+      "file": "current-starts__FALLBACK_2D__desktop__motion-06.png",
+      "scenario": "current-starts",
+      "stage": "process",
+      "profile": "FALLBACK_2D",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": false,
+      "virtualMs": 480
+    },
+    {
+      "file": "current-starts__FALLBACK_2D__desktop__motion-07.png",
+      "scenario": "current-starts",
+      "stage": "process",
+      "profile": "FALLBACK_2D",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": false,
+      "virtualMs": 560
+    },
+    {
+      "file": "current-starts__FALLBACK_2D__desktop__motion-08.png",
+      "scenario": "current-starts",
+      "stage": "process",
+      "profile": "FALLBACK_2D",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": false,
+      "virtualMs": 640
+    },
+    {
+      "file": "current-starts__FALLBACK_2D__desktop__motion-09.png",
+      "scenario": "current-starts",
+      "stage": "process",
+      "profile": "FALLBACK_2D",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": false,
+      "virtualMs": 720
+    },
+    {
+      "file": "current-starts__FALLBACK_2D__desktop__motion-sheet.png",
+      "scenario": "current-starts",
+      "stage": "process",
+      "profile": "FALLBACK_2D",
+      "viewport": "desktop",
+      "kind": "motion-sheet",
+      "reducedMotion": false
+    },
+    {
+      "file": "current-starts__FALLBACK_2D__desktop__reduced__motion-00.png",
+      "scenario": "current-starts",
+      "stage": "process",
+      "profile": "FALLBACK_2D",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": true,
+      "virtualMs": 0
+    },
+    {
+      "file": "current-starts__FALLBACK_2D__desktop__reduced__motion-01.png",
+      "scenario": "current-starts",
+      "stage": "process",
+      "profile": "FALLBACK_2D",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": true,
+      "virtualMs": 80
+    },
+    {
+      "file": "current-starts__FALLBACK_2D__desktop__reduced__motion-02.png",
+      "scenario": "current-starts",
+      "stage": "process",
+      "profile": "FALLBACK_2D",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": true,
+      "virtualMs": 160
+    },
+    {
+      "file": "current-starts__FALLBACK_2D__desktop__reduced__motion-03.png",
+      "scenario": "current-starts",
+      "stage": "process",
+      "profile": "FALLBACK_2D",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": true,
+      "virtualMs": 240
+    },
+    {
+      "file": "current-starts__FALLBACK_2D__desktop__reduced__motion-04.png",
+      "scenario": "current-starts",
+      "stage": "process",
+      "profile": "FALLBACK_2D",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": true,
+      "virtualMs": 320
+    },
+    {
+      "file": "current-starts__FALLBACK_2D__desktop__reduced__motion-05.png",
+      "scenario": "current-starts",
+      "stage": "process",
+      "profile": "FALLBACK_2D",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": true,
+      "virtualMs": 400
+    },
+    {
+      "file": "current-starts__FALLBACK_2D__desktop__reduced__motion-06.png",
+      "scenario": "current-starts",
+      "stage": "process",
+      "profile": "FALLBACK_2D",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": true,
+      "virtualMs": 480
+    },
+    {
+      "file": "current-starts__FALLBACK_2D__desktop__reduced__motion-07.png",
+      "scenario": "current-starts",
+      "stage": "process",
+      "profile": "FALLBACK_2D",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": true,
+      "virtualMs": 560
+    },
+    {
+      "file": "current-starts__FALLBACK_2D__desktop__reduced__motion-08.png",
+      "scenario": "current-starts",
+      "stage": "process",
+      "profile": "FALLBACK_2D",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": true,
+      "virtualMs": 640
+    },
+    {
+      "file": "current-starts__FALLBACK_2D__desktop__reduced__motion-09.png",
+      "scenario": "current-starts",
+      "stage": "process",
+      "profile": "FALLBACK_2D",
+      "viewport": "desktop",
+      "kind": "motion-frame",
+      "reducedMotion": true,
+      "virtualMs": 720
+    },
+    {
+      "file": "current-starts__FALLBACK_2D__desktop__reduced__motion-sheet.png",
+      "scenario": "current-starts",
+      "stage": "process",
+      "profile": "FALLBACK_2D",
+      "viewport": "desktop",
+      "kind": "motion-sheet",
+      "reducedMotion": true
+    }
+  ],
+  "runs": [
+    {
+      "scenario": "overview",
+      "profile": "FALLBACK_2D",
+      "viewport": "desktop",
+      "kind": "still",
+      "screenshot": "overview__FALLBACK_2D__desktop.png",
+      "status": "PASS",
+      "framePlan": null,
+      "frameParity": null,
+      "threeChunkRequests": [],
+      "controlHitTargets": {
+        "expectedIds": [],
+        "targets": [],
+        "missingIds": []
+      },
+      "actualProfile": "FALLBACK_2D",
+      "downgradePath": "",
+      "actualRenderer": "svg",
+      "framesRendered": 1,
+      "drawCalls": null,
+      "notice": [],
+      "surface": "svg",
+      "warnings": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "scenario": "current-starts",
+      "profile": "FALLBACK_2D",
+      "viewport": "desktop",
+      "kind": "still",
+      "screenshot": "current-starts__FALLBACK_2D__desktop.png",
+      "status": "PASS",
+      "framePlan": null,
+      "frameParity": null,
+      "threeChunkRequests": [],
+      "controlHitTargets": {
+        "expectedIds": [],
+        "targets": [],
+        "missingIds": []
+      },
+      "actualProfile": "FALLBACK_2D",
+      "downgradePath": "",
+      "actualRenderer": "svg",
+      "framesRendered": 1,
+      "drawCalls": null,
+      "notice": [],
+      "surface": "svg",
+      "warnings": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "scenario": "current-starts",
+      "profile": "FALLBACK_2D",
+      "viewport": "desktop",
+      "kind": "motion",
+      "reducedMotion": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "threeChunkRequests": []
+    },
+    {
+      "scenario": "current-starts",
+      "profile": "FALLBACK_2D",
+      "viewport": "desktop",
+      "kind": "motion",
+      "reducedMotion": true,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "threeChunkRequests": []
+    }
+  ]
+}

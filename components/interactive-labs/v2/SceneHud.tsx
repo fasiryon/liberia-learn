@@ -36,6 +36,7 @@ export function SceneHud({ definition, state, dispatch }: Props) {
           );
         })}
       </dl>
+      {definition.id === "mount-coffee-hydropower" && <p className="mt-1 text-xs text-slate-300">Scene gauge: upper row = available capacity (22 MW per segment); lower row = demand. Delivery is zero while tripped.</p>}
       {lamps.length > 0 && <ul aria-label="Status lamps" className="mt-1.5 flex flex-wrap gap-1.5">
         {lamps.map((lamp) => <li key={lamp.id} data-lab-hud-status={lamp.id} className="rounded-xl bg-white/10 px-2.5 py-1 text-xs font-semibold"><span aria-hidden="true" className="mr-1">{lamp.glyph}</span>{lamp.label}: {lamp.text}</li>)}
       </ul>}
