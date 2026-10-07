@@ -71,8 +71,8 @@ export function controlAffordanceElements(items: readonly ControlItem[], project
     ring.textContent = controlGlyph(item.control!);
     ring.dataset.labControlAffordance = item.id;
     ring.setAttribute("aria-hidden", "true");
-    // Phones use labelled hit proxies and leaders; retain the projected anchor for completeness measurements.
-    ring.className = "pointer-events-none absolute flex h-6 w-6 items-center justify-center rounded-full border-2 bg-slate-950/40 text-[11px] font-black leading-none text-amber-100 max-[1023px]:opacity-0";
+    // Tap controls have phone proxies; drag controls retain their original directional affordance.
+    ring.className = `lab-control-affordance${item.control!.dragAxis ? "" : " max-[1023px]:opacity-0"}`;
     ring.style.borderColor = item.control!.pending ? HIGHLIGHT_COLOR : "#fcd34d";
     ring.style.left = `${Math.round(at.x)}px`; ring.style.top = `${Math.round(at.y)}px`; ring.style.transform = "translate(-50%, -50%)";
     if (!item.control!.pending) return [ring];
