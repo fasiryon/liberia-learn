@@ -62,7 +62,7 @@ const components: HighFidelitySpec["components"] = [
     return [component(`unit-${unit}`, `Unit ${unit} housing`, "cylinder", [x, -0.15, 0.1], [0.52, 0.72, 0.52], "#5fb8a8", { labelOffset: unit === 1 ? [-0.9, 0.95, 0] : offsets[i], ...(unit !== 3 ? { mobileLabel: false } : {}) }),
       component(`unit-${unit}-marker`, `Unit ${unit} rotation marker`, "box", [x + 0.34, -0.15, 0.1], [0.16, 0.08, 0.08], "#facc15", { showLabel: false, selectable: false })];
   }),
-  { ...component("u3-runner", "Runner", "cylinder", [0.9, -0.25, 0.1], [0.32, 0.18, 0.32], "#d9a14b", { internal: true, layerId: "unit-3-internals", shapeKey: "runner", labelOffset: [-0.8, -0.3, 0] }),
+  { ...component("u3-runner", "Runner", "cylinder", [0.9, -0.25, 0.1], [0.32, 0.18, 0.32], "#d9a14b", { internal: true, layerId: "unit-3-internals", shapeKey: "runner", labelOffset: [-2.4, -0.8, 0] }),
     geometryVariants: bladedRunnerKit({ id: "u3-runner-shape", label: "Runner", transform: tr([0, 0, 0], [1, 1, 1]), color: "#9a6b2f", radius: 1, bladeCount: 9 })[1].geometryVariants },
   component("u3-shaft", "Shaft", "cylinder", [0.9, 0.05, 0.1], [0.09, 0.36, 0.09], "#5f6d7e", { internal: true, layerId: "unit-3-internals", shapeKey: "shaft", labelOffset: [0, 0.2, 0] }),
   { ...generatorHousingKit({ id: "u3-generator", label: "Generator", transform: tr([0.9, 0.48, 0.1], [0.34, 0.28, 0.34]), color: "#ee8f52", radius: 1, height: 2 }), internal: true, layerId: "unit-3-internals", shapeKey: "generator", labelOffset: [0.8, 0.4, 0] },

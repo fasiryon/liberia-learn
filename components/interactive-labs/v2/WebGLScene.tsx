@@ -423,7 +423,8 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
         const placed = placeSceneLabels(labelItems.flatMap((item) => {
           // The label offset is in the part's own space, exactly as on HIGH/STANDARD (R4 visual: world-space offsets
           // put a small part's label on its neighbour).
-          const at = project(transformPoint(item.spin ? spinMatrix(item.spin, t, motionless) : item.matrix, item.labelOffset ?? [0, 0, 0]));
+          // Annotation anchors do not spin with their mechanism or drift into its status glyph.
+          const at = project(transformPoint(item.matrix, item.labelOffset ?? [0, 0, 0]));
           // The pill is drawn translated up by 160 % of its height, so its bottom sits 12 px above the anchor.
           return at ? [{ id: item.id, text: item.label, x: at.x, y: at.y - 12, highlighted: item.highlighted, critical: !!item.labelCritical }] : [];
         }), { width: el.clientWidth, height: el.clientHeight }, 8, glyphBoxes);
