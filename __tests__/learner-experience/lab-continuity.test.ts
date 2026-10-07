@@ -57,7 +57,7 @@ describe("Lesson → Lab → Lesson continuity", () => {
     progress = goToScene(lesson, progress, "intro"); // e.g. a fresh tab
     progress = applyLabReturn(lesson, progress, "lab", observation);
     expect(lesson.scenes[sceneIndexOf(lesson, progress)].id).toBe("lab");
-    expect(progress.lab.status).toBe("RETURNED");
+    expect(progress.labs.lab.status).toBe("RETURNED");
     expect(isSceneComplete(lesson.scenes[sceneIndexOf(lesson, progress)], progress)).toBe(true);
   });
 
@@ -71,7 +71,7 @@ describe("Lesson → Lab → Lesson continuity", () => {
   });
 
   it("a learner who cannot open the lab can continue through the non-3D fallback", () => {
-    const progress = chooseLabFallback(goToScene(lesson, initialProgress(lesson), "lab"));
+    const progress = chooseLabFallback(goToScene(lesson, initialProgress(lesson), "lab"), "lab");
     expect(isSceneComplete(lesson.scenes.find((scene) => scene.id === "lab")!, progress)).toBe(true);
   });
 });

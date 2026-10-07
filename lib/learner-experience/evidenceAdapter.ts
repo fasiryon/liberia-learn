@@ -12,7 +12,8 @@
 import { createGovernedEvidence, validateGovernedEvidence, type GovernedEvidence } from "@/lib/learning-evidence/evidenceContract";
 import { adaptLabEvidence } from "@/lib/interactive-labs/v2/governance";
 import { getInteractiveLabDefinition } from "@/lib/interactive-labs/v2/registry";
-import { observationDisposition, type ExperienceEvidenceEnvelope, type ExperienceObservation, type ObservationDisposition } from "./evidenceHandoff";
+import { observationDisposition, sceneLink, type ExperienceEvidenceEnvelope, type ExperienceObservation, type ObservationDisposition } from "./evidenceHandoff";
+import { findLabExperience } from "./labExperience";
 import type { LearningExperienceLink } from "./links";
 import type { LessonExperience, Scene } from "./types";
 
@@ -25,7 +26,7 @@ export type AdaptedObservation = Readonly<{
 
 type Learner = Readonly<{ tenantId: string; schoolId: string; studentId: string; studentUserId: string; sessionId: string }>;
 type ServerLesson = Readonly<{ experience: LessonExperience; links: readonly LearningExperienceLink[] }>;
-type Trusted = Readonly<{ observationId: string; sceneId: string; kind: ExperienceObservation["kind"]; evidenceType: GovernedEvidence["evidenceType"]; objectiveIds: readonly string[]; activity: GovernedEvidence["activity"]; payload: Readonly<Record<string, unknown>>; disposition: ObservationDisposition }>;
+type Trusted = Readonly<{ observationId: string; sceneId: string; kind: ExperienceObservation["kind"]; evidenceType: GovernedEvidence["evidenceType"]; objectiveIds: readonly string[]; activity: GovernedEvidence["activity"]; payload: Readonly<Record<string, unknown>>; disposition: ObservationDisposition; link: LearningExperienceLink | null }>;
 
 function governed(observation: Trusted, lesson: LessonExperience, learner: Learner, occurredAt: string, suffix = "", objectiveId?: string, conceptId?: string): GovernedEvidence {
   const key = `${learner.sessionId}:${observation.observationId}${suffix}`;
@@ -56,7 +57,7 @@ function trust(observation: ExperienceObservation, server: ServerLesson): Truste
   const { experience } = server;
   const scene: Scene | undefined = experience.scenes.find((candidate) => candidate.id === observation.sceneId);
   if (!scene || scene.evidence.kind === "NONE" || scene.evidence.kind !== observation.kind) return null;
-  const link = scene.interaction.kind === "LAB_LAUNCH" ? server.links.find((candidate) => candidate.linkId === (scene.interaction as { linkId: string }).linkId) ?? null : null;
+  const link = sceneLink(scene, server.links);
   const activity = scene.evidence.kind === "LAB_OBSERVATION"
     ? link ? { activityId: link.experience.labId, activityVersion: link.experience.labVersion } : null
     : scene.interaction.kind === "ASSESSMENT_HANDOFF"
@@ -66,8 +67,9 @@ function trust(observation: ExperienceObservation, server: ServerLesson): Truste
   return {
     observationId: `${experience.id}@${experience.version}:${scene.id}`,
     sceneId: scene.id, kind: scene.evidence.kind, evidenceType: scene.evidence.evidenceType, objectiveIds: scene.evidence.objectiveIds,
-    activity, payload: observation.payload,
-    disposition: observationDisposition(scene.evidence.kind, experience, link),
+    activity, payload: observation.payload, link,
+    // The lab's release state is read on the server now, so a lab withdrawn since the learner used it stays raw.
+    disposition: observationDisposition(scene.evidence.kind, experience, link, link ? findLabExperience(link.experience.labId) : null),
   };
 }
 
@@ -90,15 +92,18 @@ export function adaptEnvelope(envelope: ExperienceEvidenceEnvelope, server: Serv
     const evidence: GovernedEvidence[] = [];
     let disposition: ObservationDisposition = observation.disposition;
     let reason = "Lab fallback used; no runtime observations.";
-    for (const checkId of checkIds) {
+    for (const checkId of new Set(checkIds)) {
+      // Only checks the link's governed evidence mapping names are admitted, with the mapping's objective;
+      // other checks the lab happens to define are outside the approved lesson relationship.
+      const mapping = observation.link?.evidenceMapping.find((candidate) => candidate.labCheckId === checkId);
       const check = definition?.checks.find((candidate) => candidate.id === checkId);
-      if (!definition || !check) continue;
-      const item = governed(observation, server.experience, learner, occurredAt, `:${checkId}`, check.objectiveId, check.conceptId);
+      if (!definition || !check || !mapping) continue;
+      const item = governed(observation, server.experience, learner, occurredAt, `:${checkId}`, mapping.objectiveId, check.conceptId);
       const result = adaptLabEvidence({ definition, check, evidence: item });
       evidence.push(result.governedEvidence);
       reason = result.reason;
-      // The stricter of lab governance and lesson governance wins.
-      if (result.disposition === "RAW_OBSERVATION") disposition = "RAW_OBSERVATION";
+      // The strictest of lab governance, the link mapping and lesson governance wins.
+      if (result.disposition === "RAW_OBSERVATION" || mapping.disposition === "RAW_OBSERVATION") disposition = "RAW_OBSERVATION";
     }
     adapted.push({ observationId: observation.observationId, disposition, evidence, reason });
   }

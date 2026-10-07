@@ -127,7 +127,10 @@ base path plus validated ids — the query string never supplies a URL (no open
 redirect). The lab host reports a presentation-only summary (checks finished,
 trip seen, reset seen, profile, minutes) through a per-lesson sessionStorage
 slot; the lesson restores the originating scene. Browser Back works the same
-way. A reload of an old return URL does not pull the learner back.
+way. A reload of an old return URL does not pull the learner back. Lab state is
+kept per LAB scene (progress format v2), so a lesson with two labs tracks each
+lab's launch, return or walkthrough separately, and a hand-back is accepted
+only for the link placed on the scene being returned to.
 
 ## 7. Labs tab
 
@@ -206,7 +209,10 @@ assessment authority unscored (no answer key on the device). The server
 adapter (`evidenceAdapter.ts`) treats the envelope as untrusted: authority,
 disposition, evidence type, objectives and activity are recomputed from the
 server's copy of the lesson and links; only responses come from the device. It
-builds `GovernedEvidence` with the existing contract and runs lab checks through the existing `adaptLabEvidence`; it never
+admits only lab checks named in the link's `evidenceMapping` (with the
+mapping's objective), keeps lab data raw unless the link is APPROVED and the lab
+is RELEASED at adaptation time (a withdrawn lab never promotes delayed or
+offline submissions), and builds `GovernedEvidence` with the existing contract and runs lab checks through the existing `adaptLabEvidence`; it never
 calls the mastery writer (asserted with a mocked writer). The lesson's
 "See my next step" goes to `/student/learn`, where the existing Orchestrator
 decides. Phase A persists nothing. SLM, DecisionModel and Orchestrator code is
@@ -269,6 +275,10 @@ Findings:
   Labs tab. Deferred: the Mount Coffee lab's crowded phone hotspots (lab
   runtime, predates Phase A); the finished state is not persisted across
   reloads (no evidence is persisted in Phase A either).
+- Codex PR review (3 × P1), fixed before merge: lab progress was one state per
+  lesson (a second lab scene would complete without opening); the adapter
+  admitted any lab check rather than the link's evidence mapping; lab
+  disposition ignored whether the lab is still released.
 
 ## 18. Remaining boundaries
 

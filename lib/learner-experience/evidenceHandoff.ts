@@ -13,7 +13,8 @@
 import type { GovernedEvidenceType } from "@/lib/learning-evidence/evidenceContract";
 import type { LessonExperience } from "./types";
 import type { LearningExperienceLink } from "./links";
-import type { ExperienceProgress } from "./progress";
+import { labStateFor, type ExperienceProgress } from "./progress";
+import type { LabExperience } from "./labExperience";
 
 export const EXPERIENCE_EVIDENCE_ENVELOPE_VERSION = "experience-evidence-envelope/1.0.0" as const;
 
@@ -36,7 +37,8 @@ export type ExperienceEvidenceEnvelope = Readonly<{
   experienceId: string;
   experienceVersion: string;
   authorityStatus: LessonExperience["authority"]["status"];
-  linkStatus: LearningExperienceLink["status"] | null;
+  /** Status of each lab link used by this lesson, by link id. */
+  linkStatuses: Readonly<Record<string, LearningExperienceLink["status"]>>;
   observations: readonly ExperienceObservation[];
   /** Invariants carried on the wire so every consumer can assert them. */
   masteryMutation: false;
@@ -48,24 +50,35 @@ export function observationDisposition(
   kind: ExperienceObservation["kind"],
   experience: LessonExperience,
   link: LearningExperienceLink | null,
+  lab: Pick<LabExperience, "labId" | "release"> | null,
 ): ObservationDisposition {
   if (experience.authority.status !== "APPROVED_RELEASE") return "RAW_OBSERVATION";
-  if (kind === "LAB_OBSERVATION") return link?.status === "APPROVED" ? "PROVISIONAL" : "RAW_OBSERVATION";
+  // Lab data is raw unless the link is approved AND the lab it names is released right now (a withdrawn lab or
+  // a link approved before the lab's release never promotes delayed or offline submissions).
+  if (kind === "LAB_OBSERVATION") return link?.status === "APPROVED" && lab?.labId === link.experience.labId && lab.release.status === "RELEASED" ? "PROVISIONAL" : "RAW_OBSERVATION";
   if (kind === "MASTERY_RESPONSE") return "SUBMIT_TO_ASSESSMENT_AUTHORITY";
   return "PROVISIONAL";
 }
 
-export function buildEvidenceEnvelope(experience: LessonExperience, progress: ExperienceProgress, link: LearningExperienceLink | null): ExperienceEvidenceEnvelope {
+/** The link a LAB scene places (null for every other scene). */
+export function sceneLink(scene: LessonExperience["scenes"][number], links: readonly LearningExperienceLink[]): LearningExperienceLink | null {
+  return scene.interaction.kind === "LAB_LAUNCH" ? links.find((candidate) => candidate.linkId === (scene.interaction as { linkId: string }).linkId) ?? null : null;
+}
+
+export function buildEvidenceEnvelope(experience: LessonExperience, progress: ExperienceProgress, links: readonly LearningExperienceLink[], labs: Readonly<Record<string, Pick<LabExperience, "labId" | "release">>>): ExperienceEvidenceEnvelope {
   const observations: ExperienceObservation[] = [];
   const activity = { activityId: experience.id, activityVersion: experience.version };
   for (const scene of experience.scenes) {
     if (scene.evidence.kind === "NONE") continue;
     const responses = progress.responses[scene.id] ?? {};
-    const base = { sceneId: scene.id, kind: scene.evidence.kind, evidenceType: scene.evidence.evidenceType, objectiveIds: scene.evidence.objectiveIds, disposition: observationDisposition(scene.evidence.kind, experience, link) };
+    const link = sceneLink(scene, links);
+    const base = { sceneId: scene.id, kind: scene.evidence.kind, evidenceType: scene.evidence.evidenceType, objectiveIds: scene.evidence.objectiveIds, disposition: observationDisposition(scene.evidence.kind, experience, link, link ? labs[link.experience.labId] ?? null : null) };
     const id = `${experience.id}@${experience.version}:${scene.id}`;
     if (scene.evidence.kind === "LAB_OBSERVATION") {
-      const observation = progress.lab.observation;
-      if (!observation && progress.lab.status !== "FALLBACK_USED") continue;
+      // Each lab scene reports only its own lab's return (never another scene's).
+      const lab = labStateFor(progress, scene.id);
+      const observation = lab.observation && lab.observation.linkId === link?.linkId ? lab.observation : null;
+      if (!observation && lab.status !== "FALLBACK_USED") continue;
       observations.push({ ...base, observationId: id, activity: observation ? { activityId: observation.labId, activityVersion: observation.labVersion } : activity, payload: observation ? { ...observation } : { fallbackUsed: true } });
       continue;
     }
@@ -81,5 +94,5 @@ export function buildEvidenceEnvelope(experience: LessonExperience, progress: Ex
       observations.push({ ...base, observationId: id, activity, payload: { responses: { ...responses } } });
     }
   }
-  return { contractVersion: EXPERIENCE_EVIDENCE_ENVELOPE_VERSION, experienceId: experience.id, experienceVersion: experience.version, authorityStatus: experience.authority.status, linkStatus: link?.status ?? null, observations, masteryMutation: false, nextActionAuthority: "LEARNING_ORCHESTRATOR" };
+  return { contractVersion: EXPERIENCE_EVIDENCE_ENVELOPE_VERSION, experienceId: experience.id, experienceVersion: experience.version, authorityStatus: experience.authority.status, linkStatuses: Object.fromEntries(links.map((candidate) => [candidate.linkId, candidate.status])), observations, masteryMutation: false, nextActionAuthority: "LEARNING_ORCHESTRATOR" };
 }

@@ -6,9 +6,14 @@
 import type { LessonExperience, Scene } from "./types";
 import { isLabReturnObservation, type LabReturnObservation } from "./labLaunch";
 
-export const EXPERIENCE_PROGRESS_VERSION = 1 as const;
+/** v2: lab state is kept per LAB scene (v1 kept one lab state per lesson). */
+export const EXPERIENCE_PROGRESS_VERSION = 2 as const;
 
 export type SceneResponses = Readonly<Record<string, number | string>>;
+
+export type LabSceneStatus = "NOT_STARTED" | "LAUNCHED" | "RETURNED" | "FALLBACK_USED";
+export type LabSceneProgress = Readonly<{ status: LabSceneStatus; observation: LabReturnObservation | null }>;
+const NO_LAB: LabSceneProgress = Object.freeze({ status: "NOT_STARTED", observation: null });
 
 export type ExperienceProgress = Readonly<{
   v: typeof EXPERIENCE_PROGRESS_VERSION;
@@ -18,12 +23,13 @@ export type ExperienceProgress = Readonly<{
   completedSceneIds: readonly string[];
   responses: Readonly<Record<string, SceneResponses>>;
   revealed: Readonly<Record<string, readonly string[]>>;
-  lab: Readonly<{ status: "NOT_STARTED" | "LAUNCHED" | "RETURNED" | "FALLBACK_USED"; observation: LabReturnObservation | null }>;
+  /** Keyed by LAB scene id, so each lab scene is opened, returned from or replaced by its fallback on its own. */
+  labs: Readonly<Record<string, LabSceneProgress>>;
   updatedAt: string;
 }>;
 
 export function initialProgress(experience: LessonExperience, now = new Date().toISOString()): ExperienceProgress {
-  return { v: EXPERIENCE_PROGRESS_VERSION, experienceId: experience.id, experienceVersion: experience.version, sceneId: experience.scenes[0].id, completedSceneIds: [], responses: {}, revealed: {}, lab: { status: "NOT_STARTED", observation: null }, updatedAt: now };
+  return { v: EXPERIENCE_PROGRESS_VERSION, experienceId: experience.id, experienceVersion: experience.version, sceneId: experience.scenes[0].id, completedSceneIds: [], responses: {}, revealed: {}, labs: {}, updatedAt: now };
 }
 
 /**
@@ -43,9 +49,18 @@ export function restoreProgress(experience: LessonExperience, raw: unknown): Exp
     completedSceneIds: Array.isArray(saved.completedSceneIds) ? saved.completedSceneIds.filter((id) => sceneIds.has(id)) : [],
     responses: saved.responses && typeof saved.responses === "object" ? saved.responses : {},
     revealed: saved.revealed && typeof saved.revealed === "object" ? saved.revealed : {},
-    lab: restoreLab(saved.lab),
+    labs: restoreLabs(experience, saved.labs),
     updatedAt: typeof saved.updatedAt === "string" ? saved.updatedAt : fresh.updatedAt,
   };
+}
+
+export function labStateFor(progress: ExperienceProgress, sceneId: string): LabSceneProgress {
+  return progress.labs[sceneId] ?? NO_LAB;
+}
+
+/** The lab scene whose launch has not yet been answered by a return or fallback. */
+export function pendingLabSceneId(progress: ExperienceProgress): string | null {
+  return Object.entries(progress.labs).find(([, lab]) => lab.status === "LAUNCHED")?.[0] ?? null;
 }
 
 export function sceneIndexOf(experience: LessonExperience, progress: ExperienceProgress): number {
@@ -66,7 +81,7 @@ export function isSceneComplete(scene: Scene, progress: ExperienceProgress): boo
     case "ALL_RESPONSES_WRITTEN":
       return scene.interaction.kind === "FREE_RESPONSE" && scene.interaction.prompts.every((prompt) => String(responses[prompt.id] ?? "").trim().length >= prompt.minLength);
     case "LAB_RETURNED_OR_FALLBACK":
-      return progress.lab.status === "RETURNED" || progress.lab.status === "FALLBACK_USED";
+      return labStateFor(progress, scene.id).status === "RETURNED" || labStateFor(progress, scene.id).status === "FALLBACK_USED";
   }
 }
 
@@ -104,8 +119,13 @@ export function revealStep(progress: ExperienceProgress, sceneId: string, stepId
   return touch(progress, { revealed: { ...progress.revealed, [sceneId]: [...current, stepId] } });
 }
 
+function withLab(progress: ExperienceProgress, sceneId: string, lab: LabSceneProgress, patch: Partial<ExperienceProgress> = {}): ExperienceProgress {
+  return touch(progress, { ...patch, labs: { ...progress.labs, [sceneId]: lab } });
+}
+
 export function markLabLaunched(progress: ExperienceProgress, sceneId: string): ExperienceProgress {
-  return touch(progress, { sceneId, lab: { status: progress.lab.status === "RETURNED" ? "RETURNED" : "LAUNCHED", observation: progress.lab.observation } });
+  const current = labStateFor(progress, sceneId);
+  return withLab(progress, sceneId, { status: current.status === "RETURNED" ? "RETURNED" : "LAUNCHED", observation: current.observation }, { sceneId });
 }
 
 /** Lab → lesson: restore the originating scene and record what the lab reported. */
@@ -113,12 +133,12 @@ export function applyLabReturn(experience: LessonExperience, progress: Experienc
   const scene = experience.scenes.find((candidate) => candidate.id === sceneId && candidate.type === "LAB");
   if (!scene) return progress;
   if (!observation) return touch(progress, { sceneId });
-  return touch(progress, { sceneId, lab: { status: "RETURNED", observation } });
+  return withLab(progress, sceneId, { status: "RETURNED", observation }, { sceneId });
 }
 
-export function chooseLabFallback(progress: ExperienceProgress): ExperienceProgress {
-  if (progress.lab.status === "RETURNED") return progress;
-  return touch(progress, { lab: { status: "FALLBACK_USED", observation: null } });
+export function chooseLabFallback(progress: ExperienceProgress, sceneId: string): ExperienceProgress {
+  if (labStateFor(progress, sceneId).status === "RETURNED") return progress;
+  return withLab(progress, sceneId, { status: "FALLBACK_USED", observation: null });
 }
 
 export function percentComplete(experience: LessonExperience, progress: ExperienceProgress): number {
@@ -127,13 +147,20 @@ export function percentComplete(experience: LessonExperience, progress: Experien
 
 const LAB_STATUSES = new Set(["NOT_STARTED", "LAUNCHED", "RETURNED", "FALLBACK_USED"]);
 
-/** Stored lab state is re-validated: a tampered or stale observation is dropped, never forwarded as evidence. */
-function restoreLab(raw: unknown): ExperienceProgress["lab"] {
-  const fresh: ExperienceProgress["lab"] = { status: "NOT_STARTED", observation: null };
-  if (!raw || typeof raw !== "object") return fresh;
-  const lab = raw as { status?: unknown; observation?: unknown };
-  if (typeof lab.status !== "string" || !LAB_STATUSES.has(lab.status)) return fresh;
-  const observation = isLabReturnObservation(lab.observation) ? lab.observation : null;
-  if (lab.status === "RETURNED" && !observation) return fresh;
-  return { status: lab.status as ExperienceProgress["lab"]["status"], observation };
+/**
+ * Stored lab state is re-validated per LAB scene: unknown scenes, tampered or stale observations, and
+ * observations from a link other than the scene's own are dropped, never forwarded as evidence.
+ */
+function restoreLabs(experience: LessonExperience, raw: unknown): ExperienceProgress["labs"] {
+  if (!raw || typeof raw !== "object") return {};
+  const restored: Record<string, LabSceneProgress> = {};
+  for (const scene of experience.scenes) {
+    if (scene.interaction.kind !== "LAB_LAUNCH") continue;
+    const lab = (raw as Record<string, unknown>)[scene.id] as { status?: unknown; observation?: unknown } | undefined;
+    if (!lab || typeof lab !== "object" || typeof lab.status !== "string" || !LAB_STATUSES.has(lab.status)) continue;
+    const observation = isLabReturnObservation(lab.observation) && lab.observation.linkId === scene.interaction.linkId ? lab.observation : null;
+    if (lab.status === "RETURNED" && !observation) continue;
+    restored[scene.id] = { status: lab.status as LabSceneStatus, observation };
+  }
+  return restored;
 }

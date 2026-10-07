@@ -8,7 +8,7 @@ import type { AgeBand, LessonExperience, Scene } from "@/lib/learner-experience/
 import type { LearningExperienceLink } from "@/lib/learner-experience/links";
 import type { LabExperience } from "@/lib/learner-experience/labExperience";
 import type { SceneToolView } from "@/lib/learner-experience/tools";
-import { advance, applyLabReturn, chooseLabFallback, goToScene, initialProgress, isSceneComplete, markLabLaunched, percentComplete, recordResponse, restoreProgress, retreat, revealStep, sceneIndexOf, type ExperienceProgress } from "@/lib/learner-experience/progress";
+import { advance, applyLabReturn, chooseLabFallback, goToScene, initialProgress, isSceneComplete, markLabLaunched, pendingLabSceneId, percentComplete, recordResponse, restoreProgress, retreat, revealStep, sceneIndexOf, type ExperienceProgress } from "@/lib/learner-experience/progress";
 import { buildLabLaunchHref, isLabReturnObservation, labReturnStorageKey, type LabReturnObservation } from "@/lib/learner-experience/labLaunch";
 import { buildEvidenceEnvelope, type ExperienceEvidenceEnvelope } from "@/lib/learner-experience/evidenceHandoff";
 import { loadExperienceProgress, saveExperienceProgress } from "@/lib/learner-experience/progressStore";
@@ -72,17 +72,21 @@ export function LessonPlayerV2({ experience, links, labs, toolsByScene, basePath
       // A superseded run must not consume the one-shot lab hand-back slot.
       if (cancelled) return;
       let next = restoreProgress(experience, saved);
-      // The lab's one-shot hand-back, accepted only for a link this lesson actually placed.
+      // A pending launch (return link or browser Back) is consumed. If IndexedDB lost the launch marker, a valid
+      // hand-back with the return link still restores the scene. A reload of an old return URL has no hand-back
+      // left, so it never pulls the learner backwards; the return parameters are also stripped from the address.
+      const pending = pendingLabSceneId(next);
+      const candidateSceneId = returnSceneId ?? pending;
+      const candidateScene = experience.scenes.find((item) => item.id === candidateSceneId);
+      const candidateLinkId = candidateScene?.interaction.kind === "LAB_LAUNCH" ? candidateScene.interaction.linkId : null;
+      // The lab's one-shot hand-back, accepted only for the link placed on the scene being returned to.
       let observation: LabReturnObservation | null = null;
       try {
         const raw = window.sessionStorage.getItem(labReturnStorageKey(experience.id));
         const parsed = raw ? JSON.parse(raw) : null;
-        if (isLabReturnObservation(parsed) && links.some((candidate) => candidate.linkId === parsed.linkId && candidate.experience.labId === parsed.labId)) observation = parsed;
+        if (isLabReturnObservation(parsed) && candidateLinkId && parsed.linkId === candidateLinkId && links.some((candidate) => candidate.linkId === parsed.linkId && candidate.experience.labId === parsed.labId)) observation = parsed;
       } catch { /* storage unavailable */ }
-      // A pending launch (return link or browser Back) is consumed. If IndexedDB lost the launch marker, a valid
-      // hand-back with the return link still restores the scene. A reload of an old return URL has no hand-back
-      // left, so it never pulls the learner backwards; the return parameters are also stripped from the address.
-      const labSceneId = next.lab.status === "LAUNCHED" ? returnSceneId ?? next.sceneId : returnSceneId && observation ? returnSceneId : null;
+      const labSceneId = candidateSceneId && (candidateSceneId === pending || observation) ? candidateSceneId : null;
       if (returnSceneId) window.history.replaceState(window.history.state, "", window.location.pathname);
       if (labSceneId) {
         try { window.sessionStorage.removeItem(labReturnStorageKey(experience.id)); } catch { /* storage unavailable */ }
@@ -147,8 +151,7 @@ export function LessonPlayerV2({ experience, links, labs, toolsByScene, basePath
   const finish = () => {
     if (!progress || !complete) return;
     // Governed handoff: observations only. The existing authority decides what happens next.
-    const labLink = links.find((candidate) => experience.scenes.some((item) => item.interaction.kind === "LAB_LAUNCH" && item.interaction.linkId === candidate.linkId)) ?? null;
-    setSubmitted(buildEvidenceEnvelope(experience, advance(experience, progress), labLink));
+    setSubmitted(buildEvidenceEnvelope(experience, advance(experience, progress), links, labs));
     update((current) => advance(experience, current));
   };
 
@@ -232,7 +235,7 @@ export function LessonPlayerV2({ experience, links, labs, toolsByScene, basePath
             <div className="mt-5"><SceneBody scene={scene} ageBand={band} /></div>
             <DiagramReveal scene={scene} progress={progress} onReveal={(stepId) => update((current) => revealStep(current, scene.id, stepId))} />
             <FormativeCheck scene={scene} progress={progress} onAnswer={(itemId, value) => update((current) => recordResponse(current, scene.id, itemId, value))} />
-            {scene.type === "LAB" && <LabScene scene={scene} lab={link ? labs[link.experience.labId] ?? null : null} link={link} progress={progress} online={online} onLaunch={() => void launchLab()} onFallback={() => update(chooseLabFallback)} />}
+            {scene.type === "LAB" && <LabScene scene={scene} lab={link ? labs[link.experience.labId] ?? null : null} link={link} progress={progress} online={online} onLaunch={() => void launchLab()} onFallback={() => update((current) => chooseLabFallback(current, scene.id))} />}
             <ReflectionPrompts scene={scene} progress={progress} onWrite={(promptId, text) => update((current) => recordResponse(current, scene.id, promptId, text))} />
             <AssessmentHandoffSeam scene={scene} progress={progress} submitted={!!submitted} onAnswer={(itemId, value) => update((current) => recordResponse(current, scene.id, itemId, value))} />
             {submitted && (

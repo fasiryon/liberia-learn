@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import { FlaskConical, RotateCcw, WifiOff } from "lucide-react";
 import type { LabExperience } from "@/lib/learner-experience/labExperience";
 import type { LearningExperienceLink } from "@/lib/learner-experience/links";
-import type { ExperienceProgress } from "@/lib/learner-experience/progress";
+import { labStateFor, type ExperienceProgress } from "@/lib/learner-experience/progress";
 import type { Scene } from "@/lib/learner-experience/types";
 
 const PROFILE_LABEL: Record<string, string> = { HIGH: "Detailed 3D", STANDARD: "Standard 3D", LOW: "Light 3D", FALLBACK_2D: "2D view", STATIC_TEACHER_GUIDED: "Text walkthrough" };
@@ -19,8 +19,9 @@ export function LabScene({ scene, lab, link, progress, online, onLaunch, onFallb
   onLaunch: () => void;
   onFallback: () => void;
 }) {
-  const observation = progress.lab.observation;
-  const returned = progress.lab.status === "RETURNED";
+  const labState = labStateFor(progress, scene.id);
+  const observation = labState.observation;
+  const returned = labState.status === "RETURNED";
   const unavailable = !lab || !link;
   const welcomeRef = useRef<HTMLDivElement>(null);
   // On a phone the return summary is below the fold: bring it into view once, when the learner comes back.
@@ -71,8 +72,8 @@ export function LabScene({ scene, lab, link, progress, online, onLaunch, onFallb
       <details className="rounded-2xl border border-[var(--ll-border)] p-4" open={unavailable || undefined}>
         <summary className="min-h-11 cursor-pointer text-base font-semibold text-[var(--ll-text)]">Can&apos;t open the lab? Use the text walkthrough</summary>
         <p className="mt-3 text-base leading-7 text-[var(--ll-text)]">{scene.accessibility.textAlternative}</p>
-        <button type="button" onClick={onFallback} disabled={progress.lab.status === "RETURNED" || progress.lab.status === "FALLBACK_USED"} className="mt-3 min-h-11 rounded-xl border border-[var(--ll-border)] px-4 py-2 text-sm font-semibold text-[var(--ll-text)] disabled:opacity-60">
-          {progress.lab.status === "FALLBACK_USED" ? "Walkthrough used" : "I read the walkthrough"}
+        <button type="button" onClick={onFallback} disabled={labState.status === "RETURNED" || labState.status === "FALLBACK_USED"} className="mt-3 min-h-11 rounded-xl border border-[var(--ll-border)] px-4 py-2 text-sm font-semibold text-[var(--ll-text)] disabled:opacity-60">
+          {labState.status === "FALLBACK_USED" ? "Walkthrough used" : "I read the walkthrough"}
         </button>
       </details>
     </div>

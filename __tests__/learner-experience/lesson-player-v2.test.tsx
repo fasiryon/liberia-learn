@@ -54,7 +54,7 @@ describe("Lesson Player V2", () => {
   });
 
   it("blocks Continue until the scene's completion rule is met", async () => {
-    store.set(experience.id, { v: 1, experienceId: experience.id, experienceVersion: experience.version, sceneId: "energy-chain", completedSceneIds: ["intro", "objective", "explain"], responses: {}, revealed: {}, lab: { status: "NOT_STARTED", observation: null }, updatedAt: "2026-10-07T00:00:00.000Z" });
+    store.set(experience.id, { v: 2, experienceId: experience.id, experienceVersion: experience.version, sceneId: "energy-chain", completedSceneIds: ["intro", "objective", "explain"], responses: {}, revealed: {}, labs: {}, updatedAt: "2026-10-07T00:00:00.000Z" });
     await render();
     expect(sceneId()).toBe("energy-chain");
     expect(button("Continue").disabled).toBe(true);
@@ -67,13 +67,13 @@ describe("Lesson Player V2", () => {
   });
 
   it("resumes at the saved scene", async () => {
-    store.set(experience.id, { v: 1, experienceId: experience.id, experienceVersion: experience.version, sceneId: "review", completedSceneIds: [], responses: {}, revealed: {}, lab: { status: "NOT_STARTED", observation: null }, updatedAt: "2026-10-07T00:00:00.000Z" });
+    store.set(experience.id, { v: 2, experienceId: experience.id, experienceVersion: experience.version, sceneId: "review", completedSceneIds: [], responses: {}, revealed: {}, labs: {}, updatedAt: "2026-10-07T00:00:00.000Z" });
     await render();
     expect(sceneId()).toBe("review");
   });
 
   it("Explore in Lab launches with origin context; returning restores the lab scene with the lab summary", async () => {
-    store.set(experience.id, { v: 1, experienceId: experience.id, experienceVersion: experience.version, sceneId: "lab", completedSceneIds: [], responses: {}, revealed: {}, lab: { status: "NOT_STARTED", observation: null }, updatedAt: "2026-10-07T00:00:00.000Z" });
+    store.set(experience.id, { v: 2, experienceId: experience.id, experienceVersion: experience.version, sceneId: "lab", completedSceneIds: [], responses: {}, revealed: {}, labs: {}, updatedAt: "2026-10-07T00:00:00.000Z" });
     await render();
     await click(button("Explore in Lab"));
     expect(push).toHaveBeenCalledTimes(1);
@@ -95,13 +95,13 @@ describe("Lesson Player V2", () => {
   });
 
   it("a reload of an old return URL keeps the learner's later position", async () => {
-    store.set(experience.id, { v: 1, experienceId: experience.id, experienceVersion: experience.version, sceneId: "mastery", completedSceneIds: [], responses: {}, revealed: {}, lab: { status: "RETURNED", observation: null }, updatedAt: "2026-10-07T00:00:00.000Z" });
+    store.set(experience.id, { v: 2, experienceId: experience.id, experienceVersion: experience.version, sceneId: "mastery", completedSceneIds: [], responses: {}, revealed: {}, labs: {}, updatedAt: "2026-10-07T00:00:00.000Z" });
     await render("lab");
     expect(sceneId()).toBe("mastery");
   });
 
   it("keeps focus in the reflection box while the learner types (focus moves only on scene change)", async () => {
-    store.set(experience.id, { v: 1, experienceId: experience.id, experienceVersion: experience.version, sceneId: "reflection", completedSceneIds: [], responses: {}, revealed: {}, lab: { status: "RETURNED", observation: null }, updatedAt: "2026-10-07T00:00:00.000Z" });
+    store.set(experience.id, { v: 2, experienceId: experience.id, experienceVersion: experience.version, sceneId: "reflection", completedSceneIds: [], responses: {}, revealed: {}, labs: {}, updatedAt: "2026-10-07T00:00:00.000Z" });
     await render();
     const box = host.querySelector("#reflect-why-trip") as HTMLTextAreaElement;
     box.focus();
@@ -132,7 +132,7 @@ describe("Lesson Player V2", () => {
   });
 
   it("offers a non-3D fallback that lets the learner continue", async () => {
-    store.set(experience.id, { v: 1, experienceId: experience.id, experienceVersion: experience.version, sceneId: "lab", completedSceneIds: [], responses: {}, revealed: {}, lab: { status: "NOT_STARTED", observation: null }, updatedAt: "2026-10-07T00:00:00.000Z" });
+    store.set(experience.id, { v: 2, experienceId: experience.id, experienceVersion: experience.version, sceneId: "lab", completedSceneIds: [], responses: {}, revealed: {}, labs: {}, updatedAt: "2026-10-07T00:00:00.000Z" });
     await render();
     expect(button("Continue").disabled).toBe(true);
     await click(button("I read the walkthrough"));
