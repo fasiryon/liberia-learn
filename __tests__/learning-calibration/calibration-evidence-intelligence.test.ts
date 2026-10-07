@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import { GRADE4_MATH_ONTOLOGY_RELEASE, deterministicReleaseIdentity } from "@/lib/learning-authority/governedGrade4Math";
 import { generateLearningCandidates, resolveLearningDecision, learnerStateRevision, type DecisionModel } from "@/lib/learning-authority/learningOrchestrator";
 import { createGovernedEvidence, type GovernedEvidence } from "@/lib/learning-evidence/evidenceContract";
-import { assessEvidenceSufficiency, calibrateLearner, calibrationInputRevision } from "@/lib/learning-calibration/calibrationState";
+import { assessEvidenceSufficiency, CALIBRATION_POLICY_V1, calibrateLearner, calibrationInputRevision, type CalibrationPolicy } from "@/lib/learning-calibration/calibrationState";
 import { assessEvidenceQuality } from "@/lib/learning-calibration/evidenceQualityPolicy";
 import {
   applyEarlyLearningPolicy, EARLY_LEARNING_POLICY_V1, validateEarlyLearningPolicy, type EarlyLearningPolicy,
@@ -297,6 +297,34 @@ describe("early-calibration learning policy", () => {
       .toThrow("calibration_learner_mismatch");
   });
 
+  it("revision covers the full policy content: a value changed under the same version invalidates the snapshot", async () => {
+    const snap = await last(scenario("policy-revision", [{ day: 0, kind: "RELEASED_ITEM", conceptId: A, correct: true }]));
+    const base = { learnerStateRevision: snap.calibration.learnerStateRevision, asOf: snap.asOf };
+    const defaultRevision = calibrationInputRevision(base);
+    expect(calibrationInputRevision({ ...base, policy: CALIBRATION_POLICY_V1 })).toBe(defaultRevision);
+    expect(calibrationInputRevision({ ...base, policy: { ...CALIBRATION_POLICY_V1 } })).toBe(calibrationInputRevision(base));
+    const reordered = Object.fromEntries(Object.entries(CALIBRATION_POLICY_V1).reverse()) as unknown as CalibrationPolicy;
+    expect(calibrationInputRevision({ ...base, policy: reordered })).toBe(defaultRevision);
+    // CalibrationPolicy is typed from V1's literals; the runtime accepts any values under that version.
+    const tweak = (patch: Record<string, unknown>) => ({ ...CALIBRATION_POLICY_V1, ...patch }) as unknown as CalibrationPolicy;
+    const variants = [
+      tweak({ minOccasions: 3 }), tweak({ sufficientOccasions: 4 }), tweak({ staleCanonicalDays: 30 }), tweak({ conflictLimit: 0.4 }),
+      tweak({ disagreementGap: 0.3 }), tweak({ stableSufficientShare: 0.5 }),
+      tweak({ occasionCredit: { ...CALIBRATION_POLICY_V1.occasionCredit, MODERATE: 0.25 } }),
+    ];
+    const revisions = variants.map((policy) => calibrationInputRevision({ ...base, policy }));
+    expect(new Set([defaultRevision, ...revisions]).size).toBe(variants.length + 1);
+    for (const policy of variants) expect(policy.version).toBe(CALIBRATION_POLICY_V1.version);
+    // calibrateLearner stamps the snapshot with the policy it actually ran under.
+    const strict = calibrateLearner({ states: snap.states, release, enrollmentGrade: 4, asOf: snap.asOf, policy: variants[0] });
+    expect(strict.calibration.inputRevision).toBe(revisions[0]);
+    expect(strict.calibration.inputRevision).not.toBe(snap.calibration.inputRevision);
+    expect(() => applyEarlyLearningPolicy({ calibration: strict.calibration, states: snap.states, release,
+      candidates: generateLearningCandidates({ states: snap.states }), ranked: snap.recommendation.rankedCandidates,
+      learnerStateRevision: base.learnerStateRevision, calibrationInputRevision: defaultRevision, idempotencyKey: "k" }))
+      .toThrow("calibration_inputs_stale");
+  });
+
   it("rejects a calibration whose corroborating evidence or as-of time changed under the same canonical revision", async () => {
     const one = await last(scenario("inputs", [{ day: 0, kind: "RELEASED_ITEM", conceptId: A, correct: true }]));
     const candidates = generateLearningCandidates({ states: one.states });
@@ -542,6 +570,36 @@ describe("offline calibration model", () => {
     const rescored = reconcileOfflineObservations({ projection, verify, release, queued: [honest, lying], alreadyAdmittedIdempotencyKeys: new Set() });
     expect(rescored.accepted.map((entry) => [entry.evidenceId, entry.strength.serverScored, entry.performance.correct])).toEqual([["s1", true, true]]);
     expect(rescored.rejected).toEqual([{ evidenceId: "s2", reason: "evidence_result_mismatch" }]);
+  });
+
+  it("scores released work on the server from the selected answer, whether or not the device reported a result", async () => {
+    const snap = await last(scenario("offline-unscored", [{ day: 0, kind: "RELEASED_ITEM", conceptId: A, correct: true }]));
+    const projection = buildSignedOfflineCalibrationProjection({ calibration: snap.calibration, estimates: snap.estimates, issuedAt: snap.asOf, ttlHours: 24, sign });
+    const binding = release.bindings.find((entry) => entry.conceptId === A)!;
+    const item = release.items.find((entry) => entry.id === binding.itemId && entry.version === binding.itemVersion)!;
+    const wrongIndex = (item.correctIndex + 1) % item.options.length;
+    const answered = (id: string, selectedAnswerIndex: number, correct: boolean | null, activity = { activityId: item.id, activityVersion: item.version }) => offlineQuiz(id, {
+      evidenceType: item.context === "DIAGNOSTIC" ? "DIAGNOSTIC" : "PRACTICE", activity,
+      performance: { outcome: "COMPLETED", score: null, maxScore: null, correct, selectedAnswerIndex, signals: [] },
+    });
+    const result = reconcileOfflineObservations({ projection, verify, release, alreadyAdmittedIdempotencyKeys: new Set(), queued: [
+      answered("n-right", item.correctIndex, null),
+      answered("n-wrong", wrongIndex, null),
+      answered("forged-right", wrongIndex, true),
+      answered("forged-wrong", item.correctIndex, false),
+      answered("unbound-null", 0, null, { activityId: "offline-quiz", activityVersion: "1" }),
+      answered("unbound-claimed", 0, true, { activityId: "offline-quiz", activityVersion: "1" }),
+    ] });
+    // A null device result is no longer accepted unscored: the server derives it canonically.
+    expect(result.accepted.map((entry) => [entry.evidenceId, entry.strength.serverScored, entry.performance.correct, entry.performance.outcome]))
+      .toEqual([["n-right", true, true, "CORRECT"], ["n-wrong", true, false, "INCORRECT"]]);
+    // A device result never overrides the server's, and unbound items stay rejected however the device scored them.
+    expect([...result.rejected].sort((a, b) => a.evidenceId.localeCompare(b.evidenceId))).toEqual([
+      { evidenceId: "forged-right", reason: "evidence_result_mismatch" },
+      { evidenceId: "forged-wrong", reason: "evidence_result_mismatch" },
+      { evidenceId: "unbound-claimed", reason: "evidence_mastery_binding_invalid" },
+      { evidenceId: "unbound-null", reason: "evidence_mastery_binding_invalid" },
+    ]);
   });
 });
 

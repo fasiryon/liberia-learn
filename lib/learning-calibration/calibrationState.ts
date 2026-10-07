@@ -86,12 +86,14 @@ export function calibrationInputRevision(input: {
   learnerStateRevision: string;
   asOf: string;
   corroboratingEvidence?: readonly GovernedEvidence[];
-  policyVersion?: string;
+  policy?: CalibrationPolicy;
 }): string {
   const evidence = [...deduplicateGovernedEvidence(input.corroboratingEvidence ?? [])]
     .sort((a, b) => a.evidenceId.localeCompare(b.evidenceId) || a.idempotencyKey.localeCompare(b.idempotencyKey));
+  // The full effective policy content, not just its version: a threshold changed under the same version must invalidate snapshots.
   return "calibration-input-" + createHash("sha256").update(canonicalizeJson({
-    revision: input.learnerStateRevision, asOf: input.asOf, policy: input.policyVersion ?? CALIBRATION_POLICY_VERSION, evidence,
+    revision: input.learnerStateRevision, asOf: input.asOf, policy: input.policy ?? CALIBRATION_POLICY_V1,
+    qualityPolicy: EVIDENCE_QUALITY_POLICY_V1, evidence,
   })).digest("hex");
 }
 
@@ -199,7 +201,7 @@ export function calibrateLearner(input: {
   }
   const corroborating = deduplicateGovernedEvidence(input.corroboratingEvidence ?? []);
   const inputRevision = calibrationInputRevision({
-    learnerStateRevision: revision, asOf: input.asOf, corroboratingEvidence: corroborating, policyVersion: policy.version,
+    learnerStateRevision: revision, asOf: input.asOf, corroboratingEvidence: corroborating, policy,
   });
   const assessments = corroborating.map((evidence) => {
     if (evidence.schoolId !== first.schoolId || evidence.learner.studentId !== first.studentId ||

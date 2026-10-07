@@ -129,6 +129,8 @@ export type OfflineReplayResult = Readonly<{
   replayDigest: string;
 }>;
 
+const OFFLINE_SCORABLE_TYPES: ReadonlySet<GovernedEvidence["evidenceType"]> = new Set(["PRACTICE", "QUIZ", "DIAGNOSTIC"]);
+
 /**
  * Re-admit one queued record on the server. Trust a device can only assert
  * (server scoring, human verification, reviewed reliability, teacher source)
@@ -141,11 +143,18 @@ function readmitOfflineEvidence(evidence: GovernedEvidence, release: CurriculumO
     ...evidence,
     strength: Object.freeze({ ...evidence.strength, serverScored: false, humanVerified: false, reliability: "UNASSESSED" as const }),
   });
-  let rescored;
-  try { rescored = toCanonicalMasteryEvidence({ ...untrusted, strength: { ...untrusted.strength, serverScored: true } }, release); } catch (error) {
-    if ((error as Error).message === "evidence_mastery_adapter_not_available") return untrusted;
-    throw error;
-  }
+  // Scorability depends on the item type and the selected answer, never on the device's own result.
+  const { selectedAnswerIndex, correct } = untrusted.performance;
+  if (!OFFLINE_SCORABLE_TYPES.has(untrusted.evidenceType) || selectedAnswerIndex === undefined) return untrusted;
+  // A device that reported no result gets the server's answer key; one that did is checked against it
+  // (evidence_result_mismatch). An item the release does not bind is rejected either way.
+  const item = release.items.find((candidate) => candidate.id === untrusted.activity.activityId && candidate.version === untrusted.activity.activityVersion);
+  const claimed = correct ?? (item !== undefined && selectedAnswerIndex === item.correctIndex);
+  const rescored = toCanonicalMasteryEvidence({
+    ...untrusted,
+    performance: { ...untrusted.performance, correct: claimed },
+    strength: { ...untrusted.strength, serverScored: true },
+  }, release);
   return Object.freeze({
     ...untrusted,
     performance: Object.freeze({ ...untrusted.performance, correct: rescored.result === "CORRECT", outcome: rescored.result }),
