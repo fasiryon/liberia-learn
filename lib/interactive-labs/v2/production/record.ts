@@ -129,6 +129,8 @@ export function validateProductionRecord(record: LabProductionRecord, definition
   if (!pilot.consent) problems.push("Pilot must reference the consent/authorization it ran under.");
   if (!pilot.xapiExport) problems.push("Pilot must reference its xAPI evidence export.");
   if (!pilot.prePostChange || pilot.failurePoints.length === 0 || pilot.teacherNotes.length === 0) problems.push("Pilot must record pre/post change, failure points and teacher notes.");
+  if (!Number.isFinite(pilot.completionRate) || pilot.completionRate < 0 || pilot.completionRate > 1) problems.push("Pilot completionRate must be a fraction from 0 to 1.");
+  if (!Number.isFinite(pilot.medianTimeOnTaskMin) || pilot.medianTimeOnTaskMin < 0) problems.push("Pilot medianTimeOnTaskMin must be a finite, non-negative number of minutes.");
   for (const finding of pilot.findings) if (finding.severity === "P0" && finding.status !== "FIXED") problems.push(`Pilot P0 ${finding.id} is ${finding.status}.`);
   return problems;
 }

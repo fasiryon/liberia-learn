@@ -120,6 +120,14 @@ describe("cutaway primitive", () => {
     expect(buildRenderList({ definition: circuitDefinition, state: isolatedGlassThenCut, profile: "LOW" }).items.map((item) => item.id)).toContain("bulb-filament");
   });
 
+  it("keeps an isolated plain scene object (not a spec component) across cutaway changes", () => {
+    const spec: HighFidelitySpec = { ...SOLIDS_FIDELITY, cutaways: [{ id: "cut", label: "Cut", plane: { normal: [0, 0, 1], offset: 0 }, removesComponentIds: [], revealsComponentIds: [] }] };
+    const isolated = { ...initialFidelityState(spec), isolatedId: "sphere" };
+    const opened = transitionFidelity(spec, isolated, { type: "set-cutaway", cutawayId: "cut" });
+    expect(opened.isolatedId).toBe("sphere");
+    expect(transitionFidelity(spec, opened, { type: "set-cutaway", cutawayId: null }).isolatedId).toBe("sphere");
+  });
+
   it("hides layered components and restores them", () => {
     const spec: HighFidelitySpec = { ...CIRCUIT_FIDELITY, layers: [{ id: "casing", label: "Casing", defaultVisible: true }], components: CIRCUIT_FIDELITY.components.map((component) => component.id === "battery" ? { ...component, layerId: "casing" } : component) };
     const state = initialFidelityState(spec);

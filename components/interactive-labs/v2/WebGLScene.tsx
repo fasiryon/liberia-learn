@@ -24,6 +24,7 @@ import { planLowFrame, type FramePlan } from "@/lib/interactive-labs/v2/fidelity
 import { createLowBatchScratch, ensureLowBatchScratch, LOW_BATCH_COLOR_CHANGED, LOW_BATCH_EMISSIVE_CHANGED, syncLowBatchItemState, type LowBatchScratch, type LowBatchStateRange } from "@/lib/interactive-labs/v2/fidelity/lowBatchState";
 import { publishFramePlan, type ReviewFrameProbe } from "@/lib/interactive-labs/v2/review/framePlanEvidence";
 import { createSurfaceTriangleStorage, writeSurfaceTriangles } from "@/lib/interactive-labs/v2/fidelity/surfaces";
+import { resolveLowGlyphProxies } from "@/lib/interactive-labs/v2/fidelity/emitters";
 import type { MeshData } from "./meshes";
 import { pickNearest, type ScenePick } from "./picking";
 import { controlTargetElements } from "./controlTargets";
@@ -408,7 +409,7 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
       if (list.markers.length) drawPoints(list.markers, gl.POINTS, MARKER_COLOR, 1, (list.budget.pulseHighlights && !motionless ? 12 + Math.sin(t * 5) * 3 : 12) * dpr, viewProj);
 
       // Labels are DOM text (sharp at any DPR) repositioned a few times per second rather than every frame.
-      const labelNow = reviewTime ?? now;
+      const labelNow = reviewTime === undefined ? now : reviewTime * 1000; // the review clock counts seconds; the throttle is in ms
       if (labels.current && labelNow - labelTick > 120) {
         labelTick = labelNow;
         const status = list.motions.filter((motion) => motion.active).map((motion) => `${motion.label}: turning`).join(". ");
@@ -442,7 +443,7 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
           return node;
         }));
         // A15: reduced motion keeps static direction cues; LOW shows an emitter's glyph proxy in place of particles.
-        const glyphProxies = list.emitters.filter((emitter) => emitter.active && emitter.lowProxy.kind === "glyph").map((emitter) => ({ id: `proxy:${emitter.id}`, kind: "glyph" as const, glyph: emitter.lowProxy.kind === "glyph" ? emitter.lowProxy.glyph : "", position: emitter.origin, direction: emitter.direction, color: emitter.color }));
+        const glyphProxies = resolveLowGlyphProxies(list.emitters);
         const focusedControl = (document.activeElement as HTMLElement | null)?.dataset.labHitProxy;
         controlTargets.current?.replaceChildren(...controlTargetElements(list.items, project, el.clientWidth, el.clientHeight, (pick) => onPickRef.current(pick), el.getBoundingClientRect().top, el.getBoundingClientRect().left));
         if (focusedControl) controlTargets.current?.querySelector<HTMLButtonElement>(`[data-lab-hit-proxy="${focusedControl}"]`)?.focus();

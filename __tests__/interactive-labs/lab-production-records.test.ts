@@ -93,5 +93,8 @@ describe("lab production records", () => {
     expect(validateProductionRecord(claim).join(" ")).toContain("needs pilot evidence");
     claim.pilot = { schools: ["S"], devices: ["Tecno Spark Go 2024"], students: 24, dates: "2026-10", completionRate: 0.8, medianTimeOnTaskMin: 14, prePostChange: "+22 pts", failurePoints: ["trace step 3"], teacherNotes: ["n"], xapiExport: "export-id", consent: "MOE pilot authorization ref", findings: [] };
     expect(validateProductionRecord(claim)).toEqual([]);
+    for (const [completionRate, medianTimeOnTaskMin] of [[80, 14], [0.8, -5], [Number.NaN, 14], [0.8, Number.POSITIVE_INFINITY]]) {
+      expect(validateProductionRecord({ ...claim, pilot: { ...claim.pilot, completionRate, medianTimeOnTaskMin } }).join(" ")).toMatch(/completionRate|medianTimeOnTaskMin/);
+    }
   });
 });

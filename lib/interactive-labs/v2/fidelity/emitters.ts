@@ -111,13 +111,23 @@ export function resolveCues(flows: readonly RenderFlow[], surfaces: readonly Ren
     cues.push({ id: `surface:${surface.id}`, kind: "chevron", position: [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2 + 0.05, (a[2] + b[2]) / 2], direction: normalise([b[0] - a[0], b[1] - a[1], b[2] - a[2]]), color: "#e0f2fe" });
   }
   for (const emitter of emitters) {
-    if (!emitter.active) continue;
+    if (!emitter.active || emitter.rate <= 0) continue;
     const tip: Vec3 = [emitter.origin[0] + emitter.direction[0] * emitter.reach * 0.5, emitter.origin[1] + emitter.direction[1] * emitter.reach * 0.5, emitter.origin[2] + emitter.direction[2] * emitter.reach * 0.5];
     cues.push(emitter.staticCue.kind === "glyph"
       ? { id: `emitter:${emitter.id}`, kind: "glyph", glyph: emitter.staticCue.glyph, position: tip, direction: emitter.direction, color: emitter.color }
       : { id: `emitter:${emitter.id}`, kind: "chevron", position: tip, direction: emitter.direction, color: emitter.color });
   }
   return cues;
+}
+
+/** A15 LOW glyph proxies: shown in place of particles only while the emitter actually emits (active with a positive rate). */
+export function resolveLowGlyphProxies(emitters: readonly RenderEmitter[]): RenderCue[] {
+  const proxies: RenderCue[] = [];
+  for (const emitter of emitters) {
+    if (!emitter.active || emitter.rate <= 0 || emitter.lowProxy.kind !== "glyph") continue;
+    proxies.push({ id: `proxy:${emitter.id}`, kind: "glyph", glyph: emitter.lowProxy.glyph, position: emitter.origin, direction: emitter.direction, color: emitter.color });
+  }
+  return proxies;
 }
 
 /** Authoring checks: geometry, quantities the simulation really emits, components, and the A15 cue requirements. */
