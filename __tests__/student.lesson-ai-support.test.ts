@@ -6,9 +6,11 @@ import {
 } from "@/lib/ai/studentLessonSupport";
 
 describe("student lesson AI support helpers", () => {
-  it("returns the Sprint 10 suggested lesson help prompts", () => {
+  it("returns lesson-context actions without teacher planning prompts", () => {
     expect(STUDENT_LESSON_HELP_SUGGESTIONS).toEqual([
       "Explain this lesson in simpler words",
+      "Explain differently",
+      "Generate practice",
       "Give me a real-life example of this",
       "What should I know before this lesson?",
     ]);

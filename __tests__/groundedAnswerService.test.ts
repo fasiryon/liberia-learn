@@ -90,7 +90,7 @@ describe("answerGroundedQuestion", () => {
     expect(mockRoutedCompletion).not.toHaveBeenCalled();
   });
 
-  it("does not fallback when chunks exist even if retrieval is weak", async () => {
+  it("refuses unscoped student answers even when broad chunks exist", async () => {
     mockHybridRetrieve.mockResolvedValue([
       {
         id: "chunk-1",
@@ -128,11 +128,11 @@ describe("answerGroundedQuestion", () => {
       role: "STUDENT",
     });
 
-    expect(result.hadFallback).toBe(false);
-    expect(result.retrievalWeak).toBe(true);
+    expect(result.hadFallback).toBe(true);
     expect(result.isWeakGrounding).toBe(true);
-    expect(result.answer).toContain("equal parts of a whole");
-    expect(mockRoutedCompletion).toHaveBeenCalledOnce();
+    expect(result.sources).toEqual([]);
+    expect(mockHybridRetrieve).not.toHaveBeenCalled();
+    expect(mockRoutedCompletion).not.toHaveBeenCalled();
   });
 
   it("falls back when chunks are empty", async () => {
@@ -149,7 +149,7 @@ describe("answerGroundedQuestion", () => {
     expect(mockRoutedCompletion).not.toHaveBeenCalled();
   });
 
-  it("uses classroom mode for subject/grade questions and returns grounded curriculum sources", async () => {
+  it("preserves staff classroom mode for subject/grade questions and returns grounded curriculum sources", async () => {
     mockHybridRetrieve.mockResolvedValue([
       {
         id: "chunk-1",
@@ -184,7 +184,7 @@ describe("answerGroundedQuestion", () => {
       schoolId: "school-1",
       subject: "MATH",
       grade: 5,
-      role: "STUDENT",
+      role: "TEACHER",
     });
 
     expect(mockHybridRetrieve).toHaveBeenCalledWith(
@@ -195,8 +195,8 @@ describe("answerGroundedQuestion", () => {
     expect(result.sources[0].id).toBe("chunk-1");
     expect(result.sources[0].sourceType).toBe("curriculum");
     expect(result.actions.map((action) => action.type)).toEqual([
-      "GENERATE_PRACTICE",
-      "EXPLAIN_DIFFERENTLY",
+      "GENERATE_ASSIGNMENT",
+      "FIX_LESSON",
     ]);
     expect(result.actions[0].payload).toMatchObject({
       subject: "MATH",
@@ -371,7 +371,7 @@ describe("answerGroundedQuestion", () => {
       schoolId: "school-1",
       subject: "MATH",
       grade: 5,
-      role: "STUDENT",
+      role: "TEACHER",
     });
 
     expect(mockRoutedCompletion).toHaveBeenCalledTimes(2);
@@ -427,7 +427,7 @@ describe("answerGroundedQuestion", () => {
       schoolId: "school-1",
       subject: "MATH",
       grade: 5,
-      role: "STUDENT",
+      role: "TEACHER",
     });
 
     expect(result.answer).toBe("a safe regenerated answer");

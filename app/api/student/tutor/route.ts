@@ -1,3 +1,4 @@
+// route-policy: auth=session; scope=tenant; authority=canonical-learner-context; rationale=authenticated role and server-resolved published lesson scope constrain tutor access.
 /**
  * POST /api/student/tutor
  *
@@ -11,6 +12,9 @@
  *
  * Audit action : "ai.tutor.requested"
  */
+import { z } from "zod";
+import { TutorIdentitySchema, TutorActionSchema } from "@/lib/ai/tutor/contextContract";
+import { resolveTutorContext } from "@/lib/ai/tutor/tutorContext";
 import { NextRequest, NextResponse } from "next/server";
 import { randomUUID } from "crypto";
 import { requireRole } from "@/lib/auth";
@@ -23,8 +27,6 @@ import { getRateLimitHeaders, rateLimitExceededResponse } from "@/lib/rateLimit"
 import { recordMetricEvent } from "@/lib/metrics/events";
 import {
   getStudentTutorResponse,
-  isValidRequestType,
-  type StudentTutorInput,
 } from "@/lib/ai/tutor/studentTutor";
 import { recordSloEvent } from "@/lib/slo/tracker";
 
@@ -54,44 +56,19 @@ export async function POST(req: NextRequest) {
       return rateLimitExceededResponse(rateLimit);
     }
 
-    const body = await req.json();
-    const subject = String(body.subject ?? "").trim();
-    const strandKey = String(body.strandKey ?? "").trim();
-    const lessonTitle = String(body.lessonTitle ?? "").trim();
-    const lessonContent = String(body.lessonContent ?? "").trim();
-    const studentQuestion = String(body.question ?? "").trim();
-
-    if (!subject || !strandKey) {
-      return NextResponse.json(
-        { error: "subject and strandKey are required" },
-        { status: 400 }
-      );
-    }
-
-    const input: StudentTutorInput = {
-      subject,
-      strandKey,
-      lessonTitle: lessonTitle || `${subject} Lesson`,
-      lessonContent,
-      studentQuestion,
-      gradeLevel:
-        typeof body.gradeLevel === "number" && Number.isFinite(body.gradeLevel)
-          ? body.gradeLevel
-          : undefined,
-      masteryState: String(body.masteryState ?? "NOT_ASSESSED"),
-      proficiencyState: String(body.proficiencyState ?? "NOT_ASSESSED"),
-      gradeBand: String(body.gradeBand ?? "lower_primary"),
-      requestType: isValidRequestType(body.requestType)
-        ? body.requestType
-        : "explain",
-    };
-
-    const result = await getStudentTutorResponse(input, {
-      route: "/api/student/tutor",
-      schoolId: user.schoolId ?? null,
-      userId: user.id,
-      lessonId: typeof body.lessonId === "string" ? body.lessonId : null,
-      contentId: typeof body.contentId === "string" ? body.contentId : null,
+    const body = z.object({
+      question: z.string().trim().min(1).max(1200),
+      focusQuestion: z.string().trim().min(1).max(1200).optional(),
+      tutorContext: TutorIdentitySchema.optional(),
+      tutorAction: TutorActionSchema.optional(),
+      lessonId: z.string().trim().min(1).max(200).optional(),
+      contentId: z.string().trim().min(1).max(200).optional(),
+      requestType: z.enum(["explain", "practice", "step_by_step", "reinforce", "explain_differently"]).optional(),
+    }).parse(await req.json());
+    const action = body.tutorAction ?? (body.requestType === "reinforce" ? "explain_differently" : body.requestType ?? "explain");
+    const context = await resolveTutorContext(user, body.tutorContext ?? { lessonId: body.lessonId, contentId: body.contentId }, action);
+    const result = await getStudentTutorResponse({ context, studentQuestion: body.question, focusQuestion: body.focusQuestion }, {
+      route: "/api/student/tutor", userId: user.id,
     });
 
     await logAudit({
@@ -101,11 +78,16 @@ export async function POST(req: NextRequest) {
       schoolId: user.schoolId,
       traceId,
       details: {
-        subject: input.subject,
-        strandKey: input.strandKey,
-        requestType: input.requestType,
-        lessonId: typeof body.lessonId === "string" ? body.lessonId : null,
-        contentId: typeof body.contentId === "string" ? body.contentId : null,
+        subject: context.subject,
+        strandKey: context.objectiveIds[0] ?? "unbound",
+        requestType: context.action,
+        lessonId: context.lesson?.id ?? null,
+        contentId: context.lesson?.contentId ?? null,
+        resolvedSceneId: context.sceneId,
+        resolvedObjectiveIds: context.objectiveIds,
+        sourceTiers: context.sources.map((source) => ({ id: source.id, tier: source.tutorTier })),
+        groundingStrength: result.groundingStrength,
+        fallbackReason: result.fallbackReason,
         guidanceLevel: result.guidanceLevel,
         hadFallback: result.hadFallback,
       },
@@ -114,10 +96,10 @@ export async function POST(req: NextRequest) {
     recordMetricEvent(
       result.hadFallback ? "ai_tutor_fallback" : "ai_tutor_request",
       {
-        subject: input.subject,
-        strandKey: input.strandKey,
-        gradeBand: input.gradeBand,
-        requestType: input.requestType,
+        subject: context.subject,
+        strandKey: context.objectiveIds[0] ?? "unbound",
+        gradeBand: String(context.grade),
+        requestType: context.action,
       },
       {
         scope: "school",
@@ -137,7 +119,7 @@ export async function POST(req: NextRequest) {
       ? buildTrustSignal({
           groundingScore: result.confidenceScore,
           hadFallback: result.hadFallback,
-          retrievalUsed: false,
+          retrievalUsed: result.sourcesUsed > 0,
           role: "STUDENT",
         })
       : undefined;
@@ -149,6 +131,10 @@ export async function POST(req: NextRequest) {
         guidanceLevel: result.guidanceLevel,
         confidenceScore: result.confidenceScore,
         hadFallback: result.hadFallback,
+        sources: result.sources,
+        tutorContext: result.tutorContext,
+        groundingStrength: result.groundingStrength,
+        isWeakGrounding: result.isWeakGrounding,
         ...(trustSignal ? { trustSignal } : {}),
       },
       { headers: getRateLimitHeaders(rateLimit) }
@@ -163,7 +149,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(
       { error: err?.message ?? "Server error" },
-      { status: err?.status ?? 500 }
+      { status: err instanceof z.ZodError ? 400 : err?.status ?? 500 }
     );
   }
 }

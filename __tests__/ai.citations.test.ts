@@ -106,6 +106,14 @@ describe("AI citations", () => {
       subject: "MATH",
       grade: 4,
       role: "STUDENT",
+      tutorContext: {
+        contractVersion: "tutor-context/2", schoolId: "school-1", learnerScopeKey: "fixture",
+        grade: 4, subject: "MATH", lesson: { id: "curr-2", contentId: "place-value", title: "Place Value Lesson", version: "1", revisionId: null },
+        unitId: null, releaseId: null, experienceId: null, experienceVersion: null, sceneId: null,
+        objectiveIds: [], objectiveStatements: ["Explain place value"], allowedRelatedContentIds: [],
+        action: "explain", sourcePolicy: "LEARNER_PROJECTED_LESSONS_ONLY", groundingStrength: "STRONG", fingerprint: "fixture",
+        sources: [{ id: "chunk-2", sourceType: "curriculum_content", sourceId: "curr-2", title: "Place Value Lesson", content: "Place value shows digit position.", chunkIndex: 0, subject: "MATH", grade: 4, schoolId: "school-1", scope: "SCHOOL", sourceLabel: "Current lesson", similarity: 0, rankingScore: 0, tutorTier: 0 }],
+      },
     });
 
     expect(studentResult.citations[0]).toEqual({

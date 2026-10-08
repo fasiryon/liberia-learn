@@ -10,6 +10,7 @@ import { StudentLessonHelpPanel } from "@/components/student/StudentLessonHelpPa
 import LessonLabPanel from "@/components/labs/LessonLabPanel";
 import { PencilButton, PencilButtonFloat } from "@/components/ui/PencilButton";
 import { gradeToTutorBand } from "@/lib/ai/studentLessonSupport";
+import { tutorActionForQuestion, type TutorIdentity } from "@/lib/ai/tutor/contextContract";
 import { lessonDurationLabel, renderSimpleMarkdown, selectLessonBody } from "@/lib/lessons";
 import { LessonHero, type HeroImageMetaLike, type InlineIllustrationLike } from "@/components/lesson/LessonImage";
 import { LessonBody } from "@/components/lesson/LessonBody";
@@ -119,6 +120,9 @@ type LessonResponse = {
 type TutorMessage = {
   role: "student" | "assistant";
   text: string;
+  sources?: Array<{ id: string; title: string; sourceLabel: string | null }>;
+  context?: TutorIdentity;
+  generatedPractice?: boolean;
 };
 
 type SimulationValue = number | string | boolean | string[];
@@ -504,6 +508,7 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
   const [submitting, setSubmitting] = useState(false);
   const [submitMessage, setSubmitMessage] = useState<string | null>(null);
   const [helpPanelOpen, setHelpPanelOpen] = useState(false);
+  const tutorFocusRef = useRef<{ lessonId: string; question: string } | null>(null);
   const [openLabId, setOpenLabId] = useState<LabId | null>(null);
   const [toolkitOpen, setToolkitOpen] = useState(false);
   const [mode, setMode] = useState<LessonMode>("read");
@@ -815,12 +820,21 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
     };
   }, [lesson, persistLessonProgress]);
 
+  useEffect(() => {
+    tutorFocusRef.current = null;
+    setTutorMessages([]);
+    setTutorQuestion("");
+  }, [lesson?.id]);
+
   async function submitTutorQuestion(questionOverride?: string) {
-    if (!lesson) return;
+    if (!lesson || tutorLoading) return;
 
     const prompt = (questionOverride ?? tutorQuestion).trim();
     if (!prompt) return;
 
+    const action = tutorActionForQuestion(prompt);
+    const priorFocus = tutorFocusRef.current?.lessonId === lesson.id ? tutorFocusRef.current.question : undefined;
+    if (action === "explain" || !priorFocus) tutorFocusRef.current = { lessonId: lesson.id, question: prompt };
     setTutorMessages((current) => [...current, { role: "student", text: prompt }]);
     setTutorQuestion("");
     setTutorLoading(true);
@@ -838,23 +852,19 @@ export default function LessonDeliveryClient({ lessonId }: { lessonId: string })
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          subject: lesson.subject,
-          strandKey: lesson.subject.toLowerCase(),
-          lessonTitle: lesson.title,
-          lessonContent: renderedBody,
-          lessonId: lesson.id,
-          contentId: lesson.contentId,
+          tutorContext: tutorMessages.filter((message) => message.role === "assistant" && message.context).at(-1)?.context ?? {
+            lessonId: lesson.id,
+            contentId: lesson.contentId,
+            ...(lesson.contentVersion ? { lessonVersion: lesson.contentVersion } : {}),
+          },
+          tutorAction: action,
+          ...(action !== "explain" && priorFocus ? { focusQuestion: priorFocus } : {}),
           question: prompt,
-          gradeLevel: lesson.grade,
-          masteryState: "NOT_ASSESSED",
-          proficiencyState: "NOT_ASSESSED",
-          gradeBand: gradeToTutorBand(lesson.grade),
-          requestType: "explain",
         }),
       });
       const data = await response.json().catch(() => null);
       if (!response.ok) throw new Error(data?.error ?? "Tutor unavailable.");
-      setTutorMessages((current) => [...current, { role: "assistant", text: data.explanation ?? "No response available." }]);
+      setTutorMessages((current) => [...current, { role: "assistant", text: data.explanation ?? "No response available.", sources: data.sources, context: data.tutorContext, generatedPractice: tutorActionForQuestion(prompt) === "practice" && !data.hadFallback }]);
     } catch (tutorError: any) {
       setTutorMessages((current) => [...current, { role: "assistant", text: tutorError?.message ?? "Tutor unavailable right now." }]);
     } finally {

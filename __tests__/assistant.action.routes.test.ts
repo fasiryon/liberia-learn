@@ -1,5 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
+const mockTutorPost = vi.hoisted(() => vi.fn());
+vi.mock("@/app/api/student/tutor/route", () => ({ POST: mockTutorPost }));
 const mockRequireUser = vi.hoisted(() => vi.fn());
 const mockStudentFindUnique = vi.hoisted(() => vi.fn());
 const mockUserFindUnique = vi.hoisted(() => vi.fn());
@@ -109,21 +111,12 @@ describe("assistant action routes", () => {
     expect(payload.draft.summary).toContain("Intervention suggestion");
   });
 
-  it("allows student practice draft generation only for STUDENT", async () => {
-    mockRequireUser.mockResolvedValue({ id: "student-1", role: "STUDENT", schoolId: "school-1" });
-
-    const response = await studentPracticePost(
-      new Request("http://localhost/api/student/practice/generate", {
-        method: "POST",
-        body: JSON.stringify({ ...validBody, role: "STUDENT", contextMode: "learning" }),
-      })
-    );
-    const payload = await response.json();
-
+  it("routes practice through the same contextual tutor and cannot override the action", async () => {
+    mockTutorPost.mockResolvedValue(new Response(JSON.stringify({ explanation: "Generated practice", hadFallback: false }), { status: 200 }));
+    const identity = { contentId: "g7-addition", sceneId: "x", objectiveIds: ["o"] };
+    const response = await studentPracticePost(new Request("http://localhost/api/student/practice/generate", { method: "POST", body: JSON.stringify({ ...validBody, tutorContext: identity, tutorAction: "explain" }) }));
     expect(response.status).toBe(200);
-    expect(payload.ok).toBe(true);
-    expect(payload.draft.summary).toContain("Practice draft");
-    expect(payload.draft.summary).toContain("Grade 7");
+    expect(await mockTutorPost.mock.calls[0][0].json()).toMatchObject({ tutorContext: identity, tutorAction: "practice" });
   });
 
   it("blocks guardian study plan generation for non-guardian roles", async () => {
@@ -139,17 +132,10 @@ describe("assistant action routes", () => {
     expect(response.status).toBe(403);
   });
 
-  it("rejects student practice requests outside enrolled subjects", async () => {
-    mockRequireUser.mockResolvedValue({ id: "student-1", role: "STUDENT", schoolId: "school-1" });
-
-    const response = await studentPracticePost(
-      new Request("http://localhost/api/student/practice/generate", {
-        method: "POST",
-        body: JSON.stringify({ ...validBody, subject: "SCIENCE", gradeLevel: "9" }),
-      })
-    );
-
-    expect(response.status).toBe(403);
+  it("preserves tutor authorization failures on the practice compatibility endpoint", async () => {
+    mockTutorPost.mockResolvedValue(new Response(JSON.stringify({ error: "Not found" }), { status: 404 }));
+    const response = await studentPracticePost(new Request("http://localhost/api/student/practice/generate", { method: "POST", body: JSON.stringify({ question: "Generate practice", tutorContext: { lessonId: "foreign" } }) }));
+    expect(response.status).toBe(404);
   });
 
   it("rejects guardian study plan requests outside linked student scope", async () => {

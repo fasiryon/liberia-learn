@@ -1,34 +1,14 @@
-import { NextResponse } from "next/server";
-import {
-  AssistantActionRequestSchema,
-  assertRole,
-  buildPracticeDraft,
-} from "@/lib/ai/rag/actionDrafts";
-import { resolveAssistantAudienceScope } from "@/lib/ai/rag/audienceScope";
-import { requireUser } from "@/lib/auth";
+// route-policy: auth=session; scope=tenant; authority=canonical-learner-context; rationale=authenticated role and server-resolved published lesson scope constrain tutor access.
+import { NextRequest } from "next/server";
+import { POST as tutorPost } from "@/app/api/student/tutor/route";
 
+/** Compatibility endpoint for the assistant practice action. Same context, flags, moderation, limits and budget. */
 export async function POST(req: Request) {
-  try {
-    const user = await requireUser();
-    assertRole(user, ["STUDENT"]);
-    const body = AssistantActionRequestSchema.parse(await req.json());
-    const audienceScope = await resolveAssistantAudienceScope(user, {
-      subject: body.subject ?? null,
-      gradeLevel: body.gradeLevel ?? null,
-    });
-
-    return NextResponse.json({
-      ok: true,
-      draft: buildPracticeDraft({
-        ...body,
-        subject: audienceScope.subject,
-        gradeLevel: audienceScope.gradeLevel,
-      }),
-    });
-  } catch (error: any) {
-    return NextResponse.json(
-      { error: error?.message ?? "Failed to generate practice draft" },
-      { status: error?.status ?? 500 }
-    );
-  }
+  let body: unknown;
+  try { body = await req.json(); } catch { body = null; }
+  const input = body && typeof body === "object" && !Array.isArray(body) ? body as Record<string, unknown> : {};
+  return tutorPost(new NextRequest(req.url, {
+    method: "POST", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ ...input, tutorAction: "practice" }),
+  }));
 }

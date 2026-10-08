@@ -28,6 +28,9 @@ vi.mock("@/lib/db", () => ({
   },
 }));
 
+vi.mock("@/lib/ai/tutor/tutorContext", () => ({ resolveTutorContext: vi.fn(async () => ({ subject: "MATH", grade: 7, objectiveIds: [], sceneId: null, lesson: null, action: "explain", sources: [] })) }));
+vi.mock("@/lib/ai/tutor/studentTutor", () => ({ getStudentTutorResponse: vi.fn(async () => ({ explanation: "Open your lesson to ask a question.", sources: [], sourcesUsed: 0, hadFallback: true, guidanceLevel: "light", confidenceScore: 0, groundingStrength: "WEAK" })) }));
+
 import { checkAiRateLimit } from "@/lib/ai/rateLimitGuard";
 import { POST as studentTutorPost } from "@/app/api/student/tutor/route";
 

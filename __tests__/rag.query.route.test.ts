@@ -1,5 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
+const mockResolveTutorContext = vi.hoisted(() => vi.fn());
+vi.mock("@/lib/ai/tutor/tutorContext", () => ({ resolveTutorContext: mockResolveTutorContext, tutorIdentityFromContext: () => ({}) }));
 const mockRequireUser = vi.hoisted(() => vi.fn());
 const mockIsRagTutorEnabled = vi.hoisted(() => vi.fn());
 const mockAnswerGroundedQuestion = vi.hoisted(() => vi.fn());
@@ -44,6 +46,7 @@ describe("POST /api/rag/query", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockIsRagTutorEnabled.mockReturnValue(true);
+    mockResolveTutorContext.mockResolvedValue({ schoolId: "school-1", lesson: null, sources: [], objectiveIds: [], action: "explain", groundingStrength: "WEAK" });
     mockRequireUser.mockResolvedValue({
       id: "teacher-1",
       role: "TEACHER",
@@ -213,7 +216,9 @@ describe("POST /api/rag/query", () => {
       allowedGrades: [7],
       mode: "classroom",
       role: "STUDENT",
+      tutorContext: expect.objectContaining({ schoolId: "school-1", groundingStrength: "WEAK" }),
       context: {
+        tutorIdentity: {},
         role: "STUDENT",
         mode: "learning",
         subject: "MATH",
@@ -393,4 +398,12 @@ describe("POST /api/rag/query", () => {
     expect(response.status).toBe(200);
     expect((await response.json()).cacheHit).toBe(true);
   });
+  it("ignores forged client role and resolves canonical student lesson identity", async () => {
+    mockRequireUser.mockResolvedValue({ id: "student-1", role: "STUDENT", schoolId: "school-1" });
+    const identity = { contentId: "g7-addition", sceneId: "scene-x", objectiveIds: ["objective-o"] };
+    await POST(new Request("http://localhost/api/rag/query", { method: "POST", body: JSON.stringify({ question: "Explain differently", role: "ADMIN", tutorContext: identity, tutorAction: "explain_differently" }) }) as any);
+    expect(mockResolveTutorContext).toHaveBeenCalledWith(expect.objectContaining({ role: "STUDENT", schoolId: "school-1" }), identity, "explain_differently");
+    expect(mockAnswerGroundedQuestion).toHaveBeenCalledWith(expect.objectContaining({ role: "STUDENT", context: expect.objectContaining({ role: "STUDENT" }) }));
+  });
+
 });
