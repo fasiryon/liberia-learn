@@ -120,7 +120,7 @@ export function StudentLessonHelpPanel({
                       : "bg-[var(--ll-bg)] text-[var(--ll-text)]"
                   }`}
                 >
-                  {message.generatedPractice ? <p className="mb-2 text-xs font-semibold">Generated practice ? not an assessment</p> : null}
+                  {message.generatedPractice ? <p className="mb-2 text-xs font-semibold">Generated practice (not an assessment)</p> : null}
                   <p className="whitespace-pre-wrap">{message.text}</p>
                   {message.sources?.length ? (
                     <details className="mt-3 text-xs">
@@ -149,6 +149,7 @@ export function StudentLessonHelpPanel({
           <textarea
             value={question}
             onChange={(event) => onQuestionChange(event.target.value)}
+            aria-label="Question about this lesson"
             placeholder="Ask about this lesson in your own words"
             className="min-h-28 w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-4 py-3 text-base leading-6 text-[var(--ll-text)] outline-none transition-colors focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400/60"
           />

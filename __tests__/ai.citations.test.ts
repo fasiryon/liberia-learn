@@ -112,7 +112,7 @@ describe("AI citations", () => {
         unitId: null, releaseId: null, experienceId: null, experienceVersion: null, sceneId: null,
         objectiveIds: [], objectiveStatements: ["Explain place value"], allowedRelatedContentIds: [],
         action: "explain", sourcePolicy: "LEARNER_PROJECTED_LESSONS_ONLY", groundingStrength: "STRONG", fingerprint: "fixture",
-        sources: [{ id: "chunk-2", sourceType: "curriculum_content", sourceId: "curr-2", title: "Place Value Lesson", content: "Place value shows digit position.", chunkIndex: 0, subject: "MATH", grade: 4, schoolId: "school-1", scope: "SCHOOL", sourceLabel: "Current lesson", similarity: 0, tutorTier: 0 }],
+        sources: [{ id: "chunk-2", sourceType: "curriculum_content", sourceId: "curr-2", title: "Place Value Lesson", content: "Place value shows digit position.", chunkIndex: 0, subject: "MATH", grade: 4, schoolId: "school-1", scope: "SCHOOL", sourceLabel: "Current lesson", similarity: 0, rankingScore: 0, tutorTier: 0 }],
       },
     });
 
