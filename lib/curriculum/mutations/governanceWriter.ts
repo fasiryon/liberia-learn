@@ -13,6 +13,9 @@ import {
 import { prisma } from "@/lib/db";
 import { logAuditRequired, logAuditRequiredWithId } from "@/lib/audit";
 import { assertAutomatedApprovalAllowed } from "@/lib/curriculum/provenance/validation";
+import { CURRICULUM_SNAPSHOT_SCHEMA_VERSION_NATIVE } from "@/lib/curriculum/provenance/snapshot";
+import { isNativeCurriculumV2Payload } from "@/lib/curriculum/v2/contract";
+import { assertNativeCurriculumV2Approval, NATIVE_APPROVAL_EVENTS } from "@/lib/curriculum/v2/governance";
 import {
   lockCurriculumContent,
   ensureCurriculumProvenance,
@@ -171,6 +174,18 @@ function validateGovernance(input: GovernanceInput, writersEnabled: boolean): vo
   }
 }
 
+function nativeApprovalInput(input: GovernanceInput) {
+  return {
+    eventType: input.eventType,
+    approvalBasis: input.approvalBasis ?? null,
+    actorType: input.actorType,
+    actorUserId: input.actorUserId ?? null,
+    reviewAuthority: input.reviewAuthority ?? null,
+    hasQualification: Boolean(input.reviewerQualificationRef?.trim()) && input.reviewerQualificationSnapshot != null,
+    nativeSnapshotSchemaVersion: CURRICULUM_SNAPSHOT_SCHEMA_VERSION_NATIVE,
+  };
+}
+
 export async function appendCurriculumGovernanceEvent(
   input: GovernanceInput,
 ): Promise<CurriculumGovernanceEvent | null> {
@@ -187,6 +202,11 @@ export async function appendCurriculumGovernanceEventInTransaction(
   validateGovernance(input, writersEnabled);
 
   if (!writersEnabled) {
+    if ((NATIVE_APPROVAL_EVENTS as readonly string[]).includes(input.eventType)) {
+      // Native Curriculum V2 approval needs an exact revision, which compatibility mode cannot provide.
+      const native = await tx.curriculumContent.findUnique({ where: { contentId: input.contentId }, select: { payload: true } });
+      assertNativeCurriculumV2Approval({ ...nativeApprovalInput(input), native: isNativeCurriculumV2Payload(native?.payload), writersEnabled: false, revisionSnapshotSchemaVersion: null });
+    }
     if (
       input.approvalBasis === "AUTOMATED_RISK_POLICY" ||
       input.approvalBasis === "ROLE_POLICY" ||
@@ -274,6 +294,7 @@ export async function appendCurriculumGovernanceEventInTransaction(
       where: { id: revisionId, provenanceId: root.id },
     });
     if (!revision) throw new Error("Governance revision does not belong to the content root");
+    assertNativeCurriculumV2Approval({ ...nativeApprovalInput(input), native: isNativeCurriculumV2Payload(content.payload), writersEnabled: true, revisionSnapshotSchemaVersion: revision.snapshotSchemaVersion });
     const lifecycleResult = LIFECYCLE_BY_EVENT[input.eventType] ?? null;
     if (lifecycleResult && revisionId !== root.currentRevisionId) {
       throw new Error("Lifecycle governance must target the current curriculum revision");

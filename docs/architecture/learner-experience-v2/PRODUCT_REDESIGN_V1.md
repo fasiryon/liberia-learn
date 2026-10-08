@@ -289,3 +289,5 @@ Player V2; MEDIA/GUIDED_EXAMPLE/PRACTICE renderers; final art; physical-device
 certification.
 
 Phase B contract: `CURRICULUM_V2_HANDOFF.md`.
+
+Phase B (Curriculum V2) is implemented: `CURRICULUM_V2.md`.

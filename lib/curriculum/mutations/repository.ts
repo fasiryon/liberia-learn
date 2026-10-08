@@ -8,11 +8,11 @@ import {
 import { prisma } from "@/lib/db";
 import { logAuditRequired } from "@/lib/audit";
 import {
-  buildCurriculumContentSnapshotV1,
-  CURRICULUM_SNAPSHOT_SCHEMA_VERSION,
-  validateCurriculumContentSnapshotV1,
+  buildCurriculumContentSnapshot,
+  validateCurriculumContentSnapshot,
 } from "@/lib/curriculum/provenance/snapshot";
 import { hashCurriculumSnapshot } from "@/lib/curriculum/provenance/hash";
+import { isNativeCurriculumV2Payload } from "@/lib/curriculum/v2/contract";
 import {
   evaluateProvenanceCompleteness,
   type RevisionLineage,
@@ -141,9 +141,9 @@ async function createRevision(
   context: GovernedMutationContext,
   defaultSourceRevisionId: string | null,
 ): Promise<CurriculumContentRevision> {
-  const snapshot = buildCurriculumContentSnapshotV1(content);
-  validateCurriculumContentSnapshotV1(snapshot);
-  const contentHash = hashCurriculumSnapshot(CURRICULUM_SNAPSHOT_SCHEMA_VERSION, snapshot);
+  const { schemaVersion, snapshot } = buildCurriculumContentSnapshot(content);
+  validateCurriculumContentSnapshot(schemaVersion, snapshot);
+  const contentHash = hashCurriculumSnapshot(schemaVersion, snapshot);
   const completeness = evaluateProvenanceCompleteness({
     ...context,
     sourceRevisionId: context.sourceRevisionId ?? defaultSourceRevisionId,
@@ -154,7 +154,7 @@ async function createRevision(
       sequence,
       revisionKind: context.revisionKind,
       originKind: context.originKind,
-      snapshotSchemaVersion: CURRICULUM_SNAPSHOT_SCHEMA_VERSION,
+      snapshotSchemaVersion: schemaVersion,
       contentSnapshot: snapshot as unknown as Prisma.InputJsonValue,
       contentHash,
       generatorName: context.generatorName ?? null,
@@ -188,9 +188,9 @@ async function adoptLegacyContent(
   content: CurriculumContent,
   backfillRunId = "p2a-writer-adoption",
 ): Promise<{ provenance: CurriculumProvenance; revision: CurriculumContentRevision }> {
-  const snapshot = buildCurriculumContentSnapshotV1(content);
-  validateCurriculumContentSnapshotV1(snapshot);
-  const contentHash = hashCurriculumSnapshot(CURRICULUM_SNAPSHOT_SCHEMA_VERSION, snapshot);
+  const { schemaVersion, snapshot } = buildCurriculumContentSnapshot(content);
+  validateCurriculumContentSnapshot(schemaVersion, snapshot);
+  const contentHash = hashCurriculumSnapshot(schemaVersion, snapshot);
   const idempotencyKey = `p2a-adopt:${content.id}:${contentHash}`;
   const provenance = await tx.curriculumProvenance.create({
     data: {
@@ -205,7 +205,7 @@ async function adoptLegacyContent(
       sequence: 1,
       revisionKind: "BACKFILL_SNAPSHOT",
       originKind: "LEGACY_UNKNOWN",
-      snapshotSchemaVersion: CURRICULUM_SNAPSHOT_SCHEMA_VERSION,
+      snapshotSchemaVersion: schemaVersion,
       contentSnapshot: snapshot as unknown as Prisma.InputJsonValue,
       contentHash,
       idempotencyKey,
@@ -278,6 +278,26 @@ export async function createCurriculumContent(
   });
 }
 
+/**
+ * Native Curriculum V2 instruction is immutable once approved (Codex P1-5): a change to any
+ * instructional structure of an APPROVED native lesson must become a new draft lesson/revision
+ * reviewed on its own, never an edit that the earlier approval appears to cover. The check runs
+ * inside the write transaction, so a refused edit rolls back.
+ */
+export function assertNativeApprovedRevisionUnchanged(
+  provenance: Pick<CurriculumProvenance, "lifecycleState">,
+  currentRevision: Pick<CurriculumContentRevision, "contentHash" | "snapshotSchemaVersion"> | null,
+  before: Pick<CurriculumContent, "payload">,
+  after: CurriculumContent,
+): void {
+  if (!isNativeCurriculumV2Payload(before.payload) && !isNativeCurriculumV2Payload(after.payload)) return;
+  if (provenance.lifecycleState !== "APPROVED") return;
+  const { schemaVersion, snapshot } = buildCurriculumContentSnapshot(after);
+  if (!currentRevision || currentRevision.snapshotSchemaVersion !== schemaVersion || currentRevision.contentHash !== hashCurriculumSnapshot(schemaVersion, snapshot)) {
+    throw new Error("NATIVE_CURRICULUM_V2_APPROVED_REVISION_IMMUTABLE: create a new draft revision for review instead of editing approved instruction");
+  }
+}
+
 export async function updateCurriculumContent(
   where: Prisma.CurriculumContentWhereUniqueInput,
   data: Prisma.CurriculumContentUncheckedUpdateInput,
@@ -314,6 +334,7 @@ export async function updateCurriculumContentInTransaction(
     await lockContent(tx, before.id);
     const { provenance, currentRevision } = await ensureCurriculumProvenance(tx, before);
     const content = await tx.curriculumContent.update({ where: { id: before.id }, data });
+    assertNativeApprovedRevisionUnchanged(provenance, currentRevision, before, content);
     const last = await tx.curriculumContentRevision.findFirst({
       where: { provenanceId: provenance.id },
       orderBy: { sequence: "desc" },

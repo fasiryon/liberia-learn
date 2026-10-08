@@ -1,3 +1,6 @@
+import { CURRICULUM_V2_PAYLOAD_KEY, isNativeCurriculumV2Payload, type CurriculumLessonV2 } from "@/lib/curriculum/v2/contract";
+import { toLessonExperience } from "@/lib/curriculum/v2/compat";
+import { validateLessonExperience } from "@/lib/learner-experience/sceneContract";
 type StudentMaterials = {
   learnerMaterial?: unknown;
   guidedItems?: unknown;
@@ -19,6 +22,72 @@ function text(value: unknown): string {
 function list(value: unknown): string[] {
   if (!Array.isArray(value)) return [];
   return value.map(text).filter(Boolean);
+}
+
+/*
+ * Learner payloads are built by explicit allow-lists (Curriculum V2 / Codex P1-2): only named,
+ * type-checked fields reach a student. Unknown fields — including future ones — never flow
+ * through, so answer, answerKey, correctIndex, explanation, scoring, rubric and teacher-only
+ * material stay on the server even when they are nested or renamed.
+ */
+type Picked = Record<string, unknown>;
+
+function pickStrings(source: LessonPayloadRecord, keys: readonly string[]): Picked {
+  const out: Picked = {};
+  for (const key of keys) if (typeof source[key] === "string") out[key] = source[key];
+  return out;
+}
+
+function pickNumbers(source: LessonPayloadRecord, keys: readonly string[]): Picked {
+  const out: Picked = {};
+  for (const key of keys) if (typeof source[key] === "number" && Number.isFinite(source[key])) out[key] = source[key];
+  return out;
+}
+
+function pickBooleans(source: LessonPayloadRecord, keys: readonly string[]): Picked {
+  const out: Picked = {};
+  for (const key of keys) if (typeof source[key] === "boolean") out[key] = source[key];
+  return out;
+}
+
+function record(value: unknown): LessonPayloadRecord | null {
+  return value && typeof value === "object" && !Array.isArray(value) ? (value as LessonPayloadRecord) : null;
+}
+
+function stringList(value: unknown): string[] | undefined {
+  return Array.isArray(value) ? value.filter((entry): entry is string => typeof entry === "string") : undefined;
+}
+
+/** Choice options: plain strings, or objects reduced to their visible id/label/text (never a correctness flag). */
+function safeOptions(value: unknown): unknown[] | undefined {
+  if (!Array.isArray(value)) return undefined;
+  return value.flatMap((option): unknown[] => {
+    if (typeof option === "string") return [option];
+    const source = record(option);
+    if (!source) return [];
+    const picked = pickStrings(source, ["id", "label", "text"]);
+    return Object.keys(picked).length ? [picked] : [];
+  });
+}
+
+/** Assessment/quiz item visible to a learner: the question and its choices only. */
+export function projectStudentAssessmentItem(item: unknown): Picked | null {
+  const source = record(item);
+  if (!source) return null;
+  const out: Picked = {
+    ...pickStrings(source, ["id", "question", "prompt", "type", "standardCode", "difficulty"]),
+    ...pickNumbers(source, ["points"]),
+  };
+  const options = safeOptions(source.options);
+  const choices = safeOptions(source.choices);
+  if (options) out.options = options;
+  if (choices) out.choices = choices;
+  return typeof out.question === "string" || typeof out.prompt === "string" ? out : null;
+}
+
+function safeAssessment(value: unknown): unknown[] | undefined {
+  if (!Array.isArray(value)) return undefined;
+  return value.map(projectStudentAssessmentItem).filter((item): item is Picked => item !== null);
 }
 
 function numbered(values: string[]): string {
@@ -78,15 +147,51 @@ function safeProblemSets(value: unknown): unknown[] {
   });
 }
 
-function approvedArtifacts(value: unknown): unknown[] {
+function approvedOnly(value: unknown): LessonPayloadRecord[] {
   if (!Array.isArray(value)) return [];
   return value.flatMap((item) => {
-    if (!item || typeof item !== "object" || Array.isArray(item)) return [];
-    const record = item as LessonPayloadRecord;
-    if (record.approved !== true || record.renderStatus !== "ready") return [];
-    const { teacherGuide: _teacherGuide, ...safeRecord } = record;
-    return [safeRecord];
+    const source = record(item);
+    return source && source.approved === true && source.renderStatus === "ready" ? [source] : [];
   });
+}
+
+/** Pseudo-lab fields the learner lesson renders (no confusion signals, success rates or teacher guides). */
+function safePseudoLabs(value: unknown): unknown[] {
+  return approvedOnly(value).map((lab) => ({
+    ...pickStrings(lab, ["id", "title", "objective", "labType", "difficulty", "resourceLevel", "safetyNotes", "expectedObservation", "fallbackMode", "fallbackIfNoMaterials", "guardianHomeVariant", "simulationType", "renderStatus"]),
+    ...pickNumbers(lab, ["gradeLevel", "setupTimeMinutes", "runTimeMinutes", "cleanupTimeMinutes"]),
+    ...pickBooleans(lab, ["offlineCapable", "approved"]),
+    ...(stringList(lab.requiredMaterials) ? { requiredMaterials: stringList(lab.requiredMaterials) } : {}),
+    ...(stringList(lab.optionalMaterials) ? { optionalMaterials: stringList(lab.optionalMaterials) } : {}),
+    ...(stringList(lab.setupInstructions) ? { setupInstructions: stringList(lab.setupInstructions) } : {}),
+    ...(stringList(lab.procedureSteps) ? { procedureSteps: stringList(lab.procedureSteps) } : {}),
+    ...(stringList(lab.reflectionQuestions) ? { reflectionQuestions: stringList(lab.reflectionQuestions) } : {}),
+  }));
+}
+
+/** Simulation fields the learner renderer uses; inputs and outputs are themselves allow-listed. */
+function safeSimulations(value: unknown): unknown[] {
+  return approvedOnly(value).map((definition) => ({
+    ...pickStrings(definition, ["id", "title", "objective", "simulationType", "rendererKey", "fallbackRendererKey", "interactionModel", "explanation", "guardianGuide", "fallbackStaticVisual", "renderStatus"]),
+    ...pickNumbers(definition, ["gradeLevel"]),
+    ...pickBooleans(definition, ["approved"]),
+    inputs: (Array.isArray(definition.inputs) ? definition.inputs : []).flatMap((input) => {
+      const source = record(input);
+      if (!source) return [];
+      const defaultValue = source.defaultValue;
+      return [{
+        ...pickStrings(source, ["key", "label", "type"]),
+        ...pickNumbers(source, ["min", "max", "step"]),
+        ...(stringList(source.options) ? { options: stringList(source.options) } : {}),
+        ...(typeof defaultValue === "string" || typeof defaultValue === "number" || typeof defaultValue === "boolean" ? { defaultValue }
+          : stringList(defaultValue) ? { defaultValue: stringList(defaultValue) } : {}),
+      }];
+    }),
+    outputs: (Array.isArray(definition.outputs) ? definition.outputs : []).flatMap((output) => {
+      const source = record(output);
+      return source ? [pickStrings(source, ["key", "label", "description"])] : [];
+    }),
+  }));
 }
 
 function safeLabs(value: unknown): unknown[] {
@@ -96,21 +201,20 @@ function safeLabs(value: unknown): unknown[] {
     const lab = item as LessonPayloadRecord;
     const procedure = Array.isArray(lab.procedure)
       ? lab.procedure.flatMap((step) => {
-          if (!step || typeof step !== "object" || Array.isArray(step)) return [];
-          const record = step as LessonPayloadRecord;
-          const { teacherNote: _teacherNote, ...safeStep } = record;
-          return [safeStep];
+          const source = record(step);
+          return source ? [{ ...pickStrings(source, ["id", "title", "instruction", "safetyNote"]), ...pickNumbers(source, ["step", "stepNumber", "durationMinutes"]) }] : [];
         })
       : [];
     const observationForm = Array.isArray(lab.observationForm)
-      ? lab.observationForm
+      ? lab.observationForm.flatMap((field) => {
+          const source = record(field);
+          return source ? [pickStrings(source, ["id", "label", "prompt", "type", "unit"])] : [];
+        })
       : [];
     const analysisQuestions = Array.isArray(lab.analysisQuestions)
       ? lab.analysisQuestions.flatMap((question) => {
-          if (!question || typeof question !== "object" || Array.isArray(question)) return [];
-          const record = question as LessonPayloadRecord;
-          const { expectedAnswer: _expectedAnswer, scoringRubric: _scoringRubric, ...safeQuestion } = record;
-          return [safeQuestion];
+          const projected = projectStudentAssessmentItem(question);
+          return projected ? [projected] : [];
         })
       : [];
     const {
@@ -194,6 +298,10 @@ function labForLearner(value: unknown): string {
 export function projectStudentLessonPayload(payload: unknown): LessonPayloadRecord {
   if (!payload || typeof payload !== "object" || Array.isArray(payload)) return {};
   const source = payload as LessonPayloadRecord;
+  // Native Curriculum V2: learners receive only the Lesson Player V2 experience built field by field
+  // (no expected observations, misconception notes, provenance, governance or review gaps). A
+  // malformed native payload fails closed rather than falling back to legacy fields.
+  if (isNativeCurriculumV2Payload(source)) return projectNativeLesson(source);
   const materials = source.studentMaterials as StudentMaterials | undefined;
   const hasAuthoredMaterials = Boolean(materials && typeof materials === "object" && text(materials.learnerMaterial));
 
@@ -213,14 +321,7 @@ export function projectStudentLessonPayload(payload: unknown): LessonPayloadReco
         studentReady: false,
       };
     }
-    const legacyAssessment = Array.isArray(source.assessment)
-      ? source.assessment.map((item) => {
-          if (!item || typeof item !== "object" || Array.isArray(item)) return item;
-          const record = item as LessonPayloadRecord;
-          const { answerKey: _answerKey, correctIndex: _correctIndex, explanation: _explanation, ...safeItem } = record;
-          return safeItem;
-        })
-      : source.assessment;
+    const legacyAssessment = safeAssessment(source.assessment);
     return {
       title: source.title,
       grade: source.grade,
@@ -234,8 +335,8 @@ export function projectStudentLessonPayload(payload: unknown): LessonPayloadReco
       assessment: legacyAssessment,
       moeAlignments: list(source.moeAlignments),
       labs: safeLabs(source.labs),
-      pseudoLabs: approvedArtifacts(source.pseudoLabs),
-      simulationDefinitions: approvedArtifacts(source.simulationDefinitions),
+      pseudoLabs: safePseudoLabs(source.pseudoLabs),
+      simulationDefinitions: safeSimulations(source.simulationDefinitions),
       takeawaySummary: text(source.takeawaySummary),
       durationMins: typeof source.durationMins === "number" ? source.durationMins : undefined,
       problemSets: safeProblemSets(source.problemSets),
@@ -271,14 +372,7 @@ export function projectStudentLessonPayload(payload: unknown): LessonPayloadReco
     project ? `## Project\n${project}` : "",
     lab ? `## Investigation\n${lab}` : "",
   ].filter(Boolean).join("\n\n");
-  const assessment = Array.isArray(source.assessment)
-    ? source.assessment.map((item) => {
-        if (!item || typeof item !== "object" || Array.isArray(item)) return item;
-        const record = item as LessonPayloadRecord;
-        const { answerKey: _answerKey, correctIndex: _correctIndex, explanation: _explanation, ...safeItem } = record;
-        return safeItem;
-      })
-    : undefined;
+  const assessment = safeAssessment(source.assessment);
   return {
     title: source.title,
     grade: source.grade,
@@ -292,13 +386,23 @@ export function projectStudentLessonPayload(payload: unknown): LessonPayloadReco
     assessment,
     moeAlignments: list(source.moeAlignments),
     labs,
-    pseudoLabs: approvedArtifacts(source.pseudoLabs),
-    simulationDefinitions: approvedArtifacts(source.simulationDefinitions),
+    pseudoLabs: safePseudoLabs(source.pseudoLabs),
+    simulationDefinitions: safeSimulations(source.simulationDefinitions),
     takeawaySummary: text(source.takeawaySummary),
     durationMins: typeof source.durationMins === "number" ? source.durationMins : undefined,
     problemSets: safeProblemSets(source.problemSets),
     studentReady: true,
   };
+}
+
+function projectNativeLesson(source: LessonPayloadRecord): LessonPayloadRecord {
+  try {
+    const lessonExperience = toLessonExperience(source[CURRICULUM_V2_PAYLOAD_KEY] as CurriculumLessonV2);
+    validateLessonExperience(lessonExperience);
+    return { title: lessonExperience.title, grade: lessonExperience.grade, subject: lessonExperience.subject, lessonExperience, body: "", body_standard: "", body_block: "", objectives: lessonExperience.objectives.map((objective) => objective.statement), studentReady: true };
+  } catch {
+    return { title: typeof source.title === "string" ? source.title : undefined, body: "", body_standard: "", body_block: "", objectives: [], studentReady: false };
+  }
 }
 
 /**
@@ -317,4 +421,44 @@ export function selectStudentLessonAudioText(payload: unknown): string {
  */
 export function projectStudentLabPayload(payload: unknown): LessonPayloadRecord {
   return (safeLabs([payload])[0] as LessonPayloadRecord | undefined) ?? {};
+}
+
+/**
+ * Learner-safe catalogue entry for curriculum listings. Built from explicit fields only: the stored
+ * payload never appears in a student listing.
+ */
+export type StudentCurriculumSummary = Readonly<{
+  contentId: string;
+  title: string;
+  displayTitle: string;
+  grade: number;
+  subject: string;
+  contentType: string;
+  version: string;
+  audioStatus: string;
+  updatedAt: string;
+}>;
+
+export function projectStudentCurriculumSummary(row: {
+  contentId: string;
+  title: string;
+  displayTitle: string;
+  grade: number;
+  subject: string;
+  contentType: string;
+  version: string;
+  audioStatus: string;
+  updatedAt: Date | string;
+}): StudentCurriculumSummary {
+  return {
+    contentId: row.contentId,
+    title: row.title,
+    displayTitle: row.displayTitle,
+    grade: row.grade,
+    subject: row.subject,
+    contentType: row.contentType,
+    version: row.version,
+    audioStatus: row.audioStatus,
+    updatedAt: row.updatedAt instanceof Date ? row.updatedAt.toISOString() : row.updatedAt,
+  };
 }

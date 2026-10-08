@@ -1,0 +1,130 @@
+{
+  "contractVersion": "candidate-lesson-v2/1.0.0",
+  "title": "Equivalent fractions: same amount, different names",
+  "estimatedMinutes": 45,
+  "ageBand": "UPPER_PRIMARY",
+  "pedagogy": { "primaryStrategy": "CONCRETE_PICTORIAL_ABSTRACT", "rationale": "Folding paper strips (concrete) and comparing strip pictures (pictorial) come before the multiply-top-and-bottom rule (abstract)." },
+  "prerequisiteAssumptions": ["Learners can name a fraction as equal parts of one whole (concept g4-fractions-equal-parts)."],
+  "misconceptions": [
+    { "id": "adds-same-number", "objectiveId": "moe-math-g4-s1-p3-number-theory-and-fraction-obj5", "description": "Adds the same number to the top and bottom, thinking 1/2 = 2/3.", "response": "Fold or draw both fractions: 2/3 covers more of the strip than 1/2. Multiplying both parts keeps the amount the same; adding does not." },
+    { "id": "bigger-numbers-bigger-fraction", "objectiveId": "moe-math-g4-s1-p3-number-theory-and-fraction-obj5", "description": "Thinks 4/8 is more than 1/2 because the numbers are bigger.", "response": "Line the strips up: 4/8 and 1/2 reach exactly the same point." }
+  ],
+  "scenes": [
+    {
+      "id": "hook", "type": "INTRO", "title": "Who got more cassava bread?", "purpose": "HOOK_PHENOMENON", "objectiveIds": [], "learnerAction": "Predict who got more before reading on.",
+      "content": { "body": "Fatu cut her cassava bread into 2 equal pieces and ate 1. Boima cut the same size bread into 4 equal pieces and ate 2.\n\nBoima says he ate more because 2 is more than 1. Is he right? Make a guess before you go on." },
+      "interaction": { "kind": "NONE" }, "tools": { "requested": [], "prohibited": [] }, "hints": [], "misconceptionIds": ["bigger-numbers-bigger-fraction"], "evidence": { "kind": "NONE" },
+      "accessibility": { "textAlternative": "Fatu ate 1 of 2 equal pieces; Boima ate 2 of 4 equal pieces of the same bread. Who ate more?", "keyboardPath": "Read the text, then Continue.", "reducedMotion": "NOT_APPLICABLE" },
+      "offline": { "mode": "FULL_OFFLINE", "note": "Text only." }, "completion": "VIEWED",
+      "pedagogy": { "strategy": "INQUIRY", "representation": "VERBAL", "scaffoldLevel": "FULL" }
+    },
+    {
+      "id": "goal", "type": "OBJECTIVE", "title": "What you will be able to do", "purpose": "STATE_OBJECTIVE", "objectiveIds": ["moe-math-g4-s1-p3-number-theory-and-fraction-obj5"], "learnerAction": "Read the goal.",
+      "content": { "body": "By the end of this lesson you will be able to:", "keyPoints": ["Show that two fractions name the same amount using strips or drawings.", "Write equivalent fractions by multiplying the top and bottom by the same number."] },
+      "interaction": { "kind": "NONE" }, "tools": { "requested": [], "prohibited": [] }, "hints": [], "misconceptionIds": [], "evidence": { "kind": "NONE" },
+      "accessibility": { "textAlternative": "Goal: show and write equivalent fractions, using strips first and then multiplication.", "keyboardPath": "Read the list, then Continue.", "reducedMotion": "NOT_APPLICABLE" },
+      "offline": { "mode": "FULL_OFFLINE", "note": "Text only." }, "completion": "VIEWED"
+    },
+    {
+      "id": "fold", "type": "GUIDED_EXAMPLE", "title": "Fold a strip", "purpose": "INVESTIGATE", "objectiveIds": ["moe-math-g4-s1-p3-number-theory-and-fraction-obj5"], "learnerAction": "Fold a paper strip and shade it as you open each step.",
+      "content": { "body": "Take a paper strip. Follow each step with your own strip, then open the next step." },
+      "interaction": { "kind": "DIAGRAM_REVEAL", "steps": [
+        { "id": "halves", "label": "Fold in half", "description": "Fold the strip once and shade one part: you have shaded 1/2." },
+        { "id": "quarters", "label": "Fold again", "description": "Fold it in half again without unfolding. Open it: there are 4 equal parts and 2 are shaded. 2/4 covers the same part as 1/2." },
+        { "id": "eighths", "label": "Fold a third time", "description": "Fold again: 8 equal parts, 4 shaded. 4/8 is still the same shaded part." }
+      ] },
+      "tools": { "requested": ["fraction-visualizer"], "prohibited": [] }, "hints": ["Keep the shading the same; only the folds change."], "misconceptionIds": ["bigger-numbers-bigger-fraction"], "evidence": { "kind": "NONE" },
+      "expectedObservation": "Learners see the same shaded length named 1/2, 2/4 and 4/8.",
+      "accessibility": { "textAlternative": "Folding a strip in half, then again and again, the same shaded part is 1/2, then 2/4, then 4/8.", "keyboardPath": "Each step is a button; press Enter to open it in order.", "reducedMotion": "NOT_APPLICABLE" },
+      "offline": { "mode": "FULL_OFFLINE", "note": "Paper strips are the core modality; the fraction visualizer is optional." }, "completion": "ALL_STEPS_REVEALED",
+      "pedagogy": { "strategy": "CONCRETE_PICTORIAL_ABSTRACT", "representation": "CONCRETE", "scaffoldLevel": "FULL" }
+    },
+    {
+      "id": "compare-strips", "type": "INTERACTIVE_DIAGRAM", "title": "Line the strips up", "purpose": "EXPLAIN_CONCEPT", "objectiveIds": ["moe-math-g4-s1-p3-number-theory-and-fraction-obj5"], "learnerAction": "Open each row of the strip picture and compare where the shading ends.",
+      "content": { "body": "Picture three strips of the same length, one under the other. Open each row and look at where the shading stops." },
+      "interaction": { "kind": "DIAGRAM_REVEAL", "steps": [
+        { "id": "row-half", "label": "Row 1: 1/2", "description": "One of two equal parts is shaded; the shading stops at the middle." },
+        { "id": "row-quarters", "label": "Row 2: 2/4", "description": "Two of four equal parts are shaded; the shading also stops at the middle." },
+        { "id": "row-eighths", "label": "Row 3: 4/8", "description": "Four of eight equal parts are shaded; again the shading stops at the middle. All three name the same amount: they are equivalent fractions." }
+      ] },
+      "tools": { "requested": ["fraction-visualizer"], "prohibited": [] }, "hints": [], "misconceptionIds": ["bigger-numbers-bigger-fraction"], "evidence": { "kind": "NONE" },
+      "accessibility": { "textAlternative": "Three equal strips: 1/2, 2/4 and 4/8 shaded. In each, the shading ends at the middle, so the fractions are equivalent.", "keyboardPath": "Each row is a button; press Enter to open it.", "reducedMotion": "NOT_APPLICABLE" },
+      "offline": { "mode": "FULL_OFFLINE", "note": "Described in text; learners can draw the strips." }, "completion": "ALL_STEPS_REVEALED",
+      "pedagogy": { "strategy": "CONCRETE_PICTORIAL_ABSTRACT", "representation": "PICTORIAL", "scaffoldLevel": "PARTIAL" }, "dependsOn": ["fold"]
+    },
+    {
+      "id": "rule", "type": "EXPLANATION", "title": "The multiplying rule", "purpose": "EXPLAIN_CONCEPT", "objectiveIds": ["moe-math-g4-s1-p3-number-theory-and-fraction-obj5"], "learnerAction": "Read the rule and the example.",
+      "content": { "body": "Each fold doubled the number of parts and doubled the shaded parts. That is the rule: **multiply the top and the bottom by the same number** and the amount stays the same.\n\n1/2 = (1 × 3)/(2 × 3) = 3/6.\n\nAdding the same number does not work: 1/2 is not 2/3.", "keyPoints": ["Multiply top and bottom by the same number.", "Never add the same number to top and bottom."] },
+      "interaction": { "kind": "NONE" }, "tools": { "requested": [], "prohibited": [] }, "hints": [], "misconceptionIds": ["adds-same-number"], "evidence": { "kind": "NONE" },
+      "accessibility": { "textAlternative": "Multiply the numerator and the denominator by the same number to get an equivalent fraction: 1/2 times 3 over 3 is 3/6. Adding does not work.", "keyboardPath": "Read the text, then Continue.", "reducedMotion": "NOT_APPLICABLE" },
+      "offline": { "mode": "FULL_OFFLINE", "note": "Text only." }, "completion": "VIEWED",
+      "pedagogy": { "strategy": "CONCRETE_PICTORIAL_ABSTRACT", "representation": "ABSTRACT", "scaffoldLevel": "PARTIAL" }, "dependsOn": ["compare-strips"]
+    },
+    {
+      "id": "check", "type": "CHECK_UNDERSTANDING", "title": "Quick check", "purpose": "CHECK_UNDERSTANDING", "objectiveIds": ["moe-math-g4-s1-p3-number-theory-and-fraction-obj5"], "learnerAction": "Choose an answer for each question.",
+      "content": { "body": "Choose an answer. Read the feedback, even when you are right." },
+      "interaction": { "kind": "SINGLE_CHOICE", "items": [
+        { "id": "equal-to-third", "prompt": "Which fraction is equivalent to 1/3?", "options": [
+          { "id": "a", "text": "2/4", "feedback": "2/4 is the same as 1/2, which is more than 1/3." },
+          { "id": "b", "text": "2/6", "feedback": "Yes. 1/3 = (1 × 2)/(3 × 2) = 2/6." },
+          { "id": "c", "text": "2/3", "feedback": "That doubles only the top. Multiply the top and the bottom." },
+          { "id": "d", "text": "1/6", "feedback": "1/6 is smaller: the bottom changed but the top did not." }
+        ], "formativeKey": { "expectedOptionId": "b" } },
+        { "id": "boima", "prompt": "Back to the bread: did Boima (2/4) eat more than Fatu (1/2)?", "options": [
+          { "id": "a", "text": "Yes, because 2 is more than 1", "feedback": "Bigger numbers do not mean a bigger amount. Line up the strips." },
+          { "id": "b", "text": "No, they ate the same amount", "feedback": "Yes. 2/4 and 1/2 are equivalent: the same amount of bread." },
+          { "id": "c", "text": "No, Fatu ate more", "feedback": "Look at the strips again: the shading stops at the same place." }
+        ], "formativeKey": { "expectedOptionId": "b" } }
+      ] },
+      "tools": { "requested": ["fraction-visualizer"], "prohibited": [] }, "hints": ["Multiply, do not add."], "misconceptionIds": ["adds-same-number", "bigger-numbers-bigger-fraction"],
+      "evidence": { "kind": "FORMATIVE_OBSERVATION", "evidenceType": "PRACTICE", "responses": [
+        { "responseKey": "equal-to-third", "objectiveId": "moe-math-g4-s1-p3-number-theory-and-fraction-obj5", "responseType": "SELECTED_OPTION", "scaffoldLevel": "PARTIAL", "misconceptionId": "adds-same-number" },
+        { "responseKey": "boima", "objectiveId": "moe-math-g4-s1-p3-number-theory-and-fraction-obj5", "responseType": "SELECTED_OPTION", "scaffoldLevel": "PARTIAL", "misconceptionId": "bigger-numbers-bigger-fraction" }
+      ] },
+      "accessibility": { "textAlternative": "Two questions: which fraction equals 1/3, and whether 2/4 is more than 1/2.", "keyboardPath": "Tab to each option and press Space; feedback is read aloud.", "reducedMotion": "NOT_APPLICABLE" },
+      "offline": { "mode": "FULL_OFFLINE", "note": "Feedback works offline." }, "completion": "ALL_ANSWERED",
+      "pedagogy": { "strategy": "RETRIEVAL_PRACTICE", "representation": "ABSTRACT", "scaffoldLevel": "PARTIAL" }
+    },
+    {
+      "id": "practice", "type": "PRACTICE", "title": "Make your own equivalent fractions", "purpose": "INDEPENDENT_PRACTICE", "objectiveIds": ["moe-math-g4-s1-p3-number-theory-and-fraction-obj5"], "learnerAction": "Write two equivalent fractions for each fraction.",
+      "content": { "body": "Write two fractions equivalent to each fraction. Show the multiplication you used." },
+      "interaction": { "kind": "FREE_RESPONSE", "prompts": [
+        { "id": "two-fifths", "prompt": "Write two fractions equivalent to 2/5.", "minLength": 6 },
+        { "id": "three-quarters", "prompt": "Write two fractions equivalent to 3/4.", "minLength": 6 }
+      ] },
+      "tools": { "requested": ["fraction-visualizer"], "prohibited": [] }, "hints": ["Try multiplying the top and bottom by 2, then by 3."], "misconceptionIds": ["adds-same-number"],
+      "evidence": { "kind": "FORMATIVE_OBSERVATION", "evidenceType": "PRACTICE", "responses": [
+        { "responseKey": "two-fifths", "objectiveId": "moe-math-g4-s1-p3-number-theory-and-fraction-obj5", "responseType": "TEXT", "scaffoldLevel": "MINIMAL", "misconceptionId": "adds-same-number" },
+        { "responseKey": "three-quarters", "objectiveId": "moe-math-g4-s1-p3-number-theory-and-fraction-obj5", "responseType": "TEXT", "scaffoldLevel": "MINIMAL" }
+      ] },
+      "accessibility": { "textAlternative": "Write two equivalent fractions for 2/5 and for 3/4 in the text boxes, showing the multiplication.", "keyboardPath": "Tab to each text box and type.", "reducedMotion": "NOT_APPLICABLE" },
+      "offline": { "mode": "FULL_OFFLINE", "note": "Answers are kept on this device." }, "completion": "ALL_RESPONSES_WRITTEN",
+      "pedagogy": { "strategy": "GUIDED_TO_INDEPENDENT", "representation": "ABSTRACT", "scaffoldLevel": "MINIMAL" }, "dependsOn": ["rule"]
+    },
+    {
+      "id": "reflect", "type": "REFLECTION", "title": "Explain it in your own words", "purpose": "REFLECT", "objectiveIds": ["moe-math-g4-s1-p3-number-theory-and-fraction-obj5"], "learnerAction": "Write a short explanation.",
+      "content": { "body": "Write a short answer. There is no single right wording." },
+      "interaction": { "kind": "FREE_RESPONSE", "prompts": [{ "id": "why-same", "prompt": "Explain to Boima why 2/4 and 1/2 are the same amount.", "minLength": 20 }] },
+      "tools": { "requested": [], "prohibited": [] }, "hints": [], "misconceptionIds": ["bigger-numbers-bigger-fraction"],
+      "evidence": { "kind": "REFLECTION", "evidenceType": "PRACTICE", "responses": [{ "responseKey": "why-same", "objectiveId": "moe-math-g4-s1-p3-number-theory-and-fraction-obj5", "responseType": "TEXT", "scaffoldLevel": "NONE" }] },
+      "accessibility": { "textAlternative": "Write an explanation of why 2/4 and 1/2 are the same amount.", "keyboardPath": "Tab to the text box and type.", "reducedMotion": "NOT_APPLICABLE" },
+      "offline": { "mode": "FULL_OFFLINE", "note": "Kept on this device." }, "completion": "ALL_RESPONSES_WRITTEN",
+      "pedagogy": { "strategy": "REFLECTION", "representation": "VERBAL", "scaffoldLevel": "NONE" }
+    },
+    {
+      "id": "mastery", "type": "MASTERY_CHECK", "title": "Show what you know", "purpose": "ASSESS_MASTERY", "objectiveIds": ["moe-math-g4-s1-p3-number-theory-and-fraction-obj5"], "learnerAction": "Answer the final question.",
+      "content": { "body": "Answer the question. Your answer is checked by the school's learning system, not on this device." },
+      "interaction": { "kind": "ASSESSMENT_HANDOFF", "assessmentRequestId": "ef-mastery" },
+      "tools": { "requested": [], "prohibited": [] }, "hints": [], "misconceptionIds": [],
+      "evidence": { "kind": "MASTERY_RESPONSE", "evidenceType": "QUIZ", "responses": [{ "responseKey": "ef-mastery", "objectiveId": "moe-math-g4-s1-p3-number-theory-and-fraction-obj5", "responseType": "ASSESSMENT_RESPONSE", "scaffoldLevel": "NONE" }] },
+      "accessibility": { "textAlternative": "A final multiple-choice question on equivalent fractions, answered with keyboard or touch.", "keyboardPath": "Tab to each option and press Space.", "reducedMotion": "NOT_APPLICABLE" },
+      "offline": { "mode": "FALLBACK_REQUIRED", "note": "The answer waits on the device and is scored after reconnecting." },
+      "fallback": { "kind": "PAPER_ACTIVITY", "content": "Your teacher gives the same question on paper and records your answer.", "objectivePreserved": true },
+      "completion": "ALL_ANSWERED"
+    }
+  ],
+  "assessmentRequests": [
+    { "id": "ef-mastery", "objectiveIds": ["moe-math-g4-s1-p3-number-theory-and-fraction-obj5"], "interaction": "SINGLE_CHOICE", "evidenceType": "QUIZ", "difficulty": "CORE", "misconceptionIds": ["adds-same-number"], "tools": { "requested": [], "prohibited": [] }, "offline": "FALLBACK_REQUIRED" }
+  ],
+  "labProposals": []
+}

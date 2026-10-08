@@ -1,0 +1,678 @@
+{
+  "contractVersion": "curriculum-lesson-v2/1.0.0",
+  "identity": {
+    "lessonId": "cv2-math-g4-s2-p6-geometry-and-statistics-obj5",
+    "version": "0.1.0",
+    "title": "Solid figures at the market",
+    "grade": 4,
+    "subject": "MATH",
+    "unitId": "g4-math-u6-geometry-statistics"
+  },
+  "authoring": {
+    "releaseId": "lr-moe-g4-math-fractions-2026.1",
+    "releaseIdentity": "de256495ec6f72fe8160179331c7f891d0574a2087a21163fbe28b93f9d88540",
+    "cellId": "cell-g4-math-v1",
+    "cellVersion": "1.1.0",
+    "contextHash": "768bcf5d558665c8b3ae39849892030209dcd7b433aff69107d3ae6f858d7c9a",
+    "source": {
+      "archiveChecksum": "82b95c17bf5bdbcdf8614c0c1b2c09f0a103c05fe50b5cb8bedf3cb3d9e429a0",
+      "sourceMember": "GRADE-1-6/Math 1-6.pdf",
+      "memberChecksum": "ae569b18b38b48cb936f164a79de053005f214500331364be3399c1c185fa74e",
+      "structuredReportVersion": "1.0.0"
+    }
+  },
+  "ageBand": "UPPER_PRIMARY",
+  "estimatedMinutes": 45,
+  "pedagogy": {
+    "primaryStrategy": "INQUIRY",
+    "rationale": "Learners handle real objects first, then name faces, edges and vertices; the 3D lab (when released) only augments the real objects."
+  },
+  "objectives": [
+    {
+      "id": "moe-math-g4-s2-p6-geometry-and-statistics-obj5",
+      "statement": "Identify solid figures – spheres, cylinder, cones, cubes, rectangular prisms.",
+      "grade": 4,
+      "subject": "MATH",
+      "topicKey": "moe-math-g4-s2-p6-geometry-and-statistics",
+      "unitId": "g4-math-u6-geometry-statistics",
+      "sourcePages": [
+        49
+      ],
+      "sourceConfidence": "MEDIUM",
+      "conceptIds": [],
+      "standardCodes": [],
+      "skillIds": []
+    }
+  ],
+  "prerequisites": {
+    "conceptIds": [],
+    "assumptions": [
+      "Learners can name flat shapes: square, rectangle, circle, triangle."
+    ]
+  },
+  "misconceptions": [
+    {
+      "id": "counts-visible-only",
+      "objectiveId": "moe-math-g4-s2-p6-geometry-and-statistics-obj5",
+      "description": "Counts only the faces they can see in a picture, saying a cube has 3 faces.",
+      "response": "Turn a real box or die over: the hidden faces still count. A cube has 6 faces."
+    },
+    {
+      "id": "edge-vertex-mixup",
+      "objectiveId": "moe-math-g4-s2-p6-geometry-and-statistics-obj5",
+      "description": "Calls corners edges.",
+      "response": "An edge is a line where two faces meet; a vertex is a corner where edges meet."
+    }
+  ],
+  "scenes": [
+    {
+      "id": "hook",
+      "type": "INTRO",
+      "title": "Shapes at Waterside Market",
+      "purpose": "HOOK_PHENOMENON",
+      "objectiveIds": [],
+      "learnerAction": "Name one object at home with the same shape as a market object.",
+      "content": {
+        "body": "At Waterside Market you can see a football, a tin of tomato paste, a box of soap and an ice cream cone. They are not flat: they are **solid figures**.\n\nWhat makes a ball different from a box?"
+      },
+      "interaction": {
+        "kind": "NONE"
+      },
+      "tools": {
+        "requested": [],
+        "prohibited": []
+      },
+      "hints": [],
+      "misconceptionIds": [],
+      "evidence": {
+        "kind": "NONE"
+      },
+      "accessibility": {
+        "textAlternative": "Market objects are solid figures: a football, a tin, a soap box and an ice cream cone. How is a ball different from a box?",
+        "keyboardPath": "Read the text, then Continue.",
+        "reducedMotion": "NOT_APPLICABLE"
+      },
+      "offline": {
+        "mode": "FULL_OFFLINE",
+        "note": "Text only."
+      },
+      "completion": "VIEWED"
+    },
+    {
+      "id": "goal",
+      "type": "OBJECTIVE",
+      "title": "What you will be able to do",
+      "purpose": "STATE_OBJECTIVE",
+      "objectiveIds": [
+        "moe-math-g4-s2-p6-geometry-and-statistics-obj5"
+      ],
+      "learnerAction": "Read the goal.",
+      "content": {
+        "body": "By the end of this lesson you will be able to:",
+        "keyPoints": [
+          "Identify spheres, cylinders, cones, cubes and rectangular prisms.",
+          "Count the faces, edges and vertices of a solid, including the hidden ones."
+        ]
+      },
+      "interaction": {
+        "kind": "NONE"
+      },
+      "tools": {
+        "requested": [],
+        "prohibited": []
+      },
+      "hints": [],
+      "misconceptionIds": [],
+      "evidence": {
+        "kind": "NONE"
+      },
+      "accessibility": {
+        "textAlternative": "Goal: identify five solid figures and count their faces, edges and vertices.",
+        "keyboardPath": "Read the list, then Continue.",
+        "reducedMotion": "NOT_APPLICABLE"
+      },
+      "offline": {
+        "mode": "FULL_OFFLINE",
+        "note": "Text only."
+      },
+      "completion": "VIEWED"
+    },
+    {
+      "id": "parts",
+      "type": "EXPLANATION",
+      "title": "Faces, edges and vertices",
+      "purpose": "EXPLAIN_CONCEPT",
+      "objectiveIds": [
+        "moe-math-g4-s2-p6-geometry-and-statistics-obj5"
+      ],
+      "learnerAction": "Hold a box and touch a face, an edge and a vertex as you read.",
+      "content": {
+        "body": "A **face** is a flat or curved surface. An **edge** is where two faces meet. A **vertex** is a corner where edges meet.\n\nA sphere (a ball) has one curved face and no edges or vertices. A cube (a die) has 6 square faces, 12 edges and 8 vertices."
+      },
+      "interaction": {
+        "kind": "NONE"
+      },
+      "tools": {
+        "requested": [],
+        "prohibited": []
+      },
+      "hints": [],
+      "misconceptionIds": [
+        "edge-vertex-mixup"
+      ],
+      "evidence": {
+        "kind": "NONE"
+      },
+      "accessibility": {
+        "textAlternative": "A face is a surface, an edge is where two faces meet, a vertex is a corner. A sphere has no edges or vertices; a cube has 6 faces, 12 edges and 8 vertices.",
+        "keyboardPath": "Read the text, then Continue.",
+        "reducedMotion": "NOT_APPLICABLE"
+      },
+      "offline": {
+        "mode": "FULL_OFFLINE",
+        "note": "Real objects are the core modality."
+      },
+      "completion": "VIEWED",
+      "pedagogy": {
+        "strategy": "CONCRETE_PICTORIAL_ABSTRACT",
+        "representation": "CONCRETE",
+        "scaffoldLevel": "FULL"
+      }
+    },
+    {
+      "id": "five-solids",
+      "type": "INTERACTIVE_DIAGRAM",
+      "title": "Meet the five solids",
+      "purpose": "EXPLAIN_CONCEPT",
+      "objectiveIds": [
+        "moe-math-g4-s2-p6-geometry-and-statistics-obj5"
+      ],
+      "learnerAction": "Open each solid and find a real object like it.",
+      "content": {
+        "body": "Open each solid. Find an object in the classroom or at home with the same shape."
+      },
+      "interaction": {
+        "kind": "DIAGRAM_REVEAL",
+        "steps": [
+          {
+            "id": "sphere",
+            "label": "Sphere",
+            "description": "Like a football: one curved face, no edges, no vertices."
+          },
+          {
+            "id": "cylinder",
+            "label": "Cylinder",
+            "description": "Like a closed tin: 2 flat circle faces, 1 curved face, 2 curved edges, no vertices."
+          },
+          {
+            "id": "cone",
+            "label": "Cone",
+            "description": "Like a paper hat: 1 flat circle face, 1 curved face, 1 edge, 1 vertex at the point."
+          },
+          {
+            "id": "cube",
+            "label": "Cube",
+            "description": "Like a die: 6 equal square faces, 12 edges, 8 vertices."
+          },
+          {
+            "id": "prism",
+            "label": "Rectangular prism",
+            "description": "Like a soap box: 6 rectangle faces in 3 matching pairs, 12 edges, 8 vertices."
+          }
+        ]
+      },
+      "tools": {
+        "requested": [],
+        "prohibited": []
+      },
+      "hints": [
+        "Turn the real object over to find hidden faces."
+      ],
+      "misconceptionIds": [
+        "counts-visible-only"
+      ],
+      "evidence": {
+        "kind": "NONE"
+      },
+      "accessibility": {
+        "textAlternative": "Sphere: no edges or vertices. Cylinder: 2 flat and 1 curved face. Cone: 1 vertex. Cube: 6 equal squares, 12 edges, 8 vertices. Rectangular prism: 6 rectangles, 12 edges, 8 vertices.",
+        "keyboardPath": "Each solid is a button; press Enter to open it.",
+        "reducedMotion": "NOT_APPLICABLE"
+      },
+      "offline": {
+        "mode": "FULL_OFFLINE",
+        "note": "Text with real objects; no device needed."
+      },
+      "completion": "ALL_STEPS_REVEALED",
+      "pedagogy": {
+        "strategy": "CONCRETE_PICTORIAL_ABSTRACT",
+        "representation": "PICTORIAL",
+        "scaffoldLevel": "PARTIAL"
+      },
+      "dependsOn": [
+        "parts"
+      ]
+    },
+    {
+      "id": "lab",
+      "type": "LAB",
+      "title": "Explore the solids in 3D",
+      "purpose": "INVESTIGATE",
+      "objectiveIds": [
+        "moe-math-g4-s2-p6-geometry-and-statistics-obj5"
+      ],
+      "learnerAction": "Turn each solid and tap the cube's vertices.",
+      "content": {
+        "body": "In the solids lab, turn each solid to see its hidden faces. Find the solid with no flat faces, then tap all 8 vertices of the cube."
+      },
+      "interaction": {
+        "kind": "LAB_LAUNCH",
+        "labCandidateId": "solids-lab"
+      },
+      "fallback": {
+        "kind": "PAPER_ACTIVITY",
+        "content": "Use real objects instead: a ball, a closed tin, a paper cone hat, a die and a box. Turn each one over and record its faces, edges and vertices in a table in your book.",
+        "objectivePreserved": true
+      },
+      "tools": {
+        "requested": [],
+        "prohibited": []
+      },
+      "expectedObservation": "Learners select the sphere as the solid with no flat faces and find all 8 vertices of the cube.",
+      "hints": [
+        "A corner is a vertex."
+      ],
+      "misconceptionIds": [
+        "counts-visible-only",
+        "edge-vertex-mixup"
+      ],
+      "evidence": {
+        "kind": "LAB_OBSERVATION",
+        "evidenceType": "LAB",
+        "responses": [
+          {
+            "responseKey": "solids-lab",
+            "objectiveId": "moe-math-g4-s2-p6-geometry-and-statistics-obj5",
+            "responseType": "LAB_OBSERVATION",
+            "scaffoldLevel": "PARTIAL"
+          }
+        ]
+      },
+      "accessibility": {
+        "textAlternative": "In the lab or with real objects: the sphere has no flat faces, and a cube has 8 vertices, including ones hidden at the back.",
+        "keyboardPath": "The lab has a button for every action; the paper table works with no device.",
+        "reducedMotion": "STATIC_EQUIVALENT"
+      },
+      "offline": {
+        "mode": "ONLINE_ENHANCED",
+        "note": "The lab adds 3D turning; the real-object table is the core modality."
+      },
+      "completion": "LAB_RETURNED_OR_FALLBACK",
+      "pedagogy": {
+        "strategy": "INQUIRY",
+        "representation": "CONCRETE",
+        "scaffoldLevel": "PARTIAL"
+      },
+      "dependsOn": [
+        "five-solids"
+      ]
+    },
+    {
+      "id": "check",
+      "type": "CHECK_UNDERSTANDING",
+      "title": "Quick check",
+      "purpose": "CHECK_UNDERSTANDING",
+      "objectiveIds": [
+        "moe-math-g4-s2-p6-geometry-and-statistics-obj5"
+      ],
+      "learnerAction": "Choose an answer for each question.",
+      "content": {
+        "body": "Choose an answer for each question."
+      },
+      "interaction": {
+        "kind": "SINGLE_CHOICE",
+        "items": [
+          {
+            "id": "cube-faces",
+            "prompt": "How many faces does a cube have?",
+            "options": [
+              {
+                "id": "a",
+                "text": "3",
+                "feedback": "Those are the faces you can see at once. Turn it over: the hidden faces count too."
+              },
+              {
+                "id": "b",
+                "text": "6",
+                "feedback": "Yes. Top, bottom, front, back, left and right: 6 faces."
+              },
+              {
+                "id": "c",
+                "text": "8",
+                "feedback": "8 is the number of vertices (corners), not faces."
+              },
+              {
+                "id": "d",
+                "text": "12",
+                "feedback": "12 is the number of edges, not faces."
+              }
+            ],
+            "formativeKey": {
+              "expectedOptionId": "b"
+            }
+          },
+          {
+            "id": "tin-shape",
+            "prompt": "A closed tin of tomato paste is shaped like which solid?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Cone",
+                "feedback": "A cone has one point (vertex). A tin has two flat circle ends."
+              },
+              {
+                "id": "b",
+                "text": "Cylinder",
+                "feedback": "Yes. Two flat circle faces joined by a curved face."
+              },
+              {
+                "id": "c",
+                "text": "Sphere",
+                "feedback": "A sphere has no flat faces. A tin has two."
+              }
+            ],
+            "formativeKey": {
+              "expectedOptionId": "b"
+            }
+          }
+        ]
+      },
+      "tools": {
+        "requested": [],
+        "prohibited": []
+      },
+      "hints": [
+        "Imagine turning the object over."
+      ],
+      "misconceptionIds": [
+        "counts-visible-only"
+      ],
+      "evidence": {
+        "kind": "FORMATIVE_OBSERVATION",
+        "evidenceType": "PRACTICE",
+        "responses": [
+          {
+            "responseKey": "cube-faces",
+            "objectiveId": "moe-math-g4-s2-p6-geometry-and-statistics-obj5",
+            "responseType": "SELECTED_OPTION",
+            "scaffoldLevel": "PARTIAL",
+            "misconceptionId": "counts-visible-only"
+          },
+          {
+            "responseKey": "tin-shape",
+            "objectiveId": "moe-math-g4-s2-p6-geometry-and-statistics-obj5",
+            "responseType": "SELECTED_OPTION",
+            "scaffoldLevel": "PARTIAL"
+          }
+        ]
+      },
+      "accessibility": {
+        "textAlternative": "Two questions: how many faces a cube has, and which solid a closed tin is.",
+        "keyboardPath": "Tab to each option and press Space.",
+        "reducedMotion": "NOT_APPLICABLE"
+      },
+      "offline": {
+        "mode": "FULL_OFFLINE",
+        "note": "Feedback works offline."
+      },
+      "completion": "ALL_ANSWERED"
+    },
+    {
+      "id": "reflect",
+      "type": "REFLECTION",
+      "title": "What did turning the object show you?",
+      "purpose": "REFLECT",
+      "objectiveIds": [
+        "moe-math-g4-s2-p6-geometry-and-statistics-obj5"
+      ],
+      "learnerAction": "Write a short answer.",
+      "content": {
+        "body": "Write a short answer in your own words."
+      },
+      "interaction": {
+        "kind": "FREE_RESPONSE",
+        "prompts": [
+          {
+            "id": "hidden-faces",
+            "prompt": "Why can a picture of a box make you count the wrong number of faces?",
+            "minLength": 20
+          }
+        ]
+      },
+      "tools": {
+        "requested": [],
+        "prohibited": []
+      },
+      "hints": [],
+      "misconceptionIds": [
+        "counts-visible-only"
+      ],
+      "evidence": {
+        "kind": "REFLECTION",
+        "evidenceType": "PRACTICE",
+        "responses": [
+          {
+            "responseKey": "hidden-faces",
+            "objectiveId": "moe-math-g4-s2-p6-geometry-and-statistics-obj5",
+            "responseType": "TEXT",
+            "scaffoldLevel": "NONE",
+            "misconceptionId": "counts-visible-only"
+          }
+        ]
+      },
+      "accessibility": {
+        "textAlternative": "Write why a picture of a box can make you miss some faces.",
+        "keyboardPath": "Tab to the text box and type.",
+        "reducedMotion": "NOT_APPLICABLE"
+      },
+      "offline": {
+        "mode": "FULL_OFFLINE",
+        "note": "Kept on this device."
+      },
+      "completion": "ALL_RESPONSES_WRITTEN"
+    },
+    {
+      "id": "mastery",
+      "type": "MASTERY_CHECK",
+      "title": "Show what you know",
+      "purpose": "ASSESS_MASTERY",
+      "objectiveIds": [
+        "moe-math-g4-s2-p6-geometry-and-statistics-obj5"
+      ],
+      "learnerAction": "Answer the final questions.",
+      "content": {
+        "body": "Answer each question. Your answers are checked by the school's learning system, not on this device."
+      },
+      "interaction": {
+        "kind": "ASSESSMENT_HANDOFF",
+        "assessmentRequestId": "sf-mastery"
+      },
+      "fallback": {
+        "kind": "PAPER_ACTIVITY",
+        "content": "Your teacher shows real objects and records your answers on paper.",
+        "objectivePreserved": true
+      },
+      "tools": {
+        "requested": [],
+        "prohibited": []
+      },
+      "hints": [],
+      "misconceptionIds": [],
+      "evidence": {
+        "kind": "MASTERY_RESPONSE",
+        "evidenceType": "QUIZ",
+        "responses": [
+          {
+            "responseKey": "sf-mastery",
+            "objectiveId": "moe-math-g4-s2-p6-geometry-and-statistics-obj5",
+            "responseType": "ASSESSMENT_RESPONSE",
+            "scaffoldLevel": "NONE"
+          }
+        ]
+      },
+      "accessibility": {
+        "textAlternative": "Final questions naming solids and counting their faces, edges and vertices.",
+        "keyboardPath": "Tab to each option and press Space.",
+        "reducedMotion": "NOT_APPLICABLE"
+      },
+      "offline": {
+        "mode": "FALLBACK_REQUIRED",
+        "note": "Answers wait on the device and are scored after reconnecting."
+      },
+      "completion": "ALL_ANSWERED"
+    }
+  ],
+  "assessmentHandoffs": [
+    {
+      "requestId": "sf-mastery",
+      "player": "ASSESSMENT_PLAYER_V2",
+      "scoring": "SERVER_AUTHORITY",
+      "objectiveIds": [
+        "moe-math-g4-s2-p6-geometry-and-statistics-obj5"
+      ],
+      "interaction": "SINGLE_CHOICE",
+      "evidenceType": "QUIZ",
+      "difficulty": "CORE",
+      "misconceptionIds": [
+        "counts-visible-only",
+        "edge-vertex-mixup"
+      ],
+      "tools": {
+        "allowed": [],
+        "prohibited": []
+      },
+      "offline": "FALLBACK_REQUIRED",
+      "governedItems": []
+    }
+  ],
+  "labLinks": [
+    {
+      "link": {
+        "contractVersion": "learning-experience-link/1.0.0",
+        "linkId": "cv2-math-g4-s2-p6-geometry-and-statistics-obj5--solids-lab",
+        "status": "CANDIDATE",
+        "authority": {
+          "basis": "Curriculum V2 generated proposal, resolved against the lab registry. Not curriculum approval.",
+          "approvedBy": null,
+          "approvedAt": null
+        },
+        "lesson": {
+          "experienceId": "cv2-math-g4-s2-p6-geometry-and-statistics-obj5",
+          "experienceVersion": "0.1.0"
+        },
+        "objectiveIds": [
+          "moe-math-g4-s2-p6-geometry-and-statistics-obj5"
+        ],
+        "experience": {
+          "kind": "INTERACTIVE_LAB",
+          "labId": "g4-solid-figures",
+          "labVersion": "2.1.0"
+        },
+        "placement": {
+          "sceneId": "lab"
+        },
+        "requirement": "OPTIONAL",
+        "preLab": {
+          "sceneIds": [
+            "five-solids"
+          ]
+        },
+        "postLab": {
+          "reflectionSceneId": "reflect",
+          "checkSceneId": "mastery"
+        },
+        "evidenceMapping": [
+          {
+            "labCheckId": "no-flat-faces",
+            "objectiveId": "moe-math-g4-s2-p6-geometry-and-statistics-obj5",
+            "disposition": "RAW_OBSERVATION"
+          },
+          {
+            "labCheckId": "cube-vertices",
+            "objectiveId": "moe-math-g4-s2-p6-geometry-and-statistics-obj5",
+            "disposition": "RAW_OBSERVATION"
+          }
+        ]
+      },
+      "proposalId": "solids-lab",
+      "rationale": "Turning solids in 3D shows hidden faces and vertices; the lab augments, never replaces, handling real objects.",
+      "eligibility": {
+        "studentEligible": false,
+        "reasons": [
+          "LINK_CANDIDATE",
+          "LESSON_NOT_APPROVED",
+          "LAB_NOT_RELEASED:IN_REVIEW/PENDING"
+        ]
+      }
+    }
+  ],
+  "provenance": {
+    "generatorName": "curriculum-v2-assembler",
+    "generatorVersion": "1.0.0",
+    "candidateSha256": "d6ba199f12daade83cab3c9de71350e8d44ad3070d64b2c6a9a634a9372d7b1c",
+    "origin": "AUTHORED_FIXTURE",
+    "promptKey": null,
+    "promptVersion": null,
+    "promptHash": null,
+    "model": null,
+    "generatedAt": "2026-10-08T00:00:00.000Z",
+    "migration": null
+  },
+  "governance": {
+    "state": "DRAFT",
+    "humanReviewRequired": true,
+    "published": false,
+    "moeApprovalState": "NOT_CLAIMED",
+    "requiredApprovalBasis": "HUMAN_REVIEW"
+  },
+  "reviewGaps": [
+    {
+      "code": "CONCEPT_UNBOUND",
+      "severity": "ADVISORY",
+      "detail": "moe-math-g4-s2-p6-geometry-and-statistics-obj5 has no governed concept in lr-moe-g4-math-fractions-2026.1; concept-level evidence stays unbound."
+    },
+    {
+      "code": "STANDARD_UNBOUND",
+      "severity": "ADVISORY",
+      "detail": "moe-math-g4-s2-p6-geometry-and-statistics-obj5 has no standard/skill binding in lr-moe-g4-math-fractions-2026.1."
+    },
+    {
+      "code": "SOURCE_CONFIDENCE_MEDIUM",
+      "severity": "ADVISORY",
+      "detail": "moe-math-g4-s2-p6-geometry-and-statistics-obj5 text was extracted at MEDIUM confidence; the reviewer confirms the wording."
+    },
+    {
+      "code": "SCENE_USES_FALLBACK",
+      "severity": "ADVISORY",
+      "sceneId": "lab",
+      "detail": "Delivered through its declared fallback under: DEFAULT, OFFLINE, WEBGL_UNAVAILABLE, VIDEO_UNAVAILABLE, KEYBOARD_ONLY, SCREEN_READER, REDUCED_MOTION, LOW_MEMORY, POINTER_DRAG_UNAVAILABLE."
+    },
+    {
+      "code": "SCENE_USES_FALLBACK",
+      "severity": "ADVISORY",
+      "sceneId": "mastery",
+      "detail": "Delivered through its declared fallback under: DEFAULT, OFFLINE, WEBGL_UNAVAILABLE, VIDEO_UNAVAILABLE, KEYBOARD_ONLY, SCREEN_READER, REDUCED_MOTION, LOW_MEMORY, POINTER_DRAG_UNAVAILABLE."
+    },
+    {
+      "code": "LAB_LINK_CANDIDATE_ONLY",
+      "severity": "ADVISORY",
+      "sceneId": "lab",
+      "detail": "g4-solid-figures is a candidate link (LINK_CANDIDATE, LESSON_NOT_APPROVED, LAB_NOT_RELEASED:IN_REVIEW/PENDING); learners get the scene fallback."
+    },
+    {
+      "code": "ASSESSMENT_ITEMS_PENDING",
+      "severity": "BLOCKING",
+      "detail": "sf-mastery has no governed items for moe-math-g4-s2-p6-geometry-and-statistics-obj5; Assessment Player V2 items must be authored and released."
+    }
+  ]
+}

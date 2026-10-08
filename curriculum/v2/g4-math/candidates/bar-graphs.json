@@ -1,0 +1,105 @@
+{
+  "contractVersion": "candidate-lesson-v2/1.0.0",
+  "title": "Reading a bar graph and finding the mode",
+  "estimatedMinutes": 40,
+  "ageBand": "UPPER_PRIMARY",
+  "pedagogy": { "primaryStrategy": "STRUCTURED_PROBLEM_SOLVING", "rationale": "Learners read one class data set from a table, then a bar graph, then answer questions that need the graph, ending with the mode." },
+  "prerequisiteAssumptions": ["Learners can count and compare whole numbers to 50.", "Scope: this lesson covers bar graphs and the mode; line graphs, pie charts, mean and median are taught in later lessons of the same objective."],
+  "misconceptions": [
+    { "id": "mode-is-biggest-number", "objectiveId": "moe-math-g4-s2-p6-geometry-and-statistics-obj6", "description": "Thinks the mode is the largest count rather than the category with the largest count.", "response": "The mode is the answer chosen most often (mango), not the number 9." },
+    { "id": "reads-bar-width", "objectiveId": "moe-math-g4-s2-p6-geometry-and-statistics-obj6", "description": "Compares bars by width or position instead of height.", "response": "Read where the top of each bar meets the number scale." }
+  ],
+  "scenes": [
+    {
+      "id": "hook", "type": "INTRO", "title": "Class 4's favourite fruit", "purpose": "HOOK_PHENOMENON", "objectiveIds": [], "learnerAction": "Guess which fruit your own class would choose most.",
+      "content": { "body": "Class 4 voted for their favourite fruit on anonymous slips: no names were written, and anyone could choose not to vote. The counts (illustrative) were: mango 9, banana 6, orange 4, pineapple 3.\n\nHow can we show these numbers so anyone can read them quickly?" },
+      "interaction": { "kind": "NONE" }, "tools": { "requested": [], "prohibited": [] }, "hints": [], "misconceptionIds": [], "evidence": { "kind": "NONE" },
+      "accessibility": { "textAlternative": "Anonymous fruit votes in Class 4: mango 9, banana 6, orange 4, pineapple 3.", "keyboardPath": "Read the text, then Continue.", "reducedMotion": "NOT_APPLICABLE" },
+      "offline": { "mode": "FULL_OFFLINE", "note": "Text only." }, "completion": "VIEWED"
+    },
+    {
+      "id": "goal", "type": "OBJECTIVE", "title": "What you will be able to do", "purpose": "STATE_OBJECTIVE", "objectiveIds": ["moe-math-g4-s2-p6-geometry-and-statistics-obj6"], "learnerAction": "Read the goal.",
+      "content": { "body": "By the end of this lesson you will be able to:", "keyPoints": ["Read the values shown by a bar graph.", "Answer questions using a bar graph.", "Find the mode of a data set."] },
+      "interaction": { "kind": "NONE" }, "tools": { "requested": [], "prohibited": [] }, "hints": [], "misconceptionIds": [], "evidence": { "kind": "NONE" },
+      "accessibility": { "textAlternative": "Goal: read a bar graph, answer questions with it, and find the mode.", "keyboardPath": "Read the list, then Continue.", "reducedMotion": "NOT_APPLICABLE" },
+      "offline": { "mode": "FULL_OFFLINE", "note": "Text only." }, "completion": "VIEWED"
+    },
+    {
+      "id": "read-graph", "type": "MEDIA", "title": "The bar graph", "purpose": "EXPLAIN_CONCEPT", "objectiveIds": ["moe-math-g4-s2-p6-geometry-and-statistics-obj6"], "learnerAction": "Read the height of each bar against the number scale.",
+      "content": { "body": "A bar graph has a bar for each fruit. The **height** of each bar shows how many votes it got: read where the top of the bar meets the number scale on the side.\n\nThe mango bar reaches 9, banana 6, orange 4 and pineapple 3." },
+      "interaction": { "kind": "NONE" },
+      "media": [{ "id": "fruit-bar-graph", "kind": "DIAGRAM", "requirement": "MEDIA_REQUIRED", "description": "Vertical bar graph titled Favourite fruit in Class 4: bars for mango (9), banana (6), orange (4), pineapple (3) against a scale from 0 to 10.", "altText": "Bar graph of favourite fruit: mango 9, banana 6, orange 4, pineapple 3. Mango has the tallest bar." }],
+      "fallback": { "kind": "TEXT_WALKTHROUGH", "content": "Draw the graph on squared paper: a scale from 0 to 10 up the side, and a bar for each fruit: mango up to 9, banana up to 6, orange up to 4, pineapple up to 3.", "objectivePreserved": true },
+      "tools": { "requested": [], "prohibited": [] }, "hints": ["Follow the top of the bar across to the scale."], "misconceptionIds": ["reads-bar-width"], "evidence": { "kind": "NONE" },
+      "accessibility": { "textAlternative": "Bar graph of favourite fruit: mango 9 votes, banana 6, orange 4, pineapple 3. The bar heights show the counts; mango is tallest.", "keyboardPath": "Read the text description, then Continue.", "reducedMotion": "NOT_APPLICABLE" },
+      "offline": { "mode": "CACHED_ASSET_REQUIRED", "note": "The graph image must be cached; the squared-paper drawing works without it." }, "completion": "VIEWED",
+      "pedagogy": { "strategy": "CONCRETE_PICTORIAL_ABSTRACT", "representation": "PICTORIAL", "scaffoldLevel": "FULL" }
+    },
+    {
+      "id": "match-bars", "type": "PRACTICE", "title": "Match each fruit to its count", "purpose": "GUIDED_PRACTICE", "objectiveIds": ["moe-math-g4-s2-p6-geometry-and-statistics-obj6"], "learnerAction": "Match each fruit to the number its bar shows.",
+      "content": { "body": "Use the bar graph to match each fruit to its number of votes." },
+      "interaction": { "kind": "MATCHING", "prompt": "Match each fruit to its number of votes.", "elements": ["mango", "banana", "orange", "pineapple", "9", "6", "4", "3"] },
+      "fallback": { "kind": "FREE_RESPONSE", "content": "Write each fruit and the number its bar shows, for example: mango - 9.", "objectivePreserved": true },
+      "tools": { "requested": [], "prohibited": [] }, "hints": ["Read the top of each bar."], "misconceptionIds": ["reads-bar-width"],
+      "evidence": { "kind": "FORMATIVE_OBSERVATION", "evidenceType": "PRACTICE", "responses": [{ "responseKey": "fruit-counts", "objectiveId": "moe-math-g4-s2-p6-geometry-and-statistics-obj6", "responseType": "MATCHES", "scaffoldLevel": "PARTIAL", "misconceptionId": "reads-bar-width" }] },
+      "accessibility": { "textAlternative": "Match mango, banana, orange and pineapple to 9, 6, 4 and 3 using the bar graph.", "keyboardPath": "Choose each fruit with Tab, then its number from a list.", "reducedMotion": "NOT_APPLICABLE", "nonPointerAlternative": "Pick each fruit's count from a list with the keyboard instead of drawing lines." },
+      "offline": { "mode": "FULL_OFFLINE", "note": "Written matching works offline." }, "completion": "VIEWED",
+      "dependsOn": ["read-graph"]
+    },
+    {
+      "id": "mode", "type": "GUIDED_EXAMPLE", "title": "Finding the mode", "purpose": "MODEL_WORKED_EXAMPLE", "objectiveIds": ["moe-math-g4-s2-p6-geometry-and-statistics-obj6"], "learnerAction": "Follow the example and say the mode aloud.",
+      "content": { "body": "The **mode** is the value that appears most often. In a bar graph it is the category with the tallest bar.\n\nThe tallest bar is mango, with 9 votes. So the mode is **mango**, not 9: the mode is the answer people chose most." },
+      "interaction": { "kind": "NONE" }, "tools": { "requested": [], "prohibited": [] }, "hints": [], "misconceptionIds": ["mode-is-biggest-number"], "evidence": { "kind": "NONE" },
+      "accessibility": { "textAlternative": "The mode is the most common answer. The tallest bar is mango with 9 votes, so the mode is mango.", "keyboardPath": "Read the text, then Continue.", "reducedMotion": "NOT_APPLICABLE" },
+      "offline": { "mode": "FULL_OFFLINE", "note": "Text only." }, "completion": "VIEWED",
+      "pedagogy": { "strategy": "WORKED_EXAMPLE_FADING", "representation": "ABSTRACT", "scaffoldLevel": "FULL" }, "dependsOn": ["match-bars"]
+    },
+    {
+      "id": "check", "type": "CHECK_UNDERSTANDING", "title": "Quick check", "purpose": "CHECK_UNDERSTANDING", "objectiveIds": ["moe-math-g4-s2-p6-geometry-and-statistics-obj6"], "learnerAction": "Choose an answer for each question.",
+      "content": { "body": "Use the fruit bar graph to answer." },
+      "interaction": { "kind": "SINGLE_CHOICE", "items": [
+        { "id": "how-many-more", "prompt": "How many more votes did banana get than orange?", "options": [
+          { "id": "a", "text": "2", "feedback": "Yes. Banana 6 minus orange 4 is 2." },
+          { "id": "b", "text": "10", "feedback": "That adds the two bars. How many more means subtract." },
+          { "id": "c", "text": "4", "feedback": "4 is the orange bar itself. Compare banana (6) with orange (4)." }
+        ], "formativeKey": { "expectedOptionId": "a" } },
+        { "id": "which-mode", "prompt": "What is the mode of the fruit votes?", "options": [
+          { "id": "a", "text": "9", "feedback": "9 is the count. The mode is the fruit with that count." },
+          { "id": "b", "text": "Mango", "feedback": "Yes. Mango has the tallest bar, so it is the mode." },
+          { "id": "c", "text": "Pineapple", "feedback": "Pineapple has the shortest bar: the fewest votes." }
+        ], "formativeKey": { "expectedOptionId": "b" } }
+      ] },
+      "tools": { "requested": [], "prohibited": [] }, "hints": ["Read each bar's top against the scale."], "misconceptionIds": ["mode-is-biggest-number"],
+      "evidence": { "kind": "FORMATIVE_OBSERVATION", "evidenceType": "PRACTICE", "responses": [
+        { "responseKey": "how-many-more", "objectiveId": "moe-math-g4-s2-p6-geometry-and-statistics-obj6", "responseType": "SELECTED_OPTION", "scaffoldLevel": "PARTIAL" },
+        { "responseKey": "which-mode", "objectiveId": "moe-math-g4-s2-p6-geometry-and-statistics-obj6", "responseType": "SELECTED_OPTION", "scaffoldLevel": "PARTIAL", "misconceptionId": "mode-is-biggest-number" }
+      ] },
+      "accessibility": { "textAlternative": "Two questions using the fruit votes: how many more chose banana than orange, and what the mode is.", "keyboardPath": "Tab to each option and press Space.", "reducedMotion": "NOT_APPLICABLE" },
+      "offline": { "mode": "FULL_OFFLINE", "note": "Feedback works offline." }, "completion": "ALL_ANSWERED"
+    },
+    {
+      "id": "reflect", "type": "REFLECTION", "title": "Why use a graph?", "purpose": "REFLECT", "objectiveIds": ["moe-math-g4-s2-p6-geometry-and-statistics-obj6"], "learnerAction": "Write a short answer.",
+      "content": { "body": "Write a short answer in your own words." },
+      "interaction": { "kind": "FREE_RESPONSE", "prompts": [{ "id": "why-graph", "prompt": "Why is a bar graph easier to read than a list of votes?", "minLength": 20 }] },
+      "tools": { "requested": [], "prohibited": [] }, "hints": [], "misconceptionIds": [],
+      "evidence": { "kind": "REFLECTION", "evidenceType": "PRACTICE", "responses": [{ "responseKey": "why-graph", "objectiveId": "moe-math-g4-s2-p6-geometry-and-statistics-obj6", "responseType": "TEXT", "scaffoldLevel": "NONE" }] },
+      "accessibility": { "textAlternative": "Write why a bar graph is easier to read than a list of votes.", "keyboardPath": "Tab to the text box and type.", "reducedMotion": "NOT_APPLICABLE" },
+      "offline": { "mode": "FULL_OFFLINE", "note": "Kept on this device." }, "completion": "ALL_RESPONSES_WRITTEN"
+    },
+    {
+      "id": "mastery", "type": "MASTERY_CHECK", "title": "Show what you know", "purpose": "ASSESS_MASTERY", "objectiveIds": ["moe-math-g4-s2-p6-geometry-and-statistics-obj6"], "learnerAction": "Answer the final questions.",
+      "content": { "body": "Answer each question. Your answers are checked by the school's learning system, not on this device." },
+      "interaction": { "kind": "ASSESSMENT_HANDOFF", "assessmentRequestId": "bg-mastery" },
+      "tools": { "requested": [], "prohibited": [] }, "hints": [], "misconceptionIds": [],
+      "evidence": { "kind": "MASTERY_RESPONSE", "evidenceType": "QUIZ", "responses": [{ "responseKey": "bg-mastery", "objectiveId": "moe-math-g4-s2-p6-geometry-and-statistics-obj6", "responseType": "ASSESSMENT_RESPONSE", "scaffoldLevel": "NONE" }] },
+      "accessibility": { "textAlternative": "Final questions reading a bar graph and finding a mode, with every graph described in text.", "keyboardPath": "Tab to each option and press Space.", "reducedMotion": "NOT_APPLICABLE" },
+      "offline": { "mode": "FALLBACK_REQUIRED", "note": "Answers wait on the device and are scored after reconnecting." },
+      "fallback": { "kind": "PAPER_ACTIVITY", "content": "Your teacher draws the graph on the board and records your answers on paper.", "objectivePreserved": true },
+      "completion": "ALL_ANSWERED"
+    }
+  ],
+  "assessmentRequests": [
+    { "id": "bg-mastery", "objectiveIds": ["moe-math-g4-s2-p6-geometry-and-statistics-obj6"], "interaction": "SINGLE_CHOICE", "evidenceType": "QUIZ", "difficulty": "CORE", "misconceptionIds": ["mode-is-biggest-number", "reads-bar-width"], "tools": { "requested": [], "prohibited": [] }, "offline": "FALLBACK_REQUIRED" }
+  ],
+  "labProposals": []
+}

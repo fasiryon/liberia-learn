@@ -145,7 +145,11 @@ describe("P2-A compatibility-path automated-approval authority gate", () => {
       reviewerQualificationSnapshot: { role: "TEACHER" },
     });
     expect(result).toBeNull();
-    expect(tx.curriculumContent.findUnique).not.toHaveBeenCalled();
+    // Curriculum V2 (P1-7): an approval reads only the payload to refuse native instruction in
+    // compatibility mode; the automated-approval provenance gate is still not applied.
+    expect(tx.curriculumContent.findUnique).toHaveBeenCalledTimes(1);
+    expect(tx.curriculumContent.findUnique).toHaveBeenCalledWith({ where: { contentId: "content-1" }, select: { payload: true } });
+    expect(tx.curriculumProvenance.findUnique).not.toHaveBeenCalled();
     expect(updateProjection).toHaveBeenCalledTimes(1);
   });
 
