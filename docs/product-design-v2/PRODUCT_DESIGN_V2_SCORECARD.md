@@ -58,9 +58,27 @@ These are presentation contracts over existing policies, not permission to add o
 
 Existing service worker weak-network cached-page fallback is 6000ms, while G11 targets ≤3s for an explicitly available saved resource. Future UI should open the verified download through the existing local resource path; do not quietly alter worker trust/cache policy to achieve the target. If current architecture cannot meet a gate, record the blocked capability and owner. Queue acknowledgment is never equivalent to mastery.
 
+## Competitive strategy review gate
+
+Every implementation review must answer A–G below for each changed [matrix capability](COMPETITIVE_UX_BENCHMARK.md#competitive-capability-matrix), following the [authoritative framework](PRODUCT_DESIGN_V2.md#competitive-strategy-adopt--improve--reimagine--differentiate) and [migration record](PRODUCT_DESIGN_V2_MIGRATION.md#competitive-disposition-required-for-every-implementation-pr). These are mandatory evidence fields, not optional marketing questions.
+
+| Field | Review question | Release-blocking evidence requirement |
+| --- | --- | --- |
+| A Benchmark | Which competitor capability/pattern was used? | Matrix ID, primary source/configuration and evidence limits; if no equivalent was verified, say so. Never treat “not observed” as “does not exist” |
+| B Disposition | Which of ADOPT / IMPROVE / REIMAGINE / DIFFERENTIATE applies? | Match the matrix, or amend its rationale before implementation approval; composite screens list separate capability decisions |
+| C Preservation | Did we preserve the proven useful aspects? | Demonstrate familiar semantics and required capability parity: grades, dates, recipients, threads, review settings, release controls and deep links as applicable |
+| D Friction | What friction did we remove? | Named task, LL baseline and new result; meet all applicable G01–G16 and capability-specific matrix thresholds. A screenshot cannot prove fewer actions or faster understanding |
+| E Reimagination | Did the new workflow objectively improve the task, or merely look different? | Correct-task success and time/actions compared with LL before-state; required task success at least 90%, no lost necessary function, no task-time/action regression and a measured gain in at least one stated task outcome (time, actions, accuracy or comprehension). Claim improvement only when measured; superiority additionally requires the matched competitor protocol above |
+| F Differentiation | Is it backed by real LiberiaLearn architecture or marketing language? | Link existing authorized seam and show end-to-end behavior on the exact build; limitations stated. Prototype position/observations, a fixture, an AI badge or a layout alone cannot establish production capability; no authority changes to fabricate a differentiator |
+| G Measurement | What measurement proves the result? | Exact head/build, cohort/device/network, task fixture, baseline/result, trace/test and reviewer decision. NOT MEASURED does not pass an affected capability gate |
+
+All affected capabilities must pass their matrix-specific acceptance gates in addition to the numbered journey gates. ADOPT requires preservation proof even without novelty. IMPROVE requires measured removal of the stated friction before it is described as improved. REIMAGINE requires task benefit, not aesthetic difference. DIFFERENTIATE requires working architecture and meaningful user behavior, not an exclusive-market claim. If no changed-task baseline is obtainable, record the measurement gap and block the affected competitive-strategy sign-off rather than relabeling the work to evade it. Existing absolute release gates still apply; passing them alone does not authorize competitive superiority claims.
+
+For focused grading (T04), use the same submissions, rubric and feedback requirements in the current and proposed LL flow; at least 90% correct unassisted review, median task time no slower than the current LL baseline, and full required grading parity. For dates/communications/records, verify familiar semantics and correct scope, not only navigation speed. For L01–L05, verify identity, fail-closed/unknown states, authorization and continuity using the existing contracts. Native scene/evidence integration remains release-blocked until the owner's seam is available.
+
 ## Review record template
 
-| Gate | Scope/build/head | Baseline/config | Result (time/actions/success) | Evidence | Reviewer/status/remediation |
+| Gate / capability ID / disposition | Scope/build/head | Baseline/config | Result (time/actions/success) | Evidence / A–G answers | Reviewer/status/remediation |
 | --- | --- | --- | --- | --- | --- |
 | G01–G16, one row each applicable gate | Fill per implementation PR | LL before/after; competitor if claiming improvement | Per cohort/device/network | Trace/video/screenshot/test output | PASS / FAIL / NOT MEASURED |
 

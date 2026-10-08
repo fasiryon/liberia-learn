@@ -49,6 +49,28 @@ The three anchor screens are 1440×1024 desktop frames. No phone anchor or local
 9. Preserve functionality while consolidating entry points. Route aliases can remain; remove duplicate navigation only after contextual access and deep-link compatibility pass.
 10. Common primitives with age/density variants, not parallel design systems for every role or grade.
 
+## Competitive strategy: ADOPT / IMPROVE / REIMAGINE / DIFFERENTIATE
+
+This is the authoritative decision framework. Apply it to a capability and user job, not to a competitor's entire product or visual style. The [capability matrix](COMPETITIVE_UX_BENCHMARK.md#competitive-capability-matrix) owns the individual decisions; the [migration contract](PRODUCT_DESIGN_V2_MIGRATION.md#competitive-disposition-required-for-every-implementation-pr) makes them implementable; the [scorecard](PRODUCT_DESIGN_V2_SCORECARD.md#competitive-strategy-review-gate) determines whether the result merits release or a competitive claim.
+
+| Disposition | Decision and rationale | Required proof |
+| --- | --- | --- |
+| ADOPT | A competitor effectively solves the underlying problem. Preserve the useful interaction/product concept while adapting it to LiberiaLearn's users, visual system, accessibility and connectivity environment | Familiar task behavior and capability parity survive; no visual copying or unnecessary relearning |
+| IMPROVE | The concept is useful but avoidable friction remains. Keep it and improve speed, clarity, context, mobile use, accessibility, offline behavior or learning usefulness | Identify the friction, record the baseline and demonstrate the specified improvement |
+| REIMAGINE | The conventional workflow organizes course administration rather than the learning/teaching goal. Change the experience around that goal instead of carrying forward the legacy workflow | The same user task becomes objectively easier or more useful, with preserved necessary capabilities; looking different is insufficient |
+| DIFFERENTIATE | Existing LiberiaLearn architecture enables a materially different learning capability, beyond a prettier conventional feature | Name the real authorized seam, its current limitations and a successful end-to-end demonstration; no invented authority or unsupported exclusivity claim |
+
+A capability may carry **ADOPT + IMPROVE** or **REIMAGINE + DIFFERENTIATE** when both rationales apply. ADOPT identifies what must survive; IMPROVE identifies what must change. REIMAGINE is a workflow choice; DIFFERENTIATE is an architecture-backed capability, so neither implies the other. A composite screen can contain several dispositions: Today reimagines the home workflow while adopting/improving agenda and Continue controls. These are separate capability decisions, not contradictory screen labels. Inventory migration dispositions (REUSE/REFINE/etc.) describe changes to existing code and are independent of competitive dispositions.
+
+Public feature documentation demonstrates available concepts, not universal usability excellence. An ADOPT decision expresses our judgment that the underlying idea is useful; its usefulness and LiberiaLearn's improvement still require task testing. Do not manufacture differentiation where an established pattern works. Novelty is not the goal; better learning UX is the goal.
+
+1. **DO NOT REINVENT SOLVED PROBLEMS.** Reuse understandable, effective patterns from mature learning products instead of creating new interaction conventions for ordinary tasks.
+2. **DO NOT COPY PRODUCT DEBT.** Do not inherit confusing hierarchy, module hunting, clutter or course-administration-first interaction simply because it is conventional. These are risks to test, not assertions about every competitor installation.
+3. **FAMILIAR WHERE FAMILIARITY HELPS.** Calendars behave like calendars; messages like messages; due dates look like due dates; Back returns without deleting work.
+4. **INNOVATE WHERE LEARNING BENEFITS.** Spend novelty on learning flow, contextual Tutor, authorized adaptive progression, mastery understanding, labs, teacher intervention, offline learning and age-banded interaction.
+5. **BETTER BEFORE DIFFERENT.** A changed workflow must demonstrate lower friction or better learning/task outcomes. Preserve grades, communication, records and other school-required capabilities.
+6. **NO FALSE COMPETITIVE CLAIMS.** Do not claim superiority until measured. The matrix describes strategy; the scorecard establishes evidence. Architecture-backed differentiation is not proof of better learning outcomes or unique market ownership.
+
 ## Role-specific experience model and IA
 
 ### Student
