@@ -2,10 +2,10 @@
 
 - Lesson: `cv2-math-g4-s2-p6-geometry-and-statistics-obj5` v0.1.0 · Grade 4 MATH · unit `g4-math-u6-geometry-statistics`
 - Pipeline status: **REVIEW_BLOCKED** · governance: DRAFT, human review required, not published, MOE approval not claimed
-- Artifact hash: `0cc2655dca07c4e44932ea5d622241273ec9fb485d7573ae032f93f07375e36b` (approve this exact revision only)
+- Artifact hash: `d4b8d59491b9118862057aa77dc2d18a9c93b9491e373fe221d6bf9b87b4230b` (approve this exact revision only)
 - Pinned context: release `lr-moe-g4-math-fractions-2026.1` (identity `de256495ec6f72fe…`), cell `cell-g4-math-v1@1.1.0`, context `768bcf5d558665c8…`
 - Source: `GRADE-1-6/Math 1-6.pdf` (archive `82b95c17bf5b…`)
-- Provenance: AUTHORED_FIXTURE by curriculum-v2-assembler@1.0.0; prompt none@-; candidate `d6ba199f12daade8…`
+- Provenance: AUTHORED_FIXTURE by curriculum-v2-assembler@1.0.0; prompt none@-; candidate `4119de07c32d8e31…`
 - Strategy: INQUIRY — Learners handle real objects first, then name faces, edges and vertices; the 3D lab (when released) only augments the real objects.
 
 ## Objective alignment
@@ -74,7 +74,7 @@ Open each solid. Find an object in the classroom or at home with the same shape.
 
 1. **Sphere** — Like a football: one curved face, no edges, no vertices.
 2. **Cylinder** — Like a closed tin: 2 flat circle faces, 1 curved face, 2 curved edges, no vertices.
-3. **Cone** — Like a paper hat: 1 flat circle face, 1 curved face, 1 edge, 1 vertex at the point.
+3. **Cone** — Like a paper hat: 1 flat circle face, 1 curved face, 1 edge, and 1 vertex at the point (the point of a cone is called its vertex, even though no edges meet there).
 4. **Cube** — Like a die: 6 equal square faces, 12 edges, 8 vertices.
 5. **Rectangular prism** — Like a soap box: 6 rectangle faces in 3 matching pairs, 12 edges, 8 vertices.
 
@@ -86,12 +86,12 @@ Open each solid. Find an object in the classroom or at home with the same shape.
 
 Learner action: Turn each solid and tap the cube's vertices.
 
-In the solids lab, turn each solid to see its hidden faces. Find the solid with no flat faces, then tap all 8 vertices of the cube.
+In the solids lab, turn each solid to see its hidden faces. Find the solid with no flat faces, then find all 8 vertices of the cube.
 
 - Fallback (PAPER_ACTIVITY, objective preserved: true): Use real objects instead: a ball, a closed tin, a paper cone hat, a die and a box. Turn each one over and record its faces, edges and vertices in a table in your book.
 - Expected observation (reviewer only): Learners select the sphere as the solid with no flat faces and find all 8 vertices of the cube.
 - Hints: A corner is a vertex.
-- Accessibility: In the lab or with real objects: the sphere has no flat faces, and a cube has 8 vertices, including ones hidden at the back. · keyboard: The lab has a button for every action; the paper table works with no device.
+- Accessibility: In the lab or with real objects: the sphere has no flat faces, and a cube has 8 vertices, including ones hidden at the back. · keyboard: The lab has a button for every action; the paper table works with no device. · non-pointer: Hold each real object and count faces, edges and vertices by touch; a partner or the teacher records the counts in the table.
 - Offline (ONLINE_ENHANCED): The lab adds 3D turning; the real-object table is the core modality.
 
 ### Quick check (`check`)
@@ -123,8 +123,8 @@ Learner action: Answer the final questions.
 Answer each question. Your answers are checked by the school's learning system, not on this device.
 
 - Fallback (PAPER_ACTIVITY, objective preserved: true): Your teacher shows real objects and records your answers on paper.
-- Accessibility: Final questions naming solids and counting their faces, edges and vertices. · keyboard: Tab to each option and press Space.
-- Offline (FALLBACK_REQUIRED): Answers wait on the device and are scored after reconnecting.
+- Accessibility: Final questions naming solids and counting their faces, edges and vertices. · keyboard: Tab to each option and press Space. · non-pointer: Without a device, the teacher reads each question and its choices aloud and records the spoken answer.
+- Offline (FALLBACK_REQUIRED): Answers given on a device are scored after reconnecting; without a device the teacher gives the same questions on paper.
 
 ## Misconceptions
 

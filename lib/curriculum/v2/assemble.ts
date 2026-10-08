@@ -74,7 +74,11 @@ export function assembleCurriculumLessonV2(input: { candidate: CandidateLessonV2
       const resolved = labLinks.find((entry) => entry.proposalId === (scene.interaction as { labCandidateId: string }).labCandidateId) ?? null;
       const experience = resolved ? findLabExperience(resolved.link.experience.labId) : null;
       const definition = experience?.runtime.kind === "INTERACTIVE_V2" ? getInteractiveLabDefinition(experience.labId) : null;
-      lab = { lab: experience, studentEligible: resolved?.eligibility.studentEligible ?? false, keyboard: definition?.accessibility.keyboard ?? false, offline: experience?.offline.offlineCapable ?? false, hasFallback2D: !!definition };
+      lab = {
+        lab: experience, studentEligible: resolved?.eligibility.studentEligible ?? false,
+        keyboard: definition?.accessibility.keyboard ?? false, reducedMotion: definition?.accessibility.reducedMotion ?? false,
+        offline: experience?.offline.offlineCapable ?? false, hasFallback2D: definition?.accessibility.fallback === "FALLBACK_2D",
+      };
     }
     const handoff = scene.interaction.kind === "ASSESSMENT_HANDOFF" ? assessmentHandoffs.find((entry) => entry.requestId === (scene.interaction as { assessmentRequestId: string }).assessmentRequestId) : null;
     return sceneDeliverability(scene, lab, !!handoff && handoff.governedItems.length > 0);

@@ -66,6 +66,8 @@ export type FormativeItem = Readonly<{
    */
   correctIndex: number;
   feedback: Readonly<{ correct: string; incorrect: string }>;
+  /** Optional feedback per option (same order as options), so each distractor answers its own misconception. */
+  optionFeedback?: readonly string[];
 }>;
 
 export type DiagramStep = Readonly<{ id: string; label: string; description: string }>;

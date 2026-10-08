@@ -21,7 +21,7 @@ const {
 }));
 
 vi.mock("@/lib/db", () => {
-  const tx = { curriculumContent: { update: curriculumContentUpdate } };
+  const tx = { curriculumContent: { update: curriculumContentUpdate, findUnique: vi.fn(async () => ({ payload: {} })) } };
   return { prisma: {
     curriculumContent: { findMany: curriculumContentFindMany, update: curriculumContentUpdate },
     curriculumRegenerationRun: { findMany: runFindMany, groupBy: runGroupBy },

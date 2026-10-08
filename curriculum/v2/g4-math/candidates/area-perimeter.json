@@ -47,7 +47,7 @@
       "pedagogy": { "strategy": "WORKED_EXAMPLE_FADING", "representation": "ABSTRACT", "scaffoldLevel": "FULL" }, "dependsOn": ["around-inside"]
     },
     {
-      "id": "check", "type": "CHECK_UNDERSTANDING", "title": "Around or inside?", "purpose": "ADDRESS_MISCONCEPTION", "objectiveIds": ["moe-math-g4-s2-p5-measurement-obj9"], "learnerAction": "Choose which measure each job needs.",
+      "id": "check", "type": "CHECK_UNDERSTANDING", "title": "Around or inside?", "purpose": "CHECK_UNDERSTANDING", "objectiveIds": ["moe-math-g4-s2-p5-measurement-obj9"], "learnerAction": "Choose which measure each job needs.",
       "content": { "body": "Each job needs either the perimeter or the area. Choose." },
       "interaction": { "kind": "SINGLE_CHOICE", "items": [
         { "id": "fence-job", "prompt": "Ma Musu buys wire to go around her garden. Does she need the perimeter or the area?", "options": [
@@ -76,7 +76,7 @@
       "evidence": { "kind": "FORMATIVE_OBSERVATION", "evidenceType": "PRACTICE", "responses": [{ "responseKey": "calculate-both", "objectiveId": "moe-math-g4-s2-p5-measurement-obj9", "responseType": "NUMBER", "scaffoldLevel": "MINIMAL", "misconceptionId": "counts-two-sides" }] },
       "expectedObservation": "7 by 3: perimeter 20 m, area 21 square metres. 6 m square: perimeter 24 m, area 36 square metres.",
       "accessibility": { "textAlternative": "Find the perimeter and area of a 7 by 3 metre garden and a 6 metre square garden.", "keyboardPath": "Type each number in its labelled box.", "reducedMotion": "NOT_APPLICABLE" },
-      "offline": { "mode": "FULL_OFFLINE", "note": "Work on squared paper is the core modality." }, "completion": "VIEWED",
+      "offline": { "mode": "FULL_OFFLINE", "note": "Work on squared paper is the core modality." }, "completion": "ALL_RESPONSES_WRITTEN",
       "pedagogy": { "strategy": "WORKED_EXAMPLE_FADING", "representation": "ABSTRACT", "scaffoldLevel": "MINIMAL" }, "dependsOn": ["square-example"]
     },
     {
@@ -85,8 +85,8 @@
       "interaction": { "kind": "ASSESSMENT_HANDOFF", "assessmentRequestId": "ap-mastery" },
       "tools": { "requested": [], "prohibited": ["basic-calculator"] }, "hints": [], "misconceptionIds": [],
       "evidence": { "kind": "MASTERY_RESPONSE", "evidenceType": "QUIZ", "responses": [{ "responseKey": "ap-mastery", "objectiveId": "moe-math-g4-s2-p5-measurement-obj9", "responseType": "ASSESSMENT_RESPONSE", "scaffoldLevel": "NONE" }] },
-      "accessibility": { "textAlternative": "Final questions on perimeter and area, answered with keyboard or touch.", "keyboardPath": "Tab to each answer and press Space or type.", "reducedMotion": "NOT_APPLICABLE" },
-      "offline": { "mode": "FALLBACK_REQUIRED", "note": "Answers wait on the device and are scored after reconnecting." },
+      "accessibility": { "textAlternative": "Final questions on perimeter and area, answered with keyboard or touch.", "keyboardPath": "Tab to each answer and press Space or type.", "reducedMotion": "NOT_APPLICABLE", "nonPointerAlternative": "Without a device, the teacher reads each question and its choices aloud and records the spoken answer." },
+      "offline": { "mode": "FALLBACK_REQUIRED", "note": "Answers given on a device are scored after reconnecting; without a device the teacher gives the same questions on paper." },
       "fallback": { "kind": "PAPER_ACTIVITY", "content": "Your teacher gives the same questions on paper and records your answers.", "objectivePreserved": true },
       "completion": "ALL_ANSWERED"
     },

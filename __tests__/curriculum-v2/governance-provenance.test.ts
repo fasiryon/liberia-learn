@@ -197,11 +197,11 @@ describe("executable accessibility and offline deliverability (P1-8)", () => {
     expect(blocked(sceneDeliverability(scene({ offline: { mode: "ONLINE_ENHANCED", note: "n" } }), null, true))).toEqual(["OFFLINE"]);
     const labScene = solidsLesson().scenes.find((candidate) => candidate.id === "lab")!;
     const noFallback = { ...labScene, fallback: undefined };
-    const lab = { lab: { labId: "g4-solid-figures" } as any, studentEligible: false, keyboard: true, offline: true, hasFallback2D: true };
+    const lab = { lab: { labId: "g4-solid-figures" } as any, studentEligible: false, keyboard: true, reducedMotion: true, offline: true, hasFallback2D: true };
     expect(blocked(sceneDeliverability(noFallback, lab, true))).toContain("DEFAULT");
     expect(blocked(sceneDeliverability(labScene, lab, true))).toEqual([]);
-    const eligible = { ...lab, studentEligible: true, offline: false, keyboard: false, hasFallback2D: false };
-    expect(blocked(sceneDeliverability(noFallback, eligible, true))).toEqual(expect.arrayContaining(["OFFLINE", "KEYBOARD_ONLY", "SCREEN_READER", "WEBGL_UNAVAILABLE"]));
+    const eligible = { ...lab, studentEligible: true, offline: false, keyboard: false, reducedMotion: false, hasFallback2D: false };
+    expect(blocked(sceneDeliverability(noFallback, eligible, true))).toEqual(expect.arrayContaining(["OFFLINE", "KEYBOARD_ONLY", "SCREEN_READER", "WEBGL_UNAVAILABLE", "REDUCED_MOTION", "POINTER_DRAG_UNAVAILABLE", "LOW_MEMORY"]));
     expect(blocked(sceneDeliverability(noFallback, eligible, true))).not.toContain("DEFAULT");
   });
 

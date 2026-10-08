@@ -2,10 +2,10 @@
 
 - Lesson: `cv2-math-g4-s2-p6-geometry-and-statistics-obj6` v0.1.0 · Grade 4 MATH · unit `g4-math-u6-geometry-statistics`
 - Pipeline status: **REVIEW_BLOCKED** · governance: DRAFT, human review required, not published, MOE approval not claimed
-- Artifact hash: `94b6b6253c73d9c948901b605aa5b965cda485fc9c4e6ed29405bcd0dafd133c` (approve this exact revision only)
+- Artifact hash: `d260faaa24a39749003a784737fea5d32cfa1a88cf221e36fed0725df9d3b1e6` (approve this exact revision only)
 - Pinned context: release `lr-moe-g4-math-fractions-2026.1` (identity `de256495ec6f72fe…`), cell `cell-g4-math-v1@1.1.0`, context `8bb7aa0a63d3cbe8…`
 - Source: `GRADE-1-6/Math 1-6.pdf` (archive `82b95c17bf5b…`)
-- Provenance: AUTHORED_FIXTURE by curriculum-v2-assembler@1.0.0; prompt none@-; candidate `4a48937bee1024a4…`
+- Provenance: AUTHORED_FIXTURE by curriculum-v2-assembler@1.0.0; prompt none@-; candidate `a59146701fa5496a…`
 - Strategy: STRUCTURED_PROBLEM_SOLVING — Learners read one class data set from a table, then a bar graph, then answer questions that need the graph, ending with the mode.
 
 ## Objective alignment
@@ -123,8 +123,8 @@ Learner action: Answer the final questions.
 Answer each question. Your answers are checked by the school's learning system, not on this device.
 
 - Fallback (PAPER_ACTIVITY, objective preserved: true): Your teacher draws the graph on the board and records your answers on paper.
-- Accessibility: Final questions reading a bar graph and finding a mode, with every graph described in text. · keyboard: Tab to each option and press Space.
-- Offline (FALLBACK_REQUIRED): Answers wait on the device and are scored after reconnecting.
+- Accessibility: Final questions reading a bar graph and finding a mode, with every graph described in text. · keyboard: Tab to each option and press Space. · non-pointer: Without a device, the teacher reads each question and its choices aloud and records the spoken answer.
+- Offline (FALLBACK_REQUIRED): Answers given on a device are scored after reconnecting; without a device the teacher gives the same questions on paper.
 
 ## Misconceptions
 

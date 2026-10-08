@@ -38,7 +38,7 @@
       "interaction": { "kind": "DIAGRAM_REVEAL", "steps": [
         { "id": "sphere", "label": "Sphere", "description": "Like a football: one curved face, no edges, no vertices." },
         { "id": "cylinder", "label": "Cylinder", "description": "Like a closed tin: 2 flat circle faces, 1 curved face, 2 curved edges, no vertices." },
-        { "id": "cone", "label": "Cone", "description": "Like a paper hat: 1 flat circle face, 1 curved face, 1 edge, 1 vertex at the point." },
+        { "id": "cone", "label": "Cone", "description": "Like a paper hat: 1 flat circle face, 1 curved face, 1 edge, and 1 vertex at the point (the point of a cone is called its vertex, even though no edges meet there)." },
         { "id": "cube", "label": "Cube", "description": "Like a die: 6 equal square faces, 12 edges, 8 vertices." },
         { "id": "prism", "label": "Rectangular prism", "description": "Like a soap box: 6 rectangle faces in 3 matching pairs, 12 edges, 8 vertices." }
       ] },
@@ -49,13 +49,13 @@
     },
     {
       "id": "lab", "type": "LAB", "title": "Explore the solids in 3D", "purpose": "INVESTIGATE", "objectiveIds": ["moe-math-g4-s2-p6-geometry-and-statistics-obj5"], "learnerAction": "Turn each solid and tap the cube's vertices.",
-      "content": { "body": "In the solids lab, turn each solid to see its hidden faces. Find the solid with no flat faces, then tap all 8 vertices of the cube." },
+      "content": { "body": "In the solids lab, turn each solid to see its hidden faces. Find the solid with no flat faces, then find all 8 vertices of the cube." },
       "interaction": { "kind": "LAB_LAUNCH", "labCandidateId": "solids-lab" },
       "fallback": { "kind": "PAPER_ACTIVITY", "content": "Use real objects instead: a ball, a closed tin, a paper cone hat, a die and a box. Turn each one over and record its faces, edges and vertices in a table in your book.", "objectivePreserved": true },
       "tools": { "requested": [], "prohibited": [] }, "hints": ["A corner is a vertex."], "misconceptionIds": ["counts-visible-only", "edge-vertex-mixup"],
       "evidence": { "kind": "LAB_OBSERVATION", "evidenceType": "LAB", "responses": [{ "responseKey": "solids-lab", "objectiveId": "moe-math-g4-s2-p6-geometry-and-statistics-obj5", "responseType": "LAB_OBSERVATION", "scaffoldLevel": "PARTIAL" }] },
       "expectedObservation": "Learners select the sphere as the solid with no flat faces and find all 8 vertices of the cube.",
-      "accessibility": { "textAlternative": "In the lab or with real objects: the sphere has no flat faces, and a cube has 8 vertices, including ones hidden at the back.", "keyboardPath": "The lab has a button for every action; the paper table works with no device.", "reducedMotion": "STATIC_EQUIVALENT" },
+      "accessibility": { "textAlternative": "In the lab or with real objects: the sphere has no flat faces, and a cube has 8 vertices, including ones hidden at the back.", "keyboardPath": "The lab has a button for every action; the paper table works with no device.", "reducedMotion": "STATIC_EQUIVALENT", "nonPointerAlternative": "Hold each real object and count faces, edges and vertices by touch; a partner or the teacher records the counts in the table." },
       "offline": { "mode": "ONLINE_ENHANCED", "note": "The lab adds 3D turning; the real-object table is the core modality." }, "completion": "LAB_RETURNED_OR_FALLBACK",
       "pedagogy": { "strategy": "INQUIRY", "representation": "CONCRETE", "scaffoldLevel": "PARTIAL" }, "dependsOn": ["five-solids"]
     },
@@ -98,8 +98,8 @@
       "interaction": { "kind": "ASSESSMENT_HANDOFF", "assessmentRequestId": "sf-mastery" },
       "tools": { "requested": [], "prohibited": [] }, "hints": [], "misconceptionIds": [],
       "evidence": { "kind": "MASTERY_RESPONSE", "evidenceType": "QUIZ", "responses": [{ "responseKey": "sf-mastery", "objectiveId": "moe-math-g4-s2-p6-geometry-and-statistics-obj5", "responseType": "ASSESSMENT_RESPONSE", "scaffoldLevel": "NONE" }] },
-      "accessibility": { "textAlternative": "Final questions naming solids and counting their faces, edges and vertices.", "keyboardPath": "Tab to each option and press Space.", "reducedMotion": "NOT_APPLICABLE" },
-      "offline": { "mode": "FALLBACK_REQUIRED", "note": "Answers wait on the device and are scored after reconnecting." },
+      "accessibility": { "textAlternative": "Final questions naming solids and counting their faces, edges and vertices.", "keyboardPath": "Tab to each option and press Space.", "reducedMotion": "NOT_APPLICABLE", "nonPointerAlternative": "Without a device, the teacher reads each question and its choices aloud and records the spoken answer." },
+      "offline": { "mode": "FALLBACK_REQUIRED", "note": "Answers given on a device are scored after reconnecting; without a device the teacher gives the same questions on paper." },
       "fallback": { "kind": "PAPER_ACTIVITY", "content": "Your teacher shows real objects and records your answers on paper.", "objectivePreserved": true },
       "completion": "ALL_ANSWERED"
     }

@@ -2,10 +2,10 @@
 
 - Lesson: `cv2-math-g4-s1-p3-number-theory-and-fraction-obj5` v0.1.0 · Grade 4 MATH · unit `g4-math-u3-number-theory-fractions`
 - Pipeline status: **READY_FOR_HUMAN_REVIEW** · governance: DRAFT, human review required, not published, MOE approval not claimed
-- Artifact hash: `06f9aab9018ac8b70f59f4e2763d5b2cb72b66bb650943b3cc4c2af772cf3c9e` (approve this exact revision only)
+- Artifact hash: `e5933a2f71489be052d8c038f53223d7899f6ff86f1c21a01e16abe54c7948fe` (approve this exact revision only)
 - Pinned context: release `lr-moe-g4-math-fractions-2026.1` (identity `de256495ec6f72fe…`), cell `cell-g4-math-v1@1.1.0`, context `791e113982a8ab20…`
 - Source: `GRADE-1-6/Math 1-6.pdf` (archive `82b95c17bf5b…`)
-- Provenance: AUTHORED_FIXTURE by curriculum-v2-assembler@1.0.0; prompt none@-; candidate `cb8cbc95af81409d…`
+- Provenance: AUTHORED_FIXTURE by curriculum-v2-assembler@1.0.0; prompt none@-; candidate `94abf1d2e1232e83…`
 - Strategy: CONCRETE_PICTORIAL_ABSTRACT — Folding paper strips (concrete) and comparing strip pictures (pictorial) come before the multiply-top-and-bottom rule (abstract).
 
 ## Objective alignment
@@ -143,7 +143,7 @@ Answer the question. Your answer is checked by the school's learning system, not
 
 - Fallback (PAPER_ACTIVITY, objective preserved: true): Your teacher gives the same question on paper and records your answer.
 - Accessibility: A final multiple-choice question on equivalent fractions, answered with keyboard or touch. · keyboard: Tab to each option and press Space.
-- Offline (FALLBACK_REQUIRED): The answer waits on the device and is scored after reconnecting.
+- Offline (FALLBACK_REQUIRED): An answer given on a device is scored after reconnecting; without a device the teacher gives the same question on paper.
 
 ## Misconceptions
 

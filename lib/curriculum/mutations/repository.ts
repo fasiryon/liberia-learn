@@ -63,6 +63,19 @@ function assertContentWriteIsNonAuthoritative(
   }
 }
 
+/**
+ * Native Curriculum V2 structure is only ever written through revision-tracked writers, so every
+ * change is a new revision that needs its own exact-revision human review. With provenance writers
+ * off there is no revision, so a write carrying native scene keys is refused (Codex P1-5/P1-7):
+ * approved native instruction cannot be rewritten in place, and a published legacy row cannot be
+ * turned into an unreviewed native lesson.
+ */
+function assertNativeWriteHasRevisionAuthority(data: { payload?: unknown }): void {
+  if (isNativeCurriculumV2Payload(data.payload)) {
+    throw new Error("NATIVE_CURRICULUM_V2_REQUIRES_PROVENANCE_WRITERS: native scene structure is written only through revision-tracked writers");
+  }
+}
+
 function lifecycleFromLegacyStatus(status: string): CurriculumLifecycleState {
   switch (status.trim().toUpperCase()) {
     case "PUBLISHED":
@@ -196,7 +209,8 @@ async function adoptLegacyContent(
     data: {
       curriculumContentId: content.id,
       provenanceCompleteness: "UNVERIFIED",
-      lifecycleState: lifecycleFromLegacyStatus(content.status),
+      // A native payload never inherits an approval from a legacy status: it starts as a DRAFT for review.
+      lifecycleState: isNativeCurriculumV2Payload(content.payload) ? "DRAFT" : lifecycleFromLegacyStatus(content.status),
     },
   });
   const revision = await tx.curriculumContentRevision.create({
@@ -249,6 +263,7 @@ export async function createCurriculumContent(
 ): Promise<GovernedWriteResult> {
   assertContentWriteIsNonAuthoritative(data);
   if (!provenanceWritersEnabled()) {
+    assertNativeWriteHasRevisionAuthority(data);
     return { content: await prisma.curriculumContent.create({ data }), provenance: null, revision: null };
   }
   return prisma.$transaction(async (tx) => {
@@ -305,6 +320,7 @@ export async function updateCurriculumContent(
 ): Promise<GovernedWriteResult> {
   assertContentWriteIsNonAuthoritative(data);
   if (!provenanceWritersEnabled()) {
+    assertNativeWriteHasRevisionAuthority(data);
     return { content: await prisma.curriculumContent.update({ where, data }), provenance: null, revision: null };
   }
   return prisma.$transaction((tx) => updateCurriculumContentInTransaction(tx, where, data, context));
@@ -318,6 +334,7 @@ export async function updateCurriculumContentInTransaction(
 ): Promise<GovernedWriteResult> {
   assertContentWriteIsNonAuthoritative(data);
   if (!provenanceWritersEnabled()) {
+    assertNativeWriteHasRevisionAuthority(data);
     return { content: await tx.curriculumContent.update({ where, data }), provenance: null, revision: null };
   }
     const prior = await findIdempotentRevision(tx, context.idempotencyKey);
@@ -363,6 +380,8 @@ export async function upsertCurriculumContent(
   assertContentWriteIsNonAuthoritative(create);
   assertContentWriteIsNonAuthoritative(update);
   if (!provenanceWritersEnabled()) {
+    assertNativeWriteHasRevisionAuthority(create);
+    assertNativeWriteHasRevisionAuthority(update);
     return {
       content: await prisma.curriculumContent.upsert({ where, create, update }),
       provenance: null,

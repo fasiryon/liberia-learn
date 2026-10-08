@@ -563,11 +563,12 @@
       "accessibility": {
         "textAlternative": "Final questions on place value, read and answered with the keyboard or touch.",
         "keyboardPath": "Tab to each option and press Space.",
-        "reducedMotion": "NOT_APPLICABLE"
+        "reducedMotion": "NOT_APPLICABLE",
+        "nonPointerAlternative": "Without a device, the teacher reads each question and its choices aloud and records the learner's spoken answer."
       },
       "offline": {
         "mode": "FALLBACK_REQUIRED",
-        "note": "Answers wait on the device and are scored after reconnecting."
+        "note": "Answers given on a device are scored after reconnecting; without a device the teacher gives the same questions on paper."
       },
       "completion": "ALL_ANSWERED"
     }
@@ -601,7 +602,7 @@
   "provenance": {
     "generatorName": "curriculum-v2-assembler",
     "generatorVersion": "1.0.0",
-    "candidateSha256": "014171acf19dce49b00eaf6a80d2d5906755b52f10f397422235e44d2bec3c0e",
+    "candidateSha256": "5764595c06829c95168de77e06561ad7e767724b83253491e515276ab616795c",
     "origin": "AUTHORED_FIXTURE",
     "promptKey": null,
     "promptVersion": null,

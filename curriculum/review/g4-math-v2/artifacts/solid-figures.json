@@ -207,7 +207,7 @@
           {
             "id": "cone",
             "label": "Cone",
-            "description": "Like a paper hat: 1 flat circle face, 1 curved face, 1 edge, 1 vertex at the point."
+            "description": "Like a paper hat: 1 flat circle face, 1 curved face, 1 edge, and 1 vertex at the point (the point of a cone is called its vertex, even though no edges meet there)."
           },
           {
             "id": "cube",
@@ -263,7 +263,7 @@
       ],
       "learnerAction": "Turn each solid and tap the cube's vertices.",
       "content": {
-        "body": "In the solids lab, turn each solid to see its hidden faces. Find the solid with no flat faces, then tap all 8 vertices of the cube."
+        "body": "In the solids lab, turn each solid to see its hidden faces. Find the solid with no flat faces, then find all 8 vertices of the cube."
       },
       "interaction": {
         "kind": "LAB_LAUNCH",
@@ -301,7 +301,8 @@
       "accessibility": {
         "textAlternative": "In the lab or with real objects: the sphere has no flat faces, and a cube has 8 vertices, including ones hidden at the back.",
         "keyboardPath": "The lab has a button for every action; the paper table works with no device.",
-        "reducedMotion": "STATIC_EQUIVALENT"
+        "reducedMotion": "STATIC_EQUIVALENT",
+        "nonPointerAlternative": "Hold each real object and count faces, edges and vertices by touch; a partner or the teacher records the counts in the table."
       },
       "offline": {
         "mode": "ONLINE_ENHANCED",
@@ -523,11 +524,12 @@
       "accessibility": {
         "textAlternative": "Final questions naming solids and counting their faces, edges and vertices.",
         "keyboardPath": "Tab to each option and press Space.",
-        "reducedMotion": "NOT_APPLICABLE"
+        "reducedMotion": "NOT_APPLICABLE",
+        "nonPointerAlternative": "Without a device, the teacher reads each question and its choices aloud and records the spoken answer."
       },
       "offline": {
         "mode": "FALLBACK_REQUIRED",
-        "note": "Answers wait on the device and are scored after reconnecting."
+        "note": "Answers given on a device are scored after reconnecting; without a device the teacher gives the same questions on paper."
       },
       "completion": "ALL_ANSWERED"
     }
@@ -619,7 +621,7 @@
   "provenance": {
     "generatorName": "curriculum-v2-assembler",
     "generatorVersion": "1.0.0",
-    "candidateSha256": "d6ba199f12daade83cab3c9de71350e8d44ad3070d64b2c6a9a634a9372d7b1c",
+    "candidateSha256": "4119de07c32d8e31f7601b231a453d744cad793995589aaad6b787a10cd61d5e",
     "origin": "AUTHORED_FIXTURE",
     "promptKey": null,
     "promptVersion": null,

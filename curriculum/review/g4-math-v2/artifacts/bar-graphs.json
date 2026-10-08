@@ -261,7 +261,7 @@
         "mode": "FULL_OFFLINE",
         "note": "Written matching works offline."
       },
-      "completion": "VIEWED",
+      "completion": "ALL_RESPONSES_WRITTEN",
       "dependsOn": [
         "read-graph"
       ]
@@ -509,11 +509,12 @@
       "accessibility": {
         "textAlternative": "Final questions reading a bar graph and finding a mode, with every graph described in text.",
         "keyboardPath": "Tab to each option and press Space.",
-        "reducedMotion": "NOT_APPLICABLE"
+        "reducedMotion": "NOT_APPLICABLE",
+        "nonPointerAlternative": "Without a device, the teacher reads each question and its choices aloud and records the spoken answer."
       },
       "offline": {
         "mode": "FALLBACK_REQUIRED",
-        "note": "Answers wait on the device and are scored after reconnecting."
+        "note": "Answers given on a device are scored after reconnecting; without a device the teacher gives the same questions on paper."
       },
       "completion": "ALL_ANSWERED"
     }
@@ -545,7 +546,7 @@
   "provenance": {
     "generatorName": "curriculum-v2-assembler",
     "generatorVersion": "1.0.0",
-    "candidateSha256": "4a48937bee1024a4ec2953e2273b7497883163730a087db8808fde1eff0149a1",
+    "candidateSha256": "a59146701fa5496aae43b654f1dac60275357d6db45c07d8cce52794c691d528",
     "origin": "AUTHORED_FIXTURE",
     "promptKey": null,
     "promptVersion": null,

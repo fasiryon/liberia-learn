@@ -629,7 +629,7 @@
       },
       "offline": {
         "mode": "FALLBACK_REQUIRED",
-        "note": "The answer waits on the device and is scored after reconnecting."
+        "note": "An answer given on a device is scored after reconnecting; without a device the teacher gives the same question on paper."
       },
       "completion": "ALL_ANSWERED"
     }
@@ -672,7 +672,7 @@
   "provenance": {
     "generatorName": "curriculum-v2-assembler",
     "generatorVersion": "1.0.0",
-    "candidateSha256": "cb8cbc95af81409d9103aaf0f1c78d40238847da66996e8662fdff20defd4106",
+    "candidateSha256": "94abf1d2e1232e83b40f8370b054b4726fa2e78a1cf4acfa4b1119884be0267b",
     "origin": "AUTHORED_FIXTURE",
     "promptKey": null,
     "promptVersion": null,

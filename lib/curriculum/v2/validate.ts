@@ -20,6 +20,17 @@ const COMPLETION_FOR: Record<string, CandidateScene["completion"]> = {
   LAB_LAUNCH: "LAB_RETURNED_OR_FALLBACK", ASSESSMENT_HANDOFF: "ALL_ANSWERED",
 };
 
+/**
+ * Whether the runtime can actually collect a scene's responses: through a rendered interaction, or a
+ * declared FREE_RESPONSE fallback with exactly one response. Evidence the player can never collect
+ * does not count as evidence.
+ */
+export function evidenceCollectable(scene: CandidateScene): boolean {
+  const kind = scene.interaction.kind;
+  if (kind === "SINGLE_CHOICE" || kind === "FREE_RESPONSE" || kind === "LAB_LAUNCH" || kind === "ASSESSMENT_HANDOFF") return true;
+  return !RENDERABLE_INTERACTIONS.has(kind) && scene.fallback?.kind === "FREE_RESPONSE" && scene.evidence.kind !== "NONE" && scene.evidence.responses.length === 1;
+}
+
 export function words(text: string): number {
   return text.trim() ? text.trim().split(/\s+/).length : 0;
 }
@@ -75,6 +86,9 @@ export function validateCandidateAgainstContext(candidate: CandidateLessonV2, co
     if (expected && scene.completion !== expected) error(`completion_mismatch:${scene.id}`);
     if (!RENDERABLE_INTERACTIONS.has(interaction.kind)) {
       if (!scene.fallback) error(`unsupported_interaction_without_fallback:${scene.id}:${interaction.kind}`);
+      // The rendered fallback decides completion: a written response must be written, text must be viewed.
+      const fallbackCompletion = scene.fallback?.kind === "FREE_RESPONSE" ? "ALL_RESPONSES_WRITTEN" : "VIEWED";
+      if (scene.fallback && scene.completion !== fallbackCompletion) error(`completion_mismatch:${scene.id}`);
       gap("UNSUPPORTED_INTERACTION_DECLARED", "ADVISORY", `${interaction.kind} is a declared intent with no renderer yet; learners receive the ${scene.fallback?.kind ?? "missing"} fallback.`, scene.id);
     }
     if (scene.type === "MASTERY_CHECK" && interaction.kind !== "ASSESSMENT_HANDOFF") error(`mastery_requires_assessment_handoff:${scene.id}`);
@@ -88,6 +102,7 @@ export function validateCandidateAgainstContext(candidate: CandidateLessonV2, co
     if (LEARNER_ACTION_KINDS.has(interaction.kind) && firstLearnerAction < 0) firstLearnerAction = index;
     // Evidence: valid objectives, explicit response → objective mapping for every collected response.
     if (scene.evidence.kind !== "NONE") {
+      if (!evidenceCollectable(scene)) error(`evidence_not_collectable:${scene.id}`);
       for (const response of scene.evidence.responses) {
         if (!scene.objectiveIds.includes(response.objectiveId)) error(`evidence_objective_not_in_scene:${scene.id}:${response.responseKey}`);
         if (response.misconceptionId && !misconceptionIds.has(response.misconceptionId)) error(`evidence_misconception_unknown:${scene.id}:${response.responseKey}`);
@@ -131,7 +146,8 @@ export function validateCandidateAgainstContext(candidate: CandidateLessonV2, co
   if (firstMastery >= 0 && types.slice(firstMastery + 1).some((type) => type !== "REVIEW" && type !== "REFLECTION")) error("instruction_after_mastery");
   const objectiveAt = types.indexOf("OBJECTIVE");
   const explanationAt = types.indexOf("EXPLANATION");
-  if (objectiveAt >= 0 && explanationAt >= 0 && objectiveAt > explanationAt) error("objective_after_explanation");
+  // Inquiry lessons may hold the objective back until after a first explanation: a reviewer call, not an error.
+  if (objectiveAt >= 0 && explanationAt >= 0 && objectiveAt > explanationAt) gap("OBJECTIVE_AFTER_EXPLANATION", "ADVISORY", "The objective is stated after the first explanation; confirm this is a deliberate inquiry sequence.");
   if (firstLearnerAction < 0) error("no_learner_action");
   if (candidate.scenes.every((scene) => scene.type === "EXPLANATION" || FRAMING_TYPES.has(scene.type))) error("all_explanation_lesson");
   if (!types.some((type) => type === "CHECK_UNDERSTANDING" || type === "PRACTICE" || type === "GUIDED_EXAMPLE")) gap("NO_FORMATIVE_CHECK", "ADVISORY", "No formative check or practice before assessment.");
@@ -141,7 +157,7 @@ export function validateCandidateAgainstContext(candidate: CandidateLessonV2, co
   // Objective coverage: each target objective is taught with a learner action and evidenced.
   for (const objective of context.objectives) {
     const taught = candidate.scenes.some((scene) => scene.objectiveIds.includes(objective.id) && LEARNER_ACTION_KINDS.has(scene.interaction.kind));
-    const evidenced = candidate.scenes.some((scene) => scene.evidence.kind !== "NONE" && scene.evidence.responses.some((response) => response.objectiveId === objective.id));
+    const evidenced = candidate.scenes.some((scene) => scene.evidence.kind !== "NONE" && evidenceCollectable(scene) && scene.evidence.responses.some((response) => response.objectiveId === objective.id));
     if (!taught) error(`objective_not_taught:${objective.id}`);
     if (!evidenced) gap("OBJECTIVE_NOT_EVIDENCED", "BLOCKING", `${objective.id} has no evidence opportunity.`);
   }

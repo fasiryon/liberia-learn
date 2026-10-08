@@ -258,7 +258,7 @@
       "id": "check",
       "type": "CHECK_UNDERSTANDING",
       "title": "Around or inside?",
-      "purpose": "ADDRESS_MISCONCEPTION",
+      "purpose": "CHECK_UNDERSTANDING",
       "objectiveIds": [
         "moe-math-g4-s2-p5-measurement-obj9"
       ],
@@ -410,7 +410,7 @@
         "mode": "FULL_OFFLINE",
         "note": "Work on squared paper is the core modality."
       },
-      "completion": "VIEWED",
+      "completion": "ALL_RESPONSES_WRITTEN",
       "pedagogy": {
         "strategy": "WORKED_EXAMPLE_FADING",
         "representation": "ABSTRACT",
@@ -464,11 +464,12 @@
       "accessibility": {
         "textAlternative": "Final questions on perimeter and area, answered with keyboard or touch.",
         "keyboardPath": "Tab to each answer and press Space or type.",
-        "reducedMotion": "NOT_APPLICABLE"
+        "reducedMotion": "NOT_APPLICABLE",
+        "nonPointerAlternative": "Without a device, the teacher reads each question and its choices aloud and records the spoken answer."
       },
       "offline": {
         "mode": "FALLBACK_REQUIRED",
-        "note": "Answers wait on the device and are scored after reconnecting."
+        "note": "Answers given on a device are scored after reconnecting; without a device the teacher gives the same questions on paper."
       },
       "completion": "ALL_ANSWERED"
     },
@@ -542,7 +543,7 @@
   "provenance": {
     "generatorName": "curriculum-v2-assembler",
     "generatorVersion": "1.0.0",
-    "candidateSha256": "be0e56a0811cadba2a70ce18ab7961f7377f0264b23659d199c60926b334266b",
+    "candidateSha256": "3936f033a63593822eaf79e49cd817c0f752287f8018de7eab77bfe14518bf43",
     "origin": "AUTHORED_FIXTURE",
     "promptKey": null,
     "promptVersion": null,

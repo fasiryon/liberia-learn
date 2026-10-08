@@ -81,8 +81,9 @@ describe("Lesson Player V2 compatibility", () => {
   it("delivers unsupported interactions through their declared fallback, never as fake multiple choice", () => {
     const experience = toLessonExperience(lessonFor("area-perimeter.json", "moe-math-g4-s2-p5-measurement-obj9"));
     const calculate = experience.scenes.find((scene) => scene.id === "calculate")!;
-    expect(calculate.interaction.kind).toBe("NONE");
-    expect(calculate.content.body).toContain("Write the perimeter and the area");
+    // NUMERIC has no renderer: learners get the declared FREE_RESPONSE fallback as a real input, not a fake choice.
+    expect(calculate.interaction.kind).toBe("FREE_RESPONSE");
+    expect(calculate.interaction.kind === "FREE_RESPONSE" && calculate.interaction.prompts[0].prompt).toContain("Write the perimeter and the area");
   });
 
   it("mastery scenes carry governed item refs with no key; unbound objectives carry none", () => {

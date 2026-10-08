@@ -2,10 +2,10 @@
 
 - Lesson: `cv2-math-g4-s2-p5-measurement-obj9` v0.1.0 · Grade 4 MATH · unit `g4-math-u5-measurement`
 - Pipeline status: **REVIEW_BLOCKED** · governance: DRAFT, human review required, not published, MOE approval not claimed
-- Artifact hash: `65eb9682db6ae0ae97c6ec702be10149a0d977c0f98074dc50af87bf467b333e` (approve this exact revision only)
+- Artifact hash: `6e0ec4dbd11c54fb7b2bddecc84f5213b9b56c6303496d64cbf202dde544f2df` (approve this exact revision only)
 - Pinned context: release `lr-moe-g4-math-fractions-2026.1` (identity `de256495ec6f72fe…`), cell `cell-g4-math-v1@1.1.0`, context `fa2a7e46b03a2d7e…`
 - Source: `GRADE-1-6/Math 1-6.pdf` (archive `82b95c17bf5b…`)
-- Provenance: AUTHORED_FIXTURE by curriculum-v2-assembler@1.0.0; prompt none@-; candidate `be0e56a0811cadba…`
+- Provenance: AUTHORED_FIXTURE by curriculum-v2-assembler@1.0.0; prompt none@-; candidate `3936f033a6359382…`
 - Strategy: STRUCTURED_PROBLEM_SOLVING — One garden problem drives both measures: the fence (perimeter) and the planted ground (area), so learners see why they differ.
 
 ## Objective alignment
@@ -26,7 +26,7 @@ Prerequisites:
 | 2 | What you will be able to do | OBJECTIVE / STATE_OBJECTIVE | obj9 | NONE | 11 | — | — | FULL_OFFLINE |
 | 3 | Around or inside? | INTERACTIVE_DIAGRAM / EXPLAIN_CONCEPT | obj9 | DIAGRAM_REVEAL | 17 | — | — | FULL_OFFLINE |
 | 4 | A square school garden | GUIDED_EXAMPLE / MODEL_WORKED_EXAMPLE | obj9 | NONE | 60 | — | — | FULL_OFFLINE |
-| 5 | Around or inside? | CHECK_UNDERSTANDING / ADDRESS_MISCONCEPTION | obj9 | SINGLE_CHOICE | 10 | — | FORMATIVE_OBSERVATION (PRACTICE): fence-job→obj9, seed-job→obj9 | FULL_OFFLINE |
+| 5 | Around or inside? | CHECK_UNDERSTANDING / CHECK_UNDERSTANDING | obj9 | SINGLE_CHOICE | 10 | — | FORMATIVE_OBSERVATION (PRACTICE): fence-job→obj9, seed-job→obj9 | FULL_OFFLINE |
 | 6 | Calculate both measures | PRACTICE / APPLY | obj9 | NUMERIC (fallback: FREE_RESPONSE) | 25 | — | FORMATIVE_OBSERVATION (PRACTICE): calculate-both→obj9 | FULL_OFFLINE |
 | 7 | Show what you know | MASTERY_CHECK / ASSESS_MASTERY | obj9 | ASSESSMENT_HANDOFF (fallback: PAPER_ACTIVITY) | 16 | —; prohibits basic-calculator | MASTERY_RESPONSE (QUIZ): ap-mastery→obj9 | FALLBACK_REQUIRED |
 | 8 | Key ideas | REVIEW / REVIEW | obj9 | NONE | 1 | — | — | FULL_OFFLINE |
@@ -118,8 +118,8 @@ Learner action: Answer the final questions.
 Answer each question. Your answers are checked by the school's learning system, not on this device.
 
 - Fallback (PAPER_ACTIVITY, objective preserved: true): Your teacher gives the same questions on paper and records your answers.
-- Accessibility: Final questions on perimeter and area, answered with keyboard or touch. · keyboard: Tab to each answer and press Space or type.
-- Offline (FALLBACK_REQUIRED): Answers wait on the device and are scored after reconnecting.
+- Accessibility: Final questions on perimeter and area, answered with keyboard or touch. · keyboard: Tab to each answer and press Space or type. · non-pointer: Without a device, the teacher reads each question and its choices aloud and records the spoken answer.
+- Offline (FALLBACK_REQUIRED): Answers given on a device are scored after reconnecting; without a device the teacher gives the same questions on paper.
 
 ### Key ideas (`review`)
 

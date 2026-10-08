@@ -60,7 +60,7 @@ the following fields:
 - interaction:
   - renderable: NONE, DIAGRAM_REVEAL, SINGLE_CHOICE, FREE_RESPONSE, LAB_LAUNCH, ASSESSMENT_HANDOFF
   - declared but not yet renderable: MULTI_SELECT, NUMERIC, MATCHING, ORDERING, DIAGRAM_LABELING, DRAG_DROP, SIMULATION_OBSERVATION
-- fallback (kind + content + objectivePreserved)
+- fallback: TEXT_WALKTHROUGH or PAPER_ACTIVITY render as text; FREE_RESPONSE renders as a real written-response input that still collects evidence; plus `objectivePreserved`
 - media intent: kind, `MEDIA_REQUIRED` / `MEDIA_OPTIONAL` / `TEXT_FALLBACK`, alt text, transcript. Never a URL.
 - tools requested and prohibited
 - expected observation (reviewer-only), hints, feedback, misconception refs
@@ -114,6 +114,28 @@ P2 status:
 8. Done: tools come from the canonical registry, and Phase A's list has a parity test.
 9. Done: `resolveToolAvailability` intersects the registry, grade context, flags, assessment prohibition and accommodations.
 10. Done: descriptive pedagogy metadata.
+
+## 4a. Independent review (Phase B)
+
+Three bounded reviewers ran before the PR: (1) curriculum governance + learning authority, (2) pedagogy + accessibility + offline, (3) runtime compatibility + learner secrecy. No P0. All P1 findings were fixed, with regression tests in `__tests__/curriculum-v2/review-fixes.test.ts`:
+
+- **Governance:** with provenance writers off, a create, update or upsert carrying native scene keys is refused. Legacy adoption of a native payload starts as DRAFT.
+- **Secrecy:**
+  - The lab observation form keeps its runtime shape (`field` / `inputType` / `choices`).
+  - Top-level lab and problem-set fields are type-checked.
+  - Answer, solution, mark-scheme and teacher sections are stripped at any heading level.
+  - The AI-literacy rubric is no longer spread to learners on the work route.
+  - A stored native artifact that puts a key in a non-formative scene fails closed, and governed item refs are re-picked.
+- **Pedagogy and accessibility:**
+  - A fallback reported as delivered is what the learner gets: FREE_RESPONSE fallbacks render as real inputs, LAB walkthroughs show the declared fallback, and required-media scenes always include their fallback.
+  - Each distractor keeps its own feedback (`optionFeedback`).
+  - Only evidence the runtime can collect counts.
+  - Fallbacks are checked per scenario: a paper activity needs a stated non-visual path for screen readers.
+  - Labs are checked against their reduced-motion, keyboard and 2D flags.
+  - Lessons are not packageable while a required asset is missing.
+  - The player only opens an APPROVED link to a RELEASED lab in an approved lesson.
+
+The legacy pseudo-lab `expectedObservation` and the simulation `explanation` / `guardianGuide` stay learner-visible by explicit decision: the legacy lesson UI presents them after the activity, and they are not assessment keys. Native Curriculum V2 keeps expected observations reviewer-only.
 
 ## 5. Validator coverage
 
@@ -218,3 +240,14 @@ It must keep two boundaries:
 - Assessment Player V2 isn't built. Mastery scenes carry governed item refs only.
 - The deliverability model reflects today's runtime and must be updated when renderers land.
 - The review package is Markdown. Recording decisions stays in the existing governance flow.
+- **Native lessons in production:**
+  - No student surface plays native lessons yet. The projection returns `lessonExperience`, but `LessonDeliveryClient` and the work route do not render it.
+  - `toLessonExperience` always labels the authority `CURRICULUM_V2_DRAFT`. After governed approval, the server boundary must derive the status from provenance lifecycle plus the pinned release identity. Until then, evidence stays raw: it fails closed.
+- **Writers off:** with provenance writers off, an edit that changes only non-payload fields of a native row (e.g. its title) is not revision-tracked. Payload edits are refused.
+- **Evidence ingestion:** `adaptEnvelope` has no production caller. Re-review its admission context when an ingestion route lands.
+- **Age and subject variation:**
+  - Word limits are the same for every age band.
+  - There is no NARRATION renderer, so narrated early-primary arcs block.
+  - `minLength` counts characters, which assumes typing.
+  - Reading lessons have no passage → question linkage in the contract.
+  - These are Phase C inputs.

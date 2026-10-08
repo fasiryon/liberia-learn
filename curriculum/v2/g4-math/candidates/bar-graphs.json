@@ -43,7 +43,7 @@
       "tools": { "requested": [], "prohibited": [] }, "hints": ["Read the top of each bar."], "misconceptionIds": ["reads-bar-width"],
       "evidence": { "kind": "FORMATIVE_OBSERVATION", "evidenceType": "PRACTICE", "responses": [{ "responseKey": "fruit-counts", "objectiveId": "moe-math-g4-s2-p6-geometry-and-statistics-obj6", "responseType": "MATCHES", "scaffoldLevel": "PARTIAL", "misconceptionId": "reads-bar-width" }] },
       "accessibility": { "textAlternative": "Match mango, banana, orange and pineapple to 9, 6, 4 and 3 using the bar graph.", "keyboardPath": "Choose each fruit with Tab, then its number from a list.", "reducedMotion": "NOT_APPLICABLE", "nonPointerAlternative": "Pick each fruit's count from a list with the keyboard instead of drawing lines." },
-      "offline": { "mode": "FULL_OFFLINE", "note": "Written matching works offline." }, "completion": "VIEWED",
+      "offline": { "mode": "FULL_OFFLINE", "note": "Written matching works offline." }, "completion": "ALL_RESPONSES_WRITTEN",
       "dependsOn": ["read-graph"]
     },
     {
@@ -92,8 +92,8 @@
       "interaction": { "kind": "ASSESSMENT_HANDOFF", "assessmentRequestId": "bg-mastery" },
       "tools": { "requested": [], "prohibited": [] }, "hints": [], "misconceptionIds": [],
       "evidence": { "kind": "MASTERY_RESPONSE", "evidenceType": "QUIZ", "responses": [{ "responseKey": "bg-mastery", "objectiveId": "moe-math-g4-s2-p6-geometry-and-statistics-obj6", "responseType": "ASSESSMENT_RESPONSE", "scaffoldLevel": "NONE" }] },
-      "accessibility": { "textAlternative": "Final questions reading a bar graph and finding a mode, with every graph described in text.", "keyboardPath": "Tab to each option and press Space.", "reducedMotion": "NOT_APPLICABLE" },
-      "offline": { "mode": "FALLBACK_REQUIRED", "note": "Answers wait on the device and are scored after reconnecting." },
+      "accessibility": { "textAlternative": "Final questions reading a bar graph and finding a mode, with every graph described in text.", "keyboardPath": "Tab to each option and press Space.", "reducedMotion": "NOT_APPLICABLE", "nonPointerAlternative": "Without a device, the teacher reads each question and its choices aloud and records the spoken answer." },
+      "offline": { "mode": "FALLBACK_REQUIRED", "note": "Answers given on a device are scored after reconnecting; without a device the teacher gives the same questions on paper." },
       "fallback": { "kind": "PAPER_ACTIVITY", "content": "Your teacher draws the graph on the board and records your answers on paper.", "objectivePreserved": true },
       "completion": "ALL_ANSWERED"
     }

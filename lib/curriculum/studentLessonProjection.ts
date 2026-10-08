@@ -115,17 +115,26 @@ const LEGACY_TEACHER_ONLY_HEADINGS = new Set([
  * teacher planning sections. Keep the usable learner sections while removing
  * known teacher-only or answer-bearing sections.
  */
+/** Answer- or teacher-bearing section titles, matched at any heading level (not only exact titles). */
+const TEACHER_OR_ANSWER_HEADING = /\b(answers?|answer key|solutions?|worked solutions?|mark(ing)? scheme|marking guide|rubric|scoring|teacher|facilitator)\b/i;
+
 function projectLegacyBody(value: unknown): string {
   const body = text(value);
   if (!body) return "";
 
   const lines = body.split(/\r?\n/);
-  let include = true;
+  // Excluded section: skipped until a heading at the same or a higher level.
+  let excludedLevel: number | null = null;
   const kept: string[] = [];
   for (const line of lines) {
-    const heading = line.match(/^##\s+(.+?)\s*$/)?.[1]?.trim().toLowerCase();
-    if (heading) include = !LEGACY_TEACHER_ONLY_HEADINGS.has(heading);
-    if (include) kept.push(line);
+    const match = line.match(/^(#{1,6})\s+(.+?)\s*$/);
+    if (match) {
+      const level = match[1].length;
+      const heading = match[2].trim().toLowerCase();
+      if (excludedLevel !== null && level <= excludedLevel) excludedLevel = null;
+      if (excludedLevel === null && (LEGACY_TEACHER_ONLY_HEADINGS.has(heading) || TEACHER_OR_ANSWER_HEADING.test(heading))) excludedLevel = level;
+    }
+    if (excludedLevel === null) kept.push(line);
   }
   return kept.join("\n").replace(/\n{3,}/g, "\n\n").trim();
 }
@@ -138,8 +147,8 @@ function safeProblemSets(value: unknown): unknown[] {
     const { id, sectionId, label, studentPrompt, workingSpace } = source;
     if (typeof studentPrompt !== "string" || !studentPrompt.trim()) return [];
     return [{
-      id,
-      sectionId,
+      id: typeof id === "string" || typeof id === "number" ? id : undefined,
+      sectionId: typeof sectionId === "string" ? sectionId : undefined,
       label: typeof label === "string" ? label : null,
       studentPrompt: studentPrompt.trim(),
       workingSpace: typeof workingSpace === "string" ? workingSpace : null,
@@ -155,7 +164,13 @@ function approvedOnly(value: unknown): LessonPayloadRecord[] {
   });
 }
 
-/** Pseudo-lab fields the learner lesson renders (no confusion signals, success rates or teacher guides). */
+/**
+ * Pseudo-lab fields the learner lesson renders (no confusion signals, success rates or teacher guides).
+ * `expectedObservation` and a simulation's `explanation`/`guardianGuide` are deliberately learner-visible
+ * in these legacy artifacts: the lesson UI presents them as "what you should see" and "how it works"
+ * after the activity. They are not assessment keys (assessment `explanation` is never projected). Native
+ * Curriculum V2 keeps expected observations reviewer-only.
+ */
 function safePseudoLabs(value: unknown): unknown[] {
   return approvedOnly(value).map((lab) => ({
     ...pickStrings(lab, ["id", "title", "objective", "labType", "difficulty", "resourceLevel", "safetyNotes", "expectedObservation", "fallbackMode", "fallbackIfNoMaterials", "guardianHomeVariant", "simulationType", "renderStatus"]),
@@ -208,7 +223,8 @@ function safeLabs(value: unknown): unknown[] {
     const observationForm = Array.isArray(lab.observationForm)
       ? lab.observationForm.flatMap((field) => {
           const source = record(field);
-          return source ? [pickStrings(source, ["id", "label", "prompt", "type", "unit"])] : [];
+          // The lab runtime keys answers by `field` and renders `inputType`/`choices` (LabSessionClient).
+          return source ? [{ ...pickStrings(source, ["id", "field", "label", "prompt", "type", "inputType", "unit"]), ...(stringList(source.choices) ? { choices: stringList(source.choices) } : {}) }] : [];
         })
       : [];
     const analysisQuestions = Array.isArray(lab.analysisQuestions)
@@ -217,36 +233,15 @@ function safeLabs(value: unknown): unknown[] {
           return projected ? [projected] : [];
         })
       : [];
-    const {
-      id,
-      title,
-      type,
-      durationMinutes,
-      subject,
-      gradeLevel,
-      labObjective,
-      materialsNeeded,
-      safetyNotes,
-      connectionToLesson,
-      offlineCapable,
-      virtualAlternative,
-    } = lab;
+    // Top-level lab fields are type-checked too: a nested object never rides along under a known key.
     return [{
-      id,
-      title,
-      type,
-      durationMinutes,
-      subject,
-      gradeLevel,
-      labObjective,
-      materialsNeeded,
-      safetyNotes,
+      ...pickStrings(lab, ["id", "title", "type", "subject", "labObjective", "safetyNotes", "connectionToLesson", "virtualAlternative"]),
+      ...pickNumbers(lab, ["durationMinutes", "gradeLevel"]),
+      ...pickBooleans(lab, ["offlineCapable"]),
+      ...(stringList(lab.materialsNeeded) ? { materialsNeeded: stringList(lab.materialsNeeded) } : {}),
       procedure,
       observationForm,
       analysisQuestions,
-      connectionToLesson,
-      offlineCapable,
-      virtualAlternative,
     }];
   });
 }
@@ -399,6 +394,8 @@ function projectNativeLesson(source: LessonPayloadRecord): LessonPayloadRecord {
   try {
     const lessonExperience = toLessonExperience(source[CURRICULUM_V2_PAYLOAD_KEY] as CurriculumLessonV2);
     validateLessonExperience(lessonExperience);
+    // Re-check the stored artifact: an instant-feedback key may only exist in a formative scene.
+    if (lessonExperience.scenes.some((scene) => scene.interaction.kind === "MULTIPLE_CHOICE" && scene.type !== "CHECK_UNDERSTANDING" && scene.type !== "PRACTICE" && scene.type !== "GUIDED_EXAMPLE")) throw new Error("native_answer_key_outside_formative_scene");
     return { title: lessonExperience.title, grade: lessonExperience.grade, subject: lessonExperience.subject, lessonExperience, body: "", body_standard: "", body_block: "", objectives: lessonExperience.objectives.map((objective) => objective.statement), studentReady: true };
   } catch {
     return { title: typeof source.title === "string" ? source.title : undefined, body: "", body_standard: "", body_block: "", objectives: [], studentReady: false };

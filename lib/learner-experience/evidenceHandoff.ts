@@ -90,7 +90,7 @@ export function buildEvidenceEnvelope(experience: LessonExperience, progress: Ex
     } else if (scene.evidence.kind === "MASTERY_RESPONSE" && scene.interaction.kind === "ASSESSMENT_HANDOFF") {
       const { assessment } = scene.interaction;
       observations.push({ ...base, observationId: id, activity: { activityId: assessment.assessmentId, activityVersion: assessment.assessmentVersion }, payload: { player: assessment.player, responses: assessment.items.map((item) => ({ itemId: item.itemId, itemVersion: item.itemVersion, selectedAnswerIndex: responses[item.itemId] ?? null })) } });
-    } else if (scene.evidence.kind === "REFLECTION") {
+    } else if (scene.evidence.kind === "REFLECTION" || (scene.evidence.kind === "FORMATIVE_OBSERVATION" && scene.interaction.kind === "FREE_RESPONSE")) {
       observations.push({ ...base, observationId: id, activity, payload: { responses: { ...responses } } });
     }
   }

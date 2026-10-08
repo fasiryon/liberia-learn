@@ -29,6 +29,8 @@ vi.mock("@/lib/db", () => ({
       let stagedStatus = durableStatus;
       const tx = {
         curriculumContent: {
+          // Legacy (non-native) payload: the Curriculum V2 approval gate reads it in compatibility mode.
+          findUnique: vi.fn(async () => ({ payload: {} })),
           update: mockUpdate.mockImplementationOnce(async (args: any) => {
             stagedStatus = args.data.status;
             return args.data;

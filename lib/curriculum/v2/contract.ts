@@ -63,8 +63,12 @@ export type InteractionKind = (typeof INTERACTION_KINDS)[number];
 export const OFFLINE_MODES = ["FULL_OFFLINE", "CACHED_ASSET_REQUIRED", "ONLINE_ENHANCED", "FALLBACK_REQUIRED"] as const;
 export type OfflineMode = (typeof OFFLINE_MODES)[number];
 
-/** A fallback is a renderable experience, not a sentence: it must still teach the objective. */
-export const FALLBACK_KINDS = ["TEXT_WALKTHROUGH", "PAPER_ACTIVITY", "DIAGRAM_REVEAL", "SINGLE_CHOICE", "FREE_RESPONSE"] as const;
+/**
+ * A fallback is an experience the player renders, not a sentence: TEXT_WALKTHROUGH and
+ * PAPER_ACTIVITY render as text the learner works through; FREE_RESPONSE renders as a real
+ * written-response input (so a fallback can still collect evidence). It must still teach the objective.
+ */
+export const FALLBACK_KINDS = ["TEXT_WALKTHROUGH", "PAPER_ACTIVITY", "FREE_RESPONSE"] as const;
 export type FallbackKind = (typeof FALLBACK_KINDS)[number];
 
 export const MEDIA_KINDS = ["DIAGRAM", "IMAGE", "MAP", "TIMELINE", "ANIMATION", "NARRATION", "VIDEO", "INTERACTIVE_MODEL"] as const;

@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Check, ChevronLeft, ChevronRight, CircleHelp, Flag, Wrench } from "lucide-react";
 import type { AgeBand, LessonExperience, Scene } from "@/lib/learner-experience/types";
-import type { LearningExperienceLink } from "@/lib/learner-experience/links";
+import { isLinkStudentVisible, type LearningExperienceLink } from "@/lib/learner-experience/links";
 import type { LabExperience } from "@/lib/learner-experience/labExperience";
 import type { SceneToolView } from "@/lib/learner-experience/tools";
 import { advance, applyLabReturn, chooseLabFallback, goToScene, initialProgress, isSceneComplete, markLabLaunched, pendingLabSceneId, percentComplete, recordResponse, restoreProgress, retreat, revealStep, sceneIndexOf, type ExperienceProgress } from "@/lib/learner-experience/progress";
@@ -52,9 +52,14 @@ export type LessonPlayerV2Props = {
   /** From the URL after a lab return: the scene to restore. */
   returnSceneId: string | null;
   ageBand?: AgeBand;
+  /**
+   * STUDENT (default): a lab opens only for an APPROVED link to a RELEASED lab in an approved lesson;
+   * anything else shows the scene's text walkthrough. INTERNAL_PREVIEW is for dev-only review routes.
+   */
+  linkPolicy?: "STUDENT" | "INTERNAL_PREVIEW";
 };
 
-export function LessonPlayerV2({ experience, links, labs, toolsByScene, basePath, exitHref, returnSceneId, ageBand }: LessonPlayerV2Props) {
+export function LessonPlayerV2({ experience, links, labs, toolsByScene, basePath, exitHref, returnSceneId, ageBand, linkPolicy = "STUDENT" }: LessonPlayerV2Props) {
   const router = useRouter();
   const online = useOnline();
   const band = ageBand ?? experience.ageBand;
@@ -122,7 +127,9 @@ export function LessonPlayerV2({ experience, links, labs, toolsByScene, basePath
   const complete = progress ? isSceneComplete(scene, progress) : false;
   const isLast = index === experience.scenes.length - 1;
   const furthest = progress ? Math.max(index, ...progress.completedSceneIds.map((id) => experience.scenes.findIndex((candidate) => candidate.id === id) + 1)) : 0;
-  const link = scene.interaction.kind === "LAB_LAUNCH" ? links.find((candidate) => candidate.linkId === (scene.interaction as { linkId: string }).linkId) ?? null : null;
+  const placedLink = scene.interaction.kind === "LAB_LAUNCH" ? links.find((candidate) => candidate.linkId === (scene.interaction as { linkId: string }).linkId) ?? null : null;
+  const placedLab = placedLink ? labs[placedLink.experience.labId] ?? null : null;
+  const link = placedLink && placedLab && (linkPolicy === "INTERNAL_PREVIEW" || isLinkStudentVisible(placedLink, experience, placedLab)) ? placedLink : null;
   const objectives = useMemo(() => experience.objectives.filter((objective) => scene.objectiveIds.includes(objective.id)), [experience.objectives, scene.objectiveIds]);
   const tools = toolsByScene[scene.id] ?? [];
 

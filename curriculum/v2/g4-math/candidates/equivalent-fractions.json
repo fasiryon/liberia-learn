@@ -118,7 +118,7 @@
       "tools": { "requested": [], "prohibited": [] }, "hints": [], "misconceptionIds": [],
       "evidence": { "kind": "MASTERY_RESPONSE", "evidenceType": "QUIZ", "responses": [{ "responseKey": "ef-mastery", "objectiveId": "moe-math-g4-s1-p3-number-theory-and-fraction-obj5", "responseType": "ASSESSMENT_RESPONSE", "scaffoldLevel": "NONE" }] },
       "accessibility": { "textAlternative": "A final multiple-choice question on equivalent fractions, answered with keyboard or touch.", "keyboardPath": "Tab to each option and press Space.", "reducedMotion": "NOT_APPLICABLE" },
-      "offline": { "mode": "FALLBACK_REQUIRED", "note": "The answer waits on the device and is scored after reconnecting." },
+      "offline": { "mode": "FALLBACK_REQUIRED", "note": "An answer given on a device is scored after reconnecting; without a device the teacher gives the same question on paper." },
       "fallback": { "kind": "PAPER_ACTIVITY", "content": "Your teacher gives the same question on paper and records your answer.", "objectivePreserved": true },
       "completion": "ALL_ANSWERED"
     }

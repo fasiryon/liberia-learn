@@ -31,7 +31,7 @@ afterEach(() => { act(() => root?.unmount()); root = null; host.remove(); });
 async function render(returnSceneId: string | null = null) {
   await act(async () => {
     root = createRoot(host);
-    root.render(<LessonPlayerV2 experience={experience} links={links} labs={labs} toolsByScene={{}} basePath="/lab-review/experience" exitHref="/student/learn" returnSceneId={returnSceneId} />);
+    root.render(<LessonPlayerV2 experience={experience} links={links} labs={labs} toolsByScene={{}} basePath="/lab-review/experience" exitHref="/student/learn" returnSceneId={returnSceneId} linkPolicy="INTERNAL_PREVIEW" />);
   });
   await act(async () => { await new Promise((resolve) => setTimeout(resolve, 0)); });
 }

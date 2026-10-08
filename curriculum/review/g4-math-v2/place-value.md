@@ -2,10 +2,10 @@
 
 - Lesson: `cv2-math-g4-s1-p1-numeration-addition-and-subtraction-obj1` v0.1.0 · Grade 4 MATH · unit `g4-math-u1-numeration-add-subtract`
 - Pipeline status: **REVIEW_BLOCKED** · governance: DRAFT, human review required, not published, MOE approval not claimed
-- Artifact hash: `38f92031223a2247c764a1d05b2fa8236fa8cf12fe0529000b3123f7638a4d1b` (approve this exact revision only)
+- Artifact hash: `0f5b179affa6be9c64f0ed39f085ff90c2889107a6669f949bca3557bbdd0ddd` (approve this exact revision only)
 - Pinned context: release `lr-moe-g4-math-fractions-2026.1` (identity `de256495ec6f72fe…`), cell `cell-g4-math-v1@1.1.0`, context `bd7482800ecb0978…`
 - Source: `GRADE-1-6/Math 1-6.pdf` (archive `82b95c17bf5b…`)
-- Provenance: AUTHORED_FIXTURE by curriculum-v2-assembler@1.0.0; prompt none@-; candidate `014171acf19dce49…`
+- Provenance: AUTHORED_FIXTURE by curriculum-v2-assembler@1.0.0; prompt none@-; candidate `5764595c06829c95…`
 - Strategy: CONCRETE_PICTORIAL_ABSTRACT — Learners build numbers with a paper place-value chart before reading and writing them in words and expanded form.
 
 ## Objective alignment
@@ -130,8 +130,8 @@ Learner action: Answer the final questions.
 Answer each question. Your answers are checked by the school's learning system, not on this device.
 
 - Fallback (PAPER_ACTIVITY, objective preserved: true): Your teacher gives the same questions on paper and records your answers.
-- Accessibility: Final questions on place value, read and answered with the keyboard or touch. · keyboard: Tab to each option and press Space.
-- Offline (FALLBACK_REQUIRED): Answers wait on the device and are scored after reconnecting.
+- Accessibility: Final questions on place value, read and answered with the keyboard or touch. · keyboard: Tab to each option and press Space. · non-pointer: Without a device, the teacher reads each question and its choices aloud and records the learner's spoken answer.
+- Offline (FALLBACK_REQUIRED): Answers given on a device are scored after reconnecting; without a device the teacher gives the same questions on paper.
 
 ## Misconceptions
 

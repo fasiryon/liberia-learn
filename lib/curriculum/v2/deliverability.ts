@@ -17,8 +17,8 @@ export type RuntimeScenario = (typeof RUNTIME_SCENARIOS)[number];
 
 /** Interactions Lesson Player V2 renders today (components/learner-experience). */
 export const RENDERABLE_INTERACTIONS: ReadonlySet<InteractionKind> = new Set(["NONE", "DIAGRAM_REVEAL", "SINGLE_CHOICE", "FREE_RESPONSE", "LAB_LAUNCH", "ASSESSMENT_HANDOFF"]);
-/** Fallbacks it can render: text scenes, the diagram reveal, formative choice and free response. */
-export const RENDERABLE_FALLBACKS: ReadonlySet<FallbackKind> = new Set(["TEXT_WALKTHROUGH", "PAPER_ACTIVITY", "DIAGRAM_REVEAL", "SINGLE_CHOICE", "FREE_RESPONSE"]);
+/** Fallbacks it can render (compat.ts): text walkthroughs, paper activities, and a written-response input. */
+export const RENDERABLE_FALLBACKS: ReadonlySet<FallbackKind> = new Set(["TEXT_WALKTHROUGH", "PAPER_ACTIVITY", "FREE_RESPONSE"]);
 /** The player has no media renderer yet, and generation never supplies asset URLs. */
 export const RENDERABLE_MEDIA_KINDS: ReadonlySet<string> = new Set();
 const POINTER_INTERACTIONS = new Set<InteractionKind>(["DRAG_DROP", "DIAGRAM_LABELING", "MATCHING", "ORDERING"]);
@@ -28,17 +28,23 @@ export type Delivery = "PRIMARY" | "FALLBACK" | "NOT_DELIVERABLE";
 export type SceneDeliverability = Readonly<{ sceneId: string; byScenario: Readonly<Record<RuntimeScenario, Delivery>>; reasons: readonly string[] }>;
 
 /** What a LAB scene's lab supports, resolved from the lab registry by the caller. */
-export type LabRuntime = Readonly<{ lab: LabExperience | null; studentEligible: boolean; keyboard: boolean; offline: boolean; hasFallback2D: boolean }>;
+export type LabRuntime = Readonly<{ lab: LabExperience | null; studentEligible: boolean; keyboard: boolean; reducedMotion: boolean; offline: boolean; hasFallback2D: boolean }>;
 
-function usableFallback(scene: CandidateScene): boolean {
-  return !!scene.fallback && scene.fallback.objectivePreserved && RENDERABLE_FALLBACKS.has(scene.fallback.kind);
+/**
+ * Whether the declared fallback itself works in this scenario. A paper activity (drawing, building,
+ * handling objects) is not automatically usable with a screen reader: it needs a stated non-visual path.
+ */
+function usableFallback(scene: CandidateScene, scenario: RuntimeScenario): boolean {
+  if (!scene.fallback || !scene.fallback.objectivePreserved || !RENDERABLE_FALLBACKS.has(scene.fallback.kind)) return false;
+  if (scene.fallback.kind === "PAPER_ACTIVITY" && scenario === "SCREEN_READER" && !scene.accessibility.nonPointerAlternative) return false;
+  return true;
 }
 
 export function sceneDeliverability(scene: CandidateScene, lab: LabRuntime | null, assessmentItemsBound: boolean): SceneDeliverability {
   const reasons: string[] = [];
-  const fallback = usableFallback(scene);
   const byScenario = {} as Record<RuntimeScenario, Delivery>;
   for (const scenario of RUNTIME_SCENARIOS) {
+    const fallback = usableFallback(scene, scenario);
     const needs: string[] = [];
     const kind = scene.interaction.kind;
     if (!RENDERABLE_INTERACTIONS.has(kind)) needs.push(`interaction_${kind}_not_renderable`);
@@ -48,6 +54,7 @@ export function sceneDeliverability(scene: CandidateScene, lab: LabRuntime | nul
       if (!RENDERABLE_MEDIA_KINDS.has(media.kind)) needs.push(`media_${media.kind}_not_renderable`);
       if (scenario === "VIDEO_UNAVAILABLE" && media.kind === "VIDEO") needs.push("video_unavailable");
       if (scenario === "REDUCED_MOTION" && MOTION_MEDIA.has(media.kind) && scene.accessibility.reducedMotion !== "STATIC_EQUIVALENT") needs.push("motion_without_static_equivalent");
+      if (scenario === "LOW_MEMORY" && (media.kind === "VIDEO" || media.kind === "INTERACTIVE_MODEL" || media.kind === "ANIMATION")) needs.push(`low_memory_${media.kind}`);
       if ((media.kind === "VIDEO" || media.kind === "NARRATION") && !media.transcript && (scenario === "SCREEN_READER" || scenario === "DEFAULT")) needs.push("audio_without_transcript");
     }
     if (scenario === "OFFLINE" && (scene.offline.mode === "ONLINE_ENHANCED" || scene.offline.mode === "FALLBACK_REQUIRED" || scene.offline.mode === "CACHED_ASSET_REQUIRED")) needs.push(`offline_${scene.offline.mode}`);
@@ -58,6 +65,9 @@ export function sceneDeliverability(scene: CandidateScene, lab: LabRuntime | nul
         if (scenario === "OFFLINE" && !lab.offline) needs.push("lab_not_offline");
         if ((scenario === "KEYBOARD_ONLY" || scenario === "SCREEN_READER") && !lab.keyboard) needs.push("lab_not_keyboard_operable");
         if (scenario === "WEBGL_UNAVAILABLE" && !lab.hasFallback2D) needs.push("lab_no_2d_fallback");
+        if (scenario === "REDUCED_MOTION" && !lab.reducedMotion) needs.push("lab_not_reduced_motion_safe");
+        if (scenario === "POINTER_DRAG_UNAVAILABLE" && !lab.keyboard) needs.push("lab_requires_pointer");
+        if (scenario === "LOW_MEMORY" && !lab.hasFallback2D) needs.push("lab_no_low_resource_path");
       }
     }
     if (kind === "ASSESSMENT_HANDOFF" && !assessmentItemsBound) needs.push("assessment_items_not_governed");
