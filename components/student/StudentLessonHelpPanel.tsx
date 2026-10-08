@@ -7,6 +7,8 @@ import { STUDENT_LESSON_HELP_SUGGESTIONS } from "@/lib/ai/studentLessonSupport";
 type TutorMessage = {
   role: "student" | "assistant";
   text: string;
+  sources?: Array<{ id: string; title: string; sourceLabel: string | null }>;
+  generatedPractice?: boolean;
 };
 
 function TypingDots() {
@@ -66,7 +68,7 @@ export function StudentLessonHelpPanel({
         className="absolute inset-0 cursor-default"
         onClick={onClose}
       />
-      <section className="absolute inset-x-0 bottom-0 flex max-h-[88vh] flex-col rounded-t-[2rem] border border-[var(--ll-border)] bg-[var(--ll-bg)] text-[var(--ll-text)] shadow-none shadow-black/50 sm:inset-y-0 sm:right-0 sm:left-auto sm:h-full sm:max-h-none sm:w-[26rem] sm:rounded-none sm:rounded-l-[2rem]">
+      <section role="dialog" aria-modal="true" aria-label={`Lesson help: ${lessonTitle}`} className="absolute inset-x-0 bottom-0 flex max-h-[88vh] flex-col rounded-t-[2rem] border border-[var(--ll-border)] bg-[var(--ll-bg)] text-[var(--ll-text)] shadow-none shadow-black/50 sm:inset-y-0 sm:right-0 sm:left-auto sm:h-full sm:max-h-none sm:w-[26rem] sm:rounded-none sm:rounded-l-[2rem]">
         <header className="border-b border-[var(--ll-border)] px-4 py-4 sm:px-5">
           <div className="mb-3 flex items-start justify-between gap-3">
             <div>
@@ -118,7 +120,14 @@ export function StudentLessonHelpPanel({
                       : "bg-[var(--ll-bg)] text-[var(--ll-text)]"
                   }`}
                 >
-                  {message.text}
+                  {message.generatedPractice ? <p className="mb-2 text-xs font-semibold">Generated practice (not an assessment)</p> : null}
+                  <p className="whitespace-pre-wrap">{message.text}</p>
+                  {message.sources?.length ? (
+                    <details className="mt-3 text-xs">
+                      <summary className="cursor-pointer">What this answer used</summary>
+                      <ul className="mt-2 space-y-1">{message.sources.slice(0, 3).map((source) => <li key={source.id}>{source.sourceLabel}: {source.title}</li>)}</ul>
+                    </details>
+                  ) : null}
                 </div>
               ))}
               {loading ? (
@@ -140,6 +149,7 @@ export function StudentLessonHelpPanel({
           <textarea
             value={question}
             onChange={(event) => onQuestionChange(event.target.value)}
+            aria-label="Question about this lesson"
             placeholder="Ask about this lesson in your own words"
             className="min-h-28 w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)] px-4 py-3 text-base leading-6 text-[var(--ll-text)] outline-none transition-colors focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400/60"
           />

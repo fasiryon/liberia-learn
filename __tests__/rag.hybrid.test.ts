@@ -366,7 +366,7 @@ describe("hybridRetrieve", () => {
 
 // ─── Integration: grounded answer service uses hybridRetrieve ─────────────
 describe("Integration: groundedAnswerService uses hybridRetrieve", () => {
-  it("answerGroundedQuestion calls hybridRetrieve when no pre-fetched chunks", async () => {
+  it("staff queries use hybridRetrieve when no pre-fetched chunks", async () => {
     // Spy on hybridRetrieve at the module level to verify it gets called.
     const spy = vi
       .spyOn(hybridRetrievalModule, "hybridRetrieve")
@@ -380,7 +380,7 @@ describe("Integration: groundedAnswerService uses hybridRetrieve", () => {
     await answerGroundedQuestion({
       question: "What is a fraction?",
       schoolId: "school-1",
-      role: "STUDENT",
+      role: "TEACHER",
     }).catch(() => {
       // Ignore downstream errors — we only care that hybridRetrieve was called.
     });

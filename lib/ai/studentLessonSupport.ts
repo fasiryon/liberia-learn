@@ -1,5 +1,7 @@
 export const STUDENT_LESSON_HELP_SUGGESTIONS = [
   "Explain this lesson in simpler words",
+  "Explain differently",
+  "Generate practice",
   "Give me a real-life example of this",
   "What should I know before this lesson?",
 ] as const;

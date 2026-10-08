@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { tutorActionForQuestion, type TutorIdentity, type TutorAction } from "@/lib/ai/tutor/contextContract";
 import { usePathname } from "next/navigation";
+import { studentTutorIdentityForPath } from "@/lib/ai/tutor/routeContext";
 import type { AssistantRoleConfig } from "@/lib/ai/rag/assistantAccess";
 import {
   getAssistantActionEndpoint,
@@ -29,6 +31,7 @@ type QueryResult = {
   hadFallback: boolean;
   isWeakGrounding: boolean;
   actions: AssistantAction[];
+  tutorContext?: TutorIdentity;
 };
 
 type Message = {
@@ -218,6 +221,29 @@ export default function GlobalAssistantShell({
   const [mode, setMode] = useState<RetrievalMode>(roleConfig.defaultMode);
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [loading, setLoading] = useState(false);
+  const [lessonContext, setLessonContext] = useState<{ pathname: string; identity: TutorIdentity } | null>(null);
+  const activeTutorIdentity = studentTutorIdentityForPath(pathname, lessonContext);
+  const conversationPathRef = useRef(pathname);
+  useEffect(() => {
+    if (conversationPathRef.current === pathname) return;
+    conversationPathRef.current = pathname;
+    if (isStudent) {
+      setMessages([]);
+      setPendingConfirmation(null);
+      setQuestion("");
+    }
+  }, [pathname, isStudent]);
+  useEffect(() => {
+    const onContext = (event: Event) => {
+      const detail = (event as CustomEvent<{ pathname: string; identity: TutorIdentity }>).detail;
+      if (detail?.pathname === pathname) setLessonContext(detail);
+    };
+    window.addEventListener("liberialearn:tutor-context", onContext);
+    // The page may mount before the shell. Read only identity attributes, not lesson text.
+    const marker = document.querySelector<HTMLElement>("[data-tutor-lesson-id]");
+    if (marker && marker.dataset.tutorLessonId === studentTutorIdentityForPath(pathname)?.lessonId) setLessonContext({ pathname, identity: { lessonId: marker.dataset.tutorLessonId, lessonVersion: marker.dataset.tutorLessonVersion } });
+    return () => window.removeEventListener("liberialearn:tutor-context", onContext);
+  }, [pathname]);
   const [pendingConfirmation, setPendingConfirmation] =
     useState<PendingActionConfirmation | null>(initialPendingConfirmation);
   const [selectedGuardianLearnerId, setSelectedGuardianLearnerId] = useState(
@@ -299,6 +325,7 @@ export default function GlobalAssistantShell({
     [pathname, roleConfig.role]
   );
   const quickPrompts = useMemo(() => {
+    if (isStudent) return ["Explain this topic", "Explain differently", "Generate practice"];
     if (contextMode === "governance") {
       return [
         "Summarize the policy implications here",
@@ -320,7 +347,7 @@ export default function GlobalAssistantShell({
       "Generate lesson plan",
       "Help student understand",
     ];
-  }, [contextMode]);
+  }, [contextMode, isStudent]);
 
   const selectedGuardianLearner = useMemo(
     () =>
@@ -378,9 +405,9 @@ export default function GlobalAssistantShell({
     setSelectedScopedSubject(scopedSubjectOptions[0] ?? "");
   }, [isGuardian, isStudent, scopedSubjectOptions, selectedScopedSubject]);
 
-  async function submitQuestion(questionOverride?: string) {
+  async function submitQuestion(questionOverride?: string, identityOverride?: TutorIdentity, actionOverride?: TutorAction, focusQuestion?: string) {
     const trimmedQuestion = (questionOverride ?? question).trim();
-    if (!trimmedQuestion || loading) {
+    if (!trimmedQuestion || loading || (isStudent && conversationPathRef.current !== pathname)) {
       return;
     }
 
@@ -435,11 +462,14 @@ export default function GlobalAssistantShell({
     setLoading(true);
 
     try {
+      if (!navigator.onLine) throw new Error("Tutor help is unavailable offline. Reconnect to ask about your lesson.");
       const response = await fetch("/api/rag/query", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           question: trimmedQuestion,
+          ...(focusQuestion ? { focusQuestion } : {}),
+          ...(isStudent ? { tutorContext: identityOverride ?? activeTutorIdentity, tutorAction: actionOverride ?? tutorActionForQuestion(trimmedQuestion) } : {}),
           pathname,
           role,
           subject: resolvedSubject,
@@ -495,10 +525,15 @@ export default function GlobalAssistantShell({
   }
 
   async function executeAction(messageId: string, action: AssistantAction) {
-    if (loading) {
+    if (loading || (isStudent && conversationPathRef.current !== pathname)) {
       return;
     }
 
+    if (isStudent && (action.type === "EXPLAIN_DIFFERENTLY" || action.type === "GENERATE_PRACTICE")) {
+      setPendingConfirmation(null);
+      await submitQuestion(action.type === "EXPLAIN_DIFFERENTLY" ? buildExplainDifferentlyQuestion(action) : "Generate a practice question for this same concept", action.payload.tutorContext ?? {}, action.type === "GENERATE_PRACTICE" ? "practice" : "explain_differently", action.payload.question);
+      return;
+    }
     if (action.type === "EXPLAIN_DIFFERENTLY") {
       setPendingConfirmation(null);
       await submitQuestion(buildExplainDifferentlyQuestion(action));
@@ -560,7 +595,8 @@ export default function GlobalAssistantShell({
     }
   }
 
-  if (pathname === "/student/learn") return null;
+  // Lesson pages own the lesson-help panel; avoid two competing tutors.
+  if (pathname === "/student/learn" || /^\/student\/lessons\//.test(pathname)) return null;
 
   return (
     <div
@@ -768,7 +804,7 @@ export default function GlobalAssistantShell({
                         <div className="flex items-center justify-between gap-3">
                           <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--ll-yellow)]">
                             {message.result.isWeakGrounding
-                              ? "Weak Grounding"
+                              ? (isStudent ? "More lesson context needed" : "Limited curriculum grounding")
                               : message.result.retrievalWeak
                                 ? "Weak Retrieval"
                                 : "Grounded Answer"}
@@ -780,15 +816,16 @@ export default function GlobalAssistantShell({
                         </div>
                         {message.result.isWeakGrounding ? (
                           <p className="mt-2 text-xs font-medium text-[var(--ll-yellow)]">
-                            Limited curriculum grounding
+                            {isStudent ? "Open your lesson or ask your teacher for help with this part." : "Only limited approved sources were found for this question."}
                           </p>
                         ) : null}
                         <p className="mt-3 whitespace-pre-wrap leading-7 text-[var(--ll-text)]">
                           {message.result.answer}
                         </p>
                         {message.result.sources.length > 0 ? (
-                          <div className="mt-4 space-y-2">
-                            {message.result.sources.map((source) => (
+                          <details className="mt-4 space-y-2">
+                            <summary className="cursor-pointer text-xs">What this answer used</summary>
+                            {(isStudent ? message.result.sources.slice(0, 3) : message.result.sources).map((source) => (
                               <div
                                 key={source.id}
                                 className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 px-3 py-3"
@@ -802,15 +839,15 @@ export default function GlobalAssistantShell({
                                       {source.title}
                                     </p>
                                   </div>
-                                  {source.groundingStrength ? (
+                                  {source.groundingStrength && !isStudent ? (
                                     <span className="text-[10px] uppercase tracking-[0.16em] text-[var(--ll-text-faint)]">
                                       {source.groundingStrength}
                                     </span>
                                   ) : null}
                                 </div>
                                 <p className="mt-1 text-[11px] uppercase tracking-[0.16em] text-[var(--ll-text-faint)]">
-                                  {source.sourceType}
-                                  {source.sourceLabel
+                                  {isStudent ? source.sourceLabel : source.sourceType}
+                                  {!isStudent && source.sourceLabel
                                     ? ` | ${source.sourceLabel}`
                                     : ""}
                                 </p>
@@ -819,7 +856,7 @@ export default function GlobalAssistantShell({
                                 </p>
                               </div>
                             ))}
-                          </div>
+                          </details>
                         ) : null}
                         {message.result.actions.length > 0 ? (
                           <div className="mt-4 flex flex-wrap gap-2">
