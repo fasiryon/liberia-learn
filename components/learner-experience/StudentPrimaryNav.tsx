@@ -10,7 +10,16 @@ const ICONS: Record<PrimaryDestination, typeof BookOpen> = { TODAY: CalendarChec
  * A bottom bar on phones, a top bar on wider screens. Focused lesson and lab
  * players hide it and keep their own way back.
  */
-export function StudentPrimaryNav({ active }: { active: PrimaryDestination | null }) {
+export function StudentPrimaryNav({ active, variant }: { active: PrimaryDestination | null; variant?: "rail" }) {
+  if (variant === "rail") return <>
+    <ReserveBottomBar height="calc(5.5rem + env(safe-area-inset-bottom, 0px))" query="(max-width: 767px)" />
+    <nav aria-label="Student" className="pdv2-nav"><ul>{STUDENT_PRIMARY_NAV.map((item) => {
+      const Icon = ICONS[item.id];
+      return <li key={item.id}><Link href={item.href} aria-current={active === item.id ? "page" : undefined}>
+        <Icon size={22} aria-hidden="true" /><span>{item.label}</span><span className="pdv2-nav-arrow" aria-hidden="true">→</span>
+      </Link></li>;
+    })}</ul></nav>
+  </>;
   return (
     <>
       <ReserveBottomBar height="calc(3.5rem + env(safe-area-inset-bottom, 0px))" />

@@ -1,0 +1,177 @@
+{
+  "results": [
+    {
+      "grade": 2,
+      "width": 320,
+      "overflow": false,
+      "primaryTarget": {
+        "x": 32,
+        "y": 473.453125,
+        "width": 134.328125,
+        "height": 56
+      },
+      "firstDueTarget": {
+        "x": 16,
+        "y": 579.84375,
+        "width": 288,
+        "height": 56
+      }
+    },
+    {
+      "grade": 2,
+      "width": 360,
+      "overflow": false,
+      "primaryTarget": {
+        "x": 32,
+        "y": 440.953125,
+        "width": 174.328125,
+        "height": 56
+      },
+      "firstDueTarget": {
+        "x": 16,
+        "y": 547.34375,
+        "width": 328,
+        "height": 56
+      }
+    },
+    {
+      "grade": 2,
+      "width": 390,
+      "overflow": false,
+      "primaryTarget": {
+        "x": 32,
+        "y": 440.953125,
+        "width": 204.328125,
+        "height": 56
+      },
+      "firstDueTarget": {
+        "x": 16,
+        "y": 547.34375,
+        "width": 358,
+        "height": 56
+      }
+    },
+    {
+      "grade": 2,
+      "width": 768,
+      "overflow": false,
+      "primaryTarget": {
+        "x": 276,
+        "y": 320.578125,
+        "width": 118.171875,
+        "height": 56
+      },
+      "firstDueTarget": {
+        "x": 250,
+        "y": 444.96875,
+        "width": 486,
+        "height": 56
+      }
+    },
+    {
+      "grade": 2,
+      "width": 1440,
+      "overflow": false,
+      "primaryTarget": {
+        "x": 296,
+        "y": 308.5625,
+        "width": 118.171875,
+        "height": 56
+      },
+      "firstDueTarget": {
+        "x": 270,
+        "y": 432.953125,
+        "width": 1138,
+        "height": 56
+      }
+    },
+    {
+      "grade": 6,
+      "width": 320,
+      "overflow": false,
+      "primaryTarget": {
+        "x": 32,
+        "y": 451.046875,
+        "width": 256,
+        "height": 48
+      },
+      "firstDueTarget": {
+        "x": 16,
+        "y": 605.4375,
+        "width": 288,
+        "height": 48
+      }
+    },
+    {
+      "grade": 6,
+      "width": 360,
+      "overflow": false,
+      "primaryTarget": {
+        "x": 32,
+        "y": 418.546875,
+        "width": 296,
+        "height": 48
+      },
+      "firstDueTarget": {
+        "x": 16,
+        "y": 572.9375,
+        "width": 328,
+        "height": 48
+      }
+    },
+    {
+      "grade": 6,
+      "width": 390,
+      "overflow": false,
+      "primaryTarget": {
+        "x": 32,
+        "y": 418.546875,
+        "width": 204.328125,
+        "height": 48
+      },
+      "firstDueTarget": {
+        "x": 16,
+        "y": 516.9375,
+        "width": 358,
+        "height": 48
+      }
+    },
+    {
+      "grade": 6,
+      "width": 768,
+      "overflow": false,
+      "primaryTarget": {
+        "x": 276,
+        "y": 314.953125,
+        "width": 182.015625,
+        "height": 48
+      },
+      "firstDueTarget": {
+        "x": 250,
+        "y": 431.34375,
+        "width": 486,
+        "height": 48
+      }
+    },
+    {
+      "grade": 6,
+      "width": 1440,
+      "overflow": false,
+      "primaryTarget": {
+        "x": 296,
+        "y": 305.359375,
+        "width": 182.015625,
+        "height": 48
+      },
+      "firstDueTarget": {
+        "x": 270,
+        "y": 421.75,
+        "width": 1138,
+        "height": 48
+      }
+    }
+  ],
+  "errors": [],
+  "axe": [],
+  "caveat": "Production components in explicit fixture harness; server destination/auth tests separate. No user study or real phone certification."
+}

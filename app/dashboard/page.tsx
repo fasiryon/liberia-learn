@@ -35,6 +35,7 @@ export default async function DashboardPage() {
   if (!session?.user?.id) redirect("/login");
   if (session.user.role === "TEACHER") redirect("/teacher");
   if (session.user.role === "ADMIN") redirect("/admin");
+  if (session.user.role === "STUDENT") redirect("/student/today");
 
   let student: any = null;
   let error: string | null = null;

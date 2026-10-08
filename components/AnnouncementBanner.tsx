@@ -22,14 +22,14 @@ export function AnnouncementBanner() {
   useEffect(() => {
     // Load dismissed IDs from localStorage
     const dismissedIds = new Set<string>();
-    if (typeof window !== "undefined") {
+    try { if (typeof window !== "undefined") {
       for (let i = 0; i < localStorage.length; i++) {
         const key = localStorage.key(i);
         if (key?.startsWith(DISMISS_PREFIX)) {
           dismissedIds.add(key.slice(DISMISS_PREFIX.length));
         }
       }
-    }
+    } } catch { /* Storage denial must not hide authorized school updates. */ }
     setDismissed(dismissedIds);
 
     fetch("/api/announcements", { cache: "no-store" })
@@ -43,7 +43,7 @@ export function AnnouncementBanner() {
   }, []);
 
   function dismiss(id: string) {
-    localStorage.setItem(`${DISMISS_PREFIX}${id}`, "1");
+    try { localStorage.setItem(`${DISMISS_PREFIX}${id}`, "1"); } catch { /* Dismiss only for this view when storage is unavailable. */ }
     setDismissed((prev) => new Set([...prev, id]));
   }
 

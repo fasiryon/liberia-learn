@@ -5,7 +5,6 @@ import { isAiLabsEnabled } from "@/lib/serverFlags";
 import { fromPracticalLab, listLabExperiences } from "@/lib/learner-experience/labExperience";
 import { buildLabsTab, LABS_TAB_SECTIONS, type LabSessionSummary } from "@/lib/learner-experience/labsTab";
 import { LabExperienceCard } from "@/components/learner-experience/LabExperienceCard";
-import { StudentPrimaryNav } from "@/components/learner-experience/StudentPrimaryNav";
 
 export const dynamic = "force-dynamic";
 
@@ -64,7 +63,6 @@ export default async function StudentLabsPage({ searchParams }: { searchParams?:
 
     return (
       <div className="ll-dashboard-shell">
-        <StudentPrimaryNav active="LABS" />
         <main className="px-4 py-5">
           <div className="mx-auto max-w-6xl space-y-5">
             <div className="flex flex-wrap items-end justify-between gap-3">

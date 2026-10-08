@@ -48,3 +48,5 @@ jobs:
         run: npx playwright install --with-deps chromium
       - name: Run real-browser PWA E2E
         run: npm run test:e2e:pwa
+      - name: Validate Student Today V2 browser fixtures
+        run: node e2e/product-design-v2/run.mjs
