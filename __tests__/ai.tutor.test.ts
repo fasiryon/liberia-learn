@@ -1,6 +1,13 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { resetRateLimitStateForTests } from "@/lib/rateLimit";
 
+const mockResolveTutorContext = vi.hoisted(() => vi.fn());
+vi.mock("@/lib/ai/tutor/tutorContext", async () => {
+  const actual = await vi.importActual<any>("@/lib/ai/tutor/tutorContext");
+  return { ...actual, resolveTutorContext: mockResolveTutorContext };
+});
+vi.mock("@/lib/agents/escalation", () => ({ enqueueEscalation: vi.fn() }));
+vi.mock("@/lib/ai/routedCompletion", () => ({ routedCompletion: mockRoutedCompletion }));
 const mockRequireRole = vi.hoisted(() => vi.fn());
 const mockIsAiTutorEnabled = vi.hoisted(() => vi.fn());
 const mockIsRagTutorEnabled = vi.hoisted(() => vi.fn());
@@ -70,6 +77,14 @@ beforeEach(async () => {
   mockIsRagTutorEnabled.mockReturnValue(false);
   mockGetAiBudgetMonthlyCap.mockReturnValue(100);
   mockRequireRole.mockResolvedValue(VALID_USER);
+  mockResolveTutorContext.mockResolvedValue({
+    contractVersion: "tutor-context/2", schoolId: VALID_USER.schoolId, learnerScopeKey: "opaque", grade: 6, subject: "MATH",
+    lesson: { id: "lesson-row", contentId: "adding-fractions", version: "1", revisionId: null, title: "Adding Fractions" },
+    unitId: null, releaseId: null, experienceId: null, experienceVersion: null, sceneId: null, objectiveIds: ["fractions.adding"],
+    objectiveStatements: ["Add fractions with the same denominator"], allowedRelatedContentIds: [], action: "explain", sourcePolicy: "LEARNER_PROJECTED_LESSONS_ONLY",
+    groundingStrength: "STRONG", fingerprint: "test-context", sources: [{ id: "source-1", sourceId: "lesson-row", title: "Adding Fractions", content: "Fractions represent parts of a whole. Add numerators and keep the denominator.",
+      sourceType: "lesson", chunkIndex: 0, subject: "MATH", grade: 6, schoolId: null, scope: "GLOBAL", sourceLabel: "Current lesson", similarity: 0, rankingScore: 0, tutorTier: 0 }],
+  });
   mockAiInteractionLogAggregate.mockResolvedValue({ _sum: { estimatedCostUSD: 0 } });
   mockAiInteractionLogCreate.mockResolvedValue({ id: "log-1" });
   mockLogAudit.mockResolvedValue(undefined);
@@ -77,10 +92,8 @@ beforeEach(async () => {
   mockModerateText.mockResolvedValue({ verdict: "SAFE" });
   mockRoutedCompletion.mockResolvedValue({
     content: JSON.stringify({
-      explanation: "A fraction represents a part of a whole.",
-      practicePrompt: "What is 1/4 + 1/4?",
-      guidanceLevel: "moderate",
-      confidenceScore: 0.9,
+      answer: "A fraction represents a part of a whole.",
+      sourceIds: ["source-1"],
     }),
     tier: "smart",
     model: "gpt-4o-mini",
@@ -107,8 +120,8 @@ describe("POST /api/student/tutor", () => {
     expect(response.status).toBe(200);
     expect(body).toMatchObject({
       explanation: "A fraction represents a part of a whole.",
-      practicePrompt: "What is 1/4 + 1/4?",
-      guidanceLevel: "moderate",
+      practicePrompt: null,
+      guidanceLevel: "light",
       hadFallback: false,
     });
     expect(typeof body.confidenceScore).toBe("number");
@@ -123,10 +136,10 @@ describe("POST /api/student/tutor", () => {
 
     expect(promptText).not.toContain(VALID_USER.id);
     expect(promptText).not.toContain(VALID_USER.schoolId);
-    expect(promptText).toContain("Current lesson subject: Mathematics.");
-    expect(promptText).toContain("Current learner level: Grade 6 (upper primary).");
-    expect(promptText).toContain("Current lesson title: Adding Fractions.");
-    expect(promptText).toContain("Student question: Explain how to add fractions with the same denominator.");
+    expect(promptText).toContain("Current objectives:");
+    expect(promptText).toContain("Add fractions with the same denominator");
+    expect(promptText).toContain("Current lesson: Adding Fractions.");
+    expect(promptText).toContain("Explain how to add fractions with the same denominator.");
     expect(auditArgs.details).not.toHaveProperty("studentId");
   });
 
@@ -191,6 +204,7 @@ describe("POST /api/student/tutor", () => {
 
   it("does not expose model output when minor output moderation is not SAFE", async () => {
     mockModerateText
+      .mockResolvedValue({ verdict: "UNCERTAIN" })
       .mockResolvedValueOnce({ verdict: "SAFE" })
       .mockResolvedValueOnce({ verdict: "UNCERTAIN", reason: "provider_down" });
 
@@ -201,4 +215,20 @@ describe("POST /api/student/tutor", () => {
     expect(body.hadFallback).toBe(true);
     expect(body.explanation).not.toContain("A fraction represents");
   });
+  it("resolves identifiers and ignores client-supplied lesson text, grade and mastery", async () => {
+    await POST(makeReq({ ...VALID_BODY, tutorContext: { contentId: "adding-fractions", lessonVersion: "1" }, lessonContent: "FORGED AUTHORITY", masteryState: "MASTERED", sourceIds: ["foreign"], gradeLevel: 12 }));
+    expect(mockResolveTutorContext).toHaveBeenCalledWith(VALID_USER, { contentId: "adding-fractions", lessonVersion: "1" }, "explain");
+    expect(JSON.stringify(mockRoutedCompletion.mock.calls[0][0].messages)).not.toContain("FORGED AUTHORITY");
+    expect(JSON.stringify(mockRoutedCompletion.mock.calls[0][0].messages)).not.toContain("MASTERED");
+  });
+  it("preserves canonical authorization rejection without invoking the model", async () => {
+    mockResolveTutorContext.mockRejectedValue(Object.assign(new Error("Not found"), { status: 404 }));
+    const response = await POST(makeReq());
+    expect(response.status).toBe(404); expect(mockRoutedCompletion).not.toHaveBeenCalled();
+  });
+  it("rejects oversized identity or questions", async () => {
+    const response = await POST(makeReq({ question: "x".repeat(1201) }));
+    expect(response.status).toBe(400); expect(mockResolveTutorContext).not.toHaveBeenCalled();
+  });
+
 });

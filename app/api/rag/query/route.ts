@@ -1,3 +1,6 @@
+// route-policy: auth=session; scope=tenant; authority=canonical-learner-context; rationale=authenticated role and server-resolved published lesson scope constrain tutor access.
+import { TutorIdentitySchema, TutorActionSchema } from "@/lib/ai/tutor/contextContract";
+import { resolveTutorContext, tutorIdentityFromContext } from "@/lib/ai/tutor/tutorContext";
 import { randomUUID } from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
@@ -26,6 +29,9 @@ const RouteContextModeSchema = z.enum([
 
 const RequestSchema = z.object({
   question: z.string().trim().min(8).max(1200),
+  focusQuestion: z.string().trim().min(1).max(1200).optional(),
+  tutorContext: TutorIdentitySchema.optional(),
+  tutorAction: TutorActionSchema.optional(),
   subject: z.string().trim().min(1).max(100).optional(),
   grade: z.number().int().min(1).max(12).optional(),
   gradeLevel: z.union([z.string().trim().min(1).max(32), z.number().int()]).optional(),
@@ -109,7 +115,7 @@ export async function POST(req: NextRequest) {
       gradeLevel: body.gradeLevel ?? null,
       invalidSubjectBehavior: "fallback",
     });
-    const effectiveRole = body.role ?? roleConfig.role;
+    const effectiveRole = roleConfig.role;
     const requestedRetrievalMode =
       body.retrievalMode ??
       (body.mode === "classroom" || body.mode === "policy" || body.mode === "mixed"
@@ -131,7 +137,11 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "forbidden" }, { status: 403 });
     }
 
+    const tutorContext = user.role === "STUDENT"
+      ? await resolveTutorContext(user, body.tutorContext ?? {}, body.tutorAction ?? "explain")
+      : undefined;
     const retrievalContext: RetrievalContext = {
+      ...(tutorContext ? { tutorIdentity: tutorIdentityFromContext(tutorContext) } : {}),
       role: effectiveRole,
       mode: contextMode,
       subject: audienceScope.subject,
@@ -142,6 +152,7 @@ export async function POST(req: NextRequest) {
 
     const result = await answerGroundedQuestion({
       question: body.question,
+      ...(body.focusQuestion ? { focusQuestion: body.focusQuestion } : {}),
       schoolId: user.schoolId,
       subject: audienceScope.subject,
       grade: audienceScope.grade,
@@ -150,6 +161,7 @@ export async function POST(req: NextRequest) {
       mode: effectiveMode,
       role: user.role,
       context: retrievalContext,
+      ...(tutorContext ? { tutorContext } : {}),
       usageContext: {
         route: "/api/rag/query",
         userId: user.id,
@@ -173,13 +185,20 @@ export async function POST(req: NextRequest) {
         groundingScore: result.groundingScore,
         hadFallback: result.hadFallback,
         confidence: result.confidence,
+        tutorAction: tutorContext?.action,
+        resolvedLessonId: tutorContext?.lesson?.id,
+        resolvedSceneId: tutorContext?.sceneId,
+        resolvedObjectiveIds: tutorContext?.objectiveIds,
+        sourceTiers: tutorContext?.sources.map((source) => ({ id: source.id, tier: source.tutorTier })),
+        groundingStrength: result.groundingStrength,
+        fallbackReason: result.fallbackReason,
       },
     });
     return NextResponse.json(result, { headers: getRateLimitHeaders(rateLimit) });
   } catch (error: any) {
     return NextResponse.json(
       { error: error?.message ?? "Failed to answer query" },
-      { status: error?.status ?? 500 }
+      { status: error instanceof z.ZodError ? 400 : error?.status ?? 500 }
     );
   }
 }

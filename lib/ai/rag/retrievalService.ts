@@ -30,6 +30,8 @@ export type RetrievedChunk = {
   rankingScore: number;
   retrievalTier?: "same_grade" | "nearby_grade" | "null_grade" | "default";
   metadata?: unknown;
+  /** Deterministic authorized tutor scope; never an embedding confidence. */
+  tutorTier?: import("@/lib/ai/tutor/contextContract").TutorSourceTier;
 };
 
 export type RetrievalMode = "classroom" | "policy" | "mixed";
@@ -45,6 +47,7 @@ export type RetrievalContext = {
   mode?: RetrievalContextMode;
   subject?: string | null;
   gradeLevel?: string | null;
+  tutorIdentity?: import("@/lib/ai/tutor/contextContract").TutorIdentity;
 };
 
 type LessonRetrievalRow = {

@@ -17,6 +17,7 @@ export type AssistantAction = {
     subject?: string | null;
     gradeLevel?: string | null;
     contextMode?: RetrievalContext["mode"];
+    tutorContext?: RetrievalContext["tutorIdentity"];
   };
   requiresConfirmation?: boolean;
 };
@@ -35,6 +36,7 @@ function buildPayload(input: BuildAssistantActionsInput): AssistantAction["paylo
     subject: input.subject ?? input.context?.subject ?? null,
     gradeLevel: input.gradeLevel ?? input.context?.gradeLevel ?? null,
     contextMode: input.context?.mode,
+    ...(input.context?.tutorIdentity ? { tutorContext: input.context.tutorIdentity } : {}),
   };
 }
 
