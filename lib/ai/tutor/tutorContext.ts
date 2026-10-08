@@ -1,4 +1,5 @@
 import { createHash } from "node:crypto";
+import { lessonPayloadSha256 } from "@/lib/learning-authority/releases/grade4Math2026_2";
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/db";
 import type { SessionUser } from "@/lib/auth";
@@ -172,7 +173,7 @@ export async function resolveTutorContext(
     if (identity.sceneId && !scene) denied();
     const release = publishedReleaseForLearner(row.grade, subject(row.subject));
     const binding = release?.contentBindings.find((candidate) => candidate.contentId === row.contentId && candidate.contentVersion === row.version);
-    const bindingValid = binding && (!binding.contentSha256 || binding.contentSha256 === createHash("sha256").update(JSON.stringify(row.payload)).digest("hex"));
+    const bindingValid = binding && (!binding.contentSha256 || binding.contentSha256 === lessonPayloadSha256(row.payload));
     const availableObjectiveIds = scene ? [...scene.objectiveIds] : experience ? experience.objectives.map((objective) => objective.id) : [];
     if (identity.objectiveIds?.some((id) => !availableObjectiveIds.includes(id))) denied();
     // Identifiers may select an objective only from this canonical scene/lesson.
@@ -215,7 +216,7 @@ export async function resolveTutorContext(
         for (const candidate of candidates) {
           if (!eligible(candidate, scope) || !await mayRead(candidate) || candidate.versionId !== row!.versionId) continue;
           const link = relatedBindings.find((item) => item.contentId === candidate.contentId);
-          if (link && (link.contentVersion !== candidate.version || (link.contentSha256 && link.contentSha256 !== createHash("sha256").update(JSON.stringify(candidate.payload)).digest("hex")))) continue;
+          if (link && (link.contentVersion !== candidate.version || (link.contentSha256 && link.contentSha256 !== lessonPayloadSha256(candidate.payload)))) continue;
           const safe = projectStudentLessonPayload(candidate.payload);
           const relatedBody = learnerBody(safe);
           if (relatedBody) sources.push(chunk(candidate, text(safe.title) || candidate.title || candidate.contentId, relatedBody,

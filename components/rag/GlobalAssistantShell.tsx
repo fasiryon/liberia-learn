@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { tutorActionForQuestion, type TutorIdentity, type TutorAction } from "@/lib/ai/tutor/contextContract";
 import { usePathname } from "next/navigation";
+import { studentTutorIdentityForPath } from "@/lib/ai/tutor/routeContext";
 import type { AssistantRoleConfig } from "@/lib/ai/rag/assistantAccess";
 import {
   getAssistantActionEndpoint,
@@ -221,20 +222,26 @@ export default function GlobalAssistantShell({
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [loading, setLoading] = useState(false);
   const [lessonContext, setLessonContext] = useState<{ pathname: string; identity: TutorIdentity } | null>(null);
-  const activeTutorIdentity = lessonContext?.pathname === pathname
-    ? lessonContext.identity
-    : /^\/student\/lessons\/([^/]+)$/.test(pathname)
-      ? { lessonId: decodeURIComponent(pathname.split("/").pop()!) }
-      : undefined;
+  const activeTutorIdentity = studentTutorIdentityForPath(pathname, lessonContext);
+  const conversationPathRef = useRef(pathname);
+  useEffect(() => {
+    if (conversationPathRef.current === pathname) return;
+    conversationPathRef.current = pathname;
+    if (isStudent) {
+      setMessages([]);
+      setPendingConfirmation(null);
+      setQuestion("");
+    }
+  }, [pathname, isStudent]);
   useEffect(() => {
     const onContext = (event: Event) => {
       const detail = (event as CustomEvent<{ pathname: string; identity: TutorIdentity }>).detail;
-      if (detail) setLessonContext(detail);
+      if (detail?.pathname === pathname) setLessonContext(detail);
     };
     window.addEventListener("liberialearn:tutor-context", onContext);
     // The page may mount before the shell. Read only identity attributes, not lesson text.
     const marker = document.querySelector<HTMLElement>("[data-tutor-lesson-id]");
-    if (marker) setLessonContext({ pathname, identity: { lessonId: marker.dataset.tutorLessonId, lessonVersion: marker.dataset.tutorLessonVersion } });
+    if (marker && marker.dataset.tutorLessonId === studentTutorIdentityForPath(pathname)?.lessonId) setLessonContext({ pathname, identity: { lessonId: marker.dataset.tutorLessonId, lessonVersion: marker.dataset.tutorLessonVersion } });
     return () => window.removeEventListener("liberialearn:tutor-context", onContext);
   }, [pathname]);
   const [pendingConfirmation, setPendingConfirmation] =
@@ -400,7 +407,7 @@ export default function GlobalAssistantShell({
 
   async function submitQuestion(questionOverride?: string, identityOverride?: TutorIdentity, actionOverride?: TutorAction, focusQuestion?: string) {
     const trimmedQuestion = (questionOverride ?? question).trim();
-    if (!trimmedQuestion || loading) {
+    if (!trimmedQuestion || loading || (isStudent && conversationPathRef.current !== pathname)) {
       return;
     }
 
@@ -518,7 +525,7 @@ export default function GlobalAssistantShell({
   }
 
   async function executeAction(messageId: string, action: AssistantAction) {
-    if (loading) {
+    if (loading || (isStudent && conversationPathRef.current !== pathname)) {
       return;
     }
 

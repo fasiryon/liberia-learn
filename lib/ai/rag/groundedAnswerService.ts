@@ -456,9 +456,14 @@ ${context}`;
 
 export async function answerGroundedQuestion(input: QueryInput): Promise<GroundedAnswerResult> {
   const moderationOptions = input.role === "STUDENT" ? { audience: "minor" as const } : undefined;
-  const inputVerdict = await moderateText(input.question, "input", moderationOptions);
-  if (isModerationBlockedForRole(inputVerdict.verdict, input.role)) {
-    return buildModerationBlockedAnswer(input.chunks ?? [], input, "input_moderation_blocked");
+  // Conversation focus is browser-controlled too, including action-carried follow-ups.
+  // Moderate every question field before cache, retrieval or answer-model construction.
+  const questionInputs = [...new Set([input.question, input.focusQuestion].filter((value): value is string => value !== undefined))];
+  for (const questionInput of questionInputs) {
+    const verdict = await moderateText(questionInput, "input", moderationOptions);
+    if (isModerationBlockedForRole(verdict.verdict, input.role)) {
+      return buildModerationBlockedAnswer([], input, "input_moderation_blocked");
+    }
   }
 
   // Student sources can only come from the package resolved by the authenticated route.

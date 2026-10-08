@@ -47,3 +47,13 @@ No live child account, production database or model response was used as evidenc
 Native scene availability depends on the separately owned shared projection landing; the identity contract and fail-closed consumer are ready. Legacy objective statements have no invented canonical IDs. No governed learner-plan/accessibility signals were available to safely add. The bounded 100-candidate scan may return no support beyond that limit (P2 availability limit). Prompt-injection tests establish prompt/data separation, not a guarantee about every possible model output. No production deployment or merge is authorized.
 
 Local validation: base-scoped `validate:changed` passed (102 changed tests, 142 related tests, route-policy audit, typecheck and diff checks). Production `npm run build` exited 0, including compilation, type/lint checks and page generation; Windows standalone packaging emitted a symlink permission warning with the shared node_modules junction. Full lint passed with existing unrelated warnings. Hosted CI and the full-suite rerun are tracked on PR #174.
+
+## PR #174 final review repair
+
+The review on `bea96fe60a0b051ef18b4b87fbfff8907f011b1a` superseded the earlier completion report. The shared answer service now moderates both the current question and optional browser/action-carried focus question with the same minor policy before cache lookup, retrieval or prompt construction; unsafe/uncertain focus fails closed. Safe follow-ups retain pinned context.
+
+The global shell derives singular catalog `contentId` and plural scheduled `lessonId` hints from the current pathname. Matching scene/revision hints can enrich only that identity; stale route events cannot supply another lesson. Student conversations clear on route transitions. Scheduled delivery retains its existing helper, and server authorization remains mandatory for both identifiers.
+
+Primary and related release binding checks call the existing `lessonPayloadSha256` producer, including its canonical JSON serialization. Reordered nested keys validate; changed content does not. No release/provenance helper or shared projection is modified.
+
+Added regressions cover harmless questions with unsafe/uncertain focus, action-carried prompt injection, safe explain-differently/practice focus, key-order invariance for primary/supporting bindings, semantic hash mismatch, singular/plural forgery and DOM-level direct navigation/reload/catalog-entry/transition behavior. Review threads are resolved only after fixes and validation, and completion requires CI plus independent review of the new exact head.
