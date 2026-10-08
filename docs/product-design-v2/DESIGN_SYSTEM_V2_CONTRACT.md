@@ -1,0 +1,93 @@
+# Design System V2 implementation contract
+
+Status: specification, not runtime implementation. Base `a5d0afd09bf8dd3a3919449022924afb16e69515`; audit 8 October 2026. [Product principles and anchors](PRODUCT_DESIGN_V2.md) govern composition. All names below are proposed exports unless linked as existing code.
+
+## Foundation audit and token migration
+
+Reuse [globals.css](../../app/globals.css) semantic CSS variables and [Tailwind configuration](../../tailwind.config.js) mappings. Existing colors are warm graphite (`--ll-bg: #1a1a18`), gold (`--ll-yellow: #E8B84B`), paper text (`#f5f0e8`), muted (`#a89f94`) and faint (`#6b6460`). Existing `--ll-success` maps to pink; `.ll-notice-success` uses accent gold. Neither represents the approved green semantic. The faint token and translucent gold focus shadow need contrast validation on each surface; presence of a focus style is not proof of visibility. Lab-specific white/dark focus halos and forced-color support already provide a useful pattern.
+
+Read-only Figma property inspection: background RGB `(0.055,0.061,0.055)` ≈ `#0E100E`; hero surface `(0.108,0.118,0.104)` ≈ `#1C1E1B`; gold `(0.937,0.710,0.250)` ≈ `#EFB540`; heading text `(0.955,0.950,0.920)` ≈ `#F4F2EB`. Hero radius 20px; primary control 10px; eraser control 11px. Inter Bold heading samples are 22–25px; control samples are 12–14px. These are rounded observations of node properties, not published tokens. No local variable collections were returned. Do not copy small mockup text/38px buttons where accessibility and age budgets require larger values.
+
+| Semantic proposal | Initial value/contract | Origin and migration |
+| --- | --- | --- |
+| Canvas/surface/raised | `#0E100E` / `#161815` / `#1C1E1B` | Background/hero observed; middle surface proposed. Map existing background/surface aliases under a V2 shell scope initially |
+| Text/secondary | `#F4F2EB` / proposed `#B8B8AB` | Text observed; secondary candidate must pass 4.5:1 in every actual use. Do not retain faint text for essential labels |
+| Primary gold/on gold | `#EFB540` / `#0E100E` | Observed gold; dark text. Gold identifies the dominant action, not every border or stat |
+| Success/progress | proposed `#73C99A` with text/icon | Green direction approved; exact value proposed and subject to contrast. Remap success only in scoped V2 components initially |
+| Warning/error | gold plus warning icon / proposed `#FF8A95` plus error text | Separate semantics by label/icon; never color alone. Error candidate needs contrast validation |
+| Border/decorative | existing low-alpha neutral permitted | Decorative separators can be subtle; interactive boundaries must achieve 3:1 with adjacent color or another sufficient affordance |
+| Focus | 3px opaque gold outline, 2px offset, dark halo on light/gold surfaces | Figma gold focus direction; implementation proposal. Forced colors use system Highlight. No outline removal without replacement |
+| Radius | controls 10–12px, sections 16–20px, chips pill only for short status | Consolidate existing `--ll-radius-control/card`; object contours restricted to meaningful controls |
+| Space | 4, 8, 12, 16, 24, 32, 48px | Proposed 4px scale. Phone page gutter 16px; 12px only for narrow content where targets still fit |
+| Elevation | level 0 static content; level 1 control rim + 2px shadow; level 2 dialog halo | No nested card shadows. Younger controls may use 4px tactile depth; older/adult controls 1–2px |
+| Type | local/system fallback first; body 16–18px, line-height 1.5–1.7; heading 24/32/40 responsive | Inter observed in Figma, Geist/system in runtime. Reuse existing font loading initially; Inter adoption requires locally available/subset font and bandwidth review |
+| Motion | feedback 100–150ms; panel 150–200ms; no looping reward animation | Reuse existing reduced-motion CSS; transform is decorative, never a functional cue |
+
+Implementation PR 1 adds semantic aliases in existing theme locations rather than a parallel token registry. Scope changed values to V2 shells until legacy screens have contrast/regression evidence. Do not globally remap success or radii and call the migration complete. Preserve low-bandwidth mode, existing large-text preference and print legibility. One component-level theme model covers role and age; do not create StudentGoldButton/TeacherGoldButton clones.
+
+Responsive proposals use existing breakpoints: base <640px (one column/phone bottom navigation), sm 640–767px, md 768–1023px (tablet), lg ≥1024px (rail/context columns when content fits), xl ≥1280px (bounded wider layout). Figma's 238px student rail is a desktop reference, not a fixed phone requirement. Stage text width ≤70 characters; page content generally ≤1280px. At 320px width and 200% zoom all primary task controls reflow; at 400% zoom test 320 CSS px equivalent. Sticky controls reserve measured height and safe-area insets and cannot cover focused content or the keyboard.
+
+## Age-banded interaction language
+
+| Property | Grades 1–3: young | Grades 4–7: middle | Older/adult/unknown |
+| --- | --- | --- | --- |
+| Touch target | ≥56×56 CSS px; ≥8px spacing | ≥48×48; ≥8px spacing | ≥44×44, primary phone controls ≥48×48; unknown defaults to generous middle spacing |
+| Labels | Action verbs, usually 1–3 words: Back, Try it, Hint | Clear phrases: Check my thinking, Explain differently | Clear task-specific labels; no grade-specific metaphors required |
+| Typography | Body ≥18px; controls ≥16px; generous line spacing | Body ≥16px; primary task/control ≥16px | Body ≥16px; secondary metadata ≥14px with contrast |
+| Density | One task; ≤3 first-view plan rows/insights; ≤2 secondary actions | ≤5 first-view rows; ≤3 secondary actions | Same primary-action hierarchy; denser secondary reports only |
+| Tactility | Raised edge, stronger depth, familiar icon/object with verb | Same direction/state cues; simplified geometry and subtle depth | Standard tactile controls with explicit verbs |
+| Feedback | Immediate visible task progress and supportive words; optional one-shot motion | Clear task feedback without decorative rewards | Evidence/status explanations, no gamified pressure |
+| School objects | Eraser Back, pencil Try/write where meaning helps | Simplified eraser/pencil cues | Optional plain equivalent with same semantics |
+
+Age is sourced from the existing authorized grade/age-band information, not inferred by AI, names or behavior. Preference for reduced density or plain controls may override decoration without changing learning authority. Scene content variants remain the existing lesson contract; these visual variants cannot rewrite curriculum. Do not theme every chart, form and background as a classroom object. Metaphors pass only if users recognize the function without explanation. Eraser Back must visibly include arrow + Back and never clear responses. Decorative object SVGs are hidden from assistive technology. An icon is supplementary to a readable label.
+
+## Required states for every interactive family
+
+| State | Visible behavior | Semantic/behavior requirement |
+| --- | --- | --- |
+| Default | Boundary + depth, readable verb, directional cue for navigation | Native button for action, link for navigation; static panels have no fake action styling |
+| Hover | Border/brightness change; optional ≤1px lift for fine pointers | Only enhancement; no hidden content/actions necessary for touch/keyboard |
+| Pressed | Darker fill, compressed depth; ≤2px visual sink (young ≤3px) | Execute once on native activation; no layout shift; keyboard Space/Enter works |
+| Focus | Opaque visible ring and halo as needed | `:focus-visible`; logical order; no obscured focus. Dialog focus containment, Escape and restoration required |
+| Disabled | Distinct muted surface and reason nearby; no hover/lift | Native disabled for unavailable action; if focusable explanation needed use `aria-disabled` and prevent execution. Do not rely on opacity alone |
+| Loading | Keep size/label context, spinner + “Opening…”/“Saving…” | `aria-busy`; polite status; suppress duplicate submission. Text replaces animation under reduced motion |
+| Success | Green icon/text with actual achieved state | “Saved on this device” ≠ “Submitted” ≠ “Evidence accepted.” Announce once; preserve task context |
+| Error | Error icon, concise cause and recovery action | Associate errors with field/task; focus first invalid field for submit errors; retain input. No fabricated empty state |
+| Offline | Offline badge + capability/recovery text | Available local action remains usable; online-only action explains why. Do not queue live AI. Storage failure must not claim saved work |
+
+All applicable states must be captured in the implementation gallery/browser evidence. Static progress/status families implement relevant data/loading/success/error/offline states only; do not invent pressed states for noninteractive chips. Selection/current state is separate from pressed (nav uses `aria-current`, toggles `aria-pressed`, tab widgets follow keyboard tab semantics). Support high contrast/forced colors. Repeated alerts use polite announcements; assertive announcements only for immediate blocking errors. No hover-only explanations or drag-only essential controls.
+
+## Accessibility contract
+
+Adopt WCAG 2.2 AA as the release target. Text ≥4.5:1 (large text ≥3:1); meaningful graphical/control indicators ≥3:1; color never carries meaning alone. These thresholds use [W3C WCAG 2.2](https://www.w3.org/TR/WCAG22/). Product targets are intentionally larger than the standard's minimum target criterion. Test actual composited colors, including translucent surfaces and disabled explanations.
+
+Every page has a named main landmark, heading hierarchy and skip link; every control has a stable accessible name matching the visible action. Screen readers hear “Scene 4 of 10, current,” “Lesson activity, 3 of 10 scenes finished,” and skill status with confidence/evidence explanation rather than an unexplained percentage. Charts have a text/table equivalent. Media requires existing alt/caption/transcript data; do not invent labels for missing curriculum media. Assessment/tutor output must not expose private keys or hidden teacher content.
+
+Reuse [accessibilityMode.ts](../../lib/accessibilityMode.ts), [AccessibilityToggle](../../components/AccessibilityToggle.tsx), [StudentAccessibilityControl](../../components/student/StudentAccessibilityControl.tsx) and global reduced-motion support. Accessibility is required even when the optional preference flag is off. Preserve user zoom; no animation, tooltip or large-text toggle is needed to unlock an essential function. Test keyboard, screen reader, coarse pointer, reduced motion, forced colors, long names/localized text and on-screen keyboard. Modal ARIA alone is insufficient: [StudentLessonHelpPanel](../../components/student/StudentLessonHelpPanel.tsx) locks scrolling but does not implement focus containment/Escape/restoration in the inspected code; the later help PR must close this gap.
+
+## Component families and reuse contracts
+
+Every interactive family inherits the nine-state table and target/accessibility rules. Listed variants describe composition, not a reason for extra component exports. Data containers accept authorized display models plus action callbacks/hrefs; they must not compute educational authority. Shared controls must expose accessible labels, disabled reasons and loading state. Prefer one action primitive plus composition over many bespoke cards.
+
+| Family and purpose | Roles/variants | Mobile and age behavior | Existing foundation and migration |
+| --- | --- | --- | --- |
+| InteractiveButton, IconButton; execute/navigate | All; primary, secondary, quiet, destructive; standard/tactile; icon-only only for familiar utility with accessible name | Full-width primary where needed; age targets; icon button has tooltip enhancement plus accessible name | Extend patterns in [PencilButton](../../components/ui/PencilButton.tsx); retain native semantics. Add minimal shared API in PR 1; migrate by surface |
+| EraserBackButton; return safely | Student learning/labs; leave task, previous destination (not previous scene) | Label always visible; young object contour, middle simplified; touch target overrides Figma 45px sample | Compose action primitive with decorative eraser SVG. Replace player exit affordance in PR 3; no response deletion or custom history authority |
+| RoleNavigation; StudentNavigationV2 / TeacherNavigationV2 adapters | Student five, teacher six; guardian/admin role configuration; current destination, collapsed rail | Phone student five-item bottom bar; tablet/top/rail by fit; focused players hide global nav; age labels/targets | Extend [StudentPrimaryNav](../../components/learner-experience/StudentPrimaryNav.tsx) and [ReserveBottomBar](../../components/learner-experience/ReserveBottomBar.tsx); consolidate [TeacherNav](../../components/teacher/TeacherNav.tsx) later. One semantic navigation family, no universal permission menu |
+| LearningActionCard + LearningPlanItem; next action/ordered work | Student/guardian overview; hero/row, assigned/resume/blocked | One hero then readable rows; no nested clickable elements; young ≤3 rows | Reuse Today display data and [Card](../../components/ui/Card.tsx) container only where needed; PR 1. Explicit single action element, not whole div with onClick |
+| SceneNavigator + LessonProgress; place and activity | Student; desktop outline/mobile selector; current/reached/locked/completed | One compact phone selector; names wrap; young visual scene markers with text | Extract presentation from [LessonPlayerV2](../../components/learner-experience/LessonPlayerV2.tsx), keep completion/reachability/state APIs; PR 3 after seam |
+| SkillProgress / ProgressVisualization; learning meaning | Student/guardian/teacher; skill summary, trend, evidence detail; unknown/limited evidence/known | Text explanation first; charts/table secondary; young simple skill wording | Refine [StudentProgressDashboard](../../components/student/StudentProgressDashboard.tsx), [MasteryBadge](../../components/adaptive/MasteryBadge.tsx), [WeeklyProgressChart](../../components/student/WeeklyProgressChart.tsx). Never derive mastery from completion; PR 5 |
+| StatusChip, Alert, EmptyState; explain state/recovery | All; informational/success/warning/error; loading/empty/unavailable distinct | Wrap text; one blocking alert; young shorter copy with details | Consolidate existing `.ll-notice` styles and [Skeleton](../../components/ui/Skeleton.tsx). Chip is static unless explicitly an action; PR 1 then surface migration |
+| OfflineStatus; availability/save/sync lifecycle | All supported roles; compact status, resource availability, detailed recovery | Compact global state, details on demand; same semantics at all ages | Compose [OfflineReadyBadge](../../components/OfflineReadyBadge.tsx), [PwaLifecycleStatus](../../components/PwaLifecycleStatus.tsx), [SaveForOfflineButton](../../components/SaveForOfflineButton.tsx) and existing SyncManager data; no second outbox; PR 1/6 |
+| AITutorPanelV2; current-task assistance | Student; hint/explain/ask/practice/teacher; teacher/guardian use separately authorized modes | Phone sheet/full-screen, desktop panel; keyboard-safe input; young short prompts; focus restored | Reuse [StudentLessonHelpPanel](../../components/student/StudentLessonHelpPanel.tsx), [GlobalAssistantShell](../../components/rag/GlobalAssistantShell.tsx), [AITrustDetails](../../components/ai/AITrustDetails.tsx). One help owner per surface; preserve grounding stack. PR 3 connects context, PR 6 consolidates help |
+| TeacherInsightCard / StudentSupportSignal; act on evidence | Teacher; learner/class signal, stale/missing/reviewed; AI draft clearly labeled | Readable signal rows; no hover-only reason; age neutral teacher density | Refine [TeacherMorningBrief](../../components/teacher/TeacherMorningBrief.tsx), [TeacherDifferentiationDashboard](../../components/teacher/TeacherDifferentiationDashboard.tsx), [AlertBell](../../components/teacher/AlertBell.tsx); PR 7, display existing signals only |
+| ClassPulse; class learning change and next planning job | Teacher/admin; skill trend, misconception, coverage, unknown | Phone narrative/list, tablet compact table; text equivalent for chart | Reuse teacher dashboard/authorized reports and [TeacherDeliveryReport](../../components/teacher/TeacherDeliveryReport.tsx); PR 7/8. This is a composition of progress + signal, not a new analytics engine |
+| Lab experience presentation; discovery and return | Student/teacher; card, assigned/continue, degraded/static | Runtime retains capability-tier choice; clear return and objective on phones | Extend [LabExperienceCard](../../components/learner-experience/LabExperienceCard.tsx), [LabExperienceHost](../../components/learner-experience/LabExperienceHost.tsx), [LabScene](../../components/learner-experience/LabScene.tsx); PR 4. Preserve approved links and release filtering |
+
+Before adding an export, show two real uses or one complicated accessibility responsibility. A simple one-use row can stay local. No generic configurable dashboard engine, independent AI chat provider, duplicate lab host, separate age theme packages or new client mastery model. Component review requires mobile/desktop and state examples plus permission, error and offline cases; a component gallery is proposed future evidence, not created by this audit.
+
+## Offline presentation integration
+
+Reuse [offline-queue.ts](../../lib/offline-queue.ts), [syncProtocol.ts](../../lib/offline/syncProtocol.ts), [SyncManager](../../app/student/SyncManager.tsx), [lesson-offline-cache.ts](../../lib/lesson-offline-cache.ts), [offline-session.ts](../../lib/offline-session.ts) and [service worker](../../public/sw.js). Queue vocabulary is LOCAL_PENDING, SENDING, ACKNOWLEDGED, CONFLICT, RETRYABLE_FAILURE, AUTH_REQUIRED and TERMINAL_FAILURE. Translate to child-safe language without hiding recovery. An ACKNOWLEDGED operation is not necessarily accepted learning evidence or mastery. The scene [progress store](../../lib/learner-experience/progressStore.ts) stores position only, never a new evidence queue.
+
+One presentation owner arbitrates offline/update/storage banners, tutor floating controls, tour, install and push prompts. Required consent/security flows retain priority; defer optional prompts until the task ends. Cached identity/version, trust expiry, account switch and unavailable storage must remain visible/contained. The detailed capability/recovery matrix and blocking budgets live in the [scorecard](PRODUCT_DESIGN_V2_SCORECARD.md).
