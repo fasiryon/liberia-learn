@@ -184,9 +184,9 @@ export async function GET() {
     const user = await requireRole("STUDENT").catch(() => null);
     if (user) {
       const stale = await getCachedValue(`cache:today:lastgood:${user.id}`);
-      if (stale) return NextResponse.json(stale);
+      if (stale && typeof stale === "object" && "schoolId" in stale && stale.schoolId === user.schoolId) return NextResponse.json({ ...stale, availability: "stale" });
     }
-    return NextResponse.json({ items: [], adaptivePlan: emptyAdaptivePlan() });
+    return NextResponse.json({ items: [], adaptivePlan: emptyAdaptivePlan(), availability: "unavailable" });
   }
   return shieldResult;
 }
@@ -215,11 +215,11 @@ async function _computeToday(): Promise<NextResponse> {
     );
 
     if (!studentMeta) {
-      return NextResponse.json({ items: [], adaptivePlan: emptyAdaptivePlan() });
+      return NextResponse.json({ items: [], adaptivePlan: emptyAdaptivePlan(), availability: "unavailable" });
     }
 
     const { id: studentId, classIds, currentGrade } = studentMeta;
-    if (classIds.length === 0) return NextResponse.json({ items: [], adaptivePlan: emptyAdaptivePlan() });
+    if (classIds.length === 0) return NextResponse.json({ items: [], adaptivePlan: emptyAdaptivePlan(), availability: "current", catchUpItems: [], completedCount: 0, remainingCount: 0 });
 
     // Today is deliberately limited to the governed orchestrator or ordinary
     // schoolwork. Legacy adaptive signals are never a learner next-action
@@ -718,6 +718,8 @@ async function _computeToday(): Promise<NextResponse> {
     }
 
     return {
+      availability: "current",
+      generatedAt: now.toISOString(),
       items,
       catchUpItems,
       schoolDay: {
@@ -813,7 +815,7 @@ async function _computeToday(): Promise<NextResponse> {
     // DB fallback limit exceeded — return degraded 200 immediately rather than
     // propagating a 503 that would fail the k6 'today 200' check.
     if (err?.code === FALLBACK_LIMIT_EXCEEDED) {
-      return NextResponse.json({ items: [], adaptivePlan: emptyAdaptivePlan() });
+      return NextResponse.json({ items: [], adaptivePlan: emptyAdaptivePlan(), availability: "unavailable" });
     }
     const status = err?.status || 500;
     return NextResponse.json({ error: err.message }, { status });

@@ -5,5 +5,5 @@ import { redirect } from "next/navigation";
  * Redirect to the canonical dark dashboard at /dashboard.
  */
 export default function LegacyStudentDashboard() {
-  redirect("/dashboard");
+  redirect("/student/today");
 }

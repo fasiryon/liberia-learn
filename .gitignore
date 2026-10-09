@@ -90,6 +90,9 @@ LL_BUILD_SNAPSHOT_*.txt
 check-math.js
 check-rag.js
 index.html
+
+# Local design alignment kit; reviewed summaries and fixture screenshots are tracked separately.
+artifacts/product-design-v2/alignment/
 tmp-*.js
 tmp-*
 *.zip

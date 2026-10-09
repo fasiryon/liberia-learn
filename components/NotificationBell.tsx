@@ -25,22 +25,25 @@ function relativeTime(iso: string): string {
   return `${Math.floor(hours / 24)}d ago`;
 }
 
-export function NotificationBell() {
+export function NotificationBell({ tactile = false }: { tactile?: boolean }) {
   const [open, setOpen] = useState(false);
   const [items, setItems] = useState<InboxItem[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [loadState, setLoadState] = useState<"loading" | "ready" | "error">("loading");
   const panelRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
 
   function fetchInbox() {
     fetch("/api/notifications/inbox", { cache: "no-store" })
-      .then((r) => (r.ok ? r.json() : null))
+      .then((r) => { if (!r.ok) throw new Error("unavailable"); return r.json(); })
       .then((d) => {
         if (d) {
           setItems(d.items ?? []);
           setUnreadCount(d.unreadCount ?? 0);
+          setLoadState("ready");
         }
       })
-      .catch(() => null);
+      .catch(() => setLoadState("error"));
   }
 
   // Paused while hidden/offline so a backgrounded phone spends no data.
@@ -57,27 +60,32 @@ export function NotificationBell() {
     return () => document.removeEventListener("mousedown", handle);
   }, [open]);
 
-  function markRead(id: string) {
-    fetch(`/api/notifications/inbox/${id}`, { method: "PATCH" }).catch(() => null);
+  async function markRead(id: string) {
+    const response = await fetch(`/api/notifications/inbox/${id}`, { method: "PATCH" }).catch(() => null);
+    if (!response?.ok) { setLoadState("error"); return; }
     setItems((prev) => prev.map((i) => (i.id === id ? { ...i, isRead: true } : i)));
     setUnreadCount((prev) => Math.max(0, prev - 1));
   }
 
-  function markAllRead() {
-    fetch("/api/notifications/inbox/read-all", { method: "POST" }).catch(() => null);
+  async function markAllRead() {
+    const response = await fetch("/api/notifications/inbox/read-all", { method: "POST" }).catch(() => null);
+    if (!response?.ok) { setLoadState("error"); return; }
     setItems((prev) => prev.map((i) => ({ ...i, isRead: true })));
     setUnreadCount(0);
   }
 
   return (
-    <div className="relative" ref={panelRef}>
+    <div className="relative" ref={panelRef} onKeyDown={(event) => { if (event.key === "Escape") { setOpen(false); triggerRef.current?.focus(); } }}>
       <button
         type="button"
+        ref={triggerRef}
         onClick={() => setOpen((v) => !v)}
-        className="relative inline-flex h-9 w-9 items-center justify-center rounded-lg border border-[var(--ll-border)] bg-[var(--ll-surface)] hover:bg-[var(--ll-surface-muted)] focus-visible:outline-none"
+        className={tactile ? "pdv2-action" : "relative inline-flex h-9 w-9 items-center justify-center rounded-lg border border-[var(--ll-border)] bg-[var(--ll-surface)] hover:bg-[var(--ll-surface-muted)]"}
+        aria-expanded={open}
         aria-label={`Notifications${unreadCount > 0 ? `, ${unreadCount} unread` : ""}`}
       >
         <Bell className="h-4 w-4 text-[var(--ll-text-muted)]" strokeWidth={1.5} />
+        {tactile && <span>Updates</span>}
         {unreadCount > 0 && (
           <span className="absolute -right-1 -top-1 inline-flex h-4 min-w-[16px] items-center justify-center rounded-full bg-red-500 px-0.5 text-[9px] font-bold text-white">
             {unreadCount > 99 ? "99+" : unreadCount}
@@ -86,21 +94,22 @@ export function NotificationBell() {
       </button>
 
       {open && (
-        <div className="absolute right-0 top-11 z-50 w-80 max-w-[calc(100vw-2rem)] rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] shadow-lg">
+        <div className={`absolute right-0 ${tactile ? "top-full" : "top-11"} z-50 w-80 max-w-[calc(100vw-2rem)] rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] shadow-lg`}>
           <div className="flex items-center justify-between border-b border-[var(--ll-border)] px-4 py-3">
             <p className="text-sm font-semibold text-[var(--ll-text)]">Notifications</p>
             {unreadCount > 0 && (
               <button
                 type="button"
                 onClick={markAllRead}
-                className="text-xs text-[var(--ll-yellow)] hover:underline"
+                className={tactile ? "pdv2-action" : "text-xs text-[var(--ll-yellow)] hover:underline"}
               >
                 Mark all read
               </button>
             )}
           </div>
           <div className="max-h-96 overflow-y-auto">
-            {items.length === 0 ? (
+            {loadState !== "ready" && <div role="status" className="p-4"><p>{loadState === "loading" ? "Loading updates…" : "Update status could not be confirmed."}</p>{loadState === "error" && <button type="button" className={tactile ? "pdv2-action" : "underline"} onClick={fetchInbox}>Try again</button>}</div>}
+            {items.length === 0 && loadState === "ready" ? (
               <div className="px-4 py-8 text-center">
                 <p className="text-sm text-[var(--ll-text-muted)]">You&apos;re all caught up</p>
               </div>

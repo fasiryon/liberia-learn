@@ -92,6 +92,26 @@ describe("student today nextBestAction wiring (Sprint 6.7)", () => {
     mockCertificateFindUnique.mockResolvedValue(null);
   });
 
+  it("does not present a missing student record as genuine empty work", async () => {
+    mockStudentFindUnique.mockResolvedValue(null);
+    const { GET } = await import("@/app/api/student/today/route");
+    expect(await (await GET()).json()).toMatchObject({ availability: "unavailable" });
+  });
+
+  it("requires the STUDENT role and derives learner identity from the session", async () => {
+    const { GET } = await import("@/app/api/student/today/route");
+    await (GET as (ignoredInput: Request) => Promise<Response>)(new Request("http://localhost/api/student/today?studentId=forged&schoolId=foreign"));
+    expect(mockRequireRole).toHaveBeenCalledWith("STUDENT");
+    expect(mockStudentFindUnique).toHaveBeenCalledWith(expect.objectContaining({ where: { userId: "student-user-1" } }));
+  });
+
+  it("keeps unauthorized requests denied", async () => {
+    mockRequireRole.mockRejectedValue(Object.assign(new Error("Forbidden"), { status: 403 }));
+    const { GET } = await import("@/app/api/student/today/route");
+    expect((await GET()).status).toBe(403);
+    expect(mockStudentFindUnique).not.toHaveBeenCalled();
+  });
+
   it("a past-due assignment becomes the hero recommendation with a real day count", async () => {
     mockScheduledWorkFindMany.mockResolvedValueOnce([]).mockResolvedValueOnce([]);
     const dueAt = new Date(Date.now() - 3 * 86_400_000);
@@ -231,7 +251,7 @@ describe("student today nextBestAction wiring (Sprint 6.7)", () => {
     const { GET } = await import("@/app/api/student/today/route");
     const body = await (await GET()).json();
 
-    expect(body).toEqual({ items: [], adaptivePlan: expect.any(Object) });
+    expect(body).toEqual({ items: [], adaptivePlan: expect.any(Object), availability: "current", catchUpItems: [], completedCount: 0, remainingCount: 0 });
     expect(mockGetStudentWaecReadinessAll).not.toHaveBeenCalled();
   });
 
