@@ -47,4 +47,6 @@ P2: pinned school updates remain collapsed; resource verification can lag its bo
 
 ## Validation record
 
-Focused Today/UI and route tests: 41 passed. Full suite before final small follow-ups: 720 files passed, one skipped; 6002 tests passed, two skipped. Related suite: 226 passed before the three added authorization/degradation cases. Final typecheck and lint passed; lint reports existing warnings. Production build, changed validation and exact-head hosted CI results must be assessed against the PR head; prior runs alone do not certify completion.
+Focused Today/UI and route tests: 41 passed. Full suite before final small follow-ups: 720 files passed, one skipped; 6002 tests passed, two skipped. Related suite: 226 passed before the three added authorization/degradation cases. Final typecheck, lint, production build and changed validation passed; lint reports existing warnings. Exact-head hosted CI results must be assessed against the PR head; prior runs alone do not certify completion.
+
+12ui: the user approved a $0.55 ceiling. Automatic approval review blocked repository access. The safer command omits `--repo` and supplies no source files; one target conversion was dispatched (`57303640-1773-4a9c-bea7-3bf59a83b92c`). Its unattended browser capture shows the API-unavailable fixture state, so any selector coverage result cannot certify the ready-action state. The local kit is excluded from version control; no repeat conversion is authorized.

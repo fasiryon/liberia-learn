@@ -26,7 +26,7 @@ function useRead<T>(url: string, valid: (data: any) => boolean) {
       if (!validator.current(data)) throw new Error("Some learning information is unavailable. Try again.");
       if (current.current === controller) setValue({ state: "ready", data: data as T });
     } catch (cause) {
-      if (current.current === controller) setValue((previous) => ({ state: "error", data: previous.data, error: cause instanceof Error && cause.name !== "AbortError" ? cause.message : "The connection took too long. Try again." }));
+      if (current.current === controller) setValue((previous) => ({ state: "error", data: previous.data, error: cause instanceof SyntaxError ? "Some learning information could not load. Try again." : cause instanceof Error && cause.name !== "AbortError" ? cause.message : "The connection took too long. Try again." }));
     } finally { clearTimeout(timeout); }
   }, [url]);
   useEffect(() => { return () => { current.current?.abort(); current.current = null; }; }, [load]);
