@@ -1,0 +1,70 @@
+{
+  "flows": {
+    "viewports": [
+      "1440x900",
+      "390x844"
+    ],
+    "A": "PASS real lesson body, direct entry, return and resume",
+    "B": "PASS scheduled assigned lesson; CHA has no due assignment",
+    "C": "PASS Learn Labs Progress Help",
+    "D": {
+      "missing": 404,
+      "stale": 404,
+      "foreignSchool": 403,
+      "unenrolledClass": 403,
+      "privileged": 403,
+      "anonymous": 401
+    }
+  },
+  "layouts": [
+    {
+      "viewportWidth": 1440,
+      "overflow": false,
+      "uncovered": true,
+      "width": 125.359375,
+      "height": 48,
+      "age": "middle"
+    },
+    {
+      "viewportWidth": 390,
+      "overflow": false,
+      "uncovered": true,
+      "width": 198.28125,
+      "height": 48,
+      "age": "middle"
+    },
+    {
+      "viewportWidth": 320,
+      "overflow": false,
+      "uncovered": true,
+      "width": 128.28125,
+      "height": 48,
+      "age": "middle"
+    },
+    {
+      "viewportWidth": 360,
+      "overflow": false,
+      "uncovered": true,
+      "width": 168.28125,
+      "height": 48,
+      "age": "middle"
+    },
+    {
+      "viewportWidth": 768,
+      "overflow": false,
+      "uncovered": true,
+      "width": 125.359375,
+      "height": 48,
+      "age": "middle"
+    }
+  ],
+  "accessibility": {
+    "keyboardFocus": true,
+    "text200": true,
+    "youngBand56px": true,
+    "reflow400": "320px viewport equivalent to 1280px at 400%; browser zoom not measured",
+    "reducedMotion": true,
+    "forcedColors": true
+  },
+  "sessionPersistence": true
+}
