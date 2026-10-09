@@ -85,6 +85,7 @@ describe("P1-1 student curriculum list returns a learner-safe summary", () => {
     findMany.mockResolvedValue([{
       id: "row-1", contentId: "c-1", title: "Equivalent fractions", grade: 4, subject: "MATH", contentType: "lesson", status: "published", version: "3",
       payload: approvedPayload,
+      visibility: "class_only", versionId: null, curriculumVersion: null, schoolId: null, teacherCreated: false, provenance: null,
       audioAssets: [{ id: "a1", status: "GENERATED", contentVersion: "3", storageUrl: "https://blob.example/secret.mp3", estimatedCostUsd: 0.4 }],
       createdAt: new Date("2026-10-01T00:00:00.000Z"), updatedAt: new Date("2026-10-02T00:00:00.000Z"),
     }]);

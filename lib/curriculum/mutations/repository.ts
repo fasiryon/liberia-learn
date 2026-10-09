@@ -100,15 +100,10 @@ async function compatibilityUpdate(
   data: Prisma.CurriculumContentUncheckedUpdateInput,
 ): Promise<CurriculumContent> {
   assertNativeWriteHasRevisionAuthority(data);
-  const target = await tx.curriculumContent.findUnique({ where, select: { id: true } });
-  if (!target) return tx.curriculumContent.update({ where, data });
-  await lockContent(tx, target.id);
-  const existing = await tx.curriculumContent.findUniqueOrThrow({
-    where: { id: target.id },
-    select: { payload: true },
-  });
+  const existing = await lockAndReadContent(tx, where);
   assertExistingNativeRowFrozenWithoutRevisions(existing, data as Record<string, unknown>);
-  return tx.curriculumContent.update({ where, data });
+  // Bound to the locked row's id: the write can only reach the row that was inspected.
+  return tx.curriculumContent.update({ where: { id: existing.id }, data });
 }
 
 function lifecycleFromLegacyStatus(status: string): CurriculumLifecycleState {
@@ -150,6 +145,37 @@ function auditEntry(
 
 async function lockContent(tx: CurriculumTransaction, id: string): Promise<void> {
   await tx.$queryRaw`SELECT "id" FROM "CurriculumContent" WHERE "id" = ${id} FOR UPDATE`;
+}
+
+function contentNotFound(): Prisma.PrismaClientKnownRequestError {
+  return new Prisma.PrismaClientKnownRequestError("No CurriculumContent record found for the update", {
+    code: "P2025",
+    clientVersion: Prisma.prismaVersion.client,
+  });
+}
+
+/**
+ * Lock the row, then read it. Every check on an existing row runs against this post-lock read: a
+ * pre-lock snapshot can be stale, and a row that was absent at lookup is never written blind (a row
+ * committed concurrently surfaces as not-found here and the caller retries against the real row).
+ */
+async function lockAndReadContent(
+  tx: CurriculumTransaction,
+  where: Prisma.CurriculumContentWhereUniqueInput,
+): Promise<CurriculumContent> {
+  const target = await tx.curriculumContent.findUnique({ where, select: { id: true } });
+  if (!target) throw contentNotFound();
+  await lockContent(tx, target.id);
+  const locked = await tx.curriculumContent.findUnique({ where: { id: target.id } });
+  if (!locked) throw contentNotFound();
+  return locked;
+}
+
+export async function lockAndReadCurriculumContent(
+  tx: CurriculumTransaction,
+  where: Prisma.CurriculumContentWhereUniqueInput,
+): Promise<CurriculumContent> {
+  return lockAndReadContent(tx, where);
 }
 
 export async function lockCurriculumContent(
@@ -382,8 +408,8 @@ export async function updateCurriculumContentInTransaction(
       });
       return { content, provenance, revision: prior };
     }
-    const before = await tx.curriculumContent.findUniqueOrThrow({ where });
-    await lockContent(tx, before.id);
+    // The snapshot used for provenance and the native-approval check is read after the lock.
+    const before = await lockAndReadContent(tx, where);
     const { provenance, currentRevision } = await ensureCurriculumProvenance(tx, before);
     const content = await tx.curriculumContent.update({ where: { id: before.id }, data });
     assertNativeApprovedRevisionUnchanged(provenance, currentRevision, before, content);
@@ -417,6 +443,8 @@ export async function upsertCurriculumContent(
   if (!provenanceWritersEnabled()) {
     assertNativeWriteHasRevisionAuthority(create);
     assertNativeWriteHasRevisionAuthority(update);
+    // An absent row is created with a plain insert: a row committed concurrently makes the insert fail
+    // on its unique key instead of being overwritten unchecked. An existing row is locked and checked.
     const content = await prisma.$transaction(async (tx) => {
       const target = await tx.curriculumContent.findUnique({ where, select: { id: true } });
       return target
@@ -463,11 +491,9 @@ export async function updateCurriculumOperationalFields(
   }
   // An identity field (`hash`) is checked against the locked row: native content is never re-keyed here.
   return prisma.$transaction(async (tx) => {
-    const target = await tx.curriculumContent.findUniqueOrThrow({ where, select: { id: true } });
-    await lockContent(tx, target.id);
-    const existing = await tx.curriculumContent.findUniqueOrThrow({ where: { id: target.id }, select: { payload: true } });
+    const existing = await lockAndReadContent(tx, where);
     assertExistingNativeRowFrozenWithoutRevisions(existing, data as Record<string, unknown>);
-    return tx.curriculumContent.update({ where: { id: target.id }, data });
+    return tx.curriculumContent.update({ where: { id: existing.id }, data });
   });
 }
 

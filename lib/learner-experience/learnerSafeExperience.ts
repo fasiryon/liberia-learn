@@ -6,6 +6,7 @@
  * a key-bearing object inside keyPoints, an unknown enum — throws, so the caller marks the lesson
  * not student-ready instead of stringifying or forwarding it. Unknown keys never survive the rebuild.
  */
+import { findRestrictedLearnerText } from "./learnerText";
 import { SCENE_TYPES, LESSON_EXPERIENCE_CONTRACT_VERSION, type AgeBand, type LessonExperience, type Scene, type SceneInteraction } from "./types";
 
 export class LearnerProjectionError extends Error {}
@@ -202,6 +203,10 @@ export function rebuildLearnerExperience(value: unknown): LessonExperience {
     offline: { packageable: bool(offline.packageable, "offline.packageable"), requiredAssets: strs(offline.requiredAssets, "offline.requiredAssets") },
   };
   assertNoLearnerSecretKeys(rebuilt);
+  // Governed native text is not silently rewritten: an answer- or teacher-bearing section anywhere
+  // (body, age variant, key point, step, prompt, feedback, fallback) makes the lesson not student-ready.
+  const restricted = findRestrictedLearnerText(rebuilt, "experience");
+  if (restricted) throw new LearnerProjectionError(`learner_projection_restricted_text:${restricted}`);
   return rebuilt;
 }
 

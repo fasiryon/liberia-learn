@@ -4,15 +4,37 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 type Row = Record<string, unknown> & { id: string; contentId: string };
-const db = vi.hoisted(() => ({ rows: new Map<string, Row>(), locks: [] as string[], transactions: 0 }));
+const db = vi.hoisted(() => ({
+  rows: new Map<string, Row>(), locks: [] as string[], transactions: 0, calls: [] as string[],
+  // Interleaving hooks: simulate another transaction committing between this one's statements.
+  beforeFirstLookup: null as null | (() => void), onLock: null as null | ((id: string) => void),
+  // Rows committed by "another transaction": a rollback of this transaction must not undo them.
+  external: new Map<string, Record<string, unknown>>(),
+}));
+/** Commit a row change from a concurrent transaction. */
+const commitConcurrently = (row: Record<string, unknown> & { id: string }) => {
+  db.external.set(row.id, structuredClone(row));
+  db.rows.set(row.id, { ...(db.rows.get(row.id) ?? {}), ...structuredClone(row) } as any);
+};
 
 vi.mock("@/lib/db", () => {
   const find = (where: Record<string, unknown>) =>
     [...db.rows.values()].find((row) => Object.entries(where).every(([key, value]) => row[key] === value)) ?? null;
   const client = {
-    $queryRaw: vi.fn(async (_strings: TemplateStringsArray, id: string) => { db.locks.push(id); return [{ id }]; }),
+    $queryRaw: vi.fn(async (_strings: TemplateStringsArray, id: string) => {
+      db.calls.push("lock");
+      db.locks.push(id);
+      db.onLock?.(id);
+      return [{ id }];
+    }),
     curriculumContent: {
-      findUnique: vi.fn(async ({ where }: { where: Record<string, unknown> }) => find(where)),
+      findUnique: vi.fn(async ({ where, select }: { where: Record<string, unknown>; select?: unknown }) => {
+        db.calls.push(select ? "lookup" : "read");
+        // The lookup sees the pre-commit snapshot; the concurrent row lands right after it.
+        const row = find(where);
+        if (db.beforeFirstLookup) { const hook = db.beforeFirstLookup; db.beforeFirstLookup = null; hook(); }
+        return row;
+      }),
       findUniqueOrThrow: vi.fn(async ({ where }: { where: Record<string, unknown> }) => {
         const row = find(where);
         if (!row) throw new Error("NOT_FOUND");
@@ -40,6 +62,7 @@ vi.mock("@/lib/db", () => {
       return await fn(client);
     } catch (error) {
       db.rows = snapshot;
+      for (const [id, row] of db.external) db.rows.set(id, { ...(db.rows.get(id) ?? {}), ...structuredClone(row) } as any);
       throw error;
     }
   });
@@ -66,6 +89,10 @@ beforeEach(() => {
   ]);
   db.locks = [];
   db.transactions = 0;
+  db.calls = [];
+  db.beforeFirstLookup = null;
+  db.onLock = null;
+  db.external = new Map();
 });
 afterEach(() => { delete process.env.P2A_PROVENANCE_WRITERS_DISABLED; });
 
@@ -116,5 +143,44 @@ describe("P1-1 writers-off: existing native rows are frozen", () => {
     await updateCurriculumContent({ contentId: "legacy" }, { payload: { body: "Edited" }, title: "New" } as any, context);
     await updateCurriculumOperationalFields({ contentId: "legacy" }, { hash: "h-legacy-2" } as any);
     expect(db.rows.get("id-legacy")).toMatchObject({ payload: { body: "Edited" }, title: "New", hash: "h-legacy-2" });
+  });
+});
+
+describe("P1-1 third pass: races cannot bypass the native check", () => {
+  const insertNative = () => commitConcurrently({ id: "id-race", contentId: "race", status: "published", hash: "h-race", payload: NATIVE_PAYLOAD });
+
+  it("an update whose target is absent at lookup is rejected, never written blind, even if a native row commits concurrently", async () => {
+    db.beforeFirstLookup = insertNative;
+    await expect(updateCurriculumContent({ contentId: "race" }, { payload: { body: "Replacement" } }, context)).rejects.toMatchObject({ code: "P2025" });
+    expect(db.rows.get("id-race")).toMatchObject({ status: "published", hash: "h-race", payload: NATIVE_PAYLOAD });
+    expect(db.locks).toEqual([]);
+  });
+
+  it("an upsert whose target is absent at lookup inserts; a concurrently committed native row makes the insert fail, unchanged", async () => {
+    db.beforeFirstLookup = insertNative;
+    const create = { contentId: "race", title: "t", grade: 4, subject: "MATH", contentType: "lesson", payload: { body: "legacy" } } as any;
+    await expect(upsertCurriculumContent({ contentId: "race" }, create, { payload: { body: "Replacement" } }, context)).rejects.toThrow("UNIQUE_VIOLATION");
+    expect(db.rows.get("id-race")).toMatchObject({ status: "published", payload: NATIVE_PAYLOAD });
+  });
+
+  it("a legacy row that becomes native before the lock is granted is checked as native (post-lock read)", async () => {
+    db.onLock = (id) => commitConcurrently({ id, payload: NATIVE_PAYLOAD });
+    await expect(updateCurriculumContent({ contentId: "legacy" }, { payload: { body: "Downgrade" }, status: "DRAFT" } as any, context)).rejects.toThrow(FROZEN);
+    expect(db.rows.get("id-legacy")).toMatchObject({ status: "published", hash: "h-legacy", payload: NATIVE_PAYLOAD });
+    expect(db.calls).toEqual(["lookup", "lock", "read"]);
+  });
+
+  it("the operational-fields hash path also reads after the lock", async () => {
+    db.onLock = (id) => commitConcurrently({ id, payload: NATIVE_PAYLOAD });
+    await expect(updateCurriculumOperationalFields({ contentId: "legacy" }, { hash: "forged" } as any)).rejects.toThrow(FROZEN);
+    expect(db.rows.get("id-legacy")!.hash).toBe("h-legacy");
+  });
+
+  it("the revision-tracked path takes its snapshot after the lock, not before", async () => {
+    process.env.P2A_PROVENANCE_WRITERS_DISABLED = "false";
+    // The fake has no provenance tables, so the write stops after the snapshot; only the order matters here.
+    await expect(prisma.$transaction((tx: any) => updateCurriculumContentInTransaction(tx, { contentId: "legacy" }, { payload: { body: "x" } }, { ...context, idempotencyKey: undefined }))).rejects.toThrow();
+    expect(db.calls.slice(0, 3)).toEqual(["lookup", "lock", "read"]);
+    expect(db.rows.get("id-legacy")!.payload).toEqual({ body: "Legacy lesson" });
   });
 });

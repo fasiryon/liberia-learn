@@ -4,7 +4,7 @@ import { prisma } from "@/lib/db";
 import { requireRole } from "@/lib/auth";
 import { buildCurriculumDisplayTitle } from "@/lib/curriculum/title";
 import { projectStudentCurriculumSummary } from "@/lib/curriculum/studentLessonProjection";
-import { learnerRowAllowed, learnerVisibilityWhere } from "@/lib/curriculum/learnerEligibility";
+import { learnerRowAllowed, learnerScopeAllows, learnerVisibilityWhere, loadLearnerScope, type LearnerVisibilityScope } from "@/lib/curriculum/learnerEligibility";
 
 export const dynamic = "force-dynamic";
 
@@ -41,17 +41,8 @@ export async function GET(req: Request) {
     // Learners see only what the Tutor would let them open: platform rows, own-school rows that are
     // school-wide or assigned to their classes, an ACTIVE version and an APPROVED governed lifecycle
     // (a revoked, superseded or re-opened revision never appears even if the legacy status lags).
-    let learnerScope = {};
-    if (isStudent) {
-      const student = await prisma.student.findUnique({
-        where: { userId: user.id },
-        select: { enrollments: { select: { classId: true, Class: { select: { schoolId: true } } } } },
-      });
-      const classIds = (student?.enrollments ?? [])
-        .filter((enrollment) => user.schoolId && enrollment.Class.schoolId === user.schoolId)
-        .map((enrollment) => enrollment.classId);
-      learnerScope = learnerVisibilityWhere({ schoolId: user.schoolId ?? null, classIds });
-    }
+    const scope: LearnerVisibilityScope | null = isStudent ? await loadLearnerScope(prisma, user) : null;
+    const learnerScope = scope ? learnerVisibilityWhere(scope) : {};
 
     const rows = await prisma.curriculumContent.findMany({
       where: {
@@ -75,6 +66,9 @@ export async function GET(req: Request) {
         visibility: true,
         versionId: true,
         curriculumVersion: { select: { status: true } },
+        schoolId: true,
+        teacherCreated: true,
+        provenance: { select: { lifecycleState: true } },
         audioAssets: {
           orderBy: { generatedAt: "desc" },
           take: 1,
@@ -93,7 +87,9 @@ export async function GET(req: Request) {
 
     if (isStudent) {
       // Learner-safe summary only: the stored payload (answers, teacher notes, rubrics) never leaves the server.
-      const visible = rows.filter(learnerRowAllowed);
+      // The same in-memory gates as the detail route and the Tutor; the query filter is only a prefilter.
+      const visible = [];
+      for (const row of rows) if (learnerRowAllowed(row) && await learnerScopeAllows(prisma, row, scope!)) visible.push(row);
       return NextResponse.json({
         count: visible.length,
         items: visible.map((row) => projectStudentCurriculumSummary({
@@ -113,7 +109,7 @@ export async function GET(req: Request) {
     return NextResponse.json({
       count: rows.length,
       // The learner-eligibility columns are selected for the student filter only; the teacher view is unchanged.
-      items: rows.map(({ visibility: _visibility, versionId: _versionId, curriculumVersion: _curriculumVersion, ...row }) => ({
+      items: rows.map(({ visibility: _visibility, versionId: _versionId, curriculumVersion: _curriculumVersion, schoolId: _schoolId, teacherCreated: _teacherCreated, provenance: _provenance, ...row }) => ({
         ...row,
         audioStatus: audioStatusOf(row),
         displayTitle: buildCurriculumDisplayTitle({

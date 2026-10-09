@@ -80,6 +80,7 @@ export function validateCandidateAgainstContext(candidate: CandidateLessonV2, co
     const interaction = scene.interaction;
     // Objectives: exact ids from the pinned context only.
     for (const id of scene.objectiveIds) if (!objectiveIds.has(id)) error(`objective_unknown:${scene.id}:${id}`);
+    if (new Set(scene.objectiveIds).size !== scene.objectiveIds.length) error(`objective_duplicate:${scene.id}`);
     if (!FRAMING_TYPES.has(scene.type) && scene.objectiveIds.length === 0) error(`objective_required:${scene.id}`);
     // Size: the Phase A cap is a ceiling; age variants obey it too.
     if (words(scene.content.body) > V2_LIMITS.sceneWords) error(`scene_too_long:${scene.id}`);

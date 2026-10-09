@@ -237,3 +237,12 @@ describe("PR #176 review P2s: governed delivery attributes and lab evidence", ()
     expect(validateCandidateAgainstContext(parseCandidateLessonV2(solids), g4ProofContext(SOLIDS)).errors).toContain(`evidence_not_collectable:${lab.id}`);
   });
 });
+
+describe("PR #176 merge gate: duplicate scene objective ids", () => {
+  it("rejects a scene that lists the same objective twice", () => {
+    const candidate = fractions();
+    const scene = candidate.scenes.find((entry: any) => entry.objectiveIds.length > 0);
+    scene.objectiveIds = [scene.objectiveIds[0], scene.objectiveIds[0]];
+    expect(validateCandidateAgainstContext(parseCandidateLessonV2(candidate), g4ProofContext(FRACTIONS)).errors).toContain(`objective_duplicate:${scene.id}`);
+  });
+});

@@ -47,6 +47,11 @@ function governedRow(status = "published") {
     version: "v2",
     payload: { title: "Water cycle" },
     teacherCreated: false,
+    // Learner-eligibility columns: a platform row with learner visibility and no version pin.
+    schoolId: null,
+    visibility: "class_only",
+    versionId: null,
+    curriculumVersion: null,
     editedBy: null,
     audioAssets: [],
     videoSupplements: [],

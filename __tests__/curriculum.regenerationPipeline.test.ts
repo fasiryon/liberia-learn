@@ -278,7 +278,7 @@ describe("curriculum regeneration pipeline", () => {
 
     expect(result.status).toBe("approved");
     expect(mockUpdate).toHaveBeenCalledWith(expect.objectContaining({
-      where: { contentId: "c1" },
+      where: { id: "row-1" }, // the write is bound to the locked row
       data: expect.objectContaining({ status: "DRAFT" }),
     }));
     expect(mockCreate).not.toHaveBeenCalledWith(expect.objectContaining({

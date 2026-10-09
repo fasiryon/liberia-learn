@@ -4,7 +4,7 @@ import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/db";
 import type { SessionUser } from "@/lib/auth";
 import { projectStudentLessonPayload } from "@/lib/curriculum/studentLessonProjection";
-import { learnerRowAllowed, learnerVisibilityWhere } from "@/lib/curriculum/learnerEligibility";
+import { learnerRowAllowed, learnerScopeAllows, learnerVisibilityWhere } from "@/lib/curriculum/learnerEligibility";
 import { buildCurriculumContentSnapshotV1 } from "@/lib/curriculum/provenance/snapshot";
 import { hashCurriculumSnapshot } from "@/lib/curriculum/provenance/hash";
 import { getCanonicalSubjectCode } from "@/lib/curriculum/subjectTaxonomy";
@@ -146,13 +146,8 @@ export async function resolveTutorContext(
     if (identity.contentId && identity.contentId !== row.contentId) denied();
     if (identity.lessonVersion && identity.lessonVersion !== row.version) stale();
     if (identity.revisionId && identity.revisionId !== row.provenance?.currentRevisionId) stale();
-    const mayRead = async (candidate: LessonRow) => {
-      if (!candidate.teacherCreated && !candidate.schoolId) return true;
-      if (candidate.schoolId !== scope.schoolId) return false;
-      if (candidate.visibility === "school_wide") return true;
-      const assigned = await tx.scheduledWork.findFirst({ where: { contentId: candidate.contentId, classId: { in: scope.classIds }, class: { schoolId: scope.schoolId } }, select: { id: true } });
-      return Boolean(assigned || await tx.teacherLessonAssignment.findFirst({ where: { contentId: candidate.contentId, classId: { in: scope.classIds }, class: { schoolId: scope.schoolId } }, select: { id: true } }));
-    };
+    // School and assignment scope: the same gate as the learner listing and detail route.
+    const mayRead = (candidate: LessonRow) => learnerScopeAllows(tx, candidate, scope);
     if (!await mayRead(row)) denied();
     const projected = projectStudentLessonPayload(row.payload);
     let experience: LessonExperience | null = null;

@@ -17,7 +17,7 @@ import { CURRICULUM_SNAPSHOT_SCHEMA_VERSION_NATIVE } from "@/lib/curriculum/prov
 import { isNativeCurriculumV2Payload } from "@/lib/curriculum/v2/contract";
 import { assertNativeCurriculumV2Approval, NATIVE_APPROVAL_EVENTS } from "@/lib/curriculum/v2/governance";
 import {
-  lockCurriculumContent,
+  lockAndReadCurriculumContent,
   ensureCurriculumProvenance,
   provenanceWritersEnabled,
   updateCurriculumGovernanceProjection,
@@ -279,10 +279,8 @@ export async function appendCurriculumGovernanceEventInTransaction(
     });
     if (prior) return prior;
   }
-  const content = await tx.curriculumContent.findUniqueOrThrow({
-      where: { contentId: input.contentId },
-    });
-    await lockCurriculumContent(tx, content.id);
+  // Read after the lock: the native-approval check must see the row as it is now, not a pre-lock snapshot.
+  const content = await lockAndReadCurriculumContent(tx, { contentId: input.contentId });
     const ensured = await ensureCurriculumProvenance(tx, content);
     const root = await tx.curriculumProvenance.findUniqueOrThrow({
       where: { id: ensured.provenance.id },

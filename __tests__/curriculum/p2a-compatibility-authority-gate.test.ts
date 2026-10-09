@@ -158,7 +158,8 @@ describe("P2-A compatibility-path automated-approval authority gate", () => {
     const tx = {
       $queryRaw: vi.fn().mockResolvedValue([]),
       curriculumContent: {
-        findUniqueOrThrow: vi.fn().mockResolvedValue({ id: "content-row-1", contentId: "content-1" }),
+        // Read after the row lock (lockAndReadCurriculumContent).
+        findUnique: vi.fn().mockResolvedValue({ id: "content-row-1", contentId: "content-1" }),
       },
       curriculumProvenance: {
         findUnique: vi.fn().mockResolvedValue({
@@ -200,7 +201,8 @@ describe("P2-A compatibility-path automated-approval authority gate", () => {
     const tx = {
       $queryRaw: vi.fn().mockResolvedValue([]),
       curriculumContent: {
-        findUniqueOrThrow: vi.fn().mockResolvedValue({
+        // Read after the row lock (lockAndReadCurriculumContent).
+        findUnique: vi.fn().mockResolvedValue({
           id: "content-row-1",
           contentId: "content-1",
           schoolId: "school-1",
@@ -250,7 +252,8 @@ describe("P2-A compatibility-path automated-approval authority gate", () => {
     const tx = {
       $queryRaw: vi.fn().mockResolvedValue([]),
       curriculumContent: {
-        findUniqueOrThrow: vi.fn().mockResolvedValue({
+        // Read after the row lock (lockAndReadCurriculumContent).
+        findUnique: vi.fn().mockResolvedValue({
           id: "content-row-1",
           contentId: "content-1",
           schoolId: "school-1",

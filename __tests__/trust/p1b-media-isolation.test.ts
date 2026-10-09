@@ -100,6 +100,11 @@ describe("P1-B tenant-scoped lesson media", () => {
       version: "3",
       payload: { title: "Cells" },
       teacherCreated: false,
+      // Learner-eligibility columns: a platform row with learner visibility and no version pin.
+      schoolId: null,
+      visibility: "class_only",
+      versionId: null,
+      curriculumVersion: null,
       editedBy: null,
       audioAssets: [],
       videoSupplements: [{

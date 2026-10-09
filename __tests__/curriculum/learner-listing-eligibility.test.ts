@@ -16,7 +16,7 @@ const LEGACY = { title: "Fractions", body_standard: "## Learn\n\nHalves and quar
 function row(contentId: string, overrides: Record<string, unknown> = {}) {
   return {
     id: `row-${contentId}`, contentId, title: contentId, grade: 4, subject: "MATH", contentType: "lesson", status: "published", version: "1",
-    payload: LEGACY, visibility: "class_only", versionId: null, curriculumVersion: null, audioAssets: [],
+    payload: LEGACY, visibility: "class_only", versionId: null, curriculumVersion: null, schoolId: null, teacherCreated: false, provenance: null, audioAssets: [],
     createdAt: new Date("2026-10-01T00:00:00.000Z"), updatedAt: new Date("2026-10-02T00:00:00.000Z"),
     ...overrides,
   };
@@ -54,7 +54,7 @@ describe("P1-3 learner listing uses the Tutor's visibility rules", () => {
     expect(JSON.stringify(scope)).not.toContain("class-b1");
     expect(version).toEqual({ OR: [{ versionId: null }, { curriculumVersion: { is: { status: "ACTIVE" } } }] });
     expect(lifecycle).toEqual({ OR: [{ provenance: { is: null } }, { provenance: { is: { lifecycleState: "APPROVED" } } }] });
-    expect(visibility).toEqual({ visibility: { notIn: ["teacher_only", "private"] } });
+    expect(visibility).toEqual({ visibility: { in: ["class_only", "school_wide", "public"] } });
   });
 
   it("a student with no school or no classes gets platform rows only, never unassigned own-school rows", () => {
@@ -95,7 +95,7 @@ describe("P1-3 learner listing uses the Tutor's visibility rules", () => {
     expect(studentFindUnique).not.toHaveBeenCalled();
     expect(findMany.mock.calls[0][0].where.AND[1]).toEqual({});
     expect(body.count).toBe(1);
-    for (const key of ["visibility", "versionId", "curriculumVersion"]) expect(body.items[0]).not.toHaveProperty(key);
+    for (const key of ["visibility", "versionId", "curriculumVersion", "schoolId", "teacherCreated", "provenance"]) expect(body.items[0]).not.toHaveProperty(key);
     expect(body.items[0].payload).toEqual(LEGACY);
   });
 });

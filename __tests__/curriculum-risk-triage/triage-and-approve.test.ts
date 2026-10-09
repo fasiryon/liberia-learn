@@ -86,7 +86,7 @@ describe("triageAndApprove", () => {
 
     expect(result.action).toBe("flagged");
     expect(mockUpdate).toHaveBeenCalledWith({
-      where: { contentId: "content-high" },
+      where: { id: "row-1" }, // the write is bound to the locked row
       data: {
         status: "NEEDS_REVIEW",
         payload: expect.objectContaining({

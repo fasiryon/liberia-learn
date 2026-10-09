@@ -2,6 +2,7 @@ import { CURRICULUM_V2_PAYLOAD_KEY, isNativeCurriculumV2Payload, type Curriculum
 import { toLessonExperience } from "@/lib/curriculum/v2/compat";
 import { validateLessonExperience } from "@/lib/learner-experience/sceneContract";
 import { assertNoLearnerSecretKeys, rebuildLearnerExperience } from "@/lib/learner-experience/learnerSafeExperience";
+import { stripRestrictedLearnerSections, stripRestrictedLearnerText } from "@/lib/learner-experience/learnerText";
 type StudentMaterials = {
   learnerMaterial?: unknown;
   guidedItems?: unknown;
@@ -30,9 +31,10 @@ function scalarGrade(value: unknown): number | string | undefined {
   return typeof value === "string" ? value : undefined;
 }
 
+/** Learner string items, each filtered on its own before any numbering can hide a heading. */
 function list(value: unknown): string[] {
   if (!Array.isArray(value)) return [];
-  return value.map(text).filter(Boolean);
+  return value.map((entry) => stripRestrictedLearnerSections(text(entry))).filter(Boolean);
 }
 
 /*
@@ -105,84 +107,14 @@ function numbered(values: string[]): string {
   return values.map((value, index) => `${index + 1}. ${value}`).join("\n");
 }
 
-const LEGACY_TEACHER_ONLY_HEADINGS = new Set([
-  "answer guide",
-  "assessment alignment",
-  "evidence record",
-  "extension branch",
-  "lesson study notes",
-  "metadata",
-  "remediation branch",
-  "teacher checkpoints",
-  "teacher explanation",
-  "teacher guidance",
-  "teacher notes",
-  "teacher planning record",
-  "teacher talk",
-]);
-
 /**
- * Legacy lessons predate studentMaterials and often mix learner content with
- * teacher planning sections. Keep the usable learner sections while removing
- * known teacher-only or answer-bearing sections.
+ * Legacy lessons predate studentMaterials and often mix learner content with teacher planning
+ * sections. The shared learner-text rule removes answer- and teacher-bearing sections and keeps the
+ * usable learner sections.
  */
-/**
- * Answer- or teacher-bearing section titles, matched at any heading level. A heading that IS an
- * answer label ("Answers", "Solution:", "3. Expected Response") or names answer/teacher material
- * ("Answer Key", "Model answers", "Mark Scheme", "Teacher notes") opens an excluded section. A
- * learner heading that merely uses the word ("Answer the questions below", "Solutions to pollution")
- * is kept, and ordinary prose is never matched — only heading and answer-label lines.
- */
-const ANSWER_LABEL = String.raw`(?:(?:expected|model|sample|suggested|correct|possible|teachers?'?)\s+)?(?:answers?|responses?|solutions?|worked\s+solutions?|answer\s+key|answer\s+guide|mark(?:ing)?\s+schemes?|marking\s+guide)(?:\s+(?:key|guide|and\s+explanations?|with\s+explanations?))?`;
-const ANSWER_HEADING = new RegExp(String.raw`^${ANSWER_LABEL}$`, "i");
-const TEACHER_OR_ANSWER_HEADING = /\b(answer key|answer guide|answers to|expected (answers?|responses?)|model answers?|sample answers?|suggested answers?|worked solutions?|mark(ing)? schemes?|marking guide|rubric|scoring|teacher|facilitator)\b/i;
-/** A line that starts with an answer label and a colon ("**Expected Response:** 3/4", "Answer: 6"). */
-const ANSWER_LABEL_LINE = new RegExp(String.raw`^\s*(?:[-*]\s+)?(?:\*\*|__)?\s*${ANSWER_LABEL}\s*(?:\*\*|__)?\s*:\s*(?:\*\*|__)?`, "i");
-
-function normalizeHeading(heading: string): string {
-  return heading
-    .replace(/[*_`]/g, "")
-    .replace(/^(?:(?:part|step|section|question)\s+)?(?:\d+|[ivx]+)[.):-]?\s+/i, "")
-    .replace(/[\s:.!?-]+$/g, "")
-    .trim()
-    .toLowerCase();
-}
-
-function isExcludedHeading(heading: string): boolean {
-  const normalized = normalizeHeading(heading);
-  return LEGACY_TEACHER_ONLY_HEADINGS.has(normalized) || ANSWER_HEADING.test(normalized) || TEACHER_OR_ANSWER_HEADING.test(normalized);
-}
-
 function projectLegacyBody(value: unknown): string {
   const body = text(value);
-  if (!body) return "";
-
-  const lines = body.split(/\r?\n/);
-  // Excluded section: skipped until a heading at the same or a higher level.
-  let excludedLevel: number | null = null;
-  // An answer label alone on its line ("**Expected Response:**") hides the block below it.
-  let inAnswerBlock = false;
-  const kept: string[] = [];
-  for (const line of lines) {
-    const match = line.match(/^(#{1,6})\s+(.+?)\s*$/);
-    if (match) {
-      inAnswerBlock = false;
-      const level = match[1].length;
-      if (excludedLevel !== null && level <= excludedLevel) excludedLevel = null;
-      if (excludedLevel === null && isExcludedHeading(match[2])) excludedLevel = level;
-    }
-    if (excludedLevel !== null) continue;
-    if (inAnswerBlock) {
-      if (!line.trim()) inAnswerBlock = false;
-      continue;
-    }
-    if (!match && ANSWER_LABEL_LINE.test(line)) {
-      if (!line.replace(ANSWER_LABEL_LINE, "").trim()) inAnswerBlock = true;
-      continue;
-    }
-    kept.push(line);
-  }
-  return kept.join("\n").replace(/\n{3,}/g, "\n\n").trim();
+  return body ? stripRestrictedLearnerSections(body) : "";
 }
 
 function safeProblemSets(value: unknown): unknown[] {
@@ -298,19 +230,19 @@ function labForLearner(value: unknown): string {
   const procedure = Array.isArray(lab.procedure)
     ? lab.procedure
         .filter((step): step is Record<string, unknown> => Boolean(step && typeof step === "object" && !Array.isArray(step)))
-        .map((step) => text(step.instruction))
+        .map((step) => stripRestrictedLearnerSections(text(step.instruction)))
         .filter(Boolean)
     : [];
   const observations = Array.isArray(lab.observationForm)
     ? lab.observationForm
         .filter((field): field is Record<string, unknown> => Boolean(field && typeof field === "object" && !Array.isArray(field)))
-        .map((field) => text(field.prompt))
+        .map((field) => stripRestrictedLearnerSections(text(field.prompt)))
         .filter(Boolean)
     : [];
   const questions = Array.isArray(lab.analysisQuestions)
     ? lab.analysisQuestions
         .filter((question): question is Record<string, unknown> => Boolean(question && typeof question === "object" && !Array.isArray(question)))
-        .map((question) => text(question.question))
+        .map((question) => stripRestrictedLearnerSections(text(question.question)))
         .filter(Boolean)
     : [];
   const sections = [
@@ -336,8 +268,12 @@ function labForLearner(value: unknown): string {
  * audit details, or raw assessment keys. This projection is intentionally
  * allow-listed and keeps legacy payloads compatible until they are replaced.
  */
+const NATIVE_EXPERIENCE_KEY: ReadonlySet<string> = new Set(["lessonExperience"]);
+
 export function projectStudentLessonPayload(payload: unknown): LessonPayloadRecord {
-  const projected = projectAllowListed(payload);
+  // Every learner string, in every collection, passes the shared answer/teacher-section rule. A native
+  // experience was already verified whole (restricted text makes it not student-ready), so it is kept as is.
+  const projected = stripRestrictedLearnerText(projectAllowListed(payload), NATIVE_EXPERIENCE_KEY);
   // Defence in depth: whatever the allow-lists produced, no secret-named key leaves the server.
   try {
     assertNoLearnerSecretKeys(projected);
@@ -478,7 +414,7 @@ export function selectStudentLessonAudioText(payload: unknown): string {
  * Teacher notes and answer/rubric fields remain server-side for evaluation.
  */
 export function projectStudentLabPayload(payload: unknown): LessonPayloadRecord {
-  return (safeLabs([payload])[0] as LessonPayloadRecord | undefined) ?? {};
+  return stripRestrictedLearnerText((safeLabs([payload])[0] as LessonPayloadRecord | undefined) ?? {});
 }
 
 /**

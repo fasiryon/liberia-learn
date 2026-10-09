@@ -160,7 +160,8 @@ describe("governance writer enforces the native rule in both flag modes", () => 
     const { appendCurriculumGovernanceEventInTransaction } = await import("@/lib/curriculum/mutations/governanceWriter");
     ensure.mockResolvedValue({ provenance: { id: "p-1" } });
     const tx = {
-      curriculumContent: { findUniqueOrThrow: vi.fn().mockResolvedValue({ id: "row-1", payload: nativePayload }) },
+      $queryRaw: vi.fn().mockResolvedValue([]),
+      curriculumContent: { findUnique: vi.fn().mockResolvedValue({ id: "row-1", payload: nativePayload }), findUniqueOrThrow: vi.fn().mockResolvedValue({ id: "row-1", payload: nativePayload }) },
       curriculumProvenance: { findUniqueOrThrow: vi.fn().mockResolvedValue({ id: "p-1", currentRevisionId: "r-1", provenanceCompleteness: "VERIFIED" }) },
       curriculumContentRevision: { findFirst: vi.fn().mockResolvedValue({ id: "r-1", snapshotSchemaVersion: 2 }) },
       curriculumGovernanceEvent: { findUnique: vi.fn(), findFirst: vi.fn(() => { throw new Error("REACHED_EVENT_WRITE"); }), create: vi.fn(() => { throw new Error("REACHED_EVENT_WRITE"); }) },
