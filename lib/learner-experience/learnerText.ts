@@ -106,9 +106,12 @@ function scan(value: string): { kept: string; restricted: boolean } {
       inAnswerBlock = true;
       continue;
     }
+    // A colon label opens the same block whether or not the answer starts on its own line
+    // ("Expected Answer: L$200" followed by its working): the inline text and every continuation line,
+    // paragraph and list are hidden until the next structural section boundary.
     if (!match && LABEL_WITH_COLON.test(line)) {
       restricted = true;
-      if (!line.replace(LABEL_WITH_COLON, "").trim()) inAnswerBlock = true;
+      inAnswerBlock = true;
       continue;
     }
     kept.push(line);

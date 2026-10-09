@@ -1,7 +1,7 @@
 // Codex second-pass P1-2: stored data is adversarial. A key smuggled into any learner-visible
 // field, a structure where text belongs, or an answer section in Markdown never reaches a learner;
 // malformed native data makes the lesson not student-ready instead of being stringified.
-import { describe, expect, it } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
 import { projectStudentLabPayload, projectStudentLessonPayload } from "@/lib/curriculum/studentLessonProjection";
 import { toLessonExperience } from "@/lib/curriculum/v2/compat";
 import { runG4Proof } from "@/lib/curriculum/v2/g4Proof";
@@ -364,5 +364,110 @@ describe("P1-B final gate: blank lines cannot reopen restricted learner text", (
       if (outcome.status === "REJECTED") throw new Error(outcome.errors.join());
       expect([file, projectStudentLessonPayload({ curriculumV2: outcome.lesson }).studentReady]).toEqual([file, true]);
     }
+  });
+});
+
+// Codex final merge gate (cf49fe3b) P1-B: a colon label with inline content ("Expected Answer: X")
+// opens the same hidden block as a bare label. Its inline text and every continuation line,
+// paragraph and list stay hidden until a structural boundary.
+describe("P1-B inline labels: continuation text stays hidden until a structural boundary", () => {
+  const INLINE = "INLINE_SECRET";
+  const MORE = "CONTINUATION_SECRET";
+  const LABELS = ["Expected Answer", "Expected Response", "Answer Key", "Teacher Notes"];
+  const FORMS: Array<[string, (label: string) => string]> = [
+    ["Label:", (label) => `${label}: ${INLINE}`],
+    ["## Label:", (label) => `## ${label}: ${INLINE}`],
+    ["1. Label:", (label) => `1. ${label}: ${INLINE}`],
+    ["1) Label:", (label) => `1) ${label}: ${INLINE}`],
+    ["A. Label:", (label) => `A. ${label}: ${INLINE}`],
+    ["- Label:", (label) => `- ${label}: ${INLINE}`],
+  ];
+  const CONTINUATIONS: Array<[string, string]> = [
+    ["wrapped line", `${MORE} wrapped`],
+    ["one blank line", `\n${MORE} after one blank`],
+    ["multiple blank lines", `\n\n\n${MORE} after blanks`],
+    ["multiple paragraphs", `${MORE} one\n\n${MORE} two\n\n${MORE} three`],
+    ["numbered answer list", `1. ${MORE} a\n2. ${MORE} b`],
+    ["bullet answer list", `- ${MORE} a\n- ${MORE} b`],
+    ["paragraphs and a list", `${MORE} reason\n\n1. ${MORE} step\n2. ${MORE} step\n\n${MORE} closing`],
+  ];
+  const BOUNDARIES: Array<[string, string, string]> = [
+    ["Markdown heading", "# Practice", "Try another market problem."],
+    ["bold-only heading", "**Practice**", "Try another market problem."],
+    ["horizontal rule", "---", "Try another market problem."],
+  ];
+  const cases = LABELS.flatMap((label) => FORMS.flatMap(([form, render]) => CONTINUATIONS.map(([shape, continuation]): [string, string, string] =>
+    [`${label} [${form}] + ${shape}`, render(label), continuation])));
+  const leaksInline = (value: unknown) => /INLINE_SECRET|CONTINUATION_SECRET/.test(JSON.stringify(value ?? null));
+  let nativeBase: string;
+  let barGraphsBase: string;
+  const fromBase = (base: string) => JSON.parse(base);
+
+  beforeAll(() => {
+    nativeBase = JSON.stringify(nativeLesson());
+    const outcome = runG4Proof("bar-graphs.json", "moe-math-g4-s2-p6-geometry-and-statistics-obj6");
+    if (outcome.status === "REJECTED") throw new Error(outcome.errors.join());
+    barGraphsBase = JSON.stringify(outcome.lesson);
+  });
+
+  it("Codex's exact reproduction no longer leaks", () => {
+    const projected = projectStudentLessonPayload({ body: "Learn safely.\nExpected Answer: FIRST_SECRET\nWRAPPED_SECRET\n\nSECOND_PARAGRAPH_SECRET\n\n# Practice\nTry it." });
+    expect(JSON.stringify(projected)).not.toMatch(/FIRST_SECRET|WRAPPED_SECRET|SECOND_PARAGRAPH_SECRET/);
+    expect(projected.body).toContain("Learn safely.");
+    expect(projected.body).toContain("# Practice\nTry it.");
+  });
+
+  it("the market example keeps only the practice section", () => {
+    const body = "Expected Answer: L$200\nBecause 70 + 50 + 100 = 220,\nBoima cannot buy all three.\n\n1. Add the prices.\n2. Compare with 200.\n\n# Practice\nTry another market problem.";
+    expect(projectStudentLessonPayload({ body }).body).toBe("# Practice\nTry another market problem.");
+  });
+
+  it.each(cases)("%s: every final projection hides the inline and continuation text", (_name, labelLine, continuation) => {
+    for (const [, boundary, after] of BOUNDARIES) {
+      const text = `Learn safely.\n${labelLine}\n${continuation}\n\n${boundary}\n${after}`;
+      const projections = {
+        legacyBody: projectStudentLessonPayload({ body: text }),
+        legacyActivities: projectStudentLessonPayload({ body: "Read.", activities: [text, "Fold a strip."] }),
+        authoredClasswork: projectStudentLessonPayload({ studentMaterials: { learnerMaterial: "Read.", classwork: [text, "Fold a strip."] } }),
+        independentItems: projectStudentLessonPayload({ studentMaterials: { learnerMaterial: "Read.", independentItems: [text] } }),
+        lessonLab: projectStudentLessonPayload({ body: "Read.", labs: [{ title: "Lab", procedure: [{ instruction: text }] }] }),
+        authoredLab: projectStudentLessonPayload({ studentMaterials: { learnerMaterial: "Read.", lab: { title: "Lab", procedure: [{ instruction: text }] } } }),
+        standaloneLab: projectStudentLabPayload({ title: "Lab", procedure: [{ instruction: text }] }),
+      };
+      for (const [path, projected] of Object.entries(projections)) expect([path, boundary, leaksInline(projected)]).toEqual([path, boundary, false]);
+      // Safe learner text before the label and after the real boundary survives. A "## Label:" heading
+      // opens a Markdown section, which only a heading at the same or a higher level ends; a bold line
+      // or rule inside it stays hidden (fails closed).
+      expect(projections.legacyBody.body).toContain("Learn safely.");
+      expect(projections.legacyActivities.activities).toContain("Fold a strip.");
+      if (!labelLine.startsWith("## ") || boundary.startsWith("# ")) {
+        expect(projections.legacyBody.body).toContain(after);
+        expect(JSON.stringify(projections.standaloneLab)).toContain(after);
+      }
+
+      const nativeInjections: Array<[string, (lesson: any) => void]> = [
+        ["native scene body", (l) => { l.scenes[0].content.body = text; }],
+        ["native age variant", (l) => { l.scenes[0].content.ageVariants = { UPPER_PRIMARY: { body: text } }; }],
+        ["native key point", (l) => { l.scenes[1].content.keyPoints = ["Safe point.", text]; }],
+      ];
+      for (const [path, inject] of nativeInjections) {
+        const lesson = fromBase(nativeBase);
+        inject(lesson);
+        const projected = projectStudentLessonPayload({ curriculumV2: lesson });
+        expect([path, boundary, leaksInline(projected), projected.studentReady]).toEqual([path, boundary, false, false]);
+      }
+      const fallbackLesson = fromBase(barGraphsBase);
+      fallbackLesson.scenes.find((scene: any) => scene.id === "read-graph").fallback.content = text;
+      const fallbackProjected = projectStudentLessonPayload({ curriculumV2: fallbackLesson });
+      expect(["generated fallback", boundary, leaksInline(fallbackProjected), fallbackProjected.studentReady]).toEqual(["generated fallback", boundary, false, false]);
+    }
+  });
+
+  it("keeps ordinary prose, Expected Value choices and standalone answer options", () => {
+    const body = "Check your answer with a partner.\nThe solution can be explained another way.\nThe expected value of a fair die is 3.5.";
+    expect(projectStudentLessonPayload({ body }).body).toBe(body);
+    const options = ["Solution", "Expected Value", "Answer", "Mean"];
+    const projected = projectStudentLessonPayload({ body: "Statistics.", assessment: [{ question: "Which word names the long-run average?", options }] }) as any;
+    expect(projected.assessment[0].options).toEqual(options);
   });
 });
