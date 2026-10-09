@@ -4,6 +4,7 @@ import { prisma } from "@/lib/db";
 import { requireRole } from "@/lib/auth";
 import { buildCurriculumDisplayTitle } from "@/lib/curriculum/title";
 import { projectStudentCurriculumSummary } from "@/lib/curriculum/studentLessonProjection";
+import { learnerRowAllowed, learnerVisibilityWhere } from "@/lib/curriculum/learnerEligibility";
 
 export const dynamic = "force-dynamic";
 
@@ -37,18 +38,27 @@ export async function GET(req: Request) {
     const tenantScope = user.isPlatformAdmin
       ? {}
       : { OR: [{ schoolId: null }, ...(user.schoolId ? [{ schoolId: user.schoolId }] : [])] };
-    // Learners only see content whose governed lifecycle (when it has one) is APPROVED: a revoked,
-    // superseded or re-opened revision never appears in a learner listing even if the legacy status lags.
-    const learnerLifecycle = isStudent
-      ? { OR: [{ provenance: { is: null } }, { provenance: { is: { lifecycleState: "APPROVED" as const } } }] }
-      : {};
+    // Learners see only what the Tutor would let them open: platform rows, own-school rows that are
+    // school-wide or assigned to their classes, an ACTIVE version and an APPROVED governed lifecycle
+    // (a revoked, superseded or re-opened revision never appears even if the legacy status lags).
+    let learnerScope = {};
+    if (isStudent) {
+      const student = await prisma.student.findUnique({
+        where: { userId: user.id },
+        select: { enrollments: { select: { classId: true, Class: { select: { schoolId: true } } } } },
+      });
+      const classIds = (student?.enrollments ?? [])
+        .filter((enrollment) => user.schoolId && enrollment.Class.schoolId === user.schoolId)
+        .map((enrollment) => enrollment.classId);
+      learnerScope = learnerVisibilityWhere({ schoolId: user.schoolId ?? null, classIds });
+    }
 
     const rows = await prisma.curriculumContent.findMany({
       where: {
         status: statusFilter,
         ...(typeof grade === "number" && !Number.isNaN(grade) ? { grade } : {}),
         ...(subject ? { subject } : {}),
-        AND: [tenantScope, learnerLifecycle],
+        AND: [tenantScope, learnerScope],
       },
       orderBy: { updatedAt: "desc" },
       take,
@@ -62,6 +72,9 @@ export async function GET(req: Request) {
         status: true,
         version: true,
         payload: true,
+        visibility: true,
+        versionId: true,
+        curriculumVersion: { select: { status: true } },
         audioAssets: {
           orderBy: { generatedAt: "desc" },
           take: 1,
@@ -80,9 +93,10 @@ export async function GET(req: Request) {
 
     if (isStudent) {
       // Learner-safe summary only: the stored payload (answers, teacher notes, rubrics) never leaves the server.
+      const visible = rows.filter(learnerRowAllowed);
       return NextResponse.json({
-        count: rows.length,
-        items: rows.map((row) => projectStudentCurriculumSummary({
+        count: visible.length,
+        items: visible.map((row) => projectStudentCurriculumSummary({
           contentId: row.contentId,
           title: row.title,
           grade: row.grade,
@@ -98,7 +112,8 @@ export async function GET(req: Request) {
 
     return NextResponse.json({
       count: rows.length,
-      items: rows.map((row) => ({
+      // The learner-eligibility columns are selected for the student filter only; the teacher view is unchanged.
+      items: rows.map(({ visibility: _visibility, versionId: _versionId, curriculumVersion: _curriculumVersion, ...row }) => ({
         ...row,
         audioStatus: audioStatusOf(row),
         displayTitle: buildCurriculumDisplayTitle({

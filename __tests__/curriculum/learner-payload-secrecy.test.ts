@@ -3,11 +3,13 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const findMany = vi.hoisted(() => vi.fn());
 const requireRole = vi.hoisted(() => vi.fn());
-vi.mock("@/lib/db", () => ({ prisma: { curriculumContent: { findMany } } }));
+const studentFindUnique = vi.hoisted(() => vi.fn());
+vi.mock("@/lib/db", () => ({ prisma: { curriculumContent: { findMany }, student: { findUnique: studentFindUnique } } }));
 vi.mock("@/lib/auth", () => ({ requireRole }));
 
 import { GET } from "@/app/api/curriculum/route";
 import { projectStudentLabPayload, projectStudentLessonPayload } from "@/lib/curriculum/studentLessonProjection";
+import { learnerVisibilityWhere } from "@/lib/curriculum/learnerEligibility";
 
 const SECRET = "SECRET-DO-NOT-SHIP";
 const SECRET_KEYS = ["answer", "answerKey", "correctIndex", "explanation", "scoring", "rubric", "scoringRubric", "expectedAnswer", "teacherNotes", "teacherNote", "teacherGuide", "markScheme", "futureHiddenField"];
@@ -78,6 +80,8 @@ describe("P1-1 student curriculum list returns a learner-safe summary", () => {
   beforeEach(() => {
     findMany.mockReset();
     requireRole.mockReset();
+    studentFindUnique.mockReset();
+    studentFindUnique.mockResolvedValue({ enrollments: [] });
     findMany.mockResolvedValue([{
       id: "row-1", contentId: "c-1", title: "Equivalent fractions", grade: 4, subject: "MATH", contentType: "lesson", status: "published", version: "3",
       payload: approvedPayload,
@@ -102,7 +106,9 @@ describe("P1-1 student curriculum list returns a learner-safe summary", () => {
     const where = findMany.mock.calls[0][0].where;
     expect(where.status).toEqual({ in: ["published", "APPROVED"] });
     expect(where.AND[0]).toEqual({ OR: [{ schoolId: null }, { schoolId: "school-a" }] });
-    expect(where.AND[1]).toEqual({ OR: [{ provenance: { is: null } }, { provenance: { is: { lifecycleState: "APPROVED" } } }] });
+    // Learner visibility (incl. the APPROVED governed lifecycle) is the shared Tutor rule set (P1-3).
+    expect(where.AND[1]).toEqual(learnerVisibilityWhere({ schoolId: "school-a", classIds: [] }));
+    expect(where.AND[1].AND).toContainEqual({ OR: [{ provenance: { is: null } }, { provenance: { is: { lifecycleState: "APPROVED" } } }] });
   });
 
   it("a student with no school sees only platform content", async () => {

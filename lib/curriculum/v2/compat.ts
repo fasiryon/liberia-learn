@@ -16,9 +16,15 @@ const OFFLINE: Record<CandidateScene["offline"]["mode"], SceneOffline["mode"]> =
   FULL_OFFLINE: "FULL", CACHED_ASSET_REQUIRED: "DEGRADED", ONLINE_ENHANCED: "DEGRADED", FALLBACK_REQUIRED: "DEGRADED",
 };
 
+/** Text joined into a learner body must be text: a stored structure is refused, never stringified. */
+function textOf(value: unknown): string {
+  if (typeof value !== "string") throw new Error("curriculum_v2_text_expected");
+  return value;
+}
+
 function interactionFor(scene: CandidateScene, lesson: CurriculumLessonV2): { interaction: SceneInteraction; completion: Scene["completion"]; body: string } {
   const interaction = scene.interaction;
-  const fallbackBody = scene.fallback ? `${scene.content.body}\n\n${scene.fallback.content}` : scene.content.body;
+  const fallbackBody = scene.fallback ? `${textOf(scene.content.body)}\n\n${textOf(scene.fallback.content)}` : scene.content.body;
   if (!RENDERABLE_INTERACTIONS.has(interaction.kind)) {
     // Declared intent without a renderer: deliver the explicit fallback as its declared kind (validation
     // guarantees one exists). A FREE_RESPONSE fallback is a real input that still collects the evidence.
@@ -69,8 +75,11 @@ export function toLessonExperience(lesson: CurriculumLessonV2): LessonExperience
     const evidence: Scene["evidence"] = scene.evidence.kind === "NONE"
       ? { kind: "NONE" }
       : { kind: scene.evidence.kind, evidenceType: scene.evidence.evidenceType, objectiveIds: [...new Set(scene.evidence.responses.map((response) => response.objectiveId))] };
+    // When the fallback became part of the scene body it must survive every age band the player can
+    // select (Codex second-pass P1-4): a band's wording replaces the body, so it carries the fallback too.
+    const carriesFallback = !!scene.fallback && body !== scene.content.body;
     const ageVariants = scene.content.ageVariants
-      ? Object.fromEntries(Object.entries(scene.content.ageVariants).filter(([, variant]) => !!variant).map(([band, variant]) => [band, { body: variant!.body, ...(variant!.keyPoints ? { keyPoints: variant!.keyPoints } : {}) }]))
+      ? Object.fromEntries(Object.entries(scene.content.ageVariants).filter(([, variant]) => !!variant).map(([band, variant]) => [band, { body: carriesFallback ? `${textOf(variant!.body)}\n\n${textOf(scene.fallback!.content)}` : variant!.body, ...(variant!.keyPoints ? { keyPoints: variant!.keyPoints } : {}) }]))
       : undefined;
     return {
       id: scene.id,

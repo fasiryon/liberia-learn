@@ -4,6 +4,7 @@ import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/db";
 import type { SessionUser } from "@/lib/auth";
 import { projectStudentLessonPayload } from "@/lib/curriculum/studentLessonProjection";
+import { learnerRowAllowed, learnerVisibilityWhere } from "@/lib/curriculum/learnerEligibility";
 import { buildCurriculumContentSnapshotV1 } from "@/lib/curriculum/provenance/snapshot";
 import { hashCurriculumSnapshot } from "@/lib/curriculum/provenance/hash";
 import { getCanonicalSubjectCode } from "@/lib/curriculum/subjectTaxonomy";
@@ -65,11 +66,7 @@ function eligible(row: LessonRow, scope: Scope): boolean {
   if (!["published", "approved"].includes(row.status.toLowerCase())) return false;
   if (row.contentType.toLowerCase() !== "lesson" || row.lessonType?.toLowerCase() === "assessment") return false;
   if (/\[assessment\]/i.test(row.title ?? "")) return false;
-  if (row.versionId && row.curriculumVersion?.status !== "ACTIVE") return false;
-  const payload = record(row.payload);
-  const audience = text(payload.audience || payload.visibility).toLowerCase();
-  if (["teacher", "teacher_only", "staff", "private"].includes(audience) || payload.teacherOnly === true) return false;
-  if (["teacher_only", "private"].includes(row.visibility)) return false;
+  if (!learnerRowAllowed(row)) return false;
   const provenance = row.provenance;
   if (provenance) {
     const revision = provenance.currentRevision;
@@ -202,13 +199,7 @@ export async function resolveTutorContext(
             contentType: { equals: "lesson", mode: "insensitive" }, status: { in: ["published", "approved"], mode: "insensitive" },
             AND: [
               { OR: [{ lessonType: null }, { lessonType: { not: "assessment", mode: "insensitive" } }] },
-              { OR: [
-                { schoolId: null, teacherCreated: false },
-                { schoolId: scope.schoolId, visibility: "school_wide" },
-                { schoolId: scope.schoolId, scheduledWork: { some: { classId: { in: scope.classIds }, class: { schoolId: scope.schoolId } } } },
-                { schoolId: scope.schoolId, teacherLessonAssignments: { some: { classId: { in: scope.classIds }, class: { schoolId: scope.schoolId } } } },
-              ] },
-              { OR: [{ provenance: null }, { provenance: { is: { lifecycleState: "APPROVED" } } }] },
+              learnerVisibilityWhere(scope),
             ],
           }, include, orderBy: { contentId: "asc" }, take: 20,
           ...(cursor ? { cursor: { id: cursor }, skip: 1 } : {}),

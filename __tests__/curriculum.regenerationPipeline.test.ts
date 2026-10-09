@@ -72,7 +72,13 @@ beforeEach(() => {
   mockUserFindUnique.mockResolvedValue(null);
   mockTransaction.mockImplementation((fn) =>
     fn({
-      curriculumContent: { update: mockUpdate, create: mockCreate },
+      $queryRaw: vi.fn(async () => []),
+      curriculumContent: {
+        findUnique: vi.fn(async () => ({ id: "row-1" })),
+        findUniqueOrThrow: vi.fn(async () => ({ payload: {} })),
+        update: mockUpdate,
+        create: mockCreate,
+      },
       curriculumRegenerationRun: { update: mockUpdate },
       curriculumRegenerationJob: { update: mockUpdate },
       curriculumRegenerationCheckpoint: { update: mockUpdate },

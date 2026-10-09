@@ -96,7 +96,7 @@ export function assembleCurriculumLessonV2(input: { candidate: CandidateLessonV2
     contractVersion: CURRICULUM_LESSON_V2_CONTRACT,
     identity: { lessonId, version, title: candidate.title, grade: context.grade, subject: context.subject, unitId: context.objectives[0].unitId },
     authoring: { releaseId: context.release.id, releaseIdentity: context.release.identity, cellId: context.cell.id, cellVersion: context.cell.version, contextHash: context.contextHash, source: context.source },
-    ageBand: candidate.ageBand,
+    ageBand: context.ageBand,
     estimatedMinutes: candidate.estimatedMinutes,
     pedagogy: candidate.pedagogy ?? null,
     objectives: context.objectives,

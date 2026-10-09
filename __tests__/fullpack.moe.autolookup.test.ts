@@ -12,6 +12,8 @@ vi.mock("@/lib/db", () => ({
   prisma: {
     school: { findUnique: mockFindUnique },
     curriculumContent: { upsert: mockUpsert },
+    // Writers-off upsert: a new row is created inside a transaction (an existing one is locked and checked).
+    $transaction: vi.fn((fn: (tx: unknown) => unknown) => fn({ curriculumContent: { findUnique: vi.fn(async () => null), create: mockUpsert } })),
     standard: { findMany: mockStandardFindMany },
   },
 }));

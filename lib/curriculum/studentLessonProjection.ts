@@ -1,6 +1,7 @@
 import { CURRICULUM_V2_PAYLOAD_KEY, isNativeCurriculumV2Payload, type CurriculumLessonV2 } from "@/lib/curriculum/v2/contract";
 import { toLessonExperience } from "@/lib/curriculum/v2/compat";
 import { validateLessonExperience } from "@/lib/learner-experience/sceneContract";
+import { assertNoLearnerSecretKeys, rebuildLearnerExperience } from "@/lib/learner-experience/learnerSafeExperience";
 type StudentMaterials = {
   learnerMaterial?: unknown;
   guidedItems?: unknown;
@@ -17,6 +18,16 @@ type LessonPayloadRecord = Record<string, unknown>;
 
 function text(value: unknown): string {
   return typeof value === "string" ? value.trim() : "";
+}
+
+/** Learner-visible scalars: a primitive of the expected type, never an object that could carry a key. */
+function scalarText(value: unknown): string | undefined {
+  return typeof value === "string" ? value : undefined;
+}
+
+function scalarGrade(value: unknown): number | string | undefined {
+  if (typeof value === "number" && Number.isFinite(value)) return value;
+  return typeof value === "string" ? value : undefined;
 }
 
 function list(value: unknown): string[] {
@@ -115,8 +126,32 @@ const LEGACY_TEACHER_ONLY_HEADINGS = new Set([
  * teacher planning sections. Keep the usable learner sections while removing
  * known teacher-only or answer-bearing sections.
  */
-/** Answer- or teacher-bearing section titles, matched at any heading level (not only exact titles). */
-const TEACHER_OR_ANSWER_HEADING = /\b(answers?|answer key|solutions?|worked solutions?|mark(ing)? scheme|marking guide|rubric|scoring|teacher|facilitator)\b/i;
+/**
+ * Answer- or teacher-bearing section titles, matched at any heading level. A heading that IS an
+ * answer label ("Answers", "Solution:", "3. Expected Response") or names answer/teacher material
+ * ("Answer Key", "Model answers", "Mark Scheme", "Teacher notes") opens an excluded section. A
+ * learner heading that merely uses the word ("Answer the questions below", "Solutions to pollution")
+ * is kept, and ordinary prose is never matched — only heading and answer-label lines.
+ */
+const ANSWER_LABEL = String.raw`(?:(?:expected|model|sample|suggested|correct|possible|teachers?'?)\s+)?(?:answers?|responses?|solutions?|worked\s+solutions?|answer\s+key|answer\s+guide|mark(?:ing)?\s+schemes?|marking\s+guide)(?:\s+(?:key|guide|and\s+explanations?|with\s+explanations?))?`;
+const ANSWER_HEADING = new RegExp(String.raw`^${ANSWER_LABEL}$`, "i");
+const TEACHER_OR_ANSWER_HEADING = /\b(answer key|answer guide|answers to|expected (answers?|responses?)|model answers?|sample answers?|suggested answers?|worked solutions?|mark(ing)? schemes?|marking guide|rubric|scoring|teacher|facilitator)\b/i;
+/** A line that starts with an answer label and a colon ("**Expected Response:** 3/4", "Answer: 6"). */
+const ANSWER_LABEL_LINE = new RegExp(String.raw`^\s*(?:[-*]\s+)?(?:\*\*|__)?\s*${ANSWER_LABEL}\s*(?:\*\*|__)?\s*:\s*(?:\*\*|__)?`, "i");
+
+function normalizeHeading(heading: string): string {
+  return heading
+    .replace(/[*_`]/g, "")
+    .replace(/^(?:(?:part|step|section|question)\s+)?(?:\d+|[ivx]+)[.):-]?\s+/i, "")
+    .replace(/[\s:.!?-]+$/g, "")
+    .trim()
+    .toLowerCase();
+}
+
+function isExcludedHeading(heading: string): boolean {
+  const normalized = normalizeHeading(heading);
+  return LEGACY_TEACHER_ONLY_HEADINGS.has(normalized) || ANSWER_HEADING.test(normalized) || TEACHER_OR_ANSWER_HEADING.test(normalized);
+}
 
 function projectLegacyBody(value: unknown): string {
   const body = text(value);
@@ -125,16 +160,27 @@ function projectLegacyBody(value: unknown): string {
   const lines = body.split(/\r?\n/);
   // Excluded section: skipped until a heading at the same or a higher level.
   let excludedLevel: number | null = null;
+  // An answer label alone on its line ("**Expected Response:**") hides the block below it.
+  let inAnswerBlock = false;
   const kept: string[] = [];
   for (const line of lines) {
     const match = line.match(/^(#{1,6})\s+(.+?)\s*$/);
     if (match) {
+      inAnswerBlock = false;
       const level = match[1].length;
-      const heading = match[2].trim().toLowerCase();
       if (excludedLevel !== null && level <= excludedLevel) excludedLevel = null;
-      if (excludedLevel === null && (LEGACY_TEACHER_ONLY_HEADINGS.has(heading) || TEACHER_OR_ANSWER_HEADING.test(heading))) excludedLevel = level;
+      if (excludedLevel === null && isExcludedHeading(match[2])) excludedLevel = level;
     }
-    if (excludedLevel === null) kept.push(line);
+    if (excludedLevel !== null) continue;
+    if (inAnswerBlock) {
+      if (!line.trim()) inAnswerBlock = false;
+      continue;
+    }
+    if (!match && ANSWER_LABEL_LINE.test(line)) {
+      if (!line.replace(ANSWER_LABEL_LINE, "").trim()) inAnswerBlock = true;
+      continue;
+    }
+    kept.push(line);
   }
   return kept.join("\n").replace(/\n{3,}/g, "\n\n").trim();
 }
@@ -291,6 +337,17 @@ function labForLearner(value: unknown): string {
  * allow-listed and keeps legacy payloads compatible until they are replaced.
  */
 export function projectStudentLessonPayload(payload: unknown): LessonPayloadRecord {
+  const projected = projectAllowListed(payload);
+  // Defence in depth: whatever the allow-lists produced, no secret-named key leaves the server.
+  try {
+    assertNoLearnerSecretKeys(projected);
+    return projected;
+  } catch {
+    return { title: scalarText(projected.title), body: "", body_standard: "", body_block: "", objectives: [], studentReady: false };
+  }
+}
+
+function projectAllowListed(payload: unknown): LessonPayloadRecord {
   if (!payload || typeof payload !== "object" || Array.isArray(payload)) return {};
   const source = payload as LessonPayloadRecord;
   // Native Curriculum V2: learners receive only the Lesson Player V2 experience built field by field
@@ -304,10 +361,10 @@ export function projectStudentLessonPayload(payload: unknown): LessonPayloadReco
     const legacyBody = projectLegacyBody(source.body_standard) || projectLegacyBody(source.body) || projectLegacyBody(source.lessons) || projectLegacyBody(source.content);
     if (!legacyBody) {
       return {
-        title: source.title,
-        grade: source.grade,
-        subject: source.subject,
-        lessonFormat: source.lessonFormat,
+        title: scalarText(source.title),
+        grade: scalarGrade(source.grade),
+        subject: scalarText(source.subject),
+        lessonFormat: scalarText(source.lessonFormat),
         objectives: [],
         activities: [],
         body: "",
@@ -318,10 +375,10 @@ export function projectStudentLessonPayload(payload: unknown): LessonPayloadReco
     }
     const legacyAssessment = safeAssessment(source.assessment);
     return {
-      title: source.title,
-      grade: source.grade,
-      subject: source.subject,
-      lessonFormat: source.lessonFormat,
+      title: scalarText(source.title),
+      grade: scalarGrade(source.grade),
+      subject: scalarText(source.subject),
+      lessonFormat: scalarText(source.lessonFormat),
       objectives: list(source.objectives),
       activities: list(source.activities),
       body: legacyBody,
@@ -356,7 +413,7 @@ export function projectStudentLessonPayload(payload: unknown): LessonPayloadReco
   const groupWork = authoredGroupWork || (guided.length
     ? `Discuss the material with your group. Take turns explaining which words or details support each answer. Then complete your own response.\n\n${numbered(guided)}`
     : "Discuss the material with your group, explain your evidence, and complete your own response afterward.");
-  const learnerSections = [
+  const sections = [
     text(materials?.learnerMaterial),
     guided.length ? `## Try It Together\n${numbered(guided)}` : "",
     classwork.length ? `## Classwork\n${numbered(classwork)}` : "",
@@ -367,12 +424,14 @@ export function projectStudentLessonPayload(payload: unknown): LessonPayloadReco
     project ? `## Project\n${project}` : "",
     lab ? `## Investigation\n${lab}` : "",
   ].filter(Boolean).join("\n\n");
+  // Authored learner material passes the same answer/teacher-section filter as legacy bodies.
+  const learnerSections = projectLegacyBody(sections);
   const assessment = safeAssessment(source.assessment);
   return {
-    title: source.title,
-    grade: source.grade,
-    subject: source.subject,
-    lessonFormat: source.lessonFormat,
+    title: scalarText(source.title),
+    grade: scalarGrade(source.grade),
+    subject: scalarText(source.subject),
+    lessonFormat: scalarText(source.lessonFormat),
     objectives: list(source.objectives),
     activities: [...classwork, ...independent, ...(project ? [project] : [])],
     body: learnerSections,
@@ -392,7 +451,9 @@ export function projectStudentLessonPayload(payload: unknown): LessonPayloadReco
 
 function projectNativeLesson(source: LessonPayloadRecord): LessonPayloadRecord {
   try {
-    const lessonExperience = toLessonExperience(source[CURRICULUM_V2_PAYLOAD_KEY] as CurriculumLessonV2);
+    // Rebuilt field by field with primitive type checks: malformed stored data (an object in keyPoints,
+    // a key under a title) throws here and the lesson is not student-ready.
+    const lessonExperience = rebuildLearnerExperience(toLessonExperience(source[CURRICULUM_V2_PAYLOAD_KEY] as CurriculumLessonV2));
     validateLessonExperience(lessonExperience);
     // Re-check the stored artifact: an instant-feedback key may only exist in a formative scene.
     if (lessonExperience.scenes.some((scene) => scene.interaction.kind === "MULTIPLE_CHOICE" && scene.type !== "CHECK_UNDERSTANDING" && scene.type !== "PRACTICE" && scene.type !== "GUIDED_EXAMPLE")) throw new Error("native_answer_key_outside_formative_scene");

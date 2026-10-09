@@ -76,6 +76,41 @@ function assertNativeWriteHasRevisionAuthority(data: { payload?: unknown }): voi
   }
 }
 
+/**
+ * Compatibility mode (writers off) has no revision to record a change against, so an EXISTING
+ * native Curriculum V2 row is frozen there whatever the incoming payload looks like (Codex
+ * second-pass P1-1): a legacy-looking replacement such as `{ body }` would otherwise downgrade
+ * approved native instruction in place, keep its approval and create no revision. Only the
+ * operational (non-instructional, non-identity) fields may change. Legacy rows are unaffected.
+ */
+export function assertExistingNativeRowFrozenWithoutRevisions(
+  existing: Pick<CurriculumContent, "payload">,
+  data: Record<string, unknown>,
+): void {
+  if (!isNativeCurriculumV2Payload(existing.payload)) return;
+  const keys = Object.keys(data);
+  if (keys.length > 0 && keys.every((key) => NATIVE_FROZEN_WRITABLE_FIELDS.has(key))) return;
+  throw new Error("NATIVE_CURRICULUM_V2_EXISTING_ROW_REQUIRES_PROVENANCE_WRITERS: existing native content changes only through revision-tracked writers");
+}
+
+/** Writers-off update: the existing row is locked and checked in the same transaction as the write. */
+async function compatibilityUpdate(
+  tx: CurriculumTransaction,
+  where: Prisma.CurriculumContentWhereUniqueInput,
+  data: Prisma.CurriculumContentUncheckedUpdateInput,
+): Promise<CurriculumContent> {
+  assertNativeWriteHasRevisionAuthority(data);
+  const target = await tx.curriculumContent.findUnique({ where, select: { id: true } });
+  if (!target) return tx.curriculumContent.update({ where, data });
+  await lockContent(tx, target.id);
+  const existing = await tx.curriculumContent.findUniqueOrThrow({
+    where: { id: target.id },
+    select: { payload: true },
+  });
+  assertExistingNativeRowFrozenWithoutRevisions(existing, data as Record<string, unknown>);
+  return tx.curriculumContent.update({ where, data });
+}
+
 function lifecycleFromLegacyStatus(status: string): CurriculumLifecycleState {
   switch (status.trim().toUpperCase()) {
     case "PUBLISHED":
@@ -321,7 +356,8 @@ export async function updateCurriculumContent(
   assertContentWriteIsNonAuthoritative(data);
   if (!provenanceWritersEnabled()) {
     assertNativeWriteHasRevisionAuthority(data);
-    return { content: await prisma.curriculumContent.update({ where, data }), provenance: null, revision: null };
+    const content = await prisma.$transaction((tx) => compatibilityUpdate(tx, where, data));
+    return { content, provenance: null, revision: null };
   }
   return prisma.$transaction((tx) => updateCurriculumContentInTransaction(tx, where, data, context));
 }
@@ -334,8 +370,7 @@ export async function updateCurriculumContentInTransaction(
 ): Promise<GovernedWriteResult> {
   assertContentWriteIsNonAuthoritative(data);
   if (!provenanceWritersEnabled()) {
-    assertNativeWriteHasRevisionAuthority(data);
-    return { content: await tx.curriculumContent.update({ where, data }), provenance: null, revision: null };
+    return { content: await compatibilityUpdate(tx, where, data), provenance: null, revision: null };
   }
     const prior = await findIdempotentRevision(tx, context.idempotencyKey);
     if (prior) {
@@ -382,11 +417,13 @@ export async function upsertCurriculumContent(
   if (!provenanceWritersEnabled()) {
     assertNativeWriteHasRevisionAuthority(create);
     assertNativeWriteHasRevisionAuthority(update);
-    return {
-      content: await prisma.curriculumContent.upsert({ where, create, update }),
-      provenance: null,
-      revision: null,
-    };
+    const content = await prisma.$transaction(async (tx) => {
+      const target = await tx.curriculumContent.findUnique({ where, select: { id: true } });
+      return target
+        ? compatibilityUpdate(tx, { id: target.id }, update)
+        : tx.curriculumContent.create({ data: create });
+    });
+    return { content, provenance: null, revision: null };
   }
   const existing = await prisma.curriculumContent.findUnique({ where, select: { id: true } });
   return existing
@@ -407,6 +444,12 @@ const OPERATIONAL_FIELDS = new Set([
   "isHero",
 ]);
 
+/**
+ * Fields an existing native Curriculum V2 row may change without a revision: rendering and search
+ * artefacts only. `hash` is the row's unique payload identity, so it moves only with a revision.
+ */
+const NATIVE_FROZEN_WRITABLE_FIELDS = new Set([...OPERATIONAL_FIELDS].filter((field) => field !== "hash"));
+
 export async function updateCurriculumOperationalFields(
   where: Prisma.CurriculumContentWhereUniqueInput,
   data: Prisma.CurriculumContentUncheckedUpdateInput,
@@ -415,7 +458,17 @@ export async function updateCurriculumOperationalFields(
   if (keys.length === 0 || keys.some((key) => !OPERATIONAL_FIELDS.has(key))) {
     throw new Error(`Operational curriculum adapter rejected fields: ${keys.join(",")}`);
   }
-  return prisma.curriculumContent.update({ where, data });
+  if (!keys.some((key) => !NATIVE_FROZEN_WRITABLE_FIELDS.has(key))) {
+    return prisma.curriculumContent.update({ where, data });
+  }
+  // An identity field (`hash`) is checked against the locked row: native content is never re-keyed here.
+  return prisma.$transaction(async (tx) => {
+    const target = await tx.curriculumContent.findUniqueOrThrow({ where, select: { id: true } });
+    await lockContent(tx, target.id);
+    const existing = await tx.curriculumContent.findUniqueOrThrow({ where: { id: target.id }, select: { payload: true } });
+    assertExistingNativeRowFrozenWithoutRevisions(existing, data as Record<string, unknown>);
+    return tx.curriculumContent.update({ where: { id: target.id }, data });
+  });
 }
 
 export async function hardDeleteNeverGovernedCurriculumContent(

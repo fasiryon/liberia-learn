@@ -137,6 +137,25 @@ Three bounded reviewers ran before the PR: (1) curriculum governance + learning 
 
 The legacy pseudo-lab `expectedObservation` and the simulation `explanation` / `guardianGuide` stay learner-visible by explicit decision: the legacy lesson UI presents them after the activity, and they are not assessment keys. Native Curriculum V2 keeps expected observations reviewer-only.
 
+## 4b. Second-pass review (Codex)
+
+A second Codex pass on PR #176 raised four P1s. All four are fixed; every regression test below was checked to fail on the pre-fix code.
+
+| Finding | Fix | Regression test |
+| --- | --- | --- |
+| P1-1 writers-off downgrade of native rows | `repository.ts`: with provenance writers off, update, in-transaction update and upsert lock the existing row and refuse any change to a native Curriculum V2 row except rendering/search fields (thumbnail, image, embedding, `isHero`). `hash` is the row's unique payload identity, so it is refused on native rows here and on the operational-fields path | `__tests__/curriculum-v2/writers-off-native-freeze.test.ts` (in-memory Prisma fake with transaction rollback) |
+| P1-2 learner projection trusts stored shapes | `learnerSafeExperience.ts` rebuilds the experience field by field with primitive checks (malformed native data → not student-ready); legacy `title` / `grade` / `subject` / `lessonFormat` must be primitives; a final secret-key scan covers every projection; answer headings and answer-label lines are stripped in legacy bodies and authored learner material | `__tests__/curriculum-v2/learner-projection-adversarial.test.ts` |
+| P1-3 learner listing wider than the Tutor | `lib/curriculum/learnerEligibility.ts` holds the one learner-visibility rule set (platform non-teacher rows; own-school rows that are school-wide or assigned to the student's classes; ACTIVE version; APPROVED lifecycle; no teacher-only/private row or payload audience; native rows only as an approved release). Both `app/api/curriculum/route.ts` and the Tutor use it. The teacher view is unchanged | `__tests__/curriculum/learner-listing-eligibility.test.ts` |
+| P1-4 fallback lost in age-band wording | `compat.ts`: when a fallback is appended to a scene body, it is appended to every age-band body too; structures are refused, never stringified | `__tests__/curriculum-v2/player-render.test.tsx` (real Lesson Player V2, all four bands, required-media and unrendered-interaction cases) |
+
+### P2 disposition (inline review comments)
+
+| Finding | Disposition | Evidence |
+| --- | --- | --- |
+| P2-1 stored `lessonExperience` (no `curriculumV2`) is not student-ready | **Deferred, fails closed by design.** No writer produces such payloads, and `main` never delivered them. Delivering one would trust a stored, self-asserted `authority.status`. Do it only with server-side release verification (as the Tutor does with `publishedRelease`) | `learner-listing-eligibility.test.ts` (`native-experience-only` is not listed) |
+| P2-2 candidate can override the age band | **Fixed.** `validate.ts` rejects `age_band_mismatch`; `assemble.ts` takes `context.ageBand` | `candidate-authority.test.ts` |
+| P2-3 lab scene counts as evidence under any kind | **Fixed.** `evidenceCollectable` counts `LAB_LAUNCH` only with `LAB_OBSERVATION` evidence | `candidate-authority.test.ts` |
+
 ## 5. Validator coverage
 
 Errors reject the artifact:
@@ -243,7 +262,8 @@ It must keep two boundaries:
 - **Native lessons in production:**
   - No student surface plays native lessons yet. The projection returns `lessonExperience`, but `LessonDeliveryClient` and the work route do not render it.
   - `toLessonExperience` always labels the authority `CURRICULUM_V2_DRAFT`. After governed approval, the server boundary must derive the status from provenance lifecycle plus the pinned release identity. Until then, evidence stays raw: it fails closed.
-- **Writers off:** with provenance writers off, an edit that changes only non-payload fields of a native row (e.g. its title) is not revision-tracked. Payload edits are refused.
+- **Writers off:** with provenance writers off, an existing native row is frozen. Only rendering and search fields (thumbnail, image, embedding, `isHero`) may change. Every other edit, including title, status and `hash`, needs the revision-tracked writers.
+- **Learner listing:** a native row is listed only as an approved release. `toLessonExperience` always emits `CURRICULUM_V2_DRAFT`, so no native row is listed or Tutor-eligible until the release-derived authority above lands.
 - **Evidence ingestion:** `adaptEnvelope` has no production caller. Re-review its admission context when an ingestion route lands.
 - **Age and subject variation:**
   - Word limits are the same for every age band.

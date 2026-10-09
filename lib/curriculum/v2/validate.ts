@@ -27,7 +27,9 @@ const COMPLETION_FOR: Record<string, CandidateScene["completion"]> = {
  */
 export function evidenceCollectable(scene: CandidateScene): boolean {
   const kind = scene.interaction.kind;
-  if (kind === "SINGLE_CHOICE" || kind === "FREE_RESPONSE" || kind === "LAB_LAUNCH" || kind === "ASSESSMENT_HANDOFF") return true;
+  if (kind === "SINGLE_CHOICE" || kind === "FREE_RESPONSE" || kind === "ASSESSMENT_HANDOFF") return true;
+  // Lab results reach the evidence envelope only as LAB_OBSERVATION; any other kind is never emitted.
+  if (kind === "LAB_LAUNCH") return scene.evidence.kind === "LAB_OBSERVATION";
   return !RENDERABLE_INTERACTIONS.has(kind) && scene.fallback?.kind === "FREE_RESPONSE" && scene.evidence.kind !== "NONE" && scene.evidence.responses.length === 1;
 }
 
@@ -40,6 +42,8 @@ export function validateCandidateAgainstContext(candidate: CandidateLessonV2, co
   const gaps: ReviewGap[] = [];
   const error = (code: string) => errors.push(code);
   const gap = (code: string, severity: ReviewGap["severity"], detail: string, sceneId?: string) => gaps.push({ code, severity, detail, ...(sceneId ? { sceneId } : {}) });
+  // The age band is a governed delivery attribute derived from the grade; generated content cannot override it.
+  if (candidate.ageBand !== context.ageBand) error(`age_band_mismatch:${candidate.ageBand}`);
   const objectiveIds = new Set(context.objectives.map((objective) => objective.id));
   const misconceptionIds = new Set(candidate.misconceptions.map((misconception) => misconception.id));
   const assessmentIds = new Set(candidate.assessmentRequests.map((request) => request.id));

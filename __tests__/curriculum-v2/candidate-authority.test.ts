@@ -213,3 +213,27 @@ describe("server-resolved lab links (P1-6)", () => {
     expect(outcome.status).toBe("REJECTED");
   });
 });
+
+describe("PR #176 review P2s: governed delivery attributes and lab evidence", () => {
+  it("rejects a candidate whose age band disagrees with the grade-derived context (P2-2)", () => {
+    const candidate = fractions();
+    candidate.ageBand = "SENIOR_SECONDARY";
+    expect(validateCandidateAgainstContext(parseCandidateLessonV2(candidate), g4ProofContext(FRACTIONS)).errors).toContain("age_band_mismatch:SENIOR_SECONDARY");
+    const outcome = assembleCurriculumLessonV2({ candidate: parseCandidateLessonV2(candidate), context: g4ProofContext(FRACTIONS), generation });
+    expect(outcome.status).toBe("REJECTED");
+  });
+
+  it("an accepted lesson carries the context age band, never the candidate's (P2-2)", () => {
+    const outcome = assembleCurriculumLessonV2({ candidate: parseCandidateLessonV2(raw("equivalent-fractions.json")), context: g4ProofContext(FRACTIONS), generation });
+    if (outcome.status === "REJECTED") throw new Error(outcome.errors.join());
+    expect(outcome.lesson.ageBand).toBe(g4ProofContext(FRACTIONS).ageBand);
+  });
+
+  it("a lab scene counts as evidence only when it declares LAB_OBSERVATION (P2-3)", () => {
+    const solids = JSON.parse(raw("solid-figures.json")) as Record<string, any>;
+    const lab = solids.scenes.find((scene: any) => scene.interaction.kind === "LAB_LAUNCH");
+    expect(validateCandidateAgainstContext(parseCandidateLessonV2(solids), g4ProofContext(SOLIDS)).errors).toEqual([]);
+    lab.evidence.kind = "REFLECTION";
+    expect(validateCandidateAgainstContext(parseCandidateLessonV2(solids), g4ProofContext(SOLIDS)).errors).toContain(`evidence_not_collectable:${lab.id}`);
+  });
+});
