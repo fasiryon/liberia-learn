@@ -17,6 +17,8 @@ import { CURRICULUM_SNAPSHOT_SCHEMA_VERSION_NATIVE } from "@/lib/curriculum/prov
 import { isNativeCurriculumV2Payload } from "@/lib/curriculum/v2/contract";
 import { assertNativeCurriculumV2Approval, NATIVE_APPROVAL_EVENTS } from "@/lib/curriculum/v2/governance";
 import {
+  assertExistingNativeRowFrozenWithoutRevisions,
+  assertNativeWriteHasRevisionAuthority,
   lockAndReadCurriculumContent,
   ensureCurriculumProvenance,
   provenanceWritersEnabled,
@@ -202,10 +204,16 @@ export async function appendCurriculumGovernanceEventInTransaction(
   validateGovernance(input, writersEnabled);
 
   if (!writersEnabled) {
+    // Compatibility mode follows the same locking truth as the repository writers: the target is
+    // located, locked and re-read, and every decision below uses that post-lock row. A row that turned
+    // native between a caller's read and this lock is governed as native.
+    const compatibilityWhere = input.compatibility?.where ?? { contentId: input.contentId };
+    // The row that is locked, inspected and written is the same row.
+    const target = await lockAndReadCurriculumContent(tx, compatibilityWhere);
+    const native = isNativeCurriculumV2Payload(target.payload);
     if ((NATIVE_APPROVAL_EVENTS as readonly string[]).includes(input.eventType)) {
       // Native Curriculum V2 approval needs an exact revision, which compatibility mode cannot provide.
-      const native = await tx.curriculumContent.findUnique({ where: { contentId: input.contentId }, select: { payload: true } });
-      assertNativeCurriculumV2Approval({ ...nativeApprovalInput(input), native: isNativeCurriculumV2Payload(native?.payload), writersEnabled: false, revisionSnapshotSchemaVersion: null });
+      assertNativeCurriculumV2Approval({ ...nativeApprovalInput(input), native, writersEnabled: false, revisionSnapshotSchemaVersion: null });
     }
     if (
       input.approvalBasis === "AUTOMATED_RISK_POLICY" ||
@@ -218,14 +226,9 @@ export async function appendCurriculumGovernanceEventInTransaction(
       // it does on the canonical (writers-enabled) branch below. Content
       // with no provenance root at all defaults to UNVERIFIED (fail
       // closed) rather than silently skipping the check.
-      const content = await tx.curriculumContent.findUnique({
-        where: { contentId: input.contentId },
+      const provenance = await tx.curriculumProvenance.findUnique({
+        where: { curriculumContentId: target.id },
       });
-      const provenance = content
-        ? await tx.curriculumProvenance.findUnique({
-            where: { curriculumContentId: content.id },
-          })
-        : null;
       assertAutomatedApprovalAllowed(provenance?.provenanceCompleteness ?? "UNVERIFIED");
     }
     const lifecycleResult = LIFECYCLE_BY_EVENT[input.eventType] ?? null;
@@ -241,14 +244,16 @@ export async function appendCurriculumGovernanceEventInTransaction(
               ? { editReviewStatus: "PENDING" }
               : {}),
     };
-    const compatibilityWhere = input.compatibility?.where ?? { contentId: input.contentId };
-    await updateCurriculumGovernanceProjection(
-      tx,
-      compatibilityWhere,
-      (input.compatibility?.projection ?? defaultProjection) as Parameters<
-        typeof updateCurriculumGovernanceProjection
-      >[2],
-    );
+    const projection = (input.compatibility?.projection ?? defaultProjection) as Parameters<
+      typeof updateCurriculumGovernanceProjection
+    >[2];
+    // A compatibility projection can never introduce native structure, and an existing native row is
+    // frozen here: no status, publication or payload change without a revision (no publish, no
+    // downgrade to legacy content, no approval surviving an instructional replacement).
+    assertNativeWriteHasRevisionAuthority(projection);
+    if (native) assertExistingNativeRowFrozenWithoutRevisions(target, projection as Record<string, unknown>);
+    // Bound to the locked, inspected row.
+    await updateCurriculumGovernanceProjection(tx, target.id, projection);
     await logAuditRequired(
       {
           userId: input.actorUserId ?? null,

@@ -53,11 +53,32 @@ function isRestrictedHeading(heading: string): boolean {
   return LEGACY_TEACHER_ONLY_HEADINGS.has(normalized) || ANSWER_HEADING.test(normalized) || TEACHER_OR_ANSWER_HEADING.test(normalized);
 }
 
+/** A bold-only line ("**Practice**", "__Wrap up__") or a horizontal rule: a section marker that is not a heading. */
+const SECTION_MARKER_LINE = /^\s*(?:(?:\*\*|__)[^*_\n]+(?:\*\*|__)\s*:?\s*|(?:-{3,}|\*{3,}|_{3,}))\s*$/;
+
+/**
+ * A structural section boundary: a Markdown heading, a bold-only section marker or a horizontal rule.
+ * Blank lines, wrapped paragraphs and list items (answers are often numbered lists) are not boundaries.
+ */
+function isSectionBoundary(line: string): boolean {
+  return HEADING_LINE.test(line) || (SECTION_MARKER_LINE.test(line) && !BARE_LABEL_LINE.test(line));
+}
+
+/** Whether learner content (not blank, not a boundary) follows `index` before the next boundary. */
+function contentFollows(lines: readonly string[], index: number): boolean {
+  for (let next = index + 1; next < lines.length; next++) {
+    if (isSectionBoundary(lines[next])) return false;
+    if (lines[next].trim()) return true;
+  }
+  return false;
+}
+
 function scan(value: string): { kept: string; restricted: boolean } {
   const lines = value.split(/\r?\n/);
-  // Restricted section: skipped until a heading at the same or a higher level.
+  // Heading-opened restricted section: skipped until a heading at the same or a higher level.
   let excludedLevel: number | null = null;
-  // An answer label alone on its line ("**Expected Response:**") hides the block below it.
+  // Label-opened restricted block ("Expected Answer", "**Expected Response:**"): skipped until the next
+  // structural section boundary. Whitespace never ends it, so a blank line cannot reopen its contents.
   let inAnswerBlock = false;
   let restricted = false;
   const kept: string[] = [];
@@ -72,13 +93,15 @@ function scan(value: string): { kept: string; restricted: boolean } {
     }
     if (excludedLevel !== null) { restricted = true; continue; }
     if (inAnswerBlock) {
-      if (!line.trim()) inAnswerBlock = false;
-      else restricted = true;
-      continue;
+      if (isSectionBoundary(line)) inAnswerBlock = false;
+      else {
+        if (line.trim()) restricted = true;
+        continue;
+      }
     }
-    // A label on its own line opens a block that runs to the next blank line or heading. A label with
-    // nothing under it is ordinary text (a one-word option such as "Solution" in a chemistry question).
-    if (!match && BARE_LABEL_LINE.test(line) && (lines[index + 1] ?? "").trim()) {
+    // A label on its own line opens a block when learner content follows it, even after blank lines.
+    // A label with nothing under it is ordinary text (a one-word option such as "Solution").
+    if (!match && BARE_LABEL_LINE.test(line) && contentFollows(lines, index)) {
       restricted = true;
       inAnswerBlock = true;
       continue;

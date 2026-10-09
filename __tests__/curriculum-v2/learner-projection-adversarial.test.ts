@@ -160,15 +160,17 @@ describe("P1-B third pass: restricted sections in every learner text field", () 
         independentItems: [`Answer: ${SECRET}`, "Write two equivalent fractions."],
         homework: [`1. ## Model Answers\n${SECRET}`, "Practise at home."],
         project: `Build a fraction wall.\n${SECTION}`,
-        masteryTask: `Show 3/4 two ways.\n**Expected Response:**\n${SECRET}\n\nThen explain.`,
+        masteryTask: `Show 3/4 two ways.\n**Expected Response:**\n${SECRET}\n\nStill part of the answer block.`,
         groupWork: `Discuss with your group.\n${SECTION}`,
       },
     });
     expect(leaks(projected)).toBe(false);
-    for (const kept of ["Compare 1/2 and 2/4.", "Draw three strips.", "Write two equivalent fractions.", "Practise at home.", "Build a fraction wall.", "Show 3/4 two ways.", "Then explain.", "Discuss with your group."]) {
+    for (const kept of ["Compare 1/2 and 2/4.", "Draw three strips.", "Write two equivalent fractions.", "Practise at home.", "Build a fraction wall.", "Show 3/4 two ways.", "Discuss with your group."]) {
       expect(JSON.stringify(projected)).toContain(kept);
     }
     expect(projected.activities).toEqual(["Draw three strips.", "Write two equivalent fractions.", "Build a fraction wall."]);
+    // A blank line does not end an answer block; only a structural section boundary does.
+    expect(JSON.stringify(projected)).not.toContain("Still part of the answer block.");
   });
 
   it("a heading numbered into a list is still recognised", () => {
@@ -258,8 +260,109 @@ describe("P1-B third pass: legitimate one-word content survives", () => {
   });
 
   it("still hides a bare label line when content follows it", () => {
-    const projected = projectStudentLessonPayload({ body: `Mixtures.\n\nSolution\n${SECRET}\n\nNext topic.` });
+    const projected = projectStudentLessonPayload({ body: `Mixtures.\n\nSolution\n${SECRET}\n\n# Next topic\nNext topic.` });
     expect(leaks(projected)).toBe(false);
     expect(projected.body).toContain("Next topic.");
+  });
+});
+
+// Codex final merge gate P1-B: whitespace never ends a restricted block. A label-opened answer block runs
+// to the next structural section boundary (a Markdown heading, a bold-only section line or a rule).
+describe("P1-B final gate: blank lines cannot reopen restricted learner text", () => {
+  const BLANK_SECRET = "MERGE_GATE_SECRET";
+  const LABELS = ["Expected Answer", "Expected Response", "Answer Key", "Teacher Notes"];
+  const FORMS: Array<[string, (label: string) => string]> = [
+    ["bare label", (label) => label],
+    ["Label:", (label) => `${label}:`],
+    ["## heading", (label) => `## ${label}`],
+    ["1. numbered", (label) => `1. ${label}`],
+    ["- bullet", (label) => `- ${label}`],
+  ];
+  const GAPS = [1, 2];
+  const cases = LABELS.flatMap((label) => FORMS.flatMap(([form, render]) => GAPS.map((gap): [string, string] =>
+    [`${render(label).replace(/\s+/g, " ")} [${form}] + ${gap} blank line(s)`, `${render(label)}\n${"\n".repeat(gap)}${BLANK_SECRET}\n\nmore ${BLANK_SECRET}`])));
+  const SAFE_BEFORE = "Learn safely.";
+  const SAFE_AFTER = "Try it.";
+  const withBoundary = (block: string) => `${SAFE_BEFORE}\n${block}\n\n# Practice\n${SAFE_AFTER}`;
+  const leaksBlank = (value: unknown) => JSON.stringify(value ?? null).includes(BLANK_SECRET);
+  const barGraphs = () => {
+    const outcome = runG4Proof("bar-graphs.json", "moe-math-g4-s2-p6-geometry-and-statistics-obj6");
+    if (outcome.status === "REJECTED") throw new Error(outcome.errors.join());
+    return JSON.parse(JSON.stringify(outcome.lesson)) as any;
+  };
+
+  it("Codex's reproduction no longer leaks", () => {
+    const projected = projectStudentLessonPayload({ body: `Learn safely.\nExpected Answer\n\n${BLANK_SECRET}\n\n# Practice\nTry it.` });
+    expect(leaksBlank(projected)).toBe(false);
+    expect(projected.body).toContain("Learn safely.");
+    expect(projected.body).toContain("Try it.");
+  });
+
+  it.each(cases)("%s: no final learner output leaks; safe text around a real boundary survives", (_name, block) => {
+    const text = withBoundary(block);
+    // Legacy body, authored activities/classwork, lab instructions in a lesson and a standalone lab.
+    const legacy = projectStudentLessonPayload({ body: text });
+    const authored = projectStudentLessonPayload({ studentMaterials: { learnerMaterial: "Read.", classwork: [text, "Fold a strip."], independentItems: [text] } });
+    const legacyActivities = projectStudentLessonPayload({ body: "Read.", activities: [text, "Fold a strip."] });
+    const lessonLab = projectStudentLessonPayload({ body: "Read.", labs: [{ title: "Lab", procedure: [{ instruction: text }] }] });
+    const authoredLab = projectStudentLessonPayload({ studentMaterials: { learnerMaterial: "Read.", lab: { title: "Lab", procedure: [{ instruction: text }] } } });
+    const standaloneLab = projectStudentLabPayload({ title: "Lab", procedure: [{ instruction: text }], observationForm: [{ field: "f", prompt: text }] });
+    for (const projected of [legacy, authored, legacyActivities, lessonLab, authoredLab, standaloneLab]) expect(leaksBlank(projected)).toBe(false);
+    expect(legacy.body).toContain(SAFE_BEFORE);
+    expect(legacy.body).toContain(SAFE_AFTER);
+    expect(legacyActivities.activities).toContain("Fold a strip.");
+    expect(JSON.stringify(standaloneLab)).toContain(SAFE_AFTER);
+
+    // Native: scene body, age variant, key point and the compatibility-generated fallback text.
+    const nativeCases: Array<(lesson: any) => void> = [
+      (l) => { l.scenes[0].content.body = text; },
+      (l) => { l.scenes[0].content.ageVariants = { UPPER_PRIMARY: { body: text } }; },
+      (l) => { l.scenes[1].content.keyPoints = ["Safe point.", text]; },
+    ];
+    for (const inject of nativeCases) {
+      const lesson = nativeLesson();
+      inject(lesson);
+      const projected = projectStudentLessonPayload({ curriculumV2: lesson });
+      expect(leaksBlank(projected)).toBe(false);
+      expect(projected.studentReady).toBe(false);
+    }
+    // Required media with a text-walkthrough fallback: compat.ts appends the fallback to the body.
+    const fallbackLesson = barGraphs();
+    fallbackLesson.scenes.find((scene: any) => scene.id === "read-graph").fallback.content = text;
+    const fallbackProjected = projectStudentLessonPayload({ curriculumV2: fallbackLesson });
+    expect(leaksBlank(fallbackProjected)).toBe(false);
+    expect(fallbackProjected.studentReady).toBe(false);
+  });
+
+  it("a block with no later boundary stays hidden to the end of the text (fails closed)", () => {
+    const projected = projectStudentLessonPayload({ body: `Read.\nExpected Response\n\n\n${BLANK_SECRET}\n\nAnother paragraph ${BLANK_SECRET}\n1. ${BLANK_SECRET}` });
+    expect(leaksBlank(projected)).toBe(false);
+    expect(projected.body).toBe("Read.");
+  });
+
+  it("bold-only section lines and rules are boundaries; numbered answer lists are not", () => {
+    const projected = projectStudentLessonPayload({ body: `Read.\n**Expected Answer:**\n\n1. ${BLANK_SECRET}\n2. ${BLANK_SECRET}\n\n**Practice**\nTry it.\n\n---\nWrap up.` });
+    expect(leaksBlank(projected)).toBe(false);
+    expect(projected.body).toContain("**Practice**");
+    expect(projected.body).toContain("Try it.");
+    expect(projected.body).toContain("Wrap up.");
+  });
+
+  it("keeps ordinary prose and standalone answer options", () => {
+    const body = "Check your answer with a partner.\n\nThere is more than one solution.\n\nWrite a short response below.";
+    expect(projectStudentLessonPayload({ body }).body).toBe(body);
+    const options = ["Compound", "Solution", "Answer", "Response"];
+    const projected = projectStudentLessonPayload({ body: "Mixtures.", assessment: [{ question: "Salt water is a ...", options }] }) as any;
+    expect(projected.assessment[0].options).toEqual(options);
+    // A label with nothing after it but a boundary is ordinary text too.
+    expect(projectStudentLessonPayload({ body: "Solution\n\n# Next\nGo on." }).body).toContain("Go on.");
+  });
+
+  it("all G4 fixture lessons still project as student-ready (no false positives)", () => {
+    for (const [file, objective] of [["equivalent-fractions.json", FRACTIONS], ["bar-graphs.json", "moe-math-g4-s2-p6-geometry-and-statistics-obj6"], ["solid-figures.json", "moe-math-g4-s2-p6-geometry-and-statistics-obj5"]]) {
+      const outcome = runG4Proof(file, objective);
+      if (outcome.status === "REJECTED") throw new Error(outcome.errors.join());
+      expect([file, projectStudentLessonPayload({ curriculumV2: outcome.lesson }).studentReady]).toEqual([file, true]);
+    }
   });
 });

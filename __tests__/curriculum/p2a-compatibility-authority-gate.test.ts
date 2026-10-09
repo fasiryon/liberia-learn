@@ -14,8 +14,12 @@ vi.mock("@/lib/audit", async (original) => {
   return { ...actual, logAuditRequired, logAuditRequiredWithId };
 });
 
-function makeTx(options: { content: { id: string } | null; provenance: { provenanceCompleteness: string } | null }) {
+/** A legacy row: compatibility governance locks and re-reads the target it writes. */
+const LEGACY_ROW = { id: "content-row-1", payload: {} };
+
+function makeTx(options: { content: { id: string; payload?: unknown } | null; provenance: { provenanceCompleteness: string } | null }) {
   return {
+    $queryRaw: vi.fn().mockResolvedValue([]),
     curriculumContent: {
       findUnique: vi.fn().mockResolvedValue(options.content),
     },
@@ -49,7 +53,7 @@ describe("P2-A compatibility-path automated-approval authority gate", () => {
 
   it("compatibility mode (writers disabled) blocks AUTOMATED_RISK_POLICY approval when there is no provenance root at all", async () => {
     process.env.P2A_PROVENANCE_WRITERS_DISABLED = "true";
-    const tx = makeTx({ content: null, provenance: null });
+    const tx = makeTx({ content: LEGACY_ROW, provenance: null });
     await expect(
       runWithTx(tx, {
         contentId: "content-legacy-1",
@@ -102,7 +106,7 @@ describe("P2-A compatibility-path automated-approval authority gate", () => {
 
   it("compatibility mode blocks ROLE_POLICY approval the same way as AUTOMATED_RISK_POLICY", async () => {
     process.env.P2A_PROVENANCE_WRITERS_DISABLED = "true";
-    const tx = makeTx({ content: { id: "content-row-1" }, provenance: { provenanceCompleteness: "UNVERIFIED" } });
+    const tx = makeTx({ content: LEGACY_ROW, provenance: { provenanceCompleteness: "UNVERIFIED" } });
     await expect(
       runWithTx(tx, {
         contentId: "content-1",
@@ -119,7 +123,7 @@ describe("P2-A compatibility-path automated-approval authority gate", () => {
 
   it("compatibility mode still mirrors non-automated events (e.g. SUBMITTED) without requiring a provenance lookup", async () => {
     process.env.P2A_PROVENANCE_WRITERS_DISABLED = "true";
-    const tx = makeTx({ content: null, provenance: null });
+    const tx = makeTx({ content: LEGACY_ROW, provenance: null });
     const result = await runWithTx(tx, {
       contentId: "content-1",
       eventType: "SUBMITTED",
@@ -127,13 +131,15 @@ describe("P2-A compatibility-path automated-approval authority gate", () => {
       actorUserId: "user-1",
     });
     expect(result).toBeNull();
-    expect(tx.curriculumContent.findUnique).not.toHaveBeenCalled();
+    // The target is locked and re-read, but no provenance lookup happens for a non-automated event.
+    expect(tx.$queryRaw).toHaveBeenCalledTimes(1);
+    expect(tx.curriculumProvenance.findUnique).not.toHaveBeenCalled();
     expect(updateProjection).toHaveBeenCalledTimes(1);
   });
 
   it("compatibility mode still mirrors HUMAN_REVIEW approvals without the automated-approval gate", async () => {
     process.env.P2A_PROVENANCE_WRITERS_DISABLED = "true";
-    const tx = makeTx({ content: null, provenance: null });
+    const tx = makeTx({ content: LEGACY_ROW, provenance: null });
     const result = await runWithTx(tx, {
       contentId: "content-1",
       eventType: "APPROVED",
@@ -145,10 +151,11 @@ describe("P2-A compatibility-path automated-approval authority gate", () => {
       reviewerQualificationSnapshot: { role: "TEACHER" },
     });
     expect(result).toBeNull();
-    // Curriculum V2 (P1-7): an approval reads only the payload to refuse native instruction in
-    // compatibility mode; the automated-approval provenance gate is still not applied.
-    expect(tx.curriculumContent.findUnique).toHaveBeenCalledTimes(1);
-    expect(tx.curriculumContent.findUnique).toHaveBeenCalledWith({ where: { contentId: "content-1" }, select: { payload: true } });
+    // Curriculum V2: the approval decision reads the row after the lock (lookup, lock, re-read) to
+    // refuse native instruction in compatibility mode; the automated-approval gate is still not applied.
+    expect(tx.curriculumContent.findUnique).toHaveBeenNthCalledWith(1, { where: { contentId: "content-1" }, select: { id: true } });
+    expect(tx.$queryRaw).toHaveBeenCalledTimes(1);
+    expect(tx.curriculumContent.findUnique).toHaveBeenNthCalledWith(2, { where: { id: "content-row-1" } });
     expect(tx.curriculumProvenance.findUnique).not.toHaveBeenCalled();
     expect(updateProjection).toHaveBeenCalledTimes(1);
   });

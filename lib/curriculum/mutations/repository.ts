@@ -70,7 +70,7 @@ function assertContentWriteIsNonAuthoritative(
  * approved native instruction cannot be rewritten in place, and a published legacy row cannot be
  * turned into an unreviewed native lesson.
  */
-function assertNativeWriteHasRevisionAuthority(data: { payload?: unknown }): void {
+export function assertNativeWriteHasRevisionAuthority(data: { payload?: unknown }): void {
   if (isNativeCurriculumV2Payload(data.payload)) {
     throw new Error("NATIVE_CURRICULUM_V2_REQUIRES_PROVENANCE_WRITERS: native scene structure is written only through revision-tracked writers");
   }

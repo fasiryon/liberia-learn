@@ -43,7 +43,7 @@ describe("CurriculumContent wave4 fields", () => {
 
   it("rejectionReason stored and readable", async () => {
     const mockUpdate = vi.fn(async () => ({ rejectionReason: "Contains errors" }));
-    vi.doMock("@/lib/db", () => ({ prisma: { curriculumContent: { update: mockUpdate, findUnique: vi.fn(async () => ({ payload: {} })) } } }));
+    vi.doMock("@/lib/db", () => ({ prisma: { $queryRaw: vi.fn(async () => []), curriculumContent: { update: mockUpdate, findUnique: vi.fn(async ({ where }: any) => ({ id: where?.id ?? `row-${where?.contentId}`, contentId: where?.contentId ?? where?.id, payload: {} })), findUniqueOrThrow: vi.fn(async ({ where }: any) => ({ id: where?.id ?? `row-${where?.contentId}`, contentId: where?.contentId ?? where?.id, payload: {} })) } } }));
     const { prisma } = await import("@/lib/db");
     const result = await prisma.curriculumContent.update({
       where: { id: "cc-1" }, data: { rejectionReason: "Contains errors" } as any,
@@ -53,7 +53,7 @@ describe("CurriculumContent wave4 fields", () => {
 
   it("parentLessonId chains version history", async () => {
     const mockUpdate = vi.fn(async () => ({ parentLessonId: "cc-parent", lessonVersion: 2 }));
-    vi.doMock("@/lib/db", () => ({ prisma: { curriculumContent: { update: mockUpdate, findUnique: vi.fn(async () => ({ payload: {} })) } } }));
+    vi.doMock("@/lib/db", () => ({ prisma: { $queryRaw: vi.fn(async () => []), curriculumContent: { update: mockUpdate, findUnique: vi.fn(async ({ where }: any) => ({ id: where?.id ?? `row-${where?.contentId}`, contentId: where?.contentId ?? where?.id, payload: {} })), findUniqueOrThrow: vi.fn(async ({ where }: any) => ({ id: where?.id ?? `row-${where?.contentId}`, contentId: where?.contentId ?? where?.id, payload: {} })) } } }));
     const { prisma } = await import("@/lib/db");
     const result = await prisma.curriculumContent.update({
       where: { id: "cc-2" }, data: { parentLessonId: "cc-parent", lessonVersion: 2 } as any,
@@ -132,7 +132,7 @@ describe("editReviewStatus state machine — PATCH /api/admin/content-review/[le
         },
         notificationInboxItem: { create: vi.fn(async () => ({})) },
         $transaction: vi.fn(async (callback: any) => callback({
-          curriculumContent: { update: updateFn, findUnique: vi.fn(async () => ({ payload: {} })) },
+          $queryRaw: vi.fn(async () => []), curriculumContent: { update: updateFn, findUnique: vi.fn(async ({ where }: any) => ({ id: where?.id ?? `row-${where?.contentId}`, contentId: where?.contentId ?? where?.id, payload: {} })), findUniqueOrThrow: vi.fn(async ({ where }: any) => ({ id: where?.id ?? `row-${where?.contentId}`, contentId: where?.contentId ?? where?.id, payload: {} })) },
         })),
       },
     }));
@@ -235,7 +235,7 @@ describe("editReviewStatus state machine — PATCH /api/admin/content-review/[le
         },
         notificationInboxItem: { create: mockNotif },
         $transaction: vi.fn(async (callback: any) => callback({
-          curriculumContent: { update: mockUpdate, findUnique: vi.fn(async () => ({ payload: {} })) },
+          $queryRaw: vi.fn(async () => []), curriculumContent: { update: mockUpdate, findUnique: vi.fn(async ({ where }: any) => ({ id: where?.id ?? `row-${where?.contentId}`, contentId: where?.contentId ?? where?.id, payload: {} })), findUniqueOrThrow: vi.fn(async ({ where }: any) => ({ id: where?.id ?? `row-${where?.contentId}`, contentId: where?.contentId ?? where?.id, payload: {} })) },
         })),
       },
     }));
@@ -265,7 +265,7 @@ describe("editReviewStatus state machine — PATCH /api/admin/content-review/[le
         },
         notificationInboxItem: { create: mockNotif },
         $transaction: vi.fn(async (callback: any) => callback({
-          curriculumContent: { update: mockUpdate, findUnique: vi.fn(async () => ({ payload: {} })) },
+          $queryRaw: vi.fn(async () => []), curriculumContent: { update: mockUpdate, findUnique: vi.fn(async ({ where }: any) => ({ id: where?.id ?? `row-${where?.contentId}`, contentId: where?.contentId ?? where?.id, payload: {} })), findUniqueOrThrow: vi.fn(async ({ where }: any) => ({ id: where?.id ?? `row-${where?.contentId}`, contentId: where?.contentId ?? where?.id, payload: {} })) },
         })),
       },
     }));

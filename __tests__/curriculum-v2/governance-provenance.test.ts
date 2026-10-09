@@ -143,14 +143,14 @@ describe("governance writer enforces the native rule in both flag modes", () => 
   it("default configuration (writer flag unset) is compatibility mode and refuses native approval", async () => {
     delete process.env.P2A_PROVENANCE_WRITERS_DISABLED;
     const { appendCurriculumGovernanceEventInTransaction } = await import("@/lib/curriculum/mutations/governanceWriter");
-    const tx = { curriculumContent: { findUnique: vi.fn().mockResolvedValue({ payload: nativePayload }) }, curriculumProvenance: { findUnique: vi.fn() } };
+    const tx = { $queryRaw: vi.fn().mockResolvedValue([]), curriculumContent: { findUnique: vi.fn().mockResolvedValue({ id: "row-1", contentId: "c-1", payload: nativePayload }) }, curriculumProvenance: { findUnique: vi.fn() } };
     await expect(appendCurriculumGovernanceEventInTransaction(tx as any, approval("HUMAN_REVIEW") as any)).rejects.toThrow("NATIVE_CURRICULUM_V2_REQUIRES_EXACT_REVISION");
   });
 
   it("compatibility mode (writers off) refuses even a qualified human approval of native content, before any projection", async () => {
     process.env.P2A_PROVENANCE_WRITERS_DISABLED = "true";
     const { appendCurriculumGovernanceEventInTransaction } = await import("@/lib/curriculum/mutations/governanceWriter");
-    const tx = { curriculumContent: { findUnique: vi.fn().mockResolvedValue({ payload: nativePayload }) }, curriculumProvenance: { findUnique: vi.fn() } };
+    const tx = { $queryRaw: vi.fn().mockResolvedValue([]), curriculumContent: { findUnique: vi.fn().mockResolvedValue({ id: "row-1", contentId: "c-1", payload: nativePayload }) }, curriculumProvenance: { findUnique: vi.fn() } };
     await expect(appendCurriculumGovernanceEventInTransaction(tx as any, approval("HUMAN_REVIEW") as any)).rejects.toThrow("NATIVE_CURRICULUM_V2_REQUIRES_EXACT_REVISION");
     expect(updateProjection).not.toHaveBeenCalled();
   });

@@ -28,9 +28,10 @@ vi.mock("@/lib/db", () => ({
     $transaction: vi.fn(async (callback: any) => {
       let stagedStatus = durableStatus;
       const tx = {
+        $queryRaw: vi.fn(async () => []),
         curriculumContent: {
-          // Legacy (non-native) payload: the Curriculum V2 approval gate reads it in compatibility mode.
-          findUnique: vi.fn(async () => ({ payload: {} })),
+          // Legacy (non-native) payload, read after the row lock in compatibility mode.
+          findUnique: vi.fn(async ({ where }: any) => ({ id: where?.id ?? `row-${where?.contentId}`, contentId: where?.contentId ?? where?.id, payload: {} })), findUniqueOrThrow: vi.fn(async ({ where }: any) => ({ id: where?.id ?? `row-${where?.contentId}`, contentId: where?.contentId ?? where?.id, payload: {} })),
           update: mockUpdate.mockImplementationOnce(async (args: any) => {
             stagedStatus = args.data.status;
             return args.data;
