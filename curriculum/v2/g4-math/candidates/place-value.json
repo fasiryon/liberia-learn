@@ -1,0 +1,122 @@
+{
+  "contractVersion": "candidate-lesson-v2/1.0.0",
+  "title": "Reading and writing numbers to 100,000",
+  "estimatedMinutes": 40,
+  "ageBand": "UPPER_PRIMARY",
+  "pedagogy": { "primaryStrategy": "CONCRETE_PICTORIAL_ABSTRACT", "rationale": "Learners build numbers with a paper place-value chart before reading and writing them in words and expanded form." },
+  "prerequisiteAssumptions": ["Learners can read and write numbers to 10,000 (Grade 3).", "Learners know the digits 0-9 and the ones, tens and hundreds places."],
+  "misconceptions": [
+    { "id": "drops-zero", "objectiveId": "moe-math-g4-s1-p1-numeration-addition-and-subtraction-obj1", "description": "Leaves out the zero in an empty place, writing 8,304 for eighty thousand, three hundred four.", "response": "Build the number in the chart: an empty column still needs a 0 so the other digits stay in their places." },
+    { "id": "digit-not-value", "objectiveId": "moe-math-g4-s1-p1-numeration-addition-and-subtraction-obj1", "description": "Gives the digit instead of its value, saying the 4 in 47,305 is worth 4.", "response": "Ask which place the digit sits in, then read the value of that place: 4 ten thousands is 40,000." }
+  ],
+  "scenes": [
+    {
+      "id": "hook", "type": "INTRO", "title": "A big number at the county office", "purpose": "HOOK_PHENOMENON", "objectiveIds": [], "learnerAction": "Read the number aloud with a partner.",
+      "content": { "body": "Mr. Kollie works at a county education office. His list says the county's schools have **47,305** learners (an illustrative number, not a real statistic).\n\nHow do you read a number that big? Today you will find out what each digit is worth." },
+      "interaction": { "kind": "NONE" }, "tools": { "requested": [], "prohibited": [] }, "hints": [], "misconceptionIds": [], "evidence": { "kind": "NONE" },
+      "accessibility": { "textAlternative": "A county office lists 47,305 learners. The lesson asks how to read a number that large.", "keyboardPath": "Read the text, then press Tab to reach Continue.", "reducedMotion": "NOT_APPLICABLE" },
+      "offline": { "mode": "FULL_OFFLINE", "note": "Text only; works from the saved lesson." }, "completion": "VIEWED"
+    },
+    {
+      "id": "goal", "type": "OBJECTIVE", "title": "What you will be able to do", "purpose": "STATE_OBJECTIVE", "objectiveIds": ["moe-math-g4-s1-p1-numeration-addition-and-subtraction-obj1"], "learnerAction": "Read the goal.",
+      "content": { "body": "By the end of this lesson you will be able to:", "keyPoints": ["Name the place and value of each digit in a number up to 100,000.", "Read and write numbers up to 100,000 in words, numerals and expanded form."] },
+      "interaction": { "kind": "NONE" }, "tools": { "requested": [], "prohibited": [] }, "hints": [], "misconceptionIds": [], "evidence": { "kind": "NONE" },
+      "accessibility": { "textAlternative": "Goal: name the place and value of each digit, and read and write numbers to 100,000.", "keyboardPath": "Read the list, then Continue.", "reducedMotion": "NOT_APPLICABLE" },
+      "offline": { "mode": "FULL_OFFLINE", "note": "Text only." }, "completion": "VIEWED"
+    },
+    {
+      "id": "places", "type": "EXPLANATION", "title": "Every digit has a place", "purpose": "EXPLAIN_CONCEPT", "objectiveIds": ["moe-math-g4-s1-p1-numeration-addition-and-subtraction-obj1"], "learnerAction": "Read and say the place names in order.",
+      "content": {
+        "body": "From the right, the places are **ones, tens, hundreds, thousands, ten thousands** and **hundred thousands**.\n\nThe place tells the value of a digit. In 47,305 the 4 is in the ten thousands place, so it is worth 40,000. The 0 is in the tens place: there are no tens, but the 0 must stay so the 3 keeps its hundreds place.",
+        "keyPoints": ["Each place is worth ten times the place to its right.", "A 0 holds an empty place."]
+      },
+      "interaction": { "kind": "NONE" }, "tools": { "requested": [], "prohibited": [] }, "hints": [], "misconceptionIds": ["drops-zero"], "evidence": { "kind": "NONE" },
+      "accessibility": { "textAlternative": "Places from the right: ones, tens, hundreds, thousands, ten thousands, hundred thousands. In 47,305 the 4 is worth 40,000 and the 0 holds the empty tens place.", "keyboardPath": "Read the text, then Continue.", "reducedMotion": "NOT_APPLICABLE" },
+      "offline": { "mode": "FULL_OFFLINE", "note": "Text only." }, "completion": "VIEWED",
+      "pedagogy": { "strategy": "DIRECT_INSTRUCTION", "representation": "ABSTRACT", "scaffoldLevel": "FULL" }
+    },
+    {
+      "id": "build-47305", "type": "GUIDED_EXAMPLE", "title": "Build 47,305 one place at a time", "purpose": "MODEL_WORKED_EXAMPLE", "objectiveIds": ["moe-math-g4-s1-p1-numeration-addition-and-subtraction-obj1"], "learnerAction": "Open each step to build the number and its expanded form.",
+      "content": { "body": "Open each step. Watch how each digit's value adds up to the whole number." },
+      "interaction": { "kind": "DIAGRAM_REVEAL", "steps": [
+        { "id": "ten-thousands", "label": "4 in the ten thousands place", "description": "4 ten thousands = 40,000." },
+        { "id": "thousands", "label": "7 in the thousands place", "description": "7 thousands = 7,000." },
+        { "id": "hundreds", "label": "3 in the hundreds place", "description": "3 hundreds = 300." },
+        { "id": "tens", "label": "0 in the tens place", "description": "No tens. The 0 holds the place." },
+        { "id": "ones", "label": "5 in the ones place", "description": "5 ones = 5. Expanded form: 40,000 + 7,000 + 300 + 5 = 47,305, read forty-seven thousand, three hundred five." }
+      ] },
+      "tools": { "requested": [], "prohibited": [] }, "hints": ["Start from the left: the biggest place first."], "misconceptionIds": ["digit-not-value"], "evidence": { "kind": "NONE" },
+      "accessibility": { "textAlternative": "47,305 is 4 ten thousands (40,000), 7 thousands (7,000), 3 hundreds (300), 0 tens and 5 ones: 40,000 + 7,000 + 300 + 5.", "keyboardPath": "Each step is a button; press Enter or Space to open it in order.", "reducedMotion": "NOT_APPLICABLE" },
+      "offline": { "mode": "FULL_OFFLINE", "note": "Text steps work offline." }, "completion": "ALL_STEPS_REVEALED",
+      "pedagogy": { "strategy": "CONCRETE_PICTORIAL_ABSTRACT", "representation": "PICTORIAL", "scaffoldLevel": "FULL" }, "dependsOn": ["places"]
+    },
+    {
+      "id": "chart-build", "type": "PRACTICE", "title": "Build numbers in the place-value chart", "purpose": "GUIDED_PRACTICE", "objectiveIds": ["moe-math-g4-s1-p1-numeration-addition-and-subtraction-obj1"], "learnerAction": "Place digit cards in the chart for numbers your teacher calls.",
+      "content": { "body": "Use your paper place-value chart and digit cards. Build each number your teacher calls, then read it aloud to your partner." },
+      "interaction": { "kind": "DRAG_DROP", "prompt": "Drag each digit card into its place in the chart to build 62,418.", "elements": ["6", "2", "4", "1", "8", "ten thousands", "thousands", "hundreds", "tens", "ones"] },
+      "fallback": { "kind": "PAPER_ACTIVITY", "content": "Draw a place-value chart (hundred thousands to ones) in your book. Write 6, 2, 4, 1 and 8 in the right columns for 62,418, then read the number aloud and write it in words.", "objectivePreserved": true },
+      "tools": { "requested": [], "prohibited": [] }, "hints": ["Count the places from the right: ones, tens, hundreds, thousands, ten thousands."], "misconceptionIds": ["drops-zero"], "evidence": { "kind": "NONE" },
+      "expectedObservation": "Learners place 6 in ten thousands, 2 in thousands, 4 in hundreds, 1 in tens, 8 in ones and read sixty-two thousand, four hundred eighteen.",
+      "accessibility": { "textAlternative": "Build 62,418 in a place-value chart: 6 ten thousands, 2 thousands, 4 hundreds, 1 ten, 8 ones.", "keyboardPath": "Use the paper chart; on screen read the instructions and press Continue.", "reducedMotion": "NOT_APPLICABLE", "nonPointerAlternative": "Write each digit in the correct column of a drawn chart instead of dragging." },
+      "offline": { "mode": "FULL_OFFLINE", "note": "The paper chart and digit cards are the core modality; no device needed." }, "completion": "VIEWED",
+      "pedagogy": { "strategy": "CONCRETE_PICTORIAL_ABSTRACT", "representation": "CONCRETE", "scaffoldLevel": "PARTIAL" }, "dependsOn": ["build-47305"]
+    },
+    {
+      "id": "check", "type": "CHECK_UNDERSTANDING", "title": "Quick check", "purpose": "CHECK_UNDERSTANDING", "objectiveIds": ["moe-math-g4-s1-p1-numeration-addition-and-subtraction-obj1"], "learnerAction": "Choose an answer for each question.",
+      "content": { "body": "Choose an answer for each question. You will see feedback straight away." },
+      "interaction": { "kind": "SINGLE_CHOICE", "items": [
+        { "id": "value-of-6", "prompt": "What is the value of the 6 in 36,152?", "options": [
+          { "id": "a", "text": "6", "feedback": "That is the digit. Which place is it in? Thousands, so it is worth 6,000." },
+          { "id": "b", "text": "600", "feedback": "Count the places from the right: ones, tens, hundreds, thousands. The 6 is in the thousands place." },
+          { "id": "c", "text": "6,000", "feedback": "Yes. The 6 is in the thousands place, so it is worth 6,000." },
+          { "id": "d", "text": "60,000", "feedback": "The 3 is in the ten thousands place. The 6 is one place to the right." }
+        ], "formativeKey": { "expectedOptionId": "c" } },
+        { "id": "write-numeral", "prompt": "Which numeral is eighty thousand, three hundred four?", "options": [
+          { "id": "a", "text": "8,304", "feedback": "This is missing a zero. Build it in the chart: the thousands place is empty and needs a 0." },
+          { "id": "b", "text": "80,304", "feedback": "Yes. 8 ten thousands, 0 thousands, 3 hundreds, 0 tens, 4 ones." },
+          { "id": "c", "text": "80,340", "feedback": "Three hundred four has no tens: the 4 belongs in the ones place." },
+          { "id": "d", "text": "800,304", "feedback": "That is eight hundred thousand. Eighty thousand has only five digits." }
+        ], "formativeKey": { "expectedOptionId": "b" } }
+      ] },
+      "tools": { "requested": [], "prohibited": [] }, "hints": ["Build the number in your chart first."], "misconceptionIds": ["drops-zero", "digit-not-value"],
+      "evidence": { "kind": "FORMATIVE_OBSERVATION", "evidenceType": "PRACTICE", "responses": [
+        { "responseKey": "value-of-6", "objectiveId": "moe-math-g4-s1-p1-numeration-addition-and-subtraction-obj1", "responseType": "SELECTED_OPTION", "scaffoldLevel": "PARTIAL", "misconceptionId": "digit-not-value" },
+        { "responseKey": "write-numeral", "objectiveId": "moe-math-g4-s1-p1-numeration-addition-and-subtraction-obj1", "responseType": "SELECTED_OPTION", "scaffoldLevel": "PARTIAL", "misconceptionId": "drops-zero" }
+      ] },
+      "accessibility": { "textAlternative": "Two questions: the value of 6 in 36,152, and the numeral for eighty thousand, three hundred four.", "keyboardPath": "Tab to each option and press Space to choose; feedback is read aloud.", "reducedMotion": "NOT_APPLICABLE" },
+      "offline": { "mode": "FULL_OFFLINE", "note": "Feedback works offline." }, "completion": "ALL_ANSWERED",
+      "pedagogy": { "strategy": "RETRIEVAL_PRACTICE", "representation": "ABSTRACT", "scaffoldLevel": "PARTIAL" }
+    },
+    {
+      "id": "write-it", "type": "PRACTICE", "title": "Write numbers three ways", "purpose": "INDEPENDENT_PRACTICE", "objectiveIds": ["moe-math-g4-s1-p1-numeration-addition-and-subtraction-obj1"], "learnerAction": "Write each number in words and in expanded form.",
+      "content": { "body": "Write each answer in your own words and numbers." },
+      "interaction": { "kind": "FREE_RESPONSE", "prompts": [
+        { "id": "words-62418", "prompt": "Write 62,418 in words.", "minLength": 10 },
+        { "id": "expanded-90372", "prompt": "Write 90,372 in expanded form.", "minLength": 8 }
+      ] },
+      "tools": { "requested": [], "prohibited": [] }, "hints": ["Read the number in two groups: the thousands, then the rest."], "misconceptionIds": [],
+      "evidence": { "kind": "FORMATIVE_OBSERVATION", "evidenceType": "PRACTICE", "responses": [
+        { "responseKey": "words-62418", "objectiveId": "moe-math-g4-s1-p1-numeration-addition-and-subtraction-obj1", "responseType": "TEXT", "scaffoldLevel": "MINIMAL" },
+        { "responseKey": "expanded-90372", "objectiveId": "moe-math-g4-s1-p1-numeration-addition-and-subtraction-obj1", "responseType": "TEXT", "scaffoldLevel": "MINIMAL" }
+      ] },
+      "accessibility": { "textAlternative": "Write 62,418 in words and 90,372 in expanded form, using the text boxes.", "keyboardPath": "Tab to each text box and type; Continue when both are written.", "reducedMotion": "NOT_APPLICABLE" },
+      "offline": { "mode": "FULL_OFFLINE", "note": "Answers are kept on this device." }, "completion": "ALL_RESPONSES_WRITTEN",
+      "pedagogy": { "strategy": "GUIDED_TO_INDEPENDENT", "representation": "ABSTRACT", "scaffoldLevel": "MINIMAL" }, "dependsOn": ["check"]
+    },
+    {
+      "id": "mastery", "type": "MASTERY_CHECK", "title": "Show what you know", "purpose": "ASSESS_MASTERY", "objectiveIds": ["moe-math-g4-s1-p1-numeration-addition-and-subtraction-obj1"], "learnerAction": "Answer the final questions.",
+      "content": { "body": "Answer each question. Your answers are checked by the school's learning system, not on this device." },
+      "interaction": { "kind": "ASSESSMENT_HANDOFF", "assessmentRequestId": "pv-mastery" },
+      "tools": { "requested": [], "prohibited": ["basic-calculator"] }, "hints": [], "misconceptionIds": [],
+      "evidence": { "kind": "MASTERY_RESPONSE", "evidenceType": "QUIZ", "responses": [{ "responseKey": "pv-mastery", "objectiveId": "moe-math-g4-s1-p1-numeration-addition-and-subtraction-obj1", "responseType": "ASSESSMENT_RESPONSE", "scaffoldLevel": "NONE" }] },
+      "accessibility": { "textAlternative": "Final questions on place value, read and answered with the keyboard or touch.", "keyboardPath": "Tab to each option and press Space.", "reducedMotion": "NOT_APPLICABLE", "nonPointerAlternative": "Without a device, the teacher reads each question and its choices aloud and records the learner's spoken answer." },
+      "offline": { "mode": "FALLBACK_REQUIRED", "note": "Answers given on a device are scored after reconnecting; without a device the teacher gives the same questions on paper." },
+      "fallback": { "kind": "PAPER_ACTIVITY", "content": "Your teacher gives the same questions on paper and records your answers.", "objectivePreserved": true },
+      "completion": "ALL_ANSWERED"
+    }
+  ],
+  "assessmentRequests": [
+    { "id": "pv-mastery", "objectiveIds": ["moe-math-g4-s1-p1-numeration-addition-and-subtraction-obj1"], "interaction": "SINGLE_CHOICE", "evidenceType": "QUIZ", "difficulty": "CORE", "misconceptionIds": ["drops-zero", "digit-not-value"], "tools": { "requested": [], "prohibited": ["basic-calculator"] }, "offline": "FALLBACK_REQUIRED" }
+  ],
+  "labProposals": []
+}

@@ -25,10 +25,25 @@ export type AdaptedObservation = Readonly<{
 }>;
 
 type Learner = Readonly<{ tenantId: string; schoolId: string; studentId: string; studentUserId: string; sessionId: string }>;
+/**
+ * How the observation reached the server, taken from the authenticated request or sync admission
+ * (Codex P2-7) — never assumed, and never read from the learner's envelope.
+ */
+export type AdmissionContext = Readonly<{ source: "ONLINE" | "OFFLINE"; syncIdentity: string | null; syncBatchId: string | null; clientEventId: string | null }>;
 type ServerLesson = Readonly<{ experience: LessonExperience; links: readonly LearningExperienceLink[] }>;
 type Trusted = Readonly<{ observationId: string; sceneId: string; kind: ExperienceObservation["kind"]; evidenceType: GovernedEvidence["evidenceType"]; objectiveIds: readonly string[]; activity: GovernedEvidence["activity"]; payload: Readonly<Record<string, unknown>>; disposition: ObservationDisposition; link: LearningExperienceLink | null }>;
 
-function governed(observation: Trusted, lesson: LessonExperience, learner: Learner, occurredAt: string, suffix = "", objectiveId?: string, conceptId?: string): GovernedEvidence {
+/**
+ * Evidence carries the pinned ontology release identity (Codex P2-6). A lesson that is not an
+ * approved release records "unreleased"; an approved one without a release identity fails closed.
+ */
+function curriculumIdentity(lesson: LessonExperience): GovernedEvidence["curriculum"] {
+  if (lesson.authority.status !== "APPROVED_RELEASE") return { ontologyReleaseId: "unreleased", ontologyReleaseIdentity: "unreleased" };
+  if (!lesson.authority.releaseId || !lesson.authority.releaseIdentity) throw new Error("experience_release_identity_required");
+  return { ontologyReleaseId: lesson.authority.releaseId, ontologyReleaseIdentity: lesson.authority.releaseIdentity };
+}
+
+function governed(observation: Trusted, lesson: LessonExperience, learner: Learner, admission: AdmissionContext, occurredAt: string, suffix = "", objectiveId?: string, conceptId?: string): GovernedEvidence {
   const key = `${learner.sessionId}:${observation.observationId}${suffix}`;
   const concept = lesson.objectives.find((objective) => objective.id === observation.objectiveIds[0])?.conceptId ?? observation.objectiveIds[0];
   return createGovernedEvidence({
@@ -45,10 +60,10 @@ function governed(observation: Trusted, lesson: LessonExperience, learner: Learn
     occurredAt,
     // Lesson-side observations are never scored here: mastery items go to the assessment authority.
     performance: { outcome: "OBSERVED", score: null, maxScore: null, correct: null, signals: [], payload: observation.payload },
-    provenance: { source: "ONLINE", actorId: learner.studentUserId, actorRole: "STUDENT", runtime: observation.kind === "LAB_OBSERVATION" ? "LAB" : "WEB", recordedAt: occurredAt, clientEventId: null, syncBatchId: null },
+    provenance: { source: admission.source, actorId: learner.studentUserId, actorRole: "STUDENT", runtime: admission.source === "OFFLINE" ? "SYNC" : observation.kind === "LAB_OBSERVATION" ? "LAB" : "WEB", recordedAt: occurredAt, clientEventId: admission.clientEventId, syncBatchId: admission.syncBatchId },
     strength: { serverScored: false, humanVerified: false, assistanceUsed: false, retryCount: 0, hintCount: 0, independenceKey: learner.sessionId, directness: "INDIRECT", reliability: "UNASSESSED", policyRef: `lesson-experience:${lesson.id}@${lesson.version}` },
-    offline: { isOffline: false, syncIdentity: null },
-    curriculum: { ontologyReleaseId: lesson.authority.status === "APPROVED_RELEASE" && lesson.authority.releaseId ? lesson.authority.releaseId : "unreleased", ontologyReleaseIdentity: lesson.version },
+    offline: { isOffline: admission.source === "OFFLINE", syncIdentity: admission.source === "OFFLINE" ? admission.syncIdentity : null },
+    curriculum: curriculumIdentity(lesson),
   });
 }
 
@@ -73,7 +88,7 @@ function trust(observation: ExperienceObservation, server: ServerLesson): Truste
   };
 }
 
-export function adaptEnvelope(envelope: ExperienceEvidenceEnvelope, server: ServerLesson, learner: Learner, occurredAt = new Date().toISOString()): AdaptedObservation[] {
+export function adaptEnvelope(envelope: ExperienceEvidenceEnvelope, server: ServerLesson, learner: Learner, admission: AdmissionContext, occurredAt = new Date().toISOString()): AdaptedObservation[] {
   if (envelope.masteryMutation !== false || envelope.nextActionAuthority !== "LEARNING_ORCHESTRATOR") throw new Error("experience_envelope_invariant_violated");
   if (envelope.experienceId !== server.experience.id || envelope.experienceVersion !== server.experience.version) throw new Error("experience_envelope_lesson_mismatch");
   const adapted: AdaptedObservation[] = [];
@@ -81,7 +96,7 @@ export function adaptEnvelope(envelope: ExperienceEvidenceEnvelope, server: Serv
     const observation = trust(raw, server);
     if (!observation) continue;
     if (observation.kind !== "LAB_OBSERVATION") {
-      const evidence = governed(observation, server.experience, learner, occurredAt);
+      const evidence = governed(observation, server.experience, learner, admission, occurredAt);
       validateGovernedEvidence(evidence);
       adapted.push({ observationId: observation.observationId, disposition: observation.disposition, evidence: [evidence], reason: observation.disposition === "RAW_OBSERVATION" ? "Lesson is not an approved release; recorded as observation only." : "Routed to existing evidence admission." });
       continue;
@@ -98,7 +113,7 @@ export function adaptEnvelope(envelope: ExperienceEvidenceEnvelope, server: Serv
       const mapping = observation.link?.evidenceMapping.find((candidate) => candidate.labCheckId === checkId);
       const check = definition?.checks.find((candidate) => candidate.id === checkId);
       if (!definition || !check || !mapping) continue;
-      const item = governed(observation, server.experience, learner, occurredAt, `:${checkId}`, mapping.objectiveId, check.conceptId);
+      const item = governed(observation, server.experience, learner, admission, occurredAt, `:${checkId}`, mapping.objectiveId, check.conceptId);
       const result = adaptLabEvidence({ definition, check, evidence: item });
       evidence.push(result.governedEvidence);
       reason = result.reason;

@@ -86,7 +86,7 @@ export function FormativeCheck({ scene, progress, onAnswer }: { scene: Scene; pr
               ))}
             </div>
             <p role="status" className={`mt-3 text-sm leading-6 ${selected === null ? "sr-only" : correct ? "text-[var(--ll-success,#4ade80)]" : "text-[var(--ll-warning,#facc15)]"}`}>
-              {selected === null ? "" : correct ? item.feedback.correct : item.feedback.incorrect}
+              {selected === null ? "" : item.optionFeedback?.[selected] ?? (correct ? item.feedback.correct : item.feedback.incorrect)}
             </p>
           </fieldset>
         );

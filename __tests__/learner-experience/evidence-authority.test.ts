@@ -15,6 +15,7 @@ const hydro = findLabExperience("mount-coffee-hydropower")!;
 const releasedHydro = { ...hydro, release: { ...hydro.release, status: "RELEASED" as const } };
 const labs = { "mount-coffee-hydropower": hydro };
 const server = { experience: lesson, links: [link] };
+const online = { source: "ONLINE" as const, syncIdentity: null, syncBatchId: null, clientEventId: null };
 const learner = { tenantId: "school-a", schoolId: "school-a", studentId: "student-a", studentUserId: "user-a", sessionId: "session-a" };
 
 function completedProgress() {
@@ -43,7 +44,7 @@ describe("lab and lesson evidence never mutate mastery", () => {
   });
 
   it("adapts into valid governed evidence through existing lab governance without calling the mastery writer", () => {
-    const adapted = adaptEnvelope(buildEvidenceEnvelope(lesson, completedProgress(), [link], labs), server, learner, "2026-10-07T00:00:00.000Z");
+    const adapted = adaptEnvelope(buildEvidenceEnvelope(lesson, completedProgress(), [link], labs), server, learner, online, "2026-10-07T00:00:00.000Z");
     const all = adapted.flatMap((entry) => entry.evidence);
     expect(all.length).toBeGreaterThanOrEqual(5);
     for (const evidence of all) {
@@ -60,7 +61,7 @@ describe("lab and lesson evidence never mutate mastery", () => {
 
   it("rejects an envelope whose invariants were tampered with", () => {
     const envelope = buildEvidenceEnvelope(lesson, completedProgress(), [link], labs);
-    expect(() => adaptEnvelope({ ...envelope, masteryMutation: true as unknown as false }, server, learner)).toThrow("experience_envelope_invariant_violated");
+    expect(() => adaptEnvelope({ ...envelope, masteryMutation: true as unknown as false }, server, learner, online)).toThrow("experience_envelope_invariant_violated");
   });
 
   it("ignores authority, disposition and evidence type claimed by the client envelope", () => {
@@ -70,14 +71,14 @@ describe("lab and lesson evidence never mutate mastery", () => {
       authorityStatus: "APPROVED_RELEASE" as const,
       observations: envelope.observations.map((o) => ({ ...o, disposition: "PROVISIONAL" as const, evidenceType: "EXAM_TEST" as const, objectiveIds: ["forged-objective"] })),
     };
-    const adapted = adaptEnvelope(forged, server, learner, "2026-10-07T00:00:00.000Z");
+    const adapted = adaptEnvelope(forged, server, learner, online, "2026-10-07T00:00:00.000Z");
     expect(adapted.every((entry) => entry.disposition === "RAW_OBSERVATION")).toBe(true);
     for (const evidence of adapted.flatMap((entry) => entry.evidence)) {
       expect(evidence.evidenceType).not.toBe("EXAM_TEST");
       expect(evidence.objective.objectiveId).not.toBe("forged-objective");
       expect(evidence.curriculum.ontologyReleaseId).toBe("unreleased");
     }
-    expect(() => adaptEnvelope({ ...envelope, experienceVersion: "9.9.9" }, server, learner)).toThrow("experience_envelope_lesson_mismatch");
+    expect(() => adaptEnvelope({ ...envelope, experienceVersion: "9.9.9" }, server, learner, online)).toThrow("experience_envelope_lesson_mismatch");
   });
 
   it("only an approved release can raise disposition, and mastery always goes to the assessment authority", () => {
@@ -100,7 +101,7 @@ describe("lab and lesson evidence never mutate mastery", () => {
   it("admits only lab checks named by the link's evidence mapping", () => {
     const narrow = { ...link, evidenceMapping: link.evidenceMapping.filter((mapping) => mapping.labCheckId === "trace-water") };
     const envelope = buildEvidenceEnvelope(lesson, completedProgress(), [narrow], labs);
-    const adapted = adaptEnvelope(envelope, { experience: lesson, links: [narrow] }, learner, "2026-10-07T00:00:00.000Z");
+    const adapted = adaptEnvelope(envelope, { experience: lesson, links: [narrow] }, learner, online, "2026-10-07T00:00:00.000Z");
     const lab = adapted.find((entry) => entry.observationId.endsWith(":lab"))!;
     // The learner finished trace-water and find-generator; only the mapped check becomes evidence.
     expect(lab.evidence.map((evidence) => evidence.idempotencyKey.split(":").pop())).toEqual(["trace-water"]);
@@ -147,5 +148,29 @@ describe("two lab scenes in one lesson", () => {
     const tampered = { ...applyLabReturn(twoLabs, initialProgress(twoLabs), "lab", observation) };
     const raw = JSON.parse(JSON.stringify({ ...tampered, labs: { "lab-2": { status: "RETURNED", observation } } }));
     expect(restoreProgress(twoLabs, raw).labs["lab-2"]).toBeUndefined();
+  });
+});
+
+describe("evidence identity and admission provenance come from trusted context (Codex P2-6, P2-7)", () => {
+  const approvedLesson = { ...lesson, authority: { ...lesson.authority, status: "APPROVED_RELEASE" as const, releaseId: "lr-moe-g4-math-fractions-2026.1", releaseIdentity: "a".repeat(64) } };
+  const formativeOnly = () => recordResponse(recordResponse(goToScene(lesson, initialProgress(lesson), "quick-check"), "quick-check", "qc-generator", 1), "quick-check", "qc-dry-season", 2);
+
+  it("uses the pinned ontology release identity, never the lesson version", () => {
+    const envelope = { ...buildEvidenceEnvelope(approvedLesson, formativeOnly(), [link], labs) };
+    const [entry] = adaptEnvelope(envelope, { experience: approvedLesson, links: [link] }, learner, online, "2026-10-07T00:00:00.000Z");
+    expect(entry.evidence[0].curriculum).toEqual({ ontologyReleaseId: "lr-moe-g4-math-fractions-2026.1", ontologyReleaseIdentity: "a".repeat(64) });
+    expect(entry.evidence[0].curriculum.ontologyReleaseIdentity).not.toBe(lesson.version);
+  });
+
+  it("fails closed when an approved lesson has no release identity", () => {
+    const missing = { ...approvedLesson, authority: { ...approvedLesson.authority, releaseIdentity: null } };
+    expect(() => adaptEnvelope(buildEvidenceEnvelope(missing, formativeOnly(), [link], labs), { experience: missing, links: [link] }, learner, online)).toThrow("experience_release_identity_required");
+  });
+
+  it("records offline admission from the authenticated sync context", () => {
+    const offline = { source: "OFFLINE" as const, syncIdentity: "sync-7", syncBatchId: "batch-3", clientEventId: "evt-9" };
+    const [entry] = adaptEnvelope(buildEvidenceEnvelope(lesson, formativeOnly(), [link], labs), server, learner, offline, "2026-10-07T00:00:00.000Z");
+    expect(entry.evidence[0].provenance).toMatchObject({ source: "OFFLINE", runtime: "SYNC", syncBatchId: "batch-3", clientEventId: "evt-9" });
+    expect(entry.evidence[0].offline).toEqual({ isOffline: true, syncIdentity: "sync-7" });
   });
 });

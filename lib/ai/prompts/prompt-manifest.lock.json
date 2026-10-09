@@ -14,6 +14,13 @@
       "path": "lib/ai/prompts/archive/lesson.deep.v2/1.0.0.ts",
       "fileSha256": "29d4ea18057df94ec076450e28a11e3592766036d23e13fb3149d1a1ca05862e",
       "promptSha256": "912cb72260cdf5c7686ff7c1e3526446a67dd7ecb6fc0aa5111f9bc2a7318cbf"
+    },
+    {
+      "key": "curriculum.v2.lesson",
+      "version": "1.0.0",
+      "path": "lib/ai/prompts/archive/curriculum.v2.lesson/1.0.0.ts",
+      "fileSha256": "26264d3f5ec6eedb435c17fa8ca955762c6f0f0e9741fcbc21000b4017f202e5",
+      "promptSha256": "3514413a38033b91bf0a131cd5aae29365ae036d5090fc0753beabc179828c87"
     }
   ]
 }

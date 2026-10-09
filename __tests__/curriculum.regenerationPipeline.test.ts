@@ -72,7 +72,13 @@ beforeEach(() => {
   mockUserFindUnique.mockResolvedValue(null);
   mockTransaction.mockImplementation((fn) =>
     fn({
-      curriculumContent: { update: mockUpdate, create: mockCreate },
+      $queryRaw: vi.fn(async () => []),
+      curriculumContent: {
+        findUnique: vi.fn(async () => ({ id: "row-1" })),
+        findUniqueOrThrow: vi.fn(async () => ({ payload: {} })),
+        update: mockUpdate,
+        create: mockCreate,
+      },
       curriculumRegenerationRun: { update: mockUpdate },
       curriculumRegenerationJob: { update: mockUpdate },
       curriculumRegenerationCheckpoint: { update: mockUpdate },
@@ -272,7 +278,7 @@ describe("curriculum regeneration pipeline", () => {
 
     expect(result.status).toBe("approved");
     expect(mockUpdate).toHaveBeenCalledWith(expect.objectContaining({
-      where: { contentId: "c1" },
+      where: { id: "row-1" }, // the write is bound to the locked row
       data: expect.objectContaining({ status: "DRAFT" }),
     }));
     expect(mockCreate).not.toHaveBeenCalledWith(expect.objectContaining({

@@ -7,8 +7,20 @@ const mockNotify = vi.hoisted(() => vi.fn(async () => {}));
 const mockWarn = vi.hoisted(() => vi.fn());
 const mockAppendGovernance = vi.hoisted(() => vi.fn(async () => ({ id: "event-1" })));
 
+// Writers-off updates lock and check the existing row inside a transaction before writing.
+const mockTx = vi.hoisted(() => ({
+  $queryRaw: vi.fn(async () => []),
+  curriculumContent: {
+    findUnique: vi.fn(async () => ({ id: "row-1" })),
+    findUniqueOrThrow: vi.fn(async () => ({ payload: {} })),
+    update: mockUpdate,
+  },
+}));
 vi.mock("@/lib/db", () => ({
-  prisma: { curriculumContent: { count: mockCount, update: mockUpdate } },
+  prisma: {
+    curriculumContent: { count: mockCount, update: mockUpdate },
+    $transaction: vi.fn((fn: (tx: typeof mockTx) => unknown) => fn(mockTx)),
+  },
 }));
 vi.mock("@/lib/audit", () => ({ logAudit: mockLogAudit }));
 vi.mock("@/lib/logger", () => ({ logger: { warn: mockWarn, error: vi.fn(), info: vi.fn() } }));
@@ -74,7 +86,7 @@ describe("triageAndApprove", () => {
 
     expect(result.action).toBe("flagged");
     expect(mockUpdate).toHaveBeenCalledWith({
-      where: { contentId: "content-high" },
+      where: { id: "row-1" }, // the write is bound to the locked row
       data: {
         status: "NEEDS_REVIEW",
         payload: expect.objectContaining({

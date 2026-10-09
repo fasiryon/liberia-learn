@@ -97,7 +97,7 @@ vi.mock("@/lib/db", () => ({
     student:       { findUnique: mockStudentFindUnique },
     strandCatalog: { findFirst: mockStrandCatalogFindFirst },
     $transaction: vi.fn(async (callback: any) => callback({
-      curriculumContent: { update: mockCurriculumContentUpdate },
+      $queryRaw: vi.fn(async () => []), curriculumContent: { update: mockCurriculumContentUpdate, findUnique: vi.fn(async ({ where }: any) => ({ id: where?.id ?? `row-${where?.contentId}`, contentId: where?.contentId ?? where?.id, payload: {} })), findUniqueOrThrow: vi.fn(async ({ where }: any) => ({ id: where?.id ?? `row-${where?.contentId}`, contentId: where?.contentId ?? where?.id, payload: {} })) },
     })),
   },
 }));

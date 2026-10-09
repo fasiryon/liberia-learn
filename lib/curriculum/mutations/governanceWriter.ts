@@ -13,8 +13,13 @@ import {
 import { prisma } from "@/lib/db";
 import { logAuditRequired, logAuditRequiredWithId } from "@/lib/audit";
 import { assertAutomatedApprovalAllowed } from "@/lib/curriculum/provenance/validation";
+import { CURRICULUM_SNAPSHOT_SCHEMA_VERSION_NATIVE } from "@/lib/curriculum/provenance/snapshot";
+import { isNativeCurriculumV2Payload } from "@/lib/curriculum/v2/contract";
+import { assertNativeCurriculumV2Approval, NATIVE_APPROVAL_EVENTS } from "@/lib/curriculum/v2/governance";
 import {
-  lockCurriculumContent,
+  assertExistingNativeRowFrozenWithoutRevisions,
+  assertNativeWriteHasRevisionAuthority,
+  lockAndReadCurriculumContent,
   ensureCurriculumProvenance,
   provenanceWritersEnabled,
   updateCurriculumGovernanceProjection,
@@ -171,6 +176,18 @@ function validateGovernance(input: GovernanceInput, writersEnabled: boolean): vo
   }
 }
 
+function nativeApprovalInput(input: GovernanceInput) {
+  return {
+    eventType: input.eventType,
+    approvalBasis: input.approvalBasis ?? null,
+    actorType: input.actorType,
+    actorUserId: input.actorUserId ?? null,
+    reviewAuthority: input.reviewAuthority ?? null,
+    hasQualification: Boolean(input.reviewerQualificationRef?.trim()) && input.reviewerQualificationSnapshot != null,
+    nativeSnapshotSchemaVersion: CURRICULUM_SNAPSHOT_SCHEMA_VERSION_NATIVE,
+  };
+}
+
 export async function appendCurriculumGovernanceEvent(
   input: GovernanceInput,
 ): Promise<CurriculumGovernanceEvent | null> {
@@ -187,6 +204,17 @@ export async function appendCurriculumGovernanceEventInTransaction(
   validateGovernance(input, writersEnabled);
 
   if (!writersEnabled) {
+    // Compatibility mode follows the same locking truth as the repository writers: the target is
+    // located, locked and re-read, and every decision below uses that post-lock row. A row that turned
+    // native between a caller's read and this lock is governed as native.
+    const compatibilityWhere = input.compatibility?.where ?? { contentId: input.contentId };
+    // The row that is locked, inspected and written is the same row.
+    const target = await lockAndReadCurriculumContent(tx, compatibilityWhere);
+    const native = isNativeCurriculumV2Payload(target.payload);
+    if ((NATIVE_APPROVAL_EVENTS as readonly string[]).includes(input.eventType)) {
+      // Native Curriculum V2 approval needs an exact revision, which compatibility mode cannot provide.
+      assertNativeCurriculumV2Approval({ ...nativeApprovalInput(input), native, writersEnabled: false, revisionSnapshotSchemaVersion: null });
+    }
     if (
       input.approvalBasis === "AUTOMATED_RISK_POLICY" ||
       input.approvalBasis === "ROLE_POLICY" ||
@@ -198,14 +226,9 @@ export async function appendCurriculumGovernanceEventInTransaction(
       // it does on the canonical (writers-enabled) branch below. Content
       // with no provenance root at all defaults to UNVERIFIED (fail
       // closed) rather than silently skipping the check.
-      const content = await tx.curriculumContent.findUnique({
-        where: { contentId: input.contentId },
+      const provenance = await tx.curriculumProvenance.findUnique({
+        where: { curriculumContentId: target.id },
       });
-      const provenance = content
-        ? await tx.curriculumProvenance.findUnique({
-            where: { curriculumContentId: content.id },
-          })
-        : null;
       assertAutomatedApprovalAllowed(provenance?.provenanceCompleteness ?? "UNVERIFIED");
     }
     const lifecycleResult = LIFECYCLE_BY_EVENT[input.eventType] ?? null;
@@ -221,14 +244,16 @@ export async function appendCurriculumGovernanceEventInTransaction(
               ? { editReviewStatus: "PENDING" }
               : {}),
     };
-    const compatibilityWhere = input.compatibility?.where ?? { contentId: input.contentId };
-    await updateCurriculumGovernanceProjection(
-      tx,
-      compatibilityWhere,
-      (input.compatibility?.projection ?? defaultProjection) as Parameters<
-        typeof updateCurriculumGovernanceProjection
-      >[2],
-    );
+    const projection = (input.compatibility?.projection ?? defaultProjection) as Parameters<
+      typeof updateCurriculumGovernanceProjection
+    >[2];
+    // A compatibility projection can never introduce native structure, and an existing native row is
+    // frozen here: no status, publication or payload change without a revision (no publish, no
+    // downgrade to legacy content, no approval surviving an instructional replacement).
+    assertNativeWriteHasRevisionAuthority(projection);
+    if (native) assertExistingNativeRowFrozenWithoutRevisions(target, projection as Record<string, unknown>);
+    // Bound to the locked, inspected row.
+    await updateCurriculumGovernanceProjection(tx, target.id, projection);
     await logAuditRequired(
       {
           userId: input.actorUserId ?? null,
@@ -259,10 +284,8 @@ export async function appendCurriculumGovernanceEventInTransaction(
     });
     if (prior) return prior;
   }
-  const content = await tx.curriculumContent.findUniqueOrThrow({
-      where: { contentId: input.contentId },
-    });
-    await lockCurriculumContent(tx, content.id);
+  // Read after the lock: the native-approval check must see the row as it is now, not a pre-lock snapshot.
+  const content = await lockAndReadCurriculumContent(tx, { contentId: input.contentId });
     const ensured = await ensureCurriculumProvenance(tx, content);
     const root = await tx.curriculumProvenance.findUniqueOrThrow({
       where: { id: ensured.provenance.id },
@@ -274,6 +297,7 @@ export async function appendCurriculumGovernanceEventInTransaction(
       where: { id: revisionId, provenanceId: root.id },
     });
     if (!revision) throw new Error("Governance revision does not belong to the content root");
+    assertNativeCurriculumV2Approval({ ...nativeApprovalInput(input), native: isNativeCurriculumV2Payload(content.payload), writersEnabled: true, revisionSnapshotSchemaVersion: revision.snapshotSchemaVersion });
     const lifecycleResult = LIFECYCLE_BY_EVENT[input.eventType] ?? null;
     if (lifecycleResult && revisionId !== root.currentRevisionId) {
       throw new Error("Lifecycle governance must target the current curriculum revision");

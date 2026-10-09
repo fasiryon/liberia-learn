@@ -1,3 +1,4 @@
+// route-policy: auth=session; scope=record; authority=student-enrolled-in-the-scheduled-work-class; rationale=returns one scheduled lesson to the enrolled learner through the learner-safe projection; rubrics, answer keys and hidden test cases stay server-side
 import { NextRequest, NextResponse } from "next/server";
 import { head } from "@vercel/blob";
 import { requireRole } from "@/lib/auth";
@@ -321,9 +322,10 @@ export async function GET(
         .map((tc) => ({ stdin: tc.stdin })),
     }));
 
-    const aiLiteracyExercises = rawAILiteracyExercises.map((ex) => ({
+    // The full rubric (level descriptors, scoring) stays server-side; learners see criteria labels only.
+    const aiLiteracyExercises = rawAILiteracyExercises.map(({ rubric: _rubric, ...ex }) => ({
       ...ex,
-      rubricCriteria: ((ex.rubric as { criteria?: Array<{ key: string; label: string; weight: number }> })?.criteria ?? []).map(
+      rubricCriteria: ((_rubric as { criteria?: Array<{ key: string; label: string; weight: number }> })?.criteria ?? []).map(
         (c) => ({ key: c.key, label: c.label, weight: c.weight })
       ),
     }));

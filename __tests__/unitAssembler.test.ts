@@ -22,6 +22,15 @@ vi.mock("@/lib/db", () => ({
       update: mockCurriculumUpdate,
       deleteMany: mockCurriculumDeleteMany,
     },
+    // Writers-off updates lock and check the existing row inside a transaction before writing.
+    $transaction: vi.fn((fn: (tx: unknown) => unknown) => fn({
+      $queryRaw: vi.fn(async () => []),
+      curriculumContent: {
+        findUnique: vi.fn(async () => ({ id: "row-1" })),
+        findUniqueOrThrow: vi.fn(async () => ({ payload: {} })),
+        update: mockCurriculumUpdate,
+      },
+    })),
     curriculumUnit: {
       findFirst: mockUnitFindFirst,
       create: mockUnitCreate,

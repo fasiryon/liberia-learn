@@ -1,3 +1,8 @@
+import { CURRICULUM_V2_PAYLOAD_KEY, isNativeCurriculumV2Payload, type CurriculumLessonV2 } from "@/lib/curriculum/v2/contract";
+import { toLessonExperience } from "@/lib/curriculum/v2/compat";
+import { validateLessonExperience } from "@/lib/learner-experience/sceneContract";
+import { assertNoLearnerSecretKeys, rebuildLearnerExperience } from "@/lib/learner-experience/learnerSafeExperience";
+import { stripRestrictedLearnerSections, stripRestrictedLearnerText } from "@/lib/learner-experience/learnerText";
 type StudentMaterials = {
   learnerMaterial?: unknown;
   guidedItems?: unknown;
@@ -16,49 +21,100 @@ function text(value: unknown): string {
   return typeof value === "string" ? value.trim() : "";
 }
 
+/** Learner-visible scalars: a primitive of the expected type, never an object that could carry a key. */
+function scalarText(value: unknown): string | undefined {
+  return typeof value === "string" ? value : undefined;
+}
+
+function scalarGrade(value: unknown): number | string | undefined {
+  if (typeof value === "number" && Number.isFinite(value)) return value;
+  return typeof value === "string" ? value : undefined;
+}
+
+/** Learner string items, each filtered on its own before any numbering can hide a heading. */
 function list(value: unknown): string[] {
   if (!Array.isArray(value)) return [];
-  return value.map(text).filter(Boolean);
+  return value.map((entry) => stripRestrictedLearnerSections(text(entry))).filter(Boolean);
+}
+
+/*
+ * Learner payloads are built by explicit allow-lists (Curriculum V2 / Codex P1-2): only named,
+ * type-checked fields reach a student. Unknown fields — including future ones — never flow
+ * through, so answer, answerKey, correctIndex, explanation, scoring, rubric and teacher-only
+ * material stay on the server even when they are nested or renamed.
+ */
+type Picked = Record<string, unknown>;
+
+function pickStrings(source: LessonPayloadRecord, keys: readonly string[]): Picked {
+  const out: Picked = {};
+  for (const key of keys) if (typeof source[key] === "string") out[key] = source[key];
+  return out;
+}
+
+function pickNumbers(source: LessonPayloadRecord, keys: readonly string[]): Picked {
+  const out: Picked = {};
+  for (const key of keys) if (typeof source[key] === "number" && Number.isFinite(source[key])) out[key] = source[key];
+  return out;
+}
+
+function pickBooleans(source: LessonPayloadRecord, keys: readonly string[]): Picked {
+  const out: Picked = {};
+  for (const key of keys) if (typeof source[key] === "boolean") out[key] = source[key];
+  return out;
+}
+
+function record(value: unknown): LessonPayloadRecord | null {
+  return value && typeof value === "object" && !Array.isArray(value) ? (value as LessonPayloadRecord) : null;
+}
+
+function stringList(value: unknown): string[] | undefined {
+  return Array.isArray(value) ? value.filter((entry): entry is string => typeof entry === "string") : undefined;
+}
+
+/** Choice options: plain strings, or objects reduced to their visible id/label/text (never a correctness flag). */
+function safeOptions(value: unknown): unknown[] | undefined {
+  if (!Array.isArray(value)) return undefined;
+  return value.flatMap((option): unknown[] => {
+    if (typeof option === "string") return [option];
+    const source = record(option);
+    if (!source) return [];
+    const picked = pickStrings(source, ["id", "label", "text"]);
+    return Object.keys(picked).length ? [picked] : [];
+  });
+}
+
+/** Assessment/quiz item visible to a learner: the question and its choices only. */
+export function projectStudentAssessmentItem(item: unknown): Picked | null {
+  const source = record(item);
+  if (!source) return null;
+  const out: Picked = {
+    ...pickStrings(source, ["id", "question", "prompt", "type", "standardCode", "difficulty"]),
+    ...pickNumbers(source, ["points"]),
+  };
+  const options = safeOptions(source.options);
+  const choices = safeOptions(source.choices);
+  if (options) out.options = options;
+  if (choices) out.choices = choices;
+  return typeof out.question === "string" || typeof out.prompt === "string" ? out : null;
+}
+
+function safeAssessment(value: unknown): unknown[] | undefined {
+  if (!Array.isArray(value)) return undefined;
+  return value.map(projectStudentAssessmentItem).filter((item): item is Picked => item !== null);
 }
 
 function numbered(values: string[]): string {
   return values.map((value, index) => `${index + 1}. ${value}`).join("\n");
 }
 
-const LEGACY_TEACHER_ONLY_HEADINGS = new Set([
-  "answer guide",
-  "assessment alignment",
-  "evidence record",
-  "extension branch",
-  "lesson study notes",
-  "metadata",
-  "remediation branch",
-  "teacher checkpoints",
-  "teacher explanation",
-  "teacher guidance",
-  "teacher notes",
-  "teacher planning record",
-  "teacher talk",
-]);
-
 /**
- * Legacy lessons predate studentMaterials and often mix learner content with
- * teacher planning sections. Keep the usable learner sections while removing
- * known teacher-only or answer-bearing sections.
+ * Legacy lessons predate studentMaterials and often mix learner content with teacher planning
+ * sections. The shared learner-text rule removes answer- and teacher-bearing sections and keeps the
+ * usable learner sections.
  */
 function projectLegacyBody(value: unknown): string {
   const body = text(value);
-  if (!body) return "";
-
-  const lines = body.split(/\r?\n/);
-  let include = true;
-  const kept: string[] = [];
-  for (const line of lines) {
-    const heading = line.match(/^##\s+(.+?)\s*$/)?.[1]?.trim().toLowerCase();
-    if (heading) include = !LEGACY_TEACHER_ONLY_HEADINGS.has(heading);
-    if (include) kept.push(line);
-  }
-  return kept.join("\n").replace(/\n{3,}/g, "\n\n").trim();
+  return body ? stripRestrictedLearnerSections(body) : "";
 }
 
 function safeProblemSets(value: unknown): unknown[] {
@@ -69,8 +125,8 @@ function safeProblemSets(value: unknown): unknown[] {
     const { id, sectionId, label, studentPrompt, workingSpace } = source;
     if (typeof studentPrompt !== "string" || !studentPrompt.trim()) return [];
     return [{
-      id,
-      sectionId,
+      id: typeof id === "string" || typeof id === "number" ? id : undefined,
+      sectionId: typeof sectionId === "string" ? sectionId : undefined,
       label: typeof label === "string" ? label : null,
       studentPrompt: studentPrompt.trim(),
       workingSpace: typeof workingSpace === "string" ? workingSpace : null,
@@ -78,15 +134,57 @@ function safeProblemSets(value: unknown): unknown[] {
   });
 }
 
-function approvedArtifacts(value: unknown): unknown[] {
+function approvedOnly(value: unknown): LessonPayloadRecord[] {
   if (!Array.isArray(value)) return [];
   return value.flatMap((item) => {
-    if (!item || typeof item !== "object" || Array.isArray(item)) return [];
-    const record = item as LessonPayloadRecord;
-    if (record.approved !== true || record.renderStatus !== "ready") return [];
-    const { teacherGuide: _teacherGuide, ...safeRecord } = record;
-    return [safeRecord];
+    const source = record(item);
+    return source && source.approved === true && source.renderStatus === "ready" ? [source] : [];
   });
+}
+
+/**
+ * Pseudo-lab fields the learner lesson renders (no confusion signals, success rates or teacher guides).
+ * `expectedObservation` and a simulation's `explanation`/`guardianGuide` are deliberately learner-visible
+ * in these legacy artifacts: the lesson UI presents them as "what you should see" and "how it works"
+ * after the activity. They are not assessment keys (assessment `explanation` is never projected). Native
+ * Curriculum V2 keeps expected observations reviewer-only.
+ */
+function safePseudoLabs(value: unknown): unknown[] {
+  return approvedOnly(value).map((lab) => ({
+    ...pickStrings(lab, ["id", "title", "objective", "labType", "difficulty", "resourceLevel", "safetyNotes", "expectedObservation", "fallbackMode", "fallbackIfNoMaterials", "guardianHomeVariant", "simulationType", "renderStatus"]),
+    ...pickNumbers(lab, ["gradeLevel", "setupTimeMinutes", "runTimeMinutes", "cleanupTimeMinutes"]),
+    ...pickBooleans(lab, ["offlineCapable", "approved"]),
+    ...(stringList(lab.requiredMaterials) ? { requiredMaterials: stringList(lab.requiredMaterials) } : {}),
+    ...(stringList(lab.optionalMaterials) ? { optionalMaterials: stringList(lab.optionalMaterials) } : {}),
+    ...(stringList(lab.setupInstructions) ? { setupInstructions: stringList(lab.setupInstructions) } : {}),
+    ...(stringList(lab.procedureSteps) ? { procedureSteps: stringList(lab.procedureSteps) } : {}),
+    ...(stringList(lab.reflectionQuestions) ? { reflectionQuestions: stringList(lab.reflectionQuestions) } : {}),
+  }));
+}
+
+/** Simulation fields the learner renderer uses; inputs and outputs are themselves allow-listed. */
+function safeSimulations(value: unknown): unknown[] {
+  return approvedOnly(value).map((definition) => ({
+    ...pickStrings(definition, ["id", "title", "objective", "simulationType", "rendererKey", "fallbackRendererKey", "interactionModel", "explanation", "guardianGuide", "fallbackStaticVisual", "renderStatus"]),
+    ...pickNumbers(definition, ["gradeLevel"]),
+    ...pickBooleans(definition, ["approved"]),
+    inputs: (Array.isArray(definition.inputs) ? definition.inputs : []).flatMap((input) => {
+      const source = record(input);
+      if (!source) return [];
+      const defaultValue = source.defaultValue;
+      return [{
+        ...pickStrings(source, ["key", "label", "type"]),
+        ...pickNumbers(source, ["min", "max", "step"]),
+        ...(stringList(source.options) ? { options: stringList(source.options) } : {}),
+        ...(typeof defaultValue === "string" || typeof defaultValue === "number" || typeof defaultValue === "boolean" ? { defaultValue }
+          : stringList(defaultValue) ? { defaultValue: stringList(defaultValue) } : {}),
+      }];
+    }),
+    outputs: (Array.isArray(definition.outputs) ? definition.outputs : []).flatMap((output) => {
+      const source = record(output);
+      return source ? [pickStrings(source, ["key", "label", "description"])] : [];
+    }),
+  }));
 }
 
 function safeLabs(value: unknown): unknown[] {
@@ -96,53 +194,32 @@ function safeLabs(value: unknown): unknown[] {
     const lab = item as LessonPayloadRecord;
     const procedure = Array.isArray(lab.procedure)
       ? lab.procedure.flatMap((step) => {
-          if (!step || typeof step !== "object" || Array.isArray(step)) return [];
-          const record = step as LessonPayloadRecord;
-          const { teacherNote: _teacherNote, ...safeStep } = record;
-          return [safeStep];
+          const source = record(step);
+          return source ? [{ ...pickStrings(source, ["id", "title", "instruction", "safetyNote"]), ...pickNumbers(source, ["step", "stepNumber", "durationMinutes"]) }] : [];
         })
       : [];
     const observationForm = Array.isArray(lab.observationForm)
-      ? lab.observationForm
+      ? lab.observationForm.flatMap((field) => {
+          const source = record(field);
+          // The lab runtime keys answers by `field` and renders `inputType`/`choices` (LabSessionClient).
+          return source ? [{ ...pickStrings(source, ["id", "field", "label", "prompt", "type", "inputType", "unit"]), ...(stringList(source.choices) ? { choices: stringList(source.choices) } : {}) }] : [];
+        })
       : [];
     const analysisQuestions = Array.isArray(lab.analysisQuestions)
       ? lab.analysisQuestions.flatMap((question) => {
-          if (!question || typeof question !== "object" || Array.isArray(question)) return [];
-          const record = question as LessonPayloadRecord;
-          const { expectedAnswer: _expectedAnswer, scoringRubric: _scoringRubric, ...safeQuestion } = record;
-          return [safeQuestion];
+          const projected = projectStudentAssessmentItem(question);
+          return projected ? [projected] : [];
         })
       : [];
-    const {
-      id,
-      title,
-      type,
-      durationMinutes,
-      subject,
-      gradeLevel,
-      labObjective,
-      materialsNeeded,
-      safetyNotes,
-      connectionToLesson,
-      offlineCapable,
-      virtualAlternative,
-    } = lab;
+    // Top-level lab fields are type-checked too: a nested object never rides along under a known key.
     return [{
-      id,
-      title,
-      type,
-      durationMinutes,
-      subject,
-      gradeLevel,
-      labObjective,
-      materialsNeeded,
-      safetyNotes,
+      ...pickStrings(lab, ["id", "title", "type", "subject", "labObjective", "safetyNotes", "connectionToLesson", "virtualAlternative"]),
+      ...pickNumbers(lab, ["durationMinutes", "gradeLevel"]),
+      ...pickBooleans(lab, ["offlineCapable"]),
+      ...(stringList(lab.materialsNeeded) ? { materialsNeeded: stringList(lab.materialsNeeded) } : {}),
       procedure,
       observationForm,
       analysisQuestions,
-      connectionToLesson,
-      offlineCapable,
-      virtualAlternative,
     }];
   });
 }
@@ -153,19 +230,19 @@ function labForLearner(value: unknown): string {
   const procedure = Array.isArray(lab.procedure)
     ? lab.procedure
         .filter((step): step is Record<string, unknown> => Boolean(step && typeof step === "object" && !Array.isArray(step)))
-        .map((step) => text(step.instruction))
+        .map((step) => stripRestrictedLearnerSections(text(step.instruction)))
         .filter(Boolean)
     : [];
   const observations = Array.isArray(lab.observationForm)
     ? lab.observationForm
         .filter((field): field is Record<string, unknown> => Boolean(field && typeof field === "object" && !Array.isArray(field)))
-        .map((field) => text(field.prompt))
+        .map((field) => stripRestrictedLearnerSections(text(field.prompt)))
         .filter(Boolean)
     : [];
   const questions = Array.isArray(lab.analysisQuestions)
     ? lab.analysisQuestions
         .filter((question): question is Record<string, unknown> => Boolean(question && typeof question === "object" && !Array.isArray(question)))
-        .map((question) => text(question.question))
+        .map((question) => stripRestrictedLearnerSections(text(question.question)))
         .filter(Boolean)
     : [];
   const sections = [
@@ -191,9 +268,28 @@ function labForLearner(value: unknown): string {
  * audit details, or raw assessment keys. This projection is intentionally
  * allow-listed and keeps legacy payloads compatible until they are replaced.
  */
+const NATIVE_EXPERIENCE_KEY: ReadonlySet<string> = new Set(["lessonExperience"]);
+
 export function projectStudentLessonPayload(payload: unknown): LessonPayloadRecord {
+  // Every learner string, in every collection, passes the shared answer/teacher-section rule. A native
+  // experience was already verified whole (restricted text makes it not student-ready), so it is kept as is.
+  const projected = stripRestrictedLearnerText(projectAllowListed(payload), NATIVE_EXPERIENCE_KEY);
+  // Defence in depth: whatever the allow-lists produced, no secret-named key leaves the server.
+  try {
+    assertNoLearnerSecretKeys(projected);
+    return projected;
+  } catch {
+    return { title: scalarText(projected.title), body: "", body_standard: "", body_block: "", objectives: [], studentReady: false };
+  }
+}
+
+function projectAllowListed(payload: unknown): LessonPayloadRecord {
   if (!payload || typeof payload !== "object" || Array.isArray(payload)) return {};
   const source = payload as LessonPayloadRecord;
+  // Native Curriculum V2: learners receive only the Lesson Player V2 experience built field by field
+  // (no expected observations, misconception notes, provenance, governance or review gaps). A
+  // malformed native payload fails closed rather than falling back to legacy fields.
+  if (isNativeCurriculumV2Payload(source)) return projectNativeLesson(source);
   const materials = source.studentMaterials as StudentMaterials | undefined;
   const hasAuthoredMaterials = Boolean(materials && typeof materials === "object" && text(materials.learnerMaterial));
 
@@ -201,10 +297,10 @@ export function projectStudentLessonPayload(payload: unknown): LessonPayloadReco
     const legacyBody = projectLegacyBody(source.body_standard) || projectLegacyBody(source.body) || projectLegacyBody(source.lessons) || projectLegacyBody(source.content);
     if (!legacyBody) {
       return {
-        title: source.title,
-        grade: source.grade,
-        subject: source.subject,
-        lessonFormat: source.lessonFormat,
+        title: scalarText(source.title),
+        grade: scalarGrade(source.grade),
+        subject: scalarText(source.subject),
+        lessonFormat: scalarText(source.lessonFormat),
         objectives: [],
         activities: [],
         body: "",
@@ -213,19 +309,12 @@ export function projectStudentLessonPayload(payload: unknown): LessonPayloadReco
         studentReady: false,
       };
     }
-    const legacyAssessment = Array.isArray(source.assessment)
-      ? source.assessment.map((item) => {
-          if (!item || typeof item !== "object" || Array.isArray(item)) return item;
-          const record = item as LessonPayloadRecord;
-          const { answerKey: _answerKey, correctIndex: _correctIndex, explanation: _explanation, ...safeItem } = record;
-          return safeItem;
-        })
-      : source.assessment;
+    const legacyAssessment = safeAssessment(source.assessment);
     return {
-      title: source.title,
-      grade: source.grade,
-      subject: source.subject,
-      lessonFormat: source.lessonFormat,
+      title: scalarText(source.title),
+      grade: scalarGrade(source.grade),
+      subject: scalarText(source.subject),
+      lessonFormat: scalarText(source.lessonFormat),
       objectives: list(source.objectives),
       activities: list(source.activities),
       body: legacyBody,
@@ -234,8 +323,8 @@ export function projectStudentLessonPayload(payload: unknown): LessonPayloadReco
       assessment: legacyAssessment,
       moeAlignments: list(source.moeAlignments),
       labs: safeLabs(source.labs),
-      pseudoLabs: approvedArtifacts(source.pseudoLabs),
-      simulationDefinitions: approvedArtifacts(source.simulationDefinitions),
+      pseudoLabs: safePseudoLabs(source.pseudoLabs),
+      simulationDefinitions: safeSimulations(source.simulationDefinitions),
       takeawaySummary: text(source.takeawaySummary),
       durationMins: typeof source.durationMins === "number" ? source.durationMins : undefined,
       problemSets: safeProblemSets(source.problemSets),
@@ -260,7 +349,7 @@ export function projectStudentLessonPayload(payload: unknown): LessonPayloadReco
   const groupWork = authoredGroupWork || (guided.length
     ? `Discuss the material with your group. Take turns explaining which words or details support each answer. Then complete your own response.\n\n${numbered(guided)}`
     : "Discuss the material with your group, explain your evidence, and complete your own response afterward.");
-  const learnerSections = [
+  const sections = [
     text(materials?.learnerMaterial),
     guided.length ? `## Try It Together\n${numbered(guided)}` : "",
     classwork.length ? `## Classwork\n${numbered(classwork)}` : "",
@@ -271,19 +360,14 @@ export function projectStudentLessonPayload(payload: unknown): LessonPayloadReco
     project ? `## Project\n${project}` : "",
     lab ? `## Investigation\n${lab}` : "",
   ].filter(Boolean).join("\n\n");
-  const assessment = Array.isArray(source.assessment)
-    ? source.assessment.map((item) => {
-        if (!item || typeof item !== "object" || Array.isArray(item)) return item;
-        const record = item as LessonPayloadRecord;
-        const { answerKey: _answerKey, correctIndex: _correctIndex, explanation: _explanation, ...safeItem } = record;
-        return safeItem;
-      })
-    : undefined;
+  // Authored learner material passes the same answer/teacher-section filter as legacy bodies.
+  const learnerSections = projectLegacyBody(sections);
+  const assessment = safeAssessment(source.assessment);
   return {
-    title: source.title,
-    grade: source.grade,
-    subject: source.subject,
-    lessonFormat: source.lessonFormat,
+    title: scalarText(source.title),
+    grade: scalarGrade(source.grade),
+    subject: scalarText(source.subject),
+    lessonFormat: scalarText(source.lessonFormat),
     objectives: list(source.objectives),
     activities: [...classwork, ...independent, ...(project ? [project] : [])],
     body: learnerSections,
@@ -292,13 +376,27 @@ export function projectStudentLessonPayload(payload: unknown): LessonPayloadReco
     assessment,
     moeAlignments: list(source.moeAlignments),
     labs,
-    pseudoLabs: approvedArtifacts(source.pseudoLabs),
-    simulationDefinitions: approvedArtifacts(source.simulationDefinitions),
+    pseudoLabs: safePseudoLabs(source.pseudoLabs),
+    simulationDefinitions: safeSimulations(source.simulationDefinitions),
     takeawaySummary: text(source.takeawaySummary),
     durationMins: typeof source.durationMins === "number" ? source.durationMins : undefined,
     problemSets: safeProblemSets(source.problemSets),
     studentReady: true,
   };
+}
+
+function projectNativeLesson(source: LessonPayloadRecord): LessonPayloadRecord {
+  try {
+    // Rebuilt field by field with primitive type checks: malformed stored data (an object in keyPoints,
+    // a key under a title) throws here and the lesson is not student-ready.
+    const lessonExperience = rebuildLearnerExperience(toLessonExperience(source[CURRICULUM_V2_PAYLOAD_KEY] as CurriculumLessonV2));
+    validateLessonExperience(lessonExperience);
+    // Re-check the stored artifact: an instant-feedback key may only exist in a formative scene.
+    if (lessonExperience.scenes.some((scene) => scene.interaction.kind === "MULTIPLE_CHOICE" && scene.type !== "CHECK_UNDERSTANDING" && scene.type !== "PRACTICE" && scene.type !== "GUIDED_EXAMPLE")) throw new Error("native_answer_key_outside_formative_scene");
+    return { title: lessonExperience.title, grade: lessonExperience.grade, subject: lessonExperience.subject, lessonExperience, body: "", body_standard: "", body_block: "", objectives: lessonExperience.objectives.map((objective) => objective.statement), studentReady: true };
+  } catch {
+    return { title: typeof source.title === "string" ? source.title : undefined, body: "", body_standard: "", body_block: "", objectives: [], studentReady: false };
+  }
 }
 
 /**
@@ -316,5 +414,45 @@ export function selectStudentLessonAudioText(payload: unknown): string {
  * Teacher notes and answer/rubric fields remain server-side for evaluation.
  */
 export function projectStudentLabPayload(payload: unknown): LessonPayloadRecord {
-  return (safeLabs([payload])[0] as LessonPayloadRecord | undefined) ?? {};
+  return stripRestrictedLearnerText((safeLabs([payload])[0] as LessonPayloadRecord | undefined) ?? {});
+}
+
+/**
+ * Learner-safe catalogue entry for curriculum listings. Built from explicit fields only: the stored
+ * payload never appears in a student listing.
+ */
+export type StudentCurriculumSummary = Readonly<{
+  contentId: string;
+  title: string;
+  displayTitle: string;
+  grade: number;
+  subject: string;
+  contentType: string;
+  version: string;
+  audioStatus: string;
+  updatedAt: string;
+}>;
+
+export function projectStudentCurriculumSummary(row: {
+  contentId: string;
+  title: string;
+  displayTitle: string;
+  grade: number;
+  subject: string;
+  contentType: string;
+  version: string;
+  audioStatus: string;
+  updatedAt: Date | string;
+}): StudentCurriculumSummary {
+  return {
+    contentId: row.contentId,
+    title: row.title,
+    displayTitle: row.displayTitle,
+    grade: row.grade,
+    subject: row.subject,
+    contentType: row.contentType,
+    version: row.version,
+    audioStatus: row.audioStatus,
+    updatedAt: row.updatedAt instanceof Date ? row.updatedAt.toISOString() : row.updatedAt,
+  };
 }

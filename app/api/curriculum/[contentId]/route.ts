@@ -1,3 +1,4 @@
+// route-policy: auth=session; scope=tenant; authority=student-teacher-admin-role-with-school-scope; rationale=curriculum detail is restricted to platform content plus the caller's school, and learners receive a learner-safe projection only for rows that pass the shared learner eligibility gates (content restrictions, approved lifecycle, school and assignment scope)
 import { NextResponse } from "next/server";
 import { head } from "@vercel/blob";
 import { prisma } from "@/lib/db";
@@ -10,6 +11,7 @@ import {
 import { DEFAULT_CLIENT_VERSION } from "@/lib/content-availability-manifest";
 import { provenanceWritersEnabled } from "@/lib/curriculum/mutations/repository";
 import { projectStudentLessonPayload } from "@/lib/curriculum/studentLessonProjection";
+import { learnerContentAllowed, learnerLifecycleAllowed, learnerScopeAllows, loadLearnerScope } from "@/lib/curriculum/learnerEligibility";
 
 export const dynamic = "force-dynamic";
 
@@ -68,6 +70,11 @@ export async function GET(
         version: true,
         payload: true,
         teacherCreated: true,
+        // Learner eligibility inputs (never returned: the response metadata is built field by field).
+        schoolId: true,
+        visibility: true,
+        versionId: true,
+        curriculumVersion: { select: { status: true } },
         editedBy: { select: { name: true } },
         audioAssets: {
           orderBy: { generatedAt: "desc" },
@@ -157,6 +164,20 @@ export async function GET(
       );
     }
 
+    // A student receives a row only through the shared learner gates (the listing and the Tutor use the
+    // same ones). Content restrictions and school/assignment scope deny like a missing row, with no
+    // trust statement. A row the student may otherwise open but whose governed lifecycle is not APPROVED
+    // (pending review, rejected, superseded, even with a lagging legacy `published` status) takes the
+    // signed unavailable path below so offline copies are purged; REVOKED keeps its 410 response.
+    let learnerLifecycleUnavailable = false;
+    if (user.role === "STUDENT") {
+      const allowed = learnerContentAllowed(row) && await learnerScopeAllows(prisma, row, () => loadLearnerScope(prisma, user));
+      if (!allowed) {
+        return NextResponse.json({ error: "Not found", contentId, offlineManifest: null }, { status: 404 });
+      }
+      learnerLifecycleUnavailable = !learnerLifecycleAllowed(row.provenance) && row.provenance?.lifecycleState !== "REVOKED";
+    }
+
     const currentRevision = row.provenance?.currentRevision ?? null;
     const lifecycleIsCoherent =
       Boolean(row.provenance) &&
@@ -231,7 +252,7 @@ export async function GET(
           })
         : null;
 
-    if (!statusFilter.in.includes(row.status)) {
+    if (!statusFilter.in.includes(row.status) || learnerLifecycleUnavailable) {
       return NextResponse.json(
         {
           error: "Not found",
