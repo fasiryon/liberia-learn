@@ -1,35 +1,22 @@
-/**
- * lib/student/unitSequence.server.ts — Phase 2, Deliverable 1
- *
- * Server-only loader that gathers the data the pure buildUnitSequence() needs.
- * Completion is read straight from StudentProgress (studentId = User.id), so no
- * Enrollment lookup is required. Lessons the student has a progress row for link
- * to the delivery page; everything else links to the library viewer.
- */
+/** Server unit display loader. Curriculum eligibility and own-school enrollment
+ * scope govern every lesson and delivery link; completion remains StudentProgress. */
+import { listAuthorizedLearnerContent } from "@/lib/student/learnDiscovery.server";
+import { loadLearnerScope } from "@/lib/curriculum/learnerEligibility";
 import { prisma } from "@/lib/db";
 import { buildUnitSequence, type UnitSequence } from "@/lib/student/unitSequence";
 
-const APPROVED = ["published", "APPROVED"];
 
 export async function loadUnitSequenceForStudent(input: {
   unitId: string;
   studentUserId: string;
+  schoolId?: string | null;
   currentContentId?: string | null;
   currentScheduledWorkId?: string | null;
 }): Promise<UnitSequence | null> {
-  const lessons = await prisma.curriculumContent.findMany({
-    where: { unitId: input.unitId, status: { in: APPROVED } },
-    select: {
-      id: true,
-      contentId: true,
-      title: true,
-      orderInUnit: true,
-      lessonType: true,
-      grade: true,
-      subject: true,
-    },
-    orderBy: { orderInUnit: "asc" },
-  });
+  const user = { id: input.studentUserId, schoolId: input.schoolId };
+  const scope = await loadLearnerScope(prisma, user);
+  const lessons = await listAuthorizedLearnerContent(user, { unitId: input.unitId });
+  if (input.currentContentId && !lessons.some((lesson) => lesson.contentId === input.currentContentId)) return null;
 
   if (lessons.length === 0) return null;
 
@@ -44,7 +31,7 @@ export async function loadUnitSequenceForStudent(input: {
     prisma.studentProgress.findMany({
       where: {
         studentId: input.studentUserId,
-        scheduledWork: { contentId: { in: contentIds } },
+        scheduledWork: { contentId: { in: contentIds }, classId: { in: [...scope.classIds] }, class: { schoolId: scope.schoolId ?? "__no_school__" } },
       },
       select: {
         completedAt: true,
@@ -72,7 +59,11 @@ export async function loadUnitSequenceForStudent(input: {
   if (
     input.currentContentId &&
     input.currentScheduledWorkId &&
-    !progressByContentId.has(input.currentContentId)
+    !progressByContentId.has(input.currentContentId) &&
+    await prisma.scheduledWork.findFirst({
+      where: { id: input.currentScheduledWorkId, contentId: input.currentContentId, classId: { in: [...scope.classIds] }, class: { schoolId: scope.schoolId ?? "__no_school__" } },
+      select: { id: true },
+    })
   ) {
     progressByContentId.set(input.currentContentId, {
       scheduledWorkId: input.currentScheduledWorkId,
@@ -121,23 +112,19 @@ export type ActiveUnitSummary = {
 
 /**
  * Units the student is actively moving through — derived from the lessons
- * scheduled to their class(es) in a window around today. Returns least-complete
- * units first (most actionable). Empty array when the student has no schedule.
+ * scheduled to their own-school class(es) in a window around today. Uses catalog
+ * order without deriving a next action. Empty array when the student has no schedule.
  */
 export async function loadActiveUnitsForStudent(
   studentUserId: string,
-  opts: { windowDays?: number; limit?: number } = {}
+  opts: { windowDays?: number; limit?: number; schoolId?: string | null } = {}
 ): Promise<ActiveUnitSummary[]> {
   const windowDays = opts.windowDays ?? 7;
   const limit = opts.limit ?? 6;
 
-  const student = await prisma.student.findUnique({
-    where: { userId: studentUserId },
-    select: { enrollments: { select: { Class: { select: { id: true } } } } },
-  });
-  const classIds = (student?.enrollments ?? [])
-    .map((e) => e.Class?.id)
-    .filter((id): id is string => Boolean(id));
+  const user = { id: studentUserId, schoolId: opts.schoolId };
+  const scope = await loadLearnerScope(prisma, user);
+  const classIds = [...scope.classIds];
   if (classIds.length === 0) return [];
 
   const now = Date.now();
@@ -145,21 +132,20 @@ export async function loadActiveUnitsForStudent(
   const to = new Date(now + windowDays * 86400000);
 
   const scheduled = await prisma.scheduledWork.findMany({
-    where: { classId: { in: classIds }, scheduledDate: { gte: from, lte: to } },
+    where: { classId: { in: classIds }, class: { schoolId: scope.schoolId ?? "__no_school__" }, scheduledDate: { gte: from, lte: to } },
     select: { contentId: true },
+    orderBy: [{ scheduledDate: "asc" }, { id: "asc" }],
+    take: 100,
   });
   const contentIds = [...new Set(scheduled.map((s) => s.contentId))];
   if (contentIds.length === 0) return [];
 
-  const contents = await prisma.curriculumContent.findMany({
-    where: { contentId: { in: contentIds }, unitId: { not: null } },
-    select: { unitId: true },
-  });
+  const contents = await listAuthorizedLearnerContent(user, { contentId: { in: contentIds }, unitId: { not: null } });
   const unitIds = [...new Set(contents.map((c) => c.unitId).filter((u): u is string => Boolean(u)))];
   if (unitIds.length === 0) return [];
 
   const sequences = await Promise.all(
-    unitIds.map((unitId) => loadUnitSequenceForStudent({ unitId, studentUserId }))
+    unitIds.map((unitId) => loadUnitSequenceForStudent({ unitId, studentUserId, schoolId: opts.schoolId }))
   );
 
   return sequences
@@ -173,6 +159,6 @@ export async function loadActiveUnitsForStudent(
       totalCount: s.totalCount,
       completionPct: s.completionPct,
     }))
-    .sort((a, b) => a.completionPct - b.completionPct)
+    .sort((a, b) => a.subject.localeCompare(b.subject) || a.unitId.localeCompare(b.unitId))
     .slice(0, limit);
 }

@@ -37,6 +37,7 @@ function scheduledWork(id = "sw-created") {
       School: { name: "School" },
     },
     content: {
+      visibility: "public", schoolId: null, teacherCreated: false,
       contentId: "content-123",
       payload: {
         title: "Timetable Lesson",

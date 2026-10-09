@@ -17,6 +17,7 @@ vi.mock("@/lib/db", () => ({
   prisma: {
     student: { findUnique: vi.fn() },
     curriculumContent: { count: vi.fn(), findMany: vi.fn() },
+    assignment: { findMany: vi.fn() },
     scheduledWork: { findMany: vi.fn() },
     studentProgress: { findMany: vi.fn() },
   },
@@ -38,9 +39,10 @@ describe("/api/student/lessons — fail-closed curriculum routing (NR-10)", () =
     mockPrisma.student.findUnique.mockResolvedValue({
       id: "student-1",
       currentGrade: 9,
-      enrollments: [{ Class: { subject: "MATH" } }],
+      user: { schoolId: "school-1" },
+      enrollments: [{ classId: "class-1", Class: { subject: "MATH", schoolId: "school-1" } }],
     });
-    mockPrisma.curriculumContent.count.mockResolvedValue(0);
+    mockPrisma.assignment.findMany.mockResolvedValue([]);
     mockPrisma.curriculumContent.findMany.mockResolvedValue([]);
     mockPrisma.scheduledWork.findMany.mockResolvedValue([]);
     mockPrisma.studentProgress.findMany.mockResolvedValue([]);
@@ -49,22 +51,21 @@ describe("/api/student/lessons — fail-closed curriculum routing (NR-10)", () =
   it("scopes the catalog query to approved-equivalent statuses only", async () => {
     await GET(makeRequest());
 
-    expect(mockPrisma.curriculumContent.findMany).toHaveBeenCalledTimes(1);
+    expect(mockPrisma.curriculumContent.findMany).toHaveBeenCalledTimes(2);
     const where = mockPrisma.curriculumContent.findMany.mock.calls[0][0].where;
-    expect(where.status.in).toEqual(expect.arrayContaining(["published", "APPROVED"]));
-    expect(where.status.in).toHaveLength(2);
+    expect(where.AND[0].status.in).toEqual(expect.arrayContaining(["published", "APPROVED"]));
+    expect(where.AND[0].status.in).toHaveLength(2);
 
-    const countWhere = mockPrisma.curriculumContent.count.mock.calls[0][0].where;
-    expect(countWhere.status.in).toHaveLength(2);
+    expect(mockPrisma.curriculumContent.count).not.toHaveBeenCalled();
   });
 
   it("never returns a draft or pending_approval lesson to a student", async () => {
     mockPrisma.curriculumContent.findMany.mockImplementation(async ({ where }: any) => {
-      const allowed: string[] = where?.status?.in ?? [];
+      const allowed: string[] = where?.AND?.[0]?.status?.in ?? [];
       const rows = [
-        { contentId: "approved-1", title: "Ratios", grade: 9, subject: "MATH", contentType: "LESSON", status: "APPROVED", thumbnailUrl: null, thumbnailStatus: null, payload: { content: "x".repeat(400) } },
-        { contentId: "draft-1", title: "Unfinished", grade: 9, subject: "MATH", contentType: "LESSON", status: "DRAFT", thumbnailUrl: null, thumbnailStatus: null, payload: { content: "x".repeat(400) } },
-        { contentId: "pending-1", title: "Awaiting review", grade: 9, subject: "MATH", contentType: "LESSON", status: "pending_approval", thumbnailUrl: null, thumbnailStatus: null, payload: { content: "x".repeat(400) } },
+        { contentId: "approved-1", title: "Ratios", grade: 9, subject: "MATH", contentType: "lesson", status: "APPROVED", thumbnailUrl: null, thumbnailStatus: null, visibility: "public", schoolId: null, teacherCreated: false, updatedAt: new Date(), payload: { content: "x".repeat(400) } },
+        { contentId: "draft-1", title: "Unfinished", grade: 9, subject: "MATH", contentType: "lesson", status: "DRAFT", thumbnailUrl: null, thumbnailStatus: null, visibility: "public", schoolId: null, teacherCreated: false, updatedAt: new Date(), payload: { content: "x".repeat(400) } },
+        { contentId: "pending-1", title: "Awaiting review", grade: 9, subject: "MATH", contentType: "lesson", status: "pending_approval", thumbnailUrl: null, thumbnailStatus: null, visibility: "public", schoolId: null, teacherCreated: false, updatedAt: new Date(), payload: { content: "x".repeat(400) } },
       ];
       return rows.filter((r) => allowed.includes(r.status));
     });

@@ -11,6 +11,7 @@ import { logProductSignal } from "@/lib/autonomous/signals/productSignalService"
 import { signHero, signInlineIllustrations } from "@/lib/media/blobStorage";
 import type { HeroImageMeta, InlineIllustration } from "@/lib/media/types";
 import { readMoeAlignmentCodes } from "@/lib/moe/alignmentReader";
+import { learnerRowAllowed, learnerScopeAllows, loadLearnerScope } from "@/lib/curriculum/learnerEligibility";
 
 function projectStudentDeliveryProfile(value: unknown) {
   if (!value || typeof value !== "object" || Array.isArray(value)) return null;
@@ -132,6 +133,12 @@ function scheduledWorkInclude(userId: string) {
         id: true,
         contentId: true,
         payload: true,
+        schoolId: true,
+        teacherCreated: true,
+        visibility: true,
+        versionId: true,
+        curriculumVersion: { select: { status: true } },
+        provenance: { select: { lifecycleState: true } },
         subject: true,
         grade: true,
         contentType: true,
@@ -247,6 +254,10 @@ export async function GET(
     }
 
     const progress = sw.progress[0];
+
+    if (!learnerRowAllowed(sw.content) || !await learnerScopeAllows(prisma, sw.content, () => loadLearnerScope(prisma, user))) {
+      return NextResponse.json({ error: "Lesson not found" }, { status: 404 });
+    }
 
     // Mark as started if not already
     if (!progress) {
