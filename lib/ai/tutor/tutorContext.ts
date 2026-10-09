@@ -4,6 +4,7 @@ import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/db";
 import type { SessionUser } from "@/lib/auth";
 import { projectStudentLessonPayload } from "@/lib/curriculum/studentLessonProjection";
+import { learnerRowAllowed, learnerScopeAllows, learnerVisibilityWhere } from "@/lib/curriculum/learnerEligibility";
 import { buildCurriculumContentSnapshotV1 } from "@/lib/curriculum/provenance/snapshot";
 import { hashCurriculumSnapshot } from "@/lib/curriculum/provenance/hash";
 import { getCanonicalSubjectCode } from "@/lib/curriculum/subjectTaxonomy";
@@ -65,11 +66,7 @@ function eligible(row: LessonRow, scope: Scope): boolean {
   if (!["published", "approved"].includes(row.status.toLowerCase())) return false;
   if (row.contentType.toLowerCase() !== "lesson" || row.lessonType?.toLowerCase() === "assessment") return false;
   if (/\[assessment\]/i.test(row.title ?? "")) return false;
-  if (row.versionId && row.curriculumVersion?.status !== "ACTIVE") return false;
-  const payload = record(row.payload);
-  const audience = text(payload.audience || payload.visibility).toLowerCase();
-  if (["teacher", "teacher_only", "staff", "private"].includes(audience) || payload.teacherOnly === true) return false;
-  if (["teacher_only", "private"].includes(row.visibility)) return false;
+  if (!learnerRowAllowed(row)) return false;
   const provenance = row.provenance;
   if (provenance) {
     const revision = provenance.currentRevision;
@@ -149,13 +146,8 @@ export async function resolveTutorContext(
     if (identity.contentId && identity.contentId !== row.contentId) denied();
     if (identity.lessonVersion && identity.lessonVersion !== row.version) stale();
     if (identity.revisionId && identity.revisionId !== row.provenance?.currentRevisionId) stale();
-    const mayRead = async (candidate: LessonRow) => {
-      if (!candidate.teacherCreated && !candidate.schoolId) return true;
-      if (candidate.schoolId !== scope.schoolId) return false;
-      if (candidate.visibility === "school_wide") return true;
-      const assigned = await tx.scheduledWork.findFirst({ where: { contentId: candidate.contentId, classId: { in: scope.classIds }, class: { schoolId: scope.schoolId } }, select: { id: true } });
-      return Boolean(assigned || await tx.teacherLessonAssignment.findFirst({ where: { contentId: candidate.contentId, classId: { in: scope.classIds }, class: { schoolId: scope.schoolId } }, select: { id: true } }));
-    };
+    // School and assignment scope: the same gate as the learner listing and detail route.
+    const mayRead = (candidate: LessonRow) => learnerScopeAllows(tx, candidate, scope);
     if (!await mayRead(row)) denied();
     const projected = projectStudentLessonPayload(row.payload);
     let experience: LessonExperience | null = null;
@@ -202,13 +194,7 @@ export async function resolveTutorContext(
             contentType: { equals: "lesson", mode: "insensitive" }, status: { in: ["published", "approved"], mode: "insensitive" },
             AND: [
               { OR: [{ lessonType: null }, { lessonType: { not: "assessment", mode: "insensitive" } }] },
-              { OR: [
-                { schoolId: null, teacherCreated: false },
-                { schoolId: scope.schoolId, visibility: "school_wide" },
-                { schoolId: scope.schoolId, scheduledWork: { some: { classId: { in: scope.classIds }, class: { schoolId: scope.schoolId } } } },
-                { schoolId: scope.schoolId, teacherLessonAssignments: { some: { classId: { in: scope.classIds }, class: { schoolId: scope.schoolId } } } },
-              ] },
-              { OR: [{ provenance: null }, { provenance: { is: { lifecycleState: "APPROVED" } } }] },
+              learnerVisibilityWhere(scope),
             ],
           }, include, orderBy: { contentId: "asc" }, take: 20,
           ...(cursor ? { cursor: { id: cursor }, skip: 1 } : {}),

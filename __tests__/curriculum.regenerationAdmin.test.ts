@@ -21,7 +21,7 @@ const {
 }));
 
 vi.mock("@/lib/db", () => {
-  const tx = { curriculumContent: { update: curriculumContentUpdate } };
+  const tx = { $queryRaw: vi.fn(async () => []), curriculumContent: { update: curriculumContentUpdate, findUnique: vi.fn(async ({ where }: any) => ({ id: where?.id ?? `row-${where?.contentId}`, contentId: where?.contentId ?? where?.id, payload: {} })), findUniqueOrThrow: vi.fn(async ({ where }: any) => ({ id: where?.id ?? `row-${where?.contentId}`, contentId: where?.contentId ?? where?.id, payload: {} })) } };
   return { prisma: {
     curriculumContent: { findMany: curriculumContentFindMany, update: curriculumContentUpdate },
     curriculumRegenerationRun: { findMany: runFindMany, groupBy: runGroupBy },
@@ -139,7 +139,7 @@ describe("curriculum regeneration admin helpers", () => {
 
     expect(result.ok).toBe(true);
     expect(curriculumContentUpdate).toHaveBeenCalledWith(expect.objectContaining({
-      where: { contentId: "weak" },
+      where: { id: "row-weak" },
       data: expect.objectContaining({ status: "rejected" }),
     }));
     expect(logAuditMock).toHaveBeenCalledWith(

@@ -277,6 +277,7 @@ describe("POST /api/admin/curriculum/approve — cache invalidation", () => {
       update: vi.fn(async () => ({})),
     };
     (prismaMock as any).$transaction = vi.fn(async (callback: any) => callback({
+      $queryRaw: vi.fn(async () => []),
       curriculumContent: (prismaMock as any).curriculumContent,
     }));
     (prismaMock as any).curriculumFeedback = { create: vi.fn(async () => ({})) };

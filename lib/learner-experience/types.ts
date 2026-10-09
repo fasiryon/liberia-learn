@@ -27,7 +27,7 @@ export type AgeBand = "EARLY_PRIMARY" | "UPPER_PRIMARY" | "JUNIOR_SECONDARY" | "
  * Where a lesson experience's authority comes from. Only APPROVED_RELEASE content
  * may be shown to real students; PROTOTYPE_FIXTURE is internal-only.
  */
-export type ContentAuthorityStatus = "APPROVED_RELEASE" | "PROTOTYPE_FIXTURE" | "LEGACY_UNGOVERNED";
+export type ContentAuthorityStatus = "APPROVED_RELEASE" | "CURRICULUM_V2_DRAFT" | "PROTOTYPE_FIXTURE" | "LEGACY_UNGOVERNED";
 
 export type ExperienceObjective = Readonly<{
   id: string;
@@ -66,6 +66,8 @@ export type FormativeItem = Readonly<{
    */
   correctIndex: number;
   feedback: Readonly<{ correct: string; incorrect: string }>;
+  /** Optional feedback per option (same order as options), so each distractor answers its own misconception. */
+  optionFeedback?: readonly string[];
 }>;
 
 export type DiagramStep = Readonly<{ id: string; label: string; description: string }>;
@@ -152,6 +154,8 @@ export type LessonExperience = Readonly<{
     /** Repository content that might later carry this lesson. Listing one is not approval. */
     candidateContentIds: readonly string[];
     releaseId: string | null;
+    /** Deterministic identity of the pinned ontology release (never the lesson version). */
+    releaseIdentity?: string | null;
   }>;
   objectives: readonly ExperienceObjective[];
   scenes: readonly Scene[];

@@ -11,5 +11,5 @@ export default function LessonExperiencePrototypePage({ params, searchParams }: 
   const loaded = loadPrototypeExperience(params.experienceId);
   if (!loaded) notFound();
   const scene = typeof searchParams.scene === "string" && searchParams.from === "lab" ? searchParams.scene : null;
-  return <LessonPlayerV2 {...loaded} basePath={PROTOTYPE_BASE_PATH} exitHref="/student/learn" returnSceneId={scene} />;
+  return <LessonPlayerV2 {...loaded} basePath={PROTOTYPE_BASE_PATH} exitHref="/student/learn" returnSceneId={scene} linkPolicy="INTERNAL_PREVIEW" />;
 }

@@ -1,0 +1,105 @@
+{
+  "contractVersion": "candidate-lesson-v2/1.0.0",
+  "title": "Fencing and planting a garden: perimeter and area",
+  "estimatedMinutes": 45,
+  "ageBand": "UPPER_PRIMARY",
+  "pedagogy": { "primaryStrategy": "STRUCTURED_PROBLEM_SOLVING", "rationale": "One garden problem drives both measures: the fence (perimeter) and the planted ground (area), so learners see why they differ." },
+  "prerequisiteAssumptions": ["Learners can measure length in metres.", "Learners can add and multiply whole numbers to 100."],
+  "misconceptions": [
+    { "id": "swaps-area-perimeter", "objectiveId": "moe-math-g4-s2-p5-measurement-obj9", "description": "Multiplies the sides when asked for the perimeter, or adds them when asked for the area.", "response": "Ask what is being measured: the fence goes around (add the sides); the planting covers the inside (count or multiply the squares)." },
+    { "id": "counts-two-sides", "objectiveId": "moe-math-g4-s2-p5-measurement-obj9", "description": "Adds only the two given side lengths for the perimeter.", "response": "Walk the shape: a rectangle has four sides, and opposite sides are equal." }
+  ],
+  "scenes": [
+    {
+      "id": "hook", "type": "INTRO", "title": "Ma Musu's cassava garden", "purpose": "HOOK_PHENOMENON", "objectiveIds": [], "learnerAction": "Think about the two questions Ma Musu needs to answer.",
+      "content": { "body": "Ma Musu in Bong County has a rectangular garden 6 metres long and 4 metres wide (illustrative numbers).\n\nShe needs to know two things: how much fence goes **around** the garden, and how much ground there is **inside** to plant cassava." },
+      "interaction": { "kind": "NONE" }, "tools": { "requested": [], "prohibited": [] }, "hints": [], "misconceptionIds": [], "evidence": { "kind": "NONE" },
+      "accessibility": { "textAlternative": "A rectangular garden is 6 metres long and 4 metres wide. How much fence goes around it, and how much ground is inside?", "keyboardPath": "Read the text, then Continue.", "reducedMotion": "NOT_APPLICABLE" },
+      "offline": { "mode": "FULL_OFFLINE", "note": "Text only." }, "completion": "VIEWED"
+    },
+    {
+      "id": "goal", "type": "OBJECTIVE", "title": "What you will be able to do", "purpose": "STATE_OBJECTIVE", "objectiveIds": ["moe-math-g4-s2-p5-measurement-obj9"], "learnerAction": "Read the goal.",
+      "content": { "body": "By the end of this lesson you will be able to:", "keyPoints": ["Find the perimeter of a square or rectangle.", "Find the area of a square or rectangle in square units."] },
+      "interaction": { "kind": "NONE" }, "tools": { "requested": [], "prohibited": [] }, "hints": [], "misconceptionIds": [], "evidence": { "kind": "NONE" },
+      "accessibility": { "textAlternative": "Goal: find the perimeter and the area of squares and rectangles.", "keyboardPath": "Read the list, then Continue.", "reducedMotion": "NOT_APPLICABLE" },
+      "offline": { "mode": "FULL_OFFLINE", "note": "Text only." }, "completion": "VIEWED"
+    },
+    {
+      "id": "around-inside", "type": "INTERACTIVE_DIAGRAM", "title": "Around or inside?", "purpose": "EXPLAIN_CONCEPT", "objectiveIds": ["moe-math-g4-s2-p5-measurement-obj9"], "learnerAction": "Open each step to see the garden drawn on squared paper.",
+      "content": { "body": "Draw the garden on squared paper: each square is 1 metre by 1 metre. Open each step." },
+      "interaction": { "kind": "DIAGRAM_REVEAL", "steps": [
+        { "id": "draw", "label": "Draw the garden", "description": "A rectangle 6 squares long and 4 squares wide." },
+        { "id": "around", "label": "Walk around it", "description": "The perimeter is the distance around: 6 + 4 + 6 + 4 = 20 metres of fence." },
+        { "id": "inside", "label": "Count the inside", "description": "The area is the number of squares inside: 4 rows of 6 squares, 6 × 4 = 24 square metres." }
+      ] },
+      "media": [{ "id": "garden-grid", "kind": "DIAGRAM", "requirement": "MEDIA_OPTIONAL", "description": "A 6 by 4 rectangle on a square grid, with the border highlighted for perimeter and the squares shaded for area.", "altText": "A rectangle 6 squares long and 4 squares wide; its border measures 20 metres and it covers 24 squares." }],
+      "tools": { "requested": [], "prohibited": [] }, "hints": ["Perimeter: around. Area: inside."], "misconceptionIds": ["swaps-area-perimeter", "counts-two-sides"], "evidence": { "kind": "NONE" },
+      "accessibility": { "textAlternative": "A 6 by 4 metre garden: the fence around it is 6 + 4 + 6 + 4 = 20 metres; the ground inside is 6 × 4 = 24 square metres.", "keyboardPath": "Each step is a button; press Enter to open it.", "reducedMotion": "NOT_APPLICABLE" },
+      "offline": { "mode": "FULL_OFFLINE", "note": "Squared exercise-book paper is the core modality." }, "completion": "ALL_STEPS_REVEALED",
+      "pedagogy": { "strategy": "CONCRETE_PICTORIAL_ABSTRACT", "representation": "PICTORIAL", "scaffoldLevel": "FULL" }
+    },
+    {
+      "id": "square-example", "type": "GUIDED_EXAMPLE", "title": "A square school garden", "purpose": "MODEL_WORKED_EXAMPLE", "objectiveIds": ["moe-math-g4-s2-p5-measurement-obj9"], "learnerAction": "Follow each step of the worked example.",
+      "content": { "body": "A square school garden has sides of 5 metres.\n\nPerimeter: a square has 4 equal sides, so 5 + 5 + 5 + 5 = 20 metres, or 4 × 5 = 20 metres.\n\nArea: 5 rows of 5 squares, 5 × 5 = 25 square metres.\n\nThe square and Ma Musu's garden have the same perimeter but different areas." },
+      "interaction": { "kind": "NONE" }, "tools": { "requested": [], "prohibited": [] }, "hints": [], "misconceptionIds": ["swaps-area-perimeter"], "evidence": { "kind": "NONE" },
+      "accessibility": { "textAlternative": "A 5 metre square: perimeter 4 × 5 = 20 metres, area 5 × 5 = 25 square metres. Same perimeter as the 6 by 4 garden, different area.", "keyboardPath": "Read the text, then Continue.", "reducedMotion": "NOT_APPLICABLE" },
+      "offline": { "mode": "FULL_OFFLINE", "note": "Text only." }, "completion": "VIEWED",
+      "pedagogy": { "strategy": "WORKED_EXAMPLE_FADING", "representation": "ABSTRACT", "scaffoldLevel": "FULL" }, "dependsOn": ["around-inside"]
+    },
+    {
+      "id": "check", "type": "CHECK_UNDERSTANDING", "title": "Around or inside?", "purpose": "CHECK_UNDERSTANDING", "objectiveIds": ["moe-math-g4-s2-p5-measurement-obj9"], "learnerAction": "Choose which measure each job needs.",
+      "content": { "body": "Each job needs either the perimeter or the area. Choose." },
+      "interaction": { "kind": "SINGLE_CHOICE", "items": [
+        { "id": "fence-job", "prompt": "Ma Musu buys wire to go around her garden. Does she need the perimeter or the area?", "options": [
+          { "id": "a", "text": "Perimeter", "feedback": "Yes. Wire goes around the edge: that is the perimeter." },
+          { "id": "b", "text": "Area", "feedback": "The wire goes around, not over the inside. Around is perimeter." }
+        ], "formativeKey": { "expectedOptionId": "a" } },
+        { "id": "seed-job", "prompt": "She spreads seed over all the ground inside. Does she need the perimeter or the area?", "options": [
+          { "id": "a", "text": "Perimeter", "feedback": "Seed covers the inside, not just the edge. Inside is area." },
+          { "id": "b", "text": "Area", "feedback": "Yes. Seed covers the ground inside: that is the area." }
+        ], "formativeKey": { "expectedOptionId": "b" } }
+      ] },
+      "tools": { "requested": [], "prohibited": [] }, "hints": ["Around means perimeter; inside means area."], "misconceptionIds": ["swaps-area-perimeter"],
+      "evidence": { "kind": "FORMATIVE_OBSERVATION", "evidenceType": "PRACTICE", "responses": [
+        { "responseKey": "fence-job", "objectiveId": "moe-math-g4-s2-p5-measurement-obj9", "responseType": "SELECTED_OPTION", "scaffoldLevel": "PARTIAL", "misconceptionId": "swaps-area-perimeter" },
+        { "responseKey": "seed-job", "objectiveId": "moe-math-g4-s2-p5-measurement-obj9", "responseType": "SELECTED_OPTION", "scaffoldLevel": "PARTIAL", "misconceptionId": "swaps-area-perimeter" }
+      ] },
+      "accessibility": { "textAlternative": "Two jobs: buying wire to go around a garden, and spreading seed over the inside. Choose perimeter or area for each.", "keyboardPath": "Tab to each option and press Space.", "reducedMotion": "NOT_APPLICABLE" },
+      "offline": { "mode": "FULL_OFFLINE", "note": "Feedback works offline." }, "completion": "ALL_ANSWERED"
+    },
+    {
+      "id": "calculate", "type": "PRACTICE", "title": "Calculate both measures", "purpose": "APPLY", "objectiveIds": ["moe-math-g4-s2-p5-measurement-obj9"], "learnerAction": "Enter the perimeter and area of each garden as numbers.",
+      "content": { "body": "Find the perimeter and the area of a garden 7 metres long and 3 metres wide, and of a square garden with 6 metre sides." },
+      "interaction": { "kind": "NUMERIC", "prompt": "Enter the perimeter (metres) and area (square metres) for each garden.", "elements": ["7 m by 3 m: perimeter", "7 m by 3 m: area", "6 m square: perimeter", "6 m square: area"] },
+      "fallback": { "kind": "FREE_RESPONSE", "content": "Write the perimeter and the area of each garden, showing the addition or multiplication you used.", "objectivePreserved": true },
+      "tools": { "requested": [], "prohibited": [] }, "hints": ["Draw each garden on squared paper first."], "misconceptionIds": ["counts-two-sides"],
+      "evidence": { "kind": "FORMATIVE_OBSERVATION", "evidenceType": "PRACTICE", "responses": [{ "responseKey": "calculate-both", "objectiveId": "moe-math-g4-s2-p5-measurement-obj9", "responseType": "NUMBER", "scaffoldLevel": "MINIMAL", "misconceptionId": "counts-two-sides" }] },
+      "expectedObservation": "7 by 3: perimeter 20 m, area 21 square metres. 6 m square: perimeter 24 m, area 36 square metres.",
+      "accessibility": { "textAlternative": "Find the perimeter and area of a 7 by 3 metre garden and a 6 metre square garden.", "keyboardPath": "Type each number in its labelled box.", "reducedMotion": "NOT_APPLICABLE" },
+      "offline": { "mode": "FULL_OFFLINE", "note": "Work on squared paper is the core modality." }, "completion": "ALL_RESPONSES_WRITTEN",
+      "pedagogy": { "strategy": "WORKED_EXAMPLE_FADING", "representation": "ABSTRACT", "scaffoldLevel": "MINIMAL" }, "dependsOn": ["square-example"]
+    },
+    {
+      "id": "mastery", "type": "MASTERY_CHECK", "title": "Show what you know", "purpose": "ASSESS_MASTERY", "objectiveIds": ["moe-math-g4-s2-p5-measurement-obj9"], "learnerAction": "Answer the final questions.",
+      "content": { "body": "Answer each question. Your answers are checked by the school's learning system, not on this device." },
+      "interaction": { "kind": "ASSESSMENT_HANDOFF", "assessmentRequestId": "ap-mastery" },
+      "tools": { "requested": [], "prohibited": ["basic-calculator"] }, "hints": [], "misconceptionIds": [],
+      "evidence": { "kind": "MASTERY_RESPONSE", "evidenceType": "QUIZ", "responses": [{ "responseKey": "ap-mastery", "objectiveId": "moe-math-g4-s2-p5-measurement-obj9", "responseType": "ASSESSMENT_RESPONSE", "scaffoldLevel": "NONE" }] },
+      "accessibility": { "textAlternative": "Final questions on perimeter and area, answered with keyboard or touch.", "keyboardPath": "Tab to each answer and press Space or type.", "reducedMotion": "NOT_APPLICABLE", "nonPointerAlternative": "Without a device, the teacher reads each question and its choices aloud and records the spoken answer." },
+      "offline": { "mode": "FALLBACK_REQUIRED", "note": "Answers given on a device are scored after reconnecting; without a device the teacher gives the same questions on paper." },
+      "fallback": { "kind": "PAPER_ACTIVITY", "content": "Your teacher gives the same questions on paper and records your answers.", "objectivePreserved": true },
+      "completion": "ALL_ANSWERED"
+    },
+    {
+      "id": "review", "type": "REVIEW", "title": "Key ideas", "purpose": "REVIEW", "objectiveIds": ["moe-math-g4-s2-p5-measurement-obj9"], "learnerAction": "Read the key ideas.",
+      "content": { "body": "Remember:", "keyPoints": ["Perimeter is the distance around: add all the sides.", "Area is the space inside: count the squares or multiply length by width.", "Two shapes can have the same perimeter and different areas."] },
+      "interaction": { "kind": "NONE" }, "tools": { "requested": [], "prohibited": [] }, "hints": [], "misconceptionIds": [], "evidence": { "kind": "NONE" },
+      "accessibility": { "textAlternative": "Review: perimeter adds the sides; area counts or multiplies squares; equal perimeters can enclose different areas.", "keyboardPath": "Read the list.", "reducedMotion": "NOT_APPLICABLE" },
+      "offline": { "mode": "FULL_OFFLINE", "note": "Text only." }, "completion": "VIEWED"
+    }
+  ],
+  "assessmentRequests": [
+    { "id": "ap-mastery", "objectiveIds": ["moe-math-g4-s2-p5-measurement-obj9"], "interaction": "NUMERIC", "evidenceType": "QUIZ", "difficulty": "CORE", "misconceptionIds": ["swaps-area-perimeter", "counts-two-sides"], "tools": { "requested": [], "prohibited": ["basic-calculator"] }, "offline": "FALLBACK_REQUIRED" }
+  ],
+  "labProposals": []
+}

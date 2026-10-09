@@ -36,7 +36,7 @@ describe("PATCH /api/admin/content-review/[lessonId] state machine", () => {
         },
         notificationInboxItem: { create: vi.fn(async () => ({})) },
         $transaction: vi.fn(async (callback: any) => callback({
-          curriculumContent: { update: updateFn },
+          $queryRaw: vi.fn(async () => []), curriculumContent: { update: updateFn, findUnique: vi.fn(async ({ where }: any) => ({ id: where?.id ?? `row-${where?.contentId}`, contentId: where?.contentId ?? where?.id, payload: {} })), findUniqueOrThrow: vi.fn(async ({ where }: any) => ({ id: where?.id ?? `row-${where?.contentId}`, contentId: where?.contentId ?? where?.id, payload: {} })) },
         })),
       },
     }));
@@ -124,7 +124,7 @@ describe("PATCH /api/admin/content-review/[lessonId] state machine", () => {
         },
         notificationInboxItem: { create: mockNotif },
         $transaction: vi.fn(async (callback: any) => callback({
-          curriculumContent: { update: mockUpdate },
+          $queryRaw: vi.fn(async () => []), curriculumContent: { update: mockUpdate, findUnique: vi.fn(async ({ where }: any) => ({ id: where?.id ?? `row-${where?.contentId}`, contentId: where?.contentId ?? where?.id, payload: {} })), findUniqueOrThrow: vi.fn(async ({ where }: any) => ({ id: where?.id ?? `row-${where?.contentId}`, contentId: where?.contentId ?? where?.id, payload: {} })) },
         })),
       },
     }));
@@ -184,7 +184,7 @@ describe("POST /api/admin/content-review/[lessonId]/unpublish", () => {
         },
         notificationInboxItem: { create: mockNotif },
         $transaction: vi.fn(async (callback: any) => callback({
-          curriculumContent: { update: mockUpdate },
+          $queryRaw: vi.fn(async () => []), curriculumContent: { update: mockUpdate, findUnique: vi.fn(async ({ where }: any) => ({ id: where?.id ?? `row-${where?.contentId}`, contentId: where?.contentId ?? where?.id, payload: {} })), findUniqueOrThrow: vi.fn(async ({ where }: any) => ({ id: where?.id ?? `row-${where?.contentId}`, contentId: where?.contentId ?? where?.id, payload: {} })) },
         })),
       },
     }));
@@ -216,7 +216,7 @@ describe("POST /api/admin/content-review/[lessonId]/unpublish", () => {
         },
         notificationInboxItem: { create: vi.fn(async () => ({})) },
         $transaction: vi.fn(async (callback: any) => callback({
-          curriculumContent: { update: mockUpdate },
+          $queryRaw: vi.fn(async () => []), curriculumContent: { update: mockUpdate, findUnique: vi.fn(async ({ where }: any) => ({ id: where?.id ?? `row-${where?.contentId}`, contentId: where?.contentId ?? where?.id, payload: {} })), findUniqueOrThrow: vi.fn(async ({ where }: any) => ({ id: where?.id ?? `row-${where?.contentId}`, contentId: where?.contentId ?? where?.id, payload: {} })) },
         })),
       },
     }));

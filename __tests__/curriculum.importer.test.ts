@@ -1,12 +1,16 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const mockCurriculumVersionCreate = vi.hoisted(() => vi.fn());
-const mockCurriculumContentUpsert = vi.hoisted(() => vi.fn());
+const mockCurriculumContentCreate = vi.hoisted(() => vi.fn());
+// Writers-off upsert runs in a transaction: a new row is created, an existing one locked and checked first.
+const mockTx = vi.hoisted(() => ({
+  curriculumContent: { findUnique: vi.fn(async () => null), create: mockCurriculumContentCreate },
+}));
 
 vi.mock("@/lib/db", () => ({
   prisma: {
     curriculumVersion: { create: mockCurriculumVersionCreate },
-    curriculumContent: { upsert: mockCurriculumContentUpsert },
+    $transaction: vi.fn((fn: (tx: typeof mockTx) => unknown) => fn(mockTx)),
   },
 }));
 
@@ -17,10 +21,10 @@ describe("curriculum importer", () => {
       id: "version-1",
       versionName: "import-math-lesson-1",
     });
-    mockCurriculumContentUpsert.mockImplementation(async (args) => ({
+    mockCurriculumContentCreate.mockImplementation(async (args) => ({
       id: "content-db-1",
-      contentId: args.create.contentId,
-      title: args.create.title,
+      contentId: args.data.contentId,
+      title: args.data.title,
     }));
   });
 
@@ -81,9 +85,9 @@ describe("curriculum importer", () => {
         data: expect.objectContaining({ createdById: "admin-1", status: "DRAFT" }),
       })
     );
-    expect(mockCurriculumContentUpsert).toHaveBeenCalledWith(
+    expect(mockCurriculumContentCreate).toHaveBeenCalledWith(
       expect.objectContaining({
-        create: expect.objectContaining({
+        data: expect.objectContaining({
           contentType: "lesson",
           status: "pending_approval",
           versionId: "version-1",

@@ -1,6 +1,15 @@
 import { toCanonicalJson, type CanonicalJson } from "@/lib/curriculum/provenance/hash";
+import { NATIVE_SCENE_PAYLOAD_KEYS, isNativeCurriculumV2Payload } from "@/lib/curriculum/v2/contract";
 
+/** Legacy (body-based) content. Unchanged so existing revision hashes stay stable. */
 export const CURRICULUM_SNAPSHOT_SCHEMA_VERSION = 1;
+/**
+ * Native structured content (Curriculum V2 / Phase A scenes). The whole native structure enters
+ * revision identity — scene order and type, objectives, body, interaction, tools, lab links, media,
+ * accessibility, offline fallback, assessment references and evidence metadata — so any
+ * instructional change produces a new hash, a new revision, and needs its own approval.
+ */
+export const CURRICULUM_SNAPSHOT_SCHEMA_VERSION_NATIVE = 2;
 
 export type CurriculumProjectionInput = {
   title?: string | null;
@@ -274,3 +283,30 @@ export const SNAPSHOT_V1_EXCLUDED_FIELDS = Object.freeze([
   "thumbnailError",
   "imageGenerationCost",
 ]);
+
+export type CurriculumContentSnapshotV2 = CurriculumContentSnapshotV1 & {
+  experience: Record<string, CanonicalJson>;
+};
+
+/** The snapshot schema a row uses: v2 whenever the payload carries native scene structure. */
+export function snapshotSchemaVersionFor(row: Pick<CurriculumProjectionInput, "payload">): number {
+  return isNativeCurriculumV2Payload(row.payload) ? CURRICULUM_SNAPSHOT_SCHEMA_VERSION_NATIVE : CURRICULUM_SNAPSHOT_SCHEMA_VERSION;
+}
+
+export function buildCurriculumContentSnapshot(row: CurriculumProjectionInput): { schemaVersion: number; snapshot: CurriculumContentSnapshotV1 | CurriculumContentSnapshotV2 } {
+  const base = buildCurriculumContentSnapshotV1(row);
+  if (snapshotSchemaVersionFor(row) === CURRICULUM_SNAPSHOT_SCHEMA_VERSION) return { schemaVersion: CURRICULUM_SNAPSHOT_SCHEMA_VERSION, snapshot: base };
+  const payload = object(row.payload);
+  const experience: Record<string, CanonicalJson> = {};
+  for (const key of NATIVE_SCENE_PAYLOAD_KEYS) if (payload[key] !== undefined) experience[key] = toCanonicalJson(payload[key]);
+  return { schemaVersion: CURRICULUM_SNAPSHOT_SCHEMA_VERSION_NATIVE, snapshot: { ...base, experience } };
+}
+
+export function validateCurriculumContentSnapshot(schemaVersion: number, snapshot: CurriculumContentSnapshotV1 | CurriculumContentSnapshotV2): void {
+  if (schemaVersion === CURRICULUM_SNAPSHOT_SCHEMA_VERSION) return validateCurriculumContentSnapshotV1(snapshot);
+  if (schemaVersion !== CURRICULUM_SNAPSHOT_SCHEMA_VERSION_NATIVE || !("experience" in snapshot)) throw new Error("Unsupported curriculum snapshot schema");
+  const native = snapshot.experience;
+  const scenes = Object.values(native).flatMap((value) => (value && typeof value === "object" && !Array.isArray(value) && Array.isArray((value as Record<string, CanonicalJson>).scenes) ? ((value as Record<string, CanonicalJson>).scenes as CanonicalJson[]) : []));
+  if (scenes.length < 2) throw new Error("Native curriculum snapshot requires a structured scene sequence");
+  if (!Number.isInteger(snapshot.identity.grade) || snapshot.identity.grade < 1 || snapshot.identity.grade > 12) throw new Error("Curriculum snapshot grade must be an integer from 1 to 12");
+}

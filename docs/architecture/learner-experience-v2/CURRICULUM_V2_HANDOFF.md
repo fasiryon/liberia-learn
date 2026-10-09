@@ -1,5 +1,10 @@
 # Phase B handoff — what Curriculum V2 must emit
 
+> Implemented in Phase B: see `CURRICULUM_V2.md` (contract `lib/curriculum/v2/contract.ts`). Where
+> this handoff and the implementation differ, the implementation and `CURRICULUM_V2.md` govern: tool
+> ids come from the canonical toolkit registry, lab links are server-resolved CANDIDATEs, and native
+> lessons need exact-revision HUMAN_REVIEW.
+
 Curriculum V2 generation must emit lessons that are natively scene-based, so no
 lesson depends on `parseToSlides`. The target is the `LessonExperience`
 contract in `lib/learner-experience/types.ts`, checked by

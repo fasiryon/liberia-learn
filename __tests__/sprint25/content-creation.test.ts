@@ -63,7 +63,12 @@ vi.mock("@/lib/db", () => ({
       create: mockAssignmentCreate,
     },
     $transaction: vi.fn(async (callback: any) => callback({
-      curriculumContent: { update: mockCurriculumContentUpdate },
+      $queryRaw: vi.fn(async () => []),
+      curriculumContent: {
+        update: mockCurriculumContentUpdate,
+        findUnique: vi.fn(async () => ({ id: "row-1", payload: {} })),
+        findUniqueOrThrow: vi.fn(async () => ({ payload: {} })),
+      },
     })),
   },
 }));
