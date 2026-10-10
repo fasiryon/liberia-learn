@@ -1,3 +1,4 @@
+// route-policy: auth=session; scope=tenant; authority=authenticated-student-own-school-enrollments; rationale=lists messaging teachers only for own-school classes, and only teachers who belong to the learner's school
 import { NextResponse } from "next/server";
 import { requireUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";
@@ -15,15 +16,16 @@ export async function GET() {
       where: { userId: user.id },
       select: { id: true },
     });
-    if (!studentRecord) return NextResponse.json([]);
+    if (!studentRecord || !user.schoolId) return NextResponse.json([]);
 
     const enrollments = await prisma.enrollment.findMany({
-      where: { studentId: studentRecord.id },
+      where: { studentId: studentRecord.id, Class: { schoolId: user.schoolId } },
       include: {
         Class: {
           select: {
             subject: true,
-            Teacher: { select: { id: true, name: true } },
+            schoolId: true,
+            Teacher: { select: { id: true, name: true, schoolId: true } },
           },
         },
       },
@@ -31,7 +33,8 @@ export async function GET() {
 
     const seen = new Set<string>();
     const teachers = enrollments
-      .filter((e) => e.Class.Teacher != null)
+      // A teacher identity is projected only for a teacher of the learner's own school.
+      .filter((e) => e.Class.schoolId === user.schoolId && e.Class.Teacher != null && e.Class.Teacher.schoolId === user.schoolId)
       .reduce<Array<{ teacherId: string; teacherName: string; subject: string | null }>>((acc, e) => {
         const t = e.Class.Teacher!;
         if (!seen.has(t.id)) {

@@ -104,8 +104,8 @@ export function fromLegacyLab(definition: LabDefinition<unknown>): LabExperience
     offline: { degradation: ["STATIC_TEACHER_GUIDED"], offlineCapable: false, maxPackageBytes: null },
     // Legacy client scores are provisional observations (see lab-score containment).
     evidenceTypes: ["SIMULATION"],
-    // The legacy library is already student-visible; it remains so during migration.
-    release: { status: "RELEASED", reviewState: "LEGACY", approvalState: "LEGACY", curriculumActive: false },
+    // No student route/renderer certification exists for these registry simulations.
+    release: { status: "DRAFT_UNRELEASED", reviewState: "LEGACY_UNCERTIFIED", approvalState: "LEGACY", curriculumActive: false },
   });
 }
 
@@ -146,7 +146,23 @@ export function findLabExperience(labId: string): LabExperience | null {
 
 /** Real students only ever see released labs. Internal preview is a separate, explicit gate. */
 export function isStudentAccessible(lab: LabExperience): boolean {
-  return lab.release.status === "RELEASED";
+  return lab.release.status === "RELEASED" && (lab.runtime.kind === "PRACTICAL_GUIDED" || isCertifiedStudentLab(lab));
+}
+
+/** Version-specific runtime certification. Empty until released route/asset/runtime evidence passes. */
+export const CERTIFIED_STUDENT_LAB_VERSIONS: Readonly<Record<string, string>> = Object.freeze({});
+
+export function isCertifiedStudentLab(lab: LabExperience): boolean {
+  return lab.release.status === "RELEASED" && lab.release.reviewState === "APPROVED" &&
+    lab.release.approvalState === "APPROVED" && CERTIFIED_STUDENT_LAB_VERSIONS[lab.labId] === lab.version;
+}
+
+export type StudentLabClassification = "CERTIFIED_RELEASED" | "ASSIGNED_ONLY" | "UNRELEASED" | "LEGACY_UNCERTIFIED";
+export function classifyLabExperience(lab: LabExperience): StudentLabClassification {
+  if (isCertifiedStudentLab(lab)) return "CERTIFIED_RELEASED";
+  if (lab.runtime.kind === "LEGACY_SIMULATION") return "LEGACY_UNCERTIFIED";
+  if (lab.runtime.kind === "PRACTICAL_GUIDED") return "ASSIGNED_ONLY";
+  return "UNRELEASED";
 }
 
 /**

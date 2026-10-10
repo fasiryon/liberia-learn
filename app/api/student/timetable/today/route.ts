@@ -1,3 +1,4 @@
+// route-policy: auth=session; scope=tenant; authority=authenticated-student-own-school-enrollments; rationale=today's timetable for own-school enrolled classes; teacher identity only for own-school teachers
 import { NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
@@ -19,7 +20,7 @@ export async function GET() {
       return NextResponse.json({ timetable: null });
     }
 
-    const timetable = await getTimetableForStudent(student.id, new Date());
+    const timetable = await getTimetableForStudent(student.id, new Date(), user.schoolId);
 
     return NextResponse.json({ timetable });
   } catch (err: any) {

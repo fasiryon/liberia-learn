@@ -19,6 +19,8 @@ vi.mock("@/lib/db", () => ({
     student: { findUnique: mockStudentFindUnique },
     scheduledWork: { findMany: mockScheduledWorkFindMany },
     assignment: { findMany: mockAssignmentFindMany },
+    // Current teacher authority: Today re-reads teacher identity per response.
+    user: { findMany: async ({ where }: any) => [{ id: "teacher-mary", schoolId: "school-1", name: "Mary Pewee" }].filter((t) => where.id.in.includes(t.id) && t.schoolId === where.schoolId) },
   },
 }));
 
@@ -76,7 +78,8 @@ describe("student today layered school day", () => {
     mockRequireRole.mockResolvedValue({ id: "student-user-1", role: "STUDENT", schoolId: "school-1" });
     mockStudentFindUnique.mockResolvedValue({
       id: "student-1",
-      enrollments: [{ classId: "class-1" }],
+      deletedAt: null, user: { schoolId: "school-1" }, academicEnrollments: [], // enrollment authority shape
+    enrollments: [{ Class: { id: "class-1", name: "Class", subject: "MATH", gradeLevel: 7, schoolId: "school-1", Teacher: null, School: { name: "School" } } }],
     });
     mockBuildLearningIntelligence.mockResolvedValue({
       generatedAt: "2026-04-23T00:00:00.000Z",
@@ -113,6 +116,7 @@ describe("student today layered school day", () => {
           subject: "MATH",
           startTime: "09:00",
           endTime: "09:45",
+          teacherId: "teacher-mary",
           teacherName: "Mary Pewee",
           assignment: null,
         },
@@ -147,6 +151,7 @@ describe("student today layered school day", () => {
           subject: "MATH",
           startTime: "09:00",
           endTime: "09:45",
+          teacherId: "teacher-mary",
           teacherName: "Mary Pewee",
           assignment: null,
         },

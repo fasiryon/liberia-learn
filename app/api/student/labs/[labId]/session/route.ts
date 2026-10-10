@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
+// route-policy: auth=session; scope=record; authority=student-session-enrollment; rationale=practical lab mutations require published runtime and own-school enrolled assignment
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { recordPerformanceEvent } from "@/lib/intelligence/recordPerformanceEvent";
 import { logAudit } from "@/lib/audit";
 import { isVirtualLabsEnabled } from "@/lib/serverFlags";
 import { analyzeLabSession } from "@/lib/ai/lab/labAnalyzer";
+import { loadAuthorizedPracticalSessions, studentSessionSummary } from "@/lib/student/labEligibility";
 
 export const dynamic = "force-dynamic";
 
@@ -30,19 +32,15 @@ export async function POST(
     }
 
     // Find the existing session created by the teacher link action
-    const session = await prisma.labSession.findFirst({
-      where: {
-        labId,
-        studentId: user.id,
-        schoolId: user.schoolId,
-      },
-    });
+    const payload = await req.json().catch(() => null);
+    const sessionId = typeof payload?.sessionId === "string" ? payload.sessionId : undefined;
+    const [authorized] = await loadAuthorizedPracticalSessions(user, { labId, sessionId });
+    const session = authorized?.session;
 
     if (!session) {
       return NextResponse.json({ error: "No session found for this lab" }, { status: 404 });
     }
 
-    const payload = await req.json().catch(() => null);
     const hasSubmission =
       payload &&
       typeof payload === "object" &&
@@ -142,12 +140,12 @@ export async function POST(
         });
       }
 
-      return NextResponse.json({ session: completedSession, aiAnalysis: analysis });
+      return NextResponse.json({ session: studentSessionSummary(completedSession) });
     }
 
     // If already started, just return the session
     if (session.completedAt) {
-      return NextResponse.json({ session });
+      return NextResponse.json({ session: studentSessionSummary(session) });
     }
 
     // Update startedAt if this is the first access
@@ -165,10 +163,10 @@ export async function POST(
       details: { labId },
     });
 
-    return NextResponse.json({ session: updated });
+    return NextResponse.json({ session: studentSessionSummary(updated) });
   } catch (err: any) {
     return NextResponse.json(
-      { error: err?.message ?? "Failed to start session" },
+      { error: "Unable to access lab session" },
       { status: err?.status ?? 500 }
     );
   }

@@ -126,4 +126,14 @@ describe("student timetable contentId lesson routing", () => {
       data: expect.objectContaining({ contentId: "content-123", classId: "class-1" }),
     }));
   });
+  it.each([["school-1", "Mrs. Kollie"], ["school-2", "Teacher"]])("projects the class teacher name only for the learner's school (%s)", async (teacherSchool, shown) => {
+    const row = scheduledWork();
+    row.class.Teacher = { name: "Mrs. Kollie", schoolId: teacherSchool } as any;
+    mockScheduledWorkCreate.mockResolvedValue(row);
+    const { GET } = await import("@/app/api/student/work/[scheduledWorkId]/route");
+    const res = await GET(new Request("http://localhost/api/student/work/content-123") as any, { params: Promise.resolve({ scheduledWorkId: "content-123" }) });
+    const data = await res.json();
+    expect(data.teacherName).toBe(shown);
+    if (teacherSchool !== "school-1") expect(JSON.stringify(data)).not.toContain("Mrs. Kollie");
+  });
 });

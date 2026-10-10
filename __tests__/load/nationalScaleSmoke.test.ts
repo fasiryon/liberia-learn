@@ -17,6 +17,16 @@
  */
 
 import { beforeEach, describe, expect, it, vi } from "vitest";
+
+// Route concurrency tests isolate the shared eligibility guard, covered by student-lab-eligibility tests.
+vi.mock("@/lib/student/labEligibility", async () => {
+  const actual = await vi.importActual<typeof import("@/lib/student/labEligibility")>("@/lib/student/labEligibility");
+  return { ...actual, loadAuthorizedPracticalSessions: async (user: { id: string; schoolId: string }, filter: { sessionId?: string; labId?: string }) => {
+    const session = filter.sessionId ? { id: filter.sessionId } : await mockLabSessionFindFirst({
+      where: { labId: filter.labId, studentId: user.id, schoolId: user.schoolId } });
+    return session ? [{ session }] : [];
+  } };
+});
 import {
   generateSessions,
   runBatched,
@@ -366,8 +376,9 @@ describe("National Scale Smoke Test — 10 parallel school contexts", () => {
 
     // Verify no cross-school contamination: each student sees their own session
     results.forEach((r) => {
-      expect(r.session.schoolId).toBe(r.ctx.schoolId);
-      expect(r.session.studentId).toBe(r.ctx.studentId);
+      expect(r.session.id).toBe(r.ctx.sessionId);
+      expect(r.session).not.toHaveProperty("schoolId");
+      expect(r.session).not.toHaveProperty("studentId");
     });
 
     // No school's sessionId appears in another school's response
@@ -427,7 +438,8 @@ describe("National Scale Smoke Test — 10 parallel school contexts", () => {
 
     // No school's data appears in another school's response
     results.forEach((r) => {
-      expect(r.body.session.schoolId).toBe(r.ctx.schoolId);
+      expect(r.body.session.id).toBe(r.ctx.sessionId);
+      expect(r.body.session).not.toHaveProperty("schoolId");
     });
 
     // Client lab scores remain provisional and never trigger mastery.
@@ -515,6 +527,9 @@ describe("National Scale Smoke Test — 10 parallel school contexts", () => {
     const allSchoolIds = new Set(schools.map((s) => s.schoolId));
     const flowResults: Array<{
       schoolId: string;
+      sessionId: string;
+      startSessionId: string;
+      completeSessionId: string;
       schedStatus: number;
       schedSwId: string;
       startStatus: number;
@@ -613,12 +628,15 @@ describe("National Scale Smoke Test — 10 parallel school contexts", () => {
 
       flowResults.push({
         schoolId: ctx.schoolId,
+        sessionId: ctx.sessionId,
         schedStatus: schedRes.status,
         schedSwId: schedBody.id,
         startStatus: startRes.status,
         startSessionSchoolId: startBody.session?.schoolId,
+        startSessionId: startBody.session?.id,
         completeStatus: completeRes.status,
         completeSessionSchoolId: completeBody.session?.schoolId,
+        completeSessionId: completeBody.session?.id,
       });
     }
 
@@ -629,9 +647,11 @@ describe("National Scale Smoke Test — 10 parallel school contexts", () => {
 
     // CRITICAL: No cross-contamination
     flowResults.forEach((r) => {
-      // Each school's session data carries only its own schoolId
-      expect(r.startSessionSchoolId).toBe(r.schoolId);
-      expect(r.completeSessionSchoolId).toBe(r.schoolId);
+      // Session identifiers retain ownership parity; tenant/student fields are minimized.
+      expect(r.startSessionId).toBe(r.sessionId);
+      expect(r.completeSessionId).toBe(r.sessionId);
+      expect(r.startSessionSchoolId).toBeUndefined();
+      expect(r.completeSessionSchoolId).toBeUndefined();
 
       // No other school's ID appears in this school's response
       const otherSchoolIds = [...allSchoolIds].filter((id) => id !== r.schoolId);

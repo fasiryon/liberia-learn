@@ -1,10 +1,12 @@
 import CellDivisionLabPage from "@/components/labs/CellDivisionLabPage";
 import { requireRole } from "@/lib/auth";
+import { requireCertifiedStudentLab } from "@/lib/student/labRouteCertification";
 import { logLearningEvent } from "@/lib/events/logLearningEvent";
 import { isAiLabsEnabled } from "@/lib/serverFlags";
 
 export default async function StudentCellDivisionLabPage() {
   const user = await requireRole("STUDENT");
+  requireCertifiedStudentLab("cell-division");
 
   if (!isAiLabsEnabled()) {
     return (

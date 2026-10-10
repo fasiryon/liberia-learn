@@ -19,19 +19,16 @@ const p = new PrismaClient();
   const student = await p.student.findFirst({ where: { userId: user.id }, select: { id: true } });
   if (!student) { console.log("student not found"); return; }
 
-  const now = new Date();
-  const dateStr = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate())).toISOString().slice(0, 10);
-
-  const keys = [
-    `cache:today:${user.id}:${dateStr}`,
-    `cache:today:lastgood:${user.id}`,
-    `cache:timetable:${student.id}:${dateStr}`,
-    `cache:student-meta:${user.id}`,
-  ];
-
-  for (const key of keys) {
-    const result = await redis.del(key);
-    console.log(`DEL ${key} → ${result}`);
+  // Today keys are addressed by user, school and enrollment-scope fingerprint (see
+  // app/api/student/today/route.ts), so match every scope and legacy namespace for this learner.
+  const patterns = [`cache:today:*${user.id}*`, `cache:timetable:*${student.id}*`, `cache:student-meta:${user.id}`];
+  for (const pattern of patterns) {
+    let cursor: string | number = 0;
+    do {
+      const [next, keys] = await redis.scan(cursor, { match: pattern, count: 200 });
+      cursor = next;
+      for (const key of keys) console.log(`DEL ${key} → ${await redis.del(key)}`);
+    } while (String(cursor) !== "0");
   }
 
   console.log("✅ Cache busted for student1@cha.edu.lr");

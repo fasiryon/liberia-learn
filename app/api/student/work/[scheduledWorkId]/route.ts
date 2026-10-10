@@ -180,7 +180,7 @@ function scheduledWorkInclude(userId: string) {
             fileSize: true,
             viewCount: true,
             uploadedAt: true,
-            teacher: { select: { name: true } },
+            teacher: { select: { name: true, schoolId: true } },
           },
         },
       },
@@ -190,7 +190,7 @@ function scheduledWorkInclude(userId: string) {
         id: true,
         schoolId: true,
         name: true,
-        Teacher: { select: { name: true } },
+        Teacher: { select: { name: true, schoolId: true } },
         School: { select: { name: true } },
       },
     },
@@ -383,7 +383,8 @@ export async function GET(
         : [],
       threeDLabDefinitions: [],
       durationMins: typeof studentPayload.durationMins === "number" ? studentPayload.durationMins : 45,
-      teacherName: sw.class.Teacher?.name ?? "Teacher",
+      // A teacher identity is projected only for a teacher of this learner's own school.
+      teacherName: (sw.class.Teacher?.schoolId === user.schoolId && sw.class.Teacher?.name) || "Teacher",
       schoolName: sw.class.School?.name ?? "School",
       className: sw.class.name,
       classFormat: sw.classFormat ?? "standard",
@@ -397,11 +398,12 @@ export async function GET(
         ? await (async () => {
             const videoHead = await head(activeVideo.storageUrl);
             const thumbHead = activeVideo.thumbnailUrl ? await head(activeVideo.thumbnailUrl) : null;
+            const { teacher, ...video } = activeVideo;
             return {
-              ...activeVideo,
+              ...video,
               storageUrl: videoHead.downloadUrl,
               thumbnailUrl: thumbHead?.downloadUrl ?? null,
-              teacherName: activeVideo.teacher?.name ?? "Teacher",
+              teacherName: (teacher?.schoolId === user.schoolId && teacher?.name) || "Teacher",
               viewCount: activeVideo.viewCount ?? 0,
             };
           })()

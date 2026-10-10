@@ -10,6 +10,16 @@
  */
 
 import { beforeEach, describe, expect, it, vi } from "vitest";
+
+// Route concurrency tests isolate the shared eligibility guard, covered by student-lab-eligibility tests.
+vi.mock("@/lib/student/labEligibility", async () => {
+  const actual = await vi.importActual<typeof import("@/lib/student/labEligibility")>("@/lib/student/labEligibility");
+  return { ...actual, loadAuthorizedPracticalSessions: async (user: { id: string; schoolId: string }, filter: { sessionId?: string; labId?: string }) => {
+    const session = filter.sessionId ? { id: filter.sessionId } : await mockLabSessionFindFirst({
+      where: { labId: filter.labId, studentId: user.id, schoolId: user.schoolId } });
+    return session ? [{ session }] : [];
+  } };
+});
 import { randomUUID } from "crypto";
 import { errorRate, mockTeacherScheduleHandler, percentile } from "./loadHarness";
 

@@ -92,7 +92,9 @@ export function LabSessionClient({ lab, sessionId, initialCompleted }: LabSessio
   }, [lab.labId, sessionId]);
 
   async function beginLab() {
-    const response = await fetch(`/api/student/labs/${lab.labId}/session`, { method: "POST" });
+    const response = await fetch(`/api/student/labs/${lab.labId}/session`, {
+      method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ sessionId }),
+    });
     if (response.ok) {
       setStarted(true);
     } else {

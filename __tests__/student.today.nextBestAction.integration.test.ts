@@ -77,7 +77,8 @@ describe("student today nextBestAction wiring (Sprint 6.7)", () => {
     mockStudentFindUnique.mockResolvedValue({
       id: "student-1",
       currentGrade: 7,
-      enrollments: [{ classId: "class-1" }],
+      deletedAt: null, user: { schoolId: "school-1" }, academicEnrollments: [], // enrollment authority shape
+    enrollments: [{ Class: { id: "class-1", name: "Class", subject: "MATH", gradeLevel: 7, schoolId: "school-1", Teacher: null, School: { name: "School" } } }],
     });
     mockScheduledWorkFindMany.mockResolvedValue([]);
     mockAssignmentFindMany.mockResolvedValue([]);
@@ -130,7 +131,8 @@ describe("student today nextBestAction wiring (Sprint 6.7)", () => {
     mockStudentFindUnique.mockResolvedValue({
       id: "student-1",
       currentGrade: 11,
-      enrollments: [{ classId: "class-1" }],
+      deletedAt: null, user: { schoolId: "school-1" }, academicEnrollments: [], // enrollment authority shape
+    enrollments: [{ Class: { id: "class-1", name: "Class", subject: "MATH", gradeLevel: 7, schoolId: "school-1", Teacher: null, School: { name: "School" } } }],
     });
     mockScheduledWorkFindMany.mockResolvedValueOnce([]).mockResolvedValueOnce([]);
     mockAssignmentFindMany.mockResolvedValueOnce([]).mockResolvedValueOnce([]);
@@ -159,7 +161,8 @@ describe("student today nextBestAction wiring (Sprint 6.7)", () => {
     mockStudentFindUnique.mockResolvedValue({
       id: "student-1",
       currentGrade: 11,
-      enrollments: [{ classId: "class-1" }],
+      deletedAt: null, user: { schoolId: "school-1" }, academicEnrollments: [], // enrollment authority shape
+    enrollments: [{ Class: { id: "class-1", name: "Class", subject: "MATH", gradeLevel: 7, schoolId: "school-1", Teacher: null, School: { name: "School" } } }],
     });
     mockScheduledWorkFindMany
       .mockResolvedValueOnce([
@@ -217,6 +220,7 @@ describe("student today nextBestAction wiring (Sprint 6.7)", () => {
     mockStudentFindUnique.mockResolvedValue({
       id: "student-1",
       currentGrade: 11,
+      deletedAt: null, user: { schoolId: "school-1" }, academicEnrollments: [],
       enrollments: [],
     });
     mockGetStudentWaecReadinessAll.mockResolvedValue([
@@ -245,6 +249,7 @@ describe("student today nextBestAction wiring (Sprint 6.7)", () => {
     mockStudentFindUnique.mockResolvedValue({
       id: "student-1",
       currentGrade: 7,
+      deletedAt: null, user: { schoolId: "school-1" }, academicEnrollments: [],
       enrollments: [],
     });
 

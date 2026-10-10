@@ -28,6 +28,17 @@ vi.mock("@/lib/audit", () => ({
   logAudit: mockLogAudit,
 }));
 
+// Session route unit tests isolate the shared eligibility guard; full enrollment/runtime coverage lives in student-lab-eligibility.
+vi.mock("@/lib/student/labEligibility", async () => {
+  const actual = await vi.importActual<typeof import("@/lib/student/labEligibility")>("@/lib/student/labEligibility");
+  return { ...actual, loadAuthorizedPracticalSessions: async (user: { id: string; schoolId: string }, filter: { labId?: string; sessionId?: string }) => {
+    const session = filter.sessionId
+      ? await mockLabSessionFindUnique({ where: { id: filter.sessionId } })
+      : await mockLabSessionFindFirst({ where: { labId: filter.labId, studentId: user.id, schoolId: user.schoolId } });
+    return session ? [{ session }] : [];
+  } };
+});
+
 vi.mock("@/lib/serverFlags", async () => {
   const actual = await vi.importActual<any>("@/lib/serverFlags");
   return {

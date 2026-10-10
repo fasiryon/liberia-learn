@@ -4,6 +4,8 @@ import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { getLessonLabLinks } from "@/lib/lessons/labLinks";
 import { getTimetableForStudent } from "@/lib/timetable/timetableService";
+import { enrollmentScopeFingerprint, loadStudentEnrollmentScope } from "@/lib/student/enrollmentReadModel";
+import { withCurrentTeacherIdentity, withoutTeacherNames } from "@/lib/student/teacherIdentity";
 import { withRedisCache, FALLBACK_LIMIT_EXCEEDED, getCachedValue, setCachedValue } from "@/lib/cache/redisCache";
 import { getCertificateProximity } from "@/lib/certificates/certificateProgress";
 import { learnerExperienceAuthority } from "@/lib/student/learnerExperienceAuthority";
@@ -165,61 +167,75 @@ function primaryActionFor(params: {
   return { label: "Start Lesson", href: params.lessonHref ?? params.assignmentHref ?? "/student/lessons" };
 }
 
+// Today cache namespace. v3: membership authority moved out of the cache. v4: cached structure
+// carries teacher ids only; names are re-read from current school authority on every response.
+// No entry written under an earlier namespace, including any carrying a teacher name, is addressed.
+const TODAY_CACHE_VERSION = "v4";
+const SHIELD_MS = 8000;
+type TodayUser = Awaited<ReturnType<typeof requireRole>>;
+type EnrollmentScope = NonNullable<Awaited<ReturnType<typeof loadStudentEnrollmentScope>>>;
+const unavailableToday = () => NextResponse.json({ items: [], adaptivePlan: emptyAdaptivePlan(), availability: "unavailable" });
+/** Structural Today data (teacher ids, no names), or a finished response that carries no Today data. */
+type ComputeResult = { kind: "structure"; data: Record<string, any> } | { kind: "response"; response: NextResponse };
+const lastGoodKey = (user: TodayUser, fingerprint: string) => `cache:today:lastgood:${TODAY_CACHE_VERSION}:${user.id}:${user.schoolId}:${fingerprint}`;
+
+/**
+ * Cache is not authority. Every response first reads the learner's CURRENT enrollment scope
+ * (the shared enrollment authority: own-school student record, active academic enrollment,
+ * own-school roster), then serves only data addressed by that exact scope. If that authority
+ * cannot be read within the shield, the response fails closed as unavailable; no cached
+ * payload is replayed without it.
+ *
+ * Select structure first, rehydrate identity once: the structural payload is either the fresh or
+ * cached compute, or (if that loses the 8s shield) the same-scope lastgood. Only after that choice
+ * is teacher identity projected, in exactly one bounded bulk lookup (0 when no teacher ids, at
+ * most 1.5s, names null on failure). A shield timeout can therefore extend the response by at
+ * most that identity budget; no path runs a second lookup.
+ */
 export async function GET() {
   // Shield: cap the entire handler at 8000ms so pgbouncer-congested responses
   // return a degraded HTTP 200 rather than timing out at 20-30s.
-  // 8s budget: enough for a cold Redis miss + parallel DB queries on first morning load.
-  // Under real load (warm cache) the inner function returns in <100ms.
-  const shieldResult = await Promise.race([
-    _computeToday(),
-    new Promise<null>((resolve) => setTimeout(() => resolve(null), 8000)),
-  ]);
-  if (shieldResult === null) {
-    // The schedule itself (which periods, which subjects, which lessons) is
-    // stable day to day — only the date label and completion status change.
-    // Rather than flash an empty "no lessons today" dashboard on a cold
-    // start, serve the last successfully computed snapshot for this student
-    // while the real computation keeps running in the background and
-    // refreshes the short-TTL cache for the next request.
-    const user = await requireRole("STUDENT").catch(() => null);
-    if (user) {
-      const stale = await getCachedValue(`cache:today:lastgood:${user.id}`);
-      if (stale && typeof stale === "object" && "schoolId" in stale && stale.schoolId === user.schoolId) return NextResponse.json({ ...stale, availability: "stale" });
-    }
-    return NextResponse.json({ items: [], adaptivePlan: emptyAdaptivePlan(), availability: "unavailable" });
+  const deadline = Date.now() + SHIELD_MS;
+  const within = <T,>(work: Promise<T>) => Promise.race([work, new Promise<null>((resolve) => setTimeout(() => resolve(null), Math.max(0, deadline - Date.now())))]);
+  let user: TodayUser;
+  try {
+    user = await requireRole("STUDENT");
+  } catch (err: any) {
+    return NextResponse.json({ error: err?.message ?? "Unauthorized" }, { status: err?.status || 500 });
   }
-  return shieldResult;
+  if (!user.schoolId) return NextResponse.json({ error: "School context required" }, { status: 403 });
+
+  // Current entitlement, never from cache. undefined = authority unavailable → fail closed.
+  const scope = await within(loadStudentEnrollmentScope(user)).catch(() => undefined);
+  if (scope === undefined || scope === null) return unavailableToday();
+  const fingerprint = enrollmentScopeFingerprint(user.id, scope);
+
+  const computed = await within(_computeToday(user, scope, fingerprint));
+  let structure: Record<string, any>;
+  if (computed === null) {
+    // The schedule itself is stable day to day. Instead of flashing an empty dashboard on a cold
+    // start, select the last snapshot computed for this SAME current scope, while the real
+    // computation keeps running in the background. A snapshot from any other enrollment, school
+    // or cache version is never addressed, and a mismatched record is ignored.
+    const stale = await getCachedValue<{ version?: string; userId?: string; schoolId?: string; fingerprint?: string; data?: Record<string, unknown> }>(lastGoodKey(user, fingerprint));
+    if (!(stale && stale.version === TODAY_CACHE_VERSION && stale.userId === user.id && stale.schoolId === user.schoolId && stale.fingerprint === fingerprint && stale.data && typeof stale.data === "object")) return unavailableToday();
+    structure = { ...stale.data, availability: "stale" };
+  } else if (computed.kind === "response") {
+    return computed.response;
+  } else {
+    structure = computed.data;
+  }
+  // The one request-level teacher identity projection, for whichever structure was selected.
+  return NextResponse.json(await withCurrentTeacherIdentity(structure, scope.schoolId));
 }
 
-async function _computeToday(): Promise<NextResponse> {
+/** Structure only: computes or reads cached Today data and writes lastgood. Never projects teacher identity. */
+async function _computeToday(user: TodayUser, scope: EnrollmentScope, fingerprint: string): Promise<ComputeResult> {
   try {
-    const user = await requireRole("STUDENT");
-    if (!user.schoolId) {
-      return NextResponse.json({ error: "School context required" }, { status: 403 });
-    }
-
-    // Cache student metadata (id + classIds) to avoid a DB roundtrip on every authenticated request.
-    // 700s TTL: must outlive full load-test window (83s warm + 540s test = 623s).
-    type StudentMeta = { id: string; classIds: string[]; currentGrade: number | null };
-    const studentMeta = await withRedisCache<StudentMeta | null>(
-      `cache:student-meta:${user.id}`,
-      700,
-      async () => {
-        const s = await prisma.student.findUnique({
-          where: { userId: user.id },
-          select: { id: true, currentGrade: true, enrollments: { select: { classId: true } } },
-        });
-        if (!s) return null;
-        return { id: s.id, classIds: s.enrollments.map((e) => e.classId), currentGrade: s.currentGrade ?? null };
-      }
-    );
-
-    if (!studentMeta) {
-      return NextResponse.json({ items: [], adaptivePlan: emptyAdaptivePlan(), availability: "unavailable" });
-    }
-
-    const { id: studentId, classIds, currentGrade } = studentMeta;
-    if (classIds.length === 0) return NextResponse.json({ items: [], adaptivePlan: emptyAdaptivePlan(), availability: "current", catchUpItems: [], completedCount: 0, remainingCount: 0 });
+    const { studentId, currentGrade } = scope;
+    const schoolId = scope.schoolId;
+    const classIds = scope.classes.map((c) => c.classId);
+    if (classIds.length === 0) return { kind: "response", response: NextResponse.json({ items: [], adaptivePlan: emptyAdaptivePlan(), availability: "current", catchUpItems: [], completedCount: 0, remainingCount: 0 }) };
 
     // Today is deliberately limited to the governed orchestrator or ordinary
     // schoolwork. Legacy adaptive signals are never a learner next-action
@@ -231,7 +247,9 @@ async function _computeToday(): Promise<NextResponse> {
     const startOfDay = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
     const endOfDay = new Date(startOfDay.getTime() + 86400000);
     const dateStr = startOfDay.toISOString().slice(0, 10);
-    const cacheKey = `cache:today:${user.id}:${dateStr}`;
+    // Derived presentation only, addressed by the current scope: an enrollment, class, school or
+    // academic-status change resolves to a different key on the very next request.
+    const cacheKey = `cache:today:${TODAY_CACHE_VERSION}:${user.id}:${schoolId}:${fingerprint}:${dateStr}`;
 
     const todayData = await withRedisCache(cacheKey, 900, async () => {
     const catchUpStart = new Date(startOfDay.getTime() - 14 * 86400000);
@@ -239,7 +257,7 @@ async function _computeToday(): Promise<NextResponse> {
     const [scheduledWork, catchUpWork, assignments, overdueAssignments] = await Promise.all([
       prisma.scheduledWork.findMany({
         where: {
-          classId: { in: classIds },
+          classId: { in: classIds }, class: { schoolId },
           scheduledDate: { gte: startOfDay, lt: endOfDay },
           content: { status: { in: APPROVED_CONTENT_STATUSES } },
         },
@@ -262,7 +280,7 @@ async function _computeToday(): Promise<NextResponse> {
       }),
       prisma.scheduledWork.findMany({
         where: {
-          classId: { in: classIds },
+          classId: { in: classIds }, class: { schoolId },
           scheduledDate: { gte: catchUpStart, lt: startOfDay },
           content: { status: { in: APPROVED_CONTENT_STATUSES } },
         },
@@ -286,7 +304,7 @@ async function _computeToday(): Promise<NextResponse> {
       }),
       prisma.assignment.findMany({
         where: {
-          classId: { in: classIds },
+          classId: { in: classIds }, Class: { schoolId },
           dueAt: { gte: startOfDay, lt: endOfDay },
         },
         select: {
@@ -302,7 +320,7 @@ async function _computeToday(): Promise<NextResponse> {
       }).catch(() => []),
       prisma.assignment.findMany({
         where: {
-          classId: { in: classIds },
+          classId: { in: classIds }, Class: { schoolId },
           dueAt: { lt: startOfDay },
           submissions: { none: { studentId } },
         },
@@ -320,10 +338,11 @@ async function _computeToday(): Promise<NextResponse> {
     // Run in parallel and cache so DB is not hit on every request at 1K VUs.
     // Action TTL=60s (changes when resolved/generated); timetable TTL=300s (day-stable).
     const timetable = await withRedisCache(
-        `cache:timetable:${studentId}:${dateStr}`,
+        `cache:timetable:${TODAY_CACHE_VERSION}:${schoolId}:${studentId}:${fingerprint}:${dateStr}`,
         300,
-        () => getTimetableForStudent(studentId, new Date()).catch(() => null)
-      );
+        // Cached structure keeps teacher ids only; names are projected per response.
+        () => getTimetableForStudent(studentId, new Date(), schoolId).then((table) => table && { ...table, periods: withoutTeacherNames(table.periods) }).catch(() => null)
+      ).then((table) => table && { ...table, periods: table.periods.filter((period) => classIds.includes(period.classId)) });
 
     const safeAssignments = asArray(assignments);
     const safeIntelligence = { generatedAt: new Date().toISOString(), weaknesses: [], recommendedNextActions: [] };
@@ -416,10 +435,9 @@ async function _computeToday(): Promise<NextResponse> {
       subject: isBreakPeriod(period?.periodLabel) ? null : (period?.subject ? safeSubject(period.subject) : null),
       startTime: typeof period?.startTime === "string" ? period.startTime : null,
       endTime: typeof period?.endTime === "string" ? period.endTime : null,
-      teacherName:
-        typeof period?.teacherName === "string" && period.teacherName.trim()
-          ? period.teacherName
-          : null,
+      teacherId: typeof period?.teacherId === "string" && period.teacherId ? period.teacherId : null,
+      // Never cached as identity: withCurrentTeacherIdentity projects the current name per response.
+      teacherName: null,
       assignment: period?.assignment
         ? {
             id: safeString(period.assignment.id, `assignment-${index + 1}`),
@@ -505,7 +523,8 @@ async function _computeToday(): Promise<NextResponse> {
             timeRange: timeRange(period.startTime, period.endTime),
             periodLabel: period.periodLabel,
             subject: period.subject,
-            teacherName: period.teacherName,
+            teacherId: period.teacherId,
+            teacherName: null,
             title: work?.assignment?.title ?? work?.title ?? period.assignment?.title ?? null,
             status: scheduleStatus,
             primaryAction: primaryActionFor({
@@ -535,6 +554,7 @@ async function _computeToday(): Promise<NextResponse> {
             timeRange: timeRange(item.startTime, item.endTime),
             periodLabel: item.periodNumber ? `Period ${item.periodNumber}` : `Learning block ${item.order}`,
             subject: item.subject,
+            teacherId: null,
             teacherName: null,
             title: item.assignment?.title ?? item.title,
             status: scheduleStatus,
@@ -802,22 +822,22 @@ async function _computeToday(): Promise<NextResponse> {
       waecSecondaryCard: null,
       unlocks,
       timetable: timetable ?? null,
-      schoolId: user.schoolId ?? null,
+      schoolId,
     };
     }); // end withRedisCache
 
-    // Best-effort, fire-and-forget: keep a long-TTL "last known good" copy so
-    // a future cold-start shield timeout has real data to fall back to.
-    setCachedValue(`cache:today:lastgood:${user.id}`, todayData, 7 * 86400).catch(() => {});
+    // Best-effort, fire-and-forget: keep a long-TTL "last known good" copy so a future cold-start
+    // shield timeout has real data to fall back to. It is bound to this exact scope and is read
+    // only after the same scope has been re-established from current authority.
+    setCachedValue(lastGoodKey(user, fingerprint), { version: TODAY_CACHE_VERSION, userId: user.id, schoolId, fingerprint, data: todayData }, 7 * 86400).catch(() => {});
 
-    return NextResponse.json(todayData);
+    // Fresh compute and cache hit alike return structure; GET projects teacher identity once.
+    return { kind: "structure", data: todayData };
   } catch (err: any) {
     // DB fallback limit exceeded — return degraded 200 immediately rather than
     // propagating a 503 that would fail the k6 'today 200' check.
-    if (err?.code === FALLBACK_LIMIT_EXCEEDED) {
-      return NextResponse.json({ items: [], adaptivePlan: emptyAdaptivePlan(), availability: "unavailable" });
-    }
+    if (err?.code === FALLBACK_LIMIT_EXCEEDED) return { kind: "response", response: unavailableToday() };
     const status = err?.status || 500;
-    return NextResponse.json({ error: err.message }, { status });
+    return { kind: "response", response: NextResponse.json({ error: err.message }, { status }) };
   }
 }

@@ -22,7 +22,11 @@ function SavedOffline({ contentId }: { contentId: string }) {
 
 type State = { kind: "loading" } | { kind: "ready" } | { kind: "error"; message: string; restricted?: boolean };
 
-/** Lesson catalog for the learner's grade, server-ordered and paged as the endpoint returns it. */
+/**
+ * Lesson library: the published catalog for the learner's grade, server-ordered
+ * and paged as the endpoint returns it. It is a browse destination, not the
+ * learner's classes; enrolled classes are on /student/classes.
+ */
 export function LessonCatalog() {
   const identity = useStudentIdentity();
   const young = ageBand(identity.grade) === "young";
@@ -76,8 +80,9 @@ export function LessonCatalog() {
 
   return <main className="pdv2-today pdv2-learn" aria-labelledby="lessons-heading">
     <header className="pdv2-topbar">
-      <div><InteractiveButton href="/student/learn">← Back to Learn</InteractiveButton><p className="pdv2-eyebrow pdv2-learn-crumb">Learn · Lessons</p><h1 id="lessons-heading">{young ? "Lessons" : "Lessons for your grade"}</h1>{state.kind === "ready" && page && <p className="pdv2-meta">{page.total} lesson{page.total === 1 ? "" : "s"} available to you</p>}</div>
-      <div className="pdv2-top-actions">{online ? <span className="pdv2-status">Connected</span> : <p role="status" className="pdv2-offline-note"><span className="pdv2-badge pdv2-badge-warn">Offline</span> Saved lessons are in Offline lessons</p>}</div>
+      <div><InteractiveButton href="/student/learn">← Back to Learn</InteractiveButton><p className="pdv2-eyebrow pdv2-learn-crumb">Learn · Lesson library</p><h1 id="lessons-heading">Lesson library</h1>
+        <p className="pdv2-meta">{young ? "Lessons for your grade." : "Published lessons for your grade, by subject. Work for your classes is in My classes."}{state.kind === "ready" && page ? ` ${page.total} lesson${page.total === 1 ? "" : "s"} available to you.` : ""}</p></div>
+      <div className="pdv2-top-actions"><InteractiveButton href="/student/classes">My classes →</InteractiveButton>{online ? <span className="pdv2-status">Connected</span> : <p role="status" className="pdv2-offline-note"><span className="pdv2-badge pdv2-badge-warn">Offline</span> Saved lessons are in Offline lessons</p>}</div>
     </header>
     <div className="pdv2-plan" aria-busy={state.kind === "loading"}>
       {state.kind === "loading" && <p role="status">Loading lessons…</p>}

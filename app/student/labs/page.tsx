@@ -5,6 +5,7 @@ import { isAiLabsEnabled } from "@/lib/serverFlags";
 import { fromPracticalLab, listLabExperiences } from "@/lib/learner-experience/labExperience";
 import { buildLabsTab, LABS_TAB_SECTIONS, type LabSessionSummary } from "@/lib/learner-experience/labsTab";
 import { LabExperienceCard } from "@/components/learner-experience/LabExperienceCard";
+import { loadAuthorizedPracticalSessions } from "@/lib/student/labEligibility";
 
 export const dynamic = "force-dynamic";
 
@@ -12,7 +13,7 @@ const EMPTY: Record<(typeof LABS_TAB_SECTIONS)[number]["id"], string> = {
   "for-you": "Labs linked to the lessons you are learning will appear here.",
   assigned: "No labs have been assigned yet.",
   continue: "You have no unfinished labs.",
-  library: "No labs available for your grade yet. Check back soon.",
+  library: "No released labs are available for your classes yet.",
   completed: "Labs you finish will appear here.",
 };
 
@@ -26,26 +27,15 @@ export default async function StudentLabsPage({ searchParams }: { searchParams?:
     const user = await requireRole("STUDENT");
     const aiLabsEnabled = isAiLabsEnabled();
 
-    const [student, sessions] = await Promise.all([
+    const [student, authorized] = await Promise.all([
       prisma.student.findUnique({ where: { userId: user.id }, select: { currentGrade: true } }),
-      prisma.labSession.findMany({
-        where: { studentId: user.id, ...(user.schoolId ? { schoolId: user.schoolId } : {}) },
-        orderBy: [{ completedAt: "asc" }, { startedAt: "desc" }],
-        select: { id: true, labId: true, startedAt: true, completedAt: true, scheduledWorkId: true },
-      }),
+      loadAuthorizedPracticalSessions(user),
     ]);
-
-    const labIds = sessions.map((session) => session.labId);
-    const practical = labIds.length
-      ? await prisma.virtualLab.findMany({
-          where: { labId: { in: labIds } },
-          select: { labId: true, title: true, subject: true, estimatedMinutes: true, labType: true },
-        }).catch(() => [])
-      : [];
-
+    const sessions = authorized.map(({ session }) => session);
+    const practical = [...new Map(authorized.map(({ lab }) => [lab.labId, lab])).values()];
     const known = listLabExperiences();
-    const knownIds = new Set(known.map((lab) => lab.labId));
-    const labs = [...known, ...practical.filter((record) => !knownIds.has(record.labId)).map(fromPracticalLab)];
+    const practicalIds = new Set(practical.map((lab) => lab.labId));
+    const labs = [...known.filter((lab) => !practicalIds.has(lab.labId)), ...practical.map(fromPracticalLab)];
     const summaries: LabSessionSummary[] = sessions.map((session) => ({
       sessionId: session.id,
       labId: session.labId,
@@ -110,11 +100,11 @@ export default async function StudentLabsPage({ searchParams }: { searchParams?:
         </main>
       </div>
     );
-  } catch (error: any) {
+  } catch {
     return (
       <main className="ll-dashboard-shell px-4 py-5">
         <div className="mx-auto max-w-3xl">
-          <div className="ll-notice ll-notice-error">{error?.message ?? "Unable to load labs."}</div>
+          <div className="ll-notice ll-notice-error">Unable to load labs.</div>
         </div>
       </main>
     );

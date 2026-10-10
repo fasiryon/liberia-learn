@@ -1,5 +1,6 @@
 import ChemicalReactionLabPage from "@/components/labs/ChemicalReactionLabPage";
 import { requireRole } from "@/lib/auth";
+import { requireCertifiedStudentLab } from "@/lib/student/labRouteCertification";
 import { logLearningEvent } from "@/lib/events/logLearningEvent";
 import { isAiLabsEnabled } from "@/lib/serverFlags";
 import { notFound } from "next/navigation";
@@ -7,6 +8,7 @@ import { notFound } from "next/navigation";
 export default async function ChemicalReactionRoute() {
   if (!isAiLabsEnabled()) notFound();
   const user = await requireRole("STUDENT");
+  requireCertifiedStudentLab("chemical-reaction");
   await logLearningEvent({
     type: "LAB_OPENED",
     labId: "chemical-reaction",
