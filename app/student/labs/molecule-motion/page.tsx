@@ -1,10 +1,12 @@
 import MoleculeMotionLabPage from "@/components/labs/MoleculeMotionLabPage";
 import { requireRole } from "@/lib/auth";
+import { requireCertifiedStudentLab } from "@/lib/student/labRouteCertification";
 import { logLearningEvent } from "@/lib/events/logLearningEvent";
 import { isAiLabsEnabled } from "@/lib/serverFlags";
 
 export default async function StudentMoleculeMotionPage() {
   const user = await requireRole("STUDENT");
+  requireCertifiedStudentLab("molecule-motion");
 
   if (!isAiLabsEnabled()) {
     return (

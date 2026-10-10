@@ -11,6 +11,10 @@ vi.mock("@/lib/audit", () => ({ logAudit: mockAudit }));
 vi.mock("@/lib/serverFlags", () => ({ isVirtualLabsEnabled: () => true }));
 vi.mock("@/lib/offline/offlineQueue", () => ({ enqueue: mockEnqueue }));
 vi.mock("@/lib/db", () => ({ prisma: { labSession: { findUnique: mockFind, update: mockUpdate } } }));
+vi.mock("@/lib/student/labEligibility", async () => {
+  const actual = await vi.importActual<typeof import("@/lib/student/labEligibility")>("@/lib/student/labEligibility");
+  return { ...actual, loadAuthorizedPracticalSessions: vi.fn(async () => [{ session: { id: "session-a" } }]) };
+});
 
 import { PATCH } from "@/app/api/student/labs/sessions/[sessionId]/route";
 

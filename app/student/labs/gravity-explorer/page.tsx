@@ -1,10 +1,12 @@
 import GravityLabPage from "@/components/labs/GravityLabPage";
 import { requireRole } from "@/lib/auth";
+import { requireCertifiedStudentLab } from "@/lib/student/labRouteCertification";
 import { logLearningEvent } from "@/lib/events/logLearningEvent";
 import { isAiLabsEnabled } from "@/lib/serverFlags";
 
 export default async function StudentGravityExplorerPage() {
   const user = await requireRole("STUDENT");
+  requireCertifiedStudentLab("gravity-explorer");
 
   if (!isAiLabsEnabled()) {
     return (

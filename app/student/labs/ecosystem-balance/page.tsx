@@ -1,10 +1,12 @@
 import EcosystemBalanceLabPage from "@/components/labs/EcosystemBalanceLabPage";
 import { requireRole } from "@/lib/auth";
+import { requireCertifiedStudentLab } from "@/lib/student/labRouteCertification";
 import { logLearningEvent } from "@/lib/events/logLearningEvent";
 import { isAiLabsEnabled } from "@/lib/serverFlags";
 
 export default async function StudentEcosystemBalanceLabPage() {
   const user = await requireRole("STUDENT");
+  requireCertifiedStudentLab("ecosystem-balance");
 
   if (!isAiLabsEnabled()) {
     return (

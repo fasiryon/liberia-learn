@@ -34,20 +34,20 @@ describe("unified Lab Experience contract", () => {
 describe("Labs tab", () => {
   const labs = [...listLabExperiences(), practical];
 
-  it("shows legacy and interactive labs through one presentation contract, never unreleased ones", () => {
+  it("hides uncertified legacy and unreleased interactive labs", () => {
     const tab = buildLabsTab({ labs, sessions: [], pathLinks: [], grade: 8 });
     const ids = tab.library.map((entry) => entry.lab.labId);
-    expect(ids).toContain("human-heart");
+    expect(ids).not.toContain("human-heart");
     expect(ids).not.toContain("mount-coffee-hydropower");
     expect(ids).not.toContain("g4-solid-figures");
     expect(ids).not.toContain("lab-sci-1");
   });
 
-  it("an interactive lab appears in the same library once it is released", () => {
+  it("a release flag alone does not certify an interactive runtime", () => {
     const hydro = findLabExperience("mount-coffee-hydropower")!;
     const released = { ...hydro, release: { ...hydro.release, status: "RELEASED" as const } };
     const tab = buildLabsTab({ labs: [released, findLabExperience("human-heart")!], sessions: [], pathLinks: [], grade: 8 });
-    expect(tab.library.map((entry) => [entry.lab.labId, entry.lab.runtime.kind])).toEqual([["mount-coffee-hydropower", "INTERACTIVE_V2"], ["human-heart", "LEGACY_SIMULATION"]]);
+    expect(tab.library).toEqual([]);
   });
 
   it("splits sessions into Assigned, Continue and Completed", () => {
@@ -61,7 +61,7 @@ describe("Labs tab", () => {
     });
     expect(tab.assigned.map((entry) => entry.session?.sessionId)).toEqual(["s1"]);
     expect(tab.continue.map((entry) => entry.session?.sessionId)).toEqual(["s1"]);
-    expect(tab.completed.map((entry) => entry.session?.sessionId)).toEqual(["s2"]);
+    expect(tab.completed).toEqual([]);
   });
 
   it("For You only uses approved governed links; prototype links never reach students", () => {

@@ -9,7 +9,7 @@
  * be shown to real students.
  */
 import type { LessonExperience } from "./types";
-import type { LabExperience } from "./labExperience";
+import { isCertifiedStudentLab, type LabExperience } from "./labExperience";
 
 export const LEARNING_EXPERIENCE_LINK_VERSION = "learning-experience-link/1.0.0" as const;
 
@@ -63,5 +63,5 @@ export function validateExperienceLink(link: LearningExperienceLink, lesson: Les
  * candidate, draft lab, unreleased lesson) is internal-only.
  */
 export function isLinkStudentVisible(link: LearningExperienceLink, lesson: LessonExperience, lab: LabExperience): boolean {
-  return link.status === "APPROVED" && lesson.authority.status === "APPROVED_RELEASE" && lab.release.status === "RELEASED";
+  return link.status === "APPROVED" && lesson.authority.status === "APPROVED_RELEASE" && isCertifiedStudentLab(lab);
 }

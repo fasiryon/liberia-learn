@@ -5,6 +5,7 @@ import { prisma } from "@/lib/db";
 import { logAudit } from "@/lib/audit";
 import { isVirtualLabsEnabled } from "@/lib/serverFlags";
 import { enqueue } from "@/lib/offline/offlineQueue";
+import { loadAuthorizedPracticalSessions, studentSessionSummary } from "@/lib/student/labEligibility";
 
 export const dynamic = "force-dynamic";
 
@@ -27,6 +28,9 @@ export async function PATCH(
     }
     if (session.studentId !== user.id || session.schoolId !== user.schoolId) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+    if (!(await loadAuthorizedPracticalSessions(user, { sessionId })).length) {
+      return NextResponse.json({ error: "Lab unavailable" }, { status: 404 });
     }
 
     const body = await req.json();
@@ -68,13 +72,13 @@ export async function PATCH(
     }
 
     return NextResponse.json({
-      session: updated,
+      session: studentSessionSummary(updated),
       evidenceStatus: isCompleting ? "PROVISIONAL" : "RAW_OBSERVATION",
       masteryUpdated: false,
     });
   } catch (err: any) {
     return NextResponse.json(
-      { error: err?.message ?? "Failed to update session" },
+      { error: "Unable to update lab session" },
       { status: err?.status ?? 500 }
     );
   }

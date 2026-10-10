@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { requireRole } from "@/lib/auth";
-import { prisma } from "@/lib/db";
+import { loadAuthorizedPracticalSessions } from "@/lib/student/labEligibility";
 import { LabSessionClient } from "@/app/student/labs/LabSessionClient";
 import { projectStudentLabPayload } from "@/lib/curriculum/studentLessonProjection";
 import { InteractiveLabPlayer } from "@/components/interactive-labs/v2/InteractiveLabPlayer";
@@ -12,8 +12,10 @@ export const dynamic = "force-dynamic";
 
 export default async function StudentLabDetailPage({
   params,
+  searchParams,
 }: {
   params: { labId: string };
+  searchParams?: { session?: string };
 }) {
   try {
     const user = await requireRole("STUDENT");
@@ -36,17 +38,8 @@ export default async function StudentLabDetailPage({
       );
     }
 
-    const session = await prisma.labSession.findFirst({
-      where: {
-        labId: params.labId,
-        studentId: user.id,
-        schoolId: user.schoolId ?? undefined,
-      },
-      select: {
-        id: true,
-        completedAt: true,
-      },
-    });
+    const [authorized] = await loadAuthorizedPracticalSessions(user, { labId: params.labId, sessionId: searchParams?.session });
+    const session = authorized?.session;
 
     if (!session) {
       return (
@@ -58,15 +51,7 @@ export default async function StudentLabDetailPage({
       );
     }
 
-    const lab = await prisma.virtualLab.findUnique({
-      where: { labId: params.labId },
-      select: {
-        labId: true,
-        title: true,
-        estimatedMinutes: true,
-        payload: true,
-      },
-    });
+    const lab = authorized?.lab;
 
     if (!lab) {
       return (
@@ -98,11 +83,11 @@ export default async function StudentLabDetailPage({
         </div>
       </main>
     );
-  } catch (error: any) {
+  } catch {
     return (
       <main className="min-h-screen bg-[var(--ll-bg)] px-4 py-8 text-[var(--ll-text)]">
         <div className="mx-auto max-w-3xl rounded-xl border border-red-500/20 bg-red-500/10 p-6 text-sm text-red-200">
-          {error?.message ?? "Unable to load the lab."}
+          Unable to load the lab.
         </div>
       </main>
     );

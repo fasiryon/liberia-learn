@@ -10,6 +10,7 @@ const notFound = vi.hoisted(() => vi.fn(() => { throw new Error("NOT_FOUND"); })
 vi.mock("next/navigation", () => ({ redirect, notFound, useRouter: () => ({ push: vi.fn() }) }));
 vi.mock("@/lib/auth", () => ({ requireRole: vi.fn(async () => ({ id: "user-a", role: "STUDENT", schoolId: "school-a" })) }));
 vi.mock("@/lib/db", () => ({ prisma: { labSession: { findFirst: vi.fn(async () => null) }, virtualLab: { findUnique: vi.fn(async () => null) } } }));
+vi.mock("@/lib/student/labEligibility", () => ({ loadAuthorizedPracticalSessions: vi.fn(async () => []) }));
 
 import InteractiveLabRedirect from "@/app/student/interactive-labs/[labId]/page";
 import StudentLabDetailPage from "@/app/student/labs/[labId]/page";

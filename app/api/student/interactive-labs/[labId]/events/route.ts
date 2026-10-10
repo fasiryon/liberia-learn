@@ -8,11 +8,14 @@ import { buildLabEvidence } from "@/lib/interactive-labs/v2/evidence";
 import { validateGovernedEvidence } from "@/lib/learning-evidence/evidenceContract";
 import { adaptLabEvidence } from "@/lib/interactive-labs/v2/governance";
 import { isEvidenceBearingAction } from "@/lib/interactive-labs/v2/fidelity/boundary";
+import { fromInteractiveLab, isCertifiedStudentLab } from "@/lib/learner-experience/labExperience";
 
 export const dynamic = "force-dynamic";
 export async function POST(req: NextRequest, { params }: { params: { labId: string } }) {
   try {
     const user = await requireRole("STUDENT"); const definition = getInteractiveLabDefinition(params.labId); if (!definition) return NextResponse.json({ error: "unknown_lab" }, { status: 404 });
+    // Student-provided PREVIEW must never bypass release/certification. Internal review has its own harness.
+    if (!user.schoolId || !isCertifiedStudentLab(fromInteractiveLab(definition))) return NextResponse.json({ error: "lab_unavailable" }, { status: 404 });
     const body = await req.json(); const preview = body?.mode === "PREVIEW"; if ((definition.reviewState !== "APPROVED" || definition.approvalState !== "APPROVED") && !preview) return NextResponse.json({ error: "lab_not_governed" }, { status: 409 });
     const sessionId = typeof body?.sessionId === "string" ? body.sessionId : ""; if (!sessionId) return NextResponse.json({ error: "session_required" }, { status: 400 });
     const session = await prisma.labSession.findFirst({ where: { id: sessionId, labId: params.labId, studentId: user.id, schoolId: user.schoolId ?? "" } }); if (!session) return NextResponse.json({ error: "session_scope_invalid" }, { status: 403 });
@@ -30,5 +33,5 @@ export async function POST(req: NextRequest, { params }: { params: { labId: stri
     if (!prior) await prisma.labSession.update({ where: { id: sessionId }, data: { aiAnalysis: { ...priorAnalysis, interactiveLabEvidence: [...priorEvidence, JSON.parse(JSON.stringify(evidence))] } } });
     const adaptation = adaptLabEvidence({ definition, check, evidence });
     return NextResponse.json({ ok: true, state: nextState, evidence: adaptation.governedEvidence, evidenceDisposition: preview ? "RAW_OBSERVATION" : adaptation.disposition, mastery: "not_mutated", reason: adaptation.reason });
-  } catch (error) { return NextResponse.json({ error: error instanceof Error ? error.message : "interactive_lab_event_failed" }, { status: 500 }); }
+  } catch (error) { return NextResponse.json({ error: "interactive_lab_event_failed" }, { status: (error as { status?: number })?.status ?? 500 }); }
 }

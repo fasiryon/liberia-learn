@@ -21,6 +21,15 @@
  */
 
 import { beforeEach, describe, expect, it, vi } from "vitest";
+
+// These tests exercise auditing/offline effects after eligibility; the shared guard has dedicated authorization tests.
+vi.mock("@/lib/student/labEligibility", async () => {
+  const actual = await vi.importActual<typeof import("@/lib/student/labEligibility")>("@/lib/student/labEligibility");
+  return { ...actual, loadAuthorizedPracticalSessions: async (_user: unknown, filter: { sessionId?: string; labId?: string }) => {
+    const session = await mockLabSessionFindUnique({ where: { id: filter.sessionId } });
+    return session ? [{ session }] : [];
+  } };
+});
 import { NextRequest } from "next/server";
 
 // ─── Hoisted mocks ────────────────────────────────────────────────────────────

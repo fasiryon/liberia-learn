@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 // route-policy: auth=session; scope=tenant; authority=student-membership; rationale=offline operations are rebound to the authenticated learner and school
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { loadAuthorizedPracticalSessions, studentSessionSummary } from "@/lib/student/labEligibility";
 import { logAudit } from "@/lib/audit";
 import { resolveAttendance, resolveSubmission } from "@/lib/offline-sync/policies";
 import { recordMetricEvent } from "@/lib/metrics/events";
@@ -872,8 +873,13 @@ export async function POST(req: NextRequest) {
             results.push({ opId: opKey, entity, status: "rejected", resolutionHint: "lab_session_tenant_mismatch" });
             continue;
           }
+          if (!(await loadAuthorizedPracticalSessions(user, { sessionId })).length) {
+            skipped++;
+            results.push({ opId: opKey, entity, status: "rejected", resolutionHint: "lab_session_unavailable" });
+            continue;
+          }
           if (session.completedAt && payload?.completedAt) {
-            results.push({ status: "conflict", opId: opKey, entity, serverState: session, clientState: payload, resolutionHint: "completed_lab_session_requires_review" });
+            results.push({ status: "conflict", opId: opKey, entity, serverState: studentSessionSummary(session), clientState: payload, resolutionHint: "completed_lab_session_requires_review" });
             continue;
           }
           const provisionalScore = payload?.score;
