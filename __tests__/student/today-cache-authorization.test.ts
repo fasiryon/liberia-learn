@@ -306,3 +306,81 @@ describe("Teacher identity revalidation: cached structure, current identity", ()
     }
   });
 });
+
+describe("One request-level teacher lookup (select structure first, rehydrate identity once)", () => {
+  const lookups = async (run: () => Promise<any>) => { const before = mocks.teachers.mock.calls.length; const body = await run(); return { body, count: mocks.teachers.mock.calls.length - before }; };
+  const names = (body: any) => [...(body.timetable?.periods ?? []), ...(body.schoolDay?.items ?? [])].map((row: any) => row.teacherName);
+  const expireOuter = () => { for (const key of [...store.map.keys()]) if (!key.startsWith("cache:today:lastgood:")) store.map.delete(key); };
+  const withClock = async (steps: number[]) => {
+    vi.useFakeTimers({ toFake: ["setTimeout"] });
+    const pending = GET();
+    for (const ms of steps) await vi.advanceTimersByTimeAsync(ms);
+    return (await pending).json();
+  };
+  it("A: fresh compute with teachers: 1", async () => {
+    const { body, count } = await lookups(call);
+    expect(count).toBe(1);
+    expect(names(body)).toEqual(["TEACHER-A", "TEACHER-A"]);
+  });
+  it("B: outer cache hit with teachers: 1", async () => {
+    await call();
+    const reads = mocks.work.mock.calls.length;
+    const { count } = await lookups(call);
+    expect(mocks.work.mock.calls.length).toBe(reads);
+    expect(count).toBe(1);
+  });
+  it("C: same-scope lastgood with teachers: 1", async () => {
+    await call(); expireOuter();
+    mocks.work.mockImplementation(() => new Promise(() => {}));
+    const { body, count } = await lookups(() => withClock([8_001]));
+    expect(body.availability).toBe("stale");
+    expect(count).toBe(1);
+    expect(names(body)).toEqual(["TEACHER-A", "TEACHER-A"]);
+  });
+  it("D: no teachers (or no classes): 0", async () => {
+    state.classes = [{ id: "class-a", schoolId: "school-a", teacherId: null }];
+    expect((await lookups(call)).count).toBe(0);
+    state.classes = [];
+    expect((await lookups(call)).count).toBe(0);
+  });
+  it("E: Codex shield boundary: compute delayed ~7.2s and the lookup hangs: 1 attempt, names null", async () => {
+    await call(); expireOuter();
+    const realWork = mocks.work.getMockImplementation()!;
+    mocks.work.mockImplementation((args: any) => new Promise((resolve) => setTimeout(() => resolve(realWork(args)), 7_200)));
+    mocks.teachers.mockImplementation(() => new Promise(() => {}));
+    const { body, count } = await lookups(() => withClock([7_200, 800, 1_500]));
+    expect(count).toBe(1);
+    expect(text(body)).toContain("LESSON-class-a");
+    expect(names(body)).toEqual([null, null]);
+  });
+  it("E2: compute loses the shield, lastgood selected, the lookup hangs: still exactly 1 attempt", async () => {
+    await call(); expireOuter();
+    mocks.work.mockImplementation(() => new Promise(() => {}));
+    mocks.teachers.mockImplementation(() => new Promise(() => {}));
+    const { body, count } = await lookups(() => withClock([8_001, 1_500]));
+    expect(body.availability).toBe("stale");
+    expect(count).toBe(1);
+    expect(names(body)).toEqual([null, null]);
+  });
+  it("F: lookup fails: 1 attempted, structure returned with null names", async () => {
+    mocks.teachers.mockRejectedValueOnce(new Error("database down"));
+    const { body, count } = await lookups(call);
+    expect(count).toBe(1);
+    expect(text(body)).toContain("LESSON-class-a");
+    expect(names(body)).toEqual([null, null]);
+  });
+  it("G: multiple teachers: 1 bulk lookup", async () => {
+    state.classes = [...state.classes, { id: "class-x", schoolId: "school-a", teacherId: "t-x" }];
+    state.teachers["t-x"] = { name: "TEACHER-X", schoolId: "school-a" };
+    const { count } = await lookups(call);
+    expect(count).toBe(1);
+    expect(mocks.teachers.mock.calls.at(-1)![0].where.id.in.sort()).toEqual(["t-a", "t-x"]);
+  });
+  it("H: teacher moves school: 1 lookup and the name is removed", async () => {
+    await call();
+    state.teachers["t-a"].schoolId = "school-b";
+    const { body, count } = await lookups(call);
+    expect(count).toBe(1);
+    expect(names(body)).toEqual([null, null]);
+  });
+});

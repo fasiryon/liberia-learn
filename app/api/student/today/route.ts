@@ -175,6 +175,8 @@ const SHIELD_MS = 8000;
 type TodayUser = Awaited<ReturnType<typeof requireRole>>;
 type EnrollmentScope = NonNullable<Awaited<ReturnType<typeof loadStudentEnrollmentScope>>>;
 const unavailableToday = () => NextResponse.json({ items: [], adaptivePlan: emptyAdaptivePlan(), availability: "unavailable" });
+/** Structural Today data (teacher ids, no names), or a finished response that carries no Today data. */
+type ComputeResult = { kind: "structure"; data: Record<string, any> } | { kind: "response"; response: NextResponse };
 const lastGoodKey = (user: TodayUser, fingerprint: string) => `cache:today:lastgood:${TODAY_CACHE_VERSION}:${user.id}:${user.schoolId}:${fingerprint}`;
 
 /**
@@ -183,6 +185,12 @@ const lastGoodKey = (user: TodayUser, fingerprint: string) => `cache:today:lastg
  * own-school roster), then serves only data addressed by that exact scope. If that authority
  * cannot be read within the shield, the response fails closed as unavailable; no cached
  * payload is replayed without it.
+ *
+ * Select structure first, rehydrate identity once: the structural payload is either the fresh or
+ * cached compute, or (if that loses the 8s shield) the same-scope lastgood. Only after that choice
+ * is teacher identity projected, in exactly one bounded bulk lookup (0 when no teacher ids, at
+ * most 1.5s, names null on failure). A shield timeout can therefore extend the response by at
+ * most that identity budget; no path runs a second lookup.
  */
 export async function GET() {
   // Shield: cap the entire handler at 8000ms so pgbouncer-congested responses
@@ -202,28 +210,32 @@ export async function GET() {
   if (scope === undefined || scope === null) return unavailableToday();
   const fingerprint = enrollmentScopeFingerprint(user.id, scope);
 
-  const shieldResult = await within(_computeToday(user, scope, fingerprint));
-  if (shieldResult === null) {
+  const computed = await within(_computeToday(user, scope, fingerprint));
+  let structure: Record<string, any>;
+  if (computed === null) {
     // The schedule itself is stable day to day. Instead of flashing an empty dashboard on a cold
-    // start, serve the last snapshot computed for this SAME current scope, while the real
+    // start, select the last snapshot computed for this SAME current scope, while the real
     // computation keeps running in the background. A snapshot from any other enrollment, school
     // or cache version is never addressed, and a mismatched record is ignored.
     const stale = await getCachedValue<{ version?: string; userId?: string; schoolId?: string; fingerprint?: string; data?: Record<string, unknown> }>(lastGoodKey(user, fingerprint));
-    if (stale && stale.version === TODAY_CACHE_VERSION && stale.userId === user.id && stale.schoolId === user.schoolId && stale.fingerprint === fingerprint && stale.data && typeof stale.data === "object") {
-      // Same structure, but teacher identity is re-checked now: a teacher who moved school is not shown.
-      return NextResponse.json({ ...(await withCurrentTeacherIdentity(stale.data as Parameters<typeof withCurrentTeacherIdentity>[0], scope.schoolId)), availability: "stale" });
-    }
-    return unavailableToday();
+    if (!(stale && stale.version === TODAY_CACHE_VERSION && stale.userId === user.id && stale.schoolId === user.schoolId && stale.fingerprint === fingerprint && stale.data && typeof stale.data === "object")) return unavailableToday();
+    structure = { ...stale.data, availability: "stale" };
+  } else if (computed.kind === "response") {
+    return computed.response;
+  } else {
+    structure = computed.data;
   }
-  return shieldResult;
+  // The one request-level teacher identity projection, for whichever structure was selected.
+  return NextResponse.json(await withCurrentTeacherIdentity(structure, scope.schoolId));
 }
 
-async function _computeToday(user: TodayUser, scope: EnrollmentScope, fingerprint: string): Promise<NextResponse> {
+/** Structure only: computes or reads cached Today data and writes lastgood. Never projects teacher identity. */
+async function _computeToday(user: TodayUser, scope: EnrollmentScope, fingerprint: string): Promise<ComputeResult> {
   try {
     const { studentId, currentGrade } = scope;
     const schoolId = scope.schoolId;
     const classIds = scope.classes.map((c) => c.classId);
-    if (classIds.length === 0) return NextResponse.json({ items: [], adaptivePlan: emptyAdaptivePlan(), availability: "current", catchUpItems: [], completedCount: 0, remainingCount: 0 });
+    if (classIds.length === 0) return { kind: "response", response: NextResponse.json({ items: [], adaptivePlan: emptyAdaptivePlan(), availability: "current", catchUpItems: [], completedCount: 0, remainingCount: 0 }) };
 
     // Today is deliberately limited to the governed orchestrator or ordinary
     // schoolwork. Legacy adaptive signals are never a learner next-action
@@ -819,13 +831,13 @@ async function _computeToday(user: TodayUser, scope: EnrollmentScope, fingerprin
     // only after the same scope has been re-established from current authority.
     setCachedValue(lastGoodKey(user, fingerprint), { version: TODAY_CACHE_VERSION, userId: user.id, schoolId, fingerprint, data: todayData }, 7 * 86400).catch(() => {});
 
-    // Fresh compute and cache hit alike: teacher identity comes from current authority, never the cache.
-    return NextResponse.json(await withCurrentTeacherIdentity(todayData, schoolId));
+    // Fresh compute and cache hit alike return structure; GET projects teacher identity once.
+    return { kind: "structure", data: todayData };
   } catch (err: any) {
     // DB fallback limit exceeded — return degraded 200 immediately rather than
     // propagating a 503 that would fail the k6 'today 200' check.
-    if (err?.code === FALLBACK_LIMIT_EXCEEDED) return unavailableToday();
+    if (err?.code === FALLBACK_LIMIT_EXCEEDED) return { kind: "response", response: unavailableToday() };
     const status = err?.status || 500;
-    return NextResponse.json({ error: err.message }, { status });
+    return { kind: "response", response: NextResponse.json({ error: err.message }, { status }) };
   }
 }
