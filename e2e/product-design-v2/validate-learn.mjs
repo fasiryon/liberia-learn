@@ -124,6 +124,30 @@ await page.goto(`${base}/student/learn?grade=6`);
 await page.locator(".pdv2-rail-support").getByRole("link", { name: "Sign out" }).click();
 assert.equal(new URL(page.url()).pathname, "/signout");
 
+// Both age bands at every required width, with the platform font and with a wide fallback font
+// (Verdana where installed) that reproduces Linux CI metrics; offending elements are named on failure.
+const WIDE_FONT = "*{font-family:Verdana,'DejaVu Sans',sans-serif !important}";
+evidence.bands = [];
+for (const route of ["/student/today", "/student/learn"]) for (const grade of [2, 6]) for (const width of [320, 360, 390, 768, 1440, 1920]) for (const wide of [false, true]) {
+  await page.setViewportSize({ width, height: width >= 1440 ? 900 : 844 });
+  await page.goto(`${base}${route}?grade=${grade}`);
+  await page.locator(route === "/student/today" ? ".pdv2-hero .pdv2-action-primary" : ".pdv2-learn-option").first().waitFor();
+  if (wide) await page.addStyleTag({ content: WIDE_FONT });
+  const offenders = await page.evaluate(() => [...document.querySelectorAll("body *")].filter((el) => { const r = el.getBoundingClientRect(); return r.width > 0 && r.right > document.documentElement.clientWidth + 0.5; }).map((el) => el.tagName.toLowerCase() + "." + String(el.className).trim().split(/\s+/).join(".")).slice(0, 6));
+  assert.equal(await overflow(), false, `${route} ${grade}/${width}${wide ? " wide font" : ""} overflows: ${offenders.join(", ")}`);
+  const nav = page.locator("nav[aria-label=Student] a"); assert.equal(await nav.count(), 5);
+  const primary = await page.locator(route === "/student/today" ? ".pdv2-hero .pdv2-action-primary" : ".pdv2-learn-option").first().boundingBox();
+  assert(primary.height >= (grade === 2 ? 56 : 48), `${route} ${grade}/${width} target ${primary.height}`);
+  if (width < 768) { const menu = await page.locator(".pdv2-account-menu summary").boundingBox(); assert(menu && menu.height >= 44 && menu.x + menu.width <= width, `${route} ${grade}/${width} account menu`); }
+  else assert(await page.locator(".pdv2-rail-support").getByRole("link", { name: "Sign out", exact: true }).isVisible());
+  if (route === "/student/today" && width <= 390) {
+    const due = await page.getByRole("link", { name: /^Open due work:/ }).boundingBox(); const navBox = await page.locator(".pdv2-nav").boundingBox();
+    assert(due.y + due.height <= navBox.y, `today ${grade}/${width}${wide ? " wide font" : ""}: critical due CTA below the first viewport`);
+  }
+  if (wide && width === 320) await page.screenshot({ path: `${out}/wide-font-${route.split("/").pop()}-g${grade}-320.png`, fullPage: true });
+  evidence.bands.push({ route, grade, width, wideFont: wide, overflow: false, primaryTarget: Math.round(primary.height) });
+}
+
 // D. Learn composition across bands and widths.
 for (const grade of [2, 6]) for (const width of [320, 360, 390, 768, 1440]) {
   await page.setViewportSize({ width, height: width === 1440 ? 900 : 844 });
@@ -215,9 +239,20 @@ mode = "ready"; await page.goto(`${base}/student/learn?grade=6`); await page.loc
 mode = "offline";
 await page.evaluate(() => { Object.defineProperty(navigator, "onLine", { configurable: true, value: false }); dispatchEvent(new Event("offline")); });
 await page.getByRole("button", { name: "Refresh" }).click();
-await page.getByText("Your assignments could not refresh. These may have changed.").waitFor();
+await page.getByText("Your assignments could not be checked just now. These are from the last check and may have changed.").waitFor();
 await page.getByText("Lists show what was last loaded").waitFor();
 await page.screenshot({ path: `${out}/state-stale-offline-390.png`, fullPage: true });
+// Stale empty (gate P1): a confirmed-empty snapshot followed by a 503 refresh must not keep claiming emptiness.
+mode = "empty"; await page.goto(`${base}/student/learn?grade=6`); await page.getByText("No assignments right now.").waitFor();
+mode = "error"; await page.getByRole("button", { name: "Refresh" }).click();
+await page.getByText("When last checked, you had no assignments.", { exact: false }).waitFor();
+for (const claim of ["No assignments right now.", "No units are scheduled for your class this week.", "No checks are open for you right now."]) assert.equal(await page.getByText(claim).count(), 0, `stale empty still claims: ${claim}`);
+await page.screenshot({ path: `${out}/state-stale-empty-390.png`, fullPage: true });
+mode = "empty"; await page.getByRole("button", { name: "Refresh" }).click();
+await page.getByText("No assignments right now.").waitFor();
+assert.equal(await page.getByText("Last checked earlier").count(), 0, "stale warning survived recovery");
+evidence.states.push("stale-empty", "stale-empty-recovered");
+mode = "offline";
 await page.goto(`${base}/student/learn?grade=6`);
 await page.getByText("Last saved · read-only").waitFor();
 assert(await page.getByRole("button", { name: "Submit answer" }).isDisabled());
@@ -254,4 +289,4 @@ evidence.a11y.axe = axeRuns;
 await fs.writeFile(`${out}/learn-results.json`, JSON.stringify({ ...evidence, errors, caveat: "Production components in an explicit fixture harness with mocked authorized APIs. Server authorization, real devices, screen readers and user studies are not certified here." }, null, 2));
 assert.deepEqual(errors, []);
 await browser.close();
-console.log(`Learn/shell fixtures passed: ${evidence.shell.length} wide-shell layouts, ${evidence.learn.length} Learn layouts, states ${evidence.states.join("/")}, keyboard/forced-colors/reduced-motion/zoom, zero serious/critical axe issues.`);
+console.log(`Learn/shell fixtures passed: ${evidence.shell.length} wide-shell layouts, ${evidence.bands.length} band/width/font layouts, ${evidence.learn.length} Learn layouts, states ${evidence.states.join("/")}, keyboard/forced-colors/reduced-motion/zoom, zero serious/critical axe issues.`);

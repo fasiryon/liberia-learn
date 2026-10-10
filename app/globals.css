@@ -541,3 +541,14 @@ a:focus-visible,
 .pdv2-account-menu > div { position: absolute; right: 0; top: calc(100% + 8px); z-index: 40; display: grid; gap: 8px; min-width: 200px; padding: 12px; background: var(--ll-surface); border: 1px solid var(--pdv2-control-border); border-radius: 12px; box-shadow: 0 8px 24px #000; }
 @media (min-width:768px) { .pdv2-account-menu { display: none; } }
 @media (forced-colors:active) { .pdv2-account-menu > summary, .pdv2-account-menu > div { border: 2px solid ButtonText; } }
+/* Phone top bar: the Account menu may wrap below the brand instead of overflowing (young band, wide fonts). */
+.pdv2-account-menu:not([open]) > div { display: none; }
+@media (max-width:767px) {
+  .pdv2-rail { flex-wrap: wrap; row-gap: 8px; }
+  .pdv2-brand { min-width: 0; overflow-wrap: anywhere; }
+}
+@media (max-width:767px) {
+  .pdv2-rail .pdv2-brand { font-size: 16px; gap: 8px; }
+  .pdv2-shell .pdv2-account-menu > summary { font-size: 16px; padding: 8px 12px; }
+  .pdv2-account-menu > summary::after { margin-left: 6px; }
+}

@@ -191,7 +191,7 @@ describe("Learn V2 composition", () => {
     await render(<LearnV2 />);
     replies["/api/student/learn"] = { reject: true };
     await act(async () => { button("Refresh").click(); }); await settle();
-    expect(text()).toContain("Your assignments could not refresh. These may have changed.");
+    expect(text()).toContain("Your assignments could not be checked just now. These are from the last check and may have changed.");
     expect(host.querySelector("a[aria-label='Open assignment: Reading for meaning']")).not.toBeNull();
     replies["/api/student/learn"] = { status: 403, body: {} };
     await act(async () => { button("Refresh").click(); }); await settle();
@@ -232,6 +232,93 @@ describe("Learn V2 composition", () => {
   it("adds no search control while search is deferred", async () => {
     await render(<LearnV2 />);
     expect(host.querySelector("input[type=search], [role=search]")).toBeNull();
+  });
+});
+
+describe("Learn V2 stale snapshots (cross-builder gate P1)", () => {
+  const emptySnapshot = () => discovery({ availability: "empty", lessons: { availability: "empty", total: 0, items: [] },
+    activeUnits: { availability: "empty", eligibility: "eligible", items: [] }, assignedWork: { availability: "empty", items: [] },
+    checks: { availability: "empty", total: 0, items: [] }, resources: { availability: "empty", items: [], destinations: [{ title: "Textbooks", href: "/student/textbooks" }], compiledBooks: "deferred" } });
+  const CONFIRMED_EMPTY = /No units are scheduled|No lessons are published|No assignments right now|No checks are open|No readings are published|You are not enrolled in a class yet/;
+  const refresh = async () => { await act(async () => { button("Refresh").click(); }); await settle(); };
+  const setOnline = (value: boolean) => act(() => { Object.defineProperty(navigator, "onLine", { configurable: true, get: () => value }); window.dispatchEvent(new Event(value ? "online" : "offline")); });
+  afterEach(() => { Object.defineProperty(navigator, "onLine", { configurable: true, get: () => true }); });
+  const expectEmptyIsHistory = () => {
+    expect(text()).not.toMatch(CONFIRMED_EMPTY);
+    for (const what of ["units", "lessons", "assignments", "checks", "readings"]) expect(text()).toContain(`When last checked, you had no ${what}. Your current ${what} could not be checked`);
+    expect(text()).toContain("Last checked earlier");
+  };
+
+  it("1. current empty snapshot then 503 refresh: empty is history, not a current fact", async () => {
+    replies["/api/student/learn"] = { body: emptySnapshot() };
+    await render(<LearnV2 />);
+    expect(text()).toContain("No assignments right now.");
+    replies["/api/student/learn"] = { status: 503, body: discovery({ availability: "unavailable" }) };
+    await refresh();
+    expectEmptyIsHistory();
+  });
+  it("2. current empty snapshot then network failure/timeout", async () => {
+    replies["/api/student/learn"] = { body: emptySnapshot() };
+    await render(<LearnV2 />);
+    replies["/api/student/learn"] = { reject: true };
+    await refresh();
+    expectEmptyIsHistory();
+  });
+  it("3. current empty snapshot then going offline (with and without a failed refresh)", async () => {
+    replies["/api/student/learn"] = { body: emptySnapshot() };
+    await render(<LearnV2 />);
+    await setOnline(false);
+    expectEmptyIsHistory();
+    replies["/api/student/learn"] = { reject: true };
+    await refresh();
+    expectEmptyIsHistory();
+    expect(text()).toContain("Lists show what was last loaded");
+  });
+  it("4. not-enrolled snapshot then transient failure", async () => {
+    replies["/api/student/learn"] = { body: discovery({ subjects: [], subjectCompletion: [], activeUnits: { availability: "empty", eligibility: "not_enrolled", items: [] } }) };
+    await render(<LearnV2 />);
+    expect(text()).toContain("You are not enrolled in a class yet");
+    replies["/api/student/learn"] = { status: 503, body: discovery({ availability: "unavailable" }) };
+    await refresh();
+    expect(text()).not.toContain("You are not enrolled in a class yet");
+    expect(text()).toContain("When last checked, you were not enrolled in a class. Your current classes could not be checked");
+    expect(text()).toContain("When last checked, you had no subjects.");
+  });
+  it("5. populated snapshot then transient failure keeps rows as last-loaded history", async () => {
+    await render(<LearnV2 />);
+    replies["/api/student/learn"] = { status: 503, body: discovery({ availability: "unavailable" }) };
+    await refresh();
+    expect(host.querySelector("a[aria-label='Open assignment: Reading for meaning']")).not.toBeNull();
+    expect(text()).toContain("Your assignments could not be checked just now. These are from the last check and may have changed.");
+    expect(section("assigned-heading").textContent).toContain("Last loaded");
+  });
+  it.each([[401, "Signed out"], [403, "Restricted"]])("%i after a prior snapshot clears protected rows (no stale retention)", async (status, badge) => {
+    await render(<LearnV2 />);
+    expect(host.querySelector("a[aria-label='Open lesson: Comparing fractions']")).not.toBeNull();
+    replies["/api/student/learn"] = { status, body: { error: "denied" } };
+    await refresh();
+    for (const name of ["Comparing fractions", "Reading for meaning", "Fractions check", "Grade 4 reader", "Fractions on a number line"]) expect(text()).not.toContain(name);
+    expect(text()).not.toContain("Last checked earlier");
+    expect(text()).toContain(badge);
+  });
+  it.each([[401], [403]])("%i after a prior empty snapshot does not keep its empty claims either", async (status) => {
+    replies["/api/student/learn"] = { body: emptySnapshot() };
+    await render(<LearnV2 />);
+    replies["/api/student/learn"] = { status, body: {} };
+    await refresh();
+    expect(text()).not.toMatch(CONFIRMED_EMPTY);
+    expect(text()).not.toContain("When last checked");
+  });
+  it("recovery: a successful refresh removes the stale warning and restores current empty copy", async () => {
+    replies["/api/student/learn"] = { body: emptySnapshot() };
+    await render(<LearnV2 />);
+    replies["/api/student/learn"] = { reject: true };
+    await refresh();
+    expect(text()).toContain("Last checked earlier");
+    replies["/api/student/learn"] = { body: emptySnapshot() };
+    await refresh();
+    expect(text()).not.toContain("Last checked earlier");
+    expect(text()).toContain("No assignments right now.");
   });
 });
 

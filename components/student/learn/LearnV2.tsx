@@ -18,13 +18,23 @@ function sectionView(read: LearnRead<LearnDiscovery>, availability: SectionAvail
   return availability === "current" ? "rows" : availability;
 }
 
-/** Loading/failed/restricted/empty copy for one section. Never presents a failure as empty. */
-function SectionState({ view, read, what, empty, reason }: { view: View; read: LearnRead<LearnDiscovery>; what: string; empty: ReactNode; reason?: string }) {
+/**
+ * Loading/failed/restricted/empty copy for one section. Never presents a
+ * failure as empty, and an empty answer is only stated as current while the
+ * snapshot is current: after a failed refresh or while offline it is history.
+ */
+function SectionState({ view, read, what, empty, reason, unknown }: { view: View; read: LearnRead<LearnDiscovery>; what: string; empty: ReactNode; reason?: string; unknown: boolean }) {
   if (view === "loading") return <p role="status" className="pdv2-meta">Loading {what}…</p>;
   if (view === "restricted" || view === "signed-out") return <p className="pdv2-learn-notice"><span className="pdv2-badge pdv2-badge-warn">{view === "restricted" ? "Restricted" : "Signed out"}</span> {read.error}</p>;
   if (view === "unavailable") return <p role="status" className="pdv2-learn-notice"><span className="pdv2-badge pdv2-badge-warn">Unavailable</span> {reason ?? `Your ${what} could not load. This does not mean you have none.`}</p>;
+  if (unknown && view === "empty") return <StaleNotice>When last checked, you had no {what}. Your current {what} could not be checked, so this may have changed.</StaleNotice>;
+  if (unknown) return <StaleNotice>Your {what} could not be checked just now. These are from the last check and may have changed.</StaleNotice>;
   if (view === "empty") return <p className="pdv2-learn-empty">{empty}</p>;
-  return read.stale ? <p role="status" className="pdv2-learn-notice"><span className="pdv2-badge pdv2-badge-warn">Last loaded</span> Your {what} could not refresh. These may have changed.</p> : null;
+  return null;
+}
+
+function StaleNotice({ children }: { children: ReactNode }) {
+  return <p role="status" className="pdv2-learn-notice"><span className="pdv2-badge pdv2-badge-warn">Last checked earlier</span> {children}</p>;
 }
 
 /** Server-decided open/unavailable state; the server's reason is shown as given. */
@@ -51,8 +61,10 @@ export function LearnV2() {
   }, [refresh]);
 
   const model = read.data;
-  const stale = read.stale ? " · Last loaded" : "";
-  const unitsView = model?.activeUnits.eligibility === "not_enrolled" && read.state === "ready" ? "not-enrolled" : sectionView(read, model?.activeUnits.eligibility === "unavailable" ? "unavailable" : model?.activeUnits.availability);
+  // Current status is unknown after a failed refresh or while offline; retained rows are history.
+  const unknown = read.stale || (!online && read.data != null);
+  const stale = unknown ? " · Last loaded" : "";
+  const unitsView = model?.activeUnits.eligibility === "not_enrolled" && (read.state === "ready" || read.stale) ? "not-enrolled" : sectionView(read, model?.activeUnits.eligibility === "unavailable" ? "unavailable" : model?.activeUnits.availability);
   const lessonsView = sectionView(read, model?.lessons.availability);
   const workView = sectionView(read, model?.assignedWork.availability);
   const checksView = sectionView(read, model?.checks.availability);
@@ -84,20 +96,21 @@ export function LearnV2() {
             return <li key={row.subject}><span className="pdv2-row-title">{subjectName(row.label)}</span>
               {done && done.total > 0 && <span className="pdv2-meta">{done.completed} of {done.total} scheduled lessons completed{stale}</span>}</li>;
           })}</ul>
-          : <SectionState view={sectionView(read, model ? (model.subjects.length ? "current" : model.availability === "unavailable" ? "unavailable" : "empty") : undefined)} read={read} what="subjects"
+          : <SectionState unknown={unknown} view={sectionView(read, model ? (model.subjects.length ? "current" : model.availability === "unavailable" ? "unavailable" : "empty") : undefined)} read={read} what="subjects"
             empty="You are not in a class with subjects yet. Ask your teacher." />}
 
         <h3 className="pdv2-subhead">Units this week</h3>
         {unitsView === "not-enrolled"
-          ? <p className="pdv2-learn-empty">You are not enrolled in a class yet, so no units are shown. Ask your teacher.</p>
-          : <SectionState view={unitsView} read={read} what="units" empty="No units are scheduled for your class this week." />}
+          ? unknown ? <StaleNotice>When last checked, you were not enrolled in a class. Your current classes could not be checked, so this may have changed.</StaleNotice>
+            : <p className="pdv2-learn-empty">You are not enrolled in a class yet, so no units are shown. Ask your teacher.</p>
+          : <SectionState unknown={unknown} view={unitsView} read={read} what="units" empty="No units are scheduled for your class this week." />}
         {unitsView === "rows" && model && <ul className="pdv2-plan-list">{model.activeUnits.items.slice(0, limit).map((unit) => <li key={unit.unitId}>
           <div><p className="pdv2-meta">{subjectName(unit.subject)}{stale}</p><p className="pdv2-row-title">{unit.title}</p>{unit.reason && <p>{unit.reason}</p>}</div>
           <RowAction item={unit} label="Open unit" name={unit.title} />
         </li>)}</ul>}
 
         <h3 className="pdv2-subhead">Lessons</h3>
-        <SectionState view={lessonsView} read={read} what="lessons" empty="No lessons are published for your grade and classes yet. Your teacher can still assign work." />
+        <SectionState unknown={unknown} view={lessonsView} read={read} what="lessons" empty="No lessons are published for your grade and classes yet. Your teacher can still assign work." />
         {lessonsView === "rows" && model && <>
           <ul className="pdv2-plan-list">{model.lessons.items.slice(0, limit).map((lesson) => <li key={lesson.contentId}>
             <div><p className="pdv2-meta">{subjectName(lesson.subject)} · Grade {lesson.grade}{stale}</p><p className="pdv2-row-title">{lesson.title}</p>{lesson.reason && <p>{lesson.reason}</p>}</div>
@@ -113,13 +126,13 @@ export function LearnV2() {
           <p className="pdv2-eyebrow">Required</p>
           <h2 id="assigned-heading">Assigned work</h2>
           <h3 className="pdv2-subhead">Assignments</h3>
-          <SectionState view={workView} read={read} what="assignments" empty="No assignments right now." />
+          <SectionState unknown={unknown} view={workView} read={read} what="assignments" empty="No assignments right now." />
           {workView === "rows" && model && <ul className="pdv2-plan-list">{model.assignedWork.items.slice(0, limit).map((item) => <li key={item.id}>
             <div><p className="pdv2-meta">{subjectName(item.subject)}</p><p className="pdv2-row-title">{item.title}</p><p>{dueLabel(item.dueAt)}{stale}</p>{item.reason && <p>{item.reason}</p>}</div>
             <RowAction item={item} label="Open assignment" name={item.title} />
           </li>)}</ul>}
           <h3 className="pdv2-subhead">Checks</h3>
-          <SectionState view={checksView} read={read} what="checks" reason={model?.checks.reason} empty="No checks are open for you right now." />
+          <SectionState unknown={unknown} view={checksView} read={read} what="checks" reason={model?.checks.reason} empty="No checks are open for you right now." />
           {checksView === "rows" && model && <ul className="pdv2-plan-list">{model.checks.items.slice(0, limit).map((check) => <li key={check.id}>
             <div><p className="pdv2-meta">{subjectName(check.subject)}{stale}</p><p className="pdv2-row-title">{check.title}</p>{check.reason && <p>{check.reason}</p>}</div>
             <RowAction item={check} label="Open check" name={check.title} />
@@ -134,7 +147,7 @@ export function LearnV2() {
           <p className="pdv2-eyebrow">Resources</p>
           <h2 id="resources-heading">Books and resources</h2>
           <h3 className="pdv2-subhead">Readings</h3>
-          <SectionState view={resourcesView} read={read} what="readings" empty="No readings are published for your grade and classes yet." />
+          <SectionState unknown={unknown} view={resourcesView} read={read} what="readings" empty="No readings are published for your grade and classes yet." />
           {resourcesView === "rows" && model && <ul className="pdv2-plan-list">{model.resources.items.slice(0, limit).map((item) => <li key={item.id}>
             <div><p className="pdv2-meta">{subjectName(item.subject)}{stale}</p><p className="pdv2-row-title">{item.title}</p>{item.reason && <p>{item.reason}</p>}</div>
             <RowAction item={item} label="Open reading" name={item.title} />

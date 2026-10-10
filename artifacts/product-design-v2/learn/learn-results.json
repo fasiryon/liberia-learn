@@ -268,6 +268,8 @@
     "signed-out",
     "cross-tenant",
     "long",
+    "stale-empty",
+    "stale-empty-recovered",
     "stale",
     "offline-cached",
     "lessons-empty"
@@ -313,6 +315,392 @@
       "lessons": []
     }
   },
+  "bands": [
+    {
+      "route": "/student/today",
+      "grade": 2,
+      "width": 320,
+      "wideFont": false,
+      "overflow": false,
+      "primaryTarget": 56
+    },
+    {
+      "route": "/student/today",
+      "grade": 2,
+      "width": 320,
+      "wideFont": true,
+      "overflow": false,
+      "primaryTarget": 56
+    },
+    {
+      "route": "/student/today",
+      "grade": 2,
+      "width": 360,
+      "wideFont": false,
+      "overflow": false,
+      "primaryTarget": 56
+    },
+    {
+      "route": "/student/today",
+      "grade": 2,
+      "width": 360,
+      "wideFont": true,
+      "overflow": false,
+      "primaryTarget": 56
+    },
+    {
+      "route": "/student/today",
+      "grade": 2,
+      "width": 390,
+      "wideFont": false,
+      "overflow": false,
+      "primaryTarget": 56
+    },
+    {
+      "route": "/student/today",
+      "grade": 2,
+      "width": 390,
+      "wideFont": true,
+      "overflow": false,
+      "primaryTarget": 56
+    },
+    {
+      "route": "/student/today",
+      "grade": 2,
+      "width": 768,
+      "wideFont": false,
+      "overflow": false,
+      "primaryTarget": 56
+    },
+    {
+      "route": "/student/today",
+      "grade": 2,
+      "width": 768,
+      "wideFont": true,
+      "overflow": false,
+      "primaryTarget": 56
+    },
+    {
+      "route": "/student/today",
+      "grade": 2,
+      "width": 1440,
+      "wideFont": false,
+      "overflow": false,
+      "primaryTarget": 56
+    },
+    {
+      "route": "/student/today",
+      "grade": 2,
+      "width": 1440,
+      "wideFont": true,
+      "overflow": false,
+      "primaryTarget": 56
+    },
+    {
+      "route": "/student/today",
+      "grade": 2,
+      "width": 1920,
+      "wideFont": false,
+      "overflow": false,
+      "primaryTarget": 56
+    },
+    {
+      "route": "/student/today",
+      "grade": 2,
+      "width": 1920,
+      "wideFont": true,
+      "overflow": false,
+      "primaryTarget": 56
+    },
+    {
+      "route": "/student/today",
+      "grade": 6,
+      "width": 320,
+      "wideFont": false,
+      "overflow": false,
+      "primaryTarget": 48
+    },
+    {
+      "route": "/student/today",
+      "grade": 6,
+      "width": 320,
+      "wideFont": true,
+      "overflow": false,
+      "primaryTarget": 48
+    },
+    {
+      "route": "/student/today",
+      "grade": 6,
+      "width": 360,
+      "wideFont": false,
+      "overflow": false,
+      "primaryTarget": 48
+    },
+    {
+      "route": "/student/today",
+      "grade": 6,
+      "width": 360,
+      "wideFont": true,
+      "overflow": false,
+      "primaryTarget": 48
+    },
+    {
+      "route": "/student/today",
+      "grade": 6,
+      "width": 390,
+      "wideFont": false,
+      "overflow": false,
+      "primaryTarget": 48
+    },
+    {
+      "route": "/student/today",
+      "grade": 6,
+      "width": 390,
+      "wideFont": true,
+      "overflow": false,
+      "primaryTarget": 48
+    },
+    {
+      "route": "/student/today",
+      "grade": 6,
+      "width": 768,
+      "wideFont": false,
+      "overflow": false,
+      "primaryTarget": 48
+    },
+    {
+      "route": "/student/today",
+      "grade": 6,
+      "width": 768,
+      "wideFont": true,
+      "overflow": false,
+      "primaryTarget": 48
+    },
+    {
+      "route": "/student/today",
+      "grade": 6,
+      "width": 1440,
+      "wideFont": false,
+      "overflow": false,
+      "primaryTarget": 48
+    },
+    {
+      "route": "/student/today",
+      "grade": 6,
+      "width": 1440,
+      "wideFont": true,
+      "overflow": false,
+      "primaryTarget": 48
+    },
+    {
+      "route": "/student/today",
+      "grade": 6,
+      "width": 1920,
+      "wideFont": false,
+      "overflow": false,
+      "primaryTarget": 48
+    },
+    {
+      "route": "/student/today",
+      "grade": 6,
+      "width": 1920,
+      "wideFont": true,
+      "overflow": false,
+      "primaryTarget": 48
+    },
+    {
+      "route": "/student/learn",
+      "grade": 2,
+      "width": 320,
+      "wideFont": false,
+      "overflow": false,
+      "primaryTarget": 64
+    },
+    {
+      "route": "/student/learn",
+      "grade": 2,
+      "width": 320,
+      "wideFont": true,
+      "overflow": false,
+      "primaryTarget": 64
+    },
+    {
+      "route": "/student/learn",
+      "grade": 2,
+      "width": 360,
+      "wideFont": false,
+      "overflow": false,
+      "primaryTarget": 64
+    },
+    {
+      "route": "/student/learn",
+      "grade": 2,
+      "width": 360,
+      "wideFont": true,
+      "overflow": false,
+      "primaryTarget": 64
+    },
+    {
+      "route": "/student/learn",
+      "grade": 2,
+      "width": 390,
+      "wideFont": false,
+      "overflow": false,
+      "primaryTarget": 64
+    },
+    {
+      "route": "/student/learn",
+      "grade": 2,
+      "width": 390,
+      "wideFont": true,
+      "overflow": false,
+      "primaryTarget": 64
+    },
+    {
+      "route": "/student/learn",
+      "grade": 2,
+      "width": 768,
+      "wideFont": false,
+      "overflow": false,
+      "primaryTarget": 64
+    },
+    {
+      "route": "/student/learn",
+      "grade": 2,
+      "width": 768,
+      "wideFont": true,
+      "overflow": false,
+      "primaryTarget": 64
+    },
+    {
+      "route": "/student/learn",
+      "grade": 2,
+      "width": 1440,
+      "wideFont": false,
+      "overflow": false,
+      "primaryTarget": 64
+    },
+    {
+      "route": "/student/learn",
+      "grade": 2,
+      "width": 1440,
+      "wideFont": true,
+      "overflow": false,
+      "primaryTarget": 64
+    },
+    {
+      "route": "/student/learn",
+      "grade": 2,
+      "width": 1920,
+      "wideFont": false,
+      "overflow": false,
+      "primaryTarget": 64
+    },
+    {
+      "route": "/student/learn",
+      "grade": 2,
+      "width": 1920,
+      "wideFont": true,
+      "overflow": false,
+      "primaryTarget": 64
+    },
+    {
+      "route": "/student/learn",
+      "grade": 6,
+      "width": 320,
+      "wideFont": false,
+      "overflow": false,
+      "primaryTarget": 52
+    },
+    {
+      "route": "/student/learn",
+      "grade": 6,
+      "width": 320,
+      "wideFont": true,
+      "overflow": false,
+      "primaryTarget": 52
+    },
+    {
+      "route": "/student/learn",
+      "grade": 6,
+      "width": 360,
+      "wideFont": false,
+      "overflow": false,
+      "primaryTarget": 52
+    },
+    {
+      "route": "/student/learn",
+      "grade": 6,
+      "width": 360,
+      "wideFont": true,
+      "overflow": false,
+      "primaryTarget": 52
+    },
+    {
+      "route": "/student/learn",
+      "grade": 6,
+      "width": 390,
+      "wideFont": false,
+      "overflow": false,
+      "primaryTarget": 52
+    },
+    {
+      "route": "/student/learn",
+      "grade": 6,
+      "width": 390,
+      "wideFont": true,
+      "overflow": false,
+      "primaryTarget": 52
+    },
+    {
+      "route": "/student/learn",
+      "grade": 6,
+      "width": 768,
+      "wideFont": false,
+      "overflow": false,
+      "primaryTarget": 52
+    },
+    {
+      "route": "/student/learn",
+      "grade": 6,
+      "width": 768,
+      "wideFont": true,
+      "overflow": false,
+      "primaryTarget": 52
+    },
+    {
+      "route": "/student/learn",
+      "grade": 6,
+      "width": 1440,
+      "wideFont": false,
+      "overflow": false,
+      "primaryTarget": 52
+    },
+    {
+      "route": "/student/learn",
+      "grade": 6,
+      "width": 1440,
+      "wideFont": true,
+      "overflow": false,
+      "primaryTarget": 52
+    },
+    {
+      "route": "/student/learn",
+      "grade": 6,
+      "width": 1920,
+      "wideFont": false,
+      "overflow": false,
+      "primaryTarget": 52
+    },
+    {
+      "route": "/student/learn",
+      "grade": 6,
+      "width": 1920,
+      "wideFont": true,
+      "overflow": false,
+      "primaryTarget": 52
+    }
+  ],
   "integrated": {
     "checksSummary": true,
     "serverLocks": true,
