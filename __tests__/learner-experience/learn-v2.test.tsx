@@ -42,6 +42,11 @@ function discovery(overrides: Record<string, any> = {}) {
   };
 }
 const unavailable = { availability: "unavailable", items: [] };
+/** Shape of `student-classes/1` from lib/student/classes.server.ts. */
+const classRow = (classId: string, name: string, extra: Record<string, unknown> = {}) => ({ classId, name, subject: "MATH", grade: 4, teacherName: "Mr. Kollie", schoolName: "Monrovia Central",
+  href: `/student/classes/${classId}`, currentUnit: null, nextClass: { date: "2026-10-09", dayName: "Friday", periodLabel: "Period 2", timeRange: "9:00 AM – 9:45 AM", isToday: true, state: "upcoming" },
+  nextWork: null, timetableConfigured: true, openAssignmentCount: 2, ...extra });
+const myClasses = (classes: unknown[] = [classRow("class-4a", "Grade 4A Mathematics")]) => ({ schemaVersion: "student-classes/1", availability: classes.length ? "current" : "empty", enrolled: classes.length > 0, today: "2026-10-09", classes });
 
 type Reply = { status?: number; body?: unknown; reject?: boolean };
 let replies: Record<string, Reply>;
@@ -55,6 +60,7 @@ const fetchMock = vi.fn(async (url: string, init?: RequestInit) => {
 const base = (): Record<string, Reply> => ({
   "/api/student/learning-authority/next-action": { body: governed },
   "/api/student/learn": { body: discovery() },
+  "/api/student/classes": { body: myClasses() },
 });
 
 let root: Root; let host: HTMLDivElement;
@@ -103,12 +109,12 @@ describe("Learn V2 presentation contract", () => {
 describe("Learn V2 composition", () => {
   it("keeps the governed task first-class, inline and answerable; discovery is one separate read", async () => {
     await render(<LearnV2 />);
-    expect(headings()).toEqual(["H1:Your learning", "H2:Equivalent fractions", "H2:Your learning path", "H2:Assigned work", "H2:Books and resources"]);
+    expect(headings()).toEqual(["H1:Your learning", "H2:Equivalent fractions", "H2:Units this week", "H2:My classes", "H2:Lesson library", "H2:Assigned work", "H2:Checks", "H2:Books and resources"]);
     const current = section("current-learning-heading");
-    expect(current.compareDocumentPosition(host.querySelector("#path-heading")!) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(current.compareDocumentPosition(host.querySelector("#my-classes-heading")!) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     expect(current.querySelectorAll("input[type=radio]").length).toBe(2);
     expect(current.querySelectorAll(".pdv2-action-primary").length).toBe(1);
-    expect(fetchMock.mock.calls.map(([url]) => url).sort()).toEqual(["/api/student/learn", "/api/student/learning-authority/next-action"]);
+    expect(fetchMock.mock.calls.map(([url]) => url).sort()).toEqual(["/api/student/classes", "/api/student/learn", "/api/student/learning-authority/next-action"]);
   });
   it("submits the exact issued decision/session/item identity", async () => {
     replies["/api/student/learning-authority/next-action"] = { body: (init?: RequestInit) => init?.method === "POST"
@@ -120,16 +126,17 @@ describe("Learn V2 composition", () => {
     expect(JSON.parse(String(post[1]!.body))).toEqual({ decisionId: "decision-1", sessionId: "session-1", itemId: "item-1", itemVersion: "3", answerIndex: 0, toolsUsed: [] });
     expect(text()).toContain("It is not a school grade");
   });
-  it("renders server-authorized subjects, units, lessons, work, checks and readings with server hrefs", async () => {
+  it("renders server-authorized units, classes, work, checks and readings with server hrefs; lessons are a browse destination", async () => {
     await render(<LearnV2 />);
     expect(host.querySelector("a[aria-label='Open unit: Fractions on a number line']")?.getAttribute("href")).toBe("/student/units/u-1");
-    expect(host.querySelector("a[aria-label='Open lesson: Comparing fractions']")?.getAttribute("href")).toBe("/student/lesson/c-1");
+    expect(host.querySelector("a[aria-label='Open class: Grade 4A Mathematics']")?.getAttribute("href")).toBe("/student/classes/class-4a");
+    expect(host.querySelector("a[aria-label='Open lesson: Comparing fractions']")).toBeNull();
+    expect(section("library-heading").querySelector("a")?.getAttribute("href")).toBe("/student/lessons");
     expect(host.querySelector("a[aria-label='Open assignment: Reading for meaning']")?.getAttribute("href")).toBe("/student/assignments");
     expect(host.querySelector("a[aria-label='Open check: Fractions check']")?.getAttribute("href")).toBe("/student/exams/e-1");
     expect(host.querySelector("a[aria-label='Open reading: Grade 4 reader']")?.getAttribute("href")).toBe("/student/lesson/r-1");
     expect(text()).toContain("3 of 10 scheduled lessons completed");
-    expect(section("path-heading").textContent).toContain("English");
-    expect(text()).toContain("37 lessons available to you.");
+    expect(text()).toContain("37 published lessons for your grade");
     expect(host.querySelector("main a[href='/student/textbooks']")?.textContent).toBe("Textbooks →");
   });
   it("shows server locks and reasons without a link", async () => {
@@ -144,21 +151,24 @@ describe("Learn V2 composition", () => {
     replies["/api/student/learn"] = { body: discovery({ lessons: { availability: "current", total: 1, items: [{ ...lessonRow("x", "Odd link"), href: "https://evil.test" }] } }) };
     await render(<LearnV2 />);
     expect(host.querySelector("a[href='https://evil.test']")).toBeNull();
-    expect(section("path-heading").textContent).toContain("Unavailable");
+    replies["/api/student/learn"] = { body: discovery({ activeUnits: { availability: "current", eligibility: "eligible", items: [{ ...open("https://evil.test"), unitId: "u-x", title: "Odd unit", subject: "MATH", grade: 4, lessons: [] }] } }) };
+    await act(async () => { button("Refresh").click(); }); await settle();
+    expect(host.querySelector("a[href='https://evil.test']")).toBeNull();
+    expect(section("current-heading").textContent).toContain("Unavailable");
   });
   it.each([[{ available: false }, "No activity is ready right now"], [{ available: false, status: "NO_VALID_RESOURCE" }, "Ask your teacher for your next step"]])("shows the no-plan state truthfully (%o)", async (body, copy) => {
     replies["/api/student/learning-authority/next-action"] = { body };
     await render(<LearnV2 />);
     expect(text()).toContain(copy);
     expect(host.querySelector("input[type=radio]")).toBeNull();
-    expect(text()).toContain("Comparing fractions");
+    expect(text()).toContain("Fractions on a number line");
   });
   it("shows server-confirmed empty sections with empty copy", async () => {
     replies["/api/student/learn"] = { body: discovery({ availability: "empty", lessons: { availability: "empty", total: 0, items: [] },
       activeUnits: { availability: "empty", eligibility: "eligible", items: [] }, assignedWork: { availability: "empty", items: [] },
       checks: { availability: "empty", total: 0, items: [] }, resources: { availability: "empty", items: [], destinations: [{ title: "Textbooks", href: "/student/textbooks" }], compiledBooks: "deferred" } }) };
     await render(<LearnV2 />);
-    for (const copy of ["No units are scheduled for your class this week.", "No lessons are published for your grade and classes yet.", "No assignments right now.", "No checks are open for you right now.", "No readings are published"]) expect(text()).toContain(copy);
+    for (const copy of ["No units are scheduled for your classes this week.", "No assignments right now.", "No checks are open for you right now.", "No readings are published"]) expect(text()).toContain(copy);
   });
   it("distinguishes not enrolled from an empty week", async () => {
     replies["/api/student/learn"] = { body: discovery({ subjects: [], subjectCompletion: [], activeUnits: { availability: "empty", eligibility: "not_enrolled", items: [] } }) };
@@ -245,7 +255,7 @@ describe("Learn V2 stale snapshots (cross-builder gate P1)", () => {
   afterEach(() => { Object.defineProperty(navigator, "onLine", { configurable: true, get: () => true }); });
   const expectEmptyIsHistory = () => {
     expect(text()).not.toMatch(CONFIRMED_EMPTY);
-    for (const what of ["units", "lessons", "assignments", "checks", "readings"]) expect(text()).toContain(`When last checked, you had no ${what}. Your current ${what} could not be checked`);
+    for (const what of ["units", "assignments", "checks", "readings"]) expect(text()).toContain(`When last checked, you had no ${what}. Your current ${what} could not be checked`);
     expect(text()).toContain("Last checked earlier");
   };
 
@@ -282,7 +292,7 @@ describe("Learn V2 stale snapshots (cross-builder gate P1)", () => {
     await refresh();
     expect(text()).not.toContain("You are not enrolled in a class yet");
     expect(text()).toContain("When last checked, you were not enrolled in a class. Your current classes could not be checked");
-    expect(text()).toContain("When last checked, you had no subjects.");
+    expect(section("my-classes-heading").textContent).toContain("Grade 4A Mathematics");
   });
   it("5. populated snapshot then transient failure keeps rows as last-loaded history", async () => {
     await render(<LearnV2 />);
@@ -294,10 +304,10 @@ describe("Learn V2 stale snapshots (cross-builder gate P1)", () => {
   });
   it.each([[401, "Signed out"], [403, "Restricted"]])("%i after a prior snapshot clears protected rows (no stale retention)", async (status, badge) => {
     await render(<LearnV2 />);
-    expect(host.querySelector("a[aria-label='Open lesson: Comparing fractions']")).not.toBeNull();
+    expect(host.querySelector("a[aria-label='Open unit: Fractions on a number line']")).not.toBeNull();
     replies["/api/student/learn"] = { status, body: { error: "denied" } };
     await refresh();
-    for (const name of ["Comparing fractions", "Reading for meaning", "Fractions check", "Grade 4 reader", "Fractions on a number line"]) expect(text()).not.toContain(name);
+    for (const name of ["Reading for meaning", "Fractions check", "Grade 4 reader", "Fractions on a number line"]) expect(text()).not.toContain(name);
     expect(text()).not.toContain("Last checked earlier");
     expect(text()).toContain(badge);
   });
@@ -319,6 +329,42 @@ describe("Learn V2 stale snapshots (cross-builder gate P1)", () => {
     await refresh();
     expect(text()).not.toContain("Last checked earlier");
     expect(text()).toContain("No assignments right now.");
+  });
+});
+
+describe("Learn My classes (enrollment, not lesson subjects)", () => {
+  it("lists only the classes the server returned for this learner, with next class and open work", async () => {
+    replies["/api/student/classes"] = { body: myClasses([classRow("class-4a", "Grade 4A Mathematics"), classRow("class-4e", "Grade 4 English", { subject: "ENGLISH", nextClass: null, timetableConfigured: false, openAssignmentCount: 0 })]) };
+    await render(<LearnV2 />);
+    const classes = section("my-classes-heading");
+    expect([...classes.querySelectorAll(".pdv2-row-title")].map((n) => n.textContent)).toEqual(["Grade 4A Mathematics", "Grade 4 English"]);
+    expect(classes.textContent).toContain("Next: Today · Period 2 · 9:00 AM – 9:45 AM · 2 open assignments");
+    expect(classes.textContent).toContain("Timetable not set up · 0 open assignments");
+    expect(classes.querySelector("a[href='/student/classes']")).not.toBeNull();
+    expect(classes.querySelector("a[href='/student/schedule']")).not.toBeNull();
+  });
+  it("does not invent classes from discovery subjects when the learner has none", async () => {
+    replies["/api/student/classes"] = { body: myClasses([]) };
+    await render(<LearnV2 />);
+    const classes = section("my-classes-heading");
+    expect(classes.textContent).toContain("You are not enrolled in a class yet");
+    expect(classes.querySelectorAll("li").length).toBe(0);
+  });
+  it("shows unavailable, never empty, when classes fail; restricted on 403", async () => {
+    replies["/api/student/classes"] = { status: 503, body: {} };
+    await render(<LearnV2 />);
+    expect(section("my-classes-heading").textContent).toContain("Your classes could not load. This does not mean you have none.");
+    expect(section("my-classes-heading").textContent).not.toContain("not enrolled");
+    act(() => root.unmount()); host.remove();
+    replies["/api/student/classes"] = { status: 403, body: {} };
+    await render(<LearnV2 />);
+    expect(section("my-classes-heading").textContent).toContain("Restricted");
+  });
+  it("never links a class row whose href is not a class route", async () => {
+    replies["/api/student/classes"] = { body: myClasses([{ ...classRow("x", "Odd class"), href: "https://evil.test" }]) };
+    await render(<LearnV2 />);
+    expect(host.querySelector("a[href='https://evil.test']")).toBeNull();
+    expect(section("my-classes-heading").textContent).toContain("Your classes could not load");
   });
 });
 
@@ -350,10 +396,10 @@ describe("Lessons and unit discovery", () => {
     replies["/api/student/lessons?page=1"] = { body: catalogPage(1, [{ contentId: "c-1", displayTitle: "Comparing fractions", title: "Comparing fractions", subject: "MATH", grade: 4, href: "/student/lesson/c-1" }]) };
     replies["/api/student/lessons?page=2"] = { body: catalogPage(2, [{ contentId: "c-2", displayTitle: "Reading stories", title: "Reading stories", subject: "ENGLISH", grade: 4, href: "/student/lesson/c-2" }]) };
     await render(<LessonCatalog />);
-    expect(headings()).toEqual(["H1:Lessons for your grade", "H2:Math"]);
+    expect(headings()).toEqual(["H1:Lesson library", "H2:Math"]);
     expect(text()).toContain("13 lessons available to you");
     await act(async () => { button("Show more lessons").click(); }); await settle();
-    expect(headings()).toEqual(["H1:Lessons for your grade", "H2:Math", "H2:English"]);
+    expect(headings()).toEqual(["H1:Lesson library", "H2:Math", "H2:English"]);
     expect(host.querySelector("a[aria-label='Open lesson: Reading stories']")?.getAttribute("href")).toBe("/student/lesson/c-2");
   });
   it("shows a server-confirmed empty catalog as empty", async () => {

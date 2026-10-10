@@ -18,8 +18,8 @@ export function StudentOptionalPrompts({ children }: { children: ReactNode }) {
 }
 
 const LINKS: Record<PrimaryDestination, Array<[string, string]>> = {
-  TODAY: [["Assignments", "/student/assignments"], ["Homework", "/student/homework"], ["Calendar", "/student/events"]],
-  LEARN: [["Assignments", "/student/assignments"], ["Lessons", "/student/lessons"], ["Practice", "/student/adaptive"], ["Exams", "/student/exams"], ["Textbooks", "/student/textbooks"], ["Projects", "/student/capstone"]],
+  TODAY: [["Class schedule", "/student/schedule"], ["Assignments", "/student/assignments"], ["Homework", "/student/homework"], ["Calendar", "/student/events"]],
+  LEARN: [["My classes", "/student/classes"], ["Class schedule", "/student/schedule"], ["Assignments", "/student/assignments"], ["Lesson library", "/student/lessons"], ["Practice", "/student/adaptive"], ["Exams", "/student/exams"], ["Textbooks", "/student/textbooks"], ["Projects", "/student/capstone"]],
   LABS: [],
   PROGRESS: [["Portfolio", "/student/portfolio"], ["Passport", "/student/passport"], ["Certificates", "/student/certificates"], ["Certifications", "/student/certifications"], ["Report cards", "/student/report-cards"], ["Transcript", "/student/transcript"], ["Leaderboard", "/student/leaderboard"]],
   HELP: [["Messages", "/student/messages"], ["Discussion", "/student/discussion"], ["Student guide", "/help/student"], ["Offline lessons", "/student/offline-lessons"], ["Downloads", "/student/packs"], ["Sync status", "/student/offline-status"]],

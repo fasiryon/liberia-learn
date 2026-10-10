@@ -119,7 +119,7 @@ export function GovernedActivity() {
       <p className="pdv2-eyebrow">Current learning</p>
       <h2 id="current-learning-heading">{heading}</h2>
       {status.kind === "loading" && <p role="status">Loading your learning activity…</p>}
-      {status.kind === "none" && <p>Your school has no ready activity for you here yet. Pick a unit or lesson from your learning path below, or ask your teacher.</p>}
+      {status.kind === "none" && <p>Your school has no ready activity for you here yet. Pick a unit or one of your classes below, or ask your teacher.</p>}
       {status.kind === "no-valid-resource" && <p>Your next activity can&apos;t be shown right now. Ask your teacher for your next step. Your assigned work is listed below.</p>}
       {status.kind === "signed-out" && <><p>Sign in again to see your learning activity.</p><div className="pdv2-hero-actions"><InteractiveButton primary href="/login">Sign in →</InteractiveButton></div></>}
       {status.kind === "restricted" && <p>This activity isn&apos;t available for your account. Ask your teacher.</p>}

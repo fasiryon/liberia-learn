@@ -6,6 +6,7 @@ import { useStudentIdentity } from "@/components/student/StudentShellV2";
 import { WAEC_MIN_GRADE } from "@/lib/waec/eligibility";
 import { GovernedActivity } from "./GovernedActivity";
 import { useLearnRead, useOnline } from "./useLearnRead";
+import { classMeta, classTarget, nextClassLabel, validMyClasses, type MyClasses } from "@/components/student/classes/classesPresentation";
 import { ageBand, dueLabel, learnPlaces, learnTarget, subjectName, validDiscovery, type LearnDiscovery, type LearnRead, type SectionAvailability } from "./learnPresentation";
 
 type View = "loading" | "rows" | "empty" | "unavailable" | "restricted" | "signed-out";
@@ -41,6 +42,32 @@ function StaleNotice({ children }: { children: ReactNode }) {
 function RowAction({ item, label, name }: { item: { state: "open" | "unavailable"; locked: boolean; href: string | null; reason?: string }; label: string; name: string }) {
   if (item.state === "open" && !item.locked && learnTarget(item.href)) return <InteractiveButton href={item.href} aria-label={`${label}: ${name}`}>Open →</InteractiveButton>;
   return <span className="pdv2-learn-locked">{item.locked ? "Locked" : "Unavailable"}</span>;
+}
+
+/** The learner's enrolled classes from the server; never derived from lesson subjects. */
+function MyClassesSection({ limit }: { limit: number }) {
+  const online = useOnline();
+  const [read] = useLearnRead<MyClasses>("/api/student/classes", validMyClasses);
+  const model = read.data;
+  const unknown = read.stale || (!online && model != null);
+  return <section aria-labelledby="my-classes-heading">
+    <p className="pdv2-eyebrow">My classes</p>
+    <h2 id="my-classes-heading">My classes</h2>
+    {read.state === "loading" && <p role="status" className="pdv2-meta">Loading your classes…</p>}
+    {(read.state === "restricted" || read.state === "signed-out") && <p className="pdv2-learn-notice"><span className="pdv2-badge pdv2-badge-warn">{read.state === "restricted" ? "Restricted" : "Signed out"}</span> {read.error}</p>}
+    {read.state === "error" && !model && <p role="status" className="pdv2-learn-notice"><span className="pdv2-badge pdv2-badge-warn">Unavailable</span> Your classes could not load. This does not mean you have none.</p>}
+    {unknown && <StaleNotice>Your classes could not be checked just now. These are from the last check and may have changed.</StaleNotice>}
+    {model && model.classes.length === 0 && !unknown && <p className="pdv2-learn-empty">You are not enrolled in a class yet. Your teacher or school adds you to classes.</p>}
+    {model && model.classes.length > 0 && <ul className="pdv2-plan-list">{model.classes.slice(0, limit).map((row) => <li key={row.classId}>
+      <div><p className="pdv2-meta">{classMeta(row)}{row.teacherName ? ` · ${row.teacherName}` : ""}{unknown ? " · Last loaded" : ""}</p><p className="pdv2-row-title">{row.name}</p>
+        <p className="pdv2-meta">{row.nextClass && model.today ? `Next: ${nextClassLabel(row.nextClass, model.today)}` : row.timetableConfigured ? "No class periods left this week" : "Timetable not set up"} · {row.openAssignmentCount} open assignment{row.openAssignmentCount === 1 ? "" : "s"}</p></div>
+      {classTarget(row.href) && <InteractiveButton href={row.href} aria-label={`Open class: ${row.name}`}>Open →</InteractiveButton>}
+    </li>)}</ul>}
+    <div className="pdv2-support-actions">
+      <InteractiveButton href="/student/classes">All my classes →</InteractiveButton>
+      <InteractiveButton href="/student/schedule">Class schedule →</InteractiveButton>
+    </div>
+  </section>;
 }
 
 export function LearnV2() {
@@ -85,62 +112,55 @@ export function LearnV2() {
     <GovernedActivity />
 
     <div className="pdv2-learn-grid">
-      <section className="pdv2-plan pdv2-learn-path" aria-labelledby="path-heading">
-        <p className="pdv2-eyebrow">Explore</p>
-        <h2 id="path-heading">Your learning path</h2>
+      <div className="pdv2-plan pdv2-learn-path">
+        <section aria-labelledby="current-heading">
+          <p className="pdv2-eyebrow">Current learning</p>
+          <h2 id="current-heading">Units this week</h2>
+          {unitsView === "not-enrolled"
+            ? unknown ? <StaleNotice>When last checked, you were not enrolled in a class. Your current classes could not be checked, so this may have changed.</StaleNotice>
+              : <p className="pdv2-learn-empty">You are not enrolled in a class yet, so no units are shown. Ask your teacher.</p>
+            : <SectionState unknown={unknown} view={unitsView} read={read} what="units" empty="No units are scheduled for your classes this week." />}
+          {unitsView === "rows" && model && <ul className="pdv2-plan-list">{model.activeUnits.items.slice(0, limit).map((unit) => {
+            const done = completion.get(unit.subject);
+            return <li key={unit.unitId}>
+              <div><p className="pdv2-meta">{subjectName(unit.subject)}{done && done.total > 0 ? ` · ${done.completed} of ${done.total} scheduled lessons completed` : ""}{stale}</p><p className="pdv2-row-title">{unit.title}</p>{unit.reason && <p>{unit.reason}</p>}</div>
+              <RowAction item={unit} label="Open unit" name={unit.title} />
+            </li>;
+          })}</ul>}
+        </section>
 
-        <h3 className="pdv2-subhead">Subjects</h3>
-        {model && read.state !== "loading" && model.subjects.length > 0
-          ? <ul className="pdv2-learn-subjects">{model.subjects.map((row) => {
-            const done = completion.get(row.subject);
-            return <li key={row.subject}><span className="pdv2-row-title">{subjectName(row.label)}</span>
-              {done && done.total > 0 && <span className="pdv2-meta">{done.completed} of {done.total} scheduled lessons completed{stale}</span>}</li>;
-          })}</ul>
-          : <SectionState unknown={unknown} view={sectionView(read, model ? (model.subjects.length ? "current" : model.availability === "unavailable" ? "unavailable" : "empty") : undefined)} read={read} what="subjects"
-            empty="You are not in a class with subjects yet. Ask your teacher." />}
+        <MyClassesSection limit={limit} />
 
-        <h3 className="pdv2-subhead">Units this week</h3>
-        {unitsView === "not-enrolled"
-          ? unknown ? <StaleNotice>When last checked, you were not enrolled in a class. Your current classes could not be checked, so this may have changed.</StaleNotice>
-            : <p className="pdv2-learn-empty">You are not enrolled in a class yet, so no units are shown. Ask your teacher.</p>
-          : <SectionState unknown={unknown} view={unitsView} read={read} what="units" empty="No units are scheduled for your class this week." />}
-        {unitsView === "rows" && model && <ul className="pdv2-plan-list">{model.activeUnits.items.slice(0, limit).map((unit) => <li key={unit.unitId}>
-          <div><p className="pdv2-meta">{subjectName(unit.subject)}{stale}</p><p className="pdv2-row-title">{unit.title}</p>{unit.reason && <p>{unit.reason}</p>}</div>
-          <RowAction item={unit} label="Open unit" name={unit.title} />
-        </li>)}</ul>}
-
-        <h3 className="pdv2-subhead">Lessons</h3>
-        <SectionState unknown={unknown} view={lessonsView} read={read} what="lessons" empty="No lessons are published for your grade and classes yet. Your teacher can still assign work." />
-        {lessonsView === "rows" && model && <>
-          <ul className="pdv2-plan-list">{model.lessons.items.slice(0, limit).map((lesson) => <li key={lesson.contentId}>
-            <div><p className="pdv2-meta">{subjectName(lesson.subject)} · Grade {lesson.grade}{stale}</p><p className="pdv2-row-title">{lesson.title}</p>{lesson.reason && <p>{lesson.reason}</p>}</div>
-            <RowAction item={lesson} label="Open lesson" name={lesson.title} />
-          </li>)}</ul>
-          <p className="pdv2-meta">{model.lessons.total} lesson{model.lessons.total === 1 ? "" : "s"} available to you.</p>
-        </>}
-        <InteractiveButton href="/student/lessons">{young ? "All lessons" : "Browse all lessons"} →</InteractiveButton>
-      </section>
+        <section aria-labelledby="library-heading" className="pdv2-learn-library">
+          <p className="pdv2-eyebrow">Browse</p>
+          <h2 id="library-heading">Lesson library</h2>
+          <p className="pdv2-meta">{lessonsView === "rows" && model ? `${model.lessons.total} published lesson${model.lessons.total === 1 ? "" : "s"} for your grade, by subject. Not all are assigned to your classes.${stale}` : "Published lessons for your grade, by subject."}</p>
+          {(lessonsView === "unavailable" || lessonsView === "restricted" || lessonsView === "signed-out") && <SectionState unknown={unknown} view={lessonsView} read={read} what="lessons" empty="" />}
+          <InteractiveButton href="/student/lessons">{young ? "Browse lessons" : "Browse the lesson library"} →</InteractiveButton>
+        </section>
+      </div>
 
       <div className="pdv2-context-column">
         <section aria-labelledby="assigned-heading">
           <p className="pdv2-eyebrow">Required</p>
           <h2 id="assigned-heading">Assigned work</h2>
-          <h3 className="pdv2-subhead">Assignments</h3>
           <SectionState unknown={unknown} view={workView} read={read} what="assignments" empty="No assignments right now." />
           {workView === "rows" && model && <ul className="pdv2-plan-list">{model.assignedWork.items.slice(0, limit).map((item) => <li key={item.id}>
             <div><p className="pdv2-meta">{subjectName(item.subject)}</p><p className="pdv2-row-title">{item.title}</p><p>{dueLabel(item.dueAt)}{stale}</p>{item.reason && <p>{item.reason}</p>}</div>
             <RowAction item={item} label="Open assignment" name={item.title} />
           </li>)}</ul>}
-          <h3 className="pdv2-subhead">Checks</h3>
+          <div className="pdv2-support-actions"><InteractiveButton href="/student/assignments">All assignments →</InteractiveButton></div>
+        </section>
+
+        <section aria-labelledby="checks-heading">
+          <p className="pdv2-eyebrow">Checks</p>
+          <h2 id="checks-heading">Checks</h2>
           <SectionState unknown={unknown} view={checksView} read={read} what="checks" reason={model?.checks.reason} empty="No checks are open for you right now." />
           {checksView === "rows" && model && <ul className="pdv2-plan-list">{model.checks.items.slice(0, limit).map((check) => <li key={check.id}>
             <div><p className="pdv2-meta">{subjectName(check.subject)}{stale}</p><p className="pdv2-row-title">{check.title}</p>{check.reason && <p>{check.reason}</p>}</div>
             <RowAction item={check} label="Open check" name={check.title} />
           </li>)}</ul>}
-          <div className="pdv2-support-actions">
-            <InteractiveButton href="/student/assignments">All assignments →</InteractiveButton>
-            <InteractiveButton href="/student/exams">All checks →</InteractiveButton>
-          </div>
+          <div className="pdv2-support-actions"><InteractiveButton href="/student/exams">All checks →</InteractiveButton></div>
         </section>
 
         <section aria-labelledby="resources-heading">

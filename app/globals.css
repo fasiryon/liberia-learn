@@ -518,6 +518,48 @@ a:focus-visible,
   .pdv2-learn-steps > li { flex-wrap: wrap; }
   .pdv2-learn-steps > li > :last-child { margin-left: 52px; }
 }
+/* Product Design V2 My classes and Class schedule: dense rows for school laptops and phones. */
+.pdv2-learn-path > section + section { margin-top: 24px; padding-top: 20px; border-top: 1px solid #41453c; }
+.pdv2-class-grid { display: grid; gap: 12px; margin: 4px 0 0; grid-template-columns: repeat(auto-fill, minmax(min(100%, 360px), 1fr)); }
+.pdv2-class-card { display: grid; gap: 12px; align-content: start; padding: 14px 16px; border: 1px solid #41453c; border-radius: 14px; background: #1c1e1b; min-width: 0; }
+.pdv2-class-card-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.pdv2-class-card-head > div { min-width: 0; }
+.pdv2-class-card-head > .pdv2-action, .pdv2-plan-list > li > .pdv2-action { flex-shrink: 0; white-space: nowrap; }
+.pdv2-class-facts { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 8px 16px; margin: 0; }
+.pdv2-class-facts dt { color: var(--ll-text-muted); font-size: 13px; font-weight: 600; }
+.pdv2-class-facts dd { margin: 2px 0 0; font-size: 15px; overflow-wrap: anywhere; }
+.pdv2-class-facts a { text-decoration: underline; text-underline-offset: 3px; }
+.pdv2-class-summary { background: var(--ll-surface); padding: 16px 20px; border-radius: 18px; margin-bottom: 24px; grid-template-columns: repeat(auto-fit, minmax(180px,1fr)); }
+.pdv2-period-list { margin: 8px 0 16px; }
+.pdv2-period-list > li { display: grid; grid-template-columns: 10rem minmax(0,1fr) auto; gap: 4px 12px; align-items: start; padding: 12px 0; border-bottom: 1px solid #41453c; }
+.pdv2-period-list > li[data-state=current] { border-left: 4px solid var(--ll-accent); padding-left: 10px; background: #26231a; }
+.pdv2-period-list > li[data-state=completed] .pdv2-row-title { color: var(--ll-text-muted); }
+.pdv2-period-list .pdv2-row-title a { text-decoration: underline; text-underline-offset: 3px; }
+.pdv2-period-time { font-weight: 600; font-size: 15px; overflow-wrap: anywhere; }
+.pdv2-period-state { justify-self: end; padding: 2px 8px; border-radius: 6px; font-size: 13px; font-weight: 700; border: 1px solid #85887c; color: var(--ll-text-muted); white-space: nowrap; }
+.pdv2-period-current { color: #0e100e; background: #efb540; border-color: #efb540; }
+.pdv2-period-upcoming { color: #f4f2eb; }
+.pdv2-period-links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+.pdv2-period-links .pdv2-action { min-height: 44px; padding: 8px 12px; font-size: 15px; text-align: left; }
+.pdv2-schedule-day h2 { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px; }
+.pdv2-week { display: grid; gap: 16px; }
+.pdv2-week .pdv2-plan { padding: 16px; }
+.pdv2-shell .pdv2-week .pdv2-schedule-day h2 { font-size: 20px; margin: 0 0 4px; }
+.pdv2-week .pdv2-period-list > li { grid-template-columns: minmax(0,1fr) auto; }
+.pdv2-week .pdv2-period-time { grid-column: 1 / -1; font-size: 14px; }
+.pdv2-week .pdv2-row-title { font-size: 16px; overflow-wrap: break-word; }
+@media (max-width:340px) { .pdv2-class-facts { grid-template-columns: minmax(0,1fr); } }
+.pdv2-segmented { display: inline-flex; border: 1px solid var(--pdv2-control-border); border-radius: 10px; overflow: hidden; }
+.pdv2-segmented a { display: inline-flex; align-items: center; min-height: var(--pdv2-target); padding: 0 16px; font-weight: 600; }
+.pdv2-segmented a + a { border-left: 1px solid var(--pdv2-control-border); }
+.pdv2-segmented a[aria-current=page] { background: #3e341b; color: var(--ll-accent); }
+@media (min-width:1024px) { .pdv2-week { grid-template-columns: repeat(auto-fit, minmax(176px,1fr)); gap: 12px; } .pdv2-week .pdv2-plan { padding: 14px; } }
+@media (max-width:480px) {
+  .pdv2-period-list > li { grid-template-columns: minmax(0,1fr) auto; }
+  .pdv2-period-time { grid-column: 1 / -1; font-size: 14px; }
+  .pdv2-class-summary { padding: 14px 16px; }
+}
+@media (forced-colors:active) { .pdv2-class-card, .pdv2-period-state, .pdv2-segmented { border: 2px solid CanvasText; } .pdv2-period-list > li[data-state=current] { border-left: 4px solid Highlight; } }
 @media (min-width:1200px) { .pdv2-learn-grid { grid-template-columns: minmax(0,1.6fr) minmax(0,1fr); } }
 @media (forced-colors:active) {
   .pdv2-learn .pdv2-learn-current, .pdv2-learn-option, .pdv2-badge, .pdv2-meter, .pdv2-step-marker, .pdv2-learn-locked { border: 2px solid CanvasText; }
