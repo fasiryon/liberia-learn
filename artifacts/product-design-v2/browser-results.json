@@ -56,15 +56,15 @@
       "width": 768,
       "overflow": false,
       "primaryTarget": {
-        "x": 276,
-        "y": 320.578125,
+        "x": 268,
+        "y": 288.078125,
         "width": 118.171875,
         "height": 56
       },
       "firstDueTarget": {
-        "x": 250,
-        "y": 444.96875,
-        "width": 486,
+        "x": 242,
+        "y": 412.46875,
+        "width": 502,
         "height": 56
       }
     },
@@ -73,15 +73,15 @@
       "width": 1440,
       "overflow": false,
       "primaryTarget": {
-        "x": 296,
+        "x": 300,
         "y": 308.5625,
         "width": 118.171875,
         "height": 56
       },
       "firstDueTarget": {
-        "x": 270,
+        "x": 274,
         "y": 432.953125,
-        "width": 1138,
+        "width": 1130,
         "height": 56
       }
     },
@@ -141,15 +141,15 @@
       "width": 768,
       "overflow": false,
       "primaryTarget": {
-        "x": 276,
-        "y": 314.953125,
+        "x": 268,
+        "y": 282.453125,
         "width": 182.015625,
         "height": 48
       },
       "firstDueTarget": {
-        "x": 250,
-        "y": 431.34375,
-        "width": 486,
+        "x": 242,
+        "y": 398.84375,
+        "width": 502,
         "height": 48
       }
     },
@@ -158,15 +158,15 @@
       "width": 1440,
       "overflow": false,
       "primaryTarget": {
-        "x": 296,
+        "x": 300,
         "y": 305.359375,
         "width": 182.015625,
         "height": 48
       },
       "firstDueTarget": {
-        "x": 270,
+        "x": 274,
         "y": 421.75,
-        "width": 1138,
+        "width": 1130,
         "height": 48
       }
     }

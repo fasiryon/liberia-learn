@@ -38,7 +38,7 @@ vi.mock("@/lib/db", () => {
     },
   });
   const client: any = {
-    student: { findUnique: async () => ({ id: "student-record", currentGrade: 7, deletedAt: null, enrollments: [
+    student: { findUnique: async () => ({ id: "student-record", currentGrade: 7, deletedAt: null, user: { schoolId: "school-a" }, enrollments: [
       { classId: "class-a", Class: { subject: "MATH", schoolId: "school-a" } },
       { classId: "class-b", Class: { subject: "MATH", schoolId: "school-b" } },
     ] }) },
@@ -46,7 +46,8 @@ vi.mock("@/lib/db", () => {
       findMany: async ({ where }: any) => (db.row && matches(db.row, where) ? [db.row] : []),
       findFirst: async ({ where }: any) => (db.row && matches(db.row, where) ? db.row : null),
     },
-    scheduledWork: assignments("scheduledWork"),
+    assignment: { findMany: async () => [] },
+    scheduledWork: { ...assignments("scheduledWork"), findMany: async () => [] },
     teacherLessonAssignment: assignments("teacherLessonAssignments"),
     curriculumGovernanceEvent: { findFirst: async () => null },
     curriculumContentRevision: { findFirst: async () => null },
@@ -56,6 +57,9 @@ vi.mock("@/lib/db", () => {
 vi.mock("@/lib/auth", () => ({ requireRole }));
 vi.mock("@/lib/learning-authority/publishedReleases", () => ({ publishedReleaseForLearner: () => null, publishedRelease: () => null }));
 
+import { GET as learnDiscovery } from "@/app/api/student/learn/route";
+import { GET as studentLessons } from "@/app/api/student/lessons/route";
+import { NextRequest } from "next/server";
 import { GET as listCurriculum } from "@/app/api/curriculum/route";
 import { GET as getCurriculum } from "@/app/api/curriculum/[contentId]/route";
 import { resolveTutorContext } from "@/lib/ai/tutor/tutorContext";
@@ -122,6 +126,11 @@ async function surfaces(target: Row) {
   const list = await (await listCurriculum(new Request("http://localhost/api/curriculum"))).json();
   const detail = await getCurriculum(new Request(`http://localhost/api/curriculum/${target.contentId}`), { params: { contentId: target.contentId } });
   const tutor = await resolveTutorContext(student, { contentId: target.contentId }).then(() => 200, (error) => error.status ?? 500);
+  const discovery = await (await learnDiscovery()).json();
+  const lessons = await (await studentLessons(new NextRequest("http://localhost/api/student/lessons"))).json();
+  expect(discovery.lessons.items.some((item: { contentId: string }) => item.contentId === target.contentId)).toBe(detail.status === 200);
+  expect(discovery.resources.items.some((item: { contentId: string }) => item.contentId === target.contentId)).toBe(detail.status === 200);
+  expect(lessons.items.some((item: { contentId: string }) => item.contentId === target.contentId)).toBe(detail.status === 200);
   return { listed: list.items.some((item: { contentId: string }) => item.contentId === target.contentId), detail: detail.status, tutor };
 }
 

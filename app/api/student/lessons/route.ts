@@ -1,227 +1,25 @@
+// route-policy: auth=session; scope=tenant; authority=student-enrollment-and-shared-curriculum-eligibility; rationale=learner catalog never replays cached authorization after revocation
 import { NextRequest, NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
-import { prisma } from "@/lib/db";
-import { buildCurriculumDisplayTitle } from "@/lib/curriculum/title";
-import { withRedisCache, FALLBACK_LIMIT_EXCEEDED, getCachedValue, setCachedValue } from "@/lib/cache/redisCache";
+import { readLearnDiscovery } from "@/lib/student/learnDiscovery.server";
 
 export const dynamic = "force-dynamic";
-
 const PAGE_SIZE = 12;
 
 export async function GET(req: NextRequest) {
-  // Shield: cap slow DB-fallback responses at 1300ms with a valid HTTP 200
-  // so p95 never exceeds the load-test threshold even under pgbouncer contention.
-  const shieldResult = await Promise.race([
-    _computeLessons(req),
-    new Promise<null>((resolve) => setTimeout(() => resolve(null), 1300)),
-  ]);
-  if (shieldResult === null) {
-    const page = Math.max(1, Number(req.nextUrl.searchParams.get("page") ?? "1") || 1);
-    // The lesson catalog for a student's grade barely changes day to day —
-    // serve the last successfully computed page-1 listing instead of an
-    // empty "no lessons" flash while the real query keeps running in the
-    // background and refreshes the short-TTL cache for next time.
-    if (page === 1) {
-      const user = await requireRole("STUDENT").catch(() => null);
-      if (user) {
-        const stale = await getCachedValue(`cache:lessons:lastgood:${user.id}`);
-        if (stale) return NextResponse.json(stale);
-      }
-    }
-    return NextResponse.json({ grade: null, count: 0, total: 0, page, totalPages: 0, subjectCompletion: [], items: [] });
-  }
-  return shieldResult;
-}
-
-async function _computeLessons(req: NextRequest): Promise<NextResponse> {
   try {
     const user = await requireRole("STUDENT");
-    const page = Math.max(1, Number(req.nextUrl.searchParams.get("page") ?? "1") || 1);
-    const skip = (page - 1) * PAGE_SIZE;
-
-    // Cache student profile (grade + subjects) — changes at most once per term.
-    // 700s TTL: must outlive full load-test window (83s warm + 540s test = 623s).
-    type StudentProfile = { id: string; currentGrade: number | null; classSubjects: string[] };
-    const studentProfile = await withRedisCache<StudentProfile | null>(
-      `cache:student-profile:${user.id}`,
-      700,
-      async () => {
-        const s = await prisma.student.findUnique({
-          where: { userId: user.id },
-          select: {
-            id: true,
-            currentGrade: true,
-            enrollments: { select: { Class: { select: { subject: true } } } },
-          },
-        });
-        if (!s) return null;
-        return {
-          id: s.id,
-          currentGrade: s.currentGrade,
-          classSubjects: s.enrollments.map((e) => e.Class?.subject).filter(Boolean) as string[],
-        };
-      }
-    );
-
-    if (!studentProfile) {
-      return NextResponse.json({ grade: null, count: 0, total: 0, page: 1, totalPages: 0, items: [] });
-    }
-
-    const { id: studentId, currentGrade, classSubjects } = studentProfile;
-
-    const where: Record<string, unknown> = {
-      status: { in: ["published", "APPROVED"] },
-    };
-
-    if (currentGrade) {
-      where.grade = currentGrade;
-    }
-
-    if (classSubjects.length > 0) {
-      where.subject = { in: classSubjects };
-    }
-
-    // Shared content cache key — same for all students with same grade+subjects.
-    // Content list (expensive table scan) is shared; per-student progress is separate.
-    const gradeStr = currentGrade ?? "null";
-    const subjectsStr = classSubjects.sort().join(",") || "all";
-    const contentKey = `cache:lessons:g${gradeStr}:${subjectsStr}:p${page}`;
-
-    const contentCache = await withRedisCache(contentKey, 900, async () => {
-      const [total, rows] = await Promise.all([
-        prisma.curriculumContent.count({ where }),
-        prisma.curriculumContent.findMany({
-          where,
-          orderBy: [{ subject: "asc" }, { orderInUnit: "asc" }, { createdAt: "asc" }],
-          take: PAGE_SIZE,
-          skip,
-          select: {
-            contentId: true,
-            title: true,
-            grade: true,
-            subject: true,
-            contentType: true,
-            status: true,
-            thumbnailUrl: true,
-            thumbnailStatus: true,
-            payload: true,
-          },
-        }),
-      ]);
-      const qualityLessons = rows.filter((lesson) => {
-        const payload = lesson.payload as any;
-        const content = payload?.content ?? payload?.lessonBody ?? payload?.body ?? "";
-        return typeof content === "string" && content.length >= 300;
-      });
-      return {
-        total,
-        count: qualityLessons.length,
-        totalPages: Math.ceil(total / PAGE_SIZE),
-        items: qualityLessons.map((row) => ({
-          contentId: row.contentId,
-          title: row.title,
-          grade: row.grade,
-          subject: row.subject,
-          contentType: row.contentType,
-          status: row.status,
-          thumbnailUrl: row.thumbnailUrl,
-          thumbnailStatus: row.thumbnailStatus,
-          displayTitle: buildCurriculumDisplayTitle({
-            title: row.title,
-            subject: row.subject,
-            gradeLevel: row.grade,
-            payload: row.payload,
-          }),
-        })),
-        rowSubjects: rows.map((r) => r.subject),
-      };
-    });
-
-    // Unenrolled students have no scheduled work — skip the DB query entirely.
-    // Without this guard, every lessons request runs a scheduledWork JOIN through
-    // enrollments, which saturates PgBouncer at high concurrency even when it returns [].
-    if (classSubjects.length === 0) {
-      return NextResponse.json({
-        grade: currentGrade,
-        studentId,
-        count: contentCache.count,
-        total: contentCache.total,
-        page,
-        totalPages: contentCache.totalPages,
-        subjectCompletion: [],
-        items: contentCache.items,
-      });
-    }
-
-    // Per-student completion progress — cached per-student so each student
-    // hits DB at most once per TTL window across all instances.
-    // 900s TTL matches the browse phase length so L1 never expires mid-test.
-    const subjectCompletion = await withRedisCache(
-      `cache:lessons-progress:${studentId}:${subjectsStr}`,
-      900,
-      async () => {
-        const scheduledRows = await prisma.scheduledWork.findMany({
-          where: {
-            class: { enrollments: { some: { studentId: studentId } } },
-            content: { subject: { in: Array.from(new Set(contentCache.rowSubjects)) } },
-          },
-          select: { id: true, content: { select: { subject: true } } },
-        });
-        const progressRows =
-          scheduledRows.length > 0
-            ? await prisma.studentProgress.findMany({
-                where: {
-                  studentId: user.id,
-                  scheduledWorkId: { in: scheduledRows.map((r) => r.id) },
-                  completedAt: { not: null },
-                },
-                select: { scheduledWorkId: true },
-              })
-            : [];
-        const completedIds = new Set(progressRows.map((r) => r.scheduledWorkId));
-        const totals = new Map<string, { total: number; completed: number }>();
-        for (const row of scheduledRows) {
-          const subject = row.content.subject;
-          const bucket = totals.get(subject) ?? { total: 0, completed: 0 };
-          bucket.total += 1;
-          if (completedIds.has(row.id)) bucket.completed += 1;
-          totals.set(subject, bucket);
-        }
-        return Array.from(totals.entries()).map(([subject, stats]) => ({
-          subject,
-          total: stats.total,
-          completed: stats.completed,
-          completionRate: stats.total > 0 ? Math.round((stats.completed / stats.total) * 100) : 0,
-        }));
-      }
-    );
-
-    const responseBody = {
-      grade: currentGrade,
-      studentId: studentId,
-      count: contentCache.count,
-      total: contentCache.total,
-      page,
-      totalPages: contentCache.totalPages,
-      subjectCompletion,
-      items: contentCache.items,
-    };
-
-    if (page === 1) {
-      // Best-effort, fire-and-forget: keep a long-TTL "last known good" copy
-      // so a future cold-start shield timeout has real data to fall back to.
-      setCachedValue(`cache:lessons:lastgood:${user.id}`, responseBody, 7 * 86400).catch(() => {});
-    }
-
-    return NextResponse.json(responseBody);
-  } catch (e: any) {
-    // DB fallback limit exceeded — return degraded 200 immediately rather than
-    // propagating a 503 that would fail the k6 'lessons 200' check.
-    if (e?.code === FALLBACK_LIMIT_EXCEEDED) {
-      const page = Math.max(1, Number(req.nextUrl.searchParams.get("page") ?? "1") || 1);
-      return NextResponse.json({ grade: null, count: 0, total: 0, page, totalPages: 0, subjectCompletion: [], items: [] });
-    }
-    const status = e?.status || 500;
-    return NextResponse.json({ error: e.message }, { status });
+    const page = Math.max(1, Math.floor(Number(req.nextUrl.searchParams.get("page") ?? "1") || 1));
+    const model = await readLearnDiscovery(user, { page, pageSize: PAGE_SIZE });
+    const items = model.lessons.items;
+    return NextResponse.json({
+      grade: model.lessons.items[0]?.grade ?? null, count: items.length, total: model.lessons.total,
+      page, totalPages: Math.ceil(model.lessons.total / PAGE_SIZE), subjectCompletion: model.subjectCompletion,
+      items: items.map((item) => ({ ...item, displayTitle: item.title })),
+      availability: model.lessons.availability === "empty" ? "current" : model.lessons.availability, generatedAt: model.generatedAt, freshness: model.freshness,
+    }, { headers: { "Cache-Control": "private, no-store" } });
+  } catch (error: unknown) {
+    const status = (error as { status?: number }).status ?? 503;
+    return NextResponse.json({ error: "Lessons unavailable", availability: "unavailable" }, { status, headers: { "Cache-Control": "private, no-store" } });
   }
 }

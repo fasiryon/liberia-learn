@@ -46,7 +46,7 @@ await page.goto("http://127.0.0.1:3191/student/today?grade=6");
 await page.locator(".pdv2-hero .pdv2-action-primary").click();
 await page.getByText("What is 2 + 3?").waitFor();
 assert.equal(new URL(page.url()).pathname, "/student/learn");
-await page.getByRole("link", { name: "← Today", exact: true }).click();
+await page.getByRole("navigation", { name: "Student", exact: true }).getByRole("link", { name: /Today/ }).click();
 await page.locator(".pdv2-hero .pdv2-action-primary").waitFor();
 await page.getByRole("link", { name: "Open assignment: Reading for meaning" }).click();
 assert(page.url().includes("/student/assignments/assignment-fixture"));

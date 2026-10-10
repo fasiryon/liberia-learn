@@ -24,23 +24,23 @@ describe("GET /api/student/units/active", () => {
   beforeEach(() => {
     vi.resetModules();
     vi.clearAllMocks();
-    mockRequireRole.mockResolvedValue({ id: "user-1", role: "STUDENT" });
+    mockRequireRole.mockResolvedValue({ id: "user-1", role: "STUDENT", schoolId: "school-a" });
     mockUnitFindFirst.mockResolvedValue(null);
     mockPrereqFindMany.mockResolvedValue([]);
   });
 
-  it("returns active unit summaries, least complete first", async () => {
-    mockStudentFindUnique.mockResolvedValue({ enrollments: [{ Class: { id: "class-1" } }] });
+  it("returns active unit summaries, in catalog order", async () => {
+    mockStudentFindUnique.mockResolvedValue({ enrollments: [{ classId: "class-1", Class: { id: "class-1", schoolId: "school-a" } }] });
     mockScheduledFindMany.mockResolvedValue([{ contentId: "c1" }, { contentId: "c2" }]);
     // curriculumContent.findMany is used twice: unitId resolution + lesson load
     mockContentFindMany.mockImplementation(async (args: any) => {
-      if (args?.where?.unitId && typeof args.where.unitId === "string") {
+      if (args?.where?.AND?.[2]?.unitId && typeof args.where.AND[2].unitId === "string") {
         return [
-          { id: "p1", contentId: "c1", title: "Topic: A", orderInUnit: 1, lessonType: "core", grade: 8, subject: "MATH" },
-          { id: "p2", contentId: "c2", title: "Topic: B", orderInUnit: 2, lessonType: "core", grade: 8, subject: "MATH" },
+          { id: "p1", contentId: "c1", title: "Topic: A", orderInUnit: 1, lessonType: "core", grade: 8, subject: "MATH", status: "published", visibility: "public", payload: {}, schoolId: null, teacherCreated: false },
+          { id: "p2", contentId: "c2", title: "Topic: B", orderInUnit: 2, lessonType: "core", grade: 8, subject: "MATH", status: "published", visibility: "public", payload: {}, schoolId: null, teacherCreated: false },
         ];
       }
-      return [{ unitId: "u1" }, { unitId: "u1" }];
+      return [{ unitId: "u1", contentId: "c1", status: "published", visibility: "public", payload: {}, schoolId: null, teacherCreated: false }];
     });
     mockProgressFindMany.mockResolvedValue([
       { completedAt: new Date(), scheduledWork: { id: "sw1", contentId: "c1" } },
@@ -51,8 +51,8 @@ describe("GET /api/student/units/active", () => {
     const body = await res.json();
 
     expect(res.status).toBe(200);
-    expect(body).toHaveLength(1);
-    expect(body[0]).toMatchObject({
+    expect(body.items).toHaveLength(1);
+    expect(body.items[0]).toMatchObject({
       unitId: "u1",
       unitName: "Topic",
       totalCount: 2,
@@ -69,6 +69,6 @@ describe("GET /api/student/units/active", () => {
     const body = await res.json();
 
     expect(res.status).toBe(200);
-    expect(body).toEqual([]);
+    expect(body).toMatchObject({ availability: "empty", eligibility: "not_enrolled", items: [] });
   }, 15_000);
 });

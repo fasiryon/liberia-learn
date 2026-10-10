@@ -70,6 +70,7 @@ describe("GET /api/student/work/[scheduledWorkId] — APPROVED content gate", ()
       classId: "class-1",
       classFormat: "standard",
       content: {
+        visibility: "public", schoolId: null, teacherCreated: false,
         contentId: "content-1",
         payload: { title: "Test Lesson", body: "Body content here." },
         subject: "MATH",
