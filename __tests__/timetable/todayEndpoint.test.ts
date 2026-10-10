@@ -44,6 +44,7 @@ const SAMPLE_TIMETABLE = {
   periods: [
     {
       id: "slot-1",
+      classId: "class-1",
       periodLabel: "Period 1",
       subject: "MATH",
       startTime: "08:30",
@@ -59,6 +60,7 @@ const SAMPLE_TIMETABLE = {
     },
     {
       id: "slot-2",
+      classId: "class-1",
       periodLabel: "Period 2",
       subject: "SCIENCE",
       startTime: "09:30",
@@ -92,7 +94,8 @@ beforeEach(() => {
   mockGetTimetableForStudent.mockResolvedValue(null);
   mockPrisma.student.findUnique.mockResolvedValue({
     id: "student-1",
-    enrollments: [{ classId: "class-1" }],
+    deletedAt: null, user: { schoolId: "school-1" }, academicEnrollments: [], // enrollment authority shape
+    enrollments: [{ Class: { id: "class-1", name: "Class", subject: "MATH", gradeLevel: 7, schoolId: "school-1", Teacher: null, School: { name: "School" } } }],
   });
   mockPrisma.scheduledWork.findMany.mockResolvedValue([]);
   mockPrisma.assignment.findMany.mockResolvedValue([]);

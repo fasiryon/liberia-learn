@@ -63,7 +63,8 @@ beforeEach(() => {
   mockBuildStudentLearningIntelligence.mockResolvedValue(defaultIntelligence());
   mockPrisma.student.findUnique.mockResolvedValue({
     id: "student1",
-    enrollments: [{ classId: "class1" }],
+    deletedAt: null, user: { schoolId: "school1" }, academicEnrollments: [], // enrollment authority shape
+    enrollments: [{ Class: { id: "class1", name: "Class", subject: "MATH", gradeLevel: 7, schoolId: "school1", Teacher: null, School: { name: "School" } } }],
   });
   mockPrisma.scheduledWork.findMany.mockResolvedValue([]);
   mockPrisma.assignment.findMany.mockResolvedValue([]);

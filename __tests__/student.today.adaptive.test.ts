@@ -76,7 +76,8 @@ describe("student today layered school day", () => {
     mockRequireRole.mockResolvedValue({ id: "student-user-1", role: "STUDENT", schoolId: "school-1" });
     mockStudentFindUnique.mockResolvedValue({
       id: "student-1",
-      enrollments: [{ classId: "class-1" }],
+      deletedAt: null, user: { schoolId: "school-1" }, academicEnrollments: [], // enrollment authority shape
+    enrollments: [{ Class: { id: "class-1", name: "Class", subject: "MATH", gradeLevel: 7, schoolId: "school-1", Teacher: null, School: { name: "School" } } }],
     });
     mockBuildLearningIntelligence.mockResolvedValue({
       generatedAt: "2026-04-23T00:00:00.000Z",
