@@ -1,3 +1,4 @@
+// route-policy: auth=session; scope=tenant; authority=authenticated-student-own-school-enrollments; rationale=learner discovery is restricted by school membership and server-side eligibility
 import { NextResponse } from "next/server";
 
 import { requireRole } from "@/lib/auth";
@@ -23,6 +24,7 @@ export async function GET(
     const sequence = await loadUnitSequenceForStudent({
       unitId,
       studentUserId: user.id,
+      schoolId: user.schoolId,
       currentContentId: params.contentId,
       currentScheduledWorkId: scheduledWorkId,
     });

@@ -1,3 +1,4 @@
+// route-policy: auth=session; scope=tenant; authority=authenticated-student-own-school-enrollments; rationale=learner discovery is restricted by school membership and server-side eligibility
 import { NextRequest, NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
@@ -36,7 +37,7 @@ export async function GET(req: NextRequest) {
     }
 
     const assignments = await prisma.assignment.findMany({
-      where: { classId: { in: classIds } },
+      where: { classId: { in: classIds }, Class: { schoolId: user.schoolId ?? "__no_school__" } },
       include: {
         Class: { select: { id: true, name: true, subject: true } },
         submissions: {
@@ -48,7 +49,7 @@ export async function GET(req: NextRequest) {
       orderBy: [{ dueAt: "asc" }, { createdAt: "asc" }],
     });
 
-    const targeting = await listAssignmentTargeting(assignments.map((assignment) => assignment.id));
+    const targeting = await listAssignmentTargeting(assignments.map((assignment) => assignment.id), { failClosed: true });
     const visibleAssignments = assignments.filter((assignment) =>
       isAssignmentVisibleToStudent(assignment.id, student.id, targeting)
     );

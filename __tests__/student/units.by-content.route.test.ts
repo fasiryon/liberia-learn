@@ -10,6 +10,7 @@ const mockPrereqFindMany = vi.hoisted(() => vi.fn());
 vi.mock("@/lib/auth", () => ({ requireRole: mockRequireRole }));
 vi.mock("@/lib/db", () => ({
   prisma: {
+    student: { findUnique: async () => ({ enrollments: [{ classId: "class-1", Class: { schoolId: "school-a" } }] }) },
     curriculumContent: { findFirst: mockContentFindFirst, findMany: mockContentFindMany },
     curriculumUnit: { findFirst: mockUnitFindFirst },
     studentProgress: { findMany: mockProgressFindMany },
@@ -21,7 +22,7 @@ describe("GET /api/student/units/by-content/[contentId]", () => {
   beforeEach(() => {
     vi.resetModules();
     vi.clearAllMocks();
-    mockRequireRole.mockResolvedValue({ id: "user-1", role: "STUDENT" });
+    mockRequireRole.mockResolvedValue({ id: "user-1", role: "STUDENT", schoolId: "school-a" });
     mockUnitFindFirst.mockResolvedValue(null);
     mockProgressFindMany.mockResolvedValue([]);
     mockPrereqFindMany.mockResolvedValue([]);
@@ -34,8 +35,8 @@ describe("GET /api/student/units/by-content/[contentId]", () => {
   it("returns the unit sequence with the requested lesson marked current", async () => {
     mockContentFindFirst.mockResolvedValue({ unitId: "u1" });
     mockContentFindMany.mockResolvedValue([
-      { id: "p1", contentId: "c1", title: "Topic: One", orderInUnit: 1, lessonType: "core", grade: 8, subject: "MATH" },
-      { id: "p2", contentId: "c2", title: "Topic: Two", orderInUnit: 2, lessonType: "core", grade: 8, subject: "MATH" },
+      { id: "p1", contentId: "c1", title: "Topic: One", orderInUnit: 1, lessonType: "core", grade: 8, subject: "MATH", status: "published", visibility: "public", payload: {}, schoolId: null, teacherCreated: false },
+      { id: "p2", contentId: "c2", title: "Topic: Two", orderInUnit: 2, lessonType: "core", grade: 8, subject: "MATH", status: "published", visibility: "public", payload: {}, schoolId: null, teacherCreated: false },
     ]);
     mockProgressFindMany.mockResolvedValue([
       { completedAt: new Date(), scheduledWork: { id: "sw1", contentId: "c1" } },

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { BookOpen, ChevronRight } from "lucide-react";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { listAuthorizedLearnerContent } from "@/lib/student/learnDiscovery.server";
 
 export const dynamic = "force-dynamic";
 
@@ -17,23 +18,10 @@ export default async function StudentTextbooksPage() {
   });
 
   const lessons = student?.currentGrade
-    ? await prisma.curriculumContent.findMany({
-        where: {
-          grade: student.currentGrade,
-          status: { in: ["APPROVED", "published"] },
-          contentType: { in: ["lesson", "unit_plan", "term_plan", "full_pack"] },
-        },
-        orderBy: [{ subject: "asc" }, { updatedAt: "desc" }],
-        take: 36,
-        select: {
-          contentId: true,
-          title: true,
-          subject: true,
-          grade: true,
-          contentType: true,
-          payload: true,
-        },
-      })
+    ? await listAuthorizedLearnerContent(user, {
+        grade: student.currentGrade,
+        contentType: { in: ["lesson", "unit_plan", "term_plan", "full_pack"] },
+      }, 36)
     : [];
 
   const grouped = new Map<string, typeof lessons>();
