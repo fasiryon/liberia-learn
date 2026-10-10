@@ -1,0 +1,95 @@
+{
+  "auth": {
+    "anonymous /api/student/learn": 401,
+    "anonymous /api/student/lessons": 401,
+    "anonymous /api/student/units/active": 401,
+    "anonymous /student/learn page": "/login",
+    "teacher /api/student/learn": 403,
+    "teacher /api/student/lessons": 403,
+    "student work pr177-foreign-class-work": 403,
+    "student work pr177-unenrolled-class-work": 403,
+    "student foreign unit": 404
+  },
+  "invariant": [
+    {
+      "kind": "lesson",
+      "href": "/student/lesson/cha-g9-math-multimedia-demo",
+      "apiStatus": 200,
+      "pageStatus": 200
+    },
+    {
+      "kind": "reading",
+      "href": "/student/lesson/cha-g9-math-multimedia-demo",
+      "apiStatus": 200,
+      "pageStatus": 200
+    }
+  ],
+  "parity": {
+    "learnTotal": 1,
+    "lessonsTotal": 1,
+    "lessonsAvailability": "current",
+    "firstPageIds": [
+      "cha-g9-math-multimedia-demo"
+    ]
+  },
+  "sections": {
+    "lessons": {
+      "availability": "current",
+      "items": 1
+    },
+    "activeUnits": {
+      "availability": "empty",
+      "items": 0,
+      "eligibility": "eligible"
+    },
+    "assignedWork": {
+      "availability": "empty",
+      "items": 0
+    },
+    "checks": {
+      "availability": "unavailable",
+      "items": 0,
+      "reason": "Checks are not available"
+    },
+    "resources": {
+      "availability": "current",
+      "items": 1
+    },
+    "subjects": [
+      "MATH"
+    ]
+  },
+  "layouts": [
+    {
+      "width": 1920,
+      "overflow": false,
+      "governedState": "none"
+    },
+    {
+      "width": 1440,
+      "overflow": false,
+      "governedState": "none"
+    },
+    {
+      "width": 768,
+      "overflow": false,
+      "governedState": "none"
+    },
+    {
+      "width": 390,
+      "overflow": false,
+      "governedState": "none"
+    },
+    {
+      "width": 360,
+      "overflow": false,
+      "governedState": "none"
+    },
+    {
+      "width": 320,
+      "overflow": false,
+      "governedState": "none"
+    }
+  ],
+  "caveat": "Real Chromium session against a disposable local PostgreSQL seeded with the CHA synthetic fixture and the convergence dev server. No API mocked. Not production, not real devices or assistive technology."
+}

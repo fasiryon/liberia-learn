@@ -5,7 +5,7 @@ import { InteractiveButton } from "@/components/ui/InteractiveButton";
 import { useStudentIdentity } from "@/components/student/StudentShellV2";
 import { isLessonCached } from "@/lib/lesson-offline-cache";
 import { useOnline } from "./useLearnRead";
-import { ageBand, catalogConfirmed, groupBySubject, readError, subjectName, validCatalog, type CatalogLesson, type CatalogPage } from "./learnPresentation";
+import { ageBand, groupBySubject, learnTarget, readError, subjectName, validCatalog, type CatalogLesson, type CatalogPage } from "./learnPresentation";
 
 /** Shows only a verified, learner-partitioned offline copy; never guesses. */
 function SavedOffline({ contentId }: { contentId: string }) {
@@ -20,7 +20,7 @@ function SavedOffline({ contentId }: { contentId: string }) {
   return saved ? <p className="pdv2-meta">✓ Saved on this device</p> : null;
 }
 
-type State = { kind: "loading" } | { kind: "ready"; confirmed: boolean } | { kind: "error"; message: string; restricted?: boolean };
+type State = { kind: "loading" } | { kind: "ready" } | { kind: "error"; message: string; restricted?: boolean };
 
 /** Lesson catalog for the learner's grade, server-ordered and paged as the endpoint returns it. */
 export function LessonCatalog() {
@@ -48,7 +48,12 @@ export function LessonCatalog() {
       const data: unknown = await response.json();
       if (!validCatalog(data)) throw new Error("malformed");
       setPage(data);
-      if (pageNumber === 1) { setLessons(data.items); setState({ kind: "ready", confirmed: catalogConfirmed(data) }); }
+      if (data.availability === "unavailable") {
+        if (pageNumber > 1) setMoreError("More lessons are unavailable right now. Try again.");
+        else setState({ kind: "error", message: "Your lessons are unavailable right now. This does not mean there are none." });
+        return;
+      }
+      if (pageNumber === 1) { setLessons(data.items); setState({ kind: "ready" }); }
       else {
         firstNew.current = data.items[0]?.contentId ?? null;
         setLessons((previous) => [...previous, ...data.items.filter((item) => !previous.some((row) => row.contentId === item.contentId))]);
@@ -71,20 +76,19 @@ export function LessonCatalog() {
 
   return <main className="pdv2-today pdv2-learn" aria-labelledby="lessons-heading">
     <header className="pdv2-topbar">
-      <div><InteractiveButton href="/student/learn">← Back to Learn</InteractiveButton><p className="pdv2-eyebrow pdv2-learn-crumb">Learn · Lessons</p><h1 id="lessons-heading">{young ? "Lessons" : "Lessons for your grade"}</h1></div>
+      <div><InteractiveButton href="/student/learn">← Back to Learn</InteractiveButton><p className="pdv2-eyebrow pdv2-learn-crumb">Learn · Lessons</p><h1 id="lessons-heading">{young ? "Lessons" : "Lessons for your grade"}</h1>{state.kind === "ready" && page && <p className="pdv2-meta">{page.total} lesson{page.total === 1 ? "" : "s"} available to you</p>}</div>
       <div className="pdv2-top-actions">{online ? <span className="pdv2-status">Connected</span> : <p role="status" className="pdv2-offline-note"><span className="pdv2-badge pdv2-badge-warn">Offline</span> Saved lessons are in Offline lessons</p>}</div>
     </header>
     <div className="pdv2-plan" aria-busy={state.kind === "loading"}>
       {state.kind === "loading" && <p role="status">Loading lessons…</p>}
       {state.kind === "error" && <div role="status" className="pdv2-learn-notice"><p><span className="pdv2-badge pdv2-badge-warn">{state.restricted ? "Restricted" : "Unavailable"}</span> {state.message}</p>
         {!state.restricted && <InteractiveButton primary onClick={() => void load(1)} disabled={busy}>{busy ? "Checking…" : "Try again"}</InteractiveButton>}</div>}
-      {state.kind === "ready" && !state.confirmed && <div role="status" className="pdv2-learn-notice"><p><span className="pdv2-badge pdv2-badge-warn">Not confirmed</span> Your lesson list could not be confirmed right now.</p><InteractiveButton primary onClick={() => void load(1)} disabled={busy}>{busy ? "Checking…" : "Try again"}</InteractiveButton></div>}
-      {state.kind === "ready" && state.confirmed && lessons.length === 0 && <p className="pdv2-learn-empty">No lessons are published for your grade yet. Your teacher can still assign work, and your assignments are on Learn.</p>}
+      {state.kind === "ready" && lessons.length === 0 && <p className="pdv2-learn-empty">No lessons are published for your grade yet. Your teacher can still assign work, and your assignments are on Learn.</p>}
       {groups.map((group) => <section key={group.subject} className="pdv2-learn-group" aria-labelledby={`subject-${group.subject}`}>
         <h2 id={`subject-${group.subject}`}>{subjectName(group.subject)}</h2>
         <ul className="pdv2-plan-list">{group.items.map((lesson) => <li key={lesson.contentId}>
           <div><p className="pdv2-row-title">{lesson.displayTitle}</p><p className="pdv2-meta">Grade {lesson.grade}</p><SavedOffline contentId={lesson.contentId} /></div>
-          <InteractiveButton id={`lesson-${lesson.contentId}`} href={`/student/lesson/${encodeURIComponent(lesson.contentId)}`} aria-label={`Open lesson: ${lesson.displayTitle}`}>Open →</InteractiveButton>
+          {learnTarget(lesson.href) ? <InteractiveButton id={`lesson-${lesson.contentId}`} href={lesson.href} aria-label={`Open lesson: ${lesson.displayTitle}`}>Open →</InteractiveButton> : <span className="pdv2-learn-locked">Unavailable</span>}
         </li>)}</ul>
       </section>)}
       {moreError && <p role="status" className="pdv2-error">{moreError}</p>}

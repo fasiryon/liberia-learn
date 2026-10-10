@@ -262,11 +262,15 @@
     "none",
     "no-resource",
     "empty",
+    "not-enrolled",
+    "lessons-unavailable",
     "error",
-    "restricted",
+    "signed-out",
+    "cross-tenant",
     "long",
     "stale",
-    "offline-cached"
+    "offline-cached",
+    "lessons-empty"
   ],
   "a11y": {
     "keyboard": [
@@ -308,6 +312,12 @@
       "unit": [],
       "lessons": []
     }
+  },
+  "integrated": {
+    "checksSummary": true,
+    "serverLocks": true,
+    "serverTotal": 24,
+    "searchDeferred": true
   },
   "errors": [],
   "caveat": "Production components in an explicit fixture harness with mocked authorized APIs. Server authorization, real devices, screen readers and user studies are not certified here."

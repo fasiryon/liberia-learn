@@ -10,9 +10,31 @@ const context = await browser.newContext({ reducedMotion: "reduce" });
 const LONG = "Understanding equivalent fractions with number lines, fraction strips and real market examples from Monrovia";
 let mode = "ready";
 const governed = (label = "Equivalent fractions") => ({ available: true, decisionId: "fixture-decision", sessionId: "fixture-session", releaseId: "fixture-release", releaseIdentity: "fixture-identity", learnerStateRevision: "1", grade: 4, subject: "MATH", conceptLabel: label, action: { kind: "PRACTICE", reason: "Practice the learning question selected by the server." }, item: { id: "fixture-item", version: "1", prompt: "Which fraction is equal to 1/2?", options: ["2/4", "1/3", "3/5"] }, toolPolicy: { allowed: [], prohibited: [] }, lessonHref: "/student/lesson/fixture-lesson" });
-const units = (long) => [{ unitId: "u-1", unitName: long ? LONG : "Fractions on a number line", subject: "MATH", grade: 4, completedCount: 2, totalCount: 5, completionPct: 40 }, { unitId: "u-2", unitName: "Reading for meaning", subject: "ENGLISH", grade: 4, completedCount: 0, totalCount: 4, completionPct: 0 }];
-const catalog = (long) => ({ studentId: "fixture-student", grade: 4, page: 1, totalPages: 1, items: [{ contentId: "c-1", displayTitle: long ? LONG : "Comparing fractions", subject: "MATH", grade: 4 }, { contentId: "c-2", displayTitle: "Main idea and details", subject: "ENGLISH", grade: 4 }], subjectCompletion: [{ subject: "MATH", total: 10, completed: 3 }, { subject: "ENGLISH", total: 8, completed: 1 }] });
-const assignments = (long) => ({ assignments: [{ id: "a-1", title: long ? LONG : "Fractions worksheet", subject: "MATH", dueAt: "2026-10-08T09:00:00Z", isOverdue: true, submission: null }, { id: "a-2", title: "Story summary", subject: "ENGLISH", dueAt: "2026-10-12T09:00:00Z", isOverdue: false, submission: null }] });
+const open = (href) => ({ state: "open", locked: false, href });
+const lessonRow = (id, title, subject = "MATH") => ({ ...open(`/student/lesson/${id}`), availability: "current", contentId: id, title, subject, grade: 4 });
+/** learn-discovery/2 as returned by GET /api/student/learn (lib/student/learnDiscovery.server.ts). */
+function discovery(long) {
+  const empty = mode === "empty", notEnrolled = mode === "not-enrolled", lessonsDown = mode === "lessons-unavailable";
+  return {
+    schemaVersion: "learn-discovery/2", availability: empty || notEnrolled ? "empty" : "current", freshness: "current", generatedAt: new Date().toISOString(),
+    currentLearning: { availability: "separate", endpoint: "/api/student/learning-authority/next-action" },
+    subjects: notEnrolled ? [] : [{ subject: "MATH", label: "MATH" }, { subject: "ENGLISH", label: "ENGLISH" }],
+    subjectCompletion: notEnrolled ? [] : [{ subject: "MATH", total: 10, completed: 3, completionRate: 30 }, { subject: "ENGLISH", total: 8, completed: 1, completionRate: 13 }],
+    lessons: lessonsDown ? { availability: "unavailable", total: 0, items: [] } : empty || notEnrolled ? { availability: "empty", total: 0, items: [] } : { availability: "current", total: 24, items: [lessonRow("c-1", long ? LONG : "Comparing fractions"), lessonRow("c-2", "Main idea and details", "ENGLISH")] },
+    activeUnits: notEnrolled ? { availability: "empty", eligibility: "not_enrolled", items: [] } : empty ? { availability: "empty", eligibility: "eligible", items: [] }
+      : { availability: "current", eligibility: "eligible", items: [{ ...open("/student/units/u-1"), unitId: "u-1", title: long ? LONG : "Fractions on a number line", subject: "MATH", grade: 4, lessons: [] }, { ...open("/student/units/u-2"), unitId: "u-2", title: "Reading for meaning", subject: "ENGLISH", grade: 4, lessons: [] }] },
+    assignedWork: empty || notEnrolled ? { availability: "empty", items: [] } : { availability: "current", items: [
+      { ...open("/student/assignments"), assignmentHref: "/student/assignments", id: "a-1", title: long ? LONG : "Fractions worksheet", subject: "MATH", dueAt: "2026-10-08T09:00:00Z", content: null },
+      { state: "unavailable", locked: true, href: null, lessonHref: null, reason: "This activity is not available", assignmentHref: "/student/assignments", id: "a-2", title: "Story summary", subject: "ENGLISH", dueAt: "2026-10-12T09:00:00Z", content: null }] },
+    checks: empty || notEnrolled ? { availability: "empty", total: 0, items: [] } : { availability: "current", total: 2, items: [
+      { ...open("/student/exams/e-1"), id: "e-1", title: "Fractions check", subject: "MATH", status: "PUBLISHED" },
+      { state: "unavailable", locked: true, href: null, reason: "This check is already completed", id: "e-2", title: "Place value check", subject: "MATH", status: "PUBLISHED" }] },
+    resources: { availability: empty || notEnrolled ? "empty" : "current", items: empty || notEnrolled ? [] : [{ ...lessonRow("r-1", "Grade 4 reader"), id: "r-1", kind: "reading" }], destinations: [{ title: "Textbooks", href: "/student/textbooks" }], compiledBooks: "deferred" },
+    search: { availability: "deferred" }, limits: { perSection: 100, linkedContent: 200, catalogBoundReached: false },
+  };
+}
+const catalog = () => ({ availability: "current", grade: 4, count: 2, total: 2, page: 1, totalPages: 1, subjectCompletion: [], items: [
+  { ...lessonRow("c-1", "Comparing fractions"), displayTitle: "Comparing fractions" }, { ...lessonRow("c-2", "Main idea and details", "ENGLISH"), displayTitle: "Main idea and details" }] });
 const unitDetail = { unitId: "u-1", unitName: "Fractions on a number line", subject: "MATH", grade: 4, completedCount: 1, totalCount: 3, completionPct: 33, lessons: [
   { contentId: "l1", title: "What is a fraction?", orderInUnit: 1, lessonType: "lesson", status: "completed", scheduledWorkId: null, locked: false, href: "/student/lesson/l1" },
   { contentId: "l2", title: "Fractions on a number line", orderInUnit: 2, lessonType: "lesson", status: "current", scheduledWorkId: null, locked: false, href: "/student/lesson/l2" },
@@ -21,17 +43,19 @@ await context.route("**/api/**", async (route) => {
   const url = route.request().url();
   const long = mode === "long";
   if (mode === "loading") await new Promise((resolve) => setTimeout(resolve, 1500));
-  if (mode === "error" && /next-action|units|lessons|assignments/.test(url)) return route.fulfill({ status: 503, json: { error: "unavailable" } });
-  if (mode === "offline" && /next-action|units|lessons|assignments/.test(url)) return route.abort("internetdisconnected");
+  const discoveryUrl = ["/api/student/learn", "/api/student/lessons", "/api/student/units/active"].includes(new URL(url).pathname);
+  if (mode === "error" && (discoveryUrl || url.includes("next-action"))) return route.fulfill({ status: 503, json: { error: "unavailable" } });
+  if (mode === "offline" && (discoveryUrl || url.includes("next-action"))) return route.abort("internetdisconnected");
+  if ((mode === "signed-out" || mode === "cross-tenant") && (discoveryUrl || url.includes("next-action"))) return route.fulfill({ status: mode === "signed-out" ? 401 : 403, json: { error: mode === "signed-out" ? "Unauthorized" : "Forbidden" } });
   if (url.includes("next-action")) {
     if (route.request().method() === "POST") return route.fulfill({ json: { correct: true, learnerState: { mastery: { level: "DEVELOPING", observedScore: 1 }, confidence: { level: "LOW" } } } });
     return route.fulfill({ json: mode === "none" ? { available: false } : mode === "no-resource" ? { available: false, status: "NO_VALID_RESOURCE" } : governed(long ? LONG : undefined) });
   }
-  if (url.includes("/units/active")) return route.fulfill({ json: mode === "empty" ? [] : units(long) });
+  if (new URL(url).pathname === "/api/student/learn") return route.fulfill({ json: discovery(long) });
   if (url.includes("/units/u-1")) return route.fulfill({ json: unitDetail });
   if (url.includes("/units/")) return route.fulfill({ status: 404, json: { error: "unit_not_found" } });
-  if (url.includes("/lessons")) return route.fulfill({ json: mode === "empty" ? { ...catalog(), items: [], subjectCompletion: [] } : catalog(long) });
-  if (url.includes("/assignments")) return mode === "restricted" ? route.fulfill({ status: 403, json: { error: "forbidden" } }) : route.fulfill({ json: mode === "empty" ? { assignments: [] } : assignments(long) });
+  if (url.includes("/api/student/lessons")) return route.fulfill({ json: mode === "lessons-empty" ? { ...catalog(), items: [], count: 0, total: 0, totalPages: 0 } : catalog() });
+  if (url.includes("/assignments")) return route.fulfill({ json: { assignments: [{ id: "a-1", title: "Fractions worksheet", subject: "MATH", dueAt: "2026-10-08T09:00:00Z", isOverdue: true, submission: null }] } });
   if (url.includes("/today")) return route.fulfill({ json: { availability: "current", items: [], catchUpItems: [], completedCount: 2, remainingCount: 0 } });
   if (url.includes("teacher-lessons")) return route.fulfill({ json: { lessons: [] } });
   if (url.includes("inbox")) return route.fulfill({ json: { items: [], unreadCount: 0 } });
@@ -124,6 +148,17 @@ for (const grade of [2, 6]) for (const width of [320, 360, 390, 768, 1440]) {
 await page.setViewportSize({ width: 1920, height: 1000 });
 await page.goto(`${base}/student/learn?grade=6`); await page.locator(".pdv2-learn-option").first().waitFor();
 await page.screenshot({ path: `${out}/learn-viewport-g6-1920.png` });
+// Integrated discovery: server rows, checks summary, server locks/reasons, server total.
+await page.setViewportSize({ width: 1440, height: 900 });
+await page.goto(`${base}/student/learn?grade=6`); await page.locator("a[aria-label='Open check: Fractions check']").waitFor();
+assert.equal(await page.locator("a[aria-label='Open check: Fractions check']").getAttribute("href"), "/student/exams/e-1");
+await page.getByText("This check is already completed").waitFor(); await page.getByText("This activity is not available").waitFor();
+assert.equal(await page.locator("a[aria-label='Open check: Place value check']").count(), 0);
+assert.equal(await page.locator("a[aria-label='Open assignment: Story summary']").count(), 0);
+await page.getByText("24 lessons available to you.").waitFor();
+assert.equal(await page.locator("main a[href='/student/textbooks']").count(), 1);
+assert.equal(await page.locator("input[type=search], [role=search]").count(), 0);
+evidence.integrated = { checksSummary: true, serverLocks: true, serverTotal: 24, searchDeferred: true };
 // Direct activation: answer the governed task in place, no chooser or second Start.
 await page.setViewportSize({ width: 390, height: 844 });
 await page.goto(`${base}/student/today?grade=6`);
@@ -160,9 +195,12 @@ const states = {
   loading: async () => page.getByText("Loading your learning activity…").waitFor(),
   none: async () => page.getByText("No activity is ready right now").waitFor(),
   "no-resource": async () => page.getByText("Ask your teacher for your next step", { exact: false }).waitFor(),
-  empty: async () => { await page.getByText("No units are scheduled for your class this week.").waitFor(); await page.getByText("No open assignments right now.").waitFor(); },
-  error: async () => { await page.getByText("Your units could not load. This does not mean you have none.").waitFor(); assert.equal(await page.getByText("No open assignments right now.").count(), 0); },
-  restricted: async () => page.locator("[aria-labelledby=assigned-heading]").getByText("Restricted").waitFor(),
+  empty: async () => { await page.getByText("No units are scheduled for your class this week.").waitFor(); await page.getByText("No assignments right now.").waitFor(); await page.getByText("No lessons are published for your grade and classes yet.", { exact: false }).waitFor(); },
+  "not-enrolled": async () => { await page.getByText("You are not enrolled in a class yet", { exact: false }).waitFor(); assert.equal(await page.getByText("No units are scheduled").count(), 0); },
+  "lessons-unavailable": async () => { await page.getByText("Your lessons could not load. This does not mean you have none.").waitFor(); assert.equal(await page.getByText("No lessons are published", { exact: false }).count(), 0); },
+  error: async () => { await page.getByText("Your units could not load. This does not mean you have none.").waitFor(); assert.equal(await page.getByText("No assignments right now.").count(), 0); },
+  "signed-out": async () => { await page.getByRole("link", { name: "Sign in →" }).waitFor(); await page.locator("[aria-labelledby=path-heading]").getByText("Signed out").first().waitFor(); assert.equal(await page.locator("a[aria-label^='Open lesson']").count(), 0); },
+  "cross-tenant": async () => { await page.getByText("This activity isn't available for your account.").waitFor(); await page.locator("[aria-labelledby=assigned-heading]").getByText("Restricted").first().waitFor(); assert.equal(await page.locator("a[aria-label^='Open assignment']").count(), 0); },
   long: async () => { await page.getByRole("heading", { name: LONG }).waitFor(); assert.equal(await overflow(), false); },
 };
 for (const [state, check] of Object.entries(states)) {
@@ -186,6 +224,8 @@ assert(await page.getByRole("button", { name: "Submit answer" }).isDisabled());
 assert(await page.getByLabel("2/4").isDisabled());
 await page.screenshot({ path: `${out}/state-offline-cached-390.png`, fullPage: true });
 evidence.states.push("stale", "offline-cached");
+mode = "lessons-empty"; await page.goto(`${base}/student/lessons?grade=6`); await page.getByText("No lessons are published for your grade yet.", { exact: false }).waitFor();
+await page.screenshot({ path: `${out}/lessons-empty-390.png`, fullPage: true }); evidence.states.push("lessons-empty");
 mode = "ready";
 
 // Unit (locked) and lessons pages.
