@@ -4,7 +4,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const store = vi.hoisted(() => ({ map: new Map<string, unknown>(), down: false }));
-const mocks = vi.hoisted(() => ({ role: vi.fn(), student: vi.fn(), work: vi.fn(), assignment: vi.fn(), timetable: vi.fn() }));
+const mocks = vi.hoisted(() => ({ role: vi.fn(), student: vi.fn(), work: vi.fn(), assignment: vi.fn(), timetable: vi.fn(), teachers: vi.fn() }));
 
 vi.mock("@/lib/cache/redisCache", () => ({
   FALLBACK_LIMIT_EXCEEDED: "FALLBACK_LIMIT_EXCEEDED",
@@ -22,15 +22,19 @@ vi.mock("@/lib/student/adaptiveRecommendations", () => ({ getAdaptiveRecommendat
 vi.mock("@/lib/intelligence/actionEngine", () => ({ generateStudentActions: vi.fn(async () => []), getActiveStudentAction: vi.fn(async () => null) }));
 vi.mock("@/lib/timetable/timetableService", () => ({ getTimetableForStudent: mocks.timetable }));
 vi.mock("@/lib/lessons/labLinks", () => ({ getLessonLabLinks: () => [] }));
-vi.mock("@/lib/db", () => ({ prisma: { student: { findUnique: mocks.student }, scheduledWork: { findMany: mocks.work }, assignment: { findMany: mocks.assignment } } }));
+vi.mock("@/lib/db", () => ({ prisma: { student: { findUnique: mocks.student }, scheduledWork: { findMany: mocks.work }, assignment: { findMany: mocks.assignment }, user: { findMany: mocks.teachers } } }));
 
 import { GET } from "@/app/api/student/today/route";
+import { enrollmentScopeFingerprint } from "@/lib/student/enrollmentReadModel";
 
-type Klass = { id: string; schoolId: string; teacher: { name: string; schoolId: string } | null };
+type Klass = { id: string; schoolId: string; teacherId: string | null };
+type Teacher = { name: string; schoolId: string };
 const state = {
   userSchool: "school-a",
   studentSchool: "school-a",
   classes: [] as Klass[],
+  // Teachers are their own records, referenced by id, exactly as in the database.
+  teachers: {} as Record<string, Teacher>,
   academic: [] as Array<{ schoolId: string; status: string; academicYear: { isActive: boolean; startDate: Date; endDate: Date } }>,
 };
 const dateStr = () => new Date().toISOString().slice(0, 10);
@@ -40,14 +44,14 @@ const text = (body: unknown) => JSON.stringify(body);
 beforeEach(() => {
   store.map.clear(); store.down = false;
   Object.assign(state, { userSchool: "school-a", studentSchool: "school-a", academic: [],
-    classes: [{ id: "class-a", schoolId: "school-a", teacher: { name: "TEACHER-A", schoolId: "school-a" } }] });
+    classes: [{ id: "class-a", schoolId: "school-a", teacherId: "t-a" }], teachers: { "t-a": { name: "TEACHER-A", schoolId: "school-a" } } });
   for (const mock of Object.values(mocks)) mock.mockReset();
   mocks.role.mockImplementation(async () => ({ id: "user-1", role: "STUDENT", schoolId: state.userSchool }));
   // The enrollment authority's single read, honouring its own-school enrollment filter.
   mocks.student.mockImplementation(async ({ where, select }: any) => where.userId !== "user-1" ? null : {
     id: "student-1", currentGrade: null, deletedAt: null, user: { schoolId: state.studentSchool }, academicEnrollments: state.academic,
     enrollments: state.classes.filter((c) => !select.enrollments.where || c.schoolId === select.enrollments.where.Class.schoolId)
-      .map((c) => ({ classId: c.id, Class: { id: c.id, name: `NAME-${c.id}`, subject: "MATH", gradeLevel: 4, schoolId: c.schoolId, Teacher: c.teacher, School: { name: `SCHOOL-${c.schoolId}` } } })),
+      .map((c) => ({ classId: c.id, Class: { id: c.id, name: `NAME-${c.id}`, subject: "MATH", gradeLevel: 4, schoolId: c.schoolId, Teacher: c.teacherId && state.teachers[c.teacherId] ? { ...state.teachers[c.teacherId] } : null, School: { name: `SCHOOL-${c.schoolId}` } } })),
   });
   const inScope = (where: any, c: { classId: string; schoolId: string }) => where.classId.in.includes(c.classId) && ((where.class ?? where.Class)?.schoolId ?? c.schoolId) === c.schoolId;
   mocks.work.mockImplementation(async ({ where }: any) => where.scheduledDate?.lt && where.scheduledDate.gte && !where.scheduledDate.gte.toISOString().startsWith(dateStr()) ? [] :
@@ -59,7 +63,10 @@ beforeEach(() => {
   // Fresh timetable projection for the learner's current own-school classes (the real service is tested separately).
   mocks.timetable.mockImplementation(async (_studentId: string, _date: Date, schoolId: string) => ({ configured: true, date: dateStr(), dayName: "Today",
     periods: state.classes.filter((c) => c.schoolId === schoolId).map((c, i) => ({ id: `slot-${c.id}`, classId: c.id, periodLabel: `Period ${i + 1}`, subject: "MATH", startTime: null, endTime: null,
-      teacherName: c.teacher?.schoolId === schoolId ? c.teacher.name : null, assignment: null })) }));
+      teacherId: c.teacherId, teacherName: c.teacherId && state.teachers[c.teacherId]?.schoolId === schoolId ? state.teachers[c.teacherId].name : null, assignment: null })) }));
+  // Current teacher authority: one bounded lookup by id within the learner's school.
+  mocks.teachers.mockImplementation(async ({ where }: any) => Object.entries(state.teachers)
+    .filter(([id, t]) => where.id.in.includes(id) && t.schoolId === where.schoolId).map(([id, t]) => ({ id, ...t })));
 });
 afterEach(() => { vi.useRealTimers(); });
 
@@ -88,7 +95,7 @@ describe("B/E. enrollment changes take effect on the next request", () => {
   });
   it("E: a different class in the same school never reads the old class payload", async () => {
     expect(text(await call())).toContain("LESSON-class-a");
-    state.classes = [{ id: "class-c", schoolId: "school-a", teacher: null }];
+    state.classes = [{ id: "class-c", schoolId: "school-a", teacherId: null }];
     const body = await call();
     expect(text(body)).toContain("LESSON-class-c");
     expect(text(body)).not.toMatch(/class-a|TEACHER-A/);
@@ -99,7 +106,7 @@ describe("C. school change", () => {
   it("never returns School A data after the learner moves to School B, though School A entries remain", async () => {
     expect(text(await call())).toContain("LESSON-class-a");
     const cachedBefore = store.map.size;
-    Object.assign(state, { userSchool: "school-b", studentSchool: "school-b", classes: [...state.classes, { id: "class-b", schoolId: "school-b", teacher: { name: "TEACHER-B", schoolId: "school-b" } }] });
+    Object.assign(state, { userSchool: "school-b", studentSchool: "school-b", classes: [...state.classes, { id: "class-b", schoolId: "school-b", teacherId: "t-b" }], teachers: { ...state.teachers, "t-b": { name: "TEACHER-B", schoolId: "school-b" } } });
     const body = await call();
     expect(store.map.size).toBeGreaterThan(cachedBefore);
     expect(text(body)).toContain("LESSON-class-b");
@@ -122,7 +129,7 @@ describe("D. foreign teacher identity cached before the teacher-scope fix", () =
     store.map.set(`cache:timetable:v2:school-a:student-1:${dateStr()}`, poisoned.timetable);
     store.map.set(`cache:timetable:student-1:${dateStr()}`, poisoned.timetable);
     store.map.set("cache:student-meta:user-1", { id: "student-1", classIds: ["class-foreign"], currentGrade: null });
-    state.classes = [{ id: "class-a", schoolId: "school-a", teacher: { name: "FOREIGN-TEACHER", schoolId: "school-b" } }];
+    state.teachers = { "t-a": { name: "FOREIGN-TEACHER", schoolId: "school-b" } };
     const body = await call();
     expect(text(body)).toContain("LESSON-class-a");
     expect(text(body)).not.toMatch(/FOREIGN-TEACHER|LEGACY-LESSON|class-foreign/);
@@ -152,7 +159,7 @@ describe("H. Redis unavailable with working authority", () => {
 describe("I. authority unavailable", () => {
   it("fails closed even when a lastgood snapshot for the previous scope exists", async () => {
     await call();
-    expect([...store.map.keys()].some((key) => key.startsWith("cache:today:lastgood:v3:"))).toBe(true);
+    expect([...store.map.keys()].some((key) => key.startsWith("cache:today:lastgood:v4:"))).toBe(true);
     mocks.student.mockRejectedValue(new Error("database down"));
     const body = await call();
     expect(body).toMatchObject({ availability: "unavailable", items: [] });
@@ -175,7 +182,7 @@ describe("J. shield timeout", () => {
   };
   it("does not replay an old-scope lastgood after enrollment changed", async () => {
     await call();
-    state.classes = [{ id: "class-c", schoolId: "school-a", teacher: null }];
+    state.classes = [{ id: "class-c", schoolId: "school-a", teacherId: null }];
     hangCompute();
     const body = await timedOut();
     expect(body).toMatchObject({ availability: "unavailable", items: [] });
@@ -199,10 +206,103 @@ describe("J. shield timeout", () => {
   });
   it("does not replay a lastgood from another school after a school change", async () => {
     await call();
-    Object.assign(state, { userSchool: "school-b", studentSchool: "school-b", classes: [{ id: "class-b", schoolId: "school-b", teacher: null }] });
+    Object.assign(state, { userSchool: "school-b", studentSchool: "school-b", classes: [{ id: "class-b", schoolId: "school-b", teacherId: null }] });
     hangCompute();
     const body = await timedOut();
     expect(body).toMatchObject({ availability: "unavailable" });
     expect(text(body)).not.toMatch(/class-a|school-a/);
+  });
+});
+
+describe("Teacher identity revalidation: cached structure, current identity", () => {
+  const teacherNames = (body: any) => [...(body.timetable?.periods ?? []), ...(body.schoolDay?.items ?? [])].map((row: any) => row.teacherName);
+  const fingerprint = () => enrollmentScopeFingerprint("user-1", { schoolId: "school-a", studentId: "student-1", classes: [{ classId: "class-a" }] });
+  it("A: same-school teacher stays visible across a cache hit; identity is re-read each response", async () => {
+    expect(teacherNames(await call())).toEqual(["TEACHER-A", "TEACHER-A"]);
+    const queries = mocks.work.mock.calls.length;
+    expect(teacherNames(await call())).toEqual(["TEACHER-A", "TEACHER-A"]);
+    expect(mocks.work.mock.calls.length).toBe(queries);
+    expect(mocks.teachers).toHaveBeenCalledTimes(2);
+    expect(mocks.teachers.mock.calls[0][0]).toEqual({ where: { id: { in: ["t-a"] }, schoolId: "school-a" }, select: { id: true, schoolId: true, name: true } });
+  });
+  it("B: teacher moves to another school: next request drops the name, cached structure still served", async () => {
+    await call();
+    const queries = mocks.work.mock.calls.length;
+    state.teachers["t-a"].schoolId = "school-b";
+    const body = await call();
+    expect(mocks.work.mock.calls.length).toBe(queries);
+    expect(text(body)).toContain("LESSON-class-a");
+    expect(teacherNames(body)).toEqual([null, null]);
+    expect(text(body)).not.toContain("TEACHER-A");
+  });
+  it("C: teacher deleted or unavailable: no name", async () => {
+    await call();
+    delete state.teachers["t-a"];
+    expect(teacherNames(await call())).toEqual([null, null]);
+    state.teachers["t-a"] = { name: "TEACHER-A", schoolId: "school-a" };
+    mocks.teachers.mockRejectedValueOnce(new Error("database down"));
+    const body = await call();
+    expect(text(body)).toContain("LESSON-class-a");
+    expect(teacherNames(body)).toEqual([null, null]);
+  });
+  it("D: names cached in earlier namespaces (v3 and before) are never addressed", async () => {
+    const poisoned = { availability: "current", items: [{ id: "x", title: "LEGACY-LESSON" }], schoolDay: { items: [{ teacherName: "FOREIGN-TEACHER" }] }, timetable: { periods: [{ teacherName: "FOREIGN-TEACHER" }] }, schoolId: "school-a" };
+    store.map.set(`cache:today:v3:user-1:school-a:${fingerprint()}:${dateStr()}`, poisoned);
+    store.map.set(`cache:timetable:v3:school-a:student-1:${fingerprint()}:${dateStr()}`, poisoned.timetable);
+    store.map.set(`cache:today:lastgood:v3:user-1:school-a:${fingerprint()}`, { version: "v3", userId: "user-1", schoolId: "school-a", fingerprint: fingerprint(), data: poisoned });
+    const body = await call();
+    expect(text(body)).toContain("LESSON-class-a");
+    expect(text(body)).not.toMatch(/FOREIGN-TEACHER|LEGACY-LESSON/);
+  });
+  it("E: teacher moves away, then returns: the name reappears after revalidation", async () => {
+    await call();
+    state.teachers["t-a"].schoolId = "school-b";
+    expect(teacherNames(await call())).toEqual([null, null]);
+    state.teachers["t-a"].schoolId = "school-a";
+    expect(teacherNames(await call())).toEqual(["TEACHER-A", "TEACHER-A"]);
+  });
+  it("F: multiple teachers: only current-school names, in one lookup", async () => {
+    state.classes = [...state.classes, { id: "class-x", schoolId: "school-a", teacherId: "t-x" }];
+    state.teachers["t-x"] = { name: "TEACHER-X", schoolId: "school-a" };
+    await call();
+    state.teachers["t-x"].schoolId = "school-b";
+    const body = await call();
+    const periods = body.timetable.periods.map((p: any) => [p.classId, p.teacherName]);
+    expect(periods).toEqual([["class-a", "TEACHER-A"], ["class-x", null]]);
+    expect(text(body)).not.toContain("TEACHER-X");
+    expect(mocks.teachers.mock.calls.at(-1)![0].where.id.in.sort()).toEqual(["t-a", "t-x"]);
+  });
+  it("G: same-scope lastgood after the teacher moved: stale structure returned without the name", async () => {
+    await call();
+    for (const key of [...store.map.keys()]) if (!key.startsWith("cache:today:lastgood:")) store.map.delete(key);
+    state.teachers["t-a"].schoolId = "school-b";
+    mocks.work.mockImplementation(() => new Promise(() => {}));
+    vi.useFakeTimers({ toFake: ["setTimeout"] });
+    const pending = GET();
+    await vi.advanceTimersByTimeAsync(8_001);
+    const body = await (await pending).json();
+    expect(body.availability).toBe("stale");
+    expect(text(body)).toContain("LESSON-class-a");
+    expect(teacherNames(body)).toEqual([null, null]);
+    expect(text(body)).not.toContain("TEACHER-A");
+  });
+  it("H: timetable cache hit after the teacher moved: structure reused, identity removed", async () => {
+    await call();
+    for (const key of [...store.map.keys()]) if (key.startsWith("cache:today:v4:")) store.map.delete(key);
+    const timetableReads = mocks.timetable.mock.calls.length;
+    state.teachers["t-a"].schoolId = "school-b";
+    const body = await call();
+    expect(mocks.timetable.mock.calls.length).toBe(timetableReads);
+    expect(body.timetable.periods.map((p: any) => p.id)).toEqual(["slot-class-a"]);
+    expect(teacherNames(body)).toEqual([null, null]);
+  });
+  it("stores teacher ids, never names, in every Today cache layer", async () => {
+    await call();
+    const cached = [...store.map.entries()].filter(([key]) => key.includes(":v4:"));
+    expect(cached.length).toBe(3);
+    for (const [, value] of cached) {
+      expect(text(value)).not.toContain("TEACHER-A");
+      expect(text(value)).toContain("t-a");
+    }
   });
 });

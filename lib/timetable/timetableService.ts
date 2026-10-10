@@ -50,6 +50,8 @@ export type TimetablePeriod = {
   subject: string | null;
   startTime: string | null;
   endTime: string | null;
+  /** Stable teacher identity; display names are re-checked against current school authority by callers that cache. */
+  teacherId: string | null;
   teacherName: string | null;
   assignment: {
     id: string;
@@ -148,6 +150,7 @@ export async function getTimetableForStudent(
       subject: slot.subject,
       startTime: slot.startTime ?? null,
       endTime: slot.endTime ?? null,
+      teacherId: slot.teacher?.id ?? slot.teacherId ?? null,
       teacherName: slot.teacher?.schoolId === schoolId ? slot.teacher.name ?? null : null,
       assignment: assignment
         ? {

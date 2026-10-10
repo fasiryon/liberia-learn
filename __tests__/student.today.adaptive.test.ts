@@ -19,6 +19,8 @@ vi.mock("@/lib/db", () => ({
     student: { findUnique: mockStudentFindUnique },
     scheduledWork: { findMany: mockScheduledWorkFindMany },
     assignment: { findMany: mockAssignmentFindMany },
+    // Current teacher authority: Today re-reads teacher identity per response.
+    user: { findMany: async ({ where }: any) => [{ id: "teacher-mary", schoolId: "school-1", name: "Mary Pewee" }].filter((t) => where.id.in.includes(t.id) && t.schoolId === where.schoolId) },
   },
 }));
 
@@ -114,6 +116,7 @@ describe("student today layered school day", () => {
           subject: "MATH",
           startTime: "09:00",
           endTime: "09:45",
+          teacherId: "teacher-mary",
           teacherName: "Mary Pewee",
           assignment: null,
         },
@@ -148,6 +151,7 @@ describe("student today layered school day", () => {
           subject: "MATH",
           startTime: "09:00",
           endTime: "09:45",
+          teacherId: "teacher-mary",
           teacherName: "Mary Pewee",
           assignment: null,
         },

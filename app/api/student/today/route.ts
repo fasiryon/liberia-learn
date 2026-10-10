@@ -5,6 +5,7 @@ import { prisma } from "@/lib/db";
 import { getLessonLabLinks } from "@/lib/lessons/labLinks";
 import { getTimetableForStudent } from "@/lib/timetable/timetableService";
 import { enrollmentScopeFingerprint, loadStudentEnrollmentScope } from "@/lib/student/enrollmentReadModel";
+import { withCurrentTeacherIdentity, withoutTeacherNames } from "@/lib/student/teacherIdentity";
 import { withRedisCache, FALLBACK_LIMIT_EXCEEDED, getCachedValue, setCachedValue } from "@/lib/cache/redisCache";
 import { getCertificateProximity } from "@/lib/certificates/certificateProgress";
 import { learnerExperienceAuthority } from "@/lib/student/learnerExperienceAuthority";
@@ -166,9 +167,10 @@ function primaryActionFor(params: {
   return { label: "Start Lesson", href: params.lessonHref ?? params.assignmentHref ?? "/student/lessons" };
 }
 
-// Today cache namespace. Bumped (v3) when membership authority moved out of the cache: no entry
-// written under an earlier namespace, including any carrying a foreign teacher, can be addressed.
-const TODAY_CACHE_VERSION = "v3";
+// Today cache namespace. v3: membership authority moved out of the cache. v4: cached structure
+// carries teacher ids only; names are re-read from current school authority on every response.
+// No entry written under an earlier namespace, including any carrying a teacher name, is addressed.
+const TODAY_CACHE_VERSION = "v4";
 const SHIELD_MS = 8000;
 type TodayUser = Awaited<ReturnType<typeof requireRole>>;
 type EnrollmentScope = NonNullable<Awaited<ReturnType<typeof loadStudentEnrollmentScope>>>;
@@ -208,7 +210,8 @@ export async function GET() {
     // or cache version is never addressed, and a mismatched record is ignored.
     const stale = await getCachedValue<{ version?: string; userId?: string; schoolId?: string; fingerprint?: string; data?: Record<string, unknown> }>(lastGoodKey(user, fingerprint));
     if (stale && stale.version === TODAY_CACHE_VERSION && stale.userId === user.id && stale.schoolId === user.schoolId && stale.fingerprint === fingerprint && stale.data && typeof stale.data === "object") {
-      return NextResponse.json({ ...stale.data, availability: "stale" });
+      // Same structure, but teacher identity is re-checked now: a teacher who moved school is not shown.
+      return NextResponse.json({ ...(await withCurrentTeacherIdentity(stale.data as Parameters<typeof withCurrentTeacherIdentity>[0], scope.schoolId)), availability: "stale" });
     }
     return unavailableToday();
   }
@@ -325,7 +328,8 @@ async function _computeToday(user: TodayUser, scope: EnrollmentScope, fingerprin
     const timetable = await withRedisCache(
         `cache:timetable:${TODAY_CACHE_VERSION}:${schoolId}:${studentId}:${fingerprint}:${dateStr}`,
         300,
-        () => getTimetableForStudent(studentId, new Date(), schoolId).catch(() => null)
+        // Cached structure keeps teacher ids only; names are projected per response.
+        () => getTimetableForStudent(studentId, new Date(), schoolId).then((table) => table && { ...table, periods: withoutTeacherNames(table.periods) }).catch(() => null)
       ).then((table) => table && { ...table, periods: table.periods.filter((period) => classIds.includes(period.classId)) });
 
     const safeAssignments = asArray(assignments);
@@ -419,10 +423,9 @@ async function _computeToday(user: TodayUser, scope: EnrollmentScope, fingerprin
       subject: isBreakPeriod(period?.periodLabel) ? null : (period?.subject ? safeSubject(period.subject) : null),
       startTime: typeof period?.startTime === "string" ? period.startTime : null,
       endTime: typeof period?.endTime === "string" ? period.endTime : null,
-      teacherName:
-        typeof period?.teacherName === "string" && period.teacherName.trim()
-          ? period.teacherName
-          : null,
+      teacherId: typeof period?.teacherId === "string" && period.teacherId ? period.teacherId : null,
+      // Never cached as identity: withCurrentTeacherIdentity projects the current name per response.
+      teacherName: null,
       assignment: period?.assignment
         ? {
             id: safeString(period.assignment.id, `assignment-${index + 1}`),
@@ -508,7 +511,8 @@ async function _computeToday(user: TodayUser, scope: EnrollmentScope, fingerprin
             timeRange: timeRange(period.startTime, period.endTime),
             periodLabel: period.periodLabel,
             subject: period.subject,
-            teacherName: period.teacherName,
+            teacherId: period.teacherId,
+            teacherName: null,
             title: work?.assignment?.title ?? work?.title ?? period.assignment?.title ?? null,
             status: scheduleStatus,
             primaryAction: primaryActionFor({
@@ -538,6 +542,7 @@ async function _computeToday(user: TodayUser, scope: EnrollmentScope, fingerprin
             timeRange: timeRange(item.startTime, item.endTime),
             periodLabel: item.periodNumber ? `Period ${item.periodNumber}` : `Learning block ${item.order}`,
             subject: item.subject,
+            teacherId: null,
             teacherName: null,
             title: item.assignment?.title ?? item.title,
             status: scheduleStatus,
@@ -814,7 +819,8 @@ async function _computeToday(user: TodayUser, scope: EnrollmentScope, fingerprin
     // only after the same scope has been re-established from current authority.
     setCachedValue(lastGoodKey(user, fingerprint), { version: TODAY_CACHE_VERSION, userId: user.id, schoolId, fingerprint, data: todayData }, 7 * 86400).catch(() => {});
 
-    return NextResponse.json(todayData);
+    // Fresh compute and cache hit alike: teacher identity comes from current authority, never the cache.
+    return NextResponse.json(await withCurrentTeacherIdentity(todayData, schoolId));
   } catch (err: any) {
     // DB fallback limit exceeded — return degraded 200 immediately rather than
     // propagating a 503 that would fail the k6 'today 200' check.
