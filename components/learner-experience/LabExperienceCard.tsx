@@ -27,7 +27,7 @@ export function LabExperienceCard({ lab, session, reason }: { lab: LabExperience
         {lab.estimatedMinutes != null && <span>{lab.estimatedMinutes} min</span>}
         {session?.completedAt && <span>Completed</span>}
       </div>
-      <Link href={labExperienceHref(lab)} className="mt-4 inline-flex min-h-11 items-center justify-center rounded-lg bg-[var(--ll-accent)] px-4 py-2 text-sm font-semibold text-[var(--ll-bg)] hover:opacity-90">
+      <Link href={session ? `${labExperienceHref(lab)}?session=${encodeURIComponent(session.sessionId)}` : labExperienceHref(lab)} className="mt-4 inline-flex min-h-11 items-center justify-center rounded-lg bg-[var(--ll-accent)] px-4 py-2 text-sm font-semibold text-[var(--ll-bg)] hover:opacity-90">
         {action}<span className="sr-only">: {lab.title}</span>
       </Link>
     </article>

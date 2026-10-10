@@ -320,9 +320,9 @@ async function _computeToday(): Promise<NextResponse> {
     // Run in parallel and cache so DB is not hit on every request at 1K VUs.
     // Action TTL=60s (changes when resolved/generated); timetable TTL=300s (day-stable).
     const timetable = await withRedisCache(
-        `cache:timetable:${studentId}:${dateStr}`,
+        `cache:timetable:v2:${user.schoolId}:${studentId}:${dateStr}`,
         300,
-        () => getTimetableForStudent(studentId, new Date()).catch(() => null)
+        () => getTimetableForStudent(studentId, new Date(), user.schoolId).catch(() => null)
       );
 
     const safeAssignments = asArray(assignments);

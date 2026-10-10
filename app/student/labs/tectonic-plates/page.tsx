@@ -1,5 +1,6 @@
 import TectonicPlatesLabPage from "@/components/labs/TectonicPlatesLabPage";
 import { requireRole } from "@/lib/auth";
+import { requireCertifiedStudentLab } from "@/lib/student/labRouteCertification";
 import { logLearningEvent } from "@/lib/events/logLearningEvent";
 import { isAiLabsEnabled } from "@/lib/serverFlags";
 import { notFound } from "next/navigation";
@@ -7,6 +8,7 @@ import { notFound } from "next/navigation";
 export default async function TectonicPlatesRoute() {
   if (!isAiLabsEnabled()) notFound();
   const user = await requireRole("STUDENT");
+  requireCertifiedStudentLab("tectonic-plates");
   await logLearningEvent({
     type: "LAB_OPENED",
     labId: "tectonic-plates",

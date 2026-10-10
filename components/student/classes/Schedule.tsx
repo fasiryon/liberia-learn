@@ -9,7 +9,7 @@ const shortDate = (date: string, weekday: boolean) =>
 function Links({ links }: { links: ScheduleDay["periods"][number]["links"] }) {
   const safe = links.filter((link) => classTarget(link.href));
   if (!safe.length) return null;
-  return <div className="pdv2-period-links">{safe.map((link) => <InteractiveButton key={link.href} href={link.href} aria-label={`Open ${link.kind}: ${link.title}`}>{link.kind === "assignment" ? "Assignment" : "Lesson"}: {link.title} →</InteractiveButton>)}</div>;
+  return <div className="pdv2-period-links">{safe.map((link) => <InteractiveButton key={link.href} href={link.href} aria-label={`Open lesson: ${link.title}`}>Lesson: {link.title} →</InteractiveButton>)}</div>;
 }
 
 function Day({ day, today, compact }: { day: ScheduleDay; today: string; compact: boolean }) {
@@ -23,7 +23,6 @@ function Day({ day, today, compact }: { day: ScheduleDay; today: string; compact
         <p className="pdv2-meta">{period.periodLabel}{period.room ? ` · Room ${period.room}` : ""}</p>
         <p className="pdv2-row-title"><Link href={`/student/classes/${encodeURIComponent(period.classId)}`}>{period.className}</Link></p>
         <p className="pdv2-meta">{subjectLabel(period.subject)}{period.teacherName ? ` · ${period.teacherName}` : ""}</p>
-        {period.plannedTitle && <p className="pdv2-meta">Planned: {period.plannedTitle}</p>}
         {!compact && <Links links={period.links} />}
       </div>
       <span className={`pdv2-period-state pdv2-period-${period.state}`}>{PERIOD_STATE_LABEL[period.state]}</span>
@@ -32,7 +31,7 @@ function Day({ day, today, compact }: { day: ScheduleDay; today: string; compact
       <h3 className="pdv2-subhead">{day.periods.length ? "Other scheduled work" : "Scheduled work"}</h3>
       <ul className="pdv2-period-list">{day.otherWork.map((row) => <li key={row.scheduledWorkId} data-state={row.state}>
         <span className="pdv2-period-time">{row.timeRange ?? (row.periodNumber ? `Period ${row.periodNumber}` : "Time not set")}</span>
-        <div><p className="pdv2-row-title">{row.className}</p><p className="pdv2-meta">{subjectLabel(row.subject)}{row.status === "completed" ? " · Completed" : ""}</p>{!compact && <Links links={row.links} />}</div>
+        <div><p className="pdv2-row-title">{row.className}</p><p className="pdv2-meta">{subjectLabel(row.subject)}</p>{!compact && <Links links={row.links} />}</div>
         <span className={`pdv2-period-state pdv2-period-${row.state}`}>{PERIOD_STATE_LABEL[row.state]}</span>
       </li>)}</ul>
     </>}
@@ -60,9 +59,9 @@ export function ScheduleView({ model, view }: { model: ScheduleReadModel | "unav
       </div>
     </header>
     {model === "unavailable" && <p role="status" className="pdv2-learn-notice"><span className="pdv2-badge pdv2-badge-warn">Unavailable</span> Your schedule could not load. This does not mean you have no classes. Try again.</p>}
-    {typeof model === "object" && model.availability === "restricted" && <p className="pdv2-learn-notice"><span className="pdv2-badge pdv2-badge-warn">Restricted</span> A schedule is not available for this account.</p>}
     {ready && !ready.enrolled && <p className="pdv2-learn-empty">You are not enrolled in a class yet, so there is no schedule to show. Your teacher or school adds you to classes.</p>}
     {ready && ready.enrolled && !ready.timetableConfigured && <p className="pdv2-learn-notice"><span className="pdv2-badge pdv2-badge-warn">Not set up</span> Your school has not set up a class timetable yet. Lessons your teachers scheduled for a date still appear below.</p>}
+    {ready?.truncated && <p role="status" className="pdv2-learn-notice"><span className="pdv2-badge pdv2-badge-warn">Partial</span> Your timetable has more entries than can be shown here. Ask your teacher for the full timetable.</p>}
     {ready && ready.enrolled && (view === "today"
       ? todayDay && <div className="pdv2-plan"><Day day={todayDay} today={ready.today} compact={false} />
         {weekHasMore && <InteractiveButton href="/student/schedule?view=week">See this week →</InteractiveButton>}</div>

@@ -40,7 +40,7 @@ function makeSlot(overrides: Record<string, unknown> = {}) {
     startTime: "08:30",
     endTime: "09:15",
     room: null,
-    teacher: { id: "teacher-1", name: "Mulbah Sirleaf" },
+    teacher: { id: "teacher-1", name: "Mulbah Sirleaf", schoolId: "school-1" },
     class: { id: "class-1", name: "7A" },
     assignments: [],
     ...overrides,
@@ -56,12 +56,12 @@ describe("getTimetableForStudent", () => {
 
   it("returns null when student has no enrollments", async () => {
     mockEnrollmentFindMany.mockResolvedValueOnce([]);
-    const result = await getTimetableForStudent("student-1", MONDAY);
+    const result = await getTimetableForStudent("student-1", MONDAY, "school-1");
     expect(result).toBeNull();
   });
 
   it("returns null when no timetable slots on that day", async () => {
-    const result = await getTimetableForStudent("student-1", MONDAY);
+    const result = await getTimetableForStudent("student-1", MONDAY, "school-1");
     expect(result).toBeNull();
   });
 
@@ -71,7 +71,7 @@ describe("getTimetableForStudent", () => {
       makeSlot({ id: "slot-1", periodLabel: "Period 1", startTime: "08:30" }),
     ]);
 
-    const result = await getTimetableForStudent("student-1", MONDAY);
+    const result = await getTimetableForStudent("student-1", MONDAY, "school-1");
 
     expect(result).not.toBeNull();
     expect(result!.periods[0].startTime).toBe("08:30");
@@ -80,7 +80,7 @@ describe("getTimetableForStudent", () => {
 
   it("queries with the correct dayOfWeek for a Monday", async () => {
     mockTimetableFindMany.mockResolvedValueOnce([makeSlot()]);
-    await getTimetableForStudent("student-1", MONDAY);
+    await getTimetableForStudent("student-1", MONDAY, "school-1");
 
     const callArgs = mockTimetableFindMany.mock.calls[0][0];
     expect(callArgs.where.dayOfWeek).toBe("MONDAY");
@@ -89,7 +89,7 @@ describe("getTimetableForStudent", () => {
   it("period with no assignment has assignment: null", async () => {
     mockTimetableFindMany.mockResolvedValueOnce([makeSlot({ assignments: [] })]);
 
-    const result = await getTimetableForStudent("student-1", MONDAY);
+    const result = await getTimetableForStudent("student-1", MONDAY, "school-1");
 
     expect(result!.periods[0].assignment).toBeNull();
   });
@@ -108,7 +108,7 @@ describe("getTimetableForStudent", () => {
       }),
     ]);
 
-    const result = await getTimetableForStudent("student-1", MONDAY);
+    const result = await getTimetableForStudent("student-1", MONDAY, "school-1");
     const assignment = result!.periods[0].assignment!;
 
     expect(assignment.title).toBe("Algebra: Quadratic Equations");
@@ -124,16 +124,32 @@ describe("getTimetableForStudent", () => {
     ]);
     mockTimetableFindMany.mockResolvedValueOnce([]);
 
-    await getTimetableForStudent("student-1", MONDAY);
+    await getTimetableForStudent("student-1", MONDAY, "school-1");
 
     const callArgs = mockTimetableFindMany.mock.calls[0][0];
     expect(callArgs.where.classId).toEqual({ in: ["class-A", "class-B"] });
   });
 
+  it("is school-scoped: enrollments, slots and classes in the learner's school only; no school reads nothing", async () => {
+    mockTimetableFindMany.mockResolvedValueOnce([makeSlot()]);
+    await getTimetableForStudent("student-1", MONDAY, "school-1");
+    expect(mockEnrollmentFindMany.mock.calls[0][0].where).toEqual({ studentId: "student-1", Class: { schoolId: "school-1" } });
+    expect(mockTimetableFindMany.mock.calls[0][0].where).toMatchObject({ schoolId: "school-1", class: { schoolId: "school-1" } });
+    mockEnrollmentFindMany.mockClear();
+    expect(await getTimetableForStudent("student-1", MONDAY, null)).toBeNull();
+    expect(mockEnrollmentFindMany).not.toHaveBeenCalled();
+  });
+
+  it("never projects a teacher name from another school", async () => {
+    mockTimetableFindMany.mockResolvedValueOnce([makeSlot({ teacher: { id: "t-x", name: "FOREIGN", schoolId: "school-2" } }), makeSlot({ id: "slot-2", startTime: "09:30" })]);
+    const result = await getTimetableForStudent("student-1", MONDAY, "school-1");
+    expect(result!.periods.map((p) => p.teacherName)).toEqual([null, "Mulbah Sirleaf"]);
+  });
+
   it("returns correct date and dayName in response", async () => {
     mockTimetableFindMany.mockResolvedValueOnce([makeSlot()]);
 
-    const result = await getTimetableForStudent("student-1", MONDAY);
+    const result = await getTimetableForStudent("student-1", MONDAY, "school-1");
 
     expect(result!.dayName).toBe("Monday");
     expect(result!.date).toBe("2026-04-27");

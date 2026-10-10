@@ -1,4 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
+const eligibility = vi.hoisted(() => vi.fn());
+vi.mock("@/lib/student/labEligibility", async () => {
+  const actual = await vi.importActual<typeof import("@/lib/student/labEligibility")>("@/lib/student/labEligibility");
+  return { ...actual, loadAuthorizedPracticalSessions: eligibility };
+});
 
 vi.mock("@/lib/auth", () => ({
   requireRole: vi.fn().mockResolvedValue({
@@ -57,6 +62,7 @@ import { logLearningEvent } from "@/lib/events/logLearningEvent";
 describe("student sync conflict detection", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    eligibility.mockResolvedValue([{ session: { id: "lab-session-1" } }]);
     (prisma.student.findUnique as any).mockResolvedValue({ id: "student-rec-1", userId: "student-1" });
     (prisma.student as any).findFirst = vi.fn().mockResolvedValue({ id: "student-rec-1" });
     (prisma.scheduledWork.findFirst as any).mockResolvedValue({ id: "sw-1" });
@@ -236,5 +242,18 @@ describe("student sync conflict detection", () => {
       status: "provisional",
       metadata: expect.objectContaining({ evidenceAdmission: "NOT_AUTOMATIC", masteryUpdated: false }),
     }));
+  });
+  it.each([false, true])("offline lab response minimizes grading data and obeys eligibility (eligible=%s)", async (eligible) => {
+    (prisma.learningEvent.findFirst as any).mockResolvedValue(null);
+    (prisma.labSession.findUnique as any).mockResolvedValue({ id: "lab-session-1", labId: "practical", studentId: "student-1",
+      schoolId: "school-1", startedAt: new Date(), completedAt: new Date(), aiAnalysis: "SECRET", teacherFeedback: "SECRET", score: 80 });
+    eligibility.mockResolvedValue(eligible ? [{ session: { id: "lab-session-1" } }] : []);
+    const request = new Request("http://localhost/api/student/sync", { method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ protocolVersion: 1, items: [observation({ resourceType: "lab_session", resourceId: "lab-session-1",
+        operationType: "lab_session.merge", payload: { completedAt: "2026-09-12T12:00:00.000Z" } })] }) });
+    const body = await (await POST(request as any)).json();
+    expect(body.results[0].status).toBe(eligible ? "conflict" : "rejected");
+    expect(JSON.stringify(body)).not.toContain("SECRET");
+    expect(prisma.labSession.update).not.toHaveBeenCalled();
   });
 });

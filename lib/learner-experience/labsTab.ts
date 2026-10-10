@@ -3,7 +3,7 @@
  * Completed. Every section renders the same LabExperience card, whatever
  * runtime the lab uses.
  */
-import { isGradeAppropriate, isStudentAccessible, type LabExperience } from "./labExperience";
+import { isCertifiedStudentLab, isGradeAppropriate, isStudentAccessible, type LabExperience } from "./labExperience";
 import type { LearningExperienceLink } from "./links";
 
 export type LabSessionSummary = Readonly<{
@@ -49,13 +49,13 @@ export function buildLabsTab(input: {
   const forYou = input.pathLinks
     .filter((link) => link.status === "APPROVED")
     .map((link) => byId.get(link.experience.labId))
-    .filter((lab): lab is LabExperience => !!lab)
+    .filter((lab): lab is LabExperience => !!lab && isCertifiedStudentLab(lab))
     .map((lab) => ({ lab, session: null, reason: "Supports an objective in your current lesson" }));
   return {
     forYou,
     assigned: sessionEntries.filter((entry) => entry.session?.assigned),
     continue: sessionEntries.filter((entry) => !entry.session?.completedAt),
-    library: visible.filter((lab) => lab.runtime.kind !== "PRACTICAL_GUIDED" && isGradeAppropriate(lab, input.grade)).map((lab) => ({ lab, session: null, reason: null })),
+    library: visible.filter((lab) => isCertifiedStudentLab(lab) && isGradeAppropriate(lab, input.grade)).map((lab) => ({ lab, session: null, reason: null })),
     completed: sessionEntries.filter((entry) => !!entry.session?.completedAt),
   };
 }

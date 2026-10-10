@@ -6,7 +6,7 @@ import { useStudentIdentity } from "@/components/student/StudentShellV2";
 import { WAEC_MIN_GRADE } from "@/lib/waec/eligibility";
 import { GovernedActivity } from "./GovernedActivity";
 import { useLearnRead, useOnline } from "./useLearnRead";
-import { classMeta, classTarget, nextClassLabel, validMyClasses, type MyClasses } from "@/components/student/classes/classesPresentation";
+import { classHref, classMeta, validStudentClasses, type StudentClasses } from "@/components/student/classes/classesPresentation";
 import { ageBand, dueLabel, learnPlaces, learnTarget, subjectName, validDiscovery, type LearnDiscovery, type LearnRead, type SectionAvailability } from "./learnPresentation";
 
 type View = "loading" | "rows" | "empty" | "unavailable" | "restricted" | "signed-out";
@@ -44,30 +44,31 @@ function RowAction({ item, label, name }: { item: { state: "open" | "unavailable
   return <span className="pdv2-learn-locked">{item.locked ? "Locked" : "Unavailable"}</span>;
 }
 
-/** The learner's enrolled classes from the server; never derived from lesson subjects. */
-function MyClassesSection({ limit }: { limit: number }) {
-  const online = useOnline();
-  const [read] = useLearnRead<MyClasses>("/api/student/classes", validMyClasses);
-  const model = read.data;
-  const unknown = read.stale || (!online && model != null);
-  return <section aria-labelledby="my-classes-heading">
-    <p className="pdv2-eyebrow">My classes</p>
-    <h2 id="my-classes-heading">My classes</h2>
+/**
+ * The learner's enrolled classes from the enrollment authority (`GET /api/student/classes`);
+ * never derived from lesson subjects. A transient failure keeps last-loaded rows marked
+ * as history; a 401/403 drops them (useLearnRead clears data on authorization failures).
+ */
+function MyClasses({ read, unknown, limit }: { read: LearnRead<StudentClasses>; unknown: boolean; limit: number }) {
+  const rows = read.data?.classes ?? [];
+  return <div role="group" aria-labelledby="my-classes-heading">
+    <h3 className="pdv2-subhead" id="my-classes-heading">My classes</h3>
     {read.state === "loading" && <p role="status" className="pdv2-meta">Loading your classes…</p>}
     {(read.state === "restricted" || read.state === "signed-out") && <p className="pdv2-learn-notice"><span className="pdv2-badge pdv2-badge-warn">{read.state === "restricted" ? "Restricted" : "Signed out"}</span> {read.error}</p>}
-    {read.state === "error" && !model && <p role="status" className="pdv2-learn-notice"><span className="pdv2-badge pdv2-badge-warn">Unavailable</span> Your classes could not load. This does not mean you have none.</p>}
-    {unknown && <StaleNotice>Your classes could not be checked just now. These are from the last check and may have changed.</StaleNotice>}
-    {model && model.classes.length === 0 && !unknown && <p className="pdv2-learn-empty">You are not enrolled in a class yet. Your teacher or school adds you to classes.</p>}
-    {model && model.classes.length > 0 && <ul className="pdv2-plan-list">{model.classes.slice(0, limit).map((row) => <li key={row.classId}>
-      <div><p className="pdv2-meta">{classMeta(row)}{row.teacherName ? ` · ${row.teacherName}` : ""}{unknown ? " · Last loaded" : ""}</p><p className="pdv2-row-title">{row.name}</p>
-        <p className="pdv2-meta">{row.nextClass && model.today ? `Next: ${nextClassLabel(row.nextClass, model.today)}` : row.timetableConfigured ? "No class periods left this week" : "Timetable not set up"} · {row.openAssignmentCount} open assignment{row.openAssignmentCount === 1 ? "" : "s"}</p></div>
-      {classTarget(row.href) && <InteractiveButton href={row.href} aria-label={`Open class: ${row.name}`}>Open →</InteractiveButton>}
+    {read.state === "error" && !read.data && <p role="status" className="pdv2-learn-notice"><span className="pdv2-badge pdv2-badge-warn">Unavailable</span> Your classes could not load. This does not mean you have none.</p>}
+    {read.data && unknown && (rows.length
+      ? <StaleNotice>Your classes could not be checked just now. These are from the last check and may have changed.</StaleNotice>
+      : <StaleNotice>When last checked, no classes were listed for you. Your current classes could not be checked, so this may have changed.</StaleNotice>)}
+    {read.data && !unknown && rows.length === 0 && <p className="pdv2-learn-empty">No classes are listed for you yet. Your teacher or school adds you to classes.</p>}
+    {rows.length > 0 && <ul className="pdv2-plan-list">{rows.slice(0, limit).map((row) => <li key={row.classId}>
+      <div><p className="pdv2-meta">{classMeta(row)}{row.teacher ? ` · ${row.teacher}` : ""}{unknown ? " · Last loaded" : ""}</p><p className="pdv2-row-title">{row.className}</p></div>
+      <InteractiveButton href={classHref(row.classId)} aria-label={`Open class: ${row.className}`}>Open →</InteractiveButton>
     </li>)}</ul>}
     <div className="pdv2-support-actions">
       <InteractiveButton href="/student/classes">All my classes →</InteractiveButton>
       <InteractiveButton href="/student/schedule">Class schedule →</InteractiveButton>
     </div>
-  </section>;
+  </div>;
 }
 
 export function LearnV2() {
@@ -76,11 +77,13 @@ export function LearnV2() {
   const limit = young ? 3 : 5;
   const online = useOnline();
   const [read, reload] = useLearnRead<LearnDiscovery>("/api/student/learn", validDiscovery);
+  const [classes, reloadClasses] = useLearnRead<StudentClasses>("/api/student/classes", validStudentClasses);
   const [refreshing, setRefreshing] = useState(false);
+  // Refresh and reconnect re-check every protected read, so a revoked session never leaves class rows behind.
   const refresh = useCallback(async () => {
     setRefreshing(true);
-    try { await reload(); } finally { setRefreshing(false); }
-  }, [reload]);
+    try { await Promise.all([reload(), reloadClasses()]); } finally { setRefreshing(false); }
+  }, [reload, reloadClasses]);
   useEffect(() => {
     const reconnect = () => void refresh();
     window.addEventListener("online", reconnect);
@@ -112,33 +115,30 @@ export function LearnV2() {
     <GovernedActivity />
 
     <div className="pdv2-learn-grid">
-      <div className="pdv2-plan pdv2-learn-path">
-        <section aria-labelledby="current-heading">
-          <p className="pdv2-eyebrow">Current learning</p>
-          <h2 id="current-heading">Units this week</h2>
-          {unitsView === "not-enrolled"
-            ? unknown ? <StaleNotice>When last checked, you were not enrolled in a class. Your current classes could not be checked, so this may have changed.</StaleNotice>
-              : <p className="pdv2-learn-empty">You are not enrolled in a class yet, so no units are shown. Ask your teacher.</p>
-            : <SectionState unknown={unknown} view={unitsView} read={read} what="units" empty="No units are scheduled for your classes this week." />}
-          {unitsView === "rows" && model && <ul className="pdv2-plan-list">{model.activeUnits.items.slice(0, limit).map((unit) => {
-            const done = completion.get(unit.subject);
-            return <li key={unit.unitId}>
-              <div><p className="pdv2-meta">{subjectName(unit.subject)}{done && done.total > 0 ? ` · ${done.completed} of ${done.total} scheduled lessons completed` : ""}{stale}</p><p className="pdv2-row-title">{unit.title}</p>{unit.reason && <p>{unit.reason}</p>}</div>
-              <RowAction item={unit} label="Open unit" name={unit.title} />
-            </li>;
-          })}</ul>}
-        </section>
+      <section className="pdv2-plan pdv2-learn-path" aria-labelledby="path-heading">
+        <p className="pdv2-eyebrow">Explore</p>
+        <h2 id="path-heading">Your learning path</h2>
 
-        <MyClassesSection limit={limit} />
+        <MyClasses read={classes} unknown={classes.stale || (!online && classes.data != null)} limit={limit} />
 
-        <section aria-labelledby="library-heading" className="pdv2-learn-library">
-          <p className="pdv2-eyebrow">Browse</p>
-          <h2 id="library-heading">Lesson library</h2>
-          <p className="pdv2-meta">{lessonsView === "rows" && model ? `${model.lessons.total} published lesson${model.lessons.total === 1 ? "" : "s"} for your grade, by subject. Not all are assigned to your classes.${stale}` : "Published lessons for your grade, by subject."}</p>
-          {(lessonsView === "unavailable" || lessonsView === "restricted" || lessonsView === "signed-out") && <SectionState unknown={unknown} view={lessonsView} read={read} what="lessons" empty="" />}
-          <InteractiveButton href="/student/lessons">{young ? "Browse lessons" : "Browse the lesson library"} →</InteractiveButton>
-        </section>
-      </div>
+        <h3 className="pdv2-subhead" id="units-heading">Units this week</h3>
+        {unitsView === "not-enrolled"
+          ? unknown ? <StaleNotice>When last checked, you were not enrolled in a class. Your current classes could not be checked, so this may have changed.</StaleNotice>
+            : <p className="pdv2-learn-empty">You are not enrolled in a class yet, so no units are shown. Ask your teacher.</p>
+          : <SectionState unknown={unknown} view={unitsView} read={read} what="units" empty="No units are scheduled for your class this week." />}
+        {unitsView === "rows" && model && <ul className="pdv2-plan-list">{model.activeUnits.items.slice(0, limit).map((unit) => {
+          const done = completion.get(unit.subject);
+          return <li key={unit.unitId}>
+            <div><p className="pdv2-meta">{subjectName(unit.subject)}{done && done.total > 0 ? ` · ${done.completed} of ${done.total} scheduled lessons completed` : ""}{stale}</p><p className="pdv2-row-title">{unit.title}</p>{unit.reason && <p>{unit.reason}</p>}</div>
+            <RowAction item={unit} label="Open unit" name={unit.title} />
+          </li>;
+        })}</ul>}
+
+        <h3 className="pdv2-subhead" id="library-heading">Lesson library</h3>
+        <SectionState unknown={unknown} view={lessonsView} read={read} what="lessons" empty="No lessons are published for your grade and classes yet. Your teacher can still assign work." />
+        {lessonsView === "rows" && model && <p className="pdv2-meta">{model.lessons.total} lesson{model.lessons.total === 1 ? "" : "s"} available to you.{stale} Published lessons for your grade, by subject; not all are assigned to your classes.</p>}
+        <InteractiveButton href="/student/lessons">{young ? "Browse lessons" : "Browse the lesson library"} →</InteractiveButton>
+      </section>
 
       <div className="pdv2-context-column">
         <section aria-labelledby="assigned-heading">

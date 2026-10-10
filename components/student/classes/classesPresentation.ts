@@ -18,21 +18,23 @@ export type MyClasses = { schemaVersion: "student-classes/1"; availability: "cur
 /** Same-origin learner destinations only; never an arbitrary or external URL. */
 export function classTarget(value: unknown): value is string {
   return typeof value === "string" && !/[\\\u0000-\u001f]/.test(value) &&
-    /^\/student\/(?:(?:lesson|units|assignments|classes)\/[^/?#]+|schedule)$/.test(value);
+    /^\/student\/(?:(?:lesson|units|assignments|classes|work)\/[^/?#]+|schedule)$/.test(value);
 }
 
 const text = (value: unknown): value is string => typeof value === "string" && value.trim().length > 0;
 const nullableText = (value: unknown) => value == null || typeof value === "string";
 
-export function validMyClasses(data: any): data is MyClasses {
-  return !!data && data.schemaVersion === "student-classes/1" && ["current", "empty", "unavailable"].includes(data.availability) && typeof data.enrolled === "boolean" && (data.today == null || /^\d{4}-\d{2}-\d{2}$/.test(data.today)) &&
-    Array.isArray(data.classes) && data.classes.every((row: any) => row && text(row.classId) && text(row.name) && text(row.subject) && classTarget(row.href) &&
-      (row.grade == null || Number.isInteger(row.grade)) && nullableText(row.teacherName) && nullableText(row.schoolName) &&
-      Number.isInteger(row.openAssignmentCount) && row.openAssignmentCount >= 0 && typeof row.timetableConfigured === "boolean" &&
-      (row.currentUnit == null || text(row.currentUnit.title) && typeof row.currentUnit.href === "string") &&
-      (row.nextClass == null || text(row.nextClass.dayName) && text(row.nextClass.periodLabel)) &&
-      (row.nextWork == null || text(row.nextWork.title) && typeof row.nextWork.href === "string"));
+/** `GET /api/student/classes` from the enrollment authority (lib/student/enrollmentReadModel.ts). */
+export type StudentClass = { classId: string; className: string; subject: string; grade: number | null; teacher: string | null; school: string | null };
+export type StudentClasses = { classes: StudentClass[] };
+
+export function validStudentClasses(data: any): data is StudentClasses {
+  return !!data && Array.isArray(data.classes) && data.classes.every((row: any) => row && text(row.classId) && row.classId.length <= 64 && text(row.className) && text(row.subject) &&
+    (row.grade == null || Number.isInteger(row.grade)) && nullableText(row.teacher) && nullableText(row.school));
 }
+
+/** The class detail route for a server-issued class id; the page re-checks enrollment. */
+export const classHref = (classId: string) => `/student/classes/${encodeURIComponent(classId)}`;
 
 export function subjectLabel(subject: string) {
   return subject.replaceAll("_", " ").toLowerCase().replace(/(^|\s)\S/g, (letter) => letter.toUpperCase());

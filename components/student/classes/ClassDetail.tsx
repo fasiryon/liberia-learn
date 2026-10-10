@@ -68,7 +68,7 @@ export function ClassDetailView({ model }: { model: ClassDetailReadModel }) {
           {!model.schedule.configured ? <p className="pdv2-learn-empty">Your school has not set up a timetable for this class yet.</p>
             : <ul className="pdv2-period-list">{model.schedule.slots.map((slot) => <li key={slot.id}>
               <span className="pdv2-period-time">{slot.dayName}</span>
-              <div><p className="pdv2-row-title">{slot.periodLabel}</p><p className="pdv2-meta">{slot.timeRange ?? "Time not set"}{slot.room ? ` · Room ${slot.room}` : ""}{slot.teacherName && slot.teacherName !== cls.teacherName ? ` · ${slot.teacherName}` : ""}</p></div>
+              <div><p className="pdv2-row-title">{slot.periodLabel}</p><p className="pdv2-meta">{slot.timeRange ?? "Time not set"}{slot.room ? ` · Room ${slot.room}` : ""}</p></div>
             </li>)}</ul>}
           <InteractiveButton href="/student/schedule">Full schedule →</InteractiveButton>
         </section>

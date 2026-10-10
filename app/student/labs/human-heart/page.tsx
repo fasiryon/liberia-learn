@@ -1,10 +1,12 @@
 import HumanHeartLabPage from "@/components/labs/HumanHeartLabPage";
 import { requireRole } from "@/lib/auth";
+import { requireCertifiedStudentLab } from "@/lib/student/labRouteCertification";
 import { logLearningEvent } from "@/lib/events/logLearningEvent";
 import { isAiLabsEnabled } from "@/lib/serverFlags";
 
 export default async function StudentHumanHeartPage() {
   const user = await requireRole("STUDENT");
+  requireCertifiedStudentLab("human-heart");
 
   if (!isAiLabsEnabled()) {
     return (

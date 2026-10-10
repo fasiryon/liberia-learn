@@ -97,19 +97,22 @@ function sortByStartTime<T extends { startTime: string | null }>(
 
 /**
  * Returns the timetable for a student on a given date.
- * Uses the student's class enrollments to find matching timetable slots.
+ * Uses the student's own-school class enrollments to find matching timetable slots.
  * Returns null (no timetable configured) if the student has no enrollments
  * or no timetable entries exist for their classes on that weekday.
+ * A teacher name is projected only for a teacher of the learner's school.
  */
 export async function getTimetableForStudent(
   studentId: string,
-  date: Date
+  date: Date,
+  schoolId: string | null | undefined
 ): Promise<TimetableForDay | null> {
+  if (!schoolId) return null;
   const weekday = weekdayFor(date);
   const dateOnly = utcDateOnly(date);
 
   const enrollments = await prisma.enrollment.findMany({
-    where: { studentId },
+    where: { studentId, Class: { schoolId } },
     select: { classId: true },
   });
 
@@ -117,9 +120,9 @@ export async function getTimetableForStudent(
   const classIds = enrollments.map((e) => e.classId);
 
   const slots = await prisma.timetable.findMany({
-    where: { classId: { in: classIds }, dayOfWeek: weekday },
+    where: { schoolId, classId: { in: classIds }, class: { schoolId }, dayOfWeek: weekday },
     include: {
-      teacher: { select: { id: true, name: true } },
+      teacher: { select: { id: true, name: true, schoolId: true } },
       assignments: {
         where: { assignedDate: dateOnly },
         select: {
@@ -145,7 +148,7 @@ export async function getTimetableForStudent(
       subject: slot.subject,
       startTime: slot.startTime ?? null,
       endTime: slot.endTime ?? null,
-      teacherName: slot.teacher?.name ?? null,
+      teacherName: slot.teacher?.schoolId === schoolId ? slot.teacher.name ?? null : null,
       assignment: assignment
         ? {
             id: assignment.id,

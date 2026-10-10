@@ -1,10 +1,12 @@
 import PendulumLabPage from "@/components/labs/PendulumLabPage";
 import { requireRole } from "@/lib/auth";
+import { requireCertifiedStudentLab } from "@/lib/student/labRouteCertification";
 import { logLearningEvent } from "@/lib/events/logLearningEvent";
 import { isAiLabsEnabled } from "@/lib/serverFlags";
 
 export default async function StudentPendulumLabPage() {
   const user = await requireRole("STUDENT");
+  requireCertifiedStudentLab("pendulum-lab");
 
   if (!isAiLabsEnabled()) {
     return (

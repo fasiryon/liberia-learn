@@ -13,7 +13,7 @@ import { StudentShellV2 } from "@/components/student/StudentShellV2";
 import { MyClassesView } from "@/components/student/classes/MyClasses";
 import { ClassDetailView } from "@/components/student/classes/ClassDetail";
 import { ScheduleView } from "@/components/student/classes/Schedule";
-import { classTarget, validMyClasses } from "@/components/student/classes/classesPresentation";
+import { classTarget, validStudentClasses } from "@/components/student/classes/classesPresentation";
 import { activeDestination, STUDENT_PRIMARY_NAV } from "@/lib/learner-experience/studentNavigation";
 import type { ClassDetailReadModel, ScheduleReadModel } from "@/lib/student/classes.server";
 
@@ -25,8 +25,8 @@ const classes = { schemaVersion: "student-classes/1" as const, availability: "cu
 const detail: ClassDetailReadModel = {
   schemaVersion: "student-class/1", availability: "current", generatedAt: "2026-10-09T08:30:00Z", timeZone: "Africa/Monrovia", today: "2026-10-09",
   class: { classId: "class-a1", name: "Grade 4A Mathematics", subject: "MATH", grade: 4, teacherName: "Mr. Kollie", schoolName: "Monrovia Central" },
-  currentUnit: summary.currentUnit, nextClass: { ...summary.nextClass, id: "t-2", classId: "class-a1", dayOfWeek: "FRIDAY", startTime: "09:00", endTime: "09:45", room: null, teacherName: "Mr. Kollie" }, nextWork: { ...summary.nextWork, scheduledWorkId: "sw-2" },
-  schedule: { configured: true, slots: [{ id: "t-2", classId: "class-a1", dayOfWeek: "FRIDAY", dayName: "Friday", periodLabel: "Period 2", startTime: "09:00", endTime: "09:45", timeRange: "9:00 AM – 9:45 AM", room: "4A", teacherName: "Mr. Kollie" }] },
+  currentUnit: summary.currentUnit, nextClass: { ...summary.nextClass, id: "t-2", classId: "class-a1", dayOfWeek: "FRIDAY", startTime: "09:00", endTime: "09:45", room: null }, nextWork: { ...summary.nextWork, scheduledWorkId: "sw-2" },
+  schedule: { configured: true, slots: [{ id: "t-2", classId: "class-a1", dayOfWeek: "FRIDAY", dayName: "Friday", periodLabel: "Period 2", startTime: "09:00", endTime: "09:45", timeRange: "9:00 AM – 9:45 AM", room: "4A" }] },
   assignedWork: [
     { id: "as-1", title: "Fraction practice", dueAt: null, status: "open", state: "open", locked: false, href: "/student/assignments/as-1" },
     { id: "as-2", title: "Locked work", dueAt: null, status: "overdue", state: "unavailable", locked: true, href: null, reason: "This activity is not available" },
@@ -34,14 +34,14 @@ const detail: ClassDetailReadModel = {
   lessons: [{ contentId: "c-1", title: "Comparing fractions", contentType: "lesson", unitId: "u-1", href: "/student/lesson/c-1", state: "open", locked: false, scheduledDate: "2026-10-05", status: "completed" }],
   resources: [], progress: { scheduledToDate: 3, completed: 1 },
 };
-const period = (id: string, state: "completed" | "current" | "upcoming", links: Array<{ kind: "lesson" | "assignment"; title: string; href: string }> = []) => ({
+const period = (id: string, state: "completed" | "current" | "upcoming", links: Array<{ kind: "lesson"; title: string; href: string }> = []) => ({
   id, classId: "class-a1", dayOfWeek: "FRIDAY" as const, dayName: "Friday", periodLabel: id, startTime: "08:00", endTime: "08:45", timeRange: "8:00 AM – 8:45 AM", room: null,
-  teacherName: "Mr. Kollie", className: "Grade 4A Mathematics", subject: "MATH", state, plannedTitle: null, links });
+  teacherName: "Mr. Kollie", className: "Grade 4A Mathematics", subject: "MATH", state, links });
 const schedule = (overrides: Partial<Extract<ScheduleReadModel, { availability: "current" }>> = {}): ScheduleReadModel => ({
   schemaVersion: "student-schedule/1", availability: "current", generatedAt: "2026-10-09T08:30:00Z", timeZone: "Africa/Monrovia", today: "2026-10-09", enrolled: true, timetableConfigured: true,
   days: [
     { date: "2026-10-05", dayName: "Monday", isToday: false, periods: [period("Period 1", "completed")], otherWork: [] },
-    { date: "2026-10-09", dayName: "Friday", isToday: true, periods: [period("Period 1", "current", [{ kind: "lesson", title: "Tenths", href: "/student/lesson/c-2" }, { kind: "assignment", title: "Bad", href: "https://evil.test" }]), period("Period 2", "upcoming")], otherWork: [] }],
+    { date: "2026-10-09", dayName: "Friday", isToday: true, periods: [period("Period 1", "current", [{ kind: "lesson", title: "Tenths", href: "/student/work/sw-2" }, { kind: "lesson", title: "Bad", href: "https://evil.test" }]), period("Period 2", "upcoming")], otherWork: [] }],
   ...overrides,
 } as ScheduleReadModel);
 
@@ -85,7 +85,7 @@ describe("My classes page", () => {
     await render(<MyClassesView model={{ ...classes, classes: [{ ...summary, teacherName: null, currentUnit: null, nextClass: null, nextWork: null, timetableConfigured: false, openAssignmentCount: 0 }] }} today="2026-10-09" />);
     for (const copy of ["Teacher not listed", "None scheduled", "Timetable not set up", "Nothing scheduled"]) expect(text()).toContain(copy);
   });
-  it.each([["unavailable", "This does not mean you have none"], ["restricted", "Restricted"]] as const)("shows %s honestly", async (model, copy) => {
+  it.each([["unavailable", "This does not mean you have none"]] as const)("shows %s honestly", async (model, copy) => {
     await render(<MyClassesView model={model} today="2026-10-09" />);
     expect(text()).toContain(copy);
     expect(host.querySelector(".pdv2-class-card")).toBeNull();
@@ -96,8 +96,11 @@ describe("My classes page", () => {
   });
   it("accepts only learner class routes and well-formed payloads", () => {
     for (const bad of ["https://evil.test", "/student/classes/a/b", "/student/classes/a?x", "/admin"]) expect(classTarget(bad)).toBe(false);
-    expect(validMyClasses(classes)).toBe(true);
-    expect(validMyClasses({ ...classes, classes: [{ ...summary, openAssignmentCount: -1 }] })).toBe(false);
+    const authority = { classes: [{ classId: "class-a1", className: "Grade 4A Mathematics", subject: "MATH", grade: 4, teacher: null, school: "Monrovia Central" }] };
+    expect(validStudentClasses(authority)).toBe(true);
+    expect(validStudentClasses({ classes: [{ ...authority.classes[0], classId: "" }] })).toBe(false);
+    expect(validStudentClasses({ classes: [{ ...authority.classes[0], teacher: 7 }] })).toBe(false);
+    expect(classTarget("/student/work/sw-2")).toBe(true);
   });
 });
 
@@ -132,7 +135,7 @@ describe("Class schedule page", () => {
     expect(rows.map((row) => row.getAttribute("data-state"))).toEqual(["current", "upcoming"]);
     expect(rows[0].textContent).toContain("Now");
     expect(rows[0].querySelector("a[href='/student/classes/class-a1']")).not.toBeNull();
-    expect(host.querySelector("a[href='/student/lesson/c-2']")?.textContent).toBe("Lesson: Tenths →");
+    expect(host.querySelector("a[href='/student/work/sw-2']")?.textContent).toBe("Lesson: Tenths →");
     expect(host.querySelector("a[href='https://evil.test']")).toBeNull();
     expect(host.querySelector("a[href='/student/schedule?view=week']")).not.toBeNull();
   });
