@@ -4,11 +4,14 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import type { UnitSequence } from "@/lib/student/unitSequence";
 
+const STATUS_TEXT = { completed: "completed", current: "current lesson", upcoming: "upcoming" } as const;
+
 /**
  * Lesson-page strip that makes the unit's lesson sequence visible:
- * "Lesson 4 of 12", a completed/current/upcoming dot-strip, and a link to the
+ * "Lesson 4 of 12", a completed/current/upcoming step list, and a link to the
  * full unit overview. Renders nothing when the lesson is not part of a unit
- * (graceful degradation for the ~21% of lessons without a unitId).
+ * (graceful degradation for the ~21% of lessons without a unitId); a failed
+ * load says the sequence is unavailable instead of hiding silently.
  */
 export function UnitSequenceSidebar({
   contentId,
@@ -18,7 +21,7 @@ export function UnitSequenceSidebar({
   scheduledWorkId?: string;
 }) {
   const [sequence, setSequence] = useState<UnitSequence | null>(null);
-  const [loaded, setLoaded] = useState(false);
+  const [failed, setFailed] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -26,96 +29,106 @@ export function UnitSequenceSidebar({
     fetch(`/api/student/units/by-content/${encodeURIComponent(contentId)}${qs}`, {
       cache: "no-store",
     })
-      .then((res) => (res.ok ? res.json() : null))
-      .then((data) => {
-        if (active) setSequence(data);
+      .then(async (res) => {
+        if (!active) return;
+        if (res.status === 404) return setSequence(null);
+        if (!res.ok) throw new Error("unavailable");
+        const data = await res.json();
+        if (active) setSequence(Array.isArray(data?.lessons) ? data : null);
       })
       .catch(() => {
-        if (active) setSequence(null);
-      })
-      .finally(() => {
-        if (active) setLoaded(true);
+        if (active) setFailed(true);
       });
     return () => {
       active = false;
     };
   }, [contentId, scheduledWorkId]);
 
-  if (!loaded || !sequence || sequence.lessons.length === 0) return null;
+  if (failed) {
+    return (
+      <p role="status" className="rounded-xl border border-[var(--ll-border)] p-3 text-sm text-[var(--ll-text-muted)]">
+        The unit lesson order is unavailable right now. Your lesson still works.
+      </p>
+    );
+  }
+  if (!sequence || sequence.lessons.length === 0) return null;
 
   const currentIndex = sequence.lessons.findIndex((l) => l.status === "current");
   const position = currentIndex >= 0 ? currentIndex + 1 : sequence.completedCount + 1;
 
   return (
-    <section
+    <nav
       data-tour="unit-map"
+      aria-label={`Unit: ${sequence.unitName}`}
       className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-4 sm:p-5"
     >
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <div>
-          <p className="text-[11px] font-medium uppercase tracking-[0.1em] text-[var(--ll-text-faint)]">
-            Lesson Sequence
+        <div className="min-w-0">
+          <p className="text-xs font-medium uppercase tracking-[0.1em] text-[var(--ll-text-muted)]">
+            Lesson sequence
           </p>
-          <h2 className="mt-0.5 text-sm font-semibold text-[var(--ll-text)]">
+          <h2 className="mt-0.5 break-words text-sm font-semibold text-[var(--ll-text)]">
             {sequence.unitName}
           </h2>
         </div>
         <div className="text-right">
           <p className="text-sm font-semibold text-[var(--ll-yellow)]">
-            Lesson {position} of {sequence.totalCount}
+            Lesson {Math.min(position, sequence.totalCount)} of {sequence.totalCount}
           </p>
-          <p className="text-[11px] text-[var(--ll-text-faint)]">
-            {sequence.completionPct}% of unit complete
+          <p className="text-xs text-[var(--ll-text-muted)]">
+            {sequence.completedCount} of {sequence.totalCount} lessons completed
           </p>
         </div>
       </div>
 
-      {/* Dot strip */}
-      <div className="mt-3 flex flex-wrap gap-1.5">
+      <ol className="mt-3 flex flex-wrap gap-2">
         {sequence.lessons.map((lesson, index) => {
           const base =
-            "flex h-7 min-w-7 items-center justify-center rounded-md border px-1.5 text-[11px] font-semibold transition";
+            "flex h-11 min-w-11 items-center justify-center rounded-lg border-2 px-2 text-sm font-semibold transition";
           const styles =
             lesson.status === "completed"
-              ? "border-emerald-500/40 bg-emerald-500/15 text-emerald-300"
+              ? "border-emerald-500/60 bg-emerald-500/15 text-emerald-300"
               : lesson.status === "current"
                 ? "border-[var(--ll-yellow)] bg-[var(--ll-yellow-soft)] text-[var(--ll-yellow)]"
                 : "border-[var(--ll-border)] bg-[var(--ll-surface)] text-[var(--ll-text-muted)]";
           const label = lesson.status === "completed" ? "✓" : String(index + 1);
+          const name = `Lesson ${index + 1}: ${lesson.title}, ${lesson.locked ? "locked, finish earlier lessons first" : STATUS_TEXT[lesson.status]}`;
 
-          if (lesson.locked) {
-            return (
-              <span
-                key={lesson.contentId}
-                title="Complete earlier lessons first"
-                className={`${base} cursor-not-allowed border-[var(--ll-border)] bg-[var(--ll-surface)] text-[var(--ll-text-faint)] opacity-60`}
-              >
-                🔒
-              </span>
-            );
-          }
           return (
-            <Link
-              key={lesson.contentId}
-              href={lesson.href}
-              title={lesson.title}
-              aria-current={lesson.status === "current" ? "step" : undefined}
-              className={`${base} ${styles} hover:border-[var(--ll-yellow)]`}
-            >
-              {label}
-            </Link>
+            <li key={lesson.contentId}>
+              {lesson.locked ? (
+                <span
+                  role="img"
+                  aria-label={name}
+                  title="Finish earlier lessons first"
+                  className={`${base} cursor-not-allowed border-dashed border-[var(--ll-border)] bg-transparent text-[var(--ll-text-muted)]`}
+                >
+                  <span aria-hidden="true">🔒</span>
+                </span>
+              ) : (
+                <Link
+                  href={lesson.href}
+                  title={lesson.title}
+                  aria-label={name}
+                  aria-current={lesson.status === "current" ? "step" : undefined}
+                  className={`${base} ${styles} hover:border-[var(--ll-yellow)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ll-yellow)]`}
+                >
+                  {label}
+                </Link>
+              )}
+            </li>
           );
         })}
-      </div>
+      </ol>
 
       <div className="mt-3">
         <Link
           href={`/student/units/${encodeURIComponent(sequence.unitId)}`}
-          className="text-xs font-medium text-[var(--ll-text-muted)] underline-offset-2 hover:text-[var(--ll-yellow)] hover:underline"
+          className="inline-flex min-h-11 items-center text-sm font-medium text-[var(--ll-text)] underline underline-offset-2 hover:text-[var(--ll-yellow)]"
         >
           View full unit →
         </Link>
       </div>
-    </section>
+    </nav>
   );
 }

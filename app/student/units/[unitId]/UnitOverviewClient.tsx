@@ -1,145 +1,71 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { ChevronLeft } from "lucide-react";
-import { SkeletonCard } from "@/components/ui/Skeleton";
+import { InteractiveButton } from "@/components/ui/InteractiveButton";
+import { learnTarget, readError, subjectName } from "@/components/student/learn/learnPresentation";
 import type { UnitSequence } from "@/lib/student/unitSequence";
 
-function statusBadge(status: string) {
-  if (status === "completed")
-    return "border-emerald-500/40 bg-emerald-500/15 text-emerald-300";
-  if (status === "current")
-    return "border-[var(--ll-yellow)] bg-[var(--ll-yellow-soft)] text-[var(--ll-yellow)]";
-  return "border-[var(--ll-border)] bg-[var(--ll-surface)] text-[var(--ll-text-muted)]";
+const STATUS: Record<string, string> = { completed: "Completed", current: "Up next in this unit", upcoming: "Upcoming" };
+
+type State = { kind: "loading" } | { kind: "ready"; sequence: UnitSequence } | { kind: "error" | "restricted" | "signed-out" | "unavailable"; message: string };
+
+function validSequence(data: any): data is UnitSequence {
+  return !!data && typeof data.unitId === "string" && typeof data.unitName === "string" && typeof data.subject === "string" && Number.isInteger(data.grade) &&
+    Array.isArray(data.lessons) && data.lessons.every((lesson: any) => lesson && typeof lesson.contentId === "string" && typeof lesson.title === "string" &&
+      ["completed", "current", "upcoming"].includes(lesson.status) && typeof lesson.locked === "boolean" && typeof lesson.href === "string") &&
+    Number.isInteger(data.completedCount) && Number.isInteger(data.totalCount);
 }
 
-function statusLabel(status: string) {
-  if (status === "completed") return "Completed";
-  if (status === "current") return "Up next";
-  return "Upcoming";
-}
-
+/** Unit lesson sequence as the server computed it, including its locks. */
 export default function UnitOverviewClient({ unitId }: { unitId: string }) {
-  const router = useRouter();
-  const [sequence, setSequence] = useState<UnitSequence | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [state, setState] = useState<State>({ kind: "loading" });
+  const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
     let active = true;
+    setState({ kind: "loading" });
     fetch(`/api/student/units/${encodeURIComponent(unitId)}`, { cache: "no-store" })
-      .then((res) => {
-        if (res.status === 401 || res.status === 403) {
-          router.push("/login");
-          return null;
-        }
-        if (res.status === 404) throw new Error("This unit isn't available.");
-        if (!res.ok) throw new Error("Could not load this unit.");
-        return res.json();
+      .then(async (res) => {
+        if (!active) return;
+        if (res.status === 404) return setState({ kind: "unavailable", message: "This unit isn't available. It may have changed or isn't part of your classes." });
+        if (!res.ok) { const failure = readError(res.status); return setState({ kind: failure.state === "ready" || failure.state === "loading" ? "error" : failure.state, message: failure.error ?? "This unit could not load." }); }
+        const data: unknown = await res.json();
+        setState(validSequence(data) ? { kind: "ready", sequence: data } : { kind: "error", message: "This unit could not be read. Try again." });
       })
-      .then((data) => {
-        if (active && data) setSequence(data);
-      })
-      .catch((err: Error) => {
-        if (active) setError(err.message);
-      })
-      .finally(() => {
-        if (active) setLoading(false);
-      });
-    return () => {
-      active = false;
-    };
-  }, [unitId, router]);
+      .catch(() => { if (active) setState({ kind: "error", message: "This unit could not load. Check your connection and try again." }); });
+    return () => { active = false; };
+  }, [unitId, attempt]);
 
-  return (
-    <main className="ll-dashboard-shell px-4 py-6 text-[var(--ll-text)]">
-      <div className="ll-page-enter mx-auto max-w-3xl space-y-5">
-        <Link
-          href="/student/today"
-          className="inline-flex items-center gap-1 text-sm text-[var(--ll-text-muted)] hover:text-[var(--ll-yellow)]"
-        >
-          <ChevronLeft className="h-4 w-4" />
-          Back to today
-        </Link>
+  const sequence = state.kind === "ready" ? state.sequence : null;
+  return <main className="pdv2-today pdv2-learn" aria-labelledby="unit-heading">
+    <header className="pdv2-topbar"><div>
+      <InteractiveButton href="/student/learn">← Back to Learn</InteractiveButton>
+      <p className="pdv2-eyebrow pdv2-learn-crumb">{sequence ? `Learn · ${subjectName(sequence.subject)} · Grade ${sequence.grade} · Unit` : "Learn · Unit"}</p>
+      <h1 id="unit-heading">{sequence?.unitName ?? (state.kind === "loading" ? "Loading unit…" : "Unit unavailable")}</h1>
+      {sequence && <p>{sequence.completedCount} of {sequence.totalCount} lessons completed. Completing lessons is not the same as mastering them.</p>}
+    </div></header>
 
-        {loading ? (
-          <div className="space-y-3">
-            {Array.from({ length: 4 }).map((_, i) => <SkeletonCard key={i} />)}
-          </div>
-        ) : error ? (
-          <div className="ll-notice ll-notice-error">{error}</div>
-        ) : sequence ? (
-          <>
-            <header className="ll-section p-5">
-              <p className="text-[11px] font-medium uppercase tracking-[0.1em] text-[var(--ll-text-faint)]">
-                {sequence.subject.replace(/_/g, " ")} · Grade {sequence.grade} · Unit
-              </p>
-              <h1 className="mt-1 text-2xl font-semibold text-[var(--ll-text)]">
-                {sequence.unitName}
-              </h1>
-              <p className="mt-2 text-sm text-[var(--ll-text-muted)]">
-                {sequence.totalCount} lessons in sequence · {sequence.completedCount} completed
-              </p>
-              <div className="mt-3 h-2 rounded-full bg-[var(--ll-surface)]">
-                <div
-                  className="h-2 rounded-full bg-emerald-500/70"
-                  style={{ width: `${sequence.completionPct}%` }}
-                />
-              </div>
-              <p className="mt-1 text-xs text-[var(--ll-text-faint)]">
-                {sequence.completionPct}% of this unit complete
-              </p>
-            </header>
-
-            {/* Ordered stepper — this is the "1-2-3-4" stack the lessons follow */}
-            <ol className="relative space-y-2 border-l border-[var(--ll-border)] pl-5">
-              {sequence.lessons.map((lesson, index) => {
-                const inner = (
-                  <div className="flex items-center justify-between gap-3 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-4">
-                    <div className="min-w-0">
-                      <p className="text-sm font-semibold text-[var(--ll-text)]">
-                        {lesson.title}
-                      </p>
-                      <p className="mt-0.5 text-xs text-[var(--ll-text-faint)]">
-                        Lesson {index + 1}
-                        {lesson.lessonType ? ` · ${lesson.lessonType}` : ""}
-                        {lesson.locked ? " · complete earlier lessons first" : ""}
-                      </p>
-                    </div>
-                    <span
-                      className={`shrink-0 rounded-full border px-2.5 py-1 text-[11px] font-medium ${statusBadge(lesson.status)}`}
-                    >
-                      {lesson.locked ? "Locked" : statusLabel(lesson.status)}
-                    </span>
-                  </div>
-                );
-                return (
-                  <li key={lesson.contentId} className="relative">
-                    <span
-                      className={`absolute -left-[27px] top-5 h-3 w-3 rounded-full border-2 ${
-                        lesson.status === "completed"
-                          ? "border-emerald-400 bg-emerald-400"
-                          : lesson.status === "current"
-                            ? "border-[var(--ll-yellow)] bg-[var(--ll-yellow)]"
-                            : "border-[var(--ll-border)] bg-[var(--ll-bg)]"
-                      }`}
-                    />
-                    {lesson.locked ? (
-                      <div className="opacity-60">{inner}</div>
-                    ) : (
-                      <Link href={lesson.href} className="block hover:opacity-90">
-                        {inner}
-                      </Link>
-                    )}
-                  </li>
-                );
-              })}
-            </ol>
-          </>
-        ) : null}
-      </div>
-    </main>
-  );
+    <div className="pdv2-plan" aria-busy={state.kind === "loading"}>
+      {state.kind === "loading" && <p role="status">Loading the lessons in this unit…</p>}
+      {state.kind !== "loading" && state.kind !== "ready" && <div role="status" className="pdv2-learn-notice">
+        <p><span className="pdv2-badge pdv2-badge-warn">{state.kind === "restricted" ? "Restricted" : state.kind === "signed-out" ? "Signed out" : "Unavailable"}</span> {state.message}</p>
+        {state.kind === "error" && <InteractiveButton primary onClick={() => setAttempt((n) => n + 1)}>Try again</InteractiveButton>}
+        {state.kind === "signed-out" && <InteractiveButton primary href="/login">Sign in →</InteractiveButton>}
+      </div>}
+      {sequence && sequence.lessons.length === 0 && <p className="pdv2-learn-empty">This unit has no lessons yet.</p>}
+      {sequence && sequence.lessons.length > 0 && <>
+        <h2 className="pdv2-subhead">Lessons in order</h2>
+        <ol className="pdv2-plan-list pdv2-learn-steps">{sequence.lessons.map((lesson, index) => {
+          const status = lesson.locked ? "Locked · finish earlier lessons first" : STATUS[lesson.status];
+          return <li key={lesson.contentId} data-status={lesson.locked ? "locked" : lesson.status} aria-current={lesson.status === "current" && !lesson.locked ? "step" : undefined}>
+            <span className="pdv2-step-marker" aria-hidden="true">{lesson.status === "completed" ? "✓" : lesson.locked ? "🔒" : index + 1}</span>
+            <div><p className="pdv2-meta">Lesson {index + 1}{lesson.lessonType ? ` · ${lesson.lessonType}` : ""}</p><p className="pdv2-row-title">{lesson.title}</p><p className="pdv2-step-status">{status}</p></div>
+            {lesson.locked ? <span className="pdv2-learn-locked">Locked</span>
+              : learnTarget(lesson.href) ? <InteractiveButton primary={lesson.status === "current"} href={lesson.href} aria-label={`${lesson.status === "completed" ? "Review" : "Open"} lesson ${index + 1}: ${lesson.title}`}>{lesson.status === "completed" ? "Review" : "Open"} →</InteractiveButton>
+              : <span className="pdv2-learn-locked">Link unavailable</span>}
+          </li>;
+        })}</ol>
+      </>}
+    </div>
+  </main>;
 }
