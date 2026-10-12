@@ -6,13 +6,14 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import { Redis } from "@upstash/redis";
+import { CHA_DEMO_SCHOOL_ID, CHA_DEMO_STUDENT_LOGIN_ID, chaDemoStudentEmail } from "../../lib/demo/chaStudentIdentity";
 
 const prisma = new PrismaClient();
 
 const LOCAL_DEMO_SEED_PASSWORD = "local-demo-password-change-me";
 const DEMO_ADMIN_EMAIL = process.env.E2E_DEMO_ADMIN_EMAIL ?? ["admin", "cha.edu.lr"].join("@");
 const DEMO_TEACHER_EMAIL = process.env.E2E_DEMO_TEACHER_EMAIL ?? ["teacher1", "cha.edu.lr"].join("@");
-const DEMO_STUDENT_EMAIL = process.env.E2E_DEMO_STUDENT_EMAIL ?? ["student1", "cha.edu.lr"].join("@");
+const DEMO_STUDENT_EMAIL = chaDemoStudentEmail();
 const DEMO_GUARDIAN_EMAIL = process.env.E2E_DEMO_GUARDIAN_EMAIL ?? ["guardian1", "cha.family.lr"].join("@");
 const DEMO_MOE_EMAIL = process.env.E2E_DEMO_MOE_EMAIL ?? ["official1", "moe.gov.lr"].join("@");
 
@@ -31,7 +32,7 @@ function getMoeSeedPassword(): string {
   throw new Error("DEMO_MOE_PASSWORD or E2E_DEMO_MOE_PASSWORD is required for CHA demo seed runs.");
 }
 
-const CHA_SCHOOL_ID = "cha-high-academy";
+const CHA_SCHOOL_ID = CHA_DEMO_SCHOOL_ID;
 const CHA_CLASS_ID = "cha-class-grade9a";
 
 export async function seedChaDemo() {
@@ -127,7 +128,7 @@ export async function seedChaDemo() {
     where: { email: DEMO_STUDENT_EMAIL },
     create: {
       email: DEMO_STUDENT_EMAIL,
-      loginId: "CHA-2026-0001",
+      loginId: CHA_DEMO_STUDENT_LOGIN_ID,
       name: "Fatu Kollie",
       role: "STUDENT",
       hashedPwd: demoHash,
