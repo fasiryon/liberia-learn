@@ -39,7 +39,9 @@ const lessonLab = labPage && params.has("rt") ? (() => {
   const definition = getInteractiveLabDefinition(labId);
   return origin && definition ? { labId, lessonReturn: { ...origin, labVersion: definition.version, totalChecks: definition.checks.length } } : { labId, lessonReturn: null };
 })() : null;
-createRoot(document.getElementById("root")!).render(<StudentShellV2 identity={{ name, grade, userId: "fixture-student", schoolId: "fixture-school" }}>
+const fixtureRoot = createRoot(document.getElementById("root")!);
+let fixtureMount = 0;
+const renderFixture = () => fixtureRoot.render(<StudentShellV2 key={fixtureMount} identity={{ name, grade, userId: "fixture-student", schoolId: "fixture-school" }}>
   {contentLesson ? <LessonViewerClient enabledToolIds={[]} />
     : assignedLesson ? <LessonDeliveryClient lessonId={decodeURIComponent(assignedLesson)} enabledToolIds={[]} />
     : lessonLab ? <InteractiveLabScreen labId={lessonLab.labId} access="RELEASED" lessonReturn={lessonLab.lessonReturn} />
@@ -50,3 +52,6 @@ createRoot(document.getElementById("root")!).render(<StudentShellV2 identity={{ 
     : classPage ? <ClassDetailView model={classDetailFixture(timetable)} />
     : path === "/student/schedule" ? <ScheduleView model={scheduleFixture(timetable)} view={params.get("view") === "week" ? "week" : "today"} /> : unit ? <UnitOverviewClient unitId={decodeURIComponent(unit)} /> : <main style={{ padding: 24 }}><a href="/student/today">Back to Today</a><h1>{path.includes("assignments") ? "Assignment fixture" : path.includes("labs") ? "Labs destination fixture" : path.includes("progress") ? "Progress destination fixture" : path.includes("signout") ? "Sign-out page fixture" : "Help destination fixture"}</h1><p>Destination routing fixture. This harness does not certify server authorization or the destination screen.</p></main>}
 </StudentShellV2>);
+
+renderFixture();
+window.addEventListener("lesson-fixture-remount", () => { fixtureMount++; renderFixture(); });

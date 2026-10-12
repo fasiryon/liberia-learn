@@ -105,6 +105,7 @@ export default function LessonViewerClient({ enabledToolIds = [] }: { enabledToo
       // Anything it does not deliver (legacy lessons, other content, offline) keeps the existing path below.
       const delivered = await loadLessonDelivery(target);
       if (delivered.kind === "NATIVE" || delivered.kind === "UNAVAILABLE") {
+        if (delivered.kind === "UNAVAILABLE" && delivered.reason !== "LOAD_FAILED") await removeCachedLesson(contentId);
         setRuntime(delivered);
         return;
       }

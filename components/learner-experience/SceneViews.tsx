@@ -19,8 +19,8 @@ export function SceneBody({ scene, ageBand }: { scene: Scene; ageBand: AgeBand }
       <SceneText text={body} />
       {keyPoints.length > 0 && (
         <ul data-key-points className="mt-5 space-y-3">
-          {keyPoints.map((point) => (
-            <li key={point} className="flex gap-3 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] px-4 py-3 text-base leading-7 text-[var(--ll-text)]">
+          {keyPoints.map((point, pointIndex) => (
+            <li key={`${pointIndex}:${point}`} className="flex gap-3 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] px-4 py-3 text-base leading-7 text-[var(--ll-text)]">
               <span aria-hidden="true" className="mt-2.5 h-2 w-2 shrink-0 rounded-full bg-[var(--ll-accent)]" />
               <span><SceneText text={point} /></span>
             </li>
@@ -85,7 +85,7 @@ export function FormativeCheck({ scene, progress, onAnswer }: { scene: Scene; pr
             <legend className="px-1 text-base font-semibold leading-7 text-[var(--ll-text)]">{itemIndex + 1}. {item.prompt}</legend>
             <div className="mt-3 grid gap-2">
               {item.options.map((option, index) => (
-                <label key={option} className={`flex min-h-[var(--pdv2-target,48px)] cursor-pointer items-center gap-3 rounded-xl border px-4 py-2 text-base ${selected === index ? "border-[var(--ll-accent)] bg-[var(--ll-bg)]" : "border-[var(--ll-border)]"}`}>
+                <label key={`${index}:${option}`} className={`flex min-h-[var(--pdv2-target,48px)] cursor-pointer items-center gap-3 rounded-xl border px-4 py-2 text-base ${selected === index ? "border-[var(--ll-accent)] bg-[var(--ll-bg)]" : "border-[var(--ll-border)]"}`}>
                   <input type="radio" name={item.id} checked={selected === index} onChange={() => onAnswer(item.id, index)} className="h-5 w-5 accent-[var(--ll-accent)]" />
                   <span>{option}</span>
                 </label>
@@ -185,7 +185,7 @@ export function AssessmentHandoffSeam({ scene, progress, onAnswer, submitted, no
           <legend className="px-1 text-base font-semibold leading-7 text-[var(--ll-text)]">{itemIndex + 1}. {item.prompt}</legend>
           <div className="mt-3 grid gap-2">
             {item.options.map((option, index) => (
-              <label key={option} className={`flex min-h-[var(--pdv2-target,48px)] cursor-pointer items-center gap-3 rounded-xl border px-4 py-2 text-base ${responses[item.itemId] === index ? "border-[var(--ll-accent)] bg-[var(--ll-bg)]" : "border-[var(--ll-border)]"}`}>
+              <label key={`${index}:${option}`} className={`flex min-h-[var(--pdv2-target,48px)] cursor-pointer items-center gap-3 rounded-xl border px-4 py-2 text-base ${responses[item.itemId] === index ? "border-[var(--ll-accent)] bg-[var(--ll-bg)]" : "border-[var(--ll-border)]"}`}>
                 <input type="radio" name={item.itemId} checked={responses[item.itemId] === index} onChange={() => onAnswer(item.itemId, index)} className="h-5 w-5 accent-[var(--ll-accent)]" />
                 <span>{option}</span>
               </label>

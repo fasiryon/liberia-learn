@@ -3,6 +3,7 @@
  * server learner projection would return for a released native lesson; they are not released content,
  * never ship to a student route and certify nothing about server authorization (the server tests do).
  */
+import type { LessonRouteTarget } from "../../lib/learner-experience/lessonRoute";
 import { LESSON_EXPERIENCE_CONTRACT_VERSION, type AgeBand, type LessonExperience, type Scene } from "../../lib/learner-experience/types";
 
 export const FIXTURE_LAB_LINK_ID = "fixture-lever-link";
@@ -59,7 +60,7 @@ export function runtimeLessonExperience(grade: 2 | 6, overrides: Partial<Pick<Le
 export function runtimeLessonResponse(grade: 2 | 6, options: { status?: LessonExperience["authority"]["status"]; version?: string } = {}) {
   const lessonExperience = runtimeLessonExperience(grade, { status: options.status, version: options.version });
   return {
-    metadata: { contentId: `fixture-content-g${grade}`, grade, subject: "SCIENCE", version: "7" },
+    metadata: { contentId: lessonExperience.id, grade, subject: "SCIENCE", version: lessonExperience.version },
     payload: { title: lessonExperience.title, grade, subject: "SCIENCE", lessonExperience, body: "", body_standard: "", body_block: "", objectives: lessonExperience.objectives.map((objective) => objective.statement), studentReady: true },
     audio: null,
     offlineManifest: null,
@@ -71,7 +72,7 @@ export function runtimeLessonResponse(grade: 2 | 6, options: { status?: LessonEx
  * native lesson (lib/lessons/lessonExperienceDelivery.ts): formative items arrive without keys, and a LAB
  * scene whose link is not authorized arrives as a plain viewed scene.
  */
-export function runtimeLessonDelivery(grade: 2 | 6, options: { labAuthorized?: boolean; version?: string; releaseId?: string | null; compatibility?: string } = {}) {
+export function runtimeLessonDelivery(grade: 2 | 6, options: { labAuthorized?: boolean; version?: string; releaseId?: string | null; compatibility?: string; routeTarget?: LessonRouteTarget; completedAt?: string } = {}) {
   const experience = runtimeLessonExperience(grade, { version: options.version });
   const scenes = experience.scenes.map((scene) => {
     if (scene.interaction.kind === "MULTIPLE_CHOICE") return { ...scene, interaction: { kind: "MULTIPLE_CHOICE", feedbackAuthority: "SERVER_REQUIRED", items: scene.interaction.items.map(({ id, prompt, options: choices }) => ({ id, prompt, options: choices })) } };
@@ -79,14 +80,16 @@ export function runtimeLessonDelivery(grade: 2 | 6, options: { labAuthorized?: b
     return scene;
   });
   return {
-    contractVersion: "lesson-experience-delivery/1.0.0",
+    contractVersion: "lesson-experience-delivery/1.1.0",
+    routeTarget: options.routeTarget ?? { kind: "CONTENT" as const, contentId: experience.id },
+    serverCompletion: options.completedAt ? { completedAt: options.completedAt } : null,
     compatibility: options.compatibility ?? "NATIVE_V2",
     lessonId: experience.id, lessonVersion: experience.version,
     releaseId: options.releaseId === undefined ? "fixture-release" : options.releaseId, releaseIdentity: "fixture-release-identity", revisionId: "fixture-revision",
     title: experience.title, subject: experience.subject, grade: experience.grade, ageBand: experience.ageBand,
     objectives: experience.objectives, objectiveIds: experience.objectives.map((objective) => objective.id),
     scenes, sceneIds: scenes.map((scene) => scene.id),
-    authorizedLabLinks: options.labAuthorized ? [{ linkId: FIXTURE_LAB_LINK_ID, labId: FIXTURE_LAB_ID, labVersion: "1.0.0", label: "Lever lab", sceneId: "lab", href: `/student/labs/${FIXTURE_LAB_ID}`, returnTarget: `/student/lessons/${experience.id}?scene=lab&from=lab`, authorization: "APPROVED_LINK_CERTIFIED_LAB" }] : [],
+    authorizedLabLinks: options.labAuthorized ? [{ linkId: FIXTURE_LAB_LINK_ID, labId: FIXTURE_LAB_ID, labVersion: "1.0.0", label: "Lever lab", sceneId: "lab", returnTarget: { route: options.routeTarget ?? { kind: "CONTENT" as const, contentId: experience.id }, sceneId: "lab" }, launchContext: { v: 1 as const, labId: FIXTURE_LAB_ID, labVersion: "1.0.0", linkId: FIXTURE_LAB_LINK_ID, origin: { experienceId: experience.id, experienceVersion: experience.version, sceneId: "lab", objectiveIds: [OBJ_A, OBJ_B], activityId: options.routeTarget?.kind === "SCHEDULED_WORK" ? options.routeTarget.scheduledWorkId : experience.id } }, authorization: "APPROVED_LINK_CERTIFIED_LAB" }] : [],
     assessmentRefs: [],
     legacyPayload: null,
     evidenceDisposition: { status: "OBSERVATION_ONLY", authoritativeSubmission: false, masteryMutation: false, nextActionAuthority: "LEARNING_ORCHESTRATOR", handoff: "EXISTING_GOVERNED_EVIDENCE_ADAPTER", submissionEndpoint: null },

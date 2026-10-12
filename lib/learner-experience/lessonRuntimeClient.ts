@@ -5,38 +5,45 @@
  * is the lesson's contentId or an enrolled scheduledWorkId, exactly as the learner's route names it. The
  * server applies release, exact-revision, eligibility and lab authorization; nothing is repeated here.
  */
+import { lessonRouteMatches, parseLessonRouteTarget, type LessonRouteRef } from "./lessonRoute";
 import { loadCachedLesson } from "@/lib/lesson-offline-cache";
 import { resolveLessonDelivery, resolveLessonRuntime, unavailableReasonForStatus, type LessonRouteTarget, type LessonRuntimeResolution } from "./lessonRuntime";
 
 /**
- * NO_DELIVERY: the seam had nothing for this route (missing, not a lesson, signed out, offline). The
- * route then keeps its existing behaviour, so legacy deep links are unchanged.
+ * NO_DELIVERY is an indistinguishable 404 (historical content detail may resolve a legacy lesson),
+ * or a transport failure (the admitted offline cache owns presentation). Native denials never use it.
  */
 export type LessonDeliveryOutcome = LessonRuntimeResolution | Readonly<{ kind: "NO_DELIVERY"; status: number | "OFFLINE" }>;
 
-export function lessonDeliveryUrl(target: LessonRouteTarget): string {
+export function lessonDeliveryUrl(target: LessonRouteRef, requestedVersion?: string): string {
   const id = target.kind === "CONTENT" ? target.contentId : target.scheduledWorkId;
-  return `/api/student/lessons/${encodeURIComponent(id)}/experience`;
+  const query = new URLSearchParams({ kind: target.kind });
+  if (requestedVersion !== undefined) query.set("version", requestedVersion);
+  return `/api/student/lessons/${encodeURIComponent(id)}/experience?${query}`;
 }
 
-export async function loadLessonDelivery(target: LessonRouteTarget, serverCompletedAt: string | null = null): Promise<LessonDeliveryOutcome> {
+export async function loadLessonDelivery(target: LessonRouteRef, serverCompletedAt: string | null = null, requestedVersion?: string): Promise<LessonDeliveryOutcome> {
   let response: Response;
   try {
-    response = await fetch(lessonDeliveryUrl(target), { cache: "no-store" });
+    response = await fetch(lessonDeliveryUrl(target, requestedVersion), { cache: "no-store" });
   } catch {
     return { kind: "NO_DELIVERY", status: "OFFLINE" };
   }
-  // A version the server no longer delivers is reported honestly instead of falling back to another copy.
-  if (response.status === 409) return { kind: "UNAVAILABLE", reason: unavailableReasonForStatus(409) };
-  if (!response.ok) return { kind: "NO_DELIVERY", status: response.status };
   const body = await response.json().catch(() => null);
-  return body ? resolveLessonDelivery(body, { serverCompletedAt }) : { kind: "UNAVAILABLE", reason: "LOAD_FAILED" };
-}
-
-/** A scheduled-work response whose learner text is empty may be a native scene lesson. */
-export function mayBeNativeLesson(work: { body?: unknown; bodyStandard?: unknown; bodyBlock?: unknown; contentId?: unknown }): boolean {
-  const empty = (value: unknown) => typeof value !== "string" || value.trim() === "";
-  return typeof work.contentId === "string" && work.contentId.length > 0 && empty(work.body) && empty(work.bodyStandard) && empty(work.bodyBlock);
+  if (response.status === 409) return { kind: "UNAVAILABLE", reason: "INCOMPATIBLE_VERSION" };
+  if (!response.ok) {
+    if (body?.format === "NATIVE_V2") {
+      const reason = ["REVOKED", "NOT_RELEASED", "NOT_STUDENT_READY"].includes(body.reason) ? body.reason : unavailableReasonForStatus(response.status);
+      return { kind: "UNAVAILABLE", reason };
+    }
+    // Only an indistinguishable 404 can consult historical legacy detail. Never fall back on server failure.
+    return response.status === 404 ? { kind: "NO_DELIVERY", status: 404 } : { kind: "UNAVAILABLE", reason: unavailableReasonForStatus(response.status) };
+  }
+  if (!body) return { kind: "UNAVAILABLE", reason: "LOAD_FAILED" };
+  const routeTarget = parseLessonRouteTarget(body.routeTarget);
+  if (!routeTarget || !lessonRouteMatches(routeTarget, target)) return { kind: "UNAVAILABLE", reason: "INCOMPATIBLE_VERSION" };
+  const resolved = resolveLessonDelivery(body, { serverCompletedAt });
+  return resolved;
 }
 
 /** A signed offline copy of a native lesson, read-only. Legacy copies stay with the legacy renderer. */

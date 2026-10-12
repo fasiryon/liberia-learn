@@ -67,26 +67,36 @@ Curriculum V2 is `docs/architecture/learner-experience-v2/CURRICULUM_V2_HANDOFF.
 
 ## Lesson Experience V2 runtime (student lesson routes)
 
-`/student/lesson/[contentId]` and `/student/lessons/[scheduledWorkId]` ask the
-server delivery seam `GET /api/student/lessons/:id/experience`
-(`LESSON_EXPERIENCE_DELIVERY.md`) with the route's own id. A `NATIVE_V2`
-delivery plays in Lesson Player V2; anything the seam does not deliver
-(legacy lessons, other content, offline) keeps the existing renderer, so old
-deep links are unchanged. The client adapter
-(`lib/learner-experience/lessonRuntime.ts`) re-runs the strict learner rebuild
-and can only deny: no release identity, a wrong contract or missing invariants
-show an honest unavailable state, never a released-looking lesson.
+`/student/lesson/[contentId]` and `/student/lessons/[scheduledWorkId]` consult
+`GET /api/student/lessons/:id/experience?kind=CONTENT|SCHEDULED_WORK` first.
+Delivery contract `lesson-experience-delivery/1.1.0` carries the server-resolved
+`routeTarget`. The shared route model, return target, encoder and URL builder
+live in `lib/learner-experience/lessonRoute.ts`.
 
-- Formative items arrive keyless (`feedbackAuthority: SERVER_REQUIRED`); the
-  player records the choice and never judges it.
-- Only `authorizedLabLinks` open a lab, on `/student/labs/[labId]`, which keeps
-  its own authorization; only a RELEASED lab returns to the lesson scene, and a
-  showcase grant never becomes lesson-linked. The return address is rebuilt
-  from the originating route (`rt=c:<contentId>` or `w:<scheduledWorkId>`).
-- Evidence is presented as the server states it (`OBSERVATION_ONLY`,
-  `submissionEndpoint: null`): finishing is presentation-only and says so. An
-  injected `EvidenceChannel.SERVER` is the seam for a future submission
-  endpoint; stale, cached or offline work is never sent.
-- A signed offline copy of a learner projection plays read-only; the delivery
-  seam grants no offline admission, so released native lessons are not yet
-  available offline.
+`NATIVE_V2` uses Lesson Player V2; `LEGACY_COMPATIBLE` retains the existing
+legacy renderer and its enrichment metadata. Authorized native denials carry
+`format: NATIVE_V2` and `NOT_RELEASED`, `REVOKED` (410) or `NOT_STUDENT_READY`;
+they never fall back to legacy. Before school/class/learner authorization,
+missing and restricted records reveal no native format or release status.
+Assignments reach the seam directly without the legacy work API's authored
+status gate, date-window alias lookup, or scheduled-work creation.
+
+- Live formative delivery is keyless (`feedbackAuthority: SERVER_REQUIRED`);
+  the runtime rejects keyed payloads and records choices without correctness.
+- Only `authorizedLabLinks` open a lesson-linked lab. Each link has exact
+  launch context and structured `{ route, sceneId }` return target. `rt=c:<id>`
+  or `rt=w:<id>` identifies the actual originating route; `lv` carries the
+  authorized lab version. The lab page reauthorizes the exact lesson/link and
+  requires the runtime version to match. Showcase grants never supply lesson
+  link certification.
+- Evidence remains `OBSERVATION_ONLY`, `authoritativeSubmission: false`,
+  `masteryMutation: false`, `submissionEndpoint: null`, with next action owned
+  by the Learning Orchestrator. Production injects no submission channel.
+- Admitted offline native copies allow read-only scenes, local navigation and
+  resume. They cannot launch labs, grade or submit evidence. Reconnect requests
+  the exact version; access loss purges the cache, and changed identity/version
+  becomes `INCOMPATIBLE_VERSION`. The seam grants no offline cache admission.
+
+See `learner-experience-v2/LESSON_EXPERIENCE_DELIVERY.md` for the convergence
+inventory, authority rules, synthetic validation scope and limitations. There
+is still no released production native V2 lesson binding or certified lab.

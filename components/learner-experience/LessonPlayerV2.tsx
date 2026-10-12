@@ -212,7 +212,8 @@ export function LessonPlayerV2({ experience, links = NO_LINKS, labs = NO_LABS, t
     // The objectives the lab serves: the governed link's own (prototype), else the LAB scene's server-stated ones.
     const placed = runtime ? null : links.find((candidate) => candidate.linkId === lab.linkId) ?? null;
     const objectiveIds = placed?.objectiveIds ?? (scene.objectiveIds.length ? scene.objectiveIds : experience.objectives.map((objective) => objective.id));
-    const context: LabLaunchContext = { v: 1, labId: lab.labId, linkId: lab.linkId, origin: { experienceId: experience.id, experienceVersion: experience.version, sceneId: scene.id, objectiveIds, activityId: experience.id } };
+    const context: LabLaunchContext | undefined = runtime ? runtime.labLinks.find((link) => link.linkId === lab.linkId)?.launchContext : { v: 1, labId: lab.labId, linkId: lab.linkId, origin: { experienceId: experience.id, experienceVersion: experience.version, sceneId: scene.id, objectiveIds, activityId: experience.id } };
+    if (!context) return;
     const launched = markLabLaunched(progress, scene.id);
     setProgress(launched);
     await saveExperienceProgress(launched).catch(() => undefined);

@@ -11,9 +11,10 @@ import { deterministicReleaseIdentity } from "@/lib/learning-authority/governedG
 import { governedInventoryForRelease } from "@/lib/learning-authority/governedInventoryRuntime";
 import { lessonPayloadSha256 } from "@/lib/learning-authority/releases/grade4Math2026_2";
 import { validateLessonExperience } from "@/lib/learner-experience/sceneContract";
-import { findLabExperience, isGradeAppropriate, labExperienceHref } from "@/lib/learner-experience/labExperience";
+import { findLabExperience, isGradeAppropriate } from "@/lib/learner-experience/labExperience";
 import { isLinkStudentVisible, validateExperienceLink, type LearningExperienceLink } from "@/lib/learner-experience/links";
-import { labLaunchQuery } from "@/lib/learner-experience/labLaunch";
+import { type LabLaunchContext } from "@/lib/learner-experience/labLaunch";
+import type { LessonRouteTarget, LessonReturnTarget } from "@/lib/learner-experience/lessonRoute";
 import type { AssessmentHandoff, LessonExperience, Scene, SceneInteraction } from "@/lib/learner-experience/types";
 
 /** Delivery intentionally omits instant-feedback keys from the existing authoring/player type. */
@@ -28,10 +29,12 @@ export type DeliveryIdentity = Readonly<{
 export type EvidenceDisposition = "OBSERVATION_ONLY" | "READ_ONLY" | "OFFLINE_PENDING" | "INCOMPATIBLE_VERSION";
 export type AuthorizedLabLink = Readonly<{
   linkId: string; labId: string; labVersion: string; label: string; sceneId: string;
-  href: string; returnTarget: string; authorization: "APPROVED_LINK_CERTIFIED_LAB";
+  returnTarget: LessonReturnTarget; launchContext: LabLaunchContext; authorization: "APPROVED_LINK_CERTIFIED_LAB";
 }>;
 export type LessonExperienceDelivery = DeliveryIdentity & Readonly<{
-  contractVersion: "lesson-experience-delivery/1.0.0";
+  contractVersion: "lesson-experience-delivery/1.1.0";
+  routeTarget: LessonRouteTarget;
+  serverCompletion: { completedAt: string } | null;
   compatibility: "NATIVE_V2" | "LEGACY_COMPATIBLE";
   title: string; subject: string; grade: number; ageBand: LessonExperience["ageBand"] | null;
   objectives: LessonExperience["objectives"]; objectiveIds: readonly string[];
@@ -44,7 +47,7 @@ export type LessonExperienceDelivery = DeliveryIdentity & Readonly<{
 }>;
 
 export class LessonDeliveryError extends Error {
-  constructor(public readonly status: number, public readonly code: "UNAVAILABLE" | "FORBIDDEN" | "INCOMPATIBLE_VERSION") { super(code); }
+  constructor(public readonly status: number, public readonly code: "UNAVAILABLE" | "FORBIDDEN" | "INCOMPATIBLE_VERSION", public readonly format?: "NATIVE_V2", public readonly reason?: "NOT_RELEASED" | "REVOKED" | "NOT_STUDENT_READY") { super(code); }
 }
 function unavailable(): never { throw new LessonDeliveryError(404, "UNAVAILABLE"); }
 
@@ -57,41 +60,55 @@ export function deliveryTrustDisposition(cached: DeliveryIdentity, current: Deli
 }
 
 /** Links come only from the exact approved revision; certification remains independent of showcase access. */
-export function resolveAuthorizedLabLinks(experience: LessonExperience, links: readonly LearningExperienceLink[]): AuthorizedLabLink[] {
+export function resolveAuthorizedLabLinks(experience: LessonExperience, links: readonly LearningExperienceLink[], target: LessonRouteTarget = { kind: "CONTENT", contentId: experience.id }): AuthorizedLabLink[] {
   return links.flatMap((link) => {
     try {
       const lab = findLabExperience(link.experience.labId);
       if (!lab || !isLinkStudentVisible(link, experience, lab) || !isGradeAppropriate(lab, experience.grade)) return [];
       validateExperienceLink(link, experience, lab);
-      const returnTarget = `/student/lessons/${encodeURIComponent(experience.id)}?scene=${encodeURIComponent(link.placement.sceneId)}&from=lab`;
-      const query = labLaunchQuery({ v: 1, labId: lab.labId, linkId: link.linkId, origin: { experienceId: experience.id, experienceVersion: experience.version, sceneId: link.placement.sceneId, objectiveIds: link.objectiveIds, activityId: experience.id } });
+      const returnTarget = { route: target, sceneId: link.placement.sceneId };
+      const launchContext: LabLaunchContext = { v: 1, labId: lab.labId, labVersion: lab.version, linkId: link.linkId, origin: { experienceId: experience.id, experienceVersion: experience.version, sceneId: link.placement.sceneId, objectiveIds: link.objectiveIds, activityId: target.kind === "SCHEDULED_WORK" ? target.scheduledWorkId : experience.id } };
       return [{ linkId: link.linkId, labId: lab.labId, labVersion: lab.version, label: lab.title, sceneId: link.placement.sceneId,
-        href: `${labExperienceHref(lab)}?${query}`,
-        returnTarget, authorization: "APPROVED_LINK_CERTIFIED_LAB" as const }];
+        returnTarget, launchContext, authorization: "APPROVED_LINK_CERTIFIED_LAB" as const }];
     } catch { return []; }
   });
 }
 
 /** Call inside one repeatable-read transaction so approval, row and access form one snapshot. */
 export async function resolveLessonDelivery(
-  tx: Prisma.TransactionClient, user: { id: string; role: string; schoolId?: string | null }, lessonRef: string, requestedVersion?: string,
+  tx: Prisma.TransactionClient, user: { id: string; role: string; schoolId?: string | null }, lessonRef: string, requestedVersion?: string, routeKind?: LessonRouteTarget["kind"],
 ): Promise<LessonExperienceDelivery> {
   if (user.role !== "STUDENT") throw new LessonDeliveryError(403, "FORBIDDEN");
   if (!user.schoolId) unavailable();
   const scope = await loadLearnerScope(tx, user);
   const include = { provenance: { include: { currentRevision: true } }, curriculumVersion: { select: { status: true } } } as const;
-  let row = await tx.curriculumContent.findUnique({ where: { contentId: lessonRef }, include });
-  if (!row) {
-    const work = await tx.scheduledWork.findUnique({ where: { id: lessonRef }, include: { content: { include }, class: { select: { schoolId: true } } } });
+  let serverCompletion: { completedAt: string } | null = null;
+  let target: LessonRouteTarget = { kind: "CONTENT", contentId: lessonRef };
+  let row = routeKind === "SCHEDULED_WORK" ? null : await tx.curriculumContent.findUnique({ where: { contentId: lessonRef }, include });
+  if (!row && routeKind !== "CONTENT") {
+    const work = await tx.scheduledWork.findUnique({ where: { id: lessonRef }, include: { content: { include }, class: { select: { schoolId: true } }, progress: { where: { studentId: user.id }, select: { completedAt: true } } } });
     if (!work || work.class.schoolId !== user.schoolId || !scope.classIds.includes(work.classId)) unavailable();
     row = work.content;
+    const completedAt = work.progress?.[0]?.completedAt;
+    serverCompletion = completedAt ? { completedAt: completedAt.toISOString() } : null;
+    target = { kind: "SCHEDULED_WORK", scheduledWorkId: work.id ?? lessonRef, contentId: row.contentId };
   }
-  if (!["published", "APPROVED"].includes(row.status) || row.contentType.toUpperCase() !== "LESSON" ||
-    !learnerMetadataAllowed(row) || !learnerLifecycleAllowed(row.provenance) || !await learnerScopeAllows(tx, row, scope)) unavailable();
-  if (requestedVersion !== undefined && requestedVersion !== row.version) throw new LessonDeliveryError(409, "INCOMPATIBLE_VERSION");
-  const projected = projectStudentLessonPayload(row.payload);
-  if (projected.studentReady !== true) unavailable();
+  if (!row) unavailable();
+  // Do not disclose format/lifecycle until school, class and metadata authorization pass.
+  if (row.contentType.toUpperCase() !== "LESSON" || !learnerMetadataAllowed(row) || !await learnerScopeAllows(tx, row, scope)) unavailable();
   const native = isNativeCurriculumV2Payload(row.payload);
+  const denyNative = (reason: "NOT_RELEASED" | "REVOKED" | "NOT_STUDENT_READY"): never => { throw new LessonDeliveryError(reason === "REVOKED" ? 410 : 404, "UNAVAILABLE", "NATIVE_V2", reason); };
+  if (native && row.provenance?.lifecycleState === "REVOKED") denyNative("REVOKED");
+  if (!["published", "APPROVED"].includes(row.status) || !learnerLifecycleAllowed(row.provenance)) {
+    if (native) denyNative("NOT_RELEASED");
+    unavailable();
+  }
+  if (requestedVersion !== undefined && requestedVersion !== row.version) throw new LessonDeliveryError(409, "INCOMPATIBLE_VERSION", native ? "NATIVE_V2" : undefined);
+  const projected = projectStudentLessonPayload(row.payload);
+  if (projected.studentReady !== true) {
+    if (native) denyNative("NOT_STUDENT_READY");
+    unavailable();
+  }
   let experience: LessonExperience | null = null;
   let authorizedLabLinks: AuthorizedLabLink[] = [];
   let assessmentRefs: AssessmentHandoff[] = [];
@@ -129,7 +146,7 @@ export async function resolveLessonDelivery(
       if (new Set(experience.objectives.map((objective) => objective.id)).size !== experience.objectives.length || experience.scenes.some((scene) => !scene.id.trim())) unavailable();
       experience = { ...experience, authority: { status: "APPROVED_RELEASE", note: "Server-resolved exact-revision release", candidateContentIds: [], releaseId: release.id, releaseIdentity: deterministicReleaseIdentity(release) } };
       const artifact = (row.payload as Record<string, unknown>)[CURRICULUM_V2_PAYLOAD_KEY] as CurriculumLessonV2;
-      authorizedLabLinks = resolveAuthorizedLabLinks(experience, artifact.labLinks.map((entry) => entry.link));
+      authorizedLabLinks = resolveAuthorizedLabLinks(experience, artifact.labLinks.map((entry) => entry.link), target);
       scenes = experience.scenes.map((scene): LearnerScene => {
         if (scene.interaction.kind === "MULTIPLE_CHOICE") return { ...scene, interaction: { kind: "MULTIPLE_CHOICE", feedbackAuthority: "SERVER_REQUIRED", items: scene.interaction.items.map(({ id, prompt, options }) => ({ id, prompt, options })) } };
         if (scene.interaction.kind === "LAB_LAUNCH" && !authorizedLabLinks.some((link) => link.linkId === (scene.interaction as { linkId: string }).linkId)) return { ...scene, interaction: { kind: "NONE" }, completion: { kind: "VIEWED" }, evidence: { kind: "NONE" } };
@@ -148,10 +165,10 @@ export async function resolveLessonDelivery(
       });
       approvalId = approval.id;
       releaseSourceRef = release.provenanceRef;
-    } catch { unavailable(); }
+    } catch { denyNative("NOT_RELEASED"); }
   }
   return {
-    contractVersion: "lesson-experience-delivery/1.0.0", compatibility: native ? "NATIVE_V2" : "LEGACY_COMPATIBLE",
+    contractVersion: "lesson-experience-delivery/1.1.0", routeTarget: target, serverCompletion, compatibility: native ? "NATIVE_V2" : "LEGACY_COMPATIBLE",
     lessonId: row.contentId, lessonVersion: row.version, releaseId: experience?.authority.releaseId ?? null, releaseIdentity: experience?.authority.releaseIdentity ?? null,
     revisionId: row.provenance?.currentRevisionId ?? null, title: experience?.title ?? (typeof projected.title === "string" ? projected.title : row.contentId), subject: String(row.subject), grade: row.grade,
     ageBand: experience?.ageBand ?? null, objectives: experience?.objectives ?? [], objectiveIds: experience?.objectives.map((objective) => objective.id) ?? [],

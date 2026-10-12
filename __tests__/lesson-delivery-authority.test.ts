@@ -3,6 +3,8 @@ import { runG4Proof } from "@/lib/curriculum/v2/g4Proof";
 import { buildCurriculumContentSnapshot } from "@/lib/curriculum/provenance/snapshot";
 import { hashCurriculumSnapshot } from "@/lib/curriculum/provenance/hash";
 import { deterministicReleaseIdentity, GRADE4_MATH_ONTOLOGY_RELEASE } from "@/lib/learning-authority/governedGrade4Math";
+import { learnerContentAllowed, learnerRowAllowed } from "@/lib/curriculum/learnerEligibility";
+import { resolveLessonDelivery as parseRuntimeDelivery } from "@/lib/learner-experience/lessonRuntime";
 import { resolveLessonDelivery, deliveryTrustDisposition } from "@/lib/lessons/lessonExperienceDelivery";
 
 // Reviewed native releases exist only in these isolated mocks, never in production data.
@@ -48,7 +50,7 @@ describe("server lesson delivery authority", () => {
   });
   it.each(["DRAFT", "PENDING_REVIEW", "REVOKED"])("B: denies lifecycle %s", async (state) => {
     row.provenance.lifecycleState = state;
-    await expect(resolveLessonDelivery(tx, learner, row.contentId)).rejects.toMatchObject({ status: 404 });
+    await expect(resolveLessonDelivery(tx, learner, row.contentId)).rejects.toMatchObject({ status: state === "REVOKED" ? 410 : 404, format: "NATIVE_V2", reason: state === "REVOKED" ? "REVOKED" : "NOT_RELEASED" });
   });
   it("C: denies foreign schools", async () => {
     await expect(resolveLessonDelivery(tx, { ...learner, schoolId: "school-b" }, row.contentId)).rejects.toMatchObject({ status: 404 });
@@ -125,4 +127,39 @@ describe("server lesson delivery authority", () => {
     expect(deliveryTrustDisposition(current, { ...current, releaseIdentity: "new" }, true)).toBe("INCOMPATIBLE_VERSION");
     expect(deliveryTrustDisposition(current, null, true)).toBe("READ_ONLY");
   });
+});
+
+it("explicit route kinds resolve collisions without overloading content as work", async () => {
+  tx.scheduledWork.findUnique.mockResolvedValue({ id: "work", content: row, classId: "class", class: { schoolId: "school-a" } });
+  const native = await resolveLessonDelivery(tx, learner, "work", row.version, "SCHEDULED_WORK");
+  expect(native.lessonId).toBe(row.contentId);
+  expect(tx.curriculumContent.findUnique).not.toHaveBeenCalled();
+  expect(tx.scheduledWork.findUnique).toHaveBeenCalledWith(expect.objectContaining({ where: { id: "work" } }));
+  tx.curriculumContent.findUnique.mockResolvedValue(null);
+  tx.scheduledWork.findUnique.mockClear();
+  await expect(resolveLessonDelivery(tx, learner, "missing-content", undefined, "CONTENT")).rejects.toMatchObject({ status: 404 });
+  expect(tx.scheduledWork.findUnique).not.toHaveBeenCalled();
+});
+
+it("does not leak native format or release state before learner scope authorization", async () => {
+  row.provenance.lifecycleState = "REVOKED";
+  try { await resolveLessonDelivery(tx, { ...learner, schoolId: "foreign" }, row.contentId); throw new Error("expected denial"); }
+  catch (error) { expect(error).toMatchObject({ status: 404, code: "UNAVAILABLE" }); expect((error as any).format).toBeUndefined(); expect((error as any).reason).toBeUndefined(); }
+});
+it("returns typed content and exact assigned identity without creating scheduled work", async () => {
+  tx.scheduledWork.create = vi.fn();
+  const content = await resolveLessonDelivery(tx, learner, row.contentId, row.version, "CONTENT");
+  expect(content.routeTarget).toEqual({ kind: "CONTENT", contentId: row.contentId });
+  tx.scheduledWork.findUnique.mockResolvedValue({ id: "exact-work", content: row, classId: "class", class: { schoolId: "school-a" }, progress: [] });
+  const assigned = await resolveLessonDelivery(tx, learner, "exact-work", row.version, "SCHEDULED_WORK");
+  expect(assigned.routeTarget).toEqual({ kind: "SCHEDULED_WORK", scheduledWorkId: "exact-work", contentId: row.contentId });
+  expect(tx.scheduledWork.create).not.toHaveBeenCalled();
+});
+
+it("authored draft cannot declare release, while the governed seam derives native delivery", async () => {
+  expect(learnerContentAllowed(row)).toBe(false);
+  expect(learnerRowAllowed(row)).toBe(false);
+  const delivery = await resolveLessonDelivery(tx, learner, row.contentId);
+  expect(delivery.compatibility).toBe("NATIVE_V2");
+  expect(parseRuntimeDelivery(delivery).kind).toBe("NATIVE");
 });

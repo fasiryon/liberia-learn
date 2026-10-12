@@ -16,7 +16,7 @@ it("uses STUDENT auth, exact-version resolution and a repeatable-read snapshot; 
   expect(result.status).toBe(200);
   expect(result.headers.get("cache-control")).toBe("private, no-store");
   expect(ports.auth).toHaveBeenCalledWith("STUDENT");
-  expect(ports.resolve).toHaveBeenCalledWith("tx", expect.objectContaining({ role: "STUDENT" }), "lesson", "1");
+  expect(ports.resolve).toHaveBeenCalledWith("tx", expect.objectContaining({ role: "STUDENT" }), "lesson", "1", undefined);
   expect(ports.transaction).toHaveBeenCalledWith(expect.any(Function), { isolationLevel: "RepeatableRead" });
 });
 it.each([401, 403])("denies authentication status %s without resolving delivery", async (status) => {
@@ -30,4 +30,19 @@ it("returns unavailable on stale version without payload or private error detail
   const result = await GET(new Request("https://example.test"), { params: { id: "lesson" } });
   expect(result.status).toBe(409);
   expect(await result.json()).toEqual({ compatibility: "UNAVAILABLE", error: "INCOMPATIBLE_VERSION" });
+});
+
+it("passes explicit scheduled-work identity and rejects arbitrary route tags", async () => {
+  expect((await GET(new Request("https://example.test?kind=SCHEDULED_WORK&version=1"), { params: { id: "work" } })).status).toBe(200);
+  expect(ports.resolve).toHaveBeenCalledWith("tx", expect.any(Object), "work", "1", "SCHEDULED_WORK");
+  ports.resolve.mockClear();
+  expect((await GET(new Request("https://example.test?kind=https://evil.test"), { params: { id: "work" } })).status).toBe(400);
+  expect(ports.resolve).not.toHaveBeenCalled();
+});
+
+it("serializes scoped native revocation as terminal 410", async () => {
+  ports.resolve.mockRejectedValue(new LessonDeliveryError(410, "UNAVAILABLE", "NATIVE_V2", "REVOKED"));
+  const result = await GET(new Request("https://example.test?kind=CONTENT"), { params: { id: "lesson" } });
+  expect(result.status).toBe(410);
+  expect(await result.json()).toEqual({ compatibility: "UNAVAILABLE", error: "UNAVAILABLE", format: "NATIVE_V2", reason: "REVOKED" });
 });

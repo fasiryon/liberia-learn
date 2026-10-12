@@ -21,10 +21,10 @@ import { parseToSlides } from "@/lib/lessons/parseToSlides";
 import { enqueueOfflineRequest } from "@/lib/offline-queue";
 import { loadLessonProgress, removeLessonProgress, saveLessonProgress } from "@/lib/offline/lessonProgress";
 import { cacheLessonSession, loadCachedLessonSession } from "@/lib/offline/lessonSession";
-import { loadCachedLesson } from "@/lib/lesson-offline-cache";
+import { loadCachedLesson, removeCachedLesson } from "@/lib/lesson-offline-cache";
 import { projectStudentLessonPayload } from "@/lib/curriculum/studentLessonProjection";
 import { LessonUnavailable, NativeLessonRuntimeView } from "@/components/learner-experience/LessonRuntimeV2";
-import { loadCachedNativeLesson, loadLessonDelivery, mayBeNativeLesson } from "@/lib/learner-experience/lessonRuntimeClient";
+import { loadCachedNativeLesson, loadLessonDelivery } from "@/lib/learner-experience/lessonRuntimeClient";
 import type { LessonRouteTarget, LessonRuntimeResolution } from "@/lib/learner-experience/lessonRuntime";
 import { SaveForOfflineButton } from "@/components/SaveForOfflineButton";
 import { LessonAudioPlayer, type LessonAudioPart } from "@/components/student/LessonAudioPlayer";
@@ -504,8 +504,8 @@ function VideoSection({
 }
 
 /**
- * Assigned lesson route. A native Lesson Experience V2 lesson (server-authorized through the curriculum
- * detail route) plays in Lesson Player V2; every other lesson keeps the existing delivery below.
+ * Assigned lesson route. A native Lesson Experience V2 lesson (server-authorized through the delivery
+ * seam) plays in Lesson Player V2; every other lesson keeps the existing delivery below.
  */
 export default function LessonDeliveryClient({ lessonId, enabledToolIds = [] }: { lessonId: string; enabledToolIds?: readonly string[] }) {
   const [native, setNative] = useState<LessonRuntimeResolution | null>(null);
@@ -513,7 +513,7 @@ export default function LessonDeliveryClient({ lessonId, enabledToolIds = [] }: 
   const target = useMemo<LessonRouteTarget | null>(() => (contentId ? { kind: "SCHEDULED_WORK", scheduledWorkId: lessonId, contentId } : null), [lessonId, contentId]);
   const onNative = useCallback((resolved: LessonRuntimeResolution, resolvedContentId: string) => { setContentId(resolvedContentId); setNative(resolved); }, []);
   if (native?.kind === "NATIVE" && target) return <NativeLessonRuntimeView lesson={native} target={target} exitHref="/student/today" enabledToolIds={enabledToolIds} />;
-  if (native?.kind === "UNAVAILABLE") return <LessonUnavailable reason={native.reason} />;
+  if (native?.kind === "UNAVAILABLE") return <LessonUnavailable reason={native.reason} exitHref="/student/today" />;
   return (
     <main className="ll-page min-h-screen px-4 py-8 text-[var(--ll-text)]">
       <div className="ll-shell max-w-5xl">
@@ -554,20 +554,26 @@ function ScheduledLessonDelivery({ lessonId, onNative }: { lessonId: string; onN
     let cancelled = false;
     async function loadLesson() {
       try {
+        // Exact scheduled-work lookup goes directly to the governed seam; the legacy work API cannot gate native reachability.
+        const resolved = await loadLessonDelivery({ kind: "SCHEDULED_WORK", scheduledWorkId: lessonId });
+        if (resolved.kind === "NATIVE" || resolved.kind === "UNAVAILABLE" || (resolved.kind === "NO_DELIVERY" && resolved.status !== "OFFLINE")) {
+          if (!cancelled) {
+            if (resolved.kind !== "NATIVE" && !(resolved.kind === "UNAVAILABLE" && resolved.reason === "LOAD_FAILED")) {
+              const cachedRef = await loadCachedLessonSession<{ contentId: string }>(lessonId).catch(() => null);
+              if (cachedRef?.contentId) await removeCachedLesson(cachedRef.contentId);
+            }
+            const contentId = resolved.kind === "NATIVE" ? resolved.identity.contentId : "";
+            if (resolved.kind === "NATIVE") void cacheLessonSession(lessonId, { contentId, contentVersion: resolved.identity.lessonVersion, contentHash: null }).catch(() => {});
+            onNative(resolved.kind === "NO_DELIVERY" ? { kind: "UNAVAILABLE", reason: "NOT_FOUND" } : resolved, contentId);
+          }
+          return;
+        }
+        if (resolved.kind === "NO_DELIVERY") throw new Error("Lesson unavailable offline");
         const response = await fetch(`/api/student/work/${lessonId}`);
         const data = await response.json();
-        if (!response.ok) throw new Error(data?.error ?? "Failed to load lesson.");
-        // Empty learner text: possibly a native scene lesson, resolved by the server delivery seam for this
-        // assignment. Anything it does not deliver keeps the existing delivery below.
-        if (mayBeNativeLesson(data)) {
-          const resolved = await loadLessonDelivery({ kind: "SCHEDULED_WORK", scheduledWorkId: lessonId, contentId: data.contentId }, typeof data.completedAt === "string" ? data.completedAt : null);
-          if (resolved.kind === "NATIVE" || resolved.kind === "UNAVAILABLE") {
-            if (!cancelled) {
-              void cacheLessonSession(lessonId, data).catch(() => {});
-              onNative(resolved, data.contentId);
-            }
-            return;
-          }
+        if (!response.ok) {
+          if (!cancelled) onNative({ kind: "UNAVAILABLE", reason: "NOT_FOUND" }, "");
+          return;
         }
         if (!cancelled) {
           setLesson(data);

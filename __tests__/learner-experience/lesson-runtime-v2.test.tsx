@@ -12,7 +12,7 @@ const push = vi.hoisted(() => vi.fn());
 const router = vi.hoisted(() => ({ push: (href: string) => push(href) }));
 const store = vi.hoisted(() => new Map<string, unknown>());
 const cache = vi.hoisted(() => ({ lesson: null as unknown, removed: [] as string[] }));
-vi.mock("next/navigation", () => ({ useRouter: () => router, useParams: () => ({ contentId: "fixture-content-g6" }) }));
+vi.mock("next/navigation", () => ({ useRouter: () => router, useParams: () => ({ contentId: "fixture-levers-g6" }) }));
 vi.mock("@/lib/learner-experience/progressStore", () => ({
   loadExperienceProgress: async (id: string) => store.get(id) ?? null,
   saveExperienceProgress: async (progress: { experienceId: string }) => { store.set(progress.experienceId, JSON.parse(JSON.stringify(progress))); },
@@ -31,21 +31,21 @@ import { NativeLessonRuntimeView, LessonUnavailable } from "@/components/learner
 import { InteractiveLabScreen } from "@/components/learner-experience/InteractiveLabScreen";
 import LessonViewerClient from "@/app/student/lesson/[contentId]/LessonViewerClient";
 import { lessonRouteHref, parseAuthorizedLabLinks, resolveLessonDelivery, resolveLessonRuntime, returnSceneFromSearch, unavailableReasonForStatus, type EvidenceChannel, type LessonRouteTarget, type NativeLessonRuntime } from "@/lib/learner-experience/lessonRuntime";
-import { loadCachedNativeLesson, loadLessonDelivery, mayBeNativeLesson } from "@/lib/learner-experience/lessonRuntimeClient";
+import { loadCachedNativeLesson, loadLessonDelivery } from "@/lib/learner-experience/lessonRuntimeClient";
 import { labReturnStorageKey, parseStudentLabReturn } from "@/lib/learner-experience/labLaunch";
 import { buildEvidenceEnvelope } from "@/lib/learner-experience/evidenceHandoff";
 import { initialProgress, recordResponse } from "@/lib/learner-experience/progress";
 import { SCENE_TYPES } from "@/lib/learner-experience/types";
 import { FIXTURE_LAB_ID, FIXTURE_LAB_LINK_ID, runtimeLessonDelivery, runtimeLessonExperience, runtimeLessonResponse } from "../../e2e/product-design-v2/lessonFixtures";
 
-const CONTENT: LessonRouteTarget = { kind: "CONTENT", contentId: "fixture-content-g6" };
-const WORK: LessonRouteTarget = { kind: "SCHEDULED_WORK", scheduledWorkId: "work-123", contentId: "fixture-content-g6" };
+const CONTENT: LessonRouteTarget = { kind: "CONTENT", contentId: "fixture-levers-g6" };
+const WORK: LessonRouteTarget = { kind: "SCHEDULED_WORK", scheduledWorkId: "work-123", contentId: "fixture-levers-g6" };
 
 let root: Root | null = null;
 let host: HTMLDivElement;
 beforeAll(() => { (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true; });
 beforeEach(() => {
-  store.clear(); push.mockReset(); window.sessionStorage.clear(); window.history.replaceState(null, "", "/student/lesson/fixture-content-g6");
+  store.clear(); push.mockReset(); window.sessionStorage.clear(); window.history.replaceState(null, "", "/student/lesson/fixture-levers-g6");
   cache.lesson = null; cache.removed = [];
   Object.defineProperty(window.navigator, "onLine", { configurable: true, get: () => true });
   host = document.createElement("div"); document.body.appendChild(host);
@@ -56,7 +56,7 @@ afterEach(() => { act(() => root?.unmount()); root = null; host.remove(); vi.uns
 function resolved(options: { labAuthorized?: boolean; source?: "NETWORK" | "CACHE"; completedAt?: string | null; grade?: 2 | 6 } = {}): NativeLessonRuntime {
   const grade = options.grade ?? 6;
   const result = options.source === "CACHE"
-    ? resolveLessonRuntime({ payload: runtimeLessonResponse(grade).payload, source: "CACHE", target: CONTENT, contentVersion: "7" })
+    ? resolveLessonRuntime({ payload: runtimeLessonResponse(grade).payload, source: "CACHE", target: CONTENT, contentVersion: "1.0.0" })
     : resolveLessonDelivery(runtimeLessonDelivery(grade, { labAuthorized: options.labAuthorized }), { serverCompletedAt: options.completedAt ?? null });
   if (result.kind !== "NATIVE") throw new Error(`expected NATIVE, got ${JSON.stringify(result)}`);
   return result;
@@ -142,8 +142,9 @@ describe("delivery resolution: render only what the server stated", () => {
 
   it("lab links: only server-authorized links placed on their own LAB scene; never from a payload or cached copy", () => {
     const experience = resolved({ labAuthorized: true }).experience;
-    const good = { linkId: FIXTURE_LAB_LINK_ID, labId: FIXTURE_LAB_ID, sceneId: "lab", label: "Lever lab", authorization: "APPROVED_LINK_CERTIFIED_LAB" };
-    expect(parseAuthorizedLabLinks([good], experience)).toEqual([{ linkId: FIXTURE_LAB_LINK_ID, labId: FIXTURE_LAB_ID, sceneId: "lab", title: "Lever lab", summary: null }]);
+    const launchContext = runtimeLessonDelivery(6, { labAuthorized: true }).authorizedLabLinks[0].launchContext;
+    const good = { launchContext, linkId: FIXTURE_LAB_LINK_ID, labId: FIXTURE_LAB_ID, sceneId: "lab", label: "Lever lab", authorization: "APPROVED_LINK_CERTIFIED_LAB" };
+    expect(parseAuthorizedLabLinks([good], experience)).toEqual([{ linkId: FIXTURE_LAB_LINK_ID, labId: FIXTURE_LAB_ID, sceneId: "lab", title: "Lever lab", summary: null, launchContext }]);
     for (const bad of [{ ...good, authorization: "SHOWCASE" }, { ...good, sceneId: "explain" }, { ...good, linkId: "other-link" }, { ...good, labId: "../evil" }, { ...good, label: "" }]) expect(parseAuthorizedLabLinks([bad], experience)).toEqual([]);
     expect(parseAuthorizedLabLinks([good, good], experience)).toHaveLength(1);
     expect(resolved({ labAuthorized: true }).labLinks).toHaveLength(1);
@@ -238,10 +239,10 @@ describe("Lesson Player V2 on a student route", () => {
     await click(button("Explore in Lab"));
     const url = new URL(push.mock.calls[0][0] as string, "http://x");
     expect(url.pathname).toBe(`/student/labs/${FIXTURE_LAB_ID}`);
-    expect(url.searchParams.get("rt")).toBe("c:fixture-content-g6");
+    expect(url.searchParams.get("rt")).toBe("c:fixture-levers-g6");
     const origin = parseStudentLabReturn(FIXTURE_LAB_ID, Object.fromEntries(url.searchParams.entries()))!;
     expect(origin.context.origin).toMatchObject({ experienceId: "fixture-levers-g6", experienceVersion: "1.0.0", sceneId: "lab", objectiveIds: ["fixture-obj-levers", "fixture-obj-balance"] });
-    expect(origin.returnHref).toBe("/student/lesson/fixture-content-g6?scene=lab&from=lab");
+    expect(origin.returnHref).toBe("/student/lesson/fixture-levers-g6?scene=lab&from=lab");
     act(() => root?.unmount()); root = null;
 
     // The lab host hands back a summary; the learner had moved on in another tab, the return wins.
@@ -258,7 +259,7 @@ describe("Lesson Player V2 on a student route", () => {
   });
 
   it("an assigned lesson returns to the assignment route; a forged hand-back is ignored", async () => {
-    const lesson = resolved({ labAuthorized: true });
+    const lesson = resolveLessonDelivery(runtimeLessonDelivery(6, { labAuthorized: true, routeTarget: WORK })) as NativeLessonRuntime;
     at(lesson, "lab");
     await play(lesson, { target: WORK });
     await click(button("Explore in Lab"));
@@ -273,7 +274,7 @@ describe("Lesson Player V2 on a student route", () => {
   });
 
   it("the lab return target is rebuilt from validated ids, never followed as a URL", () => {
-    const base = { v: "1", link: FIXTURE_LAB_LINK_ID, exp: "fixture-levers-g6", ver: "1.0.0", scene: "lab", activity: "fixture-levers-g6", obj: "fixture-obj-levers" };
+    const base = { v: "1", lv: "1.0.0", link: FIXTURE_LAB_LINK_ID, exp: "fixture-levers-g6", ver: "1.0.0", scene: "lab", activity: "fixture-levers-g6", obj: "fixture-obj-levers" };
     for (const rt of ["https://evil.example", "c:../../admin", "x:abc", "c:", "//evil", "c:a/b"]) expect(parseStudentLabReturn(FIXTURE_LAB_ID, { ...base, rt })).toBeNull();
     expect(parseStudentLabReturn(FIXTURE_LAB_ID, base)).toBeNull();
     expect(returnSceneFromSearch(new URLSearchParams("scene=lab"))).toBeNull();
@@ -351,8 +352,9 @@ describe("Lesson Player V2 on a student route", () => {
     expect(host.querySelector("[data-finish-state]")?.getAttribute("data-finish-state")).toBe("READ_ONLY");
   });
 
-  it("going offline mid-lesson keeps work pending on the device instead of sending it", async () => {
+  it("going offline mid-lesson reauthorizes before sending pending on the device instead of sending it", async () => {
     const submit = vi.fn(async () => ({ accepted: true, dispositions: [] }));
+    serve({ "/api/student/lessons/fixture-levers-g6/experience": () => json(200, runtimeLessonDelivery(6)) });
     const lesson = resolved();
     at(lesson, "final");
     await play(lesson, { evidence: { status: "SERVER", submit } });
@@ -366,6 +368,7 @@ describe("Lesson Player V2 on a student route", () => {
     expect(button("Try sending again")!.disabled).toBe(true);
     Object.defineProperty(window.navigator, "onLine", { configurable: true, get: () => true });
     await act(async () => { window.dispatchEvent(new Event("online")); });
+    await flush();
     await click(button("Try sending again"));
     expect(submit).toHaveBeenCalledTimes(1);
   });
@@ -384,12 +387,12 @@ describe("Lesson Player V2 on a student route", () => {
 });
 
 describe("Labs route: lesson return only for a released lab", () => {
-  const origin = () => parseStudentLabReturn(FIXTURE_LAB_ID, { v: "1", link: FIXTURE_LAB_LINK_ID, exp: "fixture-levers-g6", ver: "1.0.0", scene: "lab", activity: "fixture-levers-g6", obj: "fixture-obj-levers", rt: "c:fixture-content-g6" })!;
+  const origin = () => parseStudentLabReturn(FIXTURE_LAB_ID, { v: "1", lv: "1.0.0", link: FIXTURE_LAB_LINK_ID, exp: "fixture-levers-g6", ver: "1.0.0", scene: "lab", activity: "fixture-levers-g6", obj: "fixture-obj-levers", rt: "c:fixture-levers-g6" })!;
   it("a released lab opened from a lesson offers Back to lesson", async () => {
     await render(<InteractiveLabScreen labId={FIXTURE_LAB_ID} access="RELEASED" lessonReturn={{ ...origin(), labVersion: "1.0.0", totalChecks: 3 }} />);
     expect(host.querySelector("[data-lab-host]")?.getAttribute("data-origin-scene")).toBe("lab");
     await click(button("Back to lesson"));
-    expect(push).toHaveBeenCalledWith("/student/lesson/fixture-content-g6?scene=lab&from=lab");
+    expect(push).toHaveBeenCalledWith("/student/lesson/fixture-levers-g6?scene=lab&from=lab");
     expect(JSON.parse(window.sessionStorage.getItem(labReturnStorageKey("fixture-levers-g6"))!)).toMatchObject({ labId: FIXTURE_LAB_ID, linkId: FIXTURE_LAB_LINK_ID, totalChecks: 3 });
   });
 
@@ -401,8 +404,8 @@ describe("Labs route: lesson return only for a released lab", () => {
 });
 
 describe("existing lesson deep links keep working through adapters", () => {
-  const DELIVERY = "/api/student/lessons/fixture-content-g6/experience";
-  const CURRICULUM = "/api/curriculum/fixture-content-g6";
+  const DELIVERY = "/api/student/lessons/fixture-levers-g6/experience";
+  const CURRICULUM = "/api/curriculum/fixture-levers-g6";
 
   it("/student/lesson/[contentId] plays a native lesson from the delivery seam", async () => {
     serve({ [DELIVERY]: () => json(200, runtimeLessonDelivery(6, { labAuthorized: true })) });
@@ -410,7 +413,7 @@ describe("existing lesson deep links keep working through adapters", () => {
     await flush();
     expect(player().getAttribute("data-lesson-id")).toBe("fixture-levers-g6");
     expect(player().getAttribute("data-availability")).toBe("CURRENT");
-    expect((fetch as unknown as { mock: { calls: string[][] } }).mock.calls.map((call) => call[0])).toEqual([DELIVERY]);
+    expect((fetch as unknown as { mock: { calls: string[][] } }).mock.calls.map((call) => call[0])).toEqual([`${DELIVERY}?kind=CONTENT`]);
   });
 
   it("/student/lesson/[contentId] keeps legacy lessons on the existing renderer (seam absent or legacy)", async () => {
@@ -444,17 +447,14 @@ describe("existing lesson deep links keep working through adapters", () => {
     act(() => root?.unmount()); root = null;
     // Offline with a signed saved copy of the learner projection: read-only player.
     vi.stubGlobal("fetch", vi.fn(async () => { throw new TypeError("offline"); }));
-    cache.lesson = { metadata: { version: "7" }, payload: runtimeLessonResponse(6).payload };
+    cache.lesson = { metadata: { version: "1.0.0" }, payload: runtimeLessonResponse(6).payload };
     await render(<LessonViewerClient enabledToolIds={[]} />);
     await flush();
     expect(player().getAttribute("data-availability")).toBe("CACHED_READ_ONLY");
   });
 
   it("the delivery loader names the route's own id and reports what the seam said", async () => {
-    expect(mayBeNativeLesson({ contentId: "c", body: "", bodyStandard: null, bodyBlock: null })).toBe(true);
-    expect(mayBeNativeLesson({ contentId: "c", body: "Legacy text" })).toBe(false);
-    expect(mayBeNativeLesson({ body: "" })).toBe(false);
-    serve({ "/api/student/lessons/work-123/experience": () => json(200, runtimeLessonDelivery(6)) });
+    serve({ "/api/student/lessons/work-123/experience": () => json(200, runtimeLessonDelivery(6, { routeTarget: WORK })) });
     expect(await loadLessonDelivery(WORK, "2026-10-11T10:00:00.000Z")).toMatchObject({ kind: "NATIVE", serverCompletion: { completedAt: "2026-10-11T10:00:00.000Z" } });
     serve({});
     expect(await loadLessonDelivery(WORK)).toEqual({ kind: "NO_DELIVERY", status: 404 });
@@ -470,8 +470,8 @@ describe("existing lesson deep links keep working through adapters", () => {
 describe("assigned lesson route component", () => {
   it("/student/lessons/[id] plays a native assigned lesson and shows the server's completion record", async () => {
     const { default: LessonDeliveryClient } = await import("@/app/student/lessons/[id]/LessonDeliveryClient");
-    const work = { id: "work-123", contentId: "fixture-content-g6", contentVersion: "7", title: "Levers help us lift", body: "", bodyStandard: "", bodyBlock: "", status: "completed", completedAt: "2026-10-11T10:00:00.000Z" };
-    serve({ "/api/student/work/work-123": () => json(200, work), "/api/student/lessons/work-123/experience": () => json(200, runtimeLessonDelivery(6)) });
+    const work = { id: "work-123", contentId: "fixture-levers-g6", contentVersion: "1.0.0", title: "Levers help us lift", body: "Native migration retains legacy text", bodyStandard: "Legacy body", bodyBlock: "", status: "completed", completedAt: "2026-10-11T10:00:00.000Z" };
+    serve({ "/api/student/work/work-123": () => json(200, work), "/api/student/lessons/work-123/experience": () => json(200, runtimeLessonDelivery(6, { routeTarget: WORK, completedAt: "2026-10-11T10:00:00.000Z" })) });
     window.history.replaceState(null, "", "/student/lessons/work-123");
     const lesson = runtimeLessonExperience(6);
     store.set(lesson.id, { v: 2, experienceId: lesson.id, experienceVersion: lesson.version, sceneId: "final", completedSceneIds: [], responses: { final: { m1: 0, m2: 0 } }, revealed: {}, labs: {}, updatedAt: "2026-10-12T00:00:00.000Z" });
@@ -479,8 +479,57 @@ describe("assigned lesson route component", () => {
     for (let i = 0; i < 5 && !player(); i++) await flush();
     expect(player().getAttribute("data-lesson-id")).toBe("fixture-levers-g6");
     expect(host.querySelectorAll("main")).toHaveLength(1);
+    expect((fetch as any).mock.calls.some(([url]) => url.startsWith("/api/student/work/"))).toBe(false);
     await click(button("Finish"));
     expect(host.querySelector("[data-server-completion]")?.textContent).toContain("completed");
     expect(host.querySelector("[data-finish-state] a")?.getAttribute("href")).toBe("/student/today");
+  });
+});
+
+describe("convergence cache and authority regression", () => {
+  it("online native payload cannot bypass a failed delivery seam", () => {
+    expect(resolveLessonRuntime({ payload: runtimeLessonResponse(6).payload, source: "NETWORK", target: CONTENT })).toEqual({ kind: "UNAVAILABLE", reason: "NOT_RELEASED" });
+  });
+  it("cached version mismatch is incompatible and cached checks have no keys", () => {
+    expect(resolveLessonRuntime({ payload: runtimeLessonResponse(6).payload, source: "CACHE", target: CONTENT, contentVersion: "old-version" })).toEqual({ kind: "UNAVAILABLE", reason: "INCOMPATIBLE_VERSION" });
+    expect(JSON.stringify(resolved({ source: "CACHE" }).experience)).not.toMatch(/correctIndex|optionFeedback/);
+  });
+  it("reconnect with a changed server version refuses the cached authority", async () => {
+    serve({ "/api/student/lessons/fixture-levers-g6/experience": () => json(200, runtimeLessonDelivery(6, { version: "2.0.0" })) });
+    await play(resolved({ source: "CACHE" }));
+    await act(async () => { window.dispatchEvent(new Event("online")); });
+    await flush();
+    expect(host.querySelector("[data-lesson-unavailable]")?.getAttribute("data-lesson-unavailable")).toBe("INCOMPATIBLE_VERSION");
+  });
+});
+
+describe("cross-check native denial and keyless contract", () => {
+  it.each(["REVOKED", "NOT_RELEASED", "NOT_STUDENT_READY"] as const)("native denial %s never requests legacy detail on either route", async (reason) => {
+    const { default: Assigned } = await import("@/app/student/lessons/[id]/LessonDeliveryClient");
+    for (const assigned of [false, true]) {
+      serve({ [assigned ? "/api/student/lessons/work-123/experience" : "/api/student/lessons/fixture-levers-g6/experience"]: () => json(reason === "REVOKED" ? 410 : 404, { compatibility: "UNAVAILABLE", format: "NATIVE_V2", reason }) });
+      await render(assigned ? <Assigned lessonId="work-123" /> : <LessonViewerClient enabledToolIds={[]} />);
+      await flush();
+      expect(host.querySelector("[data-lesson-unavailable]")?.getAttribute("data-lesson-unavailable")).toBe(reason);
+      expect(host.querySelector("a")?.getAttribute("href")).toBe(assigned ? "/student/today" : "/student/learn");
+      expect((fetch as any).mock.calls).toHaveLength(1);
+      if (!assigned) expect(cache.removed).toContain(CONTENT.contentId);
+      act(() => root?.unmount()); root = null;
+    }
+  });
+  it("rejects keyed checks arriving from delivery rather than stripping their keys", () => {
+    const d = runtimeLessonDelivery(6);
+    const keyed = { ...d, scenes: d.scenes.map((scene) => scene.id === "check" ? { ...scene, interaction: { kind: "MULTIPLE_CHOICE", feedbackAuthority: "SERVER_REQUIRED", items: [{ id: "c1", prompt: "test", options: ["same", "same"], correctIndex: 0 }] } } : scene) };
+    expect(resolveLessonDelivery(keyed)).toEqual({ kind: "UNAVAILABLE", reason: "NOT_STUDENT_READY" });
+    expect(resolveLessonDelivery({ ...d, scenes: runtimeLessonExperience(6).scenes })).toEqual({ kind: "UNAVAILABLE", reason: "NOT_STUDENT_READY" });
+  });
+  it("500 errors never fall back to legacy, and exact versions are sent", async () => {
+    serve({ "/api/student/lessons/fixture-levers-g6/experience": () => json(500, { compatibility: "UNAVAILABLE" }) });
+    expect(await loadLessonDelivery(CONTENT, null, "1.0.0")).toEqual({ kind: "UNAVAILABLE", reason: "LOAD_FAILED" });
+    expect((fetch as any).mock.calls[0][0]).toBe("/api/student/lessons/fixture-levers-g6/experience?kind=CONTENT&version=1.0.0");
+  });
+  it("route identities cannot be exchanged", async () => {
+    serve({ "/api/student/lessons/work-123/experience": () => json(200, runtimeLessonDelivery(6)) });
+    expect(await loadLessonDelivery(WORK)).toEqual({ kind: "UNAVAILABLE", reason: "INCOMPATIBLE_VERSION" });
   });
 });

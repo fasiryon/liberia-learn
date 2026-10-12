@@ -14,8 +14,8 @@ const base = "http://127.0.0.1:3191";
 const WIDTHS = [320, 360, 390, 768, 1280, 1440];
 
 // The fixture module is TypeScript: load it through the harness's Vite server.
-const vite = await createServer({ configFile: "e2e/product-design-v2/vite.config.ts", server: { middlewareMode: true }, appType: "custom" });
-const { runtimeLessonDelivery } = await vite.ssrLoadModule("/lessonFixtures.ts");
+const vite = await createServer({ configFile: "e2e/product-design-v2/vite.config.ts", optimizeDeps: { noDiscovery: true, include: [] }, server: { middlewareMode: true }, appType: "custom" });
+const { runtimeLessonDelivery, runtimeLessonResponse } = await vite.ssrLoadModule("/lessonFixtures.ts");
 await vite.close();
 
 const browser = await chromium.launch({ headless: true });
@@ -32,7 +32,15 @@ const server = { lesson: () => ok(runtimeLessonDelivery(6, { labAuthorized: true
 await context.route("**/api/**", (route) => route.fulfill({ json: {} }));
 await context.route("**/api/curriculum/**", (route) => { const r = server.curriculum(); return route.fulfill({ status: r.status, json: r.json }); });
 await context.route("**/api/student/work/**", (route) => route.fulfill({ json: server.work }));
-await context.route("**/api/student/lessons/*/experience", (route) => { const id = decodeURIComponent(new URL(route.request().url()).pathname.split("/").slice(-2)[0]); const r = server.lesson(id); return route.fulfill({ status: r.status, json: r.json }); });
+await context.route("**/api/student/lessons/*/experience*", (route) => { const id = decodeURIComponent(new URL(route.request().url()).pathname.split("/").slice(-2)[0]); const r = server.lesson(id);
+  if (r.status === 200 && r.json.routeTarget) {
+    const contentId = new URL(route.request().url()).searchParams.get("kind") === "SCHEDULED_WORK" ? server.work.contentId : id;
+    const routeTarget = new URL(route.request().url()).searchParams.get("kind") === "SCHEDULED_WORK" ? { kind: "SCHEDULED_WORK", scheduledWorkId: id, contentId } : { kind: "CONTENT", contentId };
+    r.json = { ...r.json, lessonId: contentId, routeTarget, authorizedLabLinks: r.json.authorizedLabLinks.map((link) => ({ ...link,
+      returnTarget: { route: routeTarget, sceneId: "lab" }, launchContext: { ...link.launchContext, origin: { ...link.launchContext.origin, experienceId: contentId, activityId: new URL(route.request().url()).searchParams.get("kind") === "SCHEDULED_WORK" ? id : contentId } },
+    })) };
+  }
+  return route.fulfill({ status: r.status, json: r.json }); });
 
 const overflow = () => page.evaluate(() => document.documentElement.scrollWidth > innerWidth);
 const player = page.locator("[data-lesson-player-v2]");
@@ -71,7 +79,7 @@ async function metrics(target) {
 for (const grade of [2, 6]) for (const width of WIDTHS) {
   server.lesson = () => ok(runtimeLessonDelivery(grade, { labAuthorized: true }));
   await page.setViewportSize({ width, height: width >= 1280 ? 900 : width >= 768 ? 1024 : 700 });
-  await page.goto(`${base}/student/lesson/fixture-content-g${grade}?grade=${grade}`);
+  await page.goto(`${base}/student/lesson/fixture-levers-g${grade}?grade=${grade}`);
   await resetStorage(); await page.reload();
   await player.waitFor();
   const target = grade <= 3 ? 56 : 48;
@@ -152,9 +160,10 @@ for (const [grade, width] of [[6, 390], [2, 390], [6, 1440]]) {
   evidence.flows.push({ grade, width, start: "/student/classes/fixture-math", lessonHref: "/student/lesson/c-2", labRoute: labUrl.pathname, returnedToScene: "lab", finishState: "PRESENTATION_ONLY" });
 }
 
+console.log("Lesson browser probes: responsive layouts and content return complete");
 // C. Assignment deep link (/student/lessons/:scheduledWorkId) keeps working and plays the native lesson.
-server.work = { id: "sw-2", contentId: "c-2", contentVersion: "7", title: "Levers help us lift", subject: "SCIENCE", grade: 6, body: "", bodyStandard: "", bodyBlock: "", status: "in_progress", completedAt: null };
-server.lesson = (id) => (id === "sw-2" ? ok(runtimeLessonDelivery(6)) : { status: 404, json: {} });
+server.work = { id: "sw-2", contentId: "c-2", contentVersion: "7", title: "Levers help us lift", subject: "SCIENCE", grade: 6, body: "Synthetic retained legacy text", bodyStandard: "Synthetic legacy body", bodyBlock: "", status: "in_progress", completedAt: null };
+server.lesson = (id) => (id === "sw-2" ? ok(runtimeLessonDelivery(6, { labAuthorized: true })) : { status: 404, json: {} });
 await page.setViewportSize({ width: 390, height: 844 });
 await page.goto(`${base}/student/lessons/sw-2?grade=6`);
 await player.waitFor();
@@ -162,7 +171,19 @@ assert.equal(await page.locator("a[aria-label='Leave lesson']").getAttribute("hr
 assert.equal(await page.locator("main").count(), 1);
 await page.screenshot({ path: `${out}/assigned-g6-390.png`, fullPage: true });
 evidence.assigned = { href: "/student/lessons/sw-2", plays: true, exit: "/student/today" };
+await resetStorage(); await page.reload(); await player.waitFor();
+await walkTo("lab");
+await page.getByRole("button", { name: "Explore in Lab" }).click();
+await page.locator("[data-lab-host]").waitFor();
+assert.equal(new URL(page.url()).searchParams.get("rt"), "w:sw-2");
+await page.getByRole("button", { name: "Back to lesson" }).click();
+await player.waitFor();
+assert.equal(new URL(page.url()).pathname, "/student/lessons/sw-2");
+assert.equal(await sceneId(), "lab");
+evidence.assigned.labReturn = { route: "/student/lessons/sw-2", sceneId: "lab" };
 
+
+console.log("Lesson browser probes: assigned return complete");
 // D. Honest unavailable / restricted states.
 const NONE = { status: 404, json: { compatibility: "UNAVAILABLE", error: "UNAVAILABLE" } };
 for (const [name, delivery, curriculum, reason] of [
@@ -199,8 +220,23 @@ await context.setOffline(true);
 await page.locator("[data-runtime-notice]").getByText("You are offline").waitFor();
 await page.screenshot({ path: `${out}/offline-notice-g6-390.png`, fullPage: true });
 await context.setOffline(false);
+await player.waitFor();
 evidence.offline = { noticeShown: true, cachedReadOnlyCoveredBy: "__tests__/learner-experience/lesson-runtime-v2.test.tsx (signed offline cache cannot be produced in this harness)" };
 
+// Synthetic admitted cache exercises presentation only; server cache signature admission is unit tested.
+await page.goto(`${base}/student/lesson/fixture-levers-g6?grade=6`);
+await player.waitFor();
+await page.evaluate((lesson) => { window.__lessonCacheFixture = { contentId: "fixture-levers-g6", lesson }; }, runtimeLessonResponse(6));
+await page.route("**/api/**", (route) => route.abort("internetdisconnected"));
+await page.evaluate(() => window.dispatchEvent(new Event("online")));
+// Reloading loses the injected fixture, so remount the actual route client through the harness switch.
+await page.evaluate(() => window.dispatchEvent(new Event("lesson-fixture-remount")));
+await page.locator("[data-lesson-player-v2][data-availability='CACHED_READ_ONLY']").waitFor();
+assert.equal(await page.getByRole("button", { name: "Explore in Lab" }).count(), 0);
+evidence.offline = { noticeShown: true, cachedReadOnly: true, cacheAdmission: "synthetic test-only admission; real signature gate covered by offline unit tests" };
+await page.unroute("**/api/**");
+
+console.log("Lesson browser probes: denial and cached read-only complete");
 // F. Keyboard: Tab reaches Continue with visible focus, Enter advances, focus lands on the new scene heading.
 await page.setViewportSize({ width: 1280, height: 900 });
 server.lesson = () => ok(runtimeLessonDelivery(6, { labAuthorized: true }));
@@ -244,9 +280,9 @@ for (const grade of [2, 6]) {
 }
 server.lesson = () => NONE; server.curriculum = () => ({ status: 410, json: { error: "Content revoked", offlineManifest: null } });
 await audit("state-revoked", `${base}/student/lesson/axe-revoked?grade=6`, () => page.locator("[data-lesson-unavailable]").waitFor());
-await audit("lab-from-lesson", `${base}/student/labs/fixture-lever?v=1&link=fixture-lever-link&exp=fixture-levers-g6&ver=1.0.0&scene=lab&activity=fixture-levers-g6&obj=fixture-obj-levers&rt=c%3Ac-2`, () => page.getByRole("button", { name: "Back to lesson" }).waitFor());
+await audit("lab-from-lesson", `${base}/student/labs/fixture-lever?v=1&link=fixture-lever-link&exp=fixture-levers-g6&ver=1.0.0&lv=1.0.0&scene=lab&activity=fixture-levers-g6&obj=fixture-obj-levers&rt=c%3Afixture-levers-g6`, () => page.getByRole("button", { name: "Back to lesson" }).waitFor());
 
 assert.deepEqual(errors, []);
-await fs.writeFile(`${out}/results.json`, JSON.stringify({ ...evidence, errors, caveat: "Production lesson route clients and Lesson Player V2 with explicit fixture responses shaped like the delivery seam (a simulated released native lesson). Server release, eligibility and lab authorization, real devices and screen readers are not certified here." }, null, 2));
+await fs.writeFile(`${out}/results.json`, JSON.stringify({ ...evidence, errors, caveat: "Production lesson route clients and Lesson Player V2 with explicit fixture responses shaped like the delivery seam (a simulated released native lesson). Lab flows prove navigation continuity only: the fixture lab is not production certified. Server release, eligibility, lab authorization, signed cache admission, real devices and screen readers are not certified here." }, null, 2));
 await browser.close();
 console.log(`Lesson runtime browser fixtures passed: ${evidence.layouts.length} layouts, ${evidence.flows.length} full flows, ${evidence.states.length} states; zero serious/critical axe issues.`);

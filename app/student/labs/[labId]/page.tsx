@@ -8,7 +8,8 @@ import { InteractiveLabScreen } from "@/components/learner-experience/Interactiv
 import { getInteractiveLabDefinition } from "@/lib/interactive-labs/v2/registry";
 import { fromInteractiveLab, isStudentAccessible } from "@/lib/learner-experience/labExperience";
 import { canAccessShowcaseLab, loadShowcaseStudentAuthority } from "@/lib/student/showcaseLabs";
-import { parseStudentLabReturn } from "@/lib/learner-experience/labLaunch";
+import { authorizeStudentLabReturn } from "@/lib/lessons/authorizeLabReturn";
+import { prisma } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
 
@@ -31,8 +32,13 @@ export default async function StudentLabDetailPage({
       // player sees it. The lab stays unreleased and the observation-only runtime records nothing.
       const showcase = !released && canAccessShowcaseLab({ user, student: await loadShowcaseStudentAuthority(user).catch(() => null), labId: params.labId });
       // Opened from a lesson scene: only a released lab returns to the lesson (navigation only; no authority).
-      const lessonOrigin = released ? parseStudentLabReturn(params.labId, searchParams ?? {}) : null;
-      const lessonReturn = lessonOrigin ? { ...lessonOrigin, labVersion: interactive.version, totalChecks: interactive.checks.length } : null;
+      const hasLessonOrigin = searchParams?.rt !== undefined || searchParams?.exp !== undefined;
+      const lessonOrigin = released && hasLessonOrigin ? await prisma.$transaction(
+        (tx) => authorizeStudentLabReturn(tx, user, params.labId, searchParams ?? {}),
+        { isolationLevel: "RepeatableRead" },
+      ) : null;
+      if (hasLessonOrigin && (!lessonOrigin || lessonOrigin.labVersion !== interactive.version)) return <InteractiveLabScreen labId={params.labId} access="DENIED" />;
+      const lessonReturn = lessonOrigin ? { ...lessonOrigin, labVersion: lessonOrigin.labVersion, totalChecks: interactive.checks.length } : null;
       return <InteractiveLabScreen labId={params.labId} access={released ? "RELEASED" : showcase ? "SHOWCASE" : "DENIED"} lessonReturn={lessonReturn} />;
     }
 

@@ -1,0 +1,154 @@
+{
+  "branch": "feat/lesson-experience-v2-convergence",
+  "base": "710faad28bb4641126eda4d27cb26f49dffaa5d1",
+  "sources": {
+    "authority": "71f56969846256d45d86d333ece17c591827765b",
+    "runtime": "f73866570d44897036617a7655d7da68d7fb5168"
+  },
+  "deliveryContract": "lesson-experience-delivery/1.1.0",
+  "fullSuite": {
+    "result": "PASS",
+    "passed": 7059,
+    "skipped": 8,
+    "passedFiles": 747,
+    "skippedFiles": 2
+  },
+  "finalFocusedRegressions": {
+    "result": "PASS",
+    "passed": 89,
+    "files": 6,
+    "includesFinalCachePurge": true
+  },
+  "namedRequiredSuites": {
+    "result": "PASS",
+    "passed": 363,
+    "files": 22
+  },
+  "relatedAuthorityRuntimeCurriculumOfflineSuites": {
+    "result": "PASS",
+    "passed": 946,
+    "skipped": 6
+  },
+  "typescript": {
+    "result": "PASS",
+    "standaloneNoEmit": true,
+    "finalProductionTypecheck": true
+  },
+  "lint": {
+    "result": "PASS",
+    "exitCode": 0,
+    "existingWarnings": true
+  },
+  "validateChanged": {
+    "result": "PASS",
+    "apiPolicyAudit": true,
+    "focusedTestsPassed": 100,
+    "relatedTestsPassed": 253,
+    "typecheck": true
+  },
+  "productionBuild": {
+    "result": "PASS",
+    "exitCode": 0,
+    "standalonePackaging": true,
+    "windowsSandboxSymlinkRetry": true,
+    "finalCachePurgeInCompiledChunks": true
+  },
+  "browser": {
+    "result": "PASS",
+    "layouts": 12,
+    "contentFlows": 3,
+    "assignedLabReturn": true,
+    "safeStates": 6,
+    "cachedReadOnly": true,
+    "keyboardFocus": true,
+    "seriousOrCriticalAxeViolations": 0,
+    "pageErrors": [],
+    "fixtureScope": "synthetic API releases and cache admission; lab navigation only, no production certification"
+  },
+  "boundaries": {
+    "authoritativeSubmission": false,
+    "masteryMutation": false,
+    "nextActionAuthority": "LEARNING_ORCHESTRATOR",
+    "evidence": "OBSERVATION_ONLY",
+    "offline": "READ_ONLY; exact-version server reauthorization; purge on denial"
+  },
+  "artifacts": {
+    "retainedScreenshots": 13,
+    "removedFromTipOnly": 36,
+    "sourceHistoryPreserved": true
+  },
+  "limitations": [
+    "No production released native V2 lesson binding",
+    "Certified lab registry is empty; lab browser flows prove navigation only",
+    "No production native offline package admission",
+    "No new scoring, completion persistence, media pipeline or evidence submission endpoint",
+    "Legacy metadata enrichment fetch and native discoverability filters are retained"
+  ],
+  "deployment": false,
+  "hostedDataMutation": false,
+  "prOpened": false,
+  "filesChangedFromMain": [
+    ".gitignore",
+    "__tests__/agents/lab-production-team.test.ts",
+    "__tests__/curriculum-v2/review-fixes.test.ts",
+    "__tests__/learner-experience/lesson-runtime-v2.test.tsx",
+    "__tests__/lesson-convergence-handoff.test.ts",
+    "__tests__/lesson-convergence-lab-page.test.tsx",
+    "__tests__/lesson-delivery-authority.test.ts",
+    "__tests__/lesson-delivery-links.test.ts",
+    "__tests__/lesson-delivery-route.test.ts",
+    "__tests__/lessonFullscreen.test.tsx",
+    "__tests__/wave4fix.completion.test.ts",
+    "app/api/student/lessons/[id]/experience/route.ts",
+    "app/globals.css",
+    "app/student/labs/[labId]/page.tsx",
+    "app/student/lesson/[contentId]/LessonViewerClient.tsx",
+    "app/student/lesson/[contentId]/page.tsx",
+    "app/student/lessons/[id]/LessonDeliveryClient.tsx",
+    "app/student/lessons/[id]/page.tsx",
+    "artifacts/lesson-experience-v2-runtime/README.md",
+    "artifacts/lesson-experience-v2-runtime/assigned-g6-390.png",
+    "artifacts/lesson-experience-v2-runtime/convergence-validation.json",
+    "artifacts/lesson-experience-v2-runtime/flow-handoff-g2-390.png",
+    "artifacts/lesson-experience-v2-runtime/flow-return-g6-1440.png",
+    "artifacts/lesson-experience-v2-runtime/long-g6-390.png",
+    "artifacts/lesson-experience-v2-runtime/offline-notice-g6-390.png",
+    "artifacts/lesson-experience-v2-runtime/results.json",
+    "artifacts/lesson-experience-v2-runtime/scene1-g2-320.png",
+    "artifacts/lesson-experience-v2-runtime/scene1-g2-390.png",
+    "artifacts/lesson-experience-v2-runtime/scene1-g2-768.png",
+    "artifacts/lesson-experience-v2-runtime/scene1-g6-1440.png",
+    "artifacts/lesson-experience-v2-runtime/scene1-g6-360.png",
+    "artifacts/lesson-experience-v2-runtime/state-incompatible-version-g6-390.png",
+    "artifacts/lesson-experience-v2-runtime/state-no-lab-link-g6-390.png",
+    "artifacts/lesson-experience-v2-runtime/state-revoked-g6-390.png",
+    "components/learner-experience/InteractiveLabScreen.tsx",
+    "components/learner-experience/LabExperienceHost.tsx",
+    "components/learner-experience/LabScene.tsx",
+    "components/learner-experience/LessonPlayerV2.tsx",
+    "components/learner-experience/LessonRuntimeV2.tsx",
+    "components/learner-experience/SceneViews.tsx",
+    "docs/architecture/LEARNER_EXPERIENCE_V2.md",
+    "docs/architecture/learner-experience-v2/LESSON_EXPERIENCE_DELIVERY.md",
+    "e2e/product-design-v2/lessonCacheFixture.ts",
+    "e2e/product-design-v2/lessonFixtures.ts",
+    "e2e/product-design-v2/main.tsx",
+    "e2e/product-design-v2/navigation.ts",
+    "e2e/product-design-v2/run-lesson.mjs",
+    "e2e/product-design-v2/run.mjs",
+    "e2e/product-design-v2/validate-lesson.mjs",
+    "e2e/product-design-v2/vite.config.ts",
+    "lib/curriculum/learnerEligibility.ts",
+    "lib/learner-experience/evidenceHandoff.ts",
+    "lib/learner-experience/labLaunch.ts",
+    "lib/learner-experience/learnerSafeExperience.ts",
+    "lib/learner-experience/lessonRoute.ts",
+    "lib/learner-experience/lessonRuntime.ts",
+    "lib/learner-experience/lessonRuntimeClient.ts",
+    "lib/learner-experience/sceneContract.ts",
+    "lib/learner-experience/types.ts",
+    "lib/lessons/authorizeLabReturn.ts",
+    "lib/lessons/lessonExperienceDelivery.ts"
+  ],
+  "fileCountFromMain": 61
+}

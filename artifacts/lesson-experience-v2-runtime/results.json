@@ -215,7 +215,11 @@
   "assigned": {
     "href": "/student/lessons/sw-2",
     "plays": true,
-    "exit": "/student/today"
+    "exit": "/student/today",
+    "labReturn": {
+      "route": "/student/lessons/sw-2",
+      "sceneId": "lab"
+    }
   },
   "states": [
     {
@@ -251,7 +255,8 @@
   ],
   "offline": {
     "noticeShown": true,
-    "cachedReadOnlyCoveredBy": "__tests__/learner-experience/lesson-runtime-v2.test.tsx (signed offline cache cannot be produced in this harness)"
+    "cachedReadOnly": true,
+    "cacheAdmission": "synthetic test-only admission; real signature gate covered by offline unit tests"
   },
   "keyboard": {
     "continueReached": true,
@@ -282,5 +287,5 @@
     "lab-from-lesson": []
   },
   "errors": [],
-  "caveat": "Production lesson route clients and Lesson Player V2 with explicit fixture responses shaped like the delivery seam (a simulated released native lesson). Server release, eligibility and lab authorization, real devices and screen readers are not certified here."
+  "caveat": "Production lesson route clients and Lesson Player V2 with explicit fixture responses shaped like the delivery seam (a simulated released native lesson). Lab flows prove navigation continuity only: the fixture lab is not production certified. Server release, eligibility, lab authorization, signed cache admission, real devices and screen readers are not certified here."
 }

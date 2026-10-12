@@ -14,9 +14,8 @@ import { LESSON_EXPERIENCE_CONTRACT_VERSION, type LessonExperience } from "./typ
 import type { ExperienceEvidenceEnvelope } from "./evidenceHandoff";
 
 /** Where the learner opened the lesson from: decides the lesson address a lab returns to. */
-export type LessonRouteTarget =
-  | Readonly<{ kind: "CONTENT"; contentId: string }>
-  | Readonly<{ kind: "SCHEDULED_WORK"; scheduledWorkId: string; contentId: string }>;
+export type { LessonRouteTarget } from "./lessonRoute";
+import { parseLessonRouteTarget, type LessonRouteTarget } from "./lessonRoute";
 
 /** Stable identity of the lesson being played, exactly as the server stated it. */
 export type LessonRuntimeIdentity = Readonly<{
@@ -32,7 +31,7 @@ export type LessonRuntimeIdentity = Readonly<{
 }>;
 
 /** A lab link the server authorized for this learner and lesson. The client never authorizes one itself. */
-export type RuntimeLabLink = Readonly<{ linkId: string; labId: string; sceneId: string; title: string; summary: string | null }>;
+export type RuntimeLabLink = Readonly<{ linkId: string; labId: string; sceneId: string; title: string; summary: string | null; launchContext: import("./labLaunch").LabLaunchContext }>;
 
 /** CURRENT: live from the server. CACHED_READ_ONLY: a signed offline copy; nothing is sent from it. */
 export type LessonRuntimeAvailability = "CURRENT" | "CACHED_READ_ONLY";
@@ -51,6 +50,7 @@ export type NativeLessonRuntime = Readonly<{
   availability: LessonRuntimeAvailability;
   experience: LessonExperience;
   identity: LessonRuntimeIdentity;
+  routeTarget: LessonRouteTarget;
   labLinks: readonly RuntimeLabLink[];
   /** The server's evidence disposition for this delivery (e.g. OBSERVATION_ONLY), shown as given. */
   evidenceDisposition: string | null;
@@ -100,18 +100,28 @@ export function parseAuthorizedLabLinks(raw: unknown, experience: LessonExperien
     const scene = experience.scenes.find((candidate) => candidate.id === sceneId);
     if (!scene || scene.type !== "LAB" || scene.interaction.kind !== "LAB_LAUNCH" || scene.interaction.linkId !== linkId) continue;
     if (links.some((existing) => existing.linkId === linkId || existing.sceneId === sceneId)) continue;
-    links.push({ linkId, labId, sceneId, title: label.trim(), summary: null });
+    const context = record(link.launchContext);
+    const origin = record(context?.origin);
+    if (!context || !origin || !isSafeRuntimeId(context.labVersion) || context.v !== 1 || context.labId !== labId || context.linkId !== linkId ||
+      origin.experienceId !== experience.id || origin.experienceVersion !== experience.version || origin.sceneId !== sceneId ||
+      !isSafeRuntimeId(origin.activityId) || !Array.isArray(origin.objectiveIds) || !origin.objectiveIds.length ||
+      origin.objectiveIds.some((id) => !isSafeRuntimeId(id))) continue;
+    links.push({ linkId, labId, sceneId, title: label.trim(), summary: null, launchContext: context as import("./labLaunch").LabLaunchContext });
   }
   return links;
 }
 
-export const LESSON_DELIVERY_CONTRACT_VERSION = "lesson-experience-delivery/1.0.0" as const;
+export const LESSON_DELIVERY_CONTRACT_VERSION = "lesson-experience-delivery/1.1.0" as const;
 
 /** Rebuild + validate a lesson experience; contract or projection failures deny, anything else throws. */
 function strictExperience(raw: Record<string, unknown>): LessonExperience | LessonUnavailableReason {
   try {
     // The same strict rebuild the server ran: a cached or altered copy cannot carry more than it did.
-    const experience = rebuildLearnerExperience(raw);
+    const rebuilt = rebuildLearnerExperience(raw);
+    // Cached historical projections may carry formative keys. Never use them in the student runtime.
+    const experience: LessonExperience = { ...rebuilt, scenes: rebuilt.scenes.map((scene) => scene.interaction.kind === "MULTIPLE_CHOICE"
+      ? { ...scene, interaction: { kind: "MULTIPLE_CHOICE", feedbackAuthority: "SERVER_REQUIRED", items: scene.interaction.items.map(({ id, prompt, options }) => ({ id, prompt, options })) } }
+      : scene) };
     validateLessonExperience(experience);
     return experience;
   } catch (error) {
@@ -131,6 +141,15 @@ export function resolveLessonDelivery(raw: unknown, input: { serverCompletedAt?:
   if (delivery.compatibility === "LEGACY_COMPATIBLE") return { kind: "LEGACY" };
   if (delivery.compatibility !== "NATIVE_V2") return { kind: "UNAVAILABLE", reason: "NOT_STUDENT_READY" };
   const { lessonId, lessonVersion, releaseId, releaseIdentity, revisionId } = delivery;
+  const routeTarget = parseLessonRouteTarget(delivery.routeTarget);
+  if (!routeTarget || routeTarget.contentId !== lessonId) return { kind: "UNAVAILABLE", reason: "NOT_STUDENT_READY" };
+  // The live DTO must be keyless, including unknown correctness/feedback fields.
+  const keyed = (value: unknown): boolean => {
+    if (Array.isArray(value)) return value.some(keyed);
+    if (!value || typeof value !== "object") return false;
+    return Object.entries(value).some(([key, child]) => (key !== "feedbackAuthority" && /correct|answerkey|scoringkey|feedback|grading|solution/i.test(key)) || keyed(child));
+  };
+  if (keyed(delivery.scenes) || !Array.isArray(delivery.scenes) || delivery.scenes.some((scene) => scene?.interaction?.kind === "MULTIPLE_CHOICE" && scene.interaction.feedbackAuthority !== "SERVER_REQUIRED")) return { kind: "UNAVAILABLE", reason: "NOT_STUDENT_READY" };
   if (!isSafeRuntimeId(lessonId) || typeof lessonVersion !== "string" || !lessonVersion) return { kind: "UNAVAILABLE", reason: "NOT_STUDENT_READY" };
   // No release identity, no released lesson: never presented as one.
   if (typeof releaseId !== "string" || !releaseId || typeof releaseIdentity !== "string" || !releaseIdentity) return { kind: "UNAVAILABLE", reason: "NOT_RELEASED" };
@@ -149,11 +168,12 @@ export function resolveLessonDelivery(raw: unknown, input: { serverCompletedAt?:
   return {
     kind: "NATIVE",
     availability: "CURRENT",
+    routeTarget,
     experience,
     identity: { lessonId, lessonVersion, contentId: lessonId, contentVersion: lessonVersion, releaseId, releaseIdentity, revisionId: typeof revisionId === "string" ? revisionId : null },
     labLinks: parseAuthorizedLabLinks(delivery.authorizedLabLinks, experience),
     evidenceDisposition: typeof evidence.status === "string" ? evidence.status : null,
-    serverCompletion: typeof input.serverCompletedAt === "string" && input.serverCompletedAt ? { completedAt: input.serverCompletedAt } : null,
+    serverCompletion: typeof input.serverCompletedAt === "string" && input.serverCompletedAt ? { completedAt: input.serverCompletedAt } : record(delivery.serverCompletion) && typeof record(delivery.serverCompletion)?.completedAt === "string" ? { completedAt: record(delivery.serverCompletion)!.completedAt as string } : null,
   };
 }
 
@@ -178,13 +198,16 @@ export function resolveLessonRuntime(input: {
   const raw = record(payload.lessonExperience);
   // A copy written by an older or newer contract is not reinterpreted.
   if (!raw || raw.contractVersion !== LESSON_EXPERIENCE_CONTRACT_VERSION) return { kind: "UNAVAILABLE", reason: "INCOMPATIBLE_VERSION" };
+  if (input.source === "NETWORK") return { kind: "UNAVAILABLE", reason: "NOT_RELEASED" };
+  if (raw.id !== input.target.contentId || (input.contentVersion != null && raw.version !== input.contentVersion)) return { kind: "UNAVAILABLE", reason: "INCOMPATIBLE_VERSION" };
   const experience = strictExperience(raw);
   if (typeof experience === "string") return { kind: "UNAVAILABLE", reason: experience };
   // Never present an unreleased lesson as released, whatever route served it.
   if (experience.authority.status !== "APPROVED_RELEASE") return { kind: "UNAVAILABLE", reason: "NOT_RELEASED" };
   return {
     kind: "NATIVE",
-    availability: input.source === "NETWORK" ? "CURRENT" : "CACHED_READ_ONLY",
+    availability: "CACHED_READ_ONLY",
+    routeTarget: input.target,
     experience,
     identity: {
       lessonId: experience.id,
@@ -211,11 +234,7 @@ export function unavailableReasonForStatus(status: number): LessonUnavailableRea
 }
 
 /** The lesson address for a route target, optionally restoring a scene after a lab. */
-export function lessonRouteHref(target: LessonRouteTarget, sceneId?: string | null): string {
-  const base = target.kind === "CONTENT" ? `/student/lesson/${encodeURIComponent(target.contentId)}` : `/student/lessons/${encodeURIComponent(target.scheduledWorkId)}`;
-  if (!sceneId || !isSafeRuntimeId(sceneId)) return base;
-  return `${base}?${new URLSearchParams({ scene: sceneId, from: "lab" }).toString()}`;
-}
+export { lessonRouteHref } from "./lessonRoute";
 
 /** The scene to restore when the URL says the learner came back from a lab. */
 export function returnSceneFromSearch(search: URLSearchParams | null | undefined): string | null {
