@@ -64,3 +64,29 @@ migration plans. It does not change any rule above: lessons and labs emit
 observations only, the server scores, and the existing DecisionModel and
 Learning Orchestrator choose the next action. The Phase B contract for
 Curriculum V2 is `docs/architecture/learner-experience-v2/CURRICULUM_V2_HANDOFF.md`.
+
+## Lesson Experience V2 runtime (student lesson routes)
+
+`/student/lesson/[contentId]` and `/student/lessons/[scheduledWorkId]` ask the
+server delivery seam `GET /api/student/lessons/:id/experience`
+(`LESSON_EXPERIENCE_DELIVERY.md`) with the route's own id. A `NATIVE_V2`
+delivery plays in Lesson Player V2; anything the seam does not deliver
+(legacy lessons, other content, offline) keeps the existing renderer, so old
+deep links are unchanged. The client adapter
+(`lib/learner-experience/lessonRuntime.ts`) re-runs the strict learner rebuild
+and can only deny: no release identity, a wrong contract or missing invariants
+show an honest unavailable state, never a released-looking lesson.
+
+- Formative items arrive keyless (`feedbackAuthority: SERVER_REQUIRED`); the
+  player records the choice and never judges it.
+- Only `authorizedLabLinks` open a lab, on `/student/labs/[labId]`, which keeps
+  its own authorization; only a RELEASED lab returns to the lesson scene, and a
+  showcase grant never becomes lesson-linked. The return address is rebuilt
+  from the originating route (`rt=c:<contentId>` or `w:<scheduledWorkId>`).
+- Evidence is presented as the server states it (`OBSERVATION_ONLY`,
+  `submissionEndpoint: null`): finishing is presentation-only and says so. An
+  injected `EvidenceChannel.SERVER` is the seam for a future submission
+  endpoint; stale, cached or offline work is never sent.
+- A signed offline copy of a learner projection plays read-only; the delivery
+  seam grants no offline admission, so released native lessons are not yet
+  available offline.

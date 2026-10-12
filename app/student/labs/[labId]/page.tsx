@@ -8,6 +8,7 @@ import { InteractiveLabScreen } from "@/components/learner-experience/Interactiv
 import { getInteractiveLabDefinition } from "@/lib/interactive-labs/v2/registry";
 import { fromInteractiveLab, isStudentAccessible } from "@/lib/learner-experience/labExperience";
 import { canAccessShowcaseLab, loadShowcaseStudentAuthority } from "@/lib/student/showcaseLabs";
+import { parseStudentLabReturn } from "@/lib/learner-experience/labLaunch";
 
 export const dynamic = "force-dynamic";
 
@@ -16,7 +17,7 @@ export default async function StudentLabDetailPage({
   searchParams,
 }: {
   params: { labId: string };
-  searchParams?: { session?: string };
+  searchParams?: Record<string, string | string[] | undefined>;
 }) {
   try {
     const user = await requireRole("STUDENT");
@@ -29,10 +30,13 @@ export default async function StudentLabDetailPage({
       // Production certification remains separate from the explicit showcase exception, decided here before the
       // player sees it. The lab stays unreleased and the observation-only runtime records nothing.
       const showcase = !released && canAccessShowcaseLab({ user, student: await loadShowcaseStudentAuthority(user).catch(() => null), labId: params.labId });
-      return <InteractiveLabScreen labId={params.labId} access={released ? "RELEASED" : showcase ? "SHOWCASE" : "DENIED"} />;
+      // Opened from a lesson scene: only a released lab returns to the lesson (navigation only; no authority).
+      const lessonOrigin = released ? parseStudentLabReturn(params.labId, searchParams ?? {}) : null;
+      const lessonReturn = lessonOrigin ? { ...lessonOrigin, labVersion: interactive.version, totalChecks: interactive.checks.length } : null;
+      return <InteractiveLabScreen labId={params.labId} access={released ? "RELEASED" : showcase ? "SHOWCASE" : "DENIED"} lessonReturn={lessonReturn} />;
     }
 
-    const [authorized] = await loadAuthorizedPracticalSessions(user, { labId: params.labId, sessionId: searchParams?.session });
+    const [authorized] = await loadAuthorizedPracticalSessions(user, { labId: params.labId, sessionId: typeof searchParams?.session === "string" ? searchParams.session : undefined });
     const session = authorized?.session;
 
     if (!session) {

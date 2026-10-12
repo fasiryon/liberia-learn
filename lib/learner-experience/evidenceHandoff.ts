@@ -11,7 +11,7 @@
  * prototype lesson, an unapproved link or an unreleased lab is RAW_OBSERVATION.
  */
 import type { GovernedEvidenceType } from "@/lib/learning-evidence/evidenceContract";
-import type { LessonExperience } from "./types";
+import { isKeylessFormative, type FormativeItem, type LessonExperience } from "./types";
 import type { LearningExperienceLink } from "./links";
 import { labStateFor, type ExperienceProgress } from "./progress";
 import type { LabExperience } from "./labExperience";
@@ -85,7 +85,11 @@ export function buildEvidenceEnvelope(experience: LessonExperience, progress: Ex
     if (Object.keys(responses).length === 0) continue;
     if (scene.evidence.kind === "FORMATIVE_OBSERVATION" && scene.interaction.kind === "MULTIPLE_CHOICE") {
       // Formative feedback was shown locally; it is reported as an observation, never as a score.
-      const items = scene.interaction.items.map((item) => ({ itemId: item.id, selectedIndex: responses[item.id] ?? null, matchedFormativeKey: responses[item.id] === item.correctIndex }));
+      // A keyless (server-judged) item reports only the choice; an authored key adds whether the local feedback matched.
+      const interaction = scene.interaction;
+      const items = isKeylessFormative(interaction)
+        ? interaction.items.map((item) => ({ itemId: item.id, selectedIndex: responses[item.id] ?? null }))
+        : (interaction.items as readonly FormativeItem[]).map((item) => ({ itemId: item.id, selectedIndex: responses[item.id] ?? null, matchedFormativeKey: responses[item.id] === item.correctIndex }));
       observations.push({ ...base, observationId: id, activity, payload: { items, serverScored: false } });
     } else if (scene.evidence.kind === "MASTERY_RESPONSE" && scene.interaction.kind === "ASSESSMENT_HANDOFF") {
       const { assessment } = scene.interaction;

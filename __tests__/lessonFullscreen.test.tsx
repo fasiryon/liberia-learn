@@ -98,7 +98,7 @@ describe("lesson fullscreen controls", () => {
     expect(scheduledLesson).toContain("LessonFullscreenButton");
     expect(scheduledLesson).toContain("goToAssessmentFromSlides");
     expect(scheduledLesson).toContain("exitLessonFullscreen");
-    expect(repoFile("app/student/lesson/[contentId]/page.tsx")).toContain("LessonFullscreenButton");
+    expect(repoFile("app/student/lesson/[contentId]/LessonViewerClient.tsx")).toContain("LessonFullscreenButton");
     expect(repoFile("app/teacher/lesson/[contentId]/TeacherLessonViewClient.tsx")).toContain("LessonFullscreenButton");
     expect(repoFile("app/globals.css")).toContain(".ll-slide-fullscreen:fullscreen");
   });

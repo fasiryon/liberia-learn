@@ -70,6 +70,18 @@ export type FormativeItem = Readonly<{
   optionFeedback?: readonly string[];
 }>;
 
+/** Whether formative items carry an instant-feedback key (authored) or leave correctness to the server (delivered). */
+export function isKeylessFormative(interaction: SceneInteraction): interaction is Extract<SceneInteraction, { feedbackAuthority: "SERVER_REQUIRED" }> {
+  return interaction.kind === "MULTIPLE_CHOICE" && "feedbackAuthority" in interaction && interaction.feedbackAuthority === "SERVER_REQUIRED";
+}
+
+/**
+ * A formative item delivered without any key or feedback: correctness belongs to the server
+ * (Lesson Experience delivery, `feedbackAuthority: "SERVER_REQUIRED"`), so the device records the
+ * learner's choice and never judges it.
+ */
+export type KeylessFormativeItem = Readonly<{ id: string; prompt: string; options: readonly string[] }>;
+
 export type DiagramStep = Readonly<{ id: string; label: string; description: string }>;
 
 export type AssessmentItemRef = Readonly<{ itemId: string; itemVersion: string; prompt: string; options: readonly string[] }>;
@@ -93,6 +105,7 @@ export type SceneInteraction =
   | Readonly<{ kind: "NONE" }>
   | Readonly<{ kind: "DIAGRAM_REVEAL"; diagramId: string; steps: readonly DiagramStep[] }>
   | Readonly<{ kind: "MULTIPLE_CHOICE"; items: readonly FormativeItem[] }>
+  | Readonly<{ kind: "MULTIPLE_CHOICE"; feedbackAuthority: "SERVER_REQUIRED"; items: readonly KeylessFormativeItem[] }>
   | Readonly<{ kind: "FREE_RESPONSE"; prompts: readonly Readonly<{ id: string; prompt: string; minLength: number }>[] }>
   | Readonly<{ kind: "LAB_LAUNCH"; linkId: string }>
   | Readonly<{ kind: "ASSESSMENT_HANDOFF"; assessment: AssessmentHandoff }>;

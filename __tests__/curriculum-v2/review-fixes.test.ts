@@ -81,7 +81,7 @@ describe("compat renders the fallback the review package reports", () => {
   it("every distractor keeps its own authored feedback", () => {
     const experience = toLessonExperience(lesson("equivalent-fractions.json", FRACTIONS));
     const check = experience.scenes.find((scene) => scene.id === "check")!;
-    if (check.interaction.kind !== "MULTIPLE_CHOICE") throw new Error();
+    if (check.interaction.kind !== "MULTIPLE_CHOICE" || "feedbackAuthority" in check.interaction) throw new Error();
     const item = check.interaction.items[0];
     expect(item.optionFeedback).toHaveLength(item.options.length);
     expect(item.optionFeedback![2]).toContain("doubles only the top");
