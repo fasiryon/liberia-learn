@@ -7,6 +7,7 @@ import { projectStudentLabPayload } from "@/lib/curriculum/studentLessonProjecti
 import { InteractiveLabPlayer } from "@/components/interactive-labs/v2/InteractiveLabPlayer";
 import { getInteractiveLabDefinition } from "@/lib/interactive-labs/v2/registry";
 import { fromInteractiveLab, isStudentAccessible } from "@/lib/learner-experience/labExperience";
+import { canAccessShowcaseLab, loadShowcaseStudentAuthority } from "@/lib/student/showcaseLabs";
 
 export const dynamic = "force-dynamic";
 
@@ -23,8 +24,10 @@ export default async function StudentLabDetailPage({
     // Unified lab namespace: interactive V2 labs open here too (formerly /student/interactive-labs/[labId]).
     const interactive = getInteractiveLabDefinition(params.labId);
     if (interactive) {
-      // Same rule as the Labs tab: approved definition and a real release binding.
-      if (interactive.reviewState !== "APPROVED" || interactive.approvalState !== "APPROVED" || !isStudentAccessible(fromInteractiveLab(interactive))) {
+      const student = await loadShowcaseStudentAuthority(user);
+      const showcase = canAccessShowcaseLab({ user, student, labId: params.labId });
+      // Production certification remains separate from the explicit showcase exception.
+      if (!showcase && (interactive.reviewState !== "APPROVED" || interactive.approvalState !== "APPROVED" || !isStudentAccessible(fromInteractiveLab(interactive)))) {
         return <main className="min-h-screen bg-slate-900 px-4 py-8 text-white">This lab is not available.</main>;
       }
       return (
@@ -33,7 +36,8 @@ export default async function StudentLabDetailPage({
             <ArrowLeft className="h-4 w-4" strokeWidth={1.5} />
             Back to Labs
           </Link>
-          <InteractiveLabPlayer labId={params.labId} />
+          {/* Existing observation-only host capability: no session, evidence or mastery writes. */}
+          <InteractiveLabPlayer labId={params.labId} internalPreview={showcase} />
         </main>
       );
     }

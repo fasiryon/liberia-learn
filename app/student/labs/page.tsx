@@ -3,7 +3,8 @@ import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { isAiLabsEnabled } from "@/lib/serverFlags";
 import { fromPracticalLab, listLabExperiences } from "@/lib/learner-experience/labExperience";
-import { buildLabsTab, LABS_TAB_SECTIONS, type LabSessionSummary } from "@/lib/learner-experience/labsTab";
+import { LABS_TAB_SECTIONS, type LabSessionSummary } from "@/lib/learner-experience/labsTab";
+import { buildStudentLabsTab, loadShowcaseStudentAuthority } from "@/lib/student/showcaseLabs";
 import { LabExperienceCard } from "@/components/learner-experience/LabExperienceCard";
 import { loadAuthorizedPracticalSessions } from "@/lib/student/labEligibility";
 
@@ -20,16 +21,17 @@ const EMPTY: Record<(typeof LABS_TAB_SECTIONS)[number]["id"], string> = {
 /**
  * Product Redesign V1 Labs tab: one destination for every lab. Legacy
  * simulations, teacher practical labs and released interactive labs all render
- * through the LabExperience contract; unreleased labs never appear.
+ * through the LabExperience contract; only explicit showcase authority adds unreleased labs.
  */
 export default async function StudentLabsPage({ searchParams }: { searchParams?: Record<string, string | string[] | undefined> }) {
   try {
     const user = await requireRole("STUDENT");
     const aiLabsEnabled = isAiLabsEnabled();
 
-    const [student, authorized] = await Promise.all([
+    const [student, authorized, showcaseStudent] = await Promise.all([
       prisma.student.findUnique({ where: { userId: user.id }, select: { currentGrade: true } }),
       loadAuthorizedPracticalSessions(user),
+      loadShowcaseStudentAuthority(user),
     ]);
     const sessions = authorized.map(({ session }) => session);
     const practical = [...new Map(authorized.map(({ lab }) => [lab.labId, lab])).values()];
@@ -44,7 +46,7 @@ export default async function StudentLabsPage({ searchParams }: { searchParams?:
       completedAt: session.completedAt?.toISOString() ?? null,
     }));
     // For You reads approved links on the learner's governed path. None are approved yet, so it stays empty.
-    const tab = buildLabsTab({ labs, sessions: summaries, pathLinks: [], grade: student?.currentGrade ?? null });
+    const tab = buildStudentLabsTab({ labs, sessions: summaries, pathLinks: [], grade: student?.currentGrade ?? null }, { user, student: showcaseStudent });
 
     const requested = typeof searchParams?.tab === "string" ? searchParams.tab : null;
     const fallback = tab.forYou.length ? "for-you" : tab.continue.length ? "continue" : "library";
