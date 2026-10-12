@@ -22,7 +22,7 @@ import StudentLabsPage from "@/app/student/labs/page";
 import { POST } from "@/app/api/student/interactive-labs/[labId]/events/route";
 
 const ids = ["g4-solid-figures", "fixture-lever", "fixture-simple-circuit", "mount-coffee-hydropower"];
-const user = { id: "seeded-user", role: "STUDENT", schoolId: "cha-high-academy" };
+const user = { id: "seeded-user", role: "STUDENT", schoolId: "school-cha" };
 const account = { ...user, email: process.env.E2E_DEMO_STUDENT_EMAIL ?? "student1@cha.edu.lr", loginId: "CHA-2026-0001" };
 const student = { id: "seeded-student", userId: user.id, currentGrade: 9, user: account };
 
@@ -38,7 +38,7 @@ describe("explicit demo student showcase authority", () => {
     expect(canAccessShowcaseLab({ user, student, labId })).toBe(true);
     expect(canAccessShowcaseLab({ user, student: { ...student, user: { ...account, email: "another-demo@example.com" } }, labId })).toBe(false);
   });
-  it.each([null, { ...user, role: "TEACHER" }, { ...user, role: "ADMIN" }, { ...user, schoolId: "foreign" }, { ...user, id: "foreign" }])("fails closed for anonymous, role and scope mismatch", (candidate) => {
+  it.each([null, { ...user, role: "TEACHER" }, { ...user, role: "ADMIN" }, { ...user, schoolId: "foreign" }, { ...user, schoolId: "cha-high-academy" }, { ...user, id: "foreign" }])("fails closed for anonymous, role and scope mismatch", (candidate) => {
     expect(canAccessShowcaseLab({ user: candidate, student, labId: ids[0] })).toBe(false);
   });
   it.each([null, { ...student, id: "" }, { ...student, userId: "foreign" }, { ...student, user: { ...account, schoolId: "foreign" } }, { ...student, user: { ...account, loginId: "wrong" } }, { ...student, user: { ...account, role: "ADMIN" } }])("rejects malformed or foreign student records", (candidate) => {

@@ -1,11 +1,11 @@
 // __tests__/demo.seed.test.ts
 // Verifies that seedChaDemo creates the five expected CHA demo accounts.
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 // Hoist mock instances so they persist across the module boundary
 const mockPrismaInstance = vi.hoisted(() => ({
   school: { upsert: vi.fn(), findUnique: vi.fn() },
-  user: { upsert: vi.fn(), findUnique: vi.fn() },
+  user: { upsert: vi.fn(), findUnique: vi.fn(), update: vi.fn() },
   student: { upsert: vi.fn(), findUnique: vi.fn(), create: vi.fn(), update: vi.fn() },
   teacherProfile: { upsert: vi.fn() },
   studentGuardian: { upsert: vi.fn(), findFirst: vi.fn(), create: vi.fn() },
@@ -59,7 +59,7 @@ vi.mock("@upstash/redis", () => ({
   },
 }));
 
-import { seedChaDemo } from "@/prisma/seeds/cha-demo";
+import { seedChaDemo, parseChaDemoSeedOptions } from "@/prisma/seeds/cha-demo";
 import { loadShowcaseStudentAuthority, loadAuthorizedShowcaseLabs, SHOWCASE_LAB_IDS } from "@/lib/student/showcaseLabs";
 import { chaDemoStudentEmail } from "@/lib/demo/chaStudentIdentity";
 import bcrypt from "bcryptjs";
@@ -70,13 +70,16 @@ const expectedStudentEmail = process.env.E2E_DEMO_STUDENT_EMAIL ?? ["student1", 
 const expectedGuardianEmail = process.env.E2E_DEMO_GUARDIAN_EMAIL ?? ["guardian1", "cha.family.lr"].join("@");
 const expectedMoeEmail = process.env.E2E_DEMO_MOE_EMAIL ?? ["official1", "moe.gov.lr"].join("@");
 
+afterEach(() => vi.unstubAllEnvs());
+
 beforeEach(() => {
   vi.resetAllMocks();
   vi.mocked(bcrypt.hash).mockResolvedValue("hashed-pw" as never);
   process.env.DEMO_MOE_PASSWORD = "test-moe-password";
-  mockPrismaInstance.school.upsert.mockResolvedValue({ id: "cha-high-academy" });
-  mockPrismaInstance.school.findUnique.mockResolvedValue({ id: "cha-high-academy", code: "CHA" });
-  mockPrismaInstance.class.findUnique.mockResolvedValue({ id: "cha-class-grade9a", schoolId: "cha-high-academy" });
+  vi.stubEnv("DEMO_SEED_PASSWORD", "approved-test-demo-password");
+  mockPrismaInstance.school.upsert.mockResolvedValue({ id: "school-cha" });
+  mockPrismaInstance.school.findUnique.mockResolvedValue({ id: "school-cha", code: "CHA" });
+  mockPrismaInstance.class.findUnique.mockResolvedValue({ id: "cha-class-grade9a", schoolId: "school-cha" });
   mockPrismaInstance.user.findUnique.mockResolvedValue(null);
   mockPrismaInstance.$transaction.mockImplementation((callback) => callback(mockPrismaInstance));
   mockPrismaInstance.user.upsert.mockResolvedValue({ id: "mock-user-id" });
@@ -118,7 +121,7 @@ describe("seedChaDemo", () => {
     );
     expect(schoolCall).toBeDefined();
     expect(schoolCall![0].create).toMatchObject({
-      id: "cha-high-academy",
+      id: "school-cha",
       code: "CHA",
       name: expect.stringContaining("Cha"),
     });
@@ -178,7 +181,14 @@ function staleDemo() {
   let enrollments = [{ studentId: student.id, classId: "old-grade7-class" }, { studentId: "ordinary-student", classId: "ordinary-class" }];
   const ordinary = { id: "ordinary-user", email: "ordinary@example.test", name: "Pewu Gongloe", role: "STUDENT", schoolId: "other-school", loginId: null };
   const users = new Map<string, any>([[user.email, user], [ordinary.email, ordinary]]);
-  mockPrismaInstance.user.findUnique.mockImplementation(async ({ where }) => users.get(where.email) ?? null);
+  mockPrismaInstance.user.findUnique.mockImplementation(async ({ where }) => where.loginId
+    ? [...users.values()].find((row) => row.loginId === where.loginId) ?? null
+    : users.get(where.email) ?? null);
+  mockPrismaInstance.user.update.mockImplementation(async ({ where, data }) => {
+    expect(where.id).toBe(user.id);
+    Object.assign(user, data);
+    return user;
+  });
   mockPrismaInstance.user.upsert.mockImplementation(async ({ where, create, update }) => {
     const existing = users.get(where.email);
     if (existing) { Object.assign(existing, update); return existing; }
@@ -233,7 +243,7 @@ describe("CHA persisted demo identity repair", () => {
     expect(await loadShowcaseStudentAuthority(state.user)).toBeNull();
     await seedChaDemo();
     await seedChaDemo();
-    expect(state.user).toMatchObject({ id: "same-student-user", email: chaDemoStudentEmail(), name: "Fatu Kollie", role: "STUDENT", schoolId: "cha-high-academy", loginId: "CHA-2026-0001", hashedPwd: "hashed-pw" });
+    expect(state.user).toMatchObject({ id: "same-student-user", email: chaDemoStudentEmail(), name: "Fatu Kollie", role: "STUDENT", schoolId: "school-cha", loginId: "CHA-2026-0001", hashedPwd: "hashed-pw" });
     expect(state.student).toMatchObject({ id: "same-student-record", userId: state.user.id, currentGrade: 9 });
     expect(state.enrollments()).toEqual([{ studentId: "ordinary-student", classId: "ordinary-class" }, { studentId: state.student.id, classId: "cha-class-grade9a" }]);
     expect(state.placement).toMatchObject({ id: "same-placement", estimatedGrade: 9, band: "G7_9", teacherGrade: null });
@@ -243,7 +253,7 @@ describe("CHA persisted demo identity repair", () => {
     expect(mockPrismaInstance.placementTest.create).not.toHaveBeenCalled();
     expect(await loadShowcaseStudentAuthority(state.user)).toMatchObject({ id: state.student.id });
     const labs = await loadAuthorizedShowcaseLabs(state.user);
-    expect(labs.map((lab) => lab.labId)).toEqual([...SHOWCASE_LAB_IDS]);
+    expect(labs.map((lab) => lab.labId)).toEqual(["g4-solid-figures", "fixture-lever", "fixture-simple-circuit", "mount-coffee-hydropower"]);
     expect(labs).toHaveLength(4);
     expect(labs.every((lab) => lab.runtime.kind === "INTERACTIVE_V2" && lab.release.status === "DRAFT_UNRELEASED")).toBe(true);
   });
@@ -273,7 +283,7 @@ describe("CHA persisted demo identity repair", () => {
     const state = staleDemo();
     Object.assign(state.user, stale);
     await seedChaDemo({ studentIdentityOnly: true });
-    expect(state.user).toMatchObject({ role: "STUDENT", loginId: "CHA-2026-0001", schoolId: "cha-high-academy" });
+    expect(state.user).toMatchObject({ role: "STUDENT", loginId: "CHA-2026-0001", schoolId: "school-cha" });
     expect(await loadAuthorizedShowcaseLabs(state.user)).toHaveLength(4);
   });
   it("refuses an absent or foreign canonical class without writing identity", async () => {
@@ -288,5 +298,126 @@ describe("CHA persisted demo identity repair", () => {
     const before = structuredClone({ user: state.user, student: state.student, enrollments: state.enrollments(), placement: state.placement });
     await expect(seedChaDemo({ studentIdentityOnly: true })).rejects.toThrow("governed placement");
     expect({ user: state.user, student: state.student, enrollments: state.enrollments(), placement: state.placement }).toEqual(before);
+  });
+});
+
+describe("hosted User-only repair", () => {
+  function hostedState() {
+    const state = staleDemo();
+    Object.assign(state.user, { schoolId: "school-cha", loginId: null, isPlatformAdmin: true });
+    state.enrollments()[0].classId = "cha-class-grade9a";
+    Object.assign(state.placement, { estimatedGrade: 5, questions: [{ prompt: "Legacy question" }], answers: [{ response: "Historical response" }], decision: { finalGrade: 7 } });
+    const history = {
+      student: state.student, enrollments: state.enrollments(), placements: [state.placement],
+      class: { id: "cha-class-grade9a", name: "Grade 7 - Capitol Hill Academy", subject: "MATH", schoolId: "school-cha" },
+      quizAttempts: [{ id: "quiz", source: "student.lesson.quiz.submit", score: 0.7 }],
+      quizDetails: [{ attemptId: "quiz", response: "Historical answer", isCorrect: true }],
+      mastery: [{ studentId: state.student.id, currentScore: 0.6 }],
+      adaptiveMastery: [{ studentId: state.student.id, skillKey: "MATH:G7:geometry", masteredAt: "2026-06-01" }],
+      certificates: [{ studentId: state.student.id, referenceId: "historical-lesson" }],
+      learningEvents: [{ source: "assessment_evaluation", studentId: state.student.id }],
+      scheduledWork: [{ id: "historical-lesson", classId: "cha-class-grade9a", contentId: "grade7-lesson" }],
+      assignments: [{ classId: "cha-class-grade9a", generationMethod: "ai_generated" }],
+      homework: [{ studentId: state.student.id, answers: { q1: "Preserve" } }],
+    };
+    // The transaction receives only read ports and User.update. Any other write/read is a test failure.
+    mockPrismaInstance.$transaction.mockImplementation(async (callback, options) => {
+      expect(options).toEqual({ isolationLevel: "Serializable" });
+      return callback({
+        school: { findUnique: mockPrismaInstance.school.findUnique },
+        user: { findUnique: mockPrismaInstance.user.findUnique, update: mockPrismaInstance.user.update },
+        student: { findUnique: mockPrismaInstance.student.findUnique },
+      });
+    });
+    return { ...state, history };
+  }
+
+  it("repairs the same User while preserving all Grade 7 learning history and authorizing exactly four labs", async () => {
+    const state = hostedState();
+    const historyBefore = JSON.stringify(state.history);
+    const unrelatedBefore = JSON.stringify(state.ordinary);
+    const labBefore = await loadAuthorizedShowcaseLabs(state.user);
+    expect(labBefore).toEqual([]);
+    await seedChaDemo({ studentUserIdentityOnly: true });
+    await seedChaDemo({ studentUserIdentityOnly: true });
+    expect(state.user).toMatchObject({ id: "same-student-user", email: chaDemoStudentEmail(), name: "Fatu Kollie", role: "STUDENT", schoolId: "school-cha", loginId: "CHA-2026-0001", hashedPwd: "hashed-pw", isPlatformAdmin: false });
+    expect(JSON.stringify(state.history)).toBe(historyBefore);
+    expect(JSON.stringify(state.ordinary)).toBe(unrelatedBefore);
+    expect(state.student).toMatchObject({ id: "same-student-record", userId: state.user.id, currentGrade: 7 });
+    expect(state.users.size).toBe(2);
+    expect(bcrypt.hash).toHaveBeenCalledWith("approved-test-demo-password", 10);
+    expect(mockPrismaInstance.user.update).toHaveBeenCalledTimes(2);
+    for (const [model, ports] of Object.entries(mockPrismaInstance)) {
+      if (typeof ports !== "object") continue;
+      for (const [operation, mock] of Object.entries(ports)) {
+        if (/^(create|update|upsert|delete)/.test(operation) && !(model === "user" && operation === "update")) {
+          expect(mock, `${model}.${operation} must not mutate hosted learner history`).not.toHaveBeenCalled();
+        }
+      }
+    }
+    expect(mockPrismaInstance.placementTest.findFirst).not.toHaveBeenCalled();
+    expect(await loadShowcaseStudentAuthority(state.user)).toMatchObject({ id: state.student.id });
+    const labs = await loadAuthorizedShowcaseLabs(state.user);
+    expect(labs.map((lab) => lab.labId)).toEqual([...SHOWCASE_LAB_IDS]);
+    expect(labs.every((lab) => lab.runtime.kind === "INTERACTIVE_V2" && lab.release.status === "DRAFT_UNRELEASED")).toBe(true);
+  });
+  it("uses the exact configured email and restores a stale role without normalizing Student", async () => {
+    vi.stubEnv("E2E_DEMO_STUDENT_EMAIL", "configured-demo@example.test");
+    try {
+      const state = hostedState();
+      state.user.role = "ADMIN";
+      const before = JSON.stringify(state.history);
+      await seedChaDemo({ studentUserIdentityOnly: true });
+      expect(state.user).toMatchObject({ email: "configured-demo@example.test", role: "STUDENT", schoolId: "school-cha" });
+      expect(JSON.stringify(state.history)).toBe(before);
+      expect(mockPrismaInstance.user.findUnique).toHaveBeenCalledWith(expect.objectContaining({ where: { email: "configured-demo@example.test" } }));
+      expect(await loadAuthorizedShowcaseLabs(state.user)).toHaveLength(4);
+    } finally { vi.unstubAllEnvs(); }
+  });
+  it("fails closed when the login ID belongs to another user", async () => {
+    const state = hostedState();
+    state.ordinary.loginId = "CHA-2026-0001";
+    const before = JSON.stringify({ user: state.user, history: state.history, unrelated: state.ordinary });
+    await expect(seedChaDemo({ studentUserIdentityOnly: true })).rejects.toThrow("login ID");
+    expect(mockPrismaInstance.user.update).not.toHaveBeenCalled();
+    expect(JSON.stringify({ user: state.user, history: state.history, unrelated: state.ordinary })).toBe(before);
+  });
+  it("lets the unique constraint abort a concurrent login-ID claim without writes to history", async () => {
+    const state = hostedState();
+    const before = JSON.stringify({ user: state.user, history: state.history });
+    mockPrismaInstance.user.update.mockRejectedValue(Object.assign(new Error("Unique login ID"), { code: "P2002" }));
+    await expect(seedChaDemo({ studentUserIdentityOnly: true })).rejects.toMatchObject({ code: "P2002" });
+    expect(JSON.stringify({ user: state.user, history: state.history })).toBe(before);
+  });
+  it.each([null, { id: "school-cha", code: "WRONG" }, { id: "wrong-school", code: "CHA" }])("rejects a missing/wrong canonical school: %j", async (school) => {
+    hostedState();
+    mockPrismaInstance.school.findUnique.mockResolvedValue(school);
+    await expect(seedChaDemo({ studentUserIdentityOnly: true })).rejects.toThrow("canonical CHA school");
+    expect(mockPrismaInstance.user.update).not.toHaveBeenCalled();
+  });
+  it.each(["User", "Student", "linkage"])("requires the existing %s", async (missing) => {
+    hostedState();
+    if (missing === "User") mockPrismaInstance.user.findUnique.mockResolvedValue(null);
+    if (missing === "Student") mockPrismaInstance.student.findUnique.mockResolvedValue(null);
+    if (missing === "linkage") mockPrismaInstance.student.findUnique.mockResolvedValue({ id: "foreign", userId: "foreign" });
+    await expect(seedChaDemo({ studentUserIdentityOnly: true })).rejects.toThrow(/existing demo User|linked Student/);
+    expect(mockPrismaInstance.user.update).not.toHaveBeenCalled();
+  });
+  it("requires an explicitly approved password even in local mode", async () => {
+    hostedState();
+    vi.stubEnv("DEMO_SEED_PASSWORD", "");
+    await expect(seedChaDemo({ studentUserIdentityOnly: true })).rejects.toThrow("DEMO_SEED_PASSWORD");
+    expect(mockPrismaInstance.$transaction).not.toHaveBeenCalled();
+  });
+  it("rejects combined repair modes before any database access", async () => {
+    await expect(seedChaDemo({ studentUserIdentityOnly: true, studentIdentityOnly: true })).rejects.toThrow("mutually exclusive");
+    expect(mockPrismaInstance.$transaction).not.toHaveBeenCalled();
+  });
+  it("dispatches the precise CLI mode and rejects ambiguous or misspelled flags", () => {
+    expect(parseChaDemoSeedOptions(["--student-user-identity-only"])).toEqual({ studentUserIdentityOnly: true });
+    expect(parseChaDemoSeedOptions(["--student-identity-only"])).toEqual({ studentIdentityOnly: true });
+    expect(parseChaDemoSeedOptions([])).toEqual({});
+    expect(() => parseChaDemoSeedOptions(["--student-user-identity-ony"])).toThrow("Unknown CHA seed argument");
+    expect(() => parseChaDemoSeedOptions(["--student-user-identity-only", "--student-identity-only"])).toThrow("mutually exclusive");
   });
 });

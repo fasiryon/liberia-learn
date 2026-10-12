@@ -36,6 +36,59 @@ const CHA_CLASS_ID = "cha-class-grade9a";
 const CHA_STUDENT_NAME = "Fatu Kollie";
 const CHA_STUDENT_GRADE = 9;
 
+type ChaDemoSeedOptions = { studentIdentityOnly?: boolean; studentUserIdentityOnly?: boolean };
+
+class ChaDemoUserRepairError extends Error {}
+
+function assertExclusiveModes(options: ChaDemoSeedOptions): void {
+  if (options.studentIdentityOnly && options.studentUserIdentityOnly) {
+    throw new Error("CHA student repair modes are mutually exclusive.");
+  }
+}
+
+/** Explicit dispatch prevents a misspelled hosted repair flag from running the full seed. */
+export function parseChaDemoSeedOptions(args: readonly string[]): ChaDemoSeedOptions {
+  const options: ChaDemoSeedOptions = {};
+  for (const arg of args) {
+    if (arg === "--student-user-identity-only") options.studentUserIdentityOnly = true;
+    else if (arg === "--student-identity-only") options.studentIdentityOnly = true;
+    else throw new Error("Unknown CHA seed argument.");
+  }
+  assertExclusiveModes(options);
+  return options;
+}
+
+/** Hosted repair: only User.update, never a student/placement/enrollment normalization. */
+async function repairChaDemoUserIdentityOnly(): Promise<void> {
+  const password = process.env.DEMO_SEED_PASSWORD?.trim();
+  if (!password) throw new ChaDemoUserRepairError("DEMO_SEED_PASSWORD is required for User-only CHA repair.");
+  const email = chaDemoStudentEmail();
+  if (!email.trim()) throw new ChaDemoUserRepairError("An exact nonempty demo email is required for User-only CHA repair.");
+  const demoHash = await bcrypt.hash(password, 10);
+  await prisma.$transaction(async (tx) => {
+    const [school, user, loginOwner] = await Promise.all([
+      tx.school.findUnique({ where: { id: CHA_DEMO_SCHOOL_ID }, select: { id: true, code: true } }),
+      tx.user.findUnique({ where: { email }, select: { id: true } }),
+      tx.user.findUnique({ where: { loginId: CHA_DEMO_STUDENT_LOGIN_ID }, select: { id: true } }),
+    ]);
+    if (school?.id !== CHA_DEMO_SCHOOL_ID || school.code !== "CHA") {
+      throw new ChaDemoUserRepairError("User-only repair requires the existing canonical CHA school with code CHA.");
+    }
+    if (!user) throw new ChaDemoUserRepairError("User-only repair requires an existing demo User at the exact configured email.");
+    const student = await tx.student.findUnique({ where: { userId: user.id }, select: { id: true, userId: true } });
+    if (!student?.id || student.userId !== user.id) throw new ChaDemoUserRepairError("User-only repair requires the existing linked Student.");
+    if (loginOwner && loginOwner.id !== user.id) throw new ChaDemoUserRepairError("The CHA demo login ID belongs to another User; repair refused.");
+    // Serializable isolation plus User.loginId's existing UNIQUE constraint protects concurrent claims.
+    // A collision/serialization failure is propagated; there is no retry, transfer or replacement User.
+    await tx.user.update({
+      where: { id: user.id },
+      data: { email, loginId: CHA_DEMO_STUDENT_LOGIN_ID, name: CHA_STUDENT_NAME, role: "STUDENT",
+        schoolId: CHA_DEMO_SCHOOL_ID, hashedPwd: demoHash, isPlatformAdmin: false },
+    });
+  }, { isolationLevel: "Serializable" });
+  console.log("[cha-demo] Existing demo User identity repaired; learner history unchanged. Sign out and sign in again.");
+}
+
 /** Demo-only repair, anchored by exact configured email. Caller owns the transaction. */
 async function repairChaStudent(tx: Prisma.TransactionClient, demoHash: string) {
   const email = chaDemoStudentEmail();
@@ -85,7 +138,12 @@ async function repairChaStudent(tx: Prisma.TransactionClient, demoHash: string) 
   return { studentUser, studentRecord };
 }
 
-export async function seedChaDemo(options: { studentIdentityOnly?: boolean } = {}) {
+export async function seedChaDemo(options: ChaDemoSeedOptions = {}) {
+  assertExclusiveModes(options);
+  if (options.studentUserIdentityOnly) {
+    await repairChaDemoUserIdentityOnly();
+    return;
+  }
   if (options.studentIdentityOnly) {
     const demoHash = await bcrypt.hash(getDemoSeedPassword(), 10);
     await prisma.$transaction(async (tx) => {
@@ -494,9 +552,13 @@ To find the cost of 7 oranges, multiply 1:20 by 7. The result is 7:140, so 7 ora
 
 // Direct run
 if (require.main === module) {
-  seedChaDemo({ studentIdentityOnly: process.argv.includes("--student-identity-only") })
+  Promise.resolve().then(() => seedChaDemo(parseChaDemoSeedOptions(process.argv.slice(2))))
     .catch((e) => {
-      console.error(e);
+      if (process.argv.includes("--student-user-identity-only")) {
+        // Never print query arguments, password hashes or connection details from a hosted failure.
+        console.error(e instanceof ChaDemoUserRepairError ? e.message : "[cha-demo] User-only repair failed; no history normalization attempted.");
+        if (typeof e?.code === "string" && /^P\d{4}$/.test(e.code)) console.error(`[cha-demo] Database error code: ${e.code}`);
+      } else console.error(e);
       process.exit(1);
     })
     .finally(() => prisma.$disconnect());
