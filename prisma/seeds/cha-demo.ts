@@ -3,7 +3,7 @@
 // Idempotent â€” safe to re-run. Uses upsert everywhere.
 // Accounts match the official demo handout exactly.
 
-import { PrismaClient } from "@prisma/client";
+import { Prisma, PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import { Redis } from "@upstash/redis";
 import { CHA_DEMO_SCHOOL_ID, CHA_DEMO_STUDENT_LOGIN_ID, chaDemoStudentEmail } from "../../lib/demo/chaStudentIdentity";
@@ -13,7 +13,6 @@ const prisma = new PrismaClient();
 const LOCAL_DEMO_SEED_PASSWORD = "local-demo-password-change-me";
 const DEMO_ADMIN_EMAIL = process.env.E2E_DEMO_ADMIN_EMAIL ?? ["admin", "cha.edu.lr"].join("@");
 const DEMO_TEACHER_EMAIL = process.env.E2E_DEMO_TEACHER_EMAIL ?? ["teacher1", "cha.edu.lr"].join("@");
-const DEMO_STUDENT_EMAIL = chaDemoStudentEmail();
 const DEMO_GUARDIAN_EMAIL = process.env.E2E_DEMO_GUARDIAN_EMAIL ?? ["guardian1", "cha.family.lr"].join("@");
 const DEMO_MOE_EMAIL = process.env.E2E_DEMO_MOE_EMAIL ?? ["official1", "moe.gov.lr"].join("@");
 
@@ -34,8 +33,74 @@ function getMoeSeedPassword(): string {
 
 const CHA_SCHOOL_ID = CHA_DEMO_SCHOOL_ID;
 const CHA_CLASS_ID = "cha-class-grade9a";
+const CHA_STUDENT_NAME = "Fatu Kollie";
+const CHA_STUDENT_GRADE = 9;
 
-export async function seedChaDemo() {
+/** Demo-only repair, anchored by exact configured email. Caller owns the transaction. */
+async function repairChaStudent(tx: Prisma.TransactionClient, demoHash: string) {
+  const email = chaDemoStudentEmail();
+  const identity = {
+    email, loginId: CHA_DEMO_STUDENT_LOGIN_ID, name: CHA_STUDENT_NAME,
+    role: "STUDENT" as const, schoolId: CHA_DEMO_SCHOOL_ID, hashedPwd: demoHash,
+    isPlatformAdmin: false,
+  };
+  const studentUser = await tx.user.upsert({ where: { email }, create: identity, update: identity });
+  const studentRecord = await tx.student.upsert({
+    where: { userId: studentUser.id },
+    create: { userId: studentUser.id, currentGrade: CHA_STUDENT_GRADE },
+    update: { currentGrade: CHA_STUDENT_GRADE },
+  });
+  // Latest placement is what the existing reports display. Preserve older history.
+  const placement = await tx.placementTest.findFirst({
+    where: { studentId: studentRecord.id }, orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+    include: { decision: true, reviews: { take: 1 } },
+  });
+  if (placement && (placement.sessionId || placement.source === "server_session" || placement.decision ||
+    placement.reviews.length || placement.teacherDecision || placement.reviewedAt || placement.reviewedBy)) {
+    throw new Error("CHA demo repair refuses a governed placement; review its existing authority separately.");
+  }
+  const placementData = {
+    band: "G7_9", levelLabel: "Junior Secondary", estimatedGrade: CHA_STUDENT_GRADE,
+    rawScore: 14, totalQuestions: 18, source: "seed:cha-demo",
+    aiAnalysis: {
+      summary: "Student demonstrates solid understanding of core mathematics concepts for Grade 9.",
+      strengths: ["Algebra", "Number Theory"], gaps: ["Geometry proofs"],
+    },
+  };
+  if (placement) {
+    await tx.placementTest.update({
+      where: { id: placement.id },
+      data: { ...placementData, teacherGrade: null, teacherDecision: null, teacherReason: null,
+        reviewedAt: null, reviewedBy: null, details: Prisma.JsonNull, questions: Prisma.JsonNull, answers: Prisma.JsonNull },
+    });
+  } else {
+    await tx.placementTest.create({ data: { studentId: studentRecord.id, ...placementData } });
+  }
+  // Reset only this demo student's membership, removing obsolete/foreign class access.
+  await tx.enrollment.deleteMany({ where: { studentId: studentRecord.id, classId: { not: CHA_CLASS_ID } } });
+  await tx.enrollment.upsert({
+    where: { studentId_classId: { studentId: studentRecord.id, classId: CHA_CLASS_ID } },
+    create: { studentId: studentRecord.id, classId: CHA_CLASS_ID }, update: {},
+  });
+  return { studentUser, studentRecord };
+}
+
+export async function seedChaDemo(options: { studentIdentityOnly?: boolean } = {}) {
+  if (options.studentIdentityOnly) {
+    const demoHash = await bcrypt.hash(getDemoSeedPassword(), 10);
+    await prisma.$transaction(async (tx) => {
+      const [school, cls, existing] = await Promise.all([
+        tx.school.findUnique({ where: { id: CHA_DEMO_SCHOOL_ID }, select: { id: true, code: true } }),
+        tx.class.findUnique({ where: { id: CHA_CLASS_ID }, select: { id: true, schoolId: true } }),
+        tx.user.findUnique({ where: { email: chaDemoStudentEmail() }, select: { id: true } }),
+      ]);
+      if (!existing) throw new Error("CHA repair requires an existing demo account at the exact configured email.");
+      if (school?.code !== "CHA" || cls?.schoolId !== CHA_DEMO_SCHOOL_ID) throw new Error("CHA repair requires the existing canonical CHA school and Grade 9A class.");
+      await repairChaStudent(tx, demoHash);
+    }, { isolationLevel: "Serializable" });
+    console.log("[cha-demo] Existing demo student identity repaired; sign out and sign in again.");
+    return;
+  }
   console.log("[cha-demo] Seeding CHA demo accounts...");
   const demoPass = getDemoSeedPassword();
   const moePass = getMoeSeedPassword();
@@ -58,6 +123,7 @@ export async function seedChaDemo() {
     },
     update: { district: "Montserrado" },
   });
+  if (school.id !== CHA_DEMO_SCHOOL_ID) throw new Error("CHA school code resolves to a noncanonical school ID; repair requires review.");
 
   // â”€â”€ Admin â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const admin = await prisma.user.upsert({
@@ -120,41 +186,13 @@ export async function seedChaDemo() {
       schoolId: school.id,
       teacherId: teacher.id,
     },
-    update: { teacherId: teacher.id },
+    update: { teacherId: teacher.id, schoolId: school.id },
   });
 
   // â”€â”€ Student â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-  const studentUser = await prisma.user.upsert({
-    where: { email: DEMO_STUDENT_EMAIL },
-    create: {
-      email: DEMO_STUDENT_EMAIL,
-      loginId: CHA_DEMO_STUDENT_LOGIN_ID,
-      name: "Fatu Kollie",
-      role: "STUDENT",
-      hashedPwd: demoHash,
-      schoolId: school.id,
-    },
-    update: { hashedPwd: demoHash },
-  });
-
-  let studentRecord = await prisma.student.findUnique({
-    where: { userId: studentUser.id },
-  });
-  if (!studentRecord) {
-    studentRecord = await prisma.student.create({
-      data: { userId: studentUser.id, currentGrade: 9 },
-    });
-  }
-
-  // Enrollment (skip if already enrolled)
-  const existingEnrollment = await prisma.enrollment.findFirst({
-    where: { studentId: studentRecord.id, classId: cls.id },
-  });
-  if (!existingEnrollment) {
-    await prisma.enrollment.create({
-      data: { studentId: studentRecord.id, classId: cls.id },
-    });
-  }
+  const { studentUser, studentRecord } = await prisma.$transaction(
+    (tx) => repairChaStudent(tx, demoHash), { isolationLevel: "Serializable" },
+  );
 
   const seededLessonContentId = "cha-g9-math-multimedia-demo";
   const seededScheduledWorkId = "cha-demo-student1-multimedia-lesson";
@@ -373,33 +411,6 @@ To find the cost of 7 oranges, multiply 1:20 by 7. The result is 7:140, so 7 ora
     ],
   });
 
-  // Placement test
-  const existingPlacement = await prisma.placementTest.findFirst({
-    where: { studentId: studentRecord.id },
-  });
-  if (!existingPlacement) {
-    await prisma.placementTest.create({
-      data: {
-        studentId: studentRecord.id,
-        band: "G7_9",
-        levelLabel: "Junior Secondary",
-        estimatedGrade: 9,
-        rawScore: 14,
-        totalQuestions: 18,
-        aiAnalysis: {
-          summary:
-            "Student demonstrates solid understanding of core mathematics concepts for Grade 9.",
-          strengths: ["Algebra", "Number Theory"],
-          gaps: ["Geometry proofs"],
-        },
-      },
-    });
-    await prisma.student.update({
-      where: { id: studentRecord.id },
-      data: { currentGrade: 9 },
-    });
-  }
-
   // â”€â”€ Guardian â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const guardian = await prisma.user.upsert({
     where: { email: DEMO_GUARDIAN_EMAIL },
@@ -483,7 +494,7 @@ To find the cost of 7 oranges, multiply 1:20 by 7. The result is 7:140, so 7 ora
 
 // Direct run
 if (require.main === module) {
-  seedChaDemo()
+  seedChaDemo({ studentIdentityOnly: process.argv.includes("--student-identity-only") })
     .catch((e) => {
       console.error(e);
       process.exit(1);
