@@ -4,9 +4,10 @@ import { requireRole } from "@/lib/auth";
 import { loadAuthorizedPracticalSessions } from "@/lib/student/labEligibility";
 import { LabSessionClient } from "@/app/student/labs/LabSessionClient";
 import { projectStudentLabPayload } from "@/lib/curriculum/studentLessonProjection";
-import { InteractiveLabPlayer } from "@/components/interactive-labs/v2/InteractiveLabPlayer";
+import { InteractiveLabScreen } from "@/components/learner-experience/InteractiveLabScreen";
 import { getInteractiveLabDefinition } from "@/lib/interactive-labs/v2/registry";
 import { fromInteractiveLab, isStudentAccessible } from "@/lib/learner-experience/labExperience";
+import { isShowcaseLabAuthorized, loadShowcaseLabAccess, NO_SHOWCASE_ACCESS } from "@/lib/student/showcaseLabAccess";
 
 export const dynamic = "force-dynamic";
 
@@ -24,18 +25,10 @@ export default async function StudentLabDetailPage({
     const interactive = getInteractiveLabDefinition(params.labId);
     if (interactive) {
       // Same rule as the Labs tab: approved definition and a real release binding.
-      if (interactive.reviewState !== "APPROVED" || interactive.approvalState !== "APPROVED" || !isStudentAccessible(fromInteractiveLab(interactive))) {
-        return <main className="min-h-screen bg-slate-900 px-4 py-8 text-white">This lab is not available.</main>;
-      }
-      return (
-        <main className="min-h-screen bg-slate-900 px-4 py-8">
-          <Link href="/student/labs" className="mb-4 inline-flex min-h-11 items-center gap-1.5 rounded-lg px-2 py-1 text-sm text-slate-300 hover:text-white">
-            <ArrowLeft className="h-4 w-4" strokeWidth={1.5} />
-            Back to Labs
-          </Link>
-          <InteractiveLabPlayer labId={params.labId} />
-        </main>
-      );
+      const released = interactive.reviewState === "APPROVED" && interactive.approvalState === "APPROVED" && isStudentAccessible(fromInteractiveLab(interactive));
+      // Otherwise only a server showcase grant opens it; the lab stays unreleased and records no evidence.
+      const showcase = !released && isShowcaseLabAuthorized(await loadShowcaseLabAccess(user).catch(() => NO_SHOWCASE_ACCESS), params.labId);
+      return <InteractiveLabScreen labId={params.labId} access={released ? "RELEASED" : showcase ? "SHOWCASE" : "DENIED"} />;
     }
 
     const [authorized] = await loadAuthorizedPracticalSessions(user, { labId: params.labId, sessionId: searchParams?.session });
