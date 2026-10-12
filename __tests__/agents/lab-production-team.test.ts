@@ -95,11 +95,30 @@ describe("review harness cannot expose unapproved labs to learners", () => {
   it("only the review harness passes reviewPreview to the player", () => {
     // Product Redesign V1: interactive labs render on the unified /student/labs/[labId] route; the old route redirects.
     const learnerPage = read("app/student/labs/[labId]/page.tsx");
+    const learnerScreen = read("components/learner-experience/InteractiveLabScreen.tsx");
     expect(learnerPage).not.toContain("reviewPreview");
-    expect(learnerPage).not.toContain("internalPreview");
-    expect(learnerPage).toContain('interactive.reviewState !== "APPROVED"');
+    expect(learnerScreen).not.toContain("reviewPreview");
     expect(read("app/student/interactive-labs/[labId]/page.tsx")).not.toContain("InteractiveLabPlayer");
+    const tsx = (dir: string): string[] => readdirSync(path.join(root, dir), { withFileTypes: true })
+      .flatMap((entry) => entry.isDirectory() ? tsx(path.join(dir, entry.name)) : entry.name.endsWith(".tsx") ? [path.join(dir, entry.name)] : []);
+    const callers = [...tsx("app"), ...tsx("components")].filter((file) => read(file).includes("reviewPreview={"));
+    expect(callers.map((file) => file.split(path.sep).join("/"))).toEqual(["components/interactive-labs/v2/review/LabReviewHarness.tsx"]);
     expect(read("components/interactive-labs/v2/review/LabReviewHarness.tsx")).toContain("reviewPreview={preview}");
+  });
+
+  it("the learner route decides production and showcase access before the player renders", () => {
+    const learnerPage = read("app/student/labs/[labId]/page.tsx");
+    // Production access: approved review, approved approval and the certified student-accessibility rule, all required.
+    expect(learnerPage).toContain('const released = interactive.reviewState === "APPROVED" && interactive.approvalState === "APPROVED" && isStudentAccessible(fromInteractiveLab(interactive));');
+    // Showcase is a separate exception, only for unreleased labs, granted only by the server authority.
+    expect(learnerPage).toContain("const showcase = !released && canAccessShowcaseLab({ user, student: await loadShowcaseStudentAuthority(user)");
+    expect(learnerPage).toContain('access={released ? "RELEASED" : showcase ? "SHOWCASE" : "DENIED"}');
+    // The page never hands the player a preview flag itself; it passes the decided access.
+    expect(learnerPage).not.toContain("internalPreview");
+    // internalPreview follows that decision and cannot grant access on its own: DENIED never mounts the player.
+    const learnerScreen = read("components/learner-experience/InteractiveLabScreen.tsx");
+    expect(learnerScreen).toContain('access === "DENIED" ? <p>This lab is not available.</p> : <InteractiveLabPlayer labId={labId} internalPreview={access === "SHOWCASE"} />');
+    expect(learnerScreen.match(/internalPreview=/g)).toHaveLength(1);
   });
 
   it("middleware exempts the harness from login only outside production builds", () => {
