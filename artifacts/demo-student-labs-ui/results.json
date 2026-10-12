@@ -189,10 +189,6 @@
       "openable": []
     },
     {
-      "mode": "denied",
-      "openable": []
-    },
-    {
       "mode": "fixture-simple-circuit",
       "openable": [
         "fixture-simple-circuit"
