@@ -10,7 +10,7 @@
  * long body into one giant slide; it is never the canonical lesson structure.
  */
 import { parseToSlides } from "@/lib/lessons/parseToSlides";
-import { SCENE_TYPES, LESSON_EXPERIENCE_CONTRACT_VERSION, type AgeBand, type LessonExperience, type Scene, type SceneSource } from "./types";
+import { isKeylessFormative, SCENE_TYPES, LESSON_EXPERIENCE_CONTRACT_VERSION, type AgeBand, type FormativeItem, type LessonExperience, type Scene, type SceneSource } from "./types";
 
 export class SceneContractError extends Error {}
 
@@ -59,7 +59,8 @@ export function validateLessonExperience(experience: LessonExperience): void {
     if (scene.type === "MASTERY_CHECK" && (kind !== "ASSESSMENT_HANDOFF" || scene.evidence.kind !== "MASTERY_RESPONSE")) fail(`scene_mastery_requires_assessment_handoff:${scene.id}`);
     // Mastery evidence only ever comes through the assessment seam, so no mastery key can ship in a formative item.
     if (scene.evidence.kind === "MASTERY_RESPONSE" && kind !== "ASSESSMENT_HANDOFF") fail(`scene_mastery_evidence_requires_assessment_handoff:${scene.id}`);
-    if (kind === "MULTIPLE_CHOICE") for (const item of scene.interaction.items) {
+    // A keyless (server-judged) item has nothing to check here; an authored key must point at an option.
+    if (kind === "MULTIPLE_CHOICE" && !isKeylessFormative(scene.interaction)) for (const item of scene.interaction.items as readonly FormativeItem[]) {
       if (!Number.isInteger(item.correctIndex) || item.correctIndex < 0 || item.correctIndex >= item.options.length) fail(`scene_item_key_invalid:${scene.id}`);
       if (item.optionFeedback && item.optionFeedback.length !== item.options.length) fail(`scene_option_feedback_mismatch:${scene.id}`);
     }

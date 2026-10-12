@@ -16,8 +16,9 @@ type Tracking = { startedAt: number; tripped: boolean; reset: boolean; latest: L
  */
 export function LabExperienceHost({ context, lessonTitle, sceneTitle, labVersion, totalChecks, returnHref, internalPreview }: {
   context: LabLaunchContext;
-  lessonTitle: string;
-  sceneTitle: string;
+  /** Optional: a student lab page does not reload the lesson just to name it. */
+  lessonTitle?: string;
+  sceneTitle?: string;
   labVersion: string;
   totalChecks: number;
   returnHref: string;
@@ -70,7 +71,7 @@ export function LabExperienceHost({ context, lessonTitle, sceneTitle, labVersion
             <ArrowLeft size={16} aria-hidden="true" /> Back to lesson
           </button>
           <p className="min-w-0 truncate text-xs text-slate-300">
-            <span className="sr-only">You came from </span>{lessonTitle} · <span className="text-slate-400">{sceneTitle}</span>
+            {lessonTitle ? <><span className="sr-only">You came from </span>{lessonTitle}{sceneTitle && <> · <span className="text-slate-400">{sceneTitle}</span></>}</> : "Returns you to the same place in your lesson"}
           </p>
         </div>
       </div>

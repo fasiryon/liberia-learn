@@ -368,6 +368,10 @@ a:focus-visible,
 }
 .pdv2-shell[data-age-band=young] { --pdv2-target: 56px; font-size: 18px; }
 .pdv2-shell * { box-sizing: border-box; }
+/* Lesson Experience V2 player: the same age-band targets on focused lesson routes (no shell around it). */
+.ll-lesson-v2 { --pdv2-target: 48px; overflow-wrap: anywhere; }
+.ll-lesson-v2[data-age-band=EARLY_PRIMARY] { --pdv2-target: 56px; font-size: 18px; }
+.ll-lesson-v2 :where(a,button,summary,input,textarea):focus-visible { outline: 3px solid var(--ll-accent, #efb540); outline-offset: 3px; }
 .pdv2-shell :where(a,button,summary,input,select,textarea):focus-visible {
   outline: 3px solid #efb540; outline-offset: 3px; box-shadow: 0 0 0 6px #0e100e;
 }
