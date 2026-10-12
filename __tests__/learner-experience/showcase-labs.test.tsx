@@ -24,7 +24,7 @@ import { SHOWCASE_LAB_IDS } from "@/lib/student/showcaseLabs";
 import { classifyLabExperience, findLabExperience, listLabExperiences } from "@/lib/learner-experience/labExperience";
 
 const TITLES = { "g4-solid-figures": "Solid figures", "fixture-lever": "Lever", "fixture-simple-circuit": "Simple circuit", "mount-coffee-hydropower": "Mount Coffee hydropower" } as const;
-const demoUser = { id: "seeded-user", role: "STUDENT", schoolId: "cha-high-academy" };
+const demoUser = { id: "seeded-user", role: "STUDENT", schoolId: "school-cha" };
 const demoAccount = { ...demoUser, email: process.env.E2E_DEMO_STUDENT_EMAIL ?? "student1@cha.edu.lr", loginId: "CHA-2026-0001" };
 const demoStudent = { id: "seeded-student", userId: demoUser.id, currentGrade: 6, user: demoAccount };
 const normalUser = { id: "pilot-user", role: "STUDENT", schoolId: "pilot-school" };
