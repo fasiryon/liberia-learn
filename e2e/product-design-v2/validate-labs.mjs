@@ -2,7 +2,7 @@ import { chromium } from "@playwright/test";
 import fs from "node:fs/promises";
 import assert from "node:assert/strict";
 /**
- * Labs hub showcase fixtures: an explicit server grant fixture (?showcase=) drives the production
+ * Labs hub showcase fixtures: an explicit server authority response (?showcase=) drives the production
  * LabsHubView and InteractiveLabScreen. Server authorization is certified by the server tests, not here.
  */
 const out = "artifacts/demo-student-labs-ui";
@@ -28,6 +28,9 @@ for (const grade of [2, 6]) for (const width of WIDTHS) {
   assert.equal(await showcaseCards.count(), 4, `hub ${grade}/${width} card count`);
   assert.deepEqual(await showcaseCards.locator("h3").allTextContents(), LABS.map(([, title]) => title), `hub ${grade}/${width} titles`);
   assert.equal(await overflow(), false, `hub ${grade}/${width} overflows`);
+  // Convergence: the showcase section owns the four labs; the ordinary Library tab never repeats them.
+  assert.equal(await page.locator("nav[aria-label='Lab sections'] a[aria-current=page]").textContent().then((t) => t.startsWith("Library")), true, `hub ${grade}/${width} default tab`);
+  assert.equal(await page.locator("section[aria-labelledby=labs-section-title] a[href^='/student/labs/']").count(), 0, `hub ${grade}/${width} Library duplicates showcase`);
   const metrics = await page.evaluate(() => [...document.querySelectorAll("section[aria-labelledby=showcase-labs-title] article")].map((card) => {
     const title = card.querySelector("h3"); const open = card.querySelector("a"); const box = open.getBoundingClientRect();
     return { clipped: title.scrollWidth > title.clientWidth + 1, openHeight: box.height, openVisible: box.width > 0 && getComputedStyle(open).visibility !== "hidden", href: open.getAttribute("href") };
@@ -69,7 +72,7 @@ for (const width of [320, 390, 768, 1440]) for (const [labId, title] of LABS) {
 }
 
 // C. Ordinary learner, explicit server denial and a partial grant: nothing beyond the grant is openable.
-for (const [mode, expected] of [["none", []], ["denied", []], ["fixture-simple-circuit", ["fixture-simple-circuit"]]]) {
+for (const [mode, expected] of [["none", []], ["fixture-simple-circuit", ["fixture-simple-circuit"]]]) {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(`${base}/student/labs?showcase=${mode}&grade=6`);
   await page.locator("main h1").waitFor();

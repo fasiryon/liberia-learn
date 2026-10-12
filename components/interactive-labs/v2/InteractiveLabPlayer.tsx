@@ -68,6 +68,7 @@ export type LabReviewPreview = {
 /**
  * Learner Experience V2 host hooks. `internalPreview` lets an internal, non-production prototype route open an
  * unapproved lab with normal learner behaviour (intro, auto profile, downgrades); it records no evidence.
+ * The student Labs server host also reuses it after the explicit showcase-student authorization check.
  * `onStateChange` lets a host observe presentation state (e.g. to return to a lesson); it cannot change it.
  */
 export type LabHostHooks = { internalPreview?: boolean; onStateChange?: (state: LabState, profile: CapabilityProfile) => void };

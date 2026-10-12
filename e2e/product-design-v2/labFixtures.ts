@@ -1,18 +1,20 @@
-/** Labs hub fixtures: the server showcase grant is an explicit fixture input, never inferred in the browser. */
-import { listLabExperiences } from "../../lib/learner-experience/labExperience";
+/**
+ * Labs hub fixtures. The browser never decides showcase access: each fixture stands for the list of lab ids the
+ * server authority (loadAuthorizedShowcaseLabs in lib/student/showcaseLabs.ts) returned. That module reads
+ * Prisma, so the browser harness takes its answer as input instead of importing it.
+ */
+import { findLabExperience, listLabExperiences, type LabExperience } from "../../lib/learner-experience/labExperience";
 import { buildLabsTab } from "../../lib/learner-experience/labsTab";
-import { NO_SHOWCASE_ACCESS, SHOWCASE_LAB_IDS, showcaseLabExperiences, showcaseLabIds, type ShowcaseLabAccess } from "../../lib/student/showcaseLabAccess";
 
-/** "all" = authorized demo response, "none" = ordinary learner, "denied" = authorized:false with ids, else a comma list. */
+const AUTHORIZED_DEMO_RESPONSE = ["g4-solid-figures", "fixture-lever", "fixture-simple-circuit", "mount-coffee-hydropower"];
+
+/** "all" = authorized demo student, "none" = ordinary learner (server returns no labs), else a comma list. */
 export function showcaseFixture(mode: string | null) {
-  const access: ShowcaseLabAccess = mode === "all" ? { authorized: true, labIds: [...SHOWCASE_LAB_IDS] }
-    : mode === "denied" ? { authorized: false, labIds: [...SHOWCASE_LAB_IDS] }
-    : !mode || mode === "none" ? NO_SHOWCASE_ACCESS
-    : { authorized: true, labIds: mode.split(",") };
-  return { labs: showcaseLabExperiences(access), ids: showcaseLabIds(access) };
+  const ids = mode === "all" ? AUTHORIZED_DEMO_RESPONSE : !mode || mode === "none" ? [] : mode.split(",");
+  return { labs: ids.map((id) => findLabExperience(id)).filter((lab): lab is LabExperience => !!lab), ids };
 }
 
-/** Today's real authority: no certified interactive labs and no practical sessions, so every section is empty. */
+/** The ordinary production tab builder, exactly as the server page uses it. */
 export function labsTabFixture(grade: number) {
   return buildLabsTab({ labs: listLabExperiences(), sessions: [], pathLinks: [], grade });
 }

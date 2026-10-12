@@ -7,7 +7,7 @@ import { projectStudentLabPayload } from "@/lib/curriculum/studentLessonProjecti
 import { InteractiveLabScreen } from "@/components/learner-experience/InteractiveLabScreen";
 import { getInteractiveLabDefinition } from "@/lib/interactive-labs/v2/registry";
 import { fromInteractiveLab, isStudentAccessible } from "@/lib/learner-experience/labExperience";
-import { isShowcaseLabAuthorized, loadShowcaseLabAccess, NO_SHOWCASE_ACCESS } from "@/lib/student/showcaseLabAccess";
+import { canAccessShowcaseLab, loadShowcaseStudentAuthority } from "@/lib/student/showcaseLabs";
 
 export const dynamic = "force-dynamic";
 
@@ -26,8 +26,9 @@ export default async function StudentLabDetailPage({
     if (interactive) {
       // Same rule as the Labs tab: approved definition and a real release binding.
       const released = interactive.reviewState === "APPROVED" && interactive.approvalState === "APPROVED" && isStudentAccessible(fromInteractiveLab(interactive));
-      // Otherwise only a server showcase grant opens it; the lab stays unreleased and records no evidence.
-      const showcase = !released && isShowcaseLabAuthorized(await loadShowcaseLabAccess(user).catch(() => NO_SHOWCASE_ACCESS), params.labId);
+      // Production certification remains separate from the explicit showcase exception, decided here before the
+      // player sees it. The lab stays unreleased and the observation-only runtime records nothing.
+      const showcase = !released && canAccessShowcaseLab({ user, student: await loadShowcaseStudentAuthority(user).catch(() => null), labId: params.labId });
       return <InteractiveLabScreen labId={params.labId} access={released ? "RELEASED" : showcase ? "SHOWCASE" : "DENIED"} />;
     }
 
