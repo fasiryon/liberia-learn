@@ -14,13 +14,14 @@ export type PreviewMode = "teacher" | "student";
 
 export function ContentBundlePreview({ models, initialMode = "teacher", initialItemId = null }: { models: ContentBundlePreviewModels; initialMode?: PreviewMode; initialItemId?: string | null }) {
   const { teacher, student } = models;
-  const known = (id: string | null) => id !== null && teacher.members.some((m) => m.itemId === id);
   const [mode, setMode] = useState<PreviewMode>(initialMode);
+  const active = mode === "teacher" ? teacher : student;
+  const known = (id: string | null) => id !== null && active.members.some((m) => m.itemId === id);
   const [selectedId, setSelectedId] = useState<string>(known(initialItemId) ? initialItemId! : OVERVIEW_ID);
   const [announcement, setAnnouncement] = useState("");
   const panelRef = useRef<HTMLElement>(null);
 
-  const titleOf = useCallback((id: string) => (id === OVERVIEW_ID ? "Bundle overview" : teacher.members.find((m) => m.itemId === id)?.title ?? id), [teacher.members]);
+  const titleOf = useCallback((id: string) => (id === OVERVIEW_ID ? "Bundle overview" : active.members.find((m) => m.itemId === id)?.title ?? id), [active.members]);
 
   const select = useCallback(
     (itemId: string) => {
@@ -42,7 +43,7 @@ export function ContentBundlePreview({ models, initialMode = "teacher", initialI
     setAnnouncement(next === "student" ? "Student View: showing only what the student receives" : "Teacher overview");
   };
 
-  const h = teacher.header;
+  const h = active.header;
   return (
     <main id="cbp-main" className="cbp-root" data-mode={mode} aria-labelledby="cbp-title">
       <a href="#cbp-item-panel" className="cbp-skip">Skip to preview</a>
@@ -53,8 +54,8 @@ export function ContentBundlePreview({ models, initialMode = "teacher", initialI
           <dl className="cbp-header-meta">
             <div><dt>Grade</dt><dd>{h.gradeLevel}</dd></div>
             <div><dt>Subject</dt><dd>{h.subject}</dd></div>
-            <div><dt>Version</dt><dd><Code>{h.version}</Code></dd></div>
-            <div><dt>Status</dt><dd>{releaseChip(teacher.release)}{teacher.source.authoritative ? null : <> <Chip tone="warn">{teacher.source.kind === "FIXTURE" ? "Test fixture" : "Not authoritative"}</Chip></>}</dd></div>
+            {mode === "teacher" ? <><div><dt>Version</dt><dd><Code>{teacher.header.version}</Code></dd></div>
+            <div><dt>Status</dt><dd>{releaseChip(teacher.release)}{teacher.source.authoritative ? null : <> <Chip tone="warn">{teacher.source.kind === "FIXTURE" ? "Test fixture" : "Not authoritative"}</Chip></>}</dd></div></> : <div><dt>Status</dt><dd><Chip>Learner-safe preview</Chip></dd></div>}
           </dl>
         </div>
         <div className="cbp-mode" role="group" aria-label="Preview mode">
@@ -66,6 +67,7 @@ export function ContentBundlePreview({ models, initialMode = "teacher", initialI
       {mode === "student" ? (
         <p className="cbp-banner" role="note">
           <strong>Student View.</strong> This is what the student receives from this bundle. Teacher notes, answer keys, tool prohibitions and review records are not included.
+          {student.fixture ? " Synthetic test fixture; not governed production content." : null}
         </p>
       ) : null}
 
@@ -94,16 +96,8 @@ export function ContentBundlePreview({ models, initialMode = "teacher", initialI
           ) : (
             <section className="cbp-section" aria-labelledby="cbp-withheld" data-testid="withheld-summary">
               <h3 id="cbp-withheld" className="cbp-h3">Not sent to students</h3>
-              <p className="cbp-note">Counts only. Switch to Teacher overview to inspect them.</p>
-              {teacher.withheldFromStudents.length > 0 ? (
-                <ul className="cbp-list">
-                  {teacher.withheldFromStudents.map((row) => (
-                    <li key={row.label}>{row.label}: <span className="cbp-strong">{row.count}</span></li>
-                  ))}
-                </ul>
-              ) : (
-                <p>Nothing is withheld.</p>
-              )}
+              <p className="cbp-note">Switch to Teacher overview to inspect teacher metadata.</p>
+              <p>This view uses only the server-supplied learner projection. Teacher material stays in Teacher overview.</p>
             </section>
           )}
         </aside>
@@ -114,7 +108,7 @@ export function ContentBundlePreview({ models, initialMode = "teacher", initialI
 }
 
 /** Truthful non-success states from the resolver. */
-export function ContentBundlePreviewUnavailable({ title, message }: { title: string; message: string }) {
+export function ContentBundlePreviewUnavailable({ title, message, diagnostics = [], readiness }: { title: string; message: string; diagnostics?: readonly string[]; readiness?: string }) {
   return (
     <main id="cbp-main" className="cbp-root" aria-labelledby="cbp-title">
       <header className="cbp-header">
@@ -125,6 +119,8 @@ export function ContentBundlePreviewUnavailable({ title, message }: { title: str
       </header>
       <div className="cbp-callout cbp-callout-warn" role="alert">
         <p>{message}</p>
+        {readiness ? <p>Production readiness: <strong>{readiness}</strong></p> : null}
+        {diagnostics.length ? <ul className="cbp-list" data-testid="preview-diagnostics">{diagnostics.map(text => <li key={text}>{text}</li>)}</ul> : null}
       </div>
     </main>
   );

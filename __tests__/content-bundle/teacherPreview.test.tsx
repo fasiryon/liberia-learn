@@ -97,25 +97,26 @@ describe("fixture resolver seam", () => {
     expect(r.bundle.identity.bundleId).toBe(ids.bundleId);
     expect(r.contentHash).toMatch(/^[0-9a-f]{64}$/);
     expect(r.bundle.identity.contentHash).toBe(r.contentHash);
-    expect(r.learnerBundle.source).toEqual({ bundleId: ids.bundleId, bundleVersion: "1.0.0-fixture", contentHash: r.contentHash });
+    expect(r.learnerProjection.source).toEqual({ bundleId: ids.bundleId, bundleVersion: "1.0.0-fixture", contentHash: r.contentHash });
     expect(r.source).toMatchObject({ kind: "FIXTURE", authoritative: false });
     expect(r.release.state).toBe("NOT_EVALUATED");
     expect(r.toolkit.mapping).toMatchObject({ reviewed: false });
   });
 
   it("fails closed for unknown bundles, other versions, non-teacher viewers and production", async () => {
-    expect((await resolve("fixture.bundle.unknown")).status).toBe("NOT_FOUND");
-    expect((await resolve(ids.bundleId, DEFAULT_PREVIEW_FIXTURES, teacher, "9.9.9")).status).toBe("NOT_FOUND");
-    expect((await resolve(ids.bundleId, DEFAULT_PREVIEW_FIXTURES, { ...teacher, role: "STUDENT" })).status).toBe("FORBIDDEN");
+    expect((await resolve("fixture.bundle.unknown")).status).toBe("UNAVAILABLE");
+    expect((await resolve(ids.bundleId, DEFAULT_PREVIEW_FIXTURES, teacher, "9.9.9")).status).toBe("UNAVAILABLE");
+    expect((await resolve(ids.bundleId, DEFAULT_PREVIEW_FIXTURES, { ...teacher, role: "STUDENT" })).status).toBe("UNAVAILABLE");
     const prod = await getContentBundlePreviewResolver({ NODE_ENV: "production" }).resolveForTeacherPreview({ bundleId: ids.bundleId, bundleVersion: null, viewer: teacher });
-    expect(prod.status).toBe("RESOLVER_UNAVAILABLE");
-    expect((await getContentBundlePreviewResolver({ NODE_ENV: "development" }).resolveForTeacherPreview({ bundleId: ids.bundleId, bundleVersion: null, viewer: teacher })).status).toBe("RESOLVED");
+    expect(prod.status).toBe("UNAVAILABLE");
+    expect(prod.diagnostics.map(d => d.code)).toContain("FIXTURE_NOT_AUTHORITY");
+    expect((await getContentBundlePreviewResolver({ NODE_ENV: "development" }).resolveForTeacherPreview({ bundleId: ids.bundleId, bundleVersion: null, viewer: teacher, fixturePreview: true })).status).toBe("RESOLVED");
   });
 
-  it("reports an invalid fixture as INVALID instead of rendering it", async () => {
+  it("reports an invalid fixture as INCOMPATIBLE instead of rendering it", async () => {
     const broken = { [ids.bundleId]: { build: () => ({ ...buildGrade4FractionsFixture(), lessons: [] }), mapping: null, label: "broken" } };
     const r = await resolve(ids.bundleId, broken);
-    expect(r.status).toBe("INVALID");
+    expect(r.status).toBe("INCOMPATIBLE");
   });
 });
 
@@ -134,16 +135,17 @@ describe("Teacher overview", () => {
     expect(main).toContain("Can be packaged");
     expect(main).toMatch(/Teacher-only assets1 \(29\.4 KB\), never in the student package/);
     const aside = text("aside");
-    for (const s of ["Governance and release", "No release authority was consulted", "Not authoritative", "FIXTURE-ONLY:g4-math-fractions@synthetic-0", "fixture.provenance.synthetic", "Reviews", "None recorded", "(unreviewed)"]) expect(aside).toContain(s);
+    for (const s of ["Governance and release", "No release authority was consulted", "Not authoritative", "FIXTURE-ONLY:g4-math-fractions@synthetic-0", "server details withheld", "Reviews", "None recorded", "(unreviewed)"]) expect(aside).toContain(s);
   });
 
-  it("renders every toolkit binding with mode, scope, runtime mapping and teacher-only internal settings", async () => {
+  it("renders canonical toolkit mode/scope, unresolved mappings, and no server-only settings", async () => {
     await renderPreview();
     const cards = [...host.querySelectorAll("[data-testid=tool-bindings] > li")].map((li) => li.textContent);
     expect(cards).toHaveLength(3);
-    expect(cards[0]).toMatch(/fraction_strips.*Optional.*Whole bundle.*Fraction Visualizer \(fraction-visualizer\).*Use strips to check equal parts\..*maxDenominator: 12/);
-    expect(cards[1]).toMatch(/fraction_strips.*Not allowed.*Only: Unit assessment: fractions.*Internal settings \(teacher only\)enforcement: server/);
-    expect(cards[2]).toMatch(/calculator.*Not allowed.*Whole bundle.*Basic Calculator \(basic-calculator\), Scientific Calculator \(scientific-calculator\)/);
+    expect(cards[0]).toMatch(/fraction_strips.*Optional.*Whole bundle.*Mapping unresolved.*Use strips to check equal parts\..*maxDenominator: 12/);
+    expect(cards[1]).toMatch(/fraction_strips.*Not allowed.*Only: Unit assessment: fractions/);
+    expect(cards[1]).not.toContain("enforcement");
+    expect(cards[2]).toMatch(/calculator.*Not allowed.*Whole bundle.*Mapping unresolved/);
   });
 
   it("renders offline pins: bundle version, content hash, release identity, member versions and asset hashes", async () => {
@@ -286,14 +288,14 @@ describe("item previews", () => {
   it.each([
     ["NOT_CERTIFIED", "Not runnable", "Not certified"],
     ["LINK_REVISION_MISSING", "Not runnable", "Link revision missing"],
-    ["CERTIFIED_RUNNABLE", "Runnable: certified for students", "Certified"],
+    ["CERTIFIED_RUNNABLE", "Not runnable", "Not evaluated"],
   ] as const)("renders resolver lab readiness %s faithfully", async (state, headline, certification) => {
     const base = await resolved(withLab);
     const models = buildPreviewModels({ ...base, labReadiness: { [LAB_ITEM]: { state, reason: `resolver says ${state}` } } });
     await mount(<ContentBundlePreview models={models} initialItemId={LAB_ITEM} />);
-    expect(text("[data-testid=lab-readiness]")).toBe(`${headline}resolver says ${state}`);
+    expect(text("[data-testid=lab-readiness]")).toBe(`${headline}${state === "CERTIFIED_RUNNABLE" ? "Fixture certification is not production authority." : `resolver says ${state}`}`);
     expect(text("[aria-labelledby=cbp-lab]")).toContain(`Certification${certification}`);
-    expect(models.student.members.find((m) => m.itemId === LAB_ITEM)?.detail).toEqual({ category: "LAB", available: state === "CERTIFIED_RUNNABLE" });
+    expect(models.student.members.find((m) => m.itemId === LAB_ITEM)?.detail).toEqual({ category: "LAB", available: false });
   });
 });
 
@@ -303,9 +305,9 @@ describe("Student View", () => {
     const { student } = buildPreviewModels(r);
     const json = JSON.stringify(student);
     for (const s of TEACHER_ONLY) expect(json).not.toContain(s);
-    expect(student.members.map((m) => m.itemId).sort()).toEqual(r.learnerBundle.offline.members.map((m) => m.itemId).sort());
-    expect(student.tools.map((t) => `${t.toolId}:${t.mode}`)).toEqual(r.learnerBundle.tools.filter((t) => t.scope.kind === "BUNDLE").map((t) => `${t.toolId}:${t.mode}`));
-    expect(student.resources.map((x) => x.resourceId)).toEqual(r.learnerBundle.resources.map((x) => x.resourceId));
+    expect(student.members.map((m) => m.itemId).sort()).toEqual(r.learnerProjection.offline.members.map((m) => m.itemId).sort());
+    expect(student.tools.map((t) => `${t.toolId}:${t.mode}`)).toEqual(r.learnerProjection.tools.filter((t) => t.scope.kind === "BUNDLE").map((t) => `${t.toolId}:${t.mode}`));
+    expect(student.resources.map((x) => x.resourceId)).toEqual(r.learnerProjection.resources.map((x) => x.resourceId));
   });
 
   it("switching modes shows the learner-safe frame and banner, and returns to teacher overview", async () => {
@@ -333,9 +335,8 @@ describe("Student View", () => {
     }
     const withheld = $("[data-testid=withheld-summary]")!;
     expect($("[data-testid=student-preview]")!.contains(withheld)).toBe(false);
-    expect(withheld.textContent).toContain("Teacher instruction steps: 1");
-    expect(withheld.textContent).toContain("Tool prohibitions (enforced by the server, not shown): 2");
-    expect(withheld.textContent).toContain("Assessment answer keys and scoring guides: 1");
+    expect(withheld.textContent).toContain("server-supplied learner projection");
+    expect(withheld.textContent).not.toContain("Tool prohibitions");
   });
 
   it("preserves assessment secrecy: instructions only, no definition, item list, count or key", async () => {
@@ -367,7 +368,7 @@ describe("route", () => {
 
   it("renders the fixture for a teacher, honoring view and item parameters", async () => {
     vi.stubEnv("NODE_ENV", "test");
-    const element = await ContentBundlePreviewPage({ params: { bundleId: encodeURIComponent(ids.bundleId) }, searchParams: { view: "student", item: ids.homework } });
+    const element = await ContentBundlePreviewPage({ params: { bundleId: encodeURIComponent(ids.bundleId) }, searchParams: { view: "student", item: ids.homework, fixture: "1" } });
     await mount(element);
     expect(modeButton("Student view").getAttribute("aria-pressed")).toBe("true");
     expect($("#cbp-item-heading")?.textContent).toBe("Homework: fractions of a set at home");
@@ -376,13 +377,13 @@ describe("route", () => {
 
   it("renders truthful unavailable states and redirects anonymous viewers", async () => {
     await mount(await ContentBundlePreviewPage({ params: { bundleId: "fixture.bundle.unknown" }, searchParams: {} }));
-    expect(text("h1")).toBe("Bundle not found");
+    expect(text("h1")).toBe("Content unavailable for preview");
     act(() => root!.unmount()); root = null; host.remove();
 
     vi.stubEnv("NODE_ENV", "production");
     await mount(await ContentBundlePreviewPage({ params: { bundleId: ids.bundleId }, searchParams: {} }));
-    expect(text("h1")).toBe("Preview not available yet");
-    expect(text("[role=alert]")).toContain("No governed ContentBundle resolver is configured");
+    expect(text("h1")).toBe("Content unavailable for preview");
+    expect(text("[role=alert]")).toContain("Synthetic fixtures are not available through production authority");
     vi.unstubAllEnvs();
 
     auth.user = null;

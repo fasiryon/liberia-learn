@@ -1,0 +1,143 @@
+{
+  "generatedBy": "e2e/content-bundle-teacher-preview/validate.mjs",
+  "integration": "school-scoped service -> Wave 2B resolver -> server projection -> production components",
+  "fixture": "test.bundle.synthetic-resolver@1.0.0-fixture (synthetic)",
+  "authenticatedNextMiddleware": "Not exercised: localhost Vite SSR harness; authentication is tested separately with session fixtures",
+  "layout": [
+    {
+      "width": 320,
+      "view": "teacher",
+      "layout": "stacked",
+      "overflow": false
+    },
+    {
+      "width": 320,
+      "view": "student",
+      "layout": "stacked",
+      "overflow": false
+    },
+    {
+      "width": 390,
+      "view": "teacher",
+      "layout": "stacked",
+      "overflow": false
+    },
+    {
+      "width": 390,
+      "view": "student",
+      "layout": "stacked",
+      "overflow": false
+    },
+    {
+      "width": 768,
+      "view": "teacher",
+      "layout": "two-column",
+      "overflow": false
+    },
+    {
+      "width": 768,
+      "view": "student",
+      "layout": "two-column",
+      "overflow": false
+    },
+    {
+      "width": 1024,
+      "view": "teacher",
+      "layout": "three-column",
+      "overflow": false
+    },
+    {
+      "width": 1024,
+      "view": "student",
+      "layout": "three-column",
+      "overflow": false
+    },
+    {
+      "width": 1280,
+      "view": "teacher",
+      "layout": "three-column",
+      "overflow": false
+    },
+    {
+      "width": 1280,
+      "view": "student",
+      "layout": "three-column",
+      "overflow": false
+    },
+    {
+      "width": 1440,
+      "view": "teacher",
+      "layout": "three-column",
+      "overflow": false
+    },
+    {
+      "width": 1440,
+      "view": "student",
+      "layout": "three-column",
+      "overflow": false
+    },
+    {
+      "width": 1920,
+      "view": "teacher",
+      "layout": "three-column",
+      "overflow": false
+    },
+    {
+      "width": 1920,
+      "view": "student",
+      "layout": "three-column",
+      "overflow": false
+    }
+  ],
+  "keyboard": {
+    "skipLinkFirst": true,
+    "focusOutline": "3px",
+    "arrowEnterSelects": true,
+    "endSelectsLast": true,
+    "spaceTogglesMode": true
+  },
+  "student": {
+    "pagesChecked": 8,
+    "leaks": 0
+  },
+  "lab": {
+    "teacher": "Not runnable",
+    "student": "Students will see this lab as not available yet."
+  },
+  "targets": {
+    "width": 320,
+    "under44px": 0
+  },
+  "states": [
+    {
+      "state": "unavailable",
+      "width": 320,
+      "overflow": false
+    },
+    {
+      "state": "incompatible",
+      "width": 320,
+      "overflow": false
+    },
+    {
+      "state": "labBlocked",
+      "width": 320,
+      "overflow": false
+    },
+    {
+      "state": "unavailable",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "state": "incompatible",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "state": "labBlocked",
+      "width": 1440,
+      "overflow": false
+    }
+  ]
+}

@@ -3,8 +3,8 @@
  *
  * Two models with a hard boundary:
  *   - TeacherPreviewModel is built from the full sealed bundle plus resolver facts.
- *   - StudentPreviewModel is built ONLY from the LearnerContentBundle projection plus one boolean
- *     per lab ("can the student open it"). It never sees the full bundle, so teacher notes,
+ *   - StudentPreviewModel is built ONLY from the LearnerContentBundle projection.
+ *     It never sees the full bundle, so teacher notes,
  *     answer keys, scoring guides, prohibited tools, internal tool configuration and governance
  *     internals cannot reach Student View even by a rendering mistake.
  *
@@ -121,7 +121,6 @@ export type TeacherToolRow = Readonly<{
   mode: ToolkitBindingMode;
   scope: string;
   configuration: readonly Readonly<{ key: string; value: string }>[];
-  internalConfiguration: readonly Readonly<{ key: string; value: string }>[];
   context: string | null;
   runtimeTools: readonly string[];
 }>;
@@ -188,7 +187,7 @@ export type TeacherPreviewModel = Readonly<{
   header: Readonly<{ bundleId: string; title: string; gradeLevel: number; subject: string; version: string; locale: string; contentHash: string }>;
   source: PreviewSource;
   release: ReleaseStatus;
-  objectives: readonly Readonly<{ objectiveId: string; boundItems: readonly ItemLink[] }>[];
+  objectives: readonly Readonly<{ objectiveId: string; description: string; boundItems: readonly ItemLink[] }>[];
   standards: readonly string[];
   authority: Readonly<{ releaseId: string; releaseIdentity: string; sourceVersionRefs: readonly string[]; conceptRefs: readonly string[]; constructBindingRefs: readonly string[] }>;
   nav: readonly NavGroup[];
@@ -199,6 +198,7 @@ export type TeacherPreviewModel = Readonly<{
   learnerSupport: Readonly<{ remediation: readonly SupportRow[]; enrichment: readonly SupportRow[]; accommodations: readonly string[]; languageVariants: readonly string[] }>;
   renderings: readonly RenderingRow[];
   offline: Readonly<{
+    ready: boolean;
     packageable: boolean;
     capabilities: readonly string[];
     reconnectRequiredFor: readonly string[];
@@ -234,7 +234,7 @@ function sumBytes(assets: readonly Readonly<{ byteSize: number }>[]) {
 }
 
 export function buildTeacherPreviewModel(resolved: ResolvedContentBundlePreview): TeacherPreviewModel {
-  const { bundle, contentHash, learnerBundle, labReadiness, toolkit } = resolved;
+  const { bundle, contentHash, learnerProjection, labReadiness, toolkit } = resolved;
   const members: readonly (LessonReference | ActivityDefinition | AssessmentReference | LabBinding)[] = [...bundle.lessons, ...bundle.activities, ...bundle.assessments, ...bundle.labs];
   const titles = new Map(members.map((m) => [m.identity.itemId, memberTitle(m, labDisplayTitle)]));
   const titleOf = (itemId: string) => titles.get(itemId) ?? itemId;
@@ -294,7 +294,8 @@ export function buildTeacherPreviewModel(resolved: ResolvedContentBundlePreview)
       },
     })),
     ...bundle.labs.map((lab): TeacherMember => {
-      const readiness = labReadiness[lab.identity.itemId] ?? { state: "NOT_EVALUATED" as const, reason: "The resolver returned no readiness for this lab." };
+      const claimed = labReadiness[lab.identity.itemId] ?? { state: "NOT_EVALUATED" as const, reason: "The resolver returned no readiness for this lab." };
+      const readiness = !resolved.source.authoritative && claimed.state === "CERTIFIED_RUNNABLE" ? { state: "NOT_EVALUATED" as const, reason: "Fixture certification is not production authority." } : claimed;
       return {
         ...base(lab),
         detail: {
@@ -307,7 +308,7 @@ export function buildTeacherPreviewModel(resolved: ResolvedContentBundlePreview)
           placement: lab.placement.sceneId ? `${titleOf(lab.placement.lessonItemId)}, scene ${lab.placement.sceneId}` : titleOf(lab.placement.lessonItemId),
           authorityBasis: humanize(lab.authorityBasis),
           readiness,
-          runnable: readiness.state === "CERTIFIED_RUNNABLE",
+          runnable: resolved.source.authoritative && readiness.state === "CERTIFIED_RUNNABLE",
         },
       };
     }),
@@ -315,7 +316,7 @@ export function buildTeacherPreviewModel(resolved: ResolvedContentBundlePreview)
 
   const objectiveIds = bundle.curriculumAuthority.objectiveIds;
   const runtimeFor = (toolId: string) => {
-    const ids = toolkit.mapping && Object.prototype.hasOwnProperty.call(toolkit.mapping.entries, toolId) ? toolkit.mapping.entries[toolId] : [];
+    const ids = toolkit.mapping?.reviewed && Object.prototype.hasOwnProperty.call(toolkit.mapping.entries, toolId) ? toolkit.mapping.entries[toolId] : [];
     return ids.map((id) => (toolkit.runtimeToolNames[id] ? `${toolkit.runtimeToolNames[id]} (${id})` : id));
   };
   const supportRow = (s: Readonly<{ supportId: string; objectiveIds: readonly string[]; itemIds: readonly string[]; resourceIds: readonly string[] }>): SupportRow => ({ supportId: s.supportId, objectiveIds: [...s.objectiveIds], items: s.itemIds.map((id) => ({ itemId: id, title: titleOf(id) })), resources: s.resourceIds.map((id) => resourcesById.get(id)?.title ?? id) });
@@ -331,7 +332,7 @@ export function buildTeacherPreviewModel(resolved: ResolvedContentBundlePreview)
     { label: "Assessment item lists", count: bundle.assessments.length },
     { label: "Tool prohibitions (enforced by the server, not shown)", count: bundle.toolkitBindings.filter((b) => b.mode === "PROHIBITED").length },
     { label: "Internal tool configurations", count: internalConfigCount },
-    { label: "Teacher-only renderings", count: bundle.renderings.length - learnerBundle.renderings.length },
+    { label: "Teacher-only renderings", count: bundle.renderings.length - learnerProjection.renderings.length },
     { label: "Teacher-only offline assets", count: staffAssets.length },
     { label: "Governance and review references", count: bundle.governance.provenanceRefs.length + bundle.governance.reviewRefs.length + bundle.governance.lifecycleRefs.length + bundle.governance.releaseRefs.length },
   ];
@@ -340,7 +341,7 @@ export function buildTeacherPreviewModel(resolved: ResolvedContentBundlePreview)
     header: { bundleId: bundle.identity.bundleId, title: bundle.identity.title, gradeLevel: bundle.identity.gradeLevel, subject: humanize(bundle.identity.subject), version: bundle.identity.version, locale: bundle.identity.locale, contentHash },
     source: resolved.source,
     release: resolved.release,
-    objectives: objectiveIds.map((objectiveId) => ({ objectiveId, boundItems: teacherMembers.filter((m) => m.objectiveIds.includes(objectiveId)).map((m) => ({ itemId: m.itemId, title: m.title })) })),
+    objectives: objectiveIds.map((objectiveId) => ({ objectiveId, description: resolved.authorityMetadata.objectiveDescriptions[objectiveId] ?? "description unavailable", boundItems: teacherMembers.filter((m) => m.objectiveIds.includes(objectiveId)).map((m) => ({ itemId: m.itemId, title: m.title })) })),
     standards: [...bundle.curriculumAuthority.standardIds],
     authority: {
       releaseId: bundle.curriculumAuthority.releaseId,
@@ -352,7 +353,7 @@ export function buildTeacherPreviewModel(resolved: ResolvedContentBundlePreview)
     nav: buildNav(bundle.sequence.units, members, titleOf),
     members: teacherMembers,
     resources: bundle.resources.map(resourceRow),
-    tools: bundle.toolkitBindings.map((b) => ({ toolId: b.toolId, mode: b.mode, scope: scopeLabel(b, titleOf), configuration: configRows(b.configuration), internalConfiguration: configRows(b.internalConfiguration), context: b.context, runtimeTools: runtimeFor(b.toolId) })),
+    tools: bundle.toolkitBindings.map((b) => ({ toolId: b.toolId, mode: b.mode, scope: scopeLabel(b, titleOf), configuration: configRows(b.configuration), context: b.context, runtimeTools: runtimeFor(b.toolId) })),
     toolkitMapping: {
       pinned: bundle.toolkitMapping ? `${bundle.toolkitMapping.mappingId}@${bundle.toolkitMapping.mappingVersion}` : null,
       checkedAgainst: toolkit.mapping ? `${toolkit.mapping.mappingId}@${toolkit.mapping.mappingVersion}` : null,
@@ -370,6 +371,7 @@ export function buildTeacherPreviewModel(resolved: ResolvedContentBundlePreview)
       return { kind, label: RENDERING_LABELS[kind], available: !!r, audience: r ? humanize(r.audience) : null, artifactVersion: r?.artifactVersion ?? null };
     }),
     offline: {
+      ready: resolved.authorityMetadata.offlinePackageClosed,
       packageable: bundle.offline.packageable,
       capabilities: bundle.offline.allowedCapabilities.map(humanize),
       reconnectRequiredFor: bundle.offline.reconnectSemantics.requiredFor.map(humanize),
@@ -377,19 +379,19 @@ export function buildTeacherPreviewModel(resolved: ResolvedContentBundlePreview)
       learnerAssets: { count: learnerAssets.length, bytes: sumBytes(learnerAssets) },
       staffOnlyAssets: { count: staffAssets.length, bytes: sumBytes(staffAssets) },
       pins: {
-        bundle: `${learnerBundle.offline.bundleId}@${learnerBundle.offline.bundleVersion}`,
-        contentHash: learnerBundle.offline.contentHash,
-        releaseIdentity: learnerBundle.offline.releaseIdentity,
-        projectionVersion: learnerBundle.offline.projectionVersion,
-        members: learnerBundle.offline.members.map((m) => `${m.itemId}@${m.itemVersion}`),
-        assets: learnerBundle.offline.assets.map((a) => `${a.assetId}@${a.assetVersion} sha256:${a.sha256.slice(0, 12)}`),
+        bundle: `${learnerProjection.offline.bundleId}@${learnerProjection.offline.bundleVersion}`,
+        contentHash: learnerProjection.offline.contentHash,
+        releaseIdentity: learnerProjection.offline.releaseIdentity,
+        projectionVersion: learnerProjection.offline.projectionVersion,
+        members: learnerProjection.offline.members.map((m) => `${m.itemId}@${m.itemVersion}`),
+        assets: learnerProjection.offline.assets.map((a) => `${a.assetId}@${a.assetVersion} sha256:${a.sha256.slice(0, 12)}`),
       },
     },
     governance: {
-      provenanceRefs: [...bundle.governance.provenanceRefs],
-      reviewRefs: [...bundle.governance.reviewRefs],
-      lifecycleRefs: [...bundle.governance.lifecycleRefs],
-      releaseRefs: [...bundle.governance.releaseRefs],
+      provenanceRefs: bundle.governance.provenanceRefs.length ? [`${bundle.governance.provenanceRefs.length} recorded; server details withheld`] : [],
+      reviewRefs: bundle.governance.reviewRefs.length ? [`${bundle.governance.reviewRefs.length} recorded; server details withheld`] : [],
+      lifecycleRefs: bundle.governance.lifecycleRefs.length ? [`${bundle.governance.lifecycleRefs.length} recorded; server details withheld`] : [],
+      releaseRefs: bundle.governance.releaseRefs.length ? [`${bundle.governance.releaseRefs.length} recorded; server details withheld`] : [],
     },
     withheldFromStudents: withheld.filter((row) => row.count > 0),
   };
@@ -422,6 +424,7 @@ export type StudentMember = Readonly<{
 }>;
 
 export type StudentPreviewModel = Readonly<{
+  fixture: boolean;
   header: Readonly<{ title: string; gradeLevel: number; subject: string; locale: string }>;
   nav: readonly NavGroup[];
   members: readonly StudentMember[];
@@ -437,10 +440,10 @@ export type StudentPreviewModel = Readonly<{
 const STUDENT_ASSESSMENT_LABEL: Readonly<Record<string, string>> = { FORMATIVE_CHECK: "Quick check", QUIZ: "Quiz", UNIT_ASSESSMENT: "Unit test", EXAM: "Exam", WAEC_STYLE: "Exam practice" };
 
 /**
- * `labAvailable` is the only resolver fact Student View receives: a per-lab yes/no. Everything else
- * comes from the learner projection.
+ * Everything comes from the learner projection, never from teacher metadata.
+ * Current V1 links cannot establish runnable lab authority; displayed labs stay unavailable.
  */
-export function buildStudentPreviewModel(learner: LearnerContentBundle, labAvailable: Readonly<Record<string, boolean>>): StudentPreviewModel {
+export function buildStudentPreviewModel(learner: LearnerContentBundle): StudentPreviewModel {
   const members = [...learner.lessons, ...learner.activities, ...learner.assessments, ...learner.labs];
   const titles = new Map(members.map((m) => [m.identity.itemId, memberTitle(m, labDisplayTitle)]));
   const titleOf = (itemId: string) => titles.get(itemId) ?? itemId;
@@ -453,6 +456,7 @@ export function buildStudentPreviewModel(learner: LearnerContentBundle, labAvail
   const base = (m: AnyMember) => ({ itemId: m.identity.itemId, itemKind: m.identity.itemKind, category: categoryOf(m.identity.itemKind), title: titleOf(m.identity.itemId), sequence: placements.get(m.identity.itemId) ?? null, tools: itemScopedTools(m.identity.itemId) });
 
   return {
+    fixture: learner.source.bundleId.startsWith("fixture.") || learner.source.bundleVersion.includes("fixture"),
     header: { title: learner.identity.title, gradeLevel: learner.identity.gradeLevel, subject: humanize(learner.identity.subject), locale: learner.identity.locale },
     nav: buildNav(learner.sequence.units, members, titleOf),
     objectiveIds: [...learner.objectives.objectiveIds],
@@ -471,7 +475,7 @@ export function buildStudentPreviewModel(learner: LearnerContentBundle, labAvail
         },
       })),
       ...learner.assessments.map((a): StudentMember => ({ ...base(a), detail: { category: "ASSESSMENT", kindLabel: STUDENT_ASSESSMENT_LABEL[a.role] ?? humanize(a.role), instructions: [...a.learnerInstructions] } })),
-      ...learner.labs.map((l): StudentMember => ({ ...base(l), detail: { category: "LAB", available: labAvailable[l.identity.itemId] === true } })),
+      ...learner.labs.map((l): StudentMember => ({ ...base(l), detail: { category: "LAB", available: false } })),
     ],
     resources: learner.resources.map((r) => ({ resourceId: r.resourceId, resourceVersion: r.resourceVersion, title: r.title, kind: humanize(r.kind), audience: null, offline: r.assetId !== null && offlineAssets.has(r.assetId) })),
     tools: learner.tools.filter((t) => t.scope.kind === "BUNDLE").map((t) => ({ toolId: t.toolId, mode: t.mode, context: t.context, configuration: configRows(t.configuration) })),
@@ -493,6 +497,5 @@ export function buildStudentPreviewModel(learner: LearnerContentBundle, labAvail
 export type ContentBundlePreviewModels = Readonly<{ teacher: TeacherPreviewModel; student: StudentPreviewModel }>;
 
 export function buildPreviewModels(resolved: ResolvedContentBundlePreview): ContentBundlePreviewModels {
-  const labAvailable = Object.fromEntries(resolved.learnerBundle.labs.map((lab) => [lab.identity.itemId, resolved.labReadiness[lab.identity.itemId]?.state === "CERTIFIED_RUNNABLE"]));
-  return { teacher: buildTeacherPreviewModel(resolved), student: buildStudentPreviewModel(resolved.learnerBundle, labAvailable) };
+  return { teacher: buildTeacherPreviewModel(resolved), student: buildStudentPreviewModel(resolved.learnerProjection) };
 }

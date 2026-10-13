@@ -6,7 +6,7 @@ import assert from "node:assert/strict";
  * real keyboard navigation, learner-safe Student View and truthful lab state. Production
  * component over fixture-resolved display models; server authorization is covered by unit tests.
  */
-const out = "artifacts/content-bundle-teacher-preview";
+const out = "artifacts/content-bundle-wave2";
 await fs.mkdir(out, { recursive: true });
 const base = "http://127.0.0.1:3192";
 const WIDTHS = [320, 390, 768, 1024, 1280, 1440, 1920];
@@ -93,7 +93,25 @@ const small = await page.evaluate(() => [...document.querySelectorAll(".cbp-root
 assert.deepEqual(small, [], `controls under 44px: ${small.join(", ")}`);
 evidence.targets = { width: 320, under44px: 0 };
 
+// F. Integrated production readiness / fail-closed states at phone and desktop.
+evidence.states = [];
+for (const width of [320, 1440]) {
+  await page.setViewportSize({ width, height: 900 });
+  for (const state of ["unavailable", "incompatible", "labBlocked"]) {
+    await page.goto(`${base}/?state=${state}`); await page.locator("[data-testid=preview-diagnostics]").waitFor();
+    assert.equal(await overflow(), false, `${state} overflows at ${width}`);
+    const text = await page.locator("main").innerText();
+    if (state === "unavailable") {
+      for (const blocker of ["PARTIAL", "Production bundle not yet sealed", "Assessment authority incomplete", "mapping unresolved", "Offline package not yet closed", "Lab unavailable"]) assert(text.includes(blocker), `missing ${blocker}`);
+    } else assert(text.includes("Bundle cannot safely be resolved"));
+    if (state === "labBlocked") assert(text.includes("stable link revision and certification"));
+    assert(!text.includes("correctIndex") && !text.includes("password="));
+    evidence.states.push({ state, width, overflow: false });
+    if (width === 320) await page.screenshot({ path: `${out}/${state}-${width}.png`, fullPage: true });
+  }
+}
+
 assert.deepEqual(errors, [], `page errors: ${errors.join("\n")}`);
-await fs.writeFile(`${out}/results.json`, JSON.stringify({ generatedBy: "e2e/content-bundle-teacher-preview/validate.mjs", fixture: "fixture.bundle.g4-math-fractions@1.0.0-fixture (synthetic)", ...evidence }, null, 2));
+await fs.writeFile(`${out}/results.json`, JSON.stringify({ generatedBy: "e2e/content-bundle-teacher-preview/validate.mjs", integration: "school-scoped service -> Wave 2B resolver -> server projection -> production components", fixture: "test.bundle.synthetic-resolver@1.0.0-fixture (synthetic)", authenticatedNextMiddleware: "Not exercised: localhost Vite SSR harness; authentication is tested separately with session fixtures", ...evidence }, null, 2));
 await browser.close();
 console.log(`teacher preview browser checks passed: ${evidence.layout.length} layouts, ${count} student pages`);

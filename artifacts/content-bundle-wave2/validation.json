@@ -1,0 +1,32 @@
+{
+  "base": "f28f71070ba2676b28aab59502146dd187886608",
+  "inputs": {
+    "resolver": "48cf8501ac4fb0a1aff978f38422050a4900e4b2",
+    "teacherPreview": "f99134ded0a181ffffcf71c1ca0369999f134c95"
+  },
+  "focusedTests": { "passed": 161, "resolver": 34, "foundation": 80, "preview": 29, "integration": 18 },
+  "changedFileLint": "PASS",
+  "typeScript": "PASS",
+  "validateChanged": "PASS",
+  "productionBuild": {
+    "exitCode": 0,
+    "staticPagesGenerated": 387,
+    "previewRouteCompiled": true,
+    "databaseConfiguration": "unreachable loopback-only URLs",
+    "standalonePackaging": "Windows EPERM dependency-junction symlink warning; portable standalone artifact not verified",
+    "otherWarnings": "Existing unrelated lint/instrumentation and missing optional local services"
+  },
+  "browser": {
+    "layoutsPassed": 14,
+    "studentPagesChecked": 8,
+    "diagnosticWidthChecksPassed": 6,
+    "horizontalOverflowDetected": false,
+    "learnerLeakageDetected": false,
+    "keyboardAndTouchChecks": "PASS",
+    "authenticatedNextMiddleware": "NOT EXERCISED: Vite SSR harness and explicit synthetic session fixtures"
+  },
+  "fractionsProductionReadiness": "PARTIAL",
+  "hostedMutation": false,
+  "curriculumPublication": false,
+  "deployment": false
+}

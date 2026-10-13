@@ -62,9 +62,14 @@ export interface ContentBundleAuthorityReader {
   isRuntimeToolId(id: string): boolean;
 }
 export type ContentBundleResolution = Readonly<{
-  status: "RESOLVED" | "UNAVAILABLE" | "INCOMPATIBLE";
-  bundle: ContentBundleV1 | null;
-  learnerProjection: LearnerContentBundle | null;
+  status: "RESOLVED";
+  bundle: ContentBundleV1;
+  learnerProjection: LearnerContentBundle;
+  diagnostics: readonly ResolverDiagnostic[];
+}> | Readonly<{
+  status: "UNAVAILABLE" | "INCOMPATIBLE";
+  bundle: null;
+  learnerProjection: null;
   diagnostics: readonly ResolverDiagnostic[];
 }>;
 

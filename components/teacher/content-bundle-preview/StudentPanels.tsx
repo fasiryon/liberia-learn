@@ -42,7 +42,8 @@ function StudentOverview({ model }: { model: StudentPreviewModel }) {
       <Section id="cbp-s-offline" title="Offline">
         <Facts
           rows={[
-            ["Download for offline", model.offline.packageable ? `Yes, ${model.offline.assetCount} files (${formatBytes(model.offline.bytes)})` : "Not available"],
+            ["Download for offline", "Not yet ready: package closure has not been verified"],
+            ["Pinned assets", `${model.offline.assetCount} files (${formatBytes(model.offline.bytes)})`],
             ["Works offline", model.offline.capabilities.join(", ") || "Nothing"],
             ["Needs a connection for", model.offline.reconnectRequiredFor.join(", ") || "Nothing"],
           ]}

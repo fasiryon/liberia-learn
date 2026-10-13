@@ -1,22 +1,22 @@
 /**
- * Teacher Preview resolver seam (ContentBundle Wave 2A).
+ * Teacher Preview display extension of the Wave 2B authority resolver contract.
  *
  * The preview surface renders whatever a resolver hands it. It never decides release state,
  * lab certification or toolkit review itself: those facts are not inside a ContentBundle and
- * belong to the authority layer that Wave 2B builds. Until then, a fixture adapter implements this
- * interface and says plainly that it did not consult those authorities.
+ * belong to the read-only authority layer. The explicit local fixture adapter is non-authoritative.
  */
-import type { ContentBundleV1, ContentBundleValidationError } from "../v1/types";
-import type { LearnerContentBundle } from "../v1/projection";
+import type { ContentBundleResolution } from "../v1/resolver";
 import type { ToolkitMappingIssue } from "../v1/toolkitMapping";
 
 export type PreviewViewer = Readonly<{ userId: string; role: string; schoolId: string | null }>;
 
 export type ContentBundlePreviewRequest = Readonly<{
   bundleId: string;
-  /** Exact version; null asks the resolver for the version it would preview by default. */
+  /** Exact version; null yields a version-selection state without an authoritative default rule. */
   bundleVersion: string | null;
   viewer: PreviewViewer;
+  schoolId?: string;
+  fixturePreview?: boolean;
 }>;
 
 /**
@@ -35,7 +35,7 @@ export type LabReadiness = Readonly<{
   reason: string;
 }>;
 
-/** Release status of the exact sealed (bundleId, version, contentHash), from release governance. */
+/** Display status of the consulted ontology release; never publishes or approves a bundle. */
 export type ReleaseStatus =
   | Readonly<{ state: "NOT_EVALUATED"; reason: string }>
   | Readonly<{ state: "UNRELEASED"; reason: string }>
@@ -49,14 +49,17 @@ export type ToolkitResolution = Readonly<{
   issues: readonly ToolkitMappingIssue[];
 }>;
 
-export type ResolvedContentBundlePreview = Readonly<{
-  status: "RESOLVED";
+export type PreviewAuthorityMetadata = Readonly<{
+  readiness: "READY" | "PARTIAL" | "BLOCKED";
+  objectiveDescriptions: Readonly<Record<string, string>>;
+  offlinePackageClosed: false;
+}>;
+
+/** Wave 2B owns status/content/projection. Remaining properties are display metadata. */
+export type ResolvedContentBundlePreview = Extract<ContentBundleResolution, { status: "RESOLVED" }> & Readonly<{
   source: PreviewSource;
-  /** Validated and sealed bundle. */
-  bundle: ContentBundleV1;
   contentHash: string;
-  /** Output of `projectLearnerBundle` for the same sealed bundle; Student View renders only this. */
-  learnerBundle: LearnerContentBundle;
+  authorityMetadata: PreviewAuthorityMetadata;
   labReadiness: Readonly<Record<string, LabReadiness>>;
   release: ReleaseStatus;
   toolkit: ToolkitResolution;
@@ -64,10 +67,7 @@ export type ResolvedContentBundlePreview = Readonly<{
 
 export type ContentBundlePreviewResolution =
   | ResolvedContentBundlePreview
-  | Readonly<{ status: "NOT_FOUND"; bundleId: string }>
-  | Readonly<{ status: "FORBIDDEN" }>
-  | Readonly<{ status: "INVALID"; bundleId: string; errors: readonly ContentBundleValidationError[] }>
-  | Readonly<{ status: "RESOLVER_UNAVAILABLE"; reason: string }>;
+  | (Extract<ContentBundleResolution, { status: "UNAVAILABLE" | "INCOMPATIBLE" }> & Readonly<{ authorityMetadata?: PreviewAuthorityMetadata }>);
 
 export interface ContentBundlePreviewResolver {
   resolveForTeacherPreview(request: ContentBundlePreviewRequest): Promise<ContentBundlePreviewResolution>;

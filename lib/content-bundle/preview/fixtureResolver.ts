@@ -36,13 +36,14 @@ export function createFixturePreviewResolver(options: Readonly<{ fixtures?: Read
   const runtimeTools = options.runtimeTools ?? {};
   return {
     async resolveForTeacherPreview(request) {
-      if (!PREVIEW_ROLES.has(request.viewer.role)) return { status: "FORBIDDEN" };
+      const unavailable = (code: string) => ({ status: "UNAVAILABLE" as const, bundle: null, learnerProjection: null, diagnostics: [{ code, path: "preview" }] });
+      if (!PREVIEW_ROLES.has(request.viewer.role) || !request.viewer.schoolId || (request.schoolId && request.schoolId !== request.viewer.schoolId)) return unavailable("PREVIEW_FORBIDDEN");
       const registration = Object.prototype.hasOwnProperty.call(fixtures, request.bundleId) ? fixtures[request.bundleId] : undefined;
-      if (!registration) return { status: "NOT_FOUND", bundleId: request.bundleId };
+      if (!registration) return unavailable("COMPOSITION_MISSING");
       const sealed = sealContentBundle(registration.build());
-      if (sealed.ok === false) return { status: "INVALID", bundleId: request.bundleId, errors: sealed.errors };
+      if (sealed.ok === false) return { status: "INCOMPATIBLE", bundle: null, learnerProjection: null, diagnostics: sealed.errors.map(e => ({ code: e.code, path: e.path })) };
       const { bundle, contentHash } = sealed.sealed;
-      if (request.bundleVersion !== null && request.bundleVersion !== bundle.identity.version) return { status: "NOT_FOUND", bundleId: request.bundleId };
+      if (request.bundleVersion !== null && request.bundleVersion !== bundle.identity.version) return unavailable("COMPOSITION_MISSING");
 
       const mapping = registration.mapping;
       const runtimeIds = mapping ? [...new Set(Object.values(mapping.entries).flat())] : [];
@@ -51,7 +52,9 @@ export function createFixturePreviewResolver(options: Readonly<{ fixtures?: Read
         source: { kind: "FIXTURE", label: registration.label, authoritative: false },
         bundle,
         contentHash,
-        learnerBundle: projectLearnerBundle(bundle, contentHash),
+        diagnostics: [],
+        authorityMetadata: { readiness: "BLOCKED", objectiveDescriptions: {}, offlinePackageClosed: false },
+        learnerProjection: projectLearnerBundle(bundle, contentHash),
         labReadiness: Object.fromEntries(bundle.labs.map((lab) => [lab.identity.itemId, LAB_NOT_EVALUATED])),
         release: { state: "NOT_EVALUATED", reason: "No release authority was consulted. A fixture is never a curriculum release." },
         toolkit: {

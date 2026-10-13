@@ -5,7 +5,7 @@ const MODE_TONE: Readonly<Record<string, ChipTone>> = { REQUIRED: "gold", OPTION
 const modeLabel = (mode: string) => (mode === "PROHIBITED" ? "Not allowed" : mode === "REQUIRED" ? "Required" : "Optional");
 
 export function releaseChip(release: TeacherPreviewModel["release"]) {
-  if (release.state === "RELEASED") return <Chip tone="green">Released</Chip>;
+  if (release.state === "RELEASED") return <Chip tone="green">Published ontology</Chip>;
   if (release.state === "UNRELEASED") return <Chip tone="warn">Not released</Chip>;
   return <Chip tone="warn">Release not evaluated</Chip>;
 }
@@ -22,10 +22,9 @@ function ToolBindings({ tools }: { tools: readonly TeacherToolRow[] }) {
           <Facts
             rows={[
               ["Applies to", tool.scope],
-              ["Runtime tool", tool.runtimeTools.length > 0 ? tool.runtimeTools.join(", ") : "No runtime mapping"],
+              ["Runtime tool", tool.runtimeTools.length > 0 ? tool.runtimeTools.join(", ") : "Mapping unresolved"],
               ...(tool.context ? ([["Student guidance", tool.context]] as const) : []),
               ...(tool.configuration.length > 0 ? ([["Student settings", tool.configuration.map((c) => `${c.key}: ${c.value}`).join(", ")]] as const) : []),
-              ...(tool.internalConfiguration.length > 0 ? ([["Internal settings (teacher only)", tool.internalConfiguration.map((c) => `${c.key}: ${c.value}`).join(", ")]] as const) : []),
             ]}
           />
         </li>
@@ -49,6 +48,7 @@ function Overview({ model, onSelect }: { model: TeacherPreviewModel; onSelect: (
           {model.objectives.map((objective) => (
             <li key={objective.objectiveId}>
               <Code>{objective.objectiveId}</Code>
+              <div>{objective.description}</div>
               <div className="cbp-sub">Taught by: <ItemLinks links={objective.boundItems} onSelect={onSelect} empty="No item binds this objective" /></div>
             </li>
           ))}
@@ -87,6 +87,7 @@ function Overview({ model, onSelect }: { model: TeacherPreviewModel; onSelect: (
       </Section>
 
       <Section id="cbp-offline" title="Offline package">
+        <p className="cbp-callout cbp-callout-warn">{o.ready ? "Ready" : "Not yet ready: the real offline package is not closed."}</p>
         <Facts
           rows={[
             ["Can be packaged", o.packageable ? <Chip tone="green">Yes</Chip> : <Chip tone="warn">No</Chip>],
@@ -242,7 +243,7 @@ export function TeacherAside({ model, selectedId }: { model: TeacherPreviewModel
       ) : null}
       {member ? (
         <Section id="cbp-aside-objectives" title="Objectives">
-          {member.objectiveIds.length > 0 ? <ul className="cbp-list">{member.objectiveIds.map((id) => <li key={id}><Code>{id}</Code></li>)}</ul> : <Empty>No objectives bound.</Empty>}
+          {member.objectiveIds.length > 0 ? <ul className="cbp-list">{member.objectiveIds.map((id) => <li key={id}><Code>{id}</Code><div>{model.objectives.find(o => o.objectiveId === id)?.description ?? "description unavailable"}</div></li>)}</ul> : <Empty>No objectives bound.</Empty>}
         </Section>
       ) : null}
       {member ? (
