@@ -11,13 +11,16 @@ import {
   ASSESSMENT_ROLES,
   CONTENT_BUNDLE_SCHEMA_VERSION,
   GOVERNED_ITEM_KINDS,
+  type ActivityDefinition,
   type ContentBundleV1,
   type ContentBundleValidationCode,
   type ContentBundleValidationError,
   type ContentBundleValidationResult,
   type GovernedItemKind,
+  type JsonValue,
 } from "./types";
 import { hashContentBundle } from "./hash";
+import { parseActivityExperience } from "./activityExperience";
 
 export type ContentBundleValidationOptions = Readonly<{
   /**
@@ -465,7 +468,14 @@ export function validateContentBundle(input: unknown, options: ContentBundleVali
       for (const key of ["supportsScreenReader", "supportsReadAloud", "requiresColorVision", "requiresFineMotor"]) c.boolean(a11y, key, ap);
       checkResourceRefs(a11y, "alternativeFormatResourceIds", ap);
     }
-    if (activity.extensions !== undefined) c.record(activity.extensions, `${p}.extensions`);
+    if (activity.extensions !== undefined) {
+      const extensions = c.record(activity.extensions, `${p}.extensions`);
+      if (extensions && extensions.experience !== undefined) {
+        const definition = isRecord(activity.identity) ? (activity as unknown as ActivityDefinition) : null;
+        const parsed = parseActivityExperience(extensions.experience as JsonValue, definition);
+        if (parsed.ok === false) for (const issue of parsed.issues) c.add("activity_experience_invalid", `${p}.extensions.${issue.path}`, issue.message);
+      }
+    }
   });
 
   // Assessments

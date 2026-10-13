@@ -7,6 +7,7 @@
  * rather than deleting known secret fields, so new internal fields stay out by default.
  */
 import { sealContentBundle } from "./seal";
+import { projectLearnerExperience, type LearnerActivityExperience } from "./activityExperience";
 import type { ContentBundleValidationOptions } from "./validator";
 import {
   LEARNER_CONTENT_BUNDLE_SCHEMA_VERSION,
@@ -54,6 +55,8 @@ export type LearnerActivity = Readonly<{
   collaborationMode: CollaborationMode;
   evidenceIntent: Readonly<{ kind: EvidenceIntentKind; forms: readonly EvidenceForm[] }>;
   accessibility: AccessibilityMetadata;
+  /** Allow-listed learner body (activityExperience.ts). Present only when the activity carries a valid one. */
+  experience?: LearnerActivityExperience;
 }>;
 
 /** Safe assessment pointer: identity, role and instructions. No item list, keys or scoring guides. */
@@ -165,20 +168,24 @@ export function projectLearnerBundle(bundle: ContentBundleV1, contentHash: strin
       estimatedMinutes: lesson.estimatedMinutes,
       resourceIds: onlyLearner(lesson.resourceIds),
     })),
-    activities: bundle.activities.map((activity) => ({
-      identity: { ...activity.identity },
-      title: activity.title,
-      objectiveIds: [...activity.objectiveIds],
-      lessonItemIds: [...activity.lessonItemIds],
-      scaffolding: activity.scaffolding,
-      instructions: activity.instructions.learner.map((step) => ({ stepId: step.stepId, text: step.text, resourceIds: onlyLearner(step.resourceIds) })),
-      resourceIds: onlyLearner(activity.resourceIds),
-      rubric: activity.rubric ? { rubricId: activity.rubric.rubricId, rubricVersion: activity.rubric.rubricVersion, criteria: [...activity.rubric.learnerVisibleCriteria] } : null,
-      expectedDurationMinutes: activity.expectedDurationMinutes,
-      collaborationMode: activity.collaborationMode,
-      evidenceIntent: { kind: activity.evidenceIntent.kind, forms: [...activity.evidenceIntent.forms] },
-      accessibility: { ...activity.accessibility, alternativeFormatResourceIds: onlyLearner(activity.accessibility.alternativeFormatResourceIds) },
-    })),
+    activities: bundle.activities.map((activity) => {
+      const experience = projectLearnerExperience(activity);
+      return {
+        identity: { ...activity.identity },
+        title: activity.title,
+        objectiveIds: [...activity.objectiveIds],
+        lessonItemIds: [...activity.lessonItemIds],
+        scaffolding: activity.scaffolding,
+        instructions: activity.instructions.learner.map((step) => ({ stepId: step.stepId, text: step.text, resourceIds: onlyLearner(step.resourceIds) })),
+        resourceIds: onlyLearner(activity.resourceIds),
+        rubric: activity.rubric ? { rubricId: activity.rubric.rubricId, rubricVersion: activity.rubric.rubricVersion, criteria: [...activity.rubric.learnerVisibleCriteria] } : null,
+        expectedDurationMinutes: activity.expectedDurationMinutes,
+        collaborationMode: activity.collaborationMode,
+        evidenceIntent: { kind: activity.evidenceIntent.kind, forms: [...activity.evidenceIntent.forms] },
+        accessibility: { ...activity.accessibility, alternativeFormatResourceIds: onlyLearner(activity.accessibility.alternativeFormatResourceIds) },
+        ...(experience ? { experience } : {}),
+      };
+    }),
     assessments: bundle.assessments.map((assessment) => ({
       identity: { ...assessment.identity },
       role: assessment.role,

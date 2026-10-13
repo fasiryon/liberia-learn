@@ -24,6 +24,7 @@ import type {
   ToolkitBindingMode,
 } from "../v1/types";
 import type { LearnerContentBundle } from "../v1/projection";
+import { activityExperienceOf, PROFILE_LABELS, type ActivityExperienceV1, type LearnerActivityExperience } from "../v1/activityExperience";
 import type { LabReadiness, ReleaseStatus, ResolvedContentBundlePreview, PreviewSource } from "./resolver";
 
 // ─── Shared shapes ──────────────────────────────────────────────────────────────────────────────
@@ -134,6 +135,8 @@ export type TeacherMemberDetail =
   | Readonly<{
       category: "ACTIVITY";
       activityType: string;
+      /** "Guided practice", "Classwork", ... from the experience profile; null without one. */
+      profileLabel: string | null;
       expectedDurationMinutes: number;
       collaborationMode: string;
       scaffolding: string | null;
@@ -143,6 +146,8 @@ export type TeacherMemberDetail =
       rubric: Readonly<{ rubricId: string; rubricVersion: string; criteria: readonly string[]; scoringGuide: string | null }> | null;
       extendsLessons: readonly ItemLink[];
       resources: readonly ResourceRow[];
+      /** Full experience, teacher section included. Teacher model only. */
+      experience: ActivityExperienceV1 | null;
     }>
   | Readonly<{
       category: "ASSESSMENT";
@@ -229,6 +234,8 @@ function itemTools(bindings: readonly ToolkitBinding[], itemId: string): Teacher
   });
 }
 
+const profileLabelOf = (experience: Readonly<{ profile: keyof typeof PROFILE_LABELS }> | null) => (experience ? PROFILE_LABELS[experience.profile] : null);
+
 function sumBytes(assets: readonly Readonly<{ byteSize: number }>[]) {
   return assets.reduce((total, asset) => total + asset.byteSize, 0);
 }
@@ -268,6 +275,7 @@ export function buildTeacherPreviewModel(resolved: ResolvedContentBundlePreview)
       detail: {
         category: "ACTIVITY",
         activityType: humanize(activity.identity.itemKind),
+        profileLabel: profileLabelOf(activityExperienceOf(activity)),
         expectedDurationMinutes: activity.expectedDurationMinutes,
         collaborationMode: humanize(activity.collaborationMode),
         scaffolding: activity.scaffolding ? humanize(activity.scaffolding) : null,
@@ -277,6 +285,7 @@ export function buildTeacherPreviewModel(resolved: ResolvedContentBundlePreview)
         rubric: activity.rubric ? { rubricId: activity.rubric.rubricId, rubricVersion: activity.rubric.rubricVersion, criteria: [...activity.rubric.learnerVisibleCriteria], scoringGuide: resourceLabel(activity.rubric.scoringGuideResourceId) } : null,
         extendsLessons: activity.lessonItemIds.map((id) => ({ itemId: id, title: titleOf(id) })),
         resources: resourceRows(activity.resourceIds),
+        experience: activityExperienceOf(activity),
       },
     })),
     ...bundle.assessments.map((assessment): TeacherMember => ({
@@ -326,6 +335,7 @@ export function buildTeacherPreviewModel(resolved: ResolvedContentBundlePreview)
   const internalConfigCount = bundle.toolkitBindings.filter((b) => Object.keys(b.internalConfiguration).length > 0).length;
   const withheld: WithheldRow[] = [
     { label: "Teacher instruction steps", count: bundle.activities.reduce((n, a) => n + a.instructions.teacher.length, 0) },
+    { label: "Activity facilitation guides (flow, look-fors, misconceptions, alignment)", count: bundle.activities.filter((a) => activityExperienceOf(a) !== null).length },
     { label: "Teacher and system resources (notes, answer keys)", count: bundle.resources.filter((r) => r.audience !== "LEARNER").length },
     { label: "Assessment answer keys and scoring guides", count: bundle.assessments.reduce((n, a) => n + (a.secured.answerKeyResourceId ? 1 : 0) + (a.secured.scoringGuideResourceId ? 1 : 0), 0) },
     { label: "Rubric scoring guides", count: bundle.activities.filter((a) => a.rubric?.scoringGuideResourceId).length },
@@ -404,8 +414,11 @@ export type StudentMemberDetail =
   | Readonly<{
       category: "ACTIVITY";
       activityType: string;
+      profileLabel: string | null;
       expectedDurationMinutes: number;
       collaborationMode: string;
+      /** Learner projection of the experience only; teacher fields cannot exist here. */
+      experience: LearnerActivityExperience | null;
       instructions: readonly Readonly<{ stepId: string; text: string; resources: readonly string[] }>[];
       criteria: readonly string[];
       resources: readonly string[];
@@ -467,8 +480,10 @@ export function buildStudentPreviewModel(learner: LearnerContentBundle): Student
         detail: {
           category: "ACTIVITY",
           activityType: humanize(a.identity.itemKind),
+          profileLabel: profileLabelOf(a.experience ?? null),
           expectedDurationMinutes: a.expectedDurationMinutes,
           collaborationMode: humanize(a.collaborationMode),
+          experience: a.experience ?? null,
           instructions: a.instructions.map((s) => ({ stepId: s.stepId, text: s.text, resources: titlesFor(s.resourceIds) })),
           criteria: a.rubric ? [...a.rubric.criteria] : [],
           resources: titlesFor(a.resourceIds),

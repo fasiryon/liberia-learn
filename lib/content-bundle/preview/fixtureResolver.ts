@@ -10,6 +10,7 @@ import { projectLearnerBundle } from "../v1/projection";
 import { checkToolkitMapping, type ToolkitMapping } from "../v1/toolkitMapping";
 import type { ContentBundleV1 } from "../v1/types";
 import { buildGrade4FractionsFixture, G4_FRACTIONS_FIXTURE_IDS, G4_FRACTIONS_FIXTURE_TOOLKIT_MAPPING } from "../v1/fixtures/grade4FractionsFixture";
+import { buildGrade4FractionsActivitiesFixture, G4_FRACTIONS_ACTIVITIES_FIXTURE_IDS } from "../v1/fixtures/grade4FractionsActivitiesFixture";
 import type { ContentBundlePreviewResolver, LabReadiness } from "./resolver";
 
 export type FixtureRegistration = Readonly<{ build: () => ContentBundleV1; mapping: ToolkitMapping | null; label: string }>;
@@ -23,6 +24,11 @@ export const DEFAULT_PREVIEW_FIXTURES: Readonly<Record<string, FixtureRegistrati
     build: buildGrade4FractionsFixture,
     mapping: G4_FRACTIONS_FIXTURE_TOOLKIT_MAPPING,
     label: "Synthetic Grade 4 fractions test fixture (not curriculum, not reviewed, not released)",
+  },
+  [G4_FRACTIONS_ACTIVITIES_FIXTURE_IDS.bundleId]: {
+    build: buildGrade4FractionsActivitiesFixture,
+    mapping: G4_FRACTIONS_FIXTURE_TOOLKIT_MAPPING,
+    label: "Synthetic Grade 4 fractions activity experiences (governed candidate; not curriculum, not reviewed, not released)",
   },
 };
 

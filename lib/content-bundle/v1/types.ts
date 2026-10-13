@@ -421,7 +421,8 @@ export type ContentBundleValidationCode =
   | "rendering_claims_authority"
   | "student_state_forbidden"
   | "runtime_field_forbidden"
-  | "answer_key_inline";
+  | "answer_key_inline"
+  | "activity_experience_invalid";
 
 export type ContentBundleValidationError = Readonly<{
   code: ContentBundleValidationCode;
