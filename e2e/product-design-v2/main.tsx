@@ -12,6 +12,10 @@ import { classDetailFixture, myClassesFixture, scheduleFixture } from "./classFi
 import { LabsHubView } from "../../components/learner-experience/LabsHub";
 import { InteractiveLabScreen } from "../../components/learner-experience/InteractiveLabScreen";
 import { labsTabFixture, showcaseFixture } from "./labFixtures";
+import LessonViewerClient from "../../app/student/lesson/[contentId]/LessonViewerClient";
+import LessonDeliveryClient from "../../app/student/lessons/[id]/LessonDeliveryClient";
+import { parseStudentLabReturn } from "../../lib/learner-experience/labLaunch";
+import { getInteractiveLabDefinition } from "../../lib/interactive-labs/v2/registry";
 import "../../app/globals.css";
 const path = window.location.pathname;
 const params = new URLSearchParams(window.location.search);
@@ -26,11 +30,28 @@ if (params.has("showcase")) sessionStorage.setItem("fixture-showcase", params.ge
 const showcaseMode = sessionStorage.getItem("fixture-showcase");
 const showcase = showcaseMode !== null ? showcaseFixture(showcaseMode) : null;
 const labPage = path.match(/^\/student\/labs\/([^/]+)$/)?.[1];
-createRoot(document.getElementById("root")!).render(<StudentShellV2 identity={{ name, grade, userId: "fixture-student", schoolId: "fixture-school" }}>
-  {showcase && path === "/student/labs" ? <LabsHubView tab={labsTabFixture(grade)} requested={params.get("tab")} showcase={showcase.labs} aiLabsEnabled />
+const contentLesson = path.match(/^\/student\/lesson\/([^/]+)$/)?.[1];
+const assignedLesson = path.match(/^\/student\/lessons\/([^/]+)$/)?.[1];
+// Lesson → lab: the server page decides RELEASED (simulated here) and rebuilds the return from validated ids.
+const lessonLab = labPage && params.has("rt") ? (() => {
+  const labId = decodeURIComponent(labPage);
+  const origin = parseStudentLabReturn(labId, Object.fromEntries(params.entries()));
+  const definition = getInteractiveLabDefinition(labId);
+  return origin && definition ? { labId, lessonReturn: { ...origin, labVersion: definition.version, totalChecks: definition.checks.length } } : { labId, lessonReturn: null };
+})() : null;
+const fixtureRoot = createRoot(document.getElementById("root")!);
+let fixtureMount = 0;
+const renderFixture = () => fixtureRoot.render(<StudentShellV2 key={fixtureMount} identity={{ name, grade, userId: "fixture-student", schoolId: "fixture-school" }}>
+  {contentLesson ? <LessonViewerClient enabledToolIds={[]} />
+    : assignedLesson ? <LessonDeliveryClient lessonId={decodeURIComponent(assignedLesson)} enabledToolIds={[]} />
+    : lessonLab ? <InteractiveLabScreen labId={lessonLab.labId} access="RELEASED" lessonReturn={lessonLab.lessonReturn} />
+    : showcase && path === "/student/labs" ? <LabsHubView tab={labsTabFixture(grade)} requested={params.get("tab")} showcase={showcase.labs} aiLabsEnabled />
     : showcase && labPage ? <InteractiveLabScreen labId={decodeURIComponent(labPage)} access={showcase.ids.includes(decodeURIComponent(labPage)) ? "SHOWCASE" : "DENIED"} />
     : path === "/student/today" ? <TodayV2 /> : path === "/student/learn" ? <LearnV2 /> : path === "/student/lessons" ? <LessonCatalog />
     : path === "/student/classes" ? <MyClassesView model={myClassesFixture} today={myClassesFixture.today} />
     : classPage ? <ClassDetailView model={classDetailFixture(timetable)} />
     : path === "/student/schedule" ? <ScheduleView model={scheduleFixture(timetable)} view={params.get("view") === "week" ? "week" : "today"} /> : unit ? <UnitOverviewClient unitId={decodeURIComponent(unit)} /> : <main style={{ padding: 24 }}><a href="/student/today">Back to Today</a><h1>{path.includes("assignments") ? "Assignment fixture" : path.includes("labs") ? "Labs destination fixture" : path.includes("progress") ? "Progress destination fixture" : path.includes("signout") ? "Sign-out page fixture" : "Help destination fixture"}</h1><p>Destination routing fixture. This harness does not certify server authorization or the destination screen.</p></main>}
 </StudentShellV2>);
+
+renderFixture();
+window.addEventListener("lesson-fixture-remount", () => { fixtureMount++; renderFixture(); });

@@ -290,7 +290,7 @@ describe("MOE dashboard — TeacherContentPanel wired", () => {
 describe("student lesson viewer — teacher lesson completion wired", () => {
   it("handleComplete POSTs to the teacher-lessons complete endpoint when teacherCreated", async () => {
     const { readFileSync } = await import("fs");
-    const src = readFileSync("app/student/lesson/[contentId]/page.tsx", "utf-8");
+    const src = readFileSync("app/student/lesson/[contentId]/LessonViewerClient.tsx", "utf-8");
     expect(src).toContain("metadata?.teacherCreated");
     expect(src).toContain("/api/student/teacher-lessons/${contentId}/complete");
   });

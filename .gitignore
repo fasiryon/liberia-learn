@@ -142,3 +142,6 @@ scripts/finetune/data/
 
 # Interactive lab review captures (scripts/labs/capture-lab-review.ts)
 /artifacts/lab-review/
+
+# Lesson convergence retains reviewed representative captures; the browser runner may generate the full matrix locally.
+/artifacts/lesson-experience-v2-runtime/*.png

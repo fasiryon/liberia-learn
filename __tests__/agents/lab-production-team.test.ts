@@ -118,7 +118,8 @@ describe("review harness cannot expose unapproved labs to learners", () => {
     // internalPreview follows that decision and cannot grant access on its own: DENIED never mounts the player.
     const learnerScreen = read("components/learner-experience/InteractiveLabScreen.tsx");
     expect(learnerScreen).toContain('access === "DENIED" ? <p>This lab is not available.</p> : <InteractiveLabPlayer labId={labId} internalPreview={access === "SHOWCASE"} />');
-    expect(learnerScreen.match(/internalPreview=/g)).toHaveLength(1);
+    expect(learnerScreen).toContain("internalPreview={false}");
+    expect(learnerScreen.match(/internalPreview=/g)).toHaveLength(2);
   });
 
   it("middleware exempts the harness from login only outside production builds", () => {

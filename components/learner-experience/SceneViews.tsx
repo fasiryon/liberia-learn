@@ -1,7 +1,7 @@
 "use client";
 
 import { Fragment, type ReactNode } from "react";
-import type { AgeBand, Scene } from "@/lib/learner-experience/types";
+import { isKeylessFormative, type AgeBand, type FormativeItem, type KeylessFormativeItem, type Scene } from "@/lib/learner-experience/types";
 import type { ExperienceProgress } from "@/lib/learner-experience/progress";
 import { sceneBodyFor } from "@/lib/learner-experience/sceneContract";
 
@@ -18,9 +18,9 @@ export function SceneBody({ scene, ageBand }: { scene: Scene; ageBand: AgeBand }
     <div>
       <SceneText text={body} />
       {keyPoints.length > 0 && (
-        <ul className="mt-5 space-y-3">
-          {keyPoints.map((point) => (
-            <li key={point} className="flex gap-3 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] px-4 py-3 text-base leading-7 text-[var(--ll-text)]">
+        <ul data-key-points className="mt-5 space-y-3">
+          {keyPoints.map((point, pointIndex) => (
+            <li key={`${pointIndex}:${point}`} className="flex gap-3 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] px-4 py-3 text-base leading-7 text-[var(--ll-text)]">
               <span aria-hidden="true" className="mt-2.5 h-2 w-2 shrink-0 rounded-full bg-[var(--ll-accent)]" />
               <span><SceneText text={point} /></span>
             </li>
@@ -65,29 +65,41 @@ export function DiagramReveal({ scene, progress, onReveal }: { scene: Scene; pro
   );
 }
 
-/** CHECK_UNDERSTANDING: formative, instant, local feedback. Not scored evidence. */
+/**
+ * CHECK_UNDERSTANDING: formative, local feedback when the item carries an authored key. A keyless item
+ * (server-judged delivery) records the choice and says so; the device never decides it is right or wrong.
+ */
 export function FormativeCheck({ scene, progress, onAnswer }: { scene: Scene; progress: ExperienceProgress; onAnswer: (itemId: string, index: number) => void }) {
   if (scene.interaction.kind !== "MULTIPLE_CHOICE") return null;
   const responses = progress.responses[scene.id] ?? {};
+  const keyless = isKeylessFormative(scene.interaction);
+  const items = scene.interaction.items as readonly (FormativeItem | KeylessFormativeItem)[];
   return (
-    <div className="mt-6 space-y-6">
-      {scene.interaction.items.map((item, itemIndex) => {
+    <div className="mt-6 space-y-6" data-formative-feedback={keyless ? "SERVER_REQUIRED" : "LOCAL"}>
+      {items.map((item, itemIndex) => {
         const selected = typeof responses[item.id] === "number" ? (responses[item.id] as number) : null;
-        const correct = selected === item.correctIndex;
+        const keyed = "correctIndex" in item ? item : null;
+        const correct = keyed !== null && selected === keyed.correctIndex;
         return (
           <fieldset key={item.id} className="rounded-2xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-4">
             <legend className="px-1 text-base font-semibold leading-7 text-[var(--ll-text)]">{itemIndex + 1}. {item.prompt}</legend>
             <div className="mt-3 grid gap-2">
               {item.options.map((option, index) => (
-                <label key={option} className={`flex min-h-12 cursor-pointer items-center gap-3 rounded-xl border px-4 py-2 text-base ${selected === index ? "border-[var(--ll-accent)] bg-[var(--ll-bg)]" : "border-[var(--ll-border)]"}`}>
+                <label key={`${index}:${option}`} className={`flex min-h-[var(--pdv2-target,48px)] cursor-pointer items-center gap-3 rounded-xl border px-4 py-2 text-base ${selected === index ? "border-[var(--ll-accent)] bg-[var(--ll-bg)]" : "border-[var(--ll-border)]"}`}>
                   <input type="radio" name={item.id} checked={selected === index} onChange={() => onAnswer(item.id, index)} className="h-5 w-5 accent-[var(--ll-accent)]" />
                   <span>{option}</span>
                 </label>
               ))}
             </div>
-            <p role="status" className={`mt-3 text-sm leading-6 ${selected === null ? "sr-only" : correct ? "text-[var(--ll-success,#4ade80)]" : "text-[var(--ll-warning,#facc15)]"}`}>
-              {selected === null ? "" : item.optionFeedback?.[selected] ?? (correct ? item.feedback.correct : item.feedback.incorrect)}
-            </p>
+            {keyed ? (
+              <p role="status" className={`mt-3 text-sm leading-6 ${selected === null ? "sr-only" : correct ? "text-[var(--ll-success,#4ade80)]" : "text-[var(--ll-warning,#facc15)]"}`}>
+                {selected === null ? "" : keyed.optionFeedback?.[selected] ?? (correct ? keyed.feedback.correct : keyed.feedback.incorrect)}
+              </p>
+            ) : (
+              <p role="status" className={`mt-3 text-sm leading-6 text-[var(--ll-text-muted)] ${selected === null ? "sr-only" : ""}`}>
+                {selected === null ? "" : "Your choice is saved. This lesson does not mark it."}
+              </p>
+            )}
           </fieldset>
         );
       })}
@@ -124,21 +136,56 @@ export function ReflectionPrompts({ scene, progress, onWrite }: { scene: Scene; 
 }
 
 /**
+ * MEDIA: text first. Every item shows its required text alternative (and transcript), so the scene teaches
+ * without the asset. An image or diagram renders only from a same-origin path; other refs are never fetched.
+ */
+export function SceneMediaList({ scene }: { scene: Scene }) {
+  if (!scene.media?.length) return null;
+  return (
+    <div className="mt-6 space-y-4">
+      {scene.media.map((media, index) => {
+        const sameOrigin = media.ref.startsWith("/") && !media.ref.startsWith("//");
+        return (
+          <figure key={`${media.ref}-${index}`} data-media-kind={media.kind} className="overflow-hidden rounded-2xl border border-[var(--ll-border)] bg-[var(--ll-surface)]">
+            {(media.kind === "IMAGE" || media.kind === "DIAGRAM") && sameOrigin
+              // eslint-disable-next-line @next/next/no-img-element
+              ? <img src={media.ref} alt={media.alt} className="block h-auto w-full max-w-full" loading="lazy" />
+              : null}
+            <figcaption className="px-4 py-3 text-base leading-7 text-[var(--ll-text)]">
+              {(media.kind === "IMAGE" || media.kind === "DIAGRAM") && sameOrigin ? <span className="sr-only">Description: </span> : <span className="block text-xs font-semibold uppercase tracking-[0.12em] text-[var(--ll-text-muted)]">{media.kind === "VIDEO" ? "Video, as text" : media.kind === "AUDIO" ? "Audio, as text" : "Picture, described"}</span>}
+              <span>{media.alt}</span>
+              {media.transcript && <span className="mt-2 block whitespace-pre-line text-sm leading-6 text-[var(--ll-text-muted)]">{media.transcript}</span>}
+            </figcaption>
+          </figure>
+        );
+      })}
+    </div>
+  );
+}
+
+/**
  * MASTERY_CHECK → Assessment Player V2 seam. Phase A collects responses only:
  * no answer key reaches this device, nothing is scored here, and submission
  * goes through the governed evidence handoff.
  */
-export function AssessmentHandoffSeam({ scene, progress, onAnswer, submitted }: { scene: Scene; progress: ExperienceProgress; onAnswer: (itemId: string, index: number) => void; submitted: boolean }) {
+export function AssessmentHandoffSeam({ scene, progress, onAnswer, submitted, note }: { scene: Scene; progress: ExperienceProgress; onAnswer: (itemId: string, index: number) => void; submitted: boolean; note?: string }) {
   if (scene.interaction.kind !== "ASSESSMENT_HANDOFF") return null;
   const responses = progress.responses[scene.id] ?? {};
+  const { assessment } = scene.interaction;
   return (
-    <div className="mt-6 space-y-6" data-assessment-player={scene.interaction.assessment.player}>
-      {scene.interaction.assessment.items.map((item, itemIndex) => (
+    <div className="mt-6 space-y-6" data-assessment-player={assessment.player} data-assessment-id={assessment.assessmentId} data-assessment-version={assessment.assessmentVersion} data-assessment-scoring={assessment.scoring}>
+      {note && (
+        <section aria-labelledby={`handoff-${scene.id}`} className="rounded-2xl border border-[var(--ll-border)] p-4">
+          <h2 id={`handoff-${scene.id}`} className="text-base font-semibold text-[var(--ll-text)]">Final check · {assessment.items.length} {assessment.items.length === 1 ? "question" : "questions"}</h2>
+          <p className="mt-1 text-sm leading-6 text-[var(--ll-text-muted)]">{note}</p>
+        </section>
+      )}
+      {assessment.items.map((item, itemIndex) => (
         <fieldset key={item.itemId} disabled={submitted} className="rounded-2xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-4">
           <legend className="px-1 text-base font-semibold leading-7 text-[var(--ll-text)]">{itemIndex + 1}. {item.prompt}</legend>
           <div className="mt-3 grid gap-2">
             {item.options.map((option, index) => (
-              <label key={option} className={`flex min-h-12 cursor-pointer items-center gap-3 rounded-xl border px-4 py-2 text-base ${responses[item.itemId] === index ? "border-[var(--ll-accent)] bg-[var(--ll-bg)]" : "border-[var(--ll-border)]"}`}>
+              <label key={`${index}:${option}`} className={`flex min-h-[var(--pdv2-target,48px)] cursor-pointer items-center gap-3 rounded-xl border px-4 py-2 text-base ${responses[item.itemId] === index ? "border-[var(--ll-accent)] bg-[var(--ll-bg)]" : "border-[var(--ll-border)]"}`}>
                 <input type="radio" name={item.itemId} checked={responses[item.itemId] === index} onChange={() => onAnswer(item.itemId, index)} className="h-5 w-5 accent-[var(--ll-accent)]" />
                 <span>{option}</span>
               </label>

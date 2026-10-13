@@ -9,9 +9,13 @@
  */
 export const LAB_LAUNCH_CONTEXT_VERSION = 1 as const;
 
+export type { LessonRouteTarget } from "./lessonRoute";
+import { decodeReturnTarget, encodeReturnTarget, lessonRouteHref, type LessonRouteRef, type LessonReturnTarget } from "./lessonRoute";
+
 export type LabLaunchContext = Readonly<{
   v: typeof LAB_LAUNCH_CONTEXT_VERSION;
   labId: string;
+  labVersion?: string;
   linkId: string;
   origin: Readonly<{ experienceId: string; experienceVersion: string; sceneId: string; objectiveIds: readonly string[]; activityId: string }>;
 }>;
@@ -53,6 +57,7 @@ export function labLaunchQuery(context: LabLaunchContext): string {
     activity: context.origin.activityId,
     obj: context.origin.objectiveIds.join(","),
   });
+  if (context.labVersion) params.set("lv", context.labVersion);
   return params.toString();
 }
 
@@ -69,7 +74,9 @@ export function parseLabLaunchContext(labId: string, query: Record<string, strin
   if (!lab || !link || !exp || !ver || !scene || !activity) return null;
   const objectiveIds = (one("obj") ?? "").split(",").filter(Boolean);
   if (objectiveIds.length === 0 || objectiveIds.some((id) => !safeId(id))) return null;
-  return { v: LAB_LAUNCH_CONTEXT_VERSION, labId: lab, linkId: link, origin: { experienceId: exp, experienceVersion: ver, sceneId: scene, objectiveIds, activityId: activity } };
+  const labVersion = one("lv");
+  if (labVersion !== null && !safeId(labVersion)) return null;
+  return { v: LAB_LAUNCH_CONTEXT_VERSION, labId: lab, ...(labVersion ? { labVersion } : {}), linkId: link, origin: { experienceId: exp, experienceVersion: ver, sceneId: scene, objectiveIds, activityId: activity } };
 }
 
 export function buildLessonReturnHref(basePath: string, context: LabLaunchContext): string {
@@ -90,4 +97,28 @@ export function isLabReturnObservation(value: unknown): value is LabReturnObserv
     && v.completedCheckIds.every((id) => typeof id === "string") && typeof v.totalChecks === "number"
     && typeof v.tripObserved === "boolean" && typeof v.resetObserved === "boolean"
     && (v.exit === "COMPLETED" || v.exit === "RETURNED_EARLY");
+}
+
+/**
+ * Student lesson → existing Labs route. The lab route keeps its own server authorization; the lesson only
+ * adds its origin and a return target (`rt`): `c:<contentId>` or `w:<scheduledWorkId>`. The return address is
+ * rebuilt from those validated ids on the lab page, never read as a URL.
+ */
+export function buildStudentLabLaunchHref(target: LessonRouteRef, context: LabLaunchContext): string {
+  const returnTarget = encodeReturnTarget(target);
+  if (!safeId(context.labId) || !safeId(returnTarget.slice(2))) throw new Error("student_lab_launch_invalid");
+  return `/student/labs/${encodeURIComponent(context.labId)}?${labLaunchQuery(context)}&${new URLSearchParams({ rt: returnTarget }).toString()}`;
+}
+
+export type StudentLessonLabReturn = Readonly<{ context: LabLaunchContext; returnTarget: LessonReturnTarget; returnHref: string }>;
+
+/** The lesson a student lab was opened from, or null (an ordinary Labs visit, or anything malformed). */
+export function parseStudentLabReturn(labId: string, query: Record<string, string | string[] | undefined>): StudentLessonLabReturn | null {
+  const context = parseLabLaunchContext(labId, query);
+  const route = context ? decodeReturnTarget(query.rt, context.origin.experienceId) : null;
+  if (!context || !context.labVersion || !route) return null;
+  const expectedActivity = route.kind === "SCHEDULED_WORK" ? route.scheduledWorkId : route.contentId;
+  if (context.origin.activityId !== expectedActivity) return null;
+  const returnTarget = { route, sceneId: context.origin.sceneId };
+  return { context, returnTarget, returnHref: lessonRouteHref(returnTarget) };
 }

@@ -70,15 +70,26 @@ export function learnerContentAllowed(row: {
   curriculumVersion?: { status: string } | null;
   payload: unknown;
 }): boolean {
+  if (!learnerMetadataAllowed(row)) return false;
+  // A native scene payload is learner-visible only when it projects cleanly as an approved release.
+  if (!isNativeCurriculumV2Payload(row.payload)) return true;
+  const projected = projectStudentLessonPayload(row.payload);
+  return projected.studentReady === true && record(record(projected.lessonExperience).authority).status === "APPROVED_RELEASE";
+}
+
+/** Shared restrictions, before a server resolver derives native release authority. */
+export function learnerMetadataAllowed(row: {
+  visibility: unknown;
+  versionId?: string | null;
+  curriculumVersion?: { status: string } | null;
+  payload: unknown;
+}): boolean {
   if (typeof row.visibility !== "string" || !LEARNER_ROW_VISIBILITY.includes(row.visibility)) return false;
   if (row.versionId && row.curriculumVersion?.status !== "ACTIVE") return false;
   const payload = record(row.payload);
   if (!learnerAudienceValue(payload.audience) || !learnerAudienceValue(payload.visibility)) return false;
   if (RESTRICTION_FLAGS.some((flag) => flag in payload && payload[flag] !== false)) return false;
-  // A native scene payload is learner-visible only when it projects cleanly as an approved release.
-  if (!isNativeCurriculumV2Payload(row.payload)) return true;
-  const projected = projectStudentLessonPayload(row.payload);
-  return projected.studentReady === true && record(record(projected.lessonExperience).authority).status === "APPROVED_RELEASE";
+  return true;
 }
 
 /** A governed row is learner-visible only while its lifecycle is APPROVED; an ungoverned row passes. */

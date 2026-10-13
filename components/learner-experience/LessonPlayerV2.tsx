@@ -8,13 +8,14 @@ import type { AgeBand, LessonExperience, Scene } from "@/lib/learner-experience/
 import { isLinkStudentVisible, type LearningExperienceLink } from "@/lib/learner-experience/links";
 import type { LabExperience } from "@/lib/learner-experience/labExperience";
 import type { SceneToolView } from "@/lib/learner-experience/tools";
-import { advance, applyLabReturn, chooseLabFallback, goToScene, initialProgress, isSceneComplete, markLabLaunched, pendingLabSceneId, percentComplete, recordResponse, restoreProgress, retreat, revealStep, sceneIndexOf, type ExperienceProgress } from "@/lib/learner-experience/progress";
-import { buildLabLaunchHref, isLabReturnObservation, labReturnStorageKey, type LabReturnObservation } from "@/lib/learner-experience/labLaunch";
+import { advance, applyLabReturn, chooseLabFallback, goToScene, isSceneComplete, markLabLaunched, pendingLabSceneId, percentComplete, recordResponse, restoreProgress, retreat, revealStep, sceneIndexOf, type ExperienceProgress } from "@/lib/learner-experience/progress";
+import { buildLabLaunchHref, buildStudentLabLaunchHref, isLabReturnObservation, labReturnStorageKey, type LabLaunchContext, type LabReturnObservation } from "@/lib/learner-experience/labLaunch";
 import { buildEvidenceEnvelope, type ExperienceEvidenceEnvelope } from "@/lib/learner-experience/evidenceHandoff";
+import { isSafeRuntimeId, type EvidenceChannel, type EvidenceReceipt, type LessonRouteTarget, type LessonRuntimeAvailability, type LessonRuntimeIdentity, type RuntimeLabLink } from "@/lib/learner-experience/lessonRuntime";
 import { loadExperienceProgress, saveExperienceProgress } from "@/lib/learner-experience/progressStore";
 import { TOOL_COMPONENTS } from "@/components/toolkit/toolComponents";
-import { AssessmentHandoffSeam, DiagramReveal, FormativeCheck, ReflectionPrompts, SceneBody } from "./SceneViews";
-import { LabScene } from "./LabScene";
+import { AssessmentHandoffSeam, DiagramReveal, FormativeCheck, ReflectionPrompts, SceneBody, SceneMediaList } from "./SceneViews";
+import { LabScene, type LabSceneView } from "./LabScene";
 
 const TYPE_LABEL: Record<Scene["type"], string> = {
   INTRO: "Introduction", OBJECTIVE: "Goal", EXPLANATION: "Learn", MEDIA: "Watch", INTERACTIVE_DIAGRAM: "Explore",
@@ -42,12 +43,37 @@ function useOnline(): boolean {
   return online;
 }
 
+/**
+ * A student lesson served by the server (live or a signed offline copy). Everything here is stated by the
+ * server; the player only presents it. Without it the player runs the internal prototype.
+ */
+export type LessonPlayerRuntime = Readonly<{
+  identity: LessonRuntimeIdentity;
+  availability: LessonRuntimeAvailability;
+  target: LessonRouteTarget;
+  labLinks: readonly RuntimeLabLink[];
+  evidence: EvidenceChannel;
+  /** The server's evidence disposition for this delivery, shown as given (never upgraded here). */
+  evidenceDisposition: string | null;
+  serverCompletion: Readonly<{ completedAt: string }> | null;
+}>;
+
+/** What happened when the learner finished. Never a score and never mastery. */
+type FinishState =
+  | Readonly<{ status: "PROTOTYPE"; envelope: ExperienceEvidenceEnvelope }>
+  | Readonly<{ status: "PRESENTATION_ONLY" }>
+  | Readonly<{ status: "READ_ONLY" }>
+  | Readonly<{ status: "PENDING"; reason: "OFFLINE" | "FAILED" }>
+  | Readonly<{ status: "SENDING" }>
+  | Readonly<{ status: "SENT"; receipt: EvidenceReceipt }>;
+
 export type LessonPlayerV2Props = {
   experience: LessonExperience;
-  links: readonly LearningExperienceLink[];
-  labs: Readonly<Record<string, LabExperience>>;
+  /** Internal prototype: governed links and lab definitions. A student runtime uses `runtime.labLinks`. */
+  links?: readonly LearningExperienceLink[];
+  labs?: Readonly<Record<string, LabExperience>>;
   toolsByScene: Readonly<Record<string, readonly SceneToolView[]>>;
-  basePath: string;
+  basePath?: string;
   exitHref: string;
   /** From the URL after a lab return: the scene to restore. */
   returnSceneId: string | null;
@@ -57,39 +83,75 @@ export type LessonPlayerV2Props = {
    * anything else shows the scene's text walkthrough. INTERNAL_PREVIEW is for dev-only review routes.
    */
   linkPolicy?: "STUDENT" | "INTERNAL_PREVIEW";
+  runtime?: LessonPlayerRuntime;
 };
 
-export function LessonPlayerV2({ experience, links, labs, toolsByScene, basePath, exitHref, returnSceneId, ageBand, linkPolicy = "STUDENT" }: LessonPlayerV2Props) {
+const NO_LINKS: readonly LearningExperienceLink[] = [];
+const NO_LABS: Readonly<Record<string, LabExperience>> = {};
+
+export function LessonPlayerV2({ experience, links = NO_LINKS, labs = NO_LABS, toolsByScene, basePath, exitHref, returnSceneId, ageBand, linkPolicy = "STUDENT", runtime }: LessonPlayerV2Props) {
   const router = useRouter();
   const online = useOnline();
   const band = ageBand ?? experience.ageBand;
   const [progress, setProgress] = useState<ExperienceProgress | null>(null);
   const [openTool, setOpenTool] = useState<string | null>(null);
-  const [submitted, setSubmitted] = useState<ExperienceEvidenceEnvelope | null>(null);
+  const [finished, setFinished] = useState<FinishState | null>(null);
+  const [restartedForNewVersion, setRestartedForNewVersion] = useState(false);
   const headingRef = useRef<HTMLHeadingElement>(null);
   const restoredScene = useRef<string | null>(null);
+  const readOnly = runtime?.availability === "CACHED_READ_ONLY";
+
+  /** The lab link a LAB scene may use, and whether the hand-back for it may be accepted. */
+  const sceneLab = useCallback((scene: Scene): { linkId: string; labId: string; view: LabSceneView; launchable: boolean } | null => {
+    if (scene.interaction.kind !== "LAB_LAUNCH") return null;
+    const linkId = scene.interaction.linkId;
+    if (runtime) {
+      // Server-authorized only. The lab route re-checks its own authorization when it opens.
+      const link = runtime.labLinks.find((candidate) => candidate.linkId === linkId && candidate.sceneId === scene.id);
+      if (!link) return null;
+      // Launchable only live, and only when the lesson address can be rebuilt as the lab's return target.
+      const returnId = runtime.target.kind === "CONTENT" ? runtime.target.contentId : runtime.target.scheduledWorkId;
+      return { linkId, labId: link.labId, view: { title: link.title, summary: link.summary, draft: false, degradation: null, tripNarrative: false }, launchable: runtime.availability === "CURRENT" && isSafeRuntimeId(returnId) };
+    }
+    const placed = links.find((candidate) => candidate.linkId === linkId) ?? null;
+    const lab = placed ? labs[placed.experience.labId] ?? null : null;
+    if (!placed || !lab || (linkPolicy !== "INTERNAL_PREVIEW" && !isLinkStudentVisible(placed, experience, lab))) return null;
+    return { linkId, labId: lab.labId, view: { title: lab.title, summary: lab.summary || null, draft: lab.release.status !== "RELEASED", degradation: lab.offline.degradation, tripNarrative: true }, launchable: true };
+  }, [runtime, links, labs, linkPolicy, experience]);
+  // The resume effect reads the latest resolver without re-running when a parent re-renders.
+  const sceneLabRef = useRef(sceneLab);
+  sceneLabRef.current = sceneLab;
+
+  // Resume is keyed by stable identity: an equal lesson re-delivered by a refetch never resets the learner.
+  const experienceRef = useRef(experience);
+  experienceRef.current = experience;
+  const identityKey = `${experience.id}@${experience.version}`;
 
   // Resume: saved position (partitioned IndexedDB), then any lab hand-back for this lesson.
   useEffect(() => {
     let cancelled = false;
+    const experience = experienceRef.current;
     void (async () => {
       const saved = await loadExperienceProgress(experience.id).catch(() => null);
       // A superseded run must not consume the one-shot lab hand-back slot.
       if (cancelled) return;
       let next = restoreProgress(experience, saved);
+      // Saved work from another version of this lesson is not mapped onto changed scenes: say so plainly.
+      const savedVersion = saved && typeof saved === "object" ? (saved as { experienceId?: unknown; experienceVersion?: unknown }) : null;
+      setRestartedForNewVersion(Boolean(savedVersion && savedVersion.experienceId === experience.id && typeof savedVersion.experienceVersion === "string" && savedVersion.experienceVersion !== experience.version));
       // A pending launch (return link or browser Back) is consumed. If IndexedDB lost the launch marker, a valid
       // hand-back with the return link still restores the scene. A reload of an old return URL has no hand-back
       // left, so it never pulls the learner backwards; the return parameters are also stripped from the address.
       const pending = pendingLabSceneId(next);
       const candidateSceneId = returnSceneId ?? pending;
       const candidateScene = experience.scenes.find((item) => item.id === candidateSceneId);
-      const candidateLinkId = candidateScene?.interaction.kind === "LAB_LAUNCH" ? candidateScene.interaction.linkId : null;
+      const candidateLab = candidateScene ? sceneLabRef.current(candidateScene) : null;
       // The lab's one-shot hand-back, accepted only for the link placed on the scene being returned to.
       let observation: LabReturnObservation | null = null;
       try {
         const raw = window.sessionStorage.getItem(labReturnStorageKey(experience.id));
         const parsed = raw ? JSON.parse(raw) : null;
-        if (isLabReturnObservation(parsed) && candidateLinkId && parsed.linkId === candidateLinkId && links.some((candidate) => candidate.linkId === parsed.linkId && candidate.experience.labId === parsed.labId)) observation = parsed;
+        if (isLabReturnObservation(parsed) && candidateLab && parsed.linkId === candidateLab.linkId && parsed.labId === candidateLab.labId) observation = parsed;
       } catch { /* storage unavailable */ }
       const labSceneId = candidateSceneId && (candidateSceneId === pending || observation) ? candidateSceneId : null;
       if (returnSceneId) window.history.replaceState(window.history.state, "", window.location.pathname);
@@ -100,7 +162,7 @@ export function LessonPlayerV2({ experience, links, labs, toolsByScene, basePath
       if (!cancelled) setProgress(next);
     })();
     return () => { cancelled = true; };
-  }, [experience, links, returnSceneId]);
+  }, [identityKey, returnSceneId]);
 
   useEffect(() => {
     if (progress) void saveExperienceProgress(progress).catch(() => undefined);
@@ -127,9 +189,7 @@ export function LessonPlayerV2({ experience, links, labs, toolsByScene, basePath
   const complete = progress ? isSceneComplete(scene, progress) : false;
   const isLast = index === experience.scenes.length - 1;
   const furthest = progress ? Math.max(index, ...progress.completedSceneIds.map((id) => experience.scenes.findIndex((candidate) => candidate.id === id) + 1)) : 0;
-  const placedLink = scene.interaction.kind === "LAB_LAUNCH" ? links.find((candidate) => candidate.linkId === (scene.interaction as { linkId: string }).linkId) ?? null : null;
-  const placedLab = placedLink ? labs[placedLink.experience.labId] ?? null : null;
-  const link = placedLink && placedLab && (linkPolicy === "INTERNAL_PREVIEW" || isLinkStudentVisible(placedLink, experience, placedLab)) ? placedLink : null;
+  const lab = sceneLab(scene);
   const objectives = useMemo(() => experience.objectives.filter((objective) => scene.objectiveIds.includes(objective.id)), [experience.objectives, scene.objectiveIds]);
   const tools = toolsByScene[scene.id] ?? [];
 
@@ -148,30 +208,65 @@ export function LessonPlayerV2({ experience, links, labs, toolsByScene, basePath
   const update = useCallback((change: (current: ExperienceProgress) => ExperienceProgress) => setProgress((current) => (current ? change(current) : current)), []);
 
   const launchLab = async () => {
-    if (!progress || !link) return;
+    if (!progress || !lab || !lab.launchable) return;
+    // The objectives the lab serves: the governed link's own (prototype), else the LAB scene's server-stated ones.
+    const placed = runtime ? null : links.find((candidate) => candidate.linkId === lab.linkId) ?? null;
+    const objectiveIds = placed?.objectiveIds ?? (scene.objectiveIds.length ? scene.objectiveIds : experience.objectives.map((objective) => objective.id));
+    const context: LabLaunchContext | undefined = runtime ? runtime.labLinks.find((link) => link.linkId === lab.linkId)?.launchContext : { v: 1, labId: lab.labId, linkId: lab.linkId, origin: { experienceId: experience.id, experienceVersion: experience.version, sceneId: scene.id, objectiveIds, activityId: experience.id } };
+    if (!context) return;
     const launched = markLabLaunched(progress, scene.id);
     setProgress(launched);
     await saveExperienceProgress(launched).catch(() => undefined);
-    router.push(buildLabLaunchHref(basePath, { v: 1, labId: link.experience.labId, linkId: link.linkId, origin: { experienceId: experience.id, experienceVersion: experience.version, sceneId: scene.id, objectiveIds: link.objectiveIds, activityId: experience.id } }));
+    router.push(runtime ? buildStudentLabLaunchHref(runtime.target, context) : buildLabLaunchHref(basePath ?? "", context));
+  };
+
+  /** Hand the observations to the server channel, only for the current server version and only online. */
+  const submit = async (envelope: ExperienceEvidenceEnvelope) => {
+    if (!runtime || runtime.evidence.status !== "SERVER") return;
+    if (runtime.availability !== "CURRENT" || envelope.experienceId !== runtime.identity.lessonId || envelope.experienceVersion !== runtime.identity.lessonVersion) { setFinished({ status: "READ_ONLY" }); return; }
+    if (!navigator.onLine) { setFinished({ status: "PENDING", reason: "OFFLINE" }); return; }
+    setFinished({ status: "SENDING" });
+    try {
+      const receipt = await runtime.evidence.submit(envelope);
+      setFinished(receipt.accepted ? { status: "SENT", receipt } : { status: "PENDING", reason: "FAILED" });
+    } catch {
+      setFinished({ status: "PENDING", reason: "FAILED" });
+    }
   };
 
   const finish = () => {
     if (!progress || !complete) return;
+    const done = advance(experience, progress);
+    update(() => done);
     // Governed handoff: observations only. The existing authority decides what happens next.
-    setSubmitted(buildEvidenceEnvelope(experience, advance(experience, progress), links, labs));
-    update((current) => advance(experience, current));
+    const envelope = buildEvidenceEnvelope(experience, done, links, labs);
+    if (!runtime) { setFinished({ status: "PROTOTYPE", envelope }); return; }
+    if (readOnly) { setFinished({ status: "READ_ONLY" }); return; }
+    if (runtime.evidence.status === "PRESENTATION_ONLY") { setFinished({ status: "PRESENTATION_ONLY" }); return; }
+    void submit(envelope);
+  };
+
+  const retrySend = () => {
+    if (!progress) return;
+    void submit(buildEvidenceEnvelope(experience, progress, links, labs));
   };
 
   if (!progress) {
     return <div className="min-h-dvh bg-[var(--ll-bg)] px-4 py-10" aria-busy="true"><p className="mx-auto max-w-2xl text-[var(--ll-text-muted)]">Loading your lesson…</p></div>;
   }
 
+  const submittedOrLocked = finished !== null && finished.status !== "PENDING";
+  const assessmentNote = !runtime ? undefined
+    : readOnly ? "This is a saved copy. Your answers stay on this device and are not marked."
+    : runtime.evidence.status === "SERVER" ? "Your answers are marked by your school's assessment system, not by this lesson."
+    : "Your answers stay on this device. They are not marked or sent from this lesson yet.";
+
   const ToolComponent = openTool ? TOOL_COMPONENTS[openTool] : null;
   const contextPanel = (
     <div className="space-y-5">
       <section aria-labelledby="ctx-objective">
         <h2 id="ctx-objective" className="text-xs font-semibold uppercase tracking-[0.12em] text-[var(--ll-text-muted)]">This scene helps you</h2>
-        <ul className="mt-2 space-y-2">{objectives.map((objective) => <li key={objective.id} className="text-sm leading-6 text-[var(--ll-text)]">{objective.statement}</li>)}</ul>
+        <ul className="mt-2 space-y-2">{objectives.map((objective) => <li key={objective.id} data-objective-id={objective.id} className="text-sm leading-6 text-[var(--ll-text)]">{objective.statement}</li>)}</ul>
       </section>
       <section aria-labelledby="ctx-tools">
         <h2 id="ctx-tools" className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.12em] text-[var(--ll-text-muted)]"><Wrench size={14} aria-hidden="true" /> Tools</h2>
@@ -192,7 +287,7 @@ export function LessonPlayerV2({ experience, links, labs, toolsByScene, basePath
         <h2 id="ctx-help" className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.12em] text-[var(--ll-text-muted)]"><CircleHelp size={14} aria-hidden="true" /> Help</h2>
         <ul className="mt-2 space-y-2 text-sm">
           <li><Link href="/student/ai-tutor" className="inline-flex min-h-11 items-center text-[var(--ll-accent)] underline-offset-4 hover:underline">Ask the AI tutor</Link></li>
-          <li className="flex gap-2 text-[var(--ll-text-muted)]"><Flag size={14} className="mt-1 shrink-0" aria-hidden="true" /> Need your teacher? Released lessons connect here to the existing &quot;Flag for teacher&quot; path.</li>
+          {!runtime && <li className="flex gap-2 text-[var(--ll-text-muted)]"><Flag size={14} className="mt-1 shrink-0" aria-hidden="true" /> Need your teacher? Released lessons connect here to the existing &quot;Flag for teacher&quot; path.</li>}
           <li className="text-[var(--ll-text-muted)]">{online ? "Your place is saved on this device." : `Offline: ${scene.offline.fallback}`}</li>
         </ul>
       </section>
@@ -200,15 +295,28 @@ export function LessonPlayerV2({ experience, links, labs, toolsByScene, basePath
   );
 
   return (
-    <div data-lesson-player-v2 data-scene-id={scene.id} className="min-h-dvh bg-[var(--ll-bg)] text-[var(--ll-text)]">
+    <div
+      data-lesson-player-v2
+      data-lesson-id={experience.id}
+      data-lesson-version={experience.version}
+      data-scene-id={scene.id}
+      data-scene-type={scene.type}
+      data-objective-ids={scene.objectiveIds.join(" ")}
+      data-availability={runtime?.availability ?? "PROTOTYPE"}
+      data-evidence-disposition={runtime?.evidenceDisposition ?? undefined}
+      data-release-id={runtime?.identity.releaseId ?? undefined}
+      data-age-band={band}
+      className="ll-lesson-v2 min-h-dvh bg-[var(--ll-bg)] text-[var(--ll-text)]"
+    >
       <header className="sticky z-30 border-b border-[var(--ll-border)] bg-[var(--ll-bg)]/95 backdrop-blur" style={{ top: "env(safe-area-inset-top, 0px)" }}>
         <div className="mx-auto flex max-w-7xl items-center gap-3 px-4 py-3">
-          <Link href={exitHref} aria-label="Leave lesson" className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-xl border border-[var(--ll-border)]"><ChevronLeft size={20} aria-hidden="true" /></Link>
+          <Link href={exitHref} aria-label="Leave lesson" className="inline-flex min-h-[var(--pdv2-target,44px)] min-w-[var(--pdv2-target,44px)] items-center justify-center rounded-xl border border-[var(--ll-border)]"><ChevronLeft size={20} aria-hidden="true" /></Link>
           <div className="min-w-0 flex-1">
             <p className="truncate text-sm font-semibold leading-5">{experience.title}</p>
             <p className="text-xs text-[var(--ll-text-muted)]">Scene {index + 1} of {experience.scenes.length} · {TYPE_LABEL[scene.type]}</p>
           </div>
-          {experience.authority.status !== "APPROVED_RELEASE" && <span className="hidden shrink-0 rounded-full border border-[var(--ll-border)] px-3 py-1 text-xs text-[var(--ll-text-muted)] sm:inline">Internal prototype</span>}
+          {readOnly && <span className="shrink-0 rounded-full border border-[var(--ll-border)] px-3 py-1 text-xs text-[var(--ll-text-muted)]">Saved copy</span>}
+          {!runtime && experience.authority.status !== "APPROVED_RELEASE" && <span className="hidden shrink-0 rounded-full border border-[var(--ll-border)] px-3 py-1 text-xs text-[var(--ll-text-muted)] sm:inline">Internal prototype</span>}
         </div>
         <div role="progressbar" aria-label="Lesson progress" aria-valuemin={0} aria-valuemax={100} aria-valuenow={percentComplete(experience, progress)} className="h-1 w-full bg-[var(--ll-border)]">
           <div className="h-1 bg-[var(--ll-accent)] motion-safe:transition-[width]" style={{ width: `${percentComplete(experience, progress)}%` }} />
@@ -237,26 +345,31 @@ export function LessonPlayerV2({ experience, links, labs, toolsByScene, basePath
 
         <main id="lesson-scene" className="min-w-0">
           <article aria-labelledby="scene-title" className="mx-auto max-w-2xl">
+            {runtime && (readOnly || restartedForNewVersion || !online) && (
+              <div role="status" className="mb-5 space-y-2 rounded-2xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-4 text-sm leading-6 text-[var(--ll-text)]" data-runtime-notice>
+                {readOnly && <p>You are using a saved copy of this lesson. You can read and practise, but nothing is sent from it and labs cannot open. Connect to the internet to open the current version.</p>}
+                {!readOnly && !online && <p>You are offline. You can keep going; nothing is sent until you are back online.</p>}
+                {restartedForNewVersion && <p>This lesson was updated since you last opened it, so it starts again from the beginning. Your earlier answers were for the older version.</p>}
+              </div>
+            )}
             <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--ll-accent)]">{TYPE_LABEL[scene.type]}</p>
-            <h1 id="scene-title" ref={headingRef} tabIndex={-1} className="mt-2 text-2xl font-semibold leading-tight outline-none sm:text-3xl">{scene.title}</h1>
-            <div className="mt-5"><SceneBody scene={scene} ageBand={band} /></div>
-            <DiagramReveal scene={scene} progress={progress} onReveal={(stepId) => update((current) => revealStep(current, scene.id, stepId))} />
-            <FormativeCheck scene={scene} progress={progress} onAnswer={(itemId, value) => update((current) => recordResponse(current, scene.id, itemId, value))} />
-            {scene.type === "LAB" && <LabScene scene={scene} lab={link ? labs[link.experience.labId] ?? null : null} link={link} progress={progress} online={online} onLaunch={() => void launchLab()} onFallback={() => update((current) => chooseLabFallback(current, scene.id))} />}
-            <ReflectionPrompts scene={scene} progress={progress} onWrite={(promptId, text) => update((current) => recordResponse(current, scene.id, promptId, text))} />
-            <AssessmentHandoffSeam scene={scene} progress={progress} submitted={!!submitted} onAnswer={(itemId, value) => update((current) => recordResponse(current, scene.id, itemId, value))} />
-            {submitted && (
-              <section role="status" aria-labelledby="handoff-title" className="mt-6 rounded-2xl border border-[var(--ll-accent)] bg-[var(--ll-surface)] p-5">
-                <h2 id="handoff-title" className="text-lg font-semibold">Lesson finished</h2>
-                <p className="mt-2 text-base leading-7">Your answers and lab work are ready as {submitted.observations.length} observations for your learning plan. Your next step is chosen by your learning plan, not by this lesson.</p>
-                <p className="mt-2 text-xs leading-5 text-[var(--ll-text-muted)]" data-evidence-dispositions={submitted.observations.map((o) => o.disposition).join(" ")}>
-                  Prototype: nothing is sent, saved or scored. In a released lesson these observations go to the school&apos;s evidence system; here each one is a raw observation because this lesson and lab are not released.
-                </p>
-                <Link href="/student/learn" className="mt-4 inline-flex min-h-12 items-center rounded-xl bg-[var(--ll-accent)] px-5 py-3 text-base font-semibold text-[var(--ll-bg)]">See my next step</Link>
+            <h1 id="scene-title" ref={headingRef} tabIndex={-1} className="mt-2 text-2xl font-semibold leading-tight outline-none [overflow-wrap:anywhere] sm:text-3xl">{scene.title}</h1>
+            {runtime && index === 0 && experience.objectives.length > 0 && (
+              <section aria-labelledby="lesson-goals" className="mt-5 rounded-2xl border border-[var(--ll-border)] p-4">
+                <h2 id="lesson-goals" className="text-base font-semibold">In this lesson you will</h2>
+                <ul className="mt-2 list-disc space-y-1 pl-5 text-base leading-7">{experience.objectives.map((objective) => <li key={objective.id} data-objective-id={objective.id}>{objective.statement}</li>)}</ul>
               </section>
             )}
+            <div className="mt-5"><SceneBody scene={scene} ageBand={band} /></div>
+            <SceneMediaList scene={scene} />
+            <DiagramReveal scene={scene} progress={progress} onReveal={(stepId) => update((current) => revealStep(current, scene.id, stepId))} />
+            <FormativeCheck scene={scene} progress={progress} onAnswer={(itemId, value) => update((current) => recordResponse(current, scene.id, itemId, value))} />
+            {scene.type === "LAB" && <LabScene scene={scene} view={lab?.view ?? null} launchable={!!lab?.launchable} progress={progress} online={online} onLaunch={() => void launchLab()} onFallback={() => update((current) => chooseLabFallback(current, scene.id))} />}
+            <ReflectionPrompts scene={scene} progress={progress} onWrite={(promptId, text) => update((current) => recordResponse(current, scene.id, promptId, text))} />
+            <AssessmentHandoffSeam scene={scene} progress={progress} submitted={submittedOrLocked} note={assessmentNote} onAnswer={(itemId, value) => update((current) => recordResponse(current, scene.id, itemId, value))} />
+            {finished && <FinishedPanel finished={finished} runtime={runtime} exitHref={exitHref} online={online} onRetry={retrySend} />}
             <details className="mt-8 rounded-2xl border border-[var(--ll-border)] p-4 lg:hidden">
-              <summary className="min-h-11 cursor-pointer text-base font-semibold">Tools, goal and help</summary>
+              <summary className="flex min-h-[var(--pdv2-target,44px)] cursor-pointer items-center text-base font-semibold">Tools, goal and help</summary>
               <div className="mt-4">{contextPanel}</div>
             </details>
           </article>
@@ -268,20 +381,66 @@ export function LessonPlayerV2({ experience, links, labs, toolsByScene, basePath
       <footer ref={footerRef} className="fixed inset-x-0 bottom-0 z-30 border-t border-[var(--ll-border)] bg-[var(--ll-bg)]/95 backdrop-blur" style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }}>
         {!complete && <p id="continue-hint" className="mx-auto max-w-2xl px-4 pt-2 text-center text-sm leading-5 text-[var(--ll-text-muted)]">{BLOCKED_HINT[scene.completion.kind]}</p>}
         <div className="mx-auto flex max-w-2xl items-center justify-between gap-3 px-4 py-3">
-          <button type="button" onClick={() => update((current) => retreat(experience, current))} disabled={index === 0} className="inline-flex min-h-12 items-center gap-1 rounded-xl border border-[var(--ll-border)] px-4 py-3 text-base font-semibold disabled:opacity-40">
+          <button type="button" onClick={() => update((current) => retreat(experience, current))} disabled={index === 0} className="inline-flex min-h-[var(--pdv2-target,48px)] items-center gap-1 rounded-xl border border-[var(--ll-border)] px-4 py-3 text-base font-semibold disabled:opacity-40">
             <ChevronLeft size={18} aria-hidden="true" /> Previous
           </button>
           {isLast ? (
-            <button type="button" onClick={finish} disabled={!complete || !!submitted} aria-describedby={complete ? undefined : "continue-hint"} className="inline-flex min-h-12 items-center gap-1 rounded-xl bg-[var(--ll-accent)] px-5 py-3 text-base font-semibold text-[var(--ll-bg)] disabled:opacity-40">
-              {submitted ? "Finished" : "Finish"} <Check size={18} aria-hidden="true" />
+            <button type="button" onClick={finish} disabled={!complete || !!finished} aria-describedby={complete ? undefined : "continue-hint"} className="inline-flex min-h-[var(--pdv2-target,48px)] items-center gap-1 rounded-xl bg-[var(--ll-accent)] px-5 py-3 text-base font-semibold text-[var(--ll-bg)] disabled:opacity-40">
+              {finished ? "Finished" : "Finish"} <Check size={18} aria-hidden="true" />
             </button>
           ) : (
-            <button type="button" onClick={() => update((current) => advance(experience, current))} disabled={!complete} aria-describedby={complete ? undefined : "continue-hint"} className="inline-flex min-h-12 items-center gap-1 rounded-xl bg-[var(--ll-accent)] px-5 py-3 text-base font-semibold text-[var(--ll-bg)] disabled:opacity-40">
+            <button type="button" onClick={() => update((current) => advance(experience, current))} disabled={!complete} aria-describedby={complete ? undefined : "continue-hint"} className="inline-flex min-h-[var(--pdv2-target,48px)] items-center gap-1 rounded-xl bg-[var(--ll-accent)] px-5 py-3 text-base font-semibold text-[var(--ll-bg)] disabled:opacity-40">
               Continue <ChevronRight size={18} aria-hidden="true" />
             </button>
           )}
         </div>
       </footer>
     </div>
+  );
+}
+
+const DISPOSITION_LABEL: Record<string, string> = {
+  RAW_OBSERVATION: "kept as a note",
+  PROVISIONAL: "added to your learning record",
+  SUBMIT_TO_ASSESSMENT_AUTHORITY: "sent for marking",
+};
+
+/** Lesson end. Shows only what is true: what was sent (and the server's answer), or that nothing was. */
+function FinishedPanel({ finished, runtime, exitHref, online, onRetry }: { finished: FinishState; runtime?: LessonPlayerRuntime; exitHref: string; online: boolean; onRetry: () => void }) {
+  const completion = runtime?.serverCompletion ? new Date(runtime.serverCompletion.completedAt) : null;
+  const headingRef = useRef<HTMLHeadingElement>(null);
+  // Finish is pressed in the fixed footer: bring the outcome into view (it is below the questions on a phone).
+  useEffect(() => {
+    if (!runtime) return;
+    headingRef.current?.scrollIntoView?.({ block: "center" });
+    headingRef.current?.focus({ preventScroll: true });
+  }, [runtime, finished.status]);
+  return (
+    <section role="status" aria-labelledby="handoff-title" data-finish-state={finished.status} className="mt-6 rounded-2xl border border-[var(--ll-accent)] bg-[var(--ll-surface)] p-5">
+      <h2 id="handoff-title" ref={headingRef} tabIndex={-1} className="text-lg font-semibold outline-none">Lesson finished</h2>
+      {finished.status === "PROTOTYPE" && <>
+        <p className="mt-2 text-base leading-7">Your answers and lab work are ready as {finished.envelope.observations.length} observations for your learning plan. Your next step is chosen by your learning plan, not by this lesson.</p>
+        <p className="mt-2 text-xs leading-5 text-[var(--ll-text-muted)]" data-evidence-dispositions={finished.envelope.observations.map((o) => o.disposition).join(" ")}>
+          Prototype: nothing is sent, saved or scored. In a released lesson these observations go to the school&apos;s evidence system; here each one is a raw observation because this lesson and lab are not released.
+        </p>
+      </>}
+      {finished.status === "PRESENTATION_ONLY" && <p className="mt-2 text-base leading-7">You reached the end. Your progress is saved on this device only: this lesson does not send your answers to your teacher or your learning record yet, and it does not decide what you have mastered.</p>}
+      {finished.status === "READ_ONLY" && <p className="mt-2 text-base leading-7">You finished a saved copy of this lesson. Nothing was sent from it. Connect to the internet and open the lesson again to work in the current version.</p>}
+      {finished.status === "SENDING" && <p className="mt-2 text-base leading-7">Sending your work…</p>}
+      {finished.status === "PENDING" && <>
+        <p className="mt-2 text-base leading-7">{finished.reason === "OFFLINE" ? "You are offline, so your work has not been sent. It stays on this device." : "Your work could not be sent. It stays on this device."}</p>
+        <button type="button" onClick={onRetry} disabled={!online} className="mt-3 min-h-[var(--pdv2-target,48px)] rounded-xl border border-[var(--ll-border)] px-4 py-2 text-base font-semibold disabled:opacity-50">Try sending again</button>
+      </>}
+      {finished.status === "SENT" && <>
+        <p className="mt-2 text-base leading-7">Your work was sent. Your next step is chosen by your learning plan, not by this lesson.</p>
+        {finished.receipt.dispositions.length > 0 && (
+          <ul className="mt-2 list-disc space-y-1 pl-5 text-sm leading-6 text-[var(--ll-text-muted)]" data-evidence-dispositions={finished.receipt.dispositions.map((d) => d.disposition).join(" ")}>
+            {finished.receipt.dispositions.map((d) => <li key={d.observationId}>One part of your work was {DISPOSITION_LABEL[d.disposition] ?? "received"}.</li>)}
+          </ul>
+        )}
+      </>}
+      {completion && !Number.isNaN(completion.getTime()) && <p className="mt-2 text-sm leading-6 text-[var(--ll-text-muted)]" data-server-completion>Your class record shows this lesson as completed.</p>}
+      <Link href={runtime ? exitHref : "/student/learn"} className="mt-4 inline-flex min-h-[var(--pdv2-target,48px)] items-center rounded-xl bg-[var(--ll-accent)] px-5 py-3 text-base font-semibold text-[var(--ll-bg)]">{runtime ? "Back to my lessons" : "See my next step"}</Link>
+    </section>
   );
 }

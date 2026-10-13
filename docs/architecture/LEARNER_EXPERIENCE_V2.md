@@ -64,3 +64,39 @@ migration plans. It does not change any rule above: lessons and labs emit
 observations only, the server scores, and the existing DecisionModel and
 Learning Orchestrator choose the next action. The Phase B contract for
 Curriculum V2 is `docs/architecture/learner-experience-v2/CURRICULUM_V2_HANDOFF.md`.
+
+## Lesson Experience V2 runtime (student lesson routes)
+
+`/student/lesson/[contentId]` and `/student/lessons/[scheduledWorkId]` consult
+`GET /api/student/lessons/:id/experience?kind=CONTENT|SCHEDULED_WORK` first.
+Delivery contract `lesson-experience-delivery/1.1.0` carries the server-resolved
+`routeTarget`. The shared route model, return target, encoder and URL builder
+live in `lib/learner-experience/lessonRoute.ts`.
+
+`NATIVE_V2` uses Lesson Player V2; `LEGACY_COMPATIBLE` retains the existing
+legacy renderer and its enrichment metadata. Authorized native denials carry
+`format: NATIVE_V2` and `NOT_RELEASED`, `REVOKED` (410) or `NOT_STUDENT_READY`;
+they never fall back to legacy. Before school/class/learner authorization,
+missing and restricted records reveal no native format or release status.
+Assignments reach the seam directly without the legacy work API's authored
+status gate, date-window alias lookup, or scheduled-work creation.
+
+- Live formative delivery is keyless (`feedbackAuthority: SERVER_REQUIRED`);
+  the runtime rejects keyed payloads and records choices without correctness.
+- Only `authorizedLabLinks` open a lesson-linked lab. Each link has exact
+  launch context and structured `{ route, sceneId }` return target. `rt=c:<id>`
+  or `rt=w:<id>` identifies the actual originating route; `lv` carries the
+  authorized lab version. The lab page reauthorizes the exact lesson/link and
+  requires the runtime version to match. Showcase grants never supply lesson
+  link certification.
+- Evidence remains `OBSERVATION_ONLY`, `authoritativeSubmission: false`,
+  `masteryMutation: false`, `submissionEndpoint: null`, with next action owned
+  by the Learning Orchestrator. Production injects no submission channel.
+- Admitted offline native copies allow read-only scenes, local navigation and
+  resume. They cannot launch labs, grade or submit evidence. Reconnect requests
+  the exact version; access loss purges the cache, and changed identity/version
+  becomes `INCOMPATIBLE_VERSION`. The seam grants no offline cache admission.
+
+See `learner-experience-v2/LESSON_EXPERIENCE_DELIVERY.md` for the convergence
+inventory, authority rules, synthetic validation scope and limitations. There
+is still no released production native V2 lesson binding or certified lab.

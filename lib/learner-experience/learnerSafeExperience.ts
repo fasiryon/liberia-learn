@@ -65,7 +65,18 @@ function interaction(value: unknown, path: string): SceneInteraction {
         return { id: str(s.id, `${path}.steps[${index}].id`), label: str(s.label, `${path}.steps[${index}].label`), description: str(s.description, `${path}.steps[${index}].description`) };
       }),
     };
-    case "MULTIPLE_CHOICE": return {
+    // Delivered without keys: the server judges correctness, so the device only ever sees prompt and options.
+    case "MULTIPLE_CHOICE": if (source.feedbackAuthority === "SERVER_REQUIRED") return {
+      kind: "MULTIPLE_CHOICE",
+      feedbackAuthority: "SERVER_REQUIRED",
+      items: arr(source.items, `${path}.items`).map((item, index) => {
+        const p = `${path}.items[${index}]`;
+        const i = obj(item, p);
+        return { id: str(i.id, `${p}.id`), prompt: str(i.prompt, `${p}.prompt`), options: strs(i.options, `${p}.options`) };
+      }),
+    };
+    if (source.feedbackAuthority !== undefined) return fail(`${path}.feedbackAuthority`);
+    return {
       kind: "MULTIPLE_CHOICE",
       items: arr(source.items, `${path}.items`).map((item, index) => {
         const p = `${path}.items[${index}]`;
