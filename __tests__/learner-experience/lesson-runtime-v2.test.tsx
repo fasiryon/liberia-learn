@@ -21,6 +21,7 @@ vi.mock("@/components/toolkit/toolComponents", () => ({ TOOL_COMPONENTS: {} }));
 vi.mock("@/components/interactive-labs/v2/InteractiveLabPlayer", () => ({ InteractiveLabPlayer: ({ labId }: { labId: string }) => <div data-fake-lab={labId} /> }));
 vi.mock("@/lib/lesson-offline-cache", () => ({
   loadCachedLesson: async () => cache.lesson,
+  isLessonCached: async () => false,
   cacheLessonContent: async () => true,
   refreshLessonAvailability: async () => false,
   removeCachedLesson: async (id: string) => { cache.removed.push(id); return true; },
@@ -531,5 +532,64 @@ describe("cross-check native denial and keyless contract", () => {
   it("route identities cannot be exchanged", async () => {
     serve({ "/api/student/lessons/work-123/experience": () => json(200, runtimeLessonDelivery(6)) });
     expect(await loadLessonDelivery(WORK)).toEqual({ kind: "UNAVAILABLE", reason: "INCOMPATIBLE_VERSION" });
+  });
+});
+
+describe("X1 Today content-id legacy fallback", () => {
+  const seam = "/api/student/lessons/fixture-levers-g6/experience";
+  const legacyWork = "/api/student/work/fixture-levers-g6";
+  const plain404 = () => json(404, { compatibility: "UNAVAILABLE", error: "UNAVAILABLE" });
+  async function openTodayLink() {
+    const { default: Assigned } = await import("@/app/student/lessons/[id]/LessonDeliveryClient");
+    window.history.replaceState(null, "", "/student/lessons/fixture-levers-g6");
+    await render(<Assigned lessonId="fixture-levers-g6" enabledToolIds={[]} />);
+    await flush();
+  }
+  it("plain seam 404 follows the existing work API and renders the legacy Today lesson", async () => {
+    serve({ [seam]: plain404, [legacyWork]: () => json(200, {
+      id: "legacy-work", contentId: CONTENT.contentId, contentVersion: "1",
+      title: "X1 synthetic legacy lesson", subject: "SCIENCE", grade: 6,
+      teacherName: "Test teacher", classFormat: "standard", schoolName: "Test school",
+      body: "X1 legacy instruction from Today.", bodyStandard: "X1 legacy instruction from Today.", bodyBlock: null,
+      deliveryProfile: null, objectives: [], pseudoLabs: [], simulationDefinitions: [],
+      status: "not_started", completedAt: null, takeawaySummary: null, problemSets: [],
+    }) });
+    vi.stubGlobal("IntersectionObserver", class { observe() {} disconnect() {} unobserve() {} });
+    await openTodayLink();
+    expect(host.textContent).toContain("X1 legacy instruction from Today.");
+    expect(host.querySelector("[data-lesson-unavailable]")).toBeNull();
+    expect(player()).toBeNull();
+    expect((fetch as any).mock.calls.slice(0, 2).map(([url]) => url)).toEqual([`${seam}?kind=SCHEDULED_WORK`, legacyWork]);
+  });
+  it.each(["NOT_RELEASED", "REVOKED", "NOT_STUDENT_READY"] as const)("native denial %s never calls the legacy work API", async (reason) => {
+    serve({ [seam]: () => json(reason === "REVOKED" ? 410 : 404, { compatibility: "UNAVAILABLE", format: "NATIVE_V2", reason }) });
+    await openTodayLink();
+    expect(host.querySelector("[data-lesson-unavailable]")?.getAttribute("data-lesson-unavailable")).toBe(reason);
+    expect(host.querySelector("a")?.getAttribute("href")).toBe("/student/today");
+    expect((fetch as any).mock.calls).toHaveLength(1);
+  });
+  it.each([
+    [404, { reason: "NOT_RELEASED" }, "NOT_RELEASED"],
+    [404, { reason: "REVOKED" }, "REVOKED"],
+    [404, { reason: "NOT_STUDENT_READY" }, "NOT_STUDENT_READY"],
+    [404, { reason: "INCOMPATIBLE_VERSION" }, "INCOMPATIBLE_VERSION"],
+    [404, { error: "FORBIDDEN" }, "NOT_FOUND"],
+    [409, { error: "INCOMPATIBLE_VERSION" }, "INCOMPATIBLE_VERSION"],
+    [403, { error: "FORBIDDEN" }, "NOT_FOUND"],
+    [500, { error: "UNAVAILABLE" }, "LOAD_FAILED"],
+  ])("explicit denial/error %s %j never enters legacy delivery", async (status, body, reason) => {
+    serve({ [seam]: () => json(status as number, body) });
+    await openTodayLink();
+    expect(host.querySelector("[data-lesson-unavailable]")?.getAttribute("data-lesson-unavailable")).toBe(reason);
+    expect((fetch as any).mock.calls).toHaveLength(1);
+    expect(player()).toBeNull();
+  });
+  it("a plain missing work reference cannot revive a native row rejected by the work API", async () => {
+    serve({ [seam]: plain404, [legacyWork]: () => json(404, { error: "Lesson not found" }) });
+    await openTodayLink();
+    expect((fetch as any).mock.calls.map(([url]) => url)).toEqual([`${seam}?kind=SCHEDULED_WORK`, legacyWork]);
+    expect(host.querySelector("[data-lesson-unavailable]")?.getAttribute("data-lesson-unavailable")).toBe("NOT_FOUND");
+    expect(player()).toBeNull();
+    expect(host.querySelector("a")?.getAttribute("href")).toBe("/student/today");
   });
 });

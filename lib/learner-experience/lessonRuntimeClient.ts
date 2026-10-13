@@ -32,10 +32,13 @@ export async function loadLessonDelivery(target: LessonRouteRef, serverCompleted
   const body = await response.json().catch(() => null);
   if (response.status === 409) return { kind: "UNAVAILABLE", reason: "INCOMPATIBLE_VERSION" };
   if (!response.ok) {
-    if (body?.format === "NATIVE_V2") {
-      const reason = ["REVOKED", "NOT_RELEASED", "NOT_STUDENT_READY"].includes(body.reason) ? body.reason : unavailableReasonForStatus(response.status);
+    const denialReason = body?.reason ?? body?.error;
+    const explicitReason = ["REVOKED", "NOT_RELEASED", "NOT_STUDENT_READY", "INCOMPATIBLE_VERSION", "LOAD_FAILED"].includes(denialReason);
+    if (body?.format === "NATIVE_V2" || explicitReason) {
+      const reason = explicitReason ? denialReason : unavailableReasonForStatus(response.status);
       return { kind: "UNAVAILABLE", reason };
     }
+    if (denialReason === "FORBIDDEN") return { kind: "UNAVAILABLE", reason: "NOT_FOUND" };
     // Only an indistinguishable 404 can consult historical legacy detail. Never fall back on server failure.
     return response.status === 404 ? { kind: "NO_DELIVERY", status: 404 } : { kind: "UNAVAILABLE", reason: unavailableReasonForStatus(response.status) };
   }

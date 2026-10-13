@@ -556,7 +556,7 @@ function ScheduledLessonDelivery({ lessonId, onNative }: { lessonId: string; onN
       try {
         // Exact scheduled-work lookup goes directly to the governed seam; the legacy work API cannot gate native reachability.
         const resolved = await loadLessonDelivery({ kind: "SCHEDULED_WORK", scheduledWorkId: lessonId });
-        if (resolved.kind === "NATIVE" || resolved.kind === "UNAVAILABLE" || (resolved.kind === "NO_DELIVERY" && resolved.status !== "OFFLINE")) {
+        if (resolved.kind === "NATIVE" || resolved.kind === "UNAVAILABLE" || (resolved.kind === "NO_DELIVERY" && resolved.status !== "OFFLINE" && resolved.status !== 404)) {
           if (!cancelled) {
             if (resolved.kind !== "NATIVE" && !(resolved.kind === "UNAVAILABLE" && resolved.reason === "LOAD_FAILED")) {
               const cachedRef = await loadCachedLessonSession<{ contentId: string }>(lessonId).catch(() => null);
@@ -568,7 +568,9 @@ function ScheduledLessonDelivery({ lessonId, onNative }: { lessonId: string; onN
           }
           return;
         }
-        if (resolved.kind === "NO_DELIVERY") throw new Error("Lesson unavailable offline");
+        if (resolved.kind === "NO_DELIVERY" && resolved.status === "OFFLINE") throw new Error("Lesson unavailable offline");
+        // Today content-id links retain the existing legacy work path only for a plain 404.
+        // Explicit native denials/errors are terminal above; the work API still rejects native rows.
         const response = await fetch(`/api/student/work/${lessonId}`);
         const data = await response.json();
         if (!response.ok) {
