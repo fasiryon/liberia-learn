@@ -10,10 +10,11 @@ import { isCanonicalToolId } from "@/lib/curriculum/v2/tools";
 import type { ContentBundleAuthorityReader, ResolverDiagnostic } from "./resolver";
 
 export type ExactStoredAuthorityReaders = Pick<ContentBundleAuthorityReader,
-  "readComposition" | "readRevision" | "readResource" | "readAsset" | "readRendering" | "readCurriculumAuthority">;
+  "readComposition" | "readRevision" | "readResource" | "readAsset" | "readRendering" | "readCurriculumAuthority" | "activityAuthority">;
 
 export function createRepositoryContentBundleReader(stored: ExactStoredAuthorityReaders): ContentBundleAuthorityReader {
   return {
+    activityAuthority: stored.activityAuthority,
     readComposition: input => stored.readComposition(input),
     readRevision: pin => stored.readRevision(pin),
     readResource: ref => stored.readResource(ref),

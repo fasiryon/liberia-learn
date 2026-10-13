@@ -20,6 +20,8 @@ import {
 import { hashContentBundle } from "./hash";
 
 export type ContentBundleValidationOptions = Readonly<{
+  /** Resolver-only validation of payloads restored from exact activity authority. */
+  allowResolvedActivities?: boolean;
   /**
    * Optional check that a binding's toolId exists in the canonical GOVERNED tool namespace.
    * Runtime toolkit registry ids are a different namespace; resolve them through a reviewed
@@ -67,7 +69,7 @@ function normalizeKey(key: string): string {
 // ─── Allowed fields (strict, so unknown names cannot smuggle state) ─────────────────────────────
 
 const KEYS = {
-  bundle: ["schemaVersion", "identity", "curriculumAuthority", "sequence", "lessons", "activities", "assessments", "labs", "resources", "toolkitBindings", "toolkitMapping", "learnerSupport", "renderings", "offline", "governance", "extensions"],
+  bundle: ["schemaVersion", "identity", "curriculumAuthority", "sequence", "lessons", "activities", "activityReferences", "assessments", "labs", "resources", "toolkitBindings", "toolkitMapping", "learnerSupport", "renderings", "offline", "governance", "extensions"],
   identity: ["bundleId", "version", "title", "gradeLevel", "subject", "locale", "contentHash"],
   authority: ["releaseId", "releaseIdentity", "objectiveIds", "standardIds", "sourceVersionRefs", "conceptRefs", "constructBindingRefs"],
   itemIdentity: ["itemId", "itemVersion", "itemKind"],
@@ -381,6 +383,22 @@ export function validateContentBundle(input: unknown, options: ContentBundleVali
     return { itemId, kind };
   };
 
+  // Exact activity pointers also occupy the common item namespace.
+  if (input.activityReferences !== undefined) c.array(input.activityReferences, `${root}.activityReferences`).forEach((raw, index) => {
+    const path = `${root}.activityReferences[${index}]`;
+    const ref = c.record(raw, path);
+    if (!ref) return;
+    c.keys(ref, ["activityId", "version", "kind"], path);
+    const id = c.string(ref, "activityId", path);
+    const version = c.string(ref, "version", path);
+    if (version && /^(latest|current|\*)$/i.test(version.trim())) c.add("version_missing", path, "exact activity version required");
+    if (!(ACTIVITY_KINDS as readonly unknown[]).includes(ref.kind)) c.add("unknown_item_kind", path, "unsupported activity kind");
+    if (id) {
+      if (items.has(id)) c.add("duplicate_id", path, "duplicate activity reference");
+      else items.set(id, { kind: ref.kind as GovernedItemKind, path });
+    }
+  });
+
   // Lessons
   const lessonEntries = c.array(input.lessons, `${root}.lessons`);
   lessonEntries.forEach((raw, index) => {
@@ -402,6 +420,15 @@ export function validateContentBundle(input: unknown, options: ContentBundleVali
     const activity = c.record(raw, p);
     if (!activity) return;
     c.keys(activity, KEYS.activity, p);
+    // Hydrated members have already occupied the namespace through their pointer.
+    const hydratedId = isRecord(activity.identity) ? activity.identity.itemId : null;
+    const references = Array.isArray(input.activityReferences) ? input.activityReferences : [];
+    const pointer = references.find(ref => isRecord(ref) && ref.activityId === hydratedId) as Rec | undefined;
+    if (pointer) {
+      if (!options.allowResolvedActivities) c.add("malformed", p, "activity payload must be resolved from authority, not duplicated in a manifest");
+      if (!isRecord(activity.identity) || activity.identity.itemVersion !== pointer.version || activity.identity.itemKind !== pointer.kind) c.add("malformed", p, "activity pointer mismatch");
+      if (items.get(hydratedId as string)?.path.startsWith(`${root}.activityReferences[`)) items.delete(hydratedId as string);
+    }
     checkIdentity(activity, p, ACTIVITY_KINDS);
     c.string(activity, "title", p);
     checkObjectives(activity, p);
