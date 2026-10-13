@@ -148,6 +148,8 @@ export type TeacherMemberDetail =
       resources: readonly ResourceRow[];
       /** Full experience, teacher section included. Teacher model only. */
       experience: ActivityExperienceV1 | null;
+      /** Where the payload came from and what the activity authority says about it. */
+      authority: TeacherActivityAuthority;
     }>
   | Readonly<{
       category: "ASSESSMENT";
@@ -172,6 +174,14 @@ export type TeacherMemberDetail =
       readiness: LabReadiness;
       runnable: boolean;
     }>;
+
+export type TeacherActivityAuthority = Readonly<{
+  source: "ACTIVITY_DEFINITION_AUTHORITY" | "EMBEDDED_IN_BUNDLE";
+  activityHash: string | null;
+  lifecycleState: string | null;
+  releaseEligible: boolean | null;
+  releaseGate: string | null;
+}>;
 
 export type TeacherMember = Readonly<{
   itemId: string;
@@ -256,6 +266,14 @@ export function buildTeacherPreviewModel(resolved: ResolvedContentBundlePreview)
   };
   const instruction = (step: Readonly<{ stepId: string; text: string; resourceIds: readonly string[] }>): TeacherInstruction => ({ stepId: step.stepId, text: step.text, resources: step.resourceIds.map((id) => resourcesById.get(id)?.title ?? id) });
   const placements = buildSequence(bundle.sequence.units, titleOf);
+  const pointerIds = new Set(bundle.activityReferences?.map((r) => r.activityId) ?? []);
+  const activityAuthorityOf = (itemId: string): TeacherActivityAuthority => {
+    const fact = resolved.activityReadiness?.[itemId];
+    if (fact) return { source: fact.source, activityHash: fact.activityHash, lifecycleState: fact.lifecycleState, releaseEligible: fact.releaseEligible, releaseGate: fact.releaseGate };
+    // The production resolver restores pointer activities only after the release gate passes.
+    if (pointerIds.has(itemId)) return { source: "ACTIVITY_DEFINITION_AUTHORITY", activityHash: null, lifecycleState: null, releaseEligible: true, releaseGate: null };
+    return { source: "EMBEDDED_IN_BUNDLE", activityHash: null, lifecycleState: null, releaseEligible: null, releaseGate: null };
+  };
 
   const base = (m: AnyMember & { objectiveIds: readonly string[] }) => ({
     itemId: m.identity.itemId,
@@ -286,6 +304,7 @@ export function buildTeacherPreviewModel(resolved: ResolvedContentBundlePreview)
         extendsLessons: activity.lessonItemIds.map((id) => ({ itemId: id, title: titleOf(id) })),
         resources: resourceRows(activity.resourceIds),
         experience: activityExperienceOf(activity),
+        authority: activityAuthorityOf(activity.identity.itemId),
       },
     })),
     ...bundle.assessments.map((assessment): TeacherMember => ({

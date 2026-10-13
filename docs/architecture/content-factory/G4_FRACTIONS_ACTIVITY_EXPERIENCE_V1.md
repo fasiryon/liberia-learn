@@ -3,6 +3,11 @@
 Status: governed-candidate content in a synthetic fixture, rendered by Teacher Preview. Nothing here
 is published, released, reviewed or MOE-approved. Base: `main` at `86139e2d` (PR #185).
 
+> **Activity Wave V1 update.** The experience is now the first-class `experience` field of
+> governed activity content, not `extensions.experience`, which is rejected. The four activities
+> are restored through the ActivityDefinition authority. See
+> [ACTIVITY_WAVE_V1.md](ACTIVITY_WAVE_V1.md). The text below describes Wave 3B as built.
+
 ## What was built
 
 Four activity experiences for the first governed vertical (Grade 4 Mathematics, fractions: equal

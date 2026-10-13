@@ -1,9 +1,11 @@
 /**
  * Activity experience V1 (PROVISIONAL): the learner-facing body of an ActivityDefinition.
  *
- * Carried in `ActivityDefinition.extensions.experience`, so it is part of the sealed content hash
- * and of the validator's forbidden-key scan (no student state, runtime fields or inline answer
- * keys). It is content only: it records nothing about a learner and grants no mastery authority.
+ * A first-class field of governed activity content: `ActivityDefinition.experience` in bundle
+ * members and `ActivityDefinitionV1.content.experience` in the activity authority. It is part of
+ * both semantic hashes and of the bundle validator's forbidden-key scan (no student state, runtime
+ * fields or inline answer keys). It is content only: it records nothing about a learner and grants
+ * no mastery authority.
  *
  * No hidden answers. Every value a feedback message uses is either stated in the prompt (the
  * fraction a learner is asked to shade or mark) or drawn on screen (the parts a picture shows).
@@ -12,7 +14,7 @@
  * The learner projection is an allow-list. Teacher facilitation, look-fors, misconceptions,
  * materials planning, evidence notes and alignment refs never leave `teacher`.
  */
-import type { ActivityDefinition, JsonValue } from "./types";
+import type { ActivityDefinition } from "./types";
 
 export const ACTIVITY_EXPERIENCE_SCHEMA = "activity-experience.v1" as const;
 
@@ -313,7 +315,7 @@ function checkProfile(exp: ActivityExperienceV1, activity: Pick<ActivityDefiniti
   if ((activity.collaborationMode === "PAIR" || activity.collaborationMode === "SMALL_GROUP") !== (l.roles.length > 0)) throw new Fail("learner.roles", "pair or group work names learner roles, and individual work does not");
 }
 
-export function parseActivityExperience(value: JsonValue | undefined, activity: Pick<ActivityDefinition, "identity" | "scaffolding" | "collaborationMode"> | null = null): ExperienceParse {
+export function parseActivityExperience(value: unknown, activity: Pick<ActivityDefinition, "identity" | "scaffolding" | "collaborationMode"> | null = null): ExperienceParse {
   try {
     const r = rec(value, "experience", ["schema", "profile", "learner", "teacher"]);
     if (r.schema !== ACTIVITY_EXPERIENCE_SCHEMA) throw new Fail("experience.schema", `expected ${ACTIVITY_EXPERIENCE_SCHEMA}`);
@@ -328,9 +330,8 @@ export function parseActivityExperience(value: JsonValue | undefined, activity: 
 
 /** The experience an activity carries, parsed against its own definition; null when absent or invalid. */
 export function activityExperienceOf(activity: ActivityDefinition): ActivityExperienceV1 | null {
-  const raw = activity.extensions?.experience;
-  if (raw === undefined) return null;
-  const parsed = parseActivityExperience(raw, activity);
+  if (activity.experience === undefined) return null;
+  const parsed = parseActivityExperience(activity.experience, activity);
   return parsed.ok ? parsed.experience : null;
 }
 

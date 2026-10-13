@@ -50,7 +50,11 @@ for (const width of WIDTHS) {
         const guide = await page.locator("[data-testid=teacher-activity-guide]").innerText();
         for (const field of TEACHER_FIELDS) assert(guide.includes(field), `${key} teacher view missing ${field}`);
         assert(guide.includes(a.label), `${key} teacher view missing type ${a.label}`);
-        evidence.teacher[key] = { fields: TEACHER_FIELDS.length, type: a.label };
+        const authority = await page.locator("[data-testid=activity-authority]").innerText();
+        assert(authority.includes("Restored from the ActivityDefinition authority"), `${key} not restored through activity authority`);
+        assert.equal(await page.locator("[data-testid=activity-lifecycle]").innerText(), "Pending review");
+        assert((await page.locator("[data-testid=activity-release-gate]").innerText()).includes("Not releasable"), `${key} release gate not shown as refused`);
+        evidence.teacher[key] = { fields: TEACHER_FIELDS.length, type: a.label, authority: "ACTIVITY_DEFINITION_AUTHORITY", lifecycle: "Pending review", releaseGate: "Not releasable" };
       } else {
         const frame = await page.locator("[data-testid=student-preview]").innerText();
         for (const s of TEACHER_ONLY) assert(!frame.includes(s), `student ${key} shows teacher-only "${s}" at ${width}`);
@@ -200,7 +204,7 @@ evidence.network = { externalRequests: requests.length };
 assert.deepEqual(requests, [], `unexpected external requests: ${requests.join(", ")}`);
 await fs.writeFile(`${out}/results.json`, JSON.stringify({
   generatedBy: "e2e/g4-fractions-activities/validate.mjs",
-  integration: "fixture resolver -> seal -> learner projection -> buildPreviewModels -> production Teacher Preview components (Vite harness)",
+  integration: "pointer-only composition -> resolveActivityDefinition (draft inspection + release gate) -> seal -> learner projection -> buildPreviewModels -> production Teacher Preview components (Vite harness)",
   fixture: "fixture.bundle.g4-math-fractions-activities@1.0.0-fixture (synthetic governed candidate; not curriculum, not reviewed, not released)",
   authenticatedNextMiddleware: "Not exercised: localhost Vite harness; route authorization is unit-tested",
   widths: WIDTHS,

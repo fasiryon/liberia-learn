@@ -10,10 +10,22 @@ import { projectLearnerBundle } from "../v1/projection";
 import { checkToolkitMapping, type ToolkitMapping } from "../v1/toolkitMapping";
 import type { ContentBundleV1 } from "../v1/types";
 import { buildGrade4FractionsFixture, G4_FRACTIONS_FIXTURE_IDS, G4_FRACTIONS_FIXTURE_TOOLKIT_MAPPING } from "../v1/fixtures/grade4FractionsFixture";
-import { buildGrade4FractionsActivitiesFixture, G4_FRACTIONS_ACTIVITIES_FIXTURE_IDS } from "../v1/fixtures/grade4FractionsActivitiesFixture";
+import { G4_FRACTIONS_ACTIVITIES_FIXTURE_IDS } from "../v1/fixtures/grade4FractionsActivitiesFixture";
+import { createGrade4FractionsCandidateAuthority } from "@/lib/activity-definition/v1/fixtures/grade4FractionsCandidateAuthority";
+import type { ActivityAuthorityReader } from "@/lib/activity-definition/v1/resolver";
+import type { RevisionPin } from "../v1/resolver";
+import { hydrateActivityReferencesForPreview, type ActivityAuthorityReadiness } from "./activityAuthority";
 import type { ContentBundlePreviewResolver, LabReadiness } from "./resolver";
 
-export type FixtureRegistration = Readonly<{ build: () => ContentBundleV1; mapping: ToolkitMapping | null; label: string }>;
+/**
+ * `build` returns a self-contained fixture bundle. `governed` returns a pointer-only composition
+ * whose activityReferences are restored through the ActivityDefinition authority (draft
+ * inspection), exactly as the authority path will restore them from durable storage.
+ */
+export type FixtureRegistration = Readonly<{ mapping: ToolkitMapping | null; label: string }> & (
+  | Readonly<{ build: () => ContentBundleV1; governed?: undefined }>
+  | Readonly<{ build?: undefined; governed: () => Readonly<{ composition: ContentBundleV1; pins: Readonly<Record<string, RevisionPin>>; activityAuthority: ActivityAuthorityReader }> }>
+);
 
 export type RuntimeToolCatalog = Readonly<Record<string, string>>;
 
@@ -26,7 +38,7 @@ export const DEFAULT_PREVIEW_FIXTURES: Readonly<Record<string, FixtureRegistrati
     label: "Synthetic Grade 4 fractions test fixture (not curriculum, not reviewed, not released)",
   },
   [G4_FRACTIONS_ACTIVITIES_FIXTURE_IDS.bundleId]: {
-    build: buildGrade4FractionsActivitiesFixture,
+    governed: createGrade4FractionsCandidateAuthority,
     mapping: G4_FRACTIONS_FIXTURE_TOOLKIT_MAPPING,
     label: "Synthetic Grade 4 fractions activity experiences (governed candidate; not curriculum, not reviewed, not released)",
   },
@@ -46,7 +58,16 @@ export function createFixturePreviewResolver(options: Readonly<{ fixtures?: Read
       if (!PREVIEW_ROLES.has(request.viewer.role) || !request.viewer.schoolId || (request.schoolId && request.schoolId !== request.viewer.schoolId)) return unavailable("PREVIEW_FORBIDDEN");
       const registration = Object.prototype.hasOwnProperty.call(fixtures, request.bundleId) ? fixtures[request.bundleId] : undefined;
       if (!registration) return unavailable("COMPOSITION_MISSING");
-      const sealed = sealContentBundle(registration.build());
+      let built: ContentBundleV1;
+      let activityReadiness: Readonly<Record<string, ActivityAuthorityReadiness>> | undefined;
+      if (registration.governed) {
+        const governed = registration.governed();
+        const hydrated = await hydrateActivityReferencesForPreview(governed.composition, governed.pins, governed.activityAuthority);
+        if (hydrated.ok === false) return { status: hydrated.status, bundle: null, learnerProjection: null, diagnostics: hydrated.diagnostics };
+        built = hydrated.bundle;
+        activityReadiness = hydrated.readiness;
+      } else built = registration.build();
+      const sealed = sealContentBundle(built, { allowResolvedActivities: !!registration.governed });
       if (sealed.ok === false) return { status: "INCOMPATIBLE", bundle: null, learnerProjection: null, diagnostics: sealed.errors.map(e => ({ code: e.code, path: e.path })) };
       const { bundle, contentHash } = sealed.sealed;
       if (request.bundleVersion !== null && request.bundleVersion !== bundle.identity.version) return unavailable("COMPOSITION_MISSING");
@@ -62,6 +83,7 @@ export function createFixturePreviewResolver(options: Readonly<{ fixtures?: Read
         authorityMetadata: { readiness: "BLOCKED", objectiveDescriptions: {}, offlinePackageClosed: false },
         learnerProjection: projectLearnerBundle(bundle, contentHash),
         labReadiness: Object.fromEntries(bundle.labs.map((lab) => [lab.identity.itemId, LAB_NOT_EVALUATED])),
+        ...(activityReadiness ? { activityReadiness } : {}),
         release: { state: "NOT_EVALUATED", reason: "No release authority was consulted. A fixture is never a curriculum release." },
         toolkit: {
           // Fixture mappings are unreviewed by definition; review is a governance fact, not a fixture claim.

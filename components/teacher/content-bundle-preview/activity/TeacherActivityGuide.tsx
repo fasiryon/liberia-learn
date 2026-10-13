@@ -4,6 +4,7 @@
  */
 import type { TeacherMember, TeacherPreviewModel } from "@/lib/content-bundle/preview/viewModel";
 import type { ActivityExperienceV1, ExperienceTask } from "@/lib/content-bundle/v1/activityExperience";
+import { humanize } from "@/lib/content-bundle/preview/viewModel";
 import { Chip, Code, Empty, Facts, ItemLinks, ResourceList, Section } from "../parts";
 import { FractionPicture } from "./FractionVisuals";
 
@@ -114,6 +115,9 @@ export function TeacherActivityGuide({ member, detail, experience, model, onSele
         </div>
         <Facts
           rows={[
+            ["Activity definition", <span key="src" data-testid="activity-authority">{detail.authority.source === "ACTIVITY_DEFINITION_AUTHORITY" ? "Restored from the ActivityDefinition authority by exact id and version" : "Embedded in the bundle (fixture)"}{detail.authority.activityHash ? <div><Code>{`sha256:${detail.authority.activityHash.slice(0, 16)}…`}</Code></div> : null}</span>],
+            ["Review state", <span key="rev" data-testid="activity-lifecycle">{detail.authority.lifecycleState ? humanize(detail.authority.lifecycleState) : "Not reported"}</span>],
+            ["Release gate", <span key="gate" data-testid="activity-release-gate">{detail.authority.releaseEligible === true ? <Chip tone="green">Passes</Chip> : detail.authority.releaseEligible === false ? <><Chip tone="warn">Not releasable</Chip> <span className="cbp-sub">{detail.authority.releaseGate === "ACTIVITY_NOT_APPROVED" ? "Not approved; students cannot receive it through a released bundle." : detail.authority.releaseGate}</span></> : "Not evaluated"}</span>],
             ["Candidate MOE objective", t.alignment.candidateObjectiveRefs.map((r) => <Code key={r}>{r}</Code>)],
             ["Candidate lesson", t.alignment.candidateLessonRefs.map((r) => <Code key={r}>{r}</Code>)],
             ["Offline", l.offline.note],

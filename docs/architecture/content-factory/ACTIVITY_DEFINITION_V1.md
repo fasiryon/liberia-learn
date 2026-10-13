@@ -16,7 +16,8 @@ applicable, ordered learner and teacher instructions, exact resource metadata,
 duration, collaboration mode, evidence intent, accessibility, scaffolding and
 an optional exact rubric reference. Strict allowlists reject unknown fields at
 every object boundary, including approval flags and student state. No generic
-extensions escape hatch is provided. Shared pedagogical vocabulary is reused
+extensions escape hatch is provided. (Activity Wave V1 adds one typed, strictly
+validated field, `content.experience`; see [ACTIVITY_WAVE_V1.md](ACTIVITY_WAVE_V1.md).) Shared pedagogical vocabulary is reused
 from ContentBundle V1; `activityBundleMember` restores its existing display shape.
 
 ## Existing governance and release

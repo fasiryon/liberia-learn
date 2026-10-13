@@ -6,7 +6,7 @@
  * classwork, homework) for the first vertical: equal parts and parts of a set. Derived from the
  * merged `grade4FractionsFixture` (left unchanged): same fixture objectives, lesson, unit,
  * assessments and tool policy; new bundle id, new activity item versions and an
- * `extensions.experience` body (activityExperience.ts) on each activity.
+ * first-class `experience` body (activityExperience.ts) on each activity.
  *
  * Alignment refs name REAL repository records this content is a candidate for:
  *   - MOE objective `moe-math-g4-s1-p3-number-theory-and-fraction-obj4` ("Find parts of a set");
@@ -19,7 +19,7 @@
  */
 import { createHash } from "crypto";
 import { ACTIVITY_EXPERIENCE_SCHEMA, type ActivityExperienceV1, type ExperienceItem, type FractionVisual, type SetObject } from "../activityExperience";
-import type { ActivityDefinition, ContentBundleV1, JsonValue } from "../types";
+import type { ActivityDefinition, ContentBundleV1 } from "../types";
 import { buildGrade4FractionsFixture, G4_FRACTIONS_FIXTURE_IDS } from "./grade4FractionsFixture";
 
 const syntheticSha256 = (label: string) => createHash("sha256").update(`fixture:${label}`, "utf8").digest("hex");
@@ -34,6 +34,7 @@ export const G4_FRACTIONS_ACTIVITIES_FIXTURE_IDS = {
     paperStrips: "fixture.resource.g4-math.paper-fraction-strips",
     homeworkSheet: "fixture.resource.g4-math.parts-of-a-set-homework-sheet",
     classworkGuide: "fixture.resource.g4-math.classwork-facilitation-guide",
+    classworkScoringGuide: "fixture.resource.g4-math.classwork-scoring-guide",
   },
   alignment: {
     moeObjective: "moe-math-g4-s1-p3-number-theory-and-fraction-obj4",
@@ -62,8 +63,6 @@ function strip(parts: number, opts: { shaded?: number; widths?: number[]; label?
   const shaded = opts.shaded ?? 0;
   return { kind: "STRIP", parts, shaded: range(shaded), widths: opts.widths ?? null, label: opts.label ?? `A strip cut into ${parts} equal parts${shaded > 0 ? `, ${shaded} shaded` : ""}` };
 }
-
-const asJson = (experience: ActivityExperienceV1) => experience as unknown as JsonValue;
 
 // ─── 1. Guided practice ──────────────────────────────────────────────────────────────────────────
 
@@ -318,7 +317,7 @@ const homeworkExperience: ActivityExperienceV1 = {
 // ─── Bundle ─────────────────────────────────────────────────────────────────────────────────────
 
 function withExperience(activity: ActivityDefinition, patch: Partial<ActivityDefinition>, experience: ActivityExperienceV1): ActivityDefinition {
-  return { ...activity, ...patch, identity: { ...activity.identity, itemVersion: V }, extensions: { experience: asJson(experience) } };
+  return { ...activity, ...patch, identity: { ...activity.identity, itemVersion: V }, experience };
 }
 
 export function buildGrade4FractionsActivitiesFixture(): ContentBundleV1 {
@@ -365,9 +364,10 @@ export function buildGrade4FractionsActivitiesFixture(): ContentBundleV1 {
         ],
         teacher: [
           { stepId: "t1", text: "Launch with 9 caps in 3 groups at the front of the class, then assign roles.", resourceIds: [r.classworkGuide] },
-          { stepId: "t2", text: "Listen to each pair explain question 4. Use the scoring guide after class.", resourceIds: [r.answerKey] },
+          { stepId: "t2", text: "Listen to each pair explain question 4. Use the scoring guide after class.", resourceIds: [r.classworkScoringGuide] },
         ],
       },
+      rubric: { rubricId: "fixture.rubric.g4-math.share-bottle-caps-classwork", rubricVersion: V, learnerVisibleCriteria: ["Makes equal groups before naming a fraction", "Writes the fraction of the set", "Explains what the bottom number tells us"], scoringGuideResourceId: r.classworkScoringGuide },
       resourceIds: [r.counters, r.worksheet],
       expectedDurationMinutes: 25,
       collaborationMode: "PAIR",
@@ -394,6 +394,7 @@ export function buildGrade4FractionsActivitiesFixture(): ContentBundleV1 {
       { resourceId: r.paperStrips, resourceVersion: V, kind: "MANIPULATIVE", audience: "LEARNER", title: "Paper fraction strips", locale: "en-LR", assetId: null },
       { resourceId: r.homeworkSheet, resourceVersion: V, kind: "WORKSHEET", audience: "LEARNER", title: "Fractions of a set homework sheet", locale: "en-LR", assetId: "fixture.asset.parts-of-a-set-homework-sheet" },
       { resourceId: r.classworkGuide, resourceVersion: V, kind: "TEACHER_NOTE", audience: "TEACHER", title: "Classwork facilitation guide", locale: "en-LR", assetId: null },
+      { resourceId: r.classworkScoringGuide, resourceVersion: V, kind: "SCORING_GUIDE", audience: "TEACHER", title: "Classwork scoring guide", locale: "en-LR", assetId: null },
     ],
     offline: {
       ...merged.offline,

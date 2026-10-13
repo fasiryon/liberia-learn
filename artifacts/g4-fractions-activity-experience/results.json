@@ -1,6 +1,6 @@
 {
   "generatedBy": "e2e/g4-fractions-activities/validate.mjs",
-  "integration": "fixture resolver -> seal -> learner projection -> buildPreviewModels -> production Teacher Preview components (Vite harness)",
+  "integration": "pointer-only composition -> resolveActivityDefinition (draft inspection + release gate) -> seal -> learner projection -> buildPreviewModels -> production Teacher Preview components (Vite harness)",
   "fixture": "fixture.bundle.g4-math-fractions-activities@1.0.0-fixture (synthetic governed candidate; not curriculum, not reviewed, not released)",
   "authenticatedNextMiddleware": "Not exercised: localhost Vite harness; route authorization is unit-tested",
   "widths": [
@@ -255,19 +255,31 @@
   "teacher": {
     "guided": {
       "fields": 9,
-      "type": "Guided practice"
+      "type": "Guided practice",
+      "authority": "ACTIVITY_DEFINITION_AUTHORITY",
+      "lifecycle": "Pending review",
+      "releaseGate": "Not releasable"
     },
     "independent": {
       "fields": 9,
-      "type": "Independent practice"
+      "type": "Independent practice",
+      "authority": "ACTIVITY_DEFINITION_AUTHORITY",
+      "lifecycle": "Pending review",
+      "releaseGate": "Not releasable"
     },
     "classwork": {
       "fields": 9,
-      "type": "Classwork"
+      "type": "Classwork",
+      "authority": "ACTIVITY_DEFINITION_AUTHORITY",
+      "lifecycle": "Pending review",
+      "releaseGate": "Not releasable"
     },
     "homework": {
       "fields": 9,
-      "type": "Homework"
+      "type": "Homework",
+      "authority": "ACTIVITY_DEFINITION_AUTHORITY",
+      "lifecycle": "Pending review",
+      "releaseGate": "Not releasable"
     }
   },
   "student": {

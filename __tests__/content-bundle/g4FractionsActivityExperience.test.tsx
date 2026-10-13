@@ -34,7 +34,7 @@ type Which = keyof typeof ACTIVITY_IDS;
 type Mutable<T> = T extends readonly (infer U)[] ? Mutable<U>[] : T extends object ? { -readonly [K in keyof T]: Mutable<T[K]> } : T;
 const clone = (): Mutable<ContentBundleV1> => JSON.parse(JSON.stringify(buildGrade4FractionsActivitiesFixture()));
 const activity = (bundle: Mutable<ContentBundleV1>, which: Which) => bundle.activities.find((a) => a.identity.itemId === ACTIVITY_IDS[which])!;
-const experience = (bundle: Mutable<ContentBundleV1>, which: Which) => activity(bundle, which).extensions!.experience as unknown as Mutable<ActivityExperienceV1> & Record<string, unknown>;
+const experience = (bundle: Mutable<ContentBundleV1>, which: Which) => activity(bundle, which).experience as unknown as Mutable<ActivityExperienceV1> & Record<string, unknown>;
 
 async function resolved(): Promise<ResolvedContentBundlePreview> {
   const r = await createFixturePreviewResolver().resolveForTeacherPreview({ bundleId: ids.bundleId, bundleVersion: null, viewer: teacher });
@@ -170,13 +170,17 @@ describe("experience contract rejects unsafe or inconsistent content", () => {
     rejects((b) => { experience(b, "classwork").teacher.phases = experience(b, "classwork").teacher.phases.slice(0, 1); }, "activity_experience_invalid", "phases");
     rejects((b) => { experience(b, "classwork").learner.roles = []; }, "activity_experience_invalid", "roles");
     // A guided body cannot sit on an independent-practice definition.
-    rejects((b) => { activity(b, "independent").extensions = { experience: activity(clone(), "guided").extensions!.experience as Mutable<JsonValue> }; }, "activity_experience_invalid", "profile");
+    rejects((b) => { activity(b, "independent").experience = activity(clone(), "guided").experience; }, "activity_experience_invalid", "profile");
+  });
+
+  it("has exactly one experience surface: extensions.experience is rejected", () => {
+    rejects((b) => { const a = activity(b, "guided"); a.extensions = { experience: a.experience as unknown as Mutable<JsonValue> }; delete a.experience; }, "activity_experience_invalid", "extensions.experience");
   });
 
   it("fails closed: an activity without a valid experience projects none", () => {
     const bundle = clone();
     experience(bundle, "guided").schema = "activity-experience.v0" as never;
-    expect(parseActivityExperience(activity(bundle, "guided").extensions!.experience).ok).toBe(false);
+    expect(parseActivityExperience(activity(bundle, "guided").experience).ok).toBe(false);
     expect(projectLearnerExperience(activity(bundle, "guided"))).toBeNull();
   });
 });

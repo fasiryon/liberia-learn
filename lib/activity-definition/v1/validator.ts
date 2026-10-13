@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { ACTIVITY_KINDS } from "@/lib/content-bundle/v1/types";
+import { parseActivityExperience } from "@/lib/content-bundle/v1/activityExperience";
 import type { ActivityDefinitionV1 } from "./types";
 
 export const exactIdentity = (value: string) => value.trim() === value && value.length > 0 && !/^(latest|current|\*)$/i.test(value);
@@ -17,6 +18,8 @@ const schema = z.strictObject({
     collaborationMode: z.enum(["INDIVIDUAL", "PAIR", "SMALL_GROUP", "WHOLE_CLASS"]),
     evidenceIntent: z.strictObject({ kind: z.enum(["NONE", "PRACTICE_ONLY", "FORMATIVE", "SUMMATIVE_CANDIDATE"]), forms: z.array(z.enum(["WRITTEN", "ORAL", "PHOTO", "ARTIFACT", "OBSERVATION", "DIGITAL_RESPONSE"])) }),
     accessibility: z.strictObject({ readingLevel: z.string().nullable(), supportsScreenReader: z.boolean(), supportsReadAloud: z.boolean(), requiresColorVision: z.boolean(), requiresFineMotor: z.boolean(), alternativeFormatResourceIds: ids }),
+    // activity-experience.v1; checked below against this definition's kind and scaffolding.
+    experience: z.unknown().optional(),
   }),
   resources: z.array(resource), lessonBindings: z.array(z.strictObject({ lessonId: pin, version: pin })),
   release: z.strictObject({ releaseId: pin, releaseIdentity: pin }),
@@ -25,7 +28,15 @@ const schema = z.strictObject({
 
 export function parseActivityDefinition(input: unknown): ActivityDefinitionV1 | null {
   const parsed = schema.safeParse(input);
+  if (!parsed.success) return null;
+  const { content } = parsed.data;
+  if (content.experience !== undefined) {
+    // Strict parser: unknown fields (including any answer/key/state field) are rejected, the
+    // profile must match kind + scaffolding, and construction targets must be stated in prompts.
+    const experience = parseActivityExperience(content.experience, { identity: { itemId: parsed.data.activityId, itemVersion: parsed.data.version, itemKind: parsed.data.kind }, scaffolding: content.scaffolding ?? null, collaborationMode: content.collaborationMode });
+    if (experience.ok === false) return null;
+  } else if ("experience" in content) return null;
   // strictNullChecks is disabled in this repository, which makes Zod infer nullable
   // object fields as optional. Runtime strict schemas still require every field.
-  return parsed.success ? parsed.data as ActivityDefinitionV1 : null;
+  return parsed.data as ActivityDefinitionV1;
 }

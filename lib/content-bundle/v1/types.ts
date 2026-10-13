@@ -152,6 +152,12 @@ export type ActivityDefinition = Readonly<{
   collaborationMode: CollaborationMode;
   evidenceIntent: Readonly<{ kind: EvidenceIntentKind; forms: readonly EvidenceForm[] }>;
   accessibility: AccessibilityMetadata;
+  /**
+   * Governed learner-facing body (activity-experience.v1, activityExperience.ts). First-class
+   * activity content: hashed with the activity, strictly validated, projected by allow-list.
+   * `extensions.experience` is rejected so there is exactly one experience surface.
+   */
+  experience?: import("./activityExperience").ActivityExperienceV1;
   extensions?: Readonly<Record<string, JsonValue>>;
 }>;
 
