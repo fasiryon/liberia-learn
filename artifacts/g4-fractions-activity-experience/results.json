@@ -1,0 +1,368 @@
+{
+  "generatedBy": "e2e/g4-fractions-activities/validate.mjs",
+  "integration": "fixture resolver -> seal -> learner projection -> buildPreviewModels -> production Teacher Preview components (Vite harness)",
+  "fixture": "fixture.bundle.g4-math-fractions-activities@1.0.0-fixture (synthetic governed candidate; not curriculum, not reviewed, not released)",
+  "authenticatedNextMiddleware": "Not exercised: localhost Vite harness; route authorization is unit-tested",
+  "widths": [
+    320,
+    390,
+    768,
+    1024,
+    1440
+  ],
+  "layout": [
+    {
+      "width": 320,
+      "key": "guided",
+      "view": "teacher",
+      "overflow": false
+    },
+    {
+      "width": 320,
+      "key": "guided",
+      "view": "student",
+      "overflow": false
+    },
+    {
+      "width": 320,
+      "key": "independent",
+      "view": "teacher",
+      "overflow": false
+    },
+    {
+      "width": 320,
+      "key": "independent",
+      "view": "student",
+      "overflow": false
+    },
+    {
+      "width": 320,
+      "key": "classwork",
+      "view": "teacher",
+      "overflow": false
+    },
+    {
+      "width": 320,
+      "key": "classwork",
+      "view": "student",
+      "overflow": false
+    },
+    {
+      "width": 320,
+      "key": "homework",
+      "view": "teacher",
+      "overflow": false
+    },
+    {
+      "width": 320,
+      "key": "homework",
+      "view": "student",
+      "overflow": false
+    },
+    {
+      "width": 390,
+      "key": "guided",
+      "view": "teacher",
+      "overflow": false
+    },
+    {
+      "width": 390,
+      "key": "guided",
+      "view": "student",
+      "overflow": false
+    },
+    {
+      "width": 390,
+      "key": "independent",
+      "view": "teacher",
+      "overflow": false
+    },
+    {
+      "width": 390,
+      "key": "independent",
+      "view": "student",
+      "overflow": false
+    },
+    {
+      "width": 390,
+      "key": "classwork",
+      "view": "teacher",
+      "overflow": false
+    },
+    {
+      "width": 390,
+      "key": "classwork",
+      "view": "student",
+      "overflow": false
+    },
+    {
+      "width": 390,
+      "key": "homework",
+      "view": "teacher",
+      "overflow": false
+    },
+    {
+      "width": 390,
+      "key": "homework",
+      "view": "student",
+      "overflow": false
+    },
+    {
+      "width": 768,
+      "key": "guided",
+      "view": "teacher",
+      "overflow": false
+    },
+    {
+      "width": 768,
+      "key": "guided",
+      "view": "student",
+      "overflow": false
+    },
+    {
+      "width": 768,
+      "key": "independent",
+      "view": "teacher",
+      "overflow": false
+    },
+    {
+      "width": 768,
+      "key": "independent",
+      "view": "student",
+      "overflow": false
+    },
+    {
+      "width": 768,
+      "key": "classwork",
+      "view": "teacher",
+      "overflow": false
+    },
+    {
+      "width": 768,
+      "key": "classwork",
+      "view": "student",
+      "overflow": false
+    },
+    {
+      "width": 768,
+      "key": "homework",
+      "view": "teacher",
+      "overflow": false
+    },
+    {
+      "width": 768,
+      "key": "homework",
+      "view": "student",
+      "overflow": false
+    },
+    {
+      "width": 1024,
+      "key": "guided",
+      "view": "teacher",
+      "overflow": false
+    },
+    {
+      "width": 1024,
+      "key": "guided",
+      "view": "student",
+      "overflow": false
+    },
+    {
+      "width": 1024,
+      "key": "independent",
+      "view": "teacher",
+      "overflow": false
+    },
+    {
+      "width": 1024,
+      "key": "independent",
+      "view": "student",
+      "overflow": false
+    },
+    {
+      "width": 1024,
+      "key": "classwork",
+      "view": "teacher",
+      "overflow": false
+    },
+    {
+      "width": 1024,
+      "key": "classwork",
+      "view": "student",
+      "overflow": false
+    },
+    {
+      "width": 1024,
+      "key": "homework",
+      "view": "teacher",
+      "overflow": false
+    },
+    {
+      "width": 1024,
+      "key": "homework",
+      "view": "student",
+      "overflow": false
+    },
+    {
+      "width": 1440,
+      "key": "guided",
+      "view": "teacher",
+      "overflow": false
+    },
+    {
+      "width": 1440,
+      "key": "guided",
+      "view": "student",
+      "overflow": false
+    },
+    {
+      "width": 1440,
+      "key": "independent",
+      "view": "teacher",
+      "overflow": false
+    },
+    {
+      "width": 1440,
+      "key": "independent",
+      "view": "student",
+      "overflow": false
+    },
+    {
+      "width": 1440,
+      "key": "classwork",
+      "view": "teacher",
+      "overflow": false
+    },
+    {
+      "width": 1440,
+      "key": "classwork",
+      "view": "student",
+      "overflow": false
+    },
+    {
+      "width": 1440,
+      "key": "homework",
+      "view": "teacher",
+      "overflow": false
+    },
+    {
+      "width": 1440,
+      "key": "homework",
+      "view": "student",
+      "overflow": false
+    }
+  ],
+  "teacher": {
+    "guided": {
+      "fields": 9,
+      "type": "Guided practice"
+    },
+    "independent": {
+      "fields": 9,
+      "type": "Independent practice"
+    },
+    "classwork": {
+      "fields": 9,
+      "type": "Classwork"
+    },
+    "homework": {
+      "fields": 9,
+      "type": "Homework"
+    }
+  },
+  "student": {
+    "guided": {
+      "teacherLeaks": 0,
+      "profile": "GUIDED_PRACTICE"
+    },
+    "independent": {
+      "teacherLeaks": 0,
+      "profile": "INDEPENDENT_PRACTICE"
+    },
+    "classwork": {
+      "teacherLeaks": 0,
+      "profile": "CLASSWORK"
+    },
+    "homework": {
+      "teacherLeaks": 0,
+      "profile": "HOMEWORK"
+    }
+  },
+  "keyboard": {
+    "focusOutline": "3px",
+    "checkFocusOutline": "3px",
+    "stripPartFocus": {
+      "w": "3px",
+      "offset": "-5px"
+    },
+    "spaceToggles": true,
+    "enterToggles": true,
+    "enterChecks": true,
+    "feedback": "✓ Yes. You marked 2 of the 8 bottle caps: 1 of 4 equal groups. That is 1/4 of the set."
+  },
+  "deadControls": {
+    "guided": [
+      "MARK_SET",
+      "MARK_SET",
+      "NAME_FRACTION",
+      "SHADE_STRIP"
+    ],
+    "workedExample": [
+      "Next step",
+      "Back",
+      "Watch again"
+    ],
+    "independent": [
+      "NAME_FRACTION",
+      "MARK_SET",
+      "SHADE_STRIP",
+      "EQUAL_PARTS",
+      "NAME_FRACTION",
+      "MARK_SET"
+    ],
+    "classwork": {
+      "selfChecks": 3,
+      "hintDetails": 0
+    },
+    "homework": {
+      "selfChecks": 3,
+      "hintDetails": 4
+    }
+  },
+  "targets": [
+    {
+      "key": "guided",
+      "width": 320,
+      "undersized": 0,
+      "narrowestButtonPx": 48
+    },
+    {
+      "key": "independent",
+      "width": 320,
+      "undersized": 0,
+      "narrowestButtonPx": 25
+    },
+    {
+      "key": "classwork",
+      "width": 320,
+      "undersized": 0,
+      "narrowestButtonPx": "no buttons (paper-based)"
+    },
+    {
+      "key": "homework",
+      "width": 320,
+      "undersized": 0,
+      "narrowestButtonPx": "no buttons (paper-based)"
+    }
+  ],
+  "homework": {
+    "paperItems": 4,
+    "interactiveItems": 0,
+    "staticHtmlReadable": true,
+    "survivesOffline": true,
+    "offlineBadge": "Works offline"
+  },
+  "network": {
+    "externalRequests": 0
+  }
+}

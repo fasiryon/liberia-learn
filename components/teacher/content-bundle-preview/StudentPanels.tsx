@@ -4,6 +4,7 @@
  */
 import type { StudentMember, StudentPreviewModel } from "@/lib/content-bundle/preview/viewModel";
 import { Chip, Empty, Facts, formatBytes, kindLabel, ResourceList, Section, SequenceFacts } from "./parts";
+import { LearnerActivityExperience } from "./activity/LearnerActivityExperience";
 
 function StudentOverview({ model }: { model: StudentPreviewModel }) {
   return (
@@ -57,7 +58,7 @@ function StudentMemberView({ member, onSelect }: { member: StudentMember; onSele
   const d = member.detail;
   return (
     <>
-      <p className="cbp-eyebrow">{d.category === "ASSESSMENT" ? d.kindLabel : d.category === "ACTIVITY" ? d.activityType : kindLabel(member.itemKind)}</p>
+      <p className="cbp-eyebrow">{d.category === "ASSESSMENT" ? d.kindLabel : d.category === "ACTIVITY" ? d.profileLabel ?? d.activityType : kindLabel(member.itemKind)}</p>
       <h2 id="cbp-item-heading" tabIndex={-1} className="cbp-h2">{member.title}</h2>
       {d.category === "LESSON" ? (
         <Section id="cbp-s-lesson" title="Lesson">
@@ -65,7 +66,17 @@ function StudentMemberView({ member, onSelect }: { member: StudentMember; onSele
           {d.resources.length > 0 ? <p className="cbp-sub">You will use: {d.resources.join(", ")}</p> : null}
         </Section>
       ) : null}
-      {d.category === "ACTIVITY" ? (
+      {d.category === "ACTIVITY" && d.experience ? (
+        <>
+          <LearnerActivityExperience experience={d.experience} minutes={d.expectedDurationMinutes} collaboration={d.collaborationMode} steps={d.instructions.map((s) => s.text)} />
+          {d.criteria.length > 0 ? (
+            <Section id="cbp-s-criteria" title="How your work will be checked">
+              <ul className="cbp-list">{d.criteria.map((c) => <li key={c}>{c}</li>)}</ul>
+            </Section>
+          ) : null}
+        </>
+      ) : null}
+      {d.category === "ACTIVITY" && !d.experience ? (
         <Section id="cbp-s-activity" title="What to do">
           <p className="cbp-sub">About {d.expectedDurationMinutes} minutes · {d.collaborationMode}</p>
           {d.instructions.length > 0 ? <ol className="cbp-steps">{d.instructions.map((s) => <li key={s.stepId}>{s.text}</li>)}</ol> : <Empty>No instructions.</Empty>}

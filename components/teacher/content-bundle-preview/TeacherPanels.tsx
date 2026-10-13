@@ -1,5 +1,6 @@
 import type { TeacherMember, TeacherPreviewModel, TeacherToolRow } from "@/lib/content-bundle/preview/viewModel";
 import { Chip, Code, Empty, Facts, formatBytes, ItemLinks, kindLabel, ResourceList, Section, SequenceFacts, type ChipTone } from "./parts";
+import { TeacherActivityGuide } from "./activity/TeacherActivityGuide";
 
 const MODE_TONE: Readonly<Record<string, ChipTone>> = { REQUIRED: "gold", OPTIONAL: "neutral", PROHIBITED: "danger" };
 const modeLabel = (mode: string) => (mode === "PROHIBITED" ? "Not allowed" : mode === "REQUIRED" ? "Required" : "Optional");
@@ -118,11 +119,11 @@ function Overview({ model, onSelect }: { model: TeacherPreviewModel; onSelect: (
   );
 }
 
-function MemberDetail({ member, onSelect }: { member: TeacherMember; onSelect: (itemId: string) => void }) {
+function MemberDetail({ member, model, onSelect }: { member: TeacherMember; model: TeacherPreviewModel; onSelect: (itemId: string) => void }) {
   const d = member.detail;
   return (
     <>
-      <p className="cbp-eyebrow">{kindLabel(member.itemKind)}</p>
+      <p className="cbp-eyebrow">{d.category === "ACTIVITY" && d.profileLabel ? `${d.profileLabel} · ${kindLabel(member.itemKind)}` : kindLabel(member.itemKind)}</p>
       <h2 id="cbp-item-heading" tabIndex={-1} className="cbp-h2">{member.title}</h2>
 
       {d.category === "LESSON" ? (
@@ -132,7 +133,9 @@ function MemberDetail({ member, onSelect }: { member: TeacherMember; onSelect: (
         </Section>
       ) : null}
 
-      {d.category === "ACTIVITY" ? (
+      {d.category === "ACTIVITY" && d.experience ? <TeacherActivityGuide member={member} detail={d} experience={d.experience} model={model} onSelect={onSelect} /> : null}
+
+      {d.category === "ACTIVITY" && !d.experience ? (
         <>
           <Section id="cbp-activity" title="Activity">
             <Facts
@@ -221,7 +224,7 @@ function humanizeReadiness(state: string) {
 
 export function TeacherCenter({ model, selectedId, onSelect }: { model: TeacherPreviewModel; selectedId: string; onSelect: (itemId: string) => void }) {
   const member = model.members.find((m) => m.itemId === selectedId);
-  return member ? <MemberDetail member={member} onSelect={onSelect} /> : <Overview model={model} onSelect={onSelect} />;
+  return member ? <MemberDetail member={member} model={model} onSelect={onSelect} /> : <Overview model={model} onSelect={onSelect} />;
 }
 
 export function TeacherAside({ model, selectedId }: { model: TeacherPreviewModel; selectedId: string }) {
