@@ -47,3 +47,27 @@ Stable link revision identity is necessary but not sufficient: exact-version
 certification, release, eligibility and access gates still apply. The first
 Grade 4 fractions vertical is unaffected because it includes no lab. This
 integration does not change lab governance or enable lab delivery.
+
+## Integration validation
+
+- All ContentBundle tests: 1 file, 80 tests passed.
+- Repository TypeScript: `tsc --noEmit` passed.
+- Changed-file ESLint: foundation and ContentBundle tests passed.
+- `npm.cmd run validate:changed -- --base
+  f22ccb7bbfb8b7f57ab6ebd3ff7b7ae2f2e445f1`: passed, including route policy
+  audit, changed/related tests and TypeScript. No Prisma operation was invoked.
+- All five integrated documents' relative links resolve. Four source documents
+  match their source Git blobs; foundation code/tests match the supplied
+  foundation commit. Diff whitespace checks passed.
+- Direct `next build`: exit 0; 387/387 static pages generated. Used existing
+  installed dependencies, disabled environment validation/telemetry and a
+  nonfunctional localhost database URL; no hosted credentials were copied.
+  The npm build wrapper was avoided because it invokes Prisma generation.
+  Build warnings included outdated Browserslist data, Sentry/OpenTelemetry
+  tracing, unrelated existing lint warnings, missing Redis configuration and
+  dynamic-route static probing. Windows `EPERM` prevented copying the shared
+  dependency symlink into standalone output: compilation/build completed, but
+  the standalone artifact is not deployment-validated.
+
+No APIs, production consumers, schema changes, hosted operations or deployment
+were added. No PR was opened.
