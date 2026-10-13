@@ -85,6 +85,11 @@ selector exists at this base: omitted versions return `UNAVAILABLE` with
 never echoes internal paths, validator/provider messages, unknown code strings,
 SQL, secrets or answer-bearing data. Unknown codes get a generic dependency
 failure. Raw resolver diagnostics stay on the server; React receives messages.
+`teacherDiagnosticGroups` groups those messages by reason so a teacher can tell
+"Not available to you here" (access or production refusal), "Not built yet"
+(missing composition, definitions, pins, packages), "Not reviewed or approved yet"
+(toolkit mapping, lab certification, revision/rights verification) and "Cannot be
+resolved safely" (exact-version and identity failures, plus every unknown code).
 
 ## Objective, toolkit, lab and offline display
 
@@ -95,7 +100,8 @@ objective wording. The fallback is the objective ID plus `description unavailabl
 No descriptions are duplicated into ContentBundle authority or inferred in React.
 
 Canonical tool IDs remain unchanged. Runtime tools are displayed only when the
-resolver supplies a reviewed mapping; unreviewed/unresolved mappings display
+resolver supplies a mapping and the injected `isReviewedToolkitMapping` attests
+its review (absent means unreviewed; a governed source alone never implies review); unreviewed/unresolved mappings display
 `Mapping unresolved`. Student mode uses only the allowed tools in the server
 projection. No runtime tool or approval is guessed from spelling or registry names.
 
@@ -170,3 +176,21 @@ artifact is not verified on this host. Existing unrelated lint/instrumentation
 and missing local optional-service warnings also remain. No deployment is implied.
 The final browser harness passed 14 layouts, eight student pages and six
 diagnostic-state/width checks, with no detected overflow or learner leakage.
+
+## Pre-merge audit fixes (fix/content-bundle-wave2-audit)
+
+The pre-merge audit of `000f883d` found no blocker. Three should-fix items were
+corrected on top of it:
+
+1. Lesson payload digests use the release registry convention
+   (`lessonPayloadSha256`: SHA-256 of `canonicalizeJson(payload)`), not
+   `JSON.stringify`. The previous check failed closed for any canonically bound
+   lesson, including the 2026.2 successor binding. The synthetic fixtures used the
+   same non-canonical digest, which hid the divergence.
+2. Preview authority is declared, never inferred. A resolution is authoritative
+   only when `PreviewDependencies.source.authoritative === true`. Identifiers
+   without a `fixture` marker no longer imply governed authority, a released
+   ontology, READY readiness or a reviewed toolkit mapping. Production withholds
+   undeclared sources (`AUTHORITY_UNDECLARED`).
+3. Unavailable/incompatible states group diagnostics by reason, and the teacher
+   offline row no longer shows a green "Yes" beside "not yet ready".

@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { requireRole } from "@/lib/auth";
 import { getContentBundlePreviewResolver } from "@/lib/content-bundle/preview/server";
 import { buildPreviewModels } from "@/lib/content-bundle/preview/viewModel";
-import { teacherDiagnosticMessages } from "@/lib/content-bundle/preview/diagnostics";
+import { teacherDiagnosticGroups } from "@/lib/content-bundle/preview/diagnostics";
 import { ContentBundlePreview, ContentBundlePreviewUnavailable, type PreviewMode } from "@/components/teacher/content-bundle-preview/ContentBundlePreview";
 
 export const dynamic = "force-dynamic";
@@ -30,8 +30,8 @@ export default async function ContentBundlePreviewPage({ params, searchParams }:
       return <ContentBundlePreview models={buildPreviewModels(resolution)} initialMode={mode} initialItemId={typeof searchParams.item === "string" ? searchParams.item : null} />;
     }
     case "UNAVAILABLE":
-      return <ContentBundlePreviewUnavailable title="Content unavailable for preview" message="This content is not currently available for preview." diagnostics={teacherDiagnosticMessages(resolution.diagnostics)} readiness={resolution.authorityMetadata?.readiness} />;
+      return <ContentBundlePreviewUnavailable title="Content unavailable for preview" message="This content is not currently available for preview." groups={teacherDiagnosticGroups(resolution.diagnostics)} readiness={resolution.authorityMetadata?.readiness} />;
     case "INCOMPATIBLE":
-      return <ContentBundlePreviewUnavailable title="Bundle cannot safely be resolved" message="This bundle cannot safely be resolved. Its content is withheld." diagnostics={teacherDiagnosticMessages(resolution.diagnostics)} readiness={resolution.authorityMetadata?.readiness} />;
+      return <ContentBundlePreviewUnavailable title="Bundle cannot safely be resolved" message="This bundle cannot safely be resolved. Its content is withheld." groups={teacherDiagnosticGroups(resolution.diagnostics)} readiness={resolution.authorityMetadata?.readiness} />;
   }
 }

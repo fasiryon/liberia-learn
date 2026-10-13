@@ -102,7 +102,7 @@ for (const width of [320, 1440]) {
     assert.equal(await overflow(), false, `${state} overflows at ${width}`);
     const text = await page.locator("main").innerText();
     if (state === "unavailable") {
-      for (const blocker of ["PARTIAL", "Production bundle not yet sealed", "Assessment authority incomplete", "mapping unresolved", "Offline package not yet closed", "Lab unavailable"]) assert(text.includes(blocker), `missing ${blocker}`);
+      for (const blocker of ["Not built yet", "Not reviewed or approved yet", "PARTIAL", "Production bundle not yet sealed", "Assessment authority incomplete", "mapping unresolved", "Offline package not yet closed", "Lab unavailable"]) assert(text.includes(blocker), `missing ${blocker}`);
     } else assert(text.includes("Bundle cannot safely be resolved"));
     if (state === "labBlocked") assert(text.includes("stable link revision and certification"));
     assert(!text.includes("correctIndex") && !text.includes("password="));

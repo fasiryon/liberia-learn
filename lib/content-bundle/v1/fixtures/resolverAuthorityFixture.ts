@@ -6,7 +6,7 @@ import { createHash } from "crypto";
 import { buildGrade4FractionsFixture, G4_FRACTIONS_FIXTURE_TOOLKIT_MAPPING } from "./grade4FractionsFixture";
 import { GRADE4_MATH_ONTOLOGY_RELEASE, deterministicReleaseIdentity } from "@/lib/learning-authority/governedGrade4Math";
 import { governedInventoryForRelease } from "@/lib/learning-authority/governedInventoryRuntime";
-import { hashCurriculumSnapshot } from "@/lib/curriculum/provenance/hash";
+import { canonicalizeJson, hashCurriculumSnapshot } from "@/lib/curriculum/provenance/hash";
 import { isCanonicalToolId } from "@/lib/curriculum/v2/tools";
 import type { ContentBundleAuthorityReader, ResolvedRevision } from "../resolver";
 import type { ContentBundleV1 } from "../types";
@@ -25,7 +25,7 @@ export function createSyntheticResolverAuthority() {
     ...structuredClone(GRADE4_MATH_ONTOLOGY_RELEASE), id: "fixture.release.synthetic-integration", provenanceRef: "fixture.provenance.synthetic",
     items: items.map(i => ({ ...GRADE4_MATH_ONTOLOGY_RELEASE.items[0], id: i.assessmentItemId, version: i.assessmentItemVersion })),
     bindings: items.map((i, n) => ({ ...GRADE4_MATH_ONTOLOGY_RELEASE.bindings[0], id: `fixture.binding.${n}`, itemId: i.assessmentItemId, itemVersion: i.assessmentItemVersion })),
-    contentBindings: [{ ...GRADE4_MATH_ONTOLOGY_RELEASE.contentBindings[0], contentId: bundle.lessons[0].identity.itemId, contentVersion: bundle.lessons[0].identity.itemVersion, contentSha256: createHash("sha256").update(JSON.stringify(payload)).digest("hex") }],
+    contentBindings: [{ ...GRADE4_MATH_ONTOLOGY_RELEASE.contentBindings[0], contentId: bundle.lessons[0].identity.itemId, contentVersion: bundle.lessons[0].identity.itemVersion, contentSha256: createHash("sha256").update(canonicalizeJson(payload)).digest("hex") }],
   };
   const inventory = {
     ...governedInventoryForRelease(GRADE4_MATH_ONTOLOGY_RELEASE), releaseId: release.id, releaseIdentity: deterministicReleaseIdentity(release),

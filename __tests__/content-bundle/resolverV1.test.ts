@@ -2,13 +2,14 @@ import { createHash } from "crypto";
 import { describe, expect, it, vi } from "vitest";
 import { resolveContentBundle, createTeacherPreviewResolver, isLearnerProjectionSafe, type ContentBundleAuthorityReader, type ResolvedRevision } from "@/lib/content-bundle/v1/resolver";
 import { buildGrade4FractionsFixture, G4_FRACTIONS_FIXTURE_TOOLKIT_MAPPING } from "@/lib/content-bundle/v1/fixtures/grade4FractionsFixture";
-import { hashCurriculumSnapshot } from "@/lib/curriculum/provenance/hash";
+import { canonicalizeJson, hashCurriculumSnapshot } from "@/lib/curriculum/provenance/hash";
 import { GRADE4_MATH_ONTOLOGY_RELEASE, deterministicReleaseIdentity } from "@/lib/learning-authority/governedGrade4Math";
 import { governedInventoryForRelease } from "@/lib/learning-authority/governedInventoryRuntime";
 import { isCanonicalToolId } from "@/lib/curriculum/v2/tools";
 import { hashContentBundle } from "@/lib/content-bundle/v1/hash";
 import type { ContentBundleV1 } from "@/lib/content-bundle/v1/types";
 import { grade4FractionsReadiness, createRepositoryContentBundleReader } from "@/lib/content-bundle/v1/repositoryAuthority";
+import { lessonPayloadSha256 } from "@/lib/learning-authority/releases/grade4Math2026_2";
 
 vi.mock("@/lib/db", () => { throw new Error("Resolver must never load a database client"); });
 
@@ -24,7 +25,7 @@ function setup() {
     id: "fixture.release.synthetic-resolver", provenanceRef: "fixture.provenance.synthetic",
     items: assessmentItems.map(i => ({ ...GRADE4_MATH_ONTOLOGY_RELEASE.items[0], id: i.assessmentItemId, version: i.assessmentItemVersion })),
     bindings: assessmentItems.map((i, index) => ({ ...GRADE4_MATH_ONTOLOGY_RELEASE.bindings[0], id: `fixture.binding.${index}`, itemId: i.assessmentItemId, itemVersion: i.assessmentItemVersion })),
-    contentBindings: [{ ...GRADE4_MATH_ONTOLOGY_RELEASE.contentBindings[0], contentId: bundle.lessons[0].identity.itemId, contentVersion: bundle.lessons[0].identity.itemVersion, contentSha256: createHash("sha256").update(JSON.stringify(payload)).digest("hex") }],
+    contentBindings: [{ ...GRADE4_MATH_ONTOLOGY_RELEASE.contentBindings[0], contentId: bundle.lessons[0].identity.itemId, contentVersion: bundle.lessons[0].identity.itemVersion, contentSha256: createHash("sha256").update(canonicalizeJson(payload)).digest("hex") }],
   };
   const inventory = {
     ...governedInventoryForRelease(GRADE4_MATH_ONTOLOGY_RELEASE), releaseId: release.id, releaseIdentity: deterministicReleaseIdentity(release),
@@ -131,6 +132,30 @@ describe("read-only bundle resolver", () => {
     expect(preview.teacherMetadata?.resources.length).toBeGreaterThan(0);
     expect(JSON.stringify(preview)).not.toContain("internalConfiguration");
     expect(JSON.stringify(preview)).not.toContain("governance");
+  });
+  describe("lesson payload digest follows the release registry convention (lessonPayloadSha256)", () => {
+    // Rebind the lesson to a payload whose keys are NOT in canonical order, then re-derive the
+    // release identity the binding change implies, exactly as a real release build would.
+    function rebound(digest: (payload: unknown) => string) {
+      const s = setup();
+      const payload = { zeta: "last key first", alpha: { y: 2, x: 1 } };
+      const lessonId = s.bundle.lessons[0].identity.itemId;
+      s.release.contentBindings = [{ ...s.release.contentBindings[0], contentSha256: digest(payload) }];
+      s.revisions[lessonId] = { ...s.revisions[lessonId], releasePayload: payload };
+      const identity = deterministicReleaseIdentity(s.release);
+      s.inventory.releaseIdentity = identity;
+      s.bundle.curriculumAuthority = { ...s.bundle.curriculumAuthority, releaseIdentity: identity };
+      return s;
+    }
+    it("resolves a binding hashed by the registry's own lessonPayloadSha256", async () => {
+      const s = rebound(lessonPayloadSha256);
+      const result = await resolveContentBundle(s.input, s.reader);
+      expect(result.diagnostics).toEqual([]);
+      expect(result.status).toBe("RESOLVED");
+    });
+    it("rejects a digest of the non-canonical serialization", async () => {
+      await expectBlocked(rebound(payload => createHash("sha256").update(JSON.stringify(payload)).digest("hex")), "LESSON_PAYLOAD_HASH_MISMATCH");
+    });
   });
   it("sanitizes read failures", async () => { const s = setup(); s.reader.readRelease = async () => { throw new Error("secret database URL"); }; await expectBlocked(s, "AUTHORITY_READ_FAILED"); });
   it("reports real repository fractions as PARTIAL without minting bundle identity", () => {

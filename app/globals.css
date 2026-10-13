@@ -677,6 +677,8 @@ a:focus-visible,
 .cbp-callout-warn { border-color: var(--cbp-gold); background: #2a2416; }
 .cbp-warn-text { color: var(--cbp-error); margin-top: 8px; }
 .cbp-details { margin-top: 12px; }
+.cbp-diagnostic-groups { max-width: 1440px; margin: 16px auto 0; padding: 4px 16px; border-radius: 16px; background: var(--cbp-surface); }
+.cbp-diagnostic-groups .cbp-section:first-child { padding-top: 16px; }
 .cbp-details > summary { min-height: 44px; display: flex; align-items: center; cursor: pointer; font-weight: 600; color: var(--cbp-gold); }
 .cbp-details[open] > summary { margin-bottom: 8px; }
 .cbp-student-frame { border: 2px dashed var(--cbp-green); border-radius: 14px; padding: 16px; }

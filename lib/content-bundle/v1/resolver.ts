@@ -132,9 +132,10 @@ export async function resolveContentBundle(input: ResolveContentBundleInput, rea
         const binding = release.contentBindings.find(b => b.contentId === member.identity.itemId && b.contentVersion === member.identity.itemVersion && b.contentType === "LESSON");
         if (!binding || !inventory?.lessons.some(l => l.contentId === member.identity.itemId && l.version === member.identity.itemVersion)) gap("LESSON_NOT_RELEASED", path);
         if (!binding?.contentSha256) gap("LESSON_PAYLOAD_HASH_MISSING", path);
-        // Binding digest hashes the lesson payload; revision digest hashes the full snapshot.
+        // Binding digest hashes the canonical lesson payload (the lessonPayloadSha256 convention of the
+        // release registry); the revision digest hashes the full snapshot.
         else {
-          if (!revision.releasePayload || createHash("sha256").update(JSON.stringify(revision.releasePayload)).digest("hex") !== binding.contentSha256) gap("LESSON_PAYLOAD_HASH_MISMATCH", path);
+          if (!revision.releasePayload || createHash("sha256").update(canonicalizeJson(revision.releasePayload)).digest("hex") !== binding.contentSha256) gap("LESSON_PAYLOAD_HASH_MISMATCH", path);
         }
         const nativeSnapshot = revision.snapshot as { experience?: { curriculumV2?: unknown; lessonExperience?: unknown } };
         if (revision.snapshotSchemaVersion === CURRICULUM_SNAPSHOT_SCHEMA_VERSION_NATIVE && (!revision.nativeLesson || !nativeSnapshot?.experience?.curriculumV2 || !equal(revision.nativeLesson, nativeSnapshot.experience.curriculumV2))) gap("NATIVE_LESSON_REVISION_MISMATCH", path);

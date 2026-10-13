@@ -132,7 +132,7 @@ describe("Teacher overview", () => {
     expect(main).toContain(ids.objectives.equalParts);
     expect(text("[data-testid=renderings]")).toBe("Textbook Not availableWorkbook Available, v1.0.0-fixture (Learner)Teacher guide Available, v1.0.0-fixture (Teacher)Assessment book Not available");
     for (const s of ["Bottle-cap counters", "Facilitation note", "Teacher only", "Unit answer key", "Read aloud", "Large print", "Revisit"]) expect(main).toContain(s);
-    expect(main).toContain("Can be packaged");
+    expect(main).toContain("Bundle declares packagingDeclared, package not closed");
     expect(main).toMatch(/Teacher-only assets1 \(29\.4 KB\), never in the student package/);
     const aside = text("aside");
     for (const s of ["Governance and release", "No release authority was consulted", "Not authoritative", "FIXTURE-ONLY:g4-math-fractions@synthetic-0", "server details withheld", "Reviews", "None recorded", "(unreviewed)"]) expect(aside).toContain(s);
@@ -383,7 +383,7 @@ describe("route", () => {
     vi.stubEnv("NODE_ENV", "production");
     await mount(await ContentBundlePreviewPage({ params: { bundleId: ids.bundleId }, searchParams: {} }));
     expect(text("h1")).toBe("Content unavailable for preview");
-    expect(text("[role=alert]")).toContain("Synthetic fixtures are not available through production authority");
+    expect(text("[data-category=NOT_AVAILABLE]")).toContain("Synthetic fixtures are not available through production authority");
     vi.unstubAllEnvs();
 
     auth.user = null;

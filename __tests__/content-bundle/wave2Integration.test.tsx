@@ -5,7 +5,9 @@ import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import { getContentBundlePreviewResolver } from "@/lib/content-bundle/preview/server";
 import { createSyntheticResolverAuthority } from "@/lib/content-bundle/v1/fixtures/resolverAuthorityFixture";
 import { buildPreviewModels } from "@/lib/content-bundle/preview/viewModel";
-import { teacherDiagnosticMessages } from "@/lib/content-bundle/preview/diagnostics";
+import { teacherDiagnosticGroups, teacherDiagnosticMessages } from "@/lib/content-bundle/preview/diagnostics";
+import { deterministicReleaseIdentity } from "@/lib/learning-authority/governedGrade4Math";
+import type { ToolkitMapping } from "@/lib/content-bundle/v1/toolkitMapping";
 import { ContentBundlePreview, ContentBundlePreviewUnavailable } from "@/components/teacher/content-bundle-preview/ContentBundlePreview";
 
 vi.mock("@/lib/db", () => { throw new Error("Preview resolution must not import a DB client or mutation path"); });
@@ -140,5 +142,79 @@ describe("integrated school-authorized authority preview", () => {
     const s = setup(); const before = JSON.stringify({ bundle: s.bundle, revisions: s.revisions }); await success(s);
     expect(JSON.stringify({ bundle: s.bundle, revisions: s.revisions })).toBe(before);
     expect(Object.keys(s.reader).every(k => k.startsWith("read") || k === "isRuntimeToolId")).toBe(true);
+  });
+});
+
+/**
+ * Synthetic authority with every "fixture" marker removed from the identifiers the server's
+ * synthetic heuristic inspects. Authority must still come only from a declared source.
+ */
+function unmarkedAuthority() {
+  const s = createSyntheticResolverAuthority();
+  s.release.id = "synthetic.release.unmarked";
+  const identity = deterministicReleaseIdentity(s.release);
+  s.inventory.releaseId = s.release.id; s.inventory.releaseIdentity = identity;
+  s.bundle.identity.version = "1.0.0";
+  s.bundle.curriculumAuthority = { ...s.bundle.curriculumAuthority, releaseId: s.release.id, releaseIdentity: identity };
+  return { ...s, input: { ...s.input, bundleVersion: "1.0.0" } };
+}
+const governed = { kind: "GOVERNED_STORE" as const, label: "Declared governed store (test)", authoritative: true };
+
+describe("authority is declared, never inferred from identifiers", () => {
+  it("an undeclared source resolves as non-authoritative outside production: no release, readiness or reviewed mapping", async () => {
+    const s = unmarkedAuthority();
+    const r = await getContentBundlePreviewResolver({ NODE_ENV: "test" }, { canPreviewBundle: async () => true, createReader: () => s.reader }).resolveForTeacherPreview({ ...s.input, viewer });
+    expect(r.status).toBe("RESOLVED");
+    if (r.status !== "RESOLVED") return;
+    expect(r.source.authoritative).toBe(false);
+    expect(r.release.state).toBe("NOT_EVALUATED");
+    expect(r.authorityMetadata.readiness).toBe("BLOCKED");
+    expect(r.toolkit.mapping?.reviewed).toBe(false);
+    expect(buildPreviewModels(r).teacher.tools.every(t => t.runtimeTools.length === 0)).toBe(true);
+  });
+  it("production withholds an undeclared source even when its identifiers look real", async () => {
+    const s = unmarkedAuthority();
+    const r = await getContentBundlePreviewResolver({ NODE_ENV: "production" }, { canPreviewBundle: async () => true, createReader: () => s.reader }).resolveForTeacherPreview({ ...s.input, viewer });
+    expect(r.status).toBe("UNAVAILABLE");
+    expect(r.bundle).toBeNull();
+    expect(r.diagnostics.map(d => d.code)).toEqual(["AUTHORITY_UNDECLARED"]);
+  });
+  it("a declared governed source does not imply a reviewed toolkit mapping", async () => {
+    const s = unmarkedAuthority();
+    const r = await getContentBundlePreviewResolver({ NODE_ENV: "production" }, { canPreviewBundle: async () => true, createReader: () => s.reader, source: governed }).resolveForTeacherPreview({ ...s.input, viewer });
+    expect(r.status === "RESOLVED" && r.source.authoritative).toBe(true);
+    expect(r.status === "RESOLVED" && r.toolkit.mapping?.reviewed).toBe(false);
+  });
+  it("only an explicit review attestation marks the mapping reviewed", async () => {
+    const s = unmarkedAuthority();
+    const attest = vi.fn((m: ToolkitMapping) => m.mappingVersion === "0.0.0-fixture-unreviewed");
+    const r = await getContentBundlePreviewResolver({ NODE_ENV: "production" }, { canPreviewBundle: async () => true, createReader: () => s.reader, source: governed, isReviewedToolkitMapping: attest }).resolveForTeacherPreview({ ...s.input, viewer });
+    expect(attest).toHaveBeenCalledTimes(1);
+    expect(r.status === "RESOLVED" && r.toolkit.mapping?.reviewed).toBe(true);
+  });
+});
+
+describe("diagnostics distinguish not available / not built / not approved / not resolvable", () => {
+  it("groups the real Grade 4 fractions gaps by reason", async () => {
+    const r = await getContentBundlePreviewResolver({ NODE_ENV: "production" }).resolveForTeacherPreview({ bundleId: "g4-math-fractions", bundleVersion: "1.0.0", viewer });
+    const groups = teacherDiagnosticGroups(r.diagnostics);
+    const of = (category: string) => groups.find(g => g.category === category)?.messages ?? [];
+    expect(groups.map(g => g.category)).toEqual(["NOT_BUILT", "NOT_APPROVED"]);
+    expect(of("NOT_BUILT")).toEqual(expect.arrayContaining(["Production bundle not yet sealed: no immutable composition is available.", "Offline package not yet closed: not yet ready."]));
+    expect(of("NOT_APPROVED")).toEqual(expect.arrayContaining(["Toolkit mapping not yet reviewed: mapping unresolved.", "Lab unavailable: stable link revision and certification are unresolved."]));
+  });
+  it("classifies access, version and unknown codes, never echoing paths", () => {
+    const groups = teacherDiagnosticGroups([{ code: "PREVIEW_FORBIDDEN", path: "x" }, { code: "VERSION_SELECTION_REQUIRED", path: "y" }, { code: "PRIVATE_SQL_ERROR", path: "password=secret" }]);
+    expect(groups).toEqual([
+      { category: "NOT_AVAILABLE", label: "Not available to you here", messages: ["Your account cannot preview content outside its school context."] },
+      { category: "NOT_RESOLVABLE", label: "Cannot be resolved safely", messages: ["An exact bundle version is required; no reviewed default version is available.", "An authority dependency could not be safely resolved."] },
+    ]);
+    expect(JSON.stringify(groups)).not.toContain("password");
+  });
+  it("renders each group under its own heading", async () => {
+    await mount(<ContentBundlePreviewUnavailable title="Content unavailable for preview" message="Not available." groups={teacherDiagnosticGroups([{ code: "COMPOSITION_MISSING", path: "" }, { code: "TOOLKIT_MAPPING_UNRESOLVED", path: "" }])} />);
+    const headings = [...host.querySelectorAll("[data-testid=preview-diagnostics] h2")].map(h => h.textContent);
+    expect(headings).toEqual(["Not built yet", "Not reviewed or approved yet"]);
+    expect(host.querySelector("[data-category=NOT_APPROVED]")?.textContent).toContain("Toolkit mapping not yet reviewed");
   });
 });

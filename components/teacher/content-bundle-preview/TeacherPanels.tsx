@@ -90,7 +90,7 @@ function Overview({ model, onSelect }: { model: TeacherPreviewModel; onSelect: (
         <p className="cbp-callout cbp-callout-warn">{o.ready ? "Ready" : "Not yet ready: the real offline package is not closed."}</p>
         <Facts
           rows={[
-            ["Can be packaged", o.packageable ? <Chip tone="green">Yes</Chip> : <Chip tone="warn">No</Chip>],
+            ["Bundle declares packaging", o.packageable ? (o.ready ? <Chip tone="green">Yes, package closed</Chip> : <Chip>Declared, package not closed</Chip>) : <Chip tone="warn">No</Chip>],
             ["Student assets", `${o.learnerAssets.count} (${formatBytes(o.learnerAssets.bytes)})`],
             ["Teacher-only assets", `${o.staffOnlyAssets.count} (${formatBytes(o.staffOnlyAssets.bytes)}), never in the student package`],
             ["Works offline", o.capabilities.length > 0 ? o.capabilities.join(", ") : "Nothing"],

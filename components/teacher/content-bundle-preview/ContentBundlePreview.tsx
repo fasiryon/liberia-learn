@@ -7,6 +7,7 @@
 import { useCallback, useRef, useState } from "react";
 import type { ContentBundlePreviewModels } from "@/lib/content-bundle/preview/viewModel";
 import { Chip, Code, OVERVIEW_ID, SequenceNav } from "./parts";
+import type { DiagnosticGroup } from "@/lib/content-bundle/preview/diagnostics";
 import { releaseChip, TeacherAside, TeacherCenter } from "./TeacherPanels";
 import { StudentCenter } from "./StudentPanels";
 
@@ -108,7 +109,7 @@ export function ContentBundlePreview({ models, initialMode = "teacher", initialI
 }
 
 /** Truthful non-success states from the resolver. */
-export function ContentBundlePreviewUnavailable({ title, message, diagnostics = [], readiness }: { title: string; message: string; diagnostics?: readonly string[]; readiness?: string }) {
+export function ContentBundlePreviewUnavailable({ title, message, diagnostics = [], groups = [], readiness }: { title: string; message: string; diagnostics?: readonly string[]; groups?: readonly DiagnosticGroup[]; readiness?: string }) {
   return (
     <main id="cbp-main" className="cbp-root" aria-labelledby="cbp-title">
       <header className="cbp-header">
@@ -122,6 +123,16 @@ export function ContentBundlePreviewUnavailable({ title, message, diagnostics = 
         {readiness ? <p>Production readiness: <strong>{readiness}</strong></p> : null}
         {diagnostics.length ? <ul className="cbp-list" data-testid="preview-diagnostics">{diagnostics.map(text => <li key={text}>{text}</li>)}</ul> : null}
       </div>
+      {groups.length ? (
+        <div className="cbp-diagnostic-groups" data-testid="preview-diagnostics">
+          {groups.map((group) => (
+            <section key={group.category} className="cbp-section" aria-labelledby={`cbp-diag-${group.category}`} data-category={group.category}>
+              <h2 id={`cbp-diag-${group.category}`} className="cbp-h3">{group.label}</h2>
+              <ul className="cbp-list">{group.messages.map((text) => <li key={text}>{text}</li>)}</ul>
+            </section>
+          ))}
+        </div>
+      ) : null}
     </main>
   );
 }

@@ -9,7 +9,7 @@ import { getContentBundlePreviewResolver } from "@/lib/content-bundle/preview/se
 import { buildPreviewModels } from "@/lib/content-bundle/preview/viewModel";
 import { TOOL_REGISTRY_DEFINITIONS } from "@/lib/toolkit/toolRegistry";
 import { createSyntheticResolverAuthority } from "@/lib/content-bundle/v1/fixtures/resolverAuthorityFixture";
-import { teacherDiagnosticMessages } from "@/lib/content-bundle/preview/diagnostics";
+import { teacherDiagnosticGroups } from "@/lib/content-bundle/preview/diagnostics";
 import type { ContentBundlePreviewResolution } from "@/lib/content-bundle/preview/resolver";
 
 const viewer = { userId: "fixture-teacher", role: "TEACHER", schoolId: "fixture-school" };
@@ -44,7 +44,7 @@ export async function buildHarnessModels() {
   const state = (r: ContentBundlePreviewResolution) => ({
     title: r.status === "INCOMPATIBLE" ? "Bundle cannot safely be resolved" : "Content unavailable for preview",
     message: r.status === "INCOMPATIBLE" ? "This bundle cannot safely be resolved. Its content is withheld." : "This content is not currently available for preview.",
-    diagnostics: teacherDiagnosticMessages(r.diagnostics), readiness: r.authorityMetadata?.readiness,
+    groups: teacherDiagnosticGroups(r.diagnostics), readiness: r.authorityMetadata?.readiness,
   });
   return { default: buildPreviewModels(main), lab: buildPreviewModels(lab), states: { unavailable: state(unavailable), incompatible: state(incompatible), labBlocked: state(labBlocked) } };
 }

@@ -14,8 +14,17 @@ export type PreviewDependencies = Readonly<{
   canPreviewBundle(scope: PreviewSchoolScope, bundleId: string): Promise<boolean>;
   /** Every stored read must include this school scope; no global/current-row fallback. */
   createReader(scope: PreviewSchoolScope): ContentBundleAuthorityReader;
+  /**
+   * Declared provenance of these readers. Authority is never inferred from identifiers: without an
+   * explicit `authoritative: true` source a resolution is labelled non-authoritative, and production
+   * withholds it.
+   */
   source?: PreviewSource;
+  /** Review attestation for a resolved toolkit mapping. Absent means unreviewed. */
+  isReviewedToolkitMapping?(mapping: ToolkitMapping): boolean;
 }>;
+
+const UNDECLARED_SOURCE: PreviewSource = { kind: "GOVERNED_STORE", label: "Resolver did not declare governed authority", authoritative: false };
 
 // A known national readiness slice, not allocation of a production bundle identity.
 const repositoryDependencies: PreviewDependencies = {
@@ -82,13 +91,18 @@ export function getContentBundlePreviewResolver(
         if (resolved.status !== "RESOLVED") return { ...resolved, diagnostics: [...resolved.diagnostics, ...(fractions?.diagnostics ?? [])], authorityMetadata };
         const synthetic = resolved.bundle.curriculumAuthority.releaseId.startsWith("fixture.") || resolved.bundle.identity.version.includes("fixture") || dependencies.source?.kind === "FIXTURE";
         if (synthetic && env.NODE_ENV === "production") return unavailable([{ code: "FIXTURE_NOT_AUTHORITY", path: "preview" }]);
-        const source = synthetic ? { kind: "FIXTURE" as const, label: "Synthetic resolver fixture (not curriculum, not reviewed, not released)", authoritative: false } : dependencies.source ?? { kind: "GOVERNED_STORE" as const, label: "Exact governed authority resolution", authoritative: true };
+        const source: PreviewSource = synthetic
+          ? { kind: "FIXTURE", label: "Synthetic resolver fixture (not curriculum, not reviewed, not released)", authoritative: false }
+          : dependencies.source?.authoritative === true ? dependencies.source : UNDECLARED_SOURCE;
+        // Production never shows a resolution whose readers did not declare governed authority.
+        if (!source.authoritative && env.NODE_ENV === "production") return unavailable([{ code: "AUTHORITY_UNDECLARED", path: "preview" }]);
+        const mappingReviewed = !!mapping && source.authoritative && dependencies.isReviewedToolkitMapping?.(mapping) === true;
         return {
           ...resolved, contentHash: resolved.bundle.identity.contentHash!, source,
           authorityMetadata: { ...authorityMetadata, readiness: source.authoritative ? "READY" : "BLOCKED", objectiveDescriptions: { ...objectiveDescriptions(release, inventory), ...nativeDescriptions } },
-          release: source.authoritative ? { state: "RELEASED", releaseRef: resolved.bundle.curriculumAuthority.releaseId, reason: "Resolved against an approved published ontology. Preview does not publish or assign this bundle." } : { state: "NOT_EVALUATED", reason: "Synthetic authority readers for testing only; not a curriculum release." },
+          release: source.authoritative ? { state: "RELEASED", releaseRef: resolved.bundle.curriculumAuthority.releaseId, reason: "Resolved against an approved published ontology. Preview does not publish or assign this bundle." } : { state: "NOT_EVALUATED", reason: synthetic ? "Synthetic authority readers for testing only; not a curriculum release." : "The resolver did not declare governed authority, so release state is not evaluated." },
           labReadiness: {}, // Wave 2B rejects every current lab revision/certification binding.
-          toolkit: { mapping: mapping ? { ...mapping, reviewed: source.authoritative } : null, runtimeToolNames: Object.fromEntries(TOOL_REGISTRY_DEFINITIONS.map(t => [t.id, t.name])), issues: [] },
+          toolkit: { mapping: mapping ? { ...mapping, reviewed: mappingReviewed } : null, runtimeToolNames: Object.fromEntries(TOOL_REGISTRY_DEFINITIONS.map(t => [t.id, t.name])), issues: [] },
         };
       } catch {
         return unavailable([{ code: "AUTHORITY_READ_FAILED", path: "authority" }]);
