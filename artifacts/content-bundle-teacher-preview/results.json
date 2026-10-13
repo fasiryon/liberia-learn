@@ -1,0 +1,109 @@
+{
+  "generatedBy": "e2e/content-bundle-teacher-preview/validate.mjs",
+  "fixture": "fixture.bundle.g4-math-fractions@1.0.0-fixture (synthetic)",
+  "layout": [
+    {
+      "width": 320,
+      "view": "teacher",
+      "layout": "stacked",
+      "overflow": false
+    },
+    {
+      "width": 320,
+      "view": "student",
+      "layout": "stacked",
+      "overflow": false
+    },
+    {
+      "width": 390,
+      "view": "teacher",
+      "layout": "stacked",
+      "overflow": false
+    },
+    {
+      "width": 390,
+      "view": "student",
+      "layout": "stacked",
+      "overflow": false
+    },
+    {
+      "width": 768,
+      "view": "teacher",
+      "layout": "two-column",
+      "overflow": false
+    },
+    {
+      "width": 768,
+      "view": "student",
+      "layout": "two-column",
+      "overflow": false
+    },
+    {
+      "width": 1024,
+      "view": "teacher",
+      "layout": "three-column",
+      "overflow": false
+    },
+    {
+      "width": 1024,
+      "view": "student",
+      "layout": "three-column",
+      "overflow": false
+    },
+    {
+      "width": 1280,
+      "view": "teacher",
+      "layout": "three-column",
+      "overflow": false
+    },
+    {
+      "width": 1280,
+      "view": "student",
+      "layout": "three-column",
+      "overflow": false
+    },
+    {
+      "width": 1440,
+      "view": "teacher",
+      "layout": "three-column",
+      "overflow": false
+    },
+    {
+      "width": 1440,
+      "view": "student",
+      "layout": "three-column",
+      "overflow": false
+    },
+    {
+      "width": 1920,
+      "view": "teacher",
+      "layout": "three-column",
+      "overflow": false
+    },
+    {
+      "width": 1920,
+      "view": "student",
+      "layout": "three-column",
+      "overflow": false
+    }
+  ],
+  "keyboard": {
+    "skipLinkFirst": true,
+    "focusOutline": "3px",
+    "arrowEnterSelects": true,
+    "endSelectsLast": true,
+    "spaceTogglesMode": true
+  },
+  "student": {
+    "pagesChecked": 8,
+    "leaks": 0
+  },
+  "lab": {
+    "teacher": "Not runnable",
+    "student": "Students will see this lab as not available yet."
+  },
+  "targets": {
+    "width": 320,
+    "under44px": 0
+  }
+}
