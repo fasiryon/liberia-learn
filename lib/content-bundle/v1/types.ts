@@ -7,7 +7,8 @@
  * next (orchestration). Those belong to operational systems, the Student Learning Model and the
  * Learning Orchestrator respectively.
  *
- * Names and structure are provisional until CONTENT_FACTORY_READINESS_V1 converges; see
+ * Reconciled with CONTENT_FACTORY_READINESS_V1: an immutable composition manifest over existing
+ * authority, with no second approval engine. Remaining open items are listed in
  * docs/architecture/content-factory/CONTENT_BUNDLE_V1_FOUNDATION.md.
  */
 
@@ -69,6 +70,12 @@ export type CurriculumAuthority = Readonly<{
   releaseIdentity: string;
   objectiveIds: readonly string[];
   standardIds: readonly string[];
+  /** Verified source/version pins the objectives derive from. */
+  sourceVersionRefs: readonly string[];
+  /** Ontology concept revisions the bundle teaches. */
+  conceptRefs: readonly string[];
+  /** Release construct bindings (objective to assessable construct). */
+  constructBindingRefs: readonly string[];
 }>;
 
 // ─── Sequence ───────────────────────────────────────────────────────────────────────────────────
@@ -80,6 +87,7 @@ export type CurriculumAuthority = Readonly<{
 export type SequenceEntry = Readonly<{
   itemId: string;
   order: number;
+  requirement: "REQUIRED" | "OPTIONAL";
   prerequisiteItemIds: readonly string[];
   unlocksItemIds: readonly string[];
 }>;
@@ -155,6 +163,20 @@ export type AssessmentDefinitionRef = Readonly<{ definitionId: string; definitio
 /** Pointer to a governed AssessmentItem. Carries no stem, options or keys. */
 export type AssessmentItemRef = Readonly<{ assessmentItemId: string; assessmentItemVersion: string }>;
 
+/**
+ * How item order is authored. FIXED: `items` order is semantic and hashed. RANDOMIZED_BY_POLICY:
+ * the reviewed randomization policy is hashed and `items` is treated as a set; the presentation
+ * order belongs to the delivery/attempt, never to the bundle. Runtime randomization is not
+ * implemented here.
+ */
+export type AssessmentItemOrder =
+  | Readonly<{ kind: "FIXED" }>
+  | Readonly<{ kind: "RANDOMIZED_BY_POLICY"; policyId: string; policyVersion: string }>;
+
+/**
+ * Bundle-side pointer to a governed AssessmentDefinition and its AssessmentItems. Delivery,
+ * attempts, scores and evidence are separate concepts owned elsewhere and never appear here.
+ */
 export type AssessmentReference = Readonly<{
   identity: BundleItemIdentity<AssessmentItemKind>;
   role: AssessmentRole;
@@ -162,6 +184,7 @@ export type AssessmentReference = Readonly<{
   objectiveIds: readonly string[];
   definition: AssessmentDefinitionRef;
   items: readonly AssessmentItemRef[];
+  itemOrder: AssessmentItemOrder;
   learnerInstructions: readonly string[];
   /** Teacher/system-only material, referenced by resource id. Never projected to learners. */
   secured: Readonly<{ answerKeyResourceId: string | null; scoringGuideResourceId: string | null }>;
@@ -172,15 +195,19 @@ export type AssessmentReference = Readonly<{
 export type LabRole = "CORE" | "OPTIONAL" | "ENRICHMENT" | "REMEDIATION";
 
 /**
- * Reference to a governed lesson↔lab link. The bundle records which link it binds; it does not
- * certify the lab or the link. Showcase membership, standard-code matches and raw lab ids are not
- * authority, so the only accepted basis is GOVERNED_LINK.
+ * Three separate identities:
+ *   - `identity`: the bundle member (composition identity);
+ *   - `link`: the governed LearningExperienceLink relationship, pinned to an exact revision;
+ *   - `lab`: the lab experience and its exact version.
+ * The member id is NOT required to equal the link id. The bundle records which governed link it
+ * binds; certification, eligibility and access stay with the lab registry and link governance.
+ * Showcase membership, standard-code matches and raw lab ids are not authority, so the only
+ * accepted basis is GOVERNED_LINK.
  */
 export type LabBinding = Readonly<{
   identity: BundleItemIdentity<"LAB">;
-  linkId: string;
-  labId: string;
-  labVersion: string;
+  link: Readonly<{ linkId: string; linkRevision: string }>;
+  lab: Readonly<{ labId: string; labVersion: string }>;
   objectiveIds: readonly string[];
   role: LabRole;
   placement: Readonly<{ lessonItemId: string; sceneId: string | null }>;
@@ -216,8 +243,14 @@ export type ResourceReference = Readonly<{
 export type ToolkitBindingMode = "REQUIRED" | "OPTIONAL" | "PROHIBITED";
 export type ToolkitScope = Readonly<{ kind: "BUNDLE" }> | Readonly<{ kind: "ITEM"; itemId: string }>;
 
+/**
+ * `toolId` is a canonical governed tool identifier, in the namespace tool policies use (for
+ * example `fraction_strips`), NOT the runtime toolkit registry namespace (`fraction-visualizer`).
+ * Translation to runtime implementations goes through a reviewed, versioned mapping pinned by
+ * `ContentBundleV1.toolkitMapping` (see toolkitMapping.ts). There is no spelling normalization
+ * or implied equivalence.
+ */
 export type ToolkitBinding = Readonly<{
-  /** Canonical toolkit registry id (lib/toolkit/toolRegistry). */
   toolId: string;
   mode: ToolkitBindingMode;
   scope: ToolkitScope;
@@ -227,6 +260,9 @@ export type ToolkitBinding = Readonly<{
   internalConfiguration: Readonly<Record<string, ConfigValue>>;
   context: string | null;
 }>;
+
+/** Pin of the reviewed canonical-to-runtime tool mapping this bundle was composed against. */
+export type ToolkitMappingRef = Readonly<{ mappingId: string; mappingVersion: string }>;
 
 // ─── Learner support ────────────────────────────────────────────────────────────────────────────
 
@@ -281,38 +317,40 @@ export type OfflineAsset = Readonly<{
   audience: Audience;
 }>;
 
-export type OfflineCapabilityRestriction =
-  | "NO_AI_TUTOR"
-  | "NO_LIVE_ASSESSMENT"
-  | "NO_SUMMATIVE_ASSESSMENT"
-  | "NO_LAB_EVIDENCE_FINALIZATION"
-  | "NO_SUBMISSION_FINALIZATION";
+/** Allow-list: any capability not listed is unavailable offline. */
+export type OfflineCapability = "LESSON_PLAYBACK" | "FORMATIVE_PRACTICE" | "RESPONSE_QUEUE" | "LOCAL_TOOLS" | "PRINTABLE_WORKSHEETS";
 
-export type ReconnectRequirement = Readonly<{
+export type ReconnectSemantics = Readonly<{
   requiredFor: readonly ("SUBMISSION_SYNC" | "SUMMATIVE_ASSESSMENT" | "EVIDENCE_RECONCILIATION")[];
   maxOfflineDays: number | null;
 }>;
 
 /**
- * Offline packaging declaration. The exact bundle version/hash is bound when the package is
- * sealed (see projection.ts); a bundle cannot contain its own hash.
+ * Offline packaging plan. A package built from it pins exactly one bundleId, version and
+ * contentHash, the release identity, exact member versions and exact asset hashes (see
+ * projection.ts). Learner and staff packages are separate projections.
  */
 export type OfflineManifest = Readonly<{
   packageable: boolean;
   assets: readonly OfflineAsset[];
-  capabilityRestrictions: readonly OfflineCapabilityRestriction[];
-  reconnectRequirement: ReconnectRequirement;
+  allowedCapabilities: readonly OfflineCapability[];
+  reconnectSemantics: ReconnectSemantics;
 }>;
 
 // ─── Governance ─────────────────────────────────────────────────────────────────────────────────
 
-/** References only. Review decisions and approvals live in their own governed records. */
+/**
+ * References to existing governance records only. The bundle has no approval flag and no notes.
+ *   - provenanceRefs: immutable lineage of this composition revision; part of the content hash.
+ *   - reviewRefs, lifecycleRefs, releaseRefs: attestations and events ABOUT a sealed
+ *     (bundleId, version, contentHash). They are excluded from the content hash; otherwise
+ *     recording an approval would change what was approved.
+ */
 export type GovernanceReferences = Readonly<{
-  provenance: Readonly<{ sourceIds: readonly string[]; generatorRunId: string | null }>;
-  reviewIds: readonly string[];
-  releaseRecordId: string | null;
-  /** Internal reviewer notes; never projected to learners and excluded from the content hash. */
-  reviewerNotes: readonly string[];
+  provenanceRefs: readonly string[];
+  reviewRefs: readonly string[];
+  lifecycleRefs: readonly string[];
+  releaseRefs: readonly string[];
 }>;
 
 // ─── Bundle ─────────────────────────────────────────────────────────────────────────────────────
@@ -325,6 +363,11 @@ export type ContentBundleIdentity = Readonly<{
   gradeLevel: number;
   subject: string;
   locale: string;
+  /**
+   * SHA-256 of the canonical composition, excluding this field. null for an unsealed draft. When
+   * set, validation rejects it unless it matches the recomputed hash.
+   */
+  contentHash: string | null;
 }>;
 
 export type ContentBundleV1 = Readonly<{
@@ -338,6 +381,7 @@ export type ContentBundleV1 = Readonly<{
   labs: readonly LabBinding[];
   resources: readonly ResourceReference[];
   toolkitBindings: readonly ToolkitBinding[];
+  toolkitMapping: ToolkitMappingRef | null;
   learnerSupport: LearnerSupport;
   renderings: readonly RenderingArtifactRef[];
   offline: OfflineManifest;
@@ -351,6 +395,7 @@ export type ContentBundleValidationCode =
   | "malformed"
   | "unknown_field"
   | "schema_version_unsupported"
+  | "content_hash_stale"
   | "identity_missing"
   | "version_missing"
   | "duplicate_id"

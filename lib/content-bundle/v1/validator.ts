@@ -17,10 +17,15 @@ import {
   type ContentBundleValidationResult,
   type GovernedItemKind,
 } from "./types";
+import { hashContentBundle } from "./hash";
 
 export type ContentBundleValidationOptions = Readonly<{
-  /** Optional registry check for toolkit ids (e.g. `isCanonicalToolId`). Kept injectable so this module stays pure. */
-  isKnownToolId?: (toolId: string) => boolean;
+  /**
+   * Optional check that a binding's toolId exists in the canonical GOVERNED tool namespace.
+   * Runtime toolkit registry ids are a different namespace; resolve them through a reviewed
+   * mapping (toolkitMapping.ts), never through this check.
+   */
+  isGovernedToolId?: (toolId: string) => boolean;
 }>;
 
 // ─── Forbidden concepts ─────────────────────────────────────────────────────────────────────────
@@ -43,6 +48,7 @@ const STUDENT_STATE_KEYS = new Set([
   "placementdecision", "placementresult", "placementlevel",
   "recommendation", "recommendations", "recommendeditemid",
   "nextlesson", "nextlessonid", "nextitemid", "nextaction",
+  "evidence", "evidenceid", "evidencerecords", "admittedevidence", "observations",
 ]);
 
 /** Runtime/operational timestamps that must not enter (or perturb the hash of) a content contract. */
@@ -61,27 +67,27 @@ function normalizeKey(key: string): string {
 // ─── Allowed fields (strict, so unknown names cannot smuggle state) ─────────────────────────────
 
 const KEYS = {
-  bundle: ["schemaVersion", "identity", "curriculumAuthority", "sequence", "lessons", "activities", "assessments", "labs", "resources", "toolkitBindings", "learnerSupport", "renderings", "offline", "governance", "extensions"],
-  identity: ["bundleId", "version", "title", "gradeLevel", "subject", "locale"],
-  authority: ["releaseId", "releaseIdentity", "objectiveIds", "standardIds"],
+  bundle: ["schemaVersion", "identity", "curriculumAuthority", "sequence", "lessons", "activities", "assessments", "labs", "resources", "toolkitBindings", "toolkitMapping", "learnerSupport", "renderings", "offline", "governance", "extensions"],
+  identity: ["bundleId", "version", "title", "gradeLevel", "subject", "locale", "contentHash"],
+  authority: ["releaseId", "releaseIdentity", "objectiveIds", "standardIds", "sourceVersionRefs", "conceptRefs", "constructBindingRefs"],
   itemIdentity: ["itemId", "itemVersion", "itemKind"],
   unit: ["unitId", "unitVersion", "title", "order", "prerequisiteUnitIds", "entries"],
-  entry: ["itemId", "order", "prerequisiteItemIds", "unlocksItemIds"],
+  entry: ["itemId", "order", "requirement", "prerequisiteItemIds", "unlocksItemIds"],
   lesson: ["identity", "title", "objectiveIds", "estimatedMinutes", "resourceIds"],
   activity: ["identity", "title", "objectiveIds", "lessonItemIds", "scaffolding", "instructions", "resourceIds", "rubric", "expectedDurationMinutes", "collaborationMode", "evidenceIntent", "accessibility", "extensions"],
   step: ["stepId", "text", "resourceIds"],
   rubric: ["rubricId", "rubricVersion", "learnerVisibleCriteria", "scoringGuideResourceId"],
   accessibility: ["readingLevel", "supportsScreenReader", "supportsReadAloud", "requiresColorVision", "requiresFineMotor", "alternativeFormatResourceIds"],
-  assessment: ["identity", "role", "title", "objectiveIds", "definition", "items", "learnerInstructions", "secured"],
-  lab: ["identity", "linkId", "labId", "labVersion", "objectiveIds", "role", "placement", "authorityBasis"],
+  assessment: ["identity", "role", "title", "objectiveIds", "definition", "items", "itemOrder", "learnerInstructions", "secured"],
+  lab: ["identity", "link", "lab", "objectiveIds", "role", "placement", "authorityBasis"],
   resource: ["resourceId", "resourceVersion", "kind", "audience", "title", "locale", "assetId"],
   toolkit: ["toolId", "mode", "scope", "configuration", "internalConfiguration", "context"],
   support: ["remediation", "enrichment", "accommodations", "languageVariants"],
   supportLink: ["supportId", "objectiveIds", "itemIds", "resourceIds"],
   rendering: ["renderingId", "kind", "artifactVersion", "artifactSha256", "audience", "derivation", "sourceAuthority"],
-  offline: ["packageable", "assets", "capabilityRestrictions", "reconnectRequirement"],
+  offline: ["packageable", "assets", "allowedCapabilities", "reconnectSemantics"],
   asset: ["assetId", "assetVersion", "sha256", "byteSize", "mediaType", "audience"],
-  governance: ["provenance", "reviewIds", "releaseRecordId", "reviewerNotes"],
+  governance: ["provenanceRefs", "reviewRefs", "lifecycleRefs", "releaseRefs"],
 } as const;
 
 const AUDIENCES = ["LEARNER", "TEACHER", "SYSTEM"];
@@ -95,7 +101,7 @@ const TOOL_MODES = ["REQUIRED", "OPTIONAL", "PROHIBITED"];
 const ACCOMMODATION_KINDS = ["EXTENDED_TIME", "READ_ALOUD", "LARGE_PRINT", "REDUCED_LOAD", "ALTERNATE_FORMAT"];
 const RENDERING_KINDS = ["TEXTBOOK", "WORKBOOK", "TEACHER_GUIDE", "ASSESSMENT_BOOK"];
 const TEACHER_RENDERING_KINDS = new Set(["TEACHER_GUIDE", "ASSESSMENT_BOOK"]);
-const CAPABILITY_RESTRICTIONS = ["NO_AI_TUTOR", "NO_LIVE_ASSESSMENT", "NO_SUMMATIVE_ASSESSMENT", "NO_LAB_EVIDENCE_FINALIZATION", "NO_SUBMISSION_FINALIZATION"];
+const OFFLINE_CAPABILITIES = ["LESSON_PLAYBACK", "FORMATIVE_PRACTICE", "RESPONSE_QUEUE", "LOCAL_TOOLS", "PRINTABLE_WORKSHEETS"];
 const RECONNECT_REASONS = ["SUBMISSION_SYNC", "SUMMATIVE_ASSESSMENT", "EVIDENCE_RECONCILIATION"];
 const SHA256 = /^[a-f0-9]{64}$/;
 const MEDIA_TYPE = /^[a-z]+\/[a-z0-9.+-]+$/;
@@ -246,6 +252,9 @@ export function validateContentBundle(input: unknown, options: ContentBundleVali
     c.number(identity, "gradeLevel", p, { integer: true, min: 1 });
     c.string(identity, "subject", p);
     c.string(identity, "locale", p);
+    if (identity.contentHash !== null && (typeof identity.contentHash !== "string" || !SHA256.test(identity.contentHash))) {
+      c.add("malformed", `${p}.contentHash`, "contentHash must be 64 lowercase hex characters or null");
+    }
   }
 
   // Curriculum authority
@@ -260,6 +269,9 @@ export function validateContentBundle(input: unknown, options: ContentBundleVali
     if (Array.isArray(authority.objectiveIds) && authority.objectiveIds.length === 0) c.add("objectives_empty", `${p}.objectiveIds`, "a bundle must bind at least one curriculum objective");
     objectives.forEach((id) => authorityObjectives.add(id));
     c.stringSet(authority, "standardIds", p);
+    c.stringSet(authority, "sourceVersionRefs", p);
+    c.stringSet(authority, "conceptRefs", p);
+    c.stringSet(authority, "constructBindingRefs", p);
   }
 
   const checkObjectives = (obj: Rec, path: string) => {
@@ -293,16 +305,16 @@ export function validateContentBundle(input: unknown, options: ContentBundleVali
         else assets.set(assetId, audience ?? "SYSTEM");
       }
     });
-    const restrictions = c.array(offline.capabilityRestrictions, `${p}.capabilityRestrictions`);
-    restrictions.forEach((value, index) => {
-      if (typeof value !== "string" || !CAPABILITY_RESTRICTIONS.includes(value)) c.add("malformed", `${p}.capabilityRestrictions[${index}]`, `capability restriction must be one of ${CAPABILITY_RESTRICTIONS.join(", ")}`);
+    c.stringSet(offline, "allowedCapabilities", p).forEach((value, index) => {
+      if (!OFFLINE_CAPABILITIES.includes(value)) c.add("malformed", `${p}.allowedCapabilities[${index}]`, `offline capability must be one of ${OFFLINE_CAPABILITIES.join(", ")}`);
     });
-    const reconnect = c.record(offline.reconnectRequirement, `${p}.reconnectRequirement`);
+    const reconnect = c.record(offline.reconnectSemantics, `${p}.reconnectSemantics`);
     if (reconnect) {
-      c.array(reconnect.requiredFor, `${p}.reconnectRequirement.requiredFor`).forEach((value, index) => {
-        if (typeof value !== "string" || !RECONNECT_REASONS.includes(value)) c.add("malformed", `${p}.reconnectRequirement.requiredFor[${index}]`, `reconnect reason must be one of ${RECONNECT_REASONS.join(", ")}`);
+      c.keys(reconnect, ["requiredFor", "maxOfflineDays"], `${p}.reconnectSemantics`);
+      c.array(reconnect.requiredFor, `${p}.reconnectSemantics.requiredFor`).forEach((value, index) => {
+        if (typeof value !== "string" || !RECONNECT_REASONS.includes(value)) c.add("malformed", `${p}.reconnectSemantics.requiredFor[${index}]`, `reconnect reason must be one of ${RECONNECT_REASONS.join(", ")}`);
       });
-      if (reconnect.maxOfflineDays !== null) c.number(reconnect, "maxOfflineDays", `${p}.reconnectRequirement`, { integer: true, min: 1 });
+      if (reconnect.maxOfflineDays !== null) c.number(reconnect, "maxOfflineDays", `${p}.reconnectSemantics`, { integer: true, min: 1 });
     }
   }
 
@@ -488,6 +500,15 @@ export function validateContentBundle(input: unknown, options: ContentBundleVali
       if (id && itemIds.has(id)) c.add("duplicate_id", `${ip}.assessmentItemId`, `assessment item "${id}" is referenced more than once`);
       if (id) itemIds.add(id);
     });
+    const order = c.record(assessment.itemOrder, `${p}.itemOrder`);
+    if (order) {
+      if (order.kind === "FIXED") c.keys(order, ["kind"], `${p}.itemOrder`);
+      else if (order.kind === "RANDOMIZED_BY_POLICY") {
+        c.keys(order, ["kind", "policyId", "policyVersion"], `${p}.itemOrder`);
+        c.string(order, "policyId", `${p}.itemOrder`, "assessment_identity_missing");
+        c.string(order, "policyVersion", `${p}.itemOrder`, "assessment_identity_missing");
+      } else c.add("malformed", `${p}.itemOrder.kind`, "itemOrder.kind must be FIXED or RANDOMIZED_BY_POLICY");
+    }
     c.array(assessment.learnerInstructions, `${p}.learnerInstructions`).forEach((value, i) => {
       if (!isNonEmptyString(value)) c.add("malformed", `${p}.learnerInstructions[${i}]`, "expected a non-empty string");
     });
@@ -506,9 +527,21 @@ export function validateContentBundle(input: unknown, options: ContentBundleVali
     if (!lab) return;
     c.keys(lab, KEYS.lab, p);
     checkIdentity(lab, p, ["LAB"]);
-    c.string(lab, "linkId", p, "lab_binding_identity_missing");
-    c.string(lab, "labId", p, "lab_binding_identity_missing");
-    c.string(lab, "labVersion", p, "lab_binding_identity_missing");
+    // Governed relationship identity and lab experience identity are separate from the member id.
+    const link = isRecord(lab.link) ? lab.link : null;
+    if (!link) c.add("lab_binding_identity_missing", `${p}.link`, "a governed LearningExperienceLink reference (linkId + linkRevision) is required");
+    else {
+      c.keys(link, ["linkId", "linkRevision"], `${p}.link`);
+      c.string(link, "linkId", `${p}.link`, "lab_binding_identity_missing");
+      c.string(link, "linkRevision", `${p}.link`, "lab_binding_identity_missing");
+    }
+    const experience = isRecord(lab.lab) ? lab.lab : null;
+    if (!experience) c.add("lab_binding_identity_missing", `${p}.lab`, "a lab experience reference (labId + labVersion) is required");
+    else {
+      c.keys(experience, ["labId", "labVersion"], `${p}.lab`);
+      c.string(experience, "labId", `${p}.lab`, "lab_binding_identity_missing");
+      c.string(experience, "labVersion", `${p}.lab`, "lab_binding_identity_missing");
+    }
     checkObjectives(lab, p);
     c.enumValue(lab, "role", LAB_ROLES, p);
     const placement = c.record(lab.placement, `${p}.placement`);
@@ -565,6 +598,7 @@ export function validateContentBundle(input: unknown, options: ContentBundleVali
           if (sequenced.has(itemId)) c.add("duplicate_id", `${ep}.itemId`, `item "${itemId}" is already sequenced at ${sequenced.get(itemId)}`);
           else sequenced.set(itemId, ep);
         }
+        c.enumValue(entry, "requirement", ["REQUIRED", "OPTIONAL"], ep);
         const entryOrder = c.number(entry, "order", ep, { integer: true, min: 0, code: "sequence_order_invalid" });
         if (entryOrder !== null) {
           if (entryOrders.has(entryOrder)) c.add("sequence_order_duplicate", `${ep}.order`, `order ${entryOrder} is already used by ${entryOrders.get(entryOrder)}`);
@@ -596,7 +630,7 @@ export function validateContentBundle(input: unknown, options: ContentBundleVali
     if (!binding) return;
     c.keys(binding, KEYS.toolkit, p);
     const toolId = c.string(binding, "toolId", p, "identity_missing");
-    if (toolId && options.isKnownToolId && !options.isKnownToolId(toolId)) c.add("reference_unknown", `${p}.toolId`, `tool "${toolId}" is not in the toolkit registry`);
+    if (toolId && options.isGovernedToolId && !options.isGovernedToolId(toolId)) c.add("reference_unknown", `${p}.toolId`, `tool "${toolId}" is not a canonical governed tool id`);
     const mode = c.enumValue(binding, "mode", TOOL_MODES, p);
     let scopeKey: string | null = null;
     const scope = c.record(binding.scope, `${p}.scope`);
@@ -706,23 +740,32 @@ export function validateContentBundle(input: unknown, options: ContentBundleVali
   if (governance) {
     const gp = `${root}.governance`;
     c.keys(governance, KEYS.governance, gp);
-    const provenance = c.record(governance.provenance, `${gp}.provenance`);
-    if (provenance) {
-      c.keys(provenance, ["sourceIds", "generatorRunId"], `${gp}.provenance`);
-      c.stringSet(provenance, "sourceIds", `${gp}.provenance`);
-      c.nullableString(provenance, "generatorRunId", `${gp}.provenance`);
+    for (const key of KEYS.governance) c.stringSet(governance, key, gp);
+  }
+
+  // Toolkit mapping pin (reviewed canonical-to-runtime mapping)
+  if (input.toolkitMapping !== null) {
+    const mp = `${root}.toolkitMapping`;
+    const mapping = c.record(input.toolkitMapping, mp);
+    if (mapping) {
+      c.keys(mapping, ["mappingId", "mappingVersion"], mp);
+      c.string(mapping, "mappingId", mp, "identity_missing");
+      c.string(mapping, "mappingVersion", mp, "version_missing");
     }
-    c.stringSet(governance, "reviewIds", gp);
-    c.nullableString(governance, "releaseRecordId", gp);
-    c.array(governance.reviewerNotes, `${gp}.reviewerNotes`).forEach((value, i) => {
-      if (typeof value !== "string") c.add("malformed", `${gp}.reviewerNotes[${i}]`, "expected a string");
-    });
   }
 
   if (input.extensions !== undefined) c.record(input.extensions, `${root}.extensions`);
 
   if (c.errors.length > 0) return { ok: false, bundle: null, errors: c.errors };
-  return { ok: true, bundle: input as unknown as ContentBundleV1, errors: [] };
+  const bundle = input as unknown as ContentBundleV1;
+  // A declared hash must match the recomputed composition hash; stale identities fail closed.
+  if (bundle.identity.contentHash !== null) {
+    const actual = hashContentBundle(bundle);
+    if (actual !== bundle.identity.contentHash) {
+      return { ok: false, bundle: null, errors: [{ code: "content_hash_stale", path: `${root}.identity.contentHash`, message: `declared contentHash does not match the composition (expected ${actual})` }] };
+    }
+  }
+  return { ok: true, bundle, errors: [] };
 }
 
 /** Deterministic cycle search over the item dependency graph (nodes visited in sorted order). */

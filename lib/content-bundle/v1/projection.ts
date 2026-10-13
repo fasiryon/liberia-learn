@@ -6,7 +6,7 @@
  * eventually call this. Teacher/system material is removed by allow-listing learner fields
  * rather than deleting known secret fields, so new internal fields stay out by default.
  */
-import { sealContentBundle } from "./hash";
+import { sealContentBundle } from "./seal";
 import type { ContentBundleValidationOptions } from "./validator";
 import {
   LEARNER_CONTENT_BUNDLE_SCHEMA_VERSION,
@@ -27,14 +27,17 @@ import {
   type GovernedItemKind,
   type LabBinding,
   type LessonReference,
-  type OfflineCapabilityRestriction,
-  type ReconnectRequirement,
+  type OfflineCapability,
+  type ReconnectSemantics,
   type RenderingKind,
   type ResourceKind,
   type SequenceUnit,
   type SupportLink,
+  type ToolkitMappingRef,
   type ToolkitScope,
 } from "./types";
+
+export const LEARNER_PROJECTION_VERSION = "learner-projection.v1" as const;
 
 export type LearnerInstructionStep = Readonly<{ stepId: string; text: string; resourceIds: readonly string[] }>;
 
@@ -60,6 +63,8 @@ export type LearnerAssessmentReference = Readonly<{
   title: string;
   objectiveIds: readonly string[];
   definition: AssessmentDefinitionRef;
+  /** Whether the authored order is fixed. The actual order comes from the delivery session. */
+  itemOrder: "FIXED" | "RANDOMIZED";
   learnerInstructions: readonly string[];
 }>;
 
@@ -84,15 +89,19 @@ export type LearnerContentBundle = Readonly<{
   schemaVersion: typeof LEARNER_CONTENT_BUNDLE_SCHEMA_VERSION;
   source: Readonly<{ bundleId: string; bundleVersion: string; contentHash: string }>;
   identity: Readonly<{ title: string; gradeLevel: number; subject: string; locale: string }>;
-  objectives: Readonly<{ releaseId: string; objectiveIds: readonly string[]; standardIds: readonly string[] }>;
+  objectives: Readonly<{ releaseId: string; releaseIdentity: string; objectiveIds: readonly string[]; standardIds: readonly string[] }>;
   sequence: Readonly<{ units: readonly SequenceUnit[] }>;
   lessons: readonly LessonReference[];
   activities: readonly LearnerActivity[];
   assessments: readonly LearnerAssessmentReference[];
   labs: readonly LabBinding[];
   resources: readonly LearnerResource[];
-  /** REQUIRED/OPTIONAL tools only; prohibitions are enforced server-side, not advertised. */
+  /**
+   * REQUIRED/OPTIONAL canonical tool ids only. Prohibitions are enforced server-side, not
+   * advertised. Runtime ids come from the pinned mapping, never from spelling.
+   */
   tools: readonly LearnerToolBinding[];
+  toolkitMapping: ToolkitMappingRef | null;
   learnerSupport: Readonly<{
     remediation: readonly SupportLink[];
     enrichment: readonly SupportLink[];
@@ -100,14 +109,23 @@ export type LearnerContentBundle = Readonly<{
     languageVariants: readonly Readonly<{ locale: string; itemId: string; resourceIds: readonly string[] }>[];
   }>;
   renderings: readonly Readonly<{ renderingId: string; kind: RenderingKind; artifactVersion: string; artifactSha256: string }>[];
+  /**
+   * Learner offline package identity: exactly one bundle version and hash, its release identity,
+   * exact member versions and exact learner asset hashes. Staff packages are a separate
+   * projection and are not produced here.
+   */
   offline: Readonly<{
+    audience: "LEARNER";
+    projectionVersion: typeof LEARNER_PROJECTION_VERSION;
     bundleId: string;
     bundleVersion: string;
     contentHash: string;
+    releaseIdentity: string;
     packageable: boolean;
+    members: readonly BundleItemIdentity<GovernedItemKind>[];
     assets: readonly Readonly<{ assetId: string; assetVersion: string; sha256: string; byteSize: number; mediaType: string }>[];
-    capabilityRestrictions: readonly OfflineCapabilityRestriction[];
-    reconnectRequirement: ReconnectRequirement;
+    allowedCapabilities: readonly OfflineCapability[];
+    reconnectSemantics: ReconnectSemantics;
   }>;
 }>;
 
@@ -126,6 +144,7 @@ export function projectLearnerBundle(bundle: ContentBundleV1, contentHash: strin
     identity: { title: bundle.identity.title, gradeLevel: bundle.identity.gradeLevel, subject: bundle.identity.subject, locale: bundle.identity.locale },
     objectives: {
       releaseId: bundle.curriculumAuthority.releaseId,
+      releaseIdentity: bundle.curriculumAuthority.releaseIdentity,
       objectiveIds: [...bundle.curriculumAuthority.objectiveIds],
       standardIds: [...bundle.curriculumAuthority.standardIds],
     },
@@ -136,7 +155,7 @@ export function projectLearnerBundle(bundle: ContentBundleV1, contentHash: strin
         title: unit.title,
         order: unit.order,
         prerequisiteUnitIds: [...unit.prerequisiteUnitIds],
-        entries: unit.entries.map((entry) => ({ itemId: entry.itemId, order: entry.order, prerequisiteItemIds: [...entry.prerequisiteItemIds], unlocksItemIds: [...entry.unlocksItemIds] })),
+        entries: unit.entries.map((entry) => ({ itemId: entry.itemId, order: entry.order, requirement: entry.requirement, prerequisiteItemIds: [...entry.prerequisiteItemIds], unlocksItemIds: [...entry.unlocksItemIds] })),
       })),
     },
     lessons: bundle.lessons.map((lesson) => ({
@@ -166,13 +185,13 @@ export function projectLearnerBundle(bundle: ContentBundleV1, contentHash: strin
       title: assessment.title,
       objectiveIds: [...assessment.objectiveIds],
       definition: { definitionId: assessment.definition.definitionId, definitionVersion: assessment.definition.definitionVersion },
+      itemOrder: assessment.itemOrder.kind === "FIXED" ? ("FIXED" as const) : ("RANDOMIZED" as const),
       learnerInstructions: [...assessment.learnerInstructions],
     })),
     labs: bundle.labs.map((lab) => ({
       identity: { ...lab.identity },
-      linkId: lab.linkId,
-      labId: lab.labId,
-      labVersion: lab.labVersion,
+      link: { linkId: lab.link.linkId, linkRevision: lab.link.linkRevision },
+      lab: { labId: lab.lab.labId, labVersion: lab.lab.labVersion },
       objectiveIds: [...lab.objectiveIds],
       role: lab.role,
       placement: { lessonItemId: lab.placement.lessonItemId, sceneId: lab.placement.sceneId },
@@ -184,6 +203,7 @@ export function projectLearnerBundle(bundle: ContentBundleV1, contentHash: strin
     tools: bundle.toolkitBindings
       .filter((binding): binding is typeof binding & { mode: "REQUIRED" | "OPTIONAL" } => binding.mode !== "PROHIBITED")
       .map((binding) => ({ toolId: binding.toolId, mode: binding.mode, scope: binding.scope.kind === "ITEM" ? { kind: "ITEM" as const, itemId: binding.scope.itemId } : { kind: "BUNDLE" as const }, configuration: { ...binding.configuration }, context: binding.context })),
+    toolkitMapping: bundle.toolkitMapping ? { mappingId: bundle.toolkitMapping.mappingId, mappingVersion: bundle.toolkitMapping.mappingVersion } : null,
     learnerSupport: {
       remediation: bundle.learnerSupport.remediation.map(supportLink),
       enrichment: bundle.learnerSupport.enrichment.map(supportLink),
@@ -194,15 +214,21 @@ export function projectLearnerBundle(bundle: ContentBundleV1, contentHash: strin
       .filter((rendering) => rendering.audience === "LEARNER" && LEARNER_RENDERING_KINDS.has(rendering.kind))
       .map((rendering) => ({ renderingId: rendering.renderingId, kind: rendering.kind, artifactVersion: rendering.artifactVersion, artifactSha256: rendering.artifactSha256 })),
     offline: {
+      audience: "LEARNER",
+      projectionVersion: LEARNER_PROJECTION_VERSION,
       bundleId: bundle.identity.bundleId,
       bundleVersion: bundle.identity.version,
       contentHash,
+      releaseIdentity: bundle.curriculumAuthority.releaseIdentity,
       packageable: bundle.offline.packageable,
+      members: [...bundle.lessons, ...bundle.activities, ...bundle.assessments, ...bundle.labs]
+        .map((member) => ({ itemId: member.identity.itemId, itemVersion: member.identity.itemVersion, itemKind: member.identity.itemKind }))
+        .sort((a, b) => (a.itemId < b.itemId ? -1 : a.itemId > b.itemId ? 1 : 0)),
       assets: bundle.offline.assets
         .filter((asset) => learnerAssets.has(asset.assetId))
         .map((asset) => ({ assetId: asset.assetId, assetVersion: asset.assetVersion, sha256: asset.sha256, byteSize: asset.byteSize, mediaType: asset.mediaType })),
-      capabilityRestrictions: [...bundle.offline.capabilityRestrictions],
-      reconnectRequirement: { requiredFor: [...bundle.offline.reconnectRequirement.requiredFor], maxOfflineDays: bundle.offline.reconnectRequirement.maxOfflineDays },
+      allowedCapabilities: [...bundle.offline.allowedCapabilities],
+      reconnectSemantics: { requiredFor: [...bundle.offline.reconnectSemantics.requiredFor], maxOfflineDays: bundle.offline.reconnectSemantics.maxOfflineDays },
     },
   };
 }

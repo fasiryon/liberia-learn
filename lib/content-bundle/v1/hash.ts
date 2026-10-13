@@ -1,26 +1,30 @@
 /**
  * Deterministic content identity for ContentBundle V1.
  *
- * Serialization reuses the curriculum canonical JSON (sorted object keys, normalized numbers) so
- * bundle hashes are computed the same way as curriculum snapshot hashes. Before serialization the
- * bundle is normalized so that semantically equal bundles hash equally:
+ * CONTENT HASH vs GOVERNED RELEASE IDENTITY
+ *   - The content hash identifies WHAT IS LEARNED: exact member versions, sequence and
+ *     meaningful authored order, objective bindings, curriculum authority references (releaseId,
+ *     releaseIdentity, source/concept/construct pins), resource versions, assessment definition
+ *     and item versions, lab binding identity, the pinned toolkit mapping, learner support
+ *     references, the offline asset identities and composition provenance.
+ *   - Governed release identity is separate. `curriculumAuthority.releaseIdentity` pins the
+ *     ontology release the content is composed against (and is hashed as a reference). Reviews,
+ *     lifecycle events and release records are attestations about a sealed
+ *     (bundleId, version, contentHash). They are not hashed, so recording an approval never changes
+ *     what was approved.
  *
- *   - id-keyed collections (lessons, activities, resources, ...) are sorted by id;
- *   - set-valued id lists (objectiveIds, resourceIds, prerequisites, ...) are sorted;
- *   - sequence units and entries are sorted by their explicit `order`, so changing an order
- *     value changes the hash while re-emitting the same order does not;
- *   - authored sequences whose order IS meaning (instruction steps, assessment item order,
- *     rubric criteria, learner instructions) are kept as authored.
+ * Excluded: `identity.contentHash` (self), derived `renderings` (output artifacts compiled from
+ * the hashed content), and `governance.reviewRefs` / `lifecycleRefs` / `releaseRefs`. The contract
+ * has no timestamps, notes or student state, and the validator rejects them.
  *
- * Excluded from the hash (PROVISIONAL): `renderings` (derived artifacts compiled from the hashed
- * content; regenerating a textbook must not change bundle identity) and `governance` (review and
- * release records attach to a hash; recording an approval must not change what was approved).
- * The contract has no timestamps or student state, and the validator rejects them.
+ * Serialization reuses the curriculum canonical JSON (sorted object keys, normalized numbers).
+ * Unordered sets (id lists and id-keyed collections) are sorted. Sequence follows explicit `order`.
+ * Authored order is kept where it is meaningful: instruction steps, FIXED assessment item order,
+ * rubric criteria and learner instructions.
  */
 import { createHash } from "crypto";
 import { canonicalizeJson } from "@/lib/curriculum/provenance/hash";
-import { validateContentBundle, type ContentBundleValidationOptions } from "./validator";
-import type { ContentBundleV1, ContentBundleValidationError } from "./types";
+import type { ContentBundleV1 } from "./types";
 
 export const CONTENT_BUNDLE_HASH_DOMAIN = "liberialearn.content-bundle.v1.sha256" as const;
 
@@ -28,16 +32,26 @@ const sorted = (values: readonly string[]): string[] => [...values].sort();
 const byKey = <T>(values: readonly T[], key: (value: T) => string): T[] => [...values].sort((a, b) => (key(a) < key(b) ? -1 : key(a) > key(b) ? 1 : 0));
 const byOrder = <T extends { order: number }>(values: readonly T[]): T[] => [...values].sort((a, b) => a.order - b.order);
 
+function normalizeSupportLink<T extends { objectiveIds: readonly string[]; itemIds: readonly string[]; resourceIds: readonly string[] }>(link: T): T {
+  return { ...link, objectiveIds: sorted(link.objectiveIds), itemIds: sorted(link.itemIds), resourceIds: sorted(link.resourceIds) };
+}
+
 /** The exact semantic payload that is hashed. Exposed for audit and debugging. */
 export function contentBundleHashPayload(bundle: ContentBundleV1) {
+  const { bundleId, version, title, gradeLevel, subject, locale } = bundle.identity;
+  const authority = bundle.curriculumAuthority;
   return {
     domain: CONTENT_BUNDLE_HASH_DOMAIN,
     schemaVersion: bundle.schemaVersion,
-    identity: bundle.identity,
+    identity: { bundleId, version, title, gradeLevel, subject, locale },
     curriculumAuthority: {
-      ...bundle.curriculumAuthority,
-      objectiveIds: sorted(bundle.curriculumAuthority.objectiveIds),
-      standardIds: sorted(bundle.curriculumAuthority.standardIds),
+      releaseId: authority.releaseId,
+      releaseIdentity: authority.releaseIdentity,
+      objectiveIds: sorted(authority.objectiveIds),
+      standardIds: sorted(authority.standardIds),
+      sourceVersionRefs: sorted(authority.sourceVersionRefs),
+      conceptRefs: sorted(authority.conceptRefs),
+      constructBindingRefs: sorted(authority.constructBindingRefs),
     },
     sequence: {
       units: byOrder(bundle.sequence.units).map((unit) => ({
@@ -70,10 +84,13 @@ export function contentBundleHashPayload(bundle: ContentBundleV1) {
     assessments: byKey(bundle.assessments, (a) => a.identity.itemId).map((assessment) => ({
       ...assessment,
       objectiveIds: sorted(assessment.objectiveIds),
+      // FIXED: authored order is semantic. RANDOMIZED_BY_POLICY: the policy is hashed, items are a set.
+      items: assessment.itemOrder.kind === "FIXED" ? assessment.items : byKey(assessment.items, (item) => item.assessmentItemId),
     })),
     labs: byKey(bundle.labs, (l) => l.identity.itemId).map((lab) => ({ ...lab, objectiveIds: sorted(lab.objectiveIds) })),
     resources: byKey(bundle.resources, (r) => r.resourceId),
     toolkitBindings: byKey(bundle.toolkitBindings, (b) => `${b.toolId}|${b.scope.kind === "ITEM" ? `ITEM:${b.scope.itemId}` : "BUNDLE"}`),
+    toolkitMapping: bundle.toolkitMapping,
     learnerSupport: {
       remediation: byKey(bundle.learnerSupport.remediation, (s) => s.supportId).map(normalizeSupportLink),
       enrichment: byKey(bundle.learnerSupport.enrichment, (s) => s.supportId).map(normalizeSupportLink),
@@ -81,32 +98,17 @@ export function contentBundleHashPayload(bundle: ContentBundleV1) {
       languageVariants: byKey(bundle.learnerSupport.languageVariants, (v) => `${v.itemId}|${v.locale}`).map((variant) => ({ ...variant, resourceIds: sorted(variant.resourceIds) })),
     },
     offline: {
-      ...bundle.offline,
+      packageable: bundle.offline.packageable,
       assets: byKey(bundle.offline.assets, (a) => a.assetId),
-      capabilityRestrictions: sorted(bundle.offline.capabilityRestrictions),
-      reconnectRequirement: { ...bundle.offline.reconnectRequirement, requiredFor: sorted(bundle.offline.reconnectRequirement.requiredFor) },
+      allowedCapabilities: sorted(bundle.offline.allowedCapabilities),
+      reconnectSemantics: { ...bundle.offline.reconnectSemantics, requiredFor: sorted(bundle.offline.reconnectSemantics.requiredFor) },
     },
+    provenanceRefs: sorted(bundle.governance.provenanceRefs),
     extensions: bundle.extensions ?? null,
   };
 }
 
-function normalizeSupportLink<T extends { objectiveIds: readonly string[]; itemIds: readonly string[]; resourceIds: readonly string[] }>(link: T): T {
-  return { ...link, objectiveIds: sorted(link.objectiveIds), itemIds: sorted(link.itemIds), resourceIds: sorted(link.resourceIds) };
-}
-
-/** SHA-256 (lowercase hex) of the canonical semantic payload. Expects a validated bundle. */
+/** SHA-256 (lowercase hex) of the canonical semantic payload. Expects a structurally valid bundle. */
 export function hashContentBundle(bundle: ContentBundleV1): string {
   return createHash("sha256").update(canonicalizeJson(contentBundleHashPayload(bundle)), "utf8").digest("hex");
-}
-
-export type SealedContentBundle = Readonly<{ bundle: ContentBundleV1; contentHash: string }>;
-
-/** Validate, then hash. Fails closed: an invalid bundle never receives a content identity. */
-export function sealContentBundle(
-  input: unknown,
-  options?: ContentBundleValidationOptions,
-): Readonly<{ ok: true; sealed: SealedContentBundle; errors: readonly ContentBundleValidationError[] }> | Readonly<{ ok: false; sealed: null; errors: readonly ContentBundleValidationError[] }> {
-  const result = validateContentBundle(input, options);
-  if (result.ok === false) return { ok: false, sealed: null, errors: result.errors };
-  return { ok: true, sealed: { bundle: result.bundle, contentHash: hashContentBundle(result.bundle) }, errors: [] };
 }
