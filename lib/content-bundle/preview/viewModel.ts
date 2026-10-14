@@ -270,8 +270,9 @@ export function buildTeacherPreviewModel(resolved: ResolvedContentBundlePreview)
   const activityAuthorityOf = (itemId: string): TeacherActivityAuthority => {
     const fact = resolved.activityReadiness?.[itemId];
     if (fact) return { source: fact.source, activityHash: fact.activityHash, lifecycleState: fact.lifecycleState, releaseEligible: fact.releaseEligible, releaseGate: fact.releaseGate };
-    // The production resolver restores pointer activities only after the release gate passes.
-    if (pointerIds.has(itemId)) return { source: "ACTIVITY_DEFINITION_AUTHORITY", activityHash: null, lifecycleState: null, releaseEligible: true, releaseGate: null };
+    // The production resolver restores pointer activities only after the release gate passes, so only
+    // an authoritative source may imply it. A non-authoritative source without gate facts is not evaluated.
+    if (pointerIds.has(itemId)) return { source: "ACTIVITY_DEFINITION_AUTHORITY", activityHash: null, lifecycleState: null, releaseEligible: resolved.source.authoritative ? true : null, releaseGate: null };
     return { source: "EMBEDDED_IN_BUNDLE", activityHash: null, lifecycleState: null, releaseEligible: null, releaseGate: null };
   };
 

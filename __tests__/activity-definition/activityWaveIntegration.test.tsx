@@ -167,6 +167,25 @@ describe("Teacher Preview over the authority path", () => {
     expect(r.learnerProjection.activities.find((x) => x.rubric)?.rubric).toEqual({ rubricId: "fixture.rubric.g4-math.share-bottle-caps-classwork", rubricVersion: "1.1.0-fixture", criteria: expect.any(Array) });
   });
 
+  it("never infers release eligibility for a non-authoritative source without gate facts", async () => {
+    const r = await preview();
+    const { activityReadiness: _facts, ...withoutFacts } = r;
+    expect(withoutFacts.source.authoritative).toBe(false);
+    for (const member of buildPreviewModels(withoutFacts).teacher.members) {
+      if (member.detail.category !== "ACTIVITY") continue;
+      expect(member.detail.authority).toMatchObject({ source: "ACTIVITY_DEFINITION_AUTHORITY", releaseEligible: null, releaseGate: null });
+    }
+    // Only an authoritative source (the production resolver restores pointers after the gate passes) implies it.
+    const governed = buildPreviewModels({ ...withoutFacts, source: { ...withoutFacts.source, kind: "GOVERNED_STORE", authoritative: true } });
+    for (const member of governed.teacher.members) {
+      if (member.detail.category === "ACTIVITY") expect(member.detail.authority.releaseEligible).toBe(true);
+    }
+    // Explicit gate facts are reported as the gate answered, whatever the source.
+    for (const member of buildPreviewModels(r).teacher.members) {
+      if (member.detail.category === "ACTIVITY") expect(member.detail.authority).toMatchObject({ releaseEligible: false, releaseGate: "ACTIVITY_NOT_APPROVED" });
+    }
+  });
+
   it("production refuses the fixture bundle", async () => {
     const r = await getContentBundlePreviewResolver({ NODE_ENV: "production" }).resolveForTeacherPreview({ bundleId: "fixture.bundle.g4-math-fractions-activities", bundleVersion: null, viewer, fixturePreview: true });
     expect(r).toMatchObject({ status: "UNAVAILABLE", diagnostics: [{ code: "FIXTURE_NOT_AUTHORITY" }] });
@@ -195,5 +214,15 @@ describe("Teacher Preview rendering of authority state", () => {
     const frame = host.querySelector("[data-testid=student-preview]")!.textContent!;
     for (const s of ["ActivityDefinition authority", "Pending review", "Not releasable", "Release gate"]) expect(frame).not.toContain(s);
     expect(host.querySelector("[data-testid=learner-experience]")).toBeTruthy();
+  });
+
+  it("a non-authoritative source without gate facts shows the release gate as Not evaluated, never Passes", async () => {
+    const { activityReadiness: _facts, ...withoutFacts } = await preview();
+    host = document.createElement("div"); document.body.appendChild(host); root = createRoot(host);
+    await act(async () => { root!.render(<ContentBundlePreview models={buildPreviewModels(withoutFacts)} initialMode="teacher" initialItemId="fixture.activity.g4-math.fractions.classwork" />); });
+    const gate = host.querySelector("[data-testid=activity-release-gate]")!;
+    expect(gate.textContent).toBe("Not evaluated");
+    expect(gate.textContent).not.toMatch(/Passes|Ready/);
+    expect(gate.querySelector(".cbp-chip")).toBeNull();
   });
 });
