@@ -1,0 +1,238 @@
+{
+  "evidence": {
+    "overflow": [
+      {
+        "surface": "legacy-read",
+        "width": 320,
+        "overflow": false
+      },
+      {
+        "surface": "legacy-read",
+        "width": 390,
+        "overflow": false
+      },
+      {
+        "surface": "legacy-read",
+        "width": 768,
+        "overflow": false
+      },
+      {
+        "surface": "legacy-read",
+        "width": 1024,
+        "overflow": false
+      },
+      {
+        "surface": "legacy-read",
+        "width": 1440,
+        "overflow": false
+      },
+      {
+        "surface": "legacy-read",
+        "width": 1920,
+        "overflow": false
+      },
+      {
+        "surface": "legacy-slides",
+        "width": 320,
+        "overflow": false
+      },
+      {
+        "surface": "legacy-slides",
+        "width": 390,
+        "overflow": false
+      },
+      {
+        "surface": "legacy-slides",
+        "width": 768,
+        "overflow": false
+      },
+      {
+        "surface": "legacy-slides",
+        "width": 1024,
+        "overflow": false
+      },
+      {
+        "surface": "legacy-slides",
+        "width": 1440,
+        "overflow": false
+      },
+      {
+        "surface": "legacy-slides",
+        "width": 1920,
+        "overflow": false
+      },
+      {
+        "surface": "assigned-read",
+        "width": 320,
+        "overflow": false
+      },
+      {
+        "surface": "assigned-read",
+        "width": 390,
+        "overflow": false
+      },
+      {
+        "surface": "assigned-read",
+        "width": 768,
+        "overflow": false
+      },
+      {
+        "surface": "assigned-read",
+        "width": 1024,
+        "overflow": false
+      },
+      {
+        "surface": "assigned-read",
+        "width": 1440,
+        "overflow": false
+      },
+      {
+        "surface": "assigned-read",
+        "width": 1920,
+        "overflow": false
+      },
+      {
+        "surface": "assigned-slides",
+        "width": 320,
+        "overflow": false
+      },
+      {
+        "surface": "assigned-slides",
+        "width": 390,
+        "overflow": false
+      },
+      {
+        "surface": "assigned-slides",
+        "width": 768,
+        "overflow": false
+      },
+      {
+        "surface": "assigned-slides",
+        "width": 1024,
+        "overflow": false
+      },
+      {
+        "surface": "assigned-slides",
+        "width": 1440,
+        "overflow": false
+      },
+      {
+        "surface": "assigned-slides",
+        "width": 1920,
+        "overflow": false
+      },
+      {
+        "surface": "demo",
+        "width": 320,
+        "overflow": false
+      },
+      {
+        "surface": "demo",
+        "width": 390,
+        "overflow": false
+      },
+      {
+        "surface": "demo",
+        "width": 768,
+        "overflow": false
+      },
+      {
+        "surface": "demo",
+        "width": 1024,
+        "overflow": false
+      },
+      {
+        "surface": "demo",
+        "width": 1440,
+        "overflow": false
+      },
+      {
+        "surface": "demo",
+        "width": 1920,
+        "overflow": false
+      },
+      {
+        "surface": "progress",
+        "width": 320,
+        "overflow": false
+      },
+      {
+        "surface": "progress",
+        "width": 390,
+        "overflow": false
+      },
+      {
+        "surface": "progress",
+        "width": 768,
+        "overflow": false
+      },
+      {
+        "surface": "progress",
+        "width": 1024,
+        "overflow": false
+      },
+      {
+        "surface": "progress",
+        "width": 1440,
+        "overflow": false
+      },
+      {
+        "surface": "progress",
+        "width": 1920,
+        "overflow": false
+      }
+    ],
+    "geometry": [
+      {
+        "url": "/student/lesson/fixture-g7-place-value-legacy?grade=7",
+        "stageOpen": 1052,
+        "stageClosed": 1376
+      },
+      {
+        "url": "/design-preview/grade-7-place-value",
+        "stageOpen": 820,
+        "stageClosed": 1144
+      },
+      {
+        "readingMeasure": {
+          "width": 659.8125,
+          "approxCh": 67
+        }
+      }
+    ],
+    "targets": [],
+    "keyboard": {
+      "slides": "ArrowLeft/ArrowRight and Next move one slide"
+    },
+    "demo": {
+      "apiCalls": 0,
+      "storage": {
+        "local": 0,
+        "session": 0,
+        "idb": [
+          "keyval-store"
+        ]
+      },
+      "flow": "intro→explain→build(keyboard +/reset)→example(3 steps)→practice(3, retry feedback)→review→finish"
+    },
+    "completion": {
+      "library": {
+        "message": "device-only",
+        "requests": [
+          "POST /api/track"
+        ]
+      }
+    },
+    "axe": {
+      "legacy-slides": [],
+      "legacy-read": [],
+      "assigned-slides": [],
+      "demo-build": [],
+      "demo-practice": [],
+      "demo-review": [],
+      "progress": []
+    }
+  },
+  "errors": [],
+  "caveat": "Fixture harness with production components and mocked API answers; not server authorization, production content, or real-device certification."
+}

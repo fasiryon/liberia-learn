@@ -3,7 +3,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
-import ReactMarkdown from "react-markdown";
 import { trackEvent, EVENTS } from "@/lib/trackEvent";
 import {
   cacheLessonContent,
@@ -21,14 +20,12 @@ import { LessonUnavailable, NativeLessonRuntimeView } from "@/components/learner
 import { resolveLessonRuntime, unavailableReasonForStatus, type LessonRouteTarget, type LessonRuntimeResolution } from "@/lib/learner-experience/lessonRuntime";
 import { loadLessonDelivery } from "@/lib/learner-experience/lessonRuntimeClient";
 
-// Teacher-created lessons store HTML bodies; ReactMarkdown would show the
-// tags as literal text, so HTML bodies render via the sanitized HTML path.
-function LessonBody({ text }: { text: string }) {
-  if (looksLikeHtml(text)) {
-    return <div dangerouslySetInnerHTML={{ __html: renderSimpleMarkdown(text) }} />;
-  }
-  return <ReactMarkdown>{text}</ReactMarkdown>;
-}
+import { parseToSlides } from "@/lib/lessons/parseToSlides";
+import { parseLessonBlocks, slideBlocks, splitLessonSections, type LessonBlock } from "@/lib/learner-experience/lessonText";
+import { FocusedHeader, LearningStage } from "@/components/experience/FocusedLearning";
+import { LegacyReading, LegacySlides, type LegacySlide } from "@/components/experience/LegacyLesson";
+import { StateNotice } from "@/components/experience/StateNotice";
+import { Chip } from "@/components/experience/Frame";
 
 type LessonMode = "read" | "slides" | "listen" | "discussion";
 
@@ -94,6 +91,9 @@ export default function LessonViewerClient({ enabledToolIds = [] }: { enabledToo
   // Native Lesson Experience V2: what the server (or a signed offline copy) says this lesson is.
   const [runtime, setRuntime] = useState<LessonRuntimeResolution | null>(null);
   const target = useMemo<LessonRouteTarget>(() => ({ kind: "CONTENT", contentId }), [contentId]);
+  // What the completion button actually achieved: recorded by the server, kept on this device, or failed.
+  const [completionRecord, setCompletionRecord] = useState<"RECORDED" | "DEVICE_ONLY" | "SENDING" | "FAILED" | null>(null);
+  const [bodyFormat, setBodyFormat] = useState<"standard" | "block">("standard");
 
   useEffect(() => {
     if (!contentId) return;
@@ -171,27 +171,27 @@ export default function LessonViewerClient({ enabledToolIds = [] }: { enabledToo
     loadLesson().finally(() => setLoading(false));
   }, [contentId, router, target]);
 
-  const handleComplete = () => {
+  const handleComplete = async () => {
     trackEvent(EVENTS.LESSON_COMPLETE, { contentId });
     setCompleted(true);
     // Teacher-created lessons aren't on the timetable, so completion must be
     // recorded explicitly — feeds StudentProgress → certificate/digest/league.
-    if (metadata?.teacherCreated) {
-      fetch(`/api/student/teacher-lessons/${contentId}/complete`, { method: "POST" }).catch(() => {
-        // Fire-and-forget: completion UI shouldn't block on network.
-      });
+    // Library lessons have no completion writer here: say so instead of implying a record.
+    if (!metadata?.teacherCreated) { setCompletionRecord("DEVICE_ONLY"); return; }
+    setCompletionRecord("SENDING");
+    try {
+      const response = await fetch(`/api/student/teacher-lessons/${contentId}/complete`, { method: "POST" });
+      setCompletionRecord(response.ok ? "RECORDED" : "FAILED");
+    } catch {
+      setCompletionRecord("FAILED");
     }
   };
 
   if (loading) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-[var(--ll-bg)] px-4 py-8">
-        <div className="w-full max-w-3xl space-y-4">
-          <div className="h-8 w-2/3 animate-pulse rounded-lg bg-[var(--ll-surface)]" />
-          <div className="h-4 w-full animate-pulse rounded-lg bg-[var(--ll-surface)]" />
-          <div className="h-4 w-5/6 animate-pulse rounded-lg bg-[var(--ll-surface)]" />
-        </div>
-      </main>
+      <div className="ll3-scope ll3-focus grid place-items-center px-4">
+        <div className="w-full max-w-xl"><StateNotice kind="loading" title="Opening your lesson…">Checking which version of this lesson you can use.</StateNotice></div>
+      </div>
     );
   }
 
@@ -204,17 +204,13 @@ export default function LessonViewerClient({ enabledToolIds = [] }: { enabledToo
 
   if (error) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-[var(--ll-bg)] px-4 py-8">
-        <div className="w-full max-w-3xl space-y-4 text-center">
-          <p className="text-sm text-red-400">{error}</p>
-          <Link href="/dashboard" className="text-sm text-[var(--ll-yellow)] hover:text-[var(--ll-yellow)]">
-            Back to Dashboard
-          </Link>
-        </div>
-      </main>
+      <div className="ll3-scope ll3-focus grid place-items-center px-4">
+        <div className="w-full max-w-xl"><StateNotice kind="error" title="This lesson did not open" action={<Link href="/student/learn" className="ll3-btn" data-primary="">Back to Learn</Link>}>{error}</StateNotice></div>
+      </div>
     );
   }
 
+  const title = payload?.title ?? contentId;
   const objectives: string[] = Array.isArray(payload?.objectives) ? payload.objectives : [];
   const activities: string[] = Array.isArray(payload?.activities) ? payload.activities : [];
   const scienceSubjects = ["SCIENCE", "BIOLOGY", "CHEMISTRY", "PHYSICS"];
@@ -228,249 +224,116 @@ export default function LessonViewerClient({ enabledToolIds = [] }: { enabledToo
   const standardBodyText: string = isBlockOnly ? "" : payload?.body_standard ?? payload?.body ?? payload?.content ?? "";
   const blockBodyText: string = payload?.body_block ?? "";
   const hasBothFormats = Boolean(payload?.body_standard && payload?.body_block);
+  // Both period formats stay reachable; the standard period is shown first.
+  const bodyText = isBlockOnly || (hasBothFormats && bodyFormat === "block") ? blockBodyText : standardBodyText || blockBodyText;
+  const htmlBody = looksLikeHtml(bodyText);
   const moeAlignments: string[] = Array.isArray(metadata?.moeAlignments) ? metadata.moeAlignments : [];
+  const sections = htmlBody ? [] : splitLessonSections(parseLessonBlocks(bodyText), title);
   const slideDeck = Array.isArray(payload?.slideDeckSpecs) ? payload.slideDeckSpecs[0] : null;
-  const slides = Array.isArray(slideDeck?.slides)
-    ? slideDeck.slides
-    : [
-        {
-          slideNumber: 1,
-          title: payload?.title ?? contentId,
-          bullets:
-            objectives.length > 0
-              ? objectives
-              : [standardBodyText.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().slice(0, 180)],
-        },
-        ...activities.slice(0, 5).map((activity, index) => ({
-          slideNumber: index + 2,
-          title: `Activity ${index + 1}`,
-          bullets: [activity],
-        })),
-      ].filter((slide) => slide.bullets.some((bullet: string) => bullet.trim().length > 0));
-  const currentSlide = slides[currentSlideIndex] ?? slides[0] ?? null;
+  // Authored deck first; otherwise the lesson text's own headings (the existing compatibility adapter);
+  // an HTML body without a deck keeps the previous objectives/activities summary slides.
+  const slides: LegacySlide[] = Array.isArray(slideDeck?.slides)
+    ? slideDeck.slides.map((slide) => ({ title: slide.title, blocks: [{ kind: "list", ordered: false, items: slide.bullets ?? [] } satisfies LessonBlock] }))
+    : bodyText && !htmlBody
+      ? parseToSlides({ title, content: bodyText }).map((slide) => ({ title: slide.title, blocks: slideBlocks(slide.title, slide.content) }))
+      : [
+          { title, blocks: [{ kind: "list", ordered: false, items: objectives } satisfies LessonBlock] as LessonBlock[] },
+          ...activities.slice(0, 5).map((activity, index) => ({ title: `Activity ${index + 1}`, blocks: [{ kind: "paragraph", text: activity } satisfies LessonBlock] as LessonBlock[] })),
+        ].filter((slide) => slide.blocks.some((block) => block.kind === "list" ? block.items.some((item) => item.trim()) : block.kind === "paragraph" && block.text.trim()));
   const audioScripts = Array.isArray(payload?.audioScriptSpecs) ? payload.audioScriptSpecs : [];
   const generatedAudioReady = audio?.status === "GENERATED" && (audio?.storageUrl || audio?.audioParts?.length);
+  const grade = metadata?.grade;
+  const subjectLabel = (metadata?.subject ?? "").toString().replace(/_/g, " ").toLowerCase().replace(/\b\w/g, (letter) => letter.toUpperCase());
+  const young = typeof grade === "number" && grade >= 1 && grade <= 3;
+  const authorName = (metadata as { teacherAuthorName?: unknown } | null)?.teacherAuthorName;
 
   function switchMode(nextMode: LessonMode) {
     setMode(nextMode);
     trackEvent("lesson_mode_changed", { contentId, mode: nextMode, source: "library_lesson" });
   }
 
+  const support = <>
+    {objectives.length > 0 && <section aria-labelledby="support-goals"><h2 id="support-goals">Lesson goals</h2><ul className="mt-2 grid gap-2 text-[15px] leading-6">{objectives.map((objective, index) => <li key={index} className="flex gap-2"><span aria-hidden="true" className="mt-2 h-2 w-2 shrink-0 rounded-full bg-[var(--ll-accent)]" />{objective}</li>)}</ul></section>}
+    {activities.length > 0 && <section aria-labelledby="support-activities"><h2 id="support-activities">Activities in this lesson</h2><ol className="mt-2 grid list-decimal gap-2 pl-5 text-[15px] leading-6">{activities.map((activity, index) => <li key={index}>{activity}</li>)}</ol></section>}
+    {relatedLab && <section aria-labelledby="support-lab"><h2 id="support-lab">Explore further</h2><a href={`/student/labs/${relatedLab.labId}`} className="ll3-btn mt-2 w-full">{relatedLab.label} →</a></section>}
+    <section aria-labelledby="support-help"><h2 id="support-help">Help</h2>
+      <Link href="/student/ai-tutor" className="mt-2 inline-flex min-h-11 items-center font-semibold text-[var(--ll-accent)] underline underline-offset-4">Ask the AI tutor</Link>
+      <p className="mt-1 text-sm text-[var(--ll-text-muted)]">AI help needs a connection.</p>
+    </section>
+  </>;
+
+  const moveOn = <div className="ll3-task">
+    <p className="ll3-task-label">Next in this lesson</p>
+    <p>{slides.length > 1 ? "See the same lesson one idea at a time, or listen to it." : "Listen to this lesson, or talk about it with your class."}</p>
+    <div className="flex flex-wrap gap-2">
+      {slides.length > 1 && <button type="button" className="ll3-btn" onClick={() => { switchMode("slides"); window.scrollTo({ top: 0 }); }}>Open slides</button>}
+      <button type="button" className="ll3-btn" onClick={() => { switchMode("listen"); window.scrollTo({ top: 0 }); }}>Listen</button>
+    </div>
+  </div>;
+
   return (
-    <main className="min-h-screen bg-[var(--ll-bg)] px-4 py-8">
-      <div className="mx-auto max-w-3xl space-y-6">
-        {/* Back */}
-        <Link href="/student/today" className="inline-block text-sm text-[var(--ll-yellow)] hover:text-[var(--ll-yellow)]">
-          &larr; Back to today
-        </Link>
-
-        {/* Offline cache indicator */}
-        {servedFromCache && (
-          <div className="rounded-xl border border-amber-500/30 bg-[var(--ll-yellow-soft)] px-4 py-2 text-xs text-[var(--ll-yellow)]">
-            Viewing cached version — you are offline
+    <div className="ll3-scope ll3-focus" data-age-band={young ? "young" : "middle"} data-legacy-lesson data-lesson-mode={mode}>
+      <FocusedHeader backHref="/student/learn" backLabel="Back to Learn" title={title}
+        context={[grade != null ? `Grade ${grade}` : null, subjectLabel || null].filter(Boolean).join(" · ")}
+        extra={servedFromCache ? <Chip tone="accent">Saved copy · offline</Chip> : undefined} />
+      <LearningStage support={support} supportLabel="Lesson tools" mainLabelledBy="lesson-title">
+        <div className="mb-6 grid gap-4">
+          <div>
+            <h1 id="lesson-title" className="ll3-title">{title}</h1>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {grade != null && <Chip>Grade {grade}</Chip>}
+              {subjectLabel && <Chip>{subjectLabel}</Chip>}
+              {moeAlignments.map((alignment, index) => <Chip key={index}>{alignment}</Chip>)}
+              {authorName ? <Chip>From {String(authorName)}</Chip> : null}
+            </div>
           </div>
-        )}
-
-        {/* Title + badges */}
-        <div className="space-y-3">
-          <h1 className="text-2xl font-bold text-[var(--ll-text)]">
-            {payload?.title ?? contentId}
-          </h1>
-          {(metadata as any)?.teacherAuthorName && (
-            <span className="inline-block rounded-full border border-[var(--ll-border)] px-2.5 py-0.5 text-xs text-[var(--ll-text-muted)]">
-              From {String((metadata as any).teacherAuthorName)}
-            </span>
-          )}
-          <div className="flex flex-wrap gap-2">
-            <span className="rounded-full bg-[var(--ll-yellow)]/20 border border-emerald-400/30 px-3 py-0.5 text-xs font-medium text-[var(--ll-yellow)]">
-              Grade {metadata?.grade}
-            </span>
-            <span className="rounded-full bg-[var(--ll-yellow)]/20 border border-emerald-400/30 px-3 py-0.5 text-xs font-medium text-[var(--ll-yellow)]">
-              {metadata?.subject}
-            </span>
-          </div>
-
-          {/* MOE alignment chips */}
-          {moeAlignments.length > 0 && (
-            <div className="flex flex-wrap gap-2">
-              {moeAlignments.map((a: string, i: number) => (
-                <span key={i} className="rounded-full bg-sky-500/20 border border-sky-400/30 px-3 py-0.5 text-xs text-sky-300">
-                  {a}
-                </span>
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="ll3-modes" role="group" aria-label="How to use this lesson">
+              {(["read", "slides", "listen", "discussion"] as const).map((entry) => (
+                <button key={entry} type="button" onClick={() => switchMode(entry)} aria-pressed={mode === entry}>{MODE_LABELS[entry]}</button>
               ))}
             </div>
-          )}
+            {hasBothFormats && (mode === "read" || mode === "slides") && <div className="ll3-modes" role="group" aria-label="Lesson length">
+              <button type="button" aria-pressed={bodyFormat === "standard"} onClick={() => { setBodyFormat("standard"); setCurrentSlideIndex(0); }}>45 min</button>
+              <button type="button" aria-pressed={bodyFormat === "block"} onClick={() => { setBodyFormat("block"); setCurrentSlideIndex(0); }}>90 min block</button>
+            </div>}
+          </div>
         </div>
 
         {/* Lesson sequence within its unit (renders nothing when the lesson has no unit). */}
         <UnitSequenceSidebar contentId={contentId} />
 
-        <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-2">
-          <div className="grid grid-cols-4 gap-2">
-            {(["read", "slides", "listen", "discussion"] as const).map((entry) => (
-              <button
-                key={entry}
-                type="button"
-                onClick={() => switchMode(entry)}
-                className={`rounded-lg px-3 py-2 text-sm font-semibold transition ${
-                  mode === entry
-                    ? "bg-[var(--ll-yellow)] text-[var(--ll-bg)]"
-                    : "bg-[var(--ll-surface)] text-[var(--ll-text-muted)] hover:text-[var(--ll-text)]"
-                }`}
-                aria-pressed={mode === entry}
-              >
-                {MODE_LABELS[entry]}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Learning Objectives */}
-        {mode === "read" && objectives.length > 0 && (
-          <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-5 space-y-3">
-            <h2 className="text-sm font-semibold text-[var(--ll-text)] uppercase tracking-wide">Learning Objectives</h2>
-            <ul className="list-disc list-inside space-y-1 text-sm text-[var(--ll-text)]">
-              {objectives.map((obj: string, i: number) => (
-                <li key={i}>{obj}</li>
-              ))}
-            </ul>
-          </div>
-        )}
-
-        {/* Body Content */}
-        {mode === "read" && (standardBodyText || blockBodyText) && (
-          <div className="space-y-4">
-            {standardBodyText && (
-              <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-5">
-                <div className="mb-3 flex items-center justify-between gap-3">
-                  <h2 className="text-sm font-semibold uppercase tracking-wide text-[var(--ll-text)]">
-                    Standard Period Lesson
-                  </h2>
-                  <span className="rounded-full border border-emerald-400/30 bg-[var(--ll-yellow)]/10 px-3 py-1 text-[11px] text-[var(--ll-yellow)]">
-                    45 min
-                  </span>
-                </div>
-                <div className="prose prose-invert prose-sm max-w-none text-[var(--ll-text)] leading-relaxed">
-                  <LessonBody text={standardBodyText} />
-                </div>
-              </div>
-            )}
-
-            {(hasBothFormats || isBlockOnly) && blockBodyText && (
-              <div className="rounded-xl border border-cyan-500/20 bg-[var(--ll-bg)]/70 p-5">
-                <div className="mb-3 flex items-center justify-between gap-3">
-                  <h2 className="text-sm font-semibold uppercase tracking-wide text-[var(--ll-text)]">
-                    Block Period Lesson
-                  </h2>
-                  <span className="rounded-full border border-cyan-400/30 bg-[var(--ll-silver-soft)] px-3 py-1 text-[11px] text-[var(--ll-silver)]">
-                    90 min / A-B day
-                  </span>
-                </div>
-                <div className="prose prose-invert prose-sm max-w-none text-[var(--ll-text)] leading-relaxed">
-                  <LessonBody text={blockBodyText} />
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Activities */}
-        {mode === "read" && activities.length > 0 && (
-          <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-5 space-y-3">
-            <h2 className="text-sm font-semibold text-[var(--ll-text)] uppercase tracking-wide">Activities</h2>
-            <ol className="list-decimal list-inside space-y-2 text-sm text-[var(--ll-text)]">
-              {activities.map((act: string, i: number) => (
-                <li key={i}>{act}</li>
-              ))}
-            </ol>
-          </div>
-        )}
+        {mode === "read" && (bodyText
+          ? <LegacyReading title={title} sections={sections} html={htmlBody ? renderSimpleMarkdown(bodyText) : null} objectives={objectives} after={moveOn} />
+          : <StateNotice kind="empty" title="No reading text yet">This lesson has no reading text. Try Slides or Listen, or ask your teacher.</StateNotice>)}
 
         {mode === "slides" && (
-          <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-5">
-            {currentSlide ? (
-              <div ref={slideFullscreenRef} className="ll-slide-fullscreen space-y-5 rounded-xl bg-[var(--ll-bg)]">
-                <div className="flex items-center justify-between gap-3">
-                  <span className="rounded-full border border-[var(--ll-border)] px-3 py-1 text-xs text-[var(--ll-text-muted)]">
-                    Slide {currentSlideIndex + 1} of {slides.length}
-                  </span>
-                  <div className="flex flex-wrap items-center justify-end gap-3">
-                    <span className="text-xs text-[var(--ll-text-faint)]">
-                      {slideDeck?.deckTitle ?? "Lesson deck"}
-                    </span>
-                    <LessonFullscreenButton targetRef={slideFullscreenRef} />
-                  </div>
-                </div>
-                <div className="ll-slide-fullscreen-card min-h-[260px] rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-6">
-                  <h2 className="text-2xl font-semibold text-[var(--ll-text)]">
-                    {currentSlide.title}
-                  </h2>
-                  <ul className="mt-5 space-y-3 text-base leading-7 text-[var(--ll-text)]">
-                    {(currentSlide.bullets ?? []).map((bullet: string, index: number) => (
-                      <li key={index} className="flex gap-3">
-                        <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-[var(--ll-yellow)]" />
-                        <span>{bullet}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-                <div className="flex items-center justify-between gap-3">
-                  <button
-                    type="button"
-                    onClick={() => setCurrentSlideIndex((value) => Math.max(0, value - 1))}
-                    disabled={currentSlideIndex === 0}
-                    className="rounded-lg border border-[var(--ll-border)] px-4 py-2 text-sm font-semibold text-[var(--ll-text)] disabled:opacity-50"
-                  >
-                    Previous
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setCurrentSlideIndex((value) => Math.min(slides.length - 1, value + 1))}
-                    disabled={currentSlideIndex >= slides.length - 1}
-                    className="rounded-lg border border-[var(--ll-border)] px-4 py-2 text-sm font-semibold text-[var(--ll-text)] disabled:opacity-50"
-                  >
-                    Next
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <p className="text-sm text-[var(--ll-text-muted)]">Slides are not available for this lesson yet.</p>
-            )}
-          </section>
+          <LegacySlides slides={slides} index={currentSlideIndex} onIndexChange={setCurrentSlideIndex} containerRef={slideFullscreenRef}
+            deckLabel={slideDeck?.deckTitle ?? undefined} topActions={<LessonFullscreenButton targetRef={slideFullscreenRef} />} />
         )}
 
         {mode === "listen" && (
-          <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-5 space-y-4">
-            <h2 className="text-sm font-semibold uppercase tracking-wide text-[var(--ll-text)]">Listen Mode</h2>
+          <section aria-labelledby="listen-title" className="grid gap-4">
+            <h2 id="listen-title" className="ll3-panel-title">Listen</h2>
             {generatedAudioReady ? (
               <LessonAudioPlayer audio={audio} contentId={contentId} />
             ) : (
-              <div className="rounded-lg border border-[var(--ll-border)] bg-[var(--ll-surface)] p-4">
-                <p className="text-sm text-[var(--ll-text-muted)]">
-                  Generated audio is not available yet. Use the narration script below while audio preparation is pending.
-                </p>
-              </div>
+              <StateNotice kind="unknown" title="Audio is not ready for this lesson">Read the narration below, or switch to Read. Audio plays only when your school has prepared it.</StateNotice>
             )}
-            <div className="space-y-3">
+            <div className="ll3-panel">
+              <h3 className="ll3-panel-title">{audioScripts.length > 0 ? "Narration script" : "Lesson text"}</h3>
               {audioScripts.length > 0 ? (
-                audioScripts.map((script: AudioScript, index: number) => (
-                  <div key={index} className="rounded-lg border border-[var(--ll-border)] bg-[var(--ll-surface)] p-4">
-                    <p className="text-xs font-semibold uppercase tracking-wide text-[var(--ll-text-faint)]">
-                      {String(script.mode ?? `Script ${index + 1}`).replace(/_/g, " ")}
-                    </p>
-                    <p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-[var(--ll-text)]">
-                      {script.script ?? script.fallbackText ?? "No narration script available."}
-                    </p>
+                <div className="grid gap-4">{audioScripts.map((script: AudioScript, index: number) => (
+                  <div key={index}>
+                    <p className="ll3-eyebrow">{String(script.mode ?? `Script ${index + 1}`).replace(/_/g, " ")}</p>
+                    <p className="ll3-reading mt-1 whitespace-pre-wrap">{script.script ?? script.fallbackText ?? "No narration script available."}</p>
                   </div>
-                ))
+                ))}</div>
               ) : (
-                <p className="whitespace-pre-wrap text-sm leading-6 text-[var(--ll-text)]">
+                <p className="ll3-reading whitespace-pre-wrap">
                   {(() => {
-                    const narration = standardBodyText || blockBodyText;
-                    if (!narration) return "No lesson narration is available yet.";
-                    return looksLikeHtml(narration)
-                      ? narration.replace(/<[^>]+>/g, " ").replace(/[ \t]+/g, " ").trim()
-                      : narration;
+                    if (!bodyText) return "No lesson narration is available yet.";
+                    return looksLikeHtml(bodyText) ? bodyText.replace(/<[^>]+>/g, " ").replace(/[ \t]+/g, " ").trim() : bodyText.replace(/^#+\s*/gm, "").replace(/\*\*/g, "");
                   })()}
                 </p>
               )}
@@ -479,56 +342,33 @@ export default function LessonViewerClient({ enabledToolIds = [] }: { enabledToo
         )}
 
         {mode === "discussion" && (
-          <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-5 space-y-3">
-            <h2 className="text-sm font-semibold uppercase tracking-wide text-[var(--ll-text)]">Lesson Discussion</h2>
-            <p className="text-sm text-[var(--ll-text-muted)]">
-              Discuss this lesson with your class.{" "}
-              <a href="/student/discussion" className="text-[var(--ll-yellow)]">
-                Go to full discussion boards →
-              </a>
-            </p>
+          <section aria-labelledby="discussion-title" className="ll3-panel">
+            <h2 id="discussion-title" className="ll3-panel-title">Talk about this lesson</h2>
+            <p className="ll3-muted">Discussion happens on your class boards, where your teacher moderates it.</p>
+            <a href="/student/discussion" className="ll3-btn mt-4">Go to class discussion boards →</a>
           </section>
         )}
 
-        {/* Related Lab */}
-        {relatedLab ? (
-          <div className="mt-6 p-4 rounded-xl border border-[var(--ll-yellow)] bg-[var(--ll-yellow-soft)]">
-            <p className="text-sm font-medium text-[var(--ll-text)] mb-2">
-              Ready to explore further?
-            </p>
-            <a
-              href={`/student/labs/${relatedLab.labId}`}
-              className="inline-flex items-center gap-2 rounded-lg px-4 py-2 bg-[var(--ll-yellow)] text-[var(--ll-bg)] text-sm font-medium hover:opacity-90"
-            >
-              {relatedLab.label} →
-            </a>
-          </div>
-        ) : null}
-
-        {/* Mark Complete */}
-        <div className="flex items-center gap-3">
+        <section aria-labelledby="finish-title" className="ll3-panel mt-10" data-completion-record={completionRecord ?? undefined}>
+          <h2 id="finish-title" className="ll3-panel-title">Finished with this lesson?</h2>
           {completed ? (
-            <div className="flex items-center gap-2 text-[var(--ll-yellow)] text-sm font-medium">
-              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-              </svg>
-              Lesson complete!
-            </div>
+            <p role="status" className="text-base leading-7">
+              {completionRecord === "SENDING" ? "Recording that you finished…"
+                : completionRecord === "RECORDED" ? "Recorded. Your teacher can see that you finished this lesson."
+                : completionRecord === "FAILED" ? "You finished, but it could not be recorded right now. Try again when you are online."
+                : "Marked as finished on this device. Library lessons do not send a completion record; assigned lessons and checks do."}
+            </p>
           ) : (
-            <button
-              onClick={handleComplete}
-              className="rounded-xl bg-[var(--ll-yellow)] px-5 py-2.5 text-sm font-semibold text-[var(--ll-bg)] shadow-lg shadow-emerald-500/40 hover:opacity-90"
-            >
-              Mark as Complete
+            <p className="ll3-muted">{metadata?.teacherCreated ? "Let your teacher know you finished this lesson." : "Marking it finished helps you keep your place. It does not change your marks or mastery."}</p>
+          )}
+          {(!completed || completionRecord === "FAILED") && (
+            <button type="button" onClick={() => void handleComplete()} className="ll3-btn mt-4">
+              {completionRecord === "FAILED" ? "Try again" : "Mark as finished"}
             </button>
           )}
-        </div>
-
-        {/* Low bandwidth note */}
-        <p className="text-[11px] text-[var(--ll-text-faint)] text-center pb-4">
-          This lesson is cached for offline use after first load.
-        </p>
-      </div>
-    </main>
+          <p className="mt-4 text-sm text-[var(--ll-text-muted)]">After it opens once online, this lesson can be read on this device without a connection.</p>
+        </section>
+      </LearningStage>
+    </div>
   );
 }

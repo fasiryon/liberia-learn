@@ -16,6 +16,7 @@ import { loadExperienceProgress, saveExperienceProgress } from "@/lib/learner-ex
 import { TOOL_COMPONENTS } from "@/components/toolkit/toolComponents";
 import { AssessmentHandoffSeam, DiagramReveal, FormativeCheck, ReflectionPrompts, SceneBody, SceneMediaList } from "./SceneViews";
 import { LabScene, type LabSceneView } from "./LabScene";
+import { LearningStage, StageFooter } from "@/components/experience/FocusedLearning";
 
 const TYPE_LABEL: Record<Scene["type"], string> = {
   INTRO: "Introduction", OBJECTIVE: "Goal", EXPLANATION: "Learn", MEDIA: "Watch", INTERACTIVE_DIAGRAM: "Explore",
@@ -192,6 +193,8 @@ export function LessonPlayerV2({ experience, links = NO_LINKS, labs = NO_LABS, t
   const lab = sceneLab(scene);
   const objectives = useMemo(() => experience.objectives.filter((objective) => scene.objectiveIds.includes(objective.id)), [experience.objectives, scene.objectiveIds]);
   const tools = toolsByScene[scene.id] ?? [];
+  // A real picture or diagram (same-origin asset) earns the visual column; text alternatives stay in flow.
+  const hasVisual = (scene.media ?? []).some((media) => (media.kind === "IMAGE" || media.kind === "DIAGRAM") && media.ref.startsWith("/") && !media.ref.startsWith("//"));
 
   // Move focus to the heading only when the scene changes (never on an answer or keystroke), so keyboard and
   // screen-reader users land on the new scene. The first scene keeps normal page focus unless it is a lab return.
@@ -309,11 +312,11 @@ export function LessonPlayerV2({ experience, links = NO_LINKS, labs = NO_LABS, t
       className="ll-lesson-v2 min-h-dvh bg-[var(--ll-bg)] text-[var(--ll-text)]"
     >
       <header className="sticky z-30 border-b border-[var(--ll-border)] bg-[var(--ll-bg)]/95 backdrop-blur" style={{ top: "env(safe-area-inset-top, 0px)" }}>
-        <div className="mx-auto flex max-w-7xl items-center gap-3 px-4 py-3">
+        <div className="ll3-focus-bar">
           <Link href={exitHref} aria-label="Leave lesson" className="inline-flex min-h-[var(--pdv2-target,44px)] min-w-[var(--pdv2-target,44px)] items-center justify-center rounded-xl border border-[var(--ll-border)]"><ChevronLeft size={20} aria-hidden="true" /></Link>
           <div className="min-w-0 flex-1">
-            <p className="truncate text-sm font-semibold leading-5">{experience.title}</p>
-            <p className="text-xs text-[var(--ll-text-muted)]">Scene {index + 1} of {experience.scenes.length} · {TYPE_LABEL[scene.type]}</p>
+            <p className="truncate text-base font-semibold leading-6">{experience.title}</p>
+            <p className="text-sm text-[var(--ll-text-muted)]">Scene {index + 1} of {experience.scenes.length} · {TYPE_LABEL[scene.type]}</p>
           </div>
           {readOnly && <span className="shrink-0 rounded-full border border-[var(--ll-border)] px-3 py-1 text-xs text-[var(--ll-text-muted)]">Saved copy</span>}
           {!runtime && experience.authority.status !== "APPROVED_RELEASE" && <span className="hidden shrink-0 rounded-full border border-[var(--ll-border)] px-3 py-1 text-xs text-[var(--ll-text-muted)] sm:inline">Internal prototype</span>}
@@ -323,78 +326,83 @@ export function LessonPlayerV2({ experience, links = NO_LINKS, labs = NO_LABS, t
         </div>
       </header>
 
-      <div className="mx-auto grid max-w-7xl gap-6 px-4 pt-6 lg:grid-cols-[220px_minmax(0,1fr)_260px]" style={{ paddingBottom: footerHeight + 32 }}>
-        <nav aria-label="Lesson outline" className="hidden lg:block">
-          <ol className="sticky top-24 space-y-1">
+      <LearningStage
+        mainId="lesson-scene"
+        bottomSpace={footerHeight}
+        outlineLabel="Lesson outline"
+        outline={
+          <ol className="ll3-outline-list">
             {experience.scenes.map((candidate, candidateIndex) => {
               const done = progress.completedSceneIds.includes(candidate.id);
               const reachable = candidateIndex <= furthest;
               return (
                 <li key={candidate.id}>
-                  <button type="button" disabled={!reachable} aria-current={candidateIndex === index ? "step" : undefined} onClick={() => update((current) => goToScene(experience, current, candidate.id))}
-                    className={`flex min-h-11 w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm ${candidateIndex === index ? "bg-[var(--ll-surface)] font-semibold" : "text-[var(--ll-text-muted)]"} disabled:opacity-40`}>
-                    <span aria-hidden="true" className="w-4">{done ? <Check size={14} /> : candidateIndex + 1}</span>
-                    <span className="truncate">{candidate.title}</span>
+                  <button type="button" disabled={!reachable} aria-current={candidateIndex === index ? "step" : undefined} data-done={done ? "" : undefined} onClick={() => update((current) => goToScene(experience, current, candidate.id))}>
+                    <span aria-hidden="true" className="ll3-outline-num">{done ? <Check size={14} /> : candidateIndex + 1}</span>
+                    <span className="min-w-0 truncate">{candidate.title}</span>
                     {done && <span className="sr-only">(done)</span>}
                   </button>
                 </li>
               );
             })}
           </ol>
-        </nav>
-
-        <main id="lesson-scene" className="min-w-0">
-          <article aria-labelledby="scene-title" className="mx-auto max-w-2xl">
-            {runtime && (readOnly || restartedForNewVersion || !online) && (
-              <div role="status" className="mb-5 space-y-2 rounded-2xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-4 text-sm leading-6 text-[var(--ll-text)]" data-runtime-notice>
-                {readOnly && <p>You are using a saved copy of this lesson. You can read and practise, but nothing is sent from it and labs cannot open. Connect to the internet to open the current version.</p>}
-                {!readOnly && !online && <p>You are offline. You can keep going; nothing is sent until you are back online.</p>}
-                {restartedForNewVersion && <p>This lesson was updated since you last opened it, so it starts again from the beginning. Your earlier answers were for the older version.</p>}
-              </div>
-            )}
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--ll-accent)]">{TYPE_LABEL[scene.type]}</p>
-            <h1 id="scene-title" ref={headingRef} tabIndex={-1} className="mt-2 text-2xl font-semibold leading-tight outline-none [overflow-wrap:anywhere] sm:text-3xl">{scene.title}</h1>
-            {runtime && index === 0 && experience.objectives.length > 0 && (
-              <section aria-labelledby="lesson-goals" className="mt-5 rounded-2xl border border-[var(--ll-border)] p-4">
-                <h2 id="lesson-goals" className="text-base font-semibold">In this lesson you will</h2>
-                <ul className="mt-2 list-disc space-y-1 pl-5 text-base leading-7">{experience.objectives.map((objective) => <li key={objective.id} data-objective-id={objective.id}>{objective.statement}</li>)}</ul>
-              </section>
-            )}
-            <div className="mt-5"><SceneBody scene={scene} ageBand={band} /></div>
-            <SceneMediaList scene={scene} />
-            <DiagramReveal scene={scene} progress={progress} onReveal={(stepId) => update((current) => revealStep(current, scene.id, stepId))} />
-            <FormativeCheck scene={scene} progress={progress} onAnswer={(itemId, value) => update((current) => recordResponse(current, scene.id, itemId, value))} />
-            {scene.type === "LAB" && <LabScene scene={scene} view={lab?.view ?? null} launchable={!!lab?.launchable} progress={progress} online={online} onLaunch={() => void launchLab()} onFallback={() => update((current) => chooseLabFallback(current, scene.id))} />}
-            <ReflectionPrompts scene={scene} progress={progress} onWrite={(promptId, text) => update((current) => recordResponse(current, scene.id, promptId, text))} />
-            <AssessmentHandoffSeam scene={scene} progress={progress} submitted={submittedOrLocked} note={assessmentNote} onAnswer={(itemId, value) => update((current) => recordResponse(current, scene.id, itemId, value))} />
-            {finished && <FinishedPanel finished={finished} runtime={runtime} exitHref={exitHref} online={online} onRetry={retrySend} />}
-            <details className="mt-8 rounded-2xl border border-[var(--ll-border)] p-4 lg:hidden">
-              <summary className="flex min-h-[var(--pdv2-target,44px)] cursor-pointer items-center text-base font-semibold">Tools, goal and help</summary>
-              <div className="mt-4">{contextPanel}</div>
-            </details>
-          </article>
-        </main>
-
-        <aside aria-label="Lesson context" className="hidden lg:block"><div className="sticky top-24">{contextPanel}</div></aside>
-      </div>
-
-      <footer ref={footerRef} className="fixed inset-x-0 bottom-0 z-30 border-t border-[var(--ll-border)] bg-[var(--ll-bg)]/95 backdrop-blur" style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }}>
-        {!complete && <p id="continue-hint" className="mx-auto max-w-2xl px-4 pt-2 text-center text-sm leading-5 text-[var(--ll-text-muted)]">{BLOCKED_HINT[scene.completion.kind]}</p>}
-        <div className="mx-auto flex max-w-2xl items-center justify-between gap-3 px-4 py-3">
-          <button type="button" onClick={() => update((current) => retreat(experience, current))} disabled={index === 0} className="inline-flex min-h-[var(--pdv2-target,48px)] items-center gap-1 rounded-xl border border-[var(--ll-border)] px-4 py-3 text-base font-semibold disabled:opacity-40">
-            <ChevronLeft size={18} aria-hidden="true" /> Previous
-          </button>
-          {isLast ? (
-            <button type="button" onClick={finish} disabled={!complete || !!finished} aria-describedby={complete ? undefined : "continue-hint"} className="inline-flex min-h-[var(--pdv2-target,48px)] items-center gap-1 rounded-xl bg-[var(--ll-accent)] px-5 py-3 text-base font-semibold text-[var(--ll-bg)] disabled:opacity-40">
-              {finished ? "Finished" : "Finish"} <Check size={18} aria-hidden="true" />
-            </button>
-          ) : (
-            <button type="button" onClick={() => update((current) => advance(experience, current))} disabled={!complete} aria-describedby={complete ? undefined : "continue-hint"} className="inline-flex min-h-[var(--pdv2-target,48px)] items-center gap-1 rounded-xl bg-[var(--ll-accent)] px-5 py-3 text-base font-semibold text-[var(--ll-bg)] disabled:opacity-40">
-              Continue <ChevronRight size={18} aria-hidden="true" />
-            </button>
+        }
+        supportLabel="Lesson help"
+        support={contextPanel}
+      >
+        <article aria-labelledby="scene-title" className="ll3-scene" data-has-visual={hasVisual ? "" : undefined}>
+          {runtime && (readOnly || restartedForNewVersion || !online) && (
+            <div role="status" className="space-y-2 rounded-2xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-4 text-sm leading-6 text-[var(--ll-text)]" data-runtime-notice>
+              {readOnly && <p>You are using a saved copy of this lesson. You can read and practise, but nothing is sent from it and labs cannot open. Connect to the internet to open the current version.</p>}
+              {!readOnly && !online && <p>You are offline. You can keep going; nothing is sent until you are back online.</p>}
+              {restartedForNewVersion && <p>This lesson was updated since you last opened it, so it starts again from the beginning. Your earlier answers were for the older version.</p>}
+            </div>
           )}
-        </div>
-      </footer>
+          <div>
+            <p className="ll3-scene-kind">{TYPE_LABEL[scene.type]}</p>
+            <h1 id="scene-title" ref={headingRef} tabIndex={-1} className="ll3-scene-title">{scene.title}</h1>
+          </div>
+          {runtime && index === 0 && experience.objectives.length > 0 && (
+            <section aria-labelledby="lesson-goals" className="ll3-panel max-w-[68ch]">
+              <h2 id="lesson-goals" className="text-lg font-semibold">In this lesson you will</h2>
+              <ul className="mt-2 list-disc space-y-1 pl-5 text-base leading-7">{experience.objectives.map((objective) => <li key={objective.id} data-objective-id={objective.id}>{objective.statement}</li>)}</ul>
+            </section>
+          )}
+          <div className="ll3-scene-body">
+            <div className="ll3-scene-text">
+              <SceneBody scene={scene} ageBand={band} />
+              {!hasVisual && <SceneMediaList scene={scene} />}
+              <DiagramReveal scene={scene} progress={progress} onReveal={(stepId) => update((current) => revealStep(current, scene.id, stepId))} />
+              <FormativeCheck scene={scene} progress={progress} onAnswer={(itemId, value) => update((current) => recordResponse(current, scene.id, itemId, value))} />
+              {scene.type === "LAB" && <LabScene scene={scene} view={lab?.view ?? null} launchable={!!lab?.launchable} progress={progress} online={online} onLaunch={() => void launchLab()} onFallback={() => update((current) => chooseLabFallback(current, scene.id))} />}
+              <ReflectionPrompts scene={scene} progress={progress} onWrite={(promptId, text) => update((current) => recordResponse(current, scene.id, promptId, text))} />
+              <AssessmentHandoffSeam scene={scene} progress={progress} submitted={submittedOrLocked} note={assessmentNote} onAnswer={(itemId, value) => update((current) => recordResponse(current, scene.id, itemId, value))} />
+            </div>
+            {hasVisual && <div className="ll3-scene-visual"><SceneMediaList scene={scene} /></div>}
+          </div>
+          {finished && <FinishedPanel finished={finished} runtime={runtime} exitHref={exitHref} online={online} onRetry={retrySend} />}
+        </article>
+      </LearningStage>
+
+      <StageFooter
+        footerRef={footerRef}
+        index={index}
+        total={experience.scenes.length}
+        onPrevious={() => update((current) => retreat(experience, current))}
+        previousDisabled={index === 0}
+        hint={!complete ? BLOCKED_HINT[scene.completion.kind] || undefined : undefined}
+        hintId="continue-hint"
+        states={experience.scenes.map((candidate, candidateIndex) => candidateIndex === index ? "current" : progress.completedSceneIds.includes(candidate.id) ? "done" : "todo")}
+        next={isLast ? (
+          <button type="button" onClick={finish} disabled={!complete || !!finished} aria-describedby={complete ? undefined : "continue-hint"} className="ll3-btn" data-primary="">
+            {finished ? "Finished" : "Finish"} <Check size={18} aria-hidden="true" />
+          </button>
+        ) : (
+          <button type="button" onClick={() => update((current) => advance(experience, current))} disabled={!complete} aria-describedby={complete ? undefined : "continue-hint"} className="ll3-btn" data-primary="">
+            Continue <ChevronRight size={18} aria-hidden="true" />
+          </button>
+        )}
+      />
     </div>
   );
 }

@@ -425,7 +425,8 @@ describe("existing lesson deep links keep working through adapters", () => {
       await flush();
       expect(player()).toBeNull();
       expect(host.textContent).toContain("Legacy lesson text.");
-      expect(host.textContent).toContain("Back to today");
+      // Library content exits to Learn, the same exit the native player uses on this route.
+      expect(host.querySelector("a[aria-label='Back to Learn']")?.getAttribute("href")).toBe("/student/learn");
       act(() => root?.unmount()); root = null;
     }
   });
