@@ -1167,7 +1167,7 @@ function ScheduledLessonDelivery({ lessonId, onNative }: { lessonId: string; onN
               {readingSections.length > 0 && !(lesson.inlineIllustrations ?? []).some((item) => typeof item.position === "number")
                 // Readable text column with contents; inline illustrations keep their positioned renderer.
                 ? <LegacyReading title={lesson.title} sections={readingSections}
-                    after={<div className="ll3-task"><p className="ll3-task-label">Next</p><p>When you have read the lesson, answer the assessment questions below.</p><div><button type="button" className="ll3-btn" data-primary="" onClick={() => scrollToSection("exit-ticket")}>Go to assessment</button></div></div>} />
+                    after={<div className="ll3-task"><p className="ll3-task-label">Next</p><p>When you have read the lesson, answer the assessment questions below.</p><div><button type="button" className="ll3-btn" onClick={() => scrollToSection("exit-ticket")}>Go to assessment</button></div></div>} />
                 : <div className="ll3-reading"><LessonBody renderedBody={renderedBody} inline={lesson.inlineIllustrations} /></div>}
               {lesson.problemSets && lesson.problemSets.length > 0 ? (
                 <div className="mt-6">

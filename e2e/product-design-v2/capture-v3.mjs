@@ -12,7 +12,8 @@ const only = process.argv[3] ?? null;
 const out = `artifacts/student-experience-v3/${label}`;
 await fs.mkdir(out, { recursive: true });
 const base = "http://127.0.0.1:3191";
-const WIDTHS = [320, 390, 768, 1024, 1440, 1920];
+// Committed evidence keeps one phone and one desktop width; validate-v3.mjs asserts all six widths.
+const WIDTHS = (process.env.CAPTURE_WIDTHS ?? "390,1440").split(",").map(Number);
 
 const server = await createServer({ configFile: "e2e/product-design-v2/vite.config.ts", server: { strictPort: true } });
 await server.listen();

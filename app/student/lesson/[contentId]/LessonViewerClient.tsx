@@ -362,7 +362,7 @@ export default function LessonViewerClient({ enabledToolIds = [] }: { enabledToo
             <p className="ll3-muted">{metadata?.teacherCreated ? "Let your teacher know you finished this lesson." : "Marking it finished helps you keep your place. It does not change your marks or mastery."}</p>
           )}
           {(!completed || completionRecord === "FAILED") && (
-            <button type="button" onClick={() => void handleComplete()} className="ll3-btn mt-4" data-primary="">
+            <button type="button" onClick={() => void handleComplete()} className="ll3-btn mt-4">
               {completionRecord === "FAILED" ? "Try again" : "Mark as finished"}
             </button>
           )}
