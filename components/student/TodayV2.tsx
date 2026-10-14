@@ -104,7 +104,13 @@ export function TodayV2() {
         <div className="pdv2-hero-actions">{action.state === "ready" ? offline ? <InteractiveButton primary disabled>Reconnect to continue</InteractiveButton> : <InteractiveButton primary href={action.href}>{young ? "Continue" : action.label} →</InteractiveButton> : action.state === "empty" ? <InteractiveButton primary href="/student/lessons">Browse lessons →</InteractiveButton> : action.state !== "loading" ? <InteractiveButton primary onClick={() => void refresh()} disabled={refreshing}>{refreshing ? "Checking…" : "Try again"}</InteractiveButton> : <p role="status">Loading learning action…</p>}
           <InteractiveButton href="/student/ai-tutor">Get help →</InteractiveButton></div><p className="pdv2-meta">AI help needs a connection.</p>
       </div>
-      <div className="pdv2-hero-context"><p className="pdv2-eyebrow">Help for your learning</p><p>Open your activity for the learning question and its permitted tools.</p><p className="pdv2-meta">AI help needs a connection. Your teacher can help when an activity is unavailable.</p></div>
+      <div className="pdv2-hero-context ll3-today-glance"><p className="pdv2-eyebrow">Today at a glance</p>
+        <dl className="ll3-glance">
+          <div><dt>Open assignments</dt><dd>{assignedCurrent ? work.length : "—"}</dd></div>
+          <div><dt>Due within a day</dt><dd>{assignedCurrent ? dueWork.length : "—"}</dd></div>
+          <div><dt>Scheduled lessons left</dt><dd>{planCurrent ? lessons.length : "—"}</dd></div>
+        </dl>
+        <p className="pdv2-meta">{assignedCurrent && planCurrent ? "From your school plan and assignments just now." : "— means not known right now. It is not zero."}</p></div>
     </section>
     {dueWork[0] && <div className="pdv2-critical-due"><InteractiveButton href={`/student/assignments/${encodeURIComponent(dueWork[0].id)}`} aria-label={`Open due work: ${dueWork[0].title}`}><span>{dueWork[0].isOverdue ? "Overdue" : "Due soon"}: {dueWork[0].title}{!assignedCurrent ? " · Last loaded" : ""}</span><span aria-hidden="true">→</span></InteractiveButton></div>}
     <div className="pdv2-content-grid">
@@ -124,9 +130,11 @@ export function TodayV2() {
         <section aria-labelledby="support-heading"><p className="pdv2-eyebrow">Support and offline</p><h2 id="support-heading">Help is here</h2><p role="status">{queue}</p><p>Downloads are usable only when verified on this device.</p><div className="pdv2-support-actions"><InteractiveButton href="/student/offline-lessons">Offline lessons →</InteractiveButton><InteractiveButton href="/student/offline-status">Sync status →</InteractiveButton></div></section>
       </div>
     </div>
-    <details className="pdv2-secondary"><summary>School updates</summary><AnnouncementBanner /></details>
-    <details className="pdv2-secondary"><summary>From your teachers</summary>{teacherLessons.state !== "ready" && <p role="status">{teacherLessons.state === "loading" ? "Loading teacher lessons…" : "Teacher lessons could not load. Try Refresh."}</p>}<ul className="pdv2-plan-list">{teacherLessons.data?.lessons.map((lesson) => <li key={lesson.id}><div><h3>{lesson.title ?? "Teacher lesson"}</h3><p>{lesson.subject.replaceAll("_", " ")}{teacherLessons.state === "error" ? " · Last loaded" : ""}</p></div><InteractiveButton href={lesson.lessonHref}>Open →</InteractiveButton></li>)}</ul>{teacherLessons.state === "ready" && teacherLessons.data?.lessons.length === 0 && <p>No teacher lessons were returned.</p>}</details>
-    <details className="pdv2-secondary"><summary>Live classes and calendar</summary><p>Live classes require a connection.</p><LiveSessionBanner /><InteractiveButton href="/student/events">Open calendar →</InteractiveButton></details>
+    <div className="ll3-disclosures">
+    <details><summary>School updates</summary><AnnouncementBanner /></details>
+    <details><summary>From your teachers</summary>{teacherLessons.state !== "ready" && <p role="status">{teacherLessons.state === "loading" ? "Loading teacher lessons…" : "Teacher lessons could not load. Try Refresh."}</p>}<ul className="pdv2-plan-list">{teacherLessons.data?.lessons.map((lesson) => <li key={lesson.id}><div><h3>{lesson.title ?? "Teacher lesson"}</h3><p>{lesson.subject.replaceAll("_", " ")}{teacherLessons.state === "error" ? " · Last loaded" : ""}</p></div><InteractiveButton href={lesson.lessonHref}>Open →</InteractiveButton></li>)}</ul>{teacherLessons.state === "ready" && teacherLessons.data?.lessons.length === 0 && <p>No teacher lessons were returned.</p>}</details>
+    <details><summary>Live classes and calendar</summary><p>Live classes require a connection.</p><LiveSessionBanner /><InteractiveButton href="/student/events">Open calendar →</InteractiveButton></details>
+    </div>
   </main>;
 }
 

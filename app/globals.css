@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "./learning-v3.css";
 
 @layer components {
   .lab-control-affordance {

@@ -41,6 +41,9 @@ const PUBLIC_PATHS = [
   "/api/certificates",
   // Lab review harness: dev builds only. The page itself also 404s unless LAB_REVIEW_HARNESS=1.
   ...(process.env.NODE_ENV !== "production" ? ["/lab-review"] : []),
+  // Student design preview (synthetic DEMO lessons, no API calls or writes): dev builds only.
+  // The page itself also 404s in production unless STUDENT_DESIGN_PREVIEW=1.
+  ...(process.env.NODE_ENV !== "production" ? ["/design-preview"] : []),
 ];
 
 function isPublicPath(pathname: string) {

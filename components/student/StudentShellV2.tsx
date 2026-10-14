@@ -57,7 +57,7 @@ export function StudentShellV2({ identity, children, utilities }: { identity: St
       </>}
       <div className="pdv2-body" id="student-content" tabIndex={-1}>
         {children}
-        {!focused && active && LINKS[active].length > 0 && path !== "/student/learn" && <nav className="pdv2-secondary" aria-label={`${active.toLowerCase()} resources`}>
+        {!focused && active && LINKS[active].length > 0 && path !== "/student/learn" && path !== "/student/progress" && <nav className="pdv2-secondary" aria-label={`${active.toLowerCase()} resources`}>
           <h2>{active === "TODAY" ? "Dates and assigned work" : active === "HELP" ? "Support and communication" : active === "PROGRESS" ? "Your records" : "Learning resources"}</h2>
           <div>{LINKS[active].map(([label, href]) => <InteractiveButton key={href} href={href}>{label} →</InteractiveButton>)}
             {active === "LEARN" && identity.grade != null && identity.grade >= WAEC_MIN_GRADE && <InteractiveButton href="/student/waec">WAEC Prep →</InteractiveButton>}
