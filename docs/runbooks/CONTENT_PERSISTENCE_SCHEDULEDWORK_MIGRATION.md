@@ -3,6 +3,15 @@
 This is a future operator procedure, not deployment authorization. Wave 3A runs
 only local tests. No hosted migration/backfill/publication is executed.
 
+Pre-push safety gate: the repair amends migration
+`20261013_000001_content_bundle_scheduledwork_pins` in place. Before pushing it,
+verify absence in `_prisma_migrations` with read-only queries against every
+relevant shared, staging and production database. Record each target, query time
+and result as NOT_APPLIED, APPLIED or UNVERIFIED. Local
+disposable replay and repository statements alone cannot establish that history.
+If unknown, stop before push. If previously applied, retain deployed migration
+history and require a separately reviewed forward migration instead.
+
 1. Verify database backup and recovery posture, including tested restore evidence,
    exact target identity and approved maintenance window. Record current migration
    ledger, existing ScheduledWork count and schema/catalog state.
@@ -25,9 +34,14 @@ only local tests. No hosted migration/backfill/publication is executed.
    version resolution and school/enrollment boundaries.
 5. Enable governed writes only after separate approval and complete exact authority
    adapters, reviewed release/resource/toolkit inputs, a decided authority for
-   granting national `ContentBundleAllocation` rows (none is created by this
-   migration; a national record is unavailable to every school until allocated)
-   and audited delivery/auxiliary consumers. V1 supplies an internal writer, no
+   granting/revoking national `ContentBundleAllocation` rows through an audited
+   governance authorization service (ordinary runtime users have no access;
+   this migration creates no allocations, and a national record is unavailable
+   to every school until allocated)
+   and audited delivery/auxiliary consumers. Implement an approved continuation/
+   withdrawal policy before allowing delivery after revocation; retain assignments,
+   attempts, evidence and mastery without rewriting history. V1 supplies an
+   internal writer, no
    production enable flag or public mutation route. Teacher Preview remains read-only.
 6. Run dry-run backfill on an explicitly authorized read-only snapshot. The shipped
    analyzer accepts only a local/test loopback DB; obtain an approved local snapshot

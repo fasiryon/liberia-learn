@@ -31,8 +31,9 @@ Identity, ownership and allocation are separate:
   record (exact version). Existence alone grants nothing.
 - `ownerScope = SCHOOL` with `ownerSchoolId`. The bundle id must start with
   `school.<ownerSchoolId>.`; national ids may not start with `school.`. A PostgreSQL
-  CHECK enforces both, so a school can neither claim a national identity nor collide
-  with or probe another school's identity. School records are visible only to the
+  CHECK enforces these namespace rules as collision protection, never authorization.
+  Scoped ownership and allocation checks authorize reads independently of the id.
+  School records are visible only to the
   owner and cannot be allocated, so they never become national through allocation.
   National availability of school-authored content requires a separate governed
   process that stores a new NATIONAL record.
@@ -44,7 +45,17 @@ fields are frozen, rows are never deleted or truncated, and at most one `ACTIVE`
 allocation exists per school and record (partial unique index). A revoked school
 may be re-granted by a new row; history is retained. Allocation rows invent no
 permission: no route creates them, and who may grant or revoke is an open
-governance decision. Creating actor is provenance metadata, not review authority.
+governance decision. Ordinary runtime users must have no grant/revoke access until
+an audited governance authorization service exists; a `governanceRef` or actor id
+alone cannot authorize a decision. Creating actor is provenance metadata, not review
+authority. The national registry, school ownership and explicit exact-version
+allocation model above is the locked DEC-011 contract.
+
+Revocation preserves historical assignments and their exact pins, attempts,
+evidence and mastery. It changes only the allocation state; it does not delete,
+rewrite, unpin or regrade learner history. New governed scheduling and delivery
+remain fail-closed for the revoked school until an approved continuation/withdrawal
+policy is implemented. Retained history never implies continuing delivery access.
 
 Scoped reads authorize before verifying integrity: an unauthorized school receives
 `null` for a foreign, unallocated, revoked, corrupt or absent record alike.
@@ -138,8 +149,10 @@ pins as `itemId`, `itemVersion`, `itemKind` with the same `ACTIVITY_KINDS`
 vocabulary; no schema change is needed. Restriction: `ScheduledWork.contentId` is a
 required legacy foreign key to `CurriculumContent`, and `createGovernedScheduledWork`
 requires that `contentId` to be a LESSON member of the bundle. A governed activity
-assignment therefore needs a lesson anchor; activity-only assignments need a later
-reviewed decision (nullable/alternate anchor), not part of this additive migration.
+assignment therefore needs an explicitly selected lesson anchor; activity-only
+ScheduledWork is unsupported. Never silently attach an arbitrary lesson. Such
+assignments need a later reviewed decision (nullable/alternate anchor), not part of
+this additive migration.
 
 Future attempts, submissions and evidence attach `GovernedContentRef`
 (`bundleId`, `bundleVersion`, `itemId`, `itemVersion`, `itemKind`) and optionally
