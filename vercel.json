@@ -1,4 +1,9 @@
 {
+  "git": {
+    "deploymentEnabled": {
+      "chore/github-eval-db-target-audit-20261014": false
+    }
+  },
   "framework": "nextjs",
   "buildCommand": "npm run build",
   "installCommand": "npm install",

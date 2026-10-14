@@ -1,37 +1,24 @@
-name: Weekly RAG Evals
+name: Temporary read-only evaluation database target audit
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: "0 0 * * 0"
 
 permissions:
   contents: read
 
 jobs:
-  run-evals:
+  audit-targets:
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/chore/github-eval-db-target-audit-20261014'
     runs-on: ubuntu-latest
-    env:
-      DATABASE_URL: ${{ secrets.DATABASE_URL }}
-      DIRECT_URL: ${{ secrets.DIRECT_URL }}
-      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-      ENABLE_RAG_TUTOR: "true"
-      ENABLE_EVAL_DB_LOGGING: "true"
-      EVAL_SCHOOL_ID: ${{ secrets.EVAL_SCHOOL_ID }}
+    timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
-          node-version: 20
-          cache: npm
-      - name: Install dependencies
-        run: npm ci
-      - name: Generate Prisma client
-        run: npx prisma generate
-      - name: Run evals
-        run: npx tsx scripts/run-evals.ts
-      - name: Upload eval results
-        uses: actions/upload-artifact@v4
-        with:
-          name: rag-eval-results
-          path: evals/results/*.json
+          persist-credentials: false
+      - name: Test diagnostic safety boundaries without secrets
+        run: python3 -B -m unittest discover -s .github/scripts -p 'test_audit_eval_db_targets.py'
+      - name: Identify targets and check only previously unverified ledgers
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DIRECT_URL: ${{ secrets.DIRECT_URL }}
+        run: python3 -B .github/scripts/audit_eval_db_targets.py
