@@ -10,7 +10,7 @@ import { deterministicReleaseIdentity } from "@/lib/learning-authority/governedG
 import type { ToolkitMapping } from "@/lib/content-bundle/v1/toolkitMapping";
 import { ContentBundlePreview, ContentBundlePreviewUnavailable } from "@/components/teacher/content-bundle-preview/ContentBundlePreview";
 
-vi.mock("@/lib/db", () => ({ prisma: { contentBundleRecord: { findFirst: vi.fn(async () => null) } } }));
+vi.mock("@/lib/db", () => ({ prisma: { contentBundleRecord: { findUnique: vi.fn(async () => null), findMany: vi.fn(async () => []) }, contentBundleAllocation: { findFirst: vi.fn(async () => null) } } }));
 
 const viewer = { userId: "teacher-a", role: "TEACHER", schoolId: "school-a" };
 function setup() {

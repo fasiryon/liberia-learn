@@ -34,7 +34,8 @@
     { "name": "VirtualLab_status_grade_schoolId_idx", "table": "VirtualLab", "kind": "RETAINED_BTREE", "required": true, "definitionMd5": "4c38aef714c8d87b140926d49e7b0bef" },
     { "name": "ReviewerCredential_id_reviewerProfileId_key", "table": "ReviewerCredential", "kind": "P2B_COMPOSITE_UNIQUE_SUPPORT", "required": true, "definitionMd5": "4daf99d1b2668fc8b6f959945e6894a8" },
       { "name": "ReviewerCredentialScope_id_credentialId_key", "table": "ReviewerCredentialScope", "kind": "P2B_COMPOSITE_UNIQUE_SUPPORT", "required": true, "definitionMd5": "1779dbf2590d9c14a1d7e7c917870c82" },
-      { "name": "PlacementSession_one_active_per_student_key", "table": "PlacementSession", "kind": "LEARNING_EVIDENCE_INTEGRITY_PARTIAL_UNIQUE", "required": true, "predicate": "(status = 'ACTIVE')", "definitionMd5": "f0b078f1a5a1efb9e18b04cb21100ac0" }
+      { "name": "PlacementSession_one_active_per_student_key", "table": "PlacementSession", "kind": "LEARNING_EVIDENCE_INTEGRITY_PARTIAL_UNIQUE", "required": true, "predicate": "(status = 'ACTIVE')", "definitionMd5": "f0b078f1a5a1efb9e18b04cb21100ac0" },
+      { "name": "ContentBundleAllocation_one_active_per_school_key", "table": "ContentBundleAllocation", "kind": "CONTENT_ALLOCATION_PARTIAL_UNIQUE", "required": true, "predicate": "(status = 'ACTIVE'::text)", "definitionMd5": "60f3be9aa38bb0d6307f2d454d628592" }
   ],
   "constraints": [
     {
@@ -88,7 +89,11 @@
     { "name": "TeacherLessonAssignment_contentId_fkey", "table": "TeacherLessonAssignment", "type": "RETAINED_FK_ACTION", "physicalAction": "ON UPDATE NO ACTION ON DELETE CASCADE", "required": true, "validated": true, "definitionMd5": "d01fe543791af602316ace62a3b4b83f" },
     { "name": "VideoWatchEvent_studentId_fkey", "table": "VideoWatchEvent", "type": "RETAINED_FK_ACTION", "physicalAction": "ON UPDATE NO ACTION ON DELETE CASCADE", "required": true, "validated": true, "definitionMd5": "9f248aa588fdfca68c418544a3a77199" },
     { "name": "VideoWatchEvent_videoId_fkey", "table": "VideoWatchEvent", "type": "RETAINED_FK_ACTION", "physicalAction": "ON UPDATE NO ACTION ON DELETE CASCADE", "required": true, "validated": true, "definitionMd5": "6b47dc4f75b014c4551d5b8e268cc6cc" },
-    { "name": "AssessmentBaselineCompetency_depth_evidence_honesty", "table": "AssessmentBaselineCompetency", "type": "CHECK", "required": true, "validated": true, "definitionMd5": "a49af7f3c6dc1a11d73cbe7da238dcb3" }
+    { "name": "AssessmentBaselineCompetency_depth_evidence_honesty", "table": "AssessmentBaselineCompetency", "type": "CHECK", "required": true, "validated": true, "definitionMd5": "a49af7f3c6dc1a11d73cbe7da238dcb3" },
+    { "name": "ContentBundleRecord_hash_format_check", "table": "ContentBundleRecord", "type": "CHECK", "required": true, "validated": true, "definitionMd5": "69ac48343f2c12e45d64fbd1977ea3f7" },
+    { "name": "ContentBundleRecord_owner_scope_check", "table": "ContentBundleRecord", "type": "CHECK", "required": true, "validated": true, "definitionMd5": "4a49792cbb039c160c7865ddad233f88" },
+    { "name": "ContentBundleAllocation_governance_ref_check", "table": "ContentBundleAllocation", "type": "CHECK", "required": true, "validated": true, "definitionMd5": "c9e7ed5f6ec6e4c0451fd3d676f9a55b" },
+    { "name": "ContentBundleAllocation_status_check", "table": "ContentBundleAllocation", "type": "CHECK", "required": true, "validated": true, "definitionMd5": "d703cf8c64f072bc00958d1a67e623f1" }
   ],
   "functions": [
     { "name": "prevent_audit_delete", "required": true, "definitionMd5": "8a0967f400cfb924020847990494923d" },
@@ -105,7 +110,9 @@
     { "name": "p2b_reject_update_delete", "required": true, "definitionMd5": "85a464d87f2e0c22aaf266b249fecc45" },
     { "name": "p2b_validate_final_decision", "required": true, "definitionMd5": "38963d1e05c086341f5d64c6ee6ac641" },
     { "name": "p2b_verify_credential_transition", "required": true, "definitionMd5": "0722bc3f437c7d2e46f8ef687539e010" },
-    { "name": "p2abc_validate_governance_authority", "required": true, "definitionMd5": "40d3480c24f9773fb56cb293f879c94c" }
+    { "name": "p2abc_validate_governance_authority", "required": true, "definitionMd5": "40d3480c24f9773fb56cb293f879c94c" },
+    { "name": "reject_content_bundle_record_mutation", "required": true, "definitionMd5": "822324c8606982f18bf2ff0edd2dee8a" },
+    { "name": "guard_content_bundle_allocation", "required": true, "definitionMd5": "62f30431bdbd79f44433e807fa2cd7d4" }
   ],
   "triggers": [
     { "name": "audit_log_no_delete", "table": "AuditLog", "required": true, "definitionMd5": "fbcd0bf8f119828be8378c6f24b52594" },
@@ -129,14 +136,18 @@
     { "name": "ReviewerCredential_verified_core_immutable", "table": "ReviewerCredential", "required": true, "definitionMd5": "429025c204f7c63364a86f24ac7c659d" },
     { "name": "ReviewerCredential_verify_guard", "table": "ReviewerCredential", "required": true, "definitionMd5": "ee82b0a4e0d04b3cb964a2dc1975f8a1" },
     { "name": "ReviewerCredentialScope_verified_immutable", "table": "ReviewerCredentialScope", "required": true, "definitionMd5": "22c627a285d41ad83ca8ca2ab74ea44b" },
-    { "name": "ReviewerCredentialStatusEvent_immutable", "table": "ReviewerCredentialStatusEvent", "required": true, "definitionMd5": "6b1a0f87c1e0cd767b196b807d98d993" }
+    { "name": "ReviewerCredentialStatusEvent_immutable", "table": "ReviewerCredentialStatusEvent", "required": true, "definitionMd5": "6b1a0f87c1e0cd767b196b807d98d993" },
+    { "name": "content_bundle_record_no_update_or_delete", "table": "ContentBundleRecord", "required": true, "definitionMd5": "ead4fca566e31475545ae569e706d2c8" },
+    { "name": "content_bundle_record_no_truncate", "table": "ContentBundleRecord", "required": true, "definitionMd5": "88a53554df83067acbbc419c5ce52253" },
+    { "name": "content_bundle_allocation_guard", "table": "ContentBundleAllocation", "required": true, "definitionMd5": "8d99d1444cbceece63a10458fc3ed5d6" },
+    { "name": "content_bundle_allocation_no_truncate", "table": "ContentBundleAllocation", "required": true, "definitionMd5": "10398b413ddf82776af8f2c9deb452bd" }
   ],
   "security": {
     "rls": {
       "schema": "public",
       "selector": "ALL_PUBLIC_TABLES",
-      "expectedTableCount": 237,
-      "expectedEnabledCount": 237
+      "expectedTableCount": 239,
+      "expectedEnabledCount": 239
     },
     "p2cServerOnlyTables": [
       "CurriculumAuthoritySource", "CurriculumAuthoritySourceVersion", "MoeCurriculumObjective",

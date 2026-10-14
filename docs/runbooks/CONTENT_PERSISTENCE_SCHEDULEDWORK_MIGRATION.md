@@ -24,7 +24,9 @@ only local tests. No hosted migration/backfill/publication is executed.
    legacy delivery, partial-pin rejection, corrupt/missing bundle handling, exact
    version resolution and school/enrollment boundaries.
 5. Enable governed writes only after separate approval and complete exact authority
-   adapters, reviewed release/resource/toolkit inputs, authorized school allocation
+   adapters, reviewed release/resource/toolkit inputs, a decided authority for
+   granting national `ContentBundleAllocation` rows (none is created by this
+   migration; a national record is unavailable to every school until allocated)
    and audited delivery/auxiliary consumers. V1 supplies an internal writer, no
    production enable flag or public mutation route. Teacher Preview remains read-only.
 6. Run dry-run backfill on an explicitly authorized read-only snapshot. The shipped
@@ -39,7 +41,8 @@ only local tests. No hosted migration/backfill/publication is executed.
    Duplicate mappings or missing authority must not be guessed away.
 8. Explicitly authorize write backfill in a later mission. The shipped CLI has no
    write mode. Implement/review a scoped transactional writer that re-resolves current
-   authority and compare-and-sets six NULL fields by id and school; write only SAFE
+   authority and compare-and-sets six NULL fields by id, school and the contentId
+   and classId observed during analysis; write only SAFE rows, report refused stale
    rows, preserve contentId and verify idempotence. Production remains refused unless
    separately authorized. Do not treat a dry-run report as a write authorization.
 9. Observe missing/corrupt/partial diagnostics, authority revocations, row counts,

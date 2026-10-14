@@ -7,7 +7,7 @@ governed writes. Base: `86139e2d051ad229b085313b085d2a48f4f23ebd`.
 ## Storage decision
 
 `ContentBundleRecord` stores sealed canonical JSON with indexed bundle identity,
-schema version, exact V1 content hash, release identity/reference, school scope,
+schema version, exact V1 content hash, release identity/reference, owner scope,
 creation time and creating actor. The envelope contains both `manifest` and
 `revisions`, which the Wave 2 resolver needs to reconstruct exact authority reads.
 JSON preserves composition without separate tables for every evolving member
@@ -20,10 +20,34 @@ it remains unchanged as a hashing convention. The envelope digest detects change
 to excluded metadata and revision pins. Neither digest is a release attestation.
 Reads verify both integrity and indexed identity before returning a composition.
 
-School scope is explicit and mandatory. Global bundle/version uniqueness means
-one identity cannot be reassigned to a different school. This V1 store does not
-establish national allocation policy; shared national distribution needs a later
-authorized scope model. Creating actor is provenance metadata, not review authority.
+## Ownership and allocation (DEC-011)
+
+Identity, ownership and allocation are separate:
+
+- `(bundleId, bundleVersion)` is one global, immutable identity. A record is stored
+  once; its payload is never copied to distribute it.
+- `ownerScope = NATIONAL` (no owner school). A national record is available to a
+  school **only** through an `ACTIVE` `ContentBundleAllocation` for that exact
+  record (exact version). Existence alone grants nothing.
+- `ownerScope = SCHOOL` with `ownerSchoolId`. The bundle id must start with
+  `school.<ownerSchoolId>.`; national ids may not start with `school.`. A PostgreSQL
+  CHECK enforces both, so a school can neither claim a national identity nor collide
+  with or probe another school's identity. School records are visible only to the
+  owner and cannot be allocated, so they never become national through allocation.
+  National availability of school-authored content requires a separate governed
+  process that stores a new NATIONAL record.
+
+`ContentBundleAllocation` records `schoolId`, the exact record, a required
+`governanceRef` naming the decision elsewhere, the granting actor and time. It may
+only move `ACTIVE -> REVOKED` (with revoking actor, time and reference); identity
+fields are frozen, rows are never deleted or truncated, and at most one `ACTIVE`
+allocation exists per school and record (partial unique index). A revoked school
+may be re-granted by a new row; history is retained. Allocation rows invent no
+permission: no route creates them, and who may grant or revoke is an open
+governance decision. Creating actor is provenance metadata, not review authority.
+
+Scoped reads authorize before verifying integrity: an unauthorized school receives
+`null` for a foreign, unallocated, revoked, corrupt or absent record alike.
 
 ## Immutability
 
@@ -44,9 +68,14 @@ integrity checking, not signatures against an attacker with full database author
 
 `createContentBundleRepository(db, schoolId)` exposes:
 
-- `storeSealedContentBundle(composition, createdById)`
-- `getContentBundle(bundleId, bundleVersion)`
-- `getContentBundleByHash(contentHash)` (returns scoped matching compositions)
+- `storeSchoolContentBundle(composition, createdById)` (owner namespace required)
+- `getContentBundle(bundleId, bundleVersion)` (owned, or national with an ACTIVE allocation)
+- `getContentBundleByHash(contentHash)` (returns only compositions visible to the school)
+
+`createNationalContentBundleStore(db).storeNationalContentBundle` stores national
+compositions and `createContentBundleAllocationStore(db)` exposes `grant`/`revoke`.
+Both are internal mechanisms with no route or runtime caller. Envelopes that use
+Activity Wave `activityReferences` must carry one exact revision pin per pointer.
 
 `withPersistentComposition` replaces only composition reads on an existing
 server-owned authority reader. Flow: exact id/version → scoped stored envelope →
@@ -82,6 +111,10 @@ Pinned classification is structural, not proof of current release authorization.
 the governed resolver and returns only learner-safe content. No invalid governed
 result invokes legacy. The enrolled student work route consumes this helper before
 legacy progress/audio/payload delivery; unavailable governed work returns 409.
+The lesson experience seam (`GET /api/student/lessons/:id/experience`, the learner
+page's first call) reads scope and the six pins first and refuses GOVERNED_PINNED
+(`GOVERNED_WORK_UNAVAILABLE`) and INVALID_PARTIAL_PIN (`INVALID_GOVERNED_PIN`) with
+409 before loading any legacy content; foreign learners receive the ordinary 404.
 Legacy audio generation and answer release reject governed/partial pins instead of
 reading mutable legacy payloads. Legacy quiz context, completion and offline progress
 also reject those records before learner-state or mastery side effects. Existing
@@ -96,7 +129,17 @@ must be the class owner in V1; broader teacher allocation policy is not invented
 A serializable transaction writes all pins with one create call and records an
 AuditLog entry in the same transaction. It accepts class
 scheduling only; no attempts, submissions, evidence or student state are migrated.
-No public route enables this writer in this mission.
+No public route enables this writer in this mission. The stored bundle must be
+visible to the class's school (owned, or national with an ACTIVE allocation) inside
+the serializable transaction, so a concurrent revocation cannot be bypassed.
+
+Activity Wave: a governed ActivityDefinition pointer (`activityId`, `version`, `kind`)
+pins as `itemId`, `itemVersion`, `itemKind` with the same `ACTIVITY_KINDS`
+vocabulary; no schema change is needed. Restriction: `ScheduledWork.contentId` is a
+required legacy foreign key to `CurriculumContent`, and `createGovernedScheduledWork`
+requires that `contentId` to be a LESSON member of the bundle. A governed activity
+assignment therefore needs a lesson anchor; activity-only assignments need a later
+reviewed decision (nullable/alternate anchor), not part of this additive migration.
 
 Future attempts, submissions and evidence attach `GovernedContentRef`
 (`bundleId`, `bundleVersion`, `itemId`, `itemVersion`, `itemKind`) and optionally
@@ -122,7 +165,9 @@ production authority gaps mean no safe pins are fabricated. No CLI write mode or
 hosted authorization flag is implemented. The local-test application helper defaults
 to dry run and accepts only safe rows and an explicitly local conditional writer.
 It rejects production mode and non-loopback DATABASE_URL/DIRECT_URL configuration,
-and supplies an atomic predicate matching id, school and six NULL fields;
+and supplies an atomic predicate matching id, school, the `contentId` and `classId`
+observed during analysis and six NULL fields; a row edited or pinned after analysis
+matches nothing and is reported in `refused`, never written;
 production implementation must re-analyze under a transaction, independently
 authorize scope and use compare-and-set, never a stale report as authority.
 
@@ -162,30 +207,37 @@ not claim production lock timings or automatic rollback. Unit tests exercise sto
 resolver, preview, compatibility, governed writes and analyzer states; build/types
 and changed-file checks are required before handoff.
 
-Unresolved: real approved exact authority adapters, national allocation policy,
+Unresolved: real approved exact authority adapters, who may grant/revoke national
+allocations and how revocation treats already-assigned work (V1 fails closed),
 reviewed historical correspondence, remaining auxiliary governed consumers, hosted
 write implementation/authorization, package closure and existing lab revision gaps.
 These remain explicit rollout prerequisites; no release/publication is inferred.
 
 ## Local handoff evidence
 
-The final focused run passed 362 tests in 19 files: persistence/pins/backfill,
-ContentBundle V1, resolver, preview, scheduling, assignment/delivery compatibility,
-answer/audio routes, completion, quiz idempotency and offline sync. `validate:changed`
-passed, including Prisma validation/generation, TypeScript and 284 related tests.
-Changed-file lint passed. Production build exited 0 and generated 387 static pages;
-existing unrelated lint/instrumentation warnings remain. The built app booted on
-loopback and returned homepage HTTP 200 using unreachable local-only DB URLs.
-This is not hosted or logged-in production-session evidence.
+Repair branch `feat/content-persistence-scheduledwork-v1-repairs` (from `1d2cbf50`,
+with main `1e196d94` / Activity Wave merged). Local and disposable only; no hosted
+migration, backfill, allocation, publication or deployment occurred.
 
-Disposable PostgreSQL 17 canonical replay and real Prisma integration passed:
-existing legacy row retained with NULL pins, all new indexes/RLS/grants present,
-duplicate identities and UPDATE/DELETE/TRUNCATE blocked, canonical JSON/hash
-round-trip verified, exact resolver delivery, transactional schedule/audit creation,
-dry-run zero writes and repeated safe local backfill writing once then zero.
-
-Safety review: migration is additive; no hosted writes, deployment, release or
-publication occurred. No attempts/submissions/evidence schema was migrated, and no
-mastery/orchestrator authority changed. Cross-school assignment and partial pins
-are rejected. Invalid governed delivery never invokes legacy fallback; legacy
-student-state consumers reject governed records before their existing side effects.
+- Full Vitest suite: 758 files, 7417 passed, 8 skipped, 0 failed (the canonical
+  baseline and P2-A writer-guard regressions are fixed; the runtime check seeds its
+  lesson through the approved curriculum writer as non-authoritative draft content).
+- `validate:changed --base 1e196d94`: PASS (Prisma validation/generation, TypeScript,
+  29 related files / 502 tests). Changed-file lint: 0 errors. TypeScript: clean.
+- Production build: 387 static pages. Loopback production boot: homepage HTTP 200
+  with unreachable local-only DB URLs (not hosted or logged-in session evidence).
+- `scripts/verify-content-persistence-migration.ps1`: PASS. Canonical replay, an
+  existing legacy row kept with six NULL pins, indexes, RLS/grants on both tables,
+  append-only record and allocation guards (including TRUNCATE CASCADE), and
+  namespace-squatting refusal; then real Prisma: national reuse across two schools,
+  school-private isolation, cross-school and missing-allocation denial, exact-version
+  allocation, one-way revocation with re-grant history, atomic schedule/audit, and a
+  backfill whose stale proposal is refused while a concurrent teacher edit holds the
+  row lock (idempotent rerun writes zero).
+- Full canonical PostgreSQL 17 bootstrap: PASS (22 migrations, 239/239 tables with
+  RLS, 0 anon/authenticated P2-C grants, no unregistered Prisma diff keys); the new
+  function/trigger/check/partial-index hashes are pinned in
+  `postgres-object-manifest.json`, and a deliberately altered pin fails the bootstrap
+  with a manifest hash mismatch. Under Windows PowerShell 5.1 the bootstrap's
+  pre-existing P2-B probe treats expected psql stderr as fatal; local runs used an
+  uncommitted copy relaxing only that line.

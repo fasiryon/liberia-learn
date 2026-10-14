@@ -9,7 +9,8 @@ export type ScheduledWorkPins = { [K in typeof PIN_FIELDS[number]]?: string | nu
 export type GovernedScheduledWorkRef = GovernedContentRef & { bundleContentHash: string };
 export function classifyScheduledWork(row: ScheduledWorkPins): "GOVERNED_PINNED" | "LEGACY_UNPINNED" | "INVALID_PARTIAL_PIN" {
   if (PIN_FIELDS.every(key => row[key] == null)) return "LEGACY_UNPINNED";
-  if (!PIN_FIELDS.every(key => typeof row[key] === "string" && !!row[key]!.trim() && !/^(latest|current|\*)$/i.test(row[key]!))) return "INVALID_PARTIAL_PIN";
+  // Exact means non-empty, untrimmed-equal and never a moving alias; anything else is invalid, not legacy.
+  if (!PIN_FIELDS.every(key => typeof row[key] === "string" && !!row[key]!.trim() && row[key]!.trim() === row[key] && !/^(latest|current|\*)$/i.test(row[key]!))) return "INVALID_PARTIAL_PIN";
   if (!/^[a-f0-9]{64}$/.test(row.bundleContentHash!) || !GOVERNED_ITEM_KINDS.includes(row.itemKind as GovernedContentRef["itemKind"])) return "INVALID_PARTIAL_PIN";
   return "GOVERNED_PINNED";
 }

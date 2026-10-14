@@ -139,6 +139,8 @@ model District {
 model School {
   id                          String                    @id @default(cuid())
   name                        String
+  contentBundleRecords        ContentBundleRecord[]
+  contentBundleAllocations    ContentBundleAllocation[]
   code                        String?                   @unique
   timezone                    String                    @default("Africa/Monrovia")
   primaryHex                  String?
@@ -4329,24 +4331,51 @@ model ScheduledWork {
   @@index([sessionPairId])
 }
 
-// Append-only sealed composition; governance remains in existing authorities.
+// Append-only sealed composition; governance remains in existing authorities (DEC-011).
+// NATIONAL: stored once, usable by a school only through an ACTIVE ContentBundleAllocation.
+// SCHOOL: owned by ownerSchoolId; bundleId must start with "school.<ownerSchoolId>.".
+// Owner/namespace CHECKs and append-only triggers live in the canonical migration.
 model ContentBundleRecord {
-  id                  String   @id @default(cuid())
+  id                  String                    @id @default(cuid())
   bundleId            String
   bundleVersion       String
   schemaVersion       String
-  contentHash         String   @db.VarChar(64)
-  compositionHash     String   @db.VarChar(64)
+  contentHash         String                    @db.VarChar(64)
+  compositionHash     String                    @db.VarChar(64)
   curriculumReleaseId String
   releaseIdentity     String
-  schoolId            String
+  ownerScope          String
+  ownerSchoolId       String?
   sealedComposition   Json
-  createdAt           DateTime @default(now())
+  createdAt           DateTime                  @default(now())
   createdById         String
+  ownerSchool         School?                   @relation(fields: [ownerSchoolId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  allocations         ContentBundleAllocation[]
 
   @@unique([bundleId, bundleVersion])
-  @@index([schoolId, contentHash])
+  @@index([contentHash])
+  @@index([ownerSchoolId])
   @@index([curriculumReleaseId])
+}
+
+// Explicit, governed school entitlement to one exact NATIONAL bundle version. ACTIVE -> REVOKED only.
+// ContentBundleAllocation_one_active_per_school_key (partial unique) lives in the canonical migration.
+model ContentBundleAllocation {
+  id             String              @id @default(cuid())
+  bundleRecordId String
+  schoolId       String
+  status         String              @default("ACTIVE")
+  governanceRef  String
+  grantedById    String
+  grantedAt      DateTime            @default(now())
+  revokedById    String?
+  revokedAt      DateTime?
+  revocationRef  String?
+  bundleRecord   ContentBundleRecord @relation(fields: [bundleRecordId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  school         School              @relation(fields: [schoolId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+
+  @@index([bundleRecordId])
+  @@index([schoolId, status])
 }
 
 model Timetable {

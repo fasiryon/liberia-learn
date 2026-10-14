@@ -2,13 +2,15 @@ import type { Prisma } from "@prisma/client";
 import type { ContentBundleAuthorityReader } from "../v1/resolver";
 import { PIN_FIELDS, classifyScheduledWork, readScheduledWorkDelivery, type ScheduledWorkPins, type GovernedScheduledWorkRef } from "./scheduledWork";
 
-export type BackfillRow = ScheduledWorkPins & { id: string; schoolId: string; contentId: string; gradeLevel: number | null; subject: string };
+export type BackfillRow = ScheduledWorkPins & { id: string; schoolId: string; classId: string; contentId: string; gradeLevel: number | null; subject: string };
 /** Explicit operator-reviewed historical correspondence. Never infer history from current content. */
 export type BackfillMatch = { scheduledWorkId: string; schoolId: string; contentId: string; ref: GovernedScheduledWorkRef };
 export type BackfillAnalysis = {
   id: string; schoolId: string;
   status: "SAFE_TO_PIN" | "AMBIGUOUS" | "NO_GOVERNED_MATCH" | "ALREADY_PINNED" | "INVALID_PARTIAL_PIN";
   proposed?: GovernedScheduledWorkRef;
+  /** Source identity observed during analysis; application refuses the proposal if it changed. */
+  observed?: { contentId: string; classId: string };
 };
 export async function analyzeScheduledWorkBackfill(rows: readonly BackfillRow[], matches: readonly BackfillMatch[], reader: (schoolId: string) => ContentBundleAuthorityReader): Promise<BackfillAnalysis[]> {
   const results: BackfillAnalysis[] = [];
@@ -32,13 +34,15 @@ export async function analyzeScheduledWorkBackfill(rows: readonly BackfillRow[],
       results.push({ ...base, status: "NO_GOVERNED_MATCH" }); continue;
     }
     const proposed = Object.fromEntries(PIN_FIELDS.map(key => [key, candidate.ref[key]])) as GovernedScheduledWorkRef;
-    results.push({ ...base, status: "SAFE_TO_PIN", proposed });
+    results.push({ ...base, status: "SAFE_TO_PIN", proposed, observed: { contentId: row.contentId, classId: row.classId } });
   }
   return results;
 }
 
 /** Optional future local application boundary. Caller must re-analyze inside its transaction.
- * Conditional writer MUST match id, school and six NULL fields together; default makes no calls.
+ * Conditional writer MUST match id, school, the observed contentId/classId and six NULL fields
+ * together; a row whose source changed after analysis matches nothing and is reported as refused.
+ * Default makes no calls.
  */
 export async function applySafeBackfill(analysis: readonly BackfillAnalysis[],
   writer: (request: { where: Prisma.ScheduledWorkWhereInput; data: GovernedScheduledWorkRef }) => Promise<number>, options: { write?: boolean; target?: "LOCAL_TEST" } = {}) {
@@ -48,13 +52,16 @@ export async function applySafeBackfill(analysis: readonly BackfillAnalysis[],
   };
   if (options.target !== "LOCAL_TEST" || process.env.NODE_ENV === "production" ||
       !localUrl(process.env.DATABASE_URL) || (process.env.DIRECT_URL !== undefined && !localUrl(process.env.DIRECT_URL))) throw new Error("HOSTED_BACKFILL_NOT_AUTHORIZED");
+  const filled = (value: unknown): value is string => typeof value === "string" && !!value.trim();
   let written = 0;
+  const refused: string[] = [];
   for (const row of analysis) if (row.status === "SAFE_TO_PIN" && row.proposed && classifyScheduledWork(row.proposed) === "GOVERNED_PINNED") {
-    if (typeof row.id !== "string" || !row.id.trim() || typeof row.schoolId !== "string" || !row.schoolId.trim()) throw new Error("BACKFILL_SCOPE_REQUIRED");
-    written += await writer({
-      where: { id: row.id, class: { schoolId: row.schoolId }, ...Object.fromEntries(PIN_FIELDS.map(key => [key, null])) },
+    if (!filled(row.id) || !filled(row.schoolId) || !filled(row.observed?.contentId) || !filled(row.observed?.classId)) throw new Error("BACKFILL_SCOPE_REQUIRED");
+    const count = await writer({
+      where: { id: row.id, contentId: row.observed!.contentId, classId: row.observed!.classId, class: { schoolId: row.schoolId }, ...Object.fromEntries(PIN_FIELDS.map(key => [key, null])) },
       data: Object.fromEntries(PIN_FIELDS.map(key => [key, row.proposed![key]])) as GovernedScheduledWorkRef,
     });
+    if (count === 1) written++; else refused.push(row.id);
   }
-  return { mode: "LOCAL_TEST_WRITE" as const, written };
+  return { mode: "LOCAL_TEST_WRITE" as const, written, refused };
 }
