@@ -9,7 +9,7 @@ import { sceneBodyFor } from "@/lib/learner-experience/sceneContract";
 export function SceneText({ text }: { text: string }) {
   const inline = (line: string): ReactNode[] => line.split(/(\*\*[^*]+\*\*)/g).filter(Boolean).map((part, index) =>
     part.startsWith("**") && part.endsWith("**") ? <strong key={index} className="font-semibold text-[var(--ll-text)]">{part.slice(2, -2)}</strong> : <Fragment key={index}>{part}</Fragment>);
-  return <>{text.split(/\n{2,}/).map((paragraph, index) => <p key={index} className="mt-4 first:mt-0 text-[1.0625rem] leading-8 text-[var(--ll-text)]">{inline(paragraph)}</p>)}</>;
+  return <>{text.split(/\n{2,}/).map((paragraph, index) => <p key={index} className="mt-4 max-w-[68ch] first:mt-0 text-[1.125rem] leading-8 text-[var(--ll-text)]">{inline(paragraph)}</p>)}</>;
 }
 
 export function SceneBody({ scene, ageBand }: { scene: Scene; ageBand: AgeBand }) {
@@ -18,12 +18,9 @@ export function SceneBody({ scene, ageBand }: { scene: Scene; ageBand: AgeBand }
     <div>
       <SceneText text={body} />
       {keyPoints.length > 0 && (
-        <ul data-key-points className="mt-5 space-y-3">
+        <ul data-key-points className="ll3-points mt-6" aria-label="Key points">
           {keyPoints.map((point, pointIndex) => (
-            <li key={`${pointIndex}:${point}`} className="flex gap-3 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] px-4 py-3 text-base leading-7 text-[var(--ll-text)]">
-              <span aria-hidden="true" className="mt-2.5 h-2 w-2 shrink-0 rounded-full bg-[var(--ll-accent)]" />
-              <span><SceneText text={point} /></span>
-            </li>
+            <li key={`${pointIndex}:${point}`}><SceneText text={point} /></li>
           ))}
         </ul>
       )}

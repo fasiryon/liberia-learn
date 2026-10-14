@@ -33,6 +33,12 @@ import { CodeSubmit } from "@/components/grading/CodeSubmit";
 import { AILiteracySubmit } from "@/components/grading/AILiteracySubmit";
 import type { LabId } from "@/lib/labs/types";
 import type { PseudoLab, SimulationDefinition } from "@/lib/schemas/labSimulation";
+import { looksLikeHtml } from "@/lib/lessons";
+import { parseLessonBlocks, slideBlocks, splitLessonSections } from "@/lib/learner-experience/lessonText";
+import { FocusedHeader, LearningStage } from "@/components/experience/FocusedLearning";
+import { LegacyReading, LegacySlides } from "@/components/experience/LegacyLesson";
+import { StateNotice } from "@/components/experience/StateNotice";
+import { Chip } from "@/components/experience/Frame";
 
 type ExitTicketQuestion = {
   question: string;
@@ -515,11 +521,9 @@ export default function LessonDeliveryClient({ lessonId, enabledToolIds = [] }: 
   if (native?.kind === "NATIVE" && target) return <NativeLessonRuntimeView lesson={native} target={target} exitHref="/student/today" enabledToolIds={enabledToolIds} />;
   if (native?.kind === "UNAVAILABLE") return <LessonUnavailable reason={native.reason} exitHref="/student/today" />;
   return (
-    <main className="ll-page min-h-screen px-4 py-8 text-[var(--ll-text)]">
-      <div className="ll-shell max-w-5xl">
-        <ScheduledLessonDelivery lessonId={lessonId} onNative={onNative} />
-      </div>
-    </main>
+    <div className="ll3-scope ll3-focus" data-legacy-lesson="assigned">
+      <ScheduledLessonDelivery lessonId={lessonId} onNative={onNative} />
+    </div>
   );
 }
 
@@ -672,7 +676,6 @@ function ScheduledLessonDelivery({ lessonId, onNative }: { lessonId: string; onN
     });
   }, [lesson, renderedBody]);
 
-  const currentSlide = slides[Math.min(currentSlideIndex, Math.max(0, slides.length - 1))] ?? null;
 
   useEffect(() => {
     if (currentSlideIndex > Math.max(0, slides.length - 1)) {
@@ -680,19 +683,8 @@ function ScheduledLessonDelivery({ lessonId, onNative }: { lessonId: string; onN
     }
   }, [currentSlideIndex, slides.length]);
 
-  useEffect(() => {
-    if (mode !== "slides") return;
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "ArrowLeft") {
-        setCurrentSlideIndex((value) => Math.max(0, value - 1));
-      }
-      if (event.key === "ArrowRight") {
-        setCurrentSlideIndex((value) => Math.min(Math.max(0, slides.length - 1), value + 1));
-      }
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [mode, slides.length]);
+  const slideScenes = useMemo(() => slides.map((slide) => ({ title: slide.title, blocks: slideBlocks(slide.title, slide.content) })), [slides]);
+  const readingSections = useMemo(() => (lesson && renderedBody && !looksLikeHtml(renderedBody) ? splitLessonSections(parseLessonBlocks(renderedBody), lesson.title) : []), [lesson, renderedBody]);
 
   const exitTicketQuestions = lesson?.deliveryProfile?.exitTicket?.questions ?? [];
   const aiTutorEnabled = process.env.NEXT_PUBLIC_ENABLE_AI_TUTOR !== "false";
@@ -997,146 +989,97 @@ function ScheduledLessonDelivery({ lessonId, onNative }: { lessonId: string; onN
   }
 
   if (loading) {
-    return <div className="h-64 animate-pulse rounded-xl bg-[var(--ll-bg)]/60" />;
+    return <div className="grid min-h-dvh place-items-center px-4"><div className="w-full max-w-xl"><StateNotice kind="loading" title="Opening your lesson…">Checking your assigned lesson.</StateNotice></div></div>;
   }
   if (error || !lesson) {
-    return <div className="rounded-xl border border-[var(--ll-danger)]/30 bg-[var(--ll-danger)]/10 p-6 text-sm text-[var(--ll-danger)]">{error ?? "Lesson not found."}</div>;
+    return <div className="grid min-h-dvh place-items-center px-4"><div className="w-full max-w-xl"><StateNotice kind="error" title="This lesson did not open" action={<a href="/student/today" className="ll3-btn" data-primary="">Back to Today</a>}>{error ?? "Lesson not found."}</StateNotice></div></div>;
   }
 
+  const subjectLabel = lesson.subject.replace(/_/g, " ").toLowerCase().replace(/\b\w/g, (letter) => letter.toUpperCase());
+  const supportRail = <>
+    <section aria-labelledby="assigned-on-page">
+      <h2 id="assigned-on-page">On this page</h2>
+      <ol className="ll3-outline-list mt-2">
+        {sectionOrder.map((sectionId, index) => (
+          <li key={sectionId}>
+            <button type="button" onClick={() => scrollToSection(sectionId)} aria-current={sectionId === currentSection ? "step" : undefined}>
+              <span className="ll3-outline-num" aria-hidden="true">{index + 1}</span><span className="capitalize">{sectionId.replace(/-/g, " ")}</span>
+            </button>
+          </li>
+        ))}
+      </ol>
+    </section>
+    {lesson.objectives.length > 0 && <section aria-labelledby="assigned-goals"><h2 id="assigned-goals">Lesson goals</h2>
+      <ul className="mt-2 grid gap-2 text-[15px] leading-6">{lesson.objectives.map((objective, index) => <li key={`${objective}-${index}`} className="flex gap-2"><span aria-hidden="true" className="mt-2 h-2 w-2 shrink-0 rounded-full bg-[var(--ll-accent)]" />{objective}</li>)}</ul>
+    </section>}
+    {(aiTutorEnabled || availableLabs.length > 0) && <section aria-labelledby="assigned-help"><h2 id="assigned-help">Help and tools</h2>
+      <div className="mt-2 grid gap-2">
+        {aiTutorEnabled ? <PencilButton onClick={() => setHelpPanelOpen(true)} label="Ask the tutor" active={helpPanelOpen} /> : null}
+        {availableLabs.map((lab) => (
+          <button key={lab.labId} type="button" onClick={() => openLessonLab(lab.labId)} className="ll3-btn w-full">{lab.label}</button>
+        ))}
+      </div>
+    </section>}
+    <p className="text-sm text-[var(--ll-text-muted)]">{lesson.teacherName} · {lesson.schoolName}</p>
+  </>;
+
   return (
+    <>
+    <FocusedHeader backHref="/student/today" backLabel="Back to Today" title={lesson.title}
+      context={`Grade ${lesson.grade} · ${subjectLabel} · ${lessonDurationLabel(lesson.classFormat)}`}
+      extra={lesson.status === "completed" ? <Chip tone="success">Completed</Chip> : <Chip>Assigned by {lesson.teacherName}</Chip>}
+      progress={{ value: ((Math.max(0, currentSectionIndex) + 1) / Math.max(1, sectionOrder.length)) * 100, label: "Position in this lesson" }} />
+    <LearningStage support={supportRail} supportLabel="Lesson help" mainLabelledBy="lesson-title">
     <div className="space-y-6 pb-28">
-        <a
-          href="/student/today"
-          className="inline-flex items-center gap-1 text-sm text-[var(--ll-yellow)] hover:opacity-80"
-        >
-          &#8592; Back to today
-        </a>
-        <section ref={registerSection("overview")} data-section-id="overview" className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-5 sm:p-7">
-          <div className="flex flex-wrap items-center gap-3 text-xs text-[var(--ll-text)]">
-            <span className="rounded-full bg-[var(--ll-yellow)]/15 px-3 py-1 font-semibold text-[var(--ll-yellow)]">{lesson.subject}</span>
-            <span>Grade {lesson.grade}</span>
-            <span>{lessonDurationLabel(lesson.classFormat)}</span>
+        <section ref={registerSection("overview")} data-section-id="overview" className="grid gap-4">
+          <div className="flex flex-wrap items-start gap-3">
+            <h1 id="lesson-title" className="ll3-title min-w-0 flex-1">{lesson.title}</h1>
+            <button
+              type="button"
+              aria-label="Flag this lesson for teacher help"
+              aria-expanded={flagPanelOpen}
+              title={flagDone ? "Flagged — your teacher has been notified" : "Flag this lesson for help"}
+              onClick={() => flagDone ? undefined : setFlagPanelOpen((v) => !v)}
+              className="ll3-btn shrink-0"
+            >
+              <Flag size={18} aria-hidden="true" /> {flagDone ? "Flagged" : "Need help?"}
+            </button>
           </div>
-          <div className="mt-4 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-            <div>
-              <div className="flex items-center gap-3">
-                <h1 className="text-3xl font-semibold text-[var(--ll-text)]">{lesson.title}</h1>
-                <button
-                  type="button"
-                  aria-label="Flag this lesson for teacher help"
-                  title={flagDone ? "Flagged — your teacher has been notified" : "Flag this lesson for help"}
-                  onClick={() => flagDone ? undefined : setFlagPanelOpen((v) => !v)}
-                  className={`shrink-0 rounded-full p-1.5 transition-colors ${flagDone ? "text-red-500" : "text-[var(--ll-text-muted)] hover:text-red-400"}`}
-                >
-                  <Flag size={18} />
+          <div className="flex flex-wrap gap-2">
+            <Chip>{subjectLabel}</Chip><Chip>Grade {lesson.grade}</Chip><Chip>{lessonDurationLabel(lesson.classFormat)}</Chip>
+          </div>
+          {flagPanelOpen && !flagDone && (
+            <div className="ll3-panel grid max-w-xl gap-2">
+              <p className="font-semibold">Flag for teacher help</p>
+              <label htmlFor="flag-note" className="text-sm text-[var(--ll-text-muted)]">Optional: what are you struggling with?</label>
+              <textarea
+                id="flag-note"
+                value={flagNote}
+                onChange={(e) => setFlagNote(e.target.value)}
+                rows={2}
+                className="w-full rounded-xl border border-[var(--ll-border-strong)] bg-[var(--ll-bg)] px-3 py-2 text-base text-[var(--ll-text)]"
+              />
+              <div className="flex flex-wrap gap-2">
+                <button type="button" onClick={submitLessonFlag} disabled={flagSubmitting} className="ll3-btn" data-primary="">
+                  {flagSubmitting ? "Flagging…" : "Send to my teacher"}
                 </button>
+                <button type="button" onClick={() => setFlagPanelOpen(false)} className="ll3-btn">Cancel</button>
               </div>
-              {flagPanelOpen && !flagDone && (
-                <div className="mt-3 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface-muted)] p-3 text-sm">
-                  <p className="font-semibold text-[var(--ll-text)]">Flag for teacher help</p>
-                  <textarea
-                    value={flagNote}
-                    onChange={(e) => setFlagNote(e.target.value)}
-                    placeholder="Optional: what are you struggling with?"
-                    rows={2}
-                    className="mt-2 w-full rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 px-3 py-2 text-sm text-[var(--ll-text)] outline-none"
-                  />
-                  <div className="mt-2 flex gap-2">
-                    <button
-                      type="button"
-                      onClick={submitLessonFlag}
-                      disabled={flagSubmitting}
-                      className="rounded-lg bg-red-500/20 px-3 py-1.5 text-xs font-semibold text-red-400"
-                    >
-                      {flagSubmitting ? "Flagging…" : "Confirm Flag"}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setFlagPanelOpen(false)}
-                      className="rounded-lg border border-[var(--ll-border)] px-3 py-1.5 text-xs text-[var(--ll-text-muted)]"
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                </div>
-              )}
-              {flagDone && (
-                <p className="mt-1 text-xs text-red-400">🚩 Flagged — your teacher has been notified</p>
-              )}
-              <p className="mt-2 text-base text-[var(--ll-text)]">Teacher: {lesson.teacherName}</p>
             </div>
-            <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/55 px-4 py-3 text-sm text-[var(--ll-text)]">
-              Stay focused on the lesson, then complete the assessment at the end.
+          )}
+          {flagDone && <p role="status" className="text-sm">Flag sent. Your teacher has been notified.</p>}
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="ll3-modes" role="group" aria-label="How to use this lesson">
+              {(["read", "slides", "listen", ...(lesson.activeVideo ? ["video"] : [])] as LessonMode[]).map((entry) => (
+                <button key={entry} type="button" onClick={() => changeMode(entry)} aria-pressed={mode === entry} className="capitalize">{entry}</button>
+              ))}
             </div>
-          </div>
-          <div className={`mt-5 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-1 text-sm sm:inline-grid sm:min-w-[24rem] ${lesson.activeVideo ? "grid grid-cols-4" : "grid grid-cols-3"}`}>
-            {(["read", "slides", "listen", ...(lesson.activeVideo ? ["video"] : [])] as LessonMode[]).map((entry) => (
-              <button
-                key={entry}
-                type="button"
-                onClick={() => changeMode(entry)}
-                className={`ll-touch-target rounded-lg px-3 py-2 font-semibold capitalize ${
-                  mode === entry
-                    ? "bg-[var(--ll-yellow-soft)] text-[var(--ll-yellow)]"
-                    : "text-[var(--ll-text-muted)] hover:text-[var(--ll-text)]"
-                }`}
-              >
-                {entry}
-              </button>
-            ))}
-          </div>
-          <div className="mt-3">
             <SaveForOfflineButton
               contentId={lesson.contentId}
               lessonData={{ metadata: null, payload: { title: lesson.title, body: lesson.body } }}
             />
           </div>
-          <div className="mt-5 rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-4">
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--ll-yellow)]">Progress</p>
-                <p className="mt-1 text-sm text-[var(--ll-text)]">
-                  You are currently reading the {currentSection.replace(/-/g, " ")} section.
-                </p>
-              </div>
-              <p className="text-sm text-[var(--ll-text)]">School: {lesson.schoolName}</p>
-            </div>
-          <div className="mt-4 flex flex-wrap gap-2">
-              {sectionOrder.map((sectionId) => (
-                <button
-                  key={sectionId}
-                  type="button"
-                  onClick={() => scrollToSection(sectionId)}
-                  className={`ll-touch-target rounded-full px-4 py-2 text-sm ${
-                    sectionId === currentSection
-                      ? "bg-[var(--ll-yellow-soft)] text-[var(--ll-text-faint)]"
-                      : "border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 text-[var(--ll-text)]"
-                  }`}
-                >
-                  {sectionId.replace(/-/g, " ")}
-                </button>
-              ))}
-            </div>
-            {aiTutorEnabled ? (
-              <div className="mt-4">
-                <PencilButton
-                  onClick={() => setHelpPanelOpen(true)}
-                  label="Ask the tutor"
-                  active={helpPanelOpen}
-                />
-              </div>
-            ) : null}
-            {availableLabs.map((lab) => (
-              <button
-                key={lab.labId}
-                type="button"
-                onClick={() => openLessonLab(lab.labId)}
-                className="mt-4 ml-0 inline-flex min-h-12 items-center justify-center rounded-full bg-[var(--ll-silver-soft)] px-5 py-3 text-sm font-semibold text-[var(--ll-text-faint)] transition-colors hover:bg-[var(--ll-silver-soft)] sm:ml-2"
-              >
-                {lab.label}
-              </button>
-            ))}
-          </div>
+          <p className="ll3-muted">Work through the lesson, then answer the assessment at the end. Your teacher uses it to see how you did.</p>
         </section>
 
         {mode === "video" && lesson.activeVideo ? (
@@ -1151,7 +1094,7 @@ function ScheduledLessonDelivery({ lessonId, onNative }: { lessonId: string; onN
           <UnitSequenceSidebar contentId={lesson.contentId} scheduledWorkId={lessonId} />
         ) : null}
 
-        <section ref={registerSection("lesson-content")} data-section-id="lesson-content" className={`rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/80 p-5 sm:p-7${mode === "video" ? " hidden" : ""}`}>
+        <section ref={registerSection("lesson-content")} data-section-id="lesson-content" className={mode === "video" ? "hidden" : ""}>
           {lesson.heroImage?.url ? (
             <LessonHero url={lesson.heroImage.url} meta={lesson.heroImage.meta} />
           ) : null}
@@ -1201,68 +1144,31 @@ function ScheduledLessonDelivery({ lessonId, onNative }: { lessonId: string; onN
             </div>
           ) : null}
 
-          {mode === "slides" && currentSlide ? (
-            <div ref={slideFullscreenRef} className="ll-slide-fullscreen space-y-5 rounded-xl bg-[var(--ll-bg)]">
-              <div className="h-2 overflow-hidden rounded-full bg-[var(--ll-surface-muted)]">
-                <div
-                  className="h-full rounded-full bg-[var(--ll-yellow)] transition-all"
-                  style={{ width: `${((currentSlideIndex + 1) / Math.max(1, slides.length)) * 100}%` }}
-                />
-              </div>
-              <article className="ll-slide-fullscreen-card min-h-[24rem] rounded-xl border border-[var(--ll-border-strong)] bg-[var(--ll-surface)] p-5 transition-colors sm:p-7">
-                <div className="flex flex-wrap items-center justify-between gap-3">
-                  <p className="text-sm font-semibold text-[var(--ll-text-muted)]">
-                    Section {currentSlideIndex + 1} of {slides.length}
-                  </p>
-                  <LessonFullscreenButton targetRef={slideFullscreenRef} />
-                </div>
-                <h2 className="mt-3 text-2xl font-semibold text-[var(--ll-text)]">{currentSlide.title}</h2>
-                <div
-                  className="prose prose-invert mt-5 max-w-none overflow-y-auto prose-headings:text-[var(--ll-text)] prose-p:text-[var(--ll-text)] prose-p:text-[1rem] prose-p:leading-8 prose-li:text-[var(--ll-text)] prose-li:text-[1rem] prose-li:leading-8"
-                  style={{ maxHeight: "55vh" }}
-                  dangerouslySetInnerHTML={{ __html: renderSimpleMarkdown(currentSlide.content) }}
-                />
-              </article>
-              <div className="grid gap-2 sm:flex sm:items-center sm:justify-between">
-                <button
-                  type="button"
-                  disabled={currentSlideIndex === 0}
-                  onClick={() => setCurrentSlideIndex((value) => Math.max(0, value - 1))}
-                  className="ll-touch-target rounded-xl border border-[var(--ll-border)] px-4 py-3 text-sm text-[var(--ll-text)] disabled:opacity-40"
-                >
-                  Previous slide
-                </button>
-                {currentSlide.isLast ? (
-                  <button
-                    type="button"
-                    onClick={goToAssessmentFromSlides}
-                    className="ll-touch-target rounded-xl bg-[var(--ll-yellow-soft)] px-4 py-3 text-sm font-semibold text-[var(--ll-yellow)]"
-                  >
-                    Go to assessment
-                  </button>
-                ) : (
-                  <button
-                    type="button"
-                    onClick={() => setCurrentSlideIndex((value) => Math.min(slides.length - 1, value + 1))}
-                    className="ll-touch-target rounded-xl bg-[var(--ll-silver-soft)] px-4 py-3 text-sm font-semibold text-[var(--ll-text-faint)]"
-                  >
-                    Next slide
-                  </button>
-                )}
-              </div>
-            </div>
+          {mode === "slides" ? (
+            <LegacySlides
+              slides={slideScenes}
+              index={currentSlideIndex}
+              onIndexChange={setCurrentSlideIndex}
+              containerRef={slideFullscreenRef}
+              topActions={<LessonFullscreenButton targetRef={slideFullscreenRef} />}
+              lastAction={<button type="button" onClick={goToAssessmentFromSlides} className="ll3-btn" data-primary="">Go to assessment</button>}
+            />
           ) : (
             <>
               {renderedBody && (
-                <p className="mb-3 text-xs text-[var(--ll-text-faint)]">
+                <p className="mb-4 text-sm text-[var(--ll-text-muted)]">
                   {(() => {
                     const words = renderedBody.replace(/<[^>]+>/g, " ").split(/\s+/).filter(Boolean).length;
                     const mins = Math.ceil(words / 200);
-                    return `~${words.toLocaleString()} words · ${mins} min read`;
+                    return `About ${mins} min read · ${words.toLocaleString()} words`;
                   })()}
                 </p>
               )}
-              <LessonBody renderedBody={renderedBody} inline={lesson.inlineIllustrations} />
+              {readingSections.length > 0 && !(lesson.inlineIllustrations ?? []).some((item) => typeof item.position === "number")
+                // Readable text column with contents; inline illustrations keep their positioned renderer.
+                ? <LegacyReading title={lesson.title} sections={readingSections}
+                    after={<div className="ll3-task"><p className="ll3-task-label">Next</p><p>When you have read the lesson, answer the assessment questions below.</p><div><button type="button" className="ll3-btn" data-primary="" onClick={() => scrollToSection("exit-ticket")}>Go to assessment</button></div></div>} />
+                : <div className="ll3-reading"><LessonBody renderedBody={renderedBody} inline={lesson.inlineIllustrations} /></div>}
               {lesson.problemSets && lesson.problemSets.length > 0 ? (
                 <div className="mt-6">
                   <ProblemRevealSection lessonId={lesson.id} problemSets={lesson.problemSets} />
@@ -1453,62 +1359,41 @@ function ScheduledLessonDelivery({ lessonId, onNative }: { lessonId: string; onN
           />
         </div>
 
-        <div className="sticky bottom-3 z-10">
-          <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/95 p-3 shadow-none shadow-black/40 backdrop-blur">
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--ll-yellow)]">Section navigation</p>
-                <p className="mt-1 text-sm text-[var(--ll-text)]">
-                  {currentSectionIndex + 1} of {sectionOrder.length}
-                </p>
-              </div>
-              <div className="grid grid-cols-1 gap-2 sm:flex">
-                {aiTutorEnabled ? (
-                  <PencilButton
-                    onClick={() => setHelpPanelOpen(true)}
-                    label="Ask the tutor"
-                    active={helpPanelOpen}
-                  />
-                ) : null}
-                <button
-                  type="button"
-                  onClick={() => {
-                    const previousSection = sectionOrder[Math.max(0, currentSectionIndex - 1)];
-                    if (previousSection) scrollToSection(previousSection);
-                  }}
-                  disabled={currentSectionIndex <= 0}
-                  className="ll-touch-target rounded-xl border border-[var(--ll-border)] px-4 py-3 text-sm text-[var(--ll-text)] disabled:opacity-40"
-                >
-                  <span className="inline-flex items-center gap-1">
-                    <ChevronLeft size={14} />
-                    Back
-                  </span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    const nextSection = sectionOrder[Math.min(sectionOrder.length - 1, currentSectionIndex + 1)];
-                    if (nextSection) scrollToSection(nextSection);
-                  }}
-                  disabled={currentSectionIndex >= sectionOrder.length - 1}
-                  className="ll-touch-target rounded-xl bg-[var(--ll-silver-soft)] px-4 py-3 text-sm font-semibold text-[var(--ll-text-faint)] disabled:opacity-40"
-                >
-                  <span className="inline-flex items-center gap-1">
-                    Next
-                    <ChevronRight size={14} />
-                  </span>
-                </button>
-                <button
-                  type="button"
-                  onClick={handleSubmitExitTicket}
-                  disabled={submitting || lesson.status === "completed"}
-                  className="ll-touch-target rounded-xl bg-[var(--ll-yellow-soft)] px-5 py-3 text-sm font-semibold text-[var(--ll-text-faint)] disabled:cursor-not-allowed disabled:bg-[var(--ll-surface-muted)] disabled:text-[var(--ll-text-muted)]"
-                >
-                  {lesson.status === "completed" ? "Lesson already completed" : submitting ? "Submitting..." : "Submit Assessment"}
-                </button>
-              </div>
-            </div>
-          </div>
+        <div className="sticky bottom-3 z-10" data-section-navigation>
+          <nav aria-label="Lesson sections" className="flex flex-wrap items-center gap-2 rounded-2xl border border-[var(--ll-border-strong)] bg-[var(--ll-bg)] p-2">
+            <p className="mr-auto px-2 text-sm font-semibold text-[var(--ll-text-muted)]">Section {currentSectionIndex + 1} of {sectionOrder.length}</p>
+            <button
+              type="button"
+              onClick={() => {
+                const previousSection = sectionOrder[Math.max(0, currentSectionIndex - 1)];
+                if (previousSection) scrollToSection(previousSection);
+              }}
+              disabled={currentSectionIndex <= 0}
+              className="ll3-btn"
+            >
+              <ChevronLeft size={16} aria-hidden="true" /> Back
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                const nextSection = sectionOrder[Math.min(sectionOrder.length - 1, currentSectionIndex + 1)];
+                if (nextSection) scrollToSection(nextSection);
+              }}
+              disabled={currentSectionIndex >= sectionOrder.length - 1}
+              className="ll3-btn"
+            >
+              Next <ChevronRight size={16} aria-hidden="true" />
+            </button>
+            <button
+              type="button"
+              onClick={handleSubmitExitTicket}
+              disabled={submitting || lesson.status === "completed"}
+              className="ll3-btn"
+              data-primary=""
+            >
+              {lesson.status === "completed" ? "Lesson already completed" : submitting ? "Submitting..." : "Submit Assessment"}
+            </button>
+          </nav>
         </div>
       <StudentLessonHelpPanel
         open={aiTutorEnabled && helpPanelOpen}
@@ -1540,5 +1425,7 @@ function ScheduledLessonDelivery({ lessonId, onNative }: { lessonId: string; onN
         </div>
       ) : null}
     </div>
+    </LearningStage>
+    </>
   );
 }

@@ -14,6 +14,8 @@ import { InteractiveLabScreen } from "../../components/learner-experience/Intera
 import { labsTabFixture, showcaseFixture } from "./labFixtures";
 import LessonViewerClient from "../../app/student/lesson/[contentId]/LessonViewerClient";
 import LessonDeliveryClient from "../../app/student/lessons/[id]/LessonDeliveryClient";
+import StudentProgressDashboard from "../../components/student/StudentProgressDashboard";
+import { PlaceValueDemo } from "../../components/experience/demo/PlaceValueDemo";
 import { parseStudentLabReturn } from "../../lib/learner-experience/labLaunch";
 import { getInteractiveLabDefinition } from "../../lib/interactive-labs/v2/registry";
 import "../../app/globals.css";
@@ -41,12 +43,13 @@ const lessonLab = labPage && params.has("rt") ? (() => {
 })() : null;
 const fixtureRoot = createRoot(document.getElementById("root")!);
 let fixtureMount = 0;
-const renderFixture = () => fixtureRoot.render(<StudentShellV2 key={fixtureMount} identity={{ name, grade, userId: "fixture-student", schoolId: "fixture-school" }}>
+const renderFixture = () => fixtureRoot.render(path === "/design-preview/grade-7-place-value" ? <PlaceValueDemo /> : <StudentShellV2 key={fixtureMount} identity={{ name, grade, userId: "fixture-student", schoolId: "fixture-school" }}>
   {contentLesson ? <LessonViewerClient enabledToolIds={[]} />
     : assignedLesson ? <LessonDeliveryClient lessonId={decodeURIComponent(assignedLesson)} enabledToolIds={[]} />
     : lessonLab ? <InteractiveLabScreen labId={lessonLab.labId} access="RELEASED" lessonReturn={lessonLab.lessonReturn} />
     : showcase && path === "/student/labs" ? <LabsHubView tab={labsTabFixture(grade)} requested={params.get("tab")} showcase={showcase.labs} aiLabsEnabled />
     : showcase && labPage ? <InteractiveLabScreen labId={decodeURIComponent(labPage)} access={showcase.ids.includes(decodeURIComponent(labPage)) ? "SHOWCASE" : "DENIED"} />
+    : path === "/student/progress" && params.has("progress") ? <StudentProgressDashboard />
     : path === "/student/today" ? <TodayV2 /> : path === "/student/learn" ? <LearnV2 /> : path === "/student/lessons" ? <LessonCatalog />
     : path === "/student/classes" ? <MyClassesView model={myClassesFixture} today={myClassesFixture.today} />
     : classPage ? <ClassDetailView model={classDetailFixture(timetable)} />
