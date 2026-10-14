@@ -11,6 +11,7 @@ import {
   ASSESSMENT_ROLES,
   CONTENT_BUNDLE_SCHEMA_VERSION,
   GOVERNED_ITEM_KINDS,
+  type ActivityDefinition,
   type ContentBundleV1,
   type ContentBundleValidationCode,
   type ContentBundleValidationError,
@@ -18,8 +19,11 @@ import {
   type GovernedItemKind,
 } from "./types";
 import { hashContentBundle } from "./hash";
+import { parseActivityExperience } from "./activityExperience";
 
 export type ContentBundleValidationOptions = Readonly<{
+  /** Resolver-only validation of payloads restored from exact activity authority. */
+  allowResolvedActivities?: boolean;
   /**
    * Optional check that a binding's toolId exists in the canonical GOVERNED tool namespace.
    * Runtime toolkit registry ids are a different namespace; resolve them through a reviewed
@@ -67,14 +71,14 @@ function normalizeKey(key: string): string {
 // ─── Allowed fields (strict, so unknown names cannot smuggle state) ─────────────────────────────
 
 const KEYS = {
-  bundle: ["schemaVersion", "identity", "curriculumAuthority", "sequence", "lessons", "activities", "assessments", "labs", "resources", "toolkitBindings", "toolkitMapping", "learnerSupport", "renderings", "offline", "governance", "extensions"],
+  bundle: ["schemaVersion", "identity", "curriculumAuthority", "sequence", "lessons", "activities", "activityReferences", "assessments", "labs", "resources", "toolkitBindings", "toolkitMapping", "learnerSupport", "renderings", "offline", "governance", "extensions"],
   identity: ["bundleId", "version", "title", "gradeLevel", "subject", "locale", "contentHash"],
   authority: ["releaseId", "releaseIdentity", "objectiveIds", "standardIds", "sourceVersionRefs", "conceptRefs", "constructBindingRefs"],
   itemIdentity: ["itemId", "itemVersion", "itemKind"],
   unit: ["unitId", "unitVersion", "title", "order", "prerequisiteUnitIds", "entries"],
   entry: ["itemId", "order", "requirement", "prerequisiteItemIds", "unlocksItemIds"],
   lesson: ["identity", "title", "objectiveIds", "estimatedMinutes", "resourceIds"],
-  activity: ["identity", "title", "objectiveIds", "lessonItemIds", "scaffolding", "instructions", "resourceIds", "rubric", "expectedDurationMinutes", "collaborationMode", "evidenceIntent", "accessibility", "extensions"],
+  activity: ["identity", "title", "objectiveIds", "lessonItemIds", "scaffolding", "instructions", "resourceIds", "rubric", "expectedDurationMinutes", "collaborationMode", "evidenceIntent", "accessibility", "experience", "extensions"],
   step: ["stepId", "text", "resourceIds"],
   rubric: ["rubricId", "rubricVersion", "learnerVisibleCriteria", "scoringGuideResourceId"],
   accessibility: ["readingLevel", "supportsScreenReader", "supportsReadAloud", "requiresColorVision", "requiresFineMotor", "alternativeFormatResourceIds"],
@@ -381,6 +385,22 @@ export function validateContentBundle(input: unknown, options: ContentBundleVali
     return { itemId, kind };
   };
 
+  // Exact activity pointers also occupy the common item namespace.
+  if (input.activityReferences !== undefined) c.array(input.activityReferences, `${root}.activityReferences`).forEach((raw, index) => {
+    const path = `${root}.activityReferences[${index}]`;
+    const ref = c.record(raw, path);
+    if (!ref) return;
+    c.keys(ref, ["activityId", "version", "kind"], path);
+    const id = c.string(ref, "activityId", path);
+    const version = c.string(ref, "version", path);
+    if (version && /^(latest|current|\*)$/i.test(version.trim())) c.add("version_missing", path, "exact activity version required");
+    if (!(ACTIVITY_KINDS as readonly unknown[]).includes(ref.kind)) c.add("unknown_item_kind", path, "unsupported activity kind");
+    if (id) {
+      if (items.has(id)) c.add("duplicate_id", path, "duplicate activity reference");
+      else items.set(id, { kind: ref.kind as GovernedItemKind, path });
+    }
+  });
+
   // Lessons
   const lessonEntries = c.array(input.lessons, `${root}.lessons`);
   lessonEntries.forEach((raw, index) => {
@@ -402,6 +422,15 @@ export function validateContentBundle(input: unknown, options: ContentBundleVali
     const activity = c.record(raw, p);
     if (!activity) return;
     c.keys(activity, KEYS.activity, p);
+    // Hydrated members have already occupied the namespace through their pointer.
+    const hydratedId = isRecord(activity.identity) ? activity.identity.itemId : null;
+    const references = Array.isArray(input.activityReferences) ? input.activityReferences : [];
+    const pointer = references.find(ref => isRecord(ref) && ref.activityId === hydratedId) as Rec | undefined;
+    if (pointer) {
+      if (!options.allowResolvedActivities) c.add("malformed", p, "activity payload must be resolved from authority, not duplicated in a manifest");
+      if (!isRecord(activity.identity) || activity.identity.itemVersion !== pointer.version || activity.identity.itemKind !== pointer.kind) c.add("malformed", p, "activity pointer mismatch");
+      if (items.get(hydratedId as string)?.path.startsWith(`${root}.activityReferences[`)) items.delete(hydratedId as string);
+    }
     checkIdentity(activity, p, ACTIVITY_KINDS);
     c.string(activity, "title", p);
     checkObjectives(activity, p);
@@ -465,7 +494,16 @@ export function validateContentBundle(input: unknown, options: ContentBundleVali
       for (const key of ["supportsScreenReader", "supportsReadAloud", "requiresColorVision", "requiresFineMotor"]) c.boolean(a11y, key, ap);
       checkResourceRefs(a11y, "alternativeFormatResourceIds", ap);
     }
-    if (activity.extensions !== undefined) c.record(activity.extensions, `${p}.extensions`);
+    if (activity.experience !== undefined) {
+      const definition = isRecord(activity.identity) ? (activity as unknown as ActivityDefinition) : null;
+      const parsed = parseActivityExperience(activity.experience, definition);
+      if (parsed.ok === false) for (const issue of parsed.issues) c.add("activity_experience_invalid", `${p}.${issue.path}`, issue.message);
+    }
+    if (activity.extensions !== undefined) {
+      const extensions = c.record(activity.extensions, `${p}.extensions`);
+      // One experience surface only: the first-class field.
+      if (extensions && extensions.experience !== undefined) c.add("activity_experience_invalid", `${p}.extensions.experience`, "experience is a first-class activity field; extensions.experience is not accepted");
+    }
   });
 
   // Assessments

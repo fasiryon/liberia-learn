@@ -7,6 +7,7 @@
  */
 import type { ContentBundleResolution } from "../v1/resolver";
 import type { ToolkitMappingIssue } from "../v1/toolkitMapping";
+import type { ActivityAuthorityReadiness } from "./activityAuthority";
 
 export type PreviewViewer = Readonly<{ userId: string; role: string; schoolId: string | null }>;
 
@@ -61,6 +62,12 @@ export type ResolvedContentBundlePreview = Extract<ContentBundleResolution, { st
   contentHash: string;
   authorityMetadata: PreviewAuthorityMetadata;
   labReadiness: Readonly<Record<string, LabReadiness>>;
+  /**
+   * Per-activity facts from the ActivityDefinition authority, for activities restored from
+   * `activityReferences` in draft inspection. Absent for embedded fixture activities and for the
+   * production path, which only restores activities that passed the release gate.
+   */
+  activityReadiness?: Readonly<Record<string, ActivityAuthorityReadiness>>;
   release: ReleaseStatus;
   toolkit: ToolkitResolution;
 }>;

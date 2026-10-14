@@ -57,9 +57,10 @@ export type CurriculumContentBinding = Readonly<{
   conceptRevision?: number;
   contentId: string;
   contentVersion: string;
-  contentType: "LESSON" | "TEXTBOOK" | "LAB" | "SIMULATION";
+  contentType: "LESSON" | "TEXTBOOK" | "LAB" | "SIMULATION" | "ACTIVITY";
   toolPolicyId: string;
-  /** sha256 of the bound payload (JSON.stringify). Absent in 2026.1, which predates payload pinning. */
+  /** Bound content digest under its content-type convention (ACTIVITY uses its canonical
+   * semantic hash). Absent in 2026.1, which predates payload pinning. */
   contentSha256?: string;
 }>;
 
