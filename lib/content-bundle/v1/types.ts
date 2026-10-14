@@ -129,8 +129,10 @@ export type RubricReference = Readonly<{
 }>;
 
 /**
- * Provisional content definition for non-lesson learning work. Content concerns only: no
- * submission, grade, teacher grading result, completion or attempt state.
+ * Bundle display shape for non-lesson learning work and legacy contract fixtures.
+ * Canonical governed identity and authority live in activity-definition/v1/ActivityDefinitionV1;
+ * governed manifests store activityReferences and restore this shape through that resolver.
+ * No submission, grade, teacher grading result, completion or attempt state.
  */
 export type ActivityDefinition = Readonly<{
   identity: BundleItemIdentity<ActivityKind>;
@@ -150,6 +152,12 @@ export type ActivityDefinition = Readonly<{
   collaborationMode: CollaborationMode;
   evidenceIntent: Readonly<{ kind: EvidenceIntentKind; forms: readonly EvidenceForm[] }>;
   accessibility: AccessibilityMetadata;
+  /**
+   * Governed learner-facing body (activity-experience.v1, activityExperience.ts). First-class
+   * activity content: hashed with the activity, strictly validated, projected by allow-list.
+   * `extensions.experience` is rejected so there is exactly one experience surface.
+   */
+  experience?: import("./activityExperience").ActivityExperienceV1;
   extensions?: Readonly<Record<string, JsonValue>>;
 }>;
 
@@ -377,6 +385,8 @@ export type ContentBundleV1 = Readonly<{
   sequence: Readonly<{ units: readonly SequenceUnit[] }>;
   lessons: readonly LessonReference[];
   activities: readonly ActivityDefinition[];
+  /** Immutable authority pointers. Payloads are restored only during server resolution. */
+  activityReferences?: readonly import("@/lib/activity-definition/v1/types").ActivityReference[];
   assessments: readonly AssessmentReference[];
   labs: readonly LabBinding[];
   resources: readonly ResourceReference[];
@@ -421,7 +431,8 @@ export type ContentBundleValidationCode =
   | "rendering_claims_authority"
   | "student_state_forbidden"
   | "runtime_field_forbidden"
-  | "answer_key_inline";
+  | "answer_key_inline"
+  | "activity_experience_invalid";
 
 export type ContentBundleValidationError = Readonly<{
   code: ContentBundleValidationCode;

@@ -11,6 +11,9 @@ import { checkToolkitMapping, type ToolkitMapping } from "./toolkitMapping";
 import { sealContentBundle } from "./seal";
 import { projectLearnerBundle, type LearnerContentBundle } from "./projection";
 import type { ContentBundleV1 } from "./types";
+import { matchesActivityReference, resolveActivityDefinition, type ActivityAuthorityReader } from "@/lib/activity-definition/v1/resolver";
+import { activityBundleMember } from "@/lib/activity-definition/v1/types";
+import { validateContentBundle } from "./validator";
 
 export type ResolveContentBundleInput = Readonly<{
   bundleId: string;
@@ -49,6 +52,8 @@ export type AssessmentAuthority = Readonly<{
   source: "RELEASE_ITEMS" | "ANSWER_BEARING_LEGACY";
 }>;
 export interface ContentBundleAuthorityReader {
+  /** Server-owned exact activity authority; absent adapters fail closed for pointers. */
+  activityAuthority?: ActivityAuthorityReader;
   readComposition(input: ResolveContentBundleInput): Promise<CompositionRecord | null>;
   readRelease(releaseId: string): Promise<CurriculumOntologyRelease | null>;
   readInventory(release: CurriculumOntologyRelease): Promise<GovernedCellInventory | null>;
@@ -89,7 +94,22 @@ export async function resolveContentBundle(input: ResolveContentBundleInput, rea
     if (!composition) return failure("UNAVAILABLE", [{ code: "COMPOSITION_MISSING", path: "bundle" }]);
     const sealed = sealContentBundle(structuredClone(composition.manifest));
     if (sealed.ok === false) return failure("INCOMPATIBLE", sealed.errors.map(e => ({ code: e.code, path: e.path })));
-    const bundle = sealed.sealed.bundle;
+    let bundle = sealed.sealed.bundle;
+    const pointerIds = new Set(bundle.activityReferences?.map(ref => ref.activityId) ?? []);
+    if (bundle.activities.some(activity => pointerIds.has(activity.identity.itemId))) return failure("INCOMPATIBLE", [{ code: "ACTIVITY_PAYLOAD_DUPLICATED", path: "activities" }]);
+    for (const ref of bundle.activityReferences ?? []) {
+      if (!reader.activityAuthority) return failure("UNAVAILABLE", [{ code: "ACTIVITY_AUTHORITY_MISSING", path: "activityReferences" }]);
+      const pin = composition.revisions[ref.activityId];
+      if (!pin) return failure("INCOMPATIBLE", [{ code: "ITEM_REVISION_MISSING", path: "activityReferences" }]);
+      const result = await resolveActivityDefinition({ activityId: ref.activityId, version: ref.version, authorityContext: {
+        reader: reader.activityAuthority, ...bundle.curriculumAuthority, revision: pin, requireReleased: true,
+      } });
+      if (result.status !== "RESOLVED" || !result.definition) return failure(result.status === "UNAVAILABLE" ? "UNAVAILABLE" : "INCOMPATIBLE", result.diagnostics);
+      if (!matchesActivityReference(ref, result.definition) || result.definition.resources.some(resource => !bundle.resources.some(r => equal(r, resource))) || result.definition.lessonBindings.some(lesson => !bundle.lessons.some(l => l.identity.itemId === lesson.lessonId && l.identity.itemVersion === lesson.version)) || result.definition.governance.provenanceRefs.some(id => !bundle.governance.provenanceRefs.includes(id))) return failure("INCOMPATIBLE", [{ code: "ACTIVITY_BUNDLE_BINDING_MISMATCH", path: "activityReferences" }]);
+      bundle = { ...bundle, activities: [...bundle.activities, activityBundleMember(result.definition)] };
+    }
+    const hydrated = validateContentBundle(bundle, { allowResolvedActivities: true });
+    if (!hydrated.ok) return failure("INCOMPATIBLE", hydrated.errors.map(e => ({ code: e.code, path: e.path })));
     const checkVersions = (value: unknown, path: string) => {
       if (!value || typeof value !== "object") return;
       for (const [key, child] of Object.entries(value)) {
@@ -119,6 +139,8 @@ export async function resolveContentBundle(input: ResolveContentBundleInput, rea
     for (const id of bundle.curriculumAuthority.constructBindingRefs) if (!release.bindings.some(b => b.id === id)) gap("CONSTRUCT_BINDING_MISSING", "curriculumAuthority.constructBindingRefs");
     if (!bundle.governance.provenanceRefs.includes(release.provenanceRef)) gap("PROVENANCE_MISMATCH", "governance.provenanceRefs");
     for (const member of [...bundle.lessons, ...bundle.activities, ...bundle.assessments]) {
+      // Exact activity authority has already replayed and verified these revisions.
+      if (pointerIds.has(member.identity.itemId)) continue;
       const path = `members.${member.identity.itemId}`;
       if (!exact(member.identity.itemVersion)) gap("VERSION_PIN_MISSING", path);
       const pin = composition.revisions[member.identity.itemId];

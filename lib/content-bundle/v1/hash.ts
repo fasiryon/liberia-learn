@@ -17,6 +17,8 @@
  * the hashed content), and `governance.reviewRefs` / `lifecycleRefs` / `releaseRefs`. The contract
  * has no timestamps, notes or student state, and the validator rejects them.
  *
+ * Governed activityReferences are hashed as exact pointers; their authority-restored display
+ * payloads are excluded. Legacy embedded fixture activities retain their original hash semantics.
  * Serialization reuses the curriculum canonical JSON (sorted object keys, normalized numbers).
  * Unordered sets (id lists and id-keyed collections) are sorted. Sequence follows explicit `order`.
  * Authored order is kept where it is meaningful: instruction steps, FIXED assessment item order,
@@ -69,7 +71,8 @@ export function contentBundleHashPayload(bundle: ContentBundleV1) {
       objectiveIds: sorted(lesson.objectiveIds),
       resourceIds: sorted(lesson.resourceIds),
     })),
-    activities: byKey(bundle.activities, (a) => a.identity.itemId).map((activity) => ({
+    ...(bundle.activityReferences ? { activityReferences: byKey(bundle.activityReferences, a => a.activityId) } : {}),
+    activities: byKey(bundle.activities.filter(a => !bundle.activityReferences?.some(ref => ref.activityId === a.identity.itemId)), (a) => a.identity.itemId).map((activity) => ({
       ...activity,
       objectiveIds: sorted(activity.objectiveIds),
       lessonItemIds: sorted(activity.lessonItemIds),
