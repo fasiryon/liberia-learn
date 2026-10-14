@@ -4292,6 +4292,12 @@ model CurriculumFlag {
 /// / ===== Scheduled Work (Today's Work) =====
 model ScheduledWork {
   id             String            @id @default(cuid())
+  bundleId          String?
+  bundleVersion     String?
+  bundleContentHash String? @db.VarChar(64)
+  itemId            String?
+  itemVersion       String?
+  itemKind          String?
   contentId      String
   classId        String
   scheduledDate  DateTime
@@ -4318,8 +4324,29 @@ model ScheduledWork {
   progress       StudentProgress[]
 
   @@index([classId, scheduledDate])
+  @@index([bundleId, bundleVersion])
   @@index([contentId])
   @@index([sessionPairId])
+}
+
+// Append-only sealed composition; governance remains in existing authorities.
+model ContentBundleRecord {
+  id                  String   @id @default(cuid())
+  bundleId            String
+  bundleVersion       String
+  schemaVersion       String
+  contentHash         String   @db.VarChar(64)
+  compositionHash     String   @db.VarChar(64)
+  curriculumReleaseId String
+  releaseIdentity     String
+  schoolId            String
+  sealedComposition   Json
+  createdAt           DateTime @default(now())
+  createdById         String
+
+  @@unique([bundleId, bundleVersion])
+  @@index([schoolId, contentHash])
+  @@index([curriculumReleaseId])
 }
 
 model Timetable {

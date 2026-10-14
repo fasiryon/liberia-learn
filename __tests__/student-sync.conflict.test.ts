@@ -90,6 +90,21 @@ describe("student sync conflict detection", () => {
     };
   }
 
+  it.each([{ bundleId: "bundle" }, {
+    bundleId: "bundle", bundleVersion: "1", bundleContentHash: "a".repeat(64), itemId: "lesson", itemVersion: "1", itemKind: "LESSON",
+  }])("rejects partial and complete governed pins before legacy progress writes", async pins => {
+    (prisma.learningEvent.findFirst as any).mockResolvedValue(null);
+    (prisma.scheduledWork.findFirst as any).mockResolvedValue({ id: "sw-1", ...pins });
+    const req = new Request("http://localhost/api/student/sync", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ items: [{ id: "governed-op", entity: "studentProgress", scheduledWorkId: "sw-1", completedAt: "2026-02-20T12:00:00.000Z" }] }),
+    });
+    const response = await POST(req as any);
+    const data = await response.json();
+    expect(data.results[0]).toMatchObject({ status: "rejected", resolutionHint: "governed_student_state_references_unavailable" });
+    expect(prisma.studentProgress.upsert).not.toHaveBeenCalled();
+  });
+
   it("returns conflict when client version is stale", async () => {
     (prisma.learningEvent.findFirst as any).mockResolvedValue(null);
     (prisma.studentProgress.findUnique as any).mockResolvedValue({

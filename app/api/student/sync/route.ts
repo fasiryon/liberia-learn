@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 // route-policy: auth=session; scope=tenant; authority=student-membership; rationale=offline operations are rebound to the authenticated learner and school
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { classifyScheduledWork } from "@/lib/content-bundle/persistence/scheduledWork";
 import { loadAuthorizedPracticalSessions, studentSessionSummary } from "@/lib/student/labEligibility";
 import { logAudit } from "@/lib/audit";
 import { resolveAttendance, resolveSubmission } from "@/lib/offline-sync/policies";
@@ -449,11 +450,16 @@ export async function POST(req: NextRequest) {
                 id: scheduledWorkId,
                 class: { schoolId: user.schoolId, enrollments: { some: { studentId: profile?.id ?? "__missing__" } } },
               },
-              select: { id: true, contentId: true },
+              select: { id: true, contentId: true, bundleId: true, bundleVersion: true, bundleContentHash: true, itemId: true, itemVersion: true, itemKind: true },
             });
             if (!profile || !scheduledWork || (canonical?.contentId && scheduledWork.contentId !== canonical.contentId)) {
               skipped++;
               results.push({ opId: opKey, entity, scheduledWorkId, status: "rejected", resolutionHint: "scheduled_work_tenant_or_content_mismatch" });
+              continue;
+            }
+            if (classifyScheduledWork(scheduledWork) !== "LEGACY_UNPINNED") {
+              skipped++;
+              results.push({ opId: opKey, entity, scheduledWorkId, status: "rejected", resolutionHint: "governed_student_state_references_unavailable" });
               continue;
             }
           }
