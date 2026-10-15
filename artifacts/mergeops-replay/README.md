@@ -2,7 +2,7 @@
 
 Base: `a1508ceaf7d89a338de624e9f63c9c4c592ca28c`.
 
-- `safety-tests.txt`: 73 passing native Node safety tests, including a real temporary shallow clone and mocked GitHub side effects.
+- `safety-tests.txt`: 74 passing native Node safety tests, including a real temporary shallow clone and mocked GitHub side effects.
 - `runtime-gate.txt`: existing final-gate and permission tests, 3 files / 50 tests passing.
 - `validate-changed.txt`: repository changed-file validation passing; native MergeOps tests run separately because Vitest intentionally includes only `__tests__` TypeScript files.
 - `report.json`, `demo-output.txt`: offline lifecycle replay. The exact historical PR #190 fixture failure produces a bounded repair proposal; the PR #188 migration scenario escalates. Zero external writes; merge and repair disabled.

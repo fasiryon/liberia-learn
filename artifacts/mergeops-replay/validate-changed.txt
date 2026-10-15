@@ -3,21 +3,13 @@
 > node scripts/validate-changed.mjs
 
 validate:changed source: working tree and index
-validate:changed files: 14
-  .github/workflows/mergeops.yml
+validate:changed files: 6
   artifacts/mergeops-replay/README.md
-  artifacts/mergeops-replay/demo-output.txt
-  artifacts/mergeops-replay/mission.jsonl
-  artifacts/mergeops-replay/report.json
   artifacts/mergeops-replay/safety-tests.txt
   artifacts/mergeops-replay/validate-changed.txt
   docs/ops/MERGEOPS_V1.md
   tools/mergeops/app.mjs
-  tools/mergeops/cli.mjs
-  tools/mergeops/controller.mjs
-  tools/mergeops/core.mjs
   tools/mergeops/safety.node-test.mjs
-  tools/mergeops/webhook.mjs
 API route policy audit PASS: 81 changed routes declared; 512 legacy routes frozen at 84dd5417.
 
  RUN  v4.1.9 C:/liberia-learn/.task-worktrees/mergeops-v1

@@ -344,6 +344,19 @@ test('base-refresh lists open main PRs without minting write tokens when none ex
     assert.deepEqual(result, []); assert.equal(minted, 1); assert.equal(revoked, 1);
   } finally { cleanupTemp(dir); }
 });
+test('merger token cannot edit pull requests or dismiss reviews', async () => {
+  const dir = mkdtempSync(join(tmpdir(), 'mergeops-app-')), path = join(dir, 'synthetic-key'); writeFileSync(path, 'not-a-real-key');
+  const minted = [], env = { MERGEOPS_INSTALLATION_ID: '7', MERGEOPS_APP_ID: '1', MERGEOPS_KEY_FILE: path,
+    MERGEOPS_STATE_APP_ID: '2', MERGEOPS_STATE_INSTALLATION_ID: '8', MERGEOPS_STATE_KEY_FILE: path,
+    MERGEOPS_MERGE_APP_ID: '3', MERGEOPS_MERGE_INSTALLATION_ID: '9', MERGEOPS_MERGE_KEY_FILE: path };
+  try {
+    await assert.rejects(appRun({ number: 190, head, delivery: 'scope', payload: { installation: { id: 7 } } }, { ...enabled(), autoRepair: false, mergeAppId: 3 }, env, async input => {
+      minted.push(input);
+      return { client: { request: async () => ({ object: { sha: head } }), snapshot: async () => { throw Error('inspection-stop'); } }, revoke: async () => {} };
+    }), /inspection-stop/);
+    assert.deepEqual(minted.find(s => s.appId === '3').permissions, { contents: 'write' });
+  } finally { cleanupTemp(dir); }
+});
 test('adapter findings hold merging and record cost without granting approvals', async () => {
   const l = ledger();
   try {

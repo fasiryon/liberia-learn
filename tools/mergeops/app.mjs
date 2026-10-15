@@ -36,7 +36,7 @@ export async function appRun(target, policy, env = process.env, mint = installat
     if (reviewed && policy.autoRepair === true) writer = await session('MERGEOPS_REPAIR', { contents: 'write', pull_requests: 'write' });
     if (reviewed && policy.autoMerge === true) {
       if (Number(env.MERGEOPS_MERGE_APP_ID) !== policy.mergeAppId) throw Error('merge-app-identity');
-      merger = await session('MERGEOPS_MERGE', { contents: 'write', pull_requests: 'write' });
+      merger = await session('MERGEOPS_MERGE', { contents: 'write' });
     }
     return await lifecycle({ github, ledger, number: target.number, head: target.head, delivery: target.delivery, policy,
       dryRun: !reviewed || (!policy.autoMerge && !policy.autoRepair), log, writer, merger });

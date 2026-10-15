@@ -90,7 +90,7 @@ on the trusted controller host; no key is passed to candidate code.
 | Observer `MERGEOPS` | contents, pull requests, checks, actions, administration: read | Protection/diff/CI inspection; no mutation |
 | Ledger `MERGEOPS_STATE` | contents: write | Only protected `mergeops-ledger/**` refs; deny pushing main |
 | Repair `MERGEOPS_REPAIR` | contents, pull requests: write | Isolated repair refs and PR creation; deny pushing main |
-| Merger `MERGEOPS_MERGE` | contents, pull requests: write | Protected main only after all gates; no bypass status |
+| Merger `MERGEOPS_MERGE` | contents: write | Protected merge API only after all gates; no PR/review-edit or bypass permission |
 
 Each prefix needs `_APP_ID`, `_INSTALLATION_ID`, `_KEY_FILE` (protected absolute
 key path). Observer additionally needs `MERGEOPS_WEBHOOK_SECRET`; optional
