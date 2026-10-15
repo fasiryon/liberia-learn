@@ -1,0 +1,398 @@
+{
+  "audience": "REVIEWER_ONLY",
+  "notice": "Comparison of a DRAFT candidate with the live legacy revision it may later replace. Recommendations are not decisions; only those marked applied are in the candidate package.",
+  "lessonKey": "math-number-sense-place-value",
+  "legacy": {
+    "contentId": "math-g7-1-number-sense-and-place-value-foundations",
+    "contentPk": "cmoeaemvu01i6vor4u3zch5hq",
+    "revisionId": "cmss8t4hz00unvo54epnfst66",
+    "provenanceId": "cmss8t4fo00ulvo54k7gexkpp",
+    "lifecycleState": "APPROVED",
+    "provenanceCompleteness": "UNVERIFIED",
+    "revisionKind": "BACKFILL_SNAPSHOT",
+    "originKind": "LEGACY_UNKNOWN",
+    "backfillRunId": "p2a-production-backfill-20260814",
+    "extract": {
+      "path": "artifacts/g7-native-curriculum-v1/legacy/math-number-sense-place-value.json",
+      "sha256": "639b89b918f6409f5caa2083186def70b3652a6f8f39129609b2e7b494c79357",
+      "capturedAt": "2026-10-15T19:09:16.876Z",
+      "transactionReadOnly": "on"
+    },
+    "verification": {
+      "revisionId": "cmss8t4hz00unvo54epnfst66",
+      "matchesRequestedRevision": true,
+      "storedContentHash": "93cc90030c242b39cfbf9a86095802d967a7fd2dbcb6af7b9f7227f312fc540b",
+      "recomputedContentHash": "93cc90030c242b39cfbf9a86095802d967a7fd2dbcb6af7b9f7227f312fc540b",
+      "contentHashMatches": true,
+      "isCurrentRevision": true,
+      "revisionCount": 1,
+      "liveRowEqualsRevisionAtCapture": true
+    },
+    "bodyHeadings": [
+      "Objective",
+      "Teacher Explanation",
+      "Worked Example",
+      "Guided Practice",
+      "Independent Practice",
+      "Assessment",
+      "Remediation",
+      "Extension",
+      "Guardian Support",
+      "Metadata"
+    ]
+  },
+  "candidate": {
+    "lessonId": "cv2-cand-g7-math-number-sense-place-value",
+    "version": "0.1.0",
+    "sha256": "5817d80911154bceb61fe117e0916ad64d0b7ae5c6afd2a2c6028b9cdc972ffb"
+  },
+  "comparison": {
+    "legacySummary": [
+      "The legacy body is a template shell (payload metadata: model \"template-engine\", source \"national_curriculum_generation\", estimated cost 0). Its ten sections describe what a teacher should do (\"Model one complete math example…\") but contain no numbers, place names, examples, questions or answers.",
+      "`delivery.bodyBlock` (Day 1, Day 2, Home Support) repeats sentences from the same sections; it adds no material.",
+      "The only concrete material is one offline lab, \"Understanding Place Value with Local Materials\" (25 minutes, 3 steps): leaves, stones and cassava stand for tens, ones and hundreds; learners build a number such as 123 and record it. Its two analysis questions ask how 345 breaks into hundreds, tens and units (expected \"3 hundreds, 4 tens, and 5 units\") and why place value matters.",
+      "Assessment is a sentence (\"a short exit task with two checks…\"); `assessmentQuestions` and `problemSets` are empty, so the legacy lesson has no keyed items to compare.",
+      "Standards: a keyword alignment (confidence low) to LiberiaLearn code LR-MATH-G7_9-04, \"Apply the Pythagorean theorem and basic trigonometric ratios\". The payload's own `moeAlignments` is empty.",
+      "Governance: row status APPROVED, payload approvalStatus pending_approval, provenance UNVERIFIED with origin LEGACY_UNKNOWN (single BACKFILL_SNAPSHOT revision). Payload metadata nevertheless says qualityValidated: true and marks every section complete."
+    ],
+    "sections": [
+      {
+        "legacySection": "Objective",
+        "legacyContent": "\"Students in Grade 7 will explain and apply number sense and place value ideas using age-appropriate math tasks.\"",
+        "candidateScenes": [
+          "objectives"
+        ],
+        "disposition": "IMPROVED",
+        "note": "One unmeasurable objective became three measurable ones (read/write, digit value, compare) with a success check on 3,462,105.68."
+      },
+      {
+        "legacySection": "Teacher Explanation",
+        "legacyContent": "Instruction to the teacher to introduce the concept with modelling, Liberia-relevant examples, vocabulary and a check; no content.",
+        "candidateScenes": [
+          "chart",
+          "ten-times"
+        ],
+        "disposition": "REPLACED",
+        "note": "The candidate supplies the explanation itself: the millions-to-thousandths chart, periods, zero as a place holder, and the ×10 / ÷10 relationship."
+      },
+      {
+        "legacySection": "Worked Example",
+        "legacyContent": "\"Model one complete math example connected to number sense and place value…\" (placeholder; no example).",
+        "candidateScenes": [
+          "worked-example",
+          "compare-strategy"
+        ],
+        "disposition": "REPLACED",
+        "note": "Two complete worked examples: value, expanded and word form of L$2,350,480 with a check by adding; ordering 0.5, 0.45, 0.405 and 4,099,999 vs 4,100,000."
+      },
+      {
+        "legacySection": "Guided Practice",
+        "legacyContent": "One shared and one partner task \"with teacher prompts\" (no tasks given).",
+        "candidateScenes": [
+          "build-number",
+          "guided-decimals"
+        ],
+        "disposition": "REPLACED",
+        "note": "Concrete guided tasks with feedback. Pair work is not specified in the candidate (see R-M1)."
+      },
+      {
+        "legacySection": "Independent Practice",
+        "legacyContent": "Individual work, then \"explain one answer in writing or orally\" (no items).",
+        "candidateScenes": [
+          "practice",
+          "reflect"
+        ],
+        "disposition": "REPLACED",
+        "note": "Five independent items with feedback. The legacy \"explain one answer\" intent is kept in the written place-versus-value reflection."
+      },
+      {
+        "legacySection": "Assessment",
+        "legacyContent": "\"Use a short exit task with two checks: one recall item and one application item.\" No items exist.",
+        "candidateScenes": [
+          "exit-ticket"
+        ],
+        "disposition": "REPLACED",
+        "note": "Six candidate exit items (reviewer only), each mapped to an objective and misconception and machine-verified. See the assessment comparison."
+      },
+      {
+        "legacySection": "Remediation",
+        "legacyContent": "Re-teach with simpler examples, sentence frames and one scaffolded task (generic).",
+        "candidateScenes": [
+          "misconceptions",
+          "warm-up"
+        ],
+        "disposition": "IMPROVED",
+        "note": "Four named misconceptions with targeted responses and per-option feedback; the warm-up diagnoses Grade 4 gaps before teaching."
+      },
+      {
+        "legacySection": "Extension",
+        "legacyContent": "Ask confident learners to solve a harder version or justify reasoning (generic).",
+        "candidateScenes": [],
+        "disposition": "OMITTED",
+        "note": "The candidate has no extension task. See R-M3."
+      },
+      {
+        "legacySection": "Guardian Support",
+        "legacyContent": "Learner explains the main idea at home and does a short task with household materials (generic).",
+        "candidateScenes": [],
+        "disposition": "OMITTED",
+        "note": "The candidate has no home connection. See R-M2."
+      },
+      {
+        "legacySection": "Metadata",
+        "legacyContent": "Grade 7 MATH unit \"Number Sense and Place Value\" lesson \"Number Sense and Place Value: Foundations\".",
+        "candidateScenes": [],
+        "disposition": "IMPROVED",
+        "note": "Title revised to \"Millions to Thousandths\" (see the revision ledger); unit placement is a reviewer decision."
+      },
+      {
+        "legacySection": "Lab: Understanding Place Value with Local Materials",
+        "legacyContent": "Leaves = tens, stones = ones, cassava = hundreds; build and record a number such as 123; analysis questions on 345.",
+        "candidateScenes": [
+          "build-number"
+        ],
+        "disposition": "REORGANIZED",
+        "note": "The candidate keeps the local-counter idea only as a fallback line (\"stones or bottle caps as counters on your paper chart\"). The legacy token values are not restored (L-M3); the group activity is a restoration option (R-M1)."
+      },
+      {
+        "legacySection": "Standards alignment (LR-MATH-G7_9-04)",
+        "legacyContent": "Keyword alignment, confidence low: \"Apply the Pythagorean theorem and basic trigonometric ratios\".",
+        "candidateScenes": [],
+        "disposition": "NOT_RESTORED",
+        "note": "Wrong topic; the candidate records exact MOE relationships instead."
+      }
+    ],
+    "newScenes": [
+      {
+        "sceneId": "intro",
+        "what": "Hook with a large money amount (L$2,350,480) and a decimal measurement (2.375 kg)."
+      },
+      {
+        "sceneId": "warm-up",
+        "what": "Diagnostic check of Grade 4 place value and tenths."
+      },
+      {
+        "sceneId": "misconceptions",
+        "what": "Three misconception checks (longer decimal is bigger, dropped zeros, decimal word form)."
+      },
+      {
+        "sceneId": "review",
+        "what": "Four key ideas before the exit ticket."
+      }
+    ],
+    "objectives": [
+      {
+        "legacy": "Explain and apply number sense and place value ideas using age-appropriate math tasks.",
+        "candidate": [
+          "ll-g7-math-place-value-read-write",
+          "ll-g7-math-place-value-digit-value",
+          "ll-g7-math-place-value-compare"
+        ],
+        "change": "Scope made explicit: whole numbers to the millions and decimals to the thousandths, read/write in three forms, digit value through the ×10 relationship, comparing from the left. The legacy objective named no range; its only worked content (the lab) stopped at hundreds."
+      }
+    ],
+    "assessment": [
+      {
+        "aspect": "Items",
+        "legacy": "None. A one-line instruction for a teacher-made exit task.",
+        "candidate": "Six single-choice candidate items in GovernedItem shape (assessment-review.json), 2 per objective.",
+        "reviewNeeded": "Approve, revise or reject each item and key; confirm 2 items per objective is enough evidence."
+      },
+      {
+        "aspect": "Answer expectations",
+        "legacy": "Lab analysis: \"3 hundreds, 4 tens, and 5 units\" for 345 (correct); \"helps in understanding the value of numbers and performing arithmetic operations\" (acceptable).",
+        "candidate": "Keys verified by machine against independent place-value arithmetic; distractors mapped to named misconceptions.",
+        "reviewNeeded": "Confirm distractors are plausible for Liberian Grade 7 learners and none is defensibly correct."
+      },
+      {
+        "aspect": "Scoring",
+        "legacy": "Lab rubric: \"1 point for each correct place value identification\"; no mastery path.",
+        "candidate": "No local scoring: Assessment Player V2 scores only after a released ontology binding (SERVER_AUTHORITY).",
+        "reviewNeeded": "Decide the evidence context (DIAGNOSTIC or PRACTICE) for the release."
+      },
+      {
+        "aspect": "Calculator",
+        "legacy": "Not addressed.",
+        "candidate": "Calculators prohibited in the exit ticket.",
+        "reviewNeeded": "Confirm the tool policy."
+      }
+    ],
+    "legacyConcerns": [
+      {
+        "id": "L-M1",
+        "severity": "HIGH",
+        "category": "STRUCTURAL",
+        "where": "All body sections",
+        "finding": "The body contains no mathematics: every section is a template instruction with the topic name inserted. A learner or teacher receives nothing to teach from.",
+        "action": "Nothing to preserve from the body. The candidate replaces every section."
+      },
+      {
+        "id": "L-M2",
+        "severity": "HIGH",
+        "category": "ALIGNMENT",
+        "where": "standards.moeAlignments",
+        "finding": "Aligned (keyword, low confidence) to LR-MATH-G7_9-04, the Pythagorean theorem and trigonometric ratios, which is unrelated to place value. LR-* codes are LiberiaLearn codes (lib/curriculum/nr13Grades58.ts), not MOE items.",
+        "action": "Do not carry the alignment forward."
+      },
+      {
+        "id": "L-M3",
+        "severity": "MEDIUM",
+        "category": "PEDAGOGICAL",
+        "where": "Lab steps 1-2",
+        "finding": "Different objects stand for different values (1 cassava = 100, 1 leaf = 10, 1 stone = 1). The tokens do not show that ten of one place make one of the next, so learners can build 123 by counting objects without understanding the grouping.",
+        "action": "If the activity is restored, use identical counters placed in labelled columns of a paper chart, with a ten-for-one exchange (R-M1)."
+      },
+      {
+        "id": "L-M4",
+        "severity": "MEDIUM",
+        "category": "ALIGNMENT",
+        "where": "Lab",
+        "finding": "The lab only reaches hundreds (MOE Grade 2-3 scope: Math 1-6 p.14 and p.26), far below Grade 7.",
+        "action": "Restore only the method, at the Grade 7 range."
+      },
+      {
+        "id": "L-M5",
+        "severity": "LOW",
+        "category": "STRUCTURAL",
+        "where": "Lab materials",
+        "finding": "Materials list bottle caps and cups that no step uses; quantities (10 leaves, 20 stones, 5 cassava) do not match a number-building task.",
+        "action": "Not restored."
+      },
+      {
+        "id": "L-M6",
+        "severity": "LOW",
+        "category": "LINGUISTIC",
+        "where": "Lab analysis question 1",
+        "finding": "Uses \"units\"; the MOE Grade 3 objective (Math 1-6 p.26) and the candidate use \"ones\".",
+        "action": "Keep \"ones\"."
+      },
+      {
+        "id": "L-M7",
+        "severity": "MEDIUM",
+        "category": "GOVERNANCE",
+        "where": "Row status and payload metadata",
+        "finding": "Row status APPROVED while payload approvalStatus is pending_approval; metadata claims qualityValidated: true and full contentCompleteness for placeholder text. Provenance is UNVERIFIED, origin LEGACY_UNKNOWN.",
+        "action": "Treat the legacy approval as unverified; it is not evidence of review."
+      }
+    ],
+    "candidateConcerns": [
+      {
+        "id": "C-M1",
+        "severity": "HIGH",
+        "category": "ALIGNMENT",
+        "where": "Objectives, chart, worked-example, practice, exit items 1, 3, 6",
+        "finding": "No MOE grade in the repository source covers whole numbers in the millions: Grade 4 stops at hundred thousand (Math 1-6 p.38), and the word \"million\" does not occur anywhere in the extracted Math 1-6 or Math 7-9 text. The millions range is a LiberiaLearn extension.",
+        "action": "Curriculum authority decides (alignment decision A-M1)."
+      },
+      {
+        "id": "C-M2",
+        "severity": "MEDIUM",
+        "category": "PEDAGOGICAL",
+        "where": "Whole lesson",
+        "finding": "No group hands-on activity and no home connection. The legacy lesson had both (generic, but the intent is sound for classrooms with few devices).",
+        "action": "See R-M1 and R-M2."
+      },
+      {
+        "id": "C-M3",
+        "severity": "LOW",
+        "category": "LINGUISTIC",
+        "where": "intro, worked-example",
+        "finding": "Writes Liberian dollars as L$; the legacy essay lesson and other LiberiaLearn content use LD$. Both are in use in Liberia.",
+        "action": "Reviewer chooses one convention (R-M4)."
+      },
+      {
+        "id": "C-M4",
+        "severity": "LOW",
+        "category": "FACTUAL",
+        "where": "intro",
+        "finding": "A market trader weighing 2.375 kg of rice assumes a scale that reads grams. Many market scales do not.",
+        "action": "Reviewer confirms the context is realistic or substitutes one (for example a shop's digital scale)."
+      }
+    ],
+    "recommendations": [
+      {
+        "id": "R-M1",
+        "kind": "RESTORE_ADAPTED",
+        "scenes": [
+          "build-number"
+        ],
+        "recommendation": "Restore the legacy local-materials activity as an optional classroom (no-device) activity, adapted: pairs draw a chart from millions to thousandths and place identical counters (stones or bottle caps) in the columns to build 3,406,029.508; ten counters in a column are exchanged for one counter in the next column to the left.",
+        "rationale": "Keeps the legacy's hands-on, offline intent and pair work, fixes L-M3, and reaches the Grade 7 range.",
+        "applied": false
+      },
+      {
+        "id": "R-M2",
+        "kind": "RESTORE_ADAPTED",
+        "scenes": [
+          "reflect"
+        ],
+        "recommendation": "Add a home connection: the learner finds one large number (a price or a figure heard on the radio) and one decimal measurement, reads both to a family member and names the value of each digit.",
+        "rationale": "Restores the legacy guardian-support intent with a concrete task.",
+        "applied": false
+      },
+      {
+        "id": "R-M3",
+        "kind": "REVIEWER_DECISION",
+        "scenes": [
+          "practice"
+        ],
+        "recommendation": "Decide whether to add an extension task, for example: using the digits 0, 3, 5, 7 and 9 once each with three decimal places, write the greatest and the least number possible and explain why.",
+        "rationale": "The legacy named an extension but gave none; the candidate has none.",
+        "applied": false
+      },
+      {
+        "id": "R-M4",
+        "kind": "REVIEWER_DECISION",
+        "scenes": [
+          "intro",
+          "worked-example"
+        ],
+        "recommendation": "Choose L$ or LD$ for Liberian dollars and apply it across Grade 7 content.",
+        "rationale": "C-M3.",
+        "applied": false
+      },
+      {
+        "id": "R-M5",
+        "kind": "DO_NOT_RESTORE",
+        "scenes": [],
+        "recommendation": "Do not restore the LR-MATH-G7_9-04 alignment, the cassava/leaf/stone token values, the hundreds-only range, or \"units\" terminology.",
+        "rationale": "L-M2, L-M3, L-M4, L-M6.",
+        "applied": false
+      }
+    ],
+    "alignment": [
+      {
+        "id": "A-M1",
+        "question": "Should place value through the thousandths remain a Grade 7 prerequisite/reinforcement lesson supporting decimals, fractions and percentages?",
+        "evidence": [
+          "MOE Grade 7 Math (Math 7-9 pp.2-16) has six periods: Arithmetic skills and Sets (S1 P1), Fractions (P2), Decimals, percents and fractions (P3, p.10), Basic algebra (S2 P4), Geometry (P5), Co-ordinate geometry (P6). None has a place-value objective (test: \"the structured source has no Grade 7 objective…\").",
+          "Grade 7 P3 (p.10): obj1 \"Convert from decimal to percent/fraction and vice versa\"; obj2 \"Apply decimal and percent to the solution of problems involving commissions, discounts, taxes, interest, profits and losses and rayolty\" [sic]. Both use decimal place value.",
+          "Earlier grades: G3 place value to thousands (Math 1-6 p.26); G4 read/write and compare whole numbers to hundred thousand (p.38) and decimals to hundredths (p.45); G5 multiply and divide whole numbers and decimals; G6 \"Round off decimals to the nearest tenth, hundredths and thousandths\" (p.67).",
+          "The word \"million\" does not occur in the extracted Math 1-6 or Math 7-9 text (curriculum/sources/intermediate).",
+          "The legacy row is lesson 1 of LiberiaLearn unit math-g7-1-number-sense-and-place-value; MOE Grade 7 period 1 is Arithmetic skills and Sets, not number sense."
+        ],
+        "options": [
+          {
+            "id": "A",
+            "label": "Keep as a prerequisite/reinforcement lesson before P3",
+            "description": "Keep the three objectives as LiberiaLearn candidates with their PREREQUISITE_FOR relationships to Math 7-9 p.10, placed before the decimals, percents and fractions period. Millions stay as a labelled extension of the Grade 4 range.",
+            "consequences": "No content change. The authority must accept a LiberiaLearn extension beyond any MOE grade (millions)."
+          },
+          {
+            "id": "B",
+            "label": "Keep, but rescope to decimal place value",
+            "description": "Make tenths to thousandths (reading, digit value, comparing) the core, matching G4 p.45 and G6 p.67 and feeding P3 directly. Whole numbers above hundred thousand become optional enrichment.",
+            "consequences": "Revise intro, chart, worked-example, practice items 1-3 and exit items 1, 3 and 6 (or mark them enrichment); regenerate the package."
+          },
+          {
+            "id": "C",
+            "label": "Use as a diagnostic/remediation resource only",
+            "description": "Remove the lesson from the Grade 7 core sequence and offer it when the warm-up or P3 work shows place-value gaps.",
+            "consequences": "No Grade 7 core objective. Retiring or repointing the legacy unit needs a separate authorized change that respects its learner history."
+          }
+        ],
+        "authorRecommendation": "A, placed as a prerequisite to Math 7-9 P3 rather than as unit 1 core content, with millions labelled as a LiberiaLearn extension. This is the author's recommendation, not a decision; a qualified Math reviewer and the curriculum authority decide."
+      }
+    ]
+  }
+}

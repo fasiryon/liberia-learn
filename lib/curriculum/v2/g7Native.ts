@@ -38,7 +38,7 @@ export const G7_CANDIDATE_VERSION = "0.1.0";
 export type MoeRelation =
   | "BUILDS_ON"            // an earlier-grade MOE objective this lesson assumes and extends
   | "PREREQUISITE_FOR"     // a same-grade MOE objective that depends on this lesson's skill
-  | "SOURCE_TEXT_UNSTRUCTURED" // MOE source text for this grade covers it, but the structured source has no OBJECTIVE item for it
+  | "SOURCE_TEXT_UNSTRUCTURED" // MOE source text for this grade covers it, but the structured source has no OBJECTIVE item for it (OCR only, or misfiled as another kind)
   | "LATER_GRADE_SCOPE";   // the MOE places the closest objective in a later grade
 
 export type MoeReference = Readonly<{
@@ -50,6 +50,10 @@ export type MoeReference = Readonly<{
   pages: readonly number[];
   /** Verbatim source text (structured item text or OCR line). */
   text: string;
+  /** For OCR-only text: the column of the MOE grid it sits in. */
+  sourceColumn?: "OBJECTIVES" | "CONTENTS";
+  /** For OCR-only text that the structured source does hold, but under the wrong kind or period (not bindable as an objective). */
+  misfiledAs?: Readonly<{ itemId: string; kind: string; period: number }>;
 }>;
 
 export type CandidateObjective = Readonly<{
@@ -60,7 +64,7 @@ export type CandidateObjective = Readonly<{
   moeReferences: readonly MoeReference[];
 }>;
 
-/** The live legacy row a candidate may later replace. Recorded from the read-only cleanup snapshot; never written. */
+/** The live legacy row a candidate may later replace. Metadata from the read-only cleanup snapshot; body from a read-only extract. Never written. */
 export type LegacySource = Readonly<{
   contentPk: string;
   contentId: string;
@@ -75,8 +79,8 @@ export type LegacySource = Readonly<{
   currentRevisionId: string;
   snapshot: Readonly<{ path: string; capturedAt: string }>;
   learnerReferences: readonly Readonly<{ table: string; rows: number; policy: string }>[];
-  /** The authoring session had no database access: the legacy body was not read, so preservation is unverified. */
-  bodyAvailableToAuthor: false;
+  /** The legacy revision body, read once in a READ ONLY transaction (scripts/extract-g7-legacy-revisions.ts) and compared in the reviewer-only legacy comparison. */
+  bodyExtract: Readonly<{ path: string; contentHash: string; capturedAt: string }>;
 }>;
 
 export type G7NativeLesson = Readonly<{
@@ -100,6 +104,8 @@ const G1_6_MATH = "GRADE-1-6/Math 1-6.pdf";
 const G7_9_ENGLISH = "GRADE 7-9/English 7-9.pdf";
 const G1_6_ENGLISH = "GRADE-1-6/English 1-6.pdf";
 const SNAPSHOT = { path: "artifacts/curriculum-cleanup-v1/snapshot.json", capturedAt: "2026-09-26T09:07:15.873Z" } as const;
+const LEGACY_EXTRACT_DIR = "artifacts/g7-native-curriculum-v1/legacy";
+const LEGACY_CAPTURED_AT = "2026-10-15T19:09:16.876Z";
 
 const G4_READ_WRITE: MoeReference = { relation: "BUILDS_ON", moeItemId: "moe-math-g4-s1-p1-numeration-addition-and-subtraction-obj1", grade: 4, sourceMember: G1_6_MATH, pages: [38], text: "Read and write whole numbers up to hundred thousand" };
 const G4_COMPARE: MoeReference = { relation: "BUILDS_ON", moeItemId: "moe-math-g4-s1-p1-numeration-addition-and-subtraction-obj2", grade: 4, sourceMember: G1_6_MATH, pages: [38], text: "Compare and order whole numbers to hundred thousand" };
@@ -109,8 +115,8 @@ const G6_ROUND: MoeReference = { relation: "BUILDS_ON", moeItemId: "moe-math-g6-
 const G7_CONVERT: MoeReference = { relation: "PREREQUISITE_FOR", moeItemId: "moe-math-g7-s1-p3-decimals-percents-and-fractions-obj1", grade: 7, sourceMember: G7_9_MATH, pages: [10], text: "Convert from decimal to percent/fraction and vice versa" };
 const G7_APPLY: MoeReference = { relation: "PREREQUISITE_FOR", moeItemId: "moe-math-g7-s1-p3-decimals-percents-and-fractions-obj2", grade: 7, sourceMember: G7_9_MATH, pages: [10], text: "Apply decimal and percent to the solution of problems involving commissions, discounts, taxes, interest, profits and losses and rayolty" };
 
-const G7_PARAGRAPHS: MoeReference = { relation: "SOURCE_TEXT_UNSTRUCTURED", moeItemId: null, grade: 7, sourceMember: G7_9_ENGLISH, pages: [4], text: "1. Construct paragraphs using subject and verb agreement, capitalization, punctuations etc." };
-const G7_KINDS_OF_PARAGRAPHS: MoeReference = { relation: "SOURCE_TEXT_UNSTRUCTURED", moeItemId: null, grade: 7, sourceMember: G7_9_ENGLISH, pages: [4], text: "2. Writing kinds of paragraphs E.g.) descriptive, narrative etc." };
+const G7_PARAGRAPHS: MoeReference = { relation: "SOURCE_TEXT_UNSTRUCTURED", moeItemId: null, grade: 7, sourceMember: G7_9_ENGLISH, pages: [4], text: "1. Construct paragraphs using subject and verb agreement, capitalization, punctuations etc.", sourceColumn: "OBJECTIVES", misfiledAs: { itemId: "moe-english-g7-s1-p1-constructing-sentences-antroduction-to-literatur-act1", kind: "ACTIVITY", period: 1 } };
+const G7_KINDS_OF_PARAGRAPHS: MoeReference = { relation: "SOURCE_TEXT_UNSTRUCTURED", moeItemId: null, grade: 7, sourceMember: G7_9_ENGLISH, pages: [4], text: "2. Writing kinds of paragraphs E.g.) descriptive, narrative etc.", sourceColumn: "CONTENTS" };
 const G6_PARAGRAPH_TYPES: MoeReference = { relation: "BUILDS_ON", moeItemId: "moe-english-g6-s1-a-subject-verb-agreement-b-using-verbs-in-senten-obj2", grade: 6, sourceMember: G1_6_ENGLISH, pages: [119], text: "Construct different types of paragraphs" };
 const G8_COMPOSITION_ISSUES: MoeReference = { relation: "LATER_GRADE_SCOPE", moeItemId: "moe-english-g8-s2-composition-literature-and-reading-comprehension-obj3", grade: 8, sourceMember: G7_9_ENGLISH, pages: [18], text: "Develop composition on issues such as social norms, peer influences, decision making, etc." };
 const G9_POINT_OF_VIEW: MoeReference = { relation: "LATER_GRADE_SCOPE", moeItemId: "moe-english-g9-s2-composition-literature-reading-comprehension-sem-obj3", grade: 9, sourceMember: G7_9_ENGLISH, pages: [32], text: "Develop and defend a points of view in composition" };
@@ -134,7 +140,7 @@ export const G7_NATIVE_LESSONS: readonly G7NativeLesson[] = Object.freeze([
       unitVerification: "Cleanup plan V1 queues RETURN_FOR_REVIEW (row APPROVED while its payload is PENDING_APPROVAL).", sectionCount: 8, currentRevisionId: "cmss8t4hz00unvo54epnfst66",
       snapshot: SNAPSHOT,
       learnerReferences: [{ table: "CurriculumLessonPlan", rows: 1, policy: "REPOINT" }, { table: "LearningEvent", rows: 18, policy: "RETAIN_HISTORY" }, { table: "ScheduledWork", rows: 1, policy: "RETAIN_HISTORY" }],
-      bodyAvailableToAuthor: false,
+      bodyExtract: { path: `${LEGACY_EXTRACT_DIR}/math-number-sense-place-value.json`, contentHash: "93cc90030c242b39cfbf9a86095802d967a7fd2dbcb6af7b9f7227f312fc540b", capturedAt: LEGACY_CAPTURED_AT },
     },
     reusedMaterial: [
       { path: "components/experience/demo/PlaceValueDemo.tsx", what: "Student Experience V3 synthetic DEMO: Musu's library fund example (L$2,350,480), practice items on 1,742,009, 3,060,500 and five million forty thousand nine, and their misconception feedback." },
@@ -166,7 +172,7 @@ export const G7_NATIVE_LESSONS: readonly G7NativeLesson[] = Object.freeze([
       unitVerification: "Cleanup plan V1 keeps the unit key with reason no_verified_unit_match (no verified MOE unit).", sectionCount: 2, currentRevisionId: "cmss94dmc03b7vo54ryf3hqk1",
       snapshot: SNAPSHOT,
       learnerReferences: [{ table: "LearningEvent", rows: 1, policy: "RETAIN_HISTORY" }, { table: "ScheduledWork", rows: 42, policy: "RETAIN_HISTORY" }],
-      bodyAvailableToAuthor: false,
+      bodyExtract: { path: `${LEGACY_EXTRACT_DIR}/literacy-essay-structure-argument.json`, contentHash: "3809f98290bae0a5b8364e4bc2faf8c257111f0c21e3c383acd45310fc236ba6", capturedAt: LEGACY_CAPTURED_AT },
     },
     reusedMaterial: [],
     assets: {
@@ -203,11 +209,11 @@ export function bindingGaps(lesson: G7NativeLesson): ReviewGap[] {
   const unstructured = lesson.objectives.some((objective) => objective.moeReferences.some((reference) => reference.relation === "SOURCE_TEXT_UNSTRUCTURED"));
   const laterGrade = lesson.objectives.some((objective) => objective.moeReferences.some((reference) => reference.relation === "LATER_GRADE_SCOPE"));
   gaps.push({ code: "MOE_OBJECTIVE_UNBOUND", severity: "BLOCKING", detail: `No structured MOE Grade 7 ${lesson.subject} OBJECTIVE item matches ${lesson.objectives.map((objective) => objective.id).join(", ")}; the objectives are LiberiaLearn candidates. A qualified curriculum reviewer must accept them as a LiberiaLearn extension (with the MOE relationships listed) or rebind the lesson to an existing MOE objective.` });
-  if (unstructured) gaps.push({ code: "MOE_SOURCE_STRUCTURING_DEFECT", severity: "BLOCKING", detail: "MOE Grade 7 Language Arts paragraph-writing objectives (English 7-9.pdf p.4) were structured as ACTIVITY items under period I, so no bindable Grade 7 paragraph objective exists. The structured source must be corrected through the source-structuring process before any Grade 7 writing objective can bind." });
+  if (unstructured) gaps.push({ code: "MOE_SOURCE_STRUCTURING_DEFECT", severity: "BLOCKING", detail: "MOE Grade 7 Language Arts paragraph-writing objectives (English 7-9.pdf p.4, objectives column of period II, OCR header 'PERIOD: 11') were structured as ACTIVITY items act1-act4 under period I, so no bindable Grade 7 paragraph objective exists. The structured source must be corrected through the source-structuring process before any Grade 7 writing objective can bind." });
   if (laterGrade) gaps.push({ code: "MOE_GRADE_SCOPE_REVIEW", severity: "BLOCKING", detail: "The MOE places argumentative composition ('develop and defend a point of view') in Grade 9 (p.32) and issue-based composition in Grade 8 (p.18). The reviewer decides whether this Grade 7 lesson stays as an introduction, is rescoped to paragraph writing, or moves grade." });
   gaps.push({ code: "TEMPLATE_CELL_MISSING", severity: "BLOCKING", detail: `No governed template cell exists for Grade 7 ${lesson.subject} (lib/learning-authority/cells has Grade 4 Math only), so no unit placement, interaction classification or concept link can be resolved.` });
   gaps.push({ code: "ONTOLOGY_RELEASE_MISSING", severity: "BLOCKING", detail: `No ontology release is registered for Grade 7 ${lesson.subject} (curriculum/releases/k12-scope.json); concepts, standard/skill bindings, governed items, evidence and tool policies are all absent.` });
-  gaps.push({ code: "LEGACY_BODY_NOT_COMPARED", severity: "BLOCKING", detail: `The legacy body of ${lesson.legacy.contentId} (revision ${lesson.legacy.currentRevisionId}) was not available to the author, so correct legacy material may not have been preserved. A reviewer with read access compares that revision against this candidate before approval.` });
+  gaps.push({ code: "LEGACY_COMPARISON_SIGNOFF", severity: "BLOCKING", detail: `The legacy body of ${lesson.legacy.contentId} (revision ${lesson.legacy.currentRevisionId}, content hash ${lesson.legacy.bodyExtract.contentHash.slice(0, 12)}…) was read read-only and compared section by section in legacy-comparison.md. A qualified reviewer confirms the comparison and decides every restoration and revision recommendation before approval.` });
   return gaps;
 }
 

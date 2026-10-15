@@ -15,8 +15,9 @@ import { CANDIDATE_LESSON_V2_CONTRACT, CURRICULUM_LESSON_V2_CONTRACT } from "./c
 import { RUNTIME_SCENARIOS } from "./deliverability";
 import {
   evaluateG7Candidate, G7_ASSET_DIR, G7_AUTHORED_AT, G7_CANDIDATE_DIR, G7_CANDIDATE_VERSION, G7_NATIVE_LESSONS, G7_NATIVE_PACKAGE_VERSION,
-  g7LearnerProjection, sha256, textFileSha256, type G7CandidateOutcome, type G7NativeLesson,
+  g7LearnerProjection, sha256, textFileSha256, type G7CandidateOutcome, type G7NativeLesson, type MoeReference,
 } from "./g7Native";
+import { G7_LEGACY_COMPARISON, legacyBodyHeadings, loadLegacyExtract, verifyLegacyExtract } from "./g7NativeLegacy";
 import { G7_EXIT_ITEMS, G7_REVISION_LEDGER, G7_WRITING_RUBRIC } from "./g7NativeReview";
 import { sceneDetailLines } from "./reviewPackage";
 import { words } from "./validate";
@@ -25,6 +26,15 @@ export const G7_PACKAGE_DIR = "curriculum/review/g7-native-v1";
 
 const cell = (value: string) => value.replace(/\|/g, "\\|").replace(/\n+/g, " ");
 const json = (value: unknown) => `${JSON.stringify(value, null, 2)}\n`;
+
+/** How an MOE reference is cited: structured id, or the OCR column plus any misfiled structured item. */
+function moeSource(reference: MoeReference): string {
+  if (reference.moeItemId) return `\`${reference.moeItemId}\``;
+  const column = reference.sourceColumn ? `, ${reference.sourceColumn.toLowerCase()} column` : "";
+  return reference.misfiledAs
+    ? `OCR text only${column}; structured as ${reference.misfiledAs.kind} \`${reference.misfiledAs.itemId}\` under period ${reference.misfiledAs.period} (misfiled, not bindable)`
+    : `OCR text only${column} (no structured item)`;
+}
 
 /** Candidate release identifiers: "candidate" marks them as unregistered; no "moe" because no MOE authority is claimed. */
 export function candidateReleaseId(lesson: G7NativeLesson): string {
@@ -55,6 +65,7 @@ function sceneManifest(outcome: G7CandidateOutcome) {
     candidate: { path: `${G7_CANDIDATE_DIR}/${lesson.file}`, sha256: outcome.candidateSha256 },
     learnerProjection: { path: `${G7_PACKAGE_DIR}/${lesson.key}/learner-projection.json`, sha256: sha256(projection) },
     assessmentReview: { path: `${G7_PACKAGE_DIR}/${lesson.key}/assessment-review.json`, sha256: sha256(assessmentReview(lesson)) },
+    legacyComparison: { path: `${G7_PACKAGE_DIR}/${lesson.key}/legacy-comparison.json`, sha256: sha256(legacyComparisonRecord(lesson)) },
     scenes: candidate.scenes.map((scene, index) => ({
       position: index + 1, id: scene.id, type: scene.type, purpose: scene.purpose, objectiveIds: scene.objectiveIds, interaction: scene.interaction.kind,
       fallback: scene.fallback?.kind ?? null, evidence: scene.evidence.kind, completion: scene.completion, words: words(scene.content.body), sha256: sha256(scene),
@@ -62,6 +73,7 @@ function sceneManifest(outcome: G7CandidateOutcome) {
     })),
     sources: [
       { path: lesson.legacy.snapshot.path, role: "Read-only metadata of the legacy row (body not included)", sha256: sha256(JSON.parse(readFileSync(path.join(process.cwd(), lesson.legacy.snapshot.path), "utf8"))) },
+      { path: lesson.legacy.bodyExtract.path, role: `Read-only extract of legacy revision ${lesson.legacy.currentRevisionId} (body, objectives, questions, provenance)`, sha256: sha256(loadLegacyExtract(lesson)) },
       { path: "curriculum/structured/moe-structured-v1.json", role: "Structured MOE source (objective relationships)", sha256: sha256(JSON.parse(readFileSync(path.join(process.cwd(), "curriculum/structured/moe-structured-v1.json"), "utf8"))) },
       ...(lesson.subject === "LITERACY" ? [{ path: "curriculum/sources/ocr/GRADE-7-9--English-7-9.json", role: "OCR of MOE English 7-9 (Grade 7 paragraph writing, p.4)", sha256: sha256(JSON.parse(readFileSync(path.join(process.cwd(), "curriculum/sources/ocr/GRADE-7-9--English-7-9.json"), "utf8"))) }] : []),
       ...lesson.reusedMaterial.map((material) => ({ path: material.path, role: material.what, sha256: textFileSha256(material.path) })),
@@ -81,6 +93,82 @@ function assessmentReview(lesson: G7NativeLesson) {
   };
 }
 
+/** Reviewer-only comparison with the legacy revision, pinned to the extract it was made from. */
+function legacyComparisonRecord(lesson: G7NativeLesson) {
+  const extract = loadLegacyExtract(lesson);
+  return {
+    audience: "REVIEWER_ONLY",
+    notice: "Comparison of a DRAFT candidate with the live legacy revision it may later replace. Recommendations are not decisions; only those marked applied are in the candidate package.",
+    lessonKey: lesson.key,
+    legacy: {
+      contentId: lesson.legacy.contentId, contentPk: lesson.legacy.contentPk, revisionId: lesson.legacy.currentRevisionId,
+      provenanceId: extract.provenance.id, lifecycleState: extract.provenance.lifecycleState, provenanceCompleteness: extract.provenance.provenanceCompleteness,
+      revisionKind: extract.revisions[0]?.revisionKind ?? null, originKind: extract.revisions[0]?.originKind ?? null, backfillRunId: extract.revisions[0]?.backfillRunId ?? null,
+      extract: { path: lesson.legacy.bodyExtract.path, sha256: sha256(extract), capturedAt: extract.extraction.capturedAt, transactionReadOnly: extract.extraction.transactionReadOnly },
+      verification: { ...verifyLegacyExtract(lesson, extract), isCurrentRevision: extract.verification.isCurrentRevision, revisionCount: extract.verification.revisionCount, liveRowEqualsRevisionAtCapture: extract.verification.liveRowEqualsRevision },
+      bodyHeadings: legacyBodyHeadings(extract),
+    },
+    candidate: { lessonId: lesson.lessonId, version: G7_CANDIDATE_VERSION, sha256: sha256(evaluateG7Candidate(lesson).candidate) },
+    comparison: G7_LEGACY_COMPARISON[lesson.key],
+  };
+}
+
+const SIGNOFF_FIELDS = ["Reviewer name", "Qualification (subject, grade band)", "Organisation / role", "Date", "Governed review record id", "Decision (APPROVE / REVISE / REJECT)", "Notes"];
+
+function legacyComparisonMarkdown(outcome: G7CandidateOutcome): string {
+  const { lesson } = outcome;
+  const record = legacyComparisonRecord(lesson);
+  const { legacy, comparison } = record;
+  const verification = legacy.verification;
+  const out: string[] = [
+    `# Legacy comparison — ${outcome.candidate.title}`, "",
+    "**REVIEWER ONLY. CANDIDATE ONLY.** This compares the DRAFT candidate with the live legacy revision it may later replace. It records evidence and recommendations; it approves, publishes and changes nothing. Recommendations marked _reviewer decides_ are **not** applied to the candidate.", "",
+    "## Source and revision evidence", "",
+    "| Field | Value |", "| --- | --- |",
+    `| Legacy content | \`${legacy.contentId}\` (pk \`${legacy.contentPk}\`) |`,
+    `| Revision compared | \`${legacy.revisionId}\` (${legacy.revisionKind}, origin ${legacy.originKind}, backfill \`${legacy.backfillRunId}\`) |`,
+    `| Current revision of the row | ${verification.isCurrentRevision ? "yes" : "**no**"} (${verification.revisionCount} revision${verification.revisionCount === 1 ? "" : "s"} in total) |`,
+    `| Provenance | \`${legacy.provenanceId}\`: lifecycle ${legacy.lifecycleState}, completeness ${legacy.provenanceCompleteness} |`,
+    `| Stored content hash | \`${verification.storedContentHash}\` |`,
+    `| Recomputed from extract | \`${verification.recomputedContentHash}\` (${verification.contentHashMatches ? "match" : "**MISMATCH**"}) |`,
+    `| Live row equals revision at capture | ${verification.liveRowEqualsRevisionAtCapture ? "yes" : "**no**"} |`,
+    `| Extract | \`${legacy.extract.path}\` (sha256 \`${legacy.extract.sha256}\`) |`,
+    `| Captured | ${legacy.extract.capturedAt}, transaction_read_only = ${legacy.extract.transactionReadOnly}; lesson content only, no learner or user data |`,
+    `| Candidate compared | \`${record.candidate.lessonId}\` v${record.candidate.version}, hash \`${record.candidate.sha256}\` |`, "",
+    "## The legacy lesson", "", ...comparison.legacySummary.map((line) => `- ${line}`), "",
+    "## Section-by-section comparison", "",
+    "Disposition: PRESERVED (kept in substance) · IMPROVED (kept, made more precise or correct) · REORGANIZED (kept, moved or split) · REPLACED (same job, new material) · OMITTED (not carried over) · NOT_RESTORED (deliberately excluded).", "",
+    "| Legacy section | Legacy content | Candidate scenes | Disposition | Note |", "| --- | --- | --- | --- | --- |",
+    ...comparison.sections.map((row) => `| ${cell(row.legacySection)} | ${cell(row.legacyContent)} | ${row.candidateScenes.map((id) => `\`${id}\``).join(", ") || "—"} | ${row.disposition} | ${cell(row.note)} |`), "",
+    "New candidate material with no legacy counterpart:", ...comparison.newScenes.map((scene) => `- \`${scene.sceneId}\`: ${scene.what}`), "",
+    "## Learning objectives", "", "| Legacy objective | Candidate objectives | Change |", "| --- | --- | --- |",
+    ...comparison.objectives.map((row) => `| ${cell(row.legacy)} | ${row.candidate.map((id) => `\`${id}\``).join("<br>")} | ${cell(row.change)} |`), "",
+    "## Questions, answers and assessment expectations", "", "| Aspect | Legacy | Candidate | Reviewer must |", "| --- | --- | --- | --- |",
+    ...comparison.assessment.map((row) => `| ${row.aspect} | ${cell(row.legacy)} | ${cell(row.candidate)} | ${cell(row.reviewNeeded)} |`), "",
+    "## Concerns in the legacy lesson", "", "Not restored unless a reviewer decides otherwise.", "", "| Id | Severity | Category | Where | Finding | Action |", "| --- | --- | --- | --- | --- | --- |",
+    ...comparison.legacyConcerns.map((concern) => `| ${concern.id} | ${concern.severity} | ${concern.category} | ${cell(concern.where)} | ${cell(concern.finding)} | ${cell(concern.action)} |`), "",
+    "## Concerns in the candidate found by the comparison", "", "| Id | Severity | Category | Where | Finding | Action |", "| --- | --- | --- | --- | --- | --- |",
+    ...comparison.candidateConcerns.map((concern) => `| ${concern.id} | ${concern.severity} | ${concern.category} | ${cell(concern.where)} | ${cell(concern.finding)} | ${cell(concern.action)} |`), "",
+    "## Corrective recommendations", "", "| Id | Kind | Scenes | Recommendation | Rationale | Status | Reviewer decision |", "| --- | --- | --- | --- | --- | --- | --- |",
+    ...comparison.recommendations.map((item) => `| ${item.id} | ${item.kind} | ${item.scenes.map((id) => `\`${id}\``).join(", ") || "—"} | ${cell(item.recommendation)} | ${cell(item.rationale)} | ${item.applied ? "applied in this package" : "reviewer decides"} | ACCEPT / MODIFY / REJECT: |`), "",
+    "## Open curriculum-alignment decisions", "",
+  ];
+  for (const decision of comparison.alignment) {
+    out.push(`### ${decision.id}. ${decision.question}`, "", "Evidence (repository-held MOE source; MOE source provenance is not MOE approval):", ...decision.evidence.map((line) => `- ${line}`), "");
+    out.push("| Option | Description | Consequences |", "| --- | --- | --- |", ...decision.options.map((option) => `| ${option.id}. ${cell(option.label)} | ${cell(option.description)} | ${cell(option.consequences)} |`), "");
+    out.push(`Author's recommendation: ${decision.authorRecommendation}`, "", `- [ ] Decision on ${decision.id} (A / B / C / other), recorded through governed curriculum review: ____`, "");
+  }
+  out.push(
+    "## Reviewer sign-off", "",
+    `Sign-off is valid only when recorded through governed curriculum review (HUMAN_REVIEW) against candidate hash \`${record.candidate.sha256}\` and legacy revision \`${legacy.revisionId}\`. Filling in this file records nothing.`, "",
+    "- [ ] I compared the candidate with the legacy revision and confirm (or have corrected) the section matrix above.",
+    "- [ ] I recorded a decision on every recommendation.",
+    "- [ ] I confirm no legacy material listed under Concerns is re-introduced without correction.", "",
+    "| Field | Entry |", "| --- | --- |", ...SIGNOFF_FIELDS.map((field) => `| ${field} | |`), "",
+  );
+  return out.join("\n");
+}
+
 function reviewMarkdown(outcome: G7CandidateOutcome): string {
   const { lesson, candidate } = outcome;
   const manifest = sceneManifest(outcome);
@@ -98,13 +186,15 @@ function reviewMarkdown(outcome: G7CandidateOutcome): string {
   out.push(`- Legacy row (not modified): \`${legacy.contentId}\` (pk \`${legacy.contentPk}\`), "${legacy.title}", status ${legacy.status}, payload approval ${legacy.payloadApprovalStatus ?? "none"}, unit \`${legacy.unitId}\`, ${legacy.sectionCount} sections, current revision \`${legacy.currentRevisionId}\``);
   out.push(`- Unit verification: ${legacy.unitVerification}`);
   out.push(`- Recorded from \`${legacy.snapshot.path}\` (captured ${legacy.snapshot.capturedAt}). Learner history attached to the legacy row: ${legacy.learnerReferences.map((ref) => `${ref.table} ${ref.rows} (${ref.policy})`).join(", ")}. The candidate never touches these rows.`);
-  out.push("- The legacy lesson body was **not available** to the author (no database access). Preservation of correct legacy material is therefore unverified; see the revision ledger.");
+  const evidence = verifyLegacyExtract(lesson);
+  out.push(`- Legacy body: read from production on ${legacy.bodyExtract.capturedAt} in a single READ ONLY transaction (\`scripts/extract-g7-legacy-revisions.ts\`), stored in \`${legacy.bodyExtract.path}\`. Revision \`${evidence.revisionId}\` content hash \`${evidence.storedContentHash}\`; recomputed from the extract: ${evidence.contentHashMatches ? "match" : "**MISMATCH**"}.`);
+  out.push("- Section-by-section comparison, concerns, recommendations and alignment options: [legacy-comparison.md](legacy-comparison.md) (reviewer only).");
   for (const material of lesson.reusedMaterial) out.push(`- Reused repository material: \`${material.path}\` — ${material.what}`);
   out.push("", "## Objective alignment", "");
   out.push("No structured MOE Grade 7 OBJECTIVE item matches this lesson. Its objectives are LiberiaLearn candidates; each MOE item below is a relationship, not a binding.", "");
   out.push("| Candidate objective | Statement | MOE relationships (verbatim source text) |", "| --- | --- | --- |");
   for (const objective of lesson.objectives) {
-    const refs = objective.moeReferences.map((ref) => `${ref.relation}: ${ref.moeItemId ? `\`${ref.moeItemId}\`` : "OCR only (no structured item)"} — G${ref.grade}, ${ref.sourceMember} p.${ref.pages.join(",")} — "${cell(ref.text)}"`).join("<br>");
+    const refs = objective.moeReferences.map((ref) => `${ref.relation}: ${moeSource(ref)} — G${ref.grade}, ${ref.sourceMember} p.${ref.pages.join(",")} — "${cell(ref.text)}"`).join("<br>");
     out.push(`| \`${objective.id}\` | ${cell(objective.statement)} | ${refs} |`);
   }
   out.push("", "Prerequisites assumed:", ...candidate.prerequisiteAssumptions.map((text) => `- ${text}`));
@@ -121,7 +211,7 @@ function reviewMarkdown(outcome: G7CandidateOutcome): string {
   for (const request of candidate.assessmentRequests) out.push(`- \`${request.id}\`: ${request.interaction}, ${request.evidenceType}, ${request.difficulty}; scoring SERVER_AUTHORITY; governed items: none yet; ${G7_EXIT_ITEMS[lesson.key].length} candidate items in [assessment-review.md](assessment-review.md) (reviewer only); tools prohibited ${request.tools.prohibited.join(", ") || "none"}; offline ${request.offline}`);
   out.push("", "## Instructional revision ledger", "");
   out.push(`- Title: "${ledger.titleRevision.from}" → "${ledger.titleRevision.to}". ${ledger.titleRevision.rationale}`);
-  out.push(`- Legacy body comparison: **${ledger.legacyComparison}** (revision \`${legacy.currentRevisionId}\`).`, "");
+  out.push(`- Legacy body comparison: **${ledger.legacyComparison}** (revision \`${legacy.currentRevisionId}\`; see [legacy-comparison.md](legacy-comparison.md)).`, "");
   out.push("| Scene | Change | Source | Rationale |", "| --- | --- | --- | --- |", ...ledger.entries.map((entry) => `| \`${entry.sceneId}\` | ${entry.change} | ${cell(entry.source)} | ${cell(entry.rationale)} |`));
   out.push("", "## Runtime deliverability (Lesson Player V2 today)", "", `| Scene | ${RUNTIME_SCENARIOS.join(" | ")} |`, `| --- | ${RUNTIME_SCENARIOS.map(() => "---").join(" | ")} |`);
   for (const report of outcome.deliverability) out.push(`| ${report.sceneId} | ${RUNTIME_SCENARIOS.map((scenario) => report.byScenario[scenario]).join(" | ")} |`);
@@ -142,6 +232,22 @@ function assessmentMarkdown(lesson: G7NativeLesson): string {
     const rubric = review.writingRubric;
     out.push(`## Writing rubric — scene \`${rubric.sceneId}\``, "", rubric.use, "", "| Criterion | Secure | Developing | Beginning |", "| --- | --- | --- | --- |", ...rubric.criteria.map((criterion) => `| ${criterion.label} | ${cell(criterion.secure)} | ${cell(criterion.developing)} | ${cell(criterion.beginning)} |`), "");
   }
+  const affected = G7_LEGACY_COMPARISON[lesson.key].recommendations.filter((item) => !item.applied && item.scenes.includes("exit-ticket"));
+  out.push(
+    "## Item review requirements", "",
+    `A qualified ${lesson.subject === "MATH" ? "Grade 7 Math" : "Grade 7 English"} reviewer checks every item before any release can bind it:`, "",
+    "1. The keyed option is the only defensible answer, and the worked example explains it correctly.",
+    "2. Each distractor is plausible for a Grade 7 learner, clearly wrong, and catches the misconception it is mapped to.",
+    "3. The item measures its mapped objective (and the alignment decision in legacy-comparison.md has not moved that objective).",
+    "4. Language is plain enough for learners still building English fluency, and contexts are realistic in Liberia.",
+    lesson.subject === "MATH" ? "5. The machine verification for the item passed (see the test) and agrees with the reviewer's own working." : "5. No option presents an invented fact, figure or personal experience as real evidence.",
+    "6. Evidence context (DIAGNOSTIC or PRACTICE) and the no-calculator / no-dictionary tool policy are right for an exit ticket.",
+    "7. The legacy lesson had no keyed items to carry over (see legacy-comparison.md); nothing here is copied from it.", "",
+    ...(affected.length ? [`Open recommendations that would change exit items (see legacy-comparison.md): ${affected.map((item) => item.id).join(", ")}. Decide them before approving the affected items.`, ""] : []),
+    "| Item | Key correct | Distractors sound | Objective / misconception mapping | Language and context | Decision (APPROVE / REVISE / REJECT) | Reviewer initials |", "| --- | --- | --- | --- | --- | --- | --- |",
+    ...review.items.map((entry) => `| \`${entry.item.id}@${entry.item.version}\` | | | | | | |`), "",
+    "Item decisions count only when recorded through governed curriculum review against the item hashes above.", "",
+  );
   return out.join("\n");
 }
 
@@ -171,7 +277,14 @@ function checklistMarkdown(outcome: G7CandidateOutcome): string {
     box(literacy ? "The school-garden, PTA, library and reading-time contexts are realistic for Liberian schools and communities." : "The library fund in Liberian dollars, market weights and cocoa cooperative contexts are realistic and respectful."),
     box("Names, places and money are used correctly; no context stereotypes a county, group or gender."),
     box("Activities work in a classroom with no devices (paper chart, counters, teacher-read questions)."),
+    "", "## Legacy comparison", "",
+    box(`Confirm the section-by-section comparison with legacy revision \`${lesson.legacy.currentRevisionId}\` in legacy-comparison.md (or correct it).`),
+    box(`Decide every recommendation: ${G7_LEGACY_COMPARISON[lesson.key].recommendations.filter((item) => !item.applied).map((item) => item.id).join(", ")} (not applied), and confirm the applied ones${G7_LEGACY_COMPARISON[lesson.key].recommendations.some((item) => item.applied) ? ` (${G7_LEGACY_COMPARISON[lesson.key].recommendations.filter((item) => item.applied).map((item) => item.id).join(", ")})` : " (none)"}.`),
+    box("Confirm that no legacy concern (L-…) is re-introduced, and decide each candidate concern (C-…)."),
     "", ...curriculumMappingDecisions(lesson, box),
+    "", "## Reviewer sign-off", "",
+    `Valid only when recorded through governed curriculum review (HUMAN_REVIEW) against candidate hash \`${outcome.candidateSha256}\`. Filling in this table records nothing.`, "",
+    "| Field | Entry |", "| --- | --- |", ...SIGNOFF_FIELDS.map((field) => `| ${field} | |`),
     "", "## Decision (recorded only in governed review)", "",
     "- APPROVE requires: all boxes above, closed BLOCKING gaps, a Grade 7 template cell and ontology release, released exit-ticket items.",
     "- REVISE: list scene ids and changes; the author edits the candidate and the package is regenerated with new hashes.",
@@ -210,7 +323,7 @@ export function releaseBindingPlan() {
         "HUMAN_REVIEW of the exact candidate hash by an identified, qualified curriculum reviewer (lib/curriculum/v2/governance.ts).",
         "Objective basis decision: accept the LiberiaLearn candidate objectives with their MOE relationships, or rebind to MOE objectives.",
         ...(lesson.subject === "LITERACY" ? ["Grade-scope decision for argumentative writing (MOE Grade 9, p.32).", "Correction of the Grade 7 English paragraph-writing structuring defect through the source-structuring process."] : []),
-        "Comparison with the legacy body revision and restoration of any correct legacy material.",
+        "Confirmation of the recorded legacy comparison (legacy-comparison.md) and a decision on each restoration and revision recommendation.",
         "Approval, revision or rejection of each candidate exit-ticket item and its key.",
       ],
       requiredFromCurriculumAuthority: [
@@ -264,8 +377,10 @@ export function buildG7NativePackageFiles(): Map<string, string> {
     files.set(`${lesson.key}/assessment-review.json`, json(assessmentReview(lesson)));
     files.set(`${lesson.key}/assessment-review.md`, assessmentMarkdown(lesson));
     files.set(`${lesson.key}/reviewer-checklist.md`, checklistMarkdown(outcome));
+    files.set(`${lesson.key}/legacy-comparison.json`, json(legacyComparisonRecord(lesson)));
+    files.set(`${lesson.key}/legacy-comparison.md`, legacyComparisonMarkdown(outcome));
     const blocking = outcome.gaps.filter((gap) => gap.severity === "BLOCKING").map((gap) => gap.code);
-    rows.push(`| ${outcome.candidate.title} | \`${lesson.legacy.contentId}\` | ${outcome.status} | ${outcome.candidate.scenes.length} scenes, ${Object.keys(lesson.assets).length} diagrams | ${[...new Set(blocking)].join(", ")} | [review](${lesson.key}/review.md) · [checklist](${lesson.key}/reviewer-checklist.md) · [exit ticket](${lesson.key}/assessment-review.md) |`);
+    rows.push(`| ${outcome.candidate.title} | \`${lesson.legacy.contentId}\` | ${outcome.status} | ${outcome.candidate.scenes.length} scenes, ${Object.keys(lesson.assets).length} diagrams | ${[...new Set(blocking)].join(", ")} | [review](${lesson.key}/review.md) · [checklist](${lesson.key}/reviewer-checklist.md) · [exit ticket](${lesson.key}/assessment-review.md) · [legacy comparison](${lesson.key}/legacy-comparison.md) |`);
   }
   const plan = releaseBindingPlan();
   files.set("release-binding.json", json(plan));
@@ -281,7 +396,9 @@ export function buildG7NativePackageFiles(): Map<string, string> {
     "| --- | --- | --- | --- | --- | --- |",
     ...rows,
     "",
-    "Files per lesson: `review.md` (provenance, alignment, full scenes, revision ledger, deliverability, gaps), `scene-manifest.json` (exact hashes of candidate, scenes, assets, projection and sources), `learner-projection.json` (what Lesson Player V2 would deliver; no exit-ticket keys), `assessment-review.*` (**reviewer only**: exit-ticket keys and rubric), `reviewer-checklist.md`.",
+    "Files per lesson: `review.md` (provenance, alignment, full scenes, revision ledger, deliverability, gaps), `scene-manifest.json` (exact hashes of candidate, scenes, assets, projection and sources), `learner-projection.json` (what Lesson Player V2 would deliver; no exit-ticket keys), `assessment-review.*` (**reviewer only**: exit-ticket keys, rubric, item review requirements), `legacy-comparison.*` (**reviewer only**: section-by-section comparison with the live legacy revision, concerns, recommendations, alignment options, sign-off), `reviewer-checklist.md`.",
+    "",
+    "Legacy bodies were read once from production in a single READ ONLY transaction (`scripts/extract-g7-legacy-revisions.ts`) and are pinned in `artifacts/g7-native-curriculum-v1/legacy/` with their stored and recomputed revision hashes. Nothing was written to the database.",
     "",
     "Dev-only preview (never in production builds): `LAB_REVIEW_HARNESS=1 npm run dev`, then `/lab-review/experience/cv2-cand-g7-math-number-sense-place-value` and `/lab-review/experience/cv2-cand-g7-literacy-essay-structure-argument`.",
     "",
@@ -305,14 +422,14 @@ function curriculumMappingDecisions(lesson: G7NativeLesson, box: (text: string) 
     ] : [
       box("Scope: confirm that extending place value to the thousandths serves the MOE Grade 7 decimals, percents and fractions period (Math 7-9 p.10), or limit the lesson to whole numbers."),
     ]),
-    box(`Legacy comparison: compare with legacy revision \`${lesson.legacy.currentRevisionId}\` (\`${lesson.legacy.contentId}\`) and list any correct legacy material to restore.`),
+    box(`Alignment decision ${G7_LEGACY_COMPARISON[lesson.key].alignment.map((decision) => decision.id).join(", ")}: choose an option in legacy-comparison.md (evidence and consequences listed there).`),
     "", "### Objective-by-objective mapping", "",
   ];
   for (const objective of lesson.objectives) {
     out.push(`**\`${objective.id}\`**: ${objective.statement}`, "");
     out.push(box("Statement: accept as worded / revise (give wording) / remove."));
     for (const reference of objective.moeReferences) {
-      const source = `${reference.moeItemId ? `\`${reference.moeItemId}\`` : "OCR text only (no structured item)"}, G${reference.grade} p.${reference.pages.join(",")}: "${reference.text}"`;
+      const source = `${moeSource(reference)}, G${reference.grade} p.${reference.pages.join(",")}: "${reference.text}"`;
       out.push(box(`${reference.relation}: ${source} — accept or reject this relationship.`));
     }
     out.push(box(`Proposed concept \`${prefix}-${objective.id.replace(/^ll-g7-(math|lit)-/, "")}\`: accept, rename, or map to an existing concept.`), "");

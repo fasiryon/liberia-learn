@@ -6,6 +6,7 @@ import { NextRequest } from "next/server";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { buildG7NativePackageFiles, candidateReleaseManifest, draftReleaseShape, G7_PACKAGE_DIR, releaseBindingPlan } from "@/lib/curriculum/v2/g7NativePackage";
 import { evaluateG7Candidate, G7_ASSET_DIR, G7_ASSET_URL_BASE, G7_NATIVE_LESSONS, g7LearnerProjection, loadG7Candidate } from "@/lib/curriculum/v2/g7Native";
+import { G7_LEGACY_COMPARISON, legacyBodyHeadings, loadLegacyExtract, verifyLegacyExtract } from "@/lib/curriculum/v2/g7NativeLegacy";
 import { G7_EXIT_ITEMS, G7_REVISION_LEDGER, type ExitItemVerification } from "@/lib/curriculum/v2/g7NativeReview";
 import { g7NativePreviewEntry } from "@/lib/curriculum/v2/g7NativePreview";
 import { validateOntologyRelease } from "@/lib/learning-authority/governedGrade4Math";
@@ -23,7 +24,7 @@ const byId = new Map(structured.items.map((item) => [item.id, item]));
 const MATH = G7_NATIVE_LESSONS.find((lesson) => lesson.subject === "MATH")!;
 const LITERACY = G7_NATIVE_LESSONS.find((lesson) => lesson.subject === "LITERACY")!;
 vi.mock("next-auth/jwt", () => ({ getToken: vi.fn(async () => null) }));
-const IMPORTS_REVIEWER_MODULE = /from\s+["'][^"']*\/g7Native(Review|Preview)["']/;
+const IMPORTS_REVIEWER_MODULE = /from\s+["'][^"']*\/g7Native(Review|Preview|Legacy)["']/;
 const sourceFiles = (dir: string): string[] => readdirSync(dir, { withFileTypes: true }).flatMap((entry) => entry.isDirectory() ? sourceFiles(path.join(dir, entry.name)) : /\.(t|j)sx?$/.test(entry.name) ? [path.join(dir, entry.name)] : []);
 const masteryScenes = (experience: LessonExperience) => experience.scenes.filter((scene) => scene.type === "MASTERY_CHECK");
 
@@ -34,9 +35,9 @@ describe("Grade 7 native candidates pass the existing Curriculum V2 gates", () =
     expect(outcome.status).toBe("REVIEW_BLOCKED");
     const blocking = new Set(outcome.gaps.filter((gap) => gap.severity === "BLOCKING").map((gap) => gap.code));
     // No instructional or deliverability blocker: every BLOCKING gap is an authority, provenance or governed-item gap.
-    expect([...blocking].every((code) => ["MOE_OBJECTIVE_UNBOUND", "MOE_SOURCE_STRUCTURING_DEFECT", "MOE_GRADE_SCOPE_REVIEW", "TEMPLATE_CELL_MISSING", "ONTOLOGY_RELEASE_MISSING", "LEGACY_BODY_NOT_COMPARED", "ASSESSMENT_ITEMS_PENDING"].includes(code))).toBe(true);
+    expect([...blocking].every((code) => ["MOE_OBJECTIVE_UNBOUND", "MOE_SOURCE_STRUCTURING_DEFECT", "MOE_GRADE_SCOPE_REVIEW", "TEMPLATE_CELL_MISSING", "ONTOLOGY_RELEASE_MISSING", "LEGACY_COMPARISON_SIGNOFF", "ASSESSMENT_ITEMS_PENDING"].includes(code))).toBe(true);
     expect(blocking.has("SCENE_NOT_DELIVERABLE")).toBe(false);
-    for (const code of ["MOE_OBJECTIVE_UNBOUND", "TEMPLATE_CELL_MISSING", "ONTOLOGY_RELEASE_MISSING", "LEGACY_BODY_NOT_COMPARED", "ASSESSMENT_ITEMS_PENDING"]) expect(blocking.has(code)).toBe(true);
+    for (const code of ["MOE_OBJECTIVE_UNBOUND", "TEMPLATE_CELL_MISSING", "ONTOLOGY_RELEASE_MISSING", "LEGACY_COMPARISON_SIGNOFF", "ASSESSMENT_ITEMS_PENDING"]) expect(blocking.has(code)).toBe(true);
   });
 
   it("covers the mission's teaching sequence in each lesson", () => {
@@ -86,6 +87,20 @@ describe("authority gaps are real and every MOE relationship is exact", () => {
     expect(byId.get("moe-english-g7-s1-p1-constructing-sentences-antroduction-to-literatur-act1")).toMatchObject({ kind: "ACTIVITY", provenance: { pages: [4] } });
   });
 
+  it("a misfiled reference names the structured item that holds the same text, and its OCR page is period II", () => {
+    const ocr = JSON.parse(readFileSync("curriculum/sources/ocr/GRADE-7-9--English-7-9.json", "utf8")) as { pages: { page: number; text: string }[] };
+    const misfiled = LITERACY.objectives.flatMap((objective) => objective.moeReferences).filter((ref) => ref.misfiledAs);
+    expect(misfiled.length).toBeGreaterThan(0);
+    for (const reference of misfiled) {
+      const item = byId.get(reference.misfiledAs!.itemId)!;
+      expect(item).toMatchObject({ kind: reference.misfiledAs!.kind, grade: 7, provenance: { pages: [...reference.pages] } });
+      expect(reference.text).toContain(item.text.trim());
+      expect(reference.sourceColumn).toBe("OBJECTIVES");
+    }
+    // OCR reads the Roman period numerals as digits: p.2 "1", p.4 "11", p.6 "111".
+    expect(["2", "4", "6"].map((page) => ocr.pages.find((candidate) => candidate.page === Number(page))!.text.match(/PERIOD:\s*(\S+)/)![1])).toEqual(["1", "11", "111"]);
+  });
+
   it("no Grade 7 template cell or release exists, and nothing here registers one", () => {
     expect(readdirSync("lib/learning-authority/cells").filter((file) => /grade7|g7/i.test(file))).toEqual([]);
     const scope = JSON.parse(readFileSync("curriculum/releases/k12-scope.json", "utf8")) as { registeredReleases: { releaseId: string; grade: number }[] };
@@ -103,13 +118,80 @@ describe("legacy provenance matches the read-only snapshot", () => {
     expect(refs.sort((a, b) => a.table.localeCompare(b.table))).toEqual([...lesson.legacy.learnerReferences].sort((a, b) => a.table.localeCompare(b.table)));
   });
 
-  it("the revision ledger accounts for every scene, and legacy comparison stays pending", () => {
+  it("the revision ledger accounts for every scene, and the recorded legacy comparison awaits sign-off", () => {
     for (const lesson of G7_NATIVE_LESSONS) {
       const ledger = G7_REVISION_LEDGER[lesson.key];
       expect(ledger.entries.map((entry) => entry.sceneId)).toEqual(loadG7Candidate(lesson).scenes.map((scene) => scene.id));
-      expect(ledger.legacyComparison).toBe("PENDING_REVIEWER_WITH_DB_READ_ACCESS");
+      expect(ledger.legacyComparison).toBe("RECORDED_AWAITING_REVIEWER_SIGNOFF");
       expect(ledger.titleRevision.from).toBe(lesson.legacy.title);
       expect(ledger.titleRevision.to).toBe(loadG7Candidate(lesson).title);
+    }
+  });
+});
+
+describe("legacy revisions were read read-only and compared section by section", () => {
+  it.each(G7_NATIVE_LESSONS.map((lesson) => [lesson.key, lesson] as const))("%s: the committed extract is the exact current revision, and its hash recomputes", (_key, lesson) => {
+    const extract = loadLegacyExtract(lesson);
+    const evidence = verifyLegacyExtract(lesson, extract);
+    expect(evidence).toMatchObject({ revisionId: lesson.legacy.currentRevisionId, matchesRequestedRevision: true, contentHashMatches: true, storedContentHash: lesson.legacy.bodyExtract.contentHash });
+    expect(extract.extraction.transactionReadOnly).toBe("on");
+    expect(extract.extraction.capturedAt).toBe(lesson.legacy.bodyExtract.capturedAt);
+    expect(extract.verification).toMatchObject({ revisionFound: true, revisionBelongsToRow: true, isCurrentRevision: true, contentHashMatches: true, liveRowEqualsRevision: true });
+    expect(extract.content).toMatchObject({ id: lesson.legacy.contentPk, contentId: lesson.legacy.contentId, title: lesson.legacy.title, unitId: lesson.legacy.unitId });
+    expect(extract.provenance.currentRevisionId).toBe(lesson.legacy.currentRevisionId);
+  });
+
+  it("the extracts hold lesson content only: no user, author, editor or school identifiers", () => {
+    for (const lesson of G7_NATIVE_LESSONS) {
+      const extract = loadLegacyExtract(lesson);
+      for (const field of ["editedById", "schoolId", "authorUserId"]) {
+        expect(Object.keys(extract.content)).not.toContain(field);
+        for (const revision of extract.revisions) expect(Object.keys(revision)).not.toContain(field);
+      }
+      expect(JSON.stringify(extract)).not.toMatch(/[\w.+-]+@[\w-]+\.[\w.]+/);
+    }
+  });
+
+  it.each(G7_NATIVE_LESSONS.map((lesson) => [lesson.key, lesson] as const))("%s: the matrix covers every legacy section and every candidate scene", (_key, lesson) => {
+    const comparison = G7_LEGACY_COMPARISON[lesson.key];
+    const rows = comparison.sections.map((row) => row.legacySection);
+    for (const heading of legacyBodyHeadings(loadLegacyExtract(lesson))) expect(rows, heading).toContain(heading);
+    const sceneIds = loadG7Candidate(lesson).scenes.map((scene) => scene.id);
+    const referenced = [...comparison.sections.flatMap((row) => row.candidateScenes), ...comparison.newScenes.map((scene) => scene.sceneId), ...comparison.recommendations.flatMap((item) => item.scenes)];
+    for (const id of referenced) expect(sceneIds, id).toContain(id);
+    for (const id of sceneIds) expect(referenced, `${id} is not compared`).toContain(id);
+    const ids = [...comparison.legacyConcerns, ...comparison.candidateConcerns, ...comparison.recommendations].map((entry) => entry.id);
+    expect(new Set(ids).size).toBe(ids.length);
+    for (const objective of comparison.objectives.flatMap((row) => row.candidate)) expect(lesson.objectives.map((candidate) => candidate.id)).toContain(objective);
+    expect(comparison.alignment.every((decision) => decision.options.length >= 2 && decision.evidence.length > 0)).toBe(true);
+  });
+
+  it("applied recommendations are really in the package, and nothing else is applied", () => {
+    const applied = G7_NATIVE_LESSONS.flatMap((lesson) => G7_LEGACY_COMPARISON[lesson.key].recommendations.filter((item) => item.applied).map((item) => item.id));
+    expect(applied.sort()).toEqual(["R-L5", "R-L7"]);
+    expect(JSON.stringify(G7_REVISION_LEDGER)).not.toMatch(/West African/);
+    expect(LITERACY.objectives.flatMap((objective) => objective.moeReferences).some((ref) => ref.misfiledAs)).toBe(true);
+  });
+
+  it("the math alignment evidence holds: no MOE math text in the repository mentions millions", () => {
+    const sources = ["GRADE-1-6", "GRADE-7-9"].flatMap((archive) => (JSON.parse(readFileSync(`curriculum/sources/intermediate/${archive}.json`, "utf8")) as { manifests: { source: { sourceMember: string }; extraction: { pages: { rawText: string }[] } }[] }).manifests);
+    const math = sources.filter((manifest) => /Math/.test(manifest.source.sourceMember));
+    expect(math.map((manifest) => manifest.source.sourceMember).sort()).toEqual(["GRADE 7-9/Math 7-9.pdf", "GRADE-1-6/Math 1-6.pdf"]);
+    for (const manifest of math) {
+      expect(manifest.extraction.pages.every((page) => page.rawText.trim().length > 20), `${manifest.source.sourceMember} has textless pages`).toBe(true);
+      expect(manifest.extraction.pages.map((page) => page.rawText).join("\n")).not.toMatch(/million/i);
+    }
+    expect(structured.items.filter((item) => item.subject === "MATH" && item.kind === "OBJECTIVE" && /million/i.test(item.text))).toEqual([]);
+  });
+
+  it("the legacy comparison stays reviewer-only and never reaches the learner projection", () => {
+    for (const lesson of G7_NATIVE_LESSONS) {
+      const record = JSON.parse(readFileSync(path.join(G7_PACKAGE_DIR, lesson.key, "legacy-comparison.json"), "utf8")) as { audience: string };
+      expect(record.audience).toBe("REVIEWER_ONLY");
+      const projection = readFileSync(path.join(G7_PACKAGE_DIR, lesson.key, "learner-projection.json"), "utf8");
+      const extract = loadLegacyExtract(lesson);
+      for (const set of extract.revision.contentSnapshot.assessment?.problemSets ?? []) expect(projection).not.toContain(String(set.answerKey).slice(0, 60));
+      for (const row of G7_LEGACY_COMPARISON[lesson.key].legacyConcerns) expect(projection).not.toContain(row.finding);
     }
   });
 });

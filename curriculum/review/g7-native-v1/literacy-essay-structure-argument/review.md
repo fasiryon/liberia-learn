@@ -12,7 +12,8 @@
 - Legacy row (not modified): `hero-literacy-g7-essay-writing-structure-and-argumentation` (pk `cmpyjp25s00cqvorwisg1rhyn`), "Understanding Essay Writing: Structure and Argumentation", status published, payload approval none, unit `literacy-g7-6-paragraphs-and-text-structure`, 2 sections, current revision `cmss94dmc03b7vo54ryf3hqk1`
 - Unit verification: Cleanup plan V1 keeps the unit key with reason no_verified_unit_match (no verified MOE unit).
 - Recorded from `artifacts/curriculum-cleanup-v1/snapshot.json` (captured 2026-09-26T09:07:15.873Z). Learner history attached to the legacy row: LearningEvent 1 (RETAIN_HISTORY), ScheduledWork 42 (RETAIN_HISTORY). The candidate never touches these rows.
-- The legacy lesson body was **not available** to the author (no database access). Preservation of correct legacy material is therefore unverified; see the revision ledger.
+- Legacy body: read from production on 2026-10-15T19:09:16.876Z in a single READ ONLY transaction (`scripts/extract-g7-legacy-revisions.ts`), stored in `artifacts/g7-native-curriculum-v1/legacy/literacy-essay-structure-argument.json`. Revision `cmss94dmc03b7vo54ryf3hqk1` content hash `3809f98290bae0a5b8364e4bc2faf8c257111f0c21e3c383acd45310fc236ba6`; recomputed from the extract: match.
+- Section-by-section comparison, concerns, recommendations and alignment options: [legacy-comparison.md](legacy-comparison.md) (reviewer only).
 
 ## Objective alignment
 
@@ -20,9 +21,9 @@ No structured MOE Grade 7 OBJECTIVE item matches this lesson. Its objectives are
 
 | Candidate objective | Statement | MOE relationships (verbatim source text) |
 | --- | --- | --- |
-| `ll-g7-lit-essay-structure` | Identify and explain the parts of an argumentative essay: an introduction that ends with a thesis statement, body paragraphs that each begin with a topic sentence, and a conclusion. | SOURCE_TEXT_UNSTRUCTURED: OCR only (no structured item) — G7, GRADE 7-9/English 7-9.pdf p.4 — "1. Construct paragraphs using subject and verb agreement, capitalization, punctuations etc."<br>SOURCE_TEXT_UNSTRUCTURED: OCR only (no structured item) — G7, GRADE 7-9/English 7-9.pdf p.4 — "2. Writing kinds of paragraphs E.g.) descriptive, narrative etc."<br>BUILDS_ON: `moe-english-g6-s1-a-subject-verb-agreement-b-using-verbs-in-senten-obj2` — G6, GRADE-1-6/English 1-6.pdf p.119 — "Construct different types of paragraphs"<br>LATER_GRADE_SCOPE: `moe-english-g8-s2-composition-literature-and-reading-comprehension-obj3` — G8, GRADE 7-9/English 7-9.pdf p.18 — "Develop composition on issues such as social norms, peer influences, decision making, etc." |
+| `ll-g7-lit-essay-structure` | Identify and explain the parts of an argumentative essay: an introduction that ends with a thesis statement, body paragraphs that each begin with a topic sentence, and a conclusion. | SOURCE_TEXT_UNSTRUCTURED: OCR text only, objectives column; structured as ACTIVITY `moe-english-g7-s1-p1-constructing-sentences-antroduction-to-literatur-act1` under period 1 (misfiled, not bindable) — G7, GRADE 7-9/English 7-9.pdf p.4 — "1. Construct paragraphs using subject and verb agreement, capitalization, punctuations etc."<br>SOURCE_TEXT_UNSTRUCTURED: OCR text only, contents column (no structured item) — G7, GRADE 7-9/English 7-9.pdf p.4 — "2. Writing kinds of paragraphs E.g.) descriptive, narrative etc."<br>BUILDS_ON: `moe-english-g6-s1-a-subject-verb-agreement-b-using-verbs-in-senten-obj2` — G6, GRADE-1-6/English 1-6.pdf p.119 — "Construct different types of paragraphs"<br>LATER_GRADE_SCOPE: `moe-english-g8-s2-composition-literature-and-reading-comprehension-obj3` — G8, GRADE 7-9/English 7-9.pdf p.18 — "Develop composition on issues such as social norms, peer influences, decision making, etc." |
 | `ll-g7-lit-argument-build` | Build an argument by writing an arguable thesis statement with reasons and answering a counterargument. | LATER_GRADE_SCOPE: `moe-english-g8-s2-composition-literature-and-reading-comprehension-obj3` — G8, GRADE 7-9/English 7-9.pdf p.18 — "Develop composition on issues such as social norms, peer influences, decision making, etc."<br>LATER_GRADE_SCOPE: `moe-english-g9-s2-composition-literature-reading-comprehension-sem-obj3` — G9, GRADE 7-9/English 7-9.pdf p.32 — "Develop and defend a points of view in composition" |
-| `ll-g7-lit-evidence-support` | Choose true, relevant and specific evidence for a reason and explain how it supports the claim in a PEEL paragraph. | SOURCE_TEXT_UNSTRUCTURED: OCR only (no structured item) — G7, GRADE 7-9/English 7-9.pdf p.4 — "1. Construct paragraphs using subject and verb agreement, capitalization, punctuations etc."<br>LATER_GRADE_SCOPE: `moe-english-g9-s2-composition-literature-reading-comprehension-sem-obj3` — G9, GRADE 7-9/English 7-9.pdf p.32 — "Develop and defend a points of view in composition" |
+| `ll-g7-lit-evidence-support` | Choose true, relevant and specific evidence for a reason and explain how it supports the claim in a PEEL paragraph. | SOURCE_TEXT_UNSTRUCTURED: OCR text only, objectives column; structured as ACTIVITY `moe-english-g7-s1-p1-constructing-sentences-antroduction-to-literatur-act1` under period 1 (misfiled, not bindable) — G7, GRADE 7-9/English 7-9.pdf p.4 — "1. Construct paragraphs using subject and verb agreement, capitalization, punctuations etc."<br>LATER_GRADE_SCOPE: `moe-english-g9-s2-composition-literature-reading-comprehension-sem-obj3` — G9, GRADE 7-9/English 7-9.pdf p.32 — "Develop and defend a points of view in composition" |
 
 Prerequisites assumed:
 - Can write a paragraph with a topic sentence and supporting sentences (MOE Grade 7 paragraph writing).
@@ -277,7 +278,7 @@ Good writers know what they need to practise. Write your answer in full sentence
 ## Instructional revision ledger
 
 - Title: "Understanding Essay Writing: Structure and Argumentation" → "Understanding Essay Writing: Structure and Argument". Plainer word for Grade 7 learners; the topic is unchanged.
-- Legacy body comparison: **PENDING_REVIEWER_WITH_DB_READ_ACCESS** (revision `cmss94dmc03b7vo54ryf3hqk1`).
+- Legacy body comparison: **RECORDED_AWAITING_REVIEWER_SIGNOFF** (revision `cmss94dmc03b7vo54ryf3hqk1`; see [legacy-comparison.md](legacy-comparison.md)).
 
 | Scene | Change | Source | Rationale |
 | --- | --- | --- | --- |
@@ -287,7 +288,7 @@ Good writers know what they need to practise. Write your answer in full sentence
 | `essay-structure` | NEW | — | Three-part essay structure with the job of each part. |
 | `model-plan` | NEW | — | Complete model plan on a Liberian school topic, including a counterargument paragraph. |
 | `thesis` | NEW | — | Distinguishes claims from topics, facts and announcements with feedback. |
-| `peel` | NEW | — | PEEL paragraph model (Point, Evidence, Explain, Link), a structure widely used in West African secondary writing. |
+| `peel` | NEW | — | PEEL paragraph model (Point, Evidence, Explain, Link). Whether PEEL is familiar in Liberian classrooms is for the reviewer to confirm (legacy comparison R-L5). |
 | `evidence` | NEW | — | Kinds of evidence and four tests; explicitly forbids invented figures. |
 | `evidence-check` | NEW | — | Misconception checks: irrelevant evidence, circular reasoning, ignoring the other side. |
 | `order-paragraph` | NEW | — | Declared ORDERING interaction with a written fallback. |
@@ -318,11 +319,11 @@ Good writers know what they need to practise. Write your answer in full sentence
 ## Review gaps
 
 - **BLOCKING** MOE_OBJECTIVE_UNBOUND: No structured MOE Grade 7 LITERACY OBJECTIVE item matches ll-g7-lit-essay-structure, ll-g7-lit-argument-build, ll-g7-lit-evidence-support; the objectives are LiberiaLearn candidates. A qualified curriculum reviewer must accept them as a LiberiaLearn extension (with the MOE relationships listed) or rebind the lesson to an existing MOE objective.
-- **BLOCKING** MOE_SOURCE_STRUCTURING_DEFECT: MOE Grade 7 Language Arts paragraph-writing objectives (English 7-9.pdf p.4) were structured as ACTIVITY items under period I, so no bindable Grade 7 paragraph objective exists. The structured source must be corrected through the source-structuring process before any Grade 7 writing objective can bind.
+- **BLOCKING** MOE_SOURCE_STRUCTURING_DEFECT: MOE Grade 7 Language Arts paragraph-writing objectives (English 7-9.pdf p.4, objectives column of period II, OCR header 'PERIOD: 11') were structured as ACTIVITY items act1-act4 under period I, so no bindable Grade 7 paragraph objective exists. The structured source must be corrected through the source-structuring process before any Grade 7 writing objective can bind.
 - **BLOCKING** MOE_GRADE_SCOPE_REVIEW: The MOE places argumentative composition ('develop and defend a point of view') in Grade 9 (p.32) and issue-based composition in Grade 8 (p.18). The reviewer decides whether this Grade 7 lesson stays as an introduction, is rescoped to paragraph writing, or moves grade.
 - **BLOCKING** TEMPLATE_CELL_MISSING: No governed template cell exists for Grade 7 LITERACY (lib/learning-authority/cells has Grade 4 Math only), so no unit placement, interaction classification or concept link can be resolved.
 - **BLOCKING** ONTOLOGY_RELEASE_MISSING: No ontology release is registered for Grade 7 LITERACY (curriculum/releases/k12-scope.json); concepts, standard/skill bindings, governed items, evidence and tool policies are all absent.
-- **BLOCKING** LEGACY_BODY_NOT_COMPARED: The legacy body of hero-literacy-g7-essay-writing-structure-and-argumentation (revision cmss94dmc03b7vo54ryf3hqk1) was not available to the author, so correct legacy material may not have been preserved. A reviewer with read access compares that revision against this candidate before approval.
+- **BLOCKING** LEGACY_COMPARISON_SIGNOFF: The legacy body of hero-literacy-g7-essay-writing-structure-and-argumentation (revision cmss94dmc03b7vo54ryf3hqk1, content hash 3809f98290ba…) was read read-only and compared section by section in legacy-comparison.md. A qualified reviewer confirms the comparison and decides every restoration and revision recommendation before approval.
 - **ADVISORY** UNSUPPORTED_INTERACTION_DECLARED (`order-paragraph`): ORDERING is a declared intent with no renderer yet; learners receive the FREE_RESPONSE fallback.
 - **ADVISORY** SCENE_USES_FALLBACK (`order-paragraph`): Delivered through its declared fallback under: DEFAULT, OFFLINE, WEBGL_UNAVAILABLE, VIDEO_UNAVAILABLE, KEYBOARD_ONLY, SCREEN_READER, REDUCED_MOTION, LOW_MEMORY, POINTER_DRAG_UNAVAILABLE.
 - **ADVISORY** SCENE_USES_FALLBACK (`exit-ticket`): Delivered through its declared fallback under: DEFAULT, OFFLINE, WEBGL_UNAVAILABLE, VIDEO_UNAVAILABLE, KEYBOARD_ONLY, SCREEN_READER, REDUCED_MOTION, LOW_MEMORY, POINTER_DRAG_UNAVAILABLE.

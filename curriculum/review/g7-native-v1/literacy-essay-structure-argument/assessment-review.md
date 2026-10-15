@@ -96,3 +96,28 @@ Formative feedback by the teacher. Not a mastery score; Assessment Player V2 has
 | Point (topic sentence) | States reason one clearly and matches the thesis. | States a reason that only loosely matches the thesis. | No topic sentence, or it repeats the thesis word for word. |
 | Evidence | Specific, true and relevant evidence (example, checkable fact or experience). | Relevant but general evidence. | Opinion, an invented figure, or unrelated evidence. |
 | Explain and link | Explains how the evidence proves the point and links back to the claim. | Explains or links, but not both. | Evidence is left unexplained. |
+
+## Item review requirements
+
+A qualified Grade 7 English reviewer checks every item before any release can bind it:
+
+1. The keyed option is the only defensible answer, and the worked example explains it correctly.
+2. Each distractor is plausible for a Grade 7 learner, clearly wrong, and catches the misconception it is mapped to.
+3. The item measures its mapped objective (and the alignment decision in legacy-comparison.md has not moved that objective).
+4. Language is plain enough for learners still building English fluency, and contexts are realistic in Liberia.
+5. No option presents an invented fact, figure or personal experience as real evidence.
+6. Evidence context (DIAGNOSTIC or PRACTICE) and the no-calculator / no-dictionary tool policy are right for an exit ticket.
+7. The legacy lesson had no keyed items to carry over (see legacy-comparison.md); nothing here is copied from it.
+
+Open recommendations that would change exit items (see legacy-comparison.md): R-L1, R-L6. Decide them before approving the affected items.
+
+| Item | Key correct | Distractors sound | Objective / misconception mapping | Language and context | Decision (APPROVE / REVISE / REJECT) | Reviewer initials |
+| --- | --- | --- | --- | --- | --- | --- |
+| `g7-essay-exit-1@candidate-0.1.0` | | | | | | |
+| `g7-essay-exit-2@candidate-0.1.0` | | | | | | |
+| `g7-essay-exit-3@candidate-0.1.0` | | | | | | |
+| `g7-essay-exit-4@candidate-0.1.0` | | | | | | |
+| `g7-essay-exit-5@candidate-0.1.0` | | | | | | |
+| `g7-essay-exit-6@candidate-0.1.0` | | | | | | |
+
+Item decisions count only when recorded through governed curriculum review against the item hashes above.

@@ -21,6 +21,10 @@
     "path": "curriculum/review/g7-native-v1/literacy-essay-structure-argument/assessment-review.json",
     "sha256": "8acdf24eadb1da880d670a53ca81dcc2ab8d523cb7fb7e0586d5bd320d3300dd"
   },
+  "legacyComparison": {
+    "path": "curriculum/review/g7-native-v1/literacy-essay-structure-argument/legacy-comparison.json",
+    "sha256": "e0d14935998537cad86eda0e60492b5427b785d1b0b7575c17bd1736af2e1986"
+  },
   "scenes": [
     {
       "position": 1,
@@ -296,6 +300,11 @@
       "path": "artifacts/curriculum-cleanup-v1/snapshot.json",
       "role": "Read-only metadata of the legacy row (body not included)",
       "sha256": "654175b357f8fd363142930e98cf0b59d918c0324069f2c4e9bff788e875ba8b"
+    },
+    {
+      "path": "artifacts/g7-native-curriculum-v1/legacy/literacy-essay-structure-argument.json",
+      "role": "Read-only extract of legacy revision cmss94dmc03b7vo54ryf3hqk1 (body, objectives, questions, provenance)",
+      "sha256": "d66a646f3748b2b1cfe9a83ab855e52039dac2e57044fbbd91190cc9250738f7"
     },
     {
       "path": "curriculum/structured/moe-structured-v1.json",

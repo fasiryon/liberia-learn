@@ -35,6 +35,12 @@ A qualified reviewer completes this list through governed curriculum review. Tic
 - [ ] Names, places and money are used correctly; no context stereotypes a county, group or gender.
 - [ ] Activities work in a classroom with no devices (paper chart, counters, teacher-read questions).
 
+## Legacy comparison
+
+- [ ] Confirm the section-by-section comparison with legacy revision `cmss8t4hz00unvo54epnfst66` in legacy-comparison.md (or correct it).
+- [ ] Decide every recommendation: R-M1, R-M2, R-M3, R-M4, R-M5 (not applied), and confirm the applied ones (none).
+- [ ] Confirm that no legacy concern (L-…) is re-introduced, and decide each candidate concern (C-…).
+
 ## Curriculum-mapping decisions
 
 Each decision is recorded through governed curriculum review. Until every box is decided, the lesson stays **candidate-only** with publication disabled. No MOE objective, template cell or release is bound by this package.
@@ -44,7 +50,7 @@ Each decision is recorded through governed curriculum review. Until every box is
 - [ ] Objective basis: accept the 3 candidate objectives as a LiberiaLearn extension (with the MOE relationships below), or rebind the lesson to an existing MOE objective (name it).
 - [ ] Unit placement: `math-g7-1-number-sense-and-place-value` is a LiberiaLearn unit with no verified MOE match. Confirm it, or name the MOE Grade 7 period this lesson belongs to.
 - [ ] Scope: confirm that extending place value to the thousandths serves the MOE Grade 7 decimals, percents and fractions period (Math 7-9 p.10), or limit the lesson to whole numbers.
-- [ ] Legacy comparison: compare with legacy revision `cmss8t4hz00unvo54epnfst66` (`math-g7-1-number-sense-and-place-value-foundations`) and list any correct legacy material to restore.
+- [ ] Alignment decision A-M1: choose an option in legacy-comparison.md (evidence and consequences listed there).
 
 ### Objective-by-objective mapping
 
@@ -79,6 +85,20 @@ Each decision is recorded through governed curriculum review. Until every box is
 - [ ] Exit-ticket evidence context: governed items allow DIAGNOSTIC or PRACTICE; candidates use PRACTICE pending this decision.
 - [ ] Tool policy: confirm the proposed instruction tools and the exit-ticket prohibitions in ../release-binding.json.
 - [ ] Publication: stays DISABLED until approval, template cell, ontology release and registration in curriculum/releases/k12-scope.json are all complete.
+
+## Reviewer sign-off
+
+Valid only when recorded through governed curriculum review (HUMAN_REVIEW) against candidate hash `5817d80911154bceb61fe117e0916ad64d0b7ae5c6afd2a2c6028b9cdc972ffb`. Filling in this table records nothing.
+
+| Field | Entry |
+| --- | --- |
+| Reviewer name | |
+| Qualification (subject, grade band) | |
+| Organisation / role | |
+| Date | |
+| Governed review record id | |
+| Decision (APPROVE / REVISE / REJECT) | |
+| Notes | |
 
 ## Decision (recorded only in governed review)
 

@@ -84,3 +84,26 @@ Which number is greater: 6,009,999 or 6,010,000?
 - Worked example (released after scoring): Both have 6 millions and 0 hundred thousands. In the ten thousands, 1 is more than 0, so 6,010,000 is greater.
 - Machine verification: GREATEST (checked by __tests__/curriculum-v2-g7-native.test.ts)
 - Item hash: `9f6688a0fe13d0d948b93a260bd79bb5a48e2096a77a3a516ac7cb7f056dbfb8`
+
+## Item review requirements
+
+A qualified Grade 7 Math reviewer checks every item before any release can bind it:
+
+1. The keyed option is the only defensible answer, and the worked example explains it correctly.
+2. Each distractor is plausible for a Grade 7 learner, clearly wrong, and catches the misconception it is mapped to.
+3. The item measures its mapped objective (and the alignment decision in legacy-comparison.md has not moved that objective).
+4. Language is plain enough for learners still building English fluency, and contexts are realistic in Liberia.
+5. The machine verification for the item passed (see the test) and agrees with the reviewer's own working.
+6. Evidence context (DIAGNOSTIC or PRACTICE) and the no-calculator / no-dictionary tool policy are right for an exit ticket.
+7. The legacy lesson had no keyed items to carry over (see legacy-comparison.md); nothing here is copied from it.
+
+| Item | Key correct | Distractors sound | Objective / misconception mapping | Language and context | Decision (APPROVE / REVISE / REJECT) | Reviewer initials |
+| --- | --- | --- | --- | --- | --- | --- |
+| `g7-pv-exit-1@candidate-0.1.0` | | | | | | |
+| `g7-pv-exit-2@candidate-0.1.0` | | | | | | |
+| `g7-pv-exit-3@candidate-0.1.0` | | | | | | |
+| `g7-pv-exit-4@candidate-0.1.0` | | | | | | |
+| `g7-pv-exit-5@candidate-0.1.0` | | | | | | |
+| `g7-pv-exit-6@candidate-0.1.0` | | | | | | |
+
+Item decisions count only when recorded through governed curriculum review against the item hashes above.

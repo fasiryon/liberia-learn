@@ -14,7 +14,7 @@ Candidate release manifests carry no ontology release. They validate under relea
 Required from the qualified reviewer:
 - HUMAN_REVIEW of the exact candidate hash by an identified, qualified curriculum reviewer (lib/curriculum/v2/governance.ts).
 - Objective basis decision: accept the LiberiaLearn candidate objectives with their MOE relationships, or rebind to MOE objectives.
-- Comparison with the legacy body revision and restoration of any correct legacy material.
+- Confirmation of the recorded legacy comparison (legacy-comparison.md) and a decision on each restoration and revision recommendation.
 - Approval, revision or rejection of each candidate exit-ticket item and its key.
 
 Required from curriculum authority:
@@ -35,7 +35,7 @@ Required from the qualified reviewer:
 - Objective basis decision: accept the LiberiaLearn candidate objectives with their MOE relationships, or rebind to MOE objectives.
 - Grade-scope decision for argumentative writing (MOE Grade 9, p.32).
 - Correction of the Grade 7 English paragraph-writing structuring defect through the source-structuring process.
-- Comparison with the legacy body revision and restoration of any correct legacy material.
+- Confirmation of the recorded legacy comparison (legacy-comparison.md) and a decision on each restoration and revision recommendation.
 - Approval, revision or rejection of each candidate exit-ticket item and its key.
 
 Required from curriculum authority:

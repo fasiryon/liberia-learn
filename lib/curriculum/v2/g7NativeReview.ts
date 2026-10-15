@@ -86,12 +86,12 @@ export const G7_WRITING_RUBRIC = Object.freeze({
   ],
 } as const);
 
-/** Every instructional decision relative to existing material. Legacy body comparison is pending (body not available to the author). */
+/** Every instructional decision relative to existing material. The section-by-section legacy comparison is in g7NativeLegacy.ts and awaits reviewer confirmation. */
 export type RevisionEntry = Readonly<{ sceneId: string; change: "PRESERVED" | "REVISED" | "NEW"; source: string; rationale: string }>;
 
-export const G7_REVISION_LEDGER: Readonly<Record<string, Readonly<{ legacyComparison: "PENDING_REVIEWER_WITH_DB_READ_ACCESS"; titleRevision: Readonly<{ from: string; to: string; rationale: string }>; entries: readonly RevisionEntry[] }>>> = Object.freeze({
+export const G7_REVISION_LEDGER: Readonly<Record<string, Readonly<{ legacyComparison: "RECORDED_AWAITING_REVIEWER_SIGNOFF"; titleRevision: Readonly<{ from: string; to: string; rationale: string }>; entries: readonly RevisionEntry[] }>>> = Object.freeze({
   "math-number-sense-place-value": {
-    legacyComparison: "PENDING_REVIEWER_WITH_DB_READ_ACCESS",
+    legacyComparison: "RECORDED_AWAITING_REVIEWER_SIGNOFF",
     titleRevision: { from: "Number Sense and Place Value: Foundations", to: "Number Sense and Place Value: Millions to Thousandths", rationale: "Names the exact Grade 7 scope: whole-number places to the millions and decimal places to the thousandths, which the MOE Grade 7 decimals, percents and fractions period builds on." },
     entries: [
       { sceneId: "intro", change: "REVISED", source: "PlaceValueDemo.tsx scene 'intro' (Big numbers are all around us)", rationale: "Kept the school-fund context; added a decimal measurement (2.375 kg) because Grade 7 extends place value below one." },
@@ -111,7 +111,7 @@ export const G7_REVISION_LEDGER: Readonly<Record<string, Readonly<{ legacyCompar
     ],
   },
   "literacy-essay-structure-argument": {
-    legacyComparison: "PENDING_REVIEWER_WITH_DB_READ_ACCESS",
+    legacyComparison: "RECORDED_AWAITING_REVIEWER_SIGNOFF",
     titleRevision: { from: "Understanding Essay Writing: Structure and Argumentation", to: "Understanding Essay Writing: Structure and Argument", rationale: "Plainer word for Grade 7 learners; the topic is unchanged." },
     entries: [
       { sceneId: "intro", change: "NEW", source: "—", rationale: "Community decision (PTA meeting, school garden) as the reason to write an argument." },
@@ -120,7 +120,7 @@ export const G7_REVISION_LEDGER: Readonly<Record<string, Readonly<{ legacyCompar
       { sceneId: "essay-structure", change: "NEW", source: "—", rationale: "Three-part essay structure with the job of each part." },
       { sceneId: "model-plan", change: "NEW", source: "—", rationale: "Complete model plan on a Liberian school topic, including a counterargument paragraph." },
       { sceneId: "thesis", change: "NEW", source: "—", rationale: "Distinguishes claims from topics, facts and announcements with feedback." },
-      { sceneId: "peel", change: "NEW", source: "—", rationale: "PEEL paragraph model (Point, Evidence, Explain, Link), a structure widely used in West African secondary writing." },
+      { sceneId: "peel", change: "NEW", source: "—", rationale: "PEEL paragraph model (Point, Evidence, Explain, Link). Whether PEEL is familiar in Liberian classrooms is for the reviewer to confirm (legacy comparison R-L5)." },
       { sceneId: "evidence", change: "NEW", source: "—", rationale: "Kinds of evidence and four tests; explicitly forbids invented figures." },
       { sceneId: "evidence-check", change: "NEW", source: "—", rationale: "Misconception checks: irrelevant evidence, circular reasoning, ignoring the other side." },
       { sceneId: "order-paragraph", change: "NEW", source: "—", rationale: "Declared ORDERING interaction with a written fallback." },

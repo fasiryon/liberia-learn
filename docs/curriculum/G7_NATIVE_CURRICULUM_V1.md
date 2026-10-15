@@ -34,7 +34,26 @@ Inventing any of these would be fabricated authority. Instead, each lesson carri
 
 ## Legacy provenance
 
-The legacy rows are production database rows with learner history: 18 LearningEvents, 1 ScheduledWork and 1 lesson plan for the math row; 42 ScheduledWork rows and 1 LearningEvent for the essay row. They were not read or modified. Their metadata (pk, revision id, unit, status) comes from the read-only cleanup snapshot (`artifacts/curriculum-cleanup-v1/snapshot.json`, captured 2026-09-26). The authoring session had no database access, so the legacy **body** was not compared. Every scene's instructional decision is in the revision ledger (`lib/curriculum/v2/g7NativeReview.ts`), and comparison against the named legacy revision is a blocking reviewer task. The math lesson preserves, and tracks revisions to, the Student Experience V3 DEMO material (`components/experience/demo/PlaceValueDemo.tsx`).
+The legacy rows are production database rows with learner history: 18 LearningEvents, 1 ScheduledWork and 1 lesson plan for the math row; 42 ScheduledWork rows and 1 LearningEvent for the essay row. They were never modified. Their metadata (pk, revision id, unit, status) comes from the read-only cleanup snapshot (`artifacts/curriculum-cleanup-v1/snapshot.json`, captured 2026-09-26). Every scene's instructional decision is in the revision ledger (`lib/curriculum/v2/g7NativeReview.ts`). The math lesson preserves, and tracks revisions to, the Student Experience V3 DEMO material (`components/experience/demo/PlaceValueDemo.tsx`).
+
+### Legacy body comparison (2026-10-15)
+
+The legacy bodies were read once from production with `scripts/extract-g7-legacy-revisions.ts`: a single transaction opened `SET TRANSACTION READ ONLY` (the script aborts unless Postgres reports `transaction_read_only = on`), selecting lesson content, provenance and revision columns only. User, author, editor and school identifiers were not selected. Nothing was written. The extracts are pinned in `artifacts/g7-native-curriculum-v1/legacy/`.
+
+| Legacy row | Revision | Result |
+| --- | --- | --- |
+| `math-g7-1-number-sense-and-place-value-foundations` | `cmss8t4hz00unvo54epnfst66` (only revision, current, BACKFILL_SNAPSHOT) | Found. Stored hash `93cc9003…` recomputes exactly; the live row still equals the revision. |
+| `hero-literacy-g7-essay-writing-structure-and-argumentation` | `cmss94dmc03b7vo54ryf3hqk1` (only revision, current, BACKFILL_SNAPSHOT) | Found. Stored hash `3809f982…` recomputes exactly; the live row still equals the revision. |
+
+The comparison is in `lib/curriculum/v2/g7NativeLegacy.ts` (reviewer only) and is rendered per lesson as `legacy-comparison.md` / `.json` in the review package: evidence table, section-by-section matrix, objective and assessment differences, concerns in both lessons, corrective recommendations, the open alignment decision with options, and sign-off fields. The blocking gap `LEGACY_BODY_NOT_COMPARED` is replaced by `LEGACY_COMPARISON_SIGNOFF`: a qualified reviewer confirms the comparison and decides each recommendation.
+
+Main findings:
+
+- **Math**: the legacy body is a template shell with no mathematics (no numbers, examples, questions or answers) and is aligned to an unrelated standard (Pythagorean theorem). Its only concrete material, an offline lab using cassava, leaves and stones as hundreds, tens and ones, stops at hundreds and uses non-proportional tokens. Nothing from the body needs restoring; the lab's hands-on intent and the home connection are offered as adapted restorations. The repository's MOE math text never mentions millions at any grade, so the candidate's millions range is a LiberiaLearn extension (decision A-M1).
+- **Literacy**: the legacy lesson is long and above Grade 7 reading level, and contains teaching errors (thesis and topic sentence given to one paragraph, a wrong error-analysis rule about relevance, a model conclusion that adds new points) and unsourced figures presented as evidence. None of that is restored. Sound legacy methods (brainstorm before writing, peer review, writing introductions and conclusions) are offered as adapted restorations. The comparison also found a candidate problem (model evidence written as the learner's own real experience in a lesson that forbids invented evidence) and recommends a revision. The Grade 7 MOE paragraph objectives sit on p.4 as period II and are misfiled as ACTIVITY items under period I; argumentative writing is Grade 9 (decision A-L1).
+- Two recommendations were applied because they touch reviewer-facing text only: an unsourced claim about PEEL was removed from the revision ledger, and the Grade 7 paragraph reference now names the misfiled structured item. Candidate lessons, learner projections and their hashes are unchanged.
+
+To refresh the evidence (read-only, needs `DATABASE_URL`): `npx tsx scripts/extract-g7-legacy-revisions.ts`, then regenerate the package.
 
 ## Learner and reviewer separation
 
@@ -85,7 +104,7 @@ The capture blocks service workers, so the dev-only "app update" toast cannot co
 ## Next authorized actions
 
 1. Assign a qualified Grade 7 Math reviewer and a qualified Grade 7 English reviewer. Each works through `reviewer-checklist.md` and records APPROVE, REVISE or REJECT through governed curriculum review against the candidate hash.
-2. A reviewer with read access compares each candidate with its legacy revision (`cmss8t4hz00unvo54epnfst66`, `cmss94dmc03b7vo54ryf3hqk1`).
-3. The curriculum authority decides the objective basis and the essay grade scope, and corrects the Grade 7 English structuring defect through the source-structuring process.
+2. Each reviewer confirms the recorded legacy comparison (`legacy-comparison.md`, revisions `cmss8t4hz00unvo54epnfst66` and `cmss94dmc03b7vo54ryf3hqk1`) and decides every recommendation. Accepted candidate revisions (for example R-L1) are made in the candidate and the package is regenerated with new hashes.
+3. The curriculum authority decides alignment decisions A-M1 (place-value scope) and A-L1 (essay grade scope), and corrects the Grade 7 English structuring defect through the source-structuring process.
 4. After approval, author the Grade 7 template cells and ontology releases through their own governed process, assemble the candidates, and register the releases.
 5. Only then, a separate authorized change may replace or repoint the legacy rows. That change must respect the learner history listed above.

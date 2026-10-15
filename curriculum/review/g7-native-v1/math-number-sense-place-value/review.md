@@ -12,7 +12,8 @@
 - Legacy row (not modified): `math-g7-1-number-sense-and-place-value-foundations` (pk `cmoeaemvu01i6vor4u3zch5hq`), "Number Sense and Place Value: Foundations", status APPROVED, payload approval PENDING_APPROVAL, unit `math-g7-1-number-sense-and-place-value`, 8 sections, current revision `cmss8t4hz00unvo54epnfst66`
 - Unit verification: Cleanup plan V1 queues RETURN_FOR_REVIEW (row APPROVED while its payload is PENDING_APPROVAL).
 - Recorded from `artifacts/curriculum-cleanup-v1/snapshot.json` (captured 2026-09-26T09:07:15.873Z). Learner history attached to the legacy row: CurriculumLessonPlan 1 (REPOINT), LearningEvent 18 (RETAIN_HISTORY), ScheduledWork 1 (RETAIN_HISTORY). The candidate never touches these rows.
-- The legacy lesson body was **not available** to the author (no database access). Preservation of correct legacy material is therefore unverified; see the revision ledger.
+- Legacy body: read from production on 2026-10-15T19:09:16.876Z in a single READ ONLY transaction (`scripts/extract-g7-legacy-revisions.ts`), stored in `artifacts/g7-native-curriculum-v1/legacy/math-number-sense-place-value.json`. Revision `cmss8t4hz00unvo54epnfst66` content hash `93cc90030c242b39cfbf9a86095802d967a7fd2dbcb6af7b9f7227f312fc540b`; recomputed from the extract: match.
+- Section-by-section comparison, concerns, recommendations and alignment options: [legacy-comparison.md](legacy-comparison.md) (reviewer only).
 - Reused repository material: `components/experience/demo/PlaceValueDemo.tsx` — Student Experience V3 synthetic DEMO: Musu's library fund example (L$2,350,480), practice items on 1,742,009, 3,060,500 and five million forty thousand nine, and their misconception feedback.
 - Reused repository material: `lib/learner-experience/demo/placeValue.ts` — Deterministic place-value arithmetic used by the package tests to verify every exit-ticket key.
 
@@ -268,7 +269,7 @@ Good mathematicians can explain their thinking. Write your answer in full senten
 ## Instructional revision ledger
 
 - Title: "Number Sense and Place Value: Foundations" → "Number Sense and Place Value: Millions to Thousandths". Names the exact Grade 7 scope: whole-number places to the millions and decimal places to the thousandths, which the MOE Grade 7 decimals, percents and fractions period builds on.
-- Legacy body comparison: **PENDING_REVIEWER_WITH_DB_READ_ACCESS** (revision `cmss8t4hz00unvo54epnfst66`).
+- Legacy body comparison: **RECORDED_AWAITING_REVIEWER_SIGNOFF** (revision `cmss8t4hz00unvo54epnfst66`; see [legacy-comparison.md](legacy-comparison.md)).
 
 | Scene | Change | Source | Rationale |
 | --- | --- | --- | --- |
@@ -311,7 +312,7 @@ Good mathematicians can explain their thinking. Write your answer in full senten
 - **BLOCKING** MOE_OBJECTIVE_UNBOUND: No structured MOE Grade 7 MATH OBJECTIVE item matches ll-g7-math-place-value-read-write, ll-g7-math-place-value-digit-value, ll-g7-math-place-value-compare; the objectives are LiberiaLearn candidates. A qualified curriculum reviewer must accept them as a LiberiaLearn extension (with the MOE relationships listed) or rebind the lesson to an existing MOE objective.
 - **BLOCKING** TEMPLATE_CELL_MISSING: No governed template cell exists for Grade 7 MATH (lib/learning-authority/cells has Grade 4 Math only), so no unit placement, interaction classification or concept link can be resolved.
 - **BLOCKING** ONTOLOGY_RELEASE_MISSING: No ontology release is registered for Grade 7 MATH (curriculum/releases/k12-scope.json); concepts, standard/skill bindings, governed items, evidence and tool policies are all absent.
-- **BLOCKING** LEGACY_BODY_NOT_COMPARED: The legacy body of math-g7-1-number-sense-and-place-value-foundations (revision cmss8t4hz00unvo54epnfst66) was not available to the author, so correct legacy material may not have been preserved. A reviewer with read access compares that revision against this candidate before approval.
+- **BLOCKING** LEGACY_COMPARISON_SIGNOFF: The legacy body of math-g7-1-number-sense-and-place-value-foundations (revision cmss8t4hz00unvo54epnfst66, content hash 93cc90030c24…) was read read-only and compared section by section in legacy-comparison.md. A qualified reviewer confirms the comparison and decides every restoration and revision recommendation before approval.
 - **ADVISORY** UNSUPPORTED_INTERACTION_DECLARED (`build-number`): NUMERIC is a declared intent with no renderer yet; learners receive the FREE_RESPONSE fallback.
 - **ADVISORY** SCENE_USES_FALLBACK (`build-number`): Delivered through its declared fallback under: DEFAULT, OFFLINE, WEBGL_UNAVAILABLE, VIDEO_UNAVAILABLE, KEYBOARD_ONLY, SCREEN_READER, REDUCED_MOTION, LOW_MEMORY, POINTER_DRAG_UNAVAILABLE.
 - **ADVISORY** SCENE_USES_FALLBACK (`exit-ticket`): Delivered through its declared fallback under: DEFAULT, OFFLINE, WEBGL_UNAVAILABLE, VIDEO_UNAVAILABLE, KEYBOARD_ONLY, SCREEN_READER, REDUCED_MOTION, LOW_MEMORY, POINTER_DRAG_UNAVAILABLE.
