@@ -323,6 +323,21 @@ describe("committed review package", () => {
     }
   });
 
+  it("each reviewer checklist is candidate-only, keeps publication disabled and lists every curriculum-mapping decision", () => {
+    for (const lesson of G7_NATIVE_LESSONS) {
+      const checklist = readFileSync(path.join(G7_PACKAGE_DIR, lesson.key, "reviewer-checklist.md"), "utf8");
+      expect(checklist).toContain("| Status | CANDIDATE ONLY |");
+      expect(checklist).toContain("| Publication | DISABLED |");
+      expect(checklist).toContain("## Curriculum-mapping decisions");
+      for (const objective of lesson.objectives) {
+        expect(checklist).toContain(`**\`${objective.id}\`**`);
+        for (const reference of objective.moeReferences) expect(checklist).toContain(`- [ ] ${reference.relation}: ${reference.moeItemId ? `\`${reference.moeItemId}\`` : "OCR text only"}`);
+      }
+      expect(checklist).toContain(lesson.legacy.currentRevisionId);
+      if (lesson.subject === "LITERACY") expect(checklist).toMatch(/Grade scope:.*Grade 9/);
+    }
+  });
+
   it("keeps keys only in the reviewer-only files", () => {
     for (const lesson of G7_NATIVE_LESSONS) {
       const projection = readFileSync(path.join(G7_PACKAGE_DIR, lesson.key, "learner-projection.json"), "utf8");

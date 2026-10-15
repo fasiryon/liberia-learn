@@ -4,6 +4,7 @@ Candidate `cv2-cand-g7-math-number-sense-place-value` v0.1.0, candidate hash `58
 
 | Field | Value |
 | --- | --- |
+| Status | CANDIDATE ONLY |
 | Qualified review | NOT STARTED (no reviewer assigned) |
 | Approval | NONE |
 | MOE approval | NOT CLAIMED |
@@ -34,11 +35,50 @@ A qualified reviewer completes this list through governed curriculum review. Tic
 - [ ] Names, places and money are used correctly; no context stereotypes a county, group or gender.
 - [ ] Activities work in a classroom with no devices (paper chart, counters, teacher-read questions).
 
-## Curriculum alignment
+## Curriculum-mapping decisions
 
-- [ ] Decide the objective basis: accept as a LiberiaLearn extension with the listed MOE relationships, or rebind to an MOE objective.
-- [ ] Confirm the extension to thousandths fits the Grade 7 decimals, percents and fractions period (Math 7-9 p.10).
-- [ ] Compare against legacy revision `cmss8t4hz00unvo54epnfst66` and list any correct legacy material that should be restored.
+Each decision is recorded through governed curriculum review. Until every box is decided, the lesson stays **candidate-only** with publication disabled. No MOE objective, template cell or release is bound by this package.
+
+### Lesson-level decisions
+
+- [ ] Objective basis: accept the 3 candidate objectives as a LiberiaLearn extension (with the MOE relationships below), or rebind the lesson to an existing MOE objective (name it).
+- [ ] Unit placement: `math-g7-1-number-sense-and-place-value` is a LiberiaLearn unit with no verified MOE match. Confirm it, or name the MOE Grade 7 period this lesson belongs to.
+- [ ] Scope: confirm that extending place value to the thousandths serves the MOE Grade 7 decimals, percents and fractions period (Math 7-9 p.10), or limit the lesson to whole numbers.
+- [ ] Legacy comparison: compare with legacy revision `cmss8t4hz00unvo54epnfst66` (`math-g7-1-number-sense-and-place-value-foundations`) and list any correct legacy material to restore.
+
+### Objective-by-objective mapping
+
+**`ll-g7-math-place-value-read-write`**: Read and write numbers from the millions to the thousandths in standard form, word form and expanded form.
+
+- [ ] Statement: accept as worded / revise (give wording) / remove.
+- [ ] BUILDS_ON: `moe-math-g4-s1-p1-numeration-addition-and-subtraction-obj1`, G4 p.38: "Read and write whole numbers up to hundred thousand" — accept or reject this relationship.
+- [ ] BUILDS_ON: `moe-math-g4-s2-p4-multiplication-and-division-of-2-digits-multipli-obj7`, G4 p.45: "Read and write decimal numerals up to hundredths place." — accept or reject this relationship.
+- [ ] PREREQUISITE_FOR: `moe-math-g7-s1-p3-decimals-percents-and-fractions-obj1`, G7 p.10: "Convert from decimal to percent/fraction and vice versa" — accept or reject this relationship.
+- [ ] Proposed concept `g7-math-place-value-read-write`: accept, rename, or map to an existing concept.
+
+**`ll-g7-math-place-value-digit-value`**: Explain the value of a digit from its place, using the ten-times relationship between neighbouring places from the thousandths to the millions.
+
+- [ ] Statement: accept as worded / revise (give wording) / remove.
+- [ ] BUILDS_ON: `moe-math-g4-s1-p1-numeration-addition-and-subtraction-obj1`, G4 p.38: "Read and write whole numbers up to hundred thousand" — accept or reject this relationship.
+- [ ] BUILDS_ON: `moe-math-g6-s1-p3-operations-obj2`, G6 p.67: "Round off decimals to the nearest tenth, hundredths and thousandths" — accept or reject this relationship.
+- [ ] PREREQUISITE_FOR: `moe-math-g7-s1-p3-decimals-percents-and-fractions-obj1`, G7 p.10: "Convert from decimal to percent/fraction and vice versa" — accept or reject this relationship.
+- [ ] Proposed concept `g7-math-place-value-digit-value`: accept, rename, or map to an existing concept.
+
+**`ll-g7-math-place-value-compare`**: Compare and order whole numbers and decimals to the thousandths by comparing place values from the left.
+
+- [ ] Statement: accept as worded / revise (give wording) / remove.
+- [ ] BUILDS_ON: `moe-math-g4-s1-p1-numeration-addition-and-subtraction-obj2`, G4 p.38: "Compare and order whole numbers to hundred thousand" — accept or reject this relationship.
+- [ ] BUILDS_ON: `moe-math-g4-s2-p4-multiplication-and-division-of-2-digits-multipli-obj8`, G4 p.45: "Compare and order decimal numerals up to hundredths place." — accept or reject this relationship.
+- [ ] PREREQUISITE_FOR: `moe-math-g7-s1-p3-decimals-percents-and-fractions-obj2`, G7 p.10: "Apply decimal and percent to the solution of problems involving commissions, discounts, taxes, interest, profits and losses and rayolty" — accept or reject this relationship.
+- [ ] Proposed concept `g7-math-place-value-compare`: accept, rename, or map to an existing concept.
+
+### Release-binding decisions (for the future Grade 7 release)
+
+- [ ] Release authority: name who authorizes the Grade 7 release (the candidate manifest says UNKNOWN; MOE approval is NOT CLAIMED).
+- [ ] Standard, skill and learning-target codes for each exit-ticket item (all marked REQUIRED_FROM_AUTHORITY in ../release-binding.json).
+- [ ] Exit-ticket evidence context: governed items allow DIAGNOSTIC or PRACTICE; candidates use PRACTICE pending this decision.
+- [ ] Tool policy: confirm the proposed instruction tools and the exit-ticket prohibitions in ../release-binding.json.
+- [ ] Publication: stays DISABLED until approval, template cell, ontology release and registration in curriculum/releases/k12-scope.json are all complete.
 
 ## Decision (recorded only in governed review)
 

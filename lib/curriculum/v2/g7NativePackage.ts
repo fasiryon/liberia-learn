@@ -153,7 +153,7 @@ function checklistMarkdown(outcome: G7CandidateOutcome): string {
     `# Reviewer checklist — ${outcome.candidate.title}`, "",
     `Candidate \`${lesson.lessonId}\` v${G7_CANDIDATE_VERSION}, candidate hash \`${outcome.candidateSha256}\`.`, "",
     "| Field | Value |", "| --- | --- |",
-    "| Qualified review | NOT STARTED (no reviewer assigned) |", "| Approval | NONE |", "| MOE approval | NOT CLAIMED |", "| Publication | DISABLED |", "| Release | NONE (candidate manifest only, see ../release-binding.json) |", "",
+    "| Status | CANDIDATE ONLY |", "| Qualified review | NOT STARTED (no reviewer assigned) |", "| Approval | NONE |", "| MOE approval | NOT CLAIMED |", "| Publication | DISABLED |", "| Release | NONE (candidate manifest only, see ../release-binding.json) |", "",
     "A qualified reviewer completes this list through governed curriculum review. Ticking boxes in this file records nothing.", "",
     "## Instructional correctness", "",
     box(literacy ? "Every model sentence, thesis and PEEL paragraph is grammatical and models the skill it claims to model." : "Every number, place name, expanded form and word form in the scenes is correct."),
@@ -171,13 +171,7 @@ function checklistMarkdown(outcome: G7CandidateOutcome): string {
     box(literacy ? "The school-garden, PTA, library and reading-time contexts are realistic for Liberian schools and communities." : "The library fund in Liberian dollars, market weights and cocoa cooperative contexts are realistic and respectful."),
     box("Names, places and money are used correctly; no context stereotypes a county, group or gender."),
     box("Activities work in a classroom with no devices (paper chart, counters, teacher-read questions)."),
-    "", "## Curriculum alignment", "",
-    box("Decide the objective basis: accept as a LiberiaLearn extension with the listed MOE relationships, or rebind to an MOE objective."),
-    ...(literacy ? [
-      box("Decide grade scope: MOE places argumentative composition in Grade 9 (p.32); keep as a Grade 7 introduction, rescope to paragraph writing, or move grade."),
-      box("Raise the structuring defect: Grade 7 paragraph-writing objectives (English 7-9 p.4) are filed as ACTIVITY items and must be corrected before binding."),
-    ] : [box("Confirm the extension to thousandths fits the Grade 7 decimals, percents and fractions period (Math 7-9 p.10).")]),
-    box(`Compare against legacy revision \`${lesson.legacy.currentRevisionId}\` and list any correct legacy material that should be restored.`),
+    "", ...curriculumMappingDecisions(lesson, box),
     "", "## Decision (recorded only in governed review)", "",
     "- APPROVE requires: all boxes above, closed BLOCKING gaps, a Grade 7 template cell and ontology release, released exit-ticket items.",
     "- REVISE: list scene ids and changes; the author edits the candidate and the package is regenerated with new hashes.",
@@ -293,4 +287,43 @@ export function buildG7NativePackageFiles(): Map<string, string> {
     "",
   ].join("\n"));
   return files;
+}
+
+/** Every curriculum-mapping decision a qualified reviewer must make before any release binding, one box each. */
+function curriculumMappingDecisions(lesson: G7NativeLesson, box: (text: string) => string): string[] {
+  const literacy = lesson.subject === "LITERACY";
+  const prefix = literacy ? "g7-lit" : "g7-math";
+  const out: string[] = [
+    "## Curriculum-mapping decisions", "",
+    "Each decision is recorded through governed curriculum review. Until every box is decided, the lesson stays **candidate-only** with publication disabled. No MOE objective, template cell or release is bound by this package.", "",
+    "### Lesson-level decisions", "",
+    box(`Objective basis: accept the ${lesson.objectives.length} candidate objectives as a LiberiaLearn extension (with the MOE relationships below), or rebind the lesson to an existing MOE objective (name it).`),
+    box(`Unit placement: \`${lesson.legacy.unitId}\` is a LiberiaLearn unit with no verified MOE match. Confirm it, or name the MOE Grade 7 period this lesson belongs to.`),
+    ...(literacy ? [
+      box("Grade scope: the MOE places argumentative composition (\"develop and defend a point of view\") in Grade 9 (English 7-9 p.32). Choose one: keep as a Grade 7 introduction, rescope to Grade 7 paragraph writing, or move the lesson to Grade 8/9."),
+      box("Source structuring defect: the Grade 7 paragraph-writing objectives (English 7-9 p.4) are filed as ACTIVITY items under period I. Request correction through the source-structuring process (needed before any Grade 7 writing objective can bind)."),
+    ] : [
+      box("Scope: confirm that extending place value to the thousandths serves the MOE Grade 7 decimals, percents and fractions period (Math 7-9 p.10), or limit the lesson to whole numbers."),
+    ]),
+    box(`Legacy comparison: compare with legacy revision \`${lesson.legacy.currentRevisionId}\` (\`${lesson.legacy.contentId}\`) and list any correct legacy material to restore.`),
+    "", "### Objective-by-objective mapping", "",
+  ];
+  for (const objective of lesson.objectives) {
+    out.push(`**\`${objective.id}\`**: ${objective.statement}`, "");
+    out.push(box("Statement: accept as worded / revise (give wording) / remove."));
+    for (const reference of objective.moeReferences) {
+      const source = `${reference.moeItemId ? `\`${reference.moeItemId}\`` : "OCR text only (no structured item)"}, G${reference.grade} p.${reference.pages.join(",")}: "${reference.text}"`;
+      out.push(box(`${reference.relation}: ${source} — accept or reject this relationship.`));
+    }
+    out.push(box(`Proposed concept \`${prefix}-${objective.id.replace(/^ll-g7-(math|lit)-/, "")}\`: accept, rename, or map to an existing concept.`), "");
+  }
+  out.push("### Release-binding decisions (for the future Grade 7 release)", "",
+    box("Release authority: name who authorizes the Grade 7 release (the candidate manifest says UNKNOWN; MOE approval is NOT CLAIMED)."),
+    box("Standard, skill and learning-target codes for each exit-ticket item (all marked REQUIRED_FROM_AUTHORITY in ../release-binding.json)."),
+    box("Exit-ticket evidence context: governed items allow DIAGNOSTIC or PRACTICE; candidates use PRACTICE pending this decision."),
+    box("Tool policy: confirm the proposed instruction tools and the exit-ticket prohibitions in ../release-binding.json."),
+    ...(literacy ? [box("Writing evidence: accept teacher-marked formative writing (rubric in assessment-review.md), since Assessment Player V2 has no constructed-response item type.")] : []),
+    box("Publication: stays DISABLED until approval, template cell, ontology release and registration in curriculum/releases/k12-scope.json are all complete."),
+  );
+  return out;
 }
