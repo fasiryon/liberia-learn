@@ -19,6 +19,53 @@ beforeEach(() => {
 afterEach(async () => { await act(async () => root.unmount()); pageHost.remove(); container.remove(); });
 const render = async () => { await act(async () => root.render(<GlobalAssistantShell roleConfig={getAssistantRoleConfig("STUDENT")!} initialGrade={7} suggestedSubjects={["MATH"]} positionClassName="bottom-40 right-4" />)); };
 describe("student Help respects its page instead of covering navigation", () => {
+  it("does not turn visiting Help into an open floating panel on the next destination", async () => {
+    localStorage.setItem("liberialearn-global-assistant-open", "false");
+    await render();
+    expect(localStorage.getItem("liberialearn-global-assistant-open")).toBe("false");
+    route.path = "/student/textbooks"; await render();
+    expect(container.querySelector("textarea")).toBeNull();
+    expect(container.querySelector("button[aria-expanded=false]")).not.toBeNull();
+  });
+  it("handles contextual lesson help once without turning it into a Help page overlay", async () => {
+    route.path = "/student/lesson/fixture-place-value";
+    await render();
+    const detail = { handled: false };
+    await act(async () => { window.dispatchEvent(new CustomEvent("liberialearn:open-tutor", { detail })); });
+    expect(detail.handled).toBe(true);
+    expect(container.querySelectorAll("textarea")).toHaveLength(1);
+    expect(container.querySelector("[data-assistant-presentation=floating]")).not.toBeNull();
+    expect(pageHost.querySelector("textarea")).toBeNull();
+    const input = container.querySelector("textarea")!;
+    const setter = Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, "value")!.set!;
+    await act(async () => { setter.call(input, "Keep this unfinished question"); input.dispatchEvent(new Event("input", { bubbles: true })); });
+    await act(async () => { input.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true })); });
+    await act(async () => { window.dispatchEvent(new CustomEvent("liberialearn:open-tutor", { detail })); });
+    expect(container.querySelector("textarea")?.value).toBe("Keep this unfinished question");
+  });
+  it("leaves assigned lessons' own tutor panel as the only owner", async () => {
+    route.path = "/student/lessons/fixture-work";
+    await render();
+    const detail = { handled: false };
+    await act(async () => { window.dispatchEvent(new CustomEvent("liberialearn:open-tutor", { detail })); });
+    expect(detail.handled).toBe(false);
+    expect(container.querySelector("textarea")).toBeNull();
+    expect(pageHost.querySelector("textarea")).toBeNull();
+  });
+  it("opens contextual help for assigned native lessons that replace legacy delivery", async () => {
+    route.path = "/student/lessons/fixture-native-work";
+    const marker = document.createElement("main"); marker.setAttribute("data-lesson-player-v2", ""); document.body.append(marker);
+    try {
+      await render();
+      expect(container.querySelector("textarea")).toBeNull();
+      const detail = { handled: false };
+      await act(async () => { window.dispatchEvent(new CustomEvent("liberialearn:open-tutor", { detail })); });
+      expect(detail.handled).toBe(true);
+      expect(container.querySelectorAll("textarea")).toHaveLength(1);
+      route.path = "/student/lessons/other-legacy-work"; await render();
+      expect(container.querySelector("textarea")).toBeNull();
+    } finally { marker.remove(); }
+  });
   it("finds the page host when the authenticated page streams after layout hydration", async () => {
     pageHost.remove(); await render();
     expect(container.querySelector("[data-assistant-presentation=page]")).not.toBeNull();

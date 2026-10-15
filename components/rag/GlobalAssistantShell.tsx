@@ -212,6 +212,7 @@ export default function GlobalAssistantShell({
   const [pageHost, setPageHost] = useState<HTMLElement | null>(null);
   const launcherRef = useRef<HTMLButtonElement>(null);
   const questionRef = useRef<HTMLTextAreaElement>(null);
+  const [assignedNativeTutorPath, setAssignedNativeTutorPath] = useState<string | null>(null);
   useEffect(() => {
     if (!isDedicatedPage) { setPageHost(null); return; }
     const host = document.getElementById("student-tutor-panel");
@@ -263,8 +264,14 @@ export default function GlobalAssistantShell({
   // A lesson's "Ask the tutor" button opens this shell in place (keeping the learner's place and the page's
   // lesson context). Only where the shell is shown; pages with their own lesson-help panel do not answer.
   useEffect(() => {
-    if (pathname === "/student/learn" || /^\/student\/lessons\//.test(pathname)) return;
+    if (pathname === "/student/learn") return;
     const onOpen = (event: Event) => {
+      // Assigned legacy delivery owns its help dialog. Native delivery replaces
+      // that component, so its explicit Ask action needs the existing shell.
+      if (/^\/student\/lessons\//.test(pathname)) {
+        if (!document.querySelector("[data-lesson-player-v2]")) return;
+        setAssignedNativeTutorPath(pathname);
+      }
       const detail = (event as CustomEvent<{ handled?: boolean } | null>).detail;
       if (detail) detail.handled = true;
       setOpen(true);
@@ -289,14 +296,14 @@ export default function GlobalAssistantShell({
     }
 
     const saved = window.localStorage.getItem(storageKey);
-    if (saved === "true") {
-      setOpen(true);
-    }
-  }, [isDedicatedPage]);
+    setOpen(saved === "true" || initialOpen);
+  }, [isDedicatedPage, initialOpen]);
 
   useEffect(() => {
-    window.localStorage.setItem(storageKey, open ? "true" : "false");
-  }, [open]);
+    // A full Help page is always open; visiting it is not a request for a
+    // floating assistant on the next destination.
+    if (!isDedicatedPage) window.localStorage.setItem(storageKey, open ? "true" : "false");
+  }, [open, isDedicatedPage]);
 
   useEffect(() => {
     if (typeof window === "undefined") {
@@ -624,7 +631,7 @@ export default function GlobalAssistantShell({
   }
 
   // Lesson pages own the lesson-help panel; avoid two competing tutors.
-  if (pathname === "/student/learn" || /^\/student\/lessons\//.test(pathname)) return null;
+  if (pathname === "/student/learn" || (/^\/student\/lessons\//.test(pathname) && assignedNativeTutorPath !== pathname)) return null;
 
   const assistant = (
     <div
@@ -977,7 +984,7 @@ export default function GlobalAssistantShell({
         onClick={() => { setOpen((current) => !current); if (!open) requestAnimationFrame(() => questionRef.current?.focus()); }}
         className="group flex items-center gap-3 rounded-full border border-emerald-400/30 bg-[var(--ll-bg)]/95 px-4 py-2.5 text-left shadow-[0_18px_50px_rgba(2,6,23,0.55)] transition-colors hover:border-emerald-300/50"
       >
-        <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--ll-yellow-soft)] text-xs font-bold text-[var(--ll-text-faint)]">
+        <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--ll-yellow-soft)] text-xs font-bold text-[var(--ll-text)]">
           AI
         </div>
         <div className="pr-1">
