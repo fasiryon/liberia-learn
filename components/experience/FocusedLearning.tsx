@@ -3,6 +3,8 @@
 import { useEffect, useId, useRef, useState, type ReactNode, type Ref } from "react";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight, PanelRightClose, PanelRightOpen } from "lucide-react";
+import { ContentsDrawer } from "./ContentsDrawer";
+import "./lesson.css";
 
 /**
  * Focused learning chrome shared by the native Lesson Player, the legacy lesson routes and the Grade 7
@@ -29,9 +31,11 @@ export function FocusedHeader({ backHref, backLabel, title, context, extra, prog
   </header>;
 }
 
-export function LearningStage({ outline, outlineLabel = "Lesson outline", support, supportLabel = "Lesson help", children, bottomSpace, mainId, mainLabelledBy }: {
+export function LearningStage({ outline, outlineLabel = "Lesson outline", outlineSummary, support, supportLabel = "Lesson help", children, bottomSpace, mainId, mainLabelledBy }: {
   outline?: ReactNode;
   outlineLabel?: string;
+  /** Position text for the phone/tablet contents button, e.g. "Scene 3 of 12". */
+  outlineSummary?: ReactNode;
   support?: ReactNode;
   supportLabel?: string;
   children: ReactNode;
@@ -55,6 +59,8 @@ export function LearningStage({ outline, outlineLabel = "Lesson outline", suppor
   return <div className="ll3-stage" data-outline={outline ? "" : undefined} data-support={support ? (open ? "open" : "closed") : undefined} style={bottomSpace ? { paddingBottom: bottomSpace + 32 } : undefined}>
     {outline && <nav className="ll3-stage-outline" aria-label={outlineLabel}><div>{outline}</div></nav>}
     <main className="ll3-stage-main" id={mainId} aria-labelledby={mainLabelledBy}>
+      {/* Below 1024px the outline rail is a Contents drawer instead of a column squeezing the stage. */}
+      {outline && <ContentsDrawer label="Contents" summary={outlineSummary} className="ll4-stage-drawer"><nav aria-label={outlineLabel}>{outline}</nav></ContentsDrawer>}
       {support && !open && <div className="mb-4 flex justify-end"><button ref={showRef} type="button" className="ll3-support-toggle" aria-expanded={false} aria-controls={supportId} onClick={() => toggle(true)}><PanelRightOpen size={18} aria-hidden="true" /> Show {supportLabel.toLowerCase()}</button></div>}
       {children}
     </main>

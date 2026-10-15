@@ -244,6 +244,18 @@ export default function GlobalAssistantShell({
     if (marker && marker.dataset.tutorLessonId === studentTutorIdentityForPath(pathname)?.lessonId) setLessonContext({ pathname, identity: { lessonId: marker.dataset.tutorLessonId, lessonVersion: marker.dataset.tutorLessonVersion } });
     return () => window.removeEventListener("liberialearn:tutor-context", onContext);
   }, [pathname]);
+  // A lesson's "Ask the tutor" button opens this shell in place (keeping the learner's place and the page's
+  // lesson context). Only where the shell is shown; pages with their own lesson-help panel do not answer.
+  useEffect(() => {
+    if (pathname === "/student/learn" || /^\/student\/lessons\//.test(pathname)) return;
+    const onOpen = (event: Event) => {
+      const detail = (event as CustomEvent<{ handled?: boolean } | null>).detail;
+      if (detail) detail.handled = true;
+      setOpen(true);
+    };
+    window.addEventListener("liberialearn:open-tutor", onOpen);
+    return () => window.removeEventListener("liberialearn:open-tutor", onOpen);
+  }, [pathname]);
   const [pendingConfirmation, setPendingConfirmation] =
     useState<PendingActionConfirmation | null>(initialPendingConfirmation);
   const [selectedGuardianLearnerId, setSelectedGuardianLearnerId] = useState(

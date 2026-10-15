@@ -14,8 +14,8 @@ export default async function StudentAiTutorPage() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-center gap-2 bg-[var(--ll-bg)] p-6 text-center text-[var(--ll-text)]">
       <div className="mb-4 self-start">
-        <Link href="/dashboard" className="text-sm text-[var(--ll-yellow)] hover:text-[var(--ll-yellow)]">
-          &larr; Back to Dashboard
+        <Link href="/student/today" className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--ll-yellow)] underline-offset-4 hover:underline">
+          &larr; Back to Today
         </Link>
       </div>
       <h1 className="text-lg font-semibold text-[var(--ll-text)]">AI Tutor</h1>

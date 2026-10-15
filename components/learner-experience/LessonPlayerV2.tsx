@@ -17,6 +17,7 @@ import { TOOL_COMPONENTS } from "@/components/toolkit/toolComponents";
 import { AssessmentHandoffSeam, DiagramReveal, FormativeCheck, ReflectionPrompts, SceneBody, SceneMediaList } from "./SceneViews";
 import { LabScene, type LabSceneView } from "./LabScene";
 import { LearningStage, StageFooter } from "@/components/experience/FocusedLearning";
+import { AskTutorButton } from "@/components/experience/AskTutorButton";
 
 const TYPE_LABEL: Record<Scene["type"], string> = {
   INTRO: "Introduction", OBJECTIVE: "Goal", EXPLANATION: "Learn", MEDIA: "Watch", INTERACTIVE_DIAGRAM: "Explore",
@@ -289,7 +290,7 @@ export function LessonPlayerV2({ experience, links = NO_LINKS, labs = NO_LABS, t
       <section aria-labelledby="ctx-help">
         <h2 id="ctx-help" className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.12em] text-[var(--ll-text-muted)]"><CircleHelp size={14} aria-hidden="true" /> Help</h2>
         <ul className="mt-2 space-y-2 text-sm">
-          <li><Link href="/student/ai-tutor" className="inline-flex min-h-11 items-center text-[var(--ll-accent)] underline-offset-4 hover:underline">Ask the AI tutor</Link></li>
+          <li><AskTutorButton /><p className="mt-1 text-[var(--ll-text-muted)]">{online ? "The tutor answers about this lesson. Your place here is kept." : "The tutor needs a connection."}</p></li>
           {!runtime && <li className="flex gap-2 text-[var(--ll-text-muted)]"><Flag size={14} className="mt-1 shrink-0" aria-hidden="true" /> Need your teacher? Released lessons connect here to the existing &quot;Flag for teacher&quot; path.</li>}
           <li className="text-[var(--ll-text-muted)]">{online ? "Your place is saved on this device." : `Offline: ${scene.offline.fallback}`}</li>
         </ul>
@@ -330,6 +331,7 @@ export function LessonPlayerV2({ experience, links = NO_LINKS, labs = NO_LABS, t
         mainId="lesson-scene"
         bottomSpace={footerHeight}
         outlineLabel="Lesson outline"
+        outlineSummary={`Scene ${index + 1} of ${experience.scenes.length} · ${scene.title}`}
         outline={
           <ol className="ll3-outline-list">
             {experience.scenes.map((candidate, candidateIndex) => {
