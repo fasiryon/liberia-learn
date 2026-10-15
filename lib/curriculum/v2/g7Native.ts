@@ -32,7 +32,7 @@ export const G7_ASSET_DIR = "public/curriculum-candidates/g7-native-v1";
 export const G7_ASSET_URL_BASE = "/curriculum-candidates/g7-native-v1";
 /** Fixed so the committed review package is reproducible. */
 export const G7_AUTHORED_AT = "2026-10-15T00:00:00.000Z";
-export const G7_CANDIDATE_VERSION = "0.2.0";
+export const G7_CANDIDATE_VERSION = "0.3.0";
 
 /** How a provisional objective relates to an item in the structured MOE source. Never "is" the MOE objective. */
 export type MoeRelation =

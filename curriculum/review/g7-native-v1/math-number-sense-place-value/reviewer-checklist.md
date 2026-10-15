@@ -1,6 +1,6 @@
 # Reviewer checklist — Number Sense and Place Value: Millions to Thousandths
 
-Candidate `cv2-cand-g7-math-number-sense-place-value` v0.2.0, candidate hash `3f612d907f52f5953d879476a627fde8e9a1c5b3d30d22e171a42a8ccec80c0c`.
+Candidate `cv2-cand-g7-math-number-sense-place-value` v0.3.0, candidate hash `c68b1a37f1852458cd3765643a43c59d6cc1d80ea0ef6f0ab9d67b7860d2ca95`.
 
 | Field | Value |
 | --- | --- |
@@ -21,6 +21,15 @@ A qualified reviewer completes this list through governed curriculum review. Tic
 - [ ] Machine verifications passed (see the test) and the reviewer agrees with the word-form convention used ("and twenty-seven hundredths" / "point two seven").
 - [ ] Explanations are no longer than needed and the sequence moves from modelled to guided to independent work.
 
+## Curriculum Excellence V1 corrections (independent review required)
+
+The v0.3.0 corrections were written by an AI agent. That agent may not review or certify them; an independent qualified reviewer decides each one. Gap reports: curriculum/excellence/.
+
+- [ ] Confirm or reject each misconception-catalogue addition and each exit-item remapping (assessment-review.md shows the mappings).
+- [ ] Review every candidate assessment definition in assessment-review.md: prompts, keys, scoring guides, prerequisite routes, retention timing and transfer contexts.
+- [ ] Check the new reasoning scene (reason-it-out) and the optional challenge for correctness and level.
+- [ ] Confirm the optional challenge is labelled optional and never gates progress.
+
 ## Accessibility
 
 - [ ] Each scene's text alternative teaches the same idea without the diagram.
@@ -38,7 +47,7 @@ A qualified reviewer completes this list through governed curriculum review. Tic
 ## Legacy comparison
 
 - [ ] Confirm the section-by-section comparison with legacy revision `cmss8t4hz00unvo54epnfst66` in legacy-comparison.md (or correct it).
-- [ ] Decide every recommendation: R-M3, R-M4, R-M5 (not applied), and confirm the applied ones (R-M1, R-M2).
+- [ ] Decide every recommendation: R-M4, R-M5 (not applied), and confirm the applied ones (R-M1, R-M2, R-M3).
 - [ ] Confirm that no legacy concern (L-…) is re-introduced, and decide each candidate concern (C-…).
 
 ## Curriculum-mapping decisions
@@ -89,7 +98,7 @@ Each decision is recorded through governed curriculum review. Until every box is
 
 ## Reviewer sign-off
 
-Valid only when recorded through governed curriculum review (HUMAN_REVIEW) against candidate hash `3f612d907f52f5953d879476a627fde8e9a1c5b3d30d22e171a42a8ccec80c0c`. Filling in this table records nothing.
+Valid only when recorded through governed curriculum review (HUMAN_REVIEW) against candidate hash `c68b1a37f1852458cd3765643a43c59d6cc1d80ea0ef6f0ab9d67b7860d2ca95`. Filling in this table records nothing.
 
 | Field | Entry |
 | --- | --- |

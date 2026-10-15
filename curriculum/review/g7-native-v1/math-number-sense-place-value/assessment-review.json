@@ -8,9 +8,9 @@
       "assessmentRequestId": "g7-pv-exit-ticket",
       "objectiveId": "ll-g7-math-place-value-digit-value",
       "distractorMisconceptions": {
-        "0": "mc-digit-not-value",
-        "1": "mc-digit-not-value",
-        "3": "mc-digit-not-value"
+        "0": "mc-place-shift",
+        "1": "mc-place-shift",
+        "3": "mc-place-shift"
       },
       "verification": {
         "kind": "DIGIT_VALUE",
@@ -39,8 +39,8 @@
       "objectiveId": "ll-g7-math-place-value-digit-value",
       "distractorMisconceptions": {
         "0": "mc-digit-not-value",
-        "1": "mc-digit-not-value",
-        "2": "mc-digit-not-value"
+        "1": "mc-place-shift",
+        "2": "mc-place-shift"
       },
       "verification": {
         "kind": "DIGIT_VALUE",
@@ -98,7 +98,7 @@
       "objectiveId": "ll-g7-math-place-value-read-write",
       "distractorMisconceptions": {
         "0": "mc-zero-placeholder",
-        "1": "mc-digit-not-value",
+        "1": "mc-place-shift",
         "3": "mc-digit-not-value"
       },
       "verification": {
@@ -126,8 +126,7 @@
       "assessmentRequestId": "g7-pv-exit-ticket",
       "objectiveId": "ll-g7-math-place-value-compare",
       "distractorMisconceptions": {
-        "0": "mc-longer-decimal-bigger",
-        "2": "mc-longer-decimal-bigger",
+        "2": "mc-shorter-decimal-bigger",
         "3": "mc-longer-decimal-bigger"
       },
       "verification": {
@@ -140,27 +139,26 @@
       },
       "item": {
         "id": "g7-pv-exit-5",
-        "version": "candidate-0.1.0",
+        "version": "candidate-0.3.0",
         "context": "PRACTICE",
         "prompt": "Which list is in order from least to greatest?",
         "options": [
           "0.37, 0.307, 0.3",
           "0.3, 0.307, 0.37",
-          "0.307, 0.3, 0.37",
+          "0.307, 0.37, 0.3",
           "0.3, 0.37, 0.307"
         ],
         "correctIndex": 1,
         "hint": "Fill empty places with zeros: 0.300, 0.307, 0.370.",
         "workedExample": "As thousandths: 300, 307, 370. So the order is 0.3, 0.307, 0.37."
       },
-      "sha256": "7f0da1595e595b5979e1d7cbf647afbbaca012cc4bac5a54b0feacf34452b04d"
+      "sha256": "c5c5d6d8769c5f670a479088fb47ce1f1322399127c62ec249f6e5dd8fdde423"
     },
     {
       "assessmentRequestId": "g7-pv-exit-ticket",
       "objectiveId": "ll-g7-math-place-value-compare",
       "distractorMisconceptions": {
-        "0": "mc-longer-decimal-bigger",
-        "2": "mc-longer-decimal-bigger"
+        "0": "mc-compare-by-digits"
       },
       "verification": {
         "kind": "GREATEST",
@@ -185,5 +183,255 @@
       },
       "sha256": "9f6688a0fe13d0d948b93a260bd79bb5a48e2096a77a3a516ac7cb7f056dbfb8"
     }
-  ]
+  ],
+  "assessmentDefinitions": {
+    "lessonKey": "math-number-sense-place-value",
+    "audience": "REVIEWER_ONLY",
+    "status": "GOVERNED_CANDIDATE",
+    "notice": "Candidate assessment definitions for the v0.3.0 lesson (Curriculum Excellence Standard V1). Unreviewed and unreleased: nothing scores them, writes mastery from them or releases them. Teacher-administered on paper or in class until a qualified reviewer approves them and a governed release binds them. Keys and scoring guides are reviewer only and must never reach a learner projection, offline package or client bundle.",
+    "authors": [
+      {
+        "kind": "AI",
+        "agentId": "claude-code:curriculum-excellence-v1",
+        "modelFamily": "anthropic-claude",
+        "modelId": "claude-opus-5-5",
+        "sessionId": null
+      }
+    ],
+    "diagnosticOnlyExitItemIds": [],
+    "tasks": [
+      {
+        "id": "pm-d0",
+        "kind": "PREREQUISITE_DIAGNOSTIC",
+        "prerequisiteIndex": 0,
+        "deliveredBy": "warm-up#warm-hundreds",
+        "objectiveIds": [
+          "ll-g7-math-place-value-digit-value"
+        ],
+        "scaffold": "FULL",
+        "timing": "PRE_LESSON",
+        "context": "REHEARSED",
+        "scoring": "KEYED",
+        "prompt": "In 45,384, what is the 3 worth?",
+        "key": "300",
+        "fallbackRoute": "Before the chart scene, rebuild the thousands period with counters on a paper chart (MOE Grade 4 numeration), then re-check with two similar numbers.",
+        "source": "EXCELLENCE_PLAN",
+        "ref": "definition:pm-d0"
+      },
+      {
+        "id": "pm-d1",
+        "kind": "PREREQUISITE_DIAGNOSTIC",
+        "prerequisiteIndex": 1,
+        "deliveredBy": "warm-up#warm-tenths",
+        "objectiveIds": [
+          "ll-g7-math-place-value-digit-value"
+        ],
+        "scaffold": "FULL",
+        "timing": "PRE_LESSON",
+        "context": "REHEARSED",
+        "scoring": "KEYED",
+        "prompt": "Which means the same as 0.5?",
+        "key": "5 tenths",
+        "fallbackRoute": "Fold a paper strip into ten equal parts and shade five; then fold each tenth into ten to show 50 hundredths. Re-check with 0.3.",
+        "source": "EXCELLENCE_PLAN",
+        "ref": "definition:pm-d1"
+      },
+      {
+        "id": "pm-d2",
+        "kind": "PREREQUISITE_DIAGNOSTIC",
+        "prerequisiteIndex": 2,
+        "deliveredBy": "warm-up#warm-times-ten",
+        "objectiveIds": [
+          "ll-g7-math-place-value-digit-value"
+        ],
+        "scaffold": "FULL",
+        "timing": "PRE_LESSON",
+        "context": "REHEARSED",
+        "scoring": "KEYED",
+        "prompt": "What is 7 × 1,000?",
+        "key": "7,000",
+        "fallbackRoute": "Do the counter-exchange activity (ten counters become one in the next column) before the ten-times scene, then re-check with 4 × 10, 4 × 100, 4 × 1,000.",
+        "source": "EXCELLENCE_PLAN",
+        "ref": "definition:pm-d2"
+      },
+      {
+        "id": "pm-c1",
+        "kind": "SHORT_CONSTRUCTED_RESPONSE",
+        "objectiveIds": [
+          "ll-g7-math-place-value-read-write"
+        ],
+        "scaffold": "NONE",
+        "timing": "END_OF_LESSON",
+        "context": "REHEARSED",
+        "scoring": "KEYED",
+        "prompt": "Write in standard form: four hundred sixty thousand, three and twenty-five thousandths.",
+        "key": "460,003.025",
+        "targetsMisconceptions": [
+          "mc-zero-placeholder",
+          "mc-decimal-word-form"
+        ],
+        "note": "Within MOE scope (hundred thousands and thousandths), so it survives a decision against the millions extension.",
+        "source": "EXCELLENCE_PLAN",
+        "ref": "definition:pm-c1"
+      },
+      {
+        "id": "pm-c2",
+        "kind": "SHORT_CONSTRUCTED_RESPONSE",
+        "objectiveIds": [
+          "ll-g7-math-place-value-digit-value"
+        ],
+        "scaffold": "NONE",
+        "timing": "END_OF_LESSON",
+        "context": "REHEARSED",
+        "scoring": "KEYED",
+        "prompt": "In 135,276.049, write the value of the 3 and the value of the 4.",
+        "key": "3 → 30,000; 4 → 0.04",
+        "targetsMisconceptions": [
+          "mc-digit-not-value",
+          "mc-place-shift"
+        ],
+        "source": "EXCELLENCE_PLAN",
+        "ref": "definition:pm-c2"
+      },
+      {
+        "id": "pm-r1",
+        "kind": "EXTENDED_REASONING",
+        "objectiveIds": [
+          "ll-g7-math-place-value-compare"
+        ],
+        "scaffold": "NONE",
+        "timing": "END_OF_LESSON",
+        "context": "REHEARSED",
+        "scoring": "ANALYTIC_RUBRIC",
+        "prompt": "Kebeh says 0.7 is less than 0.65 because 65 is bigger than 7. Is she right? Explain using place value, and show one way to check your answer.",
+        "scoringGuide": {
+          "0": "Agrees with Kebeh, or no place-value reasoning.",
+          "1": "Correct decision with a vague or partly correct reason, or a correct reason with no check.",
+          "2": "Says Kebeh is wrong and justifies by place: 7 tenths is more than 6 tenths, or 0.70 is more than 0.65 when both are written to hundredths; gives a check (chart, number line or hundredths grid)."
+        },
+        "targetsMisconceptions": [
+          "mc-longer-decimal-bigger"
+        ],
+        "source": "EXCELLENCE_PLAN",
+        "ref": "definition:pm-r1"
+      },
+      {
+        "id": "pm-r2",
+        "kind": "EXTENDED_REASONING",
+        "objectiveIds": [
+          "ll-g7-math-place-value-digit-value"
+        ],
+        "scaffold": "NONE",
+        "timing": "END_OF_LESSON",
+        "context": "REHEARSED",
+        "scoring": "ANALYTIC_RUBRIC",
+        "prompt": "The digit 5 appears three times in 505.05. Write what each 5 is worth. Then explain how the value of the first 5 compares with the value of the 5 in the ones place.",
+        "scoringGuide": {
+          "0": "Gives 5 for every digit, or no relationship stated.",
+          "1": "All three values correct with no explanation of the relationship, or a correct relationship with one value wrong.",
+          "2": "500, 5 and 0.05, and explains that 500 is 100 times 5 because it is two places to the left (each place is ten times the place to its right)."
+        },
+        "targetsMisconceptions": [
+          "mc-digit-not-value",
+          "mc-place-shift"
+        ],
+        "source": "EXCELLENCE_PLAN",
+        "ref": "definition:pm-r2"
+      },
+      {
+        "id": "pm-t1",
+        "kind": "TRANSFER_TASK",
+        "objectiveIds": [
+          "ll-g7-math-place-value-compare"
+        ],
+        "scaffold": "NONE",
+        "timing": "END_OF_LESSON",
+        "context": "NEW",
+        "scoring": "ANALYTIC_RUBRIC",
+        "prompt": "Draw a number line from 2.3 to 2.4 and mark it in hundredths. Place 2.35 and 2.305 on it. Which one is closer to 2.3? Explain how the number line shows it.",
+        "scoringGuide": {
+          "0": "Says 2.35 is closer, or places 2.305 beyond 2.35.",
+          "1": "Correct answer with an imprecise placement or explanation.",
+          "2": "2.35 at the halfway mark, 2.305 between 2.30 and 2.31; says 2.305 is closer to 2.3 and explains using the marks (2.305 is less than one hundredth away; 2.35 is five hundredths away)."
+        },
+        "targetsMisconceptions": [
+          "mc-longer-decimal-bigger",
+          "mc-shorter-decimal-bigger"
+        ],
+        "note": "New representation: the lesson uses charts and grids, never a number line.",
+        "source": "EXCELLENCE_PLAN",
+        "ref": "definition:pm-t1"
+      },
+      {
+        "id": "pm-dr1",
+        "kind": "DELAYED_RETRIEVAL",
+        "objectiveIds": [
+          "ll-g7-math-place-value-read-write",
+          "ll-g7-math-place-value-digit-value",
+          "ll-g7-math-place-value-compare"
+        ],
+        "scaffold": "NONE",
+        "timing": "DELAYED",
+        "delayDays": 7,
+        "context": "REHEARSED",
+        "scoring": "ANALYTIC_RUBRIC",
+        "prompt": "Without notes: (a) What is the value of the 9 in 293,400.6? (b) Write 3.046 in expanded form. (c) Order 0.08, 0.8 and 0.088 from least to greatest and explain how you decided.",
+        "key": "(a) 90,000 (b) 3 + 0.04 + 0.006 (c) 0.08, 0.088, 0.8; the explanation compares tenths first, then hundredths and thousandths",
+        "scoringGuide": {
+          "0": "none correct",
+          "1": "one part correct",
+          "2": "two parts correct",
+          "3": "three parts correct, explanation partial",
+          "4": "(a), (b) and (c) correct with a place-value explanation"
+        },
+        "source": "EXCELLENCE_PLAN",
+        "ref": "definition:pm-dr1"
+      },
+      {
+        "id": "pm-dr2",
+        "kind": "DELAYED_RETRIEVAL",
+        "objectiveIds": [
+          "ll-g7-math-place-value-compare"
+        ],
+        "scaffold": "NONE",
+        "timing": "DELAYED",
+        "delayDays": 21,
+        "context": "REHEARSED",
+        "scoring": "ANALYTIC_RUBRIC",
+        "prompt": "Which is greater, 0.6 or 0.599? Explain.",
+        "scoringGuide": {
+          "0": "0.599",
+          "1": "0.6 with no valid reason",
+          "2": "0.6, explained by tenths (6 tenths > 5 tenths) or by writing 0.600"
+        },
+        "targetsMisconceptions": [
+          "mc-longer-decimal-bigger"
+        ],
+        "source": "EXCELLENCE_PLAN",
+        "ref": "definition:pm-dr2"
+      },
+      {
+        "id": "pm-x1",
+        "kind": "EXTENSION",
+        "optional": true,
+        "objectiveIds": [
+          "ll-g7-math-place-value-compare"
+        ],
+        "scaffold": "NONE",
+        "timing": "END_OF_LESSON",
+        "context": "NEW",
+        "scoring": "ANALYTIC_RUBRIC",
+        "prompt": "Use each of the digits 0, 3, 5 and 8 exactly once, and one decimal point, to make the number closest to 5. Explain why no other arrangement is closer.",
+        "key": "5.038",
+        "scoringGuide": {
+          "0": "other",
+          "1": "5.038 without a complete argument, or 5.083 with place-value reasoning",
+          "2": "5.038 with an argument from the left: 5 ones first, then the smallest possible tenths (0), hundredths (3) and thousandths (8)"
+        },
+        "note": "Optional and non-gating; the in-lesson challenge scene rehearses the same reasoning with different digits.",
+        "source": "EXCELLENCE_PLAN",
+        "ref": "definition:pm-x1"
+      }
+    ]
+  }
 }

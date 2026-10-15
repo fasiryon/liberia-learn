@@ -1,6 +1,6 @@
 # Reviewer checklist — Understanding Essay Writing: Structure and Argument
 
-Candidate `cv2-cand-g7-literacy-essay-structure-argument` v0.2.0, candidate hash `80b9592641effbdae8f5868323289873a8c1a6e547676241e09ab8ee5db060b1`.
+Candidate `cv2-cand-g7-literacy-essay-structure-argument` v0.3.0, candidate hash `0f275a880588aa8e9451a0ea368bf0fa18bee6cbd826bb1c15d86c4fdc952828`.
 
 | Field | Value |
 | --- | --- |
@@ -21,6 +21,15 @@ A qualified reviewer completes this list through governed curriculum review. Tic
 - [ ] Evidence examples are framed as examples and no statement presents an unverified fact or figure as true.
 - [ ] Explanations are no longer than needed and the sequence moves from modelled to guided to independent work.
 
+## Curriculum Excellence V1 corrections (independent review required)
+
+The v0.3.0 corrections were written by an AI agent. That agent may not review or certify them; an independent qualified reviewer decides each one. Gap reports: curriculum/excellence/.
+
+- [ ] Confirm or reject each misconception-catalogue addition and each exit-item remapping (assessment-review.md shows the mappings).
+- [ ] Review every candidate assessment definition in assessment-review.md: prompts, keys, scoring guides, prerequisite routes, retention timing and transfer contexts.
+- [ ] Decide whether exit items g7-essay-exit-1, -4 and -5 stay diagnostic-only, and approve or revise the candidate writing rubric (including the counterargument criterion).
+- [ ] Confirm the optional challenge is labelled optional and never gates progress.
+
 ## Accessibility
 
 - [ ] Each scene's text alternative teaches the same idea without the diagram.
@@ -38,7 +47,7 @@ A qualified reviewer completes this list through governed curriculum review. Tic
 ## Legacy comparison
 
 - [ ] Confirm the section-by-section comparison with legacy revision `cmss94dmc03b7vo54ryf3hqk1` in legacy-comparison.md (or correct it).
-- [ ] Decide every recommendation: R-L6, R-L8 (not applied), and confirm the applied ones (R-L1, R-L2, R-L3, R-L4, R-L5, R-L7).
+- [ ] Decide every recommendation: R-L8 (not applied), and confirm the applied ones (R-L1, R-L2, R-L3, R-L4, R-L5, R-L6, R-L7).
 - [ ] Confirm that no legacy concern (L-…) is re-introduced, and decide each candidate concern (C-…).
 
 ## Curriculum-mapping decisions
@@ -90,7 +99,7 @@ Each decision is recorded through governed curriculum review. Until every box is
 
 ## Reviewer sign-off
 
-Valid only when recorded through governed curriculum review (HUMAN_REVIEW) against candidate hash `80b9592641effbdae8f5868323289873a8c1a6e547676241e09ab8ee5db060b1`. Filling in this table records nothing.
+Valid only when recorded through governed curriculum review (HUMAN_REVIEW) against candidate hash `0f275a880588aa8e9451a0ea368bf0fa18bee6cbd826bb1c15d86c4fdc952828`. Filling in this table records nothing.
 
 | Field | Entry |
 | --- | --- |

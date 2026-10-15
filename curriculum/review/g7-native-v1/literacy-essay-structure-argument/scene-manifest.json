@@ -1,7 +1,7 @@
 {
   "packageVersion": "g7-native-curriculum/1.0.0",
   "lessonId": "cv2-cand-g7-literacy-essay-structure-argument",
-  "candidateVersion": "0.2.0",
+  "candidateVersion": "0.3.0",
   "contracts": {
     "candidate": "candidate-lesson-v2/1.0.0",
     "assembledTarget": "curriculum-lesson-v2/1.0.0",
@@ -11,19 +11,19 @@
   "origin": "AUTHORED_FIXTURE",
   "candidate": {
     "path": "curriculum/v2/g7/candidates/literacy-essay-structure-argument.json",
-    "sha256": "80b9592641effbdae8f5868323289873a8c1a6e547676241e09ab8ee5db060b1"
+    "sha256": "0f275a880588aa8e9451a0ea368bf0fa18bee6cbd826bb1c15d86c4fdc952828"
   },
   "learnerProjection": {
     "path": "curriculum/review/g7-native-v1/literacy-essay-structure-argument/learner-projection.json",
-    "sha256": "0794427b757c0e7e866acb1a906e0848a365cb60529f0c220368acd060d16ab9"
+    "sha256": "31e2a43f1c59bf3adbf7b9d889dd50d826e26320ad3a275a1677a4729f9cfe82"
   },
   "assessmentReview": {
     "path": "curriculum/review/g7-native-v1/literacy-essay-structure-argument/assessment-review.json",
-    "sha256": "0ed4b231651e7663ae9ebc73514f38915473beeca275896e38c48e34d7ca6d15"
+    "sha256": "9af3f09b453c5fbdf133aeed894a6940c6f4ad65cc021eb5bbd01cfb11cfa8b6"
   },
   "legacyComparison": {
     "path": "curriculum/review/g7-native-v1/literacy-essay-structure-argument/legacy-comparison.json",
-    "sha256": "c1e3ea6dd8703e5e33a732c8aeb84ca02d9d5dc69374fa62d117d744d4c6e470"
+    "sha256": "66fd1b601937b5e8fc6139f752e76fc6fb1ea80c8315bbe45a0ce0060d48e264"
   },
   "scenes": [
     {
@@ -80,6 +80,23 @@
     },
     {
       "position": 4,
+      "id": "readiness-writing",
+      "type": "CHECK_UNDERSTANDING",
+      "purpose": "ACTIVATE_PRIOR_KNOWLEDGE",
+      "objectiveIds": [
+        "ll-g7-lit-essay-structure",
+        "ll-g7-lit-argument-build"
+      ],
+      "interaction": "FREE_RESPONSE",
+      "fallback": null,
+      "evidence": "FORMATIVE_OBSERVATION",
+      "completion": "ALL_RESPONSES_WRITTEN",
+      "words": 43,
+      "sha256": "1b438ba58f5ea3c74ed0af70976997c99dcd92cb699f0bda314ff6ac3484c7ec",
+      "media": []
+    },
+    {
+      "position": 5,
       "id": "essay-structure",
       "type": "EXPLANATION",
       "purpose": "EXPLAIN_CONCEPT",
@@ -106,7 +123,7 @@
       ]
     },
     {
-      "position": 5,
+      "position": 6,
       "id": "model-plan",
       "type": "INTERACTIVE_DIAGRAM",
       "purpose": "MODEL_WORKED_EXAMPLE",
@@ -123,7 +140,7 @@
       "media": []
     },
     {
-      "position": 6,
+      "position": 7,
       "id": "thesis",
       "type": "GUIDED_EXAMPLE",
       "purpose": "GUIDED_PRACTICE",
@@ -139,7 +156,7 @@
       "media": []
     },
     {
-      "position": 7,
+      "position": 8,
       "id": "peel",
       "type": "INTERACTIVE_DIAGRAM",
       "purpose": "MODEL_WORKED_EXAMPLE",
@@ -151,7 +168,7 @@
       "evidence": "NONE",
       "completion": "ALL_STEPS_REVEALED",
       "words": 23,
-      "sha256": "234e88d15030afeecd902d1fc06ddb27bb0cee590733cafd8ad88e457159f335",
+      "sha256": "b590bf6632f5e8a87c4a0f8204e4f5fd1b66d8982dacc7298460539b74e31d4b",
       "media": [
         {
           "id": "peel-paragraph",
@@ -166,7 +183,7 @@
       ]
     },
     {
-      "position": 8,
+      "position": 9,
       "id": "evidence",
       "type": "EXPLANATION",
       "purpose": "EXPLAIN_CONCEPT",
@@ -193,7 +210,7 @@
       ]
     },
     {
-      "position": 9,
+      "position": 10,
       "id": "evidence-check",
       "type": "CHECK_UNDERSTANDING",
       "purpose": "ADDRESS_MISCONCEPTION",
@@ -210,7 +227,7 @@
       "media": []
     },
     {
-      "position": 10,
+      "position": 11,
       "id": "order-paragraph",
       "type": "PRACTICE",
       "purpose": "GUIDED_PRACTICE",
@@ -226,7 +243,7 @@
       "media": []
     },
     {
-      "position": 11,
+      "position": 12,
       "id": "plan-argument",
       "type": "GUIDED_EXAMPLE",
       "purpose": "GUIDED_PRACTICE",
@@ -243,7 +260,7 @@
       "media": []
     },
     {
-      "position": 12,
+      "position": 13,
       "id": "write-argument",
       "type": "PRACTICE",
       "purpose": "INDEPENDENT_PRACTICE",
@@ -260,7 +277,7 @@
       "media": []
     },
     {
-      "position": 13,
+      "position": 14,
       "id": "write-conclusion",
       "type": "PRACTICE",
       "purpose": "INDEPENDENT_PRACTICE",
@@ -276,7 +293,7 @@
       "media": []
     },
     {
-      "position": 14,
+      "position": 15,
       "id": "peer-review",
       "type": "PRACTICE",
       "purpose": "CHECK_UNDERSTANDING",
@@ -293,7 +310,43 @@
       "media": []
     },
     {
-      "position": 15,
+      "position": 16,
+      "id": "write-independently",
+      "type": "PRACTICE",
+      "purpose": "INDEPENDENT_PRACTICE",
+      "objectiveIds": [
+        "ll-g7-lit-argument-build",
+        "ll-g7-lit-evidence-support",
+        "ll-g7-lit-essay-structure"
+      ],
+      "interaction": "FREE_RESPONSE",
+      "fallback": null,
+      "evidence": "FORMATIVE_OBSERVATION",
+      "completion": "ALL_RESPONSES_WRITTEN",
+      "words": 54,
+      "sha256": "8d361b07dca3dff245bf62c02362e11ac48842f032e694eebc5a1952d260481f",
+      "media": []
+    },
+    {
+      "position": 17,
+      "id": "challenge",
+      "type": "EXPLANATION",
+      "purpose": "APPLY",
+      "objectiveIds": [
+        "ll-g7-lit-essay-structure",
+        "ll-g7-lit-argument-build",
+        "ll-g7-lit-evidence-support"
+      ],
+      "interaction": "NONE",
+      "fallback": null,
+      "evidence": "NONE",
+      "completion": "VIEWED",
+      "words": 78,
+      "sha256": "756435bb1c605f529fe7a5dcdff854b85df78e09313ba60db41749b10254f670",
+      "media": []
+    },
+    {
+      "position": 18,
       "id": "review",
       "type": "REVIEW",
       "purpose": "REVIEW",
@@ -311,7 +364,7 @@
       "media": []
     },
     {
-      "position": 16,
+      "position": 19,
       "id": "exit-ticket",
       "type": "MASTERY_CHECK",
       "purpose": "ASSESS_MASTERY",
@@ -329,7 +382,7 @@
       "media": []
     },
     {
-      "position": 17,
+      "position": 20,
       "id": "reflect",
       "type": "REFLECTION",
       "purpose": "REFLECT",

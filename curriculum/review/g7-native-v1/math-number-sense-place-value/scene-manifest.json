@@ -1,7 +1,7 @@
 {
   "packageVersion": "g7-native-curriculum/1.0.0",
   "lessonId": "cv2-cand-g7-math-number-sense-place-value",
-  "candidateVersion": "0.2.0",
+  "candidateVersion": "0.3.0",
   "contracts": {
     "candidate": "candidate-lesson-v2/1.0.0",
     "assembledTarget": "curriculum-lesson-v2/1.0.0",
@@ -11,19 +11,19 @@
   "origin": "AUTHORED_FIXTURE",
   "candidate": {
     "path": "curriculum/v2/g7/candidates/math-number-sense-place-value.json",
-    "sha256": "3f612d907f52f5953d879476a627fde8e9a1c5b3d30d22e171a42a8ccec80c0c"
+    "sha256": "c68b1a37f1852458cd3765643a43c59d6cc1d80ea0ef6f0ab9d67b7860d2ca95"
   },
   "learnerProjection": {
     "path": "curriculum/review/g7-native-v1/math-number-sense-place-value/learner-projection.json",
-    "sha256": "5c5e90e92e0ee1d80c3da8d91b9cac0526a0e1cec10a02f97e29b88eed080e4c"
+    "sha256": "b5dcf7a2ea2647658d9a0adb97ea084f86f93e09d433815a87e26b575d0ea6c9"
   },
   "assessmentReview": {
     "path": "curriculum/review/g7-native-v1/math-number-sense-place-value/assessment-review.json",
-    "sha256": "c79d29abcc504a67bf1d5b12d725241c51fda32900cf74c9827252ddecbbaed8"
+    "sha256": "fbc092511c22b0b92cb717909e0e7def24fe7a33a40381ea08a3e32365710bb3"
   },
   "legacyComparison": {
     "path": "curriculum/review/g7-native-v1/math-number-sense-place-value/legacy-comparison.json",
-    "sha256": "b28b3cb37d7b1cd83a85e229bef23428f60d44e85415105b4455f83785bde3fe"
+    "sha256": "7c71b6779980030831b259c5878d68147d938fd63c8ce8ea170bbce3f0e4dd82"
   },
   "scenes": [
     {
@@ -84,8 +84,8 @@
       "fallback": null,
       "evidence": "FORMATIVE_OBSERVATION",
       "completion": "ALL_ANSWERED",
-      "words": 23,
-      "sha256": "0ce421b98979bda2e15b97bba921416b055b4308a00af167efc0da5567314ff3",
+      "words": 33,
+      "sha256": "5e6c5a202c65e53bfdd8dc1c7dfbb5f59f66bc8f4cdab561a1acaf2d026b8b68",
       "media": []
     },
     {
@@ -129,7 +129,7 @@
       "evidence": "NONE",
       "completion": "ALL_STEPS_REVEALED",
       "words": 17,
-      "sha256": "5af3311e99f2b831ee46d078c3b036621f40f98cc8282a8911b494ea8363972a",
+      "sha256": "a6a1e50ab3a6f2ae506dcd32486a4bdb2c7f0c864fb66a6874498ad8b241d5be",
       "media": [
         {
           "id": "ten-times-ladder",
@@ -234,7 +234,7 @@
       "evidence": "NONE",
       "completion": "ALL_STEPS_REVEALED",
       "words": 21,
-      "sha256": "6b76b0bdc94d157a2d35868907392abf7bc3f8865173de3e8477784c6e1189ce",
+      "sha256": "0e9d0f9ad718740e853cdd21ddfdf5d0afa9adf070d6e506ddb513287f73899c",
       "media": [
         {
           "id": "compare-decimals",
@@ -262,7 +262,7 @@
       "evidence": "FORMATIVE_OBSERVATION",
       "completion": "ALL_ANSWERED",
       "words": 16,
-      "sha256": "79f87d2f90ee1ce4c369819d2c2eb550eb09608ed2831374477d973a1b931f43",
+      "sha256": "05161a12b53253322b5ef6beedc823a80ab62f66fb39844456180f398b94e584",
       "media": []
     },
     {
@@ -285,6 +285,40 @@
     },
     {
       "position": 13,
+      "id": "reason-it-out",
+      "type": "PRACTICE",
+      "purpose": "INDEPENDENT_PRACTICE",
+      "objectiveIds": [
+        "ll-g7-math-place-value-compare",
+        "ll-g7-math-place-value-digit-value"
+      ],
+      "interaction": "FREE_RESPONSE",
+      "fallback": null,
+      "evidence": "FORMATIVE_OBSERVATION",
+      "completion": "ALL_RESPONSES_WRITTEN",
+      "words": 33,
+      "sha256": "b7394ad23e3f4fa2ff8d7d6544714c465335b133d3e92c3bfbe762c821fcbfb5",
+      "media": []
+    },
+    {
+      "position": 14,
+      "id": "challenge",
+      "type": "EXPLANATION",
+      "purpose": "APPLY",
+      "objectiveIds": [
+        "ll-g7-math-place-value-compare",
+        "ll-g7-math-place-value-digit-value"
+      ],
+      "interaction": "NONE",
+      "fallback": null,
+      "evidence": "NONE",
+      "completion": "VIEWED",
+      "words": 59,
+      "sha256": "6cdd1e1bbc279beb111eb2ac8baf6f4f0136540bdc4223fc876a3194d68af5f0",
+      "media": []
+    },
+    {
+      "position": 15,
       "id": "review",
       "type": "REVIEW",
       "purpose": "REVIEW",
@@ -298,11 +332,11 @@
       "evidence": "NONE",
       "completion": "VIEWED",
       "words": 11,
-      "sha256": "9bea72fa6c6aeaab61d690a507f9cf2bc52c98e6b80d4d338dbc9f65ba4f5d34",
+      "sha256": "d29352870ad5b1744a3d3fbcbdef2a842336258e4d2b2c7ecdc96c3ae6bc2968",
       "media": []
     },
     {
-      "position": 14,
+      "position": 16,
       "id": "exit-ticket",
       "type": "MASTERY_CHECK",
       "purpose": "ASSESS_MASTERY",
@@ -320,7 +354,7 @@
       "media": []
     },
     {
-      "position": 15,
+      "position": 17,
       "id": "reflect",
       "type": "REFLECTION",
       "purpose": "REFLECT",
@@ -336,7 +370,7 @@
       "media": []
     },
     {
-      "position": 16,
+      "position": 18,
       "id": "home-practice",
       "type": "REFLECTION",
       "purpose": "APPLY",

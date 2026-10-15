@@ -55,10 +55,10 @@
         ],
         "contentBinding": {
           "contentId": "cv2-cand-g7-math-number-sense-place-value",
-          "contentVersion": "0.2.0",
+          "contentVersion": "0.3.0",
           "contentType": "LESSON",
-          "candidateSha256": "3f612d907f52f5953d879476a627fde8e9a1c5b3d30d22e171a42a8ccec80c0c",
-          "learnerProjectionSha256": "5c5e90e92e0ee1d80c3da8d91b9cac0526a0e1cec10a02f97e29b88eed080e4c",
+          "candidateSha256": "c68b1a37f1852458cd3765643a43c59d6cc1d80ea0ef6f0ab9d67b7860d2ca95",
+          "learnerProjectionSha256": "b5dcf7a2ea2647658d9a0adb97ea084f86f93e09d433815a87e26b575d0ea6c9",
           "contentSha256": "REQUIRED_FROM_AUTHORITY: digest of the assembled CurriculumLessonV2 once a template cell and release exist",
           "toolPolicyId": "g7-math-instruction-tools",
           "status": "PROPOSED"
@@ -114,8 +114,8 @@
           },
           {
             "itemId": "g7-pv-exit-5",
-            "itemVersion": "candidate-0.1.0",
-            "itemSha256": "7f0da1595e595b5979e1d7cbf647afbbaca012cc4bac5a54b0feacf34452b04d",
+            "itemVersion": "candidate-0.3.0",
+            "itemSha256": "c5c5d6d8769c5f670a479088fb47ce1f1322399127c62ec249f6e5dd8fdde423",
             "objectiveId": "ll-g7-math-place-value-compare",
             "conceptId": "PROPOSED:g7-math-place-value-compare",
             "skillId": "REQUIRED_FROM_AUTHORITY",
@@ -220,10 +220,10 @@
         ],
         "contentBinding": {
           "contentId": "cv2-cand-g7-literacy-essay-structure-argument",
-          "contentVersion": "0.2.0",
+          "contentVersion": "0.3.0",
           "contentType": "LESSON",
-          "candidateSha256": "80b9592641effbdae8f5868323289873a8c1a6e547676241e09ab8ee5db060b1",
-          "learnerProjectionSha256": "0794427b757c0e7e866acb1a906e0848a365cb60529f0c220368acd060d16ab9",
+          "candidateSha256": "0f275a880588aa8e9451a0ea368bf0fa18bee6cbd826bb1c15d86c4fdc952828",
+          "learnerProjectionSha256": "31e2a43f1c59bf3adbf7b9d889dd50d826e26320ad3a275a1677a4729f9cfe82",
           "contentSha256": "REQUIRED_FROM_AUTHORITY: digest of the assembled CurriculumLessonV2 once a template cell and release exist",
           "toolPolicyId": "g7-lit-instruction-tools",
           "status": "PROPOSED"

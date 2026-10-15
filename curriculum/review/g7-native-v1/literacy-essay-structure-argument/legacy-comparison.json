@@ -49,8 +49,8 @@
   },
   "candidate": {
     "lessonId": "cv2-cand-g7-literacy-essay-structure-argument",
-    "version": "0.2.0",
-    "sha256": "80b9592641effbdae8f5868323289873a8c1a6e547676241e09ab8ee5db060b1",
+    "version": "0.3.0",
+    "sha256": "0f275a880588aa8e9451a0ea368bf0fa18bee6cbd826bb1c15d86c4fdc952828",
     "firstComparedAgainst": {
       "commit": "4fdd897cd6263d9f651dbc141e36869c0b9503f9",
       "candidateSha256": "e875feab4d8d9742f421ba98c4c8c59f753e613a3d67526a77409cdd6019f786"
@@ -88,7 +88,8 @@
         "legacySection": "3. Prior Knowledge Activation",
         "legacyContent": "Parts of a short story; fact versus opinion (\"Liberia gained independence in 1847\"); a time you persuaded someone.",
         "candidateScenes": [
-          "warm-up"
+          "warm-up",
+          "readiness-writing"
         ],
         "disposition": "REORGANIZED",
         "note": "Fact versus opinion preserved (new example); topic sentence added. Short-story parts and the persuasion experience omitted."
@@ -186,7 +187,8 @@
         "legacySection": "14. Independent Practice — Tier 2 Standard",
         "legacyContent": "Draft an introduction (sports and unity); write a body paragraph (renewable energy).",
         "candidateScenes": [
-          "write-argument"
+          "write-argument",
+          "write-independently"
         ],
         "disposition": "REPLACED",
         "note": "One body paragraph kept in the candidate's writing task; introduction writing omitted."
@@ -194,7 +196,9 @@
       {
         "legacySection": "15. Independent Practice — Tier 3 Advanced",
         "legacyContent": "Analyse storytelling and cultural heritage; evaluate traditional versus modern education methods.",
-        "candidateScenes": [],
+        "candidateScenes": [
+          "challenge"
+        ],
         "disposition": "OMITTED",
         "note": "Analytical and comparative writing is beyond this lesson's objectives."
       },
@@ -487,9 +491,9 @@
         "scenes": [
           "exit-ticket"
         ],
-        "recommendation": "Decide whether the exit ticket needs one teacher-marked constructed prompt (for example, \"Explain what each part of an argumentative essay does\") in addition to the six single-choice items.",
+        "recommendation": "Decide whether the exit ticket needs one teacher-marked constructed prompt (for example, \"Explain what each part of an argumentative essay does\") in addition to the six single-choice items. Curriculum Excellence V1 (v0.3.0): applied as candidate assessment definitions (pl-w1 original writing, pl-r1 and pl-r2 reasoning), teacher-scored with the candidate rubric and not part of the Assessment Player V2 item set. The reviewer still decides.",
         "rationale": "The legacy exit ticket asked for explanation; the candidate measures recognition, and writing evidence stays formative.",
-        "applied": false
+        "applied": true
       },
       {
         "id": "R-L7",
@@ -589,6 +593,11 @@
               "note": "Topic sentence and fact versus opinion are exactly the prior knowledge needed."
             },
             {
+              "sceneId": "readiness-writing",
+              "action": "KEEP",
+              "note": "The paragraph readiness check is exactly the prerequisite a paragraph lesson needs; the two-sides question becomes optional."
+            },
+            {
               "sceneId": "essay-structure",
               "action": "ADAPT",
               "note": "Shorten to a preview: a paragraph is one building block of an essay."
@@ -642,6 +651,16 @@
               "sceneId": "peer-review",
               "action": "KEEP",
               "note": "Add one mechanics question to the four PEEL questions."
+            },
+            {
+              "sceneId": "write-independently",
+              "action": "ADAPT",
+              "note": "Write a second persuasive PEEL paragraph alone; drop the separate thesis prompt."
+            },
+            {
+              "sceneId": "challenge",
+              "action": "MOVE_TO_EXTENSION",
+              "note": "The full five-paragraph essay is already optional; under option A it is the essay extension."
             },
             {
               "sceneId": "review",

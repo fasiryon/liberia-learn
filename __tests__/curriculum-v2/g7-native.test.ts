@@ -168,16 +168,18 @@ describe("legacy revisions were read read-only and compared section by section",
 
   it("applied recommendations are really in the package, and nothing else is applied", () => {
     const applied = G7_NATIVE_LESSONS.flatMap((lesson) => G7_LEGACY_COMPARISON[lesson.key].recommendations.filter((item) => item.applied).map((item) => item.id));
-    expect(applied.sort()).toEqual(["R-L1", "R-L2", "R-L3", "R-L4", "R-L5", "R-L7", "R-M1", "R-M2"]);
+    expect(applied.sort()).toEqual(["R-L1", "R-L2", "R-L3", "R-L4", "R-L5", "R-L6", "R-L7", "R-M1", "R-M2", "R-M3"]);
     expect(JSON.stringify(G7_REVISION_LEDGER)).not.toMatch(/West African/);
     expect(LITERACY.objectives.flatMap((objective) => objective.moeReferences).some((ref) => ref.misfiledAs)).toBe(true);
     const mathScenes = loadG7Candidate(MATH).scenes.map((scene) => scene.id);
     const litScenes = loadG7Candidate(LITERACY).scenes.map((scene) => scene.id);
     for (const id of ["counter-chart", "home-practice"]) expect(mathScenes).toContain(id);
     for (const id of ["plan-argument", "write-conclusion", "peer-review"]) expect(litScenes).toContain(id);
-    // Not applied: R-M3 extension task, R-L6 constructed exit prompt.
-    expect(G7_LEGACY_COMPARISON[MATH.key].recommendations.find((item) => item.id === "R-M3")!.applied).toBe(false);
-    expect(G7_LEGACY_COMPARISON[LITERACY.key].recommendations.find((item) => item.id === "R-L6")!.applied).toBe(false);
+    // Curriculum Excellence V1 applied R-M3 (optional extension) and R-L6 (constructed writing evidence) as candidates; the reviewer still decides both.
+    for (const id of ["reason-it-out", "challenge"]) expect(mathScenes).toContain(id);
+    for (const id of ["readiness-writing", "write-independently", "challenge"]) expect(litScenes).toContain(id);
+    expect(G7_LEGACY_COMPARISON[MATH.key].recommendations.find((item) => item.id === "R-M3")).toMatchObject({ kind: "REVIEWER_DECISION", applied: true });
+    expect(G7_LEGACY_COMPARISON[LITERACY.key].recommendations.find((item) => item.id === "R-L6")).toMatchObject({ kind: "REVIEWER_DECISION", applied: true });
   });
 
   it("R-L1: no model evidence is written as the learner's own experience, and illustrative examples are labelled as made up", () => {

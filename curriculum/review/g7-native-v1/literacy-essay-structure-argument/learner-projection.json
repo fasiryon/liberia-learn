@@ -1,7 +1,7 @@
 {
   "contractVersion": "lesson-experience/1.0.0",
   "id": "cv2-cand-g7-literacy-essay-structure-argument",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "title": "Understanding Essay Writing: Structure and Argument",
   "subject": "LITERACY",
   "grade": 7,
@@ -192,6 +192,58 @@
       },
       "completion": {
         "kind": "ALL_ANSWERED"
+      }
+    },
+    {
+      "id": "readiness-writing",
+      "type": "CHECK_UNDERSTANDING",
+      "title": "Readiness check: write a short paragraph",
+      "objectiveIds": [
+        "ll-g7-lit-essay-structure",
+        "ll-g7-lit-argument-build"
+      ],
+      "content": {
+        "body": "This lesson builds on writing paragraphs and on seeing two sides of a question. Show what you can do now, on your own. This is not marked: it tells your teacher whether to start with a short paragraph-frame review before the essay work."
+      },
+      "interaction": {
+        "kind": "FREE_RESPONSE",
+        "prompts": [
+          {
+            "id": "ready-paragraph",
+            "prompt": "Write a short paragraph (three to five sentences) about a place in your community that you know well. Start with a sentence that tells the main idea.",
+            "minLength": 120
+          },
+          {
+            "id": "ready-two-sides",
+            "prompt": "Should our school have a longer lunch break? Write one reason someone might say yes and one reason someone might say no.",
+            "minLength": 40
+          }
+        ]
+      },
+      "tools": {
+        "allowed": [],
+        "prohibited": []
+      },
+      "accessibility": {
+        "textAlternative": "Two writing boxes: a three-to-five sentence paragraph about a place in your community, and one reason for and one against a longer lunch break.",
+        "keyboardOperable": true,
+        "reducedMotionSafe": true,
+        "captionsRequired": false
+      },
+      "offline": {
+        "mode": "FULL",
+        "fallback": "Writing is kept on the device until it can be sent."
+      },
+      "evidence": {
+        "kind": "FORMATIVE_OBSERVATION",
+        "evidenceType": "DIAGNOSTIC",
+        "objectiveIds": [
+          "ll-g7-lit-essay-structure",
+          "ll-g7-lit-argument-build"
+        ]
+      },
+      "completion": {
+        "kind": "ALL_RESPONSES_WRITTEN"
       }
     },
     {
@@ -401,7 +453,10 @@
         "ll-g7-lit-evidence-support"
       ],
       "content": {
-        "body": "A strong body paragraph follows **PEEL**: **P**oint, **E**vidence, **E**xplain, **L**ink. Open each step to build the first body paragraph of the garden essay."
+        "body": "A strong body paragraph follows **PEEL**: **P**oint, **E**vidence, **E**xplain, **L**ink. Open each step to build the first body paragraph of the garden essay.",
+        "keyPoints": [
+          "The Explain sentence does not repeat the evidence. It says what the evidence shows and why that proves the point: 'This shows that…'."
+        ]
       },
       "interaction": {
         "kind": "DIAGRAM_REVEAL",
@@ -891,6 +946,109 @@
       }
     },
     {
+      "id": "write-independently",
+      "type": "PRACTICE",
+      "title": "Write it again, on your own",
+      "objectiveIds": [
+        "ll-g7-lit-argument-build",
+        "ll-g7-lit-evidence-support",
+        "ll-g7-lit-essay-structure"
+      ],
+      "content": {
+        "body": "Now show that you can do it alone. Use the second topic from your plan (or a new question you care about). Do not look back at the model plan or the hints. Use only real evidence and say where it comes from. Your teacher reads this writing; it is practice, not a mark."
+      },
+      "interaction": {
+        "kind": "FREE_RESPONSE",
+        "prompts": [
+          {
+            "id": "solo-thesis",
+            "prompt": "Write a thesis statement for your second topic: your claim and two reasons.",
+            "minLength": 60
+          },
+          {
+            "id": "solo-peel",
+            "prompt": "Write one PEEL body paragraph that argues your first reason.",
+            "minLength": 250
+          },
+          {
+            "id": "solo-labels",
+            "prompt": "List the job of each sentence in your paragraph, in order (for example: Point, Evidence, Explain, Link).",
+            "minLength": 20
+          }
+        ]
+      },
+      "tools": {
+        "allowed": [
+          "dictionary"
+        ],
+        "prohibited": []
+      },
+      "accessibility": {
+        "textAlternative": "Three writing boxes: a thesis statement for your second topic, one PEEL body paragraph, and the job of each sentence in order.",
+        "keyboardOperable": true,
+        "reducedMotionSafe": true,
+        "captionsRequired": false
+      },
+      "offline": {
+        "mode": "FULL",
+        "fallback": "Writing is kept on the device until it can be sent."
+      },
+      "evidence": {
+        "kind": "FORMATIVE_OBSERVATION",
+        "evidenceType": "CLASSWORK",
+        "objectiveIds": [
+          "ll-g7-lit-argument-build",
+          "ll-g7-lit-evidence-support",
+          "ll-g7-lit-essay-structure"
+        ]
+      },
+      "completion": {
+        "kind": "ALL_RESPONSES_WRITTEN"
+      }
+    },
+    {
+      "id": "challenge",
+      "type": "EXPLANATION",
+      "title": "Optional challenge: a full argumentative essay",
+      "objectiveIds": [
+        "ll-g7-lit-essay-structure",
+        "ll-g7-lit-argument-build",
+        "ll-g7-lit-evidence-support"
+      ],
+      "content": {
+        "body": "This challenge is optional. Try it if you finish early or want to go further; it is not part of the exit ticket.\n\nWrite a full essay on a question you care about, in five paragraphs: an introduction that ends with your thesis, two body paragraphs (one for each reason), one paragraph that answers the other side, and a conclusion that adds no new reason. Then write two sentences explaining which of your reasons is strongest and why.",
+        "keyPoints": [
+          "Plan first: claim, two reasons, real evidence for each, and the strongest objection.",
+          "Answering the other side makes your argument stronger, not weaker."
+        ]
+      },
+      "interaction": {
+        "kind": "NONE"
+      },
+      "tools": {
+        "allowed": [
+          "dictionary"
+        ],
+        "prohibited": []
+      },
+      "accessibility": {
+        "textAlternative": "Optional challenge: write a five-paragraph argumentative essay on a question you care about, then explain which reason is strongest.",
+        "keyboardOperable": true,
+        "reducedMotionSafe": true,
+        "captionsRequired": false
+      },
+      "offline": {
+        "mode": "FULL",
+        "fallback": "Text, steps and questions are part of the saved lesson."
+      },
+      "evidence": {
+        "kind": "NONE"
+      },
+      "completion": {
+        "kind": "VIEWED"
+      }
+    },
+    {
       "id": "review",
       "type": "REVIEW",
       "title": "Key ideas to remember",
@@ -950,7 +1108,7 @@
         "kind": "ASSESSMENT_HANDOFF",
         "assessment": {
           "assessmentId": "cv2-cand-g7-literacy-essay-structure-argument--g7-essay-exit-ticket",
-          "assessmentVersion": "0.2.0",
+          "assessmentVersion": "0.3.0",
           "player": "ASSESSMENT_PLAYER_V2",
           "scoring": "SERVER_AUTHORITY",
           "objectiveIds": [

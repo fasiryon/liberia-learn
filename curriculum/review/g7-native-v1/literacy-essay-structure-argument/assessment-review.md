@@ -9,7 +9,7 @@ In an argumentative essay, where does the thesis statement usually appear?
 - **[key]** At the end of the introduction
 - In the middle of the second body paragraph
 - Only in the title
-- Only in the conclusion _(catches `mc-conclusion-new-idea`)_
+- Only in the conclusion
 
 - Hint (released after scoring): Think about what the reader needs to know before the body paragraphs begin.
 - Worked example (released after scoring): The thesis ends the introduction so the reader knows the claim and reasons before the body paragraphs argue them.
@@ -65,7 +65,7 @@ In a PEEL paragraph, what does the Explain sentence do?
 - **[key]** It shows how the evidence supports the point
 - It starts a new topic
 - It gives the essay title
-- It repeats the evidence word for word _(catches `mc-irrelevant-evidence`)_
+- It repeats the evidence word for word _(catches `mc-explain-restates-evidence`)_
 
 - Hint (released after scoring): The Explain sentence answers: so what?
 - Worked example (released after scoring): Explain connects the evidence to the point, showing why the evidence proves it.
@@ -88,14 +88,106 @@ Which sentence answers a counterargument?
 
 ## Writing rubric — scene `write-argument`
 
-Formative feedback by the teacher. Not a mastery score; Assessment Player V2 has no constructed-response item type yet.
+Candidate rubric, teacher-scored: formative feedback on in-lesson writing, and the proposed scoring guide for the candidate end-of-lesson writing tasks (assessment definitions). Nothing in the platform computes a score or mastery from it; Assessment Player V2 has no constructed-response item type, and it becomes mastery evidence only after qualified review and a governed release.
 
 | Criterion | Secure | Developing | Beginning |
 | --- | --- | --- | --- |
 | Thesis statement | An arguable claim that names two clear reasons. | A claim with one reason, or reasons that are vague. | A topic, a fact or an announcement instead of a claim. |
 | Point (topic sentence) | States reason one clearly and matches the thesis. | States a reason that only loosely matches the thesis. | No topic sentence, or it repeats the thesis word for word. |
 | Evidence | Specific, true and relevant evidence (example, checkable fact or experience). | Relevant but general evidence. | Opinion, an invented figure, or unrelated evidence. |
-| Explain and link | Explains how the evidence proves the point and links back to the claim. | Explains or links, but not both. | Evidence is left unexplained. |
+| Explain and link | Explains how the evidence proves the point and links back to the claim. | Explains or links, but not both; or the Explain sentence only restates the evidence. | Evidence is left unexplained. |
+| Counterargument and reply | States a fair objection and answers it with a reason. | States an objection but the reply only repeats the claim. | No objection, or an objection left unanswered. |
+
+## Candidate assessment definitions (Curriculum Excellence V1)
+
+Candidate assessment definitions for the v0.3.0 lesson (Curriculum Excellence Standard V1). Unreviewed and unreleased: nothing scores them, writes mastery from them or releases them. Writing is teacher-scored with the candidate rubric until a qualified reviewer approves it and a governed release binds it. Scoring guides are reviewer only and must never reach a learner projection, offline package or client bundle.
+
+Diagnostic-only exit items (asked, not counted as mastery evidence): `g7-essay-exit-1`, `g7-essay-exit-4`, `g7-essay-exit-5`. These three exit items test recall of where essay parts go and what they do. They stay in the exit ticket to show the teacher which idea to revisit, but they are not mastery evidence: pl-w1, pl-r1 and pl-r2 test the same knowledge by use. If released, they must be configured as non-mastery items.
+
+| Task | Kind | When | Scaffold | Context | Scoring | Objectives |
+| --- | --- | --- | --- | --- | --- | --- |
+| `pl-d0` | PREREQUISITE_DIAGNOSTIC (prerequisite 1) | PRE_LESSON | NONE | REHEARSED | ANALYTIC_RUBRIC | `ll-g7-lit-essay-structure` |
+| `pl-d1` | PREREQUISITE_DIAGNOSTIC (prerequisite 2) | PRE_LESSON | FULL | REHEARSED | KEYED | `ll-g7-lit-evidence-support` |
+| `pl-d2` | PREREQUISITE_DIAGNOSTIC (prerequisite 3) | PRE_LESSON | NONE | REHEARSED | ANALYTIC_RUBRIC | `ll-g7-lit-argument-build` |
+| `pl-w1` | ORIGINAL_WRITING | END_OF_LESSON | NONE | REHEARSED | ANALYTIC_RUBRIC | `ll-g7-lit-essay-structure`, `ll-g7-lit-argument-build`, `ll-g7-lit-evidence-support` |
+| `pl-r1` | EXTENDED_REASONING | END_OF_LESSON | NONE | REHEARSED | ANALYTIC_RUBRIC | `ll-g7-lit-argument-build`, `ll-g7-lit-evidence-support` |
+| `pl-r2` | EXTENDED_REASONING | END_OF_LESSON | NONE | REHEARSED | ANALYTIC_RUBRIC | `ll-g7-lit-argument-build` |
+| `pl-t1` | TRANSFER_TASK | END_OF_LESSON | NONE | NEW | ANALYTIC_RUBRIC | `ll-g7-lit-argument-build`, `ll-g7-lit-evidence-support` |
+| `pl-dr1` | DELAYED_RETRIEVAL | DELAYED 7 days | NONE | REHEARSED | ANALYTIC_RUBRIC | `ll-g7-lit-essay-structure`, `ll-g7-lit-argument-build`, `ll-g7-lit-evidence-support` |
+| `pl-dr2` | DELAYED_RETRIEVAL | DELAYED 21 days | NONE | REHEARSED | ANALYTIC_RUBRIC | `ll-g7-lit-essay-structure`, `ll-g7-lit-argument-build`, `ll-g7-lit-evidence-support` |
+| `pl-x1` (optional) | EXTENSION | END_OF_LESSON | NONE | NEW | ANALYTIC_RUBRIC | `ll-g7-lit-essay-structure`, `ll-g7-lit-argument-build`, `ll-g7-lit-evidence-support` |
+
+### `pl-d0`
+
+Write a short paragraph (three to five sentences) about a place in your community that you know well. Start with a sentence that tells the main idea.
+
+- Delivered in the lesson by `readiness-writing#ready-paragraph`
+- Scoring: 0: No identifiable main idea. · 1: A main idea is present but not first, or the support drifts to other ideas. · 2: First sentence states one main idea and at least two later sentences support that same idea.
+- If the prerequisite is missing: Before PEEL, teach a paragraph frame (topic sentence + two supporting sentences) with a shared example; the teacher conferences with learners who scored 0 before the write-argument scene.
+
+### `pl-d1`
+
+Which sentence is a fact, not an opinion?
+
+- Delivered in the lesson by `warm-up#warm-fact-opinion`
+- Key: Cassava leaves are grown and eaten in many parts of Liberia.
+- If the prerequisite is missing: Mini-lesson on the question 'Can it be checked?' with four more classroom sentences before the evidence scene.
+
+### `pl-d2`
+
+Should our school have a longer lunch break? Write one reason someone might say yes and one reason someone might say no.
+
+- Delivered in the lesson by `readiness-writing#ready-two-sides`
+- Scoring: 0: No reason given. · 1: Two reasons on the same side, or one side only. · 2: Two distinct reasons on opposite sides.
+- If the prerequisite is missing: Pair talk with the sentence starters 'Some people think … because …' and 'Others think … because …' before the intro scene.
+
+### `pl-w1`
+
+Should students be allowed to bring mobile phones to school? Write a thesis statement with your claim and two reasons. Then write one PEEL paragraph that argues your first reason with real evidence, explains it and links it back to your claim (120 to 200 words). Work alone, without hints, the model plan or a partner.
+
+- Scoring: Candidate writing rubric: thesis, point, evidence, explain-link (0-2 each, 8 points)
+- Targets: `mc-topic-not-thesis`, `mc-opinion-as-evidence`, `mc-circular-reasoning`, `mc-irrelevant-evidence`, `mc-explain-restates-evidence`
+
+### `pl-r1`
+
+Read this paragraph: 'Our school library should open on Saturdays. The library is good because it is good for students. Everyone knows reading is important. If it opens, more students will read.' Name two problems with the reasons or evidence and explain why each one weakens the argument. Then rewrite one sentence so it gives real evidence and says where the evidence comes from.
+
+- Scoring: 0: No valid problem named. · 1: A problem is named without explanation. · 2: One problem named and explained; rewrite adequate or missing. · 3: Both problems named, one explanation thin, rewrite adequate. · 4: Names circular reasoning (sentence 2) and opinion used as evidence (sentence 3), explains why each fails, and rewrites one with specific, checkable evidence and its source.
+- Targets: `mc-circular-reasoning`, `mc-opinion-as-evidence`
+
+### `pl-r2`
+
+Claim: 'Every Grade 7 class should plant trees on the school compound.' Write the strongest objection someone could raise, then write two sentences that answer it.
+
+- Scoring: Candidate writing rubric criterion counterargument (0-2)
+- Targets: `mc-ignore-counterargument`
+
+### `pl-t1`
+
+Write a short letter (80 to 150 words) to your town chief or community leader asking for one change at the market, such as lights or a clean water point. Make your claim, give one reason with real evidence, and answer one objection the leader might have.
+
+- Scoring: Candidate writing rubric: thesis (as claim), evidence, explain-link, counterargument (0-2 each)
+- Note: New genre and a real audience: the lesson only rehearses school essays.
+
+### `pl-dr1`
+
+Without notes: write a thesis statement with two reasons for 'Should every student learn to swim?', then write a PEEL paragraph for one of the reasons.
+
+- Scoring: Candidate writing rubric (8 points)
+
+### `pl-dr2`
+
+Choose a question about your school or community. Write a thesis, one PEEL paragraph, one sentence answering an objection, and a two-sentence conclusion that adds no new reason.
+
+- Scoring: Candidate writing rubric (8 points) + counterargument (2) + conclusion adds no new reason (0/1)
+- Targets: `mc-conclusion-new-idea`, `mc-ignore-counterargument`
+
+### `pl-x1`
+
+Write a full five-paragraph argumentative essay (introduction, two reasons, one paragraph answering the other side, conclusion) on a question you care about. Then write two sentences explaining which of your reasons is strongest and why.
+
+- Scoring: Candidate writing rubric applied per paragraph + counterargument + a reasoned self-evaluation
+- Note: Optional and non-gating; matches the in-lesson challenge scene. Argumentative essays are MOE Grade 9 scope (grade-scope decision pending).
 
 ## Item review requirements
 
@@ -108,8 +200,6 @@ A qualified Grade 7 English reviewer checks every item before any release can bi
 5. No option presents an invented fact, figure or personal experience as real evidence.
 6. Evidence context (DIAGNOSTIC or PRACTICE) and the no-calculator / no-dictionary tool policy are right for an exit ticket.
 7. The legacy lesson had no keyed items to carry over (see legacy-comparison.md); nothing here is copied from it.
-
-Open recommendations that would change exit items (see legacy-comparison.md): R-L6. Decide them before approving the affected items.
 
 | Item | Key correct | Distractors sound | Objective / misconception mapping | Language and context | Decision (APPROVE / REVISE / REJECT) | Reviewer initials |
 | --- | --- | --- | --- | --- | --- | --- |

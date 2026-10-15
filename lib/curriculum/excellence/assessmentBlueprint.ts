@@ -42,6 +42,8 @@ export type PlannedAssessmentTask = Readonly<{
   /** What the teacher or runtime does when the diagnostic shows the prerequisite is missing. */
   fallbackRoute?: string;
   optional?: boolean;
+  /** Asked for diagnosis only; never counted as mastery evidence. */
+  diagnosticOnly?: boolean;
   source: "CANDIDATE" | "EXCELLENCE_PLAN";
   /** JSON pointer (candidate/assessment document) or plan id the task comes from. */
   ref: string;
@@ -125,7 +127,7 @@ export type BlueprintEvaluation = Readonly<{
 }>;
 
 const isMastery = (task: PlannedAssessmentTask) =>
-  !task.optional && task.scaffold === "NONE" && (task.timing === "END_OF_LESSON" || task.timing === "DELAYED");
+  !task.optional && !task.diagnosticOnly && task.scaffold === "NONE" && (task.timing === "END_OF_LESSON" || task.timing === "DELAYED");
 
 type Blueprint = Readonly<{
   maxSelectedShare: number;

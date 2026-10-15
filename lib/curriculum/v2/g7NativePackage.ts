@@ -18,7 +18,7 @@ import {
   g7LearnerProjection, sha256, textFileSha256, type G7CandidateOutcome, type G7NativeLesson, type MoeReference,
 } from "./g7Native";
 import { G7_LEGACY_COMPARISON, G7_LEGACY_COMPARISON_BASELINE, legacyBodyHeadings, loadLegacyExtract, verifyLegacyExtract } from "./g7NativeLegacy";
-import { G7_EXIT_ITEMS, G7_REVISION_LEDGER, G7_WRITING_RUBRIC } from "./g7NativeReview";
+import { G7_EXIT_ITEMS, G7_REVISION_LEDGER, G7_WRITING_RUBRIC, loadG7AssessmentDefinitions } from "./g7NativeReview";
 import { sceneDetailLines } from "./reviewPackage";
 import { words } from "./validate";
 
@@ -90,6 +90,7 @@ function assessmentReview(lesson: G7NativeLesson) {
     itemShape: "GovernedItem (lib/learning-authority/governedGrade4Math.ts)",
     items: G7_EXIT_ITEMS[lesson.key].map((entry) => ({ ...entry, sha256: sha256(entry.item) })),
     ...(G7_WRITING_RUBRIC.lessonKey === lesson.key ? { writingRubric: G7_WRITING_RUBRIC } : {}),
+    assessmentDefinitions: loadG7AssessmentDefinitions(lesson.key),
   };
 }
 
@@ -248,6 +249,30 @@ function assessmentMarkdown(lesson: G7NativeLesson): string {
     const rubric = review.writingRubric;
     out.push(`## Writing rubric — scene \`${rubric.sceneId}\``, "", rubric.use, "", "| Criterion | Secure | Developing | Beginning |", "| --- | --- | --- | --- |", ...rubric.criteria.map((criterion) => `| ${criterion.label} | ${cell(criterion.secure)} | ${cell(criterion.developing)} | ${cell(criterion.beginning)} |`), "");
   }
+  const definitions = review.assessmentDefinitions;
+  const code = (id: string) => `\`${id}\``;
+  out.push("## Candidate assessment definitions (Curriculum Excellence V1)", "", definitions.notice, "");
+  if (definitions.diagnosticOnlyExitItemIds.length) out.push(`Diagnostic-only exit items (asked, not counted as mastery evidence): ${definitions.diagnosticOnlyExitItemIds.map(code).join(", ")}. ${definitions.diagnosticOnlyRationale ?? ""}`, "");
+  out.push("| Task | Kind | When | Scaffold | Context | Scoring | Objectives |", "| --- | --- | --- | --- | --- | --- | --- |");
+  for (const task of definitions.tasks) {
+    const kind = task.prerequisiteIndex !== undefined ? `${task.kind} (prerequisite ${task.prerequisiteIndex + 1})` : task.kind;
+    const when = task.timing === "DELAYED" ? `DELAYED ${task.delayDays} days` : task.timing;
+    out.push(`| ${code(task.id)}${task.optional ? " (optional)" : ""} | ${kind} | ${when} | ${task.scaffold} | ${task.context} | ${task.scoring} | ${task.objectiveIds.map(code).join(", ")} |`);
+  }
+  out.push("");
+  for (const task of definitions.tasks) {
+    out.push(`### ${code(task.id)}`, "", task.prompt, "");
+    if (task.deliveredBy) out.push(`- Delivered in the lesson by ${code(task.deliveredBy)}`);
+    if (task.key) out.push(`- Key: ${task.key}`);
+    if (task.scoringGuide) {
+      const guide = typeof task.scoringGuide === "string" ? task.scoringGuide : Object.entries(task.scoringGuide as Record<string, string>).map(([score, text]) => `${score}: ${text}`).join(" · ");
+      out.push(`- Scoring: ${guide}`);
+    }
+    if (task.fallbackRoute) out.push(`- If the prerequisite is missing: ${task.fallbackRoute}`);
+    if (task.targetsMisconceptions?.length) out.push(`- Targets: ${task.targetsMisconceptions.map(code).join(", ")}`);
+    if (task.note) out.push(`- Note: ${task.note}`);
+    out.push("");
+  }
   const affected = G7_LEGACY_COMPARISON[lesson.key].recommendations.filter((item) => !item.applied && item.scenes.includes("exit-ticket"));
   out.push(
     "## Item review requirements", "",
@@ -283,6 +308,12 @@ function checklistMarkdown(outcome: G7CandidateOutcome): string {
     box("Every exit-ticket key in assessment-review.md is correct and each distractor is plausible but clearly wrong."),
     box(literacy ? "Evidence examples are framed as examples and no statement presents an unverified fact or figure as true." : "Machine verifications passed (see the test) and the reviewer agrees with the word-form convention used (\"and twenty-seven hundredths\" / \"point two seven\")."),
     box("Explanations are no longer than needed and the sequence moves from modelled to guided to independent work."),
+    "", "## Curriculum Excellence V1 corrections (independent review required)", "",
+    "The v0.3.0 corrections were written by an AI agent. That agent may not review or certify them; an independent qualified reviewer decides each one. Gap reports: curriculum/excellence/.", "",
+    box("Confirm or reject each misconception-catalogue addition and each exit-item remapping (assessment-review.md shows the mappings)."),
+    box("Review every candidate assessment definition in assessment-review.md: prompts, keys, scoring guides, prerequisite routes, retention timing and transfer contexts."),
+    box(literacy ? "Decide whether exit items g7-essay-exit-1, -4 and -5 stay diagnostic-only, and approve or revise the candidate writing rubric (including the counterargument criterion)." : "Check the new reasoning scene (reason-it-out) and the optional challenge for correctness and level."),
+    box("Confirm the optional challenge is labelled optional and never gates progress."),
     "", "## Accessibility", "",
     box("Each scene's text alternative teaches the same idea without the diagram."),
     box("Each diagram's alt text matches the diagram exactly (assets listed in scene-manifest.json)."),

@@ -37,6 +37,14 @@ const WRITTEN = {
   "peer-strength": "One strength is the evidence, because it is real and specific: 'in my town many families share one or two books' names a place and something the writer has seen.",
   "peer-next-step": "The paragraph does not yet name a source for its numbers. Next time, try saying who told you or where you read the figure, so the reader can check it.",
   "reflect-writing": "The evidence is hardest for me because I often write my opinion again. Next time I will test each piece of evidence with the four questions before I use it.",
+  // v0.3.0 (Curriculum Excellence V1) prompts.
+  "reason-compare": "Tamba is not right. 0.9 has 9 tenths and 0.85 has only 8 tenths, so 0.9 is greater. I checked by writing 0.9 as 0.90: 90 hundredths is more than 85 hundredths.",
+  "reason-value": "The first 3 is worth 300, the middle 3 is worth 3 and the last 3 is worth 0.03. The first 3 is 100 times the 3 in the ones place because it is two places to the left.",
+  "ready-paragraph": "The Waterside market is the busiest place in my community. Every morning traders arrive early to set out fish, greens and pepper. Buyers come from many streets to bargain for good prices. By noon the market is so full that it is hard to walk between the tables.",
+  "ready-two-sides": "Yes: a longer break gives students time to eat and rest. No: it would make the school day end later.",
+  "solo-thesis": "Every school should have a reading corner because it helps students read more and gives them a quiet place to study.",
+  "solo-peel": "A reading corner helps students read more. For example, in my class the teacher keeps a box of old storybooks, and during break many of us read them instead of playing. This shows that when books are close by, students choose to read on their own, which builds their vocabulary. So a reading corner is one reason every school should make space for books.",
+  "solo-labels": "Point, Evidence, Explain, Link",
 };
 
 (async () => {
@@ -61,6 +69,9 @@ const WRITTEN = {
       page.on("pageerror", (error) => errors.push(String(error).slice(0, 300)));
       const response = await page.goto(`${BASE}/lab-review/experience/${lesson.id}`, { waitUntil: "networkidle", timeout: 180_000 });
       await page.waitForSelector("[data-scene-id]", { timeout: 120_000 });
+      // Blocking service workers makes the shell show "Offline support could not start" in a fixed
+      // status toast that can sit over the last answer choice. It is a capture artifact, so hide it.
+      await page.addStyleTag({ content: 'div.fixed[role="status"][aria-live="polite"] { display: none !important; }' });
       const run = { lesson: lesson.key, viewport: viewport.name, httpStatus: response.status(), scenes: [], errors };
       for (let position = 1; position <= projection.scenes.length; position++) {
         const sceneId = await page.getAttribute("[data-scene-id]", "data-scene-id");

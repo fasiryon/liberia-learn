@@ -1,8 +1,8 @@
 # Understanding Essay Writing: Structure and Argument
 
-- Candidate: `cv2-cand-g7-literacy-essay-structure-argument` v0.2.0 · Grade 7 LITERACY · Writing / argumentative essay
+- Candidate: `cv2-cand-g7-literacy-essay-structure-argument` v0.3.0 · Grade 7 LITERACY · Writing / argumentative essay
 - Pipeline status: **REVIEW_BLOCKED** · governance: DRAFT, human review required, not published, MOE approval not claimed, qualified review not started
-- Candidate hash: `80b9592641effbdae8f5868323289873a8c1a6e547676241e09ab8ee5db060b1` · learner projection hash: `0794427b757c0e7e866acb1a906e0848a365cb60529f0c220368acd060d16ab9` (review this exact revision only)
+- Candidate hash: `0f275a880588aa8e9451a0ea368bf0fa18bee6cbd826bb1c15d86c4fdc952828` · learner projection hash: `31e2a43f1c59bf3adbf7b9d889dd50d826e26320ad3a275a1677a4729f9cfe82` (review this exact revision only)
 - Origin: AUTHORED_FIXTURE in the `candidate-lesson-v2/1.0.0` generator format (no live model call); strict parser, deterministic validator and deliverability checks passed with 0 errors
 - Not assembled into `curriculum-lesson-v2/1.0.0`: assembly needs a Grade 7 template cell and ontology release that do not exist (see Review gaps)
 - Strategy: WORKED_EXAMPLE_FADING — Learners see a complete model essay plan and a model PEEL paragraph, take each part apart, practise choosing and ordering parts with feedback, and only then write their own thesis and paragraph. Writing builds on the MOE Grade 7 paragraph-writing work (topic sentences, kinds of paragraphs). Model evidence comes from a named practice school (Musu's school) and is labelled as made up; learners then plan before writing, write a conclusion and review a partner's paragraph against the PEEL questions.
@@ -37,20 +37,23 @@ Prerequisites assumed:
 | 1 | `intro` | INTRO / HOOK_PHENOMENON | `essay-structure`, `argument-build` | NONE | NONE | 75 | — | `5c9953d4b7b2…` |
 | 2 | `objectives` | OBJECTIVE / STATE_OBJECTIVE | `essay-structure`, `argument-build`, `evidence-support` | NONE | NONE | 11 | — | `d8e2b6464cbf…` |
 | 3 | `warm-up` | CHECK_UNDERSTANDING / ACTIVATE_PRIOR_KNOWLEDGE | `essay-structure`, `evidence-support` | SINGLE_CHOICE | FORMATIVE_OBSERVATION | 14 | — | `b13da10bd925…` |
-| 4 | `essay-structure` | EXPLANATION / EXPLAIN_CONCEPT | `essay-structure` | NONE | NONE | 98 | `literacy-essay-structure.svg` | `9174a7e18fd7…` |
-| 5 | `model-plan` | INTERACTIVE_DIAGRAM / MODEL_WORKED_EXAMPLE | `essay-structure`, `argument-build` | DIAGRAM_REVEAL | NONE | 28 | — | `4346a7daef39…` |
-| 6 | `thesis` | GUIDED_EXAMPLE / GUIDED_PRACTICE | `argument-build` | SINGLE_CHOICE | FORMATIVE_OBSERVATION | 56 | — | `b60735b0e789…` |
-| 7 | `peel` | INTERACTIVE_DIAGRAM / MODEL_WORKED_EXAMPLE | `evidence-support` | DIAGRAM_REVEAL | NONE | 23 | `literacy-peel-paragraph.svg` | `234e88d15030…` |
-| 8 | `evidence` | EXPLANATION / EXPLAIN_CONCEPT | `evidence-support` | NONE | NONE | 106 | `literacy-evidence-test.svg` | `ecc731243a9d…` |
-| 9 | `evidence-check` | CHECK_UNDERSTANDING / ADDRESS_MISCONCEPTION | `argument-build`, `evidence-support` | SINGLE_CHOICE | FORMATIVE_OBSERVATION | 16 | — | `08ec88271fd4…` |
-| 10 | `order-paragraph` | PRACTICE / GUIDED_PRACTICE | `essay-structure` | ORDERING (fallback FREE_RESPONSE) | FORMATIVE_OBSERVATION | 21 | — | `2654a11e1ac8…` |
-| 11 | `plan-argument` | GUIDED_EXAMPLE / GUIDED_PRACTICE | `argument-build`, `evidence-support` | FREE_RESPONSE | FORMATIVE_OBSERVATION | 76 | — | `2700ad24778c…` |
-| 12 | `write-argument` | PRACTICE / INDEPENDENT_PRACTICE | `argument-build`, `evidence-support` | FREE_RESPONSE | FORMATIVE_OBSERVATION | 44 | — | `7c5ffdde944e…` |
-| 13 | `write-conclusion` | PRACTICE / INDEPENDENT_PRACTICE | `essay-structure` | FREE_RESPONSE | FORMATIVE_OBSERVATION | 76 | — | `0cd764863e81…` |
-| 14 | `peer-review` | PRACTICE / CHECK_UNDERSTANDING | `evidence-support`, `argument-build` | FREE_RESPONSE | FORMATIVE_OBSERVATION | 48 | — | `c16102a2c09b…` |
-| 15 | `review` | REVIEW / REVIEW | `essay-structure`, `argument-build`, `evidence-support` | NONE | NONE | 11 | — | `cdeaaeb3c9a0…` |
-| 16 | `exit-ticket` | MASTERY_CHECK / ASSESS_MASTERY | `essay-structure`, `argument-build`, `evidence-support` | ASSESSMENT_HANDOFF (fallback PAPER_ACTIVITY) | MASTERY_RESPONSE | 16 | — | `ba2f86d89b4c…` |
-| 17 | `reflect` | REFLECTION / REFLECT | `essay-structure` | FREE_RESPONSE | REFLECTION | 14 | — | `232578b92a7e…` |
+| 4 | `readiness-writing` | CHECK_UNDERSTANDING / ACTIVATE_PRIOR_KNOWLEDGE | `essay-structure`, `argument-build` | FREE_RESPONSE | FORMATIVE_OBSERVATION | 43 | — | `1b438ba58f5e…` |
+| 5 | `essay-structure` | EXPLANATION / EXPLAIN_CONCEPT | `essay-structure` | NONE | NONE | 98 | `literacy-essay-structure.svg` | `9174a7e18fd7…` |
+| 6 | `model-plan` | INTERACTIVE_DIAGRAM / MODEL_WORKED_EXAMPLE | `essay-structure`, `argument-build` | DIAGRAM_REVEAL | NONE | 28 | — | `4346a7daef39…` |
+| 7 | `thesis` | GUIDED_EXAMPLE / GUIDED_PRACTICE | `argument-build` | SINGLE_CHOICE | FORMATIVE_OBSERVATION | 56 | — | `b60735b0e789…` |
+| 8 | `peel` | INTERACTIVE_DIAGRAM / MODEL_WORKED_EXAMPLE | `evidence-support` | DIAGRAM_REVEAL | NONE | 23 | `literacy-peel-paragraph.svg` | `b590bf6632f5…` |
+| 9 | `evidence` | EXPLANATION / EXPLAIN_CONCEPT | `evidence-support` | NONE | NONE | 106 | `literacy-evidence-test.svg` | `ecc731243a9d…` |
+| 10 | `evidence-check` | CHECK_UNDERSTANDING / ADDRESS_MISCONCEPTION | `argument-build`, `evidence-support` | SINGLE_CHOICE | FORMATIVE_OBSERVATION | 16 | — | `08ec88271fd4…` |
+| 11 | `order-paragraph` | PRACTICE / GUIDED_PRACTICE | `essay-structure` | ORDERING (fallback FREE_RESPONSE) | FORMATIVE_OBSERVATION | 21 | — | `2654a11e1ac8…` |
+| 12 | `plan-argument` | GUIDED_EXAMPLE / GUIDED_PRACTICE | `argument-build`, `evidence-support` | FREE_RESPONSE | FORMATIVE_OBSERVATION | 76 | — | `2700ad24778c…` |
+| 13 | `write-argument` | PRACTICE / INDEPENDENT_PRACTICE | `argument-build`, `evidence-support` | FREE_RESPONSE | FORMATIVE_OBSERVATION | 44 | — | `7c5ffdde944e…` |
+| 14 | `write-conclusion` | PRACTICE / INDEPENDENT_PRACTICE | `essay-structure` | FREE_RESPONSE | FORMATIVE_OBSERVATION | 76 | — | `0cd764863e81…` |
+| 15 | `peer-review` | PRACTICE / CHECK_UNDERSTANDING | `evidence-support`, `argument-build` | FREE_RESPONSE | FORMATIVE_OBSERVATION | 48 | — | `c16102a2c09b…` |
+| 16 | `write-independently` | PRACTICE / INDEPENDENT_PRACTICE | `argument-build`, `evidence-support`, `essay-structure` | FREE_RESPONSE | FORMATIVE_OBSERVATION | 54 | — | `8d361b07dca3…` |
+| 17 | `challenge` | EXPLANATION / APPLY | `essay-structure`, `argument-build`, `evidence-support` | NONE | NONE | 78 | — | `756435bb1c60…` |
+| 18 | `review` | REVIEW / REVIEW | `essay-structure`, `argument-build`, `evidence-support` | NONE | NONE | 11 | — | `cdeaaeb3c9a0…` |
+| 19 | `exit-ticket` | MASTERY_CHECK / ASSESS_MASTERY | `essay-structure`, `argument-build`, `evidence-support` | ASSESSMENT_HANDOFF (fallback PAPER_ACTIVITY) | MASTERY_RESPONSE | 16 | — | `ba2f86d89b4c…` |
+| 20 | `reflect` | REFLECTION / REFLECT | `essay-structure` | FREE_RESPONSE | REFLECTION | 14 | — | `232578b92a7e…` |
 
 Full hashes, asset digests and source digests are in `scene-manifest.json`.
 
@@ -92,6 +95,18 @@ Essays are built from paragraphs. Check what you remember. These answers are not
 - Hints: A fact can be checked; an opinion is what someone thinks or feels.
 - Accessibility: Two warm-up questions: what a topic sentence does, and which sentence is a fact. Each answer shows written feedback. · keyboard: Tab to each control, press Enter or Space to choose, then use Continue.
 - Offline (FULL_OFFLINE): Text, steps and questions are part of the saved lesson.
+
+### Readiness check: write a short paragraph (`readiness-writing`)
+
+Learner action: Write a short paragraph and two reasons, on your own.
+
+This lesson builds on writing paragraphs and on seeing two sides of a question. Show what you can do now, on your own. This is not marked: it tells your teacher whether to start with a short paragraph-frame review before the essay work.
+
+- Write a short paragraph (three to five sentences) about a place in your community that you know well. Start with a sentence that tells the main idea. (min 120 chars)
+- Should our school have a longer lunch break? Write one reason someone might say yes and one reason someone might say no. (min 40 chars)
+- Expected observation (reviewer only): Paragraph: the first sentence states one main idea and at least two later sentences support it. Two sides: two distinct reasons on opposite sides. A learner who cannot yet do either gets the paragraph-frame review (topic sentence plus two supporting sentences) or pair talk with 'Some people think … because …' before the essay scenes.
+- Accessibility: Two writing boxes: a three-to-five sentence paragraph about a place in your community, and one reason for and one against a longer lunch break. · keyboard: Tab to each control, press Enter or Space to choose, then use Continue.
+- Offline (FULL_OFFLINE): Writing is kept on the device until it can be sent.
 
 ### The three parts of an argumentative essay (`essay-structure`)
 
@@ -153,6 +168,8 @@ A topic ('school gardens'), a plain fact ('some schools have gardens') or an ann
 Learner action: Open each PEEL sentence of the model paragraph in order.
 
 A strong body paragraph follows **PEEL**: **P**oint, **E**vidence, **E**xplain, **L**ink. Open each step to build the first body paragraph of the garden essay.
+
+- The Explain sentence does not repeat the evidence. It says what the evidence shows and why that proves the point: 'This shows that…'.
 
 1. **P: Point (topic sentence)** — A school garden turns science and agriculture lessons into real work.
 2. **E: Evidence** — For example, in Musu's school garden, learners measure the beds, test which soil holds water best and record how fast each plant grows.
@@ -286,6 +303,34 @@ Swap your PEEL paragraph with a partner and read it twice. Check it against the 
 - Accessibility: Swap PEEL paragraphs with a partner (or review your own), check the paragraph against four questions on point, evidence, explanation and link, then write one strength and one next step. · keyboard: Tab to each control, press Enter or Space to choose, then use Continue. · non-pointer: Partners can read the paragraph aloud and discuss it; the learner then types or writes the two answers.
 - Offline (FULL_OFFLINE): A classroom activity with paper paragraphs; answers are kept on the device until they can be sent.
 
+### Write it again, on your own (`write-independently`)
+
+Learner action: Write a second thesis and PEEL paragraph without hints, the model or a partner.
+
+Now show that you can do it alone. Use the second topic from your plan (or a new question you care about). Do not look back at the model plan or the hints. Use only real evidence and say where it comes from. Your teacher reads this writing; it is practice, not a mark.
+
+- Write a thesis statement for your second topic: your claim and two reasons. (min 60 chars)
+- Write one PEEL body paragraph that argues your first reason. (min 250 chars)
+- List the job of each sentence in your paragraph, in order (for example: Point, Evidence, Explain, Link). (min 20 chars)
+- Expected observation (reviewer only): An arguable thesis with two reasons; a paragraph whose topic sentence matches reason one, with real, specific evidence and its source, an Explain sentence that says how the evidence proves the point (not a repeat of it), and a link back; labels that match the sentences.
+- Accessibility: Three writing boxes: a thesis statement for your second topic, one PEEL body paragraph, and the job of each sentence in order. · keyboard: Tab to each control, press Enter or Space to choose, then use Continue.
+- Offline (FULL_OFFLINE): Writing is kept on the device until it can be sent.
+
+### Optional challenge: a full argumentative essay (`challenge`)
+
+Learner action: Optional: plan and write a full essay in your exercise book.
+
+This challenge is optional. Try it if you finish early or want to go further; it is not part of the exit ticket.
+
+Write a full essay on a question you care about, in five paragraphs: an introduction that ends with your thesis, two body paragraphs (one for each reason), one paragraph that answers the other side, and a conclusion that adds no new reason. Then write two sentences explaining which of your reasons is strongest and why.
+
+- Plan first: claim, two reasons, real evidence for each, and the strongest objection.
+- Answering the other side makes your argument stronger, not weaker.
+
+- Expected observation (reviewer only): Five paragraphs in the right order, each body paragraph following PEEL, a fair objection answered with a reason, a conclusion without new reasons, and a reasoned choice of the strongest reason.
+- Accessibility: Optional challenge: write a five-paragraph argumentative essay on a question you care about, then explain which reason is strongest. · keyboard: Tab to each control, press Enter or Space to choose, then use Continue.
+- Offline (FULL_OFFLINE): Text, steps and questions are part of the saved lesson.
+
 ### Key ideas to remember (`review`)
 
 Learner action: Read the key ideas before the exit ticket.
@@ -331,6 +376,7 @@ Good writers know what they need to practise. Write your answer in full sentence
 - `mc-irrelevant-evidence` (`ll-g7-lit-evidence-support`): Gives true but unrelated evidence that does not support the reason in that paragraph. → Read the reason and the evidence together: does the evidence prove this reason, or something else?
 - `mc-ignore-counterargument` (`ll-g7-lit-argument-build`): Thinks mentioning the other side weakens an essay, so never answers objections. → Answering the strongest objection shows the reader you have thought it through, and makes your claim harder to reject.
 - `mc-conclusion-new-idea` (`ll-g7-lit-essay-structure`): Adds a brand-new reason in the conclusion. → The conclusion restates the thesis in new words and sums up the reasons already argued; new reasons belong in a body paragraph.
+- `mc-explain-restates-evidence` (`ll-g7-lit-evidence-support`): Thinks the Explain step means repeating the evidence, so never says how the evidence proves the point. → Ask 'so what?' after the evidence and answer it with a sentence that starts 'This shows that…'.
 
 ## Assessment handoff (Assessment Player V2)
 
@@ -345,11 +391,12 @@ Good writers know what they need to practise. Write your answer in full sentence
 | --- | --- | --- | --- |
 | `intro` | NEW | — | Community decision (PTA meeting, school garden) as the reason to write an argument. |
 | `objectives` | NEW | — | Three measurable objectives and a success check. |
-| `warm-up` | NEW | — | Activates MOE Grade 6–7 paragraph knowledge (topic sentence) and fact versus opinion. |
+| `warm-up` | NEW | — | Activates MOE Grade 6–7 paragraph knowledge (topic sentence) and fact versus opinion. Curriculum Excellence V1 (v0.3.0): Its fact-versus-opinion item is now the diagnostic for that prerequisite (assessment definitions). |
+| `readiness-writing` | NEW | Curriculum Excellence V1 gap report (NF-PRG-1) | Diagnoses the paragraph-writing and two-sides prerequisites by production rather than recognition, with a paragraph-frame or pair-talk route before the essay scenes. |
 | `essay-structure` | NEW | — | Three-part essay structure with the job of each part. |
 | `model-plan` | NEW | — | Complete model plan on a Liberian school topic, including a counterargument paragraph. |
 | `thesis` | NEW | — | Distinguishes claims from topics, facts and announcements with feedback. |
-| `peel` | NEW | — | PEEL paragraph model (Point, Evidence, Explain, Link). Whether PEEL is familiar in Liberian classrooms is for the reviewer to confirm (legacy comparison R-L5). The model evidence is attributed to Musu's (made-up) school garden (R-L1). |
+| `peel` | NEW | — | PEEL paragraph model (Point, Evidence, Explain, Link). Whether PEEL is familiar in Liberian classrooms is for the reviewer to confirm (legacy comparison R-L5). The model evidence is attributed to Musu's (made-up) school garden (R-L1). Curriculum Excellence V1 (v0.3.0): Teaches against the Explain-restates-evidence error (new mc-explain-restates-evidence). |
 | `evidence` | NEW | — | Kinds of evidence and four tests; explicitly forbids invented figures, and says that Musu's school examples are made-up practice examples, not facts (R-L1). |
 | `evidence-check` | NEW | — | Misconception checks: irrelevant evidence, circular reasoning, ignoring the other side. The model evidence is attributed to Musu's practice school instead of the learner's own school (R-L1). |
 | `order-paragraph` | NEW | — | Declared ORDERING interaction with a written fallback. Sentence D is attributed to Musu's practice school (R-L1). |
@@ -357,6 +404,8 @@ Good writers know what they need to practise. Write your answer in full sentence
 | `write-argument` | NEW | — | Interactive writing practice: thesis plus one PEEL paragraph from the learner's plan, teacher-reviewed with the rubric. |
 | `write-conclusion` | REVISED | Legacy section '13. Independent Practice — Tier 1' (write a conclusion) (revision cmss94dmc03b7vo54ryf3hqk1); legacy comparison R-L3 | Restores conclusion writing on the lesson's own garden plan, keeping the rule the legacy model answer broke: no new reasons. |
 | `peer-review` | REVISED | Legacy '4. Core Concept' checks for understanding (peer review) and objective 3 (revision cmss94dmc03b7vo54ryf3hqk1); legacy comparison R-L4 | Restores structured peer review with the four PEEL questions, one strength and one next step; a learner working alone reviews their own paragraph. |
+| `write-independently` | NEW | Curriculum Excellence V1 gap report (LM-PRG-1) | Unscaffolded writing (no hints, model or partner) on a second topic, so every objective reaches independent practice before mastery evidence. |
+| `challenge` | NEW | Curriculum Excellence V1 gap report (GE-EXT-1) | Optional, non-gating five-paragraph essay with a reasoned self-evaluation; argumentative essays stay pending the MOE grade-scope decision. |
 | `review` | NEW | — | Six key ideas, including planning before writing. |
 | `exit-ticket` | NEW | — | Assessment handoff; candidate items reviewer-only until released. |
 | `reflect` | NEW | — | Writer self-assessment and next step. |
@@ -368,6 +417,7 @@ Good writers know what they need to practise. Write your answer in full sentence
 | intro | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY |
 | objectives | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY |
 | warm-up | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY |
+| readiness-writing | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY |
 | essay-structure | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY |
 | model-plan | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY |
 | thesis | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY |
@@ -379,6 +429,8 @@ Good writers know what they need to practise. Write your answer in full sentence
 | write-argument | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY |
 | write-conclusion | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY |
 | peer-review | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY |
+| write-independently | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY |
+| challenge | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY |
 | review | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY |
 | exit-ticket | FALLBACK | FALLBACK | FALLBACK | FALLBACK | FALLBACK | FALLBACK | FALLBACK | FALLBACK | FALLBACK |
 | reflect | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY |

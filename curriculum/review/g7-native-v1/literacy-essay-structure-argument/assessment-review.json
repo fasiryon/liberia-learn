@@ -7,9 +7,7 @@
     {
       "assessmentRequestId": "g7-essay-exit-ticket",
       "objectiveId": "ll-g7-lit-essay-structure",
-      "distractorMisconceptions": {
-        "3": "mc-conclusion-new-idea"
-      },
+      "distractorMisconceptions": {},
       "verification": null,
       "item": {
         "id": "g7-essay-exit-1",
@@ -108,7 +106,7 @@
       "assessmentRequestId": "g7-essay-exit-ticket",
       "objectiveId": "ll-g7-lit-evidence-support",
       "distractorMisconceptions": {
-        "3": "mc-irrelevant-evidence"
+        "3": "mc-explain-restates-evidence"
       },
       "verification": null,
       "item": {
@@ -157,7 +155,8 @@
   "writingRubric": {
     "lessonKey": "literacy-essay-structure-argument",
     "sceneId": "write-argument",
-    "use": "Formative feedback by the teacher. Not a mastery score; Assessment Player V2 has no constructed-response item type yet.",
+    "use": "Candidate rubric, teacher-scored: formative feedback on in-lesson writing, and the proposed scoring guide for the candidate end-of-lesson writing tasks (assessment definitions). Nothing in the platform computes a score or mastery from it; Assessment Player V2 has no constructed-response item type, and it becomes mastery evidence only after qualified review and a governed release.",
+    "status": "GOVERNED_CANDIDATE",
     "criteria": [
       {
         "id": "thesis",
@@ -184,8 +183,244 @@
         "id": "explain-link",
         "label": "Explain and link",
         "secure": "Explains how the evidence proves the point and links back to the claim.",
-        "developing": "Explains or links, but not both.",
+        "developing": "Explains or links, but not both; or the Explain sentence only restates the evidence.",
         "beginning": "Evidence is left unexplained."
+      },
+      {
+        "id": "counterargument",
+        "label": "Counterargument and reply",
+        "secure": "States a fair objection and answers it with a reason.",
+        "developing": "States an objection but the reply only repeats the claim.",
+        "beginning": "No objection, or an objection left unanswered."
+      }
+    ]
+  },
+  "assessmentDefinitions": {
+    "lessonKey": "literacy-essay-structure-argument",
+    "audience": "REVIEWER_ONLY",
+    "status": "GOVERNED_CANDIDATE",
+    "notice": "Candidate assessment definitions for the v0.3.0 lesson (Curriculum Excellence Standard V1). Unreviewed and unreleased: nothing scores them, writes mastery from them or releases them. Writing is teacher-scored with the candidate rubric until a qualified reviewer approves it and a governed release binds it. Scoring guides are reviewer only and must never reach a learner projection, offline package or client bundle.",
+    "authors": [
+      {
+        "kind": "AI",
+        "agentId": "claude-code:curriculum-excellence-v1",
+        "modelFamily": "anthropic-claude",
+        "modelId": "claude-opus-5-5",
+        "sessionId": null
+      }
+    ],
+    "diagnosticOnlyExitItemIds": [
+      "g7-essay-exit-1",
+      "g7-essay-exit-4",
+      "g7-essay-exit-5"
+    ],
+    "diagnosticOnlyRationale": "These three exit items test recall of where essay parts go and what they do. They stay in the exit ticket to show the teacher which idea to revisit, but they are not mastery evidence: pl-w1, pl-r1 and pl-r2 test the same knowledge by use. If released, they must be configured as non-mastery items.",
+    "tasks": [
+      {
+        "id": "pl-d0",
+        "kind": "PREREQUISITE_DIAGNOSTIC",
+        "prerequisiteIndex": 0,
+        "deliveredBy": "readiness-writing#ready-paragraph",
+        "objectiveIds": [
+          "ll-g7-lit-essay-structure"
+        ],
+        "scaffold": "NONE",
+        "timing": "PRE_LESSON",
+        "context": "REHEARSED",
+        "scoring": "ANALYTIC_RUBRIC",
+        "prompt": "Write a short paragraph (three to five sentences) about a place in your community that you know well. Start with a sentence that tells the main idea.",
+        "scoringGuide": {
+          "0": "No identifiable main idea.",
+          "1": "A main idea is present but not first, or the support drifts to other ideas.",
+          "2": "First sentence states one main idea and at least two later sentences support that same idea."
+        },
+        "fallbackRoute": "Before PEEL, teach a paragraph frame (topic sentence + two supporting sentences) with a shared example; the teacher conferences with learners who scored 0 before the write-argument scene.",
+        "source": "EXCELLENCE_PLAN",
+        "ref": "definition:pl-d0"
+      },
+      {
+        "id": "pl-d1",
+        "kind": "PREREQUISITE_DIAGNOSTIC",
+        "prerequisiteIndex": 1,
+        "deliveredBy": "warm-up#warm-fact-opinion",
+        "objectiveIds": [
+          "ll-g7-lit-evidence-support"
+        ],
+        "scaffold": "FULL",
+        "timing": "PRE_LESSON",
+        "context": "REHEARSED",
+        "scoring": "KEYED",
+        "prompt": "Which sentence is a fact, not an opinion?",
+        "key": "Cassava leaves are grown and eaten in many parts of Liberia.",
+        "fallbackRoute": "Mini-lesson on the question 'Can it be checked?' with four more classroom sentences before the evidence scene.",
+        "source": "EXCELLENCE_PLAN",
+        "ref": "definition:pl-d1"
+      },
+      {
+        "id": "pl-d2",
+        "kind": "PREREQUISITE_DIAGNOSTIC",
+        "prerequisiteIndex": 2,
+        "deliveredBy": "readiness-writing#ready-two-sides",
+        "objectiveIds": [
+          "ll-g7-lit-argument-build"
+        ],
+        "scaffold": "NONE",
+        "timing": "PRE_LESSON",
+        "context": "REHEARSED",
+        "scoring": "ANALYTIC_RUBRIC",
+        "prompt": "Should our school have a longer lunch break? Write one reason someone might say yes and one reason someone might say no.",
+        "scoringGuide": {
+          "0": "No reason given.",
+          "1": "Two reasons on the same side, or one side only.",
+          "2": "Two distinct reasons on opposite sides."
+        },
+        "fallbackRoute": "Pair talk with the sentence starters 'Some people think … because …' and 'Others think … because …' before the intro scene.",
+        "source": "EXCELLENCE_PLAN",
+        "ref": "definition:pl-d2"
+      },
+      {
+        "id": "pl-w1",
+        "kind": "ORIGINAL_WRITING",
+        "objectiveIds": [
+          "ll-g7-lit-essay-structure",
+          "ll-g7-lit-argument-build",
+          "ll-g7-lit-evidence-support"
+        ],
+        "scaffold": "NONE",
+        "timing": "END_OF_LESSON",
+        "context": "REHEARSED",
+        "scoring": "ANALYTIC_RUBRIC",
+        "prompt": "Should students be allowed to bring mobile phones to school? Write a thesis statement with your claim and two reasons. Then write one PEEL paragraph that argues your first reason with real evidence, explains it and links it back to your claim (120 to 200 words). Work alone, without hints, the model plan or a partner.",
+        "scoringGuide": "Candidate writing rubric: thesis, point, evidence, explain-link (0-2 each, 8 points)",
+        "targetsMisconceptions": [
+          "mc-topic-not-thesis",
+          "mc-opinion-as-evidence",
+          "mc-circular-reasoning",
+          "mc-irrelevant-evidence",
+          "mc-explain-restates-evidence"
+        ],
+        "source": "EXCELLENCE_PLAN",
+        "ref": "definition:pl-w1"
+      },
+      {
+        "id": "pl-r1",
+        "kind": "EXTENDED_REASONING",
+        "objectiveIds": [
+          "ll-g7-lit-argument-build",
+          "ll-g7-lit-evidence-support"
+        ],
+        "scaffold": "NONE",
+        "timing": "END_OF_LESSON",
+        "context": "REHEARSED",
+        "scoring": "ANALYTIC_RUBRIC",
+        "prompt": "Read this paragraph: 'Our school library should open on Saturdays. The library is good because it is good for students. Everyone knows reading is important. If it opens, more students will read.' Name two problems with the reasons or evidence and explain why each one weakens the argument. Then rewrite one sentence so it gives real evidence and says where the evidence comes from.",
+        "scoringGuide": {
+          "0": "No valid problem named.",
+          "1": "A problem is named without explanation.",
+          "2": "One problem named and explained; rewrite adequate or missing.",
+          "3": "Both problems named, one explanation thin, rewrite adequate.",
+          "4": "Names circular reasoning (sentence 2) and opinion used as evidence (sentence 3), explains why each fails, and rewrites one with specific, checkable evidence and its source."
+        },
+        "targetsMisconceptions": [
+          "mc-circular-reasoning",
+          "mc-opinion-as-evidence"
+        ],
+        "source": "EXCELLENCE_PLAN",
+        "ref": "definition:pl-r1"
+      },
+      {
+        "id": "pl-r2",
+        "kind": "EXTENDED_REASONING",
+        "objectiveIds": [
+          "ll-g7-lit-argument-build"
+        ],
+        "scaffold": "NONE",
+        "timing": "END_OF_LESSON",
+        "context": "REHEARSED",
+        "scoring": "ANALYTIC_RUBRIC",
+        "prompt": "Claim: 'Every Grade 7 class should plant trees on the school compound.' Write the strongest objection someone could raise, then write two sentences that answer it.",
+        "scoringGuide": "Candidate writing rubric criterion counterargument (0-2)",
+        "targetsMisconceptions": [
+          "mc-ignore-counterargument"
+        ],
+        "source": "EXCELLENCE_PLAN",
+        "ref": "definition:pl-r2"
+      },
+      {
+        "id": "pl-t1",
+        "kind": "TRANSFER_TASK",
+        "objectiveIds": [
+          "ll-g7-lit-argument-build",
+          "ll-g7-lit-evidence-support"
+        ],
+        "scaffold": "NONE",
+        "timing": "END_OF_LESSON",
+        "context": "NEW",
+        "scoring": "ANALYTIC_RUBRIC",
+        "prompt": "Write a short letter (80 to 150 words) to your town chief or community leader asking for one change at the market, such as lights or a clean water point. Make your claim, give one reason with real evidence, and answer one objection the leader might have.",
+        "scoringGuide": "Candidate writing rubric: thesis (as claim), evidence, explain-link, counterargument (0-2 each)",
+        "note": "New genre and a real audience: the lesson only rehearses school essays.",
+        "source": "EXCELLENCE_PLAN",
+        "ref": "definition:pl-t1"
+      },
+      {
+        "id": "pl-dr1",
+        "kind": "DELAYED_RETRIEVAL",
+        "objectiveIds": [
+          "ll-g7-lit-essay-structure",
+          "ll-g7-lit-argument-build",
+          "ll-g7-lit-evidence-support"
+        ],
+        "scaffold": "NONE",
+        "timing": "DELAYED",
+        "delayDays": 7,
+        "context": "REHEARSED",
+        "scoring": "ANALYTIC_RUBRIC",
+        "prompt": "Without notes: write a thesis statement with two reasons for 'Should every student learn to swim?', then write a PEEL paragraph for one of the reasons.",
+        "scoringGuide": "Candidate writing rubric (8 points)",
+        "source": "EXCELLENCE_PLAN",
+        "ref": "definition:pl-dr1"
+      },
+      {
+        "id": "pl-dr2",
+        "kind": "DELAYED_RETRIEVAL",
+        "objectiveIds": [
+          "ll-g7-lit-essay-structure",
+          "ll-g7-lit-argument-build",
+          "ll-g7-lit-evidence-support"
+        ],
+        "scaffold": "NONE",
+        "timing": "DELAYED",
+        "delayDays": 21,
+        "context": "REHEARSED",
+        "scoring": "ANALYTIC_RUBRIC",
+        "prompt": "Choose a question about your school or community. Write a thesis, one PEEL paragraph, one sentence answering an objection, and a two-sentence conclusion that adds no new reason.",
+        "scoringGuide": "Candidate writing rubric (8 points) + counterargument (2) + conclusion adds no new reason (0/1)",
+        "targetsMisconceptions": [
+          "mc-conclusion-new-idea",
+          "mc-ignore-counterargument"
+        ],
+        "source": "EXCELLENCE_PLAN",
+        "ref": "definition:pl-dr2"
+      },
+      {
+        "id": "pl-x1",
+        "kind": "EXTENSION",
+        "optional": true,
+        "objectiveIds": [
+          "ll-g7-lit-essay-structure",
+          "ll-g7-lit-argument-build",
+          "ll-g7-lit-evidence-support"
+        ],
+        "scaffold": "NONE",
+        "timing": "END_OF_LESSON",
+        "context": "NEW",
+        "scoring": "ANALYTIC_RUBRIC",
+        "prompt": "Write a full five-paragraph argumentative essay (introduction, two reasons, one paragraph answering the other side, conclusion) on a question you care about. Then write two sentences explaining which of your reasons is strongest and why.",
+        "scoringGuide": "Candidate writing rubric applied per paragraph + counterargument + a reasoned self-evaluation",
+        "note": "Optional and non-gating; matches the in-lesson challenge scene. Argumentative essays are MOE Grade 9 scope (grade-scope decision pending).",
+        "source": "EXCELLENCE_PLAN",
+        "ref": "definition:pl-x1"
       }
     ]
   }

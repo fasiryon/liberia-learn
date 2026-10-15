@@ -114,11 +114,15 @@ The Curriculum V2 candidate contract has no fields for prerequisite links, delay
   - Unknown authorship is refused.
   - Same-model-family review is allowed as advice, but it is recorded as `countsAsIndependentReview: false`.
   - A plan the reviewer wrote is reported as `UNREVIEWED_REQUIRES_INDEPENDENT_REVIEW`. Coverage of that plan is shown as a mechanical projection, not a review.
+  - When the only available AI agent wrote or repaired the revision, run the reviewer in `AUTOMATED` mode. Only the deterministic checks run, AI judgments are refused (`AUTOMATED_CHECKS_TAKE_NO_JUDGMENTS`), and the report counts as checks, not as a review.
+  - A revision's own reviewer-only assessment definitions (`assessmentDefinitions` in the assessment document) are part of what is checked. Exit items listed as diagnostic-only are asked but never counted as mastery evidence.
 - **Governed publication is untouched.** Native Curriculum V2 approval still requires an identified, qualified human reviewing the exact revision (`lib/curriculum/v2/governance.ts`). The excellence modules import no database, governance writer, release or publication code. Tests assert this.
 
 ## Grade 7 gap reports
 
 [`curriculum/excellence/g7-v0.2.0/`](../../../curriculum/excellence/g7-v0.2.0/README.md) applies the standard to the v0.2.0 Math and Literacy candidates on PR #191 (`1ad2e9ec`).
+
+[`curriculum/excellence/g7-v0.3.0/`](../../../curriculum/excellence/g7-v0.3.0/README.md) runs the automated checks on the v0.3.0 candidates, which apply the corrections from the v0.2.0 report. It carries every v0.2.0 finding forward with its status, and records that the AI judgment review was refused because the same agent wrote the corrections. See `docs/curriculum/G7_NATIVE_CURRICULUM_V1.md` for the list of corrections.
 
 - The candidates are read with `git show`, never copied or modified.
 - Run `npx tsx scripts/build-curriculum-excellence-g7-gap-reports.ts` to regenerate the reports, or add `--check` to verify they are current.

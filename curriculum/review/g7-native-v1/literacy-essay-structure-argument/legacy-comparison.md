@@ -16,7 +16,7 @@
 | Extract | `artifacts/g7-native-curriculum-v1/legacy/literacy-essay-structure-argument.json` (sha256 `d66a646f3748b2b1cfe9a83ab855e52039dac2e57044fbbd91190cc9250738f7`) |
 | Captured | 2026-10-15T19:09:16.876Z, transaction_read_only = on; lesson content only, no learner or user data |
 | Candidate first compared | hash `e875feab4d8d9742f421ba98c4c8c59f753e613a3d67526a77409cdd6019f786` at commit `4fdd897c` (the production evidence above is unchanged since) |
-| Candidate now | `cv2-cand-g7-literacy-essay-structure-argument` v0.2.0, hash `80b9592641effbdae8f5868323289873a8c1a6e547676241e09ab8ee5db060b1`; recommendations marked "applied" below are in this revision |
+| Candidate now | `cv2-cand-g7-literacy-essay-structure-argument` v0.3.0, hash `0f275a880588aa8e9451a0ea368bf0fa18bee6cbd826bb1c15d86c4fdc952828`; recommendations marked "applied" below are in this revision |
 
 ## The legacy lesson
 
@@ -35,7 +35,7 @@ Disposition: PRESERVED (kept in substance) · IMPROVED (kept, made more precise 
 | --- | --- | --- | --- | --- |
 | 1. Hook — The Real-World Challenge | Boima overhears two vendors (Fatu and Kpaan) arguing whose stall is most successful and decides to write an essay comparing them. | `intro` | REPLACED | Candidate hook: a PTA disagreement about a school garden, which needs an argument rather than a comparison. Both are Liberian community settings. |
 | 2. Learning Objectives | Three objectives (structure; logical argument with evidence; evaluate argument strength for careers and civic life). | `objectives` | IMPROVED | Objective 1 kept and made specific; objective 2 kept and extended with a counterargument; objective 3 narrowed to choosing and explaining evidence. See the objective comparison. |
-| 3. Prior Knowledge Activation | Parts of a short story; fact versus opinion ("Liberia gained independence in 1847"); a time you persuaded someone. | `warm-up` | REORGANIZED | Fact versus opinion preserved (new example); topic sentence added. Short-story parts and the persuasion experience omitted. |
+| 3. Prior Knowledge Activation | Parts of a short story; fact versus opinion ("Liberia gained independence in 1847"); a time you persuaded someone. | `warm-up`, `readiness-writing` | REORGANIZED | Fact versus opinion preserved (new example); topic sentence added. Short-story parts and the persuasion experience omitted. |
 | 4. Core Concept — Concrete Foundation | Introduction (hook, thesis), body (topic sentences; pricing, customer engagement and quality paragraphs with LD$ calculations), conclusion; extra worked-example notes; checks for understanding (discussion, paragraph building, peer review, local context, role play, mathematics integration). | `essay-structure`, `model-plan`, `peel`, `peer-review` | IMPROVED | The three parts and their jobs are kept, shorter and in plain language, with a full model plan. Peer review is restored as a structured activity (R-L4). Revenue calculations, the food metaphors and role play are not restored (L-L5, L-L8). |
 | 6. Key Vocabulary | Thesis, evidence, argument, each with a definition, an example and a memory tip. | `thesis`, `evidence`, `essay-structure` | REORGANIZED | Thesis and evidence are defined where they are used; "argument" is taught through the claim/reasons structure. No separate glossary. The legacy thesis example contradicts its own story (L-L4). |
 | 7. Worked Example 1 — Standard Method | Paragraph on why cassava is a Liberian staple: thesis, topic sentence, evidence, conclusion. | `peel` | REPLACED | Replaced by a PEEL paragraph from the garden essay. The legacy example gives one paragraph both a thesis and a different topic sentence and mislabels its reasons (L-L1, L-L2). |
@@ -45,8 +45,8 @@ Disposition: PRESERVED (kept in substance) · IMPROVED (kept, made more precise 
 | 11. Guided Practice — Problem 2 | Draft the first body paragraph: "Why Public Transportation is Essential in Monrovia". | `order-paragraph`, `write-argument` | REPLACED | Body-paragraph practice is kept as ordering a PEEL paragraph and writing one PEEL paragraph. |
 | 12. Guided Practice — Problem 3 | Draft introduction and first body paragraph: "The Role of Local Markets in Strengthening Local Economies". | `write-argument` | REPLACED | Narrowed to a thesis and one PEEL paragraph. |
 | 13. Independent Practice — Tier 1 | Write a conclusion (learning technology); explain the significance of a thesis. | `write-conclusion`, `exit-ticket` | IMPROVED | Conclusion writing is restored on the lesson's own garden plan, with the no-new-reasons rule the legacy model answer broke (R-L3, L-L7). Thesis knowledge is checked by exit items 1 and 2. |
-| 14. Independent Practice — Tier 2 Standard | Draft an introduction (sports and unity); write a body paragraph (renewable energy). | `write-argument` | REPLACED | One body paragraph kept in the candidate's writing task; introduction writing omitted. |
-| 15. Independent Practice — Tier 3 Advanced | Analyse storytelling and cultural heritage; evaluate traditional versus modern education methods. | — | OMITTED | Analytical and comparative writing is beyond this lesson's objectives. |
+| 14. Independent Practice — Tier 2 Standard | Draft an introduction (sports and unity); write a body paragraph (renewable energy). | `write-argument`, `write-independently` | REPLACED | One body paragraph kept in the candidate's writing task; introduction writing omitted. |
+| 15. Independent Practice — Tier 3 Advanced | Analyse storytelling and cultural heritage; evaluate traditional versus modern education methods. | `challenge` | OMITTED | Analytical and comparative writing is beyond this lesson's objectives. |
 | 16. Group Discussion | "How does essay writing help us understand real-life issues in Liberian society?" with five discussion points. | — | OMITTED | No discussion task. The candidate's reflection is individual. Optional classroom discussion is a reviewer decision. |
 | 17. Assessment, Exit Ticket, and Lesson Summary | Two open exit questions with model answers; five key takeaways; next-lesson preview (styles of essays, peer review). | `exit-ticket`, `review` | REPLACED | Exit ticket becomes six single-choice candidate items; takeaways become five plain key ideas. See the assessment comparison. |
 | Problem sets (model answers) | Nine model answers (gp1-gp3, ip1a-ip3b) for the practice prompts above. | `write-argument` | NOT_RESTORED | Model answers present unsourced figures as evidence and one conclusion adds new reasons (L-L5, L-L7). The candidate uses a rubric and an expected observation instead. |
@@ -110,7 +110,7 @@ Not restored unless a reviewer decides otherwise.
 | R-L3 | RESTORE_ADAPTED | `write-conclusion` | Add a short task to write a three- or four-sentence conclusion for the model garden plan: restate the thesis in new words, sum up the two reasons, end with a final thought, add no new reason. Applied as scene write-conclusion. Under the paragraph-centred alternative (A-L1 option A) it moves to an extension. | Legacy practised conclusions; the candidate only modelled them. | applied in this package | ACCEPT / MODIFY / REJECT: |
 | R-L4 | RESTORE_ADAPTED | `peer-review` | Restore structured peer review: partners swap PEEL paragraphs, check them against four questions (point, evidence, explain, link) and write one strength and one next step with sentence starters; a learner working alone reviews their own paragraph. Applied as scene peer-review. | Restores legacy objective 3 (evaluating arguments) and the legacy peer-review check in a form that works offline. | applied in this package | ACCEPT / MODIFY / REJECT: |
 | R-L5 | REVISE_CANDIDATE | `peel` | Remove the unsourced "widely used in West African secondary writing" claim from the revision ledger. | C-L4. Reviewer-only text; no learner content changes. | applied in this package | ACCEPT / MODIFY / REJECT: |
-| R-L6 | REVIEWER_DECISION | `exit-ticket` | Decide whether the exit ticket needs one teacher-marked constructed prompt (for example, "Explain what each part of an argumentative essay does") in addition to the six single-choice items. | The legacy exit ticket asked for explanation; the candidate measures recognition, and writing evidence stays formative. | reviewer decides | ACCEPT / MODIFY / REJECT: |
+| R-L6 | REVIEWER_DECISION | `exit-ticket` | Decide whether the exit ticket needs one teacher-marked constructed prompt (for example, "Explain what each part of an argumentative essay does") in addition to the six single-choice items. Curriculum Excellence V1 (v0.3.0): applied as candidate assessment definitions (pl-w1 original writing, pl-r1 and pl-r2 reasoning), teacher-scored with the candidate rubric and not part of the Assessment Player V2 item set. The reviewer still decides. | The legacy exit ticket asked for explanation; the candidate measures recognition, and writing evidence stays formative. | applied in this package | ACCEPT / MODIFY / REJECT: |
 | R-L7 | REVISE_CANDIDATE | — | Record the Grade 7 paragraph objective reference with its misfiled structured item and its OCR column. | C-L5. Reviewer-facing alignment metadata only. | applied in this package | ACCEPT / MODIFY / REJECT: |
 | R-L8 | DO_NOT_RESTORE | — | Do not restore the cassava worked example, error-analysis mistake 1, the market revenue calculations, the food metaphors, the nine legacy model answers, the Tier 3 analytical tasks or the LR-LIT-G7_9-02 alignment. | L-L1 to L-L11. | reviewer decides | ACCEPT / MODIFY / REJECT: |
 
@@ -149,6 +149,7 @@ The same lesson rebuilt around one persuasive (opinion) paragraph, a kind of par
 | `intro` | ADAPT | Same PTA garden situation; the goal becomes one convincing paragraph. |
 | `objectives` | ADAPT | State the three alternative objectives. |
 | `warm-up` | KEEP | Topic sentence and fact versus opinion are exactly the prior knowledge needed. |
+| `readiness-writing` | KEEP | The paragraph readiness check is exactly the prerequisite a paragraph lesson needs; the two-sides question becomes optional. |
 | `essay-structure` | ADAPT | Shorten to a preview: a paragraph is one building block of an essay. |
 | `model-plan` | MOVE_TO_EXTENSION | The full essay plan with an answer to the other side becomes optional extension reading. |
 | `thesis` | ADAPT | Teach the opinion topic sentence; same claim-versus-topic/fact/announcement items. |
@@ -160,6 +161,8 @@ The same lesson rebuilt around one persuasive (opinion) paragraph, a kind of par
 | `write-argument` | ADAPT | Write one persuasive PEEL paragraph; add a grammar-mechanics check (subject-verb agreement, capitals, punctuation) from p.4. |
 | `write-conclusion` | MOVE_TO_EXTENSION | Essay conclusions are essay-level; the paragraph's Link sentence does this job in Grade 7. |
 | `peer-review` | KEEP | Add one mechanics question to the four PEEL questions. |
+| `write-independently` | ADAPT | Write a second persuasive PEEL paragraph alone; drop the separate thesis prompt. |
+| `challenge` | MOVE_TO_EXTENSION | The full five-paragraph essay is already optional; under option A it is the essay extension. |
 | `review` | ADAPT | Key ideas for a persuasive paragraph. |
 | `exit-ticket` | ADAPT | See item impact. |
 | `reflect` | KEEP | Ask which part of the paragraph is hardest. |
@@ -179,7 +182,7 @@ Binding path: No binding is made here. If option A is chosen: correct the p.4 st
 
 ## Reviewer sign-off
 
-Sign-off is valid only when recorded through governed curriculum review (HUMAN_REVIEW) against candidate hash `80b9592641effbdae8f5868323289873a8c1a6e547676241e09ab8ee5db060b1` and legacy revision `cmss94dmc03b7vo54ryf3hqk1`. Filling in this file records nothing.
+Sign-off is valid only when recorded through governed curriculum review (HUMAN_REVIEW) against candidate hash `0f275a880588aa8e9451a0ea368bf0fa18bee6cbd826bb1c15d86c4fdc952828` and legacy revision `cmss94dmc03b7vo54ryf3hqk1`. Filling in this file records nothing.
 
 - [ ] I compared the candidate with the legacy revision and confirm (or have corrected) the section matrix above.
 - [ ] I recorded a decision on every recommendation.

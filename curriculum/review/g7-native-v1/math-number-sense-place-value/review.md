@@ -1,8 +1,8 @@
 # Number Sense and Place Value: Millions to Thousandths
 
-- Candidate: `cv2-cand-g7-math-number-sense-place-value` v0.2.0 · Grade 7 MATH · Number sense / place value
+- Candidate: `cv2-cand-g7-math-number-sense-place-value` v0.3.0 · Grade 7 MATH · Number sense / place value
 - Pipeline status: **REVIEW_BLOCKED** · governance: DRAFT, human review required, not published, MOE approval not claimed, qualified review not started
-- Candidate hash: `3f612d907f52f5953d879476a627fde8e9a1c5b3d30d22e171a42a8ccec80c0c` · learner projection hash: `5c5e90e92e0ee1d80c3da8d91b9cac0526a0e1cec10a02f97e29b88eed080e4c` (review this exact revision only)
+- Candidate hash: `c68b1a37f1852458cd3765643a43c59d6cc1d80ea0ef6f0ab9d67b7860d2ca95` · learner projection hash: `b5dcf7a2ea2647658d9a0adb97ea084f86f93e09d433815a87e26b575d0ea6c9` (review this exact revision only)
 - Origin: AUTHORED_FIXTURE in the `candidate-lesson-v2/1.0.0` generator format (no live model call); strict parser, deterministic validator and deliverability checks passed with 0 errors
 - Not assembled into `curriculum-lesson-v2/1.0.0`: assembly needs a Grade 7 template cell and ontology release that do not exist (see Review gaps)
 - Strategy: CONCRETE_PICTORIAL_ABSTRACT — Learners meet place value through a chart and counters (concrete/pictorial) before reading, writing and comparing numbers symbolically. Grade 7 extends the whole-number chart learners know to the thousandths, which the MOE Grade 7 decimals, percents and fractions period depends on. A partner activity with identical counters on a paper chart (ten counters exchanged for one in the next place) and a home task work without devices.
@@ -47,20 +47,22 @@ Prerequisites assumed:
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | 1 | `intro` | INTRO / HOOK_PHENOMENON | `place-value-read-write`, `place-value-digit-value` | NONE | NONE | 70 | `math-hero-numbers.svg` | `e29490bf8309…` |
 | 2 | `objectives` | OBJECTIVE / STATE_OBJECTIVE | `place-value-read-write`, `place-value-digit-value`, `place-value-compare` | NONE | NONE | 11 | — | `015d6593c6b9…` |
-| 3 | `warm-up` | CHECK_UNDERSTANDING / ACTIVATE_PRIOR_KNOWLEDGE | `place-value-digit-value` | SINGLE_CHOICE | FORMATIVE_OBSERVATION | 23 | — | `0ce421b98979…` |
+| 3 | `warm-up` | CHECK_UNDERSTANDING / ACTIVATE_PRIOR_KNOWLEDGE | `place-value-digit-value` | SINGLE_CHOICE | FORMATIVE_OBSERVATION | 33 | — | `5e6c5a202c65…` |
 | 4 | `chart` | EXPLANATION / EXPLAIN_CONCEPT | `place-value-read-write`, `place-value-digit-value` | NONE | NONE | 88 | `math-place-value-chart.svg` | `f6f02683b174…` |
-| 5 | `ten-times` | INTERACTIVE_DIAGRAM / EXPLAIN_CONCEPT | `place-value-digit-value` | DIAGRAM_REVEAL | NONE | 17 | `math-ten-times-ladder.svg` | `5af3311e99f2…` |
+| 5 | `ten-times` | INTERACTIVE_DIAGRAM / EXPLAIN_CONCEPT | `place-value-digit-value` | DIAGRAM_REVEAL | NONE | 17 | `math-ten-times-ladder.svg` | `a6a1e50ab3a6…` |
 | 6 | `worked-example` | GUIDED_EXAMPLE / MODEL_WORKED_EXAMPLE | `place-value-read-write`, `place-value-digit-value` | DIAGRAM_REVEAL | NONE | 21 | `math-library-fund.svg` | `7b7e1494a336…` |
 | 7 | `build-number` | GUIDED_EXAMPLE / GUIDED_PRACTICE | `place-value-read-write` | NUMERIC (fallback FREE_RESPONSE) | FORMATIVE_OBSERVATION | 32 | — | `1c979da76058…` |
 | 8 | `counter-chart` | GUIDED_EXAMPLE / GUIDED_PRACTICE | `place-value-digit-value`, `place-value-read-write` | FREE_RESPONSE | FORMATIVE_OBSERVATION | 100 | — | `1ea999e7e873…` |
 | 9 | `guided-decimals` | GUIDED_EXAMPLE / GUIDED_PRACTICE | `place-value-read-write`, `place-value-digit-value` | SINGLE_CHOICE | FORMATIVE_OBSERVATION | 21 | — | `b68cdbcdb0e4…` |
-| 10 | `compare-strategy` | GUIDED_EXAMPLE / MODEL_WORKED_EXAMPLE | `place-value-compare` | DIAGRAM_REVEAL | NONE | 21 | `math-compare-decimals.svg` | `6b76b0bdc94d…` |
-| 11 | `misconceptions` | CHECK_UNDERSTANDING / ADDRESS_MISCONCEPTION | `place-value-read-write`, `place-value-compare` | SINGLE_CHOICE | FORMATIVE_OBSERVATION | 16 | — | `79f87d2f90ee…` |
+| 10 | `compare-strategy` | GUIDED_EXAMPLE / MODEL_WORKED_EXAMPLE | `place-value-compare` | DIAGRAM_REVEAL | NONE | 21 | `math-compare-decimals.svg` | `0e9d0f9ad718…` |
+| 11 | `misconceptions` | CHECK_UNDERSTANDING / ADDRESS_MISCONCEPTION | `place-value-read-write`, `place-value-compare` | SINGLE_CHOICE | FORMATIVE_OBSERVATION | 16 | — | `05161a12b532…` |
 | 12 | `practice` | PRACTICE / INDEPENDENT_PRACTICE | `place-value-read-write`, `place-value-digit-value`, `place-value-compare` | SINGLE_CHOICE | FORMATIVE_OBSERVATION | 27 | — | `781c1c36c528…` |
-| 13 | `review` | REVIEW / REVIEW | `place-value-read-write`, `place-value-digit-value`, `place-value-compare` | NONE | NONE | 11 | — | `9bea72fa6c6a…` |
-| 14 | `exit-ticket` | MASTERY_CHECK / ASSESS_MASTERY | `place-value-read-write`, `place-value-digit-value`, `place-value-compare` | ASSESSMENT_HANDOFF (fallback PAPER_ACTIVITY) | MASTERY_RESPONSE | 19 | — | `3c407b008e3a…` |
-| 15 | `reflect` | REFLECTION / REFLECT | `place-value-digit-value` | FREE_RESPONSE | REFLECTION | 12 | — | `d6984293c360…` |
-| 16 | `home-practice` | REFLECTION / APPLY | `place-value-read-write`, `place-value-digit-value` | NONE | NONE | 38 | — | `9ab79fd353b9…` |
+| 13 | `reason-it-out` | PRACTICE / INDEPENDENT_PRACTICE | `place-value-compare`, `place-value-digit-value` | FREE_RESPONSE | FORMATIVE_OBSERVATION | 33 | — | `b7394ad23e3f…` |
+| 14 | `challenge` | EXPLANATION / APPLY | `place-value-compare`, `place-value-digit-value` | NONE | NONE | 59 | — | `6cdd1e1bbc27…` |
+| 15 | `review` | REVIEW / REVIEW | `place-value-read-write`, `place-value-digit-value`, `place-value-compare` | NONE | NONE | 11 | — | `d29352870ad5…` |
+| 16 | `exit-ticket` | MASTERY_CHECK / ASSESS_MASTERY | `place-value-read-write`, `place-value-digit-value`, `place-value-compare` | ASSESSMENT_HANDOFF (fallback PAPER_ACTIVITY) | MASTERY_RESPONSE | 19 | — | `3c407b008e3a…` |
+| 17 | `reflect` | REFLECTION / REFLECT | `place-value-digit-value` | FREE_RESPONSE | REFLECTION | 12 | — | `d6984293c360…` |
+| 18 | `home-practice` | REFLECTION / APPLY | `place-value-read-write`, `place-value-digit-value` | NONE | NONE | 38 | — | `9ab79fd353b9…` |
 
 Full hashes, asset digests and source digests are in `scene-manifest.json`.
 
@@ -92,16 +94,17 @@ By the end of this lesson you will be able to:
 - Accessibility: Lesson goals: read and write numbers from millions to thousandths, explain the value of each digit, and compare and order numbers. · keyboard: Tab to each control, press Enter or Space to choose, then use Continue.
 - Offline (FULL_OFFLINE): Text, steps and questions are part of the saved lesson.
 
-### Warm-up: what do you remember? (`warm-up`)
+### Warm-up: are you ready? (`warm-up`)
 
-Learner action: Answer two quick questions from earlier grades and read the feedback.
+Learner action: Answer three quick questions from earlier grades and read the feedback.
 
-Before we start, check what you already know from earlier grades. These answers are not marked. They show you where to focus today.
+Before we start, check three things this lesson builds on. These answers are not marked. If you miss one, tell your teacher: they will review that idea with you before the place-value chart.
 
-- In 5,384, what is the 3 worth? — options: 3 / 300 (expected) / 30
+- In 45,384, what is the 3 worth? — options: 3 / 300 (expected) / 30
 - Which means the same as 0.5? — options: 5 tenths (expected) / 5 hundredths / 5 ones
+- What is 7 × 1,000? — options: 700 / 7,000 (expected) / 70,000
 - Hints: Name each place, starting from the ones place.
-- Accessibility: Two warm-up questions: the value of the 3 in 5,384, and the meaning of 0.5. Each answer shows written feedback. · keyboard: Tab to each control, press Enter or Space to choose, then use Continue.
+- Accessibility: Three readiness questions: the value of the 3 in 45,384, the meaning of 0.5, and 7 × 1,000. Each answer shows written feedback. · keyboard: Tab to each control, press Enter or Space to choose, then use Continue.
 - Offline (FULL_OFFLINE): Text, steps and questions are part of the saved lesson.
 
 ### The place-value chart: millions to thousandths (`chart`)
@@ -127,6 +130,8 @@ In **4,205,316.27** the 4 is in the millions place, so it is worth 4,000,000. Th
 Learner action: Open each step in order to follow the × 10 and ÷ 10 pattern.
 
 Places are not random. Open each step to see how every place is connected to its neighbours.
+
+- Moving a digit one place to the left makes it worth ten times as much. Count the places before you give a value: one place too far makes the answer ten times too big.
 
 1. **Start at the ones** — One one is worth 1. This is the place everything else is measured from.
 2. **Move left: multiply by 10** — 1 ten = 10 ones = 10. 1 hundred = 10 tens = 100. Each step to the left makes a place worth 10 times more.
@@ -211,6 +216,8 @@ Learner action: Open each step to follow the compare-from-the-left method.
 
 To compare numbers, compare their places, not how many digits they have. Open each step to order **0.5**, **0.45** and **0.405**.
 
+- Whole numbers work the same way: 6,010,000 is greater than 6,009,999 even though it has fewer nines, because the first different place (ten thousands) decides.
+
 1. **Line up the places** — Write the numbers one under the other with the decimal points in a column. Fill empty places with zeros: 0.500, 0.450, 0.405.
 2. **Compare from the left** — Start at the greatest place. The ones are all 0, so look at the tenths: 5, 4 and 4.
 3. **The first different digit decides** — 5 tenths is the most, so 0.5 is the greatest. 0.450 and 0.405 tie in the tenths. In the hundredths 5 is more than 0, so 0.45 is greater than 0.405.
@@ -226,13 +233,14 @@ To compare numbers, compare their places, not how many digits they have. Open ea
 
 Learner action: Decide whether each claim is right, then read why.
 
-Many learners make these three mistakes. Choose an answer for each one, then read the explanation.
+Many learners make these four mistakes. Choose an answer for each one, then read the explanation.
 
 - Kollie says 0.45 is greater than 0.5 because 45 is greater than 5. Is he right? — options: Yes, because 45 is more than 5 / No, 0.5 is greater (expected)
 - Which number is two million, forty thousand, seven hundred? — options: 2,400,700 / 2,040,700 (expected) / 240,700
 - How do you write four and six hundredths? — options: 4.6 / 4.06 (expected) / 4.600
+- Sia says 0.3 is greater than 0.37 because tenths are bigger than hundredths. Is she right? — options: Yes, 0.3 has only tenths / No, 0.37 is greater (expected)
 - Hints: Use the chart: put each digit in its column before deciding.
-- Accessibility: Three misconception checks: whether 0.45 is greater than 0.5, writing two million forty thousand seven hundred, and writing four and six hundredths. · keyboard: Tab to each control, press Enter or Space to choose, then use Continue.
+- Accessibility: four misconception checks: whether 0.45 is greater than 0.5, writing two million forty thousand seven hundred, and writing four and six hundredths. · keyboard: Tab to each control, press Enter or Space to choose, then use Continue.
 - Offline (FULL_OFFLINE): Text, steps and questions are part of the saved lesson.
 
 ### Your turn: independent practice (`practice`)
@@ -250,9 +258,36 @@ Work on your own. Each answer shows why it is right or what to check again. Use 
 - Accessibility: Five practice questions on digit values, expanded form, word form and comparing decimals, each with written feedback. · keyboard: Tab to each control, press Enter or Space to choose, then use Continue.
 - Offline (FULL_OFFLINE): Text, steps and questions are part of the saved lesson.
 
+### Reason it out on your own (`reason-it-out`)
+
+Learner action: Answer two questions in full sentences, on your own, without hints.
+
+Mathematicians do not only find answers: they explain why the answers are right. Work on your own, with no hints. Write each answer in full sentences and use the words place and value.
+
+- Tamba says 0.9 is less than 0.85 because 85 is bigger than 9. Is he right? Explain using place value, and show one way to check. (min 60 chars)
+- The digit 3 appears three times in 303.03. Write what each 3 is worth. Then explain how the first 3 compares with the 3 in the ones place. (min 60 chars)
+- Expected observation (reviewer only): Compare: Tamba is wrong; 9 tenths is more than 8 tenths (0.90 > 0.85), checked with a chart, grid or number line. Value: 300, 3 and 0.03; the first 3 is 100 times the 3 in the ones place because it is two places to the left.
+- Accessibility: Two written questions: explain whether 0.9 is less than 0.85, and give the value of each 3 in 303.03 and how the values relate. · keyboard: Tab to each control, press Enter or Space to choose, then use Continue.
+- Offline (FULL_OFFLINE): Written answers are kept on the device until they can be sent.
+
+### Optional challenge: closest to 4 (`challenge`)
+
+Learner action: Optional: try the puzzle in your exercise book.
+
+This puzzle is optional. Try it if you finish early or want to go further; it is not part of the exit ticket.
+
+Use each of the digits **0, 2, 4 and 7** exactly once, and one decimal point, to make the number that is **closest to 4**. Then write a sentence explaining why no other arrangement is closer.
+
+- Think about the ones place first, then the tenths, hundredths and thousandths.
+- Check numbers just above 4 and just below 4.
+
+- Expected observation (reviewer only): 4.027 (ones place 4, then the smallest possible tenths 0, hundredths 2, thousandths 7). No arrangement below 4 comes close, because the only digits less than 4 are 0 and 2.
+- Accessibility: Optional puzzle: use the digits 0, 2, 4 and 7 once each, with a decimal point, to make the number closest to 4, and explain why. · keyboard: Tab to each control, press Enter or Space to choose, then use Continue.
+- Offline (FULL_OFFLINE): Text, steps and questions are part of the saved lesson.
+
 ### Key ideas to remember (`review`)
 
-Learner action: Read the four key ideas before the exit ticket.
+Learner action: Read the five key ideas before the exit ticket.
 
 Before the exit ticket, review the big ideas of this lesson.
 
@@ -260,8 +295,9 @@ Before the exit ticket, review the big ideas of this lesson.
 - Each place is worth 10 times the place to its right, from the thousandths up to the millions.
 - Zeros hold empty places: three million, sixty thousand, five hundred is 3,060,500.
 - To compare, line up the places and look from the left. The first different digit decides: 0.5 is greater than 0.45.
+- Next in Grade 7 you will write decimals as fractions and percents. Place value tells you how: 0.375 is 375 thousandths.
 
-- Accessibility: Review of four key ideas: digit value depends on place, each place is ten times the next, zeros hold empty places, and compare from the left. · keyboard: Tab to each control, press Enter or Space to choose, then use Continue.
+- Accessibility: Review of five key ideas: digit value depends on place, each place is ten times the next, zeros hold empty places, compare from the left, and decimals lead to fractions and percents. · keyboard: Tab to each control, press Enter or Space to choose, then use Continue.
 - Offline (FULL_OFFLINE): Text, steps and questions are part of the saved lesson.
 
 ### Exit ticket (`exit-ticket`)
@@ -307,6 +343,9 @@ Place value is all around you. This task needs no device, no printing and nothin
 - `mc-zero-placeholder` (`ll-g7-math-place-value-read-write`): Leaves out zeros that hold empty places, writing three million, sixty thousand, five hundred as 3,600,500. → Write the number in a place-value chart first; every column must hold a digit, even if it is 0.
 - `mc-decimal-word-form` (`ll-g7-math-place-value-read-write`): Writes 'four and six hundredths' as 4.6, ignoring the place the fraction name gives. → The fraction name tells you the last place: hundredths ends two places after the point, so 4.06.
 - `mc-longer-decimal-bigger` (`ll-g7-math-place-value-compare`): Thinks a decimal with more digits is greater (0.45 > 0.5 because 45 > 5). → Line up the decimal points, fill empty places with zeros (0.50 and 0.45) and compare from the left.
+- `mc-place-shift` (`ll-g7-math-place-value-digit-value`): Puts the right digit in the wrong place, so its value is ten or a hundred times too big or too small (the 6 in 3,462,105 given as 6,000 or 600,000). → Name every place from the ones up to the digit before giving its value, and check with the ten-times ladder.
+- `mc-shorter-decimal-bigger` (`ll-g7-math-place-value-compare`): Thinks a decimal with fewer digits is greater because tenths are bigger than hundredths (0.3 > 0.37). → Write both numbers to the same number of places (0.30 and 0.37) and compare place by place.
+- `mc-compare-by-digits` (`ll-g7-math-place-value-compare`): Compares whole numbers by their larger or more numerous digits (6,009,999 has many nines) instead of comparing places from the left. → Line the numbers up by place and compare from the left until the digits differ.
 
 ## Assessment handoff (Assessment Player V2)
 
@@ -321,17 +360,19 @@ Place value is all around you. This task needs no device, no printing and nothin
 | --- | --- | --- | --- |
 | `intro` | REVISED | PlaceValueDemo.tsx scene 'intro' (Big numbers are all around us) | Kept the school-fund context; added a decimal measurement (2.375 kg) because Grade 7 extends place value below one. |
 | `objectives` | NEW | — | States three measurable objectives and a success check (the DEMO listed goals only inside the intro). |
-| `warm-up` | NEW | — | Prior-knowledge activation on Grade 4 place value and tenths, with diagnostic feedback. |
+| `warm-up` | NEW | — | Prior-knowledge activation on Grade 4 place value and tenths, with diagnostic feedback. Curriculum Excellence V1 (v0.3.0): Now a readiness check with one item per stated prerequisite (adds 7 × 1,000; 5,384 becomes 45,384 to reach the thousands period) and tells learners who miss one to ask the teacher, who reviews it before the chart (diagnostic routes in the assessment definitions). |
 | `chart` | REVISED | PlaceValueDemo.tsx scene 'explain' (4,205,316 chart) | Preserved the 4,205,316 example and the zero-holds-ten-thousands point; extended the chart to thousandths (4,205,316.27) and introduced the term 'period'. |
-| `ten-times` | NEW | — | Makes the ×10 / ÷10 relationship explicit across the decimal point; the DEMO stated it in one sentence. |
+| `ten-times` | NEW | — | Makes the ×10 / ÷10 relationship explicit across the decimal point; the DEMO stated it in one sentence. Curriculum Excellence V1 (v0.3.0): Teaches against the place-shift error (new mc-place-shift), which most digit-value distractors actually represent. |
 | `worked-example` | REVISED | PlaceValueDemo.tsx scene 'example' (Musu's library fund) | Preserved the three-step value-of-3 example; added expanded form, word form and a check-by-adding step. |
 | `build-number` | REVISED | PlaceValueTools.tsx NumberBuilder (interactive DEMO tool) | The DEMO builder is not a renderable lesson interaction, so the candidate declares NUMERIC with a written fallback and a paper chart with counters for classrooms without devices. |
 | `counter-chart` | REVISED | Legacy lab 'Understanding Place Value with Local Materials' (revision cmss8t4hz00unvo54epnfst66); legacy comparison R-M1 | Keeps the legacy's offline, hands-on pair work, but with identical counters in labelled columns and a ten-for-one exchange, at the Grade 7 range (millions to thousandths). Does not restore the cassava/leaf/stone token values or the hundreds-only range. |
 | `guided-decimals` | NEW | — | Guided decimal place-value items with per-option feedback. |
-| `compare-strategy` | NEW | — | Compare-from-the-left method for decimals and whole numbers (objective 3). |
-| `misconceptions` | NEW | — | Targets three common errors: longer decimal is bigger, dropped zero placeholders, decimal word form. |
+| `compare-strategy` | NEW | — | Compare-from-the-left method for decimals and whole numbers (objective 3). Curriculum Excellence V1 (v0.3.0): Adds the whole-number case (6,010,000 > 6,009,999) for the new mc-compare-by-digits misconception. |
+| `misconceptions` | NEW | — | Targets three common errors: longer decimal is bigger, dropped zero placeholders, decimal word form. Curriculum Excellence V1 (v0.3.0): Adds the shorter-is-greater decimal error (new mc-shorter-decimal-bigger) beside longer-is-greater. |
 | `practice` | PRESERVED | PlaceValueDemo.tsx PRACTICE q1–q3 | Items on 1,742,009, 3,060,500 and 5,040,009 kept with their feedback; one word changed in q3 feedback ('group name' → 'period name') to match the chart scene. Two new items added (cocoa tonnes comparison, thousandths). |
-| `review` | REVISED | PlaceValueDemo.tsx scene 'review' | Kept the three takeaways; added zero placeholders and comparing. |
+| `reason-it-out` | NEW | Curriculum Excellence V1 gap report (LM-RSN-1) | Independent, unscaffolded written reasoning (no hints): explain a decimal comparison and the ten-times relationship, so learners practise justifying before any mastery evidence. |
+| `challenge` | NEW | Curriculum Excellence V1 gap report (GE-EXT-1) | Optional, non-gating enrichment puzzle (digits closest to 4) that needs reasoning about every place; placed before the review so it never follows the exit ticket. |
+| `review` | REVISED | PlaceValueDemo.tsx scene 'review' | Kept the three takeaways; added zero placeholders and comparing. Curriculum Excellence V1 (v0.3.0): Adds a progression key idea: decimals lead to the MOE Grade 7 fractions-and-percents period (0.375 is 375 thousandths). |
 | `exit-ticket` | NEW | — | Assessment handoff to Assessment Player V2; candidate items are reviewer-only until released. |
 | `reflect` | NEW | — | Written explanation of place versus value. |
 | `home-practice` | REVISED | Legacy 'Guardian Support' section (revision cmss8t4hz00unvo54epnfst66); legacy comparison R-M2 | Turns the legacy's generic home-support sentence into a concrete, device-free task that a family member who does not read can still share. |
@@ -352,6 +393,8 @@ Place value is all around you. This task needs no device, no printing and nothin
 | compare-strategy | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY |
 | misconceptions | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY |
 | practice | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY |
+| reason-it-out | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY |
+| challenge | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY |
 | review | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY |
 | exit-ticket | FALLBACK | FALLBACK | FALLBACK | FALLBACK | FALLBACK | FALLBACK | FALLBACK | FALLBACK | FALLBACK |
 | reflect | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY |

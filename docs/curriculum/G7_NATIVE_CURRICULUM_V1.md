@@ -78,6 +78,40 @@ The existing decimal, comparison and number-building scenes are unchanged. The b
 
 Captures are in `artifacts/g7-native-curriculum-v1/screenshots/`, with `flow.json`.
 
+### Curriculum Excellence V1 corrections (candidate v0.3.0)
+
+The v0.2.0 candidates were reviewed against Curriculum Excellence Standard V1 (`docs/curriculum/excellence/`). That AI review is advisory, and it is not independent, because the reviewer shares a model family with the author. Its report is kept, pinned to commit `1ad2e9ec`, in `curriculum/excellence/g7-v0.2.0/`. The corrections below were then applied to the candidate sources.
+
+The same agent wrote these corrections, so it may not review them. On v0.3.0 only the deterministic checks run (`curriculum/excellence/g7-v0.3.0/`), and its AI judgment review is recorded as refused (`SELF_REVIEW_PROHIBITED`). Every correction waits for an independent qualified reviewer.
+
+| Lesson | Correction | v0.2.0 finding |
+| --- | --- | --- |
+| Math | Catalogue adds `mc-place-shift`, `mc-shorter-decimal-bigger` and `mc-compare-by-digits`, taught in `ten-times`, `misconceptions` and `compare-strategy`. Remapped: exit-1 options 0/1/3, exit-2 options 1/2 and exit-4 option 1 to place shift; exit-6 option 0 to compare-by-digits. Exit-5 option 2 is replaced with "0.307, 0.37, 0.3" (shorter-is-greater; item `candidate-0.3.0`), and exit-5 option 0 and exit-6 option 2 are unmapped. Every mapping with a machine verification now matches its error model. | 10 mapping findings, ai-m2, ai-m3 |
+| Math | `warm-up` is now a readiness check, with one item per prerequisite (adds 7 × 1,000; 5,384 → 45,384) and a teacher route for learners who miss one. | prerequisite findings, ai-m5 |
+| Math | New `reason-it-out`: two unscaffolded written explanations with no hints. | ai-m1, BP-REASONING |
+| Math | New optional `challenge` (the digits closest to 4) placed before the review, plus a progression key idea in `review` (decimals → fractions and percents). R-M3 is applied as a candidate. | GE-EXT-1 |
+| Literacy | Catalogue adds `mc-explain-restates-evidence`, taught in `peel`, with exit-5 option 3 remapped to it. Exit-1 option 3 is unmapped. | ai-l3, ai-l4 |
+| Literacy | New `readiness-writing`: the paragraph and two-sides prerequisites are diagnosed by production, with routes. | ai-l5 |
+| Literacy | New `write-independently`: an unscaffolded second thesis and PEEL paragraph. New optional `challenge`: a five-paragraph essay. | BP-INDEPENDENT-PRACTICE, GE-EXT-1 |
+| Literacy | Exit items 1, 4 and 5 are diagnostic-only (still asked, not mastery evidence). The candidate rubric adds a counterargument criterion and an Explain-restates-evidence descriptor. R-L6 is applied as a candidate. | ai-l1, ai-l2 |
+| Both | Candidate assessment definitions (`curriculum/v2/g7/assessment-definitions/`, reviewer only) cover prerequisite diagnostics with fallback routes; constructed, reasoning and original-writing mastery tasks with keys or scoring guides; delayed retrieval at 7 and 21 days; a transfer task in a new representation or genre; and an optional extension. They are listed in `assessment-review.md`. Nothing scores them or writes mastery from them; they are teacher-administered until reviewed and released. | BP-PRODUCTION, BP-RETENTION, BP-TRANSFER, BP-SELECTED-SHARE |
+
+Automated checks on v0.3.0:
+
+- No blocking or major findings.
+- All nine blueprint rules are met in both lessons. Selected response is 55% of Math and 43% of Literacy end-of-lesson mastery evidence.
+- Every blocking or major deterministic v0.2.0 finding no longer fires.
+
+What remains open:
+
+- Minor items: unmapped distractors where no catalogued error produces the option, and hints and worked examples carried on exit items, which must be withheld until after the scored response.
+- The millions scope decision, A-M1 (`ai-m4`, OPEN_CURRICULUM_OWNER_DECISION).
+- The Literacy grade scope, A-L1.
+- The structuring defect in the MOE source.
+- The authority gaps listed above.
+
+No layer of the standard is attained, because judgment and human criteria have not been rated.
+
 ## Learner and reviewer separation
 
 - `g7Native.ts` (learner-safe): registry, objectives, provenance, validation, learner projection. It never imports reviewer material.
@@ -96,7 +130,7 @@ How an approved exit ticket will reach the canonical evidence pipeline, all thro
 4. **Collection**: Lesson Player V2 builds an `experience-evidence-envelope/1.0.0`. Mastery responses carry `selectedAnswerIndex` only, with `masteryMutation: false` and `nextActionAuthority: LEARNING_ORCHESTRATOR`.
 5. **Admission**: `adaptEnvelope` (`lib/learner-experience/evidenceAdapter.ts`) recomputes authority, disposition and objectives from the server's copy. A MASTERY_RESPONSE becomes `SUBMIT_TO_ASSESSMENT_AUTHORITY` only for an APPROVED_RELEASE lesson. Until then every observation is `RAW_OBSERVATION`.
 
-Candidate-side contracts implemented and tested here: the item shape, objective and misconception mapping per item, machine verification of every math key, keyless preview items, and the envelope produced by the preview (all observations raw, mastery responses unscored, every objective evidenced). Writing evidence stays formative (FREE_RESPONSE with a teacher rubric), because Assessment Player V2 has no constructed-response item type. That is recorded as a product gap, not worked around.
+Candidate-side contracts implemented and tested here: the item shape, objective and misconception mapping per item, machine verification of every math key, keyless preview items, and the envelope produced by the preview (all observations raw, mastery responses unscored, every objective evidenced). In-lesson writing stays formative (FREE_RESPONSE with a teacher rubric), because Assessment Player V2 has no constructed-response item type. That is recorded as a product gap, not worked around. From v0.3.0, the end-of-lesson writing and reasoning tasks are reviewer-only candidate assessment definitions with a candidate rubric. A teacher scores them on paper. No platform scorer, mastery writer or release reads them, and a test checks that only the reviewer module and the package generator do.
 
 ## Regenerate and validate
 
@@ -108,15 +142,15 @@ LAB_REVIEW_HARNESS=1 npx next dev -p 3197
 node e2e/g7-native/capture-g7-native.cjs http://localhost:3197 artifacts/g7-native-curriculum-v1
 ```
 
-Browser evidence is in `artifacts/g7-native-curriculum-v1/`: 72 screenshots and `flow.json` (recaptured for candidate v0.2.0). Both lessons were walked end to end in Lesson Player V2 at 1440 px and 390 px. Results:
+Browser evidence is in `artifacts/g7-native-curriculum-v1/`: 82 screenshots and `flow.json` (recaptured for candidate v0.3.0). Both lessons were walked end to end in Lesson Player V2 at 1440 px and 390 px. Results:
 
-- all scenes completed (16 math, 17 literacy); every interactive scene kept Continue disabled until the learner acted;
+- all scenes completed (18 math, 20 literacy); every interactive scene kept Continue disabled until the learner acted;
 - all 8 diagrams rendered;
 - no horizontal overflow at 390 px (also checked at 320 px);
 - zero console errors;
 - every finish recorded only `RAW_OBSERVATION` evidence.
 
-The capture blocks service workers, so the dev-only "app update" toast cannot cover lesson controls. The visible "Offline support could not start" notice comes from that setting, not from the lesson. Full-page phone captures repeat the fixed header and footer part-way down; that is a screenshot artifact.
+The capture blocks service workers, so the dev-only "app update" toast cannot cover lesson controls. Blocking them also makes the shell show an "Offline support could not start" toast. From v0.3.0 the capture hides that toast, because it covered the last answer choice of the four-item misconceptions scene. Full-page phone captures repeat the fixed header and footer part-way down; that is a screenshot artifact.
 
 ### Player and preview fixes found by the walkthrough
 
@@ -126,6 +160,7 @@ The capture blocks service workers, so the dev-only "app update" toast cannot co
 
 ## Next authorized actions
 
+0. Have an independent reviewer (not the agent that wrote them, and ideally not its model family) review the v0.3.0 Curriculum Excellence corrections and candidate assessment definitions. Use `curriculum/excellence/g7-v0.3.0/` and the excellence section of each `reviewer-checklist.md`.
 1. Assign a qualified Grade 7 Math reviewer and a qualified Grade 7 English reviewer. Each works through `reviewer-checklist.md` and records APPROVE, REVISE or REJECT through governed curriculum review against the candidate hash.
 2. Each reviewer confirms the recorded legacy comparison (`legacy-comparison.md`, revisions `cmss8t4hz00unvo54epnfst66` and `cmss94dmc03b7vo54ryf3hqk1`) and decides every recommendation. Accepted candidate revisions (for example R-L1) are made in the candidate and the package is regenerated with new hashes.
 3. The curriculum authority decides alignment decisions A-M1 (place-value scope) and A-L1 (essay grade scope), and corrects the Grade 7 English structuring defect through the source-structuring process.

@@ -43,8 +43,8 @@
   },
   "candidate": {
     "lessonId": "cv2-cand-g7-math-number-sense-place-value",
-    "version": "0.2.0",
-    "sha256": "3f612d907f52f5953d879476a627fde8e9a1c5b3d30d22e171a42a8ccec80c0c",
+    "version": "0.3.0",
+    "sha256": "c68b1a37f1852458cd3765643a43c59d6cc1d80ea0ef6f0ab9d67b7860d2ca95",
     "firstComparedAgainst": {
       "commit": "4fdd897cd6263d9f651dbc141e36869c0b9503f9",
       "candidateSha256": "5817d80911154bceb61fe117e0916ad64d0b7ae5c6afd2a2c6028b9cdc972ffb"
@@ -105,7 +105,8 @@
         "legacyContent": "Individual work, then \"explain one answer in writing or orally\" (no items).",
         "candidateScenes": [
           "practice",
-          "reflect"
+          "reflect",
+          "reason-it-out"
         ],
         "disposition": "REPLACED",
         "note": "Five independent items with feedback. The legacy \"explain one answer\" intent is kept in the written place-versus-value reflection."
@@ -132,8 +133,10 @@
       {
         "legacySection": "Extension",
         "legacyContent": "Ask confident learners to solve a harder version or justify reasoning (generic).",
-        "candidateScenes": [],
-        "disposition": "OMITTED",
+        "candidateScenes": [
+          "challenge"
+        ],
+        "disposition": "IMPROVED",
         "note": "The candidate has no extension task. See R-M3."
       },
       {
@@ -345,9 +348,9 @@
         "scenes": [
           "practice"
         ],
-        "recommendation": "Decide whether to add an extension task, for example: using the digits 0, 3, 5, 7 and 9 once each with three decimal places, write the greatest and the least number possible and explain why.",
+        "recommendation": "Decide whether to add an extension task, for example: using the digits 0, 3, 5, 7 and 9 once each with three decimal places, write the greatest and the least number possible and explain why. Curriculum Excellence V1 (v0.3.0): applied as a candidate (optional challenge scene; assessment definition pm-x1). The reviewer still decides whether to keep it.",
         "rationale": "The legacy named an extension but gave none; the candidate has none.",
-        "applied": false
+        "applied": true
       },
       {
         "id": "R-M4",
