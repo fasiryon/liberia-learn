@@ -1,0 +1,320 @@
+{
+  "packageVersion": "g7-native-curriculum/1.0.0",
+  "lessonId": "cv2-cand-g7-literacy-essay-structure-argument",
+  "candidateVersion": "0.1.0",
+  "contracts": {
+    "candidate": "candidate-lesson-v2/1.0.0",
+    "assembledTarget": "curriculum-lesson-v2/1.0.0",
+    "learnerProjection": "lesson-experience/1.0.0"
+  },
+  "authoredAt": "2026-10-15T00:00:00.000Z",
+  "origin": "AUTHORED_FIXTURE",
+  "candidate": {
+    "path": "curriculum/v2/g7/candidates/literacy-essay-structure-argument.json",
+    "sha256": "e875feab4d8d9742f421ba98c4c8c59f753e613a3d67526a77409cdd6019f786"
+  },
+  "learnerProjection": {
+    "path": "curriculum/review/g7-native-v1/literacy-essay-structure-argument/learner-projection.json",
+    "sha256": "fdab57d016e30b374f12ca86270043b9ac0220b9c9ba231b94e9aabe4a04707a"
+  },
+  "assessmentReview": {
+    "path": "curriculum/review/g7-native-v1/literacy-essay-structure-argument/assessment-review.json",
+    "sha256": "8acdf24eadb1da880d670a53ca81dcc2ab8d523cb7fb7e0586d5bd320d3300dd"
+  },
+  "scenes": [
+    {
+      "position": 1,
+      "id": "intro",
+      "type": "INTRO",
+      "purpose": "HOOK_PHENOMENON",
+      "objectiveIds": [
+        "ll-g7-lit-essay-structure",
+        "ll-g7-lit-argument-build"
+      ],
+      "interaction": "NONE",
+      "fallback": null,
+      "evidence": "NONE",
+      "completion": "VIEWED",
+      "words": 75,
+      "sha256": "5c9953d4b7b210859962341254019d6ddbec466dca616f6e21a1459672411f4d",
+      "media": []
+    },
+    {
+      "position": 2,
+      "id": "objectives",
+      "type": "OBJECTIVE",
+      "purpose": "STATE_OBJECTIVE",
+      "objectiveIds": [
+        "ll-g7-lit-essay-structure",
+        "ll-g7-lit-argument-build",
+        "ll-g7-lit-evidence-support"
+      ],
+      "interaction": "NONE",
+      "fallback": null,
+      "evidence": "NONE",
+      "completion": "VIEWED",
+      "words": 11,
+      "sha256": "d8e2b6464cbf740b8376c218f607279d7456834035c42b91f51b529a1fcafc18",
+      "media": []
+    },
+    {
+      "position": 3,
+      "id": "warm-up",
+      "type": "CHECK_UNDERSTANDING",
+      "purpose": "ACTIVATE_PRIOR_KNOWLEDGE",
+      "objectiveIds": [
+        "ll-g7-lit-essay-structure",
+        "ll-g7-lit-evidence-support"
+      ],
+      "interaction": "SINGLE_CHOICE",
+      "fallback": null,
+      "evidence": "FORMATIVE_OBSERVATION",
+      "completion": "ALL_ANSWERED",
+      "words": 14,
+      "sha256": "b13da10bd925fba06bdf944cdac10e56b89b90ce7a233cbe0ea44b9eae305e4f",
+      "media": []
+    },
+    {
+      "position": 4,
+      "id": "essay-structure",
+      "type": "EXPLANATION",
+      "purpose": "EXPLAIN_CONCEPT",
+      "objectiveIds": [
+        "ll-g7-lit-essay-structure"
+      ],
+      "interaction": "NONE",
+      "fallback": null,
+      "evidence": "NONE",
+      "completion": "VIEWED",
+      "words": 98,
+      "sha256": "9174a7e18fd769e11deb8e0f4c9000f48c94a95d5c414da82822856d16fb278b",
+      "media": [
+        {
+          "id": "essay-structure",
+          "kind": "DIAGRAM",
+          "requirement": "MEDIA_OPTIONAL",
+          "asset": {
+            "path": "public/curriculum-candidates/g7-native-v1/literacy-essay-structure.svg",
+            "sha256": "763f874e764fb7c5957f39058b7e187a99a9e600783b6ec9d31993ecc5ea71c6",
+            "governance": "CANDIDATE_ASSET_REVIEW_REQUIRED"
+          }
+        }
+      ]
+    },
+    {
+      "position": 5,
+      "id": "model-plan",
+      "type": "INTERACTIVE_DIAGRAM",
+      "purpose": "MODEL_WORKED_EXAMPLE",
+      "objectiveIds": [
+        "ll-g7-lit-essay-structure",
+        "ll-g7-lit-argument-build"
+      ],
+      "interaction": "DIAGRAM_REVEAL",
+      "fallback": null,
+      "evidence": "NONE",
+      "completion": "ALL_STEPS_REVEALED",
+      "words": 28,
+      "sha256": "4346a7daef39f877a77f3fa02bd583821f5fa57315fc970fb5a84ce6f1eb0f6e",
+      "media": []
+    },
+    {
+      "position": 6,
+      "id": "thesis",
+      "type": "GUIDED_EXAMPLE",
+      "purpose": "GUIDED_PRACTICE",
+      "objectiveIds": [
+        "ll-g7-lit-argument-build"
+      ],
+      "interaction": "SINGLE_CHOICE",
+      "fallback": null,
+      "evidence": "FORMATIVE_OBSERVATION",
+      "completion": "ALL_ANSWERED",
+      "words": 56,
+      "sha256": "b60735b0e78984bbf0fd7c75239db8d6ef92c0dd5e6ced3488a0bbfee4c530fe",
+      "media": []
+    },
+    {
+      "position": 7,
+      "id": "peel",
+      "type": "INTERACTIVE_DIAGRAM",
+      "purpose": "MODEL_WORKED_EXAMPLE",
+      "objectiveIds": [
+        "ll-g7-lit-evidence-support"
+      ],
+      "interaction": "DIAGRAM_REVEAL",
+      "fallback": null,
+      "evidence": "NONE",
+      "completion": "ALL_STEPS_REVEALED",
+      "words": 23,
+      "sha256": "7db8fb5bd58f48dbe9de50e3bf07b3186d7e844d57f88ce533a566dff16f826d",
+      "media": [
+        {
+          "id": "peel-paragraph",
+          "kind": "DIAGRAM",
+          "requirement": "MEDIA_OPTIONAL",
+          "asset": {
+            "path": "public/curriculum-candidates/g7-native-v1/literacy-peel-paragraph.svg",
+            "sha256": "1b335949b6be8c0915ff4fcb5e70e8edd89816bb3e03bc873d3de8147f2fcff1",
+            "governance": "CANDIDATE_ASSET_REVIEW_REQUIRED"
+          }
+        }
+      ]
+    },
+    {
+      "position": 8,
+      "id": "evidence",
+      "type": "EXPLANATION",
+      "purpose": "EXPLAIN_CONCEPT",
+      "objectiveIds": [
+        "ll-g7-lit-evidence-support"
+      ],
+      "interaction": "NONE",
+      "fallback": null,
+      "evidence": "NONE",
+      "completion": "VIEWED",
+      "words": 73,
+      "sha256": "98b74a7ef79ca6fc157ec6e769361662158dc497cb885ddf58b024c1a4fb2ff3",
+      "media": [
+        {
+          "id": "evidence-test",
+          "kind": "DIAGRAM",
+          "requirement": "MEDIA_OPTIONAL",
+          "asset": {
+            "path": "public/curriculum-candidates/g7-native-v1/literacy-evidence-test.svg",
+            "sha256": "5fe7e1af87d1553d809065c2725b4a26859bae668376d93cdefbf9c7b00f1162",
+            "governance": "CANDIDATE_ASSET_REVIEW_REQUIRED"
+          }
+        }
+      ]
+    },
+    {
+      "position": 9,
+      "id": "evidence-check",
+      "type": "CHECK_UNDERSTANDING",
+      "purpose": "ADDRESS_MISCONCEPTION",
+      "objectiveIds": [
+        "ll-g7-lit-argument-build",
+        "ll-g7-lit-evidence-support"
+      ],
+      "interaction": "SINGLE_CHOICE",
+      "fallback": null,
+      "evidence": "FORMATIVE_OBSERVATION",
+      "completion": "ALL_ANSWERED",
+      "words": 16,
+      "sha256": "66b57a1abb62405fdf609126d5808e6b6d6c89176b2b8afb7d2d9324c28dc14e",
+      "media": []
+    },
+    {
+      "position": 10,
+      "id": "order-paragraph",
+      "type": "PRACTICE",
+      "purpose": "GUIDED_PRACTICE",
+      "objectiveIds": [
+        "ll-g7-lit-essay-structure"
+      ],
+      "interaction": "ORDERING",
+      "fallback": "FREE_RESPONSE",
+      "evidence": "FORMATIVE_OBSERVATION",
+      "completion": "ALL_RESPONSES_WRITTEN",
+      "words": 21,
+      "sha256": "30bfe2ec609e4b78abdd339199e747b912aa2c976362377c59ac7f85f2860beb",
+      "media": []
+    },
+    {
+      "position": 11,
+      "id": "write-argument",
+      "type": "PRACTICE",
+      "purpose": "INDEPENDENT_PRACTICE",
+      "objectiveIds": [
+        "ll-g7-lit-argument-build",
+        "ll-g7-lit-evidence-support"
+      ],
+      "interaction": "FREE_RESPONSE",
+      "fallback": null,
+      "evidence": "FORMATIVE_OBSERVATION",
+      "completion": "ALL_RESPONSES_WRITTEN",
+      "words": 42,
+      "sha256": "823d0b8db68a4a8bd53d6453686d478cf3d1b6a61f2b2209ccad386aca8ff163",
+      "media": []
+    },
+    {
+      "position": 12,
+      "id": "review",
+      "type": "REVIEW",
+      "purpose": "REVIEW",
+      "objectiveIds": [
+        "ll-g7-lit-essay-structure",
+        "ll-g7-lit-argument-build",
+        "ll-g7-lit-evidence-support"
+      ],
+      "interaction": "NONE",
+      "fallback": null,
+      "evidence": "NONE",
+      "completion": "VIEWED",
+      "words": 11,
+      "sha256": "bbeb1a819e2be4ed1355f74cee64f32aa96aaea3bb5e5769c8c0af5df9d090d8",
+      "media": []
+    },
+    {
+      "position": 13,
+      "id": "exit-ticket",
+      "type": "MASTERY_CHECK",
+      "purpose": "ASSESS_MASTERY",
+      "objectiveIds": [
+        "ll-g7-lit-essay-structure",
+        "ll-g7-lit-argument-build",
+        "ll-g7-lit-evidence-support"
+      ],
+      "interaction": "ASSESSMENT_HANDOFF",
+      "fallback": "PAPER_ACTIVITY",
+      "evidence": "MASTERY_RESPONSE",
+      "completion": "ALL_ANSWERED",
+      "words": 16,
+      "sha256": "ba2f86d89b4c1393cc91d641efa8893c951d9b01904714cae49fe68f34cf024f",
+      "media": []
+    },
+    {
+      "position": 14,
+      "id": "reflect",
+      "type": "REFLECTION",
+      "purpose": "REFLECT",
+      "objectiveIds": [
+        "ll-g7-lit-essay-structure"
+      ],
+      "interaction": "FREE_RESPONSE",
+      "fallback": null,
+      "evidence": "REFLECTION",
+      "completion": "ALL_RESPONSES_WRITTEN",
+      "words": 14,
+      "sha256": "232578b92a7e9653f87e524c1e5f52b7bd335f0a35b7bdbff7e2301f934f6389",
+      "media": []
+    }
+  ],
+  "sources": [
+    {
+      "path": "artifacts/curriculum-cleanup-v1/snapshot.json",
+      "role": "Read-only metadata of the legacy row (body not included)",
+      "sha256": "654175b357f8fd363142930e98cf0b59d918c0324069f2c4e9bff788e875ba8b"
+    },
+    {
+      "path": "curriculum/structured/moe-structured-v1.json",
+      "role": "Structured MOE source (objective relationships)",
+      "sha256": "4a20e452488fa94987ab13974467f172f8a18db32cc31dead877c68f9063e6f6"
+    },
+    {
+      "path": "curriculum/sources/ocr/GRADE-7-9--English-7-9.json",
+      "role": "OCR of MOE English 7-9 (Grade 7 paragraph writing, p.4)",
+      "sha256": "49207856c76514b437287055c65dea82076ca2fd3086b682214bf9f49c2648f3"
+    }
+  ],
+  "governance": {
+    "state": "DRAFT",
+    "humanReviewRequired": true,
+    "published": false,
+    "moeApprovalState": "NOT_CLAIMED",
+    "requiredApprovalBasis": "HUMAN_REVIEW",
+    "qualifiedReview": "NOT_STARTED",
+    "publication": "DISABLED"
+  }
+}

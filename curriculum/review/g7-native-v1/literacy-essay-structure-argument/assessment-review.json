@@ -1,0 +1,192 @@
+{
+  "audience": "REVIEWER_ONLY",
+  "notice": "Contains answer keys. Never include in a learner projection, offline package or client bundle.",
+  "lessonKey": "literacy-essay-structure-argument",
+  "itemShape": "GovernedItem (lib/learning-authority/governedGrade4Math.ts)",
+  "items": [
+    {
+      "assessmentRequestId": "g7-essay-exit-ticket",
+      "objectiveId": "ll-g7-lit-essay-structure",
+      "distractorMisconceptions": {
+        "3": "mc-conclusion-new-idea"
+      },
+      "verification": null,
+      "item": {
+        "id": "g7-essay-exit-1",
+        "version": "candidate-0.1.0",
+        "context": "PRACTICE",
+        "prompt": "In an argumentative essay, where does the thesis statement usually appear?",
+        "options": [
+          "At the end of the introduction",
+          "In the middle of the second body paragraph",
+          "Only in the title",
+          "Only in the conclusion"
+        ],
+        "correctIndex": 0,
+        "hint": "Think about what the reader needs to know before the body paragraphs begin.",
+        "workedExample": "The thesis ends the introduction so the reader knows the claim and reasons before the body paragraphs argue them."
+      },
+      "sha256": "0309d00352acd9fcdf80d878d38dbcf46ab5c5bd69fda30799d052154414bb28"
+    },
+    {
+      "assessmentRequestId": "g7-essay-exit-ticket",
+      "objectiveId": "ll-g7-lit-argument-build",
+      "distractorMisconceptions": {
+        "0": "mc-topic-not-thesis",
+        "2": "mc-topic-not-thesis",
+        "3": "mc-topic-not-thesis"
+      },
+      "verification": null,
+      "item": {
+        "id": "g7-essay-exit-2",
+        "version": "candidate-0.1.0",
+        "context": "PRACTICE",
+        "prompt": "Which sentence is an arguable thesis statement?",
+        "options": [
+          "Liberia has fifteen counties.",
+          "Our school should start a debate club because debating builds confidence and clear thinking.",
+          "This essay is about debate clubs.",
+          "Debate clubs."
+        ],
+        "correctIndex": 1,
+        "hint": "Could a sensible person disagree with it?",
+        "workedExample": "Only the debate-club claim can be argued, and it names two reasons. The others are a fact, an announcement and a topic."
+      },
+      "sha256": "010c6684dcf204fc73e209d1bc0032672e755d861be3d628a458612211056e12"
+    },
+    {
+      "assessmentRequestId": "g7-essay-exit-ticket",
+      "objectiveId": "ll-g7-lit-evidence-support",
+      "distractorMisconceptions": {
+        "0": "mc-opinion-as-evidence",
+        "2": "mc-irrelevant-evidence",
+        "3": "mc-opinion-as-evidence"
+      },
+      "verification": null,
+      "item": {
+        "id": "g7-essay-exit-3",
+        "version": "candidate-0.1.0",
+        "context": "PRACTICE",
+        "prompt": "Reason: reading every day builds vocabulary. Which evidence supports this reason best?",
+        "options": [
+          "Reading is fun.",
+          "After our class read for 20 minutes a day for one term, many of us used new words from the books in our own writing.",
+          "Books have many pages.",
+          "Everyone should read."
+        ],
+        "correctIndex": 1,
+        "hint": "Which option is specific and proves this exact reason?",
+        "workedExample": "The class example is specific and shows vocabulary growing. The others are opinions or unrelated facts."
+      },
+      "sha256": "45c74298af90d766cb95e2386cc439aaef1c9c487d0f9e6064ac5e59b1e57a31"
+    },
+    {
+      "assessmentRequestId": "g7-essay-exit-ticket",
+      "objectiveId": "ll-g7-lit-essay-structure",
+      "distractorMisconceptions": {
+        "0": "mc-conclusion-new-idea"
+      },
+      "verification": null,
+      "item": {
+        "id": "g7-essay-exit-4",
+        "version": "candidate-0.1.0",
+        "context": "PRACTICE",
+        "prompt": "What should the conclusion of an argumentative essay do?",
+        "options": [
+          "Introduce a new reason the reader has not seen",
+          "Restate the thesis in new words and sum up the main reasons",
+          "List the sources only",
+          "Repeat the introduction word for word"
+        ],
+        "correctIndex": 1,
+        "hint": "Remember the three jobs of a conclusion.",
+        "workedExample": "A conclusion restates the thesis in new words, sums up the reasons and ends with a final thought. New reasons belong in the body."
+      },
+      "sha256": "cdaa51e7d8ba67b65a9f4e3d3ef381f18b6f622b4c8d852d25db5cb6ec97fdf1"
+    },
+    {
+      "assessmentRequestId": "g7-essay-exit-ticket",
+      "objectiveId": "ll-g7-lit-evidence-support",
+      "distractorMisconceptions": {
+        "3": "mc-irrelevant-evidence"
+      },
+      "verification": null,
+      "item": {
+        "id": "g7-essay-exit-5",
+        "version": "candidate-0.1.0",
+        "context": "PRACTICE",
+        "prompt": "In a PEEL paragraph, what does the Explain sentence do?",
+        "options": [
+          "It shows how the evidence supports the point",
+          "It starts a new topic",
+          "It gives the essay title",
+          "It repeats the evidence word for word"
+        ],
+        "correctIndex": 0,
+        "hint": "The Explain sentence answers: so what?",
+        "workedExample": "Explain connects the evidence to the point, showing why the evidence proves it."
+      },
+      "sha256": "6792bf5ff254f41130c3b69b8b8e9f6d80efbe9d2d2135baaad23f57b17efa66"
+    },
+    {
+      "assessmentRequestId": "g7-essay-exit-ticket",
+      "objectiveId": "ll-g7-lit-argument-build",
+      "distractorMisconceptions": {
+        "1": "mc-ignore-counterargument",
+        "2": "mc-ignore-counterargument"
+      },
+      "verification": null,
+      "item": {
+        "id": "g7-essay-exit-6",
+        "version": "candidate-0.1.0",
+        "context": "PRACTICE",
+        "prompt": "Which sentence answers a counterargument?",
+        "options": [
+          "Some people say a debate club takes time from homework, but meetings can be held once a week after classes.",
+          "Debate clubs are great.",
+          "I like debates.",
+          "Many schools have clubs."
+        ],
+        "correctIndex": 0,
+        "hint": "Look for an objection followed by a reply.",
+        "workedExample": "It states an objection (time from homework) and answers it (meet once a week), which is how an essay answers the other side."
+      },
+      "sha256": "8b5ae4220f857f4b75c01ed959f65b9876b047ba9037be78bf10cfe363ca79e9"
+    }
+  ],
+  "writingRubric": {
+    "lessonKey": "literacy-essay-structure-argument",
+    "sceneId": "write-argument",
+    "use": "Formative feedback by the teacher. Not a mastery score; Assessment Player V2 has no constructed-response item type yet.",
+    "criteria": [
+      {
+        "id": "thesis",
+        "label": "Thesis statement",
+        "secure": "An arguable claim that names two clear reasons.",
+        "developing": "A claim with one reason, or reasons that are vague.",
+        "beginning": "A topic, a fact or an announcement instead of a claim."
+      },
+      {
+        "id": "point",
+        "label": "Point (topic sentence)",
+        "secure": "States reason one clearly and matches the thesis.",
+        "developing": "States a reason that only loosely matches the thesis.",
+        "beginning": "No topic sentence, or it repeats the thesis word for word."
+      },
+      {
+        "id": "evidence",
+        "label": "Evidence",
+        "secure": "Specific, true and relevant evidence (example, checkable fact or experience).",
+        "developing": "Relevant but general evidence.",
+        "beginning": "Opinion, an invented figure, or unrelated evidence."
+      },
+      {
+        "id": "explain-link",
+        "label": "Explain and link",
+        "secure": "Explains how the evidence proves the point and links back to the claim.",
+        "developing": "Explains or links, but not both.",
+        "beginning": "Evidence is left unexplained."
+      }
+    ]
+  }
+}

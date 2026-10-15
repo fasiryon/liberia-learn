@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 720" role="img" aria-labelledby="t d" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif">
+  <title id="t">Kinds of evidence and the four-question test</title>
+  <desc id="d">Four kinds of evidence: facts and figures from a source you can name; examples of real events; the words of an expert such as a teacher, nurse or agriculture officer; your own experience. Four test questions: Is it true? Is it relevant to this reason? Is it specific? Where does it come from? Never invent a fact or a number.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/></marker>
+  </defs>
+  <rect width="600" height="720" rx="24" fill="#ffffff"/>
+  <text x="300" y="48" text-anchor="middle" font-size="26" font-weight="700" fill="#1f2937">Strong evidence passes the test</text>
+  <g>
+    <rect x="40" y="74" width="252" height="120" rx="16" fill="#e0f2fe"/><text x="60" y="110" font-size="22" font-weight="800" fill="#0369a1">Facts and figures</text><text x="60" y="140" font-size="19" fill="#1f2937">from a source</text><text x="60" y="164" font-size="19" fill="#1f2937">you can name</text>
+    <rect x="308" y="74" width="252" height="120" rx="16" fill="#ecfdf5"/><text x="328" y="110" font-size="22" font-weight="800" fill="#0f766e">Examples</text><text x="328" y="140" font-size="19" fill="#1f2937">of real events</text><text x="328" y="164" font-size="19" fill="#1f2937">or situations</text>
+    <rect x="40" y="206" width="252" height="120" rx="16" fill="#f5f3ff"/><text x="60" y="242" font-size="22" font-weight="800" fill="#6d28d9">Expert words</text><text x="60" y="272" font-size="19" fill="#1f2937">a teacher, a nurse,</text><text x="60" y="296" font-size="19" fill="#1f2937">an agriculture officer</text>
+    <rect x="308" y="206" width="252" height="120" rx="16" fill="#fef3c7"/><text x="328" y="242" font-size="22" font-weight="800" fill="#b45309">Experience</text><text x="328" y="272" font-size="19" fill="#1f2937">something you saw</text><text x="328" y="296" font-size="19" fill="#1f2937">or did yourself</text>
+  </g>
+  <line x1="300" y1="336" x2="300" y2="366" stroke="#6b7280" stroke-width="3" marker-end="url(#arrow)"/>
+  <rect x="40" y="374" width="520" height="252" rx="18" fill="#f9fafb" stroke="#1f2937" stroke-width="2"/>
+  <text x="64" y="412" font-size="23" font-weight="800" fill="#1f2937">Test every piece of evidence</text>
+  <g font-size="21" fill="#1f2937">
+    <circle cx="80" cy="450" r="14" fill="#0f766e"/><path d="M73 450 l5 5 l9 -10" stroke="#ffffff" stroke-width="3" fill="none"/><text x="108" y="457">Is it true? Can the reader check it?</text>
+    <circle cx="80" cy="496" r="14" fill="#0f766e"/><path d="M73 496 l5 5 l9 -10" stroke="#ffffff" stroke-width="3" fill="none"/><text x="108" y="503">Is it relevant to this reason?</text>
+    <circle cx="80" cy="542" r="14" fill="#0f766e"/><path d="M73 542 l5 5 l9 -10" stroke="#ffffff" stroke-width="3" fill="none"/><text x="108" y="549">Is it specific: who, what, where?</text>
+    <circle cx="80" cy="588" r="14" fill="#0f766e"/><path d="M73 588 l5 5 l9 -10" stroke="#ffffff" stroke-width="3" fill="none"/><text x="108" y="595">Where does it come from?</text>
+  </g>
+  <rect x="40" y="644" width="520" height="56" rx="14" fill="#fee2e2"/>
+  <text x="300" y="679" text-anchor="middle" font-size="20" font-weight="700" fill="#991b1b">Never make up a fact or a number.</text>
+</svg>

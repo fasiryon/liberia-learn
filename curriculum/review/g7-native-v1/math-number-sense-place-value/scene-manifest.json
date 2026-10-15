@@ -1,0 +1,349 @@
+{
+  "packageVersion": "g7-native-curriculum/1.0.0",
+  "lessonId": "cv2-cand-g7-math-number-sense-place-value",
+  "candidateVersion": "0.1.0",
+  "contracts": {
+    "candidate": "candidate-lesson-v2/1.0.0",
+    "assembledTarget": "curriculum-lesson-v2/1.0.0",
+    "learnerProjection": "lesson-experience/1.0.0"
+  },
+  "authoredAt": "2026-10-15T00:00:00.000Z",
+  "origin": "AUTHORED_FIXTURE",
+  "candidate": {
+    "path": "curriculum/v2/g7/candidates/math-number-sense-place-value.json",
+    "sha256": "5817d80911154bceb61fe117e0916ad64d0b7ae5c6afd2a2c6028b9cdc972ffb"
+  },
+  "learnerProjection": {
+    "path": "curriculum/review/g7-native-v1/math-number-sense-place-value/learner-projection.json",
+    "sha256": "b14a869ca88963216c86a7f9883029a4df212acb46e184b3a4f302d0a5ab57fe"
+  },
+  "assessmentReview": {
+    "path": "curriculum/review/g7-native-v1/math-number-sense-place-value/assessment-review.json",
+    "sha256": "c79d29abcc504a67bf1d5b12d725241c51fda32900cf74c9827252ddecbbaed8"
+  },
+  "scenes": [
+    {
+      "position": 1,
+      "id": "intro",
+      "type": "INTRO",
+      "purpose": "HOOK_PHENOMENON",
+      "objectiveIds": [
+        "ll-g7-math-place-value-read-write",
+        "ll-g7-math-place-value-digit-value"
+      ],
+      "interaction": "NONE",
+      "fallback": null,
+      "evidence": "NONE",
+      "completion": "VIEWED",
+      "words": 70,
+      "sha256": "e29490bf8309eb2dc3a6c175baa06d5837066d02820cd6a065d50bfb9d5f948c",
+      "media": [
+        {
+          "id": "hero-numbers",
+          "kind": "DIAGRAM",
+          "requirement": "MEDIA_OPTIONAL",
+          "asset": {
+            "path": "public/curriculum-candidates/g7-native-v1/math-hero-numbers.svg",
+            "sha256": "a6bf8358928cdffca6f2fd7d129114dc4de369c1a6cada646cd948f9172c20a2",
+            "governance": "CANDIDATE_ASSET_REVIEW_REQUIRED"
+          }
+        }
+      ]
+    },
+    {
+      "position": 2,
+      "id": "objectives",
+      "type": "OBJECTIVE",
+      "purpose": "STATE_OBJECTIVE",
+      "objectiveIds": [
+        "ll-g7-math-place-value-read-write",
+        "ll-g7-math-place-value-digit-value",
+        "ll-g7-math-place-value-compare"
+      ],
+      "interaction": "NONE",
+      "fallback": null,
+      "evidence": "NONE",
+      "completion": "VIEWED",
+      "words": 11,
+      "sha256": "015d6593c6b9fa53e4b3bd0975227e3465e94d83a391a876b6efe03320b39fa2",
+      "media": []
+    },
+    {
+      "position": 3,
+      "id": "warm-up",
+      "type": "CHECK_UNDERSTANDING",
+      "purpose": "ACTIVATE_PRIOR_KNOWLEDGE",
+      "objectiveIds": [
+        "ll-g7-math-place-value-digit-value"
+      ],
+      "interaction": "SINGLE_CHOICE",
+      "fallback": null,
+      "evidence": "FORMATIVE_OBSERVATION",
+      "completion": "ALL_ANSWERED",
+      "words": 23,
+      "sha256": "0ce421b98979bda2e15b97bba921416b055b4308a00af167efc0da5567314ff3",
+      "media": []
+    },
+    {
+      "position": 4,
+      "id": "chart",
+      "type": "EXPLANATION",
+      "purpose": "EXPLAIN_CONCEPT",
+      "objectiveIds": [
+        "ll-g7-math-place-value-read-write",
+        "ll-g7-math-place-value-digit-value"
+      ],
+      "interaction": "NONE",
+      "fallback": null,
+      "evidence": "NONE",
+      "completion": "VIEWED",
+      "words": 88,
+      "sha256": "f6f02683b174e3eb17d4c40c47ed5e0d9ff12245f3da1fbc9be9c58c2bc25152",
+      "media": [
+        {
+          "id": "place-value-chart",
+          "kind": "DIAGRAM",
+          "requirement": "MEDIA_OPTIONAL",
+          "asset": {
+            "path": "public/curriculum-candidates/g7-native-v1/math-place-value-chart.svg",
+            "sha256": "c772c56f51a92c41d0b093518bf8b79066e9610cd2c6a424655e43770a967a31",
+            "governance": "CANDIDATE_ASSET_REVIEW_REQUIRED"
+          }
+        }
+      ]
+    },
+    {
+      "position": 5,
+      "id": "ten-times",
+      "type": "INTERACTIVE_DIAGRAM",
+      "purpose": "EXPLAIN_CONCEPT",
+      "objectiveIds": [
+        "ll-g7-math-place-value-digit-value"
+      ],
+      "interaction": "DIAGRAM_REVEAL",
+      "fallback": null,
+      "evidence": "NONE",
+      "completion": "ALL_STEPS_REVEALED",
+      "words": 17,
+      "sha256": "5af3311e99f2b831ee46d078c3b036621f40f98cc8282a8911b494ea8363972a",
+      "media": [
+        {
+          "id": "ten-times-ladder",
+          "kind": "DIAGRAM",
+          "requirement": "MEDIA_OPTIONAL",
+          "asset": {
+            "path": "public/curriculum-candidates/g7-native-v1/math-ten-times-ladder.svg",
+            "sha256": "f9e49a7b5f1df4f5e74040f6fa2c37f99abd9b35f74a14447aec10773542f320",
+            "governance": "CANDIDATE_ASSET_REVIEW_REQUIRED"
+          }
+        }
+      ]
+    },
+    {
+      "position": 6,
+      "id": "worked-example",
+      "type": "GUIDED_EXAMPLE",
+      "purpose": "MODEL_WORKED_EXAMPLE",
+      "objectiveIds": [
+        "ll-g7-math-place-value-read-write",
+        "ll-g7-math-place-value-digit-value"
+      ],
+      "interaction": "DIAGRAM_REVEAL",
+      "fallback": null,
+      "evidence": "NONE",
+      "completion": "ALL_STEPS_REVEALED",
+      "words": 21,
+      "sha256": "7b7e1494a33631f8e70fc42105d4c121c8fc00dd3ec80330e67900c75bb7742a",
+      "media": [
+        {
+          "id": "library-fund",
+          "kind": "DIAGRAM",
+          "requirement": "MEDIA_OPTIONAL",
+          "asset": {
+            "path": "public/curriculum-candidates/g7-native-v1/math-library-fund.svg",
+            "sha256": "ee4844d44cea943d1723b6c9eb9205d7a469554a42f61169d222da28c74ba90b",
+            "governance": "CANDIDATE_ASSET_REVIEW_REQUIRED"
+          }
+        }
+      ]
+    },
+    {
+      "position": 7,
+      "id": "build-number",
+      "type": "GUIDED_EXAMPLE",
+      "purpose": "GUIDED_PRACTICE",
+      "objectiveIds": [
+        "ll-g7-math-place-value-read-write"
+      ],
+      "interaction": "NUMERIC",
+      "fallback": "FREE_RESPONSE",
+      "evidence": "FORMATIVE_OBSERVATION",
+      "completion": "ALL_RESPONSES_WRITTEN",
+      "words": 32,
+      "sha256": "1c979da7605830bf7e3f130c3a2f9a3ad0225a42e29ac95326b6039e0b4dcd6b",
+      "media": []
+    },
+    {
+      "position": 8,
+      "id": "guided-decimals",
+      "type": "GUIDED_EXAMPLE",
+      "purpose": "GUIDED_PRACTICE",
+      "objectiveIds": [
+        "ll-g7-math-place-value-read-write",
+        "ll-g7-math-place-value-digit-value"
+      ],
+      "interaction": "SINGLE_CHOICE",
+      "fallback": null,
+      "evidence": "FORMATIVE_OBSERVATION",
+      "completion": "ALL_ANSWERED",
+      "words": 21,
+      "sha256": "b68cdbcdb0e4a91148bf0bc72533b326a39872a9607c8655da32836617d6bdf2",
+      "media": []
+    },
+    {
+      "position": 9,
+      "id": "compare-strategy",
+      "type": "GUIDED_EXAMPLE",
+      "purpose": "MODEL_WORKED_EXAMPLE",
+      "objectiveIds": [
+        "ll-g7-math-place-value-compare"
+      ],
+      "interaction": "DIAGRAM_REVEAL",
+      "fallback": null,
+      "evidence": "NONE",
+      "completion": "ALL_STEPS_REVEALED",
+      "words": 21,
+      "sha256": "6b76b0bdc94d157a2d35868907392abf7bc3f8865173de3e8477784c6e1189ce",
+      "media": [
+        {
+          "id": "compare-decimals",
+          "kind": "DIAGRAM",
+          "requirement": "MEDIA_OPTIONAL",
+          "asset": {
+            "path": "public/curriculum-candidates/g7-native-v1/math-compare-decimals.svg",
+            "sha256": "2c8810aa53c4eeaab63784608ce3efe4b08ccd90a5a4b38816ca08bc86b7a400",
+            "governance": "CANDIDATE_ASSET_REVIEW_REQUIRED"
+          }
+        }
+      ]
+    },
+    {
+      "position": 10,
+      "id": "misconceptions",
+      "type": "CHECK_UNDERSTANDING",
+      "purpose": "ADDRESS_MISCONCEPTION",
+      "objectiveIds": [
+        "ll-g7-math-place-value-read-write",
+        "ll-g7-math-place-value-compare"
+      ],
+      "interaction": "SINGLE_CHOICE",
+      "fallback": null,
+      "evidence": "FORMATIVE_OBSERVATION",
+      "completion": "ALL_ANSWERED",
+      "words": 16,
+      "sha256": "79f87d2f90ee1ce4c369819d2c2eb550eb09608ed2831374477d973a1b931f43",
+      "media": []
+    },
+    {
+      "position": 11,
+      "id": "practice",
+      "type": "PRACTICE",
+      "purpose": "INDEPENDENT_PRACTICE",
+      "objectiveIds": [
+        "ll-g7-math-place-value-read-write",
+        "ll-g7-math-place-value-digit-value",
+        "ll-g7-math-place-value-compare"
+      ],
+      "interaction": "SINGLE_CHOICE",
+      "fallback": null,
+      "evidence": "FORMATIVE_OBSERVATION",
+      "completion": "ALL_ANSWERED",
+      "words": 27,
+      "sha256": "781c1c36c5283010539cf108bcbaa46a84704c98448a27bed064471e112e90ab",
+      "media": []
+    },
+    {
+      "position": 12,
+      "id": "review",
+      "type": "REVIEW",
+      "purpose": "REVIEW",
+      "objectiveIds": [
+        "ll-g7-math-place-value-read-write",
+        "ll-g7-math-place-value-digit-value",
+        "ll-g7-math-place-value-compare"
+      ],
+      "interaction": "NONE",
+      "fallback": null,
+      "evidence": "NONE",
+      "completion": "VIEWED",
+      "words": 11,
+      "sha256": "9bea72fa6c6aeaab61d690a507f9cf2bc52c98e6b80d4d338dbc9f65ba4f5d34",
+      "media": []
+    },
+    {
+      "position": 13,
+      "id": "exit-ticket",
+      "type": "MASTERY_CHECK",
+      "purpose": "ASSESS_MASTERY",
+      "objectiveIds": [
+        "ll-g7-math-place-value-read-write",
+        "ll-g7-math-place-value-digit-value",
+        "ll-g7-math-place-value-compare"
+      ],
+      "interaction": "ASSESSMENT_HANDOFF",
+      "fallback": "PAPER_ACTIVITY",
+      "evidence": "MASTERY_RESPONSE",
+      "completion": "ALL_ANSWERED",
+      "words": 19,
+      "sha256": "3c407b008e3a3cb3deed49362867d189e14735f73c7f417e574381f426f13802",
+      "media": []
+    },
+    {
+      "position": 14,
+      "id": "reflect",
+      "type": "REFLECTION",
+      "purpose": "REFLECT",
+      "objectiveIds": [
+        "ll-g7-math-place-value-digit-value"
+      ],
+      "interaction": "FREE_RESPONSE",
+      "fallback": null,
+      "evidence": "REFLECTION",
+      "completion": "ALL_RESPONSES_WRITTEN",
+      "words": 12,
+      "sha256": "d6984293c360c7a5a8421940c7aeefca1ea680deebfa7df2a629e48cfed29e61",
+      "media": []
+    }
+  ],
+  "sources": [
+    {
+      "path": "artifacts/curriculum-cleanup-v1/snapshot.json",
+      "role": "Read-only metadata of the legacy row (body not included)",
+      "sha256": "654175b357f8fd363142930e98cf0b59d918c0324069f2c4e9bff788e875ba8b"
+    },
+    {
+      "path": "curriculum/structured/moe-structured-v1.json",
+      "role": "Structured MOE source (objective relationships)",
+      "sha256": "4a20e452488fa94987ab13974467f172f8a18db32cc31dead877c68f9063e6f6"
+    },
+    {
+      "path": "components/experience/demo/PlaceValueDemo.tsx",
+      "role": "Student Experience V3 synthetic DEMO: Musu's library fund example (L$2,350,480), practice items on 1,742,009, 3,060,500 and five million forty thousand nine, and their misconception feedback.",
+      "sha256": "d96f84969167c6376f1b040e4047fc2822ffe3771d79854918b4f042e2e726c7"
+    },
+    {
+      "path": "lib/learner-experience/demo/placeValue.ts",
+      "role": "Deterministic place-value arithmetic used by the package tests to verify every exit-ticket key.",
+      "sha256": "df11ff0287c4cac012b683ec09cee51ad40a4c30417ef553d9180d06193b5a62"
+    }
+  ],
+  "governance": {
+    "state": "DRAFT",
+    "humanReviewRequired": true,
+    "published": false,
+    "moeApprovalState": "NOT_CLAIMED",
+    "requiredApprovalBasis": "HUMAN_REVIEW",
+    "qualifiedReview": "NOT_STARTED",
+    "publication": "DISABLED"
+  }
+}

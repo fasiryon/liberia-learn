@@ -1,0 +1,342 @@
+{
+  "packageVersion": "g7-native-curriculum/1.0.0",
+  "publication": "DISABLED",
+  "registeredInK12Scope": false,
+  "executableRelease": false,
+  "notice": "Candidate release manifests carry no ontology release. They validate under releaseManifests.ts as content-gap-only manifests and cannot execute, publish or score anything.",
+  "lessons": [
+    {
+      "lessonKey": "math-number-sense-place-value",
+      "manifest": {
+        "manifestVersion": "1.0.0",
+        "releaseId": "lr-candidate-g7-math-number-sense-2026.1",
+        "grade": 7,
+        "subject": "MATH",
+        "provenance": {
+          "sourceRef": "curriculum/review/g7-native-v1/math-number-sense-place-value/review.md",
+          "authority": "UNKNOWN",
+          "moeApprovalStatus": "NOT_CLAIMED"
+        }
+      },
+      "manifestValidation": {
+        "ok": true,
+        "identity": "ee0ac39aaa463f567670592831fa1d5dfdc99c119c18460e0743bdd43435c0b5",
+        "errors": [],
+        "warnings": [
+          "release_not_attached_content_gap_only",
+          "coverage_gaps_present"
+        ],
+        "coverageGaps": 1
+      },
+      "proposedBindings": {
+        "note": "Shapes follow CurriculumOntologyRelease (governedGrade4Math.ts). Every PROPOSED value needs reviewer acceptance; every REQUIRED_FROM_AUTHORITY value must come from an authorized source and cannot be generated.",
+        "concepts": [
+          {
+            "proposedConceptId": "g7-math-place-value-read-write",
+            "revision": 1,
+            "label": "Read and write numbers from the millions to the thousandths in standard form, word form and expanded form.",
+            "objectiveId": "ll-g7-math-place-value-read-write",
+            "status": "PROPOSED"
+          },
+          {
+            "proposedConceptId": "g7-math-place-value-digit-value",
+            "revision": 1,
+            "label": "Explain the value of a digit from its place, using the ten-times relationship between neighbouring places from the thousandths to the millions.",
+            "objectiveId": "ll-g7-math-place-value-digit-value",
+            "status": "PROPOSED"
+          },
+          {
+            "proposedConceptId": "g7-math-place-value-compare",
+            "revision": 1,
+            "label": "Compare and order whole numbers and decimals to the thousandths by comparing place values from the left.",
+            "objectiveId": "ll-g7-math-place-value-compare",
+            "status": "PROPOSED"
+          }
+        ],
+        "contentBinding": {
+          "contentId": "cv2-cand-g7-math-number-sense-place-value",
+          "contentVersion": "0.1.0",
+          "contentType": "LESSON",
+          "candidateSha256": "5817d80911154bceb61fe117e0916ad64d0b7ae5c6afd2a2c6028b9cdc972ffb",
+          "learnerProjectionSha256": "b14a869ca88963216c86a7f9883029a4df212acb46e184b3a4f302d0a5ab57fe",
+          "contentSha256": "REQUIRED_FROM_AUTHORITY: digest of the assembled CurriculumLessonV2 once a template cell and release exist",
+          "toolPolicyId": "g7-math-instruction-tools",
+          "status": "PROPOSED"
+        },
+        "constructBindings": [
+          {
+            "itemId": "g7-pv-exit-1",
+            "itemVersion": "candidate-0.1.0",
+            "itemSha256": "83a7caf5e819029ad2e4df79b796699208bfdfd9b0c8e0e3297a6b4d751761a9",
+            "objectiveId": "ll-g7-math-place-value-digit-value",
+            "conceptId": "PROPOSED:g7-math-place-value-digit-value",
+            "skillId": "REQUIRED_FROM_AUTHORITY",
+            "learningTargetCode": "REQUIRED_FROM_AUTHORITY",
+            "standardCode": "REQUIRED_FROM_AUTHORITY",
+            "evidencePolicyId": "REQUIRED_FROM_AUTHORITY: exit-ticket context (GovernedItem.context is DIAGNOSTIC | PRACTICE; candidates use PRACTICE pending decision)",
+            "toolPolicyId": "g7-math-exit-ticket-tools"
+          },
+          {
+            "itemId": "g7-pv-exit-2",
+            "itemVersion": "candidate-0.1.0",
+            "itemSha256": "f472bfcf0aa0960efa7b8a6340b661614ae81a0cb5518808a85fdab5374494bd",
+            "objectiveId": "ll-g7-math-place-value-digit-value",
+            "conceptId": "PROPOSED:g7-math-place-value-digit-value",
+            "skillId": "REQUIRED_FROM_AUTHORITY",
+            "learningTargetCode": "REQUIRED_FROM_AUTHORITY",
+            "standardCode": "REQUIRED_FROM_AUTHORITY",
+            "evidencePolicyId": "REQUIRED_FROM_AUTHORITY: exit-ticket context (GovernedItem.context is DIAGNOSTIC | PRACTICE; candidates use PRACTICE pending decision)",
+            "toolPolicyId": "g7-math-exit-ticket-tools"
+          },
+          {
+            "itemId": "g7-pv-exit-3",
+            "itemVersion": "candidate-0.1.0",
+            "itemSha256": "3d1d98033510d7fd65eac459a08f034e0d658372cb035c7221411768b4a19004",
+            "objectiveId": "ll-g7-math-place-value-read-write",
+            "conceptId": "PROPOSED:g7-math-place-value-read-write",
+            "skillId": "REQUIRED_FROM_AUTHORITY",
+            "learningTargetCode": "REQUIRED_FROM_AUTHORITY",
+            "standardCode": "REQUIRED_FROM_AUTHORITY",
+            "evidencePolicyId": "REQUIRED_FROM_AUTHORITY: exit-ticket context (GovernedItem.context is DIAGNOSTIC | PRACTICE; candidates use PRACTICE pending decision)",
+            "toolPolicyId": "g7-math-exit-ticket-tools"
+          },
+          {
+            "itemId": "g7-pv-exit-4",
+            "itemVersion": "candidate-0.1.0",
+            "itemSha256": "a538ad15ec25bb296937fab3155623ae0aa7c80aa99945595b0a9898339b2147",
+            "objectiveId": "ll-g7-math-place-value-read-write",
+            "conceptId": "PROPOSED:g7-math-place-value-read-write",
+            "skillId": "REQUIRED_FROM_AUTHORITY",
+            "learningTargetCode": "REQUIRED_FROM_AUTHORITY",
+            "standardCode": "REQUIRED_FROM_AUTHORITY",
+            "evidencePolicyId": "REQUIRED_FROM_AUTHORITY: exit-ticket context (GovernedItem.context is DIAGNOSTIC | PRACTICE; candidates use PRACTICE pending decision)",
+            "toolPolicyId": "g7-math-exit-ticket-tools"
+          },
+          {
+            "itemId": "g7-pv-exit-5",
+            "itemVersion": "candidate-0.1.0",
+            "itemSha256": "7f0da1595e595b5979e1d7cbf647afbbaca012cc4bac5a54b0feacf34452b04d",
+            "objectiveId": "ll-g7-math-place-value-compare",
+            "conceptId": "PROPOSED:g7-math-place-value-compare",
+            "skillId": "REQUIRED_FROM_AUTHORITY",
+            "learningTargetCode": "REQUIRED_FROM_AUTHORITY",
+            "standardCode": "REQUIRED_FROM_AUTHORITY",
+            "evidencePolicyId": "REQUIRED_FROM_AUTHORITY: exit-ticket context (GovernedItem.context is DIAGNOSTIC | PRACTICE; candidates use PRACTICE pending decision)",
+            "toolPolicyId": "g7-math-exit-ticket-tools"
+          },
+          {
+            "itemId": "g7-pv-exit-6",
+            "itemVersion": "candidate-0.1.0",
+            "itemSha256": "9f6688a0fe13d0d948b93a260bd79bb5a48e2096a77a3a516ac7cb7f056dbfb8",
+            "objectiveId": "ll-g7-math-place-value-compare",
+            "conceptId": "PROPOSED:g7-math-place-value-compare",
+            "skillId": "REQUIRED_FROM_AUTHORITY",
+            "learningTargetCode": "REQUIRED_FROM_AUTHORITY",
+            "standardCode": "REQUIRED_FROM_AUTHORITY",
+            "evidencePolicyId": "REQUIRED_FROM_AUTHORITY: exit-ticket context (GovernedItem.context is DIAGNOSTIC | PRACTICE; candidates use PRACTICE pending decision)",
+            "toolPolicyId": "g7-math-exit-ticket-tools"
+          }
+        ],
+        "toolPolicies": [
+          {
+            "id": "g7-math-instruction-tools",
+            "context": "INSTRUCTION",
+            "allowed": [],
+            "prohibited": [],
+            "status": "PROPOSED"
+          },
+          {
+            "id": "g7-math-exit-ticket-tools",
+            "context": "CONTROLLED_ASSESSMENT",
+            "allowed": [],
+            "prohibited": [
+              "scientific-calculator",
+              "basic-calculator"
+            ],
+            "status": "PROPOSED"
+          }
+        ]
+      },
+      "requiredFromQualifiedReviewer": [
+        "HUMAN_REVIEW of the exact candidate hash by an identified, qualified curriculum reviewer (lib/curriculum/v2/governance.ts).",
+        "Objective basis decision: accept the LiberiaLearn candidate objectives with their MOE relationships, or rebind to MOE objectives.",
+        "Comparison with the legacy body revision and restoration of any correct legacy material.",
+        "Approval, revision or rejection of each candidate exit-ticket item and its key."
+      ],
+      "requiredFromCurriculumAuthority": [
+        "A governed Grade 7 MATH template cell (lib/learning-authority/cells) placing the objectives in a unit with interaction classifications.",
+        "A Grade 7 MATH ontology release (status PUBLISHED, reviewStatus APPROVED, a named authority) with concepts, standard/skill bindings, the approved items, an evidence policy and the tool policies.",
+        "Registration of that release in curriculum/releases/k12-scope.json (absent today; this package does not register anything).",
+        "Assembly of the candidate into CurriculumLessonV2 against the new authoring context, producing the hash that a content binding pins."
+      ]
+    },
+    {
+      "lessonKey": "literacy-essay-structure-argument",
+      "manifest": {
+        "manifestVersion": "1.0.0",
+        "releaseId": "lr-candidate-g7-literacy-essay-writing-2026.1",
+        "grade": 7,
+        "subject": "LITERACY",
+        "provenance": {
+          "sourceRef": "curriculum/review/g7-native-v1/literacy-essay-structure-argument/review.md",
+          "authority": "UNKNOWN",
+          "moeApprovalStatus": "NOT_CLAIMED"
+        }
+      },
+      "manifestValidation": {
+        "ok": true,
+        "identity": "070bb2b110948b3705aa0715116a7bd92a3b7f57951f181113f2b8e230fd03d2",
+        "errors": [],
+        "warnings": [
+          "release_not_attached_content_gap_only",
+          "coverage_gaps_present"
+        ],
+        "coverageGaps": 1
+      },
+      "proposedBindings": {
+        "note": "Shapes follow CurriculumOntologyRelease (governedGrade4Math.ts). Every PROPOSED value needs reviewer acceptance; every REQUIRED_FROM_AUTHORITY value must come from an authorized source and cannot be generated.",
+        "concepts": [
+          {
+            "proposedConceptId": "g7-lit-essay-structure",
+            "revision": 1,
+            "label": "Identify and explain the parts of an argumentative essay: an introduction that ends with a thesis statement, body paragraphs that each begin with a topic sentence, and a conclusion.",
+            "objectiveId": "ll-g7-lit-essay-structure",
+            "status": "PROPOSED"
+          },
+          {
+            "proposedConceptId": "g7-lit-argument-build",
+            "revision": 1,
+            "label": "Build an argument by writing an arguable thesis statement with reasons and answering a counterargument.",
+            "objectiveId": "ll-g7-lit-argument-build",
+            "status": "PROPOSED"
+          },
+          {
+            "proposedConceptId": "g7-lit-evidence-support",
+            "revision": 1,
+            "label": "Choose true, relevant and specific evidence for a reason and explain how it supports the claim in a PEEL paragraph.",
+            "objectiveId": "ll-g7-lit-evidence-support",
+            "status": "PROPOSED"
+          }
+        ],
+        "contentBinding": {
+          "contentId": "cv2-cand-g7-literacy-essay-structure-argument",
+          "contentVersion": "0.1.0",
+          "contentType": "LESSON",
+          "candidateSha256": "e875feab4d8d9742f421ba98c4c8c59f753e613a3d67526a77409cdd6019f786",
+          "learnerProjectionSha256": "fdab57d016e30b374f12ca86270043b9ac0220b9c9ba231b94e9aabe4a04707a",
+          "contentSha256": "REQUIRED_FROM_AUTHORITY: digest of the assembled CurriculumLessonV2 once a template cell and release exist",
+          "toolPolicyId": "g7-lit-instruction-tools",
+          "status": "PROPOSED"
+        },
+        "constructBindings": [
+          {
+            "itemId": "g7-essay-exit-1",
+            "itemVersion": "candidate-0.1.0",
+            "itemSha256": "0309d00352acd9fcdf80d878d38dbcf46ab5c5bd69fda30799d052154414bb28",
+            "objectiveId": "ll-g7-lit-essay-structure",
+            "conceptId": "PROPOSED:g7-lit-essay-structure",
+            "skillId": "REQUIRED_FROM_AUTHORITY",
+            "learningTargetCode": "REQUIRED_FROM_AUTHORITY",
+            "standardCode": "REQUIRED_FROM_AUTHORITY",
+            "evidencePolicyId": "REQUIRED_FROM_AUTHORITY: exit-ticket context (GovernedItem.context is DIAGNOSTIC | PRACTICE; candidates use PRACTICE pending decision)",
+            "toolPolicyId": "g7-lit-exit-ticket-tools"
+          },
+          {
+            "itemId": "g7-essay-exit-2",
+            "itemVersion": "candidate-0.1.0",
+            "itemSha256": "010c6684dcf204fc73e209d1bc0032672e755d861be3d628a458612211056e12",
+            "objectiveId": "ll-g7-lit-argument-build",
+            "conceptId": "PROPOSED:g7-lit-argument-build",
+            "skillId": "REQUIRED_FROM_AUTHORITY",
+            "learningTargetCode": "REQUIRED_FROM_AUTHORITY",
+            "standardCode": "REQUIRED_FROM_AUTHORITY",
+            "evidencePolicyId": "REQUIRED_FROM_AUTHORITY: exit-ticket context (GovernedItem.context is DIAGNOSTIC | PRACTICE; candidates use PRACTICE pending decision)",
+            "toolPolicyId": "g7-lit-exit-ticket-tools"
+          },
+          {
+            "itemId": "g7-essay-exit-3",
+            "itemVersion": "candidate-0.1.0",
+            "itemSha256": "45c74298af90d766cb95e2386cc439aaef1c9c487d0f9e6064ac5e59b1e57a31",
+            "objectiveId": "ll-g7-lit-evidence-support",
+            "conceptId": "PROPOSED:g7-lit-evidence-support",
+            "skillId": "REQUIRED_FROM_AUTHORITY",
+            "learningTargetCode": "REQUIRED_FROM_AUTHORITY",
+            "standardCode": "REQUIRED_FROM_AUTHORITY",
+            "evidencePolicyId": "REQUIRED_FROM_AUTHORITY: exit-ticket context (GovernedItem.context is DIAGNOSTIC | PRACTICE; candidates use PRACTICE pending decision)",
+            "toolPolicyId": "g7-lit-exit-ticket-tools"
+          },
+          {
+            "itemId": "g7-essay-exit-4",
+            "itemVersion": "candidate-0.1.0",
+            "itemSha256": "cdaa51e7d8ba67b65a9f4e3d3ef381f18b6f622b4c8d852d25db5cb6ec97fdf1",
+            "objectiveId": "ll-g7-lit-essay-structure",
+            "conceptId": "PROPOSED:g7-lit-essay-structure",
+            "skillId": "REQUIRED_FROM_AUTHORITY",
+            "learningTargetCode": "REQUIRED_FROM_AUTHORITY",
+            "standardCode": "REQUIRED_FROM_AUTHORITY",
+            "evidencePolicyId": "REQUIRED_FROM_AUTHORITY: exit-ticket context (GovernedItem.context is DIAGNOSTIC | PRACTICE; candidates use PRACTICE pending decision)",
+            "toolPolicyId": "g7-lit-exit-ticket-tools"
+          },
+          {
+            "itemId": "g7-essay-exit-5",
+            "itemVersion": "candidate-0.1.0",
+            "itemSha256": "6792bf5ff254f41130c3b69b8b8e9f6d80efbe9d2d2135baaad23f57b17efa66",
+            "objectiveId": "ll-g7-lit-evidence-support",
+            "conceptId": "PROPOSED:g7-lit-evidence-support",
+            "skillId": "REQUIRED_FROM_AUTHORITY",
+            "learningTargetCode": "REQUIRED_FROM_AUTHORITY",
+            "standardCode": "REQUIRED_FROM_AUTHORITY",
+            "evidencePolicyId": "REQUIRED_FROM_AUTHORITY: exit-ticket context (GovernedItem.context is DIAGNOSTIC | PRACTICE; candidates use PRACTICE pending decision)",
+            "toolPolicyId": "g7-lit-exit-ticket-tools"
+          },
+          {
+            "itemId": "g7-essay-exit-6",
+            "itemVersion": "candidate-0.1.0",
+            "itemSha256": "8b5ae4220f857f4b75c01ed959f65b9876b047ba9037be78bf10cfe363ca79e9",
+            "objectiveId": "ll-g7-lit-argument-build",
+            "conceptId": "PROPOSED:g7-lit-argument-build",
+            "skillId": "REQUIRED_FROM_AUTHORITY",
+            "learningTargetCode": "REQUIRED_FROM_AUTHORITY",
+            "standardCode": "REQUIRED_FROM_AUTHORITY",
+            "evidencePolicyId": "REQUIRED_FROM_AUTHORITY: exit-ticket context (GovernedItem.context is DIAGNOSTIC | PRACTICE; candidates use PRACTICE pending decision)",
+            "toolPolicyId": "g7-lit-exit-ticket-tools"
+          }
+        ],
+        "toolPolicies": [
+          {
+            "id": "g7-lit-instruction-tools",
+            "context": "INSTRUCTION",
+            "allowed": [
+              "dictionary"
+            ],
+            "prohibited": [],
+            "status": "PROPOSED"
+          },
+          {
+            "id": "g7-lit-exit-ticket-tools",
+            "context": "CONTROLLED_ASSESSMENT",
+            "allowed": [],
+            "prohibited": [
+              "dictionary"
+            ],
+            "status": "PROPOSED"
+          }
+        ]
+      },
+      "requiredFromQualifiedReviewer": [
+        "HUMAN_REVIEW of the exact candidate hash by an identified, qualified curriculum reviewer (lib/curriculum/v2/governance.ts).",
+        "Objective basis decision: accept the LiberiaLearn candidate objectives with their MOE relationships, or rebind to MOE objectives.",
+        "Grade-scope decision for argumentative writing (MOE Grade 9, p.32).",
+        "Correction of the Grade 7 English paragraph-writing structuring defect through the source-structuring process.",
+        "Comparison with the legacy body revision and restoration of any correct legacy material.",
+        "Approval, revision or rejection of each candidate exit-ticket item and its key."
+      ],
+      "requiredFromCurriculumAuthority": [
+        "A governed Grade 7 LITERACY template cell (lib/learning-authority/cells) placing the objectives in a unit with interaction classifications.",
+        "A Grade 7 LITERACY ontology release (status PUBLISHED, reviewStatus APPROVED, a named authority) with concepts, standard/skill bindings, the approved items, an evidence policy and the tool policies.",
+        "Registration of that release in curriculum/releases/k12-scope.json (absent today; this package does not register anything).",
+        "Assembly of the candidate into CurriculumLessonV2 against the new authoring context, producing the hash that a content binding pins."
+      ]
+    }
+  ]
+}

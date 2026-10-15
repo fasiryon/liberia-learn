@@ -1,0 +1,189 @@
+{
+  "audience": "REVIEWER_ONLY",
+  "notice": "Contains answer keys. Never include in a learner projection, offline package or client bundle.",
+  "lessonKey": "math-number-sense-place-value",
+  "itemShape": "GovernedItem (lib/learning-authority/governedGrade4Math.ts)",
+  "items": [
+    {
+      "assessmentRequestId": "g7-pv-exit-ticket",
+      "objectiveId": "ll-g7-math-place-value-digit-value",
+      "distractorMisconceptions": {
+        "0": "mc-digit-not-value",
+        "1": "mc-digit-not-value",
+        "3": "mc-digit-not-value"
+      },
+      "verification": {
+        "kind": "DIGIT_VALUE",
+        "number": "3462105",
+        "digit": "6"
+      },
+      "item": {
+        "id": "g7-pv-exit-1",
+        "version": "candidate-0.1.0",
+        "context": "PRACTICE",
+        "prompt": "What is the value of the 6 in 3,462,105?",
+        "options": [
+          "600",
+          "6,000",
+          "60,000",
+          "600,000"
+        ],
+        "correctIndex": 2,
+        "hint": "Count the places from the right: ones, tens, hundreds, thousands, ten thousands.",
+        "workedExample": "The 6 is in the ten-thousands place, so it is worth 6 × 10,000 = 60,000."
+      },
+      "sha256": "83a7caf5e819029ad2e4df79b796699208bfdfd9b0c8e0e3297a6b4d751761a9"
+    },
+    {
+      "assessmentRequestId": "g7-pv-exit-ticket",
+      "objectiveId": "ll-g7-math-place-value-digit-value",
+      "distractorMisconceptions": {
+        "0": "mc-digit-not-value",
+        "1": "mc-digit-not-value",
+        "2": "mc-digit-not-value"
+      },
+      "verification": {
+        "kind": "DIGIT_VALUE",
+        "number": "24.068",
+        "digit": "8"
+      },
+      "item": {
+        "id": "g7-pv-exit-2",
+        "version": "candidate-0.1.0",
+        "context": "PRACTICE",
+        "prompt": "What is the value of the 8 in 24.068?",
+        "options": [
+          "8",
+          "0.8",
+          "0.08",
+          "0.008"
+        ],
+        "correctIndex": 3,
+        "hint": "After the decimal point the places are tenths, hundredths, thousandths.",
+        "workedExample": "The 8 is the third digit after the point, in the thousandths place, so it is worth 0.008."
+      },
+      "sha256": "f472bfcf0aa0960efa7b8a6340b661614ae81a0cb5518808a85fdab5374494bd"
+    },
+    {
+      "assessmentRequestId": "g7-pv-exit-ticket",
+      "objectiveId": "ll-g7-math-place-value-read-write",
+      "distractorMisconceptions": {
+        "0": "mc-zero-placeholder",
+        "2": "mc-zero-placeholder",
+        "3": "mc-zero-placeholder"
+      },
+      "verification": {
+        "kind": "WORD_FORM",
+        "number": 7305040
+      },
+      "item": {
+        "id": "g7-pv-exit-3",
+        "version": "candidate-0.1.0",
+        "context": "PRACTICE",
+        "prompt": "Which number is seven million, three hundred five thousand, forty?",
+        "options": [
+          "7,350,040",
+          "7,305,040",
+          "7,305,400",
+          "730,540"
+        ],
+        "correctIndex": 1,
+        "hint": "Write each period (millions, thousands, ones) as a group of three digits.",
+        "workedExample": "Seven million → 7; three hundred five thousand → 305; forty → 040. Together: 7,305,040."
+      },
+      "sha256": "3d1d98033510d7fd65eac459a08f034e0d658372cb035c7221411768b4a19004"
+    },
+    {
+      "assessmentRequestId": "g7-pv-exit-ticket",
+      "objectiveId": "ll-g7-math-place-value-read-write",
+      "distractorMisconceptions": {
+        "0": "mc-zero-placeholder",
+        "1": "mc-digit-not-value",
+        "3": "mc-digit-not-value"
+      },
+      "verification": {
+        "kind": "EXPANDED_FORM",
+        "number": "5.307"
+      },
+      "item": {
+        "id": "g7-pv-exit-4",
+        "version": "candidate-0.1.0",
+        "context": "PRACTICE",
+        "prompt": "Which shows 5.307 in expanded form?",
+        "options": [
+          "5 + 0.3 + 0.07",
+          "5 + 0.03 + 0.007",
+          "5 + 0.3 + 0.007",
+          "5 + 3 + 7"
+        ],
+        "correctIndex": 2,
+        "hint": "Name the place of each digit after the point.",
+        "workedExample": "5 ones, 3 tenths, 0 hundredths and 7 thousandths: 5 + 0.3 + 0.007."
+      },
+      "sha256": "a538ad15ec25bb296937fab3155623ae0aa7c80aa99945595b0a9898339b2147"
+    },
+    {
+      "assessmentRequestId": "g7-pv-exit-ticket",
+      "objectiveId": "ll-g7-math-place-value-compare",
+      "distractorMisconceptions": {
+        "0": "mc-longer-decimal-bigger",
+        "2": "mc-longer-decimal-bigger",
+        "3": "mc-longer-decimal-bigger"
+      },
+      "verification": {
+        "kind": "ORDER_ASCENDING",
+        "values": [
+          "0.3",
+          "0.307",
+          "0.37"
+        ]
+      },
+      "item": {
+        "id": "g7-pv-exit-5",
+        "version": "candidate-0.1.0",
+        "context": "PRACTICE",
+        "prompt": "Which list is in order from least to greatest?",
+        "options": [
+          "0.37, 0.307, 0.3",
+          "0.3, 0.307, 0.37",
+          "0.307, 0.3, 0.37",
+          "0.3, 0.37, 0.307"
+        ],
+        "correctIndex": 1,
+        "hint": "Fill empty places with zeros: 0.300, 0.307, 0.370.",
+        "workedExample": "As thousandths: 300, 307, 370. So the order is 0.3, 0.307, 0.37."
+      },
+      "sha256": "7f0da1595e595b5979e1d7cbf647afbbaca012cc4bac5a54b0feacf34452b04d"
+    },
+    {
+      "assessmentRequestId": "g7-pv-exit-ticket",
+      "objectiveId": "ll-g7-math-place-value-compare",
+      "distractorMisconceptions": {
+        "0": "mc-longer-decimal-bigger",
+        "2": "mc-longer-decimal-bigger"
+      },
+      "verification": {
+        "kind": "GREATEST",
+        "values": [
+          "6009999",
+          "6010000"
+        ]
+      },
+      "item": {
+        "id": "g7-pv-exit-6",
+        "version": "candidate-0.1.0",
+        "context": "PRACTICE",
+        "prompt": "Which number is greater: 6,009,999 or 6,010,000?",
+        "options": [
+          "6,009,999",
+          "6,010,000",
+          "They are equal"
+        ],
+        "correctIndex": 1,
+        "hint": "Compare from the left until the digits differ.",
+        "workedExample": "Both have 6 millions and 0 hundred thousands. In the ten thousands, 1 is more than 0, so 6,010,000 is greater."
+      },
+      "sha256": "9f6688a0fe13d0d948b93a260bd79bb5a48e2096a77a3a516ac7cb7f056dbfb8"
+    }
+  ]
+}
