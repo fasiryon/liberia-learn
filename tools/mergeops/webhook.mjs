@@ -14,7 +14,7 @@ export async function receive({ body, signature, secret, event, delivery, instal
   const payload = JSON.parse(body.toString('utf8'));
   if (String(payload.installation?.id) !== String(installationId)) throw Error('webhook-installation');
   const results = [];
-  for (const target of eventTargets(event, payload, policy.repository)) results.push(await run({ ...target, delivery, payload, event }));
+  for (const target of eventTargets(event, payload, policy.repository, policy.base)) results.push(await run({ ...target, delivery, payload, event }));
   return results;
 }
 export function webhookServer(options) {

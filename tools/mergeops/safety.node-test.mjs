@@ -48,6 +48,19 @@ test('default policy disables writes even with otherwise green evidence', () => 
 test('exact head, independent approvals and bound required checks allow low-risk merge after review', () => {
   assert.equal(decide(snapshot(), head, enabled()).action, 'merge');
 });
+test('every policy check must be atomically enforced by live branch protection', () => {
+  const s = snapshot(); s.protection.required_status_checks.checks = s.protection.required_status_checks.checks.slice(0, 1);
+  const decision = decide(s, head, enabled()); assert.equal(decision.action, 'hold');
+  assert.ok(decision.blocks.includes('policy-check-unprotected:GitGuardian Security Checks'));
+});
+test('overlapping reviewer pools can select two different approved actors', () => {
+  const p = enabled(); p.reviewers.maintainability = ['security-reviewer', 'maintainer'];
+  assert.equal(decide(snapshot(p), head, p).action, 'merge');
+});
+test('overlapping reviewer pools cannot use a single actor twice', () => {
+  const p = enabled(); p.reviewers.maintainability = ['security-reviewer'];
+  assert.ok(decide(snapshot(p), head, p).blocks.includes('independent-reviews-required'));
+});
 for (const [name, mutate] of [
   ['stale head', s => { s.pr.head.sha = base; }],
   ['stale review', s => { s.reviews[0].commit_id = base; }],
@@ -182,6 +195,11 @@ test('CI and check completion route exact SHA; arbitrary instructions are ignore
   assert.deepEqual(eventTargets('workflow_run', { ...common, workflow_run: { head_sha: head, head_repository: { full_name: repository }, pull_requests: [{ number: 190 }] } }, repository), [{ number: 190, head }]);
   assert.deepEqual(eventTargets('issue_comment', common, repository), []);
 });
+test('main pushes refresh open PRs to detect conflicts introduced by base advancement', () => {
+  const payload = { repository: { full_name: repository }, ref: 'refs/heads/main' };
+  assert.deepEqual(eventTargets('push', payload, repository), [{ refreshOpen: true }]);
+  assert.deepEqual(eventTargets('push', { ...payload, ref: 'refs/heads/untrusted' }, repository), []);
+});
 test('API paginates complete check evidence and fails on truncated pagination', async () => {
   let calls = 0; const github = new GitHub(repository, 'synthetic', async () => ({ ok: true, status: 200, json: async () => ({ check_runs: ++calls === 1 ? Array(100).fill({ id: 1 }) : [{ id: 2 }] }) }));
   assert.equal((await github.pages('/commits/x/check-runs', 'check_runs')).length, 101); assert.equal(calls, 2);
@@ -210,6 +228,8 @@ test('secret redaction handles quoted diff content before JSON serialization', (
   const out = redact({ patch: '+const password = "example-private";\n+const token = \'private-token\';', secret: 'private-secret' });
   assert.ok(!JSON.stringify(out).includes('example-private')); assert.ok(!JSON.stringify(out).includes('private-token'));
   assert.ok(!JSON.stringify(out).includes('private-secret'));
+  const cloud = redact({ AWS_SECRET_ACCESS_KEY: 'never-copy-this', patch: '+AWS_SESSION_TOKEN = "a secret with spaces";\n+AWS_SECRET_ACCESS_KEY=never-copy-this' });
+  assert.ok(!JSON.stringify(cloud).includes('never-copy-this')); assert.ok(!JSON.stringify(cloud).includes('a secret with spaces'));
 });
 test('merge authority, codeowner and bypass allowances cannot silently weaken protection', () => {
   for (const mutate of [s => { s.protection.restrictions.apps.push({ id: 999 }); }, s => { s.protection.required_pull_request_reviews.require_code_owner_reviews = false; },
@@ -262,6 +282,14 @@ test('ledger outage prevents merge before external side effect', async () => {
   await assert.rejects(lifecycle({ github: api(), ledger: { transact: async () => { throw Error('ledger-unavailable'); } }, number: 1, head, delivery: 'outage', policy: enabled(), dryRun: false,
     merger: { request: async () => writes++ } })); assert.equal(writes, 0);
 });
+test('failed mandatory secret check keeps raw diff and repair content out of the ledger', async () => {
+  const l = ledger(), s = snapshot(); s.checks.at(-1).conclusion = 'failure'; s.files[0].patch = '+unrecognized-private-value';
+  try {
+    await lifecycle({ github: api(s), ledger: l.value, number: 190, head, delivery: 'secret-block', policy: enabled(), log: fixture.log });
+    const records = l.value.read(); assert.ok(!JSON.stringify(records).includes('unrecognized-private-value'));
+    assert.equal(records.find(r => r.type === 'repair-proposed').details.contentRetained, false);
+  } finally { l.cleanup(); }
+});
 test('mission bridge reuses workflow/checkpoint writers with stable idempotency', async () => {
   const calls = [], records = [seal(null, { id: 'one', mission: `${repository}#190`, type: 'decision', head, details: {} })];
   const writers = { createWorkflowRun: async input => { calls.push(input); return { workflowRun: { id: 'existing-workflow' } }; }, recordWorkflowCheckpoint: async input => calls.push(input) };
@@ -303,6 +331,17 @@ test('App observation only mints observer/state roles and revokes on failure', a
     }), /ledger-unavailable/);
     assert.equal(revoked, 2); assert.equal(permissions.length, 2);
     assert.equal(permissions[0].administration, 'read'); assert.deepEqual(permissions[1], { contents: 'write' });
+  } finally { cleanupTemp(dir); }
+});
+test('base-refresh lists open main PRs without minting write tokens when none exist', async () => {
+  const dir = mkdtempSync(join(tmpdir(), 'mergeops-app-')), path = join(dir, 'synthetic-key'); writeFileSync(path, 'not-a-real-key');
+  let revoked = 0, minted = 0;
+  try {
+    const result = await appRun({ refreshOpen: true, payload: { installation: { id: 7 } } }, policy,
+      { MERGEOPS_INSTALLATION_ID: '7', MERGEOPS_APP_ID: '1', MERGEOPS_KEY_FILE: path }, async () => {
+        minted++; return { client: { pages: async route => { assert.equal(route, '/pulls?state=open&base=main'); return []; } }, revoke: async () => revoked++ };
+      });
+    assert.deepEqual(result, []); assert.equal(minted, 1); assert.equal(revoked, 1);
   } finally { cleanupTemp(dir); }
 });
 test('adapter findings hold merging and record cost without granting approvals', async () => {

@@ -3,38 +3,21 @@
 > node scripts/validate-changed.mjs
 
 validate:changed source: working tree and index
-validate:changed files: 31
-  .github/CODEOWNERS
-  .github/workflows/ci.yml
-  .github/workflows/mergeops-safety.yml
+validate:changed files: 14
   .github/workflows/mergeops.yml
-  .github/workflows/runtime-gate.yml
   artifacts/mergeops-replay/README.md
   artifacts/mergeops-replay/demo-output.txt
   artifacts/mergeops-replay/mission.jsonl
   artifacts/mergeops-replay/report.json
-  artifacts/mergeops-replay/runtime-gate.txt
   artifacts/mergeops-replay/safety-tests.txt
   artifacts/mergeops-replay/validate-changed.txt
   docs/ops/MERGEOPS_V1.md
-  tools/mergeops/adapters.mjs
   tools/mergeops/app.mjs
-  tools/mergeops/budget.mjs
   tools/mergeops/cli.mjs
   tools/mergeops/controller.mjs
   tools/mergeops/core.mjs
-  tools/mergeops/demo.mjs
-  tools/mergeops/fixtures/pr188.json
-  tools/mergeops/fixtures/pr190.json
-  tools/mergeops/github.mjs
-  tools/mergeops/ignore-build.mjs
-  tools/mergeops/ledger.mjs
-  tools/mergeops/missionBridge.mjs
-  tools/mergeops/policy.json
-  tools/mergeops/repair.mjs
   tools/mergeops/safety.node-test.mjs
   tools/mergeops/webhook.mjs
-  vercel.json
 API route policy audit PASS: 81 changed routes declared; 512 legacy routes frozen at 84dd5417.
 
  RUN  v4.1.9 C:/liberia-learn/.task-worktrees/mergeops-v1

@@ -55,8 +55,9 @@ must provide authenticated TLS ingress, monitoring and redelivery. The host
 verifies raw-body HMAC SHA-256, installation identity and repository, bounds input,
 serializes local requests, and returns failure for redelivery if busy. Signed
 `pull_request`, `pull_request_review`, `check_run` and `workflow_run` events refresh
-live PR evidence. GitHub has no dedicated conflict event; every refresh checks
-mergeability and holds unknown/conflicting states. PR bodies, diffs, logs and
+live PR evidence. Main-branch pushes also refresh all open PR heads, covering
+conflicts introduced by base advancement. GitHub has no dedicated conflict event;
+every refresh checks mergeability and holds unknown/conflicting states. PR bodies, diffs, logs and
 plugin output are data, never controller instructions.
 
 No PR checkout or process runs in the privileged controller. The repair engine
@@ -68,7 +69,7 @@ App keys or deployment secrets. Do not use shared/self-hosted runners for this l
 ## Repair and merge state machine
 
 1. Fetch live metadata, every changed-file/review/check page, protection and Vercel configuration. Re-read PR head/base; incomplete evidence fails closed.
-2. Hash and redact diffs; record the decision, checks, reviewer IDs, protection evidence and cost in the ledger before any external mutation.
+2. Hash and redact diffs; record the decision, checks, reviewer IDs, protection evidence and cost in the ledger before any external mutation. Missing/failed mandatory secret clearance retains only patch/proposal hashes and paths, never raw content. Redaction also covers prefixed cloud credential names and quoted values.
 3. Parse failed job logs from GitHub; bounded signed downloads do not receive the App bearer token. Unknown failures and security/migration failures require human investigation.
 4. The only executable recipe is `textbook-fixture-v1`: replace one exact historical `git show` call, remove its child-process import, and check in the exact source from pinned commit `2bf94c11df127292a1863b75cc338a462204d0a2`. Every output byte and both allowed paths are reconstructed and compared before publication. No general LLM-generated patch is executable.
 5. Repair requires explicit enablement, reviewed safety/permissions/deployment settings, a complete low-risk same-repository PR and passing mandatory security evidence. Reserve an attempt durably first. Maximum two attempts per original PR, including failures, across all heads; maximum one per head. Re-delivery never resets the counter.

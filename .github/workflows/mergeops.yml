@@ -1,6 +1,8 @@
 name: MergeOps
 
 on:
+  push:
+    branches: [main]
   pull_request_target:
     branches: [main]
     types: [opened, reopened, synchronize, ready_for_review, edited, closed]

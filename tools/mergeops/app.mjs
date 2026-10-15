@@ -17,6 +17,12 @@ export async function appRun(target, policy, env = process.env, mint = installat
   };
   try {
     const github = await session('MERGEOPS', readPermissions);
+    if (target.refreshOpen) {
+      const open = await github.pages(`/pulls?state=open&base=${encodeURIComponent(policy.base)}`);
+      const results = [];
+      for (const pr of open) results.push(await appRun({ ...target, refreshOpen: false, number: pr.number, head: pr.head.sha }, policy, env, mint));
+      return results;
+    }
     // State writer is distinct from merge authority; scopes are minted per operation.
     const stateWriter = await session('MERGEOPS_STATE', { contents: 'write' });
     const ledger = new GitLedger(stateWriter, target.number); await ledger.initialize();

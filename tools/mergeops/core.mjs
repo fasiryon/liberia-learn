@@ -5,11 +5,11 @@ export const isSha = value => typeof value === 'string' && /^[a-f0-9]{40}$/.test
 export function redact(value) {
   if (Array.isArray(value)) return value.map(redact);
   if (value && typeof value === 'object') return Object.fromEntries(Object.entries(value).map(([key, item]) =>
-    [key, /^(?:authorization|password|secret|privateKey|api[_-]?key|access[_-]?token|token)$/i.test(key) ? '[REDACTED]' : redact(item)]));
+    [key, /authorization|password|secret|private.?key|api.?key|access.?key|(?:^|[_-])token(?:$|[_-])/i.test(key) ? '[REDACTED]' : redact(item)]));
   if (typeof value !== 'string') return value;
   return value.replace(/-----BEGIN [^-]*PRIVATE KEY-----[\s\S]*?-----END [^-]*PRIVATE KEY-----/g, '[REDACTED KEY]')
-    .replace(/\b(?:gh[pousr]_[\w]+|github_pat_[\w]+|sk-[\w-]{8,}|AKIA[A-Z0-9]{16})\b/g, '[REDACTED]')
-    .replace(/(\b(?:authorization|password|secret|api[_-]?key|access[_-]?token|token)\b["']?\s*[:=]\s*["']?)(?:Bearer\s+)?[^\s"',}]+/gi, '$1[REDACTED]')
+    .replace(/\b(?:gh[pousr]_[\w]+|github_pat_[\w]+|sk-[\w-]{8,}|(?:AKIA|ASIA)[A-Z0-9]{16})\b/g, '[REDACTED]')
+    .replace(/(\b[A-Za-z_]*(?:authorization|password|secret|api[_-]?key|access[_-]?key|token)[A-Za-z_]*["']?\s*[:=]\s*)(?:"[^"\r\n]*"|'[^'\r\n]*'|(?:Bearer\s+)?[^\s"',;}]+)/gi, '$1[REDACTED]')
     .replace(/([a-z]+:\/\/)[^\s/@]+:[^\s/@]+@/gi, '$1[REDACTED]@');
 }
 export function validPath(path) {
@@ -61,11 +61,12 @@ export function reviewEvidence(snapshot, policy) {
   for (const review of [...snapshot.reviews].sort((a,b) => a.id - b.id)) {
     if (review.state !== 'COMMENTED') latest.set(review.user.login, review);
   }
-  const evidence = Object.entries(policy.reviewers).map(([role, users]) => {
-    const review = [...latest.values()].find(r => users.includes(r.user.login) && r.user.login !== snapshot.pr.user.login && r.commit_id === snapshot.pr.head.sha && r.state === 'APPROVED');
-    return { role, actor: review?.user.login, id: review?.id };
-  });
-  return evidence.length === 2 && evidence.every(e => e.id) && new Set(evidence.map(e => e.actor)).size === 2 ? evidence : null;
+  const roles = ['correctness-security', 'maintainability'];
+  const candidates = roles.map(role => [...latest.values()].filter(r => Array.isArray(policy.reviewers?.[role]) &&
+    policy.reviewers[role].includes(r.user.login) && r.user.login !== snapshot.pr.user.login && r.commit_id === snapshot.pr.head.sha && r.state === 'APPROVED'));
+  const first = candidates[0].find(a => candidates[1].some(b => b.user.login !== a.user.login));
+  const second = first && candidates[1].find(b => b.user.login !== first.user.login);
+  return first && second ? [first, second].map((r, i) => ({ role: roles[i], actor: r.user.login, id: r.id })) : null;
 }
 export function decide(snapshot, expectedSha, policy) {
   const { pr, files, checks, protection } = snapshot;
@@ -94,6 +95,9 @@ export function decide(snapshot, expectedSha, policy) {
       !Array.isArray(restrictions?.users) || restrictions.users.some(u => !policy.founders.includes(u.login)) ||
       !Array.isArray(restrictions?.teams) || restrictions.teams.length > 0) blocks.push('merge-authority-unverified');
   const allRequired = [...policy.requiredChecks, ...(required?.checks ?? []).map(c => ({ name: c.context, appId: c.app_id }))];
+  for (const rule of policy.requiredChecks) {
+    if (!required?.checks?.some(c => c.context === rule.name && c.app_id === rule.appId)) blocks.push(`policy-check-unprotected:${rule.name}`);
+  }
   for (const rule of allRequired) {
     // An unbound context or a same-name check from another App cannot authorize merge.
     const match = checks.filter(c => c.name === rule.name && c.app?.id === rule.appId && c.head_sha === expectedSha).sort((a,b) => b.id - a.id)[0];
@@ -109,7 +113,10 @@ export function eligibleRepair(snapshot, diagnosis, attempts, policy) {
     snapshot.pr.base.repo?.full_name === policy.repository && snapshot.pr.mergeable === true && !snapshot.pr.draft &&
     classify(snapshot.files, policy).risk === 'low' && diagnosis.recipe === 'textbook-fixture-v1' &&
     Number.isInteger(attempts) && attempts >= 0 && attempts < Math.min(policy.maxRepairAttempts, 2) &&
-    policy.requiredChecks.some(c => /security|guardian/i.test(c.name)) &&
+    mandatorySecurityPassed(snapshot, policy);
+}
+export function mandatorySecurityPassed(snapshot, policy) {
+  return policy.requiredChecks.some(c => /security|guardian/i.test(c.name)) &&
     policy.requiredChecks.filter(c => /security|guardian/i.test(c.name)).every(rule => {
       const check = snapshot.checks.filter(c => c.name === rule.name && c.app?.id === rule.appId && c.head_sha === snapshot.pr.head.sha).sort((a,b) => b.id - a.id)[0];
       return check?.status === 'completed' && check.conclusion === 'success';

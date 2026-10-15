@@ -24,7 +24,8 @@ export async function main(args = process.argv.slice(2)) {
   const github = new GitHub(policy.repository, process.env.GH_TOKEN);
   const payload = JSON.parse(readFileSync(process.env.GITHUB_EVENT_PATH, 'utf8'));
   const event = process.env.GITHUB_EVENT_NAME === 'pull_request_target' ? 'pull_request' : process.env.GITHUB_EVENT_NAME;
-  const targets = eventTargets(event, payload, policy.repository);
+  let targets = eventTargets(event, payload, policy.repository, policy.base);
+  if (targets[0]?.refreshOpen) targets = (await github.pages(`/pulls?state=open&base=${encodeURIComponent(policy.base)}`)).map(pr => ({ number: pr.number, head: pr.head.sha }));
   const output = resolve('artifacts/mergeops'); mkdirSync(output, { recursive: true });
   const results = [];
   for (const target of targets) {
