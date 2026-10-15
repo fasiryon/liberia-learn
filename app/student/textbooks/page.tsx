@@ -1,97 +1,24 @@
-import Link from "next/link";
-import { BookOpen, ChevronRight } from "lucide-react";
+﻿import Link from "next/link";
+import { ArrowUpRight, BookOpen } from "lucide-react";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { listAuthorizedLearnerContent } from "@/lib/student/learnDiscovery.server";
+import { buildCurriculumDisplayTitle } from "@/lib/curriculum/title";
+import styles from "@/components/textbooks/textbooks.module.css";
 
 export const dynamic = "force-dynamic";
 
-function subjectLabel(subject: string) {
-  return subject.replace(/_/g, " ");
-}
-
 export default async function StudentTextbooksPage() {
   const user = await requireRole("STUDENT");
-  const student = await prisma.student.findUnique({
-    where: { userId: user.id },
-    select: { currentGrade: true, user: { select: { schoolId: true } } },
-  });
-
-  const lessons = student?.currentGrade
-    ? await listAuthorizedLearnerContent(user, {
-        grade: student.currentGrade,
-        contentType: { in: ["lesson", "unit_plan", "term_plan", "full_pack"] },
-      }, 36)
-    : [];
-
-  const grouped = new Map<string, typeof lessons>();
-  for (const lesson of lessons) {
-    const bucket = grouped.get(lesson.subject) ?? [];
-    bucket.push(lesson);
-    grouped.set(lesson.subject, bucket);
-  }
-
-  return (
-    <main className="ll-page min-h-screen px-4 py-8 text-[var(--ll-text)]">
-      <div className="ll-shell max-w-6xl space-y-6">
-        <Link href="/dashboard" className="text-sm text-[var(--ll-yellow)] hover:opacity-80">
-          &larr; Back to Dashboard
-        </Link>
-
-        <header className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-6">
-          <div className="flex items-start gap-3">
-            <span className="rounded-xl border border-[var(--ll-yellow)]/30 bg-[var(--ll-yellow-soft)] p-3 text-[var(--ll-yellow)]">
-              <BookOpen className="h-6 w-6" strokeWidth={1.5} />
-            </span>
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--ll-yellow)]">
-                Textbook hub
-              </p>
-              <h1 className="mt-2 text-3xl font-semibold">My Textbooks</h1>
-              <p className="mt-2 max-w-2xl text-sm leading-6 text-[var(--ll-text-muted)]">
-                Approved lesson readings for your grade, grouped by subject. These are real curriculum entries, not a profile route.
-              </p>
-            </div>
-          </div>
-        </header>
-
-        {grouped.size === 0 ? (
-          <section className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-8 text-center">
-            <p className="text-sm text-[var(--ll-text-muted)]">
-              {!student?.currentGrade
-                ? "Your grade hasn't been set yet. Ask your teacher to complete your placement so textbooks can load."
-                : "No textbook readings are available for your grade yet. Your teacher can still assign lessons from the curriculum library."}
-            </p>
-          </section>
-        ) : (
-          <div className="grid gap-4 md:grid-cols-2">
-            {Array.from(grouped.entries()).map(([subject, entries]) => (
-              <section key={subject} className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-5">
-                <h2 className="text-lg font-semibold">{subjectLabel(subject)}</h2>
-                <div className="mt-4 space-y-3">
-                  {entries.slice(0, 8).map((entry) => {
-                    const payload = entry.payload as { title?: string } | null;
-                    const title = payload?.title ?? entry.title ?? entry.contentId;
-                    return (
-                      <Link
-                        key={entry.contentId}
-                        href={`/student/lesson/${entry.contentId}`}
-                        className="flex items-center justify-between gap-3 rounded-lg border border-[var(--ll-border)] bg-[var(--ll-surface-muted)] px-4 py-3 text-sm hover:border-[var(--ll-border-strong)]"
-                      >
-                        <span>
-                          <span className="block font-medium text-[var(--ll-text)]">{title}</span>
-                          <span className="text-xs text-[var(--ll-text-muted)]">Grade {entry.grade} - {entry.contentType.replace(/_/g, " ")}</span>
-                        </span>
-                        <ChevronRight className="h-4 w-4 text-[var(--ll-text-faint)]" strokeWidth={1.5} />
-                      </Link>
-                    );
-                  })}
-                </div>
-              </section>
-            ))}
-          </div>
-        )}
-      </div>
-    </main>
-  );
+  const student = await prisma.student.findUnique({ where: { userId: user.id }, select: { currentGrade: true, deletedAt: true, user: { select: { schoolId: true } } } });
+  const validStudent = student && !student.deletedAt && user.schoolId && student.user.schoolId === user.schoolId;
+  const lessons = validStudent && student.currentGrade ? await listAuthorizedLearnerContent(user, { grade: student.currentGrade, contentType: { in: ["lesson", "unit_plan", "term_plan", "full_pack"] } }, 36) : [];
+  const subjects = [...new Set(lessons.map(row => row.subject))];
+  return <main id="main-content" className={styles.hub}><div className={styles.hubInner}>
+    <Link className={styles.back} href="/dashboard">Back to Dashboard</Link>
+    <header className={styles.hubHeader}><div className={styles.brand}><BookOpen size={23} /> Liberia<span>Learn</span></div><p className={styles.eyebrow}>YOUR READING ROOM</p><h1>My Textbooks</h1><p>Good ideas deserve room to grow. Explore the curriculum readings available for your grade, one page at a time.</p><p>These are authorized curriculum readings, not published textbook editions. Compiled books are not available in this library yet.</p>
+      {process.env.NODE_ENV !== "production" && <Link href="/pilot-preview/textbooks" className={styles.demoLink}>Explore the synthetic book demo <ArrowUpRight size={16} /></Link>}
+    </header>
+    {!lessons.length ? <section className={styles.notice}><h2>{!validStudent ? "Library unavailable" : !student.currentGrade ? "Your placement comes first" : "Your reading shelf is waiting"}</h2><p>{!validStudent ? "Ask your teacher to check your school access." : !student.currentGrade ? "Ask your teacher to complete your grade placement so your readings can appear here." : "No readings are available for your grade yet. Your teacher can help you find a lesson to read."}</p></section> : <div className={styles.shelves}>{subjects.map(subject => <section className={styles.shelf} key={subject}><h2>{String(subject).replace(/_/g, " ")}</h2>{lessons.filter(row => row.subject === subject).map(row => <Link className={styles.readingCard} key={row.contentId} href={row.contentType === "lesson" ? `/student/textbooks/${encodeURIComponent(row.contentId)}` : `/student/lesson/${encodeURIComponent(row.contentId)}`}><span>{buildCurriculumDisplayTitle({ title: row.title, subject: row.subject, gradeLevel: row.grade })}<small>Grade {row.grade} · {row.contentType.replace(/_/g, " ")} · {row.contentType === "lesson" ? "Open reading" : "Open curriculum resource"}</small></span><ArrowUpRight size={18} /></Link>)}</section>)}</div>}
+  </div></main>;
 }
