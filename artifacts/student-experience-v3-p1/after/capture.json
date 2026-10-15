@@ -1,0 +1,290 @@
+{
+  "label": "after",
+  "captured": [
+    "long-read-390",
+    "long-read-1440",
+    "stress-read-390",
+    "stress-read-768",
+    "stress-read-1440",
+    "stress-read-1920",
+    "stress-section-17-390",
+    "stress-section-17-1440",
+    "assigned-read-390",
+    "assigned-read-1440",
+    "hosted-shape-slides-390",
+    "hosted-shape-slides-1440",
+    "hosted-shape-slides-example-390",
+    "hosted-shape-slides-example-1440",
+    "hosted-shape-read-390",
+    "hosted-shape-read-1440",
+    "legacy-slides-table-390",
+    "legacy-slides-table-1440",
+    "assigned-slides-example-390",
+    "assigned-slides-example-1440",
+    "native-390",
+    "native-1440",
+    "native-scene-3-390",
+    "native-scene-3-1440",
+    "g7-intro-390",
+    "g7-intro-1440",
+    "g7-explain-390",
+    "g7-explain-1440",
+    "g7-digit-cards-390",
+    "g7-digit-cards-1440",
+    "g7-practice-390",
+    "g7-practice-1440",
+    "gallery-390",
+    "gallery-1440",
+    "science-cycle-390",
+    "science-cycle-1440",
+    "english-sort-390",
+    "english-sort-1440",
+    "social-timeline-390",
+    "social-timeline-1440"
+  ],
+  "skipped": [],
+  "heights": [
+    {
+      "page": "long-read",
+      "width": 390,
+      "documentHeight": 1289,
+      "overflowX": false
+    },
+    {
+      "page": "long-read",
+      "width": 1440,
+      "documentHeight": 1361,
+      "overflowX": false
+    },
+    {
+      "page": "stress-read",
+      "width": 390,
+      "documentHeight": 2384,
+      "overflowX": false
+    },
+    {
+      "page": "stress-read",
+      "width": 768,
+      "documentHeight": 1780,
+      "overflowX": false
+    },
+    {
+      "page": "stress-read",
+      "width": 1440,
+      "documentHeight": 1423,
+      "overflowX": false
+    },
+    {
+      "page": "stress-read",
+      "width": 1920,
+      "documentHeight": 1423,
+      "overflowX": false
+    },
+    {
+      "page": "stress-section-17",
+      "width": 390,
+      "documentHeight": 2418,
+      "overflowX": false
+    },
+    {
+      "page": "stress-section-17",
+      "width": 1440,
+      "documentHeight": 1423,
+      "overflowX": false
+    },
+    {
+      "page": "assigned-read",
+      "width": 390,
+      "documentHeight": 3079,
+      "overflowX": false
+    },
+    {
+      "page": "assigned-read",
+      "width": 1440,
+      "documentHeight": 2120,
+      "overflowX": false
+    },
+    {
+      "page": "hosted-shape-slides",
+      "width": 390,
+      "documentHeight": 1510,
+      "overflowX": false
+    },
+    {
+      "page": "hosted-shape-slides",
+      "width": 1440,
+      "documentHeight": 988,
+      "overflowX": false
+    },
+    {
+      "page": "hosted-shape-slides-example",
+      "width": 390,
+      "documentHeight": 2701,
+      "overflowX": false
+    },
+    {
+      "page": "hosted-shape-slides-example",
+      "width": 1440,
+      "documentHeight": 1546,
+      "overflowX": false
+    },
+    {
+      "page": "hosted-shape-read",
+      "width": 390,
+      "documentHeight": 1350,
+      "overflowX": false
+    },
+    {
+      "page": "hosted-shape-read",
+      "width": 1440,
+      "documentHeight": 1340,
+      "overflowX": false
+    },
+    {
+      "page": "legacy-slides-table",
+      "width": 390,
+      "documentHeight": 1770,
+      "overflowX": false
+    },
+    {
+      "page": "legacy-slides-table",
+      "width": 1440,
+      "documentHeight": 1049,
+      "overflowX": false
+    },
+    {
+      "page": "assigned-slides-example",
+      "width": 390,
+      "documentHeight": 4199,
+      "overflowX": false
+    },
+    {
+      "page": "assigned-slides-example",
+      "width": 1440,
+      "documentHeight": 2721,
+      "overflowX": false
+    },
+    {
+      "page": "native",
+      "width": 390,
+      "documentHeight": 1026,
+      "overflowX": false
+    },
+    {
+      "page": "native",
+      "width": 1440,
+      "documentHeight": 900,
+      "overflowX": false
+    },
+    {
+      "page": "native-scene-3",
+      "width": 390,
+      "documentHeight": 2228,
+      "overflowX": false
+    },
+    {
+      "page": "native-scene-3",
+      "width": 1440,
+      "documentHeight": 900,
+      "overflowX": false
+    },
+    {
+      "page": "g7-intro",
+      "width": 390,
+      "documentHeight": 2001,
+      "overflowX": false
+    },
+    {
+      "page": "g7-intro",
+      "width": 1440,
+      "documentHeight": 923,
+      "overflowX": false
+    },
+    {
+      "page": "g7-explain",
+      "width": 390,
+      "documentHeight": 2556,
+      "overflowX": false
+    },
+    {
+      "page": "g7-explain",
+      "width": 1440,
+      "documentHeight": 1179,
+      "overflowX": false
+    },
+    {
+      "page": "g7-digit-cards",
+      "width": 390,
+      "documentHeight": 2004,
+      "overflowX": false
+    },
+    {
+      "page": "g7-digit-cards",
+      "width": 1440,
+      "documentHeight": 917,
+      "overflowX": false
+    },
+    {
+      "page": "g7-practice",
+      "width": 390,
+      "documentHeight": 2081,
+      "overflowX": false
+    },
+    {
+      "page": "g7-practice",
+      "width": 1440,
+      "documentHeight": 999,
+      "overflowX": false
+    },
+    {
+      "page": "gallery",
+      "width": 390,
+      "documentHeight": 1984,
+      "overflowX": false
+    },
+    {
+      "page": "gallery",
+      "width": 1440,
+      "documentHeight": 928,
+      "overflowX": false
+    },
+    {
+      "page": "science-cycle",
+      "width": 390,
+      "documentHeight": 1752,
+      "overflowX": false
+    },
+    {
+      "page": "science-cycle",
+      "width": 1440,
+      "documentHeight": 918,
+      "overflowX": false
+    },
+    {
+      "page": "english-sort",
+      "width": 390,
+      "documentHeight": 1896,
+      "overflowX": false
+    },
+    {
+      "page": "english-sort",
+      "width": 1440,
+      "documentHeight": 917,
+      "overflowX": false
+    },
+    {
+      "page": "social-timeline",
+      "width": 390,
+      "documentHeight": 1596,
+      "overflowX": false
+    },
+    {
+      "page": "social-timeline",
+      "width": 1440,
+      "documentHeight": 917,
+      "overflowX": false
+    }
+  ],
+  "errors": [],
+  "caveat": "Fixture harness with production components and mocked API answers; not production, server authorization or real-device evidence."
+}

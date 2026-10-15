@@ -11,7 +11,7 @@ import { createServer } from "vite";
  */
 const out = "artifacts/student-experience-v3/validation";
 await fs.mkdir(out, { recursive: true });
-const base = "http://127.0.0.1:3191";
+const base = `http://127.0.0.1:${process.env.HARNESS_PORT ?? 3191}`;
 const WIDTHS = [320, 390, 768, 1024, 1440, 1920];
 const server = await createServer({ configFile: "e2e/product-design-v2/vite.config.ts", server: { strictPort: true } });
 await server.listen();
@@ -55,7 +55,7 @@ const SURFACES = [
   { id: "legacy-slides", url: contentUrl, ready: "#lesson-title", then: () => mode("Slides").click() },
   { id: "assigned-read", url: workUrl, ready: "#lesson-title" },
   { id: "assigned-slides", url: workUrl, ready: "#lesson-title", then: () => mode("slides").click() },
-  { id: "demo", url: demoUrl, ready: "#demo-scene-title" },
+  { id: "demo", url: demoUrl, ready: "#teaching-scene-title" },
   { id: "progress", url: `${base}/student/progress?grade=7&progress=1`, ready: "#progress-heading" },
 ];
 for (const surface of SURFACES) for (const width of WIDTHS) {
@@ -88,15 +88,17 @@ await page.goto(contentUrl); await page.locator(".ll3-reading p").first().waitFo
 const measure = await page.evaluate(() => { const p = document.querySelector(".ll3-section .ll3-reading p"); const ch = parseFloat(getComputedStyle(p).fontSize) * 0.55; return { width: p.getBoundingClientRect().width, approxCh: Math.round(p.getBoundingClientRect().width / ch) }; });
 assert(measure.approxCh <= 75, `reading measure ${measure.approxCh}ch`);
 evidence.geometry.push({ readingMeasure: measure });
-await page.goto(demoUrl); await page.locator("#demo-scene-title").waitFor();
-const together = await page.evaluate(() => { const c = [...document.querySelectorAll("footer button")].pop().getBoundingClientRect(); const t = document.querySelector("#demo-scene-title").getBoundingClientRect(); return t.top >= 0 && c.bottom <= innerHeight; });
+await page.goto(demoUrl); await page.locator("#teaching-scene-title").waitFor();
+const together = await page.evaluate(() => { const c = [...document.querySelectorAll("footer button")].pop().getBoundingClientRect(); const t = document.querySelector("#teaching-scene-title").getBoundingClientRect(); return t.top >= 0 && c.bottom <= innerHeight; });
 assert(together, "demo scene title and Continue are not visible together at 1440×900");
 
 // A06: legacy Read contents navigation, Slides keyboard and authored-order teaching scenes; table stays a table.
 await page.goto(contentUrl); await page.locator("#lesson-title").waitFor();
 assert.equal(await page.locator(".ll3-section").count(), 6);
 assert.equal(await page.locator(".ll3-section table").count(), 1, "legacy markdown table renders as a table");
-assert.equal(await page.getByRole("navigation", { name: "Lesson contents" }).getByRole("link").count(), 6);
+// P1: Read is a playlist; all six authored sections stay mounted, one shows, the rail lists all six.
+assert.equal(await page.locator(".ll4-read-rail button").count(), 6);
+assert.equal(await page.locator("[data-read-section]:visible").count(), 1);
 await mode("Slides").click();
 await page.getByText("Slide 1 of 6").waitFor();
 await page.keyboard.press("ArrowRight"); await page.getByText("Slide 2 of 6").waitFor();
@@ -128,13 +130,13 @@ await axe("assigned-slides");
 
 // Grade 7 DEMO: keyboard-only walk, interactive breakdown, guided example, practice feedback, review.
 apiCalls.length = 0;
-await page.goto(demoUrl); await page.locator("#demo-scene-title").waitFor();
+await page.goto(demoUrl); await page.locator("#teaching-scene-title").waitFor();
 await page.evaluate(() => { localStorage.clear(); sessionStorage.clear(); });
 assert(await page.getByText("DEMO · not a released lesson").isVisible());
 const cont = page.locator("footer").getByRole("button", { name: /^Continue/ });
 await cont.focus(); await page.keyboard.press("Enter");
 await page.locator("[data-demo-lesson][data-scene-id='explain']").waitFor();
-assert.equal(await page.evaluate(() => document.activeElement?.id), "demo-scene-title", "focus moves to the new scene heading");
+assert.equal(await page.evaluate(() => document.activeElement?.id), "teaching-scene-title", "focus moves to the new scene heading");
 await cont.click(); await page.locator("[data-scene-id='build']").waitFor();
 const plus = page.getByRole("button", { name: /Add one to the millions digit, now 2/ });
 await plus.focus(); await page.keyboard.press("Enter");
@@ -146,6 +148,14 @@ await cont.click(); await page.locator("[data-scene-id='example']").waitFor();
 assert.equal(await cont.isDisabled(), true, "Continue waits for every worked-example step");
 for (let step = 1; step <= 3; step++) await page.getByRole("button", { name: `Show step ${step} of 3` }).click();
 await page.getByText("All steps shown").waitFor();
+// P1 guided practice: digit cards gate Continue until the number is made.
+await cont.click(); await page.locator("[data-scene-id='digits']").waitFor();
+assert.equal(await cont.isDisabled(), true, "Continue waits for the digit cards");
+for (const [place, digit] of [5, 0, 4, 0, 0, 0, 9].entries()) {
+  await page.locator(".ll4-digit-card:not([disabled])", { hasText: String(digit) }).first().click();
+  await page.locator(".ll4-slot").nth(place).click();
+}
+await page.getByText("You made 5,040,009").waitFor();
 await cont.click(); await page.locator("[data-scene-id='practice']").waitFor();
 await page.locator("[data-practice='q1'] input").first().check();
 await page.getByText("Not yet.").waitFor();
@@ -160,7 +170,7 @@ await page.locator(".ll3-notice-title", { hasText: "Demo finished" }).waitFor();
 const storage = await page.evaluate(async () => ({ local: localStorage.length, session: sessionStorage.length, idb: (await indexedDB.databases?.() ?? []).map((db) => db.name) }));
 assert.deepEqual(apiCalls, [], `demo made API requests: ${apiCalls}`);
 assert.equal(storage.local + storage.session, 0, "demo wrote browser storage");
-evidence.demo = { apiCalls: apiCalls.length, storage, flow: "intro→explain→build(keyboard +/reset)→example(3 steps)→practice(3, retry feedback)→review→finish" };
+evidence.demo = { apiCalls: apiCalls.length, storage, flow: "intro→explain→build(keyboard +/reset)→example(3 steps)→digit cards→practice(3, retry feedback)→review→finish" };
 await axe("demo-review");
 for (const width of [320, 1440]) { await page.setViewportSize({ width, height: width >= 1440 ? 900 : 844 }); await page.screenshot({ path: `${out}/demo-finished-${width}.png`, fullPage: true }); }
 

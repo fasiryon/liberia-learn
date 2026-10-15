@@ -1,0 +1,21 @@
+{
+  "baseline": "a1508ceaf7d89a338de624e9f63c9c4c592ca28c",
+  "sources": [
+    {
+      "ref": "feat/student-lesson-visual-v3",
+      "sha": "376df51dcea8e9a20ecc59ef953feea5f2d47510"
+    },
+    {
+      "ref": "feat/student-visual-experience-v3",
+      "sha": "7324e5a886e195a753b47ff43c3c1750b0f42ceb"
+    },
+    {
+      "ref": "feat/interactive-textbook-v1",
+      "sha": "c4be406884ad93bfb44cdf526089a2f4a0eadd67"
+    }
+  ],
+  "allSourceCommitsAndMainAreAncestors": true,
+  "prismaApiAndStudentAuthorityDiff": [],
+  "migrationOrBackfillRun": false,
+  "hostedDataOperation": false
+}
