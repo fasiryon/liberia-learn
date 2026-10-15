@@ -1,0 +1,90 @@
+{
+  "mode": "offline-dry-run",
+  "provenance": {
+    "pr": 190,
+    "head": "3a493ebd81acc9ce90799234f65bb8ce92bab197",
+    "run": 38770187062,
+    "job": 116543652921,
+    "url": "https://github.com/fasiryon/liberia-learn/actions/runs/38770187062"
+  },
+  "scope": "PR190 historical failure with isolated fixture-only diff; PR188 migration scenario. No claim that either full PR is low risk.",
+  "repair": {
+    "action": "hold",
+    "blocks": [
+      "deployment-policy-unverified",
+      "independent-reviews-required",
+      "protection-unverified",
+      "merge-authority-unverified",
+      "policy-check-unprotected:build",
+      "policy-check-unprotected:runtime-gate",
+      "policy-check-unprotected:safety",
+      "policy-check-unprotected:GitGuardian Security Checks",
+      "check:build",
+      "check:runtime-gate",
+      "check:safety",
+      "check:GitGuardian Security Checks",
+      "merge-disabled"
+    ],
+    "classification": {
+      "risk": "low",
+      "reasons": []
+    },
+    "analyses": [
+      {
+        "role": "correctness-security",
+        "source": "deterministic-v1",
+        "findings": []
+      },
+      {
+        "role": "maintainability",
+        "source": "deterministic-v1",
+        "findings": []
+      }
+    ],
+    "head": "3a493ebd81acc9ce90799234f65bb8ce92bab197"
+  },
+  "migration": {
+    "action": "hold",
+    "blocks": [
+      "deployment-policy-unverified",
+      "founder-approval-required",
+      "independent-reviews-required",
+      "protection-unverified",
+      "merge-authority-unverified",
+      "policy-check-unprotected:build",
+      "policy-check-unprotected:runtime-gate",
+      "policy-check-unprotected:safety",
+      "policy-check-unprotected:GitGuardian Security Checks",
+      "check:build",
+      "check:runtime-gate",
+      "check:safety",
+      "check:GitGuardian Security Checks",
+      "merge-disabled"
+    ],
+    "classification": {
+      "risk": "high",
+      "reasons": [
+        "protected:prisma/canonical/migrations/20261013_000001_content_bundle_scheduledwork_pins/migration.sql",
+        "unclassified:prisma/canonical/migrations/20261013_000001_content_bundle_scheduledwork_pins/migration.sql"
+      ]
+    },
+    "analyses": [
+      {
+        "role": "correctness-security",
+        "source": "deterministic-v1",
+        "findings": []
+      },
+      {
+        "role": "maintainability",
+        "source": "deterministic-v1",
+        "findings": []
+      }
+    ],
+    "head": "3a493ebd81acc9ce90799234f65bb8ce92bab197"
+  },
+  "externalWrites": 0,
+  "ledgerEntries": 2,
+  "proposalRecorded": true,
+  "autoMerge": false,
+  "autoRepair": false
+}
