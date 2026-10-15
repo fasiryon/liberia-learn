@@ -3,7 +3,6 @@ import React from "react";
 import * as jsx from "react/jsx-runtime";
 import * as icons from "lucide-react";
 import { renderToStaticMarkup } from "react-dom/server";
-import { execFileSync } from "node:child_process";
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { transpileModule, ModuleKind, JsxEmit } from "typescript";
 import { expect, it, vi } from "vitest";
@@ -20,7 +19,7 @@ vi.mock("@/components/textbooks/textbooks.module.css", async () => {
 import Hub from "@/app/student/textbooks/page";
 
 it("captures before and after hub source with explicitly synthetic catalogue data", async () => {
-  const baseline = execFileSync("git", ["show", "2bf94c11:app/student/textbooks/page.tsx"], { encoding: "utf8" });
+  const baseline = readFileSync(new URL("./fixtures/textbook-hub-before.tsx.fixture", import.meta.url), "utf8");
   const compiled = transpileModule(baseline, { compilerOptions: { module: ModuleKind.CommonJS, jsx: JsxEmit.ReactJSX, esModuleInterop: true } }).outputText;
   const mod = { exports: {} as { default?: () => Promise<React.ReactElement> } };
   const dependencies: Record<string, unknown> = {
