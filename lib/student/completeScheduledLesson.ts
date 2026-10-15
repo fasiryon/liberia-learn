@@ -9,6 +9,7 @@ import { notifyLessonCompletion } from "@/lib/lesson-notifications";
 import { updateMasteryProfile } from "@/lib/mastery/masteryService";
 import { logProductSignal } from "@/lib/autonomous/signals/productSignalService";
 import { updateStreak } from "@/lib/gamification/streakService";
+import { classifyScheduledWork } from "@/lib/content-bundle/persistence/scheduledWork";
 
 type SessionUserLike = {
   id: string;
@@ -116,6 +117,9 @@ export async function completeScheduledLesson(input: CompleteLessonInput) {
   });
   if (!enrollment) {
     throw Object.assign(new Error("Forbidden"), { status: 403 });
+  }
+  if (classifyScheduledWork(sw) !== "LEGACY_UNPINNED") {
+    throw Object.assign(new Error("This work is not ready for completion yet"), { status: 409 });
   }
 
   const payload = (content.payload ?? {}) as any;

@@ -12,6 +12,8 @@ import { signHero, signInlineIllustrations } from "@/lib/media/blobStorage";
 import type { HeroImageMeta, InlineIllustration } from "@/lib/media/types";
 import { readMoeAlignmentCodes } from "@/lib/moe/alignmentReader";
 import { learnerRowAllowed, learnerScopeAllows, loadLearnerScope } from "@/lib/curriculum/learnerEligibility";
+import { classifyScheduledWork, readScheduledWorkDelivery } from "@/lib/content-bundle/persistence/scheduledWork";
+import { createPersistentRepositoryReader } from "@/lib/content-bundle/persistence/runtime";
 
 function projectStudentDeliveryProfile(value: unknown) {
   if (!value || typeof value !== "object" || Array.isArray(value)) return null;
@@ -190,6 +192,8 @@ function scheduledWorkInclude(userId: string) {
         id: true,
         schoolId: true,
         name: true,
+        gradeLevel: true,
+        subject: true,
         Teacher: { select: { name: true, schoolId: true } },
         School: { select: { name: true } },
       },
@@ -236,8 +240,8 @@ export async function GET(
       return NextResponse.json({ error: "Not found" }, { status: 404 });
     }
 
-    // Fail-closed: students may only access approved content
-    if (!APPROVED_CONTENT_STATUSES.has(sw.content.status)) {
+    // Preserve legacy approval order; governed authority is resolved independently below.
+    if (classifyScheduledWork(sw) === "LEGACY_UNPINNED" && !APPROVED_CONTENT_STATUSES.has(sw.content.status)) {
       return NextResponse.json({ error: "Lesson not found or not yet approved" }, { status: 404 });
     }
 
@@ -251,6 +255,13 @@ export async function GET(
     });
     if (!enrollment) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
+    if (classifyScheduledWork(sw) !== "LEGACY_UNPINNED") {
+      const delivery = await readScheduledWorkDelivery(sw, createPersistentRepositoryReader(prisma, sw.class.schoolId), async () => null);
+      if (delivery.status !== "RESOLVED") return NextResponse.json({ error: "Governed work unavailable", classification: delivery.classification, diagnostics: "diagnostics" in delivery ? delivery.diagnostics : [] }, { status: 409 });
+      if (delivery.learnerProjection.identity.gradeLevel !== sw.class.gradeLevel || delivery.learnerProjection.identity.subject.toLowerCase() !== sw.class.subject.toLowerCase()) return NextResponse.json({ error: "Governed work scope incompatible" }, { status: 409 });
+      return NextResponse.json({ scheduledWorkId: sw.id, ...delivery });
     }
 
     const progress = sw.progress[0];

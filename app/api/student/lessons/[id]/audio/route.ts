@@ -1,9 +1,11 @@
+// route-policy: auth=session; scope=record; authority=student-enrolled-in-the-scheduled-work-class; rationale=legacy audio requires school and enrollment checks and rejects governed pins until exact media authority is available
 import { NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { selectLessonBody } from "@/lib/lessons";
 import { getCurrentLessonAudio, queueLessonAudioGeneration } from "@/lib/lessons/audioGeneration";
 import { projectStudentLessonPayload } from "@/lib/curriculum/studentLessonProjection";
+import { classifyScheduledWork } from "@/lib/content-bundle/persistence/scheduledWork";
 
 export const dynamic = "force-dynamic";
 
@@ -36,6 +38,7 @@ export async function POST(
       select: { id: true },
     });
     if (!enrollment) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    if (classifyScheduledWork(sw) !== "LEGACY_UNPINNED") return NextResponse.json({ error: "Audio is not available for this work yet" }, { status: 409 });
 
     const payload = sw.content.payload as any;
     const studentPayload = projectStudentLessonPayload(payload);
