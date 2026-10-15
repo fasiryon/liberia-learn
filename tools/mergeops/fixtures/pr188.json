@@ -1,0 +1,11 @@
+{
+  "number": 188,
+  "url": "https://github.com/fasiryon/liberia-learn/pull/188",
+  "head": "a68f5246e0eadea65f66a5f21ffa61fd4ac48d17",
+  "merge": "a1508ceaf7d89a338de624e9f63c9c4c592ca28c",
+  "merged": true,
+  "gate": "# LiberiaLearn PR — National Standards Checklist\n\n> **DO NOT MERGE before the hosted migration is applied and verified.** After merge, the regenerated Prisma client selects six new `ScheduledWork` columns. Any deploy from `main` before production has them would break ScheduledWork queries. Required order: backup/restore evidence → authorized migration → post-migration verification → merge of this exact head → deploy.",
+  "migration": "20261013_000001_content_bundle_scheduledwork_pins",
+  "recordedAt": "2026-10-15",
+  "note": "Historical scenario replay only; no inference about current hosted migration status."
+}
