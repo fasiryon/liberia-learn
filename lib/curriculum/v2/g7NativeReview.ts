@@ -12,6 +12,8 @@
 import type { GovernedItem } from "@/lib/learning-authority/governedGrade4Math";
 
 export const G7_EXIT_ITEM_VERSION = "candidate-0.1.0" as const;
+/** Items revised after the legacy comparison carry their own version, so a reviewer sees exactly which ones changed. */
+export const G7_EXIT_ITEM_REVISED_VERSION = "candidate-0.2.0" as const;
 
 /** Machine-checkable statement of what the keyed option must equal (math only; writing is judged by people). */
 export type ExitItemVerification =
@@ -30,8 +32,8 @@ export type CandidateExitItem = Readonly<{
   verification: ExitItemVerification | null;
 }>;
 
-const item = (id: string, prompt: string, options: string[], correctIndex: number, hint: string, workedExample: string): GovernedItem =>
-  ({ id, version: G7_EXIT_ITEM_VERSION, context: "PRACTICE", prompt, options, correctIndex, hint, workedExample });
+const item = (id: string, prompt: string, options: string[], correctIndex: number, hint: string, workedExample: string, version: string = G7_EXIT_ITEM_VERSION): GovernedItem =>
+  ({ id, version, context: "PRACTICE", prompt, options, correctIndex, hint, workedExample });
 
 const PV = "g7-pv-exit-ticket";
 const PV1 = "ll-g7-math-place-value-read-write";
@@ -63,7 +65,7 @@ export const G7_EXIT_ITEMS: Readonly<Record<string, readonly CandidateExitItem[]
     { assessmentRequestId: ES, objectiveId: ES2, distractorMisconceptions: { 0: "mc-topic-not-thesis", 2: "mc-topic-not-thesis", 3: "mc-topic-not-thesis" }, verification: null,
       item: item("g7-essay-exit-2", "Which sentence is an arguable thesis statement?", ["Liberia has fifteen counties.", "Our school should start a debate club because debating builds confidence and clear thinking.", "This essay is about debate clubs.", "Debate clubs."], 1, "Could a sensible person disagree with it?", "Only the debate-club claim can be argued, and it names two reasons. The others are a fact, an announcement and a topic.") },
     { assessmentRequestId: ES, objectiveId: ES3, distractorMisconceptions: { 0: "mc-opinion-as-evidence", 2: "mc-irrelevant-evidence", 3: "mc-opinion-as-evidence" }, verification: null,
-      item: item("g7-essay-exit-3", "Reason: reading every day builds vocabulary. Which evidence supports this reason best?", ["Reading is fun.", "After our class read for 20 minutes a day for one term, many of us used new words from the books in our own writing.", "Books have many pages.", "Everyone should read."], 1, "Which option is specific and proves this exact reason?", "The class example is specific and shows vocabulary growing. The others are opinions or unrelated facts.") },
+      item: item("g7-essay-exit-3", "Reason: reading every day builds vocabulary. Which evidence supports this reason best? (Musu's school is the made-up practice school from the lesson.)", ["Reading is fun.", "Musu's class read for 20 minutes a day for one term, and many learners then used new words from the books in their own writing.", "Books have many pages.", "Everyone should read."], 1, "Which option is specific and proves this exact reason?", "The example from Musu's class is specific and shows vocabulary growing. The others are opinions or unrelated facts. In real writing, the example must come from a real class or a source you can name.", G7_EXIT_ITEM_REVISED_VERSION) },
     { assessmentRequestId: ES, objectiveId: ES1, distractorMisconceptions: { 0: "mc-conclusion-new-idea" }, verification: null,
       item: item("g7-essay-exit-4", "What should the conclusion of an argumentative essay do?", ["Introduce a new reason the reader has not seen", "Restate the thesis in new words and sum up the main reasons", "List the sources only", "Repeat the introduction word for word"], 1, "Remember the three jobs of a conclusion.", "A conclusion restates the thesis in new words, sums up the reasons and ends with a final thought. New reasons belong in the body.") },
     { assessmentRequestId: ES, objectiveId: ES3, distractorMisconceptions: { 3: "mc-irrelevant-evidence" }, verification: null,
@@ -101,6 +103,7 @@ export const G7_REVISION_LEDGER: Readonly<Record<string, Readonly<{ legacyCompar
       { sceneId: "ten-times", change: "NEW", source: "—", rationale: "Makes the ×10 / ÷10 relationship explicit across the decimal point; the DEMO stated it in one sentence." },
       { sceneId: "worked-example", change: "REVISED", source: "PlaceValueDemo.tsx scene 'example' (Musu's library fund)", rationale: "Preserved the three-step value-of-3 example; added expanded form, word form and a check-by-adding step." },
       { sceneId: "build-number", change: "REVISED", source: "PlaceValueTools.tsx NumberBuilder (interactive DEMO tool)", rationale: "The DEMO builder is not a renderable lesson interaction, so the candidate declares NUMERIC with a written fallback and a paper chart with counters for classrooms without devices." },
+      { sceneId: "counter-chart", change: "REVISED", source: "Legacy lab 'Understanding Place Value with Local Materials' (revision cmss8t4hz00unvo54epnfst66); legacy comparison R-M1", rationale: "Keeps the legacy's offline, hands-on pair work, but with identical counters in labelled columns and a ten-for-one exchange, at the Grade 7 range (millions to thousandths). Does not restore the cassava/leaf/stone token values or the hundreds-only range." },
       { sceneId: "guided-decimals", change: "NEW", source: "—", rationale: "Guided decimal place-value items with per-option feedback." },
       { sceneId: "compare-strategy", change: "NEW", source: "—", rationale: "Compare-from-the-left method for decimals and whole numbers (objective 3)." },
       { sceneId: "misconceptions", change: "NEW", source: "—", rationale: "Targets three common errors: longer decimal is bigger, dropped zero placeholders, decimal word form." },
@@ -108,6 +111,7 @@ export const G7_REVISION_LEDGER: Readonly<Record<string, Readonly<{ legacyCompar
       { sceneId: "review", change: "REVISED", source: "PlaceValueDemo.tsx scene 'review'", rationale: "Kept the three takeaways; added zero placeholders and comparing." },
       { sceneId: "exit-ticket", change: "NEW", source: "—", rationale: "Assessment handoff to Assessment Player V2; candidate items are reviewer-only until released." },
       { sceneId: "reflect", change: "NEW", source: "—", rationale: "Written explanation of place versus value." },
+      { sceneId: "home-practice", change: "REVISED", source: "Legacy 'Guardian Support' section (revision cmss8t4hz00unvo54epnfst66); legacy comparison R-M2", rationale: "Turns the legacy's generic home-support sentence into a concrete, device-free task that a family member who does not read can still share." },
     ],
   },
   "literacy-essay-structure-argument": {
@@ -120,12 +124,15 @@ export const G7_REVISION_LEDGER: Readonly<Record<string, Readonly<{ legacyCompar
       { sceneId: "essay-structure", change: "NEW", source: "—", rationale: "Three-part essay structure with the job of each part." },
       { sceneId: "model-plan", change: "NEW", source: "—", rationale: "Complete model plan on a Liberian school topic, including a counterargument paragraph." },
       { sceneId: "thesis", change: "NEW", source: "—", rationale: "Distinguishes claims from topics, facts and announcements with feedback." },
-      { sceneId: "peel", change: "NEW", source: "—", rationale: "PEEL paragraph model (Point, Evidence, Explain, Link). Whether PEEL is familiar in Liberian classrooms is for the reviewer to confirm (legacy comparison R-L5)." },
-      { sceneId: "evidence", change: "NEW", source: "—", rationale: "Kinds of evidence and four tests; explicitly forbids invented figures." },
-      { sceneId: "evidence-check", change: "NEW", source: "—", rationale: "Misconception checks: irrelevant evidence, circular reasoning, ignoring the other side." },
-      { sceneId: "order-paragraph", change: "NEW", source: "—", rationale: "Declared ORDERING interaction with a written fallback." },
-      { sceneId: "write-argument", change: "NEW", source: "—", rationale: "Interactive writing practice: thesis plus one PEEL paragraph, teacher-reviewed with the rubric." },
-      { sceneId: "review", change: "NEW", source: "—", rationale: "Five key ideas." },
+      { sceneId: "peel", change: "NEW", source: "—", rationale: "PEEL paragraph model (Point, Evidence, Explain, Link). Whether PEEL is familiar in Liberian classrooms is for the reviewer to confirm (legacy comparison R-L5). The model evidence is attributed to Musu's (made-up) school garden (R-L1)." },
+      { sceneId: "evidence", change: "NEW", source: "—", rationale: "Kinds of evidence and four tests; explicitly forbids invented figures, and says that Musu's school examples are made-up practice examples, not facts (R-L1)." },
+      { sceneId: "evidence-check", change: "NEW", source: "—", rationale: "Misconception checks: irrelevant evidence, circular reasoning, ignoring the other side. The model evidence is attributed to Musu's practice school instead of the learner's own school (R-L1)." },
+      { sceneId: "order-paragraph", change: "NEW", source: "—", rationale: "Declared ORDERING interaction with a written fallback. Sentence D is attributed to Musu's practice school (R-L1)." },
+      { sceneId: "plan-argument", change: "REVISED", source: "Legacy section '8. Worked Example 2 — Alternative Method' (revision cmss94dmc03b7vo54ryf3hqk1); legacy comparison R-L2", rationale: "Restores the legacy brainstorm-then-organise method as the learner's own planning step: brainstorm, choose two reasons, attach real evidence with its source. The writing topics moved here from write-argument." },
+      { sceneId: "write-argument", change: "NEW", source: "—", rationale: "Interactive writing practice: thesis plus one PEEL paragraph from the learner's plan, teacher-reviewed with the rubric." },
+      { sceneId: "write-conclusion", change: "REVISED", source: "Legacy section '13. Independent Practice — Tier 1' (write a conclusion) (revision cmss94dmc03b7vo54ryf3hqk1); legacy comparison R-L3", rationale: "Restores conclusion writing on the lesson's own garden plan, keeping the rule the legacy model answer broke: no new reasons." },
+      { sceneId: "peer-review", change: "REVISED", source: "Legacy '4. Core Concept' checks for understanding (peer review) and objective 3 (revision cmss94dmc03b7vo54ryf3hqk1); legacy comparison R-L4", rationale: "Restores structured peer review with the four PEEL questions, one strength and one next step; a learner working alone reviews their own paragraph." },
+      { sceneId: "review", change: "NEW", source: "—", rationale: "Six key ideas, including planning before writing." },
       { sceneId: "exit-ticket", change: "NEW", source: "—", rationale: "Assessment handoff; candidate items reviewer-only until released." },
       { sceneId: "reflect", change: "NEW", source: "—", rationale: "Writer self-assessment and next step." },
     ],

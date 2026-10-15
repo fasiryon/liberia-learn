@@ -32,7 +32,7 @@ export const G7_ASSET_DIR = "public/curriculum-candidates/g7-native-v1";
 export const G7_ASSET_URL_BASE = "/curriculum-candidates/g7-native-v1";
 /** Fixed so the committed review package is reproducible. */
 export const G7_AUTHORED_AT = "2026-10-15T00:00:00.000Z";
-export const G7_CANDIDATE_VERSION = "0.1.0";
+export const G7_CANDIDATE_VERSION = "0.2.0";
 
 /** How a provisional objective relates to an item in the structured MOE source. Never "is" the MOE objective. */
 export type MoeRelation =
@@ -83,6 +83,24 @@ export type LegacySource = Readonly<{
   bodyExtract: Readonly<{ path: string; contentHash: string; capturedAt: string }>;
 }>;
 
+/**
+ * Content the candidate teaches beyond any MOE grade in the repository source. Recorded, never hidden:
+ * it stays a proposal until the curriculum owner approves it, and blocks approval until then.
+ */
+export type ScopeExtension = Readonly<{
+  id: string;
+  scope: string;
+  status: "PROPOSED_LIBERIALEARN_EXTENSION";
+  approval: "PENDING_CURRICULUM_OWNER";
+  objectiveIds: readonly string[];
+  /** Candidate scenes that use the extended scope (a test checks this list against the candidate). */
+  sceneIds: readonly string[];
+  /** Reviewer-only exit items that use it. */
+  exitItemIds: readonly string[];
+  evidence: string;
+  ifNotApproved: string;
+}>;
+
 export type G7NativeLesson = Readonly<{
   key: string;
   file: string;
@@ -97,6 +115,7 @@ export type G7NativeLesson = Readonly<{
   reusedMaterial: readonly Readonly<{ path: string; what: string }>[];
   /** Candidate media id → repository diagram file under G7_ASSET_DIR. */
   assets: Readonly<Record<string, string>>;
+  scopeExtensions: readonly ScopeExtension[];
 }>;
 
 const G7_9_MATH = "GRADE 7-9/Math 7-9.pdf";
@@ -153,6 +172,19 @@ export const G7_NATIVE_LESSONS: readonly G7NativeLesson[] = Object.freeze([
       "library-fund": "math-library-fund.svg",
       "compare-decimals": "math-compare-decimals.svg",
     },
+    scopeExtensions: [
+      {
+        id: "ext-g7-math-whole-numbers-millions",
+        scope: "Reading, writing, valuing and comparing whole numbers in the millions (the millions period).",
+        status: "PROPOSED_LIBERIALEARN_EXTENSION",
+        approval: "PENDING_CURRICULUM_OWNER",
+        objectiveIds: ["ll-g7-math-place-value-read-write", "ll-g7-math-place-value-digit-value", "ll-g7-math-place-value-compare"],
+        sceneIds: ["intro", "objectives", "chart", "ten-times", "worked-example", "build-number", "counter-chart", "compare-strategy", "misconceptions", "practice", "review"],
+        exitItemIds: ["g7-pv-exit-1", "g7-pv-exit-3", "g7-pv-exit-6"],
+        evidence: "MOE Grade 4 stops at whole numbers to hundred thousand (Math 1-6 p.38), and the word \"million\" does not occur in the extracted MOE Math 1-6 or Math 7-9 text. Decimals to the thousandths do have MOE support (Grade 4 p.45, Grade 6 p.67).",
+        ifNotApproved: "Limit whole numbers to hundred thousands (or mark the millions material as optional enrichment), and revise or withdraw exit items g7-pv-exit-1, g7-pv-exit-3 and g7-pv-exit-6 (legacy comparison A-M1, option B).",
+      },
+    ],
   },
   {
     key: "literacy-essay-structure-argument",
@@ -180,6 +212,7 @@ export const G7_NATIVE_LESSONS: readonly G7NativeLesson[] = Object.freeze([
       "peel-paragraph": "literacy-peel-paragraph.svg",
       "evidence-test": "literacy-evidence-test.svg",
     },
+    scopeExtensions: [],
   },
 ]);
 
@@ -213,6 +246,7 @@ export function bindingGaps(lesson: G7NativeLesson): ReviewGap[] {
   if (laterGrade) gaps.push({ code: "MOE_GRADE_SCOPE_REVIEW", severity: "BLOCKING", detail: "The MOE places argumentative composition ('develop and defend a point of view') in Grade 9 (p.32) and issue-based composition in Grade 8 (p.18). The reviewer decides whether this Grade 7 lesson stays as an introduction, is rescoped to paragraph writing, or moves grade." });
   gaps.push({ code: "TEMPLATE_CELL_MISSING", severity: "BLOCKING", detail: `No governed template cell exists for Grade 7 ${lesson.subject} (lib/learning-authority/cells has Grade 4 Math only), so no unit placement, interaction classification or concept link can be resolved.` });
   gaps.push({ code: "ONTOLOGY_RELEASE_MISSING", severity: "BLOCKING", detail: `No ontology release is registered for Grade 7 ${lesson.subject} (curriculum/releases/k12-scope.json); concepts, standard/skill bindings, governed items, evidence and tool policies are all absent.` });
+  for (const extension of lesson.scopeExtensions) gaps.push({ code: "SCOPE_EXTENSION_UNAPPROVED", severity: "BLOCKING", detail: `${extension.id}: ${extension.scope} This is a proposed LiberiaLearn extension beyond the repository MOE source, pending curriculum-owner approval. ${extension.evidence} If not approved: ${extension.ifNotApproved}` });
   gaps.push({ code: "LEGACY_COMPARISON_SIGNOFF", severity: "BLOCKING", detail: `The legacy body of ${lesson.legacy.contentId} (revision ${lesson.legacy.currentRevisionId}, content hash ${lesson.legacy.bodyExtract.contentHash.slice(0, 12)}…) was read read-only and compared section by section in legacy-comparison.md. A qualified reviewer confirms the comparison and decides every restoration and revision recommendation before approval.` });
   return gaps;
 }

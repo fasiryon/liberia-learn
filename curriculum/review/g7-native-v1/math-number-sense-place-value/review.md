@@ -1,11 +1,11 @@
 # Number Sense and Place Value: Millions to Thousandths
 
-- Candidate: `cv2-cand-g7-math-number-sense-place-value` v0.1.0 · Grade 7 MATH · Number sense / place value
+- Candidate: `cv2-cand-g7-math-number-sense-place-value` v0.2.0 · Grade 7 MATH · Number sense / place value
 - Pipeline status: **REVIEW_BLOCKED** · governance: DRAFT, human review required, not published, MOE approval not claimed, qualified review not started
-- Candidate hash: `5817d80911154bceb61fe117e0916ad64d0b7ae5c6afd2a2c6028b9cdc972ffb` · learner projection hash: `b14a869ca88963216c86a7f9883029a4df212acb46e184b3a4f302d0a5ab57fe` (review this exact revision only)
+- Candidate hash: `3f612d907f52f5953d879476a627fde8e9a1c5b3d30d22e171a42a8ccec80c0c` · learner projection hash: `5c5e90e92e0ee1d80c3da8d91b9cac0526a0e1cec10a02f97e29b88eed080e4c` (review this exact revision only)
 - Origin: AUTHORED_FIXTURE in the `candidate-lesson-v2/1.0.0` generator format (no live model call); strict parser, deterministic validator and deliverability checks passed with 0 errors
 - Not assembled into `curriculum-lesson-v2/1.0.0`: assembly needs a Grade 7 template cell and ontology release that do not exist (see Review gaps)
-- Strategy: CONCRETE_PICTORIAL_ABSTRACT — Learners meet place value through a chart and counters (concrete/pictorial) before reading, writing and comparing numbers symbolically. Grade 7 extends the whole-number chart learners know to the thousandths, which the MOE Grade 7 decimals, percents and fractions period depends on.
+- Strategy: CONCRETE_PICTORIAL_ABSTRACT — Learners meet place value through a chart and counters (concrete/pictorial) before reading, writing and comparing numbers symbolically. Grade 7 extends the whole-number chart learners know to the thousandths, which the MOE Grade 7 decimals, percents and fractions period depends on. A partner activity with identical counters on a paper chart (ten counters exchanged for one in the next place) and a home task work without devices.
 
 ## Source and provenance
 
@@ -32,6 +32,15 @@ Prerequisites assumed:
 - Knows that 0.5 means five tenths and can read simple decimals aloud.
 - Can multiply a single digit by 10, 100 and 1,000.
 
+## Proposed scope extensions (pending curriculum-owner approval)
+
+- `ext-g7-math-whole-numbers-millions` — PROPOSED_LIBERIALEARN_EXTENSION, PENDING_CURRICULUM_OWNER: Reading, writing, valuing and comparing whole numbers in the millions (the millions period).
+  - Evidence: MOE Grade 4 stops at whole numbers to hundred thousand (Math 1-6 p.38), and the word "million" does not occur in the extracted MOE Math 1-6 or Math 7-9 text. Decimals to the thousandths do have MOE support (Grade 4 p.45, Grade 6 p.67).
+  - Objectives: `ll-g7-math-place-value-read-write`, `ll-g7-math-place-value-digit-value`, `ll-g7-math-place-value-compare`
+  - Scenes using it: `intro`, `objectives`, `chart`, `ten-times`, `worked-example`, `build-number`, `counter-chart`, `compare-strategy`, `misconceptions`, `practice`, `review`
+  - Exit items using it (reviewer only): `g7-pv-exit-1`, `g7-pv-exit-3`, `g7-pv-exit-6`
+  - If not approved: Limit whole numbers to hundred thousands (or mark the millions material as optional enrichment), and revise or withdraw exit items g7-pv-exit-1, g7-pv-exit-3 and g7-pv-exit-6 (legacy comparison A-M1, option B).
+
 ## Teaching sequence and scene manifest
 
 | # | Scene | Type / purpose | Objectives | Interaction | Evidence | Words | Visual | Scene hash |
@@ -43,13 +52,15 @@ Prerequisites assumed:
 | 5 | `ten-times` | INTERACTIVE_DIAGRAM / EXPLAIN_CONCEPT | `place-value-digit-value` | DIAGRAM_REVEAL | NONE | 17 | `math-ten-times-ladder.svg` | `5af3311e99f2…` |
 | 6 | `worked-example` | GUIDED_EXAMPLE / MODEL_WORKED_EXAMPLE | `place-value-read-write`, `place-value-digit-value` | DIAGRAM_REVEAL | NONE | 21 | `math-library-fund.svg` | `7b7e1494a336…` |
 | 7 | `build-number` | GUIDED_EXAMPLE / GUIDED_PRACTICE | `place-value-read-write` | NUMERIC (fallback FREE_RESPONSE) | FORMATIVE_OBSERVATION | 32 | — | `1c979da76058…` |
-| 8 | `guided-decimals` | GUIDED_EXAMPLE / GUIDED_PRACTICE | `place-value-read-write`, `place-value-digit-value` | SINGLE_CHOICE | FORMATIVE_OBSERVATION | 21 | — | `b68cdbcdb0e4…` |
-| 9 | `compare-strategy` | GUIDED_EXAMPLE / MODEL_WORKED_EXAMPLE | `place-value-compare` | DIAGRAM_REVEAL | NONE | 21 | `math-compare-decimals.svg` | `6b76b0bdc94d…` |
-| 10 | `misconceptions` | CHECK_UNDERSTANDING / ADDRESS_MISCONCEPTION | `place-value-read-write`, `place-value-compare` | SINGLE_CHOICE | FORMATIVE_OBSERVATION | 16 | — | `79f87d2f90ee…` |
-| 11 | `practice` | PRACTICE / INDEPENDENT_PRACTICE | `place-value-read-write`, `place-value-digit-value`, `place-value-compare` | SINGLE_CHOICE | FORMATIVE_OBSERVATION | 27 | — | `781c1c36c528…` |
-| 12 | `review` | REVIEW / REVIEW | `place-value-read-write`, `place-value-digit-value`, `place-value-compare` | NONE | NONE | 11 | — | `9bea72fa6c6a…` |
-| 13 | `exit-ticket` | MASTERY_CHECK / ASSESS_MASTERY | `place-value-read-write`, `place-value-digit-value`, `place-value-compare` | ASSESSMENT_HANDOFF (fallback PAPER_ACTIVITY) | MASTERY_RESPONSE | 19 | — | `3c407b008e3a…` |
-| 14 | `reflect` | REFLECTION / REFLECT | `place-value-digit-value` | FREE_RESPONSE | REFLECTION | 12 | — | `d6984293c360…` |
+| 8 | `counter-chart` | GUIDED_EXAMPLE / GUIDED_PRACTICE | `place-value-digit-value`, `place-value-read-write` | FREE_RESPONSE | FORMATIVE_OBSERVATION | 100 | — | `1ea999e7e873…` |
+| 9 | `guided-decimals` | GUIDED_EXAMPLE / GUIDED_PRACTICE | `place-value-read-write`, `place-value-digit-value` | SINGLE_CHOICE | FORMATIVE_OBSERVATION | 21 | — | `b68cdbcdb0e4…` |
+| 10 | `compare-strategy` | GUIDED_EXAMPLE / MODEL_WORKED_EXAMPLE | `place-value-compare` | DIAGRAM_REVEAL | NONE | 21 | `math-compare-decimals.svg` | `6b76b0bdc94d…` |
+| 11 | `misconceptions` | CHECK_UNDERSTANDING / ADDRESS_MISCONCEPTION | `place-value-read-write`, `place-value-compare` | SINGLE_CHOICE | FORMATIVE_OBSERVATION | 16 | — | `79f87d2f90ee…` |
+| 12 | `practice` | PRACTICE / INDEPENDENT_PRACTICE | `place-value-read-write`, `place-value-digit-value`, `place-value-compare` | SINGLE_CHOICE | FORMATIVE_OBSERVATION | 27 | — | `781c1c36c528…` |
+| 13 | `review` | REVIEW / REVIEW | `place-value-read-write`, `place-value-digit-value`, `place-value-compare` | NONE | NONE | 11 | — | `9bea72fa6c6a…` |
+| 14 | `exit-ticket` | MASTERY_CHECK / ASSESS_MASTERY | `place-value-read-write`, `place-value-digit-value`, `place-value-compare` | ASSESSMENT_HANDOFF (fallback PAPER_ACTIVITY) | MASTERY_RESPONSE | 19 | — | `3c407b008e3a…` |
+| 15 | `reflect` | REFLECTION / REFLECT | `place-value-digit-value` | FREE_RESPONSE | REFLECTION | 12 | — | `d6984293c360…` |
+| 16 | `home-practice` | REFLECTION / APPLY | `place-value-read-write`, `place-value-digit-value` | NONE | NONE | 38 | — | `9ab79fd353b9…` |
 
 Full hashes, asset digests and source digests are in `scene-manifest.json`.
 
@@ -162,6 +173,26 @@ Numbers are built from digits in places. Draw a place-value chart from the milli
 - Accessibility: Build the number with 3 millions, 4 hundred thousands, 0 ten thousands, 6 thousands, 0 hundreds, 2 tens, 9 ones, 5 tenths, 0 hundredths and 8 thousandths, then type it. · keyboard: Tab to each control, press Enter or Space to choose, then use Continue. · non-pointer: Type the number in the text box. No dragging is needed; the place list is in the text.
 - Offline (FULL_OFFLINE): The written response works offline; the response is kept on the device until it can be sent.
 
+### Build it with counters: ten for one (`counter-chart`)
+
+Learner action: With a partner, build numbers with identical counters on a paper chart and exchange ten counters for one.
+
+Work with a partner. Draw a place-value chart in your exercise book with ten labelled columns, from **millions** to **thousandths**, and mark the decimal point between the ones and the tenths. Use counters that are all the same, such as small stones, bottle caps or seeds. A counter is worth one of the place it sits in: the **column** decides the value, not the counter.
+
+When a column holds **ten** counters, take them away and put **one** counter in the next column to the left. The number does not change, because ten of one place make one of the next.
+
+- Put 14 counters in the hundredths column. Exchange ten of them for 1 counter in the tenths column. Read the number: 0.14.
+- Clear the chart. Build 2,050,316.47, one column at a time. Leave empty columns empty, but write 0 for them when you record the number.
+- Swap roles: one partner builds a number, the other writes it in standard form and says the value of each digit.
+- No counters? Draw tally marks in the columns instead.
+
+- Step 1: how many counters were in the hundredths column, what did ten of them become, and did the number change? Explain why. (min 40 chars)
+- Step 3: write the number your partner built in standard form, then give the value of its first digit. (min 10 chars)
+- Expected observation (reviewer only): Step 1: 14 hundredths become 1 tenth and 4 hundredths; the number stays 0.14 because 10 hundredths = 1 tenth. Step 3: the number is written with commas between periods and zeros in empty places, and the first digit's value is named (for example 2,000,000). Watch for counters read without their column (14 counters read as 14).
+- Hints: A counter's value comes from its column. | Ten counters in one column make one counter in the column to its left.
+- Accessibility: Partner activity with a paper place-value chart from millions to thousandths and identical counters: exchange ten counters in one column for one in the next column to the left, build 2,050,316.47, then build and read each other's numbers. Two written answers. · keyboard: Tab to each control, press Enter or Space to choose, then use Continue. · non-pointer: Tally marks can replace counters, or a partner places the counters while the learner says where they go. Answers are typed or written.
+- Offline (FULL_OFFLINE): Needs no device: paper, counters and the exercise book. Written answers are kept on the device until they can be sent.
+
 ### Guided practice: digits after the point (`guided-decimals`)
 
 Learner action: Answer two questions about decimal places and read the feedback after each one.
@@ -255,6 +286,21 @@ Good mathematicians can explain their thinking. Write your answer in full senten
 - Accessibility: Write two or three sentences explaining why the 4 in 40,000 and the 4 in 0.04 have different values. · keyboard: Tab to each control, press Enter or Space to choose, then use Continue.
 - Offline (FULL_OFFLINE): The written answer is kept on the device until it can be sent.
 
+### At home: numbers around you (`home-practice`)
+
+Learner action: Find two numbers at home or in your community and explain their digits to a family member.
+
+Place value is all around you. This task needs no device, no printing and nothing to buy. You can do it with anyone at home, even someone who does not read: you do the reading and the explaining.
+
+- Find one large number: a price on a sign or receipt, a number on a calendar or a rice bag, or an amount you hear on the radio.
+- Find one decimal: a measurement on a package (such as 0.5 kg or 1.25 litres). If you cannot find one, make one with three digits after the point.
+- Draw a place-value chart on paper or in the sand. Write both numbers in it and read them aloud.
+- Ask your family member to point to any digit. Say its place and its value.
+- Bring one of your numbers to class with the value of one of its digits.
+
+- Accessibility: Home task with no device: find a large number and a decimal at home or in the community, write them in a place-value chart, read them aloud to a family member and say the value of any digit they point to. · keyboard: Tab to each control, press Enter or Space to choose, then use Continue.
+- Offline (FULL_OFFLINE): A paper task done away from the device; the steps are part of the saved lesson.
+
 ## Misconceptions
 
 - `mc-digit-not-value` (`ll-g7-math-place-value-digit-value`): Gives the digit itself (3) instead of its value in the number (300,000). → Ask two questions every time: which place is the digit in, and what is one of that place worth? Then multiply.
@@ -280,6 +326,7 @@ Good mathematicians can explain their thinking. Write your answer in full senten
 | `ten-times` | NEW | — | Makes the ×10 / ÷10 relationship explicit across the decimal point; the DEMO stated it in one sentence. |
 | `worked-example` | REVISED | PlaceValueDemo.tsx scene 'example' (Musu's library fund) | Preserved the three-step value-of-3 example; added expanded form, word form and a check-by-adding step. |
 | `build-number` | REVISED | PlaceValueTools.tsx NumberBuilder (interactive DEMO tool) | The DEMO builder is not a renderable lesson interaction, so the candidate declares NUMERIC with a written fallback and a paper chart with counters for classrooms without devices. |
+| `counter-chart` | REVISED | Legacy lab 'Understanding Place Value with Local Materials' (revision cmss8t4hz00unvo54epnfst66); legacy comparison R-M1 | Keeps the legacy's offline, hands-on pair work, but with identical counters in labelled columns and a ten-for-one exchange, at the Grade 7 range (millions to thousandths). Does not restore the cassava/leaf/stone token values or the hundreds-only range. |
 | `guided-decimals` | NEW | — | Guided decimal place-value items with per-option feedback. |
 | `compare-strategy` | NEW | — | Compare-from-the-left method for decimals and whole numbers (objective 3). |
 | `misconceptions` | NEW | — | Targets three common errors: longer decimal is bigger, dropped zero placeholders, decimal word form. |
@@ -287,6 +334,7 @@ Good mathematicians can explain their thinking. Write your answer in full senten
 | `review` | REVISED | PlaceValueDemo.tsx scene 'review' | Kept the three takeaways; added zero placeholders and comparing. |
 | `exit-ticket` | NEW | — | Assessment handoff to Assessment Player V2; candidate items are reviewer-only until released. |
 | `reflect` | NEW | — | Written explanation of place versus value. |
+| `home-practice` | REVISED | Legacy 'Guardian Support' section (revision cmss8t4hz00unvo54epnfst66); legacy comparison R-M2 | Turns the legacy's generic home-support sentence into a concrete, device-free task that a family member who does not read can still share. |
 
 ## Runtime deliverability (Lesson Player V2 today)
 
@@ -299,6 +347,7 @@ Good mathematicians can explain their thinking. Write your answer in full senten
 | ten-times | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY |
 | worked-example | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY |
 | build-number | FALLBACK | FALLBACK | FALLBACK | FALLBACK | FALLBACK | FALLBACK | FALLBACK | FALLBACK | FALLBACK |
+| counter-chart | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY |
 | guided-decimals | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY |
 | compare-strategy | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY |
 | misconceptions | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY |
@@ -306,12 +355,14 @@ Good mathematicians can explain their thinking. Write your answer in full senten
 | review | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY |
 | exit-ticket | FALLBACK | FALLBACK | FALLBACK | FALLBACK | FALLBACK | FALLBACK | FALLBACK | FALLBACK | FALLBACK |
 | reflect | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY |
+| home-practice | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY |
 
 ## Review gaps
 
 - **BLOCKING** MOE_OBJECTIVE_UNBOUND: No structured MOE Grade 7 MATH OBJECTIVE item matches ll-g7-math-place-value-read-write, ll-g7-math-place-value-digit-value, ll-g7-math-place-value-compare; the objectives are LiberiaLearn candidates. A qualified curriculum reviewer must accept them as a LiberiaLearn extension (with the MOE relationships listed) or rebind the lesson to an existing MOE objective.
 - **BLOCKING** TEMPLATE_CELL_MISSING: No governed template cell exists for Grade 7 MATH (lib/learning-authority/cells has Grade 4 Math only), so no unit placement, interaction classification or concept link can be resolved.
 - **BLOCKING** ONTOLOGY_RELEASE_MISSING: No ontology release is registered for Grade 7 MATH (curriculum/releases/k12-scope.json); concepts, standard/skill bindings, governed items, evidence and tool policies are all absent.
+- **BLOCKING** SCOPE_EXTENSION_UNAPPROVED: ext-g7-math-whole-numbers-millions: Reading, writing, valuing and comparing whole numbers in the millions (the millions period). This is a proposed LiberiaLearn extension beyond the repository MOE source, pending curriculum-owner approval. MOE Grade 4 stops at whole numbers to hundred thousand (Math 1-6 p.38), and the word "million" does not occur in the extracted MOE Math 1-6 or Math 7-9 text. Decimals to the thousandths do have MOE support (Grade 4 p.45, Grade 6 p.67). If not approved: Limit whole numbers to hundred thousands (or mark the millions material as optional enrichment), and revise or withdraw exit items g7-pv-exit-1, g7-pv-exit-3 and g7-pv-exit-6 (legacy comparison A-M1, option B).
 - **BLOCKING** LEGACY_COMPARISON_SIGNOFF: The legacy body of math-g7-1-number-sense-and-place-value-foundations (revision cmss8t4hz00unvo54epnfst66, content hash 93cc90030c24…) was read read-only and compared section by section in legacy-comparison.md. A qualified reviewer confirms the comparison and decides every restoration and revision recommendation before approval.
 - **ADVISORY** UNSUPPORTED_INTERACTION_DECLARED (`build-number`): NUMERIC is a declared intent with no renderer yet; learners receive the FREE_RESPONSE fallback.
 - **ADVISORY** SCENE_USES_FALLBACK (`build-number`): Delivered through its declared fallback under: DEFAULT, OFFLINE, WEBGL_UNAVAILABLE, VIDEO_UNAVAILABLE, KEYBOARD_ONLY, SCREEN_READER, REDUCED_MOTION, LOW_MEMORY, POINTER_DRAG_UNAVAILABLE.

@@ -65,20 +65,20 @@
       "verification": null,
       "item": {
         "id": "g7-essay-exit-3",
-        "version": "candidate-0.1.0",
+        "version": "candidate-0.2.0",
         "context": "PRACTICE",
-        "prompt": "Reason: reading every day builds vocabulary. Which evidence supports this reason best?",
+        "prompt": "Reason: reading every day builds vocabulary. Which evidence supports this reason best? (Musu's school is the made-up practice school from the lesson.)",
         "options": [
           "Reading is fun.",
-          "After our class read for 20 minutes a day for one term, many of us used new words from the books in our own writing.",
+          "Musu's class read for 20 minutes a day for one term, and many learners then used new words from the books in their own writing.",
           "Books have many pages.",
           "Everyone should read."
         ],
         "correctIndex": 1,
         "hint": "Which option is specific and proves this exact reason?",
-        "workedExample": "The class example is specific and shows vocabulary growing. The others are opinions or unrelated facts."
+        "workedExample": "The example from Musu's class is specific and shows vocabulary growing. The others are opinions or unrelated facts. In real writing, the example must come from a real class or a source you can name."
       },
-      "sha256": "45c74298af90d766cb95e2386cc439aaef1c9c487d0f9e6064ac5e59b1e57a31"
+      "sha256": "94d0d1c399e54617e4ec5657954b894617b968c21acd82aa9957f925a5192f26"
     },
     {
       "assessmentRequestId": "g7-essay-exit-ticket",

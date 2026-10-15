@@ -17,7 +17,7 @@ import {
   evaluateG7Candidate, G7_ASSET_DIR, G7_AUTHORED_AT, G7_CANDIDATE_DIR, G7_CANDIDATE_VERSION, G7_NATIVE_LESSONS, G7_NATIVE_PACKAGE_VERSION,
   g7LearnerProjection, sha256, textFileSha256, type G7CandidateOutcome, type G7NativeLesson, type MoeReference,
 } from "./g7Native";
-import { G7_LEGACY_COMPARISON, legacyBodyHeadings, loadLegacyExtract, verifyLegacyExtract } from "./g7NativeLegacy";
+import { G7_LEGACY_COMPARISON, G7_LEGACY_COMPARISON_BASELINE, legacyBodyHeadings, loadLegacyExtract, verifyLegacyExtract } from "./g7NativeLegacy";
 import { G7_EXIT_ITEMS, G7_REVISION_LEDGER, G7_WRITING_RUBRIC } from "./g7NativeReview";
 import { sceneDetailLines } from "./reviewPackage";
 import { words } from "./validate";
@@ -108,7 +108,7 @@ function legacyComparisonRecord(lesson: G7NativeLesson) {
       verification: { ...verifyLegacyExtract(lesson, extract), isCurrentRevision: extract.verification.isCurrentRevision, revisionCount: extract.verification.revisionCount, liveRowEqualsRevisionAtCapture: extract.verification.liveRowEqualsRevision },
       bodyHeadings: legacyBodyHeadings(extract),
     },
-    candidate: { lessonId: lesson.lessonId, version: G7_CANDIDATE_VERSION, sha256: sha256(evaluateG7Candidate(lesson).candidate) },
+    candidate: { lessonId: lesson.lessonId, version: G7_CANDIDATE_VERSION, sha256: sha256(evaluateG7Candidate(lesson).candidate), firstComparedAgainst: G7_LEGACY_COMPARISON_BASELINE[lesson.key] },
     comparison: G7_LEGACY_COMPARISON[lesson.key],
   };
 }
@@ -134,7 +134,8 @@ function legacyComparisonMarkdown(outcome: G7CandidateOutcome): string {
     `| Live row equals revision at capture | ${verification.liveRowEqualsRevisionAtCapture ? "yes" : "**no**"} |`,
     `| Extract | \`${legacy.extract.path}\` (sha256 \`${legacy.extract.sha256}\`) |`,
     `| Captured | ${legacy.extract.capturedAt}, transaction_read_only = ${legacy.extract.transactionReadOnly}; lesson content only, no learner or user data |`,
-    `| Candidate compared | \`${record.candidate.lessonId}\` v${record.candidate.version}, hash \`${record.candidate.sha256}\` |`, "",
+    `| Candidate first compared | hash \`${record.candidate.firstComparedAgainst.candidateSha256}\` at commit \`${record.candidate.firstComparedAgainst.commit.slice(0, 8)}\` (the production evidence above is unchanged since) |`,
+    `| Candidate now | \`${record.candidate.lessonId}\` v${record.candidate.version}, hash \`${record.candidate.sha256}\`; recommendations marked "applied" below are in this revision |`, "",
     "## The legacy lesson", "", ...comparison.legacySummary.map((line) => `- ${line}`), "",
     "## Section-by-section comparison", "",
     "Disposition: PRESERVED (kept in substance) · IMPROVED (kept, made more precise or correct) · REORGANIZED (kept, moved or split) · REPLACED (same job, new material) · OMITTED (not carried over) · NOT_RESTORED (deliberately excluded).", "",
@@ -156,7 +157,16 @@ function legacyComparisonMarkdown(outcome: G7CandidateOutcome): string {
   for (const decision of comparison.alignment) {
     out.push(`### ${decision.id}. ${decision.question}`, "", "Evidence (repository-held MOE source; MOE source provenance is not MOE approval):", ...decision.evidence.map((line) => `- ${line}`), "");
     out.push("| Option | Description | Consequences |", "| --- | --- | --- |", ...decision.options.map((option) => `| ${option.id}. ${cell(option.label)} | ${cell(option.description)} | ${cell(option.consequences)} |`), "");
-    out.push(`Author's recommendation: ${decision.authorRecommendation}`, "", `- [ ] Decision on ${decision.id} (A / B / C / other), recorded through governed curriculum review: ____`, "");
+    out.push(`Author's recommendation: ${decision.authorRecommendation}`, "");
+    const alt = decision.preparedAlternative;
+    if (alt) {
+      out.push(`#### Prepared alternative for option ${alt.optionId}: ${alt.title} (${alt.status})`, "", alt.summary, "");
+      out.push("| Alternative objective | Statement | Replaces | MOE basis |", "| --- | --- | --- | --- |", ...alt.objectives.map((objective) => `| \`${objective.id}\` | ${cell(objective.statement)} | ${objective.replaces.map((id) => `\`${id}\``).join(", ")} | ${cell(objective.moeBasis)} |`), "");
+      out.push("| Scene | Action | Note |", "| --- | --- | --- |", ...alt.sceneImpact.map((impact) => `| \`${impact.sceneId}\` | ${impact.action} | ${cell(impact.note)} |`), "");
+      out.push("| Exit item | Action | Note |", "| --- | --- | --- |", ...alt.itemImpact.map((impact) => `| \`${impact.itemId}\` | ${impact.action} | ${cell(impact.note)} |`), "");
+      out.push(`Binding path: ${alt.bindingPath}`, "");
+    }
+    out.push(`- [ ] Decision on ${decision.id} (A / B / C / other), recorded through governed curriculum review: ____`, "");
   }
   out.push(
     "## Reviewer sign-off", "",
@@ -198,6 +208,12 @@ function reviewMarkdown(outcome: G7CandidateOutcome): string {
     out.push(`| \`${objective.id}\` | ${cell(objective.statement)} | ${refs} |`);
   }
   out.push("", "Prerequisites assumed:", ...candidate.prerequisiteAssumptions.map((text) => `- ${text}`));
+  if (lesson.scopeExtensions.length) {
+    out.push("", "## Proposed scope extensions (pending curriculum-owner approval)", "");
+    for (const extension of lesson.scopeExtensions) {
+      out.push(`- \`${extension.id}\` — ${extension.status}, ${extension.approval}: ${extension.scope}`, `  - Evidence: ${extension.evidence}`, `  - Objectives: ${extension.objectiveIds.map((id) => `\`${id}\``).join(", ")}`, `  - Scenes using it: ${extension.sceneIds.map((id) => `\`${id}\``).join(", ")}`, `  - Exit items using it (reviewer only): ${extension.exitItemIds.map((id) => `\`${id}\``).join(", ")}`, `  - If not approved: ${extension.ifNotApproved}`);
+    }
+  }
   out.push("", "## Teaching sequence and scene manifest", "");
   out.push("| # | Scene | Type / purpose | Objectives | Interaction | Evidence | Words | Visual | Scene hash |", "| --- | --- | --- | --- | --- | --- | --- | --- | --- |");
   for (const scene of manifest.scenes) {
@@ -423,6 +439,8 @@ function curriculumMappingDecisions(lesson: G7NativeLesson, box: (text: string) 
       box("Scope: confirm that extending place value to the thousandths serves the MOE Grade 7 decimals, percents and fractions period (Math 7-9 p.10), or limit the lesson to whole numbers."),
     ]),
     box(`Alignment decision ${G7_LEGACY_COMPARISON[lesson.key].alignment.map((decision) => decision.id).join(", ")}: choose an option in legacy-comparison.md (evidence and consequences listed there).`),
+    ...G7_LEGACY_COMPARISON[lesson.key].alignment.filter((decision) => decision.preparedAlternative).map((decision) => box(`Prepared alternative for ${decision.id} option ${decision.preparedAlternative!.optionId} ("${decision.preparedAlternative!.title}") is PREPARED, NOT APPLIED: adopt it, adapt it or reject it. The candidate keeps its current objectives and grade scope until this is decided.`)),
+    ...lesson.scopeExtensions.map((extension) => box(`Scope extension \`${extension.id}\` (${extension.scope}) is a proposed LiberiaLearn extension: approve it, or apply its fallback (${extension.ifNotApproved}).`)),
     "", "### Objective-by-objective mapping", "",
   ];
   for (const objective of lesson.objectives) {

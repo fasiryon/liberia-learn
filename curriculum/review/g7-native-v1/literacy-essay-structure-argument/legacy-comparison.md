@@ -15,7 +15,8 @@
 | Live row equals revision at capture | yes |
 | Extract | `artifacts/g7-native-curriculum-v1/legacy/literacy-essay-structure-argument.json` (sha256 `d66a646f3748b2b1cfe9a83ab855e52039dac2e57044fbbd91190cc9250738f7`) |
 | Captured | 2026-10-15T19:09:16.876Z, transaction_read_only = on; lesson content only, no learner or user data |
-| Candidate compared | `cv2-cand-g7-literacy-essay-structure-argument` v0.1.0, hash `e875feab4d8d9742f421ba98c4c8c59f753e613a3d67526a77409cdd6019f786` |
+| Candidate first compared | hash `e875feab4d8d9742f421ba98c4c8c59f753e613a3d67526a77409cdd6019f786` at commit `4fdd897c` (the production evidence above is unchanged since) |
+| Candidate now | `cv2-cand-g7-literacy-essay-structure-argument` v0.2.0, hash `80b9592641effbdae8f5868323289873a8c1a6e547676241e09ab8ee5db060b1`; recommendations marked "applied" below are in this revision |
 
 ## The legacy lesson
 
@@ -35,15 +36,15 @@ Disposition: PRESERVED (kept in substance) · IMPROVED (kept, made more precise 
 | 1. Hook — The Real-World Challenge | Boima overhears two vendors (Fatu and Kpaan) arguing whose stall is most successful and decides to write an essay comparing them. | `intro` | REPLACED | Candidate hook: a PTA disagreement about a school garden, which needs an argument rather than a comparison. Both are Liberian community settings. |
 | 2. Learning Objectives | Three objectives (structure; logical argument with evidence; evaluate argument strength for careers and civic life). | `objectives` | IMPROVED | Objective 1 kept and made specific; objective 2 kept and extended with a counterargument; objective 3 narrowed to choosing and explaining evidence. See the objective comparison. |
 | 3. Prior Knowledge Activation | Parts of a short story; fact versus opinion ("Liberia gained independence in 1847"); a time you persuaded someone. | `warm-up` | REORGANIZED | Fact versus opinion preserved (new example); topic sentence added. Short-story parts and the persuasion experience omitted. |
-| 4. Core Concept — Concrete Foundation | Introduction (hook, thesis), body (topic sentences; pricing, customer engagement and quality paragraphs with LD$ calculations), conclusion; extra worked-example notes; checks for understanding (discussion, paragraph building, peer review, local context, role play, mathematics integration). | `essay-structure`, `model-plan`, `peel` | IMPROVED | The three parts and their jobs are kept, shorter and in plain language, with a full model plan. Revenue calculations, the food metaphors, peer review and role play are not in the candidate (L-L5, L-L8; R-L4). |
+| 4. Core Concept — Concrete Foundation | Introduction (hook, thesis), body (topic sentences; pricing, customer engagement and quality paragraphs with LD$ calculations), conclusion; extra worked-example notes; checks for understanding (discussion, paragraph building, peer review, local context, role play, mathematics integration). | `essay-structure`, `model-plan`, `peel`, `peer-review` | IMPROVED | The three parts and their jobs are kept, shorter and in plain language, with a full model plan. Peer review is restored as a structured activity (R-L4). Revenue calculations, the food metaphors and role play are not restored (L-L5, L-L8). |
 | 6. Key Vocabulary | Thesis, evidence, argument, each with a definition, an example and a memory tip. | `thesis`, `evidence`, `essay-structure` | REORGANIZED | Thesis and evidence are defined where they are used; "argument" is taught through the claim/reasons structure. No separate glossary. The legacy thesis example contradicts its own story (L-L4). |
 | 7. Worked Example 1 — Standard Method | Paragraph on why cassava is a Liberian staple: thesis, topic sentence, evidence, conclusion. | `peel` | REPLACED | Replaced by a PEEL paragraph from the garden essay. The legacy example gives one paragraph both a thesis and a different topic sentence and mislabels its reasons (L-L1, L-L2). |
-| 8. Worked Example 2 — Alternative Method | Brainstorm bullet points (palm oil), organise them, then write the paragraph. | — | OMITTED | Planning before writing is sound and age-appropriate; the candidate has no planning step for the learner's own writing (R-L2). |
+| 8. Worked Example 2 — Alternative Method | Brainstorm bullet points (palm oil), organise them, then write the paragraph. | `plan-argument` | IMPROVED | The brainstorm-then-organise method is restored as the learner's own planning step, with real evidence and its source for each reason (R-L2). The palm-oil content is not restored (L-L10). |
 | 9. Error Analysis | Three errors: unrelated facts as evidence; no conclusion; misplaced topic sentence. | `evidence-check`, `thesis` | IMPROVED | Irrelevant evidence, circular reasoning and ignoring the other side are checked with feedback. The legacy error 1 example is itself wrong (L-L3) and is not restored. |
 | 10. Guided Practice — Problem 1 | Write an introductory paragraph: "The Importance of Education in Rural Liberia". | `model-plan` | OMITTED | The candidate models an introduction (hook and thesis) but never asks the learner to write one (R-L3). |
 | 11. Guided Practice — Problem 2 | Draft the first body paragraph: "Why Public Transportation is Essential in Monrovia". | `order-paragraph`, `write-argument` | REPLACED | Body-paragraph practice is kept as ordering a PEEL paragraph and writing one PEEL paragraph. |
 | 12. Guided Practice — Problem 3 | Draft introduction and first body paragraph: "The Role of Local Markets in Strengthening Local Economies". | `write-argument` | REPLACED | Narrowed to a thesis and one PEEL paragraph. |
-| 13. Independent Practice — Tier 1 | Write a conclusion (learning technology); explain the significance of a thesis. | `exit-ticket` | REPLACED | Conclusion and thesis knowledge are checked by exit items 1 and 4 (recognition). Writing a conclusion is omitted (R-L3). |
+| 13. Independent Practice — Tier 1 | Write a conclusion (learning technology); explain the significance of a thesis. | `write-conclusion`, `exit-ticket` | IMPROVED | Conclusion writing is restored on the lesson's own garden plan, with the no-new-reasons rule the legacy model answer broke (R-L3, L-L7). Thesis knowledge is checked by exit items 1 and 2. |
 | 14. Independent Practice — Tier 2 Standard | Draft an introduction (sports and unity); write a body paragraph (renewable energy). | `write-argument` | REPLACED | One body paragraph kept in the candidate's writing task; introduction writing omitted. |
 | 15. Independent Practice — Tier 3 Advanced | Analyse storytelling and cultural heritage; evaluate traditional versus modern education methods. | — | OMITTED | Analytical and comparative writing is beyond this lesson's objectives. |
 | 16. Group Discussion | "How does essay writing help us understand real-life issues in Liberian society?" with five discussion points. | — | OMITTED | No discussion task. The candidate's reflection is individual. Optional classroom discussion is a reviewer decision. |
@@ -94,9 +95,9 @@ Not restored unless a reviewer decides otherwise.
 
 | Id | Severity | Category | Where | Finding | Action |
 | --- | --- | --- | --- | --- | --- |
-| C-L1 | HIGH | PEDAGOGICAL | evidence-check (option 2), order-paragraph (sentence D), exit item g7-essay-exit-3 | Model evidence is written as the learner's own real experience ("Last term our agriculture club harvested greens and pepper…", "our school's greens and pepper were used in lunch for a whole week last term", "After our class read for 20 minutes a day for one term…"), while the lesson tells learners never to make up evidence. | See R-L1. |
+| C-L1 | HIGH | PEDAGOGICAL | evidence-check (option 2), order-paragraph (sentence D), exit item g7-essay-exit-3 | Model evidence was written as the learner's own real experience ("Last term our agriculture club harvested greens and pepper…", "our school's greens and pepper were used in lunch for a whole week last term", "After our class read for 20 minutes a day for one term…"), while the lesson tells learners never to make up evidence. | Addressed by R-L1 (applied): attributed to Musu's made-up practice school, labelled as made up in the evidence scene, item g7-essay-exit-3 revised to candidate-0.2.0. |
 | C-L2 | HIGH | ALIGNMENT | Objectives, essay-structure, model-plan, evidence-check q3, exit items 1, 2, 4, 6 | Full argumentative essays and counterarguments are MOE Grade 8-9 scope (p.18, p.22, p.28, p.32). The Grade 7 MOE writing objective is paragraph construction (p.4). The candidate's prerequisite also assumes Grade 7 paragraph writing is already done. | Alignment decision A-L1. |
-| C-L3 | MEDIUM | PEDAGOGICAL | write-argument | Learners never plan before writing and never write an introduction or a conclusion, and they do not evaluate anyone else's argument (legacy objective 3). | See R-L2, R-L3, R-L4. |
+| C-L3 | MEDIUM | PEDAGOGICAL | write-argument | Learners never planned before writing, never wrote an introduction or a conclusion, and did not evaluate anyone else's argument (legacy objective 3). | Addressed by R-L2, R-L3 and R-L4 (applied): plan-argument, write-conclusion, peer-review. Writing an introduction is still not practised (reviewer decides). |
 | C-L4 | LOW | FACTUAL | Revision ledger, peel | The ledger described PEEL as "widely used in West African secondary writing" without a source. | Claim removed from the ledger; the reviewer confirms PEEL suits Liberian classrooms (R-L5). |
 | C-L5 | MEDIUM | ALIGNMENT | Objective alignment table | The Grade 7 paragraph objective was labelled "OCR only (no structured item)". The structured source does hold it, misfiled as ACTIVITY moe-english-g7-s1-p1-constructing-sentences-antroduction-to-literatur-act1 under period I. | Corrected: the reference now names the misfiled item and the OCR column (R-L7). |
 
@@ -104,10 +105,10 @@ Not restored unless a reviewer decides otherwise.
 
 | Id | Kind | Scenes | Recommendation | Rationale | Status | Reviewer decision |
 | --- | --- | --- | --- | --- | --- | --- |
-| R-L1 | REVISE_CANDIDATE | `evidence-check`, `order-paragraph`, `exit-ticket` | Attribute or mark as imagined every experience used as model evidence, for example: "At Musu's school, the agriculture club's greens and pepper were used in school lunches for a week" and "Musu's class read for 20 minutes a day for one term, and many learners used new words from the books in their writing." | C-L1: the lesson must not model making up personal evidence. Changes exit item 3 (new item version) and two formative scenes, so the package must be regenerated. | reviewer decides | ACCEPT / MODIFY / REJECT: |
-| R-L2 | RESTORE_ADAPTED | `write-argument` | Restore the legacy brainstorm-then-organise method as a short planning frame before writing: claim → two reasons → one piece of true evidence for each. | Legacy Worked Example 2 method is sound; the candidate jumps from models to writing. | reviewer decides | ACCEPT / MODIFY / REJECT: |
-| R-L3 | REVIEWER_DECISION | `model-plan`, `write-argument` | If the lesson stays essay-level (options B or C of A-L1), add one short task to write a conclusion for the garden plan. Not needed if the lesson is rescoped to paragraphs (option A). | Legacy practised introductions and conclusions; the candidate only models them. | reviewer decides | ACCEPT / MODIFY / REJECT: |
-| R-L4 | RESTORE_ADAPTED | `write-argument`, `reflect` | Restore peer review as an optional classroom activity: partners swap paragraphs and give one strength and one next step against the four rubric criteria. | Restores legacy objective 3 (evaluating arguments) and the legacy peer-review check in a form that works offline. | reviewer decides | ACCEPT / MODIFY / REJECT: |
+| R-L1 | REVISE_CANDIDATE | `peel`, `evidence`, `evidence-check`, `order-paragraph`, `write-argument`, `exit-ticket` | Attribute every illustrative experience to Musu's school and say plainly that it is a made-up practice school: the evidence scene states that Musu's school examples are not facts and that learners' own evidence must be real; evidence-check option b, order-paragraph sentence D and the PEEL evidence step name Musu's school; write-argument tells learners not to borrow those examples; exit item g7-essay-exit-3 now cites Musu's class (version candidate-0.2.0). | C-L1: the lesson must not model making up personal evidence. | applied in this package | ACCEPT / MODIFY / REJECT: |
+| R-L2 | RESTORE_ADAPTED | `plan-argument`, `write-argument` | Restore the legacy brainstorm-then-organise method as a planning step before writing: brainstorm at least four reasons, choose two, and attach one piece of real evidence with its source to each. Applied as scene plan-argument; write-argument now writes from the plan. | Legacy Worked Example 2 method is sound; the candidate jumped from models to writing. | applied in this package | ACCEPT / MODIFY / REJECT: |
+| R-L3 | RESTORE_ADAPTED | `write-conclusion` | Add a short task to write a three- or four-sentence conclusion for the model garden plan: restate the thesis in new words, sum up the two reasons, end with a final thought, add no new reason. Applied as scene write-conclusion. Under the paragraph-centred alternative (A-L1 option A) it moves to an extension. | Legacy practised conclusions; the candidate only modelled them. | applied in this package | ACCEPT / MODIFY / REJECT: |
+| R-L4 | RESTORE_ADAPTED | `peer-review` | Restore structured peer review: partners swap PEEL paragraphs, check them against four questions (point, evidence, explain, link) and write one strength and one next step with sentence starters; a learner working alone reviews their own paragraph. Applied as scene peer-review. | Restores legacy objective 3 (evaluating arguments) and the legacy peer-review check in a form that works offline. | applied in this package | ACCEPT / MODIFY / REJECT: |
 | R-L5 | REVISE_CANDIDATE | `peel` | Remove the unsourced "widely used in West African secondary writing" claim from the revision ledger. | C-L4. Reviewer-only text; no learner content changes. | applied in this package | ACCEPT / MODIFY / REJECT: |
 | R-L6 | REVIEWER_DECISION | `exit-ticket` | Decide whether the exit ticket needs one teacher-marked constructed prompt (for example, "Explain what each part of an argumentative essay does") in addition to the six single-choice items. | The legacy exit ticket asked for explanation; the candidate measures recognition, and writing evidence stays formative. | reviewer decides | ACCEPT / MODIFY / REJECT: |
 | R-L7 | REVISE_CANDIDATE | — | Record the Grade 7 paragraph objective reference with its misfiled structured item and its OCR column. | C-L5. Reviewer-facing alignment metadata only. | applied in this package | ACCEPT / MODIFY / REJECT: |
@@ -133,11 +134,52 @@ Evidence (repository-held MOE source; MOE source provenance is not MOE approval)
 
 Author's recommendation: A, because it keeps the lesson in Grade 7 without moving a Grade 9 objective down, and the candidate's practice is already paragraph-level. In every option, request correction of the p.4 structuring defect (and the p.22 objective filed as CONTENT) through the source-structuring process. This is the author's recommendation, not a decision; a qualified English reviewer and the curriculum authority decide.
 
+#### Prepared alternative for option A: Writing a persuasive paragraph (Grade 7 paragraph-writing scope) (PREPARED_NOT_APPLIED)
+
+The same lesson rebuilt around one persuasive (opinion) paragraph, a kind of paragraph under English 7-9 p.4. The essay becomes a short preview of where paragraphs go; counterarguments and full conclusions become an extension. Prepared so the authority can choose it; the candidate keeps its current objectives and grade scope until a decision is recorded.
+
+| Alternative objective | Statement | Replaces | MOE basis |
+| --- | --- | --- | --- |
+| `alt-g7-lit-persuasive-paragraph` | Write a persuasive paragraph that opens with a topic sentence stating a clear opinion and a reason, then gives evidence, explains it and links back (PEEL), using correct subject-verb agreement, capitalization and punctuation. | `ll-g7-lit-essay-structure` | English 7-9 p.4, period II objectives column item 1 ("Construct paragraphs using subject and verb agreement, capitalization, punctuations etc."; misfiled as ACTIVITY act1) and contents item 2 ("Writing kinds of paragraphs E.g.) descriptive, narrative etc."). Bindable only after the structuring defect is corrected. |
+| `alt-g7-lit-claim-topic-sentence` | Tell an arguable opinion from a topic, a fact or an announcement, and write a topic sentence that states an opinion with a reason. | `ll-g7-lit-argument-build` | Same p.4 paragraph objective; answering a counterargument is left to Grade 8-9 (p.18, p.22, p.32). |
+| `ll-g7-lit-evidence-support` | Choose true, relevant and specific evidence for a reason and explain how it supports the claim in a PEEL paragraph. | `ll-g7-lit-evidence-support` | Unchanged; supports the p.4 paragraph objective. |
+
+| Scene | Action | Note |
+| --- | --- | --- |
+| `intro` | ADAPT | Same PTA garden situation; the goal becomes one convincing paragraph. |
+| `objectives` | ADAPT | State the three alternative objectives. |
+| `warm-up` | KEEP | Topic sentence and fact versus opinion are exactly the prior knowledge needed. |
+| `essay-structure` | ADAPT | Shorten to a preview: a paragraph is one building block of an essay. |
+| `model-plan` | MOVE_TO_EXTENSION | The full essay plan with an answer to the other side becomes optional extension reading. |
+| `thesis` | ADAPT | Teach the opinion topic sentence; same claim-versus-topic/fact/announcement items. |
+| `peel` | KEEP | Core model. |
+| `evidence` | KEEP | Core; keeps the made-up-practice-school notice. |
+| `evidence-check` | ADAPT | Keep questions 1-2; move question 3 (the other side) to the extension. |
+| `order-paragraph` | KEEP | Core. |
+| `plan-argument` | ADAPT | Plan one paragraph: opinion, one reason, real evidence and its source. |
+| `write-argument` | ADAPT | Write one persuasive PEEL paragraph; add a grammar-mechanics check (subject-verb agreement, capitals, punctuation) from p.4. |
+| `write-conclusion` | MOVE_TO_EXTENSION | Essay conclusions are essay-level; the paragraph's Link sentence does this job in Grade 7. |
+| `peer-review` | KEEP | Add one mechanics question to the four PEEL questions. |
+| `review` | ADAPT | Key ideas for a persuasive paragraph. |
+| `exit-ticket` | ADAPT | See item impact. |
+| `reflect` | KEEP | Ask which part of the paragraph is hardest. |
+
+| Exit item | Action | Note |
+| --- | --- | --- |
+| `g7-essay-exit-1` | REVISE | Ask where the topic sentence usually appears in a paragraph. |
+| `g7-essay-exit-2` | REVISE | Same item, worded as an opinion topic sentence. |
+| `g7-essay-exit-3` | KEEP | Evidence choice is unchanged. |
+| `g7-essay-exit-4` | REPLACE | Replace the essay-conclusion item with one on the job of the Link sentence. |
+| `g7-essay-exit-5` | KEEP | The Explain sentence is unchanged. |
+| `g7-essay-exit-6` | MOVE_TO_EXTENSION | Counterargument; replace with a subject-verb agreement or punctuation item from p.4. |
+
+Binding path: No binding is made here. If option A is chosen: correct the p.4 structuring defect so the period II paragraph objective exists as a Grade 7 OBJECTIVE item, record the objective-basis decision, revise the candidate as above, regenerate the package with new hashes, and only then propose bindings in a Grade 7 release.
+
 - [ ] Decision on A-L1 (A / B / C / other), recorded through governed curriculum review: ____
 
 ## Reviewer sign-off
 
-Sign-off is valid only when recorded through governed curriculum review (HUMAN_REVIEW) against candidate hash `e875feab4d8d9742f421ba98c4c8c59f753e613a3d67526a77409cdd6019f786` and legacy revision `cmss94dmc03b7vo54ryf3hqk1`. Filling in this file records nothing.
+Sign-off is valid only when recorded through governed curriculum review (HUMAN_REVIEW) against candidate hash `80b9592641effbdae8f5868323289873a8c1a6e547676241e09ab8ee5db060b1` and legacy revision `cmss94dmc03b7vo54ryf3hqk1`. Filling in this file records nothing.
 
 - [ ] I compared the candidate with the legacy revision and confirm (or have corrected) the section matrix above.
 - [ ] I recorded a decision on every recommendation.

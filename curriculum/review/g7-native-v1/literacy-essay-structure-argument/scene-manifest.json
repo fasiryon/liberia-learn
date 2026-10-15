@@ -1,7 +1,7 @@
 {
   "packageVersion": "g7-native-curriculum/1.0.0",
   "lessonId": "cv2-cand-g7-literacy-essay-structure-argument",
-  "candidateVersion": "0.1.0",
+  "candidateVersion": "0.2.0",
   "contracts": {
     "candidate": "candidate-lesson-v2/1.0.0",
     "assembledTarget": "curriculum-lesson-v2/1.0.0",
@@ -11,19 +11,19 @@
   "origin": "AUTHORED_FIXTURE",
   "candidate": {
     "path": "curriculum/v2/g7/candidates/literacy-essay-structure-argument.json",
-    "sha256": "e875feab4d8d9742f421ba98c4c8c59f753e613a3d67526a77409cdd6019f786"
+    "sha256": "80b9592641effbdae8f5868323289873a8c1a6e547676241e09ab8ee5db060b1"
   },
   "learnerProjection": {
     "path": "curriculum/review/g7-native-v1/literacy-essay-structure-argument/learner-projection.json",
-    "sha256": "fdab57d016e30b374f12ca86270043b9ac0220b9c9ba231b94e9aabe4a04707a"
+    "sha256": "0794427b757c0e7e866acb1a906e0848a365cb60529f0c220368acd060d16ab9"
   },
   "assessmentReview": {
     "path": "curriculum/review/g7-native-v1/literacy-essay-structure-argument/assessment-review.json",
-    "sha256": "8acdf24eadb1da880d670a53ca81dcc2ab8d523cb7fb7e0586d5bd320d3300dd"
+    "sha256": "0ed4b231651e7663ae9ebc73514f38915473beeca275896e38c48e34d7ca6d15"
   },
   "legacyComparison": {
     "path": "curriculum/review/g7-native-v1/literacy-essay-structure-argument/legacy-comparison.json",
-    "sha256": "e0d14935998537cad86eda0e60492b5427b785d1b0b7575c17bd1736af2e1986"
+    "sha256": "c1e3ea6dd8703e5e33a732c8aeb84ca02d9d5dc69374fa62d117d744d4c6e470"
   },
   "scenes": [
     {
@@ -151,7 +151,7 @@
       "evidence": "NONE",
       "completion": "ALL_STEPS_REVEALED",
       "words": 23,
-      "sha256": "7db8fb5bd58f48dbe9de50e3bf07b3186d7e844d57f88ce533a566dff16f826d",
+      "sha256": "234e88d15030afeecd902d1fc06ddb27bb0cee590733cafd8ad88e457159f335",
       "media": [
         {
           "id": "peel-paragraph",
@@ -177,8 +177,8 @@
       "fallback": null,
       "evidence": "NONE",
       "completion": "VIEWED",
-      "words": 73,
-      "sha256": "98b74a7ef79ca6fc157ec6e769361662158dc497cb885ddf58b024c1a4fb2ff3",
+      "words": 106,
+      "sha256": "ecc731243a9d8776b081a930d57b4040ffa53224ae5f26b7e49008ba19c40ae3",
       "media": [
         {
           "id": "evidence-test",
@@ -206,7 +206,7 @@
       "evidence": "FORMATIVE_OBSERVATION",
       "completion": "ALL_ANSWERED",
       "words": 16,
-      "sha256": "66b57a1abb62405fdf609126d5808e6b6d6c89176b2b8afb7d2d9324c28dc14e",
+      "sha256": "08ec88271fd425e267945813466ba87cf7f0d1b091dc0966438ebbddb5623de7",
       "media": []
     },
     {
@@ -222,11 +222,28 @@
       "evidence": "FORMATIVE_OBSERVATION",
       "completion": "ALL_RESPONSES_WRITTEN",
       "words": 21,
-      "sha256": "30bfe2ec609e4b78abdd339199e747b912aa2c976362377c59ac7f85f2860beb",
+      "sha256": "2654a11e1ac8c47079903c170af30f7282ad57b0dfb367557f090df9e77deaf7",
       "media": []
     },
     {
       "position": 11,
+      "id": "plan-argument",
+      "type": "GUIDED_EXAMPLE",
+      "purpose": "GUIDED_PRACTICE",
+      "objectiveIds": [
+        "ll-g7-lit-argument-build",
+        "ll-g7-lit-evidence-support"
+      ],
+      "interaction": "FREE_RESPONSE",
+      "fallback": null,
+      "evidence": "FORMATIVE_OBSERVATION",
+      "completion": "ALL_RESPONSES_WRITTEN",
+      "words": 76,
+      "sha256": "2700ad24778cb3009438b7a0aa4c9f07cc06309f1956a4636712dca35b96cb88",
+      "media": []
+    },
+    {
+      "position": 12,
       "id": "write-argument",
       "type": "PRACTICE",
       "purpose": "INDEPENDENT_PRACTICE",
@@ -238,12 +255,45 @@
       "fallback": null,
       "evidence": "FORMATIVE_OBSERVATION",
       "completion": "ALL_RESPONSES_WRITTEN",
-      "words": 42,
-      "sha256": "823d0b8db68a4a8bd53d6453686d478cf3d1b6a61f2b2209ccad386aca8ff163",
+      "words": 44,
+      "sha256": "7c5ffdde944e8a7a40461c901f9e3f60e65b468aed1197ed98ab9ad2ede68bf4",
       "media": []
     },
     {
-      "position": 12,
+      "position": 13,
+      "id": "write-conclusion",
+      "type": "PRACTICE",
+      "purpose": "INDEPENDENT_PRACTICE",
+      "objectiveIds": [
+        "ll-g7-lit-essay-structure"
+      ],
+      "interaction": "FREE_RESPONSE",
+      "fallback": null,
+      "evidence": "FORMATIVE_OBSERVATION",
+      "completion": "ALL_RESPONSES_WRITTEN",
+      "words": 76,
+      "sha256": "0cd764863e81fa340797b2d9b7fb63a0c59a440d54af1cde336094c9ee07b0ce",
+      "media": []
+    },
+    {
+      "position": 14,
+      "id": "peer-review",
+      "type": "PRACTICE",
+      "purpose": "CHECK_UNDERSTANDING",
+      "objectiveIds": [
+        "ll-g7-lit-evidence-support",
+        "ll-g7-lit-argument-build"
+      ],
+      "interaction": "FREE_RESPONSE",
+      "fallback": null,
+      "evidence": "FORMATIVE_OBSERVATION",
+      "completion": "ALL_RESPONSES_WRITTEN",
+      "words": 48,
+      "sha256": "c16102a2c09ba5c4dd17fc63f5aaf7ec021b26292ab967452e8d95797f905123",
+      "media": []
+    },
+    {
+      "position": 15,
       "id": "review",
       "type": "REVIEW",
       "purpose": "REVIEW",
@@ -257,11 +307,11 @@
       "evidence": "NONE",
       "completion": "VIEWED",
       "words": 11,
-      "sha256": "bbeb1a819e2be4ed1355f74cee64f32aa96aaea3bb5e5769c8c0af5df9d090d8",
+      "sha256": "cdeaaeb3c9a0a4b02a718245bd612b4bc9f94ddcf410d6a3d55a41afe7fc628f",
       "media": []
     },
     {
-      "position": 13,
+      "position": 16,
       "id": "exit-ticket",
       "type": "MASTERY_CHECK",
       "purpose": "ASSESS_MASTERY",
@@ -279,7 +329,7 @@
       "media": []
     },
     {
-      "position": 14,
+      "position": 17,
       "id": "reflect",
       "type": "REFLECTION",
       "purpose": "REFLECT",

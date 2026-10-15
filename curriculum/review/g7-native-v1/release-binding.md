@@ -8,7 +8,7 @@ Candidate release manifests carry no ontology release. They validate under relea
 
 - Candidate manifest `lr-candidate-g7-math-number-sense-2026.1`: authority UNKNOWN, MOE approval NOT_CLAIMED
 - validateReleaseManifest: ok=true, errors none, warnings release_not_attached_content_gap_only, coverage_gaps_present; identity `ee0ac39aaa463f567670592831fa1d5dfdc99c119c18460e0743bdd43435c0b5`
-- Content binding (proposed): `cv2-cand-g7-math-number-sense-place-value@0.1.0`, candidate `5817d80911154bceb61fe117e0916ad64d0b7ae5c6afd2a2c6028b9cdc972ffb`
+- Content binding (proposed): `cv2-cand-g7-math-number-sense-place-value@0.2.0`, candidate `3f612d907f52f5953d879476a627fde8e9a1c5b3d30d22e171a42a8ccec80c0c`
 - Construct bindings (proposed): `g7-pv-exit-1@candidate-0.1.0`, `g7-pv-exit-2@candidate-0.1.0`, `g7-pv-exit-3@candidate-0.1.0`, `g7-pv-exit-4@candidate-0.1.0`, `g7-pv-exit-5@candidate-0.1.0`, `g7-pv-exit-6@candidate-0.1.0`
 
 Required from the qualified reviewer:
@@ -27,8 +27,8 @@ Required from curriculum authority:
 
 - Candidate manifest `lr-candidate-g7-literacy-essay-writing-2026.1`: authority UNKNOWN, MOE approval NOT_CLAIMED
 - validateReleaseManifest: ok=true, errors none, warnings release_not_attached_content_gap_only, coverage_gaps_present; identity `070bb2b110948b3705aa0715116a7bd92a3b7f57951f181113f2b8e230fd03d2`
-- Content binding (proposed): `cv2-cand-g7-literacy-essay-structure-argument@0.1.0`, candidate `e875feab4d8d9742f421ba98c4c8c59f753e613a3d67526a77409cdd6019f786`
-- Construct bindings (proposed): `g7-essay-exit-1@candidate-0.1.0`, `g7-essay-exit-2@candidate-0.1.0`, `g7-essay-exit-3@candidate-0.1.0`, `g7-essay-exit-4@candidate-0.1.0`, `g7-essay-exit-5@candidate-0.1.0`, `g7-essay-exit-6@candidate-0.1.0`
+- Content binding (proposed): `cv2-cand-g7-literacy-essay-structure-argument@0.2.0`, candidate `80b9592641effbdae8f5868323289873a8c1a6e547676241e09ab8ee5db060b1`
+- Construct bindings (proposed): `g7-essay-exit-1@candidate-0.1.0`, `g7-essay-exit-2@candidate-0.1.0`, `g7-essay-exit-3@candidate-0.2.0`, `g7-essay-exit-4@candidate-0.1.0`, `g7-essay-exit-5@candidate-0.1.0`, `g7-essay-exit-6@candidate-0.1.0`
 
 Required from the qualified reviewer:
 - HUMAN_REVIEW of the exact candidate hash by an identified, qualified curriculum reviewer (lib/curriculum/v2/governance.ts).

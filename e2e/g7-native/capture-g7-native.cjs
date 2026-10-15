@@ -29,6 +29,13 @@ const WRITTEN = {
   "order-peel": "B, D, C, A. B is the topic sentence.",
   "write-thesis": "Every community should have a public library because it gives children books to read and gives adults a quiet place to study.",
   "write-peel": "A public library gives children books they cannot buy at home. For example, in my town many families share one or two books, so children read the same pages again and again. This shows that a library would give them new stories and information every week, which helps them read better in school. So a library is one important reason every community should have one.",
+  "counter-exchange": "There were 14 counters in the hundredths column. Ten of them became 1 counter in the tenths column, so the chart shows 1 tenth and 4 hundredths. The number did not change: it is still 0.14, because 10 hundredths make 1 tenth.",
+  "counter-partner-number": "1,203,045.6; the 1 is worth 1,000,000",
+  "plan-brainstorm": "Children get new books to read\nAdults get a quiet place to study\nIt keeps young people busy after school\nPeople can read newspapers there",
+  "plan-reasons": "Claim: every community should have a public library. Reason 1: children get new books; evidence: in my town families share one or two books (what I see at home). Reason 2: adults get a place to study; evidence: my aunt studies for her exams at the church because our house is noisy.",
+  "write-conclusion-garden": "For these reasons, a school garden is worth the land it uses. It teaches learners real farming and science skills, and it puts fresh food on the lunch table, even if the work takes a little time each week. Every school with empty land should plant a garden this year.",
+  "peer-strength": "One strength is the evidence, because it is real and specific: 'in my town many families share one or two books' names a place and something the writer has seen.",
+  "peer-next-step": "The paragraph does not yet name a source for its numbers. Next time, try saying who told you or where you read the figure, so the reader can check it.",
   "reflect-writing": "The evidence is hardest for me because I often write my opinion again. Next time I will test each piece of evidence with the four questions before I use it.",
 };
 

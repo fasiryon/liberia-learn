@@ -55,10 +55,10 @@
         ],
         "contentBinding": {
           "contentId": "cv2-cand-g7-math-number-sense-place-value",
-          "contentVersion": "0.1.0",
+          "contentVersion": "0.2.0",
           "contentType": "LESSON",
-          "candidateSha256": "5817d80911154bceb61fe117e0916ad64d0b7ae5c6afd2a2c6028b9cdc972ffb",
-          "learnerProjectionSha256": "b14a869ca88963216c86a7f9883029a4df212acb46e184b3a4f302d0a5ab57fe",
+          "candidateSha256": "3f612d907f52f5953d879476a627fde8e9a1c5b3d30d22e171a42a8ccec80c0c",
+          "learnerProjectionSha256": "5c5e90e92e0ee1d80c3da8d91b9cac0526a0e1cec10a02f97e29b88eed080e4c",
           "contentSha256": "REQUIRED_FROM_AUTHORITY: digest of the assembled CurriculumLessonV2 once a template cell and release exist",
           "toolPolicyId": "g7-math-instruction-tools",
           "status": "PROPOSED"
@@ -220,10 +220,10 @@
         ],
         "contentBinding": {
           "contentId": "cv2-cand-g7-literacy-essay-structure-argument",
-          "contentVersion": "0.1.0",
+          "contentVersion": "0.2.0",
           "contentType": "LESSON",
-          "candidateSha256": "e875feab4d8d9742f421ba98c4c8c59f753e613a3d67526a77409cdd6019f786",
-          "learnerProjectionSha256": "fdab57d016e30b374f12ca86270043b9ac0220b9c9ba231b94e9aabe4a04707a",
+          "candidateSha256": "80b9592641effbdae8f5868323289873a8c1a6e547676241e09ab8ee5db060b1",
+          "learnerProjectionSha256": "0794427b757c0e7e866acb1a906e0848a365cb60529f0c220368acd060d16ab9",
           "contentSha256": "REQUIRED_FROM_AUTHORITY: digest of the assembled CurriculumLessonV2 once a template cell and release exist",
           "toolPolicyId": "g7-lit-instruction-tools",
           "status": "PROPOSED"
@@ -255,8 +255,8 @@
           },
           {
             "itemId": "g7-essay-exit-3",
-            "itemVersion": "candidate-0.1.0",
-            "itemSha256": "45c74298af90d766cb95e2386cc439aaef1c9c487d0f9e6064ac5e59b1e57a31",
+            "itemVersion": "candidate-0.2.0",
+            "itemSha256": "94d0d1c399e54617e4ec5657954b894617b968c21acd82aa9957f925a5192f26",
             "objectiveId": "ll-g7-lit-evidence-support",
             "conceptId": "PROPOSED:g7-lit-evidence-support",
             "skillId": "REQUIRED_FROM_AUTHORITY",

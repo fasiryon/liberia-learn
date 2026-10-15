@@ -1,7 +1,7 @@
 {
   "contractVersion": "lesson-experience/1.0.0",
   "id": "cv2-cand-g7-math-number-sense-place-value",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "title": "Number Sense and Place Value: Millions to Thousandths",
   "subject": "MATH",
   "grade": 7,
@@ -428,6 +428,64 @@
         "kind": "FORMATIVE_OBSERVATION",
         "evidenceType": "CLASSWORK",
         "objectiveIds": [
+          "ll-g7-math-place-value-read-write"
+        ]
+      },
+      "completion": {
+        "kind": "ALL_RESPONSES_WRITTEN"
+      }
+    },
+    {
+      "id": "counter-chart",
+      "type": "GUIDED_EXAMPLE",
+      "title": "Build it with counters: ten for one",
+      "objectiveIds": [
+        "ll-g7-math-place-value-digit-value",
+        "ll-g7-math-place-value-read-write"
+      ],
+      "content": {
+        "body": "Work with a partner. Draw a place-value chart in your exercise book with ten labelled columns, from **millions** to **thousandths**, and mark the decimal point between the ones and the tenths. Use counters that are all the same, such as small stones, bottle caps or seeds. A counter is worth one of the place it sits in: the **column** decides the value, not the counter.\n\nWhen a column holds **ten** counters, take them away and put **one** counter in the next column to the left. The number does not change, because ten of one place make one of the next.",
+        "keyPoints": [
+          "Put 14 counters in the hundredths column. Exchange ten of them for 1 counter in the tenths column. Read the number: 0.14.",
+          "Clear the chart. Build 2,050,316.47, one column at a time. Leave empty columns empty, but write 0 for them when you record the number.",
+          "Swap roles: one partner builds a number, the other writes it in standard form and says the value of each digit.",
+          "No counters? Draw tally marks in the columns instead."
+        ]
+      },
+      "interaction": {
+        "kind": "FREE_RESPONSE",
+        "prompts": [
+          {
+            "id": "counter-exchange",
+            "prompt": "Step 1: how many counters were in the hundredths column, what did ten of them become, and did the number change? Explain why.",
+            "minLength": 40
+          },
+          {
+            "id": "counter-partner-number",
+            "prompt": "Step 3: write the number your partner built in standard form, then give the value of its first digit.",
+            "minLength": 10
+          }
+        ]
+      },
+      "tools": {
+        "allowed": [],
+        "prohibited": []
+      },
+      "accessibility": {
+        "textAlternative": "Partner activity with a paper place-value chart from millions to thousandths and identical counters: exchange ten counters in one column for one in the next column to the left, build 2,050,316.47, then build and read each other's numbers. Two written answers.",
+        "keyboardOperable": true,
+        "reducedMotionSafe": true,
+        "captionsRequired": false
+      },
+      "offline": {
+        "mode": "FULL",
+        "fallback": "Needs no device: paper, counters and the exercise book. Written answers are kept on the device until they can be sent."
+      },
+      "evidence": {
+        "kind": "FORMATIVE_OBSERVATION",
+        "evidenceType": "CLASSWORK",
+        "objectiveIds": [
+          "ll-g7-math-place-value-digit-value",
           "ll-g7-math-place-value-read-write"
         ]
       },
@@ -884,7 +942,7 @@
         "kind": "ASSESSMENT_HANDOFF",
         "assessment": {
           "assessmentId": "cv2-cand-g7-math-number-sense-place-value--g7-pv-exit-ticket",
-          "assessmentVersion": "0.1.0",
+          "assessmentVersion": "0.2.0",
           "player": "ASSESSMENT_PLAYER_V2",
           "scoring": "SERVER_AUTHORITY",
           "objectiveIds": [
@@ -968,6 +1026,48 @@
       },
       "completion": {
         "kind": "ALL_RESPONSES_WRITTEN"
+      }
+    },
+    {
+      "id": "home-practice",
+      "type": "REFLECTION",
+      "title": "At home: numbers around you",
+      "objectiveIds": [
+        "ll-g7-math-place-value-read-write",
+        "ll-g7-math-place-value-digit-value"
+      ],
+      "content": {
+        "body": "Place value is all around you. This task needs no device, no printing and nothing to buy. You can do it with anyone at home, even someone who does not read: you do the reading and the explaining.",
+        "keyPoints": [
+          "Find one large number: a price on a sign or receipt, a number on a calendar or a rice bag, or an amount you hear on the radio.",
+          "Find one decimal: a measurement on a package (such as 0.5 kg or 1.25 litres). If you cannot find one, make one with three digits after the point.",
+          "Draw a place-value chart on paper or in the sand. Write both numbers in it and read them aloud.",
+          "Ask your family member to point to any digit. Say its place and its value.",
+          "Bring one of your numbers to class with the value of one of its digits."
+        ]
+      },
+      "interaction": {
+        "kind": "NONE"
+      },
+      "tools": {
+        "allowed": [],
+        "prohibited": []
+      },
+      "accessibility": {
+        "textAlternative": "Home task with no device: find a large number and a decimal at home or in the community, write them in a place-value chart, read them aloud to a family member and say the value of any digit they point to.",
+        "keyboardOperable": true,
+        "reducedMotionSafe": true,
+        "captionsRequired": false
+      },
+      "offline": {
+        "mode": "FULL",
+        "fallback": "A paper task done away from the device; the steps are part of the saved lesson."
+      },
+      "evidence": {
+        "kind": "NONE"
+      },
+      "completion": {
+        "kind": "VIEWED"
       }
     }
   ],

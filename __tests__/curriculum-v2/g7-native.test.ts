@@ -35,7 +35,7 @@ describe("Grade 7 native candidates pass the existing Curriculum V2 gates", () =
     expect(outcome.status).toBe("REVIEW_BLOCKED");
     const blocking = new Set(outcome.gaps.filter((gap) => gap.severity === "BLOCKING").map((gap) => gap.code));
     // No instructional or deliverability blocker: every BLOCKING gap is an authority, provenance or governed-item gap.
-    expect([...blocking].every((code) => ["MOE_OBJECTIVE_UNBOUND", "MOE_SOURCE_STRUCTURING_DEFECT", "MOE_GRADE_SCOPE_REVIEW", "TEMPLATE_CELL_MISSING", "ONTOLOGY_RELEASE_MISSING", "LEGACY_COMPARISON_SIGNOFF", "ASSESSMENT_ITEMS_PENDING"].includes(code))).toBe(true);
+    expect([...blocking].every((code) => ["MOE_OBJECTIVE_UNBOUND", "MOE_SOURCE_STRUCTURING_DEFECT", "MOE_GRADE_SCOPE_REVIEW", "TEMPLATE_CELL_MISSING", "ONTOLOGY_RELEASE_MISSING", "LEGACY_COMPARISON_SIGNOFF", "SCOPE_EXTENSION_UNAPPROVED", "ASSESSMENT_ITEMS_PENDING"].includes(code))).toBe(true);
     expect(blocking.has("SCENE_NOT_DELIVERABLE")).toBe(false);
     for (const code of ["MOE_OBJECTIVE_UNBOUND", "TEMPLATE_CELL_MISSING", "ONTOLOGY_RELEASE_MISSING", "LEGACY_COMPARISON_SIGNOFF", "ASSESSMENT_ITEMS_PENDING"]) expect(blocking.has(code)).toBe(true);
   });
@@ -168,9 +168,62 @@ describe("legacy revisions were read read-only and compared section by section",
 
   it("applied recommendations are really in the package, and nothing else is applied", () => {
     const applied = G7_NATIVE_LESSONS.flatMap((lesson) => G7_LEGACY_COMPARISON[lesson.key].recommendations.filter((item) => item.applied).map((item) => item.id));
-    expect(applied.sort()).toEqual(["R-L5", "R-L7"]);
+    expect(applied.sort()).toEqual(["R-L1", "R-L2", "R-L3", "R-L4", "R-L5", "R-L7", "R-M1", "R-M2"]);
     expect(JSON.stringify(G7_REVISION_LEDGER)).not.toMatch(/West African/);
     expect(LITERACY.objectives.flatMap((objective) => objective.moeReferences).some((ref) => ref.misfiledAs)).toBe(true);
+    const mathScenes = loadG7Candidate(MATH).scenes.map((scene) => scene.id);
+    const litScenes = loadG7Candidate(LITERACY).scenes.map((scene) => scene.id);
+    for (const id of ["counter-chart", "home-practice"]) expect(mathScenes).toContain(id);
+    for (const id of ["plan-argument", "write-conclusion", "peer-review"]) expect(litScenes).toContain(id);
+    // Not applied: R-M3 extension task, R-L6 constructed exit prompt.
+    expect(G7_LEGACY_COMPARISON[MATH.key].recommendations.find((item) => item.id === "R-M3")!.applied).toBe(false);
+    expect(G7_LEGACY_COMPARISON[LITERACY.key].recommendations.find((item) => item.id === "R-L6")!.applied).toBe(false);
+  });
+
+  it("R-L1: no model evidence is written as the learner's own experience, and illustrative examples are labelled as made up", () => {
+    const literacy = loadG7Candidate(LITERACY);
+    const text = JSON.stringify(literacy);
+    expect(text).not.toMatch(/Last term our|our school's greens|After our class/i);
+    expect(literacy.scenes.find((scene) => scene.id === "evidence")!.content.body).toMatch(/Musu's school\*\* are made-up practice examples/);
+    const item3 = G7_EXIT_ITEMS[LITERACY.key].find((entry) => entry.item.id === "g7-essay-exit-3")!.item;
+    expect(item3.version).toBe("candidate-0.2.0");
+    expect(item3.options[item3.correctIndex]).toMatch(/^Musu's class/);
+    expect(item3.prompt).toMatch(/made-up practice school/);
+    expect(G7_EXIT_ITEMS[LITERACY.key].filter((entry) => entry.item.id !== "g7-essay-exit-3").every((entry) => entry.item.version === "candidate-0.1.0")).toBe(true);
+  });
+
+  it("the millions range is recorded as a proposed extension, blocking until the curriculum owner approves it", () => {
+    const [extension] = MATH.scopeExtensions;
+    expect(extension).toMatchObject({ status: "PROPOSED_LIBERIALEARN_EXTENSION", approval: "PENDING_CURRICULUM_OWNER" });
+    const usesMillions = loadG7Candidate(MATH).scenes.filter((scene) => /million|\d,\d{3},\d{3}/i.test(JSON.stringify(scene))).map((scene) => scene.id);
+    expect([...extension.sceneIds]).toEqual(usesMillions);
+    const items = G7_EXIT_ITEMS[MATH.key].filter((entry) => /million|\d,\d{3},\d{3}/i.test(JSON.stringify(entry.item))).map((entry) => entry.item.id);
+    expect([...extension.exitItemIds]).toEqual(items);
+    expect(evaluateG7Candidate(MATH).gaps).toContainEqual(expect.objectContaining({ code: "SCOPE_EXTENSION_UNAPPROVED", severity: "BLOCKING" }));
+    expect(LITERACY.scopeExtensions).toEqual([]);
+    expect(readFileSync(path.join(G7_PACKAGE_DIR, MATH.key, "reviewer-checklist.md"), "utf8")).toContain(`Scope extension \`${extension.id}\``);
+  });
+
+  it("the paragraph-centred alternative is prepared for every scene and exit item but not applied", () => {
+    const decision = G7_LEGACY_COMPARISON[LITERACY.key].alignment.find((entry) => entry.id === "A-L1")!;
+    const alt = decision.preparedAlternative!;
+    expect(alt.status).toBe("PREPARED_NOT_APPLIED");
+    expect(alt.sceneImpact.map((impact) => impact.sceneId)).toEqual(loadG7Candidate(LITERACY).scenes.map((scene) => scene.id));
+    expect(alt.itemImpact.map((impact) => impact.itemId)).toEqual(G7_EXIT_ITEMS[LITERACY.key].map((entry) => entry.item.id));
+    // The candidate keeps its current objectives and grade scope until the authority decides.
+    expect(LITERACY.objectives.map((objective) => objective.id)).toEqual(["ll-g7-lit-essay-structure", "ll-g7-lit-argument-build", "ll-g7-lit-evidence-support"]);
+    expect(evaluateG7Candidate(LITERACY).gaps.map((gap) => gap.code)).toEqual(expect.arrayContaining(["MOE_GRADE_SCOPE_REVIEW", "MOE_SOURCE_STRUCTURING_DEFECT"]));
+    const learnerText = readFileSync(path.join(G7_PACKAGE_DIR, LITERACY.key, "learner-projection.json"), "utf8");
+    for (const objective of alt.objectives) if (objective.id.startsWith("alt-")) expect(learnerText).not.toContain(objective.id);
+  });
+
+  it("the comparison keeps its original baseline: the production evidence is unchanged since commit 4fdd897c", () => {
+    for (const lesson of G7_NATIVE_LESSONS) {
+      const record = JSON.parse(readFileSync(path.join(G7_PACKAGE_DIR, lesson.key, "legacy-comparison.json"), "utf8")) as { candidate: { sha256: string; firstComparedAgainst: { commit: string; candidateSha256: string } } };
+      expect(record.candidate.firstComparedAgainst.commit).toBe("4fdd897cd6263d9f651dbc141e36869c0b9503f9");
+      expect(record.candidate.sha256).not.toBe(record.candidate.firstComparedAgainst.candidateSha256);
+      expect(lesson.legacy.bodyExtract.capturedAt).toBe("2026-10-15T19:09:16.876Z");
+    }
   });
 
   it("the math alignment evidence holds: no MOE math text in the repository mentions millions", () => {

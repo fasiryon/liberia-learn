@@ -1,11 +1,11 @@
 # Understanding Essay Writing: Structure and Argument
 
-- Candidate: `cv2-cand-g7-literacy-essay-structure-argument` v0.1.0 · Grade 7 LITERACY · Writing / argumentative essay
+- Candidate: `cv2-cand-g7-literacy-essay-structure-argument` v0.2.0 · Grade 7 LITERACY · Writing / argumentative essay
 - Pipeline status: **REVIEW_BLOCKED** · governance: DRAFT, human review required, not published, MOE approval not claimed, qualified review not started
-- Candidate hash: `e875feab4d8d9742f421ba98c4c8c59f753e613a3d67526a77409cdd6019f786` · learner projection hash: `fdab57d016e30b374f12ca86270043b9ac0220b9c9ba231b94e9aabe4a04707a` (review this exact revision only)
+- Candidate hash: `80b9592641effbdae8f5868323289873a8c1a6e547676241e09ab8ee5db060b1` · learner projection hash: `0794427b757c0e7e866acb1a906e0848a365cb60529f0c220368acd060d16ab9` (review this exact revision only)
 - Origin: AUTHORED_FIXTURE in the `candidate-lesson-v2/1.0.0` generator format (no live model call); strict parser, deterministic validator and deliverability checks passed with 0 errors
 - Not assembled into `curriculum-lesson-v2/1.0.0`: assembly needs a Grade 7 template cell and ontology release that do not exist (see Review gaps)
-- Strategy: WORKED_EXAMPLE_FADING — Learners see a complete model essay plan and a model PEEL paragraph, take each part apart, practise choosing and ordering parts with feedback, and only then write their own thesis and paragraph. Writing builds on the MOE Grade 7 paragraph-writing work (topic sentences, kinds of paragraphs).
+- Strategy: WORKED_EXAMPLE_FADING — Learners see a complete model essay plan and a model PEEL paragraph, take each part apart, practise choosing and ordering parts with feedback, and only then write their own thesis and paragraph. Writing builds on the MOE Grade 7 paragraph-writing work (topic sentences, kinds of paragraphs). Model evidence comes from a named practice school (Musu's school) and is labelled as made up; learners then plan before writing, write a conclusion and review a partner's paragraph against the PEEL questions.
 
 ## Source and provenance
 
@@ -40,14 +40,17 @@ Prerequisites assumed:
 | 4 | `essay-structure` | EXPLANATION / EXPLAIN_CONCEPT | `essay-structure` | NONE | NONE | 98 | `literacy-essay-structure.svg` | `9174a7e18fd7…` |
 | 5 | `model-plan` | INTERACTIVE_DIAGRAM / MODEL_WORKED_EXAMPLE | `essay-structure`, `argument-build` | DIAGRAM_REVEAL | NONE | 28 | — | `4346a7daef39…` |
 | 6 | `thesis` | GUIDED_EXAMPLE / GUIDED_PRACTICE | `argument-build` | SINGLE_CHOICE | FORMATIVE_OBSERVATION | 56 | — | `b60735b0e789…` |
-| 7 | `peel` | INTERACTIVE_DIAGRAM / MODEL_WORKED_EXAMPLE | `evidence-support` | DIAGRAM_REVEAL | NONE | 23 | `literacy-peel-paragraph.svg` | `7db8fb5bd58f…` |
-| 8 | `evidence` | EXPLANATION / EXPLAIN_CONCEPT | `evidence-support` | NONE | NONE | 73 | `literacy-evidence-test.svg` | `98b74a7ef79c…` |
-| 9 | `evidence-check` | CHECK_UNDERSTANDING / ADDRESS_MISCONCEPTION | `argument-build`, `evidence-support` | SINGLE_CHOICE | FORMATIVE_OBSERVATION | 16 | — | `66b57a1abb62…` |
-| 10 | `order-paragraph` | PRACTICE / GUIDED_PRACTICE | `essay-structure` | ORDERING (fallback FREE_RESPONSE) | FORMATIVE_OBSERVATION | 21 | — | `30bfe2ec609e…` |
-| 11 | `write-argument` | PRACTICE / INDEPENDENT_PRACTICE | `argument-build`, `evidence-support` | FREE_RESPONSE | FORMATIVE_OBSERVATION | 42 | — | `823d0b8db68a…` |
-| 12 | `review` | REVIEW / REVIEW | `essay-structure`, `argument-build`, `evidence-support` | NONE | NONE | 11 | — | `bbeb1a819e2b…` |
-| 13 | `exit-ticket` | MASTERY_CHECK / ASSESS_MASTERY | `essay-structure`, `argument-build`, `evidence-support` | ASSESSMENT_HANDOFF (fallback PAPER_ACTIVITY) | MASTERY_RESPONSE | 16 | — | `ba2f86d89b4c…` |
-| 14 | `reflect` | REFLECTION / REFLECT | `essay-structure` | FREE_RESPONSE | REFLECTION | 14 | — | `232578b92a7e…` |
+| 7 | `peel` | INTERACTIVE_DIAGRAM / MODEL_WORKED_EXAMPLE | `evidence-support` | DIAGRAM_REVEAL | NONE | 23 | `literacy-peel-paragraph.svg` | `234e88d15030…` |
+| 8 | `evidence` | EXPLANATION / EXPLAIN_CONCEPT | `evidence-support` | NONE | NONE | 106 | `literacy-evidence-test.svg` | `ecc731243a9d…` |
+| 9 | `evidence-check` | CHECK_UNDERSTANDING / ADDRESS_MISCONCEPTION | `argument-build`, `evidence-support` | SINGLE_CHOICE | FORMATIVE_OBSERVATION | 16 | — | `08ec88271fd4…` |
+| 10 | `order-paragraph` | PRACTICE / GUIDED_PRACTICE | `essay-structure` | ORDERING (fallback FREE_RESPONSE) | FORMATIVE_OBSERVATION | 21 | — | `2654a11e1ac8…` |
+| 11 | `plan-argument` | GUIDED_EXAMPLE / GUIDED_PRACTICE | `argument-build`, `evidence-support` | FREE_RESPONSE | FORMATIVE_OBSERVATION | 76 | — | `2700ad24778c…` |
+| 12 | `write-argument` | PRACTICE / INDEPENDENT_PRACTICE | `argument-build`, `evidence-support` | FREE_RESPONSE | FORMATIVE_OBSERVATION | 44 | — | `7c5ffdde944e…` |
+| 13 | `write-conclusion` | PRACTICE / INDEPENDENT_PRACTICE | `essay-structure` | FREE_RESPONSE | FORMATIVE_OBSERVATION | 76 | — | `0cd764863e81…` |
+| 14 | `peer-review` | PRACTICE / CHECK_UNDERSTANDING | `evidence-support`, `argument-build` | FREE_RESPONSE | FORMATIVE_OBSERVATION | 48 | — | `c16102a2c09b…` |
+| 15 | `review` | REVIEW / REVIEW | `essay-structure`, `argument-build`, `evidence-support` | NONE | NONE | 11 | — | `cdeaaeb3c9a0…` |
+| 16 | `exit-ticket` | MASTERY_CHECK / ASSESS_MASTERY | `essay-structure`, `argument-build`, `evidence-support` | ASSESSMENT_HANDOFF (fallback PAPER_ACTIVITY) | MASTERY_RESPONSE | 16 | — | `ba2f86d89b4c…` |
+| 17 | `reflect` | REFLECTION / REFLECT | `essay-structure` | FREE_RESPONSE | REFLECTION | 14 | — | `232578b92a7e…` |
 
 Full hashes, asset digests and source digests are in `scene-manifest.json`.
 
@@ -152,7 +155,7 @@ Learner action: Open each PEEL sentence of the model paragraph in order.
 A strong body paragraph follows **PEEL**: **P**oint, **E**vidence, **E**xplain, **L**ink. Open each step to build the first body paragraph of the garden essay.
 
 1. **P: Point (topic sentence)** — A school garden turns science and agriculture lessons into real work.
-2. **E: Evidence** — For example, when learners plant pepper and greens, they measure the beds, test which soil holds water best and record how fast each plant grows.
+2. **E: Evidence** — For example, in Musu's school garden, learners measure the beds, test which soil holds water best and record how fast each plant grows.
 3. **E: Explain** — This shows that the garden makes learners practise measuring, testing and recording: skills they need in science class and on a family farm.
 4. **L: Link** — So a garden makes lessons more useful, which is one reason every school should have one.
 
@@ -169,6 +172,8 @@ Evidence is what makes a reader believe your reason. Four kinds are useful in sc
 
 Before you use evidence, test it with four questions. Never make up a fact or a number: if you use a figure, say where it comes from.
 
+In this lesson, examples about **Musu's school** are made-up practice examples. They show what good evidence looks like, but they are not facts. In your own writing, use only evidence that is real.
+
 - Is it true, and can the reader check it?
 - Is it relevant: does it prove this reason?
 - Is it specific: who, what, where, when?
@@ -184,7 +189,7 @@ Learner action: Choose the best answer to each question and read why.
 
 Writers often fall into these traps. Choose an answer for each question, then read the explanation.
 
-- Reason: a garden can add fresh vegetables to school meals. Which evidence supports this reason best? — options: Gardens look beautiful when the flowers bloom. / Last term our agriculture club harvested greens and pepper that the school cook used in lunch for a week. (expected) / Gardens are good, and everyone knows it. / Many countries have gardens.
+- Reason: a garden can add fresh vegetables to school meals. Which evidence supports this reason best? (Musu's school is the made-up practice school from this lesson.) — options: Gardens look beautiful when the flowers bloom. / At Musu's school, the agriculture club's greens and pepper were used in school lunches for a week last term. (expected) / Gardens are good, and everyone knows it. / Many countries have gardens.
 - Musa writes: 'School gardens are good because they are good for schools.' What is the problem? — options: Nothing. It is a strong argument. / It repeats the claim instead of giving a real reason. (expected) / The sentence is too long.
 - Why should an argumentative essay mention the other side? — options: To show the writer has changed their mind. / To answer a likely objection, which makes the argument stronger. (expected) / To make the essay longer.
 - Hints: Read the reason and the evidence together. Does the evidence prove this reason?
@@ -200,7 +205,7 @@ These four sentences make one body paragraph, but they are mixed up. Put them in
 - A. So when learners grow food at school, everyone eats better, which is why every school needs a garden.
 - B. Fresh vegetables from a school garden can make school meals healthier.
 - C. This shows that the garden gives the kitchen food it would otherwise have to buy or go without.
-- D. For example, our school's greens and pepper were used in lunch for a whole week last term.
+- D. For example, at Musu's school the garden's greens and pepper were used in lunch for a whole week last term.
 
 - Requested ORDERING: Put the four sentences in PEEL order. [A: Link sentence about everyone eating better; B: Point about fresh vegetables; C: Explanation about food for the kitchen; D: Evidence about a week of lunches]
 - Fallback (FREE_RESPONSE, objective preserved: true): Write the four letters in PEEL order (for example: X, X, X, X), then say which letter is the topic sentence.
@@ -209,22 +214,77 @@ These four sentences make one body paragraph, but they are mixed up. Put them in
 - Accessibility: Four mixed sentences labelled A to D, listed in the text. Type their letters in PEEL order. · keyboard: Tab to each control, press Enter or Space to choose, then use Continue. · non-pointer: Type the letters in order in the text box. No dragging is needed.
 - Offline (FULL_OFFLINE): The written answer is kept on the device until it can be sent.
 
-### Write your own thesis and PEEL paragraph (`write-argument`)
+### Plan before you write (`plan-argument`)
 
-Learner action: Choose a topic, write a thesis, then write one PEEL body paragraph.
+Learner action: Choose a topic, brainstorm reasons, then plan your claim, two reasons and real evidence.
 
-Now write your own. Choose one topic, decide what you think, and write. Use only true evidence: an example you know, a fact you can check, or your own experience. Your teacher reads this writing; it is not marked by this lesson.
+Good writers plan first. Choose one topic and decide what you think. Then **brainstorm**: for two minutes, list every reason you can think of without judging them. Next, choose your **two strongest** reasons. For each one, write one piece of **real** evidence and where it comes from: something you saw, a fact you can check, or the words of someone you can name. If you cannot find real evidence for a reason, choose a different reason.
 
 - Topic 1: Every community should have a public library.
 - Topic 2: Schools should start each day with 20 minutes of reading.
 - Topic 3: Learners should help keep their school compound clean every week.
+- Plan: claim → reason 1 + evidence → reason 2 + evidence.
 
-- Write a thesis statement for your topic: your claim and two reasons. (min 60 chars)
+- Brainstorm: list at least four reasons for your claim, one per line. (min 60 chars)
+- Your plan: write your claim, then your two strongest reasons, each with one piece of real evidence and where it comes from. (min 120 chars)
+- Expected observation (reviewer only): Brainstorm lists several different reasons. The plan states an arguable claim, two reasons that answer 'why?', and for each a specific, checkable piece of evidence with its source (an observation, a checkable fact or a named person). Watch for Musu's school examples copied as evidence, opinions used as evidence, and reasons that repeat the claim.
+- Hints: Write fast while you brainstorm; choose later. | Ask of each piece of evidence: is it true, and where does it come from?
+- Accessibility: Choose one of three topics, brainstorm at least four reasons, then write a plan: a claim and two reasons, each with real evidence and its source. Two text boxes. · keyboard: Tab to each control, press Enter or Space to choose, then use Continue.
+- Offline (FULL_OFFLINE): The plan is kept on the device until it can be sent.
+
+### Write your own thesis and PEEL paragraph (`write-argument`)
+
+Learner action: Use your plan to write a thesis and one PEEL body paragraph.
+
+Now write, using your plan. Use only real evidence: an example you know, a fact you can check, or your own experience. Do not borrow Musu's school examples: they are made up. Your teacher reads this writing; it is not marked by this lesson.
+
+- Point: your first reason, as a topic sentence.
+- Evidence: one real, specific example or fact from your plan.
+- Explain: how the evidence proves the point.
+- Link: back to your claim.
+
+- Write the thesis statement from your plan: your claim and two reasons. (min 60 chars)
 - Write one body paragraph for your first reason using PEEL: Point, Evidence, Explain, Link. (min 250 chars)
 - Expected observation (reviewer only): Thesis is an arguable claim that names two reasons. Paragraph opens with a topic sentence matching reason one, gives specific true evidence, explains how it supports the point, and links back to the claim.
 - Hints: Start your thesis with your claim, then use 'because' to add two reasons. | Begin your paragraph with your first reason as the topic sentence.
-- Accessibility: Choose one of three topics, then write a thesis statement and one PEEL body paragraph in two text boxes. · keyboard: Tab to each control, press Enter or Space to choose, then use Continue.
+- Accessibility: Using the plan from the previous scene, write a thesis statement and one PEEL body paragraph in two text boxes. · keyboard: Tab to each control, press Enter or Space to choose, then use Continue.
 - Offline (FULL_OFFLINE): Writing is kept on the device until it can be sent to the teacher.
+
+### Write a conclusion (`write-conclusion`)
+
+Learner action: Write a conclusion for the school-garden essay.
+
+Go back to the model plan for **Every school in Liberia should have a school garden**. Its body paragraphs argued two reasons (gardens teach farming and science skills, and they add fresh food to school meals) and answered one objection (garden work takes time from lessons). Write a conclusion of three or four sentences that does the three jobs of a conclusion. Do not copy the model plan's conclusion, and do not add a new reason.
+
+- Restate the thesis in new words.
+- Sum up the two reasons (and, if you like, the answer to the other side).
+- End with a final thought or a call to action.
+- Check: no new reasons.
+
+- Write your conclusion for the school-garden essay (three or four sentences). (min 150 chars)
+- Expected observation (reviewer only): Restates the claim without copying the thesis, sums up both reasons (skills; fresh food), ends with a final thought or call to action, and adds no new reason (for example, not 'gardens also make the compound beautiful').
+- Hints: Begin with a phrase such as 'For these reasons' or 'In short'. | Read each sentence: does it give a reason the body did not argue? If so, remove it.
+- Accessibility: Write a three- or four-sentence conclusion for the school-garden essay: restate the thesis in new words, sum up its two reasons, end with a final thought, and add no new reason. · keyboard: Tab to each control, press Enter or Space to choose, then use Continue.
+- Offline (FULL_OFFLINE): Writing is kept on the device until it can be sent to the teacher.
+
+### Peer review: one strength, one next step (`peer-review`)
+
+Learner action: Swap paragraphs with a partner, check them against four questions, then write one strength and one next step.
+
+Swap your PEEL paragraph with a partner and read it twice. Check it against the four questions below, then give honest, kind feedback: one **strength** and one **next step**. Talk about the writing, not the writer. If you are working alone, review your own paragraph the same way.
+
+- Point: does the topic sentence state a clear reason that matches the thesis?
+- Evidence: is it real and specific, and is its source named?
+- Explain: does a sentence show how the evidence proves the point?
+- Link: does the last sentence connect back to the claim?
+- Sentence starters: 'One strength is … because …' and 'Next time, try …'
+
+- Write one strength of the paragraph you reviewed. Name the question it meets and quote the words that show it. (min 60 chars)
+- Write one next step: name a question the paragraph does not yet meet and suggest one change. (min 60 chars)
+- Expected observation (reviewer only): Feedback names a specific question and points to words in the paragraph; the next step is one concrete change (for example 'say where this figure comes from'). Watch for vague praise ('good job'), comments about the writer instead of the writing, and accepting made-up evidence as real.
+- Hints: Quote the exact words that meet, or miss, a question. | A next step says what to change, not just that something is wrong.
+- Accessibility: Swap PEEL paragraphs with a partner (or review your own), check the paragraph against four questions on point, evidence, explanation and link, then write one strength and one next step. · keyboard: Tab to each control, press Enter or Space to choose, then use Continue. · non-pointer: Partners can read the paragraph aloud and discuss it; the learner then types or writes the two answers.
+- Offline (FULL_OFFLINE): A classroom activity with paper paragraphs; answers are kept on the device until they can be sent.
 
 ### Key ideas to remember (`review`)
 
@@ -236,6 +296,7 @@ Before the exit ticket, review the big ideas of this lesson.
 - A thesis is a claim someone could disagree with, plus the reasons you will argue.
 - Each body paragraph follows PEEL: Point, Evidence, Explain, Link.
 - Strong evidence is true, relevant and specific, and you can say where it comes from.
+- Plan before you write: claim, two reasons, and real evidence for each.
 - Answer the other side; do not add new reasons in the conclusion.
 
 - Accessibility: Review of five key ideas: essay parts, thesis, PEEL paragraphs, strong evidence, and answering the other side. · keyboard: Tab to each control, press Enter or Space to choose, then use Continue.
@@ -288,12 +349,15 @@ Good writers know what they need to practise. Write your answer in full sentence
 | `essay-structure` | NEW | — | Three-part essay structure with the job of each part. |
 | `model-plan` | NEW | — | Complete model plan on a Liberian school topic, including a counterargument paragraph. |
 | `thesis` | NEW | — | Distinguishes claims from topics, facts and announcements with feedback. |
-| `peel` | NEW | — | PEEL paragraph model (Point, Evidence, Explain, Link). Whether PEEL is familiar in Liberian classrooms is for the reviewer to confirm (legacy comparison R-L5). |
-| `evidence` | NEW | — | Kinds of evidence and four tests; explicitly forbids invented figures. |
-| `evidence-check` | NEW | — | Misconception checks: irrelevant evidence, circular reasoning, ignoring the other side. |
-| `order-paragraph` | NEW | — | Declared ORDERING interaction with a written fallback. |
-| `write-argument` | NEW | — | Interactive writing practice: thesis plus one PEEL paragraph, teacher-reviewed with the rubric. |
-| `review` | NEW | — | Five key ideas. |
+| `peel` | NEW | — | PEEL paragraph model (Point, Evidence, Explain, Link). Whether PEEL is familiar in Liberian classrooms is for the reviewer to confirm (legacy comparison R-L5). The model evidence is attributed to Musu's (made-up) school garden (R-L1). |
+| `evidence` | NEW | — | Kinds of evidence and four tests; explicitly forbids invented figures, and says that Musu's school examples are made-up practice examples, not facts (R-L1). |
+| `evidence-check` | NEW | — | Misconception checks: irrelevant evidence, circular reasoning, ignoring the other side. The model evidence is attributed to Musu's practice school instead of the learner's own school (R-L1). |
+| `order-paragraph` | NEW | — | Declared ORDERING interaction with a written fallback. Sentence D is attributed to Musu's practice school (R-L1). |
+| `plan-argument` | REVISED | Legacy section '8. Worked Example 2 — Alternative Method' (revision cmss94dmc03b7vo54ryf3hqk1); legacy comparison R-L2 | Restores the legacy brainstorm-then-organise method as the learner's own planning step: brainstorm, choose two reasons, attach real evidence with its source. The writing topics moved here from write-argument. |
+| `write-argument` | NEW | — | Interactive writing practice: thesis plus one PEEL paragraph from the learner's plan, teacher-reviewed with the rubric. |
+| `write-conclusion` | REVISED | Legacy section '13. Independent Practice — Tier 1' (write a conclusion) (revision cmss94dmc03b7vo54ryf3hqk1); legacy comparison R-L3 | Restores conclusion writing on the lesson's own garden plan, keeping the rule the legacy model answer broke: no new reasons. |
+| `peer-review` | REVISED | Legacy '4. Core Concept' checks for understanding (peer review) and objective 3 (revision cmss94dmc03b7vo54ryf3hqk1); legacy comparison R-L4 | Restores structured peer review with the four PEEL questions, one strength and one next step; a learner working alone reviews their own paragraph. |
+| `review` | NEW | — | Six key ideas, including planning before writing. |
 | `exit-ticket` | NEW | — | Assessment handoff; candidate items reviewer-only until released. |
 | `reflect` | NEW | — | Writer self-assessment and next step. |
 
@@ -311,7 +375,10 @@ Good writers know what they need to practise. Write your answer in full sentence
 | evidence | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY |
 | evidence-check | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY |
 | order-paragraph | FALLBACK | FALLBACK | FALLBACK | FALLBACK | FALLBACK | FALLBACK | FALLBACK | FALLBACK | FALLBACK |
+| plan-argument | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY |
 | write-argument | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY |
+| write-conclusion | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY |
+| peer-review | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY |
 | review | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY |
 | exit-ticket | FALLBACK | FALLBACK | FALLBACK | FALLBACK | FALLBACK | FALLBACK | FALLBACK | FALLBACK | FALLBACK |
 | reflect | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY | PRIMARY |

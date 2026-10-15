@@ -1,7 +1,7 @@
 {
   "packageVersion": "g7-native-curriculum/1.0.0",
   "lessonId": "cv2-cand-g7-math-number-sense-place-value",
-  "candidateVersion": "0.1.0",
+  "candidateVersion": "0.2.0",
   "contracts": {
     "candidate": "candidate-lesson-v2/1.0.0",
     "assembledTarget": "curriculum-lesson-v2/1.0.0",
@@ -11,11 +11,11 @@
   "origin": "AUTHORED_FIXTURE",
   "candidate": {
     "path": "curriculum/v2/g7/candidates/math-number-sense-place-value.json",
-    "sha256": "5817d80911154bceb61fe117e0916ad64d0b7ae5c6afd2a2c6028b9cdc972ffb"
+    "sha256": "3f612d907f52f5953d879476a627fde8e9a1c5b3d30d22e171a42a8ccec80c0c"
   },
   "learnerProjection": {
     "path": "curriculum/review/g7-native-v1/math-number-sense-place-value/learner-projection.json",
-    "sha256": "b14a869ca88963216c86a7f9883029a4df212acb46e184b3a4f302d0a5ab57fe"
+    "sha256": "5c5e90e92e0ee1d80c3da8d91b9cac0526a0e1cec10a02f97e29b88eed080e4c"
   },
   "assessmentReview": {
     "path": "curriculum/review/g7-native-v1/math-number-sense-place-value/assessment-review.json",
@@ -23,7 +23,7 @@
   },
   "legacyComparison": {
     "path": "curriculum/review/g7-native-v1/math-number-sense-place-value/legacy-comparison.json",
-    "sha256": "a799b5f3e680f6ed7cc56647bef840a5ec04c7835c1587f65ed0badb9fcc5aec"
+    "sha256": "b28b3cb37d7b1cd83a85e229bef23428f60d44e85415105b4455f83785bde3fe"
   },
   "scenes": [
     {
@@ -189,6 +189,23 @@
     },
     {
       "position": 8,
+      "id": "counter-chart",
+      "type": "GUIDED_EXAMPLE",
+      "purpose": "GUIDED_PRACTICE",
+      "objectiveIds": [
+        "ll-g7-math-place-value-digit-value",
+        "ll-g7-math-place-value-read-write"
+      ],
+      "interaction": "FREE_RESPONSE",
+      "fallback": null,
+      "evidence": "FORMATIVE_OBSERVATION",
+      "completion": "ALL_RESPONSES_WRITTEN",
+      "words": 100,
+      "sha256": "1ea999e7e873a9222243ef507e79fa2223a1e764cc922a7d833dc2d09286060e",
+      "media": []
+    },
+    {
+      "position": 9,
       "id": "guided-decimals",
       "type": "GUIDED_EXAMPLE",
       "purpose": "GUIDED_PRACTICE",
@@ -205,7 +222,7 @@
       "media": []
     },
     {
-      "position": 9,
+      "position": 10,
       "id": "compare-strategy",
       "type": "GUIDED_EXAMPLE",
       "purpose": "MODEL_WORKED_EXAMPLE",
@@ -232,7 +249,7 @@
       ]
     },
     {
-      "position": 10,
+      "position": 11,
       "id": "misconceptions",
       "type": "CHECK_UNDERSTANDING",
       "purpose": "ADDRESS_MISCONCEPTION",
@@ -249,7 +266,7 @@
       "media": []
     },
     {
-      "position": 11,
+      "position": 12,
       "id": "practice",
       "type": "PRACTICE",
       "purpose": "INDEPENDENT_PRACTICE",
@@ -267,7 +284,7 @@
       "media": []
     },
     {
-      "position": 12,
+      "position": 13,
       "id": "review",
       "type": "REVIEW",
       "purpose": "REVIEW",
@@ -285,7 +302,7 @@
       "media": []
     },
     {
-      "position": 13,
+      "position": 14,
       "id": "exit-ticket",
       "type": "MASTERY_CHECK",
       "purpose": "ASSESS_MASTERY",
@@ -303,7 +320,7 @@
       "media": []
     },
     {
-      "position": 14,
+      "position": 15,
       "id": "reflect",
       "type": "REFLECTION",
       "purpose": "REFLECT",
@@ -316,6 +333,23 @@
       "completion": "ALL_RESPONSES_WRITTEN",
       "words": 12,
       "sha256": "d6984293c360c7a5a8421940c7aeefca1ea680deebfa7df2a629e48cfed29e61",
+      "media": []
+    },
+    {
+      "position": 16,
+      "id": "home-practice",
+      "type": "REFLECTION",
+      "purpose": "APPLY",
+      "objectiveIds": [
+        "ll-g7-math-place-value-read-write",
+        "ll-g7-math-place-value-digit-value"
+      ],
+      "interaction": "NONE",
+      "fallback": null,
+      "evidence": "NONE",
+      "completion": "VIEWED",
+      "words": 38,
+      "sha256": "9ab79fd353b9ed3b919afb831faacd4504f2e4df150429bffdfe47a4334ee1a0",
       "media": []
     }
   ],

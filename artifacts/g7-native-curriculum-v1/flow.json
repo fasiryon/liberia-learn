@@ -1,5 +1,5 @@
 {
-  "capturedAt": "2026-10-15T18:22:12.913Z",
+  "capturedAt": "2026-10-15T20:07:43.117Z",
   "base": "http://localhost:3197",
   "runs": [
     {
@@ -110,6 +110,21 @@
         },
         {
           "position": 8,
+          "sceneId": "counter-chart",
+          "sceneType": "GUIDED_EXAMPLE",
+          "title": "Build it with counters: ten for one",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "write:counter-exchange",
+            "write:counter-partner-number"
+          ],
+          "diagramsRendered": 0,
+          "horizontalOverflowPx": 0,
+          "screenshot": "screenshots/math-number-sense-place-value/desktop/08-counter-chart.jpg"
+        },
+        {
+          "position": 9,
           "sceneId": "guided-decimals",
           "sceneType": "GUIDED_EXAMPLE",
           "title": "Guided practice: digits after the point",
@@ -121,10 +136,10 @@
           ],
           "diagramsRendered": 0,
           "horizontalOverflowPx": 0,
-          "screenshot": "screenshots/math-number-sense-place-value/desktop/08-guided-decimals.jpg"
+          "screenshot": "screenshots/math-number-sense-place-value/desktop/09-guided-decimals.jpg"
         },
         {
-          "position": 9,
+          "position": 10,
           "sceneId": "compare-strategy",
           "sceneType": "GUIDED_EXAMPLE",
           "title": "How to compare and order numbers",
@@ -139,10 +154,10 @@
           ],
           "diagramsRendered": 1,
           "horizontalOverflowPx": 0,
-          "screenshot": "screenshots/math-number-sense-place-value/desktop/09-compare-strategy.jpg"
+          "screenshot": "screenshots/math-number-sense-place-value/desktop/10-compare-strategy.jpg"
         },
         {
-          "position": 10,
+          "position": 11,
           "sceneId": "misconceptions",
           "sceneType": "CHECK_UNDERSTANDING",
           "title": "Watch out: three common mistakes",
@@ -156,10 +171,10 @@
           ],
           "diagramsRendered": 0,
           "horizontalOverflowPx": 0,
-          "screenshot": "screenshots/math-number-sense-place-value/desktop/10-misconceptions.jpg"
+          "screenshot": "screenshots/math-number-sense-place-value/desktop/11-misconceptions.jpg"
         },
         {
-          "position": 11,
+          "position": 12,
           "sceneId": "practice",
           "sceneType": "PRACTICE",
           "title": "Your turn: independent practice",
@@ -174,10 +189,10 @@
           ],
           "diagramsRendered": 0,
           "horizontalOverflowPx": 0,
-          "screenshot": "screenshots/math-number-sense-place-value/desktop/11-practice.jpg"
+          "screenshot": "screenshots/math-number-sense-place-value/desktop/12-practice.jpg"
         },
         {
-          "position": 12,
+          "position": 13,
           "sceneId": "review",
           "sceneType": "REVIEW",
           "title": "Key ideas to remember",
@@ -186,10 +201,10 @@
           "actions": [],
           "diagramsRendered": 0,
           "horizontalOverflowPx": 0,
-          "screenshot": "screenshots/math-number-sense-place-value/desktop/12-review.jpg"
+          "screenshot": "screenshots/math-number-sense-place-value/desktop/13-review.jpg"
         },
         {
-          "position": 13,
+          "position": 14,
           "sceneId": "exit-ticket",
           "sceneType": "MASTERY_CHECK",
           "title": "Exit ticket",
@@ -205,10 +220,10 @@
           ],
           "diagramsRendered": 0,
           "horizontalOverflowPx": 0,
-          "screenshot": "screenshots/math-number-sense-place-value/desktop/13-exit-ticket.jpg"
+          "screenshot": "screenshots/math-number-sense-place-value/desktop/14-exit-ticket.jpg"
         },
         {
-          "position": 14,
+          "position": 15,
           "sceneId": "reflect",
           "sceneType": "REFLECTION",
           "title": "Explain it in your own words",
@@ -219,12 +234,24 @@
           ],
           "diagramsRendered": 0,
           "horizontalOverflowPx": 0,
-          "screenshot": "screenshots/math-number-sense-place-value/desktop/14-reflect.jpg"
+          "screenshot": "screenshots/math-number-sense-place-value/desktop/15-reflect.jpg"
+        },
+        {
+          "position": 16,
+          "sceneId": "home-practice",
+          "sceneType": "REFLECTION",
+          "title": "At home: numbers around you",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "diagramsRendered": 0,
+          "horizontalOverflowPx": 0,
+          "screenshot": "screenshots/math-number-sense-place-value/desktop/16-home-practice.jpg"
         }
       ],
       "errors": [],
       "finishState": "PROTOTYPE",
-      "evidenceDispositions": "RAW_OBSERVATION RAW_OBSERVATION RAW_OBSERVATION RAW_OBSERVATION RAW_OBSERVATION RAW_OBSERVATION RAW_OBSERVATION"
+      "evidenceDispositions": "RAW_OBSERVATION RAW_OBSERVATION RAW_OBSERVATION RAW_OBSERVATION RAW_OBSERVATION RAW_OBSERVATION RAW_OBSERVATION RAW_OBSERVATION"
     },
     {
       "lesson": "math-number-sense-place-value",
@@ -334,6 +361,21 @@
         },
         {
           "position": 8,
+          "sceneId": "counter-chart",
+          "sceneType": "GUIDED_EXAMPLE",
+          "title": "Build it with counters: ten for one",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "write:counter-exchange",
+            "write:counter-partner-number"
+          ],
+          "diagramsRendered": 0,
+          "horizontalOverflowPx": 0,
+          "screenshot": "screenshots/math-number-sense-place-value/mobile/08-counter-chart.jpg"
+        },
+        {
+          "position": 9,
           "sceneId": "guided-decimals",
           "sceneType": "GUIDED_EXAMPLE",
           "title": "Guided practice: digits after the point",
@@ -345,10 +387,10 @@
           ],
           "diagramsRendered": 0,
           "horizontalOverflowPx": 0,
-          "screenshot": "screenshots/math-number-sense-place-value/mobile/08-guided-decimals.jpg"
+          "screenshot": "screenshots/math-number-sense-place-value/mobile/09-guided-decimals.jpg"
         },
         {
-          "position": 9,
+          "position": 10,
           "sceneId": "compare-strategy",
           "sceneType": "GUIDED_EXAMPLE",
           "title": "How to compare and order numbers",
@@ -363,10 +405,10 @@
           ],
           "diagramsRendered": 1,
           "horizontalOverflowPx": 0,
-          "screenshot": "screenshots/math-number-sense-place-value/mobile/09-compare-strategy.jpg"
+          "screenshot": "screenshots/math-number-sense-place-value/mobile/10-compare-strategy.jpg"
         },
         {
-          "position": 10,
+          "position": 11,
           "sceneId": "misconceptions",
           "sceneType": "CHECK_UNDERSTANDING",
           "title": "Watch out: three common mistakes",
@@ -380,10 +422,10 @@
           ],
           "diagramsRendered": 0,
           "horizontalOverflowPx": 0,
-          "screenshot": "screenshots/math-number-sense-place-value/mobile/10-misconceptions.jpg"
+          "screenshot": "screenshots/math-number-sense-place-value/mobile/11-misconceptions.jpg"
         },
         {
-          "position": 11,
+          "position": 12,
           "sceneId": "practice",
           "sceneType": "PRACTICE",
           "title": "Your turn: independent practice",
@@ -398,10 +440,10 @@
           ],
           "diagramsRendered": 0,
           "horizontalOverflowPx": 0,
-          "screenshot": "screenshots/math-number-sense-place-value/mobile/11-practice.jpg"
+          "screenshot": "screenshots/math-number-sense-place-value/mobile/12-practice.jpg"
         },
         {
-          "position": 12,
+          "position": 13,
           "sceneId": "review",
           "sceneType": "REVIEW",
           "title": "Key ideas to remember",
@@ -410,10 +452,10 @@
           "actions": [],
           "diagramsRendered": 0,
           "horizontalOverflowPx": 0,
-          "screenshot": "screenshots/math-number-sense-place-value/mobile/12-review.jpg"
+          "screenshot": "screenshots/math-number-sense-place-value/mobile/13-review.jpg"
         },
         {
-          "position": 13,
+          "position": 14,
           "sceneId": "exit-ticket",
           "sceneType": "MASTERY_CHECK",
           "title": "Exit ticket",
@@ -429,10 +471,10 @@
           ],
           "diagramsRendered": 0,
           "horizontalOverflowPx": 0,
-          "screenshot": "screenshots/math-number-sense-place-value/mobile/13-exit-ticket.jpg"
+          "screenshot": "screenshots/math-number-sense-place-value/mobile/14-exit-ticket.jpg"
         },
         {
-          "position": 14,
+          "position": 15,
           "sceneId": "reflect",
           "sceneType": "REFLECTION",
           "title": "Explain it in your own words",
@@ -443,12 +485,24 @@
           ],
           "diagramsRendered": 0,
           "horizontalOverflowPx": 0,
-          "screenshot": "screenshots/math-number-sense-place-value/mobile/14-reflect.jpg"
+          "screenshot": "screenshots/math-number-sense-place-value/mobile/15-reflect.jpg"
+        },
+        {
+          "position": 16,
+          "sceneId": "home-practice",
+          "sceneType": "REFLECTION",
+          "title": "At home: numbers around you",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "diagramsRendered": 0,
+          "horizontalOverflowPx": 0,
+          "screenshot": "screenshots/math-number-sense-place-value/mobile/16-home-practice.jpg"
         }
       ],
       "errors": [],
       "finishState": "PROTOTYPE",
-      "evidenceDispositions": "RAW_OBSERVATION RAW_OBSERVATION RAW_OBSERVATION RAW_OBSERVATION RAW_OBSERVATION RAW_OBSERVATION RAW_OBSERVATION"
+      "evidenceDispositions": "RAW_OBSERVATION RAW_OBSERVATION RAW_OBSERVATION RAW_OBSERVATION RAW_OBSERVATION RAW_OBSERVATION RAW_OBSERVATION RAW_OBSERVATION"
     },
     {
       "lesson": "literacy-essay-structure-argument",
@@ -601,6 +655,21 @@
         },
         {
           "position": 11,
+          "sceneId": "plan-argument",
+          "sceneType": "GUIDED_EXAMPLE",
+          "title": "Plan before you write",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "write:plan-brainstorm",
+            "write:plan-reasons"
+          ],
+          "diagramsRendered": 0,
+          "horizontalOverflowPx": 0,
+          "screenshot": "screenshots/literacy-essay-structure-argument/desktop/11-plan-argument.jpg"
+        },
+        {
+          "position": 12,
           "sceneId": "write-argument",
           "sceneType": "PRACTICE",
           "title": "Write your own thesis and PEEL paragraph",
@@ -612,10 +681,39 @@
           ],
           "diagramsRendered": 0,
           "horizontalOverflowPx": 0,
-          "screenshot": "screenshots/literacy-essay-structure-argument/desktop/11-write-argument.jpg"
+          "screenshot": "screenshots/literacy-essay-structure-argument/desktop/12-write-argument.jpg"
         },
         {
-          "position": 12,
+          "position": 13,
+          "sceneId": "write-conclusion",
+          "sceneType": "PRACTICE",
+          "title": "Write a conclusion",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "write:write-conclusion-garden"
+          ],
+          "diagramsRendered": 0,
+          "horizontalOverflowPx": 0,
+          "screenshot": "screenshots/literacy-essay-structure-argument/desktop/13-write-conclusion.jpg"
+        },
+        {
+          "position": 14,
+          "sceneId": "peer-review",
+          "sceneType": "PRACTICE",
+          "title": "Peer review: one strength, one next step",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "write:peer-strength",
+            "write:peer-next-step"
+          ],
+          "diagramsRendered": 0,
+          "horizontalOverflowPx": 0,
+          "screenshot": "screenshots/literacy-essay-structure-argument/desktop/14-peer-review.jpg"
+        },
+        {
+          "position": 15,
           "sceneId": "review",
           "sceneType": "REVIEW",
           "title": "Key ideas to remember",
@@ -624,10 +722,10 @@
           "actions": [],
           "diagramsRendered": 0,
           "horizontalOverflowPx": 0,
-          "screenshot": "screenshots/literacy-essay-structure-argument/desktop/12-review.jpg"
+          "screenshot": "screenshots/literacy-essay-structure-argument/desktop/15-review.jpg"
         },
         {
-          "position": 13,
+          "position": 16,
           "sceneId": "exit-ticket",
           "sceneType": "MASTERY_CHECK",
           "title": "Exit ticket",
@@ -643,10 +741,10 @@
           ],
           "diagramsRendered": 0,
           "horizontalOverflowPx": 0,
-          "screenshot": "screenshots/literacy-essay-structure-argument/desktop/13-exit-ticket.jpg"
+          "screenshot": "screenshots/literacy-essay-structure-argument/desktop/16-exit-ticket.jpg"
         },
         {
-          "position": 14,
+          "position": 17,
           "sceneId": "reflect",
           "sceneType": "REFLECTION",
           "title": "Plan your next step as a writer",
@@ -657,12 +755,12 @@
           ],
           "diagramsRendered": 0,
           "horizontalOverflowPx": 0,
-          "screenshot": "screenshots/literacy-essay-structure-argument/desktop/14-reflect.jpg"
+          "screenshot": "screenshots/literacy-essay-structure-argument/desktop/17-reflect.jpg"
         }
       ],
       "errors": [],
       "finishState": "PROTOTYPE",
-      "evidenceDispositions": "RAW_OBSERVATION RAW_OBSERVATION RAW_OBSERVATION RAW_OBSERVATION RAW_OBSERVATION RAW_OBSERVATION RAW_OBSERVATION"
+      "evidenceDispositions": "RAW_OBSERVATION RAW_OBSERVATION RAW_OBSERVATION RAW_OBSERVATION RAW_OBSERVATION RAW_OBSERVATION RAW_OBSERVATION RAW_OBSERVATION RAW_OBSERVATION RAW_OBSERVATION"
     },
     {
       "lesson": "literacy-essay-structure-argument",
@@ -815,6 +913,21 @@
         },
         {
           "position": 11,
+          "sceneId": "plan-argument",
+          "sceneType": "GUIDED_EXAMPLE",
+          "title": "Plan before you write",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "write:plan-brainstorm",
+            "write:plan-reasons"
+          ],
+          "diagramsRendered": 0,
+          "horizontalOverflowPx": 0,
+          "screenshot": "screenshots/literacy-essay-structure-argument/mobile/11-plan-argument.jpg"
+        },
+        {
+          "position": 12,
           "sceneId": "write-argument",
           "sceneType": "PRACTICE",
           "title": "Write your own thesis and PEEL paragraph",
@@ -826,10 +939,39 @@
           ],
           "diagramsRendered": 0,
           "horizontalOverflowPx": 0,
-          "screenshot": "screenshots/literacy-essay-structure-argument/mobile/11-write-argument.jpg"
+          "screenshot": "screenshots/literacy-essay-structure-argument/mobile/12-write-argument.jpg"
         },
         {
-          "position": 12,
+          "position": 13,
+          "sceneId": "write-conclusion",
+          "sceneType": "PRACTICE",
+          "title": "Write a conclusion",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "write:write-conclusion-garden"
+          ],
+          "diagramsRendered": 0,
+          "horizontalOverflowPx": 0,
+          "screenshot": "screenshots/literacy-essay-structure-argument/mobile/13-write-conclusion.jpg"
+        },
+        {
+          "position": 14,
+          "sceneId": "peer-review",
+          "sceneType": "PRACTICE",
+          "title": "Peer review: one strength, one next step",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "write:peer-strength",
+            "write:peer-next-step"
+          ],
+          "diagramsRendered": 0,
+          "horizontalOverflowPx": 0,
+          "screenshot": "screenshots/literacy-essay-structure-argument/mobile/14-peer-review.jpg"
+        },
+        {
+          "position": 15,
           "sceneId": "review",
           "sceneType": "REVIEW",
           "title": "Key ideas to remember",
@@ -838,10 +980,10 @@
           "actions": [],
           "diagramsRendered": 0,
           "horizontalOverflowPx": 0,
-          "screenshot": "screenshots/literacy-essay-structure-argument/mobile/12-review.jpg"
+          "screenshot": "screenshots/literacy-essay-structure-argument/mobile/15-review.jpg"
         },
         {
-          "position": 13,
+          "position": 16,
           "sceneId": "exit-ticket",
           "sceneType": "MASTERY_CHECK",
           "title": "Exit ticket",
@@ -857,10 +999,10 @@
           ],
           "diagramsRendered": 0,
           "horizontalOverflowPx": 0,
-          "screenshot": "screenshots/literacy-essay-structure-argument/mobile/13-exit-ticket.jpg"
+          "screenshot": "screenshots/literacy-essay-structure-argument/mobile/16-exit-ticket.jpg"
         },
         {
-          "position": 14,
+          "position": 17,
           "sceneId": "reflect",
           "sceneType": "REFLECTION",
           "title": "Plan your next step as a writer",
@@ -871,12 +1013,12 @@
           ],
           "diagramsRendered": 0,
           "horizontalOverflowPx": 0,
-          "screenshot": "screenshots/literacy-essay-structure-argument/mobile/14-reflect.jpg"
+          "screenshot": "screenshots/literacy-essay-structure-argument/mobile/17-reflect.jpg"
         }
       ],
       "errors": [],
       "finishState": "PROTOTYPE",
-      "evidenceDispositions": "RAW_OBSERVATION RAW_OBSERVATION RAW_OBSERVATION RAW_OBSERVATION RAW_OBSERVATION RAW_OBSERVATION RAW_OBSERVATION"
+      "evidenceDispositions": "RAW_OBSERVATION RAW_OBSERVATION RAW_OBSERVATION RAW_OBSERVATION RAW_OBSERVATION RAW_OBSERVATION RAW_OBSERVATION RAW_OBSERVATION RAW_OBSERVATION RAW_OBSERVATION"
     }
   ]
 }

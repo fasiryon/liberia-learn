@@ -1,7 +1,7 @@
 {
   "contractVersion": "lesson-experience/1.0.0",
   "id": "cv2-cand-g7-literacy-essay-structure-argument",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "title": "Understanding Essay Writing: Structure and Argument",
   "subject": "LITERACY",
   "grade": 7,
@@ -415,7 +415,7 @@
           {
             "id": "evidence",
             "label": "E: Evidence",
-            "description": "For example, when learners plant pepper and greens, they measure the beds, test which soil holds water best and record how fast each plant grows."
+            "description": "For example, in Musu's school garden, learners measure the beds, test which soil holds water best and record how fast each plant grows."
           },
           {
             "id": "explain",
@@ -465,7 +465,7 @@
         "ll-g7-lit-evidence-support"
       ],
       "content": {
-        "body": "Evidence is what makes a reader believe your reason. Four kinds are useful in school essays: **facts and figures** from a source you can name, **examples** of real events, the words of an **expert** (such as a teacher, nurse or agriculture officer), and your own **experience**.\n\nBefore you use evidence, test it with four questions. Never make up a fact or a number: if you use a figure, say where it comes from.",
+        "body": "Evidence is what makes a reader believe your reason. Four kinds are useful in school essays: **facts and figures** from a source you can name, **examples** of real events, the words of an **expert** (such as a teacher, nurse or agriculture officer), and your own **experience**.\n\nBefore you use evidence, test it with four questions. Never make up a fact or a number: if you use a figure, say where it comes from.\n\nIn this lesson, examples about **Musu's school** are made-up practice examples. They show what good evidence looks like, but they are not facts. In your own writing, use only evidence that is real.",
         "keyPoints": [
           "Is it true, and can the reader check it?",
           "Is it relevant: does it prove this reason?",
@@ -522,21 +522,21 @@
         "items": [
           {
             "id": "check-best-evidence",
-            "prompt": "Reason: a garden can add fresh vegetables to school meals. Which evidence supports this reason best?",
+            "prompt": "Reason: a garden can add fresh vegetables to school meals. Which evidence supports this reason best? (Musu's school is the made-up practice school from this lesson.)",
             "options": [
               "Gardens look beautiful when the flowers bloom.",
-              "Last term our agriculture club harvested greens and pepper that the school cook used in lunch for a week.",
+              "At Musu's school, the agriculture club's greens and pepper were used in school lunches for a week last term.",
               "Gardens are good, and everyone knows it.",
               "Many countries have gardens."
             ],
             "correctIndex": 1,
             "feedback": {
-              "correct": "Yes. It is specific and it proves this exact reason: the garden added vegetables to school meals.",
+              "correct": "Yes. It is specific and it proves this exact reason: the garden added vegetables to school meals. In your own essay, use a real example like this from your school or community.",
               "incorrect": "This may be true, but it is about beauty, not school meals. It does not prove this reason."
             },
             "optionFeedback": [
               "This may be true, but it is about beauty, not school meals. It does not prove this reason.",
-              "Yes. It is specific and it proves this exact reason: the garden added vegetables to school meals.",
+              "Yes. It is specific and it proves this exact reason: the garden added vegetables to school meals. In your own essay, use a real example like this from your school or community.",
               "This is an opinion repeated, not evidence. The reader cannot check it.",
               "This is too vague and says nothing about school meals."
             ]
@@ -620,7 +620,7 @@
           "A. So when learners grow food at school, everyone eats better, which is why every school needs a garden.",
           "B. Fresh vegetables from a school garden can make school meals healthier.",
           "C. This shows that the garden gives the kitchen food it would otherwise have to buy or go without.",
-          "D. For example, our school's greens and pepper were used in lunch for a whole week last term."
+          "D. For example, at Musu's school the garden's greens and pepper were used in lunch for a whole week last term."
         ]
       },
       "interaction": {
@@ -659,6 +659,66 @@
       }
     },
     {
+      "id": "plan-argument",
+      "type": "GUIDED_EXAMPLE",
+      "title": "Plan before you write",
+      "objectiveIds": [
+        "ll-g7-lit-argument-build",
+        "ll-g7-lit-evidence-support"
+      ],
+      "content": {
+        "body": "Good writers plan first. Choose one topic and decide what you think. Then **brainstorm**: for two minutes, list every reason you can think of without judging them. Next, choose your **two strongest** reasons. For each one, write one piece of **real** evidence and where it comes from: something you saw, a fact you can check, or the words of someone you can name. If you cannot find real evidence for a reason, choose a different reason.",
+        "keyPoints": [
+          "Topic 1: Every community should have a public library.",
+          "Topic 2: Schools should start each day with 20 minutes of reading.",
+          "Topic 3: Learners should help keep their school compound clean every week.",
+          "Plan: claim → reason 1 + evidence → reason 2 + evidence."
+        ]
+      },
+      "interaction": {
+        "kind": "FREE_RESPONSE",
+        "prompts": [
+          {
+            "id": "plan-brainstorm",
+            "prompt": "Brainstorm: list at least four reasons for your claim, one per line.",
+            "minLength": 60
+          },
+          {
+            "id": "plan-reasons",
+            "prompt": "Your plan: write your claim, then your two strongest reasons, each with one piece of real evidence and where it comes from.",
+            "minLength": 120
+          }
+        ]
+      },
+      "tools": {
+        "allowed": [
+          "dictionary"
+        ],
+        "prohibited": []
+      },
+      "accessibility": {
+        "textAlternative": "Choose one of three topics, brainstorm at least four reasons, then write a plan: a claim and two reasons, each with real evidence and its source. Two text boxes.",
+        "keyboardOperable": true,
+        "reducedMotionSafe": true,
+        "captionsRequired": false
+      },
+      "offline": {
+        "mode": "FULL",
+        "fallback": "The plan is kept on the device until it can be sent."
+      },
+      "evidence": {
+        "kind": "FORMATIVE_OBSERVATION",
+        "evidenceType": "CLASSWORK",
+        "objectiveIds": [
+          "ll-g7-lit-argument-build",
+          "ll-g7-lit-evidence-support"
+        ]
+      },
+      "completion": {
+        "kind": "ALL_RESPONSES_WRITTEN"
+      }
+    },
+    {
       "id": "write-argument",
       "type": "PRACTICE",
       "title": "Write your own thesis and PEEL paragraph",
@@ -667,11 +727,12 @@
         "ll-g7-lit-evidence-support"
       ],
       "content": {
-        "body": "Now write your own. Choose one topic, decide what you think, and write. Use only true evidence: an example you know, a fact you can check, or your own experience. Your teacher reads this writing; it is not marked by this lesson.",
+        "body": "Now write, using your plan. Use only real evidence: an example you know, a fact you can check, or your own experience. Do not borrow Musu's school examples: they are made up. Your teacher reads this writing; it is not marked by this lesson.",
         "keyPoints": [
-          "Topic 1: Every community should have a public library.",
-          "Topic 2: Schools should start each day with 20 minutes of reading.",
-          "Topic 3: Learners should help keep their school compound clean every week."
+          "Point: your first reason, as a topic sentence.",
+          "Evidence: one real, specific example or fact from your plan.",
+          "Explain: how the evidence proves the point.",
+          "Link: back to your claim."
         ]
       },
       "interaction": {
@@ -679,7 +740,7 @@
         "prompts": [
           {
             "id": "write-thesis",
-            "prompt": "Write a thesis statement for your topic: your claim and two reasons.",
+            "prompt": "Write the thesis statement from your plan: your claim and two reasons.",
             "minLength": 60
           },
           {
@@ -696,7 +757,7 @@
         "prohibited": []
       },
       "accessibility": {
-        "textAlternative": "Choose one of three topics, then write a thesis statement and one PEEL body paragraph in two text boxes.",
+        "textAlternative": "Using the plan from the previous scene, write a thesis statement and one PEEL body paragraph in two text boxes.",
         "keyboardOperable": true,
         "reducedMotionSafe": true,
         "captionsRequired": false
@@ -711,6 +772,118 @@
         "objectiveIds": [
           "ll-g7-lit-argument-build",
           "ll-g7-lit-evidence-support"
+        ]
+      },
+      "completion": {
+        "kind": "ALL_RESPONSES_WRITTEN"
+      }
+    },
+    {
+      "id": "write-conclusion",
+      "type": "PRACTICE",
+      "title": "Write a conclusion",
+      "objectiveIds": [
+        "ll-g7-lit-essay-structure"
+      ],
+      "content": {
+        "body": "Go back to the model plan for **Every school in Liberia should have a school garden**. Its body paragraphs argued two reasons (gardens teach farming and science skills, and they add fresh food to school meals) and answered one objection (garden work takes time from lessons). Write a conclusion of three or four sentences that does the three jobs of a conclusion. Do not copy the model plan's conclusion, and do not add a new reason.",
+        "keyPoints": [
+          "Restate the thesis in new words.",
+          "Sum up the two reasons (and, if you like, the answer to the other side).",
+          "End with a final thought or a call to action.",
+          "Check: no new reasons."
+        ]
+      },
+      "interaction": {
+        "kind": "FREE_RESPONSE",
+        "prompts": [
+          {
+            "id": "write-conclusion-garden",
+            "prompt": "Write your conclusion for the school-garden essay (three or four sentences).",
+            "minLength": 150
+          }
+        ]
+      },
+      "tools": {
+        "allowed": [
+          "dictionary"
+        ],
+        "prohibited": []
+      },
+      "accessibility": {
+        "textAlternative": "Write a three- or four-sentence conclusion for the school-garden essay: restate the thesis in new words, sum up its two reasons, end with a final thought, and add no new reason.",
+        "keyboardOperable": true,
+        "reducedMotionSafe": true,
+        "captionsRequired": false
+      },
+      "offline": {
+        "mode": "FULL",
+        "fallback": "Writing is kept on the device until it can be sent to the teacher."
+      },
+      "evidence": {
+        "kind": "FORMATIVE_OBSERVATION",
+        "evidenceType": "CLASSWORK",
+        "objectiveIds": [
+          "ll-g7-lit-essay-structure"
+        ]
+      },
+      "completion": {
+        "kind": "ALL_RESPONSES_WRITTEN"
+      }
+    },
+    {
+      "id": "peer-review",
+      "type": "PRACTICE",
+      "title": "Peer review: one strength, one next step",
+      "objectiveIds": [
+        "ll-g7-lit-evidence-support",
+        "ll-g7-lit-argument-build"
+      ],
+      "content": {
+        "body": "Swap your PEEL paragraph with a partner and read it twice. Check it against the four questions below, then give honest, kind feedback: one **strength** and one **next step**. Talk about the writing, not the writer. If you are working alone, review your own paragraph the same way.",
+        "keyPoints": [
+          "Point: does the topic sentence state a clear reason that matches the thesis?",
+          "Evidence: is it real and specific, and is its source named?",
+          "Explain: does a sentence show how the evidence proves the point?",
+          "Link: does the last sentence connect back to the claim?",
+          "Sentence starters: 'One strength is … because …' and 'Next time, try …'"
+        ]
+      },
+      "interaction": {
+        "kind": "FREE_RESPONSE",
+        "prompts": [
+          {
+            "id": "peer-strength",
+            "prompt": "Write one strength of the paragraph you reviewed. Name the question it meets and quote the words that show it.",
+            "minLength": 60
+          },
+          {
+            "id": "peer-next-step",
+            "prompt": "Write one next step: name a question the paragraph does not yet meet and suggest one change.",
+            "minLength": 60
+          }
+        ]
+      },
+      "tools": {
+        "allowed": [],
+        "prohibited": []
+      },
+      "accessibility": {
+        "textAlternative": "Swap PEEL paragraphs with a partner (or review your own), check the paragraph against four questions on point, evidence, explanation and link, then write one strength and one next step.",
+        "keyboardOperable": true,
+        "reducedMotionSafe": true,
+        "captionsRequired": false
+      },
+      "offline": {
+        "mode": "FULL",
+        "fallback": "A classroom activity with paper paragraphs; answers are kept on the device until they can be sent."
+      },
+      "evidence": {
+        "kind": "FORMATIVE_OBSERVATION",
+        "evidenceType": "CLASSWORK",
+        "objectiveIds": [
+          "ll-g7-lit-evidence-support",
+          "ll-g7-lit-argument-build"
         ]
       },
       "completion": {
@@ -733,6 +906,7 @@
           "A thesis is a claim someone could disagree with, plus the reasons you will argue.",
           "Each body paragraph follows PEEL: Point, Evidence, Explain, Link.",
           "Strong evidence is true, relevant and specific, and you can say where it comes from.",
+          "Plan before you write: claim, two reasons, and real evidence for each.",
           "Answer the other side; do not add new reasons in the conclusion."
         ]
       },
@@ -776,7 +950,7 @@
         "kind": "ASSESSMENT_HANDOFF",
         "assessment": {
           "assessmentId": "cv2-cand-g7-literacy-essay-structure-argument--g7-essay-exit-ticket",
-          "assessmentVersion": "0.1.0",
+          "assessmentVersion": "0.2.0",
           "player": "ASSESSMENT_PLAYER_V2",
           "scoring": "SERVER_AUTHORITY",
           "objectiveIds": [

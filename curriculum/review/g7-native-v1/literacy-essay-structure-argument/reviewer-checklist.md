@@ -1,6 +1,6 @@
 # Reviewer checklist — Understanding Essay Writing: Structure and Argument
 
-Candidate `cv2-cand-g7-literacy-essay-structure-argument` v0.1.0, candidate hash `e875feab4d8d9742f421ba98c4c8c59f753e613a3d67526a77409cdd6019f786`.
+Candidate `cv2-cand-g7-literacy-essay-structure-argument` v0.2.0, candidate hash `80b9592641effbdae8f5868323289873a8c1a6e547676241e09ab8ee5db060b1`.
 
 | Field | Value |
 | --- | --- |
@@ -38,7 +38,7 @@ A qualified reviewer completes this list through governed curriculum review. Tic
 ## Legacy comparison
 
 - [ ] Confirm the section-by-section comparison with legacy revision `cmss94dmc03b7vo54ryf3hqk1` in legacy-comparison.md (or correct it).
-- [ ] Decide every recommendation: R-L1, R-L2, R-L3, R-L4, R-L6, R-L8 (not applied), and confirm the applied ones (R-L5, R-L7).
+- [ ] Decide every recommendation: R-L6, R-L8 (not applied), and confirm the applied ones (R-L1, R-L2, R-L3, R-L4, R-L5, R-L7).
 - [ ] Confirm that no legacy concern (L-…) is re-introduced, and decide each candidate concern (C-…).
 
 ## Curriculum-mapping decisions
@@ -52,6 +52,7 @@ Each decision is recorded through governed curriculum review. Until every box is
 - [ ] Grade scope: the MOE places argumentative composition ("develop and defend a point of view") in Grade 9 (English 7-9 p.32). Choose one: keep as a Grade 7 introduction, rescope to Grade 7 paragraph writing, or move the lesson to Grade 8/9.
 - [ ] Source structuring defect: the Grade 7 paragraph-writing objectives (English 7-9 p.4) are filed as ACTIVITY items under period I. Request correction through the source-structuring process (needed before any Grade 7 writing objective can bind).
 - [ ] Alignment decision A-L1: choose an option in legacy-comparison.md (evidence and consequences listed there).
+- [ ] Prepared alternative for A-L1 option A ("Writing a persuasive paragraph (Grade 7 paragraph-writing scope)") is PREPARED, NOT APPLIED: adopt it, adapt it or reject it. The candidate keeps its current objectives and grade scope until this is decided.
 
 ### Objective-by-objective mapping
 
@@ -89,7 +90,7 @@ Each decision is recorded through governed curriculum review. Until every box is
 
 ## Reviewer sign-off
 
-Valid only when recorded through governed curriculum review (HUMAN_REVIEW) against candidate hash `e875feab4d8d9742f421ba98c4c8c59f753e613a3d67526a77409cdd6019f786`. Filling in this table records nothing.
+Valid only when recorded through governed curriculum review (HUMAN_REVIEW) against candidate hash `80b9592641effbdae8f5868323289873a8c1a6e547676241e09ab8ee5db060b1`. Filling in this table records nothing.
 
 | Field | Entry |
 | --- | --- |

@@ -15,7 +15,8 @@
 | Live row equals revision at capture | yes |
 | Extract | `artifacts/g7-native-curriculum-v1/legacy/math-number-sense-place-value.json` (sha256 `639b89b918f6409f5caa2083186def70b3652a6f8f39129609b2e7b494c79357`) |
 | Captured | 2026-10-15T19:09:16.876Z, transaction_read_only = on; lesson content only, no learner or user data |
-| Candidate compared | `cv2-cand-g7-math-number-sense-place-value` v0.1.0, hash `5817d80911154bceb61fe117e0916ad64d0b7ae5c6afd2a2c6028b9cdc972ffb` |
+| Candidate first compared | hash `5817d80911154bceb61fe117e0916ad64d0b7ae5c6afd2a2c6028b9cdc972ffb` at commit `4fdd897c` (the production evidence above is unchanged since) |
+| Candidate now | `cv2-cand-g7-math-number-sense-place-value` v0.2.0, hash `3f612d907f52f5953d879476a627fde8e9a1c5b3d30d22e171a42a8ccec80c0c`; recommendations marked "applied" below are in this revision |
 
 ## The legacy lesson
 
@@ -35,14 +36,14 @@ Disposition: PRESERVED (kept in substance) · IMPROVED (kept, made more precise 
 | Objective | "Students in Grade 7 will explain and apply number sense and place value ideas using age-appropriate math tasks." | `objectives` | IMPROVED | One unmeasurable objective became three measurable ones (read/write, digit value, compare) with a success check on 3,462,105.68. |
 | Teacher Explanation | Instruction to the teacher to introduce the concept with modelling, Liberia-relevant examples, vocabulary and a check; no content. | `chart`, `ten-times` | REPLACED | The candidate supplies the explanation itself: the millions-to-thousandths chart, periods, zero as a place holder, and the ×10 / ÷10 relationship. |
 | Worked Example | "Model one complete math example connected to number sense and place value…" (placeholder; no example). | `worked-example`, `compare-strategy` | REPLACED | Two complete worked examples: value, expanded and word form of L$2,350,480 with a check by adding; ordering 0.5, 0.45, 0.405 and 4,099,999 vs 4,100,000. |
-| Guided Practice | One shared and one partner task "with teacher prompts" (no tasks given). | `build-number`, `guided-decimals` | REPLACED | Concrete guided tasks with feedback. Pair work is not specified in the candidate (see R-M1). |
+| Guided Practice | One shared and one partner task "with teacher prompts" (no tasks given). | `build-number`, `counter-chart`, `guided-decimals` | REPLACED | Concrete guided tasks with feedback. The legacy partner task is now the counter-chart pair activity (R-M1). |
 | Independent Practice | Individual work, then "explain one answer in writing or orally" (no items). | `practice`, `reflect` | REPLACED | Five independent items with feedback. The legacy "explain one answer" intent is kept in the written place-versus-value reflection. |
 | Assessment | "Use a short exit task with two checks: one recall item and one application item." No items exist. | `exit-ticket` | REPLACED | Six candidate exit items (reviewer only), each mapped to an objective and misconception and machine-verified. See the assessment comparison. |
 | Remediation | Re-teach with simpler examples, sentence frames and one scaffolded task (generic). | `misconceptions`, `warm-up` | IMPROVED | Four named misconceptions with targeted responses and per-option feedback; the warm-up diagnoses Grade 4 gaps before teaching. |
 | Extension | Ask confident learners to solve a harder version or justify reasoning (generic). | — | OMITTED | The candidate has no extension task. See R-M3. |
-| Guardian Support | Learner explains the main idea at home and does a short task with household materials (generic). | — | OMITTED | The candidate has no home connection. See R-M2. |
+| Guardian Support | Learner explains the main idea at home and does a short task with household materials (generic). | `home-practice` | IMPROVED | Restored as a concrete, device-free home task: find a large number and a decimal, read them to a family member and name digit values (R-M2). |
 | Metadata | Grade 7 MATH unit "Number Sense and Place Value" lesson "Number Sense and Place Value: Foundations". | — | IMPROVED | Title revised to "Millions to Thousandths" (see the revision ledger); unit placement is a reviewer decision. |
-| Lab: Understanding Place Value with Local Materials | Leaves = tens, stones = ones, cassava = hundreds; build and record a number such as 123; analysis questions on 345. | `build-number` | REORGANIZED | The candidate keeps the local-counter idea only as a fallback line ("stones or bottle caps as counters on your paper chart"). The legacy token values are not restored (L-M3); the group activity is a restoration option (R-M1). |
+| Lab: Understanding Place Value with Local Materials | Leaves = tens, stones = ones, cassava = hundreds; build and record a number such as 123; analysis questions on 345. | `build-number`, `counter-chart` | IMPROVED | Restored as the counter-chart pair activity: identical counters in labelled columns from millions to thousandths, with a ten-for-one exchange (R-M1). The legacy token values and the hundreds-only range are not restored (L-M3, L-M4). |
 | Standards alignment (LR-MATH-G7_9-04) | Keyword alignment, confidence low: "Apply the Pythagorean theorem and basic trigonometric ratios". | — | NOT_RESTORED | Wrong topic; the candidate records exact MOE relationships instead. |
 
 New candidate material with no legacy counterpart:
@@ -84,8 +85,8 @@ Not restored unless a reviewer decides otherwise.
 
 | Id | Severity | Category | Where | Finding | Action |
 | --- | --- | --- | --- | --- | --- |
-| C-M1 | HIGH | ALIGNMENT | Objectives, chart, worked-example, practice, exit items 1, 3, 6 | No MOE grade in the repository source covers whole numbers in the millions: Grade 4 stops at hundred thousand (Math 1-6 p.38), and the word "million" does not occur anywhere in the extracted Math 1-6 or Math 7-9 text. The millions range is a LiberiaLearn extension. | Curriculum authority decides (alignment decision A-M1). |
-| C-M2 | MEDIUM | PEDAGOGICAL | Whole lesson | No group hands-on activity and no home connection. The legacy lesson had both (generic, but the intent is sound for classrooms with few devices). | See R-M1 and R-M2. |
+| C-M1 | HIGH | ALIGNMENT | Objectives, chart, worked-example, practice, exit items 1, 3, 6 | No MOE grade in the repository source covers whole numbers in the millions: Grade 4 stops at hundred thousand (Math 1-6 p.38), and the word "million" does not occur anywhere in the extracted Math 1-6 or Math 7-9 text. The millions range is a LiberiaLearn extension. | Recorded as proposed extension ext-g7-math-whole-numbers-millions (blocking gap SCOPE_EXTENSION_UNAPPROVED), pending curriculum-owner approval (A-M1). |
+| C-M2 | MEDIUM | PEDAGOGICAL | Whole lesson | No group hands-on activity and no home connection. The legacy lesson had both (generic, but the intent is sound for classrooms with few devices). | Addressed: counter-chart (R-M1) and home-practice (R-M2), applied. |
 | C-M3 | LOW | LINGUISTIC | intro, worked-example | Writes Liberian dollars as L$; the legacy essay lesson and other LiberiaLearn content use LD$. Both are in use in Liberia. | Reviewer chooses one convention (R-M4). |
 | C-M4 | LOW | FACTUAL | intro | A market trader weighing 2.375 kg of rice assumes a scale that reads grams. Many market scales do not. | Reviewer confirms the context is realistic or substitutes one (for example a shop's digital scale). |
 
@@ -93,8 +94,8 @@ Not restored unless a reviewer decides otherwise.
 
 | Id | Kind | Scenes | Recommendation | Rationale | Status | Reviewer decision |
 | --- | --- | --- | --- | --- | --- | --- |
-| R-M1 | RESTORE_ADAPTED | `build-number` | Restore the legacy local-materials activity as an optional classroom (no-device) activity, adapted: pairs draw a chart from millions to thousandths and place identical counters (stones or bottle caps) in the columns to build 3,406,029.508; ten counters in a column are exchanged for one counter in the next column to the left. | Keeps the legacy's hands-on, offline intent and pair work, fixes L-M3, and reaches the Grade 7 range. | reviewer decides | ACCEPT / MODIFY / REJECT: |
-| R-M2 | RESTORE_ADAPTED | `reflect` | Add a home connection: the learner finds one large number (a price or a figure heard on the radio) and one decimal measurement, reads both to a family member and names the value of each digit. | Restores the legacy guardian-support intent with a concrete task. | reviewer decides | ACCEPT / MODIFY / REJECT: |
+| R-M1 | RESTORE_ADAPTED | `build-number`, `counter-chart` | Restore the legacy local-materials activity as a no-device pair activity, adapted: pairs draw a chart from millions to thousandths and place identical counters (stones, bottle caps or seeds) in the columns; ten counters in a column are exchanged for one counter in the next column to the left. Applied as scene counter-chart (exchange 14 hundredths, build 2,050,316.47, partners build and read each other's numbers). | Keeps the legacy's hands-on, offline intent and pair work, fixes L-M3, and reaches the Grade 7 range. | applied in this package | ACCEPT / MODIFY / REJECT: |
+| R-M2 | RESTORE_ADAPTED | `home-practice` | Add a home connection: the learner finds one large number (a price, a calendar or a figure heard on the radio) and one decimal measurement, writes them in a chart on paper or in the sand, reads both to a family member and names the value of any digit they point to. Applied as scene home-practice (no device, no printing, nothing to buy; works with a family member who does not read). | Restores the legacy guardian-support intent with a concrete, low-resource task. | applied in this package | ACCEPT / MODIFY / REJECT: |
 | R-M3 | REVIEWER_DECISION | `practice` | Decide whether to add an extension task, for example: using the digits 0, 3, 5, 7 and 9 once each with three decimal places, write the greatest and the least number possible and explain why. | The legacy named an extension but gave none; the candidate has none. | reviewer decides | ACCEPT / MODIFY / REJECT: |
 | R-M4 | REVIEWER_DECISION | `intro`, `worked-example` | Choose L$ or LD$ for Liberian dollars and apply it across Grade 7 content. | C-M3. | reviewer decides | ACCEPT / MODIFY / REJECT: |
 | R-M5 | DO_NOT_RESTORE | — | Do not restore the LR-MATH-G7_9-04 alignment, the cassava/leaf/stone token values, the hundreds-only range, or "units" terminology. | L-M2, L-M3, L-M4, L-M6. | reviewer decides | ACCEPT / MODIFY / REJECT: |
@@ -122,7 +123,7 @@ Author's recommendation: A, placed as a prerequisite to Math 7-9 P3 rather than 
 
 ## Reviewer sign-off
 
-Sign-off is valid only when recorded through governed curriculum review (HUMAN_REVIEW) against candidate hash `5817d80911154bceb61fe117e0916ad64d0b7ae5c6afd2a2c6028b9cdc972ffb` and legacy revision `cmss8t4hz00unvo54epnfst66`. Filling in this file records nothing.
+Sign-off is valid only when recorded through governed curriculum review (HUMAN_REVIEW) against candidate hash `3f612d907f52f5953d879476a627fde8e9a1c5b3d30d22e171a42a8ccec80c0c` and legacy revision `cmss8t4hz00unvo54epnfst66`. Filling in this file records nothing.
 
 - [ ] I compared the candidate with the legacy revision and confirm (or have corrected) the section matrix above.
 - [ ] I recorded a decision on every recommendation.

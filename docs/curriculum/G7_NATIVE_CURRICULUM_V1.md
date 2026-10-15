@@ -55,6 +55,29 @@ Main findings:
 
 To refresh the evidence (read-only, needs `DATABASE_URL`): `npx tsx scripts/extract-g7-legacy-revisions.ts`, then regenerate the package.
 
+### Instructional refinement V2 (candidate v0.2.0)
+
+The candidates were revised to apply the comparison's recommendations. The production extracts and the comparison baseline (candidate hashes at commit `4fdd897c`, recorded in `G7_LEGACY_COMPARISON_BASELINE`) are unchanged. Each `legacy-comparison.md` shows both the baseline hash and the current hash.
+
+| Lesson | Change | Recommendation |
+| --- | --- | --- |
+| Math | New `counter-chart` (after `build-number`): pairs use identical counters in labelled columns from millions to thousandths, exchange ten for one, build 2,050,316.47 and read each other's numbers. Tally marks replace counters when none are available. | R-M1 |
+| Math | New `home-practice` (last scene, REFLECTION): a device-free task to find a large number and a decimal, chart them, and explain digit values to a family member. It works even when the family member does not read. | R-M2 |
+| Math | The millions range is recorded as `ext-g7-math-whole-numbers-millions` (PROPOSED_LIBERIALEARN_EXTENSION, PENDING_CURRICULUM_OWNER). The new blocking gap `SCOPE_EXTENSION_UNAPPROVED` lists the scenes and exit items that use it, and its fallback if it is not approved. | C-M1, A-M1 |
+| Literacy | Illustrative evidence is attributed to Musu's school, which the `evidence` scene says is a made-up practice school (not facts). This changes `peel`, `evidence`, `evidence-check`, `order-paragraph` and `write-argument`. Exit item `g7-essay-exit-3` moves to `candidate-0.2.0`. | R-L1 |
+| Literacy | New `plan-argument` before `write-argument`: brainstorm, choose two reasons, and attach real evidence and its source to each. `write-argument` now writes from the plan. | R-L2 |
+| Literacy | New `write-conclusion` on the model garden plan, which must add no new reasons. | R-L3 |
+| Literacy | New `peer-review`: four PEEL questions, one strength and one next step; learners working alone review their own paragraph. | R-L4 |
+| Literacy | A paragraph-centred alternative (A-L1 option A) is **prepared, not applied**. It covers objectives, the impact on each scene and each exit item, and the binding path, and it is listed in `legacy-comparison.md`. The candidate keeps its objectives and grade scope until the authority decides. | A-L1 |
+
+The existing decimal, comparison and number-building scenes are unchanged. The browser walkthrough at 1440 px and 390 px gave these results:
+- 16/16 math scenes and 17/17 literacy scenes completed;
+- Continue was gated on every interactive scene;
+- no horizontal overflow and zero console errors;
+- every finish recorded RAW_OBSERVATION evidence only.
+
+Captures are in `artifacts/g7-native-curriculum-v1/screenshots/`, with `flow.json`.
+
 ## Learner and reviewer separation
 
 - `g7Native.ts` (learner-safe): registry, objectives, provenance, validation, learner projection. It never imports reviewer material.
@@ -85,9 +108,9 @@ LAB_REVIEW_HARNESS=1 npx next dev -p 3197
 node e2e/g7-native/capture-g7-native.cjs http://localhost:3197 artifacts/g7-native-curriculum-v1
 ```
 
-Browser evidence is in `artifacts/g7-native-curriculum-v1/`: 62 screenshots and `flow.json`. Both lessons were walked end to end in Lesson Player V2 at 1440 px and 390 px. Results:
+Browser evidence is in `artifacts/g7-native-curriculum-v1/`: 72 screenshots and `flow.json` (recaptured for candidate v0.2.0). Both lessons were walked end to end in Lesson Player V2 at 1440 px and 390 px. Results:
 
-- all 14 scenes of each lesson completed; every interactive scene kept Continue disabled until the learner acted;
+- all scenes completed (16 math, 17 literacy); every interactive scene kept Continue disabled until the learner acted;
 - all 8 diagrams rendered;
 - no horizontal overflow at 390 px (also checked at 320 px);
 - zero console errors;

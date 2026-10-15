@@ -43,8 +43,12 @@
   },
   "candidate": {
     "lessonId": "cv2-cand-g7-math-number-sense-place-value",
-    "version": "0.1.0",
-    "sha256": "5817d80911154bceb61fe117e0916ad64d0b7ae5c6afd2a2c6028b9cdc972ffb"
+    "version": "0.2.0",
+    "sha256": "3f612d907f52f5953d879476a627fde8e9a1c5b3d30d22e171a42a8ccec80c0c",
+    "firstComparedAgainst": {
+      "commit": "4fdd897cd6263d9f651dbc141e36869c0b9503f9",
+      "candidateSha256": "5817d80911154bceb61fe117e0916ad64d0b7ae5c6afd2a2c6028b9cdc972ffb"
+    }
   },
   "comparison": {
     "legacySummary": [
@@ -90,10 +94,11 @@
         "legacyContent": "One shared and one partner task \"with teacher prompts\" (no tasks given).",
         "candidateScenes": [
           "build-number",
+          "counter-chart",
           "guided-decimals"
         ],
         "disposition": "REPLACED",
-        "note": "Concrete guided tasks with feedback. Pair work is not specified in the candidate (see R-M1)."
+        "note": "Concrete guided tasks with feedback. The legacy partner task is now the counter-chart pair activity (R-M1)."
       },
       {
         "legacySection": "Independent Practice",
@@ -134,9 +139,11 @@
       {
         "legacySection": "Guardian Support",
         "legacyContent": "Learner explains the main idea at home and does a short task with household materials (generic).",
-        "candidateScenes": [],
-        "disposition": "OMITTED",
-        "note": "The candidate has no home connection. See R-M2."
+        "candidateScenes": [
+          "home-practice"
+        ],
+        "disposition": "IMPROVED",
+        "note": "Restored as a concrete, device-free home task: find a large number and a decimal, read them to a family member and name digit values (R-M2)."
       },
       {
         "legacySection": "Metadata",
@@ -149,10 +156,11 @@
         "legacySection": "Lab: Understanding Place Value with Local Materials",
         "legacyContent": "Leaves = tens, stones = ones, cassava = hundreds; build and record a number such as 123; analysis questions on 345.",
         "candidateScenes": [
-          "build-number"
+          "build-number",
+          "counter-chart"
         ],
-        "disposition": "REORGANIZED",
-        "note": "The candidate keeps the local-counter idea only as a fallback line (\"stones or bottle caps as counters on your paper chart\"). The legacy token values are not restored (L-M3); the group activity is a restoration option (R-M1)."
+        "disposition": "IMPROVED",
+        "note": "Restored as the counter-chart pair activity: identical counters in labelled columns from millions to thousandths, with a ten-for-one exchange (R-M1). The legacy token values and the hundreds-only range are not restored (L-M3, L-M4)."
       },
       {
         "legacySection": "Standards alignment (LR-MATH-G7_9-04)",
@@ -282,7 +290,7 @@
         "category": "ALIGNMENT",
         "where": "Objectives, chart, worked-example, practice, exit items 1, 3, 6",
         "finding": "No MOE grade in the repository source covers whole numbers in the millions: Grade 4 stops at hundred thousand (Math 1-6 p.38), and the word \"million\" does not occur anywhere in the extracted Math 1-6 or Math 7-9 text. The millions range is a LiberiaLearn extension.",
-        "action": "Curriculum authority decides (alignment decision A-M1)."
+        "action": "Recorded as proposed extension ext-g7-math-whole-numbers-millions (blocking gap SCOPE_EXTENSION_UNAPPROVED), pending curriculum-owner approval (A-M1)."
       },
       {
         "id": "C-M2",
@@ -290,7 +298,7 @@
         "category": "PEDAGOGICAL",
         "where": "Whole lesson",
         "finding": "No group hands-on activity and no home connection. The legacy lesson had both (generic, but the intent is sound for classrooms with few devices).",
-        "action": "See R-M1 and R-M2."
+        "action": "Addressed: counter-chart (R-M1) and home-practice (R-M2), applied."
       },
       {
         "id": "C-M3",
@@ -314,21 +322,22 @@
         "id": "R-M1",
         "kind": "RESTORE_ADAPTED",
         "scenes": [
-          "build-number"
+          "build-number",
+          "counter-chart"
         ],
-        "recommendation": "Restore the legacy local-materials activity as an optional classroom (no-device) activity, adapted: pairs draw a chart from millions to thousandths and place identical counters (stones or bottle caps) in the columns to build 3,406,029.508; ten counters in a column are exchanged for one counter in the next column to the left.",
+        "recommendation": "Restore the legacy local-materials activity as a no-device pair activity, adapted: pairs draw a chart from millions to thousandths and place identical counters (stones, bottle caps or seeds) in the columns; ten counters in a column are exchanged for one counter in the next column to the left. Applied as scene counter-chart (exchange 14 hundredths, build 2,050,316.47, partners build and read each other's numbers).",
         "rationale": "Keeps the legacy's hands-on, offline intent and pair work, fixes L-M3, and reaches the Grade 7 range.",
-        "applied": false
+        "applied": true
       },
       {
         "id": "R-M2",
         "kind": "RESTORE_ADAPTED",
         "scenes": [
-          "reflect"
+          "home-practice"
         ],
-        "recommendation": "Add a home connection: the learner finds one large number (a price or a figure heard on the radio) and one decimal measurement, reads both to a family member and names the value of each digit.",
-        "rationale": "Restores the legacy guardian-support intent with a concrete task.",
-        "applied": false
+        "recommendation": "Add a home connection: the learner finds one large number (a price, a calendar or a figure heard on the radio) and one decimal measurement, writes them in a chart on paper or in the sand, reads both to a family member and names the value of any digit they point to. Applied as scene home-practice (no device, no printing, nothing to buy; works with a family member who does not read).",
+        "rationale": "Restores the legacy guardian-support intent with a concrete, low-resource task.",
+        "applied": true
       },
       {
         "id": "R-M3",

@@ -1,11 +1,11 @@
 {
   "contractVersion": "candidate-lesson-v2/1.0.0",
   "title": "Number Sense and Place Value: Millions to Thousandths",
-  "estimatedMinutes": 45,
+  "estimatedMinutes": 55,
   "ageBand": "JUNIOR_SECONDARY",
   "pedagogy": {
     "primaryStrategy": "CONCRETE_PICTORIAL_ABSTRACT",
-    "rationale": "Learners meet place value through a chart and counters (concrete/pictorial) before reading, writing and comparing numbers symbolically. Grade 7 extends the whole-number chart learners know to the thousandths, which the MOE Grade 7 decimals, percents and fractions period depends on."
+    "rationale": "Learners meet place value through a chart and counters (concrete/pictorial) before reading, writing and comparing numbers symbolically. Grade 7 extends the whole-number chart learners know to the thousandths, which the MOE Grade 7 decimals, percents and fractions period depends on. A partner activity with identical counters on a paper chart (ten counters exchanged for one in the next place) and a home task work without devices."
   },
   "prerequisiteAssumptions": [
     "Can read and write whole numbers to at least 100,000 (MOE Grade 4 numeration).",
@@ -554,6 +554,98 @@
       "dependsOn": [
         "chart",
         "ten-times"
+      ]
+    },
+    {
+      "id": "counter-chart",
+      "type": "GUIDED_EXAMPLE",
+      "title": "Build it with counters: ten for one",
+      "purpose": "GUIDED_PRACTICE",
+      "objectiveIds": [
+        "ll-g7-math-place-value-digit-value",
+        "ll-g7-math-place-value-read-write"
+      ],
+      "learnerAction": "With a partner, build numbers with identical counters on a paper chart and exchange ten counters for one.",
+      "content": {
+        "body": "Work with a partner. Draw a place-value chart in your exercise book with ten labelled columns, from **millions** to **thousandths**, and mark the decimal point between the ones and the tenths. Use counters that are all the same, such as small stones, bottle caps or seeds. A counter is worth one of the place it sits in: the **column** decides the value, not the counter.\n\nWhen a column holds **ten** counters, take them away and put **one** counter in the next column to the left. The number does not change, because ten of one place make one of the next.",
+        "keyPoints": [
+          "Put 14 counters in the hundredths column. Exchange ten of them for 1 counter in the tenths column. Read the number: 0.14.",
+          "Clear the chart. Build 2,050,316.47, one column at a time. Leave empty columns empty, but write 0 for them when you record the number.",
+          "Swap roles: one partner builds a number, the other writes it in standard form and says the value of each digit.",
+          "No counters? Draw tally marks in the columns instead."
+        ]
+      },
+      "interaction": {
+        "kind": "FREE_RESPONSE",
+        "prompts": [
+          {
+            "id": "counter-exchange",
+            "prompt": "Step 1: how many counters were in the hundredths column, what did ten of them become, and did the number change? Explain why.",
+            "minLength": 40
+          },
+          {
+            "id": "counter-partner-number",
+            "prompt": "Step 3: write the number your partner built in standard form, then give the value of its first digit.",
+            "minLength": 10
+          }
+        ]
+      },
+      "expectedObservation": "Step 1: 14 hundredths become 1 tenth and 4 hundredths; the number stays 0.14 because 10 hundredths = 1 tenth. Step 3: the number is written with commas between periods and zeros in empty places, and the first digit's value is named (for example 2,000,000). Watch for counters read without their column (14 counters read as 14).",
+      "tools": {
+        "requested": [],
+        "prohibited": []
+      },
+      "hints": [
+        "A counter's value comes from its column.",
+        "Ten counters in one column make one counter in the column to its left."
+      ],
+      "feedback": {
+        "onSuccess": "You showed why each place is worth ten times the place to its right.",
+        "onStruggle": "Look at one column at a time and say its name: 4 hundredths, 1 tenth."
+      },
+      "misconceptionIds": [
+        "mc-digit-not-value",
+        "mc-zero-placeholder"
+      ],
+      "evidence": {
+        "kind": "FORMATIVE_OBSERVATION",
+        "evidenceType": "CLASSWORK",
+        "responses": [
+          {
+            "responseKey": "counter-exchange",
+            "objectiveId": "ll-g7-math-place-value-digit-value",
+            "responseType": "TEXT",
+            "scaffoldLevel": "PARTIAL",
+            "misconceptionId": "mc-digit-not-value"
+          },
+          {
+            "responseKey": "counter-partner-number",
+            "objectiveId": "ll-g7-math-place-value-read-write",
+            "responseType": "TEXT",
+            "scaffoldLevel": "PARTIAL",
+            "misconceptionId": "mc-zero-placeholder"
+          }
+        ]
+      },
+      "accessibility": {
+        "textAlternative": "Partner activity with a paper place-value chart from millions to thousandths and identical counters: exchange ten counters in one column for one in the next column to the left, build 2,050,316.47, then build and read each other's numbers. Two written answers.",
+        "keyboardPath": "Tab to each control, press Enter or Space to choose, then use Continue.",
+        "reducedMotion": "NOT_APPLICABLE",
+        "nonPointerAlternative": "Tally marks can replace counters, or a partner places the counters while the learner says where they go. Answers are typed or written."
+      },
+      "offline": {
+        "mode": "FULL_OFFLINE",
+        "note": "Needs no device: paper, counters and the exercise book. Written answers are kept on the device until they can be sent."
+      },
+      "completion": "ALL_RESPONSES_WRITTEN",
+      "pedagogy": {
+        "strategy": "CONCRETE_PICTORIAL_ABSTRACT",
+        "representation": "CONCRETE",
+        "scaffoldLevel": "PARTIAL"
+      },
+      "dependsOn": [
+        "ten-times",
+        "build-number"
       ]
     },
     {
@@ -1297,6 +1389,54 @@
         "strategy": "REFLECTION",
         "representation": "VERBAL",
         "scaffoldLevel": "NONE"
+      }
+    },
+    {
+      "id": "home-practice",
+      "type": "REFLECTION",
+      "title": "At home: numbers around you",
+      "purpose": "APPLY",
+      "objectiveIds": [
+        "ll-g7-math-place-value-read-write",
+        "ll-g7-math-place-value-digit-value"
+      ],
+      "learnerAction": "Find two numbers at home or in your community and explain their digits to a family member.",
+      "content": {
+        "body": "Place value is all around you. This task needs no device, no printing and nothing to buy. You can do it with anyone at home, even someone who does not read: you do the reading and the explaining.",
+        "keyPoints": [
+          "Find one large number: a price on a sign or receipt, a number on a calendar or a rice bag, or an amount you hear on the radio.",
+          "Find one decimal: a measurement on a package (such as 0.5 kg or 1.25 litres). If you cannot find one, make one with three digits after the point.",
+          "Draw a place-value chart on paper or in the sand. Write both numbers in it and read them aloud.",
+          "Ask your family member to point to any digit. Say its place and its value.",
+          "Bring one of your numbers to class with the value of one of its digits."
+        ]
+      },
+      "interaction": {
+        "kind": "NONE"
+      },
+      "tools": {
+        "requested": [],
+        "prohibited": []
+      },
+      "hints": [],
+      "misconceptionIds": [],
+      "evidence": {
+        "kind": "NONE"
+      },
+      "accessibility": {
+        "textAlternative": "Home task with no device: find a large number and a decimal at home or in the community, write them in a place-value chart, read them aloud to a family member and say the value of any digit they point to.",
+        "keyboardPath": "Tab to each control, press Enter or Space to choose, then use Continue.",
+        "reducedMotion": "NOT_APPLICABLE"
+      },
+      "offline": {
+        "mode": "FULL_OFFLINE",
+        "note": "A paper task done away from the device; the steps are part of the saved lesson."
+      },
+      "completion": "VIEWED",
+      "pedagogy": {
+        "strategy": "GUIDED_TO_INDEPENDENT",
+        "representation": "MIXED",
+        "scaffoldLevel": "MINIMAL"
       }
     }
   ],

@@ -30,19 +30,19 @@ Which sentence is an arguable thesis statement?
 - Machine verification: none — reviewer judgement
 - Item hash: `010c6684dcf204fc73e209d1bc0032672e755d861be3d628a458612211056e12`
 
-## 3. `g7-essay-exit-3@candidate-0.1.0` → `ll-g7-lit-evidence-support`
+## 3. `g7-essay-exit-3@candidate-0.2.0` → `ll-g7-lit-evidence-support`
 
-Reason: reading every day builds vocabulary. Which evidence supports this reason best?
+Reason: reading every day builds vocabulary. Which evidence supports this reason best? (Musu's school is the made-up practice school from the lesson.)
 
 - Reading is fun. _(catches `mc-opinion-as-evidence`)_
-- **[key]** After our class read for 20 minutes a day for one term, many of us used new words from the books in our own writing.
+- **[key]** Musu's class read for 20 minutes a day for one term, and many learners then used new words from the books in their own writing.
 - Books have many pages. _(catches `mc-irrelevant-evidence`)_
 - Everyone should read. _(catches `mc-opinion-as-evidence`)_
 
 - Hint (released after scoring): Which option is specific and proves this exact reason?
-- Worked example (released after scoring): The class example is specific and shows vocabulary growing. The others are opinions or unrelated facts.
+- Worked example (released after scoring): The example from Musu's class is specific and shows vocabulary growing. The others are opinions or unrelated facts. In real writing, the example must come from a real class or a source you can name.
 - Machine verification: none — reviewer judgement
-- Item hash: `45c74298af90d766cb95e2386cc439aaef1c9c487d0f9e6064ac5e59b1e57a31`
+- Item hash: `94d0d1c399e54617e4ec5657954b894617b968c21acd82aa9957f925a5192f26`
 
 ## 4. `g7-essay-exit-4@candidate-0.1.0` → `ll-g7-lit-essay-structure`
 
@@ -109,13 +109,13 @@ A qualified Grade 7 English reviewer checks every item before any release can bi
 6. Evidence context (DIAGNOSTIC or PRACTICE) and the no-calculator / no-dictionary tool policy are right for an exit ticket.
 7. The legacy lesson had no keyed items to carry over (see legacy-comparison.md); nothing here is copied from it.
 
-Open recommendations that would change exit items (see legacy-comparison.md): R-L1, R-L6. Decide them before approving the affected items.
+Open recommendations that would change exit items (see legacy-comparison.md): R-L6. Decide them before approving the affected items.
 
 | Item | Key correct | Distractors sound | Objective / misconception mapping | Language and context | Decision (APPROVE / REVISE / REJECT) | Reviewer initials |
 | --- | --- | --- | --- | --- | --- | --- |
 | `g7-essay-exit-1@candidate-0.1.0` | | | | | | |
 | `g7-essay-exit-2@candidate-0.1.0` | | | | | | |
-| `g7-essay-exit-3@candidate-0.1.0` | | | | | | |
+| `g7-essay-exit-3@candidate-0.2.0` | | | | | | |
 | `g7-essay-exit-4@candidate-0.1.0` | | | | | | |
 | `g7-essay-exit-5@candidate-0.1.0` | | | | | | |
 | `g7-essay-exit-6@candidate-0.1.0` | | | | | | |

@@ -1,6 +1,6 @@
 # Reviewer checklist — Number Sense and Place Value: Millions to Thousandths
 
-Candidate `cv2-cand-g7-math-number-sense-place-value` v0.1.0, candidate hash `5817d80911154bceb61fe117e0916ad64d0b7ae5c6afd2a2c6028b9cdc972ffb`.
+Candidate `cv2-cand-g7-math-number-sense-place-value` v0.2.0, candidate hash `3f612d907f52f5953d879476a627fde8e9a1c5b3d30d22e171a42a8ccec80c0c`.
 
 | Field | Value |
 | --- | --- |
@@ -38,7 +38,7 @@ A qualified reviewer completes this list through governed curriculum review. Tic
 ## Legacy comparison
 
 - [ ] Confirm the section-by-section comparison with legacy revision `cmss8t4hz00unvo54epnfst66` in legacy-comparison.md (or correct it).
-- [ ] Decide every recommendation: R-M1, R-M2, R-M3, R-M4, R-M5 (not applied), and confirm the applied ones (none).
+- [ ] Decide every recommendation: R-M3, R-M4, R-M5 (not applied), and confirm the applied ones (R-M1, R-M2).
 - [ ] Confirm that no legacy concern (L-…) is re-introduced, and decide each candidate concern (C-…).
 
 ## Curriculum-mapping decisions
@@ -51,6 +51,7 @@ Each decision is recorded through governed curriculum review. Until every box is
 - [ ] Unit placement: `math-g7-1-number-sense-and-place-value` is a LiberiaLearn unit with no verified MOE match. Confirm it, or name the MOE Grade 7 period this lesson belongs to.
 - [ ] Scope: confirm that extending place value to the thousandths serves the MOE Grade 7 decimals, percents and fractions period (Math 7-9 p.10), or limit the lesson to whole numbers.
 - [ ] Alignment decision A-M1: choose an option in legacy-comparison.md (evidence and consequences listed there).
+- [ ] Scope extension `ext-g7-math-whole-numbers-millions` (Reading, writing, valuing and comparing whole numbers in the millions (the millions period).) is a proposed LiberiaLearn extension: approve it, or apply its fallback (Limit whole numbers to hundred thousands (or mark the millions material as optional enrichment), and revise or withdraw exit items g7-pv-exit-1, g7-pv-exit-3 and g7-pv-exit-6 (legacy comparison A-M1, option B).).
 
 ### Objective-by-objective mapping
 
@@ -88,7 +89,7 @@ Each decision is recorded through governed curriculum review. Until every box is
 
 ## Reviewer sign-off
 
-Valid only when recorded through governed curriculum review (HUMAN_REVIEW) against candidate hash `5817d80911154bceb61fe117e0916ad64d0b7ae5c6afd2a2c6028b9cdc972ffb`. Filling in this table records nothing.
+Valid only when recorded through governed curriculum review (HUMAN_REVIEW) against candidate hash `3f612d907f52f5953d879476a627fde8e9a1c5b3d30d22e171a42a8ccec80c0c`. Filling in this table records nothing.
 
 | Field | Entry |
 | --- | --- |
