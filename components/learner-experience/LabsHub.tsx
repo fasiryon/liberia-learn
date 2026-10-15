@@ -28,8 +28,8 @@ export function LabsHubView({ tab, requested, showcase, aiLabsEnabled }: { tab: 
   const entries = tab[active.key];
   return (
     <div className="ll-dashboard-shell">
-      <main className="px-4 py-5">
-        <div className="mx-auto max-w-6xl space-y-5">
+      <main className="pdv2-dashboard-page">
+        <div className="space-y-5">
           <div className="flex flex-wrap items-end justify-between gap-3">
             <div>
               <h1 className="text-2xl font-semibold text-[var(--ll-text)]">Labs</h1>
@@ -46,7 +46,7 @@ export function LabsHubView({ tab, requested, showcase, aiLabsEnabled }: { tab: 
                 <h2 id="showcase-labs-title" className="text-lg font-semibold text-[var(--ll-text)]">Interactive labs</h2>
                 <p className="mt-1 text-sm leading-6 text-[var(--ll-text-muted)]">Open a lab to explore it. These are not linked to your lessons.</p>
               </div>
-              <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+              <div className="pdv2-labs-grid">
                 {showcase.map((lab) => (
                   <LabExperienceCard key={`showcase:${lab.labId}`} lab={lab} session={null} reason={null} badge="Showcase Lab" />
                 ))}
@@ -78,7 +78,7 @@ export function LabsHubView({ tab, requested, showcase, aiLabsEnabled }: { tab: 
                 <p className="text-sm text-[var(--ll-text-muted)]">{EMPTY[active.id]}</p>
               </div>
             ) : (
-              <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+              <div className="pdv2-labs-grid">
                 {entries.map((entry) => (
                   <LabExperienceCard key={`${entry.lab.labId}:${entry.session?.sessionId ?? "library"}`} lab={entry.lab} session={entry.session} reason={entry.reason} />
                 ))}

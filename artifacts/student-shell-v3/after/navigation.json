@@ -1,0 +1,48 @@
+{
+  "label": "after",
+  "metrics": [],
+  "navigationResults": [
+    {
+      "width": 390,
+      "todayToHelpToLearn": "pass",
+      "helpToToday": "pass",
+      "keyboardTabReachesNavigation": "pass",
+      "labsAndProgressReachable": "pass"
+    },
+    {
+      "width": 768,
+      "todayToHelpToLearn": "pass",
+      "helpToToday": "pass",
+      "keyboardTabReachesNavigation": "pass",
+      "labsAndProgressReachable": "pass"
+    },
+    {
+      "width": 1440,
+      "todayToHelpToLearn": "pass",
+      "helpToToday": "pass",
+      "keyboardTabReachesNavigation": "pass",
+      "labsAndProgressReachable": "pass"
+    },
+    {
+      "width": 1920,
+      "todayToHelpToLearn": "pass",
+      "helpToToday": "pass",
+      "keyboardTabReachesNavigation": "pass",
+      "labsAndProgressReachable": "pass"
+    }
+  ],
+  "accessibility": [
+    {
+      "page": "help",
+      "width": 390,
+      "violations": []
+    },
+    {
+      "page": "help",
+      "width": 1440,
+      "violations": []
+    }
+  ],
+  "errors": [],
+  "caveat": "Production components, synthetic API data; component browser evidence, not production authentication or real student records."
+}
