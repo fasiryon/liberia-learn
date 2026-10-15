@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { tutorActionForQuestion, type TutorIdentity, type TutorAction } from "@/lib/ai/tutor/contextContract";
 import { usePathname } from "next/navigation";
 import { studentTutorIdentityForPath } from "@/lib/ai/tutor/routeContext";
@@ -208,6 +209,21 @@ export default function GlobalAssistantShell({
   // The nav-visible "AI Tutor" page IS this shell, auto-opened and expanded
   // rather than a separate chat implementation (Tutor Architecture Consolidation).
   const isDedicatedPage = pathname === "/student/ai-tutor";
+  const [pageHost, setPageHost] = useState<HTMLElement | null>(null);
+  const launcherRef = useRef<HTMLButtonElement>(null);
+  const questionRef = useRef<HTMLTextAreaElement>(null);
+  useEffect(() => {
+    if (!isDedicatedPage) { setPageHost(null); return; }
+    const host = document.getElementById("student-tutor-panel");
+    if (host) { setPageHost(host); return; }
+    // The authenticated page can stream after the layout assistant has hydrated.
+    const observer = new MutationObserver(() => {
+      const nextHost = document.getElementById("student-tutor-panel");
+      if (nextHost) { setPageHost(nextHost); observer.disconnect(); }
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+    return () => observer.disconnect();
+  }, [isDedicatedPage]);
   const role = roleConfig.role;
   const isTeacherOrAdmin = role === "TEACHER" || role === "ADMIN";
   const isStudent = role === "STUDENT";
@@ -598,23 +614,28 @@ export default function GlobalAssistantShell({
   // Lesson pages own the lesson-help panel; avoid two competing tutors.
   if (pathname === "/student/learn" || /^\/student\/lessons\//.test(pathname)) return null;
 
-  return (
+  const assistant = (
     <div
-      className={`fixed z-50 flex flex-col gap-2 ${
+      data-assistant-presentation={isDedicatedPage ? "page" : "floating"}
+      onKeyDown={(event) => {
+        if (!isDedicatedPage && event.key === "Escape" && open) { event.stopPropagation(); setOpen(false); launcherRef.current?.focus(); }
+      }}
+      className={`${isDedicatedPage ? "student-tutor-workspace" : "fixed z-50"} flex flex-col gap-2 ${
         isDedicatedPage
-          ? "inset-4 items-stretch justify-center md:inset-10"
+          ? "items-stretch"
           : `items-end ${positionClassName ?? "bottom-24 right-5"}`
       }`}
     >
       {open ? (
         <section
+          aria-label={isDedicatedPage ? "AI tutor conversation" : "AI assistant"}
           className={`flex flex-col overflow-hidden rounded-xl border border-emerald-400/20 bg-[var(--ll-bg)]/95 shadow-[0_20px_60px_rgba(2,6,23,0.72)] backdrop-blur ${
             isDedicatedPage
-              ? "h-full max-h-full w-full"
+              ? "w-full"
               : "max-h-[70vh] w-[min(92vw,24rem)] max-w-md"
           }`}
         >
-          <div className="border-b border-[var(--ll-border)] bg-gradient-to-r from-slate-900 via-slate-900 to-emerald-950/60 px-4 py-3.5">
+          <div data-assistant-header className="border-b border-[var(--ll-border)] bg-gradient-to-r from-slate-900 via-slate-900 to-emerald-950/60 px-4 py-3.5">
             <div className="flex items-start justify-between gap-3">
               <div>
                 <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[var(--ll-yellow)]">
@@ -635,7 +656,8 @@ export default function GlobalAssistantShell({
               {isDedicatedPage ? null : (
               <button
                 type="button"
-                onClick={() => setOpen(false)}
+                aria-label="Close assistant"
+                onClick={() => { setOpen(false); launcherRef.current?.focus(); }}
                 className="rounded-full border border-[var(--ll-border)] px-3 py-1 text-[11px] font-semibold text-[var(--ll-text)] transition-colors hover:border-[var(--ll-border)] hover:text-[var(--ll-text)]"
               >
                 Minimize
@@ -644,8 +666,10 @@ export default function GlobalAssistantShell({
             </div>
           </div>
 
-          <div className="space-y-3 border-b border-[var(--ll-border)] px-4 py-3.5">
+          <div data-assistant-composer className="space-y-3 border-b border-[var(--ll-border)] px-4 py-3.5">
             <textarea
+              ref={questionRef}
+              aria-label="Your question"
               value={question}
               onChange={(event) => setQuestion(event.target.value)}
               placeholder={roleConfig.placeholder}
@@ -780,7 +804,7 @@ export default function GlobalAssistantShell({
             </button>
           </div>
 
-          <div className="min-h-0 flex-1 overflow-y-auto px-4 py-3.5">
+          <div data-assistant-messages role="region" aria-label="Assistant answers" tabIndex={0} className="min-h-0 flex-1 overflow-y-auto px-4 py-3.5">
             {messages.length === 0 ? (
               <div className="rounded-xl border border-dashed border-[var(--ll-border)] bg-[var(--ll-bg)]/60 px-4 py-4">
                 <p className="text-sm font-semibold text-[var(--ll-text)]">
@@ -935,8 +959,10 @@ export default function GlobalAssistantShell({
 
       {isDedicatedPage ? null : (
       <button
+        ref={launcherRef}
         type="button"
-        onClick={() => setOpen((current) => !current)}
+        aria-expanded={open}
+        onClick={() => { setOpen((current) => !current); if (!open) requestAnimationFrame(() => questionRef.current?.focus()); }}
         className="group flex items-center gap-3 rounded-full border border-emerald-400/30 bg-[var(--ll-bg)]/95 px-4 py-2.5 text-left shadow-[0_18px_50px_rgba(2,6,23,0.55)] transition-colors hover:border-emerald-300/50"
       >
         <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--ll-yellow-soft)] text-xs font-bold text-[var(--ll-text-faint)]">
@@ -952,4 +978,5 @@ export default function GlobalAssistantShell({
       )}
     </div>
   );
+  return isDedicatedPage && pageHost ? createPortal(assistant, pageHost) : assistant;
 }
