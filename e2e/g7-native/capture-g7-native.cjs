@@ -46,7 +46,8 @@ const WRITTEN = {
     for (const viewport of VIEWPORTS) {
       const dir = path.join(OUT, "screenshots", lesson.key, viewport.name);
       fs.mkdirSync(dir, { recursive: true });
-      const context = await browser.newContext({ viewport: { width: viewport.width, height: viewport.height }, deviceScaleFactor: 1 });
+      // Service workers are blocked so the dev-only "app update" toast cannot cover lesson controls.
+      const context = await browser.newContext({ viewport: { width: viewport.width, height: viewport.height }, deviceScaleFactor: 1, serviceWorkers: "block" });
       const page = await context.newPage();
       const errors = [];
       page.on("console", (message) => { if (message.type() === "error") errors.push(message.text().slice(0, 300)); });

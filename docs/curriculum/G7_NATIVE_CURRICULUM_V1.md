@@ -66,7 +66,21 @@ LAB_REVIEW_HARNESS=1 npx next dev -p 3197
 node e2e/g7-native/capture-g7-native.cjs http://localhost:3197 artifacts/g7-native-curriculum-v1
 ```
 
-Browser evidence (screenshots at 1440 px and 390 px, `flow.json`) is produced by the capture script into `artifacts/g7-native-curriculum-v1/`. It was not captured in the authoring run: the production build was stopped by the host for low memory before the dev preview could be started.
+Browser evidence is in `artifacts/g7-native-curriculum-v1/`: 62 screenshots and `flow.json`. Both lessons were walked end to end in Lesson Player V2 at 1440 px and 390 px. Results:
+
+- all 14 scenes of each lesson completed; every interactive scene kept Continue disabled until the learner acted;
+- all 8 diagrams rendered;
+- no horizontal overflow at 390 px (also checked at 320 px);
+- zero console errors;
+- every finish recorded only `RAW_OBSERVATION` evidence.
+
+The capture blocks service workers, so the dev-only "app update" toast cannot cover lesson controls. The visible "Offline support could not start" notice comes from that setting, not from the lesson. Full-page phone captures repeat the fixed header and footer part-way down; that is a screenshot artifact.
+
+### Player and preview fixes found by the walkthrough
+
+- **Outline overflow (all lessons, desktop)**: `.ll3-outline-list` was a grid with an auto-sized column, so long scene titles grew past the 208 px outline and covered lesson content and answer choices. Fix: `grid-template-columns: minmax(0, 1fr)` in `app/learning-v3.css`.
+- **Footer wrapping (lessons with 10 or more scenes, phone)**: "Scene 1 of 14" squeezed the footer until the Previous and Continue labels broke mid-word. Fix: footer buttons do not shrink or wrap, so the counter takes the space instead.
+- **Candidate diagrams behind sign-in (dev preview)**: middleware sent unauthenticated requests for `/curriculum-candidates/*` to `/login`. Fix: added a dev-only public path, on its own line beside `/lab-review` and `/design-preview`. A test asserts production still redirects to sign-in.
 
 ## Next authorized actions
 

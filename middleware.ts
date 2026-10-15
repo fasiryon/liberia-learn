@@ -44,6 +44,8 @@ const PUBLIC_PATHS = [
   // Student design preview (synthetic DEMO lessons, no API calls or writes): dev builds only.
   // The page itself also 404s in production unless STUDENT_DESIGN_PREVIEW=1.
   ...(process.env.NODE_ENV !== "production" ? ["/design-preview"] : []),
+  // Candidate lesson diagrams (unreleased static SVGs) shown by the lab review harness: dev builds only.
+  ...(process.env.NODE_ENV !== "production" ? ["/curriculum-candidates"] : []),
 ];
 
 function isPublicPath(pathname: string) {

@@ -2,7 +2,8 @@
 // separation, exit-ticket keys, release-binding preparation, evidence handoff and the committed package.
 import { existsSync, readdirSync, readFileSync } from "fs";
 import path from "path";
-import { describe, expect, it } from "vitest";
+import { NextRequest } from "next/server";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { buildG7NativePackageFiles, candidateReleaseManifest, draftReleaseShape, G7_PACKAGE_DIR, releaseBindingPlan } from "@/lib/curriculum/v2/g7NativePackage";
 import { evaluateG7Candidate, G7_ASSET_DIR, G7_ASSET_URL_BASE, G7_NATIVE_LESSONS, g7LearnerProjection, loadG7Candidate } from "@/lib/curriculum/v2/g7Native";
 import { G7_EXIT_ITEMS, G7_REVISION_LEDGER, type ExitItemVerification } from "@/lib/curriculum/v2/g7NativeReview";
@@ -21,6 +22,7 @@ const structured = JSON.parse(readFileSync("curriculum/structured/moe-structured
 const byId = new Map(structured.items.map((item) => [item.id, item]));
 const MATH = G7_NATIVE_LESSONS.find((lesson) => lesson.subject === "MATH")!;
 const LITERACY = G7_NATIVE_LESSONS.find((lesson) => lesson.subject === "LITERACY")!;
+vi.mock("next-auth/jwt", () => ({ getToken: vi.fn(async () => null) }));
 const IMPORTS_REVIEWER_MODULE = /from\s+["'][^"']*\/g7Native(Review|Preview)["']/;
 const sourceFiles = (dir: string): string[] => readdirSync(dir, { withFileTypes: true }).flatMap((entry) => entry.isDirectory() ? sourceFiles(path.join(dir, entry.name)) : /\.(t|j)sx?$/.test(entry.name) ? [path.join(dir, entry.name)] : []);
 const masteryScenes = (experience: LessonExperience) => experience.scenes.filter((scene) => scene.type === "MASTERY_CHECK");
@@ -150,6 +152,7 @@ describe("learner projection: Lesson Player V2 contract, no answer keys, candida
 });
 
 describe("dev-only preview through the existing prototype route", () => {
+  afterEach(() => { vi.unstubAllEnvs(); vi.resetModules(); });
   it.each(G7_NATIVE_LESSONS.map((lesson) => [lesson.lessonId, lesson] as const))("%s loads in Lesson Player V2 with keyless candidate exit items", (lessonId, lesson) => {
     const loaded = loadPrototypeExperience(lessonId)!;
     expect(loaded.experience.id).toBe(lessonId);
@@ -160,6 +163,18 @@ describe("dev-only preview through the existing prototype route", () => {
     const masteryText = JSON.stringify(mastery);
     expect(masteryText).not.toMatch(/correctIndex|workedExample|"hint"/);
     for (const { item } of G7_EXIT_ITEMS[lesson.key]) expect(masteryText).not.toContain(item.workedExample!);
+  });
+
+  it("candidate diagrams are public without sign-in in development only", async () => {
+    const asset = "/curriculum-candidates/g7-native-v1/math-place-value-chart.svg";
+    vi.stubEnv("NODE_ENV", "production");
+    vi.resetModules();
+    const production = await (await import("@/middleware")).middleware(new NextRequest(`https://example.test${asset}`));
+    expect(production.headers.get("location") ?? "").toMatch(/\/login/);
+    vi.stubEnv("NODE_ENV", "development");
+    vi.resetModules();
+    const development = await (await import("@/middleware")).middleware(new NextRequest(`http://localhost:3000${asset}`));
+    expect(development.headers.get("location")).toBeNull();
   });
 
   it("unknown ids still 404 and the hydropower fixture is unchanged", () => {
