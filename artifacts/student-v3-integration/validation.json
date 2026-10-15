@@ -1,5 +1,5 @@
 {
-  "base": "2bf94c11df127292a1863b75cc338a462204d0a2",
+  "base": "a1508ceaf7d89a338de624e9f63c9c4c592ca28c",
   "branch": "feat/student-experience-v3-integration",
   "sourceCommits": [
     "376df51dcea8e9a20ecc59ef953feea5f2d47510",
@@ -8,15 +8,16 @@
   ],
   "fullVitest": {
     "exitCode": 0,
-    "filesPassed": 765,
+    "filesPassed": 768,
     "filesSkipped": 2,
-    "testsPassed": 7405,
+    "testsPassed": 7480,
     "testsSkipped": 8
   },
   "sourceTargeted": {
     "exitCode": 0,
     "files": 9,
-    "tests": 59
+    "tests": 59,
+    "note": "Initial targeted run of all three input branches; final merged coverage also passed in the full suite and changed-file gate."
   },
   "integrationTutorTargeted": {
     "exitCode": 0,
@@ -26,8 +27,8 @@
   "validateChanged": {
     "command": "node scripts/validate-changed.mjs --base origin/main",
     "exitCode": 0,
-    "relatedFiles": 22,
-    "relatedTests": 328,
+    "relatedFiles": 23,
+    "relatedTests": 329,
     "typecheck": "passed"
   },
   "eslint": {
@@ -39,7 +40,7 @@
     "exitCode": 0,
     "staticGenerationPages": 391,
     "standalone": true,
-    "buildId": "GRJVmV-GSmhjl_FpwlLXx",
+    "buildId": "BrNdztDzOK9Q2PL-Xi_cl",
     "warnings": "Existing Sentry instrumentation, optional local environment, lint and dynamic-route SSG diagnostics; no standalone packaging error."
   },
   "browser": {
@@ -71,5 +72,8 @@
   ],
   "hostedDataMutation": false,
   "deployment": false,
-  "automaticMerge": false
+  "automaticMerge": false,
+  "initialBase": "2bf94c11df127292a1863b75cc338a462204d0a2",
+  "validatedProductionCommit": "3be873584d085a9a4d28b72a21260fc3ec3f683b",
+  "baselineRefresh": "PR #188 merged on main during validation; current main was merged non-destructively and all final gates/browser runs repeated."
 }

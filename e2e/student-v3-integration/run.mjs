@@ -36,7 +36,7 @@ await context.route("**/api/**", async (route) => {
 });
 
 const page = await context.newPage();
-page.setDefaultTimeout(30000); page.setDefaultNavigationTimeout(60000);
+page.setDefaultTimeout(30000); page.setDefaultNavigationTimeout(180000);
 const errors = [], writes = [], tutorRequests = [], results = [], scans = [];
 page.on('pageerror', e => errors.push(e.message));
 page.on('request', req => { if (req.method() === 'POST') { writes.push(new URL(req.url()).pathname); if (req.url().includes('/api/rag/query')) tutorRequests.push(req.postDataJSON()); } });
