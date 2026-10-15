@@ -13,6 +13,23 @@ through `CONTEXT_ROUTING.md`.
 - Do not fabricate test, deployment, production, staging, curriculum, or MOE
   evidence. Repository and live evidence outrank narrative claims.
 
+## Learning outcome standard
+
+LiberiaLearn does not consider a lesson successful because it has been
+generated, beautifully presented, or completed. A lesson succeeds when students
+can independently demonstrate that they learned, retained and can apply what it
+taught.
+
+- Generation, validation, visual polish, publication, views, and completion
+  rates are delivery evidence, not learning evidence. Do not report them as
+  proof that a lesson works.
+- Lesson and curriculum work must define how independent mastery, retention
+  over time, and transfer to new contexts will be demonstrated, and must keep
+  that evidence attributable to the learner rather than to hints, AI help, or
+  answer exposure.
+- Until such evidence exists, describe a lesson as built, reviewed, or
+  delivered, never as effective or successful.
+
 ## Worktree and external boundaries
 
 - Inspect `git status` before editing and preserve unrelated or shared changes.
