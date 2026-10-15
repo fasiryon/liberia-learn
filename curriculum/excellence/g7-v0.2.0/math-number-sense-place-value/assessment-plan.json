@@ -1,0 +1,132 @@
+{
+  "planId": "excellence-plan-g7-math-place-value-0.1.0",
+  "notice": "PROPOSED, CANDIDATE ONLY. Written by the same AI reviewer that produced the gap report, so the reviewer may not review it: it needs independent review by a qualified human before any of it is used. Answer keys and rubrics are reviewer-only and must never reach a learner projection, offline package or client bundle.",
+  "status": "PROPOSED_CANDIDATE_ONLY",
+  "revision": {
+    "contentKey": "cv2-cand-g7-math-number-sense-place-value@0.2.0",
+    "candidateSha256": "3f612d907f52f5953d879476a627fde8e9a1c5b3d30d22e171a42a8ccec80c0c"
+  },
+  "authors": [
+    { "kind": "AI", "agentId": "claude-code:curriculum-excellence-v1", "modelFamily": "anthropic-claude", "modelId": "claude-opus-5-5", "sessionId": null }
+  ],
+  "supersedesCandidateTaskIds": [],
+  "tasks": [
+    {
+      "id": "pm-d0", "kind": "PREREQUISITE_DIAGNOSTIC", "prerequisiteIndex": 0,
+      "objectiveIds": ["ll-g7-math-place-value-read-write"], "scaffold": "NONE", "timing": "PRE_LESSON", "context": "REHEARSED", "scoring": "KEYED",
+      "prompt": "(a) Write 40,306 in words. (b) Write 'twelve thousand, five' in digits.",
+      "key": "(a) forty thousand, three hundred six (b) 12,005",
+      "fallbackRoute": "Before the chart scene, rebuild the thousands period with counters on a paper chart (MOE Grade 4 numeration), then re-check with two similar numbers."
+    },
+    {
+      "id": "pm-d1", "kind": "PREREQUISITE_DIAGNOSTIC", "prerequisiteIndex": 1,
+      "objectiveIds": ["ll-g7-math-place-value-digit-value"], "scaffold": "NONE", "timing": "PRE_LESSON", "context": "REHEARSED", "scoring": "KEYED",
+      "prompt": "How many tenths are in 0.5? How many hundredths are in 0.5?",
+      "key": "5 tenths; 50 hundredths",
+      "fallbackRoute": "Fold a paper strip into ten equal parts and shade five; then fold each tenth into ten to show 50 hundredths. Re-check with 0.3."
+    },
+    {
+      "id": "pm-d2", "kind": "PREREQUISITE_DIAGNOSTIC", "prerequisiteIndex": 2,
+      "objectiveIds": ["ll-g7-math-place-value-digit-value"], "scaffold": "NONE", "timing": "PRE_LESSON", "context": "REHEARSED", "scoring": "KEYED",
+      "prompt": "Work out 7 × 10, 7 × 100 and 7 × 1,000.",
+      "key": "70; 700; 7,000",
+      "fallbackRoute": "Do the counter-exchange activity (ten counters become one in the next column) before the ten-times scene, then re-check with 4 × 10, 4 × 100, 4 × 1,000."
+    },
+    {
+      "id": "pm-c1", "kind": "SHORT_CONSTRUCTED_RESPONSE",
+      "objectiveIds": ["ll-g7-math-place-value-read-write"], "scaffold": "NONE", "timing": "END_OF_LESSON", "context": "REHEARSED", "scoring": "KEYED",
+      "prompt": "Write in standard form: four hundred sixty thousand, three and twenty-five thousandths.",
+      "key": "460,003.025",
+      "targetsMisconceptions": ["mc-zero-placeholder", "mc-decimal-word-form"],
+      "note": "Stays within MOE scope (hundred thousands and thousandths), so it survives a decision against the millions extension."
+    },
+    {
+      "id": "pm-c2", "kind": "SHORT_CONSTRUCTED_RESPONSE",
+      "objectiveIds": ["ll-g7-math-place-value-digit-value"], "scaffold": "NONE", "timing": "END_OF_LESSON", "context": "REHEARSED", "scoring": "KEYED",
+      "prompt": "In 135,276.049, write the value of the 3 and the value of the 4.",
+      "key": "3 → 30,000; 4 → 0.04",
+      "targetsMisconceptions": ["mc-digit-not-value", "mc-place-shift"]
+    },
+    {
+      "id": "pm-r1", "kind": "EXTENDED_REASONING",
+      "objectiveIds": ["ll-g7-math-place-value-compare"], "scaffold": "NONE", "timing": "END_OF_LESSON", "context": "REHEARSED", "scoring": "ANALYTIC_RUBRIC",
+      "prompt": "Kebeh says 0.7 is less than 0.65 because 65 is bigger than 7. Is she right? Explain using place value, and show one way to check your answer.",
+      "scoringGuide": {
+        "2": "Says Kebeh is wrong and justifies by place: 7 tenths is more than 6 tenths, or 0.70 is more than 0.65 when both are written to hundredths; gives a check (chart, number line or hundredths grid).",
+        "1": "Correct decision with a vague or partly correct reason, or a correct reason with no check.",
+        "0": "Agrees with Kebeh, or no place-value reasoning."
+      },
+      "targetsMisconceptions": ["mc-longer-decimal-bigger"]
+    },
+    {
+      "id": "pm-r2", "kind": "EXTENDED_REASONING",
+      "objectiveIds": ["ll-g7-math-place-value-digit-value"], "scaffold": "NONE", "timing": "END_OF_LESSON", "context": "REHEARSED", "scoring": "ANALYTIC_RUBRIC",
+      "prompt": "The digit 5 appears three times in 505.05. Write what each 5 is worth. Then explain how the value of the first 5 compares with the value of the 5 in the ones place.",
+      "scoringGuide": {
+        "2": "500, 5 and 0.05, and explains that 500 is 100 times 5 because it is two places to the left (each place is ten times the place to its right).",
+        "1": "All three values correct with no explanation of the relationship, or a correct relationship with one value wrong.",
+        "0": "Gives 5 for every digit, or no relationship stated."
+      },
+      "targetsMisconceptions": ["mc-digit-not-value", "mc-place-shift"]
+    },
+    {
+      "id": "pm-t1", "kind": "TRANSFER_TASK",
+      "objectiveIds": ["ll-g7-math-place-value-compare"], "scaffold": "NONE", "timing": "END_OF_LESSON", "context": "NEW", "scoring": "ANALYTIC_RUBRIC",
+      "prompt": "Draw a number line from 2.3 to 2.4 and mark it in hundredths. Place 2.35 and 2.305 on it. Which one is closer to 2.3? Explain how the number line shows it.",
+      "scoringGuide": {
+        "2": "2.35 at the halfway mark, 2.305 between 2.30 and 2.31; says 2.305 is closer to 2.3 and explains using the marks (2.305 is less than one hundredth away; 2.35 is five hundredths away).",
+        "1": "Correct answer with an imprecise placement or explanation.",
+        "0": "Says 2.35 is closer, or places 2.305 beyond 2.35."
+      },
+      "note": "New representation: the lesson uses charts and grids, never a number line, so this checks whether place value transfers to a new model."
+    },
+    {
+      "id": "pm-dr1", "kind": "DELAYED_RETRIEVAL",
+      "objectiveIds": ["ll-g7-math-place-value-read-write", "ll-g7-math-place-value-digit-value", "ll-g7-math-place-value-compare"],
+      "scaffold": "NONE", "timing": "DELAYED", "delayDays": 7, "context": "REHEARSED", "scoring": "ANALYTIC_RUBRIC",
+      "prompt": "Without notes: (a) What is the value of the 9 in 293,400.6? (b) Write 3.046 in expanded form. (c) Order 0.08, 0.8 and 0.088 from least to greatest and explain how you decided.",
+      "key": "(a) 90,000 (b) 3 + 0.04 + 0.006 (c) 0.08, 0.088, 0.8; explanation compares tenths first, then hundredths/thousandths",
+      "scoringGuide": { "4": "(a), (b) and (c) correct with a place-value explanation", "3": "three parts correct, explanation partial", "2": "two parts correct", "1": "one part correct", "0": "none correct" }
+    },
+    {
+      "id": "pm-dr2", "kind": "DELAYED_RETRIEVAL",
+      "objectiveIds": ["ll-g7-math-place-value-compare"], "scaffold": "NONE", "timing": "DELAYED", "delayDays": 21, "context": "REHEARSED", "scoring": "ANALYTIC_RUBRIC",
+      "prompt": "Which is greater, 0.6 or 0.599? Explain.",
+      "scoringGuide": { "2": "0.6, explained by tenths (6 tenths > 5 tenths) or by writing 0.600", "1": "0.6 with no valid reason", "0": "0.599" },
+      "targetsMisconceptions": ["mc-longer-decimal-bigger"]
+    },
+    {
+      "id": "pm-x1", "kind": "EXTENSION", "optional": true,
+      "objectiveIds": ["ll-g7-math-place-value-compare"], "scaffold": "NONE", "timing": "END_OF_LESSON", "context": "NEW", "scoring": "ANALYTIC_RUBRIC",
+      "prompt": "Use each of the digits 0, 3, 5 and 8 exactly once, and one decimal point, to make the number closest to 5. Explain why no other arrangement is closer.",
+      "key": "5.038",
+      "scoringGuide": { "2": "5.038 with an argument from the left: 5 ones first, then the smallest possible tenths (0), hundredths (3) and thousandths (8)", "1": "5.038 without a complete argument, or 5.083 with place-value reasoning", "0": "other" },
+      "note": "Optional and non-gating. Non-routine: learners must reason about every place, not apply a taught procedure."
+    }
+  ],
+  "misconceptionCorrections": {
+    "catalogueAdditions": [
+      { "id": "mc-place-shift", "objectiveId": "ll-g7-math-place-value-digit-value", "description": "Puts the right digit in the wrong place, so its value is ten or a hundred times too big or too small (the 6 in 3,462,105 given as 6,000 or 600,000).", "response": "Name every place from the ones up to the digit before giving its value; check with the ten-times ladder." },
+      { "id": "mc-shorter-decimal-bigger", "objectiveId": "ll-g7-math-place-value-compare", "description": "Thinks a decimal with fewer digits is greater because tenths are bigger than hundredths (0.3 > 0.37).", "response": "Write both numbers to the same number of places (0.30 and 0.37) and compare place by place." },
+      { "id": "mc-compare-by-digits", "objectiveId": "ll-g7-math-place-value-compare", "description": "Compares whole numbers by their larger or more numerous digits (6,009,999 has many nines) instead of comparing from the left.", "response": "Line the numbers up by place and compare from the left until the digits differ." }
+    ],
+    "remaps": [
+      { "itemId": "g7-pv-exit-1", "optionIndex": 0, "from": "mc-digit-not-value", "to": "mc-place-shift" },
+      { "itemId": "g7-pv-exit-1", "optionIndex": 1, "from": "mc-digit-not-value", "to": "mc-place-shift" },
+      { "itemId": "g7-pv-exit-1", "optionIndex": 3, "from": "mc-digit-not-value", "to": "mc-place-shift" },
+      { "itemId": "g7-pv-exit-2", "optionIndex": 1, "from": "mc-digit-not-value", "to": "mc-place-shift" },
+      { "itemId": "g7-pv-exit-2", "optionIndex": 2, "from": "mc-digit-not-value", "to": "mc-place-shift" },
+      { "itemId": "g7-pv-exit-4", "optionIndex": 1, "from": "mc-digit-not-value", "to": "mc-place-shift" },
+      { "itemId": "g7-pv-exit-5", "optionIndex": 0, "from": "mc-longer-decimal-bigger", "to": null, "rationale": "A descending list is an order-direction error, not a misconception about decimals; leave it unmapped." },
+      { "itemId": "g7-pv-exit-6", "optionIndex": 0, "from": "mc-longer-decimal-bigger", "to": "mc-compare-by-digits" },
+      { "itemId": "g7-pv-exit-6", "optionIndex": 2, "from": "mc-longer-decimal-bigger", "to": null, "rationale": "'They are equal' is not produced by any catalogued error; unmapped until classroom evidence shows a pattern." }
+    ],
+    "optionReplacements": [
+      { "itemId": "g7-pv-exit-5", "optionIndex": 2, "from": "0.307, 0.3, 0.37", "to": "0.307, 0.37, 0.3", "mapTo": "mc-shorter-decimal-bigger", "expectedErrorModel": "SHORTER_DECIMAL_GREATER", "rationale": "No modelled error produces the current option; the replacement is exactly what the shorter-is-greater misconception predicts." }
+    ],
+    "signatureAdditions": {
+      "mc-place-shift": "PLACE_SHIFT",
+      "mc-shorter-decimal-bigger": "SHORTER_DECIMAL_GREATER"
+    }
+  }
+}

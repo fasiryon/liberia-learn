@@ -1,0 +1,61 @@
+{
+  "notice": "Read-only pin of the Grade 7 v0.2.0 candidate packages under review. The candidates live on PR #191 (feat/g7-native-curriculum-v1) and are not copied or modified here. CANDIDATE ONLY: nothing here is approved, published or released.",
+  "pullRequest": 191,
+  "gitCommit": "1ad2e9ec3cbbcd15d3e0cccacfb5614951d52462",
+  "candidateAuthors": [
+    {
+      "kind": "AI",
+      "agentId": "claude-code:g7-native-curriculum-v1",
+      "modelFamily": "anthropic-claude",
+      "modelId": null,
+      "sessionId": null
+    }
+  ],
+  "reviewer": {
+    "kind": "AI",
+    "agentId": "claude-code:curriculum-excellence-v1",
+    "modelFamily": "anthropic-claude",
+    "modelId": "claude-opus-5-5",
+    "sessionId": null
+  },
+  "lessons": [
+    {
+      "lessonKey": "math-number-sense-place-value",
+      "contentKey": "cv2-cand-g7-math-number-sense-place-value@0.2.0",
+      "subject": "MATH",
+      "grade": 7,
+      "candidatePath": "curriculum/v2/g7/candidates/math-number-sense-place-value.json",
+      "assessmentPath": "curriculum/review/g7-native-v1/math-number-sense-place-value/assessment-review.json",
+      "expectedCandidateSha256": "3f612d907f52f5953d879476a627fde8e9a1c5b3d30d22e171a42a8ccec80c0c",
+      "misconceptionSignatures": {
+        "mc-digit-not-value": "DIGIT_INSTEAD_OF_VALUE",
+        "mc-zero-placeholder": "ZERO_PLACEHOLDER_OMITTED",
+        "mc-longer-decimal-bigger": "LONGER_DECIMAL_GREATER"
+      },
+      "packageGaps": ["MOE_OBJECTIVE_UNBOUND", "TEMPLATE_CELL_MISSING", "ONTOLOGY_RELEASE_MISSING", "SCOPE_EXTENSION_UNAPPROVED", "LEGACY_COMPARISON_SIGNOFF", "ASSESSMENT_ITEMS_PENDING"],
+      "waecBaseline": {
+        "examination": "LJHSCE (Grade 9), then WASSCE",
+        "competency": "math.number_numeration (Number & Numeration)",
+        "evidenceSpecificity": "SUBJECT_LEVEL",
+        "note": "Grade 7 is not examined by WAEC. The repository's WAEC map is WASSCE section-level from aggregator sources; no LJHSCE topic-level syllabus is pinned. Relevance is forward preparation only, with no topic-level baseline commitment and no WAEC approval claimed."
+      }
+    },
+    {
+      "lessonKey": "literacy-essay-structure-argument",
+      "contentKey": "cv2-cand-g7-literacy-essay-structure-argument@0.2.0",
+      "subject": "LITERACY",
+      "grade": 7,
+      "candidatePath": "curriculum/v2/g7/candidates/literacy-essay-structure-argument.json",
+      "assessmentPath": "curriculum/review/g7-native-v1/literacy-essay-structure-argument/assessment-review.json",
+      "expectedCandidateSha256": "80b9592641effbdae8f5868323289873a8c1a6e547676241e09ab8ee5db060b1",
+      "misconceptionSignatures": {},
+      "packageGaps": ["MOE_OBJECTIVE_UNBOUND", "MOE_SOURCE_STRUCTURING_DEFECT", "MOE_GRADE_SCOPE_REVIEW", "TEMPLATE_CELL_MISSING", "ONTOLOGY_RELEASE_MISSING", "LEGACY_COMPARISON_SIGNOFF", "ASSESSMENT_ITEMS_PENDING"],
+      "waecBaseline": {
+        "examination": "LJHSCE (Grade 9), then WASSCE",
+        "competency": "WAEC English Language: Essay & Continuous Writing",
+        "evidenceSpecificity": "SUBJECT_LEVEL",
+        "note": "Grade 7 is not examined by WAEC. WAEC English Language papers include continuous (essay) writing, which is original writing; that is why selected-response evidence cannot stand in for it. Relevance is forward preparation only, and no WAEC approval is claimed."
+      }
+    }
+  ]
+}

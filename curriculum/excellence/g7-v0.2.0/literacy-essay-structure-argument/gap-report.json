@@ -1,0 +1,1541 @@
+{
+  "reportVersion": "liberialearn-g7-excellence-gap-report/1.0.0",
+  "lessonKey": "literacy-essay-structure-argument",
+  "title": "Understanding Essay Writing: Structure and Argument",
+  "subject": "LITERACY",
+  "grade": 7,
+  "candidateOnly": true,
+  "published": false,
+  "pullRequest": 191,
+  "review": {
+    "reportVersion": "liberialearn-instructional-review-report/1.0.0",
+    "reviewerVersion": "liberialearn-ai-instructional-reviewer/1.0.0",
+    "standardVersion": "liberialearn-curriculum-excellence/1.0.0",
+    "rubricVersion": "liberialearn-curriculum-excellence-rubric/1.0.0",
+    "blueprintVersion": "liberialearn-assessment-blueprint/1.0.0",
+    "reviewer": {
+      "kind": "AI",
+      "agentId": "claude-code:curriculum-excellence-v1",
+      "modelFamily": "anthropic-claude",
+      "modelId": "claude-opus-5-5",
+      "sessionId": null
+    },
+    "revision": {
+      "contentKey": "cv2-cand-g7-literacy-essay-structure-argument@0.2.0",
+      "candidateSha256": "80b9592641effbdae8f5868323289873a8c1a6e547676241e09ab8ee5db060b1",
+      "assessmentSha256": "0ed4b231651e7663ae9ebc73514f38915473beeca275896e38c48e34d7ca6d15",
+      "planSha256": "0ff24a77d44d19be622d834b434578ae8dec60d26e0b76579a1229ae47822a32",
+      "source": {
+        "gitCommit": "1ad2e9ec3cbbcd15d3e0cccacfb5614951d52462",
+        "candidatePath": "curriculum/v2/g7/candidates/literacy-essay-structure-argument.json",
+        "assessmentPath": "curriculum/review/g7-native-v1/literacy-essay-structure-argument/assessment-review.json"
+      }
+    },
+    "independence": {
+      "selfAuthored": false,
+      "independent": false,
+      "reasons": [
+        "SAME_MODEL_FAMILY:anthropic-claude"
+      ],
+      "countsAsIndependentReview": false
+    },
+    "authority": "ADVISORY_ONLY",
+    "mayApprove": false,
+    "mayPublish": false,
+    "humanQualificationClaimed": false,
+    "officialApprovalClaimed": false,
+    "candidateOnly": true,
+    "outcome": "REVISE_BEFORE_HUMAN_REVIEW",
+    "findings": [
+      {
+        "id": "det-bp-independent-practice",
+        "code": "BLUEPRINT_INDEPENDENT_PRACTICE_UNMET",
+        "criterionId": "LM-PRG-1",
+        "severity": "BLOCKING",
+        "method": "DETERMINISTIC",
+        "statement": "Every objective reaches unscaffolded practice before mastery evidence. Not met: ll-g7-lit-essay-structure, ll-g7-lit-argument-build, ll-g7-lit-evidence-support. Formative IN_LESSON tasks at scaffold NONE.",
+        "recommendation": "Add the missing evidence to the lesson's assessment plan; see the gap report's proposed tasks.",
+        "evidence": [
+          {
+            "document": "CANDIDATE",
+            "pointer": "/assessmentRequests/0",
+            "valueSha256": "18b8c890041071916e44ad7ab060efc26dbeef48592b62148bc7fda32b721f09"
+          }
+        ],
+        "confidence": 1,
+        "requiresHumanConfirmation": false,
+        "layer": "LIBERIALEARN_MASTERY",
+        "dimension": "INSTRUCTIONAL_PROGRESSION"
+      },
+      {
+        "id": "det-bp-production",
+        "code": "BLUEPRINT_PRODUCTION_UNMET",
+        "criterionId": "LM-ASM-1",
+        "severity": "BLOCKING",
+        "method": "DETERMINISTIC",
+        "statement": "Every objective has mastery evidence that is original unscaffolded writing scored with an analytic rubric. Not met: ll-g7-lit-essay-structure, ll-g7-lit-argument-build, ll-g7-lit-evidence-support. Accepted kinds: ORIGINAL_WRITING.",
+        "recommendation": "Add the missing evidence to the lesson's assessment plan; see the gap report's proposed tasks.",
+        "evidence": [
+          {
+            "document": "CANDIDATE",
+            "pointer": "/assessmentRequests/0",
+            "valueSha256": "18b8c890041071916e44ad7ab060efc26dbeef48592b62148bc7fda32b721f09"
+          }
+        ],
+        "confidence": 1,
+        "requiresHumanConfirmation": false,
+        "layer": "LIBERIALEARN_MASTERY",
+        "dimension": "ASSESSMENT"
+      },
+      {
+        "id": "det-bp-reasoning",
+        "code": "BLUEPRINT_REASONING_UNMET",
+        "criterionId": "LM-RSN-1",
+        "severity": "BLOCKING",
+        "method": "DETERMINISTIC",
+        "statement": "At least one unscaffolded, rubric-scored reasoning or justification task. Not met: EXTENDED_REASONING. 0 reasoning task(s) at mastery.",
+        "recommendation": "Add the missing evidence to the lesson's assessment plan; see the gap report's proposed tasks.",
+        "evidence": [
+          {
+            "document": "CANDIDATE",
+            "pointer": "/assessmentRequests/0",
+            "valueSha256": "18b8c890041071916e44ad7ab060efc26dbeef48592b62148bc7fda32b721f09"
+          }
+        ],
+        "confidence": 1,
+        "requiresHumanConfirmation": false,
+        "layer": "LIBERIALEARN_MASTERY",
+        "dimension": "REASONING"
+      },
+      {
+        "id": "det-bp-selected-share",
+        "code": "BLUEPRINT_SELECTED_SHARE_UNMET",
+        "criterionId": "LM-ASM-1",
+        "severity": "BLOCKING",
+        "method": "DETERMINISTIC",
+        "statement": "Selected response is at most 50% of end-of-lesson mastery evidence. Not met: SELECTED_RESPONSE_SHARE. 6/6 selected response (100%).",
+        "recommendation": "Add the missing evidence to the lesson's assessment plan; see the gap report's proposed tasks.",
+        "evidence": [
+          {
+            "document": "CANDIDATE",
+            "pointer": "/assessmentRequests/0",
+            "valueSha256": "18b8c890041071916e44ad7ab060efc26dbeef48592b62148bc7fda32b721f09"
+          }
+        ],
+        "confidence": 1,
+        "requiresHumanConfirmation": false,
+        "layer": "LIBERIALEARN_MASTERY",
+        "dimension": "ASSESSMENT"
+      },
+      {
+        "id": "det-bp-retention",
+        "code": "BLUEPRINT_RETENTION_UNMET",
+        "criterionId": "LM-ASM-3",
+        "severity": "BLOCKING",
+        "method": "DETERMINISTIC",
+        "statement": "Every objective has delayed retrieval at least 7 days after the lesson. Not met: ll-g7-lit-essay-structure, ll-g7-lit-argument-build, ll-g7-lit-evidence-support. Spaced retrieval, unscaffolded.",
+        "recommendation": "Add the missing evidence to the lesson's assessment plan; see the gap report's proposed tasks.",
+        "evidence": [
+          {
+            "document": "CANDIDATE",
+            "pointer": "/assessmentRequests/0",
+            "valueSha256": "18b8c890041071916e44ad7ab060efc26dbeef48592b62148bc7fda32b721f09"
+          }
+        ],
+        "confidence": 1,
+        "requiresHumanConfirmation": false,
+        "layer": "LIBERIALEARN_MASTERY",
+        "dimension": "ASSESSMENT"
+      },
+      {
+        "id": "det-bp-transfer",
+        "code": "BLUEPRINT_TRANSFER_UNMET",
+        "criterionId": "GE-TRN-1",
+        "severity": "BLOCKING",
+        "method": "DETERMINISTIC",
+        "statement": "At least one unscaffolded transfer task in a context the lesson did not rehearse. Not met: TRANSFER_TASK. Near or far transfer, NEW context.",
+        "recommendation": "Add the missing evidence to the lesson's assessment plan; see the gap report's proposed tasks.",
+        "evidence": [
+          {
+            "document": "CANDIDATE",
+            "pointer": "/assessmentRequests/0",
+            "valueSha256": "18b8c890041071916e44ad7ab060efc26dbeef48592b62148bc7fda32b721f09"
+          }
+        ],
+        "confidence": 1,
+        "requiresHumanConfirmation": false,
+        "layer": "GLOBAL_EXCELLENCE",
+        "dimension": "CONCEPTUAL_MASTERY"
+      },
+      {
+        "id": "det-bp-extension",
+        "code": "BLUEPRINT_EXTENSION_UNMET",
+        "criterionId": "GE-EXT-1",
+        "severity": "BLOCKING",
+        "method": "DETERMINISTIC",
+        "statement": "An optional, non-gating extension task. Not met: EXTENSION. Extension is optional and never required for mastery.",
+        "recommendation": "Add the missing evidence to the lesson's assessment plan; see the gap report's proposed tasks.",
+        "evidence": [
+          {
+            "document": "CANDIDATE",
+            "pointer": "/assessmentRequests/0",
+            "valueSha256": "18b8c890041071916e44ad7ab060efc26dbeef48592b62148bc7fda32b721f09"
+          }
+        ],
+        "confidence": 1,
+        "requiresHumanConfirmation": false,
+        "layer": "GLOBAL_EXCELLENCE",
+        "dimension": "ADVANCED_EXTENSION"
+      },
+      {
+        "id": "det-prereq-0",
+        "code": "PREREQUISITE_NOT_DIAGNOSED",
+        "criterionId": "NF-PRG-1",
+        "severity": "BLOCKING",
+        "method": "DETERMINISTIC",
+        "statement": "The lesson assumes \"Can write a paragraph with a topic sentence and supporting sentences (MOE Grade 7 paragraph writing).\" but no diagnostic task checks it or routes learners who lack it.",
+        "recommendation": "Add a short diagnostic item for this prerequisite with a stated fallback route.",
+        "evidence": [
+          {
+            "document": "CANDIDATE",
+            "pointer": "/prerequisiteAssumptions/0",
+            "valueSha256": "9d0e87c95910143bff6ad11579f467fc89f62016a8ac4855f530ba6a733775d8"
+          }
+        ],
+        "confidence": 1,
+        "requiresHumanConfirmation": false,
+        "layer": "NATIONAL_FOUNDATION",
+        "dimension": "INSTRUCTIONAL_PROGRESSION"
+      },
+      {
+        "id": "det-prereq-1",
+        "code": "PREREQUISITE_NOT_DIAGNOSED",
+        "criterionId": "NF-PRG-1",
+        "severity": "BLOCKING",
+        "method": "DETERMINISTIC",
+        "statement": "The lesson assumes \"Can tell a fact from an opinion in simple sentences.\" but no diagnostic task checks it or routes learners who lack it.",
+        "recommendation": "Add a short diagnostic item for this prerequisite with a stated fallback route.",
+        "evidence": [
+          {
+            "document": "CANDIDATE",
+            "pointer": "/prerequisiteAssumptions/1",
+            "valueSha256": "c4472c657c92e7c2cd201afbe3fbf16f222686ccfe95cc8282c4d266f8539539"
+          }
+        ],
+        "confidence": 1,
+        "requiresHumanConfirmation": false,
+        "layer": "NATIONAL_FOUNDATION",
+        "dimension": "INSTRUCTIONAL_PROGRESSION"
+      },
+      {
+        "id": "det-prereq-2",
+        "code": "PREREQUISITE_NOT_DIAGNOSED",
+        "criterionId": "NF-PRG-1",
+        "severity": "BLOCKING",
+        "method": "DETERMINISTIC",
+        "statement": "The lesson assumes \"Has discussed both sides of a school or community question in class.\" but no diagnostic task checks it or routes learners who lack it.",
+        "recommendation": "Add a short diagnostic item for this prerequisite with a stated fallback route.",
+        "evidence": [
+          {
+            "document": "CANDIDATE",
+            "pointer": "/prerequisiteAssumptions/2",
+            "valueSha256": "9019cbbec06aadad8e97e2e3db89ec7fff48d54876e0df2bd4a021740df94fb7"
+          }
+        ],
+        "confidence": 1,
+        "requiresHumanConfirmation": false,
+        "layer": "NATIONAL_FOUNDATION",
+        "dimension": "INSTRUCTIONAL_PROGRESSION"
+      },
+      {
+        "id": "det-mc-unassessed-mc-circular-reasoning",
+        "code": "MISCONCEPTION_NOT_DIAGNOSABLE",
+        "criterionId": "LM-CON-1",
+        "severity": "MAJOR",
+        "method": "DETERMINISTIC",
+        "statement": "Misconception mc-circular-reasoning is catalogued but no exit-item distractor is mapped to it, so the exit evidence cannot detect it.",
+        "recommendation": "Map a distractor or a constructed-response pattern to it, or record why end-of-lesson evidence need not detect it.",
+        "evidence": [
+          {
+            "document": "CANDIDATE",
+            "pointer": "/misconceptions/2",
+            "valueSha256": "04ebab154b94a693f2dda1529413be98d510da2050a793b49277719a6dccbf9f"
+          }
+        ],
+        "confidence": 1,
+        "requiresHumanConfirmation": false,
+        "layer": "LIBERIALEARN_MASTERY",
+        "dimension": "CONCEPTUAL_MASTERY"
+      },
+      {
+        "id": "det-unmapped-g7-essay-exit-1-1",
+        "code": "DISTRACTOR_UNMAPPED",
+        "criterionId": "LM-CON-1",
+        "severity": "MINOR",
+        "method": "DETERMINISTIC",
+        "statement": "Distractor 1 of g7-essay-exit-1 is not mapped to any misconception, so choosing it gives no diagnostic information.",
+        "recommendation": "Map it to a catalogued misconception or replace it with a distractor that represents one.",
+        "evidence": [
+          {
+            "document": "ASSESSMENT",
+            "pointer": "/items/0/item/options/1",
+            "valueSha256": "b47a097fe1c0e8fac98836f5b06f217407265fe6fad8c25cc1018dcebc653c26"
+          }
+        ],
+        "confidence": 1,
+        "requiresHumanConfirmation": false,
+        "layer": "LIBERIALEARN_MASTERY",
+        "dimension": "CONCEPTUAL_MASTERY"
+      },
+      {
+        "id": "det-unmapped-g7-essay-exit-1-2",
+        "code": "DISTRACTOR_UNMAPPED",
+        "criterionId": "LM-CON-1",
+        "severity": "MINOR",
+        "method": "DETERMINISTIC",
+        "statement": "Distractor 2 of g7-essay-exit-1 is not mapped to any misconception, so choosing it gives no diagnostic information.",
+        "recommendation": "Map it to a catalogued misconception or replace it with a distractor that represents one.",
+        "evidence": [
+          {
+            "document": "ASSESSMENT",
+            "pointer": "/items/0/item/options/2",
+            "valueSha256": "6722c5641d47925de32f3f9e16e316127d294e73145722a99c6ea21b86688a57"
+          }
+        ],
+        "confidence": 1,
+        "requiresHumanConfirmation": false,
+        "layer": "LIBERIALEARN_MASTERY",
+        "dimension": "CONCEPTUAL_MASTERY"
+      },
+      {
+        "id": "det-unmapped-g7-essay-exit-4-2",
+        "code": "DISTRACTOR_UNMAPPED",
+        "criterionId": "LM-CON-1",
+        "severity": "MINOR",
+        "method": "DETERMINISTIC",
+        "statement": "Distractor 2 of g7-essay-exit-4 is not mapped to any misconception, so choosing it gives no diagnostic information.",
+        "recommendation": "Map it to a catalogued misconception or replace it with a distractor that represents one.",
+        "evidence": [
+          {
+            "document": "ASSESSMENT",
+            "pointer": "/items/3/item/options/2",
+            "valueSha256": "45fad5fd459e7e90de3ef18eae9242a2cb922893367de16bb82a72be51f2e2ba"
+          }
+        ],
+        "confidence": 1,
+        "requiresHumanConfirmation": false,
+        "layer": "LIBERIALEARN_MASTERY",
+        "dimension": "CONCEPTUAL_MASTERY"
+      },
+      {
+        "id": "det-unmapped-g7-essay-exit-4-3",
+        "code": "DISTRACTOR_UNMAPPED",
+        "criterionId": "LM-CON-1",
+        "severity": "MINOR",
+        "method": "DETERMINISTIC",
+        "statement": "Distractor 3 of g7-essay-exit-4 is not mapped to any misconception, so choosing it gives no diagnostic information.",
+        "recommendation": "Map it to a catalogued misconception or replace it with a distractor that represents one.",
+        "evidence": [
+          {
+            "document": "ASSESSMENT",
+            "pointer": "/items/3/item/options/3",
+            "valueSha256": "da03afe6e40b3eb56381ed92e35d4c3efc01345796bc3a16cdbfa9a049439e07"
+          }
+        ],
+        "confidence": 1,
+        "requiresHumanConfirmation": false,
+        "layer": "LIBERIALEARN_MASTERY",
+        "dimension": "CONCEPTUAL_MASTERY"
+      },
+      {
+        "id": "det-unmapped-g7-essay-exit-5-1",
+        "code": "DISTRACTOR_UNMAPPED",
+        "criterionId": "LM-CON-1",
+        "severity": "MINOR",
+        "method": "DETERMINISTIC",
+        "statement": "Distractor 1 of g7-essay-exit-5 is not mapped to any misconception, so choosing it gives no diagnostic information.",
+        "recommendation": "Map it to a catalogued misconception or replace it with a distractor that represents one.",
+        "evidence": [
+          {
+            "document": "ASSESSMENT",
+            "pointer": "/items/4/item/options/1",
+            "valueSha256": "bdb56c2d8e02bca8f0ba05b2daa31d76cb363236171ad402b23eb516d111a901"
+          }
+        ],
+        "confidence": 1,
+        "requiresHumanConfirmation": false,
+        "layer": "LIBERIALEARN_MASTERY",
+        "dimension": "CONCEPTUAL_MASTERY"
+      },
+      {
+        "id": "det-unmapped-g7-essay-exit-5-2",
+        "code": "DISTRACTOR_UNMAPPED",
+        "criterionId": "LM-CON-1",
+        "severity": "MINOR",
+        "method": "DETERMINISTIC",
+        "statement": "Distractor 2 of g7-essay-exit-5 is not mapped to any misconception, so choosing it gives no diagnostic information.",
+        "recommendation": "Map it to a catalogued misconception or replace it with a distractor that represents one.",
+        "evidence": [
+          {
+            "document": "ASSESSMENT",
+            "pointer": "/items/4/item/options/2",
+            "valueSha256": "f277c0e1abfa0ca7360dbdd1203fd982dbf5215f7811fcadd80abe504b8b9add"
+          }
+        ],
+        "confidence": 1,
+        "requiresHumanConfirmation": false,
+        "layer": "LIBERIALEARN_MASTERY",
+        "dimension": "CONCEPTUAL_MASTERY"
+      },
+      {
+        "id": "det-unmapped-g7-essay-exit-6-3",
+        "code": "DISTRACTOR_UNMAPPED",
+        "criterionId": "LM-CON-1",
+        "severity": "MINOR",
+        "method": "DETERMINISTIC",
+        "statement": "Distractor 3 of g7-essay-exit-6 is not mapped to any misconception, so choosing it gives no diagnostic information.",
+        "recommendation": "Map it to a catalogued misconception or replace it with a distractor that represents one.",
+        "evidence": [
+          {
+            "document": "ASSESSMENT",
+            "pointer": "/items/5/item/options/3",
+            "valueSha256": "8cc7c76a3747da75a59c2a9373a0f6b21e6cca5ebb8f84d4d3f8dd2f64b0dbcc"
+          }
+        ],
+        "confidence": 1,
+        "requiresHumanConfirmation": false,
+        "layer": "LIBERIALEARN_MASTERY",
+        "dimension": "CONCEPTUAL_MASTERY"
+      },
+      {
+        "id": "det-mastery-assistance",
+        "code": "MASTERY_ITEMS_CARRY_ASSISTANCE",
+        "criterionId": "LM-ASM-2",
+        "severity": "MINOR",
+        "method": "DETERMINISTIC",
+        "statement": "6 end-of-lesson item(s) (g7-essay-exit-1, g7-essay-exit-2, g7-essay-exit-3, g7-essay-exit-4, g7-essay-exit-5, g7-essay-exit-6) carry a hint and/or worked example; if either is shown before the response, the response is not independent evidence.",
+        "recommendation": "Withhold hints and worked examples until after the scored response, and record any assistance in the governed evidence metadata.",
+        "evidence": [
+          {
+            "document": "ASSESSMENT",
+            "pointer": "/items/0/item",
+            "valueSha256": "0309d00352acd9fcdf80d878d38dbcf46ab5c5bd69fda30799d052154414bb28"
+          },
+          {
+            "document": "ASSESSMENT",
+            "pointer": "/items/1/item",
+            "valueSha256": "010c6684dcf204fc73e209d1bc0032672e755d861be3d628a458612211056e12"
+          },
+          {
+            "document": "ASSESSMENT",
+            "pointer": "/items/2/item",
+            "valueSha256": "94d0d1c399e54617e4ec5657954b894617b968c21acd82aa9957f925a5192f26"
+          },
+          {
+            "document": "ASSESSMENT",
+            "pointer": "/items/3/item",
+            "valueSha256": "cdaa51e7d8ba67b65a9f4e3d3ef381f18b6f622b4c8d852d25db5cb6ec97fdf1"
+          },
+          {
+            "document": "ASSESSMENT",
+            "pointer": "/items/4/item",
+            "valueSha256": "6792bf5ff254f41130c3b69b8b8e9f6d80efbe9d2d2135baaad23f57b17efa66"
+          },
+          {
+            "document": "ASSESSMENT",
+            "pointer": "/items/5/item",
+            "valueSha256": "8b5ae4220f857f4b75c01ed959f65b9876b047ba9037be78bf10cfe363ca79e9"
+          }
+        ],
+        "confidence": 1,
+        "requiresHumanConfirmation": true,
+        "layer": "LIBERIALEARN_MASTERY",
+        "dimension": "ASSESSMENT"
+      },
+      {
+        "id": "ai-l1-writing-objectives-evidenced-by-selection",
+        "code": "WRITING_MASTERY_WITHOUT_WRITING",
+        "criterionId": "LM-ASM-1",
+        "severity": "BLOCKING",
+        "method": "AI_JUDGMENT",
+        "statement": "The objectives are about building an argument and supporting it with evidence, but the learner's own writing is explicitly unmarked and the rubric is labelled as not a mastery score. A learner could reach mastery by recognising good theses without ever writing one.",
+        "recommendation": "Make an unscaffolded, original argumentative paragraph on a new question, scored with the existing four-criterion rubric, part of the end-of-lesson evidence (proposed pl-w1). Keep the selected-response items as diagnostic support, not as the mastery basis.",
+        "evidence": [
+          {
+            "document": "CANDIDATE",
+            "pointer": "/scenes/11/content/body",
+            "quote": "Your teacher reads this writing; it is not marked by this lesson.",
+            "valueSha256": "46aaa095623143b3f263fb08b28e3c92e10df1ab3934742245d2633a9cdc0894"
+          },
+          {
+            "document": "ASSESSMENT",
+            "pointer": "/writingRubric/use",
+            "quote": "Not a mastery score",
+            "valueSha256": "76dd26f964e519a8dd186e20d187f3b180b0f2562990135cf128d8d716ce942a"
+          },
+          {
+            "document": "CANDIDATE",
+            "pointer": "/assessmentRequests/0/interaction",
+            "quote": "SINGLE_CHOICE",
+            "valueSha256": "eca366e39a1f6ebb11965ca92ab83ddce0565909a990a71e1675b655d205eb8c"
+          }
+        ],
+        "confidence": 0.95,
+        "requiresHumanConfirmation": true,
+        "layer": "LIBERIALEARN_MASTERY",
+        "dimension": "ASSESSMENT"
+      },
+      {
+        "id": "ai-l2-exit-items-recall-dominated",
+        "code": "EXIT_ITEMS_RECALL_DOMINATED",
+        "criterionId": "LM-CON-2",
+        "severity": "MAJOR",
+        "method": "AI_JUDGMENT",
+        "statement": "Three of the six exit items ask the learner to recall where a part goes or what it does (thesis position, the conclusion's job, the Explain sentence's job). That is recall, below the analysis and production the objectives name.",
+        "recommendation": "Replace at least two of the recall items with items that ask the learner to judge or repair a short piece of writing (proposed pl-r1), and keep one recall item for diagnosis.",
+        "evidence": [
+          {
+            "document": "ASSESSMENT",
+            "pointer": "/items/0/item/prompt",
+            "quote": "where does the thesis statement usually appear?",
+            "valueSha256": "71e6a365f9b0441030bf0cb0328b1eb5fa1f3fdbe4ab52e88624d7d11cdef193"
+          },
+          {
+            "document": "ASSESSMENT",
+            "pointer": "/items/3/item/prompt",
+            "quote": "What should the conclusion of an argumentative essay do?",
+            "valueSha256": "80c685194e470b91906fac559ac7a87bcb5e4f0135b843a030f85a5f5d5b648b"
+          },
+          {
+            "document": "ASSESSMENT",
+            "pointer": "/items/4/item/prompt",
+            "quote": "In a PEEL paragraph, what does the Explain sentence do?",
+            "valueSha256": "8add4898d0dd1321b27f1f27c11fa3ecc1bf2a6bcaf5d4114db3c5f189e26fa8"
+          }
+        ],
+        "confidence": 0.85,
+        "requiresHumanConfirmation": true,
+        "layer": "LIBERIALEARN_MASTERY",
+        "dimension": "CONCEPTUAL_MASTERY"
+      },
+      {
+        "id": "ai-l3-exit1-distractor-mismapped",
+        "code": "MISCONCEPTION_MAPPING_INCONSISTENT",
+        "criterionId": "LM-CON-1",
+        "severity": "MAJOR",
+        "method": "AI_JUDGMENT",
+        "statement": "In g7-essay-exit-1, 'Only in the conclusion' is mapped to mc-conclusion-new-idea. That misconception is about adding a new reason in the conclusion; choosing this option shows confusion about where the thesis goes, a different error.",
+        "recommendation": "Unmap the option, or map it to a new thesis-placement misconception (proposed mc-thesis-placement) if classroom evidence shows the error is common.",
+        "evidence": [
+          {
+            "document": "ASSESSMENT",
+            "pointer": "/items/0/item/options/3",
+            "quote": "Only in the conclusion",
+            "valueSha256": "d3d0a871e4c7808328d353697805b55e21fb7eb9db067d860e6fc7a2277a2127"
+          },
+          {
+            "document": "ASSESSMENT",
+            "pointer": "/items/0/distractorMisconceptions/3",
+            "quote": "mc-conclusion-new-idea",
+            "valueSha256": "b138ac67965096d0e9e98fc8f349e736d5cd9d9b3dca6d40ac83b06099dc9a2f"
+          },
+          {
+            "document": "CANDIDATE",
+            "pointer": "/misconceptions/5/description",
+            "quote": "Adds a brand-new reason in the conclusion.",
+            "valueSha256": "5b557ce48ddb399701d32d74b65b86a3785fb62c3c374185ae75b0e62a8d0a22"
+          }
+        ],
+        "confidence": 0.85,
+        "requiresHumanConfirmation": true,
+        "layer": "LIBERIALEARN_MASTERY",
+        "dimension": "CONCEPTUAL_MASTERY"
+      },
+      {
+        "id": "ai-l4-exit5-distractor-mismapped",
+        "code": "MISCONCEPTION_MAPPING_INCONSISTENT",
+        "criterionId": "LM-CON-1",
+        "severity": "MAJOR",
+        "method": "AI_JUDGMENT",
+        "statement": "In g7-essay-exit-5, 'It repeats the evidence word for word' is mapped to mc-irrelevant-evidence (true but unrelated evidence). The option describes a different and common error: treating the Explain step as restating the evidence instead of showing how it proves the point.",
+        "recommendation": "Add a catalogue entry for that error (proposed mc-explain-restates-evidence), teach against it in the peel scene, and remap this distractor to it.",
+        "evidence": [
+          {
+            "document": "ASSESSMENT",
+            "pointer": "/items/4/item/options/3",
+            "quote": "It repeats the evidence word for word",
+            "valueSha256": "bdfcb641a185c8e24c026aec1bfa4a9e24c591d176ba0f5dfb25822030aef7b6"
+          },
+          {
+            "document": "ASSESSMENT",
+            "pointer": "/items/4/distractorMisconceptions/3",
+            "quote": "mc-irrelevant-evidence",
+            "valueSha256": "24bde0cdb7ed56fbf672523d6629ebe85f0516a3c4a755e2c0b7271b572f3349"
+          },
+          {
+            "document": "CANDIDATE",
+            "pointer": "/misconceptions/3/description",
+            "quote": "Gives true but unrelated evidence",
+            "valueSha256": "d7cfaf76539a5f4da0d26b5d80db5450ef81b91be1abff987453e68e833de1b3"
+          }
+        ],
+        "confidence": 0.85,
+        "requiresHumanConfirmation": true,
+        "layer": "LIBERIALEARN_MASTERY",
+        "dimension": "CONCEPTUAL_MASTERY"
+      },
+      {
+        "id": "ai-l5-paragraph-prerequisite-checked-by-recognition",
+        "code": "PRODUCTION_PREREQUISITE_CHECKED_BY_RECOGNITION",
+        "criterionId": "NF-PRG-1",
+        "severity": "MAJOR",
+        "method": "AI_JUDGMENT",
+        "statement": "The whole writing sequence depends on the learner already writing a paragraph with a topic sentence, but the warm-up only asks what a topic sentence does. A learner who can name it but not write it reaches the PEEL writing task with no support route.",
+        "recommendation": "Diagnose the prerequisite by production: a short paragraph checked against a two-point checklist, with a paragraph-frame route before PEEL for learners who need it (proposed pl-d0).",
+        "evidence": [
+          {
+            "document": "CANDIDATE",
+            "pointer": "/prerequisiteAssumptions/0",
+            "quote": "Can write a paragraph with a topic sentence and supporting sentences",
+            "valueSha256": "9d0e87c95910143bff6ad11579f467fc89f62016a8ac4855f530ba6a733775d8"
+          },
+          {
+            "document": "CANDIDATE",
+            "pointer": "/scenes/2/interaction/items/0/prompt",
+            "quote": "What does a topic sentence do?",
+            "valueSha256": "4e7b1f52e40feb30d665f072106ba973a1f47a944fb50c01a9614d9b62970fb4"
+          }
+        ],
+        "confidence": 0.85,
+        "requiresHumanConfirmation": true,
+        "layer": "NATIONAL_FOUNDATION",
+        "dimension": "INSTRUCTIONAL_PROGRESSION"
+      },
+      {
+        "id": "ai-l6-conclusion-task-supplies-the-argument",
+        "code": "TASK_SUPPLIES_THE_ARGUMENT",
+        "criterionId": "LM-ASM-2",
+        "severity": "MINOR",
+        "method": "AI_JUDGMENT",
+        "statement": "The write-conclusion task gives the learner the essay's reasons and objection, so it shows control of conclusion structure, not independent argument. That is appropriate for practice but should not be counted as evidence of building an argument.",
+        "recommendation": "Keep it as practice. In the assessment plan, count conclusion-writing evidence only when the learner wrote the argument the conclusion closes (proposed pl-dr2).",
+        "evidence": [
+          {
+            "document": "CANDIDATE",
+            "pointer": "/scenes/12/content/body",
+            "quote": "Its body paragraphs argued two reasons",
+            "valueSha256": "c7b2a25efa041262d52f35383ef6a14e7d4717a153eccccfc0f9721b6a12bd97"
+          }
+        ],
+        "confidence": 0.8,
+        "requiresHumanConfirmation": true,
+        "layer": "LIBERIALEARN_MASTERY",
+        "dimension": "ASSESSMENT"
+      }
+    ],
+    "blueprint": {
+      "version": "liberialearn-assessment-blueprint/1.0.0",
+      "family": "LITERACY",
+      "rules": [
+        {
+          "ruleId": "BP-COVERAGE",
+          "criterionId": "NF-ASM-1",
+          "layer": "NATIONAL_FOUNDATION",
+          "blocking": true,
+          "requirement": "Every objective has end-of-lesson mastery evidence at scaffold NONE.",
+          "missing": [],
+          "detail": "6 end-of-lesson mastery task(s).",
+          "met": true
+        },
+        {
+          "ruleId": "BP-PREREQUISITE-DIAGNOSTIC",
+          "criterionId": "NF-PRG-1",
+          "layer": "NATIONAL_FOUNDATION",
+          "blocking": true,
+          "requirement": "Every stated prerequisite has a diagnostic task with a fallback route.",
+          "missing": [
+            "prerequisite[0]",
+            "prerequisite[1]",
+            "prerequisite[2]"
+          ],
+          "detail": "0 of 3 prerequisite(s) diagnosed.",
+          "met": false
+        },
+        {
+          "ruleId": "BP-INDEPENDENT-PRACTICE",
+          "criterionId": "LM-PRG-1",
+          "layer": "LIBERIALEARN_MASTERY",
+          "blocking": true,
+          "requirement": "Every objective reaches unscaffolded practice before mastery evidence.",
+          "missing": [
+            "ll-g7-lit-essay-structure",
+            "ll-g7-lit-argument-build",
+            "ll-g7-lit-evidence-support"
+          ],
+          "detail": "Formative IN_LESSON tasks at scaffold NONE.",
+          "met": false
+        },
+        {
+          "ruleId": "BP-PRODUCTION",
+          "criterionId": "LM-ASM-1",
+          "layer": "LIBERIALEARN_MASTERY",
+          "blocking": true,
+          "requirement": "Every objective has mastery evidence that is original unscaffolded writing scored with an analytic rubric.",
+          "missing": [
+            "ll-g7-lit-essay-structure",
+            "ll-g7-lit-argument-build",
+            "ll-g7-lit-evidence-support"
+          ],
+          "detail": "Accepted kinds: ORIGINAL_WRITING.",
+          "met": false
+        },
+        {
+          "ruleId": "BP-REASONING",
+          "criterionId": "LM-RSN-1",
+          "layer": "LIBERIALEARN_MASTERY",
+          "blocking": true,
+          "requirement": "At least one unscaffolded, rubric-scored reasoning or justification task.",
+          "missing": [
+            "EXTENDED_REASONING"
+          ],
+          "detail": "0 reasoning task(s) at mastery.",
+          "met": false
+        },
+        {
+          "ruleId": "BP-SELECTED-SHARE",
+          "criterionId": "LM-ASM-1",
+          "layer": "LIBERIALEARN_MASTERY",
+          "blocking": true,
+          "requirement": "Selected response is at most 50% of end-of-lesson mastery evidence.",
+          "missing": [
+            "SELECTED_RESPONSE_SHARE"
+          ],
+          "detail": "6/6 selected response (100%).",
+          "met": false
+        },
+        {
+          "ruleId": "BP-RETENTION",
+          "criterionId": "LM-ASM-3",
+          "layer": "LIBERIALEARN_MASTERY",
+          "blocking": true,
+          "requirement": "Every objective has delayed retrieval at least 7 days after the lesson.",
+          "missing": [
+            "ll-g7-lit-essay-structure",
+            "ll-g7-lit-argument-build",
+            "ll-g7-lit-evidence-support"
+          ],
+          "detail": "Spaced retrieval, unscaffolded.",
+          "met": false
+        },
+        {
+          "ruleId": "BP-TRANSFER",
+          "criterionId": "GE-TRN-1",
+          "layer": "GLOBAL_EXCELLENCE",
+          "blocking": true,
+          "requirement": "At least one unscaffolded transfer task in a context the lesson did not rehearse.",
+          "missing": [
+            "TRANSFER_TASK"
+          ],
+          "detail": "Near or far transfer, NEW context.",
+          "met": false
+        },
+        {
+          "ruleId": "BP-EXTENSION",
+          "criterionId": "GE-EXT-1",
+          "layer": "GLOBAL_EXCELLENCE",
+          "blocking": true,
+          "requirement": "An optional, non-gating extension task.",
+          "missing": [
+            "EXTENSION"
+          ],
+          "detail": "Extension is optional and never required for mastery.",
+          "met": false
+        }
+      ],
+      "selectedResponseShareOfMastery": 1,
+      "blockingGaps": [
+        "BP-PREREQUISITE-DIAGNOSTIC",
+        "BP-INDEPENDENT-PRACTICE",
+        "BP-PRODUCTION",
+        "BP-REASONING",
+        "BP-SELECTED-SHARE",
+        "BP-RETENTION",
+        "BP-TRANSFER",
+        "BP-EXTENSION"
+      ]
+    },
+    "projectedBlueprintWithPlan": {
+      "planId": "excellence-plan-g7-literacy-essay-argument-0.1.0",
+      "planSha256": "0ff24a77d44d19be622d834b434578ae8dec60d26e0b76579a1229ae47822a32",
+      "planReviewStatus": "UNREVIEWED_REQUIRES_INDEPENDENT_REVIEW",
+      "planAuthoredByReviewer": true,
+      "supersededCandidateTaskIds": [
+        "g7-essay-exit-1",
+        "g7-essay-exit-4",
+        "g7-essay-exit-5"
+      ],
+      "evaluation": {
+        "version": "liberialearn-assessment-blueprint/1.0.0",
+        "family": "LITERACY",
+        "rules": [
+          {
+            "ruleId": "BP-COVERAGE",
+            "criterionId": "NF-ASM-1",
+            "layer": "NATIONAL_FOUNDATION",
+            "blocking": true,
+            "requirement": "Every objective has end-of-lesson mastery evidence at scaffold NONE.",
+            "missing": [],
+            "detail": "7 end-of-lesson mastery task(s).",
+            "met": true
+          },
+          {
+            "ruleId": "BP-PREREQUISITE-DIAGNOSTIC",
+            "criterionId": "NF-PRG-1",
+            "layer": "NATIONAL_FOUNDATION",
+            "blocking": true,
+            "requirement": "Every stated prerequisite has a diagnostic task with a fallback route.",
+            "missing": [],
+            "detail": "3 of 3 prerequisite(s) diagnosed.",
+            "met": true
+          },
+          {
+            "ruleId": "BP-INDEPENDENT-PRACTICE",
+            "criterionId": "LM-PRG-1",
+            "layer": "LIBERIALEARN_MASTERY",
+            "blocking": true,
+            "requirement": "Every objective reaches unscaffolded practice before mastery evidence.",
+            "missing": [],
+            "detail": "Formative IN_LESSON tasks at scaffold NONE.",
+            "met": true
+          },
+          {
+            "ruleId": "BP-PRODUCTION",
+            "criterionId": "LM-ASM-1",
+            "layer": "LIBERIALEARN_MASTERY",
+            "blocking": true,
+            "requirement": "Every objective has mastery evidence that is original unscaffolded writing scored with an analytic rubric.",
+            "missing": [],
+            "detail": "Accepted kinds: ORIGINAL_WRITING.",
+            "met": true
+          },
+          {
+            "ruleId": "BP-REASONING",
+            "criterionId": "LM-RSN-1",
+            "layer": "LIBERIALEARN_MASTERY",
+            "blocking": true,
+            "requirement": "At least one unscaffolded, rubric-scored reasoning or justification task.",
+            "missing": [],
+            "detail": "3 reasoning task(s) at mastery.",
+            "met": true
+          },
+          {
+            "ruleId": "BP-SELECTED-SHARE",
+            "criterionId": "LM-ASM-1",
+            "layer": "LIBERIALEARN_MASTERY",
+            "blocking": true,
+            "requirement": "Selected response is at most 50% of end-of-lesson mastery evidence.",
+            "missing": [],
+            "detail": "3/7 selected response (43%).",
+            "met": true
+          },
+          {
+            "ruleId": "BP-RETENTION",
+            "criterionId": "LM-ASM-3",
+            "layer": "LIBERIALEARN_MASTERY",
+            "blocking": true,
+            "requirement": "Every objective has delayed retrieval at least 7 days after the lesson.",
+            "missing": [],
+            "detail": "Spaced retrieval, unscaffolded.",
+            "met": true
+          },
+          {
+            "ruleId": "BP-TRANSFER",
+            "criterionId": "GE-TRN-1",
+            "layer": "GLOBAL_EXCELLENCE",
+            "blocking": true,
+            "requirement": "At least one unscaffolded transfer task in a context the lesson did not rehearse.",
+            "missing": [],
+            "detail": "Near or far transfer, NEW context.",
+            "met": true
+          },
+          {
+            "ruleId": "BP-EXTENSION",
+            "criterionId": "GE-EXT-1",
+            "layer": "GLOBAL_EXCELLENCE",
+            "blocking": true,
+            "requirement": "An optional, non-gating extension task.",
+            "missing": [],
+            "detail": "Extension is optional and never required for mastery.",
+            "met": true
+          }
+        ],
+        "selectedResponseShareOfMastery": 0.42857142857142855,
+        "blockingGaps": []
+      }
+    },
+    "reportSha256": "981fd877cda249ce393a0a8220d129dc9eeb816561400adeb4f197ea6847ad54"
+  },
+  "criteria": {
+    "asIs": [
+      {
+        "criterionId": "NF-ALN-1",
+        "layer": "NATIONAL_FOUNDATION",
+        "blocking": true,
+        "rating": "NOT_EVALUATED",
+        "basis": "Requires a qualified human reviewer."
+      },
+      {
+        "criterionId": "NF-ALN-2",
+        "layer": "NATIONAL_FOUNDATION",
+        "blocking": true,
+        "rating": "NOT_EVALUATED",
+        "basis": "No AI finding; advisory judgment is not a MET rating."
+      },
+      {
+        "criterionId": "NF-ALN-3",
+        "layer": "NATIONAL_FOUNDATION",
+        "blocking": true,
+        "rating": "NOT_EVALUATED",
+        "basis": "Requires a qualified human reviewer."
+      },
+      {
+        "criterionId": "NF-ACC-1",
+        "layer": "NATIONAL_FOUNDATION",
+        "blocking": true,
+        "rating": "NOT_EVALUATED",
+        "basis": "No deterministic check covers this criterion yet."
+      },
+      {
+        "criterionId": "NF-ACC-2",
+        "layer": "NATIONAL_FOUNDATION",
+        "blocking": true,
+        "rating": "NOT_EVALUATED",
+        "basis": "Requires a qualified human reviewer."
+      },
+      {
+        "criterionId": "NF-PRG-1",
+        "layer": "NATIONAL_FOUNDATION",
+        "blocking": true,
+        "rating": "NOT_MET",
+        "basis": "BP-PREREQUISITE-DIAGNOSTIC, det-prereq-0, det-prereq-1, det-prereq-2"
+      },
+      {
+        "criterionId": "NF-ASM-1",
+        "layer": "NATIONAL_FOUNDATION",
+        "blocking": true,
+        "rating": "MET",
+        "basis": "blueprint:BP-COVERAGE"
+      },
+      {
+        "criterionId": "NF-ACS-1",
+        "layer": "NATIONAL_FOUNDATION",
+        "blocking": true,
+        "rating": "NOT_EVALUATED",
+        "basis": "No deterministic check covers this criterion yet."
+      },
+      {
+        "criterionId": "NF-REL-1",
+        "layer": "NATIONAL_FOUNDATION",
+        "blocking": false,
+        "rating": "NOT_EVALUATED",
+        "basis": "Requires a qualified human reviewer."
+      },
+      {
+        "criterionId": "LM-PRG-1",
+        "layer": "LIBERIALEARN_MASTERY",
+        "blocking": true,
+        "rating": "NOT_MET",
+        "basis": "BP-INDEPENDENT-PRACTICE, det-bp-independent-practice"
+      },
+      {
+        "criterionId": "LM-CON-1",
+        "layer": "LIBERIALEARN_MASTERY",
+        "blocking": true,
+        "rating": "PARTIALLY_MET",
+        "basis": "det-mc-unassessed-mc-circular-reasoning, det-unmapped-g7-essay-exit-1-1, det-unmapped-g7-essay-exit-1-2, det-unmapped-g7-essay-exit-4-2, det-unmapped-g7-essay-exit-4-3, det-unmapped-g7-essay-exit-5-1, det-unmapped-g7-essay-exit-5-2, det-unmapped-g7-essay-exit-6-3, ai-l3-exit1-distractor-mismapped, ai-l4-exit5-distractor-mismapped"
+      },
+      {
+        "criterionId": "LM-CON-2",
+        "layer": "LIBERIALEARN_MASTERY",
+        "blocking": false,
+        "rating": "PARTIALLY_MET",
+        "basis": "ai-l2-exit-items-recall-dominated"
+      },
+      {
+        "criterionId": "LM-RSN-1",
+        "layer": "LIBERIALEARN_MASTERY",
+        "blocking": true,
+        "rating": "NOT_MET",
+        "basis": "BP-REASONING, det-bp-reasoning"
+      },
+      {
+        "criterionId": "LM-ASM-1",
+        "layer": "LIBERIALEARN_MASTERY",
+        "blocking": true,
+        "rating": "NOT_MET",
+        "basis": "BP-PRODUCTION, BP-SELECTED-SHARE, det-bp-production, det-bp-selected-share, ai-l1-writing-objectives-evidenced-by-selection"
+      },
+      {
+        "criterionId": "LM-ASM-2",
+        "layer": "LIBERIALEARN_MASTERY",
+        "blocking": true,
+        "rating": "PARTIALLY_MET",
+        "basis": "det-mastery-assistance, ai-l6-conclusion-task-supplies-the-argument"
+      },
+      {
+        "criterionId": "LM-ASM-3",
+        "layer": "LIBERIALEARN_MASTERY",
+        "blocking": true,
+        "rating": "NOT_MET",
+        "basis": "BP-RETENTION, det-bp-retention"
+      },
+      {
+        "criterionId": "LM-ACS-1",
+        "layer": "LIBERIALEARN_MASTERY",
+        "blocking": false,
+        "rating": "NOT_EVALUATED",
+        "basis": "Requires a qualified human reviewer."
+      },
+      {
+        "criterionId": "LM-REL-1",
+        "layer": "LIBERIALEARN_MASTERY",
+        "blocking": false,
+        "rating": "NOT_EVALUATED",
+        "basis": "No AI finding; advisory judgment is not a MET rating."
+      },
+      {
+        "criterionId": "GE-RSN-1",
+        "layer": "GLOBAL_EXCELLENCE",
+        "blocking": true,
+        "rating": "NOT_EVALUATED",
+        "basis": "No AI finding; advisory judgment is not a MET rating."
+      },
+      {
+        "criterionId": "GE-TRN-1",
+        "layer": "GLOBAL_EXCELLENCE",
+        "blocking": true,
+        "rating": "NOT_MET",
+        "basis": "BP-TRANSFER, det-bp-transfer"
+      },
+      {
+        "criterionId": "GE-EXT-1",
+        "layer": "GLOBAL_EXCELLENCE",
+        "blocking": true,
+        "rating": "NOT_MET",
+        "basis": "BP-EXTENSION, det-bp-extension"
+      },
+      {
+        "criterionId": "GE-ASM-1",
+        "layer": "GLOBAL_EXCELLENCE",
+        "blocking": true,
+        "rating": "NOT_EVALUATED",
+        "basis": "Requires a qualified human reviewer."
+      },
+      {
+        "criterionId": "GE-ACC-1",
+        "layer": "GLOBAL_EXCELLENCE",
+        "blocking": true,
+        "rating": "NOT_EVALUATED",
+        "basis": "Requires a qualified human reviewer."
+      }
+    ],
+    "blueprintIfPlanAdopted": [
+      {
+        "criterionId": "NF-ALN-1",
+        "layer": "NATIONAL_FOUNDATION",
+        "blocking": true,
+        "rating": "NOT_EVALUATED",
+        "basis": "Requires a qualified human reviewer."
+      },
+      {
+        "criterionId": "NF-ALN-2",
+        "layer": "NATIONAL_FOUNDATION",
+        "blocking": true,
+        "rating": "NOT_EVALUATED",
+        "basis": "No AI finding; advisory judgment is not a MET rating."
+      },
+      {
+        "criterionId": "NF-ALN-3",
+        "layer": "NATIONAL_FOUNDATION",
+        "blocking": true,
+        "rating": "NOT_EVALUATED",
+        "basis": "Requires a qualified human reviewer."
+      },
+      {
+        "criterionId": "NF-ACC-1",
+        "layer": "NATIONAL_FOUNDATION",
+        "blocking": true,
+        "rating": "NOT_EVALUATED",
+        "basis": "No deterministic check covers this criterion yet."
+      },
+      {
+        "criterionId": "NF-ACC-2",
+        "layer": "NATIONAL_FOUNDATION",
+        "blocking": true,
+        "rating": "NOT_EVALUATED",
+        "basis": "Requires a qualified human reviewer."
+      },
+      {
+        "criterionId": "NF-PRG-1",
+        "layer": "NATIONAL_FOUNDATION",
+        "blocking": true,
+        "rating": "MET",
+        "basis": "blueprint:BP-PREREQUISITE-DIAGNOSTIC"
+      },
+      {
+        "criterionId": "NF-ASM-1",
+        "layer": "NATIONAL_FOUNDATION",
+        "blocking": true,
+        "rating": "MET",
+        "basis": "blueprint:BP-COVERAGE"
+      },
+      {
+        "criterionId": "NF-ACS-1",
+        "layer": "NATIONAL_FOUNDATION",
+        "blocking": true,
+        "rating": "NOT_EVALUATED",
+        "basis": "No deterministic check covers this criterion yet."
+      },
+      {
+        "criterionId": "NF-REL-1",
+        "layer": "NATIONAL_FOUNDATION",
+        "blocking": false,
+        "rating": "NOT_EVALUATED",
+        "basis": "Requires a qualified human reviewer."
+      },
+      {
+        "criterionId": "LM-PRG-1",
+        "layer": "LIBERIALEARN_MASTERY",
+        "blocking": true,
+        "rating": "MET",
+        "basis": "blueprint:BP-INDEPENDENT-PRACTICE"
+      },
+      {
+        "criterionId": "LM-CON-1",
+        "layer": "LIBERIALEARN_MASTERY",
+        "blocking": true,
+        "rating": "NOT_EVALUATED",
+        "basis": "No deterministic check covers this criterion yet."
+      },
+      {
+        "criterionId": "LM-CON-2",
+        "layer": "LIBERIALEARN_MASTERY",
+        "blocking": false,
+        "rating": "NOT_EVALUATED",
+        "basis": "No deterministic check covers this criterion yet."
+      },
+      {
+        "criterionId": "LM-RSN-1",
+        "layer": "LIBERIALEARN_MASTERY",
+        "blocking": true,
+        "rating": "MET",
+        "basis": "blueprint:BP-REASONING"
+      },
+      {
+        "criterionId": "LM-ASM-1",
+        "layer": "LIBERIALEARN_MASTERY",
+        "blocking": true,
+        "rating": "MET",
+        "basis": "blueprint:BP-PRODUCTION, blueprint:BP-SELECTED-SHARE"
+      },
+      {
+        "criterionId": "LM-ASM-2",
+        "layer": "LIBERIALEARN_MASTERY",
+        "blocking": true,
+        "rating": "NOT_EVALUATED",
+        "basis": "No deterministic check covers this criterion yet."
+      },
+      {
+        "criterionId": "LM-ASM-3",
+        "layer": "LIBERIALEARN_MASTERY",
+        "blocking": true,
+        "rating": "MET",
+        "basis": "blueprint:BP-RETENTION"
+      },
+      {
+        "criterionId": "LM-ACS-1",
+        "layer": "LIBERIALEARN_MASTERY",
+        "blocking": false,
+        "rating": "NOT_EVALUATED",
+        "basis": "Requires a qualified human reviewer."
+      },
+      {
+        "criterionId": "LM-REL-1",
+        "layer": "LIBERIALEARN_MASTERY",
+        "blocking": false,
+        "rating": "NOT_EVALUATED",
+        "basis": "No AI finding; advisory judgment is not a MET rating."
+      },
+      {
+        "criterionId": "GE-RSN-1",
+        "layer": "GLOBAL_EXCELLENCE",
+        "blocking": true,
+        "rating": "NOT_EVALUATED",
+        "basis": "No AI finding; advisory judgment is not a MET rating."
+      },
+      {
+        "criterionId": "GE-TRN-1",
+        "layer": "GLOBAL_EXCELLENCE",
+        "blocking": true,
+        "rating": "MET",
+        "basis": "blueprint:BP-TRANSFER"
+      },
+      {
+        "criterionId": "GE-EXT-1",
+        "layer": "GLOBAL_EXCELLENCE",
+        "blocking": true,
+        "rating": "MET",
+        "basis": "blueprint:BP-EXTENSION"
+      },
+      {
+        "criterionId": "GE-ASM-1",
+        "layer": "GLOBAL_EXCELLENCE",
+        "blocking": true,
+        "rating": "NOT_EVALUATED",
+        "basis": "Requires a qualified human reviewer."
+      },
+      {
+        "criterionId": "GE-ACC-1",
+        "layer": "GLOBAL_EXCELLENCE",
+        "blocking": true,
+        "rating": "NOT_EVALUATED",
+        "basis": "Requires a qualified human reviewer."
+      }
+    ]
+  },
+  "layers": {
+    "asIs": [
+      {
+        "layer": "NATIONAL_FOUNDATION",
+        "attained": false,
+        "unmetBlocking": [
+          "NF-ALN-1",
+          "NF-ALN-2",
+          "NF-ALN-3",
+          "NF-ACC-1",
+          "NF-ACC-2",
+          "NF-PRG-1",
+          "NF-ACS-1"
+        ],
+        "isLearningEvidence": false
+      },
+      {
+        "layer": "LIBERIALEARN_MASTERY",
+        "attained": false,
+        "unmetBlocking": [
+          "LM-PRG-1",
+          "LM-CON-1",
+          "LM-RSN-1",
+          "LM-ASM-1",
+          "LM-ASM-2",
+          "LM-ASM-3"
+        ],
+        "isLearningEvidence": false
+      },
+      {
+        "layer": "GLOBAL_EXCELLENCE",
+        "attained": false,
+        "unmetBlocking": [
+          "GE-RSN-1",
+          "GE-TRN-1",
+          "GE-EXT-1",
+          "GE-ASM-1",
+          "GE-ACC-1"
+        ],
+        "isLearningEvidence": false
+      }
+    ]
+  },
+  "plan": {
+    "planId": "excellence-plan-g7-literacy-essay-argument-0.1.0",
+    "notice": "PROPOSED, CANDIDATE ONLY. Written by the same AI reviewer that produced the gap report, so the reviewer may not review it: it needs independent review by a qualified human before any of it is used. Scoring guides are reviewer-only and must never reach a learner projection, offline package or client bundle.",
+    "status": "PROPOSED_CANDIDATE_ONLY",
+    "revision": {
+      "contentKey": "cv2-cand-g7-literacy-essay-structure-argument@0.2.0",
+      "candidateSha256": "80b9592641effbdae8f5868323289873a8c1a6e547676241e09ab8ee5db060b1"
+    },
+    "authors": [
+      {
+        "kind": "AI",
+        "agentId": "claude-code:curriculum-excellence-v1",
+        "modelFamily": "anthropic-claude",
+        "modelId": "claude-opus-5-5",
+        "sessionId": null
+      }
+    ],
+    "supersedesCandidateTaskIds": [
+      "g7-essay-exit-1",
+      "g7-essay-exit-4",
+      "g7-essay-exit-5"
+    ],
+    "supersedeRationale": "These three items test recall of where parts go and what they do. pl-w1, pl-r1 and pl-r2 test the same knowledge by use. If a reviewer keeps any of them, apply the remaps below.",
+    "writingRubric": {
+      "source": "Reuses the four criteria of the candidate package's writingRubric (thesis, point, evidence, explain-link), each scored secure 2 / developing 1 / beginning 0, plus one criterion for pl-r2 and pl-dr2.",
+      "addedCriteria": [
+        {
+          "id": "counterargument",
+          "label": "Counterargument and reply",
+          "secure": "States a fair objection and answers it with a reason.",
+          "developing": "States an objection but the reply only repeats the claim.",
+          "beginning": "No objection, or an objection left unanswered."
+        }
+      ],
+      "independenceRule": "Score only work written without hints, the model plan, a partner or AI help. Record any assistance in the evidence metadata; assisted work is formative only."
+    },
+    "tasks": [
+      {
+        "id": "pl-d0",
+        "kind": "PREREQUISITE_DIAGNOSTIC",
+        "prerequisiteIndex": 0,
+        "objectiveIds": [
+          "ll-g7-lit-essay-structure"
+        ],
+        "scaffold": "NONE",
+        "timing": "PRE_LESSON",
+        "context": "REHEARSED",
+        "scoring": "ANALYTIC_RUBRIC",
+        "prompt": "Write a short paragraph (three to five sentences) about a place in your community that you know well. Start with a sentence that tells the main idea.",
+        "scoringGuide": {
+          "0": "No identifiable main idea.",
+          "1": "A main idea is present but not first, or the support drifts to other ideas.",
+          "2": "First sentence states one main idea and at least two later sentences support that same idea."
+        },
+        "fallbackRoute": "Before PEEL, teach a paragraph frame (topic sentence + two supporting sentences) with a shared example; the teacher conferences with learners who scored 0 before the write-argument scene."
+      },
+      {
+        "id": "pl-d1",
+        "kind": "PREREQUISITE_DIAGNOSTIC",
+        "prerequisiteIndex": 1,
+        "objectiveIds": [
+          "ll-g7-lit-evidence-support"
+        ],
+        "scaffold": "NONE",
+        "timing": "PRE_LESSON",
+        "context": "REHEARSED",
+        "scoring": "KEYED",
+        "prompt": "Mark each sentence F (fact) or O (opinion): (1) The Saint Paul River flows into the Atlantic Ocean. (2) Rice is the best food in the world. (3) Our school has two classrooms for Grade 7. (4) Football is more fun than kickball.",
+        "key": "1 F, 2 O, 3 F (checkable for the learner's own school), 4 O",
+        "fallbackRoute": "Mini-lesson on the question 'Can it be checked?' with four more classroom sentences before the evidence scene."
+      },
+      {
+        "id": "pl-d2",
+        "kind": "PREREQUISITE_DIAGNOSTIC",
+        "prerequisiteIndex": 2,
+        "objectiveIds": [
+          "ll-g7-lit-argument-build"
+        ],
+        "scaffold": "NONE",
+        "timing": "PRE_LESSON",
+        "context": "REHEARSED",
+        "scoring": "ANALYTIC_RUBRIC",
+        "prompt": "Should our school have a longer lunch break? Write one reason someone might say yes and one reason someone might say no.",
+        "scoringGuide": {
+          "0": "No reason given.",
+          "1": "Two reasons on the same side, or one side only.",
+          "2": "Two distinct reasons on opposite sides."
+        },
+        "fallbackRoute": "Pair talk with the sentence starters 'Some people think … because …' and 'Others think … because …' before the intro scene."
+      },
+      {
+        "id": "pl-p1",
+        "kind": "ORIGINAL_WRITING",
+        "objectiveIds": [
+          "ll-g7-lit-essay-structure",
+          "ll-g7-lit-argument-build",
+          "ll-g7-lit-evidence-support"
+        ],
+        "scaffold": "NONE",
+        "timing": "IN_LESSON",
+        "context": "REHEARSED",
+        "scoring": "ANALYTIC_RUBRIC",
+        "prompt": "After peer review, write a second thesis and PEEL paragraph on the other topic from your plan, this time without hints or the model plan.",
+        "note": "Formative. Gives every objective unscaffolded practice before the mastery task; the candidate's own writing tasks keep hints (scaffold PARTIAL/MINIMAL)."
+      },
+      {
+        "id": "pl-w1",
+        "kind": "ORIGINAL_WRITING",
+        "objectiveIds": [
+          "ll-g7-lit-essay-structure",
+          "ll-g7-lit-argument-build",
+          "ll-g7-lit-evidence-support"
+        ],
+        "scaffold": "NONE",
+        "timing": "END_OF_LESSON",
+        "context": "REHEARSED",
+        "scoring": "ANALYTIC_RUBRIC",
+        "prompt": "Should students be allowed to bring mobile phones to school? Write a thesis statement with your claim and two reasons. Then write one PEEL paragraph that argues your first reason with real evidence, explains it and links it back to your claim (120 to 200 words). Work alone, without hints, the model plan or a partner.",
+        "scoringGuide": "writingRubric: thesis, point, evidence, explain-link (0-2 each, 8 points)",
+        "targetsMisconceptions": [
+          "mc-topic-not-thesis",
+          "mc-opinion-as-evidence",
+          "mc-circular-reasoning",
+          "mc-irrelevant-evidence"
+        ]
+      },
+      {
+        "id": "pl-r1",
+        "kind": "EXTENDED_REASONING",
+        "objectiveIds": [
+          "ll-g7-lit-argument-build",
+          "ll-g7-lit-evidence-support"
+        ],
+        "scaffold": "NONE",
+        "timing": "END_OF_LESSON",
+        "context": "REHEARSED",
+        "scoring": "ANALYTIC_RUBRIC",
+        "prompt": "Read this paragraph: 'Our school library should open on Saturdays. The library is good because it is good for students. Everyone knows reading is important. If it opens, more students will read.' Name two problems with the reasons or evidence and explain why each one weakens the argument. Then rewrite one sentence so it gives real evidence and says where the evidence comes from.",
+        "scoringGuide": {
+          "0": "No valid problem named.",
+          "1": "A problem is named without explanation.",
+          "2": "One problem named and explained; rewrite adequate or missing.",
+          "3": "Both problems named, one explanation thin, rewrite adequate.",
+          "4": "Names circular reasoning (sentence 2) and opinion used as evidence (sentence 3), explains why each fails, and rewrites one with specific, checkable evidence and its source."
+        },
+        "targetsMisconceptions": [
+          "mc-circular-reasoning",
+          "mc-opinion-as-evidence"
+        ]
+      },
+      {
+        "id": "pl-r2",
+        "kind": "EXTENDED_REASONING",
+        "objectiveIds": [
+          "ll-g7-lit-argument-build"
+        ],
+        "scaffold": "NONE",
+        "timing": "END_OF_LESSON",
+        "context": "REHEARSED",
+        "scoring": "ANALYTIC_RUBRIC",
+        "prompt": "Claim: 'Every Grade 7 class should plant trees on the school compound.' Write the strongest objection someone could raise, then write two sentences that answer it.",
+        "scoringGuide": "writingRubric criterion counterargument (0-2)",
+        "targetsMisconceptions": [
+          "mc-ignore-counterargument"
+        ]
+      },
+      {
+        "id": "pl-t1",
+        "kind": "TRANSFER_TASK",
+        "objectiveIds": [
+          "ll-g7-lit-argument-build",
+          "ll-g7-lit-evidence-support"
+        ],
+        "scaffold": "NONE",
+        "timing": "END_OF_LESSON",
+        "context": "NEW",
+        "scoring": "ANALYTIC_RUBRIC",
+        "prompt": "Write a short letter (80 to 150 words) to your town chief or community leader asking for one change at the market, such as lights or a clean water point. Make your claim, give one reason with real evidence, and answer one objection the leader might have.",
+        "scoringGuide": "writingRubric: thesis (as claim), evidence, explain-link, counterargument (0-2 each)",
+        "note": "New genre and a real audience: the lesson only rehearses school essays."
+      },
+      {
+        "id": "pl-dr1",
+        "kind": "DELAYED_RETRIEVAL",
+        "objectiveIds": [
+          "ll-g7-lit-essay-structure",
+          "ll-g7-lit-argument-build",
+          "ll-g7-lit-evidence-support"
+        ],
+        "scaffold": "NONE",
+        "timing": "DELAYED",
+        "delayDays": 7,
+        "context": "REHEARSED",
+        "scoring": "ANALYTIC_RUBRIC",
+        "prompt": "Without notes: write a thesis statement with two reasons for 'Should every student learn to swim?', then write a PEEL paragraph for one of the reasons.",
+        "scoringGuide": "writingRubric (8 points)"
+      },
+      {
+        "id": "pl-dr2",
+        "kind": "DELAYED_RETRIEVAL",
+        "objectiveIds": [
+          "ll-g7-lit-essay-structure",
+          "ll-g7-lit-argument-build",
+          "ll-g7-lit-evidence-support"
+        ],
+        "scaffold": "NONE",
+        "timing": "DELAYED",
+        "delayDays": 21,
+        "context": "REHEARSED",
+        "scoring": "ANALYTIC_RUBRIC",
+        "prompt": "Choose a question about your school or community. Write a thesis, one PEEL paragraph, one sentence answering an objection, and a two-sentence conclusion that adds no new reason.",
+        "scoringGuide": "writingRubric (8 points) + counterargument (2) + conclusion adds no new reason (0/1)",
+        "targetsMisconceptions": [
+          "mc-conclusion-new-idea",
+          "mc-ignore-counterargument"
+        ]
+      },
+      {
+        "id": "pl-x1",
+        "kind": "EXTENSION",
+        "optional": true,
+        "objectiveIds": [
+          "ll-g7-lit-essay-structure",
+          "ll-g7-lit-argument-build",
+          "ll-g7-lit-evidence-support"
+        ],
+        "scaffold": "NONE",
+        "timing": "END_OF_LESSON",
+        "context": "NEW",
+        "scoring": "ANALYTIC_RUBRIC",
+        "prompt": "Write a full five-paragraph argumentative essay (introduction, two reasons, one paragraph answering the other side, conclusion) on a question you care about. Then write two sentences explaining which of your reasons is strongest and why.",
+        "scoringGuide": "writingRubric applied per paragraph + counterargument + a reasoned self-evaluation",
+        "note": "Optional and non-gating; argumentative essays are MOE Grade 9 scope (grade-scope decision pending in PR #191)."
+      }
+    ],
+    "misconceptionCorrections": {
+      "catalogueAdditions": [
+        {
+          "id": "mc-explain-restates-evidence",
+          "objectiveId": "ll-g7-lit-evidence-support",
+          "description": "Thinks the Explain step means repeating the evidence, so never says how the evidence proves the point.",
+          "response": "Ask 'so what?' after the evidence and answer it with a sentence that starts 'This shows that…'."
+        },
+        {
+          "id": "mc-thesis-placement",
+          "objectiveId": "ll-g7-lit-essay-structure",
+          "description": "Places the thesis only in the conclusion or the title, so the reader meets the reasons before the claim.",
+          "response": "Show the reader's view: the introduction ends with the claim so every body paragraph can be read as support for it.",
+          "condition": "Add only if classroom evidence shows the error is common; otherwise leave g7-essay-exit-1 option 3 unmapped."
+        }
+      ],
+      "remaps": [
+        {
+          "itemId": "g7-essay-exit-1",
+          "optionIndex": 3,
+          "from": "mc-conclusion-new-idea",
+          "to": null,
+          "rationale": "Thesis placement, not a new reason in the conclusion. Map to mc-thesis-placement only under its condition."
+        },
+        {
+          "itemId": "g7-essay-exit-5",
+          "optionIndex": 3,
+          "from": "mc-irrelevant-evidence",
+          "to": "mc-explain-restates-evidence"
+        }
+      ],
+      "optionReplacements": [],
+      "diagnosabilityAdditions": [
+        {
+          "misconceptionId": "mc-circular-reasoning",
+          "via": "pl-r1",
+          "rationale": "Taught in evidence-check and plan-argument but not detectable in any exit item; pl-r1 asks the learner to find it."
+        }
+      ]
+    }
+  },
+  "correctionChecks": [],
+  "packageGaps": [
+    "MOE_OBJECTIVE_UNBOUND",
+    "MOE_SOURCE_STRUCTURING_DEFECT",
+    "MOE_GRADE_SCOPE_REVIEW",
+    "TEMPLATE_CELL_MISSING",
+    "ONTOLOGY_RELEASE_MISSING",
+    "LEGACY_COMPARISON_SIGNOFF",
+    "ASSESSMENT_ITEMS_PENDING"
+  ],
+  "waecBaseline": {
+    "examination": "LJHSCE (Grade 9), then WASSCE",
+    "competency": "WAEC English Language: Essay & Continuous Writing",
+    "evidenceSpecificity": "SUBJECT_LEVEL",
+    "note": "Grade 7 is not examined by WAEC. WAEC English Language papers include continuous (essay) writing, which is original writing; that is why selected-response evidence cannot stand in for it. Relevance is forward preparation only, and no WAEC approval is claimed."
+  }
+}
