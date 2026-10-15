@@ -10,7 +10,7 @@ import { deterministicReleaseIdentity } from "@/lib/learning-authority/governedG
 import type { ToolkitMapping } from "@/lib/content-bundle/v1/toolkitMapping";
 import { ContentBundlePreview, ContentBundlePreviewUnavailable } from "@/components/teacher/content-bundle-preview/ContentBundlePreview";
 
-vi.mock("@/lib/db", () => { throw new Error("Preview resolution must not import a DB client or mutation path"); });
+vi.mock("@/lib/db", () => ({ prisma: { contentBundleRecord: { findUnique: vi.fn(async () => null), findMany: vi.fn(async () => []) }, contentBundleAllocation: { findFirst: vi.fn(async () => null) } } }));
 
 const viewer = { userId: "teacher-a", role: "TEACHER", schoolId: "school-a" };
 function setup() {
@@ -129,7 +129,7 @@ describe("integrated school-authorized authority preview", () => {
     for (const bundleVersion of [null, "1.0.0"]) {
       const r = await service.resolveForTeacherPreview({ bundleId: "g4-math-fractions", bundleVersion, viewer });
       expect(r.status).toBe("UNAVAILABLE"); expect(r.authorityMetadata?.readiness).toBe("PARTIAL"); expect(r.bundle).toBeNull();
-      expect(r.diagnostics.map(d => d.code)).toEqual(expect.arrayContaining(["COMPOSITION_MISSING", "ASSESSMENT_DEFINITION_MISSING", "TOOLKIT_MAPPING_UNRESOLVED", "LAB_REVISION_CERTIFICATION_UNRESOLVED", "OFFLINE_PACKAGE_GAP"]));
+      expect(r.diagnostics.map(d => d.code)).toEqual(expect.arrayContaining([bundleVersion === null ? "VERSION_SELECTION_REQUIRED" : "COMPOSITION_MISSING", "ASSESSMENT_DEFINITION_MISSING", "TOOLKIT_MAPPING_UNRESOLVED", "LAB_REVISION_CERTIFICATION_UNRESOLVED", "OFFLINE_PACKAGE_GAP"]));
     }
   });
   it("rejects fixtures in production including navigation aliases", async () => {

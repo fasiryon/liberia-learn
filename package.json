@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
+    "content:scheduledwork:analyze": "tsx scripts/analyze-scheduledwork-content.ts",
     "postinstall": "node scripts/patch-vitest-offline-wildcard.mjs",
     "dev": "next dev",
     "build": "prisma generate && cross-env NODE_OPTIONS=\"--max-old-space-size=4096\" next build",

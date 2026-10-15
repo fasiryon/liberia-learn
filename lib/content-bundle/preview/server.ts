@@ -30,9 +30,13 @@ const UNDECLARED_SOURCE: PreviewSource = { kind: "GOVERNED_STORE", label: "Resol
 const repositoryDependencies: PreviewDependencies = {
   canPreviewBundle: async (_scope, id) => id === "g4-math-fractions",
   createReader: (_scope) => createRepositoryContentBundleReader({
-    // No immutable composition store or reviewed exact stored adapters at this base.
-    // Null is truthful; no DB queries, current revision fallback, writes or fabricated pins.
-    readComposition: async () => null, readRevision: async () => null,
+    // Scoped immutable composition is available. Exact authority adapters remain unresolved;
+    // persistence never substitutes for approval or fabricates missing source/media authority.
+    readComposition: async input => {
+      const { prisma } = await import("@/lib/db");
+      const { createContentBundleRepository } = await import("../persistence/repository");
+      return createContentBundleRepository(prisma, _scope.schoolId).getContentBundle(input.bundleId, input.bundleVersion);
+    }, readRevision: async () => null,
     readCurriculumAuthority: async () => null, readResource: async () => null,
     readAsset: async () => null, readRendering: async () => null,
   }),
@@ -68,9 +72,11 @@ export function getContentBundlePreviewResolver(
       try {
         if (!await dependencies.canPreviewBundle(scope, request.bundleId)) return unavailable([{ code: "PREVIEW_SCOPE_UNAVAILABLE", path: "preview" }]);
         const fractions = request.bundleId === "g4-math-fractions" ? grade4FractionsReadiness() : null;
+        // Composition availability now comes from the exact scoped resolver, not static readiness.
+        const readinessDiagnostics = (fractions?.diagnostics ?? []).filter(d => d.code !== "COMPOSITION_MISSING");
         const authorityMetadata: PreviewAuthorityMetadata = { readiness: fractions?.status ?? "BLOCKED", objectiveDescriptions: {}, offlinePackageClosed: false };
         // There is no reviewed immutable composition version selector. Never choose latest.
-        if (request.bundleVersion === null) return unavailable([{ code: "VERSION_SELECTION_REQUIRED", path: "input.bundleVersion" }, ...(fractions?.diagnostics ?? [])], authorityMetadata);
+        if (request.bundleVersion === null) return unavailable([{ code: "VERSION_SELECTION_REQUIRED", path: "input.bundleVersion" }, ...readinessDiagnostics], authorityMetadata);
         const reader = dependencies.createReader(scope);
         let release: CurriculumOntologyRelease | null = null;
         let inventory: GovernedCellInventory | null = null;
@@ -88,7 +94,7 @@ export function getContentBundlePreviewResolver(
             return revision;
           },
         });
-        if (resolved.status !== "RESOLVED") return { ...resolved, diagnostics: [...resolved.diagnostics, ...(fractions?.diagnostics ?? [])], authorityMetadata };
+        if (resolved.status !== "RESOLVED") return { ...resolved, diagnostics: [...resolved.diagnostics, ...readinessDiagnostics], authorityMetadata };
         const synthetic = resolved.bundle.curriculumAuthority.releaseId.startsWith("fixture.") || resolved.bundle.identity.version.includes("fixture") || dependencies.source?.kind === "FIXTURE";
         if (synthetic && env.NODE_ENV === "production") return unavailable([{ code: "FIXTURE_NOT_AUTHORITY", path: "preview" }]);
         const source: PreviewSource = synthetic

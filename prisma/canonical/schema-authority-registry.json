@@ -581,6 +581,54 @@
       "expectedInStaging": true,
       "expectedInCleanBootstrap": true,
       "allowedPrismaDiffKeys": []
+    },
+    {
+      "id": "content-persistence-scheduledwork-v1",
+      "objectType": "appendOnlyTablesChecksPartialUniqueIndexAndTriggers",
+      "objectNames": [
+        "public.ContentBundleRecord",
+        "public.ContentBundleAllocation",
+        "public.ScheduledWork.bundleId",
+        "public.ScheduledWork.bundleVersion",
+        "public.ScheduledWork.bundleContentHash",
+        "public.ScheduledWork.itemId",
+        "public.ScheduledWork.itemVersion",
+        "public.ScheduledWork.itemKind",
+        "public.ContentBundleRecord_hash_format_check",
+        "public.ContentBundleRecord_owner_scope_check",
+        "public.ContentBundleAllocation_governance_ref_check",
+        "public.ContentBundleAllocation_status_check",
+        "public.ContentBundleAllocation_one_active_per_school_key",
+        "public.reject_content_bundle_record_mutation",
+        "public.guard_content_bundle_allocation",
+        "public.ContentBundleRecord.content_bundle_record_no_update_or_delete",
+        "public.ContentBundleRecord.content_bundle_record_no_truncate",
+        "public.ContentBundleAllocation.content_bundle_allocation_guard",
+        "public.ContentBundleAllocation.content_bundle_allocation_no_truncate"
+      ],
+      "prismaState": "DECLARED_WITH_CHECKS_PARTIAL_INDEX_AND_TRIGGERS_IN_CANONICAL_MIGRATION",
+      "physicalState": "ADDITIVE_AND_DATABASE_ENFORCED",
+      "authorityLayer": "CANONICAL_MIGRATION",
+      "classification": "APPROVED_CONTENT_PERSISTENCE_DEC_011",
+      "rationale": "Sealed ContentBundle compositions are append-only with a global exact identity; NATIONAL records are usable by a school only through an ACTIVE allocation that can move only ACTIVE -> REVOKED, SCHOOL records stay in the owner's namespace, and ScheduledWork carries six nullable exact pins.",
+      "risk": "CRITICAL_IF_MISSING",
+      "owner": "application",
+      "introducedBy": ["20261013_000001_content_bundle_scheduledwork_pins"],
+      "evidence": [
+        "prisma/canonical/migrations/20261013_000001_content_bundle_scheduledwork_pins/migration.sql",
+        "lib/content-bundle/persistence/repository.ts",
+        "lib/content-bundle/persistence/scheduledWork.ts",
+        "scripts/content-persistence-migration-assertions.sql",
+        "scripts/content-persistence-runtime-check.ts"
+      ],
+      "reviewCondition": "Replace only with equal or stronger append-only composition, explicit allocation, owner-namespace and exact-pin invariants.",
+      "reviewDate": null,
+      "destructiveIfAutoConverged": true,
+      "acceptedAsIntentional": true,
+      "expectedInProduction": true,
+      "expectedInStaging": true,
+      "expectedInCleanBootstrap": true,
+      "allowedPrismaDiffKeys": []
     }
   ]
 }

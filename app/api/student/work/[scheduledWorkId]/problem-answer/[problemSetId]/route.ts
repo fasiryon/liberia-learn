@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { mayReleaseStudentAnswer, type StudentAnswerReleasePolicy } from "@/lib/learning-authority/answerRelease";
+import { classifyScheduledWork } from "@/lib/content-bundle/persistence/scheduledWork";
 
 export const dynamic = "force-dynamic";
 
@@ -25,6 +26,8 @@ export async function GET(
     const sw = await prisma.scheduledWork.findUnique({
       where: { id: scheduledWorkId },
       select: {
+        bundleId: true, bundleVersion: true, bundleContentHash: true,
+        itemId: true, itemVersion: true, itemKind: true,
         classId: true,
         content: { select: { payload: true, status: true } },
         class: { select: { schoolId: true } },
@@ -49,6 +52,7 @@ export async function GET(
       select: { id: true },
     });
     if (!enrollment) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    if (classifyScheduledWork(sw) !== "LEGACY_UNPINNED") return NextResponse.json({ error: "Answers are not available for this work yet" }, { status: 409 });
 
     const payload = sw.content.payload as {
       problemSets?: Array<{

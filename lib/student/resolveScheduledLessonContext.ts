@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/db";
 import { resolveLessonTitle } from "@/lib/lessons/resolveLessonTitle";
+import { classifyScheduledWork } from "@/lib/content-bundle/persistence/scheduledWork";
 
 type SessionUserLike = {
   id: string;
@@ -79,6 +80,9 @@ export async function resolveScheduledLessonContext(
 
   if (!enrollment) {
     throw Object.assign(new Error("Forbidden"), { status: 403 });
+  }
+  if (classifyScheduledWork(scheduledWork) !== "LEGACY_UNPINNED") {
+    throw Object.assign(new Error("This work is not ready for quizzes yet"), { status: 409 });
   }
 
   const payload = (scheduledWork.content.payload ?? {}) as Record<string, unknown>;

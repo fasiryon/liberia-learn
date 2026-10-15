@@ -16,6 +16,9 @@ import { isLinkStudentVisible, validateExperienceLink, type LearningExperienceLi
 import { type LabLaunchContext } from "@/lib/learner-experience/labLaunch";
 import type { LessonRouteTarget, LessonReturnTarget } from "@/lib/learner-experience/lessonRoute";
 import type { AssessmentHandoff, LessonExperience, Scene, SceneInteraction } from "@/lib/learner-experience/types";
+import { classifyScheduledWork, PIN_FIELDS } from "@/lib/content-bundle/persistence/scheduledWork";
+
+const SCHEDULED_WORK_PIN_SELECT = Object.fromEntries(PIN_FIELDS.map(key => [key, true])) as { [K in (typeof PIN_FIELDS)[number]]: true };
 
 /** Delivery intentionally omits instant-feedback keys from the existing authoring/player type. */
 export type LearnerScene = Omit<Scene, "interaction"> & { interaction:
@@ -47,7 +50,7 @@ export type LessonExperienceDelivery = DeliveryIdentity & Readonly<{
 }>;
 
 export class LessonDeliveryError extends Error {
-  constructor(public readonly status: number, public readonly code: "UNAVAILABLE" | "FORBIDDEN" | "INCOMPATIBLE_VERSION", public readonly format?: "NATIVE_V2", public readonly reason?: "NOT_RELEASED" | "REVOKED" | "NOT_STUDENT_READY") { super(code); }
+  constructor(public readonly status: number, public readonly code: "UNAVAILABLE" | "FORBIDDEN" | "INCOMPATIBLE_VERSION" | "GOVERNED_WORK_UNAVAILABLE" | "INVALID_GOVERNED_PIN", public readonly format?: "NATIVE_V2", public readonly reason?: "NOT_RELEASED" | "REVOKED" | "NOT_STUDENT_READY") { super(code); }
 }
 function unavailable(): never { throw new LessonDeliveryError(404, "UNAVAILABLE"); }
 
@@ -86,8 +89,15 @@ export async function resolveLessonDelivery(
   let target: LessonRouteTarget = { kind: "CONTENT", contentId: lessonRef };
   let row = routeKind === "SCHEDULED_WORK" ? null : await tx.curriculumContent.findUnique({ where: { contentId: lessonRef }, include });
   if (!row && routeKind !== "CONTENT") {
-    const work = await tx.scheduledWork.findUnique({ where: { id: lessonRef }, include: { content: { include }, class: { select: { schoolId: true } }, progress: { where: { studentId: user.id }, select: { completedAt: true } } } });
-    if (!work || work.class.schoolId !== user.schoolId || !scope.classIds.includes(work.classId)) unavailable();
+    // Scope and exact pins are read and classified before any mutable legacy content is loaded.
+    const pinned = await tx.scheduledWork.findUnique({ where: { id: lessonRef }, select: { id: true, classId: true, class: { select: { schoolId: true } }, ...SCHEDULED_WORK_PIN_SELECT } });
+    if (!pinned || pinned.class.schoolId !== user.schoolId || !scope.classIds.includes(pinned.classId)) unavailable();
+    const classification = classifyScheduledWork(pinned);
+    // Governed work is delivered only by the exact governed resolver, never as legacy content.
+    if (classification === "GOVERNED_PINNED") throw new LessonDeliveryError(409, "GOVERNED_WORK_UNAVAILABLE");
+    if (classification !== "LEGACY_UNPINNED") throw new LessonDeliveryError(409, "INVALID_GOVERNED_PIN");
+    const work = await tx.scheduledWork.findUnique({ where: { id: pinned.id }, include: { content: { include }, progress: { where: { studentId: user.id }, select: { completedAt: true } } } });
+    if (!work || work.classId !== pinned.classId || classifyScheduledWork(work) !== "LEGACY_UNPINNED") unavailable();
     row = work.content;
     const completedAt = work.progress?.[0]?.completedAt;
     serverCompletion = completedAt ? { completedAt: completedAt.toISOString() } : null;
