@@ -1,3 +1,4 @@
+// route-policy: auth=session; scope=record; authority=student-own-attempt; rationale=submits only the learner's own open attempt and grades it on the server
 import { NextRequest, NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { logAudit } from "@/lib/audit";
@@ -38,7 +39,7 @@ export async function POST(req: NextRequest, context: { params: { examId: string
         studentId: student.id,
       },
       include: {
-        exam: { include: { questions: true } },
+        exam: { include: { questions: { orderBy: { id: "asc" } } } },
       },
     });
     if (!attempt) {

@@ -1,14 +1,17 @@
+// route-policy: auth=session; scope=tenant; authority=student-own-school-grade; rationale=lists published, non-deleted exams for the learner's school and grade with keys and explanations withheld
 import { NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { projectLegacyExamQuestionForLearner } from "@/lib/assessment/v2/adapters";
 import { handleApiError } from "@/lib/errors/apiErrorHandler";
 import { buildStudentExamReadiness } from "@/lib/outcomes/examReadiness";
 import { isExamSystemEnabled } from "@/lib/serverFlags";
 
 export const dynamic = "force-dynamic";
 
-function stripQuestionAnswers<T extends { correctIndex: number }>(questions: T[]) {
-  return questions.map(({ correctIndex: _correctIndex, ...question }) => question);
+// Allow-list: the key and the worked explanation stay server-side until results are released.
+function stripQuestionAnswers<T extends Parameters<typeof projectLegacyExamQuestionForLearner>[0]>(questions: T[]) {
+  return questions.map(projectLegacyExamQuestionForLearner);
 }
 
 function isExamReadinessRouteEnabled() {
@@ -36,8 +39,9 @@ export async function GET() {
         schoolId: student.user.schoolId,
         grade: student.currentGrade,
         status: "PUBLISHED",
+        deletedAt: null,
       },
-      include: { questions: true, _count: { select: { questions: true } } },
+      include: { questions: { orderBy: { id: "asc" } }, _count: { select: { questions: true } } },
       orderBy: { createdAt: "desc" },
     });
 
