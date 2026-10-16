@@ -1,0 +1,140 @@
+{
+ "reportVersion": "liberialearn-instructional-review-report/1.0.0",
+ "reviewerVersion": "liberialearn-ai-instructional-reviewer/1.0.0",
+ "standardVersion": "liberialearn-curriculum-excellence/1.0.0",
+ "rubricVersion": "liberialearn-curriculum-excellence-rubric/1.0.0",
+ "blueprintVersion": "liberialearn-assessment-blueprint/1.0.0",
+ "reviewer": {
+  "kind": "AUTOMATED",
+  "agentId": "liberialearn-modernization-pipeline/1.0.0#automated-checks",
+  "modelFamily": null,
+  "sessionId": null
+ },
+ "revision": {
+  "contentKey": "lmv1-g6-math-decimal-place-value@0.1.0",
+  "candidateSha256": "da6ab75973154ab6d68049f8196efc62a09d6632299e7c33e299af5b7686586c",
+  "assessmentSha256": "5bf1ae3f92fefa486b35c70817a793b6a64e2a62864d318fe0842cab26d19cf8",
+  "planSha256": null,
+  "source": {
+   "gitCommit": null,
+   "candidatePath": "candidate.json",
+   "assessmentPath": "assessment-definitions.json"
+  }
+ },
+ "independence": {
+  "selfAuthored": false,
+  "independent": false,
+  "reasons": [
+   "AUTOMATED_CHECKS_ONLY"
+  ],
+  "countsAsIndependentReview": false
+ },
+ "authority": "ADVISORY_ONLY",
+ "mayApprove": false,
+ "mayPublish": false,
+ "humanQualificationClaimed": false,
+ "officialApprovalClaimed": false,
+ "candidateOnly": true,
+ "outcome": "READY_FOR_QUALIFIED_HUMAN_REVIEW",
+ "findings": [],
+ "blueprint": {
+  "version": "liberialearn-assessment-blueprint/1.0.0",
+  "family": "MATH",
+  "rules": [
+   {
+    "ruleId": "BP-COVERAGE",
+    "criterionId": "NF-ASM-1",
+    "layer": "NATIONAL_FOUNDATION",
+    "blocking": true,
+    "requirement": "Every objective has end-of-lesson mastery evidence at scaffold NONE.",
+    "missing": [],
+    "detail": "5 end-of-lesson mastery task(s).",
+    "met": true
+   },
+   {
+    "ruleId": "BP-PREREQUISITE-DIAGNOSTIC",
+    "criterionId": "NF-PRG-1",
+    "layer": "NATIONAL_FOUNDATION",
+    "blocking": true,
+    "requirement": "Every stated prerequisite has a diagnostic task with a fallback route.",
+    "missing": [],
+    "detail": "2 of 2 prerequisite(s) diagnosed.",
+    "met": true
+   },
+   {
+    "ruleId": "BP-INDEPENDENT-PRACTICE",
+    "criterionId": "LM-PRG-1",
+    "layer": "LIBERIALEARN_MASTERY",
+    "blocking": true,
+    "requirement": "Every objective reaches unscaffolded practice before mastery evidence.",
+    "missing": [],
+    "detail": "Formative IN_LESSON tasks at scaffold NONE.",
+    "met": true
+   },
+   {
+    "ruleId": "BP-PRODUCTION",
+    "criterionId": "LM-ASM-1",
+    "layer": "LIBERIALEARN_MASTERY",
+    "blocking": true,
+    "requirement": "Every objective has mastery evidence that is a produced answer or justification (not a selected option).",
+    "missing": [],
+    "detail": "Accepted kinds: SHORT_CONSTRUCTED_RESPONSE, EXTENDED_REASONING, PERFORMANCE_TASK.",
+    "met": true
+   },
+   {
+    "ruleId": "BP-REASONING",
+    "criterionId": "LM-RSN-1",
+    "layer": "LIBERIALEARN_MASTERY",
+    "blocking": true,
+    "requirement": "At least one unscaffolded, rubric-scored reasoning or justification task.",
+    "missing": [],
+    "detail": "2 reasoning task(s) at mastery.",
+    "met": true
+   },
+   {
+    "ruleId": "BP-SELECTED-SHARE",
+    "criterionId": "LM-ASM-1",
+    "layer": "LIBERIALEARN_MASTERY",
+    "blocking": true,
+    "requirement": "Selected response is at most 60% of end-of-lesson mastery evidence.",
+    "missing": [],
+    "detail": "0/5 selected response (0%).",
+    "met": true
+   },
+   {
+    "ruleId": "BP-RETENTION",
+    "criterionId": "LM-ASM-3",
+    "layer": "LIBERIALEARN_MASTERY",
+    "blocking": true,
+    "requirement": "Every objective has delayed retrieval at least 7 days after the lesson.",
+    "missing": [],
+    "detail": "Spaced retrieval, unscaffolded.",
+    "met": true
+   },
+   {
+    "ruleId": "BP-TRANSFER",
+    "criterionId": "GE-TRN-1",
+    "layer": "GLOBAL_EXCELLENCE",
+    "blocking": true,
+    "requirement": "At least one unscaffolded transfer task in a context the lesson did not rehearse.",
+    "missing": [],
+    "detail": "Near or far transfer, NEW context.",
+    "met": true
+   },
+   {
+    "ruleId": "BP-EXTENSION",
+    "criterionId": "GE-EXT-1",
+    "layer": "GLOBAL_EXCELLENCE",
+    "blocking": true,
+    "requirement": "An optional, non-gating extension task.",
+    "missing": [],
+    "detail": "Extension is optional and never required for mastery.",
+    "met": true
+   }
+  ],
+  "selectedResponseShareOfMastery": 0,
+  "blockingGaps": []
+ },
+ "projectedBlueprintWithPlan": null,
+ "reportSha256": "aaeb009175ced0fe04d64c1c46d44c5134e726bcb5a98553ad96113d94422a33"
+}

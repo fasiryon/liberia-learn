@@ -1,0 +1,41 @@
+{
+  "audience": "REVIEWER_ONLY",
+  "status": "GOVERNED_CANDIDATE",
+  "notice": "Candidate assessment definitions for the Grade 6 cause-and-effect pilot. Unreviewed and unreleased: nothing scores them, writes mastery from them or releases them. Teacher-administered on paper until a qualified reviewer approves them and a governed release binds them. Texts used for mastery are unseen by learners until administered; rubrics are reviewer only.",
+  "diagnosticOnlyExitItemIds": [],
+  "tasks": [
+    { "id": "d0", "kind": "PREREQUISITE_DIAGNOSTIC", "prerequisiteIndex": 0, "deliveredBy": "warm-up#w-order", "objectiveIds": ["ll-g6-lit-cause-effect-identify"], "scaffold": "FULL", "timing": "PRE_LESSON", "context": "REHEARSED", "scoring": "KEYED", "source": "EXCELLENCE_PLAN", "ref": "definition:d0",
+      "prompt": "Musu woke up early. She swept the yard. Then she walked to school. What did Musu do second?", "key": "She swept the yard.",
+      "fallbackRoute": "Read the three sentences aloud together; learners number the events 1, 2, 3 on paper and retell them to a partner before the concept scene." },
+    { "id": "d1", "kind": "PREREQUISITE_DIAGNOSTIC", "prerequisiteIndex": 1, "deliveredBy": "warm-up#w-because", "objectiveIds": ["ll-g6-lit-cause-effect-identify"], "scaffold": "FULL", "timing": "PRE_LESSON", "context": "REHEARSED", "scoring": "KEYED", "source": "EXCELLENCE_PLAN", "ref": "definition:d1",
+      "prompt": "Which sentence uses 'because' correctly?", "key": "I was thirsty because I ate very salty food.",
+      "fallbackRoute": "Oral practice: the teacher says an event ('The floor is wet') and learners complete 'because…'; then they say it with 'so' before moving on." },
+    { "id": "w1", "kind": "ORIGINAL_WRITING", "objectiveIds": ["ll-g6-lit-cause-effect-identify"], "scaffold": "NONE", "timing": "END_OF_LESSON", "context": "REHEARSED", "scoring": "ANALYTIC_RUBRIC", "source": "EXCELLENCE_PLAN", "ref": "definition:w1",
+      "prompt": "Unseen text: 'The rains came late this year, so the rice in Kpadeh's garden grew slowly. Her family bought rice at the market for an extra month.' Write one cause and its effect from the text in a full sentence.",
+      "rubric": [
+        { "criterion": "Correct pair", "levels": ["0: no valid pair or pair reversed", "1: a valid cause and effect from the text (late rains → slow growth, or slow growth → buying rice)"] },
+        { "criterion": "Sentence", "levels": ["0: fragment or list", "1: a full sentence that links the pair with because, so or as a result"] } ],
+      "targetsMisconceptions": ["mc-reversed"] },
+    { "id": "w2", "kind": "ORIGINAL_WRITING", "objectiveIds": ["ll-g6-lit-cause-effect-explain"], "scaffold": "NONE", "timing": "END_OF_LESSON", "context": "REHEARSED", "scoring": "ANALYTIC_RUBRIC", "source": "EXCELLENCE_PLAN", "ref": "definition:w2",
+      "prompt": "Using the same text, explain in 3 to 4 sentences why Kpadeh's family bought rice for an extra month. Show each step of the chain.",
+      "rubric": [
+        { "criterion": "Chain", "levels": ["0: one step or none", "1: two linked steps", "2: three linked steps: late rains → slow-growing rice → buying rice longer"] },
+        { "criterion": "Evidence from the text", "levels": ["0: none", "1: refers to what the text says rather than adding unsupported reasons"] },
+        { "criterion": "Linking language", "levels": ["0: no linking words", "1: uses at least two of because, so, as a result, therefore"] } ],
+      "targetsMisconceptions": ["mc-needs-signal-word", "mc-after-means-because"] },
+    { "id": "ret1", "kind": "DELAYED_RETRIEVAL", "objectiveIds": ["ll-g6-lit-cause-effect-identify"], "scaffold": "NONE", "timing": "DELAYED", "delayDays": 7, "context": "REHEARSED", "scoring": "KEYED", "source": "EXCELLENCE_PLAN", "ref": "definition:ret1",
+      "prompt": "One week later, without notes: 'The generator ran out of fuel, so the lights in the clinic went off.' Name the cause and the effect.", "key": "Cause: the generator ran out of fuel. Effect: the clinic lights went off.", "targetsMisconceptions": ["mc-reversed"] },
+    { "id": "ret2", "kind": "DELAYED_RETRIEVAL", "objectiveIds": ["ll-g6-lit-cause-effect-explain"], "scaffold": "NONE", "timing": "DELAYED", "delayDays": 7, "context": "REHEARSED", "scoring": "ANALYTIC_RUBRIC", "source": "EXCELLENCE_PLAN", "ref": "definition:ret2",
+      "prompt": "One week later, without notes: 'Tamba moved to the front row. His test marks improved.' Does the text prove that sitting in front caused better marks? Explain in two sentences.",
+      "rubric": [ { "criterion": "Careful claim", "levels": ["0: says it is proved", "1: says the text suggests it but does not show how", "2: also names another possible reason (e.g. more study)"] } ],
+      "targetsMisconceptions": ["mc-after-means-because"] },
+    { "id": "t1", "kind": "TRANSFER_TASK", "objectiveIds": ["ll-g6-lit-cause-effect-explain"], "scaffold": "NONE", "timing": "END_OF_LESSON", "context": "NEW", "scoring": "ANALYTIC_RUBRIC", "source": "EXCELLENCE_PLAN", "ref": "definition:t1",
+      "prompt": "A school notice says: 'From Monday, students who arrive after 8:00 must wait at the gate until the first lesson ends.' Write two effects this rule might have, and one reason the school might have made it.",
+      "rubric": [
+        { "criterion": "Effects predicted", "levels": ["0: none", "1: one plausible effect", "2: two plausible effects drawn from the rule"] },
+        { "criterion": "Cause inferred", "levels": ["0: none", "1: a plausible reason the text does not state, framed as 'might'"] } ],
+      "note": "New genre (a notice) and a forward direction (predicting effects), neither rehearsed in the lesson." },
+    { "id": "x1", "kind": "EXTENSION", "objectiveIds": ["ll-g6-lit-cause-effect-explain"], "scaffold": "NONE", "timing": "END_OF_LESSON", "context": "NEW", "scoring": "NOT_SCORED", "optional": true, "source": "EXCELLENCE_PLAN", "ref": "definition:x1",
+      "prompt": "Optional challenge: write a five-sentence story in which one event causes a chain of three effects. Underline each signal word.", "note": "Leads into the next lesson's story writing; never required for mastery." }
+  ]
+}

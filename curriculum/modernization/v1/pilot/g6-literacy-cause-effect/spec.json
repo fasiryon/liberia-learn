@@ -1,0 +1,53 @@
+{
+  "specVersion": "liberialearn-modernization-spec/1.0.0",
+  "contentId": "wk_pcs6a_wed_p2",
+  "legacy": { "revisionId": "cmss8qbwg006rvo54f0zx9ppr", "contentHash": "66b4986ad4fff6877f5cbe23aea7debd980c99808dd935f2b7d6286fcdcc5a80" },
+  "candidateId": "lmv1-g6-literacy-cause-effect",
+  "candidateVersion": "0.1.0",
+  "track": "A_TARGETED_REPAIR",
+  "title": "Cause and effect: reading for why things happen",
+  "grade": 6,
+  "subject": "LITERACY",
+  "objectives": [
+    { "id": "ll-g6-lit-cause-effect-identify", "statement": "Identify the cause and the effect in a short text, using signal words where they appear.", "layer": "NATIONAL_FOUNDATION",
+      "moe": { "status": "STRUCTURED_ID_PROPOSED_UNREVIEWED", "objectiveId": "moe-english-g6-s2-p5-english-and-reading-obj1", "sourcePages": [126], "note": "MOE Grade 6 English: 'Analyze texts on varying topics'. Cause and effect is one analysis skill within it; proposed, not an MOE-named objective." } },
+    { "id": "ll-g6-lit-cause-effect-explain", "statement": "Explain in writing how a cause leads to an effect in a text, including when no signal word is given, without claiming more than the text shows.", "layer": "LIBERIALEARN_MASTERY",
+      "moe": { "status": "STRUCTURED_ID_PROPOSED_UNREVIEWED", "objectiveId": "moe-english-g6-s2-p5-english-and-reading-obj1", "sourcePages": [126], "note": "Written explanation of implicit causes goes beyond 'analyze texts' and is LiberiaLearn mastery." } }
+  ],
+  "successCriteria": [
+    { "objectiveId": "ll-g6-lit-cause-effect-identify", "independentPerformance": "Reading an unseen short text on their own, the learner writes a correct cause-and-effect pair the right way round in a full sentence with a linking word, and does so again one week later." },
+    { "objectiveId": "ll-g6-lit-cause-effect-explain", "independentPerformance": "Without help, the learner writes a three-step chain from an unseen text using its evidence, states when a text only suggests a cause, and predicts plausible effects for an unfamiliar text type such as a school notice." }
+  ],
+  "prerequisites": [
+    "Can read a short grade-level paragraph and retell what happened in order.",
+    "Uses the words because and so correctly in everyday speech."
+  ],
+  "layers": {
+    "nationalFoundation": "Finding causes and effects in short texts as part of MOE Grade 6 text analysis.",
+    "liberiaLearnMastery": "Written explanation of causal chains, implicit causes and careful claims, with misconception-specific feedback and a 7-day retrieval.",
+    "globalExcellence": "Transfer to an unfamiliar genre (a school notice) by predicting effects, and an optional causal-chain story."
+  },
+  "legacyDisposition": [
+    { "section": 0, "heading": "1. Hook — The Real-World Challenge", "disposition": "ADAPTED", "candidateScenes": ["intro", "reflect"], "rationale": "Fatu's stall story kept and shortened from 272 to about 70 words; 'make a killing' and the career framing removed." },
+    { "section": 1, "heading": "2. Learning Objectives", "disposition": "REPLACED", "candidateScenes": ["objectives"], "rationale": "Three objectives, one of them story writing that the lesson never teaches, replaced by two assessable reading objectives. Story writing moves to the next lesson and the optional extension." },
+    { "section": 2, "heading": "3. Prior Knowledge Activation", "disposition": "ADAPTED", "candidateScenes": ["warm-up"], "rationale": "The salty-food example is reused as a diagnostic item; answers were shown to learners and are now feedback after a choice." },
+    { "section": 3, "heading": "4. Core Concept — Concrete Foundation", "disposition": "ADAPTED", "candidateScenes": ["concept"], "rationale": "The flood example and the definitions are reused. Dropped the unsupported claim that cassava is planted 'only during dry seasons to avoid spoilage'. Reviewer to confirm." },
+    { "section": 4, "heading": "5. Core Concept — The Rule and Why It Works", "disposition": "REPLACED", "candidateScenes": ["concept", "careful-readers"], "rationale": "The rule that a cause 'will always lead to some effect' overgeneralizes; replaced by the 'always is too strong' check." },
+    { "section": 5, "heading": "6. Key Vocabulary", "disposition": "REUSED", "candidateScenes": ["concept"], "rationale": "Cause and effect definitions and the flooded-street example reused, condensed into key points." },
+    { "section": 6, "heading": "7. Worked Example 1", "disposition": "ADAPTED", "candidateScenes": ["worked-example"], "rationale": "The flood and cassava-price chain is kept as a short reading text. The invented figures (LD 200 to LD 400, 10 to 2 tons) are dropped because they were not labelled as invented." },
+    { "section": 7, "heading": "8. Worked Example 2 — Alternative Method", "disposition": "ADAPTED", "candidateScenes": ["hidden-signal"], "rationale": "The 'start from the effect' method is kept and applied to a text with no signal word." },
+    { "section": 8, "heading": "9. Error Analysis", "disposition": "ADAPTED", "candidateScenes": ["careful-readers"], "rationale": "Error 3 (overgeneralization) is reused. Error 1's correction is wrong: more buyers can raise prices, so it was removed. Reviewer to confirm." },
+    { "section": 9, "heading": "10. Guided Practice Problem 1", "disposition": "REPLACED", "candidateScenes": ["careful-readers"], "rationale": "The legacy text teaches that playing in the rain caused Boima's cold. Colds are caused by viruses, so the example now teaches that 'after' is not 'because'. Reviewer to confirm." },
+    { "section": 10, "heading": "11. Guided Practice Problem 2", "disposition": "DISCARDED", "candidateScenes": [], "rationale": "Repeats Problem 3's pattern and showed its answers inline; Problem 3 is kept instead." },
+    { "section": 11, "heading": "12. Guided Practice Problem 3", "disposition": "REUSED", "candidateScenes": ["guided"], "rationale": "Boimah's stall reused as a reading text with items." },
+    { "section": 12, "heading": "13. Independent Practice — Tier 1 Foundational", "disposition": "ADAPTED", "candidateScenes": ["practice"], "rationale": "Zoe and Kollie problems reused; answers were printed next to the problems and are now feedback after a choice." },
+    { "section": 13, "heading": "14. Independent Practice — Tier 2 Standard", "disposition": "DISCARDED", "candidateScenes": [], "rationale": "Answers were printed with the problems; the time-management item is covered by the retention task." },
+    { "section": 14, "heading": "15. Independent Practice — Tier 3 Advanced", "disposition": "ADAPTED", "candidateScenes": ["practice"], "rationale": "The St. Paul River clean-up is reused without a signal word, to practise implicit causes; the river is no longer named, to avoid an unverified ecological claim." },
+    { "section": 15, "heading": "16. Group Discussion and Cross-Curricular Connection", "disposition": "MOVED_TO_TEACHER_GUIDE", "candidateScenes": [], "rationale": "A useful optional class discussion; it does not produce individual evidence." },
+    { "section": 16, "heading": "17. Assessment, Exit Ticket, and Lesson Summary", "disposition": "REPLACED", "candidateScenes": ["exit-ticket", "reflect"], "rationale": "The personal-reflection exit questions cannot show the objective; replaced by unseen-text written tasks with rubrics." }
+  ],
+  "openDecisions": [
+    { "id": "OD-LEGACY-HEALTH-CLAIM", "question": "The live lesson tells learners that playing in rain caused a cold. Should the class that used it receive a correction?", "authorRecommendation": "Yes, through the teacher, independent of whether this candidate is released." },
+    { "id": "OD-STORY-WRITING", "question": "The legacy lesson promised story writing. Accept moving it to the next lesson?", "authorRecommendation": "Accept; the extension keeps a non-gating path." }
+  ]
+}

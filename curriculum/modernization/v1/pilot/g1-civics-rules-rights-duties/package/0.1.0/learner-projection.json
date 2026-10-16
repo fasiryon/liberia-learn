@@ -1,0 +1,689 @@
+{
+ "contractVersion": "lesson-experience/1.0.0",
+ "id": "lmv1-g1-civics-rules-rights-duties",
+ "version": "0.1.0",
+ "title": "Rules, rights and duties at school",
+ "subject": "CIVICS",
+ "grade": 1,
+ "ageBand": "EARLY_PRIMARY",
+ "authority": {
+  "status": "CURRICULUM_V2_DRAFT",
+  "note": "Curriculum V2 draft. Requires exact-revision human review; not approved, not published.",
+  "candidateContentIds": [],
+  "releaseId": null,
+  "releaseIdentity": null
+ },
+ "objectives": [
+  {
+   "id": "ll-g1-civ-rules",
+   "statement": "Name a rule at home or school and say how it keeps people safe, healthy or fair.",
+   "conceptId": "ll-g1-civ-rules",
+   "standardCodes": [],
+   "skillIds": []
+  },
+  {
+   "id": "ll-g1-civ-rights-duties",
+   "statement": "Tell a right (something every child should have) from a duty (something we should do), with one school example of each.",
+   "conceptId": "ll-g1-civ-rights-duties",
+   "standardCodes": [],
+   "skillIds": []
+  }
+ ],
+ "scenes": [
+  {
+   "id": "intro",
+   "type": "INTRO",
+   "title": "The ball and the road",
+   "objectiveIds": [],
+   "content": {
+    "body": "Musu and Kollie both want the ball. They push each other. The ball rolls toward the road.\n\nWhat should they do? Today we learn about **rules**, **rights** and **duties**."
+   },
+   "interaction": {
+    "kind": "NONE"
+   },
+   "tools": {
+    "allowed": [],
+    "prohibited": []
+   },
+   "accessibility": {
+    "textAlternative": "A short story: two children push over a ball, and the ball rolls toward the road.",
+    "keyboardOperable": true,
+    "reducedMotionSafe": true,
+    "captionsRequired": false
+   },
+   "offline": {
+    "mode": "FULL",
+    "fallback": "The teacher can tell the story without the picture."
+   },
+   "evidence": {
+    "kind": "NONE"
+   },
+   "completion": {
+    "kind": "VIEWED"
+   }
+  },
+  {
+   "id": "objectives",
+   "type": "OBJECTIVE",
+   "title": "What we will learn",
+   "objectiveIds": [
+    "ll-g1-civ-rules",
+    "ll-g1-civ-rights-duties"
+   ],
+   "content": {
+    "body": "Today we will:\n\n1. Name a rule and say how it keeps us safe or fair.\n2. Tell a right from a duty."
+   },
+   "interaction": {
+    "kind": "NONE"
+   },
+   "tools": {
+    "allowed": [],
+    "prohibited": []
+   },
+   "accessibility": {
+    "textAlternative": "Two goals: naming a rule and why it helps, and telling a right from a duty.",
+    "keyboardOperable": true,
+    "reducedMotionSafe": true,
+    "captionsRequired": false
+   },
+   "offline": {
+    "mode": "FULL",
+    "fallback": "The teacher reads the goals aloud."
+   },
+   "evidence": {
+    "kind": "NONE"
+   },
+   "completion": {
+    "kind": "VIEWED"
+   }
+  },
+  {
+   "id": "warm-up",
+   "type": "CHECK_UNDERSTANDING",
+   "title": "Listen and answer",
+   "objectiveIds": [
+    "ll-g1-civ-rules"
+   ],
+   "content": {
+    "body": "Your teacher reads: *Fatu walked to the market with her mother. They bought rice.*"
+   },
+   "interaction": {
+    "kind": "MULTIPLE_CHOICE",
+    "items": [
+     {
+      "id": "w-who",
+      "prompt": "Who went with Fatu?",
+      "options": [
+       "Her mother",
+       "Her teacher"
+      ],
+      "correctIndex": 0,
+      "feedback": {
+       "correct": "Yes! Fatu went with her mother.",
+       "incorrect": "Listen again: Fatu went with her mother."
+      },
+      "optionFeedback": [
+       "Yes! Fatu went with her mother.",
+       "Listen again: Fatu went with her mother."
+      ]
+     },
+     {
+      "id": "w-where",
+      "prompt": "Where do children go to learn to read?",
+      "options": [
+       "The market",
+       "School"
+      ],
+      "correctIndex": 1,
+      "feedback": {
+       "correct": "Yes! We learn to read at school.",
+       "incorrect": "We buy food at the market. We learn to read at school."
+      },
+      "optionFeedback": [
+       "We buy food at the market. We learn to read at school.",
+       "Yes! We learn to read at school."
+      ]
+     }
+    ]
+   },
+   "tools": {
+    "allowed": [],
+    "prohibited": []
+   },
+   "accessibility": {
+    "textAlternative": "A two-sentence story about Fatu and two spoken questions with two answers each.",
+    "keyboardOperable": true,
+    "reducedMotionSafe": true,
+    "captionsRequired": false
+   },
+   "offline": {
+    "mode": "FULL",
+    "fallback": "The teacher can ask the questions aloud."
+   },
+   "evidence": {
+    "kind": "FORMATIVE_OBSERVATION",
+    "evidenceType": "DIAGNOSTIC",
+    "objectiveIds": [
+     "ll-g1-civ-rules"
+    ]
+   },
+   "completion": {
+    "kind": "ALL_ANSWERED"
+   }
+  },
+  {
+   "id": "rules",
+   "type": "EXPLANATION",
+   "title": "Why we have rules",
+   "objectiveIds": [
+    "ll-g1-civ-rules"
+   ],
+   "content": {
+    "body": "A **rule** tells us what to do or not do.\n\nRules help in two ways:\n\n- They keep us **safe**.\n- They help us be **fair**.",
+    "keyPoints": [
+     "Walk near the road: it keeps us safe.",
+     "Take turns with the ball: it is fair."
+    ]
+   },
+   "interaction": {
+    "kind": "NONE"
+   },
+   "tools": {
+    "allowed": [],
+    "prohibited": []
+   },
+   "accessibility": {
+    "textAlternative": "A rule tells us what to do. Rules keep us safe and help us be fair, with two examples.",
+    "keyboardOperable": true,
+    "reducedMotionSafe": true,
+    "captionsRequired": false
+   },
+   "offline": {
+    "mode": "FULL",
+    "fallback": "The teacher can act out both examples."
+   },
+   "evidence": {
+    "kind": "NONE"
+   },
+   "completion": {
+    "kind": "VIEWED"
+   }
+  },
+  {
+   "id": "rule-example",
+   "type": "GUIDED_EXAMPLE",
+   "title": "Let's think it through",
+   "objectiveIds": [
+    "ll-g1-civ-rules"
+   ],
+   "content": {
+    "body": "Back to Musu, Kollie and the ball. Tap to see what a rule can do."
+   },
+   "interaction": {
+    "kind": "DIAGRAM_REVEAL",
+    "diagramId": "rule-example",
+    "steps": [
+     {
+      "id": "r1",
+      "label": "The problem",
+      "description": "They push, and the ball rolls to the road."
+     },
+     {
+      "id": "r2",
+      "label": "Safe rule",
+      "description": "Do not run into the road. Ask a grown-up to get the ball."
+     },
+     {
+      "id": "r3",
+      "label": "Fair rule",
+      "description": "Take turns. Musu kicks first, then Kollie."
+     },
+     {
+      "id": "r4",
+      "label": "Why",
+      "description": "Now nobody gets hurt, and both children play."
+     }
+    ]
+   },
+   "tools": {
+    "allowed": [],
+    "prohibited": []
+   },
+   "accessibility": {
+    "textAlternative": "Four steps: the problem, a safety rule, a fairness rule, and why the rules help.",
+    "keyboardOperable": true,
+    "reducedMotionSafe": true,
+    "captionsRequired": false
+   },
+   "offline": {
+    "mode": "FULL",
+    "fallback": "The teacher can tell each step aloud."
+   },
+   "evidence": {
+    "kind": "NONE"
+   },
+   "completion": {
+    "kind": "ALL_STEPS_REVEALED"
+   }
+  },
+  {
+   "id": "rights-duties",
+   "type": "EXPLANATION",
+   "title": "Rights and duties",
+   "objectiveIds": [
+    "ll-g1-civ-rights-duties"
+   ],
+   "content": {
+    "body": "A **right** is something every child should have.\nEvery child has a right to be safe and to go to school.\n\nA **duty** is something we should do.\nAt school our duties are to listen and to keep the classroom clean."
+   },
+   "interaction": {
+    "kind": "NONE"
+   },
+   "tools": {
+    "allowed": [],
+    "prohibited": []
+   },
+   "accessibility": {
+    "textAlternative": "A right is something every child should have, like being safe. A duty is something we should do, like listening.",
+    "keyboardOperable": true,
+    "reducedMotionSafe": true,
+    "captionsRequired": false
+   },
+   "offline": {
+    "mode": "FULL",
+    "fallback": "Text only; read aloud."
+   },
+   "evidence": {
+    "kind": "NONE"
+   },
+   "completion": {
+    "kind": "VIEWED"
+   }
+  },
+  {
+   "id": "guided",
+   "type": "GUIDED_EXAMPLE",
+   "title": "Right or duty?",
+   "objectiveIds": [
+    "ll-g1-civ-rights-duties"
+   ],
+   "content": {
+    "body": "Remember: a right is what you **should have**. A duty is what you **should do**."
+   },
+   "interaction": {
+    "kind": "MULTIPLE_CHOICE",
+    "items": [
+     {
+      "id": "g-school",
+      "prompt": "Going to school. Right or duty?",
+      "options": [
+       "Right",
+       "Duty"
+      ],
+      "correctIndex": 0,
+      "feedback": {
+       "correct": "Yes! Every child should have school.",
+       "incorrect": "School is something every child should have. That makes it a right."
+      },
+      "optionFeedback": [
+       "Yes! Every child should have school.",
+       "School is something every child should have. That makes it a right."
+      ]
+     },
+     {
+      "id": "g-rubbish",
+      "prompt": "Picking up your rubbish. Right or duty?",
+      "options": [
+       "Right",
+       "Duty"
+      ],
+      "correctIndex": 1,
+      "feedback": {
+       "correct": "Yes! It is something we should do.",
+       "incorrect": "Picking up rubbish is something we should do. That makes it a duty."
+      },
+      "optionFeedback": [
+       "Picking up rubbish is something we should do. That makes it a duty.",
+       "Yes! It is something we should do."
+      ]
+     }
+    ]
+   },
+   "tools": {
+    "allowed": [],
+    "prohibited": []
+   },
+   "accessibility": {
+    "textAlternative": "Two read-aloud questions: is going to school, or picking up rubbish, a right or a duty?",
+    "keyboardOperable": true,
+    "reducedMotionSafe": true,
+    "captionsRequired": false
+   },
+   "offline": {
+    "mode": "FULL",
+    "fallback": "Can be played as stand-or-sit without a device."
+   },
+   "evidence": {
+    "kind": "FORMATIVE_OBSERVATION",
+    "evidenceType": "PRACTICE",
+    "objectiveIds": [
+     "ll-g1-civ-rights-duties"
+    ]
+   },
+   "completion": {
+    "kind": "ALL_ANSWERED"
+   }
+  },
+  {
+   "id": "think-again",
+   "type": "CHECK_UNDERSTANDING",
+   "title": "Think again",
+   "objectiveIds": [
+    "ll-g1-civ-rules",
+    "ll-g1-civ-rights-duties"
+   ],
+   "content": {
+    "body": "Listen carefully. These are tricky!"
+   },
+   "interaction": {
+    "kind": "MULTIPLE_CHOICE",
+    "items": [
+     {
+      "id": "m-watching",
+      "prompt": "Kollie walks near the road only when the teacher is looking. Is that good?",
+      "options": [
+       "Yes",
+       "No"
+      ],
+      "correctIndex": 1,
+      "feedback": {
+       "correct": "Right! The rule keeps him safe all the time, not only when someone is watching.",
+       "incorrect": "The road is dangerous even when nobody is looking. The rule keeps Kollie safe all the time."
+      },
+      "optionFeedback": [
+       "The road is dangerous even when nobody is looking. The rule keeps Kollie safe all the time.",
+       "Right! The rule keeps him safe all the time, not only when someone is watching."
+      ]
+     },
+     {
+      "id": "m-sweets",
+      "prompt": "Musu says, 'Sweets every day is my right.' Is it?",
+      "options": [
+       "Yes",
+       "No"
+      ],
+      "correctIndex": 1,
+      "feedback": {
+       "correct": "Right! Sweets are a want. Being safe and going to school are rights.",
+       "incorrect": "Sweets are nice, but a right is something every child needs, like being safe."
+      },
+      "optionFeedback": [
+       "Sweets are nice, but a right is something every child needs, like being safe.",
+       "Right! Sweets are a want. Being safe and going to school are rights."
+      ]
+     }
+    ]
+   },
+   "tools": {
+    "allowed": [],
+    "prohibited": []
+   },
+   "accessibility": {
+    "textAlternative": "Two read-aloud yes-or-no questions about following a rule when nobody watches, and whether sweets are a right.",
+    "keyboardOperable": true,
+    "reducedMotionSafe": true,
+    "captionsRequired": false
+   },
+   "offline": {
+    "mode": "FULL",
+    "fallback": "Can be asked aloud without a device."
+   },
+   "evidence": {
+    "kind": "FORMATIVE_OBSERVATION",
+    "evidenceType": "PRACTICE",
+    "objectiveIds": [
+     "ll-g1-civ-rules",
+     "ll-g1-civ-rights-duties"
+    ]
+   },
+   "completion": {
+    "kind": "ALL_ANSWERED"
+   }
+  },
+  {
+   "id": "practice",
+   "type": "PRACTICE",
+   "title": "Your turn",
+   "objectiveIds": [
+    "ll-g1-civ-rules",
+    "ll-g1-civ-rights-duties"
+   ],
+   "content": {
+    "body": "Your turn. Choose on your own."
+   },
+   "interaction": {
+    "kind": "MULTIPLE_CHOICE",
+    "items": [
+     {
+      "id": "p-wash",
+      "prompt": "'Wash your hands before you eat.' Why do we have this rule?",
+      "options": [
+       "To keep us healthy and safe",
+       "So the teacher can punish us"
+      ],
+      "correctIndex": 0,
+      "feedback": {
+       "correct": "Yes! Clean hands help stop sickness.",
+       "incorrect": "Rules help us. This one keeps us healthy."
+      },
+      "optionFeedback": [
+       "Yes! Clean hands help stop sickness.",
+       "Rules help us. This one keeps us healthy."
+      ]
+     },
+     {
+      "id": "p-listen",
+      "prompt": "Listening when a friend is talking. Right or duty?",
+      "options": [
+       "Right",
+       "Duty"
+      ],
+      "correctIndex": 1,
+      "feedback": {
+       "correct": "Yes! It is something we should do.",
+       "incorrect": "Listening is something we should do. That is a duty."
+      },
+      "optionFeedback": [
+       "Listening is something we should do. That is a duty.",
+       "Yes! It is something we should do."
+      ]
+     },
+     {
+      "id": "p-safe",
+      "prompt": "Being safe at school. Right or duty?",
+      "options": [
+       "Right",
+       "Duty"
+      ],
+      "correctIndex": 0,
+      "feedback": {
+       "correct": "Yes! Every child should be safe.",
+       "incorrect": "Being safe is something every child should have. That is a right."
+      },
+      "optionFeedback": [
+       "Yes! Every child should be safe.",
+       "Being safe is something every child should have. That is a right."
+      ]
+     }
+    ]
+   },
+   "tools": {
+    "allowed": [],
+    "prohibited": []
+   },
+   "accessibility": {
+    "textAlternative": "Three read-aloud questions: why we wash hands, and whether listening and being safe are rights or duties.",
+    "keyboardOperable": true,
+    "reducedMotionSafe": true,
+    "captionsRequired": false
+   },
+   "offline": {
+    "mode": "FULL",
+    "fallback": "Questions and feedback are saved with the lesson."
+   },
+   "evidence": {
+    "kind": "FORMATIVE_OBSERVATION",
+    "evidenceType": "PRACTICE",
+    "objectiveIds": [
+     "ll-g1-civ-rules",
+     "ll-g1-civ-rights-duties"
+    ]
+   },
+   "completion": {
+    "kind": "ALL_ANSWERED"
+   }
+  },
+  {
+   "id": "tell",
+   "type": "PRACTICE",
+   "title": "Tell your teacher",
+   "objectiveIds": [
+    "ll-g1-civ-rules",
+    "ll-g1-civ-rights-duties"
+   ],
+   "content": {
+    "body": "Say your answers. Your teacher can write them for you."
+   },
+   "interaction": {
+    "kind": "FREE_RESPONSE",
+    "prompts": [
+     {
+      "id": "t-rule",
+      "prompt": "Tell one rule at home or school, and how it helps.",
+      "minLength": 5
+     },
+     {
+      "id": "t-duty",
+      "prompt": "Tell one duty you have at school.",
+      "minLength": 5
+     }
+    ]
+   },
+   "tools": {
+    "allowed": [],
+    "prohibited": []
+   },
+   "accessibility": {
+    "textAlternative": "Two spoken prompts: tell a rule and how it helps, and tell a duty at school.",
+    "keyboardOperable": true,
+    "reducedMotionSafe": true,
+    "captionsRequired": false
+   },
+   "offline": {
+    "mode": "FULL",
+    "fallback": "Answers are spoken; the teacher can write them on paper."
+   },
+   "evidence": {
+    "kind": "FORMATIVE_OBSERVATION",
+    "evidenceType": "PRACTICE",
+    "objectiveIds": [
+     "ll-g1-civ-rules",
+     "ll-g1-civ-rights-duties"
+    ]
+   },
+   "completion": {
+    "kind": "ALL_RESPONSES_WRITTEN"
+   }
+  },
+  {
+   "id": "exit-ticket",
+   "type": "MASTERY_CHECK",
+   "title": "Show what you know",
+   "objectiveIds": [
+    "ll-g1-civ-rules",
+    "ll-g1-civ-rights-duties"
+   ],
+   "content": {
+    "body": "Your teacher will ask you to act out and tell. Do it on your own. Your teacher checks it, not this lesson."
+   },
+   "interaction": {
+    "kind": "ASSESSMENT_HANDOFF",
+    "assessment": {
+     "assessmentId": "lmv1-g1-civics-rules-rights-duties--g1-rrd-show",
+     "assessmentVersion": "0.1.0",
+     "player": "ASSESSMENT_PLAYER_V2",
+     "scoring": "SERVER_AUTHORITY",
+     "objectiveIds": [
+      "ll-g1-civ-rules",
+      "ll-g1-civ-rights-duties"
+     ],
+     "items": []
+    }
+   },
+   "tools": {
+    "allowed": [],
+    "prohibited": []
+   },
+   "accessibility": {
+    "textAlternative": "The teacher asks each child to act out a rule and tell a right and a duty.",
+    "keyboardOperable": true,
+    "reducedMotionSafe": true,
+    "captionsRequired": false
+   },
+   "offline": {
+    "mode": "DEGRADED",
+    "fallback": "Your teacher asks you to act out a rule and to tell a right and a duty, then writes down what you show."
+   },
+   "evidence": {
+    "kind": "MASTERY_RESPONSE",
+    "evidenceType": "QUIZ",
+    "objectiveIds": [
+     "ll-g1-civ-rules",
+     "ll-g1-civ-rights-duties"
+    ]
+   },
+   "completion": {
+    "kind": "ALL_ANSWERED"
+   }
+  },
+  {
+   "id": "reflect",
+   "type": "REFLECTION",
+   "title": "Back to Musu and Kollie",
+   "objectiveIds": [
+    "ll-g1-civ-rules",
+    "ll-g1-civ-rights-duties"
+   ],
+   "content": {
+    "body": "What should Musu and Kollie do about the ball? Tell a partner.\n\nNext week your teacher will ask about rules, rights and duties again."
+   },
+   "interaction": {
+    "kind": "NONE"
+   },
+   "tools": {
+    "allowed": [],
+    "prohibited": []
+   },
+   "accessibility": {
+    "textAlternative": "Tell a partner what the children should do about the ball; the topic returns next week.",
+    "keyboardOperable": true,
+    "reducedMotionSafe": true,
+    "captionsRequired": false
+   },
+   "offline": {
+    "mode": "FULL",
+    "fallback": "Text only; read aloud."
+   },
+   "evidence": {
+    "kind": "NONE"
+   },
+   "completion": {
+    "kind": "VIEWED"
+   }
+  }
+ ],
+ "offline": {
+  "packageable": true,
+  "requiredAssets": []
+ }
+}

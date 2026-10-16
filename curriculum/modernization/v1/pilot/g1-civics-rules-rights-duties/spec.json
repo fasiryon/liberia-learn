@@ -1,0 +1,51 @@
+{
+  "specVersion": "liberialearn-modernization-spec/1.0.0",
+  "contentId": "civics-g1-1-rules-rights-and-duties-foundations",
+  "legacy": { "revisionId": "cmss8rewz00fnvo5407no2s2a", "contentHash": "5fa778238633e82e02a2204a52d5d579c5f86c7055a60678e6e4e1006faf9cac" },
+  "candidateId": "lmv1-g1-civics-rules-rights-duties",
+  "candidateVersion": "0.1.0",
+  "track": "C_FULL_REPLACEMENT",
+  "title": "Rules, rights and duties at school",
+  "grade": 1,
+  "subject": "CIVICS",
+  "objectives": [
+    { "id": "ll-g1-civ-rules", "statement": "Name a rule at home or school and say how it keeps people safe, healthy or fair.", "layer": "NATIONAL_FOUNDATION",
+      "moe": { "status": "PROXY_SUBJECT_PROPOSED_UNREVIEWED", "objectiveId": "moe-social-studies-g1-s1-p2-living-together-at-home-and-school-obj3", "sourcePages": [4], "note": "No MOE Civics document exists; MOE Grade 1 Social Studies 'Apply safety rules at home and at school' is proposed through the Civics → Social Studies proxy, which needs an owner decision." } },
+    { "id": "ll-g1-civ-rights-duties", "statement": "Tell a right (something every child should have) from a duty (something we should do), with one school example of each.", "layer": "LIBERIALEARN_MASTERY",
+      "moe": { "status": "LIBERIALEARN_EXTENSION", "note": "MOE Grade 1 Social Studies covers family roles, safety and health rules, and respect, but has no rights-and-duties objective. This is a LiberiaLearn objective that needs an owner's scope decision." } }
+  ],
+  "successCriteria": [
+    { "objectiveId": "ll-g1-civ-rules", "independentPerformance": "Alone with the teacher, the child shows or names a real home or school rule and says a safety, health or fairness reason, explains why a rule matters when no one is watching, suggests a fair rule for an unfamiliar place (the market), and still names a rule and reason one week later." },
+    { "objectiveId": "ll-g1-civ-rights-duties", "independentPerformance": "Without prompting, the child sorts four picture cards into rights and duties correctly, says one right and one duty aloud, and a week later still calls keeping the classroom clean a duty." }
+  ],
+  "prerequisites": [
+    "Can listen to a short spoken story and answer who and what questions about it.",
+    "Knows familiar places such as home, school and market by name."
+  ],
+  "layers": {
+    "nationalFoundation": "Safety and health rules at home and school (MOE Grade 1 Social Studies, through the Civics proxy).",
+    "liberiaLearnMastery": "Rights and duties distinguished by performance, misconception-specific feedback, teacher-recorded oral reasoning and a one-week retrieval.",
+    "globalExcellence": "Transfer of fairness reasoning to the market, and an optional invent-a-rule drawing."
+  },
+  "legacyDisposition": [
+    { "section": 0, "heading": "Objective", "disposition": "REPLACED", "candidateScenes": ["objectives"], "rationale": "Generic, unassessable objective replaced by two observable ones." },
+    { "section": 1, "heading": "Teacher Explanation", "disposition": "REPLACED", "candidateScenes": ["rules", "rights-duties"], "rationale": "Describes how to teach without teaching; replaced by short read-aloud explanations." },
+    { "section": 2, "heading": "Worked Examples or Demonstrations", "disposition": "REPLACED", "candidateScenes": ["rule-example"], "rationale": "Placeholder ('Model a short scenario…'); replaced by the ball-and-road scenario." },
+    { "section": 3, "heading": "Guided Practice", "disposition": "REPLACED", "candidateScenes": ["guided", "think-again"], "rationale": "Placeholder; replaced by right-or-duty items and misconception checks." },
+    { "section": 4, "heading": "Independent Practice", "disposition": "REPLACED", "candidateScenes": ["practice", "tell"], "rationale": "Placeholder that asked Grade 1 learners to write; replaced by choices and spoken answers recorded by the teacher." },
+    { "section": 5, "heading": "Assessment Questions", "disposition": "REPLACED", "candidateScenes": ["exit-ticket"], "rationale": "Placeholder; replaced by teacher-recorded performance tasks with rubrics." },
+    { "section": 6, "heading": "Remediation Support", "disposition": "REPLACED", "candidateScenes": ["warm-up"], "rationale": "Generic remediation replaced by prerequisite diagnostics with fallback routes." },
+    { "section": 7, "heading": "Extension or Challenge", "disposition": "REPLACED", "candidateScenes": [], "rationale": "Replaced by the optional invent-a-rule extension." },
+    { "section": 8, "heading": "Guardian Support", "disposition": "MOVED_TO_TEACHER_GUIDE", "candidateScenes": [], "rationale": "Home conversation idea kept for teacher and guardian notes." },
+    { "section": 9, "heading": "Real-World Application", "disposition": "REPLACED", "candidateScenes": ["intro", "reflect"], "rationale": "The abstract 'connect to community participation' note is replaced by the concrete ball-and-road story." },
+    { "section": 10, "heading": "Materials and Activity Notes", "disposition": "MOVED_TO_TEACHER_GUIDE", "candidateScenes": [], "rationale": "Teacher-facing materials note; picture cards added for the performance task." },
+    { "section": 11, "heading": "Additional Teacher Notes", "disposition": "DISCARDED", "candidateScenes": [], "rationale": "Generic notes shown to learners." },
+    { "section": 12, "heading": "Additional Teacher Notes", "disposition": "DISCARDED", "candidateScenes": [], "rationale": "A word-for-word duplicate of the previous section." }
+  ],
+  "openDecisions": [
+    { "id": "OD-CIVICS-PROXY", "question": "Adopt MOE Social Studies as the authority for Grade 1 Civics lessons?", "authorRecommendation": "Yes, as a recorded owner decision covering all 133 Civics lessons, not decided lesson by lesson." },
+    { "id": "OD-RIGHTS-DUTIES-SCOPE", "question": "Accept rights and duties as a LiberiaLearn Grade 1 objective outside the MOE list?", "authorRecommendation": "Accept as LiberiaLearn mastery, never as an MOE requirement." },
+    { "id": "OD-DUPLICATES", "question": "Four live lessons (foundations, teacher-modeling, guided-application, independent-practice) carry this same learner text and 60 learners' progress each. Which one does this candidate replace?", "authorRecommendation": "Map all four to this one candidate in the legacy mapping plan (Cleanup Plan V1's survivor), keeping every historical row pinned to the revision learners actually saw." },
+    { "id": "OD-PICTURES", "question": "The two IMAGE media are described but have no governed asset.", "authorRecommendation": "Commission simple line drawings; until then the teacher tells the story without pictures (media is optional)." }
+  ]
+}

@@ -207,7 +207,7 @@
   "kind": "MECHANICAL",
   "issue": "The lesson is a template shell: sections say what to teach (\"Model one complete example…\") but contain no explanation, example or item.",
   "proposedCorrection": "Replace with a full candidate lesson (Track C); keep the legacy revision for history.",
-  "lessons": 31
+  "lessons": 40
  },
  "POSSIBLE_SUBJECT_MISLABEL|MAJOR": {
   "area": "SUBJECT_ACCURACY",

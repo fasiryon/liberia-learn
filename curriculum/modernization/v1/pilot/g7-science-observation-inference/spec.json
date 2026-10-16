@@ -1,0 +1,46 @@
+{
+  "specVersion": "liberialearn-modernization-spec/1.0.0",
+  "contentId": "science-g7-1-observation-and-scientific-thinking-foundations",
+  "legacy": { "revisionId": "cmss8t50a00urvo54li53jgr9", "contentHash": "f07576ea6b222ff8431f59117c1758489eae832ba643bc0d721359c4c4ce92eb" },
+  "candidateId": "lmv1-g7-science-observation-inference",
+  "candidateVersion": "0.1.0",
+  "track": "C_FULL_REPLACEMENT",
+  "title": "Observation and inference: how scientists know",
+  "grade": 7,
+  "subject": "SCIENCE",
+  "objectives": [
+    { "id": "ll-g7-sci-observe-infer", "statement": "Distinguish observations (what the senses or instruments detect) from inferences (explanations drawn from observations), and suggest an observation that tests an inference.", "layer": "NATIONAL_FOUNDATION",
+      "moe": { "status": "STRUCTURED_ID_PROPOSED_UNREVIEWED", "objectiveId": "moe-general-science-g7-s1-p1-scientific-knowledge-measurement-and-non-living--obj2", "sourcePages": [2], "note": "MOE Grade 7 General Science: 'Organize some simple methods of acquiring scientific knowledge'. Observation and inference are proposed as the first such method." } },
+    { "id": "ll-g7-sci-record-observations", "statement": "Record qualitative observations without judgment and quantitative observations as a number with a unit.", "layer": "NATIONAL_FOUNDATION",
+      "moe": { "status": "STRUCTURED_ID_PROPOSED_UNREVIEWED", "objectiveId": "moe-general-science-g7-s1-p1-scientific-knowledge-measurement-and-non-living--obj4", "sourcePages": [2], "note": "MOE Grade 7: 'Demonstrate the use of the two systems of measurement in solving problems'. This lesson uses metric units only; the two-systems comparison stays with that MOE lesson." } }
+  ],
+  "successCriteria": [
+    { "objectiveId": "ll-g7-sci-observe-infer", "independentPerformance": "Without notes, the learner correctly sorts statements into observations and inferences, names the observations behind an inference, offers a second plausible inference and an observation that would decide between them, and does this in an unrehearsed context such as a clinic record." },
+    { "objectiveId": "ll-g7-sci-record-observations", "independentPerformance": "Without help, the learner rewrites vague or judgmental records as precise qualitative descriptions and measured quantitative observations with correct units, and still remembers to include units one week later." }
+  ],
+  "prerequisites": [
+    "Can read a ruler or measuring cylinder to the nearest whole unit and write the unit (e.g. 7 cm).",
+    "Can name the five senses and what each one detects."
+  ],
+  "layers": {
+    "nationalFoundation": "Observation, inference and measured records as the first methods of scientific knowledge in MOE Grade 7 General Science.",
+    "liberiaLearnMastery": "Rubric-scored reasoning about competing inferences and discriminating observations, misconception-specific feedback, unscaffolded recording and a 7-day retrieval.",
+    "globalExcellence": "Transfer to a clinic record, which separates measured, reported and inferred information, and an optional measurement-uncertainty challenge."
+  },
+  "legacyDisposition": [
+    { "section": 0, "heading": "Objective", "disposition": "REPLACED", "candidateScenes": ["objectives"], "rationale": "The generic objective ('explain and apply observation and scientific thinking ideas') is not assessable; replaced by two specific objectives." },
+    { "section": 1, "heading": "Teacher Explanation", "disposition": "REPLACED", "candidateScenes": ["concept"], "rationale": "Placeholder that describes what to teach without teaching it." },
+    { "section": 2, "heading": "Worked Example", "disposition": "REPLACED", "candidateScenes": ["worked-sort", "worked-measure"], "rationale": "Placeholder ('Model one complete science example…'); replaced by two worked examples." },
+    { "section": 3, "heading": "Guided Practice", "disposition": "REPLACED", "candidateScenes": ["guided", "more-than-one"], "rationale": "Placeholder; replaced by guided sorting and a misconception check." },
+    { "section": 4, "heading": "Independent Practice", "disposition": "REPLACED", "candidateScenes": ["practice", "record"], "rationale": "Placeholder; replaced by unscaffolded items and a hands-on recording task." },
+    { "section": 5, "heading": "Assessment", "disposition": "REPLACED", "candidateScenes": ["exit-ticket"], "rationale": "Placeholder; replaced by an exit ticket with reviewer-only keys and rubrics." },
+    { "section": 6, "heading": "Remediation", "disposition": "REPLACED", "candidateScenes": ["warm-up"], "rationale": "Generic remediation is replaced by prerequisite diagnostics with named fallback routes." },
+    { "section": 7, "heading": "Extension", "disposition": "REPLACED", "candidateScenes": [], "rationale": "Replaced by the optional measurement-uncertainty extension in the assessment definitions." },
+    { "section": 8, "heading": "Guardian Support", "disposition": "MOVED_TO_TEACHER_GUIDE", "candidateScenes": [], "rationale": "A home-observation suggestion belongs in teacher and guardian notes." },
+    { "section": 9, "heading": "Metadata", "disposition": "DISCARDED", "candidateScenes": [], "rationale": "Catalogue metadata shown as learner text." }
+  ],
+  "openDecisions": [
+    { "id": "OD-LEGACY-ALIGNMENT", "question": "The legacy row is tagged LR-SCI-G7_9-01 ('chemical reactions, acids, bases and pH'), which is unrelated. Should the tag be removed from the live row now?", "authorRecommendation": "Yes, as a governed metadata correction recorded in the ledger, separate from content release." },
+    { "id": "OD-HEALTH-EXAMPLE", "question": "Is the clinic-record transfer task (fever and a malaria inference) appropriate for Grade 7?", "authorRecommendation": "Keep it, subject to subject-expert review; it is common and locally relevant." }
+  ]
+}

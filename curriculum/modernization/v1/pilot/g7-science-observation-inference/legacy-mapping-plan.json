@@ -1,0 +1,57 @@
+{
+ "planVersion": "liberialearn-legacy-mapping-plan/1.0.0",
+ "status": "PROPOSED_UNAUTHORIZED",
+ "candidate": {
+  "id": "lmv1-g7-science-observation-inference",
+  "version": "0.1.0",
+  "sha256": "ba216cc97498ddc518f076e5ba7b60cdbb3e436734df90a5883e2ac2d44bd2fb"
+ },
+ "legacyRows": [
+  {
+   "contentId": "science-g7-1-observation-and-scientific-thinking-foundations",
+   "legacyRevisionId": "cmss8t50a00urvo54li53jgr9",
+   "legacyContentHash": "f07576ea6b222ff8431f59117c1758489eae832ba643bc0d721359c4c4ce92eb",
+   "status": "APPROVED",
+   "dependencies": {
+    "scheduledWork": 1,
+    "scheduledWorkBundlePinned": 0,
+    "scheduledWorkClasses": 1,
+    "scheduledWorkSchools": 1,
+    "studentProgress": 0,
+    "assignments": 0,
+    "homework": 0,
+    "learningEvents": 11,
+    "gradedSubmissions": 0,
+    "teacherLessonAssignments": 0,
+    "lessonPlans": 1,
+    "tutorConversations": 0,
+    "helpFlags": 0,
+    "timetableAssignments": 0,
+    "performanceEvents": 0,
+    "curriculumFlags": 0,
+    "lessonVersions": 0,
+    "lessonShares": 0,
+    "audioAssets": 0,
+    "videoSupplements": 0,
+    "prerequisiteLinks": 0,
+    "dependentLessons": 1
+   },
+   "relation": "AUDITED_SOURCE"
+  }
+ ],
+ "historyPolicy": "PRESERVE_HISTORICAL_PINS",
+ "rules": [
+  "Every existing ScheduledWork, StudentProgress, LearningEvent, submission, tutor conversation and lesson plan keeps pointing at the legacy contentId and revision it was created against; nothing is repointed.",
+  "Published report cards and transcripts are not recomputed or relabelled.",
+  "Legacy rows are not deleted. On release they leave the learner catalogue for new assignment only, and resolve for history forever.",
+  "New assignments after release use the released revision only when the class teacher opts in (futureAssignments: TEACHER_OPT_IN) during the pilot.",
+  "Mastery already recorded from the legacy lesson stays as recorded; the learning authority decides separately whether later evidence from the new lesson is admitted."
+ ],
+ "futureAssignments": "TEACHER_OPT_IN",
+ "requires": [
+  "Human independent ACCEPT on ACADEMIC and ASSESSMENT scopes for this candidate hash",
+  "CURRICULUM_AUTHORITY RELEASE_AUTHORIZED citing this plan's digest",
+  "A governed migration for any catalogue-visibility change (not applied here)"
+ ],
+ "planDigest": "66be71bdcec94f814817888137e5aa44da5a710eb83f2f1c7c648c5ed961d13d"
+}

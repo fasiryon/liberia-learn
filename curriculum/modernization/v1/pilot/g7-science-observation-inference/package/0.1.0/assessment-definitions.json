@@ -1,0 +1,224 @@
+{
+ "audience": "REVIEWER_ONLY",
+ "status": "GOVERNED_CANDIDATE",
+ "notice": "Candidate assessment definitions for the Grade 7 observation-and-inference pilot. Unreviewed and unreleased: nothing scores them, writes mastery from them or releases them. Teacher-administered on paper until a qualified reviewer approves them and a governed release binds them. Keys and rubrics are reviewer only.",
+ "diagnosticOnlyExitItemIds": [],
+ "tasks": [
+  {
+   "id": "d0",
+   "kind": "PREREQUISITE_DIAGNOSTIC",
+   "prerequisiteIndex": 0,
+   "deliveredBy": "warm-up#w-ruler",
+   "objectiveIds": [
+    "ll-g7-sci-record-observations"
+   ],
+   "scaffold": "FULL",
+   "timing": "PRE_LESSON",
+   "context": "REHEARSED",
+   "scoring": "KEYED",
+   "source": "EXCELLENCE_PLAN",
+   "ref": "definition:d0",
+   "prompt": "A leaf lies along a centimetre ruler from 0 to 7. How long is it?",
+   "key": "7 cm",
+   "fallbackRoute": "Before the measuring example, pairs measure three classroom objects with a ruler, starting at 0 and writing the unit each time; the teacher checks each record."
+  },
+  {
+   "id": "d1",
+   "kind": "PREREQUISITE_DIAGNOSTIC",
+   "prerequisiteIndex": 1,
+   "deliveredBy": "warm-up#w-senses",
+   "objectiveIds": [
+    "ll-g7-sci-record-observations"
+   ],
+   "scaffold": "FULL",
+   "timing": "PRE_LESSON",
+   "context": "REHEARSED",
+   "scoring": "KEYED",
+   "source": "EXCELLENCE_PLAN",
+   "ref": "definition:d1",
+   "prompt": "Which sense tells you that soil is rough or smooth?",
+   "key": "Touch",
+   "fallbackRoute": "Quick round: the teacher holds up a stone, a leaf and a cup of water; learners name one thing each sense detects about them before the concept scene."
+  },
+  {
+   "id": "c1",
+   "kind": "SHORT_CONSTRUCTED_RESPONSE",
+   "objectiveIds": [
+    "ll-g7-sci-observe-infer"
+   ],
+   "scaffold": "NONE",
+   "timing": "END_OF_LESSON",
+   "context": "REHEARSED",
+   "scoring": "KEYED",
+   "source": "EXCELLENCE_PLAN",
+   "ref": "definition:c1",
+   "prompt": "Write O for observation or I for inference: (a) The road outside is wet. (b) It rained during the night. (c) There are puddles 3 cm deep. (d) A car splashed water on the wall.",
+   "key": "(a) O (b) I (c) O (d) I",
+   "targetsMisconceptions": [
+    "mc-inference-as-observation"
+   ]
+  },
+  {
+   "id": "c2",
+   "kind": "SHORT_CONSTRUCTED_RESPONSE",
+   "objectiveIds": [
+    "ll-g7-sci-record-observations"
+   ],
+   "scaffold": "NONE",
+   "timing": "END_OF_LESSON",
+   "context": "REHEARSED",
+   "scoring": "ANALYTIC_RUBRIC",
+   "source": "EXCELLENCE_PLAN",
+   "ref": "definition:c2",
+   "prompt": "Rewrite each record as a better scientific observation: (a) 'The bean seedling is small.' (b) 'The water smells bad.'",
+   "rubric": [
+    {
+     "criterion": "Quantitative record",
+     "levels": [
+      "0: no number or no unit",
+      "1: a plausible measurement with a unit for (a), e.g. 4 cm tall"
+     ]
+    },
+    {
+     "criterion": "Qualitative record",
+     "levels": [
+      "0: keeps a judgment such as 'bad'",
+      "1: describes the smell or appearance without judgment for (b)"
+     ]
+    }
+   ],
+   "targetsMisconceptions": [
+    "mc-number-without-unit",
+    "mc-opinion-as-observation"
+   ]
+  },
+  {
+   "id": "r1",
+   "kind": "EXTENDED_REASONING",
+   "objectiveIds": [
+    "ll-g7-sci-observe-infer"
+   ],
+   "scaffold": "NONE",
+   "timing": "END_OF_LESSON",
+   "context": "REHEARSED",
+   "scoring": "ANALYTIC_RUBRIC",
+   "source": "EXCELLENCE_PLAN",
+   "ref": "definition:r1",
+   "prompt": "A student sees an empty rice bag on the kitchen floor with a hole chewed in one corner and says, 'A rat ate the rice.' List two observations behind this inference, give one other possible inference, and describe one observation that would help decide between them.",
+   "rubric": [
+    {
+     "criterion": "Observations named",
+     "levels": [
+      "0: none or inferences",
+      "1: one observation",
+      "2: two observations (empty bag, chewed hole, on the floor)"
+     ]
+    },
+    {
+     "criterion": "Alternative inference",
+     "levels": [
+      "0: none",
+      "1: a plausible alternative (another animal; the rice was used and the bag was chewed later)"
+     ]
+    },
+    {
+     "criterion": "Discriminating observation",
+     "levels": [
+      "0: none",
+      "1: an observation that one inference predicts and the other does not (droppings, tooth marks, asking who used the rice)"
+     ]
+    }
+   ],
+   "targetsMisconceptions": [
+    "mc-inference-is-certain",
+    "mc-inference-as-observation"
+   ]
+  },
+  {
+   "id": "ret1",
+   "kind": "DELAYED_RETRIEVAL",
+   "objectiveIds": [
+    "ll-g7-sci-observe-infer"
+   ],
+   "scaffold": "NONE",
+   "timing": "DELAYED",
+   "delayDays": 7,
+   "context": "REHEARSED",
+   "scoring": "KEYED",
+   "source": "EXCELLENCE_PLAN",
+   "ref": "definition:ret1",
+   "prompt": "One week later, without notes: is 'The mango is ripe because it is yellow' an observation or an inference? Name the observation inside it.",
+   "key": "Inference; the observation is that the mango is yellow.",
+   "targetsMisconceptions": [
+    "mc-inference-as-observation"
+   ]
+  },
+  {
+   "id": "ret2",
+   "kind": "DELAYED_RETRIEVAL",
+   "objectiveIds": [
+    "ll-g7-sci-record-observations"
+   ],
+   "scaffold": "NONE",
+   "timing": "DELAYED",
+   "delayDays": 7,
+   "context": "REHEARSED",
+   "scoring": "KEYED",
+   "source": "EXCELLENCE_PLAN",
+   "ref": "definition:ret2",
+   "prompt": "One week later, without notes: what is missing from the record 'The rain gauge collected 18'?",
+   "key": "The unit (for example, 18 mm).",
+   "targetsMisconceptions": [
+    "mc-number-without-unit"
+   ]
+  },
+  {
+   "id": "t1",
+   "kind": "TRANSFER_TASK",
+   "objectiveIds": [
+    "ll-g7-sci-observe-infer"
+   ],
+   "scaffold": "NONE",
+   "timing": "END_OF_LESSON",
+   "context": "NEW",
+   "scoring": "ANALYTIC_RUBRIC",
+   "source": "EXCELLENCE_PLAN",
+   "ref": "definition:t1",
+   "prompt": "A clinic nurse writes: 'Patient's temperature 38.9 °C. Patient says she has had a headache for two days. Patient probably has malaria.' Which parts are observations and which are inferences? What could the nurse do to test the inference?",
+   "rubric": [
+    {
+     "criterion": "Sorting in a new context",
+     "levels": [
+      "0: confused",
+      "1: temperature as a measured observation and malaria as an inference",
+      "2: also notes the headache is the patient's report, which the nurse did not observe directly"
+     ]
+    },
+    {
+     "criterion": "Test",
+     "levels": [
+      "0: none",
+      "1: names a test that could confirm or rule out the inference (e.g. a malaria rapid test)"
+     ]
+    }
+   ],
+   "note": "New context (a clinic record), not rehearsed. Reviewer to confirm the health example is age-appropriate and accurate."
+  },
+  {
+   "id": "x1",
+   "kind": "EXTENSION",
+   "objectiveIds": [
+    "ll-g7-sci-record-observations"
+   ],
+   "scaffold": "NONE",
+   "timing": "END_OF_LESSON",
+   "context": "NEW",
+   "scoring": "NOT_SCORED",
+   "optional": true,
+   "source": "EXCELLENCE_PLAN",
+   "ref": "definition:x1",
+   "prompt": "Optional challenge: measure the same leaf three times and record all three lengths. Why might they differ, and what single value would you report?",
+   "note": "Introduces measurement uncertainty, beyond Grade 7 scope; never required."
+  }
+ ]
+}

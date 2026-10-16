@@ -1,0 +1,39 @@
+{
+ "manifestVersion": "liberialearn-modernization-package/1.0.0",
+ "pipelineVersion": "liberialearn-modernization-pipeline/1.0.0",
+ "contentId": "civics-g1-1-rules-rights-and-duties-foundations",
+ "legacy": {
+  "revisionId": "cmss8rewz00fnvo5407no2s2a",
+  "contentHash": "5fa778238633e82e02a2204a52d5d579c5f86c7055a60678e6e4e1006faf9cac"
+ },
+ "candidate": {
+  "id": "lmv1-g1-civics-rules-rights-duties",
+  "version": "0.1.0",
+  "sha256": "c426bca8c72285273c8b11665340e87c79f79fe4ac3223a4bb1f6ba5bc9b11be"
+ },
+ "author": {
+  "kind": "AI_AGENT",
+  "id": "claude-code:library-modernization-v1",
+  "role": "CANDIDATE_AUTHOR",
+  "modelFamily": "anthropic-claude"
+ },
+ "status": "READY_FOR_INDEPENDENT_REVIEW",
+ "candidateOnly": true,
+ "approved": false,
+ "published": false,
+ "scored": false,
+ "files": {
+  "legacy-revision.json": "758d5627870aa65d5a9378edb63dcb859f34f5469fd99d5d3566cdfd627a8327",
+  "legacy-material.json": "2e6f661a295c343c176e24fa1b8838cb88ca656793adc79793bb4cb9f02cf875",
+  "legacy-audit.json": "69c6fb4a5c12e7e3811046646d8cf019f6afb9824241e2874d6351c006aa384d",
+  "authority.json": "0b0dfac26ed322e6626c6eed76ee8998ffc0a593178613be851ddb85191991b1",
+  "spec.json": "0cb20ac1ddd1308bd91126d3c99e97bc929492b02d1fbb0836694c893011dbbb",
+  "candidate.json": "c826f01b6c14de8c71b013ea5a63adf9958e7e5624f0b5605060eb3942782d43",
+  "assessment-definitions.json": "ee4ea77da508f86721f53c47bf58228a6dacd7f924b1f2a304090afc95ffcfc1",
+  "automated-review.json": "ea72154427d58a5e1793e29cbe591c930b3af6a854c0444bc70f74b13812293e",
+  "learner-projection.json": "674bc879fdaa49fda1fdbb2ea3ad8f64144c828d7caea4ece078ca1d99a89393",
+  "readiness.json": "758c3137b14081f9b0d8de0b38ad5e4430543fba4634d82c3b0b61394fa4a95e",
+  "comparison.md": "254b521ac50cecb63b1bf926912937a0f4fd5a5403a9d56bb59934e3ca79fa7e"
+ },
+ "manifestHash": "5add59da6e0750c5c0ee72ef8ae1c5fddd67430923424ba9525ac603202da80b"
+}

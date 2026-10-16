@@ -3,7 +3,9 @@
 // no database), so it holds in CI.
 import { readFileSync, readdirSync } from "fs";
 import { describe, expect, it } from "vitest";
-import { canonicalizeJson } from "@/lib/curriculum/provenance/hash";
+import { createHash } from "crypto";
+import { canonicalizeJson, hashCurriculumSnapshot } from "@/lib/curriculum/provenance/hash";
+import { PILOT_DIR, PILOT_LESSONS } from "@/lib/curriculum/modernization/pilot";
 import { answerLedgerQuestions, readLedgerFile } from "@/lib/curriculum/modernization/ledger";
 import { LEDGER_FILE, MODERNIZATION_DIR } from "@/lib/curriculum/modernization/build";
 
@@ -45,6 +47,27 @@ describe("committed baseline", () => {
     expect(answers.approved).toEqual({ reviewAccepted: 0, releaseAuthorized: 0, released: 0 });
     expect(answers.demonstratedLearningSuccess).toBe(0);
     expect(inventory.lessons.some((lesson) => lesson.audit.reviewOutcome === "PASS_MECHANICAL_CHECKS")).toBe(false);
+  });
+  it("holds every pilot package intact, bound to the exact legacy revision, and only awaiting independent review", () => {
+    for (const lesson of PILOT_LESSONS) {
+      const spec = JSON.parse(readFileSync(`${PILOT_DIR}/${lesson.key}/spec.json`, "utf8"));
+      const dir = `${PILOT_DIR}/${lesson.key}/package/${spec.candidateVersion}`;
+      const manifest = JSON.parse(readFileSync(`${dir}/manifest.json`, "utf8"));
+      for (const [file, expected] of Object.entries(manifest.files as Record<string, string>)) {
+        expect(createHash("sha256").update(readFileSync(`${dir}/${file}`)).digest("hex"), `${lesson.key}/${file}`).toBe(expected);
+      }
+      const { manifestHash, ...unsigned } = manifest;
+      expect(createHash("sha256").update(canonicalizeJson(unsigned)).digest("hex")).toBe(manifestHash);
+      expect(manifest).toMatchObject({ candidateOnly: true, approved: false, published: false, scored: false, status: "READY_FOR_INDEPENDENT_REVIEW" });
+      const legacy = JSON.parse(readFileSync(`${dir}/legacy-revision.json`, "utf8"));
+      expect(hashCurriculumSnapshot(legacy.snapshotSchemaVersion, legacy.contentSnapshot)).toBe(legacy.contentHash);
+      const state = ledger.lessons.get(lesson.contentId)!;
+      expect(state.stage).toBe("AWAITING_INDEPENDENT_REVIEW");
+      expect(state.candidate?.candidateHash).toBe(manifest.candidate.sha256);
+      expect(state.candidate?.legacyContentHash).toBe(state.live?.contentHash);
+      expect(state.candidate?.authors.every((author) => author.kind === "AI_AGENT")).toBe(true);
+      expect(state.reviews).toHaveLength(0);
+    }
   });
   it("contains no learner, user, author or school identifiers", () => {
     const files = [`${MODERNIZATION_DIR}/inventory.json`, `${MODERNIZATION_DIR}/tracker.json`, LEDGER_FILE, ...readdirSync(`${MODERNIZATION_DIR}/audit`).map((file) => `${MODERNIZATION_DIR}/audit/${file}`)];

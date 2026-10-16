@@ -1,0 +1,75 @@
+{
+ "moeCell": {
+  "relation": "DIRECT",
+  "moeSubject": "MATH",
+  "sourceSubjects": null,
+  "objectiveCount": 24,
+  "note": "MOE MATH grade 6."
+ },
+ "legacyClaims": [
+  {
+   "code": "LR-MATH-G4_6-02",
+   "description": "Add, subtract, and compare fractions and decimals",
+   "method": "keyword",
+   "confidence": "high",
+   "kind": "LIBERIALEARN_INVENTED_CODE",
+   "resolvedObjectiveId": null
+  }
+ ],
+ "lexicalLeads": [
+  {
+   "objectiveId": "moe-math-g6-s1-p3-operations-obj1",
+   "text": "Add, subtract, multiply and divide decimal.",
+   "score": 0.144,
+   "pages": [
+    67
+   ],
+   "status": "LEXICAL_LEAD_UNREVIEWED"
+  },
+  {
+   "objectiveId": "moe-math-g6-s1-p1-ui-sets-of-real-numbers-symbols-to-describe-sets-obj2",
+   "text": "Use set builder notation to describe sets.",
+   "score": 0.134,
+   "pages": [
+    63
+   ],
+   "status": "LEXICAL_LEAD_UNREVIEWED"
+  },
+  {
+   "objectiveId": "moe-math-g6-s1-p1-ui-sets-of-real-numbers-symbols-to-describe-sets-obj1",
+   "text": "Use the power of set method to determine numbers of sets.",
+   "score": 0.125,
+   "pages": [
+    63
+   ],
+   "status": "LEXICAL_LEAD_UNREVIEWED"
+  }
+ ],
+ "proposedObjectiveRelationships": [
+  {
+   "objectiveId": "moe-math-g6-s1-p3-operations-obj2",
+   "layer": "NATIONAL_FOUNDATION",
+   "status": "STRUCTURED_ID_PROPOSED_UNREVIEWED",
+   "sourcePages": [
+    67
+   ],
+   "note": "MOE Grade 6 lists rounding decimals to tenths, hundredths and thousandths, which depends on decimal place value. Proposed as the supporting objective; not an explicit MOE objective by itself.",
+   "resolvesInStructuredSource": true
+  },
+  {
+   "objectiveId": "moe-math-g6-s1-p3-operations-obj2",
+   "layer": "LIBERIALEARN_MASTERY",
+   "status": "STRUCTURED_ID_PROPOSED_UNREVIEWED",
+   "sourcePages": [
+    67
+   ],
+   "note": "Comparing decimals is not listed for Grade 6; it is the legacy lesson's second objective and is needed for rounding. A curriculum owner decides whether it is foundation or LiberiaLearn mastery.",
+   "resolvesInStructuredSource": true
+  }
+ ],
+ "unresolvedProposedIds": [],
+ "examinations": [],
+ "waecEvidence": "NOT_APPLICABLE",
+ "status": "PROPOSED_UNREVIEWED",
+ "note": "MOE source provenance is not MOE approval. Every relationship here is a proposal that a curriculum owner must accept; nothing is bound and no MOE or WAEC approval is claimed."
+}

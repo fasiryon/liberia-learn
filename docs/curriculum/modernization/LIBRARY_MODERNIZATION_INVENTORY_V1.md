@@ -156,7 +156,7 @@ Scheduled work reaches at most 3 school(s) per lesson (distinct-school count via
 | ANSWER_KEY_IN_LEARNER_TEXT | 68 |
 | ROW_HASH_MISSING | 65 |
 | TEMPLATE_SHELL | 52 |
-| PLACEHOLDER_CONTENT | 31 |
+| PLACEHOLDER_CONTENT | 40 |
 | DUPLICATE_LEARNER_TEXT | 8 |
 | ARITHMETIC_ERROR | 4 |
 | STUB_CONTENT | 3 |
@@ -174,7 +174,11 @@ Cleanup Plan V1 (plan only, never applied; snapshot 2026-09-26T09:07:15.873Z) pr
 
 | Lesson | Candidate |
 | --- | ---: |
+| `civics-g1-1-rules-rights-and-duties-foundations` | lmv1-g1-civics-rules-rights-duties (library modernization pilot V1) |
+| `wk_pcs6a_wed_p2` | lmv1-g6-literacy-cause-effect (library modernization pilot V1) |
+| `wk_pcs6a_mon_p1` | lmv1-g6-math-decimal-place-value (library modernization pilot V1) |
 | `hero-literacy-g7-essay-writing-structure-and-argumentation` | cv2-cand-g7-literacy-essay-structure-argument (PR #191 v0.3.0) |
 | `math-g7-1-number-sense-and-place-value-foundations` | cv2-cand-g7-math-number-sense-place-value (PR #191 v0.3.0) |
+| `science-g7-1-observation-and-scientific-thinking-foundations` | lmv1-g7-science-observation-inference (library modernization pilot V1) |
 
-1103 lessons have no Curriculum V2 candidate or modernized replacement.
+1099 lessons have no Curriculum V2 candidate or modernized replacement.

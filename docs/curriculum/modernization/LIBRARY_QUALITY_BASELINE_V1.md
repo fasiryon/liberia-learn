@@ -14,8 +14,8 @@ Every lesson in the production catalog (1105) audited at its exact current revis
 | Outcome | Lessons | Share |
 | --- | ---: | ---: |
 | PASS_MECHANICAL_CHECKS | 0 | 0% |
-| REVISE | 710 | 64.3% |
-| REBUILD_REQUIRED | 42 | 3.8% |
+| REVISE | 701 | 63.4% |
+| REBUILD_REQUIRED | 51 | 4.6% |
 | BLOCKED_SOURCE_OR_AUTHORITY | 353 | 31.9% |
 | AWAITING_INDEPENDENT_REVIEW (judgment areas) | 1105 | 100% |
 
@@ -26,8 +26,8 @@ No lesson passes the mechanical checks: every legacy revision lacks misconceptio
 | Track | Lessons | Share |
 | --- | ---: | ---: |
 | A_TARGETED_REPAIR | 356 | 32.2% |
-| B_INSTRUCTIONAL_REDESIGN | 354 | 32% |
-| C_FULL_REPLACEMENT | 42 | 3.8% |
+| B_INSTRUCTIONAL_REDESIGN | 345 | 31.2% |
+| C_FULL_REPLACEMENT | 51 | 4.6% |
 | D_GOVERNANCE_HOLD | 353 | 31.9% |
 
 | Held lessons: track once the hold is resolved | Lessons |
@@ -43,7 +43,7 @@ No lesson passes the mechanical checks: every legacy revision lacks misconceptio
 | ENGLISH | 139 | 50 | 0 | 0 | 189 |
 | COMPUTER_SCIENCE | 0 | 0 | 0 | 177 | 177 |
 | ENGINEERING_FOUNDATIONS | 0 | 0 | 0 | 163 | 163 |
-| CIVICS | 33 | 99 | 0 | 1 | 133 |
+| CIVICS | 33 | 90 | 9 | 1 | 133 |
 | SCIENCE | 46 | 80 | 1 | 1 | 128 |
 | LITERACY | 74 | 34 | 1 | 1 | 110 |
 | MATH | 54 | 40 | 1 | 6 | 101 |
@@ -55,7 +55,7 @@ No lesson passes the mechanical checks: every legacy revision lacks misconceptio
 
 | Grade | A | B | C | D | Total |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| 1 | 0 | 22 | 0 | 22 | 44 |
+| 1 | 0 | 13 | 9 | 22 | 44 |
 | 2 | 0 | 21 | 0 | 25 | 46 |
 | 3 | 0 | 16 | 0 | 27 | 43 |
 | 4 | 6 | 0 | 0 | 20 | 26 |
@@ -73,7 +73,7 @@ No lesson passes the mechanical checks: every legacy revision lacks misconceptio
 | Area | Excellence criteria | MET | PARTIAL | NOT_MET | AWAITING_REVIEW | N/A |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
 | 1. SUBJECT_ACCURACY | NF-ACC-1, NF-ACC-2 | 0 | 0 | 128 | 977 | 0 |
-| 2. CONCEPTUAL_DEPTH | LM-CON-2, NF-ACC-2 | 0 | 0 | 69 | 1036 | 0 |
+| 2. CONCEPTUAL_DEPTH | LM-CON-2, NF-ACC-2 | 0 | 0 | 78 | 1027 | 0 |
 | 3. GRADE_APPROPRIATENESS | NF-ALN-3, LM-ACS-1 | 0 | 0 | 524 | 581 | 0 |
 | 4. PREREQUISITE_DIAGNOSTIC | NF-PRG-1 | 0 | 0 | 1105 | 0 | 0 |
 | 5. SEQUENCE_WORKED_EXAMPLES | LM-PRG-1 | 741 | 141 | 223 | 0 | 0 |
@@ -135,7 +135,7 @@ No lesson passes the mechanical checks: every legacy revision lacks misconceptio
 | ANSWER_KEY_IN_LEARNER_TEXT | MAJOR | MECHANICAL | ASSESSMENT_VALIDITY | 68 |
 | THIN_CONCEPT_EXPLANATION | MAJOR | MECHANICAL | CONCEPTUAL_DEPTH | 66 |
 | TEMPLATE_SHELL | BLOCKING | MECHANICAL | CONCEPTUAL_DEPTH | 44 |
-| PLACEHOLDER_CONTENT | BLOCKING | MECHANICAL | CONCEPTUAL_DEPTH | 31 |
+| PLACEHOLDER_CONTENT | BLOCKING | MECHANICAL | CONCEPTUAL_DEPTH | 40 |
 | NO_LIBERIAN_CONTEXT | MINOR | MECHANICAL | LIBERIAN_CONTEXT_EVIDENCE | 30 |
 | LONG_PARAGRAPHS | MINOR | MECHANICAL | COGNITIVE_LOAD | 15 |
 | DEMO_OR_TEST_FIXTURE_IN_CATALOG | BLOCKING | GOVERNANCE | STUDENT_EXPERIENCE_V3 | 10 |
@@ -188,12 +188,12 @@ Priority = (risk × curriculum importance + learner exposure + 2 × prerequisite
 | 16 | `wk_mca7a_tue_p2` | G7 LITERACY | A | 19.41 | READING_LEVEL_ABOVE_GRADE, NO_FALLBACK_ROUTE, NO_MISCONCEPTION_SPECIFIC_FEEDBACK |
 | 17 | `desert-english-g12-advanced-rhetoric-and-argumentation-ab3fe2e0` | G12 ENGLISH | A | 19.24 | NO_FALLBACK_ROUTE, NO_MISCONCEPTION_SPECIFIC_FEEDBACK, UNKEYED_ASSESSMENT_ITEMS |
 | 18 | `wk_krs5a_wed_p1` | G5 MATH | A | 19.21 | READING_LEVEL_ABOVE_GRADE, NO_FALLBACK_ROUTE, NO_MISCONCEPTION_SPECIFIC_FEEDBACK |
-| 19 | `civics-g1-1-rules-rights-and-duties-foundations` | G1 CIVICS | B | 19.19 | DUPLICATE_LEARNER_TEXT, READING_LEVEL_ABOVE_GRADE, NO_PREREQUISITE_CHECK |
-| 20 | `civics-g1-3-institutions-and-leadership-teacher-modeling` | G1 CIVICS | B | 18.7 | READING_LEVEL_ABOVE_GRADE, TEXT_LOAD_EXCEEDS_EMERGENT_READER_BUDGET, NO_FALLBACK_ROUTE |
-| 21 | `draft-phase6-g7-english-w34-d2-core` | G7 ENGLISH | A | 18.54 | POSSIBLE_SUBJECT_MISLABEL, READING_LEVEL_ABOVE_GRADE, NO_FALLBACK_ROUTE |
-| 22 | `civics-g1-1-rules-rights-and-duties-guided-application` | G1 CIVICS | B | 18.49 | DUPLICATE_LEARNER_TEXT, READING_LEVEL_ABOVE_GRADE, NO_PREREQUISITE_CHECK |
-| 23 | `civics-g1-1-rules-rights-and-duties-independent-practice` | G1 CIVICS | B | 18.49 | DUPLICATE_LEARNER_TEXT, READING_LEVEL_ABOVE_GRADE, NO_PREREQUISITE_CHECK |
-| 24 | `civics-g1-1-rules-rights-and-duties-teacher-modeling` | G1 CIVICS | B | 18.49 | DUPLICATE_LEARNER_TEXT, READING_LEVEL_ABOVE_GRADE, NO_PREREQUISITE_CHECK |
-| 25 | `civics-g1-2-citizenship-and-participation-foundations` | G1 CIVICS | B | 18.49 | DUPLICATE_LEARNER_TEXT, READING_LEVEL_ABOVE_GRADE, NO_PREREQUISITE_CHECK |
+| 19 | `civics-g1-3-institutions-and-leadership-teacher-modeling` | G1 CIVICS | B | 18.7 | READING_LEVEL_ABOVE_GRADE, TEXT_LOAD_EXCEEDS_EMERGENT_READER_BUDGET, NO_FALLBACK_ROUTE |
+| 20 | `draft-phase6-g7-english-w34-d2-core` | G7 ENGLISH | A | 18.54 | POSSIBLE_SUBJECT_MISLABEL, READING_LEVEL_ABOVE_GRADE, NO_FALLBACK_ROUTE |
+| 21 | `draft-phase6-g7-literacy-w19-d5-core` | G7 LITERACY | A | 18.12 | READING_LEVEL_ABOVE_GRADE, NO_FALLBACK_ROUTE, NO_MISCONCEPTION_SPECIFIC_FEEDBACK |
+| 22 | `civics-g1-2-citizenship-and-participation-teacher-modeling` | G1 CIVICS | B | 18.06 | READING_LEVEL_ABOVE_GRADE, TEXT_LOAD_EXCEEDS_EMERGENT_READER_BUDGET, NO_FALLBACK_ROUTE |
+| 23 | `civics-g1-2-citizenship-and-participation-independent-practice` | G1 CIVICS | B | 17.85 | READING_LEVEL_ABOVE_GRADE, TEXT_LOAD_EXCEEDS_EMERGENT_READER_BUDGET, NO_FALLBACK_ROUTE |
+| 24 | `wk_mca7a_mon_p1` | G7 MATH | A | 17.75 | PRIOR_KNOWLEDGE_NOT_DIAGNOSTIC, NO_MISCONCEPTION_SPECIFIC_FEEDBACK, UNKEYED_ASSESSMENT_ITEMS |
+| 25 | `wk_mca7a_fri_p3` | G7 SCIENCE | A | 17.71 | ARITHMETIC_ERROR, NO_FALLBACK_ROUTE, DENSE_SECTION |
 
 Full order: `curriculum/modernization/v1/waves.json` (752 schedulable lessons in 19 waves).

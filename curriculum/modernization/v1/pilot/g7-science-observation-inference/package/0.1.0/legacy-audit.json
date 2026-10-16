@@ -1,0 +1,416 @@
+{
+ "auditVersion": "liberialearn-library-audit/1.0.0",
+ "contentId": "science-g7-1-observation-and-scientific-thinking-foundations",
+ "revisionId": "cmss8t50a00urvo54li53jgr9",
+ "contentHash": "f07576ea6b222ff8431f59117c1758489eae832ba643bc0d721359c4c4ce92eb",
+ "grade": 7,
+ "subject": "SCIENCE",
+ "mechanicalOutcome": "REBUILD_REQUIRED",
+ "judgmentStatus": "AWAITING_INDEPENDENT_REVIEW",
+ "reviewOutcome": "REBUILD_REQUIRED",
+ "moeCell": {
+  "relation": "DIRECT",
+  "moeSubject": "SCIENCE",
+  "objectiveCount": 56
+ },
+ "moeObjectiveLeads": [
+  {
+   "objectiveId": "moe-general-science-g7-s1-p1-scientific-knowledge-measurement-and-non-living--obj1",
+   "text": "Discover Science and Scientific knowledge",
+   "score": 0.213,
+   "pages": [
+    2
+   ],
+   "status": "LEXICAL_LEAD_UNREVIEWED"
+  },
+  {
+   "objectiveId": "moe-general-science-g7-s2-p5-earth-and-space-science-obj1",
+   "text": "Distinguish between Earth and Space Science",
+   "score": 0.135,
+   "pages": [
+    15
+   ],
+   "status": "LEXICAL_LEAD_UNREVIEWED"
+  },
+  {
+   "objectiveId": "moe-general-science-g7-s2-p5-earth-and-space-science-obj3",
+   "text": "Name and describe the spheres of the earth",
+   "score": 0.135,
+   "pages": [
+    15
+   ],
+   "status": "LEXICAL_LEAD_UNREVIEWED"
+  }
+ ],
+ "examinations": [
+  "LJHSCE"
+ ],
+ "areas": [
+  {
+   "area": "SUBJECT_ACCURACY",
+   "criteria": [
+    "NF-ACC-1",
+    "NF-ACC-2"
+   ],
+   "status": "AWAITING_INDEPENDENT_REVIEW",
+   "basis": "MECHANICAL_PLUS_JUDGMENT",
+   "findingIds": []
+  },
+  {
+   "area": "CONCEPTUAL_DEPTH",
+   "criteria": [
+    "LM-CON-2",
+    "NF-ACC-2"
+   ],
+   "status": "NOT_MET",
+   "basis": "MECHANICAL_PLUS_JUDGMENT",
+   "findingIds": [
+    "science-g7-1-observation-and-scientific-thinking-foundations#F01",
+    "science-g7-1-observation-and-scientific-thinking-foundations#F02"
+   ]
+  },
+  {
+   "area": "GRADE_APPROPRIATENESS",
+   "criteria": [
+    "NF-ALN-3",
+    "LM-ACS-1"
+   ],
+   "status": "NOT_MET",
+   "basis": "MECHANICAL_PLUS_JUDGMENT",
+   "findingIds": [
+    "science-g7-1-observation-and-scientific-thinking-foundations#F03"
+   ]
+  },
+  {
+   "area": "PREREQUISITE_DIAGNOSTIC",
+   "criteria": [
+    "NF-PRG-1"
+   ],
+   "status": "NOT_MET",
+   "basis": "MECHANICAL",
+   "findingIds": [
+    "science-g7-1-observation-and-scientific-thinking-foundations#F04"
+   ]
+  },
+  {
+   "area": "SEQUENCE_WORKED_EXAMPLES",
+   "criteria": [
+    "LM-PRG-1"
+   ],
+   "status": "MET",
+   "basis": "MECHANICAL",
+   "findingIds": []
+  },
+  {
+   "area": "COGNITIVE_LOAD",
+   "criteria": [
+    "LM-ACS-1"
+   ],
+   "status": "MET",
+   "basis": "MECHANICAL",
+   "findingIds": []
+  },
+  {
+   "area": "MISCONCEPTION_FEEDBACK",
+   "criteria": [
+    "LM-CON-1"
+   ],
+   "status": "NOT_MET",
+   "basis": "MECHANICAL",
+   "findingIds": [
+    "science-g7-1-observation-and-scientific-thinking-foundations#F05",
+    "science-g7-1-observation-and-scientific-thinking-foundations#F06"
+   ]
+  },
+  {
+   "area": "GUIDED_INDEPENDENT_PRACTICE",
+   "criteria": [
+    "LM-PRG-1"
+   ],
+   "status": "MET",
+   "basis": "MECHANICAL",
+   "findingIds": []
+  },
+  {
+   "area": "AUTHENTIC_PERFORMANCE_REASONING",
+   "criteria": [
+    "LM-RSN-1",
+    "GE-RSN-1"
+   ],
+   "status": "PARTIALLY_MET",
+   "basis": "MECHANICAL",
+   "findingIds": [
+    "science-g7-1-observation-and-scientific-thinking-foundations#F07"
+   ]
+  },
+  {
+   "area": "ASSESSMENT_VALIDITY",
+   "criteria": [
+    "NF-ASM-1",
+    "NF-ACC-1",
+    "LM-ASM-1",
+    "LM-ASM-2"
+   ],
+   "status": "NOT_MET",
+   "basis": "MECHANICAL",
+   "findingIds": [
+    "science-g7-1-observation-and-scientific-thinking-foundations#F08"
+   ]
+  },
+  {
+   "area": "DELAYED_RETENTION",
+   "criteria": [
+    "LM-ASM-3"
+   ],
+   "status": "NOT_MET",
+   "basis": "MECHANICAL",
+   "findingIds": [
+    "science-g7-1-observation-and-scientific-thinking-foundations#F09"
+   ]
+  },
+  {
+   "area": "TRANSFER",
+   "criteria": [
+    "GE-TRN-1"
+   ],
+   "status": "NOT_MET",
+   "basis": "MECHANICAL",
+   "findingIds": [
+    "science-g7-1-observation-and-scientific-thinking-foundations#F10"
+   ]
+  },
+  {
+   "area": "ACCESSIBILITY_OFFLINE",
+   "criteria": [
+    "NF-ACS-1"
+   ],
+   "status": "PARTIALLY_MET",
+   "basis": "MECHANICAL",
+   "findingIds": [
+    "science-g7-1-observation-and-scientific-thinking-foundations#F11"
+   ]
+  },
+  {
+   "area": "LIBERIAN_CONTEXT_EVIDENCE",
+   "criteria": [
+    "NF-REL-1",
+    "LM-REL-1"
+   ],
+   "status": "AWAITING_INDEPENDENT_REVIEW",
+   "basis": "MECHANICAL_PLUS_JUDGMENT",
+   "findingIds": []
+  },
+  {
+   "area": "MOE_TRACEABILITY",
+   "criteria": [
+    "NF-ALN-1"
+   ],
+   "status": "NOT_MET",
+   "basis": "MECHANICAL_PLUS_JUDGMENT",
+   "findingIds": [
+    "science-g7-1-observation-and-scientific-thinking-foundations#F12"
+   ]
+  },
+  {
+   "area": "WAEC_ALIGNMENT",
+   "criteria": [
+    "NF-ALN-2"
+   ],
+   "status": "NOT_MET",
+   "basis": "MECHANICAL",
+   "findingIds": [
+    "science-g7-1-observation-and-scientific-thinking-foundations#F13"
+   ]
+  },
+  {
+   "area": "ADVANCED_ENRICHMENT",
+   "criteria": [
+    "GE-EXT-1"
+   ],
+   "status": "MET",
+   "basis": "MECHANICAL",
+   "findingIds": []
+  },
+  {
+   "area": "STUDENT_EXPERIENCE_V3",
+   "criteria": [
+    "NF-ACS-1"
+   ],
+   "status": "MET",
+   "basis": "MECHANICAL",
+   "findingIds": []
+  }
+ ],
+ "findings": [
+  {
+   "id": "science-g7-1-observation-and-scientific-thinking-foundations#F01",
+   "area": "CONCEPTUAL_DEPTH",
+   "code": "PLACEHOLDER_CONTENT",
+   "kind": "MECHANICAL",
+   "severity": "BLOCKING",
+   "where": "delivery.body#s1 \"Teacher Explanation\" (line 4)",
+   "evidence": "8 of 8 instructional sections are directions with no content, e.g. \"The teacher introduces the core concept from observation and scientific thinking using direct modeling, Liber…\"",
+   "issue": "The lesson is a template shell: sections say what to teach (\"Model one complete example…\") but contain no explanation, example or item.",
+   "proposedCorrection": "Replace with a full candidate lesson (Track C); keep the legacy revision for history."
+  },
+  {
+   "id": "science-g7-1-observation-and-scientific-thinking-foundations#F02",
+   "area": "CONCEPTUAL_DEPTH",
+   "code": "THIN_CONCEPT_EXPLANATION",
+   "kind": "MECHANICAL",
+   "severity": "MAJOR",
+   "where": "delivery.body#s1 \"Teacher Explanation\" (line 4)",
+   "evidence": "27 words of concept explanation",
+   "issue": "The core idea is barely explained before practice begins.",
+   "proposedCorrection": "Add an explicit explanation of the concept with a representation (diagram, model or example) before worked examples."
+  },
+  {
+   "id": "science-g7-1-observation-and-scientific-thinking-foundations#F03",
+   "area": "GRADE_APPROPRIATENESS",
+   "code": "READING_LEVEL_ABOVE_GRADE",
+   "kind": "JUDGMENT_INDICATOR",
+   "severity": "MAJOR",
+   "where": "delivery.body",
+   "evidence": "Flesch-Kincaid grade 13.5 for a grade 7 lesson",
+   "issue": "Sentence and word length suggest the text is harder to read than the grade allows.",
+   "proposedCorrection": "Shorten sentences and gloss vocabulary without lowering the conceptual demand; confirm with a language reviewer."
+  },
+  {
+   "id": "science-g7-1-observation-and-scientific-thinking-foundations#F04",
+   "area": "PREREQUISITE_DIAGNOSTIC",
+   "code": "NO_PREREQUISITE_CHECK",
+   "kind": "MECHANICAL",
+   "severity": "MAJOR",
+   "where": "delivery.body",
+   "evidence": "no prior-knowledge or warm-up section",
+   "issue": "Instruction assumes prerequisites it never checks.",
+   "proposedCorrection": "Add a short diagnostic per prerequisite with a stated route for learners who lack it."
+  },
+  {
+   "id": "science-g7-1-observation-and-scientific-thinking-foundations#F05",
+   "area": "MISCONCEPTION_FEEDBACK",
+   "code": "NO_MISCONCEPTION_TEACHING",
+   "kind": "MECHANICAL",
+   "severity": "MAJOR",
+   "where": "delivery.body",
+   "evidence": "no error-analysis or misconception section",
+   "issue": "Common errors are neither taught against nor anticipated.",
+   "proposedCorrection": "Catalogue the objective's misconceptions and teach against each (Track A)."
+  },
+  {
+   "id": "science-g7-1-observation-and-scientific-thinking-foundations#F06",
+   "area": "MISCONCEPTION_FEEDBACK",
+   "code": "NO_MISCONCEPTION_SPECIFIC_FEEDBACK",
+   "kind": "MECHANICAL",
+   "severity": "MAJOR",
+   "where": "assessment",
+   "evidence": "no item carries response-specific feedback or a misconception-mapped distractor",
+   "issue": "Wrong answers cannot be diagnosed or corrected by cause.",
+   "proposedCorrection": "Map each distractor or response pattern to a catalogued misconception with corrective feedback."
+  },
+  {
+   "id": "science-g7-1-observation-and-scientific-thinking-foundations#F07",
+   "area": "AUTHENTIC_PERFORMANCE_REASONING",
+   "code": "REASONING_TASK_WITHOUT_RUBRIC",
+   "kind": "MECHANICAL",
+   "severity": "MINOR",
+   "where": "assessment.rubric",
+   "evidence": "1 reasoning prompt(s), no rubric",
+   "issue": "Reasoning prompts exist but nothing says what good reasoning looks like, so they cannot be scored consistently.",
+   "proposedCorrection": "Attach a short analytic rubric (protected) to each reasoning task."
+  },
+  {
+   "id": "science-g7-1-observation-and-scientific-thinking-foundations#F08",
+   "area": "ASSESSMENT_VALIDITY",
+   "code": "NO_END_OF_LESSON_ASSESSMENT",
+   "kind": "MECHANICAL",
+   "severity": "MAJOR",
+   "where": "assessment",
+   "evidence": "no assessment questions found in body or structured fields",
+   "issue": "Nothing checks whether learners met the objectives.",
+   "proposedCorrection": "Add an independent end-of-lesson demonstration covering every objective."
+  },
+  {
+   "id": "science-g7-1-observation-and-scientific-thinking-foundations#F09",
+   "area": "DELAYED_RETENTION",
+   "code": "NO_DELAYED_RETRIEVAL",
+   "kind": "MECHANICAL",
+   "severity": "MAJOR",
+   "where": "assessment",
+   "evidence": "no delayed or spaced retrieval task",
+   "issue": "Nothing checks whether learning lasts beyond the lesson.",
+   "proposedCorrection": "Add a retention blueprint: retrieval items for each mastery objective at ≥7 days (LM-ASM-3)."
+  },
+  {
+   "id": "science-g7-1-observation-and-scientific-thinking-foundations#F10",
+   "area": "TRANSFER",
+   "code": "NO_TRANSFER_TASK",
+   "kind": "MECHANICAL",
+   "severity": "MAJOR",
+   "where": "assessment",
+   "evidence": "no task marked as a new context, representation or genre",
+   "issue": "Learners are only tested in rehearsed contexts, so transfer is unknown.",
+   "proposedCorrection": "Add an unscaffolded transfer task in a context the lesson did not rehearse (GE-TRN-1)."
+  },
+  {
+   "id": "science-g7-1-observation-and-scientific-thinking-foundations#F11",
+   "area": "ACCESSIBILITY_OFFLINE",
+   "code": "LAB_WITHOUT_OFFLINE_FALLBACK",
+   "kind": "MECHANICAL",
+   "severity": "MINOR",
+   "where": "resources.labs",
+   "evidence": "1 lab link(s), no offline or paper alternative",
+   "issue": "Learners without a device or connection lose the lab's objective.",
+   "proposedCorrection": "Add an objective-preserving paper or text walkthrough fallback."
+  },
+  {
+   "id": "science-g7-1-observation-and-scientific-thinking-foundations#F12",
+   "area": "MOE_TRACEABILITY",
+   "code": "UNVERIFIED_ALIGNMENT_CODES",
+   "kind": "MECHANICAL",
+   "severity": "MAJOR",
+   "where": "standards.moeAlignments",
+   "evidence": "1 code(s) not in the MOE structured source, e.g. LR-SCI-G7_9-01 (method: keyword)",
+   "issue": "Alignment codes are LiberiaLearn-invented labels, not MOE objectives; they must not be presented as MOE requirements.",
+   "proposedCorrection": "Map each objective to a structured MOE objective id with source page, reviewed by a curriculum owner; lexical leads are attached to this audit."
+  },
+  {
+   "id": "science-g7-1-observation-and-scientific-thinking-foundations#F13",
+   "area": "WAEC_ALIGNMENT",
+   "code": "NO_WAEC_BASELINE_MAPPING",
+   "kind": "GOVERNANCE",
+   "severity": "MAJOR",
+   "where": "standards.waecSyllabusTopics",
+   "evidence": "LJHSCE applies at grade 7; no mapping",
+   "issue": "No verified WAEC syllabus source is held in the repository, so examination alignment cannot be stated beyond 'topic may be relevant'.",
+   "proposedCorrection": "Obtain and register the official WAEC syllabus for the subject, then map with stated specificity and NOT_CLAIMED status."
+  }
+ ],
+ "metrics": {
+  "primaryTextField": "body",
+  "learnerWords": 236,
+  "structuredWords": 158,
+  "sections": 10,
+  "maxSectionWords": 27,
+  "denseSections": 0,
+  "longParagraphs": 0,
+  "fkGrade": 13.5,
+  "boilerplateSentenceShare": 0.2,
+  "objectives": 1,
+  "workedExampleSections": 1,
+  "guidedPracticeSections": 1,
+  "independentPracticeSections": 1,
+  "assessmentQuestions": 0,
+  "keyedQuestions": 0,
+  "arithmeticChecked": 0,
+  "arithmeticErrors": 0,
+  "liberianContextMarkers": 1,
+  "factualClaimIndicators": 0,
+  "imagesWithoutAlt": 0,
+  "alignmentClaims": 1,
+  "resolvedMoeIds": 0,
+  "inventedAlignmentCodes": 1
+ },
+ "isLearningEvidence": false,
+ "auditDigest": "565a92205d3b0d0f7bcf5c90d02f8e5d10184371d76f9d440a0b1ca979c955b3"
+}

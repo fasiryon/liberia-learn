@@ -282,6 +282,11 @@ export function auditLegacyLesson(record: LibraryExtractRecord, context: Library
   const placeholders = instructional.filter((section) =>
     section.words > 0 && section.words < 70 && !/\d|["“”]|e\.g\.|for example|for instance/i.test(section.text)
     && /^(model|use|guide|ask|re-?teach|provide|include|create|introduce|give|have|invite|encourage|present|show|review|learners (complete|work|practise|practice)|students (complete|work)|the teacher (introduces|models|guides|explains))\b/i.test(section.text.trim()));
+  // A second template style describes the lesson in "should" sentences ("Guided practice should include…").
+  const instructionalSentences = instructional.flatMap((section) => sentences(section.text));
+  const META_DIRECTIVE = /\b(the teacher should|learners should|students should|should (include|ask|use|build|be able|end|move|connect)|this lesson teaches|worked example \d+: (model|compare|show))\b/i;
+  const metaShare = instructionalSentences.length ? instructionalSentences.filter((sentence) => META_DIRECTIVE.test(sentence) && !/\d/.test(sentence.replace(/worked example \d+/i, ""))).length / instructionalSentences.length : 0;
+  if (instructional.length >= 4 && metaShare >= 0.5) placeholders.push(...instructional.filter((section) => !placeholders.includes(section)));
   if (placeholders.length >= 4 && placeholders.length >= instructional.length / 2) {
     add({ area: "CONCEPTUAL_DEPTH", code: "PLACEHOLDER_CONTENT", kind: "MECHANICAL", severity: "BLOCKING", where: sectionRef(field, placeholders[0]),
       evidence: `${placeholders.length} of ${instructional.length} instructional sections are directions with no content, e.g. "${excerpt(placeholders[0].text, 110)}"`,

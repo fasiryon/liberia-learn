@@ -1,0 +1,39 @@
+{
+ "manifestVersion": "liberialearn-modernization-package/1.0.0",
+ "pipelineVersion": "liberialearn-modernization-pipeline/1.0.0",
+ "contentId": "wk_pcs6a_wed_p2",
+ "legacy": {
+  "revisionId": "cmss8qbwg006rvo54f0zx9ppr",
+  "contentHash": "66b4986ad4fff6877f5cbe23aea7debd980c99808dd935f2b7d6286fcdcc5a80"
+ },
+ "candidate": {
+  "id": "lmv1-g6-literacy-cause-effect",
+  "version": "0.1.0",
+  "sha256": "af6722bf1c73227516d8944ae23cc298f3244acc179381d11066a29f98856834"
+ },
+ "author": {
+  "kind": "AI_AGENT",
+  "id": "claude-code:library-modernization-v1",
+  "role": "CANDIDATE_AUTHOR",
+  "modelFamily": "anthropic-claude"
+ },
+ "status": "READY_FOR_INDEPENDENT_REVIEW",
+ "candidateOnly": true,
+ "approved": false,
+ "published": false,
+ "scored": false,
+ "files": {
+  "legacy-revision.json": "8deef582b5dc96f386117eecccd21eb750d7e0f344d9e7fdf8ffc95a9d0e27a2",
+  "legacy-material.json": "3fc89567ef2264da22d33f6c3d583de21b900616b4a99c4303c02cfa72aeac35",
+  "legacy-audit.json": "8fe172a8d7c660d7a5be9fc7cb3c9311cd929803b6fb9bef094d7912497af6c6",
+  "authority.json": "77e3c15f55d1e0c1f8f63f2900237afbdc1efedaacdfa9785381dd47ebfcec71",
+  "spec.json": "1d5da6a360b8d552ddc5a0e965b86cea33ce791db7c00dbc6fbb2cd3e6e91821",
+  "candidate.json": "08d40ffbfe94478cee66be1651c29977127f292a2eefe315e00cf3b01eb4a65d",
+  "assessment-definitions.json": "199dee6430272f380509a41f3182a5306eff1c5e8e1963e68fdfd1822b98f227",
+  "automated-review.json": "db5a05a8c3bd39807a03a7f36d20d5bb5a8e6c9886f167d0151e35658e13cdbe",
+  "learner-projection.json": "78110bf93fbf15040252165f138e2b3c8a8e9f33ac03ab8a4d22f50ab693a699",
+  "readiness.json": "c69083e5bbb69b7d5548f87c5709fd5510af5e5da67a90f355170e37ddbd7683",
+  "comparison.md": "08ee7cbf96b0e2e58060edce23f1c3b50fa9dec60612fd66263a41cae62c938d"
+ },
+ "manifestHash": "f996bd19541b3545dce2ee1a1c3ad86c1a76fb0b938772d7b1a34d1612f462f0"
+}

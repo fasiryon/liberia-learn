@@ -1,0 +1,87 @@
+{
+ "pipelineVersion": "liberialearn-modernization-pipeline/1.0.0",
+ "contentId": "science-g7-1-observation-and-scientific-thinking-foundations",
+ "candidateVersion": "0.1.0",
+ "attempts": 1,
+ "failures": {},
+ "stages": [
+  {
+   "stage": "RESOLVE_LEGACY",
+   "inputHash": "6c0c0769b46bdc2ac25d5df55607ac91420eb15b95c1132cb2b3d28ccb41c334",
+   "outputHash": "6c0c0769b46bdc2ac25d5df55607ac91420eb15b95c1132cb2b3d28ccb41c334",
+   "status": "DONE"
+  },
+  {
+   "stage": "PRESERVE_LEGACY",
+   "inputHash": "6c0c0769b46bdc2ac25d5df55607ac91420eb15b95c1132cb2b3d28ccb41c334",
+   "outputHash": "1c99316ed85fd1f0dd9ccbaa34c87893e6bbafe82bb2a6743e4e97d80b5751d8",
+   "status": "DONE"
+  },
+  {
+   "stage": "LEGACY_MATERIAL",
+   "inputHash": "eddb4eeb6c1fbdf1f091152ab1770ca786019c2f649017e47b51f53fbb47d624",
+   "outputHash": "698ef1796fbeb90c06557e325163fe5c38b7bc7b307e2b96ca197bdd3cf89e67",
+   "status": "DONE"
+  },
+  {
+   "stage": "AUTHORITY",
+   "inputHash": "dd90ad1a8bdf5bbf2405c15cbd317e5cb8d4a225eef18c90827c45e1ceef3e7e",
+   "outputHash": "7caaecdf35482126d4b7b0a39e6e4e0c4eb612cc23211b5448037459fbc3a2c5",
+   "status": "DONE"
+  },
+  {
+   "stage": "SPECIFICATION",
+   "inputHash": "90ee5df41c1673cba0f3e0ca9773308a461e91e5b08638f15de9bdb3ae0ed7d3",
+   "outputHash": "90ee5df41c1673cba0f3e0ca9773308a461e91e5b08638f15de9bdb3ae0ed7d3",
+   "status": "DONE"
+  },
+  {
+   "stage": "AUTHOR",
+   "inputHash": "c3cc8adab60b124281b16b7f2256b3af70b5b5dcc2098f2a093ba4f55963c0e7",
+   "outputHash": "712778f8408c08e87db0a80a52fd45d7e7ac9fc2e1245f1ea0279ed3aeee0a9a",
+   "status": "DONE"
+  },
+  {
+   "stage": "VALIDATE",
+   "inputHash": "ba216cc97498ddc518f076e5ba7b60cdbb3e436734df90a5883e2ac2d44bd2fb",
+   "outputHash": "b8504ee7f04ec61423b559d8c4eb9b1fb22feecc5ee3335f84251993e8a7bdf3",
+   "status": "DONE"
+  },
+  {
+   "stage": "ASSESSMENT",
+   "inputHash": "4cb75d752aa0a5ea76158c0508b1b31c447adc611f1f47dd3b98baf399fb7c8d",
+   "outputHash": "a27250e63c10a4895adfbfd0b26b385c2a52a344cde53e734f5de39198ee81d8",
+   "status": "DONE"
+  },
+  {
+   "stage": "PROJECTION",
+   "inputHash": "ba216cc97498ddc518f076e5ba7b60cdbb3e436734df90a5883e2ac2d44bd2fb",
+   "outputHash": "c500797658ad55a5191cf44e0cab08aa17302cb7ce58fdac1fa9b3aea379019a",
+   "status": "DONE"
+  },
+  {
+   "stage": "EXPERIENCE",
+   "inputHash": "ba216cc97498ddc518f076e5ba7b60cdbb3e436734df90a5883e2ac2d44bd2fb",
+   "outputHash": "fe82a6688c7dfbf569143766af21fa2caed6dcd55705c42be2cc717258a45660",
+   "status": "DONE"
+  },
+  {
+   "stage": "COMPARISON",
+   "inputHash": "175a434a4adb67fcdbe7bf9d3d961403591746aa8813342833f6488a938d30e0",
+   "outputHash": "0d66788bfb55c4979aca7684501b88abe528e832797ed1737cec4c378b63bc69",
+   "status": "DONE"
+  },
+  {
+   "stage": "PACKAGE",
+   "inputHash": "0cf645be0cbcf6de0f03cbaf102936083ed4286b0ec753ce3a41d04628e89c19",
+   "outputHash": "0cf645be0cbcf6de0f03cbaf102936083ed4286b0ec753ce3a41d04628e89c19",
+   "status": "DONE"
+  },
+  {
+   "stage": "QUEUE",
+   "inputHash": "0cf645be0cbcf6de0f03cbaf102936083ed4286b0ec753ce3a41d04628e89c19",
+   "outputHash": "e4b589eb940d841f40d13c751289d02e02e4e7f87d8d3bf0ecb4f56060dbc039",
+   "status": "DONE"
+  }
+ ]
+}

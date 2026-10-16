@@ -3,10 +3,11 @@
  * unreleased lesson fixture and the DRAFT Mount Coffee lab, so it is gated
  * exactly like the lab review harness: never in a production build, never on
  * Vercel, and only with LAB_REVIEW_HARNESS=1. Real students cannot reach it.
- * It also plays the Grade 7 native candidate lessons for reviewers (unreleased drafts).
+ * It also plays the Grade 7 native and library modernization pilot candidates for reviewers (unreleased drafts).
  */
 import { getEnabledToolkitCategories } from "@/components/toolkit/ToolkitProvider";
 import { g7NativePreviewEntry } from "@/lib/curriculum/v2/g7NativePreview";
+import { pilotPreviewEntry } from "@/lib/curriculum/modernization/pilotPreview";
 import { isLabReviewHarnessEnabled } from "@/lib/interactive-labs/v2/review/scenarios";
 import { LESSON_EXPERIENCES } from "./fixtures/hydropowerLesson";
 import { findLabExperience, type LabExperience } from "./labExperience";
@@ -21,7 +22,7 @@ export function isLearnerExperiencePrototypeEnabled(env: Record<string, string |
 }
 
 export function loadPrototypeExperience(experienceId: string) {
-  const entry = LESSON_EXPERIENCES[experienceId] ?? g7NativePreviewEntry(experienceId);
+  const entry = LESSON_EXPERIENCES[experienceId] ?? g7NativePreviewEntry(experienceId) ?? pilotPreviewEntry(experienceId);
   if (!entry) return null;
   validateLessonExperience(entry.experience);
   const labs: Record<string, LabExperience> = {};
