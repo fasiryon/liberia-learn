@@ -57,7 +57,7 @@ describe("Configurable academic calendars", () => {
 describe("Versioned grading policy", () => {
   it("validates weights, scale and MOE provenance without assuming a national formula", () => {
     expect(validateGradingPolicy(policy)).toEqual([]);
-    expect(validateGradingPolicy({ ...policy, categories: [{ category: "EXAM", weightPercent: 60 }] })).toContain("policy_weights_must_sum_to_100");
+    expect(validateGradingPolicy({ ...policy, groups: [{ groupId: "EXAM", label: "Exams", weightPercent: 60, includes: ["EXAM"] }] })).toContain("policy_weights_must_sum_to_100");
     expect(validateGradingPolicy({ ...policy, source: { kind: "MOE_DIRECTIVE", reference: "", attestedBy: null } })).toContain("policy_moe_source_requires_reference_and_attestation");
     expect(validateGradingPolicy({ ...policy, approvedBy: null })).toContain("policy_approval_required");
     expect(hashGradingPolicy(policy)).not.toBe(hashGradingPolicy({ ...policy, version: "2026.2" }));
@@ -68,7 +68,7 @@ describe("Official grade calculation", () => {
   it("requires an approved policy of the same school", () => {
     expect(() => computeSubjectGrade({ scope, policy: null, entries: [] })).toThrow("records_grading_policy_required");
     expect(() => computeSubjectGrade({ scope, policy: { ...policy, status: "DRAFT" }, entries: [] })).toThrow("records_grading_policy_not_approved");
-    expect(() => computeSubjectGrade({ scope, policy: { ...policy, schoolId: "school-2" }, entries: [] })).toThrow("records_grading_policy_school_mismatch");
+    expect(() => computeSubjectGrade({ scope, policy: { ...policy, scope: { kind: "SCHOOL", schoolId: "school-2" } }, entries: [] })).toThrow("records_grading_policy_school_mismatch");
   });
 
   it("reports NO_EVIDENCE (null), never 0%, when nothing was graded", () => {
@@ -93,7 +93,7 @@ describe("Official grade calculation", () => {
       entry({ category: "EXAM", pointsEarned: 80, pointsPossible: 100 }),
     ] });
     expect(result.percent).toBeCloseTo(80.9, 1);
-    const equal = computeSubjectGrade({ scope, policy: { ...policy, withinCategory: "EQUAL" }, entries: [
+    const equal = computeSubjectGrade({ scope, policy: { ...policy, withinGroup: "EQUAL" }, entries: [
       entry({ category: "EXAM", pointsEarned: 9, pointsPossible: 10 }),
       entry({ category: "EXAM", pointsEarned: 80, pointsPossible: 100 }),
     ] });
@@ -124,7 +124,7 @@ describe("Official grade calculation", () => {
   it("excludes unmoderated and auto-released AI scores from official grades", () => {
     const result = computeSubjectGrade({ scope, policy, entries: [entry({}), entry({}), entry({ pointsEarned: 10, scoreAuthority: "AI_AUTO_RELEASED" })] });
     expect(result).toMatchObject({ status: "INCOMPLETE", percent: 80 });
-    expect(result.blockers).toContain("unmoderated_ai_scores_present");
+    expect(result.blockers).toContain("unverified_ai_scores_present");
     expect(legacyAssignmentScoreAuthority({ score: 90, teacherApproved: false, autoReleasedAt: new Date(), aiGrade: 90, gradedBy: null })).toBe("AI_AUTO_RELEASED");
     expect(legacyAssignmentScoreAuthority({ score: 90, teacherApproved: true, autoReleasedAt: null, aiGrade: 90, gradedBy: "t1" })).toBe("TEACHER");
     expect(legacyAssignmentScoreAuthority({ score: null, teacherApproved: false, autoReleasedAt: null, aiGrade: 90, gradedBy: null })).toBeNull();
@@ -137,8 +137,8 @@ describe("Official grade calculation", () => {
   });
 
   it("marks a grade incomplete when the policy forbids renormalizing an empty weighted category", () => {
-    const result = computeSubjectGrade({ scope, policy: { ...policy, emptyCategory: "INCOMPLETE" }, entries: [entry({}), entry({})] });
-    expect(result.blockers).toContain("weighted_category_without_evidence");
+    const result = computeSubjectGrade({ scope, policy: { ...policy, emptyGroup: "INCOMPLETE" }, entries: [entry({}), entry({})] });
+    expect(result.blockers).toContain("weighted_group_without_evidence");
   });
 });
 
@@ -198,21 +198,21 @@ describe("Official report cards", () => {
     const record = draft();
     const results = [completeResult()];
     const periods = [lockedPeriod(results)];
-    expect(() => publishReportCard(record, { actor: teacher, expectedVersion: 1, currentStoredVersion: 1, periods, principalComment: null, at: "2027-01-25T00:00:00.000Z" })).toThrow("records_requires_school_leadership");
-    expect(() => publishReportCard(record, { actor: { ...principal, schoolId: "school-2" }, expectedVersion: 1, currentStoredVersion: 1, periods, principalComment: null, at: "2027-01-25T00:00:00.000Z" })).toThrow("records_requires_school_leadership");
-    expect(() => publishReportCard(record, { actor: principal, expectedVersion: 1, currentStoredVersion: 1, periods: [], principalComment: null, at: "2027-01-25T00:00:00.000Z" })).toThrow(/records_report_period_not_locked/);
-    const { record: published } = publishReportCard(record, { actor: principal, expectedVersion: 1, currentStoredVersion: 1, periods, principalComment: "Good term.", at: "2027-01-25T00:00:00.000Z" });
+    expect(() => publishReportCard(record, { actor: teacher, publication: "OFFICIAL", expectedVersion: 1, currentStoredVersion: 1, periods, principalComment: null, at: "2027-01-25T00:00:00.000Z" })).toThrow("records_requires_school_leadership");
+    expect(() => publishReportCard(record, { actor: { ...principal, schoolId: "school-2" }, publication: "OFFICIAL", expectedVersion: 1, currentStoredVersion: 1, periods, principalComment: null, at: "2027-01-25T00:00:00.000Z" })).toThrow("records_requires_school_leadership");
+    expect(() => publishReportCard(record, { actor: principal, publication: "OFFICIAL", expectedVersion: 1, currentStoredVersion: 1, periods: [], principalComment: null, at: "2027-01-25T00:00:00.000Z" })).toThrow(/records_report_period_not_locked/);
+    const { record: published } = publishReportCard(record, { actor: principal, publication: "OFFICIAL", expectedVersion: 1, currentStoredVersion: 1, periods, principalComment: "Good term.", at: "2027-01-25T00:00:00.000Z" });
     expect(published.status).toBe("PUBLISHED");
     // A second concurrent publish of the same draft is refused: the stored version has moved on.
-    expect(() => publishReportCard(record, { actor: admin, expectedVersion: 1, currentStoredVersion: 2, periods, principalComment: null, at: "2027-01-25T00:00:01.000Z" })).toThrow("records_report_version_conflict");
-    expect(() => publishReportCard(published, { actor: admin, expectedVersion: 1, currentStoredVersion: 1, periods, principalComment: null, at: "2027-01-25T00:00:01.000Z" })).toThrow("records_report_not_draft");
+    expect(() => publishReportCard(record, { actor: admin, publication: "OFFICIAL", expectedVersion: 1, currentStoredVersion: 2, periods, principalComment: null, at: "2027-01-25T00:00:01.000Z" })).toThrow("records_report_version_conflict");
+    expect(() => publishReportCard(published, { actor: admin, publication: "OFFICIAL", expectedVersion: 1, currentStoredVersion: 1, periods, principalComment: null, at: "2027-01-25T00:00:01.000Z" })).toThrow("records_report_not_draft");
     const incomplete = draft([computeSubjectGrade({ scope, policy, entries: [entry({}), entry({ status: "MISSING", pointsEarned: null })] })]);
-    expect(() => publishReportCard(incomplete, { actor: principal, expectedVersion: 1, currentStoredVersion: 1, periods, principalComment: null, at: "2027-01-25T00:00:00.000Z" })).toThrow(/records_report_subject_incomplete/);
+    expect(() => publishReportCard(incomplete, { actor: principal, publication: "OFFICIAL", expectedVersion: 1, currentStoredVersion: 1, periods, principalComment: null, at: "2027-01-25T00:00:00.000Z" })).toThrow(/records_report_subject_not_complete/);
   });
 
   it("changes published records only through an independently approved amendment that preserves history", () => {
     const results = [completeResult()];
-    const { record: published } = publishReportCard(draft(results), { actor: principal, expectedVersion: 1, currentStoredVersion: 1, periods: [lockedPeriod(results)], principalComment: null, at: "2027-01-25T00:00:00.000Z" });
+    const { record: published } = publishReportCard(draft(results), { actor: principal, publication: "OFFICIAL", expectedVersion: 1, currentStoredVersion: 1, periods: [lockedPeriod(results)], principalComment: null, at: "2027-01-25T00:00:00.000Z" });
     const change = { attendance: tallyAttendance([{ status: "PRESENT" }, { status: "PRESENT" }]) };
     expect(() => amendPublishedReportCard(published, { reason: "Attendance register corrected", requestedBy: principal.userId, approver: principal, changes: change, at: "2027-02-01T00:00:00.000Z" })).toThrow("records_amendment_requires_independent_approver");
     expect(() => amendPublishedReportCard(published, { reason: "fix", requestedBy: teacher.userId, approver: principal, changes: change, at: "2027-02-01T00:00:00.000Z" })).toThrow("records_amendment_reason_required");
@@ -227,7 +227,7 @@ describe("Official report cards", () => {
   it("restricts viewing: families see published only; teachers see their classes; no cross-school access", () => {
     const record = draft();
     const results = [completeResult()];
-    const { record: published } = publishReportCard(record, { actor: principal, expectedVersion: 1, currentStoredVersion: 1, periods: [lockedPeriod(results)], principalComment: null, at: "2027-01-25T00:00:00.000Z" });
+    const { record: published } = publishReportCard(record, { actor: principal, publication: "OFFICIAL", expectedVersion: 1, currentStoredVersion: 1, periods: [lockedPeriod(results)], principalComment: null, at: "2027-01-25T00:00:00.000Z" });
     const student = { userId: "u-stu-1", role: "STUDENT" as const, schoolId: SCHOOL, classIds: [], studentId: "stu-1" };
     expect(canViewReportCard(student, record)).toBe(false);
     expect(canViewReportCard(student, published)).toBe(true);
@@ -246,7 +246,7 @@ describe("Official report cards", () => {
 
   it("renders an accessible report with mastery separately labelled from grades", () => {
     const results = [completeResult()];
-    const { record: published } = publishReportCard(draft(results), { actor: principal, expectedVersion: 1, currentStoredVersion: 1, periods: [lockedPeriod(results)], principalComment: "Keep going.", at: "2027-01-25T00:00:00.000Z" });
+    const { record: published } = publishReportCard(draft(results), { actor: principal, publication: "OFFICIAL", expectedVersion: 1, currentStoredVersion: 1, periods: [lockedPeriod(results)], principalComment: "Keep going.", at: "2027-01-25T00:00:00.000Z" });
     const view = buildReportCardView(published, { audience: "GUARDIAN", studentName: "Fatu K.", schoolName: "Model School", periodName: "First Semester", yearLabel: "2026/2027", gradeLevel: 7 });
     const html = renderToStaticMarkup(createElement(OfficialReportCard, { view }));
     expect(html).toContain("<caption");

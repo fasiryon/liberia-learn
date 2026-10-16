@@ -10,7 +10,7 @@ export type ReportAudience = "STUDENT" | "GUARDIAN" | "TEACHER" | "ADMIN";
 export type ReportCardView = Readonly<{
   heading: string;
   subheading: string;
-  watermark: "DRAFT — NOT AN OFFICIAL RECORD" | "SUPERSEDED — SEE LATEST VERSION" | null;
+  watermark: "DRAFT — NOT AN OFFICIAL RECORD" | "PROVISIONAL — NOT A FINAL ACADEMIC RECORD" | "SUPERSEDED — SEE LATEST VERSION" | null;
   subjects: readonly Readonly<{ subject: string; grade: string; result: string; breakdown: string; comment: string | null }>[];
   attendance: string;
   mastery: Readonly<{ title: string; note: string; rows: readonly Readonly<{ subject: string; objective: string; level: string }>[] }>;
@@ -28,6 +28,7 @@ const LEVEL_TEXT: Record<string, string> = {
   EMERGING: "Beginning",
   DEVELOPING: "Developing",
   SECURE: "Secure",
+  ADVANCED: "Advanced",
 };
 
 const DECISION_TEXT: Record<string, string> = {
@@ -53,10 +54,12 @@ export function buildReportCardView(record: ReportCardRecord, input: {
     const grade = subject.percent === null ? "Not graded" : `${subject.percent}%${subject.label ? ` (${subject.label})` : ""}`;
     const result = subject.status === "NO_EVIDENCE" ? "No graded work this period"
       : subject.status === "INCOMPLETE" ? "Incomplete"
-        : subject.passing === null ? "" : subject.passing ? "Pass" : "Below pass mark";
-    const breakdown = subject.categories
-      .filter((category) => category.countedEntries > 0)
-      .map((category) => `${titleCase(category.category)} ${category.percent}% (weight ${Math.round(category.appliedWeightPercent)}%)`)
+        : subject.passing === null ? ""
+          : subject.passing ? (subject.meetsProficiencyTarget ? "Pass — meets proficiency target" : "Pass — below proficiency target")
+            : "Below pass mark";
+    const breakdown = subject.groups
+      .filter((group) => group.countedEntries > 0)
+      .map((group) => `${titleCase(group.groupId)} ${group.percent}% (weight ${Math.round(group.appliedWeightPercent)}%)`)
       .join("; ");
     return Object.freeze({ subject: titleCase(subject.subject), grade, result, breakdown: breakdown || "—", comment: subject.teacherComment });
   });
@@ -72,7 +75,9 @@ export function buildReportCardView(record: ReportCardRecord, input: {
   return Object.freeze({
     heading: `${input.schoolName} — ${record.kind === "YEAR_END" ? "Year-End Report" : "Report Card"}`,
     subheading: `${input.studentName} · Grade ${input.gradeLevel} · ${input.periodName} · ${input.yearLabel}`,
-    watermark: record.status === "DRAFT" ? "DRAFT — NOT AN OFFICIAL RECORD" : record.status === "SUPERSEDED" ? "SUPERSEDED — SEE LATEST VERSION" : null,
+    watermark: record.status === "DRAFT" ? "DRAFT — NOT AN OFFICIAL RECORD"
+      : record.status === "SUPERSEDED" ? "SUPERSEDED — SEE LATEST VERSION"
+        : record.publication === "PROVISIONAL" ? "PROVISIONAL — NOT A FINAL ACADEMIC RECORD" : null,
     subjects: Object.freeze(subjects),
     attendance,
     mastery: Object.freeze({

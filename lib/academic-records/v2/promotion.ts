@@ -1,18 +1,26 @@
 /**
- * Deterministic promotion-eligibility evaluator. Produces a RECOMMENDATION from finalized year-end
- * records under an approved, versioned school or MOE-sourced policy. It never changes enrollment:
- * an authorized school leader decides (promotionDecision.ts).
+ * Deterministic promotion-eligibility evaluator (LL-AEP-001). Produces a RECOMMENDATION from
+ * finalized year-end records under an approved, school-scoped promotion policy. It never changes
+ * enrollment: an authorized school leader decides (promotionDecision.ts).
  *
- * Anything uncertain resolves to PENDING_REVIEW, never to PROMOTE or RETAIN: a missing or
- * unapproved policy, unfinalized records, a required subject without a complete final grade,
- * missing attendance the policy needs, or an unknown graduation requirement.
+ *   PROMOTE                 all required subjects passed, every critical competency Secure, and
+ *                           attendance at target (or below target with an approved exception)
+ *   CONDITIONAL_PROMOTION   limited gaps, to be covered by a documented support plan
+ *   RETAIN                  last resort: only after documented, completed intervention and review
+ *   GRADUATE                terminal grade, LiberiaLearn program requirements all met. National
+ *                           school-leaving status is recorded separately and never implied.
+ *   PENDING_REVIEW          anything uncertain: missing/unapproved policy, unfinalized records,
+ *                           missing grades, competencies or attendance evidence, unknown
+ *                           graduation requirements, or retention without documented intervention
  *
- * There is no AI input. `PromotionAdvisory` can carry an AI risk explanation or intervention ideas
- * next to a recommendation, but the evaluator's signature cannot accept it and it never changes the
- * recommendation.
+ * Low attendance and missing attendance evidence are different: the first is a finding, the
+ * second makes the recommendation PENDING_REVIEW. There is no AI input. `PromotionAdvisory` sits
+ * beside a recommendation and never changes it.
  */
 import { createHash } from "crypto";
 import { canonicalizeJson } from "@/lib/curriculum/provenance/hash";
+import { LL_PROMOTION, type LlMasteryState } from "@/lib/academic-policy/llAep001";
+import { masteryAtLeast } from "./masteryPolicy";
 
 export type PromotionRecommendationKind = "PROMOTE" | "CONDITIONAL_PROMOTION" | "RETAIN" | "GRADUATE" | "PENDING_REVIEW";
 
@@ -21,17 +29,22 @@ export type PromotionPolicy = Readonly<{
   version: string;
   schoolId: string;
   status: "DRAFT" | "APPROVED" | "RETIRED";
-  source: Readonly<{ kind: "SCHOOL_POLICY" | "MOE_DIRECTIVE"; reference: string; attestedBy: string | null }>;
+  source: Readonly<{ kind: "LIBERIALEARN_INSTITUTIONAL" | "SCHOOL_POLICY" | "MOE_DIRECTIVE"; reference: string; attestedBy: string | null }>;
   appliesToGrades: readonly number[];
   terminalGrade: number;
   requiredSubjects: readonly string[];
-  /** Number of failed required subjects still allowing promotion (usually 0). */
-  maxFailedForPromotion: number;
-  /** Number of failed required subjects allowing conditional promotion with a remediation plan. */
-  maxFailedForConditional: number;
-  minAttendancePercent: number | null;
-  /** Grade-12 completion requirements (e.g. a named national examination result), by id. */
-  graduationRequirements: readonly Readonly<{ requirementId: string; description: string }>[];
+  /** Designated foundational competencies that must reach `criticalCompetencyMinimum` for ordinary promotion. */
+  criticalCompetencies: readonly Readonly<{ subject: string; objectiveId: string }>[];
+  criticalCompetencyMinimum: LlMasteryState;
+  /** Gaps still allowing conditional promotion with a support plan. */
+  maxFailedSubjectsForConditional: number;
+  maxCriticalGapsForConditional: number;
+  attendanceTargetPercent: number | null;
+  attendanceExceptionsAllowed: boolean;
+  retentionRequiresDocumentedIntervention: boolean;
+  minimumInterventionSchoolDays: number;
+  /** LiberiaLearn program requirements for completion at the terminal grade. */
+  programRequirements: readonly Readonly<{ requirementId: string; description: string }>[];
 }>;
 
 export type FinalSubjectResult = Readonly<{
@@ -41,18 +54,42 @@ export type FinalSubjectResult = Readonly<{
   passing: boolean | null;
 }>;
 
+export type AttendanceException = Readonly<{ reason: string; approvedBy: string; approvedAt: string }>;
+
+export type DocumentedIntervention = Readonly<{
+  interventionId: string;
+  focus: string;
+  startedOn: string;
+  completedOn: string | null;
+  schoolDays: number;
+  documentedBy: string;
+  reviewedBy: string | null;
+}>;
+
 export type YearEndRecord = Readonly<{
   studentId: string;
   schoolId: string;
   academicYearId: string;
   grade: number;
   enrollmentStatus: "ACTIVE" | "COMPLETED" | "PROMOTED" | "RETAINED" | "TRANSFERRED" | "GRADUATED";
-  /** True only when every final-period record is locked and the year-end report is published. */
+  /** True only when every final-period record is locked and the year-end report is OFFICIAL. */
   recordsFinalized: boolean;
   subjects: readonly FinalSubjectResult[];
+  /** Mastery from verified independent evidence (masteryPolicy.ts), per objective. */
+  competencies: readonly Readonly<{ objectiveId: string; state: LlMasteryState }>[];
+  /** Null = no attendance evidence (distinct from low attendance). */
   attendancePercent: number | null;
-  /** true = met, false = not met, null = unknown. */
-  graduationRequirementsMet: Readonly<Record<string, boolean | null>>;
+  attendanceException: AttendanceException | null;
+  interventions: readonly DocumentedIntervention[];
+  /** LiberiaLearn program requirements: true met, false not met, null unknown. */
+  programRequirementsMet: Readonly<Record<string, boolean | null>>;
+  /** National school-leaving outcome (e.g. WAEC), recorded separately where applicable. */
+  nationalSchoolLeaving: Readonly<{ applicable: boolean; met: boolean | null; reference: string | null }>;
+}>;
+
+export type GraduationOutcomes = Readonly<{
+  liberiaLearnProgram: "MET" | "NOT_MET" | "UNKNOWN" | "NOT_APPLICABLE";
+  nationalSchoolLeaving: "MET" | "NOT_MET" | "UNKNOWN" | "NOT_APPLICABLE";
 }>;
 
 export type PromotionRecommendation = Readonly<{
@@ -63,6 +100,9 @@ export type PromotionRecommendation = Readonly<{
   recommendation: PromotionRecommendationKind;
   reasons: readonly string[];
   failedRequiredSubjects: readonly string[];
+  criticalCompetencyGaps: readonly string[];
+  interventionDocumented: boolean;
+  graduation: GraduationOutcomes;
   policy: Readonly<{ policyId: string; version: string }> | null;
   inputDigest: string;
   authority: "DETERMINISTIC_POLICY_EVALUATOR";
@@ -73,17 +113,55 @@ export function validatePromotionPolicy(policy: PromotionPolicy): readonly strin
   const issues: string[] = [];
   if (policy.appliesToGrades.length === 0) issues.push("promotion_policy_grades_required");
   if (policy.requiredSubjects.length === 0) issues.push("promotion_policy_required_subjects_missing");
-  if (!Number.isInteger(policy.maxFailedForPromotion) || policy.maxFailedForPromotion < 0) issues.push("promotion_policy_max_failed_invalid");
-  if (!Number.isInteger(policy.maxFailedForConditional) || policy.maxFailedForConditional < policy.maxFailedForPromotion) issues.push("promotion_policy_conditional_invalid");
-  if (policy.minAttendancePercent !== null && !(policy.minAttendancePercent >= 0 && policy.minAttendancePercent <= 100)) issues.push("promotion_policy_attendance_invalid");
+  if (!Number.isInteger(policy.maxFailedSubjectsForConditional) || policy.maxFailedSubjectsForConditional < 0) issues.push("promotion_policy_conditional_invalid");
+  if (!Number.isInteger(policy.maxCriticalGapsForConditional) || policy.maxCriticalGapsForConditional < 0) issues.push("promotion_policy_conditional_invalid");
+  if (policy.attendanceTargetPercent !== null && !(policy.attendanceTargetPercent > 0 && policy.attendanceTargetPercent <= 100)) issues.push("promotion_policy_attendance_invalid");
+  if (!Number.isInteger(policy.minimumInterventionSchoolDays) || policy.minimumInterventionSchoolDays < 0) issues.push("promotion_policy_intervention_invalid");
+  if (policy.appliesToGrades.includes(policy.terminalGrade) && policy.programRequirements.length === 0) issues.push("promotion_policy_program_requirements_missing");
   if (policy.source.kind === "MOE_DIRECTIVE" && (!policy.source.reference.trim() || !policy.source.attestedBy)) issues.push("promotion_policy_moe_source_requires_reference_and_attestation");
   return Object.freeze(issues);
+}
+
+/** LL-AEP-001 promotion baseline adopted by a school (the adopter supplies subjects, competencies and program requirements). */
+export function llPromotionPolicyFor(input: {
+  schoolId: string;
+  version: string;
+  status: PromotionPolicy["status"];
+  appliesToGrades: readonly number[];
+  requiredSubjects: readonly string[];
+  criticalCompetencies: PromotionPolicy["criticalCompetencies"];
+  programRequirements: PromotionPolicy["programRequirements"];
+}): PromotionPolicy {
+  return Object.freeze({
+    policyId: `${input.schoolId}:ll-aep-001-promotion`,
+    version: input.version,
+    schoolId: input.schoolId,
+    status: input.status,
+    source: { kind: "LIBERIALEARN_INSTITUTIONAL", reference: "LL-AEP-001@1.0.0", attestedBy: null },
+    appliesToGrades: [...input.appliesToGrades],
+    terminalGrade: 12,
+    requiredSubjects: [...input.requiredSubjects],
+    criticalCompetencies: [...input.criticalCompetencies],
+    criticalCompetencyMinimum: LL_PROMOTION.criticalCompetencyMinimum,
+    maxFailedSubjectsForConditional: 1,
+    maxCriticalGapsForConditional: 2,
+    attendanceTargetPercent: LL_PROMOTION.attendanceTargetPercent,
+    attendanceExceptionsAllowed: LL_PROMOTION.attendanceExceptionsAllowed,
+    retentionRequiresDocumentedIntervention: LL_PROMOTION.retentionRequiresDocumentedIntervention,
+    minimumInterventionSchoolDays: LL_PROMOTION.minimumInterventionSchoolDays,
+    programRequirements: [...input.programRequirements],
+  });
 }
 
 export function evaluatePromotionEligibility(record: YearEndRecord, policy: PromotionPolicy | null): PromotionRecommendation {
   const reasons: string[] = [];
   const failed: string[] = [];
+  const criticalGaps: string[] = [];
   const inputDigest = createHash("sha256").update(canonicalizeJson({ record, policy })).digest("hex");
+  const interventionDocumented = Boolean(policy) && record.interventions.some((intervention) =>
+    intervention.completedOn !== null && intervention.reviewedBy !== null && intervention.schoolDays >= (policy?.minimumInterventionSchoolDays ?? 0));
+  const terminal = policy !== null && record.grade === policy.terminalGrade;
+  let graduation: GraduationOutcomes = { liberiaLearnProgram: "NOT_APPLICABLE", nationalSchoolLeaving: "NOT_APPLICABLE" };
   const result = (recommendation: PromotionRecommendationKind) => Object.freeze({
     studentId: record.studentId,
     schoolId: record.schoolId,
@@ -92,6 +170,9 @@ export function evaluatePromotionEligibility(record: YearEndRecord, policy: Prom
     recommendation,
     reasons: Object.freeze([...reasons]),
     failedRequiredSubjects: Object.freeze([...failed]),
+    criticalCompetencyGaps: Object.freeze([...criticalGaps]),
+    interventionDocumented,
+    graduation: Object.freeze({ ...graduation }),
     policy: policy ? { policyId: policy.policyId, version: policy.version } : null,
     inputDigest,
     authority: "DETERMINISTIC_POLICY_EVALUATOR" as const,
@@ -114,30 +195,58 @@ export function evaluatePromotionEligibility(record: YearEndRecord, policy: Prom
     if (final.status !== "COMPLETE" || final.passing === null) { reasons.push(`required_subject_not_final:${subject}:${final.status}`); uncertain = true; continue; }
     if (!final.passing) failed.push(subject);
   }
-  if (policy.minAttendancePercent !== null) {
-    if (record.attendancePercent === null) { reasons.push("attendance_missing"); uncertain = true; }
-    else if (record.attendancePercent < policy.minAttendancePercent) reasons.push("attendance_below_minimum");
+  for (const competency of policy.criticalCompetencies) {
+    const evidence = record.competencies.find((candidate) => candidate.objectiveId === competency.objectiveId);
+    if (!evidence) { reasons.push(`critical_competency_unassessed:${competency.objectiveId}`); uncertain = true; continue; }
+    if (!masteryAtLeast(evidence.state, policy.criticalCompetencyMinimum)) criticalGaps.push(competency.objectiveId);
   }
-  if (record.grade === policy.terminalGrade) {
-    for (const requirement of policy.graduationRequirements) {
-      const met = record.graduationRequirementsMet[requirement.requirementId];
-      if (met === undefined || met === null) { reasons.push(`graduation_requirement_unknown:${requirement.requirementId}`); uncertain = true; }
-      else if (!met) reasons.push(`graduation_requirement_not_met:${requirement.requirementId}`);
+  let attendanceShort = false;
+  if (policy.attendanceTargetPercent !== null) {
+    if (record.attendancePercent === null) { reasons.push("attendance_evidence_missing"); uncertain = true; }
+    else if (record.attendancePercent < policy.attendanceTargetPercent) {
+      if (policy.attendanceExceptionsAllowed && record.attendanceException) reasons.push("attendance_below_target_exception_approved");
+      else { reasons.push("attendance_below_target"); attendanceShort = true; }
     }
+  }
+  if (terminal) {
+    let unknown = false;
+    let unmet = false;
+    for (const requirement of policy.programRequirements) {
+      const met = record.programRequirementsMet[requirement.requirementId];
+      if (met === undefined || met === null) { reasons.push(`program_requirement_unknown:${requirement.requirementId}`); unknown = true; }
+      else if (!met) { reasons.push(`program_requirement_not_met:${requirement.requirementId}`); unmet = true; }
+    }
+    const national = record.nationalSchoolLeaving;
+    graduation = {
+      liberiaLearnProgram: unknown ? "UNKNOWN" : unmet ? "NOT_MET" : "MET",
+      nationalSchoolLeaving: !national.applicable ? "NOT_APPLICABLE" : national.met === null ? "UNKNOWN" : national.met ? "MET" : "NOT_MET",
+    };
+    if (unknown) uncertain = true;
   }
   if (uncertain) return result("PENDING_REVIEW");
 
-  const attendanceShort = reasons.includes("attendance_below_minimum");
-  if (record.grade === policy.terminalGrade) {
-    const requirementsUnmet = reasons.some((reason) => reason.startsWith("graduation_requirement_not_met"));
-    if (failed.length === 0 && !requirementsUnmet && !attendanceShort) { reasons.push("graduation_requirements_met"); return result("GRADUATE"); }
-    // Not graduating at the terminal grade is a consequential call; route it to review, not to RETAIN.
-    reasons.push("terminal_grade_requirements_not_met");
+  if (terminal) {
+    if (graduation.liberiaLearnProgram === "MET" && failed.length === 0 && criticalGaps.length === 0 && !attendanceShort) {
+      reasons.push("liberialearn_program_completed");
+      return result("GRADUATE");
+    }
+    // Not completing the program at the terminal grade is a consequential call: always reviewed.
+    reasons.push("terminal_grade_program_not_completed");
     return result("PENDING_REVIEW");
   }
-  if (failed.length <= policy.maxFailedForPromotion && !attendanceShort) { reasons.push("promotion_criteria_met"); return result("PROMOTE"); }
-  if (failed.length <= policy.maxFailedForConditional) { reasons.push("conditional_criteria_met"); return result("CONDITIONAL_PROMOTION"); }
-  reasons.push("retention_criteria_met");
+  if (failed.length === 0 && criticalGaps.length === 0 && !attendanceShort) {
+    reasons.push("promotion_criteria_met");
+    return result("PROMOTE");
+  }
+  if (failed.length <= policy.maxFailedSubjectsForConditional && criticalGaps.length <= policy.maxCriticalGapsForConditional) {
+    reasons.push("limited_gaps_support_plan_required");
+    return result("CONDITIONAL_PROMOTION");
+  }
+  if (policy.retentionRequiresDocumentedIntervention && !interventionDocumented) {
+    reasons.push("retention_requires_documented_intervention");
+    return result("PENDING_REVIEW");
+  }
+  reasons.push("retention_after_documented_intervention");
   return result("RETAIN");
 }
 

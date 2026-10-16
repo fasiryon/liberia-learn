@@ -54,7 +54,7 @@ export async function POST(req: NextRequest) {
         assignmentId: parsed.data.assignmentId,
         aiGrade: { not: null },
         teacherApproved: false,
-        autoReleasedAt: null,
+        // Provisional AI feedback released after 72h still needs a teacher-verified official score.
       },
       include: {
         Student: {

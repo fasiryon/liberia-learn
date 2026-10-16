@@ -7,3 +7,5 @@ export * from "./reportCard";
 export * from "./reportCardView";
 export * from "./promotion";
 export * from "./promotionDecision";
+export * from "./masteryPolicy";
+export * from "./assessmentEvidence";

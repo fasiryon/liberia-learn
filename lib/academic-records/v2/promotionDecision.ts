@@ -9,10 +9,27 @@
  * key so re-applying the same decision is a no-op while a conflicting one is refused.
  */
 import { createHash } from "crypto";
-import type { PromotionRecommendation, PromotionRecommendationKind } from "./promotion";
+import { LL_PROMOTION } from "@/lib/academic-policy/llAep001";
+import { addSchoolDays, type AcademicCalendar } from "./calendar";
+import type { GraduationOutcomes, PromotionRecommendation, PromotionRecommendationKind } from "./promotion";
 import type { RecordsActor, RecordsAuditEvent } from "./periodLock";
 
 export type DecisionOutcome = Exclude<PromotionRecommendationKind, "PENDING_REVIEW">;
+
+/** Documented support plan required for conditional promotion (LL-AEP-001). */
+export type SupportPlan = Readonly<{
+  planId: string;
+  ownerUserId: string;
+  focusAreas: readonly string[];
+  reassessmentPlanned: boolean;
+  reviewOn: string;
+}>;
+
+function assertSupportPlan(plan: SupportPlan | null, decidedAt: string): asserts plan is SupportPlan {
+  if (!plan) throw new Error("records_conditional_promotion_requires_support_plan");
+  if (!plan.planId || !plan.ownerUserId || plan.focusAreas.length === 0 || !plan.reassessmentPlanned) throw new Error("records_support_plan_incomplete");
+  if (!(plan.reviewOn.slice(0, 10) > decidedAt.slice(0, 10))) throw new Error("records_support_plan_review_must_be_future");
+}
 
 export type PromotionDecision = Readonly<{
   decisionId: string;
@@ -26,7 +43,9 @@ export type PromotionDecision = Readonly<{
   recommendationDigest: string;
   overridesRecommendation: boolean;
   rationale: string | null;
-  remediationPlanRef: string | null;
+  supportPlan: SupportPlan | null;
+  /** Copied from the recommendation; a GRADUATE decision never implies national school-leaving status. */
+  graduation: GraduationOutcomes;
   decidedBy: string;
   decidedAt: string;
   supersedesDecisionId: string | null;
@@ -40,7 +59,7 @@ export function decidePromotion(input: {
   outcome: DecisionOutcome;
   actor: RecordsActor;
   rationale: string | null;
-  remediationPlanRef: string | null;
+  supportPlan: SupportPlan | null;
   terminalGrade: number;
   at: string;
 }): Readonly<{ decision: PromotionDecision; audit: RecordsAuditEvent }> {
@@ -51,12 +70,15 @@ export function decidePromotion(input: {
   if ((overrides || pendingReview) && (input.rationale ?? "").trim().length < 20) throw new Error("records_promotion_rationale_required");
   if (outcome === "GRADUATE" && recommendation.grade !== input.terminalGrade) throw new Error("records_graduation_requires_terminal_grade");
   if (outcome !== "GRADUATE" && outcome !== "RETAIN" && recommendation.grade >= input.terminalGrade) throw new Error("records_cannot_promote_past_terminal_grade");
-  if (outcome === "CONDITIONAL_PROMOTION" && !input.remediationPlanRef) throw new Error("records_conditional_promotion_requires_remediation_plan");
+  if (outcome === "CONDITIONAL_PROMOTION") assertSupportPlan(input.supportPlan, input.at);
+  // Retention is a last resort: never decided without documented, reviewed intervention.
+  if (outcome === "RETAIN" && !recommendation.interventionDocumented) throw new Error("records_retention_requires_documented_intervention");
+  if (outcome === "GRADUATE" && recommendation.graduation.liberiaLearnProgram !== "MET") throw new Error("records_graduation_requires_program_completion");
   const decision: PromotionDecision = Object.freeze({
     decisionId: input.decisionId, version: 1,
     studentId: recommendation.studentId, schoolId: recommendation.schoolId, academicYearId: recommendation.academicYearId, grade: recommendation.grade,
     outcome, recommendation: recommendation.recommendation, recommendationDigest: recommendation.inputDigest,
-    overridesRecommendation: overrides, rationale: input.rationale, remediationPlanRef: input.remediationPlanRef,
+    overridesRecommendation: overrides, rationale: input.rationale, supportPlan: input.supportPlan, graduation: recommendation.graduation,
     decidedBy: actor.userId, decidedAt: input.at, supersedesDecisionId: null,
   });
   return Object.freeze({
@@ -135,16 +157,22 @@ export type PromotionAppeal = Readonly<{
   resolvedAt: string | null;
 }>;
 
+/** Appeal window: LL-AEP-001 baseline 15 SCHOOL days after the decision, counted on the school calendar. */
+export function appealDeadline(decision: PromotionDecision, calendar: AcademicCalendar, windowSchoolDays: number = LL_PROMOTION.appealWindowSchoolDays): string {
+  if (calendar.schoolId !== decision.schoolId) throw new Error("records_appeal_calendar_school_mismatch");
+  return addSchoolDays(calendar, decision.decidedAt, windowSchoolDays);
+}
+
 export function openAppeal(decision: PromotionDecision, input: {
   appealId: string;
   filedBy: PromotionAppeal["filedBy"];
   reason: string;
   filedAt: string;
-  windowDays: number;
+  calendar: AcademicCalendar;
+  windowSchoolDays?: number;
 }): PromotionAppeal {
   if (input.reason.trim().length < 20) throw new Error("records_appeal_reason_required");
-  const deadline = Date.parse(decision.decidedAt) + input.windowDays * 86_400_000;
-  if (!(Date.parse(input.filedAt) <= deadline)) throw new Error("records_appeal_window_closed");
+  if (input.filedAt.slice(0, 10) > appealDeadline(decision, input.calendar, input.windowSchoolDays)) throw new Error("records_appeal_window_closed");
   return Object.freeze({
     appealId: input.appealId, decisionId: decision.decisionId, decisionVersion: decision.version, schoolId: decision.schoolId,
     filedBy: input.filedBy, reason: input.reason, filedAt: input.filedAt, status: "OPEN", resolvedBy: [], resolvedAt: null,
@@ -156,7 +184,7 @@ export function resolveAppeal(appeal: PromotionAppeal, decision: PromotionDecisi
   outcome: "UPHELD" | "REVISED";
   revisedOutcome: DecisionOutcome | null;
   rationale: string;
-  remediationPlanRef: string | null;
+  supportPlan: SupportPlan | null;
   at: string;
 }): Readonly<{ appeal: PromotionAppeal; decision: PromotionDecision; audit: RecordsAuditEvent }> {
   if (appeal.status !== "OPEN") throw new Error("records_appeal_not_open");
@@ -169,10 +197,11 @@ export function resolveAppeal(appeal: PromotionAppeal, decision: PromotionDecisi
   let next = decision;
   if (input.outcome === "REVISED") {
     if (!input.revisedOutcome || input.revisedOutcome === decision.outcome) throw new Error("records_appeal_revision_requires_new_outcome");
-    if (input.revisedOutcome === "CONDITIONAL_PROMOTION" && !input.remediationPlanRef) throw new Error("records_conditional_promotion_requires_remediation_plan");
+    if (input.revisedOutcome === "CONDITIONAL_PROMOTION") assertSupportPlan(input.supportPlan, input.at);
+    if (input.revisedOutcome === "GRADUATE" && decision.graduation.liberiaLearnProgram !== "MET") throw new Error("records_graduation_requires_program_completion");
     next = Object.freeze({
       ...decision, version: decision.version + 1, outcome: input.revisedOutcome, overridesRecommendation: input.revisedOutcome !== decision.recommendation,
-      rationale: input.rationale, remediationPlanRef: input.remediationPlanRef, decidedBy: input.panel.find((member) => member.userId !== decision.decidedBy)!.userId,
+      rationale: input.rationale, supportPlan: input.supportPlan, decidedBy: input.panel.find((member) => member.userId !== decision.decidedBy)!.userId,
       decidedAt: input.at, supersedesDecisionId: `${decision.decisionId}@${decision.version}`,
     });
   }

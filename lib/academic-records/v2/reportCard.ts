@@ -2,7 +2,10 @@
  * Official report-card record (period or year-end). Academic grades and skill mastery are separate,
  * separately labelled fields: mastery never feeds a grade and a grade never implies mastery.
  *
- * Lifecycle: DRAFT → PUBLISHED → (SUPERSEDED by an approved AMENDMENT). A published record is
+ * Lifecycle: DRAFT → PUBLISHED → (SUPERSEDED by an approved AMENDMENT). Publication is either
+ * OFFICIAL (every subject COMPLETE and every period LOCKED) or explicitly PROVISIONAL (labelled,
+ * never final, never usable for promotion). Incomplete records cannot be published as official.
+ * A published record is
  * immutable; corrections create a new version linked to the prior hash, with a reason, a requester
  * and a different approving leader. Publication uses optimistic concurrency (expected version), so
  * two concurrent publishes cannot both succeed.
@@ -10,7 +13,8 @@
 import { createHash } from "crypto";
 import { canonicalizeJson } from "@/lib/curriculum/provenance/hash";
 import { findPeriod, type AcademicCalendar } from "./calendar";
-import type { CategoryResult, SubjectGradeResult } from "./gradeCalculation";
+import type { LlMasteryState } from "@/lib/academic-policy/llAep001";
+import type { GroupResult, SubjectGradeResult } from "./gradeCalculation";
 import type { GradingPolicyRef } from "./gradingPolicy";
 import type { ClassSubjectPeriod, RecordsActor, RecordsAuditEvent } from "./periodLock";
 import type { PromotionRecommendationKind } from "./promotion";
@@ -31,7 +35,7 @@ export type MasteryIndicator = Readonly<{
   objectiveId: string;
   /** Fixed label so every renderer shows mastery as distinct from the academic grade. */
   label: "SKILL_MASTERY_INDICATOR_NOT_A_GRADE";
-  level: "NOT_YET_EVIDENCED" | "EMERGING" | "DEVELOPING" | "SECURE";
+  level: LlMasteryState;
   /** Mastery shown on records must come from admitted learning evidence only. */
   evidenceTier: "MASTERY_ADMITTED_EVIDENCE";
   asOf: string;
@@ -44,7 +48,8 @@ export type ReportSubjectLine = Readonly<{
   percent: number | null;
   label: string | null;
   passing: boolean | null;
-  categories: readonly CategoryResult[];
+  meetsProficiencyTarget: boolean | null;
+  groups: readonly GroupResult[];
   teacherComment: string | null;
 }>;
 
@@ -59,6 +64,8 @@ export type ReportCardRecord = Readonly<{
   version: number;
   kind: "PERIOD" | "YEAR_END";
   status: "DRAFT" | "PUBLISHED" | "SUPERSEDED";
+  /** Null until published. PROVISIONAL records are labelled and never final. */
+  publication: "OFFICIAL" | "PROVISIONAL" | null;
   schoolId: string;
   academicYearId: string;
   periodId: string;
@@ -147,6 +154,7 @@ export function buildReportCardDraft(input: ReportCardDraftInput): ReportCardRec
     version: 1,
     kind: input.kind,
     status: "DRAFT",
+    publication: null,
     schoolId: calendar.schoolId,
     academicYearId: calendar.academicYearId,
     periodId: input.periodId,
@@ -155,7 +163,7 @@ export function buildReportCardDraft(input: ReportCardDraftInput): ReportCardRec
     gradingPolicy: input.gradingPolicy,
     subjects: Object.freeze(input.results.map((result) => Object.freeze({
       subject: result.scope.subject, classId: result.scope.classId, status: result.status, percent: result.percent,
-      label: result.label, passing: result.passing, categories: result.categories,
+      label: result.label, passing: result.passing, meetsProficiencyTarget: result.meetsProficiencyTarget, groups: result.groups,
       teacherComment: input.teacherComments[result.scope.subject] ?? null,
     }))),
     attendance: input.attendance,
@@ -178,6 +186,7 @@ function assertLeader(actor: RecordsActor, schoolId: string) {
 
 export function publishReportCard(record: ReportCardRecord, input: {
   actor: RecordsActor;
+  publication: "OFFICIAL" | "PROVISIONAL";
   expectedVersion: number;
   currentStoredVersion: number;
   periods: readonly ClassSubjectPeriod[];
@@ -188,16 +197,21 @@ export function publishReportCard(record: ReportCardRecord, input: {
   if (record.status !== "DRAFT") throw new Error("records_report_not_draft");
   if (input.expectedVersion !== record.version || input.currentStoredVersion !== record.version) throw new Error("records_report_version_conflict");
   if (record.contentHash !== hashReportCard(record)) throw new Error("records_report_tampered");
-  for (const subject of record.subjects) {
-    if (subject.status !== "COMPLETE" && subject.status !== "NO_EVIDENCE") throw new Error(`records_report_subject_incomplete:${subject.subject}`);
-    const period = input.periods.find((candidate) => candidate.classId === subject.classId && candidate.subject === subject.subject && candidate.periodId === record.periodId && candidate.schoolId === record.schoolId);
-    if (!period || period.state !== "LOCKED") throw new Error(`records_report_period_not_locked:${subject.subject}`);
+  if (input.publication === "OFFICIAL") {
+    for (const subject of record.subjects) {
+      // An official record must be complete: incomplete or ungraded subjects need a provisional record.
+      if (subject.status !== "COMPLETE") throw new Error(`records_report_subject_not_complete:${subject.subject}:${subject.status}`);
+      const period = input.periods.find((candidate) => candidate.classId === subject.classId && candidate.subject === subject.subject && candidate.periodId === record.periodId && candidate.schoolId === record.schoolId);
+      if (!period || period.state !== "LOCKED") throw new Error(`records_report_period_not_locked:${subject.subject}`);
+    }
+    if (record.kind === "YEAR_END" && record.yearEndDecision.status === "RECOMMENDED") throw new Error("records_year_end_decision_not_authorized");
+  } else if (record.kind === "YEAR_END" && record.yearEndDecision.status === "DECIDED") {
+    throw new Error("records_year_end_decision_requires_official_record");
   }
-  if (record.kind === "YEAR_END" && record.yearEndDecision.status === "RECOMMENDED") throw new Error("records_year_end_decision_not_authorized");
-  const published = seal({ ...record, principalComment: input.principalComment, publishedBy: input.actor.userId, publishedAt: input.at, status: "PUBLISHED" } as Unsealed);
+  const published = seal({ ...record, publication: input.publication, principalComment: input.principalComment, publishedBy: input.actor.userId, publishedAt: input.at, status: "PUBLISHED" } as Unsealed);
   return Object.freeze({
     record: published,
-    audit: { action: "records.report_card.published", resourceRef: `${record.recordId}@${record.version}`, actorId: input.actor.userId, schoolId: record.schoolId, at: input.at, details: { contentHash: published.contentHash } },
+    audit: { action: "records.report_card.published", resourceRef: `${record.recordId}@${record.version}`, actorId: input.actor.userId, schoolId: record.schoolId, at: input.at, details: { contentHash: published.contentHash, publication: input.publication } },
   });
 }
 
@@ -236,6 +250,11 @@ export function amendPublishedReportCard(published: ReportCardRecord, amendment:
     amended,
     audit: { action: "records.report_card.amended", resourceRef: `${published.recordId}@${amended.version}`, actorId: amendment.approver.userId, schoolId: published.schoolId, at: amendment.at, details: { priorVersionHash: published.contentHash, fields: Object.keys(amendment.changes).sort().join(",") } },
   });
+}
+
+/** Only an official, published, current record is final (eligible input to promotion). */
+export function isFinalOfficialRecord(record: ReportCardRecord): boolean {
+  return record.status === "PUBLISHED" && record.publication === "OFFICIAL" && record.contentHash === hashReportCard(record);
 }
 
 /** Viewing rules. Students and guardians see published records only; teachers see their classes. */

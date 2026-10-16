@@ -4,6 +4,7 @@
  * structure. The only invariants are ordering, containment in the year and no overlap.
  */
 import type { AcademicYear, Term } from "@prisma/client";
+import { LL_CALENDAR_BASELINE } from "@/lib/academic-policy/llAep001";
 
 export const ACADEMIC_RECORDS_V2_VERSION = "academic-records.v2" as const;
 
@@ -26,6 +27,10 @@ export type AcademicCalendar = Readonly<{
   periods: readonly ReportingPeriod[];
   /** Year-end closeout: final report and promotion decisions happen after the last period. */
   closeout: Readonly<{ finalReportOn: string | null; promotionDecisionsBy: string | null }>;
+  /** Days without instruction (holidays, closures) as YYYY-MM-DD; weekends come from `weekendDays`. */
+  nonInstructionalDates: readonly string[];
+  /** 0 = Sunday … 6 = Saturday. */
+  weekendDays: readonly number[];
 }>;
 
 export type CalendarIssue = Readonly<{ code: string; periodId: string | null }>;
@@ -53,6 +58,31 @@ export function validateCalendar(calendar: AcademicCalendar): readonly CalendarI
   return Object.freeze(issues);
 }
 
+const DAY_MS = 86_400_000;
+
+export function isSchoolDay(calendar: AcademicCalendar, isoDate: string): boolean {
+  const date = new Date(`${day(isoDate)}T00:00:00.000Z`);
+  return !calendar.weekendDays.includes(date.getUTCDay()) && !calendar.nonInstructionalDates.includes(day(isoDate));
+}
+
+/** The date `schoolDays` school days after `fromIso` (the start day itself is not counted). */
+export function addSchoolDays(calendar: AcademicCalendar, fromIso: string, schoolDays: number): string {
+  if (!Number.isInteger(schoolDays) || schoolDays < 0) throw new Error("records_school_days_invalid");
+  let cursor = Date.parse(`${day(fromIso)}T00:00:00.000Z`);
+  let counted = 0;
+  while (counted < schoolDays) {
+    cursor += DAY_MS;
+    if (isSchoolDay(calendar, new Date(cursor).toISOString())) counted += 1;
+  }
+  return new Date(cursor).toISOString().slice(0, 10);
+}
+
+/** LL-AEP-001 baseline: three reporting terms. Other structures are allowed as a documented school variant. */
+export function compareToBaseline(calendar: AcademicCalendar): Readonly<{ matchesBaseline: boolean; reportingPeriods: number; baselineReportingTerms: number }> {
+  const reportingPeriods = calendar.periods.filter((period) => period.issuesReport).length;
+  return Object.freeze({ matchesBaseline: reportingPeriods === LL_CALENDAR_BASELINE.reportingTerms, reportingPeriods, baselineReportingTerms: LL_CALENDAR_BASELINE.reportingTerms });
+}
+
 export function findPeriod(calendar: AcademicCalendar, periodId: string): ReportingPeriod | null {
   return calendar.periods.find((period) => period.periodId === periodId) ?? null;
 }
@@ -70,7 +100,7 @@ export function isFinalPeriod(calendar: AcademicCalendar, periodId: string): boo
 export function calendarFromAcademicYear(
   year: Pick<AcademicYear, "id" | "schoolId" | "yearLabel" | "startDate" | "endDate">,
   terms: readonly Pick<Term, "id" | "academicYearId" | "name" | "startDate" | "endDate">[],
-  options: { reportingTermIds: readonly string[] | "ALL" },
+  options: { reportingTermIds: readonly string[] | "ALL"; nonInstructionalDates?: readonly string[]; weekendDays?: readonly number[] },
 ): AcademicCalendar {
   if (terms.some((term) => term.academicYearId !== year.id)) throw new Error("records_term_not_in_academic_year");
   const ordered = [...terms].sort((a, b) => a.startDate.getTime() - b.startDate.getTime());
@@ -89,5 +119,7 @@ export function calendarFromAcademicYear(
       issuesReport: options.reportingTermIds === "ALL" || options.reportingTermIds.includes(term.id),
     }))),
     closeout: { finalReportOn: null, promotionDecisionsBy: null },
+    nonInstructionalDates: Object.freeze([...(options.nonInstructionalDates ?? [])]),
+    weekendDays: Object.freeze([...(options.weekendDays ?? [0, 6])]),
   });
 }
