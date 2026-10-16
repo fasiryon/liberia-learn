@@ -148,7 +148,7 @@ describe("Learn discovery authorization and display contract", () => {
   });
   it("checks are bounded display summaries with direct start authorization parity", async () => {
     state.checksEnabled = true;
-    const exam = { id: "exam-a", title: "Fractions check", subject: "MATH", schoolId: "school-a", grade: 4, status: "PUBLISHED", deletedAt: null, classId: "class-a", academicYearId: "year-a", class: { schoolId: "school-a" }, questions: [{ correctIndex: 1, prompt: "SECRET_QUESTION", explanation: "SECRET_EXPLANATION" }], readiness: "SECRET_READINESS", passingScore: 70 };
+    const exam = { id: "exam-a", title: "Fractions check", subject: "MATH", schoolId: "school-a", grade: 4, status: "PUBLISHED", deletedAt: null, classId: "class-a", academicYearId: "year-a", class: { schoolId: "school-a" }, questions: [{ id: "q-a", examId: "exam-a", options: ["1", "2"], moeCode: "M4", points: 1, correctIndex: 1, prompt: "SECRET_QUESTION", explanation: "SECRET_EXPLANATION" }], readiness: "SECRET_READINESS", passingScore: 70 };
     state.years = [{ studentId: "student-a", schoolId: "school-a", academicYearId: "year-a" }];
     state.exams = [exam, { ...exam, id: "foreign-school", schoolId: "school-b" }, { ...exam, id: "foreign-class", classId: "other" }, { ...exam, id: "foreign-year", academicYearId: "year-b" }, { ...exam, id: "draft", status: "DRAFT" }, { ...exam, id: "deleted", deletedAt: new Date() }];
     const body = await model(); expect(body.checks).toMatchObject({ availability: "current", total: 1 }); expect(body.checks.items.map((item: Row) => item.id)).toEqual(["exam-a"]);
