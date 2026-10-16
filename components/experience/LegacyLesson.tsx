@@ -9,6 +9,8 @@ import { expandedForm, formatNumber, wordForm } from "@/lib/learner-experience/d
 import { PlaceValueChart } from "./demo/PlaceValueTools";
 import { InlineText, LessonBlocks, LessonImage, LessonTable } from "./LessonText";
 import { LearnerTask, TeachingPoints, TeachingScene, WorkedExample } from "./TeachingScene";
+import { FullscreenPresentation } from "./FullscreenPresentation";
+import { addFullscreenChangeListener, getFullscreenElement } from "@/lib/lesson/fullscreen";
 
 /**
  * LEGACY lesson presentation (Read and Slides) for the existing student lesson routes. Everything shown
@@ -255,6 +257,20 @@ export function LegacySlides({ slides, index, onIndexChange, containerRef, topAc
   subject?: string | null;
 }) {
   const total = slides.length;
+  const ownRoot = useRef<HTMLDivElement>(null);
+  const rootRef = containerRef ?? ownRoot;
+  const [fullscreen, setFullscreen] = useState(false);
+  useEffect(() => {
+    let wasFullscreen = false;
+    const sync = () => {
+      const active = getFullscreenElement() === rootRef.current || getFullscreenElement() === document.documentElement;
+      setFullscreen(active);
+      if (wasFullscreen && !active) requestAnimationFrame(() => rootRef.current?.querySelector<HTMLButtonElement>("[aria-label='View slides fullscreen']")?.focus());
+      wasFullscreen = active;
+    };
+    sync();
+    return addFullscreenChangeListener(document, sync);
+  }, [rootRef]);
   const current = Math.min(index, Math.max(0, total - 1));
   const notes = slides.map((slide) => sectionAudience(slide.title) !== "LEARNER");
   const noteCount = notes.filter(Boolean).length;
@@ -266,6 +282,7 @@ export function LegacySlides({ slides, index, onIndexChange, containerRef, topAc
   const nextIndex = at >= 0 ? (at < visible.length - 1 ? visible[at + 1] : null) : visible.find((position) => position > current) ?? null;
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
+      if (fullscreen) return;
       const target = event.target as HTMLElement | null;
       if (target && (target.closest("input,textarea,select,[contenteditable=true],[role=slider]") || event.altKey || event.ctrlKey || event.metaKey)) return;
       if (event.key === "ArrowLeft" && previousIndex !== null) onIndexChange(previousIndex);
@@ -273,7 +290,7 @@ export function LegacySlides({ slides, index, onIndexChange, containerRef, topAc
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [previousIndex, nextIndex, onIndexChange]);
+  }, [previousIndex, nextIndex, onIndexChange, fullscreen]);
   if (total === 0) return <p className="ll3-muted">Slides are not available for this lesson yet.</p>;
   const toggleNotes = () => {
     const next = !skipNotes;
@@ -287,7 +304,8 @@ export function LegacySlides({ slides, index, onIndexChange, containerRef, topAc
   };
   const slide = slides[current];
   const isLast = nextIndex === null;
-  return <div ref={containerRef} className="ll-slide-fullscreen" data-legacy-slides data-slide-index={current}>
+  return <div ref={rootRef} className="ll-slide-fullscreen" data-legacy-slides data-slide-index={current} data-presentation={fullscreen ? "fullscreen" : undefined}>
+    {fullscreen ? <FullscreenPresentation slides={slides} sourceIndex={current} onSourceChange={onIndexChange} topActions={topActions} lastAction={lastAction} deckLabel={deckLabel} /> : <>
     <div className="ll3-slide ll-slide-fullscreen-card">
       <div className="ll3-slide-top">
         <p className="ll3-chip" aria-live="polite">Slide {current + 1} of {total}{deckLabel ? ` · ${deckLabel}` : ""}{skipNotes && canSkip ? ` · ${noteCount} note ${noteCount === 1 ? "slide" : "slides"} skipped` : ""}</p>
@@ -303,5 +321,6 @@ export function LegacySlides({ slides, index, onIndexChange, containerRef, topAc
       <div className="ll3-dots" style={{ display: "flex", flexWrap: "wrap" }} aria-hidden="true">{visible.map((position) => <span key={position} data-state={position < current ? "done" : position === current ? "current" : "todo"} />)}</div>
       {isLast && lastAction ? lastAction : <button type="button" className="ll3-btn" data-primary="" onClick={() => nextIndex !== null && onIndexChange(nextIndex)} disabled={nextIndex === null}>Next <ChevronRight size={18} aria-hidden="true" /></button>}
     </div>
+    </>}
   </div>;
 }

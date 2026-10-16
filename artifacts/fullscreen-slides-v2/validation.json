@@ -1,0 +1,154 @@
+{
+  "recordedAt": "2026-10-16T15:54:39.605Z",
+  "branch": "feat/fullscreen-slides-v2",
+  "baseSha": "45d86dc56ce4f9b02f66bae72ff773b701c32d4a",
+  "source": {
+    "catalog": "Supabase CurriculumContent",
+    "retrievedAt": "2026-10-15T20:24:15.459Z",
+    "contentId": "hero-civics-g7-democracy-and-representation-in-liberia",
+    "title": "Understanding Democracy and Representation in Liberia",
+    "version": "2.0.0",
+    "lessonVersion": 1,
+    "updatedAt": "2026-07-25T06:05:55.023Z",
+    "currentRevisionId": "cmss94h3z03bzvo54hj7c7z8t",
+    "sequence": 1,
+    "contentHash": "cca4566947348a5dca3bf3fb2bf221c74eb6d81999c8b2677b367d24d52e24ef",
+    "lifecycleState": "APPROVED",
+    "learnerBodySha256": "62564d43e7e952124d097f8e7a7499e2344efc53333e8e67d21f724083707c69",
+    "baselineSlides": 17
+  },
+  "catalogAccess": "Read-only Supabase transaction; production learner-safe projection; no catalog writes",
+  "sourceFileSha256": {
+    "components/experience/FullscreenPresentation.tsx": "ca7af07377d69ec2b38cbaa16a7b2a0c769508ac7e6b0a6aa2c7c9afe5a1d940",
+    "components/experience/LegacyLesson.tsx": "a7dbbe0cf0a02d949176c328ef6d93958cc50b0915eee3ac231966b86560e58c",
+    "components/experience/presentation.css": "639314da71eeea350ce2c397deebcecb1c20c8e427d971fc663349c38a525134",
+    "lib/learner-experience/presentation.ts": "8f2ffeec58c6d1ec1f0d4ef23d4260a74237e9548b34240a3e9f7c57cff66d26",
+    "__tests__/learner-experience/fullscreen-presentation.test.ts": "7780b1be743d47bb3bc9ed4ea352d84c27aee237b89201fffbb17561e4d13646",
+    "e2e/fullscreen-slides-v2/civics-lesson.json": "5da1f4b3fb02c2cad67e7bc17c75e9fa4ec4ee38be9f957d746e8a7c3a9ede7e",
+    "e2e/fullscreen-slides-v2/run.mjs": "d94db0a83680d488da0c8ec32f4163ec8ab659c36291756daa2ce306400ebd4a",
+    "e2e/product-design-v2/run.mjs": "9d6ccb993973586af2c20909d20ebe89205bc382e6436c26917d12f042de3a44"
+  },
+  "checks": [
+    {
+      "command": "node e2e/fullscreen-slides-v2/run.mjs",
+      "exitCode": 0,
+      "sizes": [
+        {
+          "width": 390,
+          "height": 844,
+          "pages": 58,
+          "sourceSlides": 17,
+          "exactTextAndOrder": true,
+          "keyboardAndBack": true,
+          "readUnchanged": true,
+          "exitFocusReturned": true
+        },
+        {
+          "width": 768,
+          "height": 900,
+          "pages": 34,
+          "sourceSlides": 17,
+          "exactTextAndOrder": true,
+          "keyboardAndBack": true,
+          "readUnchanged": true,
+          "exitFocusReturned": true
+        },
+        {
+          "width": 1440,
+          "height": 720,
+          "pages": 59,
+          "sourceSlides": 17,
+          "exactTextAndOrder": true,
+          "keyboardAndBack": true,
+          "readUnchanged": true,
+          "exitFocusReturned": true
+        },
+        {
+          "width": 1440,
+          "height": 900,
+          "pages": 42,
+          "sourceSlides": 17,
+          "exactTextAndOrder": true,
+          "keyboardAndBack": true,
+          "readUnchanged": true,
+          "exitFocusReturned": true
+        },
+        {
+          "width": 1920,
+          "height": 720,
+          "pages": 68,
+          "sourceSlides": 17,
+          "exactTextAndOrder": true,
+          "keyboardAndBack": true,
+          "readUnchanged": true,
+          "exitFocusReturned": true
+        },
+        {
+          "width": 1920,
+          "height": 900,
+          "pages": 46,
+          "sourceSlides": 17,
+          "exactTextAndOrder": true,
+          "keyboardAndBack": true,
+          "readUnchanged": true,
+          "exitFocusReturned": true
+        }
+      ],
+      "pages": 307,
+      "axeScans": 6,
+      "axeViolations": 0,
+      "pageErrors": []
+    },
+    {
+      "command": "node e2e/product-design-v2/run.mjs",
+      "exitCode": 0,
+      "historicalValidators": 5,
+      "appendedRealLessonRegression": true
+    },
+    {
+      "command": "node e2e/student-v3-integration/run.mjs",
+      "exitCode": 0,
+      "layouts": 36,
+      "flows": 4,
+      "axeScans": 32,
+      "note": "Executed an otherwise identical temporary copy on port 3203; default 3197 belonged to another checkout"
+    },
+    {
+      "command": "node e2e/student-v3-integration/lesson-details.mjs",
+      "exitCode": 0,
+      "checks": 8,
+      "axeScans": 4,
+      "note": "Same temporary port substitution"
+    },
+    {
+      "command": "node node_modules/vitest/vitest.mjs run --reporter=dot",
+      "exitCode": 0,
+      "filesPassed": 769,
+      "filesSkipped": 2,
+      "testsPassed": 7485,
+      "testsSkipped": 8
+    },
+    {
+      "command": "npm.cmd run validate:changed",
+      "exitCode": 0,
+      "focusedTests": 5,
+      "relatedTests": 69,
+      "apiAudit": true,
+      "typecheck": true,
+      "syntax": true
+    },
+    {
+      "command": "node node_modules/next/dist/bin/next build",
+      "exitCode": 0,
+      "staticPages": 391,
+      "compiled": true,
+      "lint": true,
+      "typecheck": true,
+      "note": "Placeholder environment; existing warnings plus Windows EPERM reproducing shared node_modules junction during standalone tracing. Local standalone packaging is not deployment certification."
+    }
+  ],
+  "limitations": [
+    "Real production components and retrieved catalog lesson, with local identity/API fixtures; not a live authenticated session or real-device/manual screen-reader certification.",
+    "No content-candidate edits, merge, push or deployment on this feature branch."
+  ]
+}
