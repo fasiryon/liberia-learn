@@ -1,3 +1,4 @@
+// route-policy: auth=session; scope=record; authority=student-own-attempt; rationale=submits only the learner's own open attempt and grades it on the server
 import { NextRequest, NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { logAudit } from "@/lib/audit";
@@ -38,7 +39,7 @@ export async function POST(req: NextRequest, context: { params: { examId: string
         studentId: student.id,
       },
       include: {
-        exam: { include: { questions: true } },
+        exam: { include: { questions: { orderBy: { id: "asc" } } } },
       },
     });
     if (!attempt) {
@@ -67,8 +68,12 @@ export async function POST(req: NextRequest, context: { params: { examId: string
         answers: body.answers,
         passingScore: attempt.exam.passingScore,
       } as any,
-      attempt.exam.questions as any
+      attempt.exam.questions as any,
+      { questionIds: body.questionIds }
     );
+    if (grading.invalidCount > 0) {
+      return NextResponse.json({ error: "Some answers do not match a question option" }, { status: 400 });
+    }
 
     const submittedAt = new Date();
     const durationSeconds = Math.max(

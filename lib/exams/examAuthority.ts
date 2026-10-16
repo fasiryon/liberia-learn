@@ -64,7 +64,10 @@ type AttemptLogEntry = {
 
 export const submitExamSchema = z.object({
   attemptId: z.string().min(1),
-  answers: z.array(z.number().int().min(0).max(5)),
+  /** One entry per question in server order; -1 = blank (no answer given). */
+  answers: z.array(z.number().int().min(-1).max(5)).max(100),
+  /** Question ids in the order the client answered them; must match the server order. */
+  questionIds: z.array(z.string().min(1)).max(100).optional(),
   flags: z.array(z.string().trim().min(1).max(64)).max(50).optional(),
   tabSwitchCount: z.number().int().min(0).max(500).optional(),
   submissionLog: z.array(
