@@ -1,0 +1,86 @@
+{
+  "notice": "AI judgment findings submitted to the instructional reviewer for the exact revision pinned in ../source.json. Advisory only; every finding needs confirmation by a qualified human reviewer. The reviewer rejects any quote that is not in the revision.",
+  "judgments": [
+    {
+      "id": "ai-l1-writing-objectives-evidenced-by-selection",
+      "code": "WRITING_MASTERY_WITHOUT_WRITING",
+      "criterionId": "LM-ASM-1",
+      "severity": "BLOCKING",
+      "statement": "The objectives are about building an argument and supporting it with evidence, but the learner's own writing is explicitly unmarked and the rubric is labelled as not a mastery score. A learner could reach mastery by recognising good theses without ever writing one.",
+      "recommendation": "Make an unscaffolded, original argumentative paragraph on a new question, scored with the existing four-criterion rubric, part of the end-of-lesson evidence (proposed pl-w1). Keep the selected-response items as diagnostic support, not as the mastery basis.",
+      "evidence": [
+        { "document": "CANDIDATE", "pointer": "/scenes/11/content/body", "quote": "Your teacher reads this writing; it is not marked by this lesson." },
+        { "document": "ASSESSMENT", "pointer": "/writingRubric/use", "quote": "Not a mastery score" },
+        { "document": "CANDIDATE", "pointer": "/assessmentRequests/0/interaction", "quote": "SINGLE_CHOICE" }
+      ],
+      "confidence": 0.95
+    },
+    {
+      "id": "ai-l2-exit-items-recall-dominated",
+      "code": "EXIT_ITEMS_RECALL_DOMINATED",
+      "criterionId": "LM-CON-2",
+      "severity": "MAJOR",
+      "statement": "Three of the six exit items ask the learner to recall where a part goes or what it does (thesis position, the conclusion's job, the Explain sentence's job). That is recall, below the analysis and production the objectives name.",
+      "recommendation": "Replace at least two of the recall items with items that ask the learner to judge or repair a short piece of writing (proposed pl-r1), and keep one recall item for diagnosis.",
+      "evidence": [
+        { "document": "ASSESSMENT", "pointer": "/items/0/item/prompt", "quote": "where does the thesis statement usually appear?" },
+        { "document": "ASSESSMENT", "pointer": "/items/3/item/prompt", "quote": "What should the conclusion of an argumentative essay do?" },
+        { "document": "ASSESSMENT", "pointer": "/items/4/item/prompt", "quote": "In a PEEL paragraph, what does the Explain sentence do?" }
+      ],
+      "confidence": 0.85
+    },
+    {
+      "id": "ai-l3-exit1-distractor-mismapped",
+      "code": "MISCONCEPTION_MAPPING_INCONSISTENT",
+      "criterionId": "LM-CON-1",
+      "severity": "MAJOR",
+      "statement": "In g7-essay-exit-1, 'Only in the conclusion' is mapped to mc-conclusion-new-idea. That misconception is about adding a new reason in the conclusion; choosing this option shows confusion about where the thesis goes, a different error.",
+      "recommendation": "Unmap the option, or map it to a new thesis-placement misconception (proposed mc-thesis-placement) if classroom evidence shows the error is common.",
+      "evidence": [
+        { "document": "ASSESSMENT", "pointer": "/items/0/item/options/3", "quote": "Only in the conclusion" },
+        { "document": "ASSESSMENT", "pointer": "/items/0/distractorMisconceptions/3", "quote": "mc-conclusion-new-idea" },
+        { "document": "CANDIDATE", "pointer": "/misconceptions/5/description", "quote": "Adds a brand-new reason in the conclusion." }
+      ],
+      "confidence": 0.85
+    },
+    {
+      "id": "ai-l4-exit5-distractor-mismapped",
+      "code": "MISCONCEPTION_MAPPING_INCONSISTENT",
+      "criterionId": "LM-CON-1",
+      "severity": "MAJOR",
+      "statement": "In g7-essay-exit-5, 'It repeats the evidence word for word' is mapped to mc-irrelevant-evidence (true but unrelated evidence). The option describes a different and common error: treating the Explain step as restating the evidence instead of showing how it proves the point.",
+      "recommendation": "Add a catalogue entry for that error (proposed mc-explain-restates-evidence), teach against it in the peel scene, and remap this distractor to it.",
+      "evidence": [
+        { "document": "ASSESSMENT", "pointer": "/items/4/item/options/3", "quote": "It repeats the evidence word for word" },
+        { "document": "ASSESSMENT", "pointer": "/items/4/distractorMisconceptions/3", "quote": "mc-irrelevant-evidence" },
+        { "document": "CANDIDATE", "pointer": "/misconceptions/3/description", "quote": "Gives true but unrelated evidence" }
+      ],
+      "confidence": 0.85
+    },
+    {
+      "id": "ai-l5-paragraph-prerequisite-checked-by-recognition",
+      "code": "PRODUCTION_PREREQUISITE_CHECKED_BY_RECOGNITION",
+      "criterionId": "NF-PRG-1",
+      "severity": "MAJOR",
+      "statement": "The whole writing sequence depends on the learner already writing a paragraph with a topic sentence, but the warm-up only asks what a topic sentence does. A learner who can name it but not write it reaches the PEEL writing task with no support route.",
+      "recommendation": "Diagnose the prerequisite by production: a short paragraph checked against a two-point checklist, with a paragraph-frame route before PEEL for learners who need it (proposed pl-d0).",
+      "evidence": [
+        { "document": "CANDIDATE", "pointer": "/prerequisiteAssumptions/0", "quote": "Can write a paragraph with a topic sentence and supporting sentences" },
+        { "document": "CANDIDATE", "pointer": "/scenes/2/interaction/items/0/prompt", "quote": "What does a topic sentence do?" }
+      ],
+      "confidence": 0.85
+    },
+    {
+      "id": "ai-l6-conclusion-task-supplies-the-argument",
+      "code": "TASK_SUPPLIES_THE_ARGUMENT",
+      "criterionId": "LM-ASM-2",
+      "severity": "MINOR",
+      "statement": "The write-conclusion task gives the learner the essay's reasons and objection, so it shows control of conclusion structure, not independent argument. That is appropriate for practice but should not be counted as evidence of building an argument.",
+      "recommendation": "Keep it as practice. In the assessment plan, count conclusion-writing evidence only when the learner wrote the argument the conclusion closes (proposed pl-dr2).",
+      "evidence": [
+        { "document": "CANDIDATE", "pointer": "/scenes/12/content/body", "quote": "Its body paragraphs argued two reasons" }
+      ],
+      "confidence": 0.8
+    }
+  ]
+}

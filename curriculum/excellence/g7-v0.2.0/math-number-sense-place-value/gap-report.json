@@ -1,0 +1,1795 @@
+{
+  "reportVersion": "liberialearn-g7-excellence-gap-report/1.0.0",
+  "lessonKey": "math-number-sense-place-value",
+  "title": "Number Sense and Place Value: Millions to Thousandths",
+  "subject": "MATH",
+  "grade": 7,
+  "candidateOnly": true,
+  "published": false,
+  "pullRequest": 191,
+  "review": {
+    "reportVersion": "liberialearn-instructional-review-report/1.0.0",
+    "reviewerVersion": "liberialearn-ai-instructional-reviewer/1.0.0",
+    "standardVersion": "liberialearn-curriculum-excellence/1.0.0",
+    "rubricVersion": "liberialearn-curriculum-excellence-rubric/1.0.0",
+    "blueprintVersion": "liberialearn-assessment-blueprint/1.0.0",
+    "reviewer": {
+      "kind": "AI",
+      "agentId": "claude-code:curriculum-excellence-v1",
+      "modelFamily": "anthropic-claude",
+      "modelId": "claude-opus-5-5",
+      "sessionId": null
+    },
+    "revision": {
+      "contentKey": "cv2-cand-g7-math-number-sense-place-value@0.2.0",
+      "candidateSha256": "3f612d907f52f5953d879476a627fde8e9a1c5b3d30d22e171a42a8ccec80c0c",
+      "assessmentSha256": "c79d29abcc504a67bf1d5b12d725241c51fda32900cf74c9827252ddecbbaed8",
+      "planSha256": "8f296bdd8d8aeb8a86a899e845d4240bf6e50e4cb1a31aa251eef9d37d859287",
+      "source": {
+        "gitCommit": "1ad2e9ec3cbbcd15d3e0cccacfb5614951d52462",
+        "candidatePath": "curriculum/v2/g7/candidates/math-number-sense-place-value.json",
+        "assessmentPath": "curriculum/review/g7-native-v1/math-number-sense-place-value/assessment-review.json"
+      }
+    },
+    "independence": {
+      "selfAuthored": false,
+      "independent": false,
+      "reasons": [
+        "SAME_MODEL_FAMILY:anthropic-claude"
+      ],
+      "countsAsIndependentReview": false
+    },
+    "authority": "ADVISORY_ONLY",
+    "mayApprove": false,
+    "mayPublish": false,
+    "humanQualificationClaimed": false,
+    "officialApprovalClaimed": false,
+    "candidateOnly": true,
+    "outcome": "REVISE_BEFORE_HUMAN_REVIEW",
+    "findings": [
+      {
+        "id": "det-bp-production",
+        "code": "BLUEPRINT_PRODUCTION_UNMET",
+        "criterionId": "LM-ASM-1",
+        "severity": "BLOCKING",
+        "method": "DETERMINISTIC",
+        "statement": "Every objective has mastery evidence that is a produced answer or justification (not a selected option). Not met: ll-g7-math-place-value-read-write, ll-g7-math-place-value-digit-value, ll-g7-math-place-value-compare. Accepted kinds: SHORT_CONSTRUCTED_RESPONSE, EXTENDED_REASONING, PERFORMANCE_TASK.",
+        "recommendation": "Add the missing evidence to the lesson's assessment plan; see the gap report's proposed tasks.",
+        "evidence": [
+          {
+            "document": "CANDIDATE",
+            "pointer": "/assessmentRequests/0",
+            "valueSha256": "e06c2a768e1b2d5b30b4581c9880cc683434cf5aec919b74b2726680b83d0408"
+          }
+        ],
+        "confidence": 1,
+        "requiresHumanConfirmation": false,
+        "layer": "LIBERIALEARN_MASTERY",
+        "dimension": "ASSESSMENT"
+      },
+      {
+        "id": "det-bp-reasoning",
+        "code": "BLUEPRINT_REASONING_UNMET",
+        "criterionId": "LM-RSN-1",
+        "severity": "BLOCKING",
+        "method": "DETERMINISTIC",
+        "statement": "At least one unscaffolded, rubric-scored reasoning or justification task. Not met: EXTENDED_REASONING. 0 reasoning task(s) at mastery.",
+        "recommendation": "Add the missing evidence to the lesson's assessment plan; see the gap report's proposed tasks.",
+        "evidence": [
+          {
+            "document": "CANDIDATE",
+            "pointer": "/assessmentRequests/0",
+            "valueSha256": "e06c2a768e1b2d5b30b4581c9880cc683434cf5aec919b74b2726680b83d0408"
+          }
+        ],
+        "confidence": 1,
+        "requiresHumanConfirmation": false,
+        "layer": "LIBERIALEARN_MASTERY",
+        "dimension": "REASONING"
+      },
+      {
+        "id": "det-bp-selected-share",
+        "code": "BLUEPRINT_SELECTED_SHARE_UNMET",
+        "criterionId": "LM-ASM-1",
+        "severity": "BLOCKING",
+        "method": "DETERMINISTIC",
+        "statement": "Selected response is at most 60% of end-of-lesson mastery evidence. Not met: SELECTED_RESPONSE_SHARE. 6/6 selected response (100%).",
+        "recommendation": "Add the missing evidence to the lesson's assessment plan; see the gap report's proposed tasks.",
+        "evidence": [
+          {
+            "document": "CANDIDATE",
+            "pointer": "/assessmentRequests/0",
+            "valueSha256": "e06c2a768e1b2d5b30b4581c9880cc683434cf5aec919b74b2726680b83d0408"
+          }
+        ],
+        "confidence": 1,
+        "requiresHumanConfirmation": false,
+        "layer": "LIBERIALEARN_MASTERY",
+        "dimension": "ASSESSMENT"
+      },
+      {
+        "id": "det-bp-retention",
+        "code": "BLUEPRINT_RETENTION_UNMET",
+        "criterionId": "LM-ASM-3",
+        "severity": "BLOCKING",
+        "method": "DETERMINISTIC",
+        "statement": "Every objective has delayed retrieval at least 7 days after the lesson. Not met: ll-g7-math-place-value-read-write, ll-g7-math-place-value-digit-value, ll-g7-math-place-value-compare. Spaced retrieval, unscaffolded.",
+        "recommendation": "Add the missing evidence to the lesson's assessment plan; see the gap report's proposed tasks.",
+        "evidence": [
+          {
+            "document": "CANDIDATE",
+            "pointer": "/assessmentRequests/0",
+            "valueSha256": "e06c2a768e1b2d5b30b4581c9880cc683434cf5aec919b74b2726680b83d0408"
+          }
+        ],
+        "confidence": 1,
+        "requiresHumanConfirmation": false,
+        "layer": "LIBERIALEARN_MASTERY",
+        "dimension": "ASSESSMENT"
+      },
+      {
+        "id": "det-bp-transfer",
+        "code": "BLUEPRINT_TRANSFER_UNMET",
+        "criterionId": "GE-TRN-1",
+        "severity": "BLOCKING",
+        "method": "DETERMINISTIC",
+        "statement": "At least one unscaffolded transfer task in a context the lesson did not rehearse. Not met: TRANSFER_TASK. Near or far transfer, NEW context.",
+        "recommendation": "Add the missing evidence to the lesson's assessment plan; see the gap report's proposed tasks.",
+        "evidence": [
+          {
+            "document": "CANDIDATE",
+            "pointer": "/assessmentRequests/0",
+            "valueSha256": "e06c2a768e1b2d5b30b4581c9880cc683434cf5aec919b74b2726680b83d0408"
+          }
+        ],
+        "confidence": 1,
+        "requiresHumanConfirmation": false,
+        "layer": "GLOBAL_EXCELLENCE",
+        "dimension": "CONCEPTUAL_MASTERY"
+      },
+      {
+        "id": "det-bp-extension",
+        "code": "BLUEPRINT_EXTENSION_UNMET",
+        "criterionId": "GE-EXT-1",
+        "severity": "BLOCKING",
+        "method": "DETERMINISTIC",
+        "statement": "An optional, non-gating extension task. Not met: EXTENSION. Extension is optional and never required for mastery.",
+        "recommendation": "Add the missing evidence to the lesson's assessment plan; see the gap report's proposed tasks.",
+        "evidence": [
+          {
+            "document": "CANDIDATE",
+            "pointer": "/assessmentRequests/0",
+            "valueSha256": "e06c2a768e1b2d5b30b4581c9880cc683434cf5aec919b74b2726680b83d0408"
+          }
+        ],
+        "confidence": 1,
+        "requiresHumanConfirmation": false,
+        "layer": "GLOBAL_EXCELLENCE",
+        "dimension": "ADVANCED_EXTENSION"
+      },
+      {
+        "id": "det-prereq-0",
+        "code": "PREREQUISITE_NOT_DIAGNOSED",
+        "criterionId": "NF-PRG-1",
+        "severity": "BLOCKING",
+        "method": "DETERMINISTIC",
+        "statement": "The lesson assumes \"Can read and write whole numbers to at least 100,000 (MOE Grade 4 numeration).\" but no diagnostic task checks it or routes learners who lack it.",
+        "recommendation": "Add a short diagnostic item for this prerequisite with a stated fallback route.",
+        "evidence": [
+          {
+            "document": "CANDIDATE",
+            "pointer": "/prerequisiteAssumptions/0",
+            "valueSha256": "f3d97b8d9b125874d5251dfe63e2a29c4f8b676102497ad3668da69e16508905"
+          }
+        ],
+        "confidence": 1,
+        "requiresHumanConfirmation": false,
+        "layer": "NATIONAL_FOUNDATION",
+        "dimension": "INSTRUCTIONAL_PROGRESSION"
+      },
+      {
+        "id": "det-prereq-1",
+        "code": "PREREQUISITE_NOT_DIAGNOSED",
+        "criterionId": "NF-PRG-1",
+        "severity": "BLOCKING",
+        "method": "DETERMINISTIC",
+        "statement": "The lesson assumes \"Knows that 0.5 means five tenths and can read simple decimals aloud.\" but no diagnostic task checks it or routes learners who lack it.",
+        "recommendation": "Add a short diagnostic item for this prerequisite with a stated fallback route.",
+        "evidence": [
+          {
+            "document": "CANDIDATE",
+            "pointer": "/prerequisiteAssumptions/1",
+            "valueSha256": "7cd2840d036de3b224dd56ee25442dced51783865573c464fbd8a50c3a97a17c"
+          }
+        ],
+        "confidence": 1,
+        "requiresHumanConfirmation": false,
+        "layer": "NATIONAL_FOUNDATION",
+        "dimension": "INSTRUCTIONAL_PROGRESSION"
+      },
+      {
+        "id": "det-prereq-2",
+        "code": "PREREQUISITE_NOT_DIAGNOSED",
+        "criterionId": "NF-PRG-1",
+        "severity": "BLOCKING",
+        "method": "DETERMINISTIC",
+        "statement": "The lesson assumes \"Can multiply a single digit by 10, 100 and 1,000.\" but no diagnostic task checks it or routes learners who lack it.",
+        "recommendation": "Add a short diagnostic item for this prerequisite with a stated fallback route.",
+        "evidence": [
+          {
+            "document": "CANDIDATE",
+            "pointer": "/prerequisiteAssumptions/2",
+            "valueSha256": "7b503b495473c2d52bfcddaba999076ecfcc030bb5cd23a26f6451f535b253bb"
+          }
+        ],
+        "confidence": 1,
+        "requiresHumanConfirmation": false,
+        "layer": "NATIONAL_FOUNDATION",
+        "dimension": "INSTRUCTIONAL_PROGRESSION"
+      },
+      {
+        "id": "det-mc-unassessed-mc-decimal-word-form",
+        "code": "MISCONCEPTION_NOT_DIAGNOSABLE",
+        "criterionId": "LM-CON-1",
+        "severity": "MAJOR",
+        "method": "DETERMINISTIC",
+        "statement": "Misconception mc-decimal-word-form is catalogued but no exit-item distractor is mapped to it, so the exit evidence cannot detect it.",
+        "recommendation": "Map a distractor or a constructed-response pattern to it, or record why end-of-lesson evidence need not detect it.",
+        "evidence": [
+          {
+            "document": "CANDIDATE",
+            "pointer": "/misconceptions/2",
+            "valueSha256": "4b1cef65a4b72362bdedc4af5e1a2d493924e6d5ee284dfb9c076862a8939c7d"
+          }
+        ],
+        "confidence": 1,
+        "requiresHumanConfirmation": false,
+        "layer": "LIBERIALEARN_MASTERY",
+        "dimension": "CONCEPTUAL_MASTERY"
+      },
+      {
+        "id": "det-mismap-g7-pv-exit-1-0",
+        "code": "MISCONCEPTION_MAPPING_INCONSISTENT",
+        "criterionId": "LM-CON-1",
+        "severity": "MAJOR",
+        "method": "DETERMINISTIC",
+        "statement": "Distractor 0 (\"600\") of g7-pv-exit-1 is mapped to mc-digit-not-value (DIGIT_INSTEAD_OF_VALUE), but that error does not produce this option. It is produced by: PLACE_SHIFT.",
+        "recommendation": "Remap to a misconception for PLACE_SHIFT (add one to the catalogue if needed), or replace the distractor.",
+        "evidence": [
+          {
+            "document": "ASSESSMENT",
+            "pointer": "/items/0/distractorMisconceptions/0",
+            "valueSha256": "3336d6cd51b1e3485a4cbfc85c8a00e7d755027679698c161e5665d1f9f76667"
+          },
+          {
+            "document": "ASSESSMENT",
+            "pointer": "/items/0/item/options/0",
+            "valueSha256": "b08eab77f8e1fded9209737f000550f19ae422a6b83a26fdfcc517d57e4ba117"
+          },
+          {
+            "document": "ASSESSMENT",
+            "pointer": "/items/0/verification",
+            "valueSha256": "256a186ef9879dc211a152e8acd1bb98f7e7ca806db35a821684862163b65a03"
+          }
+        ],
+        "confidence": 1,
+        "requiresHumanConfirmation": false,
+        "layer": "LIBERIALEARN_MASTERY",
+        "dimension": "CONCEPTUAL_MASTERY"
+      },
+      {
+        "id": "det-mismap-g7-pv-exit-1-1",
+        "code": "MISCONCEPTION_MAPPING_INCONSISTENT",
+        "criterionId": "LM-CON-1",
+        "severity": "MAJOR",
+        "method": "DETERMINISTIC",
+        "statement": "Distractor 1 (\"6,000\") of g7-pv-exit-1 is mapped to mc-digit-not-value (DIGIT_INSTEAD_OF_VALUE), but that error does not produce this option. It is produced by: PLACE_SHIFT.",
+        "recommendation": "Remap to a misconception for PLACE_SHIFT (add one to the catalogue if needed), or replace the distractor.",
+        "evidence": [
+          {
+            "document": "ASSESSMENT",
+            "pointer": "/items/0/distractorMisconceptions/1",
+            "valueSha256": "3336d6cd51b1e3485a4cbfc85c8a00e7d755027679698c161e5665d1f9f76667"
+          },
+          {
+            "document": "ASSESSMENT",
+            "pointer": "/items/0/item/options/1",
+            "valueSha256": "6f6f1a6383794fff43dce60cb1fa43a0fbccc40249a6f8dbc65a70c74aba1b52"
+          },
+          {
+            "document": "ASSESSMENT",
+            "pointer": "/items/0/verification",
+            "valueSha256": "256a186ef9879dc211a152e8acd1bb98f7e7ca806db35a821684862163b65a03"
+          }
+        ],
+        "confidence": 1,
+        "requiresHumanConfirmation": false,
+        "layer": "LIBERIALEARN_MASTERY",
+        "dimension": "CONCEPTUAL_MASTERY"
+      },
+      {
+        "id": "det-mismap-g7-pv-exit-1-3",
+        "code": "MISCONCEPTION_MAPPING_INCONSISTENT",
+        "criterionId": "LM-CON-1",
+        "severity": "MAJOR",
+        "method": "DETERMINISTIC",
+        "statement": "Distractor 3 (\"600,000\") of g7-pv-exit-1 is mapped to mc-digit-not-value (DIGIT_INSTEAD_OF_VALUE), but that error does not produce this option. It is produced by: PLACE_SHIFT.",
+        "recommendation": "Remap to a misconception for PLACE_SHIFT (add one to the catalogue if needed), or replace the distractor.",
+        "evidence": [
+          {
+            "document": "ASSESSMENT",
+            "pointer": "/items/0/distractorMisconceptions/3",
+            "valueSha256": "3336d6cd51b1e3485a4cbfc85c8a00e7d755027679698c161e5665d1f9f76667"
+          },
+          {
+            "document": "ASSESSMENT",
+            "pointer": "/items/0/item/options/3",
+            "valueSha256": "b11c3c555810d1d87c00bf7d65f72a63412f92a631b8112b5ceeda578b10f26c"
+          },
+          {
+            "document": "ASSESSMENT",
+            "pointer": "/items/0/verification",
+            "valueSha256": "256a186ef9879dc211a152e8acd1bb98f7e7ca806db35a821684862163b65a03"
+          }
+        ],
+        "confidence": 1,
+        "requiresHumanConfirmation": false,
+        "layer": "LIBERIALEARN_MASTERY",
+        "dimension": "CONCEPTUAL_MASTERY"
+      },
+      {
+        "id": "det-mismap-g7-pv-exit-2-1",
+        "code": "MISCONCEPTION_MAPPING_INCONSISTENT",
+        "criterionId": "LM-CON-1",
+        "severity": "MAJOR",
+        "method": "DETERMINISTIC",
+        "statement": "Distractor 1 (\"0.8\") of g7-pv-exit-2 is mapped to mc-digit-not-value (DIGIT_INSTEAD_OF_VALUE), but that error does not produce this option. It is produced by: PLACE_SHIFT.",
+        "recommendation": "Remap to a misconception for PLACE_SHIFT (add one to the catalogue if needed), or replace the distractor.",
+        "evidence": [
+          {
+            "document": "ASSESSMENT",
+            "pointer": "/items/1/distractorMisconceptions/1",
+            "valueSha256": "3336d6cd51b1e3485a4cbfc85c8a00e7d755027679698c161e5665d1f9f76667"
+          },
+          {
+            "document": "ASSESSMENT",
+            "pointer": "/items/1/item/options/1",
+            "valueSha256": "07d60e4fca0c599e4bec875eddb9d7a000f97e53180818f6524ac51ed0fe70e7"
+          },
+          {
+            "document": "ASSESSMENT",
+            "pointer": "/items/1/verification",
+            "valueSha256": "108c2db4528ebbc49c7b035d0cddb0e69f02822dd5511948ee6a5c64f5aa5195"
+          }
+        ],
+        "confidence": 1,
+        "requiresHumanConfirmation": false,
+        "layer": "LIBERIALEARN_MASTERY",
+        "dimension": "CONCEPTUAL_MASTERY"
+      },
+      {
+        "id": "det-mismap-g7-pv-exit-2-2",
+        "code": "MISCONCEPTION_MAPPING_INCONSISTENT",
+        "criterionId": "LM-CON-1",
+        "severity": "MAJOR",
+        "method": "DETERMINISTIC",
+        "statement": "Distractor 2 (\"0.08\") of g7-pv-exit-2 is mapped to mc-digit-not-value (DIGIT_INSTEAD_OF_VALUE), but that error does not produce this option. It is produced by: PLACE_SHIFT.",
+        "recommendation": "Remap to a misconception for PLACE_SHIFT (add one to the catalogue if needed), or replace the distractor.",
+        "evidence": [
+          {
+            "document": "ASSESSMENT",
+            "pointer": "/items/1/distractorMisconceptions/2",
+            "valueSha256": "3336d6cd51b1e3485a4cbfc85c8a00e7d755027679698c161e5665d1f9f76667"
+          },
+          {
+            "document": "ASSESSMENT",
+            "pointer": "/items/1/item/options/2",
+            "valueSha256": "8b9f7be2965766b9ffa8f1fba93e02c1ffb21314654360f79e21da99f2cdbbb7"
+          },
+          {
+            "document": "ASSESSMENT",
+            "pointer": "/items/1/verification",
+            "valueSha256": "108c2db4528ebbc49c7b035d0cddb0e69f02822dd5511948ee6a5c64f5aa5195"
+          }
+        ],
+        "confidence": 1,
+        "requiresHumanConfirmation": false,
+        "layer": "LIBERIALEARN_MASTERY",
+        "dimension": "CONCEPTUAL_MASTERY"
+      },
+      {
+        "id": "det-mismap-g7-pv-exit-4-1",
+        "code": "MISCONCEPTION_MAPPING_INCONSISTENT",
+        "criterionId": "LM-CON-1",
+        "severity": "MAJOR",
+        "method": "DETERMINISTIC",
+        "statement": "Distractor 1 (\"5 + 0.03 + 0.007\") of g7-pv-exit-4 is mapped to mc-digit-not-value (DIGIT_INSTEAD_OF_VALUE), but that error does not produce this option. It is produced by: PLACE_SHIFT.",
+        "recommendation": "Remap to a misconception for PLACE_SHIFT (add one to the catalogue if needed), or replace the distractor.",
+        "evidence": [
+          {
+            "document": "ASSESSMENT",
+            "pointer": "/items/3/distractorMisconceptions/1",
+            "valueSha256": "3336d6cd51b1e3485a4cbfc85c8a00e7d755027679698c161e5665d1f9f76667"
+          },
+          {
+            "document": "ASSESSMENT",
+            "pointer": "/items/3/item/options/1",
+            "valueSha256": "063b40a809b287697a4392da5b96270978a5f6df7e0486f2034323d65da849e7"
+          },
+          {
+            "document": "ASSESSMENT",
+            "pointer": "/items/3/verification",
+            "valueSha256": "9130249f00c33c9be4c8d10a66bdd92a09231fdb72ef508753967f54440b43bc"
+          }
+        ],
+        "confidence": 1,
+        "requiresHumanConfirmation": false,
+        "layer": "LIBERIALEARN_MASTERY",
+        "dimension": "CONCEPTUAL_MASTERY"
+      },
+      {
+        "id": "det-mismap-g7-pv-exit-5-0",
+        "code": "MISCONCEPTION_MAPPING_INCONSISTENT",
+        "criterionId": "LM-CON-1",
+        "severity": "MAJOR",
+        "method": "DETERMINISTIC",
+        "statement": "Distractor 0 (\"0.37, 0.307, 0.3\") of g7-pv-exit-5 is mapped to mc-longer-decimal-bigger (LONGER_DECIMAL_GREATER), but that error does not produce this option. It is produced by: ORDER_REVERSED.",
+        "recommendation": "Remap to a misconception for ORDER_REVERSED (add one to the catalogue if needed), or replace the distractor.",
+        "evidence": [
+          {
+            "document": "ASSESSMENT",
+            "pointer": "/items/4/distractorMisconceptions/0",
+            "valueSha256": "7939241e13cd5649357da4d60871ca6e7f4c4afc4e8766d029d6e461548f00ce"
+          },
+          {
+            "document": "ASSESSMENT",
+            "pointer": "/items/4/item/options/0",
+            "valueSha256": "d4fd72bd912f608c7579dcf92abb5ecb1f81b03297ea6a2234a48ea7fcea483b"
+          },
+          {
+            "document": "ASSESSMENT",
+            "pointer": "/items/4/verification",
+            "valueSha256": "a188eeeec009b38bb91c2969f07d6fcbf21139683d903fed905499c7e90f7646"
+          }
+        ],
+        "confidence": 1,
+        "requiresHumanConfirmation": false,
+        "layer": "LIBERIALEARN_MASTERY",
+        "dimension": "CONCEPTUAL_MASTERY"
+      },
+      {
+        "id": "det-mismap-g7-pv-exit-5-2",
+        "code": "MISCONCEPTION_MAPPING_INCONSISTENT",
+        "criterionId": "LM-CON-1",
+        "severity": "MAJOR",
+        "method": "DETERMINISTIC",
+        "statement": "Distractor 2 (\"0.307, 0.3, 0.37\") of g7-pv-exit-5 is mapped to mc-longer-decimal-bigger (LONGER_DECIMAL_GREATER), but that error does not produce this option. No modelled error produces it.",
+        "recommendation": "Replace the distractor with one a learner holding the mapped misconception would choose, or remove the mapping.",
+        "evidence": [
+          {
+            "document": "ASSESSMENT",
+            "pointer": "/items/4/distractorMisconceptions/2",
+            "valueSha256": "7939241e13cd5649357da4d60871ca6e7f4c4afc4e8766d029d6e461548f00ce"
+          },
+          {
+            "document": "ASSESSMENT",
+            "pointer": "/items/4/item/options/2",
+            "valueSha256": "477787b76996b550eb7a633a5d3a603bcabbcdb6aa521aff8f15bc0a6070681d"
+          },
+          {
+            "document": "ASSESSMENT",
+            "pointer": "/items/4/verification",
+            "valueSha256": "a188eeeec009b38bb91c2969f07d6fcbf21139683d903fed905499c7e90f7646"
+          }
+        ],
+        "confidence": 1,
+        "requiresHumanConfirmation": false,
+        "layer": "LIBERIALEARN_MASTERY",
+        "dimension": "CONCEPTUAL_MASTERY"
+      },
+      {
+        "id": "det-mismap-g7-pv-exit-6-0",
+        "code": "MISCONCEPTION_MAPPING_INCONSISTENT",
+        "criterionId": "LM-CON-1",
+        "severity": "MAJOR",
+        "method": "DETERMINISTIC",
+        "statement": "Distractor 0 (\"6,009,999\") of g7-pv-exit-6 is mapped to mc-longer-decimal-bigger (LONGER_DECIMAL_GREATER), but that error does not produce this option. No modelled error produces it.",
+        "recommendation": "Replace the distractor with one a learner holding the mapped misconception would choose, or remove the mapping.",
+        "evidence": [
+          {
+            "document": "ASSESSMENT",
+            "pointer": "/items/5/distractorMisconceptions/0",
+            "valueSha256": "7939241e13cd5649357da4d60871ca6e7f4c4afc4e8766d029d6e461548f00ce"
+          },
+          {
+            "document": "ASSESSMENT",
+            "pointer": "/items/5/item/options/0",
+            "valueSha256": "a3950abdd802dfc9ed20180c2797cd76e3e3fb013a96639caee73eef210c8c5c"
+          },
+          {
+            "document": "ASSESSMENT",
+            "pointer": "/items/5/verification",
+            "valueSha256": "234c34c34806dfdec5a1d34b3967765875a3f235b07a59dff94861edff449734"
+          }
+        ],
+        "confidence": 1,
+        "requiresHumanConfirmation": false,
+        "layer": "LIBERIALEARN_MASTERY",
+        "dimension": "CONCEPTUAL_MASTERY"
+      },
+      {
+        "id": "det-mismap-g7-pv-exit-6-2",
+        "code": "MISCONCEPTION_MAPPING_INCONSISTENT",
+        "criterionId": "LM-CON-1",
+        "severity": "MAJOR",
+        "method": "DETERMINISTIC",
+        "statement": "Distractor 2 (\"They are equal\") of g7-pv-exit-6 is mapped to mc-longer-decimal-bigger (LONGER_DECIMAL_GREATER), but that error does not produce this option. No modelled error produces it.",
+        "recommendation": "Replace the distractor with one a learner holding the mapped misconception would choose, or remove the mapping.",
+        "evidence": [
+          {
+            "document": "ASSESSMENT",
+            "pointer": "/items/5/distractorMisconceptions/2",
+            "valueSha256": "7939241e13cd5649357da4d60871ca6e7f4c4afc4e8766d029d6e461548f00ce"
+          },
+          {
+            "document": "ASSESSMENT",
+            "pointer": "/items/5/item/options/2",
+            "valueSha256": "888a3d3b86996f3fbf88dc850006489c2e741dac9c5ab4f29b241f256863e9b1"
+          },
+          {
+            "document": "ASSESSMENT",
+            "pointer": "/items/5/verification",
+            "valueSha256": "234c34c34806dfdec5a1d34b3967765875a3f235b07a59dff94861edff449734"
+          }
+        ],
+        "confidence": 1,
+        "requiresHumanConfirmation": false,
+        "layer": "LIBERIALEARN_MASTERY",
+        "dimension": "CONCEPTUAL_MASTERY"
+      },
+      {
+        "id": "det-mastery-assistance",
+        "code": "MASTERY_ITEMS_CARRY_ASSISTANCE",
+        "criterionId": "LM-ASM-2",
+        "severity": "MINOR",
+        "method": "DETERMINISTIC",
+        "statement": "6 end-of-lesson item(s) (g7-pv-exit-1, g7-pv-exit-2, g7-pv-exit-3, g7-pv-exit-4, g7-pv-exit-5, g7-pv-exit-6) carry a hint and/or worked example; if either is shown before the response, the response is not independent evidence.",
+        "recommendation": "Withhold hints and worked examples until after the scored response, and record any assistance in the governed evidence metadata.",
+        "evidence": [
+          {
+            "document": "ASSESSMENT",
+            "pointer": "/items/0/item",
+            "valueSha256": "83a7caf5e819029ad2e4df79b796699208bfdfd9b0c8e0e3297a6b4d751761a9"
+          },
+          {
+            "document": "ASSESSMENT",
+            "pointer": "/items/1/item",
+            "valueSha256": "f472bfcf0aa0960efa7b8a6340b661614ae81a0cb5518808a85fdab5374494bd"
+          },
+          {
+            "document": "ASSESSMENT",
+            "pointer": "/items/2/item",
+            "valueSha256": "3d1d98033510d7fd65eac459a08f034e0d658372cb035c7221411768b4a19004"
+          },
+          {
+            "document": "ASSESSMENT",
+            "pointer": "/items/3/item",
+            "valueSha256": "a538ad15ec25bb296937fab3155623ae0aa7c80aa99945595b0a9898339b2147"
+          },
+          {
+            "document": "ASSESSMENT",
+            "pointer": "/items/4/item",
+            "valueSha256": "7f0da1595e595b5979e1d7cbf647afbbaca012cc4bac5a54b0feacf34452b04d"
+          },
+          {
+            "document": "ASSESSMENT",
+            "pointer": "/items/5/item",
+            "valueSha256": "9f6688a0fe13d0d948b93a260bd79bb5a48e2096a77a3a516ac7cb7f056dbfb8"
+          }
+        ],
+        "confidence": 1,
+        "requiresHumanConfirmation": true,
+        "layer": "LIBERIALEARN_MASTERY",
+        "dimension": "ASSESSMENT"
+      },
+      {
+        "id": "ai-m1-reasoning-left-unscored",
+        "code": "STRONGEST_REASONING_TASK_UNSCORED",
+        "criterionId": "LM-RSN-1",
+        "severity": "MAJOR",
+        "method": "AI_JUDGMENT",
+        "statement": "The lesson's only unscaffolded explanation task is in the reflect scene, recorded as REFLECTION evidence, so the best reasoning evidence the lesson collects never counts toward mastery. The end-of-lesson evidence is six selected-response items.",
+        "recommendation": "Keep the reflection, and add a rubric-scored explanation task to the end-of-lesson evidence using new numbers (proposed task pm-r2), so explaining place value is part of the mastery decision.",
+        "evidence": [
+          {
+            "document": "CANDIDATE",
+            "pointer": "/scenes/14/interaction/prompts/0/prompt",
+            "quote": "Explain to a friend why the 4 in 40,000 and the 4 in 0.04 are worth different amounts.",
+            "valueSha256": "ba29c891427ad77f27d9b93414e90f7750afcea74aa7ea3ab28a57f5d7a90dfd"
+          },
+          {
+            "document": "CANDIDATE",
+            "pointer": "/scenes/14/evidence/kind",
+            "quote": "REFLECTION",
+            "valueSha256": "097fcafb48c49e8939e4ef7d06df63190801ec50a6e9436ab36b79c1b0fd674e"
+          },
+          {
+            "document": "CANDIDATE",
+            "pointer": "/assessmentRequests/0/interaction",
+            "quote": "SINGLE_CHOICE",
+            "valueSha256": "eca366e39a1f6ebb11965ca92ab83ddce0565909a990a71e1675b655d205eb8c"
+          }
+        ],
+        "confidence": 0.9,
+        "requiresHumanConfirmation": true,
+        "layer": "LIBERIALEARN_MASTERY",
+        "dimension": "REASONING"
+      },
+      {
+        "id": "ai-m2-place-shift-uncatalogued",
+        "code": "DOMINANT_ERROR_UNCATALOGUED",
+        "criterionId": "LM-CON-1",
+        "severity": "MAJOR",
+        "method": "AI_JUDGMENT",
+        "statement": "Most digit-value distractors are the right digit in the wrong place (600, 6,000 and 600,000 for a true value of 60,000), but the catalogue has no misconception for a place shift. They are filed under mc-digit-not-value, which describes giving the digit itself.",
+        "recommendation": "Add a catalogue entry for the place-shift error (proposed mc-place-shift) and remap those distractors to it, so a teacher can tell a learner who miscounts places from one who ignores place altogether.",
+        "evidence": [
+          {
+            "document": "CANDIDATE",
+            "pointer": "/misconceptions/0/description",
+            "quote": "Gives the digit itself (3) instead of its value in the number (300,000).",
+            "valueSha256": "8ee51e08b2513ed173d00049248cb3077d9afa96f45cfa5785db71218ec9cf0d"
+          },
+          {
+            "document": "ASSESSMENT",
+            "pointer": "/items/0/item/options",
+            "quote": "600,000",
+            "valueSha256": "c94c3f432ab4abd890d380ba6c57be74c6cb3a7c3692fabbbdbe081d488d127e"
+          },
+          {
+            "document": "ASSESSMENT",
+            "pointer": "/items/0/distractorMisconceptions/3",
+            "quote": "mc-digit-not-value",
+            "valueSha256": "3336d6cd51b1e3485a4cbfc85c8a00e7d755027679698c161e5665d1f9f76667"
+          }
+        ],
+        "confidence": 0.9,
+        "requiresHumanConfirmation": true,
+        "layer": "LIBERIALEARN_MASTERY",
+        "dimension": "CONCEPTUAL_MASTERY"
+      },
+      {
+        "id": "ai-m3-whole-number-item-decimal-misconception",
+        "code": "ITEM_MISCONCEPTION_DOMAIN_MISMATCH",
+        "criterionId": "LM-CON-1",
+        "severity": "MAJOR",
+        "method": "AI_JUDGMENT",
+        "statement": "g7-pv-exit-6 compares two whole numbers, but both of its mapped distractors name mc-longer-decimal-bigger, a decimal misconception. A learner who picks 6,009,999 is more likely judging by the larger digits (the run of nines) than by decimal length.",
+        "recommendation": "Map option 0 to a new whole-number comparison misconception (proposed mc-compare-by-digits) and leave 'They are equal' unmapped or map it after classroom evidence; or replace the item with a decimal comparison that the mapped misconception actually predicts.",
+        "evidence": [
+          {
+            "document": "ASSESSMENT",
+            "pointer": "/items/5/item/prompt",
+            "quote": "Which number is greater: 6,009,999 or 6,010,000?",
+            "valueSha256": "56f3c673e7140b5d80ab1a4e70232df157f25154e97ef2d0c0e561f3aa286568"
+          },
+          {
+            "document": "CANDIDATE",
+            "pointer": "/misconceptions/3/description",
+            "quote": "Thinks a decimal with more digits is greater",
+            "valueSha256": "7444cba69d18247f84248b40aa97b5e5801253d48adbcf63f1aa20be8b8867bb"
+          }
+        ],
+        "confidence": 0.85,
+        "requiresHumanConfirmation": true,
+        "layer": "LIBERIALEARN_MASTERY",
+        "dimension": "CONCEPTUAL_MASTERY"
+      },
+      {
+        "id": "ai-m4-mastery-depends-on-unapproved-scope",
+        "code": "MASTERY_EVIDENCE_DEPENDS_ON_UNAPPROVED_SCOPE",
+        "criterionId": "NF-ALN-3",
+        "severity": "BLOCKING",
+        "method": "AI_JUDGMENT",
+        "statement": "Three of the six exit items use millions, which the package records as an unapproved LiberiaLearn scope extension. If the extension is declined, each objective is left with one end-of-lesson item, which is too thin a basis for a mastery decision.",
+        "recommendation": "Ask the curriculum owner for the scope decision before item review. In the meantime, add constructed-response mastery tasks within MOE scope (proposed pm-c1, pm-c2, pm-r1) so mastery evidence survives either decision.",
+        "evidence": [
+          {
+            "document": "CANDIDATE",
+            "pointer": "/scenes/0/content/body",
+            "quote": "from the millions down to the thousandths",
+            "valueSha256": "93fe513ac6001b9dfb3467f89c24994609a0fac951159551dcf701e43baa1ffd"
+          },
+          {
+            "document": "ASSESSMENT",
+            "pointer": "/items/0/item/prompt",
+            "quote": "What is the value of the 6 in 3,462,105?",
+            "valueSha256": "634732acfcc5dd8721bcd54ff78945584788172b2458dd8cbded300d745b7f91"
+          },
+          {
+            "document": "ASSESSMENT",
+            "pointer": "/items/2/item/prompt",
+            "quote": "Which number is seven million, three hundred five thousand, forty?",
+            "valueSha256": "34e551d8c60f0f049d47432b7fad8030e2a23887aa597a776a8cb0b2122d1a0e"
+          },
+          {
+            "document": "ASSESSMENT",
+            "pointer": "/items/5/item/prompt",
+            "quote": "Which number is greater: 6,009,999 or 6,010,000?",
+            "valueSha256": "56f3c673e7140b5d80ab1a4e70232df157f25154e97ef2d0c0e561f3aa286568"
+          }
+        ],
+        "confidence": 0.8,
+        "requiresHumanConfirmation": true,
+        "layer": "NATIONAL_FOUNDATION",
+        "dimension": "ALIGNMENT"
+      },
+      {
+        "id": "ai-m5-warm-up-is-not-a-diagnostic",
+        "code": "WARM_UP_NOT_DIAGNOSTIC",
+        "criterionId": "NF-PRG-1",
+        "severity": "MINOR",
+        "method": "AI_JUDGMENT",
+        "statement": "The warm-up is the natural place to check prerequisites, but it is fully scaffolded and unmarked, has two items, does not check the multiply-by-10, 100 and 1,000 prerequisite, and gives no route for a learner who answers wrongly.",
+        "recommendation": "Turn the warm-up into a three-item diagnostic, one item per prerequisite, each with a fallback route (proposed pm-d0 to pm-d2). It can stay unmarked for the learner while still informing the teacher.",
+        "evidence": [
+          {
+            "document": "CANDIDATE",
+            "pointer": "/scenes/2/content/body",
+            "quote": "These answers are not marked.",
+            "valueSha256": "ce435fe7e4ca33145955259ffd5fcb89f7a9e429ada40662e7845c1daa6c9725"
+          },
+          {
+            "document": "CANDIDATE",
+            "pointer": "/prerequisiteAssumptions/2",
+            "quote": "Can multiply a single digit by 10, 100 and 1,000.",
+            "valueSha256": "7b503b495473c2d52bfcddaba999076ecfcc030bb5cd23a26f6451f535b253bb"
+          }
+        ],
+        "confidence": 0.85,
+        "requiresHumanConfirmation": true,
+        "layer": "NATIONAL_FOUNDATION",
+        "dimension": "INSTRUCTIONAL_PROGRESSION"
+      }
+    ],
+    "blueprint": {
+      "version": "liberialearn-assessment-blueprint/1.0.0",
+      "family": "MATH",
+      "rules": [
+        {
+          "ruleId": "BP-COVERAGE",
+          "criterionId": "NF-ASM-1",
+          "layer": "NATIONAL_FOUNDATION",
+          "blocking": true,
+          "requirement": "Every objective has end-of-lesson mastery evidence at scaffold NONE.",
+          "missing": [],
+          "detail": "6 end-of-lesson mastery task(s).",
+          "met": true
+        },
+        {
+          "ruleId": "BP-PREREQUISITE-DIAGNOSTIC",
+          "criterionId": "NF-PRG-1",
+          "layer": "NATIONAL_FOUNDATION",
+          "blocking": true,
+          "requirement": "Every stated prerequisite has a diagnostic task with a fallback route.",
+          "missing": [
+            "prerequisite[0]",
+            "prerequisite[1]",
+            "prerequisite[2]"
+          ],
+          "detail": "0 of 3 prerequisite(s) diagnosed.",
+          "met": false
+        },
+        {
+          "ruleId": "BP-INDEPENDENT-PRACTICE",
+          "criterionId": "LM-PRG-1",
+          "layer": "LIBERIALEARN_MASTERY",
+          "blocking": true,
+          "requirement": "Every objective reaches unscaffolded practice before mastery evidence.",
+          "missing": [],
+          "detail": "Formative IN_LESSON tasks at scaffold NONE.",
+          "met": true
+        },
+        {
+          "ruleId": "BP-PRODUCTION",
+          "criterionId": "LM-ASM-1",
+          "layer": "LIBERIALEARN_MASTERY",
+          "blocking": true,
+          "requirement": "Every objective has mastery evidence that is a produced answer or justification (not a selected option).",
+          "missing": [
+            "ll-g7-math-place-value-read-write",
+            "ll-g7-math-place-value-digit-value",
+            "ll-g7-math-place-value-compare"
+          ],
+          "detail": "Accepted kinds: SHORT_CONSTRUCTED_RESPONSE, EXTENDED_REASONING, PERFORMANCE_TASK.",
+          "met": false
+        },
+        {
+          "ruleId": "BP-REASONING",
+          "criterionId": "LM-RSN-1",
+          "layer": "LIBERIALEARN_MASTERY",
+          "blocking": true,
+          "requirement": "At least one unscaffolded, rubric-scored reasoning or justification task.",
+          "missing": [
+            "EXTENDED_REASONING"
+          ],
+          "detail": "0 reasoning task(s) at mastery.",
+          "met": false
+        },
+        {
+          "ruleId": "BP-SELECTED-SHARE",
+          "criterionId": "LM-ASM-1",
+          "layer": "LIBERIALEARN_MASTERY",
+          "blocking": true,
+          "requirement": "Selected response is at most 60% of end-of-lesson mastery evidence.",
+          "missing": [
+            "SELECTED_RESPONSE_SHARE"
+          ],
+          "detail": "6/6 selected response (100%).",
+          "met": false
+        },
+        {
+          "ruleId": "BP-RETENTION",
+          "criterionId": "LM-ASM-3",
+          "layer": "LIBERIALEARN_MASTERY",
+          "blocking": true,
+          "requirement": "Every objective has delayed retrieval at least 7 days after the lesson.",
+          "missing": [
+            "ll-g7-math-place-value-read-write",
+            "ll-g7-math-place-value-digit-value",
+            "ll-g7-math-place-value-compare"
+          ],
+          "detail": "Spaced retrieval, unscaffolded.",
+          "met": false
+        },
+        {
+          "ruleId": "BP-TRANSFER",
+          "criterionId": "GE-TRN-1",
+          "layer": "GLOBAL_EXCELLENCE",
+          "blocking": true,
+          "requirement": "At least one unscaffolded transfer task in a context the lesson did not rehearse.",
+          "missing": [
+            "TRANSFER_TASK"
+          ],
+          "detail": "Near or far transfer, NEW context.",
+          "met": false
+        },
+        {
+          "ruleId": "BP-EXTENSION",
+          "criterionId": "GE-EXT-1",
+          "layer": "GLOBAL_EXCELLENCE",
+          "blocking": true,
+          "requirement": "An optional, non-gating extension task.",
+          "missing": [
+            "EXTENSION"
+          ],
+          "detail": "Extension is optional and never required for mastery.",
+          "met": false
+        }
+      ],
+      "selectedResponseShareOfMastery": 1,
+      "blockingGaps": [
+        "BP-PREREQUISITE-DIAGNOSTIC",
+        "BP-PRODUCTION",
+        "BP-REASONING",
+        "BP-SELECTED-SHARE",
+        "BP-RETENTION",
+        "BP-TRANSFER",
+        "BP-EXTENSION"
+      ]
+    },
+    "projectedBlueprintWithPlan": {
+      "planId": "excellence-plan-g7-math-place-value-0.1.0",
+      "planSha256": "8f296bdd8d8aeb8a86a899e845d4240bf6e50e4cb1a31aa251eef9d37d859287",
+      "planReviewStatus": "UNREVIEWED_REQUIRES_INDEPENDENT_REVIEW",
+      "planAuthoredByReviewer": true,
+      "supersededCandidateTaskIds": [],
+      "evaluation": {
+        "version": "liberialearn-assessment-blueprint/1.0.0",
+        "family": "MATH",
+        "rules": [
+          {
+            "ruleId": "BP-COVERAGE",
+            "criterionId": "NF-ASM-1",
+            "layer": "NATIONAL_FOUNDATION",
+            "blocking": true,
+            "requirement": "Every objective has end-of-lesson mastery evidence at scaffold NONE.",
+            "missing": [],
+            "detail": "11 end-of-lesson mastery task(s).",
+            "met": true
+          },
+          {
+            "ruleId": "BP-PREREQUISITE-DIAGNOSTIC",
+            "criterionId": "NF-PRG-1",
+            "layer": "NATIONAL_FOUNDATION",
+            "blocking": true,
+            "requirement": "Every stated prerequisite has a diagnostic task with a fallback route.",
+            "missing": [],
+            "detail": "3 of 3 prerequisite(s) diagnosed.",
+            "met": true
+          },
+          {
+            "ruleId": "BP-INDEPENDENT-PRACTICE",
+            "criterionId": "LM-PRG-1",
+            "layer": "LIBERIALEARN_MASTERY",
+            "blocking": true,
+            "requirement": "Every objective reaches unscaffolded practice before mastery evidence.",
+            "missing": [],
+            "detail": "Formative IN_LESSON tasks at scaffold NONE.",
+            "met": true
+          },
+          {
+            "ruleId": "BP-PRODUCTION",
+            "criterionId": "LM-ASM-1",
+            "layer": "LIBERIALEARN_MASTERY",
+            "blocking": true,
+            "requirement": "Every objective has mastery evidence that is a produced answer or justification (not a selected option).",
+            "missing": [],
+            "detail": "Accepted kinds: SHORT_CONSTRUCTED_RESPONSE, EXTENDED_REASONING, PERFORMANCE_TASK.",
+            "met": true
+          },
+          {
+            "ruleId": "BP-REASONING",
+            "criterionId": "LM-RSN-1",
+            "layer": "LIBERIALEARN_MASTERY",
+            "blocking": true,
+            "requirement": "At least one unscaffolded, rubric-scored reasoning or justification task.",
+            "missing": [],
+            "detail": "2 reasoning task(s) at mastery.",
+            "met": true
+          },
+          {
+            "ruleId": "BP-SELECTED-SHARE",
+            "criterionId": "LM-ASM-1",
+            "layer": "LIBERIALEARN_MASTERY",
+            "blocking": true,
+            "requirement": "Selected response is at most 60% of end-of-lesson mastery evidence.",
+            "missing": [],
+            "detail": "6/11 selected response (55%).",
+            "met": true
+          },
+          {
+            "ruleId": "BP-RETENTION",
+            "criterionId": "LM-ASM-3",
+            "layer": "LIBERIALEARN_MASTERY",
+            "blocking": true,
+            "requirement": "Every objective has delayed retrieval at least 7 days after the lesson.",
+            "missing": [],
+            "detail": "Spaced retrieval, unscaffolded.",
+            "met": true
+          },
+          {
+            "ruleId": "BP-TRANSFER",
+            "criterionId": "GE-TRN-1",
+            "layer": "GLOBAL_EXCELLENCE",
+            "blocking": true,
+            "requirement": "At least one unscaffolded transfer task in a context the lesson did not rehearse.",
+            "missing": [],
+            "detail": "Near or far transfer, NEW context.",
+            "met": true
+          },
+          {
+            "ruleId": "BP-EXTENSION",
+            "criterionId": "GE-EXT-1",
+            "layer": "GLOBAL_EXCELLENCE",
+            "blocking": true,
+            "requirement": "An optional, non-gating extension task.",
+            "missing": [],
+            "detail": "Extension is optional and never required for mastery.",
+            "met": true
+          }
+        ],
+        "selectedResponseShareOfMastery": 0.5454545454545454,
+        "blockingGaps": []
+      }
+    },
+    "reportSha256": "895409e42131fd11aca77ded4e5ea14e25672f133c3976e4feb52e3d0733bb98"
+  },
+  "criteria": {
+    "asIs": [
+      {
+        "criterionId": "NF-ALN-1",
+        "layer": "NATIONAL_FOUNDATION",
+        "blocking": true,
+        "rating": "NOT_EVALUATED",
+        "basis": "Requires a qualified human reviewer."
+      },
+      {
+        "criterionId": "NF-ALN-2",
+        "layer": "NATIONAL_FOUNDATION",
+        "blocking": true,
+        "rating": "NOT_EVALUATED",
+        "basis": "No AI finding; advisory judgment is not a MET rating."
+      },
+      {
+        "criterionId": "NF-ALN-3",
+        "layer": "NATIONAL_FOUNDATION",
+        "blocking": true,
+        "rating": "NOT_MET",
+        "basis": "ai-m4-mastery-depends-on-unapproved-scope"
+      },
+      {
+        "criterionId": "NF-ACC-1",
+        "layer": "NATIONAL_FOUNDATION",
+        "blocking": true,
+        "rating": "NOT_EVALUATED",
+        "basis": "No deterministic check covers this criterion yet."
+      },
+      {
+        "criterionId": "NF-ACC-2",
+        "layer": "NATIONAL_FOUNDATION",
+        "blocking": true,
+        "rating": "NOT_EVALUATED",
+        "basis": "Requires a qualified human reviewer."
+      },
+      {
+        "criterionId": "NF-PRG-1",
+        "layer": "NATIONAL_FOUNDATION",
+        "blocking": true,
+        "rating": "NOT_MET",
+        "basis": "BP-PREREQUISITE-DIAGNOSTIC, det-prereq-0, det-prereq-1, det-prereq-2"
+      },
+      {
+        "criterionId": "NF-ASM-1",
+        "layer": "NATIONAL_FOUNDATION",
+        "blocking": true,
+        "rating": "MET",
+        "basis": "blueprint:BP-COVERAGE"
+      },
+      {
+        "criterionId": "NF-ACS-1",
+        "layer": "NATIONAL_FOUNDATION",
+        "blocking": true,
+        "rating": "NOT_EVALUATED",
+        "basis": "No deterministic check covers this criterion yet."
+      },
+      {
+        "criterionId": "NF-REL-1",
+        "layer": "NATIONAL_FOUNDATION",
+        "blocking": false,
+        "rating": "NOT_EVALUATED",
+        "basis": "Requires a qualified human reviewer."
+      },
+      {
+        "criterionId": "LM-PRG-1",
+        "layer": "LIBERIALEARN_MASTERY",
+        "blocking": true,
+        "rating": "MET",
+        "basis": "blueprint:BP-INDEPENDENT-PRACTICE"
+      },
+      {
+        "criterionId": "LM-CON-1",
+        "layer": "LIBERIALEARN_MASTERY",
+        "blocking": true,
+        "rating": "PARTIALLY_MET",
+        "basis": "det-mc-unassessed-mc-decimal-word-form, det-mismap-g7-pv-exit-1-0, det-mismap-g7-pv-exit-1-1, det-mismap-g7-pv-exit-1-3, det-mismap-g7-pv-exit-2-1, det-mismap-g7-pv-exit-2-2, det-mismap-g7-pv-exit-4-1, det-mismap-g7-pv-exit-5-0, det-mismap-g7-pv-exit-5-2, det-mismap-g7-pv-exit-6-0, det-mismap-g7-pv-exit-6-2, ai-m2-place-shift-uncatalogued, ai-m3-whole-number-item-decimal-misconception"
+      },
+      {
+        "criterionId": "LM-CON-2",
+        "layer": "LIBERIALEARN_MASTERY",
+        "blocking": false,
+        "rating": "NOT_EVALUATED",
+        "basis": "No deterministic check covers this criterion yet."
+      },
+      {
+        "criterionId": "LM-RSN-1",
+        "layer": "LIBERIALEARN_MASTERY",
+        "blocking": true,
+        "rating": "NOT_MET",
+        "basis": "BP-REASONING, det-bp-reasoning"
+      },
+      {
+        "criterionId": "LM-ASM-1",
+        "layer": "LIBERIALEARN_MASTERY",
+        "blocking": true,
+        "rating": "NOT_MET",
+        "basis": "BP-PRODUCTION, BP-SELECTED-SHARE, det-bp-production, det-bp-selected-share"
+      },
+      {
+        "criterionId": "LM-ASM-2",
+        "layer": "LIBERIALEARN_MASTERY",
+        "blocking": true,
+        "rating": "PARTIALLY_MET",
+        "basis": "det-mastery-assistance"
+      },
+      {
+        "criterionId": "LM-ASM-3",
+        "layer": "LIBERIALEARN_MASTERY",
+        "blocking": true,
+        "rating": "NOT_MET",
+        "basis": "BP-RETENTION, det-bp-retention"
+      },
+      {
+        "criterionId": "LM-ACS-1",
+        "layer": "LIBERIALEARN_MASTERY",
+        "blocking": false,
+        "rating": "NOT_EVALUATED",
+        "basis": "Requires a qualified human reviewer."
+      },
+      {
+        "criterionId": "LM-REL-1",
+        "layer": "LIBERIALEARN_MASTERY",
+        "blocking": false,
+        "rating": "NOT_EVALUATED",
+        "basis": "No AI finding; advisory judgment is not a MET rating."
+      },
+      {
+        "criterionId": "GE-RSN-1",
+        "layer": "GLOBAL_EXCELLENCE",
+        "blocking": true,
+        "rating": "NOT_EVALUATED",
+        "basis": "No AI finding; advisory judgment is not a MET rating."
+      },
+      {
+        "criterionId": "GE-TRN-1",
+        "layer": "GLOBAL_EXCELLENCE",
+        "blocking": true,
+        "rating": "NOT_MET",
+        "basis": "BP-TRANSFER, det-bp-transfer"
+      },
+      {
+        "criterionId": "GE-EXT-1",
+        "layer": "GLOBAL_EXCELLENCE",
+        "blocking": true,
+        "rating": "NOT_MET",
+        "basis": "BP-EXTENSION, det-bp-extension"
+      },
+      {
+        "criterionId": "GE-ASM-1",
+        "layer": "GLOBAL_EXCELLENCE",
+        "blocking": true,
+        "rating": "NOT_EVALUATED",
+        "basis": "Requires a qualified human reviewer."
+      },
+      {
+        "criterionId": "GE-ACC-1",
+        "layer": "GLOBAL_EXCELLENCE",
+        "blocking": true,
+        "rating": "NOT_EVALUATED",
+        "basis": "Requires a qualified human reviewer."
+      }
+    ],
+    "blueprintIfPlanAdopted": [
+      {
+        "criterionId": "NF-ALN-1",
+        "layer": "NATIONAL_FOUNDATION",
+        "blocking": true,
+        "rating": "NOT_EVALUATED",
+        "basis": "Requires a qualified human reviewer."
+      },
+      {
+        "criterionId": "NF-ALN-2",
+        "layer": "NATIONAL_FOUNDATION",
+        "blocking": true,
+        "rating": "NOT_EVALUATED",
+        "basis": "No AI finding; advisory judgment is not a MET rating."
+      },
+      {
+        "criterionId": "NF-ALN-3",
+        "layer": "NATIONAL_FOUNDATION",
+        "blocking": true,
+        "rating": "NOT_EVALUATED",
+        "basis": "Requires a qualified human reviewer."
+      },
+      {
+        "criterionId": "NF-ACC-1",
+        "layer": "NATIONAL_FOUNDATION",
+        "blocking": true,
+        "rating": "NOT_EVALUATED",
+        "basis": "No deterministic check covers this criterion yet."
+      },
+      {
+        "criterionId": "NF-ACC-2",
+        "layer": "NATIONAL_FOUNDATION",
+        "blocking": true,
+        "rating": "NOT_EVALUATED",
+        "basis": "Requires a qualified human reviewer."
+      },
+      {
+        "criterionId": "NF-PRG-1",
+        "layer": "NATIONAL_FOUNDATION",
+        "blocking": true,
+        "rating": "MET",
+        "basis": "blueprint:BP-PREREQUISITE-DIAGNOSTIC"
+      },
+      {
+        "criterionId": "NF-ASM-1",
+        "layer": "NATIONAL_FOUNDATION",
+        "blocking": true,
+        "rating": "MET",
+        "basis": "blueprint:BP-COVERAGE"
+      },
+      {
+        "criterionId": "NF-ACS-1",
+        "layer": "NATIONAL_FOUNDATION",
+        "blocking": true,
+        "rating": "NOT_EVALUATED",
+        "basis": "No deterministic check covers this criterion yet."
+      },
+      {
+        "criterionId": "NF-REL-1",
+        "layer": "NATIONAL_FOUNDATION",
+        "blocking": false,
+        "rating": "NOT_EVALUATED",
+        "basis": "Requires a qualified human reviewer."
+      },
+      {
+        "criterionId": "LM-PRG-1",
+        "layer": "LIBERIALEARN_MASTERY",
+        "blocking": true,
+        "rating": "MET",
+        "basis": "blueprint:BP-INDEPENDENT-PRACTICE"
+      },
+      {
+        "criterionId": "LM-CON-1",
+        "layer": "LIBERIALEARN_MASTERY",
+        "blocking": true,
+        "rating": "NOT_EVALUATED",
+        "basis": "No deterministic check covers this criterion yet."
+      },
+      {
+        "criterionId": "LM-CON-2",
+        "layer": "LIBERIALEARN_MASTERY",
+        "blocking": false,
+        "rating": "NOT_EVALUATED",
+        "basis": "No deterministic check covers this criterion yet."
+      },
+      {
+        "criterionId": "LM-RSN-1",
+        "layer": "LIBERIALEARN_MASTERY",
+        "blocking": true,
+        "rating": "MET",
+        "basis": "blueprint:BP-REASONING"
+      },
+      {
+        "criterionId": "LM-ASM-1",
+        "layer": "LIBERIALEARN_MASTERY",
+        "blocking": true,
+        "rating": "MET",
+        "basis": "blueprint:BP-PRODUCTION, blueprint:BP-SELECTED-SHARE"
+      },
+      {
+        "criterionId": "LM-ASM-2",
+        "layer": "LIBERIALEARN_MASTERY",
+        "blocking": true,
+        "rating": "NOT_EVALUATED",
+        "basis": "No deterministic check covers this criterion yet."
+      },
+      {
+        "criterionId": "LM-ASM-3",
+        "layer": "LIBERIALEARN_MASTERY",
+        "blocking": true,
+        "rating": "MET",
+        "basis": "blueprint:BP-RETENTION"
+      },
+      {
+        "criterionId": "LM-ACS-1",
+        "layer": "LIBERIALEARN_MASTERY",
+        "blocking": false,
+        "rating": "NOT_EVALUATED",
+        "basis": "Requires a qualified human reviewer."
+      },
+      {
+        "criterionId": "LM-REL-1",
+        "layer": "LIBERIALEARN_MASTERY",
+        "blocking": false,
+        "rating": "NOT_EVALUATED",
+        "basis": "No AI finding; advisory judgment is not a MET rating."
+      },
+      {
+        "criterionId": "GE-RSN-1",
+        "layer": "GLOBAL_EXCELLENCE",
+        "blocking": true,
+        "rating": "NOT_EVALUATED",
+        "basis": "No AI finding; advisory judgment is not a MET rating."
+      },
+      {
+        "criterionId": "GE-TRN-1",
+        "layer": "GLOBAL_EXCELLENCE",
+        "blocking": true,
+        "rating": "MET",
+        "basis": "blueprint:BP-TRANSFER"
+      },
+      {
+        "criterionId": "GE-EXT-1",
+        "layer": "GLOBAL_EXCELLENCE",
+        "blocking": true,
+        "rating": "MET",
+        "basis": "blueprint:BP-EXTENSION"
+      },
+      {
+        "criterionId": "GE-ASM-1",
+        "layer": "GLOBAL_EXCELLENCE",
+        "blocking": true,
+        "rating": "NOT_EVALUATED",
+        "basis": "Requires a qualified human reviewer."
+      },
+      {
+        "criterionId": "GE-ACC-1",
+        "layer": "GLOBAL_EXCELLENCE",
+        "blocking": true,
+        "rating": "NOT_EVALUATED",
+        "basis": "Requires a qualified human reviewer."
+      }
+    ]
+  },
+  "layers": {
+    "asIs": [
+      {
+        "layer": "NATIONAL_FOUNDATION",
+        "attained": false,
+        "unmetBlocking": [
+          "NF-ALN-1",
+          "NF-ALN-2",
+          "NF-ALN-3",
+          "NF-ACC-1",
+          "NF-ACC-2",
+          "NF-PRG-1",
+          "NF-ACS-1"
+        ],
+        "isLearningEvidence": false
+      },
+      {
+        "layer": "LIBERIALEARN_MASTERY",
+        "attained": false,
+        "unmetBlocking": [
+          "LM-CON-1",
+          "LM-RSN-1",
+          "LM-ASM-1",
+          "LM-ASM-2",
+          "LM-ASM-3"
+        ],
+        "isLearningEvidence": false
+      },
+      {
+        "layer": "GLOBAL_EXCELLENCE",
+        "attained": false,
+        "unmetBlocking": [
+          "GE-RSN-1",
+          "GE-TRN-1",
+          "GE-EXT-1",
+          "GE-ASM-1",
+          "GE-ACC-1"
+        ],
+        "isLearningEvidence": false
+      }
+    ]
+  },
+  "plan": {
+    "planId": "excellence-plan-g7-math-place-value-0.1.0",
+    "notice": "PROPOSED, CANDIDATE ONLY. Written by the same AI reviewer that produced the gap report, so the reviewer may not review it: it needs independent review by a qualified human before any of it is used. Answer keys and rubrics are reviewer-only and must never reach a learner projection, offline package or client bundle.",
+    "status": "PROPOSED_CANDIDATE_ONLY",
+    "revision": {
+      "contentKey": "cv2-cand-g7-math-number-sense-place-value@0.2.0",
+      "candidateSha256": "3f612d907f52f5953d879476a627fde8e9a1c5b3d30d22e171a42a8ccec80c0c"
+    },
+    "authors": [
+      {
+        "kind": "AI",
+        "agentId": "claude-code:curriculum-excellence-v1",
+        "modelFamily": "anthropic-claude",
+        "modelId": "claude-opus-5-5",
+        "sessionId": null
+      }
+    ],
+    "supersedesCandidateTaskIds": [],
+    "tasks": [
+      {
+        "id": "pm-d0",
+        "kind": "PREREQUISITE_DIAGNOSTIC",
+        "prerequisiteIndex": 0,
+        "objectiveIds": [
+          "ll-g7-math-place-value-read-write"
+        ],
+        "scaffold": "NONE",
+        "timing": "PRE_LESSON",
+        "context": "REHEARSED",
+        "scoring": "KEYED",
+        "prompt": "(a) Write 40,306 in words. (b) Write 'twelve thousand, five' in digits.",
+        "key": "(a) forty thousand, three hundred six (b) 12,005",
+        "fallbackRoute": "Before the chart scene, rebuild the thousands period with counters on a paper chart (MOE Grade 4 numeration), then re-check with two similar numbers."
+      },
+      {
+        "id": "pm-d1",
+        "kind": "PREREQUISITE_DIAGNOSTIC",
+        "prerequisiteIndex": 1,
+        "objectiveIds": [
+          "ll-g7-math-place-value-digit-value"
+        ],
+        "scaffold": "NONE",
+        "timing": "PRE_LESSON",
+        "context": "REHEARSED",
+        "scoring": "KEYED",
+        "prompt": "How many tenths are in 0.5? How many hundredths are in 0.5?",
+        "key": "5 tenths; 50 hundredths",
+        "fallbackRoute": "Fold a paper strip into ten equal parts and shade five; then fold each tenth into ten to show 50 hundredths. Re-check with 0.3."
+      },
+      {
+        "id": "pm-d2",
+        "kind": "PREREQUISITE_DIAGNOSTIC",
+        "prerequisiteIndex": 2,
+        "objectiveIds": [
+          "ll-g7-math-place-value-digit-value"
+        ],
+        "scaffold": "NONE",
+        "timing": "PRE_LESSON",
+        "context": "REHEARSED",
+        "scoring": "KEYED",
+        "prompt": "Work out 7 × 10, 7 × 100 and 7 × 1,000.",
+        "key": "70; 700; 7,000",
+        "fallbackRoute": "Do the counter-exchange activity (ten counters become one in the next column) before the ten-times scene, then re-check with 4 × 10, 4 × 100, 4 × 1,000."
+      },
+      {
+        "id": "pm-c1",
+        "kind": "SHORT_CONSTRUCTED_RESPONSE",
+        "objectiveIds": [
+          "ll-g7-math-place-value-read-write"
+        ],
+        "scaffold": "NONE",
+        "timing": "END_OF_LESSON",
+        "context": "REHEARSED",
+        "scoring": "KEYED",
+        "prompt": "Write in standard form: four hundred sixty thousand, three and twenty-five thousandths.",
+        "key": "460,003.025",
+        "targetsMisconceptions": [
+          "mc-zero-placeholder",
+          "mc-decimal-word-form"
+        ],
+        "note": "Stays within MOE scope (hundred thousands and thousandths), so it survives a decision against the millions extension."
+      },
+      {
+        "id": "pm-c2",
+        "kind": "SHORT_CONSTRUCTED_RESPONSE",
+        "objectiveIds": [
+          "ll-g7-math-place-value-digit-value"
+        ],
+        "scaffold": "NONE",
+        "timing": "END_OF_LESSON",
+        "context": "REHEARSED",
+        "scoring": "KEYED",
+        "prompt": "In 135,276.049, write the value of the 3 and the value of the 4.",
+        "key": "3 → 30,000; 4 → 0.04",
+        "targetsMisconceptions": [
+          "mc-digit-not-value",
+          "mc-place-shift"
+        ]
+      },
+      {
+        "id": "pm-r1",
+        "kind": "EXTENDED_REASONING",
+        "objectiveIds": [
+          "ll-g7-math-place-value-compare"
+        ],
+        "scaffold": "NONE",
+        "timing": "END_OF_LESSON",
+        "context": "REHEARSED",
+        "scoring": "ANALYTIC_RUBRIC",
+        "prompt": "Kebeh says 0.7 is less than 0.65 because 65 is bigger than 7. Is she right? Explain using place value, and show one way to check your answer.",
+        "scoringGuide": {
+          "0": "Agrees with Kebeh, or no place-value reasoning.",
+          "1": "Correct decision with a vague or partly correct reason, or a correct reason with no check.",
+          "2": "Says Kebeh is wrong and justifies by place: 7 tenths is more than 6 tenths, or 0.70 is more than 0.65 when both are written to hundredths; gives a check (chart, number line or hundredths grid)."
+        },
+        "targetsMisconceptions": [
+          "mc-longer-decimal-bigger"
+        ]
+      },
+      {
+        "id": "pm-r2",
+        "kind": "EXTENDED_REASONING",
+        "objectiveIds": [
+          "ll-g7-math-place-value-digit-value"
+        ],
+        "scaffold": "NONE",
+        "timing": "END_OF_LESSON",
+        "context": "REHEARSED",
+        "scoring": "ANALYTIC_RUBRIC",
+        "prompt": "The digit 5 appears three times in 505.05. Write what each 5 is worth. Then explain how the value of the first 5 compares with the value of the 5 in the ones place.",
+        "scoringGuide": {
+          "0": "Gives 5 for every digit, or no relationship stated.",
+          "1": "All three values correct with no explanation of the relationship, or a correct relationship with one value wrong.",
+          "2": "500, 5 and 0.05, and explains that 500 is 100 times 5 because it is two places to the left (each place is ten times the place to its right)."
+        },
+        "targetsMisconceptions": [
+          "mc-digit-not-value",
+          "mc-place-shift"
+        ]
+      },
+      {
+        "id": "pm-t1",
+        "kind": "TRANSFER_TASK",
+        "objectiveIds": [
+          "ll-g7-math-place-value-compare"
+        ],
+        "scaffold": "NONE",
+        "timing": "END_OF_LESSON",
+        "context": "NEW",
+        "scoring": "ANALYTIC_RUBRIC",
+        "prompt": "Draw a number line from 2.3 to 2.4 and mark it in hundredths. Place 2.35 and 2.305 on it. Which one is closer to 2.3? Explain how the number line shows it.",
+        "scoringGuide": {
+          "0": "Says 2.35 is closer, or places 2.305 beyond 2.35.",
+          "1": "Correct answer with an imprecise placement or explanation.",
+          "2": "2.35 at the halfway mark, 2.305 between 2.30 and 2.31; says 2.305 is closer to 2.3 and explains using the marks (2.305 is less than one hundredth away; 2.35 is five hundredths away)."
+        },
+        "note": "New representation: the lesson uses charts and grids, never a number line, so this checks whether place value transfers to a new model."
+      },
+      {
+        "id": "pm-dr1",
+        "kind": "DELAYED_RETRIEVAL",
+        "objectiveIds": [
+          "ll-g7-math-place-value-read-write",
+          "ll-g7-math-place-value-digit-value",
+          "ll-g7-math-place-value-compare"
+        ],
+        "scaffold": "NONE",
+        "timing": "DELAYED",
+        "delayDays": 7,
+        "context": "REHEARSED",
+        "scoring": "ANALYTIC_RUBRIC",
+        "prompt": "Without notes: (a) What is the value of the 9 in 293,400.6? (b) Write 3.046 in expanded form. (c) Order 0.08, 0.8 and 0.088 from least to greatest and explain how you decided.",
+        "key": "(a) 90,000 (b) 3 + 0.04 + 0.006 (c) 0.08, 0.088, 0.8; explanation compares tenths first, then hundredths/thousandths",
+        "scoringGuide": {
+          "0": "none correct",
+          "1": "one part correct",
+          "2": "two parts correct",
+          "3": "three parts correct, explanation partial",
+          "4": "(a), (b) and (c) correct with a place-value explanation"
+        }
+      },
+      {
+        "id": "pm-dr2",
+        "kind": "DELAYED_RETRIEVAL",
+        "objectiveIds": [
+          "ll-g7-math-place-value-compare"
+        ],
+        "scaffold": "NONE",
+        "timing": "DELAYED",
+        "delayDays": 21,
+        "context": "REHEARSED",
+        "scoring": "ANALYTIC_RUBRIC",
+        "prompt": "Which is greater, 0.6 or 0.599? Explain.",
+        "scoringGuide": {
+          "0": "0.599",
+          "1": "0.6 with no valid reason",
+          "2": "0.6, explained by tenths (6 tenths > 5 tenths) or by writing 0.600"
+        },
+        "targetsMisconceptions": [
+          "mc-longer-decimal-bigger"
+        ]
+      },
+      {
+        "id": "pm-x1",
+        "kind": "EXTENSION",
+        "optional": true,
+        "objectiveIds": [
+          "ll-g7-math-place-value-compare"
+        ],
+        "scaffold": "NONE",
+        "timing": "END_OF_LESSON",
+        "context": "NEW",
+        "scoring": "ANALYTIC_RUBRIC",
+        "prompt": "Use each of the digits 0, 3, 5 and 8 exactly once, and one decimal point, to make the number closest to 5. Explain why no other arrangement is closer.",
+        "key": "5.038",
+        "scoringGuide": {
+          "0": "other",
+          "1": "5.038 without a complete argument, or 5.083 with place-value reasoning",
+          "2": "5.038 with an argument from the left: 5 ones first, then the smallest possible tenths (0), hundredths (3) and thousandths (8)"
+        },
+        "note": "Optional and non-gating. Non-routine: learners must reason about every place, not apply a taught procedure."
+      }
+    ],
+    "misconceptionCorrections": {
+      "catalogueAdditions": [
+        {
+          "id": "mc-place-shift",
+          "objectiveId": "ll-g7-math-place-value-digit-value",
+          "description": "Puts the right digit in the wrong place, so its value is ten or a hundred times too big or too small (the 6 in 3,462,105 given as 6,000 or 600,000).",
+          "response": "Name every place from the ones up to the digit before giving its value; check with the ten-times ladder."
+        },
+        {
+          "id": "mc-shorter-decimal-bigger",
+          "objectiveId": "ll-g7-math-place-value-compare",
+          "description": "Thinks a decimal with fewer digits is greater because tenths are bigger than hundredths (0.3 > 0.37).",
+          "response": "Write both numbers to the same number of places (0.30 and 0.37) and compare place by place."
+        },
+        {
+          "id": "mc-compare-by-digits",
+          "objectiveId": "ll-g7-math-place-value-compare",
+          "description": "Compares whole numbers by their larger or more numerous digits (6,009,999 has many nines) instead of comparing from the left.",
+          "response": "Line the numbers up by place and compare from the left until the digits differ."
+        }
+      ],
+      "remaps": [
+        {
+          "itemId": "g7-pv-exit-1",
+          "optionIndex": 0,
+          "from": "mc-digit-not-value",
+          "to": "mc-place-shift"
+        },
+        {
+          "itemId": "g7-pv-exit-1",
+          "optionIndex": 1,
+          "from": "mc-digit-not-value",
+          "to": "mc-place-shift"
+        },
+        {
+          "itemId": "g7-pv-exit-1",
+          "optionIndex": 3,
+          "from": "mc-digit-not-value",
+          "to": "mc-place-shift"
+        },
+        {
+          "itemId": "g7-pv-exit-2",
+          "optionIndex": 1,
+          "from": "mc-digit-not-value",
+          "to": "mc-place-shift"
+        },
+        {
+          "itemId": "g7-pv-exit-2",
+          "optionIndex": 2,
+          "from": "mc-digit-not-value",
+          "to": "mc-place-shift"
+        },
+        {
+          "itemId": "g7-pv-exit-4",
+          "optionIndex": 1,
+          "from": "mc-digit-not-value",
+          "to": "mc-place-shift"
+        },
+        {
+          "itemId": "g7-pv-exit-5",
+          "optionIndex": 0,
+          "from": "mc-longer-decimal-bigger",
+          "to": null,
+          "rationale": "A descending list is an order-direction error, not a misconception about decimals; leave it unmapped."
+        },
+        {
+          "itemId": "g7-pv-exit-6",
+          "optionIndex": 0,
+          "from": "mc-longer-decimal-bigger",
+          "to": "mc-compare-by-digits"
+        },
+        {
+          "itemId": "g7-pv-exit-6",
+          "optionIndex": 2,
+          "from": "mc-longer-decimal-bigger",
+          "to": null,
+          "rationale": "'They are equal' is not produced by any catalogued error; unmapped until classroom evidence shows a pattern."
+        }
+      ],
+      "optionReplacements": [
+        {
+          "itemId": "g7-pv-exit-5",
+          "optionIndex": 2,
+          "from": "0.307, 0.3, 0.37",
+          "to": "0.307, 0.37, 0.3",
+          "mapTo": "mc-shorter-decimal-bigger",
+          "expectedErrorModel": "SHORTER_DECIMAL_GREATER",
+          "rationale": "No modelled error produces the current option; the replacement is exactly what the shorter-is-greater misconception predicts."
+        }
+      ],
+      "signatureAdditions": {
+        "mc-place-shift": "PLACE_SHIFT",
+        "mc-shorter-decimal-bigger": "SHORTER_DECIMAL_GREATER"
+      }
+    }
+  },
+  "correctionChecks": [
+    {
+      "kind": "OPTION_REPLACEMENT",
+      "itemId": "g7-pv-exit-5",
+      "optionIndex": 2,
+      "option": "0.307, 0.37, 0.3",
+      "mapTo": "mc-shorter-decimal-bigger",
+      "expectedErrorModel": "SHORTER_DECIMAL_GREATER",
+      "producedBy": [
+        "SHORTER_DECIMAL_GREATER"
+      ],
+      "consistent": true,
+      "note": "MECHANICAL_CHECK_OF_REVIEWER_AUTHORED_PROPOSAL_NOT_A_REVIEW"
+    },
+    {
+      "kind": "REMAP",
+      "itemId": "g7-pv-exit-1",
+      "optionIndex": 0,
+      "option": "600",
+      "mapTo": "mc-place-shift",
+      "expectedErrorModel": "PLACE_SHIFT",
+      "producedBy": [
+        "PLACE_SHIFT"
+      ],
+      "consistent": true,
+      "note": "MECHANICAL_CHECK_OF_REVIEWER_AUTHORED_PROPOSAL_NOT_A_REVIEW"
+    },
+    {
+      "kind": "REMAP",
+      "itemId": "g7-pv-exit-1",
+      "optionIndex": 1,
+      "option": "6,000",
+      "mapTo": "mc-place-shift",
+      "expectedErrorModel": "PLACE_SHIFT",
+      "producedBy": [
+        "PLACE_SHIFT"
+      ],
+      "consistent": true,
+      "note": "MECHANICAL_CHECK_OF_REVIEWER_AUTHORED_PROPOSAL_NOT_A_REVIEW"
+    },
+    {
+      "kind": "REMAP",
+      "itemId": "g7-pv-exit-1",
+      "optionIndex": 3,
+      "option": "600,000",
+      "mapTo": "mc-place-shift",
+      "expectedErrorModel": "PLACE_SHIFT",
+      "producedBy": [
+        "PLACE_SHIFT"
+      ],
+      "consistent": true,
+      "note": "MECHANICAL_CHECK_OF_REVIEWER_AUTHORED_PROPOSAL_NOT_A_REVIEW"
+    },
+    {
+      "kind": "REMAP",
+      "itemId": "g7-pv-exit-2",
+      "optionIndex": 1,
+      "option": "0.8",
+      "mapTo": "mc-place-shift",
+      "expectedErrorModel": "PLACE_SHIFT",
+      "producedBy": [
+        "PLACE_SHIFT"
+      ],
+      "consistent": true,
+      "note": "MECHANICAL_CHECK_OF_REVIEWER_AUTHORED_PROPOSAL_NOT_A_REVIEW"
+    },
+    {
+      "kind": "REMAP",
+      "itemId": "g7-pv-exit-2",
+      "optionIndex": 2,
+      "option": "0.08",
+      "mapTo": "mc-place-shift",
+      "expectedErrorModel": "PLACE_SHIFT",
+      "producedBy": [
+        "PLACE_SHIFT"
+      ],
+      "consistent": true,
+      "note": "MECHANICAL_CHECK_OF_REVIEWER_AUTHORED_PROPOSAL_NOT_A_REVIEW"
+    },
+    {
+      "kind": "REMAP",
+      "itemId": "g7-pv-exit-4",
+      "optionIndex": 1,
+      "option": "5 + 0.03 + 0.007",
+      "mapTo": "mc-place-shift",
+      "expectedErrorModel": "PLACE_SHIFT",
+      "producedBy": [
+        "PLACE_SHIFT"
+      ],
+      "consistent": true,
+      "note": "MECHANICAL_CHECK_OF_REVIEWER_AUTHORED_PROPOSAL_NOT_A_REVIEW"
+    },
+    {
+      "kind": "REMAP",
+      "itemId": "g7-pv-exit-6",
+      "optionIndex": 0,
+      "option": "6,009,999",
+      "mapTo": "mc-compare-by-digits",
+      "expectedErrorModel": null,
+      "producedBy": [],
+      "consistent": null,
+      "note": "MECHANICAL_CHECK_OF_REVIEWER_AUTHORED_PROPOSAL_NOT_A_REVIEW"
+    }
+  ],
+  "packageGaps": [
+    "MOE_OBJECTIVE_UNBOUND",
+    "TEMPLATE_CELL_MISSING",
+    "ONTOLOGY_RELEASE_MISSING",
+    "SCOPE_EXTENSION_UNAPPROVED",
+    "LEGACY_COMPARISON_SIGNOFF",
+    "ASSESSMENT_ITEMS_PENDING"
+  ],
+  "waecBaseline": {
+    "examination": "LJHSCE (Grade 9), then WASSCE",
+    "competency": "math.number_numeration (Number & Numeration)",
+    "evidenceSpecificity": "SUBJECT_LEVEL",
+    "note": "Grade 7 is not examined by WAEC. The repository's WAEC map is WASSCE section-level from aggregator sources; no LJHSCE topic-level syllabus is pinned. Relevance is forward preparation only, with no topic-level baseline commitment and no WAEC approval claimed."
+  }
+}
