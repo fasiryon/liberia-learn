@@ -177,7 +177,7 @@ describe("AI grade saved on submission", () => {
 
 // ─── 3-4. Teacher can approve / override AI grade ─────────────────────────────
 describe("releaseStaleAIGrades", () => {
-  it("releases submissions where aiGrade is set, teacherApproved=false, and aiGradedAt is older than 72h", async () => {
+  it("releases stale AI feedback as provisional and never writes the official score (LL-AEP-001)", async () => {
     const oldDate = new Date(Date.now() - 73 * 60 * 60 * 1000);
     mockPrisma.assignmentSubmission.findMany.mockResolvedValueOnce([
       {
@@ -195,17 +195,26 @@ describe("releaseStaleAIGrades", () => {
         aiGradedAt: oldDate,
       },
     ]);
-    mockPrisma.assignmentSubmission.update.mockResolvedValue({ id: "sub1" });
+    mockPrisma.assignmentSubmission.updateMany.mockResolvedValue({ count: 1 });
 
     const result = await releaseStaleAIGrades();
 
     expect(result.released).toBe(1);
-    expect(mockPrisma.assignmentSubmission.update).toHaveBeenCalledWith(
-      expect.objectContaining({
-        where: { id: "sub1" },
-        data: expect.objectContaining({ score: 80, autoReleasedAt: expect.any(Date) }),
-      }),
-    );
+    expect(mockPrisma.assignmentSubmission.update).not.toHaveBeenCalled();
+    const call = mockPrisma.assignmentSubmission.updateMany.mock.calls[0][0];
+    expect(call.where).toEqual({ id: "sub1", teacherApproved: false, autoReleasedAt: null });
+    expect(call.data).toEqual({ autoReleasedAt: expect.any(Date) });
+    for (const officialField of ["score", "feedback", "gradedAt", "teacherApproved"]) expect(call.data).not.toHaveProperty(officialField);
+  });
+
+  it("skips a submission a teacher reviewed after it was selected (conditional claim)", async () => {
+    mockPrisma.assignmentSubmission.findMany.mockResolvedValueOnce([
+      { id: "sub9", aiGrade: 70, aiFeedback: "x", assignmentId: "a9", Assignment: { id: "a9", title: "T", classId: "c9", Class: { schoolId: "s9" } }, Student: { id: "st9", user: { id: "u9" } }, aiGradedAt: new Date(0) },
+    ]);
+    mockPrisma.assignmentSubmission.updateMany.mockResolvedValue({ count: 0 });
+    const result = await releaseStaleAIGrades();
+    expect(result.released).toBe(0);
+    expect(mockSendPush).not.toHaveBeenCalled();
   });
 
   it("does NOT release submissions with teacherApproved=true", async () => {
@@ -222,7 +231,7 @@ describe("releaseStaleAIGrades", () => {
     expect(result.released).toBe(0);
   });
 
-  it("auto-released grade uses autoReleasedAt not teacherApproved", async () => {
+  it("provisional release uses autoReleasedAt, not teacherApproved or score", async () => {
     const oldDate = new Date(Date.now() - 80 * 60 * 60 * 1000);
     mockPrisma.assignmentSubmission.findMany.mockResolvedValueOnce([
       {
@@ -240,16 +249,17 @@ describe("releaseStaleAIGrades", () => {
         aiGradedAt: oldDate,
       },
     ]);
-    mockPrisma.assignmentSubmission.update.mockResolvedValue({ id: "sub2" });
+    mockPrisma.assignmentSubmission.updateMany.mockResolvedValue({ count: 1 });
 
     await releaseStaleAIGrades();
 
-    const updateCall = mockPrisma.assignmentSubmission.update.mock.calls[0][0];
+    const updateCall = mockPrisma.assignmentSubmission.updateMany.mock.calls[0][0];
     expect(updateCall.data).toHaveProperty("autoReleasedAt");
     expect(updateCall.data).not.toHaveProperty("teacherApproved");
+    expect(updateCall.data).not.toHaveProperty("score");
   });
 
-  it("fires push to student on auto-release", async () => {
+  it("tells the student feedback is ready without presenting an AI score as a grade", async () => {
     const oldDate = new Date(Date.now() - 73 * 60 * 60 * 1000);
     mockPrisma.assignmentSubmission.findMany.mockResolvedValueOnce([
       {
@@ -267,14 +277,12 @@ describe("releaseStaleAIGrades", () => {
         aiGradedAt: oldDate,
       },
     ]);
-    mockPrisma.assignmentSubmission.update.mockResolvedValue({ id: "sub3" });
+    mockPrisma.assignmentSubmission.updateMany.mockResolvedValue({ count: 1 });
 
     await releaseStaleAIGrades();
 
-    expect(mockSendPush).toHaveBeenCalledWith(
-      "user3",
-      expect.objectContaining({ title: "Assignment Graded", body: expect.stringContaining("90/100") }),
-    );
+    expect(mockSendPush).toHaveBeenCalledWith("user3", expect.objectContaining({ title: "Feedback ready" }));
+    expect(mockSendPush.mock.calls[0][1].body).not.toContain("90");
   });
 });
 

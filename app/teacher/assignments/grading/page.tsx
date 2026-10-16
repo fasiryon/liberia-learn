@@ -72,7 +72,7 @@ export default function GradingInboxPage() {
   }, []);
 
   const pendingAiCount = useMemo(
-    () => submissions.filter((s) => s.aiGrade !== null && !s.teacherApproved && !s.autoReleasedAt).length,
+    () => submissions.filter((s) => s.aiGrade !== null && !s.teacherApproved).length,
     [submissions]
   );
   const ungradedCount = useMemo(() => submissions.filter((s) => s.score === null).length, [submissions]);
@@ -81,7 +81,7 @@ export default function GradingInboxPage() {
     if (tab === "ungraded") return submissions.filter((s) => s.score === null);
     if (tab === "graded") return submissions.filter((s) => s.score !== null);
     if (tab === "pending_ai")
-      return submissions.filter((s) => s.aiGrade !== null && !s.teacherApproved && !s.autoReleasedAt);
+      return submissions.filter((s) => s.aiGrade !== null && !s.teacherApproved);
     return submissions;
   }, [submissions, tab]);
 
@@ -262,7 +262,7 @@ export default function GradingInboxPage() {
           <div className="space-y-8">
             {grouped.map((group) => {
               const pendingInGroup = group.rows.filter(
-                (r) => r.aiGrade !== null && !r.teacherApproved && !r.autoReleasedAt
+                (r) => r.aiGrade !== null && !r.teacherApproved
               );
               return (
                 <section key={group.title} className="space-y-3">
@@ -292,7 +292,7 @@ export default function GradingInboxPage() {
                       overriding: false,
                     };
                     const isGraded = sub.score !== null;
-                    const hasPendingAI = sub.aiGrade !== null && !sub.teacherApproved && !sub.autoReleasedAt;
+                    const hasPendingAI = sub.aiGrade !== null && !sub.teacherApproved;
 
                     return (
                       <div

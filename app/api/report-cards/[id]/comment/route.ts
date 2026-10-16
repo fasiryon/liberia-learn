@@ -1,3 +1,4 @@
+// route-policy: auth=session; scope=tenant; authority=school-teacher-or-admin; rationale=comments are editable only on own-school draft cards; principal comment is admin-only
 import { NextRequest, NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
@@ -13,6 +14,10 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
     const card = await prisma.reportCard.findUnique({ where: { id: params.id } });
     if (!card || card.schoolId !== user.schoolId) {
       return NextResponse.json({ error: "Report card not found" }, { status: 404 });
+    }
+    // A published card is an official record. Corrections go through an approved amendment, not an edit.
+    if (card.status === "PUBLISHED") {
+      return NextResponse.json({ error: "Published report cards cannot be edited; request an amendment" }, { status: 409 });
     }
 
     const body = await req.json();

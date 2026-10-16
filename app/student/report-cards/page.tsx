@@ -19,7 +19,8 @@ type ReportCardItem = {
   };
 };
 
-function gradeLetter(avg: number) {
+function gradeLetter(avg: number | null) {
+  if (avg === null) return "—";
   if (avg >= 90) return "A";
   if (avg >= 80) return "B";
   if (avg >= 70) return "C";
@@ -129,7 +130,7 @@ export default function StudentReportCardsPage() {
                             <td className="py-2 pr-4 font-medium text-[var(--ll-text)]">
                               {g.subject.replace(/_/g, " ")}
                             </td>
-                            <td className="px-3 py-2 text-center">{g.average}%</td>
+                            <td className="px-3 py-2 text-center">{g.average !== null ? `${g.average}%` : "—"}</td>
                             <td className="px-3 py-2 text-center text-[var(--ll-text-muted)]">
                               {g.examScore != null ? `${g.examScore}%` : "—"}
                             </td>
@@ -149,7 +150,7 @@ export default function StudentReportCardsPage() {
                   <div className="rounded-lg border border-[var(--ll-border)] bg-[var(--ll-bg)]/60 px-4 py-3">
                     <p className="text-xs font-medium text-[var(--ll-text-muted)] mb-1">Attendance</p>
                     <p className="text-sm text-[var(--ll-text)]">
-                      {att.rate}% &mdash; Present {att.present} &middot; Absent {att.absent} &middot; Late {att.late}
+                      {att.rate !== null ? `${att.rate}%` : "Not recorded"} &mdash; Present {att.present} &middot; Absent {att.absent} &middot; Late {att.late}
                     </p>
                   </div>
 
