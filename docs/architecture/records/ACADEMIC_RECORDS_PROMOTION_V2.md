@@ -206,3 +206,59 @@ these areas to 75. They cover:
 6. **The appeal window length and panel composition.**
 7. **Whether `publish-all` should be retired** in favour of the lock-and-publish flow.
 8. **Teacher read scope** for report cards: all of the school, or only the teacher's classes.
+
+---
+
+## 8. LL-AEP-001 review and repair (PR #194)
+
+LiberiaLearn is the primary academic authority, international benchmarks come second, and MOE and
+WAEC requirements are mandatory compatibility and examination-coverage inputs, never the ceiling.
+`lib/academic-policy/llAep001.ts` holds LL-AEP-001 v1.0.0 as pure data with status
+`PROPOSED_INSTITUTIONAL_BASELINE` and activation `NOT_ACTIVATED`. It is byte-identical in PR #193,
+and a digest test in each branch fails if the copies drift.
+
+### Confirmed defects and repairs
+
+| Severity | Defect | Repair |
+| --- | --- | --- |
+| P0 | `releaseStaleAIGrades` copied the AI grade into the official `score` after 72 hours without teacher approval. The teacher grading page, the gradebook and bulk-approve all filtered on `!autoReleasedAt`, so auto-released AI scores left the teacher queue for good. | The cron now only marks AI feedback as provisionally released (a conditional claim, with no `score`, `feedback` or `gradedAt` write). Those submissions stay in the teacher queue and in bulk-approve. Students see "AI feedback (provisional)" and no AI number. Rows auto-released before the fix are labelled "not confirmed by your teacher", and the V2 calculator classifies them as `AI_AUTO_RELEASED`. |
+| P1 | Weights applied one-to-one to categories, there were no grade-band variants, and pass/fail was baked into the scale. | Weights now apply to category groups. The LiberiaLearn bands run A+ to F. Passing (70) and proficiency (80) are separate thresholds. There are Grades 4–12 and Grades 1–3 baselines; the Grades 1–3 baseline allows no tests or exams. Baselines can grade only after a school adopts them. |
+| P1 | Incomplete or no-evidence records could be published as complete. | Publication is now explicit: `OFFICIAL` requires every subject COMPLETE and every period LOCKED; `PROVISIONAL` records are watermarked and never final. `isFinalOfficialRecord` gates promotion inputs. |
+| P1 | Promotion ignored competency mastery, treated low attendance and missing attendance the same, allowed retention without intervention, and let graduation imply national status. | Critical competencies must be Secure. An attendance exception is distinct from missing attendance evidence. Retention requires a documented, completed and reviewed intervention of at least 20 school days; otherwise the recommendation is PENDING_REVIEW and a RETAIN decision is refused. Conditional promotion requires a structured support plan. Graduation records LiberiaLearn program completion and national school-leaving status separately. |
+| P2 | The appeal window counted calendar days. | It now counts 15 school days on the school calendar, excluding weekends and non-instructional dates. |
+| P2 | Mastery had four levels. | Mastery has five states, including ADVANCED, which requires verified transfer. States come from verified, independent evidence only. |
+| P2 | Nothing limited a single assessment's share of a grade, and reassessments kept no history. | One assessment may carry at most 30% of a grade. Reassessment counts the LATEST or HIGHEST attempt, and every attempt stays in the history. |
+
+### Assessment evidence boundary
+
+`assessmentEvidence.ts` accepts the structural subset of PR #193 envelopes. RAW and PROVISIONAL
+evidence never becomes a grade entry. VERIFIED or ADMITTED evidence becomes an official entry only
+when all of these hold:
+
+- the delivery was OFFICIAL;
+- the scorer was server-keyed or a human moderator;
+- any required second marking is AGREED or RECONCILED;
+- the release is not revoked;
+- the school and the student match.
+
+Assisted official evidence becomes PENDING_MODERATION for a teacher. The mastery summary counts
+only verified, independent evidence, and counts each response once. A cross-PR compatibility test,
+run on a throwaway local merge, feeds real envelopes through this boundary and type-checks the
+boundary assignment.
+
+### Engineering assumptions needing academic sign-off
+
+These are listed in `LL_AEP_001_ENGINEERING_ASSUMPTIONS`:
+
+- the Grades 1–3 weights (40/20/25/15) and difficulty blueprint;
+- the 30% single-assessment cap;
+- the mastery thresholds;
+- the 20-school-day minimum intervention;
+- the conditional-promotion limits (at most 1 failed subject and 2 critical gaps);
+- Grades 10–12 using the Grades 4–12 weights until a separate version is approved.
+
+### Still not done (each needs separate authorization)
+
+- wiring V2 into the live gradebook, report-card publisher and promotion routes;
+- the additive persistence migration (§6);
+- production policy activation.
