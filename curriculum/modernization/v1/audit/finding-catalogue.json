@@ -1,0 +1,387 @@
+{
+ "ANSWER_KEY_IN_LEARNER_TEXT|MAJOR": {
+  "area": "ASSESSMENT_VALIDITY",
+  "kind": "MECHANICAL",
+  "issue": "Answers sit in the learner-facing text, so assessment evidence is not independent.",
+  "proposedCorrection": "Move keys to the protected reviewer/teacher projection; never deliver them to learners.",
+  "lessons": 68
+ },
+ "ARITHMETIC_ERROR|BLOCKING": {
+  "area": "SUBJECT_ACCURACY",
+  "kind": "MECHANICAL",
+  "issue": "Stated arithmetic is wrong; learners would copy an incorrect result.",
+  "proposedCorrection": "Correct the stated result to the computed value in the evidence, then re-check every dependent step and answer.",
+  "lessons": 1
+ },
+ "ARITHMETIC_ERROR|MAJOR": {
+  "area": "SUBJECT_ACCURACY",
+  "kind": "MECHANICAL",
+  "issue": "Stated arithmetic is wrong; learners would copy an incorrect result.",
+  "proposedCorrection": "Correct the stated result to the computed value in the evidence, then re-check every dependent step and answer.",
+  "lessons": 3
+ },
+ "DEMO_OR_TEST_FIXTURE_IN_CATALOG|BLOCKING": {
+  "area": "STUDENT_EXPERIENCE_V3",
+  "kind": "GOVERNANCE",
+  "issue": "A demo or smoke-test lesson sits in the production catalog alongside curriculum content.",
+  "proposedCorrection": "A curriculum owner decides: retire from the learner catalog (keeping history rows resolvable) or keep as a labelled demo. It is not modernized as curriculum.",
+  "lessons": 10
+ },
+ "DENSE_SECTION|MAJOR": {
+  "area": "COGNITIVE_LOAD",
+  "kind": "MECHANICAL",
+  "issue": "Sections carry more text than one scene can present without overload.",
+  "proposedCorrection": "Split into scenes with one idea each and move teacher-only material out of learner text.",
+  "lessons": 78
+ },
+ "DENSE_SECTION|MINOR": {
+  "area": "COGNITIVE_LOAD",
+  "kind": "MECHANICAL",
+  "issue": "Sections carry more text than one scene can present without overload.",
+  "proposedCorrection": "Split into scenes with one idea each and move teacher-only material out of learner text.",
+  "lessons": 266
+ },
+ "DUPLICATE_LEARNER_TEXT|MAJOR": {
+  "area": "STUDENT_EXPERIENCE_V3",
+  "kind": "MECHANICAL",
+  "issue": "The same learner text is catalogued as more than one lesson.",
+  "proposedCorrection": "Choose one canonical lesson; map the others to it in the legacy mapping plan (never delete referenced rows).",
+  "lessons": 8
+ },
+ "DUPLICATE_TITLE|MINOR": {
+  "area": "STUDENT_EXPERIENCE_V3",
+  "kind": "MECHANICAL",
+  "issue": "Several lessons share a title in the same grade and subject; learners and teachers cannot tell them apart.",
+  "proposedCorrection": "Disambiguate titles or consolidate in the modernization plan.",
+  "lessons": 81
+ },
+ "LAB_WITHOUT_OFFLINE_FALLBACK|MINOR": {
+  "area": "ACCESSIBILITY_OFFLINE",
+  "kind": "MECHANICAL",
+  "issue": "Learners without a device or connection lose the lab's objective.",
+  "proposedCorrection": "Add an objective-preserving paper or text walkthrough fallback.",
+  "lessons": 116
+ },
+ "LONG_PARAGRAPHS|MINOR": {
+  "area": "COGNITIVE_LOAD",
+  "kind": "MECHANICAL",
+  "issue": "Long unbroken paragraphs raise reading load.",
+  "proposedCorrection": "Break into short paragraphs, lists or labelled steps.",
+  "lessons": 15
+ },
+ "NO_DELAYED_RETRIEVAL|MAJOR": {
+  "area": "DELAYED_RETENTION",
+  "kind": "MECHANICAL",
+  "issue": "Nothing checks whether learning lasts beyond the lesson.",
+  "proposedCorrection": "Add a retention blueprint: retrieval items for each mastery objective at ≥7 days (LM-ASM-3).",
+  "lessons": 1066
+ },
+ "NO_END_OF_LESSON_ASSESSMENT|MAJOR": {
+  "area": "ASSESSMENT_VALIDITY",
+  "kind": "MECHANICAL",
+  "issue": "Nothing checks whether learners met the objectives.",
+  "proposedCorrection": "Add an independent end-of-lesson demonstration covering every objective.",
+  "lessons": 128
+ },
+ "NO_EXTENSION_PATH|MINOR": {
+  "area": "ADVANCED_ENRICHMENT",
+  "kind": "MECHANICAL",
+  "issue": "Ready learners have nowhere to go beyond the objective.",
+  "proposedCorrection": "Add an optional, non-gating extension clearly labelled as beyond grade scope.",
+  "lessons": 983
+ },
+ "NO_FALLBACK_ROUTE|MAJOR": {
+  "area": "PREREQUISITE_DIAGNOSTIC",
+  "kind": "MECHANICAL",
+  "issue": "The prerequisite is mentioned but not diagnosed with a fallback, so learners without it fall behind unseen.",
+  "proposedCorrection": "Turn activation into a diagnostic item per prerequisite and state what happens when a learner misses it.",
+  "lessons": 624
+ },
+ "NO_GUIDED_PRACTICE|MAJOR": {
+  "area": "GUIDED_INDEPENDENT_PRACTICE",
+  "kind": "MECHANICAL",
+  "issue": "Learners go from watching to working alone with no supported attempt.",
+  "proposedCorrection": "Add guided items with partial support and feedback (Track B).",
+  "lessons": 174
+ },
+ "NO_INDEPENDENT_PRACTICE|MAJOR": {
+  "area": "GUIDED_INDEPENDENT_PRACTICE",
+  "kind": "MECHANICAL",
+  "issue": "Learners never practise without support.",
+  "proposedCorrection": "Add unscaffolded practice for each objective (Track B).",
+  "lessons": 174
+ },
+ "NO_LIBERIAN_CONTEXT|MINOR": {
+  "area": "LIBERIAN_CONTEXT_EVIDENCE",
+  "kind": "MECHANICAL",
+  "issue": "No task applies the objective to a Liberian situation.",
+  "proposedCorrection": "Add at least one authentic Liberian application; label invented data as invented.",
+  "lessons": 30
+ },
+ "NO_MISCONCEPTION_SPECIFIC_FEEDBACK|MAJOR": {
+  "area": "MISCONCEPTION_FEEDBACK",
+  "kind": "MECHANICAL",
+  "issue": "Wrong answers cannot be diagnosed or corrected by cause.",
+  "proposedCorrection": "Map each distractor or response pattern to a catalogued misconception with corrective feedback.",
+  "lessons": 1105
+ },
+ "NO_MISCONCEPTION_TEACHING|MAJOR": {
+  "area": "MISCONCEPTION_FEEDBACK",
+  "kind": "MECHANICAL",
+  "issue": "Common errors are neither taught against nor anticipated.",
+  "proposedCorrection": "Catalogue the objective's misconceptions and teach against each (Track A).",
+  "lessons": 374
+ },
+ "NO_MOE_MAPPING|MAJOR": {
+  "area": "MOE_TRACEABILITY",
+  "kind": "MECHANICAL",
+  "issue": "No objective is traced to the MOE curriculum.",
+  "proposedCorrection": "Map each objective to a structured MOE objective id with source page, reviewed by a curriculum owner; lexical leads are attached to this audit.",
+  "lessons": 334
+ },
+ "NO_MOE_SOURCE_FOR_SUBJECT|BLOCKING": {
+  "area": "MOE_TRACEABILITY",
+  "kind": "GOVERNANCE",
+  "issue": "There is no verified MOE curriculum to trace this lesson's objectives to; its scope is LiberiaLearn-originated.",
+  "proposedCorrection": "A curriculum owner records a scope decision (adopt as LiberiaLearn enrichment with owned objectives, or retire). Until then: governance hold (Track D).",
+  "lessons": 344
+ },
+ "NO_PREREQUISITE_CHECK|MAJOR": {
+  "area": "PREREQUISITE_DIAGNOSTIC",
+  "kind": "MECHANICAL",
+  "issue": "Instruction assumes prerequisites it never checks.",
+  "proposedCorrection": "Add a short diagnostic per prerequisite with a stated route for learners who lack it.",
+  "lessons": 375
+ },
+ "NO_REASONING_TASK|MAJOR": {
+  "area": "AUTHENTIC_PERFORMANCE_REASONING",
+  "kind": "MECHANICAL",
+  "issue": "Learners are never asked to produce reasoning, only answers.",
+  "proposedCorrection": "Add a constructed-response reasoning or performance task at scaffold NONE scored by a rubric.",
+  "lessons": 283
+ },
+ "NO_SCENE_STRUCTURE|MAJOR": {
+  "area": "STUDENT_EXPERIENCE_V3",
+  "kind": "MECHANICAL",
+  "issue": "The text has no scene structure for slideshow pagination; it would render as one long slide.",
+  "proposedCorrection": "Restructure into scenes with one purpose each (V2 scene contract).",
+  "lessons": 156
+ },
+ "NO_SCENE_STRUCTURE|MINOR": {
+  "area": "STUDENT_EXPERIENCE_V3",
+  "kind": "MECHANICAL",
+  "issue": "The text has no scene structure for slideshow pagination; it would render as one long slide.",
+  "proposedCorrection": "Restructure into scenes with one purpose each (V2 scene contract).",
+  "lessons": 95
+ },
+ "NO_TRANSFER_TASK|MAJOR": {
+  "area": "TRANSFER",
+  "kind": "MECHANICAL",
+  "issue": "Learners are only tested in rehearsed contexts, so transfer is unknown.",
+  "proposedCorrection": "Add an unscaffolded transfer task in a context the lesson did not rehearse (GE-TRN-1).",
+  "lessons": 1102
+ },
+ "NO_WAEC_BASELINE_MAPPING|MAJOR": {
+  "area": "WAEC_ALIGNMENT",
+  "kind": "GOVERNANCE",
+  "issue": "No verified WAEC syllabus source is held in the repository, so examination alignment cannot be stated beyond 'topic may be relevant'.",
+  "proposedCorrection": "Obtain and register the official WAEC syllabus for the subject, then map with stated specificity and NOT_CLAIMED status.",
+  "lessons": 657
+ },
+ "NO_WORKED_EXAMPLE|MAJOR": {
+  "area": "SEQUENCE_WORKED_EXAMPLES",
+  "kind": "MECHANICAL",
+  "issue": "Learners never see the method modelled before practising it.",
+  "proposedCorrection": "Add at least two worked examples that fade support (Track B).",
+  "lessons": 223
+ },
+ "OBJECTIVES_UNDER_ASSESSED|MINOR": {
+  "area": "ASSESSMENT_VALIDITY",
+  "kind": "MECHANICAL",
+  "issue": "Some objectives cannot have their own assessment evidence.",
+  "proposedCorrection": "Assess every objective at least once at the end of the lesson.",
+  "lessons": 267
+ },
+ "PLACEHOLDER_CONTENT|BLOCKING": {
+  "area": "CONCEPTUAL_DEPTH",
+  "kind": "MECHANICAL",
+  "issue": "The lesson is a template shell: sections say what to teach (\"Model one complete example…\") but contain no explanation, example or item.",
+  "proposedCorrection": "Replace with a full candidate lesson (Track C); keep the legacy revision for history.",
+  "lessons": 31
+ },
+ "POSSIBLE_SUBJECT_MISLABEL|MAJOR": {
+  "area": "SUBJECT_ACCURACY",
+  "kind": "JUDGMENT_INDICATOR",
+  "issue": "The content reads as a different subject from its catalogue label, so it may be mis-mapped.",
+  "proposedCorrection": "A curriculum reviewer confirms the subject; a confirmed mis-mapping moves the lesson to Track C (replace and re-catalogue) and every assignment that relied on the label is reviewed.",
+  "lessons": 124
+ },
+ "PRIOR_KNOWLEDGE_NOT_DIAGNOSTIC|MAJOR": {
+  "area": "PREREQUISITE_DIAGNOSTIC",
+  "kind": "MECHANICAL",
+  "issue": "The prerequisite is mentioned but not diagnosed with a fallback, so learners without it fall behind unseen.",
+  "proposedCorrection": "Turn activation into a diagnostic item per prerequisite and state what happens when a learner misses it.",
+  "lessons": 106
+ },
+ "PROXY_SUBJECT_DECISION_REQUIRED|MAJOR": {
+  "area": "MOE_TRACEABILITY",
+  "kind": "GOVERNANCE",
+  "issue": "Objectives can only be traced through a broader MOE subject (see evidence); that mapping is a curriculum-owner decision, not an MOE fact.",
+  "proposedCorrection": "Record the owner's decision to trace this subject through the named MOE subject before release; candidate work may proceed.",
+  "lessons": 133
+ },
+ "RAW_HTML_IN_LEARNER_TEXT|MINOR": {
+  "area": "STUDENT_EXPERIENCE_V3",
+  "kind": "MECHANICAL",
+  "issue": "Raw HTML bypasses the V3 renderer's typography and accessibility.",
+  "proposedCorrection": "Convert to markdown or structured scene fields.",
+  "lessons": 2
+ },
+ "READING_LEVEL_ABOVE_GRADE|MAJOR": {
+  "area": "GRADE_APPROPRIATENESS",
+  "kind": "JUDGMENT_INDICATOR",
+  "issue": "Sentence and word length suggest the text is harder to read than the grade allows.",
+  "proposedCorrection": "Shorten sentences and gloss vocabulary without lowering the conceptual demand; confirm with a language reviewer.",
+  "lessons": 523
+ },
+ "READING_LEVEL_ABOVE_GRADE|MINOR": {
+  "area": "GRADE_APPROPRIATENESS",
+  "kind": "JUDGMENT_INDICATOR",
+  "issue": "Sentence and word length suggest the text is harder to read than the grade allows.",
+  "proposedCorrection": "Shorten sentences and gloss vocabulary without lowering the conceptual demand; confirm with a language reviewer.",
+  "lessons": 330
+ },
+ "REASONING_TASK_WITHOUT_RUBRIC|MINOR": {
+  "area": "AUTHENTIC_PERFORMANCE_REASONING",
+  "kind": "MECHANICAL",
+  "issue": "Reasoning prompts exist but nothing says what good reasoning looks like, so they cannot be scored consistently.",
+  "proposedCorrection": "Attach a short analytic rubric (protected) to each reasoning task.",
+  "lessons": 822
+ },
+ "REVOKED_CONTENT|BLOCKING": {
+  "area": "STUDENT_EXPERIENCE_V3",
+  "kind": "GOVERNANCE",
+  "issue": "Revoked content cannot be modernized or redelivered without a governance decision.",
+  "proposedCorrection": "Confirm retirement; map dependants to a replacement through the legacy mapping plan.",
+  "lessons": 1
+ },
+ "SCHOOL_OR_TEACHER_OWNED|BLOCKING": {
+  "area": "MOE_TRACEABILITY",
+  "kind": "GOVERNANCE",
+  "issue": "Teacher- or school-owned content cannot be rewritten by the national pipeline without its owner.",
+  "proposedCorrection": "Hold; offer the owner a modernized national alternative instead.",
+  "lessons": 1
+ },
+ "SEQUENCE_OUT_OF_ORDER|MINOR": {
+  "area": "SEQUENCE_WORKED_EXAMPLES",
+  "kind": "MECHANICAL",
+  "issue": "Practice or assessment appears before the instruction it depends on.",
+  "proposedCorrection": "Reorder to explain → model → guided → independent → check.",
+  "lessons": 81
+ },
+ "SERIALIZATION_ARTIFACT|MAJOR": {
+  "area": "STUDENT_EXPERIENCE_V3",
+  "kind": "MECHANICAL",
+  "issue": "Content was lost when the lesson was saved; learners see a placeholder instead of the material (often worked examples).",
+  "proposedCorrection": "Recover the lost material from an earlier source revision if one exists; otherwise rewrite it. Treat the affected sections as missing.",
+  "lessons": 79
+ },
+ "STUB_CONTENT|BLOCKING": {
+  "area": "CONCEPTUAL_DEPTH",
+  "kind": "MECHANICAL",
+  "issue": "The revision is a stub: there is not enough content to teach the stated objective.",
+  "proposedCorrection": "Replace with a full candidate lesson (Track C); keep the legacy revision for history.",
+  "lessons": 3
+ },
+ "TEMPLATE_SHELL|BLOCKING": {
+  "area": "CONCEPTUAL_DEPTH",
+  "kind": "MECHANICAL",
+  "issue": "Much of the lesson is template text shared across the library rather than instruction specific to this objective.",
+  "proposedCorrection": "Rebuild the teaching sequence for this objective (Track C).",
+  "lessons": 44
+ },
+ "TEMPLATE_SHELL|MAJOR": {
+  "area": "CONCEPTUAL_DEPTH",
+  "kind": "MECHANICAL",
+  "issue": "Much of the lesson is template text shared across the library rather than instruction specific to this objective.",
+  "proposedCorrection": "Replace template passages with objective-specific explanation and examples (Track B).",
+  "lessons": 8
+ },
+ "TEXT_LOAD_EXCEEDS_EMERGENT_READER_BUDGET|MAJOR": {
+  "area": "GRADE_APPROPRIATENESS",
+  "kind": "MECHANICAL",
+  "issue": "Emergent readers cannot work through this much text; the lesson depends on reading it can't assume.",
+  "proposedCorrection": "Rebuild as short teacher-led scenes with oral, pictorial and concrete activities (Track B).",
+  "lessons": 114
+ },
+ "THIN_CONCEPT_EXPLANATION|MAJOR": {
+  "area": "CONCEPTUAL_DEPTH",
+  "kind": "MECHANICAL",
+  "issue": "The core idea is barely explained before practice begins.",
+  "proposedCorrection": "Add an explicit explanation of the concept with a representation (diagram, model or example) before worked examples.",
+  "lessons": 66
+ },
+ "TOO_MANY_SCENES|MINOR": {
+  "area": "STUDENT_EXPERIENCE_V3",
+  "kind": "MECHANICAL",
+  "issue": "The lesson would paginate into more scenes than one sitting supports.",
+  "proposedCorrection": "Consolidate or split into two lessons.",
+  "lessons": 174
+ },
+ "UNKEYED_ASSESSMENT_ITEMS|MAJOR": {
+  "area": "ASSESSMENT_VALIDITY",
+  "kind": "MECHANICAL",
+  "issue": "Unkeyed items cannot be scored consistently or verified for correctness.",
+  "proposedCorrection": "Write a protected key or rubric for every item and verify each key independently.",
+  "lessons": 745
+ },
+ "UNSOURCED_CLAIM:CITED_STUDY_OR_REPORT|MAJOR": {
+  "area": "LIBERIAN_CONTEXT_EVIDENCE",
+  "kind": "JUDGMENT_INDICATOR",
+  "issue": "A factual or statistical claim is stated without a source; it may be invented.",
+  "proposedCorrection": "Verify against a named, dated source and cite it, or remove it or label it as an invented example.",
+  "lessons": 85
+ },
+ "UNSOURCED_CLAIM:DATED_STATISTIC|MAJOR": {
+  "area": "LIBERIAN_CONTEXT_EVIDENCE",
+  "kind": "JUDGMENT_INDICATOR",
+  "issue": "A factual or statistical claim is stated without a source; it may be invented.",
+  "proposedCorrection": "Verify against a named, dated source and cite it, or remove it or label it as an invented example.",
+  "lessons": 1
+ },
+ "UNSOURCED_CLAIM:INSTITUTIONAL_ATTRIBUTION|MAJOR": {
+  "area": "LIBERIAN_CONTEXT_EVIDENCE",
+  "kind": "JUDGMENT_INDICATOR",
+  "issue": "A factual or statistical claim is stated without a source; it may be invented.",
+  "proposedCorrection": "Verify against a named, dated source and cite it, or remove it or label it as an invented example.",
+  "lessons": 2
+ },
+ "UNVERIFIED_ALIGNMENT_CODES|MAJOR": {
+  "area": "MOE_TRACEABILITY",
+  "kind": "MECHANICAL",
+  "issue": "Alignment codes are LiberiaLearn-invented labels, not MOE objectives; they must not be presented as MOE requirements.",
+  "proposedCorrection": "Map each objective to a structured MOE objective id with source page, reviewed by a curriculum owner; lexical leads are attached to this audit.",
+  "lessons": 427
+ },
+ "WAEC_TAGS_UNVERIFIED|MAJOR": {
+  "area": "WAEC_ALIGNMENT",
+  "kind": "GOVERNANCE",
+  "issue": "No verified WAEC syllabus source is held in the repository, so examination alignment cannot be stated beyond 'topic may be relevant'.",
+  "proposedCorrection": "Obtain and register the official WAEC syllabus for the subject, then map with stated specificity and NOT_CLAIMED status.",
+  "lessons": 69
+ },
+ "WIDE_TABLE|MINOR": {
+  "area": "ACCESSIBILITY_OFFLINE",
+  "kind": "MECHANICAL",
+  "issue": "Tables with more than five columns overflow at 390px and are hard to navigate by screen reader.",
+  "proposedCorrection": "Split or transpose the table; give it a caption.",
+  "lessons": 1
+ },
+ "WORKED_EXAMPLE_WITHOUT_STEPS|MINOR": {
+  "area": "SEQUENCE_WORKED_EXAMPLES",
+  "kind": "MECHANICAL",
+  "issue": "Worked examples state answers without showing the reasoning steps.",
+  "proposedCorrection": "Show each step and why it is taken.",
+  "lessons": 89
+ }
+}
