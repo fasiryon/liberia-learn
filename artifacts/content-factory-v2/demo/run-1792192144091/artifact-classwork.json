@@ -1,0 +1,107 @@
+{
+  "id": "classwork",
+  "version": "0.1.0",
+  "payload": {
+    "kind": "ACTIVITY",
+    "definition": {
+      "schemaVersion": "activity-definition.v1",
+      "activityId": "classwork",
+      "version": "0.1.0",
+      "kind": "CLASSWORK",
+      "contentHash": "7c81508369c42bd09f814e830d223520b3368a442ec699361cc5f49b41480947",
+      "content": {
+        "title": "Independent decimal production",
+        "objectiveIds": [
+          "proposed-g7-number-sense-place-value"
+        ],
+        "lessonItemIds": [
+          "lesson-2"
+        ],
+        "scaffolding": "INDEPENDENT",
+        "instructions": {
+          "learner": [
+            {
+              "stepId": "classwork-step-1",
+              "text": "Write 53.24 as a sum of place values. Explain what the digit 2 represents.",
+              "resourceIds": []
+            },
+            {
+              "stepId": "classwork-step-2",
+              "text": "Compare 0.4 and 0.37. Explain using the same fractional unit.",
+              "resourceIds": []
+            },
+            {
+              "stepId": "classwork-step-3",
+              "text": "Check your explanation without using a worked example. Record any help you used.",
+              "resourceIds": []
+            }
+          ],
+          "teacher": [
+            {
+              "stepId": "classwork-teacher",
+              "text": "Record assistance separately. Ask for reasoning before feedback. Use the protected assessment rubric only for independently collected assessment responses.",
+              "resourceIds": []
+            }
+          ]
+        },
+        "resourceIds": [],
+        "rubric": null,
+        "expectedDurationMinutes": 20,
+        "collaborationMode": "INDIVIDUAL",
+        "evidenceIntent": {
+          "kind": "PRACTICE_ONLY",
+          "forms": [
+            "WRITTEN"
+          ]
+        },
+        "accessibility": {
+          "readingLevel": "Grade 7, vocabulary support permitted",
+          "supportsScreenReader": true,
+          "supportsReadAloud": true,
+          "requiresColorVision": false,
+          "requiresFineMotor": false,
+          "alternativeFormatResourceIds": []
+        }
+      },
+      "resources": [],
+      "lessonBindings": [
+        {
+          "lessonId": "lesson-2",
+          "version": "0.1.0"
+        }
+      ],
+      "release": {
+        "releaseId": "UNRESOLVED-G7-CANDIDATE",
+        "releaseIdentity": "UNRESOLVED-NOT-A-RELEASE"
+      },
+      "governance": {
+        "provenanceRefs": [
+          "unit-blueprint:factory-g7-number-sense@0.1.0"
+        ],
+        "reviewRefs": [],
+        "lifecycleRefs": [],
+        "releaseRefs": []
+      }
+    }
+  },
+  "role": "LESSON_AUTHOR",
+  "author": {
+    "kind": "AI",
+    "agentId": "factory-demo:LESSON_AUTHOR",
+    "modelFamily": "deterministic-local-demo",
+    "sessionId": "LESSON_AUTHOR"
+  },
+  "blueprint": {
+    "blueprintId": "factory-g7-number-sense",
+    "version": "0.1.0",
+    "contentHash": "a2382c06ce4ec96be3634e9f0304689f88316a39d11fa976c4a44bbbe4dce40a"
+  },
+  "dependencies": [
+    {
+      "id": "lesson-2",
+      "version": "0.1.0",
+      "contentHash": "6eef5bba123482d83c82eb181ac518ebc0fa6113465d6dad4a9834174b060e53"
+    }
+  ],
+  "contentHash": "09792f8feea65ed516f342de650f498c7eaab32fea9b6a434320418b3b841abb"
+}

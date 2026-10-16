@@ -1,0 +1,181 @@
+{
+  "id": "retention",
+  "version": "0.1.0",
+  "payload": {
+    "kind": "ASSESSMENT",
+    "definition": {
+      "schemaVersion": "assessment.v2",
+      "definitionId": "retention",
+      "version": "0.1.0",
+      "title": "Grade 7 retention candidate",
+      "purpose": "RETENTION",
+      "grade": 7,
+      "subject": "MATH",
+      "objectiveIds": [
+        "proposed-g7-number-sense-place-value"
+      ],
+      "prerequisiteObjectiveIds": [],
+      "alignment": {
+        "releaseId": "UNRESOLVED-G7-CANDIDATE",
+        "releaseIdentity": "UNRESOLVED-NOT-A-RELEASE",
+        "nationalObjectiveIds": [
+          "proposed-g7-number-sense-place-value"
+        ],
+        "extensionObjectiveIds": []
+      },
+      "timeLimitMinutes": 20,
+      "permittedTools": [
+        {
+          "toolId": "ai-tutor",
+          "mode": "PROHIBITED"
+        }
+      ],
+      "permittedAccommodations": [
+        "READ_ALOUD",
+        "LARGE_PRINT"
+      ],
+      "attemptPolicy": {
+        "maxAttempts": 1,
+        "cooldownMinutes": 0,
+        "reportedAttempt": "FIRST"
+      },
+      "provenance": {
+        "authors": [
+          {
+            "kind": "AI",
+            "id": "factory-demo:ASSESSMENT_DESIGNER"
+          }
+        ],
+        "sourceRef": "unit-blueprint:factory-g7-number-sense@0.1.0",
+        "curriculumSourceRefs": [
+          "PROPOSED_G7_MAPPING_NOT_APPROVED"
+        ]
+      },
+      "contentHash": "931c797d45d0708b61e6d07b2a4fd4c481258f96fc9d50354446b3d25c3705f6"
+    },
+    "form": {
+      "schemaVersion": "assessment.v2",
+      "formId": "retention-form",
+      "version": "0.1.0",
+      "definition": {
+        "definitionId": "retention",
+        "version": "0.1.0",
+        "contentHash": "931c797d45d0708b61e6d07b2a4fd4c481258f96fc9d50354446b3d25c3705f6"
+      },
+      "items": [
+        {
+          "itemId": "retention-item-1",
+          "itemVersion": "0.1.0",
+          "itemHash": "328d0ccaeb6b208dacf752a6813ee492a5b07001e315c7943c1ae1e4a5c93538",
+          "points": 1
+        }
+      ],
+      "delivery": {
+        "itemOrder": "FIXED",
+        "randomizationPolicyId": null,
+        "allowBacktracking": true,
+        "offlineDelivery": "CAPTURE_ONLY"
+      },
+      "blueprint": {
+        "blueprintVersion": "0.1.0",
+        "totalPoints": 1,
+        "objectiveCoverage": [
+          {
+            "objectiveId": "proposed-g7-number-sense-place-value",
+            "minItems": 1
+          }
+        ]
+      },
+      "formHash": "5c3659cb09dfc027ce128dcba4dc1e4a874a72783349cf76880bfbee96faba47"
+    },
+    "items": [
+      {
+        "schemaVersion": "assessment.v2",
+        "itemId": "retention-item-1",
+        "version": "0.1.0",
+        "itemType": "NUMERIC",
+        "stimulus": {
+          "prompt": "Without a worked example, give the decimal value of the digit 6 in 18.64.",
+          "context": null,
+          "resourceIds": [],
+          "options": [],
+          "orderingElements": [],
+          "matchingLeft": [],
+          "matchingRight": [],
+          "expectedUnit": null,
+          "learnerVisibleCriteria": []
+        },
+        "objectiveIds": [
+          "proposed-g7-number-sense-place-value"
+        ],
+        "misconceptionIds": [],
+        "difficulty": 2,
+        "cognitiveDemand": "APPLY",
+        "context": "REHEARSED",
+        "hints": [],
+        "feedbackPolicy": {
+          "hints": "NONE",
+          "explanation": "NEVER",
+          "correctAnswer": "NEVER"
+        },
+        "provenance": {
+          "authors": [
+            {
+              "kind": "AI",
+              "id": "factory-demo:ASSESSMENT_DESIGNER"
+            }
+          ],
+          "sourceRef": "unit-blueprint:factory-g7-number-sense@0.1.0",
+          "curriculumSourceRefs": [
+            "PROPOSED_G7_MAPPING_NOT_APPROVED"
+          ]
+        },
+        "scoringSpecHash": "43b33c39aa7494488540907055d97a260fc11ee3e680b88c229ad8ff656578a4",
+        "itemHash": "328d0ccaeb6b208dacf752a6813ee492a5b07001e315c7943c1ae1e4a5c93538"
+      }
+    ],
+    "specs": [
+      {
+        "schemaVersion": "assessment.v2",
+        "itemId": "retention-item-1",
+        "itemVersion": "0.1.0",
+        "scoringVersion": "0.1.0",
+        "maxPoints": 1,
+        "key": {
+          "kind": "NUMERIC",
+          "key": {
+            "value": 0.6,
+            "absoluteTolerance": 0,
+            "acceptedUnits": [],
+            "wrongUnitCredit": 0
+          }
+        },
+        "explanation": "The 6 occupies the tenths column, so its value is six tenths, written 0.6.",
+        "misconceptionSignals": [],
+        "moderationNotes": [
+          "REVIEWER ONLY. Independently verify this candidate key; AI output has no scoring authority."
+        ]
+      }
+    ]
+  },
+  "role": "ASSESSMENT_DESIGNER",
+  "author": {
+    "kind": "AI",
+    "agentId": "factory-demo:ASSESSMENT_DESIGNER",
+    "modelFamily": "deterministic-local-demo",
+    "sessionId": "ASSESSMENT_DESIGNER"
+  },
+  "blueprint": {
+    "blueprintId": "factory-g7-number-sense",
+    "version": "0.1.0",
+    "contentHash": "a2382c06ce4ec96be3634e9f0304689f88316a39d11fa976c4a44bbbe4dce40a"
+  },
+  "dependencies": [
+    {
+      "id": "summative",
+      "version": "0.1.0",
+      "contentHash": "7290f844a6a1ed39ac745eeefff5a065dd105f00df1b5e1d509b5bc44837c836"
+    }
+  ],
+  "contentHash": "42055e834f665d6c90554066b67b77b275862a7469c6e481278214da31912fa4"
+}

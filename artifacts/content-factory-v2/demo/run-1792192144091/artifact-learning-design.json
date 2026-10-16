@@ -1,0 +1,44 @@
+{
+  "id": "learning-design",
+  "version": "0.1.0",
+  "payload": {
+    "kind": "DOCUMENT",
+    "title": "Progression and evidence",
+    "sections": [
+      {
+        "heading": "Sequence",
+        "text": "Diagnose whole-number place value; reteach using a chart if needed. Model decimal places, guide responses, then require independent production. Compare decimals using equal units, teach against digit-count errors, then withhold assistance during end checks."
+      },
+      {
+        "heading": "Delayed and new contexts",
+        "text": "Propose a delayed check after at least seven days, subject to an approved grade/subject policy. Use an unfamiliar measurement table for transfer. Neither opportunity is learning evidence until independently completed and verified."
+      }
+    ],
+    "textAlternative": "Sequence: Diagnose whole-number place value; reteach using a chart if needed. Model decimal places, guide responses, then require independent production. Compare decimals using equal units, teach against digit-count errors, then withhold assistance during end checks.\nDelayed and new contexts: Propose a delayed check after at least seven days, subject to an approved grade/subject policy. Use an unfamiliar measurement table for transfer. Neither opportunity is learning evidence until independently completed and verified.",
+    "keyboardPath": "Read headings and paragraphs in document order; enter responses in text or on paper.",
+    "offlineInstructions": "Print or cache this text. Record work on paper. No network, sound, colour or pointer movement is required.",
+    "references": [
+      "curriculum-map"
+    ]
+  },
+  "role": "LEARNING_SCIENCE_DESIGNER",
+  "author": {
+    "kind": "AI",
+    "agentId": "factory-demo:LEARNING_SCIENCE_DESIGNER",
+    "modelFamily": "deterministic-local-demo",
+    "sessionId": "LEARNING_SCIENCE_DESIGNER"
+  },
+  "blueprint": {
+    "blueprintId": "factory-g7-number-sense",
+    "version": "0.1.0",
+    "contentHash": "a2382c06ce4ec96be3634e9f0304689f88316a39d11fa976c4a44bbbe4dce40a"
+  },
+  "dependencies": [
+    {
+      "id": "curriculum-map",
+      "version": "0.1.0",
+      "contentHash": "7b460b728a5c6526f198f1488a7e13ec2e7ba54bbb0b0adede91e6cc4a552704"
+    }
+  ],
+  "contentHash": "dbe639bbe24a34aef9c387d5a59c4a0f290882622c2fce703cf29d9509cf9a84"
+}

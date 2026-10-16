@@ -1,0 +1,11 @@
+{
+  "role": "MEDIA_ACCESSIBILITY",
+  "attempt": 1,
+  "status": "STARTED",
+  "inputHash": "523573dbbb1f202a7841e27aff7d904d0d1ad286ff7ad0c1808fede7d45da5e1",
+  "outputHashes": [],
+  "error": null,
+  "sequence": 11,
+  "previousHash": "3f6fa52d882a3ed178f09f86b23bb82130aa23d91fd98281cf3bfe11bc90cc63",
+  "eventHash": "2a9bec65458d136cc32f94447655d7713a389747c248f8ada65090967f878f91"
+}

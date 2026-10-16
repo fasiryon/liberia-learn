@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "factory-pilot-leads/1.0.0",
+  "evidenceKind": "USER_PROVIDED_IDENTIFIERS_NOT_VERIFIED_PRODUCTION_INVENTORY",
+  "reportedAt": "2026-10-16",
+  "repositoryEvidenceCommit": "5650c4be8a9dbbb07cfbdb4d2f8312cf66443885",
+  "notice": "The user supplied these unverified identifiers. PR #191 labels them as revision IDs and carries claimed per-lesson extracts/comparisons with separate row and logical IDs. Those repository claims are not an approved full production inventory or current production verification. All identities below are discovery leads only. No replacement or release is authorized.",
+  "records": [
+    { "identifier": "cmss8t4hz00unvo54epnfst66", "reportedNamespace": "REVISION_ID_IN_PR191", "repositoryRowId": "cmoeaemvu01i6vor4u3zch5hq", "repositoryContentId": "math-g7-1-number-sense-and-place-value-foundations", "reportedTitle": "Number Sense and Place Value", "grade": 7, "subject": "MATH", "verification": "UNVERIFIED_REFERENCE_ONLY" },
+    { "identifier": "cmss94dmc03b7vo54ryf3hqk1", "reportedNamespace": "REVISION_ID_IN_PR191", "repositoryRowId": "cmpyjp25s00cqvorwisg1rhyn", "repositoryContentId": "hero-literacy-g7-essay-writing-structure-and-argumentation", "reportedTitle": "Understanding Essay Writing", "grade": 7, "subject": "LITERACY", "verification": "UNVERIFIED_REFERENCE_ONLY" }
+  ]
+}

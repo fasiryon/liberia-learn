@@ -1,0 +1,18 @@
+{
+  "role": "LESSON_AUTHOR",
+  "attempt": 1,
+  "status": "SUCCEEDED",
+  "inputHash": "a4a2a4c32f6edbf5f5b2f2f060b1278b4f65f590c39db4e55aa38eb2921c1330",
+  "outputHashes": [
+    "d314df7d14222af86fd88594fc57b2f9941b194209fe9069d5cab548ead64785",
+    "6eef5bba123482d83c82eb181ac518ebc0fa6113465d6dad4a9834174b060e53",
+    "09792f8feea65ed516f342de650f498c7eaab32fea9b6a434320418b3b841abb",
+    "6d06f102a517c5a4810815f36b33a185b1a9c38f485f991811467fc3d375df30",
+    "a0eb42b79477116d198db5cd6503f62c103e4878dee94a72932f57ddcfbefb2d",
+    "63d0a3fbee7a820f6c334f3d85cc48ef87205ca94fcda3d1ce44debbf01675ad"
+  ],
+  "error": null,
+  "sequence": 6,
+  "previousHash": "ca8f6a4fe9aee55431f10d2705444ed6217413d4249d876bd5cbef141a2d3db6",
+  "eventHash": "720b121a8a8d5abbd35fb5a20d92a6ceb86598bcd086a1c724dd34a5c026f94e"
+}

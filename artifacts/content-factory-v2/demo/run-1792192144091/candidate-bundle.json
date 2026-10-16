@@ -1,0 +1,400 @@
+{
+  "schemaVersion": "content-bundle.v1",
+  "identity": {
+    "bundleId": "g7-number-sense-pilot",
+    "version": "0.1.0",
+    "title": "Place value and decimal comparison",
+    "gradeLevel": 7,
+    "subject": "MATH",
+    "locale": "en-LR",
+    "contentHash": "7adb86d3b450d4b2ca5578ad181c46a62553f23444a4b833a454f112bdd27fc2"
+  },
+  "curriculumAuthority": {
+    "releaseId": "UNRESOLVED-G7-CANDIDATE",
+    "releaseIdentity": "UNRESOLVED-NOT-A-RELEASE",
+    "objectiveIds": [
+      "proposed-g7-number-sense-place-value",
+      "ll-g7-base-generalisation-extension"
+    ],
+    "standardIds": [],
+    "sourceVersionRefs": [
+      "g7-existing-gap-report-source@0.2.0#78c3b0d8a29ea60825ced5e66d2e1aa5cd8ec33e6aec2e5ad7baa707b40eccf8"
+    ],
+    "conceptRefs": [],
+    "constructBindingRefs": []
+  },
+  "sequence": {
+    "units": [
+      {
+        "unitId": "g7-number-sense-pilot",
+        "unitVersion": "0.1.0",
+        "title": "Place value and decimal comparison",
+        "order": 1,
+        "prerequisiteUnitIds": [],
+        "entries": [
+          {
+            "itemId": "quiz",
+            "order": 1,
+            "requirement": "REQUIRED",
+            "prerequisiteItemIds": [],
+            "unlocksItemIds": []
+          },
+          {
+            "itemId": "lesson-1",
+            "order": 2,
+            "requirement": "REQUIRED",
+            "prerequisiteItemIds": [
+              "quiz"
+            ],
+            "unlocksItemIds": []
+          },
+          {
+            "itemId": "lesson-2",
+            "order": 3,
+            "requirement": "REQUIRED",
+            "prerequisiteItemIds": [
+              "lesson-1"
+            ],
+            "unlocksItemIds": []
+          },
+          {
+            "itemId": "summative",
+            "order": 4,
+            "requirement": "REQUIRED",
+            "prerequisiteItemIds": [
+              "lesson-2"
+            ],
+            "unlocksItemIds": []
+          }
+        ]
+      }
+    ]
+  },
+  "lessons": [
+    {
+      "identity": {
+        "itemId": "lesson-1",
+        "itemVersion": "0.1.0",
+        "itemKind": "LESSON"
+      },
+      "title": "Build decimal place value",
+      "objectiveIds": [
+        "proposed-g7-number-sense-place-value"
+      ],
+      "estimatedMinutes": 35,
+      "resourceIds": []
+    },
+    {
+      "identity": {
+        "itemId": "lesson-2",
+        "itemVersion": "0.1.0",
+        "itemKind": "LESSON"
+      },
+      "title": "Compare decimals with equal units",
+      "objectiveIds": [
+        "proposed-g7-number-sense-place-value"
+      ],
+      "estimatedMinutes": 35,
+      "resourceIds": []
+    }
+  ],
+  "activities": [],
+  "activityReferences": [
+    {
+      "activityId": "classwork",
+      "version": "0.1.0",
+      "kind": "CLASSWORK"
+    },
+    {
+      "activityId": "homework",
+      "version": "0.1.0",
+      "kind": "HOMEWORK"
+    },
+    {
+      "activityId": "practical",
+      "version": "0.1.0",
+      "kind": "PRACTICAL"
+    },
+    {
+      "activityId": "project",
+      "version": "0.1.0",
+      "kind": "PROJECT"
+    }
+  ],
+  "assessments": [
+    {
+      "identity": {
+        "itemId": "quiz",
+        "itemVersion": "0.1.0",
+        "itemKind": "QUIZ"
+      },
+      "role": "QUIZ",
+      "title": "Grade 7 quiz candidate",
+      "objectiveIds": [
+        "proposed-g7-number-sense-place-value"
+      ],
+      "definition": {
+        "definitionId": "quiz",
+        "definitionVersion": "0.1.0"
+      },
+      "items": [
+        {
+          "assessmentItemId": "quiz-item-1",
+          "assessmentItemVersion": "0.1.0"
+        },
+        {
+          "assessmentItemId": "quiz-item-2",
+          "assessmentItemVersion": "0.1.0"
+        }
+      ],
+      "itemOrder": {
+        "kind": "FIXED"
+      },
+      "learnerInstructions": [
+        "Candidate preview only. Independent assessment requires a separately authorized release."
+      ],
+      "secured": {
+        "answerKeyResourceId": "answer-keys",
+        "scoringGuideResourceId": "rubrics"
+      }
+    },
+    {
+      "identity": {
+        "itemId": "summative",
+        "itemVersion": "0.1.0",
+        "itemKind": "ASSESSMENT"
+      },
+      "role": "UNIT_ASSESSMENT",
+      "title": "Grade 7 summative candidate",
+      "objectiveIds": [
+        "proposed-g7-number-sense-place-value"
+      ],
+      "definition": {
+        "definitionId": "summative",
+        "definitionVersion": "0.1.0"
+      },
+      "items": [
+        {
+          "assessmentItemId": "summative-item-1",
+          "assessmentItemVersion": "0.1.0"
+        },
+        {
+          "assessmentItemId": "summative-item-2",
+          "assessmentItemVersion": "0.1.0"
+        }
+      ],
+      "itemOrder": {
+        "kind": "FIXED"
+      },
+      "learnerInstructions": [
+        "Candidate preview only. Independent assessment requires a separately authorized release."
+      ],
+      "secured": {
+        "answerKeyResourceId": "answer-keys",
+        "scoringGuideResourceId": "rubrics"
+      }
+    },
+    {
+      "identity": {
+        "itemId": "retention",
+        "itemVersion": "0.1.0",
+        "itemKind": "ASSESSMENT"
+      },
+      "role": "UNIT_ASSESSMENT",
+      "title": "Grade 7 retention candidate",
+      "objectiveIds": [
+        "proposed-g7-number-sense-place-value"
+      ],
+      "definition": {
+        "definitionId": "retention",
+        "definitionVersion": "0.1.0"
+      },
+      "items": [
+        {
+          "assessmentItemId": "retention-item-1",
+          "assessmentItemVersion": "0.1.0"
+        }
+      ],
+      "itemOrder": {
+        "kind": "FIXED"
+      },
+      "learnerInstructions": [
+        "Candidate preview only. Independent assessment requires a separately authorized release."
+      ],
+      "secured": {
+        "answerKeyResourceId": "answer-keys",
+        "scoringGuideResourceId": "rubrics"
+      }
+    },
+    {
+      "identity": {
+        "itemId": "transfer",
+        "itemVersion": "0.1.0",
+        "itemKind": "ASSESSMENT"
+      },
+      "role": "UNIT_ASSESSMENT",
+      "title": "Grade 7 transfer candidate",
+      "objectiveIds": [
+        "proposed-g7-number-sense-place-value"
+      ],
+      "definition": {
+        "definitionId": "transfer",
+        "definitionVersion": "0.1.0"
+      },
+      "items": [
+        {
+          "assessmentItemId": "transfer-item-1",
+          "assessmentItemVersion": "0.1.0"
+        }
+      ],
+      "itemOrder": {
+        "kind": "FIXED"
+      },
+      "learnerInstructions": [
+        "Candidate preview only. Independent assessment requires a separately authorized release."
+      ],
+      "secured": {
+        "answerKeyResourceId": "answer-keys",
+        "scoringGuideResourceId": "rubrics"
+      }
+    }
+  ],
+  "labs": [],
+  "resources": [
+    {
+      "resourceId": "curriculum-map",
+      "resourceVersion": "0.1.0",
+      "kind": "DOCUMENT",
+      "audience": "TEACHER",
+      "title": "Source and scope decisions",
+      "locale": "en-LR",
+      "assetId": null
+    },
+    {
+      "resourceId": "learning-design",
+      "resourceVersion": "0.1.0",
+      "kind": "DOCUMENT",
+      "audience": "TEACHER",
+      "title": "Progression and evidence",
+      "locale": "en-LR",
+      "assetId": null
+    },
+    {
+      "resourceId": "worksheet",
+      "resourceVersion": "0.1.0",
+      "kind": "DOCUMENT",
+      "audience": "LEARNER",
+      "title": "Place chart and practice sheet",
+      "locale": "en-LR",
+      "assetId": null
+    },
+    {
+      "resourceId": "teacher-guide",
+      "resourceVersion": "0.1.0",
+      "kind": "DOCUMENT",
+      "audience": "TEACHER",
+      "title": "Teacher guide",
+      "locale": "en-LR",
+      "assetId": null
+    },
+    {
+      "resourceId": "answer-keys",
+      "resourceVersion": "0.1.0",
+      "kind": "ANSWER_KEY",
+      "audience": "TEACHER",
+      "title": "Protected answer-key index",
+      "locale": "en-LR",
+      "assetId": null
+    },
+    {
+      "resourceId": "rubrics",
+      "resourceVersion": "0.1.0",
+      "kind": "DOCUMENT",
+      "audience": "TEACHER",
+      "title": "Protected rubric index",
+      "locale": "en-LR",
+      "assetId": null
+    },
+    {
+      "resourceId": "accessible-text",
+      "resourceVersion": "0.1.0",
+      "kind": "DOCUMENT",
+      "audience": "LEARNER",
+      "title": "Text alternatives",
+      "locale": "en-LR",
+      "assetId": null
+    },
+    {
+      "resourceId": "extension",
+      "resourceVersion": "0.1.0",
+      "kind": "DOCUMENT",
+      "audience": "LEARNER",
+      "title": "Optional base investigation",
+      "locale": "en-LR",
+      "assetId": null
+    }
+  ],
+  "toolkitBindings": [],
+  "toolkitMapping": null,
+  "learnerSupport": {
+    "remediation": [
+      {
+        "supportId": "place-chart-fallback",
+        "objectiveIds": [
+          "proposed-g7-number-sense-place-value"
+        ],
+        "itemIds": [
+          "lesson-1"
+        ],
+        "resourceIds": [
+          "worksheet",
+          "accessible-text"
+        ]
+      }
+    ],
+    "enrichment": [
+      {
+        "supportId": "optional-base-investigation",
+        "objectiveIds": [
+          "ll-g7-base-generalisation-extension"
+        ],
+        "itemIds": [],
+        "resourceIds": [
+          "extension"
+        ]
+      }
+    ],
+    "accommodations": [],
+    "languageVariants": []
+  },
+  "renderings": [],
+  "offline": {
+    "packageable": false,
+    "assets": [],
+    "allowedCapabilities": [],
+    "reconnectSemantics": {
+      "requiredFor": [
+        "SUBMISSION_SYNC",
+        "SUMMATIVE_ASSESSMENT",
+        "EVIDENCE_RECONCILIATION"
+      ],
+      "maxOfflineDays": null
+    }
+  },
+  "governance": {
+    "provenanceRefs": [
+      "unit-blueprint:factory-g7-number-sense@0.1.0#a2382c06ce4ec96be3634e9f0304689f88316a39d11fa976c4a44bbbe4dce40a"
+    ],
+    "reviewRefs": [],
+    "lifecycleRefs": [],
+    "releaseRefs": []
+  },
+  "extensions": {
+    "unitBlueprint": {
+      "blueprintId": "factory-g7-number-sense",
+      "version": "0.1.0",
+      "contentHash": "a2382c06ce4ec96be3634e9f0304689f88316a39d11fa976c4a44bbbe4dce40a"
+    },
+    "candidateOnly": true
+  }
+}

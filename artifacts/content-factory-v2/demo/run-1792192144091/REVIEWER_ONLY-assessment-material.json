@@ -1,0 +1,966 @@
+[
+  {
+    "id": "quiz",
+    "version": "0.1.0",
+    "payload": {
+      "kind": "ASSESSMENT",
+      "definition": {
+        "schemaVersion": "assessment.v2",
+        "definitionId": "quiz",
+        "version": "0.1.0",
+        "title": "Grade 7 quiz candidate",
+        "purpose": "DIAGNOSTIC",
+        "grade": 7,
+        "subject": "MATH",
+        "objectiveIds": [
+          "proposed-g7-number-sense-place-value"
+        ],
+        "prerequisiteObjectiveIds": [],
+        "alignment": {
+          "releaseId": "UNRESOLVED-G7-CANDIDATE",
+          "releaseIdentity": "UNRESOLVED-NOT-A-RELEASE",
+          "nationalObjectiveIds": [
+            "proposed-g7-number-sense-place-value"
+          ],
+          "extensionObjectiveIds": []
+        },
+        "timeLimitMinutes": 20,
+        "permittedTools": [
+          {
+            "toolId": "ai-tutor",
+            "mode": "PROHIBITED"
+          }
+        ],
+        "permittedAccommodations": [
+          "READ_ALOUD",
+          "LARGE_PRINT"
+        ],
+        "attemptPolicy": {
+          "maxAttempts": 1,
+          "cooldownMinutes": 0,
+          "reportedAttempt": "FIRST"
+        },
+        "provenance": {
+          "authors": [
+            {
+              "kind": "AI",
+              "id": "factory-demo:ASSESSMENT_DESIGNER"
+            }
+          ],
+          "sourceRef": "unit-blueprint:factory-g7-number-sense@0.1.0",
+          "curriculumSourceRefs": [
+            "PROPOSED_G7_MAPPING_NOT_APPROVED"
+          ]
+        },
+        "contentHash": "85eafe111a33e67bb0f3d574ca200d996ff001e0d200ab5642ef2218114b4fd8"
+      },
+      "form": {
+        "schemaVersion": "assessment.v2",
+        "formId": "quiz-form",
+        "version": "0.1.0",
+        "definition": {
+          "definitionId": "quiz",
+          "version": "0.1.0",
+          "contentHash": "85eafe111a33e67bb0f3d574ca200d996ff001e0d200ab5642ef2218114b4fd8"
+        },
+        "items": [
+          {
+            "itemId": "quiz-item-1",
+            "itemVersion": "0.1.0",
+            "itemHash": "d76a2ef4d33e0ea59ce0f0de7b80309f7afdf2c03a595d51b461ea196c52271c",
+            "points": 1
+          },
+          {
+            "itemId": "quiz-item-2",
+            "itemVersion": "0.1.0",
+            "itemHash": "ac87c084abcf4dc9c592642536870a12b2ac88e512e009660fa3d6412a1c48e7",
+            "points": 1
+          }
+        ],
+        "delivery": {
+          "itemOrder": "FIXED",
+          "randomizationPolicyId": null,
+          "allowBacktracking": true,
+          "offlineDelivery": "CAPTURE_ONLY"
+        },
+        "blueprint": {
+          "blueprintVersion": "0.1.0",
+          "totalPoints": 2,
+          "objectiveCoverage": [
+            {
+              "objectiveId": "proposed-g7-number-sense-place-value",
+              "minItems": 1
+            }
+          ]
+        },
+        "formHash": "0c4fcbffae8afbfe6c7e08ee9dcf3b37919e9773a187b86f10d231ea4955e7f6"
+      },
+      "items": [
+        {
+          "schemaVersion": "assessment.v2",
+          "itemId": "quiz-item-1",
+          "version": "0.1.0",
+          "itemType": "NUMERIC",
+          "stimulus": {
+            "prompt": "What value does the digit 4 represent in 42?",
+            "context": null,
+            "resourceIds": [],
+            "options": [],
+            "orderingElements": [],
+            "matchingLeft": [],
+            "matchingRight": [],
+            "expectedUnit": null,
+            "learnerVisibleCriteria": []
+          },
+          "objectiveIds": [
+            "proposed-g7-number-sense-place-value"
+          ],
+          "misconceptionIds": [],
+          "difficulty": 2,
+          "cognitiveDemand": "APPLY",
+          "context": "REHEARSED",
+          "hints": [],
+          "feedbackPolicy": {
+            "hints": "NONE",
+            "explanation": "NEVER",
+            "correctAnswer": "NEVER"
+          },
+          "provenance": {
+            "authors": [
+              {
+                "kind": "AI",
+                "id": "factory-demo:ASSESSMENT_DESIGNER"
+              }
+            ],
+            "sourceRef": "unit-blueprint:factory-g7-number-sense@0.1.0",
+            "curriculumSourceRefs": [
+              "PROPOSED_G7_MAPPING_NOT_APPROVED"
+            ]
+          },
+          "scoringSpecHash": "9e1a3a9bdb418b8beb2bb164acda6e4879dc39953440cb94b8a5d6c94265c313",
+          "itemHash": "d76a2ef4d33e0ea59ce0f0de7b80309f7afdf2c03a595d51b461ea196c52271c"
+        },
+        {
+          "schemaVersion": "assessment.v2",
+          "itemId": "quiz-item-2",
+          "version": "0.1.0",
+          "itemType": "SINGLE_SELECT",
+          "stimulus": {
+            "prompt": "Compare 0.9 and 0.81. Select the greater quantity.",
+            "context": null,
+            "resourceIds": [],
+            "options": [
+              {
+                "optionId": "equal-units",
+                "text": "0.9 is greater"
+              },
+              {
+                "optionId": "longer",
+                "text": "0.81 is greater"
+              },
+              {
+                "optionId": "equal",
+                "text": "They are equal"
+              }
+            ],
+            "orderingElements": [],
+            "matchingLeft": [],
+            "matchingRight": [],
+            "expectedUnit": null,
+            "learnerVisibleCriteria": []
+          },
+          "objectiveIds": [
+            "proposed-g7-number-sense-place-value"
+          ],
+          "misconceptionIds": [
+            "mc-longer-decimal-bigger"
+          ],
+          "difficulty": 2,
+          "cognitiveDemand": "APPLY",
+          "context": "REHEARSED",
+          "hints": [],
+          "feedbackPolicy": {
+            "hints": "NONE",
+            "explanation": "NEVER",
+            "correctAnswer": "NEVER"
+          },
+          "provenance": {
+            "authors": [
+              {
+                "kind": "AI",
+                "id": "factory-demo:ASSESSMENT_DESIGNER"
+              }
+            ],
+            "sourceRef": "unit-blueprint:factory-g7-number-sense@0.1.0",
+            "curriculumSourceRefs": [
+              "PROPOSED_G7_MAPPING_NOT_APPROVED"
+            ]
+          },
+          "scoringSpecHash": "ca71731d0d75262267ad65b70fb6ab4ef6ddaeda65e63b25d5e1b6843b01feb2",
+          "itemHash": "ac87c084abcf4dc9c592642536870a12b2ac88e512e009660fa3d6412a1c48e7"
+        }
+      ],
+      "specs": [
+        {
+          "schemaVersion": "assessment.v2",
+          "itemId": "quiz-item-1",
+          "itemVersion": "0.1.0",
+          "scoringVersion": "0.1.0",
+          "maxPoints": 1,
+          "key": {
+            "kind": "NUMERIC",
+            "key": {
+              "value": 40,
+              "absoluteTolerance": 0,
+              "acceptedUnits": [],
+              "wrongUnitCredit": 0
+            }
+          },
+          "explanation": "The digit 4 is in the tens place, representing four tens or forty.",
+          "misconceptionSignals": [],
+          "moderationNotes": [
+            "REVIEWER ONLY. Independently verify this candidate key; AI output has no scoring authority."
+          ]
+        },
+        {
+          "schemaVersion": "assessment.v2",
+          "itemId": "quiz-item-2",
+          "itemVersion": "0.1.0",
+          "scoringVersion": "0.1.0",
+          "maxPoints": 1,
+          "key": {
+            "kind": "SINGLE_SELECT",
+            "correctOptionId": "equal-units"
+          },
+          "explanation": "Nine tenths is ninety hundredths, which exceeds eighty-one hundredths.",
+          "misconceptionSignals": [
+            {
+              "responsePattern": "longer",
+              "misconceptionId": "mc-longer-decimal-bigger"
+            }
+          ],
+          "moderationNotes": [
+            "REVIEWER ONLY. Independently verify this candidate key; AI output has no scoring authority."
+          ]
+        }
+      ]
+    },
+    "role": "ASSESSMENT_DESIGNER",
+    "author": {
+      "kind": "AI",
+      "agentId": "factory-demo:ASSESSMENT_DESIGNER",
+      "modelFamily": "deterministic-local-demo",
+      "sessionId": "ASSESSMENT_DESIGNER"
+    },
+    "blueprint": {
+      "blueprintId": "factory-g7-number-sense",
+      "version": "0.1.0",
+      "contentHash": "a2382c06ce4ec96be3634e9f0304689f88316a39d11fa976c4a44bbbe4dce40a"
+    },
+    "dependencies": [
+      {
+        "id": "lesson-1",
+        "version": "0.1.0",
+        "contentHash": "d314df7d14222af86fd88594fc57b2f9941b194209fe9069d5cab548ead64785"
+      },
+      {
+        "id": "lesson-2",
+        "version": "0.1.0",
+        "contentHash": "6eef5bba123482d83c82eb181ac518ebc0fa6113465d6dad4a9834174b060e53"
+      }
+    ],
+    "contentHash": "d87b761522ac5494d2beef84aa1deb0ef478b5e965a6b19267a9d47d7a9e1600"
+  },
+  {
+    "id": "summative",
+    "version": "0.1.0",
+    "payload": {
+      "kind": "ASSESSMENT",
+      "definition": {
+        "schemaVersion": "assessment.v2",
+        "definitionId": "summative",
+        "version": "0.1.0",
+        "title": "Grade 7 summative candidate",
+        "purpose": "SUMMATIVE",
+        "grade": 7,
+        "subject": "MATH",
+        "objectiveIds": [
+          "proposed-g7-number-sense-place-value"
+        ],
+        "prerequisiteObjectiveIds": [],
+        "alignment": {
+          "releaseId": "UNRESOLVED-G7-CANDIDATE",
+          "releaseIdentity": "UNRESOLVED-NOT-A-RELEASE",
+          "nationalObjectiveIds": [
+            "proposed-g7-number-sense-place-value"
+          ],
+          "extensionObjectiveIds": []
+        },
+        "timeLimitMinutes": 20,
+        "permittedTools": [
+          {
+            "toolId": "ai-tutor",
+            "mode": "PROHIBITED"
+          }
+        ],
+        "permittedAccommodations": [
+          "READ_ALOUD",
+          "LARGE_PRINT"
+        ],
+        "attemptPolicy": {
+          "maxAttempts": 1,
+          "cooldownMinutes": 0,
+          "reportedAttempt": "FIRST"
+        },
+        "provenance": {
+          "authors": [
+            {
+              "kind": "AI",
+              "id": "factory-demo:ASSESSMENT_DESIGNER"
+            }
+          ],
+          "sourceRef": "unit-blueprint:factory-g7-number-sense@0.1.0",
+          "curriculumSourceRefs": [
+            "PROPOSED_G7_MAPPING_NOT_APPROVED"
+          ]
+        },
+        "contentHash": "f03876ec40bf3d4b3d6a88a068df70dad42ceafb92bc508b6345631318bbf9e2"
+      },
+      "form": {
+        "schemaVersion": "assessment.v2",
+        "formId": "summative-form",
+        "version": "0.1.0",
+        "definition": {
+          "definitionId": "summative",
+          "version": "0.1.0",
+          "contentHash": "f03876ec40bf3d4b3d6a88a068df70dad42ceafb92bc508b6345631318bbf9e2"
+        },
+        "items": [
+          {
+            "itemId": "summative-item-1",
+            "itemVersion": "0.1.0",
+            "itemHash": "9811d559e36c6153828bbc21dee14e4661bba59e310f8b9f69320b744f3dde72",
+            "points": 1
+          },
+          {
+            "itemId": "summative-item-2",
+            "itemVersion": "0.1.0",
+            "itemHash": "4d05a6a1180bd35fb6a3e92ffb0ce15ca2368f71d49f9a725f3192351adb1f6a",
+            "points": 4
+          }
+        ],
+        "delivery": {
+          "itemOrder": "FIXED",
+          "randomizationPolicyId": null,
+          "allowBacktracking": true,
+          "offlineDelivery": "CAPTURE_ONLY"
+        },
+        "blueprint": {
+          "blueprintVersion": "0.1.0",
+          "totalPoints": 5,
+          "objectiveCoverage": [
+            {
+              "objectiveId": "proposed-g7-number-sense-place-value",
+              "minItems": 1
+            }
+          ]
+        },
+        "formHash": "10c3c8bc8b8b923bcddfbfe3fbe6a6b4513ac72cd4a36382050a4f9a7bba947f"
+      },
+      "items": [
+        {
+          "schemaVersion": "assessment.v2",
+          "itemId": "summative-item-1",
+          "version": "0.1.0",
+          "itemType": "NUMERIC",
+          "stimulus": {
+            "prompt": "What value does the digit 7 represent in 26.73? Write a decimal number.",
+            "context": null,
+            "resourceIds": [],
+            "options": [],
+            "orderingElements": [],
+            "matchingLeft": [],
+            "matchingRight": [],
+            "expectedUnit": null,
+            "learnerVisibleCriteria": []
+          },
+          "objectiveIds": [
+            "proposed-g7-number-sense-place-value"
+          ],
+          "misconceptionIds": [],
+          "difficulty": 2,
+          "cognitiveDemand": "APPLY",
+          "context": "REHEARSED",
+          "hints": [],
+          "feedbackPolicy": {
+            "hints": "NONE",
+            "explanation": "NEVER",
+            "correctAnswer": "NEVER"
+          },
+          "provenance": {
+            "authors": [
+              {
+                "kind": "AI",
+                "id": "factory-demo:ASSESSMENT_DESIGNER"
+              }
+            ],
+            "sourceRef": "unit-blueprint:factory-g7-number-sense@0.1.0",
+            "curriculumSourceRefs": [
+              "PROPOSED_G7_MAPPING_NOT_APPROVED"
+            ]
+          },
+          "scoringSpecHash": "27f145ede241c78d1d51dd0f44e706b14d842b5beefaa3d4a92ce7e659023753",
+          "itemHash": "9811d559e36c6153828bbc21dee14e4661bba59e310f8b9f69320b744f3dde72"
+        },
+        {
+          "schemaVersion": "assessment.v2",
+          "itemId": "summative-item-2",
+          "version": "0.1.0",
+          "itemType": "WORKED_SOLUTION",
+          "stimulus": {
+            "prompt": "Compare 0.45 and 0.5. Justify using a common unit and explain why counting decimal digits fails.",
+            "context": null,
+            "resourceIds": [],
+            "options": [],
+            "orderingElements": [],
+            "matchingLeft": [],
+            "matchingRight": [],
+            "expectedUnit": null,
+            "learnerVisibleCriteria": [
+              "State a comparison and justify it with equal place units.",
+              "Explain why decimal digit count can mislead."
+            ]
+          },
+          "objectiveIds": [
+            "proposed-g7-number-sense-place-value"
+          ],
+          "misconceptionIds": [],
+          "difficulty": 2,
+          "cognitiveDemand": "ANALYZE",
+          "context": "REHEARSED",
+          "hints": [],
+          "feedbackPolicy": {
+            "hints": "NONE",
+            "explanation": "NEVER",
+            "correctAnswer": "NEVER"
+          },
+          "provenance": {
+            "authors": [
+              {
+                "kind": "AI",
+                "id": "factory-demo:ASSESSMENT_DESIGNER"
+              }
+            ],
+            "sourceRef": "unit-blueprint:factory-g7-number-sense@0.1.0",
+            "curriculumSourceRefs": [
+              "PROPOSED_G7_MAPPING_NOT_APPROVED"
+            ]
+          },
+          "scoringSpecHash": "1f2727100e224f049980b67b46ca23056d66662410886abcfa2bd9cfff98d2a4",
+          "itemHash": "4d05a6a1180bd35fb6a3e92ffb0ce15ca2368f71d49f9a725f3192351adb1f6a"
+        }
+      ],
+      "specs": [
+        {
+          "schemaVersion": "assessment.v2",
+          "itemId": "summative-item-1",
+          "itemVersion": "0.1.0",
+          "scoringVersion": "0.1.0",
+          "maxPoints": 1,
+          "key": {
+            "kind": "NUMERIC",
+            "key": {
+              "value": 0.7,
+              "absoluteTolerance": 0,
+              "acceptedUnits": [],
+              "wrongUnitCredit": 0
+            }
+          },
+          "explanation": "Seven tenths has decimal value 0.7 in the number 26.73.",
+          "misconceptionSignals": [],
+          "moderationNotes": [
+            "REVIEWER ONLY. Independently verify this candidate key; AI output has no scoring authority."
+          ]
+        },
+        {
+          "schemaVersion": "assessment.v2",
+          "itemId": "summative-item-2",
+          "itemVersion": "0.1.0",
+          "scoringVersion": "0.1.0",
+          "maxPoints": 4,
+          "key": {
+            "kind": "RUBRIC",
+            "rubric": {
+              "rubricId": "decimal-reasoning",
+              "rubricVersion": "0.1.0",
+              "criteria": [
+                {
+                  "criterionId": "units",
+                  "title": "Common units",
+                  "levels": [
+                    {
+                      "points": 0,
+                      "descriptor": "No meaningful unit conversion is supplied."
+                    },
+                    {
+                      "points": 1,
+                      "descriptor": "A useful unit is named but conversion is incomplete."
+                    },
+                    {
+                      "points": 2,
+                      "descriptor": "Both quantities are correctly expressed in a common unit."
+                    }
+                  ]
+                },
+                {
+                  "criterionId": "justification",
+                  "title": "Reasoned comparison",
+                  "levels": [
+                    {
+                      "points": 0,
+                      "descriptor": "No defensible comparison is provided."
+                    },
+                    {
+                      "points": 1,
+                      "descriptor": "The comparison is correct with incomplete reasoning."
+                    },
+                    {
+                      "points": 2,
+                      "descriptor": "The comparison follows from equal-unit reasoning and explains why counting digits fails."
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "explanation": "Five tenths equals fifty hundredths; this is greater than forty-five hundredths, so 0.5 exceeds 0.45.",
+          "misconceptionSignals": [],
+          "moderationNotes": [
+            "REVIEWER ONLY. Independently verify this candidate key; AI output has no scoring authority."
+          ]
+        }
+      ]
+    },
+    "role": "ASSESSMENT_DESIGNER",
+    "author": {
+      "kind": "AI",
+      "agentId": "factory-demo:ASSESSMENT_DESIGNER",
+      "modelFamily": "deterministic-local-demo",
+      "sessionId": "ASSESSMENT_DESIGNER"
+    },
+    "blueprint": {
+      "blueprintId": "factory-g7-number-sense",
+      "version": "0.1.0",
+      "contentHash": "a2382c06ce4ec96be3634e9f0304689f88316a39d11fa976c4a44bbbe4dce40a"
+    },
+    "dependencies": [
+      {
+        "id": "lesson-2",
+        "version": "0.1.0",
+        "contentHash": "6eef5bba123482d83c82eb181ac518ebc0fa6113465d6dad4a9834174b060e53"
+      }
+    ],
+    "contentHash": "7290f844a6a1ed39ac745eeefff5a065dd105f00df1b5e1d509b5bc44837c836"
+  },
+  {
+    "id": "retention",
+    "version": "0.1.0",
+    "payload": {
+      "kind": "ASSESSMENT",
+      "definition": {
+        "schemaVersion": "assessment.v2",
+        "definitionId": "retention",
+        "version": "0.1.0",
+        "title": "Grade 7 retention candidate",
+        "purpose": "RETENTION",
+        "grade": 7,
+        "subject": "MATH",
+        "objectiveIds": [
+          "proposed-g7-number-sense-place-value"
+        ],
+        "prerequisiteObjectiveIds": [],
+        "alignment": {
+          "releaseId": "UNRESOLVED-G7-CANDIDATE",
+          "releaseIdentity": "UNRESOLVED-NOT-A-RELEASE",
+          "nationalObjectiveIds": [
+            "proposed-g7-number-sense-place-value"
+          ],
+          "extensionObjectiveIds": []
+        },
+        "timeLimitMinutes": 20,
+        "permittedTools": [
+          {
+            "toolId": "ai-tutor",
+            "mode": "PROHIBITED"
+          }
+        ],
+        "permittedAccommodations": [
+          "READ_ALOUD",
+          "LARGE_PRINT"
+        ],
+        "attemptPolicy": {
+          "maxAttempts": 1,
+          "cooldownMinutes": 0,
+          "reportedAttempt": "FIRST"
+        },
+        "provenance": {
+          "authors": [
+            {
+              "kind": "AI",
+              "id": "factory-demo:ASSESSMENT_DESIGNER"
+            }
+          ],
+          "sourceRef": "unit-blueprint:factory-g7-number-sense@0.1.0",
+          "curriculumSourceRefs": [
+            "PROPOSED_G7_MAPPING_NOT_APPROVED"
+          ]
+        },
+        "contentHash": "931c797d45d0708b61e6d07b2a4fd4c481258f96fc9d50354446b3d25c3705f6"
+      },
+      "form": {
+        "schemaVersion": "assessment.v2",
+        "formId": "retention-form",
+        "version": "0.1.0",
+        "definition": {
+          "definitionId": "retention",
+          "version": "0.1.0",
+          "contentHash": "931c797d45d0708b61e6d07b2a4fd4c481258f96fc9d50354446b3d25c3705f6"
+        },
+        "items": [
+          {
+            "itemId": "retention-item-1",
+            "itemVersion": "0.1.0",
+            "itemHash": "328d0ccaeb6b208dacf752a6813ee492a5b07001e315c7943c1ae1e4a5c93538",
+            "points": 1
+          }
+        ],
+        "delivery": {
+          "itemOrder": "FIXED",
+          "randomizationPolicyId": null,
+          "allowBacktracking": true,
+          "offlineDelivery": "CAPTURE_ONLY"
+        },
+        "blueprint": {
+          "blueprintVersion": "0.1.0",
+          "totalPoints": 1,
+          "objectiveCoverage": [
+            {
+              "objectiveId": "proposed-g7-number-sense-place-value",
+              "minItems": 1
+            }
+          ]
+        },
+        "formHash": "5c3659cb09dfc027ce128dcba4dc1e4a874a72783349cf76880bfbee96faba47"
+      },
+      "items": [
+        {
+          "schemaVersion": "assessment.v2",
+          "itemId": "retention-item-1",
+          "version": "0.1.0",
+          "itemType": "NUMERIC",
+          "stimulus": {
+            "prompt": "Without a worked example, give the decimal value of the digit 6 in 18.64.",
+            "context": null,
+            "resourceIds": [],
+            "options": [],
+            "orderingElements": [],
+            "matchingLeft": [],
+            "matchingRight": [],
+            "expectedUnit": null,
+            "learnerVisibleCriteria": []
+          },
+          "objectiveIds": [
+            "proposed-g7-number-sense-place-value"
+          ],
+          "misconceptionIds": [],
+          "difficulty": 2,
+          "cognitiveDemand": "APPLY",
+          "context": "REHEARSED",
+          "hints": [],
+          "feedbackPolicy": {
+            "hints": "NONE",
+            "explanation": "NEVER",
+            "correctAnswer": "NEVER"
+          },
+          "provenance": {
+            "authors": [
+              {
+                "kind": "AI",
+                "id": "factory-demo:ASSESSMENT_DESIGNER"
+              }
+            ],
+            "sourceRef": "unit-blueprint:factory-g7-number-sense@0.1.0",
+            "curriculumSourceRefs": [
+              "PROPOSED_G7_MAPPING_NOT_APPROVED"
+            ]
+          },
+          "scoringSpecHash": "43b33c39aa7494488540907055d97a260fc11ee3e680b88c229ad8ff656578a4",
+          "itemHash": "328d0ccaeb6b208dacf752a6813ee492a5b07001e315c7943c1ae1e4a5c93538"
+        }
+      ],
+      "specs": [
+        {
+          "schemaVersion": "assessment.v2",
+          "itemId": "retention-item-1",
+          "itemVersion": "0.1.0",
+          "scoringVersion": "0.1.0",
+          "maxPoints": 1,
+          "key": {
+            "kind": "NUMERIC",
+            "key": {
+              "value": 0.6,
+              "absoluteTolerance": 0,
+              "acceptedUnits": [],
+              "wrongUnitCredit": 0
+            }
+          },
+          "explanation": "The 6 occupies the tenths column, so its value is six tenths, written 0.6.",
+          "misconceptionSignals": [],
+          "moderationNotes": [
+            "REVIEWER ONLY. Independently verify this candidate key; AI output has no scoring authority."
+          ]
+        }
+      ]
+    },
+    "role": "ASSESSMENT_DESIGNER",
+    "author": {
+      "kind": "AI",
+      "agentId": "factory-demo:ASSESSMENT_DESIGNER",
+      "modelFamily": "deterministic-local-demo",
+      "sessionId": "ASSESSMENT_DESIGNER"
+    },
+    "blueprint": {
+      "blueprintId": "factory-g7-number-sense",
+      "version": "0.1.0",
+      "contentHash": "a2382c06ce4ec96be3634e9f0304689f88316a39d11fa976c4a44bbbe4dce40a"
+    },
+    "dependencies": [
+      {
+        "id": "summative",
+        "version": "0.1.0",
+        "contentHash": "7290f844a6a1ed39ac745eeefff5a065dd105f00df1b5e1d509b5bc44837c836"
+      }
+    ],
+    "contentHash": "42055e834f665d6c90554066b67b77b275862a7469c6e481278214da31912fa4"
+  },
+  {
+    "id": "transfer",
+    "version": "0.1.0",
+    "payload": {
+      "kind": "ASSESSMENT",
+      "definition": {
+        "schemaVersion": "assessment.v2",
+        "definitionId": "transfer",
+        "version": "0.1.0",
+        "title": "Grade 7 transfer candidate",
+        "purpose": "TRANSFER",
+        "grade": 7,
+        "subject": "MATH",
+        "objectiveIds": [
+          "proposed-g7-number-sense-place-value"
+        ],
+        "prerequisiteObjectiveIds": [],
+        "alignment": {
+          "releaseId": "UNRESOLVED-G7-CANDIDATE",
+          "releaseIdentity": "UNRESOLVED-NOT-A-RELEASE",
+          "nationalObjectiveIds": [
+            "proposed-g7-number-sense-place-value"
+          ],
+          "extensionObjectiveIds": []
+        },
+        "timeLimitMinutes": 20,
+        "permittedTools": [
+          {
+            "toolId": "ai-tutor",
+            "mode": "PROHIBITED"
+          }
+        ],
+        "permittedAccommodations": [
+          "READ_ALOUD",
+          "LARGE_PRINT"
+        ],
+        "attemptPolicy": {
+          "maxAttempts": 1,
+          "cooldownMinutes": 0,
+          "reportedAttempt": "FIRST"
+        },
+        "provenance": {
+          "authors": [
+            {
+              "kind": "AI",
+              "id": "factory-demo:ASSESSMENT_DESIGNER"
+            }
+          ],
+          "sourceRef": "unit-blueprint:factory-g7-number-sense@0.1.0",
+          "curriculumSourceRefs": [
+            "PROPOSED_G7_MAPPING_NOT_APPROVED"
+          ]
+        },
+        "contentHash": "b5a71b0970dba2189cbd8c37a952d46196e784948749d08abaf525c1abf0a546"
+      },
+      "form": {
+        "schemaVersion": "assessment.v2",
+        "formId": "transfer-form",
+        "version": "0.1.0",
+        "definition": {
+          "definitionId": "transfer",
+          "version": "0.1.0",
+          "contentHash": "b5a71b0970dba2189cbd8c37a952d46196e784948749d08abaf525c1abf0a546"
+        },
+        "items": [
+          {
+            "itemId": "transfer-item-1",
+            "itemVersion": "0.1.0",
+            "itemHash": "91bc04d421b9bd8b3c3aa7a3792bee262156b8600531d8f3aec7f67390a61422",
+            "points": 4
+          }
+        ],
+        "delivery": {
+          "itemOrder": "FIXED",
+          "randomizationPolicyId": null,
+          "allowBacktracking": true,
+          "offlineDelivery": "CAPTURE_ONLY"
+        },
+        "blueprint": {
+          "blueprintVersion": "0.1.0",
+          "totalPoints": 4,
+          "objectiveCoverage": [
+            {
+              "objectiveId": "proposed-g7-number-sense-place-value",
+              "minItems": 1
+            }
+          ]
+        },
+        "formHash": "854c905e78bac48f5dc431271536e9185d835d323aeb80e12d70e076adefcb34"
+      },
+      "items": [
+        {
+          "schemaVersion": "assessment.v2",
+          "itemId": "transfer-item-1",
+          "version": "0.1.0",
+          "itemType": "WORKED_SOLUTION",
+          "stimulus": {
+            "prompt": "An invented measurement table lists seedlings A: 0.62 m, B: 0.7 m. A learner claims A is taller because 62 exceeds 7. Evaluate the claim using equal units. This table was not used during instruction.",
+            "context": null,
+            "resourceIds": [],
+            "options": [],
+            "orderingElements": [],
+            "matchingLeft": [],
+            "matchingRight": [],
+            "expectedUnit": null,
+            "learnerVisibleCriteria": [
+              "State a comparison and justify it with equal place units.",
+              "Explain why decimal digit count can mislead."
+            ]
+          },
+          "objectiveIds": [
+            "proposed-g7-number-sense-place-value"
+          ],
+          "misconceptionIds": [],
+          "difficulty": 2,
+          "cognitiveDemand": "ANALYZE",
+          "context": "NEW",
+          "hints": [],
+          "feedbackPolicy": {
+            "hints": "NONE",
+            "explanation": "NEVER",
+            "correctAnswer": "NEVER"
+          },
+          "provenance": {
+            "authors": [
+              {
+                "kind": "AI",
+                "id": "factory-demo:ASSESSMENT_DESIGNER"
+              }
+            ],
+            "sourceRef": "unit-blueprint:factory-g7-number-sense@0.1.0",
+            "curriculumSourceRefs": [
+              "PROPOSED_G7_MAPPING_NOT_APPROVED"
+            ]
+          },
+          "scoringSpecHash": "e08543ab39e1692e8b6be2e3907bb00cd10f161a3fa3ab5b60c8fd29a91079b6",
+          "itemHash": "91bc04d421b9bd8b3c3aa7a3792bee262156b8600531d8f3aec7f67390a61422"
+        }
+      ],
+      "specs": [
+        {
+          "schemaVersion": "assessment.v2",
+          "itemId": "transfer-item-1",
+          "itemVersion": "0.1.0",
+          "scoringVersion": "0.1.0",
+          "maxPoints": 4,
+          "key": {
+            "kind": "RUBRIC",
+            "rubric": {
+              "rubricId": "decimal-reasoning",
+              "rubricVersion": "0.1.0",
+              "criteria": [
+                {
+                  "criterionId": "units",
+                  "title": "Common units",
+                  "levels": [
+                    {
+                      "points": 0,
+                      "descriptor": "No meaningful unit conversion is supplied."
+                    },
+                    {
+                      "points": 1,
+                      "descriptor": "A useful unit is named but conversion is incomplete."
+                    },
+                    {
+                      "points": 2,
+                      "descriptor": "Both quantities are correctly expressed in a common unit."
+                    }
+                  ]
+                },
+                {
+                  "criterionId": "justification",
+                  "title": "Reasoned comparison",
+                  "levels": [
+                    {
+                      "points": 0,
+                      "descriptor": "No defensible comparison is provided."
+                    },
+                    {
+                      "points": 1,
+                      "descriptor": "The comparison is correct with incomplete reasoning."
+                    },
+                    {
+                      "points": 2,
+                      "descriptor": "The comparison follows from equal-unit reasoning and explains why counting digits fails."
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "explanation": "Seven tenths of a metre is seventy hundredths, exceeding sixty-two hundredths; seedling B is taller.",
+          "misconceptionSignals": [],
+          "moderationNotes": [
+            "REVIEWER ONLY. Independently verify this candidate key; AI output has no scoring authority."
+          ]
+        }
+      ]
+    },
+    "role": "ASSESSMENT_DESIGNER",
+    "author": {
+      "kind": "AI",
+      "agentId": "factory-demo:ASSESSMENT_DESIGNER",
+      "modelFamily": "deterministic-local-demo",
+      "sessionId": "ASSESSMENT_DESIGNER"
+    },
+    "blueprint": {
+      "blueprintId": "factory-g7-number-sense",
+      "version": "0.1.0",
+      "contentHash": "a2382c06ce4ec96be3634e9f0304689f88316a39d11fa976c4a44bbbe4dce40a"
+    },
+    "dependencies": [
+      {
+        "id": "summative",
+        "version": "0.1.0",
+        "contentHash": "7290f844a6a1ed39ac745eeefff5a065dd105f00df1b5e1d509b5bc44837c836"
+      }
+    ],
+    "contentHash": "53ca23858bd2fb9c828b4f964e449601865a9869a116298b98adf74faab800c4"
+  }
+]

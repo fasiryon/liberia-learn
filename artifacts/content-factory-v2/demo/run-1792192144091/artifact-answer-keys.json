@@ -1,0 +1,58 @@
+{
+  "id": "answer-keys",
+  "version": "0.1.0",
+  "payload": {
+    "kind": "DOCUMENT",
+    "title": "Protected answer-key index",
+    "sections": [
+      {
+        "heading": "Authorized reviewer use only",
+        "text": "Keys are stored once in each Assessment V2 ProtectedScoringSpec, identified by itemId, itemVersion, scoringVersion and the item's scoringSpecHash. Verify the form's exact item hashes. Do not copy the specs into a learner document or offline package."
+      }
+    ],
+    "textAlternative": "Authorized reviewer use only: Keys are stored once in each Assessment V2 ProtectedScoringSpec, identified by itemId, itemVersion, scoringVersion and the item's scoringSpecHash. Verify the form's exact item hashes. Do not copy the specs into a learner document or offline package.",
+    "keyboardPath": "Read headings and paragraphs in document order; enter responses in text or on paper.",
+    "offlineInstructions": "Print or cache this text. Record work on paper. No network, sound, colour or pointer movement is required.",
+    "references": [
+      "quiz",
+      "summative",
+      "retention",
+      "transfer"
+    ]
+  },
+  "role": "ASSESSMENT_DESIGNER",
+  "author": {
+    "kind": "AI",
+    "agentId": "factory-demo:ASSESSMENT_DESIGNER",
+    "modelFamily": "deterministic-local-demo",
+    "sessionId": "ASSESSMENT_DESIGNER"
+  },
+  "blueprint": {
+    "blueprintId": "factory-g7-number-sense",
+    "version": "0.1.0",
+    "contentHash": "a2382c06ce4ec96be3634e9f0304689f88316a39d11fa976c4a44bbbe4dce40a"
+  },
+  "dependencies": [
+    {
+      "id": "quiz",
+      "version": "0.1.0",
+      "contentHash": "d87b761522ac5494d2beef84aa1deb0ef478b5e965a6b19267a9d47d7a9e1600"
+    },
+    {
+      "id": "summative",
+      "version": "0.1.0",
+      "contentHash": "7290f844a6a1ed39ac745eeefff5a065dd105f00df1b5e1d509b5bc44837c836"
+    },
+    {
+      "id": "retention",
+      "version": "0.1.0",
+      "contentHash": "42055e834f665d6c90554066b67b77b275862a7469c6e481278214da31912fa4"
+    },
+    {
+      "id": "transfer",
+      "version": "0.1.0",
+      "contentHash": "53ca23858bd2fb9c828b4f964e449601865a9869a116298b98adf74faab800c4"
+    }
+  ],
+  "contentHash": "51cf6327dcc21040443b1378147eb68f87e98ce6304d72b236f21e25059118aa"
+}

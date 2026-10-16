@@ -1,0 +1,54 @@
+{
+  "id": "teacher-guide",
+  "version": "0.1.0",
+  "payload": {
+    "kind": "DOCUMENT",
+    "title": "Teacher guide",
+    "sections": [
+      {
+        "heading": "Before instruction",
+        "text": "Administer the quiz as a diagnostic without feedback. Route tens/ones errors to the worksheet. Keep this separate from the end-of-unit measure. All numerical contexts in this package are invented classroom examples, not reported local measurements or prices."
+      },
+      {
+        "heading": "Differentiation and independence",
+        "text": "Offer oral directions, large print and a place chart during instruction. Fade the chart before the independent stage. A scribe may transcribe without supplying steps. Record tutoring, hints and collaboration as assistance. Do not count assisted work as independent evidence."
+      },
+      {
+        "heading": "Assessment and follow-up",
+        "text": "Use the withheld summative form after instruction. Score reasoning through authorized human moderation using the protected rubric. Plan delayed retrieval only after policy approval. Revisit the misconception scene when learners compare by digit count."
+      }
+    ],
+    "textAlternative": "Before instruction: Administer the quiz as a diagnostic without feedback. Route tens/ones errors to the worksheet. Keep this separate from the end-of-unit measure. All numerical contexts in this package are invented classroom examples, not reported local measurements or prices.\nDifferentiation and independence: Offer oral directions, large print and a place chart during instruction. Fade the chart before the independent stage. A scribe may transcribe without supplying steps. Record tutoring, hints and collaboration as assistance. Do not count assisted work as independent evidence.\nAssessment and follow-up: Use the withheld summative form after instruction. Score reasoning through authorized human moderation using the protected rubric. Plan delayed retrieval only after policy approval. Revisit the misconception scene when learners compare by digit count.",
+    "keyboardPath": "Read headings and paragraphs in document order; enter responses in text or on paper.",
+    "offlineInstructions": "Print or cache this text. Record work on paper. No network, sound, colour or pointer movement is required.",
+    "references": [
+      "lesson-1",
+      "lesson-2"
+    ]
+  },
+  "role": "LESSON_AUTHOR",
+  "author": {
+    "kind": "AI",
+    "agentId": "factory-demo:LESSON_AUTHOR",
+    "modelFamily": "deterministic-local-demo",
+    "sessionId": "LESSON_AUTHOR"
+  },
+  "blueprint": {
+    "blueprintId": "factory-g7-number-sense",
+    "version": "0.1.0",
+    "contentHash": "a2382c06ce4ec96be3634e9f0304689f88316a39d11fa976c4a44bbbe4dce40a"
+  },
+  "dependencies": [
+    {
+      "id": "lesson-1",
+      "version": "0.1.0",
+      "contentHash": "d314df7d14222af86fd88594fc57b2f9941b194209fe9069d5cab548ead64785"
+    },
+    {
+      "id": "lesson-2",
+      "version": "0.1.0",
+      "contentHash": "6eef5bba123482d83c82eb181ac518ebc0fa6113465d6dad4a9834174b060e53"
+    }
+  ],
+  "contentHash": "63d0a3fbee7a820f6c334f3d85cc48ef87205ca94fcda3d1ce44debbf01675ad"
+}

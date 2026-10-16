@@ -1,0 +1,36 @@
+{
+  "id": "curriculum-map",
+  "version": "0.1.0",
+  "payload": {
+    "kind": "DOCUMENT",
+    "title": "Source and scope decisions",
+    "sections": [
+      {
+        "heading": "National mapping pending",
+        "text": "The existing Grade 7 source report records MOE_OBJECTIVE_UNBOUND. Decimal place value is proposed for review, with no curriculum release or MOE approval claimed."
+      },
+      {
+        "heading": "Extension",
+        "text": "Base generalisation is an optional LiberiaLearn extension and cannot gate required progress."
+      }
+    ],
+    "textAlternative": "National mapping pending: The existing Grade 7 source report records MOE_OBJECTIVE_UNBOUND. Decimal place value is proposed for review, with no curriculum release or MOE approval claimed.\nExtension: Base generalisation is an optional LiberiaLearn extension and cannot gate required progress.",
+    "keyboardPath": "Read headings and paragraphs in document order; enter responses in text or on paper.",
+    "offlineInstructions": "Print or cache this text. Record work on paper. No network, sound, colour or pointer movement is required.",
+    "references": []
+  },
+  "role": "CURRICULUM_ARCHITECT",
+  "author": {
+    "kind": "AI",
+    "agentId": "factory-demo:CURRICULUM_ARCHITECT",
+    "modelFamily": "deterministic-local-demo",
+    "sessionId": "CURRICULUM_ARCHITECT"
+  },
+  "blueprint": {
+    "blueprintId": "factory-g7-number-sense",
+    "version": "0.1.0",
+    "contentHash": "a2382c06ce4ec96be3634e9f0304689f88316a39d11fa976c4a44bbbe4dce40a"
+  },
+  "dependencies": [],
+  "contentHash": "7b460b728a5c6526f198f1488a7e13ec2e7ba54bbb0b0adede91e6cc4a552704"
+}

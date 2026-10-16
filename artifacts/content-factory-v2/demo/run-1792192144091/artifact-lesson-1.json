@@ -1,0 +1,289 @@
+{
+  "id": "lesson-1",
+  "version": "0.1.0",
+  "payload": {
+    "kind": "LESSON",
+    "candidate": {
+      "contractVersion": "candidate-lesson-v2/1.0.0",
+      "title": "Build decimal place value",
+      "estimatedMinutes": 35,
+      "ageBand": "JUNIOR_SECONDARY",
+      "prerequisiteAssumptions": [
+        "Recognize tens and ones in whole numbers."
+      ],
+      "misconceptions": [],
+      "scenes": [
+        {
+          "id": "places-intro",
+          "type": "INTRO",
+          "title": "places: intro",
+          "purpose": "STATE_OBJECTIVE",
+          "objectiveIds": [
+            "proposed-g7-number-sense-place-value"
+          ],
+          "learnerAction": "Read the explanation and describe the place units in your own words.",
+          "content": {
+            "body": "We will explain how the value of a digit changes with its place, including places smaller than one."
+          },
+          "interaction": {
+            "kind": "NONE"
+          },
+          "tools": {
+            "requested": [],
+            "prohibited": []
+          },
+          "hints": [],
+          "misconceptionIds": [],
+          "evidence": {
+            "kind": "NONE"
+          },
+          "accessibility": {
+            "textAlternative": "We will explain how the value of a digit changes with its place, including places smaller than one.",
+            "keyboardPath": "Read the paragraph in document order.",
+            "reducedMotion": "NOT_APPLICABLE"
+          },
+          "offline": {
+            "mode": "FULL_OFFLINE",
+            "note": "Use the text and a notebook; capture written responses for later sync."
+          },
+          "completion": "VIEWED",
+          "pedagogy": {
+            "strategy": "WORKED_EXAMPLE_FADING",
+            "representation": "VERBAL",
+            "scaffoldLevel": "FULL"
+          }
+        },
+        {
+          "id": "places-model",
+          "type": "GUIDED_EXAMPLE",
+          "title": "places: model",
+          "purpose": "MODEL_WORKED_EXAMPLE",
+          "objectiveIds": [
+            "proposed-g7-number-sense-place-value"
+          ],
+          "learnerAction": "Read the explanation and describe the place units in your own words.",
+          "content": {
+            "body": "In 32.45, 3 represents thirty, 2 represents two, 4 represents four tenths and 5 represents five hundredths. Each place to the right has one tenth the value of the previous place."
+          },
+          "interaction": {
+            "kind": "NONE"
+          },
+          "tools": {
+            "requested": [],
+            "prohibited": []
+          },
+          "hints": [],
+          "misconceptionIds": [],
+          "evidence": {
+            "kind": "NONE"
+          },
+          "accessibility": {
+            "textAlternative": "In 32.45, 3 represents thirty, 2 represents two, 4 represents four tenths and 5 represents five hundredths. Each place to the right has one tenth the value of the previous place.",
+            "keyboardPath": "Read the paragraph in document order.",
+            "reducedMotion": "NOT_APPLICABLE"
+          },
+          "offline": {
+            "mode": "FULL_OFFLINE",
+            "note": "Use the text and a notebook; capture written responses for later sync."
+          },
+          "completion": "VIEWED",
+          "pedagogy": {
+            "strategy": "WORKED_EXAMPLE_FADING",
+            "representation": "VERBAL",
+            "scaffoldLevel": "FULL"
+          }
+        },
+        {
+          "id": "places-guided",
+          "type": "PRACTICE",
+          "title": "places: guided",
+          "purpose": "GUIDED_PRACTICE",
+          "objectiveIds": [
+            "proposed-g7-number-sense-place-value"
+          ],
+          "learnerAction": "Explain the value of 3 in 24.36 using the place labels.",
+          "content": {
+            "body": "For 24.36, label tens, ones, tenths and hundredths. Then describe the value represented by 3."
+          },
+          "interaction": {
+            "kind": "FREE_RESPONSE",
+            "prompts": [
+              {
+                "id": "places-guided-response",
+                "prompt": "Explain the value of 3 in 24.36 using the place labels.",
+                "minLength": 1
+              }
+            ]
+          },
+          "tools": {
+            "requested": [],
+            "prohibited": []
+          },
+          "hints": [],
+          "misconceptionIds": [],
+          "evidence": {
+            "kind": "FORMATIVE_OBSERVATION",
+            "evidenceType": "PRACTICE",
+            "responses": [
+              {
+                "responseKey": "places-guided-response",
+                "objectiveId": "proposed-g7-number-sense-place-value",
+                "responseType": "TEXT",
+                "scaffoldLevel": "PARTIAL"
+              }
+            ]
+          },
+          "accessibility": {
+            "textAlternative": "For 24.36, label tens, ones, tenths and hundredths. Then describe the value represented by 3.",
+            "keyboardPath": "Tab to the text field and type; paper or oral transcription is equivalent.",
+            "reducedMotion": "NOT_APPLICABLE"
+          },
+          "offline": {
+            "mode": "FULL_OFFLINE",
+            "note": "Use the text and a notebook; capture written responses for later sync."
+          },
+          "completion": "ALL_RESPONSES_WRITTEN",
+          "pedagogy": {
+            "strategy": "WORKED_EXAMPLE_FADING",
+            "representation": "VERBAL",
+            "scaffoldLevel": "PARTIAL"
+          }
+        },
+        {
+          "id": "places-independent",
+          "type": "PRACTICE",
+          "title": "places: independent",
+          "purpose": "INDEPENDENT_PRACTICE",
+          "objectiveIds": [
+            "proposed-g7-number-sense-place-value"
+          ],
+          "learnerAction": "Write 41.27 as a sum of place values and explain the value of 2.",
+          "content": {
+            "body": "Work alone. Write the number as a sum of its place values and explain what each digit represents."
+          },
+          "interaction": {
+            "kind": "FREE_RESPONSE",
+            "prompts": [
+              {
+                "id": "places-independent-response",
+                "prompt": "Write 41.27 as a sum of place values and explain the value of 2.",
+                "minLength": 1
+              }
+            ]
+          },
+          "tools": {
+            "requested": [],
+            "prohibited": []
+          },
+          "hints": [],
+          "misconceptionIds": [],
+          "evidence": {
+            "kind": "FORMATIVE_OBSERVATION",
+            "evidenceType": "PRACTICE",
+            "responses": [
+              {
+                "responseKey": "places-independent-response",
+                "objectiveId": "proposed-g7-number-sense-place-value",
+                "responseType": "TEXT",
+                "scaffoldLevel": "NONE"
+              }
+            ]
+          },
+          "accessibility": {
+            "textAlternative": "Work alone. Write the number as a sum of its place values and explain what each digit represents.",
+            "keyboardPath": "Tab to the text field and type; paper or oral transcription is equivalent.",
+            "reducedMotion": "NOT_APPLICABLE"
+          },
+          "offline": {
+            "mode": "FULL_OFFLINE",
+            "note": "Use the text and a notebook; capture written responses for later sync."
+          },
+          "completion": "ALL_RESPONSES_WRITTEN",
+          "pedagogy": {
+            "strategy": "WORKED_EXAMPLE_FADING",
+            "representation": "VERBAL",
+            "scaffoldLevel": "NONE"
+          }
+        },
+        {
+          "id": "places-reflect",
+          "type": "REFLECTION",
+          "title": "places: reflect",
+          "purpose": "REFLECT",
+          "objectiveIds": [
+            "proposed-g7-number-sense-place-value"
+          ],
+          "learnerAction": "What will you check when comparing decimal quantities?",
+          "content": {
+            "body": "Describe a mistake you can now avoid. This reflection is practice and does not establish mastery."
+          },
+          "interaction": {
+            "kind": "FREE_RESPONSE",
+            "prompts": [
+              {
+                "id": "places-reflect-response",
+                "prompt": "What will you check when comparing decimal quantities?",
+                "minLength": 1
+              }
+            ]
+          },
+          "tools": {
+            "requested": [],
+            "prohibited": []
+          },
+          "hints": [],
+          "misconceptionIds": [],
+          "evidence": {
+            "kind": "FORMATIVE_OBSERVATION",
+            "evidenceType": "PRACTICE",
+            "responses": [
+              {
+                "responseKey": "places-reflect-response",
+                "objectiveId": "proposed-g7-number-sense-place-value",
+                "responseType": "TEXT",
+                "scaffoldLevel": "NONE"
+              }
+            ]
+          },
+          "accessibility": {
+            "textAlternative": "Describe a mistake you can now avoid. This reflection is practice and does not establish mastery.",
+            "keyboardPath": "Tab to the text field and type; paper or oral transcription is equivalent.",
+            "reducedMotion": "NOT_APPLICABLE"
+          },
+          "offline": {
+            "mode": "FULL_OFFLINE",
+            "note": "Use the text and a notebook; capture written responses for later sync."
+          },
+          "completion": "ALL_RESPONSES_WRITTEN",
+          "pedagogy": {
+            "strategy": "WORKED_EXAMPLE_FADING",
+            "representation": "VERBAL",
+            "scaffoldLevel": "NONE"
+          }
+        }
+      ],
+      "assessmentRequests": [],
+      "labProposals": []
+    }
+  },
+  "role": "LESSON_AUTHOR",
+  "author": {
+    "kind": "AI",
+    "agentId": "factory-demo:LESSON_AUTHOR",
+    "modelFamily": "deterministic-local-demo",
+    "sessionId": "LESSON_AUTHOR"
+  },
+  "blueprint": {
+    "blueprintId": "factory-g7-number-sense",
+    "version": "0.1.0",
+    "contentHash": "a2382c06ce4ec96be3634e9f0304689f88316a39d11fa976c4a44bbbe4dce40a"
+  },
+  "dependencies": [
+    {
+      "id": "learning-design",
+      "version": "0.1.0",
+      "contentHash": "dbe639bbe24a34aef9c387d5a59c4a0f290882622c2fce703cf29d9509cf9a84"
+    }
+  ],
+  "contentHash": "d314df7d14222af86fd88594fc57b2f9941b194209fe9069d5cab548ead64785"
+}

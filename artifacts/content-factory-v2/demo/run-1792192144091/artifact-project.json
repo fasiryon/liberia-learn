@@ -1,0 +1,112 @@
+{
+  "id": "project",
+  "version": "0.1.0",
+  "payload": {
+    "kind": "ACTIVITY",
+    "definition": {
+      "schemaVersion": "activity-definition.v1",
+      "activityId": "project",
+      "version": "0.1.0",
+      "kind": "PROJECT",
+      "contentHash": "df6c8feb1f59ca6e93b34300916afeba51003a88aec025e6654d32c680c9873f",
+      "content": {
+        "title": "Create a decimal misconception guide",
+        "objectiveIds": [
+          "proposed-g7-number-sense-place-value"
+        ],
+        "lessonItemIds": [
+          "lesson-2"
+        ],
+        "scaffolding": "INDEPENDENT",
+        "instructions": {
+          "learner": [
+            {
+              "stepId": "project-step-1",
+              "text": "Create a one-page guide showing two invented decimal comparisons where digit count gives the wrong answer.",
+              "resourceIds": []
+            },
+            {
+              "stepId": "project-step-2",
+              "text": "For each comparison, show equal-unit reasoning. Include an original place-value diagram or a text table.",
+              "resourceIds": []
+            },
+            {
+              "stepId": "project-step-3",
+              "text": "Exchange guides for comments, then submit your own revision with the help you received recorded. Practice feedback does not establish independent mastery.",
+              "resourceIds": []
+            }
+          ],
+          "teacher": [
+            {
+              "stepId": "project-teacher",
+              "text": "Record assistance separately. Ask for reasoning before feedback. Use the protected assessment rubric only for independently collected assessment responses.",
+              "resourceIds": []
+            }
+          ]
+        },
+        "resourceIds": [],
+        "rubric": null,
+        "expectedDurationMinutes": 20,
+        "collaborationMode": "INDIVIDUAL",
+        "evidenceIntent": {
+          "kind": "PRACTICE_ONLY",
+          "forms": [
+            "WRITTEN"
+          ]
+        },
+        "accessibility": {
+          "readingLevel": "Grade 7, vocabulary support permitted",
+          "supportsScreenReader": true,
+          "supportsReadAloud": true,
+          "requiresColorVision": false,
+          "requiresFineMotor": false,
+          "alternativeFormatResourceIds": []
+        }
+      },
+      "resources": [],
+      "lessonBindings": [
+        {
+          "lessonId": "lesson-2",
+          "version": "0.1.0"
+        }
+      ],
+      "release": {
+        "releaseId": "UNRESOLVED-G7-CANDIDATE",
+        "releaseIdentity": "UNRESOLVED-NOT-A-RELEASE"
+      },
+      "governance": {
+        "provenanceRefs": [
+          "unit-blueprint:factory-g7-number-sense@0.1.0"
+        ],
+        "reviewRefs": [],
+        "lifecycleRefs": [],
+        "releaseRefs": []
+      }
+    }
+  },
+  "role": "PROJECT_PRACTICAL_DESIGNER",
+  "author": {
+    "kind": "AI",
+    "agentId": "factory-demo:PROJECT_PRACTICAL_DESIGNER",
+    "modelFamily": "deterministic-local-demo",
+    "sessionId": "PROJECT_PRACTICAL_DESIGNER"
+  },
+  "blueprint": {
+    "blueprintId": "factory-g7-number-sense",
+    "version": "0.1.0",
+    "contentHash": "a2382c06ce4ec96be3634e9f0304689f88316a39d11fa976c4a44bbbe4dce40a"
+  },
+  "dependencies": [
+    {
+      "id": "practical",
+      "version": "0.1.0",
+      "contentHash": "0cd56ace160d94980df57214fdde655d9f2ecaf1d3f4de2465b22279e3500227"
+    },
+    {
+      "id": "summative",
+      "version": "0.1.0",
+      "contentHash": "7290f844a6a1ed39ac745eeefff5a065dd105f00df1b5e1d509b5bc44837c836"
+    }
+  ],
+  "contentHash": "f0a46efee40dfef4658ae61f6b102a52cb6f0ec97986a1aee54c4a43e405507c"
+}

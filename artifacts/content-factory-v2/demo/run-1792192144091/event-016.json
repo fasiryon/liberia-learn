@@ -1,0 +1,11 @@
+{
+  "role": "GOVERNANCE_RELEASE",
+  "attempt": 1,
+  "status": "SUCCEEDED",
+  "inputHash": "1f16e2a5cff57b4c54be87ea54ebb5bec0743d9077c10b113298964c3cafd958",
+  "outputHashes": [],
+  "error": null,
+  "sequence": 16,
+  "previousHash": "b04983997b409f411c224523516f980af789c35be4f0333b26a831f0c4deedca",
+  "eventHash": "c7cffd379b23fe8584f75579266d81e2481955f48dc43721a5932367d20c470e"
+}

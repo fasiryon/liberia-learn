@@ -1,0 +1,513 @@
+{
+  "schemaVersion": "unit-blueprint/2.0.0",
+  "blueprintId": "factory-g7-number-sense",
+  "version": "0.1.0",
+  "contentHash": "a2382c06ce4ec96be3634e9f0304689f88316a39d11fa976c4a44bbbe4dce40a",
+  "grade": 7,
+  "subject": "MATH",
+  "unitId": "g7-number-sense-pilot",
+  "title": "Place value and decimal comparison",
+  "repositoryCommit": "a1508ceaf7d89a338de624e9f63c9c4c592ca28c",
+  "sources": [
+    {
+      "id": "g7-existing-gap-report-source",
+      "version": "0.2.0",
+      "sha256": "78c3b0d8a29ea60825ced5e66d2e1aa5cd8ec33e6aec2e5ad7baa707b40eccf8",
+      "sourceRef": "git:3b51aef9:curriculum/excellence/g7-v0.2.0/source.json"
+    }
+  ],
+  "objectives": [
+    {
+      "id": "proposed-g7-number-sense-place-value",
+      "kind": "NATIONAL",
+      "statement": "Explain decimal place value and justify comparisons using equal place units.",
+      "sourceId": "g7-existing-gap-report-source",
+      "sourcePointer": "/lessons/0/packageGaps",
+      "scope": "REQUIRED",
+      "mapping": "PROPOSED"
+    },
+    {
+      "id": "ll-g7-base-generalisation-extension",
+      "kind": "LIBERIALEARN_EXTENSION",
+      "statement": "Investigate how place units change in a base other than ten.",
+      "sourceId": "g7-existing-gap-report-source",
+      "sourcePointer": "/lessons/0/packageGaps/3",
+      "scope": "OPTIONAL_EXTENSION",
+      "mapping": "PROPOSED"
+    }
+  ],
+  "outcomes": [
+    {
+      "id": "outcome-number-sense",
+      "objectiveIds": [
+        "proposed-g7-number-sense-place-value"
+      ],
+      "demonstration": "Produce an expanded decimal and justify a comparison independently, including an unfamiliar representation."
+    },
+    {
+      "id": "outcome-extension",
+      "objectiveIds": [
+        "ll-g7-base-generalisation-extension"
+      ],
+      "demonstration": "Propose a consistent non-decimal place-value system, optionally."
+    }
+  ],
+  "prerequisites": [
+    {
+      "id": "whole-number-place-value",
+      "statement": "A digit's place determines its value in a whole number.",
+      "diagnosticResourceId": "quiz",
+      "fallbackResourceId": "worksheet"
+    }
+  ],
+  "misconceptions": [
+    {
+      "id": "mc-longer-decimal-bigger",
+      "objectiveId": "proposed-g7-number-sense-place-value",
+      "description": "More digits after a decimal point always mean a greater number.",
+      "instructionResourceId": "lesson-2",
+      "assessmentResourceId": "quiz",
+      "responsePattern": "longer"
+    }
+  ],
+  "sequence": [
+    {
+      "resourceId": "quiz",
+      "dependsOn": [],
+      "objectiveIds": [
+        "proposed-g7-number-sense-place-value"
+      ],
+      "scaffold": "NONE"
+    },
+    {
+      "resourceId": "lesson-1",
+      "dependsOn": [
+        "quiz"
+      ],
+      "objectiveIds": [
+        "proposed-g7-number-sense-place-value"
+      ],
+      "scaffold": "FULL"
+    },
+    {
+      "resourceId": "lesson-2",
+      "dependsOn": [
+        "lesson-1"
+      ],
+      "objectiveIds": [
+        "proposed-g7-number-sense-place-value"
+      ],
+      "scaffold": "NONE"
+    },
+    {
+      "resourceId": "summative",
+      "dependsOn": [
+        "lesson-2"
+      ],
+      "objectiveIds": [
+        "proposed-g7-number-sense-place-value"
+      ],
+      "scaffold": "NONE"
+    }
+  ],
+  "resources": [
+    {
+      "id": "curriculum-map",
+      "kind": "DESIGN_NOTE",
+      "role": "CURRICULUM_ARCHITECT",
+      "objectiveIds": [
+        "proposed-g7-number-sense-place-value"
+      ],
+      "dependsOn": [],
+      "audience": "REVIEWER_ONLY"
+    },
+    {
+      "id": "learning-design",
+      "kind": "DESIGN_NOTE",
+      "role": "LEARNING_SCIENCE_DESIGNER",
+      "objectiveIds": [
+        "proposed-g7-number-sense-place-value"
+      ],
+      "dependsOn": [
+        "curriculum-map"
+      ],
+      "audience": "REVIEWER_ONLY"
+    },
+    {
+      "id": "lesson-1",
+      "kind": "LESSON",
+      "role": "LESSON_AUTHOR",
+      "objectiveIds": [
+        "proposed-g7-number-sense-place-value"
+      ],
+      "dependsOn": [
+        "learning-design"
+      ],
+      "audience": "LEARNER"
+    },
+    {
+      "id": "lesson-2",
+      "kind": "LESSON",
+      "role": "LESSON_AUTHOR",
+      "objectiveIds": [
+        "proposed-g7-number-sense-place-value"
+      ],
+      "dependsOn": [
+        "lesson-1"
+      ],
+      "audience": "LEARNER"
+    },
+    {
+      "id": "classwork",
+      "kind": "CLASSWORK",
+      "role": "LESSON_AUTHOR",
+      "objectiveIds": [
+        "proposed-g7-number-sense-place-value"
+      ],
+      "dependsOn": [
+        "lesson-2"
+      ],
+      "audience": "LEARNER"
+    },
+    {
+      "id": "homework",
+      "kind": "HOMEWORK",
+      "role": "LESSON_AUTHOR",
+      "objectiveIds": [
+        "proposed-g7-number-sense-place-value"
+      ],
+      "dependsOn": [
+        "lesson-2"
+      ],
+      "audience": "LEARNER"
+    },
+    {
+      "id": "worksheet",
+      "kind": "WORKSHEET",
+      "role": "LESSON_AUTHOR",
+      "objectiveIds": [
+        "proposed-g7-number-sense-place-value"
+      ],
+      "dependsOn": [
+        "lesson-1"
+      ],
+      "audience": "LEARNER"
+    },
+    {
+      "id": "teacher-guide",
+      "kind": "TEACHER_GUIDE",
+      "role": "LESSON_AUTHOR",
+      "objectiveIds": [
+        "proposed-g7-number-sense-place-value"
+      ],
+      "dependsOn": [
+        "lesson-1",
+        "lesson-2"
+      ],
+      "audience": "TEACHER"
+    },
+    {
+      "id": "quiz",
+      "kind": "QUIZ",
+      "role": "ASSESSMENT_DESIGNER",
+      "objectiveIds": [
+        "proposed-g7-number-sense-place-value"
+      ],
+      "dependsOn": [
+        "lesson-1",
+        "lesson-2"
+      ],
+      "audience": "LEARNER"
+    },
+    {
+      "id": "summative",
+      "kind": "SUMMATIVE",
+      "role": "ASSESSMENT_DESIGNER",
+      "objectiveIds": [
+        "proposed-g7-number-sense-place-value"
+      ],
+      "dependsOn": [
+        "lesson-2"
+      ],
+      "audience": "LEARNER"
+    },
+    {
+      "id": "retention",
+      "kind": "RETENTION",
+      "role": "ASSESSMENT_DESIGNER",
+      "objectiveIds": [
+        "proposed-g7-number-sense-place-value"
+      ],
+      "dependsOn": [
+        "summative"
+      ],
+      "audience": "LEARNER"
+    },
+    {
+      "id": "transfer",
+      "kind": "TRANSFER",
+      "role": "ASSESSMENT_DESIGNER",
+      "objectiveIds": [
+        "proposed-g7-number-sense-place-value"
+      ],
+      "dependsOn": [
+        "summative"
+      ],
+      "audience": "LEARNER"
+    },
+    {
+      "id": "answer-keys",
+      "kind": "ANSWER_KEY",
+      "role": "ASSESSMENT_DESIGNER",
+      "objectiveIds": [
+        "proposed-g7-number-sense-place-value"
+      ],
+      "dependsOn": [
+        "quiz",
+        "summative",
+        "retention",
+        "transfer"
+      ],
+      "audience": "REVIEWER_ONLY"
+    },
+    {
+      "id": "rubrics",
+      "kind": "RUBRIC",
+      "role": "ASSESSMENT_DESIGNER",
+      "objectiveIds": [
+        "proposed-g7-number-sense-place-value"
+      ],
+      "dependsOn": [
+        "summative",
+        "transfer"
+      ],
+      "audience": "REVIEWER_ONLY"
+    },
+    {
+      "id": "practical",
+      "kind": "PRACTICAL",
+      "role": "PROJECT_PRACTICAL_DESIGNER",
+      "objectiveIds": [
+        "proposed-g7-number-sense-place-value"
+      ],
+      "dependsOn": [
+        "lesson-2",
+        "summative"
+      ],
+      "audience": "LEARNER"
+    },
+    {
+      "id": "project",
+      "kind": "PROJECT",
+      "role": "PROJECT_PRACTICAL_DESIGNER",
+      "objectiveIds": [
+        "proposed-g7-number-sense-place-value"
+      ],
+      "dependsOn": [
+        "practical",
+        "summative"
+      ],
+      "audience": "LEARNER"
+    },
+    {
+      "id": "accessible-text",
+      "kind": "ACCESSIBLE_ASSET",
+      "role": "MEDIA_ACCESSIBILITY",
+      "objectiveIds": [
+        "proposed-g7-number-sense-place-value"
+      ],
+      "dependsOn": [
+        "lesson-1",
+        "lesson-2",
+        "practical",
+        "project"
+      ],
+      "audience": "LEARNER"
+    },
+    {
+      "id": "extension",
+      "kind": "EXTENSION",
+      "role": "MEDIA_ACCESSIBILITY",
+      "objectiveIds": [
+        "ll-g7-base-generalisation-extension"
+      ],
+      "dependsOn": [
+        "project"
+      ],
+      "audience": "LEARNER"
+    }
+  ],
+  "assessmentPlan": [
+    {
+      "id": "pre-place-value",
+      "resourceId": "quiz",
+      "itemIds": [
+        "quiz-item-1"
+      ],
+      "kind": "PREREQUISITE_DIAGNOSTIC",
+      "objectiveIds": [
+        "proposed-g7-number-sense-place-value"
+      ],
+      "scaffold": "NONE",
+      "timing": "PRE_LESSON",
+      "context": "REHEARSED",
+      "scoring": "KEYED",
+      "prerequisiteIndex": 0,
+      "fallbackRoute": "worksheet",
+      "source": "EXCELLENCE_PLAN",
+      "ref": "resource:quiz"
+    },
+    {
+      "id": "independent-practice",
+      "resourceId": "classwork",
+      "itemIds": [],
+      "kind": "SHORT_CONSTRUCTED_RESPONSE",
+      "objectiveIds": [
+        "proposed-g7-number-sense-place-value"
+      ],
+      "scaffold": "NONE",
+      "timing": "IN_LESSON",
+      "context": "REHEARSED",
+      "scoring": "NOT_SCORED",
+      "source": "EXCELLENCE_PLAN",
+      "ref": "resource:classwork"
+    },
+    {
+      "id": "end-produced",
+      "resourceId": "summative",
+      "itemIds": [
+        "summative-item-1"
+      ],
+      "kind": "SHORT_CONSTRUCTED_RESPONSE",
+      "objectiveIds": [
+        "proposed-g7-number-sense-place-value"
+      ],
+      "scaffold": "NONE",
+      "timing": "END_OF_LESSON",
+      "context": "REHEARSED",
+      "scoring": "KEYED",
+      "source": "EXCELLENCE_PLAN",
+      "ref": "resource:summative"
+    },
+    {
+      "id": "end-reasoning",
+      "resourceId": "summative",
+      "itemIds": [
+        "summative-item-2"
+      ],
+      "kind": "EXTENDED_REASONING",
+      "objectiveIds": [
+        "proposed-g7-number-sense-place-value"
+      ],
+      "scaffold": "NONE",
+      "timing": "END_OF_LESSON",
+      "context": "REHEARSED",
+      "scoring": "ANALYTIC_RUBRIC",
+      "source": "EXCELLENCE_PLAN",
+      "ref": "resource:summative"
+    },
+    {
+      "id": "delayed",
+      "resourceId": "retention",
+      "itemIds": [
+        "retention-item-1"
+      ],
+      "kind": "DELAYED_RETRIEVAL",
+      "objectiveIds": [
+        "proposed-g7-number-sense-place-value"
+      ],
+      "scaffold": "NONE",
+      "timing": "DELAYED",
+      "delayDays": 7,
+      "context": "REHEARSED",
+      "scoring": "KEYED",
+      "source": "EXCELLENCE_PLAN",
+      "ref": "resource:retention"
+    },
+    {
+      "id": "new-context",
+      "resourceId": "transfer",
+      "itemIds": [
+        "transfer-item-1"
+      ],
+      "kind": "TRANSFER_TASK",
+      "objectiveIds": [
+        "proposed-g7-number-sense-place-value"
+      ],
+      "scaffold": "NONE",
+      "timing": "END_OF_LESSON",
+      "context": "NEW",
+      "scoring": "ANALYTIC_RUBRIC",
+      "source": "EXCELLENCE_PLAN",
+      "ref": "resource:transfer"
+    },
+    {
+      "id": "optional-extension",
+      "resourceId": "extension",
+      "itemIds": [],
+      "kind": "EXTENSION",
+      "objectiveIds": [
+        "ll-g7-base-generalisation-extension"
+      ],
+      "scaffold": "NONE",
+      "timing": "IN_LESSON",
+      "context": "REHEARSED",
+      "scoring": "NOT_SCORED",
+      "optional": true,
+      "source": "EXCELLENCE_PLAN",
+      "ref": "resource:extension"
+    }
+  ],
+  "support": {
+    "differentiation": [
+      "Offer a labelled place chart and oral rehearsal before fading supports.",
+      "Use larger type or dictation without supplying mathematical steps.",
+      "Offer the optional base investigation after independent core work."
+    ],
+    "accessibility": [
+      "All instructions and diagrams have text equivalents.",
+      "Keyboard and paper response paths preserve the objective.",
+      "No task depends on colour, audio or motion."
+    ],
+    "offline": {
+      "mode": "TEXT_PAPER_CAPTURE_ONLY",
+      "requirements": [
+        "Print the text worksheet and use pencil responses.",
+        "Keep assessment keys off learner devices; sync responses for server or human scoring."
+      ],
+      "maxBytes": 200000
+    }
+  },
+  "provenance": [
+    {
+      "id": "g7-existing-gap-report-source",
+      "version": "0.2.0",
+      "sha256": "78c3b0d8a29ea60825ced5e66d2e1aa5cd8ec33e6aec2e5ad7baa707b40eccf8",
+      "sourceRef": "git:3b51aef9:curriculum/excellence/g7-v0.2.0/source.json"
+    },
+    {
+      "id": "factory-local-template",
+      "version": "0.1.0",
+      "sha256": "9ca9d0805f8c11581d7453ea28a3e8811f91bfa1d29810a1873cd4ae1949085a",
+      "sourceRef": "repository-candidate:lib/content-factory/v2/demo.ts"
+    }
+  ],
+  "legacy": [],
+  "legacyLeads": [
+    {
+      "identifier": "cmss8t4hz00unvo54epnfst66",
+      "reportedNamespace": "REVISION_ID_IN_PR191",
+      "subject": "MATH",
+      "reportedTitle": "Number Sense and Place Value",
+      "verification": "UNVERIFIED_REFERENCE_ONLY"
+    }
+  ],
+  "unresolved": [
+    "PRODUCTION_INVENTORY_NOT_VERIFIED",
+    "MOE_OBJECTIVE_UNBOUND",
+    "TEMPLATE_CELL_MISSING",
+    "ONTOLOGY_RELEASE_MISSING",
+    "SCOPE_EXTENSION_UNAPPROVED",
+    "LEGACY_COMPARISON_SIGNOFF"
+  ]
+}

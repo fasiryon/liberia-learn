@@ -1,0 +1,1646 @@
+[
+  {
+    "id": "curriculum-map",
+    "version": "0.1.0",
+    "role": "CURRICULUM_ARCHITECT",
+    "author": {
+      "kind": "AI",
+      "agentId": "factory-demo:CURRICULUM_ARCHITECT",
+      "modelFamily": "deterministic-local-demo",
+      "sessionId": "CURRICULUM_ARCHITECT"
+    },
+    "blueprint": {
+      "blueprintId": "factory-g7-number-sense",
+      "version": "0.1.0",
+      "contentHash": "a2382c06ce4ec96be3634e9f0304689f88316a39d11fa976c4a44bbbe4dce40a"
+    },
+    "dependencies": [],
+    "sourceContentHash": "7b460b728a5c6526f198f1488a7e13ec2e7ba54bbb0b0adede91e6cc4a552704",
+    "payload": {
+      "kind": "DOCUMENT",
+      "title": "Source and scope decisions",
+      "sections": [
+        {
+          "heading": "National mapping pending",
+          "text": "The existing Grade 7 source report records MOE_OBJECTIVE_UNBOUND. Decimal place value is proposed for review, with no curriculum release or MOE approval claimed."
+        },
+        {
+          "heading": "Extension",
+          "text": "Base generalisation is an optional LiberiaLearn extension and cannot gate required progress."
+        }
+      ],
+      "textAlternative": "National mapping pending: The existing Grade 7 source report records MOE_OBJECTIVE_UNBOUND. Decimal place value is proposed for review, with no curriculum release or MOE approval claimed.\nExtension: Base generalisation is an optional LiberiaLearn extension and cannot gate required progress.",
+      "keyboardPath": "Read headings and paragraphs in document order; enter responses in text or on paper.",
+      "offlineInstructions": "Print or cache this text. Record work on paper. No network, sound, colour or pointer movement is required.",
+      "references": []
+    },
+    "projectionHash": "a707210c2ba4838536e407da47ead3fb8b55f2cdf20b0163d152621b67fd885d"
+  },
+  {
+    "id": "learning-design",
+    "version": "0.1.0",
+    "role": "LEARNING_SCIENCE_DESIGNER",
+    "author": {
+      "kind": "AI",
+      "agentId": "factory-demo:LEARNING_SCIENCE_DESIGNER",
+      "modelFamily": "deterministic-local-demo",
+      "sessionId": "LEARNING_SCIENCE_DESIGNER"
+    },
+    "blueprint": {
+      "blueprintId": "factory-g7-number-sense",
+      "version": "0.1.0",
+      "contentHash": "a2382c06ce4ec96be3634e9f0304689f88316a39d11fa976c4a44bbbe4dce40a"
+    },
+    "dependencies": [
+      {
+        "id": "curriculum-map",
+        "version": "0.1.0",
+        "contentHash": "7b460b728a5c6526f198f1488a7e13ec2e7ba54bbb0b0adede91e6cc4a552704"
+      }
+    ],
+    "sourceContentHash": "dbe639bbe24a34aef9c387d5a59c4a0f290882622c2fce703cf29d9509cf9a84",
+    "payload": {
+      "kind": "DOCUMENT",
+      "title": "Progression and evidence",
+      "sections": [
+        {
+          "heading": "Sequence",
+          "text": "Diagnose whole-number place value; reteach using a chart if needed. Model decimal places, guide responses, then require independent production. Compare decimals using equal units, teach against digit-count errors, then withhold assistance during end checks."
+        },
+        {
+          "heading": "Delayed and new contexts",
+          "text": "Propose a delayed check after at least seven days, subject to an approved grade/subject policy. Use an unfamiliar measurement table for transfer. Neither opportunity is learning evidence until independently completed and verified."
+        }
+      ],
+      "textAlternative": "Sequence: Diagnose whole-number place value; reteach using a chart if needed. Model decimal places, guide responses, then require independent production. Compare decimals using equal units, teach against digit-count errors, then withhold assistance during end checks.\nDelayed and new contexts: Propose a delayed check after at least seven days, subject to an approved grade/subject policy. Use an unfamiliar measurement table for transfer. Neither opportunity is learning evidence until independently completed and verified.",
+      "keyboardPath": "Read headings and paragraphs in document order; enter responses in text or on paper.",
+      "offlineInstructions": "Print or cache this text. Record work on paper. No network, sound, colour or pointer movement is required.",
+      "references": [
+        "curriculum-map"
+      ]
+    },
+    "projectionHash": "1a0cc9067787ce29f61204c16a6d42a1be9b57866fde5112806d8316b8bc1954"
+  },
+  {
+    "id": "lesson-1",
+    "version": "0.1.0",
+    "role": "LESSON_AUTHOR",
+    "author": {
+      "kind": "AI",
+      "agentId": "factory-demo:LESSON_AUTHOR",
+      "modelFamily": "deterministic-local-demo",
+      "sessionId": "LESSON_AUTHOR"
+    },
+    "blueprint": {
+      "blueprintId": "factory-g7-number-sense",
+      "version": "0.1.0",
+      "contentHash": "a2382c06ce4ec96be3634e9f0304689f88316a39d11fa976c4a44bbbe4dce40a"
+    },
+    "dependencies": [
+      {
+        "id": "learning-design",
+        "version": "0.1.0",
+        "contentHash": "dbe639bbe24a34aef9c387d5a59c4a0f290882622c2fce703cf29d9509cf9a84"
+      }
+    ],
+    "sourceContentHash": "d314df7d14222af86fd88594fc57b2f9941b194209fe9069d5cab548ead64785",
+    "payload": {
+      "kind": "LESSON",
+      "candidate": {
+        "contractVersion": "candidate-lesson-v2/1.0.0",
+        "title": "Build decimal place value",
+        "estimatedMinutes": 35,
+        "ageBand": "JUNIOR_SECONDARY",
+        "prerequisiteAssumptions": [
+          "Recognize tens and ones in whole numbers."
+        ],
+        "misconceptions": [],
+        "scenes": [
+          {
+            "id": "places-intro",
+            "type": "INTRO",
+            "title": "places: intro",
+            "purpose": "STATE_OBJECTIVE",
+            "objectiveIds": [
+              "proposed-g7-number-sense-place-value"
+            ],
+            "learnerAction": "Read the explanation and describe the place units in your own words.",
+            "content": {
+              "body": "We will explain how the value of a digit changes with its place, including places smaller than one."
+            },
+            "interaction": {
+              "kind": "NONE"
+            },
+            "tools": {
+              "requested": [],
+              "prohibited": []
+            },
+            "hints": [],
+            "misconceptionIds": [],
+            "evidence": {
+              "kind": "NONE"
+            },
+            "accessibility": {
+              "textAlternative": "We will explain how the value of a digit changes with its place, including places smaller than one.",
+              "keyboardPath": "Read the paragraph in document order.",
+              "reducedMotion": "NOT_APPLICABLE"
+            },
+            "offline": {
+              "mode": "FULL_OFFLINE",
+              "note": "Use the text and a notebook; capture written responses for later sync."
+            },
+            "completion": "VIEWED",
+            "pedagogy": {
+              "strategy": "WORKED_EXAMPLE_FADING",
+              "representation": "VERBAL",
+              "scaffoldLevel": "FULL"
+            }
+          },
+          {
+            "id": "places-model",
+            "type": "GUIDED_EXAMPLE",
+            "title": "places: model",
+            "purpose": "MODEL_WORKED_EXAMPLE",
+            "objectiveIds": [
+              "proposed-g7-number-sense-place-value"
+            ],
+            "learnerAction": "Read the explanation and describe the place units in your own words.",
+            "content": {
+              "body": "In 32.45, 3 represents thirty, 2 represents two, 4 represents four tenths and 5 represents five hundredths. Each place to the right has one tenth the value of the previous place."
+            },
+            "interaction": {
+              "kind": "NONE"
+            },
+            "tools": {
+              "requested": [],
+              "prohibited": []
+            },
+            "hints": [],
+            "misconceptionIds": [],
+            "evidence": {
+              "kind": "NONE"
+            },
+            "accessibility": {
+              "textAlternative": "In 32.45, 3 represents thirty, 2 represents two, 4 represents four tenths and 5 represents five hundredths. Each place to the right has one tenth the value of the previous place.",
+              "keyboardPath": "Read the paragraph in document order.",
+              "reducedMotion": "NOT_APPLICABLE"
+            },
+            "offline": {
+              "mode": "FULL_OFFLINE",
+              "note": "Use the text and a notebook; capture written responses for later sync."
+            },
+            "completion": "VIEWED",
+            "pedagogy": {
+              "strategy": "WORKED_EXAMPLE_FADING",
+              "representation": "VERBAL",
+              "scaffoldLevel": "FULL"
+            }
+          },
+          {
+            "id": "places-guided",
+            "type": "PRACTICE",
+            "title": "places: guided",
+            "purpose": "GUIDED_PRACTICE",
+            "objectiveIds": [
+              "proposed-g7-number-sense-place-value"
+            ],
+            "learnerAction": "Explain the value of 3 in 24.36 using the place labels.",
+            "content": {
+              "body": "For 24.36, label tens, ones, tenths and hundredths. Then describe the value represented by 3."
+            },
+            "interaction": {
+              "kind": "FREE_RESPONSE",
+              "prompts": [
+                {
+                  "id": "places-guided-response",
+                  "prompt": "Explain the value of 3 in 24.36 using the place labels.",
+                  "minLength": 1
+                }
+              ]
+            },
+            "tools": {
+              "requested": [],
+              "prohibited": []
+            },
+            "hints": [],
+            "misconceptionIds": [],
+            "evidence": {
+              "kind": "FORMATIVE_OBSERVATION",
+              "evidenceType": "PRACTICE",
+              "responses": [
+                {
+                  "responseKey": "places-guided-response",
+                  "objectiveId": "proposed-g7-number-sense-place-value",
+                  "responseType": "TEXT",
+                  "scaffoldLevel": "PARTIAL"
+                }
+              ]
+            },
+            "accessibility": {
+              "textAlternative": "For 24.36, label tens, ones, tenths and hundredths. Then describe the value represented by 3.",
+              "keyboardPath": "Tab to the text field and type; paper or oral transcription is equivalent.",
+              "reducedMotion": "NOT_APPLICABLE"
+            },
+            "offline": {
+              "mode": "FULL_OFFLINE",
+              "note": "Use the text and a notebook; capture written responses for later sync."
+            },
+            "completion": "ALL_RESPONSES_WRITTEN",
+            "pedagogy": {
+              "strategy": "WORKED_EXAMPLE_FADING",
+              "representation": "VERBAL",
+              "scaffoldLevel": "PARTIAL"
+            }
+          },
+          {
+            "id": "places-independent",
+            "type": "PRACTICE",
+            "title": "places: independent",
+            "purpose": "INDEPENDENT_PRACTICE",
+            "objectiveIds": [
+              "proposed-g7-number-sense-place-value"
+            ],
+            "learnerAction": "Write 41.27 as a sum of place values and explain the value of 2.",
+            "content": {
+              "body": "Work alone. Write the number as a sum of its place values and explain what each digit represents."
+            },
+            "interaction": {
+              "kind": "FREE_RESPONSE",
+              "prompts": [
+                {
+                  "id": "places-independent-response",
+                  "prompt": "Write 41.27 as a sum of place values and explain the value of 2.",
+                  "minLength": 1
+                }
+              ]
+            },
+            "tools": {
+              "requested": [],
+              "prohibited": []
+            },
+            "hints": [],
+            "misconceptionIds": [],
+            "evidence": {
+              "kind": "FORMATIVE_OBSERVATION",
+              "evidenceType": "PRACTICE",
+              "responses": [
+                {
+                  "responseKey": "places-independent-response",
+                  "objectiveId": "proposed-g7-number-sense-place-value",
+                  "responseType": "TEXT",
+                  "scaffoldLevel": "NONE"
+                }
+              ]
+            },
+            "accessibility": {
+              "textAlternative": "Work alone. Write the number as a sum of its place values and explain what each digit represents.",
+              "keyboardPath": "Tab to the text field and type; paper or oral transcription is equivalent.",
+              "reducedMotion": "NOT_APPLICABLE"
+            },
+            "offline": {
+              "mode": "FULL_OFFLINE",
+              "note": "Use the text and a notebook; capture written responses for later sync."
+            },
+            "completion": "ALL_RESPONSES_WRITTEN",
+            "pedagogy": {
+              "strategy": "WORKED_EXAMPLE_FADING",
+              "representation": "VERBAL",
+              "scaffoldLevel": "NONE"
+            }
+          },
+          {
+            "id": "places-reflect",
+            "type": "REFLECTION",
+            "title": "places: reflect",
+            "purpose": "REFLECT",
+            "objectiveIds": [
+              "proposed-g7-number-sense-place-value"
+            ],
+            "learnerAction": "What will you check when comparing decimal quantities?",
+            "content": {
+              "body": "Describe a mistake you can now avoid. This reflection is practice and does not establish mastery."
+            },
+            "interaction": {
+              "kind": "FREE_RESPONSE",
+              "prompts": [
+                {
+                  "id": "places-reflect-response",
+                  "prompt": "What will you check when comparing decimal quantities?",
+                  "minLength": 1
+                }
+              ]
+            },
+            "tools": {
+              "requested": [],
+              "prohibited": []
+            },
+            "hints": [],
+            "misconceptionIds": [],
+            "evidence": {
+              "kind": "FORMATIVE_OBSERVATION",
+              "evidenceType": "PRACTICE",
+              "responses": [
+                {
+                  "responseKey": "places-reflect-response",
+                  "objectiveId": "proposed-g7-number-sense-place-value",
+                  "responseType": "TEXT",
+                  "scaffoldLevel": "NONE"
+                }
+              ]
+            },
+            "accessibility": {
+              "textAlternative": "Describe a mistake you can now avoid. This reflection is practice and does not establish mastery.",
+              "keyboardPath": "Tab to the text field and type; paper or oral transcription is equivalent.",
+              "reducedMotion": "NOT_APPLICABLE"
+            },
+            "offline": {
+              "mode": "FULL_OFFLINE",
+              "note": "Use the text and a notebook; capture written responses for later sync."
+            },
+            "completion": "ALL_RESPONSES_WRITTEN",
+            "pedagogy": {
+              "strategy": "WORKED_EXAMPLE_FADING",
+              "representation": "VERBAL",
+              "scaffoldLevel": "NONE"
+            }
+          }
+        ],
+        "assessmentRequests": [],
+        "labProposals": []
+      }
+    },
+    "projectionHash": "ba2ccc3bec31ef2b4eb605d4c2ffd049e3594c9bf85169f04a9f7e953c2a1f6d"
+  },
+  {
+    "id": "lesson-2",
+    "version": "0.1.0",
+    "role": "LESSON_AUTHOR",
+    "author": {
+      "kind": "AI",
+      "agentId": "factory-demo:LESSON_AUTHOR",
+      "modelFamily": "deterministic-local-demo",
+      "sessionId": "LESSON_AUTHOR"
+    },
+    "blueprint": {
+      "blueprintId": "factory-g7-number-sense",
+      "version": "0.1.0",
+      "contentHash": "a2382c06ce4ec96be3634e9f0304689f88316a39d11fa976c4a44bbbe4dce40a"
+    },
+    "dependencies": [
+      {
+        "id": "lesson-1",
+        "version": "0.1.0",
+        "contentHash": "d314df7d14222af86fd88594fc57b2f9941b194209fe9069d5cab548ead64785"
+      }
+    ],
+    "sourceContentHash": "6eef5bba123482d83c82eb181ac518ebc0fa6113465d6dad4a9834174b060e53",
+    "payload": {
+      "kind": "LESSON",
+      "candidate": {
+        "contractVersion": "candidate-lesson-v2/1.0.0",
+        "title": "Compare decimals with equal units",
+        "estimatedMinutes": 35,
+        "ageBand": "JUNIOR_SECONDARY",
+        "prerequisiteAssumptions": [
+          "Recognize tens and ones in whole numbers."
+        ],
+        "misconceptions": [
+          {
+            "id": "mc-longer-decimal-bigger",
+            "objectiveId": "proposed-g7-number-sense-place-value",
+            "description": "The decimal with more digits must be larger.",
+            "response": "Express both decimals with the same place units before comparing."
+          }
+        ],
+        "scenes": [
+          {
+            "id": "compare-intro",
+            "type": "INTRO",
+            "title": "compare: intro",
+            "purpose": "STATE_OBJECTIVE",
+            "objectiveIds": [
+              "proposed-g7-number-sense-place-value"
+            ],
+            "learnerAction": "Read the explanation and describe the place units in your own words.",
+            "content": {
+              "body": "We will compare decimals and justify which has greater value without counting digits."
+            },
+            "interaction": {
+              "kind": "NONE"
+            },
+            "tools": {
+              "requested": [],
+              "prohibited": []
+            },
+            "hints": [],
+            "misconceptionIds": [],
+            "evidence": {
+              "kind": "NONE"
+            },
+            "accessibility": {
+              "textAlternative": "We will compare decimals and justify which has greater value without counting digits.",
+              "keyboardPath": "Read the paragraph in document order.",
+              "reducedMotion": "NOT_APPLICABLE"
+            },
+            "offline": {
+              "mode": "FULL_OFFLINE",
+              "note": "Use the text and a notebook; capture written responses for later sync."
+            },
+            "completion": "VIEWED",
+            "pedagogy": {
+              "strategy": "WORKED_EXAMPLE_FADING",
+              "representation": "VERBAL",
+              "scaffoldLevel": "FULL"
+            }
+          },
+          {
+            "id": "compare-model",
+            "type": "GUIDED_EXAMPLE",
+            "title": "compare: model",
+            "purpose": "MODEL_WORKED_EXAMPLE",
+            "objectiveIds": [
+              "proposed-g7-number-sense-place-value"
+            ],
+            "learnerAction": "Read the explanation and describe the place units in your own words.",
+            "content": {
+              "body": "Compare 0.6 and 0.48. Six tenths is sixty hundredths. Sixty hundredths is greater than forty-eight hundredths, so 0.6 is greater."
+            },
+            "interaction": {
+              "kind": "NONE"
+            },
+            "tools": {
+              "requested": [],
+              "prohibited": []
+            },
+            "hints": [],
+            "misconceptionIds": [],
+            "evidence": {
+              "kind": "NONE"
+            },
+            "accessibility": {
+              "textAlternative": "Compare 0.6 and 0.48. Six tenths is sixty hundredths. Sixty hundredths is greater than forty-eight hundredths, so 0.6 is greater.",
+              "keyboardPath": "Read the paragraph in document order.",
+              "reducedMotion": "NOT_APPLICABLE"
+            },
+            "offline": {
+              "mode": "FULL_OFFLINE",
+              "note": "Use the text and a notebook; capture written responses for later sync."
+            },
+            "completion": "VIEWED",
+            "pedagogy": {
+              "strategy": "WORKED_EXAMPLE_FADING",
+              "representation": "VERBAL",
+              "scaffoldLevel": "FULL"
+            }
+          },
+          {
+            "id": "compare-guided",
+            "type": "PRACTICE",
+            "title": "compare: guided",
+            "purpose": "GUIDED_PRACTICE",
+            "objectiveIds": [
+              "proposed-g7-number-sense-place-value"
+            ],
+            "learnerAction": "Compare 0.7 and 0.65 using hundredths.",
+            "content": {
+              "body": "Rewrite 0.7 as hundredths. Now compare it with 0.65. Explain the common unit you chose."
+            },
+            "interaction": {
+              "kind": "FREE_RESPONSE",
+              "prompts": [
+                {
+                  "id": "compare-guided-response",
+                  "prompt": "Compare 0.7 and 0.65 using hundredths.",
+                  "minLength": 1
+                }
+              ]
+            },
+            "tools": {
+              "requested": [],
+              "prohibited": []
+            },
+            "hints": [],
+            "misconceptionIds": [],
+            "evidence": {
+              "kind": "FORMATIVE_OBSERVATION",
+              "evidenceType": "PRACTICE",
+              "responses": [
+                {
+                  "responseKey": "compare-guided-response",
+                  "objectiveId": "proposed-g7-number-sense-place-value",
+                  "responseType": "TEXT",
+                  "scaffoldLevel": "PARTIAL"
+                }
+              ]
+            },
+            "accessibility": {
+              "textAlternative": "Rewrite 0.7 as hundredths. Now compare it with 0.65. Explain the common unit you chose.",
+              "keyboardPath": "Tab to the text field and type; paper or oral transcription is equivalent.",
+              "reducedMotion": "NOT_APPLICABLE"
+            },
+            "offline": {
+              "mode": "FULL_OFFLINE",
+              "note": "Use the text and a notebook; capture written responses for later sync."
+            },
+            "completion": "ALL_RESPONSES_WRITTEN",
+            "pedagogy": {
+              "strategy": "WORKED_EXAMPLE_FADING",
+              "representation": "VERBAL",
+              "scaffoldLevel": "PARTIAL"
+            }
+          },
+          {
+            "id": "compare-misconception",
+            "type": "EXPLANATION",
+            "title": "compare: misconception",
+            "purpose": "ADDRESS_MISCONCEPTION",
+            "objectiveIds": [
+              "proposed-g7-number-sense-place-value"
+            ],
+            "learnerAction": "Read the explanation and describe the place units in your own words.",
+            "content": {
+              "body": "Counting decimal digits does not compare their value. For 0.5 and 0.42, think fifty hundredths and forty-two hundredths. Adding a trailing zero changes notation but not quantity."
+            },
+            "interaction": {
+              "kind": "NONE"
+            },
+            "tools": {
+              "requested": [],
+              "prohibited": []
+            },
+            "hints": [],
+            "misconceptionIds": [
+              "mc-longer-decimal-bigger"
+            ],
+            "evidence": {
+              "kind": "NONE"
+            },
+            "accessibility": {
+              "textAlternative": "Counting decimal digits does not compare their value. For 0.5 and 0.42, think fifty hundredths and forty-two hundredths. Adding a trailing zero changes notation but not quantity.",
+              "keyboardPath": "Read the paragraph in document order.",
+              "reducedMotion": "NOT_APPLICABLE"
+            },
+            "offline": {
+              "mode": "FULL_OFFLINE",
+              "note": "Use the text and a notebook; capture written responses for later sync."
+            },
+            "completion": "VIEWED",
+            "pedagogy": {
+              "strategy": "WORKED_EXAMPLE_FADING",
+              "representation": "VERBAL",
+              "scaffoldLevel": "MINIMAL"
+            }
+          },
+          {
+            "id": "compare-independent",
+            "type": "PRACTICE",
+            "title": "compare: independent",
+            "purpose": "INDEPENDENT_PRACTICE",
+            "objectiveIds": [
+              "proposed-g7-number-sense-place-value"
+            ],
+            "learnerAction": "Which is greater, 0.8 or 0.76? Justify using equal units.",
+            "content": {
+              "body": "Work alone without a place chart, tutor or worked example. Explain the units used in your comparison."
+            },
+            "interaction": {
+              "kind": "FREE_RESPONSE",
+              "prompts": [
+                {
+                  "id": "compare-independent-response",
+                  "prompt": "Which is greater, 0.8 or 0.76? Justify using equal units.",
+                  "minLength": 1
+                }
+              ]
+            },
+            "tools": {
+              "requested": [],
+              "prohibited": []
+            },
+            "hints": [],
+            "misconceptionIds": [],
+            "evidence": {
+              "kind": "FORMATIVE_OBSERVATION",
+              "evidenceType": "PRACTICE",
+              "responses": [
+                {
+                  "responseKey": "compare-independent-response",
+                  "objectiveId": "proposed-g7-number-sense-place-value",
+                  "responseType": "TEXT",
+                  "scaffoldLevel": "NONE"
+                }
+              ]
+            },
+            "accessibility": {
+              "textAlternative": "Work alone without a place chart, tutor or worked example. Explain the units used in your comparison.",
+              "keyboardPath": "Tab to the text field and type; paper or oral transcription is equivalent.",
+              "reducedMotion": "NOT_APPLICABLE"
+            },
+            "offline": {
+              "mode": "FULL_OFFLINE",
+              "note": "Use the text and a notebook; capture written responses for later sync."
+            },
+            "completion": "ALL_RESPONSES_WRITTEN",
+            "pedagogy": {
+              "strategy": "WORKED_EXAMPLE_FADING",
+              "representation": "VERBAL",
+              "scaffoldLevel": "NONE"
+            }
+          },
+          {
+            "id": "compare-reflect",
+            "type": "REFLECTION",
+            "title": "compare: reflect",
+            "purpose": "REFLECT",
+            "objectiveIds": [
+              "proposed-g7-number-sense-place-value"
+            ],
+            "learnerAction": "What will you check when comparing decimal quantities?",
+            "content": {
+              "body": "Describe a mistake you can now avoid. This reflection is practice and does not establish mastery."
+            },
+            "interaction": {
+              "kind": "FREE_RESPONSE",
+              "prompts": [
+                {
+                  "id": "compare-reflect-response",
+                  "prompt": "What will you check when comparing decimal quantities?",
+                  "minLength": 1
+                }
+              ]
+            },
+            "tools": {
+              "requested": [],
+              "prohibited": []
+            },
+            "hints": [],
+            "misconceptionIds": [],
+            "evidence": {
+              "kind": "FORMATIVE_OBSERVATION",
+              "evidenceType": "PRACTICE",
+              "responses": [
+                {
+                  "responseKey": "compare-reflect-response",
+                  "objectiveId": "proposed-g7-number-sense-place-value",
+                  "responseType": "TEXT",
+                  "scaffoldLevel": "NONE"
+                }
+              ]
+            },
+            "accessibility": {
+              "textAlternative": "Describe a mistake you can now avoid. This reflection is practice and does not establish mastery.",
+              "keyboardPath": "Tab to the text field and type; paper or oral transcription is equivalent.",
+              "reducedMotion": "NOT_APPLICABLE"
+            },
+            "offline": {
+              "mode": "FULL_OFFLINE",
+              "note": "Use the text and a notebook; capture written responses for later sync."
+            },
+            "completion": "ALL_RESPONSES_WRITTEN",
+            "pedagogy": {
+              "strategy": "WORKED_EXAMPLE_FADING",
+              "representation": "VERBAL",
+              "scaffoldLevel": "NONE"
+            }
+          }
+        ],
+        "assessmentRequests": [],
+        "labProposals": []
+      }
+    },
+    "projectionHash": "1d45644470b5eeaac7a2a9c8afb0a4626825c8deae86611784fda950b7bf82bd"
+  },
+  {
+    "id": "classwork",
+    "version": "0.1.0",
+    "role": "LESSON_AUTHOR",
+    "author": {
+      "kind": "AI",
+      "agentId": "factory-demo:LESSON_AUTHOR",
+      "modelFamily": "deterministic-local-demo",
+      "sessionId": "LESSON_AUTHOR"
+    },
+    "blueprint": {
+      "blueprintId": "factory-g7-number-sense",
+      "version": "0.1.0",
+      "contentHash": "a2382c06ce4ec96be3634e9f0304689f88316a39d11fa976c4a44bbbe4dce40a"
+    },
+    "dependencies": [
+      {
+        "id": "lesson-2",
+        "version": "0.1.0",
+        "contentHash": "6eef5bba123482d83c82eb181ac518ebc0fa6113465d6dad4a9834174b060e53"
+      }
+    ],
+    "sourceContentHash": "09792f8feea65ed516f342de650f498c7eaab32fea9b6a434320418b3b841abb",
+    "payload": {
+      "kind": "ACTIVITY",
+      "definition": {
+        "schemaVersion": "activity-definition.v1",
+        "activityId": "classwork",
+        "version": "0.1.0",
+        "kind": "CLASSWORK",
+        "contentHash": "7c81508369c42bd09f814e830d223520b3368a442ec699361cc5f49b41480947",
+        "content": {
+          "title": "Independent decimal production",
+          "objectiveIds": [
+            "proposed-g7-number-sense-place-value"
+          ],
+          "lessonItemIds": [
+            "lesson-2"
+          ],
+          "scaffolding": "INDEPENDENT",
+          "instructions": {
+            "learner": [
+              {
+                "stepId": "classwork-step-1",
+                "text": "Write 53.24 as a sum of place values. Explain what the digit 2 represents.",
+                "resourceIds": []
+              },
+              {
+                "stepId": "classwork-step-2",
+                "text": "Compare 0.4 and 0.37. Explain using the same fractional unit.",
+                "resourceIds": []
+              },
+              {
+                "stepId": "classwork-step-3",
+                "text": "Check your explanation without using a worked example. Record any help you used.",
+                "resourceIds": []
+              }
+            ],
+            "teacher": [
+              {
+                "stepId": "classwork-teacher",
+                "text": "Record assistance separately. Ask for reasoning before feedback. Use the protected assessment rubric only for independently collected assessment responses.",
+                "resourceIds": []
+              }
+            ]
+          },
+          "resourceIds": [],
+          "rubric": null,
+          "expectedDurationMinutes": 20,
+          "collaborationMode": "INDIVIDUAL",
+          "evidenceIntent": {
+            "kind": "PRACTICE_ONLY",
+            "forms": [
+              "WRITTEN"
+            ]
+          },
+          "accessibility": {
+            "readingLevel": "Grade 7, vocabulary support permitted",
+            "supportsScreenReader": true,
+            "supportsReadAloud": true,
+            "requiresColorVision": false,
+            "requiresFineMotor": false,
+            "alternativeFormatResourceIds": []
+          }
+        },
+        "resources": [],
+        "lessonBindings": [
+          {
+            "lessonId": "lesson-2",
+            "version": "0.1.0"
+          }
+        ],
+        "release": {
+          "releaseId": "UNRESOLVED-G7-CANDIDATE",
+          "releaseIdentity": "UNRESOLVED-NOT-A-RELEASE"
+        },
+        "governance": {
+          "provenanceRefs": [
+            "unit-blueprint:factory-g7-number-sense@0.1.0"
+          ],
+          "reviewRefs": [],
+          "lifecycleRefs": [],
+          "releaseRefs": []
+        }
+      }
+    },
+    "projectionHash": "4603d079324d8404ca359990e9065b2bf4b92156b9cd09ab2a5b2b505fb8f91f"
+  },
+  {
+    "id": "homework",
+    "version": "0.1.0",
+    "role": "LESSON_AUTHOR",
+    "author": {
+      "kind": "AI",
+      "agentId": "factory-demo:LESSON_AUTHOR",
+      "modelFamily": "deterministic-local-demo",
+      "sessionId": "LESSON_AUTHOR"
+    },
+    "blueprint": {
+      "blueprintId": "factory-g7-number-sense",
+      "version": "0.1.0",
+      "contentHash": "a2382c06ce4ec96be3634e9f0304689f88316a39d11fa976c4a44bbbe4dce40a"
+    },
+    "dependencies": [
+      {
+        "id": "lesson-2",
+        "version": "0.1.0",
+        "contentHash": "6eef5bba123482d83c82eb181ac518ebc0fa6113465d6dad4a9834174b060e53"
+      }
+    ],
+    "sourceContentHash": "6d06f102a517c5a4810815f36b33a185b1a9c38f485f991811467fc3d375df30",
+    "payload": {
+      "kind": "ACTIVITY",
+      "definition": {
+        "schemaVersion": "activity-definition.v1",
+        "activityId": "homework",
+        "version": "0.1.0",
+        "kind": "HOMEWORK",
+        "contentHash": "0ca370d3fc5d1592755f79857f845eb8c826174891bdb27504dfff1f57f6f9bb",
+        "content": {
+          "title": "Practise decimal explanations",
+          "objectiveIds": [
+            "proposed-g7-number-sense-place-value"
+          ],
+          "lessonItemIds": [
+            "lesson-2"
+          ],
+          "scaffolding": "INDEPENDENT",
+          "instructions": {
+            "learner": [
+              {
+                "stepId": "homework-step-1",
+                "text": "Write 26.53 as tens, ones, tenths and hundredths.",
+                "resourceIds": []
+              },
+              {
+                "stepId": "homework-step-2",
+                "text": "Compare 0.3 with 0.28 and justify your decision.",
+                "resourceIds": []
+              },
+              {
+                "stepId": "homework-step-3",
+                "text": "Write a pair of decimals where the longer written decimal is smaller. Ask someone to listen to your reasoning without giving the answer.",
+                "resourceIds": []
+              }
+            ],
+            "teacher": [
+              {
+                "stepId": "homework-teacher",
+                "text": "Record assistance separately. Ask for reasoning before feedback. Use the protected assessment rubric only for independently collected assessment responses.",
+                "resourceIds": []
+              }
+            ]
+          },
+          "resourceIds": [],
+          "rubric": null,
+          "expectedDurationMinutes": 20,
+          "collaborationMode": "INDIVIDUAL",
+          "evidenceIntent": {
+            "kind": "PRACTICE_ONLY",
+            "forms": [
+              "WRITTEN"
+            ]
+          },
+          "accessibility": {
+            "readingLevel": "Grade 7, vocabulary support permitted",
+            "supportsScreenReader": true,
+            "supportsReadAloud": true,
+            "requiresColorVision": false,
+            "requiresFineMotor": false,
+            "alternativeFormatResourceIds": []
+          }
+        },
+        "resources": [],
+        "lessonBindings": [
+          {
+            "lessonId": "lesson-2",
+            "version": "0.1.0"
+          }
+        ],
+        "release": {
+          "releaseId": "UNRESOLVED-G7-CANDIDATE",
+          "releaseIdentity": "UNRESOLVED-NOT-A-RELEASE"
+        },
+        "governance": {
+          "provenanceRefs": [
+            "unit-blueprint:factory-g7-number-sense@0.1.0"
+          ],
+          "reviewRefs": [],
+          "lifecycleRefs": [],
+          "releaseRefs": []
+        }
+      }
+    },
+    "projectionHash": "39491a342bb4e36d50cea55875c375109b8c9073021a112b330469594a65f125"
+  },
+  {
+    "id": "worksheet",
+    "version": "0.1.0",
+    "role": "LESSON_AUTHOR",
+    "author": {
+      "kind": "AI",
+      "agentId": "factory-demo:LESSON_AUTHOR",
+      "modelFamily": "deterministic-local-demo",
+      "sessionId": "LESSON_AUTHOR"
+    },
+    "blueprint": {
+      "blueprintId": "factory-g7-number-sense",
+      "version": "0.1.0",
+      "contentHash": "a2382c06ce4ec96be3634e9f0304689f88316a39d11fa976c4a44bbbe4dce40a"
+    },
+    "dependencies": [
+      {
+        "id": "lesson-1",
+        "version": "0.1.0",
+        "contentHash": "d314df7d14222af86fd88594fc57b2f9941b194209fe9069d5cab548ead64785"
+      }
+    ],
+    "sourceContentHash": "a0eb42b79477116d198db5cd6503f62c103e4878dee94a72932f57ddcfbefb2d",
+    "payload": {
+      "kind": "DOCUMENT",
+      "title": "Place chart and practice sheet",
+      "sections": [
+        {
+          "heading": "Prerequisite fallback",
+          "text": "Draw columns labelled tens and ones. Put 4 in tens and 2 in ones. Explain how 42 differs from 24. If unsure, make four groups of ten marks and two single marks. Repeat with 31, then remove the drawing."
+        },
+        {
+          "heading": "Faded decimal support",
+          "text": "Add tenths and hundredths columns. Place 3.25 in the chart. State each digit's value. Cover the labels and explain 7.46. Finally work without the chart: compare 0.2 and 0.19 using equal place units."
+        }
+      ],
+      "textAlternative": "Prerequisite fallback: Draw columns labelled tens and ones. Put 4 in tens and 2 in ones. Explain how 42 differs from 24. If unsure, make four groups of ten marks and two single marks. Repeat with 31, then remove the drawing.\nFaded decimal support: Add tenths and hundredths columns. Place 3.25 in the chart. State each digit's value. Cover the labels and explain 7.46. Finally work without the chart: compare 0.2 and 0.19 using equal place units.",
+      "keyboardPath": "Read headings and paragraphs in document order; enter responses in text or on paper.",
+      "offlineInstructions": "Print or cache this text. Record work on paper. No network, sound, colour or pointer movement is required.",
+      "references": [
+        "lesson-1"
+      ]
+    },
+    "projectionHash": "c3ad0a76465cc39b16626c363b3d872b2543c48d09ca92aeb1a2c3f0c39c84e7"
+  },
+  {
+    "id": "teacher-guide",
+    "version": "0.1.0",
+    "role": "LESSON_AUTHOR",
+    "author": {
+      "kind": "AI",
+      "agentId": "factory-demo:LESSON_AUTHOR",
+      "modelFamily": "deterministic-local-demo",
+      "sessionId": "LESSON_AUTHOR"
+    },
+    "blueprint": {
+      "blueprintId": "factory-g7-number-sense",
+      "version": "0.1.0",
+      "contentHash": "a2382c06ce4ec96be3634e9f0304689f88316a39d11fa976c4a44bbbe4dce40a"
+    },
+    "dependencies": [
+      {
+        "id": "lesson-1",
+        "version": "0.1.0",
+        "contentHash": "d314df7d14222af86fd88594fc57b2f9941b194209fe9069d5cab548ead64785"
+      },
+      {
+        "id": "lesson-2",
+        "version": "0.1.0",
+        "contentHash": "6eef5bba123482d83c82eb181ac518ebc0fa6113465d6dad4a9834174b060e53"
+      }
+    ],
+    "sourceContentHash": "63d0a3fbee7a820f6c334f3d85cc48ef87205ca94fcda3d1ce44debbf01675ad",
+    "payload": {
+      "kind": "DOCUMENT",
+      "title": "Teacher guide",
+      "sections": [
+        {
+          "heading": "Before instruction",
+          "text": "Administer the quiz as a diagnostic without feedback. Route tens/ones errors to the worksheet. Keep this separate from the end-of-unit measure. All numerical contexts in this package are invented classroom examples, not reported local measurements or prices."
+        },
+        {
+          "heading": "Differentiation and independence",
+          "text": "Offer oral directions, large print and a place chart during instruction. Fade the chart before the independent stage. A scribe may transcribe without supplying steps. Record tutoring, hints and collaboration as assistance. Do not count assisted work as independent evidence."
+        },
+        {
+          "heading": "Assessment and follow-up",
+          "text": "Use the withheld summative form after instruction. Score reasoning through authorized human moderation using the protected rubric. Plan delayed retrieval only after policy approval. Revisit the misconception scene when learners compare by digit count."
+        }
+      ],
+      "textAlternative": "Before instruction: Administer the quiz as a diagnostic without feedback. Route tens/ones errors to the worksheet. Keep this separate from the end-of-unit measure. All numerical contexts in this package are invented classroom examples, not reported local measurements or prices.\nDifferentiation and independence: Offer oral directions, large print and a place chart during instruction. Fade the chart before the independent stage. A scribe may transcribe without supplying steps. Record tutoring, hints and collaboration as assistance. Do not count assisted work as independent evidence.\nAssessment and follow-up: Use the withheld summative form after instruction. Score reasoning through authorized human moderation using the protected rubric. Plan delayed retrieval only after policy approval. Revisit the misconception scene when learners compare by digit count.",
+      "keyboardPath": "Read headings and paragraphs in document order; enter responses in text or on paper.",
+      "offlineInstructions": "Print or cache this text. Record work on paper. No network, sound, colour or pointer movement is required.",
+      "references": [
+        "lesson-1",
+        "lesson-2"
+      ]
+    },
+    "projectionHash": "42dd3c23f3373d7e26c4bae2f6856e5c843cc6b30510fda6335df058c5f95341"
+  },
+  {
+    "id": "quiz",
+    "version": "0.1.0",
+    "role": "ASSESSMENT_DESIGNER",
+    "author": {
+      "kind": "AI",
+      "agentId": "factory-demo:ASSESSMENT_DESIGNER",
+      "modelFamily": "deterministic-local-demo",
+      "sessionId": "ASSESSMENT_DESIGNER"
+    },
+    "blueprint": {
+      "blueprintId": "factory-g7-number-sense",
+      "version": "0.1.0",
+      "contentHash": "a2382c06ce4ec96be3634e9f0304689f88316a39d11fa976c4a44bbbe4dce40a"
+    },
+    "dependencies": [
+      {
+        "id": "lesson-1",
+        "version": "0.1.0",
+        "contentHash": "d314df7d14222af86fd88594fc57b2f9941b194209fe9069d5cab548ead64785"
+      },
+      {
+        "id": "lesson-2",
+        "version": "0.1.0",
+        "contentHash": "6eef5bba123482d83c82eb181ac518ebc0fa6113465d6dad4a9834174b060e53"
+      }
+    ],
+    "sourceContentHash": "d87b761522ac5494d2beef84aa1deb0ef478b5e965a6b19267a9d47d7a9e1600",
+    "payload": {
+      "kind": "ASSESSMENT_REFERENCE",
+      "definitionId": "quiz",
+      "definitionVersion": "0.1.0",
+      "contentHash": "85eafe111a33e67bb0f3d574ca200d996ff001e0d200ab5642ef2218114b4fd8",
+      "formId": "quiz-form",
+      "formHash": "0c4fcbffae8afbfe6c7e08ee9dcf3b37919e9773a187b86f10d231ea4955e7f6",
+      "itemPins": [
+        {
+          "itemId": "quiz-item-1",
+          "itemVersion": "0.1.0",
+          "itemHash": "d76a2ef4d33e0ea59ce0f0de7b80309f7afdf2c03a595d51b461ea196c52271c",
+          "points": 1
+        },
+        {
+          "itemId": "quiz-item-2",
+          "itemVersion": "0.1.0",
+          "itemHash": "ac87c084abcf4dc9c592642536870a12b2ac88e512e009660fa3d6412a1c48e7",
+          "points": 1
+        }
+      ]
+    },
+    "projectionHash": "e09cc958737289c4d9cde870c8832c6cce2d2eadcf3dcbabd27c4a7f7c6323f0"
+  },
+  {
+    "id": "summative",
+    "version": "0.1.0",
+    "role": "ASSESSMENT_DESIGNER",
+    "author": {
+      "kind": "AI",
+      "agentId": "factory-demo:ASSESSMENT_DESIGNER",
+      "modelFamily": "deterministic-local-demo",
+      "sessionId": "ASSESSMENT_DESIGNER"
+    },
+    "blueprint": {
+      "blueprintId": "factory-g7-number-sense",
+      "version": "0.1.0",
+      "contentHash": "a2382c06ce4ec96be3634e9f0304689f88316a39d11fa976c4a44bbbe4dce40a"
+    },
+    "dependencies": [
+      {
+        "id": "lesson-2",
+        "version": "0.1.0",
+        "contentHash": "6eef5bba123482d83c82eb181ac518ebc0fa6113465d6dad4a9834174b060e53"
+      }
+    ],
+    "sourceContentHash": "7290f844a6a1ed39ac745eeefff5a065dd105f00df1b5e1d509b5bc44837c836",
+    "payload": {
+      "kind": "ASSESSMENT_REFERENCE",
+      "definitionId": "summative",
+      "definitionVersion": "0.1.0",
+      "contentHash": "f03876ec40bf3d4b3d6a88a068df70dad42ceafb92bc508b6345631318bbf9e2",
+      "formId": "summative-form",
+      "formHash": "10c3c8bc8b8b923bcddfbfe3fbe6a6b4513ac72cd4a36382050a4f9a7bba947f",
+      "itemPins": [
+        {
+          "itemId": "summative-item-1",
+          "itemVersion": "0.1.0",
+          "itemHash": "9811d559e36c6153828bbc21dee14e4661bba59e310f8b9f69320b744f3dde72",
+          "points": 1
+        },
+        {
+          "itemId": "summative-item-2",
+          "itemVersion": "0.1.0",
+          "itemHash": "4d05a6a1180bd35fb6a3e92ffb0ce15ca2368f71d49f9a725f3192351adb1f6a",
+          "points": 4
+        }
+      ]
+    },
+    "projectionHash": "3a545106eeeaf269a006ed576babbfd314cf9552eb15d4cf336383d5ca84a2f7"
+  },
+  {
+    "id": "retention",
+    "version": "0.1.0",
+    "role": "ASSESSMENT_DESIGNER",
+    "author": {
+      "kind": "AI",
+      "agentId": "factory-demo:ASSESSMENT_DESIGNER",
+      "modelFamily": "deterministic-local-demo",
+      "sessionId": "ASSESSMENT_DESIGNER"
+    },
+    "blueprint": {
+      "blueprintId": "factory-g7-number-sense",
+      "version": "0.1.0",
+      "contentHash": "a2382c06ce4ec96be3634e9f0304689f88316a39d11fa976c4a44bbbe4dce40a"
+    },
+    "dependencies": [
+      {
+        "id": "summative",
+        "version": "0.1.0",
+        "contentHash": "7290f844a6a1ed39ac745eeefff5a065dd105f00df1b5e1d509b5bc44837c836"
+      }
+    ],
+    "sourceContentHash": "42055e834f665d6c90554066b67b77b275862a7469c6e481278214da31912fa4",
+    "payload": {
+      "kind": "ASSESSMENT_REFERENCE",
+      "definitionId": "retention",
+      "definitionVersion": "0.1.0",
+      "contentHash": "931c797d45d0708b61e6d07b2a4fd4c481258f96fc9d50354446b3d25c3705f6",
+      "formId": "retention-form",
+      "formHash": "5c3659cb09dfc027ce128dcba4dc1e4a874a72783349cf76880bfbee96faba47",
+      "itemPins": [
+        {
+          "itemId": "retention-item-1",
+          "itemVersion": "0.1.0",
+          "itemHash": "328d0ccaeb6b208dacf752a6813ee492a5b07001e315c7943c1ae1e4a5c93538",
+          "points": 1
+        }
+      ]
+    },
+    "projectionHash": "fd32bbbbf434ed860d1fda11558e370734bc0c9c00e1b8e4520bff4da85964c2"
+  },
+  {
+    "id": "transfer",
+    "version": "0.1.0",
+    "role": "ASSESSMENT_DESIGNER",
+    "author": {
+      "kind": "AI",
+      "agentId": "factory-demo:ASSESSMENT_DESIGNER",
+      "modelFamily": "deterministic-local-demo",
+      "sessionId": "ASSESSMENT_DESIGNER"
+    },
+    "blueprint": {
+      "blueprintId": "factory-g7-number-sense",
+      "version": "0.1.0",
+      "contentHash": "a2382c06ce4ec96be3634e9f0304689f88316a39d11fa976c4a44bbbe4dce40a"
+    },
+    "dependencies": [
+      {
+        "id": "summative",
+        "version": "0.1.0",
+        "contentHash": "7290f844a6a1ed39ac745eeefff5a065dd105f00df1b5e1d509b5bc44837c836"
+      }
+    ],
+    "sourceContentHash": "53ca23858bd2fb9c828b4f964e449601865a9869a116298b98adf74faab800c4",
+    "payload": {
+      "kind": "ASSESSMENT_REFERENCE",
+      "definitionId": "transfer",
+      "definitionVersion": "0.1.0",
+      "contentHash": "b5a71b0970dba2189cbd8c37a952d46196e784948749d08abaf525c1abf0a546",
+      "formId": "transfer-form",
+      "formHash": "854c905e78bac48f5dc431271536e9185d835d323aeb80e12d70e076adefcb34",
+      "itemPins": [
+        {
+          "itemId": "transfer-item-1",
+          "itemVersion": "0.1.0",
+          "itemHash": "91bc04d421b9bd8b3c3aa7a3792bee262156b8600531d8f3aec7f67390a61422",
+          "points": 4
+        }
+      ]
+    },
+    "projectionHash": "80685dc8d9751f1bdfcb0905352ae99a5fbdf6c6a9668ebcf809a591740c93e6"
+  },
+  {
+    "id": "answer-keys",
+    "version": "0.1.0",
+    "role": "ASSESSMENT_DESIGNER",
+    "author": {
+      "kind": "AI",
+      "agentId": "factory-demo:ASSESSMENT_DESIGNER",
+      "modelFamily": "deterministic-local-demo",
+      "sessionId": "ASSESSMENT_DESIGNER"
+    },
+    "blueprint": {
+      "blueprintId": "factory-g7-number-sense",
+      "version": "0.1.0",
+      "contentHash": "a2382c06ce4ec96be3634e9f0304689f88316a39d11fa976c4a44bbbe4dce40a"
+    },
+    "dependencies": [
+      {
+        "id": "quiz",
+        "version": "0.1.0",
+        "contentHash": "d87b761522ac5494d2beef84aa1deb0ef478b5e965a6b19267a9d47d7a9e1600"
+      },
+      {
+        "id": "summative",
+        "version": "0.1.0",
+        "contentHash": "7290f844a6a1ed39ac745eeefff5a065dd105f00df1b5e1d509b5bc44837c836"
+      },
+      {
+        "id": "retention",
+        "version": "0.1.0",
+        "contentHash": "42055e834f665d6c90554066b67b77b275862a7469c6e481278214da31912fa4"
+      },
+      {
+        "id": "transfer",
+        "version": "0.1.0",
+        "contentHash": "53ca23858bd2fb9c828b4f964e449601865a9869a116298b98adf74faab800c4"
+      }
+    ],
+    "sourceContentHash": "51cf6327dcc21040443b1378147eb68f87e98ce6304d72b236f21e25059118aa",
+    "payload": {
+      "kind": "DOCUMENT",
+      "title": "Protected answer-key index",
+      "sections": [
+        {
+          "heading": "Authorized reviewer use only",
+          "text": "Keys are stored once in each Assessment V2 ProtectedScoringSpec, identified by itemId, itemVersion, scoringVersion and the item's scoringSpecHash. Verify the form's exact item hashes. Do not copy the specs into a learner document or offline package."
+        }
+      ],
+      "textAlternative": "Authorized reviewer use only: Keys are stored once in each Assessment V2 ProtectedScoringSpec, identified by itemId, itemVersion, scoringVersion and the item's scoringSpecHash. Verify the form's exact item hashes. Do not copy the specs into a learner document or offline package.",
+      "keyboardPath": "Read headings and paragraphs in document order; enter responses in text or on paper.",
+      "offlineInstructions": "Print or cache this text. Record work on paper. No network, sound, colour or pointer movement is required.",
+      "references": [
+        "quiz",
+        "summative",
+        "retention",
+        "transfer"
+      ]
+    },
+    "projectionHash": "6e108be15bbdc96af92a4176beeadc77c194dfd5d2ecad48f08c7d170319b106"
+  },
+  {
+    "id": "rubrics",
+    "version": "0.1.0",
+    "role": "ASSESSMENT_DESIGNER",
+    "author": {
+      "kind": "AI",
+      "agentId": "factory-demo:ASSESSMENT_DESIGNER",
+      "modelFamily": "deterministic-local-demo",
+      "sessionId": "ASSESSMENT_DESIGNER"
+    },
+    "blueprint": {
+      "blueprintId": "factory-g7-number-sense",
+      "version": "0.1.0",
+      "contentHash": "a2382c06ce4ec96be3634e9f0304689f88316a39d11fa976c4a44bbbe4dce40a"
+    },
+    "dependencies": [
+      {
+        "id": "summative",
+        "version": "0.1.0",
+        "contentHash": "7290f844a6a1ed39ac745eeefff5a065dd105f00df1b5e1d509b5bc44837c836"
+      },
+      {
+        "id": "transfer",
+        "version": "0.1.0",
+        "contentHash": "53ca23858bd2fb9c828b4f964e449601865a9869a116298b98adf74faab800c4"
+      }
+    ],
+    "sourceContentHash": "ee0306d1da4d1f6a158e58e87a58f41367462ebe5de2d2100d55c43784326835",
+    "payload": {
+      "kind": "DOCUMENT",
+      "title": "Protected rubric index",
+      "sections": [
+        {
+          "heading": "Analytic scoring",
+          "text": "The summative and transfer ProtectedScoringSpec records contain the exact decimal-reasoning rubric version and descriptors. Learners receive criteria only. An authorized human scores constructed reasoning; an AI recommendation cannot supply an official score."
+        }
+      ],
+      "textAlternative": "Analytic scoring: The summative and transfer ProtectedScoringSpec records contain the exact decimal-reasoning rubric version and descriptors. Learners receive criteria only. An authorized human scores constructed reasoning; an AI recommendation cannot supply an official score.",
+      "keyboardPath": "Read headings and paragraphs in document order; enter responses in text or on paper.",
+      "offlineInstructions": "Print or cache this text. Record work on paper. No network, sound, colour or pointer movement is required.",
+      "references": [
+        "summative",
+        "transfer"
+      ]
+    },
+    "projectionHash": "a98fccb2c59feff43058f644ddbd04897c763da57fd42e2de48d9f442515d5f0"
+  },
+  {
+    "id": "practical",
+    "version": "0.1.0",
+    "role": "PROJECT_PRACTICAL_DESIGNER",
+    "author": {
+      "kind": "AI",
+      "agentId": "factory-demo:PROJECT_PRACTICAL_DESIGNER",
+      "modelFamily": "deterministic-local-demo",
+      "sessionId": "PROJECT_PRACTICAL_DESIGNER"
+    },
+    "blueprint": {
+      "blueprintId": "factory-g7-number-sense",
+      "version": "0.1.0",
+      "contentHash": "a2382c06ce4ec96be3634e9f0304689f88316a39d11fa976c4a44bbbe4dce40a"
+    },
+    "dependencies": [
+      {
+        "id": "lesson-2",
+        "version": "0.1.0",
+        "contentHash": "6eef5bba123482d83c82eb181ac518ebc0fa6113465d6dad4a9834174b060e53"
+      },
+      {
+        "id": "summative",
+        "version": "0.1.0",
+        "contentHash": "7290f844a6a1ed39ac745eeefff5a065dd105f00df1b5e1d509b5bc44837c836"
+      }
+    ],
+    "sourceContentHash": "0cd56ace160d94980df57214fdde655d9f2ecaf1d3f4de2465b22279e3500227",
+    "payload": {
+      "kind": "ACTIVITY",
+      "definition": {
+        "schemaVersion": "activity-definition.v1",
+        "activityId": "practical",
+        "version": "0.1.0",
+        "kind": "PRACTICAL",
+        "contentHash": "0075f3f2460c3c21416e855dd73fbb29e2176f965d4e0f5a5702880493764115",
+        "content": {
+          "title": "Paper decimal strips",
+          "objectiveIds": [
+            "proposed-g7-number-sense-place-value"
+          ],
+          "lessonItemIds": [
+            "lesson-2"
+          ],
+          "scaffolding": "GUIDED",
+          "instructions": {
+            "learner": [
+              {
+                "stepId": "practical-step-1",
+                "text": "Draw two equal-length strips divided into ten equal sections. Mark quantities 0.4 and 0.35, subdividing sections into hundredths when needed.",
+                "resourceIds": []
+              },
+              {
+                "stepId": "practical-step-2",
+                "text": "Label the units in text; do not rely on colour. Explain which marked length is greater.",
+                "resourceIds": []
+              },
+              {
+                "stepId": "practical-step-3",
+                "text": "If drawing is difficult, dictate a table of tenths and hundredths instead. Record a written justification. This is practice, not a certified lab.",
+                "resourceIds": []
+              }
+            ],
+            "teacher": [
+              {
+                "stepId": "practical-teacher",
+                "text": "Record assistance separately. Ask for reasoning before feedback. Use the protected assessment rubric only for independently collected assessment responses.",
+                "resourceIds": []
+              }
+            ]
+          },
+          "resourceIds": [],
+          "rubric": null,
+          "expectedDurationMinutes": 20,
+          "collaborationMode": "INDIVIDUAL",
+          "evidenceIntent": {
+            "kind": "PRACTICE_ONLY",
+            "forms": [
+              "WRITTEN"
+            ]
+          },
+          "accessibility": {
+            "readingLevel": "Grade 7, vocabulary support permitted",
+            "supportsScreenReader": true,
+            "supportsReadAloud": true,
+            "requiresColorVision": false,
+            "requiresFineMotor": false,
+            "alternativeFormatResourceIds": []
+          }
+        },
+        "resources": [],
+        "lessonBindings": [
+          {
+            "lessonId": "lesson-2",
+            "version": "0.1.0"
+          }
+        ],
+        "release": {
+          "releaseId": "UNRESOLVED-G7-CANDIDATE",
+          "releaseIdentity": "UNRESOLVED-NOT-A-RELEASE"
+        },
+        "governance": {
+          "provenanceRefs": [
+            "unit-blueprint:factory-g7-number-sense@0.1.0"
+          ],
+          "reviewRefs": [],
+          "lifecycleRefs": [],
+          "releaseRefs": []
+        }
+      }
+    },
+    "projectionHash": "ca2be96456490f7beb6f7f98e0f8f2bc7b2a9b9b962e63e04f64d1cdda6e180a"
+  },
+  {
+    "id": "project",
+    "version": "0.1.0",
+    "role": "PROJECT_PRACTICAL_DESIGNER",
+    "author": {
+      "kind": "AI",
+      "agentId": "factory-demo:PROJECT_PRACTICAL_DESIGNER",
+      "modelFamily": "deterministic-local-demo",
+      "sessionId": "PROJECT_PRACTICAL_DESIGNER"
+    },
+    "blueprint": {
+      "blueprintId": "factory-g7-number-sense",
+      "version": "0.1.0",
+      "contentHash": "a2382c06ce4ec96be3634e9f0304689f88316a39d11fa976c4a44bbbe4dce40a"
+    },
+    "dependencies": [
+      {
+        "id": "practical",
+        "version": "0.1.0",
+        "contentHash": "0cd56ace160d94980df57214fdde655d9f2ecaf1d3f4de2465b22279e3500227"
+      },
+      {
+        "id": "summative",
+        "version": "0.1.0",
+        "contentHash": "7290f844a6a1ed39ac745eeefff5a065dd105f00df1b5e1d509b5bc44837c836"
+      }
+    ],
+    "sourceContentHash": "f0a46efee40dfef4658ae61f6b102a52cb6f0ec97986a1aee54c4a43e405507c",
+    "payload": {
+      "kind": "ACTIVITY",
+      "definition": {
+        "schemaVersion": "activity-definition.v1",
+        "activityId": "project",
+        "version": "0.1.0",
+        "kind": "PROJECT",
+        "contentHash": "df6c8feb1f59ca6e93b34300916afeba51003a88aec025e6654d32c680c9873f",
+        "content": {
+          "title": "Create a decimal misconception guide",
+          "objectiveIds": [
+            "proposed-g7-number-sense-place-value"
+          ],
+          "lessonItemIds": [
+            "lesson-2"
+          ],
+          "scaffolding": "INDEPENDENT",
+          "instructions": {
+            "learner": [
+              {
+                "stepId": "project-step-1",
+                "text": "Create a one-page guide showing two invented decimal comparisons where digit count gives the wrong answer.",
+                "resourceIds": []
+              },
+              {
+                "stepId": "project-step-2",
+                "text": "For each comparison, show equal-unit reasoning. Include an original place-value diagram or a text table.",
+                "resourceIds": []
+              },
+              {
+                "stepId": "project-step-3",
+                "text": "Exchange guides for comments, then submit your own revision with the help you received recorded. Practice feedback does not establish independent mastery.",
+                "resourceIds": []
+              }
+            ],
+            "teacher": [
+              {
+                "stepId": "project-teacher",
+                "text": "Record assistance separately. Ask for reasoning before feedback. Use the protected assessment rubric only for independently collected assessment responses.",
+                "resourceIds": []
+              }
+            ]
+          },
+          "resourceIds": [],
+          "rubric": null,
+          "expectedDurationMinutes": 20,
+          "collaborationMode": "INDIVIDUAL",
+          "evidenceIntent": {
+            "kind": "PRACTICE_ONLY",
+            "forms": [
+              "WRITTEN"
+            ]
+          },
+          "accessibility": {
+            "readingLevel": "Grade 7, vocabulary support permitted",
+            "supportsScreenReader": true,
+            "supportsReadAloud": true,
+            "requiresColorVision": false,
+            "requiresFineMotor": false,
+            "alternativeFormatResourceIds": []
+          }
+        },
+        "resources": [],
+        "lessonBindings": [
+          {
+            "lessonId": "lesson-2",
+            "version": "0.1.0"
+          }
+        ],
+        "release": {
+          "releaseId": "UNRESOLVED-G7-CANDIDATE",
+          "releaseIdentity": "UNRESOLVED-NOT-A-RELEASE"
+        },
+        "governance": {
+          "provenanceRefs": [
+            "unit-blueprint:factory-g7-number-sense@0.1.0"
+          ],
+          "reviewRefs": [],
+          "lifecycleRefs": [],
+          "releaseRefs": []
+        }
+      }
+    },
+    "projectionHash": "13c2d0c5bd9bd871c410ac244ebc052dbcd7b880a4d7f92cd028fd1e837ac8c4"
+  },
+  {
+    "id": "accessible-text",
+    "version": "0.1.0",
+    "role": "MEDIA_ACCESSIBILITY",
+    "author": {
+      "kind": "AI",
+      "agentId": "factory-demo:MEDIA_ACCESSIBILITY",
+      "modelFamily": "deterministic-local-demo",
+      "sessionId": "MEDIA_ACCESSIBILITY"
+    },
+    "blueprint": {
+      "blueprintId": "factory-g7-number-sense",
+      "version": "0.1.0",
+      "contentHash": "a2382c06ce4ec96be3634e9f0304689f88316a39d11fa976c4a44bbbe4dce40a"
+    },
+    "dependencies": [
+      {
+        "id": "lesson-1",
+        "version": "0.1.0",
+        "contentHash": "d314df7d14222af86fd88594fc57b2f9941b194209fe9069d5cab548ead64785"
+      },
+      {
+        "id": "lesson-2",
+        "version": "0.1.0",
+        "contentHash": "6eef5bba123482d83c82eb181ac518ebc0fa6113465d6dad4a9834174b060e53"
+      },
+      {
+        "id": "practical",
+        "version": "0.1.0",
+        "contentHash": "0cd56ace160d94980df57214fdde655d9f2ecaf1d3f4de2465b22279e3500227"
+      },
+      {
+        "id": "project",
+        "version": "0.1.0",
+        "contentHash": "f0a46efee40dfef4658ae61f6b102a52cb6f0ec97986a1aee54c4a43e405507c"
+      }
+    ],
+    "sourceContentHash": "03d4c5f991917b5ce29036cce92cf60fc9136b124dac5a796d97e229167f6431",
+    "payload": {
+      "kind": "DOCUMENT",
+      "title": "Text alternatives",
+      "sections": [
+        {
+          "heading": "Place chart in reading order",
+          "text": "Column one: tens. Column two: ones. Column three: tenths. Column four: hundredths. Read each digit with its column label. A blank place represents zero units of that size."
+        },
+        {
+          "heading": "Practical alternative",
+          "text": "Instead of drawing shaded strips, make two text rows. Row one: four tenths equals forty hundredths. Row two: thirty-five hundredths. Compare their quantities verbally, then write your reason. The response can be typed, dictated or handwritten."
+        }
+      ],
+      "textAlternative": "Place chart in reading order: Column one: tens. Column two: ones. Column three: tenths. Column four: hundredths. Read each digit with its column label. A blank place represents zero units of that size.\nPractical alternative: Instead of drawing shaded strips, make two text rows. Row one: four tenths equals forty hundredths. Row two: thirty-five hundredths. Compare their quantities verbally, then write your reason. The response can be typed, dictated or handwritten.",
+      "keyboardPath": "Read headings and paragraphs in document order; enter responses in text or on paper.",
+      "offlineInstructions": "Print or cache this text. Record work on paper. No network, sound, colour or pointer movement is required.",
+      "references": [
+        "lesson-1",
+        "lesson-2",
+        "practical",
+        "project"
+      ]
+    },
+    "projectionHash": "f42dc0c0d896b867bb692a943c6a1d1c78c0b5aa3195ce195bec0e312f37c6e8"
+  },
+  {
+    "id": "extension",
+    "version": "0.1.0",
+    "role": "MEDIA_ACCESSIBILITY",
+    "author": {
+      "kind": "AI",
+      "agentId": "factory-demo:MEDIA_ACCESSIBILITY",
+      "modelFamily": "deterministic-local-demo",
+      "sessionId": "MEDIA_ACCESSIBILITY"
+    },
+    "blueprint": {
+      "blueprintId": "factory-g7-number-sense",
+      "version": "0.1.0",
+      "contentHash": "a2382c06ce4ec96be3634e9f0304689f88316a39d11fa976c4a44bbbe4dce40a"
+    },
+    "dependencies": [
+      {
+        "id": "project",
+        "version": "0.1.0",
+        "contentHash": "f0a46efee40dfef4658ae61f6b102a52cb6f0ec97986a1aee54c4a43e405507c"
+      }
+    ],
+    "sourceContentHash": "8f326d90fd98b84df13180a5c84dbe811bc46dbd940d7c5002115603c5313d88",
+    "payload": {
+      "kind": "DOCUMENT",
+      "title": "Optional base investigation",
+      "sections": [
+        {
+          "heading": "Non-gating extension",
+          "text": "Imagine a counting system in which each place to the left is worth five times its neighbour. Invent notation for six objects and eleven objects, and explain your rules. Compare the grouping with our decimal system. This is a proposed LiberiaLearn extension, optional, and never required for core progression."
+        }
+      ],
+      "textAlternative": "Non-gating extension: Imagine a counting system in which each place to the left is worth five times its neighbour. Invent notation for six objects and eleven objects, and explain your rules. Compare the grouping with our decimal system. This is a proposed LiberiaLearn extension, optional, and never required for core progression.",
+      "keyboardPath": "Read headings and paragraphs in document order; enter responses in text or on paper.",
+      "offlineInstructions": "Print or cache this text. Record work on paper. No network, sound, colour or pointer movement is required.",
+      "references": [
+        "project"
+      ]
+    },
+    "projectionHash": "5b616ba597699d79adafb78a0c2f567beb4c318909340e0ba79a807dce1c3107"
+  }
+]

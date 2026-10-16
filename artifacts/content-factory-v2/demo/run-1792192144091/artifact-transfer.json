@@ -1,0 +1,220 @@
+{
+  "id": "transfer",
+  "version": "0.1.0",
+  "payload": {
+    "kind": "ASSESSMENT",
+    "definition": {
+      "schemaVersion": "assessment.v2",
+      "definitionId": "transfer",
+      "version": "0.1.0",
+      "title": "Grade 7 transfer candidate",
+      "purpose": "TRANSFER",
+      "grade": 7,
+      "subject": "MATH",
+      "objectiveIds": [
+        "proposed-g7-number-sense-place-value"
+      ],
+      "prerequisiteObjectiveIds": [],
+      "alignment": {
+        "releaseId": "UNRESOLVED-G7-CANDIDATE",
+        "releaseIdentity": "UNRESOLVED-NOT-A-RELEASE",
+        "nationalObjectiveIds": [
+          "proposed-g7-number-sense-place-value"
+        ],
+        "extensionObjectiveIds": []
+      },
+      "timeLimitMinutes": 20,
+      "permittedTools": [
+        {
+          "toolId": "ai-tutor",
+          "mode": "PROHIBITED"
+        }
+      ],
+      "permittedAccommodations": [
+        "READ_ALOUD",
+        "LARGE_PRINT"
+      ],
+      "attemptPolicy": {
+        "maxAttempts": 1,
+        "cooldownMinutes": 0,
+        "reportedAttempt": "FIRST"
+      },
+      "provenance": {
+        "authors": [
+          {
+            "kind": "AI",
+            "id": "factory-demo:ASSESSMENT_DESIGNER"
+          }
+        ],
+        "sourceRef": "unit-blueprint:factory-g7-number-sense@0.1.0",
+        "curriculumSourceRefs": [
+          "PROPOSED_G7_MAPPING_NOT_APPROVED"
+        ]
+      },
+      "contentHash": "b5a71b0970dba2189cbd8c37a952d46196e784948749d08abaf525c1abf0a546"
+    },
+    "form": {
+      "schemaVersion": "assessment.v2",
+      "formId": "transfer-form",
+      "version": "0.1.0",
+      "definition": {
+        "definitionId": "transfer",
+        "version": "0.1.0",
+        "contentHash": "b5a71b0970dba2189cbd8c37a952d46196e784948749d08abaf525c1abf0a546"
+      },
+      "items": [
+        {
+          "itemId": "transfer-item-1",
+          "itemVersion": "0.1.0",
+          "itemHash": "91bc04d421b9bd8b3c3aa7a3792bee262156b8600531d8f3aec7f67390a61422",
+          "points": 4
+        }
+      ],
+      "delivery": {
+        "itemOrder": "FIXED",
+        "randomizationPolicyId": null,
+        "allowBacktracking": true,
+        "offlineDelivery": "CAPTURE_ONLY"
+      },
+      "blueprint": {
+        "blueprintVersion": "0.1.0",
+        "totalPoints": 4,
+        "objectiveCoverage": [
+          {
+            "objectiveId": "proposed-g7-number-sense-place-value",
+            "minItems": 1
+          }
+        ]
+      },
+      "formHash": "854c905e78bac48f5dc431271536e9185d835d323aeb80e12d70e076adefcb34"
+    },
+    "items": [
+      {
+        "schemaVersion": "assessment.v2",
+        "itemId": "transfer-item-1",
+        "version": "0.1.0",
+        "itemType": "WORKED_SOLUTION",
+        "stimulus": {
+          "prompt": "An invented measurement table lists seedlings A: 0.62 m, B: 0.7 m. A learner claims A is taller because 62 exceeds 7. Evaluate the claim using equal units. This table was not used during instruction.",
+          "context": null,
+          "resourceIds": [],
+          "options": [],
+          "orderingElements": [],
+          "matchingLeft": [],
+          "matchingRight": [],
+          "expectedUnit": null,
+          "learnerVisibleCriteria": [
+            "State a comparison and justify it with equal place units.",
+            "Explain why decimal digit count can mislead."
+          ]
+        },
+        "objectiveIds": [
+          "proposed-g7-number-sense-place-value"
+        ],
+        "misconceptionIds": [],
+        "difficulty": 2,
+        "cognitiveDemand": "ANALYZE",
+        "context": "NEW",
+        "hints": [],
+        "feedbackPolicy": {
+          "hints": "NONE",
+          "explanation": "NEVER",
+          "correctAnswer": "NEVER"
+        },
+        "provenance": {
+          "authors": [
+            {
+              "kind": "AI",
+              "id": "factory-demo:ASSESSMENT_DESIGNER"
+            }
+          ],
+          "sourceRef": "unit-blueprint:factory-g7-number-sense@0.1.0",
+          "curriculumSourceRefs": [
+            "PROPOSED_G7_MAPPING_NOT_APPROVED"
+          ]
+        },
+        "scoringSpecHash": "e08543ab39e1692e8b6be2e3907bb00cd10f161a3fa3ab5b60c8fd29a91079b6",
+        "itemHash": "91bc04d421b9bd8b3c3aa7a3792bee262156b8600531d8f3aec7f67390a61422"
+      }
+    ],
+    "specs": [
+      {
+        "schemaVersion": "assessment.v2",
+        "itemId": "transfer-item-1",
+        "itemVersion": "0.1.0",
+        "scoringVersion": "0.1.0",
+        "maxPoints": 4,
+        "key": {
+          "kind": "RUBRIC",
+          "rubric": {
+            "rubricId": "decimal-reasoning",
+            "rubricVersion": "0.1.0",
+            "criteria": [
+              {
+                "criterionId": "units",
+                "title": "Common units",
+                "levels": [
+                  {
+                    "points": 0,
+                    "descriptor": "No meaningful unit conversion is supplied."
+                  },
+                  {
+                    "points": 1,
+                    "descriptor": "A useful unit is named but conversion is incomplete."
+                  },
+                  {
+                    "points": 2,
+                    "descriptor": "Both quantities are correctly expressed in a common unit."
+                  }
+                ]
+              },
+              {
+                "criterionId": "justification",
+                "title": "Reasoned comparison",
+                "levels": [
+                  {
+                    "points": 0,
+                    "descriptor": "No defensible comparison is provided."
+                  },
+                  {
+                    "points": 1,
+                    "descriptor": "The comparison is correct with incomplete reasoning."
+                  },
+                  {
+                    "points": 2,
+                    "descriptor": "The comparison follows from equal-unit reasoning and explains why counting digits fails."
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        "explanation": "Seven tenths of a metre is seventy hundredths, exceeding sixty-two hundredths; seedling B is taller.",
+        "misconceptionSignals": [],
+        "moderationNotes": [
+          "REVIEWER ONLY. Independently verify this candidate key; AI output has no scoring authority."
+        ]
+      }
+    ]
+  },
+  "role": "ASSESSMENT_DESIGNER",
+  "author": {
+    "kind": "AI",
+    "agentId": "factory-demo:ASSESSMENT_DESIGNER",
+    "modelFamily": "deterministic-local-demo",
+    "sessionId": "ASSESSMENT_DESIGNER"
+  },
+  "blueprint": {
+    "blueprintId": "factory-g7-number-sense",
+    "version": "0.1.0",
+    "contentHash": "a2382c06ce4ec96be3634e9f0304689f88316a39d11fa976c4a44bbbe4dce40a"
+  },
+  "dependencies": [
+    {
+      "id": "summative",
+      "version": "0.1.0",
+      "contentHash": "7290f844a6a1ed39ac745eeefff5a065dd105f00df1b5e1d509b5bc44837c836"
+    }
+  ],
+  "contentHash": "53ca23858bd2fb9c828b4f964e449601865a9869a116298b98adf74faab800c4"
+}

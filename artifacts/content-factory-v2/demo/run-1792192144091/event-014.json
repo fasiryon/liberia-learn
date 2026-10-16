@@ -1,0 +1,11 @@
+{
+  "role": "INDEPENDENT_QUALITY_REVIEWER",
+  "attempt": 1,
+  "status": "SUCCEEDED",
+  "inputHash": "c0a9d4bcd7920392d81988f531035bb7a4d28bf0a4c1e92aadcd6ce7968b09ab",
+  "outputHashes": [],
+  "error": null,
+  "sequence": 14,
+  "previousHash": "e32028be206ac6152a4c29343674da7d9f5aa66757417e3c546f4be06f31cd42",
+  "eventHash": "ba688d5a26f8cde0baee03c04d0d9b720f9eacb3f967f6ef0b6990171013f5e0"
+}

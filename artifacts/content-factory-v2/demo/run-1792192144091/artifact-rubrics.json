@@ -1,0 +1,46 @@
+{
+  "id": "rubrics",
+  "version": "0.1.0",
+  "payload": {
+    "kind": "DOCUMENT",
+    "title": "Protected rubric index",
+    "sections": [
+      {
+        "heading": "Analytic scoring",
+        "text": "The summative and transfer ProtectedScoringSpec records contain the exact decimal-reasoning rubric version and descriptors. Learners receive criteria only. An authorized human scores constructed reasoning; an AI recommendation cannot supply an official score."
+      }
+    ],
+    "textAlternative": "Analytic scoring: The summative and transfer ProtectedScoringSpec records contain the exact decimal-reasoning rubric version and descriptors. Learners receive criteria only. An authorized human scores constructed reasoning; an AI recommendation cannot supply an official score.",
+    "keyboardPath": "Read headings and paragraphs in document order; enter responses in text or on paper.",
+    "offlineInstructions": "Print or cache this text. Record work on paper. No network, sound, colour or pointer movement is required.",
+    "references": [
+      "summative",
+      "transfer"
+    ]
+  },
+  "role": "ASSESSMENT_DESIGNER",
+  "author": {
+    "kind": "AI",
+    "agentId": "factory-demo:ASSESSMENT_DESIGNER",
+    "modelFamily": "deterministic-local-demo",
+    "sessionId": "ASSESSMENT_DESIGNER"
+  },
+  "blueprint": {
+    "blueprintId": "factory-g7-number-sense",
+    "version": "0.1.0",
+    "contentHash": "a2382c06ce4ec96be3634e9f0304689f88316a39d11fa976c4a44bbbe4dce40a"
+  },
+  "dependencies": [
+    {
+      "id": "summative",
+      "version": "0.1.0",
+      "contentHash": "7290f844a6a1ed39ac745eeefff5a065dd105f00df1b5e1d509b5bc44837c836"
+    },
+    {
+      "id": "transfer",
+      "version": "0.1.0",
+      "contentHash": "53ca23858bd2fb9c828b4f964e449601865a9869a116298b98adf74faab800c4"
+    }
+  ],
+  "contentHash": "ee0306d1da4d1f6a158e58e87a58f41367462ebe5de2d2100d55c43784326835"
+}

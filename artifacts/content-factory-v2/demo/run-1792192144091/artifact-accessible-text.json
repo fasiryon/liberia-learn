@@ -1,0 +1,62 @@
+{
+  "id": "accessible-text",
+  "version": "0.1.0",
+  "payload": {
+    "kind": "DOCUMENT",
+    "title": "Text alternatives",
+    "sections": [
+      {
+        "heading": "Place chart in reading order",
+        "text": "Column one: tens. Column two: ones. Column three: tenths. Column four: hundredths. Read each digit with its column label. A blank place represents zero units of that size."
+      },
+      {
+        "heading": "Practical alternative",
+        "text": "Instead of drawing shaded strips, make two text rows. Row one: four tenths equals forty hundredths. Row two: thirty-five hundredths. Compare their quantities verbally, then write your reason. The response can be typed, dictated or handwritten."
+      }
+    ],
+    "textAlternative": "Place chart in reading order: Column one: tens. Column two: ones. Column three: tenths. Column four: hundredths. Read each digit with its column label. A blank place represents zero units of that size.\nPractical alternative: Instead of drawing shaded strips, make two text rows. Row one: four tenths equals forty hundredths. Row two: thirty-five hundredths. Compare their quantities verbally, then write your reason. The response can be typed, dictated or handwritten.",
+    "keyboardPath": "Read headings and paragraphs in document order; enter responses in text or on paper.",
+    "offlineInstructions": "Print or cache this text. Record work on paper. No network, sound, colour or pointer movement is required.",
+    "references": [
+      "lesson-1",
+      "lesson-2",
+      "practical",
+      "project"
+    ]
+  },
+  "role": "MEDIA_ACCESSIBILITY",
+  "author": {
+    "kind": "AI",
+    "agentId": "factory-demo:MEDIA_ACCESSIBILITY",
+    "modelFamily": "deterministic-local-demo",
+    "sessionId": "MEDIA_ACCESSIBILITY"
+  },
+  "blueprint": {
+    "blueprintId": "factory-g7-number-sense",
+    "version": "0.1.0",
+    "contentHash": "a2382c06ce4ec96be3634e9f0304689f88316a39d11fa976c4a44bbbe4dce40a"
+  },
+  "dependencies": [
+    {
+      "id": "lesson-1",
+      "version": "0.1.0",
+      "contentHash": "d314df7d14222af86fd88594fc57b2f9941b194209fe9069d5cab548ead64785"
+    },
+    {
+      "id": "lesson-2",
+      "version": "0.1.0",
+      "contentHash": "6eef5bba123482d83c82eb181ac518ebc0fa6113465d6dad4a9834174b060e53"
+    },
+    {
+      "id": "practical",
+      "version": "0.1.0",
+      "contentHash": "0cd56ace160d94980df57214fdde655d9f2ecaf1d3f4de2465b22279e3500227"
+    },
+    {
+      "id": "project",
+      "version": "0.1.0",
+      "contentHash": "f0a46efee40dfef4658ae61f6b102a52cb6f0ec97986a1aee54c4a43e405507c"
+    }
+  ],
+  "contentHash": "03d4c5f991917b5ce29036cce92cf60fc9136b124dac5a796d97e229167f6431"
+}

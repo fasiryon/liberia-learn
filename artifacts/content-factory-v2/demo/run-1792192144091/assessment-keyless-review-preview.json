@@ -1,0 +1,138 @@
+{
+  "blueprint": {
+    "blueprintId": "factory-g7-number-sense",
+    "version": "0.1.0",
+    "contentHash": "a2382c06ce4ec96be3634e9f0304689f88316a39d11fa976c4a44bbbe4dce40a"
+  },
+  "label": "REVIEWER_PREVIEW_UNRELEASED",
+  "official": false,
+  "items": [
+    {
+      "itemId": "quiz-item-1",
+      "itemVersion": "0.1.0",
+      "itemType": "NUMERIC",
+      "responseKind": "NUMERIC",
+      "prompt": "What value does the digit 4 represent in 42?",
+      "context": null,
+      "resourceIds": [],
+      "options": [],
+      "orderingElements": [],
+      "matchingLeft": [],
+      "matchingRight": [],
+      "expectedUnit": null,
+      "learnerVisibleCriteria": [],
+      "hintCount": 0,
+      "maxResponseChars": 64,
+      "points": 1
+    },
+    {
+      "itemId": "quiz-item-2",
+      "itemVersion": "0.1.0",
+      "itemType": "SINGLE_SELECT",
+      "responseKind": "SINGLE_SELECT",
+      "prompt": "Compare 0.9 and 0.81. Select the greater quantity.",
+      "context": null,
+      "resourceIds": [],
+      "options": [
+        {
+          "optionId": "equal-units",
+          "text": "0.9 is greater"
+        },
+        {
+          "optionId": "longer",
+          "text": "0.81 is greater"
+        },
+        {
+          "optionId": "equal",
+          "text": "They are equal"
+        }
+      ],
+      "orderingElements": [],
+      "matchingLeft": [],
+      "matchingRight": [],
+      "expectedUnit": null,
+      "learnerVisibleCriteria": [],
+      "hintCount": 0,
+      "maxResponseChars": 200,
+      "points": 1
+    },
+    {
+      "itemId": "summative-item-1",
+      "itemVersion": "0.1.0",
+      "itemType": "NUMERIC",
+      "responseKind": "NUMERIC",
+      "prompt": "What value does the digit 7 represent in 26.73? Write a decimal number.",
+      "context": null,
+      "resourceIds": [],
+      "options": [],
+      "orderingElements": [],
+      "matchingLeft": [],
+      "matchingRight": [],
+      "expectedUnit": null,
+      "learnerVisibleCriteria": [],
+      "hintCount": 0,
+      "maxResponseChars": 64,
+      "points": 1
+    },
+    {
+      "itemId": "summative-item-2",
+      "itemVersion": "0.1.0",
+      "itemType": "WORKED_SOLUTION",
+      "responseKind": "TEXT",
+      "prompt": "Compare 0.45 and 0.5. Justify using a common unit and explain why counting decimal digits fails.",
+      "context": null,
+      "resourceIds": [],
+      "options": [],
+      "orderingElements": [],
+      "matchingLeft": [],
+      "matchingRight": [],
+      "expectedUnit": null,
+      "learnerVisibleCriteria": [
+        "State a comparison and justify it with equal place units.",
+        "Explain why decimal digit count can mislead."
+      ],
+      "hintCount": 0,
+      "maxResponseChars": 10000,
+      "points": 4
+    },
+    {
+      "itemId": "retention-item-1",
+      "itemVersion": "0.1.0",
+      "itemType": "NUMERIC",
+      "responseKind": "NUMERIC",
+      "prompt": "Without a worked example, give the decimal value of the digit 6 in 18.64.",
+      "context": null,
+      "resourceIds": [],
+      "options": [],
+      "orderingElements": [],
+      "matchingLeft": [],
+      "matchingRight": [],
+      "expectedUnit": null,
+      "learnerVisibleCriteria": [],
+      "hintCount": 0,
+      "maxResponseChars": 64,
+      "points": 1
+    },
+    {
+      "itemId": "transfer-item-1",
+      "itemVersion": "0.1.0",
+      "itemType": "WORKED_SOLUTION",
+      "responseKind": "TEXT",
+      "prompt": "An invented measurement table lists seedlings A: 0.62 m, B: 0.7 m. A learner claims A is taller because 62 exceeds 7. Evaluate the claim using equal units. This table was not used during instruction.",
+      "context": null,
+      "resourceIds": [],
+      "options": [],
+      "orderingElements": [],
+      "matchingLeft": [],
+      "matchingRight": [],
+      "expectedUnit": null,
+      "learnerVisibleCriteria": [
+        "State a comparison and justify it with equal place units.",
+        "Explain why decimal digit count can mislead."
+      ],
+      "hintCount": 0,
+      "maxResponseChars": 10000,
+      "points": 4
+    }
+  ]
+}

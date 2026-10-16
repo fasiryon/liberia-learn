@@ -1,0 +1,338 @@
+{
+  "id": "lesson-2",
+  "version": "0.1.0",
+  "payload": {
+    "kind": "LESSON",
+    "candidate": {
+      "contractVersion": "candidate-lesson-v2/1.0.0",
+      "title": "Compare decimals with equal units",
+      "estimatedMinutes": 35,
+      "ageBand": "JUNIOR_SECONDARY",
+      "prerequisiteAssumptions": [
+        "Recognize tens and ones in whole numbers."
+      ],
+      "misconceptions": [
+        {
+          "id": "mc-longer-decimal-bigger",
+          "objectiveId": "proposed-g7-number-sense-place-value",
+          "description": "The decimal with more digits must be larger.",
+          "response": "Express both decimals with the same place units before comparing."
+        }
+      ],
+      "scenes": [
+        {
+          "id": "compare-intro",
+          "type": "INTRO",
+          "title": "compare: intro",
+          "purpose": "STATE_OBJECTIVE",
+          "objectiveIds": [
+            "proposed-g7-number-sense-place-value"
+          ],
+          "learnerAction": "Read the explanation and describe the place units in your own words.",
+          "content": {
+            "body": "We will compare decimals and justify which has greater value without counting digits."
+          },
+          "interaction": {
+            "kind": "NONE"
+          },
+          "tools": {
+            "requested": [],
+            "prohibited": []
+          },
+          "hints": [],
+          "misconceptionIds": [],
+          "evidence": {
+            "kind": "NONE"
+          },
+          "accessibility": {
+            "textAlternative": "We will compare decimals and justify which has greater value without counting digits.",
+            "keyboardPath": "Read the paragraph in document order.",
+            "reducedMotion": "NOT_APPLICABLE"
+          },
+          "offline": {
+            "mode": "FULL_OFFLINE",
+            "note": "Use the text and a notebook; capture written responses for later sync."
+          },
+          "completion": "VIEWED",
+          "pedagogy": {
+            "strategy": "WORKED_EXAMPLE_FADING",
+            "representation": "VERBAL",
+            "scaffoldLevel": "FULL"
+          }
+        },
+        {
+          "id": "compare-model",
+          "type": "GUIDED_EXAMPLE",
+          "title": "compare: model",
+          "purpose": "MODEL_WORKED_EXAMPLE",
+          "objectiveIds": [
+            "proposed-g7-number-sense-place-value"
+          ],
+          "learnerAction": "Read the explanation and describe the place units in your own words.",
+          "content": {
+            "body": "Compare 0.6 and 0.48. Six tenths is sixty hundredths. Sixty hundredths is greater than forty-eight hundredths, so 0.6 is greater."
+          },
+          "interaction": {
+            "kind": "NONE"
+          },
+          "tools": {
+            "requested": [],
+            "prohibited": []
+          },
+          "hints": [],
+          "misconceptionIds": [],
+          "evidence": {
+            "kind": "NONE"
+          },
+          "accessibility": {
+            "textAlternative": "Compare 0.6 and 0.48. Six tenths is sixty hundredths. Sixty hundredths is greater than forty-eight hundredths, so 0.6 is greater.",
+            "keyboardPath": "Read the paragraph in document order.",
+            "reducedMotion": "NOT_APPLICABLE"
+          },
+          "offline": {
+            "mode": "FULL_OFFLINE",
+            "note": "Use the text and a notebook; capture written responses for later sync."
+          },
+          "completion": "VIEWED",
+          "pedagogy": {
+            "strategy": "WORKED_EXAMPLE_FADING",
+            "representation": "VERBAL",
+            "scaffoldLevel": "FULL"
+          }
+        },
+        {
+          "id": "compare-guided",
+          "type": "PRACTICE",
+          "title": "compare: guided",
+          "purpose": "GUIDED_PRACTICE",
+          "objectiveIds": [
+            "proposed-g7-number-sense-place-value"
+          ],
+          "learnerAction": "Compare 0.7 and 0.65 using hundredths.",
+          "content": {
+            "body": "Rewrite 0.7 as hundredths. Now compare it with 0.65. Explain the common unit you chose."
+          },
+          "interaction": {
+            "kind": "FREE_RESPONSE",
+            "prompts": [
+              {
+                "id": "compare-guided-response",
+                "prompt": "Compare 0.7 and 0.65 using hundredths.",
+                "minLength": 1
+              }
+            ]
+          },
+          "tools": {
+            "requested": [],
+            "prohibited": []
+          },
+          "hints": [],
+          "misconceptionIds": [],
+          "evidence": {
+            "kind": "FORMATIVE_OBSERVATION",
+            "evidenceType": "PRACTICE",
+            "responses": [
+              {
+                "responseKey": "compare-guided-response",
+                "objectiveId": "proposed-g7-number-sense-place-value",
+                "responseType": "TEXT",
+                "scaffoldLevel": "PARTIAL"
+              }
+            ]
+          },
+          "accessibility": {
+            "textAlternative": "Rewrite 0.7 as hundredths. Now compare it with 0.65. Explain the common unit you chose.",
+            "keyboardPath": "Tab to the text field and type; paper or oral transcription is equivalent.",
+            "reducedMotion": "NOT_APPLICABLE"
+          },
+          "offline": {
+            "mode": "FULL_OFFLINE",
+            "note": "Use the text and a notebook; capture written responses for later sync."
+          },
+          "completion": "ALL_RESPONSES_WRITTEN",
+          "pedagogy": {
+            "strategy": "WORKED_EXAMPLE_FADING",
+            "representation": "VERBAL",
+            "scaffoldLevel": "PARTIAL"
+          }
+        },
+        {
+          "id": "compare-misconception",
+          "type": "EXPLANATION",
+          "title": "compare: misconception",
+          "purpose": "ADDRESS_MISCONCEPTION",
+          "objectiveIds": [
+            "proposed-g7-number-sense-place-value"
+          ],
+          "learnerAction": "Read the explanation and describe the place units in your own words.",
+          "content": {
+            "body": "Counting decimal digits does not compare their value. For 0.5 and 0.42, think fifty hundredths and forty-two hundredths. Adding a trailing zero changes notation but not quantity."
+          },
+          "interaction": {
+            "kind": "NONE"
+          },
+          "tools": {
+            "requested": [],
+            "prohibited": []
+          },
+          "hints": [],
+          "misconceptionIds": [
+            "mc-longer-decimal-bigger"
+          ],
+          "evidence": {
+            "kind": "NONE"
+          },
+          "accessibility": {
+            "textAlternative": "Counting decimal digits does not compare their value. For 0.5 and 0.42, think fifty hundredths and forty-two hundredths. Adding a trailing zero changes notation but not quantity.",
+            "keyboardPath": "Read the paragraph in document order.",
+            "reducedMotion": "NOT_APPLICABLE"
+          },
+          "offline": {
+            "mode": "FULL_OFFLINE",
+            "note": "Use the text and a notebook; capture written responses for later sync."
+          },
+          "completion": "VIEWED",
+          "pedagogy": {
+            "strategy": "WORKED_EXAMPLE_FADING",
+            "representation": "VERBAL",
+            "scaffoldLevel": "MINIMAL"
+          }
+        },
+        {
+          "id": "compare-independent",
+          "type": "PRACTICE",
+          "title": "compare: independent",
+          "purpose": "INDEPENDENT_PRACTICE",
+          "objectiveIds": [
+            "proposed-g7-number-sense-place-value"
+          ],
+          "learnerAction": "Which is greater, 0.8 or 0.76? Justify using equal units.",
+          "content": {
+            "body": "Work alone without a place chart, tutor or worked example. Explain the units used in your comparison."
+          },
+          "interaction": {
+            "kind": "FREE_RESPONSE",
+            "prompts": [
+              {
+                "id": "compare-independent-response",
+                "prompt": "Which is greater, 0.8 or 0.76? Justify using equal units.",
+                "minLength": 1
+              }
+            ]
+          },
+          "tools": {
+            "requested": [],
+            "prohibited": []
+          },
+          "hints": [],
+          "misconceptionIds": [],
+          "evidence": {
+            "kind": "FORMATIVE_OBSERVATION",
+            "evidenceType": "PRACTICE",
+            "responses": [
+              {
+                "responseKey": "compare-independent-response",
+                "objectiveId": "proposed-g7-number-sense-place-value",
+                "responseType": "TEXT",
+                "scaffoldLevel": "NONE"
+              }
+            ]
+          },
+          "accessibility": {
+            "textAlternative": "Work alone without a place chart, tutor or worked example. Explain the units used in your comparison.",
+            "keyboardPath": "Tab to the text field and type; paper or oral transcription is equivalent.",
+            "reducedMotion": "NOT_APPLICABLE"
+          },
+          "offline": {
+            "mode": "FULL_OFFLINE",
+            "note": "Use the text and a notebook; capture written responses for later sync."
+          },
+          "completion": "ALL_RESPONSES_WRITTEN",
+          "pedagogy": {
+            "strategy": "WORKED_EXAMPLE_FADING",
+            "representation": "VERBAL",
+            "scaffoldLevel": "NONE"
+          }
+        },
+        {
+          "id": "compare-reflect",
+          "type": "REFLECTION",
+          "title": "compare: reflect",
+          "purpose": "REFLECT",
+          "objectiveIds": [
+            "proposed-g7-number-sense-place-value"
+          ],
+          "learnerAction": "What will you check when comparing decimal quantities?",
+          "content": {
+            "body": "Describe a mistake you can now avoid. This reflection is practice and does not establish mastery."
+          },
+          "interaction": {
+            "kind": "FREE_RESPONSE",
+            "prompts": [
+              {
+                "id": "compare-reflect-response",
+                "prompt": "What will you check when comparing decimal quantities?",
+                "minLength": 1
+              }
+            ]
+          },
+          "tools": {
+            "requested": [],
+            "prohibited": []
+          },
+          "hints": [],
+          "misconceptionIds": [],
+          "evidence": {
+            "kind": "FORMATIVE_OBSERVATION",
+            "evidenceType": "PRACTICE",
+            "responses": [
+              {
+                "responseKey": "compare-reflect-response",
+                "objectiveId": "proposed-g7-number-sense-place-value",
+                "responseType": "TEXT",
+                "scaffoldLevel": "NONE"
+              }
+            ]
+          },
+          "accessibility": {
+            "textAlternative": "Describe a mistake you can now avoid. This reflection is practice and does not establish mastery.",
+            "keyboardPath": "Tab to the text field and type; paper or oral transcription is equivalent.",
+            "reducedMotion": "NOT_APPLICABLE"
+          },
+          "offline": {
+            "mode": "FULL_OFFLINE",
+            "note": "Use the text and a notebook; capture written responses for later sync."
+          },
+          "completion": "ALL_RESPONSES_WRITTEN",
+          "pedagogy": {
+            "strategy": "WORKED_EXAMPLE_FADING",
+            "representation": "VERBAL",
+            "scaffoldLevel": "NONE"
+          }
+        }
+      ],
+      "assessmentRequests": [],
+      "labProposals": []
+    }
+  },
+  "role": "LESSON_AUTHOR",
+  "author": {
+    "kind": "AI",
+    "agentId": "factory-demo:LESSON_AUTHOR",
+    "modelFamily": "deterministic-local-demo",
+    "sessionId": "LESSON_AUTHOR"
+  },
+  "blueprint": {
+    "blueprintId": "factory-g7-number-sense",
+    "version": "0.1.0",
+    "contentHash": "a2382c06ce4ec96be3634e9f0304689f88316a39d11fa976c4a44bbbe4dce40a"
+  },
+  "dependencies": [
+    {
+      "id": "lesson-1",
+      "version": "0.1.0",
+      "contentHash": "d314df7d14222af86fd88594fc57b2f9941b194209fe9069d5cab548ead64785"
+    }
+  ],
+  "contentHash": "6eef5bba123482d83c82eb181ac518ebc0fa6113465d6dad4a9834174b060e53"
+}

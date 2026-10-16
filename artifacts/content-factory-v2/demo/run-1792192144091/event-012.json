@@ -1,0 +1,14 @@
+{
+  "role": "MEDIA_ACCESSIBILITY",
+  "attempt": 1,
+  "status": "SUCCEEDED",
+  "inputHash": "523573dbbb1f202a7841e27aff7d904d0d1ad286ff7ad0c1808fede7d45da5e1",
+  "outputHashes": [
+    "03d4c5f991917b5ce29036cce92cf60fc9136b124dac5a796d97e229167f6431",
+    "8f326d90fd98b84df13180a5c84dbe811bc46dbd940d7c5002115603c5313d88"
+  ],
+  "error": null,
+  "sequence": 12,
+  "previousHash": "2a9bec65458d136cc32f94447655d7713a389747c248f8ada65090967f878f91",
+  "eventHash": "5afee2992aa2d9920f476c71be14c3a54fcdf93f37b309048f400bc596374087"
+}

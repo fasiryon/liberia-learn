@@ -1,0 +1,44 @@
+{
+  "id": "worksheet",
+  "version": "0.1.0",
+  "payload": {
+    "kind": "DOCUMENT",
+    "title": "Place chart and practice sheet",
+    "sections": [
+      {
+        "heading": "Prerequisite fallback",
+        "text": "Draw columns labelled tens and ones. Put 4 in tens and 2 in ones. Explain how 42 differs from 24. If unsure, make four groups of ten marks and two single marks. Repeat with 31, then remove the drawing."
+      },
+      {
+        "heading": "Faded decimal support",
+        "text": "Add tenths and hundredths columns. Place 3.25 in the chart. State each digit's value. Cover the labels and explain 7.46. Finally work without the chart: compare 0.2 and 0.19 using equal place units."
+      }
+    ],
+    "textAlternative": "Prerequisite fallback: Draw columns labelled tens and ones. Put 4 in tens and 2 in ones. Explain how 42 differs from 24. If unsure, make four groups of ten marks and two single marks. Repeat with 31, then remove the drawing.\nFaded decimal support: Add tenths and hundredths columns. Place 3.25 in the chart. State each digit's value. Cover the labels and explain 7.46. Finally work without the chart: compare 0.2 and 0.19 using equal place units.",
+    "keyboardPath": "Read headings and paragraphs in document order; enter responses in text or on paper.",
+    "offlineInstructions": "Print or cache this text. Record work on paper. No network, sound, colour or pointer movement is required.",
+    "references": [
+      "lesson-1"
+    ]
+  },
+  "role": "LESSON_AUTHOR",
+  "author": {
+    "kind": "AI",
+    "agentId": "factory-demo:LESSON_AUTHOR",
+    "modelFamily": "deterministic-local-demo",
+    "sessionId": "LESSON_AUTHOR"
+  },
+  "blueprint": {
+    "blueprintId": "factory-g7-number-sense",
+    "version": "0.1.0",
+    "contentHash": "a2382c06ce4ec96be3634e9f0304689f88316a39d11fa976c4a44bbbe4dce40a"
+  },
+  "dependencies": [
+    {
+      "id": "lesson-1",
+      "version": "0.1.0",
+      "contentHash": "d314df7d14222af86fd88594fc57b2f9941b194209fe9069d5cab548ead64785"
+    }
+  ],
+  "contentHash": "a0eb42b79477116d198db5cd6503f62c103e4878dee94a72932f57ddcfbefb2d"
+}

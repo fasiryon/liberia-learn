@@ -1,0 +1,6 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": { "incremental": false },
+  "include": ["lib/content-factory/v2/**/*.ts", "lib/assessment/v2/parse.ts", "scripts/content-factory-v2*.ts", "__tests__/content-factory-v2/**/*.ts"],
+  "exclude": ["node_modules"]
+}

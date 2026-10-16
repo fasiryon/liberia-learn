@@ -1,0 +1,107 @@
+{
+  "id": "homework",
+  "version": "0.1.0",
+  "payload": {
+    "kind": "ACTIVITY",
+    "definition": {
+      "schemaVersion": "activity-definition.v1",
+      "activityId": "homework",
+      "version": "0.1.0",
+      "kind": "HOMEWORK",
+      "contentHash": "0ca370d3fc5d1592755f79857f845eb8c826174891bdb27504dfff1f57f6f9bb",
+      "content": {
+        "title": "Practise decimal explanations",
+        "objectiveIds": [
+          "proposed-g7-number-sense-place-value"
+        ],
+        "lessonItemIds": [
+          "lesson-2"
+        ],
+        "scaffolding": "INDEPENDENT",
+        "instructions": {
+          "learner": [
+            {
+              "stepId": "homework-step-1",
+              "text": "Write 26.53 as tens, ones, tenths and hundredths.",
+              "resourceIds": []
+            },
+            {
+              "stepId": "homework-step-2",
+              "text": "Compare 0.3 with 0.28 and justify your decision.",
+              "resourceIds": []
+            },
+            {
+              "stepId": "homework-step-3",
+              "text": "Write a pair of decimals where the longer written decimal is smaller. Ask someone to listen to your reasoning without giving the answer.",
+              "resourceIds": []
+            }
+          ],
+          "teacher": [
+            {
+              "stepId": "homework-teacher",
+              "text": "Record assistance separately. Ask for reasoning before feedback. Use the protected assessment rubric only for independently collected assessment responses.",
+              "resourceIds": []
+            }
+          ]
+        },
+        "resourceIds": [],
+        "rubric": null,
+        "expectedDurationMinutes": 20,
+        "collaborationMode": "INDIVIDUAL",
+        "evidenceIntent": {
+          "kind": "PRACTICE_ONLY",
+          "forms": [
+            "WRITTEN"
+          ]
+        },
+        "accessibility": {
+          "readingLevel": "Grade 7, vocabulary support permitted",
+          "supportsScreenReader": true,
+          "supportsReadAloud": true,
+          "requiresColorVision": false,
+          "requiresFineMotor": false,
+          "alternativeFormatResourceIds": []
+        }
+      },
+      "resources": [],
+      "lessonBindings": [
+        {
+          "lessonId": "lesson-2",
+          "version": "0.1.0"
+        }
+      ],
+      "release": {
+        "releaseId": "UNRESOLVED-G7-CANDIDATE",
+        "releaseIdentity": "UNRESOLVED-NOT-A-RELEASE"
+      },
+      "governance": {
+        "provenanceRefs": [
+          "unit-blueprint:factory-g7-number-sense@0.1.0"
+        ],
+        "reviewRefs": [],
+        "lifecycleRefs": [],
+        "releaseRefs": []
+      }
+    }
+  },
+  "role": "LESSON_AUTHOR",
+  "author": {
+    "kind": "AI",
+    "agentId": "factory-demo:LESSON_AUTHOR",
+    "modelFamily": "deterministic-local-demo",
+    "sessionId": "LESSON_AUTHOR"
+  },
+  "blueprint": {
+    "blueprintId": "factory-g7-number-sense",
+    "version": "0.1.0",
+    "contentHash": "a2382c06ce4ec96be3634e9f0304689f88316a39d11fa976c4a44bbbe4dce40a"
+  },
+  "dependencies": [
+    {
+      "id": "lesson-2",
+      "version": "0.1.0",
+      "contentHash": "6eef5bba123482d83c82eb181ac518ebc0fa6113465d6dad4a9834174b060e53"
+    }
+  ],
+  "contentHash": "6d06f102a517c5a4810815f36b33a185b1a9c38f485f991811467fc3d375df30"
+}

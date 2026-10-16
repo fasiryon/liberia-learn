@@ -1,0 +1,267 @@
+{
+  "failures": [],
+  "assessmentBlueprint": {
+    "version": "liberialearn-assessment-blueprint/1.0.0",
+    "family": "MATH",
+    "rules": [
+      {
+        "ruleId": "BP-COVERAGE",
+        "criterionId": "NF-ASM-1",
+        "layer": "NATIONAL_FOUNDATION",
+        "blocking": true,
+        "requirement": "Every objective has end-of-lesson mastery evidence at scaffold NONE.",
+        "missing": [],
+        "detail": "3 end-of-lesson mastery task(s).",
+        "met": true
+      },
+      {
+        "ruleId": "BP-PREREQUISITE-DIAGNOSTIC",
+        "criterionId": "NF-PRG-1",
+        "layer": "NATIONAL_FOUNDATION",
+        "blocking": true,
+        "requirement": "Every stated prerequisite has a diagnostic task with a fallback route.",
+        "missing": [],
+        "detail": "1 of 1 prerequisite(s) diagnosed.",
+        "met": true
+      },
+      {
+        "ruleId": "BP-INDEPENDENT-PRACTICE",
+        "criterionId": "LM-PRG-1",
+        "layer": "LIBERIALEARN_MASTERY",
+        "blocking": true,
+        "requirement": "Every objective reaches unscaffolded practice before mastery evidence.",
+        "missing": [],
+        "detail": "Formative IN_LESSON tasks at scaffold NONE.",
+        "met": true
+      },
+      {
+        "ruleId": "BP-PRODUCTION",
+        "criterionId": "LM-ASM-1",
+        "layer": "LIBERIALEARN_MASTERY",
+        "blocking": true,
+        "requirement": "Every objective has mastery evidence that is a produced answer or justification (not a selected option).",
+        "missing": [],
+        "detail": "Accepted kinds: SHORT_CONSTRUCTED_RESPONSE, EXTENDED_REASONING, PERFORMANCE_TASK.",
+        "met": true
+      },
+      {
+        "ruleId": "BP-REASONING",
+        "criterionId": "LM-RSN-1",
+        "layer": "LIBERIALEARN_MASTERY",
+        "blocking": true,
+        "requirement": "At least one unscaffolded, rubric-scored reasoning or justification task.",
+        "missing": [],
+        "detail": "1 reasoning task(s) at mastery.",
+        "met": true
+      },
+      {
+        "ruleId": "BP-SELECTED-SHARE",
+        "criterionId": "LM-ASM-1",
+        "layer": "LIBERIALEARN_MASTERY",
+        "blocking": true,
+        "requirement": "Selected response is at most 60% of end-of-lesson mastery evidence.",
+        "missing": [],
+        "detail": "0/3 selected response (0%).",
+        "met": true
+      },
+      {
+        "ruleId": "BP-RETENTION",
+        "criterionId": "LM-ASM-3",
+        "layer": "LIBERIALEARN_MASTERY",
+        "blocking": true,
+        "requirement": "Every objective has delayed retrieval at least 7 days after the lesson.",
+        "missing": [],
+        "detail": "Spaced retrieval, unscaffolded.",
+        "met": true
+      },
+      {
+        "ruleId": "BP-TRANSFER",
+        "criterionId": "GE-TRN-1",
+        "layer": "GLOBAL_EXCELLENCE",
+        "blocking": true,
+        "requirement": "At least one unscaffolded transfer task in a context the lesson did not rehearse.",
+        "missing": [],
+        "detail": "Near or far transfer, NEW context.",
+        "met": true
+      },
+      {
+        "ruleId": "BP-EXTENSION",
+        "criterionId": "GE-EXT-1",
+        "layer": "GLOBAL_EXCELLENCE",
+        "blocking": true,
+        "requirement": "An optional, non-gating extension task.",
+        "missing": [],
+        "detail": "Extension is optional and never required for mastery.",
+        "met": true
+      }
+    ],
+    "selectedResponseShareOfMastery": 0,
+    "blockingGaps": []
+  },
+  "criteria": [
+    {
+      "criterionId": "NF-ALN-1",
+      "check": "HUMAN_REQUIRED",
+      "evidenceRequired": "Objective → MOE objective id with source page, or an extension record with the owner's decision.",
+      "status": "NOT_EVALUATED"
+    },
+    {
+      "criterionId": "NF-ALN-2",
+      "check": "AI_JUDGMENT_ADVISORY",
+      "evidenceRequired": "Baseline competency id, evidence specificity (TOPIC/SUBJECT/FRAMEWORK level), and a NOT_CLAIMED external-authority status.",
+      "status": "NOT_EVALUATED"
+    },
+    {
+      "criterionId": "NF-ALN-3",
+      "check": "HUMAN_REQUIRED",
+      "evidenceRequired": "Grade-scope decision for every above-scope element.",
+      "status": "NOT_EVALUATED"
+    },
+    {
+      "criterionId": "NF-ACC-1",
+      "check": "DETERMINISTIC",
+      "evidenceRequired": "Item verification records (e.g. place-value arithmetic) or a documented reason verification is not mechanical.",
+      "status": "NOT_EVALUATED"
+    },
+    {
+      "criterionId": "NF-ACC-2",
+      "check": "HUMAN_REQUIRED",
+      "evidenceRequired": "Exact-revision human subject review.",
+      "status": "NOT_EVALUATED"
+    },
+    {
+      "criterionId": "NF-PRG-1",
+      "check": "DETERMINISTIC",
+      "evidenceRequired": "A diagnostic task per prerequisite, each with a stated fallback route.",
+      "status": "NOT_EVALUATED"
+    },
+    {
+      "criterionId": "NF-ASM-1",
+      "check": "DETERMINISTIC",
+      "evidenceRequired": "Objective → mastery item/task map.",
+      "status": "NOT_EVALUATED"
+    },
+    {
+      "criterionId": "NF-ACS-1",
+      "check": "DETERMINISTIC",
+      "evidenceRequired": "Curriculum V2 accessibility and deliverability fields.",
+      "status": "NOT_EVALUATED"
+    },
+    {
+      "criterionId": "NF-REL-1",
+      "check": "HUMAN_REQUIRED",
+      "evidenceRequired": "Localization review.",
+      "status": "NOT_EVALUATED"
+    },
+    {
+      "criterionId": "LM-PRG-1",
+      "check": "DETERMINISTIC",
+      "evidenceRequired": "Scene sequence with scaffold levels per objective.",
+      "status": "NOT_EVALUATED"
+    },
+    {
+      "criterionId": "LM-CON-1",
+      "check": "DETERMINISTIC",
+      "evidenceRequired": "Misconception → instruction scene and → item distractor/response map, with each mapping consistent with the error it names.",
+      "status": "NOT_EVALUATED"
+    },
+    {
+      "criterionId": "LM-CON-2",
+      "check": "DETERMINISTIC",
+      "evidenceRequired": "At least two evidence kinds per objective in the assessment plan.",
+      "status": "NOT_EVALUATED"
+    },
+    {
+      "criterionId": "LM-RSN-1",
+      "check": "DETERMINISTIC",
+      "evidenceRequired": "A constructed-response reasoning task at scaffold NONE scored by a rubric.",
+      "status": "NOT_EVALUATED"
+    },
+    {
+      "criterionId": "LM-ASM-1",
+      "check": "DETERMINISTIC",
+      "evidenceRequired": "Blueprint evaluation with no blocking gaps.",
+      "status": "NOT_EVALUATED"
+    },
+    {
+      "criterionId": "LM-ASM-2",
+      "check": "DETERMINISTIC",
+      "evidenceRequired": "Mastery tasks at scaffold NONE with assistance recorded in governed evidence metadata.",
+      "status": "NOT_EVALUATED"
+    },
+    {
+      "criterionId": "LM-ASM-3",
+      "check": "DETERMINISTIC",
+      "evidenceRequired": "Delayed retrieval task(s) bound to the objectives.",
+      "status": "NOT_EVALUATED"
+    },
+    {
+      "criterionId": "LM-ACS-1",
+      "check": "HUMAN_REQUIRED",
+      "evidenceRequired": "Readability and language-support review.",
+      "status": "NOT_EVALUATED"
+    },
+    {
+      "criterionId": "LM-REL-1",
+      "check": "AI_JUDGMENT_ADVISORY",
+      "evidenceRequired": "Application task with its context.",
+      "status": "NOT_EVALUATED"
+    },
+    {
+      "criterionId": "GE-RSN-1",
+      "check": "AI_JUDGMENT_ADVISORY",
+      "evidenceRequired": "Task with stated framework comparison and cognitive-demand rating.",
+      "status": "NOT_EVALUATED"
+    },
+    {
+      "criterionId": "GE-TRN-1",
+      "check": "DETERMINISTIC",
+      "evidenceRequired": "Transfer task marked NEW context, at scaffold NONE.",
+      "status": "NOT_EVALUATED"
+    },
+    {
+      "criterionId": "GE-EXT-1",
+      "check": "DETERMINISTIC",
+      "evidenceRequired": "Extension task marked optional and non-gating.",
+      "status": "NOT_EVALUATED"
+    },
+    {
+      "criterionId": "GE-ASM-1",
+      "check": "HUMAN_REQUIRED",
+      "evidenceRequired": "Pilot measurement plan anchor instrument and blind-scoring protocol.",
+      "status": "NOT_EVALUATED"
+    },
+    {
+      "criterionId": "GE-ACC-1",
+      "check": "HUMAN_REQUIRED",
+      "evidenceRequired": "Second exact-revision human review.",
+      "status": "NOT_EVALUATED"
+    }
+  ],
+  "humanRequired": [
+    "NF-ALN-1",
+    "NF-ALN-2",
+    "NF-ALN-3",
+    "NF-ACC-2",
+    "NF-REL-1",
+    "LM-ACS-1",
+    "LM-REL-1",
+    "GE-RSN-1",
+    "GE-ASM-1",
+    "GE-ACC-1"
+  ],
+  "releaseBlockers": [
+    "PRODUCTION_INVENTORY_NOT_VERIFIED",
+    "MOE_OBJECTIVE_UNBOUND",
+    "TEMPLATE_CELL_MISSING",
+    "ONTOLOGY_RELEASE_MISSING",
+    "SCOPE_EXTENSION_UNAPPROVED",
+    "LEGACY_COMPARISON_SIGNOFF",
+    "OBJECTIVE_MAPPING_PROPOSED:proposed-g7-number-sense-place-value",
+    "OBJECTIVE_MAPPING_PROPOSED:ll-g7-base-generalisation-extension",
+    "EXACT_REVISION_HUMAN_REVIEW_REQUIRED",
+    "EXPLICIT_RELEASE_AUTHORIZATION_REQUIRED",
+    "RETENTION_POLICY_APPROVAL_REQUIRED"
+  ],
+  "isLearningEvidence": false
+}

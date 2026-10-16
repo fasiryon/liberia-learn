@@ -1,0 +1,40 @@
+{
+  "id": "extension",
+  "version": "0.1.0",
+  "payload": {
+    "kind": "DOCUMENT",
+    "title": "Optional base investigation",
+    "sections": [
+      {
+        "heading": "Non-gating extension",
+        "text": "Imagine a counting system in which each place to the left is worth five times its neighbour. Invent notation for six objects and eleven objects, and explain your rules. Compare the grouping with our decimal system. This is a proposed LiberiaLearn extension, optional, and never required for core progression."
+      }
+    ],
+    "textAlternative": "Non-gating extension: Imagine a counting system in which each place to the left is worth five times its neighbour. Invent notation for six objects and eleven objects, and explain your rules. Compare the grouping with our decimal system. This is a proposed LiberiaLearn extension, optional, and never required for core progression.",
+    "keyboardPath": "Read headings and paragraphs in document order; enter responses in text or on paper.",
+    "offlineInstructions": "Print or cache this text. Record work on paper. No network, sound, colour or pointer movement is required.",
+    "references": [
+      "project"
+    ]
+  },
+  "role": "MEDIA_ACCESSIBILITY",
+  "author": {
+    "kind": "AI",
+    "agentId": "factory-demo:MEDIA_ACCESSIBILITY",
+    "modelFamily": "deterministic-local-demo",
+    "sessionId": "MEDIA_ACCESSIBILITY"
+  },
+  "blueprint": {
+    "blueprintId": "factory-g7-number-sense",
+    "version": "0.1.0",
+    "contentHash": "a2382c06ce4ec96be3634e9f0304689f88316a39d11fa976c4a44bbbe4dce40a"
+  },
+  "dependencies": [
+    {
+      "id": "project",
+      "version": "0.1.0",
+      "contentHash": "f0a46efee40dfef4658ae61f6b102a52cb6f0ec97986a1aee54c4a43e405507c"
+    }
+  ],
+  "contentHash": "8f326d90fd98b84df13180a5c84dbe811bc46dbd940d7c5002115603c5313d88"
+}

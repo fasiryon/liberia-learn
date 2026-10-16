@@ -1,0 +1,112 @@
+{
+  "id": "practical",
+  "version": "0.1.0",
+  "payload": {
+    "kind": "ACTIVITY",
+    "definition": {
+      "schemaVersion": "activity-definition.v1",
+      "activityId": "practical",
+      "version": "0.1.0",
+      "kind": "PRACTICAL",
+      "contentHash": "0075f3f2460c3c21416e855dd73fbb29e2176f965d4e0f5a5702880493764115",
+      "content": {
+        "title": "Paper decimal strips",
+        "objectiveIds": [
+          "proposed-g7-number-sense-place-value"
+        ],
+        "lessonItemIds": [
+          "lesson-2"
+        ],
+        "scaffolding": "GUIDED",
+        "instructions": {
+          "learner": [
+            {
+              "stepId": "practical-step-1",
+              "text": "Draw two equal-length strips divided into ten equal sections. Mark quantities 0.4 and 0.35, subdividing sections into hundredths when needed.",
+              "resourceIds": []
+            },
+            {
+              "stepId": "practical-step-2",
+              "text": "Label the units in text; do not rely on colour. Explain which marked length is greater.",
+              "resourceIds": []
+            },
+            {
+              "stepId": "practical-step-3",
+              "text": "If drawing is difficult, dictate a table of tenths and hundredths instead. Record a written justification. This is practice, not a certified lab.",
+              "resourceIds": []
+            }
+          ],
+          "teacher": [
+            {
+              "stepId": "practical-teacher",
+              "text": "Record assistance separately. Ask for reasoning before feedback. Use the protected assessment rubric only for independently collected assessment responses.",
+              "resourceIds": []
+            }
+          ]
+        },
+        "resourceIds": [],
+        "rubric": null,
+        "expectedDurationMinutes": 20,
+        "collaborationMode": "INDIVIDUAL",
+        "evidenceIntent": {
+          "kind": "PRACTICE_ONLY",
+          "forms": [
+            "WRITTEN"
+          ]
+        },
+        "accessibility": {
+          "readingLevel": "Grade 7, vocabulary support permitted",
+          "supportsScreenReader": true,
+          "supportsReadAloud": true,
+          "requiresColorVision": false,
+          "requiresFineMotor": false,
+          "alternativeFormatResourceIds": []
+        }
+      },
+      "resources": [],
+      "lessonBindings": [
+        {
+          "lessonId": "lesson-2",
+          "version": "0.1.0"
+        }
+      ],
+      "release": {
+        "releaseId": "UNRESOLVED-G7-CANDIDATE",
+        "releaseIdentity": "UNRESOLVED-NOT-A-RELEASE"
+      },
+      "governance": {
+        "provenanceRefs": [
+          "unit-blueprint:factory-g7-number-sense@0.1.0"
+        ],
+        "reviewRefs": [],
+        "lifecycleRefs": [],
+        "releaseRefs": []
+      }
+    }
+  },
+  "role": "PROJECT_PRACTICAL_DESIGNER",
+  "author": {
+    "kind": "AI",
+    "agentId": "factory-demo:PROJECT_PRACTICAL_DESIGNER",
+    "modelFamily": "deterministic-local-demo",
+    "sessionId": "PROJECT_PRACTICAL_DESIGNER"
+  },
+  "blueprint": {
+    "blueprintId": "factory-g7-number-sense",
+    "version": "0.1.0",
+    "contentHash": "a2382c06ce4ec96be3634e9f0304689f88316a39d11fa976c4a44bbbe4dce40a"
+  },
+  "dependencies": [
+    {
+      "id": "lesson-2",
+      "version": "0.1.0",
+      "contentHash": "6eef5bba123482d83c82eb181ac518ebc0fa6113465d6dad4a9834174b060e53"
+    },
+    {
+      "id": "summative",
+      "version": "0.1.0",
+      "contentHash": "7290f844a6a1ed39ac745eeefff5a065dd105f00df1b5e1d509b5bc44837c836"
+    }
+  ],
+  "contentHash": "0cd56ace160d94980df57214fdde655d9f2ecaf1d3f4de2465b22279e3500227"
+}

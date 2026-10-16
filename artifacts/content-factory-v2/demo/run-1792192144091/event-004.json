@@ -1,0 +1,13 @@
+{
+  "role": "LEARNING_SCIENCE_DESIGNER",
+  "attempt": 1,
+  "status": "SUCCEEDED",
+  "inputHash": "149fbebc8e476cf66e4b551fde8e238d2a5a8ad6d620a801ca61245f7e74f4eb",
+  "outputHashes": [
+    "dbe639bbe24a34aef9c387d5a59c4a0f290882622c2fce703cf29d9509cf9a84"
+  ],
+  "error": null,
+  "sequence": 4,
+  "previousHash": "a2f5622bbb71246847c63b6997c849465c3a355183f8355d3e00ad3aad2be355",
+  "eventHash": "112917bf226f7c4cede3debdbc4d717a923fcd675f69584dbf9b3e5d3b1d49a8"
+}

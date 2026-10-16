@@ -1,0 +1,11 @@
+{
+  "role": "ASSESSMENT_DESIGNER",
+  "attempt": 1,
+  "status": "STARTED",
+  "inputHash": "6426b18d2042b649814cb25d66f14247a20d208205d013a5338f196c81adf512",
+  "outputHashes": [],
+  "error": null,
+  "sequence": 7,
+  "previousHash": "720b121a8a8d5abbd35fb5a20d92a6ceb86598bcd086a1c724dd34a5c026f94e",
+  "eventHash": "22184d5bab34d7f4abc801a83da30b375335253f86aa1f7125ee299ac2faebdd"
+}

@@ -1,0 +1,113 @@
+{
+  "status": "AWAITING_HUMAN_REVIEW",
+  "generationMode": "LOCAL_DETERMINISTIC_TEMPLATES_SYNTHETIC_CONTENT",
+  "blueprint": {
+    "id": "factory-g7-number-sense",
+    "version": "0.1.0",
+    "contentHash": "a2382c06ce4ec96be3634e9f0304689f88316a39d11fa976c4a44bbbe4dce40a"
+  },
+  "artifacts": [
+    {
+      "id": "curriculum-map",
+      "version": "0.1.0",
+      "contentHash": "7b460b728a5c6526f198f1488a7e13ec2e7ba54bbb0b0adede91e6cc4a552704"
+    },
+    {
+      "id": "learning-design",
+      "version": "0.1.0",
+      "contentHash": "dbe639bbe24a34aef9c387d5a59c4a0f290882622c2fce703cf29d9509cf9a84"
+    },
+    {
+      "id": "lesson-1",
+      "version": "0.1.0",
+      "contentHash": "d314df7d14222af86fd88594fc57b2f9941b194209fe9069d5cab548ead64785"
+    },
+    {
+      "id": "lesson-2",
+      "version": "0.1.0",
+      "contentHash": "6eef5bba123482d83c82eb181ac518ebc0fa6113465d6dad4a9834174b060e53"
+    },
+    {
+      "id": "classwork",
+      "version": "0.1.0",
+      "contentHash": "09792f8feea65ed516f342de650f498c7eaab32fea9b6a434320418b3b841abb"
+    },
+    {
+      "id": "homework",
+      "version": "0.1.0",
+      "contentHash": "6d06f102a517c5a4810815f36b33a185b1a9c38f485f991811467fc3d375df30"
+    },
+    {
+      "id": "worksheet",
+      "version": "0.1.0",
+      "contentHash": "a0eb42b79477116d198db5cd6503f62c103e4878dee94a72932f57ddcfbefb2d"
+    },
+    {
+      "id": "teacher-guide",
+      "version": "0.1.0",
+      "contentHash": "63d0a3fbee7a820f6c334f3d85cc48ef87205ca94fcda3d1ce44debbf01675ad"
+    },
+    {
+      "id": "quiz",
+      "version": "0.1.0",
+      "contentHash": "d87b761522ac5494d2beef84aa1deb0ef478b5e965a6b19267a9d47d7a9e1600"
+    },
+    {
+      "id": "summative",
+      "version": "0.1.0",
+      "contentHash": "7290f844a6a1ed39ac745eeefff5a065dd105f00df1b5e1d509b5bc44837c836"
+    },
+    {
+      "id": "retention",
+      "version": "0.1.0",
+      "contentHash": "42055e834f665d6c90554066b67b77b275862a7469c6e481278214da31912fa4"
+    },
+    {
+      "id": "transfer",
+      "version": "0.1.0",
+      "contentHash": "53ca23858bd2fb9c828b4f964e449601865a9869a116298b98adf74faab800c4"
+    },
+    {
+      "id": "answer-keys",
+      "version": "0.1.0",
+      "contentHash": "51cf6327dcc21040443b1378147eb68f87e98ce6304d72b236f21e25059118aa"
+    },
+    {
+      "id": "rubrics",
+      "version": "0.1.0",
+      "contentHash": "ee0306d1da4d1f6a158e58e87a58f41367462ebe5de2d2100d55c43784326835"
+    },
+    {
+      "id": "practical",
+      "version": "0.1.0",
+      "contentHash": "0cd56ace160d94980df57214fdde655d9f2ecaf1d3f4de2465b22279e3500227"
+    },
+    {
+      "id": "project",
+      "version": "0.1.0",
+      "contentHash": "f0a46efee40dfef4658ae61f6b102a52cb6f0ec97986a1aee54c4a43e405507c"
+    },
+    {
+      "id": "accessible-text",
+      "version": "0.1.0",
+      "contentHash": "03d4c5f991917b5ce29036cce92cf60fc9136b124dac5a796d97e229167f6431"
+    },
+    {
+      "id": "extension",
+      "version": "0.1.0",
+      "contentHash": "8f326d90fd98b84df13180a5c84dbe811bc46dbd940d7c5002115603c5313d88"
+    }
+  ],
+  "reviewerIndependence": {
+    "selfAuthored": false,
+    "independent": false,
+    "reasons": [
+      "SAME_MODEL_FAMILY:deterministic-local-demo"
+    ],
+    "countsAsIndependentReview": false
+  },
+  "audience": "AUTHORIZED_REVIEWERS_ONLY",
+  "official": false,
+  "liveProductionInventory": "NOT_ACCESSED",
+  "runDirectory": "artifacts/content-factory-v2/demo/run-1792192144091"
+}
