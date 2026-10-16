@@ -12,3 +12,4 @@ export * from "./evidence";
 export * from "./retention";
 export * from "./consumers";
 export * from "./adapters";
+export * from "./excellence";

@@ -57,7 +57,11 @@ function attemptOrder<T extends { optionId: string }>(values: readonly T[], atte
 
 const copyOptions = (options: readonly ChoiceOption[]) => options.map((option) => Object.freeze({ optionId: option.optionId, text: option.text }));
 
-export function projectItemForLearner(item: AssessmentItemV2, input: { attemptId: string; points: number }): LearnerItemV2 {
+/**
+ * `independent`: during an independent assessment (official, or a diagnostic/summative/retention/
+ * transfer/exam purpose) no hints are offered, matching the blocked AI Tutor (LL-AEP-001).
+ */
+export function projectItemForLearner(item: AssessmentItemV2, input: { attemptId: string; points: number; independent?: boolean }): LearnerItemV2 {
   const typeSpec = itemTypeSpec(item.itemType);
   return Object.freeze({
     itemId: item.itemId,
@@ -73,7 +77,7 @@ export function projectItemForLearner(item: AssessmentItemV2, input: { attemptId
     matchingRight: copyOptions(attemptOrder(item.stimulus.matchingRight, input.attemptId, `${item.itemId}:matching`)),
     expectedUnit: item.stimulus.expectedUnit,
     learnerVisibleCriteria: [...item.stimulus.learnerVisibleCriteria],
-    hintCount: item.feedbackPolicy.hints === "ON_REQUEST" ? item.hints.length : 0,
+    hintCount: item.feedbackPolicy.hints === "ON_REQUEST" && !input.independent ? item.hints.length : 0,
     maxResponseChars: typeSpec.maxResponseChars,
     points: input.points,
   });
@@ -84,6 +88,8 @@ export function projectFormForLearner(input: {
   items: ReadonlyMap<string, AssessmentItemV2>;
   attemptId: string;
   delivery: DeliveryDecision;
+  /** Defaults to independent for OFFICIAL deliveries. */
+  independent?: boolean;
 }): LearnerFormV2 {
   if (!input.delivery.allowed) throw new Error(`assessment_delivery_denied:${input.delivery.reason}`);
   const refs = input.form.delivery.itemOrder === "FIXED"
@@ -99,7 +105,7 @@ export function projectFormForLearner(input: {
     items: Object.freeze(refs.map((ref) => {
       const item = input.items.get(`${ref.itemId}@${ref.itemVersion}`);
       if (!item || item.itemHash !== ref.itemHash) throw new Error("assessment_projection_item_pin_mismatch");
-      return projectItemForLearner(item, { attemptId: input.attemptId, points: ref.points });
+      return projectItemForLearner(item, { attemptId: input.attemptId, points: ref.points, independent: input.independent ?? input.delivery.official });
     })),
   });
 }
@@ -133,11 +139,14 @@ function permits(policy: FeedbackReleasePolicy["explanation"], phase: Disclosure
  * Post-response disclosure, decided on the server from the item policy and the attempt phase.
  * The returned object is the ONLY path by which explanation or key material reaches a learner.
  */
-export function learnerDisclosure(item: AssessmentItemV2, spec: ProtectedScoringSpec, phase: DisclosurePhase): Readonly<{
+export function learnerDisclosure(item: AssessmentItemV2, spec: ProtectedScoringSpec, phase: DisclosurePhase, options: { independent?: boolean } = {}): Readonly<{
   explanation: string | null;
   correctResponse: string | null;
 }> {
   if (spec.itemId !== item.itemId || spec.itemVersion !== item.version) throw new Error("assessment_spec_item_mismatch");
+  // During an independent assessment nothing is disclosed until the whole attempt is closed, so an
+  // explanation for one item cannot help with the next.
+  if (options.independent && phase === "AFTER_RESPONSE") phase = "BEFORE_RESPONSE";
   const explanation = permits(item.feedbackPolicy.explanation, phase) ? spec.explanation : null;
   let correctResponse: string | null = null;
   if (permits(item.feedbackPolicy.correctAnswer, phase)) {

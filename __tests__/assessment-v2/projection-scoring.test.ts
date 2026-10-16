@@ -120,15 +120,16 @@ describe("Server-authoritative scoring", () => {
     expect(scoreResponse(items.short, items.shortSpec, { kind: "TEXT", text: " 460,003.025. " })).toMatchObject({ status: "SCORED", points: 1 });
     const ambiguous = scoreResponse(items.short, items.shortSpec, { kind: "TEXT", text: "460 003.025" });
     expect(ambiguous).toMatchObject({ status: "PENDING_HUMAN_MODERATION", points: null, reason: "constructed_response_not_exact_match" });
-    expect(scoreResponse(items.short, items.shortSpec, { kind: "TEXT", text: "   " }).status).toBe("INVALID_RESPONSE");
+    // A blank answer is BLANK (0 points), distinct from an invalid response.
+    expect(scoreResponse(items.short, items.shortSpec, { kind: "TEXT", text: "   " })).toMatchObject({ status: "BLANK", points: 0 });
   });
 
   it("routes rubric items to human moderation and does not let AI score them", () => {
     expect(isServerAutoScorable("WORKED_SOLUTION", items.rubricSpec.key)).toBe(false);
     const pending = scoreResponse(items.worked, items.rubricSpec, { kind: "TEXT", text: "No, 0.7 = 0.70 and 70 hundredths > 65 hundredths." });
     expect(pending).toMatchObject({ status: "PENDING_HUMAN_MODERATION", points: null, scorerAuthority: null });
-    const policy: ModerationPolicy = { policyId: "moderation-g7", version: "1.0.0", moderatorRoles: ["TEACHER"], requiresSecondMarker: false };
-    const base = { pending, item: items.worked, spec: items.rubricSpec, attemptSchoolId: SCHOOL, policy, criterionScores: [{ criterionId: "decision", points: 1 }, { criterionId: "reason", points: 1 }], aiSuggestion: null, moderatedAt: now };
+    const policy: ModerationPolicy = { policyId: "moderation-g7", version: "1.0.0", moderatorRoles: ["TEACHER"], requiresSecondMarker: false, reconciliationTolerancePercent: 10, examinerRoles: ["EXAMINER"] };
+    const base = { pending, item: items.worked, spec: items.rubricSpec, attemptSchoolId: SCHOOL, purpose: "FORMATIVE" as const, policy, criterionScores: [{ criterionId: "decision", points: 1 }, { criterionId: "reason", points: 1 }], aiSuggestion: null, moderatedAt: now };
     expect(() => recordModeratedScore({ ...base, moderator: { kind: "AI", id: "agent:grader", role: "TEACHER", schoolId: SCHOOL } })).toThrow("assessment_ai_scoring_not_authoritative");
     expect(() => recordModeratedScore({ ...base, policy: null, moderator: { kind: "HUMAN", id: "t1", role: "TEACHER", schoolId: SCHOOL } })).toThrow("assessment_moderation_policy_required");
     expect(() => recordModeratedScore({ ...base, moderator: { kind: "HUMAN", id: "t1", role: "TEACHER", schoolId: "school-2" } })).toThrow("assessment_moderator_school_mismatch");

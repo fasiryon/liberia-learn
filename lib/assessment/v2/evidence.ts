@@ -19,6 +19,7 @@
 import { createHash } from "crypto";
 import { canonicalizeJson } from "@/lib/curriculum/provenance/hash";
 import { auditEvent, type AssessmentAuditEvent } from "./audit";
+import { LL_SECOND_MARKING, LL_TUTOR_POLICY } from "@/lib/academic-policy/llAep001";
 import { hashRelease } from "./hash";
 import type { ScorerAuthority, ScoringOutcome } from "./scoring";
 import { assertIsoTimestamp } from "./validator";
@@ -99,13 +100,22 @@ export type CaptureProvenance = Readonly<{
 }>;
 
 export type ScoringRecord = Readonly<{
-  status: "UNSCORED" | "PROVISIONAL" | "SCORED" | "PENDING_HUMAN_MODERATION" | "INVALID_RESPONSE";
+  status: "UNSCORED" | "PROVISIONAL" | "SCORED" | "BLANK" | "PENDING_HUMAN_MODERATION" | "INVALID_RESPONSE";
   scorerAuthority: ScorerAuthority | "CLIENT_CHECK" | "AI_SUGGESTION" | null;
   points: number | null;
   maxPoints: number | null;
   scoringVersion: string | null;
   scoringSpecHash: string | null;
-  moderation: Readonly<{ policyId: string; policyVersion: string; moderatorId: string; aiSuggestionConsulted: boolean }> | null;
+  moderation: Readonly<{
+    policyId: string;
+    policyVersion: string;
+    moderatorId: string;
+    aiSuggestionConsulted: boolean;
+    /** High-stakes constructed responses need independent second marking (LL-AEP-001). */
+    secondMarkerRequired: boolean;
+    /** SINGLE = one marker; AGREED = two markers within tolerance; RECONCILED = examiner resolved a disagreement. */
+    marking: "SINGLE" | "AGREED" | "RECONCILED";
+  }> | null;
 }>;
 
 export type AdmissionRecord = Readonly<{
@@ -131,6 +141,11 @@ export type AssessmentEvidenceEnvelope = Readonly<{
   delivery: DeliveryContext;
   assistance: AssistanceExposure;
   independence: "INDEPENDENT" | "ASSISTED";
+  /**
+   * Integrity findings, e.g. AI tutor or hint use during an independent assessment, where the tutor
+   * is blocked (LL-AEP-001). Recorded for teacher review; never silently cleared.
+   */
+  integrityFlags: readonly string[];
   capture: CaptureProvenance;
   scoring: ScoringRecord;
   admission: AdmissionRecord | null;
@@ -157,9 +172,36 @@ export function classifyIndependence(assistance: AssistanceExposure): "INDEPENDE
   return assisted ? "ASSISTED" : "INDEPENDENT";
 }
 
+/**
+ * Independent assessment = any OFFICIAL delivery, or a purpose that measures what the learner can do
+ * alone. In these deliveries the AI Tutor gives no answers, hints or explanations (LL-AEP-001).
+ */
+const INDEPENDENT_PURPOSES: readonly AssessmentPurpose[] = ["DIAGNOSTIC", "SUMMATIVE", "RETENTION", "TRANSFER", "EXAMINATION"];
+
+export function isIndependentAssessment(delivery: Pick<DeliveryContext, "mode" | "official" | "purpose">): boolean {
+  return delivery.official || delivery.mode === "OFFICIAL" || INDEPENDENT_PURPOSES.includes(delivery.purpose);
+}
+
+export function tutorAccessFor(delivery: Pick<DeliveryContext, "mode" | "official" | "purpose">): "BLOCKED" | "INSTRUCTIONAL" {
+  return isIndependentAssessment(delivery) ? LL_TUTOR_POLICY.independentAssessment : LL_TUTOR_POLICY.learningMode;
+}
+
+function integrityFlagsFor(delivery: DeliveryContext, assistance: AssistanceExposure): readonly string[] {
+  if (!isIndependentAssessment(delivery)) return Object.freeze([]);
+  const flags: string[] = [];
+  if (assistance.aiTutorUsed) flags.push("ai_tutor_used_during_independent_assessment");
+  if (assistance.hintsRevealed > 0) flags.push("hints_used_during_independent_assessment");
+  if (assistance.answerRevealedBeforeResponse || assistance.explanationSeenBeforeResponse) flags.push("answer_material_exposed_during_independent_assessment");
+  if (assistance.prohibitedToolUsed) flags.push("prohibited_tool_used");
+  if (assistance.peerCollaboration) flags.push("peer_collaboration_during_independent_assessment");
+  return Object.freeze(flags);
+}
+
 export function observationIdempotencyKey(input: { studentId: string; attemptId: string; itemId: string; itemVersion: string; responseSequence: number }): string {
   return createHash("sha256").update(canonicalizeJson({ domain: "liberialearn.assessment.v2.observation", ...input })).digest("hex");
 }
+
+const CLOCK_SKEW_MS = 5 * 60_000;
 
 const derivedKey = (parent: AssessmentEvidenceEnvelope, tier: EvidenceTier) =>
   createHash("sha256").update(`${parent.idempotencyKey}:${tier}`).digest("hex");
@@ -189,7 +231,7 @@ export type ClientObservationSubmission = Readonly<{
 /** Server-resolved facts about the attempt and the authenticated learner. */
 export type ServerAttemptContext = Readonly<{
   session: Readonly<{ studentId: string; studentUserId: string; schoolId: string; tenantId: string }>;
-  attempt: Readonly<{ attemptId: string; sessionId: string; studentId: string; schoolId: string; enrollmentId: string; classId: string | null; status: "OPEN" | "SUBMITTED" | "CLOSED" }>;
+  attempt: Readonly<{ attemptId: string; sessionId: string; studentId: string; schoolId: string; enrollmentId: string; classId: string | null; status: "OPEN" | "SUBMITTED" | "CLOSED"; submittedAt?: string | null }>;
   pins: AssessmentPins;
   objectiveIds: readonly string[];
   delivery: DeliveryContext;
@@ -211,6 +253,10 @@ export function acceptClientObservation(submission: ClientObservationSubmission,
   if (submission.capture.source === "OFFLINE" && !submission.capture.deviceId) throw new Error("assessment_offline_device_required");
   assertIsoTimestamp(submission.capture.capturedAt, "captured_at");
   assertIsoTimestamp(context.receivedAt, "received_at");
+  // A device clock cannot place a response after the server received it (5-minute skew allowance).
+  if (Date.parse(submission.capture.capturedAt) > Date.parse(context.receivedAt) + CLOCK_SKEW_MS) throw new Error("assessment_capture_time_in_future");
+  // After submission only responses captured before the submission (e.g. an offline queue) are accepted.
+  if (attempt.status === "SUBMITTED" && !(attempt.submittedAt && submission.capture.capturedAt <= attempt.submittedAt)) throw new Error("assessment_attempt_already_submitted");
 
   const idempotencyKey = observationIdempotencyKey({
     studentId: session.studentId, attemptId: attempt.attemptId, itemId: submission.itemId,
@@ -231,6 +277,7 @@ export function acceptClientObservation(submission: ClientObservationSubmission,
     delivery: context.delivery,
     assistance: submission.assistance,
     independence: classifyIndependence(submission.assistance),
+    integrityFlags: integrityFlagsFor(context.delivery, submission.assistance),
     capture: { ...submission.capture, receivedAt: context.receivedAt },
     scoring: { status: "UNSCORED", scorerAuthority: null, points: null, maxPoints: null, scoringVersion: null, scoringSpecHash: null, moderation: null },
     admission: null,
@@ -271,11 +318,14 @@ export function verifyObservation(raw: AssessmentEvidenceEnvelope, input: {
   if (raw.tier !== "RAW_OBSERVATION") throw new Error("assessment_evidence_parent_tier_invalid");
   if (raw.evidenceHash !== hashEvidence(raw)) throw new Error("assessment_evidence_tampered");
   const { outcome, release } = input;
-  if (outcome.status !== "SCORED" || outcome.points === null || !outcome.scorerAuthority) throw new Error("assessment_outcome_not_scored");
+  if ((outcome.status !== "SCORED" && outcome.status !== "BLANK") || outcome.points === null || !outcome.scorerAuthority) throw new Error("assessment_outcome_not_scored");
   if (outcome.itemId !== raw.pins.itemId || outcome.itemVersion !== raw.pins.itemVersion || outcome.itemHash !== raw.pins.itemHash || outcome.scoringSpecHash !== raw.pins.scoringSpecHash) {
     throw new Error("assessment_outcome_pin_mismatch");
   }
   if (outcome.scorerAuthority === "HUMAN_MODERATOR" && !input.moderation) throw new Error("assessment_moderation_record_required");
+  if (input.moderation?.secondMarkerRequired && input.moderation.marking === "SINGLE") throw new Error("assessment_second_marking_required");
+  if (outcome.scorerAuthority === "HUMAN_MODERATOR" && input.moderation && input.moderation.secondMarkerRequired === false
+    && (LL_SECOND_MARKING.highStakesPurposes as readonly string[]).includes(raw.delivery.purpose)) throw new Error("assessment_second_marking_required");
   if (raw.delivery.mode === "REVIEWER_PREVIEW" || !release || raw.pins.releaseId === null) throw new Error("assessment_unreleased_evidence_cannot_be_verified");
   if (release.releaseHash !== hashRelease(release) || release.releaseId !== raw.pins.releaseId || release.releaseHash !== raw.pins.releaseHash) throw new Error("assessment_release_pin_mismatch");
   if (input.revocations.some((revocation) => revocation.releaseId === release.releaseId)) throw new Error("assessment_release_revoked");
@@ -294,7 +344,7 @@ export function verifyObservation(raw: AssessmentEvidenceEnvelope, input: {
     idempotencyKey,
     derivedFromEvidenceId: raw.evidenceId,
     scoring: {
-      status: "SCORED", scorerAuthority: outcome.scorerAuthority, points: outcome.points, maxPoints: outcome.maxPoints,
+      status: outcome.status, scorerAuthority: outcome.scorerAuthority, points: outcome.points, maxPoints: outcome.maxPoints,
       scoringVersion: outcome.scoringVersion, scoringSpecHash: outcome.scoringSpecHash, moderation: input.moderation,
     },
     recordedBy: input.recordedBy,
@@ -377,7 +427,7 @@ function inheritsParent(child: AssessmentEvidenceEnvelope, parent: AssessmentEvi
   const same = (a: unknown, b: unknown) => canonicalizeJson(a) === canonicalizeJson(b);
   if (!same(child.scope, parent.scope) || !same(child.pins, parent.pins) || !same(child.attempt, parent.attempt)
     || !same(child.response, parent.response) || !same(child.delivery, parent.delivery) || !same(child.assistance, parent.assistance)
-    || child.independence !== parent.independence || !same(child.capture, parent.capture) || child.occurredAt !== parent.occurredAt) return false;
+    || child.independence !== parent.independence || !same(child.integrityFlags, parent.integrityFlags) || !same(child.capture, parent.capture) || child.occurredAt !== parent.occurredAt) return false;
   if (child.tier === "MASTERY_ADMITTED_EVIDENCE") {
     return same(child.scoring, parent.scoring) && child.objectiveIds.every((objectiveId) => parent.objectiveIds.includes(objectiveId)) && child.admission !== null;
   }
@@ -408,7 +458,7 @@ export function appendEvidence(ledger: EvidenceLedger, envelope: AssessmentEvide
     if (!parent) throw new Error("assessment_evidence_parent_missing");
     if (parent.tier !== parentTier) throw new Error("assessment_evidence_parent_tier_invalid");
     if (!inheritsParent(envelope, parent)) throw new Error("assessment_evidence_derivation_altered");
-    if (envelope.tier === "VERIFIED_ASSESSMENT_EVIDENCE" && (envelope.scoring.status !== "SCORED" || !["SERVER_KEYED", "HUMAN_MODERATOR"].includes(envelope.scoring.scorerAuthority ?? ""))) {
+    if (envelope.tier === "VERIFIED_ASSESSMENT_EVIDENCE" && ((envelope.scoring.status !== "SCORED" && envelope.scoring.status !== "BLANK") || !["SERVER_KEYED", "HUMAN_MODERATOR"].includes(envelope.scoring.scorerAuthority ?? ""))) {
       throw new Error("assessment_verified_requires_scoring_authority");
     }
     if (envelope.tier === "MASTERY_ADMITTED_EVIDENCE" && envelope.independence !== "INDEPENDENT") throw new Error("assessment_assisted_evidence_not_admissible");

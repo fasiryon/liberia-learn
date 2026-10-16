@@ -68,8 +68,12 @@ export async function POST(req: NextRequest, context: { params: { examId: string
         answers: body.answers,
         passingScore: attempt.exam.passingScore,
       } as any,
-      attempt.exam.questions as any
+      attempt.exam.questions as any,
+      { questionIds: body.questionIds }
     );
+    if (grading.invalidCount > 0) {
+      return NextResponse.json({ error: "Some answers do not match a question option" }, { status: 400 });
+    }
 
     const submittedAt = new Date();
     const durationSeconds = Math.max(

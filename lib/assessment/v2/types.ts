@@ -192,7 +192,13 @@ export type NumericKey = Readonly<{
 }>;
 
 export type RubricLevel = Readonly<{ points: number; descriptor: string }>;
-export type RubricCriterion = Readonly<{ criterionId: string; title: string; levels: readonly RubricLevel[] }>;
+export type RubricCriterion = Readonly<{
+  criterionId: string;
+  title: string;
+  levels: readonly RubricLevel[];
+  /** LL-AEP-001 authentic-work dimension this criterion assesses (REASONING, EVIDENCE, …). */
+  dimension?: string;
+}>;
 export type Rubric = Readonly<{ rubricId: string; rubricVersion: string; criteria: readonly RubricCriterion[] }>;
 
 export type ScoringKey =

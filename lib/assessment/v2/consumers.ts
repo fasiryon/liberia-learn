@@ -140,6 +140,9 @@ export function gradebookEligibility(envelope: AssessmentEvidenceEnvelope, input
   if (standing.tier !== "VERIFIED_ASSESSMENT_EVIDENCE" && standing.tier !== "MASTERY_ADMITTED_EVIDENCE") return no("evidence_not_verified");
   if (!standing.official) return no("delivery_not_official");
   if (envelope.scoring.scorerAuthority !== "SERVER_KEYED" && envelope.scoring.scorerAuthority !== "HUMAN_MODERATOR") return no("scorer_not_authoritative");
+  const moderation = envelope.scoring.moderation;
+  if (moderation?.secondMarkerRequired && moderation.marking === "SINGLE") return no("second_marking_unreconciled");
+  if (envelope.integrityFlags.length > 0) return no("integrity_review_required");
   return Object.freeze({ eligible: true, reason: "official_verified_score" });
 }
 

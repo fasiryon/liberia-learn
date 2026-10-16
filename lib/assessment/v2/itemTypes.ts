@@ -26,7 +26,9 @@ export type LearnerResponse =
   | Readonly<{ kind: "MATCHING"; pairs: readonly Readonly<{ leftId: string; rightId: string }>[] }>
   | Readonly<{ kind: "TEXT"; text: string }>
   /** Uploaded or teacher-captured artifact (photo of paper work, project evidence). */
-  | Readonly<{ kind: "ARTIFACT"; artifactRefs: readonly string[]; note: string | null }>;
+  | Readonly<{ kind: "ARTIFACT"; artifactRefs: readonly string[]; note: string | null }>
+  /** The learner submitted the item with no answer. Distinct from an invalid (malformed) response. */
+  | Readonly<{ kind: "BLANK" }>;
 
 export type ItemTypeSpec = Readonly<{
   itemType: ItemType;
