@@ -1,0 +1,18 @@
+
+> liberialearn-os-daemon@1.0.0 test
+> node --test context.node-test.mjs
+
+✔ daily pulse attaches current overviews, recent records, and the prior WAT note (129.1516ms)
+✔ queue routes attach their prompt, request, and declared repository inputs (53.7875ms)
+✔ sensitive-topic queue filenames remain valid after realpath confinement (37.6131ms)
+✔ queue context rejects traversal and secret-bearing paths before an API request (112.2916ms)
+﹣ resolved source paths cannot disguise denied repository secrets (90.0991ms) # file symlinks require Windows Developer Mode; exercised on Linux CI
+﹣ queue-file symlinks cannot escape the governed queue directory (30.1662ms) # file symlinks require Windows Developer Mode; exercised on Linux CI
+ℹ tests 6
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 2
+ℹ todo 0
+ℹ duration_ms 1017.8635

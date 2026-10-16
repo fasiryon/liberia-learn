@@ -1,0 +1,88 @@
+
+> liberia-learn-frontend@1.0.0 validate:changed
+> node scripts/validate-changed.mjs --no-types
+
+validate:changed source: working tree and index
+validate:changed files: 26
+  __tests__/learner-experience/evidence-authority.test.ts
+  __tests__/student-v3-reader-repairs.test.tsx
+  __tests__/tutor.grounding-v2.test.ts
+  __tests__/tutor.route-context.browser.test.tsx
+  app/student/textbooks/page.tsx
+  artifacts/joint-repairs/README.md
+  artifacts/joint-repairs/browser-repairs.json
+  artifacts/joint-repairs/formative-help-1440.png
+  artifacts/joint-repairs/formative-help-1920.png
+  artifacts/joint-repairs/formative-help-390.png
+  artifacts/joint-repairs/formative-help-768.png
+  artifacts/joint-repairs/production-boundary-smoke.json
+  components/experience/AskTutorButton.tsx
+  components/experience/LegacyLesson.tsx
+  components/learner-experience/LessonPlayerV2.tsx
+  components/rag/GlobalAssistantShell.tsx
+  components/textbooks/TextbookReader.tsx
+  docs/reviews/PR190_PR191_REPAIR_PROGRESS_2026-10-16.md
+  lib/ai/tutor/tutorContext.ts
+  lib/learner-experience/assistancePolicy.ts
+  lib/learner-experience/evidenceAdapter.ts
+  lib/learner-experience/lessonText.ts
+  scripts/joint-repairs/main.tsx
+  scripts/joint-repairs/pwa.mjs
+  scripts/joint-repairs/run.mjs
+  scripts/joint-repairs/vite.config.ts
+API route policy audit PASS: 81 changed routes declared; 512 legacy routes frozen at 84dd5417.
+
+ RUN  v4.1.9 C:/liberia-learn/.task-worktrees/repair-pr190
+
+npm.cmd : Browserslist: browsers data (caniuse-lite) is 8 months old. Please run:
+At line:2 char:194
++ ... .0.1:3218'; npm.cmd run validate:changed -- --no-types *> artifacts/j ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Browserslist: b...ld. Please run::String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+
+ Test Files  4 passed (4)
+      Tests  79 passed (79)
+   Start at  15:43:29
+   Duration  17.01s (transform 8.73s, setup 0ms, import 13.23s, tests 1.33s, environment 14.29s)
+
+
+ RUN  v4.1.9 C:/liberia-learn/.task-worktrees/repair-pr190
+
+3:44:10 PM [vite] (ssr) warning: invalid import "../app/api/discussion/threads/[threadId]/${mod}/route". A file
+extension must be included in the static part of the import. For example: import(`./foo/${bar}.js`).
+  Plugin: vite:dynamic-import-vars
+  File: C:/liberia-learn/.task-worktrees/repair-pr190/__tests__/sprint7.discussion.test.ts
+Warning: A vi.hoisted() call in
+"C:/liberia-learn/.task-worktrees/repair-pr190/__tests__/curriculum-v2/governance-provenance.test.ts" is not at the
+top level of the module. Although it appears nested, it will be hoisted and executed before any tests run. Move it to
+the top level to reflect its actual execution order. This will become an error in a future version.
+See: https://vitest.dev/guide/mocking/modules#how-it-works
+Warning: A vi.hoisted() call in
+"C:/liberia-learn/.task-worktrees/repair-pr190/__tests__/curriculum-v2/governance-provenance.test.ts" is not at the
+top level of the module. Although it appears nested, it will be hoisted and executed before any tests run. Move it to
+the top level to reflect its actual execution order. This will become an error in a future version.
+See: https://vitest.dev/guide/mocking/modules#how-it-works
+Warning: A vi.mock("@/lib/curriculum/mutations/repository") call in
+"C:/liberia-learn/.task-worktrees/repair-pr190/__tests__/curriculum-v2/governance-provenance.test.ts" is not at the
+top level of the module. Although it appears nested, it will be hoisted and executed before any tests run. Move it to
+the top level to reflect its actual execution order. This will become an error in a future version.
+See: https://vitest.dev/guide/mocking/modules#how-it-works
+Warning: A vi.mock("@/lib/audit") call in
+"C:/liberia-learn/.task-worktrees/repair-pr190/__tests__/curriculum-v2/governance-provenance.test.ts" is not at the
+top level of the module. Although it appears nested, it will be hoisted and executed before any tests run. Move it to
+the top level to reflect its actual execution order. This will become an error in a future version.
+See: https://vitest.dev/guide/mocking/modules#how-it-works
+Browserslist: browsers data (caniuse-lite) is 8 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+
+ Test Files  29 passed (29)
+      Tests  331 passed (331)
+   Start at  15:44:49
+   Duration  63.14s (transform 16.32s, setup 0ms, import 51.05s, tests 24.45s, environment 26.36s)
+
+validate:changed PASS

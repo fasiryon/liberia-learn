@@ -61,7 +61,11 @@ function governed(observation: Trusted, lesson: LessonExperience, learner: Learn
     // Lesson-side observations are never scored here: mastery items go to the assessment authority.
     performance: { outcome: "OBSERVED", score: null, maxScore: null, correct: null, signals: [], payload: observation.payload },
     provenance: { source: admission.source, actorId: learner.studentUserId, actorRole: "STUDENT", runtime: admission.source === "OFFLINE" ? "SYNC" : observation.kind === "LAB_OBSERVATION" ? "LAB" : "WEB", recordedAt: occurredAt, clientEventId: admission.clientEventId, syncBatchId: admission.syncBatchId },
-    strength: { serverScored: false, humanVerified: false, assistanceUsed: false, retryCount: 0, hintCount: 0, independenceKey: learner.sessionId, directness: "INDIRECT", reliability: "UNASSESSED", policyRef: `lesson-experience:${lesson.id}@${lesson.version}` },
+    // There is no trusted attempt-bound assistance ledger in this delivery seam.
+    // A device's absence of hints (or explicit false) cannot establish unaided
+    // work. Use the conservative boolean until the assessment authority has
+    // verified independence; this does not assert that help was actually used.
+    strength: { serverScored: false, humanVerified: false, assistanceUsed: true, retryCount: 0, hintCount: 0, independenceKey: learner.sessionId, directness: "INDIRECT", reliability: "UNASSESSED", policyRef: `lesson-experience:${lesson.id}@${lesson.version}:assistance-unverified` },
     offline: { isOffline: admission.source === "OFFLINE", syncIdentity: admission.source === "OFFLINE" ? admission.syncIdentity : null },
     curriculum: curriculumIdentity(lesson),
   });

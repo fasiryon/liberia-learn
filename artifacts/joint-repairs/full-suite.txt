@@ -1,0 +1,1989 @@
+
+ RUN  v4.1.9 C:/liberia-learn/.task-worktrees/repair-pr190
+
+node : stderr | __tests__/e2e/workflow-validation.test.ts > Step 3 — Student completes work (POST
+/api/student/work/[id]/complete) > happy path — records completion and returns success + completedAt timestamp
+At line:2 char:363
++ ... SABLED='1'; node node_modules/vitest/vitest.mjs run --reporter=dot *> ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (stderr | __test...tedAt timestamp:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+
+[autoAwardCertificate] error: TypeError: Cannot read properties of undefined (reading 'findUnique')
+    at checkAndAwardCertificate
+(C:/liberia-learn/.task-worktrees/repair-pr190/lib/certificates/autoAwardCertificate.ts:35:47)
+    at C:/liberia-learn/.task-worktrees/repair-pr190/lib/student/completeScheduledLesson.ts:267:7
+    at runClaimedEffect (C:/liberia-learn/.task-worktrees/repair-pr190/lib/student/completeScheduledLesson.ts:226:13)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at completeScheduledLesson
+(C:/liberia-learn/.task-worktrees/repair-pr190/lib/student/completeScheduledLesson.ts:264:3)
+    at Module.POST
+(C:/liberia-learn/.task-worktrees/repair-pr190/app/api/student/work/[scheduledWorkId]/complete/route.ts:14:20)
+    at C:/liberia-learn/.task-worktrees/repair-pr190/__tests__/e2e/workflow-validation.test.ts:441:17
+    at file:///C:/liberia-learn/.task-worktrees/repair-pr190/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:20
+
+stderr | __tests__/e2e/workflow-validation.test.ts > Step 3 — Student completes work (POST
+/api/student/work/[id]/complete) > claims completion with the learner + scheduled-work identity
+[autoAwardCertificate] error: TypeError: Cannot read properties of undefined (reading 'findUnique')
+    at checkAndAwardCertificate
+(C:/liberia-learn/.task-worktrees/repair-pr190/lib/certificates/autoAwardCertificate.ts:35:47)
+    at C:/liberia-learn/.task-worktrees/repair-pr190/lib/student/completeScheduledLesson.ts:267:7
+    at runClaimedEffect (C:/liberia-learn/.task-worktrees/repair-pr190/lib/student/completeScheduledLesson.ts:226:13)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at completeScheduledLesson
+(C:/liberia-learn/.task-worktrees/repair-pr190/lib/student/completeScheduledLesson.ts:264:3)
+    at Module.POST
+(C:/liberia-learn/.task-worktrees/repair-pr190/app/api/student/work/[scheduledWorkId]/complete/route.ts:14:20)
+    at C:/liberia-learn/.task-worktrees/repair-pr190/__tests__/e2e/workflow-validation.test.ts:453:5
+    at file:///C:/liberia-learn/.task-worktrees/repair-pr190/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:20
+
+stderr | __tests__/e2e/workflow-validation.test.ts > Step 3 — Student completes work (POST
+/api/student/work/[id]/complete) > creates audit log entry with action lesson.completed
+[autoAwardCertificate] error: TypeError: Cannot read properties of undefined (reading 'findUnique')
+    at checkAndAwardCertificate
+(C:/liberia-learn/.task-worktrees/repair-pr190/lib/certificates/autoAwardCertificate.ts:35:47)
+    at C:/liberia-learn/.task-worktrees/repair-pr190/lib/student/completeScheduledLesson.ts:267:7
+    at runClaimedEffect (C:/liberia-learn/.task-worktrees/repair-pr190/lib/student/completeScheduledLesson.ts:226:13)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at completeScheduledLesson
+(C:/liberia-learn/.task-worktrees/repair-pr190/lib/student/completeScheduledLesson.ts:264:3)
+    at Module.POST
+(C:/liberia-learn/.task-worktrees/repair-pr190/app/api/student/work/[scheduledWorkId]/complete/route.ts:14:20)
+    at C:/liberia-learn/.task-worktrees/repair-pr190/__tests__/e2e/workflow-validation.test.ts:480:5
+    at file:///C:/liberia-learn/.task-worktrees/repair-pr190/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:20
+
+Browserslist: browsers data (caniuse-lite) is 8 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+·············································································································································stdout | __tests__/load/nationalScaleSmoke.test.ts > Load Harness — Tier simulations (mock handlers, no DB) > Tier 3 (1,000 schools — stretch): measures performance, reports result
+[Tier 3] p95 teacher: 90ms, p95 student: 142ms, error rate: 0.000%, PASS: true
+
+······················stdout | __tests__/load/nationalScaleSmoke.test.ts > Load Harness — Tier simulations (mock handlers, no DB) > Tier 4 (2,500 schools): "national-scale" synthetic benchmark warns on misses only
+[Tier 4][national-scale] p95 teacher: 100ms, p95 student: 168ms, error rate: 0.000%
+
+······························································································································································································stdout | __tests__/load/nationalScaleSmoke.test.ts > Load Harness — Tier simulations (mock handlers, no DB) > Tier 5 (5,000 schools): "beyond-national-scale" performance ceiling warns on misses only
+[Tier 5][beyond-national-scale] p95 teacher: 128ms, p95 student: 172ms, error rate: 0.000%
+
+stderr | __tests__/audit-gate-2-patches.test.ts
+[Upstash Redis] Unable to find environment variable: `UPSTASH_REDIS_REST_URL`
+[Upstash Redis] Unable to find environment variable: `UPSTASH_REDIS_REST_TOKEN`
+[Upstash Redis] The 'url' property is missing or undefined in your Redis config.
+[Upstash Redis] The 'token' property is missing or undefined in your Redis config.
+
+stderr | __tests__/audit-gate-2-patches.test.ts
+[Upstash Redis] Unable to find environment variable: `UPSTASH_REDIS_REST_URL`
+[Upstash Redis] Unable to find environment variable: `UPSTASH_REDIS_REST_TOKEN`
+[Upstash Redis] The 'url' property is missing or undefined in your Redis config.
+[Upstash Redis] The 'token' property is missing or undefined in your Redis config.
+
+stderr | __tests__/audit-gate-2-patches.test.ts
+[Upstash Redis] Unable to find environment variable: `UPSTASH_REDIS_REST_URL`
+[Upstash Redis] Unable to find environment variable: `UPSTASH_REDIS_REST_TOKEN`
+[Upstash Redis] The 'url' property is missing or undefined in your Redis config.
+[Upstash Redis] The 'token' property is missing or undefined in your Redis config.
+
+stderr | __tests__/audit-gate-2-patches.test.ts > Audit Gate 2 — Category 4: logAudit patch verification > POST
+/api/admin/curriculum/approve — logAudit includes schoolId > calls logAudit with schoolId on successful approval
+{"level":"warn","message":"[RAG] Best-effort approval chunk sync
+failed","metadata":{"error":{"name":"TypeError","message":"Cannot read properties of undefined (reading
+'deleteMany')","stack":null}},"timestamp":"2026-10-16T18:54:37.863Z","service":"liberialearn"}
+
+stderr | __tests__/audit-gate-2-patches.test.ts > Audit Gate 2 — Category 4: logAudit patch verification > POST
+/api/admin/curriculum/approve — logAudit includes schoolId > calls logAudit with schoolId on successful approval
+[RAG_EMBED] Retrying embedding request { attempt: 1, backoffMs: 1000, status: 503 }
+
+stderr | __tests__/audit-gate-2-patches.test.ts > Audit Gate 2 — Category 4: logAudit patch verification > POST
+/api/admin/curriculum/approve — logAudit includes schoolId > calls logAudit with schoolId on successful approval
+[RAG_EMBED] Retrying embedding request { attempt: 2, backoffMs: 2000, status: 503 }
+
+stderr | __tests__/audit-gate-2-patches.test.ts > Audit Gate 2 — Category 4: logAudit patch verification > POST
+/api/admin/curriculum/approve — logAudit includes schoolId > calls logAudit with schoolId on successful approval
+[RAG_EMBED] Embedding request failed { attempt: 3, status: 503, message: 'OpenAI unavailable' }
+
+stderr | __tests__/audit-gate-2-patches.test.ts > Audit Gate 2 — Category 4: logAudit patch verification > POST
+/api/admin/curriculum/approve — logAudit includes schoolId > calls logAudit with schoolId on successful approval
+{"level":"warn","message":"[RAG] Best-effort approval embedding
+failed","metadata":{"error":{"name":"Error","message":"OpenAI
+unavailable","stack":null}},"timestamp":"2026-10-16T18:54:40.884Z","service":"liberialearn"}
+
+stderr | __tests__/audit-gate-2-patches.test.ts > Audit Gate 2 — Category 4: logAudit patch verification > POST
+/api/admin/curriculum/approve — logAudit includes schoolId > calls logAudit with schoolId on successful approval
+[Upstash Redis] Redis client was initialized without url or token. Failed to execute command.
+
+stderr | __tests__/audit-gate-2-patches.test.ts > Audit Gate 2 — Category 4: logAudit patch verification > POST
+/api/admin/curriculum/approve — logAudit includes schoolId > logAudit is called before telemetry block — audit always
+runs
+{"level":"warn","message":"[RAG] Best-effort approval chunk sync
+failed","metadata":{"error":{"name":"TypeError","message":"Cannot read properties of undefined (reading
+'deleteMany')","stack":null}},"timestamp":"2026-10-16T18:54:40.967Z","service":"liberialearn"}
+
+stderr | __tests__/audit-gate-2-patches.test.ts > Audit Gate 2 — Category 4: logAudit patch verification > POST
+/api/admin/curriculum/approve — logAudit includes schoolId > logAudit is called before telemetry block — audit always
+runs
+[RAG_EMBED] Retrying embedding request { attempt: 1, backoffMs: 1000, status: 503 }
+
+stderr | __tests__/audit-gate-2-patches.test.ts > Audit Gate 2 — Category 4: logAudit patch verification > POST
+/api/admin/curriculum/approve — logAudit includes schoolId > logAudit is called before telemetry block — audit always
+runs
+[RAG_EMBED] Retrying embedding request { attempt: 2, backoffMs: 2000, status: 503 }
+
+stderr | __tests__/audit-gate-2-patches.test.ts > Audit Gate 2 — Category 4: logAudit patch verification > POST
+/api/admin/curriculum/approve — logAudit includes schoolId > logAudit is called before telemetry block — audit always
+runs
+[RAG_EMBED] Embedding request failed { attempt: 3, status: 503, message: 'OpenAI unavailable' }
+
+stderr | __tests__/audit-gate-2-patches.test.ts > Audit Gate 2 — Category 4: logAudit patch verification > POST
+/api/admin/curriculum/approve — logAudit includes schoolId > logAudit is called before telemetry block — audit always
+runs
+{"level":"warn","message":"[RAG] Best-effort approval embedding
+failed","metadata":{"error":{"name":"Error","message":"OpenAI
+unavailable","stack":null}},"timestamp":"2026-10-16T18:54:44.012Z","service":"liberialearn"}
+
+stderr | __tests__/audit-gate-2-patches.test.ts > Audit Gate 2 — Category 4: logAudit patch verification > POST
+/api/admin/curriculum/approve — logAudit includes schoolId > logAudit is called before telemetry block — audit always
+runs
+[Upstash Redis] Redis client was initialized without url or token. Failed to execute command.
+
+stderr | __tests__/audit-gate-2-patches.test.ts > Audit Gate 2 — Category 4: logAudit patch verification > POST
+/api/admin/curriculum/reject — logAudit includes schoolId > calls logAudit with schoolId on successful rejection
+[Upstash Redis] Redis client was initialized without url or token. Failed to execute command.
+
+stderr | __tests__/audit-gate-2-patches.test.ts > Audit Gate 2 — Category 4: logAudit patch verification > POST
+/api/admin/curriculum/reject — logAudit includes schoolId > includes hasRejectionReason in details when reason provided
+[Upstash Redis] Redis client was initialized without url or token. Failed to execute command.
+
+stderr | __tests__/audit-gate-2-patches.test.ts > Audit Gate 2 — Category 4: logAudit patch verification > POST
+/api/admin/curriculum/reject — logAudit includes schoolId > hasRejectionReason is false when no reason provided
+[Upstash Redis] Redis client was initialized without url or token. Failed to execute command.
+
+stderr | __tests__/audit-gate-2-patches.test.ts > Audit Gate 2 — Category 3: PII governance > POST
+/api/admin/curriculum/approve — no PII in response > response contains only ok, contentId, status — no student or user
+data
+{"level":"warn","message":"[RAG] Best-effort approval chunk sync
+failed","metadata":{"error":{"name":"TypeError","message":"Cannot read properties of undefined (reading
+'deleteMany')","stack":null}},"timestamp":"2026-10-16T18:54:44.458Z","service":"liberialearn"}
+
+stderr | __tests__/audit-gate-2-patches.test.ts > Audit Gate 2 — Category 3: PII governance > POST
+/api/admin/curriculum/approve — no PII in response > response contains only ok, contentId, status — no student or user
+data
+[RAG_EMBED] Retrying embedding request { attempt: 1, backoffMs: 1000, status: 503 }
+
+stderr | __tests__/audit-gate-2-patches.test.ts > Audit Gate 2 — Category 3: PII governance > POST
+/api/admin/curriculum/approve — no PII in response > response contains only ok, contentId, status — no student or user
+data
+[RAG_EMBED] Retrying embedding request { attempt: 2, backoffMs: 2000, status: 503 }
+
+stderr | __tests__/audit-gate-2-patches.test.ts > Audit Gate 2 — Category 3: PII governance > POST
+/api/admin/curriculum/approve — no PII in response > response contains only ok, contentId, status — no student or user
+data
+[RAG_EMBED] Embedding request failed { attempt: 3, status: 503, message: 'OpenAI unavailable' }
+
+stderr | __tests__/audit-gate-2-patches.test.ts > Audit Gate 2 — Category 3: PII governance > POST
+/api/admin/curriculum/approve — no PII in response > response contains only ok, contentId, status — no student or user
+data
+{"level":"warn","message":"[RAG] Best-effort approval embedding
+failed","metadata":{"error":{"name":"Error","message":"OpenAI
+unavailable","stack":null}},"timestamp":"2026-10-16T18:54:47.524Z","service":"liberialearn"}
+
+stderr | __tests__/audit-gate-2-patches.test.ts > Audit Gate 2 — Category 3: PII governance > POST
+/api/admin/curriculum/approve — no PII in response > response contains only ok, contentId, status — no student or user
+data
+[Upstash Redis] Redis client was initialized without url or token. Failed to execute command.
+
+2:55:21 PM [vite] (ssr) warning: invalid import "../app/api/discussion/threads/[threadId]/${mod}/route". A file
+extension must be included in the static part of the import. For example: import(`./foo/${bar}.js`).
+  Plugin: vite:dynamic-import-vars
+  File: C:/liberia-learn/.task-worktrees/repair-pr190/__tests__/sprint7.discussion.test.ts
+····························································································································································································································································································································stdout | __tests__/load/nationalScaleSmoke.test.ts > Load Harness — Tier simulations (mock handlers, no DB) > Tier 6 (10,000 schools): "stress-test informational only" reports p95, p99, error rate, throughput
+[Stress] p95 teacher: 122ms, p99: 561ms, error rate: 0.000%, throughput: 7.61 req/s
+
+stderr | __tests__/final-gate/smoke.all-roles.test.ts > Final gate all-roles smoke > covers guardian, admin, moe, and
+platform roles
+[QUEUE] SQS_QUEUE_URL not configured; skipping enqueue { jobType: 'GENERATE_SCHOOL_ONBOARDING_KIT' }
+
+··············································································································································································································································································································································································stdout | __tests__/demo.seed.test.ts > seedChaDemo > creates the CHA school record
+[cha-demo] Seeding CHA demo accounts...
+
+stdout | __tests__/demo.seed.test.ts > seedChaDemo > creates the CHA school record
+[cha-demo] Done. Accounts created:
+  E2E_DEMO_ADMIN_EMAIL       / DEMO_SEED_PASSWORD (ADMIN)
+  E2E_DEMO_TEACHER_EMAIL     / DEMO_SEED_PASSWORD (TEACHER)
+  E2E_DEMO_STUDENT_EMAIL     / DEMO_SEED_PASSWORD (STUDENT)
+  E2E_DEMO_GUARDIAN_EMAIL    / DEMO_SEED_PASSWORD (GUARDIAN)
+  E2E_DEMO_MOE_EMAIL         / DEMO_MOE_PASSWORD (MOE_OFFICIAL)
+  platform.admin@liberialearn.org / DEMO_SEED_PASSWORD (PLATFORM ADMIN)
+
+stdout | __tests__/demo.seed.test.ts > seedChaDemo > creates the configured demo admin with ADMIN role
+[cha-demo] Seeding CHA demo accounts...
+
+stdout | __tests__/demo.seed.test.ts > seedChaDemo > creates the configured demo admin with ADMIN role
+[cha-demo] Done. Accounts created:
+  E2E_DEMO_ADMIN_EMAIL       / DEMO_SEED_PASSWORD (ADMIN)
+  E2E_DEMO_TEACHER_EMAIL     / DEMO_SEED_PASSWORD (TEACHER)
+  E2E_DEMO_STUDENT_EMAIL     / DEMO_SEED_PASSWORD (STUDENT)
+  E2E_DEMO_GUARDIAN_EMAIL    / DEMO_SEED_PASSWORD (GUARDIAN)
+  E2E_DEMO_MOE_EMAIL         / DEMO_MOE_PASSWORD (MOE_OFFICIAL)
+  platform.admin@liberialearn.org / DEMO_SEED_PASSWORD (PLATFORM ADMIN)
+
+stdout | __tests__/demo.seed.test.ts > seedChaDemo > creates the configured demo teacher with TEACHER role
+[cha-demo] Seeding CHA demo accounts...
+
+stdout | __tests__/demo.seed.test.ts > seedChaDemo > creates the configured demo teacher with TEACHER role
+[cha-demo] Done. Accounts created:
+  E2E_DEMO_ADMIN_EMAIL       / DEMO_SEED_PASSWORD (ADMIN)
+  E2E_DEMO_TEACHER_EMAIL     / DEMO_SEED_PASSWORD (TEACHER)
+  E2E_DEMO_STUDENT_EMAIL     / DEMO_SEED_PASSWORD (STUDENT)
+  E2E_DEMO_GUARDIAN_EMAIL    / DEMO_SEED_PASSWORD (GUARDIAN)
+  E2E_DEMO_MOE_EMAIL         / DEMO_MOE_PASSWORD (MOE_OFFICIAL)
+  platform.admin@liberialearn.org / DEMO_SEED_PASSWORD (PLATFORM ADMIN)
+
+stdout | __tests__/demo.seed.test.ts > seedChaDemo > creates the configured demo student with STUDENT role
+[cha-demo] Seeding CHA demo accounts...
+
+stdout | __tests__/demo.seed.test.ts > seedChaDemo > creates the configured demo student with STUDENT role
+[cha-demo] Done. Accounts created:
+  E2E_DEMO_ADMIN_EMAIL       / DEMO_SEED_PASSWORD (ADMIN)
+  E2E_DEMO_TEACHER_EMAIL     / DEMO_SEED_PASSWORD (TEACHER)
+  E2E_DEMO_STUDENT_EMAIL     / DEMO_SEED_PASSWORD (STUDENT)
+  E2E_DEMO_GUARDIAN_EMAIL    / DEMO_SEED_PASSWORD (GUARDIAN)
+  E2E_DEMO_MOE_EMAIL         / DEMO_MOE_PASSWORD (MOE_OFFICIAL)
+  platform.admin@liberialearn.org / DEMO_SEED_PASSWORD (PLATFORM ADMIN)
+
+stdout | __tests__/demo.seed.test.ts > seedChaDemo > creates the configured demo guardian with GUARDIAN role
+[cha-demo] Seeding CHA demo accounts...
+
+stdout | __tests__/demo.seed.test.ts > seedChaDemo > creates the configured demo guardian with GUARDIAN role
+[cha-demo] Done. Accounts created:
+  E2E_DEMO_ADMIN_EMAIL       / DEMO_SEED_PASSWORD (ADMIN)
+  E2E_DEMO_TEACHER_EMAIL     / DEMO_SEED_PASSWORD (TEACHER)
+  E2E_DEMO_STUDENT_EMAIL     / DEMO_SEED_PASSWORD (STUDENT)
+  E2E_DEMO_GUARDIAN_EMAIL    / DEMO_SEED_PASSWORD (GUARDIAN)
+  E2E_DEMO_MOE_EMAIL         / DEMO_MOE_PASSWORD (MOE_OFFICIAL)
+  platform.admin@liberialearn.org / DEMO_SEED_PASSWORD (PLATFORM ADMIN)
+
+stdout | __tests__/demo.seed.test.ts > seedChaDemo > creates the configured demo MOE official with MOE_OFFICIAL role
+[cha-demo] Seeding CHA demo accounts...
+
+stdout | __tests__/demo.seed.test.ts > seedChaDemo > creates the configured demo MOE official with MOE_OFFICIAL role
+[cha-demo] Done. Accounts created:
+  E2E_DEMO_ADMIN_EMAIL       / DEMO_SEED_PASSWORD (ADMIN)
+  E2E_DEMO_TEACHER_EMAIL     / DEMO_SEED_PASSWORD (TEACHER)
+  E2E_DEMO_STUDENT_EMAIL     / DEMO_SEED_PASSWORD (STUDENT)
+  E2E_DEMO_GUARDIAN_EMAIL    / DEMO_SEED_PASSWORD (GUARDIAN)
+  E2E_DEMO_MOE_EMAIL         / DEMO_MOE_PASSWORD (MOE_OFFICIAL)
+  platform.admin@liberialearn.org / DEMO_SEED_PASSWORD (PLATFORM ADMIN)
+
+stdout | __tests__/demo.seed.test.ts > CHA persisted demo identity repair > repairs the Grade 7 student1 in place, converges on rerun, and authorizes exactly four showcase labs
+[cha-demo] Seeding CHA demo accounts...
+
+stdout | __tests__/demo.seed.test.ts > CHA persisted demo identity repair > repairs the Grade 7 student1 in place, converges on rerun, and authorizes exactly four showcase labs
+[cha-demo] Done. Accounts created:
+  E2E_DEMO_ADMIN_EMAIL       / DEMO_SEED_PASSWORD (ADMIN)
+  E2E_DEMO_TEACHER_EMAIL     / DEMO_SEED_PASSWORD (TEACHER)
+  E2E_DEMO_STUDENT_EMAIL     / DEMO_SEED_PASSWORD (STUDENT)
+  E2E_DEMO_GUARDIAN_EMAIL    / DEMO_SEED_PASSWORD (GUARDIAN)
+  E2E_DEMO_MOE_EMAIL         / DEMO_MOE_PASSWORD (MOE_OFFICIAL)
+  platform.admin@liberialearn.org / DEMO_SEED_PASSWORD (PLATFORM ADMIN)
+
+stdout | __tests__/demo.seed.test.ts > CHA persisted demo identity repair > repairs the Grade 7 student1 in place, converges on rerun, and authorizes exactly four showcase labs
+[cha-demo] Seeding CHA demo accounts...
+
+stdout | __tests__/demo.seed.test.ts > CHA persisted demo identity repair > repairs the Grade 7 student1 in place, converges on rerun, and authorizes exactly four showcase labs
+[cha-demo] Done. Accounts created:
+  E2E_DEMO_ADMIN_EMAIL       / DEMO_SEED_PASSWORD (ADMIN)
+  E2E_DEMO_TEACHER_EMAIL     / DEMO_SEED_PASSWORD (TEACHER)
+  E2E_DEMO_STUDENT_EMAIL     / DEMO_SEED_PASSWORD (STUDENT)
+  E2E_DEMO_GUARDIAN_EMAIL    / DEMO_SEED_PASSWORD (GUARDIAN)
+  E2E_DEMO_MOE_EMAIL         / DEMO_MOE_PASSWORD (MOE_OFFICIAL)
+  platform.admin@liberialearn.org / DEMO_SEED_PASSWORD (PLATFORM ADMIN)
+
+stdout | __tests__/demo.seed.test.ts > CHA persisted demo identity repair > repairs only the configured email in identity-only mode, without reseeding curriculum or other accounts
+[cha-demo] Existing demo student identity repaired; sign out and sign in again.
+
+stdout | __tests__/demo.seed.test.ts > CHA persisted demo identity repair > restores missing/stale role, login and school fields on the exact demo account: {"role":"TEACHER","loginId":null,"schoolId":null}
+[cha-demo] Existing demo student identity repaired; sign out and sign in again.
+
+stdout | __tests__/demo.seed.test.ts > CHA persisted demo identity repair > restores missing/stale role, login and school fields on the exact demo account: {"role":"STUDENT","loginId":"wrong","schoolId":"old-school"}
+[cha-demo] Existing demo student identity repaired; sign out and sign in again.
+
+stdout | __tests__/demo.seed.test.ts > hosted User-only repair > repairs the same User while preserving all Grade 7 learning history and authorizing exactly four labs
+[cha-demo] Existing demo User identity repaired; learner history unchanged. Sign out and sign in again.
+
+stdout | __tests__/demo.seed.test.ts > hosted User-only repair > repairs the same User while preserving all Grade 7 learning history and authorizing exactly four labs
+[cha-demo] Existing demo User identity repaired; learner history unchanged. Sign out and sign in again.
+
+stdout | __tests__/demo.seed.test.ts > hosted User-only repair > uses the exact configured email and restores a stale role without normalizing Student
+[cha-demo] Existing demo User identity repaired; learner history unchanged. Sign out and sign in again.
+
+stderr | __tests__/agents/guardianInbound.test.ts > handleGuardianInbound > suppresses the SMS send when the cost cap
+is hit (and does not record spend)
+{"level":"warn","message":"[guardian.inbound] SMS reply suppressed by cost cap","metadata":{"traceId":"9f9c14c3-73aa-4b
+33-b08f-e646723b9855","phone":"[REDACTED]","reason":"guardian_daily_cap"},"timestamp":"2026-10-16T18:57:52.773Z","servi
+ce":"liberialearn"}
+
+stderr | __tests__/agents/guardianInbound.test.ts > handleGuardianInbound > safeguarding keyword gate (Spec 5) > still
+escalates and acknowledges even when no schoolId can be resolved (fully unverified caller)
+{"level":"warn","message":"[guardian.inbound] safeguarding escalation has no resolvable schoolId - school not notified"
+,"metadata":{"traceId":"a28e1373-8c36-48d7-b417-44cec6af71fe","escalationId":"esc-1"},"timestamp":"2026-10-16T18:57:52.
+790Z","service":"liberialearn"}
+
+stderr | __tests__/agents/guardianInbound.test.ts > handleGuardianInbound > safeguarding keyword gate (Spec 5) > never
+rate/cost-limits the safeguarding acknowledgment
+{"level":"warn","message":"[guardian.inbound] safeguarding escalation has no resolvable schoolId - school not notified"
+,"metadata":{"traceId":"e536b9ba-9c00-4b58-bf46-515d83238ad6","escalationId":"esc-1"},"timestamp":"2026-10-16T18:57:52.
+794Z","service":"liberialearn"}
+
+stderr | __tests__/agents/guardianInbound.test.ts > handleGuardianInbound > safeguarding keyword gate (Spec 5) >
+persists the guardian message to conversation history even on the escalation path
+{"level":"warn","message":"[guardian.inbound] safeguarding escalation has no resolvable schoolId - school not notified"
+,"metadata":{"traceId":"ee5dbea4-72be-49bf-98da-59f2e5748cf7","escalationId":"esc-1"},"timestamp":"2026-10-16T18:57:52.
+795Z","service":"liberialearn"}
+
+····························································································································································································································································································································································································································································································································stdout | __tests__/sprint8.guardian.test.ts > notifyAssignmentsDueTomorrow > 12. calls sendPushToUser for both student and guardian for due-tomorrow assignments
+{"level":"info","message":"Assignment due-tomorrow notifier complete","metadata":{"assignments":1,"notified":2},"timestamp":"2026-10-16T18:57:56.010Z","service":"liberialearn"}
+
+Warning: A vi.hoisted() call in
+"C:/liberia-learn/.task-worktrees/repair-pr190/__tests__/curriculum-v2/governance-provenance.test.ts" is not at the
+top level of the module. Although it appears nested, it will be hoisted and executed before any tests run. Move it to
+the top level to reflect its actual execution order. This will become an error in a future version.
+See: https://vitest.dev/guide/mocking/modules#how-it-works
+Warning: A vi.hoisted() call in
+"C:/liberia-learn/.task-worktrees/repair-pr190/__tests__/curriculum-v2/governance-provenance.test.ts" is not at the
+top level of the module. Although it appears nested, it will be hoisted and executed before any tests run. Move it to
+the top level to reflect its actual execution order. This will become an error in a future version.
+See: https://vitest.dev/guide/mocking/modules#how-it-works
+Warning: A vi.mock("@/lib/curriculum/mutations/repository") call in
+"C:/liberia-learn/.task-worktrees/repair-pr190/__tests__/curriculum-v2/governance-provenance.test.ts" is not at the
+top level of the module. Although it appears nested, it will be hoisted and executed before any tests run. Move it to
+the top level to reflect its actual execution order. This will become an error in a future version.
+See: https://vitest.dev/guide/mocking/modules#how-it-works
+Warning: A vi.mock("@/lib/audit") call in
+"C:/liberia-learn/.task-worktrees/repair-pr190/__tests__/curriculum-v2/governance-provenance.test.ts" is not at the
+top level of the module. Although it appears nested, it will be hoisted and executed before any tests run. Move it to
+the top level to reflect its actual execution order. This will become an error in a future version.
+See: https://vitest.dev/guide/mocking/modules#how-it-works
+·····················································································································stdout | __tests__/nr-pilot-content-depth/generateLessonV2.test.ts > generateLessonV2 > returns a valid CurriculumPayload with all V2 fields
+[generateLessonV2] Pass 1: 2054 words via llama-3.3-70b-versatile
+[generateLessonV2] Expansion attempt 1: 5 thin section(s) — Direct Instruction (Core Concepts) (396/1500w), Worked Examples (293/800w), Guided Practice (147/1200w), Independent Practice (151/600w), Assessment & Summary (77/200w)
+  Expanding "Direct Instruction (Core Concepts)": 396 → target 1500 words
+
+stderr | __tests__/nr-pilot-content-depth/generateLessonV2.test.ts > generateLessonV2 > returns a valid
+CurriculumPayload with all V2 fields
+[generateLessonV2] Pass 1 below 3000-word floor: 2054 words. Running expansion.
+
+stdout | __tests__/nr-pilot-content-depth/generateLessonV2.test.ts > generateLessonV2 > returns a valid CurriculumPayload with all V2 fields
+    Result: 7596 words via gpt-4o
+  Expanding "Worked Examples": 293 → target 800 words
+
+stdout | __tests__/nr-pilot-content-depth/generateLessonV2.test.ts > generateLessonV2 > returns a valid CurriculumPayload with all V2 fields
+    Result: 7493 words via gpt-4o
+  Expanding "Guided Practice": 147 → target 1200 words
+
+stdout | __tests__/nr-pilot-content-depth/generateLessonV2.test.ts > generateLessonV2 > returns a valid CurriculumPayload with all V2 fields
+    Result: 7347 words via gpt-4o
+  Expanding "Independent Practice": 151 → target 600 words
+
+stdout | __tests__/nr-pilot-content-depth/generateLessonV2.test.ts > generateLessonV2 > returns a valid CurriculumPayload with all V2 fields
+    Result: 7351 words via gpt-4o
+  Expanding "Assessment & Summary": 77 → target 200 words
+
+stdout | __tests__/nr-pilot-content-depth/generateLessonV2.test.ts > generateLessonV2 > returns a valid CurriculumPayload with all V2 fields
+    Result: 7277 words via gpt-4o
+[generateLessonV2] All sections pass floor checks.
+
+stdout | __tests__/nr-pilot-content-depth/generateLessonV2.test.ts > generateLessonV2 > returns a valid CurriculumPayload with all V2 fields
+[generateLessonV2] After expansion: 38054 words total
+
+·stdout | __tests__/nr-pilot-content-depth/generateLessonV2.test.ts > generateLessonV2 > extracts problem sets from structured markers
+[generateLessonV2] Pass 1: 2054 words via llama-3.3-70b-versatile
+[generateLessonV2] Expansion attempt 1: 5 thin section(s) — Direct Instruction (Core Concepts) (396/1500w), Worked Examples (293/800w), Guided Practice (147/1200w), Independent Practice (151/600w), Assessment & Summary (77/200w)
+  Expanding "Direct Instruction (Core Concepts)": 396 → target 1500 words
+
+stderr | __tests__/nr-pilot-content-depth/generateLessonV2.test.ts > generateLessonV2 > extracts problem sets from
+structured markers
+[generateLessonV2] Pass 1 below 3000-word floor: 2054 words. Running expansion.
+
+stdout | __tests__/nr-pilot-content-depth/generateLessonV2.test.ts > generateLessonV2 > extracts problem sets from structured markers
+    Result: 7596 words via gpt-4o
+  Expanding "Worked Examples": 293 → target 800 words
+
+stdout | __tests__/nr-pilot-content-depth/generateLessonV2.test.ts > generateLessonV2 > extracts problem sets from structured markers
+    Result: 7493 words via gpt-4o
+  Expanding "Guided Practice": 147 → target 1200 words
+
+stdout | __tests__/nr-pilot-content-depth/generateLessonV2.test.ts > generateLessonV2 > extracts problem sets from structured markers
+    Result: 7347 words via gpt-4o
+  Expanding "Independent Practice": 151 → target 600 words
+
+stdout | __tests__/nr-pilot-content-depth/generateLessonV2.test.ts > generateLessonV2 > extracts problem sets from structured markers
+    Result: 7351 words via gpt-4o
+  Expanding "Assessment & Summary": 77 → target 200 words
+
+stdout | __tests__/nr-pilot-content-depth/generateLessonV2.test.ts > generateLessonV2 > extracts problem sets from structured markers
+    Result: 7277 words via gpt-4o
+[generateLessonV2] All sections pass floor checks.
+
+stdout | __tests__/nr-pilot-content-depth/generateLessonV2.test.ts > generateLessonV2 > extracts problem sets from structured markers
+[generateLessonV2] After expansion: 38054 words total
+
+stdout | __tests__/nr-pilot-content-depth/generateLessonV2.test.ts > generateLessonV2 > strips answer blocks from student body
+[generateLessonV2] Pass 1: 2054 words via llama-3.3-70b-versatile
+[generateLessonV2] Expansion attempt 1: 5 thin section(s) — Direct Instruction (Core Concepts) (396/1500w), Worked Examples (293/800w), Guided Practice (147/1200w), Independent Practice (151/600w), Assessment & Summary (77/200w)
+  Expanding "Direct Instruction (Core Concepts)": 396 → target 1500 words
+
+stderr | __tests__/nr-pilot-content-depth/generateLessonV2.test.ts > generateLessonV2 > strips answer blocks from
+student body
+[generateLessonV2] Pass 1 below 3000-word floor: 2054 words. Running expansion.
+
+stdout | __tests__/nr-pilot-content-depth/generateLessonV2.test.ts > generateLessonV2 > strips answer blocks from student body
+    Result: 7596 words via gpt-4o
+  Expanding "Worked Examples": 293 → target 800 words
+
+stdout | __tests__/nr-pilot-content-depth/generateLessonV2.test.ts > generateLessonV2 > strips answer blocks from student body
+    Result: 7493 words via gpt-4o
+  Expanding "Guided Practice": 147 → target 1200 words
+
+stdout | __tests__/nr-pilot-content-depth/generateLessonV2.test.ts > generateLessonV2 > strips answer blocks from student body
+    Result: 7347 words via gpt-4o
+  Expanding "Independent Practice": 151 → target 600 words
+
+stdout | __tests__/nr-pilot-content-depth/generateLessonV2.test.ts > generateLessonV2 > strips answer blocks from student body
+    Result: 7351 words via gpt-4o
+  Expanding "Assessment & Summary": 77 → target 200 words
+
+stdout | __tests__/nr-pilot-content-depth/generateLessonV2.test.ts > generateLessonV2 > strips answer blocks from student body
+    Result: 7277 words via gpt-4o
+[generateLessonV2] All sections pass floor checks.
+
+stdout | __tests__/nr-pilot-content-depth/generateLessonV2.test.ts > generateLessonV2 > strips answer blocks from student body
+[generateLessonV2] After expansion: 38054 words total
+
+··stdout | __tests__/nr-pilot-content-depth/generateLessonV2.test.ts > generateLessonV2 > sets demoReady flag when provided
+[generateLessonV2] Pass 1: 2054 words via llama-3.3-70b-versatile
+[generateLessonV2] Expansion attempt 1: 5 thin section(s) — Direct Instruction (Core Concepts) (396/1500w), Worked Examples (293/800w), Guided Practice (147/1200w), Independent Practice (151/600w), Assessment & Summary (77/200w)
+  Expanding "Direct Instruction (Core Concepts)": 396 → target 1500 words
+
+stderr | __tests__/nr-pilot-content-depth/generateLessonV2.test.ts > generateLessonV2 > sets demoReady flag when
+provided
+[generateLessonV2] Pass 1 below 3000-word floor: 2054 words. Running expansion.
+
+stdout | __tests__/nr-pilot-content-depth/generateLessonV2.test.ts > generateLessonV2 > sets demoReady flag when provided
+    Result: 7596 words via gpt-4o
+  Expanding "Worked Examples": 293 → target 800 words
+
+stdout | __tests__/nr-pilot-content-depth/generateLessonV2.test.ts > generateLessonV2 > sets demoReady flag when provided
+    Result: 7493 words via gpt-4o
+  Expanding "Guided Practice": 147 → target 1200 words
+
+stdout | __tests__/nr-pilot-content-depth/generateLessonV2.test.ts > generateLessonV2 > sets demoReady flag when provided
+    Result: 7347 words via gpt-4o
+  Expanding "Independent Practice": 151 → target 600 words
+
+stdout | __tests__/nr-pilot-content-depth/generateLessonV2.test.ts > generateLessonV2 > sets demoReady flag when provided
+    Result: 7351 words via gpt-4o
+  Expanding "Assessment & Summary": 77 → target 200 words
+
+stdout | __tests__/nr-pilot-content-depth/generateLessonV2.test.ts > generateLessonV2 > sets demoReady flag when provided
+    Result: 7277 words via gpt-4o
+[generateLessonV2] All sections pass floor checks.
+
+stdout | __tests__/nr-pilot-content-depth/generateLessonV2.test.ts > generateLessonV2 > sets demoReady flag when provided
+[generateLessonV2] After expansion: 38054 words total
+
+stdout | __tests__/nr-pilot-content-depth/generateLessonV2.test.ts > generateLessonV2 > throws GenerateLessonV2Error when body is too thin
+[generateLessonV2] Pass 1: 2 words via llama
+
+stdout | __tests__/nr-pilot-content-depth/generateLessonV2.test.ts > generateLessonV2 > calls routedCompletion with modelOverride when model is specified
+[generateLessonV2] Pass 1: 2054 words via llama-3.3-70b-versatile
+[generateLessonV2] Expansion attempt 1: 5 thin section(s) — Direct Instruction (Core Concepts) (396/1500w), Worked Examples (293/800w), Guided Practice (147/1200w), Independent Practice (151/600w), Assessment & Summary (77/200w)
+  Expanding "Direct Instruction (Core Concepts)": 396 → target 1500 words
+
+stderr | __tests__/nr-pilot-content-depth/generateLessonV2.test.ts > generateLessonV2 > calls routedCompletion with
+modelOverride when model is specified
+[generateLessonV2] Pass 1 below 3000-word floor: 2054 words. Running expansion.
+
+stdout | __tests__/nr-pilot-content-depth/generateLessonV2.test.ts > generateLessonV2 > calls routedCompletion with modelOverride when model is specified
+    Result: 7596 words via gpt-4o
+  Expanding "Worked Examples": 293 → target 800 words
+
+stdout | __tests__/nr-pilot-content-depth/generateLessonV2.test.ts > generateLessonV2 > calls routedCompletion with modelOverride when model is specified
+    Result: 7493 words via gpt-4o
+  Expanding "Guided Practice": 147 → target 1200 words
+
+stdout | __tests__/nr-pilot-content-depth/generateLessonV2.test.ts > generateLessonV2 > calls routedCompletion with modelOverride when model is specified
+    Result: 7347 words via gpt-4o
+  Expanding "Independent Practice": 151 → target 600 words
+
+stdout | __tests__/nr-pilot-content-depth/generateLessonV2.test.ts > generateLessonV2 > calls routedCompletion with modelOverride when model is specified
+    Result: 7351 words via gpt-4o
+  Expanding "Assessment & Summary": 77 → target 200 words
+
+stdout | __tests__/nr-pilot-content-depth/generateLessonV2.test.ts > generateLessonV2 > calls routedCompletion with modelOverride when model is specified
+    Result: 7277 words via gpt-4o
+[generateLessonV2] All sections pass floor checks.
+
+stdout | __tests__/nr-pilot-content-depth/generateLessonV2.test.ts > generateLessonV2 > calls routedCompletion with modelOverride when model is specified
+[generateLessonV2] After expansion: 38054 words total
+
+···stdout | __tests__/nr-pilot-content-depth/generateLessonV2.test.ts > generateLessonV2 > fires expansion calls when sections are below floor
+[generateLessonV2] Pass 1: 2054 words via llama-3.3-70b-versatile
+[generateLessonV2] Expansion attempt 1: 5 thin section(s) — Direct Instruction (Core Concepts) (396/1500w), Worked Examples (293/800w), Guided Practice (147/1200w), Independent Practice (151/600w), Assessment & Summary (77/200w)
+  Expanding "Direct Instruction (Core Concepts)": 396 → target 1500 words
+
+stderr | __tests__/nr-pilot-content-depth/generateLessonV2.test.ts > generateLessonV2 > fires expansion calls when
+sections are below floor
+[generateLessonV2] Pass 1 below 3000-word floor: 2054 words. Running expansion.
+
+stdout | __tests__/nr-pilot-content-depth/generateLessonV2.test.ts > generateLessonV2 > fires expansion calls when sections are below floor
+    Result: 7596 words via gpt-4o
+  Expanding "Worked Examples": 293 → target 800 words
+
+stdout | __tests__/nr-pilot-content-depth/generateLessonV2.test.ts > generateLessonV2 > fires expansion calls when sections are below floor
+    Result: 7493 words via gpt-4o
+  Expanding "Guided Practice": 147 → target 1200 words
+
+stdout | __tests__/nr-pilot-content-depth/generateLessonV2.test.ts > generateLessonV2 > fires expansion calls when sections are below floor
+    Result: 7347 words via gpt-4o
+  Expanding "Independent Practice": 151 → target 600 words
+
+stdout | __tests__/nr-pilot-content-depth/generateLessonV2.test.ts > generateLessonV2 > fires expansion calls when sections are below floor
+    Result: 7351 words via gpt-4o
+  Expanding "Assessment & Summary": 77 → target 200 words
+
+stdout | __tests__/nr-pilot-content-depth/generateLessonV2.test.ts > generateLessonV2 > fires expansion calls when sections are below floor
+    Result: 7277 words via gpt-4o
+[generateLessonV2] All sections pass floor checks.
+
+stdout | __tests__/nr-pilot-content-depth/generateLessonV2.test.ts > generateLessonV2 > fires expansion calls when sections are below floor
+[generateLessonV2] After expansion: 38054 words total
+
+·························································································································································································································stdout | __tests__/curriculum.regenerationPipeline.test.ts > curriculum regeneration pipeline > persists passing regenerated content as DRAFT via update, not duplicate create
+{"level":"info","message":"[AI_RETRY] provider operation succeeded","metadata":{"operation":"curriculum.regenerate.lesson","attempt":1,"provider":null,"model":null,"latencyMs":6,"inputTokens":null,"outputTokens":null,"estimatedCostUSD":null},"timestamp":"2026-10-16T18:58:45.330Z","service":"liberialearn"}
+
+stderr | __tests__/rag.hybrid.test.ts > sparseRetrieve > returns empty array gracefully when the DB query throws
+[RAG_SPARSE] Full-text search query failed — returning empty results {
+  error: Error: DB down
+      at C:/liberia-learn/.task-worktrees/repair-pr190/__tests__/rag.hybrid.test.ts:135:42
+      at
+file:///C:/liberia-learn/.task-worktrees/repair-pr190/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11
+      at
+file:///C:/liberia-learn/.task-worktrees/repair-pr190/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26
+      at
+file:///C:/liberia-learn/.task-worktrees/repair-pr190/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20
+      at new Promise (<anonymous>)
+      at runWithCancel
+(file:///C:/liberia-learn/.task-worktrees/repair-pr190/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)
+      at
+file:///C:/liberia-learn/.task-worktrees/repair-pr190/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20
+      at new Promise (<anonymous>)
+      at runWithTimeout
+(file:///C:/liberia-learn/.task-worktrees/repair-pr190/node_modules/@vitest/runner/dist/chunk-artifact.js:2272:10)
+      at
+file:///C:/liberia-learn/.task-worktrees/repair-pr190/node_modules/@vitest/runner/dist/chunk-artifact.js:2955:64
+}
+
+stderr | __tests__/rag.hybrid.test.ts > rerankChunks (Cohere cross-encoder) > degrades gracefully and returns fusion
+order when COHERE_API_KEY is not set
+[RAG_RERANKER] COHERE_API_KEY not set — skipping Cohere rerank, returning hybrid fusion order
+
+stderr | __tests__/rag.hybrid.test.ts > rerankChunks (Cohere cross-encoder) > degrades gracefully and returns fusion
+order when Cohere API throws
+[RAG_RERANKER] Cohere rerank failed — returning fusion order {
+  error: Error: rate limit
+      at C:/liberia-learn/.task-worktrees/repair-pr190/__tests__/rag.hybrid.test.ts:263:42
+      at
+file:///C:/liberia-learn/.task-worktrees/repair-pr190/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11
+      at
+file:///C:/liberia-learn/.task-worktrees/repair-pr190/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26
+      at
+file:///C:/liberia-learn/.task-worktrees/repair-pr190/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20
+      at new Promise (<anonymous>)
+      at runWithCancel
+(file:///C:/liberia-learn/.task-worktrees/repair-pr190/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)
+      at
+file:///C:/liberia-learn/.task-worktrees/repair-pr190/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20
+      at new Promise (<anonymous>)
+      at runWithTimeout
+(file:///C:/liberia-learn/.task-worktrees/repair-pr190/node_modules/@vitest/runner/dist/chunk-artifact.js:2272:10)
+      at
+file:///C:/liberia-learn/.task-worktrees/repair-pr190/node_modules/@vitest/runner/dist/chunk-artifact.js:2955:64
+}
+
+stderr | __tests__/rag.hybrid.test.ts > hybridRetrieve > runs dense and sparse retrievers in parallel (both are called)
+[RAG_RERANKER] COHERE_API_KEY not set — skipping Cohere rerank, returning hybrid fusion order
+
+·······························································································stdout | __tests__/rag.hybrid.test.ts > hybridRetrieve > runs dense and sparse retrievers in parallel (both are called)
+[RAG_HYBRID] Retrieval complete {
+  retrievalMethod: 'hybrid-rrf-rerank',
+  denseCount: 2,
+  sparseCount: 1,
+  fusedCount: 3,
+  rerankEnabled: false,
+  topK: 2
+}
+
+stderr | __tests__/rag.hybrid.test.ts > hybridRetrieve > returns at most topK results
+[RAG_RERANKER] COHERE_API_KEY not set — skipping Cohere rerank, returning hybrid fusion order
+
+stdout | __tests__/rag.hybrid.test.ts > hybridRetrieve > returns at most topK results
+[RAG_HYBRID] Retrieval complete {
+  retrievalMethod: 'hybrid-rrf-rerank',
+  denseCount: 2,
+  sparseCount: 1,
+  fusedCount: 3,
+  rerankEnabled: false,
+  topK: 2
+}
+
+stderr | __tests__/rag.hybrid.test.ts > hybridRetrieve > returns merged results from both dense and sparse sources
+[RAG_RERANKER] COHERE_API_KEY not set — skipping Cohere rerank, returning hybrid fusion order
+
+stdout | __tests__/rag.hybrid.test.ts > hybridRetrieve > returns merged results from both dense and sparse sources
+[RAG_HYBRID] Retrieval complete {
+  retrievalMethod: 'hybrid-rrf-rerank',
+  denseCount: 2,
+  sparseCount: 1,
+  fusedCount: 3,
+  rerankEnabled: false,
+  topK: 5
+}
+
+stderr | __tests__/rag.hybrid.test.ts > hybridRetrieve > hybridRetrieveWithMetadata returns denseResults,
+sparseResults, preRerankResults
+[RAG_RERANKER] COHERE_API_KEY not set — skipping Cohere rerank, returning hybrid fusion order
+
+stdout | __tests__/rag.hybrid.test.ts > hybridRetrieve > hybridRetrieveWithMetadata returns denseResults, sparseResults, preRerankResults
+[RAG_HYBRID] Retrieval complete {
+  retrievalMethod: 'hybrid-rrf-rerank',
+  denseCount: 2,
+  sparseCount: 1,
+  fusedCount: 3,
+  rerankEnabled: false,
+  topK: 3
+}
+
+stderr | __tests__/rag.hybrid.test.ts > Eval metrics include hybrid breakdown > hybridRetrieveWithMetadata result
+contains all fields required by HybridRetrievalMetrics
+[RAG_RERANKER] COHERE_API_KEY not set — skipping Cohere rerank, returning hybrid fusion order
+
+·························stdout | __tests__/rag.hybrid.test.ts > Eval metrics include hybrid breakdown > hybridRetrieveWithMetadata result contains all fields required by HybridRetrievalMetrics
+[RAG_HYBRID] Retrieval complete {
+  retrievalMethod: 'hybrid-rrf-rerank',
+  denseCount: 1,
+  sparseCount: 1,
+  fusedCount: 2,
+  rerankEnabled: false,
+  topK: 3
+}
+
+stderr | __tests__/grading.essay.test.ts > PATCH /api/grading/[submissionId]/override — teacher override > allows
+TEACHER to override score
+[AUDIT] Failed to log: Error: audit_log_unavailable
+    at writeAudit (C:/liberia-learn/.task-worktrees/repair-pr190/lib/audit.ts:34:11)
+    at logAudit (C:/liberia-learn/.task-worktrees/repair-pr190/lib/audit.ts:53:11)
+    at PATCH (C:/liberia-learn/.task-worktrees/repair-pr190/app/api/grading/[submissionId]/override/route.ts:72:11)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at C:/liberia-learn/.task-worktrees/repair-pr190/__tests__/grading.essay.test.ts:348:17
+    at file:///C:/liberia-learn/.task-worktrees/repair-pr190/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:20
+
+stderr | __tests__/grading.essay.test.ts > PATCH /api/grading/[submissionId]/override — teacher override > allows a
+platform admin to override a submission at any school
+[AUDIT] Failed to log: Error: audit_log_unavailable
+    at writeAudit (C:/liberia-learn/.task-worktrees/repair-pr190/lib/audit.ts:34:11)
+    at logAudit (C:/liberia-learn/.task-worktrees/repair-pr190/lib/audit.ts:53:11)
+    at PATCH (C:/liberia-learn/.task-worktrees/repair-pr190/app/api/grading/[submissionId]/override/route.ts:72:11)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at C:/liberia-learn/.task-worktrees/repair-pr190/__tests__/grading.essay.test.ts:397:17
+    at file:///C:/liberia-learn/.task-worktrees/repair-pr190/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:20
+
+stderr | __tests__/guardian.sms.reliability.test.ts > guardian SMS reliability > logs delivery row on send
+[AUDIT] Failed to log: Error: audit_log_unavailable
+    at writeAudit (C:/liberia-learn/.task-worktrees/repair-pr190/lib/audit.ts:34:11)
+    at logAudit (C:/liberia-learn/.task-worktrees/repair-pr190/lib/audit.ts:53:11)
+    at Module.sendGuardianSMS (C:/liberia-learn/.task-worktrees/repair-pr190/lib/guardian/sms-service.ts:289:12)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at C:/liberia-learn/.task-worktrees/repair-pr190/__tests__/guardian.sms.reliability.test.ts:103:20
+    at file:///C:/liberia-learn/.task-worktrees/repair-pr190/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:20
+
+stderr | __tests__/guardian.sms.reliability.test.ts > guardian SMS reliability > retries on transient failure
+[AUDIT] Failed to log: Error: audit_log_unavailable
+    at writeAudit (C:/liberia-learn/.task-worktrees/repair-pr190/lib/audit.ts:34:11)
+    at logAudit (C:/liberia-learn/.task-worktrees/repair-pr190/lib/audit.ts:53:11)
+    at Module.sendGuardianSMS (C:/liberia-learn/.task-worktrees/repair-pr190/lib/guardian/sms-service.ts:289:12)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at C:/liberia-learn/.task-worktrees/repair-pr190/__tests__/guardian.sms.reliability.test.ts:128:20
+    at file:///C:/liberia-learn/.task-worktrees/repair-pr190/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:20
+
+stderr | __tests__/guardian.sms.reliability.test.ts > guardian SMS reliability > includes schoolId in all Prisma
+queries to enforce tenant isolation
+[AUDIT] Failed to log: Error: audit_log_unavailable
+    at writeAudit (C:/liberia-learn/.task-worktrees/repair-pr190/lib/audit.ts:34:11)
+    at logAudit (C:/liberia-learn/.task-worktrees/repair-pr190/lib/audit.ts:53:11)
+    at Module.sendGuardianSMS (C:/liberia-learn/.task-worktrees/repair-pr190/lib/guardian/sms-service.ts:289:12)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at C:/liberia-learn/.task-worktrees/repair-pr190/__tests__/guardian.sms.reliability.test.ts:369:5
+    at file:///C:/liberia-learn/.task-worktrees/repair-pr190/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:20
+
+stderr | __tests__/guardian.sms.reliability.test.ts > guardian SMS reliability > throttle count query is tenant-scoped
+by schoolId and guardianId
+[AUDIT] Failed to log: Error: audit_log_unavailable
+    at writeAudit (C:/liberia-learn/.task-worktrees/repair-pr190/lib/audit.ts:34:11)
+    at logAudit (C:/liberia-learn/.task-worktrees/repair-pr190/lib/audit.ts:53:11)
+    at Module.sendGuardianSMS (C:/liberia-learn/.task-worktrees/repair-pr190/lib/guardian/sms-service.ts:289:12)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at C:/liberia-learn/.task-worktrees/repair-pr190/__tests__/guardian.sms.reliability.test.ts:417:5
+    at file:///C:/liberia-learn/.task-worktrees/repair-pr190/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:20
+
+stderr | __tests__/guardian.sms.reliability.test.ts > guardian SMS reliability > allows send when below throttle limit
+[AUDIT] Failed to log: Error: audit_log_unavailable
+    at writeAudit (C:/liberia-learn/.task-worktrees/repair-pr190/lib/audit.ts:34:11)
+    at logAudit (C:/liberia-learn/.task-worktrees/repair-pr190/lib/audit.ts:53:11)
+    at Module.sendGuardianSMS (C:/liberia-learn/.task-worktrees/repair-pr190/lib/guardian/sms-service.ts:289:12)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at C:/liberia-learn/.task-worktrees/repair-pr190/__tests__/guardian.sms.reliability.test.ts:437:20
+    at file:///C:/liberia-learn/.task-worktrees/repair-pr190/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:20
+
+stderr | __tests__/guardian.sms.reliability.test.ts > guardian SMS reliability > skips throttle check when throttle is
+disabled
+[AUDIT] Failed to log: Error: audit_log_unavailable
+    at writeAudit (C:/liberia-learn/.task-worktrees/repair-pr190/lib/audit.ts:34:11)
+    at logAudit (C:/liberia-learn/.task-worktrees/repair-pr190/lib/audit.ts:53:11)
+    at Module.sendGuardianSMS (C:/liberia-learn/.task-worktrees/repair-pr190/lib/guardian/sms-service.ts:289:12)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at C:/liberia-learn/.task-worktrees/repair-pr190/__tests__/guardian.sms.reliability.test.ts:450:5
+    at file:///C:/liberia-learn/.task-worktrees/repair-pr190/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:20
+
+···················································································································································································stdout | __tests__/delivery-profile.test.ts > generateCurriculumPayload — deliveryProfile flag > ENABLE_DELIVERY_PROFILE=false > does not include deliveryProfile in the returned payload
+[curriculum-factory] Two-pass Pass 1: 2 words via llama-3.3-70b-versatile
+
+stderr | __tests__/delivery-profile.test.ts > generateCurriculumPayload — deliveryProfile flag >
+ENABLE_DELIVERY_PROFILE=false > does not include deliveryProfile in the returned payload
+[curriculum-factory] Two-pass failed, falling back to single-pass OpenAI: Two-pass Pass 1 too thin: 2 words via
+llama-3.3-70b-versatile
+
+stdout | __tests__/delivery-profile.test.ts > generateCurriculumPayload — deliveryProfile flag > ENABLE_DELIVERY_PROFILE=false > does not inject deliveryProfile prompt into system message
+[curriculum-factory] Two-pass Pass 1: 2 words via llama-3.3-70b-versatile
+
+stderr | __tests__/delivery-profile.test.ts > generateCurriculumPayload — deliveryProfile flag >
+ENABLE_DELIVERY_PROFILE=false > does not inject deliveryProfile prompt into system message
+[curriculum-factory] Two-pass failed, falling back to single-pass OpenAI: Two-pass Pass 1 too thin: 2 words via
+llama-3.3-70b-versatile
+
+stdout | __tests__/delivery-profile.test.ts > generateCurriculumPayload — deliveryProfile flag > ENABLE_DELIVERY_PROFILE=false > succeeds even when AI returns no deliveryProfile field
+[curriculum-factory] Two-pass Pass 1: 2 words via llama-3.3-70b-versatile
+
+stderr | __tests__/delivery-profile.test.ts > generateCurriculumPayload — deliveryProfile flag >
+ENABLE_DELIVERY_PROFILE=false > succeeds even when AI returns no deliveryProfile field
+[curriculum-factory] Two-pass failed, falling back to single-pass OpenAI: Two-pass Pass 1 too thin: 2 words via
+llama-3.3-70b-versatile
+
+stdout | __tests__/delivery-profile.test.ts > generateCurriculumPayload — deliveryProfile flag > ENABLE_DELIVERY_PROFILE=false > strips deliveryProfile even when AI unexpectedly returns one
+[curriculum-factory] Two-pass Pass 1: 2 words via llama-3.3-70b-versatile
+
+stderr | __tests__/delivery-profile.test.ts > generateCurriculumPayload — deliveryProfile flag >
+ENABLE_DELIVERY_PROFILE=false > strips deliveryProfile even when AI unexpectedly returns one
+stdout | __tests__/delivery-profile.test.ts > generateCurriculumPayload — deliveryProfile flag > ENABLE_DELIVERY_PROFILE=true > injects deliveryProfile prompt into the system message
+[curriculum-factory] Two-pass Pass 1: 2 words via llama-3.3-70b-versatile
+
+stdout | __tests__/delivery-profile.test.ts > generateCurriculumPayload — deliveryProfile flag > ENABLE_DELIVERY_PROFILE=true > returns payload with valid deliveryProfile when AI output is well-formed
+[curriculum-factory] Two-pass Pass 1: 2 words via llama-3.3-70b-versatile
+
+stdout | __tests__/delivery-profile.test.ts > generateCurriculumPayload — deliveryProfile flag > ENABLE_DELIVERY_PROFILE=true > includes valid toolsRequired with known toolKey
+[curriculum-factory] Two-pass Pass 1: 2 words via llama-3.3-70b-versatile
+
+stdout | __tests__/delivery-profile.test.ts > generateCurriculumPayload — deliveryProfile flag > ENABLE_DELIVERY_PROFILE=true > does not throw on unknown toolKey (Zod schema allows any string — prompt enforces the list)
+[curriculum-factory] Two-pass Pass 1: 2 words via llama-3.3-70b-versatile
+
+[curriculum-factory] Two-pass failed, falling back to single-pass OpenAI: Two-pass Pass 1 too thin: 2 words via
+llama-3.3-70b-versatile
+
+stderr | __tests__/delivery-profile.test.ts > generateCurriculumPayload — deliveryProfile flag >
+ENABLE_DELIVERY_PROFILE=true > injects deliveryProfile prompt into the system message
+[curriculum-factory] Two-pass failed, falling back to single-pass OpenAI: Two-pass Pass 1 too thin: 2 words via
+llama-3.3-70b-versatile
+
+stderr | __tests__/delivery-profile.test.ts > generateCurriculumPayload — deliveryProfile flag >
+ENABLE_DELIVERY_PROFILE=true > returns payload with valid deliveryProfile when AI output is well-formed
+[curriculum-factory] Two-pass failed, falling back to single-pass OpenAI: Two-pass Pass 1 too thin: 2 words via
+llama-3.3-70b-versatile
+
+stderr | __tests__/delivery-profile.test.ts > generateCurriculumPayload — deliveryProfile flag >
+ENABLE_DELIVERY_PROFILE=true > includes valid toolsRequired with known toolKey
+[curriculum-factory] Two-pass failed, falling back to single-pass OpenAI: Two-pass Pass 1 too thin: 2 words via
+llama-3.3-70b-versatile
+
+stderr | __tests__/delivery-profile.test.ts > generateCurriculumPayload — deliveryProfile flag >
+ENABLE_DELIVERY_PROFILE=true > does not throw on unknown toolKey (Zod schema allows any string — prompt enforces the
+list)
+[curriculum-factory] Two-pass failed, falling back to single-pass OpenAI: Two-pass Pass 1 too thin: 2 words via
+llama-3.3-70b-versatile
+
+stdout | __tests__/delivery-profile.test.ts > generateCurriculumPayload — deliveryProfile flag > ENABLE_DELIVERY_PROFILE=true > throws when exitTicket has fewer than 2 questions
+[curriculum-factory] Two-pass Pass 1: 2 words via llama-3.3-70b-versatile
+
+stderr | __tests__/delivery-profile.test.ts > generateCurriculumPayload — deliveryProfile flag >
+ENABLE_DELIVERY_PROFILE=true > throws when exitTicket has fewer than 2 questions
+[curriculum-factory] Two-pass failed, falling back to single-pass OpenAI: Two-pass Pass 1 too thin: 2 words via
+llama-3.3-70b-versatile
+
+stdout | __tests__/delivery-profile.test.ts > generateCurriculumPayload — deliveryProfile flag > ENABLE_DELIVERY_PROFILE=true > throws when exitTicket has more than 3 questions
+[curriculum-factory] Two-pass Pass 1: 2 words via llama-3.3-70b-versatile
+
+stderr | __tests__/delivery-profile.test.ts > generateCurriculumPayload — deliveryProfile flag >
+ENABLE_DELIVERY_PROFILE=true > throws when exitTicket has more than 3 questions
+stdout | __tests__/delivery-profile.test.ts > generateCurriculumPayload — deliveryProfile flag > ENABLE_DELIVERY_PROFILE=true > accepts exitTicket with exactly 2 questions (lower bound)
+[curriculum-factory] Two-pass Pass 1: 2 words via llama-3.3-70b-versatile
+
+stdout | __tests__/delivery-profile.test.ts > generateCurriculumPayload — deliveryProfile flag > ENABLE_DELIVERY_PROFILE=true > accepts exitTicket with exactly 3 questions (upper bound)
+[curriculum-factory] Two-pass Pass 1: 2 words via llama-3.3-70b-versatile
+
+stdout | __tests__/delivery-profile.test.ts > generateCurriculumPayload — deliveryProfile flag > ENABLE_DELIVERY_PROFILE=true > throws when AI returns invalid JSON entirely
+[curriculum-factory] Two-pass Pass 1: 2 words via llama-3.3-70b-versatile
+
+[curriculum-factory] Two-pass failed, falling back to single-pass OpenAI: Two-pass Pass 1 too thin: 2 words via
+llama-3.3-70b-versatile
+
+stderr | __tests__/delivery-profile.test.ts > generateCurriculumPayload — deliveryProfile flag >
+ENABLE_DELIVERY_PROFILE=true > accepts exitTicket with exactly 2 questions (lower bound)
+[curriculum-factory] Two-pass failed, falling back to single-pass OpenAI: Two-pass Pass 1 too thin: 2 words via
+llama-3.3-70b-versatile
+
+stderr | __tests__/delivery-profile.test.ts > generateCurriculumPayload — deliveryProfile flag >
+ENABLE_DELIVERY_PROFILE=true > accepts exitTicket with exactly 3 questions (upper bound)
+[curriculum-factory] Two-pass failed, falling back to single-pass OpenAI: Two-pass Pass 1 too thin: 2 words via
+llama-3.3-70b-versatile
+
+stderr | __tests__/delivery-profile.test.ts > generateCurriculumPayload — deliveryProfile flag >
+ENABLE_DELIVERY_PROFILE=true > throws when AI returns invalid JSON entirely
+[curriculum-factory] Two-pass failed, falling back to single-pass OpenAI: Two-pass Pass 1 too thin: 2 words via
+llama-3.3-70b-versatile
+
+·····························································································································································································································································································································································································································································································································stdout | __tests__/curriculum.lesson-depth.test.ts > generateCurriculumPayload lesson depth > injects all required standard lesson sections into the prompt
+[curriculum-factory] Two-pass Pass 1: 2 words via llama-3.3-70b-versatile
+
+stderr | __tests__/curriculum.lesson-depth.test.ts > generateCurriculumPayload lesson depth > injects all required
+standard lesson sections into the prompt
+[curriculum-factory] Two-pass failed, falling back to single-pass OpenAI: Two-pass Pass 1 too thin: 2 words via
+llama-3.3-70b-versatile
+
+stdout | __tests__/curriculum.lesson-depth.test.ts > generateCurriculumPayload lesson depth > returns both lesson bodies when lessonFormat is either
+[curriculum-factory] Two-pass Pass 1: 2 words via llama-3.3-70b-versatile
+
+stderr | __tests__/curriculum.lesson-depth.test.ts > generateCurriculumPayload lesson depth > returns both lesson
+bodies when lessonFormat is either
+[curriculum-factory] Two-pass failed, falling back to single-pass OpenAI: Two-pass Pass 1 too thin: 2 words via
+llama-3.3-70b-versatile
+
+stderr | __tests__/workflow.assignmentTutor.test.ts > POST /api/teacher/assignment/tutor — fallback > returns 200 with
+hadFallback=true when AI throws
+[ASSIGNMENT_TUTOR] Call failed: AI unavailable
+
+stderr | __tests__/workflow.assignmentTutor.test.ts > POST /api/teacher/assignment/tutor — fallback > returns 200 with
+hadFallback=true when AI returns invalid JSON
+[ASSIGNMENT_TUTOR] Response validation failed: Here are some tips but not JSON
+
+stderr | __tests__/offline/queue-wiring.test.ts > Gap 1: offline queue wiring > POST
+/api/student/work/[scheduledWorkId]/complete > returns 200 and enqueues a lesson.completed item
+[autoAwardCertificate] error: TypeError: Cannot read properties of undefined (reading 'findUnique')
+    at checkAndAwardCertificate
+(C:/liberia-learn/.task-worktrees/repair-pr190/lib/certificates/autoAwardCertificate.ts:35:47)
+    at C:/liberia-learn/.task-worktrees/repair-pr190/lib/student/completeScheduledLesson.ts:267:7
+    at runClaimedEffect (C:/liberia-learn/.task-worktrees/repair-pr190/lib/student/completeScheduledLesson.ts:226:13)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at completeScheduledLesson
+(C:/liberia-learn/.task-worktrees/repair-pr190/lib/student/completeScheduledLesson.ts:264:3)
+    at POST
+(C:/liberia-learn/.task-worktrees/repair-pr190/app/api/student/work/[scheduledWorkId]/complete/route.ts:14:20)
+    at C:/liberia-learn/.task-worktrees/repair-pr190/__tests__/offline/queue-wiring.test.ts:145:19
+    at file:///C:/liberia-learn/.task-worktrees/repair-pr190/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:20
+
+stderr | __tests__/offline/queue-wiring.test.ts > Gap 1: offline queue wiring > POST
+/api/student/work/[scheduledWorkId]/complete > enqueued item has userId in payload
+[autoAwardCertificate] error: TypeError: Cannot read properties of undefined (reading 'findUnique')
+    at checkAndAwardCertificate
+(C:/liberia-learn/.task-worktrees/repair-pr190/lib/certificates/autoAwardCertificate.ts:35:47)
+    at C:/liberia-learn/.task-worktrees/repair-pr190/lib/student/completeScheduledLesson.ts:267:7
+    at runClaimedEffect (C:/liberia-learn/.task-worktrees/repair-pr190/lib/student/completeScheduledLesson.ts:226:13)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at completeScheduledLesson
+(C:/liberia-learn/.task-worktrees/repair-pr190/lib/student/completeScheduledLesson.ts:264:3)
+    at POST
+(C:/liberia-learn/.task-worktrees/repair-pr190/app/api/student/work/[scheduledWorkId]/complete/route.ts:14:20)
+    at C:/liberia-learn/.task-worktrees/repair-pr190/__tests__/offline/queue-wiring.test.ts:155:7
+    at file:///C:/liberia-learn/.task-worktrees/repair-pr190/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:20
+
+stderr | __tests__/offline/queue-wiring.test.ts > Gap 1: offline queue wiring > POST
+/api/student/work/[scheduledWorkId]/complete > enqueued item has completedAt in payload
+[autoAwardCertificate] error: TypeError: Cannot read properties of undefined (reading 'findUnique')
+    at checkAndAwardCertificate
+(C:/liberia-learn/.task-worktrees/repair-pr190/lib/certificates/autoAwardCertificate.ts:35:47)
+    at C:/liberia-learn/.task-worktrees/repair-pr190/lib/student/completeScheduledLesson.ts:267:7
+    at runClaimedEffect (C:/liberia-learn/.task-worktrees/repair-pr190/lib/student/completeScheduledLesson.ts:226:13)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at completeScheduledLesson
+(C:/liberia-learn/.task-worktrees/repair-pr190/lib/student/completeScheduledLesson.ts:264:3)
+    at POST
+(C:/liberia-learn/.task-worktrees/repair-pr190/app/api/student/work/[scheduledWorkId]/complete/route.ts:14:20)
+    at C:/liberia-learn/.task-worktrees/repair-pr190/__tests__/offline/queue-wiring.test.ts:161:7
+    at file:///C:/liberia-learn/.task-worktrees/repair-pr190/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:20
+
+stderr | __tests__/offline/queue-wiring.test.ts > Gap 1: offline queue wiring > POST
+/api/student/work/[scheduledWorkId]/complete > enqueuing is idempotent — re-completing does not duplicate queue entry
+[autoAwardCertificate] error: TypeError: Cannot read properties of undefined (reading 'findUnique')
+    at checkAndAwardCertificate
+(C:/liberia-learn/.task-worktrees/repair-pr190/lib/certificates/autoAwardCertificate.ts:35:47)
+    at C:/liberia-learn/.task-worktrees/repair-pr190/lib/student/completeScheduledLesson.ts:267:7
+    at runClaimedEffect (C:/liberia-learn/.task-worktrees/repair-pr190/lib/student/completeScheduledLesson.ts:226:13)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at completeScheduledLesson
+(C:/liberia-learn/.task-worktrees/repair-pr190/lib/student/completeScheduledLesson.ts:264:3)
+    at POST
+(C:/liberia-learn/.task-worktrees/repair-pr190/app/api/student/work/[scheduledWorkId]/complete/route.ts:14:20)
+    at C:/liberia-learn/.task-worktrees/repair-pr190/__tests__/offline/queue-wiring.test.ts:167:7
+    at file:///C:/liberia-learn/.task-worktrees/repair-pr190/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:20
+
+stderr | __tests__/offline/queue-wiring.test.ts > Gap 1: offline queue wiring > POST
+/api/student/work/[scheduledWorkId]/complete > queue error does NOT cause route to return 500
+[autoAwardCertificate] error: TypeError: Cannot read properties of undefined (reading 'findUnique')
+    at checkAndAwardCertificate
+(C:/liberia-learn/.task-worktrees/repair-pr190/lib/certificates/autoAwardCertificate.ts:35:47)
+    at C:/liberia-learn/.task-worktrees/repair-pr190/lib/student/completeScheduledLesson.ts:267:7
+    at runClaimedEffect (C:/liberia-learn/.task-worktrees/repair-pr190/lib/student/completeScheduledLesson.ts:226:13)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at completeScheduledLesson
+(C:/liberia-learn/.task-worktrees/repair-pr190/lib/student/completeScheduledLesson.ts:264:3)
+    at POST
+(C:/liberia-learn/.task-worktrees/repair-pr190/app/api/student/work/[scheduledWorkId]/complete/route.ts:14:20)
+    at C:/liberia-learn/.task-worktrees/repair-pr190/__tests__/offline/queue-wiring.test.ts:177:19
+    at file:///C:/liberia-learn/.task-worktrees/repair-pr190/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:20
+
+stderr | __tests__/ops.dashboard.test.ts > lib/ops — valid shape under empty state > getQueueDepths returns configured
+but null depth when SQS errors
+[vitest] The vi.fn() mock did not use 'function' or 'class' in its implementation, see
+https://vitest.dev/api/vi#vi-spyon for examples.
+
+stderr | __tests__/learner-experience/showcase-labs.test.tsx > C/D. direct showcase routes > C. g4-solid-figures opens
+for the demo student with a Back to Labs path
+Warning: useLayoutEffect does nothing on the server, because its effect cannot be encoded into the server renderer's
+output format. This will lead to a mismatch between the initial, non-hydrated UI and the intended UI. To avoid this,
+useLayoutEffect should only be used in components that render exclusively on the client. See
+https://reactjs.org/link/uselayouteffect-ssr for common fixes.
+    at InteractiveLabPlayer
+(C:/liberia-learn/.task-worktrees/repair-pr190/components/interactive-labs/v2/InteractiveLabPlayer.tsx:106:33)
+    at main
+    at InteractiveLabScreen
+(C:/liberia-learn/.task-worktrees/repair-pr190/components/learner-experience/InteractiveLabScreen.tsx:12:33)
+
+stderr | __tests__/learner-experience/showcase-labs.test.tsx > C/D. direct showcase routes > C. fixture-lever opens
+for the demo student with a Back to Labs path
+Warning: useLayoutEffect does nothing on the server, because its effect cannot be encoded into the server renderer's
+output format. This will lead to a mismatch between the initial, non-hydrated UI and the intended UI. To avoid this,
+useLayoutEffect should only be used in components that render exclusively on the client. See
+https://reactjs.org/link/uselayouteffect-ssr for common fixes.
+    at InteractiveLabPlayer
+(C:/liberia-learn/.task-worktrees/repair-pr190/components/interactive-labs/v2/InteractiveLabPlayer.tsx:106:33)
+    at main
+    at InteractiveLabScreen
+(C:/liberia-learn/.task-worktrees/repair-pr190/components/learner-experience/InteractiveLabScreen.tsx:12:33)
+
+stderr | __tests__/learner-experience/showcase-labs.test.tsx > C/D. direct showcase routes > C. fixture-simple-circuit
+opens for the demo student with a Back to Labs path
+Warning: useLayoutEffect does nothing on the server, because its effect cannot be encoded into the server renderer's
+output format. This will lead to a mismatch between the initial, non-hydrated UI and the intended UI. To avoid this,
+useLayoutEffect should only be used in components that render exclusively on the client. See
+https://reactjs.org/link/uselayouteffect-ssr for common fixes.
+    at InteractiveLabPlayer
+(C:/liberia-learn/.task-worktrees/repair-pr190/components/interactive-labs/v2/InteractiveLabPlayer.tsx:106:33)
+    at main
+    at InteractiveLabScreen
+(C:/liberia-learn/.task-worktrees/repair-pr190/components/learner-experience/InteractiveLabScreen.tsx:12:33)
+
+stderr | __tests__/learner-experience/showcase-labs.test.tsx > C/D. direct showcase routes > C.
+mount-coffee-hydropower opens for the demo student with a Back to Labs path
+Warning: useLayoutEffect does nothing on the server, because its effect cannot be encoded into the server renderer's
+output format. This will lead to a mismatch between the initial, non-hydrated UI and the intended UI. To avoid this,
+useLayoutEffect should only be used in components that render exclusively on the client. See
+https://reactjs.org/link/uselayouteffect-ssr for common fixes.
+    at InteractiveLabPlayer
+(C:/liberia-learn/.task-worktrees/repair-pr190/components/interactive-labs/v2/InteractiveLabPlayer.tsx:106:33)
+    at main
+    at InteractiveLabScreen
+(C:/liberia-learn/.task-worktrees/repair-pr190/components/learner-experience/InteractiveLabScreen.tsx:12:33)
+
+stderr | __tests__/learner-experience/showcase-labs.test.tsx > F. showcase interaction has no persistence path >
+g4-solid-figures: opening and using it writes no session, mastery or evidence
+Warning: useLayoutEffect does nothing on the server, because its effect cannot be encoded into the server renderer's
+output format. This will lead to a mismatch between the initial, non-hydrated UI and the intended UI. To avoid this,
+useLayoutEffect should only be used in components that render exclusively on the client. See
+https://reactjs.org/link/uselayouteffect-ssr for common fixes.
+    at InteractiveLabPlayer
+(C:/liberia-learn/.task-worktrees/repair-pr190/components/interactive-labs/v2/InteractiveLabPlayer.tsx:106:33)
+    at main
+    at InteractiveLabScreen
+(C:/liberia-learn/.task-worktrees/repair-pr190/components/learner-experience/InteractiveLabScreen.tsx:12:33)
+
+stderr | __tests__/learner-experience/showcase-labs.test.tsx > F. showcase interaction has no persistence path >
+fixture-lever: opening and using it writes no session, mastery or evidence
+Warning: useLayoutEffect does nothing on the server, because its effect cannot be encoded into the server renderer's
+output format. This will lead to a mismatch between the initial, non-hydrated UI and the intended UI. To avoid this,
+useLayoutEffect should only be used in components that render exclusively on the client. See
+https://reactjs.org/link/uselayouteffect-ssr for common fixes.
+    at InteractiveLabPlayer
+(C:/liberia-learn/.task-worktrees/repair-pr190/components/interactive-labs/v2/InteractiveLabPlayer.tsx:106:33)
+    at main
+    at InteractiveLabScreen
+(C:/liberia-learn/.task-worktrees/repair-pr190/components/learner-experience/InteractiveLabScreen.tsx:12:33)
+
+stderr | __tests__/learner-experience/showcase-labs.test.tsx > F. showcase interaction has no persistence path >
+fixture-simple-circuit: opening and using it writes no session, mastery or evidence
+Warning: useLayoutEffect does nothing on the server, because its effect cannot be encoded into the server renderer's
+output format. This will lead to a mismatch between the initial, non-hydrated UI and the intended UI. To avoid this,
+useLayoutEffect should only be used in components that render exclusively on the client. See
+https://reactjs.org/link/uselayouteffect-ssr for common fixes.
+    at InteractiveLabPlayer
+(C:/liberia-learn/.task-worktrees/repair-pr190/components/interactive-labs/v2/InteractiveLabPlayer.tsx:106:33)
+    at main
+    at InteractiveLabScreen
+(C:/liberia-learn/.task-worktrees/repair-pr190/components/learner-experience/InteractiveLabScreen.tsx:12:33)
+
+stderr | __tests__/learner-experience/showcase-labs.test.tsx > F. showcase interaction has no persistence path >
+mount-coffee-hydropower: opening and using it writes no session, mastery or evidence
+Warning: useLayoutEffect does nothing on the server, because its effect cannot be encoded into the server renderer's
+output format. This will lead to a mismatch between the initial, non-hydrated UI and the intended UI. To avoid this,
+useLayoutEffect should only be used in components that render exclusively on the client. See
+https://reactjs.org/link/uselayouteffect-ssr for common fixes.
+    at InteractiveLabPlayer
+(C:/liberia-learn/.task-worktrees/repair-pr190/components/interactive-labs/v2/InteractiveLabPlayer.tsx:106:33)
+    at main
+    at InteractiveLabScreen
+(C:/liberia-learn/.task-worktrees/repair-pr190/components/learner-experience/InteractiveLabScreen.tsx:12:33)
+
+stderr | __tests__/sprint15.smsNotifications.test.ts > dispatchSmsNotification > blocks dispatch when guardianPhone is
+not a valid Liberian E.164 number
+{"level":"warn","message":"[SMS] Invalid Liberian phone — notification blocked","metadata":{"guardianId":"guardian-1","
+messageType":"weekly_digest"},"timestamp":"2026-10-16T19:01:56.950Z","service":"liberialearn"}
+
+stderr | __tests__/validateEnv.test.ts > validateEnv > does not throw when all required vars are set
+[ENV][observability] Recommended env var not set: NEXT_PUBLIC_SENTRY_DSN
+[ENV][observability] Recommended env var not set: SENTRY_DSN
+[ENV][SMS / notifications] Recommended env var not set: RESEND_API_KEY
+[ENV][SMS / notifications] Recommended env var not set: EMAIL_FROM
+[ENV][SMS / notifications] Recommended env var not set: AT_API_KEY
+[ENV][SMS / notifications] Recommended env var not set: AT_USERNAME
+[ENV][media storage] Recommended env var not set: SUPABASE_LESSON_AUDIO_BUCKET
+
+stderr | __tests__/validateEnv.test.ts > validateEnv > accepts complete Auth0 configuration when privileged MFA is
+enforced
+[ENV][observability] Recommended env var not set: NEXT_PUBLIC_SENTRY_DSN
+[ENV][observability] Recommended env var not set: SENTRY_DSN
+[ENV][SMS / notifications] Recommended env var not set: RESEND_API_KEY
+[ENV][SMS / notifications] Recommended env var not set: EMAIL_FROM
+[ENV][SMS / notifications] Recommended env var not set: AT_API_KEY
+[ENV][SMS / notifications] Recommended env var not set: AT_USERNAME
+
+stderr | __tests__/agents/safeguardingSlaCheck.test.ts > runSafeguardingSlaCheck > uses the platform fallback when no
+schoolId resolves
+{"level":"warn","message":"[safeguarding.slaCheck] no schoolId resolved for 4h alert, cannot re-notify
+school","metadata":{"escalationId":"esc-1"},"timestamp":"2026-10-16T19:02:18.372Z","service":"liberialearn"}
+
+stderr | __tests__/agents/safeguardingSlaCheck.test.ts > runSafeguardingSlaCheck > records an error and continues
+processing other escalations if one throws
+{"level":"error","message":"[safeguarding.slaCheck] failed to process
+escalation","metadata":{"escalationId":"esc-bad","message":"notify
+failed"},"timestamp":"2026-10-16T19:02:18.383Z","service":"liberialearn"}
+
+stderr | __tests__/adaptive.submit.route.test.ts > POST /api/student/adaptive/submit > requires STUDENT session
+{"level":"error","message":"[adaptive.submit.POST]","metadata":{"route":"/api/student/adaptive/submit","error":{"name":
+"Error","message":"Unauthorized","stack":null},"status":401},"timestamp":"2026-10-16T19:02:19.384Z","service":"liberial
+earn"}
+
+stderr | __tests__/adaptive.scaffold.test.ts > generateScaffold > retries once when first attempt is below 400-word
+floor
+[generateScaffold] Attempt 1 failed quality gate: 100 words (min 400) — lessonId=lesson-1
+
+stderr | __tests__/adaptive.scaffold.test.ts > generateScaffold > returns null when both attempts are below 400-word
+floor
+[generateScaffold] Attempt 1 failed quality gate: 100 words (min 400) — lessonId=lesson-1
+
+stderr | __tests__/adaptive.scaffold.test.ts > generateScaffold > returns null when both attempts are below 400-word
+floor
+[generateScaffold] Attempt 2 failed quality gate: 100 words (min 400) — lessonId=lesson-1
+
+stderr | __tests__/adaptive.scaffold.test.ts > generateScaffold > returns null when routedCompletion throws on both
+attempts
+[generateScaffold] Attempt 1 error for lessonId=lesson-1: Error: AI unavailable
+    at C:/liberia-learn/.task-worktrees/repair-pr190/__tests__/adaptive.scaffold.test.ts:134:30
+    at file:///C:/liberia-learn/.task-worktrees/repair-pr190/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11
+    at file:///C:/liberia-learn/.task-worktrees/repair-pr190/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26
+    at file:///C:/liberia-learn/.task-worktrees/repair-pr190/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20
+    at new Promise (<anonymous>)
+    at runWithCancel
+(file:///C:/liberia-learn/.task-worktrees/repair-pr190/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)
+    at file:///C:/liberia-learn/.task-worktrees/repair-pr190/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20
+    at new Promise (<anonymous>)
+    at runWithTimeout
+(file:///C:/liberia-learn/.task-worktrees/repair-pr190/node_modules/@vitest/runner/dist/chunk-artifact.js:2272:10)
+    at file:///C:/liberia-learn/.task-worktrees/repair-pr190/node_modules/@vitest/runner/dist/chunk-artifact.js:2955:64
+
+stderr | __tests__/adaptive.scaffold.test.ts > generateScaffold > returns null when routedCompletion throws on both
+attempts
+[generateScaffold] Attempt 2 error for lessonId=lesson-1: Error: AI unavailable
+    at C:/liberia-learn/.task-worktrees/repair-pr190/__tests__/adaptive.scaffold.test.ts:135:30
+    at file:///C:/liberia-learn/.task-worktrees/repair-pr190/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11
+    at file:///C:/liberia-learn/.task-worktrees/repair-pr190/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26
+    at file:///C:/liberia-learn/.task-worktrees/repair-pr190/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20
+    at new Promise (<anonymous>)
+    at runWithCancel
+(file:///C:/liberia-learn/.task-worktrees/repair-pr190/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)
+    at file:///C:/liberia-learn/.task-worktrees/repair-pr190/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20
+    at new Promise (<anonymous>)
+    at runWithTimeout
+(file:///C:/liberia-learn/.task-worktrees/repair-pr190/node_modules/@vitest/runner/dist/chunk-artifact.js:2272:10)
+    at file:///C:/liberia-learn/.task-worktrees/repair-pr190/node_modules/@vitest/runner/dist/chunk-artifact.js:2955:64
+
+stderr | __tests__/adaptive.scaffold.test.ts > generateScaffold > stub guard: returns null without calling AI when
+parent is <300 words
+[generateScaffold] parent too thin to scaffold: 200 words (min 300) — lessonId=lesson-1
+
+stderr | __tests__/adaptive.scaffold.test.ts > generateScaffold > stub guard: returns null for a 35-word parent
+(classic stub case)
+[generateScaffold] parent too thin to scaffold: 35 words (min 300) — lessonId=lesson-1
+
+stderr | __tests__/nr11/moe-approval-access.test.ts > roles without CURRICULUM_APPROVE are denied on every review
+surface — TEACHER > POST /api/admin/curriculum/reject returns 403
+Curriculum reject error: Error: Forbidden
+    at assertPermission (C:/liberia-learn/.task-worktrees/repair-pr190/lib/permissions.ts:223:25)
+    at Module.POST (C:/liberia-learn/.task-worktrees/repair-pr190/app/api/admin/curriculum/reject/route.ts:30:5)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at C:/liberia-learn/.task-worktrees/repair-pr190/__tests__/nr11/moe-approval-access.test.ts:158:17 {
+  status: 403
+}
+
+stderr | __tests__/nr11/moe-approval-access.test.ts > roles without CURRICULUM_APPROVE are denied on every review
+surface — STUDENT > POST /api/admin/curriculum/reject returns 403
+Curriculum reject error: Error: Forbidden
+    at assertPermission (C:/liberia-learn/.task-worktrees/repair-pr190/lib/permissions.ts:223:25)
+    at Module.POST (C:/liberia-learn/.task-worktrees/repair-pr190/app/api/admin/curriculum/reject/route.ts:30:5)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at C:/liberia-learn/.task-worktrees/repair-pr190/__tests__/nr11/moe-approval-access.test.ts:158:17 {
+  status: 403
+}
+
+stderr | __tests__/agents/safeguardingNotify.test.ts > notifySchoolSafeguarding > reports a failed delivery when the
+durable inbox write fails
+{"level":"error","message":"[safeguarding.notify] inbox delivery
+failed","metadata":{"userId":"admin-1","message":"database
+down"},"timestamp":"2026-10-16T19:02:53.671Z","service":"liberialearn"}
+
+stderr | __tests__/curriculum.feedback.test.ts
+[Upstash Redis] Unable to find environment variable: `UPSTASH_REDIS_REST_URL`
+[Upstash Redis] Unable to find environment variable: `UPSTASH_REDIS_REST_TOKEN`
+[Upstash Redis] The 'url' property is missing or undefined in your Redis config.
+[Upstash Redis] The 'token' property is missing or undefined in your Redis config.
+
+stderr | __tests__/agents/safeguardingNotify.test.ts > notifySchoolSafeguarding > still records the inbox notification
+even when push fails
+{"level":"warn","message":"[safeguarding.notify] push failed, inbox notification still
+recorded","metadata":{"userId":"admin-1","message":"push
+down"},"timestamp":"2026-10-16T19:02:53.677Z","service":"liberialearn"}
+
+stderr | __tests__/agents/safeguardingNotify.test.ts > notifySchoolSafeguarding > returns an empty notifiedUserIds
+list when the school has no admins or safety staff
+{"level":"warn","message":"[safeguarding.notify] no ADMIN or designated safety staff found for
+school","metadata":{"schoolId":"school-1"},"timestamp":"2026-10-16T19:02:53.679Z","service":"liberialearn"}
+{"level":"warn","message":"[safeguarding.notify] PLATFORM_SAFEGUARDING_ESCALATION_EMAIL not set, cannot alert platform
+fallback","metadata":{"reason":"School school-1 has no ADMIN and no designated safety staff to receive a safeguarding
+alert. concern raised"},"timestamp":"2026-10-16T19:02:53.679Z","service":"liberialearn"}
+
+stderr | __tests__/agents/safeguardingNotify.test.ts > notifySchoolSafeguarding > NR-9.5: alerts the platform fallback
+when a school has nobody to notify
+{"level":"warn","message":"[safeguarding.notify] no ADMIN or designated safety staff found for
+school","metadata":{"schoolId":"school-1"},"timestamp":"2026-10-16T19:02:53.680Z","service":"liberialearn"}
+
+stderr | __tests__/agents/safeguardingNotify.test.ts > notifyPlatformSafeguardingFallback > reports a skipped failed
+delivery when the env var is unset
+{"level":"warn","message":"[safeguarding.notify] PLATFORM_SAFEGUARDING_ESCALATION_EMAIL not set, cannot alert platform
+fallback","metadata":{"reason":"test reason"},"timestamp":"2026-10-16T19:02:53.686Z","service":"liberialearn"}
+
+stderr | __tests__/agents/safeguardingNotify.test.ts > notifyPlatformSafeguardingFallback > reports ok:false without
+throwing when the email provider fails
+{"level":"error","message":"[safeguarding.notify] platform fallback email failed to send","metadata":{"reason":"test
+reason","error":"domain not verified"},"timestamp":"2026-10-16T19:02:53.687Z","service":"liberialearn"}
+
+stderr | __tests__/curriculum.feedback.test.ts
+[Upstash Redis] Unable to find environment variable: `UPSTASH_REDIS_REST_URL`
+[Upstash Redis] Unable to find environment variable: `UPSTASH_REDIS_REST_TOKEN`
+[Upstash Redis] The 'url' property is missing or undefined in your Redis config.
+[Upstash Redis] The 'token' property is missing or undefined in your Redis config.
+
+stderr | __tests__/curriculum.feedback.test.ts
+[Upstash Redis] Unable to find environment variable: `UPSTASH_REDIS_REST_URL`
+[Upstash Redis] Unable to find environment variable: `UPSTASH_REDIS_REST_TOKEN`
+[Upstash Redis] The 'url' property is missing or undefined in your Redis config.
+[Upstash Redis] The 'token' property is missing or undefined in your Redis config.
+
+stderr | __tests__/curriculum.feedback.test.ts > curriculum approve — telemetry > records approved telemetry when flag
+is enabled
+[Upstash Redis] Redis client was initialized without url or token. Failed to execute command.
+
+stderr | __tests__/curriculum.feedback.test.ts > curriculum approve — telemetry > does not record telemetry when flag
+is disabled
+[Upstash Redis] Redis client was initialized without url or token. Failed to execute command.
+
+stderr | __tests__/curriculum.feedback.test.ts > curriculum approve — telemetry > approval succeeds even when
+telemetry write throws
+{"level":"warn","message":"[TELEMETRY] Best-effort curriculum approval feedback
+failed","metadata":{"error":{"name":"Error","message":"DB
+down","stack":null}},"timestamp":"2026-10-16T19:02:53.977Z","service":"liberialearn"}
+
+stderr | __tests__/curriculum.feedback.test.ts > curriculum approve — telemetry > approval succeeds even when
+telemetry write throws
+[Upstash Redis] Redis client was initialized without url or token. Failed to execute command.
+
+stderr | __tests__/curriculum.feedback.test.ts > curriculum approve — telemetry > telemetry does not include PII fields
+[Upstash Redis] Redis client was initialized without url or token. Failed to execute command.
+
+stderr | __tests__/curriculum.feedback.test.ts > curriculum reject — telemetry > records rejected telemetry with
+reason when flag is enabled
+[Upstash Redis] Redis client was initialized without url or token. Failed to execute command.
+
+stderr | __tests__/curriculum.feedback.test.ts > curriculum reject — telemetry > rejection succeeds even when
+telemetry write throws
+[TELEMETRY] Best-effort curriculum rejection feedback failed Error: DB down
+    at C:/liberia-learn/.task-worktrees/repair-pr190/__tests__/curriculum.feedback.test.ts:191:42
+    at file:///C:/liberia-learn/.task-worktrees/repair-pr190/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11
+    at file:///C:/liberia-learn/.task-worktrees/repair-pr190/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26
+    at file:///C:/liberia-learn/.task-worktrees/repair-pr190/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20
+    at new Promise (<anonymous>)
+    at runWithCancel
+(file:///C:/liberia-learn/.task-worktrees/repair-pr190/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)
+    at file:///C:/liberia-learn/.task-worktrees/repair-pr190/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20
+    at new Promise (<anonymous>)
+    at runWithTimeout
+(file:///C:/liberia-learn/.task-worktrees/repair-pr190/node_modules/@vitest/runner/dist/chunk-artifact.js:2272:10)
+    at file:///C:/liberia-learn/.task-worktrees/repair-pr190/node_modules/@vitest/runner/dist/chunk-artifact.js:2955:64
+
+stderr | __tests__/curriculum.feedback.test.ts > curriculum reject — telemetry > rejection succeeds even when
+telemetry write throws
+[Upstash Redis] Redis client was initialized without url or token. Failed to execute command.
+
+stderr | __tests__/curriculum.feedback.test.ts > curriculum reject — telemetry > rejection reason is optional —
+succeeds without it
+[Upstash Redis] Redis client was initialized without url or token. Failed to execute command.
+
+stderr | __tests__/agents/contentqaSweep.test.ts > content-qa sweep: video safety routing (Escalation Point 3) > does
+not notify when a keyword-matched video has no resolvable schoolId
+{"level":"warn","message":"[content-qa.sweep] safeguarding escalation has no resolvable schoolId - school not notified"
+,"metadata":{"videoId":"video-1","escalationId":"esc-1"},"timestamp":"2026-10-16T19:03:00.154Z","service":"liberialearn
+"}
+
+stderr | __tests__/agents/contentqaSweep.test.ts > content-qa sweep: failure handling > records invoke_failed and
+continues the sweep when runAgent throws
+{"level":"warn","message":"[content-qa.sweep] invocation
+failed","metadata":{"submissionId":"content-1","submissionType":"lesson","message":"cost
+capped"},"timestamp":"2026-10-16T19:03:00.159Z","service":"liberialearn"}
+
+stderr | __tests__/interventions.access.test.ts > School interventions access > school admin can access own school
+[AUDIT] Failed to log: Error: audit_log_unavailable
+    at writeAudit (C:/liberia-learn/.task-worktrees/repair-pr190/lib/audit.ts:34:11)
+    at logAudit (C:/liberia-learn/.task-worktrees/repair-pr190/lib/audit.ts:53:11)
+    at Module.GET
+(C:/liberia-learn/.task-worktrees/repair-pr190/app/api/admin/dashboard/school/interventions/route.ts:85:11)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at C:/liberia-learn/.task-worktrees/repair-pr190/__tests__/interventions.access.test.ts:145:17
+    at file:///C:/liberia-learn/.task-worktrees/repair-pr190/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:20
+
+stderr | __tests__/interventions.access.test.ts > School interventions access > platform admin can access any school
+[AUDIT] Failed to log: Error: audit_log_unavailable
+    at writeAudit (C:/liberia-learn/.task-worktrees/repair-pr190/lib/audit.ts:34:11)
+    at logAudit (C:/liberia-learn/.task-worktrees/repair-pr190/lib/audit.ts:53:11)
+    at Module.GET
+(C:/liberia-learn/.task-worktrees/repair-pr190/app/api/admin/dashboard/school/interventions/route.ts:85:11)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at C:/liberia-learn/.task-worktrees/repair-pr190/__tests__/interventions.access.test.ts:158:17
+    at file:///C:/liberia-learn/.task-worktrees/repair-pr190/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:20
+
+stderr | __tests__/interventions.access.test.ts > District endpoints access > district admin can access district
+dashboard
+[AUDIT] Failed to log: Error: audit_log_unavailable
+    at writeAudit (C:/liberia-learn/.task-worktrees/repair-pr190/lib/audit.ts:34:11)
+    at logAudit (C:/liberia-learn/.task-worktrees/repair-pr190/lib/audit.ts:53:11)
+    at Module.GET (C:/liberia-learn/.task-worktrees/repair-pr190/app/api/admin/dashboard/district/route.ts:37:11)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at C:/liberia-learn/.task-worktrees/repair-pr190/__tests__/interventions.access.test.ts:176:17
+    at file:///C:/liberia-learn/.task-worktrees/repair-pr190/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:20
+
+stderr | __tests__/exam.generator.test.ts > generateExam > still fails a genuinely out-of-range passingScore rather
+than silently guessing
+[EXAM_GENERATOR] Attempt 1 failed ZodError: [
+  {
+    "origin": "number",
+    "code": "too_big",
+    "maximum": 1,
+    "inclusive": true,
+    "path": [
+      "passingScore"
+    ],
+    "message": "Too big: expected number to be <=1"
+  }
+]
+    at requestExam (C:/liberia-learn/.task-worktrees/repair-pr190/lib/exams/examGenerator.ts:158:36)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at generateExamWithUsage (C:/liberia-learn/.task-worktrees/repair-pr190/lib/exams/examGenerator.ts:221:14)
+    at Module.generateExam (C:/liberia-learn/.task-worktrees/repair-pr190/lib/exams/examGenerator.ts:232:18)
+
+stderr | __tests__/exam.generator.test.ts > generateExam > still fails a genuinely out-of-range passingScore rather
+than silently guessing
+[EXAM_GENERATOR] Attempt 2 failed ZodError: [
+  {
+    "origin": "number",
+    "code": "too_big",
+    "maximum": 1,
+    "inclusive": true,
+    "path": [
+      "passingScore"
+    ],
+    "message": "Too big: expected number to be <=1"
+  }
+]
+    at requestExam (C:/liberia-learn/.task-worktrees/repair-pr190/lib/exams/examGenerator.ts:158:36)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at generateExamWithUsage (C:/liberia-learn/.task-worktrees/repair-pr190/lib/exams/examGenerator.ts:221:14)
+    at Module.generateExam (C:/liberia-learn/.task-worktrees/repair-pr190/lib/exams/examGenerator.ts:232:18)
+    at C:/liberia-learn/.task-worktrees/repair-pr190/__tests__/exam.generator.test.ts:141:5
+    at file:///C:/liberia-learn/.task-worktrees/repair-pr190/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:20
+
+stderr | __tests__/exam.generator.test.ts > generateExam > still fails a moeCode that does not unambiguously extend a
+single requested standard
+[EXAM_GENERATOR] Attempt 1 failed Error: Question moeCode MATH.G7.UNRELATED was not in the requested MOE standards.
+    at requestExam (C:/liberia-learn/.task-worktrees/repair-pr190/lib/exams/examGenerator.ts:181:13)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at generateExamWithUsage (C:/liberia-learn/.task-worktrees/repair-pr190/lib/exams/examGenerator.ts:221:14)
+    at Module.generateExam (C:/liberia-learn/.task-worktrees/repair-pr190/lib/exams/examGenerator.ts:232:18)
+
+stderr | __tests__/exam.generator.test.ts > generateExam > still fails a moeCode that does not unambiguously extend a
+single requested standard
+[EXAM_GENERATOR] Attempt 2 failed Error: Question moeCode MATH.G7.UNRELATED was not in the requested MOE standards.
+    at requestExam (C:/liberia-learn/.task-worktrees/repair-pr190/lib/exams/examGenerator.ts:181:13)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at generateExamWithUsage (C:/liberia-learn/.task-worktrees/repair-pr190/lib/exams/examGenerator.ts:221:14)
+    at Module.generateExam (C:/liberia-learn/.task-worktrees/repair-pr190/lib/exams/examGenerator.ts:232:18)
+    at C:/liberia-learn/.task-worktrees/repair-pr190/__tests__/exam.generator.test.ts:203:5
+    at file:///C:/liberia-learn/.task-worktrees/repair-pr190/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:20
+
+stderr | __tests__/exam.generator.test.ts > generateExam > throws if AI returns malformed response after retry
+[EXAM_GENERATOR] Attempt 1 failed Error: Exam generator returned invalid JSON. First 200 chars: {bad json
+    at requestExam (C:/liberia-learn/.task-worktrees/repair-pr190/lib/exams/examGenerator.ts:141:11)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at generateExamWithUsage (C:/liberia-learn/.task-worktrees/repair-pr190/lib/exams/examGenerator.ts:221:14)
+    at Module.generateExam (C:/liberia-learn/.task-worktrees/repair-pr190/lib/exams/examGenerator.ts:232:18)
+
+stderr | __tests__/exam.generator.test.ts > generateExam > throws if AI returns malformed response after retry
+[EXAM_GENERATOR] Attempt 2 failed ZodError: [
+  {
+    "origin": "string",
+    "code": "too_small",
+    "minimum": 10,
+    "inclusive": true,
+    "path": [
+      "questions",
+      0,
+      "prompt"
+    ],
+    "message": "Too small: expected string to have >=10 characters"
+  },
+  {
+    "origin": "array",
+    "code": "too_small",
+    "minimum": 4,
+    "inclusive": true,
+    "exact": true,
+    "path": [
+      "questions",
+      0,
+      "options"
+    ],
+    "message": "Too small: expected array to have >=4 items"
+  },
+  {
+    "origin": "string",
+    "code": "too_small",
+    "minimum": 5,
+    "inclusive": true,
+    "path": [
+      "questions",
+      0,
+      "explanation"
+    ],
+    "message": "Too small: expected string to have >=5 characters"
+  }
+]
+    at requestExam (C:/liberia-learn/.task-worktrees/repair-pr190/lib/exams/examGenerator.ts:158:36)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at generateExamWithUsage (C:/liberia-learn/.task-worktrees/repair-pr190/lib/exams/examGenerator.ts:221:14)
+    at Module.generateExam (C:/liberia-learn/.task-worktrees/repair-pr190/lib/exams/examGenerator.ts:232:18)
+    at C:/liberia-learn/.task-worktrees/repair-pr190/__tests__/exam.generator.test.ts:229:5
+    at file:///C:/liberia-learn/.task-worktrees/repair-pr190/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:20
+
+stderr | __tests__/district.access.test.ts > District access controls > district admin can access own district
+[AUDIT] Failed to log: Error: audit_log_unavailable
+    at writeAudit (C:/liberia-learn/.task-worktrees/repair-pr190/lib/audit.ts:34:11)
+    at logAudit (C:/liberia-learn/.task-worktrees/repair-pr190/lib/audit.ts:53:11)
+    at Module.GET (C:/liberia-learn/.task-worktrees/repair-pr190/app/api/admin/dashboard/district/route.ts:37:11)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at C:/liberia-learn/.task-worktrees/repair-pr190/__tests__/district.access.test.ts:132:17
+    at file:///C:/liberia-learn/.task-worktrees/repair-pr190/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:20
+
+stderr | __tests__/district.access.test.ts > District access controls > platform admin can access any district
+[AUDIT] Failed to log: Error: audit_log_unavailable
+    at writeAudit (C:/liberia-learn/.task-worktrees/repair-pr190/lib/audit.ts:34:11)
+    at logAudit (C:/liberia-learn/.task-worktrees/repair-pr190/lib/audit.ts:53:11)
+    at Module.GET
+(C:/liberia-learn/.task-worktrees/repair-pr190/app/api/admin/dashboard/district/trends/route.ts:60:11)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at C:/liberia-learn/.task-worktrees/repair-pr190/__tests__/district.access.test.ts:148:17
+    at file:///C:/liberia-learn/.task-worktrees/repair-pr190/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:20
+
+stderr | __tests__/district.access.test.ts > District access controls > cross-district data isolation verified in
+response
+[AUDIT] Failed to log: Error: audit_log_unavailable
+    at writeAudit (C:/liberia-learn/.task-worktrees/repair-pr190/lib/audit.ts:34:11)
+    at logAudit (C:/liberia-learn/.task-worktrees/repair-pr190/lib/audit.ts:53:11)
+    at Module.GET
+(C:/liberia-learn/.task-worktrees/repair-pr190/app/api/admin/dashboard/district/interventions/route.ts:87:11)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at C:/liberia-learn/.task-worktrees/repair-pr190/__tests__/district.access.test.ts:182:17
+    at file:///C:/liberia-learn/.task-worktrees/repair-pr190/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:20
+
+································································································································································································································································································································································································································································································································································································································································································································································································································································································································································------····················································································································································································································································································································································································································································································································································································································································································································································································································································································································································································································································································································································································································································································································································stdout | __tests__/textbookCompiler.test.ts > compileTextbook > returns the correct structure when units and lessons exist
+textbook_compile_unit_processed {
+  subject: 'MATH',
+  gradeLevel: 5,
+  unitId: 'unit-1',
+  lessonsProcessed: 1,
+  unitsProcessed: 1
+}
+
+stdout | __tests__/textbookCompiler.test.ts > compileTextbook > returns the correct structure when units and lessons exist
+textbook_compile_unit_processed {
+  subject: 'MATH',
+  gradeLevel: 5,
+  unitId: 'unit-2',
+  lessonsProcessed: 2,
+  unitsProcessed: 2
+}
+
+stdout | __tests__/textbookCompiler.test.ts > compileTextbook > returns the correct structure when units and lessons exist
+textbook_compile_completed {
+  subject: 'MATH',
+  gradeLevel: 5,
+  lessonsProcessed: 2,
+  unitsProcessed: 2,
+  estimatedPages: 1,
+  actualPages: 1,
+  estimatedPdfSizeBytes: 50000,
+  actualPdfSizeBytes: 50000,
+  compileTimeMs: 3
+}
+
+stdout | __tests__/textbookCompiler.test.ts > compileTextbook > renders incrementally by appending sections as each unit is processed
+textbook_compile_unit_processed {
+  subject: 'SCIENCE',
+  gradeLevel: 8,
+  unitId: 'unit-1',
+  lessonsProcessed: 3,
+  unitsProcessed: 1
+}
+
+stdout | __tests__/textbookCompiler.test.ts > compileTextbook > renders incrementally by appending sections as each unit is processed
+textbook_compile_completed {
+  subject: 'SCIENCE',
+  gradeLevel: 8,
+  lessonsProcessed: 3,
+  unitsProcessed: 1,
+  estimatedPages: 3,
+  actualPages: 1,
+  estimatedPdfSizeBytes: 150000,
+  actualPdfSizeBytes: 50000,
+  compileTimeMs: 0
+}
+
+stderr | __tests__/december-assurance/tenant-and-recovery.test.ts > public DB health check > does not return the
+driver error text outside development
+{"level":"error","message":"[health/db] query failed","metadata":{"errorMessage":"Can't reach database server at
+`db.secret-host.supabase.co:5432`"},"timestamp":"2026-10-16T19:03:26.716Z","service":"liberialearn"}
+
+stderr | __tests__/ai.metrics.test.ts > scheduleAiCorrelationCheck — fire-and-forget > does not throw when
+recordMetricEvent fails
+[AI_CORRELATION] Failed to record: DB unavailable
+
+stderr | __tests__/security/school-isolation.test.ts > checkSchoolAccess — unit tests > 8. returns 403 Response on
+schoolId mismatch
+[TENANT] User user-1 (school: school-a) attempted to access school school-b
+
+stderr | __tests__/security/school-isolation.test.ts > Route isolation — integration scenarios > 11. admin/students:
+query scoped to user.schoolId — school-b admin sees only school-b students
+[AUDIT] Failed to log: Error: audit_log_unavailable
+    at writeAudit (C:/liberia-learn/.task-worktrees/repair-pr190/lib/audit.ts:34:11)
+    at logAudit (C:/liberia-learn/.task-worktrees/repair-pr190/lib/audit.ts:53:11)
+    at GET (C:/liberia-learn/.task-worktrees/repair-pr190/app/api/admin/students/route.ts:62:11)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at C:/liberia-learn/.task-worktrees/repair-pr190/__tests__/security/school-isolation.test.ts:120:17
+    at file:///C:/liberia-learn/.task-worktrees/repair-pr190/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:20
+
+stderr | __tests__/ai.teacher.assist.test.ts > POST /api/teacher/assist > falls back safely when the AI response is
+invalid
+[AI_TEACHER] Response validation failed: not json
+
+············································································································································································································································································································································································stdout | __tests__/factoryGapClosure.test.ts > factory-gap-closure quality gate > approveSafely excludes failed contentIds and approves each row through governance
+  Skipping 2 failed lesson(s) that did not pass quality gate:
+    SKIPPED: content-fail-1
+    SKIPPED: content-fail-2
+
+stderr | __tests__/admin.teachers.route.test.ts > POST /api/admin/teachers > creates a teacher and returns credentials
+payload
+[AUDIT] Failed to log: Error: audit_log_unavailable
+    at writeAudit (C:/liberia-learn/.task-worktrees/repair-pr190/lib/audit.ts:34:11)
+    at logAudit (C:/liberia-learn/.task-worktrees/repair-pr190/lib/audit.ts:53:11)
+    at Module.POST (C:/liberia-learn/.task-worktrees/repair-pr190/app/api/admin/teachers/route.ts:215:10)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at C:/liberia-learn/.task-worktrees/repair-pr190/__tests__/admin.teachers.route.test.ts:111:17
+    at file:///C:/liberia-learn/.task-worktrees/repair-pr190/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:20
+
+stderr | __tests__/admin.teachers.route.test.ts > PATCH /api/admin/teachers > deactivates a teacher
+[AUDIT] Failed to log: Error: audit_log_unavailable
+    at writeAudit (C:/liberia-learn/.task-worktrees/repair-pr190/lib/audit.ts:34:11)
+    at logAudit (C:/liberia-learn/.task-worktrees/repair-pr190/lib/audit.ts:53:11)
+    at Module.PATCH (C:/liberia-learn/.task-worktrees/repair-pr190/app/api/admin/teachers/route.ts:283:12)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at C:/liberia-learn/.task-worktrees/repair-pr190/__tests__/admin.teachers.route.test.ts:149:17
+    at file:///C:/liberia-learn/.task-worktrees/repair-pr190/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:20
+
+stderr | __tests__/admin.teachers.route.test.ts > PATCH /api/admin/teachers > resends invite by rotating the temp pin
+[AUDIT] Failed to log: Error: audit_log_unavailable
+    at writeAudit (C:/liberia-learn/.task-worktrees/repair-pr190/lib/audit.ts:34:11)
+    at logAudit (C:/liberia-learn/.task-worktrees/repair-pr190/lib/audit.ts:53:11)
+    at Module.PATCH (C:/liberia-learn/.task-worktrees/repair-pr190/app/api/admin/teachers/route.ts:365:10)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at C:/liberia-learn/.task-worktrees/repair-pr190/__tests__/admin.teachers.route.test.ts:158:17
+    at file:///C:/liberia-learn/.task-worktrees/repair-pr190/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:20
+
+·······················································································stdout | __tests__/curriculum.factory.tone.test.ts > generateCurriculumPayload — toneGuidance injection > injects grade 1 tone guidance into system prompt
+[curriculum-factory] Two-pass Pass 1: 2 words via llama-3.3-70b-versatile
+
+stderr | __tests__/curriculum.factory.tone.test.ts > generateCurriculumPayload — toneGuidance injection > injects
+grade 1 tone guidance into system prompt
+[curriculum-factory] Two-pass failed, falling back to single-pass OpenAI: Two-pass Pass 1 too thin: 2 words via
+llama-3.3-70b-versatile
+
+stdout | __tests__/curriculum.factory.tone.test.ts > generateCurriculumPayload — toneGuidance injection > injects grade 6 tone guidance into system prompt
+[curriculum-factory] Two-pass Pass 1: 2 words via llama-3.3-70b-versatile
+
+stderr | __tests__/curriculum.factory.tone.test.ts > generateCurriculumPayload — toneGuidance injection > injects
+grade 6 tone guidance into system prompt
+[curriculum-factory] Two-pass failed, falling back to single-pass OpenAI: Two-pass Pass 1 too thin: 2 words via
+llama-3.3-70b-versatile
+
+stdout | __tests__/curriculum.factory.tone.test.ts > generateCurriculumPayload — toneGuidance injection > injects grade 9 tone guidance into system prompt
+[curriculum-factory] Two-pass Pass 1: 2 words via llama-3.3-70b-versatile
+
+stderr | __tests__/curriculum.factory.tone.test.ts > generateCurriculumPayload — toneGuidance injection > injects
+grade 9 tone guidance into system prompt
+[curriculum-factory] Two-pass failed, falling back to single-pass OpenAI: Two-pass Pass 1 too thin: 2 words via
+llama-3.3-70b-versatile
+
+stdout | __tests__/curriculum.factory.tone.test.ts > generateCurriculumPayload — toneGuidance injection > injects grade 12 tone guidance into system prompt
+[curriculum-factory] Two-pass Pass 1: 2 words via llama-3.3-70b-versatile
+
+stderr | __tests__/curriculum.factory.tone.test.ts > generateCurriculumPayload — toneGuidance injection > injects
+grade 12 tone guidance into system prompt
+[curriculum-factory] Two-pass failed, falling back to single-pass OpenAI: Two-pass Pass 1 too thin: 2 words via
+llama-3.3-70b-versatile
+
+stderr | __tests__/student.assignment.submit.route.test.ts > POST /api/student/assignments/[id]/submit > submits the
+assignment and attempts guardian notification
+{"level":"error","message":"[AI_BUDGET] budget check unavailable; failing closed","metadata":{"feature":"agent_platform
+","schoolId":null},"timestamp":"2026-10-16T19:04:13.665Z","service":"liberialearn"}
+
+stderr | __tests__/student.assignment.submit.route.test.ts > POST /api/student/assignments/[id]/submit > does not fail
+submission when guardian notification throws
+{"level":"error","message":"[AI_BUDGET] budget check unavailable; failing closed","metadata":{"feature":"agent_platform
+","schoolId":null},"timestamp":"2026-10-16T19:04:13.681Z","service":"liberialearn"}
+
+·····························································································································································································································································································································································································stdout | __tests__/curriculum/textbookCompilerScale.test.ts > textbook compiler scale behavior > compiles incrementally one unit at a time and appends rendered sections
+textbook_compile_unit_processed {
+  subject: 'MATH',
+  gradeLevel: 7,
+  unitId: 'unit-1',
+  lessonsProcessed: 1,
+  unitsProcessed: 1
+}
+
+stdout | __tests__/curriculum/textbookCompilerScale.test.ts > textbook compiler scale behavior > compiles incrementally one unit at a time and appends rendered sections
+textbook_compile_unit_processed {
+  subject: 'MATH',
+  gradeLevel: 7,
+  unitId: 'unit-2',
+  lessonsProcessed: 2,
+  unitsProcessed: 2
+}
+
+stdout | __tests__/curriculum/textbookCompilerScale.test.ts > textbook compiler scale behavior > compiles incrementally one unit at a time and appends rendered sections
+textbook_compile_completed {
+  subject: 'MATH',
+  gradeLevel: 7,
+  lessonsProcessed: 2,
+  unitsProcessed: 2,
+  estimatedPages: 2,
+  actualPages: 1,
+  estimatedPdfSizeBytes: 100000,
+  actualPdfSizeBytes: 50000,
+  compileTimeMs: 4
+}
+
+stderr | __tests__/adaptive.practice.route.test.ts > POST /api/student/adaptive/practice > requires STUDENT session
+(401 if missing)
+{"level":"error","message":"[adaptive.practice.POST]","metadata":{"route":"/api/student/adaptive/practice","error":{"na
+me":"Error","message":"Unauthorized","stack":null},"status":401},"timestamp":"2026-10-16T19:04:57.448Z","service":"libe
+rialearn"}
+
+stderr | __tests__/audit-immutability.test.ts > audit immutability > app middleware blocks AuditLog delete
+{"level":"warn","message":"[AUDIT] blocked AuditLog
+mutation","metadata":{"action":"delete"},"timestamp":"2026-10-16T19:05:01.003Z","service":"liberialearn"}
+
+stderr | __tests__/audit-immutability.test.ts > audit immutability > app middleware blocks AuditLog update
+{"level":"warn","message":"[AUDIT] blocked AuditLog
+mutation","metadata":{"action":"update"},"timestamp":"2026-10-16T19:05:01.015Z","service":"liberialearn"}
+
+stderr | __tests__/lesson.offlineCache.test.ts > lesson offline cache > does not throw when cacheLessonContent
+encounters an error
+Offline storage operation failed { operation: 'cache-lesson', code: 'Error' }
+
+stderr | __tests__/agents/homeworkGraderModeration.test.ts > HomeworkGrader.gradeSubmission (NR-9.6 moderation) >
+blocks unsafe input, escalates, and routes through the existing failure path
+HomeworkGrader error: Error: content_moderation_blocked_input
+    at HomeworkGrader.gradeSubmission (C:/liberia-learn/.task-worktrees/repair-pr190/lib/ai/homework-grader.ts:152:15)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at C:/liberia-learn/.task-worktrees/repair-pr190/__tests__/agents/homeworkGraderModeration.test.ts:70:5
+    at file:///C:/liberia-learn/.task-worktrees/repair-pr190/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:20
+
+stderr | __tests__/agents/homeworkGraderModeration.test.ts > HomeworkGrader.gradeSubmission (NR-9.6 moderation) >
+blocks unsafe output, escalates, and routes through the existing failure path
+HomeworkGrader error: Error: content_moderation_blocked_output
+    at HomeworkGrader.gradeSubmission (C:/liberia-learn/.task-worktrees/repair-pr190/lib/ai/homework-grader.ts:219:15)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at C:/liberia-learn/.task-worktrees/repair-pr190/__tests__/agents/homeworkGraderModeration.test.ts:94:5
+    at file:///C:/liberia-learn/.task-worktrees/repair-pr190/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:20
+
+··································································································································································································································stdout | __tests__/ai.citations.test.ts > AI citations > returns teacher/admin citation metadata from retrieved chunk metadata
+prisma:error
+Invalid `prisma.$queryRaw()` invocation:
+
+
+Can't reach database server at `127.0.0.1:1`
+
+Please make sure your database server is running at `127.0.0.1:1`.
+
+stderr | __tests__/ai.citations.test.ts > AI citations > returns teacher/admin citation metadata from retrieved chunk
+metadata
+[RAG_SPARSE] Full-text search query failed — returning empty results {
+  error: PrismaClientInitializationError:
+  Invalid `prisma.$queryRaw()` invocation:
+
+
+  Can't reach database server at `127.0.0.1:1`
+
+  Please make sure your database server is running at `127.0.0.1:1`.
+      at ei.handleRequestError
+(C:\liberia-learn\.task-worktrees\repair-pr190\node_modules\@prisma\client\runtime\library.js:121:7568)
+      at ei.handleAndLogRequestError
+(C:\liberia-learn\.task-worktrees\repair-pr190\node_modules\@prisma\client\runtime\library.js:121:6593)
+      at ei.request
+(C:\liberia-learn\.task-worktrees\repair-pr190\node_modules\@prisma\client\runtime\library.js:121:6300)
+      at a (C:\liberia-learn\.task-worktrees\repair-pr190\node_modules\@prisma\client\runtime\library.js:130:9551)
+      at sparseRetrieve (C:/liberia-learn/.task-worktrees/repair-pr190/lib/ai/rag/sparseRetrieval.ts:76:12)
+      at async Promise.all (index 1)
+      at hybridRetrieveWithMetadata
+(C:/liberia-learn/.task-worktrees/repair-pr190/lib/ai/rag/hybridRetrieval.ts:100:41)
+      at hybridRetrieve (C:/liberia-learn/.task-worktrees/repair-pr190/lib/ai/rag/hybridRetrieval.ts:71:18)
+      at Module.answerGroundedQuestion
+(C:/liberia-learn/.task-worktrees/repair-pr190/lib/ai/rag/groundedAnswerService.ts:508:6)
+      at C:/liberia-learn/.task-worktrees/repair-pr190/__tests__/ai.citations.test.ts:55:20 {
+    clientVersion: '6.19.3',
+    errorCode: undefined,
+    retryable: undefined
+  }
+}
+
+stdout | __tests__/ai.citations.test.ts > AI citations > returns teacher/admin citation metadata from retrieved chunk metadata
+[RAG_HYBRID] Retrieval complete {
+  retrievalMethod: 'hybrid-rrf-rerank',
+  denseCount: 1,
+  sparseCount: 0,
+  fusedCount: 1,
+  rerankEnabled: false,
+  topK: 5
+}
+
+······stdout | __tests__/curriculum/textbookGenerationQueue.test.ts > textbookGenerationQueue > processTextbookJob generates a PDF and uploads it to Supabase
+textbook_generation_generated {
+  jobId: 'job-1',
+  grade: 5,
+  subject: 'ENGLISH',
+  format: 'student',
+  durationMs: 5,
+  estimatedCostUsd: 0
+}
+
+stderr | __tests__/curriculum.regenerationHelpers.test.ts > provider retry policy > retries transient provider
+failures with exponential policy
+{"level":"warn","message":"[AI_RETRY] provider operation failed","metadata":{"operation":"test","attempt":1,"maxAttempt
+s":3,"retry":true,"code":"network_transient","provider":null,"model":null,"latencyMs":1,"message":"ECONNRESET"},"timest
+amp":"2026-10-16T19:05:36.567Z","service":"liberialearn"}
+
+····························································stdout | __tests__/curriculum.regenerationHelpers.test.ts > provider retry policy > retries transient provider failures with exponential policy
+{"level":"info","message":"[AI_RETRY] provider operation succeeded","metadata":{"operation":"test","attempt":2,"provider":null,"model":null,"latencyMs":0,"inputTokens":null,"outputTokens":null,"estimatedCostUSD":null},"timestamp":"2026-10-16T19:05:36.575Z","service":"liberialearn"}
+
+stderr | __tests__/curriculum.regenerationHelpers.test.ts > provider retry policy > does not retry quality gate
+failures
+{"level":"warn","message":"[AI_RETRY] provider operation failed","metadata":{"operation":"test","attempt":1,"maxAttempt
+s":1,"retry":false,"code":"quality_gate_failure","provider":null,"model":null,"latencyMs":1,"message":"quality gate
+failed"},"timestamp":"2026-10-16T19:05:36.606Z","service":"liberialearn"}
+
+stderr | __tests__/curriculum.regenerationHelpers.test.ts > DB write throttling > retries idempotent writes on
+connection reset errors
+{"level":"warn","message":"[DB_WRITE_THROTTLE] write
+failed","metadata":{"operationName":"retry","attempt":1,"maxRetries":2,"retry":true,"message":"connection
+reset"},"timestamp":"2026-10-16T19:05:36.628Z","service":"liberialearn"}
+
+stderr | __tests__/curriculum.regenerationHelpers.test.ts > adaptive curriculum concurrency > reduces concurrency
+above 20 percent failures and pauses above 40 percent
+{"level":"warn","message":"[CURRICULUM_REGEN] adaptive concurrency adjusted","metadata":{"subject":"ENGLISH","attempted
+":10,"failed":3,"errorRate":0.3,"timeouts":0,"connectionResets":0,"previous":{"providerConcurrency":2,"dbWriteConcurren
+cy":1,"batchSize":20},"next":{"providerConcurrency":1,"dbWriteConcurrency":1,"batchSize":20}},"timestamp":"2026-10-16T1
+9:05:36.638Z","service":"liberialearn"}
+{"level":"warn","message":"[CURRICULUM_REGEN] adaptive concurrency adjusted","metadata":{"subject":"ENGLISH","attempted
+":10,"failed":5,"errorRate":0.5,"timeouts":0,"connectionResets":0,"previous":{"providerConcurrency":2,"dbWriteConcurren
+cy":1,"batchSize":20},"next":{"providerConcurrency":1,"dbWriteConcurrency":1,"batchSize":5,"paused":true}},"timestamp":
+"2026-10-16T19:05:36.638Z","service":"liberialearn"}
+
+stderr | __tests__/curriculum.regenerationHelpers.test.ts > adaptive curriculum concurrency > reduces batch size after
+timeout or connection reset
+{"level":"warn","message":"[CURRICULUM_REGEN] adaptive concurrency adjusted","metadata":{"subject":"PE","attempted":10,
+"failed":1,"errorRate":0.1,"timeouts":0,"connectionResets":1,"previous":{"providerConcurrency":2,"dbWriteConcurrency":1
+,"batchSize":20},"next":{"providerConcurrency":2,"dbWriteConcurrency":1,"batchSize":10}},"timestamp":"2026-10-16T19:05:
+36.640Z","service":"liberialearn"}
+
+stderr | __tests__/trust/p1b-required-audit.test.ts > P1-B required audit transaction > rolls back curriculum
+rejection when the required audit write fails
+Curriculum reject error: Error: audit store unavailable
+    at C:/liberia-learn/.task-worktrees/repair-pr190/__tests__/trust/p1b-required-audit.test.ts:82:44
+    at file:///C:/liberia-learn/.task-worktrees/repair-pr190/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11
+    at file:///C:/liberia-learn/.task-worktrees/repair-pr190/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26
+    at file:///C:/liberia-learn/.task-worktrees/repair-pr190/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20
+    at new Promise (<anonymous>)
+    at runWithCancel
+(file:///C:/liberia-learn/.task-worktrees/repair-pr190/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)
+    at file:///C:/liberia-learn/.task-worktrees/repair-pr190/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20
+    at new Promise (<anonymous>)
+    at runWithTimeout
+(file:///C:/liberia-learn/.task-worktrees/repair-pr190/node_modules/@vitest/runner/dist/chunk-artifact.js:2272:10)
+    at file:///C:/liberia-learn/.task-worktrees/repair-pr190/node_modules/@vitest/runner/dist/chunk-artifact.js:2955:64
+
+stderr | __tests__/evals/runner.test.ts > eval runner > runs a filtered 3-case subset and persists a timestamped
+result file
+[RAG_SPARSE] Full-text search query failed — returning empty results {
+  error: TypeError: __vite_ssr_import_1__.prisma.$queryRaw is not a function
+      at sparseRetrieve (C:/liberia-learn/.task-worktrees/repair-pr190/lib/ai/rag/sparseRetrieval.ts:76:25)
+      at hybridRetrieveWithMetadata (C:/liberia-learn/.task-worktrees/repair-pr190/lib/ai/rag/hybridRetrieval.ts:113:5)
+      at Module.runEvalCases (C:/liberia-learn/.task-worktrees/repair-pr190/lib/evals/runner.ts:308:32)
+      at C:/liberia-learn/.task-worktrees/repair-pr190/__tests__/evals/runner.test.ts:72:26
+      at
+file:///C:/liberia-learn/.task-worktrees/repair-pr190/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11
+      at
+file:///C:/liberia-learn/.task-worktrees/repair-pr190/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26
+      at
+file:///C:/liberia-learn/.task-worktrees/repair-pr190/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20
+      at new Promise (<anonymous>)
+      at runWithCancel
+(file:///C:/liberia-learn/.task-worktrees/repair-pr190/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)
+      at
+file:///C:/liberia-learn/.task-worktrees/repair-pr190/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20
+}
+
+·················stdout | __tests__/evals/runner.test.ts > eval runner > runs a filtered 3-case subset and persists a timestamped result file
+[RAG_HYBRID] Retrieval complete {
+  retrievalMethod: 'hybrid-rrf-rerank',
+  denseCount: 1,
+  sparseCount: 0,
+  fusedCount: 1,
+  rerankEnabled: false,
+  topK: 5
+}
+
+stderr | __tests__/evals/runner.test.ts > eval runner > runs a filtered 3-case subset and persists a timestamped
+result file
+[RAG_SPARSE] Full-text search query failed — returning empty results {
+  error: TypeError: __vite_ssr_import_1__.prisma.$queryRaw is not a function
+      at sparseRetrieve (C:/liberia-learn/.task-worktrees/repair-pr190/lib/ai/rag/sparseRetrieval.ts:76:25)
+      at hybridRetrieveWithMetadata (C:/liberia-learn/.task-worktrees/repair-pr190/lib/ai/rag/hybridRetrieval.ts:113:5)
+      at Module.runEvalCases (C:/liberia-learn/.task-worktrees/repair-pr190/lib/evals/runner.ts:308:32)
+      at processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at C:/liberia-learn/.task-worktrees/repair-pr190/__tests__/evals/runner.test.ts:72:20
+      at
+file:///C:/liberia-learn/.task-worktrees/repair-pr190/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:20
+}
+
+stdout | __tests__/evals/runner.test.ts > eval runner > runs a filtered 3-case subset and persists a timestamped result file
+[RAG_HYBRID] Retrieval complete {
+  retrievalMethod: 'hybrid-rrf-rerank',
+  denseCount: 1,
+  sparseCount: 0,
+  fusedCount: 1,
+  rerankEnabled: false,
+  topK: 5
+}
+
+·················································································································································stdout | __tests__/sms.test.ts > sendSMS > routes to dry-run provider when ENABLE_LIVE_SMS is not set (Sprint 5 gate)
+{"level":"info","message":"[SMS-DRY-RUN] SMS not sent - live SMS disabled (ENABLE_LIVE_SMS not set)","metadata":{"to":"+231****","bodyLength":12,"idempotencyKey":null,"dryRunId":"dry-run-f5ac113f-fbed-411c-8d25-4cd49572e904"},"timestamp":"2026-10-16T19:06:08.366Z","service":"liberialearn"}
+
+stderr | __tests__/moe.alignment.batch.test.ts > alignAllContent — status filter > processes published records
+returned by the query
+{"level":"error","message":"[MOE-Align] content alignment
+failed","metadata":{"index":1,"total":2,"contentId":"rec-pub-1","errorMessage":"CurriculumContent rec-pub-1 not
+found"},"timestamp":"2026-10-16T19:06:42.457Z","service":"liberialearn"}
+
+stderr | __tests__/moe.alignment.batch.test.ts > alignAllContent — status filter > processes published records
+returned by the query
+{"level":"error","message":"[MOE-Align] content alignment
+failed","metadata":{"index":2,"total":2,"contentId":"rec-app-1","errorMessage":"CurriculumContent rec-app-1 not
+found"},"timestamp":"2026-10-16T19:06:42.664Z","service":"liberialearn"}
+
+stderr | __tests__/agents/moderation.test.ts > moderateText > fails open to UNCERTAIN when the classifier errors
+{"level":"warn","message":"[agent.moderation] classifier failed — failing open to
+UNCERTAIN","metadata":{"kind":"output","message":"provider
+down"},"timestamp":"2026-10-16T19:07:22.890Z","service":"liberialearn"}
+
+stderr | __tests__/agents/moderation.test.ts > moderateText > returns UNCERTAIN when the classifier returns malformed
+JSON
+{"level":"warn","message":"[agent.moderation] classifier failed — failing open to
+UNCERTAIN","metadata":{"kind":"input","message":"Unexpected token 'o', \"not json\" is not valid
+JSON"},"timestamp":"2026-10-16T19:07:22.903Z","service":"liberialearn"}
+
+stderr | __tests__/agents/moderation.test.ts > moderateText > fails closed for a minor when the classifier errors
+{"level":"warn","message":"[agent.moderation] classifier failed — failing open to
+UNCERTAIN","metadata":{"kind":"output","message":"provider
+down"},"timestamp":"2026-10-16T19:07:22.905Z","service":"liberialearn"}
+
+··················································································································································································································································································································································································································································································..................................................stdout | __tests__/scripts/floodTestQueue.test.ts > P1-D worker flood test > sends exactly TOTAL jobs and requires an observed backlog plus two zero polls
+
+Queue depth: visible=180, inFlight=20, delayed=0
+
+stdout | __tests__/scripts/floodTestQueue.test.ts > P1-D worker flood test > sends exactly TOTAL jobs and requires an observed backlog plus two zero polls
+
+Queue depth: visible=0, inFlight=0, delayed=0
+
+stdout | __tests__/scripts/floodTestQueue.test.ts > P1-D worker flood test > sends exactly TOTAL jobs and requires an observed backlog plus two zero polls
+
+Queue depth: visible=0, inFlight=0, delayed=0
+
+stderr | __tests__/agents/morningBriefSweep.test.ts > runMorningBriefSweep > records invoke_failed for a teacher
+without failing the whole sweep
+{"level":"warn","message":"[morning-brief.sweep] invocation
+failed","metadata":{"teacherUserId":"teacher-1","message":"cost cap
+exceeded"},"timestamp":"2026-10-16T19:07:34.070Z","service":"liberialearn"}
+
+stderr | __tests__/agents/translation.test.ts > detectLanguage > falls back to en on classifier error
+{"level":"warn","message":"[agent.translation] detect failed, defaulting to
+en","metadata":{"message":"down"},"timestamp":"2026-10-16T19:07:35.264Z","service":"liberialearn"}
+
+stderr | __tests__/agents/translation.test.ts > translateToEnglish > falls back to the original text on error
+{"level":"warn","message":"[agent.translation] toEnglish failed, returning
+original","metadata":{"message":"down"},"timestamp":"2026-10-16T19:07:35.276Z","service":"liberialearn"}
+
+stderr | __tests__/teacher/teacherStudentProfile.authz.test.ts > /teacher/student/[id] — roster scope (hostile) >
+renders for the student's own teacher without inventing a location
+Warning: Each child in a list should have a unique "key" prop.
+
+Check the top-level render call using <div>. See https://reactjs.org/link/warning-keys for more information.
+    at div
+
+··········--································································stdout | __tests__/worker/dispatchMetrics.test.ts > worker job-completion metrics > reports WorkerJobCompleted and acks when a job actually runs
+{"level":"info","message":"[WORKER] Processing HEALTH_CHECK","metadata":{"messageType":"HEALTH_CHECK"},"timestamp":"2026-10-16T19:07:48.191Z","service":"liberialearn"}
+
+stdout | __tests__/worker/dispatchMetrics.test.ts > worker job-completion metrics > reports WorkerJobCompleted and acks when a job actually runs
+{"level":"info","message":"[WORKER] Processed HEALTH_CHECK in 20ms","metadata":{"messageType":"HEALTH_CHECK","durationMs":20,"resultStatus":"ok"},"timestamp":"2026-10-16T19:07:48.208Z","service":"liberialearn"}
+
+stdout | __tests__/worker/dispatchMetrics.test.ts > worker job-completion metrics > reports WorkerJobNoop and does not acknowledge a known-but-unimplemented job
+{"level":"info","message":"[WORKER] Processing GENERATE_LESSON_AUDIO","metadata":{"messageType":"GENERATE_LESSON_AUDIO"},"timestamp":"2026-10-16T19:07:48.227Z","service":"liberialearn"}
+
+stderr | __tests__/worker/dispatchMetrics.test.ts > worker job-completion metrics > reports WorkerJobNoop and does not
+acknowledge a known-but-unimplemented job
+{"level":"warn","message":"[WORKER] Rejecting GENERATE_LESSON_AUDIO without processing","metadata":{"messageType":"GENE
+RATE_LESSON_AUDIO","durationMs":1,"resultStatus":"noop"},"timestamp":"2026-10-16T19:07:48.229Z","service":"liberialearn
+"}
+
+stderr | __tests__/worker/dispatchMetrics.test.ts > worker job-completion metrics > reports WorkerJobNoop and does not
+acknowledge a known-but-unimplemented job
+{"level":"error","message":"[WORKER] job
+failed","metadata":{"messageType":"GENERATE_LESSON_AUDIO","receiveCount":1,"reason":"Worker did not implement job type
+GENERATE_LESSON_AUDIO (noop)"},"timestamp":"2026-10-16T19:07:48.240Z","service":"liberialearn"}
+
+stdout | __tests__/worker/dispatchMetrics.test.ts > worker job-completion metrics > reports WorkerJobUnknown and does not acknowledge an unrecognized job type
+{"level":"info","message":"[WORKER] Processing SOME_FUTURE_TYPE","metadata":{"messageType":"SOME_FUTURE_TYPE"},"timestamp":"2026-10-16T19:07:48.252Z","service":"liberialearn"}
+
+stderr | __tests__/worker/dispatchMetrics.test.ts > worker job-completion metrics > reports WorkerJobUnknown and does
+not acknowledge an unrecognized job type
+{"level":"warn","message":"[WORKER] Rejecting SOME_FUTURE_TYPE without processing","metadata":{"messageType":"SOME_FUTU
+RE_TYPE","durationMs":0,"resultStatus":"unknown"},"timestamp":"2026-10-16T19:07:48.252Z","service":"liberialearn"}
+
+stderr | __tests__/worker/dispatchMetrics.test.ts > worker job-completion metrics > reports WorkerJobUnknown and does
+not acknowledge an unrecognized job type
+{"level":"error","message":"[WORKER] job
+failed","metadata":{"messageType":"SOME_FUTURE_TYPE","receiveCount":1,"reason":"Worker did not implement job type
+SOME_FUTURE_TYPE (unknown)"},"timestamp":"2026-10-16T19:07:48.253Z","service":"liberialearn"}
+
+stderr | __tests__/agents/control.test.ts > resolveAgentEnabled > falls back to the env flag if the control lookup
+throws
+{"level":"warn","message":"[agent.control] override lookup failed, using env
+flag","metadata":{"agentName":"echo","message":"db
+down"},"timestamp":"2026-10-16T19:08:04.481Z","service":"liberialearn"}
+
+·······················································································································································································································································································································································································································stdout | __tests__/agents/agentTickRoute.test.ts > GET /api/cron/agents/tick > runs the goal tick when authorized and enabled
+prisma:error
+Invalid `prisma.metricEvent.create()` invocation in
+C:/liberia-learn/.task-worktrees/repair-pr190/lib/metrics/events.ts:26:29
+
+  23     userId?: string | null;
+  24   }
+  25 ) {
+→ 26   return prisma.metricEvent.create(
+Can't reach database server at `127.0.0.1:1`
+
+Please make sure your database server is running at `127.0.0.1:1`.
+
+stderr | __tests__/audit.test.ts > logAudit > does not throw on error
+[AUDIT] Failed to log: Error: DB error
+    at C:/liberia-learn/.task-worktrees/repair-pr190/__tests__/audit.test.ts:51:59
+    at file:///C:/liberia-learn/.task-worktrees/repair-pr190/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11
+    at file:///C:/liberia-learn/.task-worktrees/repair-pr190/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26
+    at file:///C:/liberia-learn/.task-worktrees/repair-pr190/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20
+    at new Promise (<anonymous>)
+    at runWithCancel
+(file:///C:/liberia-learn/.task-worktrees/repair-pr190/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)
+    at file:///C:/liberia-learn/.task-worktrees/repair-pr190/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20
+    at new Promise (<anonymous>)
+    at runWithTimeout
+(file:///C:/liberia-learn/.task-worktrees/repair-pr190/node_modules/@vitest/runner/dist/chunk-artifact.js:2272:10)
+    at file:///C:/liberia-learn/.task-worktrees/repair-pr190/node_modules/@vitest/runner/dist/chunk-artifact.js:2955:64
+
+stderr | __tests__/ops.metrics.route.test.ts > ops metrics summary route > enforces RBAC/scope for non-platform admins
+{"level":"error","message":"Ops metrics summary route failed","metadata":{"route":"/api/admin/ops/metrics/summary","err
+orMessage":"Forbidden","status":403},"timestamp":"2026-10-16T19:10:20.866Z","service":"liberialearn"}
+
+·····························································································································································································································································································································································
+
+ Test Files  769 passed | 2 skipped (771)
+      Tests  7501 passed | 8 skipped (7509)
+   Start at  14:50:50
+   Duration  1205.49s (transform 280.71s, setup 0ms, import 773.05s, tests 662.52s, environment 242.37s)

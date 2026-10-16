@@ -1,0 +1,24 @@
+node : Browserslist: browsers data (caniuse-lite) is 8 months old. Please run:
+At line:2 char:120
++ ... t-repairs'; node e2e/product-design-v2/run.mjs *> artifacts/joint-rep ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Browserslist: b...ld. Please run::String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+3:49:32 PM [vite] (client) hmr update /@fs/C:/liberia-learn/.task-worktrees/repair-pr190/app/globals.css
+3:49:32 PM [vite] (client) hmr update /@fs/C:/liberia-learn/.task-worktrees/repair-pr190/app/globals.css
+Browser fixtures passed: 10 layouts, resume/return, assignment, five-nav, error/empty/stale/loading/offline; zero serious/critical axe issues.
+3:55:32 PM [vite] (client) hmr update /@fs/C:/liberia-learn/.task-worktrees/repair-pr190/app/globals.css
+3:55:32 PM [vite] (client) hmr update /@fs/C:/liberia-learn/.task-worktrees/repair-pr190/app/globals.css
+Learn/shell fixtures passed: 8 wide-shell layouts, 48 band/width/font layouts, 10 Learn layouts, states loading/none/no-resource/empty/not-enrolled/lessons-unavailable/error/signed-out/cross-tenant/long/stale-empty/stale-empty-recovered/stale/offline-cached/lessons-empty, keyboard/forced-colors/reduced-motion/zoom, zero serious/critical axe issues.
+3:58:49 PM [vite] (client) hmr update /@fs/C:/liberia-learn/.task-worktrees/repair-pr190/app/globals.css
+Class fixtures passed: governed task first on Today and Learn for 16 band/width layouts, 32 class page layouts, no-timetable states, 401/403 clear and 503 stale on Refresh, zero serious/critical axe issues.
+4:01:14 PM [vite] (client) hmr update /@fs/C:/liberia-learn/.task-worktrees/repair-pr190/app/globals.css
+Labs fixtures passed: 12 hub layouts, 16 open/interact/return runs, 2 restricted states, keyboard reach, zero serious/critical axe issues.
+Lesson browser probes: responsive layouts and content return complete
+Lesson browser probes: assigned return complete
+Lesson browser probes: denial and cached read-only complete
+4:03:31 PM [vite] (client) hmr update /@fs/C:/liberia-learn/.task-worktrees/repair-pr190/app/globals.css
+Lesson runtime browser fixtures passed: 12 layouts, 3 full flows, 6 states; zero serious/critical axe issues.

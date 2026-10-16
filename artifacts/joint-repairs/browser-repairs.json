@@ -1,0 +1,85 @@
+{
+  "scope": "Synthetic component runtime; no authenticated production delivery or model generation.",
+  "results": [
+    {
+      "width": 390,
+      "authoredHeading": true,
+      "emptyBookmarkDisabled": true,
+      "changedContentSafe": true,
+      "protectedHelpWithheld": true,
+      "lateMountSafe": true,
+      "formativeIdentity": {
+        "contentId": "review-native",
+        "lessonVersion": "1",
+        "experienceId": "repair-fixture-explain",
+        "experienceVersion": "0.1.0",
+        "sceneId": "explain",
+        "objectiveIds": [
+          "hydropower-cause-and-effect"
+        ]
+      },
+      "errors": [],
+      "posts": []
+    },
+    {
+      "width": 768,
+      "authoredHeading": true,
+      "emptyBookmarkDisabled": true,
+      "changedContentSafe": true,
+      "protectedHelpWithheld": true,
+      "lateMountSafe": true,
+      "formativeIdentity": {
+        "contentId": "review-native",
+        "lessonVersion": "1",
+        "experienceId": "repair-fixture-explain",
+        "experienceVersion": "0.1.0",
+        "sceneId": "explain",
+        "objectiveIds": [
+          "hydropower-cause-and-effect"
+        ]
+      },
+      "errors": [],
+      "posts": []
+    },
+    {
+      "width": 1440,
+      "authoredHeading": true,
+      "emptyBookmarkDisabled": true,
+      "changedContentSafe": true,
+      "protectedHelpWithheld": true,
+      "lateMountSafe": true,
+      "formativeIdentity": {
+        "contentId": "review-native",
+        "lessonVersion": "1",
+        "experienceId": "repair-fixture-explain",
+        "experienceVersion": "0.1.0",
+        "sceneId": "explain",
+        "objectiveIds": [
+          "hydropower-cause-and-effect"
+        ]
+      },
+      "errors": [],
+      "posts": []
+    },
+    {
+      "width": 1920,
+      "authoredHeading": true,
+      "emptyBookmarkDisabled": true,
+      "changedContentSafe": true,
+      "protectedHelpWithheld": true,
+      "lateMountSafe": true,
+      "formativeIdentity": {
+        "contentId": "review-native",
+        "lessonVersion": "1",
+        "experienceId": "repair-fixture-explain",
+        "experienceVersion": "0.1.0",
+        "sceneId": "explain",
+        "objectiveIds": [
+          "hydropower-cause-and-effect"
+        ]
+      },
+      "errors": [],
+      "posts": []
+    }
+  ]
+}

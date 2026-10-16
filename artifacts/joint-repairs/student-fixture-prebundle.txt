@@ -1,0 +1,8 @@
+node : manually calling optimizeDeps is deprecated. This is done automatically and does not need to be called manually.
+At line:2 char:260
++ ... t-repairs'; node --input-type=module -e "import {resolveConfig,optimi ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (manually callin...alled manually.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+
+{"fixtureDependenciesPrepared":true,"count":10,"cacheDir":"C:/liberia-learn/.task-worktrees/repair-pr190/node_modules/.vite-student-today-joint-repairs"}

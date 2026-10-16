@@ -67,29 +67,52 @@ page.setDefaultNavigationTimeout(120000); page.setDefaultTimeout(60000);
 const errors = []; page.on("pageerror", (error) => errors.push(error.message));
 const evidence = { shell: [], learn: [], states: [], a11y: {} };
 const overflow = () => page.evaluate(() => document.documentElement.scrollWidth > innerWidth);
-const OLD_LAYOUT = ".pdv2-shell :where(.pdv2-today,.pdv2-secondary){max-width:1280px!important;margin-left:auto!important;margin-right:auto!important;padding-left:32px!important;padding-right:32px!important}";
-async function gutter() {
+async function dashboardGeometry() {
   return page.evaluate(() => {
     const rail = document.querySelector(".pdv2-rail").getBoundingClientRect();
+    const workspace = document.querySelector(".pdv2-body").getBoundingClientRect();
     const main = document.querySelector("main.pdv2-today");
     const box = main.getBoundingClientRect(); const style = getComputedStyle(main);
     const contentLeft = box.left + parseFloat(style.paddingLeft); const contentRight = box.right - parseFloat(style.paddingRight);
-    return { railRight: Math.round(rail.right), contentLeft: Math.round(contentLeft), gap: Math.round(contentLeft - rail.right), rightSpace: Math.round(innerWidth - contentRight), contentWidth: Math.round(contentRight - contentLeft) };
+    return {
+      railLeft: rail.left, railRight: rail.right, railWidth: rail.width,
+      workspaceLeft: workspace.left, workspaceRight: workspace.right, workspaceWidth: workspace.width,
+      frameLeft: box.left, frameRight: box.right, frameWidth: box.width, maxWidth: parseFloat(style.maxWidth),
+      paddingLeft: parseFloat(style.paddingLeft), paddingRight: parseFloat(style.paddingRight),
+      contentLeft, contentRight, contentWidth: contentRight - contentLeft,
+      gap: contentLeft - rail.right, leftSpace: contentLeft - workspace.left, rightSpace: workspace.right - contentRight,
+      centerOffset: (contentLeft + contentRight - workspace.left - workspace.right) / 2,
+      viewportWidth: document.documentElement.clientWidth,
+    };
   });
 }
+function assertDashboardGeometry(m, label) {
+  const close = (actual, expected, message) => assert(Math.abs(actual - expected) <= 1, `${label} ${message}: ${actual}, expected ${expected}`);
+  // Approved V3 dashboard frame: capped at 1440px INCLUDING 32px padding on each side.
+  // Keep these expectations independent of computed CSS so a changed/removed cap cannot bless itself.
+  close(m.maxWidth, 1440, "dashboard max-width");
+  close(m.paddingLeft, 32, "left padding"); close(m.paddingRight, 32, "right padding");
+  assert(m.railWidth > 0 && m.railRight < m.viewportWidth, `${label} desktop rail missing`);
+  close(m.railLeft, 0, "rail left edge");
+  close(m.workspaceLeft, m.railRight, "workspace starts after rail");
+  close(m.workspaceRight, m.viewportWidth, "workspace right edge");
+  close(m.frameWidth, Math.min(m.workspaceWidth, 1440), "frame fills available width up to cap");
+  close(m.contentWidth, Math.min(m.workspaceWidth, 1440) - 64, "usable content width");
+  close(m.centerOffset, 0, "content centered within workspace");
+  close(m.leftSpace, m.rightSpace, "balanced available whitespace");
+  close(m.leftSpace, Math.max(0, (m.workspaceWidth - 1440) / 2) + 32, "workspace whitespace");
+  assert(m.gap >= 24 && m.rightSpace >= 24, `${label} content lacks sidebar/edge separation`);
+  assert(m.frameLeft >= m.railRight - 1 && m.frameRight <= m.workspaceRight + 1, `${label} frame outside workspace`);
+}
 
-// A. Wide-screen shell: content starts beside the rail; measured before (old CSS re-applied) and after.
+// A. Wide-screen V3 dashboard: center in the workspace AFTER the rail, with a bounded, usable frame.
 for (const route of ["/student/today", "/student/learn"]) for (const width of [1280, 1440, 1600, 1920]) {
   await page.setViewportSize({ width, height: 900 });
   await page.goto(`${base}${route}?grade=6`);
   await page.locator("main.pdv2-today h1").waitFor();
-  const after = await gutter();
+  const after = await dashboardGeometry();
   assert.equal(await overflow(), false, `${route}/${width} overflows`);
-  assert(after.gap >= 24 && after.gap <= 40, `${route}/${width} gutter ${after.gap}`);
-  assert(after.rightSpace >= 24, `${route}/${width} right space ${after.rightSpace}`);
-  const style = await page.addStyleTag({ content: OLD_LAYOUT });
-  const before = await gutter();
-  await style.evaluate((node) => node.remove());
+  assertDashboardGeometry(after, `${route}/${width}`);
   // B. Visible desktop sign out in the rail utility area, through the safe-logout page.
   const signOut = page.locator(".pdv2-rail-support").getByRole("link", { name: "Sign out", exact: true });
   assert(await signOut.isVisible(), `${route}/${width} sign out hidden`);
@@ -98,7 +121,7 @@ for (const route of ["/student/today", "/student/learn"]) for (const width of [1
   assert.equal(await page.locator("nav[aria-label=Student] a").count(), 5);
   assert.equal(await page.locator("nav[aria-label=Student]").getByText("Sign out").count(), 0);
   if (width === 1440 || width === 1920) await page.screenshot({ path: `${out}/shell-${route.split("/").pop()}-${width}.png` });
-  evidence.shell.push({ route, width, before, after });
+  evidence.shell.push({ route, width, after });
 }
 // Account and preferences remain; mobile account menu exposes sign out without crowding the nav.
 assert(await page.getByText("Account and preferences", { exact: true }).isVisible());

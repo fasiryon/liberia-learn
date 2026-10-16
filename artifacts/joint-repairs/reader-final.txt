@@ -1,0 +1,18 @@
+
+ RUN  v4.1.9 C:/liberia-learn/.task-worktrees/repair-pr190
+
+node : Browserslist: browsers data (caniuse-lite) is 8 months old. Please run:
+At line:2 char:1
++ node node_modules/vitest/vitest.mjs run __tests__/student-v3-reader-r ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Browserslist: b...ld. Please run::String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+···
+
+ Test Files  1 passed (1)
+      Tests  3 passed (3)
+   Start at  14:21:07
+   Duration  52.55s (transform 7.10s, setup 0ms, import 13.42s, tests 1.71s, environment 35.29s)

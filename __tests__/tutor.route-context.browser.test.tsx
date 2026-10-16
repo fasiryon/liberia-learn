@@ -34,6 +34,28 @@ beforeEach(() => {
 afterEach(async () => { await act(async () => root.unmount()); container.remove(); vi.unstubAllGlobals(); });
 
 describe("catalog lesson tutor browser requests", () => {
+  it("reads protected native context when the player mounted before the shell", async () => {
+    const marker = document.createElement("div");
+    marker.dataset.nativeTutorContext = JSON.stringify({ pathname: navigation.pathname, identity: { contentId: "g7-addition", sceneId: "independent" }, blocked: true });
+    document.body.append(marker);
+    try {
+      await render();
+      expect(container.textContent).toBe("");
+      expect(fetchMock).not.toHaveBeenCalled();
+    } finally { marker.remove(); }
+  });
+  it("closes help on a protected native scene and scopes permitted help to its exact scene", async () => {
+    await render();
+    await act(async () => window.dispatchEvent(new CustomEvent("liberialearn:tutor-context", { detail: {
+      pathname: navigation.pathname, identity: { contentId: "g7-addition", sceneId: "independent" }, blocked: true,
+    } })));
+    expect(container.textContent).toBe("");
+    expect(fetchMock).not.toHaveBeenCalled();
+    const identity = { contentId: "g7-addition", lessonVersion: "1", experienceId: "native", experienceVersion: "1", sceneId: "explain" };
+    await act(async () => window.dispatchEvent(new CustomEvent("liberialearn:tutor-context", { detail: { pathname: navigation.pathname, identity, blocked: false } })));
+    await act(async () => window.dispatchEvent(new CustomEvent("liberialearn:open-tutor", { detail: { identity, handled: false } })));
+    expect((await ask()).tutorContext).toEqual(identity);
+  });
   it("sends content identity on direct navigation and after reload without page markers", async () => {
     await render();
     expect((await ask()).tutorContext).toEqual({ contentId: "g7-addition" });
