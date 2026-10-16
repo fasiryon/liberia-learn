@@ -1,0 +1,2936 @@
+{
+  "capturedAt": "2026-10-16T23:09:13.890Z",
+  "base": "http://localhost:3297",
+  "player": "Lesson Player V2 (/lab-review/experience)",
+  "fullscreenSlidesV2": "NOT_AVAILABLE_ON_BASE",
+  "runs": [
+    {
+      "lesson": "g1-civics-rules-rights-duties",
+      "candidateId": "lmv1-g1-civics-rules-rights-duties",
+      "viewport": "390",
+      "httpStatus": 200,
+      "scenes": [
+        {
+          "position": 1,
+          "sceneId": "intro",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.04,
+          "contentWidthShare": 0.92,
+          "screenshot": "g1-civics-rules-rights-duties/390/01-intro.jpg"
+        },
+        {
+          "position": 2,
+          "sceneId": "objectives",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.12,
+          "contentWidthShare": 0.92,
+          "screenshot": "g1-civics-rules-rights-duties/390/02-objectives.jpg"
+        },
+        {
+          "position": 3,
+          "sceneId": "warm-up",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "answer:w-who",
+            "answer:w-where"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.63,
+          "contentWidthShare": 0.92,
+          "screenshot": "g1-civics-rules-rights-duties/390/03-warm-up.jpg"
+        },
+        {
+          "position": 4,
+          "sceneId": "rules",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.32,
+          "contentWidthShare": 0.92,
+          "screenshot": "g1-civics-rules-rights-duties/390/04-rules.jpg"
+        },
+        {
+          "position": 5,
+          "sceneId": "rule-example",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "reveal-step",
+            "reveal-step",
+            "reveal-step",
+            "reveal-step"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.72,
+          "contentWidthShare": 0.92,
+          "screenshot": "g1-civics-rules-rights-duties/390/05-rule-example.jpg"
+        },
+        {
+          "position": 6,
+          "sceneId": "rights-duties",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.17,
+          "contentWidthShare": 0.92,
+          "screenshot": "g1-civics-rules-rights-duties/390/06-rights-duties.jpg"
+        },
+        {
+          "position": 7,
+          "sceneId": "guided",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "answer:g-school",
+            "answer:g-rubbish"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.65,
+          "contentWidthShare": 0.92,
+          "screenshot": "g1-civics-rules-rights-duties/390/07-guided.jpg"
+        },
+        {
+          "position": 8,
+          "sceneId": "think-again",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "answer:m-watching",
+            "answer:m-sweets"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.77,
+          "contentWidthShare": 0.92,
+          "screenshot": "g1-civics-rules-rights-duties/390/08-think-again.jpg"
+        },
+        {
+          "position": 9,
+          "sceneId": "practice",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "answer:p-wash",
+            "answer:p-listen",
+            "answer:p-safe"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 2.02,
+          "contentWidthShare": 0.92,
+          "screenshot": "g1-civics-rules-rights-duties/390/09-practice.jpg"
+        },
+        {
+          "position": 10,
+          "sceneId": "tell",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "write",
+            "write"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.66,
+          "contentWidthShare": 0.92,
+          "screenshot": "g1-civics-rules-rights-duties/390/10-tell.jpg"
+        },
+        {
+          "position": 11,
+          "sceneId": "exit-ticket",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.15,
+          "contentWidthShare": 0.92,
+          "screenshot": "g1-civics-rules-rights-duties/390/11-exit-ticket.jpg"
+        },
+        {
+          "position": 12,
+          "sceneId": "reflect",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.16,
+          "contentWidthShare": 0.92,
+          "screenshot": "g1-civics-rules-rights-duties/390/12-reflect.jpg"
+        }
+      ],
+      "errors": [],
+      "finishState": "PROTOTYPE"
+    },
+    {
+      "lesson": "g1-civics-rules-rights-duties",
+      "candidateId": "lmv1-g1-civics-rules-rights-duties",
+      "viewport": "768",
+      "httpStatus": 200,
+      "scenes": [
+        {
+          "position": 1,
+          "sceneId": "intro",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.94,
+          "screenshot": "g1-civics-rules-rights-duties/768/01-intro.jpg"
+        },
+        {
+          "position": 2,
+          "sceneId": "objectives",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.94,
+          "screenshot": "g1-civics-rules-rights-duties/768/02-objectives.jpg"
+        },
+        {
+          "position": 3,
+          "sceneId": "warm-up",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "answer:w-who",
+            "answer:w-where"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.22,
+          "contentWidthShare": 0.94,
+          "screenshot": "g1-civics-rules-rights-duties/768/03-warm-up.jpg"
+        },
+        {
+          "position": 4,
+          "sceneId": "rules",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.94,
+          "screenshot": "g1-civics-rules-rights-duties/768/04-rules.jpg"
+        },
+        {
+          "position": 5,
+          "sceneId": "rule-example",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "reveal-step",
+            "reveal-step",
+            "reveal-step",
+            "reveal-step"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.22,
+          "contentWidthShare": 0.94,
+          "screenshot": "g1-civics-rules-rights-duties/768/05-rule-example.jpg"
+        },
+        {
+          "position": 6,
+          "sceneId": "rights-duties",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.94,
+          "screenshot": "g1-civics-rules-rights-duties/768/06-rights-duties.jpg"
+        },
+        {
+          "position": 7,
+          "sceneId": "guided",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "answer:g-school",
+            "answer:g-rubbish"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.24,
+          "contentWidthShare": 0.94,
+          "screenshot": "g1-civics-rules-rights-duties/768/07-guided.jpg"
+        },
+        {
+          "position": 8,
+          "sceneId": "think-again",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "answer:m-watching",
+            "answer:m-sweets"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.27,
+          "contentWidthShare": 0.94,
+          "screenshot": "g1-civics-rules-rights-duties/768/08-think-again.jpg"
+        },
+        {
+          "position": 9,
+          "sceneId": "practice",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "answer:p-wash",
+            "answer:p-listen",
+            "answer:p-safe"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.52,
+          "contentWidthShare": 0.94,
+          "screenshot": "g1-civics-rules-rights-duties/768/09-practice.jpg"
+        },
+        {
+          "position": 10,
+          "sceneId": "tell",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "write",
+            "write"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.23,
+          "contentWidthShare": 0.94,
+          "screenshot": "g1-civics-rules-rights-duties/768/10-tell.jpg"
+        },
+        {
+          "position": 11,
+          "sceneId": "exit-ticket",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.94,
+          "screenshot": "g1-civics-rules-rights-duties/768/11-exit-ticket.jpg"
+        },
+        {
+          "position": 12,
+          "sceneId": "reflect",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.94,
+          "screenshot": "g1-civics-rules-rights-duties/768/12-reflect.jpg"
+        }
+      ],
+      "errors": [],
+      "finishState": "PROTOTYPE"
+    },
+    {
+      "lesson": "g1-civics-rules-rights-duties",
+      "candidateId": "lmv1-g1-civics-rules-rights-duties",
+      "viewport": "1440",
+      "httpStatus": 200,
+      "scenes": [
+        {
+          "position": 1,
+          "sceneId": "intro",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.57,
+          "screenshot": "g1-civics-rules-rights-duties/1440/01-intro.jpg"
+        },
+        {
+          "position": 2,
+          "sceneId": "objectives",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.57,
+          "screenshot": "g1-civics-rules-rights-duties/1440/02-objectives.jpg"
+        },
+        {
+          "position": 3,
+          "sceneId": "warm-up",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "answer:w-who",
+            "answer:w-where"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.57,
+          "screenshot": "g1-civics-rules-rights-duties/1440/03-warm-up.jpg"
+        },
+        {
+          "position": 4,
+          "sceneId": "rules",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.57,
+          "screenshot": "g1-civics-rules-rights-duties/1440/04-rules.jpg"
+        },
+        {
+          "position": 5,
+          "sceneId": "rule-example",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "reveal-step",
+            "reveal-step",
+            "reveal-step",
+            "reveal-step"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.57,
+          "screenshot": "g1-civics-rules-rights-duties/1440/05-rule-example.jpg"
+        },
+        {
+          "position": 6,
+          "sceneId": "rights-duties",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.57,
+          "screenshot": "g1-civics-rules-rights-duties/1440/06-rights-duties.jpg"
+        },
+        {
+          "position": 7,
+          "sceneId": "guided",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "answer:g-school",
+            "answer:g-rubbish"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.57,
+          "screenshot": "g1-civics-rules-rights-duties/1440/07-guided.jpg"
+        },
+        {
+          "position": 8,
+          "sceneId": "think-again",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "answer:m-watching",
+            "answer:m-sweets"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.57,
+          "screenshot": "g1-civics-rules-rights-duties/1440/08-think-again.jpg"
+        },
+        {
+          "position": 9,
+          "sceneId": "practice",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "answer:p-wash",
+            "answer:p-listen",
+            "answer:p-safe"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.24,
+          "contentWidthShare": 0.57,
+          "screenshot": "g1-civics-rules-rights-duties/1440/09-practice.jpg"
+        },
+        {
+          "position": 10,
+          "sceneId": "tell",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "write",
+            "write"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.57,
+          "screenshot": "g1-civics-rules-rights-duties/1440/10-tell.jpg"
+        },
+        {
+          "position": 11,
+          "sceneId": "exit-ticket",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.57,
+          "screenshot": "g1-civics-rules-rights-duties/1440/11-exit-ticket.jpg"
+        },
+        {
+          "position": 12,
+          "sceneId": "reflect",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.57,
+          "screenshot": "g1-civics-rules-rights-duties/1440/12-reflect.jpg"
+        }
+      ],
+      "errors": [],
+      "finishState": "PROTOTYPE"
+    },
+    {
+      "lesson": "g1-civics-rules-rights-duties",
+      "candidateId": "lmv1-g1-civics-rules-rights-duties",
+      "viewport": "1920",
+      "httpStatus": 200,
+      "scenes": [
+        {
+          "position": 1,
+          "sceneId": "intro",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.43,
+          "screenshot": "g1-civics-rules-rights-duties/1920/01-intro.jpg"
+        },
+        {
+          "position": 2,
+          "sceneId": "objectives",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.43,
+          "screenshot": "g1-civics-rules-rights-duties/1920/02-objectives.jpg"
+        },
+        {
+          "position": 3,
+          "sceneId": "warm-up",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "answer:w-who",
+            "answer:w-where"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.43,
+          "screenshot": "g1-civics-rules-rights-duties/1920/03-warm-up.jpg"
+        },
+        {
+          "position": 4,
+          "sceneId": "rules",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.43,
+          "screenshot": "g1-civics-rules-rights-duties/1920/04-rules.jpg"
+        },
+        {
+          "position": 5,
+          "sceneId": "rule-example",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "reveal-step",
+            "reveal-step",
+            "reveal-step",
+            "reveal-step"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.43,
+          "screenshot": "g1-civics-rules-rights-duties/1920/05-rule-example.jpg"
+        },
+        {
+          "position": 6,
+          "sceneId": "rights-duties",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.43,
+          "screenshot": "g1-civics-rules-rights-duties/1920/06-rights-duties.jpg"
+        },
+        {
+          "position": 7,
+          "sceneId": "guided",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "answer:g-school",
+            "answer:g-rubbish"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.43,
+          "screenshot": "g1-civics-rules-rights-duties/1920/07-guided.jpg"
+        },
+        {
+          "position": 8,
+          "sceneId": "think-again",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "answer:m-watching",
+            "answer:m-sweets"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.43,
+          "screenshot": "g1-civics-rules-rights-duties/1920/08-think-again.jpg"
+        },
+        {
+          "position": 9,
+          "sceneId": "practice",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "answer:p-wash",
+            "answer:p-listen",
+            "answer:p-safe"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.04,
+          "contentWidthShare": 0.43,
+          "screenshot": "g1-civics-rules-rights-duties/1920/09-practice.jpg"
+        },
+        {
+          "position": 10,
+          "sceneId": "tell",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "write",
+            "write"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.43,
+          "screenshot": "g1-civics-rules-rights-duties/1920/10-tell.jpg"
+        },
+        {
+          "position": 11,
+          "sceneId": "exit-ticket",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.43,
+          "screenshot": "g1-civics-rules-rights-duties/1920/11-exit-ticket.jpg"
+        },
+        {
+          "position": 12,
+          "sceneId": "reflect",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.43,
+          "screenshot": "g1-civics-rules-rights-duties/1920/12-reflect.jpg"
+        }
+      ],
+      "errors": [],
+      "finishState": "PROTOTYPE"
+    },
+    {
+      "lesson": "g6-literacy-cause-effect",
+      "candidateId": "lmv1-g6-literacy-cause-effect",
+      "viewport": "390",
+      "httpStatus": 200,
+      "scenes": [
+        {
+          "position": 1,
+          "sceneId": "intro",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.16,
+          "contentWidthShare": 0.92,
+          "screenshot": "g6-literacy-cause-effect/390/01-intro.jpg"
+        },
+        {
+          "position": 2,
+          "sceneId": "objectives",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.26,
+          "contentWidthShare": 0.92,
+          "screenshot": "g6-literacy-cause-effect/390/02-objectives.jpg"
+        },
+        {
+          "position": 3,
+          "sceneId": "warm-up",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "answer:w-order",
+            "answer:w-because"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.82,
+          "contentWidthShare": 0.92,
+          "screenshot": "g6-literacy-cause-effect/390/03-warm-up.jpg"
+        },
+        {
+          "position": 4,
+          "sceneId": "concept",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.71,
+          "contentWidthShare": 0.92,
+          "screenshot": "g6-literacy-cause-effect/390/04-concept.jpg"
+        },
+        {
+          "position": 5,
+          "sceneId": "worked-example",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "reveal-step",
+            "reveal-step",
+            "reveal-step",
+            "reveal-step"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.98,
+          "contentWidthShare": 0.92,
+          "screenshot": "g6-literacy-cause-effect/390/05-worked-example.jpg"
+        },
+        {
+          "position": 6,
+          "sceneId": "hidden-signal",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "reveal-step",
+            "reveal-step",
+            "reveal-step",
+            "reveal-step"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.97,
+          "contentWidthShare": 0.92,
+          "screenshot": "g6-literacy-cause-effect/390/06-hidden-signal.jpg"
+        },
+        {
+          "position": 7,
+          "sceneId": "guided",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "answer:g-effect",
+            "answer:g-test"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.77,
+          "contentWidthShare": 0.92,
+          "screenshot": "g6-literacy-cause-effect/390/07-guided.jpg"
+        },
+        {
+          "position": 8,
+          "sceneId": "careful-readers",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "answer:m-cold",
+            "answer:m-floods"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.87,
+          "contentWidthShare": 0.92,
+          "screenshot": "g6-literacy-cause-effect/390/08-careful-readers.jpg"
+        },
+        {
+          "position": 9,
+          "sceneId": "practice",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "answer:p-ants",
+            "answer:p-river",
+            "answer:p-kollie"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 2.31,
+          "contentWidthShare": 0.92,
+          "screenshot": "g6-literacy-cause-effect/390/09-practice.jpg"
+        },
+        {
+          "position": 10,
+          "sceneId": "write",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "write",
+            "write"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.78,
+          "contentWidthShare": 0.92,
+          "screenshot": "g6-literacy-cause-effect/390/10-write.jpg"
+        },
+        {
+          "position": 11,
+          "sceneId": "exit-ticket",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.16,
+          "contentWidthShare": 0.92,
+          "screenshot": "g6-literacy-cause-effect/390/11-exit-ticket.jpg"
+        },
+        {
+          "position": 12,
+          "sceneId": "reflect",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.32,
+          "contentWidthShare": 0.92,
+          "screenshot": "g6-literacy-cause-effect/390/12-reflect.jpg"
+        }
+      ],
+      "errors": [],
+      "finishState": "PROTOTYPE"
+    },
+    {
+      "lesson": "g6-literacy-cause-effect",
+      "candidateId": "lmv1-g6-literacy-cause-effect",
+      "viewport": "768",
+      "httpStatus": 200,
+      "scenes": [
+        {
+          "position": 1,
+          "sceneId": "intro",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.94,
+          "screenshot": "g6-literacy-cause-effect/768/01-intro.jpg"
+        },
+        {
+          "position": 2,
+          "sceneId": "objectives",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.94,
+          "screenshot": "g6-literacy-cause-effect/768/02-objectives.jpg"
+        },
+        {
+          "position": 3,
+          "sceneId": "warm-up",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "answer:w-order",
+            "answer:w-because"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.27,
+          "contentWidthShare": 0.94,
+          "screenshot": "g6-literacy-cause-effect/768/03-warm-up.jpg"
+        },
+        {
+          "position": 4,
+          "sceneId": "concept",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.08,
+          "contentWidthShare": 0.94,
+          "screenshot": "g6-literacy-cause-effect/768/04-concept.jpg"
+        },
+        {
+          "position": 5,
+          "sceneId": "worked-example",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "reveal-step",
+            "reveal-step",
+            "reveal-step",
+            "reveal-step"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.28,
+          "contentWidthShare": 0.94,
+          "screenshot": "g6-literacy-cause-effect/768/05-worked-example.jpg"
+        },
+        {
+          "position": 6,
+          "sceneId": "hidden-signal",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "reveal-step",
+            "reveal-step",
+            "reveal-step",
+            "reveal-step"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.3,
+          "contentWidthShare": 0.94,
+          "screenshot": "g6-literacy-cause-effect/768/06-hidden-signal.jpg"
+        },
+        {
+          "position": 7,
+          "sceneId": "guided",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "answer:g-effect",
+            "answer:g-test"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.27,
+          "contentWidthShare": 0.94,
+          "screenshot": "g6-literacy-cause-effect/768/07-guided.jpg"
+        },
+        {
+          "position": 8,
+          "sceneId": "careful-readers",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "answer:m-cold",
+            "answer:m-floods"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.28,
+          "contentWidthShare": 0.94,
+          "screenshot": "g6-literacy-cause-effect/768/08-careful-readers.jpg"
+        },
+        {
+          "position": 9,
+          "sceneId": "practice",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "answer:p-ants",
+            "answer:p-river",
+            "answer:p-kollie"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.53,
+          "contentWidthShare": 0.94,
+          "screenshot": "g6-literacy-cause-effect/768/09-practice.jpg"
+        },
+        {
+          "position": 10,
+          "sceneId": "write",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "write",
+            "write"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.26,
+          "contentWidthShare": 0.94,
+          "screenshot": "g6-literacy-cause-effect/768/10-write.jpg"
+        },
+        {
+          "position": 11,
+          "sceneId": "exit-ticket",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.94,
+          "screenshot": "g6-literacy-cause-effect/768/11-exit-ticket.jpg"
+        },
+        {
+          "position": 12,
+          "sceneId": "reflect",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.94,
+          "screenshot": "g6-literacy-cause-effect/768/12-reflect.jpg"
+        }
+      ],
+      "errors": [],
+      "finishState": "PROTOTYPE"
+    },
+    {
+      "lesson": "g6-literacy-cause-effect",
+      "candidateId": "lmv1-g6-literacy-cause-effect",
+      "viewport": "1440",
+      "httpStatus": 200,
+      "scenes": [
+        {
+          "position": 1,
+          "sceneId": "intro",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.57,
+          "screenshot": "g6-literacy-cause-effect/1440/01-intro.jpg"
+        },
+        {
+          "position": 2,
+          "sceneId": "objectives",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.57,
+          "screenshot": "g6-literacy-cause-effect/1440/02-objectives.jpg"
+        },
+        {
+          "position": 3,
+          "sceneId": "warm-up",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "answer:w-order",
+            "answer:w-because"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.02,
+          "contentWidthShare": 0.57,
+          "screenshot": "g6-literacy-cause-effect/1440/03-warm-up.jpg"
+        },
+        {
+          "position": 4,
+          "sceneId": "concept",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.57,
+          "screenshot": "g6-literacy-cause-effect/1440/04-concept.jpg"
+        },
+        {
+          "position": 5,
+          "sceneId": "worked-example",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "reveal-step",
+            "reveal-step",
+            "reveal-step",
+            "reveal-step"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.04,
+          "contentWidthShare": 0.57,
+          "screenshot": "g6-literacy-cause-effect/1440/05-worked-example.jpg"
+        },
+        {
+          "position": 6,
+          "sceneId": "hidden-signal",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "reveal-step",
+            "reveal-step",
+            "reveal-step",
+            "reveal-step"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.01,
+          "contentWidthShare": 0.57,
+          "screenshot": "g6-literacy-cause-effect/1440/06-hidden-signal.jpg"
+        },
+        {
+          "position": 7,
+          "sceneId": "guided",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "answer:g-effect",
+            "answer:g-test"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.01,
+          "contentWidthShare": 0.57,
+          "screenshot": "g6-literacy-cause-effect/1440/07-guided.jpg"
+        },
+        {
+          "position": 8,
+          "sceneId": "careful-readers",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "answer:m-cold",
+            "answer:m-floods"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.57,
+          "screenshot": "g6-literacy-cause-effect/1440/08-careful-readers.jpg"
+        },
+        {
+          "position": 9,
+          "sceneId": "practice",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "answer:p-ants",
+            "answer:p-river",
+            "answer:p-kollie"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.23,
+          "contentWidthShare": 0.57,
+          "screenshot": "g6-literacy-cause-effect/1440/09-practice.jpg"
+        },
+        {
+          "position": 10,
+          "sceneId": "write",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "write",
+            "write"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.57,
+          "screenshot": "g6-literacy-cause-effect/1440/10-write.jpg"
+        },
+        {
+          "position": 11,
+          "sceneId": "exit-ticket",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.57,
+          "screenshot": "g6-literacy-cause-effect/1440/11-exit-ticket.jpg"
+        },
+        {
+          "position": 12,
+          "sceneId": "reflect",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.57,
+          "screenshot": "g6-literacy-cause-effect/1440/12-reflect.jpg"
+        }
+      ],
+      "errors": [],
+      "finishState": "PROTOTYPE"
+    },
+    {
+      "lesson": "g6-literacy-cause-effect",
+      "candidateId": "lmv1-g6-literacy-cause-effect",
+      "viewport": "1920",
+      "httpStatus": 200,
+      "scenes": [
+        {
+          "position": 1,
+          "sceneId": "intro",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.43,
+          "screenshot": "g6-literacy-cause-effect/1920/01-intro.jpg"
+        },
+        {
+          "position": 2,
+          "sceneId": "objectives",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.43,
+          "screenshot": "g6-literacy-cause-effect/1920/02-objectives.jpg"
+        },
+        {
+          "position": 3,
+          "sceneId": "warm-up",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "answer:w-order",
+            "answer:w-because"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.43,
+          "screenshot": "g6-literacy-cause-effect/1920/03-warm-up.jpg"
+        },
+        {
+          "position": 4,
+          "sceneId": "concept",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.43,
+          "screenshot": "g6-literacy-cause-effect/1920/04-concept.jpg"
+        },
+        {
+          "position": 5,
+          "sceneId": "worked-example",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "reveal-step",
+            "reveal-step",
+            "reveal-step",
+            "reveal-step"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.43,
+          "screenshot": "g6-literacy-cause-effect/1920/05-worked-example.jpg"
+        },
+        {
+          "position": 6,
+          "sceneId": "hidden-signal",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "reveal-step",
+            "reveal-step",
+            "reveal-step",
+            "reveal-step"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.43,
+          "screenshot": "g6-literacy-cause-effect/1920/06-hidden-signal.jpg"
+        },
+        {
+          "position": 7,
+          "sceneId": "guided",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "answer:g-effect",
+            "answer:g-test"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.43,
+          "screenshot": "g6-literacy-cause-effect/1920/07-guided.jpg"
+        },
+        {
+          "position": 8,
+          "sceneId": "careful-readers",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "answer:m-cold",
+            "answer:m-floods"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.43,
+          "screenshot": "g6-literacy-cause-effect/1920/08-careful-readers.jpg"
+        },
+        {
+          "position": 9,
+          "sceneId": "practice",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "answer:p-ants",
+            "answer:p-river",
+            "answer:p-kollie"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.03,
+          "contentWidthShare": 0.43,
+          "screenshot": "g6-literacy-cause-effect/1920/09-practice.jpg"
+        },
+        {
+          "position": 10,
+          "sceneId": "write",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "write",
+            "write"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.43,
+          "screenshot": "g6-literacy-cause-effect/1920/10-write.jpg"
+        },
+        {
+          "position": 11,
+          "sceneId": "exit-ticket",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.43,
+          "screenshot": "g6-literacy-cause-effect/1920/11-exit-ticket.jpg"
+        },
+        {
+          "position": 12,
+          "sceneId": "reflect",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.43,
+          "screenshot": "g6-literacy-cause-effect/1920/12-reflect.jpg"
+        }
+      ],
+      "errors": [],
+      "finishState": "PROTOTYPE"
+    },
+    {
+      "lesson": "g6-math-decimal-place-value",
+      "candidateId": "lmv1-g6-math-decimal-place-value",
+      "viewport": "390",
+      "httpStatus": 200,
+      "scenes": [
+        {
+          "position": 1,
+          "sceneId": "intro",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.12,
+          "contentWidthShare": 0.92,
+          "screenshot": "g6-math-decimal-place-value/390/01-intro.jpg"
+        },
+        {
+          "position": 2,
+          "sceneId": "objectives",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.3,
+          "contentWidthShare": 0.92,
+          "screenshot": "g6-math-decimal-place-value/390/02-objectives.jpg"
+        },
+        {
+          "position": 3,
+          "sceneId": "warm-up",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "answer:w-thousands",
+            "answer:w-tenths"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.79,
+          "contentWidthShare": 0.92,
+          "screenshot": "g6-math-decimal-place-value/390/03-warm-up.jpg"
+        },
+        {
+          "position": 4,
+          "sceneId": "chart",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.57,
+          "contentWidthShare": 0.92,
+          "screenshot": "g6-math-decimal-place-value/390/04-chart.jpg"
+        },
+        {
+          "position": 5,
+          "sceneId": "worked-example",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "reveal-step",
+            "reveal-step",
+            "reveal-step",
+            "reveal-step",
+            "reveal-step",
+            "reveal-step"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 2.2,
+          "contentWidthShare": 0.92,
+          "screenshot": "g6-math-decimal-place-value/390/05-worked-example.jpg"
+        },
+        {
+          "position": 6,
+          "sceneId": "zero-holds",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "answer:z-307",
+            "answer:z-005"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.76,
+          "contentWidthShare": 0.92,
+          "screenshot": "g6-math-decimal-place-value/390/06-zero-holds.jpg"
+        },
+        {
+          "position": 7,
+          "sceneId": "compare-model",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "reveal-step",
+            "reveal-step",
+            "reveal-step",
+            "reveal-step",
+            "reveal-step"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.98,
+          "contentWidthShare": 0.92,
+          "screenshot": "g6-math-decimal-place-value/390/07-compare-model.jpg"
+        },
+        {
+          "position": 8,
+          "sceneId": "compare-guided",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "answer:g-04-045",
+            "answer:g-0125-05"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.69,
+          "contentWidthShare": 0.92,
+          "screenshot": "g6-math-decimal-place-value/390/08-compare-guided.jpg"
+        },
+        {
+          "position": 9,
+          "sceneId": "who-is-right",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "answer:m-kollie-sia"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.38,
+          "contentWidthShare": 0.92,
+          "screenshot": "g6-math-decimal-place-value/390/09-who-is-right.jpg"
+        },
+        {
+          "position": 10,
+          "sceneId": "practice",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "answer:p-783",
+            "answer:p-2009",
+            "answer:p-order",
+            "answer:p-bigger"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 2.54,
+          "contentWidthShare": 0.92,
+          "screenshot": "g6-math-decimal-place-value/390/10-practice.jpg"
+        },
+        {
+          "position": 11,
+          "sceneId": "explain",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "write",
+            "write"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.6,
+          "contentWidthShare": 0.92,
+          "screenshot": "g6-math-decimal-place-value/390/11-explain.jpg"
+        },
+        {
+          "position": 12,
+          "sceneId": "exit-ticket",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.16,
+          "contentWidthShare": 0.92,
+          "screenshot": "g6-math-decimal-place-value/390/12-exit-ticket.jpg"
+        },
+        {
+          "position": 13,
+          "sceneId": "reflect",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.28,
+          "contentWidthShare": 0.92,
+          "screenshot": "g6-math-decimal-place-value/390/13-reflect.jpg"
+        }
+      ],
+      "errors": [],
+      "finishState": "PROTOTYPE"
+    },
+    {
+      "lesson": "g6-math-decimal-place-value",
+      "candidateId": "lmv1-g6-math-decimal-place-value",
+      "viewport": "768",
+      "httpStatus": 200,
+      "scenes": [
+        {
+          "position": 1,
+          "sceneId": "intro",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.94,
+          "screenshot": "g6-math-decimal-place-value/768/01-intro.jpg"
+        },
+        {
+          "position": 2,
+          "sceneId": "objectives",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.94,
+          "screenshot": "g6-math-decimal-place-value/768/02-objectives.jpg"
+        },
+        {
+          "position": 3,
+          "sceneId": "warm-up",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "answer:w-thousands",
+            "answer:w-tenths"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.3,
+          "contentWidthShare": 0.94,
+          "screenshot": "g6-math-decimal-place-value/768/03-warm-up.jpg"
+        },
+        {
+          "position": 4,
+          "sceneId": "chart",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.94,
+          "screenshot": "g6-math-decimal-place-value/768/04-chart.jpg"
+        },
+        {
+          "position": 5,
+          "sceneId": "worked-example",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "reveal-step",
+            "reveal-step",
+            "reveal-step",
+            "reveal-step",
+            "reveal-step",
+            "reveal-step"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.5,
+          "contentWidthShare": 0.94,
+          "screenshot": "g6-math-decimal-place-value/768/05-worked-example.jpg"
+        },
+        {
+          "position": 6,
+          "sceneId": "zero-holds",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "answer:z-307",
+            "answer:z-005"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.3,
+          "contentWidthShare": 0.94,
+          "screenshot": "g6-math-decimal-place-value/768/06-zero-holds.jpg"
+        },
+        {
+          "position": 7,
+          "sceneId": "compare-model",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "reveal-step",
+            "reveal-step",
+            "reveal-step",
+            "reveal-step",
+            "reveal-step"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.37,
+          "contentWidthShare": 0.94,
+          "screenshot": "g6-math-decimal-place-value/768/07-compare-model.jpg"
+        },
+        {
+          "position": 8,
+          "sceneId": "compare-guided",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "answer:g-04-045",
+            "answer:g-0125-05"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.27,
+          "contentWidthShare": 0.94,
+          "screenshot": "g6-math-decimal-place-value/768/08-compare-guided.jpg"
+        },
+        {
+          "position": 9,
+          "sceneId": "who-is-right",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "answer:m-kollie-sia"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.94,
+          "screenshot": "g6-math-decimal-place-value/768/09-who-is-right.jpg"
+        },
+        {
+          "position": 10,
+          "sceneId": "practice",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "answer:p-783",
+            "answer:p-2009",
+            "answer:p-order",
+            "answer:p-bigger"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.88,
+          "contentWidthShare": 0.94,
+          "screenshot": "g6-math-decimal-place-value/768/10-practice.jpg"
+        },
+        {
+          "position": 11,
+          "sceneId": "explain",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "write",
+            "write"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.2,
+          "contentWidthShare": 0.94,
+          "screenshot": "g6-math-decimal-place-value/768/11-explain.jpg"
+        },
+        {
+          "position": 12,
+          "sceneId": "exit-ticket",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.94,
+          "screenshot": "g6-math-decimal-place-value/768/12-exit-ticket.jpg"
+        },
+        {
+          "position": 13,
+          "sceneId": "reflect",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.94,
+          "screenshot": "g6-math-decimal-place-value/768/13-reflect.jpg"
+        }
+      ],
+      "errors": [],
+      "finishState": "PROTOTYPE"
+    },
+    {
+      "lesson": "g6-math-decimal-place-value",
+      "candidateId": "lmv1-g6-math-decimal-place-value",
+      "viewport": "1440",
+      "httpStatus": 200,
+      "scenes": [
+        {
+          "position": 1,
+          "sceneId": "intro",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.57,
+          "screenshot": "g6-math-decimal-place-value/1440/01-intro.jpg"
+        },
+        {
+          "position": 2,
+          "sceneId": "objectives",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.57,
+          "screenshot": "g6-math-decimal-place-value/1440/02-objectives.jpg"
+        },
+        {
+          "position": 3,
+          "sceneId": "warm-up",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "answer:w-thousands",
+            "answer:w-tenths"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.07,
+          "contentWidthShare": 0.57,
+          "screenshot": "g6-math-decimal-place-value/1440/03-warm-up.jpg"
+        },
+        {
+          "position": 4,
+          "sceneId": "chart",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.57,
+          "screenshot": "g6-math-decimal-place-value/1440/04-chart.jpg"
+        },
+        {
+          "position": 5,
+          "sceneId": "worked-example",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "reveal-step",
+            "reveal-step",
+            "reveal-step",
+            "reveal-step",
+            "reveal-step",
+            "reveal-step"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.26,
+          "contentWidthShare": 0.57,
+          "screenshot": "g6-math-decimal-place-value/1440/05-worked-example.jpg"
+        },
+        {
+          "position": 6,
+          "sceneId": "zero-holds",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "answer:z-307",
+            "answer:z-005"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.07,
+          "contentWidthShare": 0.57,
+          "screenshot": "g6-math-decimal-place-value/1440/06-zero-holds.jpg"
+        },
+        {
+          "position": 7,
+          "sceneId": "compare-model",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "reveal-step",
+            "reveal-step",
+            "reveal-step",
+            "reveal-step",
+            "reveal-step"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.12,
+          "contentWidthShare": 0.57,
+          "screenshot": "g6-math-decimal-place-value/1440/07-compare-model.jpg"
+        },
+        {
+          "position": 8,
+          "sceneId": "compare-guided",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "answer:g-04-045",
+            "answer:g-0125-05"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.57,
+          "screenshot": "g6-math-decimal-place-value/1440/08-compare-guided.jpg"
+        },
+        {
+          "position": 9,
+          "sceneId": "who-is-right",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "answer:m-kollie-sia"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.57,
+          "screenshot": "g6-math-decimal-place-value/1440/09-who-is-right.jpg"
+        },
+        {
+          "position": 10,
+          "sceneId": "practice",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "answer:p-783",
+            "answer:p-2009",
+            "answer:p-order",
+            "answer:p-bigger"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.66,
+          "contentWidthShare": 0.57,
+          "screenshot": "g6-math-decimal-place-value/1440/10-practice.jpg"
+        },
+        {
+          "position": 11,
+          "sceneId": "explain",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "write",
+            "write"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.57,
+          "screenshot": "g6-math-decimal-place-value/1440/11-explain.jpg"
+        },
+        {
+          "position": 12,
+          "sceneId": "exit-ticket",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.57,
+          "screenshot": "g6-math-decimal-place-value/1440/12-exit-ticket.jpg"
+        },
+        {
+          "position": 13,
+          "sceneId": "reflect",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.57,
+          "screenshot": "g6-math-decimal-place-value/1440/13-reflect.jpg"
+        }
+      ],
+      "errors": [],
+      "finishState": "PROTOTYPE"
+    },
+    {
+      "lesson": "g6-math-decimal-place-value",
+      "candidateId": "lmv1-g6-math-decimal-place-value",
+      "viewport": "1920",
+      "httpStatus": 200,
+      "scenes": [
+        {
+          "position": 1,
+          "sceneId": "intro",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.43,
+          "screenshot": "g6-math-decimal-place-value/1920/01-intro.jpg"
+        },
+        {
+          "position": 2,
+          "sceneId": "objectives",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.43,
+          "screenshot": "g6-math-decimal-place-value/1920/02-objectives.jpg"
+        },
+        {
+          "position": 3,
+          "sceneId": "warm-up",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "answer:w-thousands",
+            "answer:w-tenths"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.43,
+          "screenshot": "g6-math-decimal-place-value/1920/03-warm-up.jpg"
+        },
+        {
+          "position": 4,
+          "sceneId": "chart",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.43,
+          "screenshot": "g6-math-decimal-place-value/1920/04-chart.jpg"
+        },
+        {
+          "position": 5,
+          "sceneId": "worked-example",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "reveal-step",
+            "reveal-step",
+            "reveal-step",
+            "reveal-step",
+            "reveal-step",
+            "reveal-step"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.05,
+          "contentWidthShare": 0.43,
+          "screenshot": "g6-math-decimal-place-value/1920/05-worked-example.jpg"
+        },
+        {
+          "position": 6,
+          "sceneId": "zero-holds",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "answer:z-307",
+            "answer:z-005"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.43,
+          "screenshot": "g6-math-decimal-place-value/1920/06-zero-holds.jpg"
+        },
+        {
+          "position": 7,
+          "sceneId": "compare-model",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "reveal-step",
+            "reveal-step",
+            "reveal-step",
+            "reveal-step",
+            "reveal-step"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.43,
+          "screenshot": "g6-math-decimal-place-value/1920/07-compare-model.jpg"
+        },
+        {
+          "position": 8,
+          "sceneId": "compare-guided",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "answer:g-04-045",
+            "answer:g-0125-05"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.43,
+          "screenshot": "g6-math-decimal-place-value/1920/08-compare-guided.jpg"
+        },
+        {
+          "position": 9,
+          "sceneId": "who-is-right",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "answer:m-kollie-sia"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.43,
+          "screenshot": "g6-math-decimal-place-value/1920/09-who-is-right.jpg"
+        },
+        {
+          "position": 10,
+          "sceneId": "practice",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "answer:p-783",
+            "answer:p-2009",
+            "answer:p-order",
+            "answer:p-bigger"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.38,
+          "contentWidthShare": 0.43,
+          "screenshot": "g6-math-decimal-place-value/1920/10-practice.jpg"
+        },
+        {
+          "position": 11,
+          "sceneId": "explain",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "write",
+            "write"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.43,
+          "screenshot": "g6-math-decimal-place-value/1920/11-explain.jpg"
+        },
+        {
+          "position": 12,
+          "sceneId": "exit-ticket",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.43,
+          "screenshot": "g6-math-decimal-place-value/1920/12-exit-ticket.jpg"
+        },
+        {
+          "position": 13,
+          "sceneId": "reflect",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.43,
+          "screenshot": "g6-math-decimal-place-value/1920/13-reflect.jpg"
+        }
+      ],
+      "errors": [],
+      "finishState": "PROTOTYPE"
+    },
+    {
+      "lesson": "g7-science-observation-inference",
+      "candidateId": "lmv1-g7-science-observation-inference",
+      "viewport": "390",
+      "httpStatus": 200,
+      "scenes": [
+        {
+          "position": 1,
+          "sceneId": "intro",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.27,
+          "contentWidthShare": 0.92,
+          "screenshot": "g7-science-observation-inference/390/01-intro.jpg"
+        },
+        {
+          "position": 2,
+          "sceneId": "objectives",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.43,
+          "contentWidthShare": 0.92,
+          "screenshot": "g7-science-observation-inference/390/02-objectives.jpg"
+        },
+        {
+          "position": 3,
+          "sceneId": "warm-up",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "answer:w-ruler",
+            "answer:w-senses"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.82,
+          "contentWidthShare": 0.92,
+          "screenshot": "g7-science-observation-inference/390/03-warm-up.jpg"
+        },
+        {
+          "position": 4,
+          "sceneId": "concept",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.94,
+          "contentWidthShare": 0.92,
+          "screenshot": "g7-science-observation-inference/390/04-concept.jpg"
+        },
+        {
+          "position": 5,
+          "sceneId": "worked-sort",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "reveal-step",
+            "reveal-step",
+            "reveal-step",
+            "reveal-step"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.99,
+          "contentWidthShare": 0.92,
+          "screenshot": "g7-science-observation-inference/390/05-worked-sort.jpg"
+        },
+        {
+          "position": 6,
+          "sceneId": "worked-measure",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "reveal-step",
+            "reveal-step",
+            "reveal-step"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.68,
+          "contentWidthShare": 0.92,
+          "screenshot": "g7-science-observation-inference/390/06-worked-measure.jpg"
+        },
+        {
+          "position": 7,
+          "sceneId": "guided",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "answer:g-pellets",
+            "answer:g-caterpillars",
+            "answer:g-height"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 2.21,
+          "contentWidthShare": 0.92,
+          "screenshot": "g7-science-observation-inference/390/07-guided.jpg"
+        },
+        {
+          "position": 8,
+          "sceneId": "more-than-one",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "answer:m-next-step"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.54,
+          "contentWidthShare": 0.92,
+          "screenshot": "g7-science-observation-inference/390/08-more-than-one.jpg"
+        },
+        {
+          "position": 9,
+          "sceneId": "practice",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "answer:p-wind",
+            "answer:p-temp",
+            "answer:p-opinion"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 2.33,
+          "contentWidthShare": 0.92,
+          "screenshot": "g7-science-observation-inference/390/09-practice.jpg"
+        },
+        {
+          "position": 10,
+          "sceneId": "record",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "write",
+            "write"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.76,
+          "contentWidthShare": 0.92,
+          "screenshot": "g7-science-observation-inference/390/10-record.jpg"
+        },
+        {
+          "position": 11,
+          "sceneId": "exit-ticket",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.18,
+          "contentWidthShare": 0.92,
+          "screenshot": "g7-science-observation-inference/390/11-exit-ticket.jpg"
+        },
+        {
+          "position": 12,
+          "sceneId": "reflect",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.3,
+          "contentWidthShare": 0.92,
+          "screenshot": "g7-science-observation-inference/390/12-reflect.jpg"
+        }
+      ],
+      "errors": [],
+      "finishState": "PROTOTYPE"
+    },
+    {
+      "lesson": "g7-science-observation-inference",
+      "candidateId": "lmv1-g7-science-observation-inference",
+      "viewport": "768",
+      "httpStatus": 200,
+      "scenes": [
+        {
+          "position": 1,
+          "sceneId": "intro",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.94,
+          "screenshot": "g7-science-observation-inference/768/01-intro.jpg"
+        },
+        {
+          "position": 2,
+          "sceneId": "objectives",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.94,
+          "screenshot": "g7-science-observation-inference/768/02-objectives.jpg"
+        },
+        {
+          "position": 3,
+          "sceneId": "warm-up",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "answer:w-ruler",
+            "answer:w-senses"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.36,
+          "contentWidthShare": 0.94,
+          "screenshot": "g7-science-observation-inference/768/03-warm-up.jpg"
+        },
+        {
+          "position": 4,
+          "sceneId": "concept",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.13,
+          "contentWidthShare": 0.94,
+          "screenshot": "g7-science-observation-inference/768/04-concept.jpg"
+        },
+        {
+          "position": 5,
+          "sceneId": "worked-sort",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "reveal-step",
+            "reveal-step",
+            "reveal-step",
+            "reveal-step"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.28,
+          "contentWidthShare": 0.94,
+          "screenshot": "g7-science-observation-inference/768/05-worked-sort.jpg"
+        },
+        {
+          "position": 6,
+          "sceneId": "worked-measure",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "reveal-step",
+            "reveal-step",
+            "reveal-step"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.15,
+          "contentWidthShare": 0.94,
+          "screenshot": "g7-science-observation-inference/768/06-worked-measure.jpg"
+        },
+        {
+          "position": 7,
+          "sceneId": "guided",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "answer:g-pellets",
+            "answer:g-caterpillars",
+            "answer:g-height"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.56,
+          "contentWidthShare": 0.94,
+          "screenshot": "g7-science-observation-inference/768/07-guided.jpg"
+        },
+        {
+          "position": 8,
+          "sceneId": "more-than-one",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "answer:m-next-step"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.06,
+          "contentWidthShare": 0.94,
+          "screenshot": "g7-science-observation-inference/768/08-more-than-one.jpg"
+        },
+        {
+          "position": 9,
+          "sceneId": "practice",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "answer:p-wind",
+            "answer:p-temp",
+            "answer:p-opinion"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.61,
+          "contentWidthShare": 0.94,
+          "screenshot": "g7-science-observation-inference/768/09-practice.jpg"
+        },
+        {
+          "position": 10,
+          "sceneId": "record",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "write",
+            "write"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.25,
+          "contentWidthShare": 0.94,
+          "screenshot": "g7-science-observation-inference/768/10-record.jpg"
+        },
+        {
+          "position": 11,
+          "sceneId": "exit-ticket",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.94,
+          "screenshot": "g7-science-observation-inference/768/11-exit-ticket.jpg"
+        },
+        {
+          "position": 12,
+          "sceneId": "reflect",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.94,
+          "screenshot": "g7-science-observation-inference/768/12-reflect.jpg"
+        }
+      ],
+      "errors": [],
+      "finishState": "PROTOTYPE"
+    },
+    {
+      "lesson": "g7-science-observation-inference",
+      "candidateId": "lmv1-g7-science-observation-inference",
+      "viewport": "1440",
+      "httpStatus": 200,
+      "scenes": [
+        {
+          "position": 1,
+          "sceneId": "intro",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.57,
+          "screenshot": "g7-science-observation-inference/1440/01-intro.jpg"
+        },
+        {
+          "position": 2,
+          "sceneId": "objectives",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.57,
+          "screenshot": "g7-science-observation-inference/1440/02-objectives.jpg"
+        },
+        {
+          "position": 3,
+          "sceneId": "warm-up",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "answer:w-ruler",
+            "answer:w-senses"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.1,
+          "contentWidthShare": 0.57,
+          "screenshot": "g7-science-observation-inference/1440/03-warm-up.jpg"
+        },
+        {
+          "position": 4,
+          "sceneId": "concept",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.57,
+          "screenshot": "g7-science-observation-inference/1440/04-concept.jpg"
+        },
+        {
+          "position": 5,
+          "sceneId": "worked-sort",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "reveal-step",
+            "reveal-step",
+            "reveal-step",
+            "reveal-step"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.01,
+          "contentWidthShare": 0.57,
+          "screenshot": "g7-science-observation-inference/1440/05-worked-sort.jpg"
+        },
+        {
+          "position": 6,
+          "sceneId": "worked-measure",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "reveal-step",
+            "reveal-step",
+            "reveal-step"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.57,
+          "screenshot": "g7-science-observation-inference/1440/06-worked-measure.jpg"
+        },
+        {
+          "position": 7,
+          "sceneId": "guided",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "answer:g-pellets",
+            "answer:g-caterpillars",
+            "answer:g-height"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.27,
+          "contentWidthShare": 0.57,
+          "screenshot": "g7-science-observation-inference/1440/07-guided.jpg"
+        },
+        {
+          "position": 8,
+          "sceneId": "more-than-one",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "answer:m-next-step"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.57,
+          "screenshot": "g7-science-observation-inference/1440/08-more-than-one.jpg"
+        },
+        {
+          "position": 9,
+          "sceneId": "practice",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "answer:p-wind",
+            "answer:p-temp",
+            "answer:p-opinion"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.33,
+          "contentWidthShare": 0.57,
+          "screenshot": "g7-science-observation-inference/1440/09-practice.jpg"
+        },
+        {
+          "position": 10,
+          "sceneId": "record",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "write",
+            "write"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.57,
+          "screenshot": "g7-science-observation-inference/1440/10-record.jpg"
+        },
+        {
+          "position": 11,
+          "sceneId": "exit-ticket",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.57,
+          "screenshot": "g7-science-observation-inference/1440/11-exit-ticket.jpg"
+        },
+        {
+          "position": 12,
+          "sceneId": "reflect",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.57,
+          "screenshot": "g7-science-observation-inference/1440/12-reflect.jpg"
+        }
+      ],
+      "errors": [],
+      "finishState": "PROTOTYPE"
+    },
+    {
+      "lesson": "g7-science-observation-inference",
+      "candidateId": "lmv1-g7-science-observation-inference",
+      "viewport": "1920",
+      "httpStatus": 200,
+      "scenes": [
+        {
+          "position": 1,
+          "sceneId": "intro",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.43,
+          "screenshot": "g7-science-observation-inference/1920/01-intro.jpg"
+        },
+        {
+          "position": 2,
+          "sceneId": "objectives",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.43,
+          "screenshot": "g7-science-observation-inference/1920/02-objectives.jpg"
+        },
+        {
+          "position": 3,
+          "sceneId": "warm-up",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "answer:w-ruler",
+            "answer:w-senses"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.43,
+          "screenshot": "g7-science-observation-inference/1920/03-warm-up.jpg"
+        },
+        {
+          "position": 4,
+          "sceneId": "concept",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.43,
+          "screenshot": "g7-science-observation-inference/1920/04-concept.jpg"
+        },
+        {
+          "position": 5,
+          "sceneId": "worked-sort",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "reveal-step",
+            "reveal-step",
+            "reveal-step",
+            "reveal-step"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.43,
+          "screenshot": "g7-science-observation-inference/1920/05-worked-sort.jpg"
+        },
+        {
+          "position": 6,
+          "sceneId": "worked-measure",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "reveal-step",
+            "reveal-step",
+            "reveal-step"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.43,
+          "screenshot": "g7-science-observation-inference/1920/06-worked-measure.jpg"
+        },
+        {
+          "position": 7,
+          "sceneId": "guided",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "answer:g-pellets",
+            "answer:g-caterpillars",
+            "answer:g-height"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.06,
+          "contentWidthShare": 0.43,
+          "screenshot": "g7-science-observation-inference/1920/07-guided.jpg"
+        },
+        {
+          "position": 8,
+          "sceneId": "more-than-one",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "answer:m-next-step"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.43,
+          "screenshot": "g7-science-observation-inference/1920/08-more-than-one.jpg"
+        },
+        {
+          "position": 9,
+          "sceneId": "practice",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "answer:p-wind",
+            "answer:p-temp",
+            "answer:p-opinion"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1.11,
+          "contentWidthShare": 0.43,
+          "screenshot": "g7-science-observation-inference/1920/09-practice.jpg"
+        },
+        {
+          "position": 10,
+          "sceneId": "record",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "write",
+            "write"
+          ],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.43,
+          "screenshot": "g7-science-observation-inference/1920/10-record.jpg"
+        },
+        {
+          "position": 11,
+          "sceneId": "exit-ticket",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.43,
+          "screenshot": "g7-science-observation-inference/1920/11-exit-ticket.jpg"
+        },
+        {
+          "position": 12,
+          "sceneId": "reflect",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "horizontalOverflowPx": 0,
+          "minFontPx": 14,
+          "scrollViewports": 1,
+          "contentWidthShare": 0.43,
+          "screenshot": "g7-science-observation-inference/1920/12-reflect.jpg"
+        }
+      ],
+      "errors": [],
+      "finishState": "PROTOTYPE"
+    }
+  ]
+}
