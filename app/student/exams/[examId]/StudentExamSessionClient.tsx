@@ -7,7 +7,6 @@ type Question = {
   id: string;
   prompt: string;
   options: string[];
-  explanation: string;
   moeCode: string;
   points: number;
 };
