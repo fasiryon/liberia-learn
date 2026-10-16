@@ -137,7 +137,7 @@ export function llPromotionPolicyFor(input: {
     version: input.version,
     schoolId: input.schoolId,
     status: input.status,
-    source: { kind: "LIBERIALEARN_INSTITUTIONAL", reference: "LL-AEP-001@1.0.0", attestedBy: null },
+    source: { kind: "LIBERIALEARN_INSTITUTIONAL" as const, reference: "LL-AEP-001@1.0.0", attestedBy: null },
     appliesToGrades: [...input.appliesToGrades],
     terminalGrade: 12,
     requiredSubjects: [...input.requiredSubjects],

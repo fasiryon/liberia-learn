@@ -178,10 +178,10 @@ export const LL_AEP_001_GRADES_4_12: GradingPolicy = Object.freeze({
   version: "1.0.0",
   appliesToGrades: [4, 5, 6, 7, 8, 9, 10, 11, 12],
   groups: LL_WEIGHTS_GRADES_4_12.map((group) => ({ ...group, includes: LL_CATEGORY_MAP_4_12[group.groupId] })),
-  prohibitedCategories: [],
+  prohibitedCategories: [] as GradeCategory[],
   // LL-AEP-001 sets no late penalty; a school may add one in its adopted version.
   late: null,
-});
+} satisfies GradingPolicy);
 
 /** Grades 1–3: developmental evidence, no tests or examinations. */
 export const LL_AEP_001_GRADES_1_3: GradingPolicy = Object.freeze({
@@ -190,9 +190,9 @@ export const LL_AEP_001_GRADES_1_3: GradingPolicy = Object.freeze({
   version: "1.0.0",
   appliesToGrades: [1, 2, 3],
   groups: LL_WEIGHTS_GRADES_1_3.map((group) => ({ ...group, includes: LL_CATEGORY_MAP_1_3[group.groupId] })),
-  prohibitedCategories: ["TEST", "EXAM"],
+  prohibitedCategories: ["TEST", "EXAM"] as GradeCategory[],
   late: null,
-});
+} satisfies GradingPolicy);
 
 export const LL_AEP_001_GRADING_BASELINES: readonly GradingPolicy[] = Object.freeze([LL_AEP_001_GRADES_1_3, LL_AEP_001_GRADES_4_12]);
 
@@ -211,7 +211,7 @@ export function adoptGradingPolicy(baseline: GradingPolicy, input: {
     ...baseline,
     policyId: `${input.schoolId}:${baseline.policyId}`,
     version: input.version,
-    scope: { kind: "SCHOOL", schoolId: input.schoolId },
+    scope: { kind: "SCHOOL" as const, schoolId: input.schoolId },
     status: "APPROVED",
     approvedBy: { userId: input.approver.userId, role: input.approver.role as "PRINCIPAL" | "ADMIN" },
     derivedFrom: `${baseline.policyId}@${baseline.version}#${hashGradingPolicy(baseline)}`,
