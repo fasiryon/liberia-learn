@@ -18,6 +18,8 @@ import { AssessmentHandoffSeam, DiagramReveal, FormativeCheck, ReflectionPrompts
 import { LabScene, type LabSceneView } from "./LabScene";
 import { LearningStage, StageFooter } from "@/components/experience/FocusedLearning";
 import { AskTutorButton } from "@/components/experience/AskTutorButton";
+import { sceneAllowsTutor } from "@/lib/learner-experience/assistancePolicy";
+import type { TutorIdentity } from "@/lib/ai/tutor/contextContract";
 
 const TYPE_LABEL: Record<Scene["type"], string> = {
   INTRO: "Introduction", OBJECTIVE: "Goal", EXPLANATION: "Learn", MEDIA: "Watch", INTERACTIVE_DIAGRAM: "Explore",
@@ -188,6 +190,19 @@ export function LessonPlayerV2({ experience, links = NO_LINKS, labs = NO_LABS, t
 
   const index = progress ? sceneIndexOf(experience, progress) : 0;
   const scene = experience.scenes[index];
+  const tutorAllowed = sceneAllowsTutor(scene);
+  const tutorIdentity = useMemo<TutorIdentity | undefined>(() => runtime ? {
+    ...(runtime.target.kind === "CONTENT" ? { contentId: runtime.target.contentId } : { lessonId: runtime.target.scheduledWorkId }),
+    lessonVersion: runtime.identity.contentVersion ?? runtime.identity.lessonVersion,
+    ...(runtime.identity.revisionId ? { revisionId: runtime.identity.revisionId } : {}),
+    experienceId: experience.id, experienceVersion: experience.version, sceneId: scene.id,
+    objectiveIds: [...scene.objectiveIds],
+  } : undefined, [runtime, experience.id, experience.version, scene.id, scene.objectiveIds]);
+  useEffect(() => {
+    window.dispatchEvent(new CustomEvent("liberialearn:tutor-context", { detail: {
+      pathname: window.location.pathname, identity: tutorIdentity ?? {}, blocked: !runtime || readOnly || !tutorAllowed,
+    } }));
+  }, [runtime, readOnly, tutorIdentity, tutorAllowed]);
   const complete = progress ? isSceneComplete(scene, progress) : false;
   const isLast = index === experience.scenes.length - 1;
   const furthest = progress ? Math.max(index, ...progress.completedSceneIds.map((id) => experience.scenes.findIndex((candidate) => candidate.id === id) + 1)) : 0;
@@ -290,7 +305,9 @@ export function LessonPlayerV2({ experience, links = NO_LINKS, labs = NO_LABS, t
       <section aria-labelledby="ctx-help">
         <h2 id="ctx-help" className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.12em] text-[var(--ll-text-muted)]"><CircleHelp size={14} aria-hidden="true" /> Help</h2>
         <ul className="mt-2 space-y-2 text-sm">
-          <li><AskTutorButton /><p className="mt-1 text-[var(--ll-text-muted)]">{online ? "The tutor answers about this lesson. Your place here is kept." : "The tutor needs a connection."}</p></li>
+          <li>{tutorAllowed && runtime && !readOnly
+            ? <><AskTutorButton identity={tutorIdentity} /><p className="mt-1 text-[var(--ll-text-muted)]">{online ? "The tutor answers about this scene. Your place here is kept." : "The tutor needs a connection."}</p></>
+            : <p>{!tutorAllowed ? "Work independently on this task. Tutor help is available in learning scenes." : "Tutor help requires an authorized online lesson."}</p>}</li>
           {!runtime && <li className="flex gap-2 text-[var(--ll-text-muted)]"><Flag size={14} className="mt-1 shrink-0" aria-hidden="true" /> Need your teacher? Released lessons connect here to the existing &quot;Flag for teacher&quot; path.</li>}
           <li className="text-[var(--ll-text-muted)]">{online ? "Your place is saved on this device." : `Offline: ${scene.offline.fallback}`}</li>
         </ul>
@@ -301,6 +318,7 @@ export function LessonPlayerV2({ experience, links = NO_LINKS, labs = NO_LABS, t
   return (
     <div
       data-lesson-player-v2
+      data-native-tutor-context={JSON.stringify({ identity: tutorIdentity ?? {}, blocked: !runtime || readOnly || !tutorAllowed })}
       data-lesson-id={experience.id}
       data-lesson-version={experience.version}
       data-scene-id={scene.id}

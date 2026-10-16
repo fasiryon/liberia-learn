@@ -11,6 +11,7 @@ import { getCanonicalSubjectCode } from "@/lib/curriculum/subjectTaxonomy";
 import { publishedRelease, publishedReleaseForLearner } from "@/lib/learning-authority/publishedReleases";
 import { validateLessonExperience } from "@/lib/learner-experience/sceneContract";
 import type { LessonExperience } from "@/lib/learner-experience/types";
+import { sceneAllowsTutor } from "@/lib/learner-experience/assistancePolicy";
 import type { RetrievedChunk } from "@/lib/ai/rag/retrievalService";
 import type { TutorAction, TutorGroundingStrength, TutorIdentity, TutorSourceTier } from "./contextContract";
 
@@ -163,6 +164,11 @@ export async function resolveTutorContext(
     if (identity.experienceVersion && identity.experienceVersion !== experience?.version) stale();
     const scene = identity.sceneId ? experience?.scenes.find((candidate) => candidate.id === identity.sceneId) : null;
     if (identity.sceneId && !scene) denied();
+    // A native lesson needs an exact scene. Omitting it must not fall back to
+    // whole-lesson tutoring during an independent task. Never trust a UI flag.
+    if (experience && (!scene || !sceneAllowsTutor(scene))) {
+      throw Object.assign(new Error("Tutor help is unavailable for this independent task. Complete it yourself, then return to a learning scene for help."), { status: 403 });
+    }
     const release = publishedReleaseForLearner(row.grade, subject(row.subject));
     const binding = release?.contentBindings.find((candidate) => candidate.contentId === row.contentId && candidate.contentVersion === row.version);
     const bindingValid = binding && (!binding.contentSha256 || binding.contentSha256 === lessonPayloadSha256(row.payload));
@@ -173,10 +179,10 @@ export async function resolveTutorContext(
     const objectives = experience ? experience.objectives.filter((objective) => objectiveIds.includes(objective.id)).map((objective) => objective.statement) : strings(projected.objectives);
     const sources: RetrievedChunk[] = [];
     const title = text(projected.title) || row.title || row.contentId;
-    if (scene && !["MASTERY_CHECK", "CHECK_UNDERSTANDING"].includes(scene.type) && scene.interaction.kind !== "ASSESSMENT_HANDOFF" && !hasRestrictedTutorText(scene.content.body)) {
+    if (scene && sceneAllowsTutor(scene) && !hasRestrictedTutorText(scene.content.body)) {
       sources.push(chunk(row, `${title}: ${scene.title}`, scene.content.body, 0, "Current scene", `scene:${scene.id}`));
     }
-    const body = experience ? experience.scenes.filter((candidate) => !["MASTERY_CHECK", "CHECK_UNDERSTANDING"].includes(candidate.type) && candidate.interaction.kind !== "ASSESSMENT_HANDOFF" && (!objectiveIds.length || candidate.objectiveIds.some((id) => objectiveIds.includes(id))))
+    const body = experience ? experience.scenes.filter((candidate) => sceneAllowsTutor(candidate) && (!objectiveIds.length || candidate.objectiveIds.some((id) => objectiveIds.includes(id))))
       .map((candidate) => candidate.content.body).filter((value) => !hasRestrictedTutorText(value)).join("\n\n") : learnerBody(projected);
     if (body) sources.push(chunk(row, title, body, 0, "Current lesson"));
     const relatedBindings = bindingValid ? release!.contentBindings.filter((candidate) => candidate.contentType === "LESSON" && candidate.contentId !== row.contentId && (candidate.conceptId === binding.conceptId || release!.prerequisites.some((edge) => edge.toConceptId === binding.conceptId && edge.fromConceptId === candidate.conceptId))) : [];

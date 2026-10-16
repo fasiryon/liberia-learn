@@ -239,6 +239,8 @@ export default function GlobalAssistantShell({
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [loading, setLoading] = useState(false);
   const [lessonContext, setLessonContext] = useState<{ pathname: string; identity: TutorIdentity } | null>(null);
+  const [nativeHelpPolicy, setNativeHelpPolicy] = useState<{ pathname: string; blocked: boolean } | null>(null);
+  const nativeHelpBlocked = nativeHelpPolicy?.pathname === pathname && nativeHelpPolicy.blocked;
   const activeTutorIdentity = studentTutorIdentityForPath(pathname, lessonContext);
   const conversationPathRef = useRef(pathname);
   useEffect(() => {
@@ -252,10 +254,23 @@ export default function GlobalAssistantShell({
   }, [pathname, isStudent]);
   useEffect(() => {
     const onContext = (event: Event) => {
-      const detail = (event as CustomEvent<{ pathname: string; identity: TutorIdentity }>).detail;
-      if (detail?.pathname === pathname) setLessonContext(detail);
+      const detail = (event as CustomEvent<{ pathname: string; identity: TutorIdentity; blocked?: boolean }>).detail;
+      if (detail?.pathname === pathname) {
+        setLessonContext(detail);
+        setNativeHelpPolicy({ pathname, blocked: detail.blocked === true });
+        // A previous scene's answer must not remain beside a new independent task.
+        setMessages([]); setQuestion(""); setPendingConfirmation(null);
+        if (detail.blocked) setOpen(false);
+      }
     };
     window.addEventListener("liberialearn:tutor-context", onContext);
+    // The player's mount event can precede the shell's listener. Its marker
+    // contains identity and help policy only; the server still authorizes both.
+    const native = document.querySelector<HTMLElement>("[data-native-tutor-context]");
+    if (native?.dataset.nativeTutorContext) {
+      try { onContext(new CustomEvent("liberialearn:tutor-context", { detail: { ...JSON.parse(native.dataset.nativeTutorContext), pathname } })); }
+      catch { setNativeHelpPolicy({ pathname, blocked: true }); }
+    }
     // The page may mount before the shell. Read only identity attributes, not lesson text.
     const marker = document.querySelector<HTMLElement>("[data-tutor-lesson-id]");
     if (marker && marker.dataset.tutorLessonId === studentTutorIdentityForPath(pathname)?.lessonId) setLessonContext({ pathname, identity: { lessonId: marker.dataset.tutorLessonId, lessonVersion: marker.dataset.tutorLessonVersion } });
@@ -272,13 +287,15 @@ export default function GlobalAssistantShell({
         if (!document.querySelector("[data-lesson-player-v2]")) return;
         setAssignedNativeTutorPath(pathname);
       }
-      const detail = (event as CustomEvent<{ handled?: boolean } | null>).detail;
+      const detail = (event as CustomEvent<{ handled?: boolean; identity?: TutorIdentity } | null>).detail;
       if (detail) detail.handled = true;
+      if (nativeHelpBlocked) return;
+      if (detail?.identity) setLessonContext({ pathname, identity: detail.identity });
       setOpen(true);
     };
     window.addEventListener("liberialearn:open-tutor", onOpen);
     return () => window.removeEventListener("liberialearn:open-tutor", onOpen);
-  }, [pathname]);
+  }, [pathname, nativeHelpBlocked]);
   const [pendingConfirmation, setPendingConfirmation] =
     useState<PendingActionConfirmation | null>(initialPendingConfirmation);
   const [selectedGuardianLearnerId, setSelectedGuardianLearnerId] = useState(
@@ -442,7 +459,7 @@ export default function GlobalAssistantShell({
 
   async function submitQuestion(questionOverride?: string, identityOverride?: TutorIdentity, actionOverride?: TutorAction, focusQuestion?: string) {
     const trimmedQuestion = (questionOverride ?? question).trim();
-    if (!trimmedQuestion || loading || (isStudent && conversationPathRef.current !== pathname)) {
+    if (!trimmedQuestion || loading || (isStudent && (nativeHelpBlocked || conversationPathRef.current !== pathname))) {
       return;
     }
 
@@ -631,7 +648,7 @@ export default function GlobalAssistantShell({
   }
 
   // Lesson pages own the lesson-help panel; avoid two competing tutors.
-  if (pathname === "/student/learn" || (/^\/student\/lessons\//.test(pathname) && assignedNativeTutorPath !== pathname)) return null;
+  if (nativeHelpBlocked || pathname === "/student/learn" || (/^\/student\/lessons\//.test(pathname) && assignedNativeTutorPath !== pathname)) return null;
 
   const assistant = (
     <div
