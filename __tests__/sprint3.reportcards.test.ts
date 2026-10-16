@@ -88,6 +88,7 @@ const mockTerm = {
   name: "Term 1",
   startDate: new Date("2026-01-01"),
   endDate: new Date("2026-04-30"),
+  academicYear: { schoolId: "school-1" },
 };
 const mockStudent = { id: STUDENT_ID, user: { schoolId: SCHOOL_ID } };
 const mockClass = { id: CLASS_ID, subject: "MATH" };
@@ -105,7 +106,7 @@ beforeEach(() => {
   mockPrismaInstance.student.findUniqueOrThrow.mockResolvedValue(mockStudent);
   mockPrismaInstance.student.findUnique.mockResolvedValue({ id: STUDENT_ID });
   mockPrismaInstance.class.findUnique.mockResolvedValue(mockClass);
-  mockPrismaInstance.class.findFirst.mockResolvedValue({ id: CLASS_ID, schoolId: SCHOOL_ID });
+  mockPrismaInstance.class.findFirst.mockResolvedValue({ ...mockClass, schoolId: SCHOOL_ID });
   mockPrismaInstance.reportCard.findUnique.mockResolvedValue(null);
   mockPrismaInstance.reportCard.upsert.mockImplementation(({ create }: any) =>
     Promise.resolve({ id: "rc-1", ...create })
@@ -155,7 +156,7 @@ describe("generateReportCard — subject grade aggregation", () => {
     expect(math.assignmentCount).toBe(2);
   });
 
-  it("handles zero submissions — creates placeholder row for primary class subject", async () => {
+  it("handles zero submissions — placeholder row reports no grade (null), never 0%", async () => {
     mockPrismaInstance.assignmentSubmission.findMany.mockResolvedValue([]);
 
     await generateReportCard(STUDENT_ID, TERM_ID, CLASS_ID, CREATED_BY);
@@ -164,8 +165,20 @@ describe("generateReportCard — subject grade aggregation", () => {
 
     expect(grades).toHaveLength(1);
     expect(grades[0].subject).toBe("MATH");
-    expect(grades[0].average).toBe(0);
+    expect(grades[0].average).toBeNull();
     expect(grades[0].assignmentCount).toBe(0);
+  });
+
+  it("refuses a term from another school's academic year", async () => {
+    mockPrismaInstance.term.findUniqueOrThrow.mockResolvedValue({ ...mockTerm, academicYear: { schoolId: "school-2" } });
+    await expect(generateReportCard(STUDENT_ID, TERM_ID, CLASS_ID, CREATED_BY)).rejects.toThrow("Term does not belong to the student's school");
+    expect(mockPrismaInstance.reportCard.upsert).not.toHaveBeenCalled();
+  });
+
+  it("refuses a class from another school", async () => {
+    mockPrismaInstance.class.findFirst.mockResolvedValue(null);
+    await expect(generateReportCard(STUDENT_ID, TERM_ID, CLASS_ID, CREATED_BY)).rejects.toThrow("Class does not belong to the student's school");
+    expect(mockPrismaInstance.class.findFirst).toHaveBeenCalledWith(expect.objectContaining({ where: { id: CLASS_ID, schoolId: "school-1" } }));
   });
 
   it("attaches exam score from Grade model to primary subject", async () => {
@@ -199,20 +212,22 @@ describe("generateReportCard — attendance summary", () => {
       { status: "PRESENT" },
       { status: "ABSENT" },
       { status: "LATE" },
+      { status: "EXCUSED" },
     ]);
 
     await generateReportCard(STUDENT_ID, TERM_ID, CLASS_ID, CREATED_BY);
     const upsertCall = mockPrismaInstance.reportCard.upsert.mock.calls[0][0];
     const att = upsertCall.create.attendanceSummary;
 
-    expect(att.totalDays).toBe(4);
+    expect(att.totalDays).toBe(5);
     expect(att.present).toBe(2);
-    expect(att.absent).toBe(1);
+    expect(att.absent).toBe(1); // unexcused only
+    expect(att.excused).toBe(1);
     expect(att.late).toBe(1);
-    expect(att.rate).toBe(50); // 2/4 = 50%
+    expect(att.rate).toBe(40); // 2/5
   });
 
-  it("returns zero rate when no attendance records", async () => {
+  it("returns no rate (null), not 0%, when no attendance was recorded", async () => {
     mockPrismaInstance.attendance.findMany.mockResolvedValue([]);
 
     await generateReportCard(STUDENT_ID, TERM_ID, CLASS_ID, CREATED_BY);
@@ -220,7 +235,7 @@ describe("generateReportCard — attendance summary", () => {
     const att = upsertCall.create.attendanceSummary;
 
     expect(att.totalDays).toBe(0);
-    expect(att.rate).toBe(0);
+    expect(att.rate).toBeNull();
   });
 });
 

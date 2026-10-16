@@ -9,7 +9,8 @@ import { ChevronLeft } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
-function gradeLetter(avg: number) {
+function gradeLetter(avg: number | null) {
+  if (avg === null) return "—";
   if (avg >= 90) return "A";
   if (avg >= 80) return "B";
   if (avg >= 70) return "C";
@@ -160,7 +161,7 @@ export default async function PrintReportCardPage({
             {grades.map((g) => (
               <tr key={g.subject} style={{ borderBottom: "1px solid #e0e0e0" }}>
                 <td style={{ padding: "7px 10px" }}>{g.subject.replace(/_/g, " ")}</td>
-                <td style={{ padding: "7px 10px", textAlign: "center" }}>{g.average}%</td>
+                <td style={{ padding: "7px 10px", textAlign: "center" }}>{g.average !== null ? `${g.average}%` : "—"}</td>
                 <td style={{ padding: "7px 10px", textAlign: "center", color: "#555" }}>
                   {g.examScore != null ? `${g.examScore}%` : "—"}
                 </td>
@@ -195,7 +196,7 @@ export default async function PrintReportCardPage({
             <span>Present: <strong>{att.present}</strong></span>
             <span>Absent: <strong>{att.absent}</strong></span>
             <span>Late: <strong>{att.late}</strong></span>
-            <span>Attendance Rate: <strong>{att.rate}%</strong></span>
+            <span>Attendance Rate: <strong>{att.rate !== null ? `${att.rate}%` : "Not recorded"}</strong></span>
           </div>
         </div>
 
