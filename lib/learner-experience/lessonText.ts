@@ -17,7 +17,7 @@ export type LessonBlock =
   | { kind: "image"; src: string; alt: string }
   | { kind: "quote"; text: Inline };
 
-export type LessonSection = { id: string; title: string; blocks: LessonBlock[] };
+export type LessonSection = { id: string; title: string; blocks: LessonBlock[]; authoredHeading?: boolean };
 
 /** What a section is for, read only from its authored heading. Unknown headings are plain "Learn". */
 export type SectionRole = "INTRODUCTION" | "LEARN" | "EXAMPLE" | "PRACTICE" | "REVIEW";
@@ -120,7 +120,7 @@ export function splitLessonSections(blocks: readonly LessonBlock[], fallbackTitl
   let current: LessonSection | null = null;
   for (const block of blocks) {
     if (block.kind === "heading" && block.level === 2) {
-      current = { id: slug(block.text, used), title: block.text, blocks: [] };
+      current = { id: slug(block.text, used), title: block.text, blocks: [], authoredHeading: true };
       sections.push(current);
       continue;
     }

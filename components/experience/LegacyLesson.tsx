@@ -115,7 +115,7 @@ export function LegacyReading({ sections, objectives, tools, after, html, title,
         {objectives && objectives.length > 0 && <Goals objectives={objectives} />}
         {html
           ? <div className="ll3-reading" dangerouslySetInnerHTML={{ __html: html }} />
-          : sections.map((section) => <section key={section.id} id={section.id} className="ll3-section"><div className="ll3-reading"><LessonBlocks blocks={section.blocks} headingOffset={1} /></div></section>)}
+          : sections.map((section) => <section key={section.id} id={section.id} className="ll3-section">{section.authoredHeading && <h2 className="ll3-section-title"><InlineText text={section.title} /></h2>}<div className="ll3-reading"><LessonBlocks blocks={section.blocks} headingOffset={1} /></div></section>)}
         {after && <div className="mt-10 max-w-[var(--ll-measure)]">{after}</div>}
       </article>
       {tools && <aside className="ll3-read-tools" aria-label="Reading tools"><div className="ll3-support">{tools}</div></aside>}
