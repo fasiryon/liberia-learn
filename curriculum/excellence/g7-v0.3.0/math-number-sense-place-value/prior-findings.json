@@ -1,0 +1,10 @@
+{
+  "notice": "How each v0.2.0 AI judgment finding was handled in v0.3.0. Written by the agent that made the corrections. These are statements of what changed, not review verdicts: every correction needs independent review.",
+  "dispositions": [
+    { "findingId": "ai-m1-reasoning-left-unscored", "disposition": "CORRECTION_APPLIED_PENDING_INDEPENDENT_REVIEW", "change": "Added the reason-it-out scene (two unscaffolded written explanations, no hints) and rubric-scored end-of-lesson reasoning definitions pm-r1 and pm-r2. The reflection is kept." },
+    { "findingId": "ai-m2-place-shift-uncatalogued", "disposition": "CORRECTION_APPLIED_PENDING_INDEPENDENT_REVIEW", "change": "Added mc-place-shift to the catalogue, taught it in ten-times and the warm-up, and remapped g7-pv-exit-1 options 0, 1 and 3, g7-pv-exit-2 options 1 and 2, and g7-pv-exit-4 option 1." },
+    { "findingId": "ai-m3-whole-number-item-decimal-misconception", "disposition": "CORRECTION_APPLIED_PENDING_INDEPENDENT_REVIEW", "change": "Added mc-compare-by-digits (taught in compare-strategy) and remapped g7-pv-exit-6 option 0 to it; option 2 ('They are equal') is now unmapped." },
+    { "findingId": "ai-m4-mastery-depends-on-unapproved-scope", "disposition": "OPEN_CURRICULUM_OWNER_DECISION", "change": "The millions scope decision is still pending. Constructed mastery definitions within MOE scope (pm-c1, pm-c2, pm-r1, pm-r2) now give every objective evidence that survives a decision against the extension." },
+    { "findingId": "ai-m5-warm-up-is-not-a-diagnostic", "disposition": "CORRECTION_APPLIED_PENDING_INDEPENDENT_REVIEW", "change": "The warm-up is now a three-item readiness check, one item per stated prerequisite (adds 7 × 1,000), with fallback routes in definitions pm-d0 to pm-d2." }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "notice": "How each v0.2.0 AI judgment finding was handled in v0.3.0. Written by the agent that made the corrections. These are statements of what changed, not review verdicts: every correction needs independent review.",
+  "dispositions": [
+    { "findingId": "ai-l1-writing-objectives-evidenced-by-selection", "disposition": "CORRECTION_APPLIED_PENDING_INDEPENDENT_REVIEW", "change": "Added definition pl-w1: original, unscaffolded argumentative writing on a new question at the end of the lesson, scored with the candidate rubric. Selected-response items remain as diagnostic support. The in-lesson writing is still formative." },
+    { "findingId": "ai-l2-exit-items-recall-dominated", "disposition": "CORRECTION_APPLIED_PENDING_INDEPENDENT_REVIEW", "change": "g7-essay-exit-1, -4 and -5 are marked diagnostic-only (asked, not counted as mastery evidence). Definitions pl-r1 and pl-r2 ask the learner to judge, repair and answer an argument." },
+    { "findingId": "ai-l3-exit1-distractor-mismapped", "disposition": "CORRECTION_APPLIED_PENDING_INDEPENDENT_REVIEW", "change": "g7-essay-exit-1 option 3 is now unmapped. mc-thesis-placement was not added; it waits for classroom evidence." },
+    { "findingId": "ai-l4-exit5-distractor-mismapped", "disposition": "CORRECTION_APPLIED_PENDING_INDEPENDENT_REVIEW", "change": "Added mc-explain-restates-evidence, taught it in the peel scene, remapped g7-essay-exit-5 option 3 to it, and named it in the rubric's explain-link descriptor." },
+    { "findingId": "ai-l5-paragraph-prerequisite-checked-by-recognition", "disposition": "CORRECTION_APPLIED_PENDING_INDEPENDENT_REVIEW", "change": "Added the readiness-writing scene: the paragraph and two-sides prerequisites are diagnosed by production, with fallback routes in definitions pl-d0 and pl-d2." },
+    { "findingId": "ai-l6-conclusion-task-supplies-the-argument", "disposition": "CORRECTION_APPLIED_PENDING_INDEPENDENT_REVIEW", "change": "write-conclusion stays practice. Conclusion evidence is counted only in definition pl-dr2, where the learner writes the argument the conclusion closes." }
+  ]
+}

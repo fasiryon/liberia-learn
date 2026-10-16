@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 780" role="img" aria-labelledby="t d" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif">
+  <title id="t">Each place is worth ten times the place below it</title>
+  <desc id="d">A ladder of place values from top to bottom: 1,000,000; 100,000; 10,000; 1,000; 100; 10; 1; then the decimal point; 0.1; 0.01; 0.001. Going up multiplies by 10; going down divides by 10.</desc>
+  <defs>
+    <marker id="up" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#0f766e"/></marker>
+    <marker id="down" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#b45309"/></marker>
+  </defs>
+  <rect width="600" height="780" rx="24" fill="#ffffff"/>
+  <text x="300" y="48" text-anchor="middle" font-size="27" font-weight="700" fill="#1f2937">The × 10 ladder</text>
+  <line x1="70" y1="700" x2="70" y2="96" stroke="#0f766e" stroke-width="5" marker-end="url(#up)"/>
+  <text x="50" y="400" text-anchor="middle" font-size="23" font-weight="800" fill="#0f766e" transform="rotate(-90 50 400)">× 10 each step up</text>
+  <line x1="530" y1="90" x2="530" y2="694" stroke="#b45309" stroke-width="5" marker-end="url(#down)"/>
+  <text x="552" y="400" text-anchor="middle" font-size="23" font-weight="800" fill="#b45309" transform="rotate(90 552 400)">÷ 10 each step down</text>
+  <g font-size="24">
+    <rect x="100" y="80" width="400" height="50" rx="10" fill="#e0f2fe"/><text x="118" y="113" fill="#1f2937">millions</text><text x="482" y="113" text-anchor="end" font-weight="800" fill="#0369a1">1,000,000</text>
+    <rect x="100" y="136" width="400" height="50" rx="10" fill="#ecfdf5"/><text x="118" y="169" fill="#1f2937">hundred thousands</text><text x="482" y="169" text-anchor="end" font-weight="800" fill="#0f766e">100,000</text>
+    <rect x="100" y="192" width="400" height="50" rx="10" fill="#ecfdf5"/><text x="118" y="225" fill="#1f2937">ten thousands</text><text x="482" y="225" text-anchor="end" font-weight="800" fill="#0f766e">10,000</text>
+    <rect x="100" y="248" width="400" height="50" rx="10" fill="#ecfdf5"/><text x="118" y="281" fill="#1f2937">thousands</text><text x="482" y="281" text-anchor="end" font-weight="800" fill="#0f766e">1,000</text>
+    <rect x="100" y="304" width="400" height="50" rx="10" fill="#f5f3ff"/><text x="118" y="337" fill="#1f2937">hundreds</text><text x="482" y="337" text-anchor="end" font-weight="800" fill="#6d28d9">100</text>
+    <rect x="100" y="360" width="400" height="50" rx="10" fill="#f5f3ff"/><text x="118" y="393" fill="#1f2937">tens</text><text x="482" y="393" text-anchor="end" font-weight="800" fill="#6d28d9">10</text>
+    <rect x="100" y="416" width="400" height="50" rx="10" fill="#f5f3ff" stroke="#1f2937" stroke-width="2"/><text x="118" y="449" font-weight="700" fill="#1f2937">ones</text><text x="482" y="449" text-anchor="end" font-weight="800" fill="#1f2937">1</text>
+    <line x1="100" y1="488" x2="500" y2="488" stroke="#1f2937" stroke-width="2" stroke-dasharray="4 6"/><circle cx="300" cy="488" r="8" fill="#1f2937"/><text x="316" y="482" font-size="17" font-weight="700" fill="#1f2937">decimal point</text>
+    <rect x="100" y="510" width="400" height="50" rx="10" fill="#fef3c7"/><text x="118" y="543" fill="#1f2937">tenths</text><text x="482" y="543" text-anchor="end" font-weight="800" fill="#b45309">0.1</text>
+    <rect x="100" y="566" width="400" height="50" rx="10" fill="#fef3c7"/><text x="118" y="599" fill="#1f2937">hundredths</text><text x="482" y="599" text-anchor="end" font-weight="800" fill="#b45309">0.01</text>
+    <rect x="100" y="622" width="400" height="50" rx="10" fill="#fef3c7"/><text x="118" y="655" fill="#1f2937">thousandths</text><text x="482" y="655" text-anchor="end" font-weight="800" fill="#b45309">0.001</text>
+  </g>
+  <text x="300" y="742" text-anchor="middle" font-size="20" fill="#4b5563">In 5,555.555 each 5 is worth a different amount.</text>
+</svg>

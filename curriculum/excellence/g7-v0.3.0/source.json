@@ -1,0 +1,55 @@
+{
+  "notice": "Pins the Grade 7 v0.3.0 candidates in this tree by their exact candidate hashes. v0.3.0 applies the Curriculum Excellence V1 corrections. The agent that wrote those corrections may not review them, so only automated checks run here, and its AI judgment review is recorded as refused. CANDIDATE ONLY: nothing here is approved, published or released.",
+  "revisionLabel": "v0.3.0",
+  "pullRequest": 191,
+  "gitCommit": null,
+  "priorReportDir": "curriculum/excellence/g7-v0.2.0",
+  "candidateAuthors": [
+    { "kind": "AI", "agentId": "claude-code:g7-native-curriculum-v1", "modelFamily": "anthropic-claude", "modelId": null, "sessionId": null },
+    { "kind": "AI", "agentId": "claude-code:curriculum-excellence-v1", "modelFamily": "anthropic-claude", "modelId": "claude-opus-5-5", "sessionId": null }
+  ],
+  "reviewer": { "kind": "AUTOMATED", "agentId": "liberialearn.excellence-automated-checks/1.0.0", "modelFamily": null, "modelId": null, "sessionId": null },
+  "aiJudgmentReviewer": { "kind": "AI", "agentId": "claude-code:curriculum-excellence-v1", "modelFamily": "anthropic-claude", "modelId": "claude-opus-5-5", "sessionId": null },
+  "lessons": [
+    {
+      "lessonKey": "math-number-sense-place-value",
+      "contentKey": "cv2-cand-g7-math-number-sense-place-value@0.3.0",
+      "subject": "MATH",
+      "grade": 7,
+      "candidatePath": "curriculum/v2/g7/candidates/math-number-sense-place-value.json",
+      "assessmentPath": "curriculum/review/g7-native-v1/math-number-sense-place-value/assessment-review.json",
+      "expectedCandidateSha256": "c68b1a37f1852458cd3765643a43c59d6cc1d80ea0ef6f0ab9d67b7860d2ca95",
+      "misconceptionSignatures": {
+        "mc-digit-not-value": "DIGIT_INSTEAD_OF_VALUE",
+        "mc-zero-placeholder": "ZERO_PLACEHOLDER_OMITTED",
+        "mc-longer-decimal-bigger": "LONGER_DECIMAL_GREATER",
+        "mc-place-shift": "PLACE_SHIFT",
+        "mc-shorter-decimal-bigger": "SHORTER_DECIMAL_GREATER"
+      },
+      "packageGaps": ["MOE_OBJECTIVE_UNBOUND", "TEMPLATE_CELL_MISSING", "ONTOLOGY_RELEASE_MISSING", "SCOPE_EXTENSION_UNAPPROVED", "LEGACY_COMPARISON_SIGNOFF", "ASSESSMENT_ITEMS_PENDING"],
+      "waecBaseline": {
+        "examination": "LJHSCE (Grade 9), then WASSCE",
+        "competency": "math.number_numeration (Number & Numeration)",
+        "evidenceSpecificity": "SUBJECT_LEVEL",
+        "note": "Grade 7 is not examined by WAEC. The repository's WAEC map is WASSCE section-level from aggregator sources; no LJHSCE topic-level syllabus is pinned. Relevance is forward preparation only, with no topic-level baseline commitment and no WAEC approval claimed."
+      }
+    },
+    {
+      "lessonKey": "literacy-essay-structure-argument",
+      "contentKey": "cv2-cand-g7-literacy-essay-structure-argument@0.3.0",
+      "subject": "LITERACY",
+      "grade": 7,
+      "candidatePath": "curriculum/v2/g7/candidates/literacy-essay-structure-argument.json",
+      "assessmentPath": "curriculum/review/g7-native-v1/literacy-essay-structure-argument/assessment-review.json",
+      "expectedCandidateSha256": "0f275a880588aa8e9451a0ea368bf0fa18bee6cbd826bb1c15d86c4fdc952828",
+      "misconceptionSignatures": {},
+      "packageGaps": ["MOE_OBJECTIVE_UNBOUND", "MOE_SOURCE_STRUCTURING_DEFECT", "MOE_GRADE_SCOPE_REVIEW", "TEMPLATE_CELL_MISSING", "ONTOLOGY_RELEASE_MISSING", "LEGACY_COMPARISON_SIGNOFF", "ASSESSMENT_ITEMS_PENDING"],
+      "waecBaseline": {
+        "examination": "LJHSCE (Grade 9), then WASSCE",
+        "competency": "WAEC English Language: Essay & Continuous Writing",
+        "evidenceSpecificity": "SUBJECT_LEVEL",
+        "note": "Grade 7 is not examined by WAEC. WAEC English Language papers include continuous (essay) writing, which is original writing; that is why selected-response evidence cannot stand in for it. Relevance is forward preparation only, and no WAEC approval is claimed."
+      }
+    }
+  ]
+}

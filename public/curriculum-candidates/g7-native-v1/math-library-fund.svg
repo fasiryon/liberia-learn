@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 640" role="img" aria-labelledby="t d" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif">
+  <title id="t">Worked example: the 3 in L$2,350,480</title>
+  <desc id="d">The digits of 2,350,480 in place boxes: 2 millions, 3 hundred thousands (outlined), 5 ten thousands, 0 thousands, 4 hundreds, 8 tens, 0 ones. The 3 is worth 300,000. Expanded form: 2,000,000 + 300,000 + 50,000 + 400 + 80 = 2,350,480.</desc>
+  <rect width="600" height="640" rx="24" fill="#ffffff"/>
+  <text x="300" y="48" text-anchor="middle" font-size="26" font-weight="700" fill="#1f2937">Musu’s library fund: L$2,350,480</text>
+  <g font-size="40" font-weight="800" text-anchor="middle">
+    <rect x="40" y="80" width="66" height="76" rx="12" fill="#e0f2fe"/><text x="73" y="133" fill="#0369a1">2</text>
+    <rect x="114" y="80" width="66" height="76" rx="12" fill="#fef3c7" stroke="#b45309" stroke-width="5"/><text x="147" y="133" fill="#78350f">3</text>
+    <rect x="188" y="80" width="66" height="76" rx="12" fill="#ecfdf5"/><text x="221" y="133" fill="#0f766e">5</text>
+    <rect x="262" y="80" width="66" height="76" rx="12" fill="#ecfdf5"/><text x="295" y="133" fill="#0f766e">0</text>
+    <rect x="336" y="80" width="66" height="76" rx="12" fill="#f5f3ff"/><text x="369" y="133" fill="#6d28d9">4</text>
+    <rect x="410" y="80" width="66" height="76" rx="12" fill="#f5f3ff"/><text x="443" y="133" fill="#6d28d9">8</text>
+    <rect x="484" y="80" width="66" height="76" rx="12" fill="#f5f3ff"/><text x="517" y="133" fill="#6d28d9">0</text>
+  </g>
+  <g font-size="20" font-weight="700" text-anchor="middle" fill="#374151">
+    <text x="73" y="184">M</text><text x="147" y="184" fill="#b45309">HTh</text><text x="221" y="184">TTh</text><text x="295" y="184">Th</text><text x="369" y="184">H</text><text x="443" y="184">T</text><text x="517" y="184">O</text>
+  </g>
+  <text x="300" y="212" text-anchor="middle" font-size="15" fill="#6b7280">M millions · HTh hundred thousands · TTh ten thousands · Th thousands</text>
+  <text x="300" y="232" text-anchor="middle" font-size="15" fill="#6b7280">H hundreds · T tens · O ones</text>
+  <rect x="40" y="250" width="520" height="70" rx="14" fill="#fef3c7"/>
+  <text x="300" y="295" text-anchor="middle" font-size="25" font-weight="700" fill="#78350f">The 3 is worth 3 × 100,000 = 300,000</text>
+  <text x="60" y="362" font-size="22" font-weight="700" fill="#1f2937">Expanded form</text>
+  <g font-size="28" font-family="ui-monospace, 'Cascadia Mono', Consolas, monospace" fill="#1f2937" text-anchor="end" xml:space="preserve">
+    <text x="400" y="404">2,000,000</text>
+    <text x="400" y="444" fill="#b45309" font-weight="700">+ 300,000</text>
+    <text x="400" y="484">+  50,000</text>
+    <text x="400" y="524">+     400</text>
+    <text x="400" y="564">+      80</text>
+  </g>
+  <line x1="200" y1="580" x2="410" y2="580" stroke="#1f2937" stroke-width="3"/>
+  <text x="400" y="620" text-anchor="end" font-size="28" font-weight="800" font-family="ui-monospace, 'Cascadia Mono', Consolas, monospace" fill="#0f766e">= 2,350,480</text>
+  <g font-size="17" fill="#6b7280">
+    <text x="428" y="486">0 thousands</text>
+    <text x="428" y="508">and 0 ones are</text>
+    <text x="428" y="530">not written</text>
+  </g>
+</svg>

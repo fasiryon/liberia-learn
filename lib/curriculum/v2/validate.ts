@@ -13,6 +13,13 @@ import { isCanonicalToolId, toolFitsContext } from "./tools";
 
 export type ValidationResult = Readonly<{ errors: readonly string[]; gaps: readonly ReviewGap[] }>;
 
+/**
+ * What validation reads from the authoring context. A full pinned AuthoringContext satisfies it; a
+ * candidate that is still waiting for governed binding (e.g. Grade 7 native V1) supplies only its
+ * provisional objective ids, so the same deterministic checks run without inventing a release or cell.
+ */
+export type ValidationContext = Pick<AuthoringContext, "grade" | "subject" | "ageBand"> & Readonly<{ objectives: readonly Readonly<{ id: string }>[] }>;
+
 const LEARNER_ACTION_KINDS = new Set(["DIAGRAM_REVEAL", "SINGLE_CHOICE", "MULTI_SELECT", "NUMERIC", "MATCHING", "ORDERING", "DIAGRAM_LABELING", "DRAG_DROP", "FREE_RESPONSE", "SIMULATION_OBSERVATION", "LAB_LAUNCH", "ASSESSMENT_HANDOFF"]);
 const FRAMING_TYPES = new Set(["INTRO", "OBJECTIVE", "REVIEW"]);
 const COMPLETION_FOR: Record<string, CandidateScene["completion"]> = {
@@ -37,7 +44,7 @@ export function words(text: string): number {
   return text.trim() ? text.trim().split(/\s+/).length : 0;
 }
 
-export function validateCandidateAgainstContext(candidate: CandidateLessonV2, context: AuthoringContext): ValidationResult {
+export function validateCandidateAgainstContext(candidate: CandidateLessonV2, context: ValidationContext): ValidationResult {
   const errors: string[] = [];
   const gaps: ReviewGap[] = [];
   const error = (code: string) => errors.push(code);
