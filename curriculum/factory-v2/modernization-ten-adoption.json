@@ -1,12 +1,12 @@
 {
   "schemaVersion": "factory-modernization-adoption/1.0.0",
   "sourceBranch": "docs/modernization-first-ten-spec-v1",
-  "sourceCommit": "3e4ba71df9f462d273fe3be1e1bb585aea30c8c0",
+  "sourceCommit": "9628d97f6932ae4c0c399ec15455230e3f76607e",
   "contract": {
-    "id": "library-modernization-pipeline-v1",
-    "version": "1.0.0",
-    "sourceRef": "git:3e4ba71df9f462d273fe3be1e1bb585aea30c8c0:docs/curriculum/modernization/MODERNIZATION_PIPELINE_V1.md",
-    "sha256": "ff838a760884c50deb959128bad4e564dcd7c0ccb5c3ad75d6da3396ca08894c"
+    "id": "liberialearn-first-ten-modernization-contract",
+    "version": "0.1.0",
+    "sourceRef": "git:9628d97f6932ae4c0c399ec15455230e3f76607e:curriculum/modernization/v1/first-ten/spec.json",
+    "sha256": "9b0128d725b83dc8ca6aaad818530b35c0649297fa7564b8fae8fb53a6d00964"
   },
   "modernizationImplementation": {
     "path": "lib/curriculum/modernization/pipeline.ts",
@@ -21,8 +21,8 @@
     "Pending independent review and explicit release blocking",
     "Idempotent completed-package reuse and bounded author attempts"
   ],
-  "tenLessonSelection": "NOT_PRESENT_IN_SOURCE_BRANCH_AT_INSPECTION",
+  "tenLessonSelection": "FIXED_EXACT_COHORT_FROM_USER_SUPPLIED_BASELINE",
   "existingPilotLessonCount": 4,
-  "productionEvidence": "NOT_ACCESSED",
-  "remainingCoordination": "Curriculum Excellence Lead must supply the exact ten source bindings and lesson-specific authoring inputs. The existing four-lesson pilot and wave planner are not a ten-lesson authorization."
+  "productionEvidence": "EXISTING_LOCAL_READ_ONLY_EXPORT_INTEGRITY_VERIFIED_NO_LIVE_CONNECTION_OR_OPERATOR_ATTESTATION",
+  "remainingCoordination": "The ten sources are located and verified. Lesson-specific generation drafts, assessment keys/rubrics, visual assets and accepted factory-inventory binding remain required. Source-bound briefs are not generated candidates or qualified review."
 }

@@ -1,0 +1,40 @@
+{
+  "schemaVersion": "factory-independent-technical-review/1.0.0",
+  "reviewerKind": "INDEPENDENT_AI_AGENT_ADVISORY_NOT_QUALIFIED_HUMAN",
+  "reviewerTask": "/root/independent_contract_qa",
+  "baselineCommit": "9628d97f6932ae4c0c399ec15455230e3f76607e",
+  "factoryBaseCommit": "d1f1826cb",
+  "reviewedFileSha256": {
+    "lib/content-factory/v2/firstTen.ts": "326c907b3157e48229f7c12385a9d05fd1b6ca4bece94d3cc80a32ddaeb49714",
+    "lib/content-factory/v2/blueprint.ts": "4cdd6965ab083750d92f7a29ba28eb508299b3df18f5f513331497a45c3c8c14",
+    "lib/curriculum/modernization/extract.ts": "036f32d05e71d155a4a46a967f58dd9631717dd5f8287c0dec679c89b6f68dae",
+    "scripts/content-factory-v2-first-ten-intake.ts": "5e60e10fbb6bb7a3262423aabc9c3c8811d2a8670800c616e1a42faa2b89e9fb",
+    "curriculum/factory-v2/first-ten-baseline.json": "df374decf615a66d2fc5a92b0530b9bb798a9d1d17190f414b2668144e272b8a"
+  },
+  "verdict": "PASS_FOR_SOURCE_INTAKE_AND_PLANNING_ONLY",
+  "verified": [
+    "Exact ten source IDs/revisions/snapshot hashes and original order",
+    "All ten source snapshot hashes independently recompute",
+    "All ten version2.1 blueprints parse and match output hashes",
+    "All ten source subjects preserved, including CIVICS",
+    "Required mastery and global excellence objectives remain required",
+    "ft08 and ft10 retain KEYED transfer scoring; other eight retain analytic rubrics",
+    "All output manifest file hashes and manifest canonical domain hash independently recompute",
+    "DRAFT/unapproved/unreleased/BRIEF_ONLY with candidateCount zero"
+  ],
+  "correctedFindings": [
+    "Preserve KEYED transfer exceptions, rather than hardcoding analytic rubrics",
+    "Apply existing feature flag to intake CLI"
+  ],
+  "integrationBlockers": [
+    "Raw extract inventoryPin is not normalized factory inventoryHash; rebinding required before prepareBatch",
+    "Local source integrity is not production/operator/privacy attestation",
+    "Actual authored lesson/assessment/key/rubric/media outputs remain required"
+  ],
+  "intakeManifest": {
+    "domain": "factory-first-ten-intake/1.0.0",
+    "canonicalDigest": "55f1d1fa6bcbafdb9cfb6d0935e743946dc32c3a8fc19e69987cec227fe28e11",
+    "fileByteSha256": "9ad0ec2aed995159b2ff7c5494ad792bfbf4863c493cb948a4e48b0f8804c1bf"
+  },
+  "reviewAuthority": "No curriculum diagnosis confirmation, qualified human rating, approval or release authority."
+}

@@ -2,6 +2,8 @@
 
 Date: 2026-10-17. Branch: `feat/content-factory-ten-candidates`. Worktree: `.task-worktrees/content-factory-ten`.
 
+Update: the user subsequently supplied the exact cohort at `9628d97f6932ae4c0c399ec15455230e3f76607e`. Its local export is now verified and source-bound planning blueprints are available. See [the fixed-cohort intake handoff](CONTENT_FACTORY_FIRST_TEN_INTAKE.md). The missing-selection statements below describe the initial `d1f1826cb` checkpoint, not the current handoff.
+
 ## Outcome
 
 The existing factory now has an offline adapter for exactly ten source-bound candidate versions. It reuses the V2 orchestrator, UnitBlueprint, inventory and production capture validators, Curriculum V2 parser and deliverability checks, Assessment V2 parser and validators, Excellence blueprint checks, and chained factory events. It adds no database schema, publishing path or alternative lesson format.
