@@ -109,8 +109,10 @@ export async function POST(req: NextRequest, context: { params: { examId: string
     }
 
     await prisma.$transaction(async (tx) => {
-      await tx.examAttempt.update({
-        where: { id: attempt.id },
+      // Conditional claim: a concurrent second submit finds the attempt already submitted and is refused,
+      // so it can neither re-grade the attempt nor issue a certificate.
+      const claimed = await tx.examAttempt.updateMany({
+        where: { id: attempt.id, submittedAt: null },
         data: {
           answers: body.answers,
           score: grading.score,
@@ -132,6 +134,9 @@ export async function POST(req: NextRequest, context: { params: { examId: string
           }),
         },
       });
+      if (claimed.count === 0) {
+        throw Object.assign(new Error("Attempt already submitted"), { status: 409, code: "exam_attempt_already_submitted" });
+      }
 
       if (grading.passed && certCode) {
         await tx.examCertification.upsert({

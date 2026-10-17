@@ -223,6 +223,11 @@ function assertMarker(policy: ModerationPolicy | null, marker: ModerationActor, 
   if (marker.schoolId !== attemptSchoolId) throw new Error("assessment_moderator_school_mismatch");
 }
 
+/** Every mark on a response uses the moderation policy of the first mark (no tolerance swapping). */
+function assertSameModerationPolicy(policy: ModerationPolicy, first: ModerationRecord): void {
+  if (policy.policyId !== first.policyId || policy.version !== first.policyVersion) throw new Error("assessment_moderation_policy_mismatch");
+}
+
 function pointsFromCriteria(spec: ProtectedScoringSpec, criterionScores: readonly Readonly<{ criterionId: string; points: number }>[]): number {
   if (spec.key.kind === "RUBRIC") {
     const rubric: Rubric = spec.key.rubric;
@@ -271,16 +276,19 @@ export function recordModeratedScore(input: {
   if (input.aiSuggestion && input.spec.key.kind === "RUBRIC" && (
     input.aiSuggestion.rubricId !== input.spec.key.rubric.rubricId || input.aiSuggestion.rubricVersion !== input.spec.key.rubric.rubricVersion
   )) throw new Error("assessment_ai_suggestion_rubric_mismatch");
+  // A first mark on work that needs second marking is not a final score: it stays pending, so a form
+  // total cannot be finalized from one marker (LL-AEP-001).
+  const secondMarkerRequired = secondMarkingRequired(policy, input.purpose);
   const outcome: ScoringOutcome = Object.freeze({
-    ...input.pending, status: "SCORED", points, partial: points > 0 && points < input.spec.maxPoints,
-    scorerAuthority: "HUMAN_MODERATOR", reason: "human_moderated",
+    ...input.pending, status: secondMarkerRequired ? "PENDING_HUMAN_MODERATION" : "SCORED", points, partial: points > 0 && points < input.spec.maxPoints,
+    scorerAuthority: "HUMAN_MODERATOR", reason: secondMarkerRequired ? "awaiting_second_mark" : "human_moderated",
   });
   return Object.freeze({
     outcome,
     moderation: Object.freeze({
       policyId: policy.policyId, policyVersion: policy.version, moderatorId: input.moderator.id,
       aiSuggestionConsulted: input.aiSuggestion !== null,
-      secondMarkerRequired: secondMarkingRequired(policy, input.purpose),
+      secondMarkerRequired,
       marking: "SINGLE" as const,
     }),
     marks: Object.freeze([{ markerId: input.moderator.id, role: input.moderator.role, points, criterionScores: [...input.criterionScores], at: input.moderatedAt }]),
@@ -309,6 +317,7 @@ export function recordSecondMark(first: ModeratedResult, input: {
   markedAt: string;
 }): ModeratedResult | ReconciliationRequired {
   assertMarker(input.policy, input.marker, input.attemptSchoolId);
+  assertSameModerationPolicy(input.policy, first.moderation);
   if (first.moderation.marking !== "SINGLE") throw new Error("assessment_second_mark_not_expected");
   if (first.marks.some((mark) => mark.markerId === input.marker.id)) throw new Error("assessment_second_marker_must_be_independent");
   if (first.outcome.itemHash !== input.item.itemHash || first.outcome.scoringSpecHash !== hashScoringSpec(input.spec)) throw new Error("assessment_scoring_spec_mismatch");
@@ -320,7 +329,7 @@ export function recordSecondMark(first: ModeratedResult, input: {
   if (difference > tolerance + 1e-9) return Object.freeze({ status: "RECONCILIATION_REQUIRED" as const, first, second, difference });
   const agreed = round((points + first.marks[0].points) / 2);
   return Object.freeze({
-    outcome: Object.freeze({ ...first.outcome, points: agreed, partial: agreed > 0 && agreed < input.spec.maxPoints, reason: "second_marking_agreed" }),
+    outcome: Object.freeze({ ...first.outcome, status: "SCORED" as const, points: agreed, partial: agreed > 0 && agreed < input.spec.maxPoints, reason: "second_marking_agreed" }),
     moderation: Object.freeze({ ...first.moderation, marking: "AGREED" as const }),
     marks: Object.freeze([...first.marks, second]),
     audit: auditEvent({
@@ -345,13 +354,14 @@ export function reconcileMarks(pending: ReconciliationRequired, input: {
   if (input.examiner.kind !== "HUMAN") throw new Error("assessment_ai_scoring_not_authoritative");
   if (!input.policy.examinerRoles.includes(input.examiner.role as ModerationPolicy["examinerRoles"][number])) throw new Error("assessment_examiner_role_required");
   if (input.examiner.schoolId !== input.attemptSchoolId) throw new Error("assessment_moderator_school_mismatch");
+  assertSameModerationPolicy(input.policy, pending.first.moderation);
   const markers = [...pending.first.marks.map((mark) => mark.markerId), pending.second.markerId];
   if (markers.includes(input.examiner.id)) throw new Error("assessment_examiner_must_be_independent");
   if (input.rationale.trim().length < 15) throw new Error("assessment_reconciliation_rationale_required");
   assertIsoTimestamp(input.reconciledAt, "reconciled_at");
   const points = pointsFromCriteria(input.spec, input.criterionScores);
   return Object.freeze({
-    outcome: Object.freeze({ ...pending.first.outcome, points, partial: points > 0 && points < input.spec.maxPoints, reason: "examiner_reconciled" }),
+    outcome: Object.freeze({ ...pending.first.outcome, status: "SCORED" as const, points, partial: points > 0 && points < input.spec.maxPoints, reason: "examiner_reconciled" }),
     moderation: Object.freeze({ ...pending.first.moderation, moderatorId: input.examiner.id, marking: "RECONCILED" as const }),
     marks: Object.freeze([...pending.first.marks, pending.second, { markerId: input.examiner.id, role: input.examiner.role, points, criterionScores: [...input.criterionScores], at: input.reconciledAt }]),
     audit: auditEvent({

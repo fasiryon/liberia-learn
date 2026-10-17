@@ -255,8 +255,9 @@ export function acceptClientObservation(submission: ClientObservationSubmission,
   assertIsoTimestamp(context.receivedAt, "received_at");
   // A device clock cannot place a response after the server received it (5-minute skew allowance).
   if (Date.parse(submission.capture.capturedAt) > Date.parse(context.receivedAt) + CLOCK_SKEW_MS) throw new Error("assessment_capture_time_in_future");
-  // After submission only responses captured before the submission (e.g. an offline queue) are accepted.
-  if (attempt.status === "SUBMITTED" && !(attempt.submittedAt && submission.capture.capturedAt <= attempt.submittedAt)) throw new Error("assessment_attempt_already_submitted");
+  // After submission only an offline queue may still deliver responses, and only those captured before
+  // the submission. An online client has no queue, so a late online response is refused outright.
+  if (attempt.status === "SUBMITTED" && !(submission.capture.source === "OFFLINE" && attempt.submittedAt && submission.capture.capturedAt <= attempt.submittedAt)) throw new Error("assessment_attempt_already_submitted");
 
   const idempotencyKey = observationIdempotencyKey({
     studentId: session.studentId, attemptId: attempt.attemptId, itemId: submission.itemId,
@@ -318,14 +319,15 @@ export function verifyObservation(raw: AssessmentEvidenceEnvelope, input: {
   if (raw.tier !== "RAW_OBSERVATION") throw new Error("assessment_evidence_parent_tier_invalid");
   if (raw.evidenceHash !== hashEvidence(raw)) throw new Error("assessment_evidence_tampered");
   const { outcome, release } = input;
+  // Second-marking checks come first so a single-marked high-stakes score is refused for that reason.
+  if (input.moderation?.secondMarkerRequired && input.moderation.marking === "SINGLE") throw new Error("assessment_second_marking_required");
+  if (outcome.scorerAuthority === "HUMAN_MODERATOR" && input.moderation && input.moderation.secondMarkerRequired === false
+    && (LL_SECOND_MARKING.highStakesPurposes as readonly string[]).includes(raw.delivery.purpose)) throw new Error("assessment_second_marking_required");
   if ((outcome.status !== "SCORED" && outcome.status !== "BLANK") || outcome.points === null || !outcome.scorerAuthority) throw new Error("assessment_outcome_not_scored");
   if (outcome.itemId !== raw.pins.itemId || outcome.itemVersion !== raw.pins.itemVersion || outcome.itemHash !== raw.pins.itemHash || outcome.scoringSpecHash !== raw.pins.scoringSpecHash) {
     throw new Error("assessment_outcome_pin_mismatch");
   }
   if (outcome.scorerAuthority === "HUMAN_MODERATOR" && !input.moderation) throw new Error("assessment_moderation_record_required");
-  if (input.moderation?.secondMarkerRequired && input.moderation.marking === "SINGLE") throw new Error("assessment_second_marking_required");
-  if (outcome.scorerAuthority === "HUMAN_MODERATOR" && input.moderation && input.moderation.secondMarkerRequired === false
-    && (LL_SECOND_MARKING.highStakesPurposes as readonly string[]).includes(raw.delivery.purpose)) throw new Error("assessment_second_marking_required");
   if (raw.delivery.mode === "REVIEWER_PREVIEW" || !release || raw.pins.releaseId === null) throw new Error("assessment_unreleased_evidence_cannot_be_verified");
   if (release.releaseHash !== hashRelease(release) || release.releaseId !== raw.pins.releaseId || release.releaseHash !== raw.pins.releaseHash) throw new Error("assessment_release_pin_mismatch");
   if (input.revocations.some((revocation) => revocation.releaseId === release.releaseId)) throw new Error("assessment_release_revoked");

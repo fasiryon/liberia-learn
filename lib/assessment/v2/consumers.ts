@@ -156,7 +156,16 @@ export type ObjectiveEvidenceSummary =
 export function summarizeObjectiveEvidence(envelopes: readonly AssessmentEvidenceEnvelope[], objectiveId: string, revocations: readonly ReleaseRevocation[]): ObjectiveEvidenceSummary {
   const relevant = envelopes.filter((envelope) => envelope.objectiveIds.includes(objectiveId) && effectiveStanding(envelope, revocations).tier !== "INVALIDATED");
   if (relevant.length === 0) return Object.freeze({ status: "NO_EVIDENCE", objectiveId });
-  const verified = relevant.filter((envelope) => envelope.tier === "VERIFIED_ASSESSMENT_EVIDENCE");
+  // Admitted evidence is verified evidence too. A response's verified and admitted envelopes describe
+  // the same observation, so each response counts once.
+  const verifiedByResponse = new Map<string, AssessmentEvidenceEnvelope>();
+  for (const envelope of relevant) {
+    const tier = effectiveStanding(envelope, revocations).tier;
+    if (tier !== "VERIFIED_ASSESSMENT_EVIDENCE" && tier !== "MASTERY_ADMITTED_EVIDENCE") continue;
+    const key = `${envelope.attempt.attemptId}|${envelope.pins.itemId}|${envelope.pins.itemVersion}|${envelope.attempt.responseSequence}`;
+    if (!verifiedByResponse.has(key)) verifiedByResponse.set(key, envelope);
+  }
+  const verified = [...verifiedByResponse.values()];
   if (verified.length === 0) return Object.freeze({ status: "ONLY_UNVERIFIED", objectiveId, observationCount: relevant.length });
   return Object.freeze({
     status: "VERIFIED",

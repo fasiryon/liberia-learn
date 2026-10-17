@@ -298,3 +298,20 @@ byte-identical in PR #194.
 | P2 | Retention intervals existed only as a proposal. | `LL_RETENTION_PILOT_POLICY` is an APPROVED 7/21-day institutional default with documented exceptions. It only plans opportunities, and a scheduled check is never evidence. |
 
 Nothing here activates official delivery, releases content, writes mastery or migrates data.
+
+## 14. Final merge-readiness review (2026-10-16)
+
+An independent review of head `f5ec9709` found the following. Regression tests are in
+`__tests__/assessment-v2/review-repairs.test.ts`.
+
+| Severity | Defect | Repair |
+| --- | --- | --- |
+| P1 | `recordModeratedScore` returned `SCORED` for the first mark on SUMMATIVE or EXAMINATION work. `scoreAttemptForm` therefore finalized a high-stakes form total from one marker, even though `verifyObservation` refused the same score. | A first mark that needs second marking stays `PENDING_HUMAN_MODERATION` (reason `awaiting_second_mark`). Only an agreed second mark or an examiner reconciliation produces `SCORED`. |
+| P2 | `recordSecondMark` and `reconcileMarks` accepted any moderation policy, so a caller could pass a lenient tolerance for the second mark. | Both require the first mark's policy id and version (`assessment_moderation_policy_mismatch`). |
+| P2 | `summarizeObjectiveEvidence` ignored MASTERY_ADMITTED envelopes, so an objective with only admitted evidence was reported as `ONLY_UNVERIFIED`. | Admitted evidence counts as verified. Each response is counted once, and revocation standing applies. |
+| P2 | After submission the gateway still accepted ONLINE responses backdated by the client clock. | After submission only OFFLINE captures made before the submission are accepted. |
+| P2 (pre-existing) | The legacy exam submit checked `submittedAt` and then wrote unconditionally. Two concurrent submits could both be graded, and both could issue a certificate. | The write is a conditional claim (`updateMany` where `submittedAt` is null). A lost race returns 409 and writes nothing. |
+
+Advisory: an evidence hash is an integrity checksum, not an authentication code. The future
+persistence layer must be the only writer of VERIFIED and ADMITTED envelopes. `resolveDelivery`
+compares ISO strings, so callers must pass canonical UTC timestamps.
