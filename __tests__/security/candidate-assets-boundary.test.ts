@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { NextRequest } from "next/server";
 import { getToken } from "next-auth/jwt";
-import { middleware } from "@/middleware";
+import { config, middleware } from "@/middleware";
 
 vi.mock("next-auth/jwt", () => ({ getToken: vi.fn() }));
 
@@ -33,6 +33,29 @@ describe("unreleased candidate assets", () => {
     vi.stubEnv("NODE_ENV", "development"); vi.stubEnv("VERCEL", "1");
     const response = await middleware(new NextRequest(`https://example.test${paths[0]}`));
     expect(response.status).toBe(404);
+  });
+
+  it("rejects local candidate image optimization before authentication while preserving ordinary images", async () => {
+    vi.stubEnv("NODE_ENV", "production");
+    expect(config.matcher).toContain("/_next/image");
+    for (const path of paths) {
+      const request = new NextRequest(`https://example.test/_next/image?url=${encodeURIComponent(path)}&w=640&q=75`);
+      const response = await middleware(request);
+      expect(response.status, path).toBe(404);
+      expect(response.headers.get("cache-control")).toContain("no-store");
+    }
+    for (const source of [
+      "https://example.test/curriculum-candidates/g7-native-v1/math-hero-numbers.svg",
+      "/public/../curriculum-candidates/g7-native-v1/math-hero-numbers.svg",
+      "/%2e%2e/curriculum-candidates/g7-native-v1/math-hero-numbers.svg",
+      "/curriculum-candidates",
+    ]) {
+      const response = await middleware(new NextRequest(`https://example.test/_next/image?url=${encodeURIComponent(source)}&w=640&q=75`));
+      expect(response.status, source).toBe(404);
+    }
+    const ordinary = await middleware(new NextRequest("https://example.test/_next/image?url=%2Flogo.png&w=640&q=75"));
+    expect(ordinary.headers.get("x-middleware-next")).toBe("1");
+    expect(getToken).not.toHaveBeenCalled();
   });
 
   it("preserves local development candidate diagrams and ordinary public assets", async () => {

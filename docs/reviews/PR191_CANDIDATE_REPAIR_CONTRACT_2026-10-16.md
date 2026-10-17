@@ -91,3 +91,16 @@ not approve, publish, register releases, bind an ontology/template, enable
 mastery scoring or migrate learner records. Qualified human curriculum and
 assessment decisions above remain required. This text is prepared locally;
 no PR body or external message was posted.
+
+## Image optimizer follow-up
+
+The combined production-mode probe found that routing an unreleased candidate
+SVG through `/_next/image` reached Next's image decoder and returned an internal
+error for an empty upstream buffer. It did not establish an artwork disclosure,
+but failed the required controlled-rejection check. Middleware now explicitly
+matches that optimizer endpoint, rejects local candidate source URLs before
+authentication with 404/no-store, and preserves the previous public optimizer
+behavior for other sources. No image or curriculum bytes changed. The focused
+regression (including absolute same-origin, dot-segment and encoded-dot sources)
+failed before the fix and passed afterward; complete combined
+validation must run again on this follow-up before a merge recommendation.
