@@ -1,0 +1,45 @@
+/* Fullscreen Slides V2: the reading view never inherits these rules. */
+.ll-slide-fullscreen[data-presentation=fullscreen] {
+  position: fixed; inset: 0; width: 100%; height: 100dvh; max-height: 100dvh;
+  padding: clamp(16px, 2vw, 32px); overflow: hidden; background: var(--ll-bg); color: var(--ll-text);
+}
+.ll5-presentation { height: 100%; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; gap: 20px; }
+.ll5-slide-meta, .ll5-slide-nav { display: flex; align-items: center; justify-content: space-between; gap: 16px; width: 100%; max-width: 1600px; margin-inline: auto; }
+.ll5-slide-meta > p { color: var(--ll-accent); font-size: 16px; line-height: 1.4; font-weight: 700; }
+.ll5-slide-meta > p > span { display: block; color: var(--ll-text-muted); font-size: 14px; font-weight: 500; }
+.ll5-slide-actions { display: flex; align-items: center; gap: 12px; }
+.ll5-slide-actions > span { max-width: 32ch; font-size: 14px; }
+.ll5-slide-actions button { min-height: 48px; }
+.ll5-slide-stage { position: relative; min-height: 0; width: 100%; max-width: 1360px; margin-inline: auto; display: grid; grid-template-rows: auto minmax(0, 1fr); gap: 20px; }
+.ll5-heading { display: grid; gap: 12px; }
+.ll5-heading h2 { font-size: clamp(30px, 3.6vw, 60px); font-weight: 750; line-height: 1.12; max-width: 36ch; overflow-wrap: anywhere; outline: none; }
+.ll5-slide-content { min-height: 0; display: grid; align-content: center; gap: 20px; }
+.ll5-fragment { min-width: 0; font-size: clamp(20px, 2vw, 32px); line-height: 1.45; overflow-wrap: anywhere; }
+.ll5-fragment :where(p,ol,ul,blockquote,h2,h3,figure) { margin: 0; font-size: inherit; line-height: inherit; }
+.ll5-fragment :where(ol,ul) { padding-left: 1.5em; }
+.ll5-fragment ol { list-style: decimal; }
+.ll5-fragment ul { list-style: disc; }
+.ll5-fragment li::marker { color: var(--ll-accent); font-weight: 700; }
+.ll5-fragment :where(ol,ul)[data-continued] { list-style: none; }
+.ll5-fragment :where(h2,h3) { color: var(--ll-accent); font-weight: 700; }
+.ll5-fragment blockquote { border-left: 4px solid var(--ll-accent); padding-left: 24px; }
+.ll5-heading[data-layout=practice] { border-left: 4px solid var(--ll-accent); padding-left: 24px; }
+.ll5-heading[data-layout=discussion] { border-bottom: 2px solid var(--ll-border-strong); padding-bottom: 16px; }
+.ll5-fragment .ll3-table { font-size: inherit; }
+.ll5-fragment .ll3-figure img { max-height: min(35dvh, 320px); width: 100%; object-fit: contain; }
+.ll5-measure { position: absolute; inset: 0 0 auto; height: 0; overflow: hidden; visibility: hidden; pointer-events: none; contain: layout; }
+.ll5-measure [data-measure-fragment] { display: flow-root; }
+.ll5-slide-nav { padding-top: 12px; border-top: 1px solid var(--ll-border); font-size: 16px; }
+.ll5-slide-nav .ll3-btn { min-height: 52px; }
+.ll5-slide-nav > span { color: var(--ll-text-muted); }
+@media (max-width: 767px) {
+  .ll5-presentation { gap: 16px; }
+  .ll5-heading { gap: 8px; }
+  .ll5-slide-actions > span { display: none; }
+  .ll5-slide-nav { gap: 8px; }
+  .ll5-slide-nav .ll3-btn { padding-inline: 12px; }
+}
+@media (forced-colors: active) {
+  .ll5-slide-nav { border-color: CanvasText; }
+  .ll5-fragment blockquote { border-color: CanvasText; }
+}
