@@ -137,7 +137,10 @@ describe("assessment definitions stay governed candidates", () => {
       }
     };
     roots.forEach(walk);
-    const readers = files.filter((file) => /assessment-definitions|loadG7AssessmentDefinitions|G7_ASSESSMENT_DEFINITION_DIR/.test(readFileSync(file, "utf8")));
+    // Match code, not comments: a type that documents the file shape (for example the pure
+    // Assessment V2 candidate adapter) is not a reader.
+    const code = (file: string) => readFileSync(file, "utf8").replace(/\/\*[\s\S]*?\*\//g, "").replace(/(^|[^:])\/\/.*$/gm, "$1");
+    const readers = files.filter((file) => /assessment-definitions|loadG7AssessmentDefinitions|G7_ASSESSMENT_DEFINITION_DIR/.test(code(file)));
     expect(readers.sort()).toEqual(["lib/curriculum/v2/g7NativePackage.ts", "lib/curriculum/v2/g7NativeReview.ts"]);
   });
 });
