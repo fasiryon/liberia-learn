@@ -262,3 +262,18 @@ These are listed in `LL_AEP_001_ENGINEERING_ASSUMPTIONS`:
 - wiring V2 into the live gradebook, report-card publisher and promotion routes;
 - the additive persistence migration (§6);
 - production policy activation.
+
+## Final merge-readiness review (2026-10-16)
+
+An independent review of head `0a8e3214` found the following. Regression tests are in
+`__tests__/academic-records-v2/review-repairs.test.ts`.
+
+| Severity | Defect | Repair |
+| --- | --- | --- |
+| P1 | The live legacy generator (`lib/reportCards/generateReportCard.ts`, used by `/api/admin/report-cards/generate`) still averaged every non-null `score`. That included AI scores auto-released before the fix and submissions from another school in the term window. | Submissions are scoped to the card's school. Only scores that `legacyAssignmentScoreAuthority` classifies as `TEACHER` count. |
+| P1 | Teacher grade routes never set `teacherApproved`. Auto-released submissions now stay in the review queue, so a teacher who graded one there left the row marked unverified. The student saw "AI score — not confirmed by your teacher" on the teacher's grade, the V2 classifier called it `AI_AUTO_RELEASED`, and the row never left the queue. The 72-hour job could also mark an already teacher-graded row as released. | Both teacher grade routes set `teacherApproved: true`. The 72-hour job skips rows with a `score` or `gradedBy`. The classifier treats a grade dated after an auto-release as `TEACHER`; the old job stamped `gradedAt` at release, so a stale `gradedBy` alone is not proof. |
+| P1 | `resolveAppeal` could revise a decision to RETAIN without documented intervention, or to PROMOTE at the terminal grade. `decidePromotion` refuses both. | A decision records `interventionDocumented` and `terminalGrade`. An appeal revision applies the same retention, terminal-grade and graduation rules. |
+
+Not changed (P2, pre-existing): the live `retainStudents` admin route does not require documented
+intervention. LL-AEP-001 is not activated, and the V2 decision path enforces the rule. Wiring the
+live route to V2 decisions is part of the separately authorized activation work.

@@ -46,6 +46,9 @@ export type PromotionDecision = Readonly<{
   supportPlan: SupportPlan | null;
   /** Copied from the recommendation; a GRADUATE decision never implies national school-leaving status. */
   graduation: GraduationOutcomes;
+  /** Copied from the recommendation so an appeal revision is held to the same retention rule. */
+  interventionDocumented: boolean;
+  terminalGrade: number;
   decidedBy: string;
   decidedAt: string;
   supersedesDecisionId: string | null;
@@ -79,6 +82,7 @@ export function decidePromotion(input: {
     studentId: recommendation.studentId, schoolId: recommendation.schoolId, academicYearId: recommendation.academicYearId, grade: recommendation.grade,
     outcome, recommendation: recommendation.recommendation, recommendationDigest: recommendation.inputDigest,
     overridesRecommendation: overrides, rationale: input.rationale, supportPlan: input.supportPlan, graduation: recommendation.graduation,
+    interventionDocumented: recommendation.interventionDocumented, terminalGrade: input.terminalGrade,
     decidedBy: actor.userId, decidedAt: input.at, supersedesDecisionId: null,
   });
   return Object.freeze({
@@ -197,7 +201,11 @@ export function resolveAppeal(appeal: PromotionAppeal, decision: PromotionDecisi
   let next = decision;
   if (input.outcome === "REVISED") {
     if (!input.revisedOutcome || input.revisedOutcome === decision.outcome) throw new Error("records_appeal_revision_requires_new_outcome");
+    // A revision is a new decision: the same invariants as decidePromotion apply.
+    if (input.revisedOutcome === "GRADUATE" && decision.grade !== decision.terminalGrade) throw new Error("records_graduation_requires_terminal_grade");
+    if (input.revisedOutcome !== "GRADUATE" && input.revisedOutcome !== "RETAIN" && decision.grade >= decision.terminalGrade) throw new Error("records_cannot_promote_past_terminal_grade");
     if (input.revisedOutcome === "CONDITIONAL_PROMOTION") assertSupportPlan(input.supportPlan, input.at);
+    if (input.revisedOutcome === "RETAIN" && !decision.interventionDocumented) throw new Error("records_retention_requires_documented_intervention");
     if (input.revisedOutcome === "GRADUATE" && decision.graduation.liberiaLearnProgram !== "MET") throw new Error("records_graduation_requires_program_completion");
     next = Object.freeze({
       ...decision, version: decision.version + 1, outcome: input.revisedOutcome, overridesRecommendation: input.revisedOutcome !== decision.recommendation,

@@ -132,6 +132,7 @@ describe("Sprint 2 — Assignment Grading", () => {
             score: 85,
             feedback: "Good work",
             gradedBy: "teacher-1",
+            teacherApproved: true,
           }),
         })
       );

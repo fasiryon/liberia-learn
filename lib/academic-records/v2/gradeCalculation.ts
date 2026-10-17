@@ -233,12 +233,17 @@ export function computeSubjectGrade(input: {
 /**
  * Maps a legacy AssignmentSubmission row to its true score authority. After the LL-AEP-001 fix,
  * auto-release no longer writes `score`; rows auto-released before the fix still carry an AI score
- * in `score` and are classified AI_AUTO_RELEASED until a teacher approves them.
+ * in `score` and are classified AI_AUTO_RELEASED until a teacher approves or regrades them. The old
+ * job stamped `gradedAt` with the release time and left any earlier `gradedBy` in place, so only a
+ * grade dated after the release proves a teacher wrote the current score.
  */
-export function legacyAssignmentScoreAuthority(row: { score: number | null; teacherApproved: boolean; autoReleasedAt: Date | null; aiGrade: number | null; gradedBy: string | null }): ScoreAuthority | null {
+export function legacyAssignmentScoreAuthority(row: { score: number | null; teacherApproved: boolean; autoReleasedAt: Date | null; aiGrade: number | null; gradedBy: string | null; gradedAt?: Date | null }): ScoreAuthority | null {
   if (row.score === null) return null;
   if (row.teacherApproved) return "TEACHER";
-  if (row.autoReleasedAt) return "AI_AUTO_RELEASED";
+  if (row.autoReleasedAt) {
+    const regradedAfterRelease = row.gradedBy !== null && row.gradedAt != null && row.gradedAt.getTime() > row.autoReleasedAt.getTime();
+    return regradedAfterRelease ? "TEACHER" : "AI_AUTO_RELEASED";
+  }
   if (row.aiGrade !== null && row.gradedBy === null) return "AI_UNMODERATED";
   return row.gradedBy ? "TEACHER" : null;
 }

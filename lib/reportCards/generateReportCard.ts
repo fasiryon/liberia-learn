@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/db";
 import { logAudit } from "@/lib/audit";
 import type { ReportCard } from "@prisma/client";
+import { legacyAssignmentScoreAuthority } from "@/lib/academic-records/v2/gradeCalculation";
 
 export type SubjectGrade = {
   subject: string;
@@ -51,11 +52,12 @@ export async function generateReportCard(
     throw Object.assign(new Error("Term does not belong to the student's school"), { status: 409 });
   }
 
-  // Aggregate graded submissions by subject within the term window
+  // Aggregate graded submissions by subject within the term window, from this school only.
   const submissions = await prisma.assignmentSubmission.findMany({
     where: {
       studentId,
       score: { not: null },
+      Assignment: { Class: { schoolId } },
       OR: [
         { gradedAt: { gte: startDate, lte: endDate } },
         { turnedInAt: { gte: startDate, lte: endDate } },
@@ -70,6 +72,9 @@ export async function generateReportCard(
 
   const subjectMap = new Map<string, number[]>();
   for (const sub of submissions) {
+    // LL-AEP-001: only teacher-verified scores are official. AI scores auto-released before the
+    // fix still sit in `score` and never count.
+    if (legacyAssignmentScoreAuthority(sub) !== "TEACHER") continue;
     const subject = String(sub.Assignment.Class.subject);
     if (!subjectMap.has(subject)) subjectMap.set(subject, []);
     subjectMap.get(subject)!.push(sub.score!);

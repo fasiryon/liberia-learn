@@ -202,7 +202,7 @@ describe("releaseStaleAIGrades", () => {
     expect(result.released).toBe(1);
     expect(mockPrisma.assignmentSubmission.update).not.toHaveBeenCalled();
     const call = mockPrisma.assignmentSubmission.updateMany.mock.calls[0][0];
-    expect(call.where).toEqual({ id: "sub1", teacherApproved: false, autoReleasedAt: null });
+    expect(call.where).toEqual({ id: "sub1", teacherApproved: false, autoReleasedAt: null, score: null, gradedBy: null });
     expect(call.data).toEqual({ autoReleasedAt: expect.any(Date) });
     for (const officialField of ["score", "feedback", "gradedAt", "teacherApproved"]) expect(call.data).not.toHaveProperty(officialField);
   });

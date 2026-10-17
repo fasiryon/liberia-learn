@@ -21,6 +21,9 @@ export async function releaseStaleAIGrades(): Promise<{ released: number }> {
       aiGrade: { not: null },
       teacherApproved: false,
       autoReleasedAt: null,
+      // A submission a teacher already graded is not waiting on AI feedback.
+      score: null,
+      gradedBy: null,
       aiGradedAt: { lt: cutoff },
     },
     include: {
@@ -38,7 +41,7 @@ export async function releaseStaleAIGrades(): Promise<{ released: number }> {
     stale.map(async (sub) => {
       // Conditional claim: only a still-unreviewed submission is marked, and no official field is written.
       const claimed = await prisma.assignmentSubmission.updateMany({
-        where: { id: sub.id, teacherApproved: false, autoReleasedAt: null },
+        where: { id: sub.id, teacherApproved: false, autoReleasedAt: null, score: null, gradedBy: null },
         data: { autoReleasedAt: now },
       });
       if (claimed.count === 0) return;
