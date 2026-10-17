@@ -107,22 +107,11 @@ export async function middleware(req: NextRequest) {
   // Public-folder files do not inherit the preview page's production 404.
   // Match Next's decoded filesystem path too, before any authenticated bypass.
   let assetPath = pathname;
-  // Next's optimizer fetches local files internally. Deny the original source
-  // here rather than letting an empty denied response reach the image decoder.
-  if (pathname === "/_next/image") {
-    try {
-      const source = new URL(req.nextUrl.searchParams.get("url") ?? "", req.url);
-      if (source.origin === req.nextUrl.origin) assetPath = source.pathname;
-    } catch { /* The optimizer validates malformed source URLs. */ }
-  }
-  try { assetPath = decodeURIComponent(assetPath); } catch { /* Next rejects malformed paths. */ }
+  try { assetPath = decodeURIComponent(pathname); } catch { /* Next rejects malformed paths. */ }
   if ((process.env.NODE_ENV === "production" || process.env.VERCEL) &&
       (assetPath === "/curriculum-candidates" || assetPath.startsWith("/curriculum-candidates/"))) {
     return finalize(new NextResponse(null, { status: 404, headers: { "Cache-Control": "private, no-store" } }));
   }
-  // Preserve the optimizer's existing public access and validation for all
-  // other images; this route previously bypassed middleware entirely.
-  if (pathname === "/_next/image") return next();
 
   // /moe/login is always public; the page renders portal availability inline.
   if (pathname === "/moe/login") {
@@ -289,5 +278,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)", "/_next/image"],
+  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
 };

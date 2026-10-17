@@ -13,6 +13,14 @@ const nextConfig = {
   reactStrictMode: true,
   output: "standalone",
   staticPageGenerationTimeout: 300,
+  images: {
+    // Deny the local image optimizer by default. The app renders local images
+    // unoptimized, and Next 14 serves /_next/image before middleware, so this
+    // allowlist is what keeps unreleased public assets (for example
+    // /curriculum-candidates) from being fetched and decoded through it.
+    // Next still appends its own /_next/static/media/** pattern for imports.
+    localPatterns: [],
+  },
   experimental: {
     cpus: 2,
     serverComponentsExternalPackages: ["@react-pdf/renderer"],

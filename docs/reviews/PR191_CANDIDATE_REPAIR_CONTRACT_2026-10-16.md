@@ -96,11 +96,22 @@ no PR body or external message was posted.
 
 The combined production-mode probe found that routing an unreleased candidate
 SVG through `/_next/image` reached Next's image decoder and returned an internal
-error for an empty upstream buffer. It did not establish an artwork disclosure,
-but failed the required controlled-rejection check. Middleware now explicitly
-matches that optimizer endpoint, rejects local candidate source URLs before
-authentication with 404/no-store, and preserves the previous public optimizer
-behavior for other sources. No image or curriculum bytes changed. The focused
-regression (including absolute same-origin, dot-segment and encoded-dot sources)
-failed before the fix and passed afterward; complete combined
-validation must run again on this follow-up before a merge recommendation.
+error (Sharp: empty input buffer). The optimizer's internal fetch was denied by
+middleware, so no artwork was disclosed, but the rejection was uncontrolled.
+
+A first attempt (`359aa7d3`) added `/_next/image` to the middleware matcher.
+Final validation against the standalone build disproved it: Next 14.2 serves
+external `/_next/image` requests before middleware, so the 500 persisted even
+though unit tests calling middleware directly passed. That matcher change is
+reverted.
+
+`next.config.js` now sets `images.localPatterns: []`. The app renders its only
+`next/image` (`unoptimized`) without the optimizer, so the local optimizer is
+denied by default and rejects every local or absolute source with a controlled
+400 before fetching. This deny-by-default also covers encoded and
+traversal-style sources (for example `/icons/..%2Fcurriculum-candidates/...`)
+that a path-prefix check could miss. Next still appends its own
+`/_next/static/media/**` pattern for statically imported images. The regression
+uses Next's own `ImageOptimizerCache.validateParams` and failed without the
+setting. No image or curriculum bytes changed. Behavior on Vercel's managed
+image service was not exercised locally; the hosted preview must be re-probed.

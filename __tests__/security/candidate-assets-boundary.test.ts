@@ -1,7 +1,10 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { NextRequest } from "next/server";
 import { getToken } from "next-auth/jwt";
-import { config, middleware } from "@/middleware";
+import { middleware } from "@/middleware";
+import { createRequire } from "node:module";
+import { imageConfigDefault } from "next/dist/shared/lib/image-config";
+import { ImageOptimizerCache } from "next/dist/server/image-optimizer";
 
 vi.mock("next-auth/jwt", () => ({ getToken: vi.fn() }));
 
@@ -35,27 +38,24 @@ describe("unreleased candidate assets", () => {
     expect(response.status).toBe(404);
   });
 
-  it("rejects local candidate image optimization before authentication while preserving ordinary images", async () => {
-    vi.stubEnv("NODE_ENV", "production");
-    expect(config.matcher).toContain("/_next/image");
-    for (const path of paths) {
-      const request = new NextRequest(`https://example.test/_next/image?url=${encodeURIComponent(path)}&w=640&q=75`);
-      const response = await middleware(request);
-      expect(response.status, path).toBe(404);
-      expect(response.headers.get("cache-control")).toContain("no-store");
-    }
-    for (const source of [
-      "https://example.test/curriculum-candidates/g7-native-v1/math-hero-numbers.svg",
-      "/public/../curriculum-candidates/g7-native-v1/math-hero-numbers.svg",
+  it("denies local image optimization by configuration, including candidate artwork", () => {
+    // Next 14 serves /_next/image before middleware, so the optimizer's own
+    // allowlist is the boundary. Validate with Next's real parameter check.
+    vi.stubEnv("SKIP_ENV_VALIDATION", "true");
+    const nextConfig = createRequire(import.meta.url)("../../next.config.js");
+    expect(nextConfig.images.localPatterns).toEqual([]);
+    const images = { ...imageConfigDefault, ...nextConfig.images, localPatterns: [...nextConfig.images.localPatterns, { pathname: "/_next/static/media/**", search: "" }] };
+    const validate = (url: string) => ImageOptimizerCache.validateParams({ headers: {} } as never, { url, w: "640", q: "75" }, { images } as never, false);
+    for (const url of [
+      ...paths,
+      "/icons/..%2Fcurriculum-candidates/g7-native-v1/math-hero-numbers.svg",
       "/%2e%2e/curriculum-candidates/g7-native-v1/math-hero-numbers.svg",
-      "/curriculum-candidates",
+      "https://example.test/curriculum-candidates/g7-native-v1/math-hero-numbers.svg",
+      "/icons/icon-192.png",
     ]) {
-      const response = await middleware(new NextRequest(`https://example.test/_next/image?url=${encodeURIComponent(source)}&w=640&q=75`));
-      expect(response.status, source).toBe(404);
+      expect(validate(url), url).toEqual({ errorMessage: '"url" parameter is not allowed' });
     }
-    const ordinary = await middleware(new NextRequest("https://example.test/_next/image?url=%2Flogo.png&w=640&q=75"));
-    expect(ordinary.headers.get("x-middleware-next")).toBe("1");
-    expect(getToken).not.toHaveBeenCalled();
+    expect(validate("/_next/static/media/imported.png")).not.toHaveProperty("errorMessage");
   });
 
   it("preserves local development candidate diagrams and ordinary public assets", async () => {
