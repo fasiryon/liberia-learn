@@ -1,0 +1,42 @@
+{
+  "specVersion": "liberialearn-modernization-spec/1.0.0",
+  "contentId": "wk_pcs6a_mon_p1",
+  "legacy": { "revisionId": "cmss8q6oi005jvo54b44tp6h5", "contentHash": "818fee10b0c1684ab082208982b918e4b831d35014a5e34a102a8024e20216d4" },
+  "candidateId": "lmv1-g6-math-decimal-place-value",
+  "candidateVersion": "0.1.0",
+  "track": "B_INSTRUCTIONAL_REDESIGN",
+  "title": "Decimal place value: reading and comparing decimals",
+  "grade": 6,
+  "subject": "MATH",
+  "objectives": [
+    { "id": "ll-g6-math-decimal-place-value", "statement": "Name the place and value of any digit in a decimal number up to thousandths.", "layer": "NATIONAL_FOUNDATION",
+      "moe": { "status": "STRUCTURED_ID_PROPOSED_UNREVIEWED", "objectiveId": "moe-math-g6-s1-p3-operations-obj2", "sourcePages": [67], "note": "MOE Grade 6 lists rounding decimals to tenths, hundredths and thousandths, which depends on decimal place value. Proposed as the supporting objective; not an explicit MOE objective by itself." } },
+    { "id": "ll-g6-math-decimal-compare", "statement": "Compare and order decimals up to thousandths by comparing place by place, and explain the comparison.", "layer": "LIBERIALEARN_MASTERY",
+      "moe": { "status": "STRUCTURED_ID_PROPOSED_UNREVIEWED", "objectiveId": "moe-math-g6-s1-p3-operations-obj2", "sourcePages": [67], "note": "Comparing decimals is not listed for Grade 6; it is the legacy lesson's second objective and is needed for rounding. A curriculum owner decides whether it is foundation or LiberiaLearn mastery." } }
+  ],
+  "successCriteria": [
+    { "objectiveId": "ll-g6-math-decimal-place-value", "independentPerformance": "Without the chart, hints or a calculator, the learner writes the correct value of named digits in decimals up to thousandths, including digits after a zero (27.093: 9 → 0.09, 3 → 0.003), and still does so one week later." },
+    { "objectiveId": "ll-g6-math-decimal-compare", "independentPerformance": "Without help, the learner orders decimals of different lengths correctly (0.06, 0.6, 0.606, 0.66), explains a comparison by comparing tenths then hundredths, rejects the 'more digits is bigger' argument in writing, and applies the comparison in an unrehearsed context where the smaller number is better." }
+  ],
+  "prerequisites": [
+    "Can name the value of a digit in a whole number up to thousands (the 4 in 3,482 is worth 400).",
+    "Knows that one tenth is one of ten equal parts of a whole, so 3 tenths is 3/10."
+  ],
+  "layers": {
+    "nationalFoundation": "Decimal place value to thousandths, the base for MOE Grade 6 rounding and decimal operations.",
+    "liberiaLearnMastery": "Comparing and ordering decimals with a written place-value justification, misconception-specific feedback, unscaffolded practice, and a 7-day retrieval check.",
+    "globalExcellence": "Transfer to race times where the smaller value wins, and an optional density challenge (decimals between 0.35 and 0.36), labelled beyond Grade 6 and never required."
+  },
+  "legacyDisposition": [
+    { "section": 0, "heading": "Opening (5 minutes)", "disposition": "ADAPTED", "candidateScenes": ["intro"], "rationale": "The legacy hook compares 2.75 and 3 Liberian dollars. Kept the idea of a familiar comparison but moved it to scale readings (1.5 kg against 1.25 kg), which also sets up the longer-is-larger misconception." },
+    { "section": 1, "heading": "Direct Instruction (15 minutes)", "disposition": "REPLACED", "candidateScenes": ["chart", "worked-example"], "rationale": "The chart idea is reused, but Example 1 is wrong: it says the 5 in 15.258 is in the tenths place (0.5). The 5s are worth 5 and 0.05. The worked example now uses 15.258 and corrects this. Reviewer to confirm." },
+    { "section": 2, "heading": "Guided Practice (15 minutes)", "disposition": "ADAPTED", "candidateScenes": ["zero-holds"], "rationale": "The legacy zero item (3.045) is correct and kept as the zero-placeholder idea, rebuilt as items with misconception-specific feedback." },
+    { "section": 3, "heading": "Independent Practice (8 minutes)", "disposition": "ADAPTED", "candidateScenes": ["practice"], "rationale": "Legacy items 12.783 and 2.009 are correct and reused; comparison items are added because the legacy lesson never practised its compare objective." },
+    { "section": 4, "heading": "Answer Key:", "disposition": "MOVED_TO_TEACHER_GUIDE", "candidateScenes": [], "rationale": "The answer key was shown to learners. Keys now live only in the reviewer-only assessment definitions." },
+    { "section": 5, "heading": "Closing (7 minutes)", "disposition": "ADAPTED", "candidateScenes": ["reflect", "exit-ticket"], "rationale": "The single exit question (value of 5 in 7.52) is replaced by an exit ticket covering both objectives; the closing becomes a reflection with a stated 7-day retrieval." }
+  ],
+  "openDecisions": [
+    { "id": "OD-MOE-COMPARE", "question": "Is comparing decimals a National Foundation objective for Grade 6, or LiberiaLearn mastery beyond the listed MOE objectives?", "authorRecommendation": "Treat it as LiberiaLearn mastery that supports MOE rounding (obj2), so it never blocks an MOE-scoped mastery decision." },
+    { "id": "OD-LEGACY-ERROR", "question": "The live legacy revision teaches that the 5 in 15.258 is worth 0.5. Should learners who saw it get a short correction note?", "authorRecommendation": "Yes: notify the 1 class with scheduled work on this lesson through the teacher, independent of whether this candidate is released." }
+  ]
+}

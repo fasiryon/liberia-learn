@@ -1,0 +1,414 @@
+{
+ "auditVersion": "liberialearn-library-audit/1.0.0",
+ "contentId": "civics-g1-1-rules-rights-and-duties-foundations",
+ "revisionId": "cmss8rewz00fnvo5407no2s2a",
+ "contentHash": "5fa778238633e82e02a2204a52d5d579c5f86c7055a60678e6e4e1006faf9cac",
+ "grade": 1,
+ "subject": "CIVICS",
+ "mechanicalOutcome": "REBUILD_REQUIRED",
+ "judgmentStatus": "AWAITING_INDEPENDENT_REVIEW",
+ "reviewOutcome": "REBUILD_REQUIRED",
+ "moeCell": {
+  "relation": "PROXY",
+  "moeSubject": "SOCIAL_STUDIES",
+  "objectiveCount": 24
+ },
+ "moeObjectiveLeads": [
+  {
+   "objectiveId": "moe-social-studies-g1-s1-p2-living-together-at-home-and-school-obj3",
+   "text": "Apply safety rules at home and at school.",
+   "score": 0.228,
+   "pages": [
+    4
+   ],
+   "status": "LEXICAL_LEAD_UNREVIEWED"
+  },
+  {
+   "objectiveId": "moe-social-studies-g1-s1-p2-living-together-at-home-and-school-obj2",
+   "text": "Develop respect for community leaders Follow health rules at home and at school.",
+   "score": 0.091,
+   "pages": [
+    4
+   ],
+   "status": "LEXICAL_LEAD_UNREVIEWED"
+  },
+  {
+   "objectiveId": "moe-social-studies-g1-s2-p6-political-sub-divisions-similarities-and-differe-obj5",
+   "text": "Demonstrate obedience to the rule of law The Pledge of Allegiance The Lone Star Song The Seal of Liberia Basic Civics Mixed Group Work: Read lines from your Civics book and discuss attitudes that are patriotic and attitudes that are unpatriotic Drama: Dramatize a situation in which you are helping an elderly person who is sick at their home Online civics resource Links www.brainpop.com www.socialstudiesforkids.com www.primarygames.com www.pbskids.org www.learninggames.com www.dictionary.com www.khanacademy.com",
+   "score": 0.041,
+   "pages": [
+    15
+   ],
+   "status": "LEXICAL_LEAD_UNREVIEWED"
+  }
+ ],
+ "examinations": [],
+ "areas": [
+  {
+   "area": "SUBJECT_ACCURACY",
+   "criteria": [
+    "NF-ACC-1",
+    "NF-ACC-2"
+   ],
+   "status": "AWAITING_INDEPENDENT_REVIEW",
+   "basis": "MECHANICAL_PLUS_JUDGMENT",
+   "findingIds": []
+  },
+  {
+   "area": "CONCEPTUAL_DEPTH",
+   "criteria": [
+    "LM-CON-2",
+    "NF-ACC-2"
+   ],
+   "status": "NOT_MET",
+   "basis": "MECHANICAL_PLUS_JUDGMENT",
+   "findingIds": [
+    "civics-g1-1-rules-rights-and-duties-foundations#F01"
+   ]
+  },
+  {
+   "area": "GRADE_APPROPRIATENESS",
+   "criteria": [
+    "NF-ALN-3",
+    "LM-ACS-1"
+   ],
+   "status": "NOT_MET",
+   "basis": "MECHANICAL_PLUS_JUDGMENT",
+   "findingIds": [
+    "civics-g1-1-rules-rights-and-duties-foundations#F03"
+   ]
+  },
+  {
+   "area": "PREREQUISITE_DIAGNOSTIC",
+   "criteria": [
+    "NF-PRG-1"
+   ],
+   "status": "NOT_MET",
+   "basis": "MECHANICAL",
+   "findingIds": [
+    "civics-g1-1-rules-rights-and-duties-foundations#F04"
+   ]
+  },
+  {
+   "area": "SEQUENCE_WORKED_EXAMPLES",
+   "criteria": [
+    "LM-PRG-1"
+   ],
+   "status": "PARTIALLY_MET",
+   "basis": "MECHANICAL",
+   "findingIds": [
+    "civics-g1-1-rules-rights-and-duties-foundations#F05"
+   ]
+  },
+  {
+   "area": "COGNITIVE_LOAD",
+   "criteria": [
+    "LM-ACS-1"
+   ],
+   "status": "MET",
+   "basis": "MECHANICAL",
+   "findingIds": []
+  },
+  {
+   "area": "MISCONCEPTION_FEEDBACK",
+   "criteria": [
+    "LM-CON-1"
+   ],
+   "status": "NOT_MET",
+   "basis": "MECHANICAL",
+   "findingIds": [
+    "civics-g1-1-rules-rights-and-duties-foundations#F06",
+    "civics-g1-1-rules-rights-and-duties-foundations#F07"
+   ]
+  },
+  {
+   "area": "GUIDED_INDEPENDENT_PRACTICE",
+   "criteria": [
+    "LM-PRG-1"
+   ],
+   "status": "MET",
+   "basis": "MECHANICAL",
+   "findingIds": []
+  },
+  {
+   "area": "AUTHENTIC_PERFORMANCE_REASONING",
+   "criteria": [
+    "LM-RSN-1",
+    "GE-RSN-1"
+   ],
+   "status": "NOT_MET",
+   "basis": "MECHANICAL",
+   "findingIds": [
+    "civics-g1-1-rules-rights-and-duties-foundations#F08"
+   ]
+  },
+  {
+   "area": "ASSESSMENT_VALIDITY",
+   "criteria": [
+    "NF-ASM-1",
+    "NF-ACC-1",
+    "LM-ASM-1",
+    "LM-ASM-2"
+   ],
+   "status": "NOT_MET",
+   "basis": "MECHANICAL",
+   "findingIds": [
+    "civics-g1-1-rules-rights-and-duties-foundations#F09"
+   ]
+  },
+  {
+   "area": "DELAYED_RETENTION",
+   "criteria": [
+    "LM-ASM-3"
+   ],
+   "status": "NOT_MET",
+   "basis": "MECHANICAL",
+   "findingIds": [
+    "civics-g1-1-rules-rights-and-duties-foundations#F10"
+   ]
+  },
+  {
+   "area": "TRANSFER",
+   "criteria": [
+    "GE-TRN-1"
+   ],
+   "status": "NOT_MET",
+   "basis": "MECHANICAL",
+   "findingIds": [
+    "civics-g1-1-rules-rights-and-duties-foundations#F11"
+   ]
+  },
+  {
+   "area": "ACCESSIBILITY_OFFLINE",
+   "criteria": [
+    "NF-ACS-1"
+   ],
+   "status": "MET",
+   "basis": "MECHANICAL",
+   "findingIds": []
+  },
+  {
+   "area": "LIBERIAN_CONTEXT_EVIDENCE",
+   "criteria": [
+    "NF-REL-1",
+    "LM-REL-1"
+   ],
+   "status": "AWAITING_INDEPENDENT_REVIEW",
+   "basis": "MECHANICAL_PLUS_JUDGMENT",
+   "findingIds": []
+  },
+  {
+   "area": "MOE_TRACEABILITY",
+   "criteria": [
+    "NF-ALN-1"
+   ],
+   "status": "NOT_MET",
+   "basis": "MECHANICAL_PLUS_JUDGMENT",
+   "findingIds": [
+    "civics-g1-1-rules-rights-and-duties-foundations#F12",
+    "civics-g1-1-rules-rights-and-duties-foundations#F13"
+   ]
+  },
+  {
+   "area": "WAEC_ALIGNMENT",
+   "criteria": [
+    "NF-ALN-2"
+   ],
+   "status": "NOT_APPLICABLE",
+   "basis": "MECHANICAL",
+   "findingIds": []
+  },
+  {
+   "area": "ADVANCED_ENRICHMENT",
+   "criteria": [
+    "GE-EXT-1"
+   ],
+   "status": "MET",
+   "basis": "MECHANICAL",
+   "findingIds": []
+  },
+  {
+   "area": "STUDENT_EXPERIENCE_V3",
+   "criteria": [
+    "NF-ACS-1"
+   ],
+   "status": "NOT_MET",
+   "basis": "MECHANICAL",
+   "findingIds": [
+    "civics-g1-1-rules-rights-and-duties-foundations#F02"
+   ]
+  }
+ ],
+ "findings": [
+  {
+   "id": "civics-g1-1-rules-rights-and-duties-foundations#F01",
+   "area": "CONCEPTUAL_DEPTH",
+   "code": "PLACEHOLDER_CONTENT",
+   "kind": "MECHANICAL",
+   "severity": "BLOCKING",
+   "where": "delivery.body#s1 \"Teacher Explanation\" (line 4)",
+   "evidence": "9 of 9 instructional sections are directions with no content, e.g. \"This lesson teaches rules, rights, and duties with a clear sequence of explanation, examples, guided work, an…\"",
+   "issue": "The lesson is a template shell: sections say what to teach (\"Model one complete example…\") but contain no explanation, example or item.",
+   "proposedCorrection": "Replace with a full candidate lesson (Track C); keep the legacy revision for history."
+  },
+  {
+   "id": "civics-g1-1-rules-rights-and-duties-foundations#F02",
+   "area": "STUDENT_EXPERIENCE_V3",
+   "code": "DUPLICATE_LEARNER_TEXT",
+   "kind": "MECHANICAL",
+   "severity": "MAJOR",
+   "where": "delivery.body",
+   "evidence": "identical learner text in civics-g1-1-rules-rights-and-duties-assessment-and-reflection, civics-g1-1-rules-rights-and-duties-guided-application, civics-g1-1-rules-rights-and-duties-independent-practice (+1)",
+   "issue": "The same learner text is catalogued as more than one lesson.",
+   "proposedCorrection": "Choose one canonical lesson; map the others to it in the legacy mapping plan (never delete referenced rows)."
+  },
+  {
+   "id": "civics-g1-1-rules-rights-and-duties-foundations#F03",
+   "area": "GRADE_APPROPRIATENESS",
+   "code": "READING_LEVEL_ABOVE_GRADE",
+   "kind": "JUDGMENT_INDICATOR",
+   "severity": "MAJOR",
+   "where": "delivery.body",
+   "evidence": "Flesch-Kincaid grade 12.3 for a grade 1 lesson",
+   "issue": "Sentence and word length suggest the text is harder to read than the grade allows.",
+   "proposedCorrection": "Shorten sentences and gloss vocabulary without lowering the conceptual demand; confirm with a language reviewer."
+  },
+  {
+   "id": "civics-g1-1-rules-rights-and-duties-foundations#F04",
+   "area": "PREREQUISITE_DIAGNOSTIC",
+   "code": "NO_PREREQUISITE_CHECK",
+   "kind": "MECHANICAL",
+   "severity": "MAJOR",
+   "where": "delivery.body",
+   "evidence": "no prior-knowledge or warm-up section",
+   "issue": "Instruction assumes prerequisites it never checks.",
+   "proposedCorrection": "Add a short diagnostic per prerequisite with a stated route for learners who lack it."
+  },
+  {
+   "id": "civics-g1-1-rules-rights-and-duties-foundations#F05",
+   "area": "SEQUENCE_WORKED_EXAMPLES",
+   "code": "WORKED_EXAMPLE_WITHOUT_STEPS",
+   "kind": "MECHANICAL",
+   "severity": "MINOR",
+   "where": "delivery.body#s2 \"Worked Examples or Demonstrations\" (line 11)",
+   "evidence": "Worked Example 1: Model a short scenario related to rules, rights, and duties and explain the key idea in action. Worked Example 2: Compare…",
+   "issue": "Worked examples state answers without showing the reasoning steps.",
+   "proposedCorrection": "Show each step and why it is taken."
+  },
+  {
+   "id": "civics-g1-1-rules-rights-and-duties-foundations#F06",
+   "area": "MISCONCEPTION_FEEDBACK",
+   "code": "NO_MISCONCEPTION_TEACHING",
+   "kind": "MECHANICAL",
+   "severity": "MAJOR",
+   "where": "delivery.body",
+   "evidence": "no error-analysis or misconception section",
+   "issue": "Common errors are neither taught against nor anticipated.",
+   "proposedCorrection": "Catalogue the objective's misconceptions and teach against each (Track A)."
+  },
+  {
+   "id": "civics-g1-1-rules-rights-and-duties-foundations#F07",
+   "area": "MISCONCEPTION_FEEDBACK",
+   "code": "NO_MISCONCEPTION_SPECIFIC_FEEDBACK",
+   "kind": "MECHANICAL",
+   "severity": "MAJOR",
+   "where": "assessment",
+   "evidence": "no item carries response-specific feedback or a misconception-mapped distractor",
+   "issue": "Wrong answers cannot be diagnosed or corrected by cause.",
+   "proposedCorrection": "Map each distractor or response pattern to a catalogued misconception with corrective feedback."
+  },
+  {
+   "id": "civics-g1-1-rules-rights-and-duties-foundations#F08",
+   "area": "AUTHENTIC_PERFORMANCE_REASONING",
+   "code": "NO_REASONING_TASK",
+   "kind": "MECHANICAL",
+   "severity": "MAJOR",
+   "where": "assessment / independent practice",
+   "evidence": "no explain/justify/compare prompt in independent work or assessment",
+   "issue": "Learners are never asked to produce reasoning, only answers.",
+   "proposedCorrection": "Add a constructed-response reasoning or performance task at scaffold NONE scored by a rubric."
+  },
+  {
+   "id": "civics-g1-1-rules-rights-and-duties-foundations#F09",
+   "area": "ASSESSMENT_VALIDITY",
+   "code": "NO_END_OF_LESSON_ASSESSMENT",
+   "kind": "MECHANICAL",
+   "severity": "MAJOR",
+   "where": "assessment",
+   "evidence": "no assessment questions found in body or structured fields",
+   "issue": "Nothing checks whether learners met the objectives.",
+   "proposedCorrection": "Add an independent end-of-lesson demonstration covering every objective."
+  },
+  {
+   "id": "civics-g1-1-rules-rights-and-duties-foundations#F10",
+   "area": "DELAYED_RETENTION",
+   "code": "NO_DELAYED_RETRIEVAL",
+   "kind": "MECHANICAL",
+   "severity": "MAJOR",
+   "where": "assessment",
+   "evidence": "no delayed or spaced retrieval task",
+   "issue": "Nothing checks whether learning lasts beyond the lesson.",
+   "proposedCorrection": "Add a retention blueprint: retrieval items for each mastery objective at ≥7 days (LM-ASM-3)."
+  },
+  {
+   "id": "civics-g1-1-rules-rights-and-duties-foundations#F11",
+   "area": "TRANSFER",
+   "code": "NO_TRANSFER_TASK",
+   "kind": "MECHANICAL",
+   "severity": "MAJOR",
+   "where": "assessment",
+   "evidence": "no task marked as a new context, representation or genre",
+   "issue": "Learners are only tested in rehearsed contexts, so transfer is unknown.",
+   "proposedCorrection": "Add an unscaffolded transfer task in a context the lesson did not rehearse (GE-TRN-1)."
+  },
+  {
+   "id": "civics-g1-1-rules-rights-and-duties-foundations#F12",
+   "area": "MOE_TRACEABILITY",
+   "code": "PROXY_SUBJECT_DECISION_REQUIRED",
+   "kind": "GOVERNANCE",
+   "severity": "MAJOR",
+   "where": "identity.subject",
+   "evidence": "CIVICS → MOE SOCIAL_STUDIES (24 objectives at grade 1). No MOE Civics document is in the verified archives; civic objectives sit inside MOE Social Studies.",
+   "issue": "Objectives can only be traced through a broader MOE subject (see evidence); that mapping is a curriculum-owner decision, not an MOE fact.",
+   "proposedCorrection": "Record the owner's decision to trace this subject through the named MOE subject before release; candidate work may proceed."
+  },
+  {
+   "id": "civics-g1-1-rules-rights-and-duties-foundations#F13",
+   "area": "MOE_TRACEABILITY",
+   "code": "NO_MOE_MAPPING",
+   "kind": "MECHANICAL",
+   "severity": "MAJOR",
+   "where": "standards.moeAlignments",
+   "evidence": "no alignment claims",
+   "issue": "No objective is traced to the MOE curriculum.",
+   "proposedCorrection": "Map each objective to a structured MOE objective id with source page, reviewed by a curriculum owner; lexical leads are attached to this audit."
+  }
+ ],
+ "metrics": {
+  "primaryTextField": "body",
+  "learnerWords": 736,
+  "structuredWords": 158,
+  "sections": 13,
+  "maxSectionWords": 126,
+  "denseSections": 0,
+  "longParagraphs": 0,
+  "fkGrade": 12.3,
+  "boilerplateSentenceShare": 0.029,
+  "objectives": 1,
+  "workedExampleSections": 1,
+  "guidedPracticeSections": 1,
+  "independentPracticeSections": 1,
+  "assessmentQuestions": 0,
+  "keyedQuestions": 0,
+  "arithmeticChecked": 0,
+  "arithmeticErrors": 0,
+  "liberianContextMarkers": 2,
+  "factualClaimIndicators": 0,
+  "imagesWithoutAlt": 0,
+  "alignmentClaims": 0,
+  "resolvedMoeIds": 0,
+  "inventedAlignmentCodes": 0
+ },
+ "isLearningEvidence": false,
+ "auditDigest": "85343bdf96ed4f8aef56383287a3c0cf1186e4dddbd3c2efe708de91176a0a93"
+}

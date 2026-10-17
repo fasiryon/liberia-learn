@@ -1,0 +1,63 @@
+{
+ "moeCell": {
+  "relation": "PROXY",
+  "moeSubject": "SOCIAL_STUDIES",
+  "sourceSubjects": null,
+  "objectiveCount": 24,
+  "note": "No MOE Civics document is in the verified archives; civic objectives sit inside MOE Social Studies."
+ },
+ "legacyClaims": [],
+ "lexicalLeads": [
+  {
+   "objectiveId": "moe-social-studies-g1-s1-p2-living-together-at-home-and-school-obj3",
+   "text": "Apply safety rules at home and at school.",
+   "score": 0.228,
+   "pages": [
+    4
+   ],
+   "status": "LEXICAL_LEAD_UNREVIEWED"
+  },
+  {
+   "objectiveId": "moe-social-studies-g1-s1-p2-living-together-at-home-and-school-obj2",
+   "text": "Develop respect for community leaders Follow health rules at home and at school.",
+   "score": 0.091,
+   "pages": [
+    4
+   ],
+   "status": "LEXICAL_LEAD_UNREVIEWED"
+  },
+  {
+   "objectiveId": "moe-social-studies-g1-s2-p6-political-sub-divisions-similarities-and-differe-obj5",
+   "text": "Demonstrate obedience to the rule of law The Pledge of Allegiance The Lone Star Song The Seal of Liberia Basic Civics Mixed Group Work: Read lines from your Civics book and discuss attitudes that are patriotic and attitudes that are unpatriotic Drama: Dramatize a situation in which you are helping an elderly person who is sick at their home Online civics resource Links www.brainpop.com www.socialstudiesforkids.com www.primarygames.com www.pbskids.org www.learninggames.com www.dictionary.com www.khanacademy.com",
+   "score": 0.041,
+   "pages": [
+    15
+   ],
+   "status": "LEXICAL_LEAD_UNREVIEWED"
+  }
+ ],
+ "proposedObjectiveRelationships": [
+  {
+   "objectiveId": "moe-social-studies-g1-s1-p2-living-together-at-home-and-school-obj3",
+   "layer": "NATIONAL_FOUNDATION",
+   "status": "PROXY_SUBJECT_PROPOSED_UNREVIEWED",
+   "sourcePages": [
+    4
+   ],
+   "note": "No MOE Civics document exists; MOE Grade 1 Social Studies 'Apply safety rules at home and at school' is proposed through the Civics → Social Studies proxy, which needs an owner decision.",
+   "resolvesInStructuredSource": true
+  },
+  {
+   "objectiveId": "ll-g1-civ-rights-duties",
+   "layer": "LIBERIALEARN_MASTERY",
+   "status": "LIBERIALEARN_EXTENSION",
+   "note": "MOE Grade 1 Social Studies covers family roles, safety and health rules, and respect, but has no rights-and-duties objective. This is a LiberiaLearn objective that needs an owner's scope decision.",
+   "resolvesInStructuredSource": null
+  }
+ ],
+ "unresolvedProposedIds": [],
+ "examinations": [],
+ "waecEvidence": "NOT_APPLICABLE",
+ "status": "PROPOSED_UNREVIEWED",
+ "note": "MOE source provenance is not MOE approval. Every relationship here is a proposal that a curriculum owner must accept; nothing is bound and no MOE or WAEC approval is claimed."
+}

@@ -1,0 +1,168 @@
+{
+ "notice": "Complete legacy revision as read (read-only). Preserved for comparison and history; never edited.",
+ "contentId": "wk_pcs6a_mon_p1",
+ "revisionId": "cmss8q6oi005jvo54b44tp6h5",
+ "contentHash": "818fee10b0c1684ab082208982b918e4b831d35014a5e34a102a8024e20216d4",
+ "snapshotSchemaVersion": 1,
+ "title": "Decimals: Place Value",
+ "grade": 6,
+ "subject": "MATH",
+ "status": "APPROVED",
+ "contentSnapshot": {
+  "delivery": {
+   "body": "## Opening (5 minutes)\n\nGood day, students! Let’s start with a question: If you had 2.75 Liberian dollars, would you say you have more or less than 3 Liberian dollars? This scenario helps us think about how decimal numbers work! Today, we will learn about place value in decimal numbers, like those we use when buying things in the market or counting money. It’s important to understand these values so we can manage our finances well. By the end of the lesson, you will have a clearer picture of how decimals work and how to compare them.\n\n## Direct Instruction (15 minutes)\n\nPlace value is the value of where the digit is in the number. In decimal numbers, we have whole numbers and fractional parts. Let’s break this down.\n\n1. **Whole Numbers and Decimals**: A whole number is a full unit, like 1, 2, or 3. But when we have decimals, we have parts of a whole. For instance, the number 2.5 means 2 whole units and 5 tenths. This means we have 2 whole Liberian dollars and half of another.\n\n2. **Place Value Chart**: Let’s look at how we can visualize this. A decimal number like 3.47 has the digits 3, 4, and 7 in different places:\n   - **3** is in the ones place.\n   - **4** is in the tenths place (which is 4/10 or 0.4).\n   - **7** is in the hundredths place (which is 7/100 or 0.07).\n   Here’s the chart of place values for further understanding:\n   - **Ones** | **Tenths** | **Hundredths**\n   - 3        | 4          | 7         \n\nLet’s work through 2 examples to clarify this:\n\n**Example 1**: What is the value of the digit 5 in the number 15.258?\n   - The digit 5 is in the tenths place, which equals 0.5.\n\n**Example 2**: In the number 7.639, what does the 6 stand for?\n   - The 6 is in the tenths place, making it 0.6.\n\nIt's essential to understand these placements as they help us perform different mathematical operations!\n\n## Guided Practice (15 minutes)\n\nNow, let’s try a few practice problems together! I’ll write some numbers on the board, and we can identify the place values together. \n\n1. What is the value of the digit 4 in the number 4.576? \n   - Answer: The digit 4 is in the ones place, meaning 4.\n\n2. In the number 9.128, what is the value of the digit 1?\n   - The digit 1 is in the tenths place, meaning 0.1.\n\n3. For the number 3.045, what does 0 represent?\n   - The 0 is in the tenths place, which means there is no additional value there.\n   - Common mistake: Remember that zeros hold a position but often do not add to the value in decimals. It indicates that there are no tenths.\n\n4. Lastly, in 10.3, identify the value of the digit 3.\n   - Answer: The digit 3 is in the tenths place, so it equals 0.3.\n\n## Independent Practice (8 minutes)\n\nNow, I want you to work independently. Here are some problems for you to solve:\n\n1. What is the place value of 7 in 12.783?\n2. Identify the value of 3 in 5.340.\n3. In the number 8.605, what does the digit 6 represent?\n4. What about the digit 2 in 2.009?\n\n### Answer Key:\n1. 7 is in the hundredths place (0.07).\n2. 3 is in the tenths place (0.3).\n3. 6 is in the tenths place (0.6).\n4. 2 is in the ones place (2).\n\n## Closing (7 minutes)\n\nLet’s summarize what we’ve learned today. We’ve covered the importance of place value in decimals and how to identify the values of different digits in a decimal number. Always remember that where a number is positioned affects its value! As you proceed to the next lesson, think about how this understanding helps you in everyday situations, like shopping in the market or counting your money. For your exit ticket, please answer this question: \"What is the value of 5 in 7.52?\" In our next lesson, we will dive deeper into comparing decimal values and ordering them!\n",
+   "bodyBlock": "## Opening (5 minutes)\n\nGood day, students! Let’s start with a question: If you had 2.75 Liberian dollars, would you say you have more or less than 3 Liberian dollars? This scenario helps us think about how decimal numbers work! Today, we will learn about place value in decimal numbers, like those we use when buying things in the market or counting money. It’s important to understand these values so we can manage our finances well. By the end of the lesson, you will have a clearer picture of how decimals work and how to compare them.\n\n## Direct Instruction (20 minutes)\n\nPlace value is the value of where the digit is in the number. In decimal numbers, we have whole numbers and fractional parts. Let’s break this down.\n\n1. **Whole Numbers and Decimals**: A whole number is a full unit, like 1, 2, or 3. But when we have decimals, we have parts of a whole. For instance, the number 2.5 means 2 whole units and 5 tenths. This means we have 2 whole Liberian dollars and half of another.\n\n2. **Place Value Chart**: Let’s look at how we can visualize this. A decimal number like 3.47 has the digits 3, 4, and 7 in different places:\n   - **3** is in the ones place.\n   - **4** is in the tenths place (which is 4/10 or 0.4).\n   - **7** is in the hundredths place (which is 7/100 or 0.07).\n   Here’s the chart of place values for further understanding:\n   - **Ones** | **Tenths** | **Hundredths**\n   - 3        | 4          | 7         \n\nLet’s work through 3 examples to clarify this:\n\n**Example 1**: What is the value of the digit 5 in the number 15.258?\n   - The digit 5 is in the tenths place, which equals 0.5.\n\n**Example 2**: In the number 7.639, what does the 6 stand for?\n   - The 6 is in the tenths place, making it 0.6.\n\n**Example 3**: Consider 0.045; what does the 4 represent?\n   - The 4 is in the hundredths place; thus, it equals 0.04.\n\nIt's essential to understand these placements as they help us perform different mathematical operations!\n\n## Guided Practice (20 minutes)\n\nNow, let’s try a few practice problems together! I’ll write some numbers on the board, and we can identify the place values together. \n\n1. **What is the value of the digit 4 in the number 4.576?** \n   - Answer: The digit 4 is in the ones place, meaning 4.\n\n2. **In the number 9.128, what is the value of the digit 1?**\n   - The digit 1 is in the tenths place, meaning 0.1.\n\n3. **For the number 3.045, what does 0 represent?**\n   - The 0 is in the tenths place, which means there is no additional value there.\n   - Common mistake: Remember that zeros hold a position but often do not add to the value in decimals. It indicates that there are no tenths.\n\n4. **Lastly, in 10.3, identify the value of the digit 3.**\n   - Answer: The digit 3 is in the tenths place, so it equals 0.3.\n\n5. **In the number 8.902, what does 9 represent?**\n   - The 9 is in the tenths place (0.9).\n\n6. **In 5.060, what does the 6 in the hundredths place stand for?**\n   - The 6 represents 0.06, indicating six hundredths.\n\n## Lab or Activity (25 minutes)\n\nNow it's activity time! We will create place value charts using real items from our classroom. Gather some colored paper and markers. You will make a chart that showcases decimal numbers with place values! Here’s how we’ll do it:\n\n### Instructions:\n1. Choose three decimal numbers that are meaningful to you, perhaps related to prices in the market or your personal savings.\n2. Create a place value chart for each number, showing the ones, tenths, and hundredths clearly.\n3. Illustrate these charts with images or drawings that relate to your chosen decimals, like cash notes or market goods. \n4. After completing your charts, pair up with a classmate. Each of you will present your charts and explain the significance of the numbers you chose.\n\n### Objective of the Lab:\n- This activity helps reinforce your understanding of decimal numbers and their place values while also allowing you to interact with your peers.\n\n## Independent Work (15 minutes)\n\nNow, I want you to work independently again, but this time with different problems. Use your place value knowledge to answer:\n\n1. What is the place value of 7 in 12.783?\n2. Identify the value of 3 in 5.340.\n3. In the number 8.605, what does the digit 6 represent?\n4. What about the digit 2 in 2.009?\n5. What is the value of the digit 5 in 6.542?\n6. Explain what the digit 0 means in the number 2.07.\n\n### Answer Key:\n1. 7 is in the hundredths place (0.07).\n2. 3 is in the tenths place (0.3).\n3. 6 is in the tenths place (0.6).\n4. 2 is in the ones place (2).\n5. 5 is in the tenths place (0.5).\n6. The 0 in the tenths place indicates that there are no tenths, so it's just a placeholder.\n\n## Group Discussion (8 minutes)\n\nNow let's discuss how this lesson applies in real life. Think about how we use decimal numbers in daily transactions, like buying food at the market or calculating money for transport. What challenges do you think people face when dealing with decimals? Share any experiences you’ve had when using decimals, perhaps in managing your school fees or making purchases at local shops.\n\n## Closing (7 minutes)\n\nLet’s summarize what we’ve learned today. We’ve covered the importance of place value in decimals and how to identify the values of different digits in a decimal number. Always remember that where a number is positioned affects its value! As you proceed to the next lesson, think about how this understanding helps you in everyday situations, like shopping in the market or counting your money. For your exit ticket, please answer this question: \"What is the value of 5 in 7.52?\" In our next lesson, we will dive deeper into comparing decimal values and ordering them!",
+   "bodyStandard": "## Opening (5 minutes)\n\nGood day, students! Let’s start with a question: If you had 2.75 Liberian dollars, would you say you have more or less than 3 Liberian dollars? This scenario helps us think about how decimal numbers work! Today, we will learn about place value in decimal numbers, like those we use when buying things in the market or counting money. It’s important to understand these values so we can manage our finances well. By the end of the lesson, you will have a clearer picture of how decimals work and how to compare them.\n\n## Direct Instruction (15 minutes)\n\nPlace value is the value of where the digit is in the number. In decimal numbers, we have whole numbers and fractional parts. Let’s break this down.\n\n1. **Whole Numbers and Decimals**: A whole number is a full unit, like 1, 2, or 3. But when we have decimals, we have parts of a whole. For instance, the number 2.5 means 2 whole units and 5 tenths. This means we have 2 whole Liberian dollars and half of another.\n\n2. **Place Value Chart**: Let’s look at how we can visualize this. A decimal number like 3.47 has the digits 3, 4, and 7 in different places:\n   - **3** is in the ones place.\n   - **4** is in the tenths place (which is 4/10 or 0.4).\n   - **7** is in the hundredths place (which is 7/100 or 0.07).\n   Here’s the chart of place values for further understanding:\n   - **Ones** | **Tenths** | **Hundredths**\n   - 3        | 4          | 7         \n\nLet’s work through 2 examples to clarify this:\n\n**Example 1**: What is the value of the digit 5 in the number 15.258?\n   - The digit 5 is in the tenths place, which equals 0.5.\n\n**Example 2**: In the number 7.639, what does the 6 stand for?\n   - The 6 is in the tenths place, making it 0.6.\n\nIt's essential to understand these placements as they help us perform different mathematical operations!\n\n## Guided Practice (15 minutes)\n\nNow, let’s try a few practice problems together! I’ll write some numbers on the board, and we can identify the place values together. \n\n1. What is the value of the digit 4 in the number 4.576? \n   - Answer: The digit 4 is in the ones place, meaning 4.\n\n2. In the number 9.128, what is the value of the digit 1?\n   - The digit 1 is in the tenths place, meaning 0.1.\n\n3. For the number 3.045, what does 0 represent?\n   - The 0 is in the tenths place, which means there is no additional value there.\n   - Common mistake: Remember that zeros hold a position but often do not add to the value in decimals. It indicates that there are no tenths.\n\n4. Lastly, in 10.3, identify the value of the digit 3.\n   - Answer: The digit 3 is in the tenths place, so it equals 0.3.\n\n## Independent Practice (8 minutes)\n\nNow, I want you to work independently. Here are some problems for you to solve:\n\n1. What is the place value of 7 in 12.783?\n2. Identify the value of 3 in 5.340.\n3. In the number 8.605, what does the digit 6 represent?\n4. What about the digit 2 in 2.009?\n\n### Answer Key:\n1. 7 is in the hundredths place (0.07).\n2. 3 is in the tenths place (0.3).\n3. 6 is in the tenths place (0.6).\n4. 2 is in the ones place (2).\n\n## Closing (7 minutes)\n\nLet’s summarize what we’ve learned today. We’ve covered the importance of place value in decimals and how to identify the values of different digits in a decimal number. Always remember that where a number is positioned affects its value! As you proceed to the next lesson, think about how this understanding helps you in everyday situations, like shopping in the market or counting your money. For your exit ticket, please answer this question: \"What is the value of 5 in 7.52?\" In our next lesson, we will dive deeper into comparing decimal values and ordering them!",
+   "lessonFormat": "either",
+   "legacyContent": null,
+   "lessonContent": null,
+   "deliveryProfile": null,
+   "estimatedMinutes": null
+  },
+  "identity": {
+   "grade": 6,
+   "title": "Decimals: Place Value",
+   "subject": "MATH",
+   "contentType": "lesson",
+   "description": null
+  },
+  "placement": {
+   "unitId": null,
+   "lessonType": null,
+   "orderInUnit": null
+  },
+  "resources": {
+   "labs": [
+    {
+     "type": "guided_walkthrough",
+     "grade": 6,
+     "title": "Decimal Value Exploration with Local Materials",
+     "subject": "MATH",
+     "procedure": [
+      {
+       "stepNumber": 1,
+       "instruction": "Gather materials: Each group will collect leaves, stones, and bottle caps. Assign each material a place value: use leaves for whole numbers, stones for tenths, and bottle caps for hundredths.",
+       "teacherNote": "Ensure students understand the correlation between materials and place values.",
+       "durationMinutes": 10
+      },
+      {
+       "stepNumber": 2,
+       "instruction": "Using string, create a line on the ground to represent the decimal place value chart. Place the leaves on the left for whole numbers, stones in the middle for tenths, and bottle caps on the right for hundredths.",
+       "teacherNote": "Encourage students to discuss the placement of their materials as they set them up.",
+       "durationMinutes": 10
+      },
+      {
+       "stepNumber": 3,
+       "instruction": "Have each group choose a decimal number (like 2.75) and represent it using their materials on the chart. After that, present their number to the class and explain the value of each digit.",
+       "teacherNote": "Facilitate discussions on how different representations can lead to the same decimal value.",
+       "durationMinutes": 5
+      }
+     ],
+     "safetyNotes": null,
+     "labObjective": "Students will use local materials to create representations of decimal numbers and understand the concept of place value.",
+     "offlineCapable": true,
+     "durationMinutes": 25,
+     "materialsNeeded": [
+      "leaves",
+      "stones",
+      "cassava",
+      "bottle caps",
+      "paper",
+      "pencils",
+      "string",
+      "rulers",
+      "cups",
+      "buckets",
+      "notebooks",
+      "local plants",
+      "coins"
+     ],
+     "observationForm": [
+      {
+       "field": "Group Number",
+       "prompt": "Enter the group number that presented.",
+       "choices": null,
+       "inputType": "text"
+      },
+      {
+       "field": "Decimal Number Represented",
+       "prompt": "What decimal number did the group represent?",
+       "choices": null,
+       "inputType": "text"
+      }
+     ],
+     "analysisQuestions": [
+      {
+       "question": "What does the position of a digit in a decimal number tell us?",
+       "scoringRubric": "1 point for mentioning place value; 1 point for accuracy.",
+       "expectedAnswer": "The position indicates the value of the digit, such as ones, tenths, or hundredths."
+      },
+      {
+       "question": "How can different materials help us understand decimal numbers better?",
+       "scoringRubric": "1 point for identifying benefits; 1 point for clarity.",
+       "expectedAnswer": "Different materials provide a visual and tangible way to grasp the concept of place values."
+      }
+     ],
+     "connectionToLesson": "This activity reinforces the understanding of place value in decimal numbers through hands-on learning and real-life applications.",
+     "virtualAlternative": null
+    }
+   ],
+   "textbook": null,
+   "heroImage": null,
+   "resources": null,
+   "slideDeckSpecs": [],
+   "audioScriptSpecs": [],
+   "inlineIllustrations": []
+  },
+  "standards": {
+   "moeAlignments": {
+    "method": "keyword",
+    "alignedAt": "2026-07-24T16:47:23.201Z",
+    "contentId": "cmm7xsiu800f0vo70sobrj09q",
+    "standards": [
+     {
+      "code": "LR-MATH-G4_6-02",
+      "confidence": "high",
+      "description": "Add, subtract, and compare fractions and decimals"
+     }
+    ]
+   },
+   "waecSyllabusTopics": []
+  },
+  "assessment": {
+   "quiz": null,
+   "rubric": null,
+   "assessment": null,
+   "problemSets": [],
+   "masteryChecks": null,
+   "assessmentQuestions": []
+  },
+  "instruction": {
+   "extension": null,
+   "activities": [],
+   "objectives": [
+    "Students will understand the concept of place value in decimal numbers.",
+    "Students will be able to identify and compare decimal values."
+   ],
+   "remediation": null,
+   "teacherNotes": null,
+   "guidedPractice": null,
+   "materialsNotes": null,
+   "workedExamples": null,
+   "guardianSupport": null,
+   "takeawaySummary": null,
+   "teacherExplanation": null,
+   "authoringObjectives": [],
+   "independentPractice": null,
+   "realWorldApplication": null
+  },
+  "curriculumPlan": {
+   "term": null,
+   "units": [],
+   "weeks": [],
+   "lessons": [],
+   "termPlan": null,
+   "unitTitle": null
+  }
+ }
+}

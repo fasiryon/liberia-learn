@@ -1,0 +1,75 @@
+{
+ "moeCell": {
+  "relation": "DIRECT",
+  "moeSubject": "LITERACY",
+  "sourceSubjects": null,
+  "objectiveCount": 17,
+  "note": "MOE LITERACY grade 6."
+ },
+ "legacyClaims": [
+  {
+   "code": "LR-LIT-G4_6-01",
+   "description": "Read and summarize fiction and non-fiction texts; identify main idea and details",
+   "method": "keyword",
+   "confidence": "low",
+   "kind": "LIBERIALEARN_INVENTED_CODE",
+   "resolvedObjectiveId": null
+  }
+ ],
+ "lexicalLeads": [
+  {
+   "objectiveId": "moe-english-g6-s2-p1-a-verb-tenses-b-comparison-of-adverbs-c-reading--obj1",
+   "text": "Identify verb tenses",
+   "score": 0.118,
+   "pages": [
+    124
+   ],
+   "status": "LEXICAL_LEAD_UNREVIEWED"
+  },
+  {
+   "objectiveId": "moe-english-g6-s1-writing-and-speaking-obj3",
+   "text": "Demonstrate public speaking skills Different kinds of letters",
+   "score": 0.11,
+   "pages": [
+    122
+   ],
+   "status": "LEXICAL_LEAD_UNREVIEWED"
+  },
+  {
+   "objectiveId": "moe-english-g6-s1-writing-and-speaking-obj2",
+   "text": "Analyze and write poems using literary devices and figurative language",
+   "score": 0.104,
+   "pages": [
+    122
+   ],
+   "status": "LEXICAL_LEAD_UNREVIEWED"
+  }
+ ],
+ "proposedObjectiveRelationships": [
+  {
+   "objectiveId": "moe-english-g6-s2-p5-english-and-reading-obj1",
+   "layer": "NATIONAL_FOUNDATION",
+   "status": "STRUCTURED_ID_PROPOSED_UNREVIEWED",
+   "sourcePages": [
+    126
+   ],
+   "note": "MOE Grade 6 English: 'Analyze texts on varying topics'. Cause and effect is one analysis skill within it; proposed, not an MOE-named objective.",
+   "resolvesInStructuredSource": true
+  },
+  {
+   "objectiveId": "moe-english-g6-s2-p5-english-and-reading-obj1",
+   "layer": "LIBERIALEARN_MASTERY",
+   "status": "STRUCTURED_ID_PROPOSED_UNREVIEWED",
+   "sourcePages": [
+    126
+   ],
+   "note": "Written explanation of implicit causes goes beyond 'analyze texts' and is LiberiaLearn mastery.",
+   "resolvesInStructuredSource": true
+  }
+ ],
+ "unresolvedProposedIds": [],
+ "examinations": [],
+ "waecEvidence": "NOT_APPLICABLE",
+ "status": "PROPOSED_UNREVIEWED",
+ "note": "MOE source provenance is not MOE approval. Every relationship here is a proposal that a curriculum owner must accept; nothing is bound and no MOE or WAEC approval is claimed."
+}

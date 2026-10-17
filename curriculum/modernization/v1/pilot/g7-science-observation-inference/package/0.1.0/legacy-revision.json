@@ -1,0 +1,170 @@
+{
+ "notice": "Complete legacy revision as read (read-only). Preserved for comparison and history; never edited.",
+ "contentId": "science-g7-1-observation-and-scientific-thinking-foundations",
+ "revisionId": "cmss8t50a00urvo54li53jgr9",
+ "contentHash": "f07576ea6b222ff8431f59117c1758489eae832ba643bc0d721359c4c4ce92eb",
+ "snapshotSchemaVersion": 1,
+ "title": "Observation and Scientific Thinking: Foundations",
+ "grade": 7,
+ "subject": "SCIENCE",
+ "status": "APPROVED",
+ "contentSnapshot": {
+  "delivery": {
+   "body": "## Objective\nStudents in Grade 7 will explain and apply observation and scientific thinking ideas using age-appropriate science tasks.\n\n## Teacher Explanation\nThe teacher introduces the core concept from observation and scientific thinking using direct modeling, Liberia-relevant examples, key vocabulary, and a short understanding check before independent work.\n\n## Worked Example\nModel one complete science example connected to observation and scientific thinking, naming each step clearly and explaining why the answer is valid.\n\n## Guided Practice\nGuide learners through one shared task and one partner task that apply observation and scientific thinking with teacher prompts, correction, and quick oral checks.\n\n## Independent Practice\nLearners complete individual work that shows whether they can apply observation and scientific thinking without copying the model, then explain one answer in writing or orally.\n\n## Assessment\nUse a short exit task with two checks: one recall item and one application item aligned to the lesson objective.\n\n## Remediation\nRe-teach the main step with simpler examples, sentence frames, and one scaffolded follow-up task for learners who need more support.\n\n## Extension\nAsk confident learners to solve a slightly more complex version, justify their reasoning, or connect the idea to a real-world context.\n\n## Guardian Support\nAsk the learner to explain the main idea from today's lesson and complete one short home discussion or practice task using ordinary household materials when possible.\n\n## Metadata\nGrade 7 SCIENCE unit \"Observation and Scientific Thinking\" lesson \"Observation and Scientific Thinking: Foundations\".",
+   "bodyBlock": "## Day 1\nStudents in Grade 7 will explain and apply observation and scientific thinking ideas using age-appropriate science tasks.\nThe teacher introduces the core concept from observation and scientific thinking using direct modeling, Liberia-relevant examples, key vocabulary, and a short understanding check before independent work.\n\n## Day 2\nGuide learners through one shared task and one partner task that apply observation and scientific thinking with teacher prompts, correction, and quick oral checks.\nUse a short exit task with two checks: one recall item and one application item aligned to the lesson objective.\n\n## Home Support\nAsk the learner to explain the main idea from today's lesson and complete one short home discussion or practice task using ordinary household materials when possible.",
+   "bodyStandard": "## Objective\nStudents in Grade 7 will explain and apply observation and scientific thinking ideas using age-appropriate science tasks.\n\n## Teacher Explanation\nThe teacher introduces the core concept from observation and scientific thinking using direct modeling, Liberia-relevant examples, key vocabulary, and a short understanding check before independent work.\n\n## Worked Example\nModel one complete science example connected to observation and scientific thinking, naming each step clearly and explaining why the answer is valid.\n\n## Guided Practice\nGuide learners through one shared task and one partner task that apply observation and scientific thinking with teacher prompts, correction, and quick oral checks.\n\n## Independent Practice\nLearners complete individual work that shows whether they can apply observation and scientific thinking without copying the model, then explain one answer in writing or orally.\n\n## Assessment\nUse a short exit task with two checks: one recall item and one application item aligned to the lesson objective.\n\n## Remediation\nRe-teach the main step with simpler examples, sentence frames, and one scaffolded follow-up task for learners who need more support.\n\n## Extension\nAsk confident learners to solve a slightly more complex version, justify their reasoning, or connect the idea to a real-world context.\n\n## Guardian Support\nAsk the learner to explain the main idea from today's lesson and complete one short home discussion or practice task using ordinary household materials when possible.\n\n## Metadata\nGrade 7 SCIENCE unit \"Observation and Scientific Thinking\" lesson \"Observation and Scientific Thinking: Foundations\".",
+   "lessonFormat": "either",
+   "legacyContent": null,
+   "lessonContent": null,
+   "deliveryProfile": null,
+   "estimatedMinutes": null
+  },
+  "identity": {
+   "grade": 7,
+   "title": "Observation and Scientific Thinking: Foundations",
+   "subject": "SCIENCE",
+   "contentType": "lesson",
+   "description": null
+  },
+  "placement": {
+   "unitId": "science-g7-1-observation-and-scientific-thinking",
+   "lessonType": "core",
+   "orderInUnit": 1
+  },
+  "resources": {
+   "labs": [
+    {
+     "type": "guided_walkthrough",
+     "grade": 7,
+     "title": "Exploring Plant Observations",
+     "subject": "SCIENCE",
+     "procedure": [
+      {
+       "stepNumber": 1,
+       "instruction": "Take students outside to a designated area with various local plants. Allow them to collect different leaves.",
+       "teacherNote": "Encourage students to look for a variety of shapes, sizes, and colors.",
+       "durationMinutes": 10
+      },
+      {
+       "stepNumber": 2,
+       "instruction": "Have students use rulers to measure the length and width of each leaf and record their measurements in their notebooks.",
+       "teacherNote": "Remind students to label their measurements clearly.",
+       "durationMinutes": 10
+      },
+      {
+       "stepNumber": 3,
+       "instruction": "Ask students to draw a detailed sketch of their favorite leaf and write down at least three observations about its texture, color, and shape.",
+       "teacherNote": "Encourage them to use descriptive language and be specific in their observations.",
+       "durationMinutes": 5
+      }
+     ],
+     "safetyNotes": "Ensure students are not allergic to any plants they handle and supervise them during outdoor activities.",
+     "labObjective": "Students will observe and document the characteristics of local plants to enhance their scientific thinking and observational skills.",
+     "offlineCapable": true,
+     "durationMinutes": 25,
+     "materialsNeeded": [
+      "leaves",
+      "paper",
+      "pencils",
+      "rulers",
+      "notebooks",
+      "local plants"
+     ],
+     "observationForm": [
+      {
+       "field": "Leaf Type",
+       "prompt": "What type of leaf did you observe?",
+       "choices": null,
+       "inputType": "text"
+      },
+      {
+       "field": "Observational Notes",
+       "prompt": "List three observations about the leaf you chose.",
+       "choices": null,
+       "inputType": "text"
+      }
+     ],
+     "analysisQuestions": [
+      {
+       "question": "Why is it important to observe the characteristics of plants?",
+       "scoringRubric": "1 point for a relevant reason, 2 points for a detailed explanation.",
+       "expectedAnswer": "Observing plants helps us understand biodiversity and the environment."
+      },
+      {
+       "question": "How did your observations change your view on the local environment?",
+       "scoringRubric": "1 point for mentioning a change, 2 points for a detailed reflection.",
+       "expectedAnswer": "Students should express a new appreciation or understanding of local flora."
+      }
+     ],
+     "connectionToLesson": "This activity reinforces the concepts of observation and scientific thinking by allowing students to practically apply these skills in a real-world context.",
+     "virtualAlternative": null
+    }
+   ],
+   "textbook": null,
+   "heroImage": null,
+   "resources": null,
+   "slideDeckSpecs": [],
+   "audioScriptSpecs": [],
+   "inlineIllustrations": []
+  },
+  "standards": {
+   "moeAlignments": {
+    "method": "keyword",
+    "alignedAt": "2026-07-25T05:02:38.928Z",
+    "contentId": "cmoeaf2j101j8vor4zrx8si9v",
+    "standards": [
+     {
+      "code": "LR-SCI-G7_9-01",
+      "confidence": "low",
+      "description": "Explain chemical reactions, acids, bases, and the pH scale"
+     }
+    ]
+   },
+   "waecSyllabusTopics": []
+  },
+  "assessment": {
+   "quiz": null,
+   "rubric": null,
+   "assessment": "Use a short exit task with two checks: one recall item and one application item aligned to the lesson objective.",
+   "problemSets": [],
+   "masteryChecks": null,
+   "assessmentQuestions": []
+  },
+  "instruction": {
+   "extension": "Ask confident learners to solve a slightly more complex version, justify their reasoning, or connect the idea to a real-world context.",
+   "activities": [
+    "Teacher modeling for observation and scientific thinking",
+    "Guided pair practice on observation and scientific thinking",
+    "Independent learner check aligned to the objective"
+   ],
+   "objectives": [
+    "Students in Grade 7 will explain and apply observation and scientific thinking ideas using age-appropriate science tasks."
+   ],
+   "remediation": "Re-teach the main step with simpler examples, sentence frames, and one scaffolded follow-up task for learners who need more support.",
+   "teacherNotes": null,
+   "guidedPractice": [
+    "Guide learners through one shared task and one partner task that apply observation and scientific thinking with teacher prompts, correction, and quick oral checks."
+   ],
+   "materialsNotes": null,
+   "workedExamples": [
+    "Model one complete science example connected to observation and scientific thinking, naming each step clearly and explaining why the answer is valid."
+   ],
+   "guardianSupport": "Ask the learner to explain the main idea from today's lesson and complete one short home discussion or practice task using ordinary household materials when possible.",
+   "takeawaySummary": null,
+   "teacherExplanation": null,
+   "authoringObjectives": [],
+   "independentPractice": [
+    "Learners complete individual work that shows whether they can apply observation and scientific thinking without copying the model, then explain one answer in writing or orally."
+   ],
+   "realWorldApplication": null
+  },
+  "curriculumPlan": {
+   "term": null,
+   "units": [],
+   "weeks": [],
+   "lessons": [],
+   "termPlan": null,
+   "unitTitle": "Observation and Scientific Thinking"
+  }
+ }
+}

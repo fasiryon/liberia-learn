@@ -1,0 +1,174 @@
+{
+ "legacyRevisionId": "cmss8rewz00fnvo5407no2s2a",
+ "legacyContentHash": "5fa778238633e82e02a2204a52d5d579c5f86c7055a60678e6e4e1006faf9cac",
+ "primaryTextField": "body",
+ "sections": [
+  {
+   "index": 0,
+   "heading": "Objective",
+   "role": "OBJECTIVES",
+   "words": 18,
+   "sha256": "543fdd757f28dd22d1b633e0d638c189807c43e02dd566c3b430ea52abdf3fd9",
+   "findings": [],
+   "disposition": "REPLACED",
+   "candidateScenes": [
+    "objectives"
+   ],
+   "rationale": "Generic, unassessable objective replaced by two observable ones."
+  },
+  {
+   "index": 1,
+   "heading": "Teacher Explanation",
+   "role": "CONCEPT",
+   "words": 117,
+   "sha256": "ae5cd44604788d2b60474743ba702cace4fd1b4d2a87ba04cef84db6db88423c",
+   "findings": [
+    "PLACEHOLDER_CONTENT/BLOCKING"
+   ],
+   "disposition": "REPLACED",
+   "candidateScenes": [
+    "rules",
+    "rights-duties"
+   ],
+   "rationale": "Describes how to teach without teaching; replaced by short read-aloud explanations."
+  },
+  {
+   "index": 2,
+   "heading": "Worked Examples or Demonstrations",
+   "role": "WORKED_EXAMPLE",
+   "words": 55,
+   "sha256": "5508c52474e08ceff9c06b38cc8556ea081cea39fd2688aeb469e00b501ac7d9",
+   "findings": [
+    "WORKED_EXAMPLE_WITHOUT_STEPS/MINOR"
+   ],
+   "disposition": "REPLACED",
+   "candidateScenes": [
+    "rule-example"
+   ],
+   "rationale": "Placeholder ('Model a short scenario…'); replaced by the ball-and-road scenario."
+  },
+  {
+   "index": 3,
+   "heading": "Guided Practice",
+   "role": "GUIDED_PRACTICE",
+   "words": 45,
+   "sha256": "613700baf6b5cd84bc71887e6fc94001c67a34fdb9ac68255eca70d910e60f7f",
+   "findings": [],
+   "disposition": "REPLACED",
+   "candidateScenes": [
+    "guided",
+    "think-again"
+   ],
+   "rationale": "Placeholder; replaced by right-or-duty items and misconception checks."
+  },
+  {
+   "index": 4,
+   "heading": "Independent Practice",
+   "role": "INDEPENDENT_PRACTICE",
+   "words": 39,
+   "sha256": "7d3ed7cbdf6619f39f2fc99ce7c50b9606b6100e5f826972b7517b52db2f1dd8",
+   "findings": [],
+   "disposition": "REPLACED",
+   "candidateScenes": [
+    "practice",
+    "tell"
+   ],
+   "rationale": "Placeholder that asked Grade 1 learners to write; replaced by choices and spoken answers recorded by the teacher."
+  },
+  {
+   "index": 5,
+   "heading": "Assessment Questions",
+   "role": "ASSESSMENT",
+   "words": 44,
+   "sha256": "01c95be82b8b137e59bab99453362d04906bc1631c81dde8b57ccb3640072e49",
+   "findings": [],
+   "disposition": "REPLACED",
+   "candidateScenes": [
+    "exit-ticket"
+   ],
+   "rationale": "Placeholder; replaced by teacher-recorded performance tasks with rubrics."
+  },
+  {
+   "index": 6,
+   "heading": "Remediation Support",
+   "role": "REMEDIATION",
+   "words": 31,
+   "sha256": "feca70ff2eff9d68b1050228cc9b973e3b30caf2c4e2ac2ed8fdb3e7d2913e36",
+   "findings": [],
+   "disposition": "REPLACED",
+   "candidateScenes": [
+    "warm-up"
+   ],
+   "rationale": "Generic remediation replaced by prerequisite diagnostics with fallback routes."
+  },
+  {
+   "index": 7,
+   "heading": "Extension or Challenge",
+   "role": "EXTENSION",
+   "words": 30,
+   "sha256": "cf6e08fb0b393e5fbaaa3527a66bf071b809155332e90b479a23703114fca210",
+   "findings": [],
+   "disposition": "REPLACED",
+   "candidateScenes": [],
+   "rationale": "Replaced by the optional invent-a-rule extension."
+  },
+  {
+   "index": 8,
+   "heading": "Guardian Support",
+   "role": "REMEDIATION",
+   "words": 23,
+   "sha256": "24210916db3efccd888ee3c9b929e8111cb974e5655708d5ca7cfe313214f58c",
+   "findings": [],
+   "disposition": "MOVED_TO_TEACHER_GUIDE",
+   "candidateScenes": [],
+   "rationale": "Home conversation idea kept for teacher and guardian notes."
+  },
+  {
+   "index": 9,
+   "heading": "Real-World Application",
+   "role": "APPLICATION",
+   "words": 27,
+   "sha256": "e70a135997ab276e2f865b09140e5b6e6fd30205bf55fcc9418d7ac9e08fdc2f",
+   "findings": [],
+   "disposition": "REPLACED",
+   "candidateScenes": [
+    "intro",
+    "reflect"
+   ],
+   "rationale": "The abstract 'connect to community participation' note is replaced by the concrete ball-and-road story."
+  },
+  {
+   "index": 10,
+   "heading": "Materials and Activity Notes",
+   "role": "TEACHER_NOTES",
+   "words": 22,
+   "sha256": "a7907b40937f5036f6a84c017520223e2de1970ef4205c942c69a305521b9036",
+   "findings": [],
+   "disposition": "MOVED_TO_TEACHER_GUIDE",
+   "candidateScenes": [],
+   "rationale": "Teacher-facing materials note; picture cards added for the performance task."
+  },
+  {
+   "index": 11,
+   "heading": "Additional Teacher Notes",
+   "role": "TEACHER_NOTES",
+   "words": 126,
+   "sha256": "f83255c286aa745e3a211583d3d0c098ffc073e204cdc7c0ec98e526a86e5c7a",
+   "findings": [],
+   "disposition": "DISCARDED",
+   "candidateScenes": [],
+   "rationale": "Generic notes shown to learners."
+  },
+  {
+   "index": 12,
+   "heading": "Additional Teacher Notes",
+   "role": "TEACHER_NOTES",
+   "words": 126,
+   "sha256": "f83255c286aa745e3a211583d3d0c098ffc073e204cdc7c0ec98e526a86e5c7a",
+   "findings": [],
+   "disposition": "DISCARDED",
+   "candidateScenes": [],
+   "rationale": "A word-for-word duplicate of the previous section."
+  }
+ ]
+}

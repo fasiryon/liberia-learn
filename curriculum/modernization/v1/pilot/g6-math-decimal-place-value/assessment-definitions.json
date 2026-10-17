@@ -1,0 +1,39 @@
+{
+  "audience": "REVIEWER_ONLY",
+  "status": "GOVERNED_CANDIDATE",
+  "notice": "Candidate assessment definitions for the Grade 6 decimal place-value pilot. Unreviewed and unreleased: nothing scores them, writes mastery from them or releases them. Teacher-administered on paper until a qualified reviewer approves them and a governed release binds them. Keys and rubrics are reviewer only and must never reach a learner projection, offline package or client bundle.",
+  "diagnosticOnlyExitItemIds": [],
+  "tasks": [
+    { "id": "d0", "kind": "PREREQUISITE_DIAGNOSTIC", "prerequisiteIndex": 0, "deliveredBy": "warm-up#w-thousands", "objectiveIds": ["ll-g6-math-decimal-place-value"], "scaffold": "FULL", "timing": "PRE_LESSON", "context": "REHEARSED", "scoring": "KEYED", "source": "EXCELLENCE_PLAN", "ref": "definition:d0",
+      "prompt": "In 3,482, what is the 4 worth?", "key": "400",
+      "fallbackRoute": "Before the chart scene, rebuild ones, tens and hundreds with bundles of sticks (MOE Grade 4 numeration), then re-check with 2,715 and 6,094." },
+    { "id": "d1", "kind": "PREREQUISITE_DIAGNOSTIC", "prerequisiteIndex": 1, "deliveredBy": "warm-up#w-tenths", "objectiveIds": ["ll-g6-math-decimal-place-value"], "scaffold": "FULL", "timing": "PRE_LESSON", "context": "REHEARSED", "scoring": "KEYED", "source": "EXCELLENCE_PLAN", "ref": "definition:d1",
+      "prompt": "Which means the same as 3 tenths: 3/10, 3/100 or 30?", "key": "3/10",
+      "fallbackRoute": "Fold a paper strip into ten equal parts and shade three; name it 3 tenths and 0.3. Then fold one tenth into ten again to show a hundredth before starting the chart." },
+    { "id": "c1", "kind": "SHORT_CONSTRUCTED_RESPONSE", "objectiveIds": ["ll-g6-math-decimal-place-value"], "scaffold": "NONE", "timing": "END_OF_LESSON", "context": "REHEARSED", "scoring": "KEYED", "source": "EXCELLENCE_PLAN", "ref": "definition:c1",
+      "prompt": "In 27.093, write the value of the 9 and the value of the 3.", "key": "9 is worth 0.09 (9 hundredths); 3 is worth 0.003 (3 thousandths)",
+      "targetsMisconceptions": ["mc-zero-ignored", "mc-place-names"] },
+    { "id": "c2", "kind": "SHORT_CONSTRUCTED_RESPONSE", "objectiveIds": ["ll-g6-math-decimal-compare"], "scaffold": "NONE", "timing": "END_OF_LESSON", "context": "REHEARSED", "scoring": "KEYED", "source": "EXCELLENCE_PLAN", "ref": "definition:c2",
+      "prompt": "Write in order from smallest to largest: 0.6, 0.06, 0.66, 0.606.", "key": "0.06 < 0.6 < 0.606 < 0.66",
+      "targetsMisconceptions": ["mc-longer-is-larger", "mc-shorter-is-larger"] },
+    { "id": "r1", "kind": "EXTENDED_REASONING", "objectiveIds": ["ll-g6-math-decimal-compare"], "scaffold": "NONE", "timing": "END_OF_LESSON", "context": "REHEARSED", "scoring": "ANALYTIC_RUBRIC", "source": "EXCELLENCE_PLAN", "ref": "definition:r1",
+      "prompt": "Sia says 3.45 is greater than 3.5 because 45 is greater than 5. Is she right? Explain using place value.",
+      "rubric": [
+        { "criterion": "Correct comparison", "levels": ["0: says Sia is right or gives no comparison", "1: says 3.5 is greater with no place-value reason", "2: says 3.5 is greater"] },
+        { "criterion": "Place-value reasoning", "levels": ["0: no reasoning or whole-number reasoning", "1: mentions tenths without comparing them", "2: compares tenths (5 tenths against 4 tenths) or writes 3.50 against 3.45"] },
+        { "criterion": "Names the error", "levels": ["0: not addressed", "1: explains that 45 and 5 are not whole numbers being compared"] } ],
+      "targetsMisconceptions": ["mc-longer-is-larger"] },
+    { "id": "ret1", "kind": "DELAYED_RETRIEVAL", "objectiveIds": ["ll-g6-math-decimal-place-value"], "scaffold": "NONE", "timing": "DELAYED", "delayDays": 7, "context": "REHEARSED", "scoring": "KEYED", "source": "EXCELLENCE_PLAN", "ref": "definition:ret1",
+      "prompt": "One week later, without notes: in 8.405, what is the 5 worth?", "key": "0.005 (5 thousandths)", "targetsMisconceptions": ["mc-zero-ignored"] },
+    { "id": "ret2", "kind": "DELAYED_RETRIEVAL", "objectiveIds": ["ll-g6-math-decimal-compare"], "scaffold": "NONE", "timing": "DELAYED", "delayDays": 7, "context": "REHEARSED", "scoring": "KEYED", "source": "EXCELLENCE_PLAN", "ref": "definition:ret2",
+      "prompt": "One week later, without notes: which is larger, 0.3 or 0.29? Give a reason.", "key": "0.3, because 3 tenths is more than 2 tenths", "targetsMisconceptions": ["mc-longer-is-larger"] },
+    { "id": "t1", "kind": "TRANSFER_TASK", "objectiveIds": ["ll-g6-math-decimal-compare"], "scaffold": "NONE", "timing": "END_OF_LESSON", "context": "NEW", "scoring": "ANALYTIC_RUBRIC", "source": "EXCELLENCE_PLAN", "ref": "definition:t1",
+      "prompt": "In a school 100 m race the times were Fatu 14.08 s, Kollie 14.8 s and Musu 14.18 s. The smallest time wins. Who won, who came last, and how do you know?",
+      "rubric": [
+        { "criterion": "Correct result", "levels": ["0: wrong winner", "1: Fatu won (14.08 s)", "2: Fatu won and Kollie came last (14.8 s)"] },
+        { "criterion": "Reasoning in a new context", "levels": ["0: none", "1: compares tenths (0, 1, 8 tenths) and states that smaller time is better"] } ],
+      "targetsMisconceptions": ["mc-longer-is-larger"], "note": "New context: the smaller number is the better result, which the lesson did not rehearse." },
+    { "id": "x1", "kind": "EXTENSION", "objectiveIds": ["ll-g6-math-decimal-compare"], "scaffold": "NONE", "timing": "END_OF_LESSON", "context": "NEW", "scoring": "NOT_SCORED", "optional": true, "source": "EXCELLENCE_PLAN", "ref": "definition:x1",
+      "prompt": "Optional challenge (beyond Grade 6): write three decimals between 0.35 and 0.36. Is there a smallest one? Explain.", "note": "Labelled extension; never required for the grade's mastery decision." }
+  ]
+}

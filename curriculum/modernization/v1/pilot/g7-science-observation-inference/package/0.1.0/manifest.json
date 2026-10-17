@@ -1,0 +1,39 @@
+{
+ "manifestVersion": "liberialearn-modernization-package/1.0.0",
+ "pipelineVersion": "liberialearn-modernization-pipeline/1.0.0",
+ "contentId": "science-g7-1-observation-and-scientific-thinking-foundations",
+ "legacy": {
+  "revisionId": "cmss8t50a00urvo54li53jgr9",
+  "contentHash": "f07576ea6b222ff8431f59117c1758489eae832ba643bc0d721359c4c4ce92eb"
+ },
+ "candidate": {
+  "id": "lmv1-g7-science-observation-inference",
+  "version": "0.1.0",
+  "sha256": "ba216cc97498ddc518f076e5ba7b60cdbb3e436734df90a5883e2ac2d44bd2fb"
+ },
+ "author": {
+  "kind": "AI_AGENT",
+  "id": "claude-code:library-modernization-v1",
+  "role": "CANDIDATE_AUTHOR",
+  "modelFamily": "anthropic-claude"
+ },
+ "status": "READY_FOR_INDEPENDENT_REVIEW",
+ "candidateOnly": true,
+ "approved": false,
+ "published": false,
+ "scored": false,
+ "files": {
+  "legacy-revision.json": "fa420905d992538aa1ea58af1af8248b15eb0272cb7af9ea4d2171a5219a0406",
+  "legacy-material.json": "417ec53a4eef6c7da3fd29ba505cade16cad105449e1c2f2b6aa9675ba2917ee",
+  "legacy-audit.json": "f7340f232683a2519f2c4adb7daaa02c0aea097a509ed1c2456545ffcc66bf09",
+  "authority.json": "76bd4c9b210efb9ccc2eb0aa02c79301dd40ad70d3d9d84b675ae697cfa42926",
+  "spec.json": "77eb6bf5d52fa00e6c0a4aeb36f0478b325f8f45f31298faa0a66945be0162b1",
+  "candidate.json": "b5c526e01344ad0f728ab3bf667c0d538a726c28f9097e3ac5bf212404c67e49",
+  "assessment-definitions.json": "3914183b08e59ba61c2807c62582cb28feb000b9fbade24b341660acfb4eb7e0",
+  "automated-review.json": "917e7c98dcbfe7e6e158378ac38b50b6db01967be9ff28f4dc8f8199eb399be3",
+  "learner-projection.json": "3facd7ea9f27d88c98c73f5e01b6a8d533aee01c49c77d311024d7fda2ea7c07",
+  "readiness.json": "78bc0301eb307b4ecbac09f2b936e645781e91db5cd8784dc20235c51c29c05d",
+  "comparison.md": "92c240ac9e96896383bf97829b6892b1fa916109928c70ebbcb98e34d80d29cb"
+ },
+ "manifestHash": "0cf645be0cbcf6de0f03cbaf102936083ed4286b0ec753ce3a41d04628e89c19"
+}

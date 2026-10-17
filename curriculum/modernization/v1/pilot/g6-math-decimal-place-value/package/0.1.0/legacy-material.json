@@ -1,0 +1,87 @@
+{
+ "legacyRevisionId": "cmss8q6oi005jvo54b44tp6h5",
+ "legacyContentHash": "818fee10b0c1684ab082208982b918e4b831d35014a5e34a102a8024e20216d4",
+ "primaryTextField": "body",
+ "sections": [
+  {
+   "index": 0,
+   "heading": "Opening (5 minutes)",
+   "role": "HOOK",
+   "words": 94,
+   "sha256": "521bc600e8bb40c0ea55f2e79b883532d00fb6c9051fff1b5bffd4575faa76d2",
+   "findings": [],
+   "disposition": "ADAPTED",
+   "candidateScenes": [
+    "intro"
+   ],
+   "rationale": "The legacy hook compares 2.75 and 3 Liberian dollars. Kept the idea of a familiar comparison but moved it to scale readings (1.5 kg against 1.25 kg), which also sets up the longer-is-larger misconception."
+  },
+  {
+   "index": 1,
+   "heading": "Direct Instruction (15 minutes)",
+   "role": "CONCEPT",
+   "words": 228,
+   "sha256": "a306ae09e1e089bad2ba0c407ef95862faeddfdcb4b4dcb943707e6e53573c1e",
+   "findings": [],
+   "disposition": "REPLACED",
+   "candidateScenes": [
+    "chart",
+    "worked-example"
+   ],
+   "rationale": "The chart idea is reused, but Example 1 is wrong: it says the 5 in 15.258 is in the tenths place (0.5). The 5s are worth 5 and 0.05. The worked example now uses 15.258 and corrects this. Reviewer to confirm."
+  },
+  {
+   "index": 2,
+   "heading": "Guided Practice (15 minutes)",
+   "role": "GUIDED_PRACTICE",
+   "words": 149,
+   "sha256": "6346cb88ad28c936851e648637fc72409fac81320c555f9b4e7259d51e2bf49c",
+   "findings": [],
+   "disposition": "ADAPTED",
+   "candidateScenes": [
+    "zero-holds"
+   ],
+   "rationale": "The legacy zero item (3.045) is correct and kept as the zero-placeholder idea, rebuilt as items with misconception-specific feedback."
+  },
+  {
+   "index": 3,
+   "heading": "Independent Practice (8 minutes)",
+   "role": "INDEPENDENT_PRACTICE",
+   "words": 56,
+   "sha256": "2c387701f1a1f7fa5db0323d2d04b28986f8e85e882970c1c1cc4c8df957ac08",
+   "findings": [],
+   "disposition": "ADAPTED",
+   "candidateScenes": [
+    "practice"
+   ],
+   "rationale": "Legacy items 12.783 and 2.009 are correct and reused; comparison items are added because the legacy lesson never practised its compare objective."
+  },
+  {
+   "index": 4,
+   "heading": "Answer Key:",
+   "role": "ANSWER_KEY",
+   "words": 35,
+   "sha256": "f84d246a4d15024e229c261f3de4f5e28784f859c4777e12c665ae8e3891d50b",
+   "findings": [
+    "ANSWER_KEY_IN_LEARNER_TEXT/MAJOR"
+   ],
+   "disposition": "MOVED_TO_TEACHER_GUIDE",
+   "candidateScenes": [],
+   "rationale": "The answer key was shown to learners. Keys now live only in the reviewer-only assessment definitions."
+  },
+  {
+   "index": 5,
+   "heading": "Closing (7 minutes)",
+   "role": "SUMMARY",
+   "words": 97,
+   "sha256": "4e0cbc567489c7edac2c0e07092407bfddaf8e6f05501d3e4cdc4d1f870d0616",
+   "findings": [],
+   "disposition": "ADAPTED",
+   "candidateScenes": [
+    "reflect",
+    "exit-ticket"
+   ],
+   "rationale": "The single exit question (value of 5 in 7.52) is replaced by an exit ticket covering both objectives; the closing becomes a reflection with a stated 7-day retrieval."
+  }
+ ]
+}
