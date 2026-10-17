@@ -145,3 +145,7 @@ scripts/finetune/data/
 
 # Lesson convergence retains reviewed representative captures; the browser runner may generate the full matrix locally.
 /artifacts/lesson-experience-v2-runtime/*.png
+
+# Reproducible local factory capacity fixtures and bundled launcher fallbacks.
+/artifacts/content-factory-v2/ten-fixture/
+/artifacts/content-factory-v2/ten-*.cjs

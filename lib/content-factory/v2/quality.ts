@@ -8,7 +8,7 @@ import { projectItemForLearner, protectedStrings, assertLearnerSafe } from "@/li
 import { evaluateAssessmentBlueprint } from "@/lib/curriculum/excellence/assessmentBlueprint";
 import { EXCELLENCE_RUBRIC_V1 } from "@/lib/curriculum/excellence/standard";
 import { blueprintRef, digest, parseBlueprint, type UnitBlueprint } from "./blueprint";
-import type { AssessmentCandidate, FactoryArtifact, QualityReport } from "./types";
+import type { AssessmentCandidate, FactoryArtifact, QualityReport, ResourceDraft, ResourcePayload } from "./types";
 
 const nonempty = z.string().trim().min(1).max(16000);
 const documentSchema = z.strictObject({ kind: z.literal("DOCUMENT"), title: nonempty,
@@ -19,6 +19,29 @@ const assessments = new Set(["QUIZ", "SUMMATIVE", "RETENTION", "TRANSFER"]);
 const activities = new Set(["CLASSWORK", "HOMEWORK", "PRACTICAL", "PROJECT"]);
 const sameIds = (a: readonly string[], b: readonly string[]) => a.length === b.length && new Set(a).size === a.length && a.every(id => b.includes(id));
 const exactKeys = (value: object, keys: string[]) => Object.keys(value).every(k => keys.includes(k)) && keys.every(k => k in value);
+
+/** File-backed authors use the same owner parsers as generated candidates. */
+export function parseResourceDraft(input: unknown): ResourceDraft {
+  const envelope = z.strictObject({ id: nonempty, version: z.string().regex(/^\d+\.\d+\.\d+$/), payload: z.unknown() }).parse(input);
+  const tagged = z.object({ kind: z.enum(["LESSON", "ACTIVITY", "ASSESSMENT", "DOCUMENT"]) }).parse(envelope.payload);
+  let payload: ResourcePayload;
+  if (tagged.kind === "LESSON") {
+    const p = z.strictObject({ kind: z.literal("LESSON"), candidate: z.unknown() }).parse(envelope.payload);
+    payload = { kind: "LESSON", candidate: parseCandidateLessonV2(JSON.stringify(p.candidate)) };
+  } else if (tagged.kind === "ACTIVITY") {
+    const p = z.strictObject({ kind: z.literal("ACTIVITY"), definition: z.unknown() }).parse(envelope.payload);
+    const definition = parseActivityDefinition(p.definition);
+    if (!definition) throw new Error("activity_contract_invalid");
+    payload = { kind: "ACTIVITY", definition };
+  } else if (tagged.kind === "ASSESSMENT") {
+    const p = z.strictObject({ kind: z.literal("ASSESSMENT"), definition: z.unknown(), form: z.unknown(), items: z.unknown(), specs: z.unknown() }).parse(envelope.payload);
+    payload = { kind: "ASSESSMENT", ...parseCandidateAssessmentV2({ definition: p.definition, form: p.form, items: p.items, specs: p.specs }) };
+  } else {
+    // Complete strict parsing precedes this cast; repository nullability weakens Zod inference.
+    payload = documentSchema.parse(envelope.payload) as ResourcePayload;
+  }
+  return { id: envelope.id, version: envelope.version, payload };
+}
 
 export function artifactHash(artifact: Omit<FactoryArtifact, "contentHash"> | FactoryArtifact): string {
   const { contentHash: _hash, ...payload } = { contentHash: "", ...artifact };

@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "factory-modernization-adoption/1.0.0",
+  "sourceBranch": "docs/modernization-first-ten-spec-v1",
+  "sourceCommit": "3e4ba71df9f462d273fe3be1e1bb585aea30c8c0",
+  "contract": {
+    "id": "library-modernization-pipeline-v1",
+    "version": "1.0.0",
+    "sourceRef": "git:3e4ba71df9f462d273fe3be1e1bb585aea30c8c0:docs/curriculum/modernization/MODERNIZATION_PIPELINE_V1.md",
+    "sha256": "ff838a760884c50deb959128bad4e564dcd7c0ccb5c3ad75d6da3396ca08894c"
+  },
+  "modernizationImplementation": {
+    "path": "lib/curriculum/modernization/pipeline.ts",
+    "sha256": "5ab880e9bfca62984730fefdba1d528cfb8a2f5e27a6678f4e6b2a91df703e54"
+  },
+  "adoptedRequirements": [
+    "Exact legacy revision and snapshot preservation",
+    "Pinned curriculum sources and explicit proposed mappings",
+    "Versioned immutable candidate packages",
+    "Reviewer-only assessment keys and rubrics",
+    "Deterministic validation with human authority preserved",
+    "Pending independent review and explicit release blocking",
+    "Idempotent completed-package reuse and bounded author attempts"
+  ],
+  "tenLessonSelection": "NOT_PRESENT_IN_SOURCE_BRANCH_AT_INSPECTION",
+  "existingPilotLessonCount": 4,
+  "productionEvidence": "NOT_ACCESSED",
+  "remainingCoordination": "Curriculum Excellence Lead must supply the exact ten source bindings and lesson-specific authoring inputs. The existing four-lesson pilot and wave planner are not a ten-lesson authorization."
+}

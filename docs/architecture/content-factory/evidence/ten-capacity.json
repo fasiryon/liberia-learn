@@ -1,0 +1,134 @@
+{
+  "schemaVersion": "factory-capacity-verification/1.0.0",
+  "evidence": "LOCAL_SYNTHETIC_ONLY_NO_REAL_LESSONS",
+  "featureFlag": "CONTENT_FACTORY_TEN_CANDIDATES=1",
+  "counts": {
+    "sourceLessons": 10,
+    "resources": 180,
+    "lessonCandidates": 20,
+    "assessmentPackages": 40,
+    "auditEvents": 160
+  },
+  "allPackageFileHashesVerified": true,
+  "rerunReturnedIdenticalPackages": true,
+  "localPackageRoot": "artifacts/content-factory-v2/ten-fixture/final/packages",
+  "sourceFileHashes": {
+    "lib/content-factory/v2/batch.ts": "e79835a2cf4b61703de14cb9b02685f9f098fdb8d751ddd936fd55e3fbc40294",
+    "lib/content-factory/v2/batchContract.ts": "d2ad4fdd291b42510680d39ce90615dae496be1d7de02e9df842871110c39e3c",
+    "lib/content-factory/v2/batchFixture.ts": "c185e808f8a06dbc29639e83ad4ff59561b9b4a304745d5e48d53b3912af3100",
+    "lib/content-factory/v2/staticBatch.ts": "59152725051dd00ff57c48d5869ba7f08b4e762ee46de0cf49c9d8fe68835966",
+    "lib/content-factory/v2/quality.ts": "5c6164d03c5fe43411ec1e851138207a170b9ace2640ff1420496522bd15258b"
+  },
+  "packages": [
+    {
+      "slot": "1050379d389703a503f3a687a7d70715698b33eeee1224a5906c30274ed55f90",
+      "candidateId": "synthetic-candidate-synthetic-row-2",
+      "packageHash": "310e532c76f7f110f9fbaf7a5c5f8e0f4dcdbc4fcf92f7fa2fb4e44fcfc81983",
+      "state": "DRAFT",
+      "approved": false,
+      "released": false,
+      "generationStatus": "AWAITING_HUMAN_REVIEW",
+      "reviewState": "PENDING_INDEPENDENT_REVIEW",
+      "failures": []
+    },
+    {
+      "slot": "47814a809dedda7f0c4971b03a5e1f7eee03eab00d445ebbe9dcd5500d0b19d3",
+      "candidateId": "synthetic-candidate-synthetic-row-6",
+      "packageHash": "cbdd78e22c632b554b6ad3ea922fac8949d599a3d17c513aa87c3c09124e40b8",
+      "state": "DRAFT",
+      "approved": false,
+      "released": false,
+      "generationStatus": "AWAITING_HUMAN_REVIEW",
+      "reviewState": "PENDING_INDEPENDENT_REVIEW",
+      "failures": []
+    },
+    {
+      "slot": "4a9e62a5c4417ff3c52d462622c3df2605e554e9a2d1f3ac3a3be38303c91149",
+      "candidateId": "synthetic-candidate-synthetic-row-9",
+      "packageHash": "9237a88ff91f4935544833f8e6284fafdb9037bbfc79fc3c8cc9550b14900a15",
+      "state": "DRAFT",
+      "approved": false,
+      "released": false,
+      "generationStatus": "AWAITING_HUMAN_REVIEW",
+      "reviewState": "PENDING_INDEPENDENT_REVIEW",
+      "failures": []
+    },
+    {
+      "slot": "58092fe528b456b150dd20150146ec17a527711a4dd869f51e31013b79f9855c",
+      "candidateId": "synthetic-candidate-synthetic-row-4",
+      "packageHash": "339d94832322054175a9ef2fd599dd7e0070c7d4a4c604f8781d6f9d675e289f",
+      "state": "DRAFT",
+      "approved": false,
+      "released": false,
+      "generationStatus": "AWAITING_HUMAN_REVIEW",
+      "reviewState": "PENDING_INDEPENDENT_REVIEW",
+      "failures": []
+    },
+    {
+      "slot": "8140c0778568b995991db8d4c1ff1aea780c27385693a86b53e6c0d47af8bb73",
+      "candidateId": "synthetic-candidate-synthetic-row-7",
+      "packageHash": "238997a1b3e9158859440e0dd8c2e9a1b007199fa7a0a6f736c27a7fd07b438e",
+      "state": "DRAFT",
+      "approved": false,
+      "released": false,
+      "generationStatus": "AWAITING_HUMAN_REVIEW",
+      "reviewState": "PENDING_INDEPENDENT_REVIEW",
+      "failures": []
+    },
+    {
+      "slot": "889137a1eb923c6b00d3c01bc199292564ea3c9e3b5f0bc2941fab92694528cd",
+      "candidateId": "synthetic-candidate-synthetic-row-5",
+      "packageHash": "575d6de776328f3013bfc1990484886d0109b80f6f285f053eebe74abef06edc",
+      "state": "DRAFT",
+      "approved": false,
+      "released": false,
+      "generationStatus": "AWAITING_HUMAN_REVIEW",
+      "reviewState": "PENDING_INDEPENDENT_REVIEW",
+      "failures": []
+    },
+    {
+      "slot": "9003a37b1179c2327acb0423afe65b10dee9db1bbd0fb011e35d55d8458f5c97",
+      "candidateId": "synthetic-candidate-synthetic-row-3",
+      "packageHash": "674b409526415f0b45c7c938bd67b6fb5143fccdf52157f04c29325fe61f5393",
+      "state": "DRAFT",
+      "approved": false,
+      "released": false,
+      "generationStatus": "AWAITING_HUMAN_REVIEW",
+      "reviewState": "PENDING_INDEPENDENT_REVIEW",
+      "failures": []
+    },
+    {
+      "slot": "c1d6c7a708062e18f3ba73a4604b0bf4909afbcfa4b26ddbaf0af91f8728879f",
+      "candidateId": "synthetic-candidate-synthetic-row-10",
+      "packageHash": "964ecbfc6989850e2e4cdd2152c090f2e32e4f3b5d942f01b5e3ac007e8de6e2",
+      "state": "DRAFT",
+      "approved": false,
+      "released": false,
+      "generationStatus": "AWAITING_HUMAN_REVIEW",
+      "reviewState": "PENDING_INDEPENDENT_REVIEW",
+      "failures": []
+    },
+    {
+      "slot": "d26b4524a7afafecdd96eea9844391f5526dee98f877723d4fa5476f496c508f",
+      "candidateId": "synthetic-candidate-synthetic-row-1",
+      "packageHash": "13f4e4db72bfa7c423c973bcca2ea448fd7fe4e97d4851e4b5a875edc9368ae0",
+      "state": "DRAFT",
+      "approved": false,
+      "released": false,
+      "generationStatus": "AWAITING_HUMAN_REVIEW",
+      "reviewState": "PENDING_INDEPENDENT_REVIEW",
+      "failures": []
+    },
+    {
+      "slot": "f65b71a5a4a241c44251e2930432f1856975ce40dc7212809e12fb91d1e9a6c1",
+      "candidateId": "synthetic-candidate-synthetic-row-8",
+      "packageHash": "adb036e91497aea77a94f3013268e0ece85039c6315e80a59f78d27fdbb8ba89",
+      "state": "DRAFT",
+      "approved": false,
+      "released": false,
+      "generationStatus": "AWAITING_HUMAN_REVIEW",
+      "reviewState": "PENDING_INDEPENDENT_REVIEW",
+      "failures": []
+    }
+  ]
+}
