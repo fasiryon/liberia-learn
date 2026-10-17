@@ -79,7 +79,7 @@ export function toGradeEntry(evidence: AssessmentEvidenceForRecords, input: {
 }
 
 /**
- * Mastery summary for one objective: verified/admitted, independent, unrevoked evidence only.
+ * Mastery summary for one objective: verified/admitted, official, independent, unrevoked evidence only.
  * Transfer items are those delivered in a NEW context.
  */
 export function masterySummaryFromEvidence(evidence: readonly AssessmentEvidenceForRecords[], input: {
@@ -89,9 +89,13 @@ export function masterySummaryFromEvidence(evidence: readonly AssessmentEvidence
 }): MasteryEvidenceSummary {
   const usable = evidence.filter((entry) => {
     assertScope(entry, input.scope);
-    return VERIFIED_TIERS.has(entry.tier) && entry.independence === "INDEPENDENT" && entry.objectiveIds.includes(input.objectiveId)
+    const moderation = entry.scoring.moderation;
+    const unreconciled = entry.scoring.scorerAuthority === "HUMAN_MODERATOR" && Boolean(moderation?.secondMarkerRequired)
+      && moderation?.marking !== "AGREED" && moderation?.marking !== "RECONCILED";
+    // Unofficial (practice) deliveries and unreconciled high-stakes marks never create mastery (LL-AEP-001).
+    return VERIFIED_TIERS.has(entry.tier) && entry.delivery.official && entry.independence === "INDEPENDENT" && entry.objectiveIds.includes(input.objectiveId)
       && entry.scoring.status === "SCORED" && entry.scoring.points !== null && Boolean(entry.scoring.maxPoints)
-      && AUTHORITATIVE_SCORERS.has(entry.scoring.scorerAuthority ?? "")
+      && AUTHORITATIVE_SCORERS.has(entry.scoring.scorerAuthority ?? "") && !unreconciled
       && !(entry.pins.releaseId && input.revokedReleaseIds.includes(entry.pins.releaseId));
   });
   // A verified and an admitted envelope can describe the same response; count each item attempt once.

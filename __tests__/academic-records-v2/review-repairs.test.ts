@@ -29,6 +29,7 @@ import { releaseStaleAIGrades } from "@/lib/ai/staleGradeReleaser";
 import { legacyAssignmentScoreAuthority } from "@/lib/academic-records/v2/gradeCalculation";
 import { decidePromotion, openAppeal, resolveAppeal } from "@/lib/academic-records/v2/promotionDecision";
 import { evaluatePromotionEligibility } from "@/lib/academic-records/v2/promotion";
+import { masterySummaryFromEvidence } from "@/lib/academic-records/v2/assessmentEvidence";
 import { admin, ALL_PROGRAM_MET, calendar, principal, promotionPolicy, yearEnd } from "./fixtures";
 
 const SCHOOL = "school-1";
@@ -124,5 +125,27 @@ describe("R3 appeal revisions obey decision invariants", () => {
     const appeal = openAppeal(decision, { appealId: "ap-g", filedBy, reason: "The graduation decision should be reconsidered.", filedAt: "2027-07-20T00:00:00.000Z", calendar });
     expect(() => resolveAppeal(appeal, decision, { panel: [principal, admin], outcome: "REVISED", revisedOutcome: "PROMOTE", rationale, supportPlan: null, at }))
       .toThrow("records_cannot_promote_past_terminal_grade");
+  });
+});
+
+describe("R4 mastery counts only official, reconciled evidence (cross-PR integration finding)", () => {
+  const base = {
+    tier: "VERIFIED_ASSESSMENT_EVIDENCE" as const, scope: { schoolId: "school-1", studentId: "stu-1" }, pins: { itemId: "item-1", releaseId: "rel-1" },
+    attempt: { attemptId: "att-1", sessionId: "ses-1" }, objectiveIds: ["obj-1"], independence: "INDEPENDENT" as const,
+    delivery: { official: true, purpose: "FORMATIVE", itemContext: "REHEARSED" },
+    scoring: { status: "SCORED", scorerAuthority: "SERVER_KEYED", points: 1, maxPoints: 1, moderation: null },
+  };
+  const summarize = (evidence: Parameters<typeof masterySummaryFromEvidence>[0]) =>
+    masterySummaryFromEvidence(evidence, { scope: { schoolId: "school-1", studentId: "stu-1" }, objectiveId: "obj-1", revokedReleaseIds: [] });
+
+  it("ignores practice (unofficial) deliveries", () => {
+    expect(summarize([{ ...base, evidenceId: "e-1" }]).independentItems).toBe(1);
+    expect(summarize([{ ...base, evidenceId: "e-2", delivery: { ...base.delivery, official: false } }]).independentItems).toBe(0);
+  });
+
+  it("ignores a high-stakes human score that is not yet second-marked", () => {
+    const single = { ...base.scoring, scorerAuthority: "HUMAN_MODERATOR", moderation: { secondMarkerRequired: true, marking: "SINGLE" } };
+    expect(summarize([{ ...base, evidenceId: "e-3", scoring: single }]).independentItems).toBe(0);
+    expect(summarize([{ ...base, evidenceId: "e-4", scoring: { ...single, moderation: { secondMarkerRequired: true, marking: "AGREED" } } }]).independentItems).toBe(1);
   });
 });
