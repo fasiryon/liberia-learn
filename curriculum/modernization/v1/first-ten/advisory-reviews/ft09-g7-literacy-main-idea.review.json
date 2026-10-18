@@ -1,0 +1,47 @@
+{
+  "reviewKey": "ft09-g7-literacy-main-idea",
+  "contentId": "wk_mca7a_mon_p2",
+  "reviewer": {"kind": "AI_AGENT", "modelFamily": "anthropic-claude", "role": "ADVISORY_SUBJECT_REVIEWER", "countsAsIndependentReview": false},
+  "blindFindings": [
+    "BODY vs BODYBLOCK: they really differ. body = 50 min (5/15/15/8/7), with the Bomi rainforest passage and key. bodyBlock = 100 min (5/20/20/25/15/8/7), adding Example 3 (rural education, Lofa), a women-in-agriculture group passage, a Kofi pair activity and a group discussion, with a different independent passage (Farmington River) and key. The shared text is otherwise identical.",
+    "B1 HIGH: two divergent learner lessons",
+    "B2 HIGH: promised passages missing (body 'one more example'; bodyBlock Kofi story)",
+    "B3 HIGH: legacy models topic as main idea (St. Paul 'about the significance of the river'; guided answer 'improved rice production techniques')",
+    "B4 MEDIUM: body key's 'conservation efforts' detail does not support its main idea",
+    "B5 MEDIUM: bodyBlock key's detail restates its main idea",
+    "B6 HIGH: keys printed; no real assessment",
+    "B7 MEDIUM: passages 2-3 sentences, main idea always first",
+    "B8 MEDIUM: 'palm oil is a major export' overstated",
+    "B9 LOW: St. Paul 'transporting goods between counties' questionable",
+    "B10 LOW: Bomi rainforests / Bong rice increase / Farmington drinking water unsourced",
+    "B11 LOW: 'Kofi' is an Akan name in Grand Bassa",
+    "B12 LOW: teacher-facing directions in learner text",
+    "B13 MEDIUM: no main-idea test or strategy beyond keywords"
+  ],
+  "defectVerdicts": [
+    {"defectId": "D1", "verdict": "CONFIRMED", "reason": "Compared independently (see the blind file). The two fields carry different durations, sections, passages and answer keys, so they are two lessons, not a formatting difference.", "sources": []},
+    {"defectId": "D2", "verdict": "CONFIRMED", "reason": "The key's main idea is 'important for wildlife and ecosystems'. 'Conservation efforts aim to protect these forests' is about protection, not importance, so it fails the key's own main idea, and the stronger detail ('crucial role in maintaining the balance of our ecosystem') is left out. Nuance: a better main idea for this passage covers both value and protection ('Bomi's forests are valuable and are being protected'), and under that the detail would fit. The defect is real either way, because the key's main idea and details do not match.", "sources": []},
+    {"defectId": "D3", "verdict": "CONFIRMED", "reason": "Both claims are stated as fact without a source. 'Major export' is an overstatement rather than flatly false. LEITI 2023 figures put crude palm oil at about US$83M, fourth behind gold, iron ore and rubber, out of roughly US$1.35B. I could not verify the Bong rice-production claim (UNCERTAIN as fact; CONFIRMED as unsourced). The spec cites only body. bodyBlock adds further unsourced claims (Farmington River 'vital for drinking water'; rural education). The body also says the St. Paul is important for 'transporting goods between counties', which I did not verify.", "sources": [{"url": "https://frontpageafricaonline.com/news/liberia-leiti-releases-16th-country-report-as-liberia-prepares-for-2026-extractive-sector-validation/", "quote": "Gold emerged as the leading export commodity with a value of 660.34 million dollars ... followed by iron ore at 482.7 million dollars, rubber at 103 million dollars, crude palm oil at 82.79 million dollars"}]},
+    {"defectId": "D4", "verdict": "CONFIRMED", "reason": "Direct instruction consists of a definition, two examples and 'look for keywords and phrases'. It does not distinguish topic from main idea, does not cover main ideas placed anywhere but the first sentence or implied main ideas, and gives no test for support. Worse than 'missing': the legacy actively models the topic as the main idea (see M1).", "sources": []},
+    {"defectId": "D5", "verdict": "CONFIRMED", "reason": "The exit ticket ('one thing you learned') gives no evidence on either objective, and the keys are printed in learner text. Location imprecision: the Kofi activity is in delivery.bodyBlock, not delivery.body as 'where' says. Also, 'MECHANICAL_AUDIT_CONFIRMED' cannot cover the missing Kofi text, which no mechanical flag lists; it is an author finding.", "sources": []}
+  ],
+  "missedDefects": [
+    {"id": "M1", "severity": "MAJOR", "kind": "CONCEPTUAL", "where": "body/bodyBlock Direct Instruction; Guided Practice teacher note", "legacy": "the main idea is about the significance of the river in local life; (Accept answers highlighting improved rice production techniques.)", "issue": "The legacy teaches the topic as the main idea. The guided-practice answer also drops the result clause ('rice production has increased'), which is part of the main idea."},
+    {"id": "M2", "severity": "MINOR", "kind": "ASSESSMENT", "where": "bodyBlock Independent Work key", "legacy": "Supporting Details: The rivers are vital and clean-up efforts are being organized.", "issue": "The details restate the two halves of the main idea, so the support is circular. Same class of fault as D2, in the other variant."},
+    {"id": "M3", "severity": "MINOR", "kind": "CONTENT_MISSING", "where": "body Guided Practice", "legacy": "We will work through one more example.", "issue": "No example follows in body."},
+    {"id": "M4", "severity": "MINOR", "kind": "GRADE_FIT", "where": "all passages", "issue": "Every passage is 2-3 sentences with the main idea in sentence 1, which is below the G7/LJHSCE comprehension demand. The spec addresses this (90-word paragraphs, varied positions, implied main ideas) but does not record it as a legacy defect."},
+    {"id": "M5", "severity": "MINOR", "kind": "CULTURAL", "where": "bodyBlock Lab", "legacy": "a young boy named Kofi in Grand Bassa County", "issue": "Kofi is an Akan (Ghanaian) day name. A Bassa or other Liberian name would fit a Grand Bassa setting.", "sources": [{"url": "https://en.wikipedia.org/wiki/Kofi", "quote": "Search-result summary: Kofi is an Akan day name for a boy born on a Friday (Wikipedia entry 'Kofi'; seen in search results, not fetched)"}]},
+    {"id": "M6", "severity": "MINOR", "kind": "AUDIENCE", "where": "both variants", "issue": "Teacher directions and timings are in learner text: '(Students can respond with ...)', '(Accept answers ...)', '(5 minutes)'."}
+  ],
+  "specIssues": [
+    {"id": "S1", "where": "D5.where / D5.verification", "issue": "The Kofi reference is in bodyBlock, and that part is not mechanically confirmed."},
+    {"id": "S2", "where": "D3.where", "issue": "Extend to bodyBlock and to the St. Paul and Bomi claims, so the mapping plan covers every unsourced claim in both variants."},
+    {"id": "S3", "where": "defects", "issue": "Add M1. The legacy actively teaches the topic/main-idea conflation, which is the very misconception the spec's m2 targets."},
+    {"id": "S4", "where": "liberianContexts", "issue": "Good. Labelling authored paragraphs is the right fix. Suggest also using locally appropriate names for characters in authored texts."}
+  ],
+  "specRating": "ADEQUATE",
+  "specRatingReason": "The objectives (topic vs main idea, rejecting a non-supporting detail, implied main idea), the umbrella test, misconceptions m1-m5, the transfer to a radio-announcement genre and the open decision on which variant learners received are all well targeted. Only small corrections are needed: location and verification labels on D5, broader scope for D3, and adding M1.",
+  "correctionNoticeWarranted": false,
+  "correctionNoticeReason": "No learner notice. There is no significant false fact; the palm-oil claim is an overstatement. The spec's teacher notice is right: the key's supporting detail was invalid, and the legacy modelled topics as main ideas. Whichever variant learners received (OD-FT09-VARIANTS), the teacher note should cover both keys.",
+  "notes": "The blind pass, including the body/bodyBlock comparison, was completed before I opened the spec. LEITI figures are for 2023."
+}

@@ -1,0 +1,63 @@
+{
+  "reviewKey": "ft03-g7-civics-democracy-representation",
+  "contentId": "hero-civics-g7-democracy-and-representation-in-liberia",
+  "reviewer": {"kind": "AI_AGENT", "modelFamily": "anthropic-claude", "role": "ADVISORY_SUBJECT_REVIEWER", "countsAsIndependentReview": false},
+  "blindPassFile": "ft03-g7-civics-democracy-representation.blind.json",
+  "blindFindings": [
+    {"id": "B1", "summary": "Implies Liberia uses proportional representation", "status": "CONFIRMED; matches D1"},
+    {"id": "B2", "summary": "Appointed superintendent used as the model of representation; 'Bong County council' and 'local elections in Nimba' overstate elected local government", "status": "Superintendent part matches D4; local-council part not in spec"},
+    {"id": "B3", "summary": "No seat counts, terms, veto, judiciary", "status": "Matches D6"},
+    {"id": "B4", "summary": "WE2 rounds to 11 of 10 seats", "status": "Matches D2"},
+    {"id": "B5", "summary": "gp2 key totals 14 of 15 and proposes extra seat to D (not largest remainder)", "status": "NOT in spec defects"},
+    {"id": "B6", "summary": "gp3 has an empty answer key; unexplained 'cultural mandate'", "status": "NOT in spec defects"},
+    {"id": "B7", "summary": "Equal-per-community vs proportional contradiction", "status": "Matches D3"},
+    {"id": "B8", "summary": "ip3a/ip3b weight seats by 'importance' without critique", "status": "NOT in spec defects"},
+    {"id": "B9", "summary": "Lesson body is mostly ratio arithmetic; error analysis about addition", "status": "Partly in D6"},
+    {"id": "B10", "summary": "False etymologies", "status": "Matches D5"},
+    {"id": "B11", "summary": "'national assembly' instead of Legislature", "status": "Not in spec"},
+    {"id": "B12", "summary": "LD$ 'intrinsic value' analogy", "status": "Matches D5"},
+    {"id": "B13", "summary": "Checks and balances omit veto, override and judiciary", "status": "Covered by spec v1 and m3, not as a defect"},
+    {"id": "B14", "summary": "Exit items unkeyed and miss objective 2", "status": "Covered by new assessment"},
+    {"id": "B15", "summary": "History MOE code; missing section 13 heading; reading level", "status": "Code in moeWaec; reading level D7; heading not in spec"}
+  ],
+  "defectVerdicts": [
+    {"defectId": "D1", "verdict": "CONFIRMED", "reason": "House: 73 seats fixed by statute, single-member districts, first-past-the-post; Senate: two per county. Nuance the spec omits: House seats are apportioned among counties by population but every county is guaranteed at least two seats, so the House is population-based with a floor, not purely proportional.", "sources": [
+      {"url": "https://en.wikipedia.org/wiki/House_of_Representatives_of_Liberia", "quote": "The number of seats is fixed by law at 73 ... First-past-the-post ... single-member districts ... guaranteed a minimum of two seats ... in proportion to their percentage of the population according to the national census"},
+      {"url": "https://www.constituteproject.org/constitution/Liberia_1986", "quote": "Article 45: Each county shall elect two Senators"}]},
+    {"defectId": "D2", "verdict": "CONFIRMED", "reason": "Recomputed: 3+2+1+1+4 = 11 against a stated total of 10. Pure arithmetic; no external source required. (Under largest remainder the result would be A2 B2 C1 D1 E4 = 10.)", "sources": []},
+    {"defectId": "D3", "verdict": "CONFIRMED", "reason": "Verified by reading s7 step 1 ('Regardless of the differences in population size, each community's voice should resonate with equal significance') against step 4 and 'What Do You Notice' (proportional). Conceptual; the Senate/House contrast is the correct real-world anchor (Art. 45 equal per county).", "sources": [
+      {"url": "https://www.constituteproject.org/constitution/Liberia_1986", "quote": "Article 45: Each county shall elect two Senators"}]},
+    {"defectId": "D4", "verdict": "CONFIRMED", "reason": "Superintendents are nominated by the President and confirmed by the Senate.", "sources": [
+      {"url": "https://www.constituteproject.org/constitution/Liberia_1986", "quote": "Article 54: The President shall nominate and, with the consent of the Senate, appoint and commission-- ... superintendents, other county officials"},
+      {"url": "https://en.wikipedia.org/wiki/Counties_of_Liberia", "quote": "Each is administered by a superintendent appointed by the President."}]},
+    {"defectId": "D5", "verdict": "CONFIRMED", "reason": "'Legislator' comes from Latin legis lator (proposer/bringer of a law); 'constituency' derives via constitute from Latin constituere (con- + statuere, 'set up, establish'), not from 'state'. The LD$ intrinsic-value analogy is a conceptual error (no source fetched; uncontroversial).", "sources": [
+      {"url": "https://en.wiktionary.org/wiki/legislator", "quote": "From Latin lēgislātor ... In Classical Latin, the word is usually written separately: lēgis lātor"},
+      {"url": "https://en.wiktionary.org/wiki/constituo", "quote": "From con- (\"with\") + statuō (\"set up; establish\")."}]},
+    {"defectId": "D6", "verdict": "CONFIRMED", "reason": "Terms per 1986 Constitution are President 6 (max two terms), Senators 9, Representatives 6. The December 2020 referendum proposals to shorten all three were rejected, so these remain current. OD-FT03-TERMS can be resolved: teach terms.", "sources": [
+      {"url": "https://www.constituteproject.org/constitution/Liberia_1986", "quote": "Art. 48: members elected for a term of six years ... Art. 50: shall hold office for a term of six years ... (Senators) nine-year terms (Art. 45)"},
+      {"url": "https://en.wikipedia.org/wiki/2020_Liberian_constitutional_referendum", "quote": "Reducing Senators' terms from nine to seven years ... Rejected ... Reducing the term of the President from six to five years ... Rejected"}]},
+    {"defectId": "D7", "verdict": "CONFIRMED", "reason": "Mechanical audit; verified by reading that several sections (s4, s5, s7) exceed 300 words and use above-grade vocabulary ('microcosm', 'conduit', 'unruly fracas'). FK score not independently recomputed.", "sources": []}
+  ],
+  "missedDefects": [
+    {"id": "M1", "severity": "MAJOR", "location": "assessment.problemSets gp2 answerKey", "quote": "Total representatives ... = 14 ... Adjust by adding an additional representative to district D", "issue": "Keyed answer is wrong under any standard method: B is already rounded up from 2.7, and the extra seat goes to D (remainder .35) rather than A (.45). Largest remainder gives A4 B3 C5 D1 E2 = 15. A learner-visible answer key teaches an incorrect method."},
+    {"id": "M2", "severity": "MAJOR", "location": "assessment.problemSets gp3", "quote": "\"answerKey\": \"\"", "issue": "Guided Practice 3 has no key at all, and its 'half the seats automatically to Region X for a specific cultural representation mandate' is an unexplained, civically dubious rule."},
+    {"id": "M3", "severity": "MAJOR", "location": "ip3a, ip3b", "quote": "representation based on societal importance ... multipliers", "issue": "Allocating seats by 'importance' weights contradicts political equality and is presented as neutral practice. Must be removed or explicitly critiqued."},
+    {"id": "M4", "severity": "MINOR", "location": "s4 para 6; s5 para 9-10", "quote": "Imagine a meeting in the Bong County council ... local elections in Nimba", "issue": "Depicts elected county councils deciding budgets; county administration is presidentially appointed (Art. 54). Not verified whether any county councils are currently elected; flag for reviewer rather than assert."},
+    {"id": "M5", "severity": "MINOR", "location": "s6 Constituency sentence", "quote": "in the national assembly", "issue": "Liberia's body is the Legislature (Senate and House of Representatives)."},
+    {"id": "M6", "severity": "MINOR", "location": "s5 para 3", "quote": "the President ... can propose laws, but it is the legislators ... who must debate and vote", "issue": "Omits the veto and two-thirds override (Art. 35) and the judiciary; 'checks and balances' is presented with only one check. Source: https://www.constituteproject.org/constitution/Liberia_1986 ('This veto may be overridden by the re-passage of such bill')."},
+    {"id": "M7", "severity": "MINOR", "location": "between s12 and s14", "quote": "(no '## 13' heading)", "issue": "Tier 1 independent practice has no section heading."}
+  ],
+  "specIssues": [
+    {"id": "S1", "issue": "Objective o3 and progression step 'House: districts by population' should mention the two-seat minimum per county and that the 73 seats are fixed by statute, otherwise learners get a new over-simplification (Wikipedia House of Representatives of Liberia: 'guaranteed a minimum of two seats')."},
+    {"id": "S2", "issue": "Misconception m3 feedback should add that the Legislature can override a veto by two-thirds of each House (Art. 35), since the spec's diagram already lists veto as a check."},
+    {"id": "S3", "issue": "m1 feedback ('Superintendents and ministers are appointed by the President') should add 'with the consent of the Senate' (Art. 54); this is itself a check worth teaching."},
+    {"id": "S4", "issue": "D5's etymology 'lex/legis law + latio proposing' is acceptable, but the commonly cited source form is legis lator 'proposer of a law'; align wording with a dictionary citation."},
+    {"id": "S5", "issue": "Defect list omits M1-M3 (wrong gp2 key, empty gp3 key, importance-weighted seats); add them so the repair removes or fixes every legacy apportionment item, not only WE2."},
+    {"id": "S6", "issue": "OD-FT03-TERMS can be closed: terms are confirmed in the 1986 Constitution and the 2020 referendum to shorten them failed."}
+  ],
+  "specRating": "ADEQUATE",
+  "specRatingReasons": "The new objectives (three branches and who is elected how; elected vs appointed; equal vs population-based representation) target exactly what the legacy lesson got wrong, and the misconceptions m1-m5 are accurate and probed. Assessment mixes keyed table, rubric explanation and a fairness argument, with retention and a school-council transfer. Edits S1-S5 are needed for precision but the design is sound.",
+  "correctionNoticeWarranted": true,
+  "correctionNoticeReason": "This is a published hero lesson with 55 scheduled-work rows across 2 classes. It taught that Liberia uses proportional representation, used an appointed superintendent as an example of elected representation, and showed keyed seat allocations that do not add up. These are civic misconceptions directly relevant to future voters and to LJHSCE Social Studies.",
+  "notes": "IPU Parline returned 403, so House facts rely on Wikipedia plus the Constitution text. Electoral law (73-seat threshold statute) and current county-council status were not checked against NEC or Ministry of Internal Affairs sources; a human reviewer should confirm before publication."
+}

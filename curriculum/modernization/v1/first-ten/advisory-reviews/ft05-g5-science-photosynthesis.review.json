@@ -1,0 +1,54 @@
+{
+  "reviewKey": "ft05-g5-science-photosynthesis",
+  "contentId": "science-g5-plants",
+  "reviewer": {"kind": "AI_AGENT", "modelFamily": "anthropic-claude", "role": "ADVISORY_SUBJECT_REVIEWER", "countsAsIndependentReview": false},
+  "blindFindings": [
+    "B1 HIGH: invented glucose yields presented as fact across s7-s15 (mango tree ~ okra plant); glucose framed as 'collected'",
+    "B2 HIGH: 'Glucose is ... how plants store energy' - cassava stores starch; starch never mentioned",
+    "B3 MEDIUM: 'Plants take in carbon dioxide to produce oxygen' - released O2 comes from water",
+    "B4 MEDIUM: 'Plants convert sunlight into glucose' / 'convert light into energy' - light becomes matter/energy confusion",
+    "B5 MEDIUM: CO2 memory tip implies plants do not respire",
+    "B6 MEDIUM: soil-as-food misconception raised in hook and never refuted",
+    "B7 LOW: stomata 'on the underside' overgeneralised",
+    "B8 LOW: 'exclusively during daylight' (light, not daylight)",
+    "B9 LOW: misleading mnemonics chorus/glue/stomach",
+    "B10 MEDIUM: 'palm oil plants' (oil palm)",
+    "B11 MEDIUM: incoherent Tier 3 scenarios (harvested cabbages still producing; cassava maturing in a week)",
+    "B12 HIGH: answers inline; exit ticket has no key",
+    "B13 MEDIUM: objective 'stages' and roots/stems role not taught; cooking title/hook never resolved",
+    "B14 MEDIUM: water-splitting detail above G5; reading level",
+    "B15 LOW: Boima/Boimah/Boiman drift; Nimba farm watered by the St. Paul River",
+    "B16 LOW: lettuce and carrots as typical examples"
+  ],
+  "defectVerdicts": [
+    {"defectId": "D1", "verdict": "CONFIRMED", "reason": "Verified in legacy s7-s15: every item uses unsourced per-plant glucose rates (5, 6, 4, 3, 10, 7, 8, 5 g/day) and is pure multiplication. The rates are not even internally plausible (a mango tree, 8 g/day, is put beside an okra plant at 3 g/day). Glucose is not a harvestable product: photosynthate moves as sucrose and is stored as starch in cassava roots.", "sources": [{"url": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8254309/", "quote": "Predominantly symplastic phloem unloading of photosynthates maintains efficient starch accumulation in the cassava storage roots (title); 'Carbohydrates are transported mainly in the form of sucrose'"}]},
+    {"defectId": "D2", "verdict": "CONFIRMED", "reason": "'Boima will collect 350 grams of glucose' and the takeaway 'convert light into energy' are both in the legacy text. The correction is scientifically right. One caveat: the legacy takeaway is imprecise rather than literally saying energy comes from nothing, so 'energy is not made from nothing' answers a stronger claim than the text makes. Still a valid misconception to target (spec m5). The legacy s4 sentence 'Glucose is crucial because it's how plants store energy' belongs under this defect too and is not cited.", "sources": [{"url": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8254309/", "quote": "Predominantly symplastic phloem unloading of photosynthates maintains efficient starch accumulation in the cassava storage roots"}]},
+    {"defectId": "D3", "verdict": "CONFIRMED", "reason": "Fatu asks 'Is it just from the soil?' in s1. Nothing later says that most of a plant's mass comes from carbon dioxide in the air; s3 even says plants need 'nutrients from the soil to grow' and stops there.", "sources": [{"url": "https://www.thenakedscientists.com/node/196454", "quote": "We now know that whilst plants derive water and nutrients from soil, their mass comes from air in the presence of sunlight."}]},
+    {"defectId": "D4", "verdict": "CONFIRMED", "reason": "The water-splitting statement is broadly true science, simplified, but it is above Grade 5. 'Including its stages' sits in objective 1 and is never taught. Flesch-Kincaid 11.5 is from the mechanical audit and I did not recompute it. The prose density I saw is consistent with that figure.", "sources": []},
+    {"defectId": "D5", "verdict": "CONFIRMED", "reason": "'8 palm oil plants' (s10) and 'Pewee has 4 palm oil plants' (s13) are both present. The plant is the oil palm. The stomata/stomach mnemonic is also present, and its gloss 'just like our stomachs take in food, stomata take in air' does reinforce the idea that plants eat. Spec note: this entry merges two unrelated defects (a terminology error and a misconception-reinforcing mnemonic) under kind TERMINOLOGY and MINOR severity. The mnemonic belongs with the conceptual defects.", "sources": []},
+    {"defectId": "D6", "verdict": "CONFIRMED", "reason": "Answers sit beside every independent-practice item in s13-s15. The two exit-ticket questions in s17 have no key or criteria.", "sources": []}
+  ],
+  "missedDefects": [
+    {"id": "M1", "severity": "MAJOR", "kind": "CONCEPTUAL", "where": "s6 Carbon Dioxide example", "legacy": "Plants take in carbon dioxide to produce oxygen.", "issue": "Teaches that O2 comes from CO2. The released oxygen comes from water, and the lesson's own s5 says water splits. This is a retractable false statement.", "sources": [{"url": "https://www.revisiondojo.com/student-faq/oxygen-released-in-photosynthesis", "quote": "The oxygen gas released during photosynthesis comes from water, not carbon dioxide."}]},
+    {"id": "M2", "severity": "MAJOR", "kind": "CONCEPTUAL", "where": "s4", "legacy": "Glucose is crucial because it's how plants store energy", "issue": "Plants (and cassava in particular) store energy as starch. The spec's liberianContexts fix this in the new lesson, but the false legacy sentence is not recorded as a defect.", "sources": [{"url": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8254309/", "quote": "efficient starch accumulation in the cassava storage roots"}]},
+    {"id": "M3", "severity": "MINOR", "kind": "CONCEPTUAL", "where": "s6 Glucose example", "legacy": "Plants convert sunlight into glucose to grow strong.", "issue": "Says light becomes matter. The carbon and oxygen in glucose come from CO2 and water. Related to spec m5, but the sentence is not listed."},
+    {"id": "M4", "severity": "MINOR", "kind": "CONCEPTUAL", "where": "s6 CO2 memory tip", "legacy": "humans exhale carbon dioxide, and plants 'breathe' it in", "issue": "Implies plants do not respire. Spec m4 targets this in the new lesson, but the legacy sentence is not recorded."},
+    {"id": "M5", "severity": "MINOR", "kind": "CONCEPTUAL", "where": "s6 memory tips", "legacy": "Chlorophyll sounds like 'chorus'; 'Glu-' sounds like 'glue'", "issue": "False word associations. Chloro- means green and gluco- means sweet. Only the stomach mnemonic is flagged."},
+    {"id": "M6", "severity": "MINOR", "kind": "ASSESSMENT", "where": "s15 Tier 3", "legacy": "harvest them after 5 days ... If it takes a week for the new plants to mature", "issue": "Biologically incoherent scenarios: harvested cabbages keep producing, and cassava matures in a week. Problem 2 also says 'from new plants' but computes all 10."},
+    {"id": "M7", "severity": "MINOR", "kind": "COVERAGE", "where": "objectives[1] vs body; legacyTitle", "issue": "Legacy objective 2 (the roles of roots and stems) is essentially untaught: water transport and the stem's role are absent. The title promises 'Traditional Liberian Cooking', but the cooking dilemma in the hook is never returned to."},
+    {"id": "M8", "severity": "MINOR", "kind": "FACTUAL", "where": "s6 stomata definition", "legacy": "Tiny openings on the underside of plant leaves", "issue": "Overgeneralised: many grasses have stomata on both surfaces. Write 'mostly on the underside in many plants'. Reviewer judgment; I fetched no rice-specific source."},
+    {"id": "M9", "severity": "MINOR", "kind": "CONSISTENCY", "where": "throughout", "issue": "The farmer's name drifts (Boima/Boimah/Boiman). A farmer in Nimba County relies on the St. Paul River. Fix both if any narrative is reused."}
+  ],
+  "specIssues": [
+    {"id": "S1", "where": "visualAndInteractive ft05-v2", "issue": "Internal inconsistency: the scene says 'under a box for 5 days', but the offline fallback is a '7-day observation table'. Pick one."},
+    {"id": "S2", "where": "objectives ft05-o3 / ft05-v2 / ft05-a3", "issue": "Scientific caution. A seedling kept in the dark for 5-7 days often grows taller (etiolation) while turning pale or yellow, because it runs on food stored in the seed. Learners may see 'the dark plant grew more'. The test shows that light is needed for green, healthy growth, which is indirect evidence for food-making. The spec should tell teachers and reviewers to measure colour and leaf health, not height, and should give the expected result plus a rubric anchor for the 'taller in the dark' observation. Otherwise ft05-a3 rests on a result that can mislead."},
+    {"id": "S3", "where": "correctionNotice", "issue": "The reason 'There is no single factual answer to retract' is wrong. The legacy states retractable falsehoods: CO2 produces oxygen (M1), glucose is how plants store energy (M2), and specific glucose yields as fact (D1). See correctionNoticeWarranted."},
+    {"id": "S4", "where": "defects D5", "issue": "The stomach mnemonic is a misconception defect bundled into a MINOR terminology entry. Split it out."},
+    {"id": "S5", "where": "transfer", "issue": "The shaded-cassava task is good. The rubric should also accept competition from the tall trees for water and nutrients as a partial contributing reason, so that a correct, richer answer is not marked down."}
+  ],
+  "specRating": "NEEDS_CHANGE",
+  "specRatingReason": "The redesign (objectives, misconceptions m1-m5, starch context, transfer task) is sound and fixes the core science. Changes needed: record the missed legacy falsehoods M1-M2 (needed for the mapping plan and any correction notice); fix the v2 day-count inconsistency; add the etiolation caveat so the light/dark evidence task cannot mislead; revisit the correction-notice reasoning.",
+  "correctionNoticeWarranted": true,
+  "correctionNoticeReason": "Yes, a short learner-facing note for the 2 scheduled classes (51 learning events). It should say that the oxygen plants release comes from water, not carbon dioxide; that plants such as cassava store food as starch; and that the glucose amounts in the practice problems were invented, not real measurements. These are concrete false statements that learners may have memorised, not only grade-fit problems. The teacher guidance the spec already proposes should go out as well.",
+  "notes": "The blind pass was completed before I opened the spec. The spec independently caught D1-D6. My blind pass also caught M1-M9, which the spec misses. I did not review the 10 attached video supplements (OD-FT05-VIDEOS)."
+}

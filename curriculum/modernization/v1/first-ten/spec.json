@@ -1,6 +1,22 @@
 {
-  "contractVersion": "liberialearn-first-ten-modernization-contract/0.1.0",
-  "status": "PROPOSED_NOT_AGREED",
+  "contractVersion": "liberialearn-first-ten-modernization-contract/1.0.0",
+  "status": "READY_FOR_OWNER_APPROVAL",
+  "history": [
+    {
+      "version": "0.1.0",
+      "commit": "9628d97f",
+      "status": "PROPOSED_NOT_AGREED"
+    },
+    {
+      "version": "0.1.0",
+      "event": "Accepted by Curriculum Excellence as the proposed V1 cohort baseline, 2026-10-17. Source IDs and revisions frozen."
+    },
+    {
+      "version": "1.0.0",
+      "status": "READY_FOR_OWNER_APPROVAL",
+      "changes": "Cited evidence for factual corrections; Civics kept as a distinct subject with MOE Social Studies as cross-reference only; learning-loop fields (stage runtimeBindings, assessmentPurpose, itemContext, misconceptionId, retention.policyRef, contract version); Content Factory source bindings; advisory independent review."
+    }
+  ],
   "notice": "Specification and acceptance contract only. Nothing here is approved, released or shown to work. No production lesson, ledger event, learner record, grade or mastery value is changed by this file. All defects are recorded by the specification author and require independent confirmation by a qualified reviewer.",
   "basis": {
     "repositoryCommit": "3e4ba71df9f462d273fe3be1e1bb585aea30c8c0",
@@ -38,7 +54,194 @@
       "science-g7-1-observation-and-scientific-thinking-foundations"
     ]
   },
+  "subjectPolicy": {
+    "CIVICS": "A distinct LiberiaLearn subject. MOE Social Studies objectives are recorded only as cross-references (relation CROSS_REFERENCE_ONLY), never as the authority or as direct MOE alignment.",
+    "decidedBy": "Curriculum Excellence owner direction, 2026-10-17"
+  },
+  "sources": {
+    "accessed": "2026-10-17",
+    "registry": [
+      {
+        "id": "SRC-LR-CONST-1986",
+        "kind": "PRIMARY_LAW",
+        "authority": "HIGH",
+        "title": "Constitution of the Republic of Liberia (1986), English text",
+        "publisher": "Constitute Project",
+        "url": "https://www.constituteproject.org/constitution/Liberia_1986"
+      },
+      {
+        "id": "SRC-US-OOH-LIBERIA",
+        "kind": "OFFICIAL_GOVERNMENT_HISTORY",
+        "authority": "HIGH",
+        "title": "Milestones: 1830–1860 — Founding of Liberia, 1847",
+        "publisher": "US Department of State, Office of the Historian (archived page)",
+        "url": "https://history.state.gov/milestones/1830-1860/liberia"
+      },
+      {
+        "id": "SRC-LVA-ROBERTS",
+        "kind": "INSTITUTIONAL_ARCHIVE",
+        "authority": "HIGH",
+        "title": "Joseph Jenkins Roberts",
+        "publisher": "Library of Virginia, The UncommonWealth (2026-03-18)",
+        "url": "https://uncommonwealth.lva.virginia.gov/blog/2026/03/18/joseph-jenkins-roberts/"
+      },
+      {
+        "id": "SRC-EBSCO-CUFFE",
+        "kind": "REFERENCE_WORK",
+        "authority": "MEDIUM",
+        "title": "Paul Cuffe (Research Starters)",
+        "publisher": "EBSCO",
+        "url": "https://www.ebsco.com/research-starters/history/paul-cuffe/"
+      },
+      {
+        "id": "SRC-WP-COUNTIES",
+        "kind": "ENCYCLOPEDIA_SECONDARY",
+        "authority": "MEDIUM",
+        "title": "Counties of Liberia",
+        "publisher": "Wikipedia",
+        "url": "https://en.wikipedia.org/wiki/Counties_of_Liberia"
+      },
+      {
+        "id": "SRC-WP-NIMBA",
+        "kind": "ENCYCLOPEDIA_SECONDARY",
+        "authority": "MEDIUM",
+        "title": "Nimba County",
+        "publisher": "Wikipedia",
+        "url": "https://en.wikipedia.org/wiki/Nimba_County"
+      },
+      {
+        "id": "SRC-WP-BENSONVILLE",
+        "kind": "ENCYCLOPEDIA_SECONDARY",
+        "authority": "MEDIUM",
+        "title": "Bensonville (Bentol)",
+        "publisher": "Wikipedia",
+        "url": "https://en.wikipedia.org/wiki/Bensonville"
+      },
+      {
+        "id": "SRC-ENCYC-MONROVIA",
+        "kind": "REFERENCE_WORK",
+        "authority": "MEDIUM",
+        "title": "Monrovia",
+        "publisher": "Encyclopedia.com",
+        "url": "https://www.encyclopedia.com/places/africa/liberian-political-geography/monrovia"
+      },
+      {
+        "id": "SRC-WP-MONROVIA",
+        "kind": "ENCYCLOPEDIA_SECONDARY",
+        "authority": "MEDIUM",
+        "title": "Monrovia",
+        "publisher": "Wikipedia",
+        "url": "https://en.wikipedia.org/wiki/Monrovia"
+      },
+      {
+        "id": "SRC-BANKNOTEWORLD-LRD",
+        "kind": "COLLECTOR_SECONDARY",
+        "authority": "LOW",
+        "title": "Liberian banknote history",
+        "publisher": "Banknote World",
+        "url": "https://www.banknoteworld.com/blog/liberian-banknote-history/"
+      },
+      {
+        "id": "SRC-WP-LEGISLATURE",
+        "kind": "ENCYCLOPEDIA_SECONDARY",
+        "authority": "MEDIUM",
+        "title": "Legislature of Liberia",
+        "publisher": "Wikipedia",
+        "url": "https://en.wikipedia.org/wiki/Legislature_of_Liberia"
+      },
+      {
+        "id": "SRC-WP-GRANDKRU",
+        "kind": "ENCYCLOPEDIA_SECONDARY",
+        "authority": "MEDIUM",
+        "title": "Grand Kru County",
+        "publisher": "Wikipedia",
+        "url": "https://en.wikipedia.org/wiki/Grand_Kru_County"
+      }
+    ],
+    "officialSourcesNotYetObtained": [
+      "A Government of Liberia (Ministry of Internal Affairs or LISGIS) list of county capitals. No official list was retrievable on 2026-10-17, and the county-capital corrections rest on consistent secondary sources until a reviewer attaches one.",
+      "National Elections Commission confirmation of the current number of House electoral districts (73)."
+    ]
+  },
+  "sourceBindings": {
+    "path": "curriculum/modernization/v1/first-ten/source-bindings.json",
+    "sha256": "7c056189ea91dd76a53962220172ff931f0910098e1670a8b120be7ddc2ec168",
+    "shape": "Content Factory V2 batchContract lessons[].source",
+    "exportStatus": "NOT_AN_ACCEPTED_READ_ONLY_EXPORT"
+  },
+  "retentionPolicy": {
+    "policyId": "ll-aep-001-retention-pilot",
+    "version": "1.0.0",
+    "status": "APPROVED",
+    "statusSource": "git:f1db1d26:lib/assessment/v2/retention.ts (feat/learning-loop-integration-v1, unmerged)",
+    "intervalsDays": [
+      7,
+      21
+    ],
+    "minimumDelayDays": 7,
+    "overridableByLesson": false
+  },
+  "misconceptionCatalog": {
+    "id": "liberialearn-first-ten-misconceptions",
+    "version": "1.0.0",
+    "rule": "misconceptions[].misconceptionId is the stable catalog id (e.g. mc-civics-largest-town-is-capital). Assessment V2 ProtectedScoringSpec.misconceptionSignals[].misconceptionId and AssessmentItemV2.misconceptionIds MUST emit it byte-identically. misconceptions[].id (e.g. ft01-m1) is a local key only."
+  },
+  "factoryCompatibility": {
+    "target": "Content Factory V2 feat/content-factory-ten-candidates @ d1f1826cb6ca94da9aa1a0e0e5df7c99ac1be277 (batch factory-ten-candidates/1.0.0, unit-blueprint/2.0.0)",
+    "verdict": "COMPATIBLE_WITH_BLOCKERS",
+    "checks": [
+      {
+        "check": "Contract pin satisfies exactPinSchema {id, version, sha256 of raw bytes, sourceRef}",
+        "result": "PASS"
+      },
+      {
+        "check": "Ten source bindings satisfy batchContract lessons[].source (strict)",
+        "result": "PASS"
+      },
+      {
+        "check": "Binding identities unique (batch_duplicate_identity)",
+        "result": "PASS"
+      },
+      {
+        "check": "Bindings equal spec identities; all 10 snapshot hashes recomputed with the shared hashCurriculumSnapshot (identical file at 3e4ba71d and d1f1826cb)",
+        "result": "PASS"
+      },
+      {
+        "check": "assessmentPurpose and itemContext use Assessment V2 enums",
+        "result": "PASS"
+      },
+      {
+        "check": "Misconception ids unique across the cohort",
+        "result": "PASS"
+      },
+      {
+        "check": "Batch evidence ACCEPTED_READ_ONLY_EXPORT can be satisfied from the #195 extract",
+        "result": "FAIL: the extract is not a factory-production-capture/1.0.0 export and carries no operator attestations"
+      },
+      {
+        "check": "Per-lesson UnitBlueprint, section dispositions and generation drafts exist",
+        "result": "NOT_YET_AUTHORED (gated on owner approval)"
+      }
+    ],
+    "probe": "Read-only tsx probe run in the factory worktree against its own zod schemas; it wrote nothing there (git status unchanged).",
+    "interfaceRules": [
+      "curriculumContract = {id: 'liberialearn-first-ten-modernization-contract', version: '1.0.0', sha256: SHA-256 of the raw bytes of spec.json at the approved commit, sourceRef: 'git:<commit>:curriculum/modernization/v1/first-ten/spec.json'}.",
+      "lessons[].source = source-bindings.json bindings[].source, verbatim. Candidate ids must not reuse any source id.",
+      "Objective layer to blueprint objective kind: NATIONAL_FOUNDATION → NATIONAL, LIBERIALEARN_MASTERY → LIBERIALEARN_MASTERY, GLOBAL_EXCELLENCE → GLOBAL_EXCELLENCE (requires unit-blueprint/2.1.0).",
+      "Civics exception: ft01–ft03 objectives keep subjectAuthority LIBERIALEARN_CIVICS. A Civics objective's sourceId points to this contract, never to an MOE Social Studies document. The MOE cross-reference travels as a note, not as objective authority. The factory owner confirms or adds an explicit authority field.",
+      "Purposes: end-of-lesson tasks SUMMATIVE; retention RETENTION (itemContext NEAR); transfer TRANSFER (itemContext NEW). These are Assessment V2 ASSESSMENT_PURPOSES values.",
+      "Assessment tasks map to blueprint assessmentPlan with scaffold NONE, timing END_OF_LESSON (retention: DELAYED with delayDays from the retention policy), scoring verbatim. The blueprint context enum has no NEAR: map NEAR to REHEARSED and keep itemContext on the Assessment V2 item.",
+      "Blueprint misconceptions[].id = misconceptionId; Assessment V2 misconceptionSignals emit the same ids."
+    ],
+    "blockers": [
+      "B-CF1: No accepted read-only export. The factory requires a factory-production-capture/1.0.0 export with authorization, target/role, visibility and privacy-review references. That needs an owner-authorized operator capture; this work does not connect to production.",
+      "B-CF2: Per-lesson UnitBlueprints, legacy section dispositions and generation drafts are not authored yet (gated on owner approval of this contract).",
+      "B-CF3: unit-blueprint/2.1.0 objective kinds exist only as uncommitted work in the factory worktree, and the Civics authority mapping needs the factory owner's confirmation.",
+      "B-CF4: The factory's uncommitted first-ten-baseline.json pins contract 0.1.0 (spec sha 9b0128d7…). It must be re-pinned to the approved 1.0.0 bytes."
+    ]
+  },
   "sharedLessonContract": {
+    "version": "liberialearn-first-ten-lesson-contract/1.0.0",
     "stages": [
       "prerequisiteDiagnostic",
       "concept",
@@ -67,6 +270,9 @@
   "verificationValues": {
     "MECHANICAL_AUDIT_CONFIRMED": "Also reported by the committed mechanical audit at this revision.",
     "AUTHOR_COMPUTED": "Recomputed by the specification author; mechanically re-checkable. The reviewer re-runs the computation.",
+    "ADVISORY_REVIEW_FINDING_AUTHOR_VERIFIED": "Found by the blind advisory reviewer, then checked against the legacy text by the specification author. A qualified reviewer still confirms it.",
+    "AUTHOR_VERIFIED_CORRECTING_MECHANICAL_AUDIT": "The committed mechanical audit finding was wrong at this revision; the author re-read the structured data and restated the defect.",
+    "AUTHOR_SOURCED_REVIEWER_MUST_CONFIRM": "Found by reading and backed by the cited sources in defect.evidence. A qualified reviewer still confirms it.",
     "AUTHOR_IDENTIFIED_REVIEWER_MUST_CONFIRM": "Found by reading. A qualified subject reviewer must confirm it against cited sources before it is treated as established."
   },
   "lessons": [
@@ -124,16 +330,36 @@
           "where": "delivery.body §4, §5, §7, §9, §10, §12, §13, §15",
           "legacy": "Nimba County ... The capital city, Ganta",
           "correction": "The capital of Nimba County is Sanniquellie. Ganta is Nimba's largest commercial town. Every answer key, worked example and error-analysis item that pairs Nimba with Ganta must change.",
-          "verification": "AUTHOR_IDENTIFIED_REVIEWER_MUST_CONFIRM"
+          "verification": "AUTHOR_SOURCED_REVIEWER_MUST_CONFIRM",
+          "evidence": [
+            {
+              "sourceId": "SRC-WP-NIMBA",
+              "supports": "Infobox: capital Sanniquellie; largest city Ganta."
+            },
+            {
+              "sourceId": "SRC-WP-COUNTIES",
+              "supports": "Table: Nimba — Sanniquellie."
+            }
+          ]
         },
         {
           "id": "D2",
           "severity": "BLOCKING",
           "kind": "FACTUAL",
-          "where": "delivery.body §7, §10, §15 and the vocabulary examples",
+          "where": "delivery.body §7, §10, §15 (the vocabulary sentence 'Montserrado County is where our capital, Monrovia, is located' is true and stays)",
           "legacy": "Montserrado - Monrovia",
-          "correction": "Monrovia is the national capital. Standard references give Bensonville as the seat of Montserrado County. The reviewer confirms this against a current Ministry of Internal Affairs / LISGIS source, and the lesson then teaches national capital and county capital as separate ideas.",
-          "verification": "AUTHOR_IDENTIFIED_REVIEWER_MUST_CONFIRM"
+          "correction": "Monrovia is the national capital. The seat of Montserrado County is Bensonville (also called Bentol). Teach national capital and county seat as separate ideas, and replace every 'Montserrado – Monrovia' pairing.",
+          "verification": "AUTHOR_SOURCED_REVIEWER_MUST_CONFIRM",
+          "evidence": [
+            {
+              "sourceId": "SRC-WP-BENSONVILLE",
+              "supports": "Bensonville, also known as Bentol (Bentol City), is the capital of Montserrado County, about 32 km from Monrovia."
+            },
+            {
+              "sourceId": "SRC-WP-COUNTIES",
+              "supports": "Table: Montserrado — Bensonville."
+            }
+          ]
         },
         {
           "id": "D3",
@@ -142,7 +368,13 @@
           "where": "delivery.body §8 step 5",
           "legacy": "For Maryland County, situate it adjacent to Sinoe",
           "correction": "Grand Kru lies between Sinoe and Maryland. Maryland borders Grand Kru, River Gee and Côte d'Ivoire (along the Cavalla River).",
-          "verification": "AUTHOR_IDENTIFIED_REVIEWER_MUST_CONFIRM"
+          "verification": "AUTHOR_SOURCED_REVIEWER_MUST_CONFIRM",
+          "evidence": [
+            {
+              "sourceId": "SRC-WP-GRANDKRU",
+              "supports": "Grand Kru is 'bordered by River Gee County to the northeast, Sinoe County to the northwest, and Maryland County to the southeast', so it lies between Sinoe and Maryland on the coast."
+            }
+          ]
         },
         {
           "id": "D4",
@@ -151,7 +383,13 @@
           "where": "objectives[0] vs whole body",
           "legacy": "Identify and name all 15 counties",
           "correction": "Only 10 counties are taught. Gbarpolu (Bopolu), Grand Gedeh (Zwedru), Grand Kru (Barclayville), River Cess (Cestos City) and River Gee (Fish Town) never appear.",
-          "verification": "AUTHOR_IDENTIFIED_REVIEWER_MUST_CONFIRM"
+          "verification": "AUTHOR_SOURCED_REVIEWER_MUST_CONFIRM",
+          "evidence": [
+            {
+              "sourceId": "SRC-WP-COUNTIES",
+              "supports": "15 counties; Gbarpolu created 2001 and River Gee 2000; capitals Bopolu, Zwedru, Barclayville, River Cess (Cestos City), Fish Town."
+            }
+          ]
         },
         {
           "id": "D5",
@@ -159,8 +397,14 @@
           "kind": "CONCEPTUAL",
           "where": "delivery.body §5",
           "legacy": "Each county in Liberia corresponds uniquely to a capital city that governs it",
-          "correction": "A capital does not govern its county. Liberia is a unitary state, and county administration is led by a superintendent whom the President appoints. Unsourced economic claims (Nimba 'contributing significantly to the country's GDP', 'tourism in Bong') must be sourced or removed.",
-          "verification": "AUTHOR_IDENTIFIED_REVIEWER_MUST_CONFIRM"
+          "correction": "A capital does not govern its county. Liberia is a unitary state, and county administration is led by a superintendent whom the President appoints with the consent of the Senate (Art. 54) and who serves at the President's pleasure (Art. 56). Unsourced economic claims (Nimba 'contributing significantly to the country's GDP', 'tourism in Bong') must be sourced or removed.",
+          "verification": "AUTHOR_SOURCED_REVIEWER_MUST_CONFIRM",
+          "evidence": [
+            {
+              "sourceId": "SRC-LR-CONST-1986",
+              "supports": "Art. 54: the President nominates and, with Senate consent, appoints 'superintendents, other county officials'. Art. 56: such officials 'hold their offices at the pleasure of the President'."
+            }
+          ]
         },
         {
           "id": "D6",
@@ -169,7 +413,18 @@
           "where": "delivery.body §13–§15, §17",
           "legacy": "Answer: The capital of Lofa County is Voinjama.",
           "correction": "Every independent item prints its answer, and the exit ticket has no key. A geography objective is never assessed with a map.",
-          "verification": "MECHANICAL_AUDIT_CONFIRMED"
+          "verification": "MECHANICAL_AUDIT_CONFIRMED",
+          "evidence": []
+        },
+        {
+          "id": "D7",
+          "severity": "MINOR",
+          "kind": "ASSESSMENT",
+          "where": "delivery.body §14 Tier 2 Problem 2; §1 hook",
+          "legacy": "What county is Bomi's capital located in, and what is the name of that capital?; avoid the traffic near St. Paul River [on deliveries to Buchanan]",
+          "correction": "The Tier 2 item is circular (it names the county it asks for). The hook's St. Paul River route to Buchanan makes no geographic sense (the St. Paul is north of Monrovia; Buchanan is south-east).",
+          "verification": "ADVISORY_REVIEW_FINDING_AUTHOR_VERIFIED",
+          "evidence": []
         }
       ],
       "objectives": [
@@ -262,7 +517,9 @@
             ],
             "kind": "CONSTRUCTED",
             "task": "Blank map: write the capital of each of the 15 counties (key: the reviewer-confirmed list).",
-            "scoring": "KEYED"
+            "scoring": "KEYED",
+            "assessmentPurpose": "SUMMATIVE",
+            "itemContext": "NEAR"
           },
           {
             "id": "ft01-a2",
@@ -271,7 +528,9 @@
             ],
             "kind": "CONSTRUCTED_EXPLANATION",
             "task": "A classmate writes 'Ganta is the capital of Nimba because it is the biggest town.' Explain the error and correct it.",
-            "scoring": "ANALYTIC_RUBRIC"
+            "scoring": "ANALYTIC_RUBRIC",
+            "assessmentPurpose": "SUMMATIVE",
+            "itemContext": "NEAR"
           },
           {
             "id": "ft01-a3",
@@ -281,7 +540,9 @@
             ],
             "kind": "SELECTED_RESPONSE_DIAGNOSTIC",
             "task": "Four items whose distractors are mapped to M1–M4.",
-            "scoring": "KEYED"
+            "scoring": "KEYED",
+            "assessmentPurpose": "SUMMATIVE",
+            "itemContext": "REHEARSED"
           },
           {
             "id": "ft01-a4",
@@ -290,7 +551,9 @@
             ],
             "kind": "REASONING_TASK",
             "task": "On the lesson's county map, name the counties a traveller crosses going by the coast from Buchanan to Greenville, and justify the order from the map.",
-            "scoring": "ANALYTIC_RUBRIC"
+            "scoring": "ANALYTIC_RUBRIC",
+            "assessmentPurpose": "SUMMATIVE",
+            "itemContext": "NEAR"
           }
         ],
         "selectedResponseMaxShare": 0.6,
@@ -301,31 +564,36 @@
           "id": "ft01-m1",
           "description": "The largest or best-known town is the capital (Ganta for Nimba).",
           "probe": "Distractor 'Ganta' on the Nimba item",
-          "feedback": "Ganta is Nimba's biggest trading town, but the county is administered from Sanniquellie."
+          "feedback": "Ganta is Nimba's biggest trading town, but the county is administered from Sanniquellie.",
+          "misconceptionId": "mc-civics-largest-town-is-capital"
         },
         {
           "id": "ft01-m2",
           "description": "Monrovia is the capital of Montserrado as well as of Liberia, or the national capital is also every county's capital.",
           "probe": "Two-part item: national capital, then Montserrado's county seat",
-          "feedback": "Liberia's capital and Montserrado's county seat are different roles."
+          "feedback": "Liberia's capital and Montserrado's county seat are different roles.",
+          "misconceptionId": "mc-civics-national-capital-is-county-seat"
         },
         {
           "id": "ft01-m3",
           "description": "Counties that are next to each other in a list are next to each other on the map (Maryland and Sinoe).",
           "probe": "Adjacency item",
-          "feedback": "Look at the map: Grand Kru lies between them."
+          "feedback": "Look at the map: Grand Kru lies between them.",
+          "misconceptionId": "mc-civics-list-order-is-map-adjacency"
         },
         {
           "id": "ft01-m4",
           "description": "Confusing the four 'Grand' counties (Bassa, Cape Mount, Gedeh, Kru) and their capitals.",
           "probe": "Matching item with all four",
-          "feedback": "A position cue: Cape Mount far west, Bassa central coast, Kru south-east coast, Gedeh east interior."
+          "feedback": "A position cue: Cape Mount far west, Bassa central coast, Kru south-east coast, Gedeh east interior.",
+          "misconceptionId": "mc-civics-grand-counties-confused"
         },
         {
           "id": "ft01-m5",
           "description": "The capital governs the county, or the county elects its own government.",
           "probe": "Constructed item ft01-a2 and a true/false item",
-          "feedback": "The capital is where the county administration sits. The superintendent is appointed by the President."
+          "feedback": "The capital is where the county administration sits. The superintendent is appointed by the President.",
+          "misconceptionId": "mc-civics-capital-governs-county"
         }
       ],
       "retention": {
@@ -334,16 +602,21 @@
           "Five county–capital pairs drawn at random, always including Nimba and one of the five counties the legacy lesson omitted",
           "Locate two counties on a blank map",
           "One capital-versus-largest-town explanation"
-        ]
+        ],
+        "policyRef": "ll-aep-001-retention-pilot@1.0.0",
+        "assessmentPurpose": "RETENTION",
+        "itemContext": "NEAR"
       },
       "transfer": {
         "context": "NEW",
         "task": "On a road map not used in the lesson, plan a trip from Voinjama to Harper. List the counties crossed and the capitals passed or near the route, and explain one reason the route is long.",
-        "scoring": "ANALYTIC_RUBRIC"
+        "scoring": "ANALYTIC_RUBRIC",
+        "assessmentPurpose": "TRANSFER",
+        "itemContext": "NEW"
       },
       "extension": {
         "optional": true,
-        "task": "Why were River Gee (2000) and Gbarpolu (2001) created as new counties? Find out from an adult or a source, and record the source."
+        "task": "Why were River Gee and Gbarpolu created as new counties around 2000–2001? (Sources differ on Gbarpolu's year.) Find out from an adult or a source, and record the source."
       },
       "teacherReview": [
         "Every county–capital pair matches a current official source (cite the source and its date in the review record).",
@@ -353,27 +626,137 @@
         "The correction notice to the class that used the legacy lesson is drafted and approved."
       ],
       "moeWaec": {
-        "moe": "MOE Social Studies Grade 7, a proxy for Civics (decision G0 pending). Objective binding is still a lexical lead and must be reviewed by a curriculum owner.",
+        "moe": "Civics is a distinct LiberiaLearn subject (owner direction, 2026-10-17). MOE Social Studies Grade 7 is recorded as a CROSS-REFERENCE only: no MOE Civics alignment is claimed, and no Social Studies objective is treated as the authority for this lesson.",
         "waec": "LJHSCE Social Studies applies at Grade 7. The repository's WAEC map is aggregator-sourced, so evidence specificity is LOW until the official syllabus is registered.",
-        "ceiling": "Objectives 2–3 go beyond recall and are not limited by exam scope."
+        "ceiling": "Objectives 2–3 go beyond recall and are not limited by exam scope.",
+        "subjectAuthority": "LIBERIALEARN_CIVICS",
+        "moeCrossReference": {
+          "subject": "SOCIAL_STUDIES",
+          "grade": 7,
+          "strand": "political geography",
+          "relation": "CROSS_REFERENCE_ONLY",
+          "objectiveBinding": "PROPOSED_LEXICAL_LEAD_UNREVIEWED"
+        }
       },
       "correctionNotice": {
         "recommended": true,
-        "reason": "Learners memorised Ganta as Nimba's capital (and possibly Monrovia as Montserrado's county seat).",
+        "reason": "Learners memorised Ganta as Nimba's capital (it is Sanniquellie) and Monrovia as Montserrado's county seat (it is Bensonville/Bentol).",
         "audience": "The class(es) with scheduled work or progress on the legacy lesson"
       },
       "openDecisions": [
         {
           "id": "OD-FT01-MONTSERRADO",
-          "question": "Does the official source list Bensonville as Montserrado's county seat?",
-          "authorRecommendation": "Yes, per standard references. Teach national capital and county seat as separate ideas either way."
+          "question": "Is Bensonville (Bentol) Montserrado's county seat?",
+          "authorRecommendation": "Yes. The owner's direction and the cited sources agree. A reviewer attaches an official Government of Liberia list when one is obtained.",
+          "status": "RESOLVED_BY_OWNER_AND_SOURCES"
         },
         {
-          "id": "OD-FT01-CIVICS-PROXY",
-          "question": "Adopt MOE Social Studies as the authority for Civics?",
-          "authorRecommendation": "Yes (gate G0), with Civics objectives recorded as a scoped relationship and never as direct MOE Civics alignment."
+          "id": "OD-FT01-CIVICS-SUBJECT",
+          "question": "How does Civics relate to MOE curriculum authority?",
+          "authorRecommendation": "Civics stays a distinct LiberiaLearn subject; MOE Social Studies is a cross-reference only.",
+          "status": "RESOLVED_BY_OWNER_2026-10-17"
         }
-      ]
+      ],
+      "stageBindings": {
+        "prerequisiteDiagnostic": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": "A 4-minute directions mini-scene (sun rises in the east; the map key) before the county map. / A nested-boxes visual: Liberia → county → district → town, using the learner's own county."
+        },
+        "concept": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": null
+        },
+        "visualOrLab": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": "A printable A4 outline map and a two-column county/capital table. / Paper cut-out capital cards placed on the printed map; a teacher answer sheet. / The same card as a text box in the printable pack."
+        },
+        "workedExample": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": null
+        },
+        "guidedPractice": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": null
+        },
+        "independentPractice": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": null
+        },
+        "endOfLessonCheck": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": null
+        },
+        "misconceptionProbes": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": null
+        },
+        "retentionProbe": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": null
+        },
+        "transferItem": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": null
+        },
+        "extension": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": false,
+          "fallback": null
+        }
+      },
+      "advisoryReview": {
+        "reviewer": {
+          "kind": "AI_AGENT",
+          "modelFamily": "anthropic-claude",
+          "role": "ADVISORY_SUBJECT_REVIEWER",
+          "countsAsIndependentReview": false
+        },
+        "procedure": "Blind diagnosis saved before the spec was opened, then per-defect verdicts with sources.",
+        "countsAsIndependentReview": false,
+        "files": {
+          "ft01-g7-civics-counties-capitals.blind.json": {
+            "path": "curriculum/modernization/v1/first-ten/advisory-reviews/ft01-g7-civics-counties-capitals.blind.json",
+            "sha256": "dac82a77e8d193aace51e7897cf043883a9178347f4c55486b66cfcef545b68d"
+          },
+          "ft01-g7-civics-counties-capitals.review.json": {
+            "path": "curriculum/modernization/v1/first-ten/advisory-reviews/ft01-g7-civics-counties-capitals.review.json",
+            "sha256": "fcae3c7a825360edafb0369907649a28c1c9c7af6d0dbaffaa6b599f7cf9359d"
+          }
+        },
+        "verdicts": {
+          "CONFIRMED": 6
+        },
+        "disputed": [],
+        "specRating": "ADEQUATE",
+        "correctionNoticeWarranted": true,
+        "adoptedIntoSpec": [
+          "D2 location narrowed (vocabulary sentence is true)",
+          "D5 adds Senate consent (Art. 54) and Art. 56",
+          "D7 circular item and hook geography",
+          "Extension: Gbarpolu creation-year conflict noted"
+        ]
+      }
     },
     {
       "key": "ft02-g7-civics-founding-of-liberia",
@@ -430,7 +813,13 @@
           "where": "delivery.body §4",
           "legacy": "Joseph Jenkins Roberts, a freed slave who became one of the first governors",
           "correction": "Joseph Jenkins Roberts was born free in Norfolk, Virginia (1809) and emigrated in 1829. He became the Commonwealth's first Black governor (1841) and Liberia's first President (1848).",
-          "verification": "AUTHOR_IDENTIFIED_REVIEWER_MUST_CONFIRM"
+          "verification": "AUTHOR_SOURCED_REVIEWER_MUST_CONFIRM",
+          "evidence": [
+            {
+              "sourceId": "SRC-LVA-ROBERTS",
+              "supports": "'born on March 15, 1809, in Norfolk, Virginia' to 'free Black parents'; emigrated 1829; 'first Black governor of Liberia in 1841'; first President of the Republic, 1847."
+            }
+          ]
         },
         {
           "id": "D2",
@@ -439,7 +828,13 @@
           "where": "delivery.body §4",
           "legacy": "Cuffe worked with the ACS ... and he helped to recruit settlers for the new colony",
           "correction": "Paul Cuffe died in 1817. His 1815–16 voyage took 38 emigrants to Sierra Leone. He corresponded with ACS founders, but he did not recruit settlers for Liberia, which began in 1822.",
-          "verification": "AUTHOR_IDENTIFIED_REVIEWER_MUST_CONFIRM"
+          "verification": "AUTHOR_SOURCED_REVIEWER_MUST_CONFIRM",
+          "evidence": [
+            {
+              "sourceId": "SRC-EBSCO-CUFFE",
+              "supports": "'Cuffe returned to West Africa in 1815 with thirty-eight African American emigrants'; 'Cuffe died peacefully at his home in Westport in 1817.'"
+            }
+          ]
         },
         {
           "id": "D3",
@@ -448,16 +843,36 @@
           "where": "delivery.body §1, §4",
           "legacy": "arrived on the shores of the St. Paul River in the early 19th century; In 1822, the ACS established the colony of Liberia, which was named after ...",
           "correction": "The first ACS emigrants (the Elizabeth, 1820) landed at Sherbro Island in present-day Sierra Leone. The settlement at Cape Mesurado (Providence Island) began in 1822, and the name 'Liberia' was adopted in 1824.",
-          "verification": "AUTHOR_IDENTIFIED_REVIEWER_MUST_CONFIRM"
+          "verification": "AUTHOR_SOURCED_REVIEWER_MUST_CONFIRM",
+          "evidence": [
+            {
+              "sourceId": "SRC-US-OOH-LIBERIA",
+              "supports": "1816 ACS founded; in 1820 settlers 'sailed for Sierra Leone' and sheltered on Sherbro ('Scherbo') Island; 1821 a site was obtained when Lt. Robert Stockton coerced a local ruler; in 1824 'the settlement was named Liberia and its capital Monrovia'."
+            },
+            {
+              "sourceId": "SRC-WP-MONROVIA",
+              "supports": "'On 7 January 1822, a ship took these settlers to Dazoe Island (now called Providence Island)'; 'In 1824, the city was renamed Monrovia after James Monroe'."
+            }
+          ]
         },
         {
           "id": "D4",
-          "severity": "MAJOR",
+          "severity": "MINOR",
           "kind": "FACTUAL",
           "where": "delivery.body §3 warm-up answer",
           "legacy": "The river that runs through the city of Monrovia is the St. Paul River.",
-          "correction": "Monrovia was founded on Cape Mesurado at the mouth of the Mesurado River. The St. Paul River forms the northern edge of Greater Monrovia (Bushrod Island). The key must not teach the St. Paul as the river running through the city; the reviewer confirms the wording.",
-          "verification": "AUTHOR_IDENTIFIED_REVIEWER_MUST_CONFIRM"
+          "correction": "Monrovia lies on the Cape Mesurado peninsula between the Atlantic and the Mesurado River; the St. Paul River lies directly north and borders Greater Monrovia (Bushrod Island). The key's 'runs through the city' is imprecise. Accept the Mesurado as the founding river, and the St. Paul as the northern boundary.",
+          "verification": "AUTHOR_SOURCED_REVIEWER_MUST_CONFIRM",
+          "evidence": [
+            {
+              "sourceId": "SRC-WP-MONROVIA",
+              "supports": "'Monrovia lies along the Cape Mesurado peninsula, between the Atlantic Ocean and the Mesurado River'; 'The Saint Paul River lies directly north of the city and forms the northern boundary of Bushrod Island'."
+            },
+            {
+              "sourceId": "SRC-ENCYC-MONROVIA",
+              "supports": "Main entry: 'at the mouth of the Mesurado River' on 'the promontory of Cape Mesurado'. CONFLICT: its Oxford entry places the city 'on the estuary of the River St Paul'. The St. Paul borders Greater Monrovia, so the legacy key is imprecise rather than simply false."
+            }
+          ]
         },
         {
           "id": "D5",
@@ -465,8 +880,14 @@
           "kind": "OFF_OBJECTIVE",
           "where": "delivery.body §7–§15",
           "legacy": "If Pewee ... traveled to Liberia in 1822 with 50 LD in his pocket ...",
-          "correction": "Every worked example and practice item is money subtraction and is unrelated to the history objectives. Liberian-dollar amounts in 1822–1825 are also anachronistic: the reviewer confirms that a Liberian currency was not issued before independence. Replace all of it with historical-thinking tasks.",
-          "verification": "AUTHOR_IDENTIFIED_REVIEWER_MUST_CONFIRM"
+          "correction": "Every worked example and practice item is money subtraction and is unrelated to the history objectives. The amounts are also anachronistic: the Liberian dollar was first issued in 1847, and before independence the colony used US money and ACS-issued notes. Replace all of it with historical-thinking tasks.",
+          "verification": "AUTHOR_SOURCED_REVIEWER_MUST_CONFIRM",
+          "evidence": [
+            {
+              "sourceId": "SRC-BANKNOTEWORLD-LRD",
+              "supports": "The first Liberian dollar was issued in 1847; before independence the ACS issued its own notes and coins. A low-authority source, so the reviewer should confirm it with a numismatic or central-bank source."
+            }
+          ]
         },
         {
           "id": "D6",
@@ -475,7 +896,8 @@
           "where": "delivery.body §1, §4–§6",
           "legacy": "conflict with local tribes; Civilization: the idea that Western culture is superior",
           "correction": "Indigenous peoples appear only as an obstacle; Dei, Bassa, Vai and other communities already living on the coast need their own perspective, with sources. 'Civilization' is mis-defined as an ideology: teach the ACS 'civilising mission' as the historical ideology and keep the ordinary meaning of the word separate.",
-          "verification": "AUTHOR_IDENTIFIED_REVIEWER_MUST_CONFIRM"
+          "verification": "AUTHOR_IDENTIFIED_REVIEWER_MUST_CONFIRM",
+          "evidence": []
         },
         {
           "id": "D7",
@@ -484,7 +906,23 @@
           "where": "delivery.body §17 next-lesson teaser",
           "legacy": "the country's struggle for independence and its experiences during the colonial era",
           "correction": "Liberia declared independence on 26 July 1847 and was not colonised by a European power. Present the ACS-administered settlement period accurately.",
-          "verification": "AUTHOR_IDENTIFIED_REVIEWER_MUST_CONFIRM"
+          "verification": "AUTHOR_SOURCED_REVIEWER_MUST_CONFIRM",
+          "evidence": [
+            {
+              "sourceId": "SRC-US-OOH-LIBERIA",
+              "supports": "'in 1847, Liberia declared independence from the American Colonization Society'; 'The United States finally established diplomatic relations with Liberia in 1862'."
+            }
+          ]
+        },
+        {
+          "id": "D8",
+          "severity": "MAJOR",
+          "kind": "PERSPECTIVE",
+          "where": "delivery.body §4–§5",
+          "legacy": "the ACS believed that Africa was the natural home of people of African descent ... provide a new home for freed slaves",
+          "correction": "The ACS is presented as purely benevolent. The US Office of the Historian records that it was founded amid the politics of slavery and race, to deal with the 'problem' of free Black people, and that its members included slaveholders. Teach its mixed motives with that source.",
+          "verification": "ADVISORY_REVIEW_FINDING_AUTHOR_VERIFIED",
+          "evidence": []
         }
       ],
       "objectives": [
@@ -576,7 +1014,9 @@
             ],
             "kind": "CONSTRUCTED",
             "task": "Put six events in order and add a one-sentence description to two of them.",
-            "scoring": "KEYED"
+            "scoring": "KEYED",
+            "assessmentPurpose": "SUMMATIVE",
+            "itemContext": "NEAR"
           },
           {
             "id": "ft02-a2",
@@ -585,7 +1025,9 @@
             ],
             "kind": "CONSTRUCTED_EXPLANATION",
             "task": "Using source cards A and B, explain how an emigrant and a member of an Indigenous community might have seen the 1822 settlement differently.",
-            "scoring": "ANALYTIC_RUBRIC"
+            "scoring": "ANALYTIC_RUBRIC",
+            "assessmentPurpose": "SUMMATIVE",
+            "itemContext": "NEAR"
           },
           {
             "id": "ft02-a3",
@@ -595,7 +1037,9 @@
             ],
             "kind": "SELECTED_RESPONSE_DIAGNOSTIC",
             "task": "Four items whose distractors are mapped to M1–M5.",
-            "scoring": "KEYED"
+            "scoring": "KEYED",
+            "assessmentPurpose": "SUMMATIVE",
+            "itemContext": "REHEARSED"
           }
         ],
         "selectedResponseMaxShare": 0.6,
@@ -606,31 +1050,36 @@
           "id": "ft02-m1",
           "description": "Liberia was a colony of the United States government.",
           "probe": "Claim-evaluation item",
-          "feedback": "The ACS was a private society. The US government did not rule the settlement, and it recognised Liberia only in 1862."
+          "feedback": "The ACS was a private society, not the US government. The US did give public money, a US government agent and Navy ships to help, but it did not rule the settlement, and it recognised Liberia only in 1862.",
+          "misconceptionId": "mc-history-liberia-us-government-colony"
         },
         {
           "id": "ft02-m2",
           "description": "All the settlers had been enslaved.",
           "probe": "True/false item about J. J. Roberts",
-          "feedback": "Many emigrants, Roberts among them, were born free."
+          "feedback": "Many emigrants, Roberts among them, were born free.",
+          "misconceptionId": "mc-history-all-settlers-formerly-enslaved"
         },
         {
           "id": "ft02-m3",
           "description": "The land was empty when the settlers arrived.",
           "probe": "Source item",
-          "feedback": "Dei, Bassa, Vai and other peoples already lived and traded on this coast."
+          "feedback": "Dei, Bassa, Vai and other peoples already lived and traded on this coast.",
+          "misconceptionId": "mc-history-land-was-empty"
         },
         {
           "id": "ft02-m4",
           "description": "Liberia was colonised by Europe like its neighbours, or was granted independence.",
           "probe": "Two-choice item",
-          "feedback": "Liberia declared its own independence in 1847."
+          "feedback": "Liberia declared its own independence in 1847.",
+          "misconceptionId": "mc-history-liberia-colonised-or-granted-independence"
         },
         {
           "id": "ft02-m5",
           "description": "Confusing 1822 (settlement) with 1847 (independence).",
           "probe": "Timeline item",
-          "feedback": "1822: the settlement begins. 1847: the Republic is declared."
+          "feedback": "1822: the settlement begins. 1847: the Republic is declared.",
+          "misconceptionId": "mc-history-1822-1847-confused"
         }
       ],
       "retention": {
@@ -639,12 +1088,17 @@
           "Order four founding events",
           "Name one person whose story the legacy lesson told wrongly and correct it",
           "One perspective sentence"
-        ]
+        ],
+        "policyRef": "ll-aep-001-retention-pilot@1.0.0",
+        "assessmentPurpose": "RETENTION",
+        "itemContext": "NEAR"
       },
       "transfer": {
         "context": "NEW",
         "task": "Read a short sourced account of Freetown's founding (1787/1792). Name one similarity to and one difference from Liberia's founding, using evidence.",
-        "scoring": "ANALYTIC_RUBRIC"
+        "scoring": "ANALYTIC_RUBRIC",
+        "assessmentPurpose": "TRANSFER",
+        "itemContext": "NEW"
       },
       "extension": {
         "optional": true,
@@ -658,9 +1112,17 @@
         "The correction notice about Roberts, Cuffe and the landing place is drafted."
       ],
       "moeWaec": {
-        "moe": "MOE Social Studies Grade 7 history strand (proxy for Civics). Legacy codes LR-CIV-G7_9-01/02 are unverified and must not be carried forward.",
+        "moe": "Civics is a distinct LiberiaLearn subject (owner direction, 2026-10-17). MOE Social Studies Grade 7 is recorded as a CROSS-REFERENCE only: no MOE Civics alignment is claimed, and no Social Studies objective is treated as the authority for this lesson. The legacy codes LR-CIV-G7_9-01/02 are unverified and are not carried forward.",
         "waec": "LJHSCE Social Studies (evidence specificity LOW until the official syllabus is registered).",
-        "ceiling": "The source-based perspective and claim-evaluation tasks are LiberiaLearn mastery and Global Excellence, beyond recall."
+        "ceiling": "The source-based perspective and claim-evaluation tasks are LiberiaLearn mastery and Global Excellence, beyond recall.",
+        "subjectAuthority": "LIBERIALEARN_CIVICS",
+        "moeCrossReference": {
+          "subject": "SOCIAL_STUDIES",
+          "grade": 7,
+          "strand": "history",
+          "relation": "CROSS_REFERENCE_ONLY",
+          "objectiveBinding": "PROPOSED_LEXICAL_LEAD_UNREVIEWED"
+        }
       },
       "correctionNotice": {
         "recommended": true,
@@ -671,14 +1133,115 @@
         {
           "id": "OD-FT02-SENSITIVITY",
           "question": "Who reviews historical sensitivity (settler/Indigenous relations) in addition to the subject reviewer?",
-          "authorRecommendation": "A second reviewer with Liberian history expertise, recorded as GE-ACC-1."
+          "authorRecommendation": "A second reviewer with Liberian history expertise, recorded as GE-ACC-1.",
+          "status": "OPEN"
         },
         {
           "id": "OD-FT02-SOURCES",
           "question": "Which primary-source excerpts are licensed for learner use?",
-          "authorRecommendation": "Public-domain 19th-century texts only, until a licensing decision covers others."
+          "authorRecommendation": "Public-domain 19th-century texts only, until a licensing decision covers others.",
+          "status": "OPEN"
         }
-      ]
+      ],
+      "stageBindings": {
+        "prerequisiteDiagnostic": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": "A timeline warm-up using the learner's own school years. / A fact/opinion sorting scene with feedback."
+        },
+        "concept": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": null
+        },
+        "visualOrLab": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": "A printed timeline strip with event cards to place. / A labelled printed map. / The same cards printed."
+        },
+        "workedExample": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": null
+        },
+        "guidedPractice": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": null
+        },
+        "independentPractice": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": null
+        },
+        "endOfLessonCheck": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": null
+        },
+        "misconceptionProbes": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": null
+        },
+        "retentionProbe": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": null
+        },
+        "transferItem": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": null
+        },
+        "extension": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": false,
+          "fallback": null
+        }
+      },
+      "advisoryReview": {
+        "reviewer": {
+          "kind": "AI_AGENT",
+          "modelFamily": "anthropic-claude",
+          "role": "ADVISORY_SUBJECT_REVIEWER",
+          "countsAsIndependentReview": false
+        },
+        "procedure": "Blind diagnosis saved before the spec was opened, then per-defect verdicts with sources.",
+        "countsAsIndependentReview": false,
+        "files": {
+          "ft02-g7-civics-founding-of-liberia.blind.json": {
+            "path": "curriculum/modernization/v1/first-ten/advisory-reviews/ft02-g7-civics-founding-of-liberia.blind.json",
+            "sha256": "7e527712768ed4e95a93905bce88674e5c62ee057904c29873520f94f5ac5f60"
+          },
+          "ft02-g7-civics-founding-of-liberia.review.json": {
+            "path": "curriculum/modernization/v1/first-ten/advisory-reviews/ft02-g7-civics-founding-of-liberia.review.json",
+            "sha256": "5abcdcbe4457399253fc40f73f417e6bd2dae03b4f4b39ffc1f895e3ed78cb0a"
+          }
+        },
+        "verdicts": {
+          "CONFIRMED": 7
+        },
+        "disputed": [],
+        "specRating": "ADEQUATE",
+        "correctionNoticeWarranted": true,
+        "adoptedIntoSpec": [
+          "D5 reworded: Liberian dollar first issued 1847 (ACS notes and tokens existed earlier)",
+          "D8 ACS presented as purely benevolent",
+          "m1 feedback acknowledges US public funding, agent and Navy"
+        ]
+      }
     },
     {
       "key": "ft03-g7-civics-democracy-representation",
@@ -735,7 +1298,17 @@
           "where": "delivery.body §7, §8, Key Takeaways",
           "legacy": "Elections and proportional representation are mechanisms that ensure diverse and fair governance ... allowing minority voices from areas like rural Nimba",
           "correction": "Liberia's House of Representatives has 73 members, each elected from a single-member electoral district by plurality. The Senate has two senators per county (30), equal for every county regardless of population. Proportional allocation may appear only as a labelled comparison model, never as Liberia's system.",
-          "verification": "AUTHOR_IDENTIFIED_REVIEWER_MUST_CONFIRM"
+          "verification": "AUTHOR_SOURCED_REVIEWER_MUST_CONFIRM",
+          "evidence": [
+            {
+              "sourceId": "SRC-LR-CONST-1986",
+              "supports": "Art. 45: 'Each county shall elect two Senators'; Art. 48: Representatives elected by the voters 'in each of the legislative constituencies'; Art. 80: constituencies of approximately equal population."
+            },
+            {
+              "sourceId": "SRC-WP-LEGISLATURE",
+              "supports": "'The House of Representatives contains 73 seats'; each member 'represents an electoral district', elected by 'a plurality of the vote'; 'The Senate has 30 members', two per county."
+            }
+          ]
         },
         {
           "id": "D2",
@@ -744,7 +1317,8 @@
           "where": "delivery.body §8 step 2",
           "legacy": "Community A ... ~ 3; B ~ 2; C ~ 1; D ~ 1; E ~ 4 (10 representatives total)",
           "correction": "The rounded allocation totals 3+2+1+1+4 = 11 seats, not 10. The mechanical auditor cannot detect this. Any apportionment example must state its method (e.g. largest remainder) and sum correctly.",
-          "verification": "AUTHOR_COMPUTED"
+          "verification": "AUTHOR_COMPUTED",
+          "evidence": []
         },
         {
           "id": "D3",
@@ -753,7 +1327,8 @@
           "where": "delivery.body §7 step 1 vs 'What Do You Notice'",
           "legacy": "Regardless of the differences in population size, each community's voice should resonate with equal significance ... This method illustrates equality ... through proportional representation",
           "correction": "This contradicts itself: equal representation per unit (like the Senate) and population-proportional representation (like the House principle) are different ideas. Teach the contrast explicitly.",
-          "verification": "AUTHOR_IDENTIFIED_REVIEWER_MUST_CONFIRM"
+          "verification": "AUTHOR_IDENTIFIED_REVIEWER_MUST_CONFIRM",
+          "evidence": []
         },
         {
           "id": "D4",
@@ -762,7 +1337,13 @@
           "where": "delivery.body §1",
           "legacy": "Gbanyan, our Superintendent ... This is representation",
           "correction": "County superintendents are appointed by the President, not elected. Teach elected versus appointed offices.",
-          "verification": "AUTHOR_IDENTIFIED_REVIEWER_MUST_CONFIRM"
+          "verification": "AUTHOR_SOURCED_REVIEWER_MUST_CONFIRM",
+          "evidence": [
+            {
+              "sourceId": "SRC-LR-CONST-1986",
+              "supports": "Art. 54 and Art. 56: superintendents are appointed by the President and serve at the President's pleasure."
+            }
+          ]
         },
         {
           "id": "D5",
@@ -771,7 +1352,8 @@
           "where": "delivery.body §6 memory tips; §4",
           "legacy": "\"Legis-late\" – laws ... take time (\"late\"); \"stituency\" can refer to state; Each LD$ possesses intrinsic value",
           "correction": "The etymologies are false: legislative comes from Latin lex/legis 'law' + latio 'proposing'. Paper currency has no intrinsic value; remove the analogy.",
-          "verification": "AUTHOR_IDENTIFIED_REVIEWER_MUST_CONFIRM"
+          "verification": "AUTHOR_IDENTIFIED_REVIEWER_MUST_CONFIRM",
+          "evidence": []
         },
         {
           "id": "D6",
@@ -780,7 +1362,13 @@
           "where": "objectives[1] vs body",
           "legacy": "Identify the roles of key representatives such as the President, Senators, and House of Representatives members",
           "correction": "Roles, terms of office (President 6 years; Senators 9; Representatives 6, per the 1986 Constitution as reviewer-confirmed) and the three branches are not taught. Worked examples are arithmetic apportionment, not civics.",
-          "verification": "AUTHOR_IDENTIFIED_REVIEWER_MUST_CONFIRM"
+          "verification": "AUTHOR_SOURCED_REVIEWER_MUST_CONFIRM",
+          "evidence": [
+            {
+              "sourceId": "SRC-LR-CONST-1986",
+              "supports": "Art. 45/46: senators nine years; Art. 48: representatives six years; Art. 50: President six years, at most two terms."
+            }
+          ]
         },
         {
           "id": "D7",
@@ -789,7 +1377,18 @@
           "where": "delivery.body",
           "legacy": "Flesch-Kincaid grade 13.9; 6 sections over 300 words",
           "correction": "Rewrite to the Grade 7 band, one idea per scene.",
-          "verification": "MECHANICAL_AUDIT_CONFIRMED"
+          "verification": "MECHANICAL_AUDIT_CONFIRMED",
+          "evidence": []
+        },
+        {
+          "id": "D8",
+          "severity": "MAJOR",
+          "kind": "MATHEMATICAL",
+          "where": "assessment.problemSets gp2, gp3; delivery.body §15",
+          "legacy": "District A ... approximately 3; B ... approximately 3; C ... 5; D ... 1; E ... 2 [for 15 representatives]; gp3 answerKey ''",
+          "correction": "The gp2 key allocates 3+3+5+1+2 = 14 of 15 seats; largest remainder gives A4 B3 C5 D1 E2. gp3 has an empty key. Tier 3 items weight seats by 'importance', which is not a democratic apportionment principle.",
+          "verification": "AUTHOR_COMPUTED",
+          "evidence": []
         }
       ],
       "objectives": [
@@ -877,7 +1476,9 @@
             ],
             "kind": "CONSTRUCTED",
             "task": "Complete a table: office, branch, how chosen, term.",
-            "scoring": "KEYED"
+            "scoring": "KEYED",
+            "assessmentPurpose": "SUMMATIVE",
+            "itemContext": "NEAR"
           },
           {
             "id": "ft03-a2",
@@ -886,7 +1487,9 @@
             ],
             "kind": "CONSTRUCTED_EXPLANATION",
             "task": "Explain how a citizen can hold an elected representative accountable, and why that is harder for an appointed official.",
-            "scoring": "ANALYTIC_RUBRIC"
+            "scoring": "ANALYTIC_RUBRIC",
+            "assessmentPurpose": "SUMMATIVE",
+            "itemContext": "NEAR"
           },
           {
             "id": "ft03-a3",
@@ -895,7 +1498,9 @@
             ],
             "kind": "REASONING_TASK",
             "task": "A small county and a large county each have two senators. Is that fair? Give a reason for and a reason against.",
-            "scoring": "ANALYTIC_RUBRIC"
+            "scoring": "ANALYTIC_RUBRIC",
+            "assessmentPurpose": "SUMMATIVE",
+            "itemContext": "NEAR"
           },
           {
             "id": "ft03-a4",
@@ -905,7 +1510,9 @@
             ],
             "kind": "SELECTED_RESPONSE_DIAGNOSTIC",
             "task": "Four items whose distractors are mapped to M1–M5.",
-            "scoring": "KEYED"
+            "scoring": "KEYED",
+            "assessmentPurpose": "SUMMATIVE",
+            "itemContext": "REHEARSED"
           }
         ],
         "selectedResponseMaxShare": 0.6,
@@ -916,31 +1523,36 @@
           "id": "ft03-m1",
           "description": "Every government official is elected.",
           "probe": "Elected/appointed sort",
-          "feedback": "Superintendents and ministers are appointed by the President."
+          "feedback": "Superintendents and ministers are appointed by the President.",
+          "misconceptionId": "mc-civics-all-officials-elected"
         },
         {
           "id": "ft03-m2",
           "description": "Liberia uses proportional representation.",
           "probe": "Senate seat-count item",
-          "feedback": "Each county has two senators whatever its population. House members are elected one per district."
+          "feedback": "Each county has two senators whatever its population. House members are elected one per district.",
+          "misconceptionId": "mc-civics-liberia-proportional-representation"
         },
         {
           "id": "ft03-m3",
           "description": "The President makes the laws.",
           "probe": "Branch-matching item",
-          "feedback": "The Legislature passes laws; the President can sign or veto them."
+          "feedback": "The Legislature passes laws; the President can sign or veto them.",
+          "misconceptionId": "mc-civics-president-makes-laws"
         },
         {
           "id": "ft03-m4",
           "description": "A representative speaks for the whole county.",
           "probe": "District item",
-          "feedback": "A representative is elected by one electoral district; senators represent the county."
+          "feedback": "A representative is elected by one electoral district; senators represent the county.",
+          "misconceptionId": "mc-civics-representative-speaks-for-county"
         },
         {
           "id": "ft03-m5",
           "description": "In a democracy the majority can do anything.",
           "probe": "Constitution item",
-          "feedback": "The Constitution limits every branch and protects rights."
+          "feedback": "The Constitution limits every branch and protects rights.",
+          "misconceptionId": "mc-civics-majority-unlimited-power"
         }
       ],
       "retention": {
@@ -949,12 +1561,17 @@
           "How many senators per county, and why that number does not depend on population",
           "One elected and one appointed office",
           "Which branch passes laws"
-        ]
+        ],
+        "policyRef": "ll-aep-001-retention-pilot@1.0.0",
+        "assessmentPurpose": "RETENTION",
+        "itemContext": "NEAR"
       },
       "transfer": {
         "context": "NEW",
         "task": "Design a student council for a school with four grades of very different sizes. Choose equal or size-based representation and justify it, naming one risk.",
-        "scoring": "ANALYTIC_RUBRIC"
+        "scoring": "ANALYTIC_RUBRIC",
+        "assessmentPurpose": "TRANSFER",
+        "itemContext": "NEW"
       },
       "extension": {
         "optional": true,
@@ -967,9 +1584,17 @@
         "The correction notice on proportional representation is drafted."
       ],
       "moeWaec": {
-        "moe": "MOE Social Studies Grade 7 government strand (proxy). The legacy code LR-CIV-G7_9-01 is a history code and must be dropped.",
+        "moe": "Civics is a distinct LiberiaLearn subject (owner direction, 2026-10-17). MOE Social Studies Grade 7 is recorded as a CROSS-REFERENCE only: no MOE Civics alignment is claimed, and no Social Studies objective is treated as the authority for this lesson. The legacy codes LR-CIV-G7_9-01/02 are unverified and are not carried forward.",
         "waec": "LJHSCE Social Studies (evidence specificity LOW).",
-        "ceiling": "The trade-off argument (ft03-o3) is above recall-level exam scope."
+        "ceiling": "The trade-off argument (ft03-o3) is above recall-level exam scope.",
+        "subjectAuthority": "LIBERIALEARN_CIVICS",
+        "moeCrossReference": {
+          "subject": "SOCIAL_STUDIES",
+          "grade": 7,
+          "strand": "government",
+          "relation": "CROSS_REFERENCE_ONLY",
+          "objectiveBinding": "PROPOSED_LEXICAL_LEAD_UNREVIEWED"
+        }
       },
       "correctionNotice": {
         "recommended": true,
@@ -980,9 +1605,108 @@
         {
           "id": "OD-FT03-TERMS",
           "question": "Teach terms of office now, or only the composition of each branch?",
-          "authorRecommendation": "Teach terms after a reviewer confirms them against the current Constitution."
+          "authorRecommendation": "Teach terms: President 6 years (two-term limit, Art. 50), Senators 9 years (Art. 45/46), Representatives 6 years (Art. 48), and the veto with legislative override.",
+          "status": "RESOLVED_BY_CONSTITUTION_TEXT"
         }
-      ]
+      ],
+      "stageBindings": {
+        "prerequisiteDiagnostic": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": "A county-map flash scene (links to ft01). / A class-election simulation scene."
+        },
+        "concept": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": null
+        },
+        "visualOrLab": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": "Printed diagram with captions. / Two printed tables with the same data."
+        },
+        "workedExample": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": null
+        },
+        "guidedPractice": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": null
+        },
+        "independentPractice": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": null
+        },
+        "endOfLessonCheck": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": null
+        },
+        "misconceptionProbes": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": null
+        },
+        "retentionProbe": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": null
+        },
+        "transferItem": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": null
+        },
+        "extension": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": false,
+          "fallback": null
+        }
+      },
+      "advisoryReview": {
+        "reviewer": {
+          "kind": "AI_AGENT",
+          "modelFamily": "anthropic-claude",
+          "role": "ADVISORY_SUBJECT_REVIEWER",
+          "countsAsIndependentReview": false
+        },
+        "procedure": "Blind diagnosis saved before the spec was opened, then per-defect verdicts with sources.",
+        "countsAsIndependentReview": false,
+        "files": {
+          "ft03-g7-civics-democracy-representation.blind.json": {
+            "path": "curriculum/modernization/v1/first-ten/advisory-reviews/ft03-g7-civics-democracy-representation.blind.json",
+            "sha256": "b0b89b034e130eb486f72a17702f606e7aeda5b143d1f62461480fbf05f61087"
+          },
+          "ft03-g7-civics-democracy-representation.review.json": {
+            "path": "curriculum/modernization/v1/first-ten/advisory-reviews/ft03-g7-civics-democracy-representation.review.json",
+            "sha256": "ee9997ed60de0a1d5917b57ad90193ce8b597f7a8f4990207110831e350b69fd"
+          }
+        },
+        "verdicts": {
+          "CONFIRMED": 7
+        },
+        "disputed": [],
+        "specRating": "ADEQUATE",
+        "correctionNoticeWarranted": true,
+        "adoptedIntoSpec": [
+          "D8 gp2 key sums to 14 of 15 (largest remainder A4 B3 C5 D1 E2); gp3 empty key; importance-weighted seats",
+          "OD-FT03-TERMS resolved from the constitution text"
+        ]
+      }
     },
     {
       "key": "ft04-g7-science-states-of-matter",
@@ -1040,7 +1764,8 @@
           "where": "delivery.body §7 step 6",
           "legacy": "The final temperature of the mixture is approximately 80.0°C.",
           "correction": "Cooling 300 g of juice to 0 °C releases at most 31,350 J, less than the 33,400 J needed to melt 100 g of ice. So about 93.9 g melts, about 6.1 g of ice remains, and the mixture stays at 0 °C. A mixture can never end hotter than its hottest part.",
-          "verification": "AUTHOR_COMPUTED"
+          "verification": "AUTHOR_COMPUTED",
+          "evidence": []
         },
         {
           "id": "D2",
@@ -1049,7 +1774,8 @@
           "where": "delivery.body §12",
           "legacy": "8360 + 133,600 = 142,960 ... x = 100 - 171.5 = -71.5° ... all boiled off",
           "correction": "8,360 + 133,600 = 141,960. Cooling the water to 0 °C releases 83,600 J. After 8,360 J warms the ice, 75,240 J melts about 225 g, leaving about 175 g of ice at 0 °C. Nothing boils off.",
-          "verification": "MECHANICAL_AUDIT_CONFIRMED"
+          "verification": "MECHANICAL_AUDIT_CONFIRMED",
+          "evidence": []
         },
         {
           "id": "D3",
@@ -1057,8 +1783,9 @@
           "kind": "SCIENTIFIC",
           "where": "delivery.body §13–§15 answer keys",
           "legacy": "Q = m * L_f = 500 g * 334 = 167,000 J; Likely between 11-15°C final; they will meet at 0-1°C",
-          "correction": "Freezing 500 g of water from 30 °C needs 62,700 J (cooling) + 167,000 J = 229,700 J removed. 250 g of ice at −5 °C in 300 g of water at 20 °C ends at 0 °C with about 67 g melted, not 11–15 °C. Two samples of ice alone end below 0 °C (−3.75 °C), with no liquid. The keys are vague ('likely', 'around') or wrong.",
-          "verification": "AUTHOR_COMPUTED"
+          "correction": "Freezing 500 g of water from 30 °C needs 62,700 J (cooling) + 167,000 J = 229,700 J removed. 250 g of ice at −5 °C in 300 g of water at 20 °C ends at 0 °C with about 67 g melted, not 11–15 °C. Tier 2 Problem 2 is ambiguous (is the 250 g at 0 °C ice or water?). If it is ice the mixture ends near −3.75 °C with no liquid; if it is water it ends at 0 °C with about 9 g frozen. A key of '0–1 °C' is wrong either way, since nothing ends above 0 °C. The keys are vague ('likely', 'around') or wrong.",
+          "verification": "AUTHOR_COMPUTED",
+          "evidence": []
         },
         {
           "id": "D4",
@@ -1066,8 +1793,9 @@
           "kind": "GRADE_FIT",
           "where": "delivery.body §7–§15",
           "legacy": "Specific heat of water = 4.18 J/g·°C; Latent heat of fusion for ice = 334 J/g",
-          "correction": "Quantitative latent-heat calorimetry is senior-secondary physics. Grade 7 needs the particle model, the changes of state and the energy direction. Calculation may appear only as an optional, labelled extension.",
-          "verification": "AUTHOR_IDENTIFIED_REVIEWER_MUST_CONFIRM"
+          "correction": "Quantitative latent-heat calorimetry is upper-secondary physics (e.g. GCSE ages 14–16 in England); the reviewer confirms against the MOE General Science syllabus. Grade 7 needs the particle model, the changes of state and the energy direction. Calculation may appear only as an optional, labelled extension.",
+          "verification": "AUTHOR_IDENTIFIED_REVIEWER_MUST_CONFIRM",
+          "evidence": []
         },
         {
           "id": "D5",
@@ -1076,7 +1804,8 @@
           "where": "delivery.body §1, §3, §6",
           "legacy": "the solid ice melts, but it also creates a reaction; This process is called evaporation [boiling]; Palm oil on a hot stove will eventually evaporate",
           "correction": "Melting is a physical change, not a reaction; fizzing comes from dissolved gas. Boiling and evaporation are different processes. Cooking oil smokes and breaks down rather than simply evaporating, so it is a poor example.",
-          "verification": "AUTHOR_IDENTIFIED_REVIEWER_MUST_CONFIRM"
+          "verification": "AUTHOR_IDENTIFIED_REVIEWER_MUST_CONFIRM",
+          "evidence": []
         },
         {
           "id": "D6",
@@ -1085,7 +1814,18 @@
           "where": "delivery.body §17",
           "legacy": "What was the most surprising fact you learned",
           "correction": "The exit ticket does not assess any objective and has no key.",
-          "verification": "MECHANICAL_AUDIT_CONFIRMED"
+          "verification": "MECHANICAL_AUDIT_CONFIRMED",
+          "evidence": []
+        },
+        {
+          "id": "D7",
+          "severity": "MAJOR",
+          "kind": "SCIENTIFIC",
+          "where": "delivery.body §8, §11, §9",
+          "legacy": "Following this method confirms the initial findings; Thus, ice will still remain frozen; they may declare that 'all liquids flow'; freezing water in a hot environment (like Nimba County)",
+          "correction": "Worked Example 2 gives no final temperature and claims to confirm the impossible 80 °C. Guided Practice 2 uses an invalid method and says the ice 'remains frozen' when about 285 g melts. Error Analysis labels a true statement ('all liquids flow') as a misconception and offers a meaningless example. Tier 3 Problem 1's answer is exactly 0 °C with about 68 g of ice left.",
+          "verification": "ADVISORY_REVIEW_FINDING_AUTHOR_VERIFIED",
+          "evidence": []
         }
       ],
       "objectives": [
@@ -1177,7 +1917,9 @@
             ],
             "kind": "CONSTRUCTED",
             "task": "Draw particles of palm oil as a liquid and as a solid, and label the differences.",
-            "scoring": "ANALYTIC_RUBRIC"
+            "scoring": "ANALYTIC_RUBRIC",
+            "assessmentPurpose": "SUMMATIVE",
+            "itemContext": "NEAR"
           },
           {
             "id": "ft04-a2",
@@ -1186,7 +1928,9 @@
             ],
             "kind": "CONSTRUCTED_EXPLANATION",
             "task": "Explain why wet clothes dry on a line without boiling.",
-            "scoring": "ANALYTIC_RUBRIC"
+            "scoring": "ANALYTIC_RUBRIC",
+            "assessmentPurpose": "SUMMATIVE",
+            "itemContext": "NEAR"
           },
           {
             "id": "ft04-a3",
@@ -1195,7 +1939,9 @@
             ],
             "kind": "REASONING_TASK",
             "task": "Data: a drink with ice reads 0 °C for 8 minutes, then rises. Explain the pattern using particles and energy.",
-            "scoring": "ANALYTIC_RUBRIC"
+            "scoring": "ANALYTIC_RUBRIC",
+            "assessmentPurpose": "SUMMATIVE",
+            "itemContext": "NEAR"
           },
           {
             "id": "ft04-a4",
@@ -1205,7 +1951,9 @@
             ],
             "kind": "SELECTED_RESPONSE_DIAGNOSTIC",
             "task": "Five items whose distractors are mapped to M1–M6.",
-            "scoring": "KEYED"
+            "scoring": "KEYED",
+            "assessmentPurpose": "SUMMATIVE",
+            "itemContext": "REHEARSED"
           }
         ],
         "selectedResponseMaxShare": 0.6,
@@ -1216,37 +1964,43 @@
           "id": "ft04-m1",
           "description": "The bubbles in boiling water are air.",
           "probe": "Distractor",
-          "feedback": "They are water vapour forming inside the liquid."
+          "feedback": "The large bubbles in boiling water are water vapour forming inside the liquid. The first tiny bubbles when you start heating are dissolved air coming out.",
+          "misconceptionId": "mc-science-boiling-bubbles-are-air"
         },
         {
           "id": "ft04-m2",
           "description": "The temperature keeps rising while ice melts, or a mixture can get hotter than its hottest part.",
           "probe": "Prediction item ft04-a3",
-          "feedback": "While ice is melting, the energy goes into changing state and the temperature stays near 0 °C."
+          "feedback": "While ice is melting, the energy goes into changing state and the temperature stays near 0 °C.",
+          "misconceptionId": "mc-science-temperature-rises-during-melting"
         },
         {
           "id": "ft04-m3",
           "description": "Water on a cold bottle leaks through the plastic.",
           "probe": "Explanation item",
-          "feedback": "Water vapour from the air condenses on the cold surface."
+          "feedback": "Water vapour from the air condenses on the cold surface.",
+          "misconceptionId": "mc-science-condensation-is-leakage"
         },
         {
           "id": "ft04-m4",
           "description": "Evaporation only happens at 100 °C.",
           "probe": "Drying-clothes item",
-          "feedback": "Evaporation happens at the surface at any temperature; boiling happens throughout the liquid at the boiling point."
+          "feedback": "Evaporation happens at the surface at any temperature; boiling happens throughout the liquid at the boiling point.",
+          "misconceptionId": "mc-science-evaporation-only-at-boiling-point"
         },
         {
           "id": "ft04-m5",
           "description": "The particles themselves expand or melt.",
           "probe": "Particle-drawing rubric row",
-          "feedback": "The particles stay the same; their spacing and motion change."
+          "feedback": "The particles stay the same; their spacing and motion change.",
+          "misconceptionId": "mc-science-particles-expand-or-melt"
         },
         {
           "id": "ft04-m6",
           "description": "Melting is a chemical reaction.",
           "probe": "Two-choice item",
-          "feedback": "No new substance forms, and the change reverses."
+          "feedback": "No new substance forms, and the change reverses.",
+          "misconceptionId": "mc-science-melting-is-chemical-change"
         }
       ],
       "retention": {
@@ -1255,12 +2009,17 @@
           "Name the change of state in three scenes",
           "Evaporation versus boiling",
           "What happens to the temperature while ice melts"
-        ]
+        ],
+        "policyRef": "ll-aep-001-retention-pilot@1.0.0",
+        "assessmentPurpose": "RETENTION",
+        "itemContext": "NEAR"
       },
       "transfer": {
         "context": "NEW",
         "task": "A clay water pot keeps drinking water cooler than a plastic bucket. Use evaporation and energy to explain why.",
-        "scoring": "ANALYTIC_RUBRIC"
+        "scoring": "ANALYTIC_RUBRIC",
+        "assessmentPurpose": "TRANSFER",
+        "itemContext": "NEW"
       },
       "extension": {
         "optional": true,
@@ -1286,9 +2045,110 @@
         {
           "id": "OD-FT04-SCOPE",
           "question": "Keep any quantitative heat content at Grade 7?",
-          "authorRecommendation": "Only as an optional, non-gating extension."
+          "authorRecommendation": "Only as an optional, non-gating extension.",
+          "status": "OPEN"
         }
-      ]
+      ],
+      "stageBindings": {
+        "prerequisiteDiagnostic": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": "A thermometer-reading mini-scene. / A particles-in-air demonstration scene (the smell of cooking spreads across the room)."
+        },
+        "concept": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": null
+        },
+        "visualOrLab": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": "A printed three-panel particle diagram and a role-play (learners as particles). / A printed graph with a data table. / A recorded data table for classes without ice or a thermometer."
+        },
+        "workedExample": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": null
+        },
+        "guidedPractice": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": null
+        },
+        "independentPractice": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": null
+        },
+        "endOfLessonCheck": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": null
+        },
+        "misconceptionProbes": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": null
+        },
+        "retentionProbe": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": null
+        },
+        "transferItem": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": null
+        },
+        "extension": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": false,
+          "fallback": null
+        }
+      },
+      "advisoryReview": {
+        "reviewer": {
+          "kind": "AI_AGENT",
+          "modelFamily": "anthropic-claude",
+          "role": "ADVISORY_SUBJECT_REVIEWER",
+          "countsAsIndependentReview": false
+        },
+        "procedure": "Blind diagnosis saved before the spec was opened, then per-defect verdicts with sources.",
+        "countsAsIndependentReview": false,
+        "files": {
+          "ft04-g7-science-states-of-matter.blind.json": {
+            "path": "curriculum/modernization/v1/first-ten/advisory-reviews/ft04-g7-science-states-of-matter.blind.json",
+            "sha256": "e61fa2448b31a111b3790b808ce336c789596b91e7d778bef01b556e32a9d62a"
+          },
+          "ft04-g7-science-states-of-matter.review.json": {
+            "path": "curriculum/modernization/v1/first-ten/advisory-reviews/ft04-g7-science-states-of-matter.review.json",
+            "sha256": "aae6685aadf7096141f339a4a9191ca5592da3d4af05292e323e0bd5ef6109ef"
+          }
+        },
+        "verdicts": {
+          "CONFIRMED": 6
+        },
+        "disputed": [],
+        "specRating": "ADEQUATE",
+        "correctionNoticeWarranted": true,
+        "adoptedIntoSpec": [
+          "D3 ambiguity of Tier 2 Problem 2 stated",
+          "D4 grade claim given a comparator and a syllabus check",
+          "D7 WE2, GP2, error-analysis and Tier 3 defects",
+          "m1 feedback distinguishes dissolved air"
+        ]
+      }
     },
     {
       "key": "ft05-g5-science-photosynthesis",
@@ -1345,7 +2205,8 @@
           "where": "delivery.body §7–§15",
           "legacy": "each plant can produce 5 grams of glucose each day",
           "correction": "Every practice and assessment item rests on invented, unlabelled glucose rates and is plain multiplication. Replace them with science tasks, and label any invented quantity as invented.",
-          "verification": "AUTHOR_IDENTIFIED_REVIEWER_MUST_CONFIRM"
+          "verification": "AUTHOR_IDENTIFIED_REVIEWER_MUST_CONFIRM",
+          "evidence": []
         },
         {
           "id": "D2",
@@ -1354,7 +2215,8 @@
           "where": "delivery.body §7 final answer; Key Takeaways",
           "legacy": "Boima will collect 350 grams of glucose; Photosynthesis is the process by which plants convert light into energy",
           "correction": "Glucose is not collected: the plant uses it for respiration and growth or stores it (in cassava, as starch in the roots). Light energy is changed into chemical energy; energy is not made from nothing.",
-          "verification": "AUTHOR_IDENTIFIED_REVIEWER_MUST_CONFIRM"
+          "verification": "AUTHOR_IDENTIFIED_REVIEWER_MUST_CONFIRM",
+          "evidence": []
         },
         {
           "id": "D3",
@@ -1363,7 +2225,8 @@
           "where": "delivery.body §1 vs whole lesson",
           "legacy": "Is it just from the soil?",
           "correction": "The central Grade 5 misconception, that plants get their food from the soil, is raised and never addressed.",
-          "verification": "AUTHOR_IDENTIFIED_REVIEWER_MUST_CONFIRM"
+          "verification": "AUTHOR_IDENTIFIED_REVIEWER_MUST_CONFIRM",
+          "evidence": []
         },
         {
           "id": "D4",
@@ -1372,7 +2235,8 @@
           "where": "delivery.body §5; objectives[0]",
           "legacy": "This reaction makes the water absorbed by the roots split into oxygen and hydrogen ... including its stages",
           "correction": "Water splitting and 'stages' are beyond Grade 5 (Flesch-Kincaid 11.5). Keep the inputs, the outputs and the role of light.",
-          "verification": "MECHANICAL_AUDIT_CONFIRMED"
+          "verification": "MECHANICAL_AUDIT_CONFIRMED",
+          "evidence": []
         },
         {
           "id": "D5",
@@ -1381,7 +2245,8 @@
           "where": "delivery.body §10, §13",
           "legacy": "8 palm oil plants",
           "correction": "The plant is the oil palm; palm oil is its product. The mnemonic 'stomata sounds like stomach' reinforces the idea that plants eat, so remove it.",
-          "verification": "AUTHOR_IDENTIFIED_REVIEWER_MUST_CONFIRM"
+          "verification": "AUTHOR_IDENTIFIED_REVIEWER_MUST_CONFIRM",
+          "evidence": []
         },
         {
           "id": "D6",
@@ -1390,7 +2255,38 @@
           "where": "delivery.body §13–§15",
           "legacy": "**Answer**: **150 grams**",
           "correction": "Answers are printed beside the practice items, and the exit ticket has no key.",
-          "verification": "MECHANICAL_AUDIT_CONFIRMED"
+          "verification": "MECHANICAL_AUDIT_CONFIRMED",
+          "evidence": []
+        },
+        {
+          "id": "D7",
+          "severity": "MAJOR",
+          "kind": "SCIENTIFIC",
+          "where": "delivery.body §6 vocabulary (Carbon Dioxide example)",
+          "legacy": "Plants take in carbon dioxide to produce oxygen.",
+          "correction": "The oxygen released in photosynthesis comes from water, not carbon dioxide; the lesson's own §5 says water splits. Teach the inputs and outputs without saying one makes the other.",
+          "verification": "ADVISORY_REVIEW_FINDING_AUTHOR_VERIFIED",
+          "evidence": []
+        },
+        {
+          "id": "D8",
+          "severity": "MAJOR",
+          "kind": "SCIENTIFIC",
+          "where": "delivery.body §4",
+          "legacy": "Glucose is crucial because it's how plants store energy",
+          "correction": "Plants store food mainly as starch; cassava roots store starch. Glucose is the sugar made first, then used or converted.",
+          "verification": "ADVISORY_REVIEW_FINDING_AUTHOR_VERIFIED",
+          "evidence": []
+        },
+        {
+          "id": "D9",
+          "severity": "MINOR",
+          "kind": "FALSE_MNEMONIC",
+          "where": "delivery.body §6 memory tips",
+          "legacy": "Chlorophyll sounds like 'chorus'; 'Glu-' sounds like 'glue'; humans exhale carbon dioxide, and plants 'breathe' it in",
+          "correction": "Remove the false word associations (chloro- means green, gluco- sweet) and the implication that plants do not respire.",
+          "verification": "ADVISORY_REVIEW_FINDING_AUTHOR_VERIFIED",
+          "evidence": []
         }
       ],
       "objectives": [
@@ -1459,7 +2355,7 @@
         },
         {
           "id": "ft05-v2",
-          "requirement": "An investigation scene: two seedlings, one under a box for 5 days, shown day by day as real or clearly labelled photos.",
+          "requirement": "An investigation scene: two seedlings, one under a box for 7 days, shown day by day as real or clearly labelled photos. Measure leaf colour and health, not height: a seedling in the dark can grow taller (etiolation) while turning pale, because it runs on food stored in its seed.",
           "offlineFallback": "A class investigation using two cups of seedlings and a cardboard box (7-day observation table)."
         }
       ],
@@ -1477,7 +2373,9 @@
             ],
             "kind": "CONSTRUCTED",
             "task": "Complete the word equation, then say where each input comes from.",
-            "scoring": "KEYED"
+            "scoring": "KEYED",
+            "assessmentPurpose": "SUMMATIVE",
+            "itemContext": "NEAR"
           },
           {
             "id": "ft05-a2",
@@ -1486,7 +2384,9 @@
             ],
             "kind": "CONSTRUCTED",
             "task": "Explain how water gets from the soil to a cassava leaf.",
-            "scoring": "ANALYTIC_RUBRIC"
+            "scoring": "ANALYTIC_RUBRIC",
+            "assessmentPurpose": "SUMMATIVE",
+            "itemContext": "NEAR"
           },
           {
             "id": "ft05-a3",
@@ -1495,7 +2395,9 @@
             ],
             "kind": "REASONING_TASK",
             "task": "Explain the investigation results: what changed, what stayed the same, and what that shows.",
-            "scoring": "ANALYTIC_RUBRIC"
+            "scoring": "ANALYTIC_RUBRIC",
+            "assessmentPurpose": "SUMMATIVE",
+            "itemContext": "NEAR"
           },
           {
             "id": "ft05-a4",
@@ -1505,7 +2407,9 @@
             ],
             "kind": "SELECTED_RESPONSE_DIAGNOSTIC",
             "task": "Four items whose distractors are mapped to M1–M5.",
-            "scoring": "KEYED"
+            "scoring": "KEYED",
+            "assessmentPurpose": "SUMMATIVE",
+            "itemContext": "REHEARSED"
           }
         ],
         "selectedResponseMaxShare": 0.6,
@@ -1516,31 +2420,36 @@
           "id": "ft05-m1",
           "description": "Plants get their food from the soil.",
           "probe": "'Where does the plant's food come from?' with a soil distractor",
-          "feedback": "Plants make their food in their leaves, from air and water, using light. Soil gives water and small amounts of minerals."
+          "feedback": "Plants make their food in their leaves, from air and water, using light. Soil gives water and small amounts of minerals.",
+          "misconceptionId": "mc-science-plant-food-from-soil"
         },
         {
           "id": "ft05-m2",
           "description": "Plants eat and breathe like animals through their leaves.",
           "probe": "Stomata item",
-          "feedback": "Stomata let gases in and out. The plant makes food; it does not eat it."
+          "feedback": "Stomata let gases in and out. The plant makes food; it does not eat it.",
+          "misconceptionId": "mc-science-plants-eat-through-leaves"
         },
         {
           "id": "ft05-m3",
           "description": "Plants only need sunlight and water.",
           "probe": "Inputs item",
-          "feedback": "Carbon dioxide from the air is also needed."
+          "feedback": "Carbon dioxide from the air is also needed.",
+          "misconceptionId": "mc-science-plants-need-only-light-and-water"
         },
         {
           "id": "ft05-m4",
           "description": "Plants make oxygen but do not use energy themselves.",
           "probe": "True/false item",
-          "feedback": "Plants use some of the sugar they make for their own energy."
+          "feedback": "Plants use some of the sugar they make for their own energy.",
+          "misconceptionId": "mc-science-plants-do-not-respire"
         },
         {
           "id": "ft05-m5",
           "description": "Photosynthesis makes energy from nothing.",
           "probe": "Energy item",
-          "feedback": "Light energy is changed into energy stored in sugar."
+          "feedback": "Light energy is changed into energy stored in sugar.",
+          "misconceptionId": "mc-science-photosynthesis-creates-energy"
         }
       ],
       "retention": {
@@ -1549,12 +2458,17 @@
           "The inputs and outputs of photosynthesis",
           "Where does a plant's food come from?",
           "One plant-part job"
-        ]
+        ],
+        "policyRef": "ll-aep-001-retention-pilot@1.0.0",
+        "assessmentPurpose": "RETENTION",
+        "itemContext": "NEAR"
       },
       "transfer": {
         "context": "NEW",
-        "task": "A farmer's cassava under tall trees grows small roots, while cassava in the open grows big roots. Explain why, using what you learned.",
-        "scoring": "ANALYTIC_RUBRIC"
+        "task": "A farmer's cassava under tall trees grows small roots, while cassava in the open grows big roots. Explain why, using what you learned. The rubric also gives credit for naming competition with the tall trees for water and nutrients as a contributing reason.",
+        "scoring": "ANALYTIC_RUBRIC",
+        "assessmentPurpose": "TRANSFER",
+        "itemContext": "NEW"
       },
       "extension": {
         "optional": true,
@@ -1572,17 +2486,120 @@
         "ceiling": "Evidence reasoning (ft05-o3) is mastery-level."
       },
       "correctionNotice": {
-        "recommended": false,
-        "reason": "There is no single factual answer to retract. The teacher guidance should still address the glucose-collecting misconception.",
-        "audience": "Teachers of the 2 scheduled classes"
+        "recommended": true,
+        "reason": "Learners were taught retractable falsehoods: that oxygen comes from carbon dioxide, that glucose is how plants store energy, and invented glucose yields presented as fact.",
+        "audience": "Teachers and learners of the 2 scheduled classes (51 learning events)"
       },
       "openDecisions": [
         {
           "id": "OD-FT05-VIDEOS",
           "question": "Who reviews the 10 video supplements linked to the legacy row?",
-          "authorRecommendation": "The same subject reviewer, recorded in the mapping plan. Videos are not carried over automatically."
+          "authorRecommendation": "The same subject reviewer, recorded in the mapping plan. Videos are not carried over automatically.",
+          "status": "OPEN"
         }
-      ]
+      ],
+      "stageBindings": {
+        "prerequisiteDiagnostic": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": "A plant-parts scene with a real cassava stem and leaf. / A short 'food gives energy' scene."
+        },
+        "concept": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": null
+        },
+        "visualOrLab": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": "A printed labelled diagram. / A class investigation using two cups of seedlings and a cardboard box (7-day observation table)."
+        },
+        "workedExample": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": null
+        },
+        "guidedPractice": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": null
+        },
+        "independentPractice": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": null
+        },
+        "endOfLessonCheck": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": null
+        },
+        "misconceptionProbes": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": null
+        },
+        "retentionProbe": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": null
+        },
+        "transferItem": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": null
+        },
+        "extension": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": false,
+          "fallback": null
+        }
+      },
+      "advisoryReview": {
+        "reviewer": {
+          "kind": "AI_AGENT",
+          "modelFamily": "anthropic-claude",
+          "role": "ADVISORY_SUBJECT_REVIEWER",
+          "countsAsIndependentReview": false
+        },
+        "procedure": "Blind diagnosis saved before the spec was opened, then per-defect verdicts with sources.",
+        "countsAsIndependentReview": false,
+        "files": {
+          "ft05-g5-science-photosynthesis.blind.json": {
+            "path": "curriculum/modernization/v1/first-ten/advisory-reviews/ft05-g5-science-photosynthesis.blind.json",
+            "sha256": "c6e09becee71973498c0489e1990c47b2bbaa918ecd8896f6358569fe28c9aaf"
+          },
+          "ft05-g5-science-photosynthesis.review.json": {
+            "path": "curriculum/modernization/v1/first-ten/advisory-reviews/ft05-g5-science-photosynthesis.review.json",
+            "sha256": "47f22fe9e082f086eba03bfd47f5726fd47ec95c5aed02e8fc82f6333118db46"
+          }
+        },
+        "verdicts": {
+          "CONFIRMED": 6
+        },
+        "disputed": [],
+        "specRating": "NEEDS_CHANGE",
+        "correctionNoticeWarranted": true,
+        "adoptedIntoSpec": [
+          "D7 oxygen comes from water, not CO2",
+          "D8 plants store starch, not glucose",
+          "D9 false mnemonics",
+          "Correction notice now recommended",
+          "Investigation: 7 days, measure colour not height (etiolation)",
+          "Transfer rubric credits competition"
+        ]
+      }
     },
     {
       "key": "ft06-g7-math-area-perimeter",
@@ -1639,7 +2656,8 @@
           "where": "delivery.body §8 step 3",
           "legacy": "Total area of all rows: 10 × 450 = 4500 ... Verify again if the distribution was miscalculated",
           "correction": "90 × 45 = 4,050 m², as §7 shows. The 'alternative method' produces 4,500 m², and the text leaves the contradiction unresolved.",
-          "verification": "AUTHOR_COMPUTED"
+          "verification": "AUTHOR_COMPUTED",
+          "evidence": []
         },
         {
           "id": "D2",
@@ -1648,7 +2666,8 @@
           "where": "delivery.body §17 Assessment 1",
           "legacy": "explore outside resources for real applications ... **Tell me more about whether assumptions hold.**",
           "correction": "The rhombus item is left unsolved, with generator residue. With side 6 m and one diagonal 8 m, the other diagonal is 2√20 ≈ 8.94 m, the area ≈ 35.8 m² and the perimeter 24 m. Either solve it within Grade 7 scope or replace it.",
-          "verification": "AUTHOR_COMPUTED"
+          "verification": "AUTHOR_COMPUTED",
+          "evidence": []
         },
         {
           "id": "D3",
@@ -1657,7 +2676,8 @@
           "where": "delivery.body §5 hexagon",
           "legacy": "the height (distance from the center to a vertex) is 2.6 meters",
           "correction": "2.6 m is the apothem (centre to the midpoint of a side). For a regular hexagon with side 3 m, the centre-to-vertex distance is 3 m.",
-          "verification": "AUTHOR_COMPUTED"
+          "verification": "AUTHOR_COMPUTED",
+          "evidence": []
         },
         {
           "id": "D4",
@@ -1666,7 +2686,8 @@
           "where": "assessment.problemSets ip2b",
           "legacy": "the area of one of Fatu's square tiles is 16 square meters, and the perimeter is also 16 meters",
           "correction": "This treats 16 m² and 16 m as comparable, which reinforces the area/perimeter confusion, and a 4 m tile is unrealistic. Use 30 cm or 40 cm tiles, and contrast units explicitly.",
-          "verification": "AUTHOR_IDENTIFIED_REVIEWER_MUST_CONFIRM"
+          "verification": "AUTHOR_IDENTIFIED_REVIEWER_MUST_CONFIRM",
+          "evidence": []
         },
         {
           "id": "D5",
@@ -1675,7 +2696,8 @@
           "where": "assessment.problemSets[0]",
           "legacy": "studentPrompt: 20 × 10 ...; answerKey: 20 + 14 = 34 ... 280 square meters",
           "correction": "The prompt and its key describe different problems. Every key must match its prompt exactly.",
-          "verification": "AUTHOR_IDENTIFIED_REVIEWER_MUST_CONFIRM"
+          "verification": "AUTHOR_IDENTIFIED_REVIEWER_MUST_CONFIRM",
+          "evidence": []
         },
         {
           "id": "D6",
@@ -1683,8 +2705,9 @@
           "kind": "COVERAGE",
           "where": "objectives[1]",
           "legacy": "Explain the significance of choosing the appropriate polygon shape for maximizing area while minimizing the perimeter",
-          "correction": "Never taught: there is no fixed-perimeter comparison. The trapezoid problem (GP3) does not say which sides are parallel, so its area is ill-posed.",
-          "verification": "AUTHOR_IDENTIFIED_REVIEWER_MUST_CONFIRM"
+          "correction": "Never taught: there is no fixed-perimeter comparison. The trapezoid problem (GP3) does not say which sides are parallel, and no arrangement of sides 12, 14, 10 and 16 fits a height of 10 m, so the shape cannot exist.",
+          "verification": "AUTHOR_IDENTIFIED_REVIEWER_MUST_CONFIRM",
+          "evidence": []
         },
         {
           "id": "D7",
@@ -1693,7 +2716,18 @@
           "where": "instruction.takeawaySummary[0]",
           "legacy": "Area of one triangle = 1200 m² / 2 = 600 square meters",
           "correction": "A practice answer leaked into the summary.",
-          "verification": "AUTHOR_IDENTIFIED_REVIEWER_MUST_CONFIRM"
+          "verification": "AUTHOR_IDENTIFIED_REVIEWER_MUST_CONFIRM",
+          "evidence": []
+        },
+        {
+          "id": "D8",
+          "severity": "MAJOR",
+          "kind": "MATHEMATICAL",
+          "where": "assessment.problemSets gp2; delivery.body §11",
+          "legacy": "a base of 10 meters, a height of 6 meters, and sides of 10 meters, 8 meters, and 6 meters ... Area = 30 square meters",
+          "correction": "The data are inconsistent: sides 6-8-10 make a right triangle whose height on the base of 10 is 4.8 m, so its area is 24 m², and the key's 30 m² uses an impossible height. §5's claim that any triangle in a rectangle has half its area is overgeneralised, and the vocabulary's '-gon means sides' is false (-gon means angle).",
+          "verification": "AUTHOR_COMPUTED",
+          "evidence": []
         }
       ],
       "objectives": [
@@ -1787,7 +2821,9 @@
             ],
             "kind": "PRODUCED_ANSWER",
             "task": "Area and perimeter of a rectangle, a triangle and an L-shape, with units.",
-            "scoring": "KEYED"
+            "scoring": "KEYED",
+            "assessmentPurpose": "SUMMATIVE",
+            "itemContext": "NEAR"
           },
           {
             "id": "ft06-a2",
@@ -1796,7 +2832,9 @@
             ],
             "kind": "CONSTRUCTED_EXPLANATION",
             "task": "A classmate says a 4 cm square has the same area and perimeter. Explain what is wrong.",
-            "scoring": "ANALYTIC_RUBRIC"
+            "scoring": "ANALYTIC_RUBRIC",
+            "assessmentPurpose": "SUMMATIVE",
+            "itemContext": "NEAR"
           },
           {
             "id": "ft06-a3",
@@ -1805,7 +2843,9 @@
             ],
             "kind": "REASONING_TASK",
             "task": "24 m of fence: find the whole-metre dimensions with the greatest area and justify why.",
-            "scoring": "ANALYTIC_RUBRIC"
+            "scoring": "ANALYTIC_RUBRIC",
+            "assessmentPurpose": "SUMMATIVE",
+            "itemContext": "NEAR"
           },
           {
             "id": "ft06-a4",
@@ -1815,7 +2855,9 @@
             ],
             "kind": "SELECTED_RESPONSE_DIAGNOSTIC",
             "task": "Four items whose distractors are mapped to M1–M5.",
-            "scoring": "KEYED"
+            "scoring": "KEYED",
+            "assessmentPurpose": "SUMMATIVE",
+            "itemContext": "REHEARSED"
           }
         ],
         "selectedResponseMaxShare": 0.6,
@@ -1826,31 +2868,36 @@
           "id": "ft06-m1",
           "description": "Area and perimeter are the same kind of quantity, or can be compared.",
           "probe": "Units item; ft06-a2",
-          "feedback": "Perimeter is a length (m); area counts squares (m²)."
+          "feedback": "Perimeter is a length (m); area counts squares (m²).",
+          "misconceptionId": "mc-math-area-perimeter-same-quantity"
         },
         {
           "id": "ft06-m2",
           "description": "Doubling the side lengths doubles the area.",
           "probe": "Scaling item",
-          "feedback": "Doubling both sides makes the area 4 times bigger."
+          "feedback": "Doubling both sides makes the area 4 times bigger.",
+          "misconceptionId": "mc-math-doubling-sides-doubles-area"
         },
         {
           "id": "ft06-m3",
           "description": "The area of a triangle is base × height (forgetting ½), or the slant side is used as the height.",
           "probe": "Distractors 2bh and 'slant × base'",
-          "feedback": "The height is perpendicular to the base, and the triangle is half the rectangle."
+          "feedback": "The height is perpendicular to the base, and the triangle is half the rectangle.",
+          "misconceptionId": "mc-math-triangle-area-omits-half-or-slant-height"
         },
         {
           "id": "ft06-m4",
           "description": "Shapes with the same perimeter have the same area.",
           "probe": "Fixed-perimeter item",
-          "feedback": "A 6 × 6 garden and an 11 × 1 garden both need 24 m of fence, but their areas are 36 m² and 11 m²."
+          "feedback": "A 6 × 6 garden and an 11 × 1 garden both need 24 m of fence, but their areas are 36 m² and 11 m².",
+          "misconceptionId": "mc-math-same-perimeter-same-area"
         },
         {
           "id": "ft06-m5",
           "description": "Perimeter is found by counting the squares along the edge.",
           "probe": "Grid-perimeter item",
-          "feedback": "Count the edge lengths, not the squares."
+          "feedback": "Count the edge lengths, not the squares.",
+          "misconceptionId": "mc-math-perimeter-counts-edge-squares"
         }
       ],
       "retention": {
@@ -1859,12 +2906,17 @@
           "The area and perimeter of a new rectangle with units",
           "Triangle area with a distractor height",
           "A same-perimeter comparison"
-        ]
+        ],
+        "policyRef": "ll-aep-001-retention-pilot@1.0.0",
+        "assessmentPurpose": "RETENTION",
+        "itemContext": "NEAR"
       },
       "transfer": {
         "context": "NEW",
-        "task": "How many 40 cm × 40 cm tiles are needed for a 6 m × 4 m classroom floor? Explain your method and any rounding.",
-        "scoring": "ANALYTIC_RUBRIC"
+        "task": "How many 40 cm × 40 cm tiles are needed for a 6 m × 4.5 m classroom floor? Explain your method and how you deal with the part-tiles.",
+        "scoring": "ANALYTIC_RUBRIC",
+        "assessmentPurpose": "TRANSFER",
+        "itemContext": "NEW"
       },
       "extension": {
         "optional": true,
@@ -1891,9 +2943,109 @@
         {
           "id": "OD-FT06-HEXAGON",
           "question": "Keep the regular-hexagon content at Grade 7?",
-          "authorRecommendation": "Move it to the optional extension."
+          "authorRecommendation": "Move it to the optional extension.",
+          "status": "OPEN"
         }
-      ]
+      ],
+      "stageBindings": {
+        "prerequisiteDiagnostic": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": "An area-model multiplication scene (links to place value). / A metre-stick scene."
+        },
+        "concept": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": null
+        },
+        "visualOrLab": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": "Graph paper and string. / Fold and cut a paper rectangle. / A printed table to complete."
+        },
+        "workedExample": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": null
+        },
+        "guidedPractice": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": null
+        },
+        "independentPractice": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": null
+        },
+        "endOfLessonCheck": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": null
+        },
+        "misconceptionProbes": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": null
+        },
+        "retentionProbe": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": null
+        },
+        "transferItem": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": null
+        },
+        "extension": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": false,
+          "fallback": null
+        }
+      },
+      "advisoryReview": {
+        "reviewer": {
+          "kind": "AI_AGENT",
+          "modelFamily": "anthropic-claude",
+          "role": "ADVISORY_SUBJECT_REVIEWER",
+          "countsAsIndependentReview": false
+        },
+        "procedure": "Blind diagnosis saved before the spec was opened, then per-defect verdicts with sources.",
+        "countsAsIndependentReview": false,
+        "files": {
+          "ft06-g7-math-area-perimeter.blind.json": {
+            "path": "curriculum/modernization/v1/first-ten/advisory-reviews/ft06-g7-math-area-perimeter.blind.json",
+            "sha256": "4e716eeae4077d7f989c5f55963893f2bec9844fa77ded1004c23974d9326909"
+          },
+          "ft06-g7-math-area-perimeter.review.json": {
+            "path": "curriculum/modernization/v1/first-ten/advisory-reviews/ft06-g7-math-area-perimeter.review.json",
+            "sha256": "f97ae137128ee8fa47fa0bc7c033f7b241e9431e6b9aa6290053921b1a67f388"
+          }
+        },
+        "verdicts": {
+          "CONFIRMED": 7
+        },
+        "disputed": [],
+        "specRating": "NEEDS_CHANGE",
+        "correctionNoticeWarranted": true,
+        "adoptedIntoSpec": [
+          "D6 trapezoid cannot exist",
+          "D8 gp2 inconsistent data (24 m² not 30 m²); -gon etymology; triangle-in-rectangle overgeneralisation",
+          "Transfer floor changed to 6 m × 4.5 m so part-tiles arise"
+        ]
+      }
     },
     {
       "key": "ft07-g7-math-fractions",
@@ -1950,7 +3102,8 @@
           "where": "delivery.body §6 vocabulary",
           "legacy": "Fraction: A numerical quantity that is not a whole number",
           "correction": "Fractions can equal whole numbers (4/4 = 1; 12/4 = 3, both in this lesson) and can be greater than 1. Define a fraction as a number that names equal parts of a whole, or a point on the number line.",
-          "verification": "AUTHOR_IDENTIFIED_REVIEWER_MUST_CONFIRM"
+          "verification": "AUTHOR_IDENTIFIED_REVIEWER_MUST_CONFIRM",
+          "evidence": []
         },
         {
           "id": "D2",
@@ -1959,7 +3112,8 @@
           "where": "delivery.body §9 error 2",
           "legacy": "Incorrect Answer: (3/4)/(1/4) = 3/1 = 3 ... they omit the process of flipping the divisor",
           "correction": "Counting how many quarters are in three quarters is a correct method with a correct answer. Labelling it an error penalises understanding. Division of fractions is also outside the stated objectives.",
-          "verification": "AUTHOR_IDENTIFIED_REVIEWER_MUST_CONFIRM"
+          "verification": "AUTHOR_IDENTIFIED_REVIEWER_MUST_CONFIRM",
+          "evidence": []
         },
         {
           "id": "D3",
@@ -1968,7 +3122,8 @@
           "where": "delivery.body §4",
           "legacy": "2/1 ÷ 2 = 2/2 = 1 kg ... And he keeps the other kg: 2/2 = 1/1",
           "correction": "This conflates a fraction of the bag with kilograms. Half of the bag is 1/2 of 2 kg = 1 kg. Always name the whole the fraction refers to.",
-          "verification": "AUTHOR_IDENTIFIED_REVIEWER_MUST_CONFIRM"
+          "verification": "AUTHOR_IDENTIFIED_REVIEWER_MUST_CONFIRM",
+          "evidence": []
         },
         {
           "id": "D4",
@@ -1977,7 +3132,8 @@
           "where": "objectives[2] vs body",
           "legacy": "Compare and simplify fractions.",
           "correction": "Comparison is never taught. The lesson also jumps to unlike denominators and division without teaching equivalence first.",
-          "verification": "AUTHOR_IDENTIFIED_REVIEWER_MUST_CONFIRM"
+          "verification": "AUTHOR_IDENTIFIED_REVIEWER_MUST_CONFIRM",
+          "evidence": []
         },
         {
           "id": "D5",
@@ -1986,7 +3142,18 @@
           "where": "delivery.body §3–§15",
           "legacy": "1/2 a liter of palm oil ... a bag of palm oil that weighs 3 kilograms ... 1/4 kilogram packets",
           "correction": "Palm oil switches between litres and kilograms. Use one measure, consistently and realistically.",
-          "verification": "AUTHOR_IDENTIFIED_REVIEWER_MUST_CONFIRM"
+          "verification": "AUTHOR_IDENTIFIED_REVIEWER_MUST_CONFIRM",
+          "evidence": []
+        },
+        {
+          "id": "D6",
+          "severity": "MINOR",
+          "kind": "ASSESSMENT",
+          "where": "delivery.body §9 error 1; §17 exit ticket",
+          "legacy": "Incorrect Answer: 1/4 + 1/2 = 1/6; Boima buys 1/2 kg ... gifts 1/3 kg",
+          "correction": "The sample error is not the common one (the typical error is 2/6). The exit ticket uses unlike denominators (1/2 − 1/3), which are outside the stated like-denominator objective.",
+          "verification": "ADVISORY_REVIEW_FINDING_AUTHOR_VERIFIED",
+          "evidence": []
         }
       ],
       "objectives": [
@@ -2066,7 +3233,8 @@
         "Place 3/4, 4/4 and 5/4 on a number line",
         "Add like denominators with bars",
         "Add 1/2 + 1/4 by splitting halves",
-        "Compare with a benchmark, with a hint"
+        "Compare with a benchmark, with a hint",
+        "Compare 3/4 and 2/3 using a common denominator, with feedback (rehearses the non-unit comparison assessed in ft07-a3)"
       ],
       "independentAssessment": {
         "endOfLesson": [
@@ -2077,7 +3245,9 @@
             ],
             "kind": "PRODUCED_ANSWER",
             "task": "Place four fractions (including 1 and 5/4) on a number line.",
-            "scoring": "KEYED"
+            "scoring": "KEYED",
+            "assessmentPurpose": "SUMMATIVE",
+            "itemContext": "NEAR"
           },
           {
             "id": "ft07-a2",
@@ -2086,7 +3256,9 @@
             ],
             "kind": "PRODUCED_ANSWER",
             "task": "Four sums and differences, two with related denominators.",
-            "scoring": "KEYED"
+            "scoring": "KEYED",
+            "assessmentPurpose": "SUMMATIVE",
+            "itemContext": "NEAR"
           },
           {
             "id": "ft07-a3",
@@ -2095,7 +3267,9 @@
             ],
             "kind": "REASONING_TASK",
             "task": "Which is more rice: 2/3 of a cup or 3/5 of a cup? Justify in two ways.",
-            "scoring": "ANALYTIC_RUBRIC"
+            "scoring": "ANALYTIC_RUBRIC",
+            "assessmentPurpose": "SUMMATIVE",
+            "itemContext": "NEAR"
           },
           {
             "id": "ft07-a4",
@@ -2106,7 +3280,9 @@
             ],
             "kind": "SELECTED_RESPONSE_DIAGNOSTIC",
             "task": "Four items whose distractors are mapped to M1–M5.",
-            "scoring": "KEYED"
+            "scoring": "KEYED",
+            "assessmentPurpose": "SUMMATIVE",
+            "itemContext": "REHEARSED"
           }
         ],
         "selectedResponseMaxShare": 0.6,
@@ -2117,31 +3293,36 @@
           "id": "ft07-m1",
           "description": "Add the numerators and the denominators (1/4 + 1/2 = 2/6).",
           "probe": "Distractor 2/6",
-          "feedback": "The size of the parts doesn't change when you combine them. Make the parts the same size first."
+          "feedback": "The size of the parts doesn't change when you combine them. Make the parts the same size first.",
+          "misconceptionId": "mc-math-fraction-add-numerators-and-denominators"
         },
         {
           "id": "ft07-m2",
           "description": "A bigger denominator means a bigger fraction.",
           "probe": "Compare 1/8 and 1/4",
-          "feedback": "More parts in the same whole means each part is smaller."
+          "feedback": "More parts in the same whole means each part is smaller.",
+          "misconceptionId": "mc-math-larger-denominator-larger-fraction"
         },
         {
           "id": "ft07-m3",
           "description": "Fractions are always less than 1.",
           "probe": "Number-line item including 5/4",
-          "feedback": "5/4 is one whole and one more quarter."
+          "feedback": "5/4 is one whole and one more quarter.",
+          "misconceptionId": "mc-math-fractions-always-less-than-one"
         },
         {
           "id": "ft07-m4",
           "description": "Losing track of the whole (a fraction of a bag versus kilograms).",
           "probe": "'Half of a 2 kg bag' item",
-          "feedback": "Say what the whole is before writing the fraction."
+          "feedback": "Say what the whole is before writing the fraction.",
+          "misconceptionId": "mc-math-fraction-whole-not-named"
         },
         {
           "id": "ft07-m5",
           "description": "Unequal parts can be named as fractions.",
           "probe": "Unequal-parts distractor",
-          "feedback": "Fractions need equal parts."
+          "feedback": "Fractions need equal parts.",
+          "misconceptionId": "mc-math-unequal-parts-as-fractions"
         }
       ],
       "retention": {
@@ -2150,12 +3331,17 @@
           "Place 3/2 on a number line",
           "1/2 + 3/8",
           "Compare 5/6 and 7/8 with a reason"
-        ]
+        ],
+        "policyRef": "ll-aep-001-retention-pilot@1.0.0",
+        "assessmentPurpose": "RETENTION",
+        "itemContext": "NEAR"
       },
       "transfer": {
         "context": "NEW",
         "task": "Two runners: one has finished 5/8 of a race and the other 2/3. Who is ahead? Explain using a number line.",
-        "scoring": "ANALYTIC_RUBRIC"
+        "scoring": "ANALYTIC_RUBRIC",
+        "assessmentPurpose": "TRANSFER",
+        "itemContext": "NEW"
       },
       "extension": {
         "optional": true,
@@ -2182,9 +3368,115 @@
         {
           "id": "OD-FT07-DIVISION",
           "question": "Remove division of fractions from this lesson?",
-          "authorRecommendation": "Yes. It belongs to a later lesson; keep only 'how many quarters' reasoning."
+          "authorRecommendation": "Yes. It belongs to a later lesson; keep only 'how many quarters' reasoning.",
+          "status": "OPEN"
+        },
+        {
+          "id": "OD-FT07-BRIDGE",
+          "question": "These objectives sit at about the Grade 3–5 level. Is this a Grade 7 bridge (remediation) lesson?",
+          "authorRecommendation": "Yes. Label it a Grade 7 bridge lesson for the fraction foundations Grade 7 work depends on, and add a Grade 7-level extension.",
+          "status": "OPEN"
         }
-      ]
+      ],
+      "stageBindings": {
+        "prerequisiteDiagnostic": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": "A fold-and-share scene with a paper 'kanya' bar. / A multiplication-facts practice scene."
+        },
+        "concept": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": null
+        },
+        "visualOrLab": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": "Paper strips folded into halves, quarters and eighths. / A printed number line from 0 to 2."
+        },
+        "workedExample": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": null
+        },
+        "guidedPractice": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": null
+        },
+        "independentPractice": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": null
+        },
+        "endOfLessonCheck": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": null
+        },
+        "misconceptionProbes": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": null
+        },
+        "retentionProbe": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": null
+        },
+        "transferItem": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": null
+        },
+        "extension": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": false,
+          "fallback": null
+        }
+      },
+      "advisoryReview": {
+        "reviewer": {
+          "kind": "AI_AGENT",
+          "modelFamily": "anthropic-claude",
+          "role": "ADVISORY_SUBJECT_REVIEWER",
+          "countsAsIndependentReview": false
+        },
+        "procedure": "Blind diagnosis saved before the spec was opened, then per-defect verdicts with sources.",
+        "countsAsIndependentReview": false,
+        "files": {
+          "ft07-g7-math-fractions.blind.json": {
+            "path": "curriculum/modernization/v1/first-ten/advisory-reviews/ft07-g7-math-fractions.blind.json",
+            "sha256": "db9092dfcc179e790350956b154462e089e4e406bf65c29f6dacf236a6222e3c"
+          },
+          "ft07-g7-math-fractions.review.json": {
+            "path": "curriculum/modernization/v1/first-ten/advisory-reviews/ft07-g7-math-fractions.review.json",
+            "sha256": "9f589f20a4de5f5823d2255c795fd7903ce393f5fb95cbbceb862d8e58a10e5b"
+          }
+        },
+        "verdicts": {
+          "CONFIRMED": 5
+        },
+        "disputed": [],
+        "specRating": "ADEQUATE",
+        "correctionNoticeWarranted": true,
+        "adoptedIntoSpec": [
+          "D6 atypical sample error and out-of-scope exit item",
+          "Guided comparison of non-unit fractions added",
+          "OD-FT07-BRIDGE grade-fit decision opened"
+        ]
+      }
     },
     {
       "key": "ft08-g2-math-place-value",
@@ -2241,7 +3533,8 @@
           "where": "delivery.body",
           "legacy": "3514 learner-facing words; Flesch-Kincaid grade 10",
           "correction": "Emergent readers need picture-led, narrated scenes. The budget is 1,200 words or fewer at a Grade 1–2 readability band.",
-          "verification": "MECHANICAL_AUDIT_CONFIRMED"
+          "verification": "MECHANICAL_AUDIT_CONFIRMED",
+          "evidence": []
         },
         {
           "id": "D2",
@@ -2250,7 +3543,8 @@
           "where": "delivery.body §1",
           "legacy": "Boima had LD$250 and US$20 ... US$1 was roughly equal to LD$200",
           "correction": "The hook poses a four-digit currency conversion (US$20 × 200 + 250 = LD$4,250) that the lesson never resolves and that is beyond Grade 2. It also states an unlabelled, time-sensitive exchange rate.",
-          "verification": "AUTHOR_COMPUTED"
+          "verification": "AUTHOR_COMPUTED",
+          "evidence": []
         },
         {
           "id": "D3",
@@ -2259,7 +3553,8 @@
           "where": "delivery.body §3, §4",
           "legacy": "15 × 10 = 150; 14 tens × 10 kilograms = 140 kilograms; '1' in 125 designates the hundreds place",
           "correction": "The objectives are two-digit numbers, but the lesson uses multiplication and three-digit numbers, and calls 143 '14 tens' without teaching regrouping or the hundreds place.",
-          "verification": "AUTHOR_IDENTIFIED_REVIEWER_MUST_CONFIRM"
+          "verification": "AUTHOR_IDENTIFIED_REVIEWER_MUST_CONFIRM",
+          "evidence": []
         },
         {
           "id": "D4",
@@ -2268,7 +3563,8 @@
           "where": "delivery.body §11, §15, §17",
           "legacy": "sells all the tens; sells half of the tens [56]; sell the equivalent of the number of tens [54]",
           "correction": "These items are ambiguous or ill-posed (5 tens cannot be halved into whole bundles; 'the equivalent of the number of tens' has no single reading). Every item needs exactly one defensible answer.",
-          "verification": "AUTHOR_IDENTIFIED_REVIEWER_MUST_CONFIRM"
+          "verification": "AUTHOR_IDENTIFIED_REVIEWER_MUST_CONFIRM",
+          "evidence": []
         },
         {
           "id": "D5",
@@ -2277,16 +3573,18 @@
           "where": "delivery.body §12",
           "legacy": "Encourage students to consider what happens if the price changes.",
           "correction": "Teacher-facing prose sits in the learner text; move it to the teacher view.",
-          "verification": "AUTHOR_IDENTIFIED_REVIEWER_MUST_CONFIRM"
+          "verification": "AUTHOR_IDENTIFIED_REVIEWER_MUST_CONFIRM",
+          "evidence": []
         },
         {
           "id": "D6",
           "severity": "MAJOR",
           "kind": "ASSESSMENT",
-          "where": "assessment.problemSets",
-          "legacy": "0 of 8 assessment prompts have an answer or scoring key",
-          "correction": "Key every item in the protected teacher/reviewer projection.",
-          "verification": "MECHANICAL_AUDIT_CONFIRMED"
+          "where": "assessment.problemSets PLACE_VALUE; gp3",
+          "legacy": "[ANSWER_START:PLACE_VALUE] ... inside studentPrompt; 'what is each cloth worth if the total cost in LD$ is proportional to quantity?'",
+          "correction": "All 12 problem sets carry keys, so the committed audit's 'unkeyed' finding is wrong (an auditor calibration issue for #195). The real defects: the PLACE_VALUE answer is embedded in the learner prompt (key leakage), and gp3 is unanswerable because no price is given, so its key invents LD$1 per cloth. Keys belong only in the protected projection.",
+          "verification": "AUTHOR_VERIFIED_CORRECTING_MECHANICAL_AUDIT",
+          "evidence": []
         }
       ],
       "objectives": [
@@ -2373,7 +3671,9 @@
             ],
             "kind": "PRODUCED_ANSWER",
             "task": "Show 36 on the mat, then write the number shown by a picture (5 tens and 9 ones).",
-            "scoring": "KEYED"
+            "scoring": "KEYED",
+            "assessmentPurpose": "SUMMATIVE",
+            "itemContext": "NEAR"
           },
           {
             "id": "ft08-a2",
@@ -2382,7 +3682,9 @@
             ],
             "kind": "CONSTRUCTED_EXPLANATION",
             "task": "Tell (spoken or drawn) what the 6 means in 61 and in 16.",
-            "scoring": "ANALYTIC_RUBRIC"
+            "scoring": "ANALYTIC_RUBRIC",
+            "assessmentPurpose": "SUMMATIVE",
+            "itemContext": "NEAR"
           },
           {
             "id": "ft08-a3",
@@ -2391,7 +3693,9 @@
             ],
             "kind": "REASONING_TASK",
             "task": "Which is more, 49 or 52? Show why using bundles.",
-            "scoring": "ANALYTIC_RUBRIC"
+            "scoring": "ANALYTIC_RUBRIC",
+            "assessmentPurpose": "SUMMATIVE",
+            "itemContext": "NEAR"
           },
           {
             "id": "ft08-a4",
@@ -2401,7 +3705,9 @@
             ],
             "kind": "SELECTED_RESPONSE_DIAGNOSTIC",
             "task": "Four picture items whose distractors are mapped to M1–M5.",
-            "scoring": "KEYED"
+            "scoring": "KEYED",
+            "assessmentPurpose": "SUMMATIVE",
+            "itemContext": "REHEARSED"
           }
         ],
         "selectedResponseMaxShare": 0.6,
@@ -2417,31 +3723,36 @@
           "id": "ft08-m1",
           "description": "A digit has its face value wherever it sits (the 4 in 47 is 4).",
           "probe": "Value item",
-          "feedback": "This 4 is 4 bundles of ten, which is 40."
+          "feedback": "This 4 is 4 bundles of ten, which is 40.",
+          "misconceptionId": "mc-math-digit-face-value"
         },
         {
           "id": "ft08-m2",
           "description": "Reversing digits (writing 74 for 47).",
           "probe": "Reversal distractor",
-          "feedback": "Tens are written first, on the left."
+          "feedback": "Tens are written first, on the left.",
+          "misconceptionId": "mc-math-two-digit-reversal"
         },
         {
           "id": "ft08-m3",
           "description": "Writing 'forty-seven' as 407.",
           "probe": "Write-the-number item",
-          "feedback": "4 tens and 7 ones is written 47."
+          "feedback": "4 tens and 7 ones is written 47.",
+          "misconceptionId": "mc-math-number-words-written-digit-by-digit"
         },
         {
           "id": "ft08-m4",
           "description": "Saying '40 tens' for 40.",
           "probe": "Mat item",
-          "feedback": "40 is 4 tens."
+          "feedback": "40 is 4 tens.",
+          "misconceptionId": "mc-math-tens-count-as-value"
         },
         {
           "id": "ft08-m5",
           "description": "Comparing by the ones digit (49 > 52 because 9 > 2).",
           "probe": "Compare item",
-          "feedback": "Compare the tens first: 5 tens is more than 4 tens."
+          "feedback": "Compare the tens first: 5 tens is more than 4 tens.",
+          "misconceptionId": "mc-math-compare-by-ones-digit"
         }
       ],
       "retention": {
@@ -2450,12 +3761,17 @@
           "Build a two-digit number on the mat",
           "The value of a tens digit",
           "Compare two numbers"
-        ]
+        ],
+        "policyRef": "ll-aep-001-retention-pilot@1.0.0",
+        "assessmentPurpose": "RETENTION",
+        "itemContext": "NEAR"
       },
       "transfer": {
         "context": "NEW",
         "task": "A picture of 63 seeds scattered on a mat: circle groups of ten and write how many seeds there are.",
-        "scoring": "KEYED"
+        "scoring": "KEYED",
+        "assessmentPurpose": "TRANSFER",
+        "itemContext": "NEW"
       },
       "extension": {
         "optional": true,
@@ -2481,9 +3797,113 @@
         {
           "id": "OD-FT08-LANGUAGE",
           "question": "Should narration include a Liberian English or local-language option for emergent readers?",
-          "authorRecommendation": "Yes, as an accessibility option, once a reviewed audio pipeline exists. It does not block acceptance."
+          "authorRecommendation": "Yes, as an accessibility option, once a reviewed audio pipeline exists. It does not block acceptance.",
+          "status": "OPEN"
         }
-      ]
+      ],
+      "stageBindings": {
+        "prerequisiteDiagnostic": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": "A count-and-touch scene with narration. / A 'make a ten' bundling scene."
+        },
+        "concept": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": null
+        },
+        "visualOrLab": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": "Real sticks with rubber bands or string. / A printed tens/ones mat and counters."
+        },
+        "workedExample": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": null
+        },
+        "guidedPractice": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": null
+        },
+        "independentPractice": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": null
+        },
+        "endOfLessonCheck": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": null
+        },
+        "misconceptionProbes": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": null
+        },
+        "retentionProbe": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": null
+        },
+        "transferItem": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": null
+        },
+        "extension": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": false,
+          "fallback": null
+        }
+      },
+      "advisoryReview": {
+        "reviewer": {
+          "kind": "AI_AGENT",
+          "modelFamily": "anthropic-claude",
+          "role": "ADVISORY_SUBJECT_REVIEWER",
+          "countsAsIndependentReview": false
+        },
+        "procedure": "Blind diagnosis saved before the spec was opened, then per-defect verdicts with sources.",
+        "countsAsIndependentReview": false,
+        "files": {
+          "ft08-g2-math-place-value.blind.json": {
+            "path": "curriculum/modernization/v1/first-ten/advisory-reviews/ft08-g2-math-place-value.blind.json",
+            "sha256": "10ae370cf7ead6199f97c5e19056e334997ab210f586005e5d6832af9bd63218"
+          },
+          "ft08-g2-math-place-value.review.json": {
+            "path": "curriculum/modernization/v1/first-ten/advisory-reviews/ft08-g2-math-place-value.review.json",
+            "sha256": "9649ebfe4b88ff78f520ec13f260b629c033b3b4b17da4db38a449bfcc078c61"
+          }
+        },
+        "verdicts": {
+          "CONFIRMED": 5,
+          "DISPUTED": 1
+        },
+        "disputed": [
+          {
+            "defectId": "D6",
+            "reason": "The legacy assessment.problemSets has 12 entries, and every one has a non-empty answerKey, including the two end-of-lesson items (ids '1' and '2': '2 tens and 9 ones'; '4 remaining eggs'). The mechanical claim '0 of 8 assessment prompts have an answer or scoring key' does not match the structured field in the extracted legacy text. Most likely the audit counted unkeyed prompts in delivery.body (s13-s17 render without answers) and did not link them to problemSets. The real key problems are different: the PLACE_VALUE key is embedded in its studentPrompt between ANSWER markers (visible to learners); the gp3 and assessment-2 keys rest on an invented price or one arbitrary reading; and the keys are multi-paragraph prose, not scoring keys. The spec should restate D6 accordingly."
+          }
+        ],
+        "specRating": "NEEDS_CHANGE",
+        "correctionNoticeWarranted": false,
+        "adoptedIntoSpec": [
+          "D6 restated: keys exist; key leakage in PLACE_VALUE prompt; gp3 unanswerable (corrects the mechanical audit)"
+        ]
+      }
     },
     {
       "key": "ft09-g7-literacy-main-idea",
@@ -2541,7 +3961,8 @@
           "where": "delivery.body vs delivery.bodyBlock",
           "legacy": "Direct Instruction (15 minutes) vs Direct Instruction (20 minutes) + Lab or Activity + a different independent passage",
           "correction": "One revision holds two different learner lessons, so what a learner sees depends on the format. The candidate must have a single learner text, and the legacy mapping plan must record both variants.",
-          "verification": "AUTHOR_IDENTIFIED_REVIEWER_MUST_CONFIRM"
+          "verification": "AUTHOR_IDENTIFIED_REVIEWER_MUST_CONFIRM",
+          "evidence": []
         },
         {
           "id": "D2",
@@ -2550,7 +3971,8 @@
           "where": "delivery.body Answer Key",
           "legacy": "Main Idea: The Bomi County rainforests are important for wildlife and ecosystems. Supporting Details: Home to diverse wildlife, and conservation efforts are underway.",
           "correction": "'Conservation efforts are underway' does not support the stated main idea. The key teaches the wrong idea of what a supporting detail is.",
-          "verification": "AUTHOR_IDENTIFIED_REVIEWER_MUST_CONFIRM"
+          "verification": "AUTHOR_IDENTIFIED_REVIEWER_MUST_CONFIRM",
+          "evidence": []
         },
         {
           "id": "D3",
@@ -2559,7 +3981,8 @@
           "where": "delivery.body examples and passages",
           "legacy": "palm oil is a major export for the country; rice production has increased significantly over the last few years",
           "correction": "Reading passages state unsourced claims as fact. Every passage must be either sourced or labelled as an authored example.",
-          "verification": "AUTHOR_IDENTIFIED_REVIEWER_MUST_CONFIRM"
+          "verification": "AUTHOR_IDENTIFIED_REVIEWER_MUST_CONFIRM",
+          "evidence": []
         },
         {
           "id": "D4",
@@ -2568,16 +3991,28 @@
           "where": "delivery.body Direct Instruction",
           "legacy": "69 words of concept explanation; 'look for keywords and phrases'",
           "correction": "Topic versus main idea, implied main ideas and a test for whether a detail supports the main idea are all missing.",
-          "verification": "MECHANICAL_AUDIT_CONFIRMED"
+          "verification": "MECHANICAL_AUDIT_CONFIRMED",
+          "evidence": []
         },
         {
           "id": "D5",
           "severity": "MAJOR",
           "kind": "ASSESSMENT",
-          "where": "delivery.body Answer Key; Closing",
+          "where": "delivery.body and delivery.bodyBlock Answer Keys; Closing; bodyBlock Lab (Kofi)",
           "legacy": "For your exit ticket, write down one thing you learned today",
           "correction": "The answer key is printed to learners, and the exit ticket is not evidence of either objective. The lab refers to a story about 'Kofi' whose text is never supplied.",
-          "verification": "MECHANICAL_AUDIT_CONFIRMED"
+          "verification": "AUTHOR_IDENTIFIED_REVIEWER_MUST_CONFIRM",
+          "evidence": []
+        },
+        {
+          "id": "D6",
+          "severity": "MAJOR",
+          "kind": "CONCEPTUAL",
+          "where": "delivery.body and bodyBlock Direct Instruction; Guided Practice teacher note",
+          "legacy": "the main idea is about the significance of the river in local life; (Accept answers highlighting improved rice production techniques.)",
+          "correction": "The legacy itself states topics where main ideas are required, teaching the topic/main-idea conflation the new lesson targets (ft09-m2). Every model main idea must be a complete claim.",
+          "verification": "ADVISORY_REVIEW_FINDING_AUTHOR_VERIFIED",
+          "evidence": []
         }
       ],
       "objectives": [
@@ -2661,7 +4096,9 @@
             ],
             "kind": "CONSTRUCTED",
             "task": "Write the main idea of a new 90-word paragraph in one sentence.",
-            "scoring": "ANALYTIC_RUBRIC"
+            "scoring": "ANALYTIC_RUBRIC",
+            "assessmentPurpose": "SUMMATIVE",
+            "itemContext": "NEAR"
           },
           {
             "id": "ft09-a2",
@@ -2670,7 +4107,9 @@
             ],
             "kind": "CONSTRUCTED_EXPLANATION",
             "task": "Two details are given; one does not support the main idea. Identify it and explain why.",
-            "scoring": "ANALYTIC_RUBRIC"
+            "scoring": "ANALYTIC_RUBRIC",
+            "assessmentPurpose": "SUMMATIVE",
+            "itemContext": "NEAR"
           },
           {
             "id": "ft09-a3",
@@ -2679,7 +4118,9 @@
             ],
             "kind": "REASONING_TASK",
             "task": "A paragraph with an implied main idea: state it and cite two details.",
-            "scoring": "ANALYTIC_RUBRIC"
+            "scoring": "ANALYTIC_RUBRIC",
+            "assessmentPurpose": "SUMMATIVE",
+            "itemContext": "NEAR"
           },
           {
             "id": "ft09-a4",
@@ -2689,7 +4130,9 @@
             ],
             "kind": "SELECTED_RESPONSE_DIAGNOSTIC",
             "task": "Four items whose distractors are mapped to M1–M5.",
-            "scoring": "KEYED"
+            "scoring": "KEYED",
+            "assessmentPurpose": "SUMMATIVE",
+            "itemContext": "REHEARSED"
           }
         ],
         "selectedResponseMaxShare": 0.5,
@@ -2700,31 +4143,36 @@
           "id": "ft09-m1",
           "description": "The first sentence is always the main idea.",
           "probe": "A paragraph whose main idea comes last",
-          "feedback": "Check every sentence against the umbrella test."
+          "feedback": "Check every sentence against the umbrella test.",
+          "misconceptionId": "mc-literacy-first-sentence-is-main-idea"
         },
         {
           "id": "ft09-m2",
           "description": "The main idea is the topic (one word).",
           "probe": "Topic distractor",
-          "feedback": "The main idea says something about the topic, in a sentence."
+          "feedback": "The main idea says something about the topic, in a sentence.",
+          "misconceptionId": "mc-literacy-main-idea-is-topic"
         },
         {
           "id": "ft09-m3",
           "description": "The most interesting detail is the main idea.",
           "probe": "Vivid-detail distractor",
-          "feedback": "A detail supports the main idea; it does not cover the whole paragraph."
+          "feedback": "A detail supports the main idea; it does not cover the whole paragraph.",
+          "misconceptionId": "mc-literacy-vivid-detail-is-main-idea"
         },
         {
           "id": "ft09-m4",
           "description": "The main idea lists every detail.",
           "probe": "Summary-list distractor",
-          "feedback": "The main idea is the one point all the details support."
+          "feedback": "The main idea is the one point all the details support.",
+          "misconceptionId": "mc-literacy-main-idea-lists-details"
         },
         {
           "id": "ft09-m5",
           "description": "Any related detail counts as support.",
           "probe": "Item ft09-a2",
-          "feedback": "A supporting detail gives a reason or an example for the main idea."
+          "feedback": "A supporting detail gives a reason or an example for the main idea.",
+          "misconceptionId": "mc-literacy-any-related-detail-supports"
         }
       ],
       "retention": {
@@ -2733,12 +4181,17 @@
           "The main idea of a new paragraph",
           "Reject a non-supporting detail",
           "Topic versus main idea"
-        ]
+        ],
+        "policyRef": "ll-aep-001-retention-pilot@1.0.0",
+        "assessmentPurpose": "RETENTION",
+        "itemContext": "NEAR"
       },
       "transfer": {
         "context": "NEW",
         "task": "A short community radio announcement script, a genre not rehearsed in the lesson: state its main idea and two supporting details.",
-        "scoring": "ANALYTIC_RUBRIC"
+        "scoring": "ANALYTIC_RUBRIC",
+        "assessmentPurpose": "TRANSFER",
+        "itemContext": "NEW"
       },
       "extension": {
         "optional": true,
@@ -2764,9 +4217,108 @@
         {
           "id": "OD-FT09-VARIANTS",
           "question": "Which legacy variant (body or bodyBlock) did learners actually receive?",
-          "authorRecommendation": "Determine it from the lessonFormat and the delivery logs before writing the mapping plan; record both."
+          "authorRecommendation": "Determine it from the lessonFormat and the delivery logs before writing the mapping plan; record both.",
+          "status": "OPEN"
         }
-      ]
+      ],
+      "stageBindings": {
+        "prerequisiteDiagnostic": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": "A read-aloud version with vocabulary support, then the same questions. / A short sentence/fragment scene."
+        },
+        "concept": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": null
+        },
+        "visualOrLab": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": "A printed organiser and detail strips. / Underline on paper."
+        },
+        "workedExample": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": null
+        },
+        "guidedPractice": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": null
+        },
+        "independentPractice": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": null
+        },
+        "endOfLessonCheck": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": null
+        },
+        "misconceptionProbes": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": null
+        },
+        "retentionProbe": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": null
+        },
+        "transferItem": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": null
+        },
+        "extension": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": false,
+          "fallback": null
+        }
+      },
+      "advisoryReview": {
+        "reviewer": {
+          "kind": "AI_AGENT",
+          "modelFamily": "anthropic-claude",
+          "role": "ADVISORY_SUBJECT_REVIEWER",
+          "countsAsIndependentReview": false
+        },
+        "procedure": "Blind diagnosis saved before the spec was opened, then per-defect verdicts with sources.",
+        "countsAsIndependentReview": false,
+        "files": {
+          "ft09-g7-literacy-main-idea.blind.json": {
+            "path": "curriculum/modernization/v1/first-ten/advisory-reviews/ft09-g7-literacy-main-idea.blind.json",
+            "sha256": "af6e44382a3bae8db4bbccc8bc209895f1e12a98ccaf63dd791c852947e0cc82"
+          },
+          "ft09-g7-literacy-main-idea.review.json": {
+            "path": "curriculum/modernization/v1/first-ten/advisory-reviews/ft09-g7-literacy-main-idea.review.json",
+            "sha256": "acc1a468d929ebd3f74c927544a24641365b4115af00aa15f2553e2075811bb7"
+          }
+        },
+        "verdicts": {
+          "CONFIRMED": 5
+        },
+        "disputed": [],
+        "specRating": "ADEQUATE",
+        "correctionNoticeWarranted": false,
+        "adoptedIntoSpec": [
+          "D5 location: Kofi lab is in bodyBlock",
+          "D6 legacy teaches topic/main-idea conflation"
+        ]
+      }
     },
     {
       "key": "ft10-g7-english-vocabulary-in-context",
@@ -2823,7 +4375,8 @@
           "where": "delivery.body §4, §7",
           "legacy": "an audacious tiger ... The cunning fox ... Liberian folktale; a 'quaint' village ... cobblestone streets",
           "correction": "Tigers are not native to Africa, and foxes are not animals of Liberia's forests. 'Cobblestone streets' is European imagery. Use authentic or carefully authored West African material, such as Liberian Spider trickster tales, and attribute Anansi to Akan (Ghanaian) tradition.",
-          "verification": "AUTHOR_IDENTIFIED_REVIEWER_MUST_CONFIRM"
+          "verification": "AUTHOR_IDENTIFIED_REVIEWER_MUST_CONFIRM",
+          "evidence": []
         },
         {
           "id": "D2",
@@ -2832,7 +4385,8 @@
           "where": "objectives[0] vs body",
           "legacy": "Identify and understand vocabulary in context within West African texts",
           "correction": "No West African text appears; every example is a single invented sentence.",
-          "verification": "AUTHOR_IDENTIFIED_REVIEWER_MUST_CONFIRM"
+          "verification": "AUTHOR_IDENTIFIED_REVIEWER_MUST_CONFIRM",
+          "evidence": []
         },
         {
           "id": "D3",
@@ -2841,7 +4395,8 @@
           "where": "delivery.body headings",
           "legacy": "## 1. Hook — The Real-World Challenge (300+ words); ## 7. Worked Example 1 — Standard Method (600+ words)",
           "correction": "Generator length instructions are visible to learners. The mechanical audit does not catch this; add a check.",
-          "verification": "AUTHOR_IDENTIFIED_REVIEWER_MUST_CONFIRM"
+          "verification": "AUTHOR_IDENTIFIED_REVIEWER_MUST_CONFIRM",
+          "evidence": []
         },
         {
           "id": "D4",
@@ -2850,7 +4405,8 @@
           "where": "delivery.body §8 'Try this Out'",
           "legacy": "With fervor akin to a hunted deer",
           "correction": "A hunted deer suggests fear, not fervour, so the example contradicts the target meaning. The false mnemonic 'inferring — in-fuse' must also go.",
-          "verification": "AUTHOR_IDENTIFIED_REVIEWER_MUST_CONFIRM"
+          "verification": "AUTHOR_IDENTIFIED_REVIEWER_MUST_CONFIRM",
+          "evidence": []
         },
         {
           "id": "D5",
@@ -2859,7 +4415,28 @@
           "where": "delivery.body",
           "legacy": "Flesch-Kincaid grade 13.5; largest section 1671 words",
           "correction": "Rewrite to the Grade 7 band, one idea per scene. Choose high-utility Tier 2 target words, not low-utility ones like 'ballyhoo'.",
-          "verification": "MECHANICAL_AUDIT_CONFIRMED"
+          "verification": "MECHANICAL_AUDIT_CONFIRMED",
+          "evidence": []
+        },
+        {
+          "id": "D6",
+          "severity": "BLOCKING",
+          "kind": "ASSESSMENT",
+          "where": "assessment.problemSets (skulk, cacophony, ballyhoo, spartan, quaint, pomp)",
+          "legacy": "studentPrompt: 'Pewee should focus on the stealth implied by the word \"shadows\" ...'; answerKey: ''",
+          "correction": "All 6 structured items have empty keys, and their learner prompts are the model answers. The live lesson has no valid assessment.",
+          "verification": "ADVISORY_REVIEW_FINDING_AUTHOR_VERIFIED",
+          "evidence": []
+        },
+        {
+          "id": "D7",
+          "severity": "MAJOR",
+          "kind": "STRUCTURE",
+          "where": "delivery.body",
+          "legacy": "(body ends at '9. Error Analysis (250+ words)')",
+          "correction": "The learner text stops after Error Analysis: there is no guided practice, independent practice, assessment or closing, and section 5 is missing.",
+          "verification": "ADVISORY_REVIEW_FINDING_AUTHOR_VERIFIED",
+          "evidence": []
         }
       ],
       "objectives": [
@@ -2946,7 +4523,9 @@
             ],
             "kind": "CONSTRUCTED",
             "task": "Infer the meanings of four words in a new 150-word passage and name the clue type for each.",
-            "scoring": "KEYED"
+            "scoring": "KEYED",
+            "assessmentPurpose": "SUMMATIVE",
+            "itemContext": "NEAR"
           },
           {
             "id": "ft10-a2",
@@ -2955,7 +4534,9 @@
             ],
             "kind": "CONSTRUCTED_EXPLANATION",
             "task": "Show the substitution check for one word and say whether the inferred meaning fits.",
-            "scoring": "ANALYTIC_RUBRIC"
+            "scoring": "ANALYTIC_RUBRIC",
+            "assessmentPurpose": "SUMMATIVE",
+            "itemContext": "NEAR"
           },
           {
             "id": "ft10-a3",
@@ -2964,7 +4545,9 @@
             ],
             "kind": "ORIGINAL_WRITING",
             "task": "Write 3–4 sentences explaining how replacing one word in the passage with a near-synonym changes its tone.",
-            "scoring": "ANALYTIC_RUBRIC"
+            "scoring": "ANALYTIC_RUBRIC",
+            "assessmentPurpose": "SUMMATIVE",
+            "itemContext": "NEAR"
           },
           {
             "id": "ft10-a4",
@@ -2974,7 +4557,9 @@
             ],
             "kind": "SELECTED_RESPONSE_DIAGNOSTIC",
             "task": "Four items whose distractors are mapped to M1–M5.",
-            "scoring": "KEYED"
+            "scoring": "KEYED",
+            "assessmentPurpose": "SUMMATIVE",
+            "itemContext": "REHEARSED"
           }
         ],
         "selectedResponseMaxShare": 0.5,
@@ -2985,31 +4570,36 @@
           "id": "ft10-m1",
           "description": "Any nearby word defines the target.",
           "probe": "A distractor taken from a non-clue word",
-          "feedback": "Find the signal word that links the clue to the target."
+          "feedback": "Find the signal word that links the clue to the target.",
+          "misconceptionId": "mc-english-nearby-word-defines-target"
         },
         {
           "id": "ft10-m2",
           "description": "One clue is enough, so there is no need to check.",
           "probe": "Item ft10-a2",
-          "feedback": "Substitute the meaning and reread."
+          "feedback": "Substitute the meaning and reread.",
+          "misconceptionId": "mc-english-single-clue-no-check"
         },
         {
           "id": "ft10-m3",
           "description": "Context clues are guessing.",
           "probe": "A justification item",
-          "feedback": "An inference must point to evidence in the text."
+          "feedback": "An inference must point to evidence in the text.",
+          "misconceptionId": "mc-english-context-clues-are-guessing"
         },
         {
           "id": "ft10-m4",
           "description": "Ignoring contrast signals ('but', 'unlike') and inferring the opposite meaning.",
           "probe": "A contrast-sentence distractor",
-          "feedback": "'But' signals the opposite of what came before."
+          "feedback": "'But' signals the opposite of what came before.",
+          "misconceptionId": "mc-english-contrast-signal-ignored"
         },
         {
           "id": "ft10-m5",
           "description": "Synonyms always have exactly the same meaning and tone.",
           "probe": "A connotation item",
-          "feedback": "'Bold' and 'reckless' are close in meaning but differ in tone."
+          "feedback": "'Bold' and 'reckless' are close in meaning but differ in tone.",
+          "misconceptionId": "mc-english-synonyms-identical-connotation"
         }
       ],
       "retention": {
@@ -3018,12 +4608,17 @@
           "Two words in a new sentence, each with its clue type",
           "A contrast clue",
           "A connotation pair"
-        ]
+        ],
+        "policyRef": "ll-aep-001-retention-pilot@1.0.0",
+        "assessmentPurpose": "RETENTION",
+        "itemContext": "NEAR"
       },
       "transfer": {
         "context": "NEW",
         "task": "A health notice (authored and labelled) with three unfamiliar words: infer each meaning and say which clue helped.",
-        "scoring": "KEYED"
+        "scoring": "KEYED",
+        "assessmentPurpose": "TRANSFER",
+        "itemContext": "NEW"
       },
       "extension": {
         "optional": true,
@@ -3041,17 +4636,117 @@
         "ceiling": "The connotation writing task is mastery-level."
       },
       "correctionNotice": {
-        "recommended": false,
-        "reason": "There are no exam-critical false facts, but teachers should be told about the misattributed folklore.",
-        "audience": "Teacher of the scheduled class"
+        "recommended": true,
+        "reason": "Learners were told that tigers and foxes are characters of West African and Liberian tales, and they were given an assessment whose prompts are its answers.",
+        "audience": "Teacher of the scheduled class (27 scheduled-work rows)"
       },
       "openDecisions": [
         {
           "id": "OD-FT10-LICENSING",
           "question": "May excerpts from living West African authors be used?",
-          "authorRecommendation": "Not until a licensing decision is made. Until then, use public-domain or LiberiaLearn-authored texts that a Liberian reviewer has checked."
+          "authorRecommendation": "Not until a licensing decision is made. Until then, use public-domain or LiberiaLearn-authored texts that a Liberian reviewer has checked.",
+          "status": "OPEN"
         }
-      ]
+      ],
+      "stageBindings": {
+        "prerequisiteDiagnostic": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": "A parts-of-speech refresher scene. / A glossary-reading scene."
+        },
+        "concept": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": null
+        },
+        "visualOrLab": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": "A printed passage; learners underline clue words and label the type. / A partner read-aloud check."
+        },
+        "workedExample": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": null
+        },
+        "guidedPractice": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": null
+        },
+        "independentPractice": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": null
+        },
+        "endOfLessonCheck": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": null
+        },
+        "misconceptionProbes": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": null
+        },
+        "retentionProbe": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": null
+        },
+        "transferItem": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": true,
+          "fallback": null
+        },
+        "extension": {
+          "sceneIds": null,
+          "assessmentDefinitionId": null,
+          "required": false,
+          "fallback": null
+        }
+      },
+      "advisoryReview": {
+        "reviewer": {
+          "kind": "AI_AGENT",
+          "modelFamily": "anthropic-claude",
+          "role": "ADVISORY_SUBJECT_REVIEWER",
+          "countsAsIndependentReview": false
+        },
+        "procedure": "Blind diagnosis saved before the spec was opened, then per-defect verdicts with sources.",
+        "countsAsIndependentReview": false,
+        "files": {
+          "ft10-g7-english-vocabulary-in-context.blind.json": {
+            "path": "curriculum/modernization/v1/first-ten/advisory-reviews/ft10-g7-english-vocabulary-in-context.blind.json",
+            "sha256": "ce7488fb403980b0df45b329e523f95217b0f8f9c63882cb1133535924e09239"
+          },
+          "ft10-g7-english-vocabulary-in-context.review.json": {
+            "path": "curriculum/modernization/v1/first-ten/advisory-reviews/ft10-g7-english-vocabulary-in-context.review.json",
+            "sha256": "c6955ee8ed904a14106d217a1efffb0429d76c4cca6f08ccf1e6e946d71bd96f"
+          }
+        },
+        "verdicts": {
+          "CONFIRMED": 5
+        },
+        "disputed": [],
+        "specRating": "NEEDS_CHANGE",
+        "correctionNoticeWarranted": true,
+        "adoptedIntoSpec": [
+          "D6 all 6 structured items have empty keys and answer-prompts",
+          "D7 lesson body ends at Error Analysis",
+          "Correction notice now recommended"
+        ]
+      }
     }
   ],
   "alternates": [

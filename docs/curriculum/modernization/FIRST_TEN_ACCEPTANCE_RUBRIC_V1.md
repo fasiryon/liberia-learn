@@ -1,6 +1,6 @@
 # First Ten Lessons: Lesson Acceptance Rubric V1
 
-Rubric `liberialearn-first-ten-acceptance-rubric/0.1.0` · contract [`FIRST_TEN_MODERNIZATION_SPEC_V1.md`](FIRST_TEN_MODERNIZATION_SPEC_V1.md) · source [`curriculum/modernization/v1/first-ten/spec.json`](../../../curriculum/modernization/v1/first-ten/spec.json) · status **PROPOSED_NOT_AGREED**
+Rubric `liberialearn-first-ten-acceptance-rubric/1.0.0` · contract [`FIRST_TEN_MODERNIZATION_SPEC_V1.md`](FIRST_TEN_MODERNIZATION_SPEC_V1.md) · source [`curriculum/modernization/v1/first-ten/spec.json`](../../../curriculum/modernization/v1/first-ten/spec.json) · status **READY_FOR_OWNER_APPROVAL**
 
 This rubric decides whether a modernised candidate for one of the ten lessons may be **accepted for release consideration**. Acceptance is not release, and it is not proof of learning. Release still needs `RELEASE_AUTHORIZED` under a mapping plan. A claim that the lesson works needs the Pilot Measurement Plan (`docs/curriculum/excellence/PILOT_MEASUREMENT_PLAN_V1.md`).
 
@@ -14,6 +14,8 @@ The rubric refines Curriculum Excellence Standard V1. Every dimension names the 
 | Independence | The author of a candidate, or of its specification, may not rate it. An AI reviewer's rating is advisory, is recorded with `AI_REVIEW_ADVISORY`, and never counts. |
 | Qualification | ACADEMIC: a subject expert for the grade band. ASSESSMENT: an assessment reviewer. ACCESSIBILITY: an accessibility reviewer. LOCALIZATION: a reviewer with Liberian context expertise. One person may hold two scopes, but never ACADEMIC and ASSESSMENT for the same lesson. |
 | Second expert | Civics/history lessons (ft01–ft03) and every Global Excellence task need a second independent subject check (GE-ACC-1). |
+| Evidence | Every factual correction carries cited sources (`defects[].evidence`, `sources.registry` in `spec.json`). The reviewer checks each citation and records CONFIRMED or DISPUTED. Secondary or low-authority sources (authority MEDIUM or LOW) do not by themselves meet R2: the reviewer attaches an official or primary source, or records why none exists. |
+| Advisory review | `lessons[].advisoryReview` holds blind AI advisory reviews (`countsAsIndependentReview: false`). They narrow the work and never replace a qualified human rating. |
 | Recording | One ledger `REVIEW_RECORDED` event per scope, with decision `ACCEPT`, `CHANGES_REQUESTED` or `REJECT` and a `reportDigest` equal to the SHA-256 of the completed rubric record (section 5). Release consideration requires human ACCEPT on both ACADEMIC and ASSESSMENT (`REQUIRED_ACCEPTANCE_SCOPES`); this rubric also requires ACCESSIBILITY and LOCALIZATION. |
 
 ## 2. Gates (in order; a lesson stops at the first failed gate)
@@ -34,7 +36,7 @@ Scores: **0** absent or wrong · **1** present but deficient · **2** meets the 
 |---:|---|---|:-:|---|---|---|
 | R1 | Identity, provenance and legacy disposition | ACADEMIC | yes | — (gate 1) | Exact hash binding; every legacy section ADOPTED, ADAPTED, REPLACED or REMOVED with a reason; a mapping plan for every live row and variant (e.g. ft09 `body`/`bodyBlock`) | Unbound candidate; a legacy section silently dropped |
 | R2 | Subject accuracy | ACADEMIC | yes | NF-ACC-1, NF-ACC-2, GE-ACC-1 | Every listed defect corrected; no new error; every fact cited; every numeric answer recomputed by the reviewer; results physically and mathematically possible | Any false fact, wrong key or impossible result |
-| R3 | Objectives and alignment | ACADEMIC | yes | NF-ALN-1, NF-ALN-2, NF-ALN-3 | 2–4 measurable, grade-appropriate objectives; each bound to a reviewed MOE objective, or recorded as a named scope extension; exam relevance stated with evidence specificity; nothing above scope is required | Unverified legacy codes carried forward; objectives untaught |
+| R3 | Objectives and alignment | ACADEMIC | yes | NF-ALN-1, NF-ALN-2, NF-ALN-3 | 2–4 measurable, grade-appropriate objectives; each bound to a reviewed MOE objective, or recorded as a named scope extension. **Civics (ft01–ft03):** objectives are LiberiaLearn Civics objectives (`subjectAuthority: LIBERIALEARN_CIVICS`); MOE Social Studies appears only as a reviewed cross-reference, and any claim of MOE Civics alignment scores 0. Exam relevance is stated with its evidence specificity, and nothing above scope is required | Unverified legacy codes carried forward; objectives untaught; Social Studies presented as Civics authority |
 | R4 | Conceptual depth and instructional progression | ACADEMIC | yes | NF-PRG-1, LM-PRG-1, LM-CON-2 | The spec's progression is realised: concrete → representational → abstract where relevant; a worked example precedes practice; support fades to scaffold NONE; each objective is evidenced in two forms | Practice unrelated to the objective (ft02, ft05 legacy); no fading |
 | R5 | Academic vocabulary and language load | ACCESSIBILITY | yes | LM-ACS-1 | Every vocabulary term in the spec is taught in context and used again in practice; readability is in the grade band (G1–3: 1,200 learner words or fewer, narrated); one idea per scene; demand is not lowered | Flesch-Kincaid well above grade; dense scenes |
 | R6 | Liberian relevance and evidence | LOCALIZATION | yes | NF-REL-1, LM-REL-1 | Contexts are accurate, current and respectful; no stereotypes; diverse Liberian names; invented data labelled; at least one authentic Liberian application per objective | Unsourced claims as fact; foreign imagery presented as local (ft10 legacy) |
@@ -74,7 +76,7 @@ A completed record is a JSON document with these fields. Its SHA-256 over canoni
 
 ```json
 {
-  "rubricVersion": "liberialearn-first-ten-acceptance-rubric/0.1.0",
+  "rubricVersion": "liberialearn-first-ten-acceptance-rubric/1.0.0",
   "lessonKey": "ft01-g7-civics-counties-capitals",
   "contentId": "wk_mca7a_fri_p4",
   "candidate": { "id": "…", "version": "…", "hash": "<64 hex>" },

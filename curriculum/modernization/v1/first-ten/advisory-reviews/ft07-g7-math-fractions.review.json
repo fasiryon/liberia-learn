@@ -1,0 +1,54 @@
+{
+"reviewKey": "ft07-g7-math-fractions",
+"contentId": "lesson_mca_1",
+"reviewer": {"kind": "AI_AGENT", "modelFamily": "anthropic-claude", "role": "ADVISORY_SUBJECT_REVIEWER", "countsAsIndependentReview": false},
+"blindFindings": [
+ "B1 MAJOR fraction defined as 'not a whole number' (the lesson itself uses 4/4 = 1, 2/1, 12/4 = 3)",
+ "B2 MAJOR s4 conflates the whole (the bag) with 2 kg; 2/1 / 2 = 2/2 muddle",
+ "B3 MAJOR s9 error 2 marks the correct (3/4)/(1/4) = 3/1 = 3 as wrong",
+ "B4 MINOR s9 error 1 (1/4+1/2 = 1/6) is not the typical misconception (2/6); no diagnosis",
+ "B5 MAJOR compare objective never taught; division taught despite being 'next lesson'; unlike denominators used beyond the objective",
+ "B6 MAJOR grade fit: like-denominator work is upper-primary content; tiers not differentiated; FK 12.8",
+ "B7 MAJOR exit ticket unkeyed; item 2 (1/2-1/3 = 1/6) uses unlike denominators",
+ "B8 MINOR hook problems never resolved (4 / 6 half-kg packets)",
+ "B9 MINOR 'two whole fractions' meaningless",
+ "B10 MINOR 'whole' conflated with 'whole number'",
+ "B11 MINOR palm oil in kg and L",
+ "B12 MINOR MOE code unverified",
+ "B13 all numerical answers correct"
+],
+"defectVerdicts": [
+ {"defectId": "D1", "verdict": "CONFIRMED", "reason": "Standard references treat fractions equal to or greater than 1 as fractions, and Grade 3 CCSS expects learners to recognise fractions equal to whole numbers. The spec's replacement 'a number that names equal parts of a whole, or a point on the number line' is acceptable. Leading with the number-line definition would avoid the part-whole-only limitation the spec criticises.",
+  "computation": "4/4 = 1; 12/4 = 3; 2/1 = 2; 3/2 = 1.5 (all appear in the lesson)",
+  "sources": [
+   {"url": "https://www.thecorestandards.org/Math/Content/3/NF/", "quote": "CCSS.Math.Content.3.NF.A.3.c: Express whole numbers as fractions, and recognize fractions that are equivalent to whole numbers."},
+   {"url": "https://en.wikipedia.org/wiki/Fraction", "quote": "Any integer can be written as a fraction with the number one as denominator. ... the fraction is called proper if the numerator is less than the denominator, and improper otherwise."}]},
+ {"defectId": "D2", "verdict": "CONFIRMED", "reason": "(3/4)/(1/4) = 3 is correct. With a common denominator, dividing the numerators is a valid method ('how many quarters are in three quarters'). Labelling it an error is mathematically wrong. Division is also outside the stated objectives, and the lesson's own close says division comes next.",
+  "computation": "Fraction(3,4)/Fraction(1,4) = 3; 3/1 = 3; (a/n)/(b/n) = a/b for n != 0",
+  "sources": [{"url": "https://www.thecorestandards.org/Math/Content/4/NF/", "quote": "4.NF.B.3.a: addition and subtraction of fractions as 'joining and separating parts referring to the same whole' (as retrieved). Same-whole unit reasoning is also what justifies counting quarters."}]},
+ {"defectId": "D3", "verdict": "CONFIRMED", "reason": "The legacy text treats 2/1 as 'the whole' and never writes 1/2 for half the bag. CCSS stresses that fractions must refer to the same named whole.",
+  "computation": "(1/2) * 2 kg = 1 kg; legacy 2/1 / 2 = 1, written as '2/2'",
+  "sources": [{"url": "https://www.thecorestandards.org/Math/Content/3/NF/", "quote": "Retrieved summary of 3.NF.A.3.d: comparisons only hold 'when both fractions refer to the same whole.'"}]},
+ {"defectId": "D4", "verdict": "CONFIRMED", "reason": "There is no comparison instruction or item anywhere in the lesson. Unlike denominators (warm-up 2, GP2, GP3, Tier 3, exit 2) and division (WE1, WE2) both appear without equivalence being taught first.",
+  "computation": "", "sources": [{"url": "https://www.thecorestandards.org/Math/Content/3/NF/", "quote": "3.NF.A.3.d: Compare two fractions with the same numerator or the same denominator by reasoning about their size."}]},
+ {"defectId": "D5", "verdict": "CONFIRMED", "reason": "Palm oil is given in litres (s3) and in kilograms (s4, s7, s14, s15), plus a 'bag of palm oil'. Its density is below 1 kg/L, so the two units are not interchangeable. No source was fetched for the density, but the inconsistency is plain in the text.", "computation": "", "sources": []}
+],
+"missedDefects": [
+ "s9 error 1 (1/4 + 1/2 = 1/6) is not the error learners typically make (adding tops and bottoms gives 2/6) and has no diagnosis. The spec's m1 uses the right example (2/6) but does not flag the legacy one.",
+ "Exit ticket item 2 (1/2 - 1/3) uses unlike, unrelated denominators, outside both the legacy objective and the new ft07-o2 ('related denominators'). The answer is 1/6. The audit flags it only as unkeyed.",
+ "Grade fit is not logged as a defect. Like-denominator addition and subtraction is CCSS Grade 4 (4.NF.B.3), and recognising whole-number fractions and simple comparison is Grade 3. The spec's own new objectives stay mostly at Grade 3-5 level.",
+ "The key takeaway 'clear methods for addition, subtraction, and division' and the closing 'next lesson ... division' contradict each other. This is a minor part of D2/D4.",
+ "s5 'palm oil represented as two whole fractions' is meaningless text."
+],
+"specIssues": [
+ "Grade ceiling: the spec is marked foundational, but its objectives (place 5/4 on a number line, related denominators, benchmark comparison) are CCSS Grade 3-5 content. Say explicitly whether this is a remediation/bridge lesson and which later G7 lesson covers general unlike denominators and mixed-number operations. Otherwise G7 learners are under-served.",
+ "ft07-a3 (2/3 vs 3/5) and the transfer task (5/8 vs 2/3) need unrelated common denominators (15, 24). That fits ft07-o3, which names common denominators, but the guided practice only rehearses related denominators and benchmarks. Add one unrelated-denominator comparison to guided practice so that a3 is not under-rehearsed.",
+ "Checked: 2/3 = 10/15 > 9/15 = 3/5; 2/3 (0.667) > 5/8 (0.625); 7/8 = 21/24 > 20/24 = 5/6; 1/2 + 3/8 = 7/8; fractions between 1/3 and 1/2 include 2/5, 3/7 and 5/12. All correct.",
+ "D1 replacement definition: prefer 'a number; it can be shown as a point on the number line' first, with the part-whole model second, so that improper fractions are not exceptions."
+],
+"specRating": "ADEQUATE",
+"specRatingReason": "All five defects are confirmed with sources, and every number in the spec is correct. The redesign (number line, named whole, equivalence before related denominators, a justified-comparison task, a transfer task) addresses the root misconceptions. The grade-ceiling question and a guided-practice gap before a3 should be recorded, but they do not block the repair.",
+"correctionNoticeWarranted": true,
+"correctionNoticeReason": "The lesson's progress records (12) and scheduled work span 2 schools. It taught a false definition (a fraction is never a whole number) and marked a correct method as an error, both of which can persist as misconceptions.",
+"notes": "Recomputed with Python fractions.Fraction via python -I -c. Sources: CCSS 3.NF and 4.NF pages and the Wikipedia Fraction article, all fetched. No NCTM page was retrieved. Advisory only."
+}

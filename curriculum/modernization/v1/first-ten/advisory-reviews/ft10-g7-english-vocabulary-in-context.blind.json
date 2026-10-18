@@ -1,0 +1,21 @@
+{
+  "reviewKey": "ft10-g7-english-vocabulary-in-context",
+  "contentId": "hero-english-g7-vocabulary-in-context-reading-west-african-texts",
+  "pass": "BLIND (written before opening spec.json)",
+  "blindFindings": [
+    {"id": "B1", "kind": "FACTUAL/CULTURAL", "severity": "HIGH", "where": "s4 'an audacious tiger' in West African oral tales; repeated 'the tale of the tiger'", "finding": "Tigers are not native to Africa (Asian species). A West African tale would feature a leopard. Presented as traditional West African story content."},
+    {"id": "B2", "kind": "FACTUAL/CULTURAL", "severity": "HIGH", "where": "s7 'Pewee is reading a Liberian folktale ... The cunning fox'", "finding": "Foxes do not occur in Liberia; the fox trickster is a European (Reynard) convention. Liberian trickster tales typically feature Spider, and also tortoise/turtle and other local animals. Needs verification."},
+    {"id": "B3", "kind": "CULTURAL", "severity": "LOW", "where": "s4 'a clever rabbit'", "finding": "West African trickster is the hare; rabbits are not native there. 'Rabbit' appears in some Liberian English retellings so this is minor."},
+    {"id": "B4", "kind": "CULTURAL", "severity": "MEDIUM", "where": "s4 Q5 'quaint' village with 'cobblestone streets'", "finding": "European imagery presented as context; and 'quaint', 'spartan', 'ballyhoo', 'pomp' are culturally Western, low-frequency words."},
+    {"id": "B5", "kind": "PEDAGOGY", "severity": "HIGH", "where": "s4 Check for Understanding Q1-Q6", "finding": "Context-clue questions give no actual sentence to read; the 'context' (no decorations, cobblestones, decorations and dances) appears only inside the answers. Learners cannot use context clues that are not provided; the method is circular."},
+    {"id": "B6", "kind": "ASSESSMENT", "severity": "HIGH", "where": "assessment.problemSets", "finding": "All six items have the answer text as the studentPrompt and an empty answerKey; there is no question for learners to answer. Assessment is broken."},
+    {"id": "B7", "kind": "STRUCTURE", "severity": "HIGH", "where": "body", "finding": "No guided practice, independent practice, assessment, exit ticket or closing; body ends at Error Analysis. Section 5 missing. takeawaySummary consists only of questions, not takeaways."},
+    {"id": "B8", "kind": "LANGUAGE", "severity": "MEDIUM", "where": "s8 Try this 'With fervor akin to a hunted deer'", "finding": "Faulty model sentence: a hunted deer suggests fear/flight, not fervor; models poor usage and misleads the inference."},
+    {"id": "B9", "kind": "LANGUAGE", "severity": "MEDIUM", "where": "s6 synonym example", "finding": "'\"clear\" is a synonym for \"unclouded\"' but 'unclouded' is not in the example sentence; confusing example."},
+    {"id": "B10", "kind": "LANGUAGE", "severity": "LOW", "where": "s6 'Inferring' memory tip 'in-fuse'", "finding": "False etymology (infer < Latin inferre, 'bring in'); 'fuse' association is misleading."},
+    {"id": "B11", "kind": "LANGUAGE", "severity": "LOW", "where": "s7 step 2 'If you're outwitted, you're puzzled or unsure'", "finding": "Overgeneralisation; outwitted means beaten by cleverness, not necessarily confused. The real clue is 'unsure of what had just happened'."},
+    {"id": "B12", "kind": "GRADE_FIT", "severity": "HIGH", "where": "s4 especially", "finding": "Ornate adult prose ('tapestry', 'vivid tableau', 'constellation of meanings') far above G7 reading level; sections carry author word-count headings ('(300+ words)')."},
+    {"id": "B13", "kind": "FACTUAL", "severity": "LOW", "where": "s4 'lush hills surrounding Monrovia'", "finding": "Monrovia sits on a low coastal plain/Cape Mesurado; 'hills surrounding' is loose but minor."},
+    {"id": "B14", "kind": "ALIGNMENT", "severity": "MEDIUM", "where": "title/objectives vs body", "finding": "Title promises West African texts but no actual West African text or excerpt is read; all sentences are invented."}
+  ]
+}

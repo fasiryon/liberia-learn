@@ -1,0 +1,22 @@
+{
+  "reviewKey": "ft08-g2-math-place-value",
+  "contentId": "hero-math-g2-place-value-tens-and-ones",
+  "pass": "BLIND (written before opening spec.json)",
+  "blindFindings": [
+    {"id": "B1", "kind": "GRADE_FIT/CONCEPTUAL", "severity": "HIGH", "where": "s1 hook", "finding": "Hook asks for total of LD$250 + US$20 at LD$200 per US$ (= LD$4,250): four-digit numbers, multiplication and currency conversion for a G2 two-digit place-value lesson. The question is never answered and place value (tens and ones) cannot answer it."},
+    {"id": "B2", "kind": "FACTUAL", "severity": "MEDIUM", "where": "s1 'US$1 was roughly equal to LD$200'", "finding": "Exchange rate is time-sensitive and should not be stated as a fixed fact in a learner text; needs verification and in any case is irrelevant for G2."},
+    {"id": "B3", "kind": "FACTUAL/CULTURAL", "severity": "MEDIUM", "where": "s7 step 3-4 '5 ten-dollar notes of LD$10', '8 single coins, each valued at LD$1'", "finding": "Need to verify current Liberian denominations. LD$1 coins exist historically but are scarcely circulating; the smallest common note is LD$5 or LD$10. Modelling ones with LD$1 coins may not match learners' lived experience."},
+    {"id": "B4", "kind": "GRADE_FIT", "severity": "MEDIUM", "where": "s3 warm-up Q2 '15 x 10 = 150'; s14 ip3b '91 x 2 = LD$182'", "finding": "Multiplication with products above 100 used as 'prior knowledge' and as a G2 practice item; beyond G2 scope."},
+    {"id": "B5", "kind": "SCOPE", "severity": "MEDIUM", "where": "s4 LD$125, LD$173, 143 kg as '14 tens and 3 ones'", "finding": "Hundreds introduced in a lesson whose objectives are two-digit numbers, while the closing says hundreds come next lesson. '14 tens' is correct but confusing before hundreds are taught."},
+    {"id": "B6", "kind": "ASSESSMENT", "severity": "HIGH", "where": "assessment item 2 '54 eggs ... sell the equivalent of the number of tens'", "finding": "Ambiguous: 'the number of tens' is 5, so selling 5 leaves 49; key says sell 50 leaving 4. The item tests reading of an ambiguous phrase, not place value."},
+    {"id": "B7", "kind": "ASSESSMENT", "severity": "HIGH", "where": "s15 ip3a '56 bundles ... sells half of the tens'", "finding": "Half of 5 tens is 2.5 tens; key computes 50/2 = 25 then 25 + 6 = 31, breaking the grouping model being taught. Ambiguous and poorly designed."},
+    {"id": "B8", "kind": "ASSESSMENT", "severity": "HIGH", "where": "gp3 Finda 93 lappa cloths", "finding": "'What is each cloth worth if the total cost is proportional to quantity?' is unanswerable from the data; key invents LD$1 per cloth and then 'confirms' each is worth LD$1 (circular). A lappa for LD$1 is also unrealistic."},
+    {"id": "B9", "kind": "CONCEPTUAL", "severity": "MEDIUM", "where": "s9 error 3 'Saying 50 and 8 as 508' / correction 'Tens place only multiplies by 10, not hundreds'", "finding": "Correction does not address the actual misconception (writing number words digit-by-digit, 'fifty-eight' -> 508); the explanation is muddled for G2."},
+    {"id": "B10", "kind": "ASSESSMENT", "severity": "MEDIUM", "where": "assessment.problemSets PLACE_VALUE", "finding": "Answer key for 73 is embedded in the studentPrompt between ANSWER markers, so the answer is visible."},
+    {"id": "B11", "kind": "PEDAGOGY", "severity": "MEDIUM", "where": "s8 'Alternative Method'", "finding": "The T|O line method is the same idea as method 1, not a genuinely alternative representation; no concrete manipulative activity (bundling sticks/bottle caps) for learners to do."},
+    {"id": "B12", "kind": "ALIGNMENT", "severity": "MEDIUM", "where": "moeAlignments LR-MATH-G1_3-05", "finding": "Telling time / days of week tagged to a place-value lesson; irrelevant code from keyword matching."},
+    {"id": "B13", "kind": "GRADE_FIT", "severity": "HIGH", "where": "whole body", "finding": "~3,500 words of adult prose ('consignment', 'fulfills his payment obligations', 'fortified, practical base') for G2 emergent readers."},
+    {"id": "B14", "kind": "CONSISTENCY", "severity": "LOW", "where": "s1 vs s4", "finding": "Boima is a young boy shopping in s1 and 'a well-known fruit vendor' in s4; Waterside/Water Side spelling; section 5 missing; takeaway uses 'apples' (imported, less local)."},
+    {"id": "B15", "kind": "CORRECT", "severity": "INFO", "where": "s4, s7, gp1, gp2, ip1, ip2, assessment 1", "finding": "Core place-value decompositions (47, 63, 86, 92, 58, 64, 87, 45, 32, 67, 78, 29) are arithmetically correct."}
+  ]
+}
