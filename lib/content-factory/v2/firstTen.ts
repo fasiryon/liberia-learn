@@ -74,7 +74,7 @@ export function loadFirstTenSources(specBytes: Buffer, extractDirectory: string)
   return result;
 }
 
-const KIND_MAP = { CONSTRUCTED: "SHORT_CONSTRUCTED_RESPONSE", CONSTRUCTED_EXPLANATION: "SHORT_CONSTRUCTED_RESPONSE", SELECTED_RESPONSE_DIAGNOSTIC: "SELECTED_RESPONSE", REASONING_TASK: "EXTENDED_REASONING", PRODUCED_ANSWER: "SHORT_CONSTRUCTED_RESPONSE", ORIGINAL_WRITING: "ORIGINAL_WRITING" } as const;
+export const FIRST_TEN_ASSESSMENT_KIND_MAP = { CONSTRUCTED: "SHORT_CONSTRUCTED_RESPONSE", CONSTRUCTED_EXPLANATION: "SHORT_CONSTRUCTED_RESPONSE", SELECTED_RESPONSE_DIAGNOSTIC: "SELECTED_RESPONSE", REASONING_TASK: "EXTENDED_REASONING", PRODUCED_ANSWER: "SHORT_CONSTRUCTED_RESPONSE", ORIGINAL_WRITING: "ORIGINAL_WRITING" } as const;
 
 /** Planning only. No candidate body, scoring key, visual asset, approval or review is invented. */
 export function firstTenBlueprint(sources: FirstTenSources, index: number): UnitBlueprint {
@@ -93,7 +93,7 @@ export function firstTenBlueprint(sources: FirstTenSources, index: number): Unit
     assessmentPlan: [
       ...lesson.prerequisites.map((p, i) => evidence(`${p.id}-diagnostic`, "diagnostic", "PREREQUISITE_DIAGNOSTIC", { timing: "PRE_LESSON", scoring: "KEYED", prerequisiteIndex: i, fallbackRoute: "worksheet" })),
       evidence(`${lesson.key}-practice`, "classwork", "SHORT_CONSTRUCTED_RESPONSE", { itemIds: [], timing: "IN_LESSON", scoring: "NOT_SCORED" }),
-      ...lesson.independentAssessment.endOfLesson.map((t, i) => evidence(t.id, "summative", KIND_MAP[t.kind], { objectiveIds: t.objectiveIds, scoring: t.scoring, ref: `${pin.sourceRef}#/lessons/${index}/independentAssessment/endOfLesson/${i}` })),
+      ...lesson.independentAssessment.endOfLesson.map((t, i) => evidence(t.id, "summative", FIRST_TEN_ASSESSMENT_KIND_MAP[t.kind], { objectiveIds: t.objectiveIds, scoring: t.scoring, ref: `${pin.sourceRef}#/lessons/${index}/independentAssessment/endOfLesson/${i}` })),
       evidence(`${lesson.key}-retention`, "retention", "DELAYED_RETRIEVAL", { timing: "DELAYED", delayDays: lesson.retention.delayDays, scoring: "KEYED" }),
       evidence(`${lesson.key}-transfer`, "transfer", "TRANSFER_TASK", { context: "NEW", scoring: lesson.transfer.scoring }),
       evidence(`${lesson.key}-extension`, "extension", "EXTENSION", { itemIds: [], optional: true, timing: "IN_LESSON", scoring: "NOT_SCORED" }),

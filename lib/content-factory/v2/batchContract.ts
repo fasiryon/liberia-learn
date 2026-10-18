@@ -40,6 +40,14 @@ export type BatchContract = z.infer<typeof batchContractSchema>;
 export type BatchLesson = BatchContract["lessons"][number];
 export type BatchAsset = z.infer<typeof assetSchema>;
 export const bytesHash = (bytes: string | Buffer) => createHash("sha256").update(bytes).digest("hex");
+export function assertBatchAssetBytes(asset: BatchAsset): void {
+  const bytes = Buffer.from(asset.bytesBase64, "base64");
+  if (bytes.toString("base64") !== asset.bytesBase64 || bytesHash(bytes) !== asset.sha256) throw new Error("batch_asset_hash_mismatch");
+  const badPng = asset.mimeType === "image/png" && bytes.subarray(0, 8).toString("hex") !== "89504e470d0a1a0a";
+  const badJpeg = asset.mimeType === "image/jpeg" && bytes.subarray(0, 3).toString("hex") !== "ffd8ff";
+  const badWebp = asset.mimeType === "image/webp" && (bytes.toString("ascii", 0, 4) !== "RIFF" || bytes.toString("ascii", 8, 12) !== "WEBP");
+  if (badPng || badJpeg || badWebp) throw new Error("batch_asset_format_mismatch");
+}
 export type ProductionCaptureInput = { raw: string; provenance: Parameters<typeof validateProductionCapture>[1]; manifestJson: string };
 
 /** All ten sources are checked before any author or output sink is invoked. No database client. */
@@ -96,14 +104,7 @@ export function prepareBatch(contractInput: unknown, inventoryInput: unknown, ca
         value = Reflect.get(value, key);
       }
     }
-    for (const asset of entry.assets) {
-      const bytes = Buffer.from(asset.bytesBase64, "base64");
-      if (bytes.toString("base64") !== asset.bytesBase64 || bytesHash(bytes) !== asset.sha256) throw new Error("batch_asset_hash_mismatch");
-      const badPng = asset.mimeType === "image/png" && bytes.subarray(0, 8).toString("hex") !== "89504e470d0a1a0a";
-      const badJpeg = asset.mimeType === "image/jpeg" && bytes.subarray(0, 3).toString("hex") !== "ffd8ff";
-      const badWebp = asset.mimeType === "image/webp" && (bytes.toString("ascii", 0, 4) !== "RIFF" || bytes.toString("ascii", 8, 12) !== "WEBP");
-      if (badPng || badJpeg || badWebp) throw new Error("batch_asset_format_mismatch");
-    }
+    entry.assets.forEach(assertBatchAssetBytes);
     return { entry, source, blueprint };
   });
   return { contract, report, lessons };
