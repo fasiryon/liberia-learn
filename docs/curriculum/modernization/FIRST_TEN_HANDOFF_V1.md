@@ -68,8 +68,22 @@ Content Factory compatibility probe: a read-only run of the factory's own zod sc
 4. **Accepted read-only export** in `factory-production-capture/1.0.0` form, with authorization, target/role, visibility and privacy-review references (Content Factory B-CF1). It requires an owner-authorized operator capture. The #195 extract cannot stand in for it, and this workstream will not connect to production.
 5. **Official Liberian sources.** No Government of Liberia county-capital list or NEC district count was retrievable. These corrections rest on consistent secondary sources plus the 1986 Constitution.
 6. **Content Factory:** unit-blueprint 2.1.0 objective kinds are uncommitted in the factory worktree. The Civics authority mapping needs the factory owner's confirmation. The factory's draft `first-ten-baseline.json` pins 0.1.0 and must be re-pinned to the 1.0.0 bytes.
-7. **Learning loop:** the retention policy `ll-aep-001-retention-pilot@1.0.0` exists only on the unmerged `feat/learning-loop-integration-v1`. The attempt-bound assistance ledger does not exist yet, so lesson-side evidence stays assisted.
+7. **Assessment V2 and learning loop:** the retention policy `ll-aep-001-retention-pilot@1.0.0` is owned by PR #193 (`feat/assessment-architecture-v2`, head `dd856850`, `lib/assessment/v2/retention.ts`), which is unmerged (see the erratum below). The attempt-bound assistance ledger does not exist yet, so lesson-side evidence stays assisted.
 8. **Base PRs:** #191 and #195 are unmerged drafts, and this branch is stacked on them. Pushes stay held under the repository's preview-protection rule.
 9. **Auditor calibration (#195):** the mechanical audit reported ft08's problem sets as unkeyed, but all 12 have keys (one leaks into a learner prompt). The audit should be corrected upstream; this contract restates the defect.
+
+## Errata (apply in the next contract version)
+
+These are recorded here rather than in `spec.json`, so that the 1.0.0 contract and manifest hashes offered for approval stay valid. Each will be applied when the contract next changes version.
+
+| # | Field | 1.0.0 says | Correct | Verified |
+|---|---|---|---|---|
+| E1 | `retentionPolicy.statusSource` | `git:f1db1d26:lib/assessment/v2/retention.ts (feat/learning-loop-integration-v1, unmerged)` | `git:dd8568500:lib/assessment/v2/retention.ts`, PR #193 (`feat/assessment-architecture-v2`, unmerged) | `LL_RETENTION_PILOT_POLICY` (`ll-aep-001-retention-pilot`, status APPROVED) is defined at `dd856850`, an ancestor of the learning-loop head. Reported by the learning-loop owner, 2026-10-17. |
+
+The erratum changes no policy id, version, interval or lesson field, and the learning-loop adapter's pins (`policyRef`, contract versions) are unaffected.
+
+## Consumers pinned to 1.0.0
+
+- Learning loop: `lib/learning-loop/v1/firstTenAdapter.ts` on `feat/learning-loop-integration-v1`. It reads `ac196397` and asserts the spec SHA-256 `648ec61a…`, and fails closed on any other contract version. `READY_FOR_OWNER_APPROVAL` maps to provisional, advisory-only coverage.
 
 Nothing here merges, deploys, publishes curriculum, changes production data, or creates official grades or mastery.
