@@ -1,8 +1,10 @@
+// route-policy: auth=session; scope=tenant; authority=assignment-class-teacher-or-school-admin; rationale=own-school assignment listing and creation with teacher-verified official score projection
 import { NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { logAudit } from "@/lib/audit";
 import { notifyAssignmentCreated } from "@/lib/assignment-notifications";
 import { prisma } from "@/lib/db";
+import { legacyAssignmentScoreAuthority } from "@/lib/academic-records/v2/gradeCalculation";
 import { createInboxNotification } from "@/lib/notifications/inboxService";
 import { logLearningEvent } from "@/lib/events/logLearningEvent";
 import { assignmentCreateSchema } from "@/lib/schemas/assignment";
@@ -116,6 +118,11 @@ export async function GET() {
             select: {
               id: true,
               score: true,
+              teacherApproved: true,
+              autoReleasedAt: true,
+              aiGrade: true,
+              gradedBy: true,
+              gradedAt: true,
               turnedInAt: true,
               Student: {
                 select: {
@@ -139,8 +146,8 @@ export async function GET() {
     return NextResponse.json({
       assignments: assignments.map((assignment) => {
         const submittedCount = assignment.submissions.filter((submission) => submission.turnedInAt).length;
-        const gradedCount = assignment.submissions.filter((submission) => submission.score != null).length;
         const gradedScores = assignment.submissions
+          .filter((submission) => legacyAssignmentScoreAuthority(submission) === "TEACHER")
           .map((submission) => submission.score)
           .filter((score): score is number => typeof score === "number");
         const submittedStudentIds = new Set(
@@ -164,7 +171,7 @@ export async function GET() {
           createdAt: assignment.createdAt.toISOString(),
           submittedCount,
           completionCount: submittedCount,
-          gradedCount,
+          gradedCount: gradedScores.length,
           studentCount: assignment.Class.enrollments.length,
           averageScore:
             gradedScores.length > 0
@@ -186,8 +193,8 @@ export async function GET() {
         studentId: submission.studentId,
         studentName: submission.Student.user.name ?? submission.Student.user.email ?? "Student",
         submittedAt: submission.turnedInAt?.toISOString() ?? null,
-        score: submission.score,
-        feedback: submission.feedback ?? "",
+        score: legacyAssignmentScoreAuthority(submission) === "TEACHER" ? submission.score : null,
+        feedback: legacyAssignmentScoreAuthority(submission) === "TEACHER" ? submission.feedback ?? "" : "",
         content: submission.content ?? "",
         aiGrade: submission.aiGrade ?? null,
         aiFeedback: submission.aiFeedback ?? null,

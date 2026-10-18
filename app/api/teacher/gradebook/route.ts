@@ -1,6 +1,8 @@
+// route-policy: auth=session; scope=tenant; authority=class-teacher-or-school-admin; rationale=own-school gradebook projects only teacher-verified official scores
 import { NextRequest, NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { legacyAssignmentScoreAuthority } from "@/lib/academic-records/v2/gradeCalculation";
 
 export const dynamic = "force-dynamic";
 
@@ -70,6 +72,7 @@ export async function GET(req: NextRequest) {
               assignmentId: true,
               score: true,
               gradedAt: true,
+              gradedBy: true,
               feedback: true,
               aiGrade: true,
               teacherApproved: true,
@@ -95,9 +98,9 @@ export async function GET(req: NextRequest) {
         id: s.id,
         studentId: s.studentId,
         assignmentId: s.assignmentId,
-        grade: s.score,
-        gradedAt: s.gradedAt?.toISOString() ?? null,
-        feedback: s.feedback,
+        grade: legacyAssignmentScoreAuthority(s) === "TEACHER" ? s.score : null,
+        gradedAt: legacyAssignmentScoreAuthority(s) === "TEACHER" ? s.gradedAt?.toISOString() ?? null : null,
+        feedback: legacyAssignmentScoreAuthority(s) === "TEACHER" ? s.feedback : "",
         aiGrade: s.aiGrade ?? null,
         teacherApproved: s.teacherApproved,
         autoReleasedAt: s.autoReleasedAt ? s.autoReleasedAt.toISOString() : null,
