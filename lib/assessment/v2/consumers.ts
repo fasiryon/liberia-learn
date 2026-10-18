@@ -17,7 +17,7 @@ import {
   type GovernedEvidence,
   type GovernedEvidenceType,
 } from "@/lib/learning-evidence/evidenceContract";
-import { effectiveStanding, type AssessmentEvidenceEnvelope, type EvidenceTier } from "./evidence";
+import { effectiveStanding, type AssessmentEvidenceEnvelope, type EvidenceIndependence, type EvidenceTier } from "./evidence";
 import type { AssessmentPurpose, ReleaseRevocation } from "./types";
 
 export const ASSESSMENT_V2_DOWNSTREAM_WRITES_ENABLED = false as const;
@@ -100,7 +100,7 @@ export type OrchestratorSignal = Readonly<{
   objectiveIds: readonly string[];
   tier: EvidenceTier;
   purpose: AssessmentPurpose;
-  independence: "INDEPENDENT" | "ASSISTED";
+  independence: EvidenceIndependence;
   fractionCorrect: number | null;
   /** Recommendations may use these signals; they must never be reported as mastery. */
   masteryClaim: false;

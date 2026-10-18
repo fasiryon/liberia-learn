@@ -8,6 +8,7 @@ export * from "./lifecycle";
 export * from "./release";
 export * from "./projection";
 export * from "./scoring";
+export * from "./assistance";
 export * from "./evidence";
 export * from "./retention";
 export * from "./consumers";

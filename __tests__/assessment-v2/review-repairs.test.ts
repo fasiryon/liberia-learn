@@ -56,7 +56,7 @@ import {
   type ModerationPolicy,
   type ServerAttemptContext,
 } from "@/lib/assessment/v2";
-import { buildItems, buildReleased, CURRICULUM, SCHOOL } from "./fixtures";
+import { buildItems, buildReleased, CURRICULUM, SCHOOL, sealedAssistanceRecord } from "./fixtures";
 
 const policy: ModerationPolicy = { policyId: "mod-1", version: "1", moderatorRoles: ["TEACHER", "EXAMINER"], requiresSecondMarker: false, reconciliationTolerancePercent: 10, examinerRoles: ["EXAMINER"] };
 const teacherA = { kind: "HUMAN" as const, id: "t-a", role: "TEACHER", schoolId: SCHOOL };
@@ -145,9 +145,9 @@ describe("A3 admitted evidence is verified evidence when summarizing an objectiv
     const released = buildReleased();
     const raw = acceptClientObservation(submission(), env);
     const outcome = scoreResponse(released.single, released.singleSpec, { kind: "SINGLE_SELECT", optionId: "a" });
-    const { evidence: verified } = verifyObservation(raw, { outcome, release: released.release, revocations: [], moderation: null, recordedBy: { kind: "SYSTEM", id: "scorer", role: null }, recordedAt: "2026-11-01T10:00:06.000Z" });
+    const { evidence: verified } = verifyObservation(raw, { outcome, release: released.release, revocations: [], moderation: null, recordedBy: { kind: "SYSTEM", id: "scorer", role: null }, recordedAt: "2026-11-01T10:00:06.000Z", assistanceLedger: sealedAssistanceRecord(raw) });
     const admission: MasteryAdmissionPolicy = { policyId: "admit", version: "1", admissiblePurposes: ["FORMATIVE"], requireOfficialDelivery: true, objectiveIds: ["obj-compare"] };
-    const { evidence: admitted } = admitToMastery(verified, { policy: admission, revocations: [], admittedAt: "2026-11-01T10:01:00.000Z" });
+    const { evidence: admitted } = admitToMastery(verified, { policy: admission, revocations: [], admittedAt: "2026-11-01T10:01:00.000Z", assistanceLedger: sealedAssistanceRecord(verified) });
     expect(summarizeObjectiveEvidence([admitted], "obj-compare", [])).toMatchObject({ status: "VERIFIED", verifiedCount: 1, pointsEarned: 1, pointsPossible: 1 });
     expect(summarizeObjectiveEvidence([raw, verified, admitted], "obj-compare", [])).toMatchObject({ status: "VERIFIED", verifiedCount: 1, independentCount: 1, pointsEarned: 1 });
   });

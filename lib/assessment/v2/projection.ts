@@ -8,9 +8,12 @@
  * hash, never in authored order (authored order is often the key).
  */
 import { createHash } from "crypto";
+import { isIndependentAssessment, type DeliveryContext } from "./evidence";
+import { hashDefinition } from "./hash";
 import { itemTypeSpec } from "./itemTypes";
 import type { DeliveryDecision } from "./release";
 import type {
+  AssessmentDefinitionV2,
   AssessmentFormV2,
   AssessmentItemV2,
   ChoiceOption,
@@ -47,8 +50,26 @@ export type LearnerFormV2 = Readonly<{
   attemptId: string;
   label: DeliveryDecision["label"];
   official: boolean;
+  /**
+   * Independent assessment (isIndependentAssessment): no hints, no tutor, and no explanation or key
+   * until the whole attempt is closed. The player must honour it; the server enforces it.
+   */
+  independent: boolean;
   items: readonly LearnerItemV2[];
 }>;
+
+/** The delivery facts that decide independence: mode, officialness and the definition's purpose. */
+export type IndependenceDelivery = Pick<DeliveryContext, "mode" | "official" | "purpose">;
+
+/**
+ * Hint access for one item. Independent deliveries block hints whatever the item policy says; in
+ * practice an item offers hints only if its policy is ON_REQUEST and it has hints. Every hint served
+ * must be recorded in the attempt's assistance record (SERVER_HINT_PROJECTION).
+ */
+export function hintAccessFor(item: Pick<AssessmentItemV2, "feedbackPolicy" | "hints">, delivery: IndependenceDelivery): "BLOCKED" | "ON_REQUEST" | "NONE" {
+  if (isIndependentAssessment(delivery)) return "BLOCKED";
+  return item.feedbackPolicy.hints === "ON_REQUEST" && item.hints.length > 0 ? "ON_REQUEST" : "NONE";
+}
 
 function attemptOrder<T extends { optionId: string }>(values: readonly T[], attemptId: string, salt: string): T[] {
   const rank = (value: T) => createHash("sha256").update(`${attemptId}:${salt}:${value.optionId}`).digest("hex");
@@ -58,10 +79,12 @@ function attemptOrder<T extends { optionId: string }>(values: readonly T[], atte
 const copyOptions = (options: readonly ChoiceOption[]) => options.map((option) => Object.freeze({ optionId: option.optionId, text: option.text }));
 
 /**
- * `independent`: during an independent assessment (official, or a diagnostic/summative/retention/
- * transfer/exam purpose) no hints are offered, matching the blocked AI Tutor (LL-AEP-001).
+ * `independent` is required: during an independent assessment (official, or a diagnostic/summative/
+ * retention/transfer/exam purpose) no hints are offered, matching the blocked AI Tutor (LL-AEP-001).
+ * Prefer projectFormForLearner, which derives it from the delivery.
  */
-export function projectItemForLearner(item: AssessmentItemV2, input: { attemptId: string; points: number; independent?: boolean }): LearnerItemV2 {
+export function projectItemForLearner(item: AssessmentItemV2, input: { attemptId: string; points: number; independent: boolean }): LearnerItemV2 {
+  if (typeof input.independent !== "boolean") throw new Error("assessment_projection_independence_required");
   const typeSpec = itemTypeSpec(item.itemType);
   return Object.freeze({
     itemId: item.itemId,
@@ -83,15 +106,30 @@ export function projectItemForLearner(item: AssessmentItemV2, input: { attemptId
   });
 }
 
-export function projectFormForLearner(input: {
+type FormProjectionInput = Readonly<{
   form: AssessmentFormV2;
+  /** The form's definition; bound by hash so its purpose cannot be substituted. */
+  definition: AssessmentDefinitionV2;
   items: ReadonlyMap<string, AssessmentItemV2>;
   attemptId: string;
   delivery: DeliveryDecision;
-  /** Defaults to independent for OFFICIAL deliveries. */
+  /** Optional tightening only: `true` makes a practice delivery independent; `false` never relaxes one. */
   independent?: boolean;
-}): LearnerFormV2 {
+}>;
+
+/** Independence for a form delivery, from the authoritative classification (handoff F2). */
+export function formDeliveryIndependence(input: Pick<FormProjectionInput, "form" | "definition" | "delivery" | "independent">): boolean {
+  const { form, definition, delivery } = input;
+  if (form.definition.definitionId !== definition.definitionId || form.definition.version !== definition.version
+    || form.definition.contentHash !== definition.contentHash || hashDefinition(definition) !== definition.contentHash) throw new Error("assessment_projection_definition_mismatch");
+  const classified = isIndependentAssessment({ mode: delivery.mode, official: delivery.official, purpose: definition.purpose });
+  if (classified && input.independent === false) throw new Error("assessment_projection_independence_downgrade_forbidden");
+  return classified || input.independent === true;
+}
+
+export function projectFormForLearner(input: FormProjectionInput): LearnerFormV2 {
   if (!input.delivery.allowed) throw new Error(`assessment_delivery_denied:${input.delivery.reason}`);
+  const independent = formDeliveryIndependence(input);
   const refs = input.form.delivery.itemOrder === "FIXED"
     ? input.form.items
     : attemptOrder(input.form.items.map((ref) => ({ ...ref, optionId: ref.itemId })), input.attemptId, `${input.form.formId}:items`);
@@ -102,10 +140,11 @@ export function projectFormForLearner(input: {
     attemptId: input.attemptId,
     label: input.delivery.label,
     official: input.delivery.official,
+    independent,
     items: Object.freeze(refs.map((ref) => {
       const item = input.items.get(`${ref.itemId}@${ref.itemVersion}`);
       if (!item || item.itemHash !== ref.itemHash) throw new Error("assessment_projection_item_pin_mismatch");
-      return projectItemForLearner(item, { attemptId: input.attemptId, points: ref.points, independent: input.independent ?? input.delivery.official });
+      return projectItemForLearner(item, { attemptId: input.attemptId, points: ref.points, independent });
     })),
   });
 }
@@ -115,12 +154,7 @@ export function projectFormForLearner(input: {
  * a device holding the explanation or key before the learner answers would leak it to anyone with
  * the device. Official offline delivery requires the form to permit CAPTURE_ONLY.
  */
-export function buildOfflineAssessmentPackage(input: {
-  form: AssessmentFormV2;
-  items: ReadonlyMap<string, AssessmentItemV2>;
-  attemptId: string;
-  delivery: DeliveryDecision;
-}): Readonly<{ kind: "OFFLINE_ASSESSMENT_PACKAGE"; capture: "CAPTURE_ONLY"; scoring: "SERVER_AFTER_SYNC"; form: LearnerFormV2 }> {
+export function buildOfflineAssessmentPackage(input: FormProjectionInput): Readonly<{ kind: "OFFLINE_ASSESSMENT_PACKAGE"; capture: "CAPTURE_ONLY"; scoring: "SERVER_AFTER_SYNC"; form: LearnerFormV2 }> {
   if (input.form.delivery.offlineDelivery !== "CAPTURE_ONLY") throw new Error("assessment_offline_delivery_prohibited");
   if (input.delivery.mode === "REVIEWER_PREVIEW") throw new Error("assessment_offline_preview_prohibited");
   return Object.freeze({ kind: "OFFLINE_ASSESSMENT_PACKAGE", capture: "CAPTURE_ONLY", scoring: "SERVER_AFTER_SYNC", form: projectFormForLearner(input) });
@@ -136,17 +170,20 @@ function permits(policy: FeedbackReleasePolicy["explanation"], phase: Disclosure
 }
 
 /**
- * Post-response disclosure, decided on the server from the item policy and the attempt phase.
- * The returned object is the ONLY path by which explanation or key material reaches a learner.
+ * Post-response disclosure, decided on the server from the item policy, the attempt phase and the
+ * delivery's independence. The returned object is the ONLY path by which explanation (worked
+ * solution) or key material reaches a learner. The delivery is required so independence can never
+ * default to "off".
  */
-export function learnerDisclosure(item: AssessmentItemV2, spec: ProtectedScoringSpec, phase: DisclosurePhase, options: { independent?: boolean } = {}): Readonly<{
+export function learnerDisclosure(item: AssessmentItemV2, spec: ProtectedScoringSpec, phase: DisclosurePhase, options: { delivery: IndependenceDelivery }): Readonly<{
   explanation: string | null;
   correctResponse: string | null;
 }> {
   if (spec.itemId !== item.itemId || spec.itemVersion !== item.version) throw new Error("assessment_spec_item_mismatch");
   // During an independent assessment nothing is disclosed until the whole attempt is closed, so an
   // explanation for one item cannot help with the next.
-  if (options.independent && phase === "AFTER_RESPONSE") phase = "BEFORE_RESPONSE";
+  if (!options?.delivery) throw new Error("assessment_disclosure_delivery_required");
+  if (isIndependentAssessment(options.delivery) && phase === "AFTER_RESPONSE") phase = "BEFORE_RESPONSE";
   const explanation = permits(item.feedbackPolicy.explanation, phase) ? spec.explanation : null;
   let correctResponse: string | null = null;
   if (permits(item.feedbackPolicy.correctAnswer, phase)) {

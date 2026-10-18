@@ -41,7 +41,7 @@ import {
   type RetentionSchedulePolicy,
   type ServerAttemptContext,
 } from "@/lib/assessment/v2";
-import { buildItems, buildReleased, CURRICULUM, LEAD, SCHOOL } from "./fixtures";
+import { buildItems, buildReleased, CURRICULUM, LEAD, SCHOOL, sealedAssistanceRecord } from "./fixtures";
 
 const NONE: AssistanceExposure = { hintsRevealed: 0, aiTutorUsed: false, explanationSeenBeforeResponse: false, answerRevealedBeforeResponse: false, prohibitedToolUsed: false, peerCollaboration: false };
 const admission: MasteryAdmissionPolicy = { policyId: "admit-g7-math", version: "1.0.0", admissiblePurposes: ["FORMATIVE", "SUMMATIVE", "RETENTION", "TRANSFER"], requireOfficialDelivery: true, objectiveIds: ["obj-compare"] };
@@ -78,7 +78,7 @@ function submission(overrides: Partial<ClientObservationSubmission> = {}): Clien
 function verifiedChain(env = setup(), sub = submission()) {
   const raw = acceptClientObservation(sub, env.context);
   const outcome = scoreResponse(env.single, env.singleSpec, { kind: "SINGLE_SELECT", optionId: "a" });
-  const { evidence: verified } = verifyObservation(raw, { outcome, release: env.release, revocations: [], moderation: null, recordedBy: { kind: "SYSTEM", id: "scorer", role: null }, recordedAt: "2026-11-01T10:00:06.000Z" });
+  const { evidence: verified } = verifyObservation(raw, { outcome, release: env.release, revocations: [], moderation: null, recordedBy: { kind: "SYSTEM", id: "scorer", role: null }, recordedAt: "2026-11-01T10:00:06.000Z", assistanceLedger: sealedAssistanceRecord(raw) });
   return { env, raw, verified };
 }
 
@@ -120,44 +120,44 @@ describe("Independence and tier separation", () => {
   it("verifies assisted evidence truthfully but never admits it to mastery", () => {
     const { verified } = verifiedChain(setup(), submission({ assistance: { ...NONE, aiTutorUsed: true } }));
     expect(verified.independence).toBe("ASSISTED");
-    expect(() => admitToMastery(verified, { policy: admission, revocations: [], admittedAt: "2026-11-01T10:01:00.000Z" })).toThrow("assessment_assisted_evidence_not_admissible");
+    expect(() => admitToMastery(verified, { policy: admission, revocations: [], admittedAt: "2026-11-01T10:01:00.000Z", assistanceLedger: sealedAssistanceRecord(verified) })).toThrow("assessment_assisted_evidence_not_admissible");
   });
 
   it("cannot verify unreleased (reviewer preview) or revoked-release evidence", () => {
     const preview = setup({ released: false, mode: "REVIEWER_PREVIEW", official: false });
     const raw = acceptClientObservation(submission(), preview.context);
     const outcome = scoreResponse(preview.single, preview.singleSpec, { kind: "SINGLE_SELECT", optionId: "a" });
-    expect(() => verifyObservation(raw, { outcome, release: null, revocations: [], moderation: null, recordedBy: { kind: "SYSTEM", id: "s", role: null }, recordedAt: "2026-11-01T10:00:06.000Z" })).toThrow("assessment_unreleased_evidence_cannot_be_verified");
+    expect(() => verifyObservation(raw, { outcome, release: null, revocations: [], moderation: null, recordedBy: { kind: "SYSTEM", id: "s", role: null }, recordedAt: "2026-11-01T10:00:06.000Z", assistanceLedger: sealedAssistanceRecord(raw) })).toThrow("assessment_unreleased_evidence_cannot_be_verified");
     const env = setup();
     const raw2 = acceptClientObservation(submission(), env.context);
     const { revocation } = revokeRelease({ release: env.release, actor: LEAD, reason: "Key error discovered after release", revokedAt: "2026-11-01T09:00:00.000Z", evidenceDisposition: "INVALIDATE" });
-    expect(() => verifyObservation(raw2, { outcome, release: env.release, revocations: [revocation], moderation: null, recordedBy: { kind: "SYSTEM", id: "s", role: null }, recordedAt: "2026-11-01T10:00:06.000Z" })).toThrow("assessment_release_revoked");
+    expect(() => verifyObservation(raw2, { outcome, release: env.release, revocations: [revocation], moderation: null, recordedBy: { kind: "SYSTEM", id: "s", role: null }, recordedAt: "2026-11-01T10:00:06.000Z", assistanceLedger: sealedAssistanceRecord(raw2) })).toThrow("assessment_release_revoked");
   });
 
   it("requires a SCORED outcome; pending moderation is not verified evidence", () => {
     const env = setup();
     const raw = acceptClientObservation(submission(), env.context);
     const pending = { ...scoreResponse(env.single, env.singleSpec, { kind: "SINGLE_SELECT", optionId: "a" }), status: "PENDING_HUMAN_MODERATION" as const, points: null, scorerAuthority: null };
-    expect(() => verifyObservation(raw, { outcome: pending, release: env.release, revocations: [], moderation: null, recordedBy: { kind: "SYSTEM", id: "s", role: null }, recordedAt: "2026-11-01T10:00:06.000Z" })).toThrow("assessment_outcome_not_scored");
+    expect(() => verifyObservation(raw, { outcome: pending, release: env.release, revocations: [], moderation: null, recordedBy: { kind: "SYSTEM", id: "s", role: null }, recordedAt: "2026-11-01T10:00:06.000Z", assistanceLedger: sealedAssistanceRecord(raw) })).toThrow("assessment_outcome_not_scored");
   });
 
   it("keeps provisional feedback provisional", () => {
     const { raw } = verifiedChain();
     const provisional = createProvisionalFeedback(raw, { authority: "AI_SUGGESTION", recordedAt: "2026-11-01T10:00:07.000Z" });
     expect(provisional.tier).toBe("PROVISIONAL_FEEDBACK");
-    expect(() => verifyObservation(provisional, { outcome: {} as never, release: null, revocations: [], moderation: null, recordedBy: { kind: "SYSTEM", id: "s", role: null }, recordedAt: "2026-11-01T10:00:06.000Z" })).toThrow("assessment_evidence_parent_tier_invalid");
-    expect(() => admitToMastery(provisional, { policy: admission, revocations: [], admittedAt: "2026-11-01T10:01:00.000Z" })).toThrow("assessment_evidence_parent_tier_invalid");
+    expect(() => verifyObservation(provisional, { outcome: {} as never, release: null, revocations: [], moderation: null, recordedBy: { kind: "SYSTEM", id: "s", role: null }, recordedAt: "2026-11-01T10:00:06.000Z", assistanceLedger: sealedAssistanceRecord(provisional) })).toThrow("assessment_evidence_parent_tier_invalid");
+    expect(() => admitToMastery(provisional, { policy: admission, revocations: [], admittedAt: "2026-11-01T10:01:00.000Z", assistanceLedger: sealedAssistanceRecord(provisional) })).toThrow("assessment_evidence_parent_tier_invalid");
   });
 
   it("admits verified independent official evidence only under a policy", () => {
     const { verified } = verifiedChain();
-    expect(() => admitToMastery(verified, { policy: null, revocations: [], admittedAt: "2026-11-01T10:01:00.000Z" })).toThrow("assessment_admission_policy_required");
-    expect(() => admitToMastery(verified, { policy: { ...admission, admissiblePurposes: ["SUMMATIVE"] }, revocations: [], admittedAt: "2026-11-01T10:01:00.000Z" })).toThrow("assessment_purpose_not_admissible");
-    expect(() => admitToMastery(verified, { policy: { ...admission, objectiveIds: ["obj-other"] }, revocations: [], admittedAt: "2026-11-01T10:01:00.000Z" })).toThrow("assessment_objective_not_governed_by_policy");
-    const { evidence } = admitToMastery(verified, { policy: admission, revocations: [], admittedAt: "2026-11-01T10:01:00.000Z" });
+    expect(() => admitToMastery(verified, { policy: null, revocations: [], admittedAt: "2026-11-01T10:01:00.000Z", assistanceLedger: sealedAssistanceRecord(verified) })).toThrow("assessment_admission_policy_required");
+    expect(() => admitToMastery(verified, { policy: { ...admission, admissiblePurposes: ["SUMMATIVE"] }, revocations: [], admittedAt: "2026-11-01T10:01:00.000Z", assistanceLedger: sealedAssistanceRecord(verified) })).toThrow("assessment_purpose_not_admissible");
+    expect(() => admitToMastery(verified, { policy: { ...admission, objectiveIds: ["obj-other"] }, revocations: [], admittedAt: "2026-11-01T10:01:00.000Z", assistanceLedger: sealedAssistanceRecord(verified) })).toThrow("assessment_objective_not_governed_by_policy");
+    const { evidence } = admitToMastery(verified, { policy: admission, revocations: [], admittedAt: "2026-11-01T10:01:00.000Z", assistanceLedger: sealedAssistanceRecord(verified) });
     expect(evidence).toMatchObject({ tier: "MASTERY_ADMITTED_EVIDENCE", derivedFromEvidenceId: verified.evidenceId, admission: { policyId: "admit-g7-math" } });
     const practice = verifiedChain(setup({ mode: "PRACTICE_UNOFFICIAL", official: false }));
-    expect(() => admitToMastery(practice.verified, { policy: admission, revocations: [], admittedAt: "2026-11-01T10:01:00.000Z" })).toThrow("assessment_unofficial_delivery_not_admissible");
+    expect(() => admitToMastery(practice.verified, { policy: admission, revocations: [], admittedAt: "2026-11-01T10:01:00.000Z", assistanceLedger: sealedAssistanceRecord(practice.verified) })).toThrow("assessment_unofficial_delivery_not_admissible");
   });
 });
 
@@ -176,7 +176,7 @@ describe("Append-only ledger: replay, conflicts and forgery", () => {
 
   it("rejects tampered envelopes and forged mastery evidence", () => {
     const { raw, verified } = verifiedChain();
-    const { evidence: admitted } = admitToMastery(verified, { policy: admission, revocations: [], admittedAt: "2026-11-01T10:01:00.000Z" });
+    const { evidence: admitted } = admitToMastery(verified, { policy: admission, revocations: [], admittedAt: "2026-11-01T10:01:00.000Z", assistanceLedger: sealedAssistanceRecord(verified) });
     expect(() => appendEvidence(emptyLedger(), { ...raw, scope: { ...raw.scope, studentId: "stu-2" } })).toThrow("assessment_evidence_tampered");
     // Admitted evidence with no verified parent in the ledger.
     expect(() => appendEvidence(appendEvidence(emptyLedger(), raw).ledger, admitted)).toThrow("assessment_evidence_parent_missing");
@@ -223,7 +223,7 @@ describe("Downstream consumers", () => {
 
   it("gives the SLM admitted evidence only, mapped to the existing governed evidence contract", () => {
     const { raw, verified } = verifiedChain();
-    const { evidence: admitted } = admitToMastery(verified, { policy: admission, revocations: [], admittedAt: "2026-11-01T10:01:00.000Z" });
+    const { evidence: admitted } = admitToMastery(verified, { policy: admission, revocations: [], admittedAt: "2026-11-01T10:01:00.000Z", assistanceLedger: sealedAssistanceRecord(verified) });
     expect(evidenceForStudentLearningModel([raw, verified, admitted], [])).toEqual([admitted]);
     const governed = toGovernedLearningEvidence(admitted, { objectiveId: "obj-compare", conceptId: "concept-decimal-compare" });
     expect(() => validateGovernedEvidence(governed)).not.toThrow();
@@ -331,12 +331,12 @@ describe("Compatibility adapters", () => {
       const state = deriveContentStatus({ current: { kind: "ITEM", itemId: item.itemId, version: item.version, hash: item.itemHash }, provenance: item.provenance, validation: validateItem(item, spec), reviews: [], policy: defaultReviewPolicy("FORMATIVE") });
       expect(state.status).toBe("VALIDATED");
       expect(item.provenance.authors[0].kind).toBe("AI");
-      const projected = projectItemForLearner(item, { attemptId: "a", points: 1 });
+      const projected = projectItemForLearner(item, { attemptId: "a", points: 1, independent: false });
       expect(() => assertLearnerSafe(projected, protectedStrings([item], [spec]))).not.toThrow();
       // Keyed paper answers are held for human scoring, never exact-match auto-scored.
       if (spec.key.kind === "SHORT_CONSTRUCTED") expect(spec.key.autoScore).toBe("HUMAN_ONLY");
     }
-    expect(JSON.stringify(adapted.map((entry) => projectItemForLearner(entry.item, { attemptId: "a", points: 1 })))).not.toContain("2.305 is closer");
+    expect(JSON.stringify(adapted.map((entry) => projectItemForLearner(entry.item, { attemptId: "a", points: 1, independent: false })))).not.toContain("2.305 is closer");
   });
 
   it("imports legacy exam questions as candidates with the key moved server-side", () => {

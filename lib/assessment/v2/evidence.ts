@@ -11,13 +11,18 @@
  * constructor, and the ledger re-checks every derivation, so a forged "admitted" envelope without a
  * verified parent, or with altered scope or points, is rejected.
  *
- * Independence is computed from recorded assistance exposure. Seeing the answer or explanation
- * before responding, revealing hints, using the AI tutor, a prohibited tool or peer help makes the
- * evidence ASSISTED. Assisted evidence can be verified (it is a true record of what happened) but
- * is never admitted to mastery as independent work.
+ * Independence (contract 1.1.0) is never taken from the client. A raw observation is UNVERIFIED, or
+ * ASSISTED if the client itself declared help: a client declaration can only weaken evidence. At
+ * verification the server reads the attempt's sealed assistance record (assistance.ts); only a
+ * chain-valid, sealed, conflict-free, fully instrumented record with no assistance yields INDEPENDENT.
+ * Seeing the answer or explanation before responding, revealing hints, using the AI tutor, a
+ * prohibited tool or peer help makes the evidence ASSISTED. A missing or contradictory record leaves
+ * it UNVERIFIED (contradictions are flagged for integrity review). Assisted and unverified evidence
+ * can be verified as a true record of what happened, but neither is ever admitted to mastery.
  */
 import { createHash } from "crypto";
 import { canonicalizeJson } from "@/lib/curriculum/provenance/hash";
+import { attestAssistance, type AssistanceAttestation, type AssistanceLedger } from "./assistance";
 import { auditEvent, type AssessmentAuditEvent } from "./audit";
 import { LL_SECOND_MARKING, LL_TUTOR_POLICY } from "@/lib/academic-policy/llAep001";
 import { hashRelease } from "./hash";
@@ -32,7 +37,20 @@ import type {
   ReleaseRevocation,
 } from "./types";
 
-export const ASSESSMENT_EVIDENCE_CONTRACT_VERSION = "assessment-evidence/1.0.0" as const;
+export const ASSESSMENT_EVIDENCE_CONTRACT_VERSION = "assessment-evidence/1.1.0" as const;
+
+export type EvidenceIndependence = "INDEPENDENT" | "ASSISTED" | "UNVERIFIED";
+
+/**
+ * Flags that mean the records disagree or cannot be trusted. Evidence carrying one of them needs a
+ * human integrity review; a review can never make the evidence independent (reassessment is the remedy).
+ */
+export const INTEGRITY_REVIEW_FLAGS = [
+  "assistance_declaration_ledger_conflict",
+  "assistance_ledger_conflict",
+  "assistance_ledger_chain_invalid",
+  "assistance_record_scope_mismatch",
+] as const;
 
 export const EVIDENCE_TIERS = [
   "RAW_OBSERVATION",
@@ -139,11 +157,15 @@ export type AssessmentEvidenceEnvelope = Readonly<{
   response: Readonly<{ responseId: string; responseDigest: string }> | null;
   occurredAt: string;
   delivery: DeliveryContext;
+  /** Union of the client declaration and the server assistance record; it only ever grows. */
   assistance: AssistanceExposure;
-  independence: "INDEPENDENT" | "ASSISTED";
+  independence: EvidenceIndependence;
+  /** The assistance-record state independence was read from. Null on raw observations and when no record exists. */
+  assistanceAttestation: AssistanceAttestation | null;
   /**
    * Integrity findings, e.g. AI tutor or hint use during an independent assessment, where the tutor
-   * is blocked (LL-AEP-001). Recorded for teacher review; never silently cleared.
+   * is blocked (LL-AEP-001), or a missing or contradictory assistance record. Recorded for teacher
+   * review; never silently cleared.
    */
   integrityFlags: readonly string[];
   capture: CaptureProvenance;
@@ -165,8 +187,19 @@ function seal(envelope: Unsealed): AssessmentEvidenceEnvelope {
   return Object.freeze({ ...envelope, evidenceHash: hashEvidence(envelope) });
 }
 
+const EXPOSURE_FLAGS = ["aiTutorUsed", "explanationSeenBeforeResponse", "answerRevealedBeforeResponse", "prohibitedToolUsed", "peerCollaboration"] as const;
+
+function assertExposure(assistance: AssistanceExposure): void {
+  if (!assistance || typeof assistance !== "object" || !Number.isInteger(assistance.hintsRevealed) || assistance.hintsRevealed < 0
+    || EXPOSURE_FLAGS.some((flag) => typeof assistance[flag] !== "boolean")) throw new Error("assessment_assistance_invalid");
+}
+
+/**
+ * Whether an exposure record shows assistance. "INDEPENDENT" here means only "this record shows none";
+ * it is never by itself proof of independent work (see verifyObservation).
+ */
 export function classifyIndependence(assistance: AssistanceExposure): "INDEPENDENT" | "ASSISTED" {
-  if (!Number.isInteger(assistance.hintsRevealed) || assistance.hintsRevealed < 0) throw new Error("assessment_assistance_invalid");
+  assertExposure(assistance);
   const assisted = assistance.hintsRevealed > 0 || assistance.aiTutorUsed || assistance.explanationSeenBeforeResponse
     || assistance.answerRevealedBeforeResponse || assistance.prohibitedToolUsed || assistance.peerCollaboration;
   return assisted ? "ASSISTED" : "INDEPENDENT";
@@ -212,7 +245,7 @@ const derivedKey = (parent: AssessmentEvidenceEnvelope, tier: EvidenceTier) =>
  * Fields a client (browser, device, sync payload) may never assert. Scores, tiers, independence
  * and admission are computed on the server; their presence in a submission is a forgery attempt.
  */
-const CLIENT_FORBIDDEN_FIELDS = ["tier", "score", "points", "maxPoints", "correct", "isCorrect", "scoring", "scorerAuthority", "admission", "independence", "official", "evidenceHash", "verified", "mastery"] as const;
+const CLIENT_FORBIDDEN_FIELDS = ["tier", "score", "points", "maxPoints", "correct", "isCorrect", "scoring", "scorerAuthority", "admission", "independence", "assistanceAttestation", "official", "evidenceHash", "verified", "mastery"] as const;
 
 export type ClientObservationSubmission = Readonly<{
   attemptId: string;
@@ -224,6 +257,10 @@ export type ClientObservationSubmission = Readonly<{
   /** Optional echo of identity. If present it must match the session; it is never trusted. */
   studentId?: string;
   schoolId?: string;
+  /**
+   * Assistance the client itself reports. It can only weaken the evidence (any help → ASSISTED);
+   * reporting none proves nothing (the observation stays UNVERIFIED until the server record is read).
+   */
   assistance: AssistanceExposure;
   capture: Omit<CaptureProvenance, "receivedAt">;
 }>;
@@ -277,7 +314,9 @@ export function acceptClientObservation(submission: ClientObservationSubmission,
     occurredAt: submission.capture.capturedAt,
     delivery: context.delivery,
     assistance: submission.assistance,
-    independence: classifyIndependence(submission.assistance),
+    // A client declaration can only weaken evidence; "no help" from the client proves nothing.
+    independence: classifyIndependence(submission.assistance) === "ASSISTED" ? "ASSISTED" : "UNVERIFIED",
+    assistanceAttestation: null,
     integrityFlags: integrityFlagsFor(context.delivery, submission.assistance),
     capture: { ...submission.capture, receivedAt: context.receivedAt },
     scoring: { status: "UNSCORED", scorerAuthority: null, points: null, maxPoints: null, scoringVersion: null, scoringSpecHash: null, moderation: null },
@@ -308,6 +347,61 @@ export function createProvisionalFeedback(raw: AssessmentEvidenceEnvelope, input
   });
 }
 
+/** The assistance record belongs to exactly this learner, attempt, delivery session and release. */
+function assistanceRecordBoundTo(ledger: AssistanceLedger, envelope: AssessmentEvidenceEnvelope): boolean {
+  const scope = ledger.scope;
+  return scope.tenantId === envelope.scope.tenantId && scope.schoolId === envelope.scope.schoolId && scope.studentId === envelope.scope.studentId
+    && scope.attemptId === envelope.attempt.attemptId && scope.sessionId === envelope.attempt.sessionId
+    && scope.releaseId === envelope.pins.releaseId && scope.releaseHash === envelope.pins.releaseHash;
+}
+
+const maxExposure = (a: AssistanceExposure, b: AssistanceExposure): AssistanceExposure => Object.freeze({
+  hintsRevealed: Math.max(a.hintsRevealed, b.hintsRevealed),
+  aiTutorUsed: a.aiTutorUsed || b.aiTutorUsed,
+  explanationSeenBeforeResponse: a.explanationSeenBeforeResponse || b.explanationSeenBeforeResponse,
+  answerRevealedBeforeResponse: a.answerRevealedBeforeResponse || b.answerRevealedBeforeResponse,
+  prohibitedToolUsed: a.prohibitedToolUsed || b.prohibitedToolUsed,
+  peerCollaboration: a.peerCollaboration || b.peerCollaboration,
+});
+
+/**
+ * Server-side independence decision for one response (handoff A.4). The client declaration can only
+ * add assistance; the sealed server record is the only source of INDEPENDENT. A record for another
+ * scope is treated as missing; disagreement between declaration and record is flagged for review.
+ */
+function resolveIndependence(raw: AssessmentEvidenceEnvelope, ledger: AssistanceLedger | null): Readonly<{
+  independence: EvidenceIndependence; assistance: AssistanceExposure; attestation: AssistanceAttestation | null; flags: readonly string[];
+}> {
+  const flags: string[] = [];
+  const declaredAssisted = raw.independence === "ASSISTED";
+  let record = ledger;
+  if (record && !assistanceRecordBoundTo(record, raw)) {
+    flags.push("assistance_record_scope_mismatch");
+    record = null;
+  }
+  if (!record) {
+    if (!ledger) flags.push("assistance_record_missing");
+    return { independence: declaredAssisted ? "ASSISTED" : "UNVERIFIED", assistance: raw.assistance, attestation: null, flags };
+  }
+  const { attestation, classification } = attestAssistance(record, raw.pins.itemId);
+  flags.push(...classification.reasons);
+  let independence: EvidenceIndependence;
+  if (classification.status === "ASSISTED") {
+    independence = "ASSISTED";
+    if (!declaredAssisted) flags.push("assistance_declaration_ledger_conflict");
+  } else if (declaredAssisted) {
+    independence = "ASSISTED";
+    if (classification.status === "INDEPENDENT") flags.push("assistance_declaration_ledger_conflict");
+  } else {
+    independence = classification.status;
+  }
+  return { independence, assistance: maxExposure(raw.assistance, classification.exposure), attestation, flags };
+}
+
+export function requiresIntegrityReview(envelope: Pick<AssessmentEvidenceEnvelope, "integrityFlags">): boolean {
+  return envelope.integrityFlags.some((flag) => (INTEGRITY_REVIEW_FLAGS as readonly string[]).includes(flag));
+}
+
 export function verifyObservation(raw: AssessmentEvidenceEnvelope, input: {
   outcome: ScoringOutcome;
   release: AssessmentReleaseV2 | null;
@@ -315,9 +409,17 @@ export function verifyObservation(raw: AssessmentEvidenceEnvelope, input: {
   moderation: ScoringRecord["moderation"];
   recordedBy: AssessmentEvidenceEnvelope["recordedBy"];
   recordedAt: string;
-}): Readonly<{ evidence: AssessmentEvidenceEnvelope; audit: AssessmentAuditEvent }> {
+  /**
+   * The attempt's server-side assistance record, as loaded from authoritative storage. Required:
+   * pass `null` when none exists, which leaves the evidence UNVERIFIED.
+   */
+  assistanceLedger: AssistanceLedger | null;
+}): Readonly<{ evidence: AssessmentEvidenceEnvelope; audit: AssessmentAuditEvent; integrityReview: AssessmentAuditEvent | null }> {
   if (raw.tier !== "RAW_OBSERVATION") throw new Error("assessment_evidence_parent_tier_invalid");
   if (raw.evidenceHash !== hashEvidence(raw)) throw new Error("assessment_evidence_tampered");
+  if (raw.contractVersion !== ASSESSMENT_EVIDENCE_CONTRACT_VERSION) throw new Error("assessment_evidence_contract_unsupported");
+  if (raw.independence === "INDEPENDENT" || raw.assistanceAttestation !== null) throw new Error("assessment_raw_observation_invalid");
+  if (input.assistanceLedger === undefined) throw new Error("assessment_assistance_record_required");
   const { outcome, release } = input;
   // Second-marking checks come first so a single-marked high-stakes score is refused for that reason.
   if (input.moderation?.secondMarkerRequired && input.moderation.marking === "SINGLE") throw new Error("assessment_second_marking_required");
@@ -338,10 +440,16 @@ export function verifyObservation(raw: AssessmentEvidenceEnvelope, input: {
   if (release.schoolId !== null && release.schoolId !== raw.scope.schoolId) throw new Error("assessment_release_school_scope_mismatch");
   assertIsoTimestamp(input.recordedAt, "recorded_at");
 
+  const resolved = resolveIndependence(raw, input.assistanceLedger);
+  const integrityFlags = Object.freeze([...new Set([...raw.integrityFlags, ...integrityFlagsFor(raw.delivery, resolved.assistance), ...resolved.flags])]);
   const idempotencyKey = derivedKey(raw, "VERIFIED_ASSESSMENT_EVIDENCE");
   const evidence = seal({
     ...raw,
     tier: "VERIFIED_ASSESSMENT_EVIDENCE",
+    assistance: resolved.assistance,
+    independence: resolved.independence,
+    assistanceAttestation: resolved.attestation,
+    integrityFlags,
     evidenceId: `ver_${idempotencyKey.slice(0, 32)}`,
     idempotencyKey,
     derivedFromEvidenceId: raw.evidenceId,
@@ -358,8 +466,16 @@ export function verifyObservation(raw: AssessmentEvidenceEnvelope, input: {
       type: "assessment.evidence.verified", subjectRef: evidence.evidenceId,
       actor: { kind: input.recordedBy.kind, id: input.recordedBy.id, role: input.recordedBy.role },
       schoolId: raw.scope.schoolId, occurredAt: input.recordedAt,
-      details: { attemptId: raw.attempt.attemptId, itemId: raw.pins.itemId, independence: raw.independence, official: raw.delivery.official },
+      details: { attemptId: raw.attempt.attemptId, itemId: raw.pins.itemId, independence: evidence.independence, official: raw.delivery.official },
     }),
+    integrityReview: requiresIntegrityReview(evidence)
+      ? auditEvent({
+        type: "assessment.evidence.integrity_review_required", subjectRef: evidence.evidenceId,
+        actor: { kind: "SYSTEM", id: "assessment-integrity", role: null },
+        schoolId: raw.scope.schoolId, occurredAt: input.recordedAt,
+        details: { attemptId: raw.attempt.attemptId, itemId: raw.pins.itemId, flags: evidence.integrityFlags.join(",") },
+      })
+      : null,
   });
 }
 
@@ -377,12 +493,21 @@ export function admitToMastery(verified: AssessmentEvidenceEnvelope, input: {
   policy: MasteryAdmissionPolicy | null;
   revocations: readonly ReleaseRevocation[];
   admittedAt: string;
+  /** The attempt's assistance record, re-read from authoritative storage at admission time. */
+  assistanceLedger: AssistanceLedger | null;
 }): Readonly<{ evidence: AssessmentEvidenceEnvelope; audit: AssessmentAuditEvent }> {
   if (verified.tier !== "VERIFIED_ASSESSMENT_EVIDENCE") throw new Error("assessment_evidence_parent_tier_invalid");
   if (verified.evidenceHash !== hashEvidence(verified)) throw new Error("assessment_evidence_tampered");
+  if (verified.contractVersion !== ASSESSMENT_EVIDENCE_CONTRACT_VERSION) throw new Error("assessment_evidence_contract_unsupported");
   const { policy } = input;
   if (!policy) throw new Error("assessment_admission_policy_required");
-  if (verified.independence !== "INDEPENDENT") throw new Error("assessment_assisted_evidence_not_admissible");
+  if (verified.independence !== "INDEPENDENT" || verified.assistanceAttestation?.status !== "INDEPENDENT") throw new Error("assessment_assisted_evidence_not_admissible");
+  // Re-read the record: independence must still hold for exactly the state that was attested.
+  if (!input.assistanceLedger) throw new Error("assessment_assistance_record_missing");
+  if (!assistanceRecordBoundTo(input.assistanceLedger, verified)) throw new Error("assessment_assistance_record_scope_mismatch");
+  const current = attestAssistance(input.assistanceLedger, verified.pins.itemId).attestation;
+  if (current.headHash !== verified.assistanceAttestation.headHash || current.headSequence !== verified.assistanceAttestation.headSequence
+    || current.status !== "INDEPENDENT") throw new Error("assessment_assistance_attestation_stale");
   if (!policy.admissiblePurposes.includes(verified.delivery.purpose)) throw new Error("assessment_purpose_not_admissible");
   if (policy.requireOfficialDelivery && !verified.delivery.official) throw new Error("assessment_unofficial_delivery_not_admissible");
   if (!verified.objectiveIds.some((objectiveId) => policy.objectiveIds.includes(objectiveId))) throw new Error("assessment_objective_not_governed_by_policy");
@@ -424,12 +549,32 @@ const PARENT_TIER: Record<EvidenceTier, EvidenceTier | null> = {
   MASTERY_ADMITTED_EVIDENCE: "VERIFIED_ASSESSMENT_EVIDENCE",
 };
 
-/** Fields a derived envelope may not change relative to its parent. */
+const exposureAtLeast = (child: AssistanceExposure, parent: AssistanceExposure) =>
+  child.hintsRevealed >= parent.hintsRevealed && EXPOSURE_FLAGS.every((flag) => child[flag] || !parent[flag]);
+
+/**
+ * Fields a derived envelope may not change relative to its parent. The one permitted change is at
+ * verification: independence may be resolved from UNVERIFIED with a server attestation, recorded
+ * exposure and integrity flags may only grow, and ASSISTED is never upgraded.
+ */
 function inheritsParent(child: AssessmentEvidenceEnvelope, parent: AssessmentEvidenceEnvelope): boolean {
   const same = (a: unknown, b: unknown) => canonicalizeJson(a) === canonicalizeJson(b);
   if (!same(child.scope, parent.scope) || !same(child.pins, parent.pins) || !same(child.attempt, parent.attempt)
-    || !same(child.response, parent.response) || !same(child.delivery, parent.delivery) || !same(child.assistance, parent.assistance)
-    || child.independence !== parent.independence || !same(child.integrityFlags, parent.integrityFlags) || !same(child.capture, parent.capture) || child.occurredAt !== parent.occurredAt) return false;
+    || !same(child.response, parent.response) || !same(child.delivery, parent.delivery)
+    || !same(child.capture, parent.capture) || child.occurredAt !== parent.occurredAt) return false;
+  if (child.tier === "VERIFIED_ASSESSMENT_EVIDENCE") {
+    if (!exposureAtLeast(child.assistance, parent.assistance)) return false;
+    if (!parent.integrityFlags.every((flag) => child.integrityFlags.includes(flag))) return false;
+    if (parent.independence === "ASSISTED" && child.independence !== "ASSISTED") return false;
+    if (parent.independence === "INDEPENDENT") return false;
+    const attestation = child.assistanceAttestation;
+    if (attestation && (attestation.attemptId !== child.attempt.attemptId || attestation.sessionId !== child.attempt.sessionId || attestation.itemId !== child.pins.itemId)) return false;
+    if (child.independence === "INDEPENDENT" && (attestation?.status !== "INDEPENDENT" || classifyIndependence(child.assistance) !== "INDEPENDENT")) return false;
+    if (child.independence === "UNVERIFIED" && classifyIndependence(child.assistance) !== "INDEPENDENT") return false;
+    return child.admission === null;
+  }
+  if (!same(child.assistance, parent.assistance) || child.independence !== parent.independence
+    || !same(child.integrityFlags, parent.integrityFlags) || !same(child.assistanceAttestation, parent.assistanceAttestation)) return false;
   if (child.tier === "MASTERY_ADMITTED_EVIDENCE") {
     return same(child.scoring, parent.scoring) && child.objectiveIds.every((objectiveId) => parent.objectiveIds.includes(objectiveId)) && child.admission !== null;
   }
@@ -454,7 +599,8 @@ export function appendEvidence(ledger: EvidenceLedger, envelope: AssessmentEvide
   if (ledger.entries.some((entry) => entry.evidenceId === envelope.evidenceId)) throw new Error("assessment_evidence_id_conflict");
   const parentTier = PARENT_TIER[envelope.tier];
   if (parentTier === null) {
-    if (envelope.derivedFromEvidenceId !== null || envelope.scoring.status !== "UNSCORED" || envelope.admission !== null) throw new Error("assessment_raw_observation_invalid");
+    if (envelope.derivedFromEvidenceId !== null || envelope.scoring.status !== "UNSCORED" || envelope.admission !== null
+      || envelope.independence === "INDEPENDENT" || envelope.assistanceAttestation !== null) throw new Error("assessment_raw_observation_invalid");
   } else {
     const parent = ledger.entries.find((entry) => entry.evidenceId === envelope.derivedFromEvidenceId);
     if (!parent) throw new Error("assessment_evidence_parent_missing");
@@ -463,7 +609,9 @@ export function appendEvidence(ledger: EvidenceLedger, envelope: AssessmentEvide
     if (envelope.tier === "VERIFIED_ASSESSMENT_EVIDENCE" && ((envelope.scoring.status !== "SCORED" && envelope.scoring.status !== "BLANK") || !["SERVER_KEYED", "HUMAN_MODERATOR"].includes(envelope.scoring.scorerAuthority ?? ""))) {
       throw new Error("assessment_verified_requires_scoring_authority");
     }
-    if (envelope.tier === "MASTERY_ADMITTED_EVIDENCE" && envelope.independence !== "INDEPENDENT") throw new Error("assessment_assisted_evidence_not_admissible");
+    if (envelope.tier === "MASTERY_ADMITTED_EVIDENCE" && (envelope.independence !== "INDEPENDENT" || envelope.assistanceAttestation?.status !== "INDEPENDENT")) {
+      throw new Error("assessment_assisted_evidence_not_admissible");
+    }
     if (envelope.tier === "PROVISIONAL_FEEDBACK" && envelope.scoring.status !== "PROVISIONAL") throw new Error("assessment_provisional_must_stay_provisional");
   }
   return Object.freeze({ ledger: Object.freeze({ entries: Object.freeze([...ledger.entries, envelope]) }), appended: true });

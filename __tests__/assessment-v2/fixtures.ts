@@ -1,10 +1,16 @@
 import {
+  appendAssistance,
+  ASSISTANCE_CHANNELS,
   authorizeRelease,
+  emptyAssistanceLedger,
   REVIEW_CHECKS,
   sealDefinition,
   sealForm,
   sealItem,
   type AssessmentDefinitionV2,
+  type AssessmentEvidenceEnvelope,
+  type AssistanceLedger,
+  type AssistanceLedgerScope,
   type AssessmentFormV2,
   type AssessmentItemV2,
   type AssessmentReleaseV2,
@@ -142,4 +148,23 @@ export function buildReleased(overrides: { permittedModes?: AssessmentReleaseV2[
   });
   const itemMap = new Map(built.items.map((item) => [`${item.itemId}@${item.version}`, item]));
   return { ...built, definition, form, reviews, release, itemMap };
+}
+
+/**
+ * A clean, sealed server assistance record for the attempt an envelope belongs to: opened before the
+ * attempt, every channel instrumented, no assistance, sealed at submission. Deterministic, so the
+ * record handed to verification and to admission has the same head. Null for unreleased delivery.
+ */
+export function sealedAssistanceRecord(envelope: Pick<AssessmentEvidenceEnvelope, "scope" | "attempt" | "pins">): AssistanceLedger | null {
+  if (envelope.pins.releaseId === null || envelope.pins.releaseHash === null) return null;
+  const scope: AssistanceLedgerScope = {
+    tenantId: envelope.scope.tenantId, schoolId: envelope.scope.schoolId, studentId: envelope.scope.studentId,
+    attemptId: envelope.attempt.attemptId, sessionId: envelope.attempt.sessionId,
+    releaseId: envelope.pins.releaseId, releaseHash: envelope.pins.releaseHash,
+  };
+  const opened = appendAssistance(emptyAssistanceLedger(scope), {
+    scope, recordedAt: "2026-10-31T00:00:00.000Z",
+    event: { type: "OPENED", availableChannels: [...ASSISTANCE_CHANNELS], instrumentedChannels: [...ASSISTANCE_CHANNELS], independentDelivery: true, offlineDeviceIds: [] },
+  }).ledger;
+  return appendAssistance(opened, { scope, recordedAt: "2026-11-05T00:00:00.000Z", event: { type: "SEALED", reason: "SUBMITTED" } }).ledger;
 }

@@ -29,7 +29,7 @@ import {
   type ProtectedScoringSpec,
   type ServerAttemptContext,
 } from "@/lib/assessment/v2";
-import { approve, buildDefinition, buildForm, buildItems, buildReleased, CURRICULUM, definitionSubject, formSubject, itemSubject, LEAD, REVIEWER_A, REVIEWER_B, SCHOOL, specFor } from "./fixtures";
+import { approve, buildDefinition, buildForm, buildItems, buildReleased, CURRICULUM, definitionSubject, formSubject, itemSubject, LEAD, REVIEWER_A, REVIEWER_B, SCHOOL, specFor, sealedAssistanceRecord } from "./fixtures";
 
 /** Identical in the assessment (PR #193) and records (PR #194) branches. Update both copies together. */
 const LL_AEP_001_SOURCE_DIGEST = "c69ddd89e743400707ddd6e26fcda4f9cd3a6dbb137531c30eed1279572d2561";
@@ -56,6 +56,8 @@ function summativeSet(points = { single: 4, numeric: 7, ordering: 6, worked: 3 }
 }
 
 const releaseArgs = { releaseId: "rel-s", permittedModes: ["OFFICIAL" as const], effectiveFrom: "2026-10-01T00:00:00.000Z", effectiveUntil: null, schoolId: SCHOOL, actor: LEAD, authorizedAt: "2026-10-02T00:00:00.000Z" };
+
+const SUMMATIVE_PRACTICE = { mode: "PRACTICE_UNOFFICIAL", official: false, purpose: "SUMMATIVE" } as const;
 
 describe("LL-AEP-001 shared policy", () => {
   it("is byte-identical to the academic-records copy", () => {
@@ -126,17 +128,17 @@ describe("Independent assessment integrity", () => {
 
   it("offers no hints and defers explanations until the attempt closes during independent assessment", () => {
     const { single, singleSpec } = buildItems();
-    expect(projectItemForLearner(single, { attemptId: "a", points: 1 }).hintCount).toBe(1);
+    expect(projectItemForLearner(single, { attemptId: "a", points: 1, independent: false }).hintCount).toBe(1);
     expect(projectItemForLearner(single, { attemptId: "a", points: 1, independent: true }).hintCount).toBe(0);
-    expect(learnerDisclosure(single, singleSpec, "AFTER_RESPONSE", { independent: true }).explanation).toBeNull();
-    expect(learnerDisclosure(single, singleSpec, "AFTER_ATTEMPT_CLOSED", { independent: true }).explanation).toBe(singleSpec.explanation);
+    expect(learnerDisclosure(single, singleSpec, "AFTER_RESPONSE", { delivery: SUMMATIVE_PRACTICE }).explanation).toBeNull();
+    expect(learnerDisclosure(single, singleSpec, "AFTER_ATTEMPT_CLOSED", { delivery: SUMMATIVE_PRACTICE }).explanation).toBe(singleSpec.explanation);
   });
 
   it("records tutor and hint use during independent assessment as integrity flags and keeps it out of the gradebook", () => {
     const { context, release, single, singleSpec } = officialContext();
     const raw = acceptClientObservation(sub({ assistance: { ...NONE, aiTutorUsed: true, hintsRevealed: 1 } }), context);
     expect(raw.integrityFlags).toEqual(["ai_tutor_used_during_independent_assessment", "hints_used_during_independent_assessment"]);
-    const { evidence } = verifyObservation(raw, { outcome: scoreResponse(single, singleSpec, { kind: "SINGLE_SELECT", optionId: "a" }), release, revocations: [], moderation: null, recordedBy: { kind: "SYSTEM", id: "s", role: null }, recordedAt: "2026-11-01T10:00:06.000Z" });
+    const { evidence } = verifyObservation(raw, { outcome: scoreResponse(single, singleSpec, { kind: "SINGLE_SELECT", optionId: "a" }), release, revocations: [], moderation: null, recordedBy: { kind: "SYSTEM", id: "s", role: null }, recordedAt: "2026-11-01T10:00:06.000Z", assistanceLedger: sealedAssistanceRecord(raw) });
     expect(gradebookEligibility(evidence, { gradingPolicy: { schoolId: SCHOOL, policyId: "p", version: "1", status: "APPROVED" }, revocations: [] }).reason).toBe("integrity_review_required");
   });
 
@@ -201,9 +203,9 @@ describe("Human moderation, high-stakes second marking and examiner reconciliati
     const { context, release } = officialContext("worked", "SUMMATIVE");
     const raw = acceptClientObservation(sub({ itemId: "i-worked" }), context);
     const { first } = firstMark("SUMMATIVE");
-    expect(() => verifyObservation(raw, { outcome: first.outcome, release, revocations: [], moderation: first.moderation, recordedBy: { kind: "HUMAN", id: "t-a", role: "TEACHER" }, recordedAt: "2026-11-02T00:00:01.000Z" })).toThrow("assessment_second_marking_required");
+    expect(() => verifyObservation(raw, { outcome: first.outcome, release, revocations: [], moderation: first.moderation, recordedBy: { kind: "HUMAN", id: "t-a", role: "TEACHER" }, recordedAt: "2026-11-02T00:00:01.000Z", assistanceLedger: sealedAssistanceRecord(raw) })).toThrow("assessment_second_marking_required");
     // A forged "not required" flag on a high-stakes purpose is refused too.
-    expect(() => verifyObservation(raw, { outcome: first.outcome, release, revocations: [], moderation: { ...first.moderation, secondMarkerRequired: false }, recordedBy: { kind: "HUMAN", id: "t-a", role: "TEACHER" }, recordedAt: "2026-11-02T00:00:01.000Z" })).toThrow("assessment_second_marking_required");
+    expect(() => verifyObservation(raw, { outcome: first.outcome, release, revocations: [], moderation: { ...first.moderation, secondMarkerRequired: false }, recordedBy: { kind: "HUMAN", id: "t-a", role: "TEACHER" }, recordedAt: "2026-11-02T00:00:01.000Z", assistanceLedger: sealedAssistanceRecord(raw) })).toThrow("assessment_second_marking_required");
   });
 
   it("agrees within tolerance, sends disagreements to an independent examiner, and verifies the result", () => {
@@ -223,7 +225,7 @@ describe("Human moderation, high-stakes second marking and examiner reconciliati
     expect(reconciled.marks).toHaveLength(3);
     const { context, release } = officialContext("worked", "SUMMATIVE");
     const raw = acceptClientObservation(sub({ itemId: "i-worked" }), context);
-    const { evidence } = verifyObservation(raw, { outcome: reconciled.outcome, release, revocations: [], moderation: reconciled.moderation, recordedBy: { kind: "HUMAN", id: "ex-1", role: "EXAMINER" }, recordedAt: "2026-11-04T00:00:01.000Z" });
+    const { evidence } = verifyObservation(raw, { outcome: reconciled.outcome, release, revocations: [], moderation: reconciled.moderation, recordedBy: { kind: "HUMAN", id: "ex-1", role: "EXAMINER" }, recordedAt: "2026-11-04T00:00:01.000Z", assistanceLedger: sealedAssistanceRecord(raw) });
     expect(evidence.scoring).toMatchObject({ scorerAuthority: "HUMAN_MODERATOR", points: 1, moderation: { marking: "RECONCILED" } });
   });
 });
@@ -236,7 +238,7 @@ describe("Approved points and blank-response semantics", () => {
     expect(scoreResponse(single, singleSpec, { kind: "SINGLE_SELECT", optionId: "zz" }).status).toBe("INVALID_RESPONSE");
     const { context, release } = officialContext();
     const raw = acceptClientObservation(sub({}), context);
-    const { evidence } = verifyObservation(raw, { outcome: scoreResponse(single, singleSpec, { kind: "BLANK" }), release, revocations: [], moderation: null, recordedBy: { kind: "SYSTEM", id: "s", role: null }, recordedAt: "2026-11-01T10:00:06.000Z" });
+    const { evidence } = verifyObservation(raw, { outcome: scoreResponse(single, singleSpec, { kind: "BLANK" }), release, revocations: [], moderation: null, recordedBy: { kind: "SYSTEM", id: "s", role: null }, recordedAt: "2026-11-01T10:00:06.000Z", assistanceLedger: sealedAssistanceRecord(raw) });
     expect(evidence.scoring).toMatchObject({ status: "BLANK", points: 0 });
   });
 
