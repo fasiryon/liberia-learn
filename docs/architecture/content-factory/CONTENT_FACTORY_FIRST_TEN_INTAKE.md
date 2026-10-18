@@ -1,5 +1,7 @@
 # Fixed first-ten source intake
 
+Update: completed authored inputs can now be processed as an explicit subset through the [governed partial-batch workflow](CONTENT_FACTORY_PARTIAL_BATCH.md). It preserves the original ten-source manifest and local-export limitations. The planning-only verdict below describes the earlier `25ebd128` checkpoint; it does not imply that empty briefs can be processed as candidates.
+
 This continues factory engineering from `d1f1826cb`. The user supplied Curriculum Excellence commit `9628d97f6932ae4c0c399ec15455230e3f76607e` as the location of the exact ten lessons. Its ordered source IDs, revisions, hashes and subjects are unchanged. No alternates are selected. Curriculum diagnoses, factual-correction citations, qualified review and owner approval remain with their respective leads.
 
 ## Verified source evidence

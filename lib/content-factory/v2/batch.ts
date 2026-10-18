@@ -18,6 +18,7 @@ const manifestSchema = z.strictObject({
   files: z.record(z.string(), z.string()), packageHash: z.string(),
 });
 type PreparedLesson = ReturnType<typeof prepareBatch>["lessons"][number];
+export type PreparedReviewLesson = PreparedLesson;
 export type BatchSummary = z.infer<typeof summarySchema>;
 export type BatchActors = Record<FactoryRole, z.infer<typeof actorSchema>>;
 
@@ -66,27 +67,46 @@ export async function runCandidateBatch(input: {
   const relative = path.relative(process.cwd(), root);
   if (prepared.contract.evidence.kind === "ACCEPTED_READ_ONLY_EXPORT" && relative !== ".." && !relative.startsWith(`..${path.sep}`) && !path.isAbsolute(relative)) throw new Error("production_candidate_output_must_be_outside_repository");
   fs.mkdirSync(root, { recursive: true });
+  return runPreparedReviewPackages({ outputRoot: root, lessons: prepared.lessons, context: lesson => ({
+    actors, inputHash: digest(BATCH_VERSION, { contract: prepared.contract, source: lesson.source, actors, pipeline: BATCH_VERSION }),
+    evidence: { contract: prepared.contract }, generationInputBase64: input.generationInputs[lesson.entry.candidateId],
+    createExecutors: () => input.createExecutors(lesson),
+    extraReleaseBlockers: prepared.contract.evidence.kind === "SYNTHETIC" ? ["SYNTHETIC_EVIDENCE_ONLY"] : [],
+  }) });
+}
+
+/** Shared immutable sink for already-preflighted inputs. Callers own cohort/source validation. */
+export async function runPreparedReviewPackages(input: {
+  outputRoot: string; lessons: readonly PreparedReviewLesson[]; authoringOnly?: boolean;
+  context: (lesson: PreparedReviewLesson) => {
+    actors: Partial<BatchActors>; inputHash: string; evidence: Record<string, unknown>;
+    generationInputBase64: string; createExecutors: () => FactoryExecutors; extraReleaseBlockers: string[];
+  };
+}): Promise<(BatchSummary & { packageHash: string })[]> {
+  const root = path.resolve(input.outputRoot);
+  fs.mkdirSync(root, { recursive: true });
   const results: (BatchSummary & { packageHash: string })[] = [];
-  for (const lesson of prepared.lessons) {
+  for (const lesson of input.lessons) {
     const { entry, source, blueprint } = lesson;
-    const inputHash = digest(BATCH_VERSION, { contract: prepared.contract, source, actors, pipeline: BATCH_VERSION });
+    const context = input.context(lesson);
+    const { actors, inputHash } = context;
     // Hash untrusted IDs so they never become filesystem paths.
     const dir = path.join(root, digest("candidate-slot", { id: entry.candidateId, version: entry.candidateVersion }));
     if (fs.existsSync(dir)) { results.push(readExisting(dir, inputHash)); continue; }
     // mkdir is the cross-process lock. A racing worker fails before invoking an author.
     fs.mkdirSync(dir);
     const write = (file: string, value: unknown) => fs.writeFileSync(path.join(dir, file), JSON.stringify(value, null, 2) + "\n", { flag: "wx" });
-    write("input.json", { schemaVersion: BATCH_VERSION, inputHash, contract: prepared.contract, source, actors, generationInputBase64: input.generationInputs[entry.candidateId] });
+    write("input.json", { schemaVersion: BATCH_VERSION, inputHash, ...context.evidence, source, actors, generationInputBase64: context.generationInputBase64 });
     let rawIndex = 0;
     try {
-      const supplied = input.createExecutors(lesson);
+      const supplied = context.createExecutors();
       const executors = Object.fromEntries(FACTORY_ROLES.map(role => [role, async (task: Parameters<FactoryExecutors[FactoryRole]>[0]) => {
         const drafts = await supplied[role](task);
         // Retain malformed as well as valid generator outputs for restricted review.
         write(`raw-${String(++rawIndex).padStart(3, "0")}.json`, { role, attempt: task.attempt, drafts });
         return drafts;
       }])) as FactoryExecutors;
-      const result = await runFactory({ blueprint, executors, actors, maxAttempts: 1,
+      const result = await runFactory({ blueprint, executors, actors, maxAttempts: 1, authoringOnly: input.authoringOnly,
         appendAudit: async event => write(`event-${String(event.sequence).padStart(3, "0")}.json`, event),
         persistArtifact: async artifact => write(`artifact-${digest("artifact-id", artifact.id)}.json`, artifact),
       });
@@ -97,7 +117,7 @@ export async function runCandidateBatch(input: {
         state: "DRAFT", released: false, approved: false, reviewState: "PENDING_INDEPENDENT_REVIEW",
         generationStatus: result.status === "FAILED" ? "FAILED" : failures.length ? "REVISION_REQUIRED" : result.status,
         failures: [...new Set(failures)],
-        releaseBlockers: [...new Set([...result.quality.releaseBlockers, "INDEPENDENT_REVIEW_NOT_PERFORMED", "SOURCE_COMPARISON_SIGNOFF_REQUIRED", "CANDIDATE_ONLY_NO_RELEASE_PATH", ...(failures.length || result.status === "FAILED" ? ["DETERMINISTIC_VALIDATION_FAILED"] : []), ...(entry.assets.length ? ["MEDIA_LICENSE_AND_ACCESSIBILITY_REVIEW_REQUIRED"] : []), ...(prepared.contract.evidence.kind === "SYNTHETIC" ? ["SYNTHETIC_EVIDENCE_ONLY"] : [])])],
+        releaseBlockers: [...new Set([...result.quality.releaseBlockers, "INDEPENDENT_REVIEW_NOT_PERFORMED", "SOURCE_COMPARISON_SIGNOFF_REQUIRED", "CANDIDATE_ONLY_NO_RELEASE_PATH", ...(failures.length || result.status === "FAILED" ? ["DETERMINISTIC_VALIDATION_FAILED"] : []), ...(entry.assets.length ? ["MEDIA_LICENSE_AND_ACCESSIBILITY_REVIEW_REQUIRED"] : []), ...context.extraReleaseBlockers])],
       };
       write("summary.json", summary);
       write("result.json", result);

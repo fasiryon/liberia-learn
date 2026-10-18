@@ -7,13 +7,14 @@ import type { FactoryArtifact, ResourceDraft } from "./types";
 import { FIRST_TEN_ASSESSMENT_KIND_MAP } from "./firstTen";
 
 export const AUTHORING_INPUT_VERSION = "factory-lesson-authoring-input/1.0.0" as const;
+export type AuthoringRequirements = { baselineCommit: string; lessons: typeof requirements.lessons };
 const id = z.string().min(1).refine(value => value.trim() === value, "exact_identity_required");
 const nullableId = id.nullable();
 const sourceSchema = z.strictObject({ databaseId: id, contentId: id, revisionId: id, revisionNumber: z.number().int().nonnegative(), snapshotSha256: z.string().regex(/^[a-f0-9]{64}$/) });
 export const authoringInputSchema = z.strictObject({
   schemaVersion: z.literal(AUTHORING_INPUT_VERSION), inputState: z.enum(["TEMPLATE", "AUTHORED_DRAFT"]),
   state: z.literal("DRAFT"), approved: z.literal(false), released: z.literal(false), published: z.literal(false), audience: z.literal("REVIEWER_ONLY"),
-  cohortCommit: z.literal(requirements.baselineCommit), source: sourceSchema, blueprint: z.unknown(),
+  cohortCommit: z.string().regex(/^[a-f0-9]{40}$/), source: sourceSchema, blueprint: z.unknown(),
   authors: z.record(z.enum(FACTORY_ROLES), actorSchema.nullable()),
   resources: z.array(z.strictObject({ id, version: id, role: z.enum(FACTORY_ROLES), payload: z.unknown().nullable() })),
   misconceptionBindings: z.array(z.strictObject({ id, objectiveId: nullableId, instructionSceneId: nullableId, assessmentResourceId: nullableId, itemId: nullableId, responsePattern: nullableId })),
@@ -30,13 +31,13 @@ export const authoringInputSchema = z.strictObject({
 export type AuthoringInput = z.infer<typeof authoringInputSchema>;
 
 /** Empty authoring slots are template data, never generated candidate lesson content. */
-export function createAuthoringTemplate(blueprint: UnitBlueprint): AuthoringInput {
+export function createAuthoringTemplate(blueprint: UnitBlueprint, context: AuthoringRequirements = requirements): AuthoringInput {
   const source = blueprint.legacy[0];
-  const required = requirements.lessons.find(l => l.source.contentId === source?.contentId);
+  const required = context.lessons.find(l => l.source.contentId === source?.contentId);
   if (!required) throw new Error("first_three_source_not_selected");
   return authoringInputSchema.parse({
     schemaVersion: AUTHORING_INPUT_VERSION, inputState: "TEMPLATE", state: "DRAFT", approved: false, released: false, published: false, audience: "REVIEWER_ONLY",
-    cohortCommit: requirements.baselineCommit, source: required.source, blueprint,
+    cohortCommit: context.baselineCommit, source: required.source, blueprint,
     authors: Object.fromEntries(FACTORY_ROLES.map(role => [role, null])),
     resources: blueprint.resources.map(r => ({ id: r.id, role: r.role, version: blueprint.version, payload: null })),
     misconceptionBindings: required.misconceptions.map(m => ({ id: m.id, objectiveId: null, instructionSceneId: null, assessmentResourceId: null, itemId: null, responsePattern: null })),
@@ -47,18 +48,19 @@ export function createAuthoringTemplate(blueprint: UnitBlueprint): AuthoringInpu
 }
 
 /** Convert validated authored inputs to the existing static factory role map, without generating content. */
-export function authoringGenerationInput(input: unknown) {
-  const result = validateAuthoringInput(input, "authored");
+export function authoringGenerationInput(input: unknown, context: AuthoringRequirements = requirements) {
+  const result = validateAuthoringInput(input, "authored", context);
   if (!result.valid) throw new Error("authored_input_incomplete_or_invalid");
   const value = authoringInputSchema.parse(input);
   return Object.fromEntries(FACTORY_ROLES.map(role => [role, value.resources.filter(r => r.role === role).map(r => parseResourceDraft({ id: r.id, version: r.version, payload: r.payload }))]));
 }
 
 /** Validation only. No author callbacks, persistence, review, publication, or grading. */
-export function validateAuthoringInput(input: unknown, mode: "template" | "authored") {
+export function validateAuthoringInput(input: unknown, mode: "template" | "authored", context: AuthoringRequirements = requirements) {
   const value = authoringInputSchema.parse(input);
+  if (value.cohortCommit !== context.baselineCommit) throw new Error("authoring_cohort_commit_mismatch");
   const blueprint = parseBlueprint(value.blueprint);
-  const required = requirements.lessons.find(l => l.source.contentId === value.source.contentId);
+  const required = context.lessons.find(l => l.source.contentId === value.source.contentId);
   if (!required || digest("source", required.source) !== digest("source", value.source)) throw new Error("authoring_source_binding_mismatch");
   const source = blueprint.legacy[0];
   if (blueprint.legacy.length !== 1 || !source || digest("source", value.source) !== digest("source", { databaseId: source.databaseId, contentId: source.contentId, revisionId: source.revisionId, revisionNumber: source.revisionNumber, snapshotSha256: source.snapshotSha256 }) || blueprint.subject !== required.subject || blueprint.grade !== required.grade) throw new Error("authoring_blueprint_scope_mismatch");
@@ -76,7 +78,7 @@ export function validateAuthoringInput(input: unknown, mode: "template" | "autho
   }
   if (!blueprint.assessmentPlan.some(t => t.resourceId === value.retentionChecks.resourceId && t.kind === "DELAYED_RETRIEVAL" && (t.delayDays ?? 0) >= value.retentionChecks.delayDays)) failures.push("retention_delay_unbound");
   for (const asset of value.assets) try { assertBatchAssetBytes(asset); } catch (error) { failures.push(error instanceof Error ? error.message : "asset_bytes_invalid"); }
-  const executionBlockers = ["TEN_LESSON_BATCH_REQUIRED", "ACCEPTED_NORMALIZED_FACTORY_INVENTORY_REQUIRED", "INDEPENDENT_AND_QUALIFIED_REVIEW_REQUIRED", "UNRELEASED_VALIDATION_ONLY"];
+  const executionBlockers = ["EXPLICIT_COHORT_SUBMISSION_REQUIRED", "ACCEPTED_NORMALIZED_FACTORY_INVENTORY_REQUIRED", "INDEPENDENT_AND_QUALIFIED_REVIEW_REQUIRED", "UNRELEASED_VALIDATION_ONLY"];
   if (value.inputState !== "AUTHORED_DRAFT") missing.push("inputState:AUTHORED_DRAFT");
   const drafts = new Map<string, ResourceDraft>();
   for (const resource of value.resources) {

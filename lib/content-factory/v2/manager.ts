@@ -22,6 +22,7 @@ export async function runFactory(input: {
   blueprint: unknown; executors: FactoryExecutors; actors?: Partial<Record<FactoryRole, AgentIdentity>>;
   maxAttempts?: number; appendAudit: (event: FactoryEvent) => Promise<void>;
   persistArtifact?: (artifact: FactoryArtifact) => Promise<void>;
+  authoringOnly?: boolean;
 }): Promise<FactoryResult> {
   const blueprint = freezeDeep(parseBlueprint(input.blueprint));
   const maxAttempts = input.maxAttempts ?? 2;
@@ -55,6 +56,10 @@ export async function runFactory(input: {
       if (quality.failures.length) {
         await record({ role, attempt: 0, status: "REVISION_REQUIRED", inputHash, outputHashes: [], error: quality.failures.join(";") });
         return result("REVISION_REQUIRED");
+      }
+      if (input.authoringOnly) {
+        await record({ role, attempt: 0, status: "REVIEW_PENDING", inputHash, outputHashes: artifacts.map(a => a.contentHash), error: null });
+        return result("AWAITING_HUMAN_REVIEW");
       }
       const independence = assessReviewerIndependence(actors[role], artifacts.map(a => a.author));
       reviewerIndependence = independence;

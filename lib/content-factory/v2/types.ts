@@ -23,7 +23,7 @@ export type QualityReport = {
 };
 export type FactoryEvent = {
   sequence: number; role: FactoryRole; attempt: number;
-  status: "STARTED" | "RETRY_REQUIRED" | "SUCCEEDED" | "FAILED" | "REVISION_REQUIRED";
+  status: "STARTED" | "RETRY_REQUIRED" | "SUCCEEDED" | "FAILED" | "REVISION_REQUIRED" | "REVIEW_PENDING";
   inputHash: string; outputHashes: string[]; error: string | null; previousHash: string | null; eventHash: string;
 };
 export type ExecutorInput = {

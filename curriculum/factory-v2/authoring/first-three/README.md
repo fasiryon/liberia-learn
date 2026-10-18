@@ -66,7 +66,7 @@ After authored validation passes, this read-only conversion prints the existing 
 node artifacts/content-factory-v2/ten-validate-authoring.cjs --generation-json <authored-input.json>
 ```
 
-The output includes protected scoring specs. Save it only in restricted storage using UTF-8 without BOM, then compute the exact file hash for the eventual batch generation pin. A template or invalid authoring package cannot be converted. The remaining source/media/blueprint/actor metadata must also be bound into the existing batch contract; generation JSON alone is not a runnable or approved batch.
+The output includes protected scoring specs. Save it only in restricted storage using UTF-8 without BOM, then compute the exact file hash for the eventual batch generation pin. A template or invalid authoring package cannot be converted. The remaining source/media/blueprint/actor metadata must also be bound into the existing batch contract; generation JSON alone is not a runnable or approved batch. The [governed partial-batch runner](../../../../docs/architecture/content-factory/CONTENT_FACTORY_PARTIAL_BATCH.md) can now consume completed authoring envelopes directly, without a separate generation-JSON export.
 
 ## Verified coverage and missing requirements
 
@@ -76,8 +76,8 @@ Outstanding content is deliberately null: lesson/resource payloads, real author 
 
 Execution limits remain separate:
 
-- The existing runner requires the fixed ten-lesson cohort. These three packages can be authored/validated separately; no alternate three-lesson production runner or cohort is created.
-- Accepted normalized factory inventory bindings, source capture/attestations and later independent/qualified review remain required before execution or release consideration. Current blueprint inventory pins describe the raw local export.
+- The original full-batch runner still requires ten lessons. The governed partial-batch runner accepts an explicit authored subset of that same unchanged manifest; it does not create an alternate cohort or placeholders for the remaining lessons.
+- The partial-batch draft-review path verifies pinned local export integrity while retaining missing production/acceptance attestations as release blockers. Accepted production-inventory and later independent/qualified review gates remain. Current blueprint inventory pins describe the raw local export.
 - The Civics spec requests SVG. Media specifications can record `image/svg+xml`, but the existing executable asset contract accepts only PNG, JPEG, WebP and text. SVG byte ingestion/rendering still needs an adapter and review. No silent raster substitution is authorized here.
 - The requested particle simulation, fraction manipulatives and other interactive media need governed runtime bindings or an owner-reviewed fallback implementation. A media specification is not an executable lab. Fallback-only delivery does not silently waive primary-media requirements.
 - This author interface uses existing AI actor identities; it does not record qualified human approval. Review-role identities and approval assertions are rejected from authoring submissions.
