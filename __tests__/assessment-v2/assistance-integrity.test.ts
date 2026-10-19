@@ -68,13 +68,13 @@ function submission(overrides: Partial<ClientObservationSubmission> = {}): Clien
 }
 
 /** A server-side ledger opened with the attempt and sealed at submission, optionally with assistance. */
-function ledgerFor(scope: AssistanceLedgerScope, steps: { assist?: "TUTOR" | "HINT"; seal?: boolean; finalize?: boolean; instrumented?: readonly (typeof ALL_CHANNELS)[number][] } = {}): AssistanceLedger {
+function ledgerFor(scope: AssistanceLedgerScope, steps: { assist?: "TUTOR" | "HINT"; seal?: boolean; finalize?: boolean; offline?: boolean; instrumented?: readonly (typeof ALL_CHANNELS)[number][] } = {}): AssistanceLedger {
   let ledger = emptyAssistanceLedger(scope);
-  ledger = appendAssistance(ledger, { scope, recordedAt: T(0), event: { type: "OPENED", availableChannels: [...ALL_CHANNELS], instrumentedChannels: [...(steps.instrumented ?? ALL_CHANNELS)], independentDelivery: true, offlineDeviceIds: ["dev-1"] } }).ledger;
+  ledger = appendAssistance(ledger, { scope, recordedAt: T(0), event: { type: "OPENED", availableChannels: [...ALL_CHANNELS], instrumentedChannels: [...(steps.instrumented ?? ALL_CHANNELS)], independentDelivery: true, offlineDeviceIds: steps.offline ? ["dev-1"] : [] } }).ledger;
   if (steps.assist === "TUTOR") ledger = appendAssistance(ledger, { scope, recordedAt: T(2), event: { type: "ASSISTANCE", kind: "TUTOR_TURN", itemId: null, provenance: { emitter: "SERVER_TUTOR_ROUTE", tutorInteractionId: "tut-1" } } }).ledger;
   if (steps.assist === "HINT") ledger = appendAssistance(ledger, { scope, recordedAt: T(2), event: { type: "ASSISTANCE", kind: "HINT_REVEALED", itemId: "i-single", provenance: { emitter: "SERVER_HINT_PROJECTION", hintId: "h1" } } }).ledger;
   if (steps.seal !== false) ledger = appendAssistance(ledger, { scope, recordedAt: T(10), event: { type: "SEALED", reason: "SUBMITTED" } }).ledger;
-  if (steps.seal !== false && steps.finalize !== false) ledger = appendAssistance(ledger, { scope, recordedAt: T(12), event: { type: "FINALIZED", reason: "OFFLINE_SYNC_CLOSED", devices: [{ deviceId: "dev-1", syncedThroughSequence: 100 }] } }).ledger;
+  if (steps.offline && steps.seal !== false && steps.finalize !== false) ledger = appendAssistance(ledger, { scope, recordedAt: T(12), event: { type: "FINALIZED", reason: "OFFLINE_SYNC_CLOSED", devices: [{ deviceId: "dev-1", syncedThroughSequence: 100 }] } }).ledger;
   return ledger;
 }
 
@@ -183,7 +183,7 @@ describe("F1: client declarations cannot prove independence", () => {
 
   it("P2-5: an offline-capable record cannot attest independence until the sync window is finalized", () => {
     const env = setup();
-    const open = ledgerFor(env.scope, { finalize: false });
+    const open = ledgerFor(env.scope, { finalize: false, offline: true });
     const early = verify(env, acceptClientObservation(submission(), env.context), open).evidence;
     expect(early.independence).toBe("UNVERIFIED");
     expect(early.integrityFlags).toContain("assistance_ledger_offline_sync_open");
@@ -387,11 +387,11 @@ describe("Independent review follow-ups (server-caller bypasses)", () => {
   it("an offline response from a device the record does not accept is UNVERIFIED and flagged", () => {
     const env = setup();
     const offline = submission({ capture: { source: "OFFLINE", deviceId: "dev-9", clientEventId: "e-9", clientSequence: 0, capturedAt: T(1), syncBatchId: "b9" } });
-    const result = verify(env, acceptClientObservation(offline, env.context), ledgerFor(env.scope));
+    const result = verify(env, acceptClientObservation(offline, env.context), ledgerFor(env.scope, { offline: true }));
     expect(result.evidence.independence).toBe("UNVERIFIED");
     expect(result.evidence.integrityFlags).toContain("assistance_record_device_unbound");
     const bound = submission({ capture: { source: "OFFLINE", deviceId: "dev-1", clientEventId: "e-1", clientSequence: 0, capturedAt: T(1), syncBatchId: "b1" } });
-    expect(verify(env, acceptClientObservation(bound, env.context), ledgerFor(env.scope)).evidence.independence).toBe("INDEPENDENT");
+    expect(verify(env, acceptClientObservation(bound, env.context), ledgerFor(env.scope, { offline: true })).evidence.independence).toBe("INDEPENDENT");
   });
 
   it("a server surface cannot relabel its assistance as a neutral tool use", () => {
@@ -419,7 +419,7 @@ describe("Independent review follow-ups (server-caller bypasses)", () => {
 
   it("a premature FINALIZED cannot turn an unsynced offline response into independence", () => {
     const env = setup();
-    let record = ledgerFor(env.scope, { finalize: false });
+    let record = ledgerFor(env.scope, { finalize: false, offline: true });
     // The sync service finalizes having synced dev-1 only through sequence 0.
     record = appendAssistance(record, { scope: env.scope, recordedAt: T(12), event: { type: "FINALIZED", reason: "OFFLINE_SYNC_CLOSED", devices: [{ deviceId: "dev-1", syncedThroughSequence: 0 }] } }).ledger;
     const offline = (clientSequence: number, receivedAt: string) => {
@@ -435,6 +435,13 @@ describe("Independent review follow-ups (server-caller bypasses)", () => {
     }
     // Within the acknowledgement and received before finalization: covered.
     expect(verify(env, offline(0, T(11)), record).evidence.independence).toBe("INDEPENDENT");
+  });
+
+  it("an online response on a record that accepts offline devices is UNVERIFIED (mixed delivery fails closed)", () => {
+    const env = setup();
+    const result = verify(env, acceptClientObservation(submission(), env.context), ledgerFor(env.scope, { offline: true }));
+    expect(result.evidence.independence).toBe("UNVERIFIED");
+    expect(result.evidence.integrityFlags).toContain("assistance_record_mixed_delivery");
   });
 
   it("FINALIZED must account for every accepted device and agree with what was recorded", () => {

@@ -180,19 +180,22 @@ export function buildReleased(overrides: { permittedModes?: AssessmentReleaseV2[
  * attempt, every channel instrumented, no assistance, sealed at submission, offline sync finalized. Deterministic, so the
  * record handed to verification and to admission has the same head. Null for unreleased delivery.
  */
-export function sealedAssistanceRecord(envelope: Pick<AssessmentEvidenceEnvelope, "scope" | "attempt" | "pins" | "delivery">): AssistanceLedger | null {
+export function sealedAssistanceRecord(envelope: Pick<AssessmentEvidenceEnvelope, "scope" | "attempt" | "pins" | "delivery" | "capture">): AssistanceLedger | null {
   if (envelope.pins.releaseId === null || envelope.pins.releaseHash === null) return null;
   const scope: AssistanceLedgerScope = {
     tenantId: envelope.scope.tenantId, schoolId: envelope.scope.schoolId, studentId: envelope.scope.studentId,
     attemptId: envelope.attempt.attemptId, sessionId: envelope.attempt.sessionId,
     releaseId: envelope.pins.releaseId, releaseHash: envelope.pins.releaseHash,
   };
+  // Online-only attempts are final when sealed; an offline capture binds its device and needs FINALIZED.
+  const devices = envelope.capture.source === "OFFLINE" && envelope.capture.deviceId ? [envelope.capture.deviceId] : [];
   const opened = appendAssistance(emptyAssistanceLedger(scope), {
     scope, recordedAt: "2026-10-31T00:00:00.000Z",
-    event: { type: "OPENED", availableChannels: [...ASSISTANCE_CHANNELS], instrumentedChannels: [...ASSISTANCE_CHANNELS], independentDelivery: isIndependentAssessment(envelope.delivery), offlineDeviceIds: ["tablet-7"] },
+    event: { type: "OPENED", availableChannels: [...ASSISTANCE_CHANNELS], instrumentedChannels: [...ASSISTANCE_CHANNELS], independentDelivery: isIndependentAssessment(envelope.delivery), offlineDeviceIds: devices },
   }).ledger;
   const sealed = appendAssistance(opened, { scope, recordedAt: "2026-11-05T00:00:00.000Z", event: { type: "SEALED", reason: "SUBMITTED" } }).ledger;
-  return appendAssistance(sealed, { scope, recordedAt: "2026-11-05T00:10:00.000Z", event: { type: "FINALIZED", reason: "OFFLINE_SYNC_CLOSED", devices: [{ deviceId: "tablet-7", syncedThroughSequence: 1_000 }] } }).ledger;
+  if (devices.length === 0) return sealed;
+  return appendAssistance(sealed, { scope, recordedAt: "2026-11-05T00:10:00.000Z", event: { type: "FINALIZED", reason: "OFFLINE_SYNC_CLOSED", devices: devices.map((deviceId) => ({ deviceId, syncedThroughSequence: 1_000 })) } }).ledger;
 }
 
 /** An issued independence decision for a released form of this purpose, delivered as practice. */

@@ -355,8 +355,11 @@ export function createProvisionalFeedback(raw: AssessmentEvidenceEnvelope, input
  * FINALIZED acknowledgement covers the response's capture sequence, and the response arrived before
  * finalization. Online responses are always covered by a final record.
  */
-function offlineResponseCovered(attestation: AssistanceAttestation, envelope: Pick<AssessmentEvidenceEnvelope, "capture">): "COVERED" | "DEVICE_UNBOUND" | "UNSYNCED" {
-  if (envelope.capture.source !== "OFFLINE") return "COVERED";
+function offlineResponseCovered(attestation: AssistanceAttestation, envelope: Pick<AssessmentEvidenceEnvelope, "capture">): "COVERED" | "DEVICE_UNBOUND" | "UNSYNCED" | "MIXED_DELIVERY" {
+  // A record that accepts offline devices cannot vouch for an online response: assistance a device
+  // still holds (or never delivered) is invisible to it. Fail closed until a device-level
+  // acknowledgement protocol exists (tracked as SYNC-2).
+  if (envelope.capture.source !== "OFFLINE") return attestation.offlineDeviceIds.length > 0 ? "MIXED_DELIVERY" : "COVERED";
   const deviceId = envelope.capture.deviceId ?? "";
   if (!attestation.offlineDeviceIds.includes(deviceId)) return "DEVICE_UNBOUND";
   const ack = attestation.syncedThrough.find((device) => device.deviceId === deviceId);
@@ -410,8 +413,9 @@ function resolveIndependence(raw: AssessmentEvidenceEnvelope, ledger: Assistance
   if (coverage === "DEVICE_UNBOUND") flags.push("assistance_record_device_unbound");
   // Only meaningful once the record is final; before that the record is UNVERIFIED anyway.
   if (coverage === "UNSYNCED" && attestation.final) flags.push("assistance_record_offline_response_unsynced");
+  if (coverage === "MIXED_DELIVERY") flags.push("assistance_record_mixed_delivery");
   const recordUsable = !flags.includes("assistance_record_delivery_mismatch") && !flags.includes("assistance_record_device_unbound")
-    && !flags.includes("assistance_record_offline_response_unsynced");
+    && !flags.includes("assistance_record_offline_response_unsynced") && !flags.includes("assistance_record_mixed_delivery");
   let independence: EvidenceIndependence;
   if (classification.status === "ASSISTED") {
     independence = "ASSISTED";
