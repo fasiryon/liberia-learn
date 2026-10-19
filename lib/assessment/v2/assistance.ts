@@ -93,7 +93,27 @@ const GENESIS = "0".repeat(64);
 const CLOCK_SKEW_MS = 5 * 60_000;
 const sha256 = (value: string) => createHash("sha256").update(value, "utf8").digest("hex");
 const hashEntry = (entry: Omit<AssistanceLedgerEntry, "entryHash">) => sha256(canonicalizeJson({ domain: "liberialearn.assistance-ledger.v1", entry }));
-const payloadDigest = (scope: AssistanceLedgerScope, event: AssistanceLedgerEvent) => sha256(canonicalizeJson({ scope, event }));
+/**
+ * Semantic payload of an event. Transport-only fields (an offline sync batch id) are excluded, so a
+ * normal re-batch of the same captured event is an idempotent replay, not a conflict.
+ */
+function payloadDigest(scope: AssistanceLedgerScope, event: AssistanceLedgerEvent): string {
+  if (event.type === "ASSISTANCE" && event.provenance.emitter === "OFFLINE_DEVICE_REPLAY") {
+    const { syncBatchId: _transport, ...provenance } = event.provenance;
+    return sha256(canonicalizeJson({ scope, event: { ...event, provenance } }));
+  }
+  return sha256(canonicalizeJson({ scope, event }));
+}
+
+/** Kinds each emitter may record. A server surface cannot relabel what it produced (e.g. a hint as a neutral tool use). */
+const EMITTER_KINDS: Readonly<Record<AssistanceProvenance["emitter"], readonly AssistanceKind[]>> = Object.freeze({
+  SERVER_TUTOR_ROUTE: ["TUTOR_TURN"],
+  SERVER_HINT_PROJECTION: ["HINT_REVEALED"],
+  SERVER_EXPLANATION_PROJECTION: ["EXPLANATION_SHOWN", "WORKED_EXAMPLE_SHOWN", "ANSWER_SHOWN"],
+  SERVER_TOOL_REGISTRY: ["TOOL_USED", "PROHIBITED_TOOL_USED"],
+  TEACHER_RECORDED: ["TUTOR_TURN", "HINT_REVEALED", "EXPLANATION_SHOWN", "WORKED_EXAMPLE_SHOWN", "ANSWER_SHOWN", "TOOL_USED", "PROHIBITED_TOOL_USED", "PEER_COLLABORATION_OBSERVED"],
+  OFFLINE_DEVICE_REPLAY: ["TUTOR_TURN", "HINT_REVEALED", "EXPLANATION_SHOWN", "WORKED_EXAMPLE_SHOWN", "ANSWER_SHOWN", "TOOL_USED", "PROHIBITED_TOOL_USED", "PEER_COLLABORATION_OBSERVED"],
+});
 
 function sourceRef(event: Extract<AssistanceLedgerEvent, { type: "ASSISTANCE" }>): string {
   const p = event.provenance;
@@ -169,7 +189,10 @@ export function appendAssistance(ledger: AssistanceLedger, input: { scope: Assis
       return Object.freeze({ ledger, appended: false, conflict: false, audit: null });
     }
     const conflict: AssistanceLedgerEvent = { type: "CONFLICT", idempotencyKey, priorEntryHash: prior.entryHash, rejectedPayloadDigest: payloadDigest(ledger.scope, event) };
-    const next = seal(ledger, sha256(`${idempotencyKey}:conflict:${conflict.rejectedPayloadDigest}`), conflict, input.recordedAt, input.recordedAt);
+    const conflictKey = sha256(`${idempotencyKey}:conflict:${conflict.rejectedPayloadDigest}`);
+    // The same conflicting payload re-delivered (e.g. a retried sync batch) is already on record.
+    if (ledger.entries.some((entry) => entry.idempotencyKey === conflictKey)) return Object.freeze({ ledger, appended: false, conflict: true, audit: null });
+    const next = seal(ledger, conflictKey, conflict, input.recordedAt, input.recordedAt);
     return Object.freeze({ ledger: next, appended: true, conflict: true, audit: auditFor(next, next.entries[next.entries.length - 1]) });
   }
 
@@ -185,7 +208,9 @@ export function appendAssistance(ledger: AssistanceLedger, input: { scope: Assis
     if (!openEntry) throw new Error("assistance_ledger_not_opened");
     if (event.type === "SEALED" && sealEntry) throw new Error("assistance_ledger_already_sealed");
     if (event.type === "ASSISTANCE") {
-      if (!(event.kind in ASSISTANCE_KIND_CHANNEL)) throw new Error("assistance_kind_unknown");
+      if (!Object.prototype.hasOwnProperty.call(ASSISTANCE_KIND_CHANNEL, event.kind)) throw new Error("assistance_kind_unknown");
+      const allowed = Object.prototype.hasOwnProperty.call(EMITTER_KINDS, event.provenance.emitter) ? EMITTER_KINDS[event.provenance.emitter] : [];
+      if (!allowed.includes(event.kind)) throw new Error("assistance_kind_not_permitted_for_emitter");
       const p = event.provenance;
       if (p.emitter === "OFFLINE_DEVICE_REPLAY") {
         if (!(openEntry.event as Opened).offlineDeviceIds.includes(p.deviceId)) throw new Error("assistance_offline_device_not_bound");
@@ -253,7 +278,9 @@ export function classifyAssistanceForItem(ledger: AssistanceLedger | null, itemI
   if (!sealedEntry(ledger)) reasons.push("assistance_ledger_not_sealed");
   if (ledger.entries.some((entry) => entry.event.type === "CONFLICT")) reasons.push("assistance_ledger_conflict");
   if (open) {
-    const uninstrumented = open.availableChannels.filter((channel) => !open.instrumentedChannels.includes(channel));
+    // Every channel must be instrumented. The server's own "available" list is recorded but never
+    // trusted to shrink what has to be watched: an empty list cannot make a record independent.
+    const uninstrumented = ASSISTANCE_CHANNELS.filter((channel) => !open.instrumentedChannels.includes(channel));
     if (uninstrumented.length > 0) reasons.push(`assistance_channels_not_instrumented:${[...uninstrumented].sort().join(",")}`);
   }
   const events = ledger.entries.map((entry) => entry.event)
@@ -284,6 +311,10 @@ export type AssistanceAttestation = Readonly<{
   sealedAt: string | null;
   status: AssistanceStatus;
   reasons: readonly string[];
+  /** From OPENED; null when the record was never opened. Checked against the delivery at verification. */
+  independentDelivery: boolean | null;
+  /** Devices the record accepts offline capture from. */
+  offlineDeviceIds: readonly string[];
 }>;
 
 export function attestAssistance(ledger: AssistanceLedger, itemId: string): Readonly<{ attestation: AssistanceAttestation; classification: ItemAssistanceClassification }> {
@@ -301,6 +332,8 @@ export function attestAssistance(ledger: AssistanceLedger, itemId: string): Read
       sealedAt: sealedEntry(ledger)?.occurredAt ?? null,
       status: classification.status,
       reasons: classification.reasons,
+      independentDelivery: (openedEntry(ledger)?.event as Opened | undefined)?.independentDelivery ?? null,
+      offlineDeviceIds: Object.freeze([...((openedEntry(ledger)?.event as Opened | undefined)?.offlineDeviceIds ?? [])]),
     }),
   });
 }

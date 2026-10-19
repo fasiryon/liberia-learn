@@ -181,17 +181,17 @@ describe("Append-only ledger: replay, conflicts and forgery", () => {
     // Admitted evidence with no verified parent in the ledger.
     expect(() => appendEvidence(appendEvidence(emptyLedger(), raw).ledger, admitted)).toThrow("assessment_evidence_parent_missing");
     let ledger = appendEvidence(emptyLedger(), raw).ledger;
-    ledger = appendEvidence(ledger, verified).ledger;
+    ledger = appendEvidence(ledger, verified, { assistanceLedger: sealedAssistanceRecord(verified) }).ledger;
     // Re-sealed forgery that inflates points relative to the verified parent.
     const { evidenceHash: _h, ...unsealed } = admitted;
     const inflatedBody = { ...unsealed, scoring: { ...admitted.scoring, points: 5 } };
     const inflated = { ...inflatedBody, evidenceHash: hashEvidence(inflatedBody) } as AssessmentEvidenceEnvelope;
-    expect(() => appendEvidence(ledger, inflated)).toThrow("assessment_evidence_derivation_altered");
+    expect(() => appendEvidence(ledger, inflated, { assistanceLedger: sealedAssistanceRecord(verified) })).toThrow("assessment_evidence_derivation_altered");
     // Raw observation re-labelled as verified without scoring authority.
     const { evidenceHash: _r, ...rawBody } = raw;
     const relabelledBody = { ...rawBody, tier: "VERIFIED_ASSESSMENT_EVIDENCE" as const, evidenceId: "ver_forged", idempotencyKey: "forged", derivedFromEvidenceId: raw.evidenceId };
     expect(() => appendEvidence(ledger, { ...relabelledBody, evidenceHash: hashEvidence(relabelledBody) })).toThrow("assessment_verified_requires_scoring_authority");
-    expect(appendEvidence(ledger, admitted).appended).toBe(true);
+    expect(appendEvidence(ledger, admitted, { assistanceLedger: sealedAssistanceRecord(verified) }).appended).toBe(true);
   });
 
   it("orders offline events by device sequence, not arrival, and surfaces conflicts", () => {

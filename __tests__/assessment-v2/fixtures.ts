@@ -3,6 +3,7 @@ import {
   ASSISTANCE_CHANNELS,
   authorizeRelease,
   emptyAssistanceLedger,
+  isIndependentAssessment,
   REVIEW_CHECKS,
   sealDefinition,
   sealForm,
@@ -134,13 +135,35 @@ export function approveAll(definition: AssessmentDefinitionV2, form: AssessmentF
   return [approve(definitionSubject(definition)), approve(formSubject(form)), ...items.map((item) => approve(itemSubject(item)))];
 }
 
-export function buildReleased(overrides: { permittedModes?: AssessmentReleaseV2["permittedModes"]; schoolId?: string | null; actor?: { userId: string; role: string } } = {}) {
+/** Points for the summative fixture set (recall/application/analysis/transfer mix the design gate requires). */
+const SUMMATIVE_POINTS = [4, 7, 6, 3] as const;
+
+/** buildItems() adjusted to satisfy the summative design gate, as the LL-AEP-001 suite does. */
+function summativeItems() {
   const built = buildItems();
-  const definition = buildDefinition();
-  const form = buildForm(definition, built.items);
-  const reviews = approveAll(definition, form, built.items);
+  const variant = (item: AssessmentItemV2, spec: ProtectedScoringSpec, extra: Partial<AssessmentItemV2>) => {
+    const { itemHash: _h, scoringSpecHash: _s, ...rest } = item;
+    return sealItem({ ...rest, ...extra }, spec);
+  };
+  const single = variant(built.single, built.singleSpec, { cognitiveDemand: "RECALL" });
+  const ordering = variant(built.ordering, built.orderingSpec, { cognitiveDemand: "ANALYZE" });
+  return { ...built, single, ordering, items: [single, built.numeric, ordering, built.worked], specs: [built.singleSpec, built.numericSpec, built.orderingSpec, built.rubricSpec] };
+}
+
+export function buildReleased(overrides: { permittedModes?: AssessmentReleaseV2["permittedModes"]; schoolId?: string | null; actor?: { userId: string; role: string }; purpose?: AssessmentDefinitionV2["purpose"] } = {}) {
+  const definition = buildDefinition(overrides.purpose ? { purpose: overrides.purpose } : {});
+  const highStakes = definition.purpose === "SUMMATIVE" || definition.purpose === "EXAMINATION";
+  const built = highStakes ? summativeItems() : buildItems();
+  const form = highStakes ? buildForm(definition, built.items, {
+    items: built.items.map((item, index) => ({ itemId: item.itemId, itemVersion: item.version, itemHash: item.itemHash, points: SUMMATIVE_POINTS[index] })),
+    blueprint: { blueprintVersion: "1", totalPoints: SUMMATIVE_POINTS.reduce((a, b) => a + b, 0), objectiveCoverage: [{ objectiveId: "obj-compare", minItems: 1 }] },
+  }) : buildForm(definition, built.items);
+  // High-stakes releases need two approvals per subject and a recorded blueprint exception for this small fixture form.
+  const subjects = [definitionSubject(definition), formSubject(form), ...built.items.map(itemSubject)];
+  const reviews = highStakes ? [...subjects.map((subject) => approve(subject, REVIEWER_A)), ...subjects.map((subject) => approve(subject, REVIEWER_B))] : approveAll(definition, form, built.items);
   const { release } = authorizeRelease({
     releaseId: "rel-1", definition, form, items: built.items, specs: built.specs, reviews,
+    blueprintException: highStakes ? { reason: "Small test fixture form", basis: "subject structure", approvedBy: "lead-1" } : null,
     permittedModes: overrides.permittedModes ?? ["OFFICIAL", "PRACTICE_UNOFFICIAL"],
     effectiveFrom: "2026-10-01T00:00:00.000Z", effectiveUntil: "2027-07-31T00:00:00.000Z",
     schoolId: overrides.schoolId === undefined ? SCHOOL : overrides.schoolId,
@@ -155,7 +178,7 @@ export function buildReleased(overrides: { permittedModes?: AssessmentReleaseV2[
  * attempt, every channel instrumented, no assistance, sealed at submission. Deterministic, so the
  * record handed to verification and to admission has the same head. Null for unreleased delivery.
  */
-export function sealedAssistanceRecord(envelope: Pick<AssessmentEvidenceEnvelope, "scope" | "attempt" | "pins">): AssistanceLedger | null {
+export function sealedAssistanceRecord(envelope: Pick<AssessmentEvidenceEnvelope, "scope" | "attempt" | "pins" | "delivery">): AssistanceLedger | null {
   if (envelope.pins.releaseId === null || envelope.pins.releaseHash === null) return null;
   const scope: AssistanceLedgerScope = {
     tenantId: envelope.scope.tenantId, schoolId: envelope.scope.schoolId, studentId: envelope.scope.studentId,
@@ -164,7 +187,7 @@ export function sealedAssistanceRecord(envelope: Pick<AssessmentEvidenceEnvelope
   };
   const opened = appendAssistance(emptyAssistanceLedger(scope), {
     scope, recordedAt: "2026-10-31T00:00:00.000Z",
-    event: { type: "OPENED", availableChannels: [...ASSISTANCE_CHANNELS], instrumentedChannels: [...ASSISTANCE_CHANNELS], independentDelivery: true, offlineDeviceIds: [] },
+    event: { type: "OPENED", availableChannels: [...ASSISTANCE_CHANNELS], instrumentedChannels: [...ASSISTANCE_CHANNELS], independentDelivery: isIndependentAssessment(envelope.delivery), offlineDeviceIds: ["tablet-7"] },
   }).ledger;
   return appendAssistance(opened, { scope, recordedAt: "2026-11-05T00:00:00.000Z", event: { type: "SEALED", reason: "SUBMITTED" } }).ledger;
 }

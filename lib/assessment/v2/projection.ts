@@ -14,6 +14,7 @@ import { itemTypeSpec } from "./itemTypes";
 import type { DeliveryDecision } from "./release";
 import type {
   AssessmentDefinitionV2,
+  AssessmentReleaseV2,
   AssessmentFormV2,
   AssessmentItemV2,
   ChoiceOption,
@@ -62,12 +63,23 @@ export type LearnerFormV2 = Readonly<{
 export type IndependenceDelivery = Pick<DeliveryContext, "mode" | "official" | "purpose">;
 
 /**
+ * Independence from the authoritative classification, optionally tightened by the caller (e.g. the
+ * value a form projection resolved). A caller can never relax an independent delivery.
+ */
+function independenceFor(delivery: IndependenceDelivery, tighten: boolean | undefined): boolean {
+  if (!delivery) throw new Error("assessment_independence_delivery_required");
+  const classified = isIndependentAssessment(delivery);
+  if (classified && tighten === false) throw new Error("assessment_projection_independence_downgrade_forbidden");
+  return classified || tighten === true;
+}
+
+/**
  * Hint access for one item. Independent deliveries block hints whatever the item policy says; in
  * practice an item offers hints only if its policy is ON_REQUEST and it has hints. Every hint served
  * must be recorded in the attempt's assistance record (SERVER_HINT_PROJECTION).
  */
-export function hintAccessFor(item: Pick<AssessmentItemV2, "feedbackPolicy" | "hints">, delivery: IndependenceDelivery): "BLOCKED" | "ON_REQUEST" | "NONE" {
-  if (isIndependentAssessment(delivery)) return "BLOCKED";
+export function hintAccessFor(item: Pick<AssessmentItemV2, "feedbackPolicy" | "hints">, delivery: IndependenceDelivery, options: { independent?: boolean } = {}): "BLOCKED" | "ON_REQUEST" | "NONE" {
+  if (independenceFor(delivery, options.independent)) return "BLOCKED";
   return item.feedbackPolicy.hints === "ON_REQUEST" && item.hints.length > 0 ? "ON_REQUEST" : "NONE";
 }
 
@@ -110,6 +122,12 @@ type FormProjectionInput = Readonly<{
   form: AssessmentFormV2;
   /** The form's definition; bound by hash so its purpose cannot be substituted. */
   definition: AssessmentDefinitionV2;
+  /**
+   * The release being delivered (null only for an unreleased reviewer preview). The form and
+   * definition must be the ones it released, so a form with another purpose cannot be projected
+   * under it.
+   */
+  release: AssessmentReleaseV2 | null;
   items: ReadonlyMap<string, AssessmentItemV2>;
   attemptId: string;
   delivery: DeliveryDecision;
@@ -118,13 +136,19 @@ type FormProjectionInput = Readonly<{
 }>;
 
 /** Independence for a form delivery, from the authoritative classification (handoff F2). */
-export function formDeliveryIndependence(input: Pick<FormProjectionInput, "form" | "definition" | "delivery" | "independent">): boolean {
-  const { form, definition, delivery } = input;
+export function formDeliveryIndependence(input: Pick<FormProjectionInput, "form" | "definition" | "release" | "delivery" | "independent">): boolean {
+  const { form, definition, release, delivery } = input;
   if (form.definition.definitionId !== definition.definitionId || form.definition.version !== definition.version
     || form.definition.contentHash !== definition.contentHash || hashDefinition(definition) !== definition.contentHash) throw new Error("assessment_projection_definition_mismatch");
-  const classified = isIndependentAssessment({ mode: delivery.mode, official: delivery.official, purpose: definition.purpose });
-  if (classified && input.independent === false) throw new Error("assessment_projection_independence_downgrade_forbidden");
-  return classified || input.independent === true;
+  if (release) {
+    if (release.form.formId !== form.formId || release.form.version !== form.version || release.form.formHash !== form.formHash
+      || release.definition.definitionId !== definition.definitionId || release.definition.version !== definition.version
+      || release.definition.contentHash !== definition.contentHash) throw new Error("assessment_projection_release_mismatch");
+    if (delivery.releaseId !== release.releaseId) throw new Error("assessment_projection_release_mismatch");
+  } else if (delivery.mode !== "REVIEWER_PREVIEW" || delivery.releaseId !== null) {
+    throw new Error("assessment_projection_release_required");
+  }
+  return independenceFor({ mode: delivery.mode, official: delivery.official, purpose: definition.purpose }, input.independent);
 }
 
 export function projectFormForLearner(input: FormProjectionInput): LearnerFormV2 {
@@ -175,7 +199,13 @@ function permits(policy: FeedbackReleasePolicy["explanation"], phase: Disclosure
  * solution) or key material reaches a learner. The delivery is required so independence can never
  * default to "off".
  */
-export function learnerDisclosure(item: AssessmentItemV2, spec: ProtectedScoringSpec, phase: DisclosurePhase, options: { delivery: IndependenceDelivery }): Readonly<{
+export function learnerDisclosure(item: AssessmentItemV2, spec: ProtectedScoringSpec, phase: DisclosurePhase, options: {
+  delivery: IndependenceDelivery;
+  /** Server-side attempt status; the phase is checked against it, never taken on trust. */
+  attemptStatus: "OPEN" | "SUBMITTED" | "CLOSED";
+  /** Tightening only, e.g. the `independent` value the form projection resolved. */
+  independent?: boolean;
+}): Readonly<{
   explanation: string | null;
   correctResponse: string | null;
 }> {
@@ -183,7 +213,9 @@ export function learnerDisclosure(item: AssessmentItemV2, spec: ProtectedScoring
   // During an independent assessment nothing is disclosed until the whole attempt is closed, so an
   // explanation for one item cannot help with the next.
   if (!options?.delivery) throw new Error("assessment_disclosure_delivery_required");
-  if (isIndependentAssessment(options.delivery) && phase === "AFTER_RESPONSE") phase = "BEFORE_RESPONSE";
+  if (!["OPEN", "SUBMITTED", "CLOSED"].includes(options.attemptStatus)) throw new Error("assessment_disclosure_attempt_status_required");
+  if (options.attemptStatus === "OPEN" && PHASE_RANK[phase] >= PHASE_RANK.AFTER_ATTEMPT_CLOSED) throw new Error("assessment_disclosure_attempt_still_open");
+  if (independenceFor(options.delivery, options.independent) && phase === "AFTER_RESPONSE") phase = "BEFORE_RESPONSE";
   const explanation = permits(item.feedbackPolicy.explanation, phase) ? spec.explanation : null;
   let correctResponse: string | null = null;
   if (permits(item.feedbackPolicy.correctAnswer, phase)) {

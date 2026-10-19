@@ -50,6 +50,8 @@ export const INTEGRITY_REVIEW_FLAGS = [
   "assistance_ledger_conflict",
   "assistance_ledger_chain_invalid",
   "assistance_record_scope_mismatch",
+  "assistance_record_delivery_mismatch",
+  "assistance_record_device_unbound",
 ] as const;
 
 export const EVIDENCE_TIERS = [
@@ -385,6 +387,11 @@ function resolveIndependence(raw: AssessmentEvidenceEnvelope, ledger: Assistance
   }
   const { attestation, classification } = attestAssistance(record, raw.pins.itemId);
   flags.push(...classification.reasons);
+  // The record must have been opened for this kind of delivery, and an offline response must come
+  // from a device the record accepts capture from; otherwise the record says nothing about it.
+  if (attestation.independentDelivery !== isIndependentAssessment(raw.delivery)) flags.push("assistance_record_delivery_mismatch");
+  if (raw.capture.source === "OFFLINE" && !attestation.offlineDeviceIds.includes(raw.capture.deviceId ?? "")) flags.push("assistance_record_device_unbound");
+  const recordUsable = !flags.includes("assistance_record_delivery_mismatch") && !flags.includes("assistance_record_device_unbound");
   let independence: EvidenceIndependence;
   if (classification.status === "ASSISTED") {
     independence = "ASSISTED";
@@ -393,7 +400,7 @@ function resolveIndependence(raw: AssessmentEvidenceEnvelope, ledger: Assistance
     independence = "ASSISTED";
     if (classification.status === "INDEPENDENT") flags.push("assistance_declaration_ledger_conflict");
   } else {
-    independence = classification.status;
+    independence = recordUsable ? classification.status : "UNVERIFIED";
   }
   return { independence, assistance: maxExposure(raw.assistance, classification.exposure), attestation, flags };
 }
@@ -503,11 +510,7 @@ export function admitToMastery(verified: AssessmentEvidenceEnvelope, input: {
   if (!policy) throw new Error("assessment_admission_policy_required");
   if (verified.independence !== "INDEPENDENT" || verified.assistanceAttestation?.status !== "INDEPENDENT") throw new Error("assessment_assisted_evidence_not_admissible");
   // Re-read the record: independence must still hold for exactly the state that was attested.
-  if (!input.assistanceLedger) throw new Error("assessment_assistance_record_missing");
-  if (!assistanceRecordBoundTo(input.assistanceLedger, verified)) throw new Error("assessment_assistance_record_scope_mismatch");
-  const current = attestAssistance(input.assistanceLedger, verified.pins.itemId).attestation;
-  if (current.headHash !== verified.assistanceAttestation.headHash || current.headSequence !== verified.assistanceAttestation.headSequence
-    || current.status !== "INDEPENDENT") throw new Error("assessment_assistance_attestation_stale");
+  assertIndependenceAttested(verified, input.assistanceLedger);
   if (!policy.admissiblePurposes.includes(verified.delivery.purpose)) throw new Error("assessment_purpose_not_admissible");
   if (policy.requireOfficialDelivery && !verified.delivery.official) throw new Error("assessment_unofficial_delivery_not_admissible");
   if (!verified.objectiveIds.some((objectiveId) => policy.objectiveIds.includes(objectiveId))) throw new Error("assessment_objective_not_governed_by_policy");
@@ -586,7 +589,28 @@ function inheritsParent(child: AssessmentEvidenceEnvelope, parent: AssessmentEvi
  * payload under the same key is a conflict. Derived envelopes must reference a parent already in the
  * ledger, of the right tier, and must not alter inherited facts.
  */
-export function appendEvidence(ledger: EvidenceLedger, envelope: AssessmentEvidenceEnvelope): Readonly<{ ledger: EvidenceLedger; appended: boolean }> {
+/**
+ * Re-reads the assistance record for an envelope that claims INDEPENDENT. The envelope hash is not a
+ * signature, so the claim is never accepted on the envelope's word alone.
+ */
+function assertIndependenceAttested(envelope: AssessmentEvidenceEnvelope, record: AssistanceLedger | null | undefined): void {
+  if (envelope.independence !== "INDEPENDENT") return;
+  const claimed = envelope.assistanceAttestation;
+  if (!claimed || claimed.status !== "INDEPENDENT") throw new Error("assessment_assisted_evidence_not_admissible");
+  if (!record) throw new Error("assessment_assistance_record_missing");
+  if (!assistanceRecordBoundTo(record, envelope)) throw new Error("assessment_assistance_record_scope_mismatch");
+  const current = attestAssistance(record, envelope.pins.itemId).attestation;
+  if (current.headHash !== claimed.headHash || current.headSequence !== claimed.headSequence || current.status !== "INDEPENDENT"
+    || current.independentDelivery !== isIndependentAssessment(envelope.delivery)
+    || (envelope.capture.source === "OFFLINE" && !current.offlineDeviceIds.includes(envelope.capture.deviceId ?? ""))) {
+    throw new Error("assessment_assistance_attestation_stale");
+  }
+}
+
+export function appendEvidence(ledger: EvidenceLedger, envelope: AssessmentEvidenceEnvelope, options: {
+  /** Required to append VERIFIED or ADMITTED evidence that claims INDEPENDENT; re-read from authoritative storage. */
+  assistanceLedger?: AssistanceLedger | null;
+} = {}): Readonly<{ ledger: EvidenceLedger; appended: boolean }> {
   if (envelope.contractVersion !== ASSESSMENT_EVIDENCE_CONTRACT_VERSION) throw new Error("assessment_evidence_contract_unsupported");
   if (!EVIDENCE_TIERS.includes(envelope.tier)) throw new Error("assessment_evidence_tier_invalid");
   if (envelope.evidenceHash !== hashEvidence(envelope)) throw new Error("assessment_evidence_tampered");
@@ -613,6 +637,7 @@ export function appendEvidence(ledger: EvidenceLedger, envelope: AssessmentEvide
       throw new Error("assessment_assisted_evidence_not_admissible");
     }
     if (envelope.tier === "PROVISIONAL_FEEDBACK" && envelope.scoring.status !== "PROVISIONAL") throw new Error("assessment_provisional_must_stay_provisional");
+    assertIndependenceAttested(envelope, options.assistanceLedger);
   }
   return Object.freeze({ ledger: Object.freeze({ entries: Object.freeze([...ledger.entries, envelope]) }), appended: true });
 }

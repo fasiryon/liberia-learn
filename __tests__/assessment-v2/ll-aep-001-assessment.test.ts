@@ -130,8 +130,8 @@ describe("Independent assessment integrity", () => {
     const { single, singleSpec } = buildItems();
     expect(projectItemForLearner(single, { attemptId: "a", points: 1, independent: false }).hintCount).toBe(1);
     expect(projectItemForLearner(single, { attemptId: "a", points: 1, independent: true }).hintCount).toBe(0);
-    expect(learnerDisclosure(single, singleSpec, "AFTER_RESPONSE", { delivery: SUMMATIVE_PRACTICE }).explanation).toBeNull();
-    expect(learnerDisclosure(single, singleSpec, "AFTER_ATTEMPT_CLOSED", { delivery: SUMMATIVE_PRACTICE }).explanation).toBe(singleSpec.explanation);
+    expect(learnerDisclosure(single, singleSpec, "AFTER_RESPONSE", { delivery: SUMMATIVE_PRACTICE, attemptStatus: "OPEN" }).explanation).toBeNull();
+    expect(learnerDisclosure(single, singleSpec, "AFTER_ATTEMPT_CLOSED", { delivery: SUMMATIVE_PRACTICE, attemptStatus: "SUBMITTED" }).explanation).toBe(singleSpec.explanation);
   });
 
   it("records tutor and hint use during independent assessment as integrity flags and keeps it out of the gradebook", () => {

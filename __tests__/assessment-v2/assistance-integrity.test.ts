@@ -233,10 +233,10 @@ describe("F1: the evidence ledger refuses forged independence", () => {
     const { raw, verified } = chain(env, assistance);
     const { evidence: admitted } = admit(verified, assistance);
     let ledger = appendEvidence(emptyLedger(), raw).ledger;
-    ledger = appendEvidence(ledger, verified).ledger;
-    expect(appendEvidence(ledger, admitted).appended).toBe(true);
+    ledger = appendEvidence(ledger, verified, { assistanceLedger: assistance }).ledger;
+    expect(appendEvidence(ledger, admitted, { assistanceLedger: assistance }).appended).toBe(true);
     const forged = reseal({ ...admitted, assistanceAttestation: { ...admitted.assistanceAttestation!, status: "UNVERIFIED" } });
-    expect(() => appendEvidence(ledger, forged)).toThrow(/assessment_(evidence_derivation_altered|assisted_evidence_not_admissible)/);
+    expect(() => appendEvidence(ledger, forged, { assistanceLedger: assistance })).toThrow(/assessment_(evidence_derivation_altered|assisted_evidence_not_admissible)/);
   });
 
   it("refuses envelopes from the 1.0.0 contract", () => {
@@ -271,6 +271,10 @@ describe("Assistance record: append-only, server-timed, replay-safe", () => {
     let ledger = appendAssistance(open(s), { scope: s, recordedAt: T(4), event: replay("TOOL_USED") }).ledger;
     const conflict = appendAssistance(ledger, { scope: s, recordedAt: T(5), event: replay("ANSWER_SHOWN") });
     expect(conflict.conflict).toBe(true);
+    // A retried batch re-delivering the same conflicting payload does not add a second CONFLICT entry.
+    const retried = appendAssistance(conflict.ledger, { scope: s, recordedAt: T(6), event: replay("ANSWER_SHOWN") });
+    expect(retried).toMatchObject({ appended: false, conflict: true });
+    expect(retried.ledger.entries).toHaveLength(conflict.ledger.entries.length);
     ledger = appendAssistance(conflict.ledger, { scope: s, recordedAt: T(10), event: { type: "SEALED", reason: "SUBMITTED" } }).ledger;
     const classified = classifyAssistanceForItem(ledger, "i-single");
     expect(classified.status).toBe("UNVERIFIED");
@@ -293,5 +297,75 @@ describe("Assistance record: append-only, server-timed, replay-safe", () => {
     const at = (capturedAt: string) => ({ type: "ASSISTANCE" as const, kind: "TUTOR_TURN" as const, itemId: null, provenance: { emitter: "OFFLINE_DEVICE_REPLAY" as const, deviceId: "dev-1", clientSequence: 1, syncBatchId: "b", capturedAt } });
     expect(() => appendAssistance(ledger, { scope: s, recordedAt: T(4), event: at(T(-60)) })).toThrow("assistance_event_before_open");
     expect(() => appendAssistance(ledger, { scope: s, recordedAt: T(4), event: at(T(4 + 600)) })).toThrow("assistance_capture_time_in_future");
+  });
+});
+
+describe("Independent review follow-ups (server-caller bypasses)", () => {
+  const reseal = (envelope: AssessmentEvidenceEnvelope) => ({ ...envelope, evidenceHash: hashEvidence(envelope) }) as AssessmentEvidenceEnvelope;
+
+  it("appendEvidence re-reads the record: a forged INDEPENDENT verified or admitted envelope is refused", () => {
+    const env = setup();
+    const raw = acceptClientObservation(submission(), env.context);
+    const { evidence: unverified } = verify(env, raw, null);
+    let ledger = appendEvidence(emptyLedger(), raw).ledger;
+    const fakeAttestation = { ledgerVersion: "assistance-ledger/1.0.0" as const, attemptId: "att-1", sessionId: "ses-1", itemId: "i-single", headSequence: 1, headHash: "f".repeat(64), sealedAt: T(10), status: "INDEPENDENT" as const, reasons: [], independentDelivery: true, offlineDeviceIds: [] };
+    const forged = reseal({ ...unverified, independence: "INDEPENDENT", assistanceAttestation: fakeAttestation, integrityFlags: [...unverified.integrityFlags] });
+    expect(() => appendEvidence(ledger, forged)).toThrow("assessment_assistance_record_missing");
+    expect(() => appendEvidence(ledger, forged, { assistanceLedger: ledgerFor(env.scope) })).toThrow("assessment_assistance_attestation_stale");
+    // The honest path appends with the record and refuses without it.
+    const record = ledgerFor(env.scope);
+    const { evidence: verified } = verify(env, raw, record);
+    expect(() => appendEvidence(ledger, verified)).toThrow("assessment_assistance_record_missing");
+    ledger = appendEvidence(ledger, verified, { assistanceLedger: record }).ledger;
+    const { evidence: admitted } = admit(verified, record);
+    expect(() => appendEvidence(ledger, admitted, { assistanceLedger: ledgerFor(env.scope, { assist: "TUTOR" }) })).toThrow("assessment_assistance_attestation_stale");
+    expect(appendEvidence(ledger, admitted, { assistanceLedger: record }).appended).toBe(true);
+  });
+
+  it("an OPENED event that lists no channels cannot attest independence", () => {
+    const env = setup();
+    let record = emptyAssistanceLedger(env.scope);
+    record = appendAssistance(record, { scope: env.scope, recordedAt: T(0), event: { type: "OPENED", availableChannels: [], instrumentedChannels: [], independentDelivery: true, offlineDeviceIds: [] } }).ledger;
+    record = appendAssistance(record, { scope: env.scope, recordedAt: T(10), event: { type: "SEALED", reason: "SUBMITTED" } }).ledger;
+    const { evidence } = verify(env, acceptClientObservation(submission(), env.context), record);
+    expect(evidence.independence).toBe("UNVERIFIED");
+    expect(evidence.integrityFlags.some((flag) => flag.startsWith("assistance_channels_not_instrumented:"))).toBe(true);
+  });
+
+  it("a record opened for practice cannot attest an independent delivery", () => {
+    const env = setup("SUMMATIVE");
+    let record = emptyAssistanceLedger(env.scope);
+    record = appendAssistance(record, { scope: env.scope, recordedAt: T(0), event: { type: "OPENED", availableChannels: [...ALL_CHANNELS], instrumentedChannels: [...ALL_CHANNELS], independentDelivery: false, offlineDeviceIds: [] } }).ledger;
+    record = appendAssistance(record, { scope: env.scope, recordedAt: T(10), event: { type: "SEALED", reason: "SUBMITTED" } }).ledger;
+    const result = verify(env, acceptClientObservation(submission(), env.context), record);
+    expect(result.evidence.independence).toBe("UNVERIFIED");
+    expect(result.evidence.integrityFlags).toContain("assistance_record_delivery_mismatch");
+    expect(requiresIntegrityReview(result.evidence)).toBe(true);
+  });
+
+  it("an offline response from a device the record does not accept is UNVERIFIED and flagged", () => {
+    const env = setup();
+    const offline = submission({ capture: { source: "OFFLINE", deviceId: "dev-9", clientEventId: "e-9", clientSequence: 0, capturedAt: T(1), syncBatchId: "b9" } });
+    const result = verify(env, acceptClientObservation(offline, env.context), ledgerFor(env.scope));
+    expect(result.evidence.independence).toBe("UNVERIFIED");
+    expect(result.evidence.integrityFlags).toContain("assistance_record_device_unbound");
+    const bound = submission({ capture: { source: "OFFLINE", deviceId: "dev-1", clientEventId: "e-1", clientSequence: 0, capturedAt: T(1), syncBatchId: "b1" } });
+    expect(verify(env, acceptClientObservation(bound, env.context), ledgerFor(env.scope)).evidence.independence).toBe("INDEPENDENT");
+  });
+
+  it("a server surface cannot relabel its assistance as a neutral tool use", () => {
+    const s = setup().scope;
+    const opened = appendAssistance(emptyAssistanceLedger(s), { scope: s, recordedAt: T(0), event: { type: "OPENED", availableChannels: [...ALL_CHANNELS], instrumentedChannels: [...ALL_CHANNELS], independentDelivery: true, offlineDeviceIds: [] } }).ledger;
+    expect(() => appendAssistance(opened, { scope: s, recordedAt: T(1), event: { type: "ASSISTANCE", kind: "TOOL_USED", itemId: "i-single", provenance: { emitter: "SERVER_HINT_PROJECTION", hintId: "h1" } } })).toThrow("assistance_kind_not_permitted_for_emitter");
+    expect(() => appendAssistance(opened, { scope: s, recordedAt: T(1), event: { type: "ASSISTANCE", kind: "toString" as never, itemId: null, provenance: { emitter: "SERVER_TUTOR_ROUTE", tutorInteractionId: "t" } } })).toThrow("assistance_kind_unknown");
+  });
+
+  it("an offline event re-delivered in a different sync batch is a replay, not a conflict", () => {
+    const s = setup().scope;
+    const opened = appendAssistance(emptyAssistanceLedger(s), { scope: s, recordedAt: T(0), event: { type: "OPENED", availableChannels: [...ALL_CHANNELS], instrumentedChannels: [...ALL_CHANNELS], independentDelivery: true, offlineDeviceIds: ["dev-1"] } }).ledger;
+    const event = (syncBatchId: string) => ({ type: "ASSISTANCE" as const, kind: "TOOL_USED" as const, itemId: "i-single", provenance: { emitter: "OFFLINE_DEVICE_REPLAY" as const, deviceId: "dev-1", clientSequence: 4, syncBatchId, capturedAt: T(2) } });
+    const first = appendAssistance(opened, { scope: s, recordedAt: T(3), event: event("b1") });
+    const rebatched = appendAssistance(first.ledger, { scope: s, recordedAt: T(4), event: event("b2") });
+    expect(rebatched).toMatchObject({ appended: false, conflict: false });
   });
 });
