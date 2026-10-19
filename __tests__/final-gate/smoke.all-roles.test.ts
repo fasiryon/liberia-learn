@@ -103,6 +103,7 @@ async function dbReturn(model: string, method: string, args: any) {
   if (model === "examAttempt" && method === "findMany") return [{ passed: true, integrityFlags: [], exam: { subject: "MATH" } }];
   if (model === "examAttempt" && method === "create") return { id: "attempt-1" };
   if (model === "examAttempt" && method === "count") return 0;
+  if (model === "examAttempt" && method === "updateMany") return { count: 1 };
   if (model === "examCertification" && method === "findMany") return [{ id: "cert-1", examId: "exam-1", subject: "MATH", grade: 7, score: 0.8, issuedAt: new Date(), certCode: "CERT-2026-STUDENT-EXAM", exam: { title: "Midterm Mathematics" } }];
   if (model === "examCertification" && method === "count") return 1;
   if (model === "confusionSignal" && method === "findMany") return [{ id: "conf-1", studentId: "student-rec-1", lessonId: "lesson-1", conceptTag: "MATH::fractions", confusionType: "misconception", severity: "medium", detectedAt: new Date() }];

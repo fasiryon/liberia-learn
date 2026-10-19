@@ -1,3 +1,4 @@
+// route-policy: auth=session; scope=record; authority=student-own-attempt; rationale=submits only the learner's own open attempt and grades it on the server
 import { NextRequest, NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { logAudit } from "@/lib/audit";
@@ -38,7 +39,7 @@ export async function POST(req: NextRequest, context: { params: { examId: string
         studentId: student.id,
       },
       include: {
-        exam: { include: { questions: true } },
+        exam: { include: { questions: { orderBy: { id: "asc" } } } },
       },
     });
     if (!attempt) {
@@ -67,8 +68,12 @@ export async function POST(req: NextRequest, context: { params: { examId: string
         answers: body.answers,
         passingScore: attempt.exam.passingScore,
       } as any,
-      attempt.exam.questions as any
+      attempt.exam.questions as any,
+      { questionIds: body.questionIds }
     );
+    if (grading.invalidCount > 0) {
+      return NextResponse.json({ error: "Some answers do not match a question option" }, { status: 400 });
+    }
 
     const submittedAt = new Date();
     const durationSeconds = Math.max(
@@ -104,8 +109,10 @@ export async function POST(req: NextRequest, context: { params: { examId: string
     }
 
     await prisma.$transaction(async (tx) => {
-      await tx.examAttempt.update({
-        where: { id: attempt.id },
+      // Conditional claim: a concurrent second submit finds the attempt already submitted and is refused,
+      // so it can neither re-grade the attempt nor issue a certificate.
+      const claimed = await tx.examAttempt.updateMany({
+        where: { id: attempt.id, submittedAt: null },
         data: {
           answers: body.answers,
           score: grading.score,
@@ -127,6 +134,9 @@ export async function POST(req: NextRequest, context: { params: { examId: string
           }),
         },
       });
+      if (claimed.count === 0) {
+        throw Object.assign(new Error("Attempt already submitted"), { status: 409, code: "exam_attempt_already_submitted" });
+      }
 
       if (grading.passed && certCode) {
         await tx.examCertification.upsert({
