@@ -1,3 +1,4 @@
+// route-policy: auth=session; scope=record; authority=assignment-class-teacher-or-school-admin; rationale=a teacher of the assignment's own-school class (or a school admin) records the official, teacher-verified score
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { requireRole } from "@/lib/auth";
@@ -79,6 +80,8 @@ export async function POST(
         feedback: parsed.data.feedback,
         gradedAt: new Date(),
         gradedBy: user.id,
+        // The teacher entered this score, so it is teacher-verified (LL-AEP-001) and leaves the AI review queue.
+        teacherApproved: true,
         rubricScore: parsed.data.rubricScore ? JSON.parse(JSON.stringify(parsed.data.rubricScore)) : null,
       },
     });
