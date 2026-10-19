@@ -192,7 +192,7 @@ export function sealedAssistanceRecord(envelope: Pick<AssessmentEvidenceEnvelope
     event: { type: "OPENED", availableChannels: [...ASSISTANCE_CHANNELS], instrumentedChannels: [...ASSISTANCE_CHANNELS], independentDelivery: isIndependentAssessment(envelope.delivery), offlineDeviceIds: ["tablet-7"] },
   }).ledger;
   const sealed = appendAssistance(opened, { scope, recordedAt: "2026-11-05T00:00:00.000Z", event: { type: "SEALED", reason: "SUBMITTED" } }).ledger;
-  return appendAssistance(sealed, { scope, recordedAt: "2026-11-05T00:10:00.000Z", event: { type: "FINALIZED", reason: "OFFLINE_SYNC_CLOSED" } }).ledger;
+  return appendAssistance(sealed, { scope, recordedAt: "2026-11-05T00:10:00.000Z", event: { type: "FINALIZED", reason: "OFFLINE_SYNC_CLOSED", devices: [{ deviceId: "tablet-7", syncedThroughSequence: 1_000 }] } }).ledger;
 }
 
 /** An issued independence decision for a released form of this purpose, delivered as practice. */

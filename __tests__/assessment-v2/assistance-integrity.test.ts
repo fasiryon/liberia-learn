@@ -74,7 +74,7 @@ function ledgerFor(scope: AssistanceLedgerScope, steps: { assist?: "TUTOR" | "HI
   if (steps.assist === "TUTOR") ledger = appendAssistance(ledger, { scope, recordedAt: T(2), event: { type: "ASSISTANCE", kind: "TUTOR_TURN", itemId: null, provenance: { emitter: "SERVER_TUTOR_ROUTE", tutorInteractionId: "tut-1" } } }).ledger;
   if (steps.assist === "HINT") ledger = appendAssistance(ledger, { scope, recordedAt: T(2), event: { type: "ASSISTANCE", kind: "HINT_REVEALED", itemId: "i-single", provenance: { emitter: "SERVER_HINT_PROJECTION", hintId: "h1" } } }).ledger;
   if (steps.seal !== false) ledger = appendAssistance(ledger, { scope, recordedAt: T(10), event: { type: "SEALED", reason: "SUBMITTED" } }).ledger;
-  if (steps.seal !== false && steps.finalize !== false) ledger = appendAssistance(ledger, { scope, recordedAt: T(12), event: { type: "FINALIZED", reason: "OFFLINE_SYNC_CLOSED" } }).ledger;
+  if (steps.seal !== false && steps.finalize !== false) ledger = appendAssistance(ledger, { scope, recordedAt: T(12), event: { type: "FINALIZED", reason: "OFFLINE_SYNC_CLOSED", devices: [{ deviceId: "dev-1", syncedThroughSequence: 100 }] } }).ledger;
   return ledger;
 }
 
@@ -189,7 +189,7 @@ describe("F1: client declarations cannot prove independence", () => {
     expect(early.integrityFlags).toContain("assistance_ledger_offline_sync_open");
     // Late offline assistance captured before the seal still lands while the window is open...
     const late = appendAssistance(open, { scope: env.scope, recordedAt: T(15), event: { type: "ASSISTANCE", kind: "ANSWER_SHOWN", itemId: "i-single", provenance: { emitter: "OFFLINE_DEVICE_REPLAY", deviceId: "dev-1", clientSequence: 3, syncBatchId: "b1", capturedAt: T(3) } } }).ledger;
-    const finalized = appendAssistance(late, { scope: env.scope, recordedAt: T(16), event: { type: "FINALIZED", reason: "OFFLINE_SYNC_CLOSED" } }).ledger;
+    const finalized = appendAssistance(late, { scope: env.scope, recordedAt: T(16), event: { type: "FINALIZED", reason: "OFFLINE_SYNC_CLOSED", devices: [{ deviceId: "dev-1", syncedThroughSequence: 3 }] } }).ledger;
     // ...so the verification after finalization sees it.
     expect(verify(env, acceptClientObservation(submission(), env.context), finalized).evidence.independence).toBe("ASSISTED");
   });
@@ -210,11 +210,11 @@ describe("F1: client declarations cannot prove independence", () => {
   it("an online-only record is final when sealed; FINALIZED requires a seal", () => {
     const s = setup().scope;
     let ledger = appendAssistance(emptyAssistanceLedger(s), { scope: s, recordedAt: T(0), event: { type: "OPENED", availableChannels: [...ALL_CHANNELS], instrumentedChannels: [...ALL_CHANNELS], independentDelivery: true, offlineDeviceIds: [] } }).ledger;
-    expect(() => appendAssistance(ledger, { scope: s, recordedAt: T(1), event: { type: "FINALIZED", reason: "OFFLINE_SYNC_CLOSED" } })).toThrow("assistance_ledger_not_sealed");
+    expect(() => appendAssistance(ledger, { scope: s, recordedAt: T(1), event: { type: "FINALIZED", reason: "OFFLINE_SYNC_CLOSED", devices: [] } })).toThrow("assistance_ledger_not_sealed");
     ledger = appendAssistance(ledger, { scope: s, recordedAt: T(10), event: { type: "SEALED", reason: "SUBMITTED" } }).ledger;
     expect(classifyAssistanceForItem(ledger, "i-single").status).toBe("INDEPENDENT");
     // Final means final: not even a FINALIZED event can move the head of a sealed online-only record.
-    expect(() => appendAssistance(ledger, { scope: s, recordedAt: T(11), event: { type: "FINALIZED", reason: "OFFLINE_SYNC_CLOSED" } })).toThrow("assistance_ledger_finalized");
+    expect(() => appendAssistance(ledger, { scope: s, recordedAt: T(11), event: { type: "FINALIZED", reason: "OFFLINE_SYNC_CLOSED", devices: [] } })).toThrow("assistance_ledger_finalized");
     expect(() => appendAssistance(ledger, { scope: s, recordedAt: T(11), event: { type: "ASSISTANCE", kind: "TUTOR_TURN", itemId: null, provenance: { emitter: "SERVER_TUTOR_ROUTE", tutorInteractionId: "late" } } })).toThrow("assistance_ledger_finalized");
     expect(appendAssistance(ledger, { scope: s, recordedAt: T(12), event: { type: "SEALED", reason: "SUBMITTED" } }).appended).toBe(false);
   });
@@ -349,7 +349,7 @@ describe("Independent review follow-ups (server-caller bypasses)", () => {
     const raw = acceptClientObservation(submission(), env.context);
     const { evidence: unverified } = verify(env, raw, null);
     let ledger = appendEvidence(emptyLedger(), raw).ledger;
-    const fakeAttestation = { ledgerVersion: "assistance-ledger/1.0.0" as const, attemptId: "att-1", sessionId: "ses-1", itemId: "i-single", headSequence: 1, headHash: "f".repeat(64), sealedAt: T(10), status: "INDEPENDENT" as const, reasons: [], independentDelivery: true, offlineDeviceIds: [], final: true };
+    const fakeAttestation = { ledgerVersion: "assistance-ledger/1.0.0" as const, attemptId: "att-1", sessionId: "ses-1", itemId: "i-single", headSequence: 1, headHash: "f".repeat(64), sealedAt: T(10), status: "INDEPENDENT" as const, reasons: [], independentDelivery: true, offlineDeviceIds: [], final: true, finalizedAt: null, syncedThrough: [] };
     const forged = reseal({ ...unverified, independence: "INDEPENDENT", assistanceAttestation: fakeAttestation, integrityFlags: [...unverified.integrityFlags] });
     expect(() => appendEvidence(ledger, forged)).toThrow("assessment_assistance_record_missing");
     expect(() => appendEvidence(ledger, forged, { assistanceLedger: ledgerFor(env.scope) })).toThrow("assessment_assistance_attestation_stale");
@@ -415,6 +415,38 @@ describe("Independent review follow-ups (server-caller bypasses)", () => {
     }
     expect(() => appendAssistance(ledger, { scope: s, recordedAt: T(21), event: replay(T(9), "ANSWER_SHOWN") })).toThrow("assistance_conflict_limit_reached");
     expect(classifyAssistanceForItem(ledger, "i-single").status).toBe("UNVERIFIED");
+  });
+
+  it("a premature FINALIZED cannot turn an unsynced offline response into independence", () => {
+    const env = setup();
+    let record = ledgerFor(env.scope, { finalize: false });
+    // The sync service finalizes having synced dev-1 only through sequence 0.
+    record = appendAssistance(record, { scope: env.scope, recordedAt: T(12), event: { type: "FINALIZED", reason: "OFFLINE_SYNC_CLOSED", devices: [{ deviceId: "dev-1", syncedThroughSequence: 0 }] } }).ledger;
+    const offline = (clientSequence: number, receivedAt: string) => {
+      const sub = submission({ responseSequence: clientSequence, capture: { source: "OFFLINE", deviceId: "dev-1", clientEventId: `e-${clientSequence}`, clientSequence, capturedAt: T(1), syncBatchId: "b" } });
+      return acceptClientObservation(sub, { ...env.context, receivedAt });
+    };
+    // A response beyond the acknowledged sequence, or received after finalization: the record cannot speak for it.
+    for (const raw of [offline(2, T(11)), offline(0, T(30))]) {
+      const result = verify(env, raw, record);
+      expect(result.evidence.independence).toBe("UNVERIFIED");
+      expect(result.evidence.integrityFlags).toContain("assistance_record_offline_response_unsynced");
+      expect(requiresIntegrityReview(result.evidence)).toBe(true);
+    }
+    // Within the acknowledgement and received before finalization: covered.
+    expect(verify(env, offline(0, T(11)), record).evidence.independence).toBe("INDEPENDENT");
+  });
+
+  it("FINALIZED must account for every accepted device and agree with what was recorded", () => {
+    const s = setup().scope;
+    let ledger = appendAssistance(emptyAssistanceLedger(s), { scope: s, recordedAt: T(0), event: { type: "OPENED", availableChannels: [...ALL_CHANNELS], instrumentedChannels: [...ALL_CHANNELS], independentDelivery: true, offlineDeviceIds: ["dev-1", "dev-2"] } }).ledger;
+    ledger = appendAssistance(ledger, { scope: s, recordedAt: T(3), event: { type: "ASSISTANCE", kind: "TOOL_USED", itemId: "i-single", provenance: { emitter: "OFFLINE_DEVICE_REPLAY", deviceId: "dev-1", clientSequence: 5, syncBatchId: "b", capturedAt: T(2) } } }).ledger;
+    ledger = appendAssistance(ledger, { scope: s, recordedAt: T(10), event: { type: "SEALED", reason: "SUBMITTED" } }).ledger;
+    const finalize = (devices: { deviceId: string; syncedThroughSequence: number }[]) => appendAssistance(ledger, { scope: s, recordedAt: T(12), event: { type: "FINALIZED", reason: "OFFLINE_SYNC_CLOSED", devices } });
+    expect(() => finalize([{ deviceId: "dev-1", syncedThroughSequence: 9 }])).toThrow("assistance_finalize_devices_mismatch");
+    expect(() => finalize([{ deviceId: "dev-1", syncedThroughSequence: 4 }, { deviceId: "dev-2", syncedThroughSequence: -1 }])).toThrow("assistance_finalize_sequence_contradicts_record");
+    expect(() => finalize([{ deviceId: "dev-1", syncedThroughSequence: 1.5 }, { deviceId: "dev-2", syncedThroughSequence: -1 }])).toThrow("assistance_finalize_sequence_invalid");
+    expect(finalize([{ deviceId: "dev-1", syncedThroughSequence: 9 }, { deviceId: "dev-2", syncedThroughSequence: -1 }]).appended).toBe(true);
   });
 
   it("an offline event re-delivered in a different sync batch is a replay, not a conflict", () => {

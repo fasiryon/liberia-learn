@@ -28,6 +28,11 @@
  *     offline devices is final only after FINALIZED (the server closed the offline sync window).
  *     Nothing can be appended to a final record, so an INDEPENDENT attestation can never go stale.
  *     Verify offline-capable attempts only after FINALIZED; earlier verification is UNVERIFIED.
+ *   - FINALIZED is the sync service's attestation, not a timer: it names, for every accepted device,
+ *     the device capture sequence it has synced through. An offline response is covered only if its
+ *     sequence is within that acknowledgement and it was received before finalization; otherwise the
+ *     record cannot speak for it (a premature FINALIZED can never turn missing help into independence).
+ *     Assumption: a device numbers responses and assistance from one per-attempt sequence.
  */
 import { createHash } from "crypto";
 import { canonicalizeJson } from "@/lib/curriculum/provenance/hash";
@@ -77,7 +82,7 @@ export type AssistanceLedgerEvent =
   | Readonly<{ type: "OPENED"; availableChannels: readonly AssistanceChannel[]; instrumentedChannels: readonly AssistanceChannel[]; independentDelivery: boolean; offlineDeviceIds: readonly string[] }>
   | Readonly<{ type: "ASSISTANCE"; kind: AssistanceKind; itemId: string | null; provenance: AssistanceProvenance }>
   | Readonly<{ type: "SEALED"; reason: "SUBMITTED" | "CLOSED" | "ABANDONED" }>
-  | Readonly<{ type: "FINALIZED"; reason: "OFFLINE_SYNC_CLOSED" }>
+  | Readonly<{ type: "FINALIZED"; reason: "OFFLINE_SYNC_CLOSED"; devices: readonly Readonly<{ deviceId: string; syncedThroughSequence: number }>[] }>
   | Readonly<{ type: "CONFLICT"; idempotencyKey: string; priorEntryHash: string; rejectedPayloadDigest: string }>;
 
 export type AssistanceLedgerEntry = Readonly<{
@@ -233,7 +238,19 @@ export function appendAssistance(ledger: AssistanceLedger, input: { scope: Assis
   } else {
     if (!openEntry) throw new Error("assistance_ledger_not_opened");
     if (event.type === "SEALED" && sealEntry) throw new Error("assistance_ledger_already_sealed");
-    if (event.type === "FINALIZED" && !sealEntry) throw new Error("assistance_ledger_not_sealed");
+    if (event.type === "FINALIZED") {
+      if (!sealEntry) throw new Error("assistance_ledger_not_sealed");
+      // The sync service must account for every accepted device, once, with what it synced through.
+      const accepted = [...(openEntry.event as Opened).offlineDeviceIds].sort();
+      const acknowledged = event.devices.map((device) => device.deviceId).sort();
+      if (canonicalizeJson(accepted) !== canonicalizeJson(acknowledged)) throw new Error("assistance_finalize_devices_mismatch");
+      for (const device of event.devices) {
+        if (!Number.isInteger(device.syncedThroughSequence) || device.syncedThroughSequence < -1) throw new Error("assistance_finalize_sequence_invalid");
+        const beyond = ledger.entries.some((entry) => entry.event.type === "ASSISTANCE" && entry.event.provenance.emitter === "OFFLINE_DEVICE_REPLAY"
+          && entry.event.provenance.deviceId === device.deviceId && entry.event.provenance.clientSequence > device.syncedThroughSequence);
+        if (beyond) throw new Error("assistance_finalize_sequence_contradicts_record");
+      }
+    }
     if (event.type === "ASSISTANCE") {
       if (!Object.prototype.hasOwnProperty.call(ASSISTANCE_KIND_CHANNEL, event.kind)) throw new Error("assistance_kind_unknown");
       const allowed = Object.prototype.hasOwnProperty.call(EMITTER_KINDS, event.provenance.emitter) ? EMITTER_KINDS[event.provenance.emitter] : [];
@@ -345,6 +362,9 @@ export type AssistanceAttestation = Readonly<{
   offlineDeviceIds: readonly string[];
   /** Nothing more can be appended to the record (see assistanceRecordIsFinal). */
   final: boolean;
+  /** When the offline sync window was closed, and what each device was synced through (null/empty if never finalized). */
+  finalizedAt: string | null;
+  syncedThrough: readonly Readonly<{ deviceId: string; syncedThroughSequence: number }>[];
 }>;
 
 export function attestAssistance(ledger: AssistanceLedger, itemId: string): Readonly<{ attestation: AssistanceAttestation; classification: ItemAssistanceClassification }> {
@@ -365,6 +385,8 @@ export function attestAssistance(ledger: AssistanceLedger, itemId: string): Read
       independentDelivery: (openedEntry(ledger)?.event as Opened | undefined)?.independentDelivery ?? null,
       offlineDeviceIds: Object.freeze([...((openedEntry(ledger)?.event as Opened | undefined)?.offlineDeviceIds ?? [])]),
       final: assistanceRecordIsFinal(ledger),
+      finalizedAt: finalizedEntry(ledger)?.recordedAt ?? null,
+      syncedThrough: Object.freeze([...((finalizedEntry(ledger)?.event as Extract<AssistanceLedgerEvent, { type: "FINALIZED" }> | undefined)?.devices ?? [])]),
     }),
   });
 }

@@ -52,6 +52,7 @@ export const INTEGRITY_REVIEW_FLAGS = [
   "assistance_record_scope_mismatch",
   "assistance_record_delivery_mismatch",
   "assistance_record_device_unbound",
+  "assistance_record_offline_response_unsynced",
 ] as const;
 
 export const EVIDENCE_TIERS = [
@@ -349,6 +350,21 @@ export function createProvisionalFeedback(raw: AssessmentEvidenceEnvelope, input
   });
 }
 
+/**
+ * Whether the record can speak for an offline response: the device is accepted, the sync service's
+ * FINALIZED acknowledgement covers the response's capture sequence, and the response arrived before
+ * finalization. Online responses are always covered by a final record.
+ */
+function offlineResponseCovered(attestation: AssistanceAttestation, envelope: Pick<AssessmentEvidenceEnvelope, "capture">): "COVERED" | "DEVICE_UNBOUND" | "UNSYNCED" {
+  if (envelope.capture.source !== "OFFLINE") return "COVERED";
+  const deviceId = envelope.capture.deviceId ?? "";
+  if (!attestation.offlineDeviceIds.includes(deviceId)) return "DEVICE_UNBOUND";
+  const ack = attestation.syncedThrough.find((device) => device.deviceId === deviceId);
+  if (!ack || attestation.finalizedAt === null || envelope.capture.clientSequence > ack.syncedThroughSequence
+    || Date.parse(envelope.capture.receivedAt) > Date.parse(attestation.finalizedAt)) return "UNSYNCED";
+  return "COVERED";
+}
+
 /** The assistance record belongs to exactly this learner, attempt, delivery session and release. */
 function assistanceRecordBoundTo(ledger: AssistanceLedger, envelope: AssessmentEvidenceEnvelope): boolean {
   const scope = ledger.scope;
@@ -390,8 +406,12 @@ function resolveIndependence(raw: AssessmentEvidenceEnvelope, ledger: Assistance
   // The record must have been opened for this kind of delivery, and an offline response must come
   // from a device the record accepts capture from; otherwise the record says nothing about it.
   if (attestation.independentDelivery !== isIndependentAssessment(raw.delivery)) flags.push("assistance_record_delivery_mismatch");
-  if (raw.capture.source === "OFFLINE" && !attestation.offlineDeviceIds.includes(raw.capture.deviceId ?? "")) flags.push("assistance_record_device_unbound");
-  const recordUsable = !flags.includes("assistance_record_delivery_mismatch") && !flags.includes("assistance_record_device_unbound");
+  const coverage = offlineResponseCovered(attestation, raw);
+  if (coverage === "DEVICE_UNBOUND") flags.push("assistance_record_device_unbound");
+  // Only meaningful once the record is final; before that the record is UNVERIFIED anyway.
+  if (coverage === "UNSYNCED" && attestation.final) flags.push("assistance_record_offline_response_unsynced");
+  const recordUsable = !flags.includes("assistance_record_delivery_mismatch") && !flags.includes("assistance_record_device_unbound")
+    && !flags.includes("assistance_record_offline_response_unsynced");
   let independence: EvidenceIndependence;
   if (classification.status === "ASSISTED") {
     independence = "ASSISTED";
@@ -602,7 +622,7 @@ function assertIndependenceAttested(envelope: AssessmentEvidenceEnvelope, record
   const current = attestAssistance(record, envelope.pins.itemId).attestation;
   if (current.headHash !== claimed.headHash || current.headSequence !== claimed.headSequence || current.status !== "INDEPENDENT"
     || current.independentDelivery !== isIndependentAssessment(envelope.delivery)
-    || (envelope.capture.source === "OFFLINE" && !current.offlineDeviceIds.includes(envelope.capture.deviceId ?? ""))) {
+    || offlineResponseCovered(current, envelope) !== "COVERED") {
     throw new Error("assessment_assistance_attestation_stale");
   }
 }
