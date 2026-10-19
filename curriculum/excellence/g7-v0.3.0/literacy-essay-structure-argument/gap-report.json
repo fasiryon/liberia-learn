@@ -1,0 +1,953 @@
+{
+  "reportVersion": "liberialearn-g7-excellence-gap-report/1.0.0",
+  "lessonKey": "literacy-essay-structure-argument",
+  "title": "Understanding Essay Writing: Structure and Argument",
+  "subject": "LITERACY",
+  "grade": 7,
+  "candidateOnly": true,
+  "published": false,
+  "pullRequest": 191,
+  "review": {
+    "reportVersion": "liberialearn-instructional-review-report/1.0.0",
+    "reviewerVersion": "liberialearn-ai-instructional-reviewer/1.0.0",
+    "standardVersion": "liberialearn-curriculum-excellence/1.0.0",
+    "rubricVersion": "liberialearn-curriculum-excellence-rubric/1.0.0",
+    "blueprintVersion": "liberialearn-assessment-blueprint/1.0.0",
+    "reviewer": {
+      "kind": "AUTOMATED",
+      "agentId": "liberialearn.excellence-automated-checks/1.0.0",
+      "modelFamily": null,
+      "modelId": null,
+      "sessionId": null
+    },
+    "revision": {
+      "contentKey": "cv2-cand-g7-literacy-essay-structure-argument@0.3.0",
+      "candidateSha256": "0f275a880588aa8e9451a0ea368bf0fa18bee6cbd826bb1c15d86c4fdc952828",
+      "assessmentSha256": "9af3f09b453c5fbdf133aeed894a6940c6f4ad65cc021eb5bbd01cfb11cfa8b6",
+      "planSha256": null,
+      "source": {
+        "gitCommit": null,
+        "candidatePath": "curriculum/v2/g7/candidates/literacy-essay-structure-argument.json",
+        "assessmentPath": "curriculum/review/g7-native-v1/literacy-essay-structure-argument/assessment-review.json"
+      }
+    },
+    "independence": {
+      "selfAuthored": false,
+      "independent": false,
+      "reasons": [
+        "AUTOMATED_CHECKS_ONLY"
+      ],
+      "countsAsIndependentReview": false
+    },
+    "authority": "ADVISORY_ONLY",
+    "mayApprove": false,
+    "mayPublish": false,
+    "humanQualificationClaimed": false,
+    "officialApprovalClaimed": false,
+    "candidateOnly": true,
+    "outcome": "READY_FOR_QUALIFIED_HUMAN_REVIEW",
+    "findings": [
+      {
+        "id": "det-unmapped-g7-essay-exit-1-1",
+        "code": "DISTRACTOR_UNMAPPED",
+        "criterionId": "LM-CON-1",
+        "severity": "MINOR",
+        "method": "DETERMINISTIC",
+        "statement": "Distractor 1 of g7-essay-exit-1 is not mapped to any misconception, so choosing it gives no diagnostic information.",
+        "recommendation": "Map it to a catalogued misconception or replace it with a distractor that represents one.",
+        "evidence": [
+          {
+            "document": "ASSESSMENT",
+            "pointer": "/items/0/item/options/1",
+            "valueSha256": "b47a097fe1c0e8fac98836f5b06f217407265fe6fad8c25cc1018dcebc653c26"
+          }
+        ],
+        "confidence": 1,
+        "requiresHumanConfirmation": false,
+        "layer": "LIBERIALEARN_MASTERY",
+        "dimension": "CONCEPTUAL_MASTERY"
+      },
+      {
+        "id": "det-unmapped-g7-essay-exit-1-2",
+        "code": "DISTRACTOR_UNMAPPED",
+        "criterionId": "LM-CON-1",
+        "severity": "MINOR",
+        "method": "DETERMINISTIC",
+        "statement": "Distractor 2 of g7-essay-exit-1 is not mapped to any misconception, so choosing it gives no diagnostic information.",
+        "recommendation": "Map it to a catalogued misconception or replace it with a distractor that represents one.",
+        "evidence": [
+          {
+            "document": "ASSESSMENT",
+            "pointer": "/items/0/item/options/2",
+            "valueSha256": "6722c5641d47925de32f3f9e16e316127d294e73145722a99c6ea21b86688a57"
+          }
+        ],
+        "confidence": 1,
+        "requiresHumanConfirmation": false,
+        "layer": "LIBERIALEARN_MASTERY",
+        "dimension": "CONCEPTUAL_MASTERY"
+      },
+      {
+        "id": "det-unmapped-g7-essay-exit-1-3",
+        "code": "DISTRACTOR_UNMAPPED",
+        "criterionId": "LM-CON-1",
+        "severity": "MINOR",
+        "method": "DETERMINISTIC",
+        "statement": "Distractor 3 of g7-essay-exit-1 is not mapped to any misconception, so choosing it gives no diagnostic information.",
+        "recommendation": "Map it to a catalogued misconception or replace it with a distractor that represents one.",
+        "evidence": [
+          {
+            "document": "ASSESSMENT",
+            "pointer": "/items/0/item/options/3",
+            "valueSha256": "d3d0a871e4c7808328d353697805b55e21fb7eb9db067d860e6fc7a2277a2127"
+          }
+        ],
+        "confidence": 1,
+        "requiresHumanConfirmation": false,
+        "layer": "LIBERIALEARN_MASTERY",
+        "dimension": "CONCEPTUAL_MASTERY"
+      },
+      {
+        "id": "det-unmapped-g7-essay-exit-4-2",
+        "code": "DISTRACTOR_UNMAPPED",
+        "criterionId": "LM-CON-1",
+        "severity": "MINOR",
+        "method": "DETERMINISTIC",
+        "statement": "Distractor 2 of g7-essay-exit-4 is not mapped to any misconception, so choosing it gives no diagnostic information.",
+        "recommendation": "Map it to a catalogued misconception or replace it with a distractor that represents one.",
+        "evidence": [
+          {
+            "document": "ASSESSMENT",
+            "pointer": "/items/3/item/options/2",
+            "valueSha256": "45fad5fd459e7e90de3ef18eae9242a2cb922893367de16bb82a72be51f2e2ba"
+          }
+        ],
+        "confidence": 1,
+        "requiresHumanConfirmation": false,
+        "layer": "LIBERIALEARN_MASTERY",
+        "dimension": "CONCEPTUAL_MASTERY"
+      },
+      {
+        "id": "det-unmapped-g7-essay-exit-4-3",
+        "code": "DISTRACTOR_UNMAPPED",
+        "criterionId": "LM-CON-1",
+        "severity": "MINOR",
+        "method": "DETERMINISTIC",
+        "statement": "Distractor 3 of g7-essay-exit-4 is not mapped to any misconception, so choosing it gives no diagnostic information.",
+        "recommendation": "Map it to a catalogued misconception or replace it with a distractor that represents one.",
+        "evidence": [
+          {
+            "document": "ASSESSMENT",
+            "pointer": "/items/3/item/options/3",
+            "valueSha256": "da03afe6e40b3eb56381ed92e35d4c3efc01345796bc3a16cdbfa9a049439e07"
+          }
+        ],
+        "confidence": 1,
+        "requiresHumanConfirmation": false,
+        "layer": "LIBERIALEARN_MASTERY",
+        "dimension": "CONCEPTUAL_MASTERY"
+      },
+      {
+        "id": "det-unmapped-g7-essay-exit-5-1",
+        "code": "DISTRACTOR_UNMAPPED",
+        "criterionId": "LM-CON-1",
+        "severity": "MINOR",
+        "method": "DETERMINISTIC",
+        "statement": "Distractor 1 of g7-essay-exit-5 is not mapped to any misconception, so choosing it gives no diagnostic information.",
+        "recommendation": "Map it to a catalogued misconception or replace it with a distractor that represents one.",
+        "evidence": [
+          {
+            "document": "ASSESSMENT",
+            "pointer": "/items/4/item/options/1",
+            "valueSha256": "bdb56c2d8e02bca8f0ba05b2daa31d76cb363236171ad402b23eb516d111a901"
+          }
+        ],
+        "confidence": 1,
+        "requiresHumanConfirmation": false,
+        "layer": "LIBERIALEARN_MASTERY",
+        "dimension": "CONCEPTUAL_MASTERY"
+      },
+      {
+        "id": "det-unmapped-g7-essay-exit-5-2",
+        "code": "DISTRACTOR_UNMAPPED",
+        "criterionId": "LM-CON-1",
+        "severity": "MINOR",
+        "method": "DETERMINISTIC",
+        "statement": "Distractor 2 of g7-essay-exit-5 is not mapped to any misconception, so choosing it gives no diagnostic information.",
+        "recommendation": "Map it to a catalogued misconception or replace it with a distractor that represents one.",
+        "evidence": [
+          {
+            "document": "ASSESSMENT",
+            "pointer": "/items/4/item/options/2",
+            "valueSha256": "f277c0e1abfa0ca7360dbdd1203fd982dbf5215f7811fcadd80abe504b8b9add"
+          }
+        ],
+        "confidence": 1,
+        "requiresHumanConfirmation": false,
+        "layer": "LIBERIALEARN_MASTERY",
+        "dimension": "CONCEPTUAL_MASTERY"
+      },
+      {
+        "id": "det-unmapped-g7-essay-exit-6-3",
+        "code": "DISTRACTOR_UNMAPPED",
+        "criterionId": "LM-CON-1",
+        "severity": "MINOR",
+        "method": "DETERMINISTIC",
+        "statement": "Distractor 3 of g7-essay-exit-6 is not mapped to any misconception, so choosing it gives no diagnostic information.",
+        "recommendation": "Map it to a catalogued misconception or replace it with a distractor that represents one.",
+        "evidence": [
+          {
+            "document": "ASSESSMENT",
+            "pointer": "/items/5/item/options/3",
+            "valueSha256": "8cc7c76a3747da75a59c2a9373a0f6b21e6cca5ebb8f84d4d3f8dd2f64b0dbcc"
+          }
+        ],
+        "confidence": 1,
+        "requiresHumanConfirmation": false,
+        "layer": "LIBERIALEARN_MASTERY",
+        "dimension": "CONCEPTUAL_MASTERY"
+      },
+      {
+        "id": "det-mastery-assistance",
+        "code": "MASTERY_ITEMS_CARRY_ASSISTANCE",
+        "criterionId": "LM-ASM-2",
+        "severity": "MINOR",
+        "method": "DETERMINISTIC",
+        "statement": "6 end-of-lesson item(s) (g7-essay-exit-1, g7-essay-exit-2, g7-essay-exit-3, g7-essay-exit-4, g7-essay-exit-5, g7-essay-exit-6) carry a hint and/or worked example; if either is shown before the response, the response is not independent evidence.",
+        "recommendation": "Withhold hints and worked examples until after the scored response, and record any assistance in the governed evidence metadata.",
+        "evidence": [
+          {
+            "document": "ASSESSMENT",
+            "pointer": "/items/0/item",
+            "valueSha256": "0309d00352acd9fcdf80d878d38dbcf46ab5c5bd69fda30799d052154414bb28"
+          },
+          {
+            "document": "ASSESSMENT",
+            "pointer": "/items/1/item",
+            "valueSha256": "010c6684dcf204fc73e209d1bc0032672e755d861be3d628a458612211056e12"
+          },
+          {
+            "document": "ASSESSMENT",
+            "pointer": "/items/2/item",
+            "valueSha256": "94d0d1c399e54617e4ec5657954b894617b968c21acd82aa9957f925a5192f26"
+          },
+          {
+            "document": "ASSESSMENT",
+            "pointer": "/items/3/item",
+            "valueSha256": "cdaa51e7d8ba67b65a9f4e3d3ef381f18b6f622b4c8d852d25db5cb6ec97fdf1"
+          },
+          {
+            "document": "ASSESSMENT",
+            "pointer": "/items/4/item",
+            "valueSha256": "6792bf5ff254f41130c3b69b8b8e9f6d80efbe9d2d2135baaad23f57b17efa66"
+          },
+          {
+            "document": "ASSESSMENT",
+            "pointer": "/items/5/item",
+            "valueSha256": "8b5ae4220f857f4b75c01ed959f65b9876b047ba9037be78bf10cfe363ca79e9"
+          }
+        ],
+        "confidence": 1,
+        "requiresHumanConfirmation": true,
+        "layer": "LIBERIALEARN_MASTERY",
+        "dimension": "ASSESSMENT"
+      }
+    ],
+    "blueprint": {
+      "version": "liberialearn-assessment-blueprint/1.0.0",
+      "family": "LITERACY",
+      "rules": [
+        {
+          "ruleId": "BP-COVERAGE",
+          "criterionId": "NF-ASM-1",
+          "layer": "NATIONAL_FOUNDATION",
+          "blocking": true,
+          "requirement": "Every objective has end-of-lesson mastery evidence at scaffold NONE.",
+          "missing": [],
+          "detail": "7 end-of-lesson mastery task(s).",
+          "met": true
+        },
+        {
+          "ruleId": "BP-PREREQUISITE-DIAGNOSTIC",
+          "criterionId": "NF-PRG-1",
+          "layer": "NATIONAL_FOUNDATION",
+          "blocking": true,
+          "requirement": "Every stated prerequisite has a diagnostic task with a fallback route.",
+          "missing": [],
+          "detail": "3 of 3 prerequisite(s) diagnosed.",
+          "met": true
+        },
+        {
+          "ruleId": "BP-INDEPENDENT-PRACTICE",
+          "criterionId": "LM-PRG-1",
+          "layer": "LIBERIALEARN_MASTERY",
+          "blocking": true,
+          "requirement": "Every objective reaches unscaffolded practice before mastery evidence.",
+          "missing": [],
+          "detail": "Formative IN_LESSON tasks at scaffold NONE.",
+          "met": true
+        },
+        {
+          "ruleId": "BP-PRODUCTION",
+          "criterionId": "LM-ASM-1",
+          "layer": "LIBERIALEARN_MASTERY",
+          "blocking": true,
+          "requirement": "Every objective has mastery evidence that is original unscaffolded writing scored with an analytic rubric.",
+          "missing": [],
+          "detail": "Accepted kinds: ORIGINAL_WRITING.",
+          "met": true
+        },
+        {
+          "ruleId": "BP-REASONING",
+          "criterionId": "LM-RSN-1",
+          "layer": "LIBERIALEARN_MASTERY",
+          "blocking": true,
+          "requirement": "At least one unscaffolded, rubric-scored reasoning or justification task.",
+          "missing": [],
+          "detail": "3 reasoning task(s) at mastery.",
+          "met": true
+        },
+        {
+          "ruleId": "BP-SELECTED-SHARE",
+          "criterionId": "LM-ASM-1",
+          "layer": "LIBERIALEARN_MASTERY",
+          "blocking": true,
+          "requirement": "Selected response is at most 50% of end-of-lesson mastery evidence.",
+          "missing": [],
+          "detail": "3/7 selected response (43%).",
+          "met": true
+        },
+        {
+          "ruleId": "BP-RETENTION",
+          "criterionId": "LM-ASM-3",
+          "layer": "LIBERIALEARN_MASTERY",
+          "blocking": true,
+          "requirement": "Every objective has delayed retrieval at least 7 days after the lesson.",
+          "missing": [],
+          "detail": "Spaced retrieval, unscaffolded.",
+          "met": true
+        },
+        {
+          "ruleId": "BP-TRANSFER",
+          "criterionId": "GE-TRN-1",
+          "layer": "GLOBAL_EXCELLENCE",
+          "blocking": true,
+          "requirement": "At least one unscaffolded transfer task in a context the lesson did not rehearse.",
+          "missing": [],
+          "detail": "Near or far transfer, NEW context.",
+          "met": true
+        },
+        {
+          "ruleId": "BP-EXTENSION",
+          "criterionId": "GE-EXT-1",
+          "layer": "GLOBAL_EXCELLENCE",
+          "blocking": true,
+          "requirement": "An optional, non-gating extension task.",
+          "missing": [],
+          "detail": "Extension is optional and never required for mastery.",
+          "met": true
+        }
+      ],
+      "selectedResponseShareOfMastery": 0.42857142857142855,
+      "blockingGaps": []
+    },
+    "projectedBlueprintWithPlan": null,
+    "reportSha256": "faa77789ecb7965e4e01c7a7dc2d6c653d6243344d7d1613c223ce59f6ad7299"
+  },
+  "criteria": {
+    "asIs": [
+      {
+        "criterionId": "NF-ALN-1",
+        "layer": "NATIONAL_FOUNDATION",
+        "blocking": true,
+        "rating": "NOT_EVALUATED",
+        "basis": "Requires a qualified human reviewer."
+      },
+      {
+        "criterionId": "NF-ALN-2",
+        "layer": "NATIONAL_FOUNDATION",
+        "blocking": true,
+        "rating": "NOT_EVALUATED",
+        "basis": "No AI finding; advisory judgment is not a MET rating."
+      },
+      {
+        "criterionId": "NF-ALN-3",
+        "layer": "NATIONAL_FOUNDATION",
+        "blocking": true,
+        "rating": "NOT_EVALUATED",
+        "basis": "Requires a qualified human reviewer."
+      },
+      {
+        "criterionId": "NF-ACC-1",
+        "layer": "NATIONAL_FOUNDATION",
+        "blocking": true,
+        "rating": "NOT_EVALUATED",
+        "basis": "No deterministic check covers this criterion yet."
+      },
+      {
+        "criterionId": "NF-ACC-2",
+        "layer": "NATIONAL_FOUNDATION",
+        "blocking": true,
+        "rating": "NOT_EVALUATED",
+        "basis": "Requires a qualified human reviewer."
+      },
+      {
+        "criterionId": "NF-PRG-1",
+        "layer": "NATIONAL_FOUNDATION",
+        "blocking": true,
+        "rating": "MET",
+        "basis": "blueprint:BP-PREREQUISITE-DIAGNOSTIC"
+      },
+      {
+        "criterionId": "NF-ASM-1",
+        "layer": "NATIONAL_FOUNDATION",
+        "blocking": true,
+        "rating": "MET",
+        "basis": "blueprint:BP-COVERAGE"
+      },
+      {
+        "criterionId": "NF-ACS-1",
+        "layer": "NATIONAL_FOUNDATION",
+        "blocking": true,
+        "rating": "NOT_EVALUATED",
+        "basis": "No deterministic check covers this criterion yet."
+      },
+      {
+        "criterionId": "NF-REL-1",
+        "layer": "NATIONAL_FOUNDATION",
+        "blocking": false,
+        "rating": "NOT_EVALUATED",
+        "basis": "Requires a qualified human reviewer."
+      },
+      {
+        "criterionId": "LM-PRG-1",
+        "layer": "LIBERIALEARN_MASTERY",
+        "blocking": true,
+        "rating": "MET",
+        "basis": "blueprint:BP-INDEPENDENT-PRACTICE"
+      },
+      {
+        "criterionId": "LM-CON-1",
+        "layer": "LIBERIALEARN_MASTERY",
+        "blocking": true,
+        "rating": "PARTIALLY_MET",
+        "basis": "det-unmapped-g7-essay-exit-1-1, det-unmapped-g7-essay-exit-1-2, det-unmapped-g7-essay-exit-1-3, det-unmapped-g7-essay-exit-4-2, det-unmapped-g7-essay-exit-4-3, det-unmapped-g7-essay-exit-5-1, det-unmapped-g7-essay-exit-5-2, det-unmapped-g7-essay-exit-6-3"
+      },
+      {
+        "criterionId": "LM-CON-2",
+        "layer": "LIBERIALEARN_MASTERY",
+        "blocking": false,
+        "rating": "NOT_EVALUATED",
+        "basis": "No deterministic check covers this criterion yet."
+      },
+      {
+        "criterionId": "LM-RSN-1",
+        "layer": "LIBERIALEARN_MASTERY",
+        "blocking": true,
+        "rating": "MET",
+        "basis": "blueprint:BP-REASONING"
+      },
+      {
+        "criterionId": "LM-ASM-1",
+        "layer": "LIBERIALEARN_MASTERY",
+        "blocking": true,
+        "rating": "MET",
+        "basis": "blueprint:BP-PRODUCTION, blueprint:BP-SELECTED-SHARE"
+      },
+      {
+        "criterionId": "LM-ASM-2",
+        "layer": "LIBERIALEARN_MASTERY",
+        "blocking": true,
+        "rating": "PARTIALLY_MET",
+        "basis": "det-mastery-assistance"
+      },
+      {
+        "criterionId": "LM-ASM-3",
+        "layer": "LIBERIALEARN_MASTERY",
+        "blocking": true,
+        "rating": "MET",
+        "basis": "blueprint:BP-RETENTION"
+      },
+      {
+        "criterionId": "LM-ACS-1",
+        "layer": "LIBERIALEARN_MASTERY",
+        "blocking": false,
+        "rating": "NOT_EVALUATED",
+        "basis": "Requires a qualified human reviewer."
+      },
+      {
+        "criterionId": "LM-REL-1",
+        "layer": "LIBERIALEARN_MASTERY",
+        "blocking": false,
+        "rating": "NOT_EVALUATED",
+        "basis": "No AI finding; advisory judgment is not a MET rating."
+      },
+      {
+        "criterionId": "GE-RSN-1",
+        "layer": "GLOBAL_EXCELLENCE",
+        "blocking": true,
+        "rating": "NOT_EVALUATED",
+        "basis": "No AI finding; advisory judgment is not a MET rating."
+      },
+      {
+        "criterionId": "GE-TRN-1",
+        "layer": "GLOBAL_EXCELLENCE",
+        "blocking": true,
+        "rating": "MET",
+        "basis": "blueprint:BP-TRANSFER"
+      },
+      {
+        "criterionId": "GE-EXT-1",
+        "layer": "GLOBAL_EXCELLENCE",
+        "blocking": true,
+        "rating": "MET",
+        "basis": "blueprint:BP-EXTENSION"
+      },
+      {
+        "criterionId": "GE-ASM-1",
+        "layer": "GLOBAL_EXCELLENCE",
+        "blocking": true,
+        "rating": "NOT_EVALUATED",
+        "basis": "Requires a qualified human reviewer."
+      },
+      {
+        "criterionId": "GE-ACC-1",
+        "layer": "GLOBAL_EXCELLENCE",
+        "blocking": true,
+        "rating": "NOT_EVALUATED",
+        "basis": "Requires a qualified human reviewer."
+      }
+    ],
+    "blueprintIfPlanAdopted": [
+      {
+        "criterionId": "NF-ALN-1",
+        "layer": "NATIONAL_FOUNDATION",
+        "blocking": true,
+        "rating": "NOT_EVALUATED",
+        "basis": "Requires a qualified human reviewer."
+      },
+      {
+        "criterionId": "NF-ALN-2",
+        "layer": "NATIONAL_FOUNDATION",
+        "blocking": true,
+        "rating": "NOT_EVALUATED",
+        "basis": "No AI finding; advisory judgment is not a MET rating."
+      },
+      {
+        "criterionId": "NF-ALN-3",
+        "layer": "NATIONAL_FOUNDATION",
+        "blocking": true,
+        "rating": "NOT_EVALUATED",
+        "basis": "Requires a qualified human reviewer."
+      },
+      {
+        "criterionId": "NF-ACC-1",
+        "layer": "NATIONAL_FOUNDATION",
+        "blocking": true,
+        "rating": "NOT_EVALUATED",
+        "basis": "No deterministic check covers this criterion yet."
+      },
+      {
+        "criterionId": "NF-ACC-2",
+        "layer": "NATIONAL_FOUNDATION",
+        "blocking": true,
+        "rating": "NOT_EVALUATED",
+        "basis": "Requires a qualified human reviewer."
+      },
+      {
+        "criterionId": "NF-PRG-1",
+        "layer": "NATIONAL_FOUNDATION",
+        "blocking": true,
+        "rating": "MET",
+        "basis": "blueprint:BP-PREREQUISITE-DIAGNOSTIC"
+      },
+      {
+        "criterionId": "NF-ASM-1",
+        "layer": "NATIONAL_FOUNDATION",
+        "blocking": true,
+        "rating": "MET",
+        "basis": "blueprint:BP-COVERAGE"
+      },
+      {
+        "criterionId": "NF-ACS-1",
+        "layer": "NATIONAL_FOUNDATION",
+        "blocking": true,
+        "rating": "NOT_EVALUATED",
+        "basis": "No deterministic check covers this criterion yet."
+      },
+      {
+        "criterionId": "NF-REL-1",
+        "layer": "NATIONAL_FOUNDATION",
+        "blocking": false,
+        "rating": "NOT_EVALUATED",
+        "basis": "Requires a qualified human reviewer."
+      },
+      {
+        "criterionId": "LM-PRG-1",
+        "layer": "LIBERIALEARN_MASTERY",
+        "blocking": true,
+        "rating": "MET",
+        "basis": "blueprint:BP-INDEPENDENT-PRACTICE"
+      },
+      {
+        "criterionId": "LM-CON-1",
+        "layer": "LIBERIALEARN_MASTERY",
+        "blocking": true,
+        "rating": "PARTIALLY_MET",
+        "basis": "det-unmapped-g7-essay-exit-1-1, det-unmapped-g7-essay-exit-1-2, det-unmapped-g7-essay-exit-1-3, det-unmapped-g7-essay-exit-4-2, det-unmapped-g7-essay-exit-4-3, det-unmapped-g7-essay-exit-5-1, det-unmapped-g7-essay-exit-5-2, det-unmapped-g7-essay-exit-6-3"
+      },
+      {
+        "criterionId": "LM-CON-2",
+        "layer": "LIBERIALEARN_MASTERY",
+        "blocking": false,
+        "rating": "NOT_EVALUATED",
+        "basis": "No deterministic check covers this criterion yet."
+      },
+      {
+        "criterionId": "LM-RSN-1",
+        "layer": "LIBERIALEARN_MASTERY",
+        "blocking": true,
+        "rating": "MET",
+        "basis": "blueprint:BP-REASONING"
+      },
+      {
+        "criterionId": "LM-ASM-1",
+        "layer": "LIBERIALEARN_MASTERY",
+        "blocking": true,
+        "rating": "MET",
+        "basis": "blueprint:BP-PRODUCTION, blueprint:BP-SELECTED-SHARE"
+      },
+      {
+        "criterionId": "LM-ASM-2",
+        "layer": "LIBERIALEARN_MASTERY",
+        "blocking": true,
+        "rating": "PARTIALLY_MET",
+        "basis": "det-mastery-assistance"
+      },
+      {
+        "criterionId": "LM-ASM-3",
+        "layer": "LIBERIALEARN_MASTERY",
+        "blocking": true,
+        "rating": "MET",
+        "basis": "blueprint:BP-RETENTION"
+      },
+      {
+        "criterionId": "LM-ACS-1",
+        "layer": "LIBERIALEARN_MASTERY",
+        "blocking": false,
+        "rating": "NOT_EVALUATED",
+        "basis": "Requires a qualified human reviewer."
+      },
+      {
+        "criterionId": "LM-REL-1",
+        "layer": "LIBERIALEARN_MASTERY",
+        "blocking": false,
+        "rating": "NOT_EVALUATED",
+        "basis": "No AI finding; advisory judgment is not a MET rating."
+      },
+      {
+        "criterionId": "GE-RSN-1",
+        "layer": "GLOBAL_EXCELLENCE",
+        "blocking": true,
+        "rating": "NOT_EVALUATED",
+        "basis": "No AI finding; advisory judgment is not a MET rating."
+      },
+      {
+        "criterionId": "GE-TRN-1",
+        "layer": "GLOBAL_EXCELLENCE",
+        "blocking": true,
+        "rating": "MET",
+        "basis": "blueprint:BP-TRANSFER"
+      },
+      {
+        "criterionId": "GE-EXT-1",
+        "layer": "GLOBAL_EXCELLENCE",
+        "blocking": true,
+        "rating": "MET",
+        "basis": "blueprint:BP-EXTENSION"
+      },
+      {
+        "criterionId": "GE-ASM-1",
+        "layer": "GLOBAL_EXCELLENCE",
+        "blocking": true,
+        "rating": "NOT_EVALUATED",
+        "basis": "Requires a qualified human reviewer."
+      },
+      {
+        "criterionId": "GE-ACC-1",
+        "layer": "GLOBAL_EXCELLENCE",
+        "blocking": true,
+        "rating": "NOT_EVALUATED",
+        "basis": "Requires a qualified human reviewer."
+      }
+    ]
+  },
+  "layers": {
+    "asIs": [
+      {
+        "layer": "NATIONAL_FOUNDATION",
+        "attained": false,
+        "unmetBlocking": [
+          "NF-ALN-1",
+          "NF-ALN-2",
+          "NF-ALN-3",
+          "NF-ACC-1",
+          "NF-ACC-2",
+          "NF-ACS-1"
+        ],
+        "isLearningEvidence": false
+      },
+      {
+        "layer": "LIBERIALEARN_MASTERY",
+        "attained": false,
+        "unmetBlocking": [
+          "LM-CON-1",
+          "LM-ASM-2"
+        ],
+        "isLearningEvidence": false
+      },
+      {
+        "layer": "GLOBAL_EXCELLENCE",
+        "attained": false,
+        "unmetBlocking": [
+          "GE-RSN-1",
+          "GE-ASM-1",
+          "GE-ACC-1"
+        ],
+        "isLearningEvidence": false
+      }
+    ]
+  },
+  "plan": null,
+  "correctionChecks": [],
+  "packageGaps": [
+    "MOE_OBJECTIVE_UNBOUND",
+    "MOE_SOURCE_STRUCTURING_DEFECT",
+    "MOE_GRADE_SCOPE_REVIEW",
+    "TEMPLATE_CELL_MISSING",
+    "ONTOLOGY_RELEASE_MISSING",
+    "LEGACY_COMPARISON_SIGNOFF",
+    "ASSESSMENT_ITEMS_PENDING"
+  ],
+  "waecBaseline": {
+    "examination": "LJHSCE (Grade 9), then WASSCE",
+    "competency": "WAEC English Language: Essay & Continuous Writing",
+    "evidenceSpecificity": "SUBJECT_LEVEL",
+    "note": "Grade 7 is not examined by WAEC. WAEC English Language papers include continuous (essay) writing, which is original writing; that is why selected-response evidence cannot stand in for it. Relevance is forward preparation only, and no WAEC approval is claimed."
+  },
+  "aiJudgmentReview": {
+    "reviewer": {
+      "kind": "AI",
+      "agentId": "claude-code:curriculum-excellence-v1",
+      "modelFamily": "anthropic-claude",
+      "modelId": "claude-opus-5-5",
+      "sessionId": null
+    },
+    "status": "BLOCKED",
+    "code": "SELF_REVIEW_PROHIBITED",
+    "detail": "SELF_REVIEW_PROHIBITED: SAME_MODEL_FAMILY:anthropic-claude, SAME_AGENT:claude-code:curriculum-excellence-v1",
+    "requires": "INDEPENDENT_REVIEWER"
+  },
+  "priorFindings": [
+    {
+      "findingId": "det-bp-independent-practice",
+      "severity": "BLOCKING",
+      "code": "BLUEPRINT_INDEPENDENT_PRACTICE_UNMET",
+      "method": "DETERMINISTIC",
+      "status": "NOT_REPRODUCED_BY_AUTOMATED_CHECKS",
+      "change": "The deterministic check no longer fires on this revision."
+    },
+    {
+      "findingId": "det-bp-production",
+      "severity": "BLOCKING",
+      "code": "BLUEPRINT_PRODUCTION_UNMET",
+      "method": "DETERMINISTIC",
+      "status": "NOT_REPRODUCED_BY_AUTOMATED_CHECKS",
+      "change": "The deterministic check no longer fires on this revision."
+    },
+    {
+      "findingId": "det-bp-reasoning",
+      "severity": "BLOCKING",
+      "code": "BLUEPRINT_REASONING_UNMET",
+      "method": "DETERMINISTIC",
+      "status": "NOT_REPRODUCED_BY_AUTOMATED_CHECKS",
+      "change": "The deterministic check no longer fires on this revision."
+    },
+    {
+      "findingId": "det-bp-selected-share",
+      "severity": "BLOCKING",
+      "code": "BLUEPRINT_SELECTED_SHARE_UNMET",
+      "method": "DETERMINISTIC",
+      "status": "NOT_REPRODUCED_BY_AUTOMATED_CHECKS",
+      "change": "The deterministic check no longer fires on this revision."
+    },
+    {
+      "findingId": "det-bp-retention",
+      "severity": "BLOCKING",
+      "code": "BLUEPRINT_RETENTION_UNMET",
+      "method": "DETERMINISTIC",
+      "status": "NOT_REPRODUCED_BY_AUTOMATED_CHECKS",
+      "change": "The deterministic check no longer fires on this revision."
+    },
+    {
+      "findingId": "det-bp-transfer",
+      "severity": "BLOCKING",
+      "code": "BLUEPRINT_TRANSFER_UNMET",
+      "method": "DETERMINISTIC",
+      "status": "NOT_REPRODUCED_BY_AUTOMATED_CHECKS",
+      "change": "The deterministic check no longer fires on this revision."
+    },
+    {
+      "findingId": "det-bp-extension",
+      "severity": "BLOCKING",
+      "code": "BLUEPRINT_EXTENSION_UNMET",
+      "method": "DETERMINISTIC",
+      "status": "NOT_REPRODUCED_BY_AUTOMATED_CHECKS",
+      "change": "The deterministic check no longer fires on this revision."
+    },
+    {
+      "findingId": "det-prereq-0",
+      "severity": "BLOCKING",
+      "code": "PREREQUISITE_NOT_DIAGNOSED",
+      "method": "DETERMINISTIC",
+      "status": "NOT_REPRODUCED_BY_AUTOMATED_CHECKS",
+      "change": "The deterministic check no longer fires on this revision."
+    },
+    {
+      "findingId": "det-prereq-1",
+      "severity": "BLOCKING",
+      "code": "PREREQUISITE_NOT_DIAGNOSED",
+      "method": "DETERMINISTIC",
+      "status": "NOT_REPRODUCED_BY_AUTOMATED_CHECKS",
+      "change": "The deterministic check no longer fires on this revision."
+    },
+    {
+      "findingId": "det-prereq-2",
+      "severity": "BLOCKING",
+      "code": "PREREQUISITE_NOT_DIAGNOSED",
+      "method": "DETERMINISTIC",
+      "status": "NOT_REPRODUCED_BY_AUTOMATED_CHECKS",
+      "change": "The deterministic check no longer fires on this revision."
+    },
+    {
+      "findingId": "det-mc-unassessed-mc-circular-reasoning",
+      "severity": "MAJOR",
+      "code": "MISCONCEPTION_NOT_DIAGNOSABLE",
+      "method": "DETERMINISTIC",
+      "status": "NOT_REPRODUCED_BY_AUTOMATED_CHECKS",
+      "change": "The deterministic check no longer fires on this revision."
+    },
+    {
+      "findingId": "det-unmapped-g7-essay-exit-1-1",
+      "severity": "MINOR",
+      "code": "DISTRACTOR_UNMAPPED",
+      "method": "DETERMINISTIC",
+      "status": "STILL_PRESENT",
+      "change": "The same deterministic check still fires on this revision."
+    },
+    {
+      "findingId": "det-unmapped-g7-essay-exit-1-2",
+      "severity": "MINOR",
+      "code": "DISTRACTOR_UNMAPPED",
+      "method": "DETERMINISTIC",
+      "status": "STILL_PRESENT",
+      "change": "The same deterministic check still fires on this revision."
+    },
+    {
+      "findingId": "det-unmapped-g7-essay-exit-4-2",
+      "severity": "MINOR",
+      "code": "DISTRACTOR_UNMAPPED",
+      "method": "DETERMINISTIC",
+      "status": "STILL_PRESENT",
+      "change": "The same deterministic check still fires on this revision."
+    },
+    {
+      "findingId": "det-unmapped-g7-essay-exit-4-3",
+      "severity": "MINOR",
+      "code": "DISTRACTOR_UNMAPPED",
+      "method": "DETERMINISTIC",
+      "status": "STILL_PRESENT",
+      "change": "The same deterministic check still fires on this revision."
+    },
+    {
+      "findingId": "det-unmapped-g7-essay-exit-5-1",
+      "severity": "MINOR",
+      "code": "DISTRACTOR_UNMAPPED",
+      "method": "DETERMINISTIC",
+      "status": "STILL_PRESENT",
+      "change": "The same deterministic check still fires on this revision."
+    },
+    {
+      "findingId": "det-unmapped-g7-essay-exit-5-2",
+      "severity": "MINOR",
+      "code": "DISTRACTOR_UNMAPPED",
+      "method": "DETERMINISTIC",
+      "status": "STILL_PRESENT",
+      "change": "The same deterministic check still fires on this revision."
+    },
+    {
+      "findingId": "det-unmapped-g7-essay-exit-6-3",
+      "severity": "MINOR",
+      "code": "DISTRACTOR_UNMAPPED",
+      "method": "DETERMINISTIC",
+      "status": "STILL_PRESENT",
+      "change": "The same deterministic check still fires on this revision."
+    },
+    {
+      "findingId": "det-mastery-assistance",
+      "severity": "MINOR",
+      "code": "MASTERY_ITEMS_CARRY_ASSISTANCE",
+      "method": "DETERMINISTIC",
+      "status": "STILL_PRESENT",
+      "change": "The same deterministic check still fires on this revision."
+    },
+    {
+      "findingId": "ai-l1-writing-objectives-evidenced-by-selection",
+      "severity": "BLOCKING",
+      "code": "WRITING_MASTERY_WITHOUT_WRITING",
+      "method": "AI_JUDGMENT",
+      "status": "CORRECTION_APPLIED_PENDING_INDEPENDENT_REVIEW",
+      "change": "Added definition pl-w1: original, unscaffolded argumentative writing on a new question at the end of the lesson, scored with the candidate rubric. Selected-response items remain as diagnostic support. The in-lesson writing is still formative."
+    },
+    {
+      "findingId": "ai-l2-exit-items-recall-dominated",
+      "severity": "MAJOR",
+      "code": "EXIT_ITEMS_RECALL_DOMINATED",
+      "method": "AI_JUDGMENT",
+      "status": "CORRECTION_APPLIED_PENDING_INDEPENDENT_REVIEW",
+      "change": "g7-essay-exit-1, -4 and -5 are marked diagnostic-only (asked, not counted as mastery evidence). Definitions pl-r1 and pl-r2 ask the learner to judge, repair and answer an argument."
+    },
+    {
+      "findingId": "ai-l3-exit1-distractor-mismapped",
+      "severity": "MAJOR",
+      "code": "MISCONCEPTION_MAPPING_INCONSISTENT",
+      "method": "AI_JUDGMENT",
+      "status": "CORRECTION_APPLIED_PENDING_INDEPENDENT_REVIEW",
+      "change": "g7-essay-exit-1 option 3 is now unmapped. mc-thesis-placement was not added; it waits for classroom evidence."
+    },
+    {
+      "findingId": "ai-l4-exit5-distractor-mismapped",
+      "severity": "MAJOR",
+      "code": "MISCONCEPTION_MAPPING_INCONSISTENT",
+      "method": "AI_JUDGMENT",
+      "status": "CORRECTION_APPLIED_PENDING_INDEPENDENT_REVIEW",
+      "change": "Added mc-explain-restates-evidence, taught it in the peel scene, remapped g7-essay-exit-5 option 3 to it, and named it in the rubric's explain-link descriptor."
+    },
+    {
+      "findingId": "ai-l5-paragraph-prerequisite-checked-by-recognition",
+      "severity": "MAJOR",
+      "code": "PRODUCTION_PREREQUISITE_CHECKED_BY_RECOGNITION",
+      "method": "AI_JUDGMENT",
+      "status": "CORRECTION_APPLIED_PENDING_INDEPENDENT_REVIEW",
+      "change": "Added the readiness-writing scene: the paragraph and two-sides prerequisites are diagnosed by production, with fallback routes in definitions pl-d0 and pl-d2."
+    },
+    {
+      "findingId": "ai-l6-conclusion-task-supplies-the-argument",
+      "severity": "MINOR",
+      "code": "TASK_SUPPLIES_THE_ARGUMENT",
+      "method": "AI_JUDGMENT",
+      "status": "CORRECTION_APPLIED_PENDING_INDEPENDENT_REVIEW",
+      "change": "write-conclusion stays practice. Conclusion evidence is counted only in definition pl-dr2, where the learner writes the argument the conclusion closes."
+    }
+  ]
+}

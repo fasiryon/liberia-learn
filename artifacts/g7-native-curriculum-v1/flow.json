@@ -1,0 +1,1168 @@
+{
+  "capturedAt": "2026-10-15T22:00:29.530Z",
+  "base": "http://localhost:3297",
+  "runs": [
+    {
+      "lesson": "math-number-sense-place-value",
+      "viewport": "desktop",
+      "httpStatus": 200,
+      "scenes": [
+        {
+          "position": 1,
+          "sceneId": "intro",
+          "sceneType": "INTRO",
+          "title": "Big and small numbers in everyday Liberia",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "diagramsRendered": 1,
+          "horizontalOverflowPx": 0,
+          "screenshot": "screenshots/math-number-sense-place-value/desktop/01-intro.jpg"
+        },
+        {
+          "position": 2,
+          "sceneId": "objectives",
+          "sceneType": "OBJECTIVE",
+          "title": "What you will be able to do",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "diagramsRendered": 0,
+          "horizontalOverflowPx": 0,
+          "screenshot": "screenshots/math-number-sense-place-value/desktop/02-objectives.jpg"
+        },
+        {
+          "position": 3,
+          "sceneId": "warm-up",
+          "sceneType": "CHECK_UNDERSTANDING",
+          "title": "Warm-up: are you ready?",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "answer:warm-hundreds",
+            "answer:warm-tenths",
+            "answer:warm-times-ten"
+          ],
+          "diagramsRendered": 0,
+          "horizontalOverflowPx": 0,
+          "screenshot": "screenshots/math-number-sense-place-value/desktop/03-warm-up.jpg"
+        },
+        {
+          "position": 4,
+          "sceneId": "chart",
+          "sceneType": "EXPLANATION",
+          "title": "The place-value chart: millions to thousandths",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "diagramsRendered": 1,
+          "horizontalOverflowPx": 0,
+          "screenshot": "screenshots/math-number-sense-place-value/desktop/04-chart.jpg"
+        },
+        {
+          "position": 5,
+          "sceneId": "ten-times",
+          "sceneType": "INTERACTIVE_DIAGRAM",
+          "title": "Each place is worth ten times the next",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "reveal-step",
+            "reveal-step",
+            "reveal-step",
+            "reveal-step",
+            "reveal-step",
+            "reveal-step"
+          ],
+          "diagramsRendered": 1,
+          "horizontalOverflowPx": 0,
+          "screenshot": "screenshots/math-number-sense-place-value/desktop/05-ten-times.jpg"
+        },
+        {
+          "position": 6,
+          "sceneId": "worked-example",
+          "sceneType": "GUIDED_EXAMPLE",
+          "title": "Worked example: Musu's library fund",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "reveal-step",
+            "reveal-step",
+            "reveal-step",
+            "reveal-step"
+          ],
+          "diagramsRendered": 1,
+          "horizontalOverflowPx": 0,
+          "screenshot": "screenshots/math-number-sense-place-value/desktop/06-worked-example.jpg"
+        },
+        {
+          "position": 7,
+          "sceneId": "build-number",
+          "sceneType": "GUIDED_EXAMPLE",
+          "title": "Build a number",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "write:build-number"
+          ],
+          "diagramsRendered": 0,
+          "horizontalOverflowPx": 0,
+          "screenshot": "screenshots/math-number-sense-place-value/desktop/07-build-number.jpg"
+        },
+        {
+          "position": 8,
+          "sceneId": "counter-chart",
+          "sceneType": "GUIDED_EXAMPLE",
+          "title": "Build it with counters: ten for one",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "write:counter-exchange",
+            "write:counter-partner-number"
+          ],
+          "diagramsRendered": 0,
+          "horizontalOverflowPx": 0,
+          "screenshot": "screenshots/math-number-sense-place-value/desktop/08-counter-chart.jpg"
+        },
+        {
+          "position": 9,
+          "sceneId": "guided-decimals",
+          "sceneType": "GUIDED_EXAMPLE",
+          "title": "Guided practice: digits after the point",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "answer:guided-hundredths",
+            "answer:guided-expanded"
+          ],
+          "diagramsRendered": 0,
+          "horizontalOverflowPx": 0,
+          "screenshot": "screenshots/math-number-sense-place-value/desktop/09-guided-decimals.jpg"
+        },
+        {
+          "position": 10,
+          "sceneId": "compare-strategy",
+          "sceneType": "GUIDED_EXAMPLE",
+          "title": "How to compare and order numbers",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "reveal-step",
+            "reveal-step",
+            "reveal-step",
+            "reveal-step",
+            "reveal-step"
+          ],
+          "diagramsRendered": 1,
+          "horizontalOverflowPx": 0,
+          "screenshot": "screenshots/math-number-sense-place-value/desktop/10-compare-strategy.jpg"
+        },
+        {
+          "position": 11,
+          "sceneId": "misconceptions",
+          "sceneType": "CHECK_UNDERSTANDING",
+          "title": "Watch out: three common mistakes",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "answer-wrong:mis-longer-decimal",
+            "answer:mis-longer-decimal",
+            "answer:mis-zero",
+            "answer:mis-word-form",
+            "answer:mis-shorter-decimal"
+          ],
+          "diagramsRendered": 0,
+          "horizontalOverflowPx": 0,
+          "screenshot": "screenshots/math-number-sense-place-value/desktop/11-misconceptions.jpg"
+        },
+        {
+          "position": 12,
+          "sceneId": "practice",
+          "sceneType": "PRACTICE",
+          "title": "Your turn: independent practice",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "answer:p-value-7",
+            "answer:p-expanded",
+            "answer:p-word-form",
+            "answer:p-cocoa",
+            "answer:p-thousandths"
+          ],
+          "diagramsRendered": 0,
+          "horizontalOverflowPx": 0,
+          "screenshot": "screenshots/math-number-sense-place-value/desktop/12-practice.jpg"
+        },
+        {
+          "position": 13,
+          "sceneId": "reason-it-out",
+          "sceneType": "PRACTICE",
+          "title": "Reason it out on your own",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "write:reason-compare",
+            "write:reason-value"
+          ],
+          "diagramsRendered": 0,
+          "horizontalOverflowPx": 0,
+          "screenshot": "screenshots/math-number-sense-place-value/desktop/13-reason-it-out.jpg"
+        },
+        {
+          "position": 14,
+          "sceneId": "challenge",
+          "sceneType": "EXPLANATION",
+          "title": "Optional challenge: closest to 4",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "diagramsRendered": 0,
+          "horizontalOverflowPx": 0,
+          "screenshot": "screenshots/math-number-sense-place-value/desktop/14-challenge.jpg"
+        },
+        {
+          "position": 15,
+          "sceneId": "review",
+          "sceneType": "REVIEW",
+          "title": "Key ideas to remember",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "diagramsRendered": 0,
+          "horizontalOverflowPx": 0,
+          "screenshot": "screenshots/math-number-sense-place-value/desktop/15-review.jpg"
+        },
+        {
+          "position": 16,
+          "sceneId": "exit-ticket",
+          "sceneType": "MASTERY_CHECK",
+          "title": "Exit ticket",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "answer:g7-pv-exit-1",
+            "answer:g7-pv-exit-2",
+            "answer:g7-pv-exit-3",
+            "answer:g7-pv-exit-4",
+            "answer:g7-pv-exit-5",
+            "answer:g7-pv-exit-6"
+          ],
+          "diagramsRendered": 0,
+          "horizontalOverflowPx": 0,
+          "screenshot": "screenshots/math-number-sense-place-value/desktop/16-exit-ticket.jpg"
+        },
+        {
+          "position": 17,
+          "sceneId": "reflect",
+          "sceneType": "REFLECTION",
+          "title": "Explain it in your own words",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "write:reflect-place-value"
+          ],
+          "diagramsRendered": 0,
+          "horizontalOverflowPx": 0,
+          "screenshot": "screenshots/math-number-sense-place-value/desktop/17-reflect.jpg"
+        },
+        {
+          "position": 18,
+          "sceneId": "home-practice",
+          "sceneType": "REFLECTION",
+          "title": "At home: numbers around you",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "diagramsRendered": 0,
+          "horizontalOverflowPx": 0,
+          "screenshot": "screenshots/math-number-sense-place-value/desktop/18-home-practice.jpg"
+        }
+      ],
+      "errors": [],
+      "finishState": "PROTOTYPE",
+      "evidenceDispositions": "RAW_OBSERVATION RAW_OBSERVATION RAW_OBSERVATION RAW_OBSERVATION RAW_OBSERVATION RAW_OBSERVATION RAW_OBSERVATION RAW_OBSERVATION RAW_OBSERVATION"
+    },
+    {
+      "lesson": "math-number-sense-place-value",
+      "viewport": "mobile",
+      "httpStatus": 200,
+      "scenes": [
+        {
+          "position": 1,
+          "sceneId": "intro",
+          "sceneType": "INTRO",
+          "title": "Big and small numbers in everyday Liberia",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "diagramsRendered": 1,
+          "horizontalOverflowPx": 0,
+          "screenshot": "screenshots/math-number-sense-place-value/mobile/01-intro.jpg"
+        },
+        {
+          "position": 2,
+          "sceneId": "objectives",
+          "sceneType": "OBJECTIVE",
+          "title": "What you will be able to do",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "diagramsRendered": 0,
+          "horizontalOverflowPx": 0,
+          "screenshot": "screenshots/math-number-sense-place-value/mobile/02-objectives.jpg"
+        },
+        {
+          "position": 3,
+          "sceneId": "warm-up",
+          "sceneType": "CHECK_UNDERSTANDING",
+          "title": "Warm-up: are you ready?",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "answer:warm-hundreds",
+            "answer:warm-tenths",
+            "answer:warm-times-ten"
+          ],
+          "diagramsRendered": 0,
+          "horizontalOverflowPx": 0,
+          "screenshot": "screenshots/math-number-sense-place-value/mobile/03-warm-up.jpg"
+        },
+        {
+          "position": 4,
+          "sceneId": "chart",
+          "sceneType": "EXPLANATION",
+          "title": "The place-value chart: millions to thousandths",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "diagramsRendered": 1,
+          "horizontalOverflowPx": 0,
+          "screenshot": "screenshots/math-number-sense-place-value/mobile/04-chart.jpg"
+        },
+        {
+          "position": 5,
+          "sceneId": "ten-times",
+          "sceneType": "INTERACTIVE_DIAGRAM",
+          "title": "Each place is worth ten times the next",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "reveal-step",
+            "reveal-step",
+            "reveal-step",
+            "reveal-step",
+            "reveal-step",
+            "reveal-step"
+          ],
+          "diagramsRendered": 1,
+          "horizontalOverflowPx": 0,
+          "screenshot": "screenshots/math-number-sense-place-value/mobile/05-ten-times.jpg"
+        },
+        {
+          "position": 6,
+          "sceneId": "worked-example",
+          "sceneType": "GUIDED_EXAMPLE",
+          "title": "Worked example: Musu's library fund",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "reveal-step",
+            "reveal-step",
+            "reveal-step",
+            "reveal-step"
+          ],
+          "diagramsRendered": 1,
+          "horizontalOverflowPx": 0,
+          "screenshot": "screenshots/math-number-sense-place-value/mobile/06-worked-example.jpg"
+        },
+        {
+          "position": 7,
+          "sceneId": "build-number",
+          "sceneType": "GUIDED_EXAMPLE",
+          "title": "Build a number",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "write:build-number"
+          ],
+          "diagramsRendered": 0,
+          "horizontalOverflowPx": 0,
+          "screenshot": "screenshots/math-number-sense-place-value/mobile/07-build-number.jpg"
+        },
+        {
+          "position": 8,
+          "sceneId": "counter-chart",
+          "sceneType": "GUIDED_EXAMPLE",
+          "title": "Build it with counters: ten for one",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "write:counter-exchange",
+            "write:counter-partner-number"
+          ],
+          "diagramsRendered": 0,
+          "horizontalOverflowPx": 0,
+          "screenshot": "screenshots/math-number-sense-place-value/mobile/08-counter-chart.jpg"
+        },
+        {
+          "position": 9,
+          "sceneId": "guided-decimals",
+          "sceneType": "GUIDED_EXAMPLE",
+          "title": "Guided practice: digits after the point",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "answer:guided-hundredths",
+            "answer:guided-expanded"
+          ],
+          "diagramsRendered": 0,
+          "horizontalOverflowPx": 0,
+          "screenshot": "screenshots/math-number-sense-place-value/mobile/09-guided-decimals.jpg"
+        },
+        {
+          "position": 10,
+          "sceneId": "compare-strategy",
+          "sceneType": "GUIDED_EXAMPLE",
+          "title": "How to compare and order numbers",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "reveal-step",
+            "reveal-step",
+            "reveal-step",
+            "reveal-step",
+            "reveal-step"
+          ],
+          "diagramsRendered": 1,
+          "horizontalOverflowPx": 0,
+          "screenshot": "screenshots/math-number-sense-place-value/mobile/10-compare-strategy.jpg"
+        },
+        {
+          "position": 11,
+          "sceneId": "misconceptions",
+          "sceneType": "CHECK_UNDERSTANDING",
+          "title": "Watch out: three common mistakes",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "answer-wrong:mis-longer-decimal",
+            "answer:mis-longer-decimal",
+            "answer:mis-zero",
+            "answer:mis-word-form",
+            "answer:mis-shorter-decimal"
+          ],
+          "diagramsRendered": 0,
+          "horizontalOverflowPx": 0,
+          "screenshot": "screenshots/math-number-sense-place-value/mobile/11-misconceptions.jpg"
+        },
+        {
+          "position": 12,
+          "sceneId": "practice",
+          "sceneType": "PRACTICE",
+          "title": "Your turn: independent practice",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "answer:p-value-7",
+            "answer:p-expanded",
+            "answer:p-word-form",
+            "answer:p-cocoa",
+            "answer:p-thousandths"
+          ],
+          "diagramsRendered": 0,
+          "horizontalOverflowPx": 0,
+          "screenshot": "screenshots/math-number-sense-place-value/mobile/12-practice.jpg"
+        },
+        {
+          "position": 13,
+          "sceneId": "reason-it-out",
+          "sceneType": "PRACTICE",
+          "title": "Reason it out on your own",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "write:reason-compare",
+            "write:reason-value"
+          ],
+          "diagramsRendered": 0,
+          "horizontalOverflowPx": 0,
+          "screenshot": "screenshots/math-number-sense-place-value/mobile/13-reason-it-out.jpg"
+        },
+        {
+          "position": 14,
+          "sceneId": "challenge",
+          "sceneType": "EXPLANATION",
+          "title": "Optional challenge: closest to 4",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "diagramsRendered": 0,
+          "horizontalOverflowPx": 0,
+          "screenshot": "screenshots/math-number-sense-place-value/mobile/14-challenge.jpg"
+        },
+        {
+          "position": 15,
+          "sceneId": "review",
+          "sceneType": "REVIEW",
+          "title": "Key ideas to remember",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "diagramsRendered": 0,
+          "horizontalOverflowPx": 0,
+          "screenshot": "screenshots/math-number-sense-place-value/mobile/15-review.jpg"
+        },
+        {
+          "position": 16,
+          "sceneId": "exit-ticket",
+          "sceneType": "MASTERY_CHECK",
+          "title": "Exit ticket",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "answer:g7-pv-exit-1",
+            "answer:g7-pv-exit-2",
+            "answer:g7-pv-exit-3",
+            "answer:g7-pv-exit-4",
+            "answer:g7-pv-exit-5",
+            "answer:g7-pv-exit-6"
+          ],
+          "diagramsRendered": 0,
+          "horizontalOverflowPx": 0,
+          "screenshot": "screenshots/math-number-sense-place-value/mobile/16-exit-ticket.jpg"
+        },
+        {
+          "position": 17,
+          "sceneId": "reflect",
+          "sceneType": "REFLECTION",
+          "title": "Explain it in your own words",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "write:reflect-place-value"
+          ],
+          "diagramsRendered": 0,
+          "horizontalOverflowPx": 0,
+          "screenshot": "screenshots/math-number-sense-place-value/mobile/17-reflect.jpg"
+        },
+        {
+          "position": 18,
+          "sceneId": "home-practice",
+          "sceneType": "REFLECTION",
+          "title": "At home: numbers around you",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "diagramsRendered": 0,
+          "horizontalOverflowPx": 0,
+          "screenshot": "screenshots/math-number-sense-place-value/mobile/18-home-practice.jpg"
+        }
+      ],
+      "errors": [],
+      "finishState": "PROTOTYPE",
+      "evidenceDispositions": "RAW_OBSERVATION RAW_OBSERVATION RAW_OBSERVATION RAW_OBSERVATION RAW_OBSERVATION RAW_OBSERVATION RAW_OBSERVATION RAW_OBSERVATION RAW_OBSERVATION"
+    },
+    {
+      "lesson": "literacy-essay-structure-argument",
+      "viewport": "desktop",
+      "httpStatus": 200,
+      "scenes": [
+        {
+          "position": 1,
+          "sceneId": "intro",
+          "sceneType": "INTRO",
+          "title": "Why write an argument?",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "diagramsRendered": 0,
+          "horizontalOverflowPx": 0,
+          "screenshot": "screenshots/literacy-essay-structure-argument/desktop/01-intro.jpg"
+        },
+        {
+          "position": 2,
+          "sceneId": "objectives",
+          "sceneType": "OBJECTIVE",
+          "title": "What you will be able to do",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "diagramsRendered": 0,
+          "horizontalOverflowPx": 0,
+          "screenshot": "screenshots/literacy-essay-structure-argument/desktop/02-objectives.jpg"
+        },
+        {
+          "position": 3,
+          "sceneId": "warm-up",
+          "sceneType": "CHECK_UNDERSTANDING",
+          "title": "Warm-up: paragraphs and facts",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "answer:warm-topic-sentence",
+            "answer:warm-fact-opinion"
+          ],
+          "diagramsRendered": 0,
+          "horizontalOverflowPx": 0,
+          "screenshot": "screenshots/literacy-essay-structure-argument/desktop/03-warm-up.jpg"
+        },
+        {
+          "position": 4,
+          "sceneId": "readiness-writing",
+          "sceneType": "CHECK_UNDERSTANDING",
+          "title": "Readiness check: write a short paragraph",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "write:ready-paragraph",
+            "write:ready-two-sides"
+          ],
+          "diagramsRendered": 0,
+          "horizontalOverflowPx": 0,
+          "screenshot": "screenshots/literacy-essay-structure-argument/desktop/04-readiness-writing.jpg"
+        },
+        {
+          "position": 5,
+          "sceneId": "essay-structure",
+          "sceneType": "EXPLANATION",
+          "title": "The three parts of an argumentative essay",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "diagramsRendered": 1,
+          "horizontalOverflowPx": 0,
+          "screenshot": "screenshots/literacy-essay-structure-argument/desktop/05-essay-structure.jpg"
+        },
+        {
+          "position": 6,
+          "sceneId": "model-plan",
+          "sceneType": "INTERACTIVE_DIAGRAM",
+          "title": "Take apart a model essay plan",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "reveal-step",
+            "reveal-step",
+            "reveal-step",
+            "reveal-step",
+            "reveal-step",
+            "reveal-step"
+          ],
+          "diagramsRendered": 0,
+          "horizontalOverflowPx": 0,
+          "screenshot": "screenshots/literacy-essay-structure-argument/desktop/06-model-plan.jpg"
+        },
+        {
+          "position": 7,
+          "sceneId": "thesis",
+          "sceneType": "GUIDED_EXAMPLE",
+          "title": "Guided practice: what makes a strong thesis",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "answer:thesis-strongest",
+            "answer:thesis-arguable"
+          ],
+          "diagramsRendered": 0,
+          "horizontalOverflowPx": 0,
+          "screenshot": "screenshots/literacy-essay-structure-argument/desktop/07-thesis.jpg"
+        },
+        {
+          "position": 8,
+          "sceneId": "peel",
+          "sceneType": "INTERACTIVE_DIAGRAM",
+          "title": "Build a body paragraph with PEEL",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "reveal-step",
+            "reveal-step",
+            "reveal-step",
+            "reveal-step"
+          ],
+          "diagramsRendered": 1,
+          "horizontalOverflowPx": 0,
+          "screenshot": "screenshots/literacy-essay-structure-argument/desktop/08-peel.jpg"
+        },
+        {
+          "position": 9,
+          "sceneId": "evidence",
+          "sceneType": "EXPLANATION",
+          "title": "Choosing strong evidence",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "diagramsRendered": 1,
+          "horizontalOverflowPx": 0,
+          "screenshot": "screenshots/literacy-essay-structure-argument/desktop/09-evidence.jpg"
+        },
+        {
+          "position": 10,
+          "sceneId": "evidence-check",
+          "sceneType": "CHECK_UNDERSTANDING",
+          "title": "Watch out: weak evidence and weak reasons",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "answer:check-best-evidence",
+            "answer:check-circular",
+            "answer:check-other-side"
+          ],
+          "diagramsRendered": 0,
+          "horizontalOverflowPx": 0,
+          "screenshot": "screenshots/literacy-essay-structure-argument/desktop/10-evidence-check.jpg"
+        },
+        {
+          "position": 11,
+          "sceneId": "order-paragraph",
+          "sceneType": "PRACTICE",
+          "title": "Put a paragraph in PEEL order",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "write:order-peel"
+          ],
+          "diagramsRendered": 0,
+          "horizontalOverflowPx": 0,
+          "screenshot": "screenshots/literacy-essay-structure-argument/desktop/11-order-paragraph.jpg"
+        },
+        {
+          "position": 12,
+          "sceneId": "plan-argument",
+          "sceneType": "GUIDED_EXAMPLE",
+          "title": "Plan before you write",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "write:plan-brainstorm",
+            "write:plan-reasons"
+          ],
+          "diagramsRendered": 0,
+          "horizontalOverflowPx": 0,
+          "screenshot": "screenshots/literacy-essay-structure-argument/desktop/12-plan-argument.jpg"
+        },
+        {
+          "position": 13,
+          "sceneId": "write-argument",
+          "sceneType": "PRACTICE",
+          "title": "Write your own thesis and PEEL paragraph",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "write:write-thesis",
+            "write:write-peel"
+          ],
+          "diagramsRendered": 0,
+          "horizontalOverflowPx": 0,
+          "screenshot": "screenshots/literacy-essay-structure-argument/desktop/13-write-argument.jpg"
+        },
+        {
+          "position": 14,
+          "sceneId": "write-conclusion",
+          "sceneType": "PRACTICE",
+          "title": "Write a conclusion",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "write:write-conclusion-garden"
+          ],
+          "diagramsRendered": 0,
+          "horizontalOverflowPx": 0,
+          "screenshot": "screenshots/literacy-essay-structure-argument/desktop/14-write-conclusion.jpg"
+        },
+        {
+          "position": 15,
+          "sceneId": "peer-review",
+          "sceneType": "PRACTICE",
+          "title": "Peer review: one strength, one next step",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "write:peer-strength",
+            "write:peer-next-step"
+          ],
+          "diagramsRendered": 0,
+          "horizontalOverflowPx": 0,
+          "screenshot": "screenshots/literacy-essay-structure-argument/desktop/15-peer-review.jpg"
+        },
+        {
+          "position": 16,
+          "sceneId": "write-independently",
+          "sceneType": "PRACTICE",
+          "title": "Write it again, on your own",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "write:solo-thesis",
+            "write:solo-peel",
+            "write:solo-labels"
+          ],
+          "diagramsRendered": 0,
+          "horizontalOverflowPx": 0,
+          "screenshot": "screenshots/literacy-essay-structure-argument/desktop/16-write-independently.jpg"
+        },
+        {
+          "position": 17,
+          "sceneId": "challenge",
+          "sceneType": "EXPLANATION",
+          "title": "Optional challenge: a full argumentative essay",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "diagramsRendered": 0,
+          "horizontalOverflowPx": 0,
+          "screenshot": "screenshots/literacy-essay-structure-argument/desktop/17-challenge.jpg"
+        },
+        {
+          "position": 18,
+          "sceneId": "review",
+          "sceneType": "REVIEW",
+          "title": "Key ideas to remember",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "diagramsRendered": 0,
+          "horizontalOverflowPx": 0,
+          "screenshot": "screenshots/literacy-essay-structure-argument/desktop/18-review.jpg"
+        },
+        {
+          "position": 19,
+          "sceneId": "exit-ticket",
+          "sceneType": "MASTERY_CHECK",
+          "title": "Exit ticket",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "answer:g7-essay-exit-1",
+            "answer:g7-essay-exit-2",
+            "answer:g7-essay-exit-3",
+            "answer:g7-essay-exit-4",
+            "answer:g7-essay-exit-5",
+            "answer:g7-essay-exit-6"
+          ],
+          "diagramsRendered": 0,
+          "horizontalOverflowPx": 0,
+          "screenshot": "screenshots/literacy-essay-structure-argument/desktop/19-exit-ticket.jpg"
+        },
+        {
+          "position": 20,
+          "sceneId": "reflect",
+          "sceneType": "REFLECTION",
+          "title": "Plan your next step as a writer",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "write:reflect-writing"
+          ],
+          "diagramsRendered": 0,
+          "horizontalOverflowPx": 0,
+          "screenshot": "screenshots/literacy-essay-structure-argument/desktop/20-reflect.jpg"
+        }
+      ],
+      "errors": [],
+      "finishState": "PROTOTYPE",
+      "evidenceDispositions": "RAW_OBSERVATION RAW_OBSERVATION RAW_OBSERVATION RAW_OBSERVATION RAW_OBSERVATION RAW_OBSERVATION RAW_OBSERVATION RAW_OBSERVATION RAW_OBSERVATION RAW_OBSERVATION RAW_OBSERVATION RAW_OBSERVATION"
+    },
+    {
+      "lesson": "literacy-essay-structure-argument",
+      "viewport": "mobile",
+      "httpStatus": 200,
+      "scenes": [
+        {
+          "position": 1,
+          "sceneId": "intro",
+          "sceneType": "INTRO",
+          "title": "Why write an argument?",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "diagramsRendered": 0,
+          "horizontalOverflowPx": 0,
+          "screenshot": "screenshots/literacy-essay-structure-argument/mobile/01-intro.jpg"
+        },
+        {
+          "position": 2,
+          "sceneId": "objectives",
+          "sceneType": "OBJECTIVE",
+          "title": "What you will be able to do",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "diagramsRendered": 0,
+          "horizontalOverflowPx": 0,
+          "screenshot": "screenshots/literacy-essay-structure-argument/mobile/02-objectives.jpg"
+        },
+        {
+          "position": 3,
+          "sceneId": "warm-up",
+          "sceneType": "CHECK_UNDERSTANDING",
+          "title": "Warm-up: paragraphs and facts",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "answer:warm-topic-sentence",
+            "answer:warm-fact-opinion"
+          ],
+          "diagramsRendered": 0,
+          "horizontalOverflowPx": 0,
+          "screenshot": "screenshots/literacy-essay-structure-argument/mobile/03-warm-up.jpg"
+        },
+        {
+          "position": 4,
+          "sceneId": "readiness-writing",
+          "sceneType": "CHECK_UNDERSTANDING",
+          "title": "Readiness check: write a short paragraph",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "write:ready-paragraph",
+            "write:ready-two-sides"
+          ],
+          "diagramsRendered": 0,
+          "horizontalOverflowPx": 0,
+          "screenshot": "screenshots/literacy-essay-structure-argument/mobile/04-readiness-writing.jpg"
+        },
+        {
+          "position": 5,
+          "sceneId": "essay-structure",
+          "sceneType": "EXPLANATION",
+          "title": "The three parts of an argumentative essay",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "diagramsRendered": 1,
+          "horizontalOverflowPx": 0,
+          "screenshot": "screenshots/literacy-essay-structure-argument/mobile/05-essay-structure.jpg"
+        },
+        {
+          "position": 6,
+          "sceneId": "model-plan",
+          "sceneType": "INTERACTIVE_DIAGRAM",
+          "title": "Take apart a model essay plan",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "reveal-step",
+            "reveal-step",
+            "reveal-step",
+            "reveal-step",
+            "reveal-step",
+            "reveal-step"
+          ],
+          "diagramsRendered": 0,
+          "horizontalOverflowPx": 0,
+          "screenshot": "screenshots/literacy-essay-structure-argument/mobile/06-model-plan.jpg"
+        },
+        {
+          "position": 7,
+          "sceneId": "thesis",
+          "sceneType": "GUIDED_EXAMPLE",
+          "title": "Guided practice: what makes a strong thesis",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "answer:thesis-strongest",
+            "answer:thesis-arguable"
+          ],
+          "diagramsRendered": 0,
+          "horizontalOverflowPx": 0,
+          "screenshot": "screenshots/literacy-essay-structure-argument/mobile/07-thesis.jpg"
+        },
+        {
+          "position": 8,
+          "sceneId": "peel",
+          "sceneType": "INTERACTIVE_DIAGRAM",
+          "title": "Build a body paragraph with PEEL",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "reveal-step",
+            "reveal-step",
+            "reveal-step",
+            "reveal-step"
+          ],
+          "diagramsRendered": 1,
+          "horizontalOverflowPx": 0,
+          "screenshot": "screenshots/literacy-essay-structure-argument/mobile/08-peel.jpg"
+        },
+        {
+          "position": 9,
+          "sceneId": "evidence",
+          "sceneType": "EXPLANATION",
+          "title": "Choosing strong evidence",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "diagramsRendered": 1,
+          "horizontalOverflowPx": 0,
+          "screenshot": "screenshots/literacy-essay-structure-argument/mobile/09-evidence.jpg"
+        },
+        {
+          "position": 10,
+          "sceneId": "evidence-check",
+          "sceneType": "CHECK_UNDERSTANDING",
+          "title": "Watch out: weak evidence and weak reasons",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "answer:check-best-evidence",
+            "answer:check-circular",
+            "answer:check-other-side"
+          ],
+          "diagramsRendered": 0,
+          "horizontalOverflowPx": 0,
+          "screenshot": "screenshots/literacy-essay-structure-argument/mobile/10-evidence-check.jpg"
+        },
+        {
+          "position": 11,
+          "sceneId": "order-paragraph",
+          "sceneType": "PRACTICE",
+          "title": "Put a paragraph in PEEL order",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "write:order-peel"
+          ],
+          "diagramsRendered": 0,
+          "horizontalOverflowPx": 0,
+          "screenshot": "screenshots/literacy-essay-structure-argument/mobile/11-order-paragraph.jpg"
+        },
+        {
+          "position": 12,
+          "sceneId": "plan-argument",
+          "sceneType": "GUIDED_EXAMPLE",
+          "title": "Plan before you write",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "write:plan-brainstorm",
+            "write:plan-reasons"
+          ],
+          "diagramsRendered": 0,
+          "horizontalOverflowPx": 0,
+          "screenshot": "screenshots/literacy-essay-structure-argument/mobile/12-plan-argument.jpg"
+        },
+        {
+          "position": 13,
+          "sceneId": "write-argument",
+          "sceneType": "PRACTICE",
+          "title": "Write your own thesis and PEEL paragraph",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "write:write-thesis",
+            "write:write-peel"
+          ],
+          "diagramsRendered": 0,
+          "horizontalOverflowPx": 0,
+          "screenshot": "screenshots/literacy-essay-structure-argument/mobile/13-write-argument.jpg"
+        },
+        {
+          "position": 14,
+          "sceneId": "write-conclusion",
+          "sceneType": "PRACTICE",
+          "title": "Write a conclusion",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "write:write-conclusion-garden"
+          ],
+          "diagramsRendered": 0,
+          "horizontalOverflowPx": 0,
+          "screenshot": "screenshots/literacy-essay-structure-argument/mobile/14-write-conclusion.jpg"
+        },
+        {
+          "position": 15,
+          "sceneId": "peer-review",
+          "sceneType": "PRACTICE",
+          "title": "Peer review: one strength, one next step",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "write:peer-strength",
+            "write:peer-next-step"
+          ],
+          "diagramsRendered": 0,
+          "horizontalOverflowPx": 0,
+          "screenshot": "screenshots/literacy-essay-structure-argument/mobile/15-peer-review.jpg"
+        },
+        {
+          "position": 16,
+          "sceneId": "write-independently",
+          "sceneType": "PRACTICE",
+          "title": "Write it again, on your own",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "write:solo-thesis",
+            "write:solo-peel",
+            "write:solo-labels"
+          ],
+          "diagramsRendered": 0,
+          "horizontalOverflowPx": 0,
+          "screenshot": "screenshots/literacy-essay-structure-argument/mobile/16-write-independently.jpg"
+        },
+        {
+          "position": 17,
+          "sceneId": "challenge",
+          "sceneType": "EXPLANATION",
+          "title": "Optional challenge: a full argumentative essay",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "diagramsRendered": 0,
+          "horizontalOverflowPx": 0,
+          "screenshot": "screenshots/literacy-essay-structure-argument/mobile/17-challenge.jpg"
+        },
+        {
+          "position": 18,
+          "sceneId": "review",
+          "sceneType": "REVIEW",
+          "title": "Key ideas to remember",
+          "continueGatedBeforeAction": false,
+          "continueEnabledAfterAction": true,
+          "actions": [],
+          "diagramsRendered": 0,
+          "horizontalOverflowPx": 0,
+          "screenshot": "screenshots/literacy-essay-structure-argument/mobile/18-review.jpg"
+        },
+        {
+          "position": 19,
+          "sceneId": "exit-ticket",
+          "sceneType": "MASTERY_CHECK",
+          "title": "Exit ticket",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "answer:g7-essay-exit-1",
+            "answer:g7-essay-exit-2",
+            "answer:g7-essay-exit-3",
+            "answer:g7-essay-exit-4",
+            "answer:g7-essay-exit-5",
+            "answer:g7-essay-exit-6"
+          ],
+          "diagramsRendered": 0,
+          "horizontalOverflowPx": 0,
+          "screenshot": "screenshots/literacy-essay-structure-argument/mobile/19-exit-ticket.jpg"
+        },
+        {
+          "position": 20,
+          "sceneId": "reflect",
+          "sceneType": "REFLECTION",
+          "title": "Plan your next step as a writer",
+          "continueGatedBeforeAction": true,
+          "continueEnabledAfterAction": true,
+          "actions": [
+            "write:reflect-writing"
+          ],
+          "diagramsRendered": 0,
+          "horizontalOverflowPx": 0,
+          "screenshot": "screenshots/literacy-essay-structure-argument/mobile/20-reflect.jpg"
+        }
+      ],
+      "errors": [],
+      "finishState": "PROTOTYPE",
+      "evidenceDispositions": "RAW_OBSERVATION RAW_OBSERVATION RAW_OBSERVATION RAW_OBSERVATION RAW_OBSERVATION RAW_OBSERVATION RAW_OBSERVATION RAW_OBSERVATION RAW_OBSERVATION RAW_OBSERVATION RAW_OBSERVATION RAW_OBSERVATION"
+    }
+  ]
+}

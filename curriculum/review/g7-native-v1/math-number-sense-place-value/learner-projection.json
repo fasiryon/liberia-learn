@@ -1,0 +1,1221 @@
+{
+  "contractVersion": "lesson-experience/1.0.0",
+  "id": "cv2-cand-g7-math-number-sense-place-value",
+  "version": "0.3.0",
+  "title": "Number Sense and Place Value: Millions to Thousandths",
+  "subject": "MATH",
+  "grade": 7,
+  "ageBand": "JUNIOR_SECONDARY",
+  "authority": {
+    "status": "CURRICULUM_V2_DRAFT",
+    "note": "Grade 7 native candidate (Curriculum V2 draft). Not bound to an MOE objective or release, not reviewed, not approved, not published.",
+    "candidateContentIds": [],
+    "releaseId": null,
+    "releaseIdentity": null
+  },
+  "objectives": [
+    {
+      "id": "ll-g7-math-place-value-read-write",
+      "statement": "Read and write numbers from the millions to the thousandths in standard form, word form and expanded form.",
+      "conceptId": "ll-g7-math-place-value-read-write",
+      "standardCodes": [],
+      "skillIds": []
+    },
+    {
+      "id": "ll-g7-math-place-value-digit-value",
+      "statement": "Explain the value of a digit from its place, using the ten-times relationship between neighbouring places from the thousandths to the millions.",
+      "conceptId": "ll-g7-math-place-value-digit-value",
+      "standardCodes": [],
+      "skillIds": []
+    },
+    {
+      "id": "ll-g7-math-place-value-compare",
+      "statement": "Compare and order whole numbers and decimals to the thousandths by comparing place values from the left.",
+      "conceptId": "ll-g7-math-place-value-compare",
+      "standardCodes": [],
+      "skillIds": []
+    }
+  ],
+  "scenes": [
+    {
+      "id": "intro",
+      "type": "INTRO",
+      "title": "Big and small numbers in everyday Liberia",
+      "objectiveIds": [
+        "ll-g7-math-place-value-read-write",
+        "ll-g7-math-place-value-digit-value"
+      ],
+      "content": {
+        "body": "Musu's school raised **L$2,350,480** for a new library. At the market, a trader weighs **2.375 kg** of rice for a customer. One number is in the millions. The other has parts smaller than one.\n\nBoth numbers follow the same rule: **where a digit sits decides what it is worth**. In this lesson you will use that rule to read, write and compare numbers from the millions down to the thousandths."
+      },
+      "interaction": {
+        "kind": "NONE"
+      },
+      "tools": {
+        "allowed": [],
+        "prohibited": []
+      },
+      "accessibility": {
+        "textAlternative": "Introduction: L$2,350,480 is 2 millions, 350 thousands and 480 ones; 2.375 kg is 2 ones and 375 thousandths. Where a digit sits decides its value.",
+        "keyboardOperable": true,
+        "reducedMotionSafe": true,
+        "captionsRequired": false
+      },
+      "offline": {
+        "mode": "FULL",
+        "fallback": "Text, steps and questions are part of the saved lesson."
+      },
+      "evidence": {
+        "kind": "NONE"
+      },
+      "completion": {
+        "kind": "VIEWED"
+      },
+      "media": [
+        {
+          "kind": "DIAGRAM",
+          "ref": "/curriculum-candidates/g7-native-v1/math-hero-numbers.svg",
+          "alt": "L$2,350,480 is 2 millions, 350 thousands and 480 ones. 2.375 kg is 2 ones and 375 thousandths."
+        }
+      ]
+    },
+    {
+      "id": "objectives",
+      "type": "OBJECTIVE",
+      "title": "What you will be able to do",
+      "objectiveIds": [
+        "ll-g7-math-place-value-read-write",
+        "ll-g7-math-place-value-digit-value",
+        "ll-g7-math-place-value-compare"
+      ],
+      "content": {
+        "body": "By the end of this lesson you will be able to:",
+        "keyPoints": [
+          "Read and write numbers from the millions to the thousandths in standard form, in words and in expanded form.",
+          "Explain what any digit is worth by naming its place.",
+          "Compare and order numbers by looking at their places from the left.",
+          "Success check: you can say what every digit in 3,462,105.68 is worth."
+        ]
+      },
+      "interaction": {
+        "kind": "NONE"
+      },
+      "tools": {
+        "allowed": [],
+        "prohibited": []
+      },
+      "accessibility": {
+        "textAlternative": "Lesson goals: read and write numbers from millions to thousandths, explain the value of each digit, and compare and order numbers.",
+        "keyboardOperable": true,
+        "reducedMotionSafe": true,
+        "captionsRequired": false
+      },
+      "offline": {
+        "mode": "FULL",
+        "fallback": "Text, steps and questions are part of the saved lesson."
+      },
+      "evidence": {
+        "kind": "NONE"
+      },
+      "completion": {
+        "kind": "VIEWED"
+      }
+    },
+    {
+      "id": "warm-up",
+      "type": "CHECK_UNDERSTANDING",
+      "title": "Warm-up: are you ready?",
+      "objectiveIds": [
+        "ll-g7-math-place-value-digit-value"
+      ],
+      "content": {
+        "body": "Before we start, check three things this lesson builds on. These answers are not marked. If you miss one, tell your teacher: they will review that idea with you before the place-value chart."
+      },
+      "interaction": {
+        "kind": "MULTIPLE_CHOICE",
+        "items": [
+          {
+            "id": "warm-hundreds",
+            "prompt": "In 45,384, what is the 3 worth?",
+            "options": [
+              "3",
+              "300",
+              "30"
+            ],
+            "correctIndex": 1,
+            "feedback": {
+              "correct": "Yes. The 3 is in the hundreds place, so it is worth 3 × 100 = 300.",
+              "incorrect": "That is the digit itself. Its place makes it worth more: the 3 is in the hundreds place, so it is worth 300."
+            },
+            "optionFeedback": [
+              "That is the digit itself. Its place makes it worth more: the 3 is in the hundreds place, so it is worth 300.",
+              "Yes. The 3 is in the hundreds place, so it is worth 3 × 100 = 300.",
+              "30 would need the 3 in the tens place. Count from the right: ones (4), tens (8), hundreds (3)."
+            ]
+          },
+          {
+            "id": "warm-tenths",
+            "prompt": "Which means the same as 0.5?",
+            "options": [
+              "5 tenths",
+              "5 hundredths",
+              "5 ones"
+            ],
+            "correctIndex": 0,
+            "feedback": {
+              "correct": "Yes. The first place after the decimal point is the tenths place, so 0.5 is 5 tenths.",
+              "incorrect": "5 hundredths is written 0.05. In 0.5 the 5 is in the first place after the point: tenths."
+            },
+            "optionFeedback": [
+              "Yes. The first place after the decimal point is the tenths place, so 0.5 is 5 tenths.",
+              "5 hundredths is written 0.05. In 0.5 the 5 is in the first place after the point: tenths.",
+              "5 ones is just 5. The decimal point shows that this 5 is smaller than one."
+            ]
+          },
+          {
+            "id": "warm-times-ten",
+            "prompt": "What is 7 × 1,000?",
+            "options": [
+              "700",
+              "7,000",
+              "70,000"
+            ],
+            "correctIndex": 1,
+            "feedback": {
+              "correct": "Yes. 7 × 1,000 = 7,000: the 7 moves three places to the left, into the thousands place.",
+              "incorrect": "700 is 7 × 100. Multiplying by 1,000 moves each digit three places to the left: 7 becomes 7,000."
+            },
+            "optionFeedback": [
+              "700 is 7 × 100. Multiplying by 1,000 moves each digit three places to the left: 7 becomes 7,000.",
+              "Yes. 7 × 1,000 = 7,000: the 7 moves three places to the left, into the thousands place.",
+              "70,000 is 7 × 10,000. Count the zeros in 1,000: three, so the answer has three zeros after the 7."
+            ]
+          }
+        ]
+      },
+      "tools": {
+        "allowed": [],
+        "prohibited": []
+      },
+      "accessibility": {
+        "textAlternative": "Three readiness questions: the value of the 3 in 45,384, the meaning of 0.5, and 7 × 1,000. Each answer shows written feedback.",
+        "keyboardOperable": true,
+        "reducedMotionSafe": true,
+        "captionsRequired": false
+      },
+      "offline": {
+        "mode": "FULL",
+        "fallback": "Text, steps and questions are part of the saved lesson."
+      },
+      "evidence": {
+        "kind": "FORMATIVE_OBSERVATION",
+        "evidenceType": "DIAGNOSTIC",
+        "objectiveIds": [
+          "ll-g7-math-place-value-digit-value"
+        ]
+      },
+      "completion": {
+        "kind": "ALL_ANSWERED"
+      }
+    },
+    {
+      "id": "chart",
+      "type": "EXPLANATION",
+      "title": "The place-value chart: millions to thousandths",
+      "objectiveIds": [
+        "ll-g7-math-place-value-read-write",
+        "ll-g7-math-place-value-digit-value"
+      ],
+      "content": {
+        "body": "Every digit has a **place** (its position) and a **value** (what it is worth in that place).\n\nLeft of the decimal point, digits are grouped in threes called **periods**: ones, thousands and millions. Commas separate the periods. Right of the decimal point are the **tenths**, **hundredths** and **thousandths**.\n\nIn **4,205,316.27** the 4 is in the millions place, so it is worth 4,000,000. The 0 holds the ten-thousands place: there are no ten thousands. The 2 after the point is in the tenths place, so it is worth 0.2.",
+        "keyPoints": [
+          "Read one period at a time, then say its name: four million, two hundred five thousand, three hundred sixteen.",
+          "Read the decimal part by its last place: and twenty-seven hundredths. In class you may also hear four million ... sixteen point two seven.",
+          "A zero holds an empty place so every other digit stays where it belongs."
+        ]
+      },
+      "interaction": {
+        "kind": "NONE"
+      },
+      "tools": {
+        "allowed": [],
+        "prohibited": []
+      },
+      "accessibility": {
+        "textAlternative": "The place-value chart from millions to thousandths, using 4,205,316.27: each digit is listed with its place and value in the text and key points.",
+        "keyboardOperable": true,
+        "reducedMotionSafe": true,
+        "captionsRequired": false
+      },
+      "offline": {
+        "mode": "FULL",
+        "fallback": "Text, steps and questions are part of the saved lesson."
+      },
+      "evidence": {
+        "kind": "NONE"
+      },
+      "completion": {
+        "kind": "VIEWED"
+      },
+      "media": [
+        {
+          "kind": "DIAGRAM",
+          "ref": "/curriculum-candidates/g7-native-v1/math-place-value-chart.svg",
+          "alt": "4,205,316.27 in a place-value chart: 4 millions (4,000,000), 2 hundred thousands (200,000), 0 ten thousands, 5 thousands (5,000), 3 hundreds (300), 1 ten (10), 6 ones (6), 2 tenths (0.2), 7 hundredths (0.07)."
+        }
+      ]
+    },
+    {
+      "id": "ten-times",
+      "type": "INTERACTIVE_DIAGRAM",
+      "title": "Each place is worth ten times the next",
+      "objectiveIds": [
+        "ll-g7-math-place-value-digit-value"
+      ],
+      "content": {
+        "body": "Places are not random. Open each step to see how every place is connected to its neighbours.",
+        "keyPoints": [
+          "Moving a digit one place to the left makes it worth ten times as much. Count the places before you give a value: one place too far makes the answer ten times too big."
+        ]
+      },
+      "interaction": {
+        "kind": "DIAGRAM_REVEAL",
+        "diagramId": "ten-times",
+        "steps": [
+          {
+            "id": "ones",
+            "label": "Start at the ones",
+            "description": "One one is worth 1. This is the place everything else is measured from."
+          },
+          {
+            "id": "left",
+            "label": "Move left: multiply by 10",
+            "description": "1 ten = 10 ones = 10. 1 hundred = 10 tens = 100. Each step to the left makes a place worth 10 times more."
+          },
+          {
+            "id": "millions",
+            "label": "Keep going to the millions",
+            "description": "1 thousand = 1,000. 1 ten thousand = 10,000. 1 hundred thousand = 100,000. 1 million = 1,000,000: six steps of × 10 from the ones."
+          },
+          {
+            "id": "right",
+            "label": "Move right: divide by 10",
+            "description": "1 tenth = 1 ÷ 10 = 0.1. A tenth is ten times smaller than one."
+          },
+          {
+            "id": "thousandths",
+            "label": "Hundredths and thousandths",
+            "description": "1 hundredth = 0.01 and 1 thousandth = 0.001. Each step to the right divides by 10 again."
+          },
+          {
+            "id": "same-digit",
+            "label": "Same digit, different values",
+            "description": "In 5,555.555 every digit is a 5, but the values are 5,000, 500, 50, 5, 0.5, 0.05 and 0.005."
+          }
+        ]
+      },
+      "tools": {
+        "allowed": [],
+        "prohibited": []
+      },
+      "accessibility": {
+        "textAlternative": "Six steps, each a button that opens text: values grow by × 10 to the left (up to 1,000,000) and shrink by ÷ 10 to the right (down to 0.001).",
+        "keyboardOperable": true,
+        "reducedMotionSafe": true,
+        "captionsRequired": false
+      },
+      "offline": {
+        "mode": "FULL",
+        "fallback": "Text, steps and questions are part of the saved lesson."
+      },
+      "evidence": {
+        "kind": "NONE"
+      },
+      "completion": {
+        "kind": "ALL_STEPS_REVEALED"
+      },
+      "media": [
+        {
+          "kind": "DIAGRAM",
+          "ref": "/curriculum-candidates/g7-native-v1/math-ten-times-ladder.svg",
+          "alt": "Ladder of place values: 1,000,000; 100,000; 10,000; 1,000; 100; 10; 1; 0.1; 0.01; 0.001. Each rung is 10 times the rung below it."
+        }
+      ]
+    },
+    {
+      "id": "worked-example",
+      "type": "GUIDED_EXAMPLE",
+      "title": "Worked example: Musu's library fund",
+      "objectiveIds": [
+        "ll-g7-math-place-value-read-write",
+        "ll-g7-math-place-value-digit-value"
+      ],
+      "content": {
+        "body": "Musu's school collected **L$2,350,480**. Musu's teacher asks three questions about the number. Open each step to see how to answer them."
+      },
+      "interaction": {
+        "kind": "DIAGRAM_REVEAL",
+        "diagramId": "worked-example",
+        "steps": [
+          {
+            "id": "value-of-3",
+            "label": "What is the 3 worth?",
+            "description": "Name the places from the left: millions (2), hundred thousands (3). The 3 is worth 3 × 100,000 = 300,000."
+          },
+          {
+            "id": "expanded",
+            "label": "Write it in expanded form",
+            "description": "2,000,000 + 300,000 + 50,000 + 400 + 80. The zeros in the thousands and ones places are not written as parts."
+          },
+          {
+            "id": "words",
+            "label": "Write it in words",
+            "description": "Two million, three hundred fifty thousand, four hundred eighty Liberian dollars."
+          },
+          {
+            "id": "check",
+            "label": "Check by adding the parts",
+            "description": "2,000,000 + 300,000 + 50,000 + 400 + 80 = 2,350,480. The parts add back to the number, so the expanded form is right."
+          }
+        ]
+      },
+      "tools": {
+        "allowed": [],
+        "prohibited": []
+      },
+      "accessibility": {
+        "textAlternative": "Worked example on L$2,350,480 in four text steps: the 3 is worth 300,000; expanded form; word form; check by adding.",
+        "keyboardOperable": true,
+        "reducedMotionSafe": true,
+        "captionsRequired": false
+      },
+      "offline": {
+        "mode": "FULL",
+        "fallback": "Text, steps and questions are part of the saved lesson."
+      },
+      "evidence": {
+        "kind": "NONE"
+      },
+      "completion": {
+        "kind": "ALL_STEPS_REVEALED"
+      },
+      "media": [
+        {
+          "kind": "DIAGRAM",
+          "ref": "/curriculum-candidates/g7-native-v1/math-library-fund.svg",
+          "alt": "2,350,480 in a chart: 2 millions, 3 hundred thousands (outlined, worth 300,000), 5 ten thousands, 0 thousands, 4 hundreds, 8 tens, 0 ones. Expanded form 2,000,000 + 300,000 + 50,000 + 400 + 80."
+        }
+      ]
+    },
+    {
+      "id": "build-number",
+      "type": "GUIDED_EXAMPLE",
+      "title": "Build a number",
+      "objectiveIds": [
+        "ll-g7-math-place-value-read-write"
+      ],
+      "content": {
+        "body": "Numbers are built from digits in places. Draw a place-value chart from the millions to the thousandths and build this number. Remember: a place with nothing in it still needs a **zero**.",
+        "keyPoints": [
+          "3 millions, 4 hundred thousands, 0 ten thousands, 6 thousands",
+          "0 hundreds, 2 tens, 9 ones",
+          "5 tenths, 0 hundredths, 8 thousandths"
+        ]
+      },
+      "interaction": {
+        "kind": "FREE_RESPONSE",
+        "prompts": [
+          {
+            "id": "build-number",
+            "prompt": "Write the number you built in standard form, with commas between the periods and a decimal point. You can use stones or bottle caps as counters on your paper chart.",
+            "minLength": 1
+          }
+        ]
+      },
+      "tools": {
+        "allowed": [],
+        "prohibited": []
+      },
+      "accessibility": {
+        "textAlternative": "Build the number with 3 millions, 4 hundred thousands, 0 ten thousands, 6 thousands, 0 hundreds, 2 tens, 9 ones, 5 tenths, 0 hundredths and 8 thousandths, then type it.",
+        "keyboardOperable": true,
+        "reducedMotionSafe": true,
+        "captionsRequired": false
+      },
+      "offline": {
+        "mode": "FULL",
+        "fallback": "Write the number you built in standard form, with commas between the periods and a decimal point. You can use stones or bottle caps as counters on your paper chart."
+      },
+      "evidence": {
+        "kind": "FORMATIVE_OBSERVATION",
+        "evidenceType": "CLASSWORK",
+        "objectiveIds": [
+          "ll-g7-math-place-value-read-write"
+        ]
+      },
+      "completion": {
+        "kind": "ALL_RESPONSES_WRITTEN"
+      }
+    },
+    {
+      "id": "counter-chart",
+      "type": "GUIDED_EXAMPLE",
+      "title": "Build it with counters: ten for one",
+      "objectiveIds": [
+        "ll-g7-math-place-value-digit-value",
+        "ll-g7-math-place-value-read-write"
+      ],
+      "content": {
+        "body": "Work with a partner. Draw a place-value chart in your exercise book with ten labelled columns, from **millions** to **thousandths**, and mark the decimal point between the ones and the tenths. Use counters that are all the same, such as small stones, bottle caps or seeds. A counter is worth one of the place it sits in: the **column** decides the value, not the counter.\n\nWhen a column holds **ten** counters, take them away and put **one** counter in the next column to the left. The number does not change, because ten of one place make one of the next.",
+        "keyPoints": [
+          "Put 14 counters in the hundredths column. Exchange ten of them for 1 counter in the tenths column. Read the number: 0.14.",
+          "Clear the chart. Build 2,050,316.47, one column at a time. Leave empty columns empty, but write 0 for them when you record the number.",
+          "Swap roles: one partner builds a number, the other writes it in standard form and says the value of each digit.",
+          "No counters? Draw tally marks in the columns instead."
+        ]
+      },
+      "interaction": {
+        "kind": "FREE_RESPONSE",
+        "prompts": [
+          {
+            "id": "counter-exchange",
+            "prompt": "Step 1: how many counters were in the hundredths column, what did ten of them become, and did the number change? Explain why.",
+            "minLength": 40
+          },
+          {
+            "id": "counter-partner-number",
+            "prompt": "Step 3: write the number your partner built in standard form, then give the value of its first digit.",
+            "minLength": 10
+          }
+        ]
+      },
+      "tools": {
+        "allowed": [],
+        "prohibited": []
+      },
+      "accessibility": {
+        "textAlternative": "Partner activity with a paper place-value chart from millions to thousandths and identical counters: exchange ten counters in one column for one in the next column to the left, build 2,050,316.47, then build and read each other's numbers. Two written answers.",
+        "keyboardOperable": true,
+        "reducedMotionSafe": true,
+        "captionsRequired": false
+      },
+      "offline": {
+        "mode": "FULL",
+        "fallback": "Needs no device: paper, counters and the exercise book. Written answers are kept on the device until they can be sent."
+      },
+      "evidence": {
+        "kind": "FORMATIVE_OBSERVATION",
+        "evidenceType": "CLASSWORK",
+        "objectiveIds": [
+          "ll-g7-math-place-value-digit-value",
+          "ll-g7-math-place-value-read-write"
+        ]
+      },
+      "completion": {
+        "kind": "ALL_RESPONSES_WRITTEN"
+      }
+    },
+    {
+      "id": "guided-decimals",
+      "type": "GUIDED_EXAMPLE",
+      "title": "Guided practice: digits after the point",
+      "objectiveIds": [
+        "ll-g7-math-place-value-read-write",
+        "ll-g7-math-place-value-digit-value"
+      ],
+      "content": {
+        "body": "Use the chart. Name the place first, then give the value. Read the feedback after each answer before you move on."
+      },
+      "interaction": {
+        "kind": "MULTIPLE_CHOICE",
+        "items": [
+          {
+            "id": "guided-hundredths",
+            "prompt": "In 15.273, what is the 7 worth?",
+            "options": [
+              "7",
+              "0.7",
+              "0.07",
+              "70"
+            ],
+            "correctIndex": 2,
+            "feedback": {
+              "correct": "Yes. The 7 is in the hundredths place, so it is worth 7 hundredths, which is 0.07.",
+              "incorrect": "7 would be in the ones place. The 7 is two places after the decimal point."
+            },
+            "optionFeedback": [
+              "7 would be in the ones place. The 7 is two places after the decimal point.",
+              "0.7 is 7 tenths. Count the places after the point: tenths (2), hundredths (7).",
+              "Yes. The 7 is in the hundredths place, so it is worth 7 hundredths, which is 0.07.",
+              "70 would need the 7 in the tens place, left of the point."
+            ]
+          },
+          {
+            "id": "guided-expanded",
+            "prompt": "Which shows 6.408 in expanded form?",
+            "options": [
+              "6 + 0.4 + 0.08",
+              "6 + 0.4 + 0.008",
+              "6 + 4 + 8"
+            ],
+            "correctIndex": 1,
+            "feedback": {
+              "correct": "Yes. 6 ones, 4 tenths, 0 hundredths and 8 thousandths. The zero is not written as a part.",
+              "incorrect": "Check the 8: it is the third digit after the point, the thousandths place, so it is 0.008."
+            },
+            "optionFeedback": [
+              "Check the 8: it is the third digit after the point, the thousandths place, so it is 0.008.",
+              "Yes. 6 ones, 4 tenths, 0 hundredths and 8 thousandths. The zero is not written as a part.",
+              "Each digit after the point is worth less than one. The 4 is 4 tenths, not 4."
+            ]
+          }
+        ]
+      },
+      "tools": {
+        "allowed": [],
+        "prohibited": []
+      },
+      "accessibility": {
+        "textAlternative": "Two guided questions: the value of the 7 in 15.273, and the expanded form of 6.408, each with written feedback.",
+        "keyboardOperable": true,
+        "reducedMotionSafe": true,
+        "captionsRequired": false
+      },
+      "offline": {
+        "mode": "FULL",
+        "fallback": "Text, steps and questions are part of the saved lesson."
+      },
+      "evidence": {
+        "kind": "FORMATIVE_OBSERVATION",
+        "evidenceType": "PRACTICE",
+        "objectiveIds": [
+          "ll-g7-math-place-value-digit-value",
+          "ll-g7-math-place-value-read-write"
+        ]
+      },
+      "completion": {
+        "kind": "ALL_ANSWERED"
+      }
+    },
+    {
+      "id": "compare-strategy",
+      "type": "GUIDED_EXAMPLE",
+      "title": "How to compare and order numbers",
+      "objectiveIds": [
+        "ll-g7-math-place-value-compare"
+      ],
+      "content": {
+        "body": "To compare numbers, compare their places, not how many digits they have. Open each step to order **0.5**, **0.45** and **0.405**.",
+        "keyPoints": [
+          "Whole numbers work the same way: 6,010,000 is greater than 6,009,999 even though it has fewer nines, because the first different place (ten thousands) decides."
+        ]
+      },
+      "interaction": {
+        "kind": "DIAGRAM_REVEAL",
+        "diagramId": "compare-strategy",
+        "steps": [
+          {
+            "id": "line-up",
+            "label": "Line up the places",
+            "description": "Write the numbers one under the other with the decimal points in a column. Fill empty places with zeros: 0.500, 0.450, 0.405."
+          },
+          {
+            "id": "from-left",
+            "label": "Compare from the left",
+            "description": "Start at the greatest place. The ones are all 0, so look at the tenths: 5, 4 and 4."
+          },
+          {
+            "id": "first-difference",
+            "label": "The first different digit decides",
+            "description": "5 tenths is the most, so 0.5 is the greatest. 0.450 and 0.405 tie in the tenths. In the hundredths 5 is more than 0, so 0.45 is greater than 0.405."
+          },
+          {
+            "id": "order",
+            "label": "Write the order",
+            "description": "From least to greatest: 0.405, 0.45, 0.5."
+          },
+          {
+            "id": "whole-numbers",
+            "label": "Whole numbers work the same way",
+            "description": "4,099,999 and 4,100,000 both have 4 millions. In the hundred thousands 0 is less than 1, so 4,099,999 is less than 4,100,000, even with all its nines."
+          }
+        ]
+      },
+      "tools": {
+        "allowed": [],
+        "prohibited": []
+      },
+      "accessibility": {
+        "textAlternative": "Five text steps showing how to order 0.5, 0.45 and 0.405 by lining up places and comparing from the left, and the same method for 4,099,999 and 4,100,000.",
+        "keyboardOperable": true,
+        "reducedMotionSafe": true,
+        "captionsRequired": false
+      },
+      "offline": {
+        "mode": "FULL",
+        "fallback": "Text, steps and questions are part of the saved lesson."
+      },
+      "evidence": {
+        "kind": "NONE"
+      },
+      "completion": {
+        "kind": "ALL_STEPS_REVEALED"
+      },
+      "media": [
+        {
+          "kind": "DIAGRAM",
+          "ref": "/curriculum-candidates/g7-native-v1/math-compare-decimals.svg",
+          "alt": "0.500, 0.450 and 0.405 lined up by place. Tenths: 5, 4, 4. Hundredths: 0, 5, 0. A hundredths grid shows 50 squares shaded for 0.5 and 45 squares for 0.45, so 0.5 is greater."
+        }
+      ]
+    },
+    {
+      "id": "misconceptions",
+      "type": "CHECK_UNDERSTANDING",
+      "title": "Watch out: three common mistakes",
+      "objectiveIds": [
+        "ll-g7-math-place-value-read-write",
+        "ll-g7-math-place-value-compare"
+      ],
+      "content": {
+        "body": "Many learners make these four mistakes. Choose an answer for each one, then read the explanation."
+      },
+      "interaction": {
+        "kind": "MULTIPLE_CHOICE",
+        "items": [
+          {
+            "id": "mis-longer-decimal",
+            "prompt": "Kollie says 0.45 is greater than 0.5 because 45 is greater than 5. Is he right?",
+            "options": [
+              "Yes, because 45 is more than 5",
+              "No, 0.5 is greater"
+            ],
+            "correctIndex": 1,
+            "feedback": {
+              "correct": "Right. Write 0.5 as 0.50: 50 hundredths is more than 45 hundredths. More digits does not mean a bigger number.",
+              "incorrect": "Compare place by place instead. In the tenths place 0.5 has 5 tenths and 0.45 has only 4 tenths, so 0.5 is greater."
+            },
+            "optionFeedback": [
+              "Compare place by place instead. In the tenths place 0.5 has 5 tenths and 0.45 has only 4 tenths, so 0.5 is greater.",
+              "Right. Write 0.5 as 0.50: 50 hundredths is more than 45 hundredths. More digits does not mean a bigger number."
+            ]
+          },
+          {
+            "id": "mis-zero",
+            "prompt": "Which number is two million, forty thousand, seven hundred?",
+            "options": [
+              "2,400,700",
+              "2,040,700",
+              "240,700"
+            ],
+            "correctIndex": 1,
+            "feedback": {
+              "correct": "Yes. The zero holds the hundred-thousands place so the 4 stays in the ten-thousands place.",
+              "incorrect": "2,400,700 has 4 hundred thousands. Forty thousand is 4 ten thousands, so the hundred-thousands place holds a zero."
+            },
+            "optionFeedback": [
+              "2,400,700 has 4 hundred thousands. Forty thousand is 4 ten thousands, so the hundred-thousands place holds a zero.",
+              "Yes. The zero holds the hundred-thousands place so the 4 stays in the ten-thousands place.",
+              "240,700 has no millions. Two million needs a 2 in the millions place: 2,040,700."
+            ]
+          },
+          {
+            "id": "mis-word-form",
+            "prompt": "How do you write four and six hundredths?",
+            "options": [
+              "4.6",
+              "4.06",
+              "4.600"
+            ],
+            "correctIndex": 1,
+            "feedback": {
+              "correct": "Yes. The 6 is in the hundredths place, so the tenths place holds a zero.",
+              "incorrect": "4.6 is four and six tenths. Hundredths end two places after the point: 4.06."
+            },
+            "optionFeedback": [
+              "4.6 is four and six tenths. Hundredths end two places after the point: 4.06.",
+              "Yes. The 6 is in the hundredths place, so the tenths place holds a zero.",
+              "4.600 is the same as 4.6, which is six tenths, not six hundredths."
+            ]
+          },
+          {
+            "id": "mis-shorter-decimal",
+            "prompt": "Sia says 0.3 is greater than 0.37 because tenths are bigger than hundredths. Is she right?",
+            "options": [
+              "Yes, 0.3 has only tenths",
+              "No, 0.37 is greater"
+            ],
+            "correctIndex": 1,
+            "feedback": {
+              "correct": "Right. The tenths are equal (3 and 3), so the hundredths decide: 0.37 has 7 hundredths and 0.3 has none.",
+              "incorrect": "Both numbers have 3 tenths. Write 0.3 as 0.30: 30 hundredths is less than 37 hundredths, so 0.37 is greater."
+            },
+            "optionFeedback": [
+              "Both numbers have 3 tenths. Write 0.3 as 0.30: 30 hundredths is less than 37 hundredths, so 0.37 is greater.",
+              "Right. The tenths are equal (3 and 3), so the hundredths decide: 0.37 has 7 hundredths and 0.3 has none."
+            ]
+          }
+        ]
+      },
+      "tools": {
+        "allowed": [],
+        "prohibited": []
+      },
+      "accessibility": {
+        "textAlternative": "four misconception checks: whether 0.45 is greater than 0.5, writing two million forty thousand seven hundred, and writing four and six hundredths.",
+        "keyboardOperable": true,
+        "reducedMotionSafe": true,
+        "captionsRequired": false
+      },
+      "offline": {
+        "mode": "FULL",
+        "fallback": "Text, steps and questions are part of the saved lesson."
+      },
+      "evidence": {
+        "kind": "FORMATIVE_OBSERVATION",
+        "evidenceType": "PRACTICE",
+        "objectiveIds": [
+          "ll-g7-math-place-value-compare",
+          "ll-g7-math-place-value-read-write"
+        ]
+      },
+      "completion": {
+        "kind": "ALL_ANSWERED"
+      }
+    },
+    {
+      "id": "practice",
+      "type": "PRACTICE",
+      "title": "Your turn: independent practice",
+      "objectiveIds": [
+        "ll-g7-math-place-value-read-write",
+        "ll-g7-math-place-value-digit-value",
+        "ll-g7-math-place-value-compare"
+      ],
+      "content": {
+        "body": "Work on your own. Each answer shows why it is right or what to check again. Use the place-value chart in your exercise book if it helps."
+      },
+      "interaction": {
+        "kind": "MULTIPLE_CHOICE",
+        "items": [
+          {
+            "id": "p-value-7",
+            "prompt": "What is the value of the 7 in 1,742,009?",
+            "options": [
+              "7,000",
+              "700,000",
+              "70,000"
+            ],
+            "correctIndex": 1,
+            "feedback": {
+              "correct": "Yes. The 7 is in the hundred-thousands place, so it is worth 7 × 100,000 = 700,000.",
+              "incorrect": "7,000 would need the 7 in the thousands place. Count from the right: ones, tens, hundreds, thousands, ten thousands, hundred thousands."
+            },
+            "optionFeedback": [
+              "7,000 would need the 7 in the thousands place. Count from the right: ones, tens, hundreds, thousands, ten thousands, hundred thousands.",
+              "Yes. The 7 is in the hundred-thousands place, so it is worth 7 × 100,000 = 700,000.",
+              "70,000 is one place too far right. The 7 sits next to the millions digit."
+            ]
+          },
+          {
+            "id": "p-expanded",
+            "prompt": "Which is 3,060,500 in expanded form?",
+            "options": [
+              "3,000,000 + 60,000 + 500",
+              "3,000,000 + 600,000 + 50",
+              "300,000 + 60,000 + 500"
+            ],
+            "correctIndex": 0,
+            "feedback": {
+              "correct": "Yes. 3 millions, 6 ten thousands and 5 hundreds. Zeros hold the empty places and are not written as parts.",
+              "incorrect": "Check where the 6 is: it is in the ten-thousands place, not the hundred-thousands place."
+            },
+            "optionFeedback": [
+              "Yes. 3 millions, 6 ten thousands and 5 hundreds. Zeros hold the empty places and are not written as parts.",
+              "Check where the 6 is: it is in the ten-thousands place, not the hundred-thousands place.",
+              "The first digit is in the millions place, so it is worth 3,000,000."
+            ]
+          },
+          {
+            "id": "p-word-form",
+            "prompt": "Which number is five million, forty thousand, nine?",
+            "options": [
+              "5,409",
+              "5,400,009",
+              "5,040,009"
+            ],
+            "correctIndex": 2,
+            "feedback": {
+              "correct": "Yes. Five million is 5,000,000, forty thousand is 40,000 and nine is 9. Together: 5,040,009.",
+              "incorrect": "Each period name (million, thousand) needs its own group of three digits."
+            },
+            "optionFeedback": [
+              "Each period name (million, thousand) needs its own group of three digits.",
+              "Forty thousand is 40,000, not 400,000.",
+              "Yes. Five million is 5,000,000, forty thousand is 40,000 and nine is 9. Together: 5,040,009."
+            ]
+          },
+          {
+            "id": "p-cocoa",
+            "prompt": "A farmers' cooperative sold 2.75 tonnes of cocoa in June and 2.705 tonnes in July. In which month did it sell more?",
+            "options": [
+              "June (2.75 tonnes)",
+              "July (2.705 tonnes)",
+              "They sold the same"
+            ],
+            "correctIndex": 0,
+            "feedback": {
+              "correct": "Yes. Both have 2 ones and 7 tenths. In the hundredths 5 is more than 0, so 2.75 is greater than 2.705.",
+              "incorrect": "More digits does not mean more. Compare place by place: the hundredths are 5 and 0, so June is greater."
+            },
+            "optionFeedback": [
+              "Yes. Both have 2 ones and 7 tenths. In the hundredths 5 is more than 0, so 2.75 is greater than 2.705.",
+              "More digits does not mean more. Compare place by place: the hundredths are 5 and 0, so June is greater.",
+              "They share 2 ones and 7 tenths, but the hundredths are different: 5 and 0."
+            ]
+          },
+          {
+            "id": "p-thousandths",
+            "prompt": "In 9.384, what is the 4 worth?",
+            "options": [
+              "4",
+              "0.04",
+              "0.004",
+              "0.4"
+            ],
+            "correctIndex": 2,
+            "feedback": {
+              "correct": "Yes. The 4 is in the thousandths place, so it is worth 4 thousandths, which is 0.004.",
+              "incorrect": "4 would be in the ones place. The 4 is the third digit after the point."
+            },
+            "optionFeedback": [
+              "4 would be in the ones place. The 4 is the third digit after the point.",
+              "0.04 is 4 hundredths. The 4 is one place further right.",
+              "Yes. The 4 is in the thousandths place, so it is worth 4 thousandths, which is 0.004.",
+              "0.4 is 4 tenths, the first place after the point. Here the 3 is in the tenths place."
+            ]
+          }
+        ]
+      },
+      "tools": {
+        "allowed": [],
+        "prohibited": [
+          "scientific-calculator"
+        ]
+      },
+      "accessibility": {
+        "textAlternative": "Five practice questions on digit values, expanded form, word form and comparing decimals, each with written feedback.",
+        "keyboardOperable": true,
+        "reducedMotionSafe": true,
+        "captionsRequired": false
+      },
+      "offline": {
+        "mode": "FULL",
+        "fallback": "Text, steps and questions are part of the saved lesson."
+      },
+      "evidence": {
+        "kind": "FORMATIVE_OBSERVATION",
+        "evidenceType": "PRACTICE",
+        "objectiveIds": [
+          "ll-g7-math-place-value-digit-value",
+          "ll-g7-math-place-value-read-write",
+          "ll-g7-math-place-value-compare"
+        ]
+      },
+      "completion": {
+        "kind": "ALL_ANSWERED"
+      }
+    },
+    {
+      "id": "reason-it-out",
+      "type": "PRACTICE",
+      "title": "Reason it out on your own",
+      "objectiveIds": [
+        "ll-g7-math-place-value-compare",
+        "ll-g7-math-place-value-digit-value"
+      ],
+      "content": {
+        "body": "Mathematicians do not only find answers: they explain why the answers are right. Work on your own, with no hints. Write each answer in full sentences and use the words place and value."
+      },
+      "interaction": {
+        "kind": "FREE_RESPONSE",
+        "prompts": [
+          {
+            "id": "reason-compare",
+            "prompt": "Tamba says 0.9 is less than 0.85 because 85 is bigger than 9. Is he right? Explain using place value, and show one way to check.",
+            "minLength": 60
+          },
+          {
+            "id": "reason-value",
+            "prompt": "The digit 3 appears three times in 303.03. Write what each 3 is worth. Then explain how the first 3 compares with the 3 in the ones place.",
+            "minLength": 60
+          }
+        ]
+      },
+      "tools": {
+        "allowed": [],
+        "prohibited": [
+          "scientific-calculator",
+          "basic-calculator"
+        ]
+      },
+      "accessibility": {
+        "textAlternative": "Two written questions: explain whether 0.9 is less than 0.85, and give the value of each 3 in 303.03 and how the values relate.",
+        "keyboardOperable": true,
+        "reducedMotionSafe": true,
+        "captionsRequired": false
+      },
+      "offline": {
+        "mode": "FULL",
+        "fallback": "Written answers are kept on the device until they can be sent."
+      },
+      "evidence": {
+        "kind": "FORMATIVE_OBSERVATION",
+        "evidenceType": "CLASSWORK",
+        "objectiveIds": [
+          "ll-g7-math-place-value-compare",
+          "ll-g7-math-place-value-digit-value"
+        ]
+      },
+      "completion": {
+        "kind": "ALL_RESPONSES_WRITTEN"
+      }
+    },
+    {
+      "id": "challenge",
+      "type": "EXPLANATION",
+      "title": "Optional challenge: closest to 4",
+      "objectiveIds": [
+        "ll-g7-math-place-value-compare",
+        "ll-g7-math-place-value-digit-value"
+      ],
+      "content": {
+        "body": "This puzzle is optional. Try it if you finish early or want to go further; it is not part of the exit ticket.\n\nUse each of the digits **0, 2, 4 and 7** exactly once, and one decimal point, to make the number that is **closest to 4**. Then write a sentence explaining why no other arrangement is closer.",
+        "keyPoints": [
+          "Think about the ones place first, then the tenths, hundredths and thousandths.",
+          "Check numbers just above 4 and just below 4."
+        ]
+      },
+      "interaction": {
+        "kind": "NONE"
+      },
+      "tools": {
+        "allowed": [],
+        "prohibited": []
+      },
+      "accessibility": {
+        "textAlternative": "Optional puzzle: use the digits 0, 2, 4 and 7 once each, with a decimal point, to make the number closest to 4, and explain why.",
+        "keyboardOperable": true,
+        "reducedMotionSafe": true,
+        "captionsRequired": false
+      },
+      "offline": {
+        "mode": "FULL",
+        "fallback": "Text, steps and questions are part of the saved lesson."
+      },
+      "evidence": {
+        "kind": "NONE"
+      },
+      "completion": {
+        "kind": "VIEWED"
+      }
+    },
+    {
+      "id": "review",
+      "type": "REVIEW",
+      "title": "Key ideas to remember",
+      "objectiveIds": [
+        "ll-g7-math-place-value-read-write",
+        "ll-g7-math-place-value-digit-value",
+        "ll-g7-math-place-value-compare"
+      ],
+      "content": {
+        "body": "Before the exit ticket, review the big ideas of this lesson.",
+        "keyPoints": [
+          "The value of a digit depends on its place: in 2,350,480 the 3 is worth 300,000.",
+          "Each place is worth 10 times the place to its right, from the thousandths up to the millions.",
+          "Zeros hold empty places: three million, sixty thousand, five hundred is 3,060,500.",
+          "To compare, line up the places and look from the left. The first different digit decides: 0.5 is greater than 0.45.",
+          "Next in Grade 7 you will write decimals as fractions and percents. Place value tells you how: 0.375 is 375 thousandths."
+        ]
+      },
+      "interaction": {
+        "kind": "NONE"
+      },
+      "tools": {
+        "allowed": [],
+        "prohibited": []
+      },
+      "accessibility": {
+        "textAlternative": "Review of five key ideas: digit value depends on place, each place is ten times the next, zeros hold empty places, compare from the left, and decimals lead to fractions and percents.",
+        "keyboardOperable": true,
+        "reducedMotionSafe": true,
+        "captionsRequired": false
+      },
+      "offline": {
+        "mode": "FULL",
+        "fallback": "Text, steps and questions are part of the saved lesson."
+      },
+      "evidence": {
+        "kind": "NONE"
+      },
+      "completion": {
+        "kind": "VIEWED"
+      }
+    },
+    {
+      "id": "exit-ticket",
+      "type": "MASTERY_CHECK",
+      "title": "Exit ticket",
+      "objectiveIds": [
+        "ll-g7-math-place-value-read-write",
+        "ll-g7-math-place-value-digit-value",
+        "ll-g7-math-place-value-compare"
+      ],
+      "content": {
+        "body": "Answer each question on your own, without a calculator. Your school's assessment system checks these answers, not this lesson."
+      },
+      "interaction": {
+        "kind": "ASSESSMENT_HANDOFF",
+        "assessment": {
+          "assessmentId": "cv2-cand-g7-math-number-sense-place-value--g7-pv-exit-ticket",
+          "assessmentVersion": "0.3.0",
+          "player": "ASSESSMENT_PLAYER_V2",
+          "scoring": "SERVER_AUTHORITY",
+          "objectiveIds": [
+            "ll-g7-math-place-value-read-write",
+            "ll-g7-math-place-value-digit-value",
+            "ll-g7-math-place-value-compare"
+          ],
+          "items": []
+        }
+      },
+      "tools": {
+        "allowed": [],
+        "prohibited": [
+          "scientific-calculator",
+          "basic-calculator"
+        ]
+      },
+      "accessibility": {
+        "textAlternative": "Exit-ticket questions on reading, writing, digit value and comparing, answered with the keyboard or touch.",
+        "keyboardOperable": true,
+        "reducedMotionSafe": true,
+        "captionsRequired": false
+      },
+      "offline": {
+        "mode": "DEGRADED",
+        "fallback": "Your teacher gives the same exit-ticket questions on paper and records your answers."
+      },
+      "evidence": {
+        "kind": "MASTERY_RESPONSE",
+        "evidenceType": "QUIZ",
+        "objectiveIds": [
+          "ll-g7-math-place-value-read-write",
+          "ll-g7-math-place-value-digit-value",
+          "ll-g7-math-place-value-compare"
+        ]
+      },
+      "completion": {
+        "kind": "ALL_ANSWERED"
+      }
+    },
+    {
+      "id": "reflect",
+      "type": "REFLECTION",
+      "title": "Explain it in your own words",
+      "objectiveIds": [
+        "ll-g7-math-place-value-digit-value"
+      ],
+      "content": {
+        "body": "Good mathematicians can explain their thinking. Write your answer in full sentences."
+      },
+      "interaction": {
+        "kind": "FREE_RESPONSE",
+        "prompts": [
+          {
+            "id": "reflect-place-value",
+            "prompt": "Explain to a friend why the 4 in 40,000 and the 4 in 0.04 are worth different amounts. Use the words place and value.",
+            "minLength": 40
+          }
+        ]
+      },
+      "tools": {
+        "allowed": [],
+        "prohibited": []
+      },
+      "accessibility": {
+        "textAlternative": "Write two or three sentences explaining why the 4 in 40,000 and the 4 in 0.04 have different values.",
+        "keyboardOperable": true,
+        "reducedMotionSafe": true,
+        "captionsRequired": false
+      },
+      "offline": {
+        "mode": "FULL",
+        "fallback": "The written answer is kept on the device until it can be sent."
+      },
+      "evidence": {
+        "kind": "REFLECTION",
+        "evidenceType": "CLASSWORK",
+        "objectiveIds": [
+          "ll-g7-math-place-value-digit-value"
+        ]
+      },
+      "completion": {
+        "kind": "ALL_RESPONSES_WRITTEN"
+      }
+    },
+    {
+      "id": "home-practice",
+      "type": "REFLECTION",
+      "title": "At home: numbers around you",
+      "objectiveIds": [
+        "ll-g7-math-place-value-read-write",
+        "ll-g7-math-place-value-digit-value"
+      ],
+      "content": {
+        "body": "Place value is all around you. This task needs no device, no printing and nothing to buy. You can do it with anyone at home, even someone who does not read: you do the reading and the explaining.",
+        "keyPoints": [
+          "Find one large number: a price on a sign or receipt, a number on a calendar or a rice bag, or an amount you hear on the radio.",
+          "Find one decimal: a measurement on a package (such as 0.5 kg or 1.25 litres). If you cannot find one, make one with three digits after the point.",
+          "Draw a place-value chart on paper or in the sand. Write both numbers in it and read them aloud.",
+          "Ask your family member to point to any digit. Say its place and its value.",
+          "Bring one of your numbers to class with the value of one of its digits."
+        ]
+      },
+      "interaction": {
+        "kind": "NONE"
+      },
+      "tools": {
+        "allowed": [],
+        "prohibited": []
+      },
+      "accessibility": {
+        "textAlternative": "Home task with no device: find a large number and a decimal at home or in the community, write them in a place-value chart, read them aloud to a family member and say the value of any digit they point to.",
+        "keyboardOperable": true,
+        "reducedMotionSafe": true,
+        "captionsRequired": false
+      },
+      "offline": {
+        "mode": "FULL",
+        "fallback": "A paper task done away from the device; the steps are part of the saved lesson."
+      },
+      "evidence": {
+        "kind": "NONE"
+      },
+      "completion": {
+        "kind": "VIEWED"
+      }
+    }
+  ],
+  "offline": {
+    "packageable": true,
+    "requiredAssets": [
+      "/curriculum-candidates/g7-native-v1/math-hero-numbers.svg",
+      "/curriculum-candidates/g7-native-v1/math-place-value-chart.svg",
+      "/curriculum-candidates/g7-native-v1/math-ten-times-ladder.svg",
+      "/curriculum-candidates/g7-native-v1/math-library-fund.svg",
+      "/curriculum-candidates/g7-native-v1/math-compare-decimals.svg"
+    ]
+  }
+}
