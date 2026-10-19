@@ -24,6 +24,7 @@ import { parseToSlides } from "@/lib/lessons/parseToSlides";
 import { parseLessonBlocks, slideBlocks, splitLessonSections, type LessonBlock } from "@/lib/learner-experience/lessonText";
 import { FocusedHeader, LearningStage } from "@/components/experience/FocusedLearning";
 import { LegacyReading, LegacySlides, type LegacySlide } from "@/components/experience/LegacyLesson";
+import { AskTutorButton } from "@/components/experience/AskTutorButton";
 import { StateNotice } from "@/components/experience/StateNotice";
 import { Chip } from "@/components/experience/Frame";
 
@@ -257,8 +258,8 @@ export default function LessonViewerClient({ enabledToolIds = [] }: { enabledToo
     {activities.length > 0 && <section aria-labelledby="support-activities"><h2 id="support-activities">Activities in this lesson</h2><ol className="mt-2 grid list-decimal gap-2 pl-5 text-[15px] leading-6">{activities.map((activity, index) => <li key={index}>{activity}</li>)}</ol></section>}
     {relatedLab && <section aria-labelledby="support-lab"><h2 id="support-lab">Explore further</h2><a href={`/student/labs/${relatedLab.labId}`} className="ll3-btn mt-2 w-full">{relatedLab.label} →</a></section>}
     <section aria-labelledby="support-help"><h2 id="support-help">Help</h2>
-      <Link href="/student/ai-tutor" className="mt-2 inline-flex min-h-11 items-center font-semibold text-[var(--ll-accent)] underline underline-offset-4">Ask the AI tutor</Link>
-      <p className="mt-1 text-sm text-[var(--ll-text-muted)]">AI help needs a connection.</p>
+      <div className="mt-2"><AskTutorButton /></div>
+      <p className="mt-1 text-sm text-[var(--ll-text-muted)]">Opens beside the lesson, so you keep your place. AI help needs a connection.</p>
     </section>
   </>;
 
@@ -304,11 +305,11 @@ export default function LessonViewerClient({ enabledToolIds = [] }: { enabledToo
         <UnitSequenceSidebar contentId={contentId} />
 
         {mode === "read" && (bodyText
-          ? <LegacyReading title={title} sections={sections} html={htmlBody ? renderSimpleMarkdown(bodyText) : null} objectives={objectives} after={moveOn} />
+          ? <LegacyReading key={bodyFormat} title={title} sections={sections} html={htmlBody ? renderSimpleMarkdown(bodyText) : null} after={moveOn} storageKey={`${contentId}:${bodyFormat}`} />
           : <StateNotice kind="empty" title="No reading text yet">This lesson has no reading text. Try Slides or Listen, or ask your teacher.</StateNotice>)}
 
         {mode === "slides" && (
-          <LegacySlides slides={slides} index={currentSlideIndex} onIndexChange={setCurrentSlideIndex} containerRef={slideFullscreenRef}
+          <LegacySlides slides={slides} index={currentSlideIndex} onIndexChange={setCurrentSlideIndex} containerRef={slideFullscreenRef} subject={metadata?.subject ?? null}
             deckLabel={slideDeck?.deckTitle ?? undefined} topActions={<LessonFullscreenButton targetRef={slideFullscreenRef} />} />
         )}
 

@@ -1,0 +1,218 @@
+{
+  "hub": [
+    {
+      "grade": 2,
+      "width": 320,
+      "cards": 4,
+      "overflow": false,
+      "minOpenHeight": 56
+    },
+    {
+      "grade": 2,
+      "width": 360,
+      "cards": 4,
+      "overflow": false,
+      "minOpenHeight": 56
+    },
+    {
+      "grade": 2,
+      "width": 390,
+      "cards": 4,
+      "overflow": false,
+      "minOpenHeight": 56
+    },
+    {
+      "grade": 2,
+      "width": 768,
+      "cards": 4,
+      "overflow": false,
+      "minOpenHeight": 56
+    },
+    {
+      "grade": 2,
+      "width": 1280,
+      "cards": 4,
+      "overflow": false,
+      "minOpenHeight": 56
+    },
+    {
+      "grade": 2,
+      "width": 1440,
+      "cards": 4,
+      "overflow": false,
+      "minOpenHeight": 56
+    },
+    {
+      "grade": 6,
+      "width": 320,
+      "cards": 4,
+      "overflow": false,
+      "minOpenHeight": 48
+    },
+    {
+      "grade": 6,
+      "width": 360,
+      "cards": 4,
+      "overflow": false,
+      "minOpenHeight": 48
+    },
+    {
+      "grade": 6,
+      "width": 390,
+      "cards": 4,
+      "overflow": false,
+      "minOpenHeight": 48
+    },
+    {
+      "grade": 6,
+      "width": 768,
+      "cards": 4,
+      "overflow": false,
+      "minOpenHeight": 48
+    },
+    {
+      "grade": 6,
+      "width": 1280,
+      "cards": 4,
+      "overflow": false,
+      "minOpenHeight": 48
+    },
+    {
+      "grade": 6,
+      "width": 1440,
+      "cards": 4,
+      "overflow": false,
+      "minOpenHeight": 48
+    }
+  ],
+  "routes": [
+    {
+      "labId": "g4-solid-figures",
+      "width": 320,
+      "controls": 2,
+      "labOverflow": false
+    },
+    {
+      "labId": "fixture-lever",
+      "width": 320,
+      "controls": 2,
+      "labOverflow": false
+    },
+    {
+      "labId": "fixture-simple-circuit",
+      "width": 320,
+      "controls": 4,
+      "labOverflow": false
+    },
+    {
+      "labId": "mount-coffee-hydropower",
+      "width": 320,
+      "controls": 21,
+      "labOverflow": false
+    },
+    {
+      "labId": "g4-solid-figures",
+      "width": 390,
+      "controls": 2,
+      "labOverflow": false
+    },
+    {
+      "labId": "fixture-lever",
+      "width": 390,
+      "controls": 2,
+      "labOverflow": false
+    },
+    {
+      "labId": "fixture-simple-circuit",
+      "width": 390,
+      "controls": 4,
+      "labOverflow": false
+    },
+    {
+      "labId": "mount-coffee-hydropower",
+      "width": 390,
+      "controls": 21,
+      "labOverflow": false
+    },
+    {
+      "labId": "g4-solid-figures",
+      "width": 768,
+      "controls": 2,
+      "labOverflow": false
+    },
+    {
+      "labId": "fixture-lever",
+      "width": 768,
+      "controls": 2,
+      "labOverflow": false
+    },
+    {
+      "labId": "fixture-simple-circuit",
+      "width": 768,
+      "controls": 4,
+      "labOverflow": false
+    },
+    {
+      "labId": "mount-coffee-hydropower",
+      "width": 768,
+      "controls": 26,
+      "labOverflow": false
+    },
+    {
+      "labId": "g4-solid-figures",
+      "width": 1440,
+      "controls": 18,
+      "labOverflow": false
+    },
+    {
+      "labId": "fixture-lever",
+      "width": 1440,
+      "controls": 7,
+      "labOverflow": false
+    },
+    {
+      "labId": "fixture-simple-circuit",
+      "width": 1440,
+      "controls": 21,
+      "labOverflow": false
+    },
+    {
+      "labId": "mount-coffee-hydropower",
+      "width": 1440,
+      "controls": 41,
+      "labOverflow": false
+    }
+  ],
+  "states": [
+    {
+      "mode": "none",
+      "openable": []
+    },
+    {
+      "mode": "fixture-simple-circuit",
+      "openable": [
+        "fixture-simple-circuit"
+      ]
+    }
+  ],
+  "keyboard": {
+    "reached": [
+      "Open lab: Solid figures",
+      "Open lab: Lever",
+      "Open lab: Simple circuit",
+      "Open lab: Mount Coffee hydropower"
+    ],
+    "enterOpens": true
+  },
+  "axe": {
+    "hub-all": [],
+    "hub-all-young": [],
+    "hub-none": [],
+    "lab-g4-solid-figures": [],
+    "lab-fixture-lever": [],
+    "lab-fixture-simple-circuit": [],
+    "lab-mount-coffee-hydropower": []
+  },
+  "errors": [],
+  "caveat": "Production components with an explicit showcase grant fixture. Server authorization, real devices, GPUs and screen readers are not certified here."
+}

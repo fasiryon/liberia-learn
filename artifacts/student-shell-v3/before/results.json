@@ -1,0 +1,767 @@
+{
+  "label": "before",
+  "metrics": [
+    {
+      "page": "today",
+      "width": 390,
+      "bodyLeft": 0,
+      "bodyWidth": 390,
+      "frameWidth": 390,
+      "leftWhitespace": 16,
+      "rightWhitespace": 16,
+      "contentUtilization": 92,
+      "overflow": false,
+      "nav": [
+        {
+          "label": "Today",
+          "active": "page",
+          "visible": true
+        },
+        {
+          "label": "Learn",
+          "active": null,
+          "visible": true
+        },
+        {
+          "label": "Labs",
+          "active": null,
+          "visible": true
+        },
+        {
+          "label": "Progress",
+          "active": null,
+          "visible": true
+        },
+        {
+          "label": "Help",
+          "active": null,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "page": "learn",
+      "width": 390,
+      "bodyLeft": 0,
+      "bodyWidth": 390,
+      "frameWidth": 390,
+      "leftWhitespace": 16,
+      "rightWhitespace": 16,
+      "contentUtilization": 92,
+      "overflow": false,
+      "nav": [
+        {
+          "label": "Today",
+          "active": null,
+          "visible": true
+        },
+        {
+          "label": "Learn",
+          "active": "page",
+          "visible": true
+        },
+        {
+          "label": "Labs",
+          "active": null,
+          "visible": true
+        },
+        {
+          "label": "Progress",
+          "active": null,
+          "visible": true
+        },
+        {
+          "label": "Help",
+          "active": null,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "page": "labs",
+      "width": 390,
+      "bodyLeft": 0,
+      "bodyWidth": 390,
+      "frameWidth": 390,
+      "leftWhitespace": 16,
+      "rightWhitespace": 16,
+      "contentUtilization": 92,
+      "overflow": false,
+      "nav": [
+        {
+          "label": "Today",
+          "active": null,
+          "visible": true
+        },
+        {
+          "label": "Learn",
+          "active": null,
+          "visible": true
+        },
+        {
+          "label": "Labs",
+          "active": "page",
+          "visible": true
+        },
+        {
+          "label": "Progress",
+          "active": null,
+          "visible": true
+        },
+        {
+          "label": "Help",
+          "active": null,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "page": "progress",
+      "width": 390,
+      "bodyLeft": 0,
+      "bodyWidth": 390,
+      "frameWidth": 390,
+      "leftWhitespace": 16,
+      "rightWhitespace": 16,
+      "contentUtilization": 92,
+      "overflow": false,
+      "nav": [
+        {
+          "label": "Today",
+          "active": null,
+          "visible": true
+        },
+        {
+          "label": "Learn",
+          "active": null,
+          "visible": true
+        },
+        {
+          "label": "Labs",
+          "active": null,
+          "visible": true
+        },
+        {
+          "label": "Progress",
+          "active": "page",
+          "visible": true
+        },
+        {
+          "label": "Help",
+          "active": null,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "page": "help",
+      "width": 390,
+      "bodyLeft": 0,
+      "bodyWidth": 390,
+      "frameWidth": 390,
+      "leftWhitespace": 24,
+      "rightWhitespace": 24,
+      "contentUtilization": 88,
+      "overflow": false,
+      "nav": [
+        {
+          "label": "Today",
+          "active": null,
+          "visible": false
+        },
+        {
+          "label": "Learn",
+          "active": null,
+          "visible": false
+        },
+        {
+          "label": "Labs",
+          "active": null,
+          "visible": false
+        },
+        {
+          "label": "Progress",
+          "active": null,
+          "visible": false
+        },
+        {
+          "label": "Help",
+          "active": "page",
+          "visible": false
+        }
+      ]
+    },
+    {
+      "page": "today",
+      "width": 768,
+      "bodyLeft": 218,
+      "bodyWidth": 550,
+      "frameWidth": 550,
+      "leftWhitespace": 24,
+      "rightWhitespace": 24,
+      "contentUtilization": 91,
+      "overflow": false,
+      "nav": [
+        {
+          "label": "Today",
+          "active": "page",
+          "visible": true
+        },
+        {
+          "label": "Learn",
+          "active": null,
+          "visible": true
+        },
+        {
+          "label": "Labs",
+          "active": null,
+          "visible": true
+        },
+        {
+          "label": "Progress",
+          "active": null,
+          "visible": true
+        },
+        {
+          "label": "Help",
+          "active": null,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "page": "learn",
+      "width": 768,
+      "bodyLeft": 218,
+      "bodyWidth": 550,
+      "frameWidth": 550,
+      "leftWhitespace": 24,
+      "rightWhitespace": 24,
+      "contentUtilization": 91,
+      "overflow": false,
+      "nav": [
+        {
+          "label": "Today",
+          "active": null,
+          "visible": true
+        },
+        {
+          "label": "Learn",
+          "active": "page",
+          "visible": true
+        },
+        {
+          "label": "Labs",
+          "active": null,
+          "visible": true
+        },
+        {
+          "label": "Progress",
+          "active": null,
+          "visible": true
+        },
+        {
+          "label": "Help",
+          "active": null,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "page": "labs",
+      "width": 768,
+      "bodyLeft": 218,
+      "bodyWidth": 550,
+      "frameWidth": 550,
+      "leftWhitespace": 16,
+      "rightWhitespace": 16,
+      "contentUtilization": 94,
+      "overflow": false,
+      "nav": [
+        {
+          "label": "Today",
+          "active": null,
+          "visible": true
+        },
+        {
+          "label": "Learn",
+          "active": null,
+          "visible": true
+        },
+        {
+          "label": "Labs",
+          "active": "page",
+          "visible": true
+        },
+        {
+          "label": "Progress",
+          "active": null,
+          "visible": true
+        },
+        {
+          "label": "Help",
+          "active": null,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "page": "progress",
+      "width": 768,
+      "bodyLeft": 218,
+      "bodyWidth": 550,
+      "frameWidth": 550,
+      "leftWhitespace": 24,
+      "rightWhitespace": 24,
+      "contentUtilization": 91,
+      "overflow": false,
+      "nav": [
+        {
+          "label": "Today",
+          "active": null,
+          "visible": true
+        },
+        {
+          "label": "Learn",
+          "active": null,
+          "visible": true
+        },
+        {
+          "label": "Labs",
+          "active": null,
+          "visible": true
+        },
+        {
+          "label": "Progress",
+          "active": "page",
+          "visible": true
+        },
+        {
+          "label": "Help",
+          "active": null,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "page": "help",
+      "width": 768,
+      "bodyLeft": 218,
+      "bodyWidth": 550,
+      "frameWidth": 550,
+      "leftWhitespace": 24,
+      "rightWhitespace": 24,
+      "contentUtilization": 91,
+      "overflow": false,
+      "nav": [
+        {
+          "label": "Today",
+          "active": null,
+          "visible": false
+        },
+        {
+          "label": "Learn",
+          "active": null,
+          "visible": false
+        },
+        {
+          "label": "Labs",
+          "active": null,
+          "visible": false
+        },
+        {
+          "label": "Progress",
+          "active": null,
+          "visible": false
+        },
+        {
+          "label": "Help",
+          "active": "page",
+          "visible": false
+        }
+      ]
+    },
+    {
+      "page": "today",
+      "width": 1440,
+      "bodyLeft": 238,
+      "bodyWidth": 1202,
+      "frameWidth": 1202,
+      "leftWhitespace": 36,
+      "rightWhitespace": 36,
+      "contentUtilization": 94,
+      "overflow": false,
+      "nav": [
+        {
+          "label": "Today",
+          "active": "page",
+          "visible": true
+        },
+        {
+          "label": "Learn",
+          "active": null,
+          "visible": true
+        },
+        {
+          "label": "Labs",
+          "active": null,
+          "visible": true
+        },
+        {
+          "label": "Progress",
+          "active": null,
+          "visible": true
+        },
+        {
+          "label": "Help",
+          "active": null,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "page": "learn",
+      "width": 1440,
+      "bodyLeft": 238,
+      "bodyWidth": 1202,
+      "frameWidth": 1202,
+      "leftWhitespace": 36,
+      "rightWhitespace": 36,
+      "contentUtilization": 94,
+      "overflow": false,
+      "nav": [
+        {
+          "label": "Today",
+          "active": null,
+          "visible": true
+        },
+        {
+          "label": "Learn",
+          "active": "page",
+          "visible": true
+        },
+        {
+          "label": "Labs",
+          "active": null,
+          "visible": true
+        },
+        {
+          "label": "Progress",
+          "active": null,
+          "visible": true
+        },
+        {
+          "label": "Help",
+          "active": null,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "page": "labs",
+      "width": 1440,
+      "bodyLeft": 238,
+      "bodyWidth": 1202,
+      "frameWidth": 1202,
+      "leftWhitespace": 16,
+      "rightWhitespace": 16,
+      "contentUtilization": 97,
+      "overflow": false,
+      "nav": [
+        {
+          "label": "Today",
+          "active": null,
+          "visible": true
+        },
+        {
+          "label": "Learn",
+          "active": null,
+          "visible": true
+        },
+        {
+          "label": "Labs",
+          "active": "page",
+          "visible": true
+        },
+        {
+          "label": "Progress",
+          "active": null,
+          "visible": true
+        },
+        {
+          "label": "Help",
+          "active": null,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "page": "progress",
+      "width": 1440,
+      "bodyLeft": 255,
+      "bodyWidth": 1168,
+      "frameWidth": 1168,
+      "leftWhitespace": 32,
+      "rightWhitespace": 32,
+      "contentUtilization": 95,
+      "overflow": false,
+      "nav": [
+        {
+          "label": "Today",
+          "active": null,
+          "visible": true
+        },
+        {
+          "label": "Learn",
+          "active": null,
+          "visible": true
+        },
+        {
+          "label": "Labs",
+          "active": null,
+          "visible": true
+        },
+        {
+          "label": "Progress",
+          "active": "page",
+          "visible": true
+        },
+        {
+          "label": "Help",
+          "active": null,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "page": "help",
+      "width": 1440,
+      "bodyLeft": 238,
+      "bodyWidth": 1202,
+      "frameWidth": 1202,
+      "leftWhitespace": 24,
+      "rightWhitespace": 24,
+      "contentUtilization": 96,
+      "overflow": false,
+      "nav": [
+        {
+          "label": "Today",
+          "active": null,
+          "visible": false
+        },
+        {
+          "label": "Learn",
+          "active": null,
+          "visible": false
+        },
+        {
+          "label": "Labs",
+          "active": null,
+          "visible": false
+        },
+        {
+          "label": "Progress",
+          "active": null,
+          "visible": false
+        },
+        {
+          "label": "Help",
+          "active": "page",
+          "visible": false
+        }
+      ]
+    },
+    {
+      "page": "today",
+      "width": 1920,
+      "bodyLeft": 238,
+      "bodyWidth": 1682,
+      "frameWidth": 1440,
+      "leftWhitespace": 40,
+      "rightWhitespace": 282,
+      "contentUtilization": 81,
+      "overflow": false,
+      "nav": [
+        {
+          "label": "Today",
+          "active": "page",
+          "visible": true
+        },
+        {
+          "label": "Learn",
+          "active": null,
+          "visible": true
+        },
+        {
+          "label": "Labs",
+          "active": null,
+          "visible": true
+        },
+        {
+          "label": "Progress",
+          "active": null,
+          "visible": true
+        },
+        {
+          "label": "Help",
+          "active": null,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "page": "learn",
+      "width": 1920,
+      "bodyLeft": 238,
+      "bodyWidth": 1682,
+      "frameWidth": 1440,
+      "leftWhitespace": 40,
+      "rightWhitespace": 282,
+      "contentUtilization": 81,
+      "overflow": false,
+      "nav": [
+        {
+          "label": "Today",
+          "active": null,
+          "visible": true
+        },
+        {
+          "label": "Learn",
+          "active": "page",
+          "visible": true
+        },
+        {
+          "label": "Labs",
+          "active": null,
+          "visible": true
+        },
+        {
+          "label": "Progress",
+          "active": null,
+          "visible": true
+        },
+        {
+          "label": "Help",
+          "active": null,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "page": "labs",
+      "width": 1920,
+      "bodyLeft": 238,
+      "bodyWidth": 1682,
+      "frameWidth": 1682,
+      "leftWhitespace": 16,
+      "rightWhitespace": 16,
+      "contentUtilization": 98,
+      "overflow": false,
+      "nav": [
+        {
+          "label": "Today",
+          "active": null,
+          "visible": true
+        },
+        {
+          "label": "Learn",
+          "active": null,
+          "visible": true
+        },
+        {
+          "label": "Labs",
+          "active": "page",
+          "visible": true
+        },
+        {
+          "label": "Progress",
+          "active": null,
+          "visible": true
+        },
+        {
+          "label": "Help",
+          "active": null,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "page": "progress",
+      "width": 1920,
+      "bodyLeft": 255,
+      "bodyWidth": 1648,
+      "frameWidth": 1280,
+      "leftWhitespace": 32,
+      "rightWhitespace": 400,
+      "contentUtilization": 74,
+      "overflow": false,
+      "nav": [
+        {
+          "label": "Today",
+          "active": null,
+          "visible": true
+        },
+        {
+          "label": "Learn",
+          "active": null,
+          "visible": true
+        },
+        {
+          "label": "Labs",
+          "active": null,
+          "visible": true
+        },
+        {
+          "label": "Progress",
+          "active": "page",
+          "visible": true
+        },
+        {
+          "label": "Help",
+          "active": null,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "page": "help",
+      "width": 1920,
+      "bodyLeft": 238,
+      "bodyWidth": 1682,
+      "frameWidth": 1682,
+      "leftWhitespace": 24,
+      "rightWhitespace": 24,
+      "contentUtilization": 97,
+      "overflow": false,
+      "nav": [
+        {
+          "label": "Today",
+          "active": null,
+          "visible": false
+        },
+        {
+          "label": "Learn",
+          "active": null,
+          "visible": false
+        },
+        {
+          "label": "Labs",
+          "active": null,
+          "visible": false
+        },
+        {
+          "label": "Progress",
+          "active": null,
+          "visible": false
+        },
+        {
+          "label": "Help",
+          "active": "page",
+          "visible": false
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "caveat": "Production components, synthetic API data; component browser evidence, not production authentication or real student records."
+}
