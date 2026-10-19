@@ -77,8 +77,17 @@ describe("Content Factory V2 candidate boundary", () => {
 
   it("uses the Assessment V2 keyless projection for reviewer learner previews", async () => {
     const result = await buildDemo();
-    const preview = reviewerAssessmentPreview(result.artifacts);
+    // Preview independence must stay conservative even if an authored item offers hints.
+    const artifacts = result.artifacts.map(artifact => artifact.payload.kind === "ASSESSMENT"
+      ? { ...artifact, payload: { ...artifact.payload, items: artifact.payload.items.map(item => ({ ...item,
+          hints: [{ hintId: "preview-hint", text: "Restricted preview hint" }],
+          feedbackPolicy: { ...item.feedbackPolicy, hints: "ON_REQUEST" as const },
+        })) } }
+      : artifact);
+    const preview = reviewerAssessmentPreview(artifacts);
     expect(preview.length).toBeGreaterThan(0);
+    expect(preview.every(item => item.hintCount === 0)).toBe(true);
+    expect(JSON.stringify(preview)).not.toContain("Restricted preview hint");
     expect(JSON.stringify(preview)).not.toMatch(/scoringSpecHash|moderationNotes|correctOptionId|acceptedAnswers/);
   });
 

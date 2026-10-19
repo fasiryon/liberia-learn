@@ -125,7 +125,7 @@ export function validateArtifact(blueprint: UnitBlueprint, artifact: FactoryArti
 }
 
 export function reviewerAssessmentPreview(artifacts: readonly FactoryArtifact[]) {
-  return artifacts.flatMap(a => a.payload.kind === "ASSESSMENT" ? a.payload.items.map(item => projectItemForLearner(item, { attemptId: "REVIEWER_PREVIEW_UNRELEASED", points: a.payload.kind === "ASSESSMENT" ? a.payload.specs.find(s => s.itemId === item.itemId)?.maxPoints ?? 0 : 0 })) : []);
+  return artifacts.flatMap(a => a.payload.kind === "ASSESSMENT" ? a.payload.items.map(item => projectItemForLearner(item, { attemptId: "REVIEWER_PREVIEW_UNRELEASED", independent: true, points: a.payload.kind === "ASSESSMENT" ? a.payload.specs.find(s => s.itemId === item.itemId)?.maxPoints ?? 0 : 0 })) : []);
 }
 
 export function checkPackage(blueprintInput: UnitBlueprint, artifacts: readonly FactoryArtifact[]): QualityReport {
