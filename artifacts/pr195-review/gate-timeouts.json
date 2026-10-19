@@ -1,0 +1,8 @@
+{
+    "processId":  9188,
+    "kind":  "production build",
+    "startedUtc":  "2026-10-19T20:57:54.6140350Z",
+    "stoppedUtc":  "2026-10-19T21:15:01.8021873Z",
+    "elapsedSeconds":  1027,
+    "result":  "INCONCLUSIVE_LOCAL_TIMEOUT"
+}
