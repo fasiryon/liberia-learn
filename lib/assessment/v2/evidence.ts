@@ -353,7 +353,7 @@ export function createProvisionalFeedback(raw: AssessmentEvidenceEnvelope, input
 /**
  * Whether the record can speak for an offline response: the device is accepted, the sync service's
  * FINALIZED acknowledgement covers the response's capture sequence, and the response arrived before
- * finalization. Online responses are always covered by a final record.
+ * finalization. An online response is covered only by a record that accepts no offline devices.
  */
 function offlineResponseCovered(attestation: AssistanceAttestation, envelope: Pick<AssessmentEvidenceEnvelope, "capture">): "COVERED" | "DEVICE_UNBOUND" | "UNSYNCED" | "MIXED_DELIVERY" {
   // A record that accepts offline devices cannot vouch for an online response: assistance a device
