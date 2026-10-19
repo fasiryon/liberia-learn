@@ -45,6 +45,13 @@ describe("Assessment evidence → official academic records boundary", () => {
     expect(toGradeEntry(evidence({ independence: "ASSISTED" }), args)).toMatchObject({ status: "PENDING_MODERATION", pointsEarned: null });
   });
 
+  it("treats UNVERIFIED independence (assessment evidence 1.1.0) like assistance: teacher review, never mastery", () => {
+    expect(toGradeEntry(evidence({ independence: "UNVERIFIED" }), args)).toMatchObject({ status: "PENDING_MODERATION", pointsEarned: null, scoreAuthority: null });
+    const unverified = [1, 2, 3].map((n) => evidence({ independence: "UNVERIFIED", attempt: { attemptId: `u${n}`, sessionId: `us${n}` }, pins: { itemId: `item-u${n}`, releaseId: "rel-1" } }, { points: 10 }));
+    expect(masterySummaryFromEvidence(unverified, { scope: { schoolId: SCHOOL, studentId: "stu-1" }, objectiveId: "math-place-value", revokedReleaseIds: [] }))
+      .toMatchObject({ independentItems: 0, independentOccasions: 0, independentPointsEarned: 0 });
+  });
+
   it("refuses evidence from another school or student", () => {
     expect(() => toGradeEntry(evidence({ scope: { schoolId: "school-2", studentId: "stu-1" } }), args)).toThrow("records_evidence_scope_mismatch");
     expect(() => toGradeEntry(evidence({ scope: { schoolId: SCHOOL, studentId: "stu-2" } }), args)).toThrow("records_evidence_scope_mismatch");

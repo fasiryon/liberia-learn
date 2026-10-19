@@ -26,7 +26,12 @@ export type AssessmentEvidenceForRecords = Readonly<{
   attempt: Readonly<{ attemptId: string; sessionId: string }>;
   objectiveIds: readonly string[];
   delivery: Readonly<{ official: boolean; purpose: string; itemContext: string }>;
-  independence: "INDEPENDENT" | "ASSISTED";
+  /**
+   * Assessment evidence contract 1.1.0 (PR #193): UNVERIFIED means the server's assistance record
+   * could not attest independent work. It is treated exactly like ASSISTED here: held for a teacher
+   * in grades, never counted toward mastery.
+   */
+  independence: "INDEPENDENT" | "ASSISTED" | "UNVERIFIED";
   scoring: Readonly<{
     status: string;
     scorerAuthority: string | null;
@@ -71,7 +76,8 @@ export function toGradeEntry(evidence: AssessmentEvidenceForRecords, input: {
     subject: input.scope.subject, periodId: input.scope.periodId, category: input.category,
     pointsPossible: evidence.scoring.maxPoints, daysLate: 0, teacherConfirmedMissing: false,
   };
-  // Assistance during an official assessment is an integrity question for a teacher, not an automatic score.
+  // Assistance during an official assessment, or independence the record could not attest, is an
+  // integrity question for a teacher, not an automatic score.
   if (evidence.independence !== "INDEPENDENT") {
     return Object.freeze({ ...base, status: "PENDING_MODERATION" as const, pointsEarned: null, scoreAuthority: null });
   }
