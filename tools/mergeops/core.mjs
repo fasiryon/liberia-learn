@@ -18,6 +18,23 @@ export function validPath(path) {
 }
 const sensitivePath = /(?:^|\/)(?:prisma|supabase|infra|\.github|\.vercel|security|auth|grading|governance|curriculum|autonomous|agents|mergeops)(?:\/|\.)|(?:auth|permission|tenant|school|student|grade|mastery|evidence|flag|deploy|migration|secret|middleware|serverFlags|next\.config|vercel\.json|package(?:-lock)?\.json|AGENTS\.md)/i;
 const sensitiveText = /\b(?:schoolId|tenantId|requireRole|assertPermission|authOptions|LearningEvent|score|mastery|grade|completion|evidence|DATABASE_URL|NEXT_PUBLIC_|process\.env|ALTER\s+TABLE|DROP\s+TABLE|ENABLE_[A-Z_]+)\b/i;
+// Domains MergeOps may report on but never merges, repairs or approves, whatever the policy flags say.
+// Academic release, unreleased candidate content and student records follow their owners' release processes.
+const outsideAuthority = [
+  ['academic-release', /^(?:curriculum\/releases\/|lib\/learning-authority\/releases?\/)|release-?(?:binding|manifest)/i, /\b(?:releaseId|releaseIdentity|moeApprovalState|studentEligible)\b/],
+  ['candidate-content', /^(?:curriculum\/v2\/[^/]+\/candidates\/|curriculum\/review\/|public\/curriculum-candidates\/)/, null],
+  ['student-records', /^(?:lib\/(?:academic-records|academics|academic-policy|records)\/|app\/api\/admin\/promotions\/)|report-?card|transcript|gradebook/i, null],
+];
+export function authorityBoundary(files) {
+  const domains = new Set();
+  for (const f of Array.isArray(files) ? files : []) {
+    const added = (f.patch ?? '').split('\n').filter(l => l.startsWith('+')).join('\n');
+    for (const [domain, path, text] of outsideAuthority) {
+      if ([f.filename, f.previous_filename].some(p => typeof p === 'string' && path.test(p)) || text?.test(added)) domains.add(domain);
+    }
+  }
+  return [...domains];
+}
 export function classify(files, policy) {
   const reasons = [];
   if (!Array.isArray(files) || !files.length) return { risk: 'high', reasons: ['empty-or-incomplete-diff'] };
@@ -79,6 +96,7 @@ export function decide(snapshot, expectedSha, policy) {
   if (!snapshot.complete) blocks.push('incomplete-evidence');
   if (snapshot.deploymentSuppressed !== true || policy.previewDeploymentPolicyReviewed !== true) blocks.push('deployment-policy-unverified');
   if (classification.risk !== 'low') blocks.push('founder-approval-required');
+  for (const domain of authorityBoundary(files)) blocks.push(`outside-authority:${domain}`);
   if (analyses.some(a => a.findings.length)) blocks.push('analysis-findings');
   if (!reviewEvidence(snapshot, policy)) blocks.push('independent-reviews-required');
   const latestReviews = new Map();
@@ -111,7 +129,7 @@ export function eligibleRepair(snapshot, diagnosis, attempts, policy) {
     policy.previewDeploymentPolicyReviewed === true && snapshot.complete && snapshot.pr.state === 'open' &&
     snapshot.pr.base.ref === policy.base && snapshot.pr.head.repo?.full_name === policy.repository &&
     snapshot.pr.base.repo?.full_name === policy.repository && snapshot.pr.mergeable === true && !snapshot.pr.draft &&
-    classify(snapshot.files, policy).risk === 'low' && diagnosis.recipe === 'textbook-fixture-v1' &&
+    classify(snapshot.files, policy).risk === 'low' && !authorityBoundary(snapshot.files).length && diagnosis.recipe === 'textbook-fixture-v1' &&
     Number.isInteger(attempts) && attempts >= 0 && attempts < Math.min(policy.maxRepairAttempts, 2) &&
     mandatorySecurityPassed(snapshot, policy);
 }

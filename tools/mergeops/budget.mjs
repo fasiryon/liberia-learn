@@ -26,7 +26,7 @@ export function buildUsage(rows, month, limits) {
 }
 export function previewDecision({ branch, environment, files, usage, approvedSha, head }) {
   if (environment !== 'preview') return { allow: false, reason: 'separate-deployment-authorization-required' };
-  if (/^mergeops-(?:repair|ledger)-/.test(branch) || branch === 'feat/mergeops-v1') return { allow: false, reason: 'engineering-automation' };
+  if (/^mergeops-(?:repair-|ledger[-/])/.test(branch) || branch === 'feat/mergeops-v1') return { allow: false, reason: 'engineering-automation' };
   if (!files.length || files.every(f => /^(?:docs\/|tools\/mergeops\/|__tests__\/|\.github\/)/.test(f))) return { allow: false, reason: 'no-preview-needed' };
   if (usage.allowPreview !== true || !/^[a-f0-9]{40}$/.test(head ?? '') || approvedSha !== head) return { allow: false, reason: 'budget-or-exact-head-approval' };
   return { allow: true, reason: 'approved-with-budget' };

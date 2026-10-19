@@ -26,7 +26,8 @@ export class GitHub {
   async request(method, path, body, global = false) {
     if (!path.startsWith('/') || path.includes('..') || path.includes('://')) throw Error('api-path-invalid');
     const response = await this.fetcher(`https://api.github.com${global ? '' : `/repos/${this.repository}`}${path}`, {
-      method, headers: { Authorization: `Bearer ${this.token}`, Accept: 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' },
+      // Without a token only public read access exists; that is the read-only discovery mode.
+      method, headers: { ...(this.token ? { Authorization: `Bearer ${this.token}` } : {}), Accept: 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' },
       ...(body === undefined ? {} : { body: JSON.stringify(body) }), signal: AbortSignal.timeout(30000), redirect: 'error',
     });
     if (!response.ok) throw Object.assign(Error(`github:${method}:${response.status}`), { status: response.status });
@@ -52,9 +53,13 @@ export class GitHub {
       this.pages(`/pulls/${number}/files`), this.pages(`/pulls/${number}/reviews`),
       this.pages(`/commits/${pr.head.sha}/check-runs?filter=latest`, 'check_runs'),
     ]);
-    let protection = null;
+    let protection = null, protectionStatus = 'fetched';
     try { protection = await this.request('GET', `/branches/${encodeURIComponent(policy.base)}/protection`); }
-    catch (error) { if (![403, 404].includes(error.status)) throw error; }
+    catch (error) {
+      // Missing permission is recorded evidence and blocks merging; it is never read as "unprotected".
+      if (![401, 403, 404].includes(error.status)) throw error;
+      protectionStatus = `unavailable:${error.status}`;
+    }
     const current = await this.request('GET', `/pulls/${number}`);
     let deploymentSuppressed = false;
     try {
@@ -62,7 +67,7 @@ export class GitHub {
       // Merging must not implicitly deploy main. Unknown external integrations require operator review too.
       deploymentSuppressed = config.git?.deploymentEnabled === false;
     } catch { /* Missing or malformed deployment policy blocks merge. */ }
-    return { pr: current, files, reviews, checks, protection,
+    return { pr: current, files, reviews, checks, protection, protectionStatus,
       deploymentSuppressed,
       complete: pr.head.sha === current.head.sha && pr.base.sha === current.base.sha && files.length === current.changed_files && files.every(f => typeof f.patch === 'string') };
   }

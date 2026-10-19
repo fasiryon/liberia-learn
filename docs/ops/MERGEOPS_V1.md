@@ -1,13 +1,17 @@
 # MergeOps V1
 
-Status: review-ready implementation; autonomous repair and merge are OFF.
-No GitHub App was installed, hosted service started, database changed, or deployment requested.
+Status: production-readiness candidate. Read-only operation (readiness reports, merge-order
+recommendations, workspace hygiene, historical replay) is usable now. Autonomous repair and merge
+are OFF and stay OFF after merge. No GitHub App was installed, hosted service started, database
+changed, branch deleted or deployment requested.
 
 ## Discovery and scope
 
-Baseline: `a1508ceaf7d89a338de624e9f63c9c4c592ca28c` on `origin/main`.
-The shared checkout contained unrelated student-experience work; this implementation
-uses `.task-worktrees/mergeops-v1` and `feat/mergeops-v1`.
+Original baseline: `a1508ceaf7d89a338de624e9f63c9c4c592ca28c`. Reconciled on 2026-10-19 by merging
+`origin/main` at `ebfdc2a07aa955553a172e99e41e65d6a9f67f66` (after PRs #190, #191, #193 and #194)
+with a merge commit, not a rebase, so the published branch never needs a force push. The merge was
+conflict-free: main had not changed `.github/`, `vercel.json` or `tools/mergeops/` since the baseline.
+This implementation uses `.task-worktrees/mergeops-v1` and `feat/mergeops-v1`.
 
 Existing systems reused:
 
@@ -190,8 +194,9 @@ not invoke a paid model or pretend deterministic scans are independent LLM revie
 ## Validation and replay
 
 ```powershell
-node --test tools/mergeops/*.node-test.mjs
+node --test tools/mergeops/*.node-test.mjs     # 104 tests: safety (74) + operations (30)
 node tools/mergeops/demo.mjs
+node tools/mergeops/cli.mjs history tools/mergeops/fixtures/history-190-194.json
 npm.cmd run validate:changed
 node tools/mergeops/cli.mjs budget trusted-vercel-export.json 2026-10
 ```
@@ -226,6 +231,194 @@ operator gates, not claimed as tested against a live installation.
 Next handoff: review the PR's safety results, permission separation, deployment
 policy and the actual branch-protection configuration. Keep all enablement flags
 off until that review and separate installation/operation authorization.
+
+## Architecture summary
+
+```
+GitHub events ──► mergeops.yml (pull_request_target, read-only token, checks out main only)
+                    └─ cli.mjs observe ─► controller.lifecycle(dryRun) ─► decide() ─► ledger artifact
+Operator shell ──► cli.mjs report | history | hygiene  (read-only; optional read token)
+                    ├─ github.mjs snapshot  (PR, all file/review/check pages, protection, vercel.json)
+                    ├─ localgit.mjs         (allowlisted read-only git: relations, worktrees, refs)
+                    ├─ core.decide + authorityBoundary ─► report.readiness  (status, CI, reviews)
+                    ├─ plan.mergePlan       (stacked / shared-history / overlap ─► order)
+                    ├─ hygiene.hygieneReport (worktrees, branches, idle PRs ─► proposals)
+                    └─ FileLedger audit.jsonl (one hash-chained record per proposal)
+Future, separately authorized: app.mjs webhook host ─► per-role App tokens ─► repair / merge
+```
+
+| Module | Responsibility | Side effects |
+| --- | --- | --- |
+| `core.mjs` | classification, authority boundary, deterministic analysis, merge/repair decision | none |
+| `github.mjs` | complete, paginated, exact-head evidence; `protectionStatus` records 401/403/404 | GitHub reads; writes only via injected App clients |
+| `controller.mjs` | event lifecycle, reservations, re-fetch before mutation | ledger; repair/merge only with enabled App clients |
+| `plan.mjs` | dependency graph and recommended order | none |
+| `report.mjs` | readiness, required-check status, review and CODEOWNERS requirements, proposal audit | ledger append |
+| `hygiene.mjs` / `localgit.mjs` | stale worktree/branch/PR proposals | local read-only git |
+| `history.mjs` | merged-PR replay with unrecoverable evidence marked unknown | none |
+| `ledger.mjs` | hash-chained local and Git-branch ledgers | append-only files/refs |
+
+## Authority boundary
+
+Some domains are outside MergeOps authority. `core.authorityBoundary` adds an
+`outside-authority:<domain>` block whatever the policy flags, approvals, adapter reports or check
+results say. It also makes repair ineligible. These PRs follow their owners' processes and are
+merged by a human through normal protection:
+
+| Domain | Paths / content |
+| --- | --- |
+| `academic-release` | `curriculum/releases/`, `lib/learning-authority/release(s)/`, any `release-binding` / `release-manifest` path, added lines setting `releaseId`, `releaseIdentity`, `moeApprovalState`, `studentEligible` |
+| `candidate-content` | `curriculum/v2/*/candidates/`, `curriculum/review/`, `public/curriculum-candidates/` |
+| `student-records` | `lib/academic-records/`, `lib/academics/`, `lib/academic-policy/`, `lib/records/`, `app/api/admin/promotions/`, report-card / transcript / gradebook paths |
+
+Renames are checked on both the old and new path. Schema, migration, auth, tenant, workflow,
+deployment and MergeOps-policy changes remain high-risk founder escalations (see classification
+above), and V1 never auto-merges any high-risk PR.
+
+## Operating guide (V1: read-only)
+
+All commands run from a trusted checkout of `main` after `git fetch origin`. Without `GH_TOKEN`
+they use unauthenticated public reads, limited to 60 requests per hour. Then branch protection is
+unreadable and every PR correctly shows `protection-unverified`. With `GH_TOKEN`, use a fine-grained
+read-only token: contents, pull requests and checks set to read, plus administration read if
+protection evidence is wanted. Nothing in these commands writes to GitHub, Vercel or the database.
+
+```powershell
+node tools/mergeops/cli.mjs report --pr 192,195     # readiness + merge order (omit --pr for all open PRs)
+node tools/mergeops/cli.mjs report --hygiene        # adds local worktree/branch hygiene
+node tools/mergeops/cli.mjs hygiene --stale-days 14 # hygiene only (one API call)
+node tools/mergeops/cli.mjs history tools/mergeops/fixtures/history-190-194.json   # offline replay
+```
+
+Each run writes `report.md`, `report.json` and an append-only `audit.jsonl` to
+`artifacts/mergeops-demo-v1/<mode>/`, or to `--out <dir>`. Each readiness entry, merge-order
+position and hygiene proposal becomes one hash-chained record with `proposedOnly: true,
+executed: false`. Record ids include a digest of the proposal content: an identical rerun appends
+nothing, and a changed outcome on the same head always appends. An example is a check finishing. Hygiene output contains local absolute
+paths. It is gitignored and must not be committed to the public repository.
+
+**Readiness status** (per PR, exact head):
+
+| Status | Meaning | Who acts |
+| --- | --- | --- |
+| `blocked` | stale/foreign head or base, not cleanly mergeable (GitHub `mergeable_state` shown), incomplete evidence, a required check missing/pending/failed/from the wrong App, changes requested, or an open PR it depends on | PR author |
+| `awaiting-review` | evidence is green but human requirements remain: two independent exact-head approvals, CODEOWNERS, founder review for high risk, owner process for an authority domain | reviewers / founder |
+| `ready-for-human-merge` | every PR-level gate passes. MergeOps still does not merge; a human merges through protected GitHub | founder / maintainer |
+
+Green CI alone never yields more than `awaiting-review`. `repositoryGaps` lists
+repository-configuration and automation blocks: `merge-disabled`, `protection-unverified`,
+`merge-authority-unverified`, `deployment-policy-unverified` and `policy-check-unprotected:*`.
+These describe the repository, not the PR, and approving a PR never clears them.
+
+**Required-check states:** `success`, `pending`, `failed:<conclusion>`, `missing`, and
+`wrong-app` (same name, different producer App: possible spoofing). Only check runs on the exact head
+SHA count.
+
+**Merge order** is recommendation-only. Edges come from trusted evidence, never PR text:
+
+- *stacked*: the PR's base is another open PR's head branch.
+- *shared-history*: the heads share unmerged commits. The PR with less unique history lands first.
+- *overlap*: the PRs change the same files, so the later one is revalidated.
+
+A base branch already merged into main yields `retarget-required`. Cycles are reported for a human.
+PRs idle longer than the staleness window are parked, not ordered. After every merge, all remaining
+PRs need fresh exact-head CI and reviews on the new base.
+
+**Hygiene** proposals: `remove-worktree` (clean and merged or detached),
+`prune-worktree-record` (directory missing), `delete-merged-branch` / `delete-remote-branch`, and
+`ask-owner` (dirty worktree, ignored local `.env*` files, idle PR, stale or upstream-gone branch). The
+following are never removal candidates:
+- the primary checkout, and locked or dirty worktrees;
+- worktrees holding local env files;
+- worktrees whose `node_modules` another worktree links to (junction targets);
+- `main`;
+- head and base branches of open PRs;
+- branches checked out in any worktree.
+
+Another agent may own them. A human runs any
+cleanup with non-forcing commands such as `git worktree remove` without `--force` and
+`git branch -d`, never `-D`. Squash-merged branches are not detected as merged and show up as
+`stale-no-pr`.
+
+**Failure handling** is fail-closed per PR. An API error while snapshotting a PR stops that PR's
+evaluation and is noted with a redacted reason. No decision is recorded for that PR, nothing is
+retried, and other PRs continue. 401/403/404 on branch protection is recorded as
+`protectionStatus: unavailable:<code>` and blocks merging. `fetched` means only that protection was
+readable, not that it meets policy; `protection-unverified` reports the compliance result. Errors
+outside per-PR evaluation, such as listing PRs or reading the base commit, fail the whole run closed
+with a redacted message.
+
+Local relations require the local `origin/main` to equal GitHub's `main` SHA. If they differ, relations are
+skipped with a note rather than computed from a stale base. CODEOWNERS is always read at GitHub's
+`main` SHA, never from a stacked PR's base branch. Only same-repository heads can be a stacked base,
+so a fork branch with the same name is unrelated. PRs in a dependency cycle are blocked with
+`dependency-cycle`, and parked idle PRs with `parked-idle-owner-decision`. Any open PR that was listed
+but not evaluated is marked `not-evaluated` in the order.
+
+The local Git runner allowlists both subcommands and flags, because Git accepts abbreviated options. It runs
+with `--no-optional-locks`, so it never refreshes another agent's index. Run it only from a trusted
+checkout, with Git resolved from `PATH`.
+
+## GitHub permission matrix
+
+| Actor | Where | Permissions | Can merge / push / deploy | V1 state |
+| --- | --- | --- | --- | --- |
+| `CI` workflow | `pull_request` | `contents: read`, no persisted credentials | no | active |
+| `Runtime Gate 1` | `pull_request` + push to main | `contents: read`, no persisted credentials | no | active (PR trigger added) |
+| `MergeOps Safety` | `pull_request` (runs PR code) | `contents: read`, no secrets | no | active |
+| `MergeOps` observer | `pull_request_target` / `workflow_run` / push; checks out **main** only | `contents, pull-requests, checks, actions: read` | no; cannot read protection (GITHUB_TOKEN lacks administration) | active after merge; skips until `cli.mjs` is on main |
+| Operator CLI | trusted shell | none (public read) or fine-grained read token | no | available |
+| App `MERGEOPS` (observer) | webhook host | contents, pull requests, checks, actions, administration: read | no | **not installed** |
+| App `MERGEOPS_STATE` | webhook host | contents: write (ledger refs only, by ruleset) | no main push | **not installed** |
+| App `MERGEOPS_REPAIR` | webhook host | contents, pull requests: write | repair branches + PRs only | **not installed**; `autoRepair: false` |
+| App `MERGEOPS_MERGE` | webhook host | contents: write | merge API with exact `sha` only after all gates | **not installed**; `autoMerge: false`, `mergeAppId: null` |
+| Vercel | Git integration | n/a | builds previews and main | MergeOps branches suppressed in `vercel.json`; production unchanged |
+
+No actor is granted `workflows`, `administration: write`, `deployments`, `secrets`, `statuses: write` or
+`checks: write`. Verified on 2026-10-19:
+- Public reads succeed unauthenticated.
+- Unauthenticated `GET /branches/main/protection` is refused, and the report records it as `unavailable:401`.
+- `main` has no CODEOWNERS until this PR merges (404).
+
+Not verified, because these need repository-admin credentials that were not used: the live
+branch-protection or ruleset configuration on `main`, and whether the four required checks are
+bound to their App IDs.
+
+## Demonstration (2026-10-19)
+
+**Historical fixtures.** `fixtures/history-190-194.json` holds PR metadata, exact-head check runs and
+reviews from the GitHub API, plus per-file numstat and pairwise relations from local Git. The PRs
+are merged PRs #190, #191, #193 and #194. Replaying them under the V1 policy gives:
+
+- **Status.** All four would have been held as `blocked`.
+- **Required checks.** Neither `runtime-gate` nor `safety` ran on any of the four heads. `runtime-gate` only ran on pushes to main, and `safety` did not exist yet.
+- **Reviews.** None of the four had an approving review. #190 had one bot `COMMENTED` review, which does not count.
+- **Merge order.** The recommended order is #190 → #191 → #193 → #194, which matches the actual merge order. #191 shared 15 unmerged commits and 311 files with #190, although it was not stacked by base branch. #194 shared `lib/academic-policy/llAep001.ts` with #193.
+- **Stale CI.** #191 merged 11 seconds after #190, on CI completed 2026-10-17 against the old base. #193 and #194 also merged after the base advanced. Strict up-to-date protection would have required fresh exact-head runs.
+- **Authority boundary.** #191 crossed the `candidate-content` and `academic-release` boundaries. #193 and #194 crossed `student-records`. MergeOps could never have merged them.
+- **Unknowns.** Mergeability, protection and patches at merge time cannot be recovered. They are treated as unknown, not as passing.
+
+**Live read-only discovery** found 14 open PRs: #192, #195 and #187 evaluated in depth, plus
+listing-only discovery of the rest. Idle PRs from 2025 (#1–#51, #126, #129) are parked for an owner
+decision. #195 targets `feat/g7-native-curriculum-v1`, which is already merged into main, so it
+needs retargeting, and `build` never ran on it because CI triggers only for PRs into main. Outputs
+are in `artifacts/mergeops-demo-v1/`.
+
+## Post-merge rollout (automation stays disabled)
+
+| Stage | Change | Exit criteria | Authority |
+| --- | --- | --- | --- |
+| 0. Merge #192 | Observer workflow, safety workflow and Runtime Gate on PRs go live. Policy flags stay false. | Observer artifacts appear on the next PR event; no write calls in logs | founder merge |
+| 1. Read-only reporting (2+ weeks) | Run `cli.mjs report` before each merge session; compare recommendations with human decisions | No unsafe recommendation; false-block rate understood | operator |
+| 2. Branch protection | An admin configures main: required checks bound to App IDs (`build`, `runtime-gate`, `safety`, GitGuardian); strict; 2 approvals; CODEOWNERS; stale dismissal; last-push approval; no bypass; no force push or deletion | `report` with an administration-read token shows no `protection-unverified` or `policy-check-unprotected` | repository admin |
+| 3. Reviewer identities | Founder-reviewed policy PR sets `reviewers`. CODEOWNERS enforces founder review of policy | Two real reviewers approve exact heads in practice | founder |
+| 4. Observer App (optional) | Install read-only `MERGEOPS` App; host webhook behind authenticated TLS; ledger refs protected | Ledger branch appends verified; tokens revoked per run | founder + admin |
+| 5. Repair pilot | `autoRepair` only, for `textbook-fixture-v1`, after permission and safety review | Separate approval; previews suppressed; replacement PR reviewed normally | founder |
+| 6. Merge pilot | `autoMerge` for docs/tests-only low-risk PRs only, with a separate merger App and `vercel.json` `deploymentEnabled: false` reviewed | Separate written authorization; first merges observed live | founder |
+
+Stages 4–6 each need their own authorization and are not implied by merging this PR. Academic
+release, candidate content, student records, schema and deployment changes never enter the
+automated lane.
 
 ## Protocol sources
 
