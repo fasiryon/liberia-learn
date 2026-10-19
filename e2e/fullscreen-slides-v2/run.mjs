@@ -25,8 +25,11 @@ const sourceHtml = slides.map(slide => renderToStaticMarkup(createElement(Lesson
 const browser = await chromium.launch({ headless: true });
 const results = [], errors = [], scans = [], flows = [], writes = [];
 try {
-  for (const [width, height] of [[390,844], [768,900], [1440,720], [1440,900], [1920,720], [1920,900]]) {
-    if (quick && (width !== 1440 || height !== 720)) continue;
+  // "wide" widens every glyph (as DejaVu Sans and many device fonts are wider than Arial): status lines that wrap on
+  // some pages only must not repaginate the deck mid-navigation (CI regression on GitHub's Ubuntu runner fonts).
+  for (const [width, height, wide] of [[390,844], [390,844,"wide"], [768,900], [1440,720], [1440,900], [1920,720], [1920,900]]) {
+    if (quick && (width !== 1440 || height !== 720 || wide)) continue;
+    const size = `${width}-${height}${wide ? "-wide" : ""}`;
     const context = await browser.newContext({ viewport: { width, height }, screen: { width, height }, reducedMotion: "reduce" });
     await context.route("**/api/**", route => {
       const path = new URL(route.request().url()).pathname;
@@ -42,6 +45,7 @@ try {
     page.on("request", request => { if (request.method() === "POST") writes.push(new URL(request.url()).pathname); });
     await page.goto(`http://127.0.0.1:3201/student/lesson/${fixture.source.contentId}?grade=7`, { waitUntil: "domcontentloaded" });
     await page.locator("#lesson-title").waitFor();
+    if (wide) await page.addStyleTag({ content: "* { letter-spacing: 0.12em !important; }" });
     const readBefore = await page.locator("[data-read-section]").allTextContents();
     await page.getByRole("group", { name: "How to use this lesson" }).getByRole("button", { name: "Slides", exact: true }).click();
     await page.getByRole("button", { name: "View slides fullscreen" }).click();
@@ -56,8 +60,8 @@ try {
         nestedScrolls: [...root.querySelectorAll("*")].filter(el => /auto|scroll/.test(getComputedStyle(el).overflowY) && el.scrollHeight > el.clientHeight + 1).length,
         contentWidth: content.width, contentLeft: content.left, contentRight: content.right, controlsBottom: controls.bottom, viewport: { width: innerWidth, height: innerHeight } };
     });
-    results.push({ width, height, ...m });
-    await page.screenshot({ path: `${out}/hook-${width}-${height}.png` });
+    results.push({ width, height, wide, ...m });
+    await page.screenshot({ path: `${out}/hook-${size}.png` });
     if (!baseline) {
       assert(m.font >= (width >= 1024 ? 26 : 20), `presentation text too small: ${JSON.stringify(m)}`);
       assert(!m.rootScrolls && m.nestedScrolls === 0, `vertical scrolling: ${JSON.stringify(m)}`);
@@ -69,13 +73,15 @@ try {
       const captured = new Set();
       const total = Number(await page.locator("[data-presentation-total]").getAttribute("data-presentation-total"));
       assert(total > 17, "long source sections were not divided");
+      let chrome;
       for (let index = 0; index < total; index++) {
         const metrics = await root.evaluate(root => {
           const frame = root.querySelector(".ll5-slide-content"), r = frame.getBoundingClientRect();
           const units = [...frame.querySelectorAll(".ll5-fragment")];
           const title = root.querySelector("#presentation-title").getBoundingClientRect();
           const nav = root.querySelector(".ll5-slide-nav").getBoundingClientRect();
-          return { page: Number(root.querySelector("[data-presentation-page]").dataset.presentationPage), source: Number(root.dataset.slideIndex),
+          return { page: Number(root.querySelector("[data-presentation-page]").dataset.presentationPage), total: Number(root.querySelector("[data-presentation-total]").dataset.presentationTotal),
+            chrome: [root.querySelector(".ll5-slide-meta").getBoundingClientRect().height, nav.height, frame.parentElement.clientHeight].map(Math.round).join("/"), source: Number(root.dataset.slideIndex),
             text: frame.textContent.replace(/\s/g, ""), font: parseFloat(getComputedStyle(units[0]).fontSize),
             clipped: units.some(element => { const b = element.getBoundingClientRect(); return b.top < r.top - 1 || b.bottom > r.bottom + 1; }),
             overflow: root.scrollHeight > root.clientHeight + 1 || document.documentElement.scrollWidth > innerWidth,
@@ -84,6 +90,10 @@ try {
             whitespaceDifference: Math.abs(r.left - (innerWidth - r.right)), contentWidth: r.width, viewport: innerWidth };
         });
         assert.equal(metrics.page, index, "pagination skipped a page");
+        // Page capacity comes from the stage height, so the status/controls rows must keep one size for the whole deck.
+        assert.equal(metrics.total, total, `deck repaginated during navigation at ${size} page ${index}`);
+        chrome ??= metrics.chrome;
+        assert.equal(metrics.chrome, chrome, `slide chrome (meta/nav/stage px) changed size at ${size} page ${index}`);
         assert(!metrics.clipped && !metrics.overflow && metrics.nestedScrolls === 0 && metrics.titleFits && metrics.controlsFit, `clipped/scrolling content at ${width}x${height}: ${JSON.stringify(metrics)}`);
         assert(metrics.font >= (width >= 1024 ? 26 : 20), "text was scaled down");
         assert(metrics.whitespaceDifference <= 2, "unbalanced teaching area");
@@ -91,15 +101,16 @@ try {
         collected[metrics.source] += metrics.text;
         if ([1,2,3,4].includes(metrics.source) && !captured.has(metrics.source)) {
           captured.add(metrics.source);
-          await page.screenshot({ path: `${out}/section-${metrics.source}-${width}-${height}.png` });
+          await page.screenshot({ path: `${out}/section-${metrics.source}-${size}.png` });
         }
-        results.push({ width, height, ...metrics, text: undefined });
+        results.push({ width, height, wide, ...metrics, text: undefined });
         if (index < total - 1) {
           await root.getByRole("button", { name: "Next", exact: true }).click();
           await page.waitForFunction(next => Number(document.querySelector("[data-presentation-page]")?.getAttribute("data-presentation-page")) === next, index + 1).catch(async error => {
             const observed = await root.evaluate(root => ({ source: root.dataset.slideIndex, page: root.querySelector("[data-presentation-page]")?.getAttribute("data-presentation-page"), total: root.querySelector("[data-presentation-total]")?.getAttribute("data-presentation-total"), text: root.querySelector(".ll5-slide-content")?.textContent }));
-            await page.screenshot({ path: `${out}/navigation-failure-${width}-${height}.png` });
-            error.message += ` observed ${JSON.stringify(observed)}`; throw error;
+            await page.screenshot({ path: `${out}/navigation-failure-${size}.png` });
+            // A new error: Node prints the stack captured at construction, so appending to error.message is lost.
+            throw new Error(`${error.message} expected page ${index + 1} at ${size}; observed ${JSON.stringify(observed)}`, { cause: error });
           });
         }
       }
@@ -112,14 +123,14 @@ try {
       await page.waitForFunction(last => Number(document.querySelector("[data-presentation-page]")?.getAttribute("data-presentation-page")) === last, total - 2);
       await page.addScriptTag({ path: "node_modules/axe-core/axe.min.js" });
       const violations = await root.evaluate(async root => (await window.axe.run(root, { runOnly: { type: "tag", values: ["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"] } })).violations.map(v => ({ id: v.id, impact: v.impact })));
-      scans.push({ width, height, violations });
+      scans.push({ width, height, wide, violations });
       assert(!violations.some(v => ["serious", "critical"].includes(v.impact)), JSON.stringify(violations));
       await page.getByRole("button", { name: "Exit fullscreen slides" }).click();
       await page.waitForFunction(() => !document.fullscreenElement);
       await page.waitForFunction(() => document.activeElement?.getAttribute("aria-label") === "View slides fullscreen");
       await page.getByRole("group", { name: "How to use this lesson" }).getByRole("button", { name: "Read", exact: true }).click();
       assert.deepEqual(await page.locator("[data-read-section]").allTextContents(), readBefore, "Read mode changed");
-      if (width === 1440 && height === 720) {
+      if (width === 1440 && height === 720 && !wide) {
         await page.getByRole("group", { name: "How to use this lesson" }).getByRole("button", { name: "Slides", exact: true }).click();
         await page.evaluate(() => { const url = new URL(location.href); url.searchParams.delete("slide"); history.replaceState(history.state, "", url); });
         const entrySource = await root.getAttribute("data-slide-index");
@@ -137,9 +148,9 @@ try {
         await page.getByRole("button", { name: "Exit fullscreen slides" }).click();
         await page.waitForFunction(() => !document.fullscreenElement);
       }
-      flows.push({ width, height, pages: total, sourceSlides: 17, exactTextAndOrder: true, keyboardAndBack: true, readUnchanged: true, exitFocusReturned: true });
-      console.log(`${width}x${height}: ${total} fullscreen pages, exact text/order, no clipping/scrolling, controls, keyboard/Back, Read unchanged`);
-      if (width === 1440 && height === 720) {
+      flows.push({ width, height, wide, pages: total, sourceSlides: 17, exactTextAndOrder: true, keyboardAndBack: true, readUnchanged: true, exitFocusReturned: true });
+      console.log(`${width}x${height}${wide ? " (wide text)" : ""}: ${total} fullscreen pages, exact text/order, no clipping/scrolling, controls, keyboard/Back, Read unchanged`);
+      if (width === 1440 && height === 720 && !wide) {
         await page.goto(`http://127.0.0.1:3201/student/lessons/${legacy.LEGACY_WORK_ID}?grade=7`, { waitUntil: "domcontentloaded" });
         await page.getByRole("group", { name: "How to use this lesson" }).getByRole("button", { name: /^Slides$/i }).click();
         await page.getByRole("button", { name: "View slides fullscreen" }).click();

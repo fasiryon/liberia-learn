@@ -50,6 +50,14 @@ export function FullscreenPresentation({ slides, sourceIndex, onSourceChange, to
   const shownSlide = slides[shownSource];
   const sourcePages = pages.filter(page => page.sourceIndex === shownSource);
   const part = sourcePages.indexOf(page) + 1;
+  const isLast = current === pages.length - 1;
+  // The stage's height sets page capacity, so the chrome around it must not change size from page to page:
+  // a status line that wraps only for "Part 10 of 13" (or a wider last action) would repaginate the deck
+  // mid-navigation. Each chrome row reserves its widest form for the current deck. The reserve can only grow
+  // as pages are added, so it settles instead of oscillating.
+  const widest = (value: number) => String(value).replace(/\d/g, "8");
+  const maxParts = Math.max(1, ...slides.map((_, index) => pages.filter(page => page.sourceIndex === index).length));
+  const nextButton = <button type="button" className="ll3-btn" data-primary="" disabled={current >= pages.length - 1} onClick={() => move(current + 1)}>Next<ChevronRight size={20} aria-hidden="true" /></button>;
 
   useLayoutEffect(() => {
     if (!stage.current || !measureRoot.current) return;
@@ -108,7 +116,10 @@ export function FullscreenPresentation({ slides, sourceIndex, onSourceChange, to
   if (!shownSlide) return null;
   return <div className="ll5-presentation" data-presentation-page={current} data-presentation-total={pages.length}>
     <div className="ll5-slide-meta">
-      <p role="status" aria-live="polite">Slide {current + 1} of {pages.length || "…"}<span>Section {shownSource + 1} of {slides.length}{sourcePages.length > 1 ? ` · Part ${part} of ${sourcePages.length}` : ""}</span></p>
+      <div className="ll5-reserve">
+        <p role="status" aria-live="polite">Slide {current + 1} of {pages.length || "…"}<span>Section {shownSource + 1} of {slides.length}{sourcePages.length > 1 ? ` · Part ${part} of ${sourcePages.length}` : ""}</span></p>
+        <p aria-hidden="true">Slide {widest(pages.length || 1)} of {widest(pages.length || 1)}<span>Section {widest(slides.length)} of {widest(slides.length)}{maxParts > 1 ? ` · Part ${widest(maxParts)} of ${widest(maxParts)}` : ""}</span></p>
+      </div>
       <div className="ll5-slide-actions">{deckLabel && <span>{deckLabel}</span>}{topActions}</div>
     </div>
     <section ref={stage} className="ll5-slide-stage" data-layout={presentationLayout(shownSlide, shownSource)} aria-labelledby="presentation-title">
@@ -122,7 +133,10 @@ export function FullscreenPresentation({ slides, sourceIndex, onSourceChange, to
     <nav className="ll5-slide-nav" aria-label="Presentation controls">
       <button type="button" className="ll3-btn" disabled={current === 0} onClick={() => move(current - 1)}><ChevronLeft size={20} aria-hidden="true" />Previous</button>
       <span aria-hidden="true">{current + 1} / {pages.length || "…"}</span>
-      {current === pages.length - 1 && lastAction ? lastAction : <button type="button" className="ll3-btn" data-primary="" disabled={current >= pages.length - 1} onClick={() => move(current + 1)}>Next<ChevronRight size={20} aria-hidden="true" /></button>}
+      {lastAction ? <div className="ll5-reserve">
+        {isLast ? lastAction : nextButton}
+        <div aria-hidden="true">{isLast ? nextButton : lastAction}</div>
+      </div> : nextButton}
     </nav>
   </div>;
 }
