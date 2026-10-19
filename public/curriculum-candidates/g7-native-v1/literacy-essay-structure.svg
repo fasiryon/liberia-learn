@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 800" role="img" aria-labelledby="t d" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif">
+  <title id="t">The three parts of an argumentative essay</title>
+  <desc id="d">Introduction: hook, background, thesis statement (claim and reasons). Body paragraphs: each one argues one reason with a topic sentence, evidence and explanation; one paragraph answers the other side. Conclusion: restate the thesis in new words, sum up the reasons, final thought; no new reasons.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/></marker>
+  </defs>
+  <rect width="600" height="800" rx="24" fill="#ffffff"/>
+  <text x="300" y="48" text-anchor="middle" font-size="26" font-weight="700" fill="#1f2937">An argumentative essay</text>
+  <rect x="40" y="74" width="520" height="180" rx="18" fill="#e0f2fe" stroke="#0369a1" stroke-width="2"/>
+  <text x="64" y="112" font-size="25" font-weight="800" fill="#0369a1">1  Introduction</text>
+  <g font-size="21" fill="#1f2937"><text x="84" y="150">• Hook: catch the reader’s attention</text><text x="84" y="182">• Background: a little context</text></g>
+  <rect x="70" y="198" width="460" height="42" rx="10" fill="#ffffff" stroke="#0369a1" stroke-width="2"/>
+  <text x="300" y="226" text-anchor="middle" font-size="20" font-weight="700" fill="#0369a1">Thesis = claim + reasons (last sentence)</text>
+  <line x1="300" y1="256" x2="300" y2="284" stroke="#6b7280" stroke-width="3" marker-end="url(#arrow)"/>
+  <rect x="40" y="290" width="520" height="290" rx="18" fill="#ecfdf5" stroke="#0f766e" stroke-width="2"/>
+  <text x="64" y="328" font-size="25" font-weight="800" fill="#0f766e">2  Body paragraphs</text>
+  <g font-size="20" fill="#1f2937">
+    <rect x="64" y="344" width="472" height="58" rx="10" fill="#ffffff"/><text x="80" y="370" font-weight="700">Paragraph: reason 1</text><text x="80" y="393" font-size="18" fill="#4b5563">topic sentence → evidence → explain → link</text>
+    <rect x="64" y="410" width="472" height="58" rx="10" fill="#ffffff"/><text x="80" y="436" font-weight="700">Paragraph: reason 2</text><text x="80" y="459" font-size="18" fill="#4b5563">topic sentence → evidence → explain → link</text>
+    <rect x="64" y="476" width="472" height="86" rx="10" fill="#fef3c7" stroke="#b45309" stroke-width="2"/><text x="80" y="503" font-weight="700" fill="#78350f">Paragraph: the other side</text><text x="80" y="527" font-size="18" fill="#78350f">state an objection fairly,</text><text x="80" y="549" font-size="18" fill="#78350f">then answer it</text>
+  </g>
+  <line x1="300" y1="582" x2="300" y2="610" stroke="#6b7280" stroke-width="3" marker-end="url(#arrow)"/>
+  <rect x="40" y="616" width="520" height="160" rx="18" fill="#f5f3ff" stroke="#6d28d9" stroke-width="2"/>
+  <text x="64" y="654" font-size="25" font-weight="800" fill="#6d28d9">3  Conclusion</text>
+  <g font-size="21" fill="#1f2937"><text x="84" y="690">• Restate the thesis in new words</text><text x="84" y="720">• Sum up the reasons</text><text x="84" y="750">• Final thought or call to action</text></g>
+  <text x="536" y="654" text-anchor="end" font-size="18" font-weight="700" fill="#b91c1c">No new reasons</text>
+</svg>

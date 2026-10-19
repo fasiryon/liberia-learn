@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 760" role="img" aria-labelledby="t d" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif">
+  <title id="t">A PEEL body paragraph</title>
+  <desc id="d">Four boxes in order. Point: a school garden turns science and agriculture lessons into real work. Evidence: learners measure beds, test which soil holds water and record plant growth. Explain: they practise measuring, testing and recording, skills for science class and the family farm. Link: so a garden makes lessons more useful, one reason every school should have one.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/></marker>
+  </defs>
+  <rect width="600" height="760" rx="24" fill="#ffffff"/>
+  <text x="300" y="48" text-anchor="middle" font-size="26" font-weight="700" fill="#1f2937">PEEL: one reason, one paragraph</text>
+  <g>
+    <rect x="40" y="76" width="520" height="140" rx="18" fill="#e0f2fe" stroke="#0369a1" stroke-width="2"/>
+    <circle cx="88" cy="124" r="30" fill="#0369a1"/><text x="88" y="135" text-anchor="middle" font-size="30" font-weight="800" fill="#ffffff">P</text>
+    <text x="134" y="118" font-size="23" font-weight="800" fill="#0369a1">Point (topic sentence)</text>
+    <g font-size="21" fill="#1f2937"><text x="134" y="152">A school garden turns science and</text><text x="134" y="178">agriculture lessons into real work.</text></g>
+  </g>
+  <line x1="300" y1="218" x2="300" y2="242" stroke="#6b7280" stroke-width="3" marker-end="url(#arrow)"/>
+  <g>
+    <rect x="40" y="248" width="520" height="140" rx="18" fill="#ecfdf5" stroke="#0f766e" stroke-width="2"/>
+    <circle cx="88" cy="296" r="30" fill="#0f766e"/><text x="88" y="307" text-anchor="middle" font-size="30" font-weight="800" fill="#ffffff">E</text>
+    <text x="134" y="290" font-size="23" font-weight="800" fill="#0f766e">Evidence</text>
+    <g font-size="21" fill="#1f2937"><text x="134" y="322">Learners measure the beds, test which</text><text x="134" y="348">soil holds water and record how fast</text><text x="134" y="374">each plant grows.</text></g>
+  </g>
+  <line x1="300" y1="390" x2="300" y2="414" stroke="#6b7280" stroke-width="3" marker-end="url(#arrow)"/>
+  <g>
+    <rect x="40" y="420" width="520" height="140" rx="18" fill="#fef3c7" stroke="#b45309" stroke-width="2"/>
+    <circle cx="88" cy="468" r="30" fill="#b45309"/><text x="88" y="479" text-anchor="middle" font-size="30" font-weight="800" fill="#ffffff">E</text>
+    <text x="134" y="462" font-size="23" font-weight="800" fill="#b45309">Explain (so what?)</text>
+    <g font-size="21" fill="#1f2937"><text x="134" y="494">They practise measuring, testing and</text><text x="134" y="520">recording: skills for science class</text><text x="134" y="546">and the family farm.</text></g>
+  </g>
+  <line x1="300" y1="562" x2="300" y2="586" stroke="#6b7280" stroke-width="3" marker-end="url(#arrow)"/>
+  <g>
+    <rect x="40" y="592" width="520" height="140" rx="18" fill="#f5f3ff" stroke="#6d28d9" stroke-width="2"/>
+    <circle cx="88" cy="640" r="30" fill="#6d28d9"/><text x="88" y="651" text-anchor="middle" font-size="30" font-weight="800" fill="#ffffff">L</text>
+    <text x="134" y="634" font-size="23" font-weight="800" fill="#6d28d9">Link (back to the thesis)</text>
+    <g font-size="21" fill="#1f2937"><text x="134" y="666">So a garden makes lessons more useful,</text><text x="134" y="692">one reason every school should</text><text x="134" y="718">have one.</text></g>
+  </g>
+</svg>

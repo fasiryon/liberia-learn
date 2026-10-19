@@ -1,6 +1,8 @@
+// route-policy: auth=session; scope=tenant; authority=class-teacher-or-school-admin; rationale=own-school CSV export includes only teacher-verified official scores
 import { NextRequest, NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { legacyAssignmentScoreAuthority } from "@/lib/academic-records/v2/gradeCalculation";
 
 export const dynamic = "force-dynamic";
 
@@ -50,7 +52,7 @@ export async function GET(req: NextRequest) {
       assignmentIds.length > 0 && studentIds.length > 0
         ? await prisma.assignmentSubmission.findMany({
             where: { assignmentId: { in: assignmentIds }, studentId: { in: studentIds } },
-            select: { studentId: true, assignmentId: true, score: true, gradedAt: true },
+            select: { studentId: true, assignmentId: true, score: true, gradedAt: true, gradedBy: true, teacherApproved: true, autoReleasedAt: true, aiGrade: true },
           })
         : [];
 
@@ -67,7 +69,7 @@ export async function GET(req: NextRequest) {
     const rows = enrollments.map((e) => {
       const scores = assignments.map((a) => {
         const s = submissionMap.get(`${e.Student.id}:${a.id}`);
-        return s?.score ?? null;
+        return s && legacyAssignmentScoreAuthority(s) === "TEACHER" ? s.score : null;
       });
       const graded = scores.filter((s) => s !== null) as number[];
       const avg =

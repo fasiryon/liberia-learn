@@ -1,0 +1,86 @@
+{
+  "screenshots": [
+    "reader-390.png",
+    "reader-768.png",
+    "reader-1440.png",
+    "reader-1920.png",
+    "hub-before-fixture-390.png",
+    "hub-after-fixture-390.png",
+    "hub-before-fixture-768.png",
+    "hub-after-fixture-768.png",
+    "hub-before-fixture-1440.png",
+    "hub-after-fixture-1440.png",
+    "hub-before-fixture-1920.png",
+    "hub-after-fixture-1920.png"
+  ],
+  "checks": [
+    {
+      "width": 390,
+      "navigation": "pass",
+      "keyboard": "pass",
+      "controls": "pass",
+      "persistence": "pass",
+      "reducedMotion": "pass",
+      "loadedTextOffline": "pass",
+      "offlineReopening": "not supported; not claimed"
+    },
+    {
+      "width": 768,
+      "navigation": "pass",
+      "keyboard": "pass",
+      "controls": "pass",
+      "persistence": "pass",
+      "reducedMotion": "pass",
+      "loadedTextOffline": "pass",
+      "offlineReopening": "not supported; not claimed"
+    },
+    {
+      "width": 1440,
+      "navigation": "pass",
+      "keyboard": "pass",
+      "controls": "pass",
+      "persistence": "pass",
+      "reducedMotion": "pass",
+      "loadedTextOffline": "pass",
+      "offlineReopening": "not supported; not claimed"
+    },
+    {
+      "width": 1920,
+      "navigation": "pass",
+      "keyboard": "pass",
+      "controls": "pass",
+      "persistence": "pass",
+      "reducedMotion": "pass",
+      "loadedTextOffline": "pass",
+      "offlineReopening": "not supported; not claimed"
+    },
+    {
+      "unauthenticatedPortals": "redirected to login"
+    },
+    {
+      "emptyReading": "pass",
+      "missingAssetTextFallback": "pass",
+      "narrowContainer": "pass",
+      "browserSpeechLifecycle": "pass with synthetic speech adapter; real voice playback not certified"
+    }
+  ],
+  "accessibility": [
+    {
+      "width": 390,
+      "violations": []
+    },
+    {
+      "width": 768,
+      "violations": []
+    },
+    {
+      "width": 1440,
+      "violations": []
+    },
+    {
+      "width": 1920,
+      "violations": []
+    }
+  ],
+  "errors": []
+}

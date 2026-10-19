@@ -39,8 +39,25 @@ export function reviewPackageMarkdown(input: { lesson: CurriculumLessonV2; statu
     const evidence = scene.evidence.kind === "NONE" ? "—" : `${scene.evidence.kind} (${scene.evidence.evidenceType}): ${scene.evidence.responses.map((response) => `${response.responseKey}→${response.objectiveId.split("-").slice(-1)[0]}`).join(", ")}`;
     out.push(`| ${index + 1} | ${cell(scene.title)} | ${scene.type} / ${scene.purpose} | ${scene.objectiveIds.map((id) => id.split("-").slice(-1)[0]).join(", ") || "—"} | ${scene.interaction.kind}${scene.fallback ? ` (fallback: ${scene.fallback.kind})` : ""} | ${words(scene.content.body)} | ${scene.tools.requested.join(", ") || "—"}${scene.tools.prohibited.length ? `; prohibits ${scene.tools.prohibited.join(", ")}` : ""} | ${cell(evidence)} | ${scene.offline.mode} |`);
   });
-  out.push("", "## Scenes in full", "");
-  for (const scene of lesson.scenes) {
+  out.push("", "## Scenes in full", "", ...sceneDetailLines(lesson.scenes));
+  out.push("## Misconceptions", "");
+  out.push(...(lesson.misconceptions.length ? lesson.misconceptions.map((m) => `- \`${m.id}\` (${m.objectiveId.split("-").slice(-1)[0]}): ${m.description} → ${m.response}`) : ["- none declared"]));
+  out.push("", "## Lab candidate links", "");
+  out.push(...(lesson.labLinks.length ? lesson.labLinks.map((entry) => `- \`${entry.link.experience.labId}@${entry.link.experience.labVersion}\` for \`${entry.link.objectiveIds.join(", ")}\` at scene \`${entry.link.placement.sceneId}\` — status ${entry.link.status}; student eligible: ${entry.eligibility.studentEligible} (${entry.eligibility.reasons.join(", ")}); checks: ${entry.link.evidenceMapping.map((mapping) => mapping.labCheckId).join(", ") || "none"}. ${entry.rationale}`) : ["- none"]));
+  out.push("", "## Assessment handoffs (Assessment Player V2)", "");
+  out.push(...lesson.assessmentHandoffs.map((handoff) => `- \`${handoff.requestId}\`: ${handoff.interaction}, ${handoff.evidenceType}, ${handoff.difficulty}; scoring ${handoff.scoring}; governed items: ${handoff.governedItems.map((item) => `${item.itemId}@${item.itemVersion}`).join(", ") || "none yet"}; tools allowed ${handoff.tools.allowed.join(", ") || "none"}, prohibited ${handoff.tools.prohibited.join(", ") || "none"}; offline ${handoff.offline}`));
+  out.push("", "## Runtime deliverability", "", `| Scene | ${RUNTIME_SCENARIOS.join(" | ")} |`, `| --- | ${RUNTIME_SCENARIOS.map(() => "---").join(" | ")} |`);
+  for (const report of input.deliverability) out.push(`| ${report.sceneId} | ${RUNTIME_SCENARIOS.map((scenario) => report.byScenario[scenario]).join(" | ")} |`);
+  out.push("", "## Review gaps", "");
+  out.push(...(lesson.reviewGaps.length ? lesson.reviewGaps.map((gap) => `- **${gap.severity}** ${gap.code}${gap.sceneId ? ` (\`${gap.sceneId}\`)` : ""}: ${gap.detail}`) : ["- none"]));
+  out.push("", "## Reviewer decision", "", "Record APPROVE / REVISE / REJECT through the governed curriculum review for this exact artifact hash. Approval requires HUMAN_REVIEW by a qualified reviewer; automated, policy and AI review cannot approve native Curriculum V2.", "");
+  return out.join("\n");
+}
+
+/** One reviewer section per scene: learner action, body, interaction (with formative expectations), fallback, a11y, offline. */
+export function sceneDetailLines(scenes: CurriculumLessonV2["scenes"]): string[] {
+  const out: string[] = [];
+  for (const scene of scenes) {
     out.push(`### ${scene.title} (\`${scene.id}\`)`, "", `Learner action: ${scene.learnerAction}`, "", scene.content.body, "");
     if (scene.content.keyPoints?.length) out.push(...scene.content.keyPoints.map((point) => `- ${point}`), "");
     const interaction = scene.interaction;
@@ -55,16 +72,5 @@ export function reviewPackageMarkdown(input: { lesson: CurriculumLessonV2; statu
     out.push(`- Accessibility: ${scene.accessibility.textAlternative} · keyboard: ${scene.accessibility.keyboardPath}${scene.accessibility.nonPointerAlternative ? ` · non-pointer: ${scene.accessibility.nonPointerAlternative}` : ""}`);
     out.push(`- Offline (${scene.offline.mode}): ${scene.offline.note}`, "");
   }
-  out.push("## Misconceptions", "");
-  out.push(...(lesson.misconceptions.length ? lesson.misconceptions.map((m) => `- \`${m.id}\` (${m.objectiveId.split("-").slice(-1)[0]}): ${m.description} → ${m.response}`) : ["- none declared"]));
-  out.push("", "## Lab candidate links", "");
-  out.push(...(lesson.labLinks.length ? lesson.labLinks.map((entry) => `- \`${entry.link.experience.labId}@${entry.link.experience.labVersion}\` for \`${entry.link.objectiveIds.join(", ")}\` at scene \`${entry.link.placement.sceneId}\` — status ${entry.link.status}; student eligible: ${entry.eligibility.studentEligible} (${entry.eligibility.reasons.join(", ")}); checks: ${entry.link.evidenceMapping.map((mapping) => mapping.labCheckId).join(", ") || "none"}. ${entry.rationale}`) : ["- none"]));
-  out.push("", "## Assessment handoffs (Assessment Player V2)", "");
-  out.push(...lesson.assessmentHandoffs.map((handoff) => `- \`${handoff.requestId}\`: ${handoff.interaction}, ${handoff.evidenceType}, ${handoff.difficulty}; scoring ${handoff.scoring}; governed items: ${handoff.governedItems.map((item) => `${item.itemId}@${item.itemVersion}`).join(", ") || "none yet"}; tools allowed ${handoff.tools.allowed.join(", ") || "none"}, prohibited ${handoff.tools.prohibited.join(", ") || "none"}; offline ${handoff.offline}`));
-  out.push("", "## Runtime deliverability", "", `| Scene | ${RUNTIME_SCENARIOS.join(" | ")} |`, `| --- | ${RUNTIME_SCENARIOS.map(() => "---").join(" | ")} |`);
-  for (const report of input.deliverability) out.push(`| ${report.sceneId} | ${RUNTIME_SCENARIOS.map((scenario) => report.byScenario[scenario]).join(" | ")} |`);
-  out.push("", "## Review gaps", "");
-  out.push(...(lesson.reviewGaps.length ? lesson.reviewGaps.map((gap) => `- **${gap.severity}** ${gap.code}${gap.sceneId ? ` (\`${gap.sceneId}\`)` : ""}: ${gap.detail}`) : ["- none"]));
-  out.push("", "## Reviewer decision", "", "Record APPROVE / REVISE / REJECT through the governed curriculum review for this exact artifact hash. Approval requires HUMAN_REVIEW by a qualified reviewer; automated, policy and AI review cannot approve native Curriculum V2.", "");
-  return out.join("\n");
+  return out;
 }

@@ -1,0 +1,65 @@
+{
+  "results": [
+    {
+      "path": "/student/today",
+      "status": 307,
+      "location": "http://localhost:3198/login?next=%2Fstudent%2Ftoday"
+    },
+    {
+      "path": "/student/learn",
+      "status": 307,
+      "location": "http://localhost:3198/login?next=%2Fstudent%2Flearn"
+    },
+    {
+      "path": "/student/lesson/fixture-g7-place-value-legacy",
+      "status": 307,
+      "location": "http://localhost:3198/login?next=%2Fstudent%2Flesson%2Ffixture-g7-place-value-legacy"
+    },
+    {
+      "path": "/student/lessons/fixture-g7-work",
+      "status": 307,
+      "location": "http://localhost:3198/login?next=%2Fstudent%2Flessons%2Ffixture-g7-work"
+    },
+    {
+      "path": "/student/ai-tutor",
+      "status": 307,
+      "location": "http://localhost:3198/login?next=%2Fstudent%2Fai-tutor"
+    },
+    {
+      "path": "/student/labs",
+      "status": 307,
+      "location": "http://localhost:3198/login?next=%2Fstudent%2Flabs"
+    },
+    {
+      "path": "/student/progress",
+      "status": 307,
+      "location": "http://localhost:3198/login?next=%2Fstudent%2Fprogress"
+    },
+    {
+      "path": "/student/textbooks",
+      "status": 307,
+      "location": "http://localhost:3198/login?next=%2Fstudent%2Ftextbooks"
+    },
+    {
+      "path": "/student/textbooks/fixture-halves",
+      "status": 307,
+      "location": "http://localhost:3198/login?next=%2Fstudent%2Ftextbooks%2Ffixture-halves"
+    },
+    {
+      "path": "/design-preview/lessons",
+      "status": 307,
+      "location": "http://localhost:3198/login?next=%2Fdesign-preview%2Flessons"
+    },
+    {
+      "path": "/design-preview/grade-7-place-value",
+      "status": 307,
+      "location": "http://localhost:3198/login?next=%2Fdesign-preview%2Fgrade-7-place-value"
+    },
+    {
+      "path": "/pilot-preview/textbooks",
+      "status": 404,
+      "location": null
+    }
+  ],
+  "caveat": "Anonymous local standalone build. Protected-route content and authenticated school data are not exercised."
+}

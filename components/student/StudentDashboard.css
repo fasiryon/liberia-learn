@@ -1,0 +1,27 @@
+/* Shared dashboard positioning only. Focused lesson/lab players use .pdv2-focused and are excluded. */
+.pdv2-shell > .pdv2-body { --student-dashboard-max: 1440px; --student-dashboard-gutter: 16px; }
+.pdv2-shell .pdv2-body :is(.pdv2-today,.ll3-page,.pdv2-secondary,.pdv2-dashboard-page) {
+  width: 100%; max-width: var(--student-dashboard-max); margin-inline: auto;
+  padding-inline: var(--student-dashboard-gutter);
+}
+.pdv2-dashboard-page { padding-block: 24px 32px; }
+.pdv2-labs-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(min(100%,280px),1fr)); gap: 20px; }
+.student-tutor-page-header { display: grid; gap: 12px; margin-bottom: 24px; }
+.student-tutor-page-header h1 { font-size: clamp(26px,2.6vw,36px); line-height: 1.2; font-weight: 700; }
+.student-tutor-page-header p { max-width: 70ch; color: var(--ll-text-muted); }
+.student-tutor-host { min-width: 0; }
+.student-tutor-workspace { position: static; width: 100%; min-width: 0; }
+.student-tutor-workspace > section { width: 100%; height: min(800px,max(560px,calc(100dvh - 200px))); min-width: 0; }
+.student-tutor-workspace :where(button,input,select,textarea) { min-height: 48px; }
+.student-tutor-workspace textarea { font-size: 16px; }
+.student-tutor-workspace [data-assistant-header] { background: var(--ll-surface-muted); }
+.student-tutor-workspace [data-assistant-composer] { background: var(--ll-surface); }
+.student-tutor-workspace [data-assistant-messages] { background: var(--ll-bg); }
+.student-tutor-workspace [data-assistant-messages]:focus-visible { outline: 3px solid var(--ll-accent); outline-offset: -3px; }
+.pdv2-shell .student-tutor-workspace { scroll-margin-top: 24px; }
+@media (min-width:768px) {
+  .pdv2-shell > .pdv2-body { --student-dashboard-gutter: 24px; }
+}
+@media (min-width:1280px) {
+  .pdv2-shell > .pdv2-body { --student-dashboard-gutter: 32px; }
+}

@@ -1,0 +1,90 @@
+{
+  "buildId": "hxd5v75Nd5Jp4rQt3LcVi",
+  "exactBuildManifestVerified": true,
+  "scope": "Local production-mode build: anonymous boundaries plus a synthetic locally signed middleware token for static assets and preview guards. No registered student session or school database exercised.",
+  "smoke": [
+    {
+      "path": "/student/today",
+      "status": 307,
+      "location": "http://localhost:3218/login?next=%2Fstudent%2Ftoday"
+    },
+    {
+      "path": "/student/learn",
+      "status": 307,
+      "location": "http://localhost:3218/login?next=%2Fstudent%2Flearn"
+    },
+    {
+      "path": "/student/ai-tutor",
+      "status": 307,
+      "location": "http://localhost:3218/login?next=%2Fstudent%2Fai-tutor"
+    },
+    {
+      "path": "/student/textbooks",
+      "status": 307,
+      "location": "http://localhost:3218/login?next=%2Fstudent%2Ftextbooks"
+    },
+    {
+      "path": "/student/textbooks/test",
+      "status": 307,
+      "location": "http://localhost:3218/login?next=%2Fstudent%2Ftextbooks%2Ftest"
+    },
+    {
+      "path": "/student/lesson/test",
+      "status": 307,
+      "location": "http://localhost:3218/login?next=%2Fstudent%2Flesson%2Ftest"
+    },
+    {
+      "path": "/student/lessons/test",
+      "status": 307,
+      "location": "http://localhost:3218/login?next=%2Fstudent%2Flessons%2Ftest"
+    },
+    {
+      "path": "/student/progress",
+      "status": 307,
+      "location": "http://localhost:3218/login?next=%2Fstudent%2Fprogress"
+    },
+    {
+      "path": "/student/labs",
+      "status": 307,
+      "location": "http://localhost:3218/login?next=%2Fstudent%2Flabs"
+    },
+    {
+      "path": "/lab-review/experience/cv2-cand-g7-math-number-sense-place-value",
+      "status": 307,
+      "location": "http://localhost:3218/login?next=%2Flab-review%2Fexperience%2Fcv2-cand-g7-math-number-sense-place-value"
+    },
+    {
+      "path": "/lab-review/experience/cv2-cand-g7-literacy-essay-structure-argument",
+      "status": 307,
+      "location": "http://localhost:3218/login?next=%2Flab-review%2Fexperience%2Fcv2-cand-g7-literacy-essay-structure-argument"
+    },
+    {
+      "path": "/design-preview/lessons",
+      "status": 307,
+      "location": "http://localhost:3218/login?next=%2Fdesign-preview%2Flessons"
+    },
+    {
+      "path": "/curriculum-candidates/g7-native-v1/math-place-value-chart.svg",
+      "status": 307,
+      "location": "http://localhost:3218/login?next=%2Fcurriculum-candidates%2Fg7-native-v1%2Fmath-place-value-chart.svg"
+    },
+    {
+      "path": "/curriculum-candidates/g7-native-v1/math-place-value-chart.svg",
+      "status": 404,
+      "syntheticLocalMiddlewareToken": true,
+      "contentType": "text/html; charset=utf-8"
+    },
+    {
+      "path": "/lab-review/experience/cv2-cand-g7-math-number-sense-place-value",
+      "status": 404,
+      "syntheticLocalMiddlewareToken": true,
+      "contentType": "text/html; charset=utf-8"
+    },
+    {
+      "path": "/design-preview/lessons",
+      "status": 404,
+      "syntheticLocalMiddlewareToken": true,
+      "contentType": "text/html; charset=utf-8"
+    }
+  ]
+}

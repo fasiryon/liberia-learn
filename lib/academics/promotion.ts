@@ -17,6 +17,26 @@ export type PromotionResult = {
 };
 
 /**
+ * The target year must be a different, later academic year of the SAME school. Without this check a
+ * caller could enroll students into another school's year or back into an earlier one.
+ */
+async function assertTargetYear(schoolId: string, sourceAcademicYearId: string, targetAcademicYearId: string) {
+  if (sourceAcademicYearId === targetAcademicYearId) {
+    throw Object.assign(new Error("Target academic year must differ from the source year"), { status: 400 });
+  }
+  const [source, target] = await Promise.all([
+    prisma.academicYear.findFirst({ where: { id: sourceAcademicYearId, schoolId }, select: { endDate: true } }),
+    prisma.academicYear.findFirst({ where: { id: targetAcademicYearId, schoolId }, select: { startDate: true } }),
+  ]);
+  if (!source || !target) {
+    throw Object.assign(new Error("Academic year not found in this school"), { status: 404 });
+  }
+  if (target.startDate.getTime() <= source.endDate.getTime()) {
+    throw Object.assign(new Error("Target academic year must start after the source year ends"), { status: 400 });
+  }
+}
+
+/**
  * Returns all students with ACTIVE enrollment in the given academic year.
  * Does NOT write to the database.
  */
@@ -58,6 +78,7 @@ export async function promoteStudents(
   actingUserId: string
 ): Promise<PromotionResult> {
   const result: PromotionResult = { promoted: [], skipped: [], errors: [] };
+  await assertTargetYear(schoolId, sourceAcademicYearId, targetAcademicYearId);
 
   for (const studentId of studentIds) {
     try {
@@ -150,8 +171,8 @@ export async function promoteStudents(
 
 /**
  * Retains students at the same grade level into targetAcademicYearId.
- * Old enrollment is marked COMPLETED; new enrollment at same grade is created.
- * student.currentGrade is unchanged.
+ * Old enrollment is marked RETAINED (not COMPLETED) so repeated-grade history stays visible;
+ * a new enrollment at the same grade is created. student.currentGrade is unchanged.
  */
 export async function retainStudents(
   schoolId: string,
@@ -161,6 +182,7 @@ export async function retainStudents(
   actingUserId: string
 ): Promise<PromotionResult> {
   const result: PromotionResult = { promoted: [], skipped: [], errors: [] };
+  await assertTargetYear(schoolId, sourceAcademicYearId, targetAcademicYearId);
 
   for (const studentId of studentIds) {
     try {
@@ -193,7 +215,7 @@ export async function retainStudents(
       await prisma.$transaction(async (tx) => {
         await tx.academicEnrollment.update({
           where: { id: currentEnrollment.id },
-          data: { status: "COMPLETED" },
+          data: { status: "RETAINED" },
         });
 
         await tx.academicEnrollment.create({

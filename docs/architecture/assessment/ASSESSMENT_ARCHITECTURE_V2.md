@@ -275,3 +275,43 @@ Open decisions for owners:
 - review quorum per purpose (default 1, or 2 for summative and examination);
 - retention intervals per grade and subject;
 - the admission policy per grade and subject.
+
+---
+
+## 13. LL-AEP-001 review and repair (PR #193)
+
+LiberiaLearn is the primary academic authority. MOE and WAEC requirements are compatibility and
+examination-coverage inputs, not the limit of difficulty. `lib/academic-policy/llAep001.ts` is
+byte-identical in PR #194.
+
+| Severity | Defect | Repair |
+| --- | --- | --- |
+| P0 | The legacy exam client submitted every blank as option 0 (`answer < 0 ? 0 : answer`), so a timed auto-submit could earn credit for unanswered questions. | Blanks are sent as `-1` and scored BLANK. |
+| P1 | `gradeAttempt` ignored approved `points` (score was correct answers / number of questions). | Score is earned points / total approved points. |
+| P1 | Answers were matched to questions by array position only, and out-of-range indexes counted as wrong. | The client echoes `questionIds` and the server returns 409 if the order differs. Invalid indexes are refused (400), distinct from blanks. |
+| P1 | High-stakes second marking was recorded but never enforced. | `recordSecondMark` requires an independent marker and agreement within tolerance (10% of the item maximum); otherwise `reconcileMarks` requires an independent EXAMINER. SUMMATIVE and EXAMINATION purposes always require second marking. `verifyObservation` refuses SINGLE-marked high-stakes scores and forged "not required" flags. |
+| P1 | There was no independent-assessment rule for the AI Tutor or hints. | `tutorAccessFor` returns BLOCKED for OFFICIAL deliveries and independent purposes. Projections offer no hints, and explanations are deferred until the attempt closes. Tutor or hint use is recorded in `integrityFlags`, and those responses are kept out of the gradebook. |
+| P1 | Blank and invalid responses were conflated, and attempts had no total. | There is an explicit `BLANK` outcome: 0 points, server-keyed, verifiable. `scoreAttemptForm` uses the form's approved points; after submission an unanswered item counts as 0, and any invalid response blocks the total. |
+| P2 | The evidence gateway accepted responses after submission and capture times in the future. | Responses arriving after submission are refused unless they were captured before it (the offline queue). Capture times more than 5 minutes ahead of server receipt are refused. |
+| P2 | Assessment difficulty was not designed by grade. | `excellence.ts` sets a blueprint of 20/35/30/15 for Grades 4–12, with a separate Grades 1–3 variant. It is enforced at release for SUMMATIVE and EXAMINATION forms; a deviation needs an exception documented by a non-author. Analysis and transfer items are mandatory for Grades 4–12 summative forms. |
+| P2 | Authentic-work rubrics were unconstrained. | EXTENDED_WRITING and PERFORMANCE_TASK rubrics must cover REASONING, EVIDENCE, ACCURACY, ORIGINALITY, COMMUNICATION and REFLECTION before release. |
+| P2 | Retention intervals existed only as a proposal. | `LL_RETENTION_PILOT_POLICY` is an APPROVED 7/21-day institutional default with documented exceptions. It only plans opportunities, and a scheduled check is never evidence. |
+
+Nothing here activates official delivery, releases content, writes mastery or migrates data.
+
+## 14. Final merge-readiness review (2026-10-16)
+
+An independent review of head `f5ec9709` found the following. Regression tests are in
+`__tests__/assessment-v2/review-repairs.test.ts`.
+
+| Severity | Defect | Repair |
+| --- | --- | --- |
+| P1 | `recordModeratedScore` returned `SCORED` for the first mark on SUMMATIVE or EXAMINATION work. `scoreAttemptForm` therefore finalized a high-stakes form total from one marker, even though `verifyObservation` refused the same score. | A first mark that needs second marking stays `PENDING_HUMAN_MODERATION` (reason `awaiting_second_mark`). Only an agreed second mark or an examiner reconciliation produces `SCORED`. |
+| P2 | `recordSecondMark` and `reconcileMarks` accepted any moderation policy, so a caller could pass a lenient tolerance for the second mark. | Both require the first mark's policy id and version (`assessment_moderation_policy_mismatch`). |
+| P2 | `summarizeObjectiveEvidence` ignored MASTERY_ADMITTED envelopes, so an objective with only admitted evidence was reported as `ONLY_UNVERIFIED`. | Admitted evidence counts as verified. Each response is counted once, and revocation standing applies. |
+| P2 | After submission the gateway still accepted ONLINE responses backdated by the client clock. | After submission only OFFLINE captures made before the submission are accepted. |
+| P2 (pre-existing) | The legacy exam submit checked `submittedAt` and then wrote unconditionally. Two concurrent submits could both be graded, and both could issue a certificate. | The write is a conditional claim (`updateMany` where `submittedAt` is null). A lost race returns 409 and writes nothing. |
+
+Advisory: an evidence hash is an integrity checksum, not an authentication code. The future
+persistence layer must be the only writer of VERIFIED and ADMITTED envelopes. `resolveDelivery`
+compares ISO strings, so callers must pass canonical UTC timestamps.

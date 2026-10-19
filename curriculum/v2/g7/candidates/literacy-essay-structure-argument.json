@@ -1,0 +1,1673 @@
+{
+  "contractVersion": "candidate-lesson-v2/1.0.0",
+  "title": "Understanding Essay Writing: Structure and Argument",
+  "estimatedMinutes": 70,
+  "ageBand": "JUNIOR_SECONDARY",
+  "pedagogy": {
+    "primaryStrategy": "WORKED_EXAMPLE_FADING",
+    "rationale": "Learners see a complete model essay plan and a model PEEL paragraph, take each part apart, practise choosing and ordering parts with feedback, and only then write their own thesis and paragraph. Writing builds on the MOE Grade 7 paragraph-writing work (topic sentences, kinds of paragraphs). Model evidence comes from a named practice school (Musu's school) and is labelled as made up; learners then plan before writing, write a conclusion and review a partner's paragraph against the PEEL questions."
+  },
+  "prerequisiteAssumptions": [
+    "Can write a paragraph with a topic sentence and supporting sentences (MOE Grade 7 paragraph writing).",
+    "Can tell a fact from an opinion in simple sentences.",
+    "Has discussed both sides of a school or community question in class."
+  ],
+  "misconceptions": [
+    {
+      "id": "mc-topic-not-thesis",
+      "objectiveId": "ll-g7-lit-argument-build",
+      "description": "Writes a topic or an announcement ('This essay is about gardens') instead of an arguable claim.",
+      "response": "Ask: could a sensible person disagree with this sentence? If not, it is a topic or a fact, not a thesis."
+    },
+    {
+      "id": "mc-opinion-as-evidence",
+      "objectiveId": "ll-g7-lit-evidence-support",
+      "description": "Uses an opinion or a feeling ('everyone loves gardens') as if it were evidence.",
+      "response": "Evidence must be something the reader can check or picture: an example, a fact with a source, or a real experience."
+    },
+    {
+      "id": "mc-circular-reasoning",
+      "objectiveId": "ll-g7-lit-argument-build",
+      "description": "Repeats the claim as its own reason ('gardens are good because they are good').",
+      "response": "A reason answers 'why?' with new information. Say what the garden does, not just that it is good."
+    },
+    {
+      "id": "mc-irrelevant-evidence",
+      "objectiveId": "ll-g7-lit-evidence-support",
+      "description": "Gives true but unrelated evidence that does not support the reason in that paragraph.",
+      "response": "Read the reason and the evidence together: does the evidence prove this reason, or something else?"
+    },
+    {
+      "id": "mc-ignore-counterargument",
+      "objectiveId": "ll-g7-lit-argument-build",
+      "description": "Thinks mentioning the other side weakens an essay, so never answers objections.",
+      "response": "Answering the strongest objection shows the reader you have thought it through, and makes your claim harder to reject."
+    },
+    {
+      "id": "mc-conclusion-new-idea",
+      "objectiveId": "ll-g7-lit-essay-structure",
+      "description": "Adds a brand-new reason in the conclusion.",
+      "response": "The conclusion restates the thesis in new words and sums up the reasons already argued; new reasons belong in a body paragraph."
+    },
+    {
+      "id": "mc-explain-restates-evidence",
+      "objectiveId": "ll-g7-lit-evidence-support",
+      "description": "Thinks the Explain step means repeating the evidence, so never says how the evidence proves the point.",
+      "response": "Ask 'so what?' after the evidence and answer it with a sentence that starts 'This shows that…'."
+    }
+  ],
+  "scenes": [
+    {
+      "id": "intro",
+      "type": "INTRO",
+      "title": "Why write an argument?",
+      "purpose": "HOOK_PHENOMENON",
+      "objectiveIds": [
+        "ll-g7-lit-essay-structure",
+        "ll-g7-lit-argument-build"
+      ],
+      "learnerAction": "Read the situation and think about how you would convince the meeting.",
+      "content": {
+        "body": "At a PTA meeting, parents and teachers disagree: should the school use its empty land for a **school garden**? Some people speak well, but a week later nobody remembers exactly what they said.\n\nA written argument lasts. An **argumentative essay** puts your claim, your reasons and your evidence in an order a reader can follow, so they can judge your argument and maybe agree with you. Today you will learn that order and use it."
+      },
+      "interaction": {
+        "kind": "NONE"
+      },
+      "tools": {
+        "requested": [],
+        "prohibited": []
+      },
+      "hints": [],
+      "misconceptionIds": [],
+      "evidence": {
+        "kind": "NONE"
+      },
+      "accessibility": {
+        "textAlternative": "Introduction: a PTA meeting disagrees about a school garden. A written argumentative essay organizes a claim, reasons and evidence so a reader can follow and judge it.",
+        "keyboardPath": "Tab to each control, press Enter or Space to choose, then use Continue.",
+        "reducedMotion": "NOT_APPLICABLE"
+      },
+      "offline": {
+        "mode": "FULL_OFFLINE",
+        "note": "Text, steps and questions are part of the saved lesson."
+      },
+      "completion": "VIEWED",
+      "pedagogy": {
+        "strategy": "INQUIRY",
+        "representation": "VERBAL",
+        "scaffoldLevel": "FULL"
+      }
+    },
+    {
+      "id": "objectives",
+      "type": "OBJECTIVE",
+      "title": "What you will be able to do",
+      "purpose": "STATE_OBJECTIVE",
+      "objectiveIds": [
+        "ll-g7-lit-essay-structure",
+        "ll-g7-lit-argument-build",
+        "ll-g7-lit-evidence-support"
+      ],
+      "learnerAction": "Read the three goals and the success check.",
+      "content": {
+        "body": "By the end of this lesson you will be able to:",
+        "keyPoints": [
+          "Name the parts of an argumentative essay and say what each part does.",
+          "Write a clear thesis statement and answer the other side of the argument.",
+          "Choose evidence that really supports a reason, and explain it in a PEEL paragraph.",
+          "Success check: you can write a thesis and one PEEL body paragraph on a topic you choose."
+        ]
+      },
+      "interaction": {
+        "kind": "NONE"
+      },
+      "tools": {
+        "requested": [],
+        "prohibited": []
+      },
+      "hints": [],
+      "misconceptionIds": [],
+      "evidence": {
+        "kind": "NONE"
+      },
+      "accessibility": {
+        "textAlternative": "Lesson goals: name the parts of an essay, write a thesis and answer the other side, and support a reason with explained evidence.",
+        "keyboardPath": "Tab to each control, press Enter or Space to choose, then use Continue.",
+        "reducedMotion": "NOT_APPLICABLE"
+      },
+      "offline": {
+        "mode": "FULL_OFFLINE",
+        "note": "Text, steps and questions are part of the saved lesson."
+      },
+      "completion": "VIEWED"
+    },
+    {
+      "id": "warm-up",
+      "type": "CHECK_UNDERSTANDING",
+      "title": "Warm-up: paragraphs and facts",
+      "purpose": "ACTIVATE_PRIOR_KNOWLEDGE",
+      "objectiveIds": [
+        "ll-g7-lit-essay-structure",
+        "ll-g7-lit-evidence-support"
+      ],
+      "learnerAction": "Answer two questions from your paragraph-writing lessons and read the feedback.",
+      "content": {
+        "body": "Essays are built from paragraphs. Check what you remember. These answers are not marked."
+      },
+      "interaction": {
+        "kind": "SINGLE_CHOICE",
+        "items": [
+          {
+            "id": "warm-topic-sentence",
+            "prompt": "What does a topic sentence do?",
+            "options": [
+              {
+                "id": "a",
+                "text": "It tells the main idea of the paragraph",
+                "feedback": "Yes. The topic sentence tells the reader what the whole paragraph is about, usually at the start."
+              },
+              {
+                "id": "b",
+                "text": "It gives the last small detail",
+                "feedback": "Details support the main idea. The topic sentence states the main idea itself, usually first."
+              },
+              {
+                "id": "c",
+                "text": "It always asks the reader a question",
+                "feedback": "A question can be a hook, but a topic sentence states the paragraph's main idea."
+              }
+            ],
+            "formativeKey": {
+              "expectedOptionId": "a"
+            }
+          },
+          {
+            "id": "warm-fact-opinion",
+            "prompt": "Which sentence is a fact, not an opinion?",
+            "options": [
+              {
+                "id": "a",
+                "text": "School gardens are the best thing a school can have.",
+                "feedback": "'The best' is a judgement, so this is an opinion. People could disagree."
+              },
+              {
+                "id": "b",
+                "text": "Cassava leaves are grown and eaten in many parts of Liberia.",
+                "feedback": "Yes. This can be checked, so it is a fact."
+              },
+              {
+                "id": "c",
+                "text": "Everyone loves working in the garden.",
+                "feedback": "This is an opinion about how people feel, and it is not true of everyone."
+              }
+            ],
+            "formativeKey": {
+              "expectedOptionId": "b"
+            }
+          }
+        ]
+      },
+      "tools": {
+        "requested": [],
+        "prohibited": []
+      },
+      "hints": [
+        "A fact can be checked; an opinion is what someone thinks or feels."
+      ],
+      "feedback": {
+        "onSuccess": "You already know two building blocks of an essay.",
+        "onStruggle": "That is fine. The next scenes show where topic sentences and facts fit in an essay."
+      },
+      "misconceptionIds": [
+        "mc-opinion-as-evidence"
+      ],
+      "evidence": {
+        "kind": "FORMATIVE_OBSERVATION",
+        "evidenceType": "DIAGNOSTIC",
+        "responses": [
+          {
+            "responseKey": "warm-topic-sentence",
+            "objectiveId": "ll-g7-lit-essay-structure",
+            "responseType": "SELECTED_OPTION",
+            "scaffoldLevel": "FULL"
+          },
+          {
+            "responseKey": "warm-fact-opinion",
+            "objectiveId": "ll-g7-lit-evidence-support",
+            "responseType": "SELECTED_OPTION",
+            "scaffoldLevel": "FULL",
+            "misconceptionId": "mc-opinion-as-evidence"
+          }
+        ]
+      },
+      "accessibility": {
+        "textAlternative": "Two warm-up questions: what a topic sentence does, and which sentence is a fact. Each answer shows written feedback.",
+        "keyboardPath": "Tab to each control, press Enter or Space to choose, then use Continue.",
+        "reducedMotion": "NOT_APPLICABLE"
+      },
+      "offline": {
+        "mode": "FULL_OFFLINE",
+        "note": "Text, steps and questions are part of the saved lesson."
+      },
+      "completion": "ALL_ANSWERED",
+      "pedagogy": {
+        "strategy": "RETRIEVAL_PRACTICE",
+        "representation": "VERBAL",
+        "scaffoldLevel": "FULL"
+      }
+    },
+    {
+      "id": "readiness-writing",
+      "type": "CHECK_UNDERSTANDING",
+      "title": "Readiness check: write a short paragraph",
+      "purpose": "ACTIVATE_PRIOR_KNOWLEDGE",
+      "objectiveIds": [
+        "ll-g7-lit-essay-structure",
+        "ll-g7-lit-argument-build"
+      ],
+      "learnerAction": "Write a short paragraph and two reasons, on your own.",
+      "content": {
+        "body": "This lesson builds on writing paragraphs and on seeing two sides of a question. Show what you can do now, on your own. This is not marked: it tells your teacher whether to start with a short paragraph-frame review before the essay work."
+      },
+      "interaction": {
+        "kind": "FREE_RESPONSE",
+        "prompts": [
+          {
+            "id": "ready-paragraph",
+            "prompt": "Write a short paragraph (three to five sentences) about a place in your community that you know well. Start with a sentence that tells the main idea.",
+            "minLength": 120
+          },
+          {
+            "id": "ready-two-sides",
+            "prompt": "Should our school have a longer lunch break? Write one reason someone might say yes and one reason someone might say no.",
+            "minLength": 40
+          }
+        ]
+      },
+      "expectedObservation": "Paragraph: the first sentence states one main idea and at least two later sentences support it. Two sides: two distinct reasons on opposite sides. A learner who cannot yet do either gets the paragraph-frame review (topic sentence plus two supporting sentences) or pair talk with 'Some people think … because …' before the essay scenes.",
+      "tools": {
+        "requested": [],
+        "prohibited": []
+      },
+      "hints": [],
+      "misconceptionIds": [],
+      "evidence": {
+        "kind": "FORMATIVE_OBSERVATION",
+        "evidenceType": "DIAGNOSTIC",
+        "responses": [
+          {
+            "responseKey": "ready-paragraph",
+            "objectiveId": "ll-g7-lit-essay-structure",
+            "responseType": "TEXT",
+            "scaffoldLevel": "NONE"
+          },
+          {
+            "responseKey": "ready-two-sides",
+            "objectiveId": "ll-g7-lit-argument-build",
+            "responseType": "TEXT",
+            "scaffoldLevel": "NONE"
+          }
+        ]
+      },
+      "accessibility": {
+        "textAlternative": "Two writing boxes: a three-to-five sentence paragraph about a place in your community, and one reason for and one against a longer lunch break.",
+        "keyboardPath": "Tab to each control, press Enter or Space to choose, then use Continue.",
+        "reducedMotion": "NOT_APPLICABLE"
+      },
+      "offline": {
+        "mode": "FULL_OFFLINE",
+        "note": "Writing is kept on the device until it can be sent."
+      },
+      "completion": "ALL_RESPONSES_WRITTEN",
+      "pedagogy": {
+        "strategy": "RETRIEVAL_PRACTICE",
+        "representation": "VERBAL",
+        "scaffoldLevel": "NONE"
+      },
+      "dependsOn": [
+        "warm-up"
+      ]
+    },
+    {
+      "id": "essay-structure",
+      "type": "EXPLANATION",
+      "title": "The three parts of an argumentative essay",
+      "purpose": "EXPLAIN_CONCEPT",
+      "objectiveIds": [
+        "ll-g7-lit-essay-structure"
+      ],
+      "learnerAction": "Study the essay diagram and the job of each part.",
+      "content": {
+        "body": "An argumentative essay has three parts, and each part has a job.\n\nThe **introduction** catches the reader's attention with a hook, gives a little background, and ends with the **thesis statement**: your claim and the main reasons for it.\n\nEach **body paragraph** argues one reason. It starts with a **topic sentence**, then gives evidence and explains it. A strong essay also uses one paragraph to answer the other side.\n\nThe **conclusion** restates the thesis in new words, sums up the reasons, and ends with a final thought or a call to action. It does not add new reasons.",
+        "keyPoints": [
+          "Introduction: hook, background, thesis statement.",
+          "Body: one reason per paragraph, each with a topic sentence, evidence and explanation.",
+          "Conclusion: restate, sum up, final thought. No new reasons."
+        ]
+      },
+      "interaction": {
+        "kind": "NONE"
+      },
+      "media": [
+        {
+          "id": "essay-structure",
+          "kind": "DIAGRAM",
+          "requirement": "MEDIA_OPTIONAL",
+          "description": "An essay drawn as three stacked blocks: introduction (hook, background, thesis), body paragraphs (topic sentence, evidence, explanation; one answers the other side), conclusion (restate, sum up, final thought).",
+          "altText": "Essay structure: introduction with hook, background and thesis; body paragraphs, each with a topic sentence, evidence and explanation, one answering the other side; conclusion that restates, sums up and ends with a final thought."
+        }
+      ],
+      "tools": {
+        "requested": [],
+        "prohibited": []
+      },
+      "hints": [],
+      "misconceptionIds": [
+        "mc-conclusion-new-idea"
+      ],
+      "evidence": {
+        "kind": "NONE"
+      },
+      "accessibility": {
+        "textAlternative": "The three parts of an argumentative essay and the job of each: introduction with thesis, body paragraphs with topic sentences and evidence, and a conclusion that adds no new reasons.",
+        "keyboardPath": "Tab to each control, press Enter or Space to choose, then use Continue.",
+        "reducedMotion": "NOT_APPLICABLE"
+      },
+      "offline": {
+        "mode": "FULL_OFFLINE",
+        "note": "Text, steps and questions are part of the saved lesson."
+      },
+      "completion": "VIEWED",
+      "pedagogy": {
+        "strategy": "DIRECT_INSTRUCTION",
+        "representation": "PICTORIAL",
+        "scaffoldLevel": "FULL"
+      }
+    },
+    {
+      "id": "model-plan",
+      "type": "INTERACTIVE_DIAGRAM",
+      "title": "Take apart a model essay plan",
+      "purpose": "MODEL_WORKED_EXAMPLE",
+      "objectiveIds": [
+        "ll-g7-lit-essay-structure",
+        "ll-g7-lit-argument-build"
+      ],
+      "learnerAction": "Open each part of the model essay plan in order.",
+      "content": {
+        "body": "Here is a plan for the essay **Every school in Liberia should have a school garden**. Open each part to see what the writer put there and why."
+      },
+      "interaction": {
+        "kind": "DIAGRAM_REVEAL",
+        "steps": [
+          {
+            "id": "hook",
+            "label": "Introduction: hook",
+            "description": "Imagine eating fresh greens at lunch that you and your classmates grew yourselves. (A picture the reader can imagine pulls them in.)"
+          },
+          {
+            "id": "thesis",
+            "label": "Introduction: thesis statement",
+            "description": "Every school in Liberia should have a school garden because gardens teach useful farming and science skills and give schools fresh food for learners. (Claim + two reasons.)"
+          },
+          {
+            "id": "body-one",
+            "label": "Body paragraph 1: first reason",
+            "description": "Topic sentence: A school garden turns science and agriculture lessons into real work. The paragraph then gives evidence and explains it."
+          },
+          {
+            "id": "body-two",
+            "label": "Body paragraph 2: second reason",
+            "description": "Topic sentence: A garden can add fresh vegetables to school meals. Evidence and explanation follow."
+          },
+          {
+            "id": "other-side",
+            "label": "Body paragraph 3: the other side",
+            "description": "Some people say gardens take time away from lessons. But garden work can be part of science and agriculture lessons, done in short weekly sessions. (Objection, then answer.)"
+          },
+          {
+            "id": "conclusion",
+            "label": "Conclusion",
+            "description": "School gardens build skills and feed learners. Every school with land should start one this year. (Restate, sum up, call to action; no new reasons.)"
+          }
+        ]
+      },
+      "tools": {
+        "requested": [],
+        "prohibited": []
+      },
+      "hints": [
+        "Notice that each body paragraph matches one reason from the thesis."
+      ],
+      "misconceptionIds": [
+        "mc-ignore-counterargument"
+      ],
+      "evidence": {
+        "kind": "NONE"
+      },
+      "accessibility": {
+        "textAlternative": "Six text steps of a model plan for 'Every school in Liberia should have a school garden': hook, thesis, two reason paragraphs, an answer to the other side, and a conclusion.",
+        "keyboardPath": "Tab to each control, press Enter or Space to choose, then use Continue.",
+        "reducedMotion": "NOT_APPLICABLE"
+      },
+      "offline": {
+        "mode": "FULL_OFFLINE",
+        "note": "Text, steps and questions are part of the saved lesson."
+      },
+      "completion": "ALL_STEPS_REVEALED",
+      "pedagogy": {
+        "strategy": "WORKED_EXAMPLE_FADING",
+        "representation": "VERBAL",
+        "scaffoldLevel": "FULL"
+      },
+      "dependsOn": [
+        "essay-structure"
+      ]
+    },
+    {
+      "id": "thesis",
+      "type": "GUIDED_EXAMPLE",
+      "title": "Guided practice: what makes a strong thesis",
+      "purpose": "GUIDED_PRACTICE",
+      "objectiveIds": [
+        "ll-g7-lit-argument-build"
+      ],
+      "learnerAction": "Choose the strongest thesis in each question and read why.",
+      "content": {
+        "body": "A strong thesis statement is a **claim**: a sentence a sensible person could disagree with. It is specific, and it names the reasons the essay will argue.\n\nA topic ('school gardens'), a plain fact ('some schools have gardens') or an announcement ('I will write about gardens') is not a thesis, because there is nothing to argue.",
+        "keyPoints": [
+          "Claim: could someone disagree?",
+          "Specific: says exactly what should happen.",
+          "Reasons: names why, so the reader knows what is coming."
+        ]
+      },
+      "interaction": {
+        "kind": "SINGLE_CHOICE",
+        "items": [
+          {
+            "id": "thesis-strongest",
+            "prompt": "Which is the strongest thesis statement?",
+            "options": [
+              {
+                "id": "a",
+                "text": "School gardens.",
+                "feedback": "This is only a topic. It does not say what you think about gardens."
+              },
+              {
+                "id": "b",
+                "text": "Some schools in Liberia have gardens.",
+                "feedback": "This is a fact. Nobody would argue about it, so there is nothing to prove."
+              },
+              {
+                "id": "c",
+                "text": "Every school in Liberia should have a school garden because gardens teach farming skills and provide fresh food.",
+                "feedback": "Yes. It is a claim someone could disagree with, it is specific, and it names two reasons."
+              },
+              {
+                "id": "d",
+                "text": "I will write about gardens in this essay.",
+                "feedback": "This announces the topic but makes no claim."
+              }
+            ],
+            "formativeKey": {
+              "expectedOptionId": "c"
+            }
+          },
+          {
+            "id": "thesis-arguable",
+            "prompt": "Which sentence could a sensible person disagree with?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Monrovia is the capital of Liberia.",
+                "feedback": "This is a fact that can be checked. It cannot be argued."
+              },
+              {
+                "id": "b",
+                "text": "Students should have 30 minutes of reading time every school day because it builds vocabulary and confidence.",
+                "feedback": "Yes. Some people might say the time is needed for other subjects, so this claim can be argued."
+              },
+              {
+                "id": "c",
+                "text": "Many students go to school.",
+                "feedback": "This is a general fact, not a claim to argue."
+              }
+            ],
+            "formativeKey": {
+              "expectedOptionId": "b"
+            }
+          }
+        ]
+      },
+      "tools": {
+        "requested": [],
+        "prohibited": []
+      },
+      "hints": [
+        "Ask: could a sensible person disagree with this sentence?"
+      ],
+      "feedback": {
+        "onSuccess": "You can tell a claim from a topic or a fact.",
+        "onStruggle": "Look for the word 'should' or a clear opinion, plus a reason."
+      },
+      "misconceptionIds": [
+        "mc-topic-not-thesis"
+      ],
+      "evidence": {
+        "kind": "FORMATIVE_OBSERVATION",
+        "evidenceType": "PRACTICE",
+        "responses": [
+          {
+            "responseKey": "thesis-strongest",
+            "objectiveId": "ll-g7-lit-argument-build",
+            "responseType": "SELECTED_OPTION",
+            "scaffoldLevel": "PARTIAL",
+            "misconceptionId": "mc-topic-not-thesis"
+          },
+          {
+            "responseKey": "thesis-arguable",
+            "objectiveId": "ll-g7-lit-argument-build",
+            "responseType": "SELECTED_OPTION",
+            "scaffoldLevel": "PARTIAL",
+            "misconceptionId": "mc-topic-not-thesis"
+          }
+        ]
+      },
+      "accessibility": {
+        "textAlternative": "What makes a strong thesis, then two questions: choose the strongest thesis and choose the sentence someone could disagree with, each with written feedback.",
+        "keyboardPath": "Tab to each control, press Enter or Space to choose, then use Continue.",
+        "reducedMotion": "NOT_APPLICABLE"
+      },
+      "offline": {
+        "mode": "FULL_OFFLINE",
+        "note": "Text, steps and questions are part of the saved lesson."
+      },
+      "completion": "ALL_ANSWERED",
+      "pedagogy": {
+        "strategy": "GUIDED_TO_INDEPENDENT",
+        "representation": "VERBAL",
+        "scaffoldLevel": "PARTIAL"
+      },
+      "dependsOn": [
+        "model-plan"
+      ]
+    },
+    {
+      "id": "peel",
+      "type": "INTERACTIVE_DIAGRAM",
+      "title": "Build a body paragraph with PEEL",
+      "purpose": "MODEL_WORKED_EXAMPLE",
+      "objectiveIds": [
+        "ll-g7-lit-evidence-support"
+      ],
+      "learnerAction": "Open each PEEL sentence of the model paragraph in order.",
+      "content": {
+        "body": "A strong body paragraph follows **PEEL**: **P**oint, **E**vidence, **E**xplain, **L**ink. Open each step to build the first body paragraph of the garden essay.",
+        "keyPoints": [
+          "The Explain sentence does not repeat the evidence. It says what the evidence shows and why that proves the point: 'This shows that…'."
+        ]
+      },
+      "interaction": {
+        "kind": "DIAGRAM_REVEAL",
+        "steps": [
+          {
+            "id": "point",
+            "label": "P: Point (topic sentence)",
+            "description": "A school garden turns science and agriculture lessons into real work."
+          },
+          {
+            "id": "evidence",
+            "label": "E: Evidence",
+            "description": "For example, in Musu's school garden, learners measure the beds, test which soil holds water best and record how fast each plant grows."
+          },
+          {
+            "id": "explain",
+            "label": "E: Explain",
+            "description": "This shows that the garden makes learners practise measuring, testing and recording: skills they need in science class and on a family farm."
+          },
+          {
+            "id": "link",
+            "label": "L: Link",
+            "description": "So a garden makes lessons more useful, which is one reason every school should have one."
+          }
+        ]
+      },
+      "media": [
+        {
+          "id": "peel-paragraph",
+          "kind": "DIAGRAM",
+          "requirement": "MEDIA_OPTIONAL",
+          "description": "Four stacked boxes labelled Point, Evidence, Explain and Link, each holding one sentence of the model garden paragraph, with arrows showing how each sentence leads to the next.",
+          "altText": "PEEL paragraph: Point (a garden turns lessons into real work), Evidence (learners measure beds, test soil, record growth), Explain (they practise science and farming skills), Link (so every school should have a garden)."
+        }
+      ],
+      "tools": {
+        "requested": [],
+        "prohibited": []
+      },
+      "hints": [
+        "The Explain sentence answers: so what? How does this evidence prove the point?"
+      ],
+      "misconceptionIds": [
+        "mc-irrelevant-evidence",
+        "mc-explain-restates-evidence"
+      ],
+      "evidence": {
+        "kind": "NONE"
+      },
+      "accessibility": {
+        "textAlternative": "A model PEEL paragraph in four text steps: point, evidence, explanation and link, about how a garden turns lessons into real work.",
+        "keyboardPath": "Tab to each control, press Enter or Space to choose, then use Continue.",
+        "reducedMotion": "NOT_APPLICABLE"
+      },
+      "offline": {
+        "mode": "FULL_OFFLINE",
+        "note": "Text, steps and questions are part of the saved lesson."
+      },
+      "completion": "ALL_STEPS_REVEALED",
+      "pedagogy": {
+        "strategy": "WORKED_EXAMPLE_FADING",
+        "representation": "PICTORIAL",
+        "scaffoldLevel": "FULL"
+      },
+      "dependsOn": [
+        "model-plan"
+      ]
+    },
+    {
+      "id": "evidence",
+      "type": "EXPLANATION",
+      "title": "Choosing strong evidence",
+      "purpose": "EXPLAIN_CONCEPT",
+      "objectiveIds": [
+        "ll-g7-lit-evidence-support"
+      ],
+      "learnerAction": "Learn four kinds of evidence and the questions that test them.",
+      "content": {
+        "body": "Evidence is what makes a reader believe your reason. Four kinds are useful in school essays: **facts and figures** from a source you can name, **examples** of real events, the words of an **expert** (such as a teacher, nurse or agriculture officer), and your own **experience**.\n\nBefore you use evidence, test it with four questions. Never make up a fact or a number: if you use a figure, say where it comes from.\n\nIn this lesson, examples about **Musu's school** are made-up practice examples. They show what good evidence looks like, but they are not facts. In your own writing, use only evidence that is real.",
+        "keyPoints": [
+          "Is it true, and can the reader check it?",
+          "Is it relevant: does it prove this reason?",
+          "Is it specific: who, what, where, when?",
+          "Where does it come from?"
+        ]
+      },
+      "interaction": {
+        "kind": "NONE"
+      },
+      "media": [
+        {
+          "id": "evidence-test",
+          "kind": "DIAGRAM",
+          "requirement": "MEDIA_OPTIONAL",
+          "description": "Four evidence cards (facts and figures, examples, expert words, experience) passing through a four-question test: true, relevant, specific, source.",
+          "altText": "Four kinds of evidence (facts and figures with a source, examples, expert words, experience) and four tests: is it true, is it relevant, is it specific, where does it come from."
+        }
+      ],
+      "tools": {
+        "requested": [
+          "dictionary"
+        ],
+        "prohibited": []
+      },
+      "hints": [],
+      "misconceptionIds": [
+        "mc-opinion-as-evidence",
+        "mc-irrelevant-evidence"
+      ],
+      "evidence": {
+        "kind": "NONE"
+      },
+      "accessibility": {
+        "textAlternative": "Four kinds of evidence and four test questions for evidence, listed in the text and key points.",
+        "keyboardPath": "Tab to each control, press Enter or Space to choose, then use Continue.",
+        "reducedMotion": "NOT_APPLICABLE"
+      },
+      "offline": {
+        "mode": "FULL_OFFLINE",
+        "note": "Text, steps and questions are part of the saved lesson."
+      },
+      "completion": "VIEWED",
+      "pedagogy": {
+        "strategy": "DIRECT_INSTRUCTION",
+        "representation": "PICTORIAL",
+        "scaffoldLevel": "FULL"
+      }
+    },
+    {
+      "id": "evidence-check",
+      "type": "CHECK_UNDERSTANDING",
+      "title": "Watch out: weak evidence and weak reasons",
+      "purpose": "ADDRESS_MISCONCEPTION",
+      "objectiveIds": [
+        "ll-g7-lit-argument-build",
+        "ll-g7-lit-evidence-support"
+      ],
+      "learnerAction": "Choose the best answer to each question and read why.",
+      "content": {
+        "body": "Writers often fall into these traps. Choose an answer for each question, then read the explanation."
+      },
+      "interaction": {
+        "kind": "SINGLE_CHOICE",
+        "items": [
+          {
+            "id": "check-best-evidence",
+            "prompt": "Reason: a garden can add fresh vegetables to school meals. Which evidence supports this reason best? (Musu's school is the made-up practice school from this lesson.)",
+            "options": [
+              {
+                "id": "a",
+                "text": "Gardens look beautiful when the flowers bloom.",
+                "feedback": "This may be true, but it is about beauty, not school meals. It does not prove this reason."
+              },
+              {
+                "id": "b",
+                "text": "At Musu's school, the agriculture club's greens and pepper were used in school lunches for a week last term.",
+                "feedback": "Yes. It is specific and it proves this exact reason: the garden added vegetables to school meals. In your own essay, use a real example like this from your school or community."
+              },
+              {
+                "id": "c",
+                "text": "Gardens are good, and everyone knows it.",
+                "feedback": "This is an opinion repeated, not evidence. The reader cannot check it."
+              },
+              {
+                "id": "d",
+                "text": "Many countries have gardens.",
+                "feedback": "This is too vague and says nothing about school meals."
+              }
+            ],
+            "formativeKey": {
+              "expectedOptionId": "b"
+            }
+          },
+          {
+            "id": "check-circular",
+            "prompt": "Musa writes: 'School gardens are good because they are good for schools.' What is the problem?",
+            "options": [
+              {
+                "id": "a",
+                "text": "Nothing. It is a strong argument.",
+                "feedback": "Look again: the reason only repeats the claim. It never says what the garden does."
+              },
+              {
+                "id": "b",
+                "text": "It repeats the claim instead of giving a real reason.",
+                "feedback": "Yes. A reason answers 'why?' with new information, such as 'because gardens give schools fresh food'."
+              },
+              {
+                "id": "c",
+                "text": "The sentence is too long.",
+                "feedback": "Length is not the problem. The reason says nothing new."
+              }
+            ],
+            "formativeKey": {
+              "expectedOptionId": "b"
+            }
+          },
+          {
+            "id": "check-other-side",
+            "prompt": "Why should an argumentative essay mention the other side?",
+            "options": [
+              {
+                "id": "a",
+                "text": "To show the writer has changed their mind.",
+                "feedback": "The writer keeps their claim. They mention the other side in order to answer it."
+              },
+              {
+                "id": "b",
+                "text": "To answer a likely objection, which makes the argument stronger.",
+                "feedback": "Yes. Answering the strongest objection shows you have thought it through."
+              },
+              {
+                "id": "c",
+                "text": "To make the essay longer.",
+                "feedback": "Length is not the goal. Answering an objection makes the argument harder to reject."
+              }
+            ],
+            "formativeKey": {
+              "expectedOptionId": "b"
+            }
+          }
+        ]
+      },
+      "tools": {
+        "requested": [],
+        "prohibited": []
+      },
+      "hints": [
+        "Read the reason and the evidence together. Does the evidence prove this reason?"
+      ],
+      "feedback": {
+        "onSuccess": "You can spot weak evidence and weak reasons.",
+        "onStruggle": "Go back to the evidence test questions and try again."
+      },
+      "misconceptionIds": [
+        "mc-irrelevant-evidence",
+        "mc-circular-reasoning",
+        "mc-ignore-counterargument"
+      ],
+      "evidence": {
+        "kind": "FORMATIVE_OBSERVATION",
+        "evidenceType": "PRACTICE",
+        "responses": [
+          {
+            "responseKey": "check-best-evidence",
+            "objectiveId": "ll-g7-lit-evidence-support",
+            "responseType": "SELECTED_OPTION",
+            "scaffoldLevel": "PARTIAL",
+            "misconceptionId": "mc-irrelevant-evidence"
+          },
+          {
+            "responseKey": "check-circular",
+            "objectiveId": "ll-g7-lit-argument-build",
+            "responseType": "SELECTED_OPTION",
+            "scaffoldLevel": "PARTIAL",
+            "misconceptionId": "mc-circular-reasoning"
+          },
+          {
+            "responseKey": "check-other-side",
+            "objectiveId": "ll-g7-lit-argument-build",
+            "responseType": "SELECTED_OPTION",
+            "scaffoldLevel": "PARTIAL",
+            "misconceptionId": "mc-ignore-counterargument"
+          }
+        ]
+      },
+      "accessibility": {
+        "textAlternative": "Three questions: choose the evidence that best supports a reason, spot a reason that repeats the claim, and explain why essays answer the other side.",
+        "keyboardPath": "Tab to each control, press Enter or Space to choose, then use Continue.",
+        "reducedMotion": "NOT_APPLICABLE"
+      },
+      "offline": {
+        "mode": "FULL_OFFLINE",
+        "note": "Text, steps and questions are part of the saved lesson."
+      },
+      "completion": "ALL_ANSWERED",
+      "pedagogy": {
+        "strategy": "RETRIEVAL_PRACTICE",
+        "representation": "VERBAL",
+        "scaffoldLevel": "PARTIAL"
+      },
+      "dependsOn": [
+        "evidence"
+      ]
+    },
+    {
+      "id": "order-paragraph",
+      "type": "PRACTICE",
+      "title": "Put a paragraph in PEEL order",
+      "purpose": "GUIDED_PRACTICE",
+      "objectiveIds": [
+        "ll-g7-lit-essay-structure"
+      ],
+      "learnerAction": "Read the four sentences and write their letters in PEEL order.",
+      "content": {
+        "body": "These four sentences make one body paragraph, but they are mixed up. Put them in PEEL order: Point, Evidence, Explain, Link.",
+        "keyPoints": [
+          "A. So when learners grow food at school, everyone eats better, which is why every school needs a garden.",
+          "B. Fresh vegetables from a school garden can make school meals healthier.",
+          "C. This shows that the garden gives the kitchen food it would otherwise have to buy or go without.",
+          "D. For example, at Musu's school the garden's greens and pepper were used in lunch for a whole week last term."
+        ]
+      },
+      "interaction": {
+        "kind": "ORDERING",
+        "prompt": "Put the four sentences in PEEL order.",
+        "elements": [
+          "A: Link sentence about everyone eating better",
+          "B: Point about fresh vegetables",
+          "C: Explanation about food for the kitchen",
+          "D: Evidence about a week of lunches"
+        ]
+      },
+      "fallback": {
+        "kind": "FREE_RESPONSE",
+        "content": "Write the four letters in PEEL order (for example: X, X, X, X), then say which letter is the topic sentence.",
+        "objectivePreserved": true
+      },
+      "expectedObservation": "B, D, C, A. B is the topic sentence (Point).",
+      "tools": {
+        "requested": [],
+        "prohibited": []
+      },
+      "hints": [
+        "The Point is the topic sentence: it states the reason.",
+        "The Link connects back to the thesis, so it comes last."
+      ],
+      "feedback": {
+        "onSuccess": "You can see the job of each sentence.",
+        "onStruggle": "Find the topic sentence first, then the sentence that starts with 'For example'."
+      },
+      "misconceptionIds": [],
+      "evidence": {
+        "kind": "FORMATIVE_OBSERVATION",
+        "evidenceType": "CLASSWORK",
+        "responses": [
+          {
+            "responseKey": "order-peel",
+            "objectiveId": "ll-g7-lit-essay-structure",
+            "responseType": "ORDER",
+            "scaffoldLevel": "PARTIAL"
+          }
+        ]
+      },
+      "accessibility": {
+        "textAlternative": "Four mixed sentences labelled A to D, listed in the text. Type their letters in PEEL order.",
+        "keyboardPath": "Tab to each control, press Enter or Space to choose, then use Continue.",
+        "reducedMotion": "NOT_APPLICABLE",
+        "nonPointerAlternative": "Type the letters in order in the text box. No dragging is needed."
+      },
+      "offline": {
+        "mode": "FULL_OFFLINE",
+        "note": "The written answer is kept on the device until it can be sent."
+      },
+      "completion": "ALL_RESPONSES_WRITTEN",
+      "pedagogy": {
+        "strategy": "GUIDED_TO_INDEPENDENT",
+        "representation": "VERBAL",
+        "scaffoldLevel": "PARTIAL"
+      },
+      "dependsOn": [
+        "peel"
+      ]
+    },
+    {
+      "id": "plan-argument",
+      "type": "GUIDED_EXAMPLE",
+      "title": "Plan before you write",
+      "purpose": "GUIDED_PRACTICE",
+      "objectiveIds": [
+        "ll-g7-lit-argument-build",
+        "ll-g7-lit-evidence-support"
+      ],
+      "learnerAction": "Choose a topic, brainstorm reasons, then plan your claim, two reasons and real evidence.",
+      "content": {
+        "body": "Good writers plan first. Choose one topic and decide what you think. Then **brainstorm**: for two minutes, list every reason you can think of without judging them. Next, choose your **two strongest** reasons. For each one, write one piece of **real** evidence and where it comes from: something you saw, a fact you can check, or the words of someone you can name. If you cannot find real evidence for a reason, choose a different reason.",
+        "keyPoints": [
+          "Topic 1: Every community should have a public library.",
+          "Topic 2: Schools should start each day with 20 minutes of reading.",
+          "Topic 3: Learners should help keep their school compound clean every week.",
+          "Plan: claim → reason 1 + evidence → reason 2 + evidence."
+        ]
+      },
+      "interaction": {
+        "kind": "FREE_RESPONSE",
+        "prompts": [
+          {
+            "id": "plan-brainstorm",
+            "prompt": "Brainstorm: list at least four reasons for your claim, one per line.",
+            "minLength": 60
+          },
+          {
+            "id": "plan-reasons",
+            "prompt": "Your plan: write your claim, then your two strongest reasons, each with one piece of real evidence and where it comes from.",
+            "minLength": 120
+          }
+        ]
+      },
+      "expectedObservation": "Brainstorm lists several different reasons. The plan states an arguable claim, two reasons that answer 'why?', and for each a specific, checkable piece of evidence with its source (an observation, a checkable fact or a named person). Watch for Musu's school examples copied as evidence, opinions used as evidence, and reasons that repeat the claim.",
+      "tools": {
+        "requested": [
+          "dictionary"
+        ],
+        "prohibited": []
+      },
+      "hints": [
+        "Write fast while you brainstorm; choose later.",
+        "Ask of each piece of evidence: is it true, and where does it come from?"
+      ],
+      "feedback": {
+        "onSuccess": "Your plan gives every paragraph a job before you write it.",
+        "onStruggle": "Start with your claim, then finish the sentence 'because …' twice."
+      },
+      "misconceptionIds": [
+        "mc-circular-reasoning",
+        "mc-opinion-as-evidence"
+      ],
+      "evidence": {
+        "kind": "FORMATIVE_OBSERVATION",
+        "evidenceType": "CLASSWORK",
+        "responses": [
+          {
+            "responseKey": "plan-brainstorm",
+            "objectiveId": "ll-g7-lit-argument-build",
+            "responseType": "TEXT",
+            "scaffoldLevel": "FULL",
+            "misconceptionId": "mc-circular-reasoning"
+          },
+          {
+            "responseKey": "plan-reasons",
+            "objectiveId": "ll-g7-lit-evidence-support",
+            "responseType": "TEXT",
+            "scaffoldLevel": "PARTIAL",
+            "misconceptionId": "mc-opinion-as-evidence"
+          }
+        ]
+      },
+      "accessibility": {
+        "textAlternative": "Choose one of three topics, brainstorm at least four reasons, then write a plan: a claim and two reasons, each with real evidence and its source. Two text boxes.",
+        "keyboardPath": "Tab to each control, press Enter or Space to choose, then use Continue.",
+        "reducedMotion": "NOT_APPLICABLE"
+      },
+      "offline": {
+        "mode": "FULL_OFFLINE",
+        "note": "The plan is kept on the device until it can be sent."
+      },
+      "completion": "ALL_RESPONSES_WRITTEN",
+      "pedagogy": {
+        "strategy": "GUIDED_TO_INDEPENDENT",
+        "representation": "VERBAL",
+        "scaffoldLevel": "PARTIAL"
+      },
+      "dependsOn": [
+        "thesis",
+        "evidence",
+        "evidence-check"
+      ]
+    },
+    {
+      "id": "write-argument",
+      "type": "PRACTICE",
+      "title": "Write your own thesis and PEEL paragraph",
+      "purpose": "INDEPENDENT_PRACTICE",
+      "objectiveIds": [
+        "ll-g7-lit-argument-build",
+        "ll-g7-lit-evidence-support"
+      ],
+      "learnerAction": "Use your plan to write a thesis and one PEEL body paragraph.",
+      "content": {
+        "body": "Now write, using your plan. Use only real evidence: an example you know, a fact you can check, or your own experience. Do not borrow Musu's school examples: they are made up. Your teacher reads this writing; it is not marked by this lesson.",
+        "keyPoints": [
+          "Point: your first reason, as a topic sentence.",
+          "Evidence: one real, specific example or fact from your plan.",
+          "Explain: how the evidence proves the point.",
+          "Link: back to your claim."
+        ]
+      },
+      "interaction": {
+        "kind": "FREE_RESPONSE",
+        "prompts": [
+          {
+            "id": "write-thesis",
+            "prompt": "Write the thesis statement from your plan: your claim and two reasons.",
+            "minLength": 60
+          },
+          {
+            "id": "write-peel",
+            "prompt": "Write one body paragraph for your first reason using PEEL: Point, Evidence, Explain, Link.",
+            "minLength": 250
+          }
+        ]
+      },
+      "expectedObservation": "Thesis is an arguable claim that names two reasons. Paragraph opens with a topic sentence matching reason one, gives specific true evidence, explains how it supports the point, and links back to the claim.",
+      "tools": {
+        "requested": [
+          "dictionary"
+        ],
+        "prohibited": []
+      },
+      "hints": [
+        "Start your thesis with your claim, then use 'because' to add two reasons.",
+        "Begin your paragraph with your first reason as the topic sentence."
+      ],
+      "feedback": {
+        "onSuccess": "You have written the core of an argumentative essay.",
+        "onStruggle": "Use the PEEL model paragraph as a guide and write one sentence for each letter."
+      },
+      "misconceptionIds": [
+        "mc-topic-not-thesis",
+        "mc-opinion-as-evidence"
+      ],
+      "evidence": {
+        "kind": "FORMATIVE_OBSERVATION",
+        "evidenceType": "CLASSWORK",
+        "responses": [
+          {
+            "responseKey": "write-thesis",
+            "objectiveId": "ll-g7-lit-argument-build",
+            "responseType": "TEXT",
+            "scaffoldLevel": "PARTIAL",
+            "misconceptionId": "mc-topic-not-thesis"
+          },
+          {
+            "responseKey": "write-peel",
+            "objectiveId": "ll-g7-lit-evidence-support",
+            "responseType": "TEXT",
+            "scaffoldLevel": "PARTIAL",
+            "misconceptionId": "mc-opinion-as-evidence"
+          }
+        ]
+      },
+      "accessibility": {
+        "textAlternative": "Using the plan from the previous scene, write a thesis statement and one PEEL body paragraph in two text boxes.",
+        "keyboardPath": "Tab to each control, press Enter or Space to choose, then use Continue.",
+        "reducedMotion": "NOT_APPLICABLE"
+      },
+      "offline": {
+        "mode": "FULL_OFFLINE",
+        "note": "Writing is kept on the device until it can be sent to the teacher."
+      },
+      "completion": "ALL_RESPONSES_WRITTEN",
+      "pedagogy": {
+        "strategy": "GUIDED_TO_INDEPENDENT",
+        "representation": "VERBAL",
+        "scaffoldLevel": "MINIMAL"
+      },
+      "dependsOn": [
+        "thesis",
+        "peel",
+        "evidence-check",
+        "plan-argument"
+      ]
+    },
+    {
+      "id": "write-conclusion",
+      "type": "PRACTICE",
+      "title": "Write a conclusion",
+      "purpose": "INDEPENDENT_PRACTICE",
+      "objectiveIds": [
+        "ll-g7-lit-essay-structure"
+      ],
+      "learnerAction": "Write a conclusion for the school-garden essay.",
+      "content": {
+        "body": "Go back to the model plan for **Every school in Liberia should have a school garden**. Its body paragraphs argued two reasons (gardens teach farming and science skills, and they add fresh food to school meals) and answered one objection (garden work takes time from lessons). Write a conclusion of three or four sentences that does the three jobs of a conclusion. Do not copy the model plan's conclusion, and do not add a new reason.",
+        "keyPoints": [
+          "Restate the thesis in new words.",
+          "Sum up the two reasons (and, if you like, the answer to the other side).",
+          "End with a final thought or a call to action.",
+          "Check: no new reasons."
+        ]
+      },
+      "interaction": {
+        "kind": "FREE_RESPONSE",
+        "prompts": [
+          {
+            "id": "write-conclusion-garden",
+            "prompt": "Write your conclusion for the school-garden essay (three or four sentences).",
+            "minLength": 150
+          }
+        ]
+      },
+      "expectedObservation": "Restates the claim without copying the thesis, sums up both reasons (skills; fresh food), ends with a final thought or call to action, and adds no new reason (for example, not 'gardens also make the compound beautiful').",
+      "tools": {
+        "requested": [
+          "dictionary"
+        ],
+        "prohibited": []
+      },
+      "hints": [
+        "Begin with a phrase such as 'For these reasons' or 'In short'.",
+        "Read each sentence: does it give a reason the body did not argue? If so, remove it."
+      ],
+      "feedback": {
+        "onSuccess": "Your conclusion closes the argument without opening a new one.",
+        "onStruggle": "Write one sentence for each of the three jobs."
+      },
+      "misconceptionIds": [
+        "mc-conclusion-new-idea"
+      ],
+      "evidence": {
+        "kind": "FORMATIVE_OBSERVATION",
+        "evidenceType": "CLASSWORK",
+        "responses": [
+          {
+            "responseKey": "write-conclusion-garden",
+            "objectiveId": "ll-g7-lit-essay-structure",
+            "responseType": "TEXT",
+            "scaffoldLevel": "PARTIAL",
+            "misconceptionId": "mc-conclusion-new-idea"
+          }
+        ]
+      },
+      "accessibility": {
+        "textAlternative": "Write a three- or four-sentence conclusion for the school-garden essay: restate the thesis in new words, sum up its two reasons, end with a final thought, and add no new reason.",
+        "keyboardPath": "Tab to each control, press Enter or Space to choose, then use Continue.",
+        "reducedMotion": "NOT_APPLICABLE"
+      },
+      "offline": {
+        "mode": "FULL_OFFLINE",
+        "note": "Writing is kept on the device until it can be sent to the teacher."
+      },
+      "completion": "ALL_RESPONSES_WRITTEN",
+      "pedagogy": {
+        "strategy": "GUIDED_TO_INDEPENDENT",
+        "representation": "VERBAL",
+        "scaffoldLevel": "MINIMAL"
+      },
+      "dependsOn": [
+        "essay-structure",
+        "model-plan"
+      ]
+    },
+    {
+      "id": "peer-review",
+      "type": "PRACTICE",
+      "title": "Peer review: one strength, one next step",
+      "purpose": "CHECK_UNDERSTANDING",
+      "objectiveIds": [
+        "ll-g7-lit-evidence-support",
+        "ll-g7-lit-argument-build"
+      ],
+      "learnerAction": "Swap paragraphs with a partner, check them against four questions, then write one strength and one next step.",
+      "content": {
+        "body": "Swap your PEEL paragraph with a partner and read it twice. Check it against the four questions below, then give honest, kind feedback: one **strength** and one **next step**. Talk about the writing, not the writer. If you are working alone, review your own paragraph the same way.",
+        "keyPoints": [
+          "Point: does the topic sentence state a clear reason that matches the thesis?",
+          "Evidence: is it real and specific, and is its source named?",
+          "Explain: does a sentence show how the evidence proves the point?",
+          "Link: does the last sentence connect back to the claim?",
+          "Sentence starters: 'One strength is … because …' and 'Next time, try …'"
+        ]
+      },
+      "interaction": {
+        "kind": "FREE_RESPONSE",
+        "prompts": [
+          {
+            "id": "peer-strength",
+            "prompt": "Write one strength of the paragraph you reviewed. Name the question it meets and quote the words that show it.",
+            "minLength": 60
+          },
+          {
+            "id": "peer-next-step",
+            "prompt": "Write one next step: name a question the paragraph does not yet meet and suggest one change.",
+            "minLength": 60
+          }
+        ]
+      },
+      "expectedObservation": "Feedback names a specific question and points to words in the paragraph; the next step is one concrete change (for example 'say where this figure comes from'). Watch for vague praise ('good job'), comments about the writer instead of the writing, and accepting made-up evidence as real.",
+      "tools": {
+        "requested": [],
+        "prohibited": []
+      },
+      "hints": [
+        "Quote the exact words that meet, or miss, a question.",
+        "A next step says what to change, not just that something is wrong."
+      ],
+      "feedback": {
+        "onSuccess": "Specific feedback helps a writer know exactly what to keep and what to change.",
+        "onStruggle": "Choose one question from the list and answer it about the paragraph."
+      },
+      "misconceptionIds": [
+        "mc-opinion-as-evidence",
+        "mc-irrelevant-evidence"
+      ],
+      "evidence": {
+        "kind": "FORMATIVE_OBSERVATION",
+        "evidenceType": "CLASSWORK",
+        "responses": [
+          {
+            "responseKey": "peer-strength",
+            "objectiveId": "ll-g7-lit-evidence-support",
+            "responseType": "TEXT",
+            "scaffoldLevel": "PARTIAL",
+            "misconceptionId": "mc-irrelevant-evidence"
+          },
+          {
+            "responseKey": "peer-next-step",
+            "objectiveId": "ll-g7-lit-argument-build",
+            "responseType": "TEXT",
+            "scaffoldLevel": "PARTIAL",
+            "misconceptionId": "mc-opinion-as-evidence"
+          }
+        ]
+      },
+      "accessibility": {
+        "textAlternative": "Swap PEEL paragraphs with a partner (or review your own), check the paragraph against four questions on point, evidence, explanation and link, then write one strength and one next step.",
+        "keyboardPath": "Tab to each control, press Enter or Space to choose, then use Continue.",
+        "reducedMotion": "NOT_APPLICABLE",
+        "nonPointerAlternative": "Partners can read the paragraph aloud and discuss it; the learner then types or writes the two answers."
+      },
+      "offline": {
+        "mode": "FULL_OFFLINE",
+        "note": "A classroom activity with paper paragraphs; answers are kept on the device until they can be sent."
+      },
+      "completion": "ALL_RESPONSES_WRITTEN",
+      "pedagogy": {
+        "strategy": "GUIDED_TO_INDEPENDENT",
+        "representation": "VERBAL",
+        "scaffoldLevel": "PARTIAL"
+      },
+      "dependsOn": [
+        "write-argument"
+      ]
+    },
+    {
+      "id": "write-independently",
+      "type": "PRACTICE",
+      "title": "Write it again, on your own",
+      "purpose": "INDEPENDENT_PRACTICE",
+      "objectiveIds": [
+        "ll-g7-lit-argument-build",
+        "ll-g7-lit-evidence-support",
+        "ll-g7-lit-essay-structure"
+      ],
+      "learnerAction": "Write a second thesis and PEEL paragraph without hints, the model or a partner.",
+      "content": {
+        "body": "Now show that you can do it alone. Use the second topic from your plan (or a new question you care about). Do not look back at the model plan or the hints. Use only real evidence and say where it comes from. Your teacher reads this writing; it is practice, not a mark."
+      },
+      "interaction": {
+        "kind": "FREE_RESPONSE",
+        "prompts": [
+          {
+            "id": "solo-thesis",
+            "prompt": "Write a thesis statement for your second topic: your claim and two reasons.",
+            "minLength": 60
+          },
+          {
+            "id": "solo-peel",
+            "prompt": "Write one PEEL body paragraph that argues your first reason.",
+            "minLength": 250
+          },
+          {
+            "id": "solo-labels",
+            "prompt": "List the job of each sentence in your paragraph, in order (for example: Point, Evidence, Explain, Link).",
+            "minLength": 20
+          }
+        ]
+      },
+      "expectedObservation": "An arguable thesis with two reasons; a paragraph whose topic sentence matches reason one, with real, specific evidence and its source, an Explain sentence that says how the evidence proves the point (not a repeat of it), and a link back; labels that match the sentences.",
+      "tools": {
+        "requested": [
+          "dictionary"
+        ],
+        "prohibited": []
+      },
+      "hints": [],
+      "misconceptionIds": [
+        "mc-topic-not-thesis",
+        "mc-opinion-as-evidence",
+        "mc-explain-restates-evidence"
+      ],
+      "evidence": {
+        "kind": "FORMATIVE_OBSERVATION",
+        "evidenceType": "CLASSWORK",
+        "responses": [
+          {
+            "responseKey": "solo-thesis",
+            "objectiveId": "ll-g7-lit-argument-build",
+            "responseType": "TEXT",
+            "scaffoldLevel": "NONE",
+            "misconceptionId": "mc-topic-not-thesis"
+          },
+          {
+            "responseKey": "solo-peel",
+            "objectiveId": "ll-g7-lit-evidence-support",
+            "responseType": "TEXT",
+            "scaffoldLevel": "NONE",
+            "misconceptionId": "mc-explain-restates-evidence"
+          },
+          {
+            "responseKey": "solo-labels",
+            "objectiveId": "ll-g7-lit-essay-structure",
+            "responseType": "TEXT",
+            "scaffoldLevel": "NONE"
+          }
+        ]
+      },
+      "accessibility": {
+        "textAlternative": "Three writing boxes: a thesis statement for your second topic, one PEEL body paragraph, and the job of each sentence in order.",
+        "keyboardPath": "Tab to each control, press Enter or Space to choose, then use Continue.",
+        "reducedMotion": "NOT_APPLICABLE"
+      },
+      "offline": {
+        "mode": "FULL_OFFLINE",
+        "note": "Writing is kept on the device until it can be sent."
+      },
+      "completion": "ALL_RESPONSES_WRITTEN",
+      "pedagogy": {
+        "strategy": "GUIDED_TO_INDEPENDENT",
+        "representation": "VERBAL",
+        "scaffoldLevel": "NONE"
+      },
+      "dependsOn": [
+        "peer-review"
+      ]
+    },
+    {
+      "id": "challenge",
+      "type": "EXPLANATION",
+      "title": "Optional challenge: a full argumentative essay",
+      "purpose": "APPLY",
+      "objectiveIds": [
+        "ll-g7-lit-essay-structure",
+        "ll-g7-lit-argument-build",
+        "ll-g7-lit-evidence-support"
+      ],
+      "learnerAction": "Optional: plan and write a full essay in your exercise book.",
+      "content": {
+        "body": "This challenge is optional. Try it if you finish early or want to go further; it is not part of the exit ticket.\n\nWrite a full essay on a question you care about, in five paragraphs: an introduction that ends with your thesis, two body paragraphs (one for each reason), one paragraph that answers the other side, and a conclusion that adds no new reason. Then write two sentences explaining which of your reasons is strongest and why.",
+        "keyPoints": [
+          "Plan first: claim, two reasons, real evidence for each, and the strongest objection.",
+          "Answering the other side makes your argument stronger, not weaker."
+        ]
+      },
+      "interaction": {
+        "kind": "NONE"
+      },
+      "expectedObservation": "Five paragraphs in the right order, each body paragraph following PEEL, a fair objection answered with a reason, a conclusion without new reasons, and a reasoned choice of the strongest reason.",
+      "tools": {
+        "requested": [
+          "dictionary"
+        ],
+        "prohibited": []
+      },
+      "hints": [],
+      "misconceptionIds": [],
+      "evidence": {
+        "kind": "NONE"
+      },
+      "accessibility": {
+        "textAlternative": "Optional challenge: write a five-paragraph argumentative essay on a question you care about, then explain which reason is strongest.",
+        "keyboardPath": "Tab to each control, press Enter or Space to choose, then use Continue.",
+        "reducedMotion": "NOT_APPLICABLE"
+      },
+      "offline": {
+        "mode": "FULL_OFFLINE",
+        "note": "Text, steps and questions are part of the saved lesson."
+      },
+      "completion": "VIEWED",
+      "pedagogy": {
+        "strategy": "GUIDED_TO_INDEPENDENT",
+        "representation": "VERBAL",
+        "scaffoldLevel": "NONE"
+      }
+    },
+    {
+      "id": "review",
+      "type": "REVIEW",
+      "title": "Key ideas to remember",
+      "purpose": "REVIEW",
+      "objectiveIds": [
+        "ll-g7-lit-essay-structure",
+        "ll-g7-lit-argument-build",
+        "ll-g7-lit-evidence-support"
+      ],
+      "learnerAction": "Read the key ideas before the exit ticket.",
+      "content": {
+        "body": "Before the exit ticket, review the big ideas of this lesson.",
+        "keyPoints": [
+          "An essay has an introduction (ending with the thesis), body paragraphs and a conclusion.",
+          "A thesis is a claim someone could disagree with, plus the reasons you will argue.",
+          "Each body paragraph follows PEEL: Point, Evidence, Explain, Link.",
+          "Strong evidence is true, relevant and specific, and you can say where it comes from.",
+          "Plan before you write: claim, two reasons, and real evidence for each.",
+          "Answer the other side; do not add new reasons in the conclusion."
+        ]
+      },
+      "interaction": {
+        "kind": "NONE"
+      },
+      "tools": {
+        "requested": [],
+        "prohibited": []
+      },
+      "hints": [],
+      "misconceptionIds": [],
+      "evidence": {
+        "kind": "NONE"
+      },
+      "accessibility": {
+        "textAlternative": "Review of five key ideas: essay parts, thesis, PEEL paragraphs, strong evidence, and answering the other side.",
+        "keyboardPath": "Tab to each control, press Enter or Space to choose, then use Continue.",
+        "reducedMotion": "NOT_APPLICABLE"
+      },
+      "offline": {
+        "mode": "FULL_OFFLINE",
+        "note": "Text, steps and questions are part of the saved lesson."
+      },
+      "completion": "VIEWED"
+    },
+    {
+      "id": "exit-ticket",
+      "type": "MASTERY_CHECK",
+      "title": "Exit ticket",
+      "purpose": "ASSESS_MASTERY",
+      "objectiveIds": [
+        "ll-g7-lit-essay-structure",
+        "ll-g7-lit-argument-build",
+        "ll-g7-lit-evidence-support"
+      ],
+      "learnerAction": "Answer the exit-ticket questions on your own.",
+      "content": {
+        "body": "Answer each question on your own. Your school's assessment system checks these answers, not this lesson."
+      },
+      "interaction": {
+        "kind": "ASSESSMENT_HANDOFF",
+        "assessmentRequestId": "g7-essay-exit-ticket"
+      },
+      "tools": {
+        "requested": [],
+        "prohibited": [
+          "dictionary"
+        ]
+      },
+      "hints": [],
+      "misconceptionIds": [],
+      "evidence": {
+        "kind": "MASTERY_RESPONSE",
+        "evidenceType": "QUIZ",
+        "responses": [
+          {
+            "responseKey": "exit-structure",
+            "objectiveId": "ll-g7-lit-essay-structure",
+            "responseType": "ASSESSMENT_RESPONSE",
+            "scaffoldLevel": "NONE"
+          },
+          {
+            "responseKey": "exit-argument",
+            "objectiveId": "ll-g7-lit-argument-build",
+            "responseType": "ASSESSMENT_RESPONSE",
+            "scaffoldLevel": "NONE"
+          },
+          {
+            "responseKey": "exit-evidence",
+            "objectiveId": "ll-g7-lit-evidence-support",
+            "responseType": "ASSESSMENT_RESPONSE",
+            "scaffoldLevel": "NONE"
+          }
+        ]
+      },
+      "accessibility": {
+        "textAlternative": "Exit-ticket questions on essay structure, thesis and counterargument, and evidence, answered with the keyboard or touch.",
+        "keyboardPath": "Tab to each option and press Space.",
+        "reducedMotion": "NOT_APPLICABLE",
+        "nonPointerAlternative": "Without a device, the teacher reads each question and its choices aloud and records the learner's spoken answer."
+      },
+      "offline": {
+        "mode": "FALLBACK_REQUIRED",
+        "note": "Answers given on a device are checked after reconnecting; without a device the teacher gives the same questions on paper."
+      },
+      "fallback": {
+        "kind": "PAPER_ACTIVITY",
+        "content": "Your teacher gives the same exit-ticket questions on paper and records your answers.",
+        "objectivePreserved": true
+      },
+      "completion": "ALL_ANSWERED"
+    },
+    {
+      "id": "reflect",
+      "type": "REFLECTION",
+      "title": "Plan your next step as a writer",
+      "purpose": "REFLECT",
+      "objectiveIds": [
+        "ll-g7-lit-essay-structure"
+      ],
+      "learnerAction": "Write two or three sentences about your writing.",
+      "content": {
+        "body": "Good writers know what they need to practise. Write your answer in full sentences."
+      },
+      "interaction": {
+        "kind": "FREE_RESPONSE",
+        "prompts": [
+          {
+            "id": "reflect-writing",
+            "prompt": "Which part of an essay is hardest for you: the thesis, the evidence or the conclusion? What will you do to make it better next time?",
+            "minLength": 40
+          }
+        ]
+      },
+      "tools": {
+        "requested": [],
+        "prohibited": []
+      },
+      "hints": [
+        "Name one part, say why it is hard, and name one thing you will try."
+      ],
+      "misconceptionIds": [],
+      "evidence": {
+        "kind": "REFLECTION",
+        "evidenceType": "CLASSWORK",
+        "responses": [
+          {
+            "responseKey": "reflect-writing",
+            "objectiveId": "ll-g7-lit-essay-structure",
+            "responseType": "TEXT",
+            "scaffoldLevel": "NONE"
+          }
+        ]
+      },
+      "accessibility": {
+        "textAlternative": "Write two or three sentences about which part of an essay is hardest for you and how you will improve it.",
+        "keyboardPath": "Tab to each control, press Enter or Space to choose, then use Continue.",
+        "reducedMotion": "NOT_APPLICABLE"
+      },
+      "offline": {
+        "mode": "FULL_OFFLINE",
+        "note": "The written answer is kept on the device until it can be sent."
+      },
+      "completion": "ALL_RESPONSES_WRITTEN",
+      "pedagogy": {
+        "strategy": "REFLECTION",
+        "representation": "VERBAL",
+        "scaffoldLevel": "NONE"
+      }
+    }
+  ],
+  "assessmentRequests": [
+    {
+      "id": "g7-essay-exit-ticket",
+      "objectiveIds": [
+        "ll-g7-lit-essay-structure",
+        "ll-g7-lit-argument-build",
+        "ll-g7-lit-evidence-support"
+      ],
+      "interaction": "SINGLE_CHOICE",
+      "evidenceType": "QUIZ",
+      "difficulty": "CORE",
+      "misconceptionIds": [
+        "mc-topic-not-thesis",
+        "mc-opinion-as-evidence",
+        "mc-irrelevant-evidence",
+        "mc-ignore-counterargument",
+        "mc-conclusion-new-idea"
+      ],
+      "tools": {
+        "requested": [],
+        "prohibited": [
+          "dictionary"
+        ]
+      },
+      "offline": "FALLBACK_REQUIRED"
+    }
+  ],
+  "labProposals": []
+}

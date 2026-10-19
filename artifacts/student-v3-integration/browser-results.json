@@ -1,0 +1,490 @@
+{
+  "results": [
+    {
+      "name": "today",
+      "width": 390,
+      "overflow": false,
+      "left": 16,
+      "right": 16,
+      "navVisible": true
+    },
+    {
+      "name": "learn",
+      "width": 390,
+      "overflow": false,
+      "left": 16,
+      "right": 16,
+      "navVisible": true
+    },
+    {
+      "name": "lesson-read",
+      "width": 390,
+      "overflow": false,
+      "left": 16,
+      "right": 16,
+      "navVisible": true
+    },
+    {
+      "name": "lesson-slides",
+      "width": 390,
+      "overflow": false,
+      "left": 16,
+      "right": 16,
+      "navVisible": true
+    },
+    {
+      "name": "help",
+      "width": 390,
+      "overflow": false,
+      "left": 16,
+      "right": 16,
+      "navVisible": true
+    },
+    {
+      "name": "textbook-hub",
+      "width": 390,
+      "overflow": false,
+      "left": 20,
+      "right": 20,
+      "navVisible": true
+    },
+    {
+      "name": "textbook-reader",
+      "width": 390,
+      "overflow": false,
+      "left": 15,
+      "right": 15,
+      "navVisible": true
+    },
+    {
+      "name": "labs",
+      "width": 390,
+      "overflow": false,
+      "left": 16,
+      "right": 16,
+      "navVisible": true
+    },
+    {
+      "name": "progress",
+      "width": 390,
+      "overflow": false,
+      "left": 16,
+      "right": 16,
+      "navVisible": true
+    },
+    {
+      "width": 390,
+      "flow": "Today > Learn > Lesson Read/Slides > contextual Tutor > Today; Today > Help > Learn > Textbooks > Reader; Labs > Progress > Today",
+      "status": "pass"
+    },
+    {
+      "name": "today",
+      "width": 768,
+      "overflow": false,
+      "left": 24,
+      "right": 24,
+      "navVisible": true
+    },
+    {
+      "name": "learn",
+      "width": 768,
+      "overflow": false,
+      "left": 24,
+      "right": 24,
+      "navVisible": true
+    },
+    {
+      "name": "lesson-read",
+      "width": 768,
+      "overflow": false,
+      "left": 40,
+      "right": 40,
+      "navVisible": true
+    },
+    {
+      "name": "lesson-slides",
+      "width": 768,
+      "overflow": false,
+      "left": 24,
+      "right": 24,
+      "navVisible": true
+    },
+    {
+      "name": "help",
+      "width": 768,
+      "overflow": false,
+      "left": 24,
+      "right": 24,
+      "navVisible": true
+    },
+    {
+      "name": "textbook-hub",
+      "width": 768,
+      "overflow": false,
+      "left": 28,
+      "right": 28,
+      "navVisible": true
+    },
+    {
+      "name": "textbook-reader",
+      "width": 768,
+      "overflow": false,
+      "left": 25,
+      "right": 25,
+      "navVisible": true
+    },
+    {
+      "name": "labs",
+      "width": 768,
+      "overflow": false,
+      "left": 24,
+      "right": 24,
+      "navVisible": true
+    },
+    {
+      "name": "progress",
+      "width": 768,
+      "overflow": false,
+      "left": 24,
+      "right": 24,
+      "navVisible": true
+    },
+    {
+      "width": 768,
+      "flow": "Today > Learn > Lesson Read/Slides > contextual Tutor > Today; Today > Help > Learn > Textbooks > Reader; Labs > Progress > Today",
+      "status": "pass"
+    },
+    {
+      "name": "today",
+      "width": 1440,
+      "overflow": false,
+      "left": 32,
+      "right": 32,
+      "navVisible": true
+    },
+    {
+      "name": "learn",
+      "width": 1440,
+      "overflow": false,
+      "left": 32,
+      "right": 32,
+      "navVisible": true
+    },
+    {
+      "name": "lesson-read",
+      "width": 1440,
+      "overflow": false,
+      "left": 32,
+      "right": 356,
+      "navVisible": true
+    },
+    {
+      "name": "lesson-slides",
+      "width": 1440,
+      "overflow": false,
+      "left": 32,
+      "right": 356,
+      "navVisible": true
+    },
+    {
+      "name": "help",
+      "width": 1440,
+      "overflow": false,
+      "left": 32,
+      "right": 32,
+      "navVisible": true
+    },
+    {
+      "name": "textbook-hub",
+      "width": 1440,
+      "overflow": false,
+      "left": 28,
+      "right": 28,
+      "navVisible": true
+    },
+    {
+      "name": "textbook-reader",
+      "width": 1440,
+      "overflow": false,
+      "left": 40,
+      "right": 40,
+      "navVisible": true
+    },
+    {
+      "name": "labs",
+      "width": 1440,
+      "overflow": false,
+      "left": 32,
+      "right": 32,
+      "navVisible": true
+    },
+    {
+      "name": "progress",
+      "width": 1440,
+      "overflow": false,
+      "left": 32,
+      "right": 32,
+      "navVisible": true
+    },
+    {
+      "width": 1440,
+      "flow": "Today > Learn > Lesson Read/Slides > contextual Tutor > Today; Today > Help > Learn > Textbooks > Reader; Labs > Progress > Today",
+      "status": "pass"
+    },
+    {
+      "name": "today",
+      "width": 1920,
+      "overflow": false,
+      "left": 153,
+      "right": 153,
+      "navVisible": true
+    },
+    {
+      "name": "learn",
+      "width": 1920,
+      "overflow": false,
+      "left": 153,
+      "right": 153,
+      "navVisible": true
+    },
+    {
+      "name": "lesson-read",
+      "width": 1920,
+      "overflow": false,
+      "left": 272,
+      "right": 596,
+      "navVisible": true
+    },
+    {
+      "name": "lesson-slides",
+      "width": 1920,
+      "overflow": false,
+      "left": 272,
+      "right": 596,
+      "navVisible": true
+    },
+    {
+      "name": "help",
+      "width": 1920,
+      "overflow": false,
+      "left": 153,
+      "right": 153,
+      "navVisible": true
+    },
+    {
+      "name": "textbook-hub",
+      "width": 1920,
+      "overflow": false,
+      "left": 28,
+      "right": 28,
+      "navVisible": true
+    },
+    {
+      "name": "textbook-reader",
+      "width": 1920,
+      "overflow": false,
+      "left": 40,
+      "right": 40,
+      "navVisible": true
+    },
+    {
+      "name": "labs",
+      "width": 1920,
+      "overflow": false,
+      "left": 153,
+      "right": 153,
+      "navVisible": true
+    },
+    {
+      "name": "progress",
+      "width": 1920,
+      "overflow": false,
+      "left": 153,
+      "right": 153,
+      "navVisible": true
+    },
+    {
+      "width": 1920,
+      "flow": "Today > Learn > Lesson Read/Slides > contextual Tutor > Today; Today > Help > Learn > Textbooks > Reader; Labs > Progress > Today",
+      "status": "pass"
+    }
+  ],
+  "scans": [
+    {
+      "name": "today",
+      "width": 390,
+      "violations": []
+    },
+    {
+      "name": "learn",
+      "width": 390,
+      "violations": []
+    },
+    {
+      "name": "lesson-read",
+      "width": 390,
+      "violations": []
+    },
+    {
+      "name": "help",
+      "width": 390,
+      "violations": []
+    },
+    {
+      "name": "textbook-hub",
+      "width": 390,
+      "violations": []
+    },
+    {
+      "name": "textbook-reader",
+      "width": 390,
+      "violations": []
+    },
+    {
+      "name": "labs",
+      "width": 390,
+      "violations": []
+    },
+    {
+      "name": "progress",
+      "width": 390,
+      "violations": []
+    },
+    {
+      "name": "today",
+      "width": 768,
+      "violations": []
+    },
+    {
+      "name": "learn",
+      "width": 768,
+      "violations": []
+    },
+    {
+      "name": "lesson-read",
+      "width": 768,
+      "violations": []
+    },
+    {
+      "name": "help",
+      "width": 768,
+      "violations": []
+    },
+    {
+      "name": "textbook-hub",
+      "width": 768,
+      "violations": []
+    },
+    {
+      "name": "textbook-reader",
+      "width": 768,
+      "violations": []
+    },
+    {
+      "name": "labs",
+      "width": 768,
+      "violations": []
+    },
+    {
+      "name": "progress",
+      "width": 768,
+      "violations": []
+    },
+    {
+      "name": "today",
+      "width": 1440,
+      "violations": []
+    },
+    {
+      "name": "learn",
+      "width": 1440,
+      "violations": []
+    },
+    {
+      "name": "lesson-read",
+      "width": 1440,
+      "violations": []
+    },
+    {
+      "name": "help",
+      "width": 1440,
+      "violations": []
+    },
+    {
+      "name": "textbook-hub",
+      "width": 1440,
+      "violations": []
+    },
+    {
+      "name": "textbook-reader",
+      "width": 1440,
+      "violations": []
+    },
+    {
+      "name": "labs",
+      "width": 1440,
+      "violations": []
+    },
+    {
+      "name": "progress",
+      "width": 1440,
+      "violations": []
+    },
+    {
+      "name": "today",
+      "width": 1920,
+      "violations": []
+    },
+    {
+      "name": "learn",
+      "width": 1920,
+      "violations": []
+    },
+    {
+      "name": "lesson-read",
+      "width": 1920,
+      "violations": []
+    },
+    {
+      "name": "help",
+      "width": 1920,
+      "violations": []
+    },
+    {
+      "name": "textbook-hub",
+      "width": 1920,
+      "violations": []
+    },
+    {
+      "name": "textbook-reader",
+      "width": 1920,
+      "violations": []
+    },
+    {
+      "name": "labs",
+      "width": 1920,
+      "violations": []
+    },
+    {
+      "name": "progress",
+      "width": 1920,
+      "violations": []
+    }
+  ],
+  "errors": [],
+  "writes": [
+    "/api/track",
+    "/api/track",
+    "/api/rag/query",
+    "/api/track",
+    "/api/track",
+    "/api/rag/query",
+    "/api/track",
+    "/api/track",
+    "/api/rag/query",
+    "/api/track",
+    "/api/track",
+    "/api/rag/query"
+  ],
+  "caveat": "Integrated production component tree, synthetic identity/API/server-rendered hub fixtures. Protected-route authority tested separately; no hosted session or production curriculum claim."
+}

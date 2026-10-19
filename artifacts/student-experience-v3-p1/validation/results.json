@@ -1,0 +1,103 @@
+{
+  "evidence": {
+    "playlist": [
+      {
+        "stageWithHelp": 756,
+        "stageWithoutHelp": 1080
+      },
+      {
+        "drawer": {
+          "scrolls": true,
+          "bodyLocked": true,
+          "fits": true
+        },
+        "section17": "drawer → section 17 → drawer closed"
+      },
+      {
+        "longLessonSections": 19,
+        "documentHeight": 1361
+      }
+    ],
+    "heights": [
+      {
+        "width": 390,
+        "docHeight": 2384,
+        "innerHeight": 844,
+        "railVisible": false,
+        "railHeight": 0,
+        "listScrolls": null,
+        "drawerVisible": true
+      },
+      {
+        "width": 768,
+        "docHeight": 1780,
+        "innerHeight": 1024,
+        "railVisible": false,
+        "railHeight": 0,
+        "listScrolls": null,
+        "drawerVisible": true
+      },
+      {
+        "width": 1440,
+        "docHeight": 1423,
+        "innerHeight": 900,
+        "railVisible": true,
+        "railHeight": 796,
+        "listScrolls": true,
+        "drawerVisible": false
+      },
+      {
+        "width": 1920,
+        "docHeight": 1423,
+        "innerHeight": 900,
+        "railVisible": true,
+        "railHeight": 796,
+        "listScrolls": true,
+        "drawerVisible": false
+      }
+    ],
+    "keyboard": {
+      "playlist": "rail click, deep link, Enter on Next/Previous, ArrowDown+Enter in rail, Back, Forward, refresh"
+    },
+    "assigned": {
+      "handOff": "final section only → existing exit ticket",
+      "writes": []
+    },
+    "slides": {
+      "teacherNotes": "labelled + skippable",
+      "cards": "reading cards with authored labels",
+      "numberLens": "2,350,480 from the worked-example slide"
+    },
+    "native": {
+      "outlineBounded": true,
+      "diagram": "flow, 3 stages opened in order",
+      "drawer": "phone contents drawer navigates"
+    },
+    "demos": {
+      "apiCalls": 0,
+      "storage": {
+        "local": [],
+        "session": []
+      },
+      "covered": "science cycle (4 stages), English sort (wrong placement feedback + all sorted), Social Studies order + timeline, gallery inventory"
+    },
+    "axe": {
+      "read-playlist-1440": [],
+      "read-playlist-390": [],
+      "long-literacy-read": [],
+      "assigned-read": [],
+      "hosted-slides": [],
+      "legacy-slides-lens": [],
+      "native-diagram": [],
+      "science-cycle-390": [],
+      "english-sort-390": [],
+      "social-timeline-390": [],
+      "science-cycle-1440": [],
+      "english-sort-1440": [],
+      "social-timeline-1440": [],
+      "preview-gallery": []
+    }
+  },
+  "errors": [],
+  "caveat": "Fixture harness with production lesson components and mocked API answers; not server authorization, production content, or real-device certification."
+}

@@ -44,7 +44,8 @@ export const sha256 = (value: unknown) => createHash("sha256").update(canonicali
 // ─── Identities and independence ───────────────────────────────────────────
 
 export type AgentIdentity = Readonly<{
-  kind: "AI" | "HUMAN";
+  /** AUTOMATED: mechanical checks only. They take no AI judgment and never count as a review. */
+  kind: "AI" | "HUMAN" | "AUTOMATED";
   /** Stable id of the agent or person (e.g. a session-scoped agent id). */
   agentId: string;
   /** For AI: provider/model family, used to detect correlated review. */
@@ -62,6 +63,10 @@ export type ReviewerIndependence = Readonly<{
 }>;
 
 export function assessReviewerIndependence(reviewer: AgentIdentity, authors: readonly AgentIdentity[]): ReviewerIndependence {
+  if (reviewer.kind === "AUTOMATED") {
+    if (authors.length === 0) throw new InstructionalReviewError("AUTHORSHIP_UNKNOWN", "a revision with unknown authorship cannot be checked");
+    return Object.freeze({ selfAuthored: false, independent: false, reasons: Object.freeze(["AUTOMATED_CHECKS_ONLY"]), countsAsIndependentReview: false });
+  }
   if (reviewer.kind !== "AI") throw new InstructionalReviewError("AI_REVIEWER_ONLY");
   if (authors.length === 0) throw new InstructionalReviewError("AUTHORSHIP_UNKNOWN", "a revision with unknown authorship cannot be reviewed for independence");
   const reasons: string[] = [];
@@ -253,6 +258,19 @@ type AssessmentDocument = Readonly<{
   }>[];
 }>;
 
+type DefinitionTask = PlannedAssessmentTask & Readonly<{ targetsMisconceptions?: readonly string[] }>;
+type AssessmentDefinitionsDocument = Readonly<{ assessmentDefinitions?: Readonly<{ tasks?: readonly DefinitionTask[]; diagnosticOnlyExitItemIds?: readonly string[] }> }>;
+
+/** Candidate assessment definitions carried in the reviewer-only assessment document, if any. */
+function assessmentDefinitionTasks(assessment: unknown): DefinitionTask[] {
+  const tasks = (assessment as AssessmentDefinitionsDocument | null)?.assessmentDefinitions?.tasks ?? [];
+  return tasks.map((task) => ({ ...task, source: "EXCELLENCE_PLAN" as const, ref: task.ref ?? `definition:${task.id}` }));
+}
+
+function assessmentDiagnosticOnlyIds(assessment: unknown): readonly string[] {
+  return (assessment as AssessmentDefinitionsDocument | null)?.assessmentDefinitions?.diagnosticOnlyExitItemIds ?? [];
+}
+
 export type ReviewConfig = Readonly<{
   /** Error model each catalogued misconception names, where one exists. */
   misconceptionSignatures?: Readonly<Record<string, ErrorModel>>;
@@ -292,7 +310,12 @@ function deterministicFindings(input: RevisionInput, documents: Documents, bluep
   });
 
   // Misconceptions: taught and assessed.
-  const assessedMisconceptions = new Set(items.flatMap((record) => Object.values(record.distractorMisconceptions ?? {})));
+  // Diagnosable through a mapped distractor, or through a rubric-scored mastery task that targets it.
+  const definitions = assessmentDefinitionTasks(input.assessment);
+  const assessedMisconceptions = new Set([
+    ...items.flatMap((record) => Object.values(record.distractorMisconceptions ?? {})),
+    ...definitions.filter((task) => !task.optional && (task.timing === "END_OF_LESSON" || task.timing === "DELAYED") && task.scoring !== "NOT_SCORED").flatMap((task) => task.targetsMisconceptions ?? []),
+  ]);
   candidate.misconceptions.forEach((misconception, index) => {
     const taught = candidate.scenes.some((scene) => scene.purpose !== "ASSESS_MASTERY" && scene.misconceptionIds.includes(misconception.id));
     if (!taught) out.push(finding({
@@ -396,12 +419,18 @@ export function buildInstructionalReview(input: {
 }): InstructionalReviewReport {
   const independence = assessReviewerIndependence(input.reviewer, input.revision.authors);
   if (independence.selfAuthored) throw new InstructionalReviewError("SELF_REVIEW_PROHIBITED", independence.reasons.join(", "));
+  if (input.reviewer.kind === "AUTOMATED" && (input.judgments ?? []).length) throw new InstructionalReviewError("AUTOMATED_CHECKS_TAKE_NO_JUDGMENTS");
   const binding = bindRevision(input.revision);
   const documents: Documents = { CANDIDATE: input.revision.candidate, ASSESSMENT: input.revision.assessment ?? null };
   const assessment = (input.revision.assessment ?? {}) as AssessmentDocument;
   const exitItems: ExitItemRecord[] = (assessment.items ?? []).map((record) => ({ objectiveId: record.objectiveId, item: record.item }));
   const objectiveIds = Array.from(new Set(input.revision.candidate.scenes.flatMap((scene) => scene.objectiveIds)));
-  const candidateTasks = deriveCandidateTasks(input.revision.candidate, input.revision.subject, exitItems);
+  // The revision's own assessment definitions (reviewer-only document) are part of what is reviewed.
+  const diagnosticOnly = new Set(assessmentDiagnosticOnlyIds(input.revision.assessment));
+  const candidateTasks = [
+    ...deriveCandidateTasks(input.revision.candidate, input.revision.subject, exitItems).map((task) => (diagnosticOnly.has(task.id) ? { ...task, diagnosticOnly: true } : task)),
+    ...assessmentDefinitionTasks(input.revision.assessment),
+  ];
   const blueprintInput = { subject: input.revision.subject, objectiveIds, prerequisiteCount: input.revision.candidate.prerequisiteAssumptions.length };
   const blueprint = evaluateAssessmentBlueprint({ ...blueprintInput, tasks: candidateTasks });
 

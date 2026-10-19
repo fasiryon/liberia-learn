@@ -105,7 +105,7 @@ export default function AssignmentSubmissionClient(props: Props) {
         <div className="flex flex-wrap items-center gap-3">
           {gradeData.autoReleasedAt && !gradeData.teacherApproved ? (
             <span className="rounded-full border border-gray-500/20 bg-gray-500/10 px-3 py-1 text-xs font-semibold text-gray-300">
-              Graded by AI
+              AI score — not confirmed by your teacher
             </span>
           ) : (
             <span className="rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-300">
@@ -120,7 +120,7 @@ export default function AssignmentSubmissionClient(props: Props) {
         </div>
         {gradeData.autoReleasedAt && !gradeData.teacherApproved ? (
           <p className="text-xs text-[var(--ll-text-muted)]">
-            Your teacher may review this grade. Check back later.
+            This score came from AI and is not an official grade until your teacher confirms it.
           </p>
         ) : null}
 
@@ -163,6 +163,18 @@ export default function AssignmentSubmissionClient(props: Props) {
             Submitted — awaiting grade
           </span>
         </div>
+
+        {gradeData?.feedback && gradeData.autoReleasedAt && !gradeData.teacherApproved ? (
+          <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-5">
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--ll-text-muted)]">
+              AI feedback (provisional)
+            </p>
+            <p className="mt-1 text-xs text-[var(--ll-text-muted)]">
+              This is not a grade. Your teacher will review your work and confirm your official score.
+            </p>
+            <p className="mt-3 whitespace-pre-wrap text-sm text-[var(--ll-text)]">{gradeData.feedback}</p>
+          </div>
+        ) : null}
 
         {props.existingContent ? (
           <div className="rounded-xl border border-[var(--ll-border)] bg-[var(--ll-bg)]/70 p-5">

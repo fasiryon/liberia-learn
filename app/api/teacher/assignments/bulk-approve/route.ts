@@ -1,3 +1,4 @@
+// route-policy: auth=session; scope=record; authority=assignment-class-teacher-or-school-admin; rationale=a teacher of the assignment's own-school class (or a school admin) converts pending AI suggestions into teacher-approved official scores
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { requireRole } from "@/lib/auth";
@@ -54,7 +55,7 @@ export async function POST(req: NextRequest) {
         assignmentId: parsed.data.assignmentId,
         aiGrade: { not: null },
         teacherApproved: false,
-        autoReleasedAt: null,
+        // Provisional AI feedback released after 72h still needs a teacher-verified official score.
       },
       include: {
         Student: {

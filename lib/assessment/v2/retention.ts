@@ -10,6 +10,7 @@
  * There is no universal timetable. Intervals come from a versioned policy resolved for the grade
  * and subject; the 7/21-day proposal below is labelled PROPOSED and never auto-applies.
  */
+import { LL_AEP_001_REF, LL_RETENTION_DEFAULT } from "@/lib/academic-policy/llAep001";
 import type { AssessmentEvidenceEnvelope } from "./evidence";
 import type { AssessmentItemV2, CognitiveDemand } from "./types";
 
@@ -21,6 +22,14 @@ export type RetentionSchedulePolicy = Readonly<{
   intervalsDays: readonly number[];
   /** Minimum days after instruction for a response to count as delayed. */
   minimumDelayDays: number;
+  /** Documented exceptions: competencies for which these checks are unsuitable. */
+  exceptions?: readonly RetentionException[];
+}>;
+
+export type RetentionException = Readonly<{
+  objectiveId: string;
+  reason: string;
+  approvedBy: string;
 }>;
 
 /** Proposal from the Curriculum Excellence Standard; requires approval per grade/subject before use. */
@@ -32,6 +41,32 @@ export const PROPOSED_RETENTION_POLICY: RetentionSchedulePolicy = Object.freeze(
   intervalsDays: [7, 21],
   minimumDelayDays: 7,
 });
+
+/**
+ * LL-AEP-001 initial default: 7- and 21-day delayed checks for suitable taught competencies, with
+ * documented exceptions. Approved as an institutional policy version; planning opportunities from it
+ * activates nothing (no scheduler, delivery or evidence write is wired to it).
+ */
+export const LL_RETENTION_PILOT_POLICY: RetentionSchedulePolicy = Object.freeze({
+  policyId: "ll-aep-001-retention-pilot",
+  version: "1.0.0",
+  status: "APPROVED",
+  scope: { grade: null, subject: null },
+  intervalsDays: [...LL_RETENTION_DEFAULT.intervalsDays],
+  minimumDelayDays: LL_RETENTION_DEFAULT.minimumDelayDays,
+  exceptions: [],
+});
+
+export const LL_RETENTION_POLICY_SOURCE = LL_AEP_001_REF;
+
+export function validateRetentionPolicy(policy: RetentionSchedulePolicy): readonly string[] {
+  const issues: string[] = [];
+  if (policy.intervalsDays.length === 0 || policy.intervalsDays.some((days) => !Number.isInteger(days) || days < policy.minimumDelayDays)) issues.push("retention_intervals_invalid");
+  for (const exception of policy.exceptions ?? []) {
+    if (!exception.objectiveId || exception.reason.trim().length < 15 || !exception.approvedBy) issues.push(`retention_exception_undocumented:${exception.objectiveId}`);
+  }
+  return Object.freeze(issues);
+}
 
 /** Most specific APPROVED policy for (grade, subject); null when none is approved. */
 export function resolveRetentionPolicy(policies: readonly RetentionSchedulePolicy[], grade: number, subject: string): RetentionSchedulePolicy | null {
@@ -64,14 +99,18 @@ export function planRetentionOpportunities(input: {
   policy: RetentionSchedulePolicy | null;
 }): readonly EvidenceOpportunity[] {
   if (!input.policy || input.policy.status !== "APPROVED") return Object.freeze([]);
+  if (validateRetentionPolicy(input.policy).length > 0) throw new Error("assessment_retention_policy_invalid");
+  const excepted = new Set((input.policy.exceptions ?? []).map((exception) => exception.objectiveId));
+  const objectiveIds = input.objectiveIds.filter((objectiveId) => !excepted.has(objectiveId));
+  if (objectiveIds.length === 0) return Object.freeze([]);
   const start = Date.parse(input.instructionCompletedAt);
   if (!Number.isFinite(start)) throw new Error("assessment_instruction_timestamp_invalid");
   const policy = input.policy;
   return Object.freeze(policy.intervalsDays.map((intervalDays) => Object.freeze({
-    opportunityId: `${input.studentId}:${[...input.objectiveIds].sort().join("+")}:${intervalDays}d`,
+    opportunityId: `${input.studentId}:${[...objectiveIds].sort().join("+")}:${intervalDays}d`,
     kind: "DELAYED_RETENTION" as const,
     studentId: input.studentId,
-    objectiveIds: [...input.objectiveIds],
+    objectiveIds: [...objectiveIds],
     instructionCompletedAt: input.instructionCompletedAt,
     dueAt: new Date(start + intervalDays * DAY_MS).toISOString(),
     intervalDays,

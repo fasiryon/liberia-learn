@@ -17,7 +17,7 @@ import {
   type GovernedEvidence,
   type GovernedEvidenceType,
 } from "@/lib/learning-evidence/evidenceContract";
-import { effectiveStanding, type AssessmentEvidenceEnvelope, type EvidenceTier } from "./evidence";
+import { effectiveStanding, type AssessmentEvidenceEnvelope, type EvidenceIndependence, type EvidenceTier } from "./evidence";
 import type { AssessmentPurpose, ReleaseRevocation } from "./types";
 
 export const ASSESSMENT_V2_DOWNSTREAM_WRITES_ENABLED = false as const;
@@ -100,7 +100,7 @@ export type OrchestratorSignal = Readonly<{
   objectiveIds: readonly string[];
   tier: EvidenceTier;
   purpose: AssessmentPurpose;
-  independence: "INDEPENDENT" | "ASSISTED";
+  independence: EvidenceIndependence;
   fractionCorrect: number | null;
   /** Recommendations may use these signals; they must never be reported as mastery. */
   masteryClaim: false;
@@ -140,6 +140,9 @@ export function gradebookEligibility(envelope: AssessmentEvidenceEnvelope, input
   if (standing.tier !== "VERIFIED_ASSESSMENT_EVIDENCE" && standing.tier !== "MASTERY_ADMITTED_EVIDENCE") return no("evidence_not_verified");
   if (!standing.official) return no("delivery_not_official");
   if (envelope.scoring.scorerAuthority !== "SERVER_KEYED" && envelope.scoring.scorerAuthority !== "HUMAN_MODERATOR") return no("scorer_not_authoritative");
+  const moderation = envelope.scoring.moderation;
+  if (moderation?.secondMarkerRequired && moderation.marking === "SINGLE") return no("second_marking_unreconciled");
+  if (envelope.integrityFlags.length > 0) return no("integrity_review_required");
   return Object.freeze({ eligible: true, reason: "official_verified_score" });
 }
 
@@ -153,7 +156,16 @@ export type ObjectiveEvidenceSummary =
 export function summarizeObjectiveEvidence(envelopes: readonly AssessmentEvidenceEnvelope[], objectiveId: string, revocations: readonly ReleaseRevocation[]): ObjectiveEvidenceSummary {
   const relevant = envelopes.filter((envelope) => envelope.objectiveIds.includes(objectiveId) && effectiveStanding(envelope, revocations).tier !== "INVALIDATED");
   if (relevant.length === 0) return Object.freeze({ status: "NO_EVIDENCE", objectiveId });
-  const verified = relevant.filter((envelope) => envelope.tier === "VERIFIED_ASSESSMENT_EVIDENCE");
+  // Admitted evidence is verified evidence too. A response's verified and admitted envelopes describe
+  // the same observation, so each response counts once.
+  const verifiedByResponse = new Map<string, AssessmentEvidenceEnvelope>();
+  for (const envelope of relevant) {
+    const tier = effectiveStanding(envelope, revocations).tier;
+    if (tier !== "VERIFIED_ASSESSMENT_EVIDENCE" && tier !== "MASTERY_ADMITTED_EVIDENCE") continue;
+    const key = `${envelope.attempt.attemptId}|${envelope.pins.itemId}|${envelope.pins.itemVersion}|${envelope.attempt.responseSequence}`;
+    if (!verifiedByResponse.has(key)) verifiedByResponse.set(key, envelope);
+  }
+  const verified = [...verifiedByResponse.values()];
   if (verified.length === 0) return Object.freeze({ status: "ONLY_UNVERIFIED", objectiveId, observationCount: relevant.length });
   return Object.freeze({
     status: "VERIFIED",

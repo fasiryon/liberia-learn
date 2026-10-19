@@ -246,11 +246,50 @@ describe("Lesson Player V2 shared projection compatibility", () => {
       expect(again.sceneId).toBe(context.sceneId); expect(again.objectiveIds).toEqual(context.objectiveIds);
     }
     const selected = native.objectives[0].id;
-    const scoped = await resolveTutorContext(user, { contentId: "g7-addition", objectiveIds: [selected] }, "practice");
+    const scoped = await resolveTutorContext(user, { ...identity, objectiveIds: [selected] }, "practice");
     expect(scoped.objectiveIds).toEqual([selected]);
     expect(scoped.objectiveStatements).toEqual([native.objectives[0].statement]);
     await expect(resolveTutorContext(user, { ...identity, sceneId: "forged" })).rejects.toMatchObject({ status: 404 });
     await expect(resolveTutorContext(user, { ...identity, objectiveIds: ["forged"] })).rejects.toMatchObject({ status: 404 });
+  });
+});
+
+describe("native lesson independent-work tutor boundary", () => {
+  function nativeLesson() {
+    const experience = structuredClone(hydropowerLessonExperience);
+    const native = { ...experience, grade: 7, subject: "MATH", authority: { ...experience.authority, status: "APPROVED_RELEASE" as const, releaseId: "release-active" } };
+    mocks.lesson.mockResolvedValue(lesson({ versionId: "release-active", curriculumVersion: { id: "release-active", versionName: "active", status: "ACTIVE" }, payload: { testProjectedExperience: native } }));
+    return native;
+  }
+
+  it.each((["explain", "explain_differently", "practice", "step_by_step"] as const).flatMap((action) =>
+    ["quick-check", "reflection", "mastery"].map((sceneId) => ({ action, sceneId }))))("refuses $action on protected scene $sceneId", async ({ action, sceneId }) => {
+    const native = nativeLesson();
+    const scene = native.scenes.find((candidate) => candidate.id === sceneId)!;
+    expect(scene.type === "MASTERY_CHECK" || scene.type === "CHECK_UNDERSTANDING" || scene.interaction.kind === "FREE_RESPONSE" || scene.interaction.kind === "ASSESSMENT_HANDOFF").toBe(true);
+    await expect(resolveTutorContext(user, { contentId: "g7-addition", lessonVersion: "1", experienceId: native.id, experienceVersion: native.version, sceneId }, action)).rejects.toMatchObject({ status: 403 });
+    expect(mocks.completion).not.toHaveBeenCalled();
+  });
+
+  it("does not allow omission of native scene identity to bypass the assessment boundary", async () => {
+    const native = nativeLesson();
+    for (const identity of [
+      { contentId: "g7-addition" },
+      { contentId: "g7-addition", experienceId: native.id, experienceVersion: native.version },
+      { contentId: "g7-addition", objectiveIds: [native.objectives[0].id] },
+    ]) {
+      await expect(resolveTutorContext(user, identity)).rejects.toMatchObject({ status: 403 });
+    }
+    expect(mocks.completion).not.toHaveBeenCalled();
+  });
+
+  it("preserves exact canonical lesson, experience and scene identity for allowed formative help", async () => {
+    const native = nativeLesson();
+    const context = await resolveTutorContext(user, { contentId: "g7-addition", lessonVersion: "1", experienceId: native.id, experienceVersion: native.version, sceneId: "explain" });
+    expect(context.sources.length).toBeGreaterThan(0);
+    expect(tutorIdentityFromContext(context)).toMatchObject({ contentId: "g7-addition", lessonVersion: "1", experienceId: native.id, experienceVersion: native.version, sceneId: "explain" });
+    const followUp = await resolveTutorContext(user, tutorIdentityFromContext(context), "explain_differently");
+    expect(tutorIdentityFromContext(followUp)).toEqual(tutorIdentityFromContext(context));
   });
 });
 

@@ -12,7 +12,13 @@ export type AssessmentAuditEventType =
   | "assessment.score.ai_suggestion_recorded"
   | "assessment.evidence.verified"
   | "assessment.evidence.admitted"
-  | "assessment.evidence.rejected";
+  | "assessment.evidence.rejected"
+  | "assessment.evidence.integrity_review_required"
+  | "assessment.assistance.opened"
+  | "assessment.assistance.recorded"
+  | "assessment.assistance.sealed"
+  | "assessment.assistance.conflict"
+  | "assessment.assistance.finalized";
 
 export type AssessmentAuditEvent = Readonly<{
   type: AssessmentAuditEventType;

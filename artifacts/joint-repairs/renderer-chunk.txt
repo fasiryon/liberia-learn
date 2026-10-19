@@ -1,0 +1,14 @@
+{
+  "chunks": [
+    "static/chunks/b536a0f1.4168af6bd25b3add.js"
+  ],
+  "next": {
+    "storageBytes": 356679,
+    "transferBytes": 70321
+  },
+  "esbuild": {
+    "storageBytes": 609291,
+    "transferBytes": 132842
+  },
+  "allowance": 0.15
+}

@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 750" role="img" aria-labelledby="t d" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif">
+  <title id="t">Place-value chart for 4,205,316.27</title>
+  <desc id="d">Each place with its digit and value: millions 4 is 4,000,000; hundred thousands 2 is 200,000; ten thousands 0 is 0; thousands 5 is 5,000; hundreds 3 is 300; tens 1 is 10; ones 6 is 6; then the decimal point; tenths 2 is 0.2; hundredths 7 is 0.07.</desc>
+  <rect width="600" height="750" rx="24" fill="#ffffff"/>
+  <text x="300" y="50" text-anchor="middle" font-size="27" font-weight="700" fill="#1f2937">4,205,316.27 in a place-value chart</text>
+  <g font-size="19" font-weight="700" fill="#374151"><text x="40" y="94">PERIOD</text><text x="150" y="94">PLACE</text><text x="430" y="94" text-anchor="middle">DIGIT</text><text x="560" y="94" text-anchor="end">VALUE</text></g>
+  <g font-size="22">
+    <rect x="30" y="108" width="540" height="56" rx="10" fill="#e0f2fe"/>
+    <text x="40" y="144" font-size="18" font-weight="700" fill="#0369a1">Millions</text><text x="150" y="144" fill="#1f2937">millions</text><text x="430" y="146" text-anchor="middle" font-size="32" font-weight="800" fill="#0369a1">4</text><text x="560" y="144" text-anchor="end" fill="#1f2937">4,000,000</text>
+    <rect x="30" y="172" width="540" height="168" rx="10" fill="#ecfdf5"/>
+    <text x="40" y="262" font-size="18" font-weight="700" fill="#0f766e">Thousands</text>
+    <text x="150" y="208" fill="#1f2937">hundred thousands</text><text x="430" y="210" text-anchor="middle" font-size="32" font-weight="800" fill="#0f766e">2</text><text x="560" y="208" text-anchor="end" fill="#1f2937">200,000</text>
+    <text x="150" y="264" fill="#1f2937">ten thousands</text><rect x="408" y="236" width="44" height="40" rx="8" fill="none" stroke="#b45309" stroke-width="3" stroke-dasharray="6 4"/><text x="430" y="266" text-anchor="middle" font-size="32" font-weight="800" fill="#b45309">0</text><text x="560" y="264" text-anchor="end" fill="#b45309">0</text><text x="150" y="288" font-size="16" fill="#b45309">a zero holds this place</text>
+    <text x="150" y="320" fill="#1f2937">thousands</text><text x="430" y="322" text-anchor="middle" font-size="32" font-weight="800" fill="#0f766e">5</text><text x="560" y="320" text-anchor="end" fill="#1f2937">5,000</text>
+    <rect x="30" y="348" width="540" height="168" rx="10" fill="#f5f3ff"/>
+    <text x="40" y="438" font-size="18" font-weight="700" fill="#6d28d9">Ones</text>
+    <text x="150" y="384" fill="#1f2937">hundreds</text><text x="430" y="386" text-anchor="middle" font-size="32" font-weight="800" fill="#6d28d9">3</text><text x="560" y="384" text-anchor="end" fill="#1f2937">300</text>
+    <text x="150" y="440" fill="#1f2937">tens</text><text x="430" y="442" text-anchor="middle" font-size="32" font-weight="800" fill="#6d28d9">1</text><text x="560" y="440" text-anchor="end" fill="#1f2937">10</text>
+    <text x="150" y="496" fill="#1f2937">ones</text><text x="430" y="498" text-anchor="middle" font-size="32" font-weight="800" fill="#6d28d9">6</text><text x="560" y="496" text-anchor="end" fill="#1f2937">6</text>
+    <line x1="30" y1="540" x2="570" y2="540" stroke="#1f2937" stroke-width="2" stroke-dasharray="4 6"/>
+    <circle cx="430" cy="540" r="9" fill="#1f2937"/><text x="452" y="534" font-size="18" font-weight="700" fill="#1f2937">decimal point</text>
+    <rect x="30" y="562" width="540" height="112" rx="10" fill="#fef3c7"/>
+    <text x="40" y="624" font-size="18" font-weight="700" fill="#b45309">Parts of one</text>
+    <text x="150" y="598" fill="#1f2937">tenths</text><text x="430" y="600" text-anchor="middle" font-size="32" font-weight="800" fill="#b45309">2</text><text x="560" y="598" text-anchor="end" fill="#1f2937">0.2</text>
+    <text x="150" y="654" fill="#1f2937">hundredths</text><text x="430" y="656" text-anchor="middle" font-size="32" font-weight="800" fill="#b45309">7</text><text x="560" y="654" text-anchor="end" fill="#1f2937">0.07</text>
+  </g>
+  <text x="300" y="704" text-anchor="middle" font-size="19" fill="#4b5563">Read: four million, two hundred five thousand,</text><text x="300" y="730" text-anchor="middle" font-size="19" fill="#4b5563">three hundred sixteen and twenty-seven hundredths</text>
+</svg>

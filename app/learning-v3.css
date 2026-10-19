@@ -110,7 +110,7 @@
 .ll3-support-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 .ll3-support h2, .ll3-support-label { font-size: 14px; font-weight: 700; letter-spacing: .04em; color: var(--ll-text-muted); text-transform: uppercase; }
 .ll3-support-toggle { display: inline-flex; align-items: center; gap: 6px; min-height: var(--pdv2-target, 48px); padding: 6px 12px; border-radius: 10px; border: 1px solid var(--ll-border-strong); font-weight: 600; font-size: 15px; color: var(--ll-text); background: var(--ll-surface); }
-.ll3-outline-list { display: grid; gap: 4px; }
+.ll3-outline-list { display: grid; grid-template-columns: minmax(0, 1fr); gap: 4px; }
 .ll3-outline-list :where(button,a) { display: flex; align-items: center; gap: 10px; width: 100%; min-height: 44px; padding: 8px 10px; border-radius: 10px; text-align: left; font-size: 15px; color: var(--ll-text-muted); }
 .ll3-outline-list :where(button,a)[aria-current] { background: var(--ll-surface); color: var(--ll-text); font-weight: 700; box-shadow: inset 3px 0 0 var(--ll-accent); }
 .ll3-outline-list button:disabled { opacity: .45; cursor: not-allowed; }
@@ -119,6 +119,7 @@
 
 .ll3-footer { position: fixed; inset: auto 0 0; z-index: 30; background: var(--ll-bg); border-top: 1px solid var(--ll-border); padding-bottom: env(safe-area-inset-bottom, 0px); }
 .ll3-footer-inner { max-width: var(--ll-stage-max); margin: 0 auto; padding: 10px var(--ll-gutter); display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.ll3-footer-inner > .ll3-btn { flex-shrink: 0; white-space: nowrap; }
 .ll3-footer-hint { max-width: var(--ll-stage-max); margin: 0 auto; padding: 8px var(--ll-gutter) 0; text-align: center; color: var(--ll-text-muted); font-size: 14px; line-height: 1.4; }
 .ll3-footer-count { color: var(--ll-text-muted); font-size: 14px; font-weight: 600; text-align: center; min-width: 0; }
 .ll3-dots { display: none; gap: 6px; justify-content: center; margin-top: 6px; }

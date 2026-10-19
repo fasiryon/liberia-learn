@@ -1,0 +1,1113 @@
+
+> liberia-learn-frontend@1.0.0 build
+> prisma generate && cross-env NODE_OPTIONS="--max-old-space-size=4096" next build
+
+npm.cmd : Loaded Prisma config from prisma.config.ts.
+At line:2 char:228
++ ... SABLED='1'; npm.cmd run build *> artifacts/joint-repairs/build.log; $ ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Loaded Prisma c...isma.config.ts.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+
+
+Prisma config detected, skipping environment variable loading.
+Prisma schema loaded from prisma\schema.prisma
+
+✔ Generated Prisma Client (v6.19.3) to .\node_modules\@prisma\client in 21.46s
+
+Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
+
+Tip: Want to turn off tips and other hints? https://pris.ly/tip-4-nohints
+
+[ENV][observability] Recommended env var not set: NEXT_PUBLIC_SENTRY_DSN
+[ENV][observability] Recommended env var not set: SENTRY_DSN
+  ▲ Next.js 14.2.35
+  - Experiments (use with caution):
+    · cpus
+
+   Creating an optimized production build ...
+Browserslist: browsers data (caniuse-lite) is 8 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+Browserslist: caniuse-lite is outdated. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+ ⚠ Compiled with warnings
+
+./node_modules/require-in-the-middle/index.js
+Critical dependency: require function is used in a way in which dependencies cannot be statically extracted
+
+Import trace for requested module:
+./node_modules/require-in-the-middle/index.js
+./node_modules/@opentelemetry/instrumentation/build/esm/platform/node/instrumentation.js
+./node_modules/@opentelemetry/instrumentation/build/esm/platform/node/index.js
+./node_modules/@opentelemetry/instrumentation/build/esm/platform/index.js
+./node_modules/@opentelemetry/instrumentation/build/esm/index.js
+./node_modules/@sentry/node/build/cjs/integrations/tracing/express.js
+./node_modules/@sentry/node/build/cjs/index.js
+./node_modules/@sentry/nextjs/build/cjs/index.server.js
+./lib/email.ts
+./app/api/auth/forgot-password/route.ts
+
+   Linting and checking validity of types ...
+
+./app/admin/announcements/page.tsx
+56:37  Warning: React Hook useEffect has a missing dependency: 'load'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./app/admin/video-moderation/page.tsx
+187:19  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./app/error.tsx
+18:7  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./app/share/certificate/[id]/page.tsx
+126:11  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./app/student/messages/page.tsx
+57:9  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./app/teacher/lesson/[contentId]/video/page.tsx
+76:38  Warning: React Hook useEffect has a missing dependency: 'loadVideos'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+483:17  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./app/teacher/messages/page.tsx
+166:23  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./app/unauthorized/page.tsx
+6:7  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./components/GlobalSearch.tsx
+64:20  Warning: React Hook useCallback received a function whose dependencies are unknown. Pass an inline function instead.  react-hooks/exhaustive-deps
+
+./components/interactive-labs/v2/ThreeScene.tsx
+77:5  Warning: React Hook useEffect has a missing dependency: 'review'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./components/labs/SimpleMachinesLabPage.tsx
+29:6  Warning: React Hook useEffect has missing dependencies: 'drawInclinedPlane', 'drawLever', and 'drawPulley'. Either include them or remove the dependency array.  react-hooks/exhaustive-deps
+
+info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/basic-features/eslint#disabling-rules
+   Collecting page data ...
+[Upstash Redis] Unable to find environment variable: `UPSTASH_REDIS_REST_URL`
+[Upstash Redis] Unable to find environment variable: `UPSTASH_REDIS_REST_TOKEN`
+[Upstash Redis] The 'url' property is missing or undefined in your Redis config.
+[Upstash Redis] The 'token' property is missing or undefined in your Redis config.
+[Upstash Redis] Unable to find environment variable: `UPSTASH_REDIS_REST_URL`
+[Upstash Redis] Unable to find environment variable: `UPSTASH_REDIS_REST_TOKEN`
+[Upstash Redis] The 'url' property is missing or undefined in your Redis config.
+[Upstash Redis] The 'token' property is missing or undefined in your Redis config.
+[Upstash Redis] Unable to find environment variable: `UPSTASH_REDIS_REST_URL`
+[Upstash Redis] Unable to find environment variable: `UPSTASH_REDIS_REST_TOKEN`
+[Upstash Redis] The 'url' property is missing or undefined in your Redis config.
+[Upstash Redis] The 'token' property is missing or undefined in your Redis config.
+[Upstash Redis] Unable to find environment variable: `UPSTASH_REDIS_REST_URL`
+[Upstash Redis] Unable to find environment variable: `UPSTASH_REDIS_REST_TOKEN`
+[Upstash Redis] The 'url' property is missing or undefined in your Redis config.
+[Upstash Redis] The 'token' property is missing or undefined in your Redis config.
+[Upstash Redis] Unable to find environment variable: `UPSTASH_REDIS_REST_URL`
+[Upstash Redis] Unable to find environment variable: `UPSTASH_REDIS_REST_TOKEN`
+[Upstash Redis] The 'url' property is missing or undefined in your Redis config.
+[Upstash Redis] The 'token' property is missing or undefined in your Redis config.
+   Generating static pages (0/391) ...
+[Upstash Redis] Unable to find environment variable: `UPSTASH_REDIS_REST_URL`
+[Upstash Redis] Unable to find environment variable: `UPSTASH_REDIS_REST_TOKEN`
+[Upstash Redis] The 'url' property is missing or undefined in your Redis config.
+[Upstash Redis] The 'token' property is missing or undefined in your Redis config.
+[Upstash Redis] Unable to find environment variable: `UPSTASH_REDIS_REST_URL`
+[Upstash Redis] Unable to find environment variable: `UPSTASH_REDIS_REST_TOKEN`
+[Upstash Redis] The 'url' property is missing or undefined in your Redis config.
+[Upstash Redis] The 'token' property is missing or undefined in your Redis config.
+{"level":"error","message":"API handler error","requestId":"forkable","metadata":{"route":"/api/teacher/lessons/forkabl
+e","method":"GET","errorMessage":"Dynamic server usage: Route /api/teacher/lessons/forkable couldn't be rendered
+statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error","error
+Name":"Error","status":500,"code":"INTERNAL_ERROR"},"timestamp":"2026-10-16T19:19:45.231Z","service":"liberialearn"}
+{"level":"error","message":"API handler error","requestId":"e5c3470b-e5fb-4ab5-9546-5976c8cd2c3a","metadata":{"route":"
+/api/teacher/lessons/mine","method":"GET","errorMessage":"Dynamic server usage: Route /api/teacher/lessons/mine
+couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic
+-server-error","errorName":"Error","status":500,"code":"INTERNAL_ERROR"},"timestamp":"2026-10-16T19:19:45.295Z","servic
+e":"liberialearn"}
+{"level":"error","message":"API handler
+error","requestId":"sw","metadata":{"route":"/api/teacher/lessons/school-wide","method":"GET","errorMessage":"Dynamic
+server usage: Route /api/teacher/lessons/school-wide couldn't be rendered statically because it used `headers`. See
+more info here: https://nextjs.org/docs/messages/dynamic-server-error","errorName":"Error","status":500,"code":"INTERNA
+L_ERROR"},"timestamp":"2026-10-16T19:19:45.333Z","service":"liberialearn"}
+   Generating static pages (97/391)
+{"level":"error","message":"API handler error","requestId":"14a161b3-aa92-4a88-b6bb-798059837aaa","metadata":{"route":"
+/api/teacher/lessons/shared","method":"GET","errorMessage":"Dynamic server usage: Route /api/teacher/lessons/shared
+couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic
+-server-error","errorName":"Error","status":500,"code":"INTERNAL_ERROR"},"timestamp":"2026-10-16T19:19:45.361Z","servic
+e":"liberialearn"}
+   Generating static pages (195/391)
+prisma:error
+Invalid `prisma.curriculumContent.count()` invocation:
+
+
+Can't reach database server at `127.0.0.1:1`
+
+Please make sure your database server is running at `127.0.0.1:1`.
+prisma:error
+Invalid `prisma.curriculumContent.count()` invocation:
+
+
+Can't reach database server at `127.0.0.1:1`
+
+Please make sure your database server is running at `127.0.0.1:1`.
+   Generating static pages (293/391)
+ ✓ Generating static pages (391/391)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                                                                         Size     First Load JS
+┌ ƒ /                                                                               872 B          97.7 kB
+├ ƒ /_not-found                                                                     251 B          88.3 kB
+├ ƒ /admin                                                                          3.96 kB         101 kB
+├ ƒ /admin/academic-year                                                            3.58 kB         100 kB
+├ ƒ /admin/agents                                                                   2.27 kB        99.1 kB
+├ ƒ /admin/agents/invocations                                                       2.27 kB        90.4 kB
+├ ƒ /admin/ai-costs                                                                 249 B          88.3 kB
+├ ƒ /admin/ai-quality                                                               249 B          88.3 kB
+├ ƒ /admin/analytics                                                                111 kB          199 kB
+├ ƒ /admin/announcements                                                            5.23 kB         102 kB
+├ ƒ /admin/assignments                                                              3.64 kB         100 kB
+├ ƒ /admin/audio-generation                                                         2.01 kB        90.1 kB
+├ ƒ /admin/audit                                                                    249 B          88.3 kB
+├ ƒ /admin/audit-log                                                                251 B          88.3 kB
+├ ƒ /admin/classes                                                                  1.52 kB        89.6 kB
+├ ƒ /admin/communications                                                           2.86 kB        99.7 kB
+├ ƒ /admin/communications/flags                                                     3.26 kB         100 kB
+├ ƒ /admin/compliance                                                               1.46 kB        98.3 kB
+├ ƒ /admin/content-media                                                            4.18 kB         101 kB
+├ ƒ /admin/content-review                                                           3.97 kB         101 kB
+├ ƒ /admin/cost-dashboard                                                           2.21 kB        90.3 kB
+├ ƒ /admin/credential-card                                                          258 B          88.4 kB
+├ ƒ /admin/credentials                                                              1.56 kB        89.7 kB
+├ ƒ /admin/curriculum                                                               6.29 kB         103 kB
+├ ƒ /admin/curriculum/[contentId]/review                                            5.29 kB         102 kB
+├ ƒ /admin/curriculum/coverage                                                      2.23 kB          99 kB
+├ ƒ /admin/curriculum/units                                                         3.45 kB         100 kB
+├ ƒ /admin/curriculum/year-readiness                                                1.53 kB        89.6 kB
+├ ƒ /admin/demo-reset                                                               952 B          97.8 kB
+├ ƒ /admin/district-updates                                                         3.31 kB         100 kB
+├ ƒ /admin/documents                                                                3.82 kB         101 kB
+├ ƒ /admin/enrollment                                                               2.39 kB        99.2 kB
+├ ƒ /admin/events                                                                   4.44 kB         101 kB
+├ ƒ /admin/exams                                                                    2.33 kB        99.1 kB
+├ ƒ /admin/governance                                                               407 B          97.2 kB
+├ ƒ /admin/governance/exports                                                       406 B          97.2 kB
+├ ƒ /admin/guardian-link                                                            2.11 kB        90.2 kB
+├ ƒ /admin/homework                                                                 1.43 kB        89.5 kB
+├ ƒ /admin/interoperability                                                         5.51 kB         102 kB
+├ ƒ /admin/invites                                                                  1.41 kB        89.5 kB
+├ ƒ /admin/metrics                                                                  2.41 kB        99.2 kB
+├ ƒ /admin/moe-submissions                                                          3.9 kB          101 kB
+├ ƒ /admin/notifications                                                            979 B          89.1 kB
+├ ƒ /admin/onboarding                                                               5.58 kB        93.7 kB
+├ ƒ /admin/onboarding/launch-checklist                                              406 B          97.2 kB
+├ ƒ /admin/onboarding/readiness                                                     1.59 kB        98.4 kB
+├ ƒ /admin/ops                                                                      406 B          97.2 kB
+├ ƒ /admin/ops/actions/[actionExecutionId]                                          405 B          97.2 kB
+├ ƒ /admin/ops/approvals                                                            406 B          97.2 kB
+├ ƒ /admin/ops/approvals/[approvalRequestId]                                        406 B          97.2 kB
+├ ƒ /admin/ops/curriculum-regeneration                                              406 B          97.2 kB
+├ ƒ /admin/ops/curriculum-review                                                    249 B          88.3 kB
+├ ƒ /admin/ops/detectors                                                            406 B          97.2 kB
+├ ƒ /admin/ops/detectors/evidence/[decisionId]                                      405 B          97.2 kB
+├ ƒ /admin/ops/detectors/executions/[workflowRunId]                                 406 B          97.2 kB
+├ ƒ /admin/ops/early-warnings                                                       406 B          97.2 kB
+├ ƒ /admin/ops/effectiveness                                                        406 B          97.2 kB
+├ ƒ /admin/ops/evaluations                                                          406 B          97.2 kB
+├ ƒ /admin/ops/execution                                                            405 B          97.2 kB
+├ ƒ /admin/ops/execution/health                                                     406 B          97.2 kB
+├ ƒ /admin/ops/execution/low-risk                                                   405 B          97.2 kB
+├ ƒ /admin/ops/false-positives                                                      249 B          88.3 kB
+├ ƒ /admin/ops/forecast-calibration                                                 406 B          97.2 kB
+├ ƒ /admin/ops/forecasting                                                          406 B          97.2 kB
+├ ƒ /admin/ops/health                                                               476 B          97.3 kB
+├ ƒ /admin/ops/memory                                                               406 B          97.2 kB
+├ ƒ /admin/ops/memory/[memoryEventId]                                               406 B          97.2 kB
+├ ƒ /admin/ops/optimization                                                         406 B          97.2 kB
+├ ƒ /admin/ops/optimization/[proposalEventId]                                       405 B          97.2 kB
+├ ƒ /admin/ops/optimization/change-requests                                         406 B          97.2 kB
+├ ƒ /admin/ops/optimization/change-requests/[changeRequestId]                       406 B          97.2 kB
+├ ƒ /admin/ops/optimization/change-requests/[changeRequestId]/audit                 406 B          97.2 kB
+├ ƒ /admin/ops/optimization/change-requests/[changeRequestId]/post-change-eval      2.58 kB        99.4 kB
+├ ƒ /admin/ops/optimization/change-requests/[changeRequestId]/rollout               406 B          97.2 kB
+├ ƒ /admin/ops/optimization/change-requests/[changeRequestId]/signoff               1.25 kB        89.3 kB
+├ ƒ /admin/ops/optimization/effectiveness                                           406 B          97.2 kB
+├ ƒ /admin/ops/optimization/evaluation-windows                                      406 B          97.2 kB
+├ ƒ /admin/ops/optimization/outcomes                                                406 B          97.2 kB
+├ ƒ /admin/ops/optimization/readiness                                               251 B          88.3 kB
+├ ƒ /admin/ops/optimization/rollout                                                 249 B          88.3 kB
+├ ƒ /admin/ops/optimization/tuning                                                  406 B          97.2 kB
+├ ƒ /admin/ops/prediction-review                                                    406 B          97.2 kB
+├ ƒ /admin/ops/predictions                                                          406 B          97.2 kB
+├ ƒ /admin/ops/readiness                                                            250 B          88.3 kB
+├ ƒ /admin/ops/recommendations                                                      406 B          97.2 kB
+├ ƒ /admin/ops/recommendations/[decisionId]                                         405 B          97.2 kB
+├ ƒ /admin/ops/runtime                                                              1.91 kB        98.7 kB
+├ ƒ /admin/ops/runtime/cron                                                         406 B          97.2 kB
+├ ƒ /admin/ops/runtime/dead-letter                                                  406 B          97.2 kB
+├ ƒ /admin/ops/runtime/dead-letter/[workflowRunId]                                  406 B          97.2 kB
+├ ƒ /admin/ops/runtime/queue                                                        406 B          97.2 kB
+├ ƒ /admin/ops/runtime/recovery                                                     405 B          97.2 kB
+├ ƒ /admin/ops/runtime/runs                                                         405 B          97.2 kB
+├ ƒ /admin/ops/runtime/runs/[runId]                                                 406 B          97.2 kB
+├ ƒ /admin/ops/runtime/smoke                                                        1.32 kB        98.1 kB
+├ ƒ /admin/ops/runtime/workers                                                      406 B          97.2 kB
+├ ƒ /admin/ops/signals                                                              405 B          97.2 kB
+├ ƒ /admin/ops/stale-approvals                                                      406 B          97.2 kB
+├ ƒ /admin/ops/workflows                                                            406 B          97.2 kB
+├ ƒ /admin/ops/workflows/[workflowRunId]                                            406 B          97.2 kB
+├ ƒ /admin/ops/workflows/[workflowRunId]/replay                                     2.39 kB        99.2 kB
+├ ƒ /admin/pilot-readiness                                                          2.18 kB        90.3 kB
+├ ƒ /admin/pilot-score                                                              1.29 kB        98.1 kB
+├ ƒ /admin/pipeline-status                                                          250 B          88.3 kB
+├ ƒ /admin/placements                                                               2.36 kB        99.2 kB
+├ ƒ /admin/placements/[placementId]                                                 3.13 kB        99.9 kB
+├ ƒ /admin/rag                                                                      1.49 kB        89.6 kB
+├ ƒ /admin/report-cards                                                             3.21 kB         100 kB
+├ ƒ /admin/reports                                                                  1.32 kB        89.4 kB
+├ ƒ /admin/school                                                                   2.75 kB        99.6 kB
+├ ƒ /admin/school-branding                                                          7.42 kB         104 kB
+├ ƒ /admin/school-settings                                                          1.78 kB        98.6 kB
+├ ƒ /admin/schools                                                                  406 B          97.2 kB
+├ ƒ /admin/schools/[id]                                                             406 B          97.2 kB
+├ ƒ /admin/schools/pending                                                          1.45 kB        98.3 kB
+├ ƒ /admin/seed                                                                     1.06 kB        97.9 kB
+├ ƒ /admin/settings/canva                                                           804 B          97.6 kB
+├ ƒ /admin/students                                                                 3.62 kB         100 kB
+├ ƒ /admin/students/[id]                                                            2.35 kB        99.2 kB
+├ ƒ /admin/students/import                                                          3.5 kB          100 kB
+├ ƒ /admin/support/sync-diagnostics                                                 958 B          97.8 kB
+├ ƒ /admin/support/sync-diagnostics/[learnerId]                                     3.6 kB          100 kB
+├ ƒ /admin/teachers                                                                 4.73 kB         102 kB
+├ ƒ /admin/textbook-generation                                                      1.86 kB          90 kB
+├ ƒ /admin/timetable                                                                3.93 kB         101 kB
+├ ƒ /admin/training/adoption                                                        406 B          97.2 kB
+├ ƒ /admin/video-moderation                                                         3.6 kB          100 kB
+├ ƒ /admin/videos/review                                                            250 B          88.3 kB
+├ ƒ /ai-tutor                                                                       251 B          88.3 kB
+├ ƒ /api/adaptive/mastery                                                           0 B                0 B
+├ ƒ /api/adaptive/scaffold/[variantId]                                              0 B                0 B
+├ ƒ /api/adaptive/stuck                                                             0 B                0 B
+├ ƒ /api/admin/academic-year                                                        0 B                0 B
+├ ƒ /api/admin/agents                                                               0 B                0 B
+├ ƒ /api/admin/agents/[name]/toggle                                                 0 B                0 B
+├ ƒ /api/admin/agents/cost                                                          0 B                0 B
+├ ƒ /api/admin/agents/district-update/run                                           0 B                0 B
+├ ƒ /api/admin/agents/echo/run                                                      0 B                0 B
+├ ƒ /api/admin/agents/escalations                                                   0 B                0 B
+├ ƒ /api/admin/agents/escalations/[id]                                              0 B                0 B
+├ ƒ /api/admin/agents/goals                                                         0 B                0 B
+├ ƒ /api/admin/agents/invocations                                                   0 B                0 B
+├ ƒ /api/admin/agents/moe-narrative-report/run                                      0 B                0 B
+├ ƒ /api/admin/agents/morning-brief/run                                             0 B                0 B
+├ ƒ /api/admin/agents/triggers                                                      0 B                0 B
+├ ƒ /api/admin/ai-costs                                                             0 B                0 B
+├ ƒ /api/admin/analytics                                                            0 B                0 B
+├ ƒ /api/admin/announcements                                                        0 B                0 B
+├ ƒ /api/admin/announcements/[id]                                                   0 B                0 B
+├ ƒ /api/admin/assignments                                                          0 B                0 B
+├ ƒ /api/admin/attach-demo-school                                                   0 B                0 B
+├ ƒ /api/admin/audio-generation/enqueue                                             0 B                0 B
+├ ƒ /api/admin/audio-generation/process                                             0 B                0 B
+├ ƒ /api/admin/audio-generation/retry                                               0 B                0 B
+├ ƒ /api/admin/audio-generation/status                                              0 B                0 B
+├ ƒ /api/admin/canva/auth-url                                                       0 B                0 B
+├ ƒ /api/admin/canva/callback                                                       0 B                0 B
+├ ƒ /api/admin/canva/disconnect                                                     0 B                0 B
+├ ƒ /api/admin/canva/status                                                         0 B                0 B
+├ ƒ /api/admin/classes                                                              0 B                0 B
+├ ƒ /api/admin/compliance/audit-log                                                 0 B                0 B
+├ ƒ /api/admin/compliance/delivery-report                                           0 B                0 B
+├ ƒ /api/admin/content-media                                                        0 B                0 B
+├ ƒ /api/admin/content-media/[contentId]/regenerate                                 0 B                0 B
+├ ƒ /api/admin/content-media/[contentId]/upload                                     0 B                0 B
+├ ƒ /api/admin/content-media/bulk-regenerate                                        0 B                0 B
+├ ƒ /api/admin/content-review                                                       0 B                0 B
+├ ƒ /api/admin/content-review/[lessonId]                                            0 B                0 B
+├ ƒ /api/admin/content-review/[lessonId]/unpublish                                  0 B                0 B
+├ ƒ /api/admin/cost-dashboard                                                       0 B                0 B
+├ ƒ /api/admin/credentials                                                          0 B                0 B
+├ ƒ /api/admin/credentials/bulk-generate                                            0 B                0 B
+├ ƒ /api/admin/credentials/send                                                     0 B                0 B
+├ ƒ /api/admin/curriculum/[contentId]/audio                                         0 B                0 B
+├ ƒ /api/admin/curriculum/[contentId]/evidence                                      0 B                0 B
+├ ƒ /api/admin/curriculum/[contentId]/governance                                    0 B                0 B
+├ ƒ /api/admin/curriculum/[contentId]/provenance                                    0 B                0 B
+├ ƒ /api/admin/curriculum/approve                                                   0 B                0 B
+├ ƒ /api/admin/curriculum/audio/batch                                               0 B                0 B
+├ ƒ /api/admin/curriculum/audio/process                                             0 B                0 B
+├ ƒ /api/admin/curriculum/coverage                                                  0 B                0 B
+├ ƒ /api/admin/curriculum/framework                                                 0 B                0 B
+├ ƒ /api/admin/curriculum/generate                                                  0 B                0 B
+├ ƒ /api/admin/curriculum/generate-full-pack                                        0 B                0 B
+├ ƒ /api/admin/curriculum/import                                                    0 B                0 B
+├ ƒ /api/admin/curriculum/national-factory                                          0 B                0 B
+├ ƒ /api/admin/curriculum/reject                                                    0 B                0 B
+├ ƒ /api/admin/curriculum/schedule                                                  0 B                0 B
+├ ƒ /api/admin/curriculum/textbook                                                  0 B                0 B
+├ ƒ /api/admin/curriculum/units                                                     0 B                0 B
+├ ƒ /api/admin/curriculum/upgrade                                                   0 B                0 B
+├ ƒ /api/admin/curriculum/waec-alignment                                            0 B                0 B
+├ ƒ /api/admin/curriculum/year-readiness                                            0 B                0 B
+├ ƒ /api/admin/dashboard/district                                                   0 B                0 B
+├ ƒ /api/admin/dashboard/district/interventions                                     0 B                0 B
+├ ƒ /api/admin/dashboard/district/trends                                            0 B                0 B
+├ ƒ /api/admin/dashboard/national/impact                                            0 B                0 B
+├ ƒ /api/admin/dashboard/school/growth-summary                                      0 B                0 B
+├ ƒ /api/admin/dashboard/school/impact                                              0 B                0 B
+├ ƒ /api/admin/dashboard/school/intervention-outcomes                               0 B                0 B
+├ ƒ /api/admin/dashboard/school/interventions                                       0 B                0 B
+├ ƒ /api/admin/dashboard/school/risk-summary                                        0 B                0 B
+├ ƒ /api/admin/diagnostics/sentry-test                                              0 B                0 B
+├ ƒ /api/admin/digest/trigger                                                       0 B                0 B
+├ ƒ /api/admin/documents                                                            0 B                0 B
+├ ƒ /api/admin/documents/enrollment-letter                                          0 B                0 B
+├ ƒ /api/admin/documents/id-cards/generate                                          0 B                0 B
+├ ƒ /api/admin/documents/permission-slips                                           0 B                0 B
+├ ƒ /api/admin/documents/teacher-appointment                                        0 B                0 B
+├ ƒ /api/admin/enrollment                                                           0 B                0 B
+├ ƒ /api/admin/events                                                               0 B                0 B
+├ ƒ /api/admin/events/[id]                                                          0 B                0 B
+├ ƒ /api/admin/events/[id]/publish                                                  0 B                0 B
+├ ƒ /api/admin/exams                                                                0 B                0 B
+├ ƒ /api/admin/exams/[examId]                                                       0 B                0 B
+├ ƒ /api/admin/exams/[examId]/publish                                               0 B                0 B
+├ ƒ /api/admin/exams/[examId]/results                                               0 B                0 B
+├ ƒ /api/admin/exams/generate                                                       0 B                0 B
+├ ƒ /api/admin/governance/exports/class-summary                                     0 B                0 B
+├ ƒ /api/admin/governance/exports/jobs                                              0 B                0 B
+├ ƒ /api/admin/governance/exports/jobs/[jobId]/approve                              0 B                0 B
+├ ƒ /api/admin/governance/exports/jobs/[jobId]/download                             0 B                0 B
+├ ƒ /api/admin/governance/exports/monthly-report                                    0 B                0 B
+├ ƒ /api/admin/governance/exports/student-performance                               0 B                0 B
+├ ƒ /api/admin/governance/report                                                    0 B                0 B
+├ ƒ /api/admin/guardian-link                                                        0 B                0 B
+├ ƒ /api/admin/import                                                               0 B                0 B
+├ ƒ /api/admin/import/batches/[id]                                                  0 B                0 B
+├ ƒ /api/admin/import/batches/[id]/credentials                                      0 B                0 B
+├ ƒ /api/admin/import/confirm                                                       0 B                0 B
+├ ƒ /api/admin/import/preview                                                       0 B                0 B
+├ ƒ /api/admin/import/template/[importType]                                         0 B                0 B
+├ ƒ /api/admin/import/validate                                                      0 B                0 B
+├ ƒ /api/admin/interoperability/oneroster/export                                    0 B                0 B
+├ ƒ /api/admin/interoperability/oneroster/import                                    0 B                0 B
+├ ƒ /api/admin/interoperability/xapi/export                                         0 B                0 B
+├ ƒ /api/admin/intervention/suggest                                                 0 B                0 B
+├ ƒ /api/admin/invites                                                              0 B                0 B
+├ ƒ /api/admin/league/reset                                                         0 B                0 B
+├ ƒ /api/admin/messages/[id]                                                        0 B                0 B
+├ ƒ /api/admin/messages/flags                                                       0 B                0 B
+├ ƒ /api/admin/messages/stats                                                       0 B                0 B
+├ ƒ /api/admin/metrics/product                                                      0 B                0 B
+├ ƒ /api/admin/moe-submissions                                                      0 B                0 B
+├ ƒ /api/admin/national/curriculum-signals                                          0 B                0 B
+├ ƒ /api/admin/national/geo-performance                                             0 B                0 B
+├ ƒ /api/admin/national/insights                                                    0 B                0 B
+├ ƒ /api/admin/notifications                                                        0 B                0 B
+├ ƒ /api/admin/onboarding                                                           0 B                0 B
+├ ƒ /api/admin/onboarding/complete                                                  0 B                0 B
+├ ƒ /api/admin/onboarding/import-students                                           0 B                0 B
+├ ƒ /api/admin/onboarding/import-teachers                                           0 B                0 B
+├ ƒ /api/admin/onboarding/readiness                                                 0 B                0 B
+├ ƒ /api/admin/onboarding/step/[n]                                                  0 B                0 B
+├ ƒ /api/admin/ops/actions/[actionExecutionId]/rollback                             0 B                0 B
+├ ƒ /api/admin/ops/actions/[actionExecutionId]/trace                                0 B                0 B
+├ ƒ /api/admin/ops/actions/from-recommendation                                      0 B                0 B
+├ ƒ /api/admin/ops/approvals                                                        0 B                0 B
+├ ƒ /api/admin/ops/approvals/[approvalRequestId]                                    0 B                0 B
+├ ƒ /api/admin/ops/approvals/[approvalRequestId]/approve                            0 B                0 B
+├ ƒ /api/admin/ops/approvals/[approvalRequestId]/cancel                             0 B                0 B
+├ ƒ /api/admin/ops/approvals/[approvalRequestId]/escalate                           0 B                0 B
+├ ƒ /api/admin/ops/approvals/[approvalRequestId]/reject                             0 B                0 B
+├ ƒ /api/admin/ops/curriculum-regeneration                                          0 B                0 B
+├ ƒ /api/admin/ops/curriculum-review                                                0 B                0 B
+├ ƒ /api/admin/ops/dashboard                                                        0 B                0 B
+├ ƒ /api/admin/ops/early-warnings                                                   0 B                0 B
+├ ƒ /api/admin/ops/evaluations                                                      0 B                0 B
+├ ƒ /api/admin/ops/evaluations/[decisionId]                                         0 B                0 B
+├ ƒ /api/admin/ops/execution/analytics                                              0 B                0 B
+├ ƒ /api/admin/ops/execution/health                                                 0 B                0 B
+├ ƒ /api/admin/ops/false-positives                                                  0 B                0 B
+├ ƒ /api/admin/ops/forecast-calibration                                             0 B                0 B
+├ ƒ /api/admin/ops/forecasting                                                      0 B                0 B
+├ ƒ /api/admin/ops/memory                                                           0 B                0 B
+├ ƒ /api/admin/ops/memory/[memoryEventId]/lineage                                   0 B                0 B
+├ ƒ /api/admin/ops/metrics/events                                                   0 B                0 B
+├ ƒ /api/admin/ops/metrics/summary                                                  0 B                0 B
+├ ƒ /api/admin/ops/optimization                                                     0 B                0 B
+├ ƒ /api/admin/ops/optimization/[proposalEventId]                                   0 B                0 B
+├ ƒ /api/admin/ops/optimization/[proposalEventId]/implementation                    0 B                0 B
+├ ƒ /api/admin/ops/optimization/[proposalEventId]/review                            0 B                0 B
+├ ƒ /api/admin/ops/optimization/change-requests                                     0 B                0 B
+├ ƒ /api/admin/ops/optimization/change-requests/[changeRequestId]                   0 B                0 B
+├ ƒ /api/admin/ops/optimization/change-requests/[changeRequestId]/audit             0 B                0 B
+├ ƒ /api/admin/ops/optimization/change-requests/[changeRequestId]/post-change-eval  0 B                0 B
+├ ƒ /api/admin/ops/optimization/change-requests/[changeRequestId]/rollback/verify   0 B                0 B
+├ ƒ /api/admin/ops/optimization/change-requests/[changeRequestId]/rollout           0 B                0 B
+├ ƒ /api/admin/ops/optimization/change-requests/[changeRequestId]/rollout/cancel    0 B                0 B
+├ ƒ /api/admin/ops/optimization/change-requests/[changeRequestId]/rollout/pause     0 B                0 B
+├ ƒ /api/admin/ops/optimization/change-requests/[changeRequestId]/rollout/verify    0 B                0 B
+├ ƒ /api/admin/ops/optimization/change-requests/[changeRequestId]/signoff           0 B                0 B
+├ ƒ /api/admin/ops/prediction-outcomes                                              0 B                0 B
+├ ƒ /api/admin/ops/prediction-reviews                                               0 B                0 B
+├ ƒ /api/admin/ops/predictions                                                      0 B                0 B
+├ ƒ /api/admin/ops/runtime/dead-letter                                              0 B                0 B
+├ ƒ /api/admin/ops/runtime/dead-letter/[workflowRunId]                              0 B                0 B
+├ ƒ /api/admin/ops/runtime/health                                                   0 B                0 B
+├ ƒ /api/admin/ops/runtime/metrics                                                  0 B                0 B
+├ ƒ /api/admin/ops/runtime/recovery                                                 0 B                0 B
+├ ƒ /api/admin/ops/runtime/run/dead-letter-inspection                               0 B                0 B
+├ ƒ /api/admin/ops/runtime/run/evaluation-windows                                   0 B                0 B
+├ ƒ /api/admin/ops/runtime/run/full-maintenance                                     0 B                0 B
+├ ƒ /api/admin/ops/runtime/run/runtime-health                                       0 B                0 B
+├ ƒ /api/admin/ops/runtime/run/stale-approvals                                      0 B                0 B
+├ ƒ /api/admin/ops/runtime/run/workflow-recovery                                    0 B                0 B
+├ ƒ /api/admin/ops/runtime/runs                                                     0 B                0 B
+├ ƒ /api/admin/ops/runtime/runs/[runId]                                             0 B                0 B
+├ ƒ /api/admin/ops/runtime/smoke                                                    0 B                0 B
+├ ƒ /api/admin/ops/snapshot                                                         0 B                0 B
+├ ƒ /api/admin/ops/stale-approvals/process                                          0 B                0 B
+├ ƒ /api/admin/ops/trajectories                                                     0 B                0 B
+├ ƒ /api/admin/ops/workflows/[workflowRunId]/graph                                  0 B                0 B
+├ ƒ /api/admin/ops/workflows/[workflowRunId]/notes                                  0 B                0 B
+├ ƒ /api/admin/ops/workflows/[workflowRunId]/notes/[noteId]                         0 B                0 B
+├ ƒ /api/admin/ops/workflows/[workflowRunId]/replay                                 0 B                0 B
+├ ƒ /api/admin/ops/workflows/[workflowRunId]/timeline                               0 B                0 B
+├ ƒ /api/admin/pilot-readiness                                                      0 B                0 B
+├ ƒ /api/admin/pilot-score                                                          0 B                0 B
+├ ƒ /api/admin/placements                                                           0 B                0 B
+├ ƒ /api/admin/placements/[id]                                                      0 B                0 B
+├ ƒ /api/admin/placements/[id]/confirm                                              0 B                0 B
+├ ƒ /api/admin/promotions/graduate                                                  0 B                0 B
+├ ƒ /api/admin/promotions/preview                                                   0 B                0 B
+├ ƒ /api/admin/promotions/promote                                                   0 B                0 B
+├ ƒ /api/admin/promotions/retain                                                    0 B                0 B
+├ ƒ /api/admin/prompts                                                              0 B                0 B
+├ ƒ /api/admin/report-cards                                                         0 B                0 B
+├ ƒ /api/admin/report-cards/generate                                                0 B                0 B
+├ ƒ /api/admin/report-cards/publish-all                                             0 B                0 B
+├ ƒ /api/admin/review-operations/ai/run                                             0 B                0 B
+├ ƒ /api/admin/review-operations/calibration                                        0 B                0 B
+├ ƒ /api/admin/review-operations/claims/[assignmentId]/override                     0 B                0 B
+├ ○ /api/admin/review-operations/reports                                            0 B                0 B
+├ ƒ /api/admin/review-operations/tasks/[taskId]                                     0 B                0 B
+├ ƒ /api/admin/reviewer-credentials                                                 0 B                0 B
+├ ƒ /api/admin/reviewer-credentials/[credentialId]/transition                       0 B                0 B
+├ ƒ /api/admin/reviewers                                                            0 B                0 B
+├ ƒ /api/admin/reviewers/[profileId]                                                0 B                0 B
+├ ƒ /api/admin/reviewers/[profileId]/restrictions                                   0 B                0 B
+├ ƒ /api/admin/school                                                               0 B                0 B
+├ ƒ /api/admin/school-branding                                                      0 B                0 B
+├ ƒ /api/admin/school-settings                                                      0 B                0 B
+├ ƒ /api/admin/school/logo                                                          0 B                0 B
+├ ƒ /api/admin/schools                                                              0 B                0 B
+├ ƒ /api/admin/schools/pending                                                      0 B                0 B
+├ ƒ /api/admin/security/mfa/recovery/reset                                          0 B                0 B
+├ ƒ /api/admin/seed-demo                                                            0 B                0 B
+├ ƒ /api/admin/sentiment                                                            0 B                0 B
+├ ƒ /api/admin/students                                                             0 B                0 B
+├ ƒ /api/admin/students/[id]                                                        0 B                0 B
+├ ƒ /api/admin/students/[id]/generate-reset-code                                    0 B                0 B
+├ ƒ /api/admin/support/learners/[learnerId]/sync-diagnostics                        0 B                0 B
+├ ƒ /api/admin/teachers                                                             0 B                0 B
+├ ƒ /api/admin/textbook-generation/enqueue                                          0 B                0 B
+├ ƒ /api/admin/textbook-generation/process                                          0 B                0 B
+├ ƒ /api/admin/textbook-generation/retry                                            0 B                0 B
+├ ƒ /api/admin/textbook-generation/status                                           0 B                0 B
+├ ƒ /api/admin/timetable                                                            0 B                0 B
+├ ƒ /api/admin/training/adoption                                                    0 B                0 B
+├ ƒ /api/admin/training/export                                                      0 B                0 B
+├ ƒ /api/admin/training/summary                                                     0 B                0 B
+├ ƒ /api/admin/transcripts                                                          0 B                0 B
+├ ƒ /api/admin/videos                                                               0 B                0 B
+├ ƒ /api/admin/videos/[id]/approve                                                  0 B                0 B
+├ ƒ /api/admin/videos/[id]/reject                                                   0 B                0 B
+├ ƒ /api/announcements                                                              0 B                0 B
+├ ƒ /api/attendance                                                                 0 B                0 B
+├ ƒ /api/attendance/[meetingId]                                                     0 B                0 B
+├ ƒ /api/auth/[...nextauth]                                                         0 B                0 B
+├ ƒ /api/auth/forgot-password                                                       0 B                0 B
+├ ƒ /api/auth/reset-password                                                        0 B                0 B
+├ ƒ /api/auth/reset-with-code                                                       0 B                0 B
+├ ƒ /api/cache-warm                                                                 0 B                0 B
+├ ƒ /api/canva/auth                                                                 0 B                0 B
+├ ƒ /api/canva/callback                                                             0 B                0 B
+├ ƒ /api/certificates/[id]/image                                                    0 B                0 B
+├ ƒ /api/certificates/[id]/share                                                    0 B                0 B
+├ ƒ /api/certificates/generate                                                      0 B                0 B
+├ ƒ /api/certifications/generate-assets                                             0 B                0 B
+├ ƒ /api/cron/agents/tick                                                           0 B                0 B
+├ ƒ /api/cron/alert-digest                                                          0 B                0 B
+├ ƒ /api/cron/alert-inactive                                                        0 B                0 B
+├ ƒ /api/cron/alert-low-grade                                                       0 B                0 B
+├ ƒ /api/cron/assignment-due-reminders                                              0 B                0 B
+├ ƒ /api/cron/autonomous/dead-letter-inspection                                     0 B                0 B
+├ ƒ /api/cron/autonomous/evaluation-windows                                         0 B                0 B
+├ ƒ /api/cron/autonomous/runtime-health                                             0 B                0 B
+├ ƒ /api/cron/autonomous/stale-approvals                                            0 B                0 B
+├ ƒ /api/cron/autonomous/workflow-recovery                                          0 B                0 B
+├ ƒ /api/cron/check-ai-budget                                                       0 B                0 B
+├ ƒ /api/cron/check-dlq                                                             0 B                0 B
+├ ƒ /api/cron/cleanup-offline-packs                                                 0 B                0 B
+├ ƒ /api/cron/cleanup-rejected-videos                                               0 B                0 B
+├ ƒ /api/cron/content-qa-sweep                                                      0 B                0 B
+├ ƒ /api/cron/guardian-weekly-digest                                                0 B                0 B
+├ ƒ /api/cron/league-weekly-reset                                                   0 B                0 B
+├ ƒ /api/cron/morning-brief-sweep                                                   0 B                0 B
+├ ƒ /api/cron/nightly-backup                                                        0 B                0 B
+├ ƒ /api/cron/ops-sentinel                                                          0 B                0 B
+├ ƒ /api/cron/process-audio-generation                                              0 B                0 B
+├ ƒ /api/cron/process-textbook-generation                                           0 B                0 B
+├ ƒ /api/cron/rebuild-leaderboards                                                  0 B                0 B
+├ ƒ /api/cron/refresh-demo-schedule                                                 0 B                0 B
+├ ƒ /api/cron/release-stale-grades                                                  0 B                0 B
+├ ƒ /api/cron/safeguarding-sla-check                                                0 B                0 B
+├ ƒ /api/crons/league-snapshot                                                      0 B                0 B
+├ ƒ /api/curriculum                                                                 0 B                0 B
+├ ƒ /api/curriculum/[contentId]                                                     0 B                0 B
+├ ƒ /api/demo/reset                                                                 0 B                0 B
+├ ƒ /api/dev/simulate-inbound-sms                                                   0 B                0 B
+├ ƒ /api/discussion/posts                                                           0 B                0 B
+├ ƒ /api/discussion/posts/[postId]                                                  0 B                0 B
+├ ƒ /api/discussion/posts/[postId]/approve                                          0 B                0 B
+├ ƒ /api/discussion/posts/[postId]/flag                                             0 B                0 B
+├ ƒ /api/discussion/posts/[postId]/upvote                                           0 B                0 B
+├ ƒ /api/discussion/threads                                                         0 B                0 B
+├ ƒ /api/discussion/threads/[threadId]                                              0 B                0 B
+├ ƒ /api/discussion/threads/[threadId]/lock                                         0 B                0 B
+├ ƒ /api/discussion/threads/[threadId]/pin                                          0 B                0 B
+├ ƒ /api/discussion/threads/[threadId]/posts                                        0 B                0 B
+├ ƒ /api/district-updates                                                           0 B                0 B
+├ ƒ /api/district-updates/[id]                                                      0 B                0 B
+├ ƒ /api/enroll                                                                     0 B                0 B
+├ ƒ /api/events                                                                     0 B                0 B
+├ ƒ /api/grading/[submissionId]/override                                            0 B                0 B
+├ ƒ /api/grading/ai-literacy                                                        0 B                0 B
+├ ƒ /api/grading/code                                                               0 B                0 B
+├ ƒ /api/grading/essay                                                              0 B                0 B
+├ ƒ /api/guardian/assignments                                                       0 B                0 B
+├ ƒ /api/guardian/attendance                                                        0 B                0 B
+├ ƒ /api/guardian/dashboard                                                         0 B                0 B
+├ ƒ /api/guardian/grades                                                            0 B                0 B
+├ ƒ /api/guardian/link                                                              0 B                0 B
+├ ƒ /api/guardian/linked-teachers                                                   0 B                0 B
+├ ƒ /api/guardian/messages                                                          0 B                0 B
+├ ƒ /api/guardian/messages/[id]/read                                                0 B                0 B
+├ ƒ /api/guardian/performance                                                       0 B                0 B
+├ ƒ /api/guardian/register                                                          0 B                0 B
+├ ƒ /api/guardian/report-cards                                                      0 B                0 B
+├ ƒ /api/guardian/settings                                                          0 B                0 B
+├ ƒ /api/guardian/sms/send                                                          0 B                0 B
+├ ƒ /api/guardian/student/[studentId]                                               0 B                0 B
+├ ƒ /api/guardian/students                                                          0 B                0 B
+├ ƒ /api/guardian/study-plan                                                        0 B                0 B
+├ ƒ /api/health                                                                     0 B                0 B
+├ ƒ /api/health/canva                                                               0 B                0 B
+├ ƒ /api/health/db                                                                  0 B                0 B
+├ ƒ /api/health/queue                                                               0 B                0 B
+├ ƒ /api/healthz                                                                    0 B                0 B
+├ ƒ /api/homework                                                                   0 B                0 B
+├ ƒ /api/homework/[id]                                                              0 B                0 B
+├ ƒ /api/homework/create                                                            0 B                0 B
+├ ƒ /api/homework/grade                                                             0 B                0 B
+├ ƒ /api/homework/latest                                                            0 B                0 B
+├ ƒ /api/homework/review                                                            0 B                0 B
+├ ƒ /api/homework/submissions                                                       0 B                0 B
+├ ƒ /api/homework/submit                                                            0 B                0 B
+├ ƒ /api/labs/[labId]/explain                                                       0 B                0 B
+├ ƒ /api/labs/[labId]/plan                                                          0 B                0 B
+├ ƒ /api/league                                                                     0 B                0 B
+├ ƒ /api/league/district                                                            0 B                0 B
+├ ƒ /api/league/district/summary                                                    0 B                0 B
+├ ƒ /api/legal/accept-policy                                                        0 B                0 B
+├ ƒ /api/messages/upload-attachment                                                 0 B                0 B
+├ ƒ /api/moe/align                                                                  0 B                0 B
+├ ƒ /api/moe/counties                                                               0 B                0 B
+├ ƒ /api/moe/curriculum-health                                                      0 B                0 B
+├ ƒ /api/moe/curriculum/[contentId]/provenance                                      0 B                0 B
+├ ƒ /api/moe/curriculum/publish                                                     0 B                0 B
+├ ƒ /api/moe/curriculum/version                                                     0 B                0 B
+├ ƒ /api/moe/dashboard                                                              0 B                0 B
+├ ƒ /api/moe/delivery-compliance                                                    0 B                0 B
+├ ƒ /api/moe/districts                                                              0 B                0 B
+├ ƒ /api/moe/export/district/[district]                                             0 B                0 B
+├ ƒ /api/moe/export/national                                                        0 B                0 B
+├ ƒ /api/moe/export/school/[schoolId]                                               0 B                0 B
+├ ƒ /api/moe/export/summary-pdf                                                     0 B                0 B
+├ ƒ /api/moe/intervention-impact                                                    0 B                0 B
+├ ƒ /api/moe/live                                                                   0 B                0 B
+├ ƒ /api/moe/live-token                                                             0 B                0 B
+├ ƒ /api/moe/narrative-reports                                                      0 B                0 B
+├ ƒ /api/moe/narrative-reports/[id]                                                 0 B                0 B
+├ ƒ /api/moe/override                                                               0 B                0 B
+├ ƒ /api/moe/placements                                                             0 B                0 B
+├ ƒ /api/moe/policies                                                               0 B                0 B
+├ ƒ /api/moe/policies/[directiveId]                                                 0 B                0 B
+├ ƒ /api/moe/reports/generate                                                       0 B                0 B
+├ ƒ /api/moe/standards-coverage                                                     0 B                0 B
+├ ƒ /api/moe/submissions                                                            0 B                0 B
+├ ƒ /api/moe/submissions/[id]/review                                                0 B                0 B
+├ ƒ /api/moe/teacher-lessons                                                        0 B                0 B
+├ ƒ /api/moe/waec-readiness                                                         0 B                0 B
+├ ƒ /api/notifications/guardian                                                     0 B                0 B
+├ ƒ /api/notifications/inbox                                                        0 B                0 B
+├ ƒ /api/notifications/inbox/[id]                                                   0 B                0 B
+├ ƒ /api/notifications/inbox/read-all                                               0 B                0 B
+├ ƒ /api/notifications/log                                                          0 B                0 B
+├ ƒ /api/notifications/open                                                         0 B                0 B
+├ ƒ /api/notifications/send                                                         0 B                0 B
+├ ƒ /api/notifications/subscribe                                                    0 B                0 B
+├ ƒ /api/notifications/unsubscribe                                                  0 B                0 B
+├ ƒ /api/notifications/vapid-public-key                                             0 B                0 B
+├ ƒ /api/onboard/accept                                                             0 B                0 B
+├ ƒ /api/onboard/invite                                                             0 B                0 B
+├ ƒ /api/packs/[packId]                                                             0 B                0 B
+├ ƒ /api/packs/[packId]/download                                                    0 B                0 B
+├ ƒ /api/packs/history                                                              0 B                0 B
+├ ƒ /api/packs/week                                                                 0 B                0 B
+├ ƒ /api/placement/calculate-grade                                                  0 B                0 B
+├ ƒ /api/placement/generate-question                                                0 B                0 B
+├ ƒ /api/platform/demo/advance-day                                                  0 B                0 B
+├ ƒ /api/platform/demo/reset                                                        0 B                0 B
+├ ƒ /api/platform/demo/simulate-activity                                            0 B                0 B
+├ ƒ /api/platform/reports                                                           0 B                0 B
+├ ƒ /api/platform/schools                                                           0 B                0 B
+├ ƒ /api/platform/security/accept                                                   0 B                0 B
+├ ƒ /api/platform/security/demote                                                   0 B                0 B
+├ ƒ /api/platform/security/transfer                                                 0 B                0 B
+├ ƒ /api/platform/stats                                                             0 B                0 B
+├ ƒ /api/portfolio/[shareCode]                                                      0 B                0 B
+├ ƒ /api/rag/query                                                                  0 B                0 B
+├ ƒ /api/register/guardian                                                          0 B                0 B
+├ ƒ /api/register/student                                                           0 B                0 B
+├ ƒ /api/report-cards/[id]                                                          0 B                0 B
+├ ƒ /api/report-cards/[id]/comment                                                  0 B                0 B
+├ ƒ /api/report-cards/[id]/publish                                                  0 B                0 B
+├ ƒ /api/reports/progress/[studentId]                                               0 B                0 B
+├ ƒ /api/reports/school                                                             0 B                0 B
+├ ƒ /api/review/calibration/[sessionId]/submit                                      0 B                0 B
+├ ƒ /api/review/claims/[assignmentId]/assessment                                    0 B                0 B
+├ ƒ /api/review/claims/[assignmentId]/heartbeat                                     0 B                0 B
+├ ƒ /api/review/claims/[assignmentId]/release                                       0 B                0 B
+├ ƒ /api/review/claims/[assignmentId]/submit                                        0 B                0 B
+├ ƒ /api/review/tasks                                                               0 B                0 B
+├ ƒ /api/review/tasks/[taskId]                                                      0 B                0 B
+├ ƒ /api/review/tasks/[taskId]/claim                                                0 B                0 B
+├ ƒ /api/review/tasks/[taskId]/complete                                             0 B                0 B
+├ ƒ /api/review/tasks/[taskId]/eligibility                                          0 B                0 B
+├ ƒ /api/rollout/invite/student                                                     0 B                0 B
+├ ƒ /api/rollout/invite/student/bulk                                                0 B                0 B
+├ ƒ /api/rollout/invite/teacher                                                     0 B                0 B
+├ ƒ /api/search                                                                     0 B                0 B
+├ ƒ /api/sms/stop                                                                   0 B                0 B
+├ ƒ /api/student/[id]                                                               0 B                0 B
+├ ƒ /api/student/actions                                                            0 B                0 B
+├ ƒ /api/student/adaptive/gaps                                                      0 B                0 B
+├ ƒ /api/student/adaptive/practice                                                  0 B                0 B
+├ ƒ /api/student/adaptive/submit                                                    0 B                0 B
+├ ƒ /api/student/assignments                                                        0 B                0 B
+├ ƒ /api/student/assignments/[id]/submit                                            0 B                0 B
+├ ƒ /api/student/capstone                                                           0 B                0 B
+├ ƒ /api/student/capstone/[id]                                                      0 B                0 B
+├ ƒ /api/student/capstone/[id]/revise                                               0 B                0 B
+├ ƒ /api/student/capstone/[id]/submit                                               0 B                0 B
+├ ƒ /api/student/certificates                                                       0 B                0 B
+├ ƒ /api/student/certifications                                                     0 B                0 B
+├ ƒ /api/student/change-pin                                                         0 B                0 B
+├ ƒ /api/student/classes                                                            0 B                0 B
+├ ƒ /api/student/classes/[classId]                                                  0 B                0 B
+├ ƒ /api/student/exams                                                              0 B                0 B
+├ ƒ /api/student/exams/[examId]/start                                               0 B                0 B
+├ ƒ /api/student/exams/[examId]/submit                                              0 B                0 B
+├ ƒ /api/student/flag-content                                                       0 B                0 B
+├ ƒ /api/student/homework/[id]/submit                                               0 B                0 B
+├ ƒ /api/student/homework/submit                                                    0 B                0 B
+├ ƒ /api/student/interactive-labs/[labId]/events                                    0 B                0 B
+├ ƒ /api/student/labs/[labId]/session                                               0 B                0 B
+├ ƒ /api/student/labs/sessions/[sessionId]                                          0 B                0 B
+├ ƒ /api/student/leaderboard/[classId]                                              0 B                0 B
+├ ƒ /api/student/learn                                                              0 B                0 B
+├ ƒ /api/student/learning-authority/grade4-math                                     0 B                0 B
+├ ƒ /api/student/learning-authority/grade4-math/next-action                         0 B                0 B
+├ ƒ /api/student/learning-authority/next-action                                     0 B                0 B
+├ ƒ /api/student/lesson/[contentId]/flag                                            0 B                0 B
+├ ƒ /api/student/lessons                                                            0 B                0 B
+├ ƒ /api/student/lessons/[id]/audio                                                 0 B                0 B
+├ ƒ /api/student/lessons/[id]/complete                                              0 B                0 B
+├ ƒ /api/student/lessons/[id]/experience                                            0 B                0 B
+├ ƒ /api/student/lessons/[id]/quiz                                                  0 B                0 B
+├ ƒ /api/student/lessons/[id]/quiz/submit                                           0 B                0 B
+├ ƒ /api/student/live-sessions/active                                               0 B                0 B
+├ ƒ /api/student/meetings/[meetingId]/join                                          0 B                0 B
+├ ƒ /api/student/messages                                                           0 B                0 B
+├ ƒ /api/student/messages/[messageId]                                               0 B                0 B
+├ ƒ /api/student/messages/unread-count                                              0 B                0 B
+├ ƒ /api/student/my-teachers                                                        0 B                0 B
+├ ƒ /api/student/next-lesson                                                        0 B                0 B
+├ ƒ /api/student/passport                                                           0 B                0 B
+├ ƒ /api/student/placement                                                          0 B                0 B
+├ ƒ /api/student/placement/sessions                                                 0 B                0 B
+├ ƒ /api/student/placement/sessions/[sessionId]                                     0 B                0 B
+├ ƒ /api/student/placement/sessions/[sessionId]/complete                            0 B                0 B
+├ ƒ /api/student/placement/sessions/[sessionId]/items                               0 B                0 B
+├ ƒ /api/student/placement/sessions/[sessionId]/responses                           0 B                0 B
+├ ƒ /api/student/portfolio                                                          0 B                0 B
+├ ƒ /api/student/portfolio/generate                                                 0 B                0 B
+├ ƒ /api/student/portfolio/share                                                    0 B                0 B
+├ ƒ /api/student/practice/generate                                                  0 B                0 B
+├ ƒ /api/student/progress                                                           0 B                0 B
+├ ƒ /api/student/progress/weekly                                                    0 B                0 B
+├ ƒ /api/student/report-cards                                                       0 B                0 B
+├ ƒ /api/student/schedule                                                           0 B                0 B
+├ ƒ /api/student/streak                                                             0 B                0 B
+├ ƒ /api/student/sync                                                               0 B                0 B
+├ ƒ /api/student/sync/diagnostics                                                   0 B                0 B
+├ ƒ /api/student/teacher-lessons                                                    0 B                0 B
+├ ƒ /api/student/teacher-lessons/[contentId]/complete                               0 B                0 B
+├ ƒ /api/student/timetable/today                                                    0 B                0 B
+├ ƒ /api/student/today                                                              0 B                0 B
+├ ƒ /api/student/transcript                                                         0 B                0 B
+├ ƒ /api/student/tutor                                                              0 B                0 B
+├ ƒ /api/student/units/[unitId]                                                     0 B                0 B
+├ ƒ /api/student/units/active                                                       0 B                0 B
+├ ƒ /api/student/units/by-content/[contentId]                                       0 B                0 B
+├ ƒ /api/student/video/[videoId]/watch                                              0 B                0 B
+├ ƒ /api/student/waec/[subject]/practice                                            0 B                0 B
+├ ƒ /api/student/waec/eligibility                                                   0 B                0 B
+├ ƒ /api/student/work/[scheduledWorkId]                                             0 B                0 B
+├ ƒ /api/student/work/[scheduledWorkId]/complete                                    0 B                0 B
+├ ƒ /api/student/work/[scheduledWorkId]/problem-answer/[problemSetId]               0 B                0 B
+├ ƒ /api/submissions                                                                0 B                0 B
+├ ƒ /api/submissions/create                                                         0 B                0 B
+├ ƒ /api/teacher/actions/execute                                                    0 B                0 B
+├ ƒ /api/teacher/alert-prefs                                                        0 B                0 B
+├ ƒ /api/teacher/alerts                                                             0 B                0 B
+├ ƒ /api/teacher/analytics/assessment/[contentId]                                   0 B                0 B
+├ ƒ /api/teacher/assignment-suggestions/[id]/accept                                 0 B                0 B
+├ ƒ /api/teacher/assignment-suggestions/[id]/dismiss                                0 B                0 B
+├ ƒ /api/teacher/assignment/generate                                                0 B                0 B
+├ ƒ /api/teacher/assignment/tutor                                                   0 B                0 B
+├ ƒ /api/teacher/assignments                                                        0 B                0 B
+├ ƒ /api/teacher/assignments/[id]/export                                            0 B                0 B
+├ ƒ /api/teacher/assignments/[id]/grade                                             0 B                0 B
+├ ƒ /api/teacher/assignments/[id]/sms-send                                          0 B                0 B
+├ ƒ /api/teacher/assignments/[id]/sms-status                                        0 B                0 B
+├ ƒ /api/teacher/assignments/bulk-approve                                           0 B                0 B
+├ ƒ /api/teacher/assignments/generate                                               0 B                0 B
+├ ƒ /api/teacher/assignments/submissions/[submissionId]/approve                     0 B                0 B
+├ ƒ /api/teacher/assignments/submissions/[submissionId]/grade                       0 B                0 B
+├ ƒ /api/teacher/assist                                                             0 B                0 B
+├ ƒ /api/teacher/attendance                                                         0 B                0 B
+├ ƒ /api/teacher/brief                                                              0 B                0 B
+├ ƒ /api/teacher/capstone                                                           0 B                0 B
+├ ƒ /api/teacher/capstone/[id]/review                                               0 B                0 B
+├ ƒ /api/teacher/change-password                                                    0 B                0 B
+├ ƒ /api/teacher/class-insights                                                     0 B                0 B
+├ ƒ /api/teacher/class/risk-summary                                                 0 B                0 B
+├ ƒ /api/teacher/classes/[classId]/differentiation                                  0 B                0 B
+├ ƒ /api/teacher/confusions                                                         0 B                0 B
+├ ƒ /api/teacher/curriculum/units                                                   0 B                0 B
+├ ƒ /api/teacher/dashboard                                                          0 B                0 B
+├ ƒ /api/teacher/exams                                                              0 B                0 B
+├ ƒ /api/teacher/generate-lesson                                                    0 B                0 B
+├ ƒ /api/teacher/gradebook                                                          0 B                0 B
+├ ƒ /api/teacher/gradebook/export                                                   0 B                0 B
+├ ƒ /api/teacher/grading-assist                                                     0 B                0 B
+├ ƒ /api/teacher/grading/assist                                                     0 B                0 B
+├ ƒ /api/teacher/intelligence/[studentId]                                           0 B                0 B
+├ ƒ /api/teacher/interventions                                                      0 B                0 B
+├ ƒ /api/teacher/labs                                                               0 B                0 B
+├ ƒ /api/teacher/labs/[labId]                                                       0 B                0 B
+├ ƒ /api/teacher/labs/sessions                                                      0 B                0 B
+├ ƒ /api/teacher/labs/sessions/[sessionId]                                          0 B                0 B
+├ ƒ /api/teacher/learning-authority/grade4-math/misconceptions                      0 B                0 B
+├ ƒ /api/teacher/learning-authority/grade4-math/next-action                         0 B                0 B
+├ ƒ /api/teacher/lesson-plan                                                        0 B                0 B
+├ ƒ /api/teacher/lesson-plan/bind                                                   0 B                0 B
+├ ƒ /api/teacher/lesson/improve                                                     0 B                0 B
+├ ƒ /api/teacher/lessons                                                            0 B                0 B
+├ ƒ /api/teacher/lessons/[contentId]                                                0 B                0 B
+├ ƒ /api/teacher/lessons/[contentId]/assign                                         0 B                0 B
+├ ƒ /api/teacher/lessons/[contentId]/detail                                         0 B                0 B
+├ ƒ /api/teacher/lessons/[contentId]/fork                                           0 B                0 B
+├ ƒ /api/teacher/lessons/[contentId]/regenerate-audio                               0 B                0 B
+├ ƒ /api/teacher/lessons/[contentId]/share                                          0 B                0 B
+├ ƒ /api/teacher/lessons/[contentId]/versions                                       0 B                0 B
+├ ƒ /api/teacher/lessons/[contentId]/video                                          0 B                0 B
+├ ƒ /api/teacher/lessons/[contentId]/video/[videoId]                                0 B                0 B
+├ ƒ /api/teacher/lessons/forkable                                                   0 B                0 B
+├ ƒ /api/teacher/lessons/mine                                                       0 B                0 B
+├ ƒ /api/teacher/lessons/school-wide                                                0 B                0 B
+├ ƒ /api/teacher/lessons/shared                                                     0 B                0 B
+├ ƒ /api/teacher/meetings                                                           0 B                0 B
+├ ƒ /api/teacher/meetings/[meetingId]/end                                           0 B                0 B
+├ ƒ /api/teacher/meetings/[meetingId]/start                                         0 B                0 B
+├ ƒ /api/teacher/messages/reply                                                     0 B                0 B
+├ ƒ /api/teacher/messages/student-threads                                           0 B                0 B
+├ ƒ /api/teacher/onboarding/complete                                                0 B                0 B
+├ ƒ /api/teacher/performance                                                        0 B                0 B
+├ ƒ /api/teacher/placements                                                         0 B                0 B
+├ ƒ /api/teacher/placements/[id]                                                    0 B                0 B
+├ ƒ /api/teacher/placements/[id]/review                                             0 B                0 B
+├ ƒ /api/teacher/profile                                                            0 B                0 B
+├ ƒ /api/teacher/report-cards                                                       0 B                0 B
+├ ƒ /api/teacher/schedule                                                           0 B                0 B
+├ ƒ /api/teacher/schedule/[id]/deliver                                              0 B                0 B
+├ ƒ /api/teacher/schedule/[id]/lab                                                  0 B                0 B
+├ ƒ /api/teacher/schedule/[id]/tools                                                0 B                0 B
+├ ƒ /api/teacher/sentiment                                                          0 B                0 B
+├ ƒ /api/teacher/standards                                                          0 B                0 B
+├ ƒ /api/teacher/students                                                           0 B                0 B
+├ ƒ /api/teacher/students/[studentId]                                               0 B                0 B
+├ ƒ /api/teacher/students/growth                                                    0 B                0 B
+├ ƒ /api/teacher/timetable/[timetableId]/assign                                     0 B                0 B
+├ ƒ /api/teacher/timetable/today                                                    0 B                0 B
+├ ƒ /api/teacher/training/complete                                                  0 B                0 B
+├ ƒ /api/teacher/training/open                                                      0 B                0 B
+├ ƒ /api/teacher/tutor-analytics                                                    0 B                0 B
+├ ƒ /api/teacher/video-analytics                                                    0 B                0 B
+├ ƒ /api/teacher/videos/upload                                                      0 B                0 B
+├ ƒ /api/teacher/waec-readiness                                                     0 B                0 B
+├ ƒ /api/teacher/weekly-report                                                      0 B                0 B
+├ ƒ /api/teaching/sessions                                                          0 B                0 B
+├ ƒ /api/teaching/sessions/[sessionId]/degrade                                      0 B                0 B
+├ ƒ /api/teaching/sessions/[sessionId]/end                                          0 B                0 B
+├ ƒ /api/teaching/sessions/[sessionId]/turn                                         0 B                0 B
+├ ƒ /api/track                                                                      0 B                0 B
+├ ƒ /api/user/language-preference                                                   0 B                0 B
+├ ƒ /api/user/privacy-accept                                                        0 B                0 B
+├ ƒ /api/user/tour-complete                                                         0 B                0 B
+├ ƒ /api/webhooks/sms-inbound                                                       0 B                0 B
+├ ƒ /api/webhooks/sms-reply                                                         0 B                0 B
+├ ƒ /app                                                                            251 B          88.3 kB
+├ ƒ /assignments                                                                    406 B          97.2 kB
+├ ƒ /assignments/[id]                                                               406 B          97.2 kB
+├ ƒ /auth/step-up                                                                   1.02 kB        98.7 kB
+├ ƒ /classes                                                                        406 B          97.2 kB
+├ ƒ /contact                                                                        406 B          97.2 kB
+├ ƒ /credential/[token]                                                             406 B          97.2 kB
+├ ƒ /dashboard                                                                      7.46 kB         119 kB
+├ ƒ /data-policy                                                                    248 B          88.3 kB
+├ ƒ /design-preview/grade-7-place-value                                             3.17 kB         118 kB
+├ ƒ /design-preview/lessons                                                         883 B          97.7 kB
+├ ƒ /design-preview/lessons/[slug]                                                  191 B           115 kB
+├ ƒ /enroll                                                                         1.77 kB        98.6 kB
+├ ƒ /forgot-password                                                                1.28 kB        98.1 kB
+├ ƒ /governance                                                                     251 B          88.3 kB
+├ ƒ /guardian                                                                       250 B          88.3 kB
+├ ƒ /guardian/assignments                                                           4.81 kB         102 kB
+├ ƒ /guardian/attendance                                                            2.76 kB        99.6 kB
+├ ƒ /guardian/dashboard                                                             10.9 kB         108 kB
+├ ƒ /guardian/events                                                                143 B           100 kB
+├ ƒ /guardian/grades                                                                2.36 kB        99.2 kB
+├ ƒ /guardian/link                                                                  1.33 kB        98.2 kB
+├ ƒ /guardian/messages                                                              2.27 kB         102 kB
+├ ƒ /guardian/onboarding                                                            2.97 kB        99.8 kB
+├ ƒ /guardian/progress                                                              2.59 kB        99.4 kB
+├ ƒ /guardian/register                                                              1.67 kB        98.5 kB
+├ ƒ /guardian/report-cards                                                          2.61 kB        99.4 kB
+├ ƒ /guardian/settings                                                              1.57 kB        98.4 kB
+├ ƒ /guardian/settings/phone                                                        406 B          97.2 kB
+├ ƒ /guardian/student/[studentId]                                                   1.88 kB        98.7 kB
+├ ƒ /guardian/welcome                                                               933 B            89 kB
+├ ƒ /help                                                                           406 B          97.2 kB
+├ ƒ /help/admin                                                                     406 B          97.2 kB
+├ ƒ /help/guardian                                                                  406 B          97.2 kB
+├ ƒ /help/moe                                                                       406 B          97.2 kB
+├ ƒ /help/student                                                                   406 B          97.2 kB
+├ ƒ /help/teacher                                                                   406 B          97.2 kB
+├ ƒ /lab-review/[labId]                                                             5.1 kB          151 kB
+├ ƒ /lab-review/experience/[experienceId]                                           5.54 kB         168 kB
+├ ƒ /lab-review/experience/[experienceId]/lab/[labId]                               3.24 kB         161 kB
+├ ƒ /league                                                                         1.75 kB        89.8 kB
+├ ƒ /league/embed                                                                   251 B          88.3 kB
+├ ƒ /legal/data-for-minors                                                          406 B          97.2 kB
+├ ƒ /legal/data-retention                                                           406 B          97.2 kB
+├ ƒ /legal/privacy                                                                  406 B          97.2 kB
+├ ƒ /legal/procurement-security-packet                                              405 B          97.2 kB
+├ ƒ /legal/terms                                                                    406 B          97.2 kB
+├ ƒ /login                                                                          5.56 kB         112 kB
+├ ƒ /moe/alerts                                                                     1.82 kB        89.9 kB
+├ ƒ /moe/approvals                                                                  251 B          88.3 kB
+├ ƒ /moe/certifications/[id]                                                        1.26 kB        98.1 kB
+├ ƒ /moe/compliance                                                                 2.09 kB        90.2 kB
+├ ƒ /moe/curriculum                                                                 4.53 kB        92.6 kB
+├ ƒ /moe/curriculum/coverage                                                        1.81 kB        98.6 kB
+├ ƒ /moe/dashboard                                                                  11.5 kB         108 kB
+├ ƒ /moe/detectors                                                                  251 B          88.3 kB
+├ ƒ /moe/districts                                                                  1.38 kB        98.2 kB
+├ ƒ /moe/districts/[districtId]                                                     1.73 kB        98.6 kB
+├ ƒ /moe/exports                                                                    1.75 kB        89.8 kB
+├ ƒ /moe/live                                                                       2.38 kB        90.5 kB
+├ ƒ /moe/login                                                                      2.42 kB         109 kB
+├ ƒ /moe/memory                                                                     251 B          88.3 kB
+├ ƒ /moe/onboarding                                                                 1.75 kB        98.6 kB
+├ ƒ /moe/optimization                                                               406 B          97.2 kB
+├ ƒ /moe/policies                                                                   2.52 kB        90.6 kB
+├ ƒ /moe/reports/narrative                                                          2.38 kB        90.5 kB
+├ ƒ /moe/submissions                                                                3.51 kB         100 kB
+├ ƒ /offline                                                                        585 B          88.7 kB
+├ ƒ /onboard/accept                                                                 1.8 kB         98.6 kB
+├ ƒ /pilot-preview                                                                  406 B          97.2 kB
+├ ƒ /pilot-preview/textbooks                                                        151 B           139 kB
+├ ƒ /placement                                                                      2.49 kB        99.3 kB
+├ ƒ /platform                                                                       406 B          97.2 kB
+├ ƒ /platform/audit                                                                 250 B          88.3 kB
+├ ƒ /platform/demo                                                                  1.09 kB        89.2 kB
+├ ƒ /platform/ops                                                                   251 B          88.3 kB
+├ ƒ /platform/reports                                                               250 B          88.3 kB
+├ ƒ /platform/schools                                                               1.98 kB        90.1 kB
+├ ƒ /platform/security                                                              1.29 kB        89.4 kB
+├ ƒ /platform/security/accept                                                       1.21 kB        89.3 kB
+├ ƒ /portfolio/[shareCode]                                                          845 B          88.9 kB
+├ ƒ /privacy                                                                        251 B          88.3 kB
+├ ƒ /progress                                                                       406 B          97.2 kB
+├ ƒ /register/guardian                                                              1.99 kB        98.8 kB
+├ ƒ /register/student                                                               2.07 kB        98.9 kB
+├ ƒ /reset-password                                                                 1.45 kB        98.3 kB
+├ ƒ /reset-with-code                                                                1.69 kB        98.5 kB
+├ ƒ /review/operations                                                              251 B          88.3 kB
+├ ƒ /review/queue                                                                   406 B          97.2 kB
+├ ƒ /review/tasks/[taskId]                                                          2.6 kB         90.7 kB
+├ ƒ /share/certificate/[id]                                                         406 B          97.2 kB
+├ ƒ /signout                                                                        4.38 kB         107 kB
+├ ƒ /student/[id]                                                                   1.27 kB        98.1 kB
+├ ƒ /student/adaptive                                                               2.15 kB        90.2 kB
+├ ƒ /student/ai-tutor                                                               250 B          88.3 kB
+├ ƒ /student/assignments                                                            3.49 kB         100 kB
+├ ƒ /student/assignments/[id]                                                       2.5 kB          104 kB
+├ ƒ /student/capstone                                                               2.22 kB          99 kB
+├ ƒ /student/certificates                                                           2.26 kB        99.1 kB
+├ ƒ /student/certifications                                                         1.22 kB          98 kB
+├ ƒ /student/change-pin                                                             1.47 kB        89.6 kB
+├ ƒ /student/class/[classId]/discussion                                             3.45 kB         100 kB
+├ ƒ /student/classes                                                                406 B          97.2 kB
+├ ƒ /student/classes/[classId]                                                      406 B          97.2 kB
+├ ƒ /student/dashboard                                                              251 B          88.3 kB
+├ ƒ /student/discussion                                                             872 B          97.7 kB
+├ ƒ /student/events                                                                 143 B           100 kB
+├ ƒ /student/exams                                                                  1.42 kB        98.2 kB
+├ ƒ /student/exams/[examId]                                                         3.44 kB         100 kB
+├ ƒ /student/homework                                                               406 B          97.2 kB
+├ ƒ /student/homework/[id]                                                          2.98 kB        95.8 kB
+├ ƒ /student/interactive-labs/[labId]                                               251 B          88.3 kB
+├ ƒ /student/labs                                                                   406 B          97.2 kB
+├ ƒ /student/labs/[labId]                                                           6.62 kB         166 kB
+├ ƒ /student/labs/cell-division                                                     2.08 kB        93.8 kB
+├ ƒ /student/labs/chemical-reaction                                                 2.07 kB        93.8 kB
+├ ƒ /student/labs/ecosystem-balance                                                 2.19 kB        93.9 kB
+├ ƒ /student/labs/electric-circuit                                                  1.96 kB        93.7 kB
+├ ƒ /student/labs/gravity-explorer                                                  2 kB           93.7 kB
+├ ƒ /student/labs/human-heart                                                       2.25 kB        93.9 kB
+├ ƒ /student/labs/molecule-motion                                                   2.02 kB        93.7 kB
+├ ƒ /student/labs/pendulum-lab                                                      2.03 kB        93.7 kB
+├ ƒ /student/labs/periodic-table                                                    1.5 kB         98.4 kB
+├ ƒ /student/labs/tectonic-plates                                                   2.12 kB        93.8 kB
+├ ƒ /student/labs/wave-motion                                                       2.03 kB        93.7 kB
+├ ƒ /student/labs/weather-system                                                    2.06 kB        93.8 kB
+├ ƒ /student/leaderboard                                                            406 B          97.2 kB
+├ ƒ /student/leaderboard/[classId]                                                  1.73 kB        98.6 kB
+├ ƒ /student/learn                                                                  9.03 kB         109 kB
+├ ƒ /student/lesson/[contentId]                                                     6.36 kB         210 kB
+├ ƒ /student/lessons                                                                8.79 kB         113 kB
+├ ƒ /student/lessons/[id]                                                           33.9 kB         272 kB
+├ ƒ /student/live/[meetingId]                                                       1.18 kB          98 kB
+├ ƒ /student/messages                                                               5.6 kB          102 kB
+├ ƒ /student/offline-lessons                                                        3.52 kB         111 kB
+├ ƒ /student/offline-status                                                         1.18 kB          94 kB
+├ ƒ /student/onboarding                                                             2.99 kB        99.8 kB
+├ ƒ /student/packs                                                                  3.13 kB         100 kB
+├ ƒ /student/passport                                                               2.53 kB        99.3 kB
+├ ƒ /student/placement                                                              1.4 kB         98.2 kB
+├ ƒ /student/portfolio                                                              4.04 kB         101 kB
+├ ƒ /student/progress                                                               5.08 kB         102 kB
+├ ƒ /student/report-cards                                                           2.59 kB        99.4 kB
+├ ƒ /student/report-cards/[id]/print                                                1.08 kB        97.9 kB
+├ ƒ /student/schedule                                                               406 B          97.2 kB
+├ ƒ /student/textbooks                                                              1.72 kB        98.5 kB
+├ ƒ /student/textbooks/[contentId]                                                  151 B           139 kB
+├ ƒ /student/today                                                                  12.3 kB         121 kB
+├ ƒ /student/transcript                                                             1.84 kB        98.7 kB
+├ ƒ /student/units/[unitId]                                                         3.18 kB         100 kB
+├ ƒ /student/waec                                                                   1.52 kB         102 kB
+├ ƒ /student/waec/[subject]                                                         1.52 kB         102 kB
+├ ƒ /student/waec/[subject]/practice                                                3.73 kB         101 kB
+├ ƒ /student/work/[scheduledWorkId]                                                 249 B          88.3 kB
+├ ƒ /teacher                                                                        251 B          88.3 kB
+├ ƒ /teacher/alerts                                                                 4.69 kB         102 kB
+├ ƒ /teacher/analytics/assessment/[contentId]                                       2.53 kB        99.3 kB
+├ ƒ /teacher/approvals                                                              250 B          88.3 kB
+├ ƒ /teacher/assignments                                                            5.2 kB          102 kB
+├ ƒ /teacher/assignments/[id]                                                       1.93 kB        98.8 kB
+├ ƒ /teacher/assignments/create                                                     2.8 kB          219 kB
+├ ƒ /teacher/assignments/grading                                                    4.19 kB         101 kB
+├ ƒ /teacher/assignments/new                                                        1.85 kB        98.7 kB
+├ ƒ /teacher/attendance                                                             3.42 kB         100 kB
+├ ƒ /teacher/brief                                                                  1.72 kB        98.5 kB
+├ ƒ /teacher/capstone                                                               1.91 kB        98.7 kB
+├ ƒ /teacher/change-password                                                        1.4 kB         89.5 kB
+├ ƒ /teacher/class/[id]/discussion                                                  3.11 kB        99.9 kB
+├ ƒ /teacher/class/[id]/students                                                    406 B          97.2 kB
+├ ƒ /teacher/content-bundles/[bundleId]/preview                                     12.9 kB         101 kB
+├ ƒ /teacher/create-lesson                                                          3.16 kB         100 kB
+├ ƒ /teacher/curriculum                                                             3.89 kB         101 kB
+├ ƒ /teacher/dashboard                                                              18.2 kB         115 kB
+├ ƒ /teacher/delivery-report                                                        2.75 kB        99.6 kB
+├ ƒ /teacher/differentiation                                                        2.35 kB        99.2 kB
+├ ƒ /teacher/discussion                                                             872 B          97.7 kB
+├ ƒ /teacher/events                                                                 142 B           100 kB
+├ ƒ /teacher/exams                                                                  2.41 kB        99.2 kB
+├ ƒ /teacher/exams/[examId]                                                         831 B          97.7 kB
+├ ƒ /teacher/gradebook                                                              3.17 kB         100 kB
+├ ƒ /teacher/help                                                                   406 B          97.2 kB
+├ ƒ /teacher/homework                                                               406 B          97.2 kB
+├ ƒ /teacher/homework/[id]                                                          3.46 kB         100 kB
+├ ƒ /teacher/homework/new                                                           1.35 kB        89.4 kB
+├ ƒ /teacher/intelligence                                                           3.54 kB         103 kB
+├ ƒ /teacher/intelligence/[studentId]                                               2.44 kB         102 kB
+├ ƒ /teacher/labs                                                                   406 B          97.2 kB
+├ ƒ /teacher/labs/sessions/[sessionId]                                              1.02 kB        97.8 kB
+├ ƒ /teacher/lesson/[contentId]                                                     7.65 kB         116 kB
+├ ƒ /teacher/lesson/[contentId]/video                                               3.73 kB         101 kB
+├ ƒ /teacher/lessons                                                                2.08 kB        98.9 kB
+├ ƒ /teacher/lessons/[lessonId]/edit                                                3.48 kB         220 kB
+├ ƒ /teacher/lessons/[lessonId]/share                                               1.48 kB        98.3 kB
+├ ƒ /teacher/lessons/create                                                         3.64 kB         220 kB
+├ ƒ /teacher/messages                                                               2.81 kB         103 kB
+├ ƒ /teacher/onboarding                                                             2.69 kB        99.5 kB
+├ ƒ /teacher/packs                                                                  3.27 kB         100 kB
+├ ƒ /teacher/placements                                                             2.44 kB        99.3 kB
+├ ƒ /teacher/placements/[placementId]                                               3.52 kB         100 kB
+├ ƒ /teacher/profile                                                                1.4 kB         89.5 kB
+├ ƒ /teacher/rag                                                                    1.49 kB        89.6 kB
+├ ƒ /teacher/report-cards                                                           2.93 kB        99.7 kB
+├ ƒ /teacher/schedule                                                               5.13 kB         102 kB
+├ ƒ /teacher/settings/alerts                                                        1.7 kB         98.5 kB
+├ ƒ /teacher/skills                                                                 2.04 kB        98.9 kB
+├ ƒ /teacher/standards                                                              2.55 kB        99.4 kB
+├ ƒ /teacher/student/[id]                                                           406 B          97.2 kB
+├ ƒ /teacher/students                                                               2.6 kB         99.4 kB
+├ ƒ /teacher/students/[studentId]                                                   4.14 kB         101 kB
+├ ƒ /teacher/textbooks/preview                                                      150 B           139 kB
+├ ƒ /teacher/timetable                                                              4.06 kB         101 kB
+├ ƒ /teacher/training                                                               406 B          97.2 kB
+├ ƒ /teacher/training/[moduleId]                                                    2.56 kB        99.4 kB
+├ ƒ /teacher/training/completion-record                                             376 B          97.2 kB
+├ ƒ /teacher/tutor-analytics                                                        2.25 kB        99.1 kB
+├ ƒ /teacher/video-analytics                                                        1.54 kB        98.4 kB
+├ ƒ /teacher/weekly-report                                                          2.39 kB        99.2 kB
+├ ƒ /teacher/welcome                                                                1.14 kB        89.2 kB
+├ ƒ /terms                                                                          251 B          88.3 kB
+├ ƒ /unauthorized                                                                   406 B          97.2 kB
+└ ƒ /verify/[certificateCode]                                                       406 B          97.2 kB
++ First Load JS shared by all                                                       88.1 kB
+  ├ chunks/2117-ec32068e4fd92817.js                                                 31.9 kB
+  ├ chunks/fd9d1056-8afd97183c9efd95.js                                             53.6 kB
+  └ other shared chunks (total)                                                     2.55 kB
+
+
+ƒ Middleware                                                                        47.7 kB
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand

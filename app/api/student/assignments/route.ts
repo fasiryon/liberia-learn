@@ -2,6 +2,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { legacyAssignmentScoreAuthority } from "@/lib/academic-records/v2/gradeCalculation";
 import { logLearningEvent } from "@/lib/events/logLearningEvent";
 import { isAssignmentVisibleToStudent, listAssignmentTargeting } from "@/lib/assignments/targeting";
 
@@ -43,7 +44,7 @@ export async function GET(req: NextRequest) {
         submissions: {
           where: { studentId: student.id },
           take: 1,
-          select: { id: true, score: true, turnedInAt: true },
+          select: { id: true, score: true, turnedInAt: true, teacherApproved: true, autoReleasedAt: true, aiGrade: true, gradedBy: true, gradedAt: true },
         },
       },
       orderBy: [{ dueAt: "asc" }, { createdAt: "asc" }],
@@ -96,7 +97,7 @@ export async function GET(req: NextRequest) {
           submission: submission
             ? {
                 id: submission.id,
-                score: submission.score,
+                score: legacyAssignmentScoreAuthority(submission) === "TEACHER" ? submission.score : null,
                 turnedInAt: submission.turnedInAt?.toISOString() ?? null,
               }
             : null,

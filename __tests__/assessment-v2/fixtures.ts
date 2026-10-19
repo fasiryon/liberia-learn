@@ -1,10 +1,19 @@
 import {
+  appendAssistance,
+  ASSISTANCE_CHANNELS,
   authorizeRelease,
+  emptyAssistanceLedger,
+  isIndependentAssessment,
+  resolveDelivery,
+  resolveFormIndependence,
   REVIEW_CHECKS,
   sealDefinition,
   sealForm,
   sealItem,
   type AssessmentDefinitionV2,
+  type AssessmentEvidenceEnvelope,
+  type AssistanceLedger,
+  type AssistanceLedgerScope,
   type AssessmentFormV2,
   type AssessmentItemV2,
   type AssessmentReleaseV2,
@@ -128,13 +137,35 @@ export function approveAll(definition: AssessmentDefinitionV2, form: AssessmentF
   return [approve(definitionSubject(definition)), approve(formSubject(form)), ...items.map((item) => approve(itemSubject(item)))];
 }
 
-export function buildReleased(overrides: { permittedModes?: AssessmentReleaseV2["permittedModes"]; schoolId?: string | null; actor?: { userId: string; role: string } } = {}) {
+/** Points for the summative fixture set (recall/application/analysis/transfer mix the design gate requires). */
+const SUMMATIVE_POINTS = [4, 7, 6, 3] as const;
+
+/** buildItems() adjusted to satisfy the summative design gate, as the LL-AEP-001 suite does. */
+function summativeItems() {
   const built = buildItems();
-  const definition = buildDefinition();
-  const form = buildForm(definition, built.items);
-  const reviews = approveAll(definition, form, built.items);
+  const variant = (item: AssessmentItemV2, spec: ProtectedScoringSpec, extra: Partial<AssessmentItemV2>) => {
+    const { itemHash: _h, scoringSpecHash: _s, ...rest } = item;
+    return sealItem({ ...rest, ...extra }, spec);
+  };
+  const single = variant(built.single, built.singleSpec, { cognitiveDemand: "RECALL" });
+  const ordering = variant(built.ordering, built.orderingSpec, { cognitiveDemand: "ANALYZE" });
+  return { ...built, single, ordering, items: [single, built.numeric, ordering, built.worked], specs: [built.singleSpec, built.numericSpec, built.orderingSpec, built.rubricSpec] };
+}
+
+export function buildReleased(overrides: { permittedModes?: AssessmentReleaseV2["permittedModes"]; schoolId?: string | null; actor?: { userId: string; role: string }; purpose?: AssessmentDefinitionV2["purpose"] } = {}) {
+  const definition = buildDefinition(overrides.purpose ? { purpose: overrides.purpose } : {});
+  const highStakes = definition.purpose === "SUMMATIVE" || definition.purpose === "EXAMINATION";
+  const built = highStakes ? summativeItems() : buildItems();
+  const form = highStakes ? buildForm(definition, built.items, {
+    items: built.items.map((item, index) => ({ itemId: item.itemId, itemVersion: item.version, itemHash: item.itemHash, points: SUMMATIVE_POINTS[index] })),
+    blueprint: { blueprintVersion: "1", totalPoints: SUMMATIVE_POINTS.reduce((a, b) => a + b, 0), objectiveCoverage: [{ objectiveId: "obj-compare", minItems: 1 }] },
+  }) : buildForm(definition, built.items);
+  // High-stakes releases need two approvals per subject and a recorded blueprint exception for this small fixture form.
+  const subjects = [definitionSubject(definition), formSubject(form), ...built.items.map(itemSubject)];
+  const reviews = highStakes ? [...subjects.map((subject) => approve(subject, REVIEWER_A)), ...subjects.map((subject) => approve(subject, REVIEWER_B))] : approveAll(definition, form, built.items);
   const { release } = authorizeRelease({
     releaseId: "rel-1", definition, form, items: built.items, specs: built.specs, reviews,
+    blueprintException: highStakes ? { reason: "Small test fixture form", basis: "subject structure", approvedBy: "lead-1" } : null,
     permittedModes: overrides.permittedModes ?? ["OFFICIAL", "PRACTICE_UNOFFICIAL"],
     effectiveFrom: "2026-10-01T00:00:00.000Z", effectiveUntil: "2027-07-31T00:00:00.000Z",
     schoolId: overrides.schoolId === undefined ? SCHOOL : overrides.schoolId,
@@ -142,4 +173,34 @@ export function buildReleased(overrides: { permittedModes?: AssessmentReleaseV2[
   });
   const itemMap = new Map(built.items.map((item) => [`${item.itemId}@${item.version}`, item]));
   return { ...built, definition, form, reviews, release, itemMap };
+}
+
+/**
+ * A clean, final server assistance record for the attempt an envelope belongs to: opened before the
+ * attempt, every channel instrumented, no assistance, sealed at submission, offline sync finalized. Deterministic, so the
+ * record handed to verification and to admission has the same head. Null for unreleased delivery.
+ */
+export function sealedAssistanceRecord(envelope: Pick<AssessmentEvidenceEnvelope, "scope" | "attempt" | "pins" | "delivery" | "capture">): AssistanceLedger | null {
+  if (envelope.pins.releaseId === null || envelope.pins.releaseHash === null) return null;
+  const scope: AssistanceLedgerScope = {
+    tenantId: envelope.scope.tenantId, schoolId: envelope.scope.schoolId, studentId: envelope.scope.studentId,
+    attemptId: envelope.attempt.attemptId, sessionId: envelope.attempt.sessionId,
+    releaseId: envelope.pins.releaseId, releaseHash: envelope.pins.releaseHash,
+  };
+  // Online-only attempts are final when sealed; an offline capture binds its device and needs FINALIZED.
+  const devices = envelope.capture.source === "OFFLINE" && envelope.capture.deviceId ? [envelope.capture.deviceId] : [];
+  const opened = appendAssistance(emptyAssistanceLedger(scope), {
+    scope, recordedAt: "2026-10-31T00:00:00.000Z",
+    event: { type: "OPENED", availableChannels: [...ASSISTANCE_CHANNELS], instrumentedChannels: [...ASSISTANCE_CHANNELS], independentDelivery: isIndependentAssessment(envelope.delivery), offlineDeviceIds: devices },
+  }).ledger;
+  const sealed = appendAssistance(opened, { scope, recordedAt: "2026-11-05T00:00:00.000Z", event: { type: "SEALED", reason: "SUBMITTED" } }).ledger;
+  if (devices.length === 0) return sealed;
+  return appendAssistance(sealed, { scope, recordedAt: "2026-11-05T00:10:00.000Z", event: { type: "FINALIZED", reason: "OFFLINE_SYNC_CLOSED", devices: devices.map((deviceId) => ({ deviceId, syncedThroughSequence: 1_000 })) } }).ledger;
+}
+
+/** An issued independence decision for a released form of this purpose, delivered as practice. */
+export function practiceDecision(purpose: AssessmentDefinitionV2["purpose"] = "FORMATIVE") {
+  const released = buildReleased({ purpose });
+  const delivery = resolveDelivery({ mode: "PRACTICE_UNOFFICIAL", now: "2026-11-01T00:00:00.000Z", requester: { role: "STUDENT", schoolId: SCHOOL }, release: released.release, revocations: [], expectedCurriculum: CURRICULUM });
+  return resolveFormIndependence({ form: released.form, definition: released.definition, release: released.release, delivery });
 }

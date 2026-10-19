@@ -13,7 +13,7 @@ import {
   scoreResponse,
   type ModerationPolicy,
 } from "@/lib/assessment/v2";
-import { buildItems, buildReleased, CURRICULUM, SCHOOL } from "./fixtures";
+import { buildItems, buildReleased, CURRICULUM, SCHOOL, practiceDecision } from "./fixtures";
 
 const now = "2026-11-01T00:00:00.000Z";
 
@@ -25,8 +25,8 @@ function officialDelivery() {
 
 describe("Learner-safe projection", () => {
   it("contains no answer keys, scoring rules, explanations, rubric descriptors or moderation notes", () => {
-    const { form, itemMap, items, specs, delivery } = officialDelivery();
-    const projected = projectFormForLearner({ form, items: itemMap, attemptId: "att-1", delivery });
+    const { form, definition, release, itemMap, items, specs, delivery } = officialDelivery();
+    const projected = projectFormForLearner({ form, definition, release, items: itemMap, attemptId: "att-1", delivery });
     expect(projected.official).toBe(true);
     expect(() => assertLearnerSafe(projected, protectedStrings(items, specs))).not.toThrow();
     const serialized = JSON.stringify(projected);
@@ -36,21 +36,21 @@ describe("Learner-safe projection", () => {
   });
 
   it("builds offline packages from the pre-response projection only", () => {
-    const { form, itemMap, items, specs, delivery } = officialDelivery();
-    const pkg = buildOfflineAssessmentPackage({ form, items: itemMap, attemptId: "att-off", delivery });
+    const { form, definition, release, itemMap, items, specs, delivery } = officialDelivery();
+    const pkg = buildOfflineAssessmentPackage({ form, definition, release, items: itemMap, attemptId: "att-off", delivery });
     expect(pkg).toMatchObject({ capture: "CAPTURE_ONLY", scoring: "SERVER_AFTER_SYNC" });
     expect(() => assertLearnerSafe(pkg, protectedStrings(items, specs))).not.toThrow();
     const prohibited = { ...form, delivery: { ...form.delivery, offlineDelivery: "PROHIBITED" as const } };
-    expect(() => buildOfflineAssessmentPackage({ form: prohibited, items: itemMap, attemptId: "x", delivery })).toThrow("assessment_offline_delivery_prohibited");
+    expect(() => buildOfflineAssessmentPackage({ form: prohibited, definition, release, items: itemMap, attemptId: "x", delivery })).toThrow("assessment_offline_delivery_prohibited");
   });
 
   it("refuses to project a denied delivery or a form whose item pins drifted", () => {
-    const { form, itemMap, delivery, items } = officialDelivery();
+    const { form, definition, release, itemMap, delivery, items } = officialDelivery();
     const denied = resolveDelivery({ mode: "OFFICIAL", now, requester: { role: "STUDENT", schoolId: SCHOOL }, release: null, revocations: [], expectedCurriculum: null });
-    expect(() => projectFormForLearner({ form, items: itemMap, attemptId: "a", delivery: denied })).toThrow(/assessment_delivery_denied/);
+    expect(() => projectFormForLearner({ form, definition, release, items: itemMap, attemptId: "a", delivery: denied })).toThrow(/assessment_delivery_denied/);
     const drifted = new Map(itemMap);
     drifted.set(`${items[0].itemId}@${items[0].version}`, { ...items[0], itemHash: "different" });
-    expect(() => projectFormForLearner({ form, items: drifted, attemptId: "a", delivery })).toThrow("assessment_projection_item_pin_mismatch");
+    expect(() => projectFormForLearner({ form, definition, release, items: drifted, attemptId: "a", delivery })).toThrow("assessment_projection_item_pin_mismatch");
   });
 
   it("detects leakage through protected field names and protected values", () => {
@@ -63,22 +63,22 @@ describe("Learner-safe projection", () => {
 
   it("does not present ordering elements in the authored (key) order", () => {
     const { ordering } = buildItems();
-    const { form, itemMap, delivery } = officialDelivery();
-    const orders = ["a1", "a2", "a3", "a4", "a5", "a6"].map((attemptId) => projectFormForLearner({ form, items: itemMap, attemptId, delivery })
+    const { form, definition, release, itemMap, delivery } = officialDelivery();
+    const orders = ["a1", "a2", "a3", "a4", "a5", "a6"].map((attemptId) => projectFormForLearner({ form, definition, release, items: itemMap, attemptId, delivery })
       .items.find((item) => item.itemId === ordering.itemId)!.orderingElements.map((element) => element.optionId).join(","));
     expect(orders.some((order) => order !== "e1,e2,e3,e4")).toBe(true);
     // Deterministic per attempt (resumes and offline replays see the same order).
-    expect(projectFormForLearner({ form, items: itemMap, attemptId: "a1", delivery }).items[2].orderingElements)
-      .toEqual(projectFormForLearner({ form, items: itemMap, attemptId: "a1", delivery }).items[2].orderingElements);
+    expect(projectFormForLearner({ form, definition, release, items: itemMap, attemptId: "a1", delivery }).items[2].orderingElements)
+      .toEqual(projectFormForLearner({ form, definition, release, items: itemMap, attemptId: "a1", delivery }).items[2].orderingElements);
   });
 
   it("discloses explanations and answers only as the feedback policy allows", () => {
     const { single, singleSpec } = buildItems();
-    expect(learnerDisclosure(single, singleSpec, "BEFORE_RESPONSE")).toEqual({ explanation: null, correctResponse: null });
-    expect(learnerDisclosure(single, singleSpec, "AFTER_RESPONSE")).toEqual({ explanation: singleSpec.explanation, correctResponse: null });
-    expect(learnerDisclosure(single, singleSpec, "AFTER_ATTEMPT_CLOSED")).toEqual({ explanation: singleSpec.explanation, correctResponse: "0.7" });
+    expect(learnerDisclosure(single, singleSpec, "BEFORE_RESPONSE", { decision: practiceDecision("FORMATIVE"), attemptStatus: "CLOSED" })).toEqual({ explanation: null, correctResponse: null });
+    expect(learnerDisclosure(single, singleSpec, "AFTER_RESPONSE", { decision: practiceDecision("FORMATIVE"), attemptStatus: "CLOSED" })).toEqual({ explanation: singleSpec.explanation, correctResponse: null });
+    expect(learnerDisclosure(single, singleSpec, "AFTER_ATTEMPT_CLOSED", { decision: practiceDecision("FORMATIVE"), attemptStatus: "CLOSED" })).toEqual({ explanation: singleSpec.explanation, correctResponse: "0.7" });
     const never = { ...single, feedbackPolicy: { hints: "NONE" as const, explanation: "NEVER" as const, correctAnswer: "NEVER" as const } };
-    expect(learnerDisclosure(never, singleSpec, "AFTER_RELEASE_WINDOW")).toEqual({ explanation: null, correctResponse: null });
+    expect(learnerDisclosure(never, singleSpec, "AFTER_RELEASE_WINDOW", { decision: practiceDecision("FORMATIVE"), attemptStatus: "CLOSED" })).toEqual({ explanation: null, correctResponse: null });
   });
 
   it("projects legacy exam questions without key or worked explanation", () => {
@@ -120,15 +120,16 @@ describe("Server-authoritative scoring", () => {
     expect(scoreResponse(items.short, items.shortSpec, { kind: "TEXT", text: " 460,003.025. " })).toMatchObject({ status: "SCORED", points: 1 });
     const ambiguous = scoreResponse(items.short, items.shortSpec, { kind: "TEXT", text: "460 003.025" });
     expect(ambiguous).toMatchObject({ status: "PENDING_HUMAN_MODERATION", points: null, reason: "constructed_response_not_exact_match" });
-    expect(scoreResponse(items.short, items.shortSpec, { kind: "TEXT", text: "   " }).status).toBe("INVALID_RESPONSE");
+    // A blank answer is BLANK (0 points), distinct from an invalid response.
+    expect(scoreResponse(items.short, items.shortSpec, { kind: "TEXT", text: "   " })).toMatchObject({ status: "BLANK", points: 0 });
   });
 
   it("routes rubric items to human moderation and does not let AI score them", () => {
     expect(isServerAutoScorable("WORKED_SOLUTION", items.rubricSpec.key)).toBe(false);
     const pending = scoreResponse(items.worked, items.rubricSpec, { kind: "TEXT", text: "No, 0.7 = 0.70 and 70 hundredths > 65 hundredths." });
     expect(pending).toMatchObject({ status: "PENDING_HUMAN_MODERATION", points: null, scorerAuthority: null });
-    const policy: ModerationPolicy = { policyId: "moderation-g7", version: "1.0.0", moderatorRoles: ["TEACHER"], requiresSecondMarker: false };
-    const base = { pending, item: items.worked, spec: items.rubricSpec, attemptSchoolId: SCHOOL, policy, criterionScores: [{ criterionId: "decision", points: 1 }, { criterionId: "reason", points: 1 }], aiSuggestion: null, moderatedAt: now };
+    const policy: ModerationPolicy = { policyId: "moderation-g7", version: "1.0.0", moderatorRoles: ["TEACHER"], requiresSecondMarker: false, reconciliationTolerancePercent: 10, examinerRoles: ["EXAMINER"] };
+    const base = { pending, item: items.worked, spec: items.rubricSpec, attemptSchoolId: SCHOOL, purpose: "FORMATIVE" as const, policy, criterionScores: [{ criterionId: "decision", points: 1 }, { criterionId: "reason", points: 1 }], aiSuggestion: null, moderatedAt: now };
     expect(() => recordModeratedScore({ ...base, moderator: { kind: "AI", id: "agent:grader", role: "TEACHER", schoolId: SCHOOL } })).toThrow("assessment_ai_scoring_not_authoritative");
     expect(() => recordModeratedScore({ ...base, policy: null, moderator: { kind: "HUMAN", id: "t1", role: "TEACHER", schoolId: SCHOOL } })).toThrow("assessment_moderation_policy_required");
     expect(() => recordModeratedScore({ ...base, moderator: { kind: "HUMAN", id: "t1", role: "TEACHER", schoolId: "school-2" } })).toThrow("assessment_moderator_school_mismatch");

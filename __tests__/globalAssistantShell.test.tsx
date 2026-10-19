@@ -234,7 +234,7 @@ describe("GlobalAssistantShell", () => {
     expect(html).toContain(">Cancel<");
   });
 
-  it("expands to a full-page layout with no minimize/toggle affordances on the dedicated /student/ai-tutor route", () => {
+  it("renders a page workspace without covering navigation on the dedicated /student/ai-tutor route", () => {
     mockUsePathname.mockReturnValue("/student/ai-tutor");
 
     const html = renderToStaticMarkup(
@@ -246,8 +246,11 @@ describe("GlobalAssistantShell", () => {
       />
     );
 
-    // Full-page sizing, not the floating-bubble sizing used everywhere else.
-    expect(html).toContain("inset-4");
+    // Normal page flow: viewport-wide fixed sizing caused the navigation trap.
+    expect(html).toContain("student-tutor-workspace");
+    expect(html).toContain('data-assistant-presentation="page"');
+    expect(html).not.toContain("inset-4");
+    expect(html).not.toContain("fixed z-50");
     expect(html).not.toContain("max-h-[70vh]");
     expect(html).not.toContain("max-w-md");
     // No way to accidentally strand the student on a blank page with the

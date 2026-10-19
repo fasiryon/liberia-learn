@@ -119,27 +119,79 @@ export type G7GapReport = Readonly<{
   review: InstructionalReviewReport;
   criteria: Readonly<{ asIs: readonly CriterionStatus[]; blueprintIfPlanAdopted: readonly CriterionStatus[] }>;
   layers: Readonly<{ asIs: readonly LayerAttainment[] }>;
-  plan: ProposedPlan;
+  plan: ProposedPlan | null;
   correctionChecks: readonly CorrectionCheck[];
   packageGaps: readonly string[];
   waecBaseline: G7LessonInputs["source"]["waecBaseline"];
+  /** Present when an AI judgment review was attempted for this revision. */
+  aiJudgmentReview?: AIJudgmentAttempt;
+  /** Present when this report follows an earlier revision's report. */
+  priorFindings?: readonly PriorFindingStatus[];
 }>;
 
-export function buildG7GapReport(pin: G7SourcePin, inputs: G7LessonInputs): G7GapReport {
+export type AIJudgmentAttempt = Readonly<{
+  reviewer: AgentIdentity;
+  status: "BLOCKED" | "RAN";
+  code: string | null;
+  detail: string;
+  requires: "INDEPENDENT_REVIEWER";
+}>;
+
+export type PriorFindingStatus = Readonly<{
+  findingId: string;
+  severity: string;
+  code: string;
+  method: "DETERMINISTIC" | "AI_JUDGMENT";
+  status: "NOT_REPRODUCED_BY_AUTOMATED_CHECKS" | "STILL_PRESENT" | "CORRECTION_APPLIED_PENDING_INDEPENDENT_REVIEW" | "OPEN_CURRICULUM_OWNER_DECISION" | "OPEN_NOT_ADDRESSED";
+  change: string;
+}>;
+
+type PriorReport = Readonly<{ review: Readonly<{ revision: Readonly<{ candidateSha256: string }>; findings: readonly Readonly<{ id: string; severity: string; code: string; method: "DETERMINISTIC" | "AI_JUDGMENT" }>[] }> }>;
+
+/**
+ * Carries the previous revision's findings forward. A deterministic finding that no longer fires is
+ * NOT_REPRODUCED (mechanically), never "resolved". Every AI judgment finding needs an authored
+ * disposition, and each stays pending independent review.
+ */
+export function carryForwardFindings(prior: PriorReport, current: InstructionalReviewReport, dispositions: G7LessonInputs["priorDispositions"]): PriorFindingStatus[] {
+  const currentIds = new Set(current.findings.map((item) => item.id));
+  return prior.review.findings.map((item) => {
+    if (item.method === "DETERMINISTIC") {
+      return Object.freeze({ findingId: item.id, severity: item.severity, code: item.code, method: item.method, status: currentIds.has(item.id) ? "STILL_PRESENT" as const : "NOT_REPRODUCED_BY_AUTOMATED_CHECKS" as const, change: currentIds.has(item.id) ? "The same deterministic check still fires on this revision." : "The deterministic check no longer fires on this revision." });
+    }
+    const disposition = dispositions.find((entry) => entry.findingId === item.id);
+    if (!disposition) throw new InstructionalReviewError("PRIOR_FINDING_UNDISPOSED", item.id);
+    return Object.freeze({ findingId: item.id, severity: item.severity, code: item.code, method: item.method, status: disposition.disposition, change: disposition.change });
+  });
+}
+
+export function buildG7GapReport(pin: G7SourcePin, inputs: G7LessonInputs, priorReport: unknown = null): G7GapReport {
   const { source, candidate, assessment, judgments, plan } = inputs;
-  if (plan.revision.candidateSha256 !== source.expectedCandidateSha256) throw new InstructionalReviewError("PLAN_REVISION_MISMATCH", plan.planId);
+  if (plan && plan.revision.candidateSha256 !== source.expectedCandidateSha256) throw new InstructionalReviewError("PLAN_REVISION_MISMATCH", plan.planId);
+  const revision = {
+    contentKey: source.contentKey, subject: source.subject, grade: source.grade, candidate, assessment,
+    plan: plan ? { planId: plan.planId, authors: plan.authors, tasks: plan.tasks, supersedesCandidateTaskIds: plan.supersedesCandidateTaskIds } : null,
+    source: { gitCommit: pin.gitCommit, candidatePath: source.candidatePath, assessmentPath: source.assessmentPath },
+    authors: pin.candidateAuthors,
+    expectedCandidateSha256: source.expectedCandidateSha256,
+  };
   const review = buildInstructionalReview({
     reviewer: pin.reviewer,
-    revision: {
-      contentKey: source.contentKey, subject: source.subject, grade: source.grade, candidate, assessment,
-      plan: { planId: plan.planId, authors: plan.authors, tasks: plan.tasks, supersedesCandidateTaskIds: plan.supersedesCandidateTaskIds },
-      source: { gitCommit: pin.gitCommit, candidatePath: source.candidatePath, assessmentPath: source.assessmentPath },
-      authors: pin.candidateAuthors,
-      expectedCandidateSha256: source.expectedCandidateSha256,
-    },
+    revision,
     judgments,
     config: { misconceptionSignatures: source.misconceptionSignatures },
   });
+  let aiJudgmentReview: AIJudgmentAttempt | undefined;
+  if (pin.aiJudgmentReviewer) {
+    try {
+      buildInstructionalReview({ reviewer: pin.aiJudgmentReviewer, revision, config: { misconceptionSignatures: source.misconceptionSignatures } });
+      aiJudgmentReview = Object.freeze({ reviewer: pin.aiJudgmentReviewer, status: "RAN" as const, code: null, detail: "Ran without judgments.", requires: "INDEPENDENT_REVIEWER" as const });
+    } catch (error) {
+      if (!(error instanceof InstructionalReviewError)) throw error;
+      aiJudgmentReview = Object.freeze({ reviewer: pin.aiJudgmentReviewer, status: "BLOCKED" as const, code: error.code, detail: error.message, requires: "INDEPENDENT_REVIEWER" as const });
+    }
+  }
+  const priorFindings = priorReport ? carryForwardFindings(priorReport as PriorReport, review, inputs.priorDispositions) : undefined;
   const asIs = criterionStatuses(review);
   const projected = review.projectedBlueprintWithPlan
     ? criterionStatuses(review, review.projectedBlueprintWithPlan.evaluation, false)
@@ -157,9 +209,11 @@ export function buildG7GapReport(pin: G7SourcePin, inputs: G7LessonInputs): G7Ga
     criteria: Object.freeze({ asIs: Object.freeze(asIs), blueprintIfPlanAdopted: Object.freeze(projected) }),
     layers: Object.freeze({ asIs: attainment(asIs) }),
     plan,
-    correctionChecks: Object.freeze(checkProposedCorrections(plan, assessment, source.misconceptionSignatures)),
+    correctionChecks: Object.freeze(plan ? checkProposedCorrections(plan, assessment, source.misconceptionSignatures) : []),
     packageGaps: source.packageGaps,
     waecBaseline: source.waecBaseline,
+    ...(aiJudgmentReview ? { aiJudgmentReview } : {}),
+    ...(priorFindings ? { priorFindings: Object.freeze(priorFindings) } : {}),
   });
 }
 
@@ -182,53 +236,78 @@ export function renderG7GapReportMarkdown(report: G7GapReport): string {
 
   push(`# Excellence gap report: ${report.title}`, "");
   push(`Grade ${report.grade} ${report.subject} · candidate \`${review.revision.contentKey}\` · ${review.standardVersion}`, "");
-  push("> **CANDIDATE ONLY. Advisory AI review.** Nothing here approves, publishes, releases or certifies this lesson, and nothing here claims human qualification or MOE/WAEC approval. Approval of native curriculum requires an identified, qualified human reviewing the exact revision (`lib/curriculum/v2/governance.ts`). A design rubric is not learning evidence: a lesson succeeds only when students independently show they learned, retained and can apply it (pilot plan).", "");
-  push(`> **Not an independent review.** Reviewer ${who(review.reviewer)} shares a model family with the candidate's author (${review.independence.reasons.join(", ")}). It may be used as advice but does not count toward an independent-review requirement.`, "");
+  const automated = review.reviewer.kind === "AUTOMATED";
+  if (automated) {
+    push("> **CANDIDATE ONLY. Automated checks, not a review.** These are the deterministic checks of the Curriculum Excellence Standard (blueprint, prerequisites, misconception catalogue, distractor error models, assistance on mastery items). They approve, publish, release and certify nothing, and they claim no human qualification or MOE/WAEC approval. Approval of native curriculum requires an identified, qualified human reviewing the exact revision (`lib/curriculum/v2/governance.ts`). A design rubric is not learning evidence: a lesson succeeds only when students independently show they learned, retained and can apply it (pilot plan).", "");
+    push(`> **No AI judgment review of this revision.** ${report.aiJudgmentReview ? `An AI judgment review by ${who(report.aiJudgmentReview.reviewer)} was ${report.aiJudgmentReview.status === "BLOCKED" ? `refused (\`${report.aiJudgmentReview.code}\`): that agent wrote the corrections in this revision and may not review them` : "run"}. ` : ""}Judgment criteria and every correction need an independent reviewer.`, "");
+  } else {
+    push("> **CANDIDATE ONLY. Advisory AI review.** Nothing here approves, publishes, releases or certifies this lesson, and nothing here claims human qualification or MOE/WAEC approval. Approval of native curriculum requires an identified, qualified human reviewing the exact revision (`lib/curriculum/v2/governance.ts`). A design rubric is not learning evidence: a lesson succeeds only when students independently show they learned, retained and can apply it (pilot plan).", "");
+    push(`> **Not an independent review.** Reviewer ${who(review.reviewer)} shares a model family with the candidate's author (${review.independence.reasons.join(", ")}). It may be used as advice but does not count toward an independent-review requirement.`, "");
+  }
 
   push("## Exact revision", "");
-  push(`- Source: PR #${report.pullRequest} at commit \`${review.revision.source.gitCommit}\` (read with \`git show\`; not copied, not modified)`);
+  push(review.revision.source.gitCommit
+    ? `- Source: PR #${report.pullRequest} at commit \`${review.revision.source.gitCommit}\` (read with \`git show\`; not copied, not modified)`
+    : `- Source: this tree (PR #${report.pullRequest} integration), pinned by the candidate hash below; regenerated whenever the candidate changes`);
   push(`- Candidate: \`${review.revision.source.candidatePath}\` sha256 \`${review.revision.candidateSha256}\``);
   push(`- Assessment (reviewer only): \`${review.revision.source.assessmentPath}\` sha256 \`${review.revision.assessmentSha256}\``);
-  push(`- Proposed plan: \`${plan.planId}\` sha256 \`${review.revision.planSha256}\``);
+  if (plan) push(`- Proposed plan: \`${plan.planId}\` sha256 \`${review.revision.planSha256}\``);
   push(`- Report sha256: \`${review.reportSha256}\` (void for any other revision; see \`assertReportMatchesRevision\`)`, "");
 
   push("## Summary", "");
   push(`- Reviewer outcome: **${review.outcome}** (the reviewer has no approve outcome)`);
   push(`- Findings: ${count("BLOCKING")} blocking, ${count("MAJOR")} major, ${count("MINOR")} minor (${review.findings.filter((item) => item.method === "DETERMINISTIC").length} deterministic, ${review.findings.filter((item) => item.method === "AI_JUDGMENT").length} AI judgment needing human confirmation)`);
   const share = review.blueprint.selectedResponseShareOfMastery;
+  const percent = (value: number | null) => (value === null ? "n/a" : `${Math.round(value * 100)}%`);
   const projectedShare = review.projectedBlueprintWithPlan?.evaluation.selectedResponseShareOfMastery ?? null;
+  if (!plan) {
+    push(`- Selected response share of end-of-lesson mastery evidence: ${percent(share)}`);
+    push(`- Blueprint blocking gaps: ${review.blueprint.blockingGaps.join(", ") || "none"}`);
+  } else {
   push(`- Selected response share of end-of-lesson mastery evidence: ${share === null ? "n/a" : `${Math.round(share * 100)}%`} as is; ${projectedShare === null ? "n/a" : `${Math.round(projectedShare * 100)}%`} if the plan is adopted`);
   push(`- Blueprint blocking gaps as is: ${review.blueprint.blockingGaps.join(", ") || "none"}; if the plan is adopted (mechanical projection, unreviewed): ${review.projectedBlueprintWithPlan?.evaluation.blockingGaps.join(", ") || "none"}`);
+  }
   push(`- Existing package gaps from PR #${report.pullRequest} (unchanged here): ${report.packageGaps.join(", ")}`, "");
 
   push("## Three layers", "");
   push("| Layer | Attained as is | Blocking criteria not yet met |", "| --- | --- | --- |");
   for (const layer of report.layers.asIs) push(`| ${LAYER_TITLE[layer.layer]} | ${layer.attained ? "yes" : "no"} | ${layer.unmetBlocking.join(", ")} |`);
   push("");
-  push("Layer attainment is cumulative and design-only (`isLearningEvidence: false`). HUMAN_REQUIRED criteria cannot be rated MET by this reviewer, so no layer can be attained without qualified human review. The last column re-evaluates only blueprint-checked criteria with the proposed plan added (— means the blueprint does not check that criterion); it ignores findings and is not a review of the plan.", "");
+  if (!plan) push("Layer attainment is cumulative and design-only (`isLearningEvidence: false`). Automated checks can rate only deterministic criteria MET; judgment and HUMAN_REQUIRED criteria stay NOT_EVALUATED until an independent reviewer rates them, so no layer can be attained from this report.", "");
+  else push("Layer attainment is cumulative and design-only (`isLearningEvidence: false`). HUMAN_REQUIRED criteria cannot be rated MET by this reviewer, so no layer can be attained without qualified human review. The last column re-evaluates only blueprint-checked criteria with the proposed plan added (— means the blueprint does not check that criterion); it ignores findings and is not a review of the plan.", "");
   for (const layer of EXCELLENCE_LAYERS) {
     push(`### ${LAYER_TITLE[layer]}`, "");
-    push("| Criterion | Blocking | As is | Blueprint if plan adopted | Basis |", "| --- | --- | --- | --- | --- |");
+    if (plan) push("| Criterion | Blocking | As is | Blueprint if plan adopted | Basis |", "| --- | --- | --- | --- | --- |");
+    else push("| Criterion | Blocking | Status | Basis |", "| --- | --- | --- | --- |");
     report.criteria.asIs.filter((status) => status.layer === layer).forEach((status) => {
       const covered = review.blueprint.rules.some((rule) => rule.criterionId === status.criterionId);
       const projected = covered ? report.criteria.blueprintIfPlanAdopted.find((item) => item.criterionId === status.criterionId)?.rating ?? "" : "—";
       const criterion = EXCELLENCE_RUBRIC_V1.find((item) => item.id === status.criterionId);
-      push(`| \`${status.criterionId}\` ${cell(criterion?.statement ?? "")} | ${status.blocking ? "yes" : "no"} | ${status.rating} | ${projected} | ${cell(status.basis)} |`);
+      push(`| \`${status.criterionId}\` ${cell(criterion?.statement ?? "")} | ${status.blocking ? "yes" : "no"} | ${status.rating}${plan ? ` | ${projected}` : ""} | ${cell(status.basis)} |`);
     });
     push("");
   }
 
   push("## Assessment blueprint", "");
   push(`Subject family ${review.blueprint.family}, ${review.blueprintVersion}.`, "");
-  push("| Rule | Criterion | Requirement | As is | If plan adopted |", "| --- | --- | --- | --- | --- |");
+  if (plan) push("| Rule | Criterion | Requirement | As is | If plan adopted |", "| --- | --- | --- | --- | --- |");
+  else push("| Rule | Criterion | Requirement | Status |", "| --- | --- | --- | --- |");
   for (const rule of review.blueprint.rules) {
     const projected = review.projectedBlueprintWithPlan?.evaluation.rules.find((item) => item.ruleId === rule.ruleId);
     const state = (met: boolean | undefined, missing: readonly string[] = []) => (met ? "met" : `**not met** (${missing.join(", ")})`);
-    push(`| ${rule.ruleId} | ${rule.criterionId} | ${cell(rule.requirement)} | ${state(rule.met, rule.missing)} | ${projected ? state(projected.met, projected.missing) : ""} |`);
+    push(`| ${rule.ruleId} | ${rule.criterionId} | ${cell(rule.requirement)} | ${state(rule.met, rule.missing)}${plan ? ` | ${projected ? state(projected.met, projected.missing) : ""}` : ""} |`);
   }
   push("");
+  if (report.priorFindings) {
+    push("## Findings on the previous revision", "");
+    push("How every finding on the previous revision stands now. NOT_REPRODUCED means a deterministic check no longer fires; it is not a verdict that the issue is resolved. The corrections were written by an AI agent and need independent review.", "");
+    push("| Finding | Severity | Method | Status | Change |", "| --- | --- | --- | --- | --- |");
+    for (const item of report.priorFindings) push(`| \`${item.findingId}\` ${item.code} | ${item.severity} | ${item.method} | ${item.status} | ${cell(item.change)} |`);
+    push("");
+  }
 
   push("## Findings", "");
+  if (!review.findings.length) push("No deterministic check fired. This is not a review: judgment criteria were not evaluated.", "");
   for (const item of review.findings) {
     push(`### ${item.severity} · ${item.code} · \`${item.id}\``, "");
     push(`${item.statement}`, "");
@@ -239,6 +318,7 @@ export function renderG7GapReportMarkdown(report: G7GapReport): string {
     push("");
   }
 
+  if (plan) {
   push("## Proposed assessment plan (unreviewed)", "");
   push(`\`${plan.planId}\` was written by the same AI reviewer, so the reviewer may not review it (\`SELF_REVIEW_PROHIBITED\`). The coverage columns above are a mechanical projection, not a review. Keys and scoring guides are reviewer only.`, "");
   if (plan.supersedesCandidateTaskIds.length) push(`Proposes retiring: ${plan.supersedesCandidateTaskIds.map((id) => `\`${id}\``).join(", ")}. ${plan.supersedeRationale ?? ""}`, "");
@@ -288,20 +368,46 @@ export function renderG7GapReportMarkdown(report: G7GapReport): string {
   if (report.correctionChecks.length) push("", "These mechanical checks test reviewer-authored proposals against the error models. They are not a review of the proposals.");
   for (const addition of corrections.diagnosabilityAdditions ?? []) push(`- Make \`${addition.misconceptionId}\` diagnosable through \`${addition.via}\`: ${addition.rationale}`);
   push("");
+  }
 
   push("## National mapping kept explicit", "");
   push(`- MOE: objectives remain LiberiaLearn candidates with MOE relationships, not bindings; the open decisions are recorded in PR #${report.pullRequest} (${report.packageGaps.filter((gap) => gap.startsWith("MOE") || gap.startsWith("SCOPE")).join(", ")}). This report does not bind or rebind anything.`);
   push(`- WAEC: ${report.waecBaseline.examination}; ${report.waecBaseline.competency}; evidence specificity ${report.waecBaseline.evidenceSpecificity}. ${report.waecBaseline.note}`, "");
 
   push("## Required before any use", "");
-  push("1. A qualified human confirms or rejects each AI judgment finding against this exact revision.");
-  push("2. Independent review (not this reviewer, not its model family where possible) of the proposed plan and corrections.");
+  if (automated) {
+    push("1. An independent reviewer (not the agent that wrote the corrections, and not its model family where possible) reviews this exact revision against the judgment and human criteria, and confirms or rejects each correction.");
+    push("2. A qualified human approves or revises the candidate assessment definitions and rubric before any of them is used as mastery evidence.");
+  } else {
+    push("1. A qualified human confirms or rejects each AI judgment finding against this exact revision.");
+    push("2. Independent review (not this reviewer, not its model family where possible) of the proposed plan and corrections.");
+  }
   push(`3. The curriculum decisions already blocking the package in PR #${report.pullRequest}.`);
   push("4. Pilot measurement under the Learning outcome standard before any claim that the lesson works.", "");
   return `${lines.join("\n").trimEnd()}\n`;
 }
 
 export function renderG7IndexMarkdown(pin: G7SourcePin, reports: readonly G7GapReport[]): string {
+  if (pin.gitCommit === null) {
+    const n = (report: G7GapReport, severity: string) => report.review.findings.filter((item) => item.severity === severity).length;
+    return [
+      `# Grade 7 ${pin.revisionLabel} excellence automated checks`,
+      "",
+      `Generated by \`scripts/build-curriculum-excellence-g7-gap-reports.ts\` from the ${pin.revisionLabel} candidates and reviewer-only assessment reviews in this tree, pinned by the candidate hashes in [source.json](source.json). Do not edit generated files by hand; a test fails if they are stale.`,
+      "",
+      `**CANDIDATE ONLY. Automated checks, not a review.** The corrections in ${pin.revisionLabel} were written by an AI agent, so the AI judgment review of this revision is refused (\`SELF_REVIEW_PROHIBITED\`) and is left to an independent reviewer. Nothing here approves, publishes or releases anything.`,
+      "",
+      "| Lesson | Outcome | Blocking | Major | Minor | Blueprint gaps | Previous findings not reproduced | Report |",
+      "| --- | --- | --- | --- | --- | --- | --- | --- |",
+      ...reports.map((report) => {
+        const prior = report.priorFindings ?? [];
+        const gone = prior.filter((item) => item.status === "NOT_REPRODUCED_BY_AUTOMATED_CHECKS").length;
+        const deterministic = prior.filter((item) => item.method === "DETERMINISTIC").length;
+        return `| ${report.title} | ${report.review.outcome} | ${n(report, "BLOCKING")} | ${n(report, "MAJOR")} | ${n(report, "MINOR")} | ${report.review.blueprint.blockingGaps.join(", ") || "none"} | ${gone} of ${deterministic} deterministic | [checks](${report.lessonKey}/gap-report.md) |`;
+      }),
+      "",
+    ].join("\n");
+  }
   const lines = [
     "# Grade 7 v0.2.0 excellence gap reports",
     "",

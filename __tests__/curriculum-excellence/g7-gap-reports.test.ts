@@ -49,10 +49,11 @@ describe("committed Grade 7 gap reports", () => {
   });
 });
 
+// A skipped describe still runs its body while collecting, so nothing here may read the pinned commit
+// outside a test: a shallow CI checkout does not have it.
 describe.runIf(pinnedCommitAvailable(pin))("reproducible from the pinned commit", () => {
-  const rebuilt = loadG7LessonInputs().map((inputs) => buildG7GapReport(pin, inputs));
-
   it("regenerates byte-identical reports (run the build script if this fails)", () => {
+    const rebuilt = loadG7LessonInputs().map((inputs) => buildG7GapReport(pin, inputs));
     rebuilt.forEach((report) => {
       expect(`${JSON.stringify(report, null, 2)}\n`).toBe(readFileSync(`${G7_EXCELLENCE_DIR}/${report.lessonKey}/gap-report.json`, "utf8").replace(/\r\n/g, "\n"));
       expect(renderG7GapReportMarkdown(report)).toBe(readFileSync(`${G7_EXCELLENCE_DIR}/${report.lessonKey}/gap-report.md`, "utf8").replace(/\r\n/g, "\n"));
