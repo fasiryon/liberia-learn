@@ -17,7 +17,8 @@ export type AssessmentAuditEventType =
   | "assessment.assistance.opened"
   | "assessment.assistance.recorded"
   | "assessment.assistance.sealed"
-  | "assessment.assistance.conflict";
+  | "assessment.assistance.conflict"
+  | "assessment.assistance.finalized";
 
 export type AssessmentAuditEvent = Readonly<{
   type: AssessmentAuditEventType;

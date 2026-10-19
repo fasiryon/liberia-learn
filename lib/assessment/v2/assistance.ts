@@ -21,9 +21,13 @@
  *   - Idempotency keys are derived on the server from the emitter's source reference. An exact replay
  *     is a no-op. A different payload under the same key is recorded as a CONFLICT entry (never an
  *     overwrite) and makes the attempt UNVERIFIED for integrity review.
- *   - INDEPENDENT requires the record to be chain-valid, opened, sealed, conflict-free, with every
- *     available channel instrumented and no assistance recorded. Recorded assistance yields ASSISTED.
+ *   - INDEPENDENT requires the record to be chain-valid, opened, sealed, FINAL, conflict-free, with
+ *     every channel instrumented and no assistance recorded. Recorded assistance yields ASSISTED.
  *     Everything else is UNVERIFIED.
+ *   - Final: a record that accepts no offline devices is final when sealed. A record that accepts
+ *     offline devices is final only after FINALIZED (the server closed the offline sync window).
+ *     Nothing can be appended to a final record, so an INDEPENDENT attestation can never go stale.
+ *     Verify offline-capable attempts only after FINALIZED; earlier verification is UNVERIFIED.
  */
 import { createHash } from "crypto";
 import { canonicalizeJson } from "@/lib/curriculum/provenance/hash";
@@ -73,6 +77,7 @@ export type AssistanceLedgerEvent =
   | Readonly<{ type: "OPENED"; availableChannels: readonly AssistanceChannel[]; instrumentedChannels: readonly AssistanceChannel[]; independentDelivery: boolean; offlineDeviceIds: readonly string[] }>
   | Readonly<{ type: "ASSISTANCE"; kind: AssistanceKind; itemId: string | null; provenance: AssistanceProvenance }>
   | Readonly<{ type: "SEALED"; reason: "SUBMITTED" | "CLOSED" | "ABANDONED" }>
+  | Readonly<{ type: "FINALIZED"; reason: "OFFLINE_SYNC_CLOSED" }>
   | Readonly<{ type: "CONFLICT"; idempotencyKey: string; priorEntryHash: string; rejectedPayloadDigest: string }>;
 
 export type AssistanceLedgerEntry = Readonly<{
@@ -145,6 +150,14 @@ export function emptyAssistanceLedger(scope: AssistanceLedgerScope): AssistanceL
 type Opened = Extract<AssistanceLedgerEvent, { type: "OPENED" }>;
 const openedEntry = (ledger: AssistanceLedger) => ledger.entries.find((entry) => entry.event.type === "OPENED");
 const sealedEntry = (ledger: AssistanceLedger) => ledger.entries.find((entry) => entry.event.type === "SEALED");
+const finalizedEntry = (ledger: AssistanceLedger) => ledger.entries.find((entry) => entry.event.type === "FINALIZED");
+
+/** True when nothing more can be appended: sealed and, if offline devices are accepted, FINALIZED. */
+export function assistanceRecordIsFinal(ledger: AssistanceLedger): boolean {
+  if (!sealedEntry(ledger)) return false;
+  const open = openedEntry(ledger)?.event as Opened | undefined;
+  return (open?.offlineDeviceIds.length ?? 0) === 0 || finalizedEntry(ledger) !== undefined;
+}
 
 function seal(ledger: AssistanceLedger, idempotencyKey: string, event: AssistanceLedgerEvent, occurredAt: string, recordedAt: string): AssistanceLedger {
   const last = ledger.entries[ledger.entries.length - 1];
@@ -159,6 +172,7 @@ function seal(ledger: AssistanceLedger, idempotencyKey: string, event: Assistanc
 function auditFor(ledger: AssistanceLedger, entry: AssistanceLedgerEntry): AssessmentAuditEvent {
   const { event } = entry;
   const type = event.type === "OPENED" ? "assessment.assistance.opened" : event.type === "SEALED" ? "assessment.assistance.sealed"
+    : event.type === "FINALIZED" ? "assessment.assistance.finalized"
     : event.type === "CONFLICT" ? "assessment.assistance.conflict" : "assessment.assistance.recorded";
   const teacher = event.type === "ASSISTANCE" && event.provenance.emitter === "TEACHER_RECORDED" ? event.provenance : null;
   return auditEvent({
@@ -190,6 +204,7 @@ export function appendAssistance(ledger: AssistanceLedger, input: { scope: Assis
     if (payloadDigest(prior.scope, prior.event) === payloadDigest(ledger.scope, event)) {
       return Object.freeze({ ledger, appended: false, conflict: false, audit: null });
     }
+    if (finalizedEntry(ledger)) throw new Error("assistance_ledger_finalized");
     const conflict: AssistanceLedgerEvent = { type: "CONFLICT", idempotencyKey, priorEntryHash: prior.entryHash, rejectedPayloadDigest: payloadDigest(ledger.scope, event) };
     const conflictKey = sha256(`${idempotencyKey}:conflict:${conflict.rejectedPayloadDigest}`);
     // The same conflicting payload re-delivered (e.g. a retried sync batch) is already on record.
@@ -198,6 +213,7 @@ export function appendAssistance(ledger: AssistanceLedger, input: { scope: Assis
     const sealAt = sealedEntry(ledger)?.occurredAt;
     if (sealAt) {
       const offline = event.type === "ASSISTANCE" && event.provenance.emitter === "OFFLINE_DEVICE_REPLAY" ? event.provenance : null;
+      if (offline) assertIsoTimestamp(offline.capturedAt, "assistance_captured_at");
       if (!offline || Date.parse(offline.capturedAt) > Date.parse(sealAt)) throw new Error("assistance_ledger_sealed");
     }
     if (ledger.entries.filter((entry) => entry.event.type === "CONFLICT").length >= MAX_ASSISTANCE_CONFLICTS) throw new Error("assistance_conflict_limit_reached");
@@ -205,6 +221,7 @@ export function appendAssistance(ledger: AssistanceLedger, input: { scope: Assis
     return Object.freeze({ ledger: next, appended: true, conflict: true, audit: auditFor(next, next.entries[next.entries.length - 1]) });
   }
 
+  if (finalizedEntry(ledger)) throw new Error("assistance_ledger_finalized");
   const openEntry = openedEntry(ledger);
   const sealEntry = sealedEntry(ledger);
   let occurredAt = input.recordedAt;
@@ -216,6 +233,7 @@ export function appendAssistance(ledger: AssistanceLedger, input: { scope: Assis
   } else {
     if (!openEntry) throw new Error("assistance_ledger_not_opened");
     if (event.type === "SEALED" && sealEntry) throw new Error("assistance_ledger_already_sealed");
+    if (event.type === "FINALIZED" && !sealEntry) throw new Error("assistance_ledger_not_sealed");
     if (event.type === "ASSISTANCE") {
       if (!Object.prototype.hasOwnProperty.call(ASSISTANCE_KIND_CHANNEL, event.kind)) throw new Error("assistance_kind_unknown");
       const allowed = Object.prototype.hasOwnProperty.call(EMITTER_KINDS, event.provenance.emitter) ? EMITTER_KINDS[event.provenance.emitter] : [];
@@ -285,6 +303,7 @@ export function classifyAssistanceForItem(ledger: AssistanceLedger | null, itemI
   const open = openedEntry(ledger)?.event as Opened | undefined;
   if (!open) reasons.push("assistance_ledger_not_opened");
   if (!sealedEntry(ledger)) reasons.push("assistance_ledger_not_sealed");
+  else if (!assistanceRecordIsFinal(ledger)) reasons.push("assistance_ledger_offline_sync_open");
   if (ledger.entries.some((entry) => entry.event.type === "CONFLICT")) reasons.push("assistance_ledger_conflict");
   if (open) {
     // Every channel must be instrumented. The server's own "available" list is recorded but never
@@ -324,6 +343,8 @@ export type AssistanceAttestation = Readonly<{
   independentDelivery: boolean | null;
   /** Devices the record accepts offline capture from. */
   offlineDeviceIds: readonly string[];
+  /** Nothing more can be appended to the record (see assistanceRecordIsFinal). */
+  final: boolean;
 }>;
 
 export function attestAssistance(ledger: AssistanceLedger, itemId: string): Readonly<{ attestation: AssistanceAttestation; classification: ItemAssistanceClassification }> {
@@ -343,6 +364,7 @@ export function attestAssistance(ledger: AssistanceLedger, itemId: string): Read
       reasons: classification.reasons,
       independentDelivery: (openedEntry(ledger)?.event as Opened | undefined)?.independentDelivery ?? null,
       offlineDeviceIds: Object.freeze([...((openedEntry(ledger)?.event as Opened | undefined)?.offlineDeviceIds ?? [])]),
+      final: assistanceRecordIsFinal(ledger),
     }),
   });
 }

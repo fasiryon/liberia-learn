@@ -68,12 +68,13 @@ function submission(overrides: Partial<ClientObservationSubmission> = {}): Clien
 }
 
 /** A server-side ledger opened with the attempt and sealed at submission, optionally with assistance. */
-function ledgerFor(scope: AssistanceLedgerScope, steps: { assist?: "TUTOR" | "HINT"; seal?: boolean; instrumented?: readonly (typeof ALL_CHANNELS)[number][] } = {}): AssistanceLedger {
+function ledgerFor(scope: AssistanceLedgerScope, steps: { assist?: "TUTOR" | "HINT"; seal?: boolean; finalize?: boolean; instrumented?: readonly (typeof ALL_CHANNELS)[number][] } = {}): AssistanceLedger {
   let ledger = emptyAssistanceLedger(scope);
   ledger = appendAssistance(ledger, { scope, recordedAt: T(0), event: { type: "OPENED", availableChannels: [...ALL_CHANNELS], instrumentedChannels: [...(steps.instrumented ?? ALL_CHANNELS)], independentDelivery: true, offlineDeviceIds: ["dev-1"] } }).ledger;
   if (steps.assist === "TUTOR") ledger = appendAssistance(ledger, { scope, recordedAt: T(2), event: { type: "ASSISTANCE", kind: "TUTOR_TURN", itemId: null, provenance: { emitter: "SERVER_TUTOR_ROUTE", tutorInteractionId: "tut-1" } } }).ledger;
   if (steps.assist === "HINT") ledger = appendAssistance(ledger, { scope, recordedAt: T(2), event: { type: "ASSISTANCE", kind: "HINT_REVEALED", itemId: "i-single", provenance: { emitter: "SERVER_HINT_PROJECTION", hintId: "h1" } } }).ledger;
   if (steps.seal !== false) ledger = appendAssistance(ledger, { scope, recordedAt: T(10), event: { type: "SEALED", reason: "SUBMITTED" } }).ledger;
+  if (steps.seal !== false && steps.finalize !== false) ledger = appendAssistance(ledger, { scope, recordedAt: T(12), event: { type: "FINALIZED", reason: "OFFLINE_SYNC_CLOSED" } }).ledger;
   return ledger;
 }
 
@@ -180,12 +181,47 @@ describe("F1: client declarations cannot prove independence", () => {
     expect(admitted.tier).toBe("MASTERY_ADMITTED_EVIDENCE");
   });
 
-  it("admission refuses when the record changed after verification (late offline assistance)", () => {
+  it("P2-5: an offline-capable record cannot attest independence until the sync window is finalized", () => {
+    const env = setup();
+    const open = ledgerFor(env.scope, { finalize: false });
+    const early = verify(env, acceptClientObservation(submission(), env.context), open).evidence;
+    expect(early.independence).toBe("UNVERIFIED");
+    expect(early.integrityFlags).toContain("assistance_ledger_offline_sync_open");
+    // Late offline assistance captured before the seal still lands while the window is open...
+    const late = appendAssistance(open, { scope: env.scope, recordedAt: T(15), event: { type: "ASSISTANCE", kind: "ANSWER_SHOWN", itemId: "i-single", provenance: { emitter: "OFFLINE_DEVICE_REPLAY", deviceId: "dev-1", clientSequence: 3, syncBatchId: "b1", capturedAt: T(3) } } }).ledger;
+    const finalized = appendAssistance(late, { scope: env.scope, recordedAt: T(16), event: { type: "FINALIZED", reason: "OFFLINE_SYNC_CLOSED" } }).ledger;
+    // ...so the verification after finalization sees it.
+    expect(verify(env, acceptClientObservation(submission(), env.context), finalized).evidence.independence).toBe("ASSISTED");
+  });
+
+  it("P2-5: a final record accepts nothing more, so an INDEPENDENT attestation cannot go stale", () => {
     const env = setup();
     const ledger = ledgerFor(env.scope);
     const { evidence } = verify(env, acceptClientObservation(submission(), env.context), ledger);
-    const later = appendAssistance(ledger, { scope: env.scope, recordedAt: T(15), event: { type: "ASSISTANCE", kind: "ANSWER_SHOWN", itemId: "i-single", provenance: { emitter: "OFFLINE_DEVICE_REPLAY", deviceId: "dev-1", clientSequence: 3, syncBatchId: "b1", capturedAt: T(3) } } }).ledger;
-    expect(() => admit(evidence, later)).toThrow("assessment_assistance_attestation_stale");
+    expect(evidence.independence).toBe("INDEPENDENT");
+    expect(evidence.assistanceAttestation?.final).toBe(true);
+    const late = { type: "ASSISTANCE" as const, kind: "ANSWER_SHOWN" as const, itemId: "i-single", provenance: { emitter: "OFFLINE_DEVICE_REPLAY" as const, deviceId: "dev-1", clientSequence: 3, syncBatchId: "b1", capturedAt: T(3) } };
+    expect(() => appendAssistance(ledger, { scope: env.scope, recordedAt: T(15), event: late })).toThrow("assistance_ledger_finalized");
+    // A record handed in later that differs from the attested one is still refused at admission.
+    expect(() => admit(evidence, ledgerFor(env.scope, { assist: "TUTOR" }))).toThrow("assessment_assistance_attestation_stale");
+    expect(admit(evidence, ledger).evidence.tier).toBe("MASTERY_ADMITTED_EVIDENCE");
+  });
+
+  it("an online-only record is final when sealed; FINALIZED requires a seal", () => {
+    const s = setup().scope;
+    let ledger = appendAssistance(emptyAssistanceLedger(s), { scope: s, recordedAt: T(0), event: { type: "OPENED", availableChannels: [...ALL_CHANNELS], instrumentedChannels: [...ALL_CHANNELS], independentDelivery: true, offlineDeviceIds: [] } }).ledger;
+    expect(() => appendAssistance(ledger, { scope: s, recordedAt: T(1), event: { type: "FINALIZED", reason: "OFFLINE_SYNC_CLOSED" } })).toThrow("assistance_ledger_not_sealed");
+    ledger = appendAssistance(ledger, { scope: s, recordedAt: T(10), event: { type: "SEALED", reason: "SUBMITTED" } }).ledger;
+    expect(classifyAssistanceForItem(ledger, "i-single").status).toBe("INDEPENDENT");
+  });
+
+  it("a conflicting offline delivery with an invalid capture time is refused", () => {
+    const s = setup().scope;
+    let ledger = appendAssistance(emptyAssistanceLedger(s), { scope: s, recordedAt: T(0), event: { type: "OPENED", availableChannels: [...ALL_CHANNELS], instrumentedChannels: [...ALL_CHANNELS], independentDelivery: true, offlineDeviceIds: ["dev-1"] } }).ledger;
+    const replay = (capturedAt: string, kind: "TOOL_USED" | "ANSWER_SHOWN") => ({ type: "ASSISTANCE" as const, kind, itemId: "i-single", provenance: { emitter: "OFFLINE_DEVICE_REPLAY" as const, deviceId: "dev-1", clientSequence: 1, syncBatchId: "b", capturedAt } });
+    ledger = appendAssistance(ledger, { scope: s, recordedAt: T(3), event: replay(T(2), "TOOL_USED") }).ledger;
+    ledger = appendAssistance(ledger, { scope: s, recordedAt: T(10), event: { type: "SEALED", reason: "SUBMITTED" } }).ledger;
+    expect(() => appendAssistance(ledger, { scope: s, recordedAt: T(11), event: replay("not-a-time", "ANSWER_SHOWN") })).toThrow("assessment_assistance_captured_at_timestamp_invalid");
   });
 
   it("assisted evidence stays ineligible: hints in the record make it ASSISTED", () => {
@@ -309,7 +345,7 @@ describe("Independent review follow-ups (server-caller bypasses)", () => {
     const raw = acceptClientObservation(submission(), env.context);
     const { evidence: unverified } = verify(env, raw, null);
     let ledger = appendEvidence(emptyLedger(), raw).ledger;
-    const fakeAttestation = { ledgerVersion: "assistance-ledger/1.0.0" as const, attemptId: "att-1", sessionId: "ses-1", itemId: "i-single", headSequence: 1, headHash: "f".repeat(64), sealedAt: T(10), status: "INDEPENDENT" as const, reasons: [], independentDelivery: true, offlineDeviceIds: [] };
+    const fakeAttestation = { ledgerVersion: "assistance-ledger/1.0.0" as const, attemptId: "att-1", sessionId: "ses-1", itemId: "i-single", headSequence: 1, headHash: "f".repeat(64), sealedAt: T(10), status: "INDEPENDENT" as const, reasons: [], independentDelivery: true, offlineDeviceIds: [], final: true };
     const forged = reseal({ ...unverified, independence: "INDEPENDENT", assistanceAttestation: fakeAttestation, integrityFlags: [...unverified.integrityFlags] });
     expect(() => appendEvidence(ledger, forged)).toThrow("assessment_assistance_record_missing");
     expect(() => appendEvidence(ledger, forged, { assistanceLedger: ledgerFor(env.scope) })).toThrow("assessment_assistance_attestation_stale");

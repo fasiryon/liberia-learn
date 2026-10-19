@@ -176,8 +176,8 @@ export function buildReleased(overrides: { permittedModes?: AssessmentReleaseV2[
 }
 
 /**
- * A clean, sealed server assistance record for the attempt an envelope belongs to: opened before the
- * attempt, every channel instrumented, no assistance, sealed at submission. Deterministic, so the
+ * A clean, final server assistance record for the attempt an envelope belongs to: opened before the
+ * attempt, every channel instrumented, no assistance, sealed at submission, offline sync finalized. Deterministic, so the
  * record handed to verification and to admission has the same head. Null for unreleased delivery.
  */
 export function sealedAssistanceRecord(envelope: Pick<AssessmentEvidenceEnvelope, "scope" | "attempt" | "pins" | "delivery">): AssistanceLedger | null {
@@ -191,7 +191,8 @@ export function sealedAssistanceRecord(envelope: Pick<AssessmentEvidenceEnvelope
     scope, recordedAt: "2026-10-31T00:00:00.000Z",
     event: { type: "OPENED", availableChannels: [...ASSISTANCE_CHANNELS], instrumentedChannels: [...ASSISTANCE_CHANNELS], independentDelivery: isIndependentAssessment(envelope.delivery), offlineDeviceIds: ["tablet-7"] },
   }).ledger;
-  return appendAssistance(opened, { scope, recordedAt: "2026-11-05T00:00:00.000Z", event: { type: "SEALED", reason: "SUBMITTED" } }).ledger;
+  const sealed = appendAssistance(opened, { scope, recordedAt: "2026-11-05T00:00:00.000Z", event: { type: "SEALED", reason: "SUBMITTED" } }).ledger;
+  return appendAssistance(sealed, { scope, recordedAt: "2026-11-05T00:10:00.000Z", event: { type: "FINALIZED", reason: "OFFLINE_SYNC_CLOSED" } }).ledger;
 }
 
 /** An issued independence decision for a released form of this purpose, delivered as practice. */
