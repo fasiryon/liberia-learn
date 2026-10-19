@@ -90,6 +90,8 @@ export type AssistanceLedgerEntry = Readonly<{
 export type AssistanceLedger = Readonly<{ version: typeof ASSISTANCE_LEDGER_VERSION; scope: AssistanceLedgerScope; entries: readonly AssistanceLedgerEntry[] }>;
 
 const GENESIS = "0".repeat(64);
+/** Beyond this the record is already UNVERIFIED; further conflicting deliveries are refused, not stored. */
+export const MAX_ASSISTANCE_CONFLICTS = 16;
 const CLOCK_SKEW_MS = 5 * 60_000;
 const sha256 = (value: string) => createHash("sha256").update(value, "utf8").digest("hex");
 const hashEntry = (entry: Omit<AssistanceLedgerEntry, "entryHash">) => sha256(canonicalizeJson({ domain: "liberialearn.assistance-ledger.v1", entry }));
@@ -192,6 +194,13 @@ export function appendAssistance(ledger: AssistanceLedger, input: { scope: Assis
     const conflictKey = sha256(`${idempotencyKey}:conflict:${conflict.rejectedPayloadDigest}`);
     // The same conflicting payload re-delivered (e.g. a retried sync batch) is already on record.
     if (ledger.entries.some((entry) => entry.idempotencyKey === conflictKey)) return Object.freeze({ ledger, appended: false, conflict: true, audit: null });
+    // A conflict is admitted under the same window rules as the event it contradicts.
+    const sealAt = sealedEntry(ledger)?.occurredAt;
+    if (sealAt) {
+      const offline = event.type === "ASSISTANCE" && event.provenance.emitter === "OFFLINE_DEVICE_REPLAY" ? event.provenance : null;
+      if (!offline || Date.parse(offline.capturedAt) > Date.parse(sealAt)) throw new Error("assistance_ledger_sealed");
+    }
+    if (ledger.entries.filter((entry) => entry.event.type === "CONFLICT").length >= MAX_ASSISTANCE_CONFLICTS) throw new Error("assistance_conflict_limit_reached");
     const next = seal(ledger, conflictKey, conflict, input.recordedAt, input.recordedAt);
     return Object.freeze({ ledger: next, appended: true, conflict: true, audit: auditFor(next, next.entries[next.entries.length - 1]) });
   }

@@ -29,7 +29,7 @@ import {
   type ProtectedScoringSpec,
   type ServerAttemptContext,
 } from "@/lib/assessment/v2";
-import { approve, buildDefinition, buildForm, buildItems, buildReleased, CURRICULUM, definitionSubject, formSubject, itemSubject, LEAD, REVIEWER_A, REVIEWER_B, SCHOOL, specFor, sealedAssistanceRecord } from "./fixtures";
+import { approve, buildDefinition, buildForm, buildItems, buildReleased, CURRICULUM, definitionSubject, formSubject, itemSubject, LEAD, REVIEWER_A, REVIEWER_B, SCHOOL, specFor, sealedAssistanceRecord, practiceDecision } from "./fixtures";
 
 /** Identical in the assessment (PR #193) and records (PR #194) branches. Update both copies together. */
 const LL_AEP_001_SOURCE_DIGEST = "c69ddd89e743400707ddd6e26fcda4f9cd3a6dbb137531c30eed1279572d2561";
@@ -56,8 +56,6 @@ function summativeSet(points = { single: 4, numeric: 7, ordering: 6, worked: 3 }
 }
 
 const releaseArgs = { releaseId: "rel-s", permittedModes: ["OFFICIAL" as const], effectiveFrom: "2026-10-01T00:00:00.000Z", effectiveUntil: null, schoolId: SCHOOL, actor: LEAD, authorizedAt: "2026-10-02T00:00:00.000Z" };
-
-const SUMMATIVE_PRACTICE = { mode: "PRACTICE_UNOFFICIAL", official: false, purpose: "SUMMATIVE" } as const;
 
 describe("LL-AEP-001 shared policy", () => {
   it("is byte-identical to the academic-records copy", () => {
@@ -130,8 +128,8 @@ describe("Independent assessment integrity", () => {
     const { single, singleSpec } = buildItems();
     expect(projectItemForLearner(single, { attemptId: "a", points: 1, independent: false }).hintCount).toBe(1);
     expect(projectItemForLearner(single, { attemptId: "a", points: 1, independent: true }).hintCount).toBe(0);
-    expect(learnerDisclosure(single, singleSpec, "AFTER_RESPONSE", { delivery: SUMMATIVE_PRACTICE, attemptStatus: "OPEN" }).explanation).toBeNull();
-    expect(learnerDisclosure(single, singleSpec, "AFTER_ATTEMPT_CLOSED", { delivery: SUMMATIVE_PRACTICE, attemptStatus: "SUBMITTED" }).explanation).toBe(singleSpec.explanation);
+    expect(learnerDisclosure(single, singleSpec, "AFTER_RESPONSE", { decision: practiceDecision("SUMMATIVE"), attemptStatus: "OPEN" }).explanation).toBeNull();
+    expect(learnerDisclosure(single, singleSpec, "AFTER_ATTEMPT_CLOSED", { decision: practiceDecision("SUMMATIVE"), attemptStatus: "SUBMITTED" }).explanation).toBe(singleSpec.explanation);
   });
 
   it("records tutor and hint use during independent assessment as integrity flags and keeps it out of the gradebook", () => {

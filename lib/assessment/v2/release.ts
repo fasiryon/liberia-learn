@@ -178,13 +178,14 @@ export type DeliveryDecision = Readonly<{
   official: boolean;
   /** The release this decision delivers; null for denials and unreleased reviewer previews. */
   releaseId: string | null;
+  releaseHash: string | null;
   /** Label the player must show. Candidate previews are never "certified". */
   label: "REVIEWER_PREVIEW_UNRELEASED" | "PRACTICE_NOT_OFFICIAL" | "OFFICIAL_RELEASED" | "DENIED";
   reason: string;
 }>;
 
 const deny = (mode: DeliveryMode, reason: string): DeliveryDecision =>
-  Object.freeze({ allowed: false, mode, official: false, releaseId: null, label: "DENIED", reason });
+  Object.freeze({ allowed: false, mode, official: false, releaseId: null, releaseHash: null, label: "DENIED", reason });
 
 /** Deny-by-default delivery resolution. Every allowed path is enumerated explicitly. */
 export function resolveDelivery(request: DeliveryRequest): DeliveryDecision {
@@ -193,7 +194,7 @@ export function resolveDelivery(request: DeliveryRequest): DeliveryDecision {
   if (!release) {
     if (mode !== "REVIEWER_PREVIEW") return deny(mode, "unreleased_content_cannot_be_delivered_to_learners");
     if (!REVIEWER_ROLES.includes(request.requester.role as ReviewerRole)) return deny(mode, "reviewer_role_required");
-    return Object.freeze({ allowed: true, mode, official: false, releaseId: null, label: "REVIEWER_PREVIEW_UNRELEASED", reason: "candidate_preview" });
+    return Object.freeze({ allowed: true, mode, official: false, releaseId: null, releaseHash: null, label: "REVIEWER_PREVIEW_UNRELEASED", reason: "candidate_preview" });
   }
   if (release.releaseHash !== hashRelease(release)) return deny(mode, "release_hash_mismatch");
   if (request.revocations.some((revocation) => revocation.releaseId === release.releaseId)) return deny(mode, "release_revoked");
@@ -207,8 +208,8 @@ export function resolveDelivery(request: DeliveryRequest): DeliveryDecision {
   )) return deny(mode, "release_curriculum_version_mismatch");
   if (mode === "REVIEWER_PREVIEW") {
     if (!REVIEWER_ROLES.includes(request.requester.role as ReviewerRole)) return deny(mode, "reviewer_role_required");
-    return Object.freeze({ allowed: true, mode, official: false, releaseId: release.releaseId, label: "REVIEWER_PREVIEW_UNRELEASED", reason: "released_preview" });
+    return Object.freeze({ allowed: true, mode, official: false, releaseId: release.releaseId, releaseHash: release.releaseHash, label: "REVIEWER_PREVIEW_UNRELEASED", reason: "released_preview" });
   }
-  if (mode === "OFFICIAL") return Object.freeze({ allowed: true, mode, official: true, releaseId: release.releaseId, label: "OFFICIAL_RELEASED", reason: "released_official" });
-  return Object.freeze({ allowed: true, mode, official: false, releaseId: release.releaseId, label: "PRACTICE_NOT_OFFICIAL", reason: "released_practice" });
+  if (mode === "OFFICIAL") return Object.freeze({ allowed: true, mode, official: true, releaseId: release.releaseId, releaseHash: release.releaseHash, label: "OFFICIAL_RELEASED", reason: "released_official" });
+  return Object.freeze({ allowed: true, mode, official: false, releaseId: release.releaseId, releaseHash: release.releaseHash, label: "PRACTICE_NOT_OFFICIAL", reason: "released_practice" });
 }

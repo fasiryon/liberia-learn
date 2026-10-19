@@ -9,7 +9,7 @@
  */
 import { createHash } from "crypto";
 import { isIndependentAssessment, type DeliveryContext } from "./evidence";
-import { hashDefinition } from "./hash";
+import { hashDefinition, hashRelease } from "./hash";
 import { itemTypeSpec } from "./itemTypes";
 import type { DeliveryDecision } from "./release";
 import type {
@@ -78,8 +78,8 @@ function independenceFor(delivery: IndependenceDelivery, tighten: boolean | unde
  * practice an item offers hints only if its policy is ON_REQUEST and it has hints. Every hint served
  * must be recorded in the attempt's assistance record (SERVER_HINT_PROJECTION).
  */
-export function hintAccessFor(item: Pick<AssessmentItemV2, "feedbackPolicy" | "hints">, delivery: IndependenceDelivery, options: { independent?: boolean } = {}): "BLOCKED" | "ON_REQUEST" | "NONE" {
-  if (independenceFor(delivery, options.independent)) return "BLOCKED";
+export function hintAccessFor(item: Pick<AssessmentItemV2, "itemId" | "version" | "feedbackPolicy" | "hints">, decision: IndependenceDecision): "BLOCKED" | "ON_REQUEST" | "NONE" {
+  if (issuedIndependence(decision, item)) return "BLOCKED";
   return item.feedbackPolicy.hints === "ON_REQUEST" && item.hints.length > 0 ? "ON_REQUEST" : "NONE";
 }
 
@@ -144,11 +144,47 @@ export function formDeliveryIndependence(input: Pick<FormProjectionInput, "form"
     if (release.form.formId !== form.formId || release.form.version !== form.version || release.form.formHash !== form.formHash
       || release.definition.definitionId !== definition.definitionId || release.definition.version !== definition.version
       || release.definition.contentHash !== definition.contentHash) throw new Error("assessment_projection_release_mismatch");
-    if (delivery.releaseId !== release.releaseId) throw new Error("assessment_projection_release_mismatch");
-  } else if (delivery.mode !== "REVIEWER_PREVIEW" || delivery.releaseId !== null) {
+    if (hashRelease(release) !== release.releaseHash || delivery.releaseId !== release.releaseId || delivery.releaseHash !== release.releaseHash) {
+      throw new Error("assessment_projection_release_mismatch");
+    }
+  } else if (delivery.mode !== "REVIEWER_PREVIEW" || delivery.releaseId !== null || delivery.releaseHash !== null) {
     throw new Error("assessment_projection_release_required");
   }
   return independenceFor({ mode: delivery.mode, official: delivery.official, purpose: definition.purpose }, input.independent);
+}
+
+/**
+ * The only accepted input to hint access and disclosure: an independence decision issued here from a
+ * hash-verified release, form and definition. Decisions live in process memory; a free-form or
+ * deserialized object is refused, so a route cannot hand in its own idea of the purpose.
+ */
+export type IndependenceDecision = Readonly<{
+  independent: boolean;
+  releaseId: string | null;
+  formId: string;
+  formVersion: string;
+  itemKeys: readonly string[];
+}>;
+
+const ISSUED_DECISIONS = new WeakSet<object>();
+
+export function resolveFormIndependence(input: Pick<FormProjectionInput, "form" | "definition" | "release" | "delivery" | "independent">): IndependenceDecision {
+  if (!input.delivery.allowed) throw new Error(`assessment_delivery_denied:${input.delivery.reason}`);
+  const decision: IndependenceDecision = Object.freeze({
+    independent: formDeliveryIndependence(input),
+    releaseId: input.release?.releaseId ?? null,
+    formId: input.form.formId,
+    formVersion: input.form.version,
+    itemKeys: Object.freeze(input.form.items.map((ref) => `${ref.itemId}@${ref.itemVersion}`)),
+  });
+  ISSUED_DECISIONS.add(decision);
+  return decision;
+}
+
+function issuedIndependence(decision: IndependenceDecision, item: Pick<AssessmentItemV2, "itemId" | "version">): boolean {
+  if (!decision || typeof decision !== "object" || !ISSUED_DECISIONS.has(decision)) throw new Error("assessment_independence_decision_unverified");
+  if (!decision.itemKeys.includes(`${item.itemId}@${item.version}`)) throw new Error("assessment_independence_decision_item_mismatch");
+  return decision.independent;
 }
 
 export function projectFormForLearner(input: FormProjectionInput): LearnerFormV2 {
@@ -200,11 +236,10 @@ function permits(policy: FeedbackReleasePolicy["explanation"], phase: Disclosure
  * default to "off".
  */
 export function learnerDisclosure(item: AssessmentItemV2, spec: ProtectedScoringSpec, phase: DisclosurePhase, options: {
-  delivery: IndependenceDelivery;
+  /** Issued by resolveFormIndependence for the delivered release and form. */
+  decision: IndependenceDecision;
   /** Server-side attempt status; the phase is checked against it, never taken on trust. */
   attemptStatus: "OPEN" | "SUBMITTED" | "CLOSED";
-  /** Tightening only, e.g. the `independent` value the form projection resolved. */
-  independent?: boolean;
 }): Readonly<{
   explanation: string | null;
   correctResponse: string | null;
@@ -212,10 +247,10 @@ export function learnerDisclosure(item: AssessmentItemV2, spec: ProtectedScoring
   if (spec.itemId !== item.itemId || spec.itemVersion !== item.version) throw new Error("assessment_spec_item_mismatch");
   // During an independent assessment nothing is disclosed until the whole attempt is closed, so an
   // explanation for one item cannot help with the next.
-  if (!options?.delivery) throw new Error("assessment_disclosure_delivery_required");
+  const independent = issuedIndependence(options?.decision, item);
   if (!["OPEN", "SUBMITTED", "CLOSED"].includes(options.attemptStatus)) throw new Error("assessment_disclosure_attempt_status_required");
   if (options.attemptStatus === "OPEN" && PHASE_RANK[phase] >= PHASE_RANK.AFTER_ATTEMPT_CLOSED) throw new Error("assessment_disclosure_attempt_still_open");
-  if (independenceFor(options.delivery, options.independent) && phase === "AFTER_RESPONSE") phase = "BEFORE_RESPONSE";
+  if (independent && phase === "AFTER_RESPONSE") phase = "BEFORE_RESPONSE";
   const explanation = permits(item.feedbackPolicy.explanation, phase) ? spec.explanation : null;
   let correctResponse: string | null = null;
   if (permits(item.feedbackPolicy.correctAnswer, phase)) {

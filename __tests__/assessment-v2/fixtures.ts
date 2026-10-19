@@ -4,6 +4,8 @@ import {
   authorizeRelease,
   emptyAssistanceLedger,
   isIndependentAssessment,
+  resolveDelivery,
+  resolveFormIndependence,
   REVIEW_CHECKS,
   sealDefinition,
   sealForm,
@@ -190,4 +192,11 @@ export function sealedAssistanceRecord(envelope: Pick<AssessmentEvidenceEnvelope
     event: { type: "OPENED", availableChannels: [...ASSISTANCE_CHANNELS], instrumentedChannels: [...ASSISTANCE_CHANNELS], independentDelivery: isIndependentAssessment(envelope.delivery), offlineDeviceIds: ["tablet-7"] },
   }).ledger;
   return appendAssistance(opened, { scope, recordedAt: "2026-11-05T00:00:00.000Z", event: { type: "SEALED", reason: "SUBMITTED" } }).ledger;
+}
+
+/** An issued independence decision for a released form of this purpose, delivered as practice. */
+export function practiceDecision(purpose: AssessmentDefinitionV2["purpose"] = "FORMATIVE") {
+  const released = buildReleased({ purpose });
+  const delivery = resolveDelivery({ mode: "PRACTICE_UNOFFICIAL", now: "2026-11-01T00:00:00.000Z", requester: { role: "STUDENT", schoolId: SCHOOL }, release: released.release, revocations: [], expectedCurriculum: CURRICULUM });
+  return resolveFormIndependence({ form: released.form, definition: released.definition, release: released.release, delivery });
 }

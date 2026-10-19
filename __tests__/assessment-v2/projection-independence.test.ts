@@ -12,6 +12,7 @@ import {
   learnerDisclosure,
   projectFormForLearner,
   resolveDelivery,
+  resolveFormIndependence,
   tutorAccessFor,
   type AssessmentPurpose,
   type DeliveryMode,
@@ -24,7 +25,8 @@ const now = "2026-11-01T00:00:00.000Z";
 function deliveryFor(purpose: AssessmentPurpose, mode: Exclude<DeliveryMode, "REVIEWER_PREVIEW">) {
   const released = buildReleased({ purpose });
   const delivery = resolveDelivery({ mode, now, requester: { role: "STUDENT", schoolId: SCHOOL }, release: released.release, revocations: [], expectedCurriculum: CURRICULUM });
-  return { ...released, delivery };
+  const decision = resolveFormIndependence({ form: released.form, definition: released.definition, release: released.release, delivery });
+  return { ...released, delivery, decision };
 }
 
 const CASES: readonly { purpose: AssessmentPurpose; mode: "OFFICIAL" | "PRACTICE_UNOFFICIAL"; independent: boolean }[] = [
@@ -47,7 +49,7 @@ describe("F2: independence, not officialness, gates hints, worked solutions and 
       const delivery = { mode, official: env.delivery.official, purpose };
       expect(isIndependentAssessment(delivery)).toBe(independent);
       expect(tutorAccessFor(delivery)).toBe(independent ? "BLOCKED" : "INSTRUCTIONAL");
-      expect(hintAccessFor(env.single, delivery)).toBe(independent ? "BLOCKED" : "ON_REQUEST");
+      expect(hintAccessFor(env.single, env.decision)).toBe(independent ? "BLOCKED" : "ON_REQUEST");
 
       const online = projectFormForLearner({ form: env.form, definition: env.definition, release: env.release, items: env.itemMap, attemptId: "att-1", delivery: env.delivery });
       const offline = buildOfflineAssessmentPackage({ form: env.form, definition: env.definition, release: env.release, items: env.itemMap, attemptId: "att-1", delivery: env.delivery });
@@ -56,11 +58,11 @@ describe("F2: independence, not officialness, gates hints, worked solutions and 
         expect(form.items.every((item) => item.hintCount === (independent ? 0 : 1))).toBe(true);
       }
 
-      const afterResponse = learnerDisclosure(env.single, env.singleSpec, "AFTER_RESPONSE", { delivery, attemptStatus: "OPEN" });
+      const afterResponse = learnerDisclosure(env.single, env.singleSpec, "AFTER_RESPONSE", { decision: env.decision, attemptStatus: "OPEN" });
       expect(afterResponse.explanation).toBe(independent ? null : env.singleSpec.explanation);
       expect(afterResponse.correctResponse).toBeNull();
-      expect(() => learnerDisclosure(env.single, env.singleSpec, "AFTER_ATTEMPT_CLOSED", { delivery, attemptStatus: "OPEN" })).toThrow("assessment_disclosure_attempt_still_open");
-      const afterClose = learnerDisclosure(env.single, env.singleSpec, "AFTER_ATTEMPT_CLOSED", { delivery, attemptStatus: "SUBMITTED" });
+      expect(() => learnerDisclosure(env.single, env.singleSpec, "AFTER_ATTEMPT_CLOSED", { decision: env.decision, attemptStatus: "OPEN" })).toThrow("assessment_disclosure_attempt_still_open");
+      const afterClose = learnerDisclosure(env.single, env.singleSpec, "AFTER_ATTEMPT_CLOSED", { decision: env.decision, attemptStatus: "SUBMITTED" });
       expect(afterClose).toEqual({ explanation: env.singleSpec.explanation, correctResponse: "0.7" });
     });
   }
@@ -95,13 +97,32 @@ describe("F2: independence, not officialness, gates hints, worked solutions and 
   });
 
   it("tightened independence also governs hints and disclosure, and can never be relaxed", () => {
-    const delivery = { mode: "PRACTICE_UNOFFICIAL" as const, official: false, purpose: "FORMATIVE" as const };
     const env = deliveryFor("FORMATIVE", "PRACTICE_UNOFFICIAL");
-    expect(hintAccessFor(env.single, delivery, { independent: true })).toBe("BLOCKED");
-    expect(learnerDisclosure(env.single, env.singleSpec, "AFTER_RESPONSE", { delivery, attemptStatus: "OPEN", independent: true }).explanation).toBeNull();
-    const summative = { ...delivery, purpose: "SUMMATIVE" as const };
-    expect(() => hintAccessFor(env.single, summative, { independent: false })).toThrow("assessment_projection_independence_downgrade_forbidden");
-    expect(() => learnerDisclosure(env.single, env.singleSpec, "AFTER_RESPONSE", { delivery: summative, attemptStatus: "OPEN", independent: false })).toThrow("assessment_projection_independence_downgrade_forbidden");
+    const tightened = resolveFormIndependence({ form: env.form, definition: env.definition, release: env.release, delivery: env.delivery, independent: true });
+    expect(hintAccessFor(env.single, tightened)).toBe("BLOCKED");
+    expect(learnerDisclosure(env.single, env.singleSpec, "AFTER_RESPONSE", { decision: tightened, attemptStatus: "OPEN" }).explanation).toBeNull();
+    const summative = deliveryFor("SUMMATIVE", "PRACTICE_UNOFFICIAL");
+    expect(() => resolveFormIndependence({ form: summative.form, definition: summative.definition, release: summative.release, delivery: summative.delivery, independent: false }))
+      .toThrow("assessment_projection_independence_downgrade_forbidden");
+  });
+
+  it("hint access and disclosure accept only an issued decision, for an item on its form", () => {
+    const env = deliveryFor("SUMMATIVE", "PRACTICE_UNOFFICIAL");
+    // A route cannot hand in its own idea of the delivery, or a copied decision that relaxes it.
+    const forged = { ...env.decision, independent: false };
+    expect(() => hintAccessFor(env.single, forged)).toThrow("assessment_independence_decision_unverified");
+    expect(() => learnerDisclosure(env.single, env.singleSpec, "AFTER_RESPONSE", { decision: { mode: "PRACTICE_UNOFFICIAL", official: false, purpose: "FORMATIVE" } as never, attemptStatus: "OPEN" }))
+      .toThrow("assessment_independence_decision_unverified");
+    expect(() => hintAccessFor({ ...env.single, itemId: "i-elsewhere" }, env.decision)).toThrow("assessment_independence_decision_item_mismatch");
+  });
+
+  it("a release object whose content does not match its hash is refused", () => {
+    const env = deliveryFor("SUMMATIVE", "PRACTICE_UNOFFICIAL");
+    const tampered = { ...env.release, permittedModes: ["PRACTICE_UNOFFICIAL" as const] };
+    expect(() => projectFormForLearner({ form: env.form, definition: env.definition, release: tampered, items: env.itemMap, attemptId: "a", delivery: env.delivery }))
+      .toThrow("assessment_projection_release_mismatch");
+    expect(() => projectFormForLearner({ form: env.form, definition: env.definition, release: env.release, items: env.itemMap, attemptId: "a", delivery: { ...env.delivery, releaseHash: "other" } }))
+      .toThrow("assessment_projection_release_mismatch");
   });
 
   it("binds the purpose to the form's definition by hash; a substituted definition is refused", () => {
@@ -116,8 +137,7 @@ describe("F2: independence, not officialness, gates hints, worked solutions and 
 
   it("items with no hints or a NONE hint policy never offer hints, even in practice", () => {
     const env = deliveryFor("FORMATIVE", "PRACTICE_UNOFFICIAL");
-    const delivery = { mode: "PRACTICE_UNOFFICIAL" as const, official: false, purpose: "FORMATIVE" as const };
-    expect(hintAccessFor({ ...env.single, feedbackPolicy: { ...env.single.feedbackPolicy, hints: "NONE" } }, delivery)).toBe("NONE");
-    expect(hintAccessFor({ ...env.single, hints: [] }, delivery)).toBe("NONE");
+    expect(hintAccessFor({ ...env.single, feedbackPolicy: { ...env.single.feedbackPolicy, hints: "NONE" } }, env.decision)).toBe("NONE");
+    expect(hintAccessFor({ ...env.single, hints: [] }, env.decision)).toBe("NONE");
   });
 });

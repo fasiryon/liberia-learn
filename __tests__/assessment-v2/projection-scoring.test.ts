@@ -13,7 +13,7 @@ import {
   scoreResponse,
   type ModerationPolicy,
 } from "@/lib/assessment/v2";
-import { buildItems, buildReleased, CURRICULUM, SCHOOL } from "./fixtures";
+import { buildItems, buildReleased, CURRICULUM, SCHOOL, practiceDecision } from "./fixtures";
 
 const now = "2026-11-01T00:00:00.000Z";
 
@@ -74,11 +74,11 @@ describe("Learner-safe projection", () => {
 
   it("discloses explanations and answers only as the feedback policy allows", () => {
     const { single, singleSpec } = buildItems();
-    expect(learnerDisclosure(single, singleSpec, "BEFORE_RESPONSE", { delivery: { mode: "PRACTICE_UNOFFICIAL", official: false, purpose: "FORMATIVE" }, attemptStatus: "CLOSED" })).toEqual({ explanation: null, correctResponse: null });
-    expect(learnerDisclosure(single, singleSpec, "AFTER_RESPONSE", { delivery: { mode: "PRACTICE_UNOFFICIAL", official: false, purpose: "FORMATIVE" }, attemptStatus: "CLOSED" })).toEqual({ explanation: singleSpec.explanation, correctResponse: null });
-    expect(learnerDisclosure(single, singleSpec, "AFTER_ATTEMPT_CLOSED", { delivery: { mode: "PRACTICE_UNOFFICIAL", official: false, purpose: "FORMATIVE" }, attemptStatus: "CLOSED" })).toEqual({ explanation: singleSpec.explanation, correctResponse: "0.7" });
+    expect(learnerDisclosure(single, singleSpec, "BEFORE_RESPONSE", { decision: practiceDecision("FORMATIVE"), attemptStatus: "CLOSED" })).toEqual({ explanation: null, correctResponse: null });
+    expect(learnerDisclosure(single, singleSpec, "AFTER_RESPONSE", { decision: practiceDecision("FORMATIVE"), attemptStatus: "CLOSED" })).toEqual({ explanation: singleSpec.explanation, correctResponse: null });
+    expect(learnerDisclosure(single, singleSpec, "AFTER_ATTEMPT_CLOSED", { decision: practiceDecision("FORMATIVE"), attemptStatus: "CLOSED" })).toEqual({ explanation: singleSpec.explanation, correctResponse: "0.7" });
     const never = { ...single, feedbackPolicy: { hints: "NONE" as const, explanation: "NEVER" as const, correctAnswer: "NEVER" as const } };
-    expect(learnerDisclosure(never, singleSpec, "AFTER_RELEASE_WINDOW", { delivery: { mode: "PRACTICE_UNOFFICIAL", official: false, purpose: "FORMATIVE" }, attemptStatus: "CLOSED" })).toEqual({ explanation: null, correctResponse: null });
+    expect(learnerDisclosure(never, singleSpec, "AFTER_RELEASE_WINDOW", { decision: practiceDecision("FORMATIVE"), attemptStatus: "CLOSED" })).toEqual({ explanation: null, correctResponse: null });
   });
 
   it("projects legacy exam questions without key or worked explanation", () => {

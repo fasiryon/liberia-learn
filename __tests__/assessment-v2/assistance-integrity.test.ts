@@ -18,6 +18,7 @@ import {
   emptyAssistanceLedger,
   emptyLedger,
   hashEvidence,
+  MAX_ASSISTANCE_CONFLICTS,
   requiresIntegrityReview,
   scoreResponse,
   verifyObservation,
@@ -358,6 +359,22 @@ describe("Independent review follow-ups (server-caller bypasses)", () => {
     const opened = appendAssistance(emptyAssistanceLedger(s), { scope: s, recordedAt: T(0), event: { type: "OPENED", availableChannels: [...ALL_CHANNELS], instrumentedChannels: [...ALL_CHANNELS], independentDelivery: true, offlineDeviceIds: [] } }).ledger;
     expect(() => appendAssistance(opened, { scope: s, recordedAt: T(1), event: { type: "ASSISTANCE", kind: "TOOL_USED", itemId: "i-single", provenance: { emitter: "SERVER_HINT_PROJECTION", hintId: "h1" } } })).toThrow("assistance_kind_not_permitted_for_emitter");
     expect(() => appendAssistance(opened, { scope: s, recordedAt: T(1), event: { type: "ASSISTANCE", kind: "toString" as never, itemId: null, provenance: { emitter: "SERVER_TUTOR_ROUTE", tutorInteractionId: "t" } } })).toThrow("assistance_kind_unknown");
+  });
+
+  it("conflicts obey the seal window and are bounded", () => {
+    const s = setup().scope;
+    let ledger = appendAssistance(emptyAssistanceLedger(s), { scope: s, recordedAt: T(0), event: { type: "OPENED", availableChannels: [...ALL_CHANNELS], instrumentedChannels: [...ALL_CHANNELS], independentDelivery: true, offlineDeviceIds: ["dev-1"] } }).ledger;
+    const replay = (capturedAt: string, kind: "TOOL_USED" | "ANSWER_SHOWN" = "TOOL_USED") => ({ type: "ASSISTANCE" as const, kind, itemId: "i-single", provenance: { emitter: "OFFLINE_DEVICE_REPLAY" as const, deviceId: "dev-1", clientSequence: 1, syncBatchId: "b", capturedAt } });
+    ledger = appendAssistance(ledger, { scope: s, recordedAt: T(3), event: replay(T(2)) }).ledger;
+    ledger = appendAssistance(ledger, { scope: s, recordedAt: T(10), event: { type: "SEALED", reason: "SUBMITTED" } }).ledger;
+    // After the seal, a conflicting delivery captured after the seal is refused rather than stored.
+    expect(() => appendAssistance(ledger, { scope: s, recordedAt: T(20), event: replay(T(15), "ANSWER_SHOWN") })).toThrow("assistance_ledger_sealed");
+    // Distinct conflicting payloads captured before the seal are stored, up to the bound.
+    for (let second = 3; second < 3 + MAX_ASSISTANCE_CONFLICTS; second += 1) {
+      ledger = appendAssistance(ledger, { scope: s, recordedAt: T(20), event: replay(T(second / 10 + 2), "ANSWER_SHOWN") }).ledger;
+    }
+    expect(() => appendAssistance(ledger, { scope: s, recordedAt: T(21), event: replay(T(9), "ANSWER_SHOWN") })).toThrow("assistance_conflict_limit_reached");
+    expect(classifyAssistanceForItem(ledger, "i-single").status).toBe("UNVERIFIED");
   });
 
   it("an offline event re-delivered in a different sync batch is a replay, not a conflict", () => {
