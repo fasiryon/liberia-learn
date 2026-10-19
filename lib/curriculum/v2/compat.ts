@@ -9,7 +9,7 @@
  */
 import { LEARNING_EXPERIENCE_LINK_VERSION, type LearningExperienceLink } from "@/lib/learner-experience/links";
 import { LESSON_EXPERIENCE_CONTRACT_VERSION, type LessonExperience, type Scene, type SceneInteraction, type SceneOffline } from "@/lib/learner-experience/types";
-import type { CandidateScene, CurriculumLessonV2 } from "./contract";
+import type { CandidateScene, CurriculumLessonV2, ResolvedObjective } from "./contract";
 import { RENDERABLE_INTERACTIONS } from "./deliverability";
 
 const OFFLINE: Record<CandidateScene["offline"]["mode"], SceneOffline["mode"]> = {
@@ -22,7 +22,16 @@ function textOf(value: unknown): string {
   return value;
 }
 
-function interactionFor(scene: CandidateScene, lesson: CurriculumLessonV2): { interaction: SceneInteraction; completion: Scene["completion"]; body: string } {
+/**
+ * What the learner projection reads. An assembled CurriculumLessonV2 satisfies it; a candidate still
+ * waiting for governed binding supplies a null release, which the projection carries as-is.
+ */
+export type LessonProjectionSource = Pick<CurriculumLessonV2, "identity" | "ageBand" | "scenes" | "labLinks" | "assessmentHandoffs"> & Readonly<{
+  objectives: readonly Pick<ResolvedObjective, "id" | "statement" | "conceptIds" | "standardCodes" | "skillIds">[];
+  authoring: Readonly<{ releaseId: string | null; releaseIdentity: string | null }>;
+}>;
+
+function interactionFor(scene: CandidateScene, lesson: LessonProjectionSource): { interaction: SceneInteraction; completion: Scene["completion"]; body: string } {
   const interaction = scene.interaction;
   const fallbackBody = scene.fallback ? `${textOf(scene.content.body)}\n\n${textOf(scene.fallback.content)}` : scene.content.body;
   if (!RENDERABLE_INTERACTIONS.has(interaction.kind)) {
@@ -69,7 +78,7 @@ function interactionFor(scene: CandidateScene, lesson: CurriculumLessonV2): { in
   }
 }
 
-export function toLessonExperience(lesson: CurriculumLessonV2): LessonExperience {
+export function toLessonExperience(lesson: LessonProjectionSource): LessonExperience {
   const scenes: Scene[] = lesson.scenes.map((scene) => {
     const { interaction, completion, body } = interactionFor(scene, lesson);
     const evidence: Scene["evidence"] = scene.evidence.kind === "NONE"

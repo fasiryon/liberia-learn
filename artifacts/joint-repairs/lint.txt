@@ -1,0 +1,48 @@
+
+> liberia-learn-frontend@1.0.0 lint
+> next lint
+
+npm.cmd : [ENV][observability] Recommended env var not set: NEXT_PUBLIC_SENTRY_DSN
+At line:2 char:1
++ npm.cmd run lint *> artifacts/joint-repairs/lint.log; $lintExit=$LAST ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ([ENV][observabi...BLIC_SENTRY_DSN:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+
+[ENV][observability] Recommended env var not set: SENTRY_DSN
+
+./app/admin/announcements/page.tsx
+56:37  Warning: React Hook useEffect has a missing dependency: 'load'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./app/admin/video-moderation/page.tsx
+187:19  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./app/error.tsx
+18:7  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./app/share/certificate/[id]/page.tsx
+126:11  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./app/student/messages/page.tsx
+57:9  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./app/teacher/lesson/[contentId]/video/page.tsx
+76:38  Warning: React Hook useEffect has a missing dependency: 'loadVideos'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+483:17  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./app/teacher/messages/page.tsx
+166:23  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./app/unauthorized/page.tsx
+6:7  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./components/GlobalSearch.tsx
+64:20  Warning: React Hook useCallback received a function whose dependencies are unknown. Pass an inline function instead.  react-hooks/exhaustive-deps
+
+./components/interactive-labs/v2/ThreeScene.tsx
+77:5  Warning: React Hook useEffect has a missing dependency: 'review'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./components/labs/SimpleMachinesLabPage.tsx
+29:6  Warning: React Hook useEffect has missing dependencies: 'drawInclinedPlane', 'drawLever', and 'drawPulley'. Either include them or remove the dependency array.  react-hooks/exhaustive-deps
+
+info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/basic-features/eslint#disabling-rules

@@ -9,6 +9,7 @@ const mockStudentUpdate = vi.hoisted(() => vi.fn());
 const mockTranscriptUpsert = vi.hoisted(() => vi.fn());
 const mockTransaction = vi.hoisted(() => vi.fn());
 const mockLogAudit = vi.hoisted(() => vi.fn());
+const mockAcademicYearFindFirst = vi.hoisted(() => vi.fn());
 
 vi.mock("@/lib/db", () => ({
   prisma: {
@@ -23,9 +24,24 @@ vi.mock("@/lib/db", () => ({
       create: mockEnrollmentCreate,
     },
     transcript: { upsert: mockTranscriptUpsert },
+    academicYear: { findFirst: mockAcademicYearFindFirst },
     $transaction: mockTransaction,
   },
 }));
+
+const YEARS: Record<string, { schoolId: string; startDate: Date; endDate: Date }> = {
+  "year-2025": { schoolId: "school-1", startDate: new Date("2025-09-01"), endDate: new Date("2026-07-15") },
+  "year-2026": { schoolId: "school-1", startDate: new Date("2026-09-01"), endDate: new Date("2027-07-15") },
+  "year-2024": { schoolId: "school-1", startDate: new Date("2024-09-01"), endDate: new Date("2025-07-15") },
+  "other-school-2026": { schoolId: "school-2", startDate: new Date("2026-09-01"), endDate: new Date("2027-07-15") },
+};
+
+function mockYears() {
+  mockAcademicYearFindFirst.mockImplementation(async ({ where }: any) => {
+    const year = YEARS[where.id];
+    return year && year.schoolId === where.schoolId ? year : null;
+  });
+}
 vi.mock("@/lib/audit", () => ({ logAudit: mockLogAudit }));
 
 import {
@@ -107,7 +123,17 @@ describe("previewPromotions", () => {
 });
 
 describe("promoteStudents", () => {
-  beforeEach(() => vi.clearAllMocks());
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockYears();
+  });
+
+  it("refuses a target academic year from another school, the same year, or an earlier year", async () => {
+    await expect(promoteStudents(SCHOOL, SOURCE_YEAR, "other-school-2026", [STUDENT_1], ACTOR)).rejects.toThrow("Academic year not found in this school");
+    await expect(promoteStudents(SCHOOL, SOURCE_YEAR, SOURCE_YEAR, [STUDENT_1], ACTOR)).rejects.toThrow("must differ");
+    await expect(promoteStudents(SCHOOL, SOURCE_YEAR, "year-2024", [STUDENT_1], ACTOR)).rejects.toThrow("must start after");
+    expect(mockTransaction).not.toHaveBeenCalled();
+  });
 
   it("promotes Grade 1 student to Grade 2 and updates student.currentGrade", async () => {
     mockStudentFindFirst.mockResolvedValueOnce({ id: STUDENT_1, currentGrade: 1 });
@@ -195,9 +221,17 @@ describe("promoteStudents", () => {
 });
 
 describe("retainStudents", () => {
-  beforeEach(() => vi.clearAllMocks());
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockYears();
+  });
 
-  it("keeps student at same grade and marks old enrollment COMPLETED", async () => {
+  it("refuses a target academic year from another school", async () => {
+    await expect(retainStudents(SCHOOL, SOURCE_YEAR, "other-school-2026", [STUDENT_1], ACTOR)).rejects.toThrow("Academic year not found in this school");
+    expect(mockTransaction).not.toHaveBeenCalled();
+  });
+
+  it("keeps student at same grade and marks old enrollment RETAINED (repeated-grade history)", async () => {
     mockStudentFindFirst.mockResolvedValueOnce({ id: STUDENT_1 });
     mockEnrollmentFindFirst
       .mockResolvedValueOnce(ACTIVE_ENROLLMENT_G1)
@@ -216,7 +250,7 @@ describe("retainStudents", () => {
 
     expect(result.promoted).toContain(STUDENT_1);
     expect(mockEnrollmentUpdate).toHaveBeenCalledWith(
-      expect.objectContaining({ data: expect.objectContaining({ status: "COMPLETED" }) })
+      expect.objectContaining({ data: expect.objectContaining({ status: "RETAINED" }) })
     );
     expect(mockEnrollmentCreate).toHaveBeenCalledWith(
       expect.objectContaining({

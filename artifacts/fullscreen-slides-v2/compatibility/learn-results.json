@@ -1,0 +1,776 @@
+{
+  "shell": [
+    {
+      "route": "/student/today",
+      "width": 1280,
+      "after": {
+        "railLeft": 0,
+        "railRight": 238,
+        "railWidth": 238,
+        "workspaceLeft": 238,
+        "workspaceRight": 1280,
+        "workspaceWidth": 1042,
+        "frameLeft": 238,
+        "frameRight": 1280,
+        "frameWidth": 1042,
+        "maxWidth": 1440,
+        "paddingLeft": 32,
+        "paddingRight": 32,
+        "contentLeft": 270,
+        "contentRight": 1248,
+        "contentWidth": 978,
+        "gap": 32,
+        "leftSpace": 32,
+        "rightSpace": 32,
+        "centerOffset": 0,
+        "viewportWidth": 1280
+      }
+    },
+    {
+      "route": "/student/today",
+      "width": 1440,
+      "after": {
+        "railLeft": 0,
+        "railRight": 238,
+        "railWidth": 238,
+        "workspaceLeft": 238,
+        "workspaceRight": 1440,
+        "workspaceWidth": 1202,
+        "frameLeft": 238,
+        "frameRight": 1440,
+        "frameWidth": 1202,
+        "maxWidth": 1440,
+        "paddingLeft": 32,
+        "paddingRight": 32,
+        "contentLeft": 270,
+        "contentRight": 1408,
+        "contentWidth": 1138,
+        "gap": 32,
+        "leftSpace": 32,
+        "rightSpace": 32,
+        "centerOffset": 0,
+        "viewportWidth": 1440
+      }
+    },
+    {
+      "route": "/student/today",
+      "width": 1600,
+      "after": {
+        "railLeft": 0,
+        "railRight": 238,
+        "railWidth": 238,
+        "workspaceLeft": 238,
+        "workspaceRight": 1600,
+        "workspaceWidth": 1362,
+        "frameLeft": 238,
+        "frameRight": 1600,
+        "frameWidth": 1362,
+        "maxWidth": 1440,
+        "paddingLeft": 32,
+        "paddingRight": 32,
+        "contentLeft": 270,
+        "contentRight": 1568,
+        "contentWidth": 1298,
+        "gap": 32,
+        "leftSpace": 32,
+        "rightSpace": 32,
+        "centerOffset": 0,
+        "viewportWidth": 1600
+      }
+    },
+    {
+      "route": "/student/today",
+      "width": 1920,
+      "after": {
+        "railLeft": 0,
+        "railRight": 238,
+        "railWidth": 238,
+        "workspaceLeft": 238,
+        "workspaceRight": 1920,
+        "workspaceWidth": 1682,
+        "frameLeft": 359,
+        "frameRight": 1799,
+        "frameWidth": 1440,
+        "maxWidth": 1440,
+        "paddingLeft": 32,
+        "paddingRight": 32,
+        "contentLeft": 391,
+        "contentRight": 1767,
+        "contentWidth": 1376,
+        "gap": 153,
+        "leftSpace": 153,
+        "rightSpace": 153,
+        "centerOffset": 0,
+        "viewportWidth": 1920
+      }
+    },
+    {
+      "route": "/student/learn",
+      "width": 1280,
+      "after": {
+        "railLeft": 0,
+        "railRight": 238,
+        "railWidth": 238,
+        "workspaceLeft": 238,
+        "workspaceRight": 1280,
+        "workspaceWidth": 1042,
+        "frameLeft": 238,
+        "frameRight": 1280,
+        "frameWidth": 1042,
+        "maxWidth": 1440,
+        "paddingLeft": 32,
+        "paddingRight": 32,
+        "contentLeft": 270,
+        "contentRight": 1248,
+        "contentWidth": 978,
+        "gap": 32,
+        "leftSpace": 32,
+        "rightSpace": 32,
+        "centerOffset": 0,
+        "viewportWidth": 1280
+      }
+    },
+    {
+      "route": "/student/learn",
+      "width": 1440,
+      "after": {
+        "railLeft": 0,
+        "railRight": 238,
+        "railWidth": 238,
+        "workspaceLeft": 238,
+        "workspaceRight": 1440,
+        "workspaceWidth": 1202,
+        "frameLeft": 238,
+        "frameRight": 1440,
+        "frameWidth": 1202,
+        "maxWidth": 1440,
+        "paddingLeft": 32,
+        "paddingRight": 32,
+        "contentLeft": 270,
+        "contentRight": 1408,
+        "contentWidth": 1138,
+        "gap": 32,
+        "leftSpace": 32,
+        "rightSpace": 32,
+        "centerOffset": 0,
+        "viewportWidth": 1440
+      }
+    },
+    {
+      "route": "/student/learn",
+      "width": 1600,
+      "after": {
+        "railLeft": 0,
+        "railRight": 238,
+        "railWidth": 238,
+        "workspaceLeft": 238,
+        "workspaceRight": 1600,
+        "workspaceWidth": 1362,
+        "frameLeft": 238,
+        "frameRight": 1600,
+        "frameWidth": 1362,
+        "maxWidth": 1440,
+        "paddingLeft": 32,
+        "paddingRight": 32,
+        "contentLeft": 270,
+        "contentRight": 1568,
+        "contentWidth": 1298,
+        "gap": 32,
+        "leftSpace": 32,
+        "rightSpace": 32,
+        "centerOffset": 0,
+        "viewportWidth": 1600
+      }
+    },
+    {
+      "route": "/student/learn",
+      "width": 1920,
+      "after": {
+        "railLeft": 0,
+        "railRight": 238,
+        "railWidth": 238,
+        "workspaceLeft": 238,
+        "workspaceRight": 1920,
+        "workspaceWidth": 1682,
+        "frameLeft": 359,
+        "frameRight": 1799,
+        "frameWidth": 1440,
+        "maxWidth": 1440,
+        "paddingLeft": 32,
+        "paddingRight": 32,
+        "contentLeft": 391,
+        "contentRight": 1767,
+        "contentWidth": 1376,
+        "gap": 153,
+        "leftSpace": 153,
+        "rightSpace": 153,
+        "centerOffset": 0,
+        "viewportWidth": 1920
+      }
+    }
+  ],
+  "learn": [
+    {
+      "grade": 2,
+      "width": 320,
+      "submitTarget": {
+        "x": 34,
+        "y": 754.46875,
+        "width": 252,
+        "height": 56
+      },
+      "taskHeadingTop": 208.390625
+    },
+    {
+      "grade": 2,
+      "width": 360,
+      "submitTarget": {
+        "x": 34,
+        "y": 754.46875,
+        "width": 141.53125,
+        "height": 56
+      },
+      "taskHeadingTop": 208.390625
+    },
+    {
+      "grade": 2,
+      "width": 390,
+      "submitTarget": {
+        "x": 34,
+        "y": 723.671875,
+        "width": 171.53125,
+        "height": 56
+      },
+      "taskHeadingTop": 208.390625
+    },
+    {
+      "grade": 2,
+      "width": 768,
+      "submitTarget": {
+        "x": 270,
+        "y": 668.875,
+        "width": 133.109375,
+        "height": 56
+      },
+      "taskHeadingTop": 170.390625
+    },
+    {
+      "grade": 2,
+      "width": 1440,
+      "submitTarget": {
+        "x": 298,
+        "y": 689.359375,
+        "width": 133.109375,
+        "height": 56
+      },
+      "taskHeadingTop": 178.375
+    },
+    {
+      "grade": 6,
+      "width": 320,
+      "submitTarget": {
+        "x": 34,
+        "y": 712.015625,
+        "width": 252,
+        "height": 48
+      },
+      "taskHeadingTop": 197.96875
+    },
+    {
+      "grade": 6,
+      "width": 360,
+      "submitTarget": {
+        "x": 34,
+        "y": 658.828125,
+        "width": 141.53125,
+        "height": 48
+      },
+      "taskHeadingTop": 197.96875
+    },
+    {
+      "grade": 6,
+      "width": 390,
+      "submitTarget": {
+        "x": 34,
+        "y": 658.828125,
+        "width": 171.53125,
+        "height": 48
+      },
+      "taskHeadingTop": 197.96875
+    },
+    {
+      "grade": 6,
+      "width": 768,
+      "submitTarget": {
+        "x": 270,
+        "y": 615.234375,
+        "width": 141.25,
+        "height": 48
+      },
+      "taskHeadingTop": 167.96875
+    },
+    {
+      "grade": 6,
+      "width": 1440,
+      "submitTarget": {
+        "x": 298,
+        "y": 638.140625,
+        "width": 141.25,
+        "height": 48
+      },
+      "taskHeadingTop": 178.375
+    }
+  ],
+  "states": [
+    "loading",
+    "none",
+    "no-resource",
+    "empty",
+    "not-enrolled",
+    "lessons-unavailable",
+    "error",
+    "signed-out",
+    "cross-tenant",
+    "long",
+    "stale-empty",
+    "stale-empty-recovered",
+    "stale",
+    "offline-cached",
+    "lessons-empty"
+  ],
+  "a11y": {
+    "keyboard": [
+      {
+        "text": "Refresh",
+        "inTask": false,
+        "outline": "solid"
+      },
+      {
+        "text": "Read the lesson, then come back →",
+        "inTask": true,
+        "outline": "solid"
+      },
+      {
+        "text": "",
+        "inTask": true,
+        "outline": "solid"
+      },
+      {
+        "text": "All my classes →",
+        "inTask": false,
+        "outline": "solid"
+      },
+      {
+        "text": "Class schedule →",
+        "inTask": false,
+        "outline": "solid"
+      },
+      {
+        "text": "Open unit: Fractions on a number line",
+        "inTask": false,
+        "outline": "solid"
+      }
+    ],
+    "reducedMotionTransition": "0s",
+    "axe": {
+      "learn": [],
+      "learn-young": [],
+      "unit": [],
+      "lessons": []
+    }
+  },
+  "bands": [
+    {
+      "route": "/student/today",
+      "grade": 2,
+      "width": 320,
+      "wideFont": false,
+      "overflow": false,
+      "primaryTarget": 56
+    },
+    {
+      "route": "/student/today",
+      "grade": 2,
+      "width": 320,
+      "wideFont": true,
+      "overflow": false,
+      "primaryTarget": 56
+    },
+    {
+      "route": "/student/today",
+      "grade": 2,
+      "width": 360,
+      "wideFont": false,
+      "overflow": false,
+      "primaryTarget": 56
+    },
+    {
+      "route": "/student/today",
+      "grade": 2,
+      "width": 360,
+      "wideFont": true,
+      "overflow": false,
+      "primaryTarget": 56
+    },
+    {
+      "route": "/student/today",
+      "grade": 2,
+      "width": 390,
+      "wideFont": false,
+      "overflow": false,
+      "primaryTarget": 56
+    },
+    {
+      "route": "/student/today",
+      "grade": 2,
+      "width": 390,
+      "wideFont": true,
+      "overflow": false,
+      "primaryTarget": 56
+    },
+    {
+      "route": "/student/today",
+      "grade": 2,
+      "width": 768,
+      "wideFont": false,
+      "overflow": false,
+      "primaryTarget": 56
+    },
+    {
+      "route": "/student/today",
+      "grade": 2,
+      "width": 768,
+      "wideFont": true,
+      "overflow": false,
+      "primaryTarget": 56
+    },
+    {
+      "route": "/student/today",
+      "grade": 2,
+      "width": 1440,
+      "wideFont": false,
+      "overflow": false,
+      "primaryTarget": 56
+    },
+    {
+      "route": "/student/today",
+      "grade": 2,
+      "width": 1440,
+      "wideFont": true,
+      "overflow": false,
+      "primaryTarget": 56
+    },
+    {
+      "route": "/student/today",
+      "grade": 2,
+      "width": 1920,
+      "wideFont": false,
+      "overflow": false,
+      "primaryTarget": 56
+    },
+    {
+      "route": "/student/today",
+      "grade": 2,
+      "width": 1920,
+      "wideFont": true,
+      "overflow": false,
+      "primaryTarget": 56
+    },
+    {
+      "route": "/student/today",
+      "grade": 6,
+      "width": 320,
+      "wideFont": false,
+      "overflow": false,
+      "primaryTarget": 48
+    },
+    {
+      "route": "/student/today",
+      "grade": 6,
+      "width": 320,
+      "wideFont": true,
+      "overflow": false,
+      "primaryTarget": 48
+    },
+    {
+      "route": "/student/today",
+      "grade": 6,
+      "width": 360,
+      "wideFont": false,
+      "overflow": false,
+      "primaryTarget": 48
+    },
+    {
+      "route": "/student/today",
+      "grade": 6,
+      "width": 360,
+      "wideFont": true,
+      "overflow": false,
+      "primaryTarget": 48
+    },
+    {
+      "route": "/student/today",
+      "grade": 6,
+      "width": 390,
+      "wideFont": false,
+      "overflow": false,
+      "primaryTarget": 48
+    },
+    {
+      "route": "/student/today",
+      "grade": 6,
+      "width": 390,
+      "wideFont": true,
+      "overflow": false,
+      "primaryTarget": 48
+    },
+    {
+      "route": "/student/today",
+      "grade": 6,
+      "width": 768,
+      "wideFont": false,
+      "overflow": false,
+      "primaryTarget": 48
+    },
+    {
+      "route": "/student/today",
+      "grade": 6,
+      "width": 768,
+      "wideFont": true,
+      "overflow": false,
+      "primaryTarget": 48
+    },
+    {
+      "route": "/student/today",
+      "grade": 6,
+      "width": 1440,
+      "wideFont": false,
+      "overflow": false,
+      "primaryTarget": 48
+    },
+    {
+      "route": "/student/today",
+      "grade": 6,
+      "width": 1440,
+      "wideFont": true,
+      "overflow": false,
+      "primaryTarget": 48
+    },
+    {
+      "route": "/student/today",
+      "grade": 6,
+      "width": 1920,
+      "wideFont": false,
+      "overflow": false,
+      "primaryTarget": 48
+    },
+    {
+      "route": "/student/today",
+      "grade": 6,
+      "width": 1920,
+      "wideFont": true,
+      "overflow": false,
+      "primaryTarget": 48
+    },
+    {
+      "route": "/student/learn",
+      "grade": 2,
+      "width": 320,
+      "wideFont": false,
+      "overflow": false,
+      "primaryTarget": 64
+    },
+    {
+      "route": "/student/learn",
+      "grade": 2,
+      "width": 320,
+      "wideFont": true,
+      "overflow": false,
+      "primaryTarget": 64
+    },
+    {
+      "route": "/student/learn",
+      "grade": 2,
+      "width": 360,
+      "wideFont": false,
+      "overflow": false,
+      "primaryTarget": 64
+    },
+    {
+      "route": "/student/learn",
+      "grade": 2,
+      "width": 360,
+      "wideFont": true,
+      "overflow": false,
+      "primaryTarget": 64
+    },
+    {
+      "route": "/student/learn",
+      "grade": 2,
+      "width": 390,
+      "wideFont": false,
+      "overflow": false,
+      "primaryTarget": 64
+    },
+    {
+      "route": "/student/learn",
+      "grade": 2,
+      "width": 390,
+      "wideFont": true,
+      "overflow": false,
+      "primaryTarget": 64
+    },
+    {
+      "route": "/student/learn",
+      "grade": 2,
+      "width": 768,
+      "wideFont": false,
+      "overflow": false,
+      "primaryTarget": 64
+    },
+    {
+      "route": "/student/learn",
+      "grade": 2,
+      "width": 768,
+      "wideFont": true,
+      "overflow": false,
+      "primaryTarget": 64
+    },
+    {
+      "route": "/student/learn",
+      "grade": 2,
+      "width": 1440,
+      "wideFont": false,
+      "overflow": false,
+      "primaryTarget": 64
+    },
+    {
+      "route": "/student/learn",
+      "grade": 2,
+      "width": 1440,
+      "wideFont": true,
+      "overflow": false,
+      "primaryTarget": 64
+    },
+    {
+      "route": "/student/learn",
+      "grade": 2,
+      "width": 1920,
+      "wideFont": false,
+      "overflow": false,
+      "primaryTarget": 64
+    },
+    {
+      "route": "/student/learn",
+      "grade": 2,
+      "width": 1920,
+      "wideFont": true,
+      "overflow": false,
+      "primaryTarget": 64
+    },
+    {
+      "route": "/student/learn",
+      "grade": 6,
+      "width": 320,
+      "wideFont": false,
+      "overflow": false,
+      "primaryTarget": 52
+    },
+    {
+      "route": "/student/learn",
+      "grade": 6,
+      "width": 320,
+      "wideFont": true,
+      "overflow": false,
+      "primaryTarget": 52
+    },
+    {
+      "route": "/student/learn",
+      "grade": 6,
+      "width": 360,
+      "wideFont": false,
+      "overflow": false,
+      "primaryTarget": 52
+    },
+    {
+      "route": "/student/learn",
+      "grade": 6,
+      "width": 360,
+      "wideFont": true,
+      "overflow": false,
+      "primaryTarget": 52
+    },
+    {
+      "route": "/student/learn",
+      "grade": 6,
+      "width": 390,
+      "wideFont": false,
+      "overflow": false,
+      "primaryTarget": 52
+    },
+    {
+      "route": "/student/learn",
+      "grade": 6,
+      "width": 390,
+      "wideFont": true,
+      "overflow": false,
+      "primaryTarget": 52
+    },
+    {
+      "route": "/student/learn",
+      "grade": 6,
+      "width": 768,
+      "wideFont": false,
+      "overflow": false,
+      "primaryTarget": 52
+    },
+    {
+      "route": "/student/learn",
+      "grade": 6,
+      "width": 768,
+      "wideFont": true,
+      "overflow": false,
+      "primaryTarget": 52
+    },
+    {
+      "route": "/student/learn",
+      "grade": 6,
+      "width": 1440,
+      "wideFont": false,
+      "overflow": false,
+      "primaryTarget": 52
+    },
+    {
+      "route": "/student/learn",
+      "grade": 6,
+      "width": 1440,
+      "wideFont": true,
+      "overflow": false,
+      "primaryTarget": 52
+    },
+    {
+      "route": "/student/learn",
+      "grade": 6,
+      "width": 1920,
+      "wideFont": false,
+      "overflow": false,
+      "primaryTarget": 52
+    },
+    {
+      "route": "/student/learn",
+      "grade": 6,
+      "width": 1920,
+      "wideFont": true,
+      "overflow": false,
+      "primaryTarget": 52
+    }
+  ],
+  "integrated": {
+    "checksSummary": true,
+    "serverLocks": true,
+    "serverTotal": 24,
+    "searchDeferred": true
+  },
+  "errors": [],
+  "caveat": "Production components in an explicit fixture harness with mocked authorized APIs. Server authorization, real devices, screen readers and user studies are not certified here."
+}

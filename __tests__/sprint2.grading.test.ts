@@ -132,6 +132,7 @@ describe("Sprint 2 — Assignment Grading", () => {
             score: 85,
             feedback: "Good work",
             gradedBy: "teacher-1",
+            teacherApproved: true,
           }),
         })
       );
@@ -198,7 +199,7 @@ describe("Sprint 2 — Assignment Grading", () => {
         { id: "asgn-1", title: "Week 1", points: 100, dueAt: null, createdAt: new Date() },
       ]);
       mockSubmissionFindMany.mockResolvedValue([
-        { id: "sub-1", studentId: "student-1", assignmentId: "asgn-1", score: 85, gradedAt: new Date(), feedback: "Good" },
+        { id: "sub-1", studentId: "student-1", assignmentId: "asgn-1", score: 85, gradedAt: new Date(), feedback: "Good", teacherApproved: true },
       ]);
 
       const res = await callGradebookRoute("?classId=class-1");
@@ -222,7 +223,7 @@ describe("Sprint 2 — Assignment Grading", () => {
         { id: "asgn-1", title: "Week 1", points: 100 },
       ]);
       mockSubmissionFindMany.mockResolvedValue([
-        { studentId: "student-1", assignmentId: "asgn-1", score: 92, gradedAt: new Date() },
+        { studentId: "student-1", assignmentId: "asgn-1", score: 92, gradedAt: new Date(), teacherApproved: true },
       ]);
 
       const res = await callGradebookExportRoute("?classId=class-1");

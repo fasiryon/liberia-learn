@@ -59,6 +59,28 @@ describe("lab and lesson evidence never mutate mastery", () => {
     expect(mastery.appendCanonicalMasteryUpdate).not.toHaveBeenCalled();
   });
 
+  it.each([false, true])("cannot certify unaided work from a device assistance claim of %s without trusted assistance evidence", (assistanceUsed) => {
+    const envelope = buildEvidenceEnvelope(lesson, completedProgress(), [link], labs);
+    const untrusted = {
+      ...envelope,
+      observations: envelope.observations.map((observation) => ({
+        ...observation,
+        payload: { ...observation.payload, assistanceUsed, hintCount: 0 },
+      })),
+    };
+    const evidence = adaptEnvelope(untrusted, server, learner, online).flatMap((entry) => entry.evidence);
+    expect(evidence.length).toBeGreaterThan(0);
+    for (const observation of evidence) {
+      // An unknown assistance history must not become a false assertion of independence.
+      expect(observation.strength.assistanceUsed).toBe(true);
+      expect(observation.strength.policyRef).toContain(":assistance-unverified");
+      expect(observation.strength.serverScored).toBe(false);
+      expect(observation.canonicalMasteryMutation).toBe(false);
+      expect(observation.performance.correct).toBeNull();
+    }
+    expect(mastery.appendCanonicalMasteryUpdate).not.toHaveBeenCalled();
+  });
+
   it("rejects an envelope whose invariants were tampered with", () => {
     const envelope = buildEvidenceEnvelope(lesson, completedProgress(), [link], labs);
     expect(() => adaptEnvelope({ ...envelope, masteryMutation: true as unknown as false }, server, learner, online)).toThrow("experience_envelope_invariant_violated");

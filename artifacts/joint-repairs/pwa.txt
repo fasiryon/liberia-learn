@@ -1,0 +1,36 @@
+
+Running 14 tests using 1 worker
+
+node : (node:16832) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+At line:2 char:1
++ node scripts/joint-repairs/pwa.mjs *> artifacts/joint-repairs/pwa.log ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ((node:16832) Wa... env being set.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:16832) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 [chromium] › e2e\p5c-pwa-lifecycle.spec.ts:71:7 › P5-C real browser PWA lifecycle › manifest, service worker, shell cache, and offline launch are real browser behavior (10.6s)
+  ✓   2 [chromium] › e2e\p5c-pwa-lifecycle.spec.ts:105:7 › P5-C real browser PWA lifecycle › IndexedDB outbox and Cache Storage survive a browser-context restart (8.9s)
+  ✓   3 [chromium] › e2e\p5e-offline-hardening.spec.ts:82:7 › P5-E offline hardening in a real browser › a login redirect is never cached as a learner page and offline launch shows the offline shell (8.3s)
+  ✓   4 [chromium] › e2e\p5e-offline-hardening.spec.ts:104:7 › P5-E offline hardening in a real browser › switching learners on a shared device deletes the previous learner's page cache (8.3s)
+  ✓   5 [chromium] › e2e\p5e-offline-hardening.spec.ts:121:7 › P5-E offline hardening in a real browser › queued work replays only for the bound learner and is held, not lost, when auth has expired (6.1s)
+  ✓   6 [chromium] › e2e\p5e-offline-hardening.spec.ts:139:7 › P5-E offline hardening in a real browser › queued work survives a service-worker update (5.9s)
+[p5e-measurement] {"project":"chromium","coldMs":5443,"coldBytes":198853,"jsBytes":107523,"offlineLaunchMs":203}
+  ✓   7 [chromium] › e2e\p5e-offline-hardening.spec.ts:152:7 › P5-E offline hardening in a real browser › constrained-device measurement: offline shell cold and cached launch (11.1s)
+(node:7236) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:7236) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   8 [mobile-chromium] › e2e\p5c-pwa-lifecycle.spec.ts:71:7 › P5-C real browser PWA lifecycle › manifest, service worker, shell cache, and offline launch are real browser behavior (7.6s)
+  ✓   9 [mobile-chromium] › e2e\p5c-pwa-lifecycle.spec.ts:105:7 › P5-C real browser PWA lifecycle › IndexedDB outbox and Cache Storage survive a browser-context restart (11.0s)
+  ✓  10 [mobile-chromium] › e2e\p5e-offline-hardening.spec.ts:82:7 › P5-E offline hardening in a real browser › a login redirect is never cached as a learner page and offline launch shows the offline shell (8.7s)
+  ✓  11 [mobile-chromium] › e2e\p5e-offline-hardening.spec.ts:104:7 › P5-E offline hardening in a real browser › switching learners on a shared device deletes the previous learner's page cache (12.9s)
+  ✓  12 [mobile-chromium] › e2e\p5e-offline-hardening.spec.ts:121:7 › P5-E offline hardening in a real browser › queued work replays only for the bound learner and is held, not lost, when auth has expired (11.1s)
+  ✓  13 [mobile-chromium] › e2e\p5e-offline-hardening.spec.ts:139:7 › P5-E offline hardening in a real browser › queued work survives a service-worker update (9.1s)
+[p5e-measurement] {"project":"mobile-chromium","coldMs":5786,"coldBytes":198855,"jsBytes":107523,"offlineLaunchMs":117}
+  ✓  14 [mobile-chromium] › e2e\p5e-offline-hardening.spec.ts:152:7 › P5-E offline hardening in a real browser › constrained-device measurement: offline shell cold and cached launch (15.1s)
+
+  14 passed (2.6m)
+PWA exit 0

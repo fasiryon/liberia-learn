@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 470" role="img" aria-labelledby="t d" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif">
+  <title id="t">One rule for big and small numbers</title>
+  <desc id="d">L$2,350,480 is 2 millions, 350 thousands and 480 ones. 2.375 kg is 2 ones and 375 thousandths.</desc>
+  <rect width="600" height="470" rx="24" fill="#ffffff"/>
+  <text x="300" y="52" text-anchor="middle" font-size="26" font-weight="700" fill="#1f2937">Where a digit sits decides its value</text>
+  <rect x="30" y="80" width="540" height="170" rx="18" fill="#ecfdf5" stroke="#0f766e" stroke-width="2"/>
+  <text x="300" y="126" text-anchor="middle" font-size="22" fill="#374151">School library fund</text>
+  <g font-size="44" font-weight="700" text-anchor="middle" fill="#064e3b">
+    <text x="120" y="186">L$2</text><text x="205" y="186">,</text><text x="290" y="186">350</text><text x="375" y="186">,</text><text x="460" y="186">480</text>
+  </g>
+  <g font-size="21" text-anchor="middle" fill="#0f766e" font-weight="600">
+    <text x="128" y="228">millions</text><text x="290" y="228">thousands</text><text x="460" y="228">ones</text>
+  </g>
+  <rect x="30" y="275" width="540" height="170" rx="18" fill="#fef3c7" stroke="#b45309" stroke-width="2"/>
+  <text x="300" y="321" text-anchor="middle" font-size="22" fill="#374151">Rice on the market scale</text>
+  <g font-size="44" font-weight="700" text-anchor="middle" fill="#78350f">
+    <text x="200" y="381">2</text><text x="250" y="381">.</text><text x="330" y="381">375</text><text x="440" y="381" font-size="32" font-weight="600">kg</text>
+  </g>
+  <g font-size="21" text-anchor="middle" fill="#b45309" font-weight="600">
+    <text x="200" y="423">ones</text><text x="330" y="423">thousandths</text>
+  </g>
+</svg>

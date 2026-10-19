@@ -34,7 +34,7 @@ export function PlaceValueChart({ value, highlight = null, caption }: { value: n
 }
 
 /** Interactive number breakdown: change any place with buttons (touch, mouse, keyboard). */
-export function NumberBuilder({ value, onChange }: { value: number; onChange: (next: number) => void }) {
+export function NumberBuilder({ value, onChange, presets = [2_350_480, 4_205_316, 1_742_009] }: { value: number; onChange: (next: number) => void; presets?: readonly number[] }) {
   const digits = digitsOf(value);
   const set = (index: number, delta: number) => {
     const next = [...digits];
@@ -58,7 +58,7 @@ export function NumberBuilder({ value, onChange }: { value: number; onChange: (n
       </dl>
     </div>
     <div className="flex flex-wrap gap-2">
-      {[2_350_480, 4_205_316, 1_742_009].map((preset) => <button key={preset} type="button" className="ll3-btn" onClick={() => onChange(preset)} aria-pressed={value === preset}>Show {formatNumber(preset)}</button>)}
+      {presets.map((preset) => <button key={preset} type="button" className="ll3-btn" onClick={() => onChange(preset)} aria-pressed={value === preset}>Show {formatNumber(preset)}</button>)}
       <button type="button" className="ll3-btn" onClick={() => onChange(0)}><RotateCcw size={16} aria-hidden="true" /> Reset</button>
     </div>
   </div>;

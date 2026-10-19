@@ -28,37 +28,37 @@ export function SceneBody({ scene, ageBand }: { scene: Scene; ageBand: AgeBand }
   );
 }
 
-/** INTERACTIVE_DIAGRAM: reveal each stage in order. Buttons, not hover, so keyboard, touch and screen readers work. */
+/**
+ * INTERACTIVE_DIAGRAM: reveal each stage in order. Buttons, not hover, so keyboard, touch and screen readers
+ * work. On a wide stage the stages are a connected left-to-right flow (each card opens in place); on a narrow
+ * one they stack with connectors. Open/next/locked is stated in text, never by colour alone.
+ */
 export function DiagramReveal({ scene, progress, onReveal }: { scene: Scene; progress: ExperienceProgress; onReveal: (stepId: string) => void }) {
   if (scene.interaction.kind !== "DIAGRAM_REVEAL") return null;
   const revealed = progress.revealed[scene.id] ?? [];
   const steps = scene.interaction.steps;
   const nextIndex = steps.findIndex((step) => !revealed.includes(step.id));
+  const openCount = steps.filter((step) => revealed.includes(step.id)).length;
   return (
-    <ol className="mt-6 grid gap-3" aria-label={scene.media?.[0]?.alt ?? "Diagram"}>
-      {steps.map((step, index) => {
-        const open = revealed.includes(step.id);
-        const available = open || index === nextIndex;
-        return (
-          <li key={step.id} className="relative">
-            <button
-              type="button"
-              aria-expanded={open}
-              aria-controls={`step-${step.id}`}
-              disabled={!available}
-              onClick={() => onReveal(step.id)}
-              className={`flex min-h-14 w-full items-center gap-3 rounded-xl border px-4 py-3 text-left text-base font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ll-accent)] ${open ? "border-[var(--ll-accent)] bg-[var(--ll-surface)] text-[var(--ll-text)]" : available ? "border-[var(--ll-accent)] border-dashed text-[var(--ll-text)]" : "border-[var(--ll-border)] text-[var(--ll-text-faint)]"}`}
-            >
-              <span aria-hidden="true" className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm ${open ? "bg-[var(--ll-accent)] text-[var(--ll-bg)]" : "border border-current"}`}>{index + 1}</span>
-              <span className="flex-1">{step.label}</span>
-              <span className="text-sm font-normal text-[var(--ll-text-muted)]">{open ? "Open" : available ? "Tap to open" : "Locked"}</span>
-            </button>
-            <div id={`step-${step.id}`} hidden={!open} className="mx-4 border-l-2 border-[var(--ll-accent)] px-4 py-2 text-base leading-7 text-[var(--ll-text)]">{step.description}</div>
-            {index < steps.length - 1 && <div aria-hidden="true" className="ml-8 h-3 w-0.5 bg-[var(--ll-border)]" />}
-          </li>
-        );
-      })}
-    </ol>
+    <div className="ll4-diagram" data-diagram-reveal data-steps={steps.length}>
+      <p className="ll4-diagram-meta" aria-live="polite"><span>{scene.media?.[0]?.alt ?? "Diagram"}</span><span>{openCount} of {steps.length} open</span></p>
+      <ol className="ll4-diagram-steps" aria-label={scene.media?.[0]?.alt ?? "Diagram"}>
+        {steps.map((step, index) => {
+          const open = revealed.includes(step.id);
+          const available = open || index === nextIndex;
+          return (
+            <li key={step.id} data-state={open ? "open" : available ? "next" : "locked"}>
+              <button type="button" aria-expanded={open} aria-controls={`step-${step.id}`} disabled={!available} onClick={() => onReveal(step.id)} className="ll4-diagram-node">
+                <span aria-hidden="true" className="ll4-diagram-num">{index + 1}</span>
+                <span className="ll4-diagram-label">{step.label}</span>
+                <span className="ll4-diagram-status">{open ? "Open" : available ? "Tap to open" : "Locked"}</span>
+              </button>
+              <div id={`step-${step.id}`} hidden={!open} className="ll4-diagram-text">{step.description}</div>
+            </li>
+          );
+        })}
+      </ol>
+    </div>
   );
 }
 
@@ -72,28 +72,29 @@ export function FormativeCheck({ scene, progress, onAnswer }: { scene: Scene; pr
   const keyless = isKeylessFormative(scene.interaction);
   const items = scene.interaction.items as readonly (FormativeItem | KeylessFormativeItem)[];
   return (
-    <div className="mt-6 space-y-6" data-formative-feedback={keyless ? "SERVER_REQUIRED" : "LOCAL"}>
+    <div className="ll4-checks mt-6" data-formative-feedback={keyless ? "SERVER_REQUIRED" : "LOCAL"}>
       {items.map((item, itemIndex) => {
         const selected = typeof responses[item.id] === "number" ? (responses[item.id] as number) : null;
         const keyed = "correctIndex" in item ? item : null;
         const correct = keyed !== null && selected === keyed.correctIndex;
         return (
-          <fieldset key={item.id} className="rounded-2xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-4">
-            <legend className="px-1 text-base font-semibold leading-7 text-[var(--ll-text)]">{itemIndex + 1}. {item.prompt}</legend>
-            <div className="mt-3 grid gap-2">
+          <fieldset key={item.id} className="ll3-panel ll4-question">
+            <legend className="ll4-question-prompt"><span className="ll4-question-num" aria-hidden="true">{itemIndex + 1}</span>{item.prompt}</legend>
+            <div className="ll4-options">
               {item.options.map((option, index) => (
-                <label key={`${index}:${option}`} className={`flex min-h-[var(--pdv2-target,48px)] cursor-pointer items-center gap-3 rounded-xl border px-4 py-2 text-base ${selected === index ? "border-[var(--ll-accent)] bg-[var(--ll-bg)]" : "border-[var(--ll-border)]"}`}>
-                  <input type="radio" name={item.id} checked={selected === index} onChange={() => onAnswer(item.id, index)} className="h-5 w-5 accent-[var(--ll-accent)]" />
+                <label key={`${index}:${option}`} className="ll3-choice" data-selected={selected === index ? "" : undefined} data-verdict={selected === index && keyed ? (correct ? "right" : "retry") : undefined}>
+                  <input type="radio" name={item.id} checked={selected === index} onChange={() => onAnswer(item.id, index)} />
+                  <span className="ll4-option-letter" aria-hidden="true">{String.fromCharCode(65 + index)}</span>
                   <span>{option}</span>
                 </label>
               ))}
             </div>
             {keyed ? (
-              <p role="status" className={`mt-3 text-sm leading-6 ${selected === null ? "sr-only" : correct ? "text-[var(--ll-success,#4ade80)]" : "text-[var(--ll-warning,#facc15)]"}`}>
+              <p role="status" className={selected === null ? "sr-only" : "ll3-feedback"} data-result={selected === null ? undefined : correct ? "right" : "retry"}>
                 {selected === null ? "" : keyed.optionFeedback?.[selected] ?? (correct ? keyed.feedback.correct : keyed.feedback.incorrect)}
               </p>
             ) : (
-              <p role="status" className={`mt-3 text-sm leading-6 text-[var(--ll-text-muted)] ${selected === null ? "sr-only" : ""}`}>
+              <p role="status" className={selected === null ? "sr-only" : "ll3-feedback"}>
                 {selected === null ? "" : "Your choice is saved. This lesson does not mark it."}
               </p>
             )}

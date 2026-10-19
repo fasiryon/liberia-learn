@@ -17,7 +17,7 @@ vi.mock("@/lib/db", () => ({
     student: { findUnique: mockStudentFindUnique },
     examAttempt: {
       findFirst: mockExamAttemptFindFirst,
-      update: mockExamAttemptUpdate,
+      updateMany: mockExamAttemptUpdate,
     },
     examCertification: {
       upsert: mockExamCertificationUpsert,
@@ -70,12 +70,12 @@ describe("POST /api/student/exams/[examId]/submit", () => {
     mockExamAttemptFindFirst
       .mockResolvedValueOnce(makeAttempt())
       .mockResolvedValueOnce(null);
-    mockExamAttemptUpdate.mockResolvedValue(undefined);
+    mockExamAttemptUpdate.mockResolvedValue({ count: 1 });
     mockExamCertificationUpsert.mockResolvedValue(undefined);
     mockLogAudit.mockResolvedValue(undefined);
     mockTransaction.mockImplementation(async (cb: any) => {
       const tx = {
-        examAttempt: { update: mockExamAttemptUpdate },
+        examAttempt: { updateMany: mockExamAttemptUpdate },
         examCertification: { upsert: mockExamCertificationUpsert },
       };
       return cb(tx);
@@ -111,6 +111,7 @@ describe("POST /api/student/exams/[examId]/submit", () => {
     await POST(makeReq({ attemptId: "attempt-1", answers: [1, 2] }), { params: { examId: "exam-1" } });
     expect(mockExamAttemptUpdate).toHaveBeenCalledWith(
       expect.objectContaining({
+        where: { id: "attempt-1", submittedAt: null },
         data: expect.objectContaining({
           integrityFlags: expect.arrayContaining(["time_exceeded"]),
         }),

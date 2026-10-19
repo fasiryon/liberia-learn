@@ -16,6 +16,12 @@ import LessonViewerClient from "../../app/student/lesson/[contentId]/LessonViewe
 import LessonDeliveryClient from "../../app/student/lessons/[id]/LessonDeliveryClient";
 import StudentProgressDashboard from "../../components/student/StudentProgressDashboard";
 import { PlaceValueDemo } from "../../components/experience/demo/PlaceValueDemo";
+import { TeachingLessonPlayer } from "../../components/experience/teaching/TeachingLessonPlayer";
+import { PreviewGallery } from "../../components/experience/teaching/PreviewGallery";
+import { DEMO_TEACHING_LESSONS, GRADE7_PLACE_VALUE } from "../../lib/learner-experience/teaching/demoLessons";
+import { teachingLessonAvailability } from "../../lib/learner-experience/teaching/contract";
+// The harness has no release registry (node:crypto); an empty lookup gives the same DEMO status the server does.
+const previewAvailability = (lesson: typeof GRADE7_PLACE_VALUE) => teachingLessonAvailability(lesson, () => null);
 import { parseStudentLabReturn } from "../../lib/learner-experience/labLaunch";
 import { getInteractiveLabDefinition } from "../../lib/interactive-labs/v2/registry";
 import "../../app/globals.css";
@@ -43,7 +49,11 @@ const lessonLab = labPage && params.has("rt") ? (() => {
 })() : null;
 const fixtureRoot = createRoot(document.getElementById("root")!);
 let fixtureMount = 0;
-const renderFixture = () => fixtureRoot.render(path === "/design-preview/grade-7-place-value" ? <PlaceValueDemo /> : <StudentShellV2 key={fixtureMount} identity={{ name, grade, userId: "fixture-student", schoolId: "fixture-school" }}>
+const previewSlug = path.match(/^\/design-preview\/lessons\/([^/]+)$/)?.[1];
+const previewLesson = previewSlug ? DEMO_TEACHING_LESSONS[previewSlug] : undefined;
+const renderFixture = () => fixtureRoot.render(path === "/design-preview/grade-7-place-value" ? <PlaceValueDemo availability={previewAvailability(GRADE7_PLACE_VALUE)} initialSceneId={params.get("scene")} />
+  : path === "/design-preview/lessons" ? <PreviewGallery releases={[{ id: "fixture-release", grade: 4, subject: "MATH" }]} chips={Object.fromEntries(Object.entries(DEMO_TEACHING_LESSONS).map(([slug, lesson]) => [slug, previewAvailability(lesson).chip]))} />
+  : previewLesson ? <TeachingLessonPlayer lesson={previewLesson} availability={previewAvailability(previewLesson)} initialSceneId={params.get("scene")} backHref="/design-preview/lessons" backLabel="Back to Previews" moreHref="/design-preview/lessons" /> : <StudentShellV2 key={fixtureMount} identity={{ name, grade, userId: "fixture-student", schoolId: "fixture-school" }}>
   {contentLesson ? <LessonViewerClient enabledToolIds={[]} />
     : assignedLesson ? <LessonDeliveryClient lessonId={decodeURIComponent(assignedLesson)} enabledToolIds={[]} />
     : lessonLab ? <InteractiveLabScreen labId={lessonLab.labId} access="RELEASED" lessonReturn={lessonLab.lessonReturn} />

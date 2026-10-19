@@ -1,0 +1,74 @@
+{
+  "notice": "AI judgment findings submitted to the instructional reviewer for the exact revision pinned in ../source.json. Advisory only; every finding needs confirmation by a qualified human reviewer. The reviewer rejects any quote that is not in the revision.",
+  "judgments": [
+    {
+      "id": "ai-m1-reasoning-left-unscored",
+      "code": "STRONGEST_REASONING_TASK_UNSCORED",
+      "criterionId": "LM-RSN-1",
+      "severity": "MAJOR",
+      "statement": "The lesson's only unscaffolded explanation task is in the reflect scene, recorded as REFLECTION evidence, so the best reasoning evidence the lesson collects never counts toward mastery. The end-of-lesson evidence is six selected-response items.",
+      "recommendation": "Keep the reflection, and add a rubric-scored explanation task to the end-of-lesson evidence using new numbers (proposed task pm-r2), so explaining place value is part of the mastery decision.",
+      "evidence": [
+        { "document": "CANDIDATE", "pointer": "/scenes/14/interaction/prompts/0/prompt", "quote": "Explain to a friend why the 4 in 40,000 and the 4 in 0.04 are worth different amounts." },
+        { "document": "CANDIDATE", "pointer": "/scenes/14/evidence/kind", "quote": "REFLECTION" },
+        { "document": "CANDIDATE", "pointer": "/assessmentRequests/0/interaction", "quote": "SINGLE_CHOICE" }
+      ],
+      "confidence": 0.9
+    },
+    {
+      "id": "ai-m2-place-shift-uncatalogued",
+      "code": "DOMINANT_ERROR_UNCATALOGUED",
+      "criterionId": "LM-CON-1",
+      "severity": "MAJOR",
+      "statement": "Most digit-value distractors are the right digit in the wrong place (600, 6,000 and 600,000 for a true value of 60,000), but the catalogue has no misconception for a place shift. They are filed under mc-digit-not-value, which describes giving the digit itself.",
+      "recommendation": "Add a catalogue entry for the place-shift error (proposed mc-place-shift) and remap those distractors to it, so a teacher can tell a learner who miscounts places from one who ignores place altogether.",
+      "evidence": [
+        { "document": "CANDIDATE", "pointer": "/misconceptions/0/description", "quote": "Gives the digit itself (3) instead of its value in the number (300,000)." },
+        { "document": "ASSESSMENT", "pointer": "/items/0/item/options", "quote": "600,000" },
+        { "document": "ASSESSMENT", "pointer": "/items/0/distractorMisconceptions/3", "quote": "mc-digit-not-value" }
+      ],
+      "confidence": 0.9
+    },
+    {
+      "id": "ai-m3-whole-number-item-decimal-misconception",
+      "code": "ITEM_MISCONCEPTION_DOMAIN_MISMATCH",
+      "criterionId": "LM-CON-1",
+      "severity": "MAJOR",
+      "statement": "g7-pv-exit-6 compares two whole numbers, but both of its mapped distractors name mc-longer-decimal-bigger, a decimal misconception. A learner who picks 6,009,999 is more likely judging by the larger digits (the run of nines) than by decimal length.",
+      "recommendation": "Map option 0 to a new whole-number comparison misconception (proposed mc-compare-by-digits) and leave 'They are equal' unmapped or map it after classroom evidence; or replace the item with a decimal comparison that the mapped misconception actually predicts.",
+      "evidence": [
+        { "document": "ASSESSMENT", "pointer": "/items/5/item/prompt", "quote": "Which number is greater: 6,009,999 or 6,010,000?" },
+        { "document": "CANDIDATE", "pointer": "/misconceptions/3/description", "quote": "Thinks a decimal with more digits is greater" }
+      ],
+      "confidence": 0.85
+    },
+    {
+      "id": "ai-m4-mastery-depends-on-unapproved-scope",
+      "code": "MASTERY_EVIDENCE_DEPENDS_ON_UNAPPROVED_SCOPE",
+      "criterionId": "NF-ALN-3",
+      "severity": "BLOCKING",
+      "statement": "Three of the six exit items use millions, which the package records as an unapproved LiberiaLearn scope extension. If the extension is declined, each objective is left with one end-of-lesson item, which is too thin a basis for a mastery decision.",
+      "recommendation": "Ask the curriculum owner for the scope decision before item review. In the meantime, add constructed-response mastery tasks within MOE scope (proposed pm-c1, pm-c2, pm-r1) so mastery evidence survives either decision.",
+      "evidence": [
+        { "document": "CANDIDATE", "pointer": "/scenes/0/content/body", "quote": "from the millions down to the thousandths" },
+        { "document": "ASSESSMENT", "pointer": "/items/0/item/prompt", "quote": "What is the value of the 6 in 3,462,105?" },
+        { "document": "ASSESSMENT", "pointer": "/items/2/item/prompt", "quote": "Which number is seven million, three hundred five thousand, forty?" },
+        { "document": "ASSESSMENT", "pointer": "/items/5/item/prompt", "quote": "Which number is greater: 6,009,999 or 6,010,000?" }
+      ],
+      "confidence": 0.8
+    },
+    {
+      "id": "ai-m5-warm-up-is-not-a-diagnostic",
+      "code": "WARM_UP_NOT_DIAGNOSTIC",
+      "criterionId": "NF-PRG-1",
+      "severity": "MINOR",
+      "statement": "The warm-up is the natural place to check prerequisites, but it is fully scaffolded and unmarked, has two items, does not check the multiply-by-10, 100 and 1,000 prerequisite, and gives no route for a learner who answers wrongly.",
+      "recommendation": "Turn the warm-up into a three-item diagnostic, one item per prerequisite, each with a fallback route (proposed pm-d0 to pm-d2). It can stay unmarked for the learner while still informing the teacher.",
+      "evidence": [
+        { "document": "CANDIDATE", "pointer": "/scenes/2/content/body", "quote": "These answers are not marked." },
+        { "document": "CANDIDATE", "pointer": "/prerequisiteAssumptions/2", "quote": "Can multiply a single digit by 10, 100 and 1,000." }
+      ],
+      "confidence": 0.85
+    }
+  ]
+}

@@ -1,0 +1,311 @@
+{
+  "notice": "Read-only evidence of a live legacy lesson revision. Lesson content only: no learner, user, submission or school identifiers. Nothing here is approved for reuse; see legacy-comparison.md in the review package.",
+  "extraction": {
+    "script": "scripts/extract-g7-legacy-revisions.ts",
+    "target": "LiberiaLearn production database (DATABASE_URL), single READ ONLY transaction",
+    "transactionReadOnly": "on",
+    "capturedAt": "2026-10-15T19:09:16.876Z",
+    "excludedFields": [
+      "editedById",
+      "schoolId",
+      "authorUserId",
+      "embedding",
+      "thumbnail*",
+      "image*"
+    ]
+  },
+  "requested": {
+    "contentId": "math-g7-1-number-sense-and-place-value-foundations",
+    "revisionId": "cmss8t4hz00unvo54epnfst66"
+  },
+  "verification": {
+    "revisionFound": true,
+    "revisionBelongsToRow": true,
+    "isCurrentRevision": true,
+    "revisionCount": 1,
+    "storedContentHash": "93cc90030c242b39cfbf9a86095802d967a7fd2dbcb6af7b9f7227f312fc540b",
+    "recomputedContentHash": "93cc90030c242b39cfbf9a86095802d967a7fd2dbcb6af7b9f7227f312fc540b",
+    "contentHashMatches": true,
+    "liveRowEqualsRevision": true
+  },
+  "content": {
+    "id": "cmoeaemvu01i6vor4u3zch5hq",
+    "contentId": "math-g7-1-number-sense-and-place-value-foundations",
+    "title": "Number Sense and Place Value: Foundations",
+    "grade": 7,
+    "subject": "MATH",
+    "contentType": "lesson",
+    "status": "APPROVED",
+    "version": "ncf-2026.1",
+    "moeAlignments": {
+      "method": "keyword",
+      "alignedAt": "2026-07-25T05:01:13.115Z",
+      "contentId": "cmoeaemvu01i6vor4u3zch5hq",
+      "standards": [
+        {
+          "code": "LR-MATH-G7_9-04",
+          "confidence": "low",
+          "description": "Apply the Pythagorean theorem and basic trigonometric ratios"
+        }
+      ]
+    },
+    "waecSyllabusTopics": [],
+    "hash": "e2725195dba7c32fa0b755508273589087560d3f",
+    "createdAt": "2026-04-25T11:59:51.643Z",
+    "updatedAt": "2026-07-25T05:01:13.160Z",
+    "unitId": "math-g7-1-number-sense-and-place-value",
+    "orderInUnit": 1,
+    "lessonType": "core",
+    "teacherCreated": false,
+    "isHero": false,
+    "versionId": null,
+    "learningObjectives": [],
+    "visibility": "class_only",
+    "parentLessonId": null,
+    "lessonVersion": 1,
+    "publishedAt": null,
+    "derivedFromContentId": null,
+    "hasSchoolScope": false,
+    "hasEditor": false
+  },
+  "payloadMetadata": {
+    "metadata": {
+      "term": null,
+      "model": "template-engine",
+      "topic": "Number Sense and Place Value",
+      "locale": "LR",
+      "source": "national_curriculum_generation",
+      "sessionId": "prod-generate-1777117328098",
+      "unitTitle": "Number Sense and Place Value",
+      "catalogBand": "full_year",
+      "generatedAt": "2026-04-25T11:59:50.619Z",
+      "estimatedCostUsd": 0,
+      "qualityValidated": true,
+      "generationBatchId": "ncf-math-g7-1777118390619",
+      "totalLessonTarget": 40
+    },
+    "difficulty": "intro",
+    "primaryConcept": "number_sense",
+    "nextConcepts": [
+      "operations"
+    ],
+    "prerequisites": [
+      "math_readiness"
+    ],
+    "approvalStatus": "pending_approval",
+    "approvalWorkflow": [
+      "generated",
+      "validated",
+      "APPROVED",
+      "published"
+    ],
+    "generationStage": "generated",
+    "contentCompleteness": {
+      "extension": true,
+      "objective": true,
+      "assessment": true,
+      "explanation": true,
+      "remediation": true,
+      "guidedPractice": true,
+      "workedExamples": true,
+      "guardianSupport": true,
+      "independentPractice": true
+    }
+  },
+  "provenance": {
+    "id": "cmss8t4fo00ulvo54k7gexkpp",
+    "curriculumContentId": "cmoeaemvu01i6vor4u3zch5hq",
+    "provenanceCompleteness": "UNVERIFIED",
+    "lifecycleState": "APPROVED",
+    "currentRevisionId": "cmss8t4hz00unvo54epnfst66",
+    "createdAt": "2026-08-14T01:02:44.149Z",
+    "updatedAt": "2026-08-14T01:02:44.324Z"
+  },
+  "revisions": [
+    {
+      "id": "cmss8t4hz00unvo54epnfst66",
+      "provenanceId": "cmss8t4fo00ulvo54k7gexkpp",
+      "sequence": 1,
+      "revisionKind": "BACKFILL_SNAPSHOT",
+      "originKind": "LEGACY_UNKNOWN",
+      "snapshotSchemaVersion": 1,
+      "contentHash": "93cc90030c242b39cfbf9a86095802d967a7fd2dbcb6af7b9f7227f312fc540b",
+      "generatorName": null,
+      "generatorVersion": null,
+      "aiProvider": null,
+      "aiModel": null,
+      "generatedAt": null,
+      "primaryPromptKey": null,
+      "primaryPromptVersion": null,
+      "sourceRevisionId": null,
+      "backfillRunId": "p2a-production-backfill-20260814",
+      "createdAt": "2026-08-14T01:02:44.231Z",
+      "hasAuthor": false
+    }
+  ],
+  "revision": {
+    "id": "cmss8t4hz00unvo54epnfst66",
+    "snapshotSchemaVersion": 1,
+    "contentHash": "93cc90030c242b39cfbf9a86095802d967a7fd2dbcb6af7b9f7227f312fc540b",
+    "contentSnapshot": {
+      "delivery": {
+        "body": "## Objective\nStudents in Grade 7 will explain and apply number sense and place value ideas using age-appropriate math tasks.\n\n## Teacher Explanation\nThe teacher introduces the core concept from number sense and place value using direct modeling, Liberia-relevant examples, key vocabulary, and a short understanding check before independent work.\n\n## Worked Example\nModel one complete math example connected to number sense and place value, naming each step clearly and explaining why the answer is valid.\n\n## Guided Practice\nGuide learners through one shared task and one partner task that apply number sense and place value with teacher prompts, correction, and quick oral checks.\n\n## Independent Practice\nLearners complete individual work that shows whether they can apply number sense and place value without copying the model, then explain one answer in writing or orally.\n\n## Assessment\nUse a short exit task with two checks: one recall item and one application item aligned to the lesson objective.\n\n## Remediation\nRe-teach the main step with simpler examples, sentence frames, and one scaffolded follow-up task for learners who need more support.\n\n## Extension\nAsk confident learners to solve a slightly more complex version, justify their reasoning, or connect the idea to a real-world context.\n\n## Guardian Support\nAsk the learner to explain the main idea from today's lesson and complete one short home discussion or practice task using ordinary household materials when possible.\n\n## Metadata\nGrade 7 MATH unit \"Number Sense and Place Value\" lesson \"Number Sense and Place Value: Foundations\".",
+        "bodyBlock": "## Day 1\nStudents in Grade 7 will explain and apply number sense and place value ideas using age-appropriate math tasks.\nThe teacher introduces the core concept from number sense and place value using direct modeling, Liberia-relevant examples, key vocabulary, and a short understanding check before independent work.\n\n## Day 2\nGuide learners through one shared task and one partner task that apply number sense and place value with teacher prompts, correction, and quick oral checks.\nUse a short exit task with two checks: one recall item and one application item aligned to the lesson objective.\n\n## Home Support\nAsk the learner to explain the main idea from today's lesson and complete one short home discussion or practice task using ordinary household materials when possible.",
+        "bodyStandard": "## Objective\nStudents in Grade 7 will explain and apply number sense and place value ideas using age-appropriate math tasks.\n\n## Teacher Explanation\nThe teacher introduces the core concept from number sense and place value using direct modeling, Liberia-relevant examples, key vocabulary, and a short understanding check before independent work.\n\n## Worked Example\nModel one complete math example connected to number sense and place value, naming each step clearly and explaining why the answer is valid.\n\n## Guided Practice\nGuide learners through one shared task and one partner task that apply number sense and place value with teacher prompts, correction, and quick oral checks.\n\n## Independent Practice\nLearners complete individual work that shows whether they can apply number sense and place value without copying the model, then explain one answer in writing or orally.\n\n## Assessment\nUse a short exit task with two checks: one recall item and one application item aligned to the lesson objective.\n\n## Remediation\nRe-teach the main step with simpler examples, sentence frames, and one scaffolded follow-up task for learners who need more support.\n\n## Extension\nAsk confident learners to solve a slightly more complex version, justify their reasoning, or connect the idea to a real-world context.\n\n## Guardian Support\nAsk the learner to explain the main idea from today's lesson and complete one short home discussion or practice task using ordinary household materials when possible.\n\n## Metadata\nGrade 7 MATH unit \"Number Sense and Place Value\" lesson \"Number Sense and Place Value: Foundations\".",
+        "lessonFormat": "either",
+        "legacyContent": null,
+        "lessonContent": null,
+        "deliveryProfile": null,
+        "estimatedMinutes": null
+      },
+      "identity": {
+        "grade": 7,
+        "title": "Number Sense and Place Value: Foundations",
+        "subject": "MATH",
+        "contentType": "lesson",
+        "description": null
+      },
+      "placement": {
+        "unitId": "math-g7-1-number-sense-and-place-value",
+        "lessonType": "core",
+        "orderInUnit": 1
+      },
+      "resources": {
+        "labs": [
+          {
+            "type": "guided_walkthrough",
+            "grade": 7,
+            "title": "Understanding Place Value with Local Materials",
+            "subject": "MATH",
+            "procedure": [
+              {
+                "stepNumber": 1,
+                "instruction": "Gather various materials: leaves to represent tens, stones for units, and cassava for hundreds. Each group should have at least 10 leaves, 20 stones, and 5 pieces of cassava.",
+                "teacherNote": "Guide students in categorizing materials to represent different place values.",
+                "durationMinutes": 10
+              },
+              {
+                "stepNumber": 2,
+                "instruction": "Using the materials, create a number representation of their choice. For example, represent the number 123 with 1 cassava (hundred), 2 leaves (tens), and 3 stones (units).",
+                "teacherNote": "Encourage creativity and ensure that students understand how to represent each digit.",
+                "durationMinutes": 10
+              },
+              {
+                "stepNumber": 3,
+                "instruction": "In their notebooks, students will write down the number they represented along with the corresponding place values and the materials used.",
+                "teacherNote": "Walk around to assist students and check for understanding of place value concepts.",
+                "durationMinutes": 5
+              }
+            ],
+            "safetyNotes": "Ensure that students are careful while handling stones to avoid injury.",
+            "labObjective": "Students will model numbers using local materials to understand place value.",
+            "offlineCapable": true,
+            "durationMinutes": 25,
+            "materialsNeeded": [
+              "leaves",
+              "stones",
+              "cassava",
+              "bottle caps",
+              "notebooks",
+              "pencils",
+              "cups"
+            ],
+            "observationForm": [
+              {
+                "field": "Number Representation",
+                "prompt": "What number did you represent?",
+                "choices": null,
+                "inputType": "text"
+              },
+              {
+                "field": "Materials Used",
+                "prompt": "List the materials you used to represent this number.",
+                "choices": null,
+                "inputType": "text"
+              }
+            ],
+            "analysisQuestions": [
+              {
+                "question": "How does the number 345 break down into hundreds, tens, and units?",
+                "scoringRubric": "1 point for each correct place value identification.",
+                "expectedAnswer": "3 hundreds, 4 tens, and 5 units."
+              },
+              {
+                "question": "Why is understanding place value important in math?",
+                "scoringRubric": "Full points for a clear explanation, partial points for incomplete answers.",
+                "expectedAnswer": "It helps in understanding the value of numbers and performing arithmetic operations."
+              }
+            ],
+            "connectionToLesson": "This lab activity reinforces the concepts of number sense and place value through hands-on modeling with local materials, aligning with the lesson objectives.",
+            "virtualAlternative": null
+          }
+        ],
+        "textbook": null,
+        "heroImage": null,
+        "resources": null,
+        "slideDeckSpecs": [],
+        "audioScriptSpecs": [],
+        "inlineIllustrations": []
+      },
+      "standards": {
+        "moeAlignments": {
+          "method": "keyword",
+          "alignedAt": "2026-07-25T05:01:13.115Z",
+          "contentId": "cmoeaemvu01i6vor4u3zch5hq",
+          "standards": [
+            {
+              "code": "LR-MATH-G7_9-04",
+              "confidence": "low",
+              "description": "Apply the Pythagorean theorem and basic trigonometric ratios"
+            }
+          ]
+        },
+        "waecSyllabusTopics": []
+      },
+      "assessment": {
+        "quiz": null,
+        "rubric": null,
+        "assessment": "Use a short exit task with two checks: one recall item and one application item aligned to the lesson objective.",
+        "problemSets": [],
+        "masteryChecks": null,
+        "assessmentQuestions": []
+      },
+      "instruction": {
+        "extension": "Ask confident learners to solve a slightly more complex version, justify their reasoning, or connect the idea to a real-world context.",
+        "activities": [
+          "Teacher modeling for number sense and place value",
+          "Guided pair practice on number sense and place value",
+          "Independent learner check aligned to the objective"
+        ],
+        "objectives": [
+          "Students in Grade 7 will explain and apply number sense and place value ideas using age-appropriate math tasks."
+        ],
+        "remediation": "Re-teach the main step with simpler examples, sentence frames, and one scaffolded follow-up task for learners who need more support.",
+        "teacherNotes": null,
+        "guidedPractice": [
+          "Guide learners through one shared task and one partner task that apply number sense and place value with teacher prompts, correction, and quick oral checks."
+        ],
+        "materialsNotes": null,
+        "workedExamples": [
+          "Model one complete math example connected to number sense and place value, naming each step clearly and explaining why the answer is valid."
+        ],
+        "guardianSupport": "Ask the learner to explain the main idea from today's lesson and complete one short home discussion or practice task using ordinary household materials when possible.",
+        "takeawaySummary": null,
+        "teacherExplanation": null,
+        "authoringObjectives": [],
+        "independentPractice": [
+          "Learners complete individual work that shows whether they can apply number sense and place value without copying the model, then explain one answer in writing or orally."
+        ],
+        "realWorldApplication": null
+      },
+      "curriculumPlan": {
+        "term": null,
+        "units": [],
+        "weeks": [],
+        "lessons": [],
+        "termPlan": null,
+        "unitTitle": "Number Sense and Place Value"
+      }
+    }
+  }
+}

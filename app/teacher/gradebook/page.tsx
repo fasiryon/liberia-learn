@@ -77,7 +77,7 @@ export default function GradebookPage() {
   const pendingAiCount = useMemo(
     () =>
       (data?.submissions ?? []).filter(
-        (s) => s.aiGrade !== null && !s.teacherApproved && !s.autoReleasedAt,
+        (s) => s.aiGrade !== null && !s.teacherApproved,
       ).length,
     [data?.submissions],
   );
@@ -86,7 +86,7 @@ export default function GradebookPage() {
     if (!pendingAiOnly) return data?.assignments ?? [];
     const aidsWithPending = new Set(
       (data?.submissions ?? [])
-        .filter((s) => s.aiGrade !== null && !s.teacherApproved && !s.autoReleasedAt)
+        .filter((s) => s.aiGrade !== null && !s.teacherApproved)
         .map((s) => s.assignmentId),
     );
     return (data?.assignments ?? []).filter((a) => aidsWithPending.has(a.id));
@@ -229,7 +229,7 @@ export default function GradebookPage() {
                       {assignments.map((a) => {
                         const cell = cellMap.get(`${student.id}:${a.id}`) ?? null;
                         const score = cell?.grade ?? null;
-                        const hasPendingAI = cell ? cell.aiGrade !== null && !cell.teacherApproved && !cell.autoReleasedAt : false;
+                        const hasPendingAI = cell ? cell.aiGrade !== null && !cell.teacherApproved : false;
                         return (
                           <td key={a.id} className={`px-3 py-3 text-center font-semibold ${scoreColor(score)}`}>
                             <span className="inline-flex items-center justify-center gap-1">

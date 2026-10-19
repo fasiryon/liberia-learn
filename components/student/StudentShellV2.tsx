@@ -8,6 +8,7 @@ import { activeDestination, type PrimaryDestination } from "@/lib/learner-experi
 import { InteractiveButton } from "@/components/ui/InteractiveButton";
 import { LanguageSelector } from "@/components/LanguageSelector";
 import { WAEC_MIN_GRADE } from "@/lib/waec/eligibility";
+import "./StudentDashboard.css";
 
 export type StudentIdentity = { name: string; grade: number | null; userId: string; schoolId: string | null };
 const Identity = createContext<StudentIdentity>({ name: "Learner", grade: null, userId: "", schoolId: null });
