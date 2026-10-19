@@ -204,7 +204,7 @@ export function appendAssistance(ledger: AssistanceLedger, input: { scope: Assis
     if (payloadDigest(prior.scope, prior.event) === payloadDigest(ledger.scope, event)) {
       return Object.freeze({ ledger, appended: false, conflict: false, audit: null });
     }
-    if (finalizedEntry(ledger)) throw new Error("assistance_ledger_finalized");
+    if (assistanceRecordIsFinal(ledger)) throw new Error("assistance_ledger_finalized");
     const conflict: AssistanceLedgerEvent = { type: "CONFLICT", idempotencyKey, priorEntryHash: prior.entryHash, rejectedPayloadDigest: payloadDigest(ledger.scope, event) };
     const conflictKey = sha256(`${idempotencyKey}:conflict:${conflict.rejectedPayloadDigest}`);
     // The same conflicting payload re-delivered (e.g. a retried sync batch) is already on record.
@@ -221,7 +221,7 @@ export function appendAssistance(ledger: AssistanceLedger, input: { scope: Assis
     return Object.freeze({ ledger: next, appended: true, conflict: true, audit: auditFor(next, next.entries[next.entries.length - 1]) });
   }
 
-  if (finalizedEntry(ledger)) throw new Error("assistance_ledger_finalized");
+  if (assistanceRecordIsFinal(ledger)) throw new Error("assistance_ledger_finalized");
   const openEntry = openedEntry(ledger);
   const sealEntry = sealedEntry(ledger);
   let occurredAt = input.recordedAt;

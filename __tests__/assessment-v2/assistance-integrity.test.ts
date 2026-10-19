@@ -213,6 +213,10 @@ describe("F1: client declarations cannot prove independence", () => {
     expect(() => appendAssistance(ledger, { scope: s, recordedAt: T(1), event: { type: "FINALIZED", reason: "OFFLINE_SYNC_CLOSED" } })).toThrow("assistance_ledger_not_sealed");
     ledger = appendAssistance(ledger, { scope: s, recordedAt: T(10), event: { type: "SEALED", reason: "SUBMITTED" } }).ledger;
     expect(classifyAssistanceForItem(ledger, "i-single").status).toBe("INDEPENDENT");
+    // Final means final: not even a FINALIZED event can move the head of a sealed online-only record.
+    expect(() => appendAssistance(ledger, { scope: s, recordedAt: T(11), event: { type: "FINALIZED", reason: "OFFLINE_SYNC_CLOSED" } })).toThrow("assistance_ledger_finalized");
+    expect(() => appendAssistance(ledger, { scope: s, recordedAt: T(11), event: { type: "ASSISTANCE", kind: "TUTOR_TURN", itemId: null, provenance: { emitter: "SERVER_TUTOR_ROUTE", tutorInteractionId: "late" } } })).toThrow("assistance_ledger_finalized");
+    expect(appendAssistance(ledger, { scope: s, recordedAt: T(12), event: { type: "SEALED", reason: "SUBMITTED" } }).appended).toBe(false);
   });
 
   it("a conflicting offline delivery with an invalid capture time is refused", () => {
