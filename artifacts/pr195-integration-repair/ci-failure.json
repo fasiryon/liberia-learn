@@ -1,0 +1,19 @@
+{
+  "head": "de39b68b7b994b6a9b8b8d7c6999a5a19dcf716c",
+  "ciMergeRef": "ea6ace0d64d4c759ceeb10c9d52f6e7ddd864561",
+  "runId": 39456117273,
+  "jobId": 118743322238,
+  "url": "https://github.com/fasiryon/liberia-learn/actions/runs/39456117273",
+  "conclusion": "failure",
+  "typecheck": "success",
+  "tests": {"passed": 7987, "failed": 1, "skipped": 11, "filesPassed": 797, "filesFailed": 1, "filesSkipped": 2, "durationSeconds": 225.51},
+  "failedTest": "__tests__/curriculum-excellence/g7-v030-integration.test.ts: only reviewer-side code reads the definitions; no scorer, mastery writer or release uses them",
+  "cause": "Generic assessment-definitions filename scan also identifies the two legitimate modernization review package modules; G7 namespace readers remain unchanged.",
+  "localReproduction": {"failed": 1, "passed": 11, "exitCode": 1},
+  "repairVerification": {"passed": 309, "filesPassed": 24, "durationSeconds": 37.34, "exitCode": 0},
+  "downstreamBuildAndBrowserSteps": "SKIPPED_AFTER_TEST_FAILURE",
+  "routeAuditLimitation": "Default depth-1 checkout lacks pinned legacy baseline; log reports zero changed routes after Git errors. Repair fetches full history.",
+  "dependencyAuditAtInstall": {"total": 62, "low": 1, "moderate": 36, "high": 21, "critical": 4, "triage": "NOT_PERFORMED_DEPENDENCIES_UNCHANGED"},
+  "vercelStatusOnThisHead": "success",
+  "academicStatus": "BLOCKED FOR ACADEMIC APPROVAL"
+}

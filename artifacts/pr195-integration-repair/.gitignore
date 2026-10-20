@@ -8,3 +8,6 @@
 !affected-tests.log
 !changed-validation.log
 !repair-changed-validation.log
+!ci-repair-tests.log
+!ci-repair-validation.log
+!ci-failure.json

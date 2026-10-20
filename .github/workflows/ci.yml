@@ -20,6 +20,9 @@ jobs:
       EMAIL_FROM: "test@test.com"
     steps:
       - uses: actions/checkout@v4
+        with:
+          # Route-policy and provenance checks compare against pinned historical commits.
+          fetch-depth: 0
       - name: Guard _gold artifacts
         run: |
           if git ls-files | grep -E '(^|/)_gold/'; then
