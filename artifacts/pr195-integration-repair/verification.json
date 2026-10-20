@@ -1,0 +1,117 @@
+{
+  "startedAt": "2026-10-20T15:56:04.397Z",
+  "sequential": true,
+  "steps": [
+    {
+      "name": "inventory",
+      "args": [
+        "C:\\liberia-learn\\.task-worktrees\\pr195-integration-repair\\artifacts\\pr195-integration-repair\\inventory.generated.cjs",
+        "C:/liberia-learn/.worktrees/library-modernization-v1/artifacts/library-modernization-v1/extract",
+        "artifacts/pr195-integration-repair/recomputed-inventory.json"
+      ],
+      "startedAt": "2026-10-20T15:56:04.718Z",
+      "finishedAt": "2026-10-20T15:56:28.660Z",
+      "exitCode": 0
+    },
+    {
+      "name": "ledger",
+      "args": [
+        "C:\\liberia-learn\\.task-worktrees\\pr195-integration-repair\\artifacts\\pr195-integration-repair\\ledger.generated.cjs"
+      ],
+      "startedAt": "2026-10-20T15:56:28.697Z",
+      "finishedAt": "2026-10-20T15:56:29.011Z",
+      "exitCode": 0
+    },
+    {
+      "name": "ledger-diff",
+      "args": [
+        "C:\\liberia-learn\\.task-worktrees\\pr195-integration-repair\\artifacts\\pr195-integration-repair\\ledger-diff.generated.cjs",
+        "origin/main"
+      ],
+      "startedAt": "2026-10-20T15:56:29.052Z",
+      "finishedAt": "2026-10-20T15:56:29.541Z",
+      "exitCode": 0
+    },
+    {
+      "name": "release-provenance",
+      "args": [
+        "C:\\liberia-learn\\.task-worktrees\\pr195-integration-repair\\artifacts\\pr195-integration-repair\\release-provenance.generated.cjs"
+      ],
+      "startedAt": "2026-10-20T15:56:29.564Z",
+      "finishedAt": "2026-10-20T15:56:29.813Z",
+      "exitCode": 0
+    },
+    {
+      "name": "source-bindings",
+      "args": [
+        "C:\\liberia-learn\\.task-worktrees\\pr195-integration-repair\\artifacts\\pr195-integration-repair\\source-bindings.generated.cjs",
+        "C:/liberia-learn/.worktrees/library-modernization-v1/artifacts/library-modernization-v1/extract",
+        "--check"
+      ],
+      "startedAt": "2026-10-20T15:56:29.854Z",
+      "finishedAt": "2026-10-20T15:56:30.845Z",
+      "exitCode": 0
+    },
+    {
+      "name": "contract-render",
+      "args": [
+        "C:\\liberia-learn\\.task-worktrees\\pr195-integration-repair\\artifacts\\pr195-integration-repair\\contract-render.generated.cjs",
+        "--check"
+      ],
+      "startedAt": "2026-10-20T15:56:30.913Z",
+      "finishedAt": "2026-10-20T15:56:31.756Z",
+      "exitCode": 0
+    },
+    {
+      "name": "contract-manifest",
+      "args": [
+        "C:\\liberia-learn\\.task-worktrees\\pr195-integration-repair\\artifacts\\pr195-integration-repair\\contract-manifest.generated.cjs",
+        "--check"
+      ],
+      "startedAt": "2026-10-20T15:56:31.910Z",
+      "finishedAt": "2026-10-20T15:56:32.349Z",
+      "exitCode": 0
+    },
+    {
+      "name": "affected-tests",
+      "args": [
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "__tests__/library-modernization",
+        "__tests__/curriculum-v2",
+        "__tests__/security",
+        "__tests__/learner-experience",
+        "__tests__/assessment-v2",
+        "__tests__/learning-authority",
+        "__tests__/curriculum/p2a-provenance-primitives.test.ts",
+        "--maxWorkers=1",
+        "--no-file-parallelism"
+      ],
+      "startedAt": "2026-10-20T15:56:32.351Z",
+      "finishedAt": "2026-10-20T15:59:37.854Z",
+      "exitCode": 0
+    },
+    {
+      "name": "typecheck",
+      "args": [
+        "node_modules/typescript/bin/tsc",
+        "--noEmit"
+      ],
+      "startedAt": "2026-10-20T15:59:37.899Z",
+      "finishedAt": "2026-10-20T16:04:24.449Z",
+      "exitCode": 0
+    },
+    {
+      "name": "changed-validation",
+      "args": [
+        "scripts/validate-changed.mjs",
+        "--base",
+        "origin/main",
+        "--no-types"
+      ],
+      "startedAt": "2026-10-20T16:04:24.505Z",
+      "finishedAt": "2026-10-20T16:06:33.596Z",
+      "exitCode": 0
+    }
+  ]
+}

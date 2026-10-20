@@ -1,0 +1,21 @@
+{
+  "startedAt": "2026-10-20T15:26:44.112Z",
+  "workerCount": 1,
+  "heapMiB": 4096,
+  "sequential": true,
+  "database": "DUMMY_LOOPBACK_NO_PRODUCTION",
+  "steps": [
+    {
+      "name": "prisma-generate",
+      "startedAt": "2026-10-20T15:26:44.130Z",
+      "finishedAt": "2026-10-20T15:27:08.518Z",
+      "exitCode": 0
+    },
+    {
+      "name": "production-build",
+      "startedAt": "2026-10-20T15:27:08.521Z",
+      "finishedAt": "2026-10-20T15:42:02.191Z",
+      "exitCode": 0
+    }
+  ]
+}

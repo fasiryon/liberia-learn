@@ -1,0 +1,261 @@
+{
+  "reviewKind": "AI_ADVISORY_NOT_QUALIFIED_HUMAN_REVIEW",
+  "auditDate": "2026-10-20",
+  "sourceSha256": "c2446e6e7795f2ae8ee309c8d6b0421485a3342afd17b3a9e05b192ffbe424d2",
+  "counts": {
+    "P0": 0,
+    "P1": 12,
+    "P2": 29,
+    "total": 41
+  },
+  "findings": [
+    {
+      "id": "F01-01",
+      "lesson": "ft01 wk_mca7a_fri_p4",
+      "severity": "P1",
+      "dimension": "academic-accuracy / accessibility"
+    },
+    {
+      "id": "F01-02",
+      "lesson": "ft01 wk_mca7a_fri_p4",
+      "severity": "P1",
+      "dimension": "academic-accuracy / assessment-validity"
+    },
+    {
+      "id": "F01-03",
+      "lesson": "ft01 wk_mca7a_fri_p4",
+      "severity": "P1",
+      "dimension": "pedagogy / lab"
+    },
+    {
+      "id": "F01-04",
+      "lesson": "ft01 wk_mca7a_fri_p4",
+      "severity": "P1",
+      "dimension": "pedagogy"
+    },
+    {
+      "id": "F01-05",
+      "lesson": "ft01 wk_mca7a_fri_p4",
+      "severity": "P1",
+      "dimension": "inclusion/accessibility"
+    },
+    {
+      "id": "F01-06",
+      "lesson": "ft01 wk_mca7a_fri_p4",
+      "severity": "P2",
+      "dimension": "academic-accuracy"
+    },
+    {
+      "id": "F01-07",
+      "lesson": "ft01 wk_mca7a_fri_p4",
+      "severity": "P2",
+      "dimension": "academic-accuracy"
+    },
+    {
+      "id": "F01-08",
+      "lesson": "ft01 wk_mca7a_fri_p4",
+      "severity": "P2",
+      "dimension": "assessment-validity"
+    },
+    {
+      "id": "F01-09",
+      "lesson": "ft01 wk_mca7a_fri_p4",
+      "severity": "P2",
+      "dimension": "assessment-validity"
+    },
+    {
+      "id": "F01-10",
+      "lesson": "ft01 wk_mca7a_fri_p4",
+      "severity": "P2",
+      "dimension": "pedagogy"
+    },
+    {
+      "id": "F01-11",
+      "lesson": "ft01 wk_mca7a_fri_p4",
+      "severity": "P2",
+      "dimension": "pedagogy"
+    },
+    {
+      "id": "F01-12",
+      "lesson": "ft01 wk_mca7a_fri_p4",
+      "severity": "P2",
+      "dimension": "assessment-validity"
+    },
+    {
+      "id": "F01-13",
+      "lesson": "ft01 wk_mca7a_fri_p4",
+      "severity": "P2",
+      "dimension": "assessment-validity (transfer)"
+    },
+    {
+      "id": "F01-14",
+      "lesson": "ft01 wk_mca7a_fri_p4",
+      "severity": "P2",
+      "dimension": "inclusion/reading level"
+    },
+    {
+      "id": "F01-15",
+      "lesson": "ft01 wk_mca7a_fri_p4",
+      "severity": "P2",
+      "dimension": "media legibility"
+    },
+    {
+      "id": "F01-16",
+      "lesson": "ft01 wk_mca7a_fri_p4",
+      "severity": "P2",
+      "dimension": "assessment-validity (retention)"
+    },
+    {
+      "id": "F04-01",
+      "lesson": "ft04 wk_mca7a_fri_p3",
+      "severity": "P1",
+      "dimension": "academic-accuracy (lab) / misconception risk"
+    },
+    {
+      "id": "F04-02",
+      "lesson": "ft04 wk_mca7a_fri_p3",
+      "severity": "P2",
+      "dimension": "academic-accuracy"
+    },
+    {
+      "id": "F04-03",
+      "lesson": "ft04 wk_mca7a_fri_p3",
+      "severity": "P2",
+      "dimension": "pedagogy / scope"
+    },
+    {
+      "id": "F04-04",
+      "lesson": "ft04 wk_mca7a_fri_p3",
+      "severity": "P2",
+      "dimension": "feasibility"
+    },
+    {
+      "id": "F04-05",
+      "lesson": "ft04 wk_mca7a_fri_p3",
+      "severity": "P2",
+      "dimension": "assessment-validity"
+    },
+    {
+      "id": "F04-06",
+      "lesson": "ft04 wk_mca7a_fri_p3",
+      "severity": "P2",
+      "dimension": "assessment-validity (retention)"
+    },
+    {
+      "id": "F04-07",
+      "lesson": "ft04 wk_mca7a_fri_p3",
+      "severity": "P2",
+      "dimension": "assessment coverage"
+    },
+    {
+      "id": "F04-08",
+      "lesson": "ft04 wk_mca7a_fri_p3",
+      "severity": "P2",
+      "dimension": "Liberian context"
+    },
+    {
+      "id": "F04-09",
+      "lesson": "ft04 wk_mca7a_fri_p3",
+      "severity": "P2",
+      "dimension": "inclusion/reading level"
+    },
+    {
+      "id": "F04-10",
+      "lesson": "ft04 wk_mca7a_fri_p3",
+      "severity": "P2",
+      "dimension": "transfer validity"
+    },
+    {
+      "id": "F07-01",
+      "lesson": "ft07 lesson_mca_1",
+      "severity": "P1",
+      "dimension": "assessment-validity (retention / leakage)"
+    },
+    {
+      "id": "F07-02",
+      "lesson": "ft07 lesson_mca_1",
+      "severity": "P1",
+      "dimension": "pedagogy / media accuracy"
+    },
+    {
+      "id": "F07-03",
+      "lesson": "ft07 lesson_mca_1",
+      "severity": "P1",
+      "dimension": "lab causal correctness"
+    },
+    {
+      "id": "F07-04",
+      "lesson": "ft07 lesson_mca_1",
+      "severity": "P2",
+      "dimension": "lab specification"
+    },
+    {
+      "id": "F07-05",
+      "lesson": "ft07 lesson_mca_1",
+      "severity": "P2",
+      "dimension": "pedagogy (fading)"
+    },
+    {
+      "id": "F07-06",
+      "lesson": "ft07 lesson_mca_1",
+      "severity": "P2",
+      "dimension": "pedagogy (division scope)"
+    },
+    {
+      "id": "F07-07",
+      "lesson": "ft07 lesson_mca_1",
+      "severity": "P2",
+      "dimension": "pacing"
+    },
+    {
+      "id": "F07-08",
+      "lesson": "ft07 lesson_mca_1",
+      "severity": "P2",
+      "dimension": "assessment-validity (rubric)"
+    },
+    {
+      "id": "F07-09",
+      "lesson": "ft07 lesson_mca_1",
+      "severity": "P2",
+      "dimension": "Liberian context / inclusion"
+    },
+    {
+      "id": "F07-10",
+      "lesson": "ft07 lesson_mca_1",
+      "severity": "P2",
+      "dimension": "standards / grade fit"
+    },
+    {
+      "id": "X-01",
+      "lesson": "all three",
+      "severity": "P1",
+      "dimension": "assessment-validity (distractors)"
+    },
+    {
+      "id": "X-02",
+      "lesson": "all three",
+      "severity": "P1",
+      "dimension": "pedagogy (prerequisite gating) / data integrity"
+    },
+    {
+      "id": "X-03",
+      "lesson": "ft04, ft07 (ft01 advisory)",
+      "severity": "P1",
+      "dimension": "standards alignment"
+    },
+    {
+      "id": "X-04",
+      "lesson": "all three",
+      "severity": "P2",
+      "dimension": "pacing / cognitive load"
+    },
+    {
+      "id": "X-05",
+      "lesson": "all three",
+      "severity": "P2",
+      "dimension": "retention design"
+    }
+  ],
+  "academicStatus": "BLOCKED FOR ACADEMIC APPROVAL",
+  "note": "Protected evidence and recommendations remain in restricted storage. These are advisory findings, not independent human approval."
+}

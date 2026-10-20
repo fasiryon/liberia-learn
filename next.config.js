@@ -2,6 +2,13 @@ const { withSentryConfig } = require("@sentry/nextjs");
 const createNextIntlPlugin = require("next-intl/plugin");
 const withNextIntl = createNextIntlPlugin("./i18n.ts");
 
+// One worker is useful for sequential verification on memory-constrained machines.
+// Keep the normal build unchanged unless the operator explicitly selects it.
+const buildCpus = process.env.LIBERIALEARN_BUILD_CPUS ?? "2";
+if (!["1", "2"].includes(buildCpus)) {
+  throw new Error("LIBERIALEARN_BUILD_CPUS must be 1 or 2");
+}
+
 // Validate required env vars at build time.
 if (process.env.NEXT_PHASE !== "phase-development-server" && process.env.SKIP_ENV_VALIDATION !== "true") {
   const { validateBuildEnv } = require("./lib/validateEnv.shared.js");
@@ -22,7 +29,7 @@ const nextConfig = {
     localPatterns: [],
   },
   experimental: {
-    cpus: 2,
+    cpus: Number(buildCpus),
     serverComponentsExternalPackages: ["@react-pdf/renderer"],
     // Next's automatic output-file-tracing missed lib/agents/prompts/*.md at
     // runtime (readFileSync(new URL(..., import.meta.url)) isn't statically

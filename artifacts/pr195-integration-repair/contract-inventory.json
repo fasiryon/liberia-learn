@@ -1,0 +1,192 @@
+{
+  "checkedAt": "2026-10-20T16:08:38.767Z",
+  "integrationCommit": "a8b0d64cbad7b0b4b1e3efafc624cdac9dffc696",
+  "contractCommit": "ac196397cb13bd6866879c9f5c24503e5195c61d",
+  "factoryCommit": "0d63e6eed755dcd0717019fc2f89742d7d136a29",
+  "contractVersion": "liberialearn-first-ten-modernization-contract/1.0.0",
+  "manifestSha256": "4cb6fb5588f5f840fe8b702f181a051a5838b093c1db82b0ea14d9c4b64ea549",
+  "verifiedContractFiles": 29,
+  "inventoryCapture": {
+    "capturedAt": "2026-10-16T18:44:42.884Z",
+    "lessons": 1105,
+    "extractSha256": "7d5e25cb2a6e2d26e5dc6327c8d2caebeb5882c278d0e9c8c430502de1a7c4ca",
+    "target": "LiberiaLearn production database (DATABASE_URL), single READ ONLY transaction",
+    "transactionReadOnly": "on",
+    "revisionHashMismatches": 0,
+    "liveRowsDifferingFromCurrentRevision": 0
+  },
+  "classificationCounts": {
+    "C_FULL_REPLACEMENT": 51,
+    "B_INSTRUCTIONAL_REDESIGN": 345,
+    "D_GOVERNANCE_HOLD": 353,
+    "A_TARGETED_REPAIR": 356
+  },
+  "factoryContractVersion": "liberialearn-first-ten-modernization-contract/1.0.0",
+  "factorySpecSha256": "648ec61a72e2ddff147444dadae75aff321866cfc660498a792b6a3b48e7a28b",
+  "contractCompatible": true,
+  "lessons": [
+    {
+      "key": "ft01-g7-civics-counties-capitals",
+      "databaseId": "cmm7xs89200e9vo70t6qdlgho",
+      "contentId": "wk_mca7a_fri_p4",
+      "revisionId": "cmss8ptit002jvo540275dfvw",
+      "revisionNumber": 1,
+      "snapshotSha256": "c7a1257c9520d452a623f474bc8c3b7987366a55e6c5a98947fdbeba1f5fb242",
+      "grade": 7,
+      "subject": "CIVICS",
+      "factorySourceMatches": true
+    },
+    {
+      "key": "ft02-g7-civics-founding-of-liberia",
+      "databaseId": "cmm7xs4ez00dzvo703kixnumu",
+      "contentId": "wk_mca7a_wed_p4",
+      "revisionId": "cmss8poxb001fvo544mp6ebop",
+      "revisionNumber": 1,
+      "snapshotSha256": "744f8d1f1dee6ce00e1f98885e56071c698eee61b4e1a284c0884015fbfacf2e",
+      "grade": 7,
+      "subject": "CIVICS",
+      "factorySourceMatches": true
+    },
+    {
+      "key": "ft03-g7-civics-democracy-representation",
+      "databaseId": "cmpzniahk001dvon4p327wkgz",
+      "contentId": "hero-civics-g7-democracy-and-representation-in-liberia",
+      "revisionId": "cmss94h3z03bzvo54hj7c7z8t",
+      "revisionNumber": 1,
+      "snapshotSha256": "cca4566947348a5dca3bf3fb2bf221c74eb6d81999c8b2677b367d24d52e24ef",
+      "grade": 7,
+      "subject": "CIVICS",
+      "factorySourceMatches": true
+    },
+    {
+      "key": "ft04-g7-science-states-of-matter",
+      "databaseId": "cmm7xs7v000e8vo70m7n72h3t",
+      "contentId": "wk_mca7a_fri_p3",
+      "revisionId": "cmss8pt0j002fvo54be8gcrnd",
+      "revisionNumber": 1,
+      "snapshotSha256": "d218a3e17da67bcf7e774bcace1a4080f3b2e6eb9e581d00b987ee3f8025c1e8",
+      "grade": 7,
+      "subject": "SCIENCE",
+      "factorySourceMatches": true
+    },
+    {
+      "key": "ft05-g5-science-photosynthesis",
+      "databaseId": "cmlpe4i9w0002vofgss8b2049",
+      "contentId": "science-g5-plants",
+      "revisionId": "cmss8mp3p0007vo1wqsa620v2",
+      "revisionNumber": 1,
+      "snapshotSha256": "ba219ffc4d788a4f81a9eeecbbad51092f43718139747a481863124cf62dd97e",
+      "grade": 5,
+      "subject": "SCIENCE",
+      "factorySourceMatches": true
+    },
+    {
+      "key": "ft06-g7-math-area-perimeter",
+      "databaseId": "cmpyg7yx6003avoqgrqwkw7id",
+      "contentId": "hero-math-g7-geometry-area-and-perimeter-of-polygons",
+      "revisionId": "cmss9493703a7vo54xxnhxmjy",
+      "revisionNumber": 1,
+      "snapshotSha256": "31416f12b1fc07bd6931f2ad5d1998ac7c56f971c9be7c195adf45e7a6440f5f",
+      "grade": 7,
+      "subject": "MATH",
+      "factorySourceMatches": true
+    },
+    {
+      "key": "ft07-g7-math-fractions",
+      "databaseId": "cmlrkjnow00dmvo7o4cajgquf",
+      "contentId": "lesson_mca_1",
+      "revisionId": "cmss8mpl0000bvo1wos7i1ew4",
+      "revisionNumber": 1,
+      "snapshotSha256": "872222a2435f151d6b215488ad2c3de2cc6c130f57d68fc5d7c6898ad301314f",
+      "grade": 7,
+      "subject": "MATH",
+      "factorySourceMatches": true
+    },
+    {
+      "key": "ft08-g2-math-place-value",
+      "databaseId": "cmpyfel1o000xvopge4q6bboh",
+      "contentId": "hero-math-g2-place-value-tens-and-ones",
+      "revisionId": "cmss946is039nvo54is10v1t4",
+      "revisionNumber": 1,
+      "snapshotSha256": "78437ada896122fbd9c5bd5f866888dbfcccb0d4900c4dc348bb2db5d6c53126",
+      "grade": 2,
+      "subject": "MATH",
+      "factorySourceMatches": true
+    },
+    {
+      "key": "ft09-g7-literacy-main-idea",
+      "databaseId": "cmm7xrzxj00dnvo70sxga6kgz",
+      "contentId": "wk_mca7a_mon_p2",
+      "revisionId": "cmss8pj580003vo54iiun3f8s",
+      "revisionNumber": 1,
+      "snapshotSha256": "d1767e29c8cac4c2f1bf2d25d163d77904fa86652b897ecc8c04f298c6de23f4",
+      "grade": 7,
+      "subject": "LITERACY",
+      "factorySourceMatches": true
+    },
+    {
+      "key": "ft10-g7-english-vocabulary-in-context",
+      "databaseId": "cmpznzads0044von4w059zpm1",
+      "contentId": "hero-english-g7-vocabulary-in-context-reading-west-african-texts",
+      "revisionId": "cmss94i4b03c7vo54sblilk60",
+      "revisionNumber": 1,
+      "snapshotSha256": "d224500e4e008f502f049c142263c19cb2e4530d21be50020bd168afde6b0571",
+      "grade": 7,
+      "subject": "ENGLISH",
+      "factorySourceMatches": true
+    }
+  ],
+  "firstThree": [
+    {
+      "source": {
+        "databaseId": "cmm7xs89200e9vo70t6qdlgho",
+        "contentId": "wk_mca7a_fri_p4",
+        "revisionId": "cmss8ptit002jvo540275dfvw",
+        "revisionNumber": 1,
+        "snapshotSha256": "c7a1257c9520d452a623f474bc8c3b7987366a55e6c5a98947fdbeba1f5fb242"
+      },
+      "inputState": "TEMPLATE",
+      "candidateId": null,
+      "proposedBlueprintId": "candidate-ft01-g7-civics-counties-capitals",
+      "resources": 12,
+      "authoredPayloads": 0,
+      "approved": false,
+      "published": false,
+      "released": false
+    },
+    {
+      "source": {
+        "databaseId": "cmm7xs7v000e8vo70m7n72h3t",
+        "contentId": "wk_mca7a_fri_p3",
+        "revisionId": "cmss8pt0j002fvo54be8gcrnd",
+        "revisionNumber": 1,
+        "snapshotSha256": "d218a3e17da67bcf7e774bcace1a4080f3b2e6eb9e581d00b987ee3f8025c1e8"
+      },
+      "inputState": "TEMPLATE",
+      "candidateId": null,
+      "proposedBlueprintId": "candidate-ft04-g7-science-states-of-matter",
+      "resources": 12,
+      "authoredPayloads": 0,
+      "approved": false,
+      "published": false,
+      "released": false
+    },
+    {
+      "source": {
+        "databaseId": "cmlrkjnow00dmvo7o4cajgquf",
+        "contentId": "lesson_mca_1",
+        "revisionId": "cmss8mpl0000bvo1wos7i1ew4",
+        "revisionNumber": 1,
+        "snapshotSha256": "872222a2435f151d6b215488ad2c3de2cc6c130f57d68fc5d7c6898ad301314f"
+      },
+      "inputState": "TEMPLATE",
+      "candidateId": null,
+      "proposedBlueprintId": "candidate-ft07-g7-math-fractions",
+      "resources": 12,
+      "authoredPayloads": 0,
+      "approved": false,
+      "published": false,
+      "released": false
+    }
+  ]
+}

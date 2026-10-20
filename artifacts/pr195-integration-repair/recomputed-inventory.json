@@ -1,0 +1,29 @@
+{
+  "checkedAt": "2026-10-20T15:56:28.547Z",
+  "basis": "LOCAL_2026_10_16_CAPTURE_NOT_LIVE_ATTESTATION",
+  "extractSha256": "7d5e25cb2a6e2d26e5dc6327c8d2caebeb5882c278d0e9c8c430502de1a7c4ca",
+  "records": 1105,
+  "recomputedRevisionHashes": 1105,
+  "storedLiveEqualityAssertionsMatch": 1105,
+  "counts": {
+    "C_FULL_REPLACEMENT": 51,
+    "B_INSTRUCTIONAL_REDESIGN": 345,
+    "D_GOVERNANCE_HOLD": 353,
+    "A_TARGETED_REPAIR": 356
+  },
+  "differences": [],
+  "nativeCandidates": [
+    {
+      "contentId": "math-g7-1-number-sense-and-place-value-foundations",
+      "evaluatedHash": "c68b1a37f1852458cd3765643a43c59d6cc1d80ea0ef6f0ab9d67b7860d2ca95",
+      "ledgerHash": "c68b1a37f1852458cd3765643a43c59d6cc1d80ea0ef6f0ab9d67b7860d2ca95",
+      "matches": true
+    },
+    {
+      "contentId": "hero-literacy-g7-essay-writing-structure-and-argumentation",
+      "evaluatedHash": "0f275a880588aa8e9451a0ea368bf0fa18bee6cbd826bb1c15d86c4fdc952828",
+      "ledgerHash": "0f275a880588aa8e9451a0ea368bf0fa18bee6cbd826bb1c15d86c4fdc952828",
+      "matches": true
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+*
+!.gitignore
+!sequential-build.json
+!verification.json
+!recomputed-inventory.json
+!contract-inventory.json
+!advisory-audit-index.json
+!affected-tests.log
+!changed-validation.log
+!repair-changed-validation.log

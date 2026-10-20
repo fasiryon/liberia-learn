@@ -30,6 +30,6 @@ const nativeCandidates = G7_NATIVE_LESSONS.map(lesson => {
   return {contentId: lesson.legacy.contentId, evaluatedHash: current.candidateSha256, ledgerHash: recorded?.candidateHash, matches: current.candidateSha256 === recorded?.candidateHash};
 });
 const result = {checkedAt: new Date().toISOString(), basis: 'LOCAL_2026_10_16_CAPTURE_NOT_LIVE_ATTESTATION', extractSha256: manifest.extractSha256, records: records.length, recomputedRevisionHashes: records.length, storedLiveEqualityAssertionsMatch: records.length, counts, differences, nativeCandidates};
-fs.writeFileSync('artifacts/pr195-review/recomputed-inventory.json', JSON.stringify(result, null, 2) + '\n');
+fs.writeFileSync(process.argv[3] || 'artifacts/pr195-review/recomputed-inventory.json', JSON.stringify(result, null, 2) + '\n');
 console.log(JSON.stringify(result));
 if (differences.length) process.exitCode = 1;
