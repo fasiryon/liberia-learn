@@ -1,0 +1,100 @@
+{
+  "schemaVersion": "factory-first-ten-baseline/1.0.0",
+  "sourceCommit": "9628d97f6932ae4c0c399ec15455230e3f76607e",
+  "specPath": "curriculum/modernization/v1/first-ten/spec.json",
+  "specSha256": "9b0128d725b83dc8ca6aaad818530b35c0649297fa7564b8fae8fb53a6d00964",
+  "contractVersion": "liberialearn-first-ten-modernization-contract/0.1.0",
+  "extractSha256": "7d5e25cb2a6e2d26e5dc6327c8d2caebeb5882c278d0e9c8c430502de1a7c4ca",
+  "lessons": [
+    {
+      "key": "ft01-g7-civics-counties-capitals",
+      "databaseId": "cmm7xs89200e9vo70t6qdlgho",
+      "contentId": "wk_mca7a_fri_p4",
+      "revisionId": "cmss8ptit002jvo540275dfvw",
+      "snapshotSha256": "c7a1257c9520d452a623f474bc8c3b7987366a55e6c5a98947fdbeba1f5fb242",
+      "grade": 7,
+      "subject": "CIVICS"
+    },
+    {
+      "key": "ft02-g7-civics-founding-of-liberia",
+      "databaseId": "cmm7xs4ez00dzvo703kixnumu",
+      "contentId": "wk_mca7a_wed_p4",
+      "revisionId": "cmss8poxb001fvo544mp6ebop",
+      "snapshotSha256": "744f8d1f1dee6ce00e1f98885e56071c698eee61b4e1a284c0884015fbfacf2e",
+      "grade": 7,
+      "subject": "CIVICS"
+    },
+    {
+      "key": "ft03-g7-civics-democracy-representation",
+      "databaseId": "cmpzniahk001dvon4p327wkgz",
+      "contentId": "hero-civics-g7-democracy-and-representation-in-liberia",
+      "revisionId": "cmss94h3z03bzvo54hj7c7z8t",
+      "snapshotSha256": "cca4566947348a5dca3bf3fb2bf221c74eb6d81999c8b2677b367d24d52e24ef",
+      "grade": 7,
+      "subject": "CIVICS"
+    },
+    {
+      "key": "ft04-g7-science-states-of-matter",
+      "databaseId": "cmm7xs7v000e8vo70m7n72h3t",
+      "contentId": "wk_mca7a_fri_p3",
+      "revisionId": "cmss8pt0j002fvo54be8gcrnd",
+      "snapshotSha256": "d218a3e17da67bcf7e774bcace1a4080f3b2e6eb9e581d00b987ee3f8025c1e8",
+      "grade": 7,
+      "subject": "SCIENCE"
+    },
+    {
+      "key": "ft05-g5-science-photosynthesis",
+      "databaseId": "cmlpe4i9w0002vofgss8b2049",
+      "contentId": "science-g5-plants",
+      "revisionId": "cmss8mp3p0007vo1wqsa620v2",
+      "snapshotSha256": "ba219ffc4d788a4f81a9eeecbbad51092f43718139747a481863124cf62dd97e",
+      "grade": 5,
+      "subject": "SCIENCE"
+    },
+    {
+      "key": "ft06-g7-math-area-perimeter",
+      "databaseId": "cmpyg7yx6003avoqgrqwkw7id",
+      "contentId": "hero-math-g7-geometry-area-and-perimeter-of-polygons",
+      "revisionId": "cmss9493703a7vo54xxnhxmjy",
+      "snapshotSha256": "31416f12b1fc07bd6931f2ad5d1998ac7c56f971c9be7c195adf45e7a6440f5f",
+      "grade": 7,
+      "subject": "MATH"
+    },
+    {
+      "key": "ft07-g7-math-fractions",
+      "databaseId": "cmlrkjnow00dmvo7o4cajgquf",
+      "contentId": "lesson_mca_1",
+      "revisionId": "cmss8mpl0000bvo1wos7i1ew4",
+      "snapshotSha256": "872222a2435f151d6b215488ad2c3de2cc6c130f57d68fc5d7c6898ad301314f",
+      "grade": 7,
+      "subject": "MATH"
+    },
+    {
+      "key": "ft08-g2-math-place-value",
+      "databaseId": "cmpyfel1o000xvopge4q6bboh",
+      "contentId": "hero-math-g2-place-value-tens-and-ones",
+      "revisionId": "cmss946is039nvo54is10v1t4",
+      "snapshotSha256": "78437ada896122fbd9c5bd5f866888dbfcccb0d4900c4dc348bb2db5d6c53126",
+      "grade": 2,
+      "subject": "MATH"
+    },
+    {
+      "key": "ft09-g7-literacy-main-idea",
+      "databaseId": "cmm7xrzxj00dnvo70sxga6kgz",
+      "contentId": "wk_mca7a_mon_p2",
+      "revisionId": "cmss8pj580003vo54iiun3f8s",
+      "snapshotSha256": "d1767e29c8cac4c2f1bf2d25d163d77904fa86652b897ecc8c04f298c6de23f4",
+      "grade": 7,
+      "subject": "LITERACY"
+    },
+    {
+      "key": "ft10-g7-english-vocabulary-in-context",
+      "databaseId": "cmpznzads0044von4w059zpm1",
+      "contentId": "hero-english-g7-vocabulary-in-context-reading-west-african-texts",
+      "revisionId": "cmss94i4b03c7vo54sblilk60",
+      "snapshotSha256": "d224500e4e008f502f049c142263c19cb2e4530d21be50020bd168afde6b0571",
+      "grade": 7,
+      "subject": "ENGLISH"
+    }
+  ]
+}

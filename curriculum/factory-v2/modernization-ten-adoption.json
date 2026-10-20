@@ -1,12 +1,12 @@
 {
-  "schemaVersion": "factory-modernization-adoption/1.0.0",
+  "schemaVersion": "factory-modernization-adoption/2.0.0",
   "sourceBranch": "docs/modernization-first-ten-spec-v1",
-  "sourceCommit": "9628d97f6932ae4c0c399ec15455230e3f76607e",
+  "sourceCommit": "ac196397cb13bd6866879c9f5c24503e5195c61d",
   "contract": {
     "id": "liberialearn-first-ten-modernization-contract",
-    "version": "0.1.0",
-    "sourceRef": "git:9628d97f6932ae4c0c399ec15455230e3f76607e:curriculum/modernization/v1/first-ten/spec.json",
-    "sha256": "9b0128d725b83dc8ca6aaad818530b35c0649297fa7564b8fae8fb53a6d00964"
+    "version": "1.0.0",
+    "sourceRef": "git:ac196397cb13bd6866879c9f5c24503e5195c61d:curriculum/modernization/v1/first-ten/spec.json",
+    "sha256": "648ec61a72e2ddff147444dadae75aff321866cfc660498a792b6a3b48e7a28b"
   },
   "modernizationImplementation": {
     "path": "lib/curriculum/modernization/pipeline.ts",
@@ -24,5 +24,7 @@
   "tenLessonSelection": "FIXED_EXACT_COHORT_FROM_USER_SUPPLIED_BASELINE",
   "existingPilotLessonCount": 4,
   "productionEvidence": "EXISTING_LOCAL_READ_ONLY_EXPORT_INTEGRITY_VERIFIED_NO_LIVE_CONNECTION_OR_OPERATOR_ATTESTATION",
-  "remainingCoordination": "The ten sources are located and verified. Lesson-specific generation drafts, assessment keys/rubrics, visual assets and accepted factory-inventory binding remain required. Source-bound briefs are not generated candidates or qualified review."
+  "remainingCoordination": "New 1.0.0 cohort inputs and governed lab runtimes required; no old input or immutable package is silently repinned.",
+  "manifestSha256": "4cb6fb5588f5f840fe8b702f181a051a5838b093c1db82b0ea14d9c4b64ea549",
+  "adoptionRef": "contract-adoption-v1.json"
 }

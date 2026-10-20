@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "factory-first-ten-contract-adoption/1.0.0",
+  "contractVersion": "liberialearn-first-ten-modernization-contract/1.0.0",
+  "contractCommit": "ac196397cb13bd6866879c9f5c24503e5195c61d",
+  "specSha256": "648ec61a72e2ddff147444dadae75aff321866cfc660498a792b6a3b48e7a28b",
+  "manifestSha256": "4cb6fb5588f5f840fe8b702f181a051a5838b093c1db82b0ea14d9c4b64ea549",
+  "sourceBindingsSha256": "7c056189ea91dd76a53962220172ff931f0910098e1670a8b120be7ddc2ec168",
+  "previous": {
+    "contractVersion": "liberialearn-first-ten-modernization-contract/0.1.0",
+    "contractCommit": "9628d97f6932ae4c0c399ec15455230e3f76607e",
+    "specSha256": "9b0128d725b83dc8ca6aaad818530b35c0649297fa7564b8fae8fb53a6d00964",
+    "baselineSha256": "df374decf615a66d2fc5a92b0530b9bb798a9d1d17190f414b2668144e272b8a",
+    "archive": "curriculum/factory-v2/contracts/0.1.0"
+  },
+  "erratum": {
+    "id": "E1",
+    "commit": "d640b6fcb9e102b0a06a9d49a136a0aca6948a8f",
+    "documentSha256": "18b4b4b1f2094c3bfae15064d9a5ce4eef9b72f11a838d626be54dd0853f8701",
+    "statusSource": "git:dd8568500:lib/assessment/v2/retention.ts",
+    "policyId": "ll-aep-001-retention-pilot",
+    "policyVersion": "1.0.0"
+  },
+  "preservesAllTenSourceBindings": true,
+  "authoredInputPolicy": "NO_IMPLICIT_REPIN_REQUIRE_NEW_COHORT_INPUT",
+  "approved": false,
+  "published": false,
+  "released": false
+}

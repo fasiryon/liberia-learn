@@ -6,7 +6,7 @@
   "released": false,
   "published": false,
   "audience": "REVIEWER_ONLY",
-  "cohortCommit": "9628d97f6932ae4c0c399ec15455230e3f76607e",
+  "cohortCommit": "ac196397cb13bd6866879c9f5c24503e5195c61d",
   "source": {
     "databaseId": "cmlrkjnow00dmvo7o4cajgquf",
     "contentId": "lesson_mca_1",
@@ -17,19 +17,19 @@
   "blueprint": {
     "schemaVersion": "unit-blueprint/2.1.0",
     "blueprintId": "candidate-ft07-g7-math-fractions",
-    "version": "0.1.0",
-    "contentHash": "2e18b2191080185ebf2d460a5fa20287f1143ce2340d2a754d95280f0450224c",
+    "version": "0.2.0",
+    "contentHash": "aa18123370f634e843be69e5496bb8e5d144ba76a306789bf5791b5d5f831972",
     "grade": 7,
     "subject": "MATH",
     "unitId": "candidate-unit-ft07-g7-math-fractions",
     "title": "Understanding and Representing Fractions in Real-Life Contexts",
-    "repositoryCommit": "9628d97f6932ae4c0c399ec15455230e3f76607e",
+    "repositoryCommit": "ac196397cb13bd6866879c9f5c24503e5195c61d",
     "sources": [
       {
         "id": "first-ten-cohort-contract",
-        "version": "0.1.0",
-        "sha256": "9b0128d725b83dc8ca6aaad818530b35c0649297fa7564b8fae8fb53a6d00964",
-        "sourceRef": "git:9628d97f6932ae4c0c399ec15455230e3f76607e:curriculum/modernization/v1/first-ten/spec.json"
+        "version": "1.0.0",
+        "sha256": "648ec61a72e2ddff147444dadae75aff321866cfc660498a792b6a3b48e7a28b",
+        "sourceRef": "git:ac196397cb13bd6866879c9f5c24503e5195c61d:curriculum/modernization/v1/first-ten/spec.json"
       }
     ],
     "objectives": [
@@ -327,7 +327,7 @@
         "prerequisiteIndex": 0,
         "fallbackRoute": "worksheet",
         "source": "EXCELLENCE_PLAN",
-        "ref": "git:9628d97f6932ae4c0c399ec15455230e3f76607e:curriculum/modernization/v1/first-ten/spec.json#/lessons/6"
+        "ref": "git:ac196397cb13bd6866879c9f5c24503e5195c61d:curriculum/modernization/v1/first-ten/spec.json#/lessons/6"
       },
       {
         "id": "ft07-p2-diagnostic",
@@ -348,7 +348,7 @@
         "prerequisiteIndex": 1,
         "fallbackRoute": "worksheet",
         "source": "EXCELLENCE_PLAN",
-        "ref": "git:9628d97f6932ae4c0c399ec15455230e3f76607e:curriculum/modernization/v1/first-ten/spec.json#/lessons/6"
+        "ref": "git:ac196397cb13bd6866879c9f5c24503e5195c61d:curriculum/modernization/v1/first-ten/spec.json#/lessons/6"
       },
       {
         "id": "ft07-g7-math-fractions-practice",
@@ -365,7 +365,7 @@
         "context": "REHEARSED",
         "scoring": "NOT_SCORED",
         "source": "EXCELLENCE_PLAN",
-        "ref": "git:9628d97f6932ae4c0c399ec15455230e3f76607e:curriculum/modernization/v1/first-ten/spec.json#/lessons/6"
+        "ref": "git:ac196397cb13bd6866879c9f5c24503e5195c61d:curriculum/modernization/v1/first-ten/spec.json#/lessons/6"
       },
       {
         "id": "ft07-a1",
@@ -382,7 +382,7 @@
         "context": "REHEARSED",
         "scoring": "KEYED",
         "source": "EXCELLENCE_PLAN",
-        "ref": "git:9628d97f6932ae4c0c399ec15455230e3f76607e:curriculum/modernization/v1/first-ten/spec.json#/lessons/6/independentAssessment/endOfLesson/0"
+        "ref": "git:ac196397cb13bd6866879c9f5c24503e5195c61d:curriculum/modernization/v1/first-ten/spec.json#/lessons/6/independentAssessment/endOfLesson/0"
       },
       {
         "id": "ft07-a2",
@@ -399,7 +399,7 @@
         "context": "REHEARSED",
         "scoring": "KEYED",
         "source": "EXCELLENCE_PLAN",
-        "ref": "git:9628d97f6932ae4c0c399ec15455230e3f76607e:curriculum/modernization/v1/first-ten/spec.json#/lessons/6/independentAssessment/endOfLesson/1"
+        "ref": "git:ac196397cb13bd6866879c9f5c24503e5195c61d:curriculum/modernization/v1/first-ten/spec.json#/lessons/6/independentAssessment/endOfLesson/1"
       },
       {
         "id": "ft07-a3",
@@ -416,7 +416,7 @@
         "context": "REHEARSED",
         "scoring": "ANALYTIC_RUBRIC",
         "source": "EXCELLENCE_PLAN",
-        "ref": "git:9628d97f6932ae4c0c399ec15455230e3f76607e:curriculum/modernization/v1/first-ten/spec.json#/lessons/6/independentAssessment/endOfLesson/2"
+        "ref": "git:ac196397cb13bd6866879c9f5c24503e5195c61d:curriculum/modernization/v1/first-ten/spec.json#/lessons/6/independentAssessment/endOfLesson/2"
       },
       {
         "id": "ft07-a4",
@@ -435,7 +435,7 @@
         "context": "REHEARSED",
         "scoring": "KEYED",
         "source": "EXCELLENCE_PLAN",
-        "ref": "git:9628d97f6932ae4c0c399ec15455230e3f76607e:curriculum/modernization/v1/first-ten/spec.json#/lessons/6/independentAssessment/endOfLesson/3"
+        "ref": "git:ac196397cb13bd6866879c9f5c24503e5195c61d:curriculum/modernization/v1/first-ten/spec.json#/lessons/6/independentAssessment/endOfLesson/3"
       },
       {
         "id": "ft07-g7-math-fractions-retention",
@@ -455,7 +455,7 @@
         "context": "REHEARSED",
         "scoring": "KEYED",
         "source": "EXCELLENCE_PLAN",
-        "ref": "git:9628d97f6932ae4c0c399ec15455230e3f76607e:curriculum/modernization/v1/first-ten/spec.json#/lessons/6"
+        "ref": "git:ac196397cb13bd6866879c9f5c24503e5195c61d:curriculum/modernization/v1/first-ten/spec.json#/lessons/6"
       },
       {
         "id": "ft07-g7-math-fractions-transfer",
@@ -474,7 +474,7 @@
         "context": "NEW",
         "scoring": "ANALYTIC_RUBRIC",
         "source": "EXCELLENCE_PLAN",
-        "ref": "git:9628d97f6932ae4c0c399ec15455230e3f76607e:curriculum/modernization/v1/first-ten/spec.json#/lessons/6"
+        "ref": "git:ac196397cb13bd6866879c9f5c24503e5195c61d:curriculum/modernization/v1/first-ten/spec.json#/lessons/6"
       },
       {
         "id": "ft07-g7-math-fractions-extension",
@@ -492,7 +492,7 @@
         "scoring": "NOT_SCORED",
         "optional": true,
         "source": "EXCELLENCE_PLAN",
-        "ref": "git:9628d97f6932ae4c0c399ec15455230e3f76607e:curriculum/modernization/v1/first-ten/spec.json#/lessons/6"
+        "ref": "git:ac196397cb13bd6866879c9f5c24503e5195c61d:curriculum/modernization/v1/first-ten/spec.json#/lessons/6"
       }
     ],
     "support": {
@@ -513,9 +513,9 @@
     "provenance": [
       {
         "id": "first-ten-cohort-contract",
-        "version": "0.1.0",
-        "sha256": "9b0128d725b83dc8ca6aaad818530b35c0649297fa7564b8fae8fb53a6d00964",
-        "sourceRef": "git:9628d97f6932ae4c0c399ec15455230e3f76607e:curriculum/modernization/v1/first-ten/spec.json"
+        "version": "1.0.0",
+        "sha256": "648ec61a72e2ddff147444dadae75aff321866cfc660498a792b6a3b48e7a28b",
+        "sourceRef": "git:ac196397cb13bd6866879c9f5c24503e5195c61d:curriculum/modernization/v1/first-ten/spec.json"
       }
     ],
     "legacy": [
@@ -556,73 +556,73 @@
   "resources": [
     {
       "id": "curriculum-map",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "role": "CURRICULUM_ARCHITECT",
       "payload": null
     },
     {
       "id": "learning-design",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "role": "LEARNING_SCIENCE_DESIGNER",
       "payload": null
     },
     {
       "id": "lesson",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "role": "LESSON_AUTHOR",
       "payload": null
     },
     {
       "id": "classwork",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "role": "LESSON_AUTHOR",
       "payload": null
     },
     {
       "id": "worksheet",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "role": "LESSON_AUTHOR",
       "payload": null
     },
     {
       "id": "diagnostic",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "role": "ASSESSMENT_DESIGNER",
       "payload": null
     },
     {
       "id": "summative",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "role": "ASSESSMENT_DESIGNER",
       "payload": null
     },
     {
       "id": "retention",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "role": "ASSESSMENT_DESIGNER",
       "payload": null
     },
     {
       "id": "transfer",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "role": "ASSESSMENT_DESIGNER",
       "payload": null
     },
     {
       "id": "answer-keys",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "role": "ASSESSMENT_DESIGNER",
       "payload": null
     },
     {
       "id": "rubrics",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "role": "ASSESSMENT_DESIGNER",
       "payload": null
     },
     {
       "id": "extension",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "role": "MEDIA_ACCESSIBILITY",
       "payload": null
     }

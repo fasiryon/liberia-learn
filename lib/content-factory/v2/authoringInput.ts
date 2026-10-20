@@ -5,9 +5,17 @@ import { blueprintRef, digest, exactPinSchema, FACTORY_ROLES, parseBlueprint, ty
 import { artifactHash, checkPackage, parseResourceDraft } from "./quality";
 import type { FactoryArtifact, ResourceDraft } from "./types";
 import { FIRST_TEN_ASSESSMENT_KIND_MAP } from "./firstTen";
+import { FIRST_TEN_AUTHORITY } from "./firstTenContract";
 
 export const AUTHORING_INPUT_VERSION = "factory-lesson-authoring-input/1.0.0" as const;
-export type AuthoringRequirements = { baselineCommit: string; lessons: typeof requirements.lessons };
+export type AuthoringRequirements = { baselineCommit: string; lessons: {
+  key: string; source: { databaseId: string; contentId: string; revisionId: string; revisionNumber: number; snapshotSha256: string };
+  subject: string; grade: number; objectiveIds: string[];
+  misconceptions: { id: string; description: string; probe: string; feedback: string; misconceptionId?: string }[];
+  mediaSpecifications: { id: string; requirement: string; offlineFallback: string }[];
+  retention: { delayDays: number; items: string[]; policyRef?: string; assessmentPurpose?: string; itemContext?: string };
+  assessmentTasks: { id: string; objectiveIds: string[]; kind: string; scoring: string; task: string; assessmentPurpose?: string; itemContext?: string }[];
+}[] };
 const id = z.string().min(1).refine(value => value.trim() === value, "exact_identity_required");
 const nullableId = id.nullable();
 const sourceSchema = z.strictObject({ databaseId: id, contentId: id, revisionId: id, revisionNumber: z.number().int().nonnegative(), snapshotSha256: z.string().regex(/^[a-f0-9]{64}$/) });
@@ -60,6 +68,11 @@ export function validateAuthoringInput(input: unknown, mode: "template" | "autho
   const value = authoringInputSchema.parse(input);
   if (value.cohortCommit !== context.baselineCommit) throw new Error("authoring_cohort_commit_mismatch");
   const blueprint = parseBlueprint(value.blueprint);
+  if (context.baselineCommit === FIRST_TEN_AUTHORITY.commit) {
+    const pin = (entry: { id: string; version: string; sha256: string; sourceRef: string }) => entry.id === "first-ten-cohort-contract" && entry.version === "1.0.0" && entry.sha256 === FIRST_TEN_AUTHORITY.specSha256 && entry.sourceRef === `git:${FIRST_TEN_AUTHORITY.commit}:curriculum/modernization/v1/first-ten/spec.json`;
+    if (blueprint.repositoryCommit !== FIRST_TEN_AUTHORITY.commit || !blueprint.sources.some(pin) || !blueprint.provenance.some(pin)) throw new Error("authoring_contract_blueprint_pin_mismatch");
+    if (blueprint.version === "0.1.0") throw new Error("authoring_new_contract_requires_new_candidate_version");
+  }
   const required = context.lessons.find(l => l.source.contentId === value.source.contentId);
   if (!required || digest("source", required.source) !== digest("source", value.source)) throw new Error("authoring_source_binding_mismatch");
   const source = blueprint.legacy[0];

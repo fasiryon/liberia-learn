@@ -1,7 +1,9 @@
 {
-  "schemaVersion": "factory-first-three-authoring-requirements/1.0.0",
-  "baselineCommit": "9628d97f6932ae4c0c399ec15455230e3f76607e",
-  "specSha256": "9b0128d725b83dc8ca6aaad818530b35c0649297fa7564b8fae8fb53a6d00964",
+  "schemaVersion": "factory-first-three-authoring-requirements/2.0.0",
+  "baselineCommit": "ac196397cb13bd6866879c9f5c24503e5195c61d",
+  "specSha256": "648ec61a72e2ddff147444dadae75aff321866cfc660498a792b6a3b48e7a28b",
+  "manifestSha256": "4cb6fb5588f5f840fe8b702f181a051a5838b093c1db82b0ea14d9c4b64ea549",
+  "erratumRef": "curriculum/factory-v2/contract-adoption-v1.json#/erratum",
   "lessons": [
     {
       "key": "ft01-g7-civics-counties-capitals",
@@ -24,31 +26,36 @@
           "id": "ft01-m1",
           "description": "The largest or best-known town is the capital (Ganta for Nimba).",
           "probe": "Distractor 'Ganta' on the Nimba item",
-          "feedback": "Ganta is Nimba's biggest trading town, but the county is administered from Sanniquellie."
+          "feedback": "Ganta is Nimba's biggest trading town, but the county is administered from Sanniquellie.",
+          "misconceptionId": "mc-civics-largest-town-is-capital"
         },
         {
           "id": "ft01-m2",
           "description": "Monrovia is the capital of Montserrado as well as of Liberia, or the national capital is also every county's capital.",
           "probe": "Two-part item: national capital, then Montserrado's county seat",
-          "feedback": "Liberia's capital and Montserrado's county seat are different roles."
+          "feedback": "Liberia's capital and Montserrado's county seat are different roles.",
+          "misconceptionId": "mc-civics-national-capital-is-county-seat"
         },
         {
           "id": "ft01-m3",
           "description": "Counties that are next to each other in a list are next to each other on the map (Maryland and Sinoe).",
           "probe": "Adjacency item",
-          "feedback": "Look at the map: Grand Kru lies between them."
+          "feedback": "Look at the map: Grand Kru lies between them.",
+          "misconceptionId": "mc-civics-list-order-is-map-adjacency"
         },
         {
           "id": "ft01-m4",
           "description": "Confusing the four 'Grand' counties (Bassa, Cape Mount, Gedeh, Kru) and their capitals.",
           "probe": "Matching item with all four",
-          "feedback": "A position cue: Cape Mount far west, Bassa central coast, Kru south-east coast, Gedeh east interior."
+          "feedback": "A position cue: Cape Mount far west, Bassa central coast, Kru south-east coast, Gedeh east interior.",
+          "misconceptionId": "mc-civics-grand-counties-confused"
         },
         {
           "id": "ft01-m5",
           "description": "The capital governs the county, or the county elects its own government.",
           "probe": "Constructed item ft01-a2 and a true/false item",
-          "feedback": "The capital is where the county administration sits. The superintendent is appointed by the President."
+          "feedback": "The capital is where the county administration sits. The superintendent is appointed by the President.",
+          "misconceptionId": "mc-civics-capital-governs-county"
         }
       ],
       "mediaSpecifications": [
@@ -74,7 +81,10 @@
           "Five county–capital pairs drawn at random, always including Nimba and one of the five counties the legacy lesson omitted",
           "Locate two counties on a blank map",
           "One capital-versus-largest-town explanation"
-        ]
+        ],
+        "policyRef": "ll-aep-001-retention-pilot@1.0.0",
+        "assessmentPurpose": "RETENTION",
+        "itemContext": "NEAR"
       },
       "assessmentTasks": [
         {
@@ -84,7 +94,9 @@
           ],
           "kind": "CONSTRUCTED",
           "task": "Blank map: write the capital of each of the 15 counties (key: the reviewer-confirmed list).",
-          "scoring": "KEYED"
+          "scoring": "KEYED",
+          "assessmentPurpose": "SUMMATIVE",
+          "itemContext": "NEAR"
         },
         {
           "id": "ft01-a2",
@@ -93,7 +105,9 @@
           ],
           "kind": "CONSTRUCTED_EXPLANATION",
           "task": "A classmate writes 'Ganta is the capital of Nimba because it is the biggest town.' Explain the error and correct it.",
-          "scoring": "ANALYTIC_RUBRIC"
+          "scoring": "ANALYTIC_RUBRIC",
+          "assessmentPurpose": "SUMMATIVE",
+          "itemContext": "NEAR"
         },
         {
           "id": "ft01-a3",
@@ -103,7 +117,9 @@
           ],
           "kind": "SELECTED_RESPONSE_DIAGNOSTIC",
           "task": "Four items whose distractors are mapped to M1–M4.",
-          "scoring": "KEYED"
+          "scoring": "KEYED",
+          "assessmentPurpose": "SUMMATIVE",
+          "itemContext": "REHEARSED"
         },
         {
           "id": "ft01-a4",
@@ -112,7 +128,9 @@
           ],
           "kind": "REASONING_TASK",
           "task": "On the lesson's county map, name the counties a traveller crosses going by the coast from Buchanan to Greenville, and justify the order from the map.",
-          "scoring": "ANALYTIC_RUBRIC"
+          "scoring": "ANALYTIC_RUBRIC",
+          "assessmentPurpose": "SUMMATIVE",
+          "itemContext": "NEAR"
         }
       ]
     },
@@ -137,37 +155,43 @@
           "id": "ft04-m1",
           "description": "The bubbles in boiling water are air.",
           "probe": "Distractor",
-          "feedback": "They are water vapour forming inside the liquid."
+          "feedback": "The large bubbles in boiling water are water vapour forming inside the liquid. The first tiny bubbles when you start heating are dissolved air coming out.",
+          "misconceptionId": "mc-science-boiling-bubbles-are-air"
         },
         {
           "id": "ft04-m2",
           "description": "The temperature keeps rising while ice melts, or a mixture can get hotter than its hottest part.",
           "probe": "Prediction item ft04-a3",
-          "feedback": "While ice is melting, the energy goes into changing state and the temperature stays near 0 °C."
+          "feedback": "While ice is melting, the energy goes into changing state and the temperature stays near 0 °C.",
+          "misconceptionId": "mc-science-temperature-rises-during-melting"
         },
         {
           "id": "ft04-m3",
           "description": "Water on a cold bottle leaks through the plastic.",
           "probe": "Explanation item",
-          "feedback": "Water vapour from the air condenses on the cold surface."
+          "feedback": "Water vapour from the air condenses on the cold surface.",
+          "misconceptionId": "mc-science-condensation-is-leakage"
         },
         {
           "id": "ft04-m4",
           "description": "Evaporation only happens at 100 °C.",
           "probe": "Drying-clothes item",
-          "feedback": "Evaporation happens at the surface at any temperature; boiling happens throughout the liquid at the boiling point."
+          "feedback": "Evaporation happens at the surface at any temperature; boiling happens throughout the liquid at the boiling point.",
+          "misconceptionId": "mc-science-evaporation-only-at-boiling-point"
         },
         {
           "id": "ft04-m5",
           "description": "The particles themselves expand or melt.",
           "probe": "Particle-drawing rubric row",
-          "feedback": "The particles stay the same; their spacing and motion change."
+          "feedback": "The particles stay the same; their spacing and motion change.",
+          "misconceptionId": "mc-science-particles-expand-or-melt"
         },
         {
           "id": "ft04-m6",
           "description": "Melting is a chemical reaction.",
           "probe": "Two-choice item",
-          "feedback": "No new substance forms, and the change reverses."
+          "feedback": "No new substance forms, and the change reverses.",
+          "misconceptionId": "mc-science-melting-is-chemical-change"
         }
       ],
       "mediaSpecifications": [
@@ -193,7 +217,10 @@
           "Name the change of state in three scenes",
           "Evaporation versus boiling",
           "What happens to the temperature while ice melts"
-        ]
+        ],
+        "policyRef": "ll-aep-001-retention-pilot@1.0.0",
+        "assessmentPurpose": "RETENTION",
+        "itemContext": "NEAR"
       },
       "assessmentTasks": [
         {
@@ -203,7 +230,9 @@
           ],
           "kind": "CONSTRUCTED",
           "task": "Draw particles of palm oil as a liquid and as a solid, and label the differences.",
-          "scoring": "ANALYTIC_RUBRIC"
+          "scoring": "ANALYTIC_RUBRIC",
+          "assessmentPurpose": "SUMMATIVE",
+          "itemContext": "NEAR"
         },
         {
           "id": "ft04-a2",
@@ -212,7 +241,9 @@
           ],
           "kind": "CONSTRUCTED_EXPLANATION",
           "task": "Explain why wet clothes dry on a line without boiling.",
-          "scoring": "ANALYTIC_RUBRIC"
+          "scoring": "ANALYTIC_RUBRIC",
+          "assessmentPurpose": "SUMMATIVE",
+          "itemContext": "NEAR"
         },
         {
           "id": "ft04-a3",
@@ -221,7 +252,9 @@
           ],
           "kind": "REASONING_TASK",
           "task": "Data: a drink with ice reads 0 °C for 8 minutes, then rises. Explain the pattern using particles and energy.",
-          "scoring": "ANALYTIC_RUBRIC"
+          "scoring": "ANALYTIC_RUBRIC",
+          "assessmentPurpose": "SUMMATIVE",
+          "itemContext": "NEAR"
         },
         {
           "id": "ft04-a4",
@@ -231,7 +264,9 @@
           ],
           "kind": "SELECTED_RESPONSE_DIAGNOSTIC",
           "task": "Five items whose distractors are mapped to M1–M6.",
-          "scoring": "KEYED"
+          "scoring": "KEYED",
+          "assessmentPurpose": "SUMMATIVE",
+          "itemContext": "REHEARSED"
         }
       ]
     },
@@ -256,31 +291,36 @@
           "id": "ft07-m1",
           "description": "Add the numerators and the denominators (1/4 + 1/2 = 2/6).",
           "probe": "Distractor 2/6",
-          "feedback": "The size of the parts doesn't change when you combine them. Make the parts the same size first."
+          "feedback": "The size of the parts doesn't change when you combine them. Make the parts the same size first.",
+          "misconceptionId": "mc-math-fraction-add-numerators-and-denominators"
         },
         {
           "id": "ft07-m2",
           "description": "A bigger denominator means a bigger fraction.",
           "probe": "Compare 1/8 and 1/4",
-          "feedback": "More parts in the same whole means each part is smaller."
+          "feedback": "More parts in the same whole means each part is smaller.",
+          "misconceptionId": "mc-math-larger-denominator-larger-fraction"
         },
         {
           "id": "ft07-m3",
           "description": "Fractions are always less than 1.",
           "probe": "Number-line item including 5/4",
-          "feedback": "5/4 is one whole and one more quarter."
+          "feedback": "5/4 is one whole and one more quarter.",
+          "misconceptionId": "mc-math-fractions-always-less-than-one"
         },
         {
           "id": "ft07-m4",
           "description": "Losing track of the whole (a fraction of a bag versus kilograms).",
           "probe": "'Half of a 2 kg bag' item",
-          "feedback": "Say what the whole is before writing the fraction."
+          "feedback": "Say what the whole is before writing the fraction.",
+          "misconceptionId": "mc-math-fraction-whole-not-named"
         },
         {
           "id": "ft07-m5",
           "description": "Unequal parts can be named as fractions.",
           "probe": "Unequal-parts distractor",
-          "feedback": "Fractions need equal parts."
+          "feedback": "Fractions need equal parts.",
+          "misconceptionId": "mc-math-unequal-parts-as-fractions"
         }
       ],
       "mediaSpecifications": [
@@ -301,7 +341,10 @@
           "Place 3/2 on a number line",
           "1/2 + 3/8",
           "Compare 5/6 and 7/8 with a reason"
-        ]
+        ],
+        "policyRef": "ll-aep-001-retention-pilot@1.0.0",
+        "assessmentPurpose": "RETENTION",
+        "itemContext": "NEAR"
       },
       "assessmentTasks": [
         {
@@ -311,7 +354,9 @@
           ],
           "kind": "PRODUCED_ANSWER",
           "task": "Place four fractions (including 1 and 5/4) on a number line.",
-          "scoring": "KEYED"
+          "scoring": "KEYED",
+          "assessmentPurpose": "SUMMATIVE",
+          "itemContext": "NEAR"
         },
         {
           "id": "ft07-a2",
@@ -320,7 +365,9 @@
           ],
           "kind": "PRODUCED_ANSWER",
           "task": "Four sums and differences, two with related denominators.",
-          "scoring": "KEYED"
+          "scoring": "KEYED",
+          "assessmentPurpose": "SUMMATIVE",
+          "itemContext": "NEAR"
         },
         {
           "id": "ft07-a3",
@@ -329,7 +376,9 @@
           ],
           "kind": "REASONING_TASK",
           "task": "Which is more rice: 2/3 of a cup or 3/5 of a cup? Justify in two ways.",
-          "scoring": "ANALYTIC_RUBRIC"
+          "scoring": "ANALYTIC_RUBRIC",
+          "assessmentPurpose": "SUMMATIVE",
+          "itemContext": "NEAR"
         },
         {
           "id": "ft07-a4",
@@ -340,7 +389,9 @@
           ],
           "kind": "SELECTED_RESPONSE_DIAGNOSTIC",
           "task": "Four items whose distractors are mapped to M1–M5.",
-          "scoring": "KEYED"
+          "scoring": "KEYED",
+          "assessmentPurpose": "SUMMATIVE",
+          "itemContext": "REHEARSED"
         }
       ]
     }

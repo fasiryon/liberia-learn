@@ -16,7 +16,7 @@ function fixture() {
       verification: { revisionHashMatches: true, liveRowEqualsRevision: true, storedRevisionHash: contentHash, recomputedRevisionHash: contentHash, liveSnapshotHash: contentHash }, dependencies: { assignments: 2, gradedSubmissions: 3, learningEvents: 7 },
     };
   });
-  const spec = { contractVersion: "liberialearn-first-ten-modernization-contract/0.1.0", status: "PROPOSED_NOT_AGREED", basis: { inventory: { extractSha256: "", lessons: 10, capturedAt } },
+  const spec = { contractVersion: "liberialearn-first-ten-modernization-contract/1.0.0", status: "READY_FOR_OWNER_APPROVAL", basis: { inventory: { extractSha256: "", lessons: 10, capturedAt } },
     lessons: records.map((r, i) => ({ key: `fixture-${i}`, contentPk: r.id, contentId: r.contentId, grade: 7, subject: "CIVICS", unitId: null, legacyTitle: r.row.title, legacy: { revisionId: r.revision.id, contentHash: r.revision.contentHash },
       objectives: [{ id: `o${i}`, statement: "Explain a synthetic example.", layer: "LIBERIALEARN_MASTERY" }, { id: `ge${i}`, statement: "Reason from an unfamiliar synthetic example.", layer: "GLOBAL_EXCELLENCE" }],
       prerequisites: [{ id: `p${i}`, statement: "Read the example.", diagnostic: "Read a label.", fallbackRoute: "Use text labels." }], independentAssessment: { endOfLesson: [{ id: `a${i}`, objectiveIds: [`o${i}`, `ge${i}`], kind: "REASONING_TASK", scoring: "ANALYTIC_RUBRIC", task: "Explain the example independently." }] },

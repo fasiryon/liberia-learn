@@ -1,9 +1,9 @@
 {
-  "schemaVersion": "factory-first-ten-baseline/1.0.0",
-  "sourceCommit": "9628d97f6932ae4c0c399ec15455230e3f76607e",
+  "schemaVersion": "factory-first-ten-baseline/2.0.0",
+  "sourceCommit": "ac196397cb13bd6866879c9f5c24503e5195c61d",
   "specPath": "curriculum/modernization/v1/first-ten/spec.json",
-  "specSha256": "9b0128d725b83dc8ca6aaad818530b35c0649297fa7564b8fae8fb53a6d00964",
-  "contractVersion": "liberialearn-first-ten-modernization-contract/0.1.0",
+  "specSha256": "648ec61a72e2ddff147444dadae75aff321866cfc660498a792b6a3b48e7a28b",
+  "contractVersion": "liberialearn-first-ten-modernization-contract/1.0.0",
   "extractSha256": "7d5e25cb2a6e2d26e5dc6327c8d2caebeb5882c278d0e9c8c430502de1a7c4ca",
   "lessons": [
     {
@@ -96,5 +96,7 @@
       "grade": 7,
       "subject": "ENGLISH"
     }
-  ]
+  ],
+  "manifestSha256": "4cb6fb5588f5f840fe8b702f181a051a5838b093c1db82b0ea14d9c4b64ea549",
+  "erratumRef": "contract-adoption-v1.json#/erratum"
 }

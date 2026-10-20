@@ -1,5 +1,11 @@
 # First three authoring input templates
 
+## Contract 1.0.0 adoption
+
+The active templates now bind `ac196397cb13bd6866879c9f5c24503e5195c61d`, spec SHA-256 `648ec61a72e2ddff147444dadae75aff321866cfc660498a792b6a3b48e7a28b`, manifest SHA-256 `4cb6fb5588f5f840fe8b702f181a051a5838b093c1db82b0ea14d9c4b64ea549`, with E1 preserved. New candidate metadata uses version 0.2.0. Old 0.1.0 templates and requirements are retained under `curriculum/factory-v2/contracts/0.1.0/`. Existing restricted authored inputs are not changed and cannot pass the new cohort gate merely because they share the same ten source identities.
+
+See `docs/architecture/content-factory/CONTENT_FACTORY_CONTRACT_1_0_ADOPTION.md` for the explicit adoption, validation and owner handoff. The historical baseline and workflow notes below describe the archived 0.1.0 templates; use the new requirements and active templates for a new versioned authored delivery. No automatic approval, package generation, publication or runtime waiver is authorized.
+
 These are empty authoring inputs, not lessons or candidate outputs. Every resource payload and author identity is null. They stay DRAFT, REVIEWER_ONLY, unapproved, unpublished and unreleased. Work continues on the existing `feat/content-factory-ten-candidates` branch and worktree.
 
 | Source lesson | Subject | Template |

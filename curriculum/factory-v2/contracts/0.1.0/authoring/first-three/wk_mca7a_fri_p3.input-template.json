@@ -1,0 +1,773 @@
+{
+  "schemaVersion": "factory-lesson-authoring-input/1.0.0",
+  "inputState": "TEMPLATE",
+  "state": "DRAFT",
+  "approved": false,
+  "released": false,
+  "published": false,
+  "audience": "REVIEWER_ONLY",
+  "cohortCommit": "9628d97f6932ae4c0c399ec15455230e3f76607e",
+  "source": {
+    "databaseId": "cmm7xs7v000e8vo70m7n72h3t",
+    "contentId": "wk_mca7a_fri_p3",
+    "revisionId": "cmss8pt0j002fvo54be8gcrnd",
+    "revisionNumber": 1,
+    "snapshotSha256": "d218a3e17da67bcf7e774bcace1a4080f3b2e6eb9e581d00b987ee3f8025c1e8"
+  },
+  "blueprint": {
+    "schemaVersion": "unit-blueprint/2.1.0",
+    "blueprintId": "candidate-ft04-g7-science-states-of-matter",
+    "version": "0.1.0",
+    "contentHash": "ddb82745951893aaf1add63980ee76b033ef2fcbad0811844ba81500c6980952",
+    "grade": 7,
+    "subject": "SCIENCE",
+    "unitId": "candidate-unit-ft04-g7-science-states-of-matter",
+    "title": "Understanding States of Matter Through Real-Life Examples",
+    "repositoryCommit": "9628d97f6932ae4c0c399ec15455230e3f76607e",
+    "sources": [
+      {
+        "id": "first-ten-cohort-contract",
+        "version": "0.1.0",
+        "sha256": "9b0128d725b83dc8ca6aaad818530b35c0649297fa7564b8fae8fb53a6d00964",
+        "sourceRef": "git:9628d97f6932ae4c0c399ec15455230e3f76607e:curriculum/modernization/v1/first-ten/spec.json"
+      }
+    ],
+    "objectives": [
+      {
+        "id": "ft04-o1",
+        "kind": "NATIONAL",
+        "statement": "Use the particle model to describe and compare solids, liquids and gases (arrangement, movement, shape and volume), with Liberian examples.",
+        "sourceId": "first-ten-cohort-contract",
+        "sourcePointer": "/lessons/3/objectives/0",
+        "scope": "REQUIRED",
+        "mapping": "PROPOSED"
+      },
+      {
+        "id": "ft04-o2",
+        "kind": "NATIONAL",
+        "statement": "Explain melting, freezing, evaporation, boiling and condensation as energy gained or lost by particles, and distinguish evaporation from boiling.",
+        "sourceId": "first-ten-cohort-contract",
+        "sourcePointer": "/lessons/3/objectives/1",
+        "scope": "REQUIRED",
+        "mapping": "PROPOSED"
+      },
+      {
+        "id": "ft04-o3",
+        "kind": "LIBERIALEARN_MASTERY",
+        "statement": "Predict and explain, with evidence, what happens to temperature when ice melts in a drink (it stays at about 0 °C while ice remains), and recognise changes of state as reversible physical changes.",
+        "sourceId": "first-ten-cohort-contract",
+        "sourcePointer": "/lessons/3/objectives/2",
+        "scope": "REQUIRED",
+        "mapping": "PROPOSED"
+      }
+    ],
+    "outcomes": [
+      {
+        "id": "ft04-o1-outcome",
+        "objectiveIds": [
+          "ft04-o1"
+        ],
+        "demonstration": "Use the particle model to describe and compare solids, liquids and gases (arrangement, movement, shape and volume), with Liberian examples."
+      },
+      {
+        "id": "ft04-o2-outcome",
+        "objectiveIds": [
+          "ft04-o2"
+        ],
+        "demonstration": "Explain melting, freezing, evaporation, boiling and condensation as energy gained or lost by particles, and distinguish evaporation from boiling."
+      },
+      {
+        "id": "ft04-o3-outcome",
+        "objectiveIds": [
+          "ft04-o3"
+        ],
+        "demonstration": "Predict and explain, with evidence, what happens to temperature when ice melts in a drink (it stays at about 0 °C while ice remains), and recognise changes of state as reversible physical changes."
+      }
+    ],
+    "prerequisites": [
+      {
+        "id": "ft04-p1",
+        "statement": "Reads a thermometer in °C.",
+        "diagnosticResourceId": "diagnostic",
+        "fallbackResourceId": "worksheet"
+      },
+      {
+        "id": "ft04-p2",
+        "statement": "Knows that all matter is made of tiny particles.",
+        "diagnosticResourceId": "diagnostic",
+        "fallbackResourceId": "worksheet"
+      }
+    ],
+    "misconceptions": [],
+    "sequence": [
+      {
+        "resourceId": "diagnostic",
+        "dependsOn": [],
+        "objectiveIds": [
+          "ft04-o1",
+          "ft04-o2",
+          "ft04-o3"
+        ],
+        "scaffold": "NONE"
+      },
+      {
+        "resourceId": "lesson",
+        "dependsOn": [
+          "diagnostic"
+        ],
+        "objectiveIds": [
+          "ft04-o1",
+          "ft04-o2",
+          "ft04-o3"
+        ],
+        "scaffold": "FULL"
+      },
+      {
+        "resourceId": "summative",
+        "dependsOn": [
+          "lesson"
+        ],
+        "objectiveIds": [
+          "ft04-o1",
+          "ft04-o2",
+          "ft04-o3"
+        ],
+        "scaffold": "NONE"
+      }
+    ],
+    "resources": [
+      {
+        "id": "curriculum-map",
+        "kind": "DESIGN_NOTE",
+        "role": "CURRICULUM_ARCHITECT",
+        "objectiveIds": [
+          "ft04-o1",
+          "ft04-o2",
+          "ft04-o3"
+        ],
+        "dependsOn": [],
+        "audience": "REVIEWER_ONLY"
+      },
+      {
+        "id": "learning-design",
+        "kind": "DESIGN_NOTE",
+        "role": "LEARNING_SCIENCE_DESIGNER",
+        "objectiveIds": [
+          "ft04-o1",
+          "ft04-o2",
+          "ft04-o3"
+        ],
+        "dependsOn": [
+          "curriculum-map"
+        ],
+        "audience": "REVIEWER_ONLY"
+      },
+      {
+        "id": "lesson",
+        "kind": "LESSON",
+        "role": "LESSON_AUTHOR",
+        "objectiveIds": [
+          "ft04-o1",
+          "ft04-o2",
+          "ft04-o3"
+        ],
+        "dependsOn": [
+          "learning-design"
+        ],
+        "audience": "LEARNER"
+      },
+      {
+        "id": "classwork",
+        "kind": "CLASSWORK",
+        "role": "LESSON_AUTHOR",
+        "objectiveIds": [
+          "ft04-o1",
+          "ft04-o2",
+          "ft04-o3"
+        ],
+        "dependsOn": [
+          "lesson"
+        ],
+        "audience": "LEARNER"
+      },
+      {
+        "id": "worksheet",
+        "kind": "WORKSHEET",
+        "role": "LESSON_AUTHOR",
+        "objectiveIds": [
+          "ft04-o1",
+          "ft04-o2",
+          "ft04-o3"
+        ],
+        "dependsOn": [
+          "lesson"
+        ],
+        "audience": "LEARNER"
+      },
+      {
+        "id": "diagnostic",
+        "kind": "QUIZ",
+        "role": "ASSESSMENT_DESIGNER",
+        "objectiveIds": [
+          "ft04-o1",
+          "ft04-o2",
+          "ft04-o3"
+        ],
+        "dependsOn": [
+          "lesson"
+        ],
+        "audience": "LEARNER"
+      },
+      {
+        "id": "summative",
+        "kind": "SUMMATIVE",
+        "role": "ASSESSMENT_DESIGNER",
+        "objectiveIds": [
+          "ft04-o1",
+          "ft04-o2",
+          "ft04-o3"
+        ],
+        "dependsOn": [
+          "lesson"
+        ],
+        "audience": "LEARNER"
+      },
+      {
+        "id": "retention",
+        "kind": "RETENTION",
+        "role": "ASSESSMENT_DESIGNER",
+        "objectiveIds": [
+          "ft04-o1",
+          "ft04-o2",
+          "ft04-o3"
+        ],
+        "dependsOn": [
+          "summative"
+        ],
+        "audience": "LEARNER"
+      },
+      {
+        "id": "transfer",
+        "kind": "TRANSFER",
+        "role": "ASSESSMENT_DESIGNER",
+        "objectiveIds": [
+          "ft04-o1",
+          "ft04-o2",
+          "ft04-o3"
+        ],
+        "dependsOn": [
+          "summative"
+        ],
+        "audience": "LEARNER"
+      },
+      {
+        "id": "answer-keys",
+        "kind": "ANSWER_KEY",
+        "role": "ASSESSMENT_DESIGNER",
+        "objectiveIds": [
+          "ft04-o1",
+          "ft04-o2",
+          "ft04-o3"
+        ],
+        "dependsOn": [
+          "diagnostic",
+          "summative",
+          "retention",
+          "transfer"
+        ],
+        "audience": "REVIEWER_ONLY"
+      },
+      {
+        "id": "rubrics",
+        "kind": "RUBRIC",
+        "role": "ASSESSMENT_DESIGNER",
+        "objectiveIds": [
+          "ft04-o1",
+          "ft04-o2",
+          "ft04-o3"
+        ],
+        "dependsOn": [
+          "summative",
+          "transfer"
+        ],
+        "audience": "REVIEWER_ONLY"
+      },
+      {
+        "id": "extension",
+        "kind": "EXTENSION",
+        "role": "MEDIA_ACCESSIBILITY",
+        "objectiveIds": [
+          "ft04-o1",
+          "ft04-o2",
+          "ft04-o3"
+        ],
+        "dependsOn": [
+          "lesson"
+        ],
+        "audience": "LEARNER"
+      }
+    ],
+    "assessmentPlan": [
+      {
+        "id": "ft04-p1-diagnostic",
+        "resourceId": "diagnostic",
+        "itemIds": [
+          "ft04-p1-diagnostic-item"
+        ],
+        "kind": "PREREQUISITE_DIAGNOSTIC",
+        "objectiveIds": [
+          "ft04-o1",
+          "ft04-o2",
+          "ft04-o3"
+        ],
+        "scaffold": "NONE",
+        "timing": "PRE_LESSON",
+        "context": "REHEARSED",
+        "scoring": "KEYED",
+        "prerequisiteIndex": 0,
+        "fallbackRoute": "worksheet",
+        "source": "EXCELLENCE_PLAN",
+        "ref": "git:9628d97f6932ae4c0c399ec15455230e3f76607e:curriculum/modernization/v1/first-ten/spec.json#/lessons/3"
+      },
+      {
+        "id": "ft04-p2-diagnostic",
+        "resourceId": "diagnostic",
+        "itemIds": [
+          "ft04-p2-diagnostic-item"
+        ],
+        "kind": "PREREQUISITE_DIAGNOSTIC",
+        "objectiveIds": [
+          "ft04-o1",
+          "ft04-o2",
+          "ft04-o3"
+        ],
+        "scaffold": "NONE",
+        "timing": "PRE_LESSON",
+        "context": "REHEARSED",
+        "scoring": "KEYED",
+        "prerequisiteIndex": 1,
+        "fallbackRoute": "worksheet",
+        "source": "EXCELLENCE_PLAN",
+        "ref": "git:9628d97f6932ae4c0c399ec15455230e3f76607e:curriculum/modernization/v1/first-ten/spec.json#/lessons/3"
+      },
+      {
+        "id": "ft04-g7-science-states-of-matter-practice",
+        "resourceId": "classwork",
+        "itemIds": [],
+        "kind": "SHORT_CONSTRUCTED_RESPONSE",
+        "objectiveIds": [
+          "ft04-o1",
+          "ft04-o2",
+          "ft04-o3"
+        ],
+        "scaffold": "NONE",
+        "timing": "IN_LESSON",
+        "context": "REHEARSED",
+        "scoring": "NOT_SCORED",
+        "source": "EXCELLENCE_PLAN",
+        "ref": "git:9628d97f6932ae4c0c399ec15455230e3f76607e:curriculum/modernization/v1/first-ten/spec.json#/lessons/3"
+      },
+      {
+        "id": "ft04-a1",
+        "resourceId": "summative",
+        "itemIds": [
+          "ft04-a1-item"
+        ],
+        "kind": "SHORT_CONSTRUCTED_RESPONSE",
+        "objectiveIds": [
+          "ft04-o1"
+        ],
+        "scaffold": "NONE",
+        "timing": "END_OF_LESSON",
+        "context": "REHEARSED",
+        "scoring": "ANALYTIC_RUBRIC",
+        "source": "EXCELLENCE_PLAN",
+        "ref": "git:9628d97f6932ae4c0c399ec15455230e3f76607e:curriculum/modernization/v1/first-ten/spec.json#/lessons/3/independentAssessment/endOfLesson/0"
+      },
+      {
+        "id": "ft04-a2",
+        "resourceId": "summative",
+        "itemIds": [
+          "ft04-a2-item"
+        ],
+        "kind": "SHORT_CONSTRUCTED_RESPONSE",
+        "objectiveIds": [
+          "ft04-o2"
+        ],
+        "scaffold": "NONE",
+        "timing": "END_OF_LESSON",
+        "context": "REHEARSED",
+        "scoring": "ANALYTIC_RUBRIC",
+        "source": "EXCELLENCE_PLAN",
+        "ref": "git:9628d97f6932ae4c0c399ec15455230e3f76607e:curriculum/modernization/v1/first-ten/spec.json#/lessons/3/independentAssessment/endOfLesson/1"
+      },
+      {
+        "id": "ft04-a3",
+        "resourceId": "summative",
+        "itemIds": [
+          "ft04-a3-item"
+        ],
+        "kind": "EXTENDED_REASONING",
+        "objectiveIds": [
+          "ft04-o3"
+        ],
+        "scaffold": "NONE",
+        "timing": "END_OF_LESSON",
+        "context": "REHEARSED",
+        "scoring": "ANALYTIC_RUBRIC",
+        "source": "EXCELLENCE_PLAN",
+        "ref": "git:9628d97f6932ae4c0c399ec15455230e3f76607e:curriculum/modernization/v1/first-ten/spec.json#/lessons/3/independentAssessment/endOfLesson/2"
+      },
+      {
+        "id": "ft04-a4",
+        "resourceId": "summative",
+        "itemIds": [
+          "ft04-a4-item"
+        ],
+        "kind": "SELECTED_RESPONSE",
+        "objectiveIds": [
+          "ft04-o1",
+          "ft04-o2"
+        ],
+        "scaffold": "NONE",
+        "timing": "END_OF_LESSON",
+        "context": "REHEARSED",
+        "scoring": "KEYED",
+        "source": "EXCELLENCE_PLAN",
+        "ref": "git:9628d97f6932ae4c0c399ec15455230e3f76607e:curriculum/modernization/v1/first-ten/spec.json#/lessons/3/independentAssessment/endOfLesson/3"
+      },
+      {
+        "id": "ft04-g7-science-states-of-matter-retention",
+        "resourceId": "retention",
+        "itemIds": [
+          "ft04-g7-science-states-of-matter-retention-item"
+        ],
+        "kind": "DELAYED_RETRIEVAL",
+        "objectiveIds": [
+          "ft04-o1",
+          "ft04-o2",
+          "ft04-o3"
+        ],
+        "scaffold": "NONE",
+        "timing": "DELAYED",
+        "delayDays": 7,
+        "context": "REHEARSED",
+        "scoring": "KEYED",
+        "source": "EXCELLENCE_PLAN",
+        "ref": "git:9628d97f6932ae4c0c399ec15455230e3f76607e:curriculum/modernization/v1/first-ten/spec.json#/lessons/3"
+      },
+      {
+        "id": "ft04-g7-science-states-of-matter-transfer",
+        "resourceId": "transfer",
+        "itemIds": [
+          "ft04-g7-science-states-of-matter-transfer-item"
+        ],
+        "kind": "TRANSFER_TASK",
+        "objectiveIds": [
+          "ft04-o1",
+          "ft04-o2",
+          "ft04-o3"
+        ],
+        "scaffold": "NONE",
+        "timing": "END_OF_LESSON",
+        "context": "NEW",
+        "scoring": "ANALYTIC_RUBRIC",
+        "source": "EXCELLENCE_PLAN",
+        "ref": "git:9628d97f6932ae4c0c399ec15455230e3f76607e:curriculum/modernization/v1/first-ten/spec.json#/lessons/3"
+      },
+      {
+        "id": "ft04-g7-science-states-of-matter-extension",
+        "resourceId": "extension",
+        "itemIds": [],
+        "kind": "EXTENSION",
+        "objectiveIds": [
+          "ft04-o1",
+          "ft04-o2",
+          "ft04-o3"
+        ],
+        "scaffold": "NONE",
+        "timing": "IN_LESSON",
+        "context": "REHEARSED",
+        "scoring": "NOT_SCORED",
+        "optional": true,
+        "source": "EXCELLENCE_PLAN",
+        "ref": "git:9628d97f6932ae4c0c399ec15455230e3f76607e:curriculum/modernization/v1/first-ten/spec.json#/lessons/3"
+      }
+    ],
+    "support": {
+      "differentiation": [
+        "Author must supply grade-appropriate scaffolding and preserve independent assessment."
+      ],
+      "accessibility": [
+        "Author must supply each specified visual with provenance, alt text and a keyboard/text alternative."
+      ],
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "requirements": [
+          "Author must implement the original specification's offline fallbacks."
+        ],
+        "maxBytes": 500000
+      }
+    },
+    "provenance": [
+      {
+        "id": "first-ten-cohort-contract",
+        "version": "0.1.0",
+        "sha256": "9b0128d725b83dc8ca6aaad818530b35c0649297fa7564b8fae8fb53a6d00964",
+        "sourceRef": "git:9628d97f6932ae4c0c399ec15455230e3f76607e:curriculum/modernization/v1/first-ten/spec.json"
+      }
+    ],
+    "legacy": [
+      {
+        "databaseId": "cmm7xs7v000e8vo70m7n72h3t",
+        "contentId": "wk_mca7a_fri_p3",
+        "revisionId": "cmss8pt0j002fvo54be8gcrnd",
+        "revisionNumber": 1,
+        "snapshotSha256": "d218a3e17da67bcf7e774bcace1a4080f3b2e6eb9e581d00b987ee3f8025c1e8",
+        "inventoryPin": {
+          "id": "first-ten-local-extract",
+          "version": "1.0.0",
+          "sha256": "7d5e25cb2a6e2d26e5dc6327c8d2caebeb5882c278d0e9c8c430502de1a7c4ca",
+          "sourceRef": "local-read-only-extract:lessons.jsonl"
+        }
+      }
+    ],
+    "unresolved": [
+      "AUTHORING_DRAFTS_KEYS_RUBRICS_AND_MEDIA_REQUIRED",
+      "MISCONCEPTION_ITEM_BINDINGS_REQUIRED",
+      "LOCAL_EXPORT_NOT_PRODUCTION_ATTESTED",
+      "LIVE_ROW_ASSERTION_NOT_INDEPENDENTLY_PROVEN",
+      "FULL_DEPENDENCY_STORE_COVERAGE_NOT_CAPTURED",
+      "QUALIFIED_CURRICULUM_MAPPING_REVIEW_REQUIRED",
+      "EXACT_REVISION_HUMAN_REVIEW_REQUIRED"
+    ]
+  },
+  "authors": {
+    "CURRICULUM_ARCHITECT": null,
+    "LEARNING_SCIENCE_DESIGNER": null,
+    "LESSON_AUTHOR": null,
+    "ASSESSMENT_DESIGNER": null,
+    "PROJECT_PRACTICAL_DESIGNER": null,
+    "MEDIA_ACCESSIBILITY": null,
+    "INDEPENDENT_QUALITY_REVIEWER": null,
+    "GOVERNANCE_RELEASE": null
+  },
+  "resources": [
+    {
+      "id": "curriculum-map",
+      "version": "0.1.0",
+      "role": "CURRICULUM_ARCHITECT",
+      "payload": null
+    },
+    {
+      "id": "learning-design",
+      "version": "0.1.0",
+      "role": "LEARNING_SCIENCE_DESIGNER",
+      "payload": null
+    },
+    {
+      "id": "lesson",
+      "version": "0.1.0",
+      "role": "LESSON_AUTHOR",
+      "payload": null
+    },
+    {
+      "id": "classwork",
+      "version": "0.1.0",
+      "role": "LESSON_AUTHOR",
+      "payload": null
+    },
+    {
+      "id": "worksheet",
+      "version": "0.1.0",
+      "role": "LESSON_AUTHOR",
+      "payload": null
+    },
+    {
+      "id": "diagnostic",
+      "version": "0.1.0",
+      "role": "ASSESSMENT_DESIGNER",
+      "payload": null
+    },
+    {
+      "id": "summative",
+      "version": "0.1.0",
+      "role": "ASSESSMENT_DESIGNER",
+      "payload": null
+    },
+    {
+      "id": "retention",
+      "version": "0.1.0",
+      "role": "ASSESSMENT_DESIGNER",
+      "payload": null
+    },
+    {
+      "id": "transfer",
+      "version": "0.1.0",
+      "role": "ASSESSMENT_DESIGNER",
+      "payload": null
+    },
+    {
+      "id": "answer-keys",
+      "version": "0.1.0",
+      "role": "ASSESSMENT_DESIGNER",
+      "payload": null
+    },
+    {
+      "id": "rubrics",
+      "version": "0.1.0",
+      "role": "ASSESSMENT_DESIGNER",
+      "payload": null
+    },
+    {
+      "id": "extension",
+      "version": "0.1.0",
+      "role": "MEDIA_ACCESSIBILITY",
+      "payload": null
+    }
+  ],
+  "misconceptionBindings": [
+    {
+      "id": "ft04-m1",
+      "objectiveId": null,
+      "instructionSceneId": null,
+      "assessmentResourceId": null,
+      "itemId": null,
+      "responsePattern": null
+    },
+    {
+      "id": "ft04-m2",
+      "objectiveId": null,
+      "instructionSceneId": null,
+      "assessmentResourceId": null,
+      "itemId": null,
+      "responsePattern": null
+    },
+    {
+      "id": "ft04-m3",
+      "objectiveId": null,
+      "instructionSceneId": null,
+      "assessmentResourceId": null,
+      "itemId": null,
+      "responsePattern": null
+    },
+    {
+      "id": "ft04-m4",
+      "objectiveId": null,
+      "instructionSceneId": null,
+      "assessmentResourceId": null,
+      "itemId": null,
+      "responsePattern": null
+    },
+    {
+      "id": "ft04-m5",
+      "objectiveId": null,
+      "instructionSceneId": null,
+      "assessmentResourceId": null,
+      "itemId": null,
+      "responsePattern": null
+    },
+    {
+      "id": "ft04-m6",
+      "objectiveId": null,
+      "instructionSceneId": null,
+      "assessmentResourceId": null,
+      "itemId": null,
+      "responsePattern": null
+    }
+  ],
+  "mediaSpecifications": [
+    {
+      "id": "ft04-v1",
+      "resourceId": null,
+      "sceneId": null,
+      "mediaId": null,
+      "implementation": null,
+      "mimeType": null,
+      "altText": null,
+      "keyboardPath": null,
+      "transcript": null,
+      "provenance": null,
+      "license": null,
+      "fallbackDescription": null
+    },
+    {
+      "id": "ft04-v2",
+      "resourceId": null,
+      "sceneId": null,
+      "mediaId": null,
+      "implementation": null,
+      "mimeType": null,
+      "altText": null,
+      "keyboardPath": null,
+      "transcript": null,
+      "provenance": null,
+      "license": null,
+      "fallbackDescription": null
+    },
+    {
+      "id": "ft04-v3",
+      "resourceId": null,
+      "sceneId": null,
+      "mediaId": null,
+      "implementation": null,
+      "mimeType": null,
+      "altText": null,
+      "keyboardPath": null,
+      "transcript": null,
+      "provenance": null,
+      "license": null,
+      "fallbackDescription": null
+    }
+  ],
+  "rubricBindings": [
+    {
+      "taskId": "ft04-a1",
+      "resourceId": "summative",
+      "itemId": null,
+      "rubricId": null,
+      "scoringVersion": null
+    },
+    {
+      "taskId": "ft04-a2",
+      "resourceId": "summative",
+      "itemId": null,
+      "rubricId": null,
+      "scoringVersion": null
+    },
+    {
+      "taskId": "ft04-a3",
+      "resourceId": "summative",
+      "itemId": null,
+      "rubricId": null,
+      "scoringVersion": null
+    },
+    {
+      "taskId": "ft04-g7-science-states-of-matter-transfer",
+      "resourceId": "transfer",
+      "itemId": null,
+      "rubricId": null,
+      "scoringVersion": null
+    }
+  ],
+  "retentionChecks": {
+    "delayDays": 7,
+    "resourceId": "retention",
+    "assistance": "NONE",
+    "items": [
+      {
+        "requirementIndex": 0,
+        "itemIds": []
+      },
+      {
+        "requirementIndex": 1,
+        "itemIds": []
+      },
+      {
+        "requirementIndex": 2,
+        "itemIds": []
+      }
+    ]
+  },
+  "assets": []
+}

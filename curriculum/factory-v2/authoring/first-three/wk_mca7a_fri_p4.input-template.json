@@ -6,7 +6,7 @@
   "released": false,
   "published": false,
   "audience": "REVIEWER_ONLY",
-  "cohortCommit": "9628d97f6932ae4c0c399ec15455230e3f76607e",
+  "cohortCommit": "ac196397cb13bd6866879c9f5c24503e5195c61d",
   "source": {
     "databaseId": "cmm7xs89200e9vo70t6qdlgho",
     "contentId": "wk_mca7a_fri_p4",
@@ -17,19 +17,19 @@
   "blueprint": {
     "schemaVersion": "unit-blueprint/2.1.0",
     "blueprintId": "candidate-ft01-g7-civics-counties-capitals",
-    "version": "0.1.0",
-    "contentHash": "3644f1b4ed2152579be11f4e0d054b8984ccba02cb69511bb5cce24778bf2063",
+    "version": "0.2.0",
+    "contentHash": "ca785f1280d0064039a1c302bae8666eccb187d224d382710038f7ec3399bc0b",
     "grade": 7,
     "subject": "CIVICS",
     "unitId": "candidate-unit-ft01-g7-civics-counties-capitals",
     "title": "Exploring the Counties and Capitals of Liberia",
-    "repositoryCommit": "9628d97f6932ae4c0c399ec15455230e3f76607e",
+    "repositoryCommit": "ac196397cb13bd6866879c9f5c24503e5195c61d",
     "sources": [
       {
         "id": "first-ten-cohort-contract",
-        "version": "0.1.0",
-        "sha256": "9b0128d725b83dc8ca6aaad818530b35c0649297fa7564b8fae8fb53a6d00964",
-        "sourceRef": "git:9628d97f6932ae4c0c399ec15455230e3f76607e:curriculum/modernization/v1/first-ten/spec.json"
+        "version": "1.0.0",
+        "sha256": "648ec61a72e2ddff147444dadae75aff321866cfc660498a792b6a3b48e7a28b",
+        "sourceRef": "git:ac196397cb13bd6866879c9f5c24503e5195c61d:curriculum/modernization/v1/first-ten/spec.json"
       }
     ],
     "objectives": [
@@ -327,7 +327,7 @@
         "prerequisiteIndex": 0,
         "fallbackRoute": "worksheet",
         "source": "EXCELLENCE_PLAN",
-        "ref": "git:9628d97f6932ae4c0c399ec15455230e3f76607e:curriculum/modernization/v1/first-ten/spec.json#/lessons/0"
+        "ref": "git:ac196397cb13bd6866879c9f5c24503e5195c61d:curriculum/modernization/v1/first-ten/spec.json#/lessons/0"
       },
       {
         "id": "ft01-p2-diagnostic",
@@ -348,7 +348,7 @@
         "prerequisiteIndex": 1,
         "fallbackRoute": "worksheet",
         "source": "EXCELLENCE_PLAN",
-        "ref": "git:9628d97f6932ae4c0c399ec15455230e3f76607e:curriculum/modernization/v1/first-ten/spec.json#/lessons/0"
+        "ref": "git:ac196397cb13bd6866879c9f5c24503e5195c61d:curriculum/modernization/v1/first-ten/spec.json#/lessons/0"
       },
       {
         "id": "ft01-g7-civics-counties-capitals-practice",
@@ -365,7 +365,7 @@
         "context": "REHEARSED",
         "scoring": "NOT_SCORED",
         "source": "EXCELLENCE_PLAN",
-        "ref": "git:9628d97f6932ae4c0c399ec15455230e3f76607e:curriculum/modernization/v1/first-ten/spec.json#/lessons/0"
+        "ref": "git:ac196397cb13bd6866879c9f5c24503e5195c61d:curriculum/modernization/v1/first-ten/spec.json#/lessons/0"
       },
       {
         "id": "ft01-a1",
@@ -382,7 +382,7 @@
         "context": "REHEARSED",
         "scoring": "KEYED",
         "source": "EXCELLENCE_PLAN",
-        "ref": "git:9628d97f6932ae4c0c399ec15455230e3f76607e:curriculum/modernization/v1/first-ten/spec.json#/lessons/0/independentAssessment/endOfLesson/0"
+        "ref": "git:ac196397cb13bd6866879c9f5c24503e5195c61d:curriculum/modernization/v1/first-ten/spec.json#/lessons/0/independentAssessment/endOfLesson/0"
       },
       {
         "id": "ft01-a2",
@@ -399,7 +399,7 @@
         "context": "REHEARSED",
         "scoring": "ANALYTIC_RUBRIC",
         "source": "EXCELLENCE_PLAN",
-        "ref": "git:9628d97f6932ae4c0c399ec15455230e3f76607e:curriculum/modernization/v1/first-ten/spec.json#/lessons/0/independentAssessment/endOfLesson/1"
+        "ref": "git:ac196397cb13bd6866879c9f5c24503e5195c61d:curriculum/modernization/v1/first-ten/spec.json#/lessons/0/independentAssessment/endOfLesson/1"
       },
       {
         "id": "ft01-a3",
@@ -417,7 +417,7 @@
         "context": "REHEARSED",
         "scoring": "KEYED",
         "source": "EXCELLENCE_PLAN",
-        "ref": "git:9628d97f6932ae4c0c399ec15455230e3f76607e:curriculum/modernization/v1/first-ten/spec.json#/lessons/0/independentAssessment/endOfLesson/2"
+        "ref": "git:ac196397cb13bd6866879c9f5c24503e5195c61d:curriculum/modernization/v1/first-ten/spec.json#/lessons/0/independentAssessment/endOfLesson/2"
       },
       {
         "id": "ft01-a4",
@@ -434,7 +434,7 @@
         "context": "REHEARSED",
         "scoring": "ANALYTIC_RUBRIC",
         "source": "EXCELLENCE_PLAN",
-        "ref": "git:9628d97f6932ae4c0c399ec15455230e3f76607e:curriculum/modernization/v1/first-ten/spec.json#/lessons/0/independentAssessment/endOfLesson/3"
+        "ref": "git:ac196397cb13bd6866879c9f5c24503e5195c61d:curriculum/modernization/v1/first-ten/spec.json#/lessons/0/independentAssessment/endOfLesson/3"
       },
       {
         "id": "ft01-g7-civics-counties-capitals-retention",
@@ -454,7 +454,7 @@
         "context": "REHEARSED",
         "scoring": "KEYED",
         "source": "EXCELLENCE_PLAN",
-        "ref": "git:9628d97f6932ae4c0c399ec15455230e3f76607e:curriculum/modernization/v1/first-ten/spec.json#/lessons/0"
+        "ref": "git:ac196397cb13bd6866879c9f5c24503e5195c61d:curriculum/modernization/v1/first-ten/spec.json#/lessons/0"
       },
       {
         "id": "ft01-g7-civics-counties-capitals-transfer",
@@ -473,7 +473,7 @@
         "context": "NEW",
         "scoring": "ANALYTIC_RUBRIC",
         "source": "EXCELLENCE_PLAN",
-        "ref": "git:9628d97f6932ae4c0c399ec15455230e3f76607e:curriculum/modernization/v1/first-ten/spec.json#/lessons/0"
+        "ref": "git:ac196397cb13bd6866879c9f5c24503e5195c61d:curriculum/modernization/v1/first-ten/spec.json#/lessons/0"
       },
       {
         "id": "ft01-g7-civics-counties-capitals-extension",
@@ -491,7 +491,7 @@
         "scoring": "NOT_SCORED",
         "optional": true,
         "source": "EXCELLENCE_PLAN",
-        "ref": "git:9628d97f6932ae4c0c399ec15455230e3f76607e:curriculum/modernization/v1/first-ten/spec.json#/lessons/0"
+        "ref": "git:ac196397cb13bd6866879c9f5c24503e5195c61d:curriculum/modernization/v1/first-ten/spec.json#/lessons/0"
       }
     ],
     "support": {
@@ -512,9 +512,9 @@
     "provenance": [
       {
         "id": "first-ten-cohort-contract",
-        "version": "0.1.0",
-        "sha256": "9b0128d725b83dc8ca6aaad818530b35c0649297fa7564b8fae8fb53a6d00964",
-        "sourceRef": "git:9628d97f6932ae4c0c399ec15455230e3f76607e:curriculum/modernization/v1/first-ten/spec.json"
+        "version": "1.0.0",
+        "sha256": "648ec61a72e2ddff147444dadae75aff321866cfc660498a792b6a3b48e7a28b",
+        "sourceRef": "git:ac196397cb13bd6866879c9f5c24503e5195c61d:curriculum/modernization/v1/first-ten/spec.json"
       }
     ],
     "legacy": [
@@ -555,73 +555,73 @@
   "resources": [
     {
       "id": "curriculum-map",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "role": "CURRICULUM_ARCHITECT",
       "payload": null
     },
     {
       "id": "learning-design",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "role": "LEARNING_SCIENCE_DESIGNER",
       "payload": null
     },
     {
       "id": "lesson",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "role": "LESSON_AUTHOR",
       "payload": null
     },
     {
       "id": "classwork",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "role": "LESSON_AUTHOR",
       "payload": null
     },
     {
       "id": "worksheet",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "role": "LESSON_AUTHOR",
       "payload": null
     },
     {
       "id": "diagnostic",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "role": "ASSESSMENT_DESIGNER",
       "payload": null
     },
     {
       "id": "summative",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "role": "ASSESSMENT_DESIGNER",
       "payload": null
     },
     {
       "id": "retention",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "role": "ASSESSMENT_DESIGNER",
       "payload": null
     },
     {
       "id": "transfer",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "role": "ASSESSMENT_DESIGNER",
       "payload": null
     },
     {
       "id": "answer-keys",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "role": "ASSESSMENT_DESIGNER",
       "payload": null
     },
     {
       "id": "rubrics",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "role": "ASSESSMENT_DESIGNER",
       "payload": null
     },
     {
       "id": "extension",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "role": "MEDIA_ACCESSIBILITY",
       "payload": null
     }

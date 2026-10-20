@@ -1,0 +1,738 @@
+{
+  "schemaVersion": "factory-lesson-authoring-input/1.0.0",
+  "inputState": "TEMPLATE",
+  "state": "DRAFT",
+  "approved": false,
+  "released": false,
+  "published": false,
+  "audience": "REVIEWER_ONLY",
+  "cohortCommit": "9628d97f6932ae4c0c399ec15455230e3f76607e",
+  "source": {
+    "databaseId": "cmlrkjnow00dmvo7o4cajgquf",
+    "contentId": "lesson_mca_1",
+    "revisionId": "cmss8mpl0000bvo1wos7i1ew4",
+    "revisionNumber": 1,
+    "snapshotSha256": "872222a2435f151d6b215488ad2c3de2cc6c130f57d68fc5d7c6898ad301314f"
+  },
+  "blueprint": {
+    "schemaVersion": "unit-blueprint/2.1.0",
+    "blueprintId": "candidate-ft07-g7-math-fractions",
+    "version": "0.1.0",
+    "contentHash": "2e18b2191080185ebf2d460a5fa20287f1143ce2340d2a754d95280f0450224c",
+    "grade": 7,
+    "subject": "MATH",
+    "unitId": "candidate-unit-ft07-g7-math-fractions",
+    "title": "Understanding and Representing Fractions in Real-Life Contexts",
+    "repositoryCommit": "9628d97f6932ae4c0c399ec15455230e3f76607e",
+    "sources": [
+      {
+        "id": "first-ten-cohort-contract",
+        "version": "0.1.0",
+        "sha256": "9b0128d725b83dc8ca6aaad818530b35c0649297fa7564b8fae8fb53a6d00964",
+        "sourceRef": "git:9628d97f6932ae4c0c399ec15455230e3f76607e:curriculum/modernization/v1/first-ten/spec.json"
+      }
+    ],
+    "objectives": [
+      {
+        "id": "ft07-o1",
+        "kind": "NATIONAL",
+        "statement": "Represent fractions, including fractions equal to or greater than 1, on area models and a number line, naming the whole each fraction refers to.",
+        "sourceId": "first-ten-cohort-contract",
+        "sourcePointer": "/lessons/6/objectives/0",
+        "scope": "REQUIRED",
+        "mapping": "PROPOSED"
+      },
+      {
+        "id": "ft07-o2",
+        "kind": "NATIONAL",
+        "statement": "Add and subtract fractions with like denominators, and with related denominators (e.g. halves, quarters, eighths), by using equivalent fractions.",
+        "sourceId": "first-ten-cohort-contract",
+        "sourcePointer": "/lessons/6/objectives/1",
+        "scope": "REQUIRED",
+        "mapping": "PROPOSED"
+      },
+      {
+        "id": "ft07-o3",
+        "kind": "LIBERIALEARN_MASTERY",
+        "statement": "Compare and order fractions using benchmarks (0, 1/2, 1), common denominators and the number line, and justify each comparison.",
+        "sourceId": "first-ten-cohort-contract",
+        "sourcePointer": "/lessons/6/objectives/2",
+        "scope": "REQUIRED",
+        "mapping": "PROPOSED"
+      }
+    ],
+    "outcomes": [
+      {
+        "id": "ft07-o1-outcome",
+        "objectiveIds": [
+          "ft07-o1"
+        ],
+        "demonstration": "Represent fractions, including fractions equal to or greater than 1, on area models and a number line, naming the whole each fraction refers to."
+      },
+      {
+        "id": "ft07-o2-outcome",
+        "objectiveIds": [
+          "ft07-o2"
+        ],
+        "demonstration": "Add and subtract fractions with like denominators, and with related denominators (e.g. halves, quarters, eighths), by using equivalent fractions."
+      },
+      {
+        "id": "ft07-o3-outcome",
+        "objectiveIds": [
+          "ft07-o3"
+        ],
+        "demonstration": "Compare and order fractions using benchmarks (0, 1/2, 1), common denominators and the number line, and justify each comparison."
+      }
+    ],
+    "prerequisites": [
+      {
+        "id": "ft07-p1",
+        "statement": "Recognises equal parts.",
+        "diagnosticResourceId": "diagnostic",
+        "fallbackResourceId": "worksheet"
+      },
+      {
+        "id": "ft07-p2",
+        "statement": "Knows multiplication facts to 10 × 10.",
+        "diagnosticResourceId": "diagnostic",
+        "fallbackResourceId": "worksheet"
+      }
+    ],
+    "misconceptions": [],
+    "sequence": [
+      {
+        "resourceId": "diagnostic",
+        "dependsOn": [],
+        "objectiveIds": [
+          "ft07-o1",
+          "ft07-o2",
+          "ft07-o3"
+        ],
+        "scaffold": "NONE"
+      },
+      {
+        "resourceId": "lesson",
+        "dependsOn": [
+          "diagnostic"
+        ],
+        "objectiveIds": [
+          "ft07-o1",
+          "ft07-o2",
+          "ft07-o3"
+        ],
+        "scaffold": "FULL"
+      },
+      {
+        "resourceId": "summative",
+        "dependsOn": [
+          "lesson"
+        ],
+        "objectiveIds": [
+          "ft07-o1",
+          "ft07-o2",
+          "ft07-o3"
+        ],
+        "scaffold": "NONE"
+      }
+    ],
+    "resources": [
+      {
+        "id": "curriculum-map",
+        "kind": "DESIGN_NOTE",
+        "role": "CURRICULUM_ARCHITECT",
+        "objectiveIds": [
+          "ft07-o1",
+          "ft07-o2",
+          "ft07-o3"
+        ],
+        "dependsOn": [],
+        "audience": "REVIEWER_ONLY"
+      },
+      {
+        "id": "learning-design",
+        "kind": "DESIGN_NOTE",
+        "role": "LEARNING_SCIENCE_DESIGNER",
+        "objectiveIds": [
+          "ft07-o1",
+          "ft07-o2",
+          "ft07-o3"
+        ],
+        "dependsOn": [
+          "curriculum-map"
+        ],
+        "audience": "REVIEWER_ONLY"
+      },
+      {
+        "id": "lesson",
+        "kind": "LESSON",
+        "role": "LESSON_AUTHOR",
+        "objectiveIds": [
+          "ft07-o1",
+          "ft07-o2",
+          "ft07-o3"
+        ],
+        "dependsOn": [
+          "learning-design"
+        ],
+        "audience": "LEARNER"
+      },
+      {
+        "id": "classwork",
+        "kind": "CLASSWORK",
+        "role": "LESSON_AUTHOR",
+        "objectiveIds": [
+          "ft07-o1",
+          "ft07-o2",
+          "ft07-o3"
+        ],
+        "dependsOn": [
+          "lesson"
+        ],
+        "audience": "LEARNER"
+      },
+      {
+        "id": "worksheet",
+        "kind": "WORKSHEET",
+        "role": "LESSON_AUTHOR",
+        "objectiveIds": [
+          "ft07-o1",
+          "ft07-o2",
+          "ft07-o3"
+        ],
+        "dependsOn": [
+          "lesson"
+        ],
+        "audience": "LEARNER"
+      },
+      {
+        "id": "diagnostic",
+        "kind": "QUIZ",
+        "role": "ASSESSMENT_DESIGNER",
+        "objectiveIds": [
+          "ft07-o1",
+          "ft07-o2",
+          "ft07-o3"
+        ],
+        "dependsOn": [
+          "lesson"
+        ],
+        "audience": "LEARNER"
+      },
+      {
+        "id": "summative",
+        "kind": "SUMMATIVE",
+        "role": "ASSESSMENT_DESIGNER",
+        "objectiveIds": [
+          "ft07-o1",
+          "ft07-o2",
+          "ft07-o3"
+        ],
+        "dependsOn": [
+          "lesson"
+        ],
+        "audience": "LEARNER"
+      },
+      {
+        "id": "retention",
+        "kind": "RETENTION",
+        "role": "ASSESSMENT_DESIGNER",
+        "objectiveIds": [
+          "ft07-o1",
+          "ft07-o2",
+          "ft07-o3"
+        ],
+        "dependsOn": [
+          "summative"
+        ],
+        "audience": "LEARNER"
+      },
+      {
+        "id": "transfer",
+        "kind": "TRANSFER",
+        "role": "ASSESSMENT_DESIGNER",
+        "objectiveIds": [
+          "ft07-o1",
+          "ft07-o2",
+          "ft07-o3"
+        ],
+        "dependsOn": [
+          "summative"
+        ],
+        "audience": "LEARNER"
+      },
+      {
+        "id": "answer-keys",
+        "kind": "ANSWER_KEY",
+        "role": "ASSESSMENT_DESIGNER",
+        "objectiveIds": [
+          "ft07-o1",
+          "ft07-o2",
+          "ft07-o3"
+        ],
+        "dependsOn": [
+          "diagnostic",
+          "summative",
+          "retention",
+          "transfer"
+        ],
+        "audience": "REVIEWER_ONLY"
+      },
+      {
+        "id": "rubrics",
+        "kind": "RUBRIC",
+        "role": "ASSESSMENT_DESIGNER",
+        "objectiveIds": [
+          "ft07-o1",
+          "ft07-o2",
+          "ft07-o3"
+        ],
+        "dependsOn": [
+          "summative",
+          "transfer"
+        ],
+        "audience": "REVIEWER_ONLY"
+      },
+      {
+        "id": "extension",
+        "kind": "EXTENSION",
+        "role": "MEDIA_ACCESSIBILITY",
+        "objectiveIds": [
+          "ft07-o1",
+          "ft07-o2",
+          "ft07-o3"
+        ],
+        "dependsOn": [
+          "lesson"
+        ],
+        "audience": "LEARNER"
+      }
+    ],
+    "assessmentPlan": [
+      {
+        "id": "ft07-p1-diagnostic",
+        "resourceId": "diagnostic",
+        "itemIds": [
+          "ft07-p1-diagnostic-item"
+        ],
+        "kind": "PREREQUISITE_DIAGNOSTIC",
+        "objectiveIds": [
+          "ft07-o1",
+          "ft07-o2",
+          "ft07-o3"
+        ],
+        "scaffold": "NONE",
+        "timing": "PRE_LESSON",
+        "context": "REHEARSED",
+        "scoring": "KEYED",
+        "prerequisiteIndex": 0,
+        "fallbackRoute": "worksheet",
+        "source": "EXCELLENCE_PLAN",
+        "ref": "git:9628d97f6932ae4c0c399ec15455230e3f76607e:curriculum/modernization/v1/first-ten/spec.json#/lessons/6"
+      },
+      {
+        "id": "ft07-p2-diagnostic",
+        "resourceId": "diagnostic",
+        "itemIds": [
+          "ft07-p2-diagnostic-item"
+        ],
+        "kind": "PREREQUISITE_DIAGNOSTIC",
+        "objectiveIds": [
+          "ft07-o1",
+          "ft07-o2",
+          "ft07-o3"
+        ],
+        "scaffold": "NONE",
+        "timing": "PRE_LESSON",
+        "context": "REHEARSED",
+        "scoring": "KEYED",
+        "prerequisiteIndex": 1,
+        "fallbackRoute": "worksheet",
+        "source": "EXCELLENCE_PLAN",
+        "ref": "git:9628d97f6932ae4c0c399ec15455230e3f76607e:curriculum/modernization/v1/first-ten/spec.json#/lessons/6"
+      },
+      {
+        "id": "ft07-g7-math-fractions-practice",
+        "resourceId": "classwork",
+        "itemIds": [],
+        "kind": "SHORT_CONSTRUCTED_RESPONSE",
+        "objectiveIds": [
+          "ft07-o1",
+          "ft07-o2",
+          "ft07-o3"
+        ],
+        "scaffold": "NONE",
+        "timing": "IN_LESSON",
+        "context": "REHEARSED",
+        "scoring": "NOT_SCORED",
+        "source": "EXCELLENCE_PLAN",
+        "ref": "git:9628d97f6932ae4c0c399ec15455230e3f76607e:curriculum/modernization/v1/first-ten/spec.json#/lessons/6"
+      },
+      {
+        "id": "ft07-a1",
+        "resourceId": "summative",
+        "itemIds": [
+          "ft07-a1-item"
+        ],
+        "kind": "SHORT_CONSTRUCTED_RESPONSE",
+        "objectiveIds": [
+          "ft07-o1"
+        ],
+        "scaffold": "NONE",
+        "timing": "END_OF_LESSON",
+        "context": "REHEARSED",
+        "scoring": "KEYED",
+        "source": "EXCELLENCE_PLAN",
+        "ref": "git:9628d97f6932ae4c0c399ec15455230e3f76607e:curriculum/modernization/v1/first-ten/spec.json#/lessons/6/independentAssessment/endOfLesson/0"
+      },
+      {
+        "id": "ft07-a2",
+        "resourceId": "summative",
+        "itemIds": [
+          "ft07-a2-item"
+        ],
+        "kind": "SHORT_CONSTRUCTED_RESPONSE",
+        "objectiveIds": [
+          "ft07-o2"
+        ],
+        "scaffold": "NONE",
+        "timing": "END_OF_LESSON",
+        "context": "REHEARSED",
+        "scoring": "KEYED",
+        "source": "EXCELLENCE_PLAN",
+        "ref": "git:9628d97f6932ae4c0c399ec15455230e3f76607e:curriculum/modernization/v1/first-ten/spec.json#/lessons/6/independentAssessment/endOfLesson/1"
+      },
+      {
+        "id": "ft07-a3",
+        "resourceId": "summative",
+        "itemIds": [
+          "ft07-a3-item"
+        ],
+        "kind": "EXTENDED_REASONING",
+        "objectiveIds": [
+          "ft07-o3"
+        ],
+        "scaffold": "NONE",
+        "timing": "END_OF_LESSON",
+        "context": "REHEARSED",
+        "scoring": "ANALYTIC_RUBRIC",
+        "source": "EXCELLENCE_PLAN",
+        "ref": "git:9628d97f6932ae4c0c399ec15455230e3f76607e:curriculum/modernization/v1/first-ten/spec.json#/lessons/6/independentAssessment/endOfLesson/2"
+      },
+      {
+        "id": "ft07-a4",
+        "resourceId": "summative",
+        "itemIds": [
+          "ft07-a4-item"
+        ],
+        "kind": "SELECTED_RESPONSE",
+        "objectiveIds": [
+          "ft07-o1",
+          "ft07-o2",
+          "ft07-o3"
+        ],
+        "scaffold": "NONE",
+        "timing": "END_OF_LESSON",
+        "context": "REHEARSED",
+        "scoring": "KEYED",
+        "source": "EXCELLENCE_PLAN",
+        "ref": "git:9628d97f6932ae4c0c399ec15455230e3f76607e:curriculum/modernization/v1/first-ten/spec.json#/lessons/6/independentAssessment/endOfLesson/3"
+      },
+      {
+        "id": "ft07-g7-math-fractions-retention",
+        "resourceId": "retention",
+        "itemIds": [
+          "ft07-g7-math-fractions-retention-item"
+        ],
+        "kind": "DELAYED_RETRIEVAL",
+        "objectiveIds": [
+          "ft07-o1",
+          "ft07-o2",
+          "ft07-o3"
+        ],
+        "scaffold": "NONE",
+        "timing": "DELAYED",
+        "delayDays": 7,
+        "context": "REHEARSED",
+        "scoring": "KEYED",
+        "source": "EXCELLENCE_PLAN",
+        "ref": "git:9628d97f6932ae4c0c399ec15455230e3f76607e:curriculum/modernization/v1/first-ten/spec.json#/lessons/6"
+      },
+      {
+        "id": "ft07-g7-math-fractions-transfer",
+        "resourceId": "transfer",
+        "itemIds": [
+          "ft07-g7-math-fractions-transfer-item"
+        ],
+        "kind": "TRANSFER_TASK",
+        "objectiveIds": [
+          "ft07-o1",
+          "ft07-o2",
+          "ft07-o3"
+        ],
+        "scaffold": "NONE",
+        "timing": "END_OF_LESSON",
+        "context": "NEW",
+        "scoring": "ANALYTIC_RUBRIC",
+        "source": "EXCELLENCE_PLAN",
+        "ref": "git:9628d97f6932ae4c0c399ec15455230e3f76607e:curriculum/modernization/v1/first-ten/spec.json#/lessons/6"
+      },
+      {
+        "id": "ft07-g7-math-fractions-extension",
+        "resourceId": "extension",
+        "itemIds": [],
+        "kind": "EXTENSION",
+        "objectiveIds": [
+          "ft07-o1",
+          "ft07-o2",
+          "ft07-o3"
+        ],
+        "scaffold": "NONE",
+        "timing": "IN_LESSON",
+        "context": "REHEARSED",
+        "scoring": "NOT_SCORED",
+        "optional": true,
+        "source": "EXCELLENCE_PLAN",
+        "ref": "git:9628d97f6932ae4c0c399ec15455230e3f76607e:curriculum/modernization/v1/first-ten/spec.json#/lessons/6"
+      }
+    ],
+    "support": {
+      "differentiation": [
+        "Author must supply grade-appropriate scaffolding and preserve independent assessment."
+      ],
+      "accessibility": [
+        "Author must supply each specified visual with provenance, alt text and a keyboard/text alternative."
+      ],
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "requirements": [
+          "Author must implement the original specification's offline fallbacks."
+        ],
+        "maxBytes": 500000
+      }
+    },
+    "provenance": [
+      {
+        "id": "first-ten-cohort-contract",
+        "version": "0.1.0",
+        "sha256": "9b0128d725b83dc8ca6aaad818530b35c0649297fa7564b8fae8fb53a6d00964",
+        "sourceRef": "git:9628d97f6932ae4c0c399ec15455230e3f76607e:curriculum/modernization/v1/first-ten/spec.json"
+      }
+    ],
+    "legacy": [
+      {
+        "databaseId": "cmlrkjnow00dmvo7o4cajgquf",
+        "contentId": "lesson_mca_1",
+        "revisionId": "cmss8mpl0000bvo1wos7i1ew4",
+        "revisionNumber": 1,
+        "snapshotSha256": "872222a2435f151d6b215488ad2c3de2cc6c130f57d68fc5d7c6898ad301314f",
+        "inventoryPin": {
+          "id": "first-ten-local-extract",
+          "version": "1.0.0",
+          "sha256": "7d5e25cb2a6e2d26e5dc6327c8d2caebeb5882c278d0e9c8c430502de1a7c4ca",
+          "sourceRef": "local-read-only-extract:lessons.jsonl"
+        }
+      }
+    ],
+    "unresolved": [
+      "AUTHORING_DRAFTS_KEYS_RUBRICS_AND_MEDIA_REQUIRED",
+      "MISCONCEPTION_ITEM_BINDINGS_REQUIRED",
+      "LOCAL_EXPORT_NOT_PRODUCTION_ATTESTED",
+      "LIVE_ROW_ASSERTION_NOT_INDEPENDENTLY_PROVEN",
+      "FULL_DEPENDENCY_STORE_COVERAGE_NOT_CAPTURED",
+      "QUALIFIED_CURRICULUM_MAPPING_REVIEW_REQUIRED",
+      "EXACT_REVISION_HUMAN_REVIEW_REQUIRED"
+    ]
+  },
+  "authors": {
+    "CURRICULUM_ARCHITECT": null,
+    "LEARNING_SCIENCE_DESIGNER": null,
+    "LESSON_AUTHOR": null,
+    "ASSESSMENT_DESIGNER": null,
+    "PROJECT_PRACTICAL_DESIGNER": null,
+    "MEDIA_ACCESSIBILITY": null,
+    "INDEPENDENT_QUALITY_REVIEWER": null,
+    "GOVERNANCE_RELEASE": null
+  },
+  "resources": [
+    {
+      "id": "curriculum-map",
+      "version": "0.1.0",
+      "role": "CURRICULUM_ARCHITECT",
+      "payload": null
+    },
+    {
+      "id": "learning-design",
+      "version": "0.1.0",
+      "role": "LEARNING_SCIENCE_DESIGNER",
+      "payload": null
+    },
+    {
+      "id": "lesson",
+      "version": "0.1.0",
+      "role": "LESSON_AUTHOR",
+      "payload": null
+    },
+    {
+      "id": "classwork",
+      "version": "0.1.0",
+      "role": "LESSON_AUTHOR",
+      "payload": null
+    },
+    {
+      "id": "worksheet",
+      "version": "0.1.0",
+      "role": "LESSON_AUTHOR",
+      "payload": null
+    },
+    {
+      "id": "diagnostic",
+      "version": "0.1.0",
+      "role": "ASSESSMENT_DESIGNER",
+      "payload": null
+    },
+    {
+      "id": "summative",
+      "version": "0.1.0",
+      "role": "ASSESSMENT_DESIGNER",
+      "payload": null
+    },
+    {
+      "id": "retention",
+      "version": "0.1.0",
+      "role": "ASSESSMENT_DESIGNER",
+      "payload": null
+    },
+    {
+      "id": "transfer",
+      "version": "0.1.0",
+      "role": "ASSESSMENT_DESIGNER",
+      "payload": null
+    },
+    {
+      "id": "answer-keys",
+      "version": "0.1.0",
+      "role": "ASSESSMENT_DESIGNER",
+      "payload": null
+    },
+    {
+      "id": "rubrics",
+      "version": "0.1.0",
+      "role": "ASSESSMENT_DESIGNER",
+      "payload": null
+    },
+    {
+      "id": "extension",
+      "version": "0.1.0",
+      "role": "MEDIA_ACCESSIBILITY",
+      "payload": null
+    }
+  ],
+  "misconceptionBindings": [
+    {
+      "id": "ft07-m1",
+      "objectiveId": null,
+      "instructionSceneId": null,
+      "assessmentResourceId": null,
+      "itemId": null,
+      "responsePattern": null
+    },
+    {
+      "id": "ft07-m2",
+      "objectiveId": null,
+      "instructionSceneId": null,
+      "assessmentResourceId": null,
+      "itemId": null,
+      "responsePattern": null
+    },
+    {
+      "id": "ft07-m3",
+      "objectiveId": null,
+      "instructionSceneId": null,
+      "assessmentResourceId": null,
+      "itemId": null,
+      "responsePattern": null
+    },
+    {
+      "id": "ft07-m4",
+      "objectiveId": null,
+      "instructionSceneId": null,
+      "assessmentResourceId": null,
+      "itemId": null,
+      "responsePattern": null
+    },
+    {
+      "id": "ft07-m5",
+      "objectiveId": null,
+      "instructionSceneId": null,
+      "assessmentResourceId": null,
+      "itemId": null,
+      "responsePattern": null
+    }
+  ],
+  "mediaSpecifications": [
+    {
+      "id": "ft07-v1",
+      "resourceId": null,
+      "sceneId": null,
+      "mediaId": null,
+      "implementation": null,
+      "mimeType": null,
+      "altText": null,
+      "keyboardPath": null,
+      "transcript": null,
+      "provenance": null,
+      "license": null,
+      "fallbackDescription": null
+    },
+    {
+      "id": "ft07-v2",
+      "resourceId": null,
+      "sceneId": null,
+      "mediaId": null,
+      "implementation": null,
+      "mimeType": null,
+      "altText": null,
+      "keyboardPath": null,
+      "transcript": null,
+      "provenance": null,
+      "license": null,
+      "fallbackDescription": null
+    }
+  ],
+  "rubricBindings": [
+    {
+      "taskId": "ft07-a3",
+      "resourceId": "summative",
+      "itemId": null,
+      "rubricId": null,
+      "scoringVersion": null
+    },
+    {
+      "taskId": "ft07-g7-math-fractions-transfer",
+      "resourceId": "transfer",
+      "itemId": null,
+      "rubricId": null,
+      "scoringVersion": null
+    }
+  ],
+  "retentionChecks": {
+    "delayDays": 7,
+    "resourceId": "retention",
+    "assistance": "NONE",
+    "items": [
+      {
+        "requirementIndex": 0,
+        "itemIds": []
+      },
+      {
+        "requirementIndex": 1,
+        "itemIds": []
+      },
+      {
+        "requirementIndex": 2,
+        "itemIds": []
+      }
+    ]
+  },
+  "assets": []
+}

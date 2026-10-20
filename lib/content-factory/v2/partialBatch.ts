@@ -11,7 +11,7 @@ import { hashCurriculumSnapshot } from "@/lib/curriculum/provenance/hash";
 import { staticBatchExecutors } from "./staticBatch";
 import { runFactory } from "./manager";
 
-export const PARTIAL_BATCH_VERSION = "factory-authored-subset/1.0.0" as const;
+export const PARTIAL_BATCH_VERSION = "factory-authored-subset/2.0.0" as const;
 const id = z.string().min(1).refine(v => v === v.trim());
 const hash = z.string().regex(/^[a-f0-9]{64}$/);
 const fullManifestSchema = z.object({ sourceCommit: z.string().regex(/^[a-f0-9]{40}$/), specSha256: hash, extractSha256: hash,
@@ -36,13 +36,13 @@ export function loadPinnedAuthoringCohort(specBytes: Buffer, extractDirectory: s
     })).map(({ snapshotSha256: _pin, ...row }) => row),
   });
   const context: AuthoringRequirements = { baselineCommit: FIRST_TEN_BASELINE.sourceCommit, lessons: sources.lessons.map(({ lesson, sourceRef }) => {
-    const misconceptions = z.array(z.object({ id, description: id, probe: id, feedback: id })).parse(lesson.misconceptions);
+    const misconceptions = z.array(z.object({ id, description: id, probe: id, feedback: id, misconceptionId: id.optional() })).parse(lesson.misconceptions);
     const media = z.array(z.object({ id, requirement: id, offlineFallback: id })).parse(lesson.visualAndInteractive);
     return { key: lesson.key, source: sourceRef, subject: lesson.subject, grade: lesson.grade, objectiveIds: lesson.objectives.map(o => o.id),
-      misconceptions: misconceptions.map(m => ({ id: m.id, description: m.description, probe: m.probe, feedback: m.feedback })),
+      misconceptions: misconceptions.map(m => ({ ...m })),
       mediaSpecifications: media.map(m => ({ id: m.id, requirement: m.requirement, offlineFallback: m.offlineFallback })),
-      retention: { delayDays: lesson.retention.delayDays, items: lesson.retention.items },
-      assessmentTasks: lesson.independentAssessment.endOfLesson.map(t => ({ id: t.id, objectiveIds: t.objectiveIds, kind: t.kind, scoring: t.scoring, task: t.task })),
+      retention: { ...lesson.retention },
+      assessmentTasks: lesson.independentAssessment.endOfLesson.map(t => ({ ...t })),
     };
   }) };
   return { manifest: FIRST_TEN_BASELINE, requirements: context, evidence: "LOCAL_READ_ONLY_EXPORT_UNATTESTED",

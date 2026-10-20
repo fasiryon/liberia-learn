@@ -1,7 +1,6 @@
 import fs from "fs";
 import path from "path";
-import { spawnSync } from "child_process";
-import { FIRST_TEN_BASELINE, FIRST_TEN_INTAKE_VERSION, firstTenBlueprint, loadFirstTenSources, rawSha256 } from "../lib/content-factory/v2/firstTen";
+import { FIRST_TEN_BASELINE, FIRST_TEN_INTAKE_VERSION, firstTenBlueprint, loadFirstTenSources, rawSha256, readPinnedFirstTenSpec } from "../lib/content-factory/v2/firstTen";
 import { digest } from "../lib/content-factory/v2/blueprint";
 
 function main() {
@@ -11,9 +10,7 @@ function main() {
   const output = path.resolve(outputDirectory);
   const relative = path.relative(process.cwd(), output);
   if (relative !== ".." && !relative.startsWith(`..${path.sep}`) && !path.isAbsolute(relative)) throw new Error("first_ten_source_output_must_be_outside_repository");
-  const git = specFile ? null : spawnSync("git", ["show", `${FIRST_TEN_BASELINE.sourceCommit}:${FIRST_TEN_BASELINE.specPath}`]);
-  if (git?.status) throw new Error("first_ten_baseline_git_object_unavailable_supply_exact_spec_file");
-  const specBytes = specFile ? fs.readFileSync(specFile) : git!.stdout;
+  const specBytes = specFile ? fs.readFileSync(specFile) : readPinnedFirstTenSpec();
   const sources = loadFirstTenSources(specBytes, extractDirectory);
   // Validate the complete cohort and every blueprint before creating any output.
   const blueprints = sources.lessons.map((_, i) => firstTenBlueprint(sources, i));

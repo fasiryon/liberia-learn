@@ -6,21 +6,23 @@ import { loadLibraryExtract } from "@/lib/curriculum/modernization/extract";
 import { hashCurriculumSnapshot } from "@/lib/curriculum/provenance/hash";
 import { digest, sealBlueprint, type ExactPin, type UnitBlueprint } from "./blueprint";
 import baseline from "@/curriculum/factory-v2/first-ten-baseline.json";
+import { readPinnedFirstTenSpec } from "./firstTenContract";
+export { readPinnedFirstTenSpec } from "./firstTenContract";
 
-export const FIRST_TEN_INTAKE_VERSION = "factory-first-ten-intake/1.0.0";
+export const FIRST_TEN_INTAKE_VERSION = "factory-first-ten-intake/2.0.0";
 export const FIRST_TEN_BASELINE = baseline;
 const hash = z.string().regex(/^[a-f0-9]{64}$/);
 const id = z.string().min(1);
 const count = z.number().int().nonnegative();
 const objective = z.object({ id, statement: id, layer: z.enum(["NATIONAL_FOUNDATION", "LIBERIALEARN_MASTERY", "GLOBAL_EXCELLENCE"]) }).passthrough();
-const task = z.object({ id, objectiveIds: z.array(id).min(1), kind: z.enum(["CONSTRUCTED", "CONSTRUCTED_EXPLANATION", "SELECTED_RESPONSE_DIAGNOSTIC", "REASONING_TASK", "PRODUCED_ANSWER", "ORIGINAL_WRITING"]), scoring: z.enum(["KEYED", "ANALYTIC_RUBRIC"]), task: id }).passthrough();
-const specSchema = z.object({ contractVersion: z.literal("liberialearn-first-ten-modernization-contract/0.1.0"), status: id,
+const task = z.object({ id, objectiveIds: z.array(id).min(1), kind: z.enum(["CONSTRUCTED", "CONSTRUCTED_EXPLANATION", "SELECTED_RESPONSE_DIAGNOSTIC", "REASONING_TASK", "PRODUCED_ANSWER", "ORIGINAL_WRITING"]), scoring: z.enum(["KEYED", "ANALYTIC_RUBRIC"]), task: id, assessmentPurpose: id.optional(), itemContext: id.optional() }).passthrough();
+export const firstTenSpecSchema = z.object({ contractVersion: z.literal("liberialearn-first-ten-modernization-contract/1.0.0"), status: id,
   basis: z.object({ inventory: z.object({ extractSha256: hash, lessons: count, capturedAt: id }) }),
   lessons: z.array(z.object({ key: id, contentPk: id, contentId: id, grade: z.number().int().min(1).max(12), subject: id, unitId: id.nullable(), legacyTitle: id,
     legacy: z.object({ revisionId: id, contentHash: hash }).passthrough(), objectives: z.array(objective).min(1),
     prerequisites: z.array(z.object({ id, statement: id, diagnostic: id, fallbackRoute: id }).passthrough()),
     independentAssessment: z.object({ endOfLesson: z.array(task).min(1) }).passthrough(),
-    retention: z.object({ delayDays: z.number().int().min(7), items: z.array(id).min(1) }).passthrough(),
+    retention: z.object({ delayDays: z.number().int().min(7), items: z.array(id).min(1), policyRef: id.optional(), assessmentPurpose: id.optional(), itemContext: id.optional() }).passthrough(),
     transfer: z.object({ context: z.literal("NEW"), scoring: z.enum(["KEYED", "ANALYTIC_RUBRIC"]), task: id }).passthrough(),
     extension: z.object({ optional: z.literal(true), task: id }).passthrough(),
   }).passthrough()).length(10),
@@ -39,7 +41,7 @@ export const rawSha256 = (bytes: Buffer) => createHash("sha256").update(bytes).d
 export function validateFirstTenSources(input: { specBytes: Buffer; manifestBytes: Buffer; extractBytes: Buffer; expectedSpecSha256: string }) {
   const specSha256 = rawSha256(input.specBytes);
   if (specSha256 !== input.expectedSpecSha256) throw new Error("first_ten_spec_hash_mismatch");
-  const spec = specSchema.parse(JSON.parse(input.specBytes.toString("utf8")));
+  const spec = firstTenSpecSchema.parse(JSON.parse(input.specBytes.toString("utf8")));
   const manifest = manifestSchema.parse(JSON.parse(input.manifestBytes.toString("utf8")));
   const extractSha256 = rawSha256(input.extractBytes);
   if (extractSha256 !== manifest.extractSha256 || extractSha256 !== spec.basis.inventory.extractSha256) throw new Error("first_ten_extract_hash_mismatch");
@@ -66,6 +68,7 @@ export type FirstTenSources = ReturnType<typeof validateFirstTenSources>;
 
 /** Reuse the original loader, then strengthen its cast-based parsing at the factory boundary. */
 export function loadFirstTenSources(specBytes: Buffer, extractDirectory: string): FirstTenSources {
+  readPinnedFirstTenSpec(); // Refuse stale adoption metadata, changed contract bytes or a lost E1.
   loadLibraryExtract(extractDirectory);
   const result = validateFirstTenSources({ specBytes, manifestBytes: fs.readFileSync(path.join(extractDirectory, "manifest.json")), extractBytes: fs.readFileSync(path.join(extractDirectory, "lessons.jsonl")), expectedSpecSha256: baseline.specSha256 });
   const actual = result.lessons.map(({ lesson, sourceRef }) => ({ key: lesson.key, ...sourceRef, grade: lesson.grade, subject: lesson.subject }));
@@ -77,13 +80,13 @@ export function loadFirstTenSources(specBytes: Buffer, extractDirectory: string)
 export const FIRST_TEN_ASSESSMENT_KIND_MAP = { CONSTRUCTED: "SHORT_CONSTRUCTED_RESPONSE", CONSTRUCTED_EXPLANATION: "SHORT_CONSTRUCTED_RESPONSE", SELECTED_RESPONSE_DIAGNOSTIC: "SELECTED_RESPONSE", REASONING_TASK: "EXTENDED_REASONING", PRODUCED_ANSWER: "SHORT_CONSTRUCTED_RESPONSE", ORIGINAL_WRITING: "ORIGINAL_WRITING" } as const;
 
 /** Planning only. No candidate body, scoring key, visual asset, approval or review is invented. */
-export function firstTenBlueprint(sources: FirstTenSources, index: number): UnitBlueprint {
+export function firstTenBlueprint(sources: Pick<FirstTenSources, "specSha256" | "extractSha256"> & { lessons: Pick<FirstTenSources["lessons"][number], "lesson" | "sourceRef">[] }, index: number): UnitBlueprint {
   const { lesson, sourceRef } = sources.lessons[index];
-  const pin: ExactPin = { id: "first-ten-cohort-contract", version: "0.1.0", sha256: sources.specSha256, sourceRef: `git:${baseline.sourceCommit}:${baseline.specPath}` };
+  const pin: ExactPin = { id: "first-ten-cohort-contract", version: "1.0.0", sha256: sources.specSha256, sourceRef: `git:${baseline.sourceCommit}:${baseline.specPath}` };
   const objectiveIds = lesson.objectives.map(o => o.id);
   const resource = (id: string, kind: UnitBlueprint["resources"][number]["kind"], role: UnitBlueprint["resources"][number]["role"], dependsOn: string[], audience: UnitBlueprint["resources"][number]["audience"] = "LEARNER") => ({ id, kind, role, dependsOn, audience, objectiveIds });
   const evidence = (id: string, resourceId: string, kind: UnitBlueprint["assessmentPlan"][number]["kind"], extra: Partial<UnitBlueprint["assessmentPlan"][number]> = {}) => ({ id, resourceId, kind, itemIds: [`${id}-item`], objectiveIds, scaffold: "NONE" as const, timing: "END_OF_LESSON" as const, context: "REHEARSED" as const, scoring: "ANALYTIC_RUBRIC" as const, source: "EXCELLENCE_PLAN" as const, ref: `${pin.sourceRef}#/lessons/${index}`, ...extra });
-  return sealBlueprint({ schemaVersion: "unit-blueprint/2.1.0", blueprintId: `candidate-${lesson.key}`, version: "0.1.0", grade: lesson.grade, subject: lesson.subject,
+  return sealBlueprint({ schemaVersion: "unit-blueprint/2.1.0", blueprintId: `candidate-${lesson.key}`, version: "0.2.0", grade: lesson.grade, subject: lesson.subject,
     unitId: `candidate-unit-${lesson.key}`, title: lesson.legacyTitle, repositoryCommit: baseline.sourceCommit, sources: [pin], provenance: [pin], legacy: [{ ...sourceRef, inventoryPin: { id: "first-ten-local-extract", version: "1.0.0", sha256: sources.extractSha256, sourceRef: "local-read-only-extract:lessons.jsonl" } }],
     objectives: lesson.objectives.map((o, i) => ({ id: o.id, statement: o.statement, kind: o.layer === "NATIONAL_FOUNDATION" ? "NATIONAL" : o.layer, scope: "REQUIRED", sourceId: pin.id, sourcePointer: `/lessons/${index}/objectives/${i}`, mapping: "PROPOSED" })),
     outcomes: lesson.objectives.map(o => ({ id: `${o.id}-outcome`, objectiveIds: [o.id], demonstration: o.statement })),

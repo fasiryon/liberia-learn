@@ -1,0 +1,43 @@
+// Explicit, reproducible metadata adoption. Never reads/writes authored inputs or packages.
+const fs = require('node:fs');
+const cp = require('node:child_process');
+const path = require('node:path');
+const assert = require('node:assert/strict');
+const {createHash} = require('node:crypto');
+const sha = b => createHash('sha256').update(b).digest('hex');
+const commit = 'ac196397cb13bd6866879c9f5c24503e5195c61d';
+const erratumCommit = 'd640b6fcb9e102b0a06a9d49a136a0aca6948a8f';
+const root = 'curriculum/factory-v2';
+const contractRoot = 'curriculum/modernization/v1/first-ten';
+const readGit = (ref, name) => cp.execFileSync('git', ['show', `${ref}:${name}`], {maxBuffer: 10 * 1024 * 1024});
+const immutable = (file, bytes) => {fs.mkdirSync(path.dirname(file), {recursive:true}); if (fs.existsSync(file)) assert.equal(sha(fs.readFileSync(file)), sha(bytes), `immutable archive changed: ${file}`); else fs.writeFileSync(file, bytes);};
+const json = (file, value) => fs.writeFileSync(file, JSON.stringify(value, null, 2) + '\n');
+const manifestBytes = readGit(commit, `${contractRoot}/manifest.json`);
+assert.equal(sha(manifestBytes), '4cb6fb5588f5f840fe8b702f181a051a5838b093c1db82b0ea14d9c4b64ea549');
+const manifest = JSON.parse(manifestBytes);
+for (const file of [...manifest.files, ...manifest.advisoryReviews]) assert.equal(sha(readGit(commit, file.path)), file.sha256, file.path);
+const specBytes = readGit(commit, `${contractRoot}/spec.json`);
+const bindingBytes = readGit(commit, `${contractRoot}/source-bindings.json`);
+const spec = JSON.parse(specBytes), bindings = JSON.parse(bindingBytes).bindings;
+const baselineFile = `${root}/first-ten-baseline.json`;
+const oldBaselineBytes = readGit('366f299545fdd9af7e271d6ee1767293854ce915', baselineFile);
+const old = JSON.parse(oldBaselineBytes);
+for (const lesson of old.lessons) {
+  const binding = bindings.find(b => b.source.contentId === lesson.contentId);
+  assert.ok(binding);
+  for (const key of ['databaseId','contentId','revisionId','snapshotSha256']) assert.equal(lesson[key], binding.source[key], key);
+  assert.equal(binding.source.revisionNumber, 1);
+}
+for (const name of ['first-ten-baseline.json','modernization-ten-adoption.json','authoring/first-three/requirements.json', ...['wk_mca7a_fri_p4','wk_mca7a_fri_p3','lesson_mca_1'].map(id => `authoring/first-three/${id}.input-template.json`)]) immutable(`${root}/contracts/0.1.0/${name}`, readGit('366f299545fdd9af7e271d6ee1767293854ce915', `${root}/${name}`));
+immutable(`${root}/contracts/1.0.0/spec.json`, specBytes);
+immutable(`${root}/contracts/1.0.0/source-bindings.json`, bindingBytes);
+immutable(`${root}/contracts/1.0.0/manifest.json`, manifestBytes);
+immutable(`${root}/contracts/1.0.0/FIRST_TEN_HANDOFF_V1.md`, readGit(erratumCommit, 'docs/curriculum/modernization/FIRST_TEN_HANDOFF_V1.md'));
+const adoption = {schemaVersion:'factory-first-ten-contract-adoption/1.0.0', contractVersion:spec.contractVersion, contractCommit:commit, specSha256:sha(specBytes), manifestSha256:sha(manifestBytes), sourceBindingsSha256:sha(bindingBytes), previous:{contractVersion:old.contractVersion, contractCommit:old.sourceCommit, specSha256:old.specSha256, baselineSha256:sha(oldBaselineBytes), archive:`${root}/contracts/0.1.0`}, erratum:{id:'E1', commit:erratumCommit, documentSha256:sha(readGit(erratumCommit,'docs/curriculum/modernization/FIRST_TEN_HANDOFF_V1.md')), statusSource:'git:dd8568500:lib/assessment/v2/retention.ts', policyId:'ll-aep-001-retention-pilot', policyVersion:'1.0.0'}, preservesAllTenSourceBindings:true, authoredInputPolicy:'NO_IMPLICIT_REPIN_REQUIRE_NEW_COHORT_INPUT', approved:false, published:false, released:false};
+json(`${root}/contract-adoption-v1.json`, adoption);
+json(baselineFile, {...old, schemaVersion:'factory-first-ten-baseline/2.0.0', sourceCommit:commit, specSha256:sha(specBytes), contractVersion:spec.contractVersion, manifestSha256:sha(manifestBytes), erratumRef:'contract-adoption-v1.json#/erratum'});
+const oldAdoption=JSON.parse(readGit('366f299545fdd9af7e271d6ee1767293854ce915',`${root}/modernization-ten-adoption.json`));
+json(`${root}/modernization-ten-adoption.json`, {...oldAdoption, schemaVersion:'factory-modernization-adoption/2.0.0', sourceCommit:commit, contract:{id:'liberialearn-first-ten-modernization-contract',version:'1.0.0',sourceRef:`git:${commit}:${contractRoot}/spec.json`,sha256:sha(specBytes)}, manifestSha256:sha(manifestBytes), adoptionRef:'contract-adoption-v1.json', remainingCoordination:'New 1.0.0 cohort inputs and governed lab runtimes required; no old input or immutable package is silently repinned.'});
+const ids = ['wk_mca7a_fri_p4','wk_mca7a_fri_p3','lesson_mca_1'];
+json(`${root}/authoring/first-three/requirements.json`, {schemaVersion:'factory-first-three-authoring-requirements/2.0.0',baselineCommit:commit,specSha256:sha(specBytes),manifestSha256:sha(manifestBytes),erratumRef:'curriculum/factory-v2/contract-adoption-v1.json#/erratum',lessons:ids.map(id=>{const l=spec.lessons.find(l=>l.contentId===id);return {key:l.key,source:bindings.find(b=>b.source.contentId===id).source,subject:l.subject,grade:l.grade,objectiveIds:l.objectives.map(o=>o.id),misconceptions:l.misconceptions,mediaSpecifications:l.visualAndInteractive,retention:l.retention,assessmentTasks:l.independentAssessment.endOfLesson};})});
+console.log('Explicit 1.0.0 adoption written; 0.1.0 bytes archived; all ten identities unchanged; no authored inputs touched.');
