@@ -1,0 +1,24 @@
+{
+  "reviewKey": "ft09-g7-literacy-main-idea",
+  "contentId": "wk_mca7a_mon_p2",
+  "pass": "BLIND (written before opening spec.json)",
+  "bodyVsBodyBlock": {
+    "differ": true,
+    "summary": "delivery.body and delivery.bodyBlock are materially different lessons. body totals 50 minutes (Opening 5, Direct Instruction 15, Guided 15, Independent 8, Closing 7); bodyBlock totals 100 minutes (5, 20, 20, Lab/Activity 25, Independent Work 15, Group Discussion 8, Closing 7). bodyBlock adds Example 3 (rural education, Lofa), a small-group passage (women in agriculture), a Kofi pair activity, and a group discussion. The independent passage differs (body: Bomi County rainforests; bodyBlock: Farmington River) with different answer keys. Shared text is identical otherwise. Learners may see different content depending on which field a surface renders."
+  },
+  "blindFindings": [
+    {"id": "B1", "kind": "CONSISTENCY", "severity": "HIGH", "where": "delivery.body vs delivery.bodyBlock", "finding": "Two divergent versions of the lesson (see bodyVsBodyBlock); no single authoritative learner text."},
+    {"id": "B2", "kind": "CONTENT_MISSING", "severity": "HIGH", "where": "body Guided Practice 'We will work through one more example'; bodyBlock Lab 'short story about a young boy named Kofi'", "finding": "Promised passages are not provided. The Kofi story does not exist in the text, so the 25-minute activity cannot be done as written."},
+    {"id": "B3", "kind": "CONCEPTUAL", "severity": "HIGH", "where": "Direct Instruction St. Paul example; Guided Practice expected answer", "finding": "Conflates topic with main idea: 'the main idea is about the significance of the river' and 'accept answers highlighting improved rice production techniques' are topics, not main-idea statements. The guided-practice answer omits the result clause (production increased)."},
+    {"id": "B4", "kind": "ASSESSMENT", "severity": "MEDIUM", "where": "body Independent Practice answer key", "finding": "Key lists 'conservation efforts are underway' as support for 'forests are important for wildlife and ecosystems'; that detail is about protection, not importance. The stronger support ('crucial role in maintaining balance of ecosystem') is omitted. Main idea plausibly should include the need for protection."},
+    {"id": "B5", "kind": "ASSESSMENT", "severity": "MEDIUM", "where": "bodyBlock Independent Work answer key", "finding": "Supporting detail 'clean-up efforts are being organized' restates the main idea; circular."},
+    {"id": "B6", "kind": "ASSESSMENT", "severity": "HIGH", "where": "both versions", "finding": "Answer keys printed in learner text; no end-of-lesson assessment (exit ticket is 'write one thing you learned'); no item with an implied main idea or a main idea not in the first sentence."},
+    {"id": "B7", "kind": "GRADE_FIT", "severity": "MEDIUM", "where": "all passages", "finding": "Passages are 2-3 sentences with the main idea always in sentence 1; too easy for G7 / LJHSCE comprehension (multi-paragraph passages, implied main ideas)."},
+    {"id": "B8", "kind": "FACTUAL", "severity": "MEDIUM", "where": "Example 1 'palm oil is a major export for the country'", "finding": "Overstated. Liberia's major exports are iron ore, gold and rubber; palm oil is a modest export. Needs verification."},
+    {"id": "B9", "kind": "FACTUAL", "severity": "LOW", "where": "Direct Instruction 'St. Paul River is important for ... transporting goods between counties'", "finding": "Questionable: the St. Paul has rapids and the Mount Coffee dam, limiting navigation; presented as a fact inside an example sentence. Needs verification."},
+    {"id": "B10", "kind": "FACTUAL", "severity": "LOW", "where": "Bomi County rainforests; Bong rice production 'increased significantly'; Farmington 'vital for drinking water'", "finding": "Unverified factual claims presented as real-world statements. Bomi is not a major intact rainforest county (Sapo/Sinoe, Gola, Lofa are); Monrovia's water comes from the St. Paul (White Plains). Should be framed as fictional or sourced."},
+    {"id": "B11", "kind": "CULTURAL", "severity": "LOW", "where": "bodyBlock 'Kofi in Grand Bassa County'", "finding": "Kofi is an Akan (Ghanaian) day name, not typical in Grand Bassa (Bassa names would fit)."},
+    {"id": "B12", "kind": "AUDIENCE", "severity": "LOW", "where": "both", "finding": "Teacher-facing directions ('Accept answers...', '(Students can respond with...)', timings) mixed into learner text."},
+    {"id": "B13", "kind": "DEPTH", "severity": "MEDIUM", "where": "Direct Instruction", "finding": "No strategy beyond 'look for keywords'; no test for a main idea (e.g., does every detail support it?), no distinction between too-broad / too-narrow statements."}
+  ]
+}

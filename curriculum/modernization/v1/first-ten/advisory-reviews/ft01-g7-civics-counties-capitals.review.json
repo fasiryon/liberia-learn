@@ -1,0 +1,57 @@
+{
+  "reviewKey": "ft01-g7-civics-counties-capitals",
+  "contentId": "wk_mca7a_fri_p4",
+  "reviewer": {"kind": "AI_AGENT", "modelFamily": "anthropic-claude", "role": "ADVISORY_SUBJECT_REVIEWER", "countsAsIndependentReview": false},
+  "blindPassFile": "ft01-g7-civics-counties-capitals.blind.json",
+  "blindFindings": [
+    {"id": "B1", "summary": "Nimba capital given as Ganta throughout (actually Sanniquellie)", "status": "CONFIRMED by sources; matches spec D1"},
+    {"id": "B2", "summary": "Montserrado paired with Monrovia (county seat is Bensonville)", "status": "CONFIRMED by sources; matches spec D2"},
+    {"id": "B3", "summary": "Maryland placed adjacent to Sinoe", "status": "CONFIRMED; matches spec D3"},
+    {"id": "B4", "summary": "Bomi 'close to the Atlantic' suspected wrong", "status": "WITHDRAWN: Wikipedia Bomi County gives the Atlantic Ocean as its south-western border, so the legacy text is acceptable (Bomi lies north-west, not due west, of Montserrado)"},
+    {"id": "B5", "summary": "Margibi 'southeastern edge' map instruction imprecise", "status": "MINOR, not in spec"},
+    {"id": "B6", "summary": "'capital city that governs it' and 'each county has its own local government'", "status": "CONFIRMED; matches spec D5"},
+    {"id": "B7", "summary": "Only 10 of 15 counties taught", "status": "CONFIRMED; matches spec D4"},
+    {"id": "B8", "summary": "Tier 2 Problem 2 is circular ('What county is Bomi's capital located in')", "status": "Not in spec defects"},
+    {"id": "B9", "summary": "Exit ticket trivial and unkeyed", "status": "Matches spec D6"},
+    {"id": "B10", "summary": "Error analysis built on the wrong Ganta fact; real misconception missing", "status": "Implicit in D1; spec misconception m1 fixes it"},
+    {"id": "B11", "summary": "Hook: route to Buchanan avoiding 'traffic near St. Paul River' is geographically incoherent", "status": "Not in spec defects"},
+    {"id": "B12", "summary": "Unsourced county characterisations", "status": "Partly in D5"},
+    {"id": "B13", "summary": "Framed as a geography quiz; objective 2 not taught/assessed; maths-template heading", "status": "Partly addressed by new objectives"},
+    {"id": "B14", "summary": "Typo 'and and'", "status": "Minor, not in spec"}
+  ],
+  "defectVerdicts": [
+    {"defectId": "D1", "verdict": "CONFIRMED", "reason": "Sanniquellie is the Nimba county centre; Ganta is the largest/commercial town. The government tourism site and a UK government gazetteer compiled from LISGIS/MIA data agree.", "sources": [
+      {"url": "https://assets.publishing.service.gov.uk/media/5a81506ee5274a2e87dbcf2e/Liberia_Administrative_Divisions.pdf", "quote": "Nimba ... County Centre (PPLA) Sanniquellie * 07° 21' 44\"N/008° 42' 22\"W (PCGN, March 2015, sourced from the 2008 Census, LISGIS and Ministry of Internal Affairs)"},
+      {"url": "https://enjoyliberia.travel/pages/nimba-county", "quote": "While Sanniquellie is the capital of Nimba County ... Ganta is the largest city and Liberia's second-largest urban center. (Liberia's Official Tourism Website, MICAT)"},
+      {"url": "https://en.wikipedia.org/wiki/Counties_of_Liberia", "quote": "Nimba Sanniquellie 621,841 ... 1964"}]},
+    {"defectId": "D2", "verdict": "CONFIRMED", "reason": "Bensonville (also called Bentol City) is the Montserrado county centre; Monrovia is the national capital located inside Montserrado. Caveat: the spec's location list overreaches slightly. The vocabulary example 'Montserrado County is where our capital, Monrovia, is located' is TRUE (Monrovia is in Montserrado) and must not be 'corrected'; only the pairings Montserrado - Monrovia as county capital (s5, s7, s10, s15) are wrong. No current Ministry of Internal Affairs page was reachable in this review; the PCGN paper cites MIA and LISGIS, so the open decision OD-FT01-MONTSERRADO is answered 'yes' with medium-high confidence pending an official Liberian source.", "sources": [
+      {"url": "https://assets.publishing.service.gov.uk/media/5a81506ee5274a2e87dbcf2e/Liberia_Administrative_Divisions.pdf", "quote": "Montserrado ... Careysburg, Greater Monrovia, Todee, St. Paul River, Commonwealth ... Bensonville *25 ... 25 Sometimes seen as Bentol City"},
+      {"url": "https://en.wikipedia.org/wiki/Counties_of_Liberia", "quote": "Montserrado Bensonville 1,920,965 ... 1839"}]},
+    {"defectId": "D3", "verdict": "CONFIRMED", "reason": "Maryland borders Grand Kru (west), River Gee (north) and Cote d'Ivoire across the Cavalla; it does not touch Sinoe.", "sources": [
+      {"url": "https://en.wikipedia.org/wiki/Maryland_County", "quote": "The county is bordered by Grand Kru County to the west and River Gee County to the north ... The eastern part of Maryland borders the nation of Ivory Coast (Côte d'Ivoire), separated by the Cavalla River."}]},
+    {"defectId": "D4", "verdict": "CONFIRMED", "reason": "Verified by reading: Gbarpolu, Grand Gedeh, Grand Kru, River Cess and River Gee never appear. The spec's capitals for these five are correct (River Cess centre listed as Cestos City by PCGN, 'River Cess' by Wikipedia - alternate names).", "sources": [
+      {"url": "https://assets.publishing.service.gov.uk/media/5a81506ee5274a2e87dbcf2e/Liberia_Administrative_Divisions.pdf", "quote": "Gbarpolu ... Bopolu; Grand Gedeh ... Zwedru; Grand Kru ... Barclayville; River Cess ... Cestos City; River Gee ... Fish Town *"}]},
+    {"defectId": "D5", "verdict": "CONFIRMED", "reason": "Superintendents are presidential appointees confirmed by the Senate, so the capital does not 'govern' the county. Spec should add 'with the consent of the Senate'. The demand to source or remove economic claims is a sound editorial requirement (not a factual dispute).", "sources": [
+      {"url": "https://www.constituteproject.org/constitution/Liberia_1986", "quote": "Article 54: The President shall nominate and, with the consent of the Senate, appoint and commission-- ... superintendents, other county officials and officials of other political sub-divisions"},
+      {"url": "https://en.wikipedia.org/wiki/Counties_of_Liberia", "quote": "Each is administered by a superintendent appointed by the President."}]},
+    {"defectId": "D6", "verdict": "CONFIRMED", "reason": "Verified by reading: every s13-s15 item prints its answer; the s17 exit ticket has no key; no map task assesses the location objective. Mechanical finding, no external source needed.", "sources": []}
+  ],
+  "missedDefects": [
+    {"id": "M1", "severity": "MAJOR", "location": "s14 Tier 2 Problem 2", "quote": "What county is Bomi's capital located in, and what is the name of that capital?", "issue": "Circular item that gives away part of its own answer; invalid as assessment."},
+    {"id": "M2", "severity": "MINOR", "location": "s1 Hook", "quote": "deliveries to Buchanan ... avoid the traffic near St. Paul River", "issue": "The St. Paul River is on Monrovia's northern edge (Bushrod Island) while Buchanan lies south-east; geographically incoherent scenario in a geography lesson. Source: https://en.wikipedia.org/wiki/Bushrod_Island (search result: 'the Saint Paul River lies directly north of the city and forms the northern boundary of Bushrod Island')."},
+    {"id": "M3", "severity": "MINOR", "location": "s9 Error Analysis #2-#3", "quote": "Accidental Omission ... thinking they can guess the capitals", "issue": "Error analysis lists generic study-habit errors, not diagnostic misconceptions; whole section must be rewritten, not only the Ganta item."},
+    {"id": "M4", "severity": "MINOR", "location": "s1", "quote": "ace the quiz and and understand", "issue": "Typo."}
+  ],
+  "specIssues": [
+    {"id": "S1", "issue": "D2 'where' includes 'the vocabulary examples'. The vocabulary sentence 'Montserrado County is where our capital, Monrovia, is located' is factually correct and should be kept (it actually supports the national-capital vs county-seat contrast). Narrow D2 to the county-capital pairings."},
+    {"id": "S2", "issue": "Extension task dates Gbarpolu to 2001. Sources conflict: PCGN notes 2001 in Wikipedia/older papers but 2003 in the Gbarpolu County Development Agenda and LISGIS. Reword to 'created in the early 2000s' or have the reviewer settle the date against the Act. Source: https://assets.publishing.service.gov.uk/media/5a81506ee5274a2e87dbcf2e/Liberia_Administrative_Divisions.pdf ('2001 is the date reported in the previous PCGN Information Paper, Wikipedia ... but 2003 is the date in the Gbarpolu County Development Agenda')."},
+    {"id": "S3", "issue": "Misconception m5 feedback and D5 should say superintendents are appointed by the President with the consent of the Senate (Art. 54), not just 'appointed by the President'."},
+    {"id": "S4", "issue": "Montserrado's county seat is not widely taught in Liberian classrooms and many informal sources say Monrovia; the correction notice should present Bensonville carefully (national capital vs county seat) and cite the official source the reviewer obtains, to avoid replacing one confusion with another."},
+    {"id": "S5", "issue": "Minor: River Cess capital appears as both 'Cestos City' (PCGN) and 'River Cess' (Wikipedia). The answer key should accept both or state the official form."}
+  ],
+  "specRating": "ADEQUATE",
+  "specRatingReasons": "Objectives move from recall to explanation and map reasoning, and o2 targets the exact misconception the legacy lesson created. The five misconceptions are real and each has a probe and feedback. Assessment is keyed, answers are hidden, a reasoning task and a 7-day retention set exist, and the transfer task uses a new map. Needed edits are small (S1-S5), not structural.",
+  "correctionNoticeWarranted": true,
+  "correctionNoticeReason": "13 learners have progress and the class has scheduled work on a lesson that drilled Ganta as Nimba's capital in keyed answers, and paired Monrovia as Montserrado's county capital. Wrong facts that were rehearsed as correct answers will persist without an explicit correction.",
+  "notes": "No Liberian government (MIA/LISGIS) page was fetched directly; the strongest official-adjacent source is the UK PCGN 2015 paper that cites the 2008 Census, LISGIS and MIA, plus the MICAT tourism site for Nimba. The spec's verification flags 'AUTHOR_IDENTIFIED_REVIEWER_MUST_CONFIRM' remain open for a human subject reviewer; this advisory review does not count as independent review."
+}
