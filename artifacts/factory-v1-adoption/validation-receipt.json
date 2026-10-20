@@ -1,0 +1,40 @@
+{
+  "checkedAt": "2026-10-20T16:15:10.292Z",
+  "testedCodeCommit": "0d63e6eed755dcd0717019fc2f89742d7d136a29",
+  "baseCommit": "366f299545fdd9af7e271d6ee1767293854ce915",
+  "contractCommit": "ac196397cb13bd6866879c9f5c24503e5195c61d",
+  "manifestSha256": "4cb6fb5588f5f840fe8b702f181a051a5838b093c1db82b0ea14d9c4b64ea549",
+  "tests": {
+    "command": "node node_modules/vitest/vitest.mjs run __tests__/content-factory-v2 --maxWorkers=1 --no-file-parallelism",
+    "exitCode": 0,
+    "filesPassed": 9,
+    "testsPassed": 98,
+    "durationSeconds": 115.82,
+    "logSha256": "df6a17303d2f59a1cee318c1bc0c3dbaa6dc93406392db06c446fa840affbd02"
+  },
+  "focusedTypecheck": {
+    "command": "node node_modules/typescript/bin/tsc --noEmit -p tsconfig.content-factory-v2.json",
+    "exitCode": 0
+  },
+  "changedValidation": {
+    "command": "node scripts/validate-changed.mjs --base 366f299545fdd9af7e271d6ee1767293854ce915 --no-types",
+    "exitCode": 0,
+    "changedTestsPassed": 24,
+    "relatedTestsPassed": 60,
+    "apiRoutePolicyAudit": "PASS"
+  },
+  "templateRegeneration": {
+    "exitCode": 0,
+    "trackedTemplateDiff": "NONE"
+  },
+  "allTenBindingsUnchanged": true,
+  "archivedBaselineSha256": "df374decf615a66d2fc5a92b0530b9bb798a9d1d17190f414b2668144e272b8a",
+  "deliveryStatus": "PATCH_ONLY_OWNER_ADOPTION_PENDING",
+  "ownerWorktreeTouched": false,
+  "candidatePaths": null,
+  "candidateHashes": null,
+  "approved": false,
+  "released": false,
+  "published": false,
+  "academicStatus": "BLOCKED FOR ACADEMIC APPROVAL"
+}
