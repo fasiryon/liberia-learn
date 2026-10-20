@@ -1,0 +1,291 @@
+{
+  "layouts": [
+    {
+      "grade": 2,
+      "width": 320,
+      "overflow": false,
+      "continueHeight": 73.1875,
+      "leaveHeight": 56,
+      "target": 56
+    },
+    {
+      "grade": 2,
+      "width": 360,
+      "overflow": false,
+      "continueHeight": 73.1875,
+      "leaveHeight": 56,
+      "target": 56
+    },
+    {
+      "grade": 2,
+      "width": 390,
+      "overflow": false,
+      "continueHeight": 56,
+      "leaveHeight": 56,
+      "target": 56
+    },
+    {
+      "grade": 2,
+      "width": 768,
+      "overflow": false,
+      "continueHeight": 56,
+      "leaveHeight": 56,
+      "target": 56
+    },
+    {
+      "grade": 2,
+      "width": 1280,
+      "overflow": false,
+      "continueHeight": 56,
+      "leaveHeight": 56,
+      "target": 56
+    },
+    {
+      "grade": 2,
+      "width": 1440,
+      "overflow": false,
+      "continueHeight": 56,
+      "leaveHeight": 56,
+      "target": 56
+    },
+    {
+      "grade": 6,
+      "width": 320,
+      "overflow": false,
+      "continueHeight": 73.1875,
+      "leaveHeight": 48,
+      "target": 48
+    },
+    {
+      "grade": 6,
+      "width": 360,
+      "overflow": false,
+      "continueHeight": 73.1875,
+      "leaveHeight": 48,
+      "target": 48
+    },
+    {
+      "grade": 6,
+      "width": 390,
+      "overflow": false,
+      "continueHeight": 48,
+      "leaveHeight": 48,
+      "target": 48
+    },
+    {
+      "grade": 6,
+      "width": 768,
+      "overflow": false,
+      "continueHeight": 48,
+      "leaveHeight": 48,
+      "target": 48
+    },
+    {
+      "grade": 6,
+      "width": 1280,
+      "overflow": false,
+      "continueHeight": 48,
+      "leaveHeight": 48,
+      "target": 48
+    },
+    {
+      "grade": 6,
+      "width": 1440,
+      "overflow": false,
+      "continueHeight": 48,
+      "leaveHeight": 48,
+      "target": 48
+    }
+  ],
+  "longContent": [
+    {
+      "grade": 2,
+      "width": 320,
+      "lastVisibleAboveFooter": true,
+      "continueInView": true,
+      "pageTaller": true
+    },
+    {
+      "grade": 2,
+      "width": 360,
+      "lastVisibleAboveFooter": true,
+      "continueInView": true,
+      "pageTaller": true
+    },
+    {
+      "grade": 2,
+      "width": 390,
+      "lastVisibleAboveFooter": true,
+      "continueInView": true,
+      "pageTaller": true
+    },
+    {
+      "grade": 2,
+      "width": 768,
+      "lastVisibleAboveFooter": true,
+      "continueInView": true,
+      "pageTaller": true
+    },
+    {
+      "grade": 2,
+      "width": 1280,
+      "lastVisibleAboveFooter": true,
+      "continueInView": true,
+      "pageTaller": true
+    },
+    {
+      "grade": 2,
+      "width": 1440,
+      "lastVisibleAboveFooter": true,
+      "continueInView": true,
+      "pageTaller": true
+    },
+    {
+      "grade": 6,
+      "width": 320,
+      "lastVisibleAboveFooter": true,
+      "continueInView": true,
+      "pageTaller": true
+    },
+    {
+      "grade": 6,
+      "width": 360,
+      "lastVisibleAboveFooter": true,
+      "continueInView": true,
+      "pageTaller": true
+    },
+    {
+      "grade": 6,
+      "width": 390,
+      "lastVisibleAboveFooter": true,
+      "continueInView": true,
+      "pageTaller": true
+    },
+    {
+      "grade": 6,
+      "width": 768,
+      "lastVisibleAboveFooter": true,
+      "continueInView": true,
+      "pageTaller": true
+    },
+    {
+      "grade": 6,
+      "width": 1280,
+      "lastVisibleAboveFooter": true,
+      "continueInView": true,
+      "pageTaller": true
+    },
+    {
+      "grade": 6,
+      "width": 1440,
+      "lastVisibleAboveFooter": true,
+      "continueInView": true,
+      "pageTaller": true
+    }
+  ],
+  "flows": [
+    {
+      "grade": 6,
+      "width": 390,
+      "start": "/student/classes/fixture-math",
+      "lessonHref": "/student/lesson/c-2",
+      "labRoute": "/student/labs/fixture-lever",
+      "returnedToScene": "lab",
+      "finishState": "PRESENTATION_ONLY"
+    },
+    {
+      "grade": 2,
+      "width": 390,
+      "start": "/student/classes/fixture-math",
+      "lessonHref": "/student/lesson/c-2",
+      "labRoute": "/student/labs/fixture-lever",
+      "returnedToScene": "lab",
+      "finishState": "PRESENTATION_ONLY"
+    },
+    {
+      "grade": 6,
+      "width": 1440,
+      "start": "/student/classes/fixture-math",
+      "lessonHref": "/student/lesson/c-2",
+      "labRoute": "/student/labs/fixture-lever",
+      "returnedToScene": "lab",
+      "finishState": "PRESENTATION_ONLY"
+    }
+  ],
+  "assigned": {
+    "href": "/student/lessons/sw-2",
+    "plays": true,
+    "exit": "/student/today",
+    "labReturn": {
+      "route": "/student/lessons/sw-2",
+      "sceneId": "lab"
+    }
+  },
+  "states": [
+    {
+      "name": "revoked",
+      "reason": "REVOKED",
+      "exit": "/student/learn"
+    },
+    {
+      "name": "not-found",
+      "reason": "NOT_FOUND",
+      "exit": "/student/learn"
+    },
+    {
+      "name": "unreleased",
+      "reason": "NOT_RELEASED",
+      "exit": "/student/learn"
+    },
+    {
+      "name": "incompatible-version",
+      "reason": "INCOMPATIBLE_VERSION",
+      "exit": "/student/learn"
+    },
+    {
+      "name": "not-ready",
+      "reason": "NOT_STUDENT_READY",
+      "exit": "/student/learn"
+    },
+    {
+      "name": "no-authorized-lab-link",
+      "launchable": false,
+      "walkthrough": true
+    }
+  ],
+  "offline": {
+    "noticeShown": true,
+    "cachedReadOnly": true,
+    "cacheAdmission": "synthetic test-only admission; real signature gate covered by offline unit tests"
+  },
+  "keyboard": {
+    "continueReached": true,
+    "visibleFocus": true,
+    "enterAdvances": true,
+    "focusAfterAdvance": "scene-title",
+    "readingOrder": [
+      "P",
+      "P",
+      "H1",
+      "BUTTON",
+      "BUTTON"
+    ]
+  },
+  "reducedMotion": {
+    "progressTransition": "1e-05s"
+  },
+  "axe": {
+    "scene1-g2": [],
+    "diagram-g2": [],
+    "lab-g2": [],
+    "final-g2": [],
+    "scene1-g6": [],
+    "diagram-g6": [],
+    "lab-g6": [],
+    "final-g6": [],
+    "state-revoked": [],
+    "lab-from-lesson": []
+  },
+  "errors": [],
+  "caveat": "Production lesson route clients and Lesson Player V2 with explicit fixture responses shaped like the delivery seam (a simulated released native lesson). Lab flows prove navigation continuity only: the fixture lab is not production certified. Server release, eligibility, lab authorization, signed cache admission, real devices and screen readers are not certified here."
+}

@@ -1,0 +1,318 @@
+{
+  "hierarchy": [
+    {
+      "grade": 2,
+      "width": 320,
+      "learnOrder": [
+        "Equivalent fractions",
+        "Your learning path"
+      ],
+      "todayFirst": "pdv2-hero"
+    },
+    {
+      "grade": 2,
+      "width": 360,
+      "learnOrder": [
+        "Equivalent fractions",
+        "Your learning path"
+      ],
+      "todayFirst": "pdv2-hero"
+    },
+    {
+      "grade": 2,
+      "width": 390,
+      "learnOrder": [
+        "Equivalent fractions",
+        "Your learning path"
+      ],
+      "todayFirst": "pdv2-hero"
+    },
+    {
+      "grade": 2,
+      "width": 768,
+      "learnOrder": [
+        "Equivalent fractions",
+        "Your learning path"
+      ],
+      "todayFirst": "pdv2-hero"
+    },
+    {
+      "grade": 2,
+      "width": 1280,
+      "learnOrder": [
+        "Equivalent fractions",
+        "Your learning path"
+      ],
+      "todayFirst": "pdv2-hero"
+    },
+    {
+      "grade": 2,
+      "width": 1366,
+      "learnOrder": [
+        "Equivalent fractions",
+        "Your learning path"
+      ],
+      "todayFirst": "pdv2-hero"
+    },
+    {
+      "grade": 2,
+      "width": 1440,
+      "learnOrder": [
+        "Equivalent fractions",
+        "Your learning path"
+      ],
+      "todayFirst": "pdv2-hero"
+    },
+    {
+      "grade": 2,
+      "width": 1920,
+      "learnOrder": [
+        "Equivalent fractions",
+        "Your learning path"
+      ],
+      "todayFirst": "pdv2-hero"
+    },
+    {
+      "grade": 6,
+      "width": 320,
+      "learnOrder": [
+        "Equivalent fractions",
+        "Your learning path"
+      ],
+      "todayFirst": "pdv2-hero"
+    },
+    {
+      "grade": 6,
+      "width": 360,
+      "learnOrder": [
+        "Equivalent fractions",
+        "Your learning path"
+      ],
+      "todayFirst": "pdv2-hero"
+    },
+    {
+      "grade": 6,
+      "width": 390,
+      "learnOrder": [
+        "Equivalent fractions",
+        "Your learning path"
+      ],
+      "todayFirst": "pdv2-hero"
+    },
+    {
+      "grade": 6,
+      "width": 768,
+      "learnOrder": [
+        "Equivalent fractions",
+        "Your learning path"
+      ],
+      "todayFirst": "pdv2-hero"
+    },
+    {
+      "grade": 6,
+      "width": 1280,
+      "learnOrder": [
+        "Equivalent fractions",
+        "Your learning path"
+      ],
+      "todayFirst": "pdv2-hero"
+    },
+    {
+      "grade": 6,
+      "width": 1366,
+      "learnOrder": [
+        "Equivalent fractions",
+        "Your learning path"
+      ],
+      "todayFirst": "pdv2-hero"
+    },
+    {
+      "grade": 6,
+      "width": 1440,
+      "learnOrder": [
+        "Equivalent fractions",
+        "Your learning path"
+      ],
+      "todayFirst": "pdv2-hero"
+    },
+    {
+      "grade": 6,
+      "width": 1920,
+      "learnOrder": [
+        "Equivalent fractions",
+        "Your learning path"
+      ],
+      "todayFirst": "pdv2-hero"
+    }
+  ],
+  "pages": [
+    {
+      "name": "classes",
+      "width": 320,
+      "overflow": false
+    },
+    {
+      "name": "classes",
+      "width": 360,
+      "overflow": false
+    },
+    {
+      "name": "classes",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "name": "classes",
+      "width": 768,
+      "overflow": false
+    },
+    {
+      "name": "classes",
+      "width": 1280,
+      "overflow": false
+    },
+    {
+      "name": "classes",
+      "width": 1366,
+      "overflow": false
+    },
+    {
+      "name": "classes",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "name": "classes",
+      "width": 1920,
+      "overflow": false
+    },
+    {
+      "name": "detail",
+      "width": 320,
+      "overflow": false
+    },
+    {
+      "name": "detail",
+      "width": 360,
+      "overflow": false
+    },
+    {
+      "name": "detail",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "name": "detail",
+      "width": 768,
+      "overflow": false
+    },
+    {
+      "name": "detail",
+      "width": 1280,
+      "overflow": false
+    },
+    {
+      "name": "detail",
+      "width": 1366,
+      "overflow": false
+    },
+    {
+      "name": "detail",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "name": "detail",
+      "width": 1920,
+      "overflow": false
+    },
+    {
+      "name": "schedule",
+      "width": 320,
+      "overflow": false
+    },
+    {
+      "name": "schedule",
+      "width": 360,
+      "overflow": false
+    },
+    {
+      "name": "schedule",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "name": "schedule",
+      "width": 768,
+      "overflow": false
+    },
+    {
+      "name": "schedule",
+      "width": 1280,
+      "overflow": false
+    },
+    {
+      "name": "schedule",
+      "width": 1366,
+      "overflow": false
+    },
+    {
+      "name": "schedule",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "name": "schedule",
+      "width": 1920,
+      "overflow": false
+    },
+    {
+      "name": "week",
+      "width": 320,
+      "overflow": false
+    },
+    {
+      "name": "week",
+      "width": 360,
+      "overflow": false
+    },
+    {
+      "name": "week",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "name": "week",
+      "width": 768,
+      "overflow": false
+    },
+    {
+      "name": "week",
+      "width": 1280,
+      "overflow": false
+    },
+    {
+      "name": "week",
+      "width": 1366,
+      "overflow": false
+    },
+    {
+      "name": "week",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "name": "week",
+      "width": 1920,
+      "overflow": false
+    }
+  ],
+  "axe": {
+    "classes": [],
+    "detail": [],
+    "schedule": [],
+    "week": []
+  },
+  "errors": [],
+  "caveat": "Production components with explicit fixture models and mocked authorized APIs. Server authorization, real devices and screen readers are not certified here."
+}

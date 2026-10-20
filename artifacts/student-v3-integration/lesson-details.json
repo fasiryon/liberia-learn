@@ -1,0 +1,96 @@
+{
+  "results": [
+    {
+      "width": 390,
+      "sectionHistoryRefresh": "pass",
+      "assignedInputRetained": "pass",
+      "nativeDiagram": "pass",
+      "assignedNativeTutor": "pass"
+    },
+    {
+      "width": 768,
+      "sectionHistoryRefresh": "pass",
+      "assignedInputRetained": "pass",
+      "nativeDiagram": "pass",
+      "assignedNativeTutor": "pass"
+    },
+    {
+      "width": 1440,
+      "independentContentsScroll": {
+        "scroll": true,
+        "height": 833.203125,
+        "viewport": 1000
+      }
+    },
+    {
+      "width": 1440,
+      "sectionHistoryRefresh": "pass",
+      "assignedInputRetained": "pass",
+      "nativeDiagram": "pass",
+      "assignedNativeTutor": "pass"
+    },
+    {
+      "width": 1920,
+      "independentContentsScroll": {
+        "scroll": true,
+        "height": 833.203125,
+        "viewport": 1000
+      }
+    },
+    {
+      "width": 1920,
+      "sectionHistoryRefresh": "pass",
+      "assignedInputRetained": "pass",
+      "nativeDiagram": "pass",
+      "assignedNativeTutor": "pass"
+    },
+    {
+      "readerSpreadsBookmarksChaptersKeyboard": "pass",
+      "offline": "loaded text remains readable; reopening explicitly unsupported"
+    },
+    {
+      "learnFailureState": "unavailable, no fabricated empty success"
+    }
+  ],
+  "scans": [
+    {
+      "width": 390,
+      "violations": []
+    },
+    {
+      "width": 768,
+      "violations": []
+    },
+    {
+      "width": 1440,
+      "violations": []
+    },
+    {
+      "width": 1920,
+      "violations": []
+    }
+  ],
+  "errors": [],
+  "writes": [
+    "/api/track",
+    "/api/track",
+    "/api/track",
+    "/api/track",
+    "/api/track",
+    "/api/track",
+    "/api/track",
+    "/api/track",
+    "/api/track",
+    "/api/track",
+    "/api/track",
+    "/api/track",
+    "/api/track",
+    "/api/track",
+    "/api/track",
+    "/api/track",
+    "/api/track",
+    "/api/track",
+    "/api/track",
+    "/api/track"
+  ]
+}

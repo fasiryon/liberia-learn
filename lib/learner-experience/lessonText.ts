@@ -17,7 +17,7 @@ export type LessonBlock =
   | { kind: "image"; src: string; alt: string }
   | { kind: "quote"; text: Inline };
 
-export type LessonSection = { id: string; title: string; blocks: LessonBlock[] };
+export type LessonSection = { id: string; title: string; blocks: LessonBlock[]; authoredHeading?: boolean };
 
 /** What a section is for, read only from its authored heading. Unknown headings are plain "Learn". */
 export type SectionRole = "INTRODUCTION" | "LEARN" | "EXAMPLE" | "PRACTICE" | "REVIEW";
@@ -120,7 +120,7 @@ export function splitLessonSections(blocks: readonly LessonBlock[], fallbackTitl
   let current: LessonSection | null = null;
   for (const block of blocks) {
     if (block.kind === "heading" && block.level === 2) {
-      current = { id: slug(block.text, used), title: block.text, blocks: [] };
+      current = { id: slug(block.text, used), title: block.text, blocks: [], authoredHeading: true };
       sections.push(current);
       continue;
     }
@@ -168,4 +168,53 @@ export function readingMinutes(blocks: readonly LessonBlock[]): number {
 export function slideBlocks(title: string, markdown: string): LessonBlock[] {
   const normalized = title.trim().toLowerCase();
   return parseLessonBlocks(markdown).filter((block) => !(block.kind === "heading" && block.text.trim().toLowerCase() === normalized));
+}
+
+/** Who a legacy section was written for, read only from its authored heading. */
+export type SectionAudience = "LEARNER" | "TEACHER" | "FAMILY";
+
+const TEACHER_HEADING = /^(teacher\b|additional teacher notes|remediation( support)?$|materials and activity notes|materials$|teaching notes)/i;
+const FAMILY_HEADING = /(guardian|family|home and guardian|parent)/i;
+
+export function sectionAudience(title: string): SectionAudience {
+  const clean = title.replace(/\*\*|__|`/g, "").trim();
+  if (FAMILY_HEADING.test(clean)) return "FAMILY";
+  if (TEACHER_HEADING.test(clean)) return "TEACHER";
+  return "LEARNER";
+}
+
+export const AUDIENCE_LABEL: Record<Exclude<SectionAudience, "LEARNER">, string> = {
+  TEACHER: "Notes for your teacher",
+  FAMILY: "For your family",
+};
+
+/**
+ * A paragraph that starts with its own short authored label ("Worked Example 1: …", "Guardian support: …")
+ * split into label and text, so the label can be shown as a heading. Nothing is added or reworded.
+ */
+export function labelledParagraph(text: string): { label: string; text: string } | null {
+  const match = /^(?:\*\*)?([A-Z][A-Za-z0-9'’ -]{2,40}?)(?:\*\*)?:\s+(.{12,})$/s.exec(text.trim());
+  if (!match) return null;
+  const label = match[1].trim();
+  if (label.split(/\s+/).length > 6) return null;
+  return { label, text: match[2].trim() };
+}
+
+/**
+ * Whole numbers from 10,000 to 9,999,999 written in the lesson's own text (with or without thousands
+ * commas), in order of appearance, for an optional place-value tool. Shorter numbers and anything in a
+ * decimal or fraction are ignored. Four-digit values only count when written with a comma (so years are not
+ * mistaken for quantities).
+ */
+export function numbersInBlocks(blocks: readonly LessonBlock[], limit = 4): number[] {
+  const found: number[] = [];
+  const text = plainText(blocks);
+  const pattern = /(?<![\d.,/])(\d{1,3}(?:,\d{3})+|\d{5,7})(?![\d/]|[.,]\d)/g;
+  for (const match of text.matchAll(pattern)) {
+    const value = Number(match[1].replace(/,/g, ""));
+    const commaFour = match[1].includes(",") && value >= 1000;
+    if ((value >= 10_000 || commaFour) && value <= 9_999_999 && !found.includes(value)) found.push(value);
+    if (found.length >= limit) break;
+  }
+  return found;
 }

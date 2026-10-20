@@ -90,6 +90,8 @@ describe("PATCH /api/teacher/assignments/[id]/grade", () => {
           score: 88,
           feedback: "Strong effort with clear reasoning.",
           gradedBy: "teacher-1",
+          // A teacher-entered score is teacher-verified (LL-AEP-001) and leaves the AI review queue.
+          teacherApproved: true,
         }),
       })
     );

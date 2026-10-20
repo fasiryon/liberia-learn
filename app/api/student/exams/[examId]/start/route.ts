@@ -1,13 +1,16 @@
+// route-policy: auth=session; scope=record; authority=student-roster-and-academic-enrollment; rationale=starts an attempt only on an own-school published exam the learner is enrolled for; keys and explanations withheld
 import { NextRequest, NextResponse } from "next/server";
 import { requireUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { projectLegacyExamQuestionForLearner } from "@/lib/assessment/v2/adapters";
 import { handleApiError } from "@/lib/errors/apiErrorHandler";
 import { isExamSystemEnabled } from "@/lib/serverFlags";
 
 export const dynamic = "force-dynamic";
 
-function stripQuestionAnswers<T extends { correctIndex: number }>(questions: T[]) {
-  return questions.map(({ correctIndex: _correctIndex, ...question }) => question);
+// Allow-list: the key and the worked explanation stay server-side until results are released.
+function stripQuestionAnswers<T extends Parameters<typeof projectLegacyExamQuestionForLearner>[0]>(questions: T[]) {
+  return questions.map(projectLegacyExamQuestionForLearner);
 }
 
 export async function POST(_req: NextRequest, context: { params: { examId: string } }) {
@@ -37,7 +40,8 @@ export async function POST(_req: NextRequest, context: { params: { examId: strin
         deletedAt: null,
       },
       include: {
-        questions: true,
+        // Answers are graded by position, so every read uses the same order.
+        questions: { orderBy: { id: "asc" } },
         class: { select: { id: true, name: true } },
       },
     });

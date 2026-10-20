@@ -1,10 +1,12 @@
 import { prisma } from "@/lib/db";
 import { logAudit } from "@/lib/audit";
 import type { ReportCard } from "@prisma/client";
+import { legacyAssignmentScoreAuthority } from "@/lib/academic-records/v2/gradeCalculation";
 
 export type SubjectGrade = {
   subject: string;
-  average: number;
+  /** Null when no graded work exists for the term. Missing evidence is never reported as 0%. */
+  average: number | null;
   assignmentCount: number;
   examScore?: number;
   masteryScore?: number;
@@ -14,8 +16,11 @@ export type AttendanceSummary = {
   totalDays: number;
   present: number;
   absent: number;
+  /** Excused absences, reported separately from unexcused ones. Optional on cards generated before it existed. */
+  excused?: number;
   late: number;
-  rate: number;
+  /** Null when no attendance was recorded for the term. */
+  rate: number | null;
 };
 
 export async function generateReportCard(
@@ -24,7 +29,10 @@ export async function generateReportCard(
   classId: string,
   createdBy: string
 ): Promise<ReportCard> {
-  const term = await prisma.term.findUniqueOrThrow({ where: { id: termId } });
+  const term = await prisma.term.findUniqueOrThrow({
+    where: { id: termId },
+    include: { academicYear: { select: { schoolId: true } } },
+  });
   const { startDate, endDate } = term;
 
   const existing = await prisma.reportCard.findUnique({
@@ -38,13 +46,18 @@ export async function generateReportCard(
     where: { id: studentId },
     include: { user: { select: { schoolId: true } } },
   });
-  const schoolId = student.user.schoolId!;
+  const schoolId = student.user.schoolId;
+  // A term, class or student from another school must never produce a card.
+  if (!schoolId || term.academicYear.schoolId !== schoolId) {
+    throw Object.assign(new Error("Term does not belong to the student's school"), { status: 409 });
+  }
 
-  // Aggregate graded submissions by subject within the term window
+  // Aggregate graded submissions by subject within the term window, from this school only.
   const submissions = await prisma.assignmentSubmission.findMany({
     where: {
       studentId,
       score: { not: null },
+      Assignment: { Class: { schoolId } },
       OR: [
         { gradedAt: { gte: startDate, lte: endDate } },
         { turnedInAt: { gte: startDate, lte: endDate } },
@@ -59,15 +72,21 @@ export async function generateReportCard(
 
   const subjectMap = new Map<string, number[]>();
   for (const sub of submissions) {
+    // LL-AEP-001: only teacher-verified scores are official. AI scores auto-released before the
+    // fix still sit in `score` and never count.
+    if (legacyAssignmentScoreAuthority(sub) !== "TEACHER") continue;
     const subject = String(sub.Assignment.Class.subject);
     if (!subjectMap.has(subject)) subjectMap.set(subject, []);
     subjectMap.get(subject)!.push(sub.score!);
   }
 
-  const primaryClass = await prisma.class.findUnique({
-    where: { id: classId },
+  const primaryClass = await prisma.class.findFirst({
+    where: { id: classId, schoolId },
     select: { subject: true },
   });
+  if (!primaryClass) {
+    throw Object.assign(new Error("Class does not belong to the student's school"), { status: 409 });
+  }
   const primarySubject = primaryClass ? String(primaryClass.subject) : "UNKNOWN";
 
   // Exam scores from Grade model for this class
@@ -84,7 +103,7 @@ export async function generateReportCard(
   if (subjectMap.size === 0) {
     subjectGrades.push({
       subject: primarySubject,
-      average: 0,
+      average: null,
       assignmentCount: 0,
       examScore,
     });
@@ -112,16 +131,16 @@ export async function generateReportCard(
 
   const totalDays = attendanceRows.length;
   const present = attendanceRows.filter((a) => a.status === "PRESENT").length;
-  const absent = attendanceRows.filter(
-    (a) => a.status === "ABSENT" || a.status === "EXCUSED"
-  ).length;
+  const absent = attendanceRows.filter((a) => a.status === "ABSENT").length;
+  const excused = attendanceRows.filter((a) => a.status === "EXCUSED").length;
   const late = attendanceRows.filter((a) => a.status === "LATE").length;
-  const rate = totalDays > 0 ? Math.round((present / totalDays) * 100) : 0;
+  const rate = totalDays > 0 ? Math.round((present / totalDays) * 100) : null;
 
   const attendanceSummary: AttendanceSummary = {
     totalDays,
     present,
     absent,
+    excused,
     late,
     rate,
   };

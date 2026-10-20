@@ -1,0 +1,110 @@
+{
+  "source": {
+    "catalog": "Supabase CurriculumContent",
+    "retrievedAt": "2026-10-15T20:24:15.459Z",
+    "contentId": "hero-civics-g7-democracy-and-representation-in-liberia",
+    "title": "Understanding Democracy and Representation in Liberia",
+    "version": "2.0.0",
+    "lessonVersion": 1,
+    "updatedAt": "2026-07-25T06:05:55.023Z",
+    "currentRevisionId": "cmss94h3z03bzvo54hj7c7z8t",
+    "sequence": 1,
+    "contentHash": "cca4566947348a5dca3bf3fb2bf221c74eb6d81999c8b2677b367d24d52e24ef",
+    "lifecycleState": "APPROVED",
+    "learnerBodySha256": "62564d43e7e952124d097f8e7a7499e2344efc53333e8e67d21f724083707c69",
+    "baselineSlides": 17
+  },
+  "results": [
+    {
+      "width": 390,
+      "height": 844,
+      "font": 17,
+      "rootScrolls": true,
+      "nestedScrolls": 0,
+      "contentWidth": 348,
+      "contentLeft": 21,
+      "contentRight": 369,
+      "controlsBottom": 2658.46875,
+      "viewport": {
+        "width": 390,
+        "height": 844
+      }
+    },
+    {
+      "width": 768,
+      "height": 900,
+      "font": 17,
+      "rootScrolls": true,
+      "nestedScrolls": 0,
+      "contentWidth": 719.9375,
+      "contentLeft": 24.03125,
+      "contentRight": 743.96875,
+      "controlsBottom": 1801.75,
+      "viewport": {
+        "width": 768,
+        "height": 900
+      }
+    },
+    {
+      "width": 1440,
+      "height": 720,
+      "font": 17,
+      "rootScrolls": true,
+      "nestedScrolls": 0,
+      "contentWidth": 1358,
+      "contentLeft": 41,
+      "contentRight": 1399,
+      "controlsBottom": 1382.703125,
+      "viewport": {
+        "width": 1440,
+        "height": 720
+      }
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "font": 17,
+      "rootScrolls": true,
+      "nestedScrolls": 0,
+      "contentWidth": 1358,
+      "contentLeft": 41,
+      "contentRight": 1399,
+      "controlsBottom": 1382.703125,
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      }
+    },
+    {
+      "width": 1920,
+      "height": 720,
+      "font": 17,
+      "rootScrolls": true,
+      "nestedScrolls": 0,
+      "contentWidth": 1838,
+      "contentLeft": 41,
+      "contentRight": 1879,
+      "controlsBottom": 964.703125,
+      "viewport": {
+        "width": 1920,
+        "height": 720
+      }
+    },
+    {
+      "width": 1920,
+      "height": 900,
+      "font": 17,
+      "rootScrolls": true,
+      "nestedScrolls": 0,
+      "contentWidth": 1838,
+      "contentLeft": 41,
+      "contentRight": 1879,
+      "controlsBottom": 964.703125,
+      "viewport": {
+        "width": 1920,
+        "height": 900
+      }
+    }
+  ],
+  "errors": []
+}

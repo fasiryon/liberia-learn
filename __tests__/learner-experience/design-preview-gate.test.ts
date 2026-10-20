@@ -22,6 +22,21 @@ describe("Student design preview gate", () => {
     expect(() => Page()).toThrow(/NEXT_NOT_FOUND|NEXT_HTTP_ERROR_FALLBACK/);
   });
 
+  it("the P1 preview gallery and demo lesson pages 404 in a production build without the flag", async () => {
+    vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("STUDENT_DESIGN_PREVIEW", "");
+    const { default: Gallery } = await import("@/app/design-preview/lessons/page");
+    const { default: Lesson } = await import("@/app/design-preview/lessons/[slug]/page");
+    expect(() => Gallery()).toThrow(/NEXT_NOT_FOUND|NEXT_HTTP_ERROR_FALLBACK/);
+    expect(() => Lesson({ params: { slug: "grade-5-water-cycle" } })).toThrow(/NEXT_NOT_FOUND|NEXT_HTTP_ERROR_FALLBACK/);
+  });
+
+  it("an unknown preview lesson slug 404s even in development", async () => {
+    vi.stubEnv("NODE_ENV", "development");
+    const { default: Lesson } = await import("@/app/design-preview/lessons/[slug]/page");
+    expect(() => Lesson({ params: { slug: "grade-7-released-native" } })).toThrow(/NEXT_NOT_FOUND|NEXT_HTTP_ERROR_FALLBACK/);
+  });
+
   it("production middleware does not make /design-preview public (anonymous users go to sign-in)", async () => {
     vi.stubEnv("NODE_ENV", "production");
     vi.resetModules();

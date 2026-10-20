@@ -7,7 +7,6 @@ type Question = {
   id: string;
   prompt: string;
   options: string[];
-  explanation: string;
   moeCode: string;
   points: number;
 };
@@ -179,7 +178,9 @@ export default function StudentExamSessionClient({ examId }: { examId: string })
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           attemptId: session.attemptId,
-          answers: answers.map((answer) => (answer < 0 ? 0 : answer)),
+          // Blank stays blank (-1); it must never be submitted as option 0.
+          answers: session.questions.map((_question, index) => (Number.isInteger(answers[index]) && answers[index] >= 0 ? answers[index] : -1)),
+          questionIds: session.questions.map((question) => question.id),
           flags: Array.from(flagsRef.current),
           tabSwitchCount: tabSwitchCountRef.current,
           submissionLog: submissionLogRef.current,

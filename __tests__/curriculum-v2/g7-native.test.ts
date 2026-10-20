@@ -307,7 +307,8 @@ describe("dev-only preview through the existing prototype route", () => {
     vi.stubEnv("NODE_ENV", "production");
     vi.resetModules();
     const production = await (await import("@/middleware")).middleware(new NextRequest(`https://example.test${asset}`));
-    expect(production.headers.get("location") ?? "").toMatch(/\/login/);
+    expect(production.status).toBe(404);
+    expect(production.headers.get("cache-control")).toContain("no-store");
     vi.stubEnv("NODE_ENV", "development");
     vi.resetModules();
     const development = await (await import("@/middleware")).middleware(new NextRequest(`http://localhost:3000${asset}`));

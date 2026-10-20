@@ -104,6 +104,15 @@ export async function middleware(req: NextRequest) {
   };
   const next = () => finalize(NextResponse.next({ request: { headers: requestHeaders } }));
 
+  // Public-folder files do not inherit the preview page's production 404.
+  // Match Next's decoded filesystem path too, before any authenticated bypass.
+  let assetPath = pathname;
+  try { assetPath = decodeURIComponent(pathname); } catch { /* Next rejects malformed paths. */ }
+  if ((process.env.NODE_ENV === "production" || process.env.VERCEL) &&
+      (assetPath === "/curriculum-candidates" || assetPath.startsWith("/curriculum-candidates/"))) {
+    return finalize(new NextResponse(null, { status: 404, headers: { "Cache-Control": "private, no-store" } }));
+  }
+
   // /moe/login is always public; the page renders portal availability inline.
   if (pathname === "/moe/login") {
     return next();
