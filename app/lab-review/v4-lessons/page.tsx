@@ -18,7 +18,7 @@ export default function V4LessonIndexPage() {
   return <div className="ll3-scope min-h-dvh">
     <PageFrame labelledBy="v4-title">
       <PageHeader eyebrow="Interactive Learning V4 · review" title="V4 lesson candidates" titleId="v4-title"
-        lede="Six lessons generated to the V4 instructional standard and played by Lesson Player V2. Every one is an unreviewed DRAFT: not approved, not released, not delivered to students, and nothing you do here is saved, sent or marked." />
+        lede="Six hand-authored reference fixtures written to the V4 instructional standard and played by Lesson Player V2. They are not Content Factory output and not curriculum: unreviewed DRAFTs, not approved, not released, not delivered to students, and nothing you do here is saved, sent or marked." />
       <div className="ll3-cards">
         {rows.map((row) => <article key={row.key} className="ll3-card ll4-gallery-card" data-v4-candidate={row.key}>
           <p className="text-sm font-semibold text-[var(--ll-text-muted)]">Grade {row.grade} · {row.subject}</p>

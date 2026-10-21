@@ -389,9 +389,10 @@ export function ArrayModelBlock({ block }: { block: BlockOf<"ARRAY_MODEL"> }) {
 }
 
 export function AreaModelBlock({ block, onDone }: { block: BlockOf<"AREA_MODEL">; onDone: BlockDone }) {
-  const rowParts = block.splitB ?? [block.factorB];
-  const columnParts = block.splitA ?? placeValueParts(block.factorA);
-  const model = useMemo(() => areaModel(rowParts, columnParts), [rowParts, columnParts]);
+  const { rowParts, columnParts, model } = useMemo(() => {
+    const rows = block.splitB ?? [block.factorB], columns = block.splitA ?? placeValueParts(block.factorA);
+    return { rowParts: rows, columnParts: columns, model: areaModel(rows, columns) };
+  }, [block.splitA, block.splitB, block.factorA, block.factorB]);
   const [entries, setEntries] = useState<Record<string, string>>({});
   const [total, setTotal] = useState("");
   const [checked, setChecked] = useState(false);
