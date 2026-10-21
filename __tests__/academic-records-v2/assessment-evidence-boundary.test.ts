@@ -75,4 +75,13 @@ describe("Assessment evidence → official academic records boundary", () => {
     const transfer = [...all, evidence({ attempt: { attemptId: "a7", sessionId: "s6" }, pins: { itemId: "t-1", releaseId: "rel-1" }, delivery: { official: true, purpose: "TRANSFER", itemContext: "NEW" } }, { points: 9 })];
     expect(classifyMastery(masterySummaryFromEvidence(transfer, { scope: { schoolId: SCHOOL, studentId: "stu-1" }, objectiveId: "math-place-value", revokedReleaseIds: [] })).state).toBe("ADVANCED");
   });
+
+  it("never credits one multi-objective score toward mastery of each objective", () => {
+    const mixed = [1, 2, 3].map((n) => evidence({ attempt: { attemptId: `m${n}`, sessionId: `ms${n}` }, pins: { itemId: `mixed-${n}`, releaseId: "rel-1" }, objectiveIds: ["math-place-value", "math-rounding"] }, { points: 10 }));
+    for (const objectiveId of ["math-place-value", "math-rounding"]) {
+      expect(masterySummaryFromEvidence(mixed, { scope: { schoolId: SCHOOL, studentId: "stu-1" }, objectiveId, revokedReleaseIds: [] })).toMatchObject({ independentItems: 0, independentPointsEarned: 0 });
+    }
+    const single = evidence({ attempt: { attemptId: "s1", sessionId: "ss1" } });
+    expect(masterySummaryFromEvidence([single, ...mixed], { scope: { schoolId: SCHOOL, studentId: "stu-1" }, objectiveId: "math-place-value", revokedReleaseIds: [] })).toMatchObject({ independentItems: 1, independentPointsEarned: 8 });
+  });
 });

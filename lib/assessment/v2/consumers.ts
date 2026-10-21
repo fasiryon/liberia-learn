@@ -52,6 +52,9 @@ export function toGovernedLearningEvidence(envelope: AssessmentEvidenceEnvelope,
 }): GovernedEvidence {
   if (envelope.tier !== "MASTERY_ADMITTED_EVIDENCE" || !envelope.admission) throw new Error("assessment_slm_requires_admitted_evidence");
   if (!envelope.objectiveIds.includes(input.objectiveId)) throw new Error("assessment_slm_objective_not_admitted");
+  // One score cannot be split across objectives without item/criterion attribution, so a multi-objective
+  // observation never becomes per-objective mastery evidence.
+  if (envelope.objectiveIds.length !== 1) throw new Error("assessment_slm_multi_objective_unattributed");
   const { scoring, capture } = envelope;
   const fullCredit = scoring.points !== null && scoring.maxPoints !== null && scoring.points >= scoring.maxPoints;
   const outcome: GovernedEvidence["performance"]["outcome"] = scoring.points === 0 ? "INCORRECT" : fullCredit ? "CORRECT" : "PARTIAL";
@@ -151,7 +154,9 @@ export function gradebookEligibility(envelope: AssessmentEvidenceEnvelope, input
 export type ObjectiveEvidenceSummary =
   | Readonly<{ status: "NO_EVIDENCE"; objectiveId: string }>
   | Readonly<{ status: "ONLY_UNVERIFIED"; objectiveId: string; observationCount: number }>
-  | Readonly<{ status: "VERIFIED"; objectiveId: string; verifiedCount: number; independentCount: number; pointsEarned: number; pointsPossible: number }>;
+  /** Verified responses exist, but each spans several objectives, so none can be scored against this one. */
+  | Readonly<{ status: "ONLY_UNATTRIBUTED"; objectiveId: string; unattributedCount: number }>
+  | Readonly<{ status: "VERIFIED"; objectiveId: string; verifiedCount: number; independentCount: number; pointsEarned: number; pointsPossible: number; unattributedCount: number }>;
 
 export function summarizeObjectiveEvidence(envelopes: readonly AssessmentEvidenceEnvelope[], objectiveId: string, revocations: readonly ReleaseRevocation[]): ObjectiveEvidenceSummary {
   const relevant = envelopes.filter((envelope) => envelope.objectiveIds.includes(objectiveId) && effectiveStanding(envelope, revocations).tier !== "INVALIDATED");
@@ -165,8 +170,12 @@ export function summarizeObjectiveEvidence(envelopes: readonly AssessmentEvidenc
     const key = `${envelope.attempt.attemptId}|${envelope.pins.itemId}|${envelope.pins.itemVersion}|${envelope.attempt.responseSequence}`;
     if (!verifiedByResponse.has(key)) verifiedByResponse.set(key, envelope);
   }
-  const verified = [...verifiedByResponse.values()];
-  if (verified.length === 0) return Object.freeze({ status: "ONLY_UNVERIFIED", objectiveId, observationCount: relevant.length });
+  const responses = [...verifiedByResponse.values()];
+  if (responses.length === 0) return Object.freeze({ status: "ONLY_UNVERIFIED", objectiveId, observationCount: relevant.length });
+  // A multi-objective score has no item/criterion attribution, so it never counts toward any one objective.
+  const verified = responses.filter((envelope) => envelope.objectiveIds.length === 1);
+  const unattributedCount = responses.length - verified.length;
+  if (verified.length === 0) return Object.freeze({ status: "ONLY_UNATTRIBUTED", objectiveId, unattributedCount });
   return Object.freeze({
     status: "VERIFIED",
     objectiveId,
@@ -174,5 +183,6 @@ export function summarizeObjectiveEvidence(envelopes: readonly AssessmentEvidenc
     independentCount: verified.filter((envelope) => envelope.independence === "INDEPENDENT").length,
     pointsEarned: verified.reduce((sum, envelope) => sum + (envelope.scoring.points ?? 0), 0),
     pointsPossible: verified.reduce((sum, envelope) => sum + (envelope.scoring.maxPoints ?? 0), 0),
+    unattributedCount,
   });
 }

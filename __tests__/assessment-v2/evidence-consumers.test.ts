@@ -231,6 +231,15 @@ describe("Downstream consumers", () => {
     expect(() => toGovernedLearningEvidence(verified, { objectiveId: "obj-compare", conceptId: "c" })).toThrow("assessment_slm_requires_admitted_evidence");
   });
 
+  it("refuses to project one multi-objective score onto any single objective", () => {
+    const { verified } = verifiedChain();
+    const { evidence: admitted } = admitToMastery(verified, { policy: admission, revocations: [], admittedAt: "2026-11-01T10:01:00.000Z", assistanceLedger: sealedAssistanceRecord(verified) });
+    const mixed = { ...admitted, objectiveIds: [...admitted.objectiveIds, "obj-order"] };
+    for (const objectiveId of mixed.objectiveIds) {
+      expect(() => toGovernedLearningEvidence(mixed, { objectiveId, conceptId: "concept-decimal-compare" })).toThrow("assessment_slm_multi_objective_unattributed");
+    }
+  });
+
   it("lets the orchestrator read diagnostics without a mastery claim", () => {
     const { raw } = verifiedChain(setup({ purpose: "DIAGNOSTIC" }));
     const [signal] = signalsForOrchestrator([raw], []);
@@ -254,6 +263,15 @@ describe("Downstream consumers", () => {
     const { raw, verified } = verifiedChain();
     expect(summarizeObjectiveEvidence([raw], "obj-compare", []).status).toBe("ONLY_UNVERIFIED");
     expect(summarizeObjectiveEvidence([raw, verified], "obj-compare", [])).toMatchObject({ status: "VERIFIED", pointsEarned: 1, pointsPossible: 1, independentCount: 1 });
+  });
+
+  it("never credits one multi-objective score to each of its objectives", () => {
+    const { verified } = verifiedChain();
+    const mixed = { ...verified, objectiveIds: ["obj-compare", "obj-order"], pins: { ...verified.pins, itemId: "item-mixed" } };
+    for (const objectiveId of mixed.objectiveIds) {
+      expect(summarizeObjectiveEvidence([mixed], objectiveId, [])).toEqual({ status: "ONLY_UNATTRIBUTED", objectiveId, unattributedCount: 1 });
+    }
+    expect(summarizeObjectiveEvidence([verified, mixed], "obj-compare", [])).toMatchObject({ status: "VERIFIED", verifiedCount: 1, pointsEarned: 1, pointsPossible: 1, unattributedCount: 1 });
   });
 });
 
