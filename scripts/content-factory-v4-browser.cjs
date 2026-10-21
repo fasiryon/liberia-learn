@@ -15,6 +15,7 @@ replace('const lessons = Object.fromEntries(v4.V4_LESSONS.map((lesson) => [lesso
 // The original driver was for reference fixtures with no scene-level free-response tasks.
 replace('const shot = `${out}/shots/', `if (scene.interaction.kind === "FREE_RESPONSE") for (const prompt of scene.interaction.prompts) await page.locator('[id="reflect-' + prompt.id + '"]').fill("I compared the labelled representation with the evidence and checked a second explanation. This is synthetic browser test input, never learner evidence.");\n        const shot = \x60\x24{out}/shots/`);
 replace('record.scenes.push({ id: scene.id,', 'record.scenes.push({ layout: await metrics(page), id: scene.id,');
+replace('`The story says ${quote} and more.`', '`The story says ${quote}. ${wordsText(field.minWords + 2, i)}. This is synthetic browser input, not academic evidence.`');
 // Responsive scene-id fixtures belong to T1. This run visits generated scenes, including phone geometry.
 const section = driver.indexOf("  // 2. Responsive layout"), finalizer = driver.indexOf("} finally {", section);
 if (section < 0 || finalizer < 0) throw Error("driver_sections_missing");
