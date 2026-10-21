@@ -1,0 +1,37 @@
+
+ RUN  v4.1.9 C:/liberia-learn/.task-worktrees/pr195-controlled-integration
+
+node : Browserslist: browsers data (caniuse-lite) is 8 months old. Please run:
+At line:2 char:250
++ ... TEXITCODE"; node node_modules/vitest/vitest.mjs run __tests__/library ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Browserslist: b...ld. Please run::String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+Warning: A vi.hoisted() call in
+"C:/liberia-learn/.task-worktrees/pr195-controlled-integration/__tests__/curriculum-v2/governance-provenance.test.ts"
+is not at the top level of the module. Although it appears nested, it will be hoisted and executed before any tests
+run. Move it to the top level to reflect its actual execution order. This will become an error in a future version.
+See: https://vitest.dev/guide/mocking/modules#how-it-works
+Warning: A vi.hoisted() call in
+"C:/liberia-learn/.task-worktrees/pr195-controlled-integration/__tests__/curriculum-v2/governance-provenance.test.ts"
+is not at the top level of the module. Although it appears nested, it will be hoisted and executed before any tests
+run. Move it to the top level to reflect its actual execution order. This will become an error in a future version.
+See: https://vitest.dev/guide/mocking/modules#how-it-works
+Warning: A vi.mock("@/lib/curriculum/mutations/repository") call in
+"C:/liberia-learn/.task-worktrees/pr195-controlled-integration/__tests__/curriculum-v2/governance-provenance.test.ts"
+is not at the top level of the module. Although it appears nested, it will be hoisted and executed before any tests
+run. Move it to the top level to reflect its actual execution order. This will become an error in a future version.
+See: https://vitest.dev/guide/mocking/modules#how-it-works
+Warning: A vi.mock("@/lib/audit") call in
+"C:/liberia-learn/.task-worktrees/pr195-controlled-integration/__tests__/curriculum-v2/governance-provenance.test.ts"
+is not at the top level of the module. Although it appears nested, it will be hoisted and executed before any tests
+run. Move it to the top level to reflect its actual execution order. This will become an error in a future version.
+See: https://vitest.dev/guide/mocking/modules#how-it-works
+
+ Test Files  47 passed | 1 skipped (48)
+      Tests  1151 passed | 6 skipped (1157)
+   Start at  16:40:51
+   Duration  179.69s (transform 63.89s, setup 0ms, import 84.04s, tests 144.48s, environment 80.13s)

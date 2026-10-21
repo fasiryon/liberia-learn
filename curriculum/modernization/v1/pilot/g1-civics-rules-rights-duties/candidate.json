@@ -1,0 +1,204 @@
+{
+  "contractVersion": "candidate-lesson-v2/1.0.0",
+  "title": "Rules, rights and duties at school",
+  "estimatedMinutes": 35,
+  "ageBand": "EARLY_PRIMARY",
+  "pedagogy": { "primaryStrategy": "DIRECT_INSTRUCTION", "rationale": "Teacher-led, oral and picture-supported short scenes for emergent readers, with choices read aloud and performance shown by role-play." },
+  "prerequisiteAssumptions": [
+    "Can listen to a short spoken story and answer who and what questions about it.",
+    "Knows familiar places such as home, school and market by name."
+  ],
+  "misconceptions": [
+    { "id": "mc-rules-are-punishment", "objectiveId": "ll-g1-civ-rules", "description": "Thinks rules exist only so adults can punish children.", "response": "Rules help everyone stay safe and be treated fairly. Ask: who does this rule keep safe?" },
+    { "id": "mc-rule-only-when-watched", "objectiveId": "ll-g1-civ-rules", "description": "Thinks a rule only matters when an adult is watching.", "response": "The road is just as dangerous when no one is looking. We follow rules to keep people safe, not to avoid being seen." },
+    { "id": "mc-right-is-a-want", "objectiveId": "ll-g1-civ-rights-duties", "description": "Thinks a right is anything a child wants, such as sweets every day.", "response": "A right is something every child needs and should have, like being safe and going to school." },
+    { "id": "mc-duties-are-for-adults", "objectiveId": "ll-g1-civ-rights-duties", "description": "Thinks only grown-ups have duties.", "response": "Children have duties too: listening when others speak and keeping the classroom clean." }
+  ],
+  "scenes": [
+    {
+      "id": "intro", "type": "INTRO", "title": "The ball and the road", "purpose": "HOOK_PHENOMENON", "objectiveIds": [],
+      "learnerAction": "Listen to the story and look at the picture.",
+      "content": { "body": "Musu and Kollie both want the ball. They push each other. The ball rolls toward the road.\n\nWhat should they do? Today we learn about **rules**, **rights** and **duties**." },
+      "interaction": { "kind": "NONE" },
+      "media": [ { "id": "ball-road", "kind": "IMAGE", "requirement": "MEDIA_OPTIONAL", "description": "Two children at a school gate; a ball rolls toward a road.", "altText": "Two children push each other at the school gate while their ball rolls toward the road." } ],
+      "tools": { "requested": [], "prohibited": [] }, "hints": [], "misconceptionIds": [], "evidence": { "kind": "NONE" },
+      "accessibility": { "textAlternative": "A short story: two children push over a ball, and the ball rolls toward the road.", "keyboardPath": "Use Continue to move to the next scene.", "reducedMotion": "NOT_APPLICABLE" },
+      "offline": { "mode": "FULL_OFFLINE", "note": "The teacher can tell the story without the picture." }, "completion": "VIEWED"
+    },
+    {
+      "id": "objectives", "type": "OBJECTIVE", "title": "What we will learn", "purpose": "STATE_OBJECTIVE", "objectiveIds": ["ll-g1-civ-rules", "ll-g1-civ-rights-duties"],
+      "learnerAction": "Listen to the two goals.",
+      "content": { "body": "Today we will:\n\n1. Name a rule and say how it keeps us safe or fair.\n2. Tell a right from a duty." },
+      "interaction": { "kind": "NONE" }, "tools": { "requested": [], "prohibited": [] }, "hints": [], "misconceptionIds": [], "evidence": { "kind": "NONE" },
+      "accessibility": { "textAlternative": "Two goals: naming a rule and why it helps, and telling a right from a duty.", "keyboardPath": "Use Continue to move to the next scene.", "reducedMotion": "NOT_APPLICABLE" },
+      "offline": { "mode": "FULL_OFFLINE", "note": "The teacher reads the goals aloud." }, "completion": "VIEWED"
+    },
+    {
+      "id": "warm-up", "type": "CHECK_UNDERSTANDING", "title": "Listen and answer", "purpose": "ACTIVATE_PRIOR_KNOWLEDGE", "objectiveIds": ["ll-g1-civ-rules"],
+      "learnerAction": "Listen to your teacher and choose an answer.",
+      "content": { "body": "Your teacher reads: *Fatu walked to the market with her mother. They bought rice.*" },
+      "interaction": { "kind": "SINGLE_CHOICE", "items": [
+        { "id": "w-who", "prompt": "Who went with Fatu?", "options": [
+          { "id": "a", "text": "Her mother", "feedback": "Yes! Fatu went with her mother." },
+          { "id": "b", "text": "Her teacher", "feedback": "Listen again: Fatu went with her mother." } ],
+          "formativeKey": { "expectedOptionId": "a" } },
+        { "id": "w-where", "prompt": "Where do children go to learn to read?", "options": [
+          { "id": "a", "text": "The market", "feedback": "We buy food at the market. We learn to read at school." },
+          { "id": "b", "text": "School", "feedback": "Yes! We learn to read at school." } ],
+          "formativeKey": { "expectedOptionId": "b" } } ] },
+      "tools": { "requested": [], "prohibited": [] }, "hints": [], "misconceptionIds": [],
+      "evidence": { "kind": "FORMATIVE_OBSERVATION", "evidenceType": "DIAGNOSTIC", "responses": [
+        { "responseKey": "w-who", "objectiveId": "ll-g1-civ-rules", "responseType": "SELECTED_OPTION", "scaffoldLevel": "FULL" },
+        { "responseKey": "w-where", "objectiveId": "ll-g1-civ-rules", "responseType": "SELECTED_OPTION", "scaffoldLevel": "FULL" } ] },
+      "accessibility": { "textAlternative": "A two-sentence story about Fatu and two spoken questions with two answers each.", "keyboardPath": "Tab to an answer and press Space.", "reducedMotion": "NOT_APPLICABLE", "nonPointerAlternative": "The teacher reads the choices aloud and the child points or says the answer." },
+      "offline": { "mode": "FULL_OFFLINE", "note": "The teacher can ask the questions aloud." }, "completion": "ALL_ANSWERED",
+      "pedagogy": { "strategy": "RETRIEVAL_PRACTICE", "representation": "VERBAL", "scaffoldLevel": "FULL" }
+    },
+    {
+      "id": "rules", "type": "EXPLANATION", "title": "Why we have rules", "purpose": "EXPLAIN_CONCEPT", "objectiveIds": ["ll-g1-civ-rules"],
+      "learnerAction": "Listen and repeat the two reasons.",
+      "content": { "body": "A **rule** tells us what to do or not do.\n\nRules help in two ways:\n\n- They keep us **safe**.\n- They help us be **fair**.",
+        "keyPoints": ["Walk near the road: it keeps us safe.", "Take turns with the ball: it is fair."] },
+      "interaction": { "kind": "NONE" },
+      "media": [ { "id": "two-reasons", "kind": "IMAGE", "requirement": "MEDIA_OPTIONAL", "description": "A child walking beside a road; two children taking turns with a ball.", "altText": "Left: a child walking safely beside the road. Right: two children taking turns with a ball." } ],
+      "tools": { "requested": [], "prohibited": [] }, "hints": [], "misconceptionIds": ["mc-rules-are-punishment"], "evidence": { "kind": "NONE" },
+      "accessibility": { "textAlternative": "A rule tells us what to do. Rules keep us safe and help us be fair, with two examples.", "keyboardPath": "Use Continue to move to the next scene.", "reducedMotion": "NOT_APPLICABLE" },
+      "offline": { "mode": "FULL_OFFLINE", "note": "The teacher can act out both examples." }, "completion": "VIEWED",
+      "pedagogy": { "strategy": "DIRECT_INSTRUCTION", "representation": "PICTORIAL", "scaffoldLevel": "FULL" }
+    },
+    {
+      "id": "rule-example", "type": "GUIDED_EXAMPLE", "title": "Let's think it through", "purpose": "MODEL_WORKED_EXAMPLE", "objectiveIds": ["ll-g1-civ-rules"],
+      "learnerAction": "Tap to see each step of the story.",
+      "content": { "body": "Back to Musu, Kollie and the ball. Tap to see what a rule can do." },
+      "interaction": { "kind": "DIAGRAM_REVEAL", "steps": [
+        { "id": "r1", "label": "The problem", "description": "They push, and the ball rolls to the road." },
+        { "id": "r2", "label": "Safe rule", "description": "Do not run into the road. Ask a grown-up to get the ball." },
+        { "id": "r3", "label": "Fair rule", "description": "Take turns. Musu kicks first, then Kollie." },
+        { "id": "r4", "label": "Why", "description": "Now nobody gets hurt, and both children play." } ] },
+      "tools": { "requested": [], "prohibited": [] }, "hints": [], "misconceptionIds": ["mc-rules-are-punishment"], "evidence": { "kind": "NONE" },
+      "accessibility": { "textAlternative": "Four steps: the problem, a safety rule, a fairness rule, and why the rules help.", "keyboardPath": "Press Enter to see each step, then Continue.", "reducedMotion": "NOT_APPLICABLE" },
+      "offline": { "mode": "FULL_OFFLINE", "note": "The teacher can tell each step aloud." }, "completion": "ALL_STEPS_REVEALED",
+      "pedagogy": { "strategy": "WORKED_EXAMPLE_FADING", "representation": "PICTORIAL", "scaffoldLevel": "FULL" },
+      "dependsOn": ["rules"]
+    },
+    {
+      "id": "rights-duties", "type": "EXPLANATION", "title": "Rights and duties", "purpose": "EXPLAIN_CONCEPT", "objectiveIds": ["ll-g1-civ-rights-duties"],
+      "learnerAction": "Listen and say each word with your teacher.",
+      "content": { "body": "A **right** is something every child should have.\nEvery child has a right to be safe and to go to school.\n\nA **duty** is something we should do.\nAt school our duties are to listen and to keep the classroom clean." },
+      "interaction": { "kind": "NONE" }, "tools": { "requested": [], "prohibited": [] }, "hints": [], "misconceptionIds": ["mc-right-is-a-want", "mc-duties-are-for-adults"], "evidence": { "kind": "NONE" },
+      "accessibility": { "textAlternative": "A right is something every child should have, like being safe. A duty is something we should do, like listening.", "keyboardPath": "Use Continue to move to the next scene.", "reducedMotion": "NOT_APPLICABLE" },
+      "offline": { "mode": "FULL_OFFLINE", "note": "Text only; read aloud." }, "completion": "VIEWED",
+      "pedagogy": { "strategy": "DIRECT_INSTRUCTION", "representation": "VERBAL", "scaffoldLevel": "FULL" }
+    },
+    {
+      "id": "guided", "type": "GUIDED_EXAMPLE", "title": "Right or duty?", "purpose": "GUIDED_PRACTICE", "objectiveIds": ["ll-g1-civ-rights-duties"],
+      "learnerAction": "Listen and choose right or duty.",
+      "content": { "body": "Remember: a right is what you **should have**. A duty is what you **should do**." },
+      "interaction": { "kind": "SINGLE_CHOICE", "items": [
+        { "id": "g-school", "prompt": "Going to school. Right or duty?", "options": [
+          { "id": "a", "text": "Right", "feedback": "Yes! Every child should have school." },
+          { "id": "b", "text": "Duty", "feedback": "School is something every child should have. That makes it a right." } ],
+          "formativeKey": { "expectedOptionId": "a" } },
+        { "id": "g-rubbish", "prompt": "Picking up your rubbish. Right or duty?", "options": [
+          { "id": "a", "text": "Right", "feedback": "Picking up rubbish is something we should do. That makes it a duty." },
+          { "id": "b", "text": "Duty", "feedback": "Yes! It is something we should do." } ],
+          "formativeKey": { "expectedOptionId": "b" } } ] },
+      "tools": { "requested": [], "prohibited": [] }, "hints": ["Ask: should I have it, or should I do it?"], "misconceptionIds": ["mc-duties-are-for-adults"],
+      "evidence": { "kind": "FORMATIVE_OBSERVATION", "evidenceType": "PRACTICE", "responses": [
+        { "responseKey": "g-school", "objectiveId": "ll-g1-civ-rights-duties", "responseType": "SELECTED_OPTION", "scaffoldLevel": "PARTIAL" },
+        { "responseKey": "g-rubbish", "objectiveId": "ll-g1-civ-rights-duties", "responseType": "SELECTED_OPTION", "scaffoldLevel": "PARTIAL", "misconceptionId": "mc-duties-are-for-adults" } ] },
+      "accessibility": { "textAlternative": "Two read-aloud questions: is going to school, or picking up rubbish, a right or a duty?", "keyboardPath": "Tab to an answer and press Space.", "reducedMotion": "NOT_APPLICABLE", "nonPointerAlternative": "Children stand for a right and sit for a duty while the teacher reads." },
+      "offline": { "mode": "FULL_OFFLINE", "note": "Can be played as stand-or-sit without a device." }, "completion": "ALL_ANSWERED",
+      "pedagogy": { "strategy": "GUIDED_TO_INDEPENDENT", "representation": "VERBAL", "scaffoldLevel": "PARTIAL" }
+    },
+    {
+      "id": "think-again", "type": "CHECK_UNDERSTANDING", "title": "Think again", "purpose": "ADDRESS_MISCONCEPTION", "objectiveIds": ["ll-g1-civ-rules", "ll-g1-civ-rights-duties"],
+      "learnerAction": "Listen and choose.",
+      "content": { "body": "Listen carefully. These are tricky!" },
+      "interaction": { "kind": "SINGLE_CHOICE", "items": [
+        { "id": "m-watching", "prompt": "Kollie walks near the road only when the teacher is looking. Is that good?", "options": [
+          { "id": "a", "text": "Yes", "feedback": "The road is dangerous even when nobody is looking. The rule keeps Kollie safe all the time." },
+          { "id": "b", "text": "No", "feedback": "Right! The rule keeps him safe all the time, not only when someone is watching." } ],
+          "formativeKey": { "expectedOptionId": "b" } },
+        { "id": "m-sweets", "prompt": "Musu says, 'Sweets every day is my right.' Is it?", "options": [
+          { "id": "a", "text": "Yes", "feedback": "Sweets are nice, but a right is something every child needs, like being safe." },
+          { "id": "b", "text": "No", "feedback": "Right! Sweets are a want. Being safe and going to school are rights." } ],
+          "formativeKey": { "expectedOptionId": "b" } } ] },
+      "tools": { "requested": [], "prohibited": [] }, "hints": [], "misconceptionIds": ["mc-rule-only-when-watched", "mc-right-is-a-want"],
+      "evidence": { "kind": "FORMATIVE_OBSERVATION", "evidenceType": "PRACTICE", "responses": [
+        { "responseKey": "m-watching", "objectiveId": "ll-g1-civ-rules", "responseType": "SELECTED_OPTION", "scaffoldLevel": "MINIMAL", "misconceptionId": "mc-rule-only-when-watched" },
+        { "responseKey": "m-sweets", "objectiveId": "ll-g1-civ-rights-duties", "responseType": "SELECTED_OPTION", "scaffoldLevel": "MINIMAL", "misconceptionId": "mc-right-is-a-want" } ] },
+      "accessibility": { "textAlternative": "Two read-aloud yes-or-no questions about following a rule when nobody watches, and whether sweets are a right.", "keyboardPath": "Tab to an answer and press Space.", "reducedMotion": "NOT_APPLICABLE", "nonPointerAlternative": "Children show thumbs up for yes and thumbs down for no." },
+      "offline": { "mode": "FULL_OFFLINE", "note": "Can be asked aloud without a device." }, "completion": "ALL_ANSWERED",
+      "pedagogy": { "strategy": "STRUCTURED_PROBLEM_SOLVING", "representation": "VERBAL", "scaffoldLevel": "MINIMAL" }
+    },
+    {
+      "id": "practice", "type": "PRACTICE", "title": "Your turn", "purpose": "INDEPENDENT_PRACTICE", "objectiveIds": ["ll-g1-civ-rules", "ll-g1-civ-rights-duties"],
+      "learnerAction": "Choose on your own. No help this time.",
+      "content": { "body": "Your turn. Choose on your own." },
+      "interaction": { "kind": "SINGLE_CHOICE", "items": [
+        { "id": "p-wash", "prompt": "'Wash your hands before you eat.' Why do we have this rule?", "options": [
+          { "id": "a", "text": "To keep us healthy and safe", "feedback": "Yes! Clean hands help stop sickness." },
+          { "id": "b", "text": "So the teacher can punish us", "feedback": "Rules help us. This one keeps us healthy." } ],
+          "formativeKey": { "expectedOptionId": "a" } },
+        { "id": "p-listen", "prompt": "Listening when a friend is talking. Right or duty?", "options": [
+          { "id": "a", "text": "Right", "feedback": "Listening is something we should do. That is a duty." },
+          { "id": "b", "text": "Duty", "feedback": "Yes! It is something we should do." } ],
+          "formativeKey": { "expectedOptionId": "b" } },
+        { "id": "p-safe", "prompt": "Being safe at school. Right or duty?", "options": [
+          { "id": "a", "text": "Right", "feedback": "Yes! Every child should be safe." },
+          { "id": "b", "text": "Duty", "feedback": "Being safe is something every child should have. That is a right." } ],
+          "formativeKey": { "expectedOptionId": "a" } } ] },
+      "tools": { "requested": [], "prohibited": [] }, "hints": [], "misconceptionIds": ["mc-rules-are-punishment", "mc-duties-are-for-adults", "mc-right-is-a-want"],
+      "evidence": { "kind": "FORMATIVE_OBSERVATION", "evidenceType": "PRACTICE", "responses": [
+        { "responseKey": "p-wash", "objectiveId": "ll-g1-civ-rules", "responseType": "SELECTED_OPTION", "scaffoldLevel": "NONE", "misconceptionId": "mc-rules-are-punishment" },
+        { "responseKey": "p-listen", "objectiveId": "ll-g1-civ-rights-duties", "responseType": "SELECTED_OPTION", "scaffoldLevel": "NONE", "misconceptionId": "mc-duties-are-for-adults" },
+        { "responseKey": "p-safe", "objectiveId": "ll-g1-civ-rights-duties", "responseType": "SELECTED_OPTION", "scaffoldLevel": "NONE" } ] },
+      "accessibility": { "textAlternative": "Three read-aloud questions: why we wash hands, and whether listening and being safe are rights or duties.", "keyboardPath": "Tab to an answer and press Space.", "reducedMotion": "NOT_APPLICABLE", "nonPointerAlternative": "The teacher reads the choices and the child says or points to an answer." },
+      "offline": { "mode": "FULL_OFFLINE", "note": "Questions and feedback are saved with the lesson." }, "completion": "ALL_ANSWERED",
+      "pedagogy": { "strategy": "GUIDED_TO_INDEPENDENT", "representation": "VERBAL", "scaffoldLevel": "NONE" }
+    },
+    {
+      "id": "tell", "type": "PRACTICE", "title": "Tell your teacher", "purpose": "INDEPENDENT_PRACTICE", "objectiveIds": ["ll-g1-civ-rules", "ll-g1-civ-rights-duties"],
+      "learnerAction": "Say your answers. Your teacher writes them down.",
+      "content": { "body": "Say your answers. Your teacher can write them for you." },
+      "interaction": { "kind": "FREE_RESPONSE", "prompts": [
+        { "id": "t-rule", "prompt": "Tell one rule at home or school, and how it helps.", "minLength": 5 },
+        { "id": "t-duty", "prompt": "Tell one duty you have at school.", "minLength": 5 } ] },
+      "tools": { "requested": [], "prohibited": [] }, "hints": [], "misconceptionIds": ["mc-duties-are-for-adults"],
+      "evidence": { "kind": "FORMATIVE_OBSERVATION", "evidenceType": "PRACTICE", "responses": [
+        { "responseKey": "t-rule", "objectiveId": "ll-g1-civ-rules", "responseType": "TEXT", "scaffoldLevel": "NONE" },
+        { "responseKey": "t-duty", "objectiveId": "ll-g1-civ-rights-duties", "responseType": "TEXT", "scaffoldLevel": "NONE" } ] },
+      "accessibility": { "textAlternative": "Two spoken prompts: tell a rule and how it helps, and tell a duty at school.", "keyboardPath": "Tab into each box; the teacher types what the child says.", "reducedMotion": "NOT_APPLICABLE", "nonPointerAlternative": "Children answer aloud and the teacher records the answers." },
+      "offline": { "mode": "FULL_OFFLINE", "note": "Answers are spoken; the teacher can write them on paper." }, "completion": "ALL_RESPONSES_WRITTEN",
+      "pedagogy": { "strategy": "GUIDED_TO_INDEPENDENT", "representation": "VERBAL", "scaffoldLevel": "NONE" }
+    },
+    {
+      "id": "exit-ticket", "type": "MASTERY_CHECK", "title": "Show what you know", "purpose": "ASSESS_MASTERY", "objectiveIds": ["ll-g1-civ-rules", "ll-g1-civ-rights-duties"],
+      "learnerAction": "Show your teacher on your own.",
+      "content": { "body": "Your teacher will ask you to act out and tell. Do it on your own. Your teacher checks it, not this lesson." },
+      "interaction": { "kind": "ASSESSMENT_HANDOFF", "assessmentRequestId": "g1-rrd-show" },
+      "tools": { "requested": [], "prohibited": [] }, "hints": [], "misconceptionIds": [],
+      "evidence": { "kind": "MASTERY_RESPONSE", "evidenceType": "QUIZ", "responses": [
+        { "responseKey": "show-rule", "objectiveId": "ll-g1-civ-rules", "responseType": "ASSESSMENT_RESPONSE", "scaffoldLevel": "NONE" },
+        { "responseKey": "show-right-duty", "objectiveId": "ll-g1-civ-rights-duties", "responseType": "ASSESSMENT_RESPONSE", "scaffoldLevel": "NONE" } ] },
+      "accessibility": { "textAlternative": "The teacher asks each child to act out a rule and tell a right and a duty.", "keyboardPath": "Use Continue when the teacher says you are done.", "reducedMotion": "NOT_APPLICABLE", "nonPointerAlternative": "Done in person with the teacher; no device needed." },
+      "offline": { "mode": "FALLBACK_REQUIRED", "note": "The teacher runs this in person and records each child's response." },
+      "fallback": { "kind": "PAPER_ACTIVITY", "content": "Your teacher asks you to act out a rule and to tell a right and a duty, then writes down what you show.", "objectivePreserved": true },
+      "completion": "ALL_ANSWERED"
+    },
+    {
+      "id": "reflect", "type": "REFLECTION", "title": "Back to Musu and Kollie", "purpose": "REFLECT", "objectiveIds": ["ll-g1-civ-rules", "ll-g1-civ-rights-duties"],
+      "learnerAction": "Tell a partner what Musu and Kollie should do.",
+      "content": { "body": "What should Musu and Kollie do about the ball? Tell a partner.\n\nNext week your teacher will ask about rules, rights and duties again." },
+      "interaction": { "kind": "NONE" }, "tools": { "requested": [], "prohibited": [] }, "hints": [], "misconceptionIds": [], "evidence": { "kind": "NONE" },
+      "accessibility": { "textAlternative": "Tell a partner what the children should do about the ball; the topic returns next week.", "keyboardPath": "Use Continue to finish the lesson.", "reducedMotion": "NOT_APPLICABLE" },
+      "offline": { "mode": "FULL_OFFLINE", "note": "Text only; read aloud." }, "completion": "VIEWED"
+    }
+  ],
+  "assessmentRequests": [
+    { "id": "g1-rrd-show", "objectiveIds": ["ll-g1-civ-rules", "ll-g1-civ-rights-duties"], "interaction": "FREE_RESPONSE", "evidenceType": "QUIZ", "difficulty": "INTRO",
+      "misconceptionIds": ["mc-rules-are-punishment", "mc-rule-only-when-watched", "mc-right-is-a-want", "mc-duties-are-for-adults"], "tools": { "requested": [], "prohibited": [] }, "offline": "FALLBACK_REQUIRED" }
+  ],
+  "labProposals": []
+}

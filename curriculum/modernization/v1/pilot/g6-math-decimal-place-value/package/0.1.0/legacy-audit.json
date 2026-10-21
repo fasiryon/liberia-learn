@@ -1,0 +1,401 @@
+{
+ "auditVersion": "liberialearn-library-audit/1.0.0",
+ "contentId": "wk_pcs6a_mon_p1",
+ "revisionId": "cmss8q6oi005jvo54b44tp6h5",
+ "contentHash": "818fee10b0c1684ab082208982b918e4b831d35014a5e34a102a8024e20216d4",
+ "grade": 6,
+ "subject": "MATH",
+ "mechanicalOutcome": "REVISE",
+ "judgmentStatus": "AWAITING_INDEPENDENT_REVIEW",
+ "reviewOutcome": "REVISE",
+ "moeCell": {
+  "relation": "DIRECT",
+  "moeSubject": "MATH",
+  "objectiveCount": 24
+ },
+ "moeObjectiveLeads": [
+  {
+   "objectiveId": "moe-math-g6-s1-p3-operations-obj1",
+   "text": "Add, subtract, multiply and divide decimal.",
+   "score": 0.144,
+   "pages": [
+    67
+   ],
+   "status": "LEXICAL_LEAD_UNREVIEWED"
+  },
+  {
+   "objectiveId": "moe-math-g6-s1-p1-ui-sets-of-real-numbers-symbols-to-describe-sets-obj2",
+   "text": "Use set builder notation to describe sets.",
+   "score": 0.134,
+   "pages": [
+    63
+   ],
+   "status": "LEXICAL_LEAD_UNREVIEWED"
+  },
+  {
+   "objectiveId": "moe-math-g6-s1-p1-ui-sets-of-real-numbers-symbols-to-describe-sets-obj1",
+   "text": "Use the power of set method to determine numbers of sets.",
+   "score": 0.125,
+   "pages": [
+    63
+   ],
+   "status": "LEXICAL_LEAD_UNREVIEWED"
+  }
+ ],
+ "examinations": [],
+ "areas": [
+  {
+   "area": "SUBJECT_ACCURACY",
+   "criteria": [
+    "NF-ACC-1",
+    "NF-ACC-2"
+   ],
+   "status": "AWAITING_INDEPENDENT_REVIEW",
+   "basis": "MECHANICAL_PLUS_JUDGMENT",
+   "findingIds": []
+  },
+  {
+   "area": "CONCEPTUAL_DEPTH",
+   "criteria": [
+    "LM-CON-2",
+    "NF-ACC-2"
+   ],
+   "status": "AWAITING_INDEPENDENT_REVIEW",
+   "basis": "MECHANICAL_PLUS_JUDGMENT",
+   "findingIds": []
+  },
+  {
+   "area": "GRADE_APPROPRIATENESS",
+   "criteria": [
+    "NF-ALN-3",
+    "LM-ACS-1"
+   ],
+   "status": "AWAITING_INDEPENDENT_REVIEW",
+   "basis": "MECHANICAL_PLUS_JUDGMENT",
+   "findingIds": []
+  },
+  {
+   "area": "PREREQUISITE_DIAGNOSTIC",
+   "criteria": [
+    "NF-PRG-1"
+   ],
+   "status": "NOT_MET",
+   "basis": "MECHANICAL",
+   "findingIds": [
+    "wk_pcs6a_mon_p1#F01"
+   ]
+  },
+  {
+   "area": "SEQUENCE_WORKED_EXAMPLES",
+   "criteria": [
+    "LM-PRG-1"
+   ],
+   "status": "NOT_MET",
+   "basis": "MECHANICAL",
+   "findingIds": [
+    "wk_pcs6a_mon_p1#F02"
+   ]
+  },
+  {
+   "area": "COGNITIVE_LOAD",
+   "criteria": [
+    "LM-ACS-1"
+   ],
+   "status": "MET",
+   "basis": "MECHANICAL",
+   "findingIds": []
+  },
+  {
+   "area": "MISCONCEPTION_FEEDBACK",
+   "criteria": [
+    "LM-CON-1"
+   ],
+   "status": "NOT_MET",
+   "basis": "MECHANICAL",
+   "findingIds": [
+    "wk_pcs6a_mon_p1#F03",
+    "wk_pcs6a_mon_p1#F04"
+   ]
+  },
+  {
+   "area": "GUIDED_INDEPENDENT_PRACTICE",
+   "criteria": [
+    "LM-PRG-1"
+   ],
+   "status": "MET",
+   "basis": "MECHANICAL",
+   "findingIds": []
+  },
+  {
+   "area": "AUTHENTIC_PERFORMANCE_REASONING",
+   "criteria": [
+    "LM-RSN-1",
+    "GE-RSN-1"
+   ],
+   "status": "NOT_MET",
+   "basis": "MECHANICAL",
+   "findingIds": [
+    "wk_pcs6a_mon_p1#F05"
+   ]
+  },
+  {
+   "area": "ASSESSMENT_VALIDITY",
+   "criteria": [
+    "NF-ASM-1",
+    "NF-ACC-1",
+    "LM-ASM-1",
+    "LM-ASM-2"
+   ],
+   "status": "NOT_MET",
+   "basis": "MECHANICAL",
+   "findingIds": [
+    "wk_pcs6a_mon_p1#F06",
+    "wk_pcs6a_mon_p1#F07"
+   ]
+  },
+  {
+   "area": "DELAYED_RETENTION",
+   "criteria": [
+    "LM-ASM-3"
+   ],
+   "status": "NOT_MET",
+   "basis": "MECHANICAL",
+   "findingIds": [
+    "wk_pcs6a_mon_p1#F08"
+   ]
+  },
+  {
+   "area": "TRANSFER",
+   "criteria": [
+    "GE-TRN-1"
+   ],
+   "status": "NOT_MET",
+   "basis": "MECHANICAL",
+   "findingIds": [
+    "wk_pcs6a_mon_p1#F09"
+   ]
+  },
+  {
+   "area": "ACCESSIBILITY_OFFLINE",
+   "criteria": [
+    "NF-ACS-1"
+   ],
+   "status": "PARTIALLY_MET",
+   "basis": "MECHANICAL",
+   "findingIds": [
+    "wk_pcs6a_mon_p1#F10"
+   ]
+  },
+  {
+   "area": "LIBERIAN_CONTEXT_EVIDENCE",
+   "criteria": [
+    "NF-REL-1",
+    "LM-REL-1"
+   ],
+   "status": "AWAITING_INDEPENDENT_REVIEW",
+   "basis": "MECHANICAL_PLUS_JUDGMENT",
+   "findingIds": []
+  },
+  {
+   "area": "MOE_TRACEABILITY",
+   "criteria": [
+    "NF-ALN-1"
+   ],
+   "status": "NOT_MET",
+   "basis": "MECHANICAL_PLUS_JUDGMENT",
+   "findingIds": [
+    "wk_pcs6a_mon_p1#F11"
+   ]
+  },
+  {
+   "area": "WAEC_ALIGNMENT",
+   "criteria": [
+    "NF-ALN-2"
+   ],
+   "status": "NOT_APPLICABLE",
+   "basis": "MECHANICAL",
+   "findingIds": []
+  },
+  {
+   "area": "ADVANCED_ENRICHMENT",
+   "criteria": [
+    "GE-EXT-1"
+   ],
+   "status": "PARTIALLY_MET",
+   "basis": "MECHANICAL",
+   "findingIds": [
+    "wk_pcs6a_mon_p1#F12"
+   ]
+  },
+  {
+   "area": "STUDENT_EXPERIENCE_V3",
+   "criteria": [
+    "NF-ACS-1"
+   ],
+   "status": "MET",
+   "basis": "MECHANICAL",
+   "findingIds": []
+  }
+ ],
+ "findings": [
+  {
+   "id": "wk_pcs6a_mon_p1#F01",
+   "area": "PREREQUISITE_DIAGNOSTIC",
+   "code": "NO_PREREQUISITE_CHECK",
+   "kind": "MECHANICAL",
+   "severity": "MAJOR",
+   "where": "delivery.body",
+   "evidence": "no prior-knowledge or warm-up section",
+   "issue": "Instruction assumes prerequisites it never checks.",
+   "proposedCorrection": "Add a short diagnostic per prerequisite with a stated route for learners who lack it."
+  },
+  {
+   "id": "wk_pcs6a_mon_p1#F02",
+   "area": "SEQUENCE_WORKED_EXAMPLES",
+   "code": "NO_WORKED_EXAMPLE",
+   "kind": "MECHANICAL",
+   "severity": "MAJOR",
+   "where": "delivery.body",
+   "evidence": "no worked-example section or structured workedExamples",
+   "issue": "Learners never see the method modelled before practising it.",
+   "proposedCorrection": "Add at least two worked examples that fade support (Track B)."
+  },
+  {
+   "id": "wk_pcs6a_mon_p1#F03",
+   "area": "MISCONCEPTION_FEEDBACK",
+   "code": "NO_MISCONCEPTION_TEACHING",
+   "kind": "MECHANICAL",
+   "severity": "MAJOR",
+   "where": "delivery.body",
+   "evidence": "no error-analysis or misconception section",
+   "issue": "Common errors are neither taught against nor anticipated.",
+   "proposedCorrection": "Catalogue the objective's misconceptions and teach against each (Track A)."
+  },
+  {
+   "id": "wk_pcs6a_mon_p1#F04",
+   "area": "MISCONCEPTION_FEEDBACK",
+   "code": "NO_MISCONCEPTION_SPECIFIC_FEEDBACK",
+   "kind": "MECHANICAL",
+   "severity": "MAJOR",
+   "where": "assessment",
+   "evidence": "no item carries response-specific feedback or a misconception-mapped distractor",
+   "issue": "Wrong answers cannot be diagnosed or corrected by cause.",
+   "proposedCorrection": "Map each distractor or response pattern to a catalogued misconception with corrective feedback."
+  },
+  {
+   "id": "wk_pcs6a_mon_p1#F05",
+   "area": "AUTHENTIC_PERFORMANCE_REASONING",
+   "code": "NO_REASONING_TASK",
+   "kind": "MECHANICAL",
+   "severity": "MAJOR",
+   "where": "assessment / independent practice",
+   "evidence": "no explain/justify/compare prompt in independent work or assessment",
+   "issue": "Learners are never asked to produce reasoning, only answers.",
+   "proposedCorrection": "Add a constructed-response reasoning or performance task at scaffold NONE scored by a rubric."
+  },
+  {
+   "id": "wk_pcs6a_mon_p1#F06",
+   "area": "ASSESSMENT_VALIDITY",
+   "code": "NO_END_OF_LESSON_ASSESSMENT",
+   "kind": "MECHANICAL",
+   "severity": "MAJOR",
+   "where": "assessment",
+   "evidence": "no assessment questions found in body or structured fields",
+   "issue": "Nothing checks whether learners met the objectives.",
+   "proposedCorrection": "Add an independent end-of-lesson demonstration covering every objective."
+  },
+  {
+   "id": "wk_pcs6a_mon_p1#F07",
+   "area": "ASSESSMENT_VALIDITY",
+   "code": "ANSWER_KEY_IN_LEARNER_TEXT",
+   "kind": "MECHANICAL",
+   "severity": "MAJOR",
+   "where": "delivery.body#s4 \"Answer Key:\" (line 55)",
+   "evidence": "Answer Key:: 1. 7 is in the hundredths place (0.07). 2. 3 is in the tenths place (0.3). 3. 6 is in the tenths place (0.6). 4. 2 is in the o…",
+   "issue": "Answers sit in the learner-facing text, so assessment evidence is not independent.",
+   "proposedCorrection": "Move keys to the protected reviewer/teacher projection; never deliver them to learners."
+  },
+  {
+   "id": "wk_pcs6a_mon_p1#F08",
+   "area": "DELAYED_RETENTION",
+   "code": "NO_DELAYED_RETRIEVAL",
+   "kind": "MECHANICAL",
+   "severity": "MAJOR",
+   "where": "assessment",
+   "evidence": "no delayed or spaced retrieval task",
+   "issue": "Nothing checks whether learning lasts beyond the lesson.",
+   "proposedCorrection": "Add a retention blueprint: retrieval items for each mastery objective at ≥7 days (LM-ASM-3)."
+  },
+  {
+   "id": "wk_pcs6a_mon_p1#F09",
+   "area": "TRANSFER",
+   "code": "NO_TRANSFER_TASK",
+   "kind": "MECHANICAL",
+   "severity": "MAJOR",
+   "where": "assessment",
+   "evidence": "no task marked as a new context, representation or genre",
+   "issue": "Learners are only tested in rehearsed contexts, so transfer is unknown.",
+   "proposedCorrection": "Add an unscaffolded transfer task in a context the lesson did not rehearse (GE-TRN-1)."
+  },
+  {
+   "id": "wk_pcs6a_mon_p1#F10",
+   "area": "ACCESSIBILITY_OFFLINE",
+   "code": "LAB_WITHOUT_OFFLINE_FALLBACK",
+   "kind": "MECHANICAL",
+   "severity": "MINOR",
+   "where": "resources.labs",
+   "evidence": "1 lab link(s), no offline or paper alternative",
+   "issue": "Learners without a device or connection lose the lab's objective.",
+   "proposedCorrection": "Add an objective-preserving paper or text walkthrough fallback."
+  },
+  {
+   "id": "wk_pcs6a_mon_p1#F11",
+   "area": "MOE_TRACEABILITY",
+   "code": "UNVERIFIED_ALIGNMENT_CODES",
+   "kind": "MECHANICAL",
+   "severity": "MAJOR",
+   "where": "standards.moeAlignments",
+   "evidence": "1 code(s) not in the MOE structured source, e.g. LR-MATH-G4_6-02 (method: keyword)",
+   "issue": "Alignment codes are LiberiaLearn-invented labels, not MOE objectives; they must not be presented as MOE requirements.",
+   "proposedCorrection": "Map each objective to a structured MOE objective id with source page, reviewed by a curriculum owner; lexical leads are attached to this audit."
+  },
+  {
+   "id": "wk_pcs6a_mon_p1#F12",
+   "area": "ADVANCED_ENRICHMENT",
+   "code": "NO_EXTENSION_PATH",
+   "kind": "MECHANICAL",
+   "severity": "MINOR",
+   "where": "instruction.extension",
+   "evidence": "no extension or challenge",
+   "issue": "Ready learners have nowhere to go beyond the objective.",
+   "proposedCorrection": "Add an optional, non-gating extension clearly labelled as beyond grade scope."
+  }
+ ],
+ "metrics": {
+  "primaryTextField": "body",
+  "learnerWords": 679,
+  "structuredWords": 0,
+  "sections": 6,
+  "maxSectionWords": 228,
+  "denseSections": 0,
+  "longParagraphs": 0,
+  "fkGrade": 8.1,
+  "boilerplateSentenceShare": 0,
+  "objectives": 2,
+  "workedExampleSections": 0,
+  "guidedPracticeSections": 1,
+  "independentPracticeSections": 1,
+  "assessmentQuestions": 0,
+  "keyedQuestions": 0,
+  "arithmeticChecked": 0,
+  "arithmeticErrors": 0,
+  "liberianContextMarkers": 3,
+  "factualClaimIndicators": 0,
+  "imagesWithoutAlt": 0,
+  "alignmentClaims": 1,
+  "resolvedMoeIds": 0,
+  "inventedAlignmentCodes": 1
+ },
+ "isLearningEvidence": false,
+ "auditDigest": "d501455e18a887036a6a67bc40a99f40707d4412fbc1a95d5544b046603ed01a"
+}

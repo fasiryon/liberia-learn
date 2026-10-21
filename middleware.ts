@@ -11,6 +11,7 @@ import {
   isSensitivePrivilegedRequest,
 } from "@/lib/auth/privilegedIdentity";
 import { buildContentSecurityPolicy } from "@/lib/security/contentSecurityPolicy";
+import { assertReviewReadScope } from "@/lib/curriculum/review/access";
 
 const PUBLIC_PATHS = [
   "/",
@@ -39,8 +40,6 @@ const PUBLIC_PATHS = [
   "/share/certificate",
   "/verify",
   "/api/certificates",
-  // Lab review harness: dev builds only. The page itself also 404s unless LAB_REVIEW_HARNESS=1.
-  ...(process.env.NODE_ENV !== "production" ? ["/lab-review"] : []),
   // Student design preview (synthetic DEMO lessons, no API calls or writes): dev builds only.
   // The page itself also 404s in production unless STUDENT_DESIGN_PREVIEW=1.
   ...(process.env.NODE_ENV !== "production" ? ["/design-preview"] : []),
@@ -100,9 +99,24 @@ export async function middleware(req: NextRequest) {
   requestHeaders.set("Content-Security-Policy", csp);
   const finalize = <T extends NextResponse>(response: T): T => {
     response.headers.set("Content-Security-Policy", csp);
+    if (pathname === "/lab-review" || pathname.startsWith("/lab-review/")) {
+      response.headers.set("Cache-Control", "private, no-store");
+      response.headers.append("Vary", "Cookie");
+    }
     return response;
   };
   const next = () => finalize(NextResponse.next({ request: { headers: requestHeaders } }));
+
+  // Draft review includes restricted learner projections and media. Authorize before any read,
+  // including in development, and never admit this namespace in a deployed runtime.
+  if (pathname === "/lab-review" || pathname.startsWith("/lab-review/")) {
+    if (process.env.NODE_ENV === "production" || process.env.VERCEL || process.env.LAB_REVIEW_HARNESS !== "1") return finalize(new NextResponse(null, { status: 404 }));
+    const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+    if (!token || typeof token.id !== "string" || typeof token.role !== "string") return finalize(new NextResponse(null, { status: 404 }));
+    try { assertReviewReadScope({ id: token.id, role: token.role, isPlatformAdmin: token.isPlatformAdmin === true }, null); }
+    catch { return finalize(new NextResponse(null, { status: 404 })); }
+    return next();
+  }
 
   // Public-folder files do not inherit the preview page's production 404.
   // Match Next's decoded filesystem path too, before any authenticated bypass.

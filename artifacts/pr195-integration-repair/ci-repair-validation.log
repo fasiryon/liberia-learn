@@ -1,0 +1,15 @@
+validate:changed source: working tree and index
+validate:changed files: 2
+  .github/workflows/ci.yml
+  __tests__/curriculum-excellence/g7-v030-integration.test.ts
+API route policy audit PASS: 91 changed routes declared; 502 legacy routes frozen at 84dd5417.
+
+ RUN  v4.1.9 C:/liberia-learn/.task-worktrees/pr195-integration-repair
+
+
+ Test Files  1 passed (1)
+      Tests  12 passed (12)
+   Start at  16:26:25
+   Duration  20.21s (transform 7.36s, setup 0ms, import 8.55s, tests 10.77s, environment 0ms)
+
+validate:changed PASS

@@ -98,6 +98,19 @@ jobs:
   capture:
     needs: plan
     runs-on: ubuntu-latest
+    services:
+      review-postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: lab-review-admin-local
+          POSTGRES_DB: lab_review_fixture
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
     # Full still captures plus determinism, remount and walkthrough acceptance can exceed 90 minutes.
     timeout-minutes: 180
     strategy:
@@ -109,9 +122,9 @@ jobs:
     env:
       LAB_REVIEW_HARNESS: "1"
       NEXT_TELEMETRY_DISABLED: "1"
-      # Placeholders only (same as CI): the review harness needs no database, login or provider.
-      DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/test"
-      DIRECT_URL: "postgresql://postgres:postgres@localhost:5432/test"
+      # Local synthetic consent only; application sessions retain normal reviewer authentication.
+      DATABASE_URL: "postgresql://lab_review_reader:lab-review-read-only-local@localhost:5432/lab_review_fixture"
+      DIRECT_URL: "postgresql://lab_review_reader:lab-review-read-only-local@localhost:5432/lab_review_fixture"
       NEXTAUTH_SECRET: "ci-secret-not-real"
       NEXTAUTH_URL: "http://localhost:3000"
       OPENAI_API_KEY: "sk-test"
@@ -147,6 +160,10 @@ jobs:
           path: ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
       - run: npm ci
+      - name: Prepare the isolated read-only reviewer consent fixture
+        env:
+          REVIEW_FIXTURE_ADMIN_URL: "postgresql://postgres:lab-review-admin-local@localhost:5432/lab_review_fixture"
+        run: node scripts/labs/prepare-review-consent.cjs
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
       - name: Start the review dev server
@@ -155,9 +172,10 @@ jobs:
           echo $! > dev-server.pid
       - name: Wait for the review harness (bounded)
         run: |
+          cookie=$(node scripts/labs/reviewer-session.cjs)
           url="http://localhost:3000/lab-review/${LAB}?profile=${PROFILE}"
           for i in $(seq 1 60); do
-            code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 240 "$url" || true)
+            code=$(curl -s -o /dev/null -w '%{http_code}' --cookie "$cookie" --max-time 240 "$url" || true)
             if [ "$code" = "200" ]; then echo "Harness ready after attempt $i"; exit 0; fi
             echo "Attempt $i: HTTP $code"; sleep 10
           done

@@ -1,0 +1,41 @@
+{
+  "inputSha256": "fed1af1dadc67bfa5d17e8cc776b91fb5a8a73bd50979b3372ef196eb327416f",
+  "collisions": [],
+  "misconceptions": [
+    {
+      "id": "ft07-m1",
+      "bindingSceneFound": true,
+      "purpose": "ADDRESS_MISCONCEPTION",
+      "assessmentSignalFound": true,
+      "patternMatchesBlueprint": true
+    },
+    {
+      "id": "ft07-m2",
+      "bindingSceneFound": true,
+      "purpose": "ADDRESS_MISCONCEPTION",
+      "assessmentSignalFound": true,
+      "patternMatchesBlueprint": true
+    },
+    {
+      "id": "ft07-m3",
+      "bindingSceneFound": true,
+      "purpose": "ADDRESS_MISCONCEPTION",
+      "assessmentSignalFound": true,
+      "patternMatchesBlueprint": true
+    },
+    {
+      "id": "ft07-m4",
+      "bindingSceneFound": true,
+      "purpose": "ADDRESS_MISCONCEPTION",
+      "assessmentSignalFound": true,
+      "patternMatchesBlueprint": true
+    },
+    {
+      "id": "ft07-m5",
+      "bindingSceneFound": true,
+      "purpose": "ADDRESS_MISCONCEPTION",
+      "assessmentSignalFound": true,
+      "patternMatchesBlueprint": true
+    }
+  ]
+}

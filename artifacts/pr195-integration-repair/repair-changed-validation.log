@@ -1,0 +1,60 @@
+validate:changed source: working tree and index
+validate:changed files: 15
+  artifacts/pr195-integration-repair/.gitignore
+  artifacts/pr195-integration-repair/advisory-audit-index.json
+  artifacts/pr195-integration-repair/affected-tests.log
+  artifacts/pr195-integration-repair/changed-validation.log
+  artifacts/pr195-integration-repair/contract-inventory.json
+  artifacts/pr195-integration-repair/recomputed-inventory.json
+  artifacts/pr195-integration-repair/sequential-build.json
+  artifacts/pr195-integration-repair/verification.json
+  docs/qa/CONTENT_FACTORY_OWNER_HANDOFF.md
+  docs/qa/PR195_INTEGRATION_REPAIR.md
+  next.config.js
+  scripts/qa/build-pr195-sequential.cjs
+  scripts/qa/recompute-pr195-inventory.ts
+  scripts/qa/verify-pr195-sequential.cjs
+  scripts/qa/verify-pr195-snapshot.cjs
+API route policy audit PASS: 91 changed routes declared; 502 legacy routes frozen at 84dd5417.
+
+ RUN  v4.1.9 C:/liberia-learn/.task-worktrees/pr195-integration-repair
+
+node : Warning: A vi.hoisted() call in
+"C:/liberia-learn/.task-worktrees/pr195-integration-repair/__tests__/curriculum-v2/governance-provenance.test.ts" is
+not at the top level of the module. Although it appears nested, it will be hoisted and executed before any tests run.
+Move it to the top level to reflect its actual execution order. This will become an error in a future version.
+At line:2 char:68
++ ... SM='false'; node scripts/validate-changed.mjs --no-types *> artifacts ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Warning: A vi.h...future version.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+
+See: https://vitest.dev/guide/mocking/modules#how-it-works
+Warning: A vi.hoisted() call in
+"C:/liberia-learn/.task-worktrees/pr195-integration-repair/__tests__/curriculum-v2/governance-provenance.test.ts" is
+not at the top level of the module. Although it appears nested, it will be hoisted and executed before any tests run.
+Move it to the top level to reflect its actual execution order. This will become an error in a future version.
+See: https://vitest.dev/guide/mocking/modules#how-it-works
+Warning: A vi.mock("@/lib/curriculum/mutations/repository") call in
+"C:/liberia-learn/.task-worktrees/pr195-integration-repair/__tests__/curriculum-v2/governance-provenance.test.ts" is
+not at the top level of the module. Although it appears nested, it will be hoisted and executed before any tests run.
+Move it to the top level to reflect its actual execution order. This will become an error in a future version.
+See: https://vitest.dev/guide/mocking/modules#how-it-works
+Warning: A vi.mock("@/lib/audit") call in
+"C:/liberia-learn/.task-worktrees/pr195-integration-repair/__tests__/curriculum-v2/governance-provenance.test.ts" is
+not at the top level of the module. Although it appears nested, it will be hoisted and executed before any tests run.
+Move it to the top level to reflect its actual execution order. This will become an error in a future version.
+See: https://vitest.dev/guide/mocking/modules#how-it-works
+12:10:48 PM [vite] (ssr) warning: invalid import "../app/api/discussion/threads/[threadId]/${mod}/route". A file
+extension must be included in the static part of the import. For example: import(`./foo/${bar}.js`).
+  Plugin: vite:dynamic-import-vars
+  File: C:/liberia-learn/.task-worktrees/pr195-integration-repair/__tests__/sprint7.discussion.test.ts
+Browserslist: browsers data (caniuse-lite) is 8 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+No test files found, exiting with code 0
+
+include: __tests__/**/*.{test,spec}.{ts,tsx}
+exclude:  **/node_modules/**, **/.claude/**
+
+validate:changed PASS

@@ -1,0 +1,47 @@
+{
+  "reviewKey": "ft10-g7-english-vocabulary-in-context",
+  "contentId": "hero-english-g7-vocabulary-in-context-reading-west-african-texts",
+  "reviewer": {"kind": "AI_AGENT", "modelFamily": "anthropic-claude", "role": "ADVISORY_SUBJECT_REVIEWER", "countsAsIndependentReview": false},
+  "blindFindings": [
+    "B1 HIGH: 'audacious tiger' in West African tales; tigers are Asian",
+    "B2 HIGH: fox in a 'Liberian folktale'",
+    "B3 LOW: 'clever rabbit' (the West African trickster is the hare)",
+    "B4 MEDIUM: 'quaint' village with 'cobblestone streets'; Western, low-utility target words",
+    "B5 HIGH: check-for-understanding gives no actual context sentence; the clues appear only in the answers (circular)",
+    "B6 HIGH: assessment.problemSets: answer text used as studentPrompt, answerKey empty",
+    "B7 HIGH: no guided/independent practice, assessment or closing; takeawaySummary is questions",
+    "B8 MEDIUM: 'fervor akin to a hunted deer'",
+    "B9 MEDIUM: synonym example names a word ('unclouded') not in the sentence",
+    "B10 LOW: 'in-fuse' false etymology",
+    "B11 LOW: 'if you're outwitted, you're puzzled' overgeneralisation",
+    "B12 HIGH: reading level far above G7; word-count headings",
+    "B13 LOW: 'lush hills surrounding Monrovia'",
+    "B14 MEDIUM: no West African text actually read"
+  ],
+  "defectVerdicts": [
+    {"defectId": "D1", "verdict": "CONFIRMED", "reason": "Tigers: wild tigers live only in Asia. Foxes: the only fox in the West African region, the pale fox, is a Sahel species; its range does not include Liberia, so a fox is not an animal of Liberian forests or Liberian folklore fauna. Liberian trickster tales typically feature Spider (Peace Corps collection of 50 Liberian tales). Anansi is Akan/Ghanaian, so the spec's attribution advice is correct. The legacy calls Anansi part of 'tales and legends of West Africa', which is not wrong but is imprecise. 'Cobblestone streets' is European imagery (reviewer judgment).", "sources": [{"url": "https://www.worldatlas.com/are-there-tigers-in-africa.html", "quote": "Tigers, the largest of the big cats, do not live in Africa. ... Wild tigers are found only in Asia across 13 tiger-range countries."}, {"url": "https://en.wikipedia.org/wiki/Pale_fox", "quote": "The pale fox is found in the band of African Sahel from Senegal in the west to Sudan in the east."}, {"url": "https://africaaccessreview.org/2020/03/once-upon-west-africa/", "quote": "usually that trickster Spider - gets it in the end."}, {"url": "https://en.wikipedia.org/wiki/Anansi", "quote": "the Anansi tales from Ghana are seen to be the origin of these stories."}]},
+    {"defectId": "D2", "verdict": "CONFIRMED", "reason": "Every example is a single invented sentence. No passage, excerpt or tale from a West African source is read.", "sources": []},
+    {"defectId": "D3", "verdict": "CONFIRMED", "reason": "The headings read '(300+ words)', '(150+ words)', '(200+ words)', '(600+ words)' and '(250+ words)'. The mechanical flags quote these headings, for example in DENSE_SECTION, but none of them flags the marker itself. The spec's point that a check should be added is valid.", "sources": []},
+    {"defectId": "D4", "verdict": "CONFIRMED", "reason": "'With fervor akin to a hunted deer' pairs fervour with an image of fear and flight, so the context contradicts the target meaning. 'Remember it as in-fuse' attaches a false word origin: infer has nothing to do with fuse. This is reviewer linguistic judgment; I fetched no etymology source.", "sources": []},
+    {"defectId": "D5", "verdict": "CONFIRMED", "reason": "FK 13.5 comes from the mechanical audit. The prose ('tapestry', 'vivid tableau', 'constellation of meanings') is consistent with that figure. 'Ballyhoo', 'spartan', 'quaint' and 'pomp' are low-utility target words for G7.", "sources": []}
+  ],
+  "missedDefects": [
+    {"id": "M1", "severity": "BLOCKING", "kind": "ASSESSMENT_VALIDITY", "where": "assessment.problemSets (skulk, cacophony, ballyhoo, spartan, quaint, pomp)", "legacy": "studentPrompt: 'Pewee should focus on the stealth implied by the word \"shadows\" ...'; answerKey: ''", "issue": "All 6 structured items use the model answer as the learner prompt and have empty keys. Learners are shown answers with no question, and nothing can be scored. This is the most serious live-delivery defect and the spec does not list it (the mechanical flag NO_END_OF_LESSON_ASSESSMENT only partly captures it)."},
+    {"id": "M2", "severity": "MAJOR", "kind": "PEDAGOGY", "where": "s4 Check for Understanding Q3-Q6", "legacy": "Finding no decorations, Boima associates 'spartan' with simplicity ...; noting descriptions of the village's cobblestone streets ...", "issue": "No context sentence is supplied. The 'clues' exist only in the answers, so learners cannot do context-clue inference and the method is modelled circularly."},
+    {"id": "M3", "severity": "MAJOR", "kind": "STRUCTURE", "where": "delivery.body; instruction.takeawaySummary", "issue": "The body ends at Error Analysis: there is no guided practice, independent practice, assessment or closing, and section 5 is missing. The takeaway summary is five questions copied from the check-for-understanding prompts, not takeaways. Mechanical flags exist, but the spec's defect list does not carry them."},
+    {"id": "M4", "severity": "MINOR", "kind": "LANGUAGE", "where": "s6 Synonym example", "legacy": "In the sentence, 'The sun was bright, and the sky was clear,' 'clear' is a synonym for 'unclouded.'", "issue": "The synonym named is not in the sentence. A confusing model of what a synonym is."},
+    {"id": "M5", "severity": "MINOR", "kind": "LANGUAGE", "where": "s7 step 2", "legacy": "If you're outwitted, you're puzzled or unsure.", "issue": "Overgeneralised. The real clue to 'bewildered' is 'unsure of what had just happened'; 'outwitted' only means beaten by cleverness."},
+    {"id": "M6", "severity": "MINOR", "kind": "CULTURAL", "where": "s4", "legacy": "a clever rabbit", "issue": "In West African tradition the trickster is the hare. Rabbit appears in some English retellings, so this is minor (reviewer judgment; no source fetched)."}
+  ],
+  "specIssues": [
+    {"id": "S1", "where": "defects", "issue": "Add M1 (broken problemSets) at BLOCKING or MAJOR severity. It is live learner-facing content."},
+    {"id": "S2", "where": "D1.correction", "issue": "Accurate. Optionally name the leopard as the culturally apt large predator and the hare or tortoise as other attested tricksters. Note that the pale fox exists in the Sahel, so 'foxes are not animals of Liberia' is correct but 'West Africa has no foxes' would not be."},
+    {"id": "S3", "where": "correctionNotice.reason", "issue": "'No exam-critical false facts' is true but sets too narrow a bar; see correctionNoticeWarranted."},
+    {"id": "S4", "where": "objectives / assessment", "issue": "Sound. ft10-a1 (a 150-word passage, four words, clue types) and ft10-a3 (connotation writing) are well targeted. The licensing open decision is appropriate."}
+  ],
+  "specRating": "NEEDS_CHANGE",
+  "specRatingReason": "The redesign is strong: four clue types with signal words, a substitution check, connotation, a Spider tale with cultural review, licensing gating, and misconceptions mapped. The defect list, however, omits the broken structured assessment (M1) and the circular context-clue items (M2), which a mapping plan and teacher notice need to know about.",
+  "correctionNoticeWarranted": true,
+  "correctionNoticeReason": "Yes, a brief one for the scheduled class (27 scheduled rows). The lesson told learners that West African tales feature tigers and that a Liberian folktale features a fox. Grade 7 learners may retain this as cultural or biological fact. A two-line note ('tigers live in Asia, not Africa; Liberian trickster tales usually feature Spider') costs little. The teacher should also be told that the six 'practice items' showed answers and could not be scored.",
+  "notes": "The blind pass was completed before I opened the spec. The fox finding rests on the pale fox's Sahel range; I did not fetch a full Liberian mammal checklist, but nothing I found records any fox species in Liberia."
+}

@@ -1,0 +1,57 @@
+{
+ "planVersion": "liberialearn-legacy-mapping-plan/1.0.0",
+ "status": "PROPOSED_UNAUTHORIZED",
+ "candidate": {
+  "id": "lmv1-g6-math-decimal-place-value",
+  "version": "0.1.0",
+  "sha256": "da6ab75973154ab6d68049f8196efc62a09d6632299e7c33e299af5b7686586c"
+ },
+ "legacyRows": [
+  {
+   "contentId": "wk_pcs6a_mon_p1",
+   "legacyRevisionId": "cmss8q6oi005jvo54b44tp6h5",
+   "legacyContentHash": "818fee10b0c1684ab082208982b918e4b831d35014a5e34a102a8024e20216d4",
+   "status": "APPROVED",
+   "dependencies": {
+    "scheduledWork": 1,
+    "scheduledWorkBundlePinned": 0,
+    "scheduledWorkClasses": 1,
+    "scheduledWorkSchools": 1,
+    "studentProgress": 7,
+    "assignments": 0,
+    "homework": 0,
+    "learningEvents": 0,
+    "gradedSubmissions": 0,
+    "teacherLessonAssignments": 0,
+    "lessonPlans": 1,
+    "tutorConversations": 0,
+    "helpFlags": 0,
+    "timetableAssignments": 0,
+    "performanceEvents": 0,
+    "curriculumFlags": 0,
+    "lessonVersions": 0,
+    "lessonShares": 0,
+    "audioAssets": 0,
+    "videoSupplements": 0,
+    "prerequisiteLinks": 0,
+    "dependentLessons": 0
+   },
+   "relation": "AUDITED_SOURCE"
+  }
+ ],
+ "historyPolicy": "PRESERVE_HISTORICAL_PINS",
+ "rules": [
+  "Every existing ScheduledWork, StudentProgress, LearningEvent, submission, tutor conversation and lesson plan keeps pointing at the legacy contentId and revision it was created against; nothing is repointed.",
+  "Published report cards and transcripts are not recomputed or relabelled.",
+  "Legacy rows are not deleted. On release they leave the learner catalogue for new assignment only, and resolve for history forever.",
+  "New assignments after release use the released revision only when the class teacher opts in (futureAssignments: TEACHER_OPT_IN) during the pilot.",
+  "Mastery already recorded from the legacy lesson stays as recorded; the learning authority decides separately whether later evidence from the new lesson is admitted."
+ ],
+ "futureAssignments": "TEACHER_OPT_IN",
+ "requires": [
+  "Human independent ACCEPT on ACADEMIC and ASSESSMENT scopes for this candidate hash",
+  "CURRICULUM_AUTHORITY RELEASE_AUTHORIZED citing this plan's digest",
+  "A governed migration for any catalogue-visibility change (not applied here)"
+ ],
+ "planDigest": "15d2a263ea85f00a29e1d5ed9e61de4267c1648ea75687c6fa6ff64a57cd0ccb"
+}

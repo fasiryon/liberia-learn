@@ -1,0 +1,137 @@
+{
+ "status": "READY_FOR_INDEPENDENT_REVIEW",
+ "checks": [
+  {
+   "id": "V2-PARSE",
+   "blocking": true,
+   "passed": true,
+   "detail": "Strict Curriculum V2 parse (authority and secret keys refused)."
+  },
+  {
+   "id": "V2-CONTEXT",
+   "blocking": true,
+   "passed": true,
+   "detail": "0 errors; 0 review gap(s): none"
+  },
+  {
+   "id": "SPEC-OBJECTIVES",
+   "blocking": true,
+   "passed": true,
+   "detail": "Candidate scenes teach exactly the spec objectives."
+  },
+  {
+   "id": "SPEC-SUCCESS-CRITERIA",
+   "blocking": true,
+   "passed": true,
+   "detail": "Every objective defines successful independent performance."
+  },
+  {
+   "id": "SPEC-PREREQUISITES",
+   "blocking": true,
+   "passed": true,
+   "detail": "Spec prerequisites equal the candidate's prerequisite assumptions."
+  },
+  {
+   "id": "SPEC-AGE-BAND",
+   "blocking": true,
+   "passed": true,
+   "detail": "Candidate age band UPPER_PRIMARY; grade 6 → UPPER_PRIMARY."
+  },
+  {
+   "id": "LEGACY-DISPOSITION-COMPLETE",
+   "blocking": true,
+   "passed": true,
+   "detail": "All 6 legacy sections have a disposition."
+  },
+  {
+   "id": "AUTHORITY-NO-INVENTED-MOE",
+   "blocking": true,
+   "passed": true,
+   "detail": "Every proposed MOE id exists in the structured source (proposal only)."
+  },
+  {
+   "id": "DELIVERABILITY",
+   "blocking": true,
+   "passed": true,
+   "detail": "Every scene deliverable (primary or fallback) in every runtime scenario."
+  },
+  {
+   "id": "BLUEPRINT",
+   "blocking": true,
+   "passed": true,
+   "detail": "Assessment blueprint satisfied: coverage, diagnostics, independent practice, production, reasoning, selected share, retention, transfer, extension."
+  },
+  {
+   "id": "EXCELLENCE-AUTOMATED",
+   "blocking": true,
+   "passed": true,
+   "detail": "No blocking automated findings (0 non-blocking)."
+  },
+  {
+   "id": "PROTECTED-KEYS-SEPARATE",
+   "blocking": true,
+   "passed": true,
+   "detail": "Mastery keys and rubrics live only in the reviewer-only assessment definitions."
+  },
+  {
+   "id": "PROJECTION-NO-REVIEWER-CONTENT",
+   "blocking": true,
+   "passed": true,
+   "detail": "No keys, rubrics, expected observations or fallback routes in the learner projection."
+  },
+  {
+   "id": "PROJECTION-AUTHORITY",
+   "blocking": true,
+   "passed": true,
+   "detail": "Projection authority CURRICULUM_V2_DRAFT: never APPROVED_RELEASE."
+  },
+  {
+   "id": "SX-INTRO-AND-OBJECTIVES",
+   "blocking": true,
+   "passed": true,
+   "detail": "Clear introduction and stated objectives."
+  },
+  {
+   "id": "SX-TEXT-DENSITY",
+   "blocking": true,
+   "passed": true,
+   "detail": "Every scene within 140 words (UPPER_PRIMARY)."
+  },
+  {
+   "id": "SX-MEDIA-ALT",
+   "blocking": true,
+   "passed": true,
+   "detail": "Every media item has alt text."
+  },
+  {
+   "id": "SX-KEYBOARD-SCREEN-READER",
+   "blocking": true,
+   "passed": true,
+   "detail": "Every scene has a text alternative and keyboard path."
+  },
+  {
+   "id": "SX-OFFLINE",
+   "blocking": true,
+   "passed": true,
+   "detail": "Packageable offline: true."
+  },
+  {
+   "id": "SX-PAGINATION",
+   "blocking": true,
+   "passed": true,
+   "detail": "13 scenes (contract 3-20); one scene per slide."
+  },
+  {
+   "id": "SX-NO-MASTERY-CLAIM",
+   "blocking": true,
+   "passed": true,
+   "detail": "No learner-facing claim of mastery or completion success."
+  },
+  {
+   "id": "SX-FULLSCREEN-SLIDES-V2",
+   "blocking": false,
+   "passed": false,
+   "detail": "Fullscreen Slides V2 layout contracts are not on this base (feat/fullscreen-slides-v2 is unmerged); checked against Lesson Player V2 only."
+  }
+ ]
+}

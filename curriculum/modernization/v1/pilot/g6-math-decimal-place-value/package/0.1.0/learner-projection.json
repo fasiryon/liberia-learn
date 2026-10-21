@@ -1,0 +1,817 @@
+{
+ "contractVersion": "lesson-experience/1.0.0",
+ "id": "lmv1-g6-math-decimal-place-value",
+ "version": "0.1.0",
+ "title": "Decimal place value: reading and comparing decimals",
+ "subject": "MATH",
+ "grade": 6,
+ "ageBand": "UPPER_PRIMARY",
+ "authority": {
+  "status": "CURRICULUM_V2_DRAFT",
+  "note": "Curriculum V2 draft. Requires exact-revision human review; not approved, not published.",
+  "candidateContentIds": [],
+  "releaseId": null,
+  "releaseIdentity": null
+ },
+ "objectives": [
+  {
+   "id": "ll-g6-math-decimal-place-value",
+   "statement": "Name the place and value of any digit in a decimal number up to thousandths.",
+   "conceptId": "ll-g6-math-decimal-place-value",
+   "standardCodes": [],
+   "skillIds": []
+  },
+  {
+   "id": "ll-g6-math-decimal-compare",
+   "statement": "Compare and order decimals up to thousandths by comparing place by place, and explain the comparison.",
+   "conceptId": "ll-g6-math-decimal-compare",
+   "standardCodes": [],
+   "skillIds": []
+  }
+ ],
+ "scenes": [
+  {
+   "id": "intro",
+   "type": "INTRO",
+   "title": "Which bag of rice is heavier?",
+   "objectiveIds": [],
+   "content": {
+    "body": "At the market, Musu weighs two small bags of rice. One scale shows **1.5 kg**. The other shows **1.25 kg**.\n\nHer brother says the second bag is heavier because 25 is bigger than 5. Is he right? By the end of this lesson you will know, and you will be able to explain why."
+   },
+   "interaction": {
+    "kind": "NONE"
+   },
+   "tools": {
+    "allowed": [],
+    "prohibited": []
+   },
+   "accessibility": {
+    "textAlternative": "Two scale readings, 1.5 kg and 1.25 kg, and the question of which bag of rice is heavier.",
+    "keyboardOperable": true,
+    "reducedMotionSafe": true,
+    "captionsRequired": false
+   },
+   "offline": {
+    "mode": "FULL",
+    "fallback": "Text only; saved with the lesson."
+   },
+   "evidence": {
+    "kind": "NONE"
+   },
+   "completion": {
+    "kind": "VIEWED"
+   }
+  },
+  {
+   "id": "objectives",
+   "type": "OBJECTIVE",
+   "title": "What you will learn",
+   "objectiveIds": [
+    "ll-g6-math-decimal-place-value",
+    "ll-g6-math-decimal-compare"
+   ],
+   "content": {
+    "body": "Today you will learn to:\n\n1. Name the place and value of any digit in a decimal, up to thousandths.\n2. Compare and order decimals by checking place by place, and explain which is larger.\n\nAt the end you will show both on your own, without help."
+   },
+   "interaction": {
+    "kind": "NONE"
+   },
+   "tools": {
+    "allowed": [],
+    "prohibited": []
+   },
+   "accessibility": {
+    "textAlternative": "The two lesson goals: naming the place and value of decimal digits, and comparing decimals place by place.",
+    "keyboardOperable": true,
+    "reducedMotionSafe": true,
+    "captionsRequired": false
+   },
+   "offline": {
+    "mode": "FULL",
+    "fallback": "Text only; saved with the lesson."
+   },
+   "evidence": {
+    "kind": "NONE"
+   },
+   "completion": {
+    "kind": "VIEWED"
+   }
+  },
+  {
+   "id": "warm-up",
+   "type": "CHECK_UNDERSTANDING",
+   "title": "Warm-up: what do you already know?",
+   "objectiveIds": [
+    "ll-g6-math-decimal-place-value"
+   ],
+   "content": {
+    "body": "Two quick questions about ideas we will build on. If either one is hard, tell your teacher: you will get a short review first."
+   },
+   "interaction": {
+    "kind": "MULTIPLE_CHOICE",
+    "items": [
+     {
+      "id": "w-thousands",
+      "prompt": "In 3,482, what is the 4 worth?",
+      "options": [
+       "4",
+       "400",
+       "40"
+      ],
+      "correctIndex": 1,
+      "feedback": {
+       "correct": "Yes. The 4 is in the hundreds place, so it is worth 4 hundreds, 400.",
+       "incorrect": "The 4 is not in the ones place. Count from the right: ones, tens, hundreds."
+      },
+      "optionFeedback": [
+       "The 4 is not in the ones place. Count from the right: ones, tens, hundreds.",
+       "Yes. The 4 is in the hundreds place, so it is worth 4 hundreds, 400.",
+       "40 would put the 4 in the tens place. It is one place further left."
+      ]
+     },
+     {
+      "id": "w-tenths",
+      "prompt": "Which means the same as 3 tenths?",
+      "options": [
+       "3/10",
+       "3/100",
+       "30"
+      ],
+      "correctIndex": 0,
+      "feedback": {
+       "correct": "Yes. A tenth is one of ten equal parts, so 3 tenths is 3/10.",
+       "incorrect": "3/100 is 3 hundredths, parts of a whole cut into 100 pieces."
+      },
+      "optionFeedback": [
+       "Yes. A tenth is one of ten equal parts, so 3 tenths is 3/10.",
+       "3/100 is 3 hundredths, parts of a whole cut into 100 pieces.",
+       "30 is a whole number. Tenths are parts of one whole."
+      ]
+     }
+    ]
+   },
+   "tools": {
+    "allowed": [],
+    "prohibited": []
+   },
+   "accessibility": {
+    "textAlternative": "Two multiple-choice warm-up questions on whole-number place value and the meaning of tenths.",
+    "keyboardOperable": true,
+    "reducedMotionSafe": true,
+    "captionsRequired": false
+   },
+   "offline": {
+    "mode": "FULL",
+    "fallback": "Questions and feedback are saved with the lesson."
+   },
+   "evidence": {
+    "kind": "FORMATIVE_OBSERVATION",
+    "evidenceType": "DIAGNOSTIC",
+    "objectiveIds": [
+     "ll-g6-math-decimal-place-value"
+    ]
+   },
+   "completion": {
+    "kind": "ALL_ANSWERED"
+   }
+  },
+  {
+   "id": "chart",
+   "type": "EXPLANATION",
+   "title": "The decimal place-value chart",
+   "objectiveIds": [
+    "ll-g6-math-decimal-place-value"
+   ],
+   "content": {
+    "body": "The decimal point separates whole ones from parts of a one. Places after the point are **tenths**, **hundredths** and **thousandths**. Each place is worth one tenth of the place to its left.\n\nIn **3.472**: the 3 is 3 ones (3), the 4 is 4 tenths (0.4), the 7 is 7 hundredths (0.07) and the 2 is 2 thousandths (0.002).",
+    "keyPoints": [
+     "There is no 'oneths' place: the first place after the point is tenths.",
+     "Read 3.472 as three and four hundred seventy-two thousandths."
+    ]
+   },
+   "interaction": {
+    "kind": "NONE"
+   },
+   "tools": {
+    "allowed": [],
+    "prohibited": []
+   },
+   "accessibility": {
+    "textAlternative": "A place-value chart for 3.472 listing each digit with its place and value, also given in the text.",
+    "keyboardOperable": true,
+    "reducedMotionSafe": true,
+    "captionsRequired": false
+   },
+   "offline": {
+    "mode": "FULL",
+    "fallback": "The chart is described in full in the text."
+   },
+   "evidence": {
+    "kind": "NONE"
+   },
+   "completion": {
+    "kind": "VIEWED"
+   }
+  },
+  {
+   "id": "worked-example",
+   "type": "GUIDED_EXAMPLE",
+   "title": "Worked example: every digit of 15.258",
+   "objectiveIds": [
+    "ll-g6-math-decimal-place-value"
+   ],
+   "content": {
+    "body": "The number 15.258 has two 5s. They are worth very different amounts because they sit in different places. Reveal one step at a time."
+   },
+   "interaction": {
+    "kind": "DIAGRAM_REVEAL",
+    "diagramId": "worked-example",
+    "steps": [
+     {
+      "id": "s1",
+      "label": "Find the point",
+      "description": "Everything left of the point is whole ones and tens: 15. Everything right of it is parts: .258."
+     },
+     {
+      "id": "s2",
+      "label": "Whole part",
+      "description": "The 1 is 1 ten (10). The first 5 is 5 ones (5)."
+     },
+     {
+      "id": "s3",
+      "label": "First place after the point",
+      "description": "The 2 is in the tenths place: 2 tenths, 0.2."
+     },
+     {
+      "id": "s4",
+      "label": "Second place",
+      "description": "The second 5 is in the hundredths place: 5 hundredths, 0.05."
+     },
+     {
+      "id": "s5",
+      "label": "Third place",
+      "description": "The 8 is in the thousandths place: 8 thousandths, 0.008."
+     },
+     {
+      "id": "s6",
+      "label": "Check",
+      "description": "10 + 5 + 0.2 + 0.05 + 0.008 = 15.258. The two 5s are worth 5 and 0.05."
+     }
+    ]
+   },
+   "tools": {
+    "allowed": [],
+    "prohibited": []
+   },
+   "accessibility": {
+    "textAlternative": "Six revealed steps naming the value of each digit of 15.258: 10, 5, 0.2, 0.05 and 0.008.",
+    "keyboardOperable": true,
+    "reducedMotionSafe": true,
+    "captionsRequired": false
+   },
+   "offline": {
+    "mode": "FULL",
+    "fallback": "Steps are saved with the lesson."
+   },
+   "evidence": {
+    "kind": "NONE"
+   },
+   "completion": {
+    "kind": "ALL_STEPS_REVEALED"
+   }
+  },
+  {
+   "id": "zero-holds",
+   "type": "GUIDED_EXAMPLE",
+   "title": "Zeros hold a place",
+   "objectiveIds": [
+    "ll-g6-math-decimal-place-value"
+   ],
+   "content": {
+    "body": "A zero after the point keeps a place empty, so the digits after it move one place to the right. Use the chart for these two."
+   },
+   "interaction": {
+    "kind": "MULTIPLE_CHOICE",
+    "items": [
+     {
+      "id": "z-307",
+      "prompt": "In 3.07, what is the 7 worth?",
+      "options": [
+       "7 tenths (0.7)",
+       "7 hundredths (0.07)",
+       "7 ones (7)"
+      ],
+      "correctIndex": 1,
+      "feedback": {
+       "correct": "Yes. The 0 holds the tenths place, so the 7 is in the hundredths place.",
+       "incorrect": "The 0 fills the tenths place, so the 7 is pushed into the hundredths place."
+      },
+      "optionFeedback": [
+       "The 0 fills the tenths place, so the 7 is pushed into the hundredths place.",
+       "Yes. The 0 holds the tenths place, so the 7 is in the hundredths place.",
+       "The 7 is to the right of the point, so it is part of a one."
+      ]
+     },
+     {
+      "id": "z-005",
+      "prompt": "Which is five hundredths?",
+      "options": [
+       "0.5",
+       "0.005",
+       "0.05"
+      ],
+      "correctIndex": 2,
+      "feedback": {
+       "correct": "Yes. Zero tenths, then 5 in the hundredths place.",
+       "incorrect": "0.5 is five tenths. Hundredths need a second place after the point."
+      },
+      "optionFeedback": [
+       "0.5 is five tenths. Hundredths need a second place after the point.",
+       "0.005 is five thousandths: the 5 is three places after the point.",
+       "Yes. Zero tenths, then 5 in the hundredths place."
+      ]
+     }
+    ]
+   },
+   "tools": {
+    "allowed": [],
+    "prohibited": []
+   },
+   "accessibility": {
+    "textAlternative": "Two guided multiple-choice questions on how a zero after the decimal point holds the tenths place.",
+    "keyboardOperable": true,
+    "reducedMotionSafe": true,
+    "captionsRequired": false
+   },
+   "offline": {
+    "mode": "FULL",
+    "fallback": "Questions and feedback are saved with the lesson."
+   },
+   "evidence": {
+    "kind": "FORMATIVE_OBSERVATION",
+    "evidenceType": "PRACTICE",
+    "objectiveIds": [
+     "ll-g6-math-decimal-place-value"
+    ]
+   },
+   "completion": {
+    "kind": "ALL_ANSWERED"
+   }
+  },
+  {
+   "id": "compare-model",
+   "type": "GUIDED_EXAMPLE",
+   "title": "Worked example: 1.5 or 1.25?",
+   "objectiveIds": [
+    "ll-g6-math-decimal-compare"
+   ],
+   "content": {
+    "body": "To compare decimals, line up the points and compare place by place from the left. The first place that differs decides."
+   },
+   "interaction": {
+    "kind": "DIAGRAM_REVEAL",
+    "diagramId": "compare-model",
+    "steps": [
+     {
+      "id": "c1",
+      "label": "Line up the points",
+      "description": "Write 1.5 above 1.25 so the points are in one column."
+     },
+     {
+      "id": "c2",
+      "label": "Fill empty places",
+      "description": "Write 1.5 as 1.50. Adding a zero at the end does not change the value."
+     },
+     {
+      "id": "c3",
+      "label": "Compare ones",
+      "description": "Both have 1 one. Same, so move right."
+     },
+     {
+      "id": "c4",
+      "label": "Compare tenths",
+      "description": "1.50 has 5 tenths; 1.25 has 2 tenths. 5 > 2."
+     },
+     {
+      "id": "c5",
+      "label": "Decide",
+      "description": "1.5 > 1.25. The 1.5 kg bag is heavier. Having more digits did not make 1.25 larger."
+     }
+    ]
+   },
+   "tools": {
+    "allowed": [],
+    "prohibited": []
+   },
+   "accessibility": {
+    "textAlternative": "Five revealed steps comparing 1.50 and 1.25 by lining up the points and comparing ones, then tenths.",
+    "keyboardOperable": true,
+    "reducedMotionSafe": true,
+    "captionsRequired": false
+   },
+   "offline": {
+    "mode": "FULL",
+    "fallback": "Steps are saved with the lesson."
+   },
+   "evidence": {
+    "kind": "NONE"
+   },
+   "completion": {
+    "kind": "ALL_STEPS_REVEALED"
+   }
+  },
+  {
+   "id": "compare-guided",
+   "type": "GUIDED_EXAMPLE",
+   "title": "Try comparing with a hint",
+   "objectiveIds": [
+    "ll-g6-math-decimal-compare"
+   ],
+   "content": {
+    "body": "Line up the points and give both numbers the same number of places before you compare."
+   },
+   "interaction": {
+    "kind": "MULTIPLE_CHOICE",
+    "items": [
+     {
+      "id": "g-04-045",
+      "prompt": "Which is larger: 0.4 or 0.45?",
+      "options": [
+       "0.4",
+       "0.45",
+       "They are equal"
+      ],
+      "correctIndex": 1,
+      "feedback": {
+       "correct": "Yes. 0.40 and 0.45 have the same tenths, and 5 hundredths > 0 hundredths.",
+       "incorrect": "Write 0.4 as 0.40. Same tenths; then 5 hundredths beats 0 hundredths."
+      },
+      "optionFeedback": [
+       "Write 0.4 as 0.40. Same tenths; then 5 hundredths beats 0 hundredths.",
+       "Yes. 0.40 and 0.45 have the same tenths, and 5 hundredths > 0 hundredths.",
+       "They share 4 tenths, but 0.45 also has 5 hundredths."
+      ]
+     },
+     {
+      "id": "g-0125-05",
+      "prompt": "Which is larger: 0.125 or 0.5?",
+      "options": [
+       "0.125",
+       "0.5"
+      ],
+      "correctIndex": 1,
+      "feedback": {
+       "correct": "Yes. 0.5 has 5 tenths; 0.125 has only 1 tenth.",
+       "incorrect": "125 > 5 for whole numbers, but compare tenths here: 1 tenth against 5 tenths."
+      },
+      "optionFeedback": [
+       "125 > 5 for whole numbers, but compare tenths here: 1 tenth against 5 tenths.",
+       "Yes. 0.5 has 5 tenths; 0.125 has only 1 tenth."
+      ]
+     }
+    ]
+   },
+   "tools": {
+    "allowed": [],
+    "prohibited": []
+   },
+   "accessibility": {
+    "textAlternative": "Two guided multiple-choice comparisons: 0.4 with 0.45, and 0.125 with 0.5.",
+    "keyboardOperable": true,
+    "reducedMotionSafe": true,
+    "captionsRequired": false
+   },
+   "offline": {
+    "mode": "FULL",
+    "fallback": "Questions and feedback are saved with the lesson."
+   },
+   "evidence": {
+    "kind": "FORMATIVE_OBSERVATION",
+    "evidenceType": "PRACTICE",
+    "objectiveIds": [
+     "ll-g6-math-decimal-compare"
+    ]
+   },
+   "completion": {
+    "kind": "ALL_ANSWERED"
+   }
+  },
+  {
+   "id": "who-is-right",
+   "type": "CHECK_UNDERSTANDING",
+   "title": "Who is right?",
+   "objectiveIds": [
+    "ll-g6-math-decimal-compare"
+   ],
+   "content": {
+    "body": "Kollie says 2.35 is larger than 2.4 because 35 is more than 4. Sia says 2.4 is larger because it has more tenths. Who is right?"
+   },
+   "interaction": {
+    "kind": "MULTIPLE_CHOICE",
+    "items": [
+     {
+      "id": "m-kollie-sia",
+      "prompt": "Whose reasoning is correct?",
+      "options": [
+       "Kollie",
+       "Sia"
+      ],
+      "correctIndex": 1,
+      "feedback": {
+       "correct": "Yes. Both have 2 ones; 4 tenths > 3 tenths, so 2.4 > 2.35.",
+       "incorrect": "35 and 4 are not whole numbers here. Compare tenths: 2.35 has 3 tenths, 2.4 has 4 tenths."
+      },
+      "optionFeedback": [
+       "35 and 4 are not whole numbers here. Compare tenths: 2.35 has 3 tenths, 2.4 has 4 tenths.",
+       "Yes. Both have 2 ones; 4 tenths > 3 tenths, so 2.4 > 2.35."
+      ]
+     }
+    ]
+   },
+   "tools": {
+    "allowed": [],
+    "prohibited": []
+   },
+   "accessibility": {
+    "textAlternative": "Two learners' reasoning about whether 2.35 or 2.4 is larger, and a choice of who is right.",
+    "keyboardOperable": true,
+    "reducedMotionSafe": true,
+    "captionsRequired": false
+   },
+   "offline": {
+    "mode": "FULL",
+    "fallback": "Question and feedback are saved with the lesson."
+   },
+   "evidence": {
+    "kind": "FORMATIVE_OBSERVATION",
+    "evidenceType": "PRACTICE",
+    "objectiveIds": [
+     "ll-g6-math-decimal-compare"
+    ]
+   },
+   "completion": {
+    "kind": "ALL_ANSWERED"
+   }
+  },
+  {
+   "id": "practice",
+   "type": "PRACTICE",
+   "title": "Your turn",
+   "objectiveIds": [
+    "ll-g6-math-decimal-place-value",
+    "ll-g6-math-decimal-compare"
+   ],
+   "content": {
+    "body": "Work on your own, without the chart if you can. Each answer tells you why it is right or what to check."
+   },
+   "interaction": {
+    "kind": "MULTIPLE_CHOICE",
+    "items": [
+     {
+      "id": "p-783",
+      "prompt": "In 12.783, what is the 8 worth?",
+      "options": [
+       "0.8",
+       "0.08",
+       "80"
+      ],
+      "correctIndex": 1,
+      "feedback": {
+       "correct": "Yes. The 8 is in the hundredths place: 8 hundredths.",
+       "incorrect": "The 8 is the second digit after the point, so it is in the hundredths place."
+      },
+      "optionFeedback": [
+       "The 8 is the second digit after the point, so it is in the hundredths place.",
+       "Yes. The 8 is in the hundredths place: 8 hundredths.",
+       "The 8 is after the point, so it is part of a one."
+      ]
+     },
+     {
+      "id": "p-2009",
+      "prompt": "In 2.009, what is the 9 worth?",
+      "options": [
+       "0.009",
+       "0.9",
+       "0.09"
+      ],
+      "correctIndex": 0,
+      "feedback": {
+       "correct": "Yes. Two zeros hold the tenths and hundredths, so the 9 is 9 thousandths.",
+       "incorrect": "The zeros hold places. Count three places after the point."
+      },
+      "optionFeedback": [
+       "Yes. Two zeros hold the tenths and hundredths, so the 9 is 9 thousandths.",
+       "The zeros hold places. Count three places after the point.",
+       "Count again: tenths, hundredths, thousandths."
+      ]
+     },
+     {
+      "id": "p-order",
+      "prompt": "Which list is in order from smallest to largest?",
+      "options": [
+       "0.7, 0.65, 0.072",
+       "0.072, 0.65, 0.7",
+       "0.65, 0.7, 0.072"
+      ],
+      "correctIndex": 1,
+      "feedback": {
+       "correct": "Yes. Tenths are 0, 6 and 7, so the order is 0.072, 0.65, 0.7.",
+       "incorrect": "This list puts the largest first. Compare tenths: 0.072 has 0 tenths."
+      },
+      "optionFeedback": [
+       "This list puts the largest first. Compare tenths: 0.072 has 0 tenths.",
+       "Yes. Tenths are 0, 6 and 7, so the order is 0.072, 0.65, 0.7.",
+       "0.072 has the fewest tenths, so it is the smallest."
+      ]
+     },
+     {
+      "id": "p-bigger",
+      "prompt": "Which is larger: 5.09 or 5.1?",
+      "options": [
+       "5.09",
+       "5.1"
+      ],
+      "correctIndex": 1,
+      "feedback": {
+       "correct": "Yes. Both have 5 ones; 1 tenth > 0 tenths.",
+       "incorrect": "Write 5.1 as 5.10. Compare tenths: 0 against 1."
+      },
+      "optionFeedback": [
+       "Write 5.1 as 5.10. Compare tenths: 0 against 1.",
+       "Yes. Both have 5 ones; 1 tenth > 0 tenths."
+      ]
+     }
+    ]
+   },
+   "tools": {
+    "allowed": [],
+    "prohibited": []
+   },
+   "accessibility": {
+    "textAlternative": "Four independent multiple-choice questions on digit values and comparing decimals, with feedback.",
+    "keyboardOperable": true,
+    "reducedMotionSafe": true,
+    "captionsRequired": false
+   },
+   "offline": {
+    "mode": "FULL",
+    "fallback": "Questions and feedback are saved with the lesson."
+   },
+   "evidence": {
+    "kind": "FORMATIVE_OBSERVATION",
+    "evidenceType": "PRACTICE",
+    "objectiveIds": [
+     "ll-g6-math-decimal-place-value",
+     "ll-g6-math-decimal-compare"
+    ]
+   },
+   "completion": {
+    "kind": "ALL_ANSWERED"
+   }
+  },
+  {
+   "id": "explain",
+   "type": "PRACTICE",
+   "title": "Explain your thinking",
+   "objectiveIds": [
+    "ll-g6-math-decimal-place-value",
+    "ll-g6-math-decimal-compare"
+   ],
+   "content": {
+    "body": "Write in full sentences. Use the words tenths, hundredths and thousandths."
+   },
+   "interaction": {
+    "kind": "FREE_RESPONSE",
+    "prompts": [
+     {
+      "id": "e-values",
+      "prompt": "Write the value of each digit in 4.306.",
+      "minLength": 20
+     },
+     {
+      "id": "e-compare",
+      "prompt": "Explain why 2.6 is larger than 2.58.",
+      "minLength": 30
+     }
+    ]
+   },
+   "tools": {
+    "allowed": [],
+    "prohibited": []
+   },
+   "accessibility": {
+    "textAlternative": "Two written-response prompts: the value of each digit in 4.306, and why 2.6 is larger than 2.58.",
+    "keyboardOperable": true,
+    "reducedMotionSafe": true,
+    "captionsRequired": false
+   },
+   "offline": {
+    "mode": "FULL",
+    "fallback": "Answers can be written offline or in the exercise book."
+   },
+   "evidence": {
+    "kind": "FORMATIVE_OBSERVATION",
+    "evidenceType": "PRACTICE",
+    "objectiveIds": [
+     "ll-g6-math-decimal-place-value",
+     "ll-g6-math-decimal-compare"
+    ]
+   },
+   "completion": {
+    "kind": "ALL_RESPONSES_WRITTEN"
+   }
+  },
+  {
+   "id": "exit-ticket",
+   "type": "MASTERY_CHECK",
+   "title": "Exit ticket",
+   "objectiveIds": [
+    "ll-g6-math-decimal-place-value",
+    "ll-g6-math-decimal-compare"
+   ],
+   "content": {
+    "body": "Answer each question on your own, without help or a calculator. Your teacher checks these answers; this lesson does not."
+   },
+   "interaction": {
+    "kind": "ASSESSMENT_HANDOFF",
+    "assessment": {
+     "assessmentId": "lmv1-g6-math-decimal-place-value--g6-dec-exit",
+     "assessmentVersion": "0.1.0",
+     "player": "ASSESSMENT_PLAYER_V2",
+     "scoring": "SERVER_AUTHORITY",
+     "objectiveIds": [
+      "ll-g6-math-decimal-place-value",
+      "ll-g6-math-decimal-compare"
+     ],
+     "items": []
+    }
+   },
+   "tools": {
+    "allowed": [],
+    "prohibited": [
+     "basic-calculator"
+    ]
+   },
+   "accessibility": {
+    "textAlternative": "Exit-ticket questions on digit values and comparing decimals, answered in writing.",
+    "keyboardOperable": true,
+    "reducedMotionSafe": true,
+    "captionsRequired": false
+   },
+   "offline": {
+    "mode": "DEGRADED",
+    "fallback": "Your teacher gives you the exit-ticket questions on paper. Answer them on your own."
+   },
+   "evidence": {
+    "kind": "MASTERY_RESPONSE",
+    "evidenceType": "QUIZ",
+    "objectiveIds": [
+     "ll-g6-math-decimal-place-value",
+     "ll-g6-math-decimal-compare"
+    ]
+   },
+   "completion": {
+    "kind": "ALL_ANSWERED"
+   }
+  },
+  {
+   "id": "reflect",
+   "type": "REFLECTION",
+   "title": "Look back and look ahead",
+   "objectiveIds": [
+    "ll-g6-math-decimal-place-value",
+    "ll-g6-math-decimal-compare"
+   ],
+   "content": {
+    "body": "Go back to Musu's rice: which bag was heavier, and how do you know? Say your reason to a partner.\n\nIn one week your teacher will ask a few questions like today's again, without notes. That helps the idea stay with you. Next lesson, you will use place value to round decimals."
+   },
+   "interaction": {
+    "kind": "NONE"
+   },
+   "tools": {
+    "allowed": [],
+    "prohibited": []
+   },
+   "accessibility": {
+    "textAlternative": "A reflection on Musu's rice question and a note that review questions come back in one week.",
+    "keyboardOperable": true,
+    "reducedMotionSafe": true,
+    "captionsRequired": false
+   },
+   "offline": {
+    "mode": "FULL",
+    "fallback": "Text only; saved with the lesson."
+   },
+   "evidence": {
+    "kind": "NONE"
+   },
+   "completion": {
+    "kind": "VIEWED"
+   }
+  }
+ ],
+ "offline": {
+  "packageable": true,
+  "requiredAssets": []
+ }
+}

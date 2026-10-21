@@ -1,0 +1,720 @@
+{
+ "contractVersion": "lesson-experience/1.0.0",
+ "id": "lmv1-g7-science-observation-inference",
+ "version": "0.1.0",
+ "title": "Observation and inference: how scientists know",
+ "subject": "SCIENCE",
+ "grade": 7,
+ "ageBand": "JUNIOR_SECONDARY",
+ "authority": {
+  "status": "CURRICULUM_V2_DRAFT",
+  "note": "Curriculum V2 draft. Requires exact-revision human review; not approved, not published.",
+  "candidateContentIds": [],
+  "releaseId": null,
+  "releaseIdentity": null
+ },
+ "objectives": [
+  {
+   "id": "ll-g7-sci-observe-infer",
+   "statement": "Distinguish observations (what the senses or instruments detect) from inferences (explanations drawn from observations), and suggest an observation that tests an inference.",
+   "conceptId": "ll-g7-sci-observe-infer",
+   "standardCodes": [],
+   "skillIds": []
+  },
+  {
+   "id": "ll-g7-sci-record-observations",
+   "statement": "Record qualitative observations without judgment and quantitative observations as a number with a unit.",
+   "conceptId": "ll-g7-sci-record-observations",
+   "standardCodes": [],
+   "skillIds": []
+  }
+ ],
+ "scenes": [
+  {
+   "id": "intro",
+   "type": "INTRO",
+   "title": "Something happened in the school garden",
+   "objectiveIds": [],
+   "content": {
+    "body": "On Monday morning, Grade 7 find that many cassava leaves in the school garden have holes in them. There are small dark pellets on the soil under the plants, and a trail of torn leaf pieces leads to the fence.\n\nWhat happened? Before you answer, notice something: you did not *see* anything happen. You saw holes, pellets and a trail. Scientists keep these two kinds of statement apart."
+   },
+   "interaction": {
+    "kind": "NONE"
+   },
+   "tools": {
+    "allowed": [],
+    "prohibited": []
+   },
+   "accessibility": {
+    "textAlternative": "A description of holes in cassava leaves, dark pellets on the soil and a trail of leaf pieces in a school garden.",
+    "keyboardOperable": true,
+    "reducedMotionSafe": true,
+    "captionsRequired": false
+   },
+   "offline": {
+    "mode": "FULL",
+    "fallback": "Text only; saved with the lesson."
+   },
+   "evidence": {
+    "kind": "NONE"
+   },
+   "completion": {
+    "kind": "VIEWED"
+   }
+  },
+  {
+   "id": "objectives",
+   "type": "OBJECTIVE",
+   "title": "What you will learn",
+   "objectiveIds": [
+    "ll-g7-sci-observe-infer",
+    "ll-g7-sci-record-observations"
+   ],
+   "content": {
+    "body": "Today you will learn to:\n\n1. Tell an **observation** (what your senses or an instrument detect) from an **inference** (an explanation you work out from observations).\n2. Record **qualitative** observations (described in words) and **quantitative** observations (measured, with a number and a unit).\n\nAt the end you will observe and reason on your own."
+   },
+   "interaction": {
+    "kind": "NONE"
+   },
+   "tools": {
+    "allowed": [],
+    "prohibited": []
+   },
+   "accessibility": {
+    "textAlternative": "The two lesson goals: separating observations from inferences, and recording qualitative and quantitative observations.",
+    "keyboardOperable": true,
+    "reducedMotionSafe": true,
+    "captionsRequired": false
+   },
+   "offline": {
+    "mode": "FULL",
+    "fallback": "Text only; saved with the lesson."
+   },
+   "evidence": {
+    "kind": "NONE"
+   },
+   "completion": {
+    "kind": "VIEWED"
+   }
+  },
+  {
+   "id": "warm-up",
+   "type": "CHECK_UNDERSTANDING",
+   "title": "Warm-up",
+   "objectiveIds": [
+    "ll-g7-sci-record-observations"
+   ],
+   "content": {
+    "body": "Two quick checks on skills this lesson uses. If either is hard, tell your teacher before we go on."
+   },
+   "interaction": {
+    "kind": "MULTIPLE_CHOICE",
+    "items": [
+     {
+      "id": "w-ruler",
+      "prompt": "A leaf lies along a ruler from the 0 mark to the 7 mark. The ruler is in centimetres. How long is the leaf?",
+      "options": [
+       "7",
+       "7 cm",
+       "8 cm"
+      ],
+      "correctIndex": 1,
+      "feedback": {
+       "correct": "Yes. The number with its unit: 7 centimetres.",
+       "incorrect": "The number is right, but a length needs its unit."
+      },
+      "optionFeedback": [
+       "The number is right, but a length needs its unit.",
+       "Yes. The number with its unit: 7 centimetres.",
+       "Start counting at the 0 mark, not the 1 mark."
+      ]
+     },
+     {
+      "id": "w-senses",
+      "prompt": "Which sense tells you that soil is rough or smooth?",
+      "options": [
+       "Touch",
+       "Smell",
+       "Hearing"
+      ],
+      "correctIndex": 0,
+      "feedback": {
+       "correct": "Yes. Texture is detected by touch.",
+       "incorrect": "Smell detects odours, not texture."
+      },
+      "optionFeedback": [
+       "Yes. Texture is detected by touch.",
+       "Smell detects odours, not texture.",
+       "Hearing detects sounds."
+      ]
+     }
+    ]
+   },
+   "tools": {
+    "allowed": [],
+    "prohibited": []
+   },
+   "accessibility": {
+    "textAlternative": "Two multiple-choice warm-up questions: reading a length on a centimetre ruler, and which sense detects texture.",
+    "keyboardOperable": true,
+    "reducedMotionSafe": true,
+    "captionsRequired": false
+   },
+   "offline": {
+    "mode": "FULL",
+    "fallback": "Questions and feedback are saved with the lesson."
+   },
+   "evidence": {
+    "kind": "FORMATIVE_OBSERVATION",
+    "evidenceType": "DIAGNOSTIC",
+    "objectiveIds": [
+     "ll-g7-sci-record-observations"
+    ]
+   },
+   "completion": {
+    "kind": "ALL_ANSWERED"
+   }
+  },
+  {
+   "id": "concept",
+   "type": "EXPLANATION",
+   "title": "Observation or inference?",
+   "objectiveIds": [
+    "ll-g7-sci-observe-infer",
+    "ll-g7-sci-record-observations"
+   ],
+   "content": {
+    "body": "An **observation** is information you get directly through your senses or an instrument: *the leaves have holes*; *the pellets are dark and about 2 mm across*.\n\nAn **inference** is an explanation you work out from observations: *an animal ate the leaves*. Inferences can be wrong, so scientists test them with more observations.\n\nObservations are **qualitative** (described in words: colour, texture, smell) or **quantitative** (measured: a number with a unit).",
+    "keyPoints": [
+     "Test a statement: could you check it right now with your senses or an instrument? If yes, it is an observation.",
+     "Words like 'because', 'probably' and 'must have' usually signal an inference."
+    ]
+   },
+   "interaction": {
+    "kind": "NONE"
+   },
+   "tools": {
+    "allowed": [],
+    "prohibited": []
+   },
+   "accessibility": {
+    "textAlternative": "Definitions of observation, inference, qualitative and quantitative observation, with garden examples and a test question.",
+    "keyboardOperable": true,
+    "reducedMotionSafe": true,
+    "captionsRequired": false
+   },
+   "offline": {
+    "mode": "FULL",
+    "fallback": "Text only; saved with the lesson."
+   },
+   "evidence": {
+    "kind": "NONE"
+   },
+   "completion": {
+    "kind": "VIEWED"
+   }
+  },
+  {
+   "id": "worked-sort",
+   "type": "GUIDED_EXAMPLE",
+   "title": "Worked example: the cup in the sun",
+   "objectiveIds": [
+    "ll-g7-sci-observe-infer"
+   ],
+   "content": {
+    "body": "A cup of water was left on a sunny window ledge. In the afternoon a student wrote four statements. Reveal them one at a time."
+   },
+   "interaction": {
+    "kind": "DIAGRAM_REVEAL",
+    "diagramId": "worked-sort",
+    "steps": [
+     {
+      "id": "s1",
+      "label": "'The water level dropped by 2 cm.'",
+      "description": "Observation, quantitative: measured with a ruler, number and unit."
+     },
+     {
+      "id": "s2",
+      "label": "'The outside of the cup feels warm.'",
+      "description": "Observation, qualitative: detected by touch."
+     },
+     {
+      "id": "s3",
+      "label": "'The sun's heat made some water evaporate.'",
+      "description": "Inference: an explanation. It is reasonable, but nobody saw the water leave."
+     },
+     {
+      "id": "s4",
+      "label": "'Someone drank some water.'",
+      "description": "Also an inference. Two inferences fit the same observations, so we need a test, such as covering a second cup."
+     }
+    ]
+   },
+   "tools": {
+    "allowed": [],
+    "prohibited": []
+   },
+   "accessibility": {
+    "textAlternative": "Four statements about a cup of water in the sun, each revealed with whether it is a qualitative or quantitative observation or an inference.",
+    "keyboardOperable": true,
+    "reducedMotionSafe": true,
+    "captionsRequired": false
+   },
+   "offline": {
+    "mode": "FULL",
+    "fallback": "Steps are saved with the lesson."
+   },
+   "evidence": {
+    "kind": "NONE"
+   },
+   "completion": {
+    "kind": "ALL_STEPS_REVEALED"
+   }
+  },
+  {
+   "id": "worked-measure",
+   "type": "GUIDED_EXAMPLE",
+   "title": "Worked example: from words to measurements",
+   "objectiveIds": [
+    "ll-g7-sci-record-observations"
+   ],
+   "content": {
+    "body": "Good records let someone else check your work. Watch three vague records become scientific ones."
+   },
+   "interaction": {
+    "kind": "DIAGRAM_REVEAL",
+    "diagramId": "worked-measure",
+    "steps": [
+     {
+      "id": "m1",
+      "label": "'The plant is tall.'",
+      "description": "Measure it: 'The plant is 34 cm tall from the soil to the top leaf.' Number, unit and what was measured."
+     },
+     {
+      "id": "m2",
+      "label": "'The soil looks bad.'",
+      "description": "'Bad' is an opinion. Describe instead: 'The soil is pale brown, dry and cracked on top.'"
+     },
+     {
+      "id": "m3",
+      "label": "'It rained a lot.'",
+      "description": "Use the rain gauge: 'The rain gauge collected 18 mm of rain overnight.'"
+     }
+    ]
+   },
+   "tools": {
+    "allowed": [],
+    "prohibited": []
+   },
+   "accessibility": {
+    "textAlternative": "Three vague records rewritten as measurements with units or precise descriptions: plant height, soil, and rainfall.",
+    "keyboardOperable": true,
+    "reducedMotionSafe": true,
+    "captionsRequired": false
+   },
+   "offline": {
+    "mode": "FULL",
+    "fallback": "Steps are saved with the lesson."
+   },
+   "evidence": {
+    "kind": "NONE"
+   },
+   "completion": {
+    "kind": "ALL_STEPS_REVEALED"
+   }
+  },
+  {
+   "id": "guided",
+   "type": "GUIDED_EXAMPLE",
+   "title": "Sort with a hint",
+   "objectiveIds": [
+    "ll-g7-sci-observe-infer",
+    "ll-g7-sci-record-observations"
+   ],
+   "content": {
+    "body": "Back in the school garden. Use the test: could you check it right now with your senses or an instrument?"
+   },
+   "interaction": {
+    "kind": "MULTIPLE_CHOICE",
+    "items": [
+     {
+      "id": "g-pellets",
+      "prompt": "'The pellets on the soil are dark and about 2 mm across.' This is…",
+      "options": [
+       "an observation",
+       "an inference"
+      ],
+      "correctIndex": 0,
+      "feedback": {
+       "correct": "Yes. You can see the colour and measure the size.",
+       "incorrect": "Nothing here is explained or guessed; it can be checked by looking and measuring."
+      },
+      "optionFeedback": [
+       "Yes. You can see the colour and measure the size.",
+       "Nothing here is explained or guessed; it can be checked by looking and measuring."
+      ]
+     },
+     {
+      "id": "g-caterpillars",
+      "prompt": "'Caterpillars ate the cassava leaves.' This is…",
+      "options": [
+       "an observation",
+       "an inference"
+      ],
+      "correctIndex": 1,
+      "feedback": {
+       "correct": "Yes. It explains the holes and pellets, and it could be wrong: goats or grasshoppers are also possible.",
+       "incorrect": "Nobody saw caterpillars eating. This explains the holes."
+      },
+      "optionFeedback": [
+       "Nobody saw caterpillars eating. This explains the holes.",
+       "Yes. It explains the holes and pellets, and it could be wrong: goats or grasshoppers are also possible."
+      ]
+     },
+     {
+      "id": "g-height",
+      "prompt": "Which is a quantitative observation?",
+      "options": [
+       "The cassava plant is very tall.",
+       "The cassava plant is 120 cm tall.",
+       "The cassava plant is 120."
+      ],
+      "correctIndex": 1,
+      "feedback": {
+       "correct": "Yes. A measured number with its unit.",
+       "incorrect": "'Very tall' is a description, not a measurement."
+      },
+      "optionFeedback": [
+       "'Very tall' is a description, not a measurement.",
+       "Yes. A measured number with its unit.",
+       "120 what? Without a unit the record cannot be checked."
+      ]
+     }
+    ]
+   },
+   "tools": {
+    "allowed": [],
+    "prohibited": []
+   },
+   "accessibility": {
+    "textAlternative": "Three guided multiple-choice questions sorting garden statements into observations and inferences, and finding the quantitative one.",
+    "keyboardOperable": true,
+    "reducedMotionSafe": true,
+    "captionsRequired": false
+   },
+   "offline": {
+    "mode": "FULL",
+    "fallback": "Questions and feedback are saved with the lesson."
+   },
+   "evidence": {
+    "kind": "FORMATIVE_OBSERVATION",
+    "evidenceType": "PRACTICE",
+    "objectiveIds": [
+     "ll-g7-sci-observe-infer",
+     "ll-g7-sci-record-observations"
+    ]
+   },
+   "completion": {
+    "kind": "ALL_ANSWERED"
+   }
+  },
+  {
+   "id": "more-than-one",
+   "type": "CHECK_UNDERSTANDING",
+   "title": "More than one explanation",
+   "objectiveIds": [
+    "ll-g7-sci-observe-infer"
+   ],
+   "content": {
+    "body": "Kebeh says: 'Caterpillars ate the leaves. That is what happened.' Her partner Yassah says goats from the next yard could have done it."
+   },
+   "interaction": {
+    "kind": "MULTIPLE_CHOICE",
+    "items": [
+     {
+      "id": "m-next-step",
+      "prompt": "What should the class do next?",
+      "options": [
+       "Agree with Kebeh, because she spoke first.",
+       "Make a new observation that could tell the explanations apart, such as checking the leaves for caterpillars and the soil for hoof prints.",
+       "Decide it cannot be known."
+      ],
+      "correctIndex": 1,
+      "feedback": {
+       "correct": "Yes. A new observation tests the inferences.",
+       "incorrect": "Who speaks first does not decide. Both explanations fit what was seen so far."
+      },
+      "optionFeedback": [
+       "Who speaks first does not decide. Both explanations fit what was seen so far.",
+       "Yes. A new observation tests the inferences.",
+       "It can be investigated: look for more evidence."
+      ]
+     }
+    ]
+   },
+   "tools": {
+    "allowed": [],
+    "prohibited": []
+   },
+   "accessibility": {
+    "textAlternative": "Two learners disagree about what ate the leaves; a multiple-choice question on the best next step.",
+    "keyboardOperable": true,
+    "reducedMotionSafe": true,
+    "captionsRequired": false
+   },
+   "offline": {
+    "mode": "FULL",
+    "fallback": "Question and feedback are saved with the lesson."
+   },
+   "evidence": {
+    "kind": "FORMATIVE_OBSERVATION",
+    "evidenceType": "PRACTICE",
+    "objectiveIds": [
+     "ll-g7-sci-observe-infer"
+    ]
+   },
+   "completion": {
+    "kind": "ALL_ANSWERED"
+   }
+  },
+  {
+   "id": "practice",
+   "type": "PRACTICE",
+   "title": "Your turn",
+   "objectiveIds": [
+    "ll-g7-sci-observe-infer",
+    "ll-g7-sci-record-observations"
+   ],
+   "content": {
+    "body": "A bucket of water stood outside overnight. In the morning there were dead leaves floating on it and the water was cloudy. Work on your own."
+   },
+   "interaction": {
+    "kind": "MULTIPLE_CHOICE",
+    "items": [
+     {
+      "id": "p-wind",
+      "prompt": "Which statement is an inference?",
+      "options": [
+       "The water is cloudy.",
+       "Wind blew the leaves into the bucket.",
+       "There are seven leaves floating."
+      ],
+      "correctIndex": 1,
+      "feedback": {
+       "correct": "Yes. Nobody saw the wind do it; it explains the leaves.",
+       "incorrect": "That can be seen: an observation."
+      },
+      "optionFeedback": [
+       "That can be seen: an observation.",
+       "Yes. Nobody saw the wind do it; it explains the leaves.",
+       "That can be counted: an observation."
+      ]
+     },
+     {
+      "id": "p-temp",
+      "prompt": "Which is the best quantitative observation?",
+      "options": [
+       "The water is cold.",
+       "The thermometer reads 24 °C.",
+       "The water is 24."
+      ],
+      "correctIndex": 1,
+      "feedback": {
+       "correct": "Yes. A measured value with its unit.",
+       "incorrect": "A description by touch: qualitative."
+      },
+      "optionFeedback": [
+       "A description by touch: qualitative.",
+       "Yes. A measured value with its unit.",
+       "Without a unit the record cannot be checked."
+      ]
+     },
+     {
+      "id": "p-opinion",
+      "prompt": "Which is a qualitative observation, not an opinion?",
+      "options": [
+       "The water looks disgusting.",
+       "The water is cloudy and smells earthy."
+      ],
+      "correctIndex": 1,
+      "feedback": {
+       "correct": "Yes. Sight and smell, described without judgment.",
+       "incorrect": "'Disgusting' is a judgment. Describe what you detect instead."
+      },
+      "optionFeedback": [
+       "'Disgusting' is a judgment. Describe what you detect instead.",
+       "Yes. Sight and smell, described without judgment."
+      ]
+     }
+    ]
+   },
+   "tools": {
+    "allowed": [],
+    "prohibited": []
+   },
+   "accessibility": {
+    "textAlternative": "A bucket of water left outside overnight, with three independent questions on inference, measurement and description.",
+    "keyboardOperable": true,
+    "reducedMotionSafe": true,
+    "captionsRequired": false
+   },
+   "offline": {
+    "mode": "FULL",
+    "fallback": "Questions and feedback are saved with the lesson."
+   },
+   "evidence": {
+    "kind": "FORMATIVE_OBSERVATION",
+    "evidenceType": "PRACTICE",
+    "objectiveIds": [
+     "ll-g7-sci-observe-infer",
+     "ll-g7-sci-record-observations"
+    ]
+   },
+   "completion": {
+    "kind": "ALL_ANSWERED"
+   }
+  },
+  {
+   "id": "record",
+   "type": "PRACTICE",
+   "title": "Observe and record",
+   "objectiveIds": [
+    "ll-g7-sci-observe-infer",
+    "ll-g7-sci-record-observations"
+   ],
+   "content": {
+    "body": "Choose one object near you: a leaf, a stone or a pencil. Use a ruler if you have one. Write your answers in full sentences."
+   },
+   "interaction": {
+    "kind": "FREE_RESPONSE",
+    "prompts": [
+     {
+      "id": "r-observations",
+      "prompt": "Write one qualitative and one quantitative observation of your object. Include a unit.",
+      "minLength": 30
+     },
+     {
+      "id": "r-inference",
+      "prompt": "Write one inference about your object, and the observation it is based on.",
+      "minLength": 30
+     }
+    ]
+   },
+   "tools": {
+    "allowed": [],
+    "prohibited": []
+   },
+   "accessibility": {
+    "textAlternative": "Two written-response prompts to record qualitative and quantitative observations and one inference about a nearby object.",
+    "keyboardOperable": true,
+    "reducedMotionSafe": true,
+    "captionsRequired": false
+   },
+   "offline": {
+    "mode": "FULL",
+    "fallback": "Works with any object; answers can be written in the exercise book."
+   },
+   "evidence": {
+    "kind": "FORMATIVE_OBSERVATION",
+    "evidenceType": "PRACTICE",
+    "objectiveIds": [
+     "ll-g7-sci-record-observations",
+     "ll-g7-sci-observe-infer"
+    ]
+   },
+   "completion": {
+    "kind": "ALL_RESPONSES_WRITTEN"
+   }
+  },
+  {
+   "id": "exit-ticket",
+   "type": "MASTERY_CHECK",
+   "title": "Exit ticket",
+   "objectiveIds": [
+    "ll-g7-sci-observe-infer",
+    "ll-g7-sci-record-observations"
+   ],
+   "content": {
+    "body": "Answer each question on your own, without notes. Your teacher checks these answers; this lesson does not."
+   },
+   "interaction": {
+    "kind": "ASSESSMENT_HANDOFF",
+    "assessment": {
+     "assessmentId": "lmv1-g7-science-observation-inference--g7-oi-exit",
+     "assessmentVersion": "0.1.0",
+     "player": "ASSESSMENT_PLAYER_V2",
+     "scoring": "SERVER_AUTHORITY",
+     "objectiveIds": [
+      "ll-g7-sci-observe-infer",
+      "ll-g7-sci-record-observations"
+     ],
+     "items": []
+    }
+   },
+   "tools": {
+    "allowed": [],
+    "prohibited": []
+   },
+   "accessibility": {
+    "textAlternative": "Exit ticket on sorting observations from inferences and writing measured observations.",
+    "keyboardOperable": true,
+    "reducedMotionSafe": true,
+    "captionsRequired": false
+   },
+   "offline": {
+    "mode": "DEGRADED",
+    "fallback": "Your teacher gives you the exit-ticket questions on paper. Answer them on your own."
+   },
+   "evidence": {
+    "kind": "MASTERY_RESPONSE",
+    "evidenceType": "QUIZ",
+    "objectiveIds": [
+     "ll-g7-sci-observe-infer",
+     "ll-g7-sci-record-observations"
+    ]
+   },
+   "completion": {
+    "kind": "ALL_ANSWERED"
+   }
+  },
+  {
+   "id": "reflect",
+   "type": "REFLECTION",
+   "title": "Back to the garden",
+   "objectiveIds": [
+    "ll-g7-sci-observe-infer",
+    "ll-g7-sci-record-observations"
+   ],
+   "content": {
+    "body": "Back to the cassava leaves. Name one inference about what happened and one new observation that would test it.\n\nIn one week your teacher will ask you to sort and record observations again, without notes. Next lesson you will use your observations to plan a fair test."
+   },
+   "interaction": {
+    "kind": "NONE"
+   },
+   "tools": {
+    "allowed": [],
+    "prohibited": []
+   },
+   "accessibility": {
+    "textAlternative": "A reflection asking for one inference and one test for the garden mystery, and a note that a check returns in one week.",
+    "keyboardOperable": true,
+    "reducedMotionSafe": true,
+    "captionsRequired": false
+   },
+   "offline": {
+    "mode": "FULL",
+    "fallback": "Text only; saved with the lesson."
+   },
+   "evidence": {
+    "kind": "NONE"
+   },
+   "completion": {
+    "kind": "VIEWED"
+   }
+  }
+ ],
+ "offline": {
+  "packageable": true,
+  "requiredAssets": []
+ }
+}

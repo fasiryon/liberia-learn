@@ -141,6 +141,13 @@ describe("assessment definitions stay governed candidates", () => {
     // Assessment V2 candidate adapter) is not a reader.
     const code = (file: string) => readFileSync(file, "utf8").replace(/\/\*[\s\S]*?\*\//g, "").replace(/(^|[^:])\/\/.*$/gm, "$1");
     const readers = files.filter((file) => /assessment-definitions|loadG7AssessmentDefinitions|G7_ASSESSMENT_DEFINITION_DIR/.test(code(file)));
-    expect(readers.sort()).toEqual(["lib/curriculum/v2/g7NativePackage.ts", "lib/curriculum/v2/g7NativeReview.ts"]);
+    // Modernization packages have their own protected assessment-definitions.json;
+    // their offline review packaging does not read the G7 definition namespace.
+    expect(readers.sort()).toEqual([
+      "lib/curriculum/modernization/pilot.ts", "lib/curriculum/modernization/pipeline.ts",
+      "lib/curriculum/v2/g7NativePackage.ts", "lib/curriculum/v2/g7NativeReview.ts",
+    ]);
+    const g7Readers = files.filter((file) => /loadG7AssessmentDefinitions|G7_ASSESSMENT_DEFINITION_DIR|curriculum\/v2\/g7\/assessment-definitions/.test(code(file)));
+    expect(g7Readers.sort()).toEqual(["lib/curriculum/v2/g7NativePackage.ts", "lib/curriculum/v2/g7NativeReview.ts"]);
   });
 });

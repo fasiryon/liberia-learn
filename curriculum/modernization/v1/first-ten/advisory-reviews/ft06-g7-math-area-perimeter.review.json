@@ -1,0 +1,64 @@
+{
+"reviewKey": "ft06-g7-math-area-perimeter",
+"contentId": "hero-math-g7-geometry-area-and-perimeter-of-polygons",
+"reviewer": {"kind": "AI_AGENT", "modelFamily": "anthropic-claude", "role": "ADVISORY_SUBJECT_REVIEWER", "countsAsIndependentReview": false},
+"blindFindings": [
+ "B1 CRITICAL s8 alternative method gives 4500 m^2 vs the correct 4050 m^2, left unresolved",
+ "B2 CRITICAL GP2: a 6-8-10 triangle is right-angled; with base 10 the height is 4.8 m, not 6 m; key area 30 m^2 should be 24 m^2",
+ "B3 CRITICAL GP3: no trapezoid with sides {12,14,10,16} and height 10 exists (checked all 24 assignments); area 130 m^2 arbitrary",
+ "B4 CRITICAL rhombus assessment abandoned with chatbot residue; 'assuming the rhombus is also equilateral' confused; correct area 35.78 m^2",
+ "B5 CRITICAL problemSets[0]: prompt (20x10 worked text) and key (20x14) mismatch",
+ "B6 MAJOR hexagon: 2.6 m labelled centre-to-vertex; it is the apothem",
+ "B7 MAJOR triangle half-rectangle claim overgeneralised to 'any triangular plot nested within a larger encasing shape'",
+ "B8 MAJOR the maximise-area/minimise-perimeter objective and the hook are never taught; ill-posed dual goal",
+ "B9 MAJOR 4 m tiles; '16 m^2 and also 16 m' conflates units",
+ "B10 MINOR 3 m-side hexagonal cafe table implausible",
+ "B11 MINOR '-gon' etymology wrong (Greek gonia = angle); 'area sounds like air' mnemonic misleading",
+ "B12 MINOR takeaway leaks 600 m^2 answer",
+ "B13 MAJOR guided/independent practice blank in body; mostly routine rectangle substitution",
+ "B14 MINOR halving item misses that area quarters (7700 -> 1925)",
+ "B15 MINOR Pythagoras converse used as 'prior knowledge' (usually G8)",
+ "B16 MINOR FK 12.8; MOE codes unrelated",
+ "B17 all other values verified correct"
+],
+"defectVerdicts": [
+ {"defectId": "D1", "verdict": "CONFIRMED", "reason": "Correct decomposition gives 81 squares of 10x5, not 10 rows of 450.",
+  "computation": "90*45 = 4050; (9*9)*(10*5) = 81*50 = 4050; legacy 9*50 = 450, 10*450 = 4500", "sources": []},
+ {"defectId": "D2", "verdict": "CONFIRMED", "reason": "The item is unsolved and contains generator residue. The spec's 8.94 m and 35.8 m^2 are correct, and so is the 24 m perimeter. The spec should add that this item needs Pythagoras (normally Grade 8), which supports 'replace'. It should also flag the legacy line 'Assuming the rhombus is also equilateral': every rhombus has four equal sides.",
+  "computation": "half-diagonal sqrt(6^2-4^2) = sqrt(20) = 4.472; d2 = 8.944; area = 8*8.944/2 = 35.78 m^2; P = 4*6 = 24 m", "sources": []},
+ {"defectId": "D3", "verdict": "CONFIRMED", "reason": "In a regular hexagon the centre-to-vertex distance (circumradius) equals the side, and the apothem is (sqrt3/2)*side. 2.6 m is a rounded apothem.",
+  "computation": "apothem = 3*sqrt(3)/2 = 2.598 m; circumradius = 3 m; area = 6*0.5*3*2.598 = 23.38 m^2 (23.40 using 2.6)",
+  "sources": [{"url": "https://en.wikipedia.org/wiki/Hexagon", "quote": "twice the maximal radius or circumradius, R, which equals the side length, t ... r = d/2 = cos(30)R = (sqrt3/2)R = (sqrt3/2)t (as retrieved)"}]},
+ {"defectId": "D4", "verdict": "CONFIRMED", "reason": "Confusing area with perimeter is a well-documented misconception, and research links it to not distinguishing linear units from square units. Writing '16 m^2 ... perimeter is also 16 m' invites exactly that confusion, and a 4 m tile is unrealistic.",
+  "computation": "4*4 = 16 m^2; 4*4 = 16 m (different units)",
+  "sources": [
+   {"url": "https://teachers.yale.edu/curriculum/units/2019/5/1/2", "quote": "Search-result summary for this Yale-New Haven Teachers Institute unit and related papers: students 'assume that rectangular figures with the same perimeter must have the same area and vice versa'"},
+   {"url": "https://ejournal.unsri.ac.id/index.php/jme/article/view/616", "quote": "Search-result summary (Winarti et al., Journal on Mathematics Education): some students confuse the concepts because of 'difficulty understanding the differences between linear (one-dimensional) units and squared (two-dimensional) units'"}]},
+ {"defectId": "D5", "verdict": "CONFIRMED", "reason": "This can be checked directly. The prompt is the worked 20x10 practice text with its answers showing; the key solves the 20x14 lot. The verification tag could be upgraded from REVIEWER_MUST_CONFIRM to mechanically checkable.",
+  "computation": "20x10: A = 200, P = 60; 20x14: A = 280, P = 68", "sources": []},
+ {"defectId": "D6", "verdict": "CONFIRMED", "reason": "The objective is never taught. The trapezoid part is understated, though: the problem is not just ill-posed for lack of named parallel sides. No assignment of the four sides fits a height of 10 m, so the figure cannot exist.",
+  "computation": "for each choice of bases b1, b2 and legs l1, l2 >= 10: |b1-b2| must equal sqrt(l1^2-100) +/- sqrt(l2^2-100); none of the 24 permutations satisfies it",
+  "sources": [{"url": "https://teachers.yale.edu/curriculum/units/2019/5/1/2", "quote": "Search-result summary: a fixed-perimeter example contrasts a 1x11 and a 4x7 rectangle, both perimeter 24, with areas 11 and 28 square units, i.e. same perimeter, different area"}]},
+ {"defectId": "D7", "verdict": "CONFIRMED", "reason": "instruction.takeawaySummary[0] is the ip3b answer, with no context.", "computation": "40*30/2 = 600", "sources": []}
+],
+"missedDefects": [
+ "BLOCKING-level: Guided Practice 2 (gp2) data are inconsistent. 6^2+8^2 = 10^2, so with base 10 the perpendicular height is 6*8/10 = 4.8 m, not 6 m. The key's 30 m^2 is wrong; the true area is 24 m^2. This is a keyed, learner-facing wrong answer that also models the 'height is not a side' rule badly. Add it to the defects and the correction notice.",
+ "s5 overgeneralisation: 'the formula precisely captures the area of any triangular plot nested within a larger encasing shape'. The triangle is half the rectangle only when its base is a full side and its apex lies on the opposite side. Relevant because the spec's progression step 'Triangle as half a rectangle' must avoid repeating it.",
+ "s6 etymology: '-gon' comes from Greek gonia (angle/corner), not 'sides'.",
+ "s17 item 2 states that halving the sides halves the perimeter but never says the area quarters (7700 -> 1925 m^2). The spec's misconception m2 covers the scaling idea, but the legacy item is not mentioned.",
+ "s4 'Question for Understanding' compares 50 -> 150 m^2 and 30 -> 50 m without drawing the lesson from it."
+],
+"specIssues": [
+ "D6 understates GP3: it should say 'geometrically impossible', not only 'does not say which sides are parallel'.",
+ "D5 and D7 are mechanically checkable but tagged AUTHOR_IDENTIFIED_REVIEWER_MUST_CONFIRM.",
+ "Transfer task: 6 m x 4 m with 40 cm tiles is exactly 15 x 10 = 150 tiles, so 'explain ... any rounding' has nothing to round. Use dimensions that need cut tiles (e.g. 6.2 m x 4 m) if rounding is meant to be assessed.",
+ "ft06-a3 (24 m of fence, greatest whole-metre area): the answer is the 6x6 square, 36 m^2. The rubric should accept a square as a rectangle; G7 learners often exclude it.",
+ "Numbers in m4 are correct: 2*(6+6) = 2*(11+1) = 24 m; areas 36 and 11 m^2. m2 is correct: doubling both sides gives 4 times the area.",
+ "The correction-notice reason should add the gp2 wrong key (30 vs 24 m^2), the impossible trapezoid and the mismatched problemSets[0]."
+],
+"specRating": "NEEDS_CHANGE",
+"specRatingReason": "All seven listed defects are confirmed and the redesign is sound: unit-square reasoning, a fixed-perimeter design task, realistic tiles, and misconception-mapped items. But the spec misses a keyed wrong answer in a learner-facing guided-practice item (gp2: 30 m^2 instead of 24 m^2) and understates GP3 as ill-posed when it is impossible. In the highest-exposure math lesson (42 scheduled-work rows, 1 assignment), both belong in the defect list and the correction notice.",
+"correctionNoticeWarranted": true,
+"correctionNoticeReason": "Learners in 2 classes, including 1 assignment, saw contradictory worked areas (4050 vs 4500), an unsolved assessment item, a wrong triangle key (30 vs 24 m^2) and a mismatched prompt/key.",
+"notes": "All values recomputed with python -I -c, including an exhaustive check of trapezoid side assignments. Two misconception sources are cited from search-result summaries, not fetched pages. Advisory only."
+}

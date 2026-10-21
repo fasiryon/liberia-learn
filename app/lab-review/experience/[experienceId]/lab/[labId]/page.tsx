@@ -3,13 +3,15 @@ import { LabExperienceHost } from "@/components/learner-experience/LabExperience
 import { getInteractiveLabDefinition } from "@/lib/interactive-labs/v2/registry";
 import { buildLessonReturnHref, parseLabLaunchContext } from "@/lib/learner-experience/labLaunch";
 import { isLearnerExperiencePrototypeEnabled, loadPrototypeExperience, PROTOTYPE_BASE_PATH } from "@/lib/learner-experience/prototypeRoute";
+import { requireCandidateReviewer } from "@/lib/learner-experience/reviewerAccess";
 
 // Lab entered from a Lesson Player V2 scene. The launch context must match a governed link on this lesson;
 // the return URL is rebuilt from validated identifiers, never read from the query string.
 export const dynamic = "force-dynamic";
 
-export default function LessonLabPrototypePage({ params, searchParams }: { params: { experienceId: string; labId: string }; searchParams: Record<string, string | string[] | undefined> }) {
+export default async function LessonLabPrototypePage({ params, searchParams }: { params: { experienceId: string; labId: string }; searchParams: Record<string, string | string[] | undefined> }) {
   if (!isLearnerExperiencePrototypeEnabled(process.env)) notFound();
+  await requireCandidateReviewer();
   const loaded = loadPrototypeExperience(params.experienceId);
   const context = parseLabLaunchContext(params.labId, searchParams);
   if (!loaded || !context || context.origin.experienceId !== loaded.experience.id || context.origin.experienceVersion !== loaded.experience.version) notFound();

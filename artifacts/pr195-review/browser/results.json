@@ -1,0 +1,80 @@
+{
+  "checkedAt": "2026-10-19T20:46:45.062Z",
+  "integrationCommit": "7256bbe31755b542355a64f65296a9e7760ee7cf",
+  "firstThreeAvailability": [
+    {
+      "sourceId": "wk_mca7a_fri_p4",
+      "probedProposedBlueprintId": "candidate-ft01-g7-civics-counties-capitals",
+      "candidateId": null,
+      "width": 360,
+      "httpStatus": 404,
+      "screenshot": "wk_mca7a_fri_p4-360.png",
+      "status": "BLOCKED_NO_AUTHORED_CANDIDATE"
+    },
+    {
+      "sourceId": "wk_mca7a_fri_p3",
+      "probedProposedBlueprintId": "candidate-ft04-g7-science-states-of-matter",
+      "candidateId": null,
+      "width": 360,
+      "httpStatus": 404,
+      "screenshot": "wk_mca7a_fri_p3-360.png",
+      "status": "BLOCKED_NO_AUTHORED_CANDIDATE"
+    },
+    {
+      "sourceId": "lesson_mca_1",
+      "probedProposedBlueprintId": "candidate-ft07-g7-math-fractions",
+      "candidateId": null,
+      "width": 360,
+      "httpStatus": 404,
+      "screenshot": "lesson_mca_1-360.png",
+      "status": "BLOCKED_NO_AUTHORED_CANDIDATE"
+    },
+    {
+      "sourceId": "wk_mca7a_fri_p4",
+      "probedProposedBlueprintId": "candidate-ft01-g7-civics-counties-capitals",
+      "candidateId": null,
+      "width": 390,
+      "httpStatus": 404,
+      "screenshot": "wk_mca7a_fri_p4-390.png",
+      "status": "BLOCKED_NO_AUTHORED_CANDIDATE"
+    },
+    {
+      "sourceId": "wk_mca7a_fri_p3",
+      "probedProposedBlueprintId": "candidate-ft04-g7-science-states-of-matter",
+      "candidateId": null,
+      "width": 390,
+      "httpStatus": 404,
+      "screenshot": "wk_mca7a_fri_p3-390.png",
+      "status": "BLOCKED_NO_AUTHORED_CANDIDATE"
+    },
+    {
+      "sourceId": "lesson_mca_1",
+      "probedProposedBlueprintId": "candidate-ft07-g7-math-fractions",
+      "candidateId": null,
+      "width": 390,
+      "httpStatus": 404,
+      "screenshot": "lesson_mca_1-390.png",
+      "status": "BLOCKED_NO_AUTHORED_CANDIDATE"
+    }
+  ],
+  "pilotControls": [
+    {
+      "width": 360,
+      "httpStatus": 200,
+      "overflowPx": 0,
+      "sceneId": "intro",
+      "loadedSceneRemainsOffline": true,
+      "attemptedWrites": [],
+      "note": "Older pilot control only; does not certify first-three lessons, offline cold start, independent mastery or teacher evidence."
+    },
+    {
+      "width": 390,
+      "httpStatus": 200,
+      "overflowPx": 0,
+      "sceneId": "intro",
+      "loadedSceneRemainsOffline": true,
+      "attemptedWrites": [],
+      "note": "Older pilot control only; does not certify first-three lessons, offline cold start, independent mastery or teacher evidence."
+    }
+  ]
+}

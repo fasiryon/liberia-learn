@@ -7,7 +7,7 @@ export type LowBatchPlan = { batches: LowBatch[]; singles: RenderItem[]; drawCal
 type BatchSignature = { id: string; geometry: GeometryKind; descriptor: ParametricDescriptor | undefined; alpha: number; eligible: boolean; vertices: number };
 export type LowBatchCache = { plan: LowBatchPlan | null; signature: BatchSignature[]; locations: Map<string, { items: RenderItem[]; index: number }> };
 export function createLowBatchCache(): LowBatchCache { return { plan: null, signature: [], locations: new Map() }; }
-const mayBatch = (item: RenderItem) => item.alpha >= 0.9 && !item.clip && !item.spin && !item.highlighted && item.inFocus;
+const mayBatch = (item: RenderItem) => item.alpha >= 0.9 && !item.clip && !item.spin && !item.translation && !item.highlighted && item.inFocus;
 /** WebGL1-safe non-indexed merged chunks stay strictly below the 65,536 vertex boundary. */
 export const MAX_LOW_BATCH_VERTICES = 65_532;
 const LOW_TRIANGLES: Readonly<Record<GeometryKind, number>> = Object.freeze({ sphere: 192, cylinder: 56, cone: 28, cube: 12, "rectangular-prism": 12, lever: 12, box: 12, panel: 12 });

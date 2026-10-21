@@ -39,6 +39,12 @@ export function validateHighFidelityDefinition(definition: InteractiveLabDefinit
   if (!spec) return ["fidelity_spec_missing"];
   const errors: string[] = [];
   if (spec.specVersion !== HIGH_FIDELITY_SPEC_VERSION) errors.push("spec_version_unsupported");
+  if(spec.validateVariables){
+    const initial=Object.fromEntries(spec.variables.map(v=>[v.id,v.initial]));
+    if(!spec.validateVariables(initial).ok)errors.push("variables_initial_cross_state_invalid");
+    for(const [mode,start] of Object.entries(spec.modeStart??{}))if(!spec.validateVariables({...initial,...start?.variables}).ok)errors.push(`mode_start_cross_state_invalid:${mode}`);
+    for(const step of spec.guidedPath)if(!spec.validateVariables({...initial,...step.variables}).ok)errors.push(`guided_start_cross_state_invalid:${step.id}`);
+  }
   for (const field of AUTHORING_FIELDS) if (!spec.authoring[field]?.trim()) errors.push(`authoring_missing:${field}`);
   const componentIds = spec.components.map((component) => component.id);
   const objectIds = definition.scene.objects.map((object) => object.id);

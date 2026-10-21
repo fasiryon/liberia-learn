@@ -1,0 +1,229 @@
+{
+ "legacyRevisionId": "cmss8qbwg006rvo54f0zx9ppr",
+ "legacyContentHash": "66b4986ad4fff6877f5cbe23aea7debd980c99808dd935f2b7d6286fcdcc5a80",
+ "primaryTextField": "body",
+ "sections": [
+  {
+   "index": 0,
+   "heading": "1. Hook — The Real-World Challenge",
+   "role": "HOOK",
+   "words": 272,
+   "sha256": "e5910ec3a4b1873b4f9227d1f5abd0e91f290ed4b3fadd85ffd1fc59231c707f",
+   "findings": [],
+   "disposition": "ADAPTED",
+   "candidateScenes": [
+    "intro",
+    "reflect"
+   ],
+   "rationale": "Fatu's stall story kept and shortened from 272 to about 70 words; 'make a killing' and the career framing removed."
+  },
+  {
+   "index": 1,
+   "heading": "2. Learning Objectives",
+   "role": "OBJECTIVES",
+   "words": 182,
+   "sha256": "63aa27a2b2c2010c075e2499b512fe7b4f5d1c84497f48e926d3939d63e9b11b",
+   "findings": [],
+   "disposition": "REPLACED",
+   "candidateScenes": [
+    "objectives"
+   ],
+   "rationale": "Three objectives, one of them story writing that the lesson never teaches, replaced by two assessable reading objectives. Story writing moves to the next lesson and the optional extension."
+  },
+  {
+   "index": 2,
+   "heading": "3. Prior Knowledge Activation",
+   "role": "PRIOR_KNOWLEDGE",
+   "words": 188,
+   "sha256": "ce1f74bfb9435951d0c6a6bf21b09f58e33961c1251384c41f232e575ee5a8eb",
+   "findings": [
+    "NO_FALLBACK_ROUTE/MAJOR"
+   ],
+   "disposition": "ADAPTED",
+   "candidateScenes": [
+    "warm-up"
+   ],
+   "rationale": "The salty-food example is reused as a diagnostic item; answers were shown to learners and are now feedback after a choice."
+  },
+  {
+   "index": 3,
+   "heading": "4. Core Concept — Concrete Foundation",
+   "role": "CONCEPT",
+   "words": 243,
+   "sha256": "85562bc21eed36fb34ecdf99855926ac5677a9425eaa51e3f5d07b7b6287d5b4",
+   "findings": [],
+   "disposition": "ADAPTED",
+   "candidateScenes": [
+    "concept"
+   ],
+   "rationale": "The flood example and the definitions are reused. Dropped the unsupported claim that cassava is planted 'only during dry seasons to avoid spoilage'. Reviewer to confirm."
+  },
+  {
+   "index": 4,
+   "heading": "5. Core Concept — The Rule and Why It Works",
+   "role": "CONCEPT",
+   "words": 215,
+   "sha256": "13746e7d827c3607fecc35c2f42bd3aa020bfac1a65bd7fab89244e9ecc097e1",
+   "findings": [],
+   "disposition": "REPLACED",
+   "candidateScenes": [
+    "concept",
+    "careful-readers"
+   ],
+   "rationale": "The rule that a cause 'will always lead to some effect' overgeneralizes; replaced by the 'always is too strong' check."
+  },
+  {
+   "index": 5,
+   "heading": "6. Key Vocabulary",
+   "role": "VOCABULARY",
+   "words": 185,
+   "sha256": "0ad730dbf28a0ccca9ac0e3b0742f749d84049ff634249a3b2b5d48ab2d2353d",
+   "findings": [],
+   "disposition": "REUSED",
+   "candidateScenes": [
+    "concept"
+   ],
+   "rationale": "Cause and effect definitions and the flooded-street example reused, condensed into key points."
+  },
+  {
+   "index": 6,
+   "heading": "7. Worked Example 1",
+   "role": "WORKED_EXAMPLE",
+   "words": 209,
+   "sha256": "87fc9c1f7c68f4e87718fa3137c8ca0e668a1a0cdd23ff5382a6f2d6119bf5db",
+   "findings": [],
+   "disposition": "ADAPTED",
+   "candidateScenes": [
+    "worked-example"
+   ],
+   "rationale": "The flood and cassava-price chain is kept as a short reading text. The invented figures (LD 200 to LD 400, 10 to 2 tons) are dropped because they were not labelled as invented."
+  },
+  {
+   "index": 7,
+   "heading": "8. Worked Example 2 — Alternative Method",
+   "role": "WORKED_EXAMPLE",
+   "words": 258,
+   "sha256": "5a95d2d5879d89b1e5fa36f7b964fe16dd7e34e64e90d8d4fa32f1dd966a8238",
+   "findings": [],
+   "disposition": "ADAPTED",
+   "candidateScenes": [
+    "hidden-signal"
+   ],
+   "rationale": "The 'start from the effect' method is kept and applied to a text with no signal word."
+  },
+  {
+   "index": 8,
+   "heading": "9. Error Analysis",
+   "role": "ERROR_ANALYSIS",
+   "words": 209,
+   "sha256": "eb9e3793e636268a1c7c7a7a03ce71ac55c2e7f74ad7efd77f4cc5b73a89ef1b",
+   "findings": [],
+   "disposition": "ADAPTED",
+   "candidateScenes": [
+    "careful-readers"
+   ],
+   "rationale": "Error 3 (overgeneralization) is reused. Error 1's correction is wrong: more buyers can raise prices, so it was removed. Reviewer to confirm."
+  },
+  {
+   "index": 9,
+   "heading": "10. Guided Practice Problem 1",
+   "role": "GUIDED_PRACTICE",
+   "words": 159,
+   "sha256": "3838a03f1578e4cf7bb2192835a21c05d6c21d091fa0df2c96d9a0a503ba5eb3",
+   "findings": [],
+   "disposition": "REPLACED",
+   "candidateScenes": [
+    "careful-readers"
+   ],
+   "rationale": "The legacy text teaches that playing in the rain caused Boima's cold. Colds are caused by viruses, so the example now teaches that 'after' is not 'because'. Reviewer to confirm."
+  },
+  {
+   "index": 10,
+   "heading": "11. Guided Practice Problem 2",
+   "role": "GUIDED_PRACTICE",
+   "words": 199,
+   "sha256": "2a6d11999299445560d0ff8fc8b9a0f463bb809200ce2439ac4c7e53ab7d7b1d",
+   "findings": [],
+   "disposition": "DISCARDED",
+   "candidateScenes": [],
+   "rationale": "Repeats Problem 3's pattern and showed its answers inline; Problem 3 is kept instead."
+  },
+  {
+   "index": 11,
+   "heading": "12. Guided Practice Problem 3",
+   "role": "GUIDED_PRACTICE",
+   "words": 183,
+   "sha256": "15053469b664a768b66473f4798ed53b8423c90ea49550cbba6b17053d02dca0",
+   "findings": [],
+   "disposition": "REUSED",
+   "candidateScenes": [
+    "guided"
+   ],
+   "rationale": "Boimah's stall reused as a reading text with items."
+  },
+  {
+   "index": 12,
+   "heading": "13. Independent Practice — Tier 1 Foundational",
+   "role": "INDEPENDENT_PRACTICE",
+   "words": 94,
+   "sha256": "1526d85ba8fe90adfa4328669633b3f4693079adb6cf346b4c46411384f3f8b0",
+   "findings": [],
+   "disposition": "ADAPTED",
+   "candidateScenes": [
+    "practice"
+   ],
+   "rationale": "Zoe and Kollie problems reused; answers were printed next to the problems and are now feedback after a choice."
+  },
+  {
+   "index": 13,
+   "heading": "14. Independent Practice — Tier 2 Standard",
+   "role": "INDEPENDENT_PRACTICE",
+   "words": 114,
+   "sha256": "ae2a0b85d7f8c78b8fb7d0d01cd205047e7d7c36bec5b305831660828466c1ad",
+   "findings": [],
+   "disposition": "DISCARDED",
+   "candidateScenes": [],
+   "rationale": "Answers were printed with the problems; the time-management item is covered by the retention task."
+  },
+  {
+   "index": 14,
+   "heading": "15. Independent Practice — Tier 3 Advanced",
+   "role": "INDEPENDENT_PRACTICE",
+   "words": 123,
+   "sha256": "f704f7e3fd46bb139d1e395ba3288c21fe45bfdaf3979d364bf9a9b1fd38948e",
+   "findings": [],
+   "disposition": "ADAPTED",
+   "candidateScenes": [
+    "practice"
+   ],
+   "rationale": "The St. Paul River clean-up is reused without a signal word, to practise implicit causes; the river is no longer named, to avoid an unverified ecological claim."
+  },
+  {
+   "index": 15,
+   "heading": "16. Group Discussion and Cross-Curricular Connection",
+   "role": "DISCUSSION",
+   "words": 144,
+   "sha256": "6b668848fdbd1fc69a365aa7fb86b26f19e770cbbbe269c575b0ca0b03e3c0ef",
+   "findings": [],
+   "disposition": "MOVED_TO_TEACHER_GUIDE",
+   "candidateScenes": [],
+   "rationale": "A useful optional class discussion; it does not produce individual evidence."
+  },
+  {
+   "index": 16,
+   "heading": "17. Assessment, Exit Ticket, and Lesson Summary",
+   "role": "ASSESSMENT",
+   "words": 142,
+   "sha256": "61ad83aee00bf3aa762400bbc2baa24a10bce86f9d97d974691e2d7b5cad1f07",
+   "findings": [
+    "UNKEYED_ASSESSMENT_ITEMS/MAJOR"
+   ],
+   "disposition": "REPLACED",
+   "candidateScenes": [
+    "exit-ticket",
+    "reflect"
+   ],
+   "rationale": "The personal-reflection exit questions cannot show the objective; replaced by unseen-text written tasks with rubrics."
+  }
+ ]
+}

@@ -1,0 +1,307 @@
+{
+  "checkedAt": "2026-10-19T21:10:48.526Z",
+  "sourceId": "wk_mca7a_fri_p4",
+  "inputSha256": "5d27433348ad6d24ad1d168e1398544afb42b68bb707298737bba1f950441ccb",
+  "status": "BLOCKED FOR ACADEMIC APPROVAL",
+  "artifactKind": "AUTHORED_INPUT_NOT_IMMUTABLE_FACTORY_PACKAGE",
+  "cohortCommit": "9628d97f6932ae4c0c399ec15455230e3f76607e",
+  "state": "DRAFT",
+  "approved": false,
+  "released": false,
+  "published": false,
+  "parsed": true,
+  "scenes": 18,
+  "assetChecks": [
+    {
+      "mediaId": "ft01-county-map",
+      "bytes": 51199,
+      "hashMatches": true,
+      "mimeType": "image/png"
+    },
+    {
+      "mediaId": "ft01-contrast",
+      "bytes": 27298,
+      "hashMatches": true,
+      "mimeType": "image/png"
+    },
+    {
+      "mediaId": "ft01-blank-map",
+      "bytes": 49047,
+      "hashMatches": true,
+      "mimeType": "image/png"
+    }
+  ],
+  "deliverability": [
+    {
+      "sceneId": "s01-hook",
+      "byScenario": {
+        "DEFAULT": "PRIMARY",
+        "OFFLINE": "PRIMARY",
+        "WEBGL_UNAVAILABLE": "PRIMARY",
+        "VIDEO_UNAVAILABLE": "PRIMARY",
+        "KEYBOARD_ONLY": "PRIMARY",
+        "SCREEN_READER": "PRIMARY",
+        "REDUCED_MOTION": "PRIMARY",
+        "LOW_MEMORY": "PRIMARY",
+        "POINTER_DRAG_UNAVAILABLE": "PRIMARY"
+      },
+      "reasons": []
+    },
+    {
+      "sceneId": "s02-goals",
+      "byScenario": {
+        "DEFAULT": "PRIMARY",
+        "OFFLINE": "PRIMARY",
+        "WEBGL_UNAVAILABLE": "PRIMARY",
+        "VIDEO_UNAVAILABLE": "PRIMARY",
+        "KEYBOARD_ONLY": "PRIMARY",
+        "SCREEN_READER": "PRIMARY",
+        "REDUCED_MOTION": "PRIMARY",
+        "LOW_MEMORY": "PRIMARY",
+        "POINTER_DRAG_UNAVAILABLE": "PRIMARY"
+      },
+      "reasons": []
+    },
+    {
+      "sceneId": "s03-ready",
+      "byScenario": {
+        "DEFAULT": "PRIMARY",
+        "OFFLINE": "PRIMARY",
+        "WEBGL_UNAVAILABLE": "PRIMARY",
+        "VIDEO_UNAVAILABLE": "PRIMARY",
+        "KEYBOARD_ONLY": "PRIMARY",
+        "SCREEN_READER": "PRIMARY",
+        "REDUCED_MOTION": "PRIMARY",
+        "LOW_MEMORY": "PRIMARY",
+        "POINTER_DRAG_UNAVAILABLE": "PRIMARY"
+      },
+      "reasons": []
+    },
+    {
+      "sceneId": "s04-shape",
+      "byScenario": {
+        "DEFAULT": "FALLBACK",
+        "OFFLINE": "FALLBACK",
+        "WEBGL_UNAVAILABLE": "FALLBACK",
+        "VIDEO_UNAVAILABLE": "FALLBACK",
+        "KEYBOARD_ONLY": "FALLBACK",
+        "SCREEN_READER": "FALLBACK",
+        "REDUCED_MOTION": "FALLBACK",
+        "LOW_MEMORY": "FALLBACK",
+        "POINTER_DRAG_UNAVAILABLE": "FALLBACK"
+      },
+      "reasons": []
+    },
+    {
+      "sceneId": "s05-coast-model",
+      "byScenario": {
+        "DEFAULT": "PRIMARY",
+        "OFFLINE": "PRIMARY",
+        "WEBGL_UNAVAILABLE": "PRIMARY",
+        "VIDEO_UNAVAILABLE": "PRIMARY",
+        "KEYBOARD_ONLY": "PRIMARY",
+        "SCREEN_READER": "PRIMARY",
+        "REDUCED_MOTION": "PRIMARY",
+        "LOW_MEMORY": "PRIMARY",
+        "POINTER_DRAG_UNAVAILABLE": "PRIMARY"
+      },
+      "reasons": []
+    },
+    {
+      "sceneId": "s06-interior",
+      "byScenario": {
+        "DEFAULT": "PRIMARY",
+        "OFFLINE": "PRIMARY",
+        "WEBGL_UNAVAILABLE": "PRIMARY",
+        "VIDEO_UNAVAILABLE": "PRIMARY",
+        "KEYBOARD_ONLY": "PRIMARY",
+        "SCREEN_READER": "PRIMARY",
+        "REDUCED_MOTION": "PRIMARY",
+        "LOW_MEMORY": "PRIMARY",
+        "POINTER_DRAG_UNAVAILABLE": "PRIMARY"
+      },
+      "reasons": []
+    },
+    {
+      "sceneId": "s07-coast-guided",
+      "byScenario": {
+        "DEFAULT": "PRIMARY",
+        "OFFLINE": "PRIMARY",
+        "WEBGL_UNAVAILABLE": "PRIMARY",
+        "VIDEO_UNAVAILABLE": "PRIMARY",
+        "KEYBOARD_ONLY": "PRIMARY",
+        "SCREEN_READER": "PRIMARY",
+        "REDUCED_MOTION": "PRIMARY",
+        "LOW_MEMORY": "PRIMARY",
+        "POINTER_DRAG_UNAVAILABLE": "PRIMARY"
+      },
+      "reasons": []
+    },
+    {
+      "sceneId": "s08-grand",
+      "byScenario": {
+        "DEFAULT": "PRIMARY",
+        "OFFLINE": "PRIMARY",
+        "WEBGL_UNAVAILABLE": "PRIMARY",
+        "VIDEO_UNAVAILABLE": "PRIMARY",
+        "KEYBOARD_ONLY": "PRIMARY",
+        "SCREEN_READER": "PRIMARY",
+        "REDUCED_MOTION": "PRIMARY",
+        "LOW_MEMORY": "PRIMARY",
+        "POINTER_DRAG_UNAVAILABLE": "PRIMARY"
+      },
+      "reasons": []
+    },
+    {
+      "sceneId": "s09-capital-idea",
+      "byScenario": {
+        "DEFAULT": "FALLBACK",
+        "OFFLINE": "FALLBACK",
+        "WEBGL_UNAVAILABLE": "FALLBACK",
+        "VIDEO_UNAVAILABLE": "FALLBACK",
+        "KEYBOARD_ONLY": "FALLBACK",
+        "SCREEN_READER": "FALLBACK",
+        "REDUCED_MOTION": "FALLBACK",
+        "LOW_MEMORY": "FALLBACK",
+        "POINTER_DRAG_UNAVAILABLE": "FALLBACK"
+      },
+      "reasons": []
+    },
+    {
+      "sceneId": "s10-capital-model",
+      "byScenario": {
+        "DEFAULT": "PRIMARY",
+        "OFFLINE": "PRIMARY",
+        "WEBGL_UNAVAILABLE": "PRIMARY",
+        "VIDEO_UNAVAILABLE": "PRIMARY",
+        "KEYBOARD_ONLY": "PRIMARY",
+        "SCREEN_READER": "PRIMARY",
+        "REDUCED_MOTION": "PRIMARY",
+        "LOW_MEMORY": "PRIMARY",
+        "POINTER_DRAG_UNAVAILABLE": "PRIMARY"
+      },
+      "reasons": []
+    },
+    {
+      "sceneId": "s11-capital-myths",
+      "byScenario": {
+        "DEFAULT": "PRIMARY",
+        "OFFLINE": "PRIMARY",
+        "WEBGL_UNAVAILABLE": "PRIMARY",
+        "VIDEO_UNAVAILABLE": "PRIMARY",
+        "KEYBOARD_ONLY": "PRIMARY",
+        "SCREEN_READER": "PRIMARY",
+        "REDUCED_MOTION": "PRIMARY",
+        "LOW_MEMORY": "PRIMARY",
+        "POINTER_DRAG_UNAVAILABLE": "PRIMARY"
+      },
+      "reasons": []
+    },
+    {
+      "sceneId": "s12-place-capitals",
+      "byScenario": {
+        "DEFAULT": "FALLBACK",
+        "OFFLINE": "FALLBACK",
+        "WEBGL_UNAVAILABLE": "FALLBACK",
+        "VIDEO_UNAVAILABLE": "FALLBACK",
+        "KEYBOARD_ONLY": "FALLBACK",
+        "SCREEN_READER": "FALLBACK",
+        "REDUCED_MOTION": "FALLBACK",
+        "LOW_MEMORY": "FALLBACK",
+        "POINTER_DRAG_UNAVAILABLE": "FALLBACK"
+      },
+      "reasons": []
+    },
+    {
+      "sceneId": "s13-route-model",
+      "byScenario": {
+        "DEFAULT": "PRIMARY",
+        "OFFLINE": "PRIMARY",
+        "WEBGL_UNAVAILABLE": "PRIMARY",
+        "VIDEO_UNAVAILABLE": "PRIMARY",
+        "KEYBOARD_ONLY": "PRIMARY",
+        "SCREEN_READER": "PRIMARY",
+        "REDUCED_MOTION": "PRIMARY",
+        "LOW_MEMORY": "PRIMARY",
+        "POINTER_DRAG_UNAVAILABLE": "PRIMARY"
+      },
+      "reasons": []
+    },
+    {
+      "sceneId": "s14-list-order",
+      "byScenario": {
+        "DEFAULT": "PRIMARY",
+        "OFFLINE": "PRIMARY",
+        "WEBGL_UNAVAILABLE": "PRIMARY",
+        "VIDEO_UNAVAILABLE": "PRIMARY",
+        "KEYBOARD_ONLY": "PRIMARY",
+        "SCREEN_READER": "PRIMARY",
+        "REDUCED_MOTION": "PRIMARY",
+        "LOW_MEMORY": "PRIMARY",
+        "POINTER_DRAG_UNAVAILABLE": "PRIMARY"
+      },
+      "reasons": []
+    },
+    {
+      "sceneId": "s15-route-guided",
+      "byScenario": {
+        "DEFAULT": "PRIMARY",
+        "OFFLINE": "PRIMARY",
+        "WEBGL_UNAVAILABLE": "PRIMARY",
+        "VIDEO_UNAVAILABLE": "PRIMARY",
+        "KEYBOARD_ONLY": "PRIMARY",
+        "SCREEN_READER": "PRIMARY",
+        "REDUCED_MOTION": "PRIMARY",
+        "LOW_MEMORY": "PRIMARY",
+        "POINTER_DRAG_UNAVAILABLE": "PRIMARY"
+      },
+      "reasons": []
+    },
+    {
+      "sceneId": "s16-fade",
+      "byScenario": {
+        "DEFAULT": "PRIMARY",
+        "OFFLINE": "PRIMARY",
+        "WEBGL_UNAVAILABLE": "PRIMARY",
+        "VIDEO_UNAVAILABLE": "PRIMARY",
+        "KEYBOARD_ONLY": "PRIMARY",
+        "SCREEN_READER": "PRIMARY",
+        "REDUCED_MOTION": "PRIMARY",
+        "LOW_MEMORY": "PRIMARY",
+        "POINTER_DRAG_UNAVAILABLE": "PRIMARY"
+      },
+      "reasons": []
+    },
+    {
+      "sceneId": "s17-independent",
+      "byScenario": {
+        "DEFAULT": "FALLBACK",
+        "OFFLINE": "FALLBACK",
+        "WEBGL_UNAVAILABLE": "FALLBACK",
+        "VIDEO_UNAVAILABLE": "FALLBACK",
+        "KEYBOARD_ONLY": "FALLBACK",
+        "SCREEN_READER": "FALLBACK",
+        "REDUCED_MOTION": "FALLBACK",
+        "LOW_MEMORY": "FALLBACK",
+        "POINTER_DRAG_UNAVAILABLE": "FALLBACK"
+      },
+      "reasons": []
+    },
+    {
+      "sceneId": "s18-review",
+      "byScenario": {
+        "DEFAULT": "PRIMARY",
+        "OFFLINE": "PRIMARY",
+        "WEBGL_UNAVAILABLE": "PRIMARY",
+        "VIDEO_UNAVAILABLE": "PRIMARY",
+        "KEYBOARD_ONLY": "PRIMARY",
+        "SCREEN_READER": "PRIMARY",
+        "REDUCED_MOTION": "PRIMARY",
+        "LOW_MEMORY": "PRIMARY",
+        "POINTER_DRAG_UNAVAILABLE": "PRIMARY"
+      },
+      "reasons": []
+    }
+  ],
+  "labProposals": 0
+}

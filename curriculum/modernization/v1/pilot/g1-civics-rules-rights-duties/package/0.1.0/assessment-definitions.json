@@ -1,0 +1,237 @@
+{
+ "audience": "REVIEWER_ONLY",
+ "status": "GOVERNED_CANDIDATE",
+ "notice": "Candidate assessment definitions for the Grade 1 rules, rights and duties pilot. Unreviewed and unreleased: nothing scores them, writes mastery from them or releases them. For Grade 1 every mastery task is oral or performed and recorded by the teacher; reading and writing are not assessed here. Keys and rubrics are reviewer and teacher only.",
+ "diagnosticOnlyExitItemIds": [],
+ "tasks": [
+  {
+   "id": "d0",
+   "kind": "PREREQUISITE_DIAGNOSTIC",
+   "prerequisiteIndex": 0,
+   "deliveredBy": "warm-up#w-who",
+   "objectiveIds": [
+    "ll-g1-civ-rules"
+   ],
+   "scaffold": "FULL",
+   "timing": "PRE_LESSON",
+   "context": "REHEARSED",
+   "scoring": "KEYED",
+   "source": "EXCELLENCE_PLAN",
+   "ref": "definition:d0",
+   "prompt": "Fatu walked to the market with her mother. Who went with Fatu?",
+   "key": "Her mother",
+   "fallbackRoute": "Retell the story with two children acting it out, then ask who and what again; keep sentences very short for children who still struggle."
+  },
+  {
+   "id": "d1",
+   "kind": "PREREQUISITE_DIAGNOSTIC",
+   "prerequisiteIndex": 1,
+   "deliveredBy": "warm-up#w-where",
+   "objectiveIds": [
+    "ll-g1-civ-rules"
+   ],
+   "scaffold": "FULL",
+   "timing": "PRE_LESSON",
+   "context": "REHEARSED",
+   "scoring": "KEYED",
+   "source": "EXCELLENCE_PLAN",
+   "ref": "definition:d1",
+   "prompt": "Where do children go to learn to read?",
+   "key": "School",
+   "fallbackRoute": "Show or draw home, school and market; children name each place and one thing people do there before the rules scene."
+  },
+  {
+   "id": "pf1",
+   "kind": "PERFORMANCE_TASK",
+   "objectiveIds": [
+    "ll-g1-civ-rules"
+   ],
+   "scaffold": "NONE",
+   "timing": "END_OF_LESSON",
+   "context": "REHEARSED",
+   "scoring": "ANALYTIC_RUBRIC",
+   "source": "EXCELLENCE_PLAN",
+   "ref": "definition:pf1",
+   "prompt": "One at a time: 'Show me a rule we follow at school or at home, then tell me why we have it.' The child acts it out and explains; the teacher records.",
+   "rubric": [
+    {
+     "criterion": "Names or shows a real rule",
+     "levels": [
+      "0: no rule or a made-up punishment",
+      "1: a real home or school rule shown or said"
+     ]
+    },
+    {
+     "criterion": "Says how it helps",
+     "levels": [
+      "0: 'so we are not beaten' or no reason",
+      "1: a reason about safety, health or fairness"
+     ]
+    }
+   ],
+   "targetsMisconceptions": [
+    "mc-rules-are-punishment"
+   ]
+  },
+  {
+   "id": "pf2",
+   "kind": "PERFORMANCE_TASK",
+   "objectiveIds": [
+    "ll-g1-civ-rights-duties"
+   ],
+   "scaffold": "NONE",
+   "timing": "END_OF_LESSON",
+   "context": "REHEARSED",
+   "scoring": "ANALYTIC_RUBRIC",
+   "source": "EXCELLENCE_PLAN",
+   "ref": "definition:pf2",
+   "prompt": "The teacher shows four picture cards (going to school, sweeping the classroom, being safe, listening to a friend). The child sorts them into right or duty and says one of each aloud.",
+   "rubric": [
+    {
+     "criterion": "Sorting",
+     "levels": [
+      "0: two or fewer correct",
+      "1: three correct",
+      "2: all four correct (rights: school, safe; duties: sweeping, listening)"
+     ]
+    },
+    {
+     "criterion": "Names one of each aloud",
+     "levels": [
+      "0: neither",
+      "1: one right and one duty said correctly"
+     ]
+    }
+   ],
+   "targetsMisconceptions": [
+    "mc-right-is-a-want",
+    "mc-duties-are-for-adults"
+   ]
+  },
+  {
+   "id": "r1",
+   "kind": "EXTENDED_REASONING",
+   "objectiveIds": [
+    "ll-g1-civ-rules"
+   ],
+   "scaffold": "NONE",
+   "timing": "END_OF_LESSON",
+   "context": "REHEARSED",
+   "scoring": "ANALYTIC_RUBRIC",
+   "source": "EXCELLENCE_PLAN",
+   "ref": "definition:r1",
+   "prompt": "Oral: 'Kollie walks near the road only when the teacher is watching. Is that good? Why?' The teacher records the child's words.",
+   "rubric": [
+    {
+     "criterion": "Judgment",
+     "levels": [
+      "0: says yes",
+      "1: says no"
+     ]
+    },
+    {
+     "criterion": "Reason",
+     "levels": [
+      "0: none or 'he will be punished'",
+      "1: the road is dangerous all the time / the rule keeps him safe"
+     ]
+    }
+   ],
+   "targetsMisconceptions": [
+    "mc-rule-only-when-watched"
+   ],
+   "note": "Reasoning at Grade 1 is spoken, short and teacher-recorded."
+  },
+  {
+   "id": "ret1",
+   "kind": "DELAYED_RETRIEVAL",
+   "objectiveIds": [
+    "ll-g1-civ-rules"
+   ],
+   "scaffold": "NONE",
+   "timing": "DELAYED",
+   "delayDays": 7,
+   "context": "REHEARSED",
+   "scoring": "ANALYTIC_RUBRIC",
+   "source": "EXCELLENCE_PLAN",
+   "ref": "definition:ret1",
+   "prompt": "One week later, oral: 'Tell me one rule and how it helps us.'",
+   "rubric": [
+    {
+     "criterion": "Rule and reason",
+     "levels": [
+      "0: neither",
+      "1: a rule only",
+      "2: a rule and a safety, health or fairness reason"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "ret2",
+   "kind": "DELAYED_RETRIEVAL",
+   "objectiveIds": [
+    "ll-g1-civ-rights-duties"
+   ],
+   "scaffold": "NONE",
+   "timing": "DELAYED",
+   "delayDays": 7,
+   "context": "REHEARSED",
+   "scoring": "KEYED",
+   "source": "EXCELLENCE_PLAN",
+   "ref": "definition:ret2",
+   "prompt": "One week later, oral: 'Is keeping the classroom clean a right or a duty?'",
+   "key": "A duty",
+   "targetsMisconceptions": [
+    "mc-duties-are-for-adults"
+   ]
+  },
+  {
+   "id": "t1",
+   "kind": "TRANSFER_TASK",
+   "objectiveIds": [
+    "ll-g1-civ-rules"
+   ],
+   "scaffold": "NONE",
+   "timing": "END_OF_LESSON",
+   "context": "NEW",
+   "scoring": "ANALYTIC_RUBRIC",
+   "source": "EXCELLENCE_PLAN",
+   "ref": "definition:t1",
+   "prompt": "Oral, new place: 'At the market, many people want to buy from one seller. What rule could help, and why?'",
+   "rubric": [
+    {
+     "criterion": "A sensible rule",
+     "levels": [
+      "0: none",
+      "1: e.g. wait in line / take turns"
+     ]
+    },
+    {
+     "criterion": "Why",
+     "levels": [
+      "0: none",
+      "1: fairness or safety reason"
+     ]
+    }
+   ],
+   "note": "New context (the market) not rehearsed in the lesson."
+  },
+  {
+   "id": "x1",
+   "kind": "EXTENSION",
+   "objectiveIds": [
+    "ll-g1-civ-rules"
+   ],
+   "scaffold": "NONE",
+   "timing": "END_OF_LESSON",
+   "context": "NEW",
+   "scoring": "NOT_SCORED",
+   "optional": true,
+   "source": "EXCELLENCE_PLAN",
+   "ref": "definition:x1",
+   "prompt": "Optional: with a partner, make up one new class rule and draw a picture that shows why it helps.",
+   "note": "Optional and non-gating."
+  }
+ ]
+}

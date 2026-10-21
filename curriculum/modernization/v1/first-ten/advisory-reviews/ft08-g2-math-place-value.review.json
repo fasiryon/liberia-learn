@@ -1,0 +1,50 @@
+{
+  "reviewKey": "ft08-g2-math-place-value",
+  "contentId": "hero-math-g2-place-value-tens-and-ones",
+  "reviewer": {"kind": "AI_AGENT", "modelFamily": "anthropic-claude", "role": "ADVISORY_SUBJECT_REVIEWER", "countsAsIndependentReview": false},
+  "blindFindings": [
+    "B1 HIGH: hook poses an unresolved LD$4,250 currency conversion",
+    "B2 MEDIUM: time-sensitive exchange rate stated as fact",
+    "B3 MEDIUM: LD$1 coins / LD$10 notes as models: denominations need verification",
+    "B4 MEDIUM: multiplication beyond G2 (15x10, 91x2)",
+    "B5 MEDIUM: hundreds (125, 173) and '14 tens' in a two-digit lesson",
+    "B6 HIGH: assessment item 2 ('equivalent of the number of tens') ambiguous",
+    "B7 HIGH: ip3a 'half of the tens' of 56 not whole bundles",
+    "B8 HIGH: gp3 Finda lappa price unanswerable; key circular (LD$1 assumed)",
+    "B9 MEDIUM: error 3 correction muddled",
+    "B10 MEDIUM: PLACE_VALUE answer embedded in studentPrompt",
+    "B11 MEDIUM: 'alternative method' is not a distinct representation; no manipulative activity",
+    "B12 MEDIUM: MOE code for telling time",
+    "B13 HIGH: ~3,500 words of adult prose",
+    "B14 LOW: Boima boy vs vendor; missing section 5; 'apples'",
+    "B15 INFO: core decompositions arithmetically correct"
+  ],
+  "defectVerdicts": [
+    {"defectId": "D1", "verdict": "CONFIRMED", "reason": "The header carries the mechanical audit figures (3,514 words; FK grade 10). The adult register I saw ('consignment', 'fulfills his payment obligations', 'fortified, practical base') confirms gross grade misfit. I did not recompute the word count.", "sources": []},
+    {"defectId": "D2", "verdict": "CONFIRMED", "reason": "Arithmetic checked: 20 x 200 + 250 = 4,250. The hook never resolves it. The rate is time-sensitive and currently off: around 170 LRD per USD in mid-October 2026, not 'roughly 200'.", "sources": [{"url": "https://tradingeconomics.com/liberia/currency", "quote": "The USD/LRD exchange rate was unchanged at 170.0000 on October 15, 2026."}]},
+    {"defectId": "D3", "verdict": "CONFIRMED", "reason": "Present: s3 15 x 10 = 150; s4 '14 tens x 10 kilograms = 140'; LD$125 and LD$173 decomposed into hundreds. Nuance: '14 tens and 3 ones' is mathematically correct, so the defect is scope and sequencing, not error. The spec wording is fair.", "sources": []},
+    {"defectId": "D4", "verdict": "CONFIRMED", "reason": "Two of the three cited items are ill-posed. ip3a (56 bundles, 'sells half of the tens'): half of 5 tens is 2.5 tens, and the key's 25 + 6 = 31 breaks the bundle model. Assessment item 2 (54 eggs, 'sell the equivalent of the number of tens'): this reads as selling 5 eggs (49 left) or 50 eggs (4 left, the key's answer). OVERSTATED for gp2 ('sells all the tens' of 87): selling 8 tens leaves 7, and that has one defensible answer. The spec misses gp3 (see M1), which is the most clearly unanswerable item.", "sources": []},
+    {"defectId": "D5", "verdict": "CONFIRMED", "reason": "'Encourage students to consider what happens if the price changes' (s12) is teacher-facing. Other teacher-facing lines exist too ('In this section, students will independently practice...').", "sources": []},
+    {"defectId": "D6", "verdict": "DISPUTED", "reason": "The legacy assessment.problemSets has 12 entries, and every one has a non-empty answerKey, including the two end-of-lesson items (ids '1' and '2': '2 tens and 9 ones'; '4 remaining eggs'). The mechanical claim '0 of 8 assessment prompts have an answer or scoring key' does not match the structured field in the extracted legacy text. Most likely the audit counted unkeyed prompts in delivery.body (s13-s17 render without answers) and did not link them to problemSets. The real key problems are different: the PLACE_VALUE key is embedded in its studentPrompt between ANSWER markers (visible to learners); the gp3 and assessment-2 keys rest on an invented price or one arbitrary reading; and the keys are multi-paragraph prose, not scoring keys. The spec should restate D6 accordingly.", "sources": []}
+  ],
+  "missedDefects": [
+    {"id": "M1", "severity": "MAJOR", "kind": "ASSESSMENT", "where": "gp3 (Finda, 93 lappa cloths)", "legacy": "what is each cloth worth if the total cost in LD$ is proportional to quantity?", "issue": "Unanswerable: no price is given. The key invents LD$1 per cloth and then 'confirms each cloth is worth LD$1', which is circular. A lappa at LD$1 is also unrealistic."},
+    {"id": "M2", "severity": "MAJOR", "kind": "ASSESSMENT_VALIDITY", "where": "assessment.problemSets PLACE_VALUE", "legacy": "[ANSWER_START:PLACE_VALUE] ... [ANSWER_END:PLACE_VALUE] inside studentPrompt", "issue": "The answer key sits inside the learner-facing prompt."},
+    {"id": "M3", "severity": "MINOR", "kind": "GRADE_FIT", "where": "ip3b", "legacy": "91 x 2 = LD$182", "issue": "A two-digit by one-digit product above 100 used as G2 independent practice."},
+    {"id": "M4", "severity": "MINOR", "kind": "FACTUAL/CULTURAL", "where": "s7 steps 3-4", "legacy": "8 single coins, each valued at LD$1; 5 ten-dollar notes of LD$10", "issue": "Denominations need care. The CBL lists coins up to $1.00 and notes from $5. Coin World (2022) reports that the $5 and $10 notes were replaced by coins. A July 2026 report says the CBL dropped plans to mint new L$5/L$10 coins and expects to bring them back as notes. The status of LD$10 is therefore in flux, and I found no evidence that LD$1 coins are in everyday use. The spec's 'reviewer to confirm the denominations' is the right caution; record it as a legacy defect too.", "sources": [{"url": "https://cbl.org.lr/node/3220", "quote": "The banknotes are in the denomination of $5.00, $10.00, $20.00, $50.00 and $100.00 ... while the coins are in $0.05, $0.10, $0.25, $0.50 and $1.00."}, {"url": "https://www.coinworld.com/news/paper-money/liberia-issues-four-new-bank-notes-to-complete-series", "quote": "The $5 and $10 bills were replaced with coins of the same denominations"}, {"url": "https://currency-news.com/news/2026/jul/27/liberia-to-revert-to-banknotes-for-lowest-denominations/", "quote": "the Central Bank of Liberia (CBL) has dropped plans to mint new L$5 and L$10 (Liberian dollar) coins ... both denominations are expected to return as paper notes."}]},
+    {"id": "M5", "severity": "MINOR", "kind": "CONCEPTUAL", "where": "s9 error 3", "legacy": "Saying 50 and 8 as 508 ... Tens place only multiplies by 10, not hundreds.", "issue": "The correction does not explain the real misconception (writing number words digit by digit). Spec m3 covers this well in the redesign."},
+    {"id": "M6", "severity": "MINOR", "kind": "PEDAGOGY", "where": "s8", "issue": "The 'alternative method' is a T|O label on the same digits, not a different representation. The legacy has no hands-on bundling. The spec redesign fixes this (v1, v2)."},
+    {"id": "M7", "severity": "MINOR", "kind": "CONSISTENCY", "where": "s1 vs s4; numbering", "issue": "Boima is a boy shopper in s1 and 'a well-known fruit vendor' in s4. Section 5 is missing. The takeaway uses 'apples'."}
+  ],
+  "specIssues": [
+    {"id": "S1", "where": "defects D6", "issue": "This 'MECHANICAL_AUDIT_CONFIRMED' claim does not match the structured legacy data: all 12 problemSets have answerKeys. Restate it as key leakage and invalid keys (see M1, M2)."},
+    {"id": "S2", "where": "defects D4", "issue": "Remove gp2 ('sells all the tens') from the ill-posed list or explain why it counts. Add gp3."},
+    {"id": "S3", "where": "liberianContexts / teacherReview 'current denominations'", "issue": "Good caution. In light of the July 2026 report, specify a fallback: if LD$10 is not reliably in circulation as a note, the money link uses LD$20/LD$100 only for an extension or drops money altogether."},
+    {"id": "S4", "where": "extension", "issue": "Fine. Note that it previews 100, which the legacy closing says is the next lesson; coordinate with the unit sequence."}
+  ],
+  "specRating": "NEEDS_CHANGE",
+  "specRatingReason": "The redesign (bundle model, mat, 47 vs 74 reversal, tens-first comparison, mapped misconceptions, spoken/drawn response modes, transfer with scattered seeds) is pedagogically strong and fits Grade 2. The changes are small but needed for accuracy: D6 misstates the legacy data; D4 overstates one item and misses the worst one (gp3); key leakage (M2) is unrecorded.",
+  "correctionNoticeWarranted": false,
+  "correctionNoticeReason": "No. The place-value facts taught are correct. The defects are grade fit, ambiguous items and a stale exchange rate, and the redesign handles them. Tell the teacher of the scheduled class that items gp3, ip3a and assessment 2 were ill-posed, in case any learner was marked wrong on them.",
+  "notes": "The blind pass was completed before I opened the spec. I verified all decompositions in the legacy text (47, 63, 73, 86, 92, 143, 58, 64, 87, 93, 45, 32, 67, 78, 56, 91, 29, 54) as arithmetically correct, apart from the ill-posed readings noted."
+}

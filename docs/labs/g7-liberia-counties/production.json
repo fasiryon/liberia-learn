@@ -1,0 +1,9 @@
+{
+  "recordVersion":"lab-production-record/1.0.0","labId":"g7-liberia-counties","labVersion":"1.1.0","tier":"STANDARD","tierReason":"New county-selection and capital/boundary interaction built on Runtime V2.","status":"DRAFT",
+  "authority":{"governedObjective":false,"objectiveIds":["ft01-o1","ft01-o2","ft01-o3"],"note":"Proposed authoring objectives only; no academic approval, official evidence or release."},
+  "design":{"pedagogyBrief":"docs/labs/first-three-production.md","storyboard":"docs/labs/first-three-production.md","simulationSpec":"docs/labs/first-three-production.md","assetSpec":"docs/labs/first-three-production.md"},
+  "assets":[{"id":"derived-county-geometry","componentIds":["*"],"kind":"procedural","license":"CC-BY-3.0-IGO","provenance":"Pinned geographic source and original SVG hashes in definitions/firstThree/map-data.json; UNMIL/OCHA ROWCA via geoBoundaries; PCGN factual references. Asset-policy exception remains pending; no release approval."}],
+  "rounds":[],"disagreements":[],
+  "runtimeExtensions":[{"id":"first-three-manipulatives","capability":"Atomic variable patches, definition-selected tools and exact concave SVG fallback","proposal":"docs/architecture/runtime-extensions/first-three-manipulatives.md","status":"IMPLEMENTED","reviewers":[],"tests":"__tests__/interactive-labs/first-three-integration.test.ts"}],
+  "tradeoffs":[{"what":"Teaching mainland outline without interior rings","why":"Matches the authored teaching-map scope; original source topology and omitted-ring count retained."},{"what":"License policy approval pending","why":"CC-BY-3.0-IGO is retained and attributed; the role's narrower allowlist was not changed."}]
+}

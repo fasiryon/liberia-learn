@@ -1,0 +1,934 @@
+{
+ "contractVersion": "candidate-lesson-v2/1.0.0",
+ "title": "Observation and inference: how scientists know",
+ "estimatedMinutes": 50,
+ "ageBand": "JUNIOR_SECONDARY",
+ "pedagogy": {
+  "primaryStrategy": "INQUIRY",
+  "rationale": "Learners sort real statements into observations and inferences, then make their own records, moving from modelled sorting to independent recording and reasoning."
+ },
+ "prerequisiteAssumptions": [
+  "Can read a ruler or measuring cylinder to the nearest whole unit and write the unit (e.g. 7 cm).",
+  "Can name the five senses and what each one detects."
+ ],
+ "misconceptions": [
+  {
+   "id": "mc-inference-as-observation",
+   "objectiveId": "ll-g7-sci-observe-infer",
+   "description": "States an explanation as if it were seen, e.g. 'I observed that insects ate the leaves'.",
+   "response": "Ask: did you detect it with your senses or an instrument, or did you work it out? Only what you detected is an observation."
+  },
+  {
+   "id": "mc-inference-is-certain",
+   "objectiveId": "ll-g7-sci-observe-infer",
+   "description": "Thinks an observation has only one possible inference, so the first explanation must be true.",
+   "response": "List at least two inferences for the same observations, then ask what new observation would tell them apart."
+  },
+  {
+   "id": "mc-number-without-unit",
+   "objectiveId": "ll-g7-sci-record-observations",
+   "description": "Records a quantitative observation as a bare number, e.g. 'the plant is 34'.",
+   "response": "A measurement needs its unit: 34 cm and 34 mm are very different plants."
+  },
+  {
+   "id": "mc-opinion-as-observation",
+   "objectiveId": "ll-g7-sci-record-observations",
+   "description": "Records an opinion ('the soil looks bad') as a qualitative observation.",
+   "response": "Describe what the senses detect (colour, texture, smell) instead of a judgment."
+  }
+ ],
+ "scenes": [
+  {
+   "id": "intro",
+   "type": "INTRO",
+   "title": "Something happened in the school garden",
+   "purpose": "HOOK_PHENOMENON",
+   "objectiveIds": [],
+   "learnerAction": "Read what the class found and say what you think happened.",
+   "content": {
+    "body": "On Monday morning, Grade 7 find that many cassava leaves in the school garden have holes in them. There are small dark pellets on the soil under the plants, and a trail of torn leaf pieces leads to the fence.\n\nWhat happened? Before you answer, notice something: you did not *see* anything happen. You saw holes, pellets and a trail. Scientists keep these two kinds of statement apart."
+   },
+   "interaction": {
+    "kind": "NONE"
+   },
+   "tools": {
+    "requested": [],
+    "prohibited": []
+   },
+   "hints": [],
+   "misconceptionIds": [
+    "mc-inference-as-observation"
+   ],
+   "evidence": {
+    "kind": "NONE"
+   },
+   "accessibility": {
+    "textAlternative": "A description of holes in cassava leaves, dark pellets on the soil and a trail of leaf pieces in a school garden.",
+    "keyboardPath": "Use Continue to move to the next scene.",
+    "reducedMotion": "NOT_APPLICABLE"
+   },
+   "offline": {
+    "mode": "FULL_OFFLINE",
+    "note": "Text only; saved with the lesson."
+   },
+   "completion": "VIEWED"
+  },
+  {
+   "id": "objectives",
+   "type": "OBJECTIVE",
+   "title": "What you will learn",
+   "purpose": "STATE_OBJECTIVE",
+   "objectiveIds": [
+    "ll-g7-sci-observe-infer",
+    "ll-g7-sci-record-observations"
+   ],
+   "learnerAction": "Read the two goals for today.",
+   "content": {
+    "body": "Today you will learn to:\n\n1. Tell an **observation** (what your senses or an instrument detect) from an **inference** (an explanation you work out from observations).\n2. Record **qualitative** observations (described in words) and **quantitative** observations (measured, with a number and a unit).\n\nAt the end you will observe and reason on your own."
+   },
+   "interaction": {
+    "kind": "NONE"
+   },
+   "tools": {
+    "requested": [],
+    "prohibited": []
+   },
+   "hints": [],
+   "misconceptionIds": [],
+   "evidence": {
+    "kind": "NONE"
+   },
+   "accessibility": {
+    "textAlternative": "The two lesson goals: separating observations from inferences, and recording qualitative and quantitative observations.",
+    "keyboardPath": "Use Continue to move to the next scene.",
+    "reducedMotion": "NOT_APPLICABLE"
+   },
+   "offline": {
+    "mode": "FULL_OFFLINE",
+    "note": "Text only; saved with the lesson."
+   },
+   "completion": "VIEWED"
+  },
+  {
+   "id": "warm-up",
+   "type": "CHECK_UNDERSTANDING",
+   "title": "Warm-up",
+   "purpose": "ACTIVATE_PRIOR_KNOWLEDGE",
+   "objectiveIds": [
+    "ll-g7-sci-record-observations"
+   ],
+   "learnerAction": "Answer two quick questions.",
+   "content": {
+    "body": "Two quick checks on skills this lesson uses. If either is hard, tell your teacher before we go on."
+   },
+   "interaction": {
+    "kind": "SINGLE_CHOICE",
+    "items": [
+     {
+      "id": "w-ruler",
+      "prompt": "A leaf lies along a ruler from the 0 mark to the 7 mark. The ruler is in centimetres. How long is the leaf?",
+      "options": [
+       {
+        "id": "a",
+        "text": "7",
+        "feedback": "The number is right, but a length needs its unit."
+       },
+       {
+        "id": "b",
+        "text": "7 cm",
+        "feedback": "Yes. The number with its unit: 7 centimetres."
+       },
+       {
+        "id": "c",
+        "text": "8 cm",
+        "feedback": "Start counting at the 0 mark, not the 1 mark."
+       }
+      ],
+      "formativeKey": {
+       "expectedOptionId": "b"
+      }
+     },
+     {
+      "id": "w-senses",
+      "prompt": "Which sense tells you that soil is rough or smooth?",
+      "options": [
+       {
+        "id": "a",
+        "text": "Touch",
+        "feedback": "Yes. Texture is detected by touch."
+       },
+       {
+        "id": "b",
+        "text": "Smell",
+        "feedback": "Smell detects odours, not texture."
+       },
+       {
+        "id": "c",
+        "text": "Hearing",
+        "feedback": "Hearing detects sounds."
+       }
+      ],
+      "formativeKey": {
+       "expectedOptionId": "a"
+      }
+     }
+    ]
+   },
+   "tools": {
+    "requested": [],
+    "prohibited": []
+   },
+   "hints": [],
+   "misconceptionIds": [],
+   "evidence": {
+    "kind": "FORMATIVE_OBSERVATION",
+    "evidenceType": "DIAGNOSTIC",
+    "responses": [
+     {
+      "responseKey": "w-ruler",
+      "objectiveId": "ll-g7-sci-record-observations",
+      "responseType": "SELECTED_OPTION",
+      "scaffoldLevel": "FULL"
+     },
+     {
+      "responseKey": "w-senses",
+      "objectiveId": "ll-g7-sci-record-observations",
+      "responseType": "SELECTED_OPTION",
+      "scaffoldLevel": "FULL"
+     }
+    ]
+   },
+   "accessibility": {
+    "textAlternative": "Two multiple-choice warm-up questions: reading a length on a centimetre ruler, and which sense detects texture.",
+    "keyboardPath": "Tab to an option and press Space to choose it.",
+    "reducedMotion": "NOT_APPLICABLE"
+   },
+   "offline": {
+    "mode": "FULL_OFFLINE",
+    "note": "Questions and feedback are saved with the lesson."
+   },
+   "completion": "ALL_ANSWERED",
+   "pedagogy": {
+    "strategy": "RETRIEVAL_PRACTICE",
+    "representation": "VERBAL",
+    "scaffoldLevel": "FULL"
+   }
+  },
+  {
+   "id": "concept",
+   "type": "EXPLANATION",
+   "title": "Observation or inference?",
+   "purpose": "EXPLAIN_CONCEPT",
+   "objectiveIds": [
+    "ll-g7-sci-observe-infer",
+    "ll-g7-sci-record-observations"
+   ],
+   "learnerAction": "Read the definitions and the garden examples.",
+   "content": {
+    "body": "An **observation** is information you get directly through your senses or an instrument: *the leaves have holes*; *the pellets are dark and about 2 mm across*.\n\nAn **inference** is an explanation you work out from observations: *an animal ate the leaves*. Inferences can be wrong, so scientists test them with more observations.\n\nObservations are **qualitative** (described in words: colour, texture, smell) or **quantitative** (measured: a number with a unit).",
+    "keyPoints": [
+     "Test a statement: could you check it right now with your senses or an instrument? If yes, it is an observation.",
+     "Words like 'because', 'probably' and 'must have' usually signal an inference."
+    ]
+   },
+   "interaction": {
+    "kind": "NONE"
+   },
+   "tools": {
+    "requested": [],
+    "prohibited": []
+   },
+   "hints": [],
+   "misconceptionIds": [
+    "mc-inference-as-observation"
+   ],
+   "evidence": {
+    "kind": "NONE"
+   },
+   "accessibility": {
+    "textAlternative": "Definitions of observation, inference, qualitative and quantitative observation, with garden examples and a test question.",
+    "keyboardPath": "Use Continue to move to the next scene.",
+    "reducedMotion": "NOT_APPLICABLE"
+   },
+   "offline": {
+    "mode": "FULL_OFFLINE",
+    "note": "Text only; saved with the lesson."
+   },
+   "completion": "VIEWED",
+   "pedagogy": {
+    "strategy": "DIRECT_INSTRUCTION",
+    "representation": "VERBAL",
+    "scaffoldLevel": "FULL"
+   }
+  },
+  {
+   "id": "worked-sort",
+   "type": "GUIDED_EXAMPLE",
+   "title": "Worked example: the cup in the sun",
+   "purpose": "MODEL_WORKED_EXAMPLE",
+   "objectiveIds": [
+    "ll-g7-sci-observe-infer"
+   ],
+   "learnerAction": "Reveal each statement and see how it is sorted.",
+   "content": {
+    "body": "A cup of water was left on a sunny window ledge. In the afternoon a student wrote four statements. Reveal them one at a time."
+   },
+   "interaction": {
+    "kind": "DIAGRAM_REVEAL",
+    "steps": [
+     {
+      "id": "s1",
+      "label": "'The water level dropped by 2 cm.'",
+      "description": "Observation, quantitative: measured with a ruler, number and unit."
+     },
+     {
+      "id": "s2",
+      "label": "'The outside of the cup feels warm.'",
+      "description": "Observation, qualitative: detected by touch."
+     },
+     {
+      "id": "s3",
+      "label": "'The sun's heat made some water evaporate.'",
+      "description": "Inference: an explanation. It is reasonable, but nobody saw the water leave."
+     },
+     {
+      "id": "s4",
+      "label": "'Someone drank some water.'",
+      "description": "Also an inference. Two inferences fit the same observations, so we need a test, such as covering a second cup."
+     }
+    ]
+   },
+   "tools": {
+    "requested": [],
+    "prohibited": []
+   },
+   "hints": [],
+   "misconceptionIds": [
+    "mc-inference-as-observation",
+    "mc-inference-is-certain"
+   ],
+   "evidence": {
+    "kind": "NONE"
+   },
+   "accessibility": {
+    "textAlternative": "Four statements about a cup of water in the sun, each revealed with whether it is a qualitative or quantitative observation or an inference.",
+    "keyboardPath": "Press Enter to reveal each step, then Continue.",
+    "reducedMotion": "NOT_APPLICABLE"
+   },
+   "offline": {
+    "mode": "FULL_OFFLINE",
+    "note": "Steps are saved with the lesson."
+   },
+   "completion": "ALL_STEPS_REVEALED",
+   "pedagogy": {
+    "strategy": "WORKED_EXAMPLE_FADING",
+    "representation": "VERBAL",
+    "scaffoldLevel": "FULL"
+   },
+   "dependsOn": [
+    "concept"
+   ]
+  },
+  {
+   "id": "worked-measure",
+   "type": "GUIDED_EXAMPLE",
+   "title": "Worked example: from words to measurements",
+   "purpose": "MODEL_WORKED_EXAMPLE",
+   "objectiveIds": [
+    "ll-g7-sci-record-observations"
+   ],
+   "learnerAction": "Reveal how each vague record becomes a better one.",
+   "content": {
+    "body": "Good records let someone else check your work. Watch three vague records become scientific ones."
+   },
+   "interaction": {
+    "kind": "DIAGRAM_REVEAL",
+    "steps": [
+     {
+      "id": "m1",
+      "label": "'The plant is tall.'",
+      "description": "Measure it: 'The plant is 34 cm tall from the soil to the top leaf.' Number, unit and what was measured."
+     },
+     {
+      "id": "m2",
+      "label": "'The soil looks bad.'",
+      "description": "'Bad' is an opinion. Describe instead: 'The soil is pale brown, dry and cracked on top.'"
+     },
+     {
+      "id": "m3",
+      "label": "'It rained a lot.'",
+      "description": "Use the rain gauge: 'The rain gauge collected 18 mm of rain overnight.'"
+     }
+    ]
+   },
+   "tools": {
+    "requested": [],
+    "prohibited": []
+   },
+   "hints": [],
+   "misconceptionIds": [
+    "mc-number-without-unit",
+    "mc-opinion-as-observation"
+   ],
+   "evidence": {
+    "kind": "NONE"
+   },
+   "accessibility": {
+    "textAlternative": "Three vague records rewritten as measurements with units or precise descriptions: plant height, soil, and rainfall.",
+    "keyboardPath": "Press Enter to reveal each step, then Continue.",
+    "reducedMotion": "NOT_APPLICABLE"
+   },
+   "offline": {
+    "mode": "FULL_OFFLINE",
+    "note": "Steps are saved with the lesson."
+   },
+   "completion": "ALL_STEPS_REVEALED",
+   "pedagogy": {
+    "strategy": "WORKED_EXAMPLE_FADING",
+    "representation": "VERBAL",
+    "scaffoldLevel": "FULL"
+   },
+   "dependsOn": [
+    "concept"
+   ]
+  },
+  {
+   "id": "guided",
+   "type": "GUIDED_EXAMPLE",
+   "title": "Sort with a hint",
+   "purpose": "GUIDED_PRACTICE",
+   "objectiveIds": [
+    "ll-g7-sci-observe-infer",
+    "ll-g7-sci-record-observations"
+   ],
+   "learnerAction": "Sort each garden statement.",
+   "content": {
+    "body": "Back in the school garden. Use the test: could you check it right now with your senses or an instrument?"
+   },
+   "interaction": {
+    "kind": "SINGLE_CHOICE",
+    "items": [
+     {
+      "id": "g-pellets",
+      "prompt": "'The pellets on the soil are dark and about 2 mm across.' This is…",
+      "options": [
+       {
+        "id": "a",
+        "text": "an observation",
+        "feedback": "Yes. You can see the colour and measure the size."
+       },
+       {
+        "id": "b",
+        "text": "an inference",
+        "feedback": "Nothing here is explained or guessed; it can be checked by looking and measuring."
+       }
+      ],
+      "formativeKey": {
+       "expectedOptionId": "a"
+      }
+     },
+     {
+      "id": "g-caterpillars",
+      "prompt": "'Caterpillars ate the cassava leaves.' This is…",
+      "options": [
+       {
+        "id": "a",
+        "text": "an observation",
+        "feedback": "Nobody saw caterpillars eating. This explains the holes."
+       },
+       {
+        "id": "b",
+        "text": "an inference",
+        "feedback": "Yes. It explains the holes and pellets, and it could be wrong: goats or grasshoppers are also possible."
+       }
+      ],
+      "formativeKey": {
+       "expectedOptionId": "b"
+      }
+     },
+     {
+      "id": "g-height",
+      "prompt": "Which is a quantitative observation?",
+      "options": [
+       {
+        "id": "a",
+        "text": "The cassava plant is very tall.",
+        "feedback": "'Very tall' is a description, not a measurement."
+       },
+       {
+        "id": "b",
+        "text": "The cassava plant is 120 cm tall.",
+        "feedback": "Yes. A measured number with its unit."
+       },
+       {
+        "id": "c",
+        "text": "The cassava plant is 120.",
+        "feedback": "120 what? Without a unit the record cannot be checked."
+       }
+      ],
+      "formativeKey": {
+       "expectedOptionId": "b"
+      }
+     }
+    ]
+   },
+   "tools": {
+    "requested": [],
+    "prohibited": []
+   },
+   "hints": [
+    "Words like 'ate', 'because' or 'must have' often signal an inference."
+   ],
+   "misconceptionIds": [
+    "mc-inference-as-observation",
+    "mc-number-without-unit"
+   ],
+   "evidence": {
+    "kind": "FORMATIVE_OBSERVATION",
+    "evidenceType": "PRACTICE",
+    "responses": [
+     {
+      "responseKey": "g-pellets",
+      "objectiveId": "ll-g7-sci-observe-infer",
+      "responseType": "SELECTED_OPTION",
+      "scaffoldLevel": "PARTIAL"
+     },
+     {
+      "responseKey": "g-caterpillars",
+      "objectiveId": "ll-g7-sci-observe-infer",
+      "responseType": "SELECTED_OPTION",
+      "scaffoldLevel": "PARTIAL",
+      "misconceptionId": "mc-inference-as-observation"
+     },
+     {
+      "responseKey": "g-height",
+      "objectiveId": "ll-g7-sci-record-observations",
+      "responseType": "SELECTED_OPTION",
+      "scaffoldLevel": "PARTIAL",
+      "misconceptionId": "mc-number-without-unit"
+     }
+    ]
+   },
+   "accessibility": {
+    "textAlternative": "Three guided multiple-choice questions sorting garden statements into observations and inferences, and finding the quantitative one.",
+    "keyboardPath": "Tab to an option and press Space to choose it.",
+    "reducedMotion": "NOT_APPLICABLE"
+   },
+   "offline": {
+    "mode": "FULL_OFFLINE",
+    "note": "Questions and feedback are saved with the lesson."
+   },
+   "completion": "ALL_ANSWERED",
+   "pedagogy": {
+    "strategy": "GUIDED_TO_INDEPENDENT",
+    "representation": "VERBAL",
+    "scaffoldLevel": "PARTIAL"
+   }
+  },
+  {
+   "id": "more-than-one",
+   "type": "CHECK_UNDERSTANDING",
+   "title": "More than one explanation",
+   "purpose": "ADDRESS_MISCONCEPTION",
+   "objectiveIds": [
+    "ll-g7-sci-observe-infer"
+   ],
+   "learnerAction": "Choose the best next step.",
+   "content": {
+    "body": "Kebeh says: 'Caterpillars ate the leaves. That is what happened.' Her partner Yassah says goats from the next yard could have done it."
+   },
+   "interaction": {
+    "kind": "SINGLE_CHOICE",
+    "items": [
+     {
+      "id": "m-next-step",
+      "prompt": "What should the class do next?",
+      "options": [
+       {
+        "id": "a",
+        "text": "Agree with Kebeh, because she spoke first.",
+        "feedback": "Who speaks first does not decide. Both explanations fit what was seen so far."
+       },
+       {
+        "id": "b",
+        "text": "Make a new observation that could tell the explanations apart, such as checking the leaves for caterpillars and the soil for hoof prints.",
+        "feedback": "Yes. A new observation tests the inferences."
+       },
+       {
+        "id": "c",
+        "text": "Decide it cannot be known.",
+        "feedback": "It can be investigated: look for more evidence."
+       }
+      ],
+      "formativeKey": {
+       "expectedOptionId": "b"
+      }
+     }
+    ]
+   },
+   "tools": {
+    "requested": [],
+    "prohibited": []
+   },
+   "hints": [],
+   "misconceptionIds": [
+    "mc-inference-is-certain"
+   ],
+   "evidence": {
+    "kind": "FORMATIVE_OBSERVATION",
+    "evidenceType": "PRACTICE",
+    "responses": [
+     {
+      "responseKey": "m-next-step",
+      "objectiveId": "ll-g7-sci-observe-infer",
+      "responseType": "SELECTED_OPTION",
+      "scaffoldLevel": "MINIMAL",
+      "misconceptionId": "mc-inference-is-certain"
+     }
+    ]
+   },
+   "accessibility": {
+    "textAlternative": "Two learners disagree about what ate the leaves; a multiple-choice question on the best next step.",
+    "keyboardPath": "Tab to an option and press Space to choose it.",
+    "reducedMotion": "NOT_APPLICABLE"
+   },
+   "offline": {
+    "mode": "FULL_OFFLINE",
+    "note": "Question and feedback are saved with the lesson."
+   },
+   "completion": "ALL_ANSWERED",
+   "pedagogy": {
+    "strategy": "INQUIRY",
+    "representation": "VERBAL",
+    "scaffoldLevel": "MINIMAL"
+   }
+  },
+  {
+   "id": "practice",
+   "type": "PRACTICE",
+   "title": "Your turn",
+   "purpose": "INDEPENDENT_PRACTICE",
+   "objectiveIds": [
+    "ll-g7-sci-observe-infer",
+    "ll-g7-sci-record-observations"
+   ],
+   "learnerAction": "Answer three questions on your own.",
+   "content": {
+    "body": "A bucket of water stood outside overnight. In the morning there were dead leaves floating on it and the water was cloudy. Work on your own."
+   },
+   "interaction": {
+    "kind": "SINGLE_CHOICE",
+    "items": [
+     {
+      "id": "p-wind",
+      "prompt": "Which statement is an inference?",
+      "options": [
+       {
+        "id": "a",
+        "text": "The water is cloudy.",
+        "feedback": "That can be seen: an observation."
+       },
+       {
+        "id": "b",
+        "text": "Wind blew the leaves into the bucket.",
+        "feedback": "Yes. Nobody saw the wind do it; it explains the leaves."
+       },
+       {
+        "id": "c",
+        "text": "There are seven leaves floating.",
+        "feedback": "That can be counted: an observation."
+       }
+      ],
+      "formativeKey": {
+       "expectedOptionId": "b"
+      }
+     },
+     {
+      "id": "p-temp",
+      "prompt": "Which is the best quantitative observation?",
+      "options": [
+       {
+        "id": "a",
+        "text": "The water is cold.",
+        "feedback": "A description by touch: qualitative."
+       },
+       {
+        "id": "b",
+        "text": "The thermometer reads 24 °C.",
+        "feedback": "Yes. A measured value with its unit."
+       },
+       {
+        "id": "c",
+        "text": "The water is 24.",
+        "feedback": "Without a unit the record cannot be checked."
+       }
+      ],
+      "formativeKey": {
+       "expectedOptionId": "b"
+      }
+     },
+     {
+      "id": "p-opinion",
+      "prompt": "Which is a qualitative observation, not an opinion?",
+      "options": [
+       {
+        "id": "a",
+        "text": "The water looks disgusting.",
+        "feedback": "'Disgusting' is a judgment. Describe what you detect instead."
+       },
+       {
+        "id": "b",
+        "text": "The water is cloudy and smells earthy.",
+        "feedback": "Yes. Sight and smell, described without judgment."
+       }
+      ],
+      "formativeKey": {
+       "expectedOptionId": "b"
+      }
+     }
+    ]
+   },
+   "tools": {
+    "requested": [],
+    "prohibited": []
+   },
+   "hints": [],
+   "misconceptionIds": [
+    "mc-inference-as-observation",
+    "mc-opinion-as-observation",
+    "mc-number-without-unit"
+   ],
+   "evidence": {
+    "kind": "FORMATIVE_OBSERVATION",
+    "evidenceType": "PRACTICE",
+    "responses": [
+     {
+      "responseKey": "p-wind",
+      "objectiveId": "ll-g7-sci-observe-infer",
+      "responseType": "SELECTED_OPTION",
+      "scaffoldLevel": "NONE",
+      "misconceptionId": "mc-inference-as-observation"
+     },
+     {
+      "responseKey": "p-temp",
+      "objectiveId": "ll-g7-sci-record-observations",
+      "responseType": "SELECTED_OPTION",
+      "scaffoldLevel": "NONE",
+      "misconceptionId": "mc-number-without-unit"
+     },
+     {
+      "responseKey": "p-opinion",
+      "objectiveId": "ll-g7-sci-record-observations",
+      "responseType": "SELECTED_OPTION",
+      "scaffoldLevel": "NONE",
+      "misconceptionId": "mc-opinion-as-observation"
+     }
+    ]
+   },
+   "accessibility": {
+    "textAlternative": "A bucket of water left outside overnight, with three independent questions on inference, measurement and description.",
+    "keyboardPath": "Tab to an option and press Space to choose it.",
+    "reducedMotion": "NOT_APPLICABLE"
+   },
+   "offline": {
+    "mode": "FULL_OFFLINE",
+    "note": "Questions and feedback are saved with the lesson."
+   },
+   "completion": "ALL_ANSWERED",
+   "pedagogy": {
+    "strategy": "GUIDED_TO_INDEPENDENT",
+    "representation": "VERBAL",
+    "scaffoldLevel": "NONE"
+   }
+  },
+  {
+   "id": "record",
+   "type": "PRACTICE",
+   "title": "Observe and record",
+   "purpose": "INDEPENDENT_PRACTICE",
+   "objectiveIds": [
+    "ll-g7-sci-observe-infer",
+    "ll-g7-sci-record-observations"
+   ],
+   "learnerAction": "Observe an object on your desk and write your records.",
+   "content": {
+    "body": "Choose one object near you: a leaf, a stone or a pencil. Use a ruler if you have one. Write your answers in full sentences."
+   },
+   "interaction": {
+    "kind": "FREE_RESPONSE",
+    "prompts": [
+     {
+      "id": "r-observations",
+      "prompt": "Write one qualitative and one quantitative observation of your object. Include a unit.",
+      "minLength": 30
+     },
+     {
+      "id": "r-inference",
+      "prompt": "Write one inference about your object, and the observation it is based on.",
+      "minLength": 30
+     }
+    ]
+   },
+   "tools": {
+    "requested": [],
+    "prohibited": []
+   },
+   "hints": [],
+   "misconceptionIds": [
+    "mc-number-without-unit"
+   ],
+   "evidence": {
+    "kind": "FORMATIVE_OBSERVATION",
+    "evidenceType": "PRACTICE",
+    "responses": [
+     {
+      "responseKey": "r-observations",
+      "objectiveId": "ll-g7-sci-record-observations",
+      "responseType": "TEXT",
+      "scaffoldLevel": "NONE"
+     },
+     {
+      "responseKey": "r-inference",
+      "objectiveId": "ll-g7-sci-observe-infer",
+      "responseType": "TEXT",
+      "scaffoldLevel": "NONE"
+     }
+    ]
+   },
+   "accessibility": {
+    "textAlternative": "Two written-response prompts to record qualitative and quantitative observations and one inference about a nearby object.",
+    "keyboardPath": "Tab into each text box and type; Tab again to continue.",
+    "reducedMotion": "NOT_APPLICABLE",
+    "nonPointerAlternative": "Learners who cannot handle an object may observe one the teacher holds up, or a classmate describes it."
+   },
+   "offline": {
+    "mode": "FULL_OFFLINE",
+    "note": "Works with any object; answers can be written in the exercise book."
+   },
+   "completion": "ALL_RESPONSES_WRITTEN",
+   "pedagogy": {
+    "strategy": "INQUIRY",
+    "representation": "CONCRETE",
+    "scaffoldLevel": "NONE"
+   }
+  },
+  {
+   "id": "exit-ticket",
+   "type": "MASTERY_CHECK",
+   "title": "Exit ticket",
+   "purpose": "ASSESS_MASTERY",
+   "objectiveIds": [
+    "ll-g7-sci-observe-infer",
+    "ll-g7-sci-record-observations"
+   ],
+   "learnerAction": "Answer the exit-ticket questions on your own.",
+   "content": {
+    "body": "Answer each question on your own, without notes. Your teacher checks these answers; this lesson does not."
+   },
+   "interaction": {
+    "kind": "ASSESSMENT_HANDOFF",
+    "assessmentRequestId": "g7-oi-exit"
+   },
+   "fallback": {
+    "kind": "PAPER_ACTIVITY",
+    "content": "Your teacher gives you the exit-ticket questions on paper. Answer them on your own.",
+    "objectivePreserved": true
+   },
+   "tools": {
+    "requested": [],
+    "prohibited": []
+   },
+   "hints": [],
+   "misconceptionIds": [],
+   "evidence": {
+    "kind": "MASTERY_RESPONSE",
+    "evidenceType": "QUIZ",
+    "responses": [
+     {
+      "responseKey": "exit-infer",
+      "objectiveId": "ll-g7-sci-observe-infer",
+      "responseType": "ASSESSMENT_RESPONSE",
+      "scaffoldLevel": "NONE"
+     },
+     {
+      "responseKey": "exit-record",
+      "objectiveId": "ll-g7-sci-record-observations",
+      "responseType": "ASSESSMENT_RESPONSE",
+      "scaffoldLevel": "NONE"
+     }
+    ]
+   },
+   "accessibility": {
+    "textAlternative": "Exit ticket on sorting observations from inferences and writing measured observations.",
+    "keyboardPath": "Tab into each answer box and type.",
+    "reducedMotion": "NOT_APPLICABLE",
+    "nonPointerAlternative": "Without a device, the teacher reads each question aloud and the learner answers on paper."
+   },
+   "offline": {
+    "mode": "FALLBACK_REQUIRED",
+    "note": "Without a device or connection the teacher gives the same questions on paper."
+   },
+   "completion": "ALL_ANSWERED"
+  },
+  {
+   "id": "reflect",
+   "type": "REFLECTION",
+   "title": "Back to the garden",
+   "purpose": "REFLECT",
+   "objectiveIds": [
+    "ll-g7-sci-observe-infer",
+    "ll-g7-sci-record-observations"
+   ],
+   "learnerAction": "Plan one test for the garden mystery.",
+   "content": {
+    "body": "Back to the cassava leaves. Name one inference about what happened and one new observation that would test it.\n\nIn one week your teacher will ask you to sort and record observations again, without notes. Next lesson you will use your observations to plan a fair test."
+   },
+   "interaction": {
+    "kind": "NONE"
+   },
+   "tools": {
+    "requested": [],
+    "prohibited": []
+   },
+   "hints": [],
+   "misconceptionIds": [],
+   "evidence": {
+    "kind": "NONE"
+   },
+   "accessibility": {
+    "textAlternative": "A reflection asking for one inference and one test for the garden mystery, and a note that a check returns in one week.",
+    "keyboardPath": "Use Continue to finish the lesson.",
+    "reducedMotion": "NOT_APPLICABLE"
+   },
+   "offline": {
+    "mode": "FULL_OFFLINE",
+    "note": "Text only; saved with the lesson."
+   },
+   "completion": "VIEWED"
+  }
+ ],
+ "assessmentRequests": [
+  {
+   "id": "g7-oi-exit",
+   "objectiveIds": [
+    "ll-g7-sci-observe-infer",
+    "ll-g7-sci-record-observations"
+   ],
+   "interaction": "FREE_RESPONSE",
+   "evidenceType": "QUIZ",
+   "difficulty": "CORE",
+   "misconceptionIds": [
+    "mc-inference-as-observation",
+    "mc-inference-is-certain",
+    "mc-number-without-unit",
+    "mc-opinion-as-observation"
+   ],
+   "tools": {
+    "requested": [],
+    "prohibited": []
+   },
+   "offline": "FALLBACK_REQUIRED"
+  }
+ ],
+ "labProposals": []
+}

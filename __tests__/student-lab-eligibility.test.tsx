@@ -29,9 +29,9 @@ describe("student lab discovery and route parity", () => {
   });
   it("classifies the entire static inventory as uncertified/unreleased, with no fake recommendations", () => {
     const labs = listLabExperiences();
-    expect(labs).toHaveLength(16); expect(labs.filter(isCertifiedStudentLab)).toEqual([]);
+    expect(labs).toHaveLength(19); expect(labs.filter(isCertifiedStudentLab)).toEqual([]);
     expect(labs.filter((lab) => classifyLabExperience(lab) === "LEGACY_UNCERTIFIED")).toHaveLength(12);
-    expect(labs.filter((lab) => classifyLabExperience(lab) === "UNRELEASED")).toHaveLength(4);
+    expect(labs.filter((lab) => classifyLabExperience(lab) === "UNRELEASED")).toHaveLength(7);
     expect(classifyLabExperience(fromPracticalLab(lab))).toBe("ASSIGNED_ONLY");
     const model = buildLabsTab({ labs, sessions: [], pathLinks: [], grade: null });
     expect(model.library).toEqual([]); expect(model.forYou).toEqual([]);

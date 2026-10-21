@@ -25,6 +25,7 @@ import { getLabReviewScenarioSet } from "../../lib/interactive-labs/v2/review/re
 import type { FrameProbeResult } from "../../lib/interactive-labs/v2/review/framePlanEvidence";
 import type { CapabilityProfile } from "../../lib/interactive-labs/v2/types";
 
+import { createLocalReviewerToken } from "./reviewer-session.cjs";
 const arg = (name: string) => { const index = process.argv.indexOf(`--${name}`); return index >= 0 ? process.argv[index + 1] : undefined; };
 const HEAP_GROWTH_LIMIT_MB = 8;
 const CONTEXT_WARNING = /too many active webgl contexts|context lost|CONTEXT_LOST_WEBGL/i;
@@ -171,6 +172,7 @@ async function main() {
   try {
     for (const profile of profiles) {
       const context = await browser.newContext({ viewport: { width: 1366, height: 900 } });
+      await context.addCookies([{ name: "next-auth.session-token", value: await createLocalReviewerToken(baseUrl), url: baseUrl, httpOnly: true, sameSite: "Lax" }]);
       // tsx/esbuild keeps callback names with a __name wrapper; page.evaluate/waitForFunction need it defined.
       await context.addInitScript("globalThis.__name = globalThis.__name || ((fn) => fn);");
       await context.addInitScript(`try { localStorage.setItem("liberialearn_session_cookie_notice_dismissed", "true"); } catch (e) {}`);

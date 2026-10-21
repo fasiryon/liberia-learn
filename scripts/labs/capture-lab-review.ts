@@ -28,6 +28,7 @@ import { mkdirSync, writeFileSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { chromium, type Browser, type BrowserContext, type Page } from "@playwright/test";
 import sharp from "sharp";
+import { createLocalReviewerToken } from "./reviewer-session.cjs";
 import { getInteractiveLabDefinition } from "../../lib/interactive-labs/v2/registry";
 import { getLabReviewScenarioSet } from "../../lib/interactive-labs/v2/review/referenceScenarios";
 import { LAB_REVIEW_PROFILES, validateScenarioSet, type LabReviewScenario } from "../../lib/interactive-labs/v2/review/scenarios";
@@ -100,6 +101,8 @@ async function observeRenderer(page: Page, requestedProfile: CapabilityProfile) 
 
 async function newContext(browser: Browser, viewport: ViewportName, reducedMotion: boolean, video?: string): Promise<BrowserContext> {
   const context = await browser.newContext({ ...VIEWPORTS[viewport], deviceScaleFactor: 1, reducedMotion: reducedMotion ? "reduce" : "no-preference", ...(video ? { recordVideo: { dir: video, size: VIEWPORTS[viewport].viewport } } : {}) });
+  const baseUrl = arg("base-url") ?? "http://localhost:3000";
+  await context.addCookies([{ name: "next-auth.session-token", value: await createLocalReviewerToken(baseUrl), url: baseUrl, httpOnly: true, sameSite: "Lax" }]);
   // tsx/esbuild keeps function names by wrapping them in __name(); functions sent to page.evaluate need it defined.
   await context.addInitScript("globalThis.__name = globalThis.__name || ((fn) => fn);");
   await context.addInitScript(([key]) => { try { window.localStorage.setItem(key, "true"); } catch { /* storage blocked */ } }, [COOKIE_NOTICE_KEY]);

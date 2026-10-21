@@ -1,0 +1,1276 @@
+{
+  "schemaVersion": "first-three-provenance-reconciliation/1.1.0",
+  "codeCommit": "5561feebbe91bc30bd2f231f71461a98e7e8fb91",
+  "baselineEvidenceCommit": "25da765d9bcc8805c2859e6e3c4ed131c0337fd9",
+  "outputRoot": "C:\\restricted-authoring\\review-packages\\first-three-v2-61fa60b7",
+  "contract": {
+    "designation": "liberialearn-first-ten-modernization-contract/1.0.0+FT-A001",
+    "contractPin": {
+      "version": "liberialearn-first-ten-modernization-contract/1.0.0",
+      "sourceRef": "git:ac196397c:curriculum/modernization/v1/first-ten/spec.json",
+      "sha256": "648ec61a72e2ddff147444dadae75aff321866cfc660498a792b6a3b48e7a28b"
+    },
+    "amendments": [
+      {
+        "amendmentId": "FT-A001",
+        "amendmentVersion": "1.0.0",
+        "sourceRef": "git:bf8e57a2e:curriculum/modernization/v1/first-ten/amendments/FT-A001-retention-policy-status.json",
+        "sha256": "faae49b48338ead61c91d12729bfbd9569a8ae25de423957e201b700658d37aa",
+        "effectiveDesignation": "liberialearn-first-ten-modernization-contract/1.0.0+FT-A001"
+      }
+    ]
+  },
+  "draftAttempt": {
+    "root": "C:/restricted-authoring/review-packages/first-three-v2-reconciliation",
+    "status": "SUPERSEDED_UNDELIVERED_DRAFT_ATTEMPT",
+    "note": "Produced before contract P1 guards; never committed or handed off. Left untouched.",
+    "fileInventorySha256": "de27365a4ec60e2b495cacf69e23f48e237667b06e86ee3624acc5548e0188b8"
+  },
+  "sourceInputs": [
+    {
+      "contentId": "wk_mca7a_fri_p4",
+      "source": {
+        "databaseId": "cmm7xs89200e9vo70t6qdlgho",
+        "contentId": "wk_mca7a_fri_p4",
+        "revisionId": "cmss8ptit002jvo540275dfvw",
+        "revisionNumber": 1,
+        "snapshotSha256": "c7a1257c9520d452a623f474bc8c3b7987366a55e6c5a98947fdbeba1f5fb242"
+      },
+      "mediaAudit": {
+        "media": [
+          {
+            "mediaId": "ft01-v1",
+            "implementation": "GOVERNED_INTERACTION",
+            "sceneId": "s04-shape",
+            "sourceSha256": "ed80fee2779a8fcef659d5f8aeff2aee0632bfd2c0e7e0e37b4acf83c864edbc",
+            "runtime": [
+              {
+                "sceneId": "s04-shape",
+                "labId": "g7-liberia-counties",
+                "labVersion": "1.1.0"
+              }
+            ]
+          },
+          {
+            "mediaId": "ft01-v2",
+            "implementation": "GOVERNED_INTERACTION",
+            "sceneId": "s12-place-capitals",
+            "sourceSha256": "7d0f11b4b363e983f3f6ac9e77f2b5cfefe6c4aac48f6436eeba6ccf32d381ac",
+            "runtime": [
+              {
+                "sceneId": "s12-place-capitals",
+                "labId": "g7-liberia-counties",
+                "labVersion": "1.1.0"
+              },
+              {
+                "sceneId": "s12b-place-interior",
+                "labId": "g7-liberia-counties",
+                "labVersion": "1.1.0"
+              }
+            ]
+          },
+          {
+            "mediaId": "ft01-v3",
+            "implementation": "STATIC_ASSET",
+            "sceneId": "s09-capital-idea",
+            "sourceSha256": "a8c722abcbad587e6613f7915dbe65b31040faba6a41c17838d9fbc8cea50454",
+            "embeddedAsset": {
+              "mediaId": "ft01-contrast",
+              "sha256": "5203371e598413044fce3bec30566ce7578f1cd34bdb722c22315d2f225f2554"
+            }
+          }
+        ],
+        "assets": [
+          {
+            "mediaId": "ft01-county-map",
+            "sceneId": "s04-shape",
+            "sha256": "5e2abbc4fd91c9a0a73581fe443a4d8cdf7c6158ed50219660fb0ec57797252f",
+            "deliveredFile": "media/ft01-county-map-labelled.png"
+          },
+          {
+            "mediaId": "ft01-contrast",
+            "sceneId": "s09-capital-idea",
+            "sha256": "5203371e598413044fce3bec30566ce7578f1cd34bdb722c22315d2f225f2554",
+            "deliveredFile": "media/ft01-contrast-card.png"
+          },
+          {
+            "mediaId": "ft01-partial-map",
+            "sceneId": "s16-fade",
+            "sha256": "4e84b000484999fc7b4b4f9507ced30068fc673d6f550406ae77d4de8d310ebc",
+            "deliveredFile": "media/ft01-county-map-partial.png"
+          },
+          {
+            "mediaId": "ft01-practice-map",
+            "sceneId": "s17-independent",
+            "sha256": "edf57f642aca6cc437a9a3355d57c7ca61d75bdb031063611bf5c2b6b3ff0886",
+            "deliveredFile": "media/ft01-county-map-practice.png"
+          }
+        ],
+        "labScenes": [
+          {
+            "sceneId": "s12-place-capitals",
+            "runtime": "g7-liberia-counties",
+            "staticMedia": null
+          },
+          {
+            "sceneId": "s12b-place-interior",
+            "runtime": "g7-liberia-counties",
+            "staticMedia": null
+          }
+        ]
+      },
+      "oldAuthoredSha256": "5d27433348ad6d24ad1d168e1398544afb42b68bb707298737bba1f950441ccb",
+      "v2AuthoredSha256": "85e689715b83db6352d4a3bb423d9cc0419b955991af617ea25d6822b5397219",
+      "canonicalSha256": "bc5dadf2583adbf8670c219504245840c0153f38e07a30276656e122bf3a6356",
+      "verdict": "V1_SUPERSEDED_REBUILT_FROM_V2",
+      "runtimeBinding": {
+        "schemaVersion": "first-three-runtime-binding/1.1.0",
+        "authoredCanonicalSha256": "bc5dadf2583adbf8670c219504245840c0153f38e07a30276656e122bf3a6356",
+        "authoredGeneration": "V2",
+        "source": {
+          "databaseId": "cmm7xs89200e9vo70t6qdlgho",
+          "contentId": "wk_mca7a_fri_p4",
+          "revisionId": "cmss8ptit002jvo540275dfvw",
+          "revisionNumber": 1,
+          "snapshotSha256": "c7a1257c9520d452a623f474bc8c3b7987366a55e6c5a98947fdbeba1f5fb242"
+        },
+        "bindings": [
+          {
+            "mediaId": "ft01-v1",
+            "resourceId": "lesson",
+            "sceneId": "s04-shape",
+            "sourceMedia": {
+              "id": "media-ft01-county-map-labelled",
+              "version": "2.0.0",
+              "sha256": "ed80fee2779a8fcef659d5f8aeff2aee0632bfd2c0e7e0e37b4acf83c864edbc",
+              "sourceRef": "repo-path:curriculum/factory-v2/authoring/first-three/delivery-v2/media/ft01-county-map-labelled.svg"
+            },
+            "labId": "g7-liberia-counties",
+            "labVersion": "1.1.0"
+          },
+          {
+            "mediaId": "ft01-v2",
+            "resourceId": "lesson",
+            "sceneId": "s12-place-capitals",
+            "sourceMedia": {
+              "id": "media-ft01-county-map-partial",
+              "version": "2.0.0",
+              "sha256": "7d0f11b4b363e983f3f6ac9e77f2b5cfefe6c4aac48f6436eeba6ccf32d381ac",
+              "sourceRef": "repo-path:curriculum/factory-v2/authoring/first-three/delivery-v2/media/ft01-county-map-partial.svg"
+            },
+            "labId": "g7-liberia-counties",
+            "labVersion": "1.1.0"
+          },
+          {
+            "mediaId": "ft01-v2",
+            "resourceId": "lesson",
+            "sceneId": "s12b-place-interior",
+            "sourceMedia": {
+              "id": "media-ft01-county-map-partial",
+              "version": "2.0.0",
+              "sha256": "7d0f11b4b363e983f3f6ac9e77f2b5cfefe6c4aac48f6436eeba6ccf32d381ac",
+              "sourceRef": "repo-path:curriculum/factory-v2/authoring/first-three/delivery-v2/media/ft01-county-map-partial.svg"
+            },
+            "labId": "g7-liberia-counties",
+            "labVersion": "1.1.0"
+          }
+        ],
+        "derivedGeometrySha256": "a788feea7b4a01bade43c4e33389be69919c4aabd3430f0786b4e16b75134001",
+        "studentEligible": false,
+        "state": "DRAFT",
+        "approved": false,
+        "released": false,
+        "notices": [
+          "Adapted interaction to registered LAB_LAUNCH; retained original authored input, instructional content and source media hashes.",
+          "Runtime keyboard controls provide equivalent native buttons/selects/ranges; source interaction descriptions remain review evidence.",
+          "Display contours rebuilt from pinned GeoJSON, maximum simplification tolerance 0.015 world units, to correct self-crossing shorelines in the supplied SVG. Original SVG bytes and hashes preserved. Interior rings remain omitted as in the teaching SVG. Not legal boundaries.",
+          "CC-BY-3.0-IGO retained; asset-policy approval is pending."
+        ]
+      },
+      "validation": {
+        "valid": true,
+        "failures": [],
+        "missing": []
+      }
+    },
+    {
+      "contentId": "wk_mca7a_fri_p3",
+      "source": {
+        "databaseId": "cmm7xs7v000e8vo70m7n72h3t",
+        "contentId": "wk_mca7a_fri_p3",
+        "revisionId": "cmss8pt0j002fvo54be8gcrnd",
+        "revisionNumber": 1,
+        "snapshotSha256": "d218a3e17da67bcf7e774bcace1a4080f3b2e6eb9e581d00b987ee3f8025c1e8"
+      },
+      "mediaAudit": {
+        "media": [
+          {
+            "mediaId": "ft04-v1",
+            "implementation": "GOVERNED_INTERACTION",
+            "sceneId": "s05-sim",
+            "sourceSha256": "84d885a97876974a7698de3c328d703c6485c95a605c1e1174c94f71aa31c13d",
+            "runtime": [
+              {
+                "sceneId": "s05-sim",
+                "labId": "g7-water-particles",
+                "labVersion": "1.1.0"
+              }
+            ]
+          },
+          {
+            "mediaId": "ft04-v2",
+            "implementation": "STATIC_ASSET",
+            "sceneId": "s14-curve",
+            "sourceSha256": "c2a056f852b61e631863ac6cfd05064933043c46bd891911df639b0a11e4c790",
+            "embeddedAsset": {
+              "mediaId": "ft04-curve",
+              "sha256": "3d38eb1b09756ae2eac6f40b4daf1b2295dffbc8fbee89d765a1d4a3f85e5c16"
+            }
+          },
+          {
+            "mediaId": "ft04-v3",
+            "implementation": "STATIC_ASSET",
+            "sceneId": "s17-demo",
+            "sourceSha256": "4f21af4ef20b45629050acd382ccb0a37f30ac66761fe85c2fee07a77ef5d9b4",
+            "embeddedAsset": {
+              "mediaId": "ft04-demo-card",
+              "sha256": "4b25881241a5e16f565ae976d137253dda7038d9125c352060decedfd176978e"
+            }
+          }
+        ],
+        "assets": [
+          {
+            "mediaId": "ft04-particles",
+            "sceneId": "s04-model",
+            "sha256": "29f5e67ecad680e7117e37a86253430d29c9bb133f30a74301fb7fc0d411a9c2",
+            "deliveredFile": "media/ft04-particle-model.png"
+          },
+          {
+            "mediaId": "ft04-curve",
+            "sceneId": "s14-curve",
+            "sha256": "3d38eb1b09756ae2eac6f40b4daf1b2295dffbc8fbee89d765a1d4a3f85e5c16",
+            "deliveredFile": "media/ft04-heating-curve.png"
+          },
+          {
+            "mediaId": "ft04-demo-card",
+            "sceneId": "s17-demo",
+            "sha256": "4b25881241a5e16f565ae976d137253dda7038d9125c352060decedfd176978e",
+            "deliveredFile": "media/ft04-ice-demo-card.png"
+          }
+        ],
+        "labScenes": [
+          {
+            "sceneId": "s05-sim",
+            "runtime": "g7-water-particles",
+            "staticMedia": null
+          },
+          {
+            "sceneId": "s17-demo",
+            "runtime": null,
+            "staticMedia": "ft04-v3"
+          }
+        ]
+      },
+      "oldAuthoredSha256": "6c7928c46f8a7c25c0c026b67e5d066395d47094d5164b90645264288edab5f3",
+      "v2AuthoredSha256": "8c69c45266bb7bc954a89bc4c5b8ad328d127f777642f66083b3b36933e3b31d",
+      "canonicalSha256": "fb4d8f49a3b1f2841db9182205e2325897c14c414afd42c86bd04cbba72dfa80",
+      "verdict": "V1_SUPERSEDED_REBUILT_FROM_V2",
+      "runtimeBinding": {
+        "schemaVersion": "first-three-runtime-binding/1.1.0",
+        "authoredCanonicalSha256": "fb4d8f49a3b1f2841db9182205e2325897c14c414afd42c86bd04cbba72dfa80",
+        "authoredGeneration": "V2",
+        "source": {
+          "databaseId": "cmm7xs7v000e8vo70m7n72h3t",
+          "contentId": "wk_mca7a_fri_p3",
+          "revisionId": "cmss8pt0j002fvo54be8gcrnd",
+          "revisionNumber": 1,
+          "snapshotSha256": "d218a3e17da67bcf7e774bcace1a4080f3b2e6eb9e581d00b987ee3f8025c1e8"
+        },
+        "bindings": [
+          {
+            "mediaId": "ft04-v1",
+            "resourceId": "lesson",
+            "sceneId": "s05-sim",
+            "sourceMedia": {
+              "id": "media-ft04-particle-model",
+              "version": "2.0.0",
+              "sha256": "84d885a97876974a7698de3c328d703c6485c95a605c1e1174c94f71aa31c13d",
+              "sourceRef": "repo-path:curriculum/factory-v2/authoring/first-three/delivery-v2/media/ft04-particle-model.svg"
+            },
+            "labId": "g7-water-particles",
+            "labVersion": "1.1.0"
+          }
+        ],
+        "derivedGeometrySha256": null,
+        "studentEligible": false,
+        "state": "DRAFT",
+        "approved": false,
+        "released": false,
+        "notices": [
+          "Adapted interaction to registered LAB_LAUNCH; retained original authored input, instructional content and source media hashes.",
+          "Runtime keyboard controls provide equivalent native buttons/selects/ranges; source interaction descriptions remain review evidence."
+        ]
+      },
+      "validation": {
+        "valid": true,
+        "failures": [],
+        "missing": []
+      }
+    },
+    {
+      "contentId": "lesson_mca_1",
+      "source": {
+        "databaseId": "cmlrkjnow00dmvo7o4cajgquf",
+        "contentId": "lesson_mca_1",
+        "revisionId": "cmss8mpl0000bvo1wos7i1ew4",
+        "revisionNumber": 1,
+        "snapshotSha256": "872222a2435f151d6b215488ad2c3de2cc6c130f57d68fc5d7c6898ad301314f"
+      },
+      "mediaAudit": {
+        "media": [
+          {
+            "mediaId": "ft07-v1",
+            "implementation": "GOVERNED_INTERACTION",
+            "sceneId": "s09-manipulative",
+            "sourceSha256": "63f522fe7699a2a7f707de63817d1ef75672830f0083d810af4f7ee2102a4a31",
+            "runtime": [
+              {
+                "sceneId": "s09-manipulative",
+                "labId": "g7-fraction-manipulatives",
+                "labVersion": "1.1.0"
+              }
+            ]
+          },
+          {
+            "mediaId": "ft07-v2",
+            "implementation": "GOVERNED_INTERACTION",
+            "sceneId": "s17-compare-lab",
+            "sourceSha256": "413aba7ac49a54e197e92b59a0b282da46a73a7df243f074e20ae32f8d59eb88",
+            "runtime": [
+              {
+                "sceneId": "s17-compare-lab",
+                "labId": "g7-fraction-manipulatives",
+                "labVersion": "1.1.0"
+              }
+            ]
+          }
+        ],
+        "assets": [
+          {
+            "mediaId": "ft07-line",
+            "sceneId": "s06-line",
+            "sha256": "df9b69ebdb14bd5802e9ec5cff62e3bd881f04d44c50d489977fbfd7e0ce3c58",
+            "deliveredFile": "media/ft07-number-line-quarters.png"
+          },
+          {
+            "mediaId": "ft07-bars",
+            "sceneId": "s09-manipulative",
+            "sha256": "d7f8d7c79356c5b04f5cfa1ecda2be4895354e18e058e723cb7b1ec72de28605",
+            "deliveredFile": "media/ft07-fraction-bars.png"
+          },
+          {
+            "mediaId": "ft07-compare-line",
+            "sceneId": "s14-compare",
+            "sha256": "25ebf1a0396fe78f247ea2f4b68ff3a5839ac2c0e0215062da8ee865c7d3328d",
+            "deliveredFile": "media/ft07-number-line-compare.png"
+          }
+        ],
+        "labScenes": [
+          {
+            "sceneId": "s09-manipulative",
+            "runtime": "g7-fraction-manipulatives",
+            "staticMedia": null
+          },
+          {
+            "sceneId": "s17-compare-lab",
+            "runtime": "g7-fraction-manipulatives",
+            "staticMedia": null
+          }
+        ]
+      },
+      "oldAuthoredSha256": "fed1af1dadc67bfa5d17e8cc776b91fb5a8a73bd50979b3372ef196eb327416f",
+      "v2AuthoredSha256": "f446ad2396075dcf6e9edf4c1bc4fdc2b20f3bd26553be75daebb6cf925280ff",
+      "canonicalSha256": "33ec4103fcd1ec6f73d7ef91b23f0cd1fe47b1ac5414d5d2d38403c724dc7940",
+      "verdict": "V1_SUPERSEDED_REBUILT_FROM_V2",
+      "runtimeBinding": {
+        "schemaVersion": "first-three-runtime-binding/1.1.0",
+        "authoredCanonicalSha256": "33ec4103fcd1ec6f73d7ef91b23f0cd1fe47b1ac5414d5d2d38403c724dc7940",
+        "authoredGeneration": "V2",
+        "source": {
+          "databaseId": "cmlrkjnow00dmvo7o4cajgquf",
+          "contentId": "lesson_mca_1",
+          "revisionId": "cmss8mpl0000bvo1wos7i1ew4",
+          "revisionNumber": 1,
+          "snapshotSha256": "872222a2435f151d6b215488ad2c3de2cc6c130f57d68fc5d7c6898ad301314f"
+        },
+        "bindings": [
+          {
+            "mediaId": "ft07-v1",
+            "resourceId": "lesson",
+            "sceneId": "s09-manipulative",
+            "sourceMedia": {
+              "id": "media-ft07-fraction-bars",
+              "version": "2.0.0",
+              "sha256": "63f522fe7699a2a7f707de63817d1ef75672830f0083d810af4f7ee2102a4a31",
+              "sourceRef": "repo-path:curriculum/factory-v2/authoring/first-three/delivery-v2/media/ft07-fraction-bars.svg"
+            },
+            "labId": "g7-fraction-manipulatives",
+            "labVersion": "1.1.0"
+          },
+          {
+            "mediaId": "ft07-v2",
+            "resourceId": "lesson",
+            "sceneId": "s17-compare-lab",
+            "sourceMedia": {
+              "id": "media-ft07-number-line-compare",
+              "version": "2.0.0",
+              "sha256": "413aba7ac49a54e197e92b59a0b282da46a73a7df243f074e20ae32f8d59eb88",
+              "sourceRef": "repo-path:curriculum/factory-v2/authoring/first-three/delivery-v2/media/ft07-number-line-compare.svg"
+            },
+            "labId": "g7-fraction-manipulatives",
+            "labVersion": "1.1.0"
+          }
+        ],
+        "derivedGeometrySha256": null,
+        "studentEligible": false,
+        "state": "DRAFT",
+        "approved": false,
+        "released": false,
+        "notices": [
+          "Adapted interaction to registered LAB_LAUNCH; retained original authored input, instructional content and source media hashes.",
+          "Runtime keyboard controls provide equivalent native buttons/selects/ranges; source interaction descriptions remain review evidence."
+        ]
+      },
+      "validation": {
+        "valid": true,
+        "failures": [],
+        "missing": []
+      }
+    }
+  ],
+  "packages": [
+    {
+      "contentId": "lesson_mca_1",
+      "reviewPackage": "C:\\restricted-authoring\\review-packages\\first-three-v2-61fa60b7\\packages\\62d93465d5726c9a091f7f00488ede89480a1149072e63da35fd50e75c5e483a",
+      "manifest": "C:\\restricted-authoring\\review-packages\\first-three-v2-61fa60b7\\packages\\62d93465d5726c9a091f7f00488ede89480a1149072e63da35fd50e75c5e483a\\manifest.json",
+      "manifestFileSha256": "fe9180cae99f37cf156a49b26c14b7b7d25fef63c9cee977b412c2ddd6f63243",
+      "packageHash": "94320f36beb28bc7bb3b4e716661e6d5a086a15c5a8f1991b3e4df37aabc3749",
+      "candidateContentHashes": [
+        {
+          "resourceId": "lesson",
+          "contentHash": "d98c76f902bfc264b13f9967849dc15b4fc5d5da9c0616329e48f397fc251602"
+        }
+      ],
+      "resources": [
+        {
+          "resourceId": "answer-keys",
+          "version": "0.2.0",
+          "role": "ASSESSMENT_DESIGNER",
+          "contentHash": "94fa626d1a7046d61c545e6c24c5eedbf5a1692a90160cad9fd9b810f1feca43",
+          "file": "artifact-30a08353705e60b80faff3886fafc2395e764cddfa28d4ba4833af90c865a4e3.json",
+          "fileSha256": "f2ed3b990abaaf2b866d685c906843bf6885f99bdcdf503abc9bc5282b9950e1"
+        },
+        {
+          "resourceId": "classwork",
+          "version": "0.2.0",
+          "role": "LESSON_AUTHOR",
+          "contentHash": "cb537cd5d552e44e0479cd494664a9ec785cb1150e6c74074aed78e468b9f364",
+          "file": "artifact-fd48ec96874813d25ffbe0fae88e6c2e039cc958c54f5969ecdd1f322d0d5a92.json",
+          "fileSha256": "fde3fc268b84cb5565644dc21bccb53be82be79d46acb4f645a30dca3f90ec83"
+        },
+        {
+          "resourceId": "curriculum-map",
+          "version": "0.2.0",
+          "role": "CURRICULUM_ARCHITECT",
+          "contentHash": "f9c626a137ad5e45ccdd45ecebdada4c9c0f0920a1bb78807607f80aadc0701f",
+          "file": "artifact-41b33a78fc903e3ac7dcdebeb4da9789ee9bcd159cfebb714583a70980e52fed.json",
+          "fileSha256": "e6520d5d3a3e6e3d93922b29cd347e6f6579c461c5f7197a2bbe6daa42459ba4"
+        },
+        {
+          "resourceId": "diagnostic",
+          "version": "0.2.0",
+          "role": "ASSESSMENT_DESIGNER",
+          "contentHash": "29c4f9b6e342c9ca684dec3e9c8d1d616936d7aae4ac3521943b3c8973cd0d52",
+          "file": "artifact-2017022a2ba5c1662e879197ed3def4a9bfbc53fece9b84d246ba5f8e68250e9.json",
+          "fileSha256": "023ccab2eb16154fd1deedc452448ec7c8f36631d13e62176835c8f563b09ef7"
+        },
+        {
+          "resourceId": "extension",
+          "version": "0.2.0",
+          "role": "MEDIA_ACCESSIBILITY",
+          "contentHash": "81f82ce5b0680dadfbc2ca97f46d887d5e7df98c3b64bd62163f9f0f5376735d",
+          "file": "artifact-9afc2b580c39fb5812653a6708c849eafe51134a38f033494217584644f3fb10.json",
+          "fileSha256": "55e672d151a5e3f1415d6e0dc769988b77d11c2afbea07b07c57580e9fea944e"
+        },
+        {
+          "resourceId": "learning-design",
+          "version": "0.2.0",
+          "role": "LEARNING_SCIENCE_DESIGNER",
+          "contentHash": "1a2297a74f822b9729258796832fab55acd789d1fc47ba6cd66afb29f6aab900",
+          "file": "artifact-77fcdd40f9dacc9d449af9a1eb19ee75ccc93a41e3f1f264cff9522d693d4b14.json",
+          "fileSha256": "a07bfe58cb7abe4205040f6ad80e7e8b676b924c6882d85f51cc7ee0aa01ea3b"
+        },
+        {
+          "resourceId": "lesson",
+          "version": "0.2.0",
+          "role": "LESSON_AUTHOR",
+          "contentHash": "d98c76f902bfc264b13f9967849dc15b4fc5d5da9c0616329e48f397fc251602",
+          "file": "artifact-c2542be408ff91d7b3dc16ffcc251457afbbd9695e7a685b8533be47cb06775f.json",
+          "fileSha256": "24b5599aabe7db3a0acaa3568ee717059c4d22ec22f4a784d7fccb9962b98e8b"
+        },
+        {
+          "resourceId": "retention",
+          "version": "0.2.0",
+          "role": "ASSESSMENT_DESIGNER",
+          "contentHash": "81270d21efa9c0f5e0f19df1aae6b2097f1744eb718b73c58ae4b0eb1dc4bcd5",
+          "file": "artifact-350bc485126013922abefc72bff0870ff2b9a25539ec7f874cbe3a87badcd779.json",
+          "fileSha256": "3667122294addbd67aa9efb8dcf07fa045b3a6b96f4f31a2fa4dbc2e573cc275"
+        },
+        {
+          "resourceId": "rubrics",
+          "version": "0.2.0",
+          "role": "ASSESSMENT_DESIGNER",
+          "contentHash": "d9fee026adbe76c146a4290049930fe268a823561310f86db483efdeb73c5fb0",
+          "file": "artifact-eedd32dfc62f4f4f1021ca7052008e6417217c6a4dc35ebc6928eca1a3356b5b.json",
+          "fileSha256": "1c1fb32c2625d58b4a576f5d3d714d74a81ea7f52a2cb02b356a8d451395b6c2"
+        },
+        {
+          "resourceId": "summative",
+          "version": "0.2.0",
+          "role": "ASSESSMENT_DESIGNER",
+          "contentHash": "ff6126f1eae8e45689390322864fed6aff4dc5615efd06450424362bd03616db",
+          "file": "artifact-94c8067ccf00a1d09862002398c2c3430faebe1e11bb52ed003d01f2df404fd5.json",
+          "fileSha256": "1df195a8b7352f72301136b8ba9b40aae0c8e09b001ec9ad94ec7b3a38f485ac"
+        },
+        {
+          "resourceId": "transfer",
+          "version": "0.2.0",
+          "role": "ASSESSMENT_DESIGNER",
+          "contentHash": "9e776bb093c8eb30479bc56d82be65d36b174673240af481618e20714de040ae",
+          "file": "artifact-9a6587eea0bc4c7aceb48397dbbe41558fa5aa12b07c97dece9770622523eb30.json",
+          "fileSha256": "8fed50fb5469e177f5377c14d1887ba5c6f3a19210df8eae5ebe0e0e79610f60"
+        },
+        {
+          "resourceId": "worksheet",
+          "version": "0.2.0",
+          "role": "LESSON_AUTHOR",
+          "contentHash": "83f946a9f5f6d11aef6ccbac9603bee795fc29221a5ca0839703ebd52cc365a4",
+          "file": "artifact-9073c444c5f5f03660ba1146924a4fdd2d3b16afb2cca0b261539c8ae16fcc14.json",
+          "fileSha256": "66e18b1923a6347a79b6192a4cb58544d80f094e7a1e9fe5b77f9d5c160999bd"
+        }
+      ],
+      "state": "DRAFT",
+      "reviewState": "PENDING_INDEPENDENT_REVIEW",
+      "releaseBlockers": [
+        "LOCAL_EXPORT_NOT_PRODUCTION_ATTESTED",
+        "LIVE_ROW_ASSERTION_NOT_INDEPENDENTLY_PROVEN",
+        "FULL_DEPENDENCY_STORE_COVERAGE_NOT_CAPTURED",
+        "QUALIFIED_CURRICULUM_MAPPING_REVIEW_REQUIRED",
+        "EXACT_REVISION_HUMAN_REVIEW_REQUIRED",
+        "GOVERNED_RUNTIME_REQUIRED_FOR_FT07_V1_V2",
+        "MOE_MATHEMATICS_BINDING_PROPOSED_OFFICIAL_COPY_REQUIRED",
+        "DIAGNOSTIC_RUNTIME_GATE_NOT_IMPLEMENTED",
+        "MISCONCEPTION_CATALOGUE_ID_CROSSWALK_OWNER_DECISION",
+        "OD_FT07_DIVISION_OWNER_DECISION",
+        "OD_FT07_BRIDGE_OWNER_DECISION",
+        "LIBERIAN_CONTEXTS_REVIEWER_CONFIRM",
+        "QUALIFIED_SUBJECT_EXPERT_REVIEW_REQUIRED",
+        "CORRECTION_NOTICE_DECISION_REQUIRED",
+        "OBJECTIVE_MAPPING_PROPOSED:ft07-o1",
+        "OBJECTIVE_MAPPING_PROPOSED:ft07-o2",
+        "OBJECTIVE_MAPPING_PROPOSED:ft07-o3",
+        "EXPLICIT_RELEASE_AUTHORIZATION_REQUIRED",
+        "RETENTION_POLICY_APPROVAL_REQUIRED",
+        "INDEPENDENT_REVIEW_NOT_PERFORMED",
+        "SOURCE_COMPARISON_SIGNOFF_REQUIRED",
+        "CANDIDATE_ONLY_NO_RELEASE_PATH",
+        "MEDIA_LICENSE_AND_ACCESSIBILITY_REVIEW_REQUIRED",
+        "FULL_COHORT_READINESS_NOT_EVALUATED",
+        "SOURCE_EXPORT_NOT_PRODUCTION_ATTESTED",
+        "DRAFT_RUNTIME_NOT_APPROVED",
+        "ASSESSMENT_ITEM_NOT_IN_EXACTLY_ONE_TASK:ft07-a5-order",
+        "RETENTION_POLICY_INTERNAL_BASELINE_ONLY"
+      ],
+      "misconceptionCrosswalk": {
+        "ft07-m1": "mc-math-fraction-add-numerators-and-denominators",
+        "ft07-m2": "mc-math-larger-denominator-larger-fraction",
+        "ft07-m3": "mc-math-fractions-always-less-than-one",
+        "ft07-m4": "mc-math-fraction-whole-not-named",
+        "ft07-m5": "mc-math-unequal-parts-as-fractions"
+      },
+      "retentionPolicy": {
+        "policyRef": "ll-aep-001-retention-pilot@1.0.0",
+        "status": "INTERNAL_ENGINEERING_BASELINE",
+        "contract": "liberialearn-first-ten-modernization-contract/1.0.0+FT-A001",
+        "officialUse": false
+      },
+      "attribution": {
+        "taskOnly": [
+          "ft07-a4",
+          "ft07-g7-math-fractions-transfer"
+        ],
+        "itemLevel": [
+          "ft07-p1-diagnostic",
+          "ft07-p2-diagnostic",
+          "ft07-a1",
+          "ft07-a2",
+          "ft07-a3",
+          "ft07-g7-math-fractions-retention",
+          "ft07-g7-math-fractions-retention-o2",
+          "ft07-g7-math-fractions-retention-o3"
+        ],
+        "blockers": [
+          "ASSESSMENT_ITEM_NOT_IN_EXACTLY_ONE_TASK:ft07-a5-order"
+        ]
+      }
+    },
+    {
+      "contentId": "wk_mca7a_fri_p4",
+      "reviewPackage": "C:\\restricted-authoring\\review-packages\\first-three-v2-61fa60b7\\packages\\e98b1527a5869e316ad657a818669460515519801931aba593aa61d3a16cb28e",
+      "manifest": "C:\\restricted-authoring\\review-packages\\first-three-v2-61fa60b7\\packages\\e98b1527a5869e316ad657a818669460515519801931aba593aa61d3a16cb28e\\manifest.json",
+      "manifestFileSha256": "a855afb8376bda5b719751f44dbc930fc5906c29d957b16eb9f3869a7244077b",
+      "packageHash": "8c3be8668f3192cdc37e9c98d3f5f63ea444827afe314194011d717f30d17238",
+      "candidateContentHashes": [
+        {
+          "resourceId": "lesson",
+          "contentHash": "1c87d2494eb5c897fb64a71a56d3c3580b720102e7e3e3daf03dcdc8cb4bb23f"
+        }
+      ],
+      "resources": [
+        {
+          "resourceId": "answer-keys",
+          "version": "0.2.0",
+          "role": "ASSESSMENT_DESIGNER",
+          "contentHash": "826fef2f9bddc982ed93086a19c3c7be66cb7299610d5bd2c01bc33426dfc9cb",
+          "file": "artifact-30a08353705e60b80faff3886fafc2395e764cddfa28d4ba4833af90c865a4e3.json",
+          "fileSha256": "5708f7f522d9de81ad37fb03fcf78af2dc860b6aa87c8980c3b1e3aa67c688c5"
+        },
+        {
+          "resourceId": "classwork",
+          "version": "0.2.0",
+          "role": "LESSON_AUTHOR",
+          "contentHash": "4bb49b956d1a2761426793cf565a1688822182d936257951e3b33d433b18b3ea",
+          "file": "artifact-fd48ec96874813d25ffbe0fae88e6c2e039cc958c54f5969ecdd1f322d0d5a92.json",
+          "fileSha256": "95368fed0e2dcea4d16e258a6cf5669cece9304c3e0bd688e5170e329a20c968"
+        },
+        {
+          "resourceId": "curriculum-map",
+          "version": "0.2.0",
+          "role": "CURRICULUM_ARCHITECT",
+          "contentHash": "312519d50646712b2f6d649305f6ba259e2b836b4d55e3bd1dc7e9a2f89d6ab7",
+          "file": "artifact-41b33a78fc903e3ac7dcdebeb4da9789ee9bcd159cfebb714583a70980e52fed.json",
+          "fileSha256": "b670cd9895733c92fc35cd78b8c37b77e464aee4ae7ca57d3073b629d886a1aa"
+        },
+        {
+          "resourceId": "diagnostic",
+          "version": "0.2.0",
+          "role": "ASSESSMENT_DESIGNER",
+          "contentHash": "1082943f0b908d5e95fa29dddf6b746754d00dc8ed2552cefbcf9966cc335f5d",
+          "file": "artifact-2017022a2ba5c1662e879197ed3def4a9bfbc53fece9b84d246ba5f8e68250e9.json",
+          "fileSha256": "bae466148130118169f56b092dea0df57e4a1e896354916221c4660ea2bcb0ee"
+        },
+        {
+          "resourceId": "extension",
+          "version": "0.2.0",
+          "role": "MEDIA_ACCESSIBILITY",
+          "contentHash": "fadb9bf524ed210ebb0712c4e473524d58922ba3faacd4570f1b7ec4cc70376b",
+          "file": "artifact-9afc2b580c39fb5812653a6708c849eafe51134a38f033494217584644f3fb10.json",
+          "fileSha256": "0f85c81f9385450abee74fa86e80e64c284699ac9807901f0e5053814c7b696b"
+        },
+        {
+          "resourceId": "learning-design",
+          "version": "0.2.0",
+          "role": "LEARNING_SCIENCE_DESIGNER",
+          "contentHash": "c23c8584b997de168d83fdb9e3ffee1310c46b7ccb01020c4136aeaf06fb0a70",
+          "file": "artifact-77fcdd40f9dacc9d449af9a1eb19ee75ccc93a41e3f1f264cff9522d693d4b14.json",
+          "fileSha256": "736467c462bd8ceddbabda05555a5b305224c32800afcbba9bc3c2a2fe73c577"
+        },
+        {
+          "resourceId": "lesson",
+          "version": "0.2.0",
+          "role": "LESSON_AUTHOR",
+          "contentHash": "1c87d2494eb5c897fb64a71a56d3c3580b720102e7e3e3daf03dcdc8cb4bb23f",
+          "file": "artifact-c2542be408ff91d7b3dc16ffcc251457afbbd9695e7a685b8533be47cb06775f.json",
+          "fileSha256": "8712adb3466a82ffcdcbcd4a9164bf932026635a741388a98e1f746624cdc04c"
+        },
+        {
+          "resourceId": "retention",
+          "version": "0.2.0",
+          "role": "ASSESSMENT_DESIGNER",
+          "contentHash": "b63bb8313b28c732117fcbb4e42273bcf0b3286b7c53749a9a6841a84bf2f896",
+          "file": "artifact-350bc485126013922abefc72bff0870ff2b9a25539ec7f874cbe3a87badcd779.json",
+          "fileSha256": "014ca02ee5a2d8cc06e007d1f5469392233e0959cdc93d64e044cec0250d7709"
+        },
+        {
+          "resourceId": "rubrics",
+          "version": "0.2.0",
+          "role": "ASSESSMENT_DESIGNER",
+          "contentHash": "1cc24e8195488328ac44c7d9070345f12ff5a3f26a324caa528c3e9d6b38e197",
+          "file": "artifact-eedd32dfc62f4f4f1021ca7052008e6417217c6a4dc35ebc6928eca1a3356b5b.json",
+          "fileSha256": "bd5e8edb7ce1595aba37ff15d86c062be0958cdc7c3e85dd23c16738bc4dfaf3"
+        },
+        {
+          "resourceId": "summative",
+          "version": "0.2.0",
+          "role": "ASSESSMENT_DESIGNER",
+          "contentHash": "f3724963017f0f476dd6e98a79f3b2bc8051cfb18ea9991d4ddcb49f2e561a14",
+          "file": "artifact-94c8067ccf00a1d09862002398c2c3430faebe1e11bb52ed003d01f2df404fd5.json",
+          "fileSha256": "cd9d9345fbbd11b604a3c757021de8091b96fc29e6ecb0b77c5b0ced99e5fdc0"
+        },
+        {
+          "resourceId": "transfer",
+          "version": "0.2.0",
+          "role": "ASSESSMENT_DESIGNER",
+          "contentHash": "a61637c1145909dd10ebdc5511c15d0c34711359f87f5cf6c92ae7cf72fce719",
+          "file": "artifact-9a6587eea0bc4c7aceb48397dbbe41558fa5aa12b07c97dece9770622523eb30.json",
+          "fileSha256": "bce818be9c3ada4e0d5399ee43583630cc1b52ae9856f49b1e2181805cb1066a"
+        },
+        {
+          "resourceId": "worksheet",
+          "version": "0.2.0",
+          "role": "LESSON_AUTHOR",
+          "contentHash": "0aebad2f3bc021721122cc806ea34105da37f42ce352a296d4a64363ff55e338",
+          "file": "artifact-9073c444c5f5f03660ba1146924a4fdd2d3b16afb2cca0b261539c8ae16fcc14.json",
+          "fileSha256": "778f423160cfc919cd3102fe87024fb2d298a6bd57bdcb792c2267a726f850d8"
+        }
+      ],
+      "state": "DRAFT",
+      "reviewState": "PENDING_INDEPENDENT_REVIEW",
+      "releaseBlockers": [
+        "LOCAL_EXPORT_NOT_PRODUCTION_ATTESTED",
+        "LIVE_ROW_ASSERTION_NOT_INDEPENDENTLY_PROVEN",
+        "FULL_DEPENDENCY_STORE_COVERAGE_NOT_CAPTURED",
+        "QUALIFIED_CURRICULUM_MAPPING_REVIEW_REQUIRED",
+        "EXACT_REVISION_HUMAN_REVIEW_REQUIRED",
+        "SVG_ASSET_ADAPTER_REQUIRED_FOR_FT01_V1",
+        "GOVERNED_RUNTIME_REQUIRED_FOR_FT01_V1_V2",
+        "OFFICIAL_GOVERNMENT_COUNTY_CAPITAL_LIST_NOT_OBTAINED",
+        "BOMI_COASTAL_STATUS_REVIEWER_CONFIRM",
+        "SHORT_BOUNDARY_CONTACTS_REVIEWER_CONFIRM",
+        "LOCAL_GOVERNMENT_ACT_2018_TEXT_NOT_READ",
+        "TRANSFER_ROAD_LIST_REVIEWER_CONFIRM",
+        "MOE_SOCIAL_STUDIES_CROSS_REFERENCE_OWNER_CONFIRM",
+        "DIAGNOSTIC_RUNTIME_GATE_NOT_IMPLEMENTED",
+        "MISCONCEPTION_CATALOGUE_ID_CROSSWALK_OWNER_DECISION",
+        "QUALIFIED_SUBJECT_EXPERT_REVIEW_REQUIRED",
+        "CORRECTION_NOTICE_DECISION_REQUIRED",
+        "OBJECTIVE_MAPPING_PROPOSED:ft01-o1",
+        "OBJECTIVE_MAPPING_PROPOSED:ft01-o2",
+        "OBJECTIVE_MAPPING_PROPOSED:ft01-o3",
+        "EXPLICIT_RELEASE_AUTHORIZATION_REQUIRED",
+        "RETENTION_POLICY_APPROVAL_REQUIRED",
+        "INDEPENDENT_REVIEW_NOT_PERFORMED",
+        "SOURCE_COMPARISON_SIGNOFF_REQUIRED",
+        "CANDIDATE_ONLY_NO_RELEASE_PATH",
+        "MEDIA_LICENSE_AND_ACCESSIBILITY_REVIEW_REQUIRED",
+        "FULL_COHORT_READINESS_NOT_EVALUATED",
+        "SOURCE_EXPORT_NOT_PRODUCTION_ATTESTED",
+        "DRAFT_RUNTIME_NOT_APPROVED",
+        "CC_BY_3_IGO_ASSET_POLICY_REVIEW_PENDING",
+        "ASSESSMENT_PRIMARY_OBJECTIVE_NOT_IN_TASK:ft01-a3/ft01-a3-q3",
+        "ASSESSMENT_ITEM_NOT_IN_EXACTLY_ONE_TASK:ft01-a3-q5-tf",
+        "RETENTION_POLICY_INTERNAL_BASELINE_ONLY"
+      ],
+      "misconceptionCrosswalk": {
+        "ft01-m1": "mc-civics-largest-town-is-capital",
+        "ft01-m2": "mc-civics-national-capital-is-county-seat",
+        "ft01-m3": "mc-civics-list-order-is-map-adjacency",
+        "ft01-m4": "mc-civics-grand-counties-confused",
+        "ft01-m5": "mc-civics-capital-governs-county"
+      },
+      "retentionPolicy": {
+        "policyRef": "ll-aep-001-retention-pilot@1.0.0",
+        "status": "INTERNAL_ENGINEERING_BASELINE",
+        "contract": "liberialearn-first-ten-modernization-contract/1.0.0+FT-A001",
+        "officialUse": false
+      },
+      "attribution": {
+        "taskOnly": [
+          "ft01-a3",
+          "ft01-g7-civics-counties-capitals-transfer"
+        ],
+        "itemLevel": [
+          "ft01-p1-diagnostic",
+          "ft01-p2-diagnostic",
+          "ft01-a1",
+          "ft01-a2",
+          "ft01-a4",
+          "ft01-g7-civics-counties-capitals-retention",
+          "ft01-g7-civics-counties-capitals-retention-o2",
+          "ft01-g7-civics-counties-capitals-retention-o3"
+        ],
+        "blockers": [
+          "ASSESSMENT_PRIMARY_OBJECTIVE_NOT_IN_TASK:ft01-a3/ft01-a3-q3",
+          "ASSESSMENT_ITEM_NOT_IN_EXACTLY_ONE_TASK:ft01-a3-q5-tf"
+        ]
+      }
+    },
+    {
+      "contentId": "wk_mca7a_fri_p3",
+      "reviewPackage": "C:\\restricted-authoring\\review-packages\\first-three-v2-61fa60b7\\packages\\ffba52c4eb3462b73d2fdf1f8ec077c14c4294cc72ea87dd495a4aedb67178db",
+      "manifest": "C:\\restricted-authoring\\review-packages\\first-three-v2-61fa60b7\\packages\\ffba52c4eb3462b73d2fdf1f8ec077c14c4294cc72ea87dd495a4aedb67178db\\manifest.json",
+      "manifestFileSha256": "b591a7d03e25bb457f1b71492bed992ad6ddc4020e5b4c991b5df3f37e794243",
+      "packageHash": "554b6df9010129efcc6e0389da70f2bfbd6a1ff9c1d7f344c0cd9285f68c1436",
+      "candidateContentHashes": [
+        {
+          "resourceId": "lesson",
+          "contentHash": "48024b73aa91799a97a6f2591853b74cb1fc0fdcfb484629ec7be5f83945489d"
+        }
+      ],
+      "resources": [
+        {
+          "resourceId": "answer-keys",
+          "version": "0.2.0",
+          "role": "ASSESSMENT_DESIGNER",
+          "contentHash": "e8d37ceee4820a89e837fb747c206cbd25d5aaaa40d83ddf0977acd287565070",
+          "file": "artifact-30a08353705e60b80faff3886fafc2395e764cddfa28d4ba4833af90c865a4e3.json",
+          "fileSha256": "d4299c859b9018bd55a9e2c259d0b8a3f633043ed36d131a372948d729dd8aa3"
+        },
+        {
+          "resourceId": "classwork",
+          "version": "0.2.0",
+          "role": "LESSON_AUTHOR",
+          "contentHash": "60fa0b696a87632736504db7637cb7e590156cde66e953136513b0548a6e759b",
+          "file": "artifact-fd48ec96874813d25ffbe0fae88e6c2e039cc958c54f5969ecdd1f322d0d5a92.json",
+          "fileSha256": "70c24885f108767e4317e7a4a1a1104923bdec42c5f1ce5e6c5aa12fc7657ea4"
+        },
+        {
+          "resourceId": "curriculum-map",
+          "version": "0.2.0",
+          "role": "CURRICULUM_ARCHITECT",
+          "contentHash": "1687ed0efafe338a4889dc4af44eb13b9bc554250b595b217e2860d19c348cd9",
+          "file": "artifact-41b33a78fc903e3ac7dcdebeb4da9789ee9bcd159cfebb714583a70980e52fed.json",
+          "fileSha256": "8c05b01540123d37aed06a4c032e604e98b1e90873a21bec9873256e759b542c"
+        },
+        {
+          "resourceId": "diagnostic",
+          "version": "0.2.0",
+          "role": "ASSESSMENT_DESIGNER",
+          "contentHash": "9c2cd33429800642df1e6af69c18a70c51bc2de891f7dc8b8c9a0afcdbdd4d3f",
+          "file": "artifact-2017022a2ba5c1662e879197ed3def4a9bfbc53fece9b84d246ba5f8e68250e9.json",
+          "fileSha256": "986c9ecfe68da8055807321f2627bbe08bc298215e55026747ef0831acf624b2"
+        },
+        {
+          "resourceId": "extension",
+          "version": "0.2.0",
+          "role": "MEDIA_ACCESSIBILITY",
+          "contentHash": "e5c45119a415ce5dd0ef2275547b5a9e37ef3a99677d8659b2b5177abd819fc7",
+          "file": "artifact-9afc2b580c39fb5812653a6708c849eafe51134a38f033494217584644f3fb10.json",
+          "fileSha256": "3168e0b0208510a4544ffff1ec5ca454462d9e0d71e2954c2504c6688b88b003"
+        },
+        {
+          "resourceId": "learning-design",
+          "version": "0.2.0",
+          "role": "LEARNING_SCIENCE_DESIGNER",
+          "contentHash": "f198eb8a673a44ef5c8f9813c3d443bba3bf6985b266d03f86b8ad92a87746a7",
+          "file": "artifact-77fcdd40f9dacc9d449af9a1eb19ee75ccc93a41e3f1f264cff9522d693d4b14.json",
+          "fileSha256": "4d04ffdcafb3ab1b8520337c4f9dbffaddab5c945ec7d6faccf2ba20ac69c665"
+        },
+        {
+          "resourceId": "lesson",
+          "version": "0.2.0",
+          "role": "LESSON_AUTHOR",
+          "contentHash": "48024b73aa91799a97a6f2591853b74cb1fc0fdcfb484629ec7be5f83945489d",
+          "file": "artifact-c2542be408ff91d7b3dc16ffcc251457afbbd9695e7a685b8533be47cb06775f.json",
+          "fileSha256": "0a0b6e0c538f2083738674c6d238f3ff940ed21c038f12ab5d5cb3967ce6b7b3"
+        },
+        {
+          "resourceId": "retention",
+          "version": "0.2.0",
+          "role": "ASSESSMENT_DESIGNER",
+          "contentHash": "1c99b6fdf31bf5839a2dabc2fe4dc81a3a3f27268e3928053a3620c725fc286e",
+          "file": "artifact-350bc485126013922abefc72bff0870ff2b9a25539ec7f874cbe3a87badcd779.json",
+          "fileSha256": "fbba3524afc57910e3c369e018f277fb0db1f495c5bdd15cea6706eb8227b7a3"
+        },
+        {
+          "resourceId": "rubrics",
+          "version": "0.2.0",
+          "role": "ASSESSMENT_DESIGNER",
+          "contentHash": "6c37bd9ec24f58fd4c22f511ffda38a8464008337bc8f548faa0e2bc7f732150",
+          "file": "artifact-eedd32dfc62f4f4f1021ca7052008e6417217c6a4dc35ebc6928eca1a3356b5b.json",
+          "fileSha256": "81e07aefb06b933b0f58aa015a63a4b9aed641aff495deccbdaf3517f1040107"
+        },
+        {
+          "resourceId": "summative",
+          "version": "0.2.0",
+          "role": "ASSESSMENT_DESIGNER",
+          "contentHash": "127f95517a12dec7cf802962eede4f8c89459d65f36e98117425cbe00f2ea82c",
+          "file": "artifact-94c8067ccf00a1d09862002398c2c3430faebe1e11bb52ed003d01f2df404fd5.json",
+          "fileSha256": "0373ebc62e415ee179e5469d57c7be68e768fe8dc1757b92d36a57faa02eb18d"
+        },
+        {
+          "resourceId": "transfer",
+          "version": "0.2.0",
+          "role": "ASSESSMENT_DESIGNER",
+          "contentHash": "d8c1164b277caf31a92cc3567207096998ac9c10acbdc2164dfcae9bf0022611",
+          "file": "artifact-9a6587eea0bc4c7aceb48397dbbe41558fa5aa12b07c97dece9770622523eb30.json",
+          "fileSha256": "591e7d85afb88e9a2254cebaac298ab3346aa63928f094efb8e67a38f8d55233"
+        },
+        {
+          "resourceId": "worksheet",
+          "version": "0.2.0",
+          "role": "LESSON_AUTHOR",
+          "contentHash": "abc20b8a0860396e5975cee9339a8fabaa5671574628f2bbaaf58a2f6a305498",
+          "file": "artifact-9073c444c5f5f03660ba1146924a4fdd2d3b16afb2cca0b261539c8ae16fcc14.json",
+          "fileSha256": "c86ee4099c69af5291c211717e9f7afe5f4ac5fa97b31cc10561acc12072ad09"
+        }
+      ],
+      "state": "DRAFT",
+      "reviewState": "PENDING_INDEPENDENT_REVIEW",
+      "releaseBlockers": [
+        "LOCAL_EXPORT_NOT_PRODUCTION_ATTESTED",
+        "LIVE_ROW_ASSERTION_NOT_INDEPENDENTLY_PROVEN",
+        "FULL_DEPENDENCY_STORE_COVERAGE_NOT_CAPTURED",
+        "QUALIFIED_CURRICULUM_MAPPING_REVIEW_REQUIRED",
+        "EXACT_REVISION_HUMAN_REVIEW_REQUIRED",
+        "GOVERNED_RUNTIME_REQUIRED_FOR_FT04_V1",
+        "PALM_OIL_DESCRIPTION_REVIEWER_CONFIRM",
+        "COCONUT_OIL_AND_CLAY_POT_FAMILIARITY_REVIEWER_CONFIRM",
+        "ICE_DEMONSTRATION_CLASSROOM_TRIAL_REQUIRED",
+        "MOE_GENERAL_SCIENCE_BINDING_PROPOSED_OFFICIAL_COPY_REQUIRED",
+        "DIAGNOSTIC_RUNTIME_GATE_NOT_IMPLEMENTED",
+        "MISCONCEPTION_CATALOGUE_ID_CROSSWALK_OWNER_DECISION",
+        "OD_FT04_SCOPE_OWNER_DECISION",
+        "QUALIFIED_SUBJECT_EXPERT_REVIEW_REQUIRED",
+        "CORRECTION_NOTICE_DECISION_REQUIRED",
+        "OBJECTIVE_MAPPING_PROPOSED:ft04-o1",
+        "OBJECTIVE_MAPPING_PROPOSED:ft04-o2",
+        "OBJECTIVE_MAPPING_PROPOSED:ft04-o3",
+        "EXPLICIT_RELEASE_AUTHORIZATION_REQUIRED",
+        "RETENTION_POLICY_APPROVAL_REQUIRED",
+        "INDEPENDENT_REVIEW_NOT_PERFORMED",
+        "SOURCE_COMPARISON_SIGNOFF_REQUIRED",
+        "CANDIDATE_ONLY_NO_RELEASE_PATH",
+        "MEDIA_LICENSE_AND_ACCESSIBILITY_REVIEW_REQUIRED",
+        "FULL_COHORT_READINESS_NOT_EVALUATED",
+        "SOURCE_EXPORT_NOT_PRODUCTION_ATTESTED",
+        "DRAFT_RUNTIME_NOT_APPROVED",
+        "ASSESSMENT_PRIMARY_OBJECTIVE_NOT_IN_TASK:ft04-a4/ft04-a4-q5",
+        "RETENTION_POLICY_INTERNAL_BASELINE_ONLY"
+      ],
+      "misconceptionCrosswalk": {
+        "ft04-m1": "mc-science-boiling-bubbles-are-air",
+        "ft04-m2": "mc-science-temperature-rises-during-melting",
+        "ft04-m3": "mc-science-condensation-is-leakage",
+        "ft04-m4": "mc-science-evaporation-only-at-boiling-point",
+        "ft04-m5": "mc-science-particles-expand-or-melt",
+        "ft04-m6": "mc-science-melting-is-chemical-change"
+      },
+      "retentionPolicy": {
+        "policyRef": "ll-aep-001-retention-pilot@1.0.0",
+        "status": "INTERNAL_ENGINEERING_BASELINE",
+        "contract": "liberialearn-first-ten-modernization-contract/1.0.0+FT-A001",
+        "officialUse": false
+      },
+      "attribution": {
+        "taskOnly": [
+          "ft04-a4",
+          "ft04-g7-science-states-of-matter-transfer"
+        ],
+        "itemLevel": [
+          "ft04-p1-diagnostic",
+          "ft04-p2-diagnostic",
+          "ft04-a1",
+          "ft04-a2",
+          "ft04-a3",
+          "ft04-g7-science-states-of-matter-retention",
+          "ft04-g7-science-states-of-matter-retention-o1",
+          "ft04-g7-science-states-of-matter-retention-o3"
+        ],
+        "blockers": [
+          "ASSESSMENT_PRIMARY_OBJECTIVE_NOT_IN_TASK:ft04-a4/ft04-a4-q5"
+        ]
+      }
+    }
+  ],
+  "runtimeSources": {
+    "schemaVersion": "first-three-runtime-source/1.0.0",
+    "hashEncoding": "UTF8_LF",
+    "state": "DRAFT",
+    "approved": false,
+    "pins": [
+      {
+        "path": "lib/content-factory/v2/assessmentAttribution.ts",
+        "sha256": "7af6fc44bc1a3058d7a22113b86c6f795ccde1397be8e5a47906e527b544748e"
+      },
+      {
+        "path": "lib/content-factory/v2/contractPolicy.ts",
+        "sha256": "7c258fb0e8f010c9de88b6f69b85d41acd4059e854af45ada508168fd294c73f"
+      },
+      {
+        "path": "lib/content-factory/v2/contractPolicySource.ts",
+        "sha256": "bdcb58595c16a005ebe9257c6e86bd7b65b9db763fdcc3c2533355e9e9b6221a"
+      },
+      {
+        "path": "curriculum/factory-v2/authoring/first-three/stated-primary-objectives.json",
+        "sha256": "147fd295ac7f4b5eee548a4b83c600a5f0bb60fcd93839a376237db6593ff36d"
+      },
+      {
+        "path": "lib/content-factory/v2/runtimeBindings.ts",
+        "sha256": "c11b3b2bba84675ca046da09e6164a3119b550851fb40cf7338000f9e784e732"
+      },
+      {
+        "path": "lib/content-factory/v2/runtimeSource.ts",
+        "sha256": "e8baa56c642a03ccb5d60823d83f2ba9c7e8fafd6e29a9a401eddef82ffa9462"
+      },
+      {
+        "path": "lib/content-factory/v2/partialBatch.ts",
+        "sha256": "3757cd8189a782f904c3444bc9e43b72e5598814f7bbd694e797801f4525bfd8"
+      },
+      {
+        "path": "lib/content-factory/v2/authoringInput.ts",
+        "sha256": "58435d7969cd93b9e0b2f209bf54633600e855c1d0a719fffe16aa9d711331c1"
+      },
+      {
+        "path": "lib/interactive-labs/v2/definitions/firstThree/index.ts",
+        "sha256": "ec726050b0b09332237a27ace65398c080b39be17712981d293012ed391b4dfc"
+      },
+      {
+        "path": "lib/interactive-labs/v2/definitions/firstThree/models.ts",
+        "sha256": "a68afeebd203cf5b29d59cfec42d6881aa072995703df45184d7eb8433e9f9fe"
+      },
+      {
+        "path": "lib/interactive-labs/v2/definitions/firstThree/map-data.json",
+        "sha256": "1db962f100608e5aa9c4e061874cdc627b8657ee6c9f0a8fc44acbac3e519e34"
+      },
+      {
+        "path": "lib/interactive-labs/v2/registry.ts",
+        "sha256": "f188cf99fb50545e5a964cfe0e97b486ac653f7acdc7b6c249b939573f385900"
+      },
+      {
+        "path": "lib/interactive-labs/v2/fidelity/types.ts",
+        "sha256": "ca9f940f17734ab3a78604df59e9bb747080bbcc39751f41a0c899448ebbd852"
+      },
+      {
+        "path": "lib/interactive-labs/v2/fidelity/engine.ts",
+        "sha256": "7c3b83ac7f5ea43b29e412a2dfe44ede39c522d805e858f2255b867ab1057787"
+      },
+      {
+        "path": "lib/interactive-labs/v2/fidelity/boundary.ts",
+        "sha256": "e5c7ee38f414c79085c355bd4e4e30db98e0a03df75c444c8a6f4933b8a8c9a1"
+      },
+      {
+        "path": "lib/interactive-labs/v2/fidelity/semanticCues.ts",
+        "sha256": "76eb62c2551a5d5f97bd0d0918818aeb370a72a9a2734ad48aa25c3b257b4e92"
+      },
+      {
+        "path": "lib/interactive-labs/v2/fidelity/runtimeTargets.ts",
+        "sha256": "93f58e740e9681213761bf01b7338d1a7678f5c8181312728e1cf225916368be"
+      },
+      {
+        "path": "lib/interactive-labs/v2/fidelity/renderList.ts",
+        "sha256": "25fea29c0abf3538520a1cd779b7d37a34fa52e3d2ff2f944b7cddf4fa883356"
+      },
+      {
+        "path": "lib/interactive-labs/v2/fidelity/presentation.ts",
+        "sha256": "fbe8bcfd3dfd0dfdf4f0b9f47e7d59fd487054ba5dc486a0af813dbfe0268716"
+      },
+      {
+        "path": "lib/interactive-labs/v2/fidelity/lowBatch.ts",
+        "sha256": "d86b031bb472c387982c186010e4705eb0da9a508e10146170a45209a9d87ab1"
+      },
+      {
+        "path": "lib/interactive-labs/v2/fidelity/framePlan.ts",
+        "sha256": "4715b5cbfe6fc38f5c66c5d57a6e23989bba61a87859611b191fa7506399f07c"
+      },
+      {
+        "path": "components/interactive-labs/v2/LearningTools.tsx",
+        "sha256": "855adf3ac79f040330a5e755c1b0ecdb0d63d7f69f30b3f4edfdd18f27db23ca"
+      },
+      {
+        "path": "components/interactive-labs/v2/LabControlPanel.tsx",
+        "sha256": "70f63d2e9e4f6dcfec13b5ef0e6e417c2bb50d3a92205edbb4686dec8a448c14"
+      },
+      {
+        "path": "components/interactive-labs/v2/MobileSheet.tsx",
+        "sha256": "3b3c043b1b31863794b7e1957534e8444cd13b5964ce1f98973d3092156316ae"
+      },
+      {
+        "path": "components/interactive-labs/v2/InteractiveLabPlayer.tsx",
+        "sha256": "b77cd05bc382572f023864681af4685ffcc995e9c615b580e673a4fd047aea21"
+      },
+      {
+        "path": "components/interactive-labs/v2/Fallback2D.tsx",
+        "sha256": "f124780b8172f41249e6d90e73891a55f5baba793b34fd660c38c33dd8be0f02"
+      },
+      {
+        "path": "components/interactive-labs/v2/ThreeScene.tsx",
+        "sha256": "532e194c62ee6bc4d10f19f372c8ccece0af1bed98248664350dbef69f45bf4c"
+      },
+      {
+        "path": "components/interactive-labs/v2/WebGLScene.tsx",
+        "sha256": "f816f49458a270c82f42e42e6bb4b02bd285bf4a63e6a18c5a66ed5c5383b47a"
+      },
+      {
+        "path": "components/interactive-labs/v2/threeSceneSync.ts",
+        "sha256": "2290a98f2f8c5ef8d18bc81d70ba862ce2df06f9c64db43e625e21186e0d2bcd"
+      },
+      {
+        "path": "components/interactive-labs/v2/useDisplayFidelity.ts",
+        "sha256": "7afecc7cc3d2c7b620adce41f86fee1e6b03a19a5afd8fa02da2eaa614717ade"
+      }
+    ]
+  },
+  "submission": {
+    "schemaVersion": "factory-authored-subset/1.0.0",
+    "cohortManifestHash": "5b31711d9d5e1bc9fbe0f0f120e74211a22a5f3b1dc8db47a9f30397d414f96b",
+    "evidence": "LOCAL_READ_ONLY_EXPORT_UNATTESTED",
+    "scope": "PARTIAL_DRAFT_SUBMISSION",
+    "selectedIds": [
+      "wk_mca7a_fri_p4",
+      "wk_mca7a_fri_p3",
+      "lesson_mca_1"
+    ],
+    "suppliedCount": 3,
+    "notStartedCount": 7,
+    "state": "DRAFT",
+    "approved": false,
+    "published": false,
+    "released": false,
+    "fullCohortReady": false,
+    "readiness": "NOT_EVALUATED",
+    "statusScope": "THIS_SUBMISSION_ONLY",
+    "lessons": [
+      {
+        "contentId": "wk_mca7a_fri_p4",
+        "revisionId": "cmss8ptit002jvo540275dfvw",
+        "snapshotSha256": "c7a1257c9520d452a623f474bc8c3b7987366a55e6c5a98947fdbeba1f5fb242",
+        "status": "AWAITING_HUMAN_REVIEW",
+        "packageHash": "8c3be8668f3192cdc37e9c98d3f5f63ea444827afe314194011d717f30d17238"
+      },
+      {
+        "contentId": "wk_mca7a_wed_p4",
+        "revisionId": "cmss8poxb001fvo544mp6ebop",
+        "snapshotSha256": "744f8d1f1dee6ce00e1f98885e56071c698eee61b4e1a284c0884015fbfacf2e",
+        "status": "NOT_STARTED",
+        "packageHash": null
+      },
+      {
+        "contentId": "hero-civics-g7-democracy-and-representation-in-liberia",
+        "revisionId": "cmss94h3z03bzvo54hj7c7z8t",
+        "snapshotSha256": "cca4566947348a5dca3bf3fb2bf221c74eb6d81999c8b2677b367d24d52e24ef",
+        "status": "NOT_STARTED",
+        "packageHash": null
+      },
+      {
+        "contentId": "wk_mca7a_fri_p3",
+        "revisionId": "cmss8pt0j002fvo54be8gcrnd",
+        "snapshotSha256": "d218a3e17da67bcf7e774bcace1a4080f3b2e6eb9e581d00b987ee3f8025c1e8",
+        "status": "AWAITING_HUMAN_REVIEW",
+        "packageHash": "554b6df9010129efcc6e0389da70f2bfbd6a1ff9c1d7f344c0cd9285f68c1436"
+      },
+      {
+        "contentId": "science-g5-plants",
+        "revisionId": "cmss8mp3p0007vo1wqsa620v2",
+        "snapshotSha256": "ba219ffc4d788a4f81a9eeecbbad51092f43718139747a481863124cf62dd97e",
+        "status": "NOT_STARTED",
+        "packageHash": null
+      },
+      {
+        "contentId": "hero-math-g7-geometry-area-and-perimeter-of-polygons",
+        "revisionId": "cmss9493703a7vo54xxnhxmjy",
+        "snapshotSha256": "31416f12b1fc07bd6931f2ad5d1998ac7c56f971c9be7c195adf45e7a6440f5f",
+        "status": "NOT_STARTED",
+        "packageHash": null
+      },
+      {
+        "contentId": "lesson_mca_1",
+        "revisionId": "cmss8mpl0000bvo1wos7i1ew4",
+        "snapshotSha256": "872222a2435f151d6b215488ad2c3de2cc6c130f57d68fc5d7c6898ad301314f",
+        "status": "AWAITING_HUMAN_REVIEW",
+        "packageHash": "94320f36beb28bc7bb3b4e716661e6d5a086a15c5a8f1991b3e4df37aabc3749"
+      },
+      {
+        "contentId": "hero-math-g2-place-value-tens-and-ones",
+        "revisionId": "cmss946is039nvo54is10v1t4",
+        "snapshotSha256": "78437ada896122fbd9c5bd5f866888dbfcccb0d4900c4dc348bb2db5d6c53126",
+        "status": "NOT_STARTED",
+        "packageHash": null
+      },
+      {
+        "contentId": "wk_mca7a_mon_p2",
+        "revisionId": "cmss8pj580003vo54iiun3f8s",
+        "snapshotSha256": "d1767e29c8cac4c2f1bf2d25d163d77904fa86652b897ecc8c04f298c6de23f4",
+        "status": "NOT_STARTED",
+        "packageHash": null
+      },
+      {
+        "contentId": "hero-english-g7-vocabulary-in-context-reading-west-african-texts",
+        "revisionId": "cmss94i4b03c7vo54sblilk60",
+        "snapshotSha256": "d224500e4e008f502f049c142263c19cb2e4530d21be50020bd168afde6b0571",
+        "status": "NOT_STARTED",
+        "packageHash": null
+      }
+    ],
+    "events": [
+      {
+        "sequence": 1,
+        "status": "SUBSET_VALIDATED",
+        "selectedIds": [
+          "wk_mca7a_fri_p4",
+          "wk_mca7a_fri_p3",
+          "lesson_mca_1"
+        ],
+        "previousHash": null,
+        "eventHash": "f570dc47be868e820bf9e3abd1e649ce6cc9a7bc78993cd4737b0dc3aa670715"
+      },
+      {
+        "sequence": 2,
+        "status": "DRAFT_PACKAGES_PREPARED",
+        "packageHashes": [
+          "8c3be8668f3192cdc37e9c98d3f5f63ea444827afe314194011d717f30d17238",
+          "554b6df9010129efcc6e0389da70f2bfbd6a1ff9c1d7f344c0cd9285f68c1436",
+          "94320f36beb28bc7bb3b4e716661e6d5a086a15c5a8f1991b3e4df37aabc3749"
+        ],
+        "previousHash": "f570dc47be868e820bf9e3abd1e649ce6cc9a7bc78993cd4737b0dc3aa670715",
+        "eventHash": "630c94e7d12550a1af0697d5f0a761762eba3f0d2182c426a2ebaec243853cae"
+      }
+    ],
+    "manifestHash": "c3259ba4e449b50d9e44a18f69174e6335c1d32480c4332398feb4e6646e9b8a"
+  },
+  "supersededDrafts": {
+    "root": "C:\\restricted-authoring\\review-packages\\first-three-6c1d6f8e",
+    "packages": [
+      {
+        "contentId": "wk_mca7a_fri_p4",
+        "packageHash": "b336dfe094b6219c7c9d05a072bf43a5629a838c4be3c297f49ef4c51c15554b",
+        "reviewPackage": "C:\\restricted-authoring\\review-packages\\first-three-6c1d6f8e\\packages\\0a3c35134b449d753f4b4e297cafe2eecf20579f2d6f33c12ca393a90a08b642",
+        "status": "SUPERSEDED_DRAFT"
+      },
+      {
+        "contentId": "wk_mca7a_fri_p3",
+        "packageHash": "499349ce6092ff06b146f458b8572e06d18c66f8b652521538abcd659e9d96d5",
+        "reviewPackage": "C:\\restricted-authoring\\review-packages\\first-three-6c1d6f8e\\packages\\13514652a23fc7fd335f2b2b6154f44c6c4cb14ae4400d33f86ce911cbe7bff8",
+        "status": "SUPERSEDED_DRAFT"
+      },
+      {
+        "contentId": "lesson_mca_1",
+        "packageHash": "afc95277572ce3ba3c1fd6b48a6f74947a3ac4fe6f9df7a927e3f266a0184738",
+        "reviewPackage": "C:\\restricted-authoring\\review-packages\\first-three-6c1d6f8e\\packages\\da80ffe198c4b42b8a7175a6f804d010acd55b00ce359084549b631c2db80ec9",
+        "status": "SUPERSEDED_DRAFT"
+      }
+    ],
+    "allBytesAndModificationTimesUnchanged": true,
+    "fileCount": 112
+  },
+  "deterministicRerun": {
+    "receiptIdentical": true,
+    "allFileBytesAndModificationTimesUnchanged": true,
+    "fileCount": 112,
+    "fileInventorySha256": "51108fd9fbaf4e9ccc3edf722dc7ea5e8098520833d4504af401465e4f21a78a"
+  },
+  "assessmentAttribution": "ITEM_LEVEL_ONLY_FOR_SINGLE_OBJECTIVE_TASKS_NO_MASTERY_WRITES",
+  "productionWrites": false,
+  "published": false,
+  "approved": false,
+  "released": false,
+  "reviewReadiness": "DRAFT_READY_FOR_LIBRARY_MODERNIZATION_QA_NOT_ACADEMIC_APPROVAL",
+  "remainingGates": [
+    "INDEPENDENT_QA_OF_EXACT_V2_CANDIDATES",
+    "QUALIFIED_HUMAN_SUBJECT_REVIEW",
+    "ASSESSMENT_MEDIA_CHANNEL",
+    "AUTHORITATIVE_ITEM_OBJECTIVE_CONTRACT",
+    "MANUAL_ACCESSIBILITY_AND_REAL_DEVICE_QA",
+    "SOURCE_ATTESTATION_AND_RELEASE_AUTHORIZATION"
+  ]
+}

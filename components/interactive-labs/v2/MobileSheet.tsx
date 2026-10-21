@@ -26,7 +26,8 @@ export function MobileSheet({ definition, state, activeCheck, snap, onSnap, onPe
   const spec = definition.fidelity, fidelity = state.fidelity;
   const quantities = spec && fidelity ? deriveSimulation(spec, fidelity).quantities : {};
   // The explanation layer leads with what matters most now (a trip, a spill), so the peek shows its first line.
-  const latest = spec && fidelity ? explainState(spec, fidelity, definition.grade)[0] : undefined;
+  const independent = spec?.independentAssessment && (state.mode === "ASSESSMENT" || state.mode === "COMPLETE");
+  const latest = spec && fidelity && !independent ? explainState(spec, fidelity, definition.grade)[0] : undefined;
   const drag = useRef<{ y: number; dragged: boolean } | null>(null);
   const header = useRef<HTMLDivElement>(null);
   useEffect(() => {

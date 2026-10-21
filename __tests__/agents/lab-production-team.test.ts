@@ -122,7 +122,6 @@ describe("review harness cannot expose unapproved labs to learners", () => {
     expect(learnerScreen.match(/internalPreview=/g)).toHaveLength(2);
   });
 
-  it("middleware exempts the harness from login only outside production builds", () => {
-    expect(read("middleware.ts")).toContain('...(process.env.NODE_ENV !== "production" ? ["/lab-review"] : [])');
-  });
+  // Anonymous harness access was retired. The real middleware/session rejection cases now live in
+  // security/candidate-review-access.test.ts and security/local-review-session.test.ts.
 });

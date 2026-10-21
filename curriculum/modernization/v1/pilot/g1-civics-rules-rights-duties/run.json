@@ -1,0 +1,87 @@
+{
+ "pipelineVersion": "liberialearn-modernization-pipeline/1.0.0",
+ "contentId": "civics-g1-1-rules-rights-and-duties-foundations",
+ "candidateVersion": "0.1.0",
+ "attempts": 1,
+ "failures": {},
+ "stages": [
+  {
+   "stage": "RESOLVE_LEGACY",
+   "inputHash": "af0e7299cbe1c5194e038916775494484195cac9312e39b5cc1e71f788b811c9",
+   "outputHash": "af0e7299cbe1c5194e038916775494484195cac9312e39b5cc1e71f788b811c9",
+   "status": "DONE"
+  },
+  {
+   "stage": "PRESERVE_LEGACY",
+   "inputHash": "af0e7299cbe1c5194e038916775494484195cac9312e39b5cc1e71f788b811c9",
+   "outputHash": "21fef0ae62f111aee0cd15ae43c3c4e6f1cef5d9e185d4f17e47943ccce1a27e",
+   "status": "DONE"
+  },
+  {
+   "stage": "LEGACY_MATERIAL",
+   "inputHash": "57369fa210f212309f7b99a89fb4a4dd1748defbf75d559aad54482484a02429",
+   "outputHash": "ea8d3e55a2beb58a324a2a97771b9f65ae621d1e93f45a7eb8e9bc22e48a680f",
+   "status": "DONE"
+  },
+  {
+   "stage": "AUTHORITY",
+   "inputHash": "971fa3c5f953aad580853138077f3ab7e6111a54b06e75d5ccb9e0f661d2d781",
+   "outputHash": "f787603d6a6c2ba5a50479cf52b72c4bd1354a575fbe96b5be0543acbab6dd5c",
+   "status": "DONE"
+  },
+  {
+   "stage": "SPECIFICATION",
+   "inputHash": "5e6ab78daf2b7f3511e79fc7eed350321fe73198a5ee4d772da655f25095a56f",
+   "outputHash": "5e6ab78daf2b7f3511e79fc7eed350321fe73198a5ee4d772da655f25095a56f",
+   "status": "DONE"
+  },
+  {
+   "stage": "AUTHOR",
+   "inputHash": "bb68bc9d1750f777b4e7e74139ba60d7e3082834af412431c8f0a52ac5db4725",
+   "outputHash": "7d6ed254164961b7d47fa1dac84d8ba3c14985e1a429aeaf700460c01e632d66",
+   "status": "DONE"
+  },
+  {
+   "stage": "VALIDATE",
+   "inputHash": "c426bca8c72285273c8b11665340e87c79f79fe4ac3223a4bb1f6ba5bc9b11be",
+   "outputHash": "19a128cc88e55e8b47d22fd94a5fbe0713eb9e73bfb47048adf01c4b8f2715f9",
+   "status": "DONE"
+  },
+  {
+   "stage": "ASSESSMENT",
+   "inputHash": "c10045a113f5594e7c23a39954bb9bba900682d165364bdd9ed8003a1ce070c5",
+   "outputHash": "7470dc116d7c0b062af74a3d8c9ec888ea124c0b9c64ce03d3148395494eac5c",
+   "status": "DONE"
+  },
+  {
+   "stage": "PROJECTION",
+   "inputHash": "c426bca8c72285273c8b11665340e87c79f79fe4ac3223a4bb1f6ba5bc9b11be",
+   "outputHash": "aac3e2794d86ce4b372fa510cdbd748e0f4b90e3dc475a7cbb6a19d5f86896df",
+   "status": "DONE"
+  },
+  {
+   "stage": "EXPERIENCE",
+   "inputHash": "c426bca8c72285273c8b11665340e87c79f79fe4ac3223a4bb1f6ba5bc9b11be",
+   "outputHash": "30adfc7104b585513632bcddc1e3a739e7693e3fdf185e277218ac5b2f4dfbc2",
+   "status": "DONE"
+  },
+  {
+   "stage": "COMPARISON",
+   "inputHash": "0288ab821600f0e6d04509bb4a32da5c7abebf33428826e531e85c28d66aa64c",
+   "outputHash": "e1d562d4ee08ee521b645a37137204ed4faa5f6cfe498ca3f92f4700ee827c7b",
+   "status": "DONE"
+  },
+  {
+   "stage": "PACKAGE",
+   "inputHash": "5add59da6e0750c5c0ee72ef8ae1c5fddd67430923424ba9525ac603202da80b",
+   "outputHash": "5add59da6e0750c5c0ee72ef8ae1c5fddd67430923424ba9525ac603202da80b",
+   "status": "DONE"
+  },
+  {
+   "stage": "QUEUE",
+   "inputHash": "5add59da6e0750c5c0ee72ef8ae1c5fddd67430923424ba9525ac603202da80b",
+   "outputHash": "e4b589eb940d841f40d13c751289d02e02e4e7f87d8d3bf0ecb4f56060dbc039",
+   "status": "DONE"
+  }
+ ]
+}

@@ -1,0 +1,264 @@
+validate:changed source: origin/main...HEAD
+validate:changed files: 228
+  .gitignore
+  __tests__/library-modernization/audit-classification.test.ts
+  __tests__/library-modernization/committed-baseline.test.ts
+  __tests__/library-modernization/first-ten-spec.test.ts
+  __tests__/library-modernization/fixtures.ts
+  __tests__/library-modernization/ledger-diff-guard.test.ts
+  __tests__/library-modernization/ledger.test.ts
+  __tests__/library-modernization/pipeline.test.ts
+  artifacts/library-modernization-v1/browser/flow.json
+  artifacts/library-modernization-v1/browser/g1-civics-rules-rights-duties/1440/01-intro.jpg
+  artifacts/library-modernization-v1/browser/g1-civics-rules-rights-duties/1440/05-rule-example.jpg
+  artifacts/library-modernization-v1/browser/g1-civics-rules-rights-duties/1440/11-exit-ticket.jpg
+  artifacts/library-modernization-v1/browser/g1-civics-rules-rights-duties/1920/01-intro.jpg
+  artifacts/library-modernization-v1/browser/g1-civics-rules-rights-duties/1920/05-rule-example.jpg
+  artifacts/library-modernization-v1/browser/g1-civics-rules-rights-duties/1920/11-exit-ticket.jpg
+  artifacts/library-modernization-v1/browser/g1-civics-rules-rights-duties/390/01-intro.jpg
+  artifacts/library-modernization-v1/browser/g1-civics-rules-rights-duties/390/05-rule-example.jpg
+  artifacts/library-modernization-v1/browser/g1-civics-rules-rights-duties/390/11-exit-ticket.jpg
+  artifacts/library-modernization-v1/browser/g1-civics-rules-rights-duties/768/01-intro.jpg
+  artifacts/library-modernization-v1/browser/g1-civics-rules-rights-duties/768/05-rule-example.jpg
+  artifacts/library-modernization-v1/browser/g1-civics-rules-rights-duties/768/11-exit-ticket.jpg
+  artifacts/library-modernization-v1/browser/g6-literacy-cause-effect/1440/01-intro.jpg
+  artifacts/library-modernization-v1/browser/g6-literacy-cause-effect/1440/05-worked-example.jpg
+  artifacts/library-modernization-v1/browser/g6-literacy-cause-effect/1440/11-exit-ticket.jpg
+  artifacts/library-modernization-v1/browser/g6-literacy-cause-effect/1920/01-intro.jpg
+  artifacts/library-modernization-v1/browser/g6-literacy-cause-effect/1920/05-worked-example.jpg
+  artifacts/library-modernization-v1/browser/g6-literacy-cause-effect/1920/11-exit-ticket.jpg
+  artifacts/library-modernization-v1/browser/g6-literacy-cause-effect/390/01-intro.jpg
+  artifacts/library-modernization-v1/browser/g6-literacy-cause-effect/390/05-worked-example.jpg
+  artifacts/library-modernization-v1/browser/g6-literacy-cause-effect/390/11-exit-ticket.jpg
+  artifacts/library-modernization-v1/browser/g6-literacy-cause-effect/768/01-intro.jpg
+  artifacts/library-modernization-v1/browser/g6-literacy-cause-effect/768/05-worked-example.jpg
+  artifacts/library-modernization-v1/browser/g6-literacy-cause-effect/768/11-exit-ticket.jpg
+  artifacts/library-modernization-v1/browser/g6-math-decimal-place-value/1440/01-intro.jpg
+  artifacts/library-modernization-v1/browser/g6-math-decimal-place-value/1440/05-worked-example.jpg
+  artifacts/library-modernization-v1/browser/g6-math-decimal-place-value/1440/12-exit-ticket.jpg
+  artifacts/library-modernization-v1/browser/g6-math-decimal-place-value/1920/01-intro.jpg
+  artifacts/library-modernization-v1/browser/g6-math-decimal-place-value/1920/05-worked-example.jpg
+  artifacts/library-modernization-v1/browser/g6-math-decimal-place-value/1920/12-exit-ticket.jpg
+  artifacts/library-modernization-v1/browser/g6-math-decimal-place-value/390/01-intro.jpg
+  artifacts/library-modernization-v1/browser/g6-math-decimal-place-value/390/05-worked-example.jpg
+  artifacts/library-modernization-v1/browser/g6-math-decimal-place-value/390/12-exit-ticket.jpg
+  artifacts/library-modernization-v1/browser/g6-math-decimal-place-value/768/01-intro.jpg
+  artifacts/library-modernization-v1/browser/g6-math-decimal-place-value/768/05-worked-example.jpg
+  artifacts/library-modernization-v1/browser/g6-math-decimal-place-value/768/12-exit-ticket.jpg
+  artifacts/library-modernization-v1/browser/g7-science-observation-inference/1440/01-intro.jpg
+  artifacts/library-modernization-v1/browser/g7-science-observation-inference/1440/05-worked-sort.jpg
+  artifacts/library-modernization-v1/browser/g7-science-observation-inference/1440/11-exit-ticket.jpg
+  artifacts/library-modernization-v1/browser/g7-science-observation-inference/1920/01-intro.jpg
+  artifacts/library-modernization-v1/browser/g7-science-observation-inference/1920/05-worked-sort.jpg
+  artifacts/library-modernization-v1/browser/g7-science-observation-inference/1920/11-exit-ticket.jpg
+  artifacts/library-modernization-v1/browser/g7-science-observation-inference/390/01-intro.jpg
+  artifacts/library-modernization-v1/browser/g7-science-observation-inference/390/05-worked-sort.jpg
+  artifacts/library-modernization-v1/browser/g7-science-observation-inference/390/11-exit-ticket.jpg
+  artifacts/library-modernization-v1/browser/g7-science-observation-inference/768/01-intro.jpg
+  artifacts/library-modernization-v1/browser/g7-science-observation-inference/768/05-worked-sort.jpg
+  artifacts/library-modernization-v1/browser/g7-science-observation-inference/768/11-exit-ticket.jpg
+  artifacts/pr195-review/.gitignore
+  artifacts/pr195-review/affected-tests.log
+  artifacts/pr195-review/all-three-owner-validator-final.log
+  artifacts/pr195-review/assessment-boundaries.log
+  artifacts/pr195-review/browser/results.json
+  artifacts/pr195-review/changed-validation-direct.log
+  artifacts/pr195-review/contract-inventory.json
+  artifacts/pr195-review/factory-observed-module-hashes.json
+  artifacts/pr195-review/gate-timeouts.json
+  artifacts/pr195-review/ledger-diff.log
+  artifacts/pr195-review/lesson_mca_1-input-review.json
+  artifacts/pr195-review/math-diagnosis.json
+  artifacts/pr195-review/recomputed-inventory.json
+  artifacts/pr195-review/validation-receipt.json
+  artifacts/pr195-review/wk_mca7a_fri_p3-input-review.json
+  artifacts/pr195-review/wk_mca7a_fri_p4-input-review.json
+  curriculum/modernization/v1/DASHBOARD.md
+  curriculum/modernization/v1/README.md
+  curriculum/modernization/v1/audit/finding-catalogue.json
+  curriculum/modernization/v1/audit/grade-01.json
+  curriculum/modernization/v1/audit/grade-02.json
+  curriculum/modernization/v1/audit/grade-03.json
+  curriculum/modernization/v1/audit/grade-04.json
+  curriculum/modernization/v1/audit/grade-05.json
+  curriculum/modernization/v1/audit/grade-06.json
+  curriculum/modernization/v1/audit/grade-07.json
+  curriculum/modernization/v1/audit/grade-08.json
+  curriculum/modernization/v1/audit/grade-09.json
+  curriculum/modernization/v1/audit/grade-10.json
+  curriculum/modernization/v1/audit/grade-11.json
+  curriculum/modernization/v1/audit/grade-12.json
+  curriculum/modernization/v1/first-ten/advisory-reviews/ft01-g7-civics-counties-capitals.blind.json
+  curriculum/modernization/v1/first-ten/advisory-reviews/ft01-g7-civics-counties-capitals.review.json
+  curriculum/modernization/v1/first-ten/advisory-reviews/ft02-g7-civics-founding-of-liberia.blind.json
+  curriculum/modernization/v1/first-ten/advisory-reviews/ft02-g7-civics-founding-of-liberia.review.json
+  curriculum/modernization/v1/first-ten/advisory-reviews/ft03-g7-civics-democracy-representation.blind.json
+  curriculum/modernization/v1/first-ten/advisory-reviews/ft03-g7-civics-democracy-representation.review.json
+  curriculum/modernization/v1/first-ten/advisory-reviews/ft04-g7-science-states-of-matter.blind.json
+  curriculum/modernization/v1/first-ten/advisory-reviews/ft04-g7-science-states-of-matter.review.json
+  curriculum/modernization/v1/first-ten/advisory-reviews/ft05-g5-science-photosynthesis.blind.json
+  curriculum/modernization/v1/first-ten/advisory-reviews/ft05-g5-science-photosynthesis.review.json
+  curriculum/modernization/v1/first-ten/advisory-reviews/ft06-g7-math-area-perimeter.blind.json
+  curriculum/modernization/v1/first-ten/advisory-reviews/ft06-g7-math-area-perimeter.review.json
+  curriculum/modernization/v1/first-ten/advisory-reviews/ft07-g7-math-fractions.blind.json
+  curriculum/modernization/v1/first-ten/advisory-reviews/ft07-g7-math-fractions.review.json
+  curriculum/modernization/v1/first-ten/advisory-reviews/ft08-g2-math-place-value.blind.json
+  curriculum/modernization/v1/first-ten/advisory-reviews/ft08-g2-math-place-value.review.json
+  curriculum/modernization/v1/first-ten/advisory-reviews/ft09-g7-literacy-main-idea.blind.json
+  curriculum/modernization/v1/first-ten/advisory-reviews/ft09-g7-literacy-main-idea.review.json
+  curriculum/modernization/v1/first-ten/advisory-reviews/ft10-g7-english-vocabulary-in-context.blind.json
+  curriculum/modernization/v1/first-ten/advisory-reviews/ft10-g7-english-vocabulary-in-context.review.json
+  curriculum/modernization/v1/first-ten/manifest.json
+  curriculum/modernization/v1/first-ten/source-bindings.json
+  curriculum/modernization/v1/first-ten/spec.json
+  curriculum/modernization/v1/inventory.json
+  curriculum/modernization/v1/ledger/events.jsonl
+  curriculum/modernization/v1/ledger/state.json
+  curriculum/modernization/v1/pilot/g1-civics-rules-rights-duties/assessment-definitions.json
+  curriculum/modernization/v1/pilot/g1-civics-rules-rights-duties/candidate.json
+  curriculum/modernization/v1/pilot/g1-civics-rules-rights-duties/legacy-mapping-plan.json
+  curriculum/modernization/v1/pilot/g1-civics-rules-rights-duties/package/0.1.0/assessment-definitions.json
+  curriculum/modernization/v1/pilot/g1-civics-rules-rights-duties/package/0.1.0/authority.json
+  curriculum/modernization/v1/pilot/g1-civics-rules-rights-duties/package/0.1.0/automated-review.json
+  curriculum/modernization/v1/pilot/g1-civics-rules-rights-duties/package/0.1.0/candidate.json
+  curriculum/modernization/v1/pilot/g1-civics-rules-rights-duties/package/0.1.0/comparison.md
+  curriculum/modernization/v1/pilot/g1-civics-rules-rights-duties/package/0.1.0/learner-projection.json
+  curriculum/modernization/v1/pilot/g1-civics-rules-rights-duties/package/0.1.0/legacy-audit.json
+  curriculum/modernization/v1/pilot/g1-civics-rules-rights-duties/package/0.1.0/legacy-material.json
+  curriculum/modernization/v1/pilot/g1-civics-rules-rights-duties/package/0.1.0/legacy-revision.json
+  curriculum/modernization/v1/pilot/g1-civics-rules-rights-duties/package/0.1.0/manifest.json
+  curriculum/modernization/v1/pilot/g1-civics-rules-rights-duties/package/0.1.0/readiness.json
+  curriculum/modernization/v1/pilot/g1-civics-rules-rights-duties/package/0.1.0/review-package.md
+  curriculum/modernization/v1/pilot/g1-civics-rules-rights-duties/package/0.1.0/spec.json
+  curriculum/modernization/v1/pilot/g1-civics-rules-rights-duties/run.json
+  curriculum/modernization/v1/pilot/g1-civics-rules-rights-duties/spec.json
+  curriculum/modernization/v1/pilot/g6-literacy-cause-effect/assessment-definitions.json
+  curriculum/modernization/v1/pilot/g6-literacy-cause-effect/candidate.json
+  curriculum/modernization/v1/pilot/g6-literacy-cause-effect/legacy-mapping-plan.json
+  curriculum/modernization/v1/pilot/g6-literacy-cause-effect/package/0.1.0/assessment-definitions.json
+  curriculum/modernization/v1/pilot/g6-literacy-cause-effect/package/0.1.0/authority.json
+  curriculum/modernization/v1/pilot/g6-literacy-cause-effect/package/0.1.0/automated-review.json
+  curriculum/modernization/v1/pilot/g6-literacy-cause-effect/package/0.1.0/candidate.json
+  curriculum/modernization/v1/pilot/g6-literacy-cause-effect/package/0.1.0/comparison.md
+  curriculum/modernization/v1/pilot/g6-literacy-cause-effect/package/0.1.0/learner-projection.json
+  curriculum/modernization/v1/pilot/g6-literacy-cause-effect/package/0.1.0/legacy-audit.json
+  curriculum/modernization/v1/pilot/g6-literacy-cause-effect/package/0.1.0/legacy-material.json
+  curriculum/modernization/v1/pilot/g6-literacy-cause-effect/package/0.1.0/legacy-revision.json
+  curriculum/modernization/v1/pilot/g6-literacy-cause-effect/package/0.1.0/manifest.json
+  curriculum/modernization/v1/pilot/g6-literacy-cause-effect/package/0.1.0/readiness.json
+  curriculum/modernization/v1/pilot/g6-literacy-cause-effect/package/0.1.0/review-package.md
+  curriculum/modernization/v1/pilot/g6-literacy-cause-effect/package/0.1.0/spec.json
+  curriculum/modernization/v1/pilot/g6-literacy-cause-effect/run.json
+  curriculum/modernization/v1/pilot/g6-literacy-cause-effect/spec.json
+  curriculum/modernization/v1/pilot/g6-math-decimal-place-value/assessment-definitions.json
+  curriculum/modernization/v1/pilot/g6-math-decimal-place-value/candidate.json
+  curriculum/modernization/v1/pilot/g6-math-decimal-place-value/legacy-mapping-plan.json
+  curriculum/modernization/v1/pilot/g6-math-decimal-place-value/package/0.1.0/assessment-definitions.json
+  curriculum/modernization/v1/pilot/g6-math-decimal-place-value/package/0.1.0/authority.json
+  curriculum/modernization/v1/pilot/g6-math-decimal-place-value/package/0.1.0/automated-review.json
+  curriculum/modernization/v1/pilot/g6-math-decimal-place-value/package/0.1.0/candidate.json
+  curriculum/modernization/v1/pilot/g6-math-decimal-place-value/package/0.1.0/comparison.md
+  curriculum/modernization/v1/pilot/g6-math-decimal-place-value/package/0.1.0/learner-projection.json
+  curriculum/modernization/v1/pilot/g6-math-decimal-place-value/package/0.1.0/legacy-audit.json
+  curriculum/modernization/v1/pilot/g6-math-decimal-place-value/package/0.1.0/legacy-material.json
+  curriculum/modernization/v1/pilot/g6-math-decimal-place-value/package/0.1.0/legacy-revision.json
+  curriculum/modernization/v1/pilot/g6-math-decimal-place-value/package/0.1.0/manifest.json
+  curriculum/modernization/v1/pilot/g6-math-decimal-place-value/package/0.1.0/readiness.json
+  curriculum/modernization/v1/pilot/g6-math-decimal-place-value/package/0.1.0/review-package.md
+  curriculum/modernization/v1/pilot/g6-math-decimal-place-value/package/0.1.0/spec.json
+  curriculum/modernization/v1/pilot/g6-math-decimal-place-value/run.json
+  curriculum/modernization/v1/pilot/g6-math-decimal-place-value/spec.json
+  curriculum/modernization/v1/pilot/g7-science-observation-inference/assessment-definitions.json
+  curriculum/modernization/v1/pilot/g7-science-observation-inference/candidate.json
+  curriculum/modernization/v1/pilot/g7-science-observation-inference/legacy-mapping-plan.json
+  curriculum/modernization/v1/pilot/g7-science-observation-inference/package/0.1.0/assessment-definitions.json
+  curriculum/modernization/v1/pilot/g7-science-observation-inference/package/0.1.0/authority.json
+  curriculum/modernization/v1/pilot/g7-science-observation-inference/package/0.1.0/automated-review.json
+  curriculum/modernization/v1/pilot/g7-science-observation-inference/package/0.1.0/candidate.json
+  curriculum/modernization/v1/pilot/g7-science-observation-inference/package/0.1.0/comparison.md
+  curriculum/modernization/v1/pilot/g7-science-observation-inference/package/0.1.0/learner-projection.json
+  curriculum/modernization/v1/pilot/g7-science-observation-inference/package/0.1.0/legacy-audit.json
+  curriculum/modernization/v1/pilot/g7-science-observation-inference/package/0.1.0/legacy-material.json
+  curriculum/modernization/v1/pilot/g7-science-observation-inference/package/0.1.0/legacy-revision.json
+  curriculum/modernization/v1/pilot/g7-science-observation-inference/package/0.1.0/manifest.json
+  curriculum/modernization/v1/pilot/g7-science-observation-inference/package/0.1.0/readiness.json
+  curriculum/modernization/v1/pilot/g7-science-observation-inference/package/0.1.0/review-package.md
+  curriculum/modernization/v1/pilot/g7-science-observation-inference/package/0.1.0/spec.json
+  curriculum/modernization/v1/pilot/g7-science-observation-inference/run.json
+  curriculum/modernization/v1/pilot/g7-science-observation-inference/spec.json
+  curriculum/modernization/v1/tracker.json
+  curriculum/modernization/v1/waves.json
+  docs/curriculum/modernization/FIRST_TEN_ACCEPTANCE_RUBRIC_V1.md
+  docs/curriculum/modernization/FIRST_TEN_HANDOFF_V1.md
+  docs/curriculum/modernization/FIRST_TEN_MODERNIZATION_SPEC_V1.md
+  docs/curriculum/modernization/LIBRARY_MODERNIZATION_INVENTORY_V1.md
+  docs/curriculum/modernization/LIBRARY_QUALITY_BASELINE_V1.md
+  docs/curriculum/modernization/MERGEOPS_INTEGRATION_V1.md
+  docs/curriculum/modernization/MODERNIZATION_LEDGER_V1.md
+  docs/curriculum/modernization/MODERNIZATION_PIPELINE_V1.md
+  docs/curriculum/modernization/NATIONAL_SCALE_OUT_PLAN_V1.md
+  docs/curriculum/modernization/PILOT_BATCH_V1.md
+  docs/curriculum/modernization/README.md
+  docs/qa/PR195_CONTROLLED_INTEGRATION.md
+  e2e/library-modernization/capture-pilot.cjs
+  lib/curriculum/modernization/build.ts
+  lib/curriculum/modernization/classify.ts
+  lib/curriculum/modernization/extract.ts
+  lib/curriculum/modernization/firstTen.ts
+  lib/curriculum/modernization/inventory.ts
+  lib/curriculum/modernization/ledger.ts
+  lib/curriculum/modernization/ledgerDiffGuard.ts
+  lib/curriculum/modernization/legacyAudit.ts
+  lib/curriculum/modernization/moeAuthority.ts
+  lib/curriculum/modernization/pilot.ts
+  lib/curriculum/modernization/pilotPreview.ts
+  lib/curriculum/modernization/pipeline.ts
+  lib/curriculum/modernization/report.ts
+  lib/curriculum/modernization/text.ts
+  lib/learner-experience/prototypeRoute.ts
+  scripts/build-first-ten-manifest.ts
+  scripts/build-library-modernization.ts
+  scripts/check-modernization-ledger-diff.ts
+  scripts/extract-library-modernization-inventory.ts
+  scripts/qa/inspect-pr195-authored-input.ts
+  scripts/qa/probe-first-three-availability.cjs
+  scripts/qa/recompute-pr195-inventory.ts
+  scripts/qa/verify-pr195-snapshot.cjs
+  scripts/render-first-ten-modernization-spec.ts
+  scripts/run-library-modernization-pilot.ts
+  scripts/verify-first-ten-source-bindings.ts
+  scripts/verify-library-modernization-ledger.ts
+API route policy audit PASS: 91 changed routes declared; 502 legacy routes frozen at 84dd5417.
+
+ RUN  v4.1.9 C:/liberia-learn/.task-worktrees/pr195-integration-repair
+
+
+ Test Files  6 passed (6)
+      Tests  139 passed (139)
+   Start at  12:04:36
+   Duration  7.45s (transform 2.01s, setup 0ms, import 2.94s, tests 1.89s, environment 1ms)
+
+
+ RUN  v4.1.9 C:/liberia-learn/.task-worktrees/pr195-integration-repair
+
+
+ Test Files  8 passed (8)
+      Tests  187 passed (187)
+   Start at  12:05:35
+   Duration  57.27s (transform 10.64s, setup 0ms, import 16.18s, tests 24.77s, environment 10.02s)
+
+validate:changed PASS
+12:04:56 PM [vite] (ssr) warning: invalid import "../app/api/discussion/threads/[threadId]/${mod}/route". A file extension must be included in the static part of the import. For example: import(`./foo/${bar}.js`).
+  Plugin: vite:dynamic-import-vars
+  File: C:/liberia-learn/.task-worktrees/pr195-integration-repair/__tests__/sprint7.discussion.test.ts
+Warning: A vi.hoisted() call in "C:/liberia-learn/.task-worktrees/pr195-integration-repair/__tests__/curriculum-v2/governance-provenance.test.ts" is not at the top level of the module. Although it appears nested, it will be hoisted and executed before any tests run. Move it to the top level to reflect its actual execution order. This will become an error in a future version.
+See: https://vitest.dev/guide/mocking/modules#how-it-works
+Warning: A vi.hoisted() call in "C:/liberia-learn/.task-worktrees/pr195-integration-repair/__tests__/curriculum-v2/governance-provenance.test.ts" is not at the top level of the module. Although it appears nested, it will be hoisted and executed before any tests run. Move it to the top level to reflect its actual execution order. This will become an error in a future version.
+See: https://vitest.dev/guide/mocking/modules#how-it-works
+Warning: A vi.mock("@/lib/curriculum/mutations/repository") call in "C:/liberia-learn/.task-worktrees/pr195-integration-repair/__tests__/curriculum-v2/governance-provenance.test.ts" is not at the top level of the module. Although it appears nested, it will be hoisted and executed before any tests run. Move it to the top level to reflect its actual execution order. This will become an error in a future version.
+See: https://vitest.dev/guide/mocking/modules#how-it-works
+Warning: A vi.mock("@/lib/audit") call in "C:/liberia-learn/.task-worktrees/pr195-integration-repair/__tests__/curriculum-v2/governance-provenance.test.ts" is not at the top level of the module. Although it appears nested, it will be hoisted and executed before any tests run. Move it to the top level to reflect its actual execution order. This will become an error in a future version.
+See: https://vitest.dev/guide/mocking/modules#how-it-works
+Browserslist: browsers data (caniuse-lite) is 8 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme

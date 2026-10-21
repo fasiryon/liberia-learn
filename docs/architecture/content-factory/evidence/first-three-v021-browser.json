@@ -1,0 +1,146 @@
+{
+  "results": [
+    {
+      "lab": "g7-liberia-counties",
+      "version": "1.1.0",
+      "profile": "FALLBACK_2D",
+      "errors": [],
+      "checks": "PASS",
+      "accessibility": {
+        "violations": [],
+        "incomplete": [
+          {
+            "id": "aria-prohibited-attr",
+            "nodes": 1
+          },
+          {
+            "id": "color-contrast",
+            "nodes": 9
+          }
+        ],
+        "liveRegions": 5,
+        "horizontalOverflow": false,
+        "unnamedControls": 0
+      },
+      "repeatedPausedFrameIdentical": true,
+      "sha256": "28f25e1e4d0e7413d835ffcd2061cfe40a1ec706669438362512229057480c66"
+    },
+    {
+      "lab": "g7-water-particles",
+      "version": "1.1.0",
+      "profile": "FALLBACK_2D",
+      "errors": [],
+      "checks": "PASS",
+      "accessibility": {
+        "violations": [],
+        "incomplete": [
+          {
+            "id": "aria-prohibited-attr",
+            "nodes": 1
+          }
+        ],
+        "liveRegions": 5,
+        "horizontalOverflow": false,
+        "unnamedControls": 0
+      },
+      "repeatedPausedFrameIdentical": true,
+      "sha256": "c3c42cc93e36a447a0da6152c8ac0f846c6708f4697ab328669f99a3148885b8"
+    },
+    {
+      "lab": "g7-fraction-manipulatives",
+      "version": "1.1.0",
+      "profile": "FALLBACK_2D",
+      "errors": [],
+      "checks": "PASS",
+      "accessibility": {
+        "violations": [],
+        "incomplete": [
+          {
+            "id": "aria-prohibited-attr",
+            "nodes": 1
+          },
+          {
+            "id": "color-contrast",
+            "nodes": 7
+          }
+        ],
+        "liveRegions": 5,
+        "horizontalOverflow": false,
+        "unnamedControls": 0
+      },
+      "repeatedPausedFrameIdentical": true,
+      "sha256": "5d9eed16c22eab2da430ce89bec3118856ad4bc653942a824626a426305fd0dd"
+    },
+    {
+      "lab": "g7-liberia-counties",
+      "width": 390,
+      "touch": true,
+      "profile": "FALLBACK_2D",
+      "errors": [],
+      "accessibility": {
+        "violations": [],
+        "incomplete": [
+          {
+            "id": "aria-prohibited-attr",
+            "nodes": 1
+          },
+          {
+            "id": "color-contrast",
+            "nodes": 10
+          }
+        ],
+        "liveRegions": 5,
+        "horizontalOverflow": false,
+        "unnamedControls": 0
+      }
+    },
+    {
+      "lab": "g7-water-particles",
+      "width": 390,
+      "touch": true,
+      "profile": "FALLBACK_2D",
+      "errors": [],
+      "accessibility": {
+        "violations": [],
+        "incomplete": [
+          {
+            "id": "aria-prohibited-attr",
+            "nodes": 1
+          },
+          {
+            "id": "color-contrast",
+            "nodes": 2
+          }
+        ],
+        "liveRegions": 5,
+        "horizontalOverflow": false,
+        "unnamedControls": 0
+      }
+    },
+    {
+      "lab": "g7-fraction-manipulatives",
+      "width": 390,
+      "touch": true,
+      "profile": "FALLBACK_2D",
+      "errors": [],
+      "accessibility": {
+        "violations": [],
+        "incomplete": [
+          {
+            "id": "aria-prohibited-attr",
+            "nodes": 1
+          },
+          {
+            "id": "color-contrast",
+            "nodes": 5
+          }
+        ],
+        "liveRegions": 5,
+        "horizontalOverflow": false,
+        "unnamedControls": 0
+      }
+    }
+  ],
+  "scope": "Local standalone bound lab runtimes only, FALLBACK_2D at 1440 and touch 390 px. Includes F4 on lock, corrected 4/3 versus 6/5 pair, repeated paused frames, axe WCAG 2/2.1 A/AA. Does not certify full lesson flows, independent capture runs, screen readers, real devices or academic authority.",
+  "codeCommit": "05d9c0fb991fae786d4cd7ae6773510910515f54"
+}

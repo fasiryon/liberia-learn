@@ -1,0 +1,77 @@
+{
+ "moeCell": {
+  "relation": "DIRECT",
+  "moeSubject": "SCIENCE",
+  "sourceSubjects": null,
+  "objectiveCount": 56,
+  "note": "MOE SCIENCE grade 7."
+ },
+ "legacyClaims": [
+  {
+   "code": "LR-SCI-G7_9-01",
+   "description": "Explain chemical reactions, acids, bases, and the pH scale",
+   "method": "keyword",
+   "confidence": "low",
+   "kind": "LIBERIALEARN_INVENTED_CODE",
+   "resolvedObjectiveId": null
+  }
+ ],
+ "lexicalLeads": [
+  {
+   "objectiveId": "moe-general-science-g7-s1-p1-scientific-knowledge-measurement-and-non-living--obj1",
+   "text": "Discover Science and Scientific knowledge",
+   "score": 0.213,
+   "pages": [
+    2
+   ],
+   "status": "LEXICAL_LEAD_UNREVIEWED"
+  },
+  {
+   "objectiveId": "moe-general-science-g7-s2-p5-earth-and-space-science-obj1",
+   "text": "Distinguish between Earth and Space Science",
+   "score": 0.135,
+   "pages": [
+    15
+   ],
+   "status": "LEXICAL_LEAD_UNREVIEWED"
+  },
+  {
+   "objectiveId": "moe-general-science-g7-s2-p5-earth-and-space-science-obj3",
+   "text": "Name and describe the spheres of the earth",
+   "score": 0.135,
+   "pages": [
+    15
+   ],
+   "status": "LEXICAL_LEAD_UNREVIEWED"
+  }
+ ],
+ "proposedObjectiveRelationships": [
+  {
+   "objectiveId": "moe-general-science-g7-s1-p1-scientific-knowledge-measurement-and-non-living--obj2",
+   "layer": "NATIONAL_FOUNDATION",
+   "status": "STRUCTURED_ID_PROPOSED_UNREVIEWED",
+   "sourcePages": [
+    2
+   ],
+   "note": "MOE Grade 7 General Science: 'Organize some simple methods of acquiring scientific knowledge'. Observation and inference are proposed as the first such method.",
+   "resolvesInStructuredSource": true
+  },
+  {
+   "objectiveId": "moe-general-science-g7-s1-p1-scientific-knowledge-measurement-and-non-living--obj4",
+   "layer": "NATIONAL_FOUNDATION",
+   "status": "STRUCTURED_ID_PROPOSED_UNREVIEWED",
+   "sourcePages": [
+    2
+   ],
+   "note": "MOE Grade 7: 'Demonstrate the use of the two systems of measurement in solving problems'. This lesson uses metric units only; the two-systems comparison stays with that MOE lesson.",
+   "resolvesInStructuredSource": true
+  }
+ ],
+ "unresolvedProposedIds": [],
+ "examinations": [
+  "LJHSCE"
+ ],
+ "waecEvidence": "KEYWORD_TAG_UNVERIFIED_SOURCE",
+ "status": "PROPOSED_UNREVIEWED",
+ "note": "MOE source provenance is not MOE approval. Every relationship here is a proposal that a curriculum owner must accept; nothing is bound and no MOE or WAEC approval is claimed."
+}

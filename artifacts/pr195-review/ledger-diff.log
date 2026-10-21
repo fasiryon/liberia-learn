@@ -1,0 +1,17 @@
+{
+  "baseRef": "origin/main",
+  "verdict": "AUTOMATED_APPEND_ONLY",
+  "appended": 3702,
+  "appendedByType": {
+    "LIVE_OBSERVED": 1105,
+    "AUDIT_RECORDED": 1114,
+    "TRACK_PROPOSED": 1114,
+    "HOLD_PLACED": 353,
+    "CANDIDATE_REGISTERED": 6,
+    "REVIEW_REQUESTED": 6,
+    "WORK_STARTED": 4
+  },
+  "escalations": [],
+  "problems": [],
+  "mayAutoMerge": false
+}

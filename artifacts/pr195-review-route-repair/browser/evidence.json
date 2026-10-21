@@ -1,0 +1,1509 @@
+{
+  "scope": "Real immutable V2 packages, synthetic signed local reviewer sessions, no production credentials",
+  "access": [
+    {
+      "role": "ANONYMOUS",
+      "url": "/lab-review/experience/candidate-ft01-g7-civics-counties-capitals",
+      "status": 404
+    },
+    {
+      "role": "ANONYMOUS",
+      "url": "/lab-review/experience/candidate-ft01-g7-civics-counties-capitals/media/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "status": 404
+    },
+    {
+      "role": "ANONYMOUS",
+      "url": "/lab-review/experience/unknown",
+      "status": 404
+    },
+    {
+      "role": "STUDENT",
+      "url": "/lab-review/experience/candidate-ft01-g7-civics-counties-capitals",
+      "status": 404
+    },
+    {
+      "role": "STUDENT",
+      "url": "/lab-review/experience/candidate-ft01-g7-civics-counties-capitals/media/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "status": 404
+    },
+    {
+      "role": "STUDENT",
+      "url": "/lab-review/experience/unknown",
+      "status": 404
+    },
+    {
+      "role": "TEACHER",
+      "url": "/lab-review/experience/candidate-ft01-g7-civics-counties-capitals",
+      "status": 404
+    },
+    {
+      "role": "TEACHER",
+      "url": "/lab-review/experience/candidate-ft01-g7-civics-counties-capitals/media/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "status": 404
+    },
+    {
+      "role": "TEACHER",
+      "url": "/lab-review/experience/unknown",
+      "status": 404
+    },
+    {
+      "role": "ADMIN",
+      "url": "/lab-review/experience/candidate-ft01-g7-civics-counties-capitals",
+      "status": 404
+    },
+    {
+      "role": "ADMIN",
+      "url": "/lab-review/experience/candidate-ft01-g7-civics-counties-capitals/media/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "status": 404
+    },
+    {
+      "role": "ADMIN",
+      "url": "/lab-review/experience/unknown",
+      "status": 404
+    },
+    {
+      "role": "MOE_OFFICIAL",
+      "url": "unknown",
+      "status": 404
+    },
+    {
+      "role": "MOE_OFFICIAL",
+      "url": "__proto__",
+      "status": 404
+    },
+    {
+      "role": "MOE_OFFICIAL",
+      "url": "candidate-unknown",
+      "status": 404
+    }
+  ],
+  "rendering": [
+    {
+      "id": "candidate-ft01-g7-civics-counties-capitals",
+      "width": 360,
+      "phase": "DIAGNOSTIC",
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft01-g7-civics-counties-capitals",
+      "width": 390,
+      "phase": "DIAGNOSTIC",
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft01-g7-civics-counties-capitals",
+      "width": 768,
+      "phase": "DIAGNOSTIC",
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft01-g7-civics-counties-capitals",
+      "width": 1440,
+      "phase": "DIAGNOSTIC",
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft01-g7-civics-counties-capitals",
+      "width": 360,
+      "phase": "REMEDIATION",
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft01-g7-civics-counties-capitals",
+      "width": 390,
+      "phase": "REMEDIATION",
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft01-g7-civics-counties-capitals",
+      "width": 768,
+      "phase": "REMEDIATION",
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft01-g7-civics-counties-capitals",
+      "width": 1440,
+      "phase": "REMEDIATION",
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft01-g7-civics-counties-capitals",
+      "width": 360,
+      "phase": "CHECK_UNDERSTANDING",
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft01-g7-civics-counties-capitals",
+      "width": 390,
+      "phase": "CHECK_UNDERSTANDING",
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft01-g7-civics-counties-capitals",
+      "width": 768,
+      "phase": "CHECK_UNDERSTANDING",
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft01-g7-civics-counties-capitals",
+      "width": 1440,
+      "phase": "CHECK_UNDERSTANDING",
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft01-g7-civics-counties-capitals",
+      "width": 360,
+      "phase": "LAB-0",
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft01-g7-civics-counties-capitals",
+      "width": 390,
+      "phase": "LAB-0",
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft01-g7-civics-counties-capitals",
+      "width": 768,
+      "phase": "LAB-0",
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft01-g7-civics-counties-capitals",
+      "width": 1440,
+      "phase": "LAB-0",
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft01-g7-civics-counties-capitals",
+      "width": 360,
+      "phase": "GUIDED_EXAMPLE",
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft01-g7-civics-counties-capitals",
+      "width": 390,
+      "phase": "GUIDED_EXAMPLE",
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft01-g7-civics-counties-capitals",
+      "width": 768,
+      "phase": "GUIDED_EXAMPLE",
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft01-g7-civics-counties-capitals",
+      "width": 1440,
+      "phase": "GUIDED_EXAMPLE",
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft01-g7-civics-counties-capitals",
+      "width": 360,
+      "phase": "EXPLANATION",
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft01-g7-civics-counties-capitals",
+      "width": 390,
+      "phase": "EXPLANATION",
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft01-g7-civics-counties-capitals",
+      "width": 768,
+      "phase": "EXPLANATION",
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft01-g7-civics-counties-capitals",
+      "width": 1440,
+      "phase": "EXPLANATION",
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft01-g7-civics-counties-capitals",
+      "width": 360,
+      "phase": "LAB-1",
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft01-g7-civics-counties-capitals",
+      "width": 390,
+      "phase": "LAB-1",
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft01-g7-civics-counties-capitals",
+      "width": 768,
+      "phase": "LAB-1",
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft01-g7-civics-counties-capitals",
+      "width": 1440,
+      "phase": "LAB-1",
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft01-g7-civics-counties-capitals",
+      "width": 360,
+      "phase": "LAB-2",
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft01-g7-civics-counties-capitals",
+      "width": 390,
+      "phase": "LAB-2",
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft01-g7-civics-counties-capitals",
+      "width": 768,
+      "phase": "LAB-2",
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft01-g7-civics-counties-capitals",
+      "width": 1440,
+      "phase": "LAB-2",
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft01-g7-civics-counties-capitals",
+      "width": 360,
+      "phase": "ASSESSMENT_HANDOFF",
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft01-g7-civics-counties-capitals",
+      "width": 390,
+      "phase": "ASSESSMENT_HANDOFF",
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft01-g7-civics-counties-capitals",
+      "width": 768,
+      "phase": "ASSESSMENT_HANDOFF",
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft01-g7-civics-counties-capitals",
+      "width": 1440,
+      "phase": "ASSESSMENT_HANDOFF",
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft04-g7-science-states-of-matter",
+      "width": 360,
+      "phase": "DIAGNOSTIC",
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft04-g7-science-states-of-matter",
+      "width": 390,
+      "phase": "DIAGNOSTIC",
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft04-g7-science-states-of-matter",
+      "width": 768,
+      "phase": "DIAGNOSTIC",
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft04-g7-science-states-of-matter",
+      "width": 1440,
+      "phase": "DIAGNOSTIC",
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft04-g7-science-states-of-matter",
+      "width": 360,
+      "phase": "REMEDIATION",
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft04-g7-science-states-of-matter",
+      "width": 390,
+      "phase": "REMEDIATION",
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft04-g7-science-states-of-matter",
+      "width": 768,
+      "phase": "REMEDIATION",
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft04-g7-science-states-of-matter",
+      "width": 1440,
+      "phase": "REMEDIATION",
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft04-g7-science-states-of-matter",
+      "width": 360,
+      "phase": "CHECK_UNDERSTANDING",
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft04-g7-science-states-of-matter",
+      "width": 390,
+      "phase": "CHECK_UNDERSTANDING",
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft04-g7-science-states-of-matter",
+      "width": 768,
+      "phase": "CHECK_UNDERSTANDING",
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft04-g7-science-states-of-matter",
+      "width": 1440,
+      "phase": "CHECK_UNDERSTANDING",
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft04-g7-science-states-of-matter",
+      "width": 360,
+      "phase": "LAB-0",
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft04-g7-science-states-of-matter",
+      "width": 390,
+      "phase": "LAB-0",
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft04-g7-science-states-of-matter",
+      "width": 768,
+      "phase": "LAB-0",
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft04-g7-science-states-of-matter",
+      "width": 1440,
+      "phase": "LAB-0",
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft04-g7-science-states-of-matter",
+      "width": 360,
+      "phase": "GUIDED_EXAMPLE",
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft04-g7-science-states-of-matter",
+      "width": 390,
+      "phase": "GUIDED_EXAMPLE",
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft04-g7-science-states-of-matter",
+      "width": 768,
+      "phase": "GUIDED_EXAMPLE",
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft04-g7-science-states-of-matter",
+      "width": 1440,
+      "phase": "GUIDED_EXAMPLE",
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft04-g7-science-states-of-matter",
+      "width": 360,
+      "phase": "EXPLANATION",
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft04-g7-science-states-of-matter",
+      "width": 390,
+      "phase": "EXPLANATION",
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft04-g7-science-states-of-matter",
+      "width": 768,
+      "phase": "EXPLANATION",
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft04-g7-science-states-of-matter",
+      "width": 1440,
+      "phase": "EXPLANATION",
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft04-g7-science-states-of-matter",
+      "width": 360,
+      "phase": "ASSESSMENT_HANDOFF",
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft04-g7-science-states-of-matter",
+      "width": 390,
+      "phase": "ASSESSMENT_HANDOFF",
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft04-g7-science-states-of-matter",
+      "width": 768,
+      "phase": "ASSESSMENT_HANDOFF",
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft04-g7-science-states-of-matter",
+      "width": 1440,
+      "phase": "ASSESSMENT_HANDOFF",
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft07-g7-math-fractions",
+      "width": 360,
+      "phase": "DIAGNOSTIC",
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft07-g7-math-fractions",
+      "width": 390,
+      "phase": "DIAGNOSTIC",
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft07-g7-math-fractions",
+      "width": 768,
+      "phase": "DIAGNOSTIC",
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft07-g7-math-fractions",
+      "width": 1440,
+      "phase": "DIAGNOSTIC",
+      "status": 200,
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft07-g7-math-fractions",
+      "width": 360,
+      "phase": "REMEDIATION",
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft07-g7-math-fractions",
+      "width": 390,
+      "phase": "REMEDIATION",
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft07-g7-math-fractions",
+      "width": 768,
+      "phase": "REMEDIATION",
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft07-g7-math-fractions",
+      "width": 1440,
+      "phase": "REMEDIATION",
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft07-g7-math-fractions",
+      "width": 360,
+      "phase": "CHECK_UNDERSTANDING",
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft07-g7-math-fractions",
+      "width": 390,
+      "phase": "CHECK_UNDERSTANDING",
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft07-g7-math-fractions",
+      "width": 768,
+      "phase": "CHECK_UNDERSTANDING",
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft07-g7-math-fractions",
+      "width": 1440,
+      "phase": "CHECK_UNDERSTANDING",
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft07-g7-math-fractions",
+      "width": 360,
+      "phase": "EXPLANATION",
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft07-g7-math-fractions",
+      "width": 390,
+      "phase": "EXPLANATION",
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft07-g7-math-fractions",
+      "width": 768,
+      "phase": "EXPLANATION",
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft07-g7-math-fractions",
+      "width": 1440,
+      "phase": "EXPLANATION",
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft07-g7-math-fractions",
+      "width": 360,
+      "phase": "GUIDED_EXAMPLE",
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft07-g7-math-fractions",
+      "width": 390,
+      "phase": "GUIDED_EXAMPLE",
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft07-g7-math-fractions",
+      "width": 768,
+      "phase": "GUIDED_EXAMPLE",
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft07-g7-math-fractions",
+      "width": 1440,
+      "phase": "GUIDED_EXAMPLE",
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft07-g7-math-fractions",
+      "width": 360,
+      "phase": "LAB-0",
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft07-g7-math-fractions",
+      "width": 390,
+      "phase": "LAB-0",
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft07-g7-math-fractions",
+      "width": 768,
+      "phase": "LAB-0",
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft07-g7-math-fractions",
+      "width": 1440,
+      "phase": "LAB-0",
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft07-g7-math-fractions",
+      "width": 360,
+      "phase": "LAB-1",
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft07-g7-math-fractions",
+      "width": 390,
+      "phase": "LAB-1",
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft07-g7-math-fractions",
+      "width": 768,
+      "phase": "LAB-1",
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft07-g7-math-fractions",
+      "width": 1440,
+      "phase": "LAB-1",
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft07-g7-math-fractions",
+      "width": 360,
+      "phase": "ASSESSMENT_HANDOFF",
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft07-g7-math-fractions",
+      "width": 390,
+      "phase": "ASSESSMENT_HANDOFF",
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft07-g7-math-fractions",
+      "width": 768,
+      "phase": "ASSESSMENT_HANDOFF",
+      "overflow": false
+    },
+    {
+      "id": "candidate-ft07-g7-math-fractions",
+      "width": 1440,
+      "phase": "ASSESSMENT_HANDOFF",
+      "overflow": false
+    }
+  ],
+  "sequences": [
+    {
+      "id": "candidate-ft01-g7-civics-counties-capitals",
+      "diagnostic": true,
+      "remediation": true,
+      "instruction": true,
+      "guidedPractice": true,
+      "labVisits": 3,
+      "simulationsStarted": 3,
+      "keyboardModelChanges": 3,
+      "renderer": "svg",
+      "positiveRenderedFrameCount": true,
+      "exactLabReturnScene": true,
+      "assessmentHandoff": true,
+      "sceneCount": 20,
+      "reviewCacheEntries": 0
+    },
+    {
+      "id": "candidate-ft04-g7-science-states-of-matter",
+      "diagnostic": true,
+      "remediation": true,
+      "instruction": true,
+      "guidedPractice": true,
+      "labVisits": 1,
+      "simulationsStarted": 1,
+      "keyboardModelChanges": 1,
+      "renderer": "svg",
+      "positiveRenderedFrameCount": true,
+      "exactLabReturnScene": true,
+      "assessmentHandoff": true,
+      "sceneCount": 20,
+      "reviewCacheEntries": 0
+    },
+    {
+      "id": "candidate-ft07-g7-math-fractions",
+      "diagnostic": true,
+      "remediation": true,
+      "instruction": true,
+      "guidedPractice": true,
+      "labVisits": 2,
+      "simulationsStarted": 2,
+      "keyboardModelChanges": 2,
+      "renderer": "svg",
+      "positiveRenderedFrameCount": true,
+      "exactLabReturnScene": true,
+      "assessmentHandoff": true,
+      "sceneCount": 20,
+      "reviewCacheEntries": 0
+    }
+  ],
+  "violations": [
+    {
+      "label": "candidate-ft01-g7-civics-counties-capitals-360-diagnostic",
+      "violations": [],
+      "incomplete": []
+    },
+    {
+      "label": "candidate-ft01-g7-civics-counties-capitals-390-diagnostic",
+      "violations": [],
+      "incomplete": []
+    },
+    {
+      "label": "candidate-ft01-g7-civics-counties-capitals-768-diagnostic",
+      "violations": [],
+      "incomplete": []
+    },
+    {
+      "label": "candidate-ft01-g7-civics-counties-capitals-1440-diagnostic",
+      "violations": [],
+      "incomplete": []
+    },
+    {
+      "label": "candidate-ft01-g7-civics-counties-capitals-REMEDIATION-360",
+      "violations": [],
+      "incomplete": []
+    },
+    {
+      "label": "candidate-ft01-g7-civics-counties-capitals-REMEDIATION-390",
+      "violations": [],
+      "incomplete": []
+    },
+    {
+      "label": "candidate-ft01-g7-civics-counties-capitals-REMEDIATION-768",
+      "violations": [],
+      "incomplete": []
+    },
+    {
+      "label": "candidate-ft01-g7-civics-counties-capitals-REMEDIATION-1440",
+      "violations": [],
+      "incomplete": []
+    },
+    {
+      "label": "candidate-ft01-g7-civics-counties-capitals-CHECK_UNDERSTANDING-360",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 2
+        }
+      ]
+    },
+    {
+      "label": "candidate-ft01-g7-civics-counties-capitals-CHECK_UNDERSTANDING-390",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 3
+        }
+      ]
+    },
+    {
+      "label": "candidate-ft01-g7-civics-counties-capitals-CHECK_UNDERSTANDING-768",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 2
+        }
+      ]
+    },
+    {
+      "label": "candidate-ft01-g7-civics-counties-capitals-CHECK_UNDERSTANDING-1440",
+      "violations": [],
+      "incomplete": []
+    },
+    {
+      "label": "candidate-ft01-g7-civics-counties-capitals-LAB-0-360",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "aria-prohibited-attr",
+          "nodes": 1
+        },
+        {
+          "id": "color-contrast",
+          "nodes": 8
+        }
+      ]
+    },
+    {
+      "label": "candidate-ft01-g7-civics-counties-capitals-LAB-0-390",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "aria-prohibited-attr",
+          "nodes": 1
+        },
+        {
+          "id": "color-contrast",
+          "nodes": 8
+        }
+      ]
+    },
+    {
+      "label": "candidate-ft01-g7-civics-counties-capitals-LAB-0-768",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "aria-prohibited-attr",
+          "nodes": 1
+        },
+        {
+          "id": "color-contrast",
+          "nodes": 9
+        }
+      ]
+    },
+    {
+      "label": "candidate-ft01-g7-civics-counties-capitals-LAB-0-1440",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "aria-prohibited-attr",
+          "nodes": 1
+        },
+        {
+          "id": "color-contrast",
+          "nodes": 8
+        }
+      ]
+    },
+    {
+      "label": "candidate-ft01-g7-civics-counties-capitals-GUIDED_EXAMPLE-360",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 1
+        }
+      ]
+    },
+    {
+      "label": "candidate-ft01-g7-civics-counties-capitals-GUIDED_EXAMPLE-390",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 1
+        }
+      ]
+    },
+    {
+      "label": "candidate-ft01-g7-civics-counties-capitals-GUIDED_EXAMPLE-768",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 2
+        }
+      ]
+    },
+    {
+      "label": "candidate-ft01-g7-civics-counties-capitals-GUIDED_EXAMPLE-1440",
+      "violations": [],
+      "incomplete": []
+    },
+    {
+      "label": "candidate-ft01-g7-civics-counties-capitals-EXPLANATION-360",
+      "violations": [],
+      "incomplete": []
+    },
+    {
+      "label": "candidate-ft01-g7-civics-counties-capitals-EXPLANATION-390",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 1
+        }
+      ]
+    },
+    {
+      "label": "candidate-ft01-g7-civics-counties-capitals-EXPLANATION-768",
+      "violations": [],
+      "incomplete": []
+    },
+    {
+      "label": "candidate-ft01-g7-civics-counties-capitals-EXPLANATION-1440",
+      "violations": [],
+      "incomplete": []
+    },
+    {
+      "label": "candidate-ft01-g7-civics-counties-capitals-LAB-1-360",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "aria-prohibited-attr",
+          "nodes": 1
+        },
+        {
+          "id": "color-contrast",
+          "nodes": 8
+        }
+      ]
+    },
+    {
+      "label": "candidate-ft01-g7-civics-counties-capitals-LAB-1-390",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "aria-prohibited-attr",
+          "nodes": 1
+        },
+        {
+          "id": "color-contrast",
+          "nodes": 8
+        }
+      ]
+    },
+    {
+      "label": "candidate-ft01-g7-civics-counties-capitals-LAB-1-768",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "aria-prohibited-attr",
+          "nodes": 1
+        },
+        {
+          "id": "color-contrast",
+          "nodes": 9
+        }
+      ]
+    },
+    {
+      "label": "candidate-ft01-g7-civics-counties-capitals-LAB-1-1440",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "aria-prohibited-attr",
+          "nodes": 1
+        },
+        {
+          "id": "color-contrast",
+          "nodes": 8
+        }
+      ]
+    },
+    {
+      "label": "candidate-ft01-g7-civics-counties-capitals-LAB-2-360",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "aria-prohibited-attr",
+          "nodes": 1
+        },
+        {
+          "id": "color-contrast",
+          "nodes": 8
+        }
+      ]
+    },
+    {
+      "label": "candidate-ft01-g7-civics-counties-capitals-LAB-2-390",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "aria-prohibited-attr",
+          "nodes": 1
+        },
+        {
+          "id": "color-contrast",
+          "nodes": 8
+        }
+      ]
+    },
+    {
+      "label": "candidate-ft01-g7-civics-counties-capitals-LAB-2-768",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "aria-prohibited-attr",
+          "nodes": 1
+        },
+        {
+          "id": "color-contrast",
+          "nodes": 9
+        }
+      ]
+    },
+    {
+      "label": "candidate-ft01-g7-civics-counties-capitals-LAB-2-1440",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "aria-prohibited-attr",
+          "nodes": 1
+        },
+        {
+          "id": "color-contrast",
+          "nodes": 8
+        }
+      ]
+    },
+    {
+      "label": "candidate-ft01-g7-civics-counties-capitals-ASSESSMENT_HANDOFF-360",
+      "violations": [],
+      "incomplete": []
+    },
+    {
+      "label": "candidate-ft01-g7-civics-counties-capitals-ASSESSMENT_HANDOFF-390",
+      "violations": [],
+      "incomplete": []
+    },
+    {
+      "label": "candidate-ft01-g7-civics-counties-capitals-ASSESSMENT_HANDOFF-768",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 2
+        }
+      ]
+    },
+    {
+      "label": "candidate-ft01-g7-civics-counties-capitals-ASSESSMENT_HANDOFF-1440",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 2
+        }
+      ]
+    },
+    {
+      "label": "candidate-ft04-g7-science-states-of-matter-360-diagnostic",
+      "violations": [],
+      "incomplete": []
+    },
+    {
+      "label": "candidate-ft04-g7-science-states-of-matter-390-diagnostic",
+      "violations": [],
+      "incomplete": []
+    },
+    {
+      "label": "candidate-ft04-g7-science-states-of-matter-768-diagnostic",
+      "violations": [],
+      "incomplete": []
+    },
+    {
+      "label": "candidate-ft04-g7-science-states-of-matter-1440-diagnostic",
+      "violations": [],
+      "incomplete": []
+    },
+    {
+      "label": "candidate-ft04-g7-science-states-of-matter-REMEDIATION-360",
+      "violations": [],
+      "incomplete": []
+    },
+    {
+      "label": "candidate-ft04-g7-science-states-of-matter-REMEDIATION-390",
+      "violations": [],
+      "incomplete": []
+    },
+    {
+      "label": "candidate-ft04-g7-science-states-of-matter-REMEDIATION-768",
+      "violations": [],
+      "incomplete": []
+    },
+    {
+      "label": "candidate-ft04-g7-science-states-of-matter-REMEDIATION-1440",
+      "violations": [],
+      "incomplete": []
+    },
+    {
+      "label": "candidate-ft04-g7-science-states-of-matter-CHECK_UNDERSTANDING-360",
+      "violations": [],
+      "incomplete": []
+    },
+    {
+      "label": "candidate-ft04-g7-science-states-of-matter-CHECK_UNDERSTANDING-390",
+      "violations": [],
+      "incomplete": []
+    },
+    {
+      "label": "candidate-ft04-g7-science-states-of-matter-CHECK_UNDERSTANDING-768",
+      "violations": [],
+      "incomplete": []
+    },
+    {
+      "label": "candidate-ft04-g7-science-states-of-matter-CHECK_UNDERSTANDING-1440",
+      "violations": [],
+      "incomplete": []
+    },
+    {
+      "label": "candidate-ft04-g7-science-states-of-matter-LAB-0-360",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "aria-prohibited-attr",
+          "nodes": 1
+        },
+        {
+          "id": "color-contrast",
+          "nodes": 2
+        }
+      ]
+    },
+    {
+      "label": "candidate-ft04-g7-science-states-of-matter-LAB-0-390",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "aria-prohibited-attr",
+          "nodes": 1
+        },
+        {
+          "id": "color-contrast",
+          "nodes": 1
+        }
+      ]
+    },
+    {
+      "label": "candidate-ft04-g7-science-states-of-matter-LAB-0-768",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "aria-prohibited-attr",
+          "nodes": 1
+        },
+        {
+          "id": "color-contrast",
+          "nodes": 1
+        }
+      ]
+    },
+    {
+      "label": "candidate-ft04-g7-science-states-of-matter-LAB-0-1440",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "aria-prohibited-attr",
+          "nodes": 1
+        }
+      ]
+    },
+    {
+      "label": "candidate-ft04-g7-science-states-of-matter-GUIDED_EXAMPLE-360",
+      "violations": [],
+      "incomplete": []
+    },
+    {
+      "label": "candidate-ft04-g7-science-states-of-matter-GUIDED_EXAMPLE-390",
+      "violations": [],
+      "incomplete": []
+    },
+    {
+      "label": "candidate-ft04-g7-science-states-of-matter-GUIDED_EXAMPLE-768",
+      "violations": [],
+      "incomplete": []
+    },
+    {
+      "label": "candidate-ft04-g7-science-states-of-matter-GUIDED_EXAMPLE-1440",
+      "violations": [],
+      "incomplete": []
+    },
+    {
+      "label": "candidate-ft04-g7-science-states-of-matter-EXPLANATION-360",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 1
+        }
+      ]
+    },
+    {
+      "label": "candidate-ft04-g7-science-states-of-matter-EXPLANATION-390",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 1
+        }
+      ]
+    },
+    {
+      "label": "candidate-ft04-g7-science-states-of-matter-EXPLANATION-768",
+      "violations": [],
+      "incomplete": []
+    },
+    {
+      "label": "candidate-ft04-g7-science-states-of-matter-EXPLANATION-1440",
+      "violations": [],
+      "incomplete": []
+    },
+    {
+      "label": "candidate-ft04-g7-science-states-of-matter-ASSESSMENT_HANDOFF-360",
+      "violations": [],
+      "incomplete": []
+    },
+    {
+      "label": "candidate-ft04-g7-science-states-of-matter-ASSESSMENT_HANDOFF-390",
+      "violations": [],
+      "incomplete": []
+    },
+    {
+      "label": "candidate-ft04-g7-science-states-of-matter-ASSESSMENT_HANDOFF-768",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 2
+        }
+      ]
+    },
+    {
+      "label": "candidate-ft04-g7-science-states-of-matter-ASSESSMENT_HANDOFF-1440",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 2
+        }
+      ]
+    },
+    {
+      "label": "candidate-ft07-g7-math-fractions-360-diagnostic",
+      "violations": [],
+      "incomplete": []
+    },
+    {
+      "label": "candidate-ft07-g7-math-fractions-390-diagnostic",
+      "violations": [],
+      "incomplete": []
+    },
+    {
+      "label": "candidate-ft07-g7-math-fractions-768-diagnostic",
+      "violations": [],
+      "incomplete": []
+    },
+    {
+      "label": "candidate-ft07-g7-math-fractions-1440-diagnostic",
+      "violations": [],
+      "incomplete": []
+    },
+    {
+      "label": "candidate-ft07-g7-math-fractions-REMEDIATION-360",
+      "violations": [],
+      "incomplete": []
+    },
+    {
+      "label": "candidate-ft07-g7-math-fractions-REMEDIATION-390",
+      "violations": [],
+      "incomplete": []
+    },
+    {
+      "label": "candidate-ft07-g7-math-fractions-REMEDIATION-768",
+      "violations": [],
+      "incomplete": []
+    },
+    {
+      "label": "candidate-ft07-g7-math-fractions-REMEDIATION-1440",
+      "violations": [],
+      "incomplete": []
+    },
+    {
+      "label": "candidate-ft07-g7-math-fractions-CHECK_UNDERSTANDING-360",
+      "violations": [],
+      "incomplete": []
+    },
+    {
+      "label": "candidate-ft07-g7-math-fractions-CHECK_UNDERSTANDING-390",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 1
+        }
+      ]
+    },
+    {
+      "label": "candidate-ft07-g7-math-fractions-CHECK_UNDERSTANDING-768",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 1
+        }
+      ]
+    },
+    {
+      "label": "candidate-ft07-g7-math-fractions-CHECK_UNDERSTANDING-1440",
+      "violations": [],
+      "incomplete": []
+    },
+    {
+      "label": "candidate-ft07-g7-math-fractions-EXPLANATION-360",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 1
+        }
+      ]
+    },
+    {
+      "label": "candidate-ft07-g7-math-fractions-EXPLANATION-390",
+      "violations": [],
+      "incomplete": []
+    },
+    {
+      "label": "candidate-ft07-g7-math-fractions-EXPLANATION-768",
+      "violations": [],
+      "incomplete": []
+    },
+    {
+      "label": "candidate-ft07-g7-math-fractions-EXPLANATION-1440",
+      "violations": [],
+      "incomplete": []
+    },
+    {
+      "label": "candidate-ft07-g7-math-fractions-GUIDED_EXAMPLE-360",
+      "violations": [],
+      "incomplete": []
+    },
+    {
+      "label": "candidate-ft07-g7-math-fractions-GUIDED_EXAMPLE-390",
+      "violations": [],
+      "incomplete": []
+    },
+    {
+      "label": "candidate-ft07-g7-math-fractions-GUIDED_EXAMPLE-768",
+      "violations": [],
+      "incomplete": []
+    },
+    {
+      "label": "candidate-ft07-g7-math-fractions-GUIDED_EXAMPLE-1440",
+      "violations": [],
+      "incomplete": []
+    },
+    {
+      "label": "candidate-ft07-g7-math-fractions-LAB-0-360",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "aria-prohibited-attr",
+          "nodes": 1
+        },
+        {
+          "id": "color-contrast",
+          "nodes": 3
+        }
+      ]
+    },
+    {
+      "label": "candidate-ft07-g7-math-fractions-LAB-0-390",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "aria-prohibited-attr",
+          "nodes": 1
+        },
+        {
+          "id": "color-contrast",
+          "nodes": 3
+        }
+      ]
+    },
+    {
+      "label": "candidate-ft07-g7-math-fractions-LAB-0-768",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "aria-prohibited-attr",
+          "nodes": 1
+        },
+        {
+          "id": "color-contrast",
+          "nodes": 4
+        }
+      ]
+    },
+    {
+      "label": "candidate-ft07-g7-math-fractions-LAB-0-1440",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "aria-prohibited-attr",
+          "nodes": 1
+        },
+        {
+          "id": "color-contrast",
+          "nodes": 3
+        }
+      ]
+    },
+    {
+      "label": "candidate-ft07-g7-math-fractions-LAB-1-360",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "aria-prohibited-attr",
+          "nodes": 1
+        },
+        {
+          "id": "color-contrast",
+          "nodes": 3
+        }
+      ]
+    },
+    {
+      "label": "candidate-ft07-g7-math-fractions-LAB-1-390",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "aria-prohibited-attr",
+          "nodes": 1
+        },
+        {
+          "id": "color-contrast",
+          "nodes": 3
+        }
+      ]
+    },
+    {
+      "label": "candidate-ft07-g7-math-fractions-LAB-1-768",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "aria-prohibited-attr",
+          "nodes": 1
+        },
+        {
+          "id": "color-contrast",
+          "nodes": 4
+        }
+      ]
+    },
+    {
+      "label": "candidate-ft07-g7-math-fractions-LAB-1-1440",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "aria-prohibited-attr",
+          "nodes": 1
+        },
+        {
+          "id": "color-contrast",
+          "nodes": 3
+        }
+      ]
+    },
+    {
+      "label": "candidate-ft07-g7-math-fractions-ASSESSMENT_HANDOFF-360",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 1
+        }
+      ]
+    },
+    {
+      "label": "candidate-ft07-g7-math-fractions-ASSESSMENT_HANDOFF-390",
+      "violations": [],
+      "incomplete": []
+    },
+    {
+      "label": "candidate-ft07-g7-math-fractions-ASSESSMENT_HANDOFF-768",
+      "violations": [],
+      "incomplete": []
+    },
+    {
+      "label": "candidate-ft07-g7-math-fractions-ASSESSMENT_HANDOFF-1440",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 2
+        }
+      ]
+    }
+  ],
+  "blockedMutations": [],
+  "errors": [],
+  "protectedResponsesInspected": 27,
+  "unavailableResponseBodies": 13,
+  "status": "PASS"
+}

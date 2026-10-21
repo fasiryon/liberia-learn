@@ -59,14 +59,28 @@ export function isComponentRevealed(spec: HighFidelitySpec, state: FidelityState
   return !assembly || isAssemblyOpen(spec, state, assembly.id);
 }
 
+export function validateVariablePatch(spec: HighFidelitySpec, state: FidelityState, patch: unknown): Verdict {
+  if (!patch || typeof patch !== "object" || Array.isArray(patch)) return reject("variables_patch_invalid");
+  const entries = Object.entries(patch);
+  if (!entries.length || entries.length > 64) return reject("variables_patch_size_invalid");
+  for (const [id, value] of entries) {
+    const variable = spec.variables.find(candidate => candidate.id === id);
+    if (!variable) return reject("variable_unknown");
+    if (!variable.learnerControlled) return reject("variable_not_learner_controlled");
+    if (typeof value !== "number") return reject("variable_value_not_finite");
+    const scalar = validateVariableValue(variable, value);
+    if (!scalar.ok) return scalar;
+  }
+  return spec.validateVariables?.({ ...state.variables, ...patch }) ?? OK;
+}
+
 export function validateFidelityAction(spec: HighFidelitySpec, state: FidelityState, action: FidelityAction, sceneObjectIds: readonly string[] = []): Verdict {
   switch (action.type) {
     case "set-variable": {
-      const variable = spec.variables.find((candidate) => candidate.id === action.variableId);
-      if (!variable) return reject("variable_unknown");
-      if (!variable.learnerControlled) return reject("variable_not_learner_controlled");
-      return validateVariableValue(variable, action.value);
+      return validateVariablePatch(spec, state, { [action.variableId]: action.value });
     }
+    case "set-variables":
+      return validateVariablePatch(spec, state, action.values);
     case "set-explode":
       if (!spec.exploded.some((view) => view.assemblyId === action.assemblyId)) return reject("exploded_view_unknown");
       return typeof action.factor === "number" && Number.isFinite(action.factor) && action.factor >= 0 && action.factor <= 1 ? OK : reject("explode_factor_out_of_bounds");
@@ -101,8 +115,11 @@ export function validateFidelityAction(spec: HighFidelitySpec, state: FidelitySt
       if (!component || component.selectable === false) return reject("component_not_selectable");
       return isComponentRevealed(spec, state, action.componentId) ? OK : reject("component_not_visible");
     }
-    case "guided-step":
-      return Number.isInteger(action.index) && action.index >= 0 && action.index < spec.guidedPath.length ? OK : reject("guided_step_out_of_range");
+    case "guided-step": {
+      if (!Number.isInteger(action.index) || action.index < 0 || action.index >= spec.guidedPath.length) return reject("guided_step_out_of_range");
+      const start = spec.guidedPath[action.index].variables;
+      return spec.validateVariables && start && Object.keys(start).length ? validateVariablePatch(spec, state, start) : OK;
+    }
     case "reset-protection": {
       const status = protectionStatus(spec, state);
       if (!status) return reject("protection_undeclared");
@@ -149,6 +166,8 @@ function applyFidelityAction(spec: HighFidelitySpec, state: FidelityState, actio
   switch (action.type) {
     case "set-variable":
       return { ...state, variables: { ...state.variables, [action.variableId]: action.value } };
+    case "set-variables":
+      return { ...state, variables: { ...state.variables, ...action.values } };
     case "set-explode": {
       const view = spec.exploded.find((candidate) => candidate.assemblyId === action.assemblyId);
       return { ...state, explode: { ...state.explode, [action.assemblyId]: action.factor }, cameraPresetId: action.factor > 0 && view?.cameraPresetId ? view.cameraPresetId : state.cameraPresetId };
@@ -232,6 +251,7 @@ export function isAssemblyComplete(spec: HighFidelitySpec, state: FidelityState,
 }
 
 export function evaluateFidelityCheck(spec: HighFidelitySpec, state: FidelityState, check: FidelityCheck): boolean {
+  if (spec.validateVariables && (!spec.variables.every(v=>validateVariableValue(v,state.variables[v.id]).ok)||!spec.validateVariables(state.variables).ok)) return false;
   switch (check.kind) {
     case "reach-target": {
       const value = deriveSimulation(spec, state).quantities[check.quantityId];
@@ -259,6 +279,7 @@ export function isValidFidelityState(spec: HighFidelitySpec, value: unknown): va
   const variableIds = Object.keys(state.variables).sort();
   if (variableIds.join("|") !== spec.variables.map((variable) => variable.id).sort().join("|")) return false;
   if (!spec.variables.every((variable) => validateVariableValue(variable, state.variables[variable.id]).ok)) return false;
+  if (spec.validateVariables && !spec.validateVariables(state.variables).ok) return false;
   if (!state.explode || !Object.entries(state.explode).every(([id, factor]) => spec.exploded.some((view) => view.assemblyId === id) && typeof factor === "number" && factor >= 0 && factor <= 1)) return false;
   if (state.activeCutawayId !== null && !spec.cutaways.some((cutaway) => cutaway.id === state.activeCutawayId)) return false;
   if (!spec.camera.presets.some((preset) => preset.id === state.cameraPresetId)) return false;
@@ -294,6 +315,19 @@ export function composeHighFidelity(base: InteractiveLabDefinition<LabState>, sp
     fidelity: spec,
     initialState: { ...base.initialState, fidelity: initialFidelityState(spec) },
     validateAction: (state, action) => {
+      if (spec.independentAssessment && state.mode === "ASSESSMENT" && (action.type === "reset" || action.type === "mode" && action.mode !== "ASSESSMENT")) return reject("independent_assessment_in_progress");
+      if (action.type !== "reset" && spec.validateVariables) {
+        if(!spec.variables.every(v=>validateVariableValue(v,current(state).variables[v.id]).ok))return reject("variables_state_invalid");
+        const valid = spec.validateVariables(current(state).variables);
+        if (!valid.ok) return valid;
+        if (action.type === "mode") {
+          const start = spec.modeStart?.[action.mode]?.variables;
+          if (start && Object.keys(start).length) {
+            const validStart = validateVariablePatch(spec, current(state), start);
+            if (!validStart.ok) return validStart;
+          }
+        }
+      }
       if (isFidelityAction(action)) return validateFidelityAction(spec, current(state), action, sceneObjectIds);
       if (action.type === "check" && fidelityChecks.has(action.checkId)) return OK;
       return base.validateAction(state, action);

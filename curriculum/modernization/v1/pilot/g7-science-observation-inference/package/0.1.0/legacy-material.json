@@ -1,0 +1,137 @@
+{
+ "legacyRevisionId": "cmss8t50a00urvo54li53jgr9",
+ "legacyContentHash": "f07576ea6b222ff8431f59117c1758489eae832ba643bc0d721359c4c4ce92eb",
+ "primaryTextField": "body",
+ "sections": [
+  {
+   "index": 0,
+   "heading": "Objective",
+   "role": "OBJECTIVES",
+   "words": 18,
+   "sha256": "bab5f34add047aa87811ecf90a29e4cd4f058f85e728617b238263b92bddc5fd",
+   "findings": [],
+   "disposition": "REPLACED",
+   "candidateScenes": [
+    "objectives"
+   ],
+   "rationale": "The generic objective ('explain and apply observation and scientific thinking ideas') is not assessable; replaced by two specific objectives."
+  },
+  {
+   "index": 1,
+   "heading": "Teacher Explanation",
+   "role": "CONCEPT",
+   "words": 27,
+   "sha256": "6c4f9bd1c97a119aa1adc1a47be305e19cf73456c5f8477080a37515e9b9483a",
+   "findings": [
+    "PLACEHOLDER_CONTENT/BLOCKING",
+    "THIN_CONCEPT_EXPLANATION/MAJOR"
+   ],
+   "disposition": "REPLACED",
+   "candidateScenes": [
+    "concept"
+   ],
+   "rationale": "Placeholder that describes what to teach without teaching it."
+  },
+  {
+   "index": 2,
+   "heading": "Worked Example",
+   "role": "WORKED_EXAMPLE",
+   "words": 22,
+   "sha256": "c3c7afdda94324cbdc38d54277575637a9b3bee5d3aaeb7fc78f3e4752dccf64",
+   "findings": [],
+   "disposition": "REPLACED",
+   "candidateScenes": [
+    "worked-sort",
+    "worked-measure"
+   ],
+   "rationale": "Placeholder ('Model one complete science example…'); replaced by two worked examples."
+  },
+  {
+   "index": 3,
+   "heading": "Guided Practice",
+   "role": "GUIDED_PRACTICE",
+   "words": 24,
+   "sha256": "c74a99f875ce157f1f9709830d04df45e76890456b7b1328cff3c25e6c320f0f",
+   "findings": [],
+   "disposition": "REPLACED",
+   "candidateScenes": [
+    "guided",
+    "more-than-one"
+   ],
+   "rationale": "Placeholder; replaced by guided sorting and a misconception check."
+  },
+  {
+   "index": 4,
+   "heading": "Independent Practice",
+   "role": "INDEPENDENT_PRACTICE",
+   "words": 26,
+   "sha256": "8d25b50e839c8a3e342bbcf12402bdce66409d83f90692f08f7421c1ef95d556",
+   "findings": [],
+   "disposition": "REPLACED",
+   "candidateScenes": [
+    "practice",
+    "record"
+   ],
+   "rationale": "Placeholder; replaced by unscaffolded items and a hands-on recording task."
+  },
+  {
+   "index": 5,
+   "heading": "Assessment",
+   "role": "ASSESSMENT",
+   "words": 20,
+   "sha256": "b4c900ccc2bc0c996c9ef5a09ca11bb33dc7b8656dd77bf0502e9c86824857fd",
+   "findings": [],
+   "disposition": "REPLACED",
+   "candidateScenes": [
+    "exit-ticket"
+   ],
+   "rationale": "Placeholder; replaced by an exit ticket with reviewer-only keys and rubrics."
+  },
+  {
+   "index": 6,
+   "heading": "Remediation",
+   "role": "REMEDIATION",
+   "words": 22,
+   "sha256": "75edecf1971760fa62ec504065de3e7e46dc2066090bf79ddbcd86787619197e",
+   "findings": [],
+   "disposition": "REPLACED",
+   "candidateScenes": [
+    "warm-up"
+   ],
+   "rationale": "Generic remediation is replaced by prerequisite diagnostics with named fallback routes."
+  },
+  {
+   "index": 7,
+   "heading": "Extension",
+   "role": "EXTENSION",
+   "words": 22,
+   "sha256": "c764bbdf4e582997a14d7a81ff40ee36a9ea08e1f3232dbaf740b617ababaeb7",
+   "findings": [],
+   "disposition": "REPLACED",
+   "candidateScenes": [],
+   "rationale": "Replaced by the optional measurement-uncertainty extension in the assessment definitions."
+  },
+  {
+   "index": 8,
+   "heading": "Guardian Support",
+   "role": "REMEDIATION",
+   "words": 26,
+   "sha256": "cb8a2ff103a492abdff145e0367b90aef56429bec4e9aba6dac5743fca56a36e",
+   "findings": [],
+   "disposition": "MOVED_TO_TEACHER_GUIDE",
+   "candidateScenes": [],
+   "rationale": "A home-observation suggestion belongs in teacher and guardian notes."
+  },
+  {
+   "index": 9,
+   "heading": "Metadata",
+   "role": "TEACHER_NOTES",
+   "words": 14,
+   "sha256": "c411409168668cd80ee111e4d3ecfd5f4a92ec000a289e0ac48fb266549a63d1",
+   "findings": [],
+   "disposition": "DISCARDED",
+   "candidateScenes": [],
+   "rationale": "Catalogue metadata shown as learner text."
+  }
+ ]
+}

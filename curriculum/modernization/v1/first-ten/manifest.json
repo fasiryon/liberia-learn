@@ -1,0 +1,136 @@
+{
+  "schemaVersion": "liberialearn-first-ten-manifest/1.0.0",
+  "contractVersion": "liberialearn-first-ten-modernization-contract/1.0.0",
+  "lessonContractVersion": "liberialearn-first-ten-lesson-contract/1.0.0",
+  "status": "READY_FOR_OWNER_APPROVAL",
+  "baseCommit": "3e4ba71df9f462d273fe3be1e1bb585aea30c8c0",
+  "files": [
+    {
+      "path": "curriculum/modernization/v1/first-ten/spec.json",
+      "sha256": "648ec61a72e2ddff147444dadae75aff321866cfc660498a792b6a3b48e7a28b",
+      "bytes": 210340
+    },
+    {
+      "path": "curriculum/modernization/v1/first-ten/source-bindings.json",
+      "sha256": "7c056189ea91dd76a53962220172ff931f0910098e1670a8b120be7ddc2ec168",
+      "bytes": 5121
+    },
+    {
+      "path": "docs/curriculum/modernization/FIRST_TEN_MODERNIZATION_SPEC_V1.md",
+      "sha256": "73d6eed4cc23460589c90aa8c9581edaa0a70fc1f8269e56af29939bf85afa51",
+      "bytes": 119189
+    },
+    {
+      "path": "docs/curriculum/modernization/FIRST_TEN_ACCEPTANCE_RUBRIC_V1.md",
+      "sha256": "04c62e50065ff7e14ca7e37d97e613fc75fe8eb9c9cce42d8b1299bc1fee237d",
+      "bytes": 13858
+    },
+    {
+      "path": "lib/curriculum/modernization/firstTen.ts",
+      "sha256": "3e754f8f8f9412bd241008afdb1b7fd8d7bcef057e0bf7a94bd3dbfe3b086d81",
+      "bytes": 17419
+    },
+    {
+      "path": "scripts/render-first-ten-modernization-spec.ts",
+      "sha256": "f7c02089526ebba2cbf10dbaa620def3df8d8d55a95b046762e54297e4fe5b59",
+      "bytes": 917
+    },
+    {
+      "path": "scripts/verify-first-ten-source-bindings.ts",
+      "sha256": "6366003f7b86d4c0536e79e6ac33c88e26cbbb6adf8899c99604917c8eb8e1ae",
+      "bytes": 3664
+    },
+    {
+      "path": "scripts/build-first-ten-manifest.ts",
+      "sha256": "942759b52322aff1ed32ac32cc8977537a8978ff0d5a2f91a01aeeddaac57325",
+      "bytes": 1125
+    },
+    {
+      "path": "__tests__/library-modernization/first-ten-spec.test.ts",
+      "sha256": "def7a6a00a45c726716265dfabfa07872cb017f924190ffa798ace937bf437b4",
+      "bytes": 15792
+    }
+  ],
+  "advisoryReviews": [
+    {
+      "path": "curriculum/modernization/v1/first-ten/advisory-reviews/ft01-g7-civics-counties-capitals.blind.json",
+      "sha256": "dac82a77e8d193aace51e7897cf043883a9178347f4c55486b66cfcef545b68d"
+    },
+    {
+      "path": "curriculum/modernization/v1/first-ten/advisory-reviews/ft01-g7-civics-counties-capitals.review.json",
+      "sha256": "fcae3c7a825360edafb0369907649a28c1c9c7af6d0dbaffaa6b599f7cf9359d"
+    },
+    {
+      "path": "curriculum/modernization/v1/first-ten/advisory-reviews/ft02-g7-civics-founding-of-liberia.blind.json",
+      "sha256": "7e527712768ed4e95a93905bce88674e5c62ee057904c29873520f94f5ac5f60"
+    },
+    {
+      "path": "curriculum/modernization/v1/first-ten/advisory-reviews/ft02-g7-civics-founding-of-liberia.review.json",
+      "sha256": "5abcdcbe4457399253fc40f73f417e6bd2dae03b4f4b39ffc1f895e3ed78cb0a"
+    },
+    {
+      "path": "curriculum/modernization/v1/first-ten/advisory-reviews/ft03-g7-civics-democracy-representation.blind.json",
+      "sha256": "b0b89b034e130eb486f72a17702f606e7aeda5b143d1f62461480fbf05f61087"
+    },
+    {
+      "path": "curriculum/modernization/v1/first-ten/advisory-reviews/ft03-g7-civics-democracy-representation.review.json",
+      "sha256": "ee9997ed60de0a1d5917b57ad90193ce8b597f7a8f4990207110831e350b69fd"
+    },
+    {
+      "path": "curriculum/modernization/v1/first-ten/advisory-reviews/ft04-g7-science-states-of-matter.blind.json",
+      "sha256": "e61fa2448b31a111b3790b808ce336c789596b91e7d778bef01b556e32a9d62a"
+    },
+    {
+      "path": "curriculum/modernization/v1/first-ten/advisory-reviews/ft04-g7-science-states-of-matter.review.json",
+      "sha256": "aae6685aadf7096141f339a4a9191ca5592da3d4af05292e323e0bd5ef6109ef"
+    },
+    {
+      "path": "curriculum/modernization/v1/first-ten/advisory-reviews/ft05-g5-science-photosynthesis.blind.json",
+      "sha256": "c6e09becee71973498c0489e1990c47b2bbaa918ecd8896f6358569fe28c9aaf"
+    },
+    {
+      "path": "curriculum/modernization/v1/first-ten/advisory-reviews/ft05-g5-science-photosynthesis.review.json",
+      "sha256": "47f22fe9e082f086eba03bfd47f5726fd47ec95c5aed02e8fc82f6333118db46"
+    },
+    {
+      "path": "curriculum/modernization/v1/first-ten/advisory-reviews/ft06-g7-math-area-perimeter.blind.json",
+      "sha256": "4e716eeae4077d7f989c5f55963893f2bec9844fa77ded1004c23974d9326909"
+    },
+    {
+      "path": "curriculum/modernization/v1/first-ten/advisory-reviews/ft06-g7-math-area-perimeter.review.json",
+      "sha256": "f97ae137128ee8fa47fa0bc7c033f7b241e9431e6b9aa6290053921b1a67f388"
+    },
+    {
+      "path": "curriculum/modernization/v1/first-ten/advisory-reviews/ft07-g7-math-fractions.blind.json",
+      "sha256": "db9092dfcc179e790350956b154462e089e4e406bf65c29f6dacf236a6222e3c"
+    },
+    {
+      "path": "curriculum/modernization/v1/first-ten/advisory-reviews/ft07-g7-math-fractions.review.json",
+      "sha256": "9f589f20a4de5f5823d2255c795fd7903ce393f5fb95cbbceb862d8e58a10e5b"
+    },
+    {
+      "path": "curriculum/modernization/v1/first-ten/advisory-reviews/ft08-g2-math-place-value.blind.json",
+      "sha256": "10ae370cf7ead6199f97c5e19056e334997ab210f586005e5d6832af9bd63218"
+    },
+    {
+      "path": "curriculum/modernization/v1/first-ten/advisory-reviews/ft08-g2-math-place-value.review.json",
+      "sha256": "9649ebfe4b88ff78f520ec13f260b629c033b3b4b17da4db38a449bfcc078c61"
+    },
+    {
+      "path": "curriculum/modernization/v1/first-ten/advisory-reviews/ft09-g7-literacy-main-idea.blind.json",
+      "sha256": "af6e44382a3bae8db4bbccc8bc209895f1e12a98ccaf63dd791c852947e0cc82"
+    },
+    {
+      "path": "curriculum/modernization/v1/first-ten/advisory-reviews/ft09-g7-literacy-main-idea.review.json",
+      "sha256": "acc1a468d929ebd3f74c927544a24641365b4115af00aa15f2553e2075811bb7"
+    },
+    {
+      "path": "curriculum/modernization/v1/first-ten/advisory-reviews/ft10-g7-english-vocabulary-in-context.blind.json",
+      "sha256": "ce7488fb403980b0df45b329e523f95217b0f8f9c63882cb1133535924e09239"
+    },
+    {
+      "path": "curriculum/modernization/v1/first-ten/advisory-reviews/ft10-g7-english-vocabulary-in-context.review.json",
+      "sha256": "c6955ee8ed904a14106d217a1efffb0429d76c4cca6f08ccf1e6e946d71bd96f"
+    }
+  ]
+}

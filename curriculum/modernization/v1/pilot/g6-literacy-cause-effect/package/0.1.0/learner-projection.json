@@ -1,0 +1,714 @@
+{
+ "contractVersion": "lesson-experience/1.0.0",
+ "id": "lmv1-g6-literacy-cause-effect",
+ "version": "0.1.0",
+ "title": "Cause and effect: reading for why things happen",
+ "subject": "LITERACY",
+ "grade": 6,
+ "ageBand": "UPPER_PRIMARY",
+ "authority": {
+  "status": "CURRICULUM_V2_DRAFT",
+  "note": "Curriculum V2 draft. Requires exact-revision human review; not approved, not published.",
+  "candidateContentIds": [],
+  "releaseId": null,
+  "releaseIdentity": null
+ },
+ "objectives": [
+  {
+   "id": "ll-g6-lit-cause-effect-identify",
+   "statement": "Identify the cause and the effect in a short text, using signal words where they appear.",
+   "conceptId": "ll-g6-lit-cause-effect-identify",
+   "standardCodes": [],
+   "skillIds": []
+  },
+  {
+   "id": "ll-g6-lit-cause-effect-explain",
+   "statement": "Explain in writing how a cause leads to an effect in a text, including when no signal word is given, without claiming more than the text shows.",
+   "conceptId": "ll-g6-lit-cause-effect-explain",
+   "standardCodes": [],
+   "skillIds": []
+  }
+ ],
+ "scenes": [
+  {
+   "id": "intro",
+   "type": "INTRO",
+   "title": "Why are customers walking past Fatu's stall?",
+   "objectiveIds": [],
+   "content": {
+    "body": "Fatu opens a food stall at Waterside Market selling her mother's palm oil rice. People walk past her stall to Pewee's stall, where the fufu is served in bright bowls with pepper soup on the side.\n\nWhy are customers choosing Pewee's stall? When you ask *why* something happened, you are looking for a **cause**."
+   },
+   "interaction": {
+    "kind": "NONE"
+   },
+   "tools": {
+    "allowed": [],
+    "prohibited": []
+   },
+   "accessibility": {
+    "textAlternative": "A short story about Fatu's food stall and the question of why customers choose another stall.",
+    "keyboardOperable": true,
+    "reducedMotionSafe": true,
+    "captionsRequired": false
+   },
+   "offline": {
+    "mode": "FULL",
+    "fallback": "Text only; saved with the lesson."
+   },
+   "evidence": {
+    "kind": "NONE"
+   },
+   "completion": {
+    "kind": "VIEWED"
+   }
+  },
+  {
+   "id": "objectives",
+   "type": "OBJECTIVE",
+   "title": "What you will learn",
+   "objectiveIds": [
+    "ll-g6-lit-cause-effect-identify",
+    "ll-g6-lit-cause-effect-explain"
+   ],
+   "content": {
+    "body": "Today you will learn to:\n\n1. Find the cause and the effect in a short text.\n2. Explain in writing how the cause leads to the effect, even when the writer does not use a word like *because*.\n\nAt the end you will read a new text and write about it on your own."
+   },
+   "interaction": {
+    "kind": "NONE"
+   },
+   "tools": {
+    "allowed": [],
+    "prohibited": []
+   },
+   "accessibility": {
+    "textAlternative": "The two lesson goals: finding cause and effect in a text, and explaining the link in writing.",
+    "keyboardOperable": true,
+    "reducedMotionSafe": true,
+    "captionsRequired": false
+   },
+   "offline": {
+    "mode": "FULL",
+    "fallback": "Text only; saved with the lesson."
+   },
+   "evidence": {
+    "kind": "NONE"
+   },
+   "completion": {
+    "kind": "VIEWED"
+   }
+  },
+  {
+   "id": "warm-up",
+   "type": "CHECK_UNDERSTANDING",
+   "title": "Warm-up",
+   "objectiveIds": [
+    "ll-g6-lit-cause-effect-identify"
+   ],
+   "content": {
+    "body": "Read: *Musu woke up early. She swept the yard. Then she walked to school.*\n\nAnswer two quick questions. If either is hard, tell your teacher before we go on."
+   },
+   "interaction": {
+    "kind": "MULTIPLE_CHOICE",
+    "items": [
+     {
+      "id": "w-order",
+      "prompt": "What did Musu do second?",
+      "options": [
+       "She walked to school.",
+       "She swept the yard.",
+       "She woke up early."
+      ],
+      "correctIndex": 1,
+      "feedback": {
+       "correct": "Yes. First she woke up, second she swept, then she walked to school.",
+       "incorrect": "That was the last thing she did."
+      },
+      "optionFeedback": [
+       "That was the last thing she did.",
+       "Yes. First she woke up, second she swept, then she walked to school.",
+       "That came first."
+      ]
+     },
+     {
+      "id": "w-because",
+      "prompt": "Which sentence uses 'because' correctly?",
+      "options": [
+       "I was thirsty because I ate very salty food.",
+       "I ate very salty food because I was thirsty."
+      ],
+      "correctIndex": 0,
+      "feedback": {
+       "correct": "Yes. Eating salty food is the reason for feeling thirsty.",
+       "incorrect": "Being thirsty is not a reason to eat salty food. Which one explains the other?"
+      },
+      "optionFeedback": [
+       "Yes. Eating salty food is the reason for feeling thirsty.",
+       "Being thirsty is not a reason to eat salty food. Which one explains the other?"
+      ]
+     }
+    ]
+   },
+   "tools": {
+    "allowed": [],
+    "prohibited": []
+   },
+   "accessibility": {
+    "textAlternative": "A three-sentence story about Musu's morning and two multiple-choice warm-up questions on order and the word because.",
+    "keyboardOperable": true,
+    "reducedMotionSafe": true,
+    "captionsRequired": false
+   },
+   "offline": {
+    "mode": "FULL",
+    "fallback": "Questions and feedback are saved with the lesson."
+   },
+   "evidence": {
+    "kind": "FORMATIVE_OBSERVATION",
+    "evidenceType": "DIAGNOSTIC",
+    "objectiveIds": [
+     "ll-g6-lit-cause-effect-identify"
+    ]
+   },
+   "completion": {
+    "kind": "ALL_ANSWERED"
+   }
+  },
+  {
+   "id": "concept",
+   "type": "EXPLANATION",
+   "title": "Cause, effect and signal words",
+   "objectiveIds": [
+    "ll-g6-lit-cause-effect-identify"
+   ],
+   "content": {
+    "body": "An **effect** is what happened. A **cause** is why it happened.\n\nTwo questions help: *What happened?* finds the effect. *Why did it happen?* finds the cause.\n\nWriters often join them with **signal words**: because, so, since, as a result, therefore, due to.",
+    "keyPoints": [
+     "Heavy rain fell all night, so the road to the market flooded. Cause: heavy rain. Effect: flooded road.",
+     "Test your answer: 'The road flooded because heavy rain fell all night.' If the because-sentence makes sense, you have the pair the right way round."
+    ]
+   },
+   "interaction": {
+    "kind": "NONE"
+   },
+   "tools": {
+    "allowed": [],
+    "prohibited": []
+   },
+   "accessibility": {
+    "textAlternative": "Definitions of cause and effect, two finding questions, a list of signal words and a worked flood example.",
+    "keyboardOperable": true,
+    "reducedMotionSafe": true,
+    "captionsRequired": false
+   },
+   "offline": {
+    "mode": "FULL",
+    "fallback": "Text only; saved with the lesson."
+   },
+   "evidence": {
+    "kind": "NONE"
+   },
+   "completion": {
+    "kind": "VIEWED"
+   }
+  },
+  {
+   "id": "worked-example",
+   "type": "GUIDED_EXAMPLE",
+   "title": "Worked example: a text with signal words",
+   "objectiveIds": [
+    "ll-g6-lit-cause-effect-identify"
+   ],
+   "content": {
+    "body": "Read: *Floods covered many cassava farms near the river, so farmers could not harvest. As a result, there was less cassava in the market, and the price went up.*"
+   },
+   "interaction": {
+    "kind": "DIAGRAM_REVEAL",
+    "diagramId": "worked-example",
+    "steps": [
+     {
+      "id": "s1",
+      "label": "What happened?",
+      "description": "Find an effect: farmers could not harvest."
+     },
+     {
+      "id": "s2",
+      "label": "Why?",
+      "description": "Look back: floods covered the farms. That is the cause. The signal word is 'so'."
+     },
+     {
+      "id": "s3",
+      "label": "A chain",
+      "description": "The effect becomes the next cause: no harvest → less cassava in the market → higher price ('as a result')."
+     },
+     {
+      "id": "s4",
+      "label": "Test it",
+      "description": "'The price went up because there was less cassava in the market.' It makes sense, so the pair is the right way round."
+     }
+    ]
+   },
+   "tools": {
+    "allowed": [],
+    "prohibited": []
+   },
+   "accessibility": {
+    "textAlternative": "A two-sentence text about floods, harvest and cassava prices, with four revealed steps naming each cause and effect.",
+    "keyboardOperable": true,
+    "reducedMotionSafe": true,
+    "captionsRequired": false
+   },
+   "offline": {
+    "mode": "FULL",
+    "fallback": "Steps are saved with the lesson."
+   },
+   "evidence": {
+    "kind": "NONE"
+   },
+   "completion": {
+    "kind": "ALL_STEPS_REVEALED"
+   }
+  },
+  {
+   "id": "hidden-signal",
+   "type": "GUIDED_EXAMPLE",
+   "title": "Worked example: no signal word",
+   "objectiveIds": [
+    "ll-g6-lit-cause-effect-explain"
+   ],
+   "content": {
+    "body": "Read: *Saida's stall was empty last week. This week she painted it bright yellow and put out a sign with her prices. By noon, every bowl of rice was sold.*"
+   },
+   "interaction": {
+    "kind": "DIAGRAM_REVEAL",
+    "diagramId": "hidden-signal",
+    "steps": [
+     {
+      "id": "h1",
+      "label": "Start from the effect",
+      "description": "What happened? Every bowl was sold by noon."
+     },
+     {
+      "id": "h2",
+      "label": "Ask why",
+      "description": "What changed before that? She painted the stall and put out a price sign."
+     },
+     {
+      "id": "h3",
+      "label": "Add 'because'",
+      "description": "'Her rice sold out because her stall was easier to notice and showed its prices.' The text suggests this, but does not say it."
+     },
+     {
+      "id": "h4",
+      "label": "Stay careful",
+      "description": "Say 'the text suggests'. Other things could also have helped, such as a busy market day."
+     }
+    ]
+   },
+   "tools": {
+    "allowed": [],
+    "prohibited": []
+   },
+   "accessibility": {
+    "textAlternative": "A short text about Saida's stall with four revealed steps showing how to infer a cause without a signal word.",
+    "keyboardOperable": true,
+    "reducedMotionSafe": true,
+    "captionsRequired": false
+   },
+   "offline": {
+    "mode": "FULL",
+    "fallback": "Steps are saved with the lesson."
+   },
+   "evidence": {
+    "kind": "NONE"
+   },
+   "completion": {
+    "kind": "ALL_STEPS_REVEALED"
+   }
+  },
+  {
+   "id": "guided",
+   "type": "GUIDED_EXAMPLE",
+   "title": "Try it with a hint",
+   "objectiveIds": [
+    "ll-g6-lit-cause-effect-identify"
+   ],
+   "content": {
+    "body": "Read: *After a week of poor sales, Boimah decorated his stall and offered a small discount. More customers came to his stall than the week before.*"
+   },
+   "interaction": {
+    "kind": "MULTIPLE_CHOICE",
+    "items": [
+     {
+      "id": "g-effect",
+      "prompt": "What is the effect?",
+      "options": [
+       "Boimah decorated his stall.",
+       "More customers came to his stall.",
+       "He had a week of poor sales."
+      ],
+      "correctIndex": 1,
+      "feedback": {
+       "correct": "Yes. That is what happened.",
+       "incorrect": "That is what Boimah did. Ask: what happened as a result?"
+      },
+      "optionFeedback": [
+       "That is what Boimah did. Ask: what happened as a result?",
+       "Yes. That is what happened.",
+       "That came before; it is why he made changes."
+      ]
+     },
+     {
+      "id": "g-test",
+      "prompt": "Which test sentence is the right way round?",
+      "options": [
+       "More customers came because Boimah decorated his stall and offered a discount.",
+       "Boimah decorated his stall because more customers came."
+      ],
+      "correctIndex": 0,
+      "feedback": {
+       "correct": "Yes. The changes explain the extra customers.",
+       "incorrect": "This swaps them. He decorated before the customers came."
+      },
+      "optionFeedback": [
+       "Yes. The changes explain the extra customers.",
+       "This swaps them. He decorated before the customers came."
+      ]
+     }
+    ]
+   },
+   "tools": {
+    "allowed": [],
+    "prohibited": []
+   },
+   "accessibility": {
+    "textAlternative": "A short text about Boimah's stall and two guided multiple-choice questions on its effect and cause.",
+    "keyboardOperable": true,
+    "reducedMotionSafe": true,
+    "captionsRequired": false
+   },
+   "offline": {
+    "mode": "FULL",
+    "fallback": "Questions and feedback are saved with the lesson."
+   },
+   "evidence": {
+    "kind": "FORMATIVE_OBSERVATION",
+    "evidenceType": "PRACTICE",
+    "objectiveIds": [
+     "ll-g6-lit-cause-effect-identify"
+    ]
+   },
+   "completion": {
+    "kind": "ALL_ANSWERED"
+   }
+  },
+  {
+   "id": "careful-readers",
+   "type": "CHECK_UNDERSTANDING",
+   "title": "Careful readers",
+   "objectiveIds": [
+    "ll-g6-lit-cause-effect-explain"
+   ],
+   "content": {
+    "body": "Something happening first does not prove it caused what came after. And one cause does not always give the same effect."
+   },
+   "interaction": {
+    "kind": "MULTIPLE_CHOICE",
+    "items": [
+     {
+      "id": "m-cold",
+      "prompt": "Boima played football in the rain. Two days later he had a cold. Does this show the rain caused his cold?",
+      "options": [
+       "Yes, because the cold came after the rain.",
+       "No. The cold came after the rain, but the story does not show that the rain caused it."
+      ],
+      "correctIndex": 1,
+      "feedback": {
+       "correct": "Yes. A careful reader asks for evidence of how one event caused the other.",
+       "incorrect": "Coming after is not proof. Colds are caused by viruses passed between people; the story does not show how he caught it."
+      },
+      "optionFeedback": [
+       "Coming after is not proof. Colds are caused by viruses passed between people; the story does not show how he caught it.",
+       "Yes. A careful reader asks for evidence of how one event caused the other."
+      ]
+     },
+     {
+      "id": "m-floods",
+      "prompt": "A student writes: 'Floods always make food prices go up.' What is the problem?",
+      "options": [
+       "Nothing; floods always do that.",
+       "'Always' is too strong. A flood may raise prices, depending on the harvest and what is in the market."
+      ],
+      "correctIndex": 1,
+      "feedback": {
+       "correct": "Yes. Words like often or may are more accurate here.",
+       "incorrect": "A flood far from farms, or when stores are full, may not change prices. The cause does not always give the same effect."
+      },
+      "optionFeedback": [
+       "A flood far from farms, or when stores are full, may not change prices. The cause does not always give the same effect.",
+       "Yes. Words like often or may are more accurate here."
+      ]
+     }
+    ]
+   },
+   "tools": {
+    "allowed": [],
+    "prohibited": []
+   },
+   "accessibility": {
+    "textAlternative": "Two multiple-choice questions about claims that are too strong: a cold after rain, and floods always raising prices.",
+    "keyboardOperable": true,
+    "reducedMotionSafe": true,
+    "captionsRequired": false
+   },
+   "offline": {
+    "mode": "FULL",
+    "fallback": "Questions and feedback are saved with the lesson."
+   },
+   "evidence": {
+    "kind": "FORMATIVE_OBSERVATION",
+    "evidenceType": "PRACTICE",
+    "objectiveIds": [
+     "ll-g6-lit-cause-effect-explain"
+    ]
+   },
+   "completion": {
+    "kind": "ALL_ANSWERED"
+   }
+  },
+  {
+   "id": "practice",
+   "type": "PRACTICE",
+   "title": "Your turn",
+   "objectiveIds": [
+    "ll-g6-lit-cause-effect-identify",
+    "ll-g6-lit-cause-effect-explain"
+   ],
+   "content": {
+    "body": "Work on your own. Read each sentence carefully before you choose."
+   },
+   "interaction": {
+    "kind": "MULTIPLE_CHOICE",
+    "items": [
+     {
+      "id": "p-ants",
+      "prompt": "'Zoe left food uncovered overnight, so ants were all over it in the morning.' What is the cause?",
+      "options": [
+       "Ants were all over the food.",
+       "Zoe left the food uncovered overnight."
+      ],
+      "correctIndex": 1,
+      "feedback": {
+       "correct": "Yes. That is why the ants came. The signal word is 'so'.",
+       "incorrect": "That is what happened, the effect."
+      },
+      "optionFeedback": [
+       "That is what happened, the effect.",
+       "Yes. That is why the ants came. The signal word is 'so'."
+      ]
+     },
+     {
+      "id": "p-river",
+      "prompt": "'The community cleared rubbish from the river banks. By the end of the season, more fish were seen near the shore.' What does the text suggest is the cause of more fish?",
+      "options": [
+       "Clearing rubbish from the river banks.",
+       "The end of the season."
+      ],
+      "correctIndex": 0,
+      "feedback": {
+       "correct": "Yes. No signal word is printed, but the text suggests this link.",
+       "incorrect": "That tells when, not why."
+      },
+      "optionFeedback": [
+       "Yes. No signal word is printed, but the text suggests this link.",
+       "That tells when, not why."
+      ]
+     },
+     {
+      "id": "p-kollie",
+      "prompt": "'Kollie passed his test after he studied every evening.' Which word could join the cause and effect?",
+      "options": [
+       "Kollie passed his test because he studied every evening.",
+       "Kollie studied every evening because he passed his test."
+      ],
+      "correctIndex": 0,
+      "feedback": {
+       "correct": "Yes. Studying explains passing.",
+       "incorrect": "This is reversed. He studied before the test."
+      },
+      "optionFeedback": [
+       "Yes. Studying explains passing.",
+       "This is reversed. He studied before the test."
+      ]
+     }
+    ]
+   },
+   "tools": {
+    "allowed": [],
+    "prohibited": []
+   },
+   "accessibility": {
+    "textAlternative": "Three independent multiple-choice questions on short sentences, finding causes with and without signal words.",
+    "keyboardOperable": true,
+    "reducedMotionSafe": true,
+    "captionsRequired": false
+   },
+   "offline": {
+    "mode": "FULL",
+    "fallback": "Questions and feedback are saved with the lesson."
+   },
+   "evidence": {
+    "kind": "FORMATIVE_OBSERVATION",
+    "evidenceType": "PRACTICE",
+    "objectiveIds": [
+     "ll-g6-lit-cause-effect-identify",
+     "ll-g6-lit-cause-effect-explain"
+    ]
+   },
+   "completion": {
+    "kind": "ALL_ANSWERED"
+   }
+  },
+  {
+   "id": "write",
+   "type": "PRACTICE",
+   "title": "Read and write",
+   "objectiveIds": [
+    "ll-g6-lit-cause-effect-identify",
+    "ll-g6-lit-cause-effect-explain"
+   ],
+   "content": {
+    "body": "Read: *The school well dried up in the dry season. Students had to carry water from a pump far away, and many arrived late. The principal asked parents to help dig the well deeper.*"
+   },
+   "interaction": {
+    "kind": "FREE_RESPONSE",
+    "prompts": [
+     {
+      "id": "e-pair",
+      "prompt": "Write one cause and its effect from the text, using 'because'.",
+      "minLength": 25
+     },
+     {
+      "id": "e-chain",
+      "prompt": "Explain how the well drying up led to the principal's request. Use at least two steps.",
+      "minLength": 40
+     }
+    ]
+   },
+   "tools": {
+    "allowed": [],
+    "prohibited": []
+   },
+   "accessibility": {
+    "textAlternative": "A three-sentence text about a school well drying up, with two written-response prompts about its causes and effects.",
+    "keyboardOperable": true,
+    "reducedMotionSafe": true,
+    "captionsRequired": false
+   },
+   "offline": {
+    "mode": "FULL",
+    "fallback": "Answers can be written offline or in the exercise book."
+   },
+   "evidence": {
+    "kind": "FORMATIVE_OBSERVATION",
+    "evidenceType": "PRACTICE",
+    "objectiveIds": [
+     "ll-g6-lit-cause-effect-identify",
+     "ll-g6-lit-cause-effect-explain"
+    ]
+   },
+   "completion": {
+    "kind": "ALL_RESPONSES_WRITTEN"
+   }
+  },
+  {
+   "id": "exit-ticket",
+   "type": "MASTERY_CHECK",
+   "title": "Exit ticket",
+   "objectiveIds": [
+    "ll-g6-lit-cause-effect-identify",
+    "ll-g6-lit-cause-effect-explain"
+   ],
+   "content": {
+    "body": "Read the new text your teacher gives you and answer in full sentences, on your own. Your teacher checks these answers; this lesson does not."
+   },
+   "interaction": {
+    "kind": "ASSESSMENT_HANDOFF",
+    "assessment": {
+     "assessmentId": "lmv1-g6-literacy-cause-effect--g6-ce-exit",
+     "assessmentVersion": "0.1.0",
+     "player": "ASSESSMENT_PLAYER_V2",
+     "scoring": "SERVER_AUTHORITY",
+     "objectiveIds": [
+      "ll-g6-lit-cause-effect-identify",
+      "ll-g6-lit-cause-effect-explain"
+     ],
+     "items": []
+    }
+   },
+   "tools": {
+    "allowed": [],
+    "prohibited": []
+   },
+   "accessibility": {
+    "textAlternative": "Exit ticket: read a new short text and write its cause and effect and an explanation.",
+    "keyboardOperable": true,
+    "reducedMotionSafe": true,
+    "captionsRequired": false
+   },
+   "offline": {
+    "mode": "DEGRADED",
+    "fallback": "Your teacher gives you the exit-ticket text and questions on paper. Answer them on your own."
+   },
+   "evidence": {
+    "kind": "MASTERY_RESPONSE",
+    "evidenceType": "QUIZ",
+    "objectiveIds": [
+     "ll-g6-lit-cause-effect-identify",
+     "ll-g6-lit-cause-effect-explain"
+    ]
+   },
+   "completion": {
+    "kind": "ALL_ANSWERED"
+   }
+  },
+  {
+   "id": "reflect",
+   "type": "REFLECTION",
+   "title": "Look back and look ahead",
+   "objectiveIds": [
+    "ll-g6-lit-cause-effect-identify",
+    "ll-g6-lit-cause-effect-explain"
+   ],
+   "content": {
+    "body": "Go back to Fatu's stall. What does the story suggest caused customers to choose Pewee's stall? Say it with 'because'.\n\nIn one week your teacher will give you a short text to read and explain again, without notes. Next lesson you will use cause and effect to plan your own short story."
+   },
+   "interaction": {
+    "kind": "NONE"
+   },
+   "tools": {
+    "allowed": [],
+    "prohibited": []
+   },
+   "accessibility": {
+    "textAlternative": "A reflection on Fatu's stall and a note that a reading check returns in one week.",
+    "keyboardOperable": true,
+    "reducedMotionSafe": true,
+    "captionsRequired": false
+   },
+   "offline": {
+    "mode": "FULL",
+    "fallback": "Text only; saved with the lesson."
+   },
+   "evidence": {
+    "kind": "NONE"
+   },
+   "completion": {
+    "kind": "VIEWED"
+   }
+  }
+ ],
+ "offline": {
+  "packageable": true,
+  "requiredAssets": []
+ }
+}

@@ -1,0 +1,139 @@
+{
+  "recordedAt": "2026-10-19T21:21:13.606Z",
+  "remotePrHead": "3e4ba71df9f462d273fe3be1e1bb585aea30c8c0",
+  "mainBaseline": "ebfdc2a07aa955553a172e99e41e65d6a9f67f66",
+  "testedIntegration": "7256bbe31755b542355a64f65296a9e7760ee7cf",
+  "academicStatus": "BLOCKED FOR ACADEMIC APPROVAL",
+  "qualifiedAcademicReviewers": [],
+  "mergeReadiness": "NOT_MERGE_READY",
+  "checks": {
+    "affectedRegression": {
+      "exitCode": 0,
+      "passedFiles": 47,
+      "skippedFiles": 1,
+      "passedTests": 1151,
+      "skippedTests": 6,
+      "seconds": 179.69
+    },
+    "assessmentAndLearningAuthority": {
+      "exitCode": 0,
+      "passedFiles": 28,
+      "passedTests": 246,
+      "skippedTests": 0,
+      "seconds": 35.88
+    },
+    "changedFiles": {
+      "exitCode": 0,
+      "command": "node scripts/validate-changed.mjs --base origin/main --no-types",
+      "files": 176,
+      "directTests": 76,
+      "relatedTests": 124,
+      "note": "Overlaps targeted suites; counts are not additive."
+    },
+    "typecheck": {
+      "exitCode": 0,
+      "command": "node node_modules/typescript/bin/tsc --noEmit",
+      "scope": "Production-code integration. Prepared QA helpers were additionally syntax checked, bundled and run against delivered inputs."
+    },
+    "prismaGenerate": {
+      "exitCode": 0,
+      "databaseConnection": false,
+      "client": "WORKTREE_LOCAL"
+    },
+    "ledgerReplay": {
+      "exitCode": 0,
+      "events": 3702,
+      "holds": 353,
+      "acceptedReviews": 0,
+      "releaseAuthorizations": 0,
+      "releases": 0
+    },
+    "ledgerDiffGuard": {
+      "exitCode": 0,
+      "verdict": "AUTOMATED_APPEND_ONLY",
+      "mayAutoMerge": false
+    },
+    "curriculumReleaseProvenance": {
+      "exitCode": 0,
+      "note": "Existing coverage and authority gaps remain explicit."
+    },
+    "inventory": {
+      "records": 1105,
+      "recomputedRevisionHashes": 1105,
+      "auditOrTrackDifferences": 0,
+      "revise": 701,
+      "rebuildRequired": 51,
+      "governanceHold": 353,
+      "basis": "2026-10-16 local export, not live attestation"
+    },
+    "contract": {
+      "version": "1.0.0",
+      "manifestSha256": "4cb6fb5588f5f840fe8b702f181a051a5838b093c1db82b0ea14d9c4b64ea549",
+      "verifiedPinnedFiles": 29,
+      "matchingFactorySourceBindings": 10,
+      "factoryContractVersion": "0.1.0",
+      "compatibility": "BLOCKED",
+      "erratumE1Preserved": true
+    },
+    "productionBuild": {
+      "processId": 9188,
+      "kind": "production build",
+      "startedUtc": "2026-10-19T20:57:54.6140350Z",
+      "stoppedUtc": "2026-10-19T21:15:01.8021873Z",
+      "elapsedSeconds": 1027,
+      "result": "INCONCLUSIVE_LOCAL_TIMEOUT"
+    },
+    "browser": {
+      "result": "PARTIAL",
+      "completedControlWidths": [
+        360,
+        390
+      ],
+      "additionalScreenshotWidth": 768,
+      "notCompletedWidth": 1440,
+      "firstThreeEndToEnd": "NOT_RUN_PENDING_IMMUTABLE_PACKAGES_AND_RUNTIME_BINDINGS"
+    },
+    "finalAuthoredInputValidation": {
+      "exitCode": 0,
+      "validInputs": 3,
+      "readyForFactoryExecution": 0,
+      "generatedByQA": 0,
+      "factoryValidatorBundleSha256": "25514319c83f1a12b5e9907ab5081e1007eadd74c3e0e3785d44e48de39292e1"
+    },
+    "reviewPatchValidation": {
+      "exitCode": 0,
+      "command": "node scripts/validate-changed.mjs --no-types",
+      "scope": "Staged report, sanitized evidence and four standalone QA helpers; route policy, whitespace and JavaScript syntax checks passed."
+    }
+  },
+  "firstThree": [
+    {
+      "sourceId": "wk_mca7a_fri_p4",
+      "inputSha256": "5d27433348ad6d24ad1d168e1398544afb42b68bb707298737bba1f950441ccb",
+      "parserPassed": true,
+      "images": 3,
+      "matchingImageHashes": 3,
+      "immutableFactoryPackage": null,
+      "academicApproval": "BLOCKED FOR ACADEMIC APPROVAL"
+    },
+    {
+      "sourceId": "wk_mca7a_fri_p3",
+      "inputSha256": "6c7928c46f8a7c25c0c026b67e5d066395d47094d5164b90645264288edab5f3",
+      "parserPassed": true,
+      "images": 3,
+      "matchingImageHashes": 3,
+      "immutableFactoryPackage": null,
+      "academicApproval": "BLOCKED FOR ACADEMIC APPROVAL"
+    },
+    {
+      "sourceId": "lesson_mca_1",
+      "inputSha256": "fed1af1dadc67bfa5d17e8cc776b91fb5a8a73bd50979b3372ef196eb327416f",
+      "parserPassed": true,
+      "images": 3,
+      "matchingImageHashes": 3,
+      "immutableFactoryPackage": null,
+      "academicApproval": "BLOCKED FOR ACADEMIC APPROVAL"
+    }
+  ],
+  "prohibitedActionsPerformed": []
+}

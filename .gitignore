@@ -146,5 +146,8 @@ scripts/finetune/data/
 # Lesson convergence retains reviewed representative captures; the browser runner may generate the full matrix locally.
 /artifacts/lesson-experience-v2-runtime/*.png
 
+# Library Modernization V1: local read-only lesson extract (lesson bodies, ~120 MB)
+/artifacts/library-modernization-v1/extract/
+
 # MergeOps hygiene output contains local absolute paths; never commit it.
 /artifacts/mergeops-demo-v1/hygiene/

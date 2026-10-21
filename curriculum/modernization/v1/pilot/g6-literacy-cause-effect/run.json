@@ -1,0 +1,87 @@
+{
+ "pipelineVersion": "liberialearn-modernization-pipeline/1.0.0",
+ "contentId": "wk_pcs6a_wed_p2",
+ "candidateVersion": "0.1.0",
+ "attempts": 1,
+ "failures": {},
+ "stages": [
+  {
+   "stage": "RESOLVE_LEGACY",
+   "inputHash": "995489f0f352e9d9c419bc599d5639c10fc13203e8a676f04ab690f6a4593802",
+   "outputHash": "995489f0f352e9d9c419bc599d5639c10fc13203e8a676f04ab690f6a4593802",
+   "status": "DONE"
+  },
+  {
+   "stage": "PRESERVE_LEGACY",
+   "inputHash": "995489f0f352e9d9c419bc599d5639c10fc13203e8a676f04ab690f6a4593802",
+   "outputHash": "e6529910d76a5d7208a39b3b22548713686ddeb4eecdd532962bd64ae02af684",
+   "status": "DONE"
+  },
+  {
+   "stage": "LEGACY_MATERIAL",
+   "inputHash": "84f28f09e7256b36aeb56fd28bc78e9e485f2820055a6422f4f61c5ae1617901",
+   "outputHash": "d680dbf76bb47cc63019fd390318549155065f9fa01a49b6224aafbc02cce5be",
+   "status": "DONE"
+  },
+  {
+   "stage": "AUTHORITY",
+   "inputHash": "c71435a3a004d114d2b47b5785f890352d5b8ebc96684453ae4329eb8708596f",
+   "outputHash": "fdfa320772ea5d0528fe7781889b7a9aa568067e2b18724d2dc632d3f39101b6",
+   "status": "DONE"
+  },
+  {
+   "stage": "SPECIFICATION",
+   "inputHash": "3cb4bc99055df95e57e8f2f65a16fa3991ea9b980a275faa68c8d6dcf0f03299",
+   "outputHash": "3cb4bc99055df95e57e8f2f65a16fa3991ea9b980a275faa68c8d6dcf0f03299",
+   "status": "DONE"
+  },
+  {
+   "stage": "AUTHOR",
+   "inputHash": "013c05c1a57e0f1fcb9b934b448effd27491036ed1e34da434e7e17c8b3f6e10",
+   "outputHash": "f38507109f72e920756790966c9f2eb90492c2c6d1ec1e0db7303c5a4a3d4787",
+   "status": "DONE"
+  },
+  {
+   "stage": "VALIDATE",
+   "inputHash": "af6722bf1c73227516d8944ae23cc298f3244acc179381d11066a29f98856834",
+   "outputHash": "0418eae1bfde5245dc6a5e294263266e936cb0cb0bb6decaf14df69600ade1e0",
+   "status": "DONE"
+  },
+  {
+   "stage": "ASSESSMENT",
+   "inputHash": "2dba1a7453fd5c9c3f4200a44e36ccf8620cead4cbc14a1fb7b3d86e03852486",
+   "outputHash": "7bf5559b48c0165f15b209c812b818b15114847050dacf71eb255b58144b1bda",
+   "status": "DONE"
+  },
+  {
+   "stage": "PROJECTION",
+   "inputHash": "af6722bf1c73227516d8944ae23cc298f3244acc179381d11066a29f98856834",
+   "outputHash": "8385b8ac7f07e6c4e212d95cc54cb3525894f8bb3a376d3f6ef555452709e5c0",
+   "status": "DONE"
+  },
+  {
+   "stage": "EXPERIENCE",
+   "inputHash": "af6722bf1c73227516d8944ae23cc298f3244acc179381d11066a29f98856834",
+   "outputHash": "7f4a3ad7711b36e9b74ce82ad9a301c2706b1ff5f81daf9921eb5b6b23833aa6",
+   "status": "DONE"
+  },
+  {
+   "stage": "COMPARISON",
+   "inputHash": "9aff2ab8c07d28cf70dcd7cadb8a885d712076cce19fc53fff3cad72663ec646",
+   "outputHash": "12026cf225fbd3df485e8de1effc9a3b0b8ad2f3c4f77de657883746760b979f",
+   "status": "DONE"
+  },
+  {
+   "stage": "PACKAGE",
+   "inputHash": "f996bd19541b3545dce2ee1a1c3ad86c1a76fb0b938772d7b1a34d1612f462f0",
+   "outputHash": "f996bd19541b3545dce2ee1a1c3ad86c1a76fb0b938772d7b1a34d1612f462f0",
+   "status": "DONE"
+  },
+  {
+   "stage": "QUEUE",
+   "inputHash": "f996bd19541b3545dce2ee1a1c3ad86c1a76fb0b938772d7b1a34d1612f462f0",
+   "outputHash": "e4b589eb940d841f40d13c751289d02e02e4e7f87d8d3bf0ecb4f56060dbc039",
+   "status": "DONE"
+  }
+ ]
+}

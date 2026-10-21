@@ -1,0 +1,238 @@
+{
+  "schemaVersion": "first-three-v021-validation/1.0.0",
+  "codeCommit": "05d9c0fb991fae786d4cd7ae6773510910515f54",
+  "date": "2026-10-21",
+  "state": "DRAFT",
+  "approved": false,
+  "published": false,
+  "released": false,
+  "productionWrites": false,
+  "build": {
+    "result": "PASS",
+    "command": "node scripts/content-factory-v2/isolated-validation.cjs build (npm run build, including private Prisma generation)",
+    "nativeExitCode": 0,
+    "pages": 391,
+    "codeCommit": "05d9c0fb991fae786d4cd7ae6773510910515f54",
+    "buildId": "McEVfzWfsVx7FoFm4vh-A",
+    "standaloneServerExists": true,
+    "standaloneServerSha256": "c65baac43e1f70d89a1800cbd1716c49a19aa9763bc10e58d23fc16dcd318248",
+    "prerenderManifestSha256": "a7d6d3e99362d927d0928b443f6af5b55792a2f8784151ab401c7c6a73f13df7",
+    "routesManifestSha256": "a7eef6d1d2af02a1ae9edc777cfb2ac3f2b9517372024d695213240cb635b6a1",
+    "firstAttempt": "Full Next output produced, but PowerShell returned 1 after converting stderr into NativeCommandError. Superseded by explicit native-exit rerun."
+  },
+  "dependencies": {
+    "root": "C:\\liberia-learn\\.task-worktrees\\first-three-v021-final\\node_modules",
+    "generatedClient": "C:\\liberia-learn\\.task-worktrees\\first-three-v021-final\\node_modules\\.prisma\\client",
+    "sharedNodeModulesRegenerated": false,
+    "lockSha256": "6a7951b5d447ef1e5201eb9cf7174386d82d9534d5646f72f054d785dbfa3f49",
+    "schemaSha256": "ed7cfb06743f9ea0d7bda0d0ec365d8f41962aed2776056aa2de527289495100",
+    "node": "v24.21.0"
+  },
+  "typescript": {
+    "command": "node scripts/content-factory-v2/isolated-validation.cjs types",
+    "result": "PASS",
+    "exitCode": 0
+  },
+  "focusedTests": {
+    "files": 14,
+    "passed": 143,
+    "skipped": 0,
+    "exitCode": 0
+  },
+  "changedGate": {
+    "result": "PASS",
+    "command": "node scripts/validate-changed.mjs --no-types",
+    "passed": 1728,
+    "skipped": 23,
+    "note": "Broad related gate before the final C13 fail-closed guard. Final exact-head focused tests and production build cover the frozen code."
+  },
+  "deterministic": {
+    "receiptIdentical": true,
+    "allFileBytesAndModificationTimesUnchanged": true,
+    "fileCount": 112,
+    "fileInventorySha256": "d621df439b255fd23509ca90950208ea6b606568a649330aff3acce8824afe45"
+  },
+  "historicalPreservation": [
+    {
+      "root": "C:\\restricted-authoring\\review-packages\\first-three-6c1d6f8e",
+      "fileCount": 112,
+      "bytesAndMtimesUnchanged": true,
+      "inventorySha256": "3674e8757fcd860fbc46f9b36ff36e72c04fc159aefd802ce07c9b13d7d92b6d"
+    },
+    {
+      "root": "C:/restricted-authoring/review-packages/first-three-v2-reconciliation",
+      "fileCount": 112,
+      "bytesAndMtimesUnchanged": true,
+      "inventorySha256": "de27365a4ec60e2b495cacf69e23f48e237667b06e86ee3624acc5548e0188b8"
+    },
+    {
+      "root": "C:/restricted-authoring/review-packages/first-three-v2-61fa60b7",
+      "fileCount": 112,
+      "bytesAndMtimesUnchanged": true,
+      "inventorySha256": "51108fd9fbaf4e9ccc3edf722dc7ea5e8098520833d4504af401465e4f21a78a"
+    }
+  ],
+  "media": {
+    "figures": 12,
+    "pngs": 12,
+    "references": 30,
+    "allDeclaredHashesVerified": true
+  },
+  "runtimeSourcePins": 32,
+  "accessibility": {
+    "runs": 6,
+    "violations": 0,
+    "incomplete": [
+      {
+        "lab": "g7-liberia-counties",
+        "width": 1440,
+        "incomplete": [
+          {
+            "id": "aria-prohibited-attr",
+            "nodes": 1
+          },
+          {
+            "id": "color-contrast",
+            "nodes": 9
+          }
+        ]
+      },
+      {
+        "lab": "g7-water-particles",
+        "width": 1440,
+        "incomplete": [
+          {
+            "id": "aria-prohibited-attr",
+            "nodes": 1
+          }
+        ]
+      },
+      {
+        "lab": "g7-fraction-manipulatives",
+        "width": 1440,
+        "incomplete": [
+          {
+            "id": "aria-prohibited-attr",
+            "nodes": 1
+          },
+          {
+            "id": "color-contrast",
+            "nodes": 7
+          }
+        ]
+      },
+      {
+        "lab": "g7-liberia-counties",
+        "width": 390,
+        "incomplete": [
+          {
+            "id": "aria-prohibited-attr",
+            "nodes": 1
+          },
+          {
+            "id": "color-contrast",
+            "nodes": 10
+          }
+        ]
+      },
+      {
+        "lab": "g7-water-particles",
+        "width": 390,
+        "incomplete": [
+          {
+            "id": "aria-prohibited-attr",
+            "nodes": 1
+          },
+          {
+            "id": "color-contrast",
+            "nodes": 2
+          }
+        ]
+      },
+      {
+        "lab": "g7-fraction-manipulatives",
+        "width": 390,
+        "incomplete": [
+          {
+            "id": "aria-prohibited-attr",
+            "nodes": 1
+          },
+          {
+            "id": "color-contrast",
+            "nodes": 5
+          }
+        ]
+      }
+    ],
+    "manualReviewRequired": true
+  },
+  "logs": [
+    {
+      "path": "C:\\liberia-learn\\.task-worktrees\\first-three-v021-final\\dependency-install.log",
+      "sha256": "5ece02806fdfab86a071f5788465226f21ef5d48a5e4ee9ac71d16d7988f8968"
+    },
+    {
+      "path": "C:\\liberia-learn\\.task-worktrees\\first-three-v021-final\\prisma-private-generate.log",
+      "sha256": "0724fe90c6f0bf5c6bec37daa54f87e67fa955b130437baa7395f4303bc7b9aa"
+    },
+    {
+      "path": "C:\\liberia-learn\\.task-worktrees\\first-three-v021-final\\types-final-v021.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "C:\\liberia-learn\\.task-worktrees\\first-three-v021-final\\focused-exact-head-v021.log",
+      "sha256": "c1dad181fadfbd211a29a28e1a00291514bd7317e421c75ba220470f94952a51"
+    },
+    {
+      "path": "C:\\liberia-learn\\.task-worktrees\\first-three-v021-final\\validate-changed-v021.log",
+      "sha256": "eeb84e56ac7393a1e76a1851eda90689b75fefcfb6d869b3f87d23d6ad3078c8"
+    },
+    {
+      "path": "C:\\liberia-learn\\.task-worktrees\\first-three-v021-final\\production-build-v021.log",
+      "sha256": "5c1010e24df6c58ebf844b6ec6cc66a2b3f865f715121a2c5289c104ce15d723"
+    },
+    {
+      "path": "C:\\liberia-learn\\.task-worktrees\\first-three-v021-final\\production-build-confirmed-v021.log",
+      "sha256": "99557b93c46f2bad100989afd360df2bc1e503704d5738746ff0fc486f6dd597"
+    },
+    {
+      "path": "C:\\liberia-learn\\.task-worktrees\\first-three-v021-final\\reconciliation-v021.log",
+      "sha256": "be29111342ac416e99f9cf229157c25f7d4644036f8824255a29bf48cac14f79"
+    },
+    {
+      "path": "C:\\liberia-learn\\.task-worktrees\\first-three-v021-final\\browser-v021.log",
+      "sha256": "9a682bd914710046943cf6db058f0e12dc58372ce747fa0d5fcfdf2c8eb1c77e"
+    }
+  ],
+  "evidence": [
+    {
+      "path": "docs/architecture/content-factory/evidence/first-three-v021-reconciliation.json",
+      "sha256": "6f9ae1c066934b16de2b4ffb4b6290aa7f9c9ba69ecc0291e40c33f84b79ce24"
+    },
+    {
+      "path": "docs/architecture/content-factory/evidence/first-three-v021-media.json",
+      "sha256": "1241acf4dff3e83dbf081987ccbe72cdcd345c6c929437c017cf013fc0257950"
+    },
+    {
+      "path": "docs/architecture/content-factory/evidence/first-three-v021-browser.json",
+      "sha256": "347c52fd05dadc7a35b3dfb58e83e5c8d75d099d611beb763037ad0e7accbf70"
+    },
+    {
+      "path": "docs/architecture/content-factory/evidence/reproduce-v021-browser.cjs",
+      "sha256": "5adecdc3985279561bffcded33bd27cc0041d4965df3d87636224ccb550e53ca"
+    },
+    {
+      "path": "docs/architecture/content-factory/evidence/reproduce-v021-media.cjs",
+      "sha256": "2a5f1998ad57dc34d7baed9ec8bedc82c201c7ece143ca081ca94353b5fa8d50"
+    }
+  ],
+  "outstanding": [
+    "PR195_COMBINED_EXACT_HASH_LEARNER_LOADER_AND_FULL_FLOW_QA",
+    "AUTHORITATIVE_ITEM_OBJECTIVE_CONTRACT_AND_DOWNSTREAM_CONSUMER_REPAIR_BEFORE_ACTIVATION",
+    "MANUAL_SCREEN_READER_LOW_VISION_KEYBOARD_AND_REAL_DEVICE_REVIEW",
+    "COUNTY_BOUNDARY_VISUAL_REVIEW",
+    "GEOMETRY_LICENSE_AND_ASSET_POLICY_CLEARANCE",
+    "RESTRICTED_ASSESSMENT_ASSET_PUBLICATION_REMAINS_UNAUTHORIZED",
+    "SOURCE_ATTESTATION_QUALIFIED_HUMAN_ACADEMIC_REVIEW_AND_EXPLICIT_RELEASE_AUTHORIZATION"
+  ]
+}

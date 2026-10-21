@@ -1,0 +1,57 @@
+{
+ "head": "6a346b9bfc93dd3002b708792470d0b8a13f2263df25c86543f9eb4060a33267",
+ "events": 3702,
+ "answers": {
+  "lessons": 1105,
+  "live": {
+   "observed": 1105,
+   "byStatus": {
+    "APPROVED": 1052,
+    "published": 38,
+    "DRAFT": 10,
+    "draft": 1,
+    "REVOKED": 1,
+    "pending_approval": 2,
+    "NEEDS_REVIEW": 1
+   },
+   "modernizedReleased": 0
+  },
+  "deficient": {
+   "audited": 1105,
+   "staleAudits": 0,
+   "byReviewOutcome": {
+    "REBUILD_REQUIRED": 51,
+    "REVISE": 701,
+    "BLOCKED_SOURCE_OR_AUTHORITY": 353
+   },
+   "byTrack": {
+    "C_FULL_REPLACEMENT": 51,
+    "B_INSTRUCTIONAL_REDESIGN": 345,
+    "D_GOVERNANCE_HOLD": 353,
+    "A_TARGETED_REPAIR": 356
+   }
+  },
+  "onHold": 353,
+  "beingRebuilt": {
+   "scheduled": 0,
+   "inProgress": 0,
+   "candidateReady": 0,
+   "changesRequested": 0
+  },
+  "awaitingIndependentReview": 6,
+  "approved": {
+   "reviewAccepted": 0,
+   "releaseAuthorized": 0,
+   "released": 0
+  },
+  "outcomes": {
+   "NO_EVIDENCE": 1105
+  },
+  "demonstratedLearningSuccess": 0,
+  "byStage": {
+   "AUDITED": 746,
+   "AWAITING_INDEPENDENT_REVIEW": 6,
+   "ON_HOLD": 353
+  }
+ }
+}

@@ -1,0 +1,64 @@
+{
+  "reviewKey": "ft02-g7-civics-founding-of-liberia",
+  "contentId": "wk_mca7a_wed_p4",
+  "reviewer": {"kind": "AI_AGENT", "modelFamily": "anthropic-claude", "role": "ADVISORY_SUBJECT_REVIEWER", "countsAsIndependentReview": false},
+  "blindPassFile": "ft02-g7-civics-founding-of-liberia.blind.json",
+  "blindFindings": [
+    {"id": "B1", "summary": "s7-s15 are money subtraction unrelated to objectives", "status": "Matches spec D5"},
+    {"id": "B2", "summary": "LD amounts in 1822/1825 anachronistic; Liberian names for American emigrants", "status": "Anachronism matches D5; naming point not in spec"},
+    {"id": "B3", "summary": "Paul Cuffe recruited settlers for Liberia", "status": "CONFIRMED; matches D2"},
+    {"id": "B4", "summary": "J. J. Roberts called a freed slave / 'one of the first governors'", "status": "CONFIRMED; matches D1"},
+    {"id": "B5", "summary": "Landing on St. Paul River; St. Paul 'runs through' Monrovia", "status": "CONFIRMED; matches D3/D4"},
+    {"id": "B6", "summary": "Name Liberia dated 1822 (actually 1824)", "status": "CONFIRMED; in D3"},
+    {"id": "B7", "summary": "ACS motives presented as purely benevolent; 'freed slaves' omits free-born emigrants and recaptives", "status": "NOT a listed defect (only partly via objective o2 and m2)"},
+    {"id": "B8", "summary": "'Civilization' mis-defined; 'rule' framing", "status": "Matches D6"},
+    {"id": "B9", "summary": "Settler-centred narrative; indigenous peoples only as 'local tribes'", "status": "Matches D6"},
+    {"id": "B10", "summary": "'struggle for independence ... colonial era' preview", "status": "Matches D7"},
+    {"id": "B11", "summary": "Objectives 2-3 never taught", "status": "Implicit in D5 and selection note"},
+    {"id": "B12", "summary": "Two unkeyed exit items only", "status": "Covered by new assessment design"},
+    {"id": "B13", "summary": "Learner-facing claim of alignment to unverified MOE codes", "status": "Covered in spec moeWaec, not as a defect"},
+    {"id": "B14", "summary": "Trivia warm-up (Waterside Market)", "status": "Not in spec"},
+    {"id": "B15", "summary": "Grammar 'a organization'; inconsistent Boima/Boimah", "status": "Minor, not in spec"}
+  ],
+  "defectVerdicts": [
+    {"defectId": "D1", "verdict": "CONFIRMED", "reason": "Roberts was born free in Norfolk (1809) to free parents, emigrated 1829, became the first Black governor and the first President. Minor source conflict on the governorship date: Library of Virginia and Wikipedia give 1841; BlackPast says he was appointed after Governor Buchanan's death (search summary gives 1842 - Buchanan actually died September 1841, so 1841 is better supported). One search result (Virginian-Pilot) says his mother had been freed, which does not change his own free birth.", "sources": [
+      {"url": "https://uncommonwealth.lva.virginia.gov/blog/2026/03/18/joseph-jenkins-roberts/", "quote": "born on March 15, 1809, in Norfolk, Virginia ... free Black parents of mixed African and European ancestry ... In 1829, at 20 years old, Roberts emigrated with his family to Liberia ... He became the first Black governor of Liberia in 1841."},
+      {"url": "https://www.pbs.org/wgbh/globalconnections/liberia/timeline/time2.html", "quote": "October 5, 1847: Governor Joseph Jenkins Roberts is elected the first Liberian president."},
+      {"url": "https://history.state.gov/milestones/1830-1860/liberia", "quote": "Joseph Jenkins Roberts, First President of Liberia"}]},
+    {"defectId": "D2", "verdict": "CONFIRMED", "reason": "Cuffe died 7 Sept 1817 and took 38 colonists to Sierra Leone (arrived Feb 1816). He advised the ACS but chose not to support it, which is stronger than the spec's 'corresponded with ACS founders'. Wikipedia is internally inconsistent on group size ('nine families' vs 38).", "sources": [
+      {"url": "https://en.wikipedia.org/wiki/Paul_Cuffe", "quote": "sailed out of Westport on December 10, 1815, with thirty-eight free black colonists ... died in Westport on September 7, 1817 ... chose not to support the ACS"},
+      {"url": "https://www.Britannica.com/biography/Paul-Cuffe", "quote": "(search-result summary; page returned 403 on fetch) In December 1815 Cuffe and 38 black settlers sailed for Sierra Leone, and they landed in February 1816."}]},
+    {"defectId": "D3", "verdict": "CONFIRMED", "reason": "First emigrants went to Sherbro (1820), land at Cape Mesurado was negotiated Dec 1821, settlement began 1822, and the name Liberia was given in 1824. Nuance: per a search summary the Elizabeth itself did not reach Cape Mesurado; survivors moved on the Augusta. Sources differ on the land size and treaty date.", "sources": [
+      {"url": "https://history.state.gov/milestones/1830-1860/liberia", "quote": "the settlement was named Liberia and its capital Monrovia, in honor of President James Monroe ... (first settlers sheltered on) Scherbo Island off the west coast of Africa"},
+      {"url": "https://www.pbs.org/wgbh/globalconnections/liberia/timeline/time2.html", "quote": "February 6, 1820: The Elizabeth sails from New York ... 1824: The ACS names the colony Liberia, for liberty, and the capital Monrovia ... land is purchased at Cape Mesurado and the adjacent island of Dozoa."},
+      {"url": "https://en.wikipedia.org/wiki/Sherbro_Island", "quote": "(search-result summary) The American Colonization Society sent its first group of immigrants to Sherbro Island in Sierra Leone in 1820."}]},
+    {"defectId": "D4", "verdict": "CONFIRMED", "reason": "The St. Paul forms the northern boundary of Bushrod Island (part of Greater Monrovia); the Mesurado is the river at the original settlement. Nuance: the St. Paul is within Greater Monrovia's limits, so a key such as 'Mesurado River' with the St. Paul accepted only as 'northern edge' is the right fix, as the spec says.", "sources": [
+      {"url": "https://en.wikipedia.org/wiki/Bushrod_Island", "quote": "(search-result summary) Bushrod Island is an island near Monrovia, Liberia surrounded by the Atlantic Ocean, the Saint Paul River, the Mesurado River and Stockton Creek ... the Saint Paul River lies directly north of the city and forms the northern boundary of Bushrod Island"}]},
+    {"defectId": "D5", "verdict": "CONFIRMED", "reason": "Off-objective arithmetic verified by reading. Anachronism confirmed: the first Liberian dollar was issued in 1847. However the spec's wording 'a Liberian currency was not issued before independence' is slightly overstated: a copper 'Liberia' cent token dated 1833 exists (catalogued KM-Tn1, classed as a token, not official coinage). Either way nothing existed in 1822-1825, so the defect stands; reword to 'the Liberian dollar was first issued in 1847'.", "sources": [
+      {"url": "https://en.wikipedia.org/wiki/Liberian_dollar", "quote": "The first Liberian dollar was issued in 1847."},
+      {"url": "https://coinvarieties.com/index.php/Liberia_1833_cent", "quote": "Cent, 1833 ... copper ... KM-Tn1"}]},
+    {"defectId": "D6", "verdict": "CONFIRMED", "reason": "The perspective gap is a judgement, but sources show Indigenous rulers negotiated the land and Indigenous groups attacked the colony in 1822, so presenting them only as 'local tribes' in 'conflict' is one-sided. The vocabulary item mis-defines 'civilization' (verified by reading).", "sources": [
+      {"url": "https://www.pbs.org/wgbh/globalconnections/liberia/timeline/time2.html", "quote": "December 11, 1821: A U.S. government agent and an ACS agent sail to the Grain Coast to begin negotiations with local kings ... (1822) The colony comes under attack from some 500 members of two indigenous ethnic groups."}]},
+    {"defectId": "D7", "verdict": "CONFIRMED", "reason": "Independence was declared from the ACS, not won from a European colonial power. Severity MINOR is appropriate as it is a preview line.", "sources": [
+      {"url": "https://history.state.gov/milestones/1830-1860/liberia", "quote": "Liberia declared independence from the American Colonization Society in order to establish a sovereign state."},
+      {"url": "https://www.pbs.org/wgbh/globalconnections/liberia/timeline/time2.html", "quote": "July 26, 1847: Liberia becomes independent. The Liberian Declaration of Independence is adopted and signed."}]}
+  ],
+  "missedDefects": [
+    {"id": "M1", "severity": "MAJOR", "location": "s4 para 1; s5", "quote": "The ACS believed that Africa was the natural home ... provide a new home for freed slaves", "issue": "Omits the ACS's removal motive and slaveholder membership. Office of the Historian: 'founded the American Colonization Society (ACS) to deal with the \"problem\" of the growing number of free blacks ... from abolitionists to slaveholders counted themselves members.' (https://history.state.gov/milestones/1830-1860/liberia). Spec objective o2 will cover motives, but this should be a listed defect and part of the correction notice."},
+    {"id": "M2", "severity": "MINOR", "location": "s1, s4, s16", "quote": "freed slaves from the United States", "issue": "Settlers included free-born African Americans (Roberts) and later recaptured Africans; m2 addresses free-born, recaptives not mentioned anywhere in the spec."},
+    {"id": "M3", "severity": "MINOR", "location": "s2", "quote": "align with the MOE codes LR-CIV-G7_9-01 and LR-CIV-G7_9-02", "issue": "Learner-facing text asserts alignment to unverified codes; spec drops them in moeWaec but should also require removing the claim from learner text."},
+    {"id": "M4", "severity": "MINOR", "location": "s3", "quote": "the market where you can find ... palm oil fried rice ... Waterside Market", "issue": "Trivia warm-up, not a prerequisite check (spec replaces it with timeline / fact-opinion diagnostics)."}
+  ],
+  "specIssues": [
+    {"id": "S1", "issue": "Misconception m1 feedback 'The US government did not rule the settlement' is defensible but incomplete: the US government funded the ACS and a US government agent and US Navy took part in acquiring the land. Feedback should say the ACS ran the colony with US government funding and naval support, so learners do not swing to 'the US had nothing to do with it'. Sources: https://history.state.gov/milestones/1830-1860/liberia ('President James Madison arranged public funding for the Society'); https://www.pbs.org/wgbh/globalconnections/liberia/timeline/time2.html ('A U.S. government agent and an ACS agent sail to the Grain Coast')."},
+    {"id": "S2", "issue": "D5 wording 'a Liberian currency was not issued before independence' should become 'the Liberian dollar was first issued in 1847' because of the 1833 token."},
+    {"id": "S3", "issue": "D2 should state that Cuffe chose not to support the ACS (Wikipedia), which is the sharper correction than 'corresponded with ACS founders'."},
+    {"id": "S4", "issue": "D3/ft02-o1: 'Sherbro 1820' is correct; the spec should avoid implying the Elizabeth itself landed at Cape Mesurado (its survivors moved on the Augusta). Land-deal terms differ across sources; do not teach exact acreage or price without a reviewed source."},
+    {"id": "S5", "issue": "The 1821 land acquisition is widely described as made under pressure (Stockton); sources disagree, so the spec rightly avoids asserting it, but the source cards for o2 should present the contested account explicitly rather than omit it."}
+  ],
+  "specRating": "ADEQUATE",
+  "specRatingReasons": "Objectives replace arithmetic with a timeline, multi-perspective source work and claim evaluation, which suits Grade 7 history. Misconceptions m1-m5 are accurate and probed. Assessment is keyed or rubric-scored with hidden answers, retention at 7 days, and a valid transfer to Freetown (1787/1792). Needs the S1 feedback nuance and listing of the ACS-motive defect (M1); otherwise sound.",
+  "correctionNoticeWarranted": true,
+  "correctionNoticeReason": "13 learners have progress on a lesson that taught as fact that Roberts was a freed slave, that Paul Cuffe recruited Liberia's settlers, and that settlers landed on the St. Paul River, which runs through Monrovia (keyed warm-up answer). These are core national-history facts likely to recur in LJHSCE Social Studies.",
+  "notes": "Britannica Cuffe page returned 403; its quote is from search-result text only. Encyclopedia Virginia was not reached; the Library of Virginia blog was used for Roberts. No Liberian government source was fetched for this lesson. A historical-sensitivity reviewer (OD-FT02-SENSITIVITY) is still recommended."
+}
