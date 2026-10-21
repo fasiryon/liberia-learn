@@ -24,10 +24,17 @@ const pins: Readonly<Record<string,{input:string;labId:string;media:readonly str
   lesson_mca_1:{input:"33ec4103fcd1ec6f73d7ef91b23f0cd1fe47b1ac5414d5d2d38403c724dc7940",labId:FIRST_THREE_LAB_IDS.mathematics,media:["ft07-v1","ft07-v2"]},
 };
 
+/** Corrected authored baseline. Historical V2 inputs remain resolvable as V2 evidence. */
+export const V021_CANONICAL_INPUTS: Readonly<Record<string, string>> = {
+  wk_mca7a_fri_p4: "2cd1e6b097d8421d20637570d0a6589095dc17d99f9a054ddd8043afbf98c544",
+  wk_mca7a_fri_p3: "52be8b196f47b8f6b98672c7a575b243c9bf5717c26d5a722e15b1f348fdd764",
+  lesson_mca_1: "6c73ffedaf43a59f69b83013c33e33ed7a7b599382301f737b68fb262b8eab1f",
+};
+
 export function resolveAuthoredRuntime(input: AuthoringInput) {
   const pin=pins[input.source.contentId];
   const inputHash=hash(input);
-  if(!pin||inputHash!==pin.input)return null;
+  if(!pin||(inputHash!==pin.input&&inputHash!==V021_CANONICAL_INPUTS[input.source.contentId]))return null;
   const definition=getInteractiveLabDefinition(pin.labId);
   if(!definition||definition.version!==FIRST_THREE_LAB_VERSION||definition.reviewState!=="DRAFT"||definition.approvalState!=="PENDING"||validateHighFidelityDefinition(definition).length)return null;
   const bindings=pin.media.flatMap(id=>{
@@ -42,7 +49,7 @@ export function resolveAuthoredRuntime(input: AuthoringInput) {
     return scenes.map(scene=>({mediaId:id,...scene,sourceMedia:media.provenance!,labId:pin.labId,labVersion:definition.version}));
   });
   if(bindings.some(b=>b===null))return null;
-  return {schemaVersion:"first-three-runtime-binding/1.1.0",authoredCanonicalSha256:inputHash,authoredGeneration:"V2" as const,source:input.source,bindings:bindings as NonNullable<(typeof bindings)[number]>[],
+  return {schemaVersion:"first-three-runtime-binding/1.2.0",authoredCanonicalSha256:inputHash,authoredGeneration:inputHash===pin.input?"V2" as const:"V0.2.1" as const,source:input.source,bindings:bindings as NonNullable<(typeof bindings)[number]>[],
     derivedGeometrySha256:pin.labId===FIRST_THREE_LAB_IDS.civics?hash(geometry):null,
     studentEligible:false,state:"DRAFT",approved:false,released:false,
     notices:["Adapted interaction to registered LAB_LAUNCH; retained original authored input, instructional content and source media hashes.",

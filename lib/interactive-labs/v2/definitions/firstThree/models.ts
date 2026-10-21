@@ -157,7 +157,7 @@ export function comparisonFeedback(a: FractionStrip,b: FractionStrip,relation:nu
 }
 
 export const fractionModel: SimulationModel = {
-  id:"exact-two-whole-fraction-manipulatives",version:"1.0.0",kind:"deterministic-rules",
+  id:"exact-two-whole-fraction-manipulatives",version:"1.0.1",kind:"deterministic-rules",
   evaluate:({variables:v})=>{
     const lcm=commonDenominator(v.denA,v.denB)!;
     const numeratorA=shadedCount(v.maskA),numeratorB=shadedCount(v.maskB);
@@ -180,7 +180,7 @@ export const fractionModel: SimulationModel = {
         {id:"same-wholes",text:`A is ${numeratorA}/${v.denA}; B is ${numeratorB}/${v.denB}. Each whole has exactly the same length. Two wholes allow values greater than one.`},
         {id:"subdivide",text:"Splitting every selected part preserves its length. Adding/removing pieces changes the amount by exact units; unsupported subdivisions are refused."},
         {id:"line",text:`The common line has ${lcm} intervals per whole. Count jumps from zero; tick marks are not intervals.`},
-        {id:"compare",text:v.relation===0?"Place both cards, lock them, then compare and justify.":comparisonFeedback({denominator:v.denA,mask:v.maskA},{denominator:v.denB,mask:v.maskB},v.relation,placedA&&placedB).message},
+        {id:"compare",text:(v.lockedA===1&&!placedA)||(v.lockedB===1&&!placedB)?"Count the jumps from 0 for each fraction before you choose.":v.relation===0?"Place both cards, lock them, then compare and justify.":comparisonFeedback({denominator:v.denA,mask:v.maskA},{denominator:v.denB,mask:v.maskB},v.relation,placedA&&placedB).message},
       ]};
   },
 };

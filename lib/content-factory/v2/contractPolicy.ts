@@ -13,19 +13,26 @@ export const FIRST_TEN_AMENDMENT_PINS = [{
   sha256: "faae49b48338ead61c91d12729bfbd9569a8ae25de423957e201b700658d37aa",
 }] as const;
 
+export const V021_AMENDMENT_PINS = [...FIRST_TEN_AMENDMENT_PINS, {
+  amendmentId: "FT-A002", amendmentVersion: "1.0.0",
+  sourceRef: "repo-path:curriculum/factory-v2/authoring/first-three/amendments/FT-A002-v021-assessment-counts.json",
+  sha256: "1db4c015330045b2e9a906a0ea961c34917aac21d8c2182141cfafac6fc116cf",
+}] as const;
+
 const sha256 = (bytes: Buffer) => createHash("sha256").update(bytes).digest("hex");
 type ContractLesson = { contentId: string; misconceptions?: { id: string; misconceptionId: string }[] };
 type Contract = { contractVersion: string; lessons: ContractLesson[]; retentionPolicy: Record<string, unknown> & { policyId: string; version: string; status: string } };
 type Amendment = { amendmentId: string; amendmentVersion: string; effectiveDesignation: string; target: { sha256: string }; changes: { op: "replace"; path: string; from: unknown; to: unknown }[] };
 
 /** Read the pinned contract and apply every pinned amendment. Any byte or value drift fails closed. */
-export function loadAmendedFirstTenContract(contractBytes: Buffer, amendmentBytes: readonly Buffer[]) {
+export function loadAmendedFirstTenContract(contractBytes: Buffer, amendmentBytes: readonly Buffer[], generation: "V2" | "V0.2.1" = "V2") {
+  const amendmentPins = generation === "V0.2.1" ? V021_AMENDMENT_PINS : FIRST_TEN_AMENDMENT_PINS;
   if (sha256(contractBytes) !== FIRST_TEN_CONTRACT_PIN.sha256) throw new Error("first_ten_contract_hash_mismatch");
-  if (amendmentBytes.length !== FIRST_TEN_AMENDMENT_PINS.length) throw new Error("first_ten_amendment_set_mismatch");
+  if (amendmentBytes.length !== amendmentPins.length) throw new Error("first_ten_amendment_set_mismatch");
   const contract = JSON.parse(contractBytes.toString("utf8")) as Contract;
   if (contract.contractVersion !== FIRST_TEN_CONTRACT_PIN.version) throw new Error("first_ten_contract_version_mismatch");
   const amendments = amendmentBytes.map((bytes, index) => {
-    const pin = FIRST_TEN_AMENDMENT_PINS[index];
+    const pin = amendmentPins[index];
     if (sha256(bytes) !== pin.sha256) throw new Error(`first_ten_amendment_hash_mismatch:${pin.amendmentId}`);
     const amendment = JSON.parse(bytes.toString("utf8")) as Amendment;
     if (amendment.amendmentId !== pin.amendmentId || amendment.amendmentVersion !== pin.amendmentVersion || amendment.target.sha256 !== FIRST_TEN_CONTRACT_PIN.sha256) throw new Error(`first_ten_amendment_target_mismatch:${pin.amendmentId}`);

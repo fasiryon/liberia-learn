@@ -5,16 +5,24 @@
   "approved": false,
   "pins": [
     {
+      "path": "curriculum/factory-v2/authoring/first-three/stated-primary-objectives-v021.json",
+      "sha256": "d51419b80e7e06090daf4e974f75c9b49812a29501291e7f8355d06568874b59"
+    },
+    {
+      "path": "curriculum/factory-v2/authoring/first-three/amendments/FT-A002-v021-assessment-counts.json",
+      "sha256": "1db4c015330045b2e9a906a0ea961c34917aac21d8c2182141cfafac6fc116cf"
+    },
+    {
       "path": "lib/content-factory/v2/assessmentAttribution.ts",
       "sha256": "7af6fc44bc1a3058d7a22113b86c6f795ccde1397be8e5a47906e527b544748e"
     },
     {
       "path": "lib/content-factory/v2/contractPolicy.ts",
-      "sha256": "7c258fb0e8f010c9de88b6f69b85d41acd4059e854af45ada508168fd294c73f"
+      "sha256": "d897b59a4143fd154d90dfa1a2733e8b87f9e355c914365c873af88d57c66fa1"
     },
     {
       "path": "lib/content-factory/v2/contractPolicySource.ts",
-      "sha256": "bdcb58595c16a005ebe9257c6e86bd7b65b9db763fdcc3c2533355e9e9b6221a"
+      "sha256": "21af1aa7cedda41db9596dce88364e8876ba160b859e14ce983d80b885a0268d"
     },
     {
       "path": "curriculum/factory-v2/authoring/first-three/stated-primary-objectives.json",
@@ -22,7 +30,7 @@
     },
     {
       "path": "lib/content-factory/v2/runtimeBindings.ts",
-      "sha256": "c11b3b2bba84675ca046da09e6164a3119b550851fb40cf7338000f9e784e732"
+      "sha256": "df9f05e15114dd524b3780dd9176a63aabe119da2c6e1206ffcb0ede9a752d01"
     },
     {
       "path": "lib/content-factory/v2/runtimeSource.ts",
@@ -30,7 +38,7 @@
     },
     {
       "path": "lib/content-factory/v2/partialBatch.ts",
-      "sha256": "3757cd8189a782f904c3444bc9e43b72e5598814f7bbd694e797801f4525bfd8"
+      "sha256": "7720493b27d028f284ca7c98cd1b53a5b083fb04067855ed5621584d9e17cd3b"
     },
     {
       "path": "lib/content-factory/v2/authoringInput.ts",
@@ -42,7 +50,7 @@
     },
     {
       "path": "lib/interactive-labs/v2/definitions/firstThree/models.ts",
-      "sha256": "a68afeebd203cf5b29d59cfec42d6881aa072995703df45184d7eb8433e9f9fe"
+      "sha256": "dc9dabe53f73ae7eeb504361c2191ce33d383a9bc62e1e28efddcabe40c673c3"
     },
     {
       "path": "lib/interactive-labs/v2/definitions/firstThree/map-data.json",

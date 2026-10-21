@@ -1,0 +1,347 @@
+{
+  "codeCommit": "05d9c0fb991fae786d4cd7ae6773510910515f54",
+  "figures": [
+    {
+      "file": "media/svg/ft01-contrast-card.svg",
+      "sha256": "a8c722abcbad587e6613f7915dbe65b31040faba6a41c17838d9fbc8cea50454"
+    },
+    {
+      "file": "media/svg/ft01-county-map-blank.svg",
+      "sha256": "9f3d6891927be1119e1e3f1b037de0e0b74af7ccde6bd4edb45e49531198dd67"
+    },
+    {
+      "file": "media/svg/ft01-county-map-labelled.svg",
+      "sha256": "ed80fee2779a8fcef659d5f8aeff2aee0632bfd2c0e7e0e37b4acf83c864edbc"
+    },
+    {
+      "file": "media/svg/ft01-county-map-partial.svg",
+      "sha256": "7d0f11b4b363e983f3f6ac9e77f2b5cfefe6c4aac48f6436eeba6ccf32d381ac"
+    },
+    {
+      "file": "media/svg/ft01-county-map-practice.svg",
+      "sha256": "d3c16f286f17863ccd4c0e6f9498e9be36d0d3deaa8c531be42372af56afee13"
+    },
+    {
+      "file": "media/svg/ft01-county-map-retention.svg",
+      "sha256": "5d83d971b1233bd1c22376f4d1ae4496ee399eacaa14c832c922363ead7bd794"
+    },
+    {
+      "file": "media/svg/ft04-heating-curve.svg",
+      "sha256": "c2a056f852b61e631863ac6cfd05064933043c46bd891911df639b0a11e4c790"
+    },
+    {
+      "file": "media/svg/ft04-ice-demo-card.svg",
+      "sha256": "c1c34699af3467ce01fe756f10738b106d22883302262bd3054ef76ff137e620"
+    },
+    {
+      "file": "media/svg/ft04-particle-model.svg",
+      "sha256": "84d885a97876974a7698de3c328d703c6485c95a605c1e1174c94f71aa31c13d"
+    },
+    {
+      "file": "media/svg/ft07-fraction-bars.svg",
+      "sha256": "63f522fe7699a2a7f707de63817d1ef75672830f0083d810af4f7ee2102a4a31"
+    },
+    {
+      "file": "media/svg/ft07-number-line-compare.svg",
+      "sha256": "413aba7ac49a54e197e92b59a0b282da46a73a7df243f074e20ae32f8d59eb88"
+    },
+    {
+      "file": "media/svg/ft07-number-line-quarters.svg",
+      "sha256": "1439a5bb68dd145bf4ca4b76ee485c646515e8b5eff4b027e6e8c819a9bb8bd9"
+    }
+  ],
+  "pngs": [
+    {
+      "file": "media/ft01-contrast-card.png",
+      "sha256": "5203371e598413044fce3bec30566ce7578f1cd34bdb722c22315d2f225f2554"
+    },
+    {
+      "file": "media/ft01-county-map-blank.png",
+      "sha256": "3c43d83294321e2b271e5114da4fe570cad56005461bf57c04aeea2167141414"
+    },
+    {
+      "file": "media/ft01-county-map-labelled.png",
+      "sha256": "5e2abbc4fd91c9a0a73581fe443a4d8cdf7c6158ed50219660fb0ec57797252f"
+    },
+    {
+      "file": "media/ft01-county-map-partial.png",
+      "sha256": "4e84b000484999fc7b4b4f9507ced30068fc673d6f550406ae77d4de8d310ebc"
+    },
+    {
+      "file": "media/ft01-county-map-practice.png",
+      "sha256": "edf57f642aca6cc437a9a3355d57c7ca61d75bdb031063611bf5c2b6b3ff0886"
+    },
+    {
+      "file": "media/ft01-county-map-retention.png",
+      "sha256": "96da5a19c1f87369915a835a79a2d89aa9d810a02f7b030c65810ef1eb10bc5e"
+    },
+    {
+      "file": "media/ft04-heating-curve.png",
+      "sha256": "3d38eb1b09756ae2eac6f40b4daf1b2295dffbc8fbee89d765a1d4a3f85e5c16"
+    },
+    {
+      "file": "media/ft04-ice-demo-card.png",
+      "sha256": "adfd59c293e59bfa3374a2a164d2fe0f8df0036bd3355cf0486a9d3f65561093"
+    },
+    {
+      "file": "media/ft04-particle-model.png",
+      "sha256": "29f5e67ecad680e7117e37a86253430d29c9bb133f30a74301fb7fc0d411a9c2"
+    },
+    {
+      "file": "media/ft07-fraction-bars.png",
+      "sha256": "d7f8d7c79356c5b04f5cfa1ecda2be4895354e18e058e723cb7b1ec72de28605"
+    },
+    {
+      "file": "media/ft07-number-line-compare.png",
+      "sha256": "25ebf1a0396fe78f247ea2f4b68ff3a5839ac2c0e0215062da8ee865c7d3328d"
+    },
+    {
+      "file": "media/ft07-number-line-quarters.png",
+      "sha256": "df9b69ebdb14bd5802e9ec5cff62e3bd881f04d44c50d489977fbfd7e0ce3c58"
+    }
+  ],
+  "references": [
+    {
+      "contentId": "wk_mca7a_fri_p4",
+      "location": "/blueprint/provenance/4/sourceRef",
+      "sourceRef": "repo-path:curriculum/factory-v2/authoring/first-three/delivery-v2/media/ft01-county-map-blank.svg",
+      "file": "media/svg/ft01-county-map-blank.svg",
+      "declaredSha256": "9f3d6891927be1119e1e3f1b037de0e0b74af7ccde6bd4edb45e49531198dd67",
+      "actualSha256": "9f3d6891927be1119e1e3f1b037de0e0b74af7ccde6bd4edb45e49531198dd67"
+    },
+    {
+      "contentId": "wk_mca7a_fri_p4",
+      "location": "/blueprint/provenance/5/sourceRef",
+      "sourceRef": "repo-path:curriculum/factory-v2/authoring/first-three/delivery-v2/media/ft01-county-map-retention.svg",
+      "file": "media/svg/ft01-county-map-retention.svg",
+      "declaredSha256": "5d83d971b1233bd1c22376f4d1ae4496ee399eacaa14c832c922363ead7bd794",
+      "actualSha256": "5d83d971b1233bd1c22376f4d1ae4496ee399eacaa14c832c922363ead7bd794"
+    },
+    {
+      "contentId": "wk_mca7a_fri_p4",
+      "location": "/blueprint/provenance/6/sourceRef",
+      "sourceRef": "repo-path:curriculum/factory-v2/authoring/first-three/delivery-v2/media/ft01-county-map-labelled.svg",
+      "file": "media/svg/ft01-county-map-labelled.svg",
+      "declaredSha256": "ed80fee2779a8fcef659d5f8aeff2aee0632bfd2c0e7e0e37b4acf83c864edbc",
+      "actualSha256": "ed80fee2779a8fcef659d5f8aeff2aee0632bfd2c0e7e0e37b4acf83c864edbc"
+    },
+    {
+      "contentId": "wk_mca7a_fri_p4",
+      "location": "/blueprint/provenance/7/sourceRef",
+      "sourceRef": "repo-path:curriculum/factory-v2/authoring/first-three/delivery-v2/media/ft01-county-map-partial.svg",
+      "file": "media/svg/ft01-county-map-partial.svg",
+      "declaredSha256": "7d0f11b4b363e983f3f6ac9e77f2b5cfefe6c4aac48f6436eeba6ccf32d381ac",
+      "actualSha256": "7d0f11b4b363e983f3f6ac9e77f2b5cfefe6c4aac48f6436eeba6ccf32d381ac"
+    },
+    {
+      "contentId": "wk_mca7a_fri_p4",
+      "location": "/blueprint/provenance/8/sourceRef",
+      "sourceRef": "repo-path:curriculum/factory-v2/authoring/first-three/delivery-v2/media/ft01-contrast-card.svg",
+      "file": "media/svg/ft01-contrast-card.svg",
+      "declaredSha256": "a8c722abcbad587e6613f7915dbe65b31040faba6a41c17838d9fbc8cea50454",
+      "actualSha256": "a8c722abcbad587e6613f7915dbe65b31040faba6a41c17838d9fbc8cea50454"
+    },
+    {
+      "contentId": "wk_mca7a_fri_p4",
+      "location": "/blueprint/provenance/9/sourceRef",
+      "sourceRef": "repo-path:curriculum/factory-v2/authoring/first-three/delivery-v2/media/ft01-county-map-practice.svg",
+      "file": "media/svg/ft01-county-map-practice.svg",
+      "declaredSha256": "d3c16f286f17863ccd4c0e6f9498e9be36d0d3deaa8c531be42372af56afee13",
+      "actualSha256": "d3c16f286f17863ccd4c0e6f9498e9be36d0d3deaa8c531be42372af56afee13"
+    },
+    {
+      "contentId": "wk_mca7a_fri_p4",
+      "location": "/mediaSpecifications/0/provenance/sourceRef",
+      "sourceRef": "repo-path:curriculum/factory-v2/authoring/first-three/delivery-v2/media/ft01-county-map-labelled.svg",
+      "file": "media/svg/ft01-county-map-labelled.svg",
+      "declaredSha256": "ed80fee2779a8fcef659d5f8aeff2aee0632bfd2c0e7e0e37b4acf83c864edbc",
+      "actualSha256": "ed80fee2779a8fcef659d5f8aeff2aee0632bfd2c0e7e0e37b4acf83c864edbc"
+    },
+    {
+      "contentId": "wk_mca7a_fri_p4",
+      "location": "/mediaSpecifications/1/provenance/sourceRef",
+      "sourceRef": "repo-path:curriculum/factory-v2/authoring/first-three/delivery-v2/media/ft01-county-map-partial.svg",
+      "file": "media/svg/ft01-county-map-partial.svg",
+      "declaredSha256": "7d0f11b4b363e983f3f6ac9e77f2b5cfefe6c4aac48f6436eeba6ccf32d381ac",
+      "actualSha256": "7d0f11b4b363e983f3f6ac9e77f2b5cfefe6c4aac48f6436eeba6ccf32d381ac"
+    },
+    {
+      "contentId": "wk_mca7a_fri_p4",
+      "location": "/mediaSpecifications/2/provenance/sourceRef",
+      "sourceRef": "repo-path:curriculum/factory-v2/authoring/first-three/delivery-v2/media/ft01-contrast-card.svg",
+      "file": "media/svg/ft01-contrast-card.svg",
+      "declaredSha256": "a8c722abcbad587e6613f7915dbe65b31040faba6a41c17838d9fbc8cea50454",
+      "actualSha256": "a8c722abcbad587e6613f7915dbe65b31040faba6a41c17838d9fbc8cea50454"
+    },
+    {
+      "contentId": "wk_mca7a_fri_p4",
+      "location": "/assets/0/provenance/sourceRef",
+      "sourceRef": "repo-path:curriculum/factory-v2/authoring/first-three/delivery-v2/media/ft01-county-map-labelled.svg",
+      "file": "media/svg/ft01-county-map-labelled.svg",
+      "declaredSha256": "ed80fee2779a8fcef659d5f8aeff2aee0632bfd2c0e7e0e37b4acf83c864edbc",
+      "actualSha256": "ed80fee2779a8fcef659d5f8aeff2aee0632bfd2c0e7e0e37b4acf83c864edbc"
+    },
+    {
+      "contentId": "wk_mca7a_fri_p4",
+      "location": "/assets/1/provenance/sourceRef",
+      "sourceRef": "repo-path:curriculum/factory-v2/authoring/first-three/delivery-v2/media/ft01-contrast-card.svg",
+      "file": "media/svg/ft01-contrast-card.svg",
+      "declaredSha256": "a8c722abcbad587e6613f7915dbe65b31040faba6a41c17838d9fbc8cea50454",
+      "actualSha256": "a8c722abcbad587e6613f7915dbe65b31040faba6a41c17838d9fbc8cea50454"
+    },
+    {
+      "contentId": "wk_mca7a_fri_p4",
+      "location": "/assets/2/provenance/sourceRef",
+      "sourceRef": "repo-path:curriculum/factory-v2/authoring/first-three/delivery-v2/media/ft01-county-map-partial.svg",
+      "file": "media/svg/ft01-county-map-partial.svg",
+      "declaredSha256": "7d0f11b4b363e983f3f6ac9e77f2b5cfefe6c4aac48f6436eeba6ccf32d381ac",
+      "actualSha256": "7d0f11b4b363e983f3f6ac9e77f2b5cfefe6c4aac48f6436eeba6ccf32d381ac"
+    },
+    {
+      "contentId": "wk_mca7a_fri_p4",
+      "location": "/assets/3/provenance/sourceRef",
+      "sourceRef": "repo-path:curriculum/factory-v2/authoring/first-three/delivery-v2/media/ft01-county-map-practice.svg",
+      "file": "media/svg/ft01-county-map-practice.svg",
+      "declaredSha256": "d3c16f286f17863ccd4c0e6f9498e9be36d0d3deaa8c531be42372af56afee13",
+      "actualSha256": "d3c16f286f17863ccd4c0e6f9498e9be36d0d3deaa8c531be42372af56afee13"
+    },
+    {
+      "contentId": "wk_mca7a_fri_p3",
+      "location": "/blueprint/provenance/1/sourceRef",
+      "sourceRef": "repo-path:curriculum/factory-v2/authoring/first-three/delivery-v2/media/ft04-particle-model.svg",
+      "file": "media/svg/ft04-particle-model.svg",
+      "declaredSha256": "84d885a97876974a7698de3c328d703c6485c95a605c1e1174c94f71aa31c13d",
+      "actualSha256": "84d885a97876974a7698de3c328d703c6485c95a605c1e1174c94f71aa31c13d"
+    },
+    {
+      "contentId": "wk_mca7a_fri_p3",
+      "location": "/blueprint/provenance/2/sourceRef",
+      "sourceRef": "repo-path:curriculum/factory-v2/authoring/first-three/delivery-v2/media/ft04-heating-curve.svg",
+      "file": "media/svg/ft04-heating-curve.svg",
+      "declaredSha256": "c2a056f852b61e631863ac6cfd05064933043c46bd891911df639b0a11e4c790",
+      "actualSha256": "c2a056f852b61e631863ac6cfd05064933043c46bd891911df639b0a11e4c790"
+    },
+    {
+      "contentId": "wk_mca7a_fri_p3",
+      "location": "/blueprint/provenance/3/sourceRef",
+      "sourceRef": "repo-path:curriculum/factory-v2/authoring/first-three/delivery-v021/media/ft04-ice-demo-card.svg",
+      "file": "media/svg/ft04-ice-demo-card.svg",
+      "declaredSha256": "c1c34699af3467ce01fe756f10738b106d22883302262bd3054ef76ff137e620",
+      "actualSha256": "c1c34699af3467ce01fe756f10738b106d22883302262bd3054ef76ff137e620"
+    },
+    {
+      "contentId": "wk_mca7a_fri_p3",
+      "location": "/mediaSpecifications/0/provenance/sourceRef",
+      "sourceRef": "repo-path:curriculum/factory-v2/authoring/first-three/delivery-v2/media/ft04-particle-model.svg",
+      "file": "media/svg/ft04-particle-model.svg",
+      "declaredSha256": "84d885a97876974a7698de3c328d703c6485c95a605c1e1174c94f71aa31c13d",
+      "actualSha256": "84d885a97876974a7698de3c328d703c6485c95a605c1e1174c94f71aa31c13d"
+    },
+    {
+      "contentId": "wk_mca7a_fri_p3",
+      "location": "/mediaSpecifications/1/provenance/sourceRef",
+      "sourceRef": "repo-path:curriculum/factory-v2/authoring/first-three/delivery-v2/media/ft04-heating-curve.svg",
+      "file": "media/svg/ft04-heating-curve.svg",
+      "declaredSha256": "c2a056f852b61e631863ac6cfd05064933043c46bd891911df639b0a11e4c790",
+      "actualSha256": "c2a056f852b61e631863ac6cfd05064933043c46bd891911df639b0a11e4c790"
+    },
+    {
+      "contentId": "wk_mca7a_fri_p3",
+      "location": "/mediaSpecifications/2/provenance/sourceRef",
+      "sourceRef": "repo-path:curriculum/factory-v2/authoring/first-three/delivery-v021/media/ft04-ice-demo-card.svg",
+      "file": "media/svg/ft04-ice-demo-card.svg",
+      "declaredSha256": "c1c34699af3467ce01fe756f10738b106d22883302262bd3054ef76ff137e620",
+      "actualSha256": "c1c34699af3467ce01fe756f10738b106d22883302262bd3054ef76ff137e620"
+    },
+    {
+      "contentId": "wk_mca7a_fri_p3",
+      "location": "/assets/0/provenance/sourceRef",
+      "sourceRef": "repo-path:curriculum/factory-v2/authoring/first-three/delivery-v2/media/ft04-particle-model.svg",
+      "file": "media/svg/ft04-particle-model.svg",
+      "declaredSha256": "84d885a97876974a7698de3c328d703c6485c95a605c1e1174c94f71aa31c13d",
+      "actualSha256": "84d885a97876974a7698de3c328d703c6485c95a605c1e1174c94f71aa31c13d"
+    },
+    {
+      "contentId": "wk_mca7a_fri_p3",
+      "location": "/assets/1/provenance/sourceRef",
+      "sourceRef": "repo-path:curriculum/factory-v2/authoring/first-three/delivery-v2/media/ft04-heating-curve.svg",
+      "file": "media/svg/ft04-heating-curve.svg",
+      "declaredSha256": "c2a056f852b61e631863ac6cfd05064933043c46bd891911df639b0a11e4c790",
+      "actualSha256": "c2a056f852b61e631863ac6cfd05064933043c46bd891911df639b0a11e4c790"
+    },
+    {
+      "contentId": "wk_mca7a_fri_p3",
+      "location": "/assets/2/provenance/sourceRef",
+      "sourceRef": "repo-path:curriculum/factory-v2/authoring/first-three/delivery-v021/media/ft04-ice-demo-card.svg",
+      "file": "media/svg/ft04-ice-demo-card.svg",
+      "declaredSha256": "c1c34699af3467ce01fe756f10738b106d22883302262bd3054ef76ff137e620",
+      "actualSha256": "c1c34699af3467ce01fe756f10738b106d22883302262bd3054ef76ff137e620"
+    },
+    {
+      "contentId": "lesson_mca_1",
+      "location": "/blueprint/provenance/1/sourceRef",
+      "sourceRef": "repo-path:curriculum/factory-v2/authoring/first-three/delivery-v2/media/ft07-fraction-bars.svg",
+      "file": "media/svg/ft07-fraction-bars.svg",
+      "declaredSha256": "63f522fe7699a2a7f707de63817d1ef75672830f0083d810af4f7ee2102a4a31",
+      "actualSha256": "63f522fe7699a2a7f707de63817d1ef75672830f0083d810af4f7ee2102a4a31"
+    },
+    {
+      "contentId": "lesson_mca_1",
+      "location": "/blueprint/provenance/2/sourceRef",
+      "sourceRef": "repo-path:curriculum/factory-v2/authoring/first-three/delivery-v2/media/ft07-number-line-compare.svg",
+      "file": "media/svg/ft07-number-line-compare.svg",
+      "declaredSha256": "413aba7ac49a54e197e92b59a0b282da46a73a7df243f074e20ae32f8d59eb88",
+      "actualSha256": "413aba7ac49a54e197e92b59a0b282da46a73a7df243f074e20ae32f8d59eb88"
+    },
+    {
+      "contentId": "lesson_mca_1",
+      "location": "/blueprint/provenance/3/sourceRef",
+      "sourceRef": "repo-path:curriculum/factory-v2/authoring/first-three/delivery-v2/media/ft07-number-line-quarters.svg",
+      "file": "media/svg/ft07-number-line-quarters.svg",
+      "declaredSha256": "1439a5bb68dd145bf4ca4b76ee485c646515e8b5eff4b027e6e8c819a9bb8bd9",
+      "actualSha256": "1439a5bb68dd145bf4ca4b76ee485c646515e8b5eff4b027e6e8c819a9bb8bd9"
+    },
+    {
+      "contentId": "lesson_mca_1",
+      "location": "/mediaSpecifications/0/provenance/sourceRef",
+      "sourceRef": "repo-path:curriculum/factory-v2/authoring/first-three/delivery-v2/media/ft07-fraction-bars.svg",
+      "file": "media/svg/ft07-fraction-bars.svg",
+      "declaredSha256": "63f522fe7699a2a7f707de63817d1ef75672830f0083d810af4f7ee2102a4a31",
+      "actualSha256": "63f522fe7699a2a7f707de63817d1ef75672830f0083d810af4f7ee2102a4a31"
+    },
+    {
+      "contentId": "lesson_mca_1",
+      "location": "/mediaSpecifications/1/provenance/sourceRef",
+      "sourceRef": "repo-path:curriculum/factory-v2/authoring/first-three/delivery-v2/media/ft07-number-line-compare.svg",
+      "file": "media/svg/ft07-number-line-compare.svg",
+      "declaredSha256": "413aba7ac49a54e197e92b59a0b282da46a73a7df243f074e20ae32f8d59eb88",
+      "actualSha256": "413aba7ac49a54e197e92b59a0b282da46a73a7df243f074e20ae32f8d59eb88"
+    },
+    {
+      "contentId": "lesson_mca_1",
+      "location": "/assets/0/provenance/sourceRef",
+      "sourceRef": "repo-path:curriculum/factory-v2/authoring/first-three/delivery-v2/media/ft07-number-line-quarters.svg",
+      "file": "media/svg/ft07-number-line-quarters.svg",
+      "declaredSha256": "1439a5bb68dd145bf4ca4b76ee485c646515e8b5eff4b027e6e8c819a9bb8bd9",
+      "actualSha256": "1439a5bb68dd145bf4ca4b76ee485c646515e8b5eff4b027e6e8c819a9bb8bd9"
+    },
+    {
+      "contentId": "lesson_mca_1",
+      "location": "/assets/1/provenance/sourceRef",
+      "sourceRef": "repo-path:curriculum/factory-v2/authoring/first-three/delivery-v2/media/ft07-fraction-bars.svg",
+      "file": "media/svg/ft07-fraction-bars.svg",
+      "declaredSha256": "63f522fe7699a2a7f707de63817d1ef75672830f0083d810af4f7ee2102a4a31",
+      "actualSha256": "63f522fe7699a2a7f707de63817d1ef75672830f0083d810af4f7ee2102a4a31"
+    },
+    {
+      "contentId": "lesson_mca_1",
+      "location": "/assets/2/provenance/sourceRef",
+      "sourceRef": "repo-path:curriculum/factory-v2/authoring/first-three/delivery-v2/media/ft07-number-line-compare.svg",
+      "file": "media/svg/ft07-number-line-compare.svg",
+      "declaredSha256": "413aba7ac49a54e197e92b59a0b282da46a73a7df243f074e20ae32f8d59eb88",
+      "actualSha256": "413aba7ac49a54e197e92b59a0b282da46a73a7df243f074e20ae32f8d59eb88"
+    }
+  ],
+  "scope": "All delivered figures and PNGs hashed locally. Every repo-path SVG/PNG reference resolves locally. Remote publication and rights clearance remain blocked.",
+  "productionWrites": false
+}

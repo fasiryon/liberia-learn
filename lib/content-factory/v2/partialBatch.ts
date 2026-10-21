@@ -12,7 +12,7 @@ import { staticBatchExecutors } from "./staticBatch";
 import { runFactory } from "./manager";
 import { resolveAuthoredRuntime } from "./runtimeBindings";
 import { assessmentAttribution, type StatedPrimaryObjectives } from "./assessmentAttribution";
-import { misconceptionCrosswalk, retentionPolicyStatus, validateRetentionEnvelope, type AmendedFirstTenContract } from "./contractPolicy";
+import { FIRST_TEN_CONTRACT_PIN, misconceptionCrosswalk, retentionPolicyStatus, validateRetentionEnvelope, type AmendedFirstTenContract } from "./contractPolicy";
 import { verifyFirstThreeRuntimeSources } from "./runtimeSource";
 
 export const PARTIAL_BATCH_VERSION = "factory-authored-subset/1.0.0" as const;
@@ -107,8 +107,11 @@ export async function processAuthoredSubset(input: {
     const runtimeBinding=resolveAuthoredRuntime(supplied.value);
     const runtimeSources=runtimeBinding?verifyFirstThreeRuntimeSources():null;
     if (runtimeBinding && !input.contractPolicy) throw new Error(`partial_contract_policy_required:${selected.contentId}`);
+    if (runtimeBinding?.authoredGeneration === "V0.2.1" && input.contractPolicy?.contract.designation !== "liberialearn-first-ten-modernization-contract/1.0.0+FT-A001+FT-A002") throw new Error(`partial_v021_contract_amendment_required:${selected.contentId}`);
     const attribution = assessmentAttribution(supplied.value, input.contractPolicy?.statedPrimary);
     const policy = input.contractPolicy ? {
+      contractPin: FIRST_TEN_CONTRACT_PIN,
+      amendments: input.contractPolicy.contract.amendments,
       misconceptionCrosswalk: misconceptionCrosswalk(input.contractPolicy.contract, supplied.value),
       retention: { envelope: validateRetentionEnvelope(supplied.value.retentionChecks, blueprint.objectives.length), policy: retentionPolicyStatus(input.contractPolicy.contract) },
     } : null;

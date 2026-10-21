@@ -1,6 +1,6 @@
 import fs from "fs";
 import { describe, it, expect, vi } from "vitest";
-import delivery from "@/docs/architecture/content-factory/evidence/first-three-v2-reconciliation.json";
+import delivery from "@/docs/architecture/content-factory/evidence/first-three-v021-reconciliation.json";
 import { CANDIDATE_REVIEW_IDS, candidateReviewEntry, candidateDiagnostic, diagnosticRequestSchema, reviewDiagnosticResult } from "@/lib/learner-experience/candidateReview";
 import { loadPrototypeExperience } from "@/lib/learner-experience/prototypeRoute";
 import { validateLessonExperience } from "@/lib/learner-experience/sceneContract";
@@ -30,7 +30,7 @@ describe("candidate review boundary", () => {
 
 // Restricted content is intentionally not present on CI. Run this explicit gate locally with
 // PR195_REAL_PACKAGE_QA=1; a skip is never candidate certification.
-describe.skipIf(process.env.PR195_REAL_PACKAGE_QA !== "1")("exact delivered V2 learning sequence", () => {
+describe.skipIf(process.env.PR195_REAL_PACKAGE_QA !== "1")("exact delivered V0.2.1 learning sequence", () => {
   it.each(CANDIDATE_REVIEW_IDS)("loads the real package and registered labs for %s", id => {
     const entry = candidateReviewEntry(id)!;
     const loaded = loadPrototypeExperience(id)!;

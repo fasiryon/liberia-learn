@@ -3,7 +3,7 @@ import fs from "fs";
 import path from "path";
 import { createHash } from "crypto";
 import { z } from "zod";
-import delivery from "@/docs/architecture/content-factory/evidence/first-three-v2-reconciliation.json";
+import delivery from "@/docs/architecture/content-factory/evidence/first-three-v021-reconciliation.json";
 import { digest, parseBlueprint } from "@/lib/content-factory/v2/blueprint";
 import { artifactHash, parseResourceDraft } from "@/lib/content-factory/v2/quality";
 import { authoringInputSchema } from "@/lib/content-factory/v2/authoringInput";
@@ -20,7 +20,7 @@ import type { Scene } from "./types";
 
 const hash = (bytes: Buffer | string) => createHash("sha256").update(bytes).digest("hex");
 const manifestSchema = z.object({ schemaVersion: z.literal("factory-ten-candidates/1.0.0"), inputHash: z.string(), files: z.record(z.string(), z.string()), packageHash: z.string() }).strict();
-const summarySchema = z.object({ candidateId: z.string(), candidateVersion: z.literal("0.2.0"), inputHash: z.string(), state: z.literal("DRAFT"), approved: z.literal(false), released: z.literal(false), reviewState: z.literal("PENDING_INDEPENDENT_REVIEW"), generationStatus: z.literal("AWAITING_HUMAN_REVIEW"), failures: z.array(z.string()).length(0) }).passthrough();
+const summarySchema = z.object({ candidateId: z.string(), candidateVersion: z.literal("0.2.1"), inputHash: z.string(), state: z.literal("DRAFT"), approved: z.literal(false), released: z.literal(false), reviewState: z.literal("PENDING_INDEPENDENT_REVIEW"), generationStatus: z.literal("AWAITING_HUMAN_REVIEW"), failures: z.array(z.string()).length(0) }).passthrough();
 const inputSchema = z.object({ originalAuthoringInputBase64: z.string(), source: z.object({ databaseId: z.string(), contentId: z.string(), revisionId: z.string(), revisionNumber: z.number(), snapshotSchemaVersion: z.number(), contentSnapshot: z.unknown(), contentHash: z.string() }) }).passthrough();
 const artifactSchema = z.object({ id: z.string(), version: z.string(), payload: z.unknown(), blueprint: z.object({ blueprintId: z.string(), version: z.string(), contentHash: z.string() }), role: z.string(), author: z.unknown(), dependencies: z.array(z.unknown()), contentHash: z.string() });
 
@@ -54,7 +54,7 @@ function readCandidate(candidateId: string) {
   const input = inputSchema.parse(read("input.json"));
   const authoredBytes = Buffer.from(input.originalAuthoringInputBase64, "base64");
   const authoredPin = delivery.sourceInputs.find(p => p.contentId === pin.contentId);
-  if (!authoredPin || hash(authoredBytes) !== authoredPin.v2AuthoredSha256) throw new Error("candidate_authored_pin_mismatch");
+  if (!authoredPin || hash(authoredBytes) !== authoredPin.authoredSha256) throw new Error("candidate_authored_pin_mismatch");
   const authored = authoringInputSchema.parse(JSON.parse(authoredBytes.toString("utf8")));
   const runtime = resolveAuthoredRuntime(authored);
   if (!runtime || input.source.contentId !== pin.contentId || input.source.databaseId !== authored.source.databaseId || input.source.revisionId !== authored.source.revisionId || input.source.revisionNumber !== authored.source.revisionNumber || input.source.contentHash !== authored.source.snapshotSha256 || hashCurriculumSnapshot(input.source.snapshotSchemaVersion, input.source.contentSnapshot) !== authored.source.snapshotSha256) throw new Error("candidate_source_or_runtime_mismatch");
@@ -85,7 +85,7 @@ export function candidateReviewEntry(candidateId: string) {
     const media = resolved.authored.assets.filter(a => a.sceneId === scene.id).map(a => ({ kind: "IMAGE" as const, ref: `/lab-review/experience/${candidateId}/media/${a.sha256}`, alt: a.altText }));
     return media.length ? { ...scene, media } : scene;
   });
-  return { experience: { ...projected, scenes: [...scenes, handoff], offline: { packageable: false, requiredAssets: [] }, authority: { ...projected.authority, note: `Reviewer-only V2 draft. Package ${pin.packageHash}. V0.2.1 adoption pending. No official grades, mastery writes or release.` } }, links: labLinks.map(l => l.link) };
+  return { experience: { ...projected, scenes: [...scenes, handoff], offline: { packageable: false, requiredAssets: [] }, authority: { ...projected.authority, note: `Reviewer-only V0.2.1 draft. Package ${pin.packageHash}. No official grades, mastery writes or release.` } }, links: labLinks.map(l => l.link) };
 }
 
 export function candidateDiagnostic(candidateId: string) {
