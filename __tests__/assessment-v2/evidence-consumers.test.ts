@@ -231,6 +231,15 @@ describe("Downstream consumers", () => {
     expect(() => toGovernedLearningEvidence(verified, { objectiveId: "obj-compare", conceptId: "c" })).toThrow("assessment_slm_requires_admitted_evidence");
   });
 
+  it("refuses to project one multi-objective score onto any single objective", () => {
+    const { verified } = verifiedChain();
+    const { evidence: admitted } = admitToMastery(verified, { policy: admission, revocations: [], admittedAt: "2026-11-01T10:01:00.000Z", assistanceLedger: sealedAssistanceRecord(verified) });
+    const mixed = { ...admitted, objectiveIds: [...admitted.objectiveIds, "obj-order"] };
+    for (const objectiveId of mixed.objectiveIds) {
+      expect(() => toGovernedLearningEvidence(mixed, { objectiveId, conceptId: "concept-decimal-compare" })).toThrow("assessment_slm_multi_objective_unattributed");
+    }
+  });
+
   it("lets the orchestrator read diagnostics without a mastery claim", () => {
     const { raw } = verifiedChain(setup({ purpose: "DIAGNOSTIC" }));
     const [signal] = signalsForOrchestrator([raw], []);

@@ -52,6 +52,9 @@ export function toGovernedLearningEvidence(envelope: AssessmentEvidenceEnvelope,
 }): GovernedEvidence {
   if (envelope.tier !== "MASTERY_ADMITTED_EVIDENCE" || !envelope.admission) throw new Error("assessment_slm_requires_admitted_evidence");
   if (!envelope.objectiveIds.includes(input.objectiveId)) throw new Error("assessment_slm_objective_not_admitted");
+  // One score cannot be split across objectives without item/criterion attribution, so a multi-objective
+  // observation never becomes per-objective mastery evidence.
+  if (envelope.objectiveIds.length !== 1) throw new Error("assessment_slm_multi_objective_unattributed");
   const { scoring, capture } = envelope;
   const fullCredit = scoring.points !== null && scoring.maxPoints !== null && scoring.points >= scoring.maxPoints;
   const outcome: GovernedEvidence["performance"]["outcome"] = scoring.points === 0 ? "INCORRECT" : fullCredit ? "CORRECT" : "PARTIAL";
