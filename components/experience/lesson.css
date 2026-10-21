@@ -303,6 +303,8 @@ li[data-state=open] .ll4-diagram-num { background: var(--ll-accent); border-colo
 
 /* Block frame: instruction, example and question each look different. */
 .ll5-scene-blocks { display: grid; gap: 20px; min-width: 0; }
+/* Each V4 block sizes its own layout from its own width (it may sit in the narrow visual column). */
+.ll5-block, .ll5-figure { container-type: inline-size; }
 .ll5-block { display: grid; gap: 14px; padding: clamp(16px, 2.4vw, 22px); border-radius: 18px; background: var(--ll-surface); border: 1px solid var(--ll-border); min-width: 0; }
 .ll5-block-label { font-size: 13px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--ll-accent); }
 .ll5-block-title { font-size: 19px; font-weight: 700; line-height: 1.45; }
@@ -317,6 +319,7 @@ li[data-state=open] .ll4-diagram-num { background: var(--ll-accent); border-colo
 .ll5-slider input[type=range] { width: 100%; min-height: 32px; accent-color: #efb540; }
 .ll5-readout { display: grid; gap: 8px; }
 .ll5-readout > div { display: grid; grid-template-columns: minmax(84px, auto) minmax(0, 1fr); gap: 10px; align-items: baseline; padding: 8px 12px; border-radius: 10px; background: var(--ll-surface-muted); }
+@container (max-width: 420px) { .ll5-readout > div { grid-template-columns: minmax(0, 1fr); gap: 2px; } }
 .ll5-readout dt { font-size: 13px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; color: var(--ll-text-muted); }
 .ll5-readout dd { min-width: 0; overflow-wrap: anywhere; }
 .ll5-readout dd .ll5-math math { font-size: clamp(.95em, 3.6vw, 1.12em); }
@@ -342,7 +345,7 @@ li[data-state=open] .ll4-diagram-num { background: var(--ll-accent); border-colo
 .ll5-shape-right { fill: none; stroke: #ff8a95; stroke-width: 2; }
 .ll5-shape-label { fill: var(--ll-text); font-size: 17px; font-weight: 700; paint-order: stroke; stroke: var(--ll-bg); stroke-width: 4px; }
 .ll5-worked-body, .ll5-numeric-body { display: grid; gap: 18px; align-items: start; }
-@container stage (min-width: 760px) {
+@container (min-width: 760px) {
   .ll5-worked-body[data-has-shape], .ll5-numeric-body[data-has-shape] { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
 }
 .ll5-steps > li[data-latest] > span { background: var(--ll-yellow-soft, rgba(239,181,64,.14)); border-radius: 10px; padding: 4px 10px; margin: -4px -10px; }
@@ -406,7 +409,7 @@ button.ll5-fpart:focus-visible { outline: 3px solid #8fb8ff; outline-offset: -5p
 
 /* Science */
 .ll5-particle-layout { display: grid; gap: 16px; align-items: start; }
-@container stage (min-width: 760px) { .ll5-particle-layout { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); } }
+@container (min-width: 760px) { .ll5-particle-layout { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); } }
 .ll5-particles { display: grid; gap: 8px; justify-items: start; }
 .ll5-particles svg { width: 100%; max-width: 480px; height: auto; display: block; }
 .ll5-particle-box { fill: rgba(143, 184, 255, .06); stroke: var(--ll-border-strong); stroke-width: 2; }
@@ -429,7 +432,7 @@ button.ll5-fpart:focus-visible { outline: 3px solid #8fb8ff; outline-offset: -5p
 
 /* Map */
 .ll5-map-layout { display: grid; gap: 16px; align-items: start; }
-@container stage (min-width: 820px) { .ll5-map-layout { grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); } }
+@container (min-width: 820px) { .ll5-map-layout { grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); } }
 .ll5-map-frame { display: grid; gap: 6px; padding: 10px; border-radius: 16px; background: linear-gradient(200deg, var(--ll-surface-muted) 55%, rgba(143, 184, 255, .16)); border: 1px solid var(--ll-border); }
 .ll5-map-edge { font-size: 12px; font-weight: 700; color: var(--ll-text-muted); display: flex; gap: 4px; align-items: center; }
 .ll5-map-edge[data-edge=east] { justify-content: flex-end; }
@@ -467,7 +470,7 @@ button.ll5-fpart:focus-visible { outline: 3px solid #8fb8ff; outline-offset: -5p
 .ll5-sentence-line, .ll5-tile-bank { display: flex; flex-wrap: wrap; gap: 8px; min-height: var(--pdv2-target, 48px); padding: 10px; border-radius: 12px; }
 .ll5-sentence-line { border: 2px dashed var(--ll-border-strong); background: var(--ll-surface-muted); align-items: center; }
 .ll5-organizer-fields { display: grid; gap: 14px; }
-@container stage (min-width: 900px) { .ll5-organizer-fields { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); } }
+@container (min-width: 900px) { .ll5-organizer-fields { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); } }
 .ll5-organizer-field { display: grid; gap: 4px; align-content: start; }
 .ll5-checklist { display: grid; gap: 6px; }
 .ll5-check { display: flex; gap: 10px; align-items: flex-start; min-height: 40px; font-size: 16px; line-height: 1.45; }

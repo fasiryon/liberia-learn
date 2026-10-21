@@ -32,6 +32,7 @@ async function newPage(width, height, reducedMotion = "reduce") {
   await context.route("**/api/**", (route) => route.fulfill({ json: {} }));
   const page = await context.newPage();
   page.setDefaultTimeout(30000);
+  page.setDefaultNavigationTimeout(180000);
   page.on("pageerror", (error) => evidence.errors.push(`${width}: ${error.message}`));
   page.on("request", (request) => { if (["POST", "PUT", "PATCH", "DELETE"].includes(request.method())) evidence.writes.push(`${request.method()} ${new URL(request.url()).pathname}`); });
   return { context, page };

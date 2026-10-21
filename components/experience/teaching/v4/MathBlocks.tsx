@@ -179,7 +179,8 @@ export function NumericResponseBlock({ block, onDone }: { block: BlockOf<"NUMERI
   return <BlockFrame label={block.mode === "GUIDED" ? "Solve with help" : "Solve on your own"} className="ll5-numeric" data={{ "data-numeric-response": block.id, "data-mode": block.mode }}>
     <div className="ll5-problem"><InlineText text={block.prompt} /></div>
     <div className="ll5-numeric-body" data-has-shape={shape ? "" : undefined}>
-      {shape && <ShapeDiagram shape={shape} views={[]} reveal={false} />}
+      {/* A triangle problem shows its perpendicular height: the diagram states measurements, never answers. */}
+      {shape && <ShapeDiagram shape={shape} views={shape.kind === "TRIANGLE" ? ["HEIGHT"] : []} reveal={false} />}
       <div className="ll5-answers">
         {block.parts.map((part) => {
           const diagnosis = results?.[part.id];
