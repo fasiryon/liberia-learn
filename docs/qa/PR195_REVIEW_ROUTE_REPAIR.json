@@ -1,10 +1,22 @@
 {
   "schemaVersion": "pr195-review-route-repair/1.0.0",
-  "recordedAt": "2026-10-21T17:01:54.265Z",
+  "recordedAt": "2026-10-21T17:15:47.779Z",
   "baseCommit": "6221975b39965f3d1b17b7fa526b9ee2d28df8a7",
   "sourceHashEncoding": "UTF8_LF",
-  "sourceManifestSha256": "9f3b2a11d4532186533489d71c7ed2cb47121500dcb39de2bdea4147b558d557",
+  "sourceManifestSha256": "be1f969f151c5aebd33198201ab5ae0939aa189706d2a2c7c66d5ce36e0c4c25",
   "sources": [
+    {
+      "path": ".github/workflows/lab-review-capture.yml",
+      "sha256": "fe378c3bb2d323f351d9911b16d1470d5e37f05436168d53a7de0f81a7db40cc"
+    },
+    {
+      "path": ".github/workflows/lab-runtime-gate.yml",
+      "sha256": "cd83d218345e19494d6b976168847d616d117527c60685613da75398a170017a"
+    },
+    {
+      "path": "__tests__/agents/lab-production-team.test.ts",
+      "sha256": "0d51d01ab43abf30dbd43dc35d36c07a706f55ea565bc5095564d5fd216e5ed1"
+    },
     {
       "path": "__tests__/interactive-labs/first-three-integration.test.ts",
       "sha256": "6224ea6914bf5c3730cb7386898a0774595f7cf6293373b79ce4b0e8daf86f9f"
@@ -36,6 +48,10 @@
     {
       "path": "__tests__/security/candidate-review-access.test.ts",
       "sha256": "d29fa9caa540e4ca0f3c91746c263c2aab578707b987a8db73272362c7792961"
+    },
+    {
+      "path": "__tests__/security/local-review-session.test.ts",
+      "sha256": "c12bbfa04eca22ba809a973c43eeceea03d8f4e4a32173ce8eff0137b45caf34"
     },
     {
       "path": "__tests__/student-lab-eligibility.test.tsx",
@@ -266,6 +282,22 @@
       "sha256": "cc86d4406f31f75f2f2c9cf0e1474452c3ab571d3d7aa3e00b57fd23e3e5127f"
     },
     {
+      "path": "scripts/labs/capture-lab-review.ts",
+      "sha256": "3e86361c9dd44121d1733620e825837a202cff73842374711cbde76952fd4e71"
+    },
+    {
+      "path": "scripts/labs/prepare-review-consent.cjs",
+      "sha256": "fcba949cb7fd68145b40dcbbd4e6e8b51c484e46796bf668c07f2f4880d28655"
+    },
+    {
+      "path": "scripts/labs/reviewer-session.cjs",
+      "sha256": "bd9eb633bb886444601e0dc84839e6bb3ab63421a4cd82377d12dd87be4102b9"
+    },
+    {
+      "path": "scripts/labs/runtime-acceptance.ts",
+      "sha256": "bb0184750f394f296ba25fc186531bd3f6146fc9bbde9391a7d63a5a1bedf1b7"
+    },
+    {
       "path": "scripts/qa/pr195-review-browser.cjs",
       "sha256": "afbb02b2c96acb964eb34c3ae0f98bbbf7954a596234db7c4c96d5329c5f997a"
     },
@@ -275,7 +307,7 @@
     },
     {
       "path": "scripts/qa/pr195-review-receipt.cjs",
-      "sha256": "70c0d2d1edd55438f65b61c3ac722151ac9bdd2f97ca505cf72af65606950537"
+      "sha256": "da666eba16af945344fdfc45b810845d27f96bd4827278777577ad2500f7f509"
     },
     {
       "path": "scripts/qa/pr195-review-server.cjs",
@@ -341,6 +373,23 @@
     "registryRegressions": {
       "passed": 54
     }
+  },
+  "ciFollowthrough": {
+    "changedValidation": "PASS",
+    "focusedTests": {
+      "passed": 20,
+      "skipped": 0
+    },
+    "fixtureBootstrap": "PASS_READ_ONLY_APPLICATION_ROLE",
+    "authenticatedRendererCaptures": {
+      "passed": 2,
+      "failed": 0,
+      "profiles": [
+        "LOW",
+        "FALLBACK_2D"
+      ]
+    },
+    "applicationValidationCommit": "3590bc8940cf90a2ce0e655506f9d48d27672f07"
   },
   "browser": {
     "evidenceFile": "artifacts/pr195-review-route-repair/browser/evidence.json",
@@ -420,6 +469,18 @@
     {
       "path": "artifacts-pr195-registry-regressions.log",
       "sha256": "31d730b58aa3d99a21e3111e4f1a1cc744d5d67943d264ba4a21150ea114da62"
+    },
+    {
+      "path": "artifacts-pr195-ci-auth-validation.log",
+      "sha256": "aa5dbd86602d62342658d5b7b8f446307aa668f4ee384220f127513e3c5b2044"
+    },
+    {
+      "path": "artifacts-pr195-ci-fixture.log",
+      "sha256": "57bc8a400571c2a80d48ade3f84cc0f19e78d1a717ae4d88845c5c02910dbf9e"
+    },
+    {
+      "path": "artifacts-pr195-authenticated-gate.log",
+      "sha256": "25f3479b4421aa39b1ed6a7c19b6b51a070844e81feba4798efe909c830b383e"
     }
   ],
   "officialGrades": false,

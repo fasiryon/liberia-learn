@@ -48,6 +48,8 @@ Reproduction scripts: `scripts/qa/pr195-review-db.cjs`, `pr195-review-server.cjs
 
 The machine receipt `PR195_REVIEW_ROUTE_REPAIR.json` records source and evidence hashes. The exact-head GitHub CI result is reported separately after pushing this repair to PR #195's existing branch; the earlier green `6221975b` run does not certify this change.
 
+The initial repair commit `3590bc894` passed TypeScript and 8,042 tests in [CI 39640276946](https://github.com/fasiryon/liberia-learn/actions/runs/39640276946), then failed one obsolete source assertion requiring anonymous harness access. That assertion is retired in favor of the behavioral access tests. The CI follow-up authenticates the existing capture and runtime-acceptance tools with real signed synthetic NextAuth sessions, restricted to explicit loopback development harnesses. Both automated and manual capture workflows seed a dedicated `lab_review_fixture` database; the app receives only a read-only consent role, and the admin URL exists only in the fixture setup step. Local fixture bootstrap and read-only verification pass; the existing capture tool passes authenticated LOW and FALLBACK_2D runs for `fixture-simple-circuit/current-starts` with 2 PASS and no errors. No renderer, shader, parity or determinism assertion is removed. The route/player/runtime package sources are unchanged by this CI follow-up.
+
 ## Remaining merge and release blockers
 
 1. V0.2.1 adoption and a newly hashed delivery, followed by repeated integration QA. Separate factory adoption of the full 1.0.0 cohort baseline remains pending; the V2 amended contract pin alone does not resolve it.
