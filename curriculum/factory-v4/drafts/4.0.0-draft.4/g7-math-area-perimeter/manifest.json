@@ -1,0 +1,147 @@
+{
+  "manifestVersion": "factory-v4-candidate/1.0.0",
+  "candidateVersion": "4.0.0-draft.4",
+  "contractVersion": "visual-teaching-block/4.0.0-draft.1",
+  "key": "g7-math-area-perimeter",
+  "lessonId": "cv4-cand-g7-math-area-perimeter",
+  "grade": 7,
+  "subject": "MATH",
+  "title": "Generated: Covering and fencing",
+  "state": "DRAFT",
+  "approved": false,
+  "published": false,
+  "released": false,
+  "learnerDeliverable": false,
+  "audience": "REVIEWER_ONLY",
+  "contentOrigin": "DETERMINISTIC_FACTORY_EXECUTOR_WITH_SYNTHETIC_TEACHING_CONTEXTS",
+  "generation": {
+    "executor": "factory-v4-lesson-author/1.0.0",
+    "role": "LESSON_AUTHOR",
+    "referenceFixtureCopied": false,
+    "modelCalls": 0
+  },
+  "sourceLineage": {
+    "kind": "SOURCE_ROW_ONLY",
+    "contentId": "hero-math-g7-geometry-area-and-perimeter-of-polygons",
+    "contentPk": "cmpyg7yx6003avoqgrqwkw7id",
+    "legacyTitle": "Calculating Area and Perimeter of Polygons for Real-World Applications",
+    "revisionId": "cmss9493703a7vo54xxnhxmjy",
+    "snapshot": {
+      "path": "artifacts/curriculum-cleanup-v1/snapshot.json",
+      "capturedAt": "2026-09-26T09:07:15.873Z",
+      "fileSha256": "ef89632f6b447011b9092fb17501a8eac52555783aa45d3c16a52d275ebaa16c",
+      "rowSha256": "bada4c6dc59c80e333ae2e50633f46679d57e24a0421f3eba126dcbc21eb1d72"
+    }
+  },
+  "sourceVerification": "REPOSITORY_PINS_VERIFIED_REMOTE_RIGHTS_AND_LEGACY_BODY_NOT_ATTESTED",
+  "inputPins": {
+    "manifestSha256": "60883779051198a7bdbc8a389d97c186376fc7b050599fdb32aa4c72f9aa01a2",
+    "frontendCommit": "1268773a649fd3d570450ec15c8d5c9eb93d0cf2",
+    "candidate": {
+      "path": "curriculum/v4/candidates/g7-math-area-perimeter.json",
+      "sha256": "76f4e26278aca2a3b73523dd8b8574381b09e459a791354e40a7e3cc3c95ce20"
+    }
+  },
+  "candidateSha256": "3bdd1015c189843cae8ad1eb2c116fd04c110ec87d12738d648803e3b41d488a",
+  "blueprintHash": "cd4cfbc4c23903d974143fa94bd911c53d351bcb196eddbf75459ea170542f9f",
+  "learnerProjectionSha256": "a9128cc58cd6e4643f320870bb8f93f17f164f62977ce7bfdd75eb850c136d28",
+  "academicSchema": {
+    "valid": true,
+    "errors": []
+  },
+  "visualInstruction": {
+    "valid": true,
+    "family": "MATHEMATICS",
+    "balance": {
+      "explanationSeconds": 215,
+      "activitySeconds": 960,
+      "activityShare": 0.817
+    },
+    "practice": {
+      "ll-g7-math-ap-rectangles": {
+        "visuals": 2,
+        "workedExamples": 2,
+        "guided": 4,
+        "independent": 4,
+        "mistakes": 1,
+        "transfer": 3
+      },
+      "ll-g7-math-ap-triangles": {
+        "visuals": 2,
+        "workedExamples": 2,
+        "guided": 4,
+        "independent": 4,
+        "mistakes": 1,
+        "transfer": 3
+      }
+    },
+    "totals": {
+      "visuals": 4,
+      "workedExamples": 4,
+      "guided": 8,
+      "independent": 8,
+      "mistakes": 2,
+      "transfer": 6,
+      "problems": 12
+    },
+    "advisories": [
+      {
+        "code": "v4_activity_share_outside_target",
+        "severity": "ADVISORY",
+        "detail": "82% activity (target 65–75%); do not pad with repetitive questions to reach it."
+      }
+    ]
+  },
+  "accessibility": {
+    "schema": "PASS",
+    "blockBindings": 10,
+    "manualScreenReaderReview": "PENDING"
+  },
+  "offline": {
+    "mode": "TEXT_PAPER_CAPTURE_ONLY",
+    "protectedKeysCached": false,
+    "runtimeColdStartAndReconnect": "PENDING"
+  },
+  "protectedAssessment": {
+    "included": false,
+    "restrictedKeyComparison": "PENDING_AUTHORIZED_OWNER_INPUT",
+    "canonicalMasteryMutation": false
+  },
+  "factoryStatus": "REVISION_REQUIRED",
+  "releaseBlockers": [
+    "MOE_OBJECTIVE_UNBOUND",
+    "ONTOLOGY_RELEASE_MISSING",
+    "V4_HUMAN_REVIEW_REQUIRED",
+    "LEGACY_BODY_NOT_COMPARED",
+    "excellence:BP-COVERAGE",
+    "excellence:BP-PRODUCTION",
+    "excellence:BP-REASONING",
+    "excellence:BP-SELECTED-SHARE",
+    "excellence:BP-RETENTION",
+    "excellence:BP-TRANSFER",
+    "excellence:BP-EXTENSION",
+    "REFERENCE_LESSON_ONLY_FULL_EXCELLENCE_PACKAGE_PENDING",
+    "PROTECTED_ASSESSMENT_RECONCILIATION_REQUIRED",
+    "PREREQUISITE_DIAGNOSTIC_AND_MISCONCEPTION_ITEM_BINDINGS_PENDING",
+    "AUTHENTIC_SOURCE_COMPARISON_AND_RIGHTS_REVIEW_REQUIRED",
+    "MANUAL_ACCESSIBILITY_AND_OFFLINE_RUNTIME_QA_REQUIRED",
+    "OBJECTIVE_MAPPING_PROPOSED:ll-g7-math-ap-rectangles",
+    "OBJECTIVE_MAPPING_PROPOSED:ll-g7-math-ap-triangles",
+    "EXACT_REVISION_HUMAN_REVIEW_REQUIRED",
+    "EXPLICIT_RELEASE_AUTHORIZATION_REQUIRED",
+    "RETENTION_POLICY_APPROVAL_REQUIRED",
+    "ASSESSMENT_ITEMS_PENDING",
+    "RESTRICTED_KEY_COMPARISON_PENDING",
+    "FRONTEND_GENERATED_PACKAGE_CONSUMPTION_QA_PENDING"
+  ],
+  "files": {
+    "candidate.json": "b2ece48f1cd57e09143582cc27a32666e42abbf4793f76038a693156c3562b74",
+    "visual-teaching.json": "41485f77f10d66af8b37a3df81207307c775a549a9c78d524ba75944b734ba9d",
+    "blueprint.json": "7a3452a422a03029c8ff1a8ec6a9138939ce5579e89705da5a61429a168215a5",
+    "factory-artifact.json": "adbe783595df5f720d2b580465bdedc6e2c5ef3ada95a385a80fec952c2a4218",
+    "learner-projection.json": "65d6f40029af24d5f81d55e6f3c27fe9edb9dd0a02e9a19f2a10f28b54dca038",
+    "factory-receipt.json": "4331d442e53fdbfae5553c5a1bff03ca580df0ac579f2557ce9119e918362e69",
+    "paper-alternative.txt": "14c0f4dc0ad2bb207de37ec58eceb7f5c4a0482dd308b818fbc624a2f6b62364"
+  },
+  "packageHash": "ad195ec26b8e269cf2e2ec9672e3fbc72b3ebf290a8911ad17f71364b7716905"
+}

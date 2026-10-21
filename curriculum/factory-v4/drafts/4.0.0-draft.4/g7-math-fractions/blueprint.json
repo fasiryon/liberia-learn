@@ -1,0 +1,138 @@
+{
+  "schemaVersion": "unit-blueprint/2.2.0",
+  "blueprintId": "g7-math-fractions-v4",
+  "version": "4.0.0",
+  "contentHash": "059c976ee8635f442990182d53e41a89b8746954b8dd6eb7ca868fa9742b6ad7",
+  "grade": 7,
+  "subject": "MATH",
+  "unitId": "g7-math-fractions",
+  "title": "g7-math-fractions",
+  "repositoryCommit": "1268773a649fd3d570450ec15c8d5c9eb93d0cf2",
+  "sources": [
+    {
+      "id": "v4-reference-inputs",
+      "version": "1.0.0",
+      "sha256": "60883779051198a7bdbc8a389d97c186376fc7b050599fdb32aa4c72f9aa01a2",
+      "sourceRef": "curriculum/factory-v4/reference-inputs.json"
+    }
+  ],
+  "objectives": [
+    {
+      "id": "ft07-o1",
+      "kind": "LIBERIALEARN_MASTERY",
+      "statement": "Represent fractions, including fractions equal to or greater than 1, on area models and a number line, naming the whole each fraction refers to.",
+      "sourceId": "v4-reference-inputs",
+      "sourcePointer": "moe-math-g7-s1-p2-fractions-con1",
+      "scope": "REQUIRED",
+      "mapping": "PROPOSED"
+    },
+    {
+      "id": "ft07-o2",
+      "kind": "LIBERIALEARN_MASTERY",
+      "statement": "Add and subtract fractions with like denominators, and with related denominators (e.g. halves, quarters, eighths), by using equivalent fractions.",
+      "sourceId": "v4-reference-inputs",
+      "sourcePointer": "moe-math-g7-s1-p2-fractions-con1",
+      "scope": "REQUIRED",
+      "mapping": "PROPOSED"
+    },
+    {
+      "id": "ft07-o3",
+      "kind": "LIBERIALEARN_MASTERY",
+      "statement": "Compare and order fractions using benchmarks (0, 1/2, 1), common denominators and the number line, and justify each comparison.",
+      "sourceId": "v4-reference-inputs",
+      "sourcePointer": "moe-math-g7-s1-p2-fractions-con1",
+      "scope": "REQUIRED",
+      "mapping": "PROPOSED"
+    }
+  ],
+  "outcomes": [
+    {
+      "id": "g7-math-fractions-outcome",
+      "objectiveIds": [
+        "ft07-o1",
+        "ft07-o2",
+        "ft07-o3"
+      ],
+      "demonstration": "Produce and explain an independent response and transfer it to a new context."
+    }
+  ],
+  "prerequisites": [],
+  "misconceptions": [],
+  "sequence": [
+    {
+      "resourceId": "g7-math-fractions-lesson",
+      "dependsOn": [],
+      "objectiveIds": [
+        "ft07-o1",
+        "ft07-o2",
+        "ft07-o3"
+      ],
+      "scaffold": "FULL"
+    }
+  ],
+  "resources": [
+    {
+      "id": "g7-math-fractions-lesson",
+      "kind": "LESSON",
+      "role": "LESSON_AUTHOR",
+      "objectiveIds": [
+        "ft07-o1",
+        "ft07-o2",
+        "ft07-o3"
+      ],
+      "dependsOn": [],
+      "audience": "REVIEWER_ONLY"
+    }
+  ],
+  "assessmentPlan": [
+    {
+      "id": "g7-math-fractions-practice",
+      "resourceId": "g7-math-fractions-lesson",
+      "itemIds": [],
+      "kind": "SHORT_CONSTRUCTED_RESPONSE",
+      "objectiveIds": [
+        "ft07-o1",
+        "ft07-o2",
+        "ft07-o3"
+      ],
+      "scaffold": "NONE",
+      "timing": "IN_LESSON",
+      "context": "REHEARSED",
+      "scoring": "NOT_SCORED",
+      "source": "EXCELLENCE_PLAN",
+      "ref": "REFERENCE_LESSON_ONLY_ASSESSMENT_PENDING"
+    }
+  ],
+  "support": {
+    "differentiation": [
+      "Use the text equivalent and paper model with a teacher."
+    ],
+    "accessibility": [
+      "Scene keyboard paths and block text equivalents."
+    ],
+    "offline": {
+      "mode": "TEXT_PAPER_CAPTURE_ONLY",
+      "requirements": [
+        "Paper, pencil and printed text alternatives."
+      ],
+      "maxBytes": 2000000
+    }
+  },
+  "provenance": [
+    {
+      "id": "v4-reference-inputs",
+      "version": "1.0.0",
+      "sha256": "60883779051198a7bdbc8a389d97c186376fc7b050599fdb32aa4c72f9aa01a2",
+      "sourceRef": "curriculum/factory-v4/reference-inputs.json"
+    }
+  ],
+  "legacy": [],
+  "unresolved": [
+    "REFERENCE_LESSON_ONLY_FULL_EXCELLENCE_PACKAGE_PENDING",
+    "PROTECTED_ASSESSMENT_RECONCILIATION_REQUIRED",
+    "PREREQUISITE_DIAGNOSTIC_AND_MISCONCEPTION_ITEM_BINDINGS_PENDING",
+    "AUTHENTIC_SOURCE_COMPARISON_AND_RIGHTS_REVIEW_REQUIRED",
+    "MANUAL_ACCESSIBILITY_AND_OFFLINE_RUNTIME_QA_REQUIRED"
+  ],
+  "instructionStandard": "liberialearn-v4-instruction/1.0.0"
+}

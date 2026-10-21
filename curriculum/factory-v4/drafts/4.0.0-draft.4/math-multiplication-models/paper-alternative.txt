@@ -1,0 +1,27 @@
+generated-1/blocks/0
+7 rows of 4 dots: 7 × 4 = 28. Explain why each representation has the same total.
+Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores.
+
+generated-1/blocks/1
+Watch the rectangle split into tens and ones. Find 24 × 6 by splitting it into parts.
+Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores.
+
+generated-2/blocks/0
+Find 24 × 6. Step 1: Split the first factor by place value. 24 = 20 + 4 Step 2: Multiply both parts, then add their products. 20 × 6 + 4 × 6 = 120 + 24 = 144
+Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores.
+
+generated-3/blocks/0
+Use equal groups or a split array. 23 times 4: write your answer. 16 times 5: write your answer.
+Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores.
+
+generated-4/blocks/0
+Solve independently. 32 times 4: write your answer. 17 times 8: write your answer.
+Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores.
+
+generated-5/blocks/0
+Find 24 times 6. A learner wrote: 20 times 6 plus 4 equals 124. Which diagnosis explains the mistake? Options: The four ones must also be multiplied by six; add 120 and 24.; The method already matches the model..
+Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores.
+
+generated-6/blocks/0
+How many chairs remain for the audience? Audience chairs: write your answer.
+Explain why you multiply before removing the reserved chairs, and check the result with a second method. Write your response and reasoning on paper. Responses are capture only, never official scores.

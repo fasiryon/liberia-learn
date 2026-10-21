@@ -1,0 +1,340 @@
+{
+  "contractVersion": "visual-teaching-block/4.0.0-draft.1",
+  "registryVersion": "teaching-blocks/1.1.0",
+  "instructionStandard": "liberialearn-v4-instruction/1.0.0",
+  "candidateSha256": "dd170c9a5ad3dc20ed799db43d10d797bc67a7f86314035f390baca4a058f4b0",
+  "state": "DRAFT",
+  "approved": false,
+  "published": false,
+  "released": false,
+  "audience": "REVIEWER_ONLY",
+  "objectives": [
+    {
+      "id": "ft04-o1",
+      "statement": "Use the particle model to describe and compare solids, liquids and gases (arrangement, movement, shape and volume), with Liberian examples.",
+      "standards": [
+        {
+          "reference": "moe-general-science-g7-s1-p1-scientific-knowledge-measurement-and-non-living--obj6",
+          "statement": "Discuss the state of matter and their properties",
+          "relation": "ALIGNS_WITH",
+          "mapping": "PROPOSED"
+        },
+        {
+          "reference": "moe-general-science-g7-s1-p1-scientific-knowledge-measurement-and-non-living--con11",
+          "statement": "Matter • Non-living matter characteristics and examples. • States of Matter • Solid, liquid and gas.",
+          "relation": "CONTENT_REFERENCE",
+          "mapping": "PROPOSED"
+        }
+      ]
+    },
+    {
+      "id": "ft04-o2",
+      "statement": "Explain melting, freezing, evaporation, boiling and condensation as energy gained or lost by particles, and distinguish evaporation from boiling.",
+      "standards": [
+        {
+          "reference": "moe-general-science-g7-s1-p1-scientific-knowledge-measurement-and-non-living--obj6",
+          "statement": "Discuss the state of matter and their properties",
+          "relation": "ALIGNS_WITH",
+          "mapping": "PROPOSED"
+        },
+        {
+          "reference": "moe-general-science-g7-s1-p1-scientific-knowledge-measurement-and-non-living--con11",
+          "statement": "Matter • Non-living matter characteristics and examples. • States of Matter • Solid, liquid and gas.",
+          "relation": "CONTENT_REFERENCE",
+          "mapping": "PROPOSED"
+        }
+      ]
+    },
+    {
+      "id": "ft04-o3",
+      "statement": "Predict and explain, with evidence, what happens to temperature when ice melts in a drink (it stays at about 0 °C while ice remains), and recognise changes of state as reversible physical changes.",
+      "standards": [
+        {
+          "reference": "moe-general-science-g7-s1-p1-scientific-knowledge-measurement-and-non-living--obj6",
+          "statement": "Discuss the state of matter and their properties",
+          "relation": "ALIGNS_WITH",
+          "mapping": "PROPOSED"
+        }
+      ]
+    }
+  ],
+  "blocks": [
+    {
+      "sceneId": "generated-1",
+      "slot": "blocks",
+      "index": 0,
+      "type": "PREDICT_OBSERVE",
+      "blockSha256": "27a878e775d820c4e371ff9f020f079e4b963a68d5fdb56921aaa657f02ca2ff",
+      "objectiveIds": [
+        "ft04-o1",
+        "ft04-o2",
+        "ft04-o3"
+      ],
+      "instructionalPurpose": "Commit to a prediction, run the experiment, then explain what happened. Learner action: Use the model, complete its task, and explain what the representation shows.",
+      "misconceptionIds": [
+        "generated-science-misconception"
+      ],
+      "responseSignals": [],
+      "accessibility": {
+        "textAlternative": "What happens to ice as it warms from -5 degrees C to 20 degrees C? Options: It melts; the particles remain water particles.; The particles themselves grow into liquid particles.. After you predict, the observation is shown. Compare your prediction with the observation and explain the role of energy.",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: What happens to ice as it warms from -5 degrees C to 20 degrees C? Options: It melts; the particles remain water particles.; The particles themselves grow into liquid particles.. After you predict, the observation is shown. Compare your prediction with the observation and explain the role of energy.",
+        "responsePrompt": "Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/lessonAuthor.ts",
+          "sha256": "adad66e123a6d53744c9aca1791860b13b363de0caefeccededb519fc9da937a",
+          "license": "Original authored deterministic recipe; internal review only",
+          "attribution": "LiberiaLearn Content Factory V4 executor; synthetic scenarios and illustrative data",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "generated-2",
+      "slot": "blocks",
+      "index": 0,
+      "type": "PARTICLE_MODEL",
+      "blockSha256": "17b3607a5aacc0a948e58c28662b89bd83d1969da712374991d3e2266267fc6d",
+      "objectiveIds": [
+        "ft04-o1",
+        "ft04-o2",
+        "ft04-o3"
+      ],
+      "instructionalPurpose": "Heat or cool water and watch the particle arrangement and motion change. Learner action: Use the model, complete its task, and explain what the representation shows.",
+      "misconceptionIds": [
+        "generated-science-misconception"
+      ],
+      "responseSignals": [],
+      "accessibility": {
+        "textAlternative": "Change temperature and compare solid, liquid and gas representations. This is a simplified model, not measured data. Below 0 °C water is a solid: particles packed in a pattern, vibrating in place. From 0 °C to 100 °C it is a liquid: particles close together, sliding past one another. At 100 °C and above it is a gas: particles far apart, moving quickly in all directions.",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Change temperature and compare solid, liquid and gas representations. This is a simplified model, not measured data. Below 0 °C water is a solid: particles packed in a pattern, vibrating in place. From 0 °C to 100 °C it is a liquid: particles close together, sliding past one another. At 100 °C and above it is a gas: particles far apart, moving quickly in all directions.",
+        "responsePrompt": "Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "NONE",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/lessonAuthor.ts",
+          "sha256": "adad66e123a6d53744c9aca1791860b13b363de0caefeccededb519fc9da937a",
+          "license": "Original authored deterministic recipe; internal review only",
+          "attribution": "LiberiaLearn Content Factory V4 executor; synthetic scenarios and illustrative data",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "generated-3",
+      "slot": "blocks",
+      "index": 0,
+      "type": "DATA_PLOT",
+      "blockSha256": "bf0a1cb095118e3d22b27d6a018a1628d950fbe9ca2855ba7e4d509a43331027",
+      "objectiveIds": [
+        "ft04-o1",
+        "ft04-o2",
+        "ft04-o3"
+      ],
+      "instructionalPurpose": "Read measurements as a table and a line graph. Learner action: Describe the interval from minute 1 to minute 3 using only the plotted evidence. Explain why a temperature plateau does not mean energy transfer has stopped.",
+      "misconceptionIds": [
+        "generated-science-misconception"
+      ],
+      "responseSignals": [],
+      "accessibility": {
+        "textAlternative": "Illustrative ice heating. Time 0 min: Temperature -5 C; Time 1 min: Temperature 0 C; Time 2 min: Temperature 0 C; Time 3 min: Temperature 0 C; Time 4 min: Temperature 10 C. A plateau can indicate a phase change; these data alone do not establish how much energy was supplied.",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Illustrative ice heating. Time 0 min: Temperature -5 C; Time 1 min: Temperature 0 C; Time 2 min: Temperature 0 C; Time 3 min: Temperature 0 C; Time 4 min: Temperature 10 C. A plateau can indicate a phase change; these data alone do not establish how much energy was supplied.",
+        "responsePrompt": "Describe the interval from minute 1 to minute 3 using only the plotted evidence. Explain why a temperature plateau does not mean energy transfer has stopped. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "NONE",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/lessonAuthor.ts",
+          "sha256": "adad66e123a6d53744c9aca1791860b13b363de0caefeccededb519fc9da937a",
+          "license": "Original authored deterministic recipe; internal review only",
+          "attribution": "LiberiaLearn Content Factory V4 executor; synthetic scenarios and illustrative data",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "generated-4",
+      "slot": "blocks",
+      "index": 0,
+      "type": "CHECK",
+      "blockSha256": "8fe959e313e7d4e81edaa6ec899e5fd3d4cafd1346b0e691ebb86aaf9d513ef7",
+      "objectiveIds": [
+        "ft04-o1",
+        "ft04-o2",
+        "ft04-o3"
+      ],
+      "instructionalPurpose": "Choose an answer and get feedback written for that choice. Learner action: Use the model, complete its task, and explain what the representation shows.",
+      "misconceptionIds": [
+        "generated-science-misconception"
+      ],
+      "responseSignals": [
+        {
+          "misconceptionId": "generated-science-misconception",
+          "responsePattern": "particles-check-item:OPTION:other",
+          "feedback": "Compare this claim with the model and its evidence."
+        }
+      ],
+      "accessibility": {
+        "textAlternative": "Which explanation fits a liquid changing container shape? Options: Particles move past one another.; The particles turn into a new substance..",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Which explanation fits a liquid changing container shape? Options: Particles move past one another.; The particles turn into a new substance..",
+        "responsePrompt": "Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/lessonAuthor.ts",
+          "sha256": "adad66e123a6d53744c9aca1791860b13b363de0caefeccededb519fc9da937a",
+          "license": "Original authored deterministic recipe; internal review only",
+          "attribution": "LiberiaLearn Content Factory V4 executor; synthetic scenarios and illustrative data",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "generated-4",
+      "slot": "blocks",
+      "index": 1,
+      "type": "CHECK",
+      "blockSha256": "71fb09bbbab9e9c112819a642331b6b5d9ba28ba08b5a6b43564289e37ee88fc",
+      "objectiveIds": [
+        "ft04-o1",
+        "ft04-o2",
+        "ft04-o3"
+      ],
+      "instructionalPurpose": "Choose an answer and get feedback written for that choice. Learner action: Use the model, complete its task, and explain what the representation shows.",
+      "misconceptionIds": [
+        "generated-science-misconception"
+      ],
+      "responseSignals": [
+        {
+          "misconceptionId": "generated-science-misconception",
+          "responsePattern": "energy-check-item:OPTION:other",
+          "feedback": "Compare this claim with the model and its evidence."
+        }
+      ],
+      "accessibility": {
+        "textAlternative": "Why can ice keep melting at about zero degrees C? Options: Energy changes particle arrangement during melting.; No energy reaches the ice..",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Why can ice keep melting at about zero degrees C? Options: Energy changes particle arrangement during melting.; No energy reaches the ice..",
+        "responsePrompt": "Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/lessonAuthor.ts",
+          "sha256": "adad66e123a6d53744c9aca1791860b13b363de0caefeccededb519fc9da937a",
+          "license": "Original authored deterministic recipe; internal review only",
+          "attribution": "LiberiaLearn Content Factory V4 executor; synthetic scenarios and illustrative data",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "generated-5",
+      "slot": "blocks",
+      "index": 0,
+      "type": "WRITING_ORGANIZER",
+      "blockSha256": "67302625ef84c4a5a70bd035a72d1e46091c1851035e2d8cc5bbcea0cea6065a",
+      "objectiveIds": [
+        "ft04-o1",
+        "ft04-o2",
+        "ft04-o3"
+      ],
+      "instructionalPurpose": "Plan and write a response part by part, then revise against a checklist. Learner action: Predict what would happen around an equally cold dry metal container, and explain how that result would distinguish two explanations.",
+      "misconceptionIds": [
+        "generated-science-misconception"
+      ],
+      "responseSignals": [],
+      "accessibility": {
+        "textAlternative": "Use particles and energy to explain the droplets and propose a fair test against the leak explanation. Claim: State your conclusion precisely. Evidence and reasoning: Quote or describe relevant evidence and explain the link to your claim.",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Use particles and energy to explain the droplets and propose a fair test against the leak explanation. Claim: State your conclusion precisely. Evidence and reasoning: Quote or describe relevant evidence and explain the link to your claim.",
+        "responsePrompt": "Predict what would happen around an equally cold dry metal container, and explain how that result would distinguish two explanations. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "NONE",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/lessonAuthor.ts",
+          "sha256": "adad66e123a6d53744c9aca1791860b13b363de0caefeccededb519fc9da937a",
+          "license": "Original authored deterministic recipe; internal review only",
+          "attribution": "LiberiaLearn Content Factory V4 executor; synthetic scenarios and illustrative data",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    }
+  ],
+  "assessmentBoundary": {
+    "player": "ASSESSMENT_PLAYER_V2",
+    "scoring": "SERVER_AUTHORITY",
+    "protectedKeysIncluded": false,
+    "canonicalMasteryMutation": false,
+    "offlineEvidence": "CAPTURE_ONLY_NOT_OFFICIAL"
+  }
+}

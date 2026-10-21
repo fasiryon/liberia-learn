@@ -1,0 +1,437 @@
+{
+  "contractVersion": "lesson-experience/1.0.0",
+  "id": "cv4-cand-g7-civics-counties-capitals",
+  "version": "4.0.0-draft.1",
+  "title": "Generated: Read a schematic county map",
+  "subject": "CIVICS",
+  "grade": 7,
+  "ageBand": "JUNIOR_SECONDARY",
+  "authority": {
+    "status": "CURRICULUM_V2_DRAFT",
+    "note": "Interactive Learning V4 DRAFT candidate for wk_mca7a_fri_p4. Not bound to an MOE objective or release, not reviewed, not approved, not published.",
+    "candidateContentIds": [
+      "wk_mca7a_fri_p4"
+    ],
+    "releaseId": null,
+    "releaseIdentity": null
+  },
+  "objectives": [
+    {
+      "id": "ft01-o1",
+      "statement": "Locate each of Liberia's 15 counties on an outline map and name its capital.",
+      "conceptId": "ft01-o1",
+      "standardCodes": [],
+      "skillIds": []
+    },
+    {
+      "id": "ft01-o2",
+      "statement": "Explain the difference between a county capital (the seat of county administration) and a county's largest or best-known town, and between the national capital and a county capital, using Nimba (Sanniquellie/Ganta) and Montserrado as examples.",
+      "conceptId": "ft01-o2",
+      "standardCodes": [],
+      "skillIds": []
+    },
+    {
+      "id": "ft01-o3",
+      "statement": "Use a county map to reason about location: name the counties crossed, and the capitals passed, on a route between two county capitals, and justify the answer from the map.",
+      "conceptId": "ft01-o3",
+      "standardCodes": [],
+      "skillIds": []
+    }
+  ],
+  "scenes": [
+    {
+      "id": "generated-1",
+      "type": "EXPLANATION",
+      "title": "Read a schematic county map",
+      "objectiveIds": [
+        "ft01-o1",
+        "ft01-o2",
+        "ft01-o3"
+      ],
+      "content": {
+        "body": "Explore the names and capital labels on this schematic. It is not a survey map: do not infer exact boundaries, distance, area or population from the shapes. The county and capital list is a repository reference awaiting independent authoritative-source attestation."
+      },
+      "interaction": {
+        "kind": "NONE"
+      },
+      "tools": {
+        "allowed": [],
+        "prohibited": []
+      },
+      "accessibility": {
+        "textAlternative": "Explore the names and capital labels on this schematic. It is not a survey map: do not infer exact boundaries, distance, area or population from the shapes. The county and capital list is a repository reference awaiting independent authoritative-source attestation. A schematic map of Liberia's 15 counties: Lofa (capital Voinjama), Gbarpolu (capital Bopolu), Grand Cape Mount (capital Robertsport), Bomi (capital Tubmanburg), Montserrado (capital Bensonville), Bong (capital Gbarnga), Nimba (capital Sanniquellie), Margibi (capital Kakata), Grand Bassa (capital Buchanan), River Cess (capital Cestos City), Grand Gedeh (capital Zwedru), Sinoe (capital Greenville), River Gee (capital Fish Town), Grand Kru (capital Barclayville), Maryland (capital Harper).",
+        "keyboardOperable": true,
+        "reducedMotionSafe": true,
+        "captionsRequired": false
+      },
+      "offline": {
+        "mode": "FULL",
+        "fallback": "Models and formative checks use cached lesson data. Paper responses are capture only; no official grade is produced."
+      },
+      "evidence": {
+        "kind": "NONE"
+      },
+      "completion": {
+        "kind": "VIEWED"
+      },
+      "teaching": {
+        "phase": "EXPLORE",
+        "blocks": [
+          {
+            "type": "MAP_EXPLORER",
+            "id": "counties-explore",
+            "map": "LIBERIA_COUNTIES_SCHEMATIC"
+          }
+        ]
+      }
+    },
+    {
+      "id": "generated-2",
+      "type": "PRACTICE",
+      "title": "Find places with support",
+      "objectiveIds": [
+        "ft01-o1",
+        "ft01-o2",
+        "ft01-o3"
+      ],
+      "content": {
+        "body": "Use the labelled map and name list. Distinguish a county from the city named as its capital. Map size provides no population evidence."
+      },
+      "interaction": {
+        "kind": "NONE"
+      },
+      "tools": {
+        "allowed": [],
+        "prohibited": []
+      },
+      "accessibility": {
+        "textAlternative": "Use the labelled map and name list. Distinguish a county from the city named as its capital. Map size provides no population evidence. Locate Bong, whose capital is Gbarnga. A schematic map of Liberia's 15 counties: Lofa (capital Voinjama), Gbarpolu (capital Bopolu), Grand Cape Mount (capital Robertsport), Bomi (capital Tubmanburg), Montserrado (capital Bensonville), Bong (capital Gbarnga), Nimba (capital Sanniquellie), Margibi (capital Kakata), Grand Bassa (capital Buchanan), River Cess (capital Cestos City), Grand Gedeh (capital Zwedru), Sinoe (capital Greenville), River Gee (capital Fish Town), Grand Kru (capital Barclayville), Maryland (capital Harper). Locate Montserrado, whose capital is Bensonville. A schematic map of Liberia's 15 counties: Lofa (capital Voinjama), Gbarpolu (capital Bopolu), Grand Cape Mount (capital Robertsport), Bomi (capital Tubmanburg), Montserrado (capital Bensonville), Bong (capital Gbarnga), Nimba (capital Sanniquellie), Margibi (capital Kakata), Grand Bassa (capital Buchanan), River Cess (capital Cestos City), Grand Gedeh (capital Zwedru), Sinoe (capital Greenville), River Gee (capital Fish Town), Grand Kru (capital Barclayville), Maryland (capital Harper). Does the drawn size of a tile establish population? Options: No; use an authoritative population table.; Yes; larger tiles always mean more residents..",
+        "keyboardOperable": true,
+        "reducedMotionSafe": true,
+        "captionsRequired": false
+      },
+      "offline": {
+        "mode": "FULL",
+        "fallback": "Models and formative checks use cached lesson data. Paper responses are capture only; no official grade is produced."
+      },
+      "evidence": {
+        "kind": "NONE"
+      },
+      "completion": {
+        "kind": "VIEWED"
+      },
+      "teaching": {
+        "phase": "INVESTIGATE",
+        "blocks": [
+          {
+            "type": "MAP_EXPLORER",
+            "id": "county-task-0",
+            "map": "LIBERIA_COUNTIES_SCHEMATIC",
+            "task": {
+              "prompt": "Locate Bong, whose capital is Gbarnga.",
+              "formativeKey": {
+                "regionId": "bong"
+              },
+              "success": "The map pairs Bong with Gbarnga; the county and its capital are different geographic units."
+            }
+          },
+          {
+            "type": "MAP_EXPLORER",
+            "id": "county-task-1",
+            "map": "LIBERIA_COUNTIES_SCHEMATIC",
+            "task": {
+              "prompt": "Locate Montserrado, whose capital is Bensonville.",
+              "formativeKey": {
+                "regionId": "montserrado"
+              },
+              "success": "The map pairs Montserrado with Bensonville; the county and its capital are different geographic units."
+            }
+          },
+          {
+            "type": "CHECK",
+            "id": "county-scope",
+            "items": [
+              {
+                "id": "county-scope-item",
+                "prompt": "Does the drawn size of a tile establish population?",
+                "options": [
+                  {
+                    "id": "reason",
+                    "text": "No; use an authoritative population table.",
+                    "feedback": "The schematic encodes labels and approximate placement, not population."
+                  },
+                  {
+                    "id": "other",
+                    "text": "Yes; larger tiles always mean more residents.",
+                    "feedback": "Compare this claim with the model and its evidence."
+                  }
+                ],
+                "formativeKey": {
+                  "expectedOptionId": "reason"
+                },
+                "misconceptionId": "generated-civics-misconception"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "generated-3",
+      "type": "PRACTICE",
+      "title": "Compare evidence independently",
+      "objectiveIds": [
+        "ft01-o1",
+        "ft01-o2",
+        "ft01-o3"
+      ],
+      "content": {
+        "body": "The repository model lists Bong: Gbarnga; Montserrado: Bensonville. Treat the schematic as a name-location aid, not a measurement of land or people."
+      },
+      "interaction": {
+        "kind": "FREE_RESPONSE",
+        "prompts": [
+          {
+            "id": "generated-3-response-0",
+            "prompt": "Compare the capital and county names in the two entries. Explain how the labels keep them distinct.",
+            "minLength": 20
+          },
+          {
+            "id": "generated-3-response-1",
+            "prompt": "Can a larger drawn county establish a larger population? Explain what additional source would be needed.",
+            "minLength": 20
+          }
+        ]
+      },
+      "tools": {
+        "allowed": [],
+        "prohibited": []
+      },
+      "accessibility": {
+        "textAlternative": "The repository model lists Bong: Gbarnga; Montserrado: Bensonville. Treat the schematic as a name-location aid, not a measurement of land or people. Compare the capital and county names in the two entries. Explain how the labels keep them distinct. Can a larger drawn county establish a larger population? Explain what additional source would be needed.",
+        "keyboardOperable": true,
+        "reducedMotionSafe": true,
+        "captionsRequired": false
+      },
+      "offline": {
+        "mode": "FULL",
+        "fallback": "Models and formative checks use cached lesson data. Paper responses are capture only; no official grade is produced."
+      },
+      "evidence": {
+        "kind": "NONE"
+      },
+      "completion": {
+        "kind": "ALL_RESPONSES_WRITTEN"
+      },
+      "teaching": {
+        "phase": "COMPARE",
+        "blocks": []
+      }
+    },
+    {
+      "id": "generated-4",
+      "type": "PRACTICE",
+      "title": "Build a source-based claim",
+      "objectiveIds": [
+        "ft01-o1",
+        "ft01-o2",
+        "ft01-o3"
+      ],
+      "content": {
+        "body": "Worked reasoning: a county-capital table supports a claim about administrative names. It does not establish travel time or population. A useful explanation states both what a source supports and what remains unknown."
+      },
+      "interaction": {
+        "kind": "NONE"
+      },
+      "tools": {
+        "allowed": [],
+        "prohibited": []
+      },
+      "accessibility": {
+        "textAlternative": "Worked reasoning: a county-capital table supports a claim about administrative names. It does not establish travel time or population. A useful explanation states both what a source supports and what remains unknown. Synthetic source-comparison exercise. The map labels each county and its capital separately. The schematic does not encode population or reliable distances. A familiar-looking shape is enough to verify every administrative fact. Which statements justify checking a county-capital claim with a named source?",
+        "keyboardOperable": true,
+        "reducedMotionSafe": true,
+        "captionsRequired": false
+      },
+      "offline": {
+        "mode": "FULL",
+        "fallback": "Models and formative checks use cached lesson data. Paper responses are capture only; no official grade is produced."
+      },
+      "evidence": {
+        "kind": "NONE"
+      },
+      "completion": {
+        "kind": "VIEWED"
+      },
+      "teaching": {
+        "phase": "REASON",
+        "blocks": [
+          {
+            "type": "SOURCE_EVIDENCE",
+            "id": "county-evidence",
+            "source": {
+              "title": "Synthetic source-comparison exercise",
+              "kind": "DOCUMENT",
+              "origin": {
+                "kind": "ORIGINAL_FOR_LIBERIALEARN",
+                "license": "Original synthetic demonstration; internal review only",
+                "attribution": "LiberiaLearn Content Factory V4 deterministic author"
+              }
+            },
+            "question": "Which statements justify checking a county-capital claim with a named source?",
+            "sentences": [
+              {
+                "id": "names",
+                "text": "The map labels each county and its capital separately.",
+                "supports": true,
+                "why": "The two labels distinguish the administrative units."
+              },
+              {
+                "id": "scope",
+                "text": "The schematic does not encode population or reliable distances.",
+                "supports": true,
+                "why": "A source has limits; use a population table or a scaled map for other claims."
+              },
+              {
+                "id": "guess",
+                "text": "A familiar-looking shape is enough to verify every administrative fact.",
+                "supports": false,
+                "why": "Visual familiarity is not verification against an authoritative list."
+              }
+            ],
+            "minSelect": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "generated-5",
+      "type": "PRACTICE",
+      "title": "Plan a fair information request",
+      "objectiveIds": [
+        "ft01-o1",
+        "ft01-o2",
+        "ft01-o3"
+      ],
+      "content": {
+        "body": "Synthetic task: a school needs to send supplies to a county office. It has a schematic map but no current contact list or travel data."
+      },
+      "interaction": {
+        "kind": "FREE_RESPONSE",
+        "prompts": [
+          {
+            "id": "generated-5-response-0",
+            "prompt": "Explain why a county's capital label does not establish that a road is passable today.",
+            "minLength": 20
+          }
+        ]
+      },
+      "tools": {
+        "allowed": [],
+        "prohibited": []
+      },
+      "accessibility": {
+        "textAlternative": "Synthetic task: a school needs to send supplies to a county office. It has a schematic map but no current contact list or travel data. Write the county and capital information you can obtain, state its verification limits, and request the additional sources needed to plan delivery. Claim: State your conclusion precisely. Evidence and reasoning: Quote or describe relevant evidence and explain the link to your claim. Explain why a county's capital label does not establish that a road is passable today.",
+        "keyboardOperable": true,
+        "reducedMotionSafe": true,
+        "captionsRequired": false
+      },
+      "offline": {
+        "mode": "FULL",
+        "fallback": "Models and formative checks use cached lesson data. Paper responses are capture only; no official grade is produced."
+      },
+      "evidence": {
+        "kind": "NONE"
+      },
+      "completion": {
+        "kind": "ALL_RESPONSES_WRITTEN"
+      },
+      "teaching": {
+        "phase": "APPLY",
+        "blocks": [
+          {
+            "type": "WRITING_ORGANIZER",
+            "id": "county-transfer",
+            "prompt": "Write the county and capital information you can obtain, state its verification limits, and request the additional sources needed to plan delivery.",
+            "fields": [
+              {
+                "id": "claim",
+                "label": "Claim",
+                "guidance": "State your conclusion precisely.",
+                "minWords": 8
+              },
+              {
+                "id": "evidence",
+                "label": "Evidence and reasoning",
+                "guidance": "Quote or describe relevant evidence and explain the link to your claim.",
+                "minWords": 15
+              }
+            ],
+            "checklist": [
+              "My evidence supports my claim.",
+              "I explained the reasoning and checked an alternative."
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "generated-assess",
+      "type": "MASTERY_CHECK",
+      "title": "Independent assessment handoff",
+      "objectiveIds": [
+        "ft01-o1",
+        "ft01-o2",
+        "ft01-o3"
+      ],
+      "content": {
+        "body": "Only Assessment Player V2 can collect and score governed assessment responses. This draft has no approved form or official score."
+      },
+      "interaction": {
+        "kind": "ASSESSMENT_HANDOFF",
+        "assessment": {
+          "assessmentId": "cv4-cand-g7-civics-counties-capitals--generated-mastery",
+          "assessmentVersion": "4.0.0-draft.1",
+          "player": "ASSESSMENT_PLAYER_V2",
+          "scoring": "SERVER_AUTHORITY",
+          "objectiveIds": [
+            "ft01-o1",
+            "ft01-o2",
+            "ft01-o3"
+          ],
+          "items": []
+        }
+      },
+      "tools": {
+        "allowed": [],
+        "prohibited": []
+      },
+      "accessibility": {
+        "textAlternative": "The lesson requests a separate independent assessment. This draft contains no governed assessment questions or protected scoring material.",
+        "keyboardOperable": true,
+        "reducedMotionSafe": true,
+        "captionsRequired": false
+      },
+      "offline": {
+        "mode": "FULL",
+        "fallback": "No assessment form is cached by this draft. Paper work is capture only and cannot establish an official grade."
+      },
+      "evidence": {
+        "kind": "MASTERY_RESPONSE",
+        "evidenceType": "QUIZ",
+        "objectiveIds": [
+          "ft01-o1",
+          "ft01-o2",
+          "ft01-o3"
+        ]
+      },
+      "completion": {
+        "kind": "ALL_ANSWERED"
+      }
+    }
+  ],
+  "offline": {
+    "packageable": true,
+    "requiredAssets": []
+  }
+}

@@ -1,0 +1,380 @@
+{
+  "contractVersion": "visual-teaching-block/4.0.0-draft.1",
+  "registryVersion": "teaching-blocks/1.1.0",
+  "instructionStandard": "liberialearn-v4-instruction/1.0.0",
+  "candidateSha256": "e7cb4ff774a05c2888a0c8ff353f4c9861274750b368309a2199fc352591a43c",
+  "state": "DRAFT",
+  "approved": false,
+  "published": false,
+  "released": false,
+  "audience": "REVIEWER_ONLY",
+  "objectives": [
+    {
+      "id": "v4-demo-mult-models",
+      "statement": "Represent a multiplication as equal groups, an array and repeated addition, and explain why they show the same product.",
+      "standards": [
+        {
+          "reference": "moe-math-g5-s1-p1-multiplication-and-division-of-wh-ole-numbers-an-obj2",
+          "statement": "Multiply and divide whole numbers and decimals.",
+          "relation": "BUILDS_ON",
+          "mapping": "PROPOSED"
+        },
+        {
+          "reference": "moe-math-g5-s1-p1-multiplication-and-division-of-wh-ole-numbers-an-con1",
+          "statement": "Properties of multiplication",
+          "relation": "CONTENT_REFERENCE",
+          "mapping": "PROPOSED"
+        }
+      ]
+    },
+    {
+      "id": "v4-demo-mult-area-model",
+      "statement": "Multiply a two-digit number by a one- or two-digit number with an area model, splitting by place value.",
+      "standards": [
+        {
+          "reference": "moe-math-g5-s1-p1-multiplication-and-division-of-wh-ole-numbers-an-obj2",
+          "statement": "Multiply and divide whole numbers and decimals.",
+          "relation": "BUILDS_ON",
+          "mapping": "PROPOSED"
+        },
+        {
+          "reference": "moe-math-g5-s1-p1-multiplication-and-division-of-wh-ole-numbers-an-con1",
+          "statement": "Properties of multiplication",
+          "relation": "CONTENT_REFERENCE",
+          "mapping": "PROPOSED"
+        }
+      ]
+    }
+  ],
+  "blocks": [
+    {
+      "sceneId": "generated-1",
+      "slot": "blocks",
+      "index": 0,
+      "type": "ARRAY_MODEL",
+      "blockSha256": "06efaa862c896dfb4f22bafbc3eb62b8519443c9f03fd0b7bbb48341dd8549e9",
+      "objectiveIds": [
+        "v4-demo-mult-models",
+        "v4-demo-mult-area-model"
+      ],
+      "instructionalPurpose": "See one multiplication as equal groups, an array, an area grid and repeated addition. Learner action: Use the model, complete its task, and explain what the representation shows.",
+      "misconceptionIds": [
+        "generated-math-misconception"
+      ],
+      "responseSignals": [],
+      "accessibility": {
+        "textAlternative": "7 rows of 4 dots: 7 × 4 = 28. Explain why each representation has the same total.",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: 7 rows of 4 dots: 7 × 4 = 28. Explain why each representation has the same total.",
+        "responsePrompt": "Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "NONE",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/lessonAuthor.ts",
+          "sha256": "adad66e123a6d53744c9aca1791860b13b363de0caefeccededb519fc9da937a",
+          "license": "Original authored deterministic recipe; internal review only",
+          "attribution": "LiberiaLearn Content Factory V4 executor; synthetic scenarios and illustrative data",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "generated-1",
+      "slot": "blocks",
+      "index": 1,
+      "type": "AREA_MODEL",
+      "blockSha256": "351404b33017512e10059d6ba9bbad4e286f9b8a07530227c32c0b611edeb00d",
+      "objectiveIds": [
+        "v4-demo-mult-models",
+        "v4-demo-mult-area-model"
+      ],
+      "instructionalPurpose": "Split a multiplication by place value and fill in the partial products. Learner action: Use the model, complete its task, and explain what the representation shows.",
+      "misconceptionIds": [
+        "generated-math-misconception"
+      ],
+      "responseSignals": [],
+      "accessibility": {
+        "textAlternative": "Watch the rectangle split into tens and ones. Find 24 × 6 by splitting it into parts.",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Watch the rectangle split into tens and ones. Find 24 × 6 by splitting it into parts.",
+        "responsePrompt": "Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "NONE",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/lessonAuthor.ts",
+          "sha256": "adad66e123a6d53744c9aca1791860b13b363de0caefeccededb519fc9da937a",
+          "license": "Original authored deterministic recipe; internal review only",
+          "attribution": "LiberiaLearn Content Factory V4 executor; synthetic scenarios and illustrative data",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "generated-2",
+      "slot": "blocks",
+      "index": 0,
+      "type": "WORKED_SOLUTION",
+      "blockSha256": "8b54f89c2037276f926367a2a3923107d2473bcbdd7232f97fa0992bd0793f1d",
+      "objectiveIds": [
+        "v4-demo-mult-models",
+        "v4-demo-mult-area-model"
+      ],
+      "instructionalPurpose": "Watch a problem solved one step at a time, with the diagram following each step. Learner action: Use the model, complete its task, and explain what the representation shows.",
+      "misconceptionIds": [
+        "generated-math-misconception"
+      ],
+      "responseSignals": [],
+      "accessibility": {
+        "textAlternative": "Find 24 × 6. Step 1: Split the first factor by place value. 24 = 20 + 4 Step 2: Multiply both parts, then add their products. 20 × 6 + 4 × 6 = 120 + 24 = 144",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Find 24 × 6. Step 1: Split the first factor by place value. 24 = 20 + 4 Step 2: Multiply both parts, then add their products. 20 × 6 + 4 × 6 = 120 + 24 = 144",
+        "responsePrompt": "Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "MODEL",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/lessonAuthor.ts",
+          "sha256": "adad66e123a6d53744c9aca1791860b13b363de0caefeccededb519fc9da937a",
+          "license": "Original authored deterministic recipe; internal review only",
+          "attribution": "LiberiaLearn Content Factory V4 executor; synthetic scenarios and illustrative data",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "generated-3",
+      "slot": "blocks",
+      "index": 0,
+      "type": "NUMERIC_RESPONSE",
+      "blockSha256": "30f6443c6c278678e012ddaa31c057ca44f8280c1c666566f8e9a7ce59aae129",
+      "objectiveIds": [
+        "v4-demo-mult-models",
+        "v4-demo-mult-area-model"
+      ],
+      "instructionalPurpose": "Type a numeric answer with its unit and get feedback that names the mistake. Learner action: Use the model, complete its task, and explain what the representation shows.",
+      "misconceptionIds": [
+        "generated-math-misconception"
+      ],
+      "responseSignals": [
+        {
+          "misconceptionId": "generated-math-misconception",
+          "responsePattern": "multiply-guided-0:NUMBER:83",
+          "feedback": "Compare your operation with what the model represents. Explain each part before calculating again."
+        },
+        {
+          "misconceptionId": "generated-math-misconception",
+          "responsePattern": "multiply-guided-1:NUMBER:56",
+          "feedback": "Compare your operation with what the model represents. Explain each part before calculating again."
+        }
+      ],
+      "accessibility": {
+        "textAlternative": "Use equal groups or a split array. 23 times 4: write your answer. 16 times 5: write your answer.",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Use equal groups or a split array. 23 times 4: write your answer. 16 times 5: write your answer.",
+        "responsePrompt": "Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/lessonAuthor.ts",
+          "sha256": "adad66e123a6d53744c9aca1791860b13b363de0caefeccededb519fc9da937a",
+          "license": "Original authored deterministic recipe; internal review only",
+          "attribution": "LiberiaLearn Content Factory V4 executor; synthetic scenarios and illustrative data",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "generated-4",
+      "slot": "blocks",
+      "index": 0,
+      "type": "NUMERIC_RESPONSE",
+      "blockSha256": "72ac5001aa23ac67315680fed568b1d49c9c40e891ec3d6f769c9f402369d4a0",
+      "objectiveIds": [
+        "v4-demo-mult-models",
+        "v4-demo-mult-area-model"
+      ],
+      "instructionalPurpose": "Type a numeric answer with its unit and get feedback that names the mistake. Learner action: Use the model, complete its task, and explain what the representation shows.",
+      "misconceptionIds": [
+        "generated-math-misconception"
+      ],
+      "responseSignals": [
+        {
+          "misconceptionId": "generated-math-misconception",
+          "responsePattern": "multiply-independent-0:NUMBER:122",
+          "feedback": "Compare your operation with what the model represents. Explain each part before calculating again."
+        },
+        {
+          "misconceptionId": "generated-math-misconception",
+          "responsePattern": "multiply-independent-1:NUMBER:87",
+          "feedback": "Compare your operation with what the model represents. Explain each part before calculating again."
+        }
+      ],
+      "accessibility": {
+        "textAlternative": "Solve independently. 32 times 4: write your answer. 17 times 8: write your answer.",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Solve independently. 32 times 4: write your answer. 17 times 8: write your answer.",
+        "responsePrompt": "Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/lessonAuthor.ts",
+          "sha256": "adad66e123a6d53744c9aca1791860b13b363de0caefeccededb519fc9da937a",
+          "license": "Original authored deterministic recipe; internal review only",
+          "attribution": "LiberiaLearn Content Factory V4 executor; synthetic scenarios and illustrative data",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "generated-5",
+      "slot": "blocks",
+      "index": 0,
+      "type": "MISTAKE_ANALYSIS",
+      "blockSha256": "ef0d6a057a83d6b455d80dde0bbdea4d4966bb636e5144a446ac163c12b9fa5b",
+      "objectiveIds": [
+        "v4-demo-mult-models",
+        "v4-demo-mult-area-model"
+      ],
+      "instructionalPurpose": "Diagnose a worked attempt that contains a common misconception. Learner action: Use the model, complete its task, and explain what the representation shows.",
+      "misconceptionIds": [
+        "generated-math-misconception"
+      ],
+      "responseSignals": [
+        {
+          "misconceptionId": "generated-math-misconception",
+          "responsePattern": "OPTION:keep",
+          "feedback": "Check what each quantity in the model means."
+        }
+      ],
+      "accessibility": {
+        "textAlternative": "Find 24 times 6. A learner wrote: 20 times 6 plus 4 equals 124. Which diagnosis explains the mistake? Options: The four ones must also be multiplied by six; add 120 and 24.; The method already matches the model..",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Find 24 times 6. A learner wrote: 20 times 6 plus 4 equals 124. Which diagnosis explains the mistake? Options: The four ones must also be multiplied by six; add 120 and 24.; The method already matches the model..",
+        "responsePrompt": "Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/lessonAuthor.ts",
+          "sha256": "adad66e123a6d53744c9aca1791860b13b363de0caefeccededb519fc9da937a",
+          "license": "Original authored deterministic recipe; internal review only",
+          "attribution": "LiberiaLearn Content Factory V4 executor; synthetic scenarios and illustrative data",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "generated-6",
+      "slot": "blocks",
+      "index": 0,
+      "type": "NUMERIC_RESPONSE",
+      "blockSha256": "d3389dbbc29ba5ca0d09d01a2620dcebbaede40ca0bf8e19f7fd60343b03b78e",
+      "objectiveIds": [
+        "v4-demo-mult-models",
+        "v4-demo-mult-area-model"
+      ],
+      "instructionalPurpose": "Type a numeric answer with its unit and get feedback that names the mistake. Learner action: Explain why you multiply before removing the reserved chairs, and check the result with a second method.",
+      "misconceptionIds": [
+        "generated-math-misconception"
+      ],
+      "responseSignals": [],
+      "accessibility": {
+        "textAlternative": "How many chairs remain for the audience? Audience chairs: write your answer.",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: How many chairs remain for the audience? Audience chairs: write your answer.",
+        "responsePrompt": "Explain why you multiply before removing the reserved chairs, and check the result with a second method. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/lessonAuthor.ts",
+          "sha256": "adad66e123a6d53744c9aca1791860b13b363de0caefeccededb519fc9da937a",
+          "license": "Original authored deterministic recipe; internal review only",
+          "attribution": "LiberiaLearn Content Factory V4 executor; synthetic scenarios and illustrative data",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    }
+  ],
+  "assessmentBoundary": {
+    "player": "ASSESSMENT_PLAYER_V2",
+    "scoring": "SERVER_AUTHORITY",
+    "protectedKeysIncluded": false,
+    "canonicalMasteryMutation": false,
+    "offlineEvidence": "CAPTURE_ONLY_NOT_OFFICIAL"
+  }
+}

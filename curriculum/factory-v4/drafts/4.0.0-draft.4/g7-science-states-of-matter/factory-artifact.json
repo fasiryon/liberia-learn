@@ -1,0 +1,554 @@
+{
+  "id": "g7-science-states-of-matter-lesson",
+  "version": "4.0.0",
+  "payload": {
+    "kind": "LESSON",
+    "candidate": {
+      "contractVersion": "candidate-lesson-v2/1.1.0",
+      "title": "Generated: Predict a change of state",
+      "instruction": {
+        "standard": "liberialearn-v4-instruction/1.0.0",
+        "retention": {
+          "delayDays": 7,
+          "prompts": [
+            "After seven days, independently explain: Use the particle model to describe and compare solids, liquids and gases (arrangement, movement, shape and volume), with Liberian examples.",
+            "Apply the idea to a new context and justify the evidence or calculations used. This is a request for a governed retention task, not a scheduled or scored item."
+          ]
+        }
+      },
+      "estimatedMinutes": 45,
+      "ageBand": "JUNIOR_SECONDARY",
+      "pedagogy": {
+        "primaryStrategy": "GUIDED_TO_INDEPENDENT",
+        "rationale": "Generate representations and worked reasoning from a versioned subject plan, then fade support before independent work and transfer."
+      },
+      "prerequisiteAssumptions": [
+        "Can read or access the text equivalent and explain a response in writing or speech."
+      ],
+      "misconceptions": [
+        {
+          "id": "generated-science-misconception",
+          "objectiveId": "ft04-o1",
+          "description": "Treats an unsupported claim as if it were established by evidence.",
+          "response": "Compare the claim with the labelled representation and explain what evidence would support it."
+        }
+      ],
+      "scenes": [
+        {
+          "id": "generated-1",
+          "type": "EXPLANATION",
+          "title": "Predict a change of state",
+          "purpose": "EXPLAIN_CONCEPT",
+          "objectiveIds": [
+            "ft04-o1",
+            "ft04-o2",
+            "ft04-o3"
+          ],
+          "learnerAction": "Use the model, complete its task, and explain what the representation shows.",
+          "content": {
+            "body": "Synthetic water-model demonstration at approximately one atmosphere. Predict first. The simulation simplifies a pure substance and is not a safe procedure for heating water. A prediction is a reasoned claim to test, not a fact established by the animation."
+          },
+          "interaction": {
+            "kind": "NONE"
+          },
+          "tools": {
+            "requested": [],
+            "prohibited": []
+          },
+          "hints": [],
+          "misconceptionIds": [
+            "generated-science-misconception"
+          ],
+          "evidence": {
+            "kind": "NONE"
+          },
+          "accessibility": {
+            "textAlternative": "Synthetic water-model demonstration at approximately one atmosphere. Predict first. The simulation simplifies a pure substance and is not a safe procedure for heating water. A prediction is a reasoned claim to test, not a fact established by the animation. What happens to ice as it warms from -5 degrees C to 20 degrees C? Options: It melts; the particles remain water particles.; The particles themselves grow into liquid particles.. After you predict, the observation is shown. Compare your prediction with the observation and explain the role of energy.",
+            "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+            "reducedMotion": "STATIC_EQUIVALENT"
+          },
+          "offline": {
+            "mode": "FULL_OFFLINE",
+            "note": "Models and formative checks use cached lesson data. Paper responses are capture only; no official grade is produced."
+          },
+          "completion": "VIEWED",
+          "pedagogy": {
+            "strategy": "GUIDED_TO_INDEPENDENT",
+            "representation": "MIXED",
+            "scaffoldLevel": "FULL"
+          },
+          "teaching": {
+            "phase": "PREDICT",
+            "blocks": [
+              {
+                "type": "PREDICT_OBSERVE",
+                "id": "water-prediction",
+                "prompt": "What happens to ice as it warms from -5 degrees C to 20 degrees C?",
+                "options": [
+                  {
+                    "id": "melt",
+                    "text": "It melts; the particles remain water particles.",
+                    "feedback": "Energy changes particle movement and arrangement."
+                  },
+                  {
+                    "id": "grow",
+                    "text": "The particles themselves grow into liquid particles.",
+                    "feedback": "Particles remain the same substance during a physical change."
+                  }
+                ],
+                "formativeKey": {
+                  "expectedOptionId": "melt"
+                },
+                "simulation": {
+                  "startC": -5,
+                  "endC": 20
+                },
+                "observation": "In this simplified model, solid water becomes liquid near 0 degrees C. Particles move past one another; they do not become larger particles.",
+                "explainPrompt": "Compare your prediction with the observation and explain the role of energy.",
+                "explainMinChars": 20
+              }
+            ]
+          }
+        },
+        {
+          "id": "generated-2",
+          "type": "EXPLANATION",
+          "title": "Change one model variable",
+          "purpose": "EXPLAIN_CONCEPT",
+          "objectiveIds": [
+            "ft04-o1",
+            "ft04-o2",
+            "ft04-o3"
+          ],
+          "learnerAction": "Use the model, complete its task, and explain what the representation shows.",
+          "content": {
+            "body": "Keep the substance and pressure fixed while changing temperature. Watch arrangement and motion. Real water can contain ice and liquid together during melting; a temperature slider alone does not model the time or energy needed for that phase change."
+          },
+          "interaction": {
+            "kind": "NONE"
+          },
+          "tools": {
+            "requested": [],
+            "prohibited": []
+          },
+          "hints": [],
+          "misconceptionIds": [
+            "generated-science-misconception"
+          ],
+          "evidence": {
+            "kind": "NONE"
+          },
+          "accessibility": {
+            "textAlternative": "Keep the substance and pressure fixed while changing temperature. Watch arrangement and motion. Real water can contain ice and liquid together during melting; a temperature slider alone does not model the time or energy needed for that phase change. Change temperature and compare solid, liquid and gas representations. This is a simplified model, not measured data. Below 0 °C water is a solid: particles packed in a pattern, vibrating in place. From 0 °C to 100 °C it is a liquid: particles close together, sliding past one another. At 100 °C and above it is a gas: particles far apart, moving quickly in all directions.",
+            "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+            "reducedMotion": "STATIC_EQUIVALENT"
+          },
+          "offline": {
+            "mode": "FULL_OFFLINE",
+            "note": "Models and formative checks use cached lesson data. Paper responses are capture only; no official grade is produced."
+          },
+          "completion": "VIEWED",
+          "pedagogy": {
+            "strategy": "GUIDED_TO_INDEPENDENT",
+            "representation": "MIXED",
+            "scaffoldLevel": "FULL"
+          },
+          "teaching": {
+            "phase": "EXPERIMENT",
+            "blocks": [
+              {
+                "type": "PARTICLE_MODEL",
+                "id": "water-particles",
+                "substance": "WATER",
+                "startC": -5,
+                "minC": -10,
+                "maxC": 110,
+                "caption": "Change temperature and compare solid, liquid and gas representations. This is a simplified model, not measured data."
+              }
+            ]
+          }
+        },
+        {
+          "id": "generated-3",
+          "type": "PRACTICE",
+          "title": "Read observations independently",
+          "purpose": "EXPLAIN_CONCEPT",
+          "objectiveIds": [
+            "ft04-o1",
+            "ft04-o2",
+            "ft04-o3"
+          ],
+          "learnerAction": "Describe the interval from minute 1 to minute 3 using only the plotted evidence. Explain why a temperature plateau does not mean energy transfer has stopped.",
+          "content": {
+            "body": "Illustrative heating data, not a real experiment. These points show a simplified melting interval for pure water near one atmosphere. The temperature stays near zero while added energy changes the state."
+          },
+          "interaction": {
+            "kind": "FREE_RESPONSE",
+            "prompts": [
+              {
+                "id": "generated-3-response-0",
+                "prompt": "Describe the interval from minute 1 to minute 3 using only the plotted evidence.",
+                "minLength": 20
+              },
+              {
+                "id": "generated-3-response-1",
+                "prompt": "Explain why a temperature plateau does not mean energy transfer has stopped.",
+                "minLength": 20
+              }
+            ]
+          },
+          "tools": {
+            "requested": [],
+            "prohibited": []
+          },
+          "hints": [],
+          "misconceptionIds": [
+            "generated-science-misconception"
+          ],
+          "evidence": {
+            "kind": "NONE"
+          },
+          "accessibility": {
+            "textAlternative": "Illustrative heating data, not a real experiment. These points show a simplified melting interval for pure water near one atmosphere. The temperature stays near zero while added energy changes the state. Illustrative ice heating. Time 0 min: Temperature -5 C; Time 1 min: Temperature 0 C; Time 2 min: Temperature 0 C; Time 3 min: Temperature 0 C; Time 4 min: Temperature 10 C. A plateau can indicate a phase change; these data alone do not establish how much energy was supplied. Describe the interval from minute 1 to minute 3 using only the plotted evidence. Explain why a temperature plateau does not mean energy transfer has stopped.",
+            "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+            "reducedMotion": "STATIC_EQUIVALENT"
+          },
+          "offline": {
+            "mode": "FULL_OFFLINE",
+            "note": "Models and formative checks use cached lesson data. Paper responses are capture only; no official grade is produced."
+          },
+          "completion": "ALL_RESPONSES_WRITTEN",
+          "pedagogy": {
+            "strategy": "GUIDED_TO_INDEPENDENT",
+            "representation": "MIXED",
+            "scaffoldLevel": "NONE"
+          },
+          "teaching": {
+            "phase": "OBSERVE",
+            "blocks": [
+              {
+                "type": "DATA_PLOT",
+                "id": "melting-data",
+                "title": "Illustrative ice heating",
+                "x": {
+                  "label": "Time",
+                  "unit": "min"
+                },
+                "y": {
+                  "label": "Temperature",
+                  "unit": "C"
+                },
+                "series": [
+                  {
+                    "x": 0,
+                    "y": -5
+                  },
+                  {
+                    "x": 1,
+                    "y": 0
+                  },
+                  {
+                    "x": 2,
+                    "y": 0
+                  },
+                  {
+                    "x": 3,
+                    "y": 0
+                  },
+                  {
+                    "x": 4,
+                    "y": 10
+                  }
+                ],
+                "data": {
+                  "kind": "ILLUSTRATIVE",
+                  "note": "Synthetic demonstration values, not collected observations."
+                },
+                "caption": "A plateau can indicate a phase change; these data alone do not establish how much energy was supplied."
+              }
+            ]
+          }
+        },
+        {
+          "id": "generated-4",
+          "type": "PRACTICE",
+          "title": "Explain with particles",
+          "purpose": "GUIDED_PRACTICE",
+          "objectiveIds": [
+            "ft04-o1",
+            "ft04-o2",
+            "ft04-o3"
+          ],
+          "learnerAction": "Use the model, complete its task, and explain what the representation shows.",
+          "content": {
+            "body": "Worked reasoning: a liquid changes container shape because its particles can move past one another. A solid keeps its shape because its particles remain arranged around fixed positions while vibrating. A gas spreads because its particles are widely spaced and moving freely. Particle identity does not change during these physical changes."
+          },
+          "interaction": {
+            "kind": "NONE"
+          },
+          "tools": {
+            "requested": [],
+            "prohibited": []
+          },
+          "hints": [],
+          "misconceptionIds": [
+            "generated-science-misconception"
+          ],
+          "evidence": {
+            "kind": "NONE"
+          },
+          "accessibility": {
+            "textAlternative": "Worked reasoning: a liquid changes container shape because its particles can move past one another. A solid keeps its shape because its particles remain arranged around fixed positions while vibrating. A gas spreads because its particles are widely spaced and moving freely. Particle identity does not change during these physical changes. Which explanation fits a liquid changing container shape? Options: Particles move past one another.; The particles turn into a new substance.. Why can ice keep melting at about zero degrees C? Options: Energy changes particle arrangement during melting.; No energy reaches the ice..",
+            "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+            "reducedMotion": "STATIC_EQUIVALENT"
+          },
+          "offline": {
+            "mode": "FULL_OFFLINE",
+            "note": "Models and formative checks use cached lesson data. Paper responses are capture only; no official grade is produced."
+          },
+          "completion": "VIEWED",
+          "pedagogy": {
+            "strategy": "GUIDED_TO_INDEPENDENT",
+            "representation": "MIXED",
+            "scaffoldLevel": "PARTIAL"
+          },
+          "teaching": {
+            "phase": "EXPLAIN",
+            "blocks": [
+              {
+                "type": "CHECK",
+                "id": "particles-check",
+                "items": [
+                  {
+                    "id": "particles-check-item",
+                    "prompt": "Which explanation fits a liquid changing container shape?",
+                    "options": [
+                      {
+                        "id": "reason",
+                        "text": "Particles move past one another.",
+                        "feedback": "Movement and arrangement explain the observation without changing particle identity."
+                      },
+                      {
+                        "id": "other",
+                        "text": "The particles turn into a new substance.",
+                        "feedback": "Compare this claim with the model and its evidence."
+                      }
+                    ],
+                    "formativeKey": {
+                      "expectedOptionId": "reason"
+                    },
+                    "misconceptionId": "generated-science-misconception"
+                  }
+                ]
+              },
+              {
+                "type": "CHECK",
+                "id": "energy-check",
+                "items": [
+                  {
+                    "id": "energy-check-item",
+                    "prompt": "Why can ice keep melting at about zero degrees C?",
+                    "options": [
+                      {
+                        "id": "reason",
+                        "text": "Energy changes particle arrangement during melting.",
+                        "feedback": "Latent energy changes state while temperature remains approximately constant."
+                      },
+                      {
+                        "id": "other",
+                        "text": "No energy reaches the ice.",
+                        "feedback": "Compare this claim with the model and its evidence."
+                      }
+                    ],
+                    "formativeKey": {
+                      "expectedOptionId": "reason"
+                    },
+                    "misconceptionId": "generated-science-misconception"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "generated-5",
+          "type": "PRACTICE",
+          "title": "Transfer to a cool container",
+          "purpose": "INDEPENDENT_PRACTICE",
+          "objectiveIds": [
+            "ft04-o1",
+            "ft04-o2",
+            "ft04-o3"
+          ],
+          "learnerAction": "Predict what would happen around an equally cold dry metal container, and explain how that result would distinguish two explanations.",
+          "content": {
+            "body": "A synthetic observation: droplets appear on the outside of a cold sealed bottle. No water is observed leaking from its cap."
+          },
+          "interaction": {
+            "kind": "FREE_RESPONSE",
+            "prompts": [
+              {
+                "id": "generated-5-response-0",
+                "prompt": "Predict what would happen around an equally cold dry metal container, and explain how that result would distinguish two explanations.",
+                "minLength": 20
+              }
+            ]
+          },
+          "tools": {
+            "requested": [],
+            "prohibited": []
+          },
+          "hints": [],
+          "misconceptionIds": [
+            "generated-science-misconception"
+          ],
+          "evidence": {
+            "kind": "NONE"
+          },
+          "accessibility": {
+            "textAlternative": "A synthetic observation: droplets appear on the outside of a cold sealed bottle. No water is observed leaking from its cap. Use particles and energy to explain the droplets and propose a fair test against the leak explanation. Claim: State your conclusion precisely. Evidence and reasoning: Quote or describe relevant evidence and explain the link to your claim. Predict what would happen around an equally cold dry metal container, and explain how that result would distinguish two explanations.",
+            "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+            "reducedMotion": "STATIC_EQUIVALENT"
+          },
+          "offline": {
+            "mode": "FULL_OFFLINE",
+            "note": "Models and formative checks use cached lesson data. Paper responses are capture only; no official grade is produced."
+          },
+          "completion": "ALL_RESPONSES_WRITTEN",
+          "pedagogy": {
+            "strategy": "GUIDED_TO_INDEPENDENT",
+            "representation": "MIXED",
+            "scaffoldLevel": "NONE"
+          },
+          "teaching": {
+            "phase": "APPLY",
+            "blocks": [
+              {
+                "type": "WRITING_ORGANIZER",
+                "id": "condensation-reasoning",
+                "prompt": "Use particles and energy to explain the droplets and propose a fair test against the leak explanation.",
+                "fields": [
+                  {
+                    "id": "claim",
+                    "label": "Claim",
+                    "guidance": "State your conclusion precisely.",
+                    "minWords": 8
+                  },
+                  {
+                    "id": "evidence",
+                    "label": "Evidence and reasoning",
+                    "guidance": "Quote or describe relevant evidence and explain the link to your claim.",
+                    "minWords": 15
+                  }
+                ],
+                "checklist": [
+                  "My evidence supports my claim.",
+                  "I explained the reasoning and checked an alternative."
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "generated-assess",
+          "type": "MASTERY_CHECK",
+          "title": "Independent assessment handoff",
+          "purpose": "ASSESS_MASTERY",
+          "objectiveIds": [
+            "ft04-o1",
+            "ft04-o2",
+            "ft04-o3"
+          ],
+          "learnerAction": "Complete the governed assessment independently when an authorized draft form is supplied.",
+          "content": {
+            "body": "Only Assessment Player V2 can collect and score governed assessment responses. This draft has no approved form or official score."
+          },
+          "interaction": {
+            "kind": "ASSESSMENT_HANDOFF",
+            "assessmentRequestId": "generated-mastery"
+          },
+          "tools": {
+            "requested": [],
+            "prohibited": []
+          },
+          "hints": [],
+          "misconceptionIds": [],
+          "evidence": {
+            "kind": "MASTERY_RESPONSE",
+            "evidenceType": "QUIZ",
+            "responses": [
+              {
+                "responseKey": "assessment-0",
+                "objectiveId": "ft04-o1",
+                "responseType": "ASSESSMENT_RESPONSE",
+                "scaffoldLevel": "NONE"
+              },
+              {
+                "responseKey": "assessment-1",
+                "objectiveId": "ft04-o2",
+                "responseType": "ASSESSMENT_RESPONSE",
+                "scaffoldLevel": "NONE"
+              },
+              {
+                "responseKey": "assessment-2",
+                "objectiveId": "ft04-o3",
+                "responseType": "ASSESSMENT_RESPONSE",
+                "scaffoldLevel": "NONE"
+              }
+            ]
+          },
+          "accessibility": {
+            "textAlternative": "The lesson requests a separate independent assessment. This draft contains no governed assessment questions or protected scoring material.",
+            "keyboardPath": "Use the assessment player's labelled questions and Submit control when an authorized form is available.",
+            "reducedMotion": "NOT_APPLICABLE"
+          },
+          "offline": {
+            "mode": "FULL_OFFLINE",
+            "note": "No assessment form is cached by this draft. Paper work is capture only and cannot establish an official grade."
+          },
+          "completion": "ALL_ANSWERED",
+          "teaching": {
+            "phase": "ASSESS",
+            "blocks": []
+          }
+        }
+      ],
+      "assessmentRequests": [
+        {
+          "id": "generated-mastery",
+          "objectiveIds": [
+            "ft04-o1",
+            "ft04-o2",
+            "ft04-o3"
+          ],
+          "interaction": "FREE_RESPONSE",
+          "evidenceType": "QUIZ",
+          "difficulty": "CORE",
+          "misconceptionIds": [
+            "generated-science-misconception"
+          ],
+          "tools": {
+            "requested": [],
+            "prohibited": []
+          },
+          "offline": "FULL_OFFLINE"
+        }
+      ],
+      "labProposals": []
+    }
+  },
+  "role": "LESSON_AUTHOR",
+  "author": {
+    "kind": "AI",
+    "agentId": "factory-demo:LESSON_AUTHOR",
+    "modelFamily": "deterministic-local-demo",
+    "sessionId": "LESSON_AUTHOR"
+  },
+  "blueprint": {
+    "blueprintId": "g7-science-states-of-matter-v4",
+    "version": "4.0.0",
+    "contentHash": "16a2fd7609fc2a99b8d7cdf350a10fa98c2cf642729ab8a7632a97dba001af66"
+  },
+  "dependencies": [],
+  "contentHash": "896a703804c77a9e70c4acb93fae075f4dd8c08e0f0c76f6a243ac7aec2d16e7"
+}

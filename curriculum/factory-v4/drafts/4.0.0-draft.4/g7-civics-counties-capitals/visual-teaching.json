@@ -1,0 +1,352 @@
+{
+  "contractVersion": "visual-teaching-block/4.0.0-draft.1",
+  "registryVersion": "teaching-blocks/1.1.0",
+  "instructionStandard": "liberialearn-v4-instruction/1.0.0",
+  "candidateSha256": "1256eb142ba1bfda3b18a788c7dcdbe1fdb7523447f63ef5a42fe7ff42999796",
+  "state": "DRAFT",
+  "approved": false,
+  "published": false,
+  "released": false,
+  "audience": "REVIEWER_ONLY",
+  "objectives": [
+    {
+      "id": "ft01-o1",
+      "statement": "Locate each of Liberia's 15 counties on an outline map and name its capital.",
+      "standards": [
+        {
+          "reference": "moe-social-studies-g7-s1-p1-the-earth-and-the-solar-system-semester-one-act6",
+          "statement": "Draw the map of Liberia and plot in the tribes according to the political sub-divisions.",
+          "relation": "ALIGNS_WITH",
+          "mapping": "PROPOSED"
+        },
+        {
+          "reference": "moe-social-studies-g5-s1-p1-geography-con6",
+          "statement": "Ivory Coast on the East. Counties of Liberia:",
+          "relation": "BUILDS_ON",
+          "mapping": "PROPOSED"
+        }
+      ]
+    },
+    {
+      "id": "ft01-o2",
+      "statement": "Explain the difference between a county capital (the seat of county administration) and a county's largest or best-known town, and between the national capital and a county capital, using Nimba (Sanniquellie/Ganta) and Montserrado as examples.",
+      "standards": [
+        {
+          "reference": "moe-social-studies-g7-s1-p1-the-earth-and-the-solar-system-semester-one-act6",
+          "statement": "Draw the map of Liberia and plot in the tribes according to the political sub-divisions.",
+          "relation": "ALIGNS_WITH",
+          "mapping": "PROPOSED"
+        }
+      ]
+    },
+    {
+      "id": "ft01-o3",
+      "statement": "Use a county map to reason about location: name the counties crossed, and the capitals passed, on a route between two county capitals, and justify the answer from the map.",
+      "standards": [
+        {
+          "reference": "moe-social-studies-g7-s1-p1-the-earth-and-the-solar-system-semester-one-act6",
+          "statement": "Draw the map of Liberia and plot in the tribes according to the political sub-divisions.",
+          "relation": "ALIGNS_WITH",
+          "mapping": "PROPOSED"
+        }
+      ]
+    }
+  ],
+  "blocks": [
+    {
+      "sceneId": "generated-1",
+      "slot": "blocks",
+      "index": 0,
+      "type": "MAP_EXPLORER",
+      "blockSha256": "0f2825382eaf387bee7af9d43044200f0393d67c52bd466b0309e6a71a0957ec",
+      "objectiveIds": [
+        "ft01-o1",
+        "ft01-o2",
+        "ft01-o3"
+      ],
+      "instructionalPurpose": "Explore places on a schematic map and locate them using directions. Learner action: Use the model, complete its task, and explain what the representation shows.",
+      "misconceptionIds": [
+        "generated-civics-misconception"
+      ],
+      "responseSignals": [],
+      "accessibility": {
+        "textAlternative": "A schematic map of Liberia's 15 counties: Lofa (capital Voinjama), Gbarpolu (capital Bopolu), Grand Cape Mount (capital Robertsport), Bomi (capital Tubmanburg), Montserrado (capital Bensonville), Bong (capital Gbarnga), Nimba (capital Sanniquellie), Margibi (capital Kakata), Grand Bassa (capital Buchanan), River Cess (capital Cestos City), Grand Gedeh (capital Zwedru), Sinoe (capital Greenville), River Gee (capital Fish Town), Grand Kru (capital Barclayville), Maryland (capital Harper).",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: A schematic map of Liberia's 15 counties: Lofa (capital Voinjama), Gbarpolu (capital Bopolu), Grand Cape Mount (capital Robertsport), Bomi (capital Tubmanburg), Montserrado (capital Bensonville), Bong (capital Gbarnga), Nimba (capital Sanniquellie), Margibi (capital Kakata), Grand Bassa (capital Buchanan), River Cess (capital Cestos City), Grand Gedeh (capital Zwedru), Sinoe (capital Greenville), River Gee (capital Fish Town), Grand Kru (capital Barclayville), Maryland (capital Harper).",
+        "responsePrompt": "Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "NONE",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/lessonAuthor.ts",
+          "sha256": "adad66e123a6d53744c9aca1791860b13b363de0caefeccededb519fc9da937a",
+          "license": "Original authored deterministic recipe; internal review only",
+          "attribution": "LiberiaLearn Content Factory V4 executor; synthetic scenarios and illustrative data",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        },
+        {
+          "path": "lib/learner-experience/teaching/models/liberiaCounties.ts",
+          "sha256": "b1f991c1b1cbde29a585ff2a7b67ca2740043d3e92b32e997c145a0e71d724c9",
+          "license": "Repository schematic; rights and geography review pending",
+          "attribution": "Interactive Learning V4 owner; schematic model, not survey boundaries",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "generated-2",
+      "slot": "blocks",
+      "index": 0,
+      "type": "MAP_EXPLORER",
+      "blockSha256": "e39ddf9bac2b447eb3ea39ea16744443230ee294644d7a642e22b94978f5a12f",
+      "objectiveIds": [
+        "ft01-o1",
+        "ft01-o2",
+        "ft01-o3"
+      ],
+      "instructionalPurpose": "Explore places on a schematic map and locate them using directions. Learner action: Use the model, complete its task, and explain what the representation shows.",
+      "misconceptionIds": [
+        "generated-civics-misconception"
+      ],
+      "responseSignals": [],
+      "accessibility": {
+        "textAlternative": "Locate Bong, whose capital is Gbarnga. A schematic map of Liberia's 15 counties: Lofa (capital Voinjama), Gbarpolu (capital Bopolu), Grand Cape Mount (capital Robertsport), Bomi (capital Tubmanburg), Montserrado (capital Bensonville), Bong (capital Gbarnga), Nimba (capital Sanniquellie), Margibi (capital Kakata), Grand Bassa (capital Buchanan), River Cess (capital Cestos City), Grand Gedeh (capital Zwedru), Sinoe (capital Greenville), River Gee (capital Fish Town), Grand Kru (capital Barclayville), Maryland (capital Harper).",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Locate Bong, whose capital is Gbarnga. A schematic map of Liberia's 15 counties: Lofa (capital Voinjama), Gbarpolu (capital Bopolu), Grand Cape Mount (capital Robertsport), Bomi (capital Tubmanburg), Montserrado (capital Bensonville), Bong (capital Gbarnga), Nimba (capital Sanniquellie), Margibi (capital Kakata), Grand Bassa (capital Buchanan), River Cess (capital Cestos City), Grand Gedeh (capital Zwedru), Sinoe (capital Greenville), River Gee (capital Fish Town), Grand Kru (capital Barclayville), Maryland (capital Harper).",
+        "responsePrompt": "Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/lessonAuthor.ts",
+          "sha256": "adad66e123a6d53744c9aca1791860b13b363de0caefeccededb519fc9da937a",
+          "license": "Original authored deterministic recipe; internal review only",
+          "attribution": "LiberiaLearn Content Factory V4 executor; synthetic scenarios and illustrative data",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        },
+        {
+          "path": "lib/learner-experience/teaching/models/liberiaCounties.ts",
+          "sha256": "b1f991c1b1cbde29a585ff2a7b67ca2740043d3e92b32e997c145a0e71d724c9",
+          "license": "Repository schematic; rights and geography review pending",
+          "attribution": "Interactive Learning V4 owner; schematic model, not survey boundaries",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "generated-2",
+      "slot": "blocks",
+      "index": 1,
+      "type": "MAP_EXPLORER",
+      "blockSha256": "62e8a7a9831f9a5b2097233679f0daa91935e2b94a457130fb439b33710d4b39",
+      "objectiveIds": [
+        "ft01-o1",
+        "ft01-o2",
+        "ft01-o3"
+      ],
+      "instructionalPurpose": "Explore places on a schematic map and locate them using directions. Learner action: Use the model, complete its task, and explain what the representation shows.",
+      "misconceptionIds": [
+        "generated-civics-misconception"
+      ],
+      "responseSignals": [],
+      "accessibility": {
+        "textAlternative": "Locate Montserrado, whose capital is Bensonville. A schematic map of Liberia's 15 counties: Lofa (capital Voinjama), Gbarpolu (capital Bopolu), Grand Cape Mount (capital Robertsport), Bomi (capital Tubmanburg), Montserrado (capital Bensonville), Bong (capital Gbarnga), Nimba (capital Sanniquellie), Margibi (capital Kakata), Grand Bassa (capital Buchanan), River Cess (capital Cestos City), Grand Gedeh (capital Zwedru), Sinoe (capital Greenville), River Gee (capital Fish Town), Grand Kru (capital Barclayville), Maryland (capital Harper).",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Locate Montserrado, whose capital is Bensonville. A schematic map of Liberia's 15 counties: Lofa (capital Voinjama), Gbarpolu (capital Bopolu), Grand Cape Mount (capital Robertsport), Bomi (capital Tubmanburg), Montserrado (capital Bensonville), Bong (capital Gbarnga), Nimba (capital Sanniquellie), Margibi (capital Kakata), Grand Bassa (capital Buchanan), River Cess (capital Cestos City), Grand Gedeh (capital Zwedru), Sinoe (capital Greenville), River Gee (capital Fish Town), Grand Kru (capital Barclayville), Maryland (capital Harper).",
+        "responsePrompt": "Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/lessonAuthor.ts",
+          "sha256": "adad66e123a6d53744c9aca1791860b13b363de0caefeccededb519fc9da937a",
+          "license": "Original authored deterministic recipe; internal review only",
+          "attribution": "LiberiaLearn Content Factory V4 executor; synthetic scenarios and illustrative data",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        },
+        {
+          "path": "lib/learner-experience/teaching/models/liberiaCounties.ts",
+          "sha256": "b1f991c1b1cbde29a585ff2a7b67ca2740043d3e92b32e997c145a0e71d724c9",
+          "license": "Repository schematic; rights and geography review pending",
+          "attribution": "Interactive Learning V4 owner; schematic model, not survey boundaries",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "generated-2",
+      "slot": "blocks",
+      "index": 2,
+      "type": "CHECK",
+      "blockSha256": "425c1cf361b0ecc2b293b208a41871306cd9c860ce245824a46d877dec7585aa",
+      "objectiveIds": [
+        "ft01-o1",
+        "ft01-o2",
+        "ft01-o3"
+      ],
+      "instructionalPurpose": "Choose an answer and get feedback written for that choice. Learner action: Use the model, complete its task, and explain what the representation shows.",
+      "misconceptionIds": [
+        "generated-civics-misconception"
+      ],
+      "responseSignals": [
+        {
+          "misconceptionId": "generated-civics-misconception",
+          "responsePattern": "county-scope-item:OPTION:other",
+          "feedback": "Compare this claim with the model and its evidence."
+        }
+      ],
+      "accessibility": {
+        "textAlternative": "Does the drawn size of a tile establish population? Options: No; use an authoritative population table.; Yes; larger tiles always mean more residents..",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Does the drawn size of a tile establish population? Options: No; use an authoritative population table.; Yes; larger tiles always mean more residents..",
+        "responsePrompt": "Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/lessonAuthor.ts",
+          "sha256": "adad66e123a6d53744c9aca1791860b13b363de0caefeccededb519fc9da937a",
+          "license": "Original authored deterministic recipe; internal review only",
+          "attribution": "LiberiaLearn Content Factory V4 executor; synthetic scenarios and illustrative data",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "generated-4",
+      "slot": "blocks",
+      "index": 0,
+      "type": "SOURCE_EVIDENCE",
+      "blockSha256": "94c7061bacd8e37dd30d4193605703f8dd3cd6ef6125d30d9070b8c34e0c2362",
+      "objectiveIds": [
+        "ft01-o1",
+        "ft01-o2",
+        "ft01-o3"
+      ],
+      "instructionalPurpose": "Select the sentences in a source that answer a question, with a reason for each. Learner action: Use the model, complete its task, and explain what the representation shows.",
+      "misconceptionIds": [
+        "generated-civics-misconception"
+      ],
+      "responseSignals": [],
+      "accessibility": {
+        "textAlternative": "Synthetic source-comparison exercise. The map labels each county and its capital separately. The schematic does not encode population or reliable distances. A familiar-looking shape is enough to verify every administrative fact. Which statements justify checking a county-capital claim with a named source?",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Synthetic source-comparison exercise. The map labels each county and its capital separately. The schematic does not encode population or reliable distances. A familiar-looking shape is enough to verify every administrative fact. Which statements justify checking a county-capital claim with a named source?",
+        "responsePrompt": "Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/lessonAuthor.ts",
+          "sha256": "adad66e123a6d53744c9aca1791860b13b363de0caefeccededb519fc9da937a",
+          "license": "Original authored deterministic recipe; internal review only",
+          "attribution": "LiberiaLearn Content Factory V4 executor; synthetic scenarios and illustrative data",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "generated-5",
+      "slot": "blocks",
+      "index": 0,
+      "type": "WRITING_ORGANIZER",
+      "blockSha256": "abd86b6c95f025405110ab320522aeb1a0477f286303419bef69e5b574946736",
+      "objectiveIds": [
+        "ft01-o1",
+        "ft01-o2",
+        "ft01-o3"
+      ],
+      "instructionalPurpose": "Plan and write a response part by part, then revise against a checklist. Learner action: Explain why a county's capital label does not establish that a road is passable today.",
+      "misconceptionIds": [
+        "generated-civics-misconception"
+      ],
+      "responseSignals": [],
+      "accessibility": {
+        "textAlternative": "Write the county and capital information you can obtain, state its verification limits, and request the additional sources needed to plan delivery. Claim: State your conclusion precisely. Evidence and reasoning: Quote or describe relevant evidence and explain the link to your claim.",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Write the county and capital information you can obtain, state its verification limits, and request the additional sources needed to plan delivery. Claim: State your conclusion precisely. Evidence and reasoning: Quote or describe relevant evidence and explain the link to your claim.",
+        "responsePrompt": "Explain why a county's capital label does not establish that a road is passable today. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "NONE",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/lessonAuthor.ts",
+          "sha256": "adad66e123a6d53744c9aca1791860b13b363de0caefeccededb519fc9da937a",
+          "license": "Original authored deterministic recipe; internal review only",
+          "attribution": "LiberiaLearn Content Factory V4 executor; synthetic scenarios and illustrative data",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    }
+  ],
+  "assessmentBoundary": {
+    "player": "ASSESSMENT_PLAYER_V2",
+    "scoring": "SERVER_AUTHORITY",
+    "protectedKeysIncluded": false,
+    "canonicalMasteryMutation": false,
+    "offlineEvidence": "CAPTURE_ONLY_NOT_OFFICIAL"
+  }
+}

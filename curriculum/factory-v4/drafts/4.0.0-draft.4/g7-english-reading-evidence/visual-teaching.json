@@ -1,0 +1,340 @@
+{
+  "contractVersion": "visual-teaching-block/4.0.0-draft.1",
+  "registryVersion": "teaching-blocks/1.1.0",
+  "instructionStandard": "liberialearn-v4-instruction/1.0.0",
+  "candidateSha256": "e35d9cb14806d57867ff76d49cec9703f165e8f9e543c8bbdf7fa004d56b66eb",
+  "state": "DRAFT",
+  "approved": false,
+  "published": false,
+  "released": false,
+  "audience": "REVIEWER_ONLY",
+  "objectives": [
+    {
+      "id": "ll-g7-eng-read-infer",
+      "statement": "Read an informational text, explain words from context, and answer literal and inferential questions about it.",
+      "standards": [
+        {
+          "reference": "moe-english-g7-s1-p1-constructing-sentences-antroduction-to-literatur-act6",
+          "statement": "Learners read poem \"Mother to Son\" by Langston Hughes a) Analyze the poem b) Make connections to life citing textual evidence",
+          "relation": "ALIGNS_WITH",
+          "mapping": "PROPOSED"
+        },
+        {
+          "reference": "moe-english-g6-s2-p5-english-and-reading-con1",
+          "statement": "Analysis of texts Author's perspective Theme Style Tone Research Facts Corroborating evidence Information gathering",
+          "relation": "BUILDS_ON",
+          "mapping": "PROPOSED"
+        }
+      ]
+    },
+    {
+      "id": "ll-g7-eng-cite-evidence",
+      "statement": "Select and quote the sentences in a text that support an answer, and explain how they support it.",
+      "standards": [
+        {
+          "reference": "moe-english-g7-s1-p1-constructing-sentences-antroduction-to-literatur-act6",
+          "statement": "Learners read poem \"Mother to Son\" by Langston Hughes a) Analyze the poem b) Make connections to life citing textual evidence",
+          "relation": "ALIGNS_WITH",
+          "mapping": "PROPOSED"
+        },
+        {
+          "reference": "moe-english-g6-s2-p5-english-and-reading-con1",
+          "statement": "Analysis of texts Author's perspective Theme Style Tone Research Facts Corroborating evidence Information gathering",
+          "relation": "BUILDS_ON",
+          "mapping": "PROPOSED"
+        }
+      ]
+    },
+    {
+      "id": "ll-g7-eng-evidence-paragraph",
+      "statement": "Write and revise a short paragraph that makes a claim about a text, supports it with quoted evidence and explains it.",
+      "standards": [
+        {
+          "reference": "moe-english-g7-s1-p1-constructing-sentences-antroduction-to-literatur-act6",
+          "statement": "Learners read poem \"Mother to Son\" by Langston Hughes a) Analyze the poem b) Make connections to life citing textual evidence",
+          "relation": "ALIGNS_WITH",
+          "mapping": "PROPOSED"
+        }
+      ]
+    }
+  ],
+  "blocks": [
+    {
+      "sceneId": "generated-1",
+      "slot": "blocks",
+      "index": 0,
+      "type": "READING_PASSAGE",
+      "blockSha256": "4a9ae555b1a6e001497c835a50905fd52bf68d67604e62e625f96191ff860207",
+      "objectiveIds": [
+        "ll-g7-eng-read-infer",
+        "ll-g7-eng-cite-evidence",
+        "ll-g7-eng-evidence-paragraph"
+      ],
+      "instructionalPurpose": "Sustained reading with words explained in context. Learner action: Use the model, complete its task, and explain what the representation shows.",
+      "misconceptionIds": [
+        "generated-english-misconception"
+      ],
+      "responseSignals": [],
+      "accessibility": {
+        "textAlternative": "The seed library. When the dry season ended, Satta found three empty seed tins beside the school garden. She asked each family to bring a small share of seeds. On Friday, the class labelled the tins and wrote down who had contributed. A younger pupil worried that only families with money could help. Satta pointed to the list. Some families had given seeds, some had cleaned tins, and others had taught the class when to plant. By the next week, every pupil could borrow seeds and promise to return some after the harvest.",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: The seed library. When the dry season ended, Satta found three empty seed tins beside the school garden. She asked each family to bring a small share of seeds. On Friday, the class labelled the tins and wrote down who had contributed. A younger pupil worried that only families with money could help. Satta pointed to the list. Some families had given seeds, some had cleaned tins, and others had taught the class when to plant. By the next week, every pupil could borrow seeds and promise to return some after the harvest.",
+        "responsePrompt": "Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "NONE",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/lessonAuthor.ts",
+          "sha256": "adad66e123a6d53744c9aca1791860b13b363de0caefeccededb519fc9da937a",
+          "license": "Original authored deterministic recipe; internal review only",
+          "attribution": "LiberiaLearn Content Factory V4 executor; synthetic scenarios and illustrative data",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "generated-2",
+      "slot": "blocks",
+      "index": 0,
+      "type": "CHECK",
+      "blockSha256": "491065d3520bb11f477c96eb6ba209fc9e87e6d46745d3d0959c2e47118a41e9",
+      "objectiveIds": [
+        "ll-g7-eng-read-infer",
+        "ll-g7-eng-cite-evidence",
+        "ll-g7-eng-evidence-paragraph"
+      ],
+      "instructionalPurpose": "Choose an answer and get feedback written for that choice. Learner action: Use the model, complete its task, and explain what the representation shows.",
+      "misconceptionIds": [
+        "generated-english-misconception"
+      ],
+      "responseSignals": [
+        {
+          "misconceptionId": "generated-english-misconception",
+          "responsePattern": "vocabulary-check-item:OPTION:other",
+          "feedback": "Compare this claim with the model and its evidence."
+        }
+      ],
+      "accessibility": {
+        "textAlternative": "What does contributed mean in this story? Options: Gave something to help the shared effort.; Paid money in every case..",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: What does contributed mean in this story? Options: Gave something to help the shared effort.; Paid money in every case..",
+        "responsePrompt": "Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/lessonAuthor.ts",
+          "sha256": "adad66e123a6d53744c9aca1791860b13b363de0caefeccededb519fc9da937a",
+          "license": "Original authored deterministic recipe; internal review only",
+          "attribution": "LiberiaLearn Content Factory V4 executor; synthetic scenarios and illustrative data",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "generated-2",
+      "slot": "blocks",
+      "index": 1,
+      "type": "CHECK",
+      "blockSha256": "332dfa2144e5bb4e7ebc7895b581e41e77462f21700f69b9fda78ad0e25cb581",
+      "objectiveIds": [
+        "ll-g7-eng-read-infer",
+        "ll-g7-eng-cite-evidence",
+        "ll-g7-eng-evidence-paragraph"
+      ],
+      "instructionalPurpose": "Choose an answer and get feedback written for that choice. Learner action: Use the model, complete its task, and explain what the representation shows.",
+      "misconceptionIds": [
+        "generated-english-misconception"
+      ],
+      "responseSignals": [
+        {
+          "misconceptionId": "generated-english-misconception",
+          "responsePattern": "inference-check-item:OPTION:other",
+          "feedback": "Compare this claim with the model and its evidence."
+        }
+      ],
+      "accessibility": {
+        "textAlternative": "Which detail supports several ways to help? Options: Some cleaned tins and others taught when to plant.; The dry season ended..",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Which detail supports several ways to help? Options: Some cleaned tins and others taught when to plant.; The dry season ended..",
+        "responsePrompt": "Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/lessonAuthor.ts",
+          "sha256": "adad66e123a6d53744c9aca1791860b13b363de0caefeccededb519fc9da937a",
+          "license": "Original authored deterministic recipe; internal review only",
+          "attribution": "LiberiaLearn Content Factory V4 executor; synthetic scenarios and illustrative data",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "generated-3",
+      "slot": "blocks",
+      "index": 0,
+      "type": "SOURCE_EVIDENCE",
+      "blockSha256": "3c3275755fb5834c70dbd9015552d521955432844ed7446d82ecf7d1b53cc3d3",
+      "objectiveIds": [
+        "ll-g7-eng-read-infer",
+        "ll-g7-eng-cite-evidence",
+        "ll-g7-eng-evidence-paragraph"
+      ],
+      "instructionalPurpose": "Select the sentences in a source that answer a question, with a reason for each. Learner action: Explain how one selected detail supports the claim. State an alternative inference the passage does not establish.",
+      "misconceptionIds": [
+        "generated-english-misconception"
+      ],
+      "responseSignals": [],
+      "accessibility": {
+        "textAlternative": "The seed library. Some families had given seeds, some had cleaned tins, and others had taught the class when to plant. By the next week, every pupil could borrow seeds and promise to return some after the harvest. When the dry season ended, Satta found three empty seed tins beside the school garden. Which details support more than one form of contribution?",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: The seed library. Some families had given seeds, some had cleaned tins, and others had taught the class when to plant. By the next week, every pupil could borrow seeds and promise to return some after the harvest. When the dry season ended, Satta found three empty seed tins beside the school garden. Which details support more than one form of contribution?",
+        "responsePrompt": "Explain how one selected detail supports the claim. State an alternative inference the passage does not establish. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/lessonAuthor.ts",
+          "sha256": "adad66e123a6d53744c9aca1791860b13b363de0caefeccededb519fc9da937a",
+          "license": "Original authored deterministic recipe; internal review only",
+          "attribution": "LiberiaLearn Content Factory V4 executor; synthetic scenarios and illustrative data",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "generated-4",
+      "slot": "blocks",
+      "index": 0,
+      "type": "WRITING_ORGANIZER",
+      "blockSha256": "b7664decb8a9c66df93901d580b8014a859f424aabb32089ae9fd0fca5b6789c",
+      "objectiveIds": [
+        "ll-g7-eng-read-infer",
+        "ll-g7-eng-cite-evidence",
+        "ll-g7-eng-evidence-paragraph"
+      ],
+      "instructionalPurpose": "Plan and write a response part by part, then revise against a checklist. Learner action: Use the model, complete its task, and explain what the representation shows.",
+      "misconceptionIds": [
+        "generated-english-misconception"
+      ],
+      "responseSignals": [],
+      "accessibility": {
+        "textAlternative": "Explain how the seed library depends on different contributions. Claim: State your conclusion precisely. Evidence and reasoning: Quote or describe relevant evidence and explain the link to your claim.",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Explain how the seed library depends on different contributions. Claim: State your conclusion precisely. Evidence and reasoning: Quote or describe relevant evidence and explain the link to your claim.",
+        "responsePrompt": "Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "NONE",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/lessonAuthor.ts",
+          "sha256": "adad66e123a6d53744c9aca1791860b13b363de0caefeccededb519fc9da937a",
+          "license": "Original authored deterministic recipe; internal review only",
+          "attribution": "LiberiaLearn Content Factory V4 executor; synthetic scenarios and illustrative data",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "generated-5",
+      "slot": "blocks",
+      "index": 0,
+      "type": "WRITING_ORGANIZER",
+      "blockSha256": "20c80cf04c2dc1ce43eec789103bda64df66264aa4a831aa62f26cfb73e4a700",
+      "objectiveIds": [
+        "ll-g7-eng-read-infer",
+        "ll-g7-eng-cite-evidence",
+        "ll-g7-eng-evidence-paragraph"
+      ],
+      "instructionalPurpose": "Plan and write a response part by part, then revise against a checklist. Learner action: Give your original sentence, its revision, and the reason the revision is better supported.",
+      "misconceptionIds": [
+        "generated-english-misconception"
+      ],
+      "responseSignals": [],
+      "accessibility": {
+        "textAlternative": "Produce a revised paragraph, then explain one change that improves its reasoning. Claim: State your conclusion precisely. Evidence and reasoning: Quote or describe relevant evidence and explain the link to your claim.",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Produce a revised paragraph, then explain one change that improves its reasoning. Claim: State your conclusion precisely. Evidence and reasoning: Quote or describe relevant evidence and explain the link to your claim.",
+        "responsePrompt": "Give your original sentence, its revision, and the reason the revision is better supported. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "NONE",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/lessonAuthor.ts",
+          "sha256": "adad66e123a6d53744c9aca1791860b13b363de0caefeccededb519fc9da937a",
+          "license": "Original authored deterministic recipe; internal review only",
+          "attribution": "LiberiaLearn Content Factory V4 executor; synthetic scenarios and illustrative data",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    }
+  ],
+  "assessmentBoundary": {
+    "player": "ASSESSMENT_PLAYER_V2",
+    "scoring": "SERVER_AUTHORITY",
+    "protectedKeysIncluded": false,
+    "canonicalMasteryMutation": false,
+    "offlineEvidence": "CAPTURE_ONLY_NOT_OFFICIAL"
+  }
+}

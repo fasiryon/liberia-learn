@@ -1,0 +1,170 @@
+{
+  "manifestVersion": "factory-v4-candidate/1.0.0",
+  "candidateVersion": "4.0.0-draft.4",
+  "contractVersion": "visual-teaching-block/4.0.0-draft.1",
+  "key": "g7-science-states-of-matter",
+  "lessonId": "cv4-cand-g7-science-states-of-matter",
+  "grade": 7,
+  "subject": "SCIENCE",
+  "title": "Generated: Predict a change of state",
+  "state": "DRAFT",
+  "approved": false,
+  "published": false,
+  "released": false,
+  "learnerDeliverable": false,
+  "audience": "REVIEWER_ONLY",
+  "contentOrigin": "DETERMINISTIC_FACTORY_EXECUTOR_WITH_SYNTHETIC_TEACHING_CONTEXTS",
+  "generation": {
+    "executor": "factory-v4-lesson-author/1.0.0",
+    "role": "LESSON_AUTHOR",
+    "referenceFixtureCopied": false,
+    "modelCalls": 0
+  },
+  "sourceLineage": {
+    "kind": "FIRST_TEN_BOUND",
+    "contentId": "wk_mca7a_fri_p3",
+    "contentPk": "cmm7xs7v000e8vo70m7n72h3t",
+    "legacyTitle": "Understanding States of Matter Through Real-Life Examples",
+    "revisionId": "cmss8pt0j002fvo54be8gcrnd",
+    "legacyBodySha256": "d218a3e17da67bcf7e774bcace1a4080f3b2e6eb9e581d00b987ee3f8025c1e8",
+    "firstTenKey": "ft04-g7-science-states-of-matter",
+    "contract": "liberialearn-first-ten-modernization-contract/1.0.0+FT-A001+FT-A002",
+    "specSha256": "648ec61a72e2ddff147444dadae75aff321866cfc660498a792b6a3b48e7a28b",
+    "baseline": {
+      "label": "first-three V0.2.1",
+      "packageDigest": "daced29a1516f9cf0470430c2508ca560235c931b6101433c9f90c813ba2bd70",
+      "lessonResourceDigest": "e74b6feea9c54bbe2e7b09bf9e64a50601e57e853fa035305ae6f32043d744aa",
+      "manifestSha256": "3735caac694a761211e006e4fa9793c66f835acbef17c3e344a061a66d586f6b",
+      "root": "C:/restricted-authoring/review-packages/first-three-v021-final",
+      "handoff": "docs/architecture/content-factory/FIRST_THREE_V021_CANDIDATES_HANDOFF.md (PR #195)",
+      "read": false
+    },
+    "snapshot": {
+      "path": "artifacts/curriculum-cleanup-v1/snapshot.json",
+      "capturedAt": "2026-09-26T09:07:15.873Z",
+      "fileSha256": "ef89632f6b447011b9092fb17501a8eac52555783aa45d3c16a52d275ebaa16c",
+      "rowSha256": "9a3ad3a48343bf72dca080dd7b819fe53e29b563bd7a4792e36094d480080ba0"
+    },
+    "learnerReferences": "first-ten dependencies: 1 scheduled work, 13 progress records, 1 lesson plan (retained, never rewritten)."
+  },
+  "sourceVerification": "REPOSITORY_PINS_VERIFIED_REMOTE_RIGHTS_AND_LEGACY_BODY_NOT_ATTESTED",
+  "inputPins": {
+    "manifestSha256": "60883779051198a7bdbc8a389d97c186376fc7b050599fdb32aa4c72f9aa01a2",
+    "frontendCommit": "1268773a649fd3d570450ec15c8d5c9eb93d0cf2",
+    "candidate": {
+      "path": "curriculum/v4/candidates/g7-science-states-of-matter.json",
+      "sha256": "d9a0aae7d276cd1c9480ac39e1a4c2211227666742ea7cee70cee27b9d06fc4a"
+    }
+  },
+  "candidateSha256": "dd170c9a5ad3dc20ed799db43d10d797bc67a7f86314035f390baca4a058f4b0",
+  "blueprintHash": "16a2fd7609fc2a99b8d7cdf350a10fa98c2cf642729ab8a7632a97dba001af66",
+  "learnerProjectionSha256": "f198e443ce4d82cb540fe1de5149e8601b85df4e78ece1bd900124c3176414ff",
+  "academicSchema": {
+    "valid": true,
+    "errors": []
+  },
+  "visualInstruction": {
+    "valid": true,
+    "family": "SCIENCE",
+    "balance": {
+      "explanationSeconds": 207,
+      "activitySeconds": 830,
+      "activityShare": 0.8
+    },
+    "practice": {
+      "ft04-o1": {
+        "visuals": 2,
+        "workedExamples": 0,
+        "guided": 2,
+        "independent": 2,
+        "mistakes": 0,
+        "transfer": 2
+      },
+      "ft04-o2": {
+        "visuals": 2,
+        "workedExamples": 0,
+        "guided": 2,
+        "independent": 2,
+        "mistakes": 0,
+        "transfer": 2
+      },
+      "ft04-o3": {
+        "visuals": 2,
+        "workedExamples": 0,
+        "guided": 2,
+        "independent": 2,
+        "mistakes": 0,
+        "transfer": 2
+      }
+    },
+    "totals": {
+      "visuals": 6,
+      "workedExamples": 0,
+      "guided": 6,
+      "independent": 6,
+      "mistakes": 0,
+      "transfer": 6,
+      "problems": 7
+    },
+    "advisories": [
+      {
+        "code": "v4_activity_share_outside_target",
+        "severity": "ADVISORY",
+        "detail": "80% activity (target 65–75%); do not pad with repetitive questions to reach it."
+      }
+    ]
+  },
+  "accessibility": {
+    "schema": "PASS",
+    "blockBindings": 6,
+    "manualScreenReaderReview": "PENDING"
+  },
+  "offline": {
+    "mode": "TEXT_PAPER_CAPTURE_ONLY",
+    "protectedKeysCached": false,
+    "runtimeColdStartAndReconnect": "PENDING"
+  },
+  "protectedAssessment": {
+    "included": false,
+    "restrictedKeyComparison": "PENDING_AUTHORIZED_OWNER_INPUT",
+    "canonicalMasteryMutation": false
+  },
+  "factoryStatus": "REVISION_REQUIRED",
+  "releaseBlockers": [
+    "MOE_OBJECTIVE_UNBOUND",
+    "ONTOLOGY_RELEASE_MISSING",
+    "V4_HUMAN_REVIEW_REQUIRED",
+    "V021_BASELINE_RECONCILIATION",
+    "excellence:BP-COVERAGE",
+    "excellence:BP-PRODUCTION",
+    "excellence:BP-REASONING",
+    "excellence:BP-SELECTED-SHARE",
+    "excellence:BP-RETENTION",
+    "excellence:BP-TRANSFER",
+    "excellence:BP-EXTENSION",
+    "REFERENCE_LESSON_ONLY_FULL_EXCELLENCE_PACKAGE_PENDING",
+    "PROTECTED_ASSESSMENT_RECONCILIATION_REQUIRED",
+    "PREREQUISITE_DIAGNOSTIC_AND_MISCONCEPTION_ITEM_BINDINGS_PENDING",
+    "AUTHENTIC_SOURCE_COMPARISON_AND_RIGHTS_REVIEW_REQUIRED",
+    "MANUAL_ACCESSIBILITY_AND_OFFLINE_RUNTIME_QA_REQUIRED",
+    "OBJECTIVE_MAPPING_PROPOSED:ft04-o1",
+    "OBJECTIVE_MAPPING_PROPOSED:ft04-o2",
+    "OBJECTIVE_MAPPING_PROPOSED:ft04-o3",
+    "EXACT_REVISION_HUMAN_REVIEW_REQUIRED",
+    "EXPLICIT_RELEASE_AUTHORIZATION_REQUIRED",
+    "RETENTION_POLICY_APPROVAL_REQUIRED",
+    "ASSESSMENT_ITEMS_PENDING",
+    "RESTRICTED_KEY_COMPARISON_PENDING",
+    "FRONTEND_GENERATED_PACKAGE_CONSUMPTION_QA_PENDING"
+  ],
+  "files": {
+    "candidate.json": "dbb7442591f219b3ec28960cee2cb8a9af60ecebf66883412cc489c97207590b",
+    "visual-teaching.json": "e09a95dec972360a2d435468372791c03c283c372d31656d2b4130342773bfcf",
+    "blueprint.json": "9cb1206db1351adcd59e4805adec0d8d5b6d2582521ee09bb903a1425e73dd60",
+    "factory-artifact.json": "e606708cb2cb549d3945722bfc20cd33942ab36ccb705b5e4908ad24262a9107",
+    "learner-projection.json": "2342004919d0b897bbafdd0c4107e7e93fac2a2b8e0b863f082a3bdfa3813f8a",
+    "factory-receipt.json": "bb303615add5a1dcf8e0aa78d7dd135763912222f7b5a76118da8d5e20238e2f",
+    "paper-alternative.txt": "5ce2b8c196b665586dbf0432ace496167ebc946a08851af917575c1396acfea6"
+  },
+  "packageHash": "928c58752705d571f2d69ef602b4d47562537a0fb97289839b085bf88f5964ef"
+}
