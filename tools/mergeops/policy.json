@@ -1,0 +1,24 @@
+{
+  "version": 1,
+  "repository": "fasiryon/liberia-learn",
+  "base": "main",
+  "autoMerge": false,
+  "autoRepair": false,
+  "mergeAppId": null,
+  "permissionsReviewed": false,
+  "safetyTestsReviewed": false,
+  "previewDeploymentPolicyReviewed": false,
+  "maxRepairAttempts": 2,
+  "maxFiles": 20,
+  "maxChangedLines": 400,
+  "founders": ["fasiryon"],
+  "reviewers": { "correctness-security": [], "maintainability": [] },
+  "requiredChecks": [
+    { "name": "build", "appId": 15368 },
+    { "name": "runtime-gate", "appId": 15368 },
+    { "name": "safety", "appId": 15368 },
+    { "name": "GitGuardian Security Checks", "appId": 46505 }
+  ],
+  "adapters": { "pstack": false, "ponytail": false, "thermos": false },
+  "budget": { "monthlyCpuMinutes": 0, "monthlyBuilds": 0, "alertFractions": [0.5, 0.8, 1] }
+}

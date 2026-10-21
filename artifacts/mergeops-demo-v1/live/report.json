@@ -1,0 +1,455 @@
+{
+  "mode": "live",
+  "repository": "fasiryon/liberia-learn",
+  "generatedAt": "2026-10-19T21:12:10.509Z",
+  "automation": {
+    "autoMerge": false,
+    "autoRepair": false
+  },
+  "readiness": [
+    {
+      "number": 195,
+      "head": "3e4ba71df9f462d273fe3be1e1bb585aea30c8c0",
+      "base": "feat/g7-native-curriculum-v1",
+      "title": "Library Modernization V1 — 1,105 lesson inventory, governed ledger and review pilots",
+      "mergeableState": "clean, draft",
+      "status": "blocked",
+      "automation": "disabled",
+      "blockers": [
+        "repository-or-base",
+        "not-clean-mergeable",
+        "incomplete-evidence",
+        "check:build",
+        "check:runtime-gate",
+        "check:safety"
+      ],
+      "requirements": [
+        "two independent approvals of exact head 3e4ba71df9f4 from configured reviewers (configured: 0; current-head approvals: 0; stale approvals: 0)",
+        "founder review through the protected normal process (high risk: diff-byte-budget×1, diff-budget×1, unclassified×168, authority×92, incomplete-or-structural×63, protected×113)",
+        "academic-release owner process; outside MergeOps authority, never auto-merged or repaired",
+        "resolve deterministic analysis findings"
+      ],
+      "ci": [
+        {
+          "name": "build",
+          "appId": 15368,
+          "state": "missing",
+          "completedAt": null
+        },
+        {
+          "name": "runtime-gate",
+          "appId": 15368,
+          "state": "missing",
+          "completedAt": null
+        },
+        {
+          "name": "safety",
+          "appId": 15368,
+          "state": "missing",
+          "completedAt": null
+        },
+        {
+          "name": "GitGuardian Security Checks",
+          "appId": 46505,
+          "state": "success",
+          "completedAt": "2026-10-17T01:56:50Z"
+        }
+      ],
+      "repositoryGaps": [
+        "deployment-policy-unverified",
+        "protection-unverified",
+        "merge-authority-unverified",
+        "policy-check-unprotected:build",
+        "policy-check-unprotected:runtime-gate",
+        "policy-check-unprotected:safety",
+        "policy-check-unprotected:GitGuardian Security Checks",
+        "merge-disabled"
+      ],
+      "protectionStatus": "unavailable:401",
+      "risk": "high",
+      "classificationReasons": 438
+    },
+    {
+      "number": 192,
+      "head": "a5d77b5d5ecbb4215fb98e43181e204a820e09e7",
+      "base": "main",
+      "title": "MergeOps V1: guarded review, CI repair and merge control (writes disabled)",
+      "mergeableState": "clean",
+      "status": "awaiting-review",
+      "automation": "disabled",
+      "blockers": [],
+      "requirements": [
+        "two independent approvals of exact head a5d77b5d5ecb from configured reviewers (configured: 0; current-head approvals: 0; stale approvals: 0)",
+        "founder review through the protected normal process (high risk: diff-byte-budget×1, diff-budget×1, protected×23, unclassified×30, authority×15)",
+        "resolve deterministic analysis findings"
+      ],
+      "ci": [
+        {
+          "name": "build",
+          "appId": 15368,
+          "state": "success",
+          "completedAt": "2026-10-15T21:13:59Z"
+        },
+        {
+          "name": "runtime-gate",
+          "appId": 15368,
+          "state": "success",
+          "completedAt": "2026-10-15T21:00:01Z"
+        },
+        {
+          "name": "safety",
+          "appId": 15368,
+          "state": "success",
+          "completedAt": "2026-10-15T20:59:12Z"
+        },
+        {
+          "name": "GitGuardian Security Checks",
+          "appId": 46505,
+          "state": "success",
+          "completedAt": "2026-10-15T20:59:09Z"
+        }
+      ],
+      "repositoryGaps": [
+        "deployment-policy-unverified",
+        "protection-unverified",
+        "merge-authority-unverified",
+        "policy-check-unprotected:build",
+        "policy-check-unprotected:runtime-gate",
+        "policy-check-unprotected:safety",
+        "policy-check-unprotected:GitGuardian Security Checks",
+        "merge-disabled"
+      ],
+      "protectionStatus": "unavailable:401",
+      "risk": "high",
+      "classificationReasons": 70
+    },
+    {
+      "number": 187,
+      "head": "dd825e30aa2d1f4ebf9851d1a3521d54450db3d1",
+      "base": "main",
+      "title": "docs: preserve Unified Experience V3 discovery blueprint",
+      "mergeableState": "unknown",
+      "status": "blocked",
+      "automation": "disabled",
+      "blockers": [
+        "not-clean-mergeable",
+        "check:runtime-gate",
+        "check:safety"
+      ],
+      "requirements": [
+        "two independent approvals of exact head dd825e30aa2d from configured reviewers (configured: 0; current-head approvals: 0; stale approvals: 0)",
+        "founder review through the protected normal process (high risk: diff-byte-budget×1, diff-budget×1, authority×4)",
+        "resolve deterministic analysis findings"
+      ],
+      "ci": [
+        {
+          "name": "build",
+          "appId": 15368,
+          "state": "success",
+          "completedAt": "2026-10-14T17:27:15Z"
+        },
+        {
+          "name": "runtime-gate",
+          "appId": 15368,
+          "state": "missing",
+          "completedAt": null
+        },
+        {
+          "name": "safety",
+          "appId": 15368,
+          "state": "missing",
+          "completedAt": null
+        },
+        {
+          "name": "GitGuardian Security Checks",
+          "appId": 46505,
+          "state": "success",
+          "completedAt": "2026-10-14T17:15:22Z"
+        }
+      ],
+      "repositoryGaps": [
+        "deployment-policy-unverified",
+        "protection-unverified",
+        "merge-authority-unverified",
+        "policy-check-unprotected:build",
+        "policy-check-unprotected:runtime-gate",
+        "policy-check-unprotected:safety",
+        "policy-check-unprotected:GitGuardian Security Checks",
+        "merge-disabled"
+      ],
+      "protectionStatus": "unavailable:401",
+      "risk": "high",
+      "classificationReasons": 6
+    }
+  ],
+  "plan": {
+    "base": "main",
+    "authority": "recommendation-only",
+    "order": [
+      {
+        "position": 1,
+        "number": 187,
+        "dependsOn": [],
+        "revalidateAfter": [],
+        "notes": []
+      },
+      {
+        "position": 2,
+        "number": 192,
+        "dependsOn": [],
+        "revalidateAfter": [],
+        "notes": []
+      },
+      {
+        "position": 3,
+        "number": 195,
+        "dependsOn": [],
+        "revalidateAfter": [],
+        "notes": [
+          "retarget-required:feat/g7-native-curriculum-v1-already-merged"
+        ]
+      }
+    ],
+    "cycles": [],
+    "parked": [
+      {
+        "number": 129,
+        "reason": "idle-owner-decision"
+      },
+      {
+        "number": 126,
+        "reason": "idle-owner-decision"
+      },
+      {
+        "number": 51,
+        "reason": "idle-owner-decision"
+      },
+      {
+        "number": 45,
+        "reason": "idle-owner-decision"
+      },
+      {
+        "number": 44,
+        "reason": "idle-owner-decision"
+      },
+      {
+        "number": 38,
+        "reason": "idle-owner-decision"
+      },
+      {
+        "number": 15,
+        "reason": "idle-owner-decision"
+      },
+      {
+        "number": 14,
+        "reason": "idle-owner-decision"
+      },
+      {
+        "number": 5,
+        "reason": "idle-owner-decision"
+      },
+      {
+        "number": 2,
+        "reason": "idle-owner-decision"
+      },
+      {
+        "number": 1,
+        "reason": "idle-owner-decision"
+      }
+    ],
+    "rule": "After each merge, every remaining PR must be updated to the new base and pass exact-head CI and reviews again."
+  },
+  "hygiene": null,
+  "notes": [
+    "CODEOWNERS unavailable on main (github:GET:404); owner requirements not derived.",
+    "Unauthenticated public read: branch protection is not readable, so every evaluated PR carries protection-unverified."
+  ],
+  "inputs": {
+    "open": [
+      [
+        195,
+        "3e4ba71df9f462d273fe3be1e1bb585aea30c8c0"
+      ],
+      [
+        192,
+        "a5d77b5d5ecbb4215fb98e43181e204a820e09e7"
+      ],
+      [
+        187,
+        "dd825e30aa2d1f4ebf9851d1a3521d54450db3d1"
+      ],
+      [
+        129,
+        "a99794a687c672477afb8cc031b21c6ab66dbe34"
+      ],
+      [
+        126,
+        "43f741254ab76f407d357e2a52acb8862daca87f"
+      ],
+      [
+        51,
+        "65df786de254c4de7b43319040da5944933b56fd"
+      ],
+      [
+        45,
+        "77f3767770a9d80e778972fe25455568dde424ea"
+      ],
+      [
+        44,
+        "79a21a176dbc5281e8513a0f0806d1db118266c1"
+      ],
+      [
+        38,
+        "6f8510f700bd603261025ffd911909cc0924a420"
+      ],
+      [
+        15,
+        "23a1323b6a8631e077386c55ca6f4051c63db0e2"
+      ],
+      [
+        14,
+        "3d35ac66b2e74032488c2e4102c3dbc71956a6cd"
+      ],
+      [
+        5,
+        "ce78f3faf51162d197281b36094c9d249cd75046"
+      ],
+      [
+        2,
+        "9a2f2ec8d902520e7a9b8850ccf7bb5bdbc62904"
+      ],
+      [
+        1,
+        "4ca18fce0723b568cc0cc1c94a42ed922c192d06"
+      ]
+    ]
+  },
+  "discovered": [
+    {
+      "number": 195,
+      "head": "3e4ba71df9f462d273fe3be1e1bb585aea30c8c0",
+      "headRef": "feat/library-modernization-v1",
+      "base": "feat/g7-native-curriculum-v1",
+      "draft": true,
+      "updatedAt": "2026-10-17T01:56:19Z",
+      "evaluated": true
+    },
+    {
+      "number": 192,
+      "head": "a5d77b5d5ecbb4215fb98e43181e204a820e09e7",
+      "headRef": "feat/mergeops-v1",
+      "base": "main",
+      "draft": false,
+      "updatedAt": "2026-10-16T15:20:39Z",
+      "evaluated": true
+    },
+    {
+      "number": 187,
+      "head": "dd825e30aa2d1f4ebf9851d1a3521d54450db3d1",
+      "headRef": "docs/unified-experience-discovery-v3",
+      "base": "main",
+      "draft": false,
+      "updatedAt": "2026-10-14T17:19:00Z",
+      "evaluated": true
+    },
+    {
+      "number": 129,
+      "head": "a99794a687c672477afb8cc031b21c6ab66dbe34",
+      "headRef": "fix/adaptive-session-legacy-compat",
+      "base": "main",
+      "draft": false,
+      "updatedAt": "2026-09-14T20:34:40Z",
+      "evaluated": false
+    },
+    {
+      "number": 126,
+      "head": "43f741254ab76f407d357e2a52acb8862daca87f",
+      "headRef": "feat/nr16-playwright-ci-phase6-close",
+      "base": "main",
+      "draft": false,
+      "updatedAt": "2026-09-10T16:58:38Z",
+      "evaluated": false
+    },
+    {
+      "number": 51,
+      "head": "65df786de254c4de7b43319040da5944933b56fd",
+      "headRef": "fix/phase7-day1-simulation",
+      "base": "main",
+      "draft": false,
+      "updatedAt": "2026-07-23T16:53:13Z",
+      "evaluated": false
+    },
+    {
+      "number": 45,
+      "head": "77f3767770a9d80e778972fe25455568dde424ea",
+      "headRef": "feat/gap-closing",
+      "base": "main",
+      "draft": false,
+      "updatedAt": "2026-07-23T16:53:13Z",
+      "evaluated": false
+    },
+    {
+      "number": 44,
+      "head": "79a21a176dbc5281e8513a0f0806d1db118266c1",
+      "headRef": "feat/security-hardening",
+      "base": "main",
+      "draft": false,
+      "updatedAt": "2026-07-23T16:53:13Z",
+      "evaluated": false
+    },
+    {
+      "number": 38,
+      "head": "6f8510f700bd603261025ffd911909cc0924a420",
+      "headRef": "feat/infra-edge-logging",
+      "base": "main",
+      "draft": false,
+      "updatedAt": "2026-07-23T16:53:13Z",
+      "evaluated": false
+    },
+    {
+      "number": 15,
+      "head": "23a1323b6a8631e077386c55ca6f4051c63db0e2",
+      "headRef": "fix/ci-prisma-impact",
+      "base": "main",
+      "draft": false,
+      "updatedAt": "2026-07-23T16:53:13Z",
+      "evaluated": false
+    },
+    {
+      "number": 14,
+      "head": "3d35ac66b2e74032488c2e4102c3dbc71956a6cd",
+      "headRef": "chore/remove-demo-nursing-pill-id",
+      "base": "main",
+      "draft": false,
+      "updatedAt": "2026-07-23T16:53:13Z",
+      "evaluated": false
+    },
+    {
+      "number": 5,
+      "head": "ce78f3faf51162d197281b36094c9d249cd75046",
+      "headRef": "fix/prisma-smsdeliverylog-client-name",
+      "base": "main",
+      "draft": false,
+      "updatedAt": "2026-07-23T16:53:13Z",
+      "evaluated": false
+    },
+    {
+      "number": 2,
+      "head": "9a2f2ec8d902520e7a9b8850ccf7bb5bdbc62904",
+      "headRef": "sprint1/issues5-8-pilot-dashboard-export",
+      "base": "main",
+      "draft": false,
+      "updatedAt": "2026-07-23T16:53:13Z",
+      "evaluated": false
+    },
+    {
+      "number": 1,
+      "head": "4ca18fce0723b568cc0cc1c94a42ed922c192d06",
+      "headRef": "vercel/react-server-components-cve-vu-pziqtm",
+      "base": "main",
+      "draft": true,
+      "updatedAt": "2026-07-23T16:53:13Z",
+      "evaluated": false
+    }
+  ]
+}
