@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { TEACHING_BLOCK_REGISTRY_VERSION, BLOCK_SCHEMAS, type VisualBlock } from "@/lib/learner-experience/teaching/registry";
+import { TEACHING_BLOCK_REGISTRY_VERSION, BLOCK_TYPES } from "@/lib/learner-experience/teaching/registry";
 import { V4_INSTRUCTION_STANDARD } from "@/lib/learner-experience/teaching/instruction";
 
 /** Factory sidecar only. Never insert provenance or authority metadata into candidate content. */
@@ -14,9 +14,10 @@ export const sourcePinSchema = z.strictObject({
 });
 export const blockBindingSchema = z.strictObject({
   sceneId: text, slot: z.enum(["blocks", "visual"]), index: z.number().int().nonnegative(),
-  type: z.enum(Object.keys(BLOCK_SCHEMAS) as [VisualBlock["type"], ...VisualBlock["type"][]]),
+  type: z.enum(BLOCK_TYPES),
   blockSha256: sha256, objectiveIds: z.array(text).min(1),
   instructionalPurpose: text, misconceptionIds: z.array(text),
+  responseSignals: z.array(z.strictObject({ misconceptionId: text, responsePattern: text, feedback: text })),
   accessibility: z.strictObject({ textAlternative: text, keyboardPath: text, nonColorCue: text, reducedMotion: text }),
   offline: z.strictObject({ mode: z.literal("TEXT_PAPER_CAPTURE_ONLY"), instructions: text, responsePrompt: text }),
   feedback: z.strictObject({ policy: z.literal("FORMATIVE_ONLY"), reveal: z.enum(["NONE", "MODEL", "AFTER_ATTEMPT"]), canonicalMasteryMutation: z.literal(false) }),
