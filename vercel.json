@@ -1,4 +1,12 @@
 {
+  "git": {
+    "deploymentEnabled": {
+      "feat/mergeops-v1": false,
+      "mergeops-repair-*": false,
+      "mergeops-ledger-*": false,
+      "mergeops-ledger/**": false
+    }
+  },
   "framework": "nextjs",
   "buildCommand": "npm run build",
   "installCommand": "npm install",

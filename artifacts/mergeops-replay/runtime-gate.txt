@@ -1,0 +1,8 @@
+
+ RUN  v4.1.9 C:/liberia-learn/.task-worktrees/mergeops-v1
+
+
+ Test Files  3 passed (3)
+      Tests  50 passed (50)
+   Start at  16:26:08
+   Duration  7.44s (transform 3.32s, setup 0ms, import 9.83s, tests 183ms, environment 1ms)
