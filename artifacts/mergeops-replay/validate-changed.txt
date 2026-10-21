@@ -1,0 +1,19 @@
+﻿
+> liberia-learn-frontend@1.0.0 validate:changed
+> node scripts/validate-changed.mjs
+
+validate:changed source: working tree and index
+validate:changed files: 6
+  artifacts/mergeops-replay/README.md
+  artifacts/mergeops-replay/safety-tests.txt
+  artifacts/mergeops-replay/validate-changed.txt
+  docs/ops/MERGEOPS_V1.md
+  tools/mergeops/app.mjs
+  tools/mergeops/safety.node-test.mjs
+API route policy audit PASS: 81 changed routes declared; 512 legacy routes frozen at 84dd5417.
+
+ RUN  v4.1.9 C:/liberia-learn/.task-worktrees/mergeops-v1
+
+No test files found, exiting with code 0
+
+validate:changed PASS

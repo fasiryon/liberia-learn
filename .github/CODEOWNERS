@@ -1,0 +1,5 @@
+# MergeOps policy and authority changes require founder review.
+/.github/ @fasiryon
+/tools/mergeops/ @fasiryon
+/vercel.json @fasiryon
+/docs/ops/MERGEOPS_V1.md @fasiryon

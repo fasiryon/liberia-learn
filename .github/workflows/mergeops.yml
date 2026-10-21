@@ -1,0 +1,47 @@
+name: MergeOps
+
+on:
+  push:
+    branches: [main]
+  pull_request_target:
+    branches: [main]
+    types: [opened, reopened, synchronize, ready_for_review, edited, closed]
+  workflow_run:
+    workflows: [CI, Runtime Gate 1, Canonical Clean Bootstrap]
+    types: [completed]
+
+permissions:
+  contents: read
+  pull-requests: read
+  checks: read
+  actions: read
+
+concurrency:
+  group: mergeops-observe-${{ github.event.pull_request.number || github.event.workflow_run.id || github.run_id }}
+  cancel-in-progress: false
+
+jobs:
+  observe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      # Trusted default-branch controller only. Never check out or execute PR code here.
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Observe exact-head evidence without write authority
+        # The first PR introducing this controller cannot run it from main yet.
+        if: hashFiles('tools/mergeops/cli.mjs') != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node tools/mergeops/cli.mjs observe
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: mergeops-${{ github.run_id }}-${{ github.run_attempt }}
+          path: artifacts/mergeops/
+          retention-days: 90
