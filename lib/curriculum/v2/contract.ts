@@ -19,9 +19,17 @@
 import type { GovernedEvidenceType } from "@/lib/learning-evidence/evidenceContract";
 import type { LearningExperienceLink } from "@/lib/learner-experience/links";
 import type { AgeBand, SceneType } from "@/lib/learner-experience/types";
+import type { InstructionPlan, SceneTeaching } from "@/lib/learner-experience/teaching/instruction";
 
 export const CURRICULUM_LESSON_V2_CONTRACT = "curriculum-lesson-v2/1.0.0" as const;
 export const CANDIDATE_LESSON_V2_CONTRACT = "candidate-lesson-v2/1.0.0" as const;
+/**
+ * Interactive Learning V4: the same candidate plus `scene.teaching` (registry-validated visual teaching blocks and
+ * the scene's instructional phase) and `instruction` (the V4 standard and requested retention). 1.0.0 candidates
+ * (Grade 4 proof, Grade 7 native V1, first-three V0.2.1) stay valid byte-for-byte and may not carry either field.
+ */
+export const CANDIDATE_LESSON_V2_CONTRACT_V4 = "candidate-lesson-v2/1.1.0" as const;
+export type CandidateContractVersion = typeof CANDIDATE_LESSON_V2_CONTRACT | typeof CANDIDATE_LESSON_V2_CONTRACT_V4;
 
 /** Bounded sizes (Codex P2-2). The 350-word scene cap is a ceiling, not a target. */
 export const V2_LIMITS = Object.freeze({
@@ -144,6 +152,8 @@ export type CandidateScene = Readonly<{
   pedagogy?: Readonly<{ strategy: PedagogyStrategy; representation: Representation; scaffoldLevel: ScaffoldLevel }>;
   /** Earlier scenes this scene builds on (Phase C seam); must point backwards. */
   dependsOn?: readonly string[];
+  /** V4 (1.1.0 only): the scene's instructional phase and its visual teaching blocks (formative only). */
+  teaching?: SceneTeaching;
 }>;
 
 export type CandidateAssessmentRequest = Readonly<{
@@ -170,8 +180,10 @@ export type CandidateLabProposal = Readonly<{
 export type CandidateMisconception = Readonly<{ id: string; objectiveId: string; description: string; response: string }>;
 
 export type CandidateLessonV2 = Readonly<{
-  contractVersion: typeof CANDIDATE_LESSON_V2_CONTRACT;
+  contractVersion: CandidateContractVersion;
   title: string;
+  /** V4 (1.1.0 only, required there): the instructional standard and requested delayed retrieval. */
+  instruction?: InstructionPlan;
   estimatedMinutes: number;
   ageBand: AgeBand;
   pedagogy?: Readonly<{ primaryStrategy: PedagogyStrategy; rationale: string }>;

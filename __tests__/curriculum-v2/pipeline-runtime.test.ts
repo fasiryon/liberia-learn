@@ -31,7 +31,8 @@ describe("generation pipeline: AI proposes, the server validates and governs", (
 
   it("builds the request from the governed prompt registry and a trusted brief", async () => {
     const call = complete(fixture("equivalent-fractions.json"));
-    const outcome = await generateCurriculumLessonV2({ context: g4ProofContext(FRACTIONS), complete: call, now: () => new Date("2026-10-08T00:00:00.000Z") });
+    // The archived 1.0.0 standard still reproduces earlier artifacts exactly; V4 is covered in __tests__/learning-v4.
+    const outcome = await generateCurriculumLessonV2({ context: g4ProofContext(FRACTIONS), complete: call, now: () => new Date("2026-10-08T00:00:00.000Z"), standard: "V2_LEGACY" });
     const options = call.mock.calls[0][0];
     expect(options.messages[0].content).toBe(getPrompt(curriculumV2LessonArchive.systemKey).template);
     expect(options.messages[1].content).toContain(FRACTIONS);

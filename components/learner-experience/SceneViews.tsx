@@ -1,15 +1,33 @@
 "use client";
 
-import { Fragment, type ReactNode } from "react";
-import { isKeylessFormative, type AgeBand, type FormativeItem, type KeylessFormativeItem, type Scene } from "@/lib/learner-experience/types";
+import { isKeylessFormative, type AgeBand, type FormativeItem, type KeylessFormativeItem, type LessonExperience, type Scene } from "@/lib/learner-experience/types";
 import type { ExperienceProgress } from "@/lib/learner-experience/progress";
 import { sceneBodyFor } from "@/lib/learner-experience/sceneContract";
+import { InlineText } from "@/components/experience/LessonText";
+import { TeachingBlockView } from "@/components/experience/teaching/TeachingBlocks";
+import type { BlockDone } from "@/components/experience/teaching/v4/shared";
 
-/** Paragraphs and **bold** only, rendered as React nodes (no HTML injection). */
+/** Paragraphs with inline **bold** and typeset mathematics (V4), rendered as React nodes (no HTML injection). */
 export function SceneText({ text }: { text: string }) {
-  const inline = (line: string): ReactNode[] => line.split(/(\*\*[^*]+\*\*)/g).filter(Boolean).map((part, index) =>
-    part.startsWith("**") && part.endsWith("**") ? <strong key={index} className="font-semibold text-[var(--ll-text)]">{part.slice(2, -2)}</strong> : <Fragment key={index}>{part}</Fragment>);
-  return <>{text.split(/\n{2,}/).map((paragraph, index) => <p key={index} className="mt-4 max-w-[68ch] first:mt-0 text-[1.125rem] leading-8 text-[var(--ll-text)]">{inline(paragraph)}</p>)}</>;
+  return <>{text.split(/\n{2,}/).map((paragraph, index) => <p key={index} className="mt-4 max-w-[68ch] first:mt-0 text-[1.125rem] leading-8 text-[var(--ll-text)]"><InlineText text={paragraph} /></p>)}</>;
+}
+
+/**
+ * Interactive Learning V4: the scene's visual teaching blocks in the text column (the scene's primary visual is
+ * placed in the visual column by the player). Formative only; a finished block only opens Continue.
+ */
+export function SceneTeachingBlocks({ scene, onDone }: { scene: Scene; onDone: BlockDone }) {
+  if (!scene.teaching || scene.teaching.blocks.length === 0) return null;
+  return <div className="ll5-scene-blocks" data-phase={scene.teaching.phase}>{scene.teaching.blocks.map((block, index) => <TeachingBlockView key={`${scene.id}-${index}`} block={block} onDone={onDone} />)}</div>;
+}
+
+/** Reading passages in a lesson, by block id, for writing blocks that check quotations. */
+export function teachingSources(experience: LessonExperience): Record<string, string> {
+  const sources: Record<string, string> = {};
+  for (const scene of experience.scenes) for (const block of [...(scene.teaching?.blocks ?? []), ...(scene.teaching?.visual ? [scene.teaching.visual] : [])]) {
+    if (block.type === "READING_PASSAGE") sources[block.id] = `${block.title}. ${block.paragraphs.join(" ")}`;
+  }
+  return sources;
 }
 
 export function SceneBody({ scene, ageBand }: { scene: Scene; ageBand: AgeBand }) {
@@ -79,19 +97,19 @@ export function FormativeCheck({ scene, progress, onAnswer }: { scene: Scene; pr
         const correct = keyed !== null && selected === keyed.correctIndex;
         return (
           <fieldset key={item.id} className="ll3-panel ll4-question">
-            <legend className="ll4-question-prompt"><span className="ll4-question-num" aria-hidden="true">{itemIndex + 1}</span>{item.prompt}</legend>
+            <legend className="ll4-question-prompt"><span className="ll4-question-num" aria-hidden="true">{itemIndex + 1}</span><span><InlineText text={item.prompt} /></span></legend>
             <div className="ll4-options">
               {item.options.map((option, index) => (
                 <label key={`${index}:${option}`} className="ll3-choice" data-selected={selected === index ? "" : undefined} data-verdict={selected === index && keyed ? (correct ? "right" : "retry") : undefined}>
                   <input type="radio" name={item.id} checked={selected === index} onChange={() => onAnswer(item.id, index)} />
                   <span className="ll4-option-letter" aria-hidden="true">{String.fromCharCode(65 + index)}</span>
-                  <span>{option}</span>
+                  <span><InlineText text={option} /></span>
                 </label>
               ))}
             </div>
             {keyed ? (
               <p role="status" className={selected === null ? "sr-only" : "ll3-feedback"} data-result={selected === null ? undefined : correct ? "right" : "retry"}>
-                {selected === null ? "" : keyed.optionFeedback?.[selected] ?? (correct ? keyed.feedback.correct : keyed.feedback.incorrect)}
+                {selected === null ? "" : <InlineText text={keyed.optionFeedback?.[selected] ?? (correct ? keyed.feedback.correct : keyed.feedback.incorrect)} />}
               </p>
             ) : (
               <p role="status" className={selected === null ? "sr-only" : "ll3-feedback"}>

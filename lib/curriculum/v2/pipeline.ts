@@ -6,6 +6,11 @@
  *   → strict parse → deterministic validation → assembly (server authority)
  *   → curriculum review package → HUMAN REVIEW → governed approval → release → Lesson Player V2
  *
+ * Interactive Learning V4 (default): the brief also carries the subject's instructional pattern, the Visual
+ * Teaching Block Registry catalogue for the grade and subject, and the V4 limits; the candidate is
+ * candidate-lesson-v2/1.1.0 and must pass the registry and the V4 standard. `standard: "V2_LEGACY"` reproduces
+ * 1.0.0 generation exactly (archived prompt 1.0.0, unchanged brief).
+ *
  * AI stops at "structured candidate generation". Everything after it is deterministic server
  * code, and approval/release are governed human decisions outside this module: the pipeline
  * returns a DRAFT artifact or a rejection, never a persisted, approved or published lesson.
@@ -13,10 +18,15 @@
 import { buildPrompt } from "@/lib/ai/promptRegistry";
 import type { RouterOptions, RouterResult } from "@/lib/ai/routedCompletion";
 import { curriculumV2LessonArchive, curriculumV2PromptHash } from "@/lib/ai/prompts/archive/curriculum.v2.lesson/1.0.0";
+import { curriculumV4LessonArchive, curriculumV4PromptHash } from "@/lib/ai/prompts/archive/curriculum.v2.lesson/1.1.0";
+import { MATH_PRACTICE_TARGET, V4_LIMITS } from "@/lib/curriculum/v4/standard";
+import { INSTRUCTION_PATTERNS, PHASE_LABEL, SHARED_PHASES, V4_INSTRUCTION_STANDARD } from "@/lib/learner-experience/teaching/instruction";
+import { TEACHING_BLOCK_REGISTRY_VERSION, generationCatalogue, subjectFamily } from "@/lib/learner-experience/teaching/registry";
 import { listLabExperiences, isGradeAppropriate } from "@/lib/learner-experience/labExperience";
 import { assembleCurriculumLessonV2, type AssemblyOutcome } from "./assemble";
 import type { AuthoringContext } from "./authoringContext";
 import { RENDERABLE_FALLBACKS, RENDERABLE_INTERACTIONS } from "./deliverability";
+import { CANDIDATE_LESSON_V2_CONTRACT_V4 } from "./contract";
 import { CandidateRejectedError, parseCandidateLessonV2 } from "./parse";
 import { canonicalToolIds, toolFitsContext } from "./tools";
 
@@ -43,11 +53,36 @@ export function buildGenerationBrief(context: AuthoringContext): Record<string, 
   };
 }
 
-export async function generateCurriculumLessonV2(input: { context: AuthoringContext; complete: CompletionFn; now?: () => Date }): Promise<AssemblyOutcome> {
-  const brief = JSON.stringify(buildGenerationBrief(input.context));
+export type GenerationStandard = "V4" | "V2_LEGACY";
+
+/** The V4 brief: the V2 brief plus the instructional pattern, the block catalogue and the standard's limits. */
+export function buildV4GenerationBrief(context: AuthoringContext): Record<string, unknown> {
+  const family = subjectFamily(context.subject);
+  return {
+    ...buildGenerationBrief(context),
+    candidateContract: "candidate-lesson-v2/1.1.0",
+    instructionStandard: V4_INSTRUCTION_STANDARD,
+    blockRegistry: TEACHING_BLOCK_REGISTRY_VERSION,
+    subjectFamily: family,
+    pattern: family ? INSTRUCTION_PATTERNS[family].map((phase) => ({ phase, label: PHASE_LABEL[phase] })) : [],
+    sharedPhases: SHARED_PHASES,
+    blocks: generationCatalogue({ subject: context.subject, grade: context.grade }),
+    limits: { ...V4_LIMITS, ...(family === "MATHEMATICS" ? { mathPracticePerConcept: MATH_PRACTICE_TARGET } : {}) },
+  };
+}
+
+export function generationPrompt(standard: GenerationStandard) {
+  return standard === "V4"
+    ? { archive: curriculumV4LessonArchive, hash: curriculumV4PromptHash, brief: buildV4GenerationBrief }
+    : { archive: curriculumV2LessonArchive, hash: curriculumV2PromptHash, brief: buildGenerationBrief };
+}
+
+export async function generateCurriculumLessonV2(input: { context: AuthoringContext; complete: CompletionFn; now?: () => Date; standard?: GenerationStandard }): Promise<AssemblyOutcome> {
+  const prompt = generationPrompt(input.standard ?? "V4");
+  const brief = JSON.stringify(prompt.brief(input.context));
   const messages: RouterOptions["messages"] = [
-    { role: "system", content: buildPrompt(curriculumV2LessonArchive.systemKey) },
-    { role: "user", content: buildPrompt(curriculumV2LessonArchive.userKey, { brief }) },
+    { role: "system", content: buildPrompt(prompt.archive.systemKey) },
+    { role: "user", content: buildPrompt(prompt.archive.userKey, { brief }) },
   ];
   const result = await input.complete({
     messages,
@@ -58,17 +93,19 @@ export async function generateCurriculumLessonV2(input: { context: AuthoringCont
       feature: "curriculum",
       requestType: "curriculum_v2_lesson",
       subject: input.context.subject,
-      promptKey: curriculumV2LessonArchive.key,
-      promptVersion: curriculumV2LessonArchive.version,
-      promptHash: curriculumV2PromptHash,
+      promptKey: prompt.archive.key,
+      promptVersion: prompt.archive.version,
+      promptHash: prompt.hash,
     },
   });
   try {
     const candidate = parseCandidateLessonV2(result.content);
+    // A V4 request must come back as a V4 candidate; an old-shape lesson is not silently accepted.
+    if ((input.standard ?? "V4") === "V4" && candidate.contractVersion !== CANDIDATE_LESSON_V2_CONTRACT_V4) return { status: "REJECTED", errors: ["candidate_contract_not_v4"], gaps: [] };
     return assembleCurriculumLessonV2({
       candidate,
       context: input.context,
-      generation: { origin: "AI_GENERATED", promptKey: curriculumV2LessonArchive.key, promptVersion: curriculumV2LessonArchive.version, promptHash: curriculumV2PromptHash, model: result.model, generatedAt: (input.now?.() ?? new Date()).toISOString() },
+      generation: { origin: "AI_GENERATED", promptKey: prompt.archive.key, promptVersion: prompt.archive.version, promptHash: prompt.hash, model: result.model, generatedAt: (input.now?.() ?? new Date()).toISOString() },
     });
   } catch (error) {
     if (error instanceof CandidateRejectedError) return { status: "REJECTED", errors: [error.code, ...error.issues], gaps: [] };

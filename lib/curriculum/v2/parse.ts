@@ -12,8 +12,10 @@
  */
 import { z } from "zod";
 import { SCENE_TYPES } from "@/lib/learner-experience/types";
+import { INSTRUCTION_PHASES, V4_INSTRUCTION_STANDARD } from "@/lib/learner-experience/teaching/instruction";
+import { validateBlock } from "@/lib/learner-experience/teaching/registry";
 import {
-  CANDIDATE_LESSON_V2_CONTRACT, FALLBACK_KINDS, INSTRUCTIONAL_PURPOSES, INTERACTION_KINDS, MEDIA_KINDS, MEDIA_REQUIREMENTS,
+  CANDIDATE_LESSON_V2_CONTRACT, CANDIDATE_LESSON_V2_CONTRACT_V4, FALLBACK_KINDS, INSTRUCTIONAL_PURPOSES, INTERACTION_KINDS, MEDIA_KINDS, MEDIA_REQUIREMENTS,
   OFFLINE_MODES, PEDAGOGY_STRATEGIES, REPRESENTATIONS, RESPONSE_TYPES, SCAFFOLD_LEVELS, V2_LIMITS, type CandidateLessonV2,
 } from "./contract";
 
@@ -125,11 +127,14 @@ const scene = z.object({
   completion: z.enum(["VIEWED", "ALL_STEPS_REVEALED", "ALL_ANSWERED", "ALL_RESPONSES_WRITTEN", "LAB_RETURNED_OR_FALLBACK"]),
   pedagogy: z.object({ strategy: z.enum(PEDAGOGY_STRATEGIES), representation: z.enum(REPRESENTATIONS), scaffoldLevel: z.enum(SCAFFOLD_LEVELS) }).strict().optional(),
   dependsOn: IDS().optional(),
+  // V4: blocks are parsed by the Visual Teaching Block Registry after the envelope (see parseCandidateLessonV2).
+  teaching: z.object({ phase: z.enum(INSTRUCTION_PHASES as [string, ...string[]]), blocks: z.array(z.unknown()).max(8), visual: z.unknown().optional() }).strict().optional(),
 }).strict();
 
 const CandidateSchema = z.object({
-  contractVersion: z.literal(CANDIDATE_LESSON_V2_CONTRACT),
+  contractVersion: z.enum([CANDIDATE_LESSON_V2_CONTRACT, CANDIDATE_LESSON_V2_CONTRACT_V4]),
   title: S(140),
+  instruction: z.object({ standard: z.literal(V4_INSTRUCTION_STANDARD), retention: z.object({ delayDays: z.number().int().min(1).max(120), prompts: z.array(S(300)).max(6) }).strict() }).strict().optional(),
   estimatedMinutes: z.number().int().min(10).max(90),
   ageBand: z.enum(AGE_BANDS),
   pedagogy: z.object({ primaryStrategy: z.enum(PEDAGOGY_STRATEGIES), rationale: S(600) }).strict().optional(),
@@ -161,5 +166,23 @@ export function parseCandidateLessonV2(raw: unknown): CandidateLessonV2 {
   if (forbidden.length) throw new CandidateRejectedError(forbidden.some((issue) => issue.startsWith("authority")) ? "candidate_authority_injection" : forbidden.some((issue) => issue.startsWith("secret")) ? "candidate_secret_field" : "candidate_url_forbidden", forbidden);
   const parsed = CandidateSchema.safeParse(value);
   if (!parsed.success) throw new CandidateRejectedError("candidate_schema_invalid", parsed.error.issues.map((issue) => `${issue.path.join(".")}: ${issue.message}`));
-  return parsed.data as CandidateLessonV2;
+  const candidate = parsed.data;
+  // V4 fields belong to 1.1.0 only, so a 1.0.0 artifact (and its hash) can never change meaning.
+  if (candidate.contractVersion === CANDIDATE_LESSON_V2_CONTRACT && (candidate.instruction || candidate.scenes.some((scene) => scene.teaching))) throw new CandidateRejectedError("candidate_v4_fields_require_1_1_0");
+  if (candidate.contractVersion === CANDIDATE_LESSON_V2_CONTRACT_V4 && !candidate.instruction) throw new CandidateRejectedError("candidate_v4_instruction_required");
+  // Every visual teaching block must be a registered type with valid content and a consistent model.
+  const blockProblems: string[] = [];
+  const scenes = candidate.scenes.map((scene) => {
+    if (!scene.teaching) return scene;
+    const check = (input: unknown, path: string) => {
+      const result = validateBlock(input);
+      blockProblems.push(...result.problems.map((problem) => `${scene.id}.${path}: ${problem}`));
+      return result.block;
+    };
+    const blocks = scene.teaching.blocks.map((block, index) => check(block, `teaching.blocks[${index}]`));
+    const visual = scene.teaching.visual === undefined ? undefined : check(scene.teaching.visual, "teaching.visual");
+    return { ...scene, teaching: { phase: scene.teaching.phase, blocks, ...(visual ? { visual } : {}) } };
+  });
+  if (blockProblems.length) throw new CandidateRejectedError("candidate_block_invalid", blockProblems);
+  return { ...candidate, scenes } as CandidateLessonV2;
 }

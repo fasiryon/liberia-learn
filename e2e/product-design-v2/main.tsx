@@ -24,6 +24,16 @@ import { teachingLessonAvailability } from "../../lib/learner-experience/teachin
 const previewAvailability = (lesson: typeof GRADE7_PLACE_VALUE) => teachingLessonAvailability(lesson, () => null);
 import { parseStudentLabReturn } from "../../lib/learner-experience/labLaunch";
 import { getInteractiveLabDefinition } from "../../lib/interactive-labs/v2/registry";
+import { useEffect, useState } from "react";
+import { LessonPlayerV2 } from "../../components/learner-experience/LessonPlayerV2";
+import type { LessonExperience } from "../../lib/learner-experience/types";
+
+/** Interactive Learning V4 review route: the run script builds each projection with the real pipeline (node) and serves it. */
+function V4LessonFixture({ lessonKey }: { lessonKey: string }) {
+  const [experience, setExperience] = useState<LessonExperience | null>(null);
+  useEffect(() => { void fetch(`/__v4/${lessonKey}.json`).then((response) => response.json()).then(setExperience); }, [lessonKey]);
+  return experience ? <LessonPlayerV2 experience={experience} toolsByScene={{}} exitHref="/lab-review/v4-lessons" returnSceneId={null} linkPolicy="INTERNAL_PREVIEW" /> : <p style={{ padding: 24 }}>Loading V4 lesson…</p>;
+}
 import "../../app/globals.css";
 const path = window.location.pathname;
 const params = new URLSearchParams(window.location.search);
@@ -50,8 +60,9 @@ const lessonLab = labPage && params.has("rt") ? (() => {
 const fixtureRoot = createRoot(document.getElementById("root")!);
 let fixtureMount = 0;
 const previewSlug = path.match(/^\/design-preview\/lessons\/([^/]+)$/)?.[1];
+const v4Key = path.match(/^\/lab-review\/v4-lessons\/([^/]+)$/)?.[1];
 const previewLesson = previewSlug ? DEMO_TEACHING_LESSONS[previewSlug] : undefined;
-const renderFixture = () => fixtureRoot.render(path === "/design-preview/grade-7-place-value" ? <PlaceValueDemo availability={previewAvailability(GRADE7_PLACE_VALUE)} initialSceneId={params.get("scene")} />
+const renderFixture = () => fixtureRoot.render(v4Key ? <V4LessonFixture lessonKey={decodeURIComponent(v4Key)} /> : path === "/design-preview/grade-7-place-value" ? <PlaceValueDemo availability={previewAvailability(GRADE7_PLACE_VALUE)} initialSceneId={params.get("scene")} />
   : path === "/design-preview/lessons" ? <PreviewGallery releases={[{ id: "fixture-release", grade: 4, subject: "MATH" }]} chips={Object.fromEntries(Object.entries(DEMO_TEACHING_LESSONS).map(([slug, lesson]) => [slug, previewAvailability(lesson).chip]))} />
   : previewLesson ? <TeachingLessonPlayer lesson={previewLesson} availability={previewAvailability(previewLesson)} initialSceneId={params.get("scene")} backHref="/design-preview/lessons" backLabel="Back to Previews" moreHref="/design-preview/lessons" /> : <StudentShellV2 key={fixtureMount} identity={{ name, grade, userId: "fixture-student", schoolId: "fixture-school" }}>
   {contentLesson ? <LessonViewerClient enabledToolIds={[]} />

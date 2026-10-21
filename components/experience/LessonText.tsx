@@ -1,20 +1,35 @@
 import { Fragment, type ReactNode } from "react";
 import { isSafeHref, isSafeImageSrc, type LessonBlock } from "@/lib/learner-experience/lessonText";
+import { segmentMath, type MathSegment } from "@/lib/learner-experience/math/tex";
+import { MathExpression } from "./MathText";
 
 /**
  * Lesson text as React nodes (no HTML injection): **bold**, *emphasis*, `code` and safe links inline;
  * headings, paragraphs, lists, tables, images and quotes as blocks. Unsafe image sources show their
- * description instead of loading; nothing is fetched from an unknown origin.
+ * description instead of loading; nothing is fetched from an unknown origin. Mathematics (delimited, bare or
+ * double-escaped TeX) is typeset as MathML (V4); it is cut out first so Markdown never splits an expression.
  */
+const MATH_MARK = /\u0001(\d+)\u0001/;
+
+function withMath(text: string, math: readonly Extract<MathSegment, { kind: "math" }>[]): ReactNode {
+  if (!math.length || !MATH_MARK.test(text)) return text;
+  return <>{text.split(/\u0001(\d+)\u0001/).map((part, index) => index % 2 === 1
+    ? <MathExpression key={index} tex={math[Number(part)].tex} display={math[Number(part)].display} />
+    : <Fragment key={index}>{part}</Fragment>)}</>;
+}
+
 export function InlineText({ text }: { text: string }) {
+  const math: Extract<MathSegment, { kind: "math" }>[] = [];
+  const segments = segmentMath(text ?? "");
+  if (segments.some((segment) => segment.kind === "math")) text = segments.map((segment) => (segment.kind === "text" ? segment.text : `\u0001${math.push(segment) - 1}\u0001`)).join("");
   const parts = text.split(/(\*\*[^*]+\*\*|__[^_]+__|`[^`]+`|\[[^\]]+\]\([^)\s]+\)|\*[^*\s][^*]*\*)/g).filter(Boolean);
   return <>{parts.map((part, index) => {
-    if (/^(\*\*|__).+(\*\*|__)$/.test(part)) return <strong key={index}>{part.slice(2, -2)}</strong>;
+    if (/^(\*\*|__).+(\*\*|__)$/.test(part)) return <strong key={index}>{withMath(part.slice(2, -2), math)}</strong>;
     if (/^`.+`$/.test(part)) return <code key={index}>{part.slice(1, -1)}</code>;
     const link = /^\[([^\]]+)\]\(([^)\s]+)\)$/.exec(part);
-    if (link) return isSafeHref(link[2]) ? <a key={index} href={link[2]} rel="noopener noreferrer">{link[1]}</a> : <Fragment key={index}>{link[1]}</Fragment>;
-    if (/^\*[^*\s][^*]*\*$/.test(part)) return <em key={index}>{part.slice(1, -1)}</em>;
-    return <Fragment key={index}>{part}</Fragment>;
+    if (link) return isSafeHref(link[2]) ? <a key={index} href={link[2]} rel="noopener noreferrer">{withMath(link[1], math)}</a> : <Fragment key={index}>{withMath(link[1], math)}</Fragment>;
+    if (/^\*[^*\s][^*]*\*$/.test(part)) return <em key={index}>{withMath(part.slice(1, -1), math)}</em>;
+    return <Fragment key={index}>{withMath(part, math)}</Fragment>;
   })}</>;
 }
 

@@ -1,0 +1,1016 @@
+{
+  "manifestVersion": "v4-candidates-review/1.0.0",
+  "candidateContract": "candidate-lesson-v2/1.1.0",
+  "candidateVersion": "4.0.0-draft.1",
+  "governance": {
+    "state": "DRAFT",
+    "humanReviewRequired": true,
+    "published": false,
+    "approved": false,
+    "learnerDeliverable": false
+  },
+  "lessons": [
+    {
+      "key": "g7-math-area-perimeter",
+      "lessonId": "cv4-cand-g7-math-area-perimeter",
+      "grade": 7,
+      "subject": "MATH",
+      "title": "Area and perimeter: inside and around",
+      "source": {
+        "kind": "SOURCE_ROW_ONLY",
+        "contentId": "hero-math-g7-geometry-area-and-perimeter-of-polygons",
+        "contentPk": "cmpyg7yx6003avoqgrqwkw7id",
+        "legacyTitle": "Calculating Area and Perimeter of Polygons for Real-World Applications",
+        "revisionId": "cmss9493703a7vo54xxnhxmjy",
+        "snapshot": {
+          "path": "artifacts/curriculum-cleanup-v1/snapshot.json",
+          "capturedAt": "2026-09-26T09:07:15.873Z",
+          "fileSha256": "ef89632f6b447011b9092fb17501a8eac52555783aa45d3c16a52d275ebaa16c",
+          "rowSha256": "bada4c6dc59c80e333ae2e50633f46679d57e24a0421f3eba126dcbc21eb1d72"
+        }
+      },
+      "candidate": {
+        "file": "curriculum/v4/candidates/g7-math-area-perimeter.json",
+        "fileSha256": "76f4e26278aca2a3b73523dd8b8574381b09e459a791354e40a7e3cc3c95ce20",
+        "canonicalSha256": "c437122b7806e513ebad01cc44a60ae38529f40d540fcdc444aba1b933db74eb"
+      },
+      "learnerProjectionSha256": "d93086f92a5eaeee6226dbfa2d247ade683aa6ed345e8479316e0b7fa6420a2f",
+      "status": "REVIEW_BLOCKED",
+      "errors": [],
+      "standard": {
+        "family": "MATHEMATICS",
+        "balance": {
+          "explanationSeconds": 516,
+          "activitySeconds": 1275,
+          "activityShare": 0.712
+        },
+        "totals": {
+          "visuals": 6,
+          "workedExamples": 2,
+          "guided": 5,
+          "independent": 5,
+          "mistakes": 2,
+          "transfer": 8,
+          "problems": 18
+        },
+        "practice": {
+          "ll-g7-math-ap-rectangles": {
+            "visuals": 3,
+            "workedExamples": 1,
+            "guided": 3,
+            "independent": 3,
+            "mistakes": 1,
+            "transfer": 4
+          },
+          "ll-g7-math-ap-triangles": {
+            "visuals": 3,
+            "workedExamples": 1,
+            "guided": 2,
+            "independent": 2,
+            "mistakes": 1,
+            "transfer": 4
+          }
+        },
+        "problems": []
+      },
+      "scenes": [
+        {
+          "id": "field",
+          "phase": "ORIENT",
+          "blocks": [
+            "SHAPE_MODEL"
+          ]
+        },
+        {
+          "id": "see-it",
+          "phase": "VISUALIZE",
+          "blocks": [
+            "EQUATION",
+            "EQUATION",
+            "CALLOUT",
+            "SHAPE_MODEL"
+          ]
+        },
+        {
+          "id": "watch-field",
+          "phase": "DEMONSTRATE",
+          "blocks": [
+            "WORKED_SOLUTION"
+          ]
+        },
+        {
+          "id": "solve-classroom",
+          "phase": "SOLVE_WITH_SUPPORT",
+          "blocks": [
+            "NUMERIC_RESPONSE",
+            "NUMERIC_RESPONSE"
+          ]
+        },
+        {
+          "id": "alone-rice-farm",
+          "phase": "PRACTICE_INDEPENDENTLY",
+          "blocks": [
+            "NUMERIC_RESPONSE",
+            "CHECK"
+          ]
+        },
+        {
+          "id": "mistake-room",
+          "phase": "ANALYZE_MISTAKE",
+          "blocks": [
+            "MISTAKE_ANALYSIS",
+            "CHECK"
+          ]
+        },
+        {
+          "id": "see-triangle",
+          "phase": "VISUALIZE",
+          "blocks": [
+            "EQUATION",
+            "EQUATION",
+            "CALLOUT",
+            "SHAPE_MODEL"
+          ]
+        },
+        {
+          "id": "watch-pennant",
+          "phase": "DEMONSTRATE",
+          "blocks": [
+            "WORKED_SOLUTION"
+          ]
+        },
+        {
+          "id": "solve-triangle",
+          "phase": "SOLVE_WITH_SUPPORT",
+          "blocks": [
+            "NUMERIC_RESPONSE"
+          ]
+        },
+        {
+          "id": "alone-roof",
+          "phase": "PRACTICE_INDEPENDENTLY",
+          "blocks": [
+            "NUMERIC_RESPONSE"
+          ]
+        },
+        {
+          "id": "mistake-kofi",
+          "phase": "ANALYZE_MISTAKE",
+          "blocks": [
+            "MISTAKE_ANALYSIS"
+          ]
+        },
+        {
+          "id": "apply-school-grounds",
+          "phase": "APPLY",
+          "blocks": [
+            "NUMERIC_RESPONSE",
+            "NUMERIC_RESPONSE"
+          ]
+        },
+        {
+          "id": "remember",
+          "phase": "RETRIEVE",
+          "blocks": [
+            "CHECK"
+          ]
+        },
+        {
+          "id": "show-what-you-know",
+          "phase": "ASSESS",
+          "blocks": []
+        }
+      ],
+      "blockingGaps": [
+        "MOE_OBJECTIVE_UNBOUND",
+        "ONTOLOGY_RELEASE_MISSING",
+        "V4_HUMAN_REVIEW_REQUIRED",
+        "LEGACY_BODY_NOT_COMPARED",
+        "SCENE_NOT_DELIVERABLE",
+        "ASSESSMENT_ITEMS_PENDING"
+      ]
+    },
+    {
+      "key": "g7-math-fractions",
+      "lessonId": "cv4-cand-g7-math-fractions",
+      "grade": 7,
+      "subject": "MATH",
+      "title": "Fractions: parts, equivalence and comparison",
+      "source": {
+        "kind": "FIRST_TEN_BOUND",
+        "contentId": "lesson_mca_1",
+        "contentPk": "cmlrkjnow00dmvo7o4cajgquf",
+        "legacyTitle": "Understanding and Representing Fractions in Real-Life Contexts",
+        "revisionId": "cmss8mpl0000bvo1wos7i1ew4",
+        "legacyBodySha256": "872222a2435f151d6b215488ad2c3de2cc6c130f57d68fc5d7c6898ad301314f",
+        "firstTenKey": "ft07-g7-math-fractions",
+        "contract": "liberialearn-first-ten-modernization-contract/1.0.0+FT-A001+FT-A002",
+        "specSha256": "648ec61a72e2ddff147444dadae75aff321866cfc660498a792b6a3b48e7a28b",
+        "baseline": {
+          "label": "first-three V0.2.1",
+          "packageDigest": "cc2bc9a4d5c41eeccf5a4a0f35cb3d619780f7030a021c8431495ff5a659e1aa",
+          "lessonResourceDigest": "326c912dd588d7f895559f2cb1cfc001791538874ce909798768eb57fa520a04",
+          "manifestSha256": "36da28c83688f229ac46ba5cfee72c8a74ca4a23bbbb374a60c4d80fff5db1a8",
+          "root": "C:/restricted-authoring/review-packages/first-three-v021-final",
+          "handoff": "docs/architecture/content-factory/FIRST_THREE_V021_CANDIDATES_HANDOFF.md (PR #195)",
+          "read": false
+        },
+        "snapshot": {
+          "path": "artifacts/curriculum-cleanup-v1/snapshot.json",
+          "capturedAt": "2026-09-26T09:07:15.873Z",
+          "fileSha256": "ef89632f6b447011b9092fb17501a8eac52555783aa45d3c16a52d275ebaa16c",
+          "rowSha256": "77a8650161146251841d6ae82570a26c098db5320389c52c02315217f9991e47"
+        },
+        "learnerReferences": "first-ten dependencies: 4 scheduled works, 12 progress records, 19 learning events, 1 lesson plan, 1 audio asset (retained, never rewritten)."
+      },
+      "candidate": {
+        "file": "curriculum/v4/candidates/g7-math-fractions.json",
+        "fileSha256": "95c5b2995430c27ca7237e3e8c7e5864ad81aa566c039ddd2ec856e5625ce22f",
+        "canonicalSha256": "e6c62226e03af08f1c884fa3ce33b0b823be7a46778f495b30e38961cbfa15d5"
+      },
+      "learnerProjectionSha256": "b9bc6a1bf3b963a399eb2c5eb5c2d32b724fb3a2a88c828d4ff60ad884334e99",
+      "status": "REVIEW_BLOCKED",
+      "errors": [],
+      "standard": {
+        "family": "MATHEMATICS",
+        "balance": {
+          "explanationSeconds": 514,
+          "activitySeconds": 875,
+          "activityShare": 0.63
+        },
+        "totals": {
+          "visuals": 7,
+          "workedExamples": 6,
+          "guided": 8,
+          "independent": 12,
+          "mistakes": 3,
+          "transfer": 6,
+          "problems": 16
+        },
+        "practice": {
+          "ft07-o1": {
+            "visuals": 3,
+            "workedExamples": 2,
+            "guided": 3,
+            "independent": 4,
+            "mistakes": 1,
+            "transfer": 2
+          },
+          "ft07-o2": {
+            "visuals": 2,
+            "workedExamples": 2,
+            "guided": 2,
+            "independent": 4,
+            "mistakes": 1,
+            "transfer": 2
+          },
+          "ft07-o3": {
+            "visuals": 2,
+            "workedExamples": 2,
+            "guided": 3,
+            "independent": 4,
+            "mistakes": 1,
+            "transfer": 2
+          }
+        },
+        "problems": [
+          "ADVISORY:v4_activity_share_outside_target"
+        ]
+      },
+      "scenes": [
+        {
+          "id": "kanya",
+          "phase": "ORIENT",
+          "blocks": [
+            "FRACTION_MODEL"
+          ]
+        },
+        {
+          "id": "see-fractions",
+          "phase": "VISUALIZE",
+          "blocks": [
+            "FRACTION_MODEL",
+            "EQUATION",
+            "CALLOUT",
+            "FRACTION_MODEL"
+          ]
+        },
+        {
+          "id": "see-equivalent",
+          "phase": "VISUALIZE",
+          "blocks": [
+            "EQUATION",
+            "FRACTION_EQUIVALENCE"
+          ]
+        },
+        {
+          "id": "watch-fractions",
+          "phase": "DEMONSTRATE",
+          "blocks": [
+            "WORKED_SOLUTION",
+            "WORKED_SOLUTION"
+          ]
+        },
+        {
+          "id": "solve-models",
+          "phase": "SOLVE_WITH_SUPPORT",
+          "blocks": [
+            "FRACTION_MODEL",
+            "FRACTION_NUMBER_LINE",
+            "FRACTION_COMPARE"
+          ]
+        },
+        {
+          "id": "solve-adding",
+          "phase": "SOLVE_WITH_SUPPORT",
+          "blocks": [
+            "NUMERIC_RESPONSE"
+          ]
+        },
+        {
+          "id": "alone-fractions",
+          "phase": "PRACTICE_INDEPENDENTLY",
+          "blocks": [
+            "NUMERIC_RESPONSE",
+            "FRACTION_COMPARE",
+            "FRACTION_NUMBER_LINE"
+          ]
+        },
+        {
+          "id": "mistakes",
+          "phase": "ANALYZE_MISTAKE",
+          "blocks": [
+            "MISTAKE_ANALYSIS",
+            "CHECK"
+          ]
+        },
+        {
+          "id": "apply-palm-oil",
+          "phase": "APPLY",
+          "blocks": [
+            "NUMERIC_RESPONSE",
+            "CHECK"
+          ]
+        },
+        {
+          "id": "remember",
+          "phase": "RETRIEVE",
+          "blocks": [
+            "CHECK"
+          ]
+        },
+        {
+          "id": "show-what-you-know",
+          "phase": "ASSESS",
+          "blocks": []
+        }
+      ],
+      "blockingGaps": [
+        "MOE_OBJECTIVE_UNBOUND",
+        "ONTOLOGY_RELEASE_MISSING",
+        "V4_HUMAN_REVIEW_REQUIRED",
+        "V021_BASELINE_RECONCILIATION",
+        "SCENE_NOT_DELIVERABLE",
+        "ASSESSMENT_ITEMS_PENDING"
+      ]
+    },
+    {
+      "key": "math-multiplication-models",
+      "lessonId": "cv4-demo-math-multiplication-models",
+      "grade": 5,
+      "subject": "MATH",
+      "title": "Multiplication: groups, arrays and the area model",
+      "source": {
+        "kind": "SYNTHETIC_DEMONSTRATION",
+        "reason": "No approved source lesson teaches equal groups, arrays and the area model together; the nearest rows are listed for a curriculum owner, not bound.",
+        "relatedRows": [
+          {
+            "contentId": "math-g7-multiplication-and-division-strategies-application",
+            "title": "Multiplication and Division Strategies for Real-Life Problem Solving"
+          },
+          {
+            "contentId": "wk_krs5a_wed_p1",
+            "title": "Understanding Multiplication through Real-Life Applications"
+          }
+        ]
+      },
+      "candidate": {
+        "file": "curriculum/v4/candidates/math-multiplication-models.json",
+        "fileSha256": "a3c629af5a246f6db6c0ac2d7bba901b08ea15326408196227f92378ac12ae17",
+        "canonicalSha256": "193bb1204ed42ff5a001f6531278ef64ba259b94b14889e5027e59b3e86ab417"
+      },
+      "learnerProjectionSha256": "0c473201ac4911d678383c76653be7156dc742f9c12efc5dcc25aadce3a6e162",
+      "status": "REVIEW_BLOCKED",
+      "errors": [],
+      "standard": {
+        "family": "MATHEMATICS",
+        "balance": {
+          "explanationSeconds": 451,
+          "activitySeconds": 960,
+          "activityShare": 0.68
+        },
+        "totals": {
+          "visuals": 4,
+          "workedExamples": 3,
+          "guided": 4,
+          "independent": 7,
+          "mistakes": 2,
+          "transfer": 4,
+          "problems": 17
+        },
+        "practice": {
+          "v4-demo-mult-models": {
+            "visuals": 2,
+            "workedExamples": 1,
+            "guided": 2,
+            "independent": 3,
+            "mistakes": 1,
+            "transfer": 2
+          },
+          "v4-demo-mult-area-model": {
+            "visuals": 2,
+            "workedExamples": 2,
+            "guided": 2,
+            "independent": 4,
+            "mistakes": 1,
+            "transfer": 2
+          }
+        },
+        "problems": []
+      },
+      "scenes": [
+        {
+          "id": "oranges",
+          "phase": "ORIENT",
+          "blocks": [
+            "ARRAY_MODEL"
+          ]
+        },
+        {
+          "id": "see-four-ways",
+          "phase": "VISUALIZE",
+          "blocks": [
+            "EQUATION",
+            "CALLOUT",
+            "ARRAY_MODEL"
+          ]
+        },
+        {
+          "id": "watch-chairs",
+          "phase": "DEMONSTRATE",
+          "blocks": [
+            "WORKED_SOLUTION"
+          ]
+        },
+        {
+          "id": "solve-groups",
+          "phase": "SOLVE_WITH_SUPPORT",
+          "blocks": [
+            "NUMERIC_RESPONSE"
+          ]
+        },
+        {
+          "id": "alone-groups",
+          "phase": "PRACTICE_INDEPENDENTLY",
+          "blocks": [
+            "NUMERIC_RESPONSE",
+            "CHECK"
+          ]
+        },
+        {
+          "id": "mistake-kollie",
+          "phase": "ANALYZE_MISTAKE",
+          "blocks": [
+            "MISTAKE_ANALYSIS"
+          ]
+        },
+        {
+          "id": "see-area-model",
+          "phase": "VISUALIZE",
+          "blocks": [
+            "EQUATION",
+            "AREA_MODEL"
+          ]
+        },
+        {
+          "id": "watch-area-model",
+          "phase": "DEMONSTRATE",
+          "blocks": [
+            "WORKED_SOLUTION",
+            "WORKED_SOLUTION"
+          ]
+        },
+        {
+          "id": "solve-area-model",
+          "phase": "SOLVE_WITH_SUPPORT",
+          "blocks": [
+            "AREA_MODEL"
+          ]
+        },
+        {
+          "id": "alone-area-model",
+          "phase": "PRACTICE_INDEPENDENTLY",
+          "blocks": [
+            "AREA_MODEL"
+          ]
+        },
+        {
+          "id": "mistake-sia",
+          "phase": "ANALYZE_MISTAKE",
+          "blocks": [
+            "MISTAKE_ANALYSIS",
+            "CHECK"
+          ]
+        },
+        {
+          "id": "apply-school",
+          "phase": "APPLY",
+          "blocks": [
+            "NUMERIC_RESPONSE"
+          ]
+        },
+        {
+          "id": "remember",
+          "phase": "RETRIEVE",
+          "blocks": [
+            "CHECK"
+          ]
+        },
+        {
+          "id": "show-what-you-know",
+          "phase": "ASSESS",
+          "blocks": []
+        }
+      ],
+      "blockingGaps": [
+        "MOE_OBJECTIVE_UNBOUND",
+        "ONTOLOGY_RELEASE_MISSING",
+        "V4_HUMAN_REVIEW_REQUIRED",
+        "SYNTHETIC_DEMONSTRATION",
+        "SCENE_NOT_DELIVERABLE",
+        "ASSESSMENT_ITEMS_PENDING"
+      ]
+    },
+    {
+      "key": "g7-science-states-of-matter",
+      "lessonId": "cv4-cand-g7-science-states-of-matter",
+      "grade": 7,
+      "subject": "SCIENCE",
+      "title": "States of matter: what particles do",
+      "source": {
+        "kind": "FIRST_TEN_BOUND",
+        "contentId": "wk_mca7a_fri_p3",
+        "contentPk": "cmm7xs7v000e8vo70m7n72h3t",
+        "legacyTitle": "Understanding States of Matter Through Real-Life Examples",
+        "revisionId": "cmss8pt0j002fvo54be8gcrnd",
+        "legacyBodySha256": "d218a3e17da67bcf7e774bcace1a4080f3b2e6eb9e581d00b987ee3f8025c1e8",
+        "firstTenKey": "ft04-g7-science-states-of-matter",
+        "contract": "liberialearn-first-ten-modernization-contract/1.0.0+FT-A001+FT-A002",
+        "specSha256": "648ec61a72e2ddff147444dadae75aff321866cfc660498a792b6a3b48e7a28b",
+        "baseline": {
+          "label": "first-three V0.2.1",
+          "packageDigest": "daced29a1516f9cf0470430c2508ca560235c931b6101433c9f90c813ba2bd70",
+          "lessonResourceDigest": "e74b6feea9c54bbe2e7b09bf9e64a50601e57e853fa035305ae6f32043d744aa",
+          "manifestSha256": "3735caac694a761211e006e4fa9793c66f835acbef17c3e344a061a66d586f6b",
+          "root": "C:/restricted-authoring/review-packages/first-three-v021-final",
+          "handoff": "docs/architecture/content-factory/FIRST_THREE_V021_CANDIDATES_HANDOFF.md (PR #195)",
+          "read": false
+        },
+        "snapshot": {
+          "path": "artifacts/curriculum-cleanup-v1/snapshot.json",
+          "capturedAt": "2026-09-26T09:07:15.873Z",
+          "fileSha256": "ef89632f6b447011b9092fb17501a8eac52555783aa45d3c16a52d275ebaa16c",
+          "rowSha256": "9a3ad3a48343bf72dca080dd7b819fe53e29b563bd7a4792e36094d480080ba0"
+        },
+        "learnerReferences": "first-ten dependencies: 1 scheduled work, 13 progress records, 1 lesson plan (retained, never rewritten)."
+      },
+      "candidate": {
+        "file": "curriculum/v4/candidates/g7-science-states-of-matter.json",
+        "fileSha256": "d9a0aae7d276cd1c9480ac39e1a4c2211227666742ea7cee70cee27b9d06fc4a",
+        "canonicalSha256": "11d69cda7a1668d26619e0fcc5371a9d894f87bc3b5bb8cea18180b38f56b9e1"
+      },
+      "learnerProjectionSha256": "dfd0bab4be1f8a6025c4427383ecdd9facf98251a1b1d836e8909080980edff8",
+      "status": "REVIEW_BLOCKED",
+      "errors": [],
+      "standard": {
+        "family": "SCIENCE",
+        "balance": {
+          "explanationSeconds": 397,
+          "activitySeconds": 1000,
+          "activityShare": 0.716
+        },
+        "totals": {
+          "visuals": 4,
+          "workedExamples": 1,
+          "guided": 6,
+          "independent": 4,
+          "mistakes": 2,
+          "transfer": 4,
+          "problems": 11
+        },
+        "practice": {
+          "ft04-o1": {
+            "visuals": 1,
+            "workedExamples": 0,
+            "guided": 2,
+            "independent": 0,
+            "mistakes": 1,
+            "transfer": 0
+          },
+          "ft04-o2": {
+            "visuals": 2,
+            "workedExamples": 1,
+            "guided": 2,
+            "independent": 2,
+            "mistakes": 0,
+            "transfer": 2
+          },
+          "ft04-o3": {
+            "visuals": 1,
+            "workedExamples": 0,
+            "guided": 2,
+            "independent": 2,
+            "mistakes": 1,
+            "transfer": 2
+          }
+        },
+        "problems": []
+      },
+      "scenes": [
+        {
+          "id": "cold-drink",
+          "phase": "ORIENT",
+          "blocks": [
+            "CALLOUT"
+          ]
+        },
+        {
+          "id": "predict",
+          "phase": "PREDICT",
+          "blocks": [
+            "PREDICT_OBSERVE"
+          ]
+        },
+        {
+          "id": "experiment",
+          "phase": "EXPERIMENT",
+          "blocks": [
+            "SORT",
+            "PARTICLE_MODEL"
+          ]
+        },
+        {
+          "id": "observe",
+          "phase": "OBSERVE",
+          "blocks": [
+            "CHECK",
+            "DATA_PLOT"
+          ]
+        },
+        {
+          "id": "explain",
+          "phase": "EXPLAIN",
+          "blocks": [
+            "STEP_REVEAL",
+            "CHECK",
+            "PROCESS_CYCLE"
+          ]
+        },
+        {
+          "id": "explain-mistakes",
+          "phase": "EXPLAIN",
+          "blocks": [
+            "MISTAKE_ANALYSIS",
+            "CHECK"
+          ]
+        },
+        {
+          "id": "apply",
+          "phase": "APPLY",
+          "blocks": [
+            "CHECK",
+            "WRITING_ORGANIZER"
+          ]
+        },
+        {
+          "id": "remember",
+          "phase": "RETRIEVE",
+          "blocks": [
+            "CHECK"
+          ]
+        },
+        {
+          "id": "show-what-you-know",
+          "phase": "ASSESS",
+          "blocks": []
+        }
+      ],
+      "blockingGaps": [
+        "MOE_OBJECTIVE_UNBOUND",
+        "ONTOLOGY_RELEASE_MISSING",
+        "V4_HUMAN_REVIEW_REQUIRED",
+        "V021_BASELINE_RECONCILIATION",
+        "SCENE_NOT_DELIVERABLE",
+        "ASSESSMENT_ITEMS_PENDING"
+      ]
+    },
+    {
+      "key": "g7-civics-counties-capitals",
+      "lessonId": "cv4-cand-g7-civics-counties-capitals",
+      "grade": 7,
+      "subject": "CIVICS",
+      "title": "Liberia's counties and their capitals",
+      "source": {
+        "kind": "FIRST_TEN_BOUND",
+        "contentId": "wk_mca7a_fri_p4",
+        "contentPk": "cmm7xs89200e9vo70t6qdlgho",
+        "legacyTitle": "Exploring the Counties and Capitals of Liberia",
+        "revisionId": "cmss8ptit002jvo540275dfvw",
+        "legacyBodySha256": "c7a1257c9520d452a623f474bc8c3b7987366a55e6c5a98947fdbeba1f5fb242",
+        "firstTenKey": "ft01-g7-civics-counties-capitals",
+        "contract": "liberialearn-first-ten-modernization-contract/1.0.0+FT-A001+FT-A002",
+        "specSha256": "648ec61a72e2ddff147444dadae75aff321866cfc660498a792b6a3b48e7a28b",
+        "baseline": {
+          "label": "first-three V0.2.1",
+          "packageDigest": "fd9de92735c99937cf0cc3fe0d1d85ce493bb9936d5d4b6b9d215f3cf31ab7b9",
+          "lessonResourceDigest": "401dd3406f576c5fcc0de8643071d32e3581c2030b0f669854a737cec1b4da25",
+          "manifestSha256": "cceab5702960bde4b5cc1b8d8b076ee613a1e67bc7262fc3837513c9ef18d9c7",
+          "root": "C:/restricted-authoring/review-packages/first-three-v021-final",
+          "handoff": "docs/architecture/content-factory/FIRST_THREE_V021_CANDIDATES_HANDOFF.md (PR #195)",
+          "read": false
+        },
+        "snapshot": {
+          "path": "artifacts/curriculum-cleanup-v1/snapshot.json",
+          "capturedAt": "2026-09-26T09:07:15.873Z",
+          "fileSha256": "ef89632f6b447011b9092fb17501a8eac52555783aa45d3c16a52d275ebaa16c",
+          "rowSha256": "0f91b323605e9a2fc96bbf310f31c7cd65f3796be0989caacff5f315f2740bec"
+        },
+        "learnerReferences": "first-ten dependencies: 1 scheduled work, 13 progress records, 3 learning events, 1 lesson plan (retained, never rewritten)."
+      },
+      "candidate": {
+        "file": "curriculum/v4/candidates/g7-civics-counties-capitals.json",
+        "fileSha256": "d5c48a23c2b09bfa3e66cd0b6be221ab62ae0d4c6212a67d2a26c573751807ea",
+        "canonicalSha256": "5ceea5364c3272be61e20d6bdc7556552863dfbb15a4a73064fe78be4a7779aa"
+      },
+      "learnerProjectionSha256": "8b8c19c7898375615f805426323fc41313c27aa462a1f02f0ea8ecb7fc115349",
+      "status": "REVIEW_BLOCKED",
+      "errors": [],
+      "standard": {
+        "family": "HUMANITIES",
+        "balance": {
+          "explanationSeconds": 441,
+          "activitySeconds": 850,
+          "activityShare": 0.658
+        },
+        "totals": {
+          "visuals": 1,
+          "workedExamples": 2,
+          "guided": 6,
+          "independent": 6,
+          "mistakes": 2,
+          "transfer": 6,
+          "problems": 11
+        },
+        "practice": {
+          "ft01-o1": {
+            "visuals": 1,
+            "workedExamples": 1,
+            "guided": 3,
+            "independent": 3,
+            "mistakes": 1,
+            "transfer": 2
+          },
+          "ft01-o2": {
+            "visuals": 0,
+            "workedExamples": 1,
+            "guided": 3,
+            "independent": 3,
+            "mistakes": 1,
+            "transfer": 0
+          },
+          "ft01-o3": {
+            "visuals": 0,
+            "workedExamples": 0,
+            "guided": 0,
+            "independent": 0,
+            "mistakes": 0,
+            "transfer": 4
+          }
+        },
+        "problems": []
+      },
+      "scenes": [
+        {
+          "id": "your-county",
+          "phase": "ORIENT",
+          "blocks": [
+            "CALLOUT"
+          ]
+        },
+        {
+          "id": "explore-map",
+          "phase": "EXPLORE",
+          "blocks": [
+            "MAP_EXPLORER"
+          ]
+        },
+        {
+          "id": "investigate-capitals",
+          "phase": "INVESTIGATE",
+          "blocks": [
+            "STEP_REVEAL",
+            "MAP_EXPLORER",
+            "SOURCE_EVIDENCE",
+            "MISTAKE_ANALYSIS"
+          ]
+        },
+        {
+          "id": "compare",
+          "phase": "COMPARE",
+          "blocks": [
+            "CHECK",
+            "SORT"
+          ]
+        },
+        {
+          "id": "reason",
+          "phase": "REASON",
+          "blocks": [
+            "MAP_EXPLORER",
+            "CHECK"
+          ]
+        },
+        {
+          "id": "apply-own-county",
+          "phase": "APPLY",
+          "blocks": [
+            "MAP_EXPLORER",
+            "WRITING_ORGANIZER"
+          ]
+        },
+        {
+          "id": "remember",
+          "phase": "RETRIEVE",
+          "blocks": [
+            "CHECK"
+          ]
+        },
+        {
+          "id": "show-what-you-know",
+          "phase": "ASSESS",
+          "blocks": []
+        }
+      ],
+      "blockingGaps": [
+        "MOE_OBJECTIVE_UNBOUND",
+        "ONTOLOGY_RELEASE_MISSING",
+        "V4_HUMAN_REVIEW_REQUIRED",
+        "V021_BASELINE_RECONCILIATION",
+        "SCENE_NOT_DELIVERABLE",
+        "ASSESSMENT_ITEMS_PENDING"
+      ]
+    },
+    {
+      "key": "g7-english-reading-evidence",
+      "lessonId": "cv4-cand-g7-english-reading-evidence",
+      "grade": 7,
+      "subject": "ENGLISH",
+      "title": "Reading for evidence: the town pump",
+      "source": {
+        "kind": "SOURCE_ROW_ONLY",
+        "contentId": "english-g7-waec-style-reading-and-writing-performance",
+        "contentPk": "cmn9kgxde004ivotgtqr8fqgo",
+        "legacyTitle": "Mastering Reading Comprehension and Writing Skills for WAEC",
+        "revisionId": "cmss8r8o200e7vo546w0divyw",
+        "snapshot": {
+          "path": "artifacts/curriculum-cleanup-v1/snapshot.json",
+          "capturedAt": "2026-09-26T09:07:15.873Z",
+          "fileSha256": "ef89632f6b447011b9092fb17501a8eac52555783aa45d3c16a52d275ebaa16c",
+          "rowSha256": "98d8b0db6b323d7d208c9e05d24931ae4438b32a058fe2b198cb158c2406e950"
+        }
+      },
+      "candidate": {
+        "file": "curriculum/v4/candidates/g7-english-reading-evidence.json",
+        "fileSha256": "2048eee394a6b2b600967d4542c26f34091a7f75b3021d0d279d90b0af5a271d",
+        "canonicalSha256": "785ba8e7c65a3c64a02e7fe29d0ac269fee7b9051b7f04ba16bc12212714ac41"
+      },
+      "learnerProjectionSha256": "e345691de629dab7bf550069ce12c709c2ec0595c48d83fe04ae16f42407a3c6",
+      "status": "REVIEW_BLOCKED",
+      "errors": [],
+      "standard": {
+        "family": "LANGUAGE",
+        "balance": {
+          "explanationSeconds": 226,
+          "activitySeconds": 910,
+          "activityShare": 0.801
+        },
+        "totals": {
+          "visuals": 1,
+          "workedExamples": 1,
+          "guided": 3,
+          "independent": 2,
+          "mistakes": 1,
+          "transfer": 4,
+          "problems": 11
+        },
+        "practice": {
+          "ll-g7-eng-read-infer": {
+            "visuals": 1,
+            "workedExamples": 0,
+            "guided": 3,
+            "independent": 0,
+            "mistakes": 0,
+            "transfer": 0
+          },
+          "ll-g7-eng-cite-evidence": {
+            "visuals": 0,
+            "workedExamples": 1,
+            "guided": 0,
+            "independent": 2,
+            "mistakes": 1,
+            "transfer": 0
+          },
+          "ll-g7-eng-evidence-paragraph": {
+            "visuals": 0,
+            "workedExamples": 0,
+            "guided": 0,
+            "independent": 0,
+            "mistakes": 0,
+            "transfer": 4
+          }
+        },
+        "problems": [
+          "ADVISORY:v4_activity_share_outside_target"
+        ]
+      },
+      "scenes": [
+        {
+          "id": "why-evidence",
+          "phase": "ORIENT",
+          "blocks": [
+            "CALLOUT"
+          ]
+        },
+        {
+          "id": "read",
+          "phase": "READ",
+          "blocks": [
+            "READING_PASSAGE"
+          ]
+        },
+        {
+          "id": "understand",
+          "phase": "UNDERSTAND",
+          "blocks": [
+            "CHECK"
+          ]
+        },
+        {
+          "id": "analyze",
+          "phase": "ANALYZE",
+          "blocks": [
+            "SOURCE_EVIDENCE",
+            "CHECK",
+            "MISTAKE_ANALYSIS",
+            "STEP_REVEAL"
+          ]
+        },
+        {
+          "id": "construct",
+          "phase": "CONSTRUCT",
+          "blocks": [
+            "SENTENCE_BUILDER",
+            "WRITING_ORGANIZER"
+          ]
+        },
+        {
+          "id": "revise",
+          "phase": "REVISE",
+          "blocks": [
+            "CHECK"
+          ]
+        },
+        {
+          "id": "remember",
+          "phase": "RETRIEVE",
+          "blocks": [
+            "CHECK"
+          ]
+        },
+        {
+          "id": "show-what-you-know",
+          "phase": "ASSESS",
+          "blocks": []
+        }
+      ],
+      "blockingGaps": [
+        "MOE_OBJECTIVE_UNBOUND",
+        "ONTOLOGY_RELEASE_MISSING",
+        "V4_HUMAN_REVIEW_REQUIRED",
+        "LEGACY_BODY_NOT_COMPARED",
+        "SCENE_NOT_DELIVERABLE",
+        "ASSESSMENT_ITEMS_PENDING"
+      ]
+    }
+  ]
+}

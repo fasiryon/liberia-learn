@@ -1,0 +1,217 @@
+{
+  "contractVersion": "candidate-lesson-v2/1.1.0",
+  "title": "Fractions: parts, equivalence and comparison",
+  "estimatedMinutes": 45,
+  "ageBand": "JUNIOR_SECONDARY",
+  "instruction": {
+    "standard": "liberialearn-v4-instruction/1.0.0",
+    "retention": {
+      "delayDays": 7,
+      "prompts": [
+        "Draw a bar to show 3/4 and another to show 6/8. Explain why they are the same amount.",
+        "Which is larger, 2/3 or 5/8? Justify your answer with a common denominator or a number line."
+      ]
+    }
+  },
+  "pedagogy": { "primaryStrategy": "CONCRETE_PICTORIAL_ABSTRACT", "rationale": "Bars, circles and the number line come before symbols; equivalence is built by splitting parts again, then used to add, subtract and compare." },
+  "prerequisiteAssumptions": ["Recognises equal parts of a whole.", "Knows multiplication facts to 10 × 10."],
+  "misconceptions": [
+    { "id": "ft07-m1", "objectiveId": "ft07-o2", "description": "Adds the numerators and the denominators (1/4 + 1/2 = 2/6).", "response": "The size of the parts does not change when you combine them. Make the parts the same size first." },
+    { "id": "ft07-m2", "objectiveId": "ft07-o3", "description": "A bigger denominator means a bigger fraction.", "response": "More parts in the same whole means each part is smaller." },
+    { "id": "ft07-m3", "objectiveId": "ft07-o1", "description": "Fractions are always less than 1.", "response": "5/4 is one whole and one more quarter." },
+    { "id": "ft07-m4", "objectiveId": "ft07-o1", "description": "Loses track of the whole (a fraction of a bag versus kilograms).", "response": "Always name the whole a fraction refers to: half of a 2 kg bag is 1 kg." }
+  ],
+  "scenes": [
+    {
+      "id": "kanya", "type": "INTRO", "title": "Sharing a kanya bar", "purpose": "HOOK_PHENOMENON", "objectiveIds": [],
+      "learnerAction": "Look at the shared bar and say how much has been eaten.",
+      "content": { "body": "Hawa cut a kanya bar into 4 equal pieces and ate 3 of them. How much of the bar did she eat? A fraction answers that question exactly.\n\nToday you will show fractions with bars, circles and a number line, find fractions that are equal, and use them to add, subtract and compare." },
+      "interaction": { "kind": "NONE" }, "tools": { "requested": [], "prohibited": [] }, "hints": [], "misconceptionIds": [], "evidence": { "kind": "NONE" },
+      "accessibility": { "textAlternative": "A kanya bar cut into 4 equal pieces, with 3 pieces shaded to show they were eaten. 3 of 4 equal pieces is the fraction three quarters.", "keyboardPath": "Read the scene, then press Continue.", "reducedMotion": "NOT_APPLICABLE" },
+      "offline": { "mode": "FULL_OFFLINE", "note": "The model is drawn on the device." }, "completion": "VIEWED",
+      "teaching": { "phase": "ORIENT", "blocks": [], "visual": { "type": "FRACTION_MODEL", "id": "kanya-bar", "representation": "BAR", "parts": 4, "shaded": 3, "interaction": "NONE", "caption": "3 of 4 equal pieces: $\\frac{3}{4}$ of the bar." } }
+    },
+    {
+      "id": "see-fractions", "type": "EXPLANATION", "title": "Equal parts of a whole", "purpose": "EXPLAIN_CONCEPT", "objectiveIds": ["ft07-o1"],
+      "learnerAction": "Change the number of equal parts and shade some; read the fraction your model shows.",
+      "content": { "body": "A fraction names equal parts of a whole. The **denominator** (bottom) says how many equal parts the whole is cut into. The **numerator** (top) says how many of those parts you have.\n\nA fraction can be a whole or more: $\\frac{4}{4} = 1$ and $\\frac{5}{4}$ is one whole and one more quarter.", "keyPoints": ["$\\frac{3}{4}$: the whole is cut into 4 equal parts and we have 3 of them.", "Always name the whole: a quarter of a bar, a quarter of a 2 kg bag."] },
+      "interaction": { "kind": "NONE" }, "tools": { "requested": [], "prohibited": [] }, "hints": [], "misconceptionIds": ["ft07-m3", "ft07-m4"], "evidence": { "kind": "NONE" },
+      "accessibility": { "textAlternative": "A fraction names equal parts of a whole. In three quarters, the whole is cut into 4 equal parts and 3 are shaded. A circle cut into 8 equal parts with 5 shaded shows five eighths. Four quarters make one whole, and five quarters is one whole and one more quarter.", "keyboardPath": "Use the More parts and Fewer parts buttons, then choose parts to shade with Tab and Space.", "reducedMotion": "NOT_APPLICABLE" },
+      "offline": { "mode": "FULL_OFFLINE", "note": "The models are drawn on the device." }, "completion": "VIEWED",
+      "pedagogy": { "strategy": "CONCRETE_PICTORIAL_ABSTRACT", "representation": "PICTORIAL", "scaffoldLevel": "FULL" },
+      "teaching": { "phase": "VISUALIZE", "blocks": [
+        { "type": "FRACTION_MODEL", "id": "circle-five-eighths", "representation": "CIRCLE", "parts": 8, "shaded": 5, "interaction": "NONE", "caption": "A circle in 8 equal parts with 5 shaded: $\\frac{5}{8}$." },
+        { "type": "EQUATION", "tex": "\\frac{3}{4},\\quad \\frac{2}{3},\\quad \\frac{5}{8}", "caption": "Numerator on top, denominator below the line." },
+        { "type": "CALLOUT", "tone": "MISTAKE", "title": "Fractions can be 1 or more", "text": "$\\frac{4}{4}$ is one whole bar. $\\frac{5}{4}$ is one whole bar and one more quarter of another bar." }
+      ], "visual": { "type": "FRACTION_MODEL", "id": "explore-bar", "representation": "BAR", "parts": 4, "shaded": 3, "interaction": "EXPLORE", "caption": "Change the number of equal parts and shade some. The fraction updates to match your bar." } }
+    },
+    {
+      "id": "see-equivalent", "type": "EXPLANATION", "title": "Same amount, different names", "purpose": "EXPLAIN_CONCEPT", "objectiveIds": ["ft07-o2", "ft07-o3"],
+      "learnerAction": "Split every part again and watch the fraction's name change while the amount stays the same.",
+      "content": { "body": "Cut every part of $\\frac{1}{2}$ into 2 smaller parts: now there are 4 parts and 2 are shaded, so $\\frac{1}{2} = \\frac{2}{4}$. The shaded amount did not change; only the size of the parts did.\n\nMultiplying the numerator and denominator by the same number gives an **equivalent fraction**." },
+      "interaction": { "kind": "NONE" }, "tools": { "requested": [], "prohibited": [] }, "hints": [], "misconceptionIds": ["ft07-m2"], "evidence": { "kind": "NONE" },
+      "accessibility": { "textAlternative": "One half of a bar is shaded. Splitting every part into 2 gives 2 of 4 parts shaded; splitting into 3 gives 3 of 6; into 4 gives 4 of 8. One half equals two quarters equals three sixths equals four eighths: the same amount with smaller parts.", "keyboardPath": "Choose a split button to cut every part again.", "reducedMotion": "NOT_APPLICABLE" },
+      "offline": { "mode": "FULL_OFFLINE", "note": "Drawn on the device." }, "completion": "VIEWED",
+      "pedagogy": { "strategy": "CONCRETE_PICTORIAL_ABSTRACT", "representation": "MIXED", "scaffoldLevel": "FULL" },
+      "teaching": { "phase": "VISUALIZE", "blocks": [
+        { "type": "EQUATION", "tex": "\\frac{1}{2} = \\frac{1 \\times 2}{2 \\times 2} = \\frac{2}{4}", "caption": "Multiply the top and bottom by the same number." }
+      ], "visual": { "type": "FRACTION_EQUIVALENCE", "id": "half-split", "base": { "numerator": 1, "denominator": 2 }, "factors": [2, 3, 4], "caption": "The shaded amount stays the same; the parts get smaller and there are more of them." } }
+    },
+    {
+      "id": "watch-fractions", "type": "GUIDED_EXAMPLE", "title": "Worked solutions: rice and kanya", "purpose": "MODEL_WORKED_EXAMPLE", "objectiveIds": ["ft07-o1", "ft07-o2", "ft07-o3"],
+      "learnerAction": "Reveal each step of two worked solutions: an addition and a comparison.",
+      "content": { "body": "Watch equivalent fractions do two jobs: adding fractions with different parts, and comparing them." },
+      "interaction": { "kind": "NONE" }, "tools": { "requested": [], "prohibited": [] }, "hints": [], "misconceptionIds": ["ft07-m1"], "evidence": { "kind": "NONE" },
+      "accessibility": { "textAlternative": "Example 1: Boima has a quarter of a bag of rice and buys half a bag more. Half equals two quarters, so one quarter plus two quarters is three quarters of a bag. The denominators are not added. Example 2: compare three quarters and five eighths. Three quarters equals six eighths, which is more than five eighths.", "keyboardPath": "Press Show next step until every step of both examples is shown.", "reducedMotion": "NOT_APPLICABLE" },
+      "offline": { "mode": "FULL_OFFLINE", "note": "Part of the cached lesson." }, "completion": "VIEWED",
+      "pedagogy": { "strategy": "WORKED_EXAMPLE_FADING", "representation": "MIXED", "scaffoldLevel": "FULL" },
+      "teaching": { "phase": "DEMONSTRATE", "blocks": [
+        { "type": "WORKED_SOLUTION", "id": "rice-addition", "problem": "Boima has $\\frac{1}{4}$ of a bag of rice. He buys $\\frac{1}{2}$ of a bag more. How much of a bag does he have now?", "steps": [
+          { "text": "The parts are different sizes: quarters and halves. Make them the same size first." },
+          { "text": "Rewrite the half as quarters.", "tex": "\\frac{1}{2} = \\frac{2}{4}" },
+          { "text": "Now add the quarters. The size of the parts (quarters) does not change.", "tex": "\\frac{1}{4} + \\frac{2}{4} = \\frac{3}{4}" },
+          { "text": "Name the whole: Boima has $\\frac{3}{4}$ of a bag of rice." }
+        ] },
+        { "type": "WORKED_SOLUTION", "id": "compare-eighths", "problem": "Which is more kanya: $\\frac{3}{4}$ of a bar or $\\frac{5}{8}$ of the same size of bar?", "steps": [
+          { "text": "Give both fractions the same denominator: eighths.", "tex": "\\frac{3}{4} = \\frac{6}{8}" },
+          { "text": "Compare the numerators now that the parts are the same size.", "tex": "\\frac{6}{8} > \\frac{5}{8}" },
+          { "text": "So $\\frac{3}{4}$ of a bar is more than $\\frac{5}{8}$ of a bar." }
+        ] }
+      ] }
+    },
+    {
+      "id": "solve-models", "type": "PRACTICE", "title": "Solve with help: build and place fractions", "purpose": "GUIDED_PRACTICE", "objectiveIds": ["ft07-o1", "ft07-o3"],
+      "learnerAction": "Shade a bar to show a fraction, place a fraction on a number line and compare two fractions.",
+      "content": { "body": "Use the models. If you are stuck, open the hint in the help panel." },
+      "interaction": { "kind": "NONE" }, "tools": { "requested": [], "prohibited": [] }, "hints": ["To compare, give both fractions the same denominator, or picture both bars the same length."], "misconceptionIds": [], "evidence": { "kind": "NONE" },
+      "accessibility": { "textAlternative": "Task 1: shade a bar of 6 equal parts to show two thirds; four of six parts is two thirds. Task 2: place three quarters on a number line from 0 to 1 marked in quarters. Task 3: compare two thirds and three quarters; two thirds is eight twelfths and three quarters is nine twelfths, so two thirds is less.", "keyboardPath": "Tab to each part and press Space to shade it; use the arrow keys to move the point on the number line; choose less than, equal to or greater than.", "reducedMotion": "NOT_APPLICABLE" },
+      "offline": { "mode": "FULL_OFFLINE", "note": "Checked on the device." }, "completion": "VIEWED",
+      "pedagogy": { "strategy": "GUIDED_TO_INDEPENDENT", "representation": "PICTORIAL", "scaffoldLevel": "PARTIAL" },
+      "teaching": { "phase": "SOLVE_WITH_SUPPORT", "blocks": [
+        { "type": "FRACTION_MODEL", "id": "shade-two-thirds", "representation": "BAR", "parts": 6, "shaded": 0, "interaction": "SHADE_TARGET", "target": { "numerator": 2, "denominator": 3 }, "caption": "Shade the bar to show $\\frac{2}{3}$. You may change the number of parts." },
+        { "type": "FRACTION_NUMBER_LINE", "id": "place-three-quarters", "denominator": 4, "wholes": 1, "prompt": "Move the point to $\\frac{3}{4}$.", "formativeKey": { "numerator": 3, "denominator": 4 } },
+        { "type": "FRACTION_COMPARE", "id": "compare-thirds-quarters", "a": { "numerator": 2, "denominator": 3 }, "b": { "numerator": 3, "denominator": 4 }, "prompt": "Which is larger?", "formativeKey": { "relation": "<" } }
+      ] }
+    },
+    {
+      "id": "solve-adding", "type": "PRACTICE", "title": "Solve with help: add and subtract", "purpose": "GUIDED_PRACTICE", "objectiveIds": ["ft07-o2"],
+      "learnerAction": "Add and subtract fractions with related denominators, using the hints if needed.",
+      "content": { "body": "Make the parts the same size, then add or subtract the numerators. Type answers as fractions, such as 3/4." },
+      "interaction": { "kind": "NONE" }, "tools": { "requested": [], "prohibited": [] }, "hints": ["Which denominator can both fractions be written in? Eighths work for halves, quarters and eighths."], "misconceptionIds": ["ft07-m1"], "evidence": { "kind": "NONE" },
+      "accessibility": { "textAlternative": "Problem 1: one quarter plus one half. Write one half as two quarters; the answer is three quarters. Problem 2: five eighths minus one quarter. Write one quarter as two eighths; the answer is three eighths.", "keyboardPath": "Tab to each answer box, type a fraction and press Check.", "reducedMotion": "NOT_APPLICABLE" },
+      "offline": { "mode": "FULL_OFFLINE", "note": "Checked on the device." }, "completion": "VIEWED",
+      "pedagogy": { "strategy": "GUIDED_TO_INDEPENDENT", "representation": "ABSTRACT", "scaffoldLevel": "PARTIAL" },
+      "teaching": { "phase": "SOLVE_WITH_SUPPORT", "blocks": [
+        { "type": "NUMERIC_RESPONSE", "id": "add-quarter-half", "mode": "GUIDED", "prompt": "Work out each one. Write the answer as a fraction.", "parts": [
+          { "id": "sum", "label": "$\\frac{1}{4} + \\frac{1}{2}$", "quantity": "OTHER", "unit": { "kind": "NONE", "base": "" }, "formativeKey": { "value": 0.75 }, "misconceptions": [{ "value": 0.333333333333, "feedback": "You added the tops and the bottoms (2/6). The parts must be the same size first: $\\frac{1}{2} = \\frac{2}{4}$, so $\\frac{1}{4} + \\frac{2}{4}$.", "misconceptionId": "ft07-m1" }] },
+          { "id": "difference", "label": "$\\frac{5}{8} - \\frac{1}{4}$", "quantity": "OTHER", "unit": { "kind": "NONE", "base": "" }, "formativeKey": { "value": 0.375 }, "misconceptions": [{ "value": 1, "feedback": "You subtracted the tops and the bottoms (4/4). Write the quarter as eighths first: $\\frac{1}{4} = \\frac{2}{8}$.", "misconceptionId": "ft07-m1" }] }
+        ], "hints": ["$\\frac{1}{2} = \\frac{2}{4}$.", "$\\frac{1}{4} = \\frac{2}{8}$."], "afterAttempt": ["$\\frac{1}{4} + \\frac{2}{4} = \\frac{3}{4}$.", "$\\frac{5}{8} - \\frac{2}{8} = \\frac{3}{8}$."] }
+      ] }
+    },
+    {
+      "id": "alone-fractions", "type": "PRACTICE", "title": "Try it alone", "purpose": "INDEPENDENT_PRACTICE", "objectiveIds": ["ft07-o1", "ft07-o2", "ft07-o3"],
+      "learnerAction": "Add, subtract, compare and place fractions without hints.",
+      "content": { "body": "No hints this time. Each solution appears after you check." },
+      "interaction": { "kind": "NONE" }, "tools": { "requested": [], "prohibited": [] }, "hints": [], "misconceptionIds": [], "evidence": { "kind": "NONE" },
+      "accessibility": { "textAlternative": "Work out three eighths plus one half, and five sixths minus one third. Compare seven twelfths with two thirds. Place five quarters on a number line from 0 to 2.", "keyboardPath": "Tab to each task; type fractions, choose a comparison, and move the point with the arrow keys.", "reducedMotion": "NOT_APPLICABLE" },
+      "offline": { "mode": "FULL_OFFLINE", "note": "Checked on the device." }, "completion": "VIEWED",
+      "pedagogy": { "strategy": "GUIDED_TO_INDEPENDENT", "representation": "ABSTRACT", "scaffoldLevel": "NONE" },
+      "teaching": { "phase": "PRACTICE_INDEPENDENTLY", "blocks": [
+        { "type": "NUMERIC_RESPONSE", "id": "alone-add-subtract", "mode": "INDEPENDENT", "prompt": "Write each answer as a fraction.", "parts": [
+          { "id": "sum", "label": "$\\frac{3}{8} + \\frac{1}{2}$", "quantity": "OTHER", "unit": { "kind": "NONE", "base": "" }, "formativeKey": { "value": 0.875 }, "misconceptions": [{ "value": 0.4, "feedback": "4/10 adds the tops and the bottoms. Write the half as eighths first.", "misconceptionId": "ft07-m1" }] },
+          { "id": "difference", "label": "$\\frac{5}{6} - \\frac{1}{3}$", "quantity": "OTHER", "unit": { "kind": "NONE", "base": "" }, "formativeKey": { "value": 0.5 }, "misconceptions": [{ "value": 1.333333333333, "feedback": "4/3 subtracts the tops and the bottoms. Write the third as sixths first.", "misconceptionId": "ft07-m1" }] }
+        ], "hints": [], "afterAttempt": ["$\\frac{3}{8} + \\frac{4}{8} = \\frac{7}{8}$.", "$\\frac{5}{6} - \\frac{2}{6} = \\frac{3}{6} = \\frac{1}{2}$."] },
+        { "type": "FRACTION_COMPARE", "id": "alone-compare", "a": { "numerator": 7, "denominator": 12 }, "b": { "numerator": 2, "denominator": 3 }, "prompt": "Which is larger?", "formativeKey": { "relation": "<" } },
+        { "type": "FRACTION_NUMBER_LINE", "id": "alone-five-quarters", "denominator": 4, "wholes": 2, "prompt": "Move the point to $\\frac{5}{4}$.", "formativeKey": { "numerator": 5, "denominator": 4 } }
+      ] }
+    },
+    {
+      "id": "mistakes", "type": "CHECK_UNDERSTANDING", "title": "Find the mistakes", "purpose": "ADDRESS_MISCONCEPTION", "objectiveIds": ["ft07-o1", "ft07-o2", "ft07-o3"],
+      "learnerAction": "Diagnose a wrong addition and answer three questions that catch common fraction mistakes.",
+      "content": { "body": "These answers come from real ways of thinking that do not quite work. Find what went wrong." },
+      "interaction": { "kind": "NONE" }, "tools": { "requested": [], "prohibited": [] }, "hints": [], "misconceptionIds": ["ft07-m1", "ft07-m2", "ft07-m3", "ft07-m4"], "evidence": { "kind": "NONE" },
+      "accessibility": { "textAlternative": "Jallah wrote one quarter plus one half equals two sixths, adding the tops and the bottoms. The parts must be made the same size first; the answer is three quarters. Further questions: which is bigger, one eighth or one quarter (one quarter); how much is five quarters of a bar (one whole bar and a quarter); and what is half of a 2 kilogram bag of rice (1 kilogram).", "keyboardPath": "Choose one option for each question with the arrow keys and Space.", "reducedMotion": "NOT_APPLICABLE" },
+      "offline": { "mode": "FULL_OFFLINE", "note": "Checked on the device." }, "completion": "VIEWED",
+      "teaching": { "phase": "ANALYZE_MISTAKE", "blocks": [
+        { "type": "MISTAKE_ANALYSIS", "id": "jallah-adds", "problem": "Work out $\\frac{1}{4} + \\frac{1}{2}$.", "attempt": { "name": "Jallah", "steps": ["$\\frac{1}{4} + \\frac{1}{2} = \\frac{1 + 1}{4 + 2}$", "$= \\frac{2}{6}$"] }, "question": "What went wrong?", "options": [
+          { "id": "added-bottoms", "text": "Jallah added the denominators. The parts must be the same size before adding.", "feedback": "Yes. $\\frac{2}{6}$ is less than $\\frac{1}{2}$ on its own, which cannot be right. $\\frac{1}{4} + \\frac{2}{4} = \\frac{3}{4}$." },
+          { "id": "should-multiply", "text": "Jallah should have multiplied: $\\frac{1}{4} \\times \\frac{1}{2} = \\frac{1}{8}$.", "feedback": "Multiplying is a different operation. The question asks for the total of the two amounts." },
+          { "id": "correct", "text": "Nothing: $\\frac{2}{6}$ is right.", "feedback": "Check the size: $\\frac{2}{6}$ is smaller than $\\frac{1}{2}$, but we added more to the half." }
+        ], "formativeKey": { "expectedOptionId": "added-bottoms" }, "correction": ["Make the parts the same size: $\\frac{1}{2} = \\frac{2}{4}$.", "Add the quarters: $\\frac{1}{4} + \\frac{2}{4} = \\frac{3}{4}$."], "misconceptionId": "ft07-m1" },
+        { "type": "CHECK", "id": "fraction-traps", "items": [
+          { "id": "eighth-quarter", "prompt": "Which is bigger: $\\frac{1}{8}$ of a bar or $\\frac{1}{4}$ of the same bar?", "options": [
+            { "id": "quarter", "text": "$\\frac{1}{4}$", "feedback": "Yes. Cutting the bar into 8 parts makes each part smaller than cutting it into 4." },
+            { "id": "eighth", "text": "$\\frac{1}{8}$, because 8 is bigger than 4", "feedback": "A bigger denominator means more parts, so each part is smaller. $\\frac{1}{8}$ is half of $\\frac{1}{4}$." },
+            { "id": "same", "text": "They are the same", "feedback": "Both have one part, but the parts are different sizes." }
+          ], "formativeKey": { "expectedOptionId": "quarter" }, "misconceptionId": "ft07-m2" },
+          { "id": "five-quarters", "prompt": "Musu ate $\\frac{5}{4}$ kanya bars. How much is that?", "options": [
+            { "id": "one-and-quarter", "text": "One whole bar and one quarter of another", "feedback": "Yes. $\\frac{4}{4}$ is one whole bar, and one more quarter makes $\\frac{5}{4}$." },
+            { "id": "impossible", "text": "That is impossible: a fraction is less than 1", "feedback": "Fractions can be 1 or more. $\\frac{5}{4}$ is more than one whole." },
+            { "id": "less-than-one", "text": "Less than one bar", "feedback": "5 quarters is more than 4 quarters, and 4 quarters is a whole bar." }
+          ], "formativeKey": { "expectedOptionId": "one-and-quarter" }, "misconceptionId": "ft07-m3" },
+          { "id": "half-bag", "prompt": "A bag of rice weighs 2 kg. How much rice is in half of the bag?", "options": [
+            { "id": "one-kg", "text": "1 kg", "feedback": "Yes. The whole is 2 kg, and half of 2 kg is 1 kg." },
+            { "id": "half-kg", "text": "$\\frac{1}{2}$ kg", "feedback": "Half of the bag is not half of a kilogram. The whole here is the 2 kg bag." },
+            { "id": "two-halves", "text": "$\\frac{2}{2}$ kg", "feedback": "$\\frac{2}{2}$ is one whole. Name the whole first: half of a 2 kg bag." }
+          ], "formativeKey": { "expectedOptionId": "one-kg" }, "misconceptionId": "ft07-m4" }
+        ] }
+      ] }
+    },
+    {
+      "id": "apply-palm-oil", "type": "PRACTICE", "title": "Apply it: palm oil at the market", "purpose": "APPLY", "objectiveIds": ["ft07-o1", "ft07-o2", "ft07-o3"],
+      "learnerAction": "Solve a new market problem that needs adding, comparing and naming the whole.",
+      "content": { "body": "Ma Fatu sells palm oil in litres. Use what you learned to answer her questions." },
+      "interaction": { "kind": "NONE" }, "tools": { "requested": [], "prohibited": [] }, "hints": [], "misconceptionIds": [], "evidence": { "kind": "NONE" },
+      "accessibility": { "textAlternative": "Ma Fatu has three quarters of a litre of palm oil in one bottle and one half of a litre in another. How much oil does she have altogether? Can it all fit in a 1 litre bottle?", "keyboardPath": "Type the total, press Check, then choose an answer.", "reducedMotion": "NOT_APPLICABLE" },
+      "offline": { "mode": "FULL_OFFLINE", "note": "Checked on the device." }, "completion": "VIEWED",
+      "pedagogy": { "strategy": "STRUCTURED_PROBLEM_SOLVING", "representation": "ABSTRACT", "scaffoldLevel": "NONE" },
+      "teaching": { "phase": "APPLY", "blocks": [
+        { "type": "NUMERIC_RESPONSE", "id": "palm-oil-total", "mode": "INDEPENDENT", "prompt": "Ma Fatu has $\\frac{3}{4}$ L of palm oil in one bottle and $\\frac{1}{2}$ L in another. How many litres does she have altogether? Write a fraction or a mixed number.", "parts": [
+          { "id": "total", "label": "Total palm oil (litres)", "quantity": "OTHER", "unit": { "kind": "NONE", "base": "" }, "formativeKey": { "value": 1.25 }, "misconceptions": [{ "value": 0.666666666667, "feedback": "4/6 adds the tops and the bottoms. Write the half as quarters first.", "misconceptionId": "ft07-m1" }] }
+        ], "hints": [], "afterAttempt": ["$\\frac{3}{4} + \\frac{2}{4} = \\frac{5}{4} = 1\\frac{1}{4}$ L."] },
+        { "type": "CHECK", "id": "palm-oil-bottle", "items": [
+          { "id": "fits", "prompt": "Can all of Ma Fatu's oil fit into one 1 L bottle?", "options": [
+            { "id": "no", "text": "No: $\\frac{5}{4}$ L is more than 1 L", "feedback": "Yes. $\\frac{5}{4}$ L is $1\\frac{1}{4}$ L, a quarter of a litre more than the bottle holds." },
+            { "id": "yes", "text": "Yes: fractions are always less than 1", "feedback": "A total of fractions can be more than 1. $\\frac{4}{4}$ L fills the bottle and $\\frac{1}{4}$ L is left over." },
+            { "id": "exact", "text": "Exactly: it fills the bottle", "feedback": "$\\frac{4}{4}$ L would fill it exactly. She has $\\frac{5}{4}$ L." }
+          ], "formativeKey": { "expectedOptionId": "no" }, "misconceptionId": "ft07-m3" }
+        ] }
+      ] }
+    },
+    {
+      "id": "remember", "type": "REVIEW", "title": "Remember", "purpose": "REVIEW", "objectiveIds": ["ft07-o1", "ft07-o2", "ft07-o3"],
+      "learnerAction": "Recall how equivalent fractions help you add and compare.",
+      "content": { "body": "Say each point aloud before the check.", "keyPoints": ["A fraction names equal parts of a named whole; it can be 1 or more.", "Multiply the top and bottom by the same number for an equivalent fraction.", "Make the parts the same size before you add, subtract or compare."] },
+      "interaction": { "kind": "NONE" }, "tools": { "requested": [], "prohibited": [] }, "hints": [], "misconceptionIds": [], "evidence": { "kind": "NONE" },
+      "accessibility": { "textAlternative": "A fraction names equal parts of a named whole and can be 1 or more. Multiplying the top and bottom by the same number gives an equivalent fraction. Make the parts the same size before adding, subtracting or comparing. A question asks which fraction equals three quarters: six eighths.", "keyboardPath": "Choose one option with the arrow keys and Space.", "reducedMotion": "NOT_APPLICABLE" },
+      "offline": { "mode": "FULL_OFFLINE", "note": "Part of the cached lesson." }, "completion": "VIEWED",
+      "teaching": { "phase": "RETRIEVE", "blocks": [
+        { "type": "CHECK", "id": "retrieve-equivalent", "items": [
+          { "id": "equals-three-quarters", "prompt": "Which fraction is equal to $\\frac{3}{4}$?", "options": [
+            { "id": "six-eighths", "text": "$\\frac{6}{8}$", "feedback": "Yes: multiply the top and bottom by 2." },
+            { "id": "four-fifths", "text": "$\\frac{4}{5}$", "feedback": "Adding 1 to the top and bottom does not keep the amount the same." },
+            { "id": "three-eighths", "text": "$\\frac{3}{8}$", "feedback": "Eighths are smaller than quarters, so 3 eighths is less than 3 quarters." }
+          ], "formativeKey": { "expectedOptionId": "six-eighths" } }
+        ] }
+      ] }
+    },
+    {
+      "id": "show-what-you-know", "type": "MASTERY_CHECK", "title": "Show what you know", "purpose": "ASSESS_MASTERY", "objectiveIds": ["ft07-o1", "ft07-o2", "ft07-o3"],
+      "learnerAction": "Answer the assessment questions on your own.",
+      "content": { "body": "Now show what you can do on your own. The assessment is checked by your teacher's assessment system, not by this lesson." },
+      "interaction": { "kind": "ASSESSMENT_HANDOFF", "assessmentRequestId": "fractions-mastery" }, "tools": { "requested": [], "prohibited": ["fraction-visualizer", "basic-calculator"] }, "hints": [], "misconceptionIds": [],
+      "evidence": { "kind": "MASTERY_RESPONSE", "evidenceType": "QUIZ", "responses": [
+        { "responseKey": "fractions-mastery-represent", "objectiveId": "ft07-o1", "responseType": "ASSESSMENT_RESPONSE", "scaffoldLevel": "NONE" },
+        { "responseKey": "fractions-mastery-add", "objectiveId": "ft07-o2", "responseType": "ASSESSMENT_RESPONSE", "scaffoldLevel": "NONE" },
+        { "responseKey": "fractions-mastery-compare", "objectiveId": "ft07-o3", "responseType": "ASSESSMENT_RESPONSE", "scaffoldLevel": "NONE" }
+      ] },
+      "accessibility": { "textAlternative": "The assessment asks you to represent, add, subtract and compare fractions on your own. It is delivered by the assessment player.", "keyboardPath": "Answer each assessment question, then submit.", "reducedMotion": "NOT_APPLICABLE" },
+      "offline": { "mode": "FULL_OFFLINE", "note": "Responses are kept until the device is online; the assessment authority scores them." }, "completion": "ALL_ANSWERED",
+      "teaching": { "phase": "ASSESS", "blocks": [] }
+    }
+  ],
+  "assessmentRequests": [
+    { "id": "fractions-mastery", "objectiveIds": ["ft07-o1", "ft07-o2", "ft07-o3"], "interaction": "NUMERIC", "evidenceType": "QUIZ", "difficulty": "CORE", "misconceptionIds": ["ft07-m1", "ft07-m2", "ft07-m3", "ft07-m4"], "tools": { "requested": [], "prohibited": ["fraction-visualizer", "basic-calculator"] }, "offline": "FULL_OFFLINE" }
+  ],
+  "labProposals": []
+}

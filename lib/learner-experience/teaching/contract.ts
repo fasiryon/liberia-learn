@@ -16,6 +16,7 @@
 import type { CurriculumOntologyRelease } from "@/lib/learning-authority/governedGrade4Math";
 import type { AgeBand, ContentAuthorityStatus, FormativeItem } from "@/lib/learner-experience/types";
 import { MAX_DEMO_NUMBER, PLACES, type PlaceId } from "@/lib/learner-experience/demo/placeValue";
+import { blockRequiresCompletion, validateBlock, type VisualBlock } from "./registry";
 
 export const TEACHING_LESSON_CONTRACT_VERSION = "teaching-lesson/1.0.0" as const;
 
@@ -52,7 +53,9 @@ export type TeachingBlock =
   /** Put events in order, then see them on a timeline. `marker` is the label shown on the line (e.g. a year). */
   | Readonly<{ type: "SEQUENCE"; id: string; prompt: string; events: readonly Readonly<{ id: string; label: string; marker: string; detail: string }>[] }>
   /** A short authored callout: a tip, or a common mistake to avoid. */
-  | Readonly<{ type: "CALLOUT"; tone: "TIP" | "MISTAKE"; title: string; text: string }>;
+  | Readonly<{ type: "CALLOUT"; tone: "TIP" | "MISTAKE"; title: string; text: string }>
+  /** Interactive Learning V4: any block of the Visual Teaching Block Registry (lib/learner-experience/teaching/registry.ts). */
+  | VisualBlock;
 
 export type InteractiveBlock = Extract<TeachingBlock, { id: string }>;
 
@@ -92,7 +95,8 @@ export class TeachingContractError extends Error {}
 
 /** Blocks a learner must finish before Continue: all worked steps shown, all checks answered, cards placed. */
 export function requiresInteraction(block: TeachingBlock): block is InteractiveBlock {
-  return block.type === "STEP_REVEAL" || block.type === "CHOICE_CHECK" || block.type === "DIGIT_CARDS" || block.type === "SORT" || block.type === "SEQUENCE";
+  if (block.type === "CHOICE_CHECK") return true;
+  return blockRequiresCompletion(block as VisualBlock);
 }
 
 export function sceneBlocks(scene: TeachingScene): readonly TeachingBlock[] {
@@ -158,6 +162,8 @@ export function validateTeachingLesson(lesson: TeachingLesson): string[] {
         }
         case "SEQUENCE": if (block.events.length < 3) fail(`sequence_requires_three_events:${block.id}`); break;
         case "CALLOUT": if (!block.text.trim()) fail(`callout_text_required:${scene.id}`); break;
+        // V4 blocks are checked by the registry: schema, model consistency and subject/grade fit.
+        default: for (const problem of validateBlock(block, { subject: lesson.subject, grade: lesson.grade }).problems) fail(problem);
       }
     }
   }

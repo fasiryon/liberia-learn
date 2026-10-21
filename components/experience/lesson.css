@@ -241,3 +241,243 @@ li[data-state=open] .ll4-diagram-num { background: var(--ll-accent); border-colo
   .ll4-diagram-text { padding: 0 18px 18px; }
 }
 @media (prefers-reduced-motion: no-preference) { .ll4-diagram-text:not([hidden]) { animation: ll4-rise 200ms ease-out; } }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+ * Interactive Learning V4 — workspace layout, mathematical notation and the visual teaching blocks.
+ * Scoped to lesson roots (.ll3-stage[data-workspace], .ll5-*) like the rest of this file; no shared token changes.
+ * ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Workspace: contents rail | wide canvas | tools rail. Gutters respond to the viewport instead of a fixed cap. */
+.ll3-stage[data-workspace] { max-width: 1760px; padding-inline: clamp(12px, 2.2vw, 36px); gap: 24px; grid-template-columns: minmax(0, 1fr); grid-template-areas: "main"; }
+.ll3-stage[data-workspace] .ll3-stage-main { width: 100%; max-width: 1180px; justify-self: center; }
+/* Pages that keep their own contents rail inside the canvas (legacy Read) get the outline column's width back. */
+.ll3-stage[data-workspace]:not([data-outline]) .ll3-stage-main { max-width: 1400px; }
+.ll3-stage[data-workspace] .ll3-stage-support { display: none; }
+.ll5-stage-bar { display: flex; flex-wrap: wrap; gap: 0 10px; }
+.ll5-stage-bar > * { margin-bottom: 16px; }
+.ll5-stage-bar > .ll4-drawer { flex: 1 1 220px; min-width: 0; }
+.ll5-outline-show, .ll5-support-show, .ll5-read-show { display: none; }
+.ll5-support-sheet { padding: 8px 4px; background: transparent; }
+.ll5-rail-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 2px 4px 8px; font-size: 13px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--ll-text-muted); }
+.ll5-rail-count { margin-left: 4px; letter-spacing: 0; color: var(--ll-text); }
+.ll4-read-rail .ll4-rail-head { align-items: center; flex-wrap: nowrap; }
+.ll5-rail-toggle { display: inline-flex; align-items: center; gap: 4px; min-height: 36px; padding: 4px 8px; border-radius: 8px; border: 1px solid var(--ll-border); color: var(--ll-text); font-size: 13px; font-weight: 700; letter-spacing: 0; text-transform: none; background: var(--ll-surface); }
+@media (min-width: 1024px) {
+  .ll3-stage[data-workspace][data-outline=""] { grid-template-columns: 208px minmax(0, 1fr); grid-template-areas: "outline main"; }
+  .ll3-stage[data-workspace][data-outline=closed] { grid-template-columns: minmax(0, 1fr); grid-template-areas: "main"; }
+  .ll5-outline-show { display: inline-flex; }
+  .ll5-read-show { display: block; margin-bottom: 16px; }
+}
+@media (min-width: 1280px) {
+  .ll3-stage[data-workspace] .ll3-stage-support:not([hidden]) { display: block; }
+  .ll3-stage[data-workspace][data-support=open] { grid-template-columns: minmax(0, 1fr) 232px; grid-template-areas: "main support"; }
+  .ll3-stage[data-workspace][data-outline=""][data-support=open] { grid-template-columns: 208px minmax(0, 1fr) 232px; grid-template-areas: "outline main support"; }
+  .ll3-stage[data-workspace][data-outline=""][data-support=closed] { grid-template-columns: 208px minmax(0, 1fr); grid-template-areas: "outline main"; }
+  .ll3-stage[data-workspace] .ll3-stage-support .ll3-support { padding: 14px; gap: 14px; }
+  .ll5-support-drawer { display: none; }
+  .ll5-support-show { display: inline-flex; margin-left: auto; }
+}
+/* Legacy Read: a 208px contents rail that can be hidden, and a wider reading stage. */
+@media (min-width: 1024px) {
+  .ll4-read { grid-template-columns: 208px minmax(0, 1fr); gap: 24px; }
+  .ll4-read[data-rail=closed] { grid-template-columns: minmax(0, 1fr); }
+  .ll4-read-stage .ll3-reading { max-width: 76ch; }
+}
+@media (min-width: 1280px) { .ll4-read-stage .ll3-reading { font-size: 19px; } }
+
+/* Mathematical notation (MathML, with a plain-text fallback where MathML is not supported). */
+.ll5-math { white-space: nowrap; }
+/* Inline fractions at full size (MathML shrinks them by default), so they stay readable inside sentences. */
+.ll5-math math { font-size: 1.12em; color: var(--ll-text); math-style: normal; }
+/* Display equations scale with the viewport instead of scrolling (a scroll box would need its own tab stop). */
+.ll5-math[data-display] { display: block; margin: 10px 0; text-align: center; white-space: normal; max-width: 100%; }
+.ll5-math[data-display] math { font-size: clamp(1em, 4.4vw, 1.4em); }
+.ll5-math-fallback { display: none; }
+@supports not (math-depth: 1) {
+  .ll5-math math { display: none; }
+  .ll5-math-fallback { display: inline; font-weight: 600; }
+}
+.ll5-equation { display: grid; gap: 4px; padding: 14px 18px; border-radius: 14px; background: var(--ll-surface); border: 1px solid var(--ll-border); }
+.ll5-equation figcaption { color: var(--ll-text-muted); font-size: 15px; text-align: center; }
+.ll5-step-math { display: block; }
+
+/* Block frame: instruction, example and question each look different. */
+.ll5-scene-blocks { display: grid; gap: 20px; min-width: 0; }
+.ll5-block { display: grid; gap: 14px; padding: clamp(16px, 2.4vw, 22px); border-radius: 18px; background: var(--ll-surface); border: 1px solid var(--ll-border); min-width: 0; }
+.ll5-block-label { font-size: 13px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--ll-accent); }
+.ll5-block-title { font-size: 19px; font-weight: 700; line-height: 1.45; }
+.ll5-problem { font-size: 19px; line-height: 1.55; font-weight: 600; padding: 12px 16px; border-left: 5px solid #8fb8ff; background: rgba(143, 184, 255, .08); border-radius: 0 12px 12px 0; }
+.ll5-worked { border-color: var(--ll-border-strong); }
+.ll5-numeric, .ll5-compare, .ll5-numberline, .ll5-areamodel, .ll5-builder, .ll5-evidence { border-left: 5px solid var(--ll-accent); }
+.ll5-mistake { border-left: 5px solid #ff8a95; }
+.ll5-figure { gap: 14px; }
+.ll5-toggle[aria-pressed=true] { border: 3px solid var(--ll-accent); background: #3e341b; padding: 8px 16px; }
+.ll5-sliders { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); }
+.ll5-slider { display: grid; gap: 6px; font-size: 16px; }
+.ll5-slider input[type=range] { width: 100%; min-height: 32px; accent-color: #efb540; }
+.ll5-readout { display: grid; gap: 8px; }
+.ll5-readout > div { display: grid; grid-template-columns: minmax(84px, auto) minmax(0, 1fr); gap: 10px; align-items: baseline; padding: 8px 12px; border-radius: 10px; background: var(--ll-surface-muted); }
+.ll5-readout dt { font-size: 13px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; color: var(--ll-text-muted); }
+.ll5-readout dd { min-width: 0; overflow-wrap: anywhere; }
+.ll5-readout dd .ll5-math math { font-size: clamp(.95em, 3.6vw, 1.12em); }
+.ll5-readout > div[data-kind=area] { box-shadow: inset 4px 0 0 var(--ll-accent); }
+.ll5-readout > div[data-kind=perimeter] { box-shadow: inset 4px 0 0 #8fb8ff; }
+.ll5-solution { display: grid; gap: 8px; padding: 14px 16px; border-radius: 12px; background: rgba(115, 201, 154, .08); border: 1px solid rgba(115, 201, 154, .35); }
+.ll5-solution-steps { display: grid; gap: 6px; padding-left: 1.3em; list-style: decimal; font-size: 17px; line-height: 1.55; }
+.ll5-reasons { display: grid; gap: 6px; padding-left: 1.2em; list-style: disc; line-height: 1.5; }
+.ll5-reasons > li[data-result=retry] strong { color: var(--ll-accent); }
+.ll5-reasons > li[data-result=right] strong { color: var(--ll-success); }
+
+/* Geometry */
+.ll5-shape { margin: 0; min-width: 0; }
+.ll5-shape svg { display: block; width: 100%; max-width: 620px; height: auto; margin: 0 auto; overflow: visible; }
+.ll5-shape-body { fill: transparent; transition: fill 180ms ease; }
+.ll5-shape-body[data-on] { fill: rgba(239, 181, 64, .32); }
+.ll5-shape-grid { fill: none; stroke: rgba(244, 242, 235, .35); stroke-width: 1; }
+.ll5-shape-frame { fill: none; stroke: var(--ll-border-strong); stroke-width: 1.5; stroke-dasharray: 6 5; }
+.ll5-shape-edge { fill: none; stroke: var(--ll-text); stroke-width: 2.5; stroke-linejoin: round; }
+.ll5-shape-edge[data-on] { stroke: #8fb8ff; stroke-width: 6; }
+.ll5-shape-height line { stroke: #ff8a95; stroke-width: 3; stroke-dasharray: 7 5; }
+.ll5-shape-height .ll5-shape-extend { stroke: var(--ll-border-strong); stroke-width: 1.5; stroke-dasharray: 3 4; }
+.ll5-shape-right { fill: none; stroke: #ff8a95; stroke-width: 2; }
+.ll5-shape-label { fill: var(--ll-text); font-size: 17px; font-weight: 700; paint-order: stroke; stroke: var(--ll-bg); stroke-width: 4px; }
+.ll5-worked-body, .ll5-numeric-body { display: grid; gap: 18px; align-items: start; }
+@container stage (min-width: 760px) {
+  .ll5-worked-body[data-has-shape], .ll5-numeric-body[data-has-shape] { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+}
+.ll5-steps > li[data-latest] > span { background: var(--ll-yellow-soft, rgba(239,181,64,.14)); border-radius: 10px; padding: 4px 10px; margin: -4px -10px; }
+
+/* Answers */
+.ll5-answers { display: grid; gap: 16px; min-width: 0; }
+.ll5-answer { display: grid; gap: 8px; }
+.ll5-answer-label { font-size: 17px; font-weight: 700; line-height: 1.4; }
+.ll5-answer-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.ll5-input, .ll5-select, .ll5-textarea { min-height: var(--pdv2-target, 48px); padding: 8px 12px; border-radius: 12px; border: 2px solid var(--ll-border-strong); background: var(--ll-bg); color: var(--ll-text); font-size: 19px; }
+.ll5-input { width: min(100%, 11rem); font-variant-numeric: tabular-nums; font-weight: 700; }
+.ll5-select { font-size: 17px; }
+.ll5-textarea { width: 100%; font-size: 17px; line-height: 1.55; resize: vertical; }
+.ll5-answer[data-result=right] .ll5-input { border-color: var(--ll-success); }
+.ll5-answer[data-result=retry] .ll5-input { border-color: var(--ll-accent); border-style: dashed; }
+.ll5-student-work { display: grid; gap: 6px; padding: 14px 16px; border-radius: 12px; background: #f4f2eb; color: #0e100e; font-size: 18px; line-height: 1.5; font-family: "Comic Sans MS", "Segoe Print", cursive; }
+.ll5-student-work .ll5-math math, .ll5-student-work .ll5-math-fallback { color: #0e100e; }
+.ll5-student-name { font-family: inherit; font-size: 13px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; color: #5a4a1a; }
+
+/* Fractions */
+.ll5-fbar { display: flex; width: 100%; max-width: 640px; min-height: 64px; border: 3px solid var(--ll-text); border-radius: 8px; overflow: hidden; }
+.ll5-fpart { flex: 1 1 0; min-width: 0; min-height: 64px; border-right: 2px solid var(--ll-text); background: transparent; }
+.ll5-fpart:last-child { border-right: 0; }
+.ll5-fpart[data-shaded], .ll5-fpart[aria-pressed=true] { background: repeating-linear-gradient(135deg, #efb540 0 10px, #d79a26 10px 14px); }
+button.ll5-fpart:focus-visible { outline: 3px solid #8fb8ff; outline-offset: -5px; }
+.ll5-fcircle { width: min(100%, 260px); height: auto; display: block; margin: 0 auto; }
+.ll5-fsector { fill: transparent; stroke: var(--ll-text); stroke-width: 2.5; cursor: default; }
+.ll5-fsector[data-shaded], .ll5-fsector[aria-pressed=true] { fill: #efb540; }
+.ll5-fsector[role=button] { cursor: pointer; }
+.ll5-fsector[role=button]:focus-visible { outline: none; stroke: #8fb8ff; stroke-width: 5; }
+.ll5-fraction-readout { display: grid; gap: 4px; justify-items: center; text-align: center; color: var(--ll-text-muted); }
+.ll5-compare-rows { display: grid; gap: 12px; }
+.ll5-compare-rows > div { display: grid; grid-template-columns: 3.2rem minmax(0, 1fr); gap: 12px; align-items: center; }
+.ll5-sign { min-width: 56px; font-size: 24px; }
+.ll5-sign[aria-pressed=true] { border: 3px solid var(--ll-accent); background: #3e341b; }
+.ll5-numberline svg { width: 100%; height: auto; }
+.ll5-nl-axis { stroke: var(--ll-text); stroke-width: 3; }
+.ll5-nl-tick { stroke: var(--ll-text); stroke-width: 2; }
+.ll5-nl-point { fill: #efb540; stroke: var(--ll-bg); stroke-width: 3; }
+
+/* Multiplication */
+.ll5-array { display: grid; gap: 10px; justify-content: center; }
+.ll5-array-row { display: grid; grid-template-columns: repeat(var(--cols), 26px); gap: 8px; }
+.ll5-array-cell { width: 26px; height: 26px; border-radius: 50%; background: #efb540; }
+.ll5-array-groups .ll5-array-row { padding: 8px 10px; border: 2px dashed var(--ll-border-strong); border-radius: 14px; }
+.ll5-array-grid { gap: 0; }
+.ll5-array-grid .ll5-array-row { gap: 0; }
+.ll5-array-grid .ll5-array-cell { border-radius: 0; background: rgba(239, 181, 64, .35); border: 1px solid var(--ll-text); }
+.ll5-am { display: grid; gap: 6px; }
+.ll5-am-top { display: grid; margin-left: 56px; gap: 0; text-align: center; font-weight: 800; color: var(--ll-accent); }
+.ll5-am-row { display: grid; grid-template-columns: 50px minmax(0, 1fr); gap: 6px; align-items: stretch; }
+.ll5-am-side { display: grid; place-items: center; font-weight: 800; color: #8fb8ff; }
+.ll5-am-cells { display: grid; border: 2px solid var(--ll-text); }
+.ll5-am-cell { display: grid; gap: 6px; place-items: center; align-content: center; min-height: 92px; padding: 8px 4px; border-right: 2px solid var(--ll-text); background: rgba(239, 181, 64, .1); text-align: center; min-width: 0; }
+.ll5-am-cell:last-child { border-right: 0; }
+.ll5-am-cell strong { font-size: 24px; font-variant-numeric: tabular-nums; }
+.ll5-am-cell[data-result=right] { background: rgba(115, 201, 154, .18); }
+.ll5-am-cell[data-result=retry] { outline: 3px dashed var(--ll-accent); outline-offset: -5px; }
+.ll5-am-input { width: min(100%, 6.5rem); text-align: center; }
+.ll5-am-q { font-size: 14px; color: var(--ll-text-muted); }
+
+/* Science */
+.ll5-particle-layout { display: grid; gap: 16px; align-items: start; }
+@container stage (min-width: 760px) { .ll5-particle-layout { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); } }
+.ll5-particles { display: grid; gap: 8px; justify-items: start; }
+.ll5-particles svg { width: 100%; max-width: 480px; height: auto; display: block; }
+.ll5-particle-box { fill: rgba(143, 184, 255, .06); stroke: var(--ll-border-strong); stroke-width: 2; }
+.ll5-particle { fill: #8fb8ff; stroke: #0e100e; stroke-width: 1.5; }
+.ll5-particles[data-state=SOLID] .ll5-particle { fill: #cfe3ff; }
+.ll5-particles[data-state=GAS] .ll5-particle { fill: #ffb3ba; }
+.ll5-particle-arrow { stroke: var(--ll-accent); stroke-width: 2; }
+.ll5-particle-controls { display: grid; gap: 12px; }
+.ll5-thermo input[type=range] { accent-color: #ff8a95; }
+.ll5-pause { min-height: 40px; padding: 4px 12px; font-size: 14px; }
+.ll5-poe-run { display: grid; gap: 10px; }
+.ll5-plot svg { width: 100%; height: auto; }
+.ll5-plot-grid { stroke: var(--ll-border); stroke-width: 1; }
+.ll5-plot-axis { stroke: var(--ll-text-muted); stroke-width: 1.5; }
+.ll5-plot-line { fill: none; stroke: #8fb8ff; stroke-width: 3; stroke-linejoin: round; }
+.ll5-plot-point { fill: #8fb8ff; stroke: var(--ll-bg); stroke-width: 2; }
+.ll5-plot-tick { fill: var(--ll-text-muted); font-size: 13px; }
+.ll5-plot-label { fill: var(--ll-text); font-size: 14px; font-weight: 700; }
+.ll5-plot-table summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; font-weight: 700; color: var(--ll-accent); }
+
+/* Map */
+.ll5-map-layout { display: grid; gap: 16px; align-items: start; }
+@container stage (min-width: 820px) { .ll5-map-layout { grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); } }
+.ll5-map-frame { display: grid; gap: 6px; padding: 10px; border-radius: 16px; background: linear-gradient(200deg, var(--ll-surface-muted) 55%, rgba(143, 184, 255, .16)); border: 1px solid var(--ll-border); }
+.ll5-map-edge { font-size: 12px; font-weight: 700; color: var(--ll-text-muted); display: flex; gap: 4px; align-items: center; }
+.ll5-map-edge[data-edge=east] { justify-content: flex-end; }
+.ll5-map-edge[data-edge=south] { color: #8fb8ff; }
+.ll5-map-grid { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); grid-template-rows: repeat(5, minmax(44px, auto)); gap: 4px; }
+.ll5-county { display: grid; place-items: center; min-height: 44px; padding: 4px 2px; border-radius: 8px; border: 2px solid var(--ll-border-strong); background: var(--ll-raised, #22251f); color: var(--ll-text); font-size: clamp(10px, 1.2vw, 13px); font-weight: 700; line-height: 1.15; text-align: center; overflow-wrap: normal; word-break: normal; hyphens: manual; }
+.ll5-county[data-coast] { border-bottom: 4px solid #8fb8ff; }
+.ll5-county[aria-pressed=true] { border-color: var(--ll-accent); background: #3e341b; outline: 3px solid var(--ll-accent); outline-offset: 1px; }
+.ll5-county[data-result=right] { border-color: var(--ll-success); background: rgba(115, 201, 154, .2); }
+.ll5-county[data-result=retry] { border-style: dashed; }
+.ll5-map-side { display: grid; gap: 12px; }
+.ll5-county-detail { display: grid; gap: 8px; }
+.ll5-county-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr)); gap: 2px 12px; padding: 8px 0; }
+
+/* Sources and reading */
+.ll5-source { display: grid; gap: 10px; padding: 16px; border-radius: 14px; background: #f4f2eb; color: #0e100e; }
+.ll5-source-title { display: flex; gap: 8px; align-items: center; font-weight: 800; }
+.ll5-source .ll3-muted { color: #4a4a40; }
+.ll5-sentences { display: flex; flex-wrap: wrap; gap: 4px 6px; line-height: 1.7; }
+.ll5-sentence { text-align: left; padding: 2px 6px; border-radius: 6px; border: 2px solid transparent; color: #0e100e; font-size: 18px; line-height: 1.6; background: transparent; }
+.ll5-sentence:hover { background: rgba(239, 181, 64, .2); }
+.ll5-sentence[aria-pressed=true] { background: #f5d37f; border-color: #8a6410; }
+.ll5-sentence[data-result=retry] { text-decoration: underline wavy #b3261e; text-underline-offset: 4px; }
+.ll5-sentence[data-result=right] { background: #bfe6cf; border-color: #1f6b43; }
+.ll5-sentence:focus-visible { outline: 3px solid #0b57d0; outline-offset: 2px; }
+.ll5-passage { display: grid; gap: 14px; padding: clamp(18px, 3vw, 32px); border-radius: 18px; background: #f4f2eb; color: #0e100e; }
+/* The passage is printed paper: controls inside its header use dark-on-light text. */
+.ll5-passage-head { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; --ll-text-muted: #45453c; }
+.ll5-passage-title { font-size: clamp(24px, 2.6vw, 32px); font-weight: 800; font-family: Georgia, "Times New Roman", serif; }
+.ll5-passage-body { display: grid; gap: 14px; max-width: 70ch; font-size: 19px; line-height: 1.75; font-family: Georgia, "Times New Roman", serif; }
+.ll5-passage .ll3-muted { color: #4a4a40; }
+.ll5-gloss { color: #0e100e; font: inherit; text-decoration: underline dotted 2px #8a6410; text-underline-offset: 4px; padding: 0; background: none; border: 0; }
+.ll5-gloss[aria-expanded=true] { background: #f5d37f; }
+.ll5-gloss-meaning { font-family: system-ui, sans-serif; font-size: 16px; color: #5a4a1a; }
+.ll5-sentence-line, .ll5-tile-bank { display: flex; flex-wrap: wrap; gap: 8px; min-height: var(--pdv2-target, 48px); padding: 10px; border-radius: 12px; }
+.ll5-sentence-line { border: 2px dashed var(--ll-border-strong); background: var(--ll-surface-muted); align-items: center; }
+.ll5-organizer-fields { display: grid; gap: 14px; }
+@container stage (min-width: 900px) { .ll5-organizer-fields { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); } }
+.ll5-organizer-field { display: grid; gap: 4px; align-content: start; }
+.ll5-checklist { display: grid; gap: 6px; }
+.ll5-check { display: flex; gap: 10px; align-items: flex-start; min-height: 40px; font-size: 16px; line-height: 1.45; }
+.ll5-check input { width: 22px; height: 22px; flex-shrink: 0; margin-top: 2px; accent-color: #efb540; }
+
+@media (prefers-reduced-motion: reduce) { .ll5-shape-body { transition: none; } }
+@media (forced-colors: active) {
+  .ll5-fpart, .ll5-county, .ll5-sentence, .ll5-am-cell { border: 2px solid ButtonText; }
+  .ll5-fpart[aria-pressed=true], .ll5-fpart[data-shaded], .ll5-sentence[aria-pressed=true], .ll5-county[aria-pressed=true] { background: Highlight; }
+  .ll5-shape-body[data-on], .ll5-fsector[data-shaded] { fill: Highlight; }
+  .ll5-shape-edge[data-on] { stroke: Highlight; }
+}
+@media print { .ll5-stage-bar { display: none !important; } }

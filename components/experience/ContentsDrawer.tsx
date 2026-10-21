@@ -9,8 +9,12 @@ import { ListOrdered, X } from "lucide-react";
  * backdrop close it and return focus to the trigger. The page behind does not scroll while it is open, so
  * there is never a second scrollbar competing with the page.
  */
-export function ContentsDrawer({ label, summary, children, className = "" }: {
+export function ContentsDrawer({ label, summary, children, className = "", icon, closeOnSelect = true }: {
   label: string;
+  /** Trigger icon; the lesson contents list icon by default. */
+  icon?: ReactNode;
+  /** Close when a button or link inside is chosen (navigation lists). Off for tool panels. */
+  closeOnSelect?: boolean;
   /** Short position text beside the trigger, e.g. "3 of 17 · Reading large numbers". */
   summary?: ReactNode;
   children: ReactNode;
@@ -48,12 +52,12 @@ export function ContentsDrawer({ label, summary, children, className = "" }: {
   }, [open]);
   return <div className={`ll4-drawer ${className}`.trim()}>
     <button ref={triggerRef} type="button" className="ll4-drawer-trigger" aria-haspopup="dialog" aria-expanded={open} onClick={() => setOpen(true)}>
-      <ListOrdered size={18} aria-hidden="true" /><span className="ll4-drawer-label">{label}</span>{summary && <span className="ll4-drawer-summary">{summary}</span>}
+      {icon ?? <ListOrdered size={18} aria-hidden="true" />}<span className="ll4-drawer-label">{label}</span>{summary && <span className="ll4-drawer-summary">{summary}</span>}
     </button>
     {open && <div className="ll4-drawer-layer">
       <button type="button" className="ll4-drawer-backdrop" aria-label={`Close ${label.toLowerCase()}`} tabIndex={-1} onClick={() => { returnFocus.current = true; setOpen(false); }} />
       <div ref={sheetRef} role="dialog" aria-modal="true" aria-labelledby={titleId} className="ll4-drawer-sheet"
-        onClick={(event) => { const target = event.target as HTMLElement; if (target.closest(".ll4-drawer-list button:not([disabled]), .ll4-drawer-list a[href]")) setOpen(false); }}>
+        onClick={(event) => { const target = event.target as HTMLElement; if (closeOnSelect && target.closest(".ll4-drawer-list button:not([disabled]), .ll4-drawer-list a[href]")) setOpen(false); }}>
         <div className="ll4-drawer-head">
           <p id={titleId} className="ll4-drawer-title">{label}</p>
           <button type="button" className="ll4-icon-btn" aria-label={`Close ${label.toLowerCase()}`} onClick={() => { returnFocus.current = true; setOpen(false); }}><X size={20} aria-hidden="true" /></button>

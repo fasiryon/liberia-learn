@@ -1,0 +1,244 @@
+{
+  "contractVersion": "candidate-lesson-v2/1.1.0",
+  "title": "Multiplication: groups, arrays and the area model",
+  "estimatedMinutes": 40,
+  "ageBand": "UPPER_PRIMARY",
+  "instruction": {
+    "standard": "liberialearn-v4-instruction/1.0.0",
+    "retention": {
+      "delayDays": 7,
+      "prompts": [
+        "Draw 5 × 4 as equal groups and as an array. Write it as repeated addition.",
+        "Use an area model to work out 36 × 7. Show the two partial products."
+      ]
+    }
+  },
+  "pedagogy": { "primaryStrategy": "CONCRETE_PICTORIAL_ABSTRACT", "rationale": "One product is seen as groups, an array, a grid and repeated addition before the area model splits larger factors by place value." },
+  "prerequisiteAssumptions": ["Counts in equal steps (skip-counting by 2, 3, 5 and 10).", "Knows the place value of tens and ones."],
+  "misconceptions": [
+    { "id": "m-add-factors", "objectiveId": "v4-demo-mult-models", "description": "Adds the two numbers instead of multiplying them (4 × 3 = 7).", "response": "Draw the groups: 4 groups of 3 is 3 + 3 + 3 + 3, not 4 + 3." },
+    { "id": "m-place-value-dropped", "objectiveId": "v4-demo-mult-area-model", "description": "Treats the tens digit as ones in a partial product (20 × 4 written as 2 × 4 = 8).", "response": "Keep the value of each part: 20 × 4 is 80, the area of a 20 by 4 rectangle." },
+    { "id": "m-partial-product-missed", "objectiveId": "v4-demo-mult-area-model", "description": "Multiplies only some parts of the split, or forgets to add the partial products.", "response": "Every section of the area model is part of the whole rectangle: find each one, then add them all." }
+  ],
+  "scenes": [
+    {
+      "id": "oranges", "type": "INTRO", "title": "Bags of oranges", "purpose": "HOOK_PHENOMENON", "objectiveIds": [],
+      "learnerAction": "Look at the bags and think of a quick way to count the oranges.",
+      "content": { "body": "At the market, Ma Kumba has 4 bags with 3 oranges in each bag. You could count every orange, or you could use multiplication.\n\nToday you will see one multiplication in four ways, then use a picture called an area model to multiply bigger numbers." },
+      "interaction": { "kind": "NONE" }, "tools": { "requested": [], "prohibited": [] }, "hints": [], "misconceptionIds": [], "evidence": { "kind": "NONE" },
+      "accessibility": { "textAlternative": "Four bags with 3 oranges in each bag: 4 equal groups of 3, which is 12 oranges.", "keyboardPath": "Read the scene, then press Continue.", "reducedMotion": "NOT_APPLICABLE" },
+      "offline": { "mode": "FULL_OFFLINE", "note": "Drawn on the device." }, "completion": "VIEWED",
+      "teaching": { "phase": "ORIENT", "blocks": [], "visual": { "type": "ARRAY_MODEL", "id": "orange-bags", "rows": 4, "columns": 3, "views": ["GROUPS"], "adjustable": false, "context": { "group": "bags", "item": "oranges" }, "caption": "4 bags with 3 oranges in each." } }
+    },
+    {
+      "id": "see-four-ways", "type": "EXPLANATION", "title": "One product, four pictures", "purpose": "EXPLAIN_CONCEPT", "objectiveIds": ["v4-demo-mult-models"],
+      "learnerAction": "Switch between groups, an array and a grid, and change the numbers.",
+      "content": { "body": "$4 \\times 3$ means 4 groups of 3. Line the groups up in rows and you get an **array**: 4 rows of 3. Fill the rows with squares and you get a **grid** with an area of 12 squares.\n\nEvery picture shows the same total, $3 + 3 + 3 + 3 = 12$.", "keyPoints": ["Equal groups, an array and a grid all show $4 \\times 3 = 12$.", "Turning the array gives $3 \\times 4$: the same 12."] },
+      "interaction": { "kind": "NONE" }, "tools": { "requested": [], "prohibited": [] }, "hints": [], "misconceptionIds": ["m-add-factors"], "evidence": { "kind": "NONE" },
+      "accessibility": { "textAlternative": "Four times three shown four ways: 4 groups of 3 dots; an array of 4 rows with 3 dots in each; a grid of 4 rows of 3 squares with an area of 12 squares; and repeated addition, 3 plus 3 plus 3 plus 3 equals 12. Turning the array round shows 3 times 4, also 12.", "keyboardPath": "Use the Groups, Array and Grid buttons, and the row and column sliders with the arrow keys.", "reducedMotion": "NOT_APPLICABLE" },
+      "offline": { "mode": "FULL_OFFLINE", "note": "Drawn on the device." }, "completion": "VIEWED",
+      "pedagogy": { "strategy": "CONCRETE_PICTORIAL_ABSTRACT", "representation": "PICTORIAL", "scaffoldLevel": "FULL" },
+      "teaching": { "phase": "VISUALIZE", "blocks": [
+        { "type": "EQUATION", "tex": "4 \\times 3 = 3 + 3 + 3 + 3 = 12", "caption": "Multiplication is repeated addition of equal groups." },
+        { "type": "CALLOUT", "tone": "TIP", "title": "Turn it round", "text": "An array of 4 rows of 3 turned on its side is 3 rows of 4. So $4 \\times 3 = 3 \\times 4$." }
+      ], "visual": { "type": "ARRAY_MODEL", "id": "explore-array", "rows": 4, "columns": 3, "views": ["GROUPS", "ARRAY", "GRID"], "adjustable": true, "caption": "Change the rows and columns. The groups, array, grid and repeated addition all update together." } }
+    },
+    {
+      "id": "watch-chairs", "type": "GUIDED_EXAMPLE", "title": "Worked solution: chairs for assembly", "purpose": "MODEL_WORKED_EXAMPLE", "objectiveIds": ["v4-demo-mult-models"],
+      "learnerAction": "Reveal each step of the worked solution.",
+      "content": { "body": "Watch how the picture turns into a multiplication." },
+      "interaction": { "kind": "NONE" }, "tools": { "requested": [], "prohibited": [] }, "hints": [], "misconceptionIds": ["m-add-factors"], "evidence": { "kind": "NONE" },
+      "accessibility": { "textAlternative": "The hall has 6 rows of chairs with 5 chairs in each row. That is 6 equal groups of 5, or 5 plus 5 plus 5 plus 5 plus 5 plus 5, which is 30 chairs. As a multiplication, 6 times 5 equals 30.", "keyboardPath": "Press Show next step until every step is shown.", "reducedMotion": "NOT_APPLICABLE" },
+      "offline": { "mode": "FULL_OFFLINE", "note": "Part of the cached lesson." }, "completion": "VIEWED",
+      "pedagogy": { "strategy": "WORKED_EXAMPLE_FADING", "representation": "MIXED", "scaffoldLevel": "FULL" },
+      "teaching": { "phase": "DEMONSTRATE", "blocks": [
+        { "type": "WORKED_SOLUTION", "id": "chairs-solution", "problem": "The school hall has 6 rows of chairs with 5 chairs in each row. How many chairs are there?", "steps": [
+          { "text": "Find the equal groups: 6 rows, each with 5 chairs." },
+          { "text": "Write it as repeated addition.", "tex": "5 + 5 + 5 + 5 + 5 + 5" },
+          { "text": "Write it as a multiplication: number of groups times the size of each group.", "tex": "6 \\times 5 = 30" },
+          { "text": "Check that the answer makes sense: 6 rows of 5 is more than 6 + 5 = 11, so 30 chairs is reasonable." }
+        ] }
+      ] }
+    },
+    {
+      "id": "solve-groups", "type": "PRACTICE", "title": "Solve with help: groups at the market", "purpose": "GUIDED_PRACTICE", "objectiveIds": ["v4-demo-mult-models"],
+      "learnerAction": "Turn equal groups into multiplications and calculate them, using hints if needed.",
+      "content": { "body": "Find the equal groups, then multiply. Hints are here if you need them." },
+      "interaction": { "kind": "NONE" }, "tools": { "requested": [], "prohibited": [] }, "hints": ["Say it as groups: how many groups, and how many in each?"], "misconceptionIds": [], "evidence": { "kind": "NONE" },
+      "accessibility": { "textAlternative": "Problem 1: 7 piles of mangoes with 4 mangoes in each pile; how many mangoes? Problem 2: a classroom has 5 rows of 8 desks; how many desks?", "keyboardPath": "Tab to each answer box, type the number and press Check.", "reducedMotion": "NOT_APPLICABLE" },
+      "offline": { "mode": "FULL_OFFLINE", "note": "Checked on the device." }, "completion": "VIEWED",
+      "pedagogy": { "strategy": "GUIDED_TO_INDEPENDENT", "representation": "MIXED", "scaffoldLevel": "PARTIAL" },
+      "teaching": { "phase": "SOLVE_WITH_SUPPORT", "blocks": [
+        { "type": "NUMERIC_RESPONSE", "id": "market-groups", "mode": "GUIDED", "prompt": "Work out each total.", "parts": [
+          { "id": "mangoes", "label": "7 piles of 4 mangoes", "quantity": "PRODUCT", "unit": { "kind": "NONE", "base": "" }, "formativeKey": { "value": 28 }, "misconceptions": [{ "value": 11, "feedback": "You added 7 + 4. There are 7 piles, each with 4: that is 4 + 4 + 4 + 4 + 4 + 4 + 4.", "misconceptionId": "m-add-factors" }] },
+          { "id": "desks", "label": "5 rows of 8 desks", "quantity": "PRODUCT", "unit": { "kind": "NONE", "base": "" }, "formativeKey": { "value": 40 }, "misconceptions": [{ "value": 13, "feedback": "You added 5 + 8. Each of the 5 rows has 8 desks: multiply.", "misconceptionId": "m-add-factors" }] }
+        ], "hints": ["$7 \\times 4$: count in fours seven times.", "$5 \\times 8$: count in eights five times, or in fives eight times."], "afterAttempt": ["$7 \\times 4 = 28$ mangoes.", "$5 \\times 8 = 40$ desks."] }
+      ] }
+    },
+    {
+      "id": "alone-groups", "type": "PRACTICE", "title": "Try it alone", "purpose": "INDEPENDENT_PRACTICE", "objectiveIds": ["v4-demo-mult-models"],
+      "learnerAction": "Solve multiplications and match an array to its multiplication, without hints.",
+      "content": { "body": "No hints this time. The solution appears after you check." },
+      "interaction": { "kind": "NONE" }, "tools": { "requested": [], "prohibited": [] }, "hints": [], "misconceptionIds": [], "evidence": { "kind": "NONE" },
+      "accessibility": { "textAlternative": "Problem 1: 9 bundles of 6 sticks. Problem 2: 8 rows of 7 seedlings. Question: which multiplication matches an array of 3 rows with 5 dots in each row?", "keyboardPath": "Tab to each answer box, type the number and press Check; choose one option for the question.", "reducedMotion": "NOT_APPLICABLE" },
+      "offline": { "mode": "FULL_OFFLINE", "note": "Checked on the device." }, "completion": "VIEWED",
+      "pedagogy": { "strategy": "GUIDED_TO_INDEPENDENT", "representation": "ABSTRACT", "scaffoldLevel": "NONE" },
+      "teaching": { "phase": "PRACTICE_INDEPENDENTLY", "blocks": [
+        { "type": "NUMERIC_RESPONSE", "id": "alone-products", "mode": "INDEPENDENT", "prompt": "Work out each total.", "parts": [
+          { "id": "sticks", "label": "9 bundles of 6 sticks", "quantity": "PRODUCT", "unit": { "kind": "NONE", "base": "" }, "formativeKey": { "value": 54 }, "misconceptions": [{ "value": 15, "feedback": "15 is 9 + 6. There are 9 bundles of 6: multiply.", "misconceptionId": "m-add-factors" }] },
+          { "id": "seedlings", "label": "8 rows of 7 seedlings", "quantity": "PRODUCT", "unit": { "kind": "NONE", "base": "" }, "formativeKey": { "value": 56 }, "misconceptions": [] }
+        ], "hints": [], "afterAttempt": ["$9 \\times 6 = 54$ sticks.", "$8 \\times 7 = 56$ seedlings."] },
+        { "type": "CHECK", "id": "match-array", "items": [
+          { "id": "three-by-five", "prompt": "An array has 3 rows with 5 dots in each row. Which multiplication does it show?", "options": [
+            { "id": "three-times-five", "text": "$3 \\times 5 = 15$", "feedback": "Yes: 3 rows of 5 is 5 + 5 + 5 = 15." },
+            { "id": "three-plus-five", "text": "$3 + 5 = 8$", "feedback": "Count the dots: each of the 3 rows has 5, so there are more than 8." },
+            { "id": "three-times-three", "text": "$3 \\times 3 = 9$", "feedback": "There are 3 rows, but each row has 5 dots, not 3." }
+          ], "formativeKey": { "expectedOptionId": "three-times-five" }, "misconceptionId": "m-add-factors" }
+        ] }
+      ] }
+    },
+    {
+      "id": "mistake-kollie", "type": "CHECK_UNDERSTANDING", "title": "Find the mistake: Kollie's oranges", "purpose": "ADDRESS_MISCONCEPTION", "objectiveIds": ["v4-demo-mult-models"],
+      "learnerAction": "Diagnose why an answer to 4 × 3 is wrong.",
+      "content": { "body": "Kollie's answer is quick, but it does not match the picture. Find the mistake." },
+      "interaction": { "kind": "NONE" }, "tools": { "requested": [], "prohibited": [] }, "hints": [], "misconceptionIds": ["m-add-factors"], "evidence": { "kind": "NONE" },
+      "accessibility": { "textAlternative": "Kollie said 4 bags of 3 oranges is 7 oranges, because 4 plus 3 is 7. He added the number of bags and the number in each bag. There are 4 groups of 3, which is 3 plus 3 plus 3 plus 3 equals 12.", "keyboardPath": "Choose one option with the arrow keys and Space.", "reducedMotion": "NOT_APPLICABLE" },
+      "offline": { "mode": "FULL_OFFLINE", "note": "Checked on the device." }, "completion": "VIEWED",
+      "teaching": { "phase": "ANALYZE_MISTAKE", "blocks": [
+        { "type": "MISTAKE_ANALYSIS", "id": "kollie-adds", "problem": "Ma Kumba has 4 bags with 3 oranges in each bag. How many oranges?", "attempt": { "name": "Kollie", "steps": ["$4 + 3 = 7$", "7 oranges"] }, "question": "What went wrong?", "options": [
+          { "id": "added", "text": "Kollie added the number of bags and the oranges in one bag.", "feedback": "Yes. There are 4 groups of 3: $3 + 3 + 3 + 3 = 4 \\times 3 = 12$." },
+          { "id": "order", "text": "Kollie should have written $3 + 4$.", "feedback": "Changing the order of an addition still gives 7. The problem needs equal groups added together." },
+          { "id": "fine", "text": "Nothing: 7 is right.", "feedback": "Count the oranges in the picture: one bag alone has 3, and there are 4 bags." }
+        ], "formativeKey": { "expectedOptionId": "added" }, "correction": ["4 bags of 3 is 4 equal groups of 3.", "$4 \\times 3 = 3 + 3 + 3 + 3 = 12$ oranges."], "misconceptionId": "m-add-factors" }
+      ] }
+    },
+    {
+      "id": "see-area-model", "type": "EXPLANATION", "title": "Split it: the area model", "purpose": "EXPLAIN_CONCEPT", "objectiveIds": ["v4-demo-mult-area-model"],
+      "learnerAction": "See a big multiplication split into easier parts by place value.",
+      "content": { "body": "Bigger numbers are easier in parts. $14 \\times 6$ is a rectangle 14 long and 6 wide. Split the 14 into 10 and 4: you get two smaller rectangles, $10 \\times 6$ and $4 \\times 6$.\n\nAdd their areas to get the whole: $60 + 24 = 84$." },
+      "interaction": { "kind": "NONE" }, "tools": { "requested": [], "prohibited": [] }, "hints": [], "misconceptionIds": ["m-place-value-dropped", "m-partial-product-missed"], "evidence": { "kind": "NONE" },
+      "accessibility": { "textAlternative": "Fourteen times six drawn as a rectangle 14 by 6, split into a 10 by 6 part and a 4 by 6 part. Ten times six is 60 and four times six is 24. Together, 60 plus 24 equals 84.", "keyboardPath": "Read the model; nothing needs to be entered here.", "reducedMotion": "NOT_APPLICABLE" },
+      "offline": { "mode": "FULL_OFFLINE", "note": "Drawn on the device." }, "completion": "VIEWED",
+      "pedagogy": { "strategy": "CONCRETE_PICTORIAL_ABSTRACT", "representation": "PICTORIAL", "scaffoldLevel": "FULL" },
+      "teaching": { "phase": "VISUALIZE", "blocks": [
+        { "type": "EQUATION", "tex": "14 \\times 6 = (10 \\times 6) + (4 \\times 6) = 60 + 24 = 84", "caption": "Split one factor by place value, multiply each part, then add." }
+      ], "visual": { "type": "AREA_MODEL", "id": "show-14-by-6", "mode": "SHOW", "factorA": 14, "factorB": 6, "splitA": [10, 4], "prompt": "$14 \\times 6$ as two rectangles." } }
+    },
+    {
+      "id": "watch-area-model", "type": "GUIDED_EXAMPLE", "title": "Worked solution: two area models", "purpose": "MODEL_WORKED_EXAMPLE", "objectiveIds": ["v4-demo-mult-area-model"],
+      "learnerAction": "Reveal each step of two area model solutions.",
+      "content": { "body": "Watch one split, then a split of both numbers." },
+      "interaction": { "kind": "NONE" }, "tools": { "requested": [], "prohibited": [] }, "hints": [], "misconceptionIds": ["m-place-value-dropped"], "evidence": { "kind": "NONE" },
+      "accessibility": { "textAlternative": "Example 1: twenty-three times four. Split 23 into 20 and 3. Twenty times four is 80 and three times four is 12, so the answer is 92. Example 2: twenty-four times thirteen. Split both numbers: 20 plus 4, and 10 plus 3. The four parts are 200, 60, 40 and 12, which add to 312.", "keyboardPath": "Press Show next step until every step of both examples is shown.", "reducedMotion": "NOT_APPLICABLE" },
+      "offline": { "mode": "FULL_OFFLINE", "note": "Part of the cached lesson." }, "completion": "VIEWED",
+      "pedagogy": { "strategy": "WORKED_EXAMPLE_FADING", "representation": "MIXED", "scaffoldLevel": "FULL" },
+      "teaching": { "phase": "DEMONSTRATE", "blocks": [
+        { "type": "WORKED_SOLUTION", "id": "area-23-by-4", "problem": "A farmer plants 23 rows of cassava with 4 plants in each row. How many plants?", "steps": [
+          { "text": "Split 23 by place value: 20 and 3.", "tex": "23 = 20 + 3" },
+          { "text": "Multiply each part by 4. Keep the value of the tens: $20 \\times 4$ is 80, not 8.", "tex": "20 \\times 4 = 80, \\quad 3 \\times 4 = 12" },
+          { "text": "Add the partial products.", "tex": "80 + 12 = 92" }
+        ] },
+        { "type": "WORKED_SOLUTION", "id": "area-24-by-13", "problem": "Work out $24 \\times 13$.", "steps": [
+          { "text": "Split both numbers: $24 = 20 + 4$ and $13 = 10 + 3$. That makes four rectangles." },
+          { "text": "Find each partial product.", "tex": "20 \\times 10 = 200, \\quad 20 \\times 3 = 60, \\quad 4 \\times 10 = 40, \\quad 4 \\times 3 = 12" },
+          { "text": "Add all four parts.", "tex": "200 + 60 + 40 + 12 = 312" }
+        ] }
+      ] }
+    },
+    {
+      "id": "solve-area-model", "type": "PRACTICE", "title": "Solve with help: fill the area model", "purpose": "GUIDED_PRACTICE", "objectiveIds": ["v4-demo-mult-area-model"],
+      "learnerAction": "Fill in each partial product and the total.",
+      "content": { "body": "Fill in each part of the rectangle. The hint in the help panel shows where to start." },
+      "interaction": { "kind": "NONE" }, "tools": { "requested": [], "prohibited": [] }, "hints": ["Start with the tens: 10 × 7. Then the ones: 6 × 7. Then add."], "misconceptionIds": [], "evidence": { "kind": "NONE" },
+      "accessibility": { "textAlternative": "Sixteen times seven split into ten times seven and six times seven. Fill in 70 and 42, then add them to get 112.", "keyboardPath": "Tab to each box in the model, type the product and press Check.", "reducedMotion": "NOT_APPLICABLE" },
+      "offline": { "mode": "FULL_OFFLINE", "note": "Checked on the device." }, "completion": "VIEWED",
+      "pedagogy": { "strategy": "GUIDED_TO_INDEPENDENT", "representation": "PICTORIAL", "scaffoldLevel": "PARTIAL" },
+      "teaching": { "phase": "SOLVE_WITH_SUPPORT", "blocks": [
+        { "type": "AREA_MODEL", "id": "fill-16-by-7", "mode": "FILL", "factorA": 16, "factorB": 7, "splitA": [10, 6], "prompt": "Work out $16 \\times 7$ by filling in each part." }
+      ] }
+    },
+    {
+      "id": "alone-area-model", "type": "PRACTICE", "title": "Try it alone: a bigger area model", "purpose": "INDEPENDENT_PRACTICE", "objectiveIds": ["v4-demo-mult-area-model"],
+      "learnerAction": "Split both numbers and fill in four partial products without hints.",
+      "content": { "body": "Both numbers are split this time. No hints: fill in every part, then the total." },
+      "interaction": { "kind": "NONE" }, "tools": { "requested": [], "prohibited": [] }, "hints": [], "misconceptionIds": [], "evidence": { "kind": "NONE" },
+      "accessibility": { "textAlternative": "Twenty-five times twelve split into twenty plus five, and ten plus two. The four partial products are 200, 40, 50 and 10, which add to 300.", "keyboardPath": "Tab to each box in the model, type the product and press Check.", "reducedMotion": "NOT_APPLICABLE" },
+      "offline": { "mode": "FULL_OFFLINE", "note": "Checked on the device." }, "completion": "VIEWED",
+      "pedagogy": { "strategy": "GUIDED_TO_INDEPENDENT", "representation": "PICTORIAL", "scaffoldLevel": "NONE" },
+      "teaching": { "phase": "PRACTICE_INDEPENDENTLY", "blocks": [
+        { "type": "AREA_MODEL", "id": "fill-25-by-12", "mode": "FILL", "factorA": 25, "factorB": 12, "splitA": [20, 5], "splitB": [10, 2], "prompt": "Work out $25 \\times 12$." }
+      ] }
+    },
+    {
+      "id": "mistake-sia", "type": "CHECK_UNDERSTANDING", "title": "Find the mistake: Sia's area model", "purpose": "ADDRESS_MISCONCEPTION", "objectiveIds": ["v4-demo-mult-area-model"],
+      "learnerAction": "Diagnose a mistake in a partial product.",
+      "content": { "body": "Sia split the number correctly, but one part has the wrong value." },
+      "interaction": { "kind": "NONE" }, "tools": { "requested": [], "prohibited": [] }, "hints": [], "misconceptionIds": ["m-place-value-dropped", "m-partial-product-missed"], "evidence": { "kind": "NONE" },
+      "accessibility": { "textAlternative": "Sia worked out twenty-three times four as two times four is 8, plus three times four is 12, giving 20. She treated the 2 tens as 2 ones. Twenty times four is 80, so the answer is 80 plus 12, which is 92.", "keyboardPath": "Choose one option with the arrow keys and Space.", "reducedMotion": "NOT_APPLICABLE" },
+      "offline": { "mode": "FULL_OFFLINE", "note": "Checked on the device." }, "completion": "VIEWED",
+      "teaching": { "phase": "ANALYZE_MISTAKE", "blocks": [
+        { "type": "MISTAKE_ANALYSIS", "id": "sia-place-value", "problem": "Work out $23 \\times 4$ with an area model.", "attempt": { "name": "Sia", "steps": ["$23 = 20 + 3$", "$2 \\times 4 = 8$ and $3 \\times 4 = 12$", "$8 + 12 = 20$"] }, "question": "What went wrong?", "options": [
+          { "id": "tens", "text": "Sia used 2 instead of 20 in the first part.", "feedback": "Yes. The 2 in 23 means 2 tens. $20 \\times 4 = 80$, so the answer is $80 + 12 = 92$." },
+          { "id": "split", "text": "Sia should not have split 23.", "feedback": "Splitting 23 into 20 and 3 is a good start. The mistake comes after the split." },
+          { "id": "add", "text": "Sia should have multiplied 8 and 12 instead of adding.", "feedback": "The parts of an area model are added: they are pieces of one rectangle." }
+        ], "formativeKey": { "expectedOptionId": "tens" }, "correction": ["$20 \\times 4 = 80$ and $3 \\times 4 = 12$.", "$80 + 12 = 92$."], "misconceptionId": "m-place-value-dropped" },
+        { "type": "CHECK", "id": "missed-part", "items": [
+          { "id": "missing-partial", "prompt": "For $24 \\times 13$, Musa found $200 + 12 = 212$. What did he miss?", "options": [
+            { "id": "two-parts", "text": "Two parts: $20 \\times 3 = 60$ and $4 \\times 10 = 40$", "feedback": "Yes. Splitting both numbers makes four rectangles. Add all four: $200 + 60 + 40 + 12 = 312$." },
+            { "id": "nothing", "text": "Nothing: 212 is right", "feedback": "Draw the rectangle: it has four sections, and Musa used only two of them." },
+            { "id": "carry", "text": "He forgot to carry a 1", "feedback": "There is no carrying here. Look at how many sections the rectangle has." }
+          ], "formativeKey": { "expectedOptionId": "two-parts" }, "misconceptionId": "m-partial-product-missed" }
+        ] }
+      ] }
+    },
+    {
+      "id": "apply-school", "type": "PRACTICE", "title": "Apply it: supplies for the school", "purpose": "APPLY", "objectiveIds": ["v4-demo-mult-models", "v4-demo-mult-area-model"],
+      "learnerAction": "Solve two new real-world problems using any model you choose.",
+      "content": { "body": "Choose a picture that helps: groups, an array or an area model. Then calculate." },
+      "interaction": { "kind": "NONE" }, "tools": { "requested": [], "prohibited": [] }, "hints": [], "misconceptionIds": [], "evidence": { "kind": "NONE" },
+      "accessibility": { "textAlternative": "Problem 1: the school orders 18 boxes of chalk with 24 sticks in each box; how many sticks? Problem 2: the school farm has 15 rows of cassava with 13 plants in each row; how many plants?", "keyboardPath": "Tab to each answer box, type the number and press Check.", "reducedMotion": "NOT_APPLICABLE" },
+      "offline": { "mode": "FULL_OFFLINE", "note": "Checked on the device." }, "completion": "VIEWED",
+      "pedagogy": { "strategy": "STRUCTURED_PROBLEM_SOLVING", "representation": "ABSTRACT", "scaffoldLevel": "NONE" },
+      "teaching": { "phase": "APPLY", "blocks": [
+        { "type": "NUMERIC_RESPONSE", "id": "school-supplies", "mode": "INDEPENDENT", "prompt": "Work out each total. Sketch an area model if it helps.", "parts": [
+          { "id": "chalk", "label": "18 boxes of 24 chalk sticks", "quantity": "PRODUCT", "unit": { "kind": "NONE", "base": "" }, "formativeKey": { "value": 432 }, "misconceptions": [{ "value": 272, "feedback": "Check every part: $10 \\times 20$, $10 \\times 4$, $8 \\times 20$ and $8 \\times 4$. One part may be missing.", "misconceptionId": "m-partial-product-missed" }] },
+          { "id": "cassava", "label": "15 rows of 13 cassava plants", "quantity": "PRODUCT", "unit": { "kind": "NONE", "base": "" }, "formativeKey": { "value": 195 }, "misconceptions": [{ "value": 115, "feedback": "You found $10 \\times 10 + 5 \\times 3$ and missed two parts. Split both numbers and add all four pieces.", "misconceptionId": "m-partial-product-missed" }] }
+        ], "hints": [], "afterAttempt": ["$18 \\times 24 = 200 + 40 + 160 + 32 = 432$ sticks.", "$15 \\times 13 = 100 + 30 + 50 + 15 = 195$ plants."] }
+      ] }
+    },
+    {
+      "id": "remember", "type": "REVIEW", "title": "Remember", "purpose": "REVIEW", "objectiveIds": ["v4-demo-mult-models", "v4-demo-mult-area-model"],
+      "learnerAction": "Recall the four pictures of multiplication and the area model steps.",
+      "content": { "body": "Say each point aloud before the check.", "keyPoints": ["Equal groups, arrays, grids and repeated addition all show the same product.", "The area model splits a number by place value; keep the value of each part.", "Find every partial product, then add them all."] },
+      "interaction": { "kind": "NONE" }, "tools": { "requested": [], "prohibited": [] }, "hints": [], "misconceptionIds": [], "evidence": { "kind": "NONE" },
+      "accessibility": { "textAlternative": "Equal groups, arrays, grids and repeated addition show the same product. The area model splits a number by place value; every partial product is found and added. A question asks for the partial products of 32 times 5: 150 and 10.", "keyboardPath": "Choose one option with the arrow keys and Space.", "reducedMotion": "NOT_APPLICABLE" },
+      "offline": { "mode": "FULL_OFFLINE", "note": "Part of the cached lesson." }, "completion": "VIEWED",
+      "teaching": { "phase": "RETRIEVE", "blocks": [
+        { "type": "CHECK", "id": "retrieve-partials", "items": [
+          { "id": "thirty-two-by-five", "prompt": "Which partial products give $32 \\times 5$?", "options": [
+            { "id": "right", "text": "$150$ and $10$", "feedback": "Yes: $30 \\times 5 = 150$ and $2 \\times 5 = 10$, so $32 \\times 5 = 160$." },
+            { "id": "dropped", "text": "$15$ and $10$", "feedback": "$3 \\times 5$ is 15, but the 3 in 32 means 3 tens: $30 \\times 5 = 150$." },
+            { "id": "added", "text": "$35$ and $7$", "feedback": "These come from adding. The parts of an area model are multiplied, then added." }
+          ], "formativeKey": { "expectedOptionId": "right" } }
+        ] }
+      ] }
+    },
+    {
+      "id": "show-what-you-know", "type": "MASTERY_CHECK", "title": "Show what you know", "purpose": "ASSESS_MASTERY", "objectiveIds": ["v4-demo-mult-models", "v4-demo-mult-area-model"],
+      "learnerAction": "Answer the assessment questions on your own.",
+      "content": { "body": "Now show what you can do on your own. The assessment is checked by the assessment system, not by this lesson." },
+      "interaction": { "kind": "ASSESSMENT_HANDOFF", "assessmentRequestId": "mult-mastery" }, "tools": { "requested": [], "prohibited": ["basic-calculator", "multiplication-table"] }, "hints": [], "misconceptionIds": [],
+      "evidence": { "kind": "MASTERY_RESPONSE", "evidenceType": "QUIZ", "responses": [
+        { "responseKey": "mult-mastery-models", "objectiveId": "v4-demo-mult-models", "responseType": "ASSESSMENT_RESPONSE", "scaffoldLevel": "NONE" },
+        { "responseKey": "mult-mastery-area", "objectiveId": "v4-demo-mult-area-model", "responseType": "ASSESSMENT_RESPONSE", "scaffoldLevel": "NONE" }
+      ] },
+      "accessibility": { "textAlternative": "The assessment asks you to represent and calculate multiplications on your own. It is delivered by the assessment player.", "keyboardPath": "Answer each assessment question, then submit.", "reducedMotion": "NOT_APPLICABLE" },
+      "offline": { "mode": "FULL_OFFLINE", "note": "Responses are kept until the device is online; the assessment authority scores them." }, "completion": "ALL_ANSWERED",
+      "teaching": { "phase": "ASSESS", "blocks": [] }
+    }
+  ],
+  "assessmentRequests": [
+    { "id": "mult-mastery", "objectiveIds": ["v4-demo-mult-models", "v4-demo-mult-area-model"], "interaction": "NUMERIC", "evidenceType": "QUIZ", "difficulty": "CORE", "misconceptionIds": ["m-add-factors", "m-place-value-dropped", "m-partial-product-missed"], "tools": { "requested": [], "prohibited": ["basic-calculator", "multiplication-table"] }, "offline": "FULL_OFFLINE" }
+  ],
+  "labProposals": []
+}

@@ -29,7 +29,7 @@ afterEach(() => { act(() => root?.unmount()); root = null; host.remove(); });
 const render = async (node: React.ReactNode) => { await act(async () => { root = createRoot(host); root.render(node); }); };
 const click = async (element: Element | null | undefined) => { expect(element).toBeTruthy(); await act(async () => { (element as HTMLElement).click(); }); };
 const visibleSections = () => [...host.querySelectorAll<HTMLElement>("[data-read-section]")].filter((section) => !section.hidden);
-const railButton = (n: number) => host.querySelectorAll(".ll4-read-rail button")[n - 1];
+const railButton = (n: number) => host.querySelectorAll(".ll4-read-rail ol button")[n - 1];
 
 const body = Array.from({ length: 20 }, (_, index) => `## Part ${index + 1}\n\nText of part ${index + 1}.`).join("\n\n");
 const sections = splitLessonSections(parseLessonBlocks(body), "Long lesson");
@@ -39,7 +39,7 @@ describe("Read mode playlist", () => {
     await render(<LegacyReading title="Long lesson" sections={sections} storageKey="c1" after={<label>Notes <input data-final-input /></label>} />);
     expect(sections).toHaveLength(20);
     expect(visibleSections().map((section) => section.dataset.readSection)).toEqual(["part-1"]);
-    expect(host.querySelectorAll(".ll4-read-rail button")).toHaveLength(20);
+    expect(host.querySelectorAll(".ll4-read-rail ol button")).toHaveLength(20);
     await click(railButton(17));
     expect(visibleSections().map((section) => section.dataset.readSection)).toEqual(["part-17"]);
     expect(new URL(window.location.href).searchParams.get("section")).toBe("part-17");
@@ -63,6 +63,18 @@ describe("Read mode playlist", () => {
     expect(final().hidden).toBe(true);
     await click([...host.querySelectorAll(".ll4-read-pager button")][1]);
     expect(host.querySelector<HTMLInputElement>("[data-final-input]")!.value).toBe("kept");
+  });
+
+  it("the contents rail can be hidden and shown again without losing the open section (V4 workspace)", async () => {
+    await render(<LegacyReading title="Long lesson" sections={sections} storageKey="c1" />);
+    await click(railButton(5));
+    await click([...host.querySelectorAll(".ll4-read-rail button")].find((button) => button.textContent?.includes("Hide")));
+    expect(host.querySelector(".ll4-read-rail")).toBeNull();
+    expect(host.querySelector("[data-reading-layout]")?.getAttribute("data-rail")).toBe("closed");
+    expect(window.sessionStorage.getItem("ll-read-rail")).toBe("closed");
+    expect(visibleSections().map((section) => section.dataset.readSection)).toEqual(["part-5"]);
+    await click([...host.querySelectorAll("button")].find((button) => button.textContent?.trim().startsWith("Show contents")));
+    expect(railButton(5).getAttribute("aria-current")).toBe("true");
   });
 
   it("opens a deep-linked section and follows browser Back/Forward", async () => {
