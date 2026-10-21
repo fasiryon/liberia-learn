@@ -154,7 +154,9 @@ export function gradebookEligibility(envelope: AssessmentEvidenceEnvelope, input
 export type ObjectiveEvidenceSummary =
   | Readonly<{ status: "NO_EVIDENCE"; objectiveId: string }>
   | Readonly<{ status: "ONLY_UNVERIFIED"; objectiveId: string; observationCount: number }>
-  | Readonly<{ status: "VERIFIED"; objectiveId: string; verifiedCount: number; independentCount: number; pointsEarned: number; pointsPossible: number }>;
+  /** Verified responses exist, but each spans several objectives, so none can be scored against this one. */
+  | Readonly<{ status: "ONLY_UNATTRIBUTED"; objectiveId: string; unattributedCount: number }>
+  | Readonly<{ status: "VERIFIED"; objectiveId: string; verifiedCount: number; independentCount: number; pointsEarned: number; pointsPossible: number; unattributedCount: number }>;
 
 export function summarizeObjectiveEvidence(envelopes: readonly AssessmentEvidenceEnvelope[], objectiveId: string, revocations: readonly ReleaseRevocation[]): ObjectiveEvidenceSummary {
   const relevant = envelopes.filter((envelope) => envelope.objectiveIds.includes(objectiveId) && effectiveStanding(envelope, revocations).tier !== "INVALIDATED");
@@ -168,8 +170,12 @@ export function summarizeObjectiveEvidence(envelopes: readonly AssessmentEvidenc
     const key = `${envelope.attempt.attemptId}|${envelope.pins.itemId}|${envelope.pins.itemVersion}|${envelope.attempt.responseSequence}`;
     if (!verifiedByResponse.has(key)) verifiedByResponse.set(key, envelope);
   }
-  const verified = [...verifiedByResponse.values()];
-  if (verified.length === 0) return Object.freeze({ status: "ONLY_UNVERIFIED", objectiveId, observationCount: relevant.length });
+  const responses = [...verifiedByResponse.values()];
+  if (responses.length === 0) return Object.freeze({ status: "ONLY_UNVERIFIED", objectiveId, observationCount: relevant.length });
+  // A multi-objective score has no item/criterion attribution, so it never counts toward any one objective.
+  const verified = responses.filter((envelope) => envelope.objectiveIds.length === 1);
+  const unattributedCount = responses.length - verified.length;
+  if (verified.length === 0) return Object.freeze({ status: "ONLY_UNATTRIBUTED", objectiveId, unattributedCount });
   return Object.freeze({
     status: "VERIFIED",
     objectiveId,
@@ -177,5 +183,6 @@ export function summarizeObjectiveEvidence(envelopes: readonly AssessmentEvidenc
     independentCount: verified.filter((envelope) => envelope.independence === "INDEPENDENT").length,
     pointsEarned: verified.reduce((sum, envelope) => sum + (envelope.scoring.points ?? 0), 0),
     pointsPossible: verified.reduce((sum, envelope) => sum + (envelope.scoring.maxPoints ?? 0), 0),
+    unattributedCount,
   });
 }

@@ -100,6 +100,8 @@ export function masterySummaryFromEvidence(evidence: readonly AssessmentEvidence
       && moderation?.marking !== "AGREED" && moderation?.marking !== "RECONCILED";
     // Unofficial (practice) deliveries and unreconciled high-stakes marks never create mastery (LL-AEP-001).
     return VERIFIED_TIERS.has(entry.tier) && entry.delivery.official && entry.independence === "INDEPENDENT" && entry.objectiveIds.includes(input.objectiveId)
+      // A multi-objective score has no item/criterion attribution, so it is never credited to one objective.
+      && entry.objectiveIds.length === 1
       && entry.scoring.status === "SCORED" && entry.scoring.points !== null && Boolean(entry.scoring.maxPoints)
       && AUTHORITATIVE_SCORERS.has(entry.scoring.scorerAuthority ?? "") && !unreconciled
       && !(entry.pins.releaseId && input.revokedReleaseIds.includes(entry.pins.releaseId));

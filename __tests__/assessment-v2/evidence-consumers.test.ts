@@ -264,6 +264,15 @@ describe("Downstream consumers", () => {
     expect(summarizeObjectiveEvidence([raw], "obj-compare", []).status).toBe("ONLY_UNVERIFIED");
     expect(summarizeObjectiveEvidence([raw, verified], "obj-compare", [])).toMatchObject({ status: "VERIFIED", pointsEarned: 1, pointsPossible: 1, independentCount: 1 });
   });
+
+  it("never credits one multi-objective score to each of its objectives", () => {
+    const { verified } = verifiedChain();
+    const mixed = { ...verified, objectiveIds: ["obj-compare", "obj-order"], pins: { ...verified.pins, itemId: "item-mixed" } };
+    for (const objectiveId of mixed.objectiveIds) {
+      expect(summarizeObjectiveEvidence([mixed], objectiveId, [])).toEqual({ status: "ONLY_UNATTRIBUTED", objectiveId, unattributedCount: 1 });
+    }
+    expect(summarizeObjectiveEvidence([verified, mixed], "obj-compare", [])).toMatchObject({ status: "VERIFIED", verifiedCount: 1, pointsEarned: 1, pointsPossible: 1, unattributedCount: 1 });
+  });
 });
 
 describe("Retention and transfer", () => {
