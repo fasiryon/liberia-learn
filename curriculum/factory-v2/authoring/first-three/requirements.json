@@ -1,0 +1,348 @@
+{
+  "schemaVersion": "factory-first-three-authoring-requirements/1.0.0",
+  "baselineCommit": "9628d97f6932ae4c0c399ec15455230e3f76607e",
+  "specSha256": "9b0128d725b83dc8ca6aaad818530b35c0649297fa7564b8fae8fb53a6d00964",
+  "lessons": [
+    {
+      "key": "ft01-g7-civics-counties-capitals",
+      "source": {
+        "databaseId": "cmm7xs89200e9vo70t6qdlgho",
+        "contentId": "wk_mca7a_fri_p4",
+        "revisionId": "cmss8ptit002jvo540275dfvw",
+        "revisionNumber": 1,
+        "snapshotSha256": "c7a1257c9520d452a623f474bc8c3b7987366a55e6c5a98947fdbeba1f5fb242"
+      },
+      "subject": "CIVICS",
+      "grade": 7,
+      "objectiveIds": [
+        "ft01-o1",
+        "ft01-o2",
+        "ft01-o3"
+      ],
+      "misconceptions": [
+        {
+          "id": "ft01-m1",
+          "description": "The largest or best-known town is the capital (Ganta for Nimba).",
+          "probe": "Distractor 'Ganta' on the Nimba item",
+          "feedback": "Ganta is Nimba's biggest trading town, but the county is administered from Sanniquellie."
+        },
+        {
+          "id": "ft01-m2",
+          "description": "Monrovia is the capital of Montserrado as well as of Liberia, or the national capital is also every county's capital.",
+          "probe": "Two-part item: national capital, then Montserrado's county seat",
+          "feedback": "Liberia's capital and Montserrado's county seat are different roles."
+        },
+        {
+          "id": "ft01-m3",
+          "description": "Counties that are next to each other in a list are next to each other on the map (Maryland and Sinoe).",
+          "probe": "Adjacency item",
+          "feedback": "Look at the map: Grand Kru lies between them."
+        },
+        {
+          "id": "ft01-m4",
+          "description": "Confusing the four 'Grand' counties (Bassa, Cape Mount, Gedeh, Kru) and their capitals.",
+          "probe": "Matching item with all four",
+          "feedback": "A position cue: Cape Mount far west, Bassa central coast, Kru south-east coast, Gedeh east interior."
+        },
+        {
+          "id": "ft01-m5",
+          "description": "The capital governs the county, or the county elects its own government.",
+          "probe": "Constructed item ft01-a2 and a true/false item",
+          "feedback": "The capital is where the county administration sits. The superintendent is appointed by the President."
+        }
+      ],
+      "mediaSpecifications": [
+        {
+          "id": "ft01-v1",
+          "requirement": "An accessible county map (SVG): each county labelled on focus, keyboard-navigable, with a text table grouping counties as coastal and interior, west to east.",
+          "offlineFallback": "A printable A4 outline map and a two-column county/capital table."
+        },
+        {
+          "id": "ft01-v2",
+          "requirement": "Place-the-capital interaction: drag or select the capital into its county, with immediate, misconception-specific feedback (e.g. choosing Ganta for Nimba).",
+          "offlineFallback": "Paper cut-out capital cards placed on the printed map; a teacher answer sheet."
+        },
+        {
+          "id": "ft01-v3",
+          "requirement": "A 'capital versus largest town' contrast card for Nimba and Montserrado.",
+          "offlineFallback": "The same card as a text box in the printable pack."
+        }
+      ],
+      "retention": {
+        "delayDays": 7,
+        "items": [
+          "Five county–capital pairs drawn at random, always including Nimba and one of the five counties the legacy lesson omitted",
+          "Locate two counties on a blank map",
+          "One capital-versus-largest-town explanation"
+        ]
+      },
+      "assessmentTasks": [
+        {
+          "id": "ft01-a1",
+          "objectiveIds": [
+            "ft01-o1"
+          ],
+          "kind": "CONSTRUCTED",
+          "task": "Blank map: write the capital of each of the 15 counties (key: the reviewer-confirmed list).",
+          "scoring": "KEYED"
+        },
+        {
+          "id": "ft01-a2",
+          "objectiveIds": [
+            "ft01-o2"
+          ],
+          "kind": "CONSTRUCTED_EXPLANATION",
+          "task": "A classmate writes 'Ganta is the capital of Nimba because it is the biggest town.' Explain the error and correct it.",
+          "scoring": "ANALYTIC_RUBRIC"
+        },
+        {
+          "id": "ft01-a3",
+          "objectiveIds": [
+            "ft01-o1",
+            "ft01-o2"
+          ],
+          "kind": "SELECTED_RESPONSE_DIAGNOSTIC",
+          "task": "Four items whose distractors are mapped to M1–M4.",
+          "scoring": "KEYED"
+        },
+        {
+          "id": "ft01-a4",
+          "objectiveIds": [
+            "ft01-o3"
+          ],
+          "kind": "REASONING_TASK",
+          "task": "On the lesson's county map, name the counties a traveller crosses going by the coast from Buchanan to Greenville, and justify the order from the map.",
+          "scoring": "ANALYTIC_RUBRIC"
+        }
+      ]
+    },
+    {
+      "key": "ft04-g7-science-states-of-matter",
+      "source": {
+        "databaseId": "cmm7xs7v000e8vo70m7n72h3t",
+        "contentId": "wk_mca7a_fri_p3",
+        "revisionId": "cmss8pt0j002fvo54be8gcrnd",
+        "revisionNumber": 1,
+        "snapshotSha256": "d218a3e17da67bcf7e774bcace1a4080f3b2e6eb9e581d00b987ee3f8025c1e8"
+      },
+      "subject": "SCIENCE",
+      "grade": 7,
+      "objectiveIds": [
+        "ft04-o1",
+        "ft04-o2",
+        "ft04-o3"
+      ],
+      "misconceptions": [
+        {
+          "id": "ft04-m1",
+          "description": "The bubbles in boiling water are air.",
+          "probe": "Distractor",
+          "feedback": "They are water vapour forming inside the liquid."
+        },
+        {
+          "id": "ft04-m2",
+          "description": "The temperature keeps rising while ice melts, or a mixture can get hotter than its hottest part.",
+          "probe": "Prediction item ft04-a3",
+          "feedback": "While ice is melting, the energy goes into changing state and the temperature stays near 0 °C."
+        },
+        {
+          "id": "ft04-m3",
+          "description": "Water on a cold bottle leaks through the plastic.",
+          "probe": "Explanation item",
+          "feedback": "Water vapour from the air condenses on the cold surface."
+        },
+        {
+          "id": "ft04-m4",
+          "description": "Evaporation only happens at 100 °C.",
+          "probe": "Drying-clothes item",
+          "feedback": "Evaporation happens at the surface at any temperature; boiling happens throughout the liquid at the boiling point."
+        },
+        {
+          "id": "ft04-m5",
+          "description": "The particles themselves expand or melt.",
+          "probe": "Particle-drawing rubric row",
+          "feedback": "The particles stay the same; their spacing and motion change."
+        },
+        {
+          "id": "ft04-m6",
+          "description": "Melting is a chemical reaction.",
+          "probe": "Two-choice item",
+          "feedback": "No new substance forms, and the change reverses."
+        }
+      ],
+      "mediaSpecifications": [
+        {
+          "id": "ft04-v1",
+          "requirement": "A particle simulation with a heat slider showing arrangement and motion in each state, with a text description of every state.",
+          "offlineFallback": "A printed three-panel particle diagram and a role-play (learners as particles)."
+        },
+        {
+          "id": "ft04-v2",
+          "requirement": "A heating curve for water with labelled plateaus, built step by step.",
+          "offlineFallback": "A printed graph with a data table."
+        },
+        {
+          "id": "ft04-v3",
+          "requirement": "An optional low-cost demonstration: ice in a cup with a thermometer, read every minute (teacher-led; safety note).",
+          "offlineFallback": "A recorded data table for classes without ice or a thermometer."
+        }
+      ],
+      "retention": {
+        "delayDays": 7,
+        "items": [
+          "Name the change of state in three scenes",
+          "Evaporation versus boiling",
+          "What happens to the temperature while ice melts"
+        ]
+      },
+      "assessmentTasks": [
+        {
+          "id": "ft04-a1",
+          "objectiveIds": [
+            "ft04-o1"
+          ],
+          "kind": "CONSTRUCTED",
+          "task": "Draw particles of palm oil as a liquid and as a solid, and label the differences.",
+          "scoring": "ANALYTIC_RUBRIC"
+        },
+        {
+          "id": "ft04-a2",
+          "objectiveIds": [
+            "ft04-o2"
+          ],
+          "kind": "CONSTRUCTED_EXPLANATION",
+          "task": "Explain why wet clothes dry on a line without boiling.",
+          "scoring": "ANALYTIC_RUBRIC"
+        },
+        {
+          "id": "ft04-a3",
+          "objectiveIds": [
+            "ft04-o3"
+          ],
+          "kind": "REASONING_TASK",
+          "task": "Data: a drink with ice reads 0 °C for 8 minutes, then rises. Explain the pattern using particles and energy.",
+          "scoring": "ANALYTIC_RUBRIC"
+        },
+        {
+          "id": "ft04-a4",
+          "objectiveIds": [
+            "ft04-o1",
+            "ft04-o2"
+          ],
+          "kind": "SELECTED_RESPONSE_DIAGNOSTIC",
+          "task": "Five items whose distractors are mapped to M1–M6.",
+          "scoring": "KEYED"
+        }
+      ]
+    },
+    {
+      "key": "ft07-g7-math-fractions",
+      "source": {
+        "databaseId": "cmlrkjnow00dmvo7o4cajgquf",
+        "contentId": "lesson_mca_1",
+        "revisionId": "cmss8mpl0000bvo1wos7i1ew4",
+        "revisionNumber": 1,
+        "snapshotSha256": "872222a2435f151d6b215488ad2c3de2cc6c130f57d68fc5d7c6898ad301314f"
+      },
+      "subject": "MATH",
+      "grade": 7,
+      "objectiveIds": [
+        "ft07-o1",
+        "ft07-o2",
+        "ft07-o3"
+      ],
+      "misconceptions": [
+        {
+          "id": "ft07-m1",
+          "description": "Add the numerators and the denominators (1/4 + 1/2 = 2/6).",
+          "probe": "Distractor 2/6",
+          "feedback": "The size of the parts doesn't change when you combine them. Make the parts the same size first."
+        },
+        {
+          "id": "ft07-m2",
+          "description": "A bigger denominator means a bigger fraction.",
+          "probe": "Compare 1/8 and 1/4",
+          "feedback": "More parts in the same whole means each part is smaller."
+        },
+        {
+          "id": "ft07-m3",
+          "description": "Fractions are always less than 1.",
+          "probe": "Number-line item including 5/4",
+          "feedback": "5/4 is one whole and one more quarter."
+        },
+        {
+          "id": "ft07-m4",
+          "description": "Losing track of the whole (a fraction of a bag versus kilograms).",
+          "probe": "'Half of a 2 kg bag' item",
+          "feedback": "Say what the whole is before writing the fraction."
+        },
+        {
+          "id": "ft07-m5",
+          "description": "Unequal parts can be named as fractions.",
+          "probe": "Unequal-parts distractor",
+          "feedback": "Fractions need equal parts."
+        }
+      ],
+      "mediaSpecifications": [
+        {
+          "id": "ft07-v1",
+          "requirement": "A fraction-bar and number-line manipulative: split, shade and place fractions, and see equivalence by splitting.",
+          "offlineFallback": "Paper strips folded into halves, quarters and eighths."
+        },
+        {
+          "id": "ft07-v2",
+          "requirement": "A comparison tool: drag two fractions onto one number line.",
+          "offlineFallback": "A printed number line from 0 to 2."
+        }
+      ],
+      "retention": {
+        "delayDays": 7,
+        "items": [
+          "Place 3/2 on a number line",
+          "1/2 + 3/8",
+          "Compare 5/6 and 7/8 with a reason"
+        ]
+      },
+      "assessmentTasks": [
+        {
+          "id": "ft07-a1",
+          "objectiveIds": [
+            "ft07-o1"
+          ],
+          "kind": "PRODUCED_ANSWER",
+          "task": "Place four fractions (including 1 and 5/4) on a number line.",
+          "scoring": "KEYED"
+        },
+        {
+          "id": "ft07-a2",
+          "objectiveIds": [
+            "ft07-o2"
+          ],
+          "kind": "PRODUCED_ANSWER",
+          "task": "Four sums and differences, two with related denominators.",
+          "scoring": "KEYED"
+        },
+        {
+          "id": "ft07-a3",
+          "objectiveIds": [
+            "ft07-o3"
+          ],
+          "kind": "REASONING_TASK",
+          "task": "Which is more rice: 2/3 of a cup or 3/5 of a cup? Justify in two ways.",
+          "scoring": "ANALYTIC_RUBRIC"
+        },
+        {
+          "id": "ft07-a4",
+          "objectiveIds": [
+            "ft07-o1",
+            "ft07-o2",
+            "ft07-o3"
+          ],
+          "kind": "SELECTED_RESPONSE_DIAGNOSTIC",
+          "task": "Four items whose distractors are mapped to M1–M5.",
+          "scoring": "KEYED"
+        }
+      ]
+    }
+  ]
+}

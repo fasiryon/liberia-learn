@@ -1,4 +1,5 @@
 "use client";
+import { presentRenderList, hasTranslationMotion } from "@/lib/interactive-labs/v2/fidelity/presentation";
 
 import { useEffect, useRef } from "react";
 import { SCENE_HEIGHT } from "./sceneLayout";
@@ -10,7 +11,7 @@ import { approachCamera, constrainCamera, easeDisplayState, isSettled, spinMatri
 import { findPreset, framedPose } from "@/lib/interactive-labs/v2/fidelity/camera";
 import { recordFrameSample, shouldDowngrade } from "@/lib/interactive-labs/v2/fidelity/profiles";
 import { probeAllowsUpgrade } from "@/lib/interactive-labs/v2/capabilities";
-import { downgradeFrameBudgetMs } from "@/lib/interactive-labs/v2/production/budgets";
+import { downgradeFrameBudgetMs } from "@/lib/interactive-labs/v2/fidelity/runtimeTargets";
 import { fitHorizontalFieldOfView, IDENTITY, multiply, multiplyInto, perspective, transformPoint, type Mat4, type Vec3 } from "@/lib/interactive-labs/v2/fidelity/math";
 import { batchFlowGeometry, createFlowBatchStorage, createPointBatchStorage, writeMarkerPositions, type FlowVertexBatch } from "@/lib/interactive-labs/v2/fidelity/flowBatch";
 import { shouldScheduleWebGLFrame } from "@/lib/interactive-labs/v2/fidelity/renderLoop";
@@ -276,7 +277,7 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
       }
       const current = stateRef.current, motionless = callbacks.current.reducedMotion;
       if (spec && current.fidelity) displayRef.current = easeDisplayState(spec, displayRef.current ?? current.fidelity, current.fidelity, dt, motionless);
-      const list = buildRenderList({ definition, state: current, profile, displayFidelity: displayRef.current, pendingControlId: pendingRef.current });
+      const list = presentRenderList(buildRenderList({ definition, state: current, profile, displayFidelity: displayRef.current, pendingControlId: pendingRef.current }), reviewTime ?? now / 1000, motionless);
       // RX-005d: presets with a frame refit to the stage's aspect; rail legs on LOW are cuts.
       const stageAspect = Math.max(1, el.clientWidth) / Math.max(1, el.clientHeight);
       const preset = spec && current.fidelity ? framedPose(spec, findPreset(spec, current.fidelity.cameraPresetId), list.items, definition.scene.camera.fov, stageAspect) : fallbackPose;
@@ -385,10 +386,10 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
           for (const [key, buffers] of lowBatchBuffers) if (!plan.batches.some((batch) => batch.key === key)) { buffers.count = 0; buffers.itemRanges.clear(); }
           uploadedLowPlan = plan;
         }
-        for (const item of plan.singles) drawItem(item, meshFor(item), item.spin ? spinMatrix(item.spin, t, motionless) : item.matrix);
+        for (const item of plan.singles) drawItem(item, meshFor(item), item.matrix);
       } else {
         const ordered = [...list.items].sort((a, b) => Number(a.alpha < 0.9) - Number(b.alpha < 0.9));
-        for (const item of ordered) drawItem(item, meshFor(item), item.spin ? spinMatrix(item.spin, t, motionless) : item.matrix);
+        for (const item of ordered) drawItem(item, meshFor(item), item.matrix);
       }
       gl.depthMask(true);
       if (list.environment === "DAYLIGHT") drawBatch(groundBatch, groundBuffers, gl.TRIANGLES, 1, 1, viewProj);
@@ -452,7 +453,7 @@ export function WebGLScene({ definition, state, profile, reducedMotion, traceFlo
       const fidelityMoving = !!(spec && current.fidelity && displayRef.current && !isSettled(displayRef.current, current.fidelity));
       const cameraMoving = !motionless && (Math.abs(camera.distance - targetPose.distance) > 1e-4 || Math.abs(camera.yaw - targetPose.yaw) > 1e-4 || Math.abs(camera.pitch - targetPose.pitch) > 1e-4 || camera.target.some((value, index) => Math.abs(value - targetPose.target[index]) > 1e-4));
       const flowMoving = list.flows.some((flow) => flow.active && flow.particleCount > 0);
-      const spinMoving = list.motions.some((motion) => motion.active);
+      const spinMoving = list.motions.some((motion) => motion.active) || hasTranslationMotion(list);
       const pulseMoving = list.budget.pulseHighlights && list.items.some((item) => item.highlighted);
       // Review captures advance an authored virtual clock and need a frame for every tick.
       // Learner sessions request frames only while something visible is moving.

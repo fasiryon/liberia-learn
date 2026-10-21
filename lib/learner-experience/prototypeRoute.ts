@@ -8,6 +8,7 @@
 import { getEnabledToolkitCategories } from "@/components/toolkit/ToolkitProvider";
 import { g7NativePreviewEntry } from "@/lib/curriculum/v2/g7NativePreview";
 import { pilotPreviewEntry } from "@/lib/curriculum/modernization/pilotPreview";
+import { candidateReviewEntry } from "./candidateReview";
 import { isLabReviewHarnessEnabled } from "@/lib/interactive-labs/v2/review/scenarios";
 import { LESSON_EXPERIENCES } from "./fixtures/hydropowerLesson";
 import { findLabExperience, type LabExperience } from "./labExperience";
@@ -22,7 +23,8 @@ export function isLearnerExperiencePrototypeEnabled(env: Record<string, string |
 }
 
 export function loadPrototypeExperience(experienceId: string) {
-  const entry = LESSON_EXPERIENCES[experienceId] ?? g7NativePreviewEntry(experienceId) ?? pilotPreviewEntry(experienceId);
+  const fixture = Object.hasOwn(LESSON_EXPERIENCES, experienceId) ? LESSON_EXPERIENCES[experienceId] : null;
+  const entry = fixture ?? candidateReviewEntry(experienceId) ?? g7NativePreviewEntry(experienceId) ?? pilotPreviewEntry(experienceId);
   if (!entry) return null;
   validateLessonExperience(entry.experience);
   const labs: Record<string, LabExperience> = {};

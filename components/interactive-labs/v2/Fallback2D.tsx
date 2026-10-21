@@ -1,4 +1,5 @@
 "use client";
+import { presentRenderList } from "@/lib/interactive-labs/v2/fidelity/presentation";
 import { useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
 import { dragParameter } from "@/lib/interactive-labs/v2/fidelity/controls";
 import { SCENE_HEIGHT } from "./sceneLayout";
@@ -50,7 +51,7 @@ function useNarrowContainer(): boolean {
 export function Fallback2D({ definition, state, reducedMotion, traceFlowId, dispatch, onPick, pendingControlId = null, onDragControl }: Props) {
   const hasFlows = !!definition.fidelity?.flows.length;
   const { display, time } = useDisplayFidelity(definition, state, reducedMotion, hasFlows);
-  const list = useMemo(() => buildRenderList({ definition, state, profile: "FALLBACK_2D", displayFidelity: display, pendingControlId }), [definition, state, display, pendingControlId]);
+  const list = useMemo(() => presentRenderList(buildRenderList({ definition, state, profile: "FALLBACK_2D", displayFidelity: display, pendingControlId }), time, reducedMotion), [definition, state, display, pendingControlId, time, reducedMotion]);
   // A14 drag-variable on 2D: the front projection maps world (x, y) to SVG (x, -y), so the drag runs in SVG units.
   const controlTargets = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
@@ -109,7 +110,8 @@ export function Fallback2D({ definition, state, reducedMotion, traceFlowId, disp
     let points = hullCache.current.get(key);
     if (points === undefined) {
       const sourcePoints = item.fallbackSilhouette?.points.map(([x, y]) => [x, y, 0] as const) ?? silhouetteSamples(item.geometry);
-      points = convexHull(sourcePoints.map((sample) => { const p = transformPoint(item.matrix, sample); return [round(p[0]), round(-p[1])] as [number, number]; })).map((p) => p.join(",")).join(" ");
+      const projected = sourcePoints.map((sample) => { const p = transformPoint(item.matrix, sample); return [round(p[0]), round(-p[1])] as [number, number]; });
+      points = (item.fallbackSilhouette ? projected : convexHull(projected)).map((p) => p.join(",")).join(" ");
       if (hullCache.current.size > 512) hullCache.current.clear();
       hullCache.current.set(key, points);
     }
@@ -128,7 +130,7 @@ export function Fallback2D({ definition, state, reducedMotion, traceFlowId, disp
               {item.control && item.inFocus && <g aria-hidden="true" pointerEvents="none"><circle data-lab-control-affordance={item.id} cx={item.center[0]} cy={-item.center[1]} r={0.2 * screenScale} fill="#020617" fillOpacity={0.4} stroke={item.control.pending ? HIGHLIGHT_COLOR : "#fcd34d"} strokeWidth={2} vectorEffect="non-scaling-stroke" /><text x={item.center[0]} y={-item.center[1]} textAnchor="middle" dominantBaseline="central" fontSize={0.2 * screenScale} fontWeight={800} fill="#fef3c7">{controlGlyph(item.control)}</text>{item.control.pending && <text data-lab-pending-label={item.id} x={item.center[0]} y={-item.center[1] - 0.36 * screenScale} textAnchor="middle" fontSize={0.24 * screenScale} fontWeight={800} fill={HIGHLIGHT_COLOR} stroke="#020617" strokeWidth={0.04 * screenScale} paintOrder="stroke">Confirm?</text>}</g>}
               {item.emissive > 0 && <circle cx={item.center[0]} cy={-item.center[1]} r={0.08 * item.emissive + 0.04} fill="#fde68a" opacity={Math.min(0.08, item.emissive * 0.08)} filter="url(#glow)" />}
               {/* A19 / G3: a status lamp's glyph, so its state is never colour alone. */}
-              <polygon points={hull} fill={drawnBySurface.has(item.id) && !item.highlighted ? "none" : item.highlighted ? mixHexColor(item.color, HIGHLIGHT_COLOR, 0.2) : item.emissive > 0 ? mixHexColor(item.color, LIT_COLOR, Math.min(0.8, 0.8 * item.emissive)) : item.color} stroke={item.highlighted ? HIGHLIGHT_COLOR : "#0f172a"} strokeWidth={item.highlighted ? 3 : 1} vectorEffect="non-scaling-stroke" />
+              <polygon points={hull} fill={drawnBySurface.has(item.id) && !item.highlighted ? "none" : item.highlighted ? mixHexColor(item.color, HIGHLIGHT_COLOR, 0.2) : item.emissive > 0 ? mixHexColor(item.color, LIT_COLOR, Math.min(0.8, 0.8 * item.emissive)) : item.color} stroke={item.highlighted ? HIGHLIGHT_COLOR : item.selectable ? "#0f172a" : item.color} strokeWidth={item.highlighted ? 3 : 1} vectorEffect="non-scaling-stroke" />
               {item.status && item.selectable && item.inFocus && <text data-lab-status={item.id} x={item.center[0]} y={-item.center[1] + 0.42 * screenScale} textAnchor="middle" dominantBaseline="central" fontSize={0.4 * screenScale} fontWeight={800} fill="#0f172a" stroke="#f8fafc" strokeWidth={0.04 * screenScale} paintOrder="stroke" aria-hidden="true">{item.status.glyph}</text>}
             </g>
           );

@@ -40,7 +40,7 @@ export const threeTransparent = (item: RenderItem) => item.alpha < 0.95;
 export const threePasses = (item: RenderItem) => threeTransparent(item) ? 2 : 1;
 
 /** The shadow-caster rule ThreeScene applies to individually drawn parts; batches of opaque static parts always cast. */
-export const castsShadow = (item: RenderItem) => !item.spin && !item.clip && item.alpha >= 0.9 && item.detail !== "decor";
+export const castsShadow = (item: RenderItem) => !item.spin && !item.translation && !item.clip && item.alpha >= 0.9 && item.detail !== "decor";
 
 /** The trace-path flow a learner is currently asked to trace, exactly as the player derives it. */
 export function activeTraceFlowId(definition: InteractiveLabDefinition<LabState>, state: LabState): string | null {

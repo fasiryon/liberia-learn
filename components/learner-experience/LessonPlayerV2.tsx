@@ -120,7 +120,7 @@ export function LessonPlayerV2({ experience, links = NO_LINKS, labs = NO_LABS, t
     const placed = links.find((candidate) => candidate.linkId === linkId) ?? null;
     const lab = placed ? labs[placed.experience.labId] ?? null : null;
     if (!placed || !lab || (linkPolicy !== "INTERNAL_PREVIEW" && !isLinkStudentVisible(placed, experience, lab))) return null;
-    return { linkId, labId: lab.labId, view: { title: lab.title, summary: lab.summary || null, draft: lab.release.status !== "RELEASED", degradation: lab.offline.degradation, tripNarrative: true }, launchable: true };
+    return { linkId, labId: lab.labId, view: { title: lab.title, summary: lab.summary || null, draft: lab.release.status !== "RELEASED", degradation: lab.offline.degradation, tripNarrative: lab.labId === "mount-coffee-hydropower" }, launchable: true };
   }, [runtime, links, labs, linkPolicy, experience]);
   // The resume effect reads the latest resolver without re-running when a parent re-renders.
   const sceneLabRef = useRef(sceneLab);

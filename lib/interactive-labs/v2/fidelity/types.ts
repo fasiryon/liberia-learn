@@ -114,9 +114,12 @@ export type SimulationOutput = {
   quantities: Record<string, number>;
   flows: Record<string, { active: boolean; rate: number; direction: 1 | -1 }>;
   /** fill (0–1) draws a part at that fraction of its length along x, anchored at its left end (e.g. a gauge segment). */
-  componentStates: Record<string, { intensity?: number; status?: string; color?: string; alpha?: number; pose?: number; fill?: number }>;
+  componentStates: Record<string, { intensity?: number; status?: string; color?: string; alpha?: number; pose?: number; fill?: number; position?: Vec3; scale?: Vec3; translation?: ParticleTranslation }>;
   explanation: ExplanationLine[];
 };
+
+/** Bounded presentation motion, never a physics/evidence or simulation-state writer. */
+export type ParticleTranslation = { seed: number; amplitude: Vec3; frequency: number };
 
 /** Simulation rules are separate from the renderer and from evidence: a pure, deterministic function of state. */
 export type SimulationModel = {
@@ -194,6 +197,12 @@ export type HighFidelitySpec = {
   layers: LayerDefinition[];
   poseTransitions: PoseTransitionDefinition[];
   variables: VariableDefinition[];
+  /** Exact cross-variable invariants, checked before mutation and on restored checkpoints. */
+  validateVariables?: (variables: Readonly<Record<string, number>>) => { ok: true } | { ok: false; reason: string };
+  /** Shared instructional controls; state and checks still belong to the existing kernel. */
+  learningTools?: { kind: "county-map" | "water-particles" | "fraction-strips"; paperInstructions: string[]; attribution: string };
+  independentAssessment?: boolean;
+  componentAction?: (componentId: string, variables: Readonly<Record<string, number>>) => FidelityAction | null;
   simulation?: SimulationModel;
   motions?: ComponentMotionDefinition[];
   flows: FlowDefinition[];
@@ -259,6 +268,7 @@ export type FidelityState = {
 
 export type FidelityAction =
   | { type: "set-variable"; variableId: string; value: number }
+  | { type: "set-variables"; values: Record<string, number> }
   | { type: "set-explode"; assemblyId: string; factor: number }
   | { type: "set-cutaway"; cutawayId: string | null }
   | { type: "toggle-layer"; layerId: string }
@@ -274,4 +284,4 @@ export type FidelityAction =
   | { type: "toggle-flow"; flowId: string }
   | { type: "reset-protection" };
 
-export const FIDELITY_ACTION_TYPES = Object.freeze(["set-variable", "set-explode", "set-cutaway", "toggle-layer", "isolate", "toggle-labels", "camera-preset", "clear-assembly", "place-component", "trace-node", "clear-trace", "inspect-component", "guided-step", "toggle-flow", "reset-protection"] as const);
+export const FIDELITY_ACTION_TYPES = Object.freeze(["set-variable", "set-variables", "set-explode", "set-cutaway", "toggle-layer", "isolate", "toggle-labels", "camera-preset", "clear-assembly", "place-component", "trace-node", "clear-trace", "inspect-component", "guided-step", "toggle-flow", "reset-protection"] as const);

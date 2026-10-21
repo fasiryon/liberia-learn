@@ -191,6 +191,10 @@ export function InteractiveLabPlayer({ labId = "g4-solid-figures", override, rev
   const progress = Math.round(state.completedChecks.length / Math.max(checks.length, 1) * 100);
   const traceFlowId = activeCheck?.fidelity?.kind === "trace-path" ? activeCheck.fidelity.flowId : null;
   const onPick = (pick: ScenePick) => {
+    if (pick.kind !== "node" && definition?.fidelity?.componentAction && state.fidelity) {
+      const action = definition.fidelity.componentAction(pick.item.id, state.fidelity.variables);
+      if (action) { dispatch(action); return; }
+    }
     if (pick.kind === "node") dispatch({ type: "trace-node", flowId: pick.flowId, nodeId: pick.nodeId });
     // RX-005c tap rule: tapping a control part operates it (same set-variable as the panel twin); a disabled
     // control does nothing. Inspecting a control part goes through the parts list.
@@ -242,7 +246,7 @@ export function InteractiveLabPlayer({ labId = "g4-solid-figures", override, rev
               <button type="button" onClick={() => { setConfirmRestart(false); dispatch({ type: "reset" }); }} className="min-h-11 rounded-full border border-red-300 bg-red-700 px-4 py-2 text-sm font-bold text-white">Yes, restart the lab</button>
               <button type="button" onClick={() => setConfirmRestart(false)} className="min-h-11 rounded-full border border-white/15 px-4 py-2 text-sm">Keep my progress</button>
             </>
-          : <button type="button" onClick={() => setConfirmRestart(true)} className="min-h-11 rounded-full border border-white/15 px-4 py-2 text-sm">Restart lab (clears progress)</button>}
+          : <button type="button" disabled={!!definition.fidelity?.independentAssessment && state.mode === "ASSESSMENT"} onClick={() => setConfirmRestart(true)} className="min-h-11 rounded-full border border-white/15 px-4 py-2 text-sm disabled:opacity-40">Restart lab (clears progress)</button>}
         {definition.scene.objects.length > 0 && <button type="button" onClick={() => dispatch({ type: "focus", objectId: state.selectedObjectId ?? definition.scene.objects[0].id })} className="min-h-11 rounded-full border border-white/15 px-4 py-2 text-sm">Focus</button>}
       </div>
     </>

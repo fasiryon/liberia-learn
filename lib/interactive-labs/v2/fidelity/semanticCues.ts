@@ -12,6 +12,7 @@ export function checkCriticalComponentIds(definition: InteractiveLabDefinition<L
   const spec = definition.fidelity;
   if (!spec) return [];
   const ids = new Set<string>();
+  if(spec.learningTools)for(const component of spec.components)if(component.selectable!==false)ids.add(component.id);
   for (const check of definition.checks) {
     const fidelity = check.fidelity;
     if (fidelity?.kind === "identify-component") ids.add(fidelity.componentId);

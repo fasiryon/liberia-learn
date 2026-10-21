@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "first-three-stated-primary-objectives/1.0.0",
+  "state": "DRAFT",
+  "approved": false,
+  "source": "Primary objective stated per item in each protected V2 answer-key index (ids only; no keys or rubric text). Ported from git:23c730dce:curriculum/factory-v2/authoring/first-three/delivery-v2/final-policy/contract-p1.test.mjs (T12.6).",
+  "appliesTo": {
+    "wk_mca7a_fri_p4": "85e689715b83db6352d4a3bb423d9cc0419b955991af617ea25d6822b5397219",
+    "wk_mca7a_fri_p3": "8c69c45266bb7bc954a89bc4c5b8ad328d127f777642f66083b3b36933e3b31d",
+    "lesson_mca_1": "f446ad2396075dcf6e9edf4c1bc4fdc2b20f3bd26553be75daebb6cf925280ff"
+  },
+  "tasks": {
+    "ft01-a3": { "ft01-a3-q1": "ft01-o2", "ft01-a3-q2": "ft01-o2", "ft01-a3-q3": "ft01-o3", "ft01-a3-q4": "ft01-o1" },
+    "ft04-a4": { "ft04-a4-q1": "ft04-o2", "ft04-a4-q2": "ft04-o2", "ft04-a4-q3": "ft04-o2", "ft04-a4-q4": "ft04-o1", "ft04-a4-q5": "ft04-o3" },
+    "ft07-a4": { "ft07-a4-q1": "ft07-o2", "ft07-a4-q2": "ft07-o3", "ft07-a4-q3": "ft07-o1", "ft07-a4-q4": "ft07-o1" }
+  }
+}

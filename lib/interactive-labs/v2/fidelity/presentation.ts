@@ -1,8 +1,8 @@
 // Camera, animation and flow primitives. Every animated quantity eases toward a target taken from lab
 // state, so animation always reflects simulation state instead of playing canned motion.
 import type { CameraConstraints, CameraPreset, FidelityState, FlowDefinition, HighFidelitySpec } from "./types";
-import type { ItemSpin } from "./renderList";
-import { clamp, distance, lerp, lerpVec3, multiply, rotate, translate, type Mat4, type Vec3 } from "./math";
+import type { ItemSpin, RenderItem, RenderList } from "./renderList";
+import { clamp, distance, lerp, lerpVec3, multiply, rotate, transformPoint, translate, type Mat4, type Vec3 } from "./math";
 
 export type CameraPose = { target: Vec3; distance: number; yaw: number; pitch: number };
 
@@ -39,6 +39,33 @@ export function spinMatrix(spin: ItemSpin, timeSeconds: number, reducedMotion: b
   const angles: Vec3 = spin.axis === "x" ? [theta, 0, 0] : spin.axis === "y" ? [0, theta, 0] : [0, 0, theta];
   const pivot = spin.pivot;
   return multiply(spin.pre, multiply(translate(...pivot), multiply(rotate(...angles), multiply(translate(-pivot[0], -pivot[1], -pivot[2]), spin.local))));
+}
+
+/** Same bounded motion for geometry, labels and picking on every renderer. */
+export function animatedMatrix(item: RenderItem, timeSeconds: number, reducedMotion: boolean): Mat4 {
+  const base = item.spin ? spinMatrix(item.spin, timeSeconds, reducedMotion) : item.matrix;
+  const motion = item.translation;
+  if (!motion || reducedMotion || motion.frequency === 0) return base;
+  const time = Number.isFinite(timeSeconds) ? Math.max(0, timeSeconds) : 0;
+  const phase = motion.seed * 0.61803398875 * Math.PI * 2;
+  const t = time * motion.frequency * Math.PI * 2;
+  return multiply(translate(
+    Math.sin(t + phase) * motion.amplitude[0],
+    Math.sin(t * 1.3 + phase * 2) * motion.amplitude[1],
+    Math.sin(t * 0.7 + phase * 3) * motion.amplitude[2],
+  ), base);
+}
+
+export function hasTranslationMotion(list: RenderList): boolean {
+  return list.items.some(item => item.translation && item.translation.frequency > 0 && item.translation.amplitude.some(a => a > 0));
+}
+
+export function presentRenderList(list: RenderList, time: number, reducedMotion: boolean): RenderList {
+  return { ...list, items: list.items.map(item => {
+    if (!item.translation && !item.spin) return item;
+    const matrix = animatedMatrix(item, time, reducedMotion);
+    return { ...item, matrix, center: transformPoint(matrix, [0, 0, 0]) };
+  }) };
 }
 
 export function viewMatrix(pose: CameraPose): Mat4 {

@@ -1,0 +1,128 @@
+{
+  "schemaVersion": "first-three-runtime-source/1.0.0",
+  "hashEncoding": "UTF8_LF",
+  "state": "DRAFT",
+  "approved": false,
+  "pins": [
+    {
+      "path": "lib/content-factory/v2/assessmentAttribution.ts",
+      "sha256": "7af6fc44bc1a3058d7a22113b86c6f795ccde1397be8e5a47906e527b544748e"
+    },
+    {
+      "path": "lib/content-factory/v2/contractPolicy.ts",
+      "sha256": "7c258fb0e8f010c9de88b6f69b85d41acd4059e854af45ada508168fd294c73f"
+    },
+    {
+      "path": "lib/content-factory/v2/contractPolicySource.ts",
+      "sha256": "bdcb58595c16a005ebe9257c6e86bd7b65b9db763fdcc3c2533355e9e9b6221a"
+    },
+    {
+      "path": "curriculum/factory-v2/authoring/first-three/stated-primary-objectives.json",
+      "sha256": "147fd295ac7f4b5eee548a4b83c600a5f0bb60fcd93839a376237db6593ff36d"
+    },
+    {
+      "path": "lib/content-factory/v2/runtimeBindings.ts",
+      "sha256": "c11b3b2bba84675ca046da09e6164a3119b550851fb40cf7338000f9e784e732"
+    },
+    {
+      "path": "lib/content-factory/v2/runtimeSource.ts",
+      "sha256": "e8baa56c642a03ccb5d60823d83f2ba9c7e8fafd6e29a9a401eddef82ffa9462"
+    },
+    {
+      "path": "lib/content-factory/v2/partialBatch.ts",
+      "sha256": "3757cd8189a782f904c3444bc9e43b72e5598814f7bbd694e797801f4525bfd8"
+    },
+    {
+      "path": "lib/content-factory/v2/authoringInput.ts",
+      "sha256": "58435d7969cd93b9e0b2f209bf54633600e855c1d0a719fffe16aa9d711331c1"
+    },
+    {
+      "path": "lib/interactive-labs/v2/definitions/firstThree/index.ts",
+      "sha256": "ec726050b0b09332237a27ace65398c080b39be17712981d293012ed391b4dfc"
+    },
+    {
+      "path": "lib/interactive-labs/v2/definitions/firstThree/models.ts",
+      "sha256": "a68afeebd203cf5b29d59cfec42d6881aa072995703df45184d7eb8433e9f9fe"
+    },
+    {
+      "path": "lib/interactive-labs/v2/definitions/firstThree/map-data.json",
+      "sha256": "1db962f100608e5aa9c4e061874cdc627b8657ee6c9f0a8fc44acbac3e519e34"
+    },
+    {
+      "path": "lib/interactive-labs/v2/registry.ts",
+      "sha256": "f188cf99fb50545e5a964cfe0e97b486ac653f7acdc7b6c249b939573f385900"
+    },
+    {
+      "path": "lib/interactive-labs/v2/fidelity/types.ts",
+      "sha256": "ca9f940f17734ab3a78604df59e9bb747080bbcc39751f41a0c899448ebbd852"
+    },
+    {
+      "path": "lib/interactive-labs/v2/fidelity/engine.ts",
+      "sha256": "7c3b83ac7f5ea43b29e412a2dfe44ede39c522d805e858f2255b867ab1057787"
+    },
+    {
+      "path": "lib/interactive-labs/v2/fidelity/boundary.ts",
+      "sha256": "e5c7ee38f414c79085c355bd4e4e30db98e0a03df75c444c8a6f4933b8a8c9a1"
+    },
+    {
+      "path": "lib/interactive-labs/v2/fidelity/semanticCues.ts",
+      "sha256": "76eb62c2551a5d5f97bd0d0918818aeb370a72a9a2734ad48aa25c3b257b4e92"
+    },
+    {
+      "path": "lib/interactive-labs/v2/fidelity/runtimeTargets.ts",
+      "sha256": "93f58e740e9681213761bf01b7338d1a7678f5c8181312728e1cf225916368be"
+    },
+    {
+      "path": "lib/interactive-labs/v2/fidelity/renderList.ts",
+      "sha256": "25fea29c0abf3538520a1cd779b7d37a34fa52e3d2ff2f944b7cddf4fa883356"
+    },
+    {
+      "path": "lib/interactive-labs/v2/fidelity/presentation.ts",
+      "sha256": "fbe8bcfd3dfd0dfdf4f0b9f47e7d59fd487054ba5dc486a0af813dbfe0268716"
+    },
+    {
+      "path": "lib/interactive-labs/v2/fidelity/lowBatch.ts",
+      "sha256": "d86b031bb472c387982c186010e4705eb0da9a508e10146170a45209a9d87ab1"
+    },
+    {
+      "path": "lib/interactive-labs/v2/fidelity/framePlan.ts",
+      "sha256": "4715b5cbfe6fc38f5c66c5d57a6e23989bba61a87859611b191fa7506399f07c"
+    },
+    {
+      "path": "components/interactive-labs/v2/LearningTools.tsx",
+      "sha256": "855adf3ac79f040330a5e755c1b0ecdb0d63d7f69f30b3f4edfdd18f27db23ca"
+    },
+    {
+      "path": "components/interactive-labs/v2/LabControlPanel.tsx",
+      "sha256": "70f63d2e9e4f6dcfec13b5ef0e6e417c2bb50d3a92205edbb4686dec8a448c14"
+    },
+    {
+      "path": "components/interactive-labs/v2/MobileSheet.tsx",
+      "sha256": "3b3c043b1b31863794b7e1957534e8444cd13b5964ce1f98973d3092156316ae"
+    },
+    {
+      "path": "components/interactive-labs/v2/InteractiveLabPlayer.tsx",
+      "sha256": "b77cd05bc382572f023864681af4685ffcc995e9c615b580e673a4fd047aea21"
+    },
+    {
+      "path": "components/interactive-labs/v2/Fallback2D.tsx",
+      "sha256": "f124780b8172f41249e6d90e73891a55f5baba793b34fd660c38c33dd8be0f02"
+    },
+    {
+      "path": "components/interactive-labs/v2/ThreeScene.tsx",
+      "sha256": "532e194c62ee6bc4d10f19f372c8ccece0af1bed98248664350dbef69f45bf4c"
+    },
+    {
+      "path": "components/interactive-labs/v2/WebGLScene.tsx",
+      "sha256": "f816f49458a270c82f42e42e6bb4b02bd285bf4a63e6a18c5a66ed5c5383b47a"
+    },
+    {
+      "path": "components/interactive-labs/v2/threeSceneSync.ts",
+      "sha256": "2290a98f2f8c5ef8d18bc81d70ba862ce2df06f9c64db43e625e21186e0d2bcd"
+    },
+    {
+      "path": "components/interactive-labs/v2/useDisplayFidelity.ts",
+      "sha256": "7afecc7cc3d2c7b620adce41f86fee1e6b03a19a5afd8fa02da2eaa614717ade"
+    }
+  ]
+}

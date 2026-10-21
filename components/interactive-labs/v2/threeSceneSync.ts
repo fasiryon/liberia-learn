@@ -4,7 +4,7 @@
 import * as THREE from "three";
 import type { RenderItem, RenderList } from "@/lib/interactive-labs/v2/fidelity/renderList";
 import { buildParametricGeometry } from "@/lib/interactive-labs/v2/fidelity/geometry/builders";
-import { flowParticles, spinMatrix } from "@/lib/interactive-labs/v2/fidelity/presentation";
+import { flowParticles, animatedMatrix } from "@/lib/interactive-labs/v2/fidelity/presentation";
 import { planLowBatches, type LowBatchPlan } from "@/lib/interactive-labs/v2/fidelity/lowBatch";
 import { castsShadow, runningEmitters, threeTransparent } from "@/lib/interactive-labs/v2/fidelity/framePlan";
 import { emitterParticles } from "@/lib/interactive-labs/v2/fidelity/emitters";
@@ -100,7 +100,7 @@ export function syncThreeScene(stores: ThreeSceneStores, list: RenderList, optio
     let object = stores.objects.get(item.id);
     if (!object) { object = new THREE.Mesh(geometry, material); object.matrixAutoUpdate = false; object.userData.componentId = item.id; scene.add(object); stores.objects.set(item.id, object); }
     else { object.geometry = geometry; object.material = material; }
-    object.matrix.fromArray(item.spin ? spinMatrix(item.spin, options.time, options.reducedMotion) : item.matrix);
+    object.matrix.fromArray(animatedMatrix(item, options.time, options.reducedMotion));
     object.visible = true;
     object.castShadow = stores.shadows && castsShadow(item);
     object.receiveShadow = stores.shadows && !item.clip && !item.revealed;
@@ -123,7 +123,7 @@ export function syncThreeScene(stores: ThreeSceneStores, list: RenderList, optio
     let cap = stores.caps.get(item.id);
     if (!cap) { cap = new THREE.Mesh(geometryOf(item), capMaterial); cap.matrixAutoUpdate = false; cap.userData.sectionCapOf = item.id; scene.add(cap); stores.caps.set(item.id, cap); }
     else { cap.geometry = geometryOf(item); cap.material = capMaterial; }
-    cap.matrix.fromArray(item.spin ? spinMatrix(item.spin, options.time, options.reducedMotion) : item.matrix);
+    cap.matrix.fromArray(animatedMatrix(item, options.time, options.reducedMotion));
     cap.castShadow = false; cap.receiveShadow = false;
   }
   for (const [id, cap] of stores.caps) if (!seen.has(id) || !plan.singles.some((item) => item.id === id && item.clip)) { cap.removeFromParent(); stores.caps.delete(id); }

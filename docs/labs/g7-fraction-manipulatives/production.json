@@ -1,0 +1,9 @@
+{
+  "recordVersion":"lab-production-record/1.0.0","labId":"g7-fraction-manipulatives","labVersion":"1.1.0","tier":"STANDARD","tierReason":"New exact two-whole strip and common-number-line interactions within Runtime V2.","status":"DRAFT",
+  "authority":{"governedObjective":false,"objectiveIds":["ft07-o1","ft07-o2","ft07-o3"],"note":"Proposed authoring objectives only; no academic approval, official evidence or release."},
+  "design":{"pedagogyBrief":"docs/labs/first-three-production.md","storyboard":"docs/labs/first-three-production.md","simulationSpec":"docs/labs/first-three-production.md","assetSpec":"docs/labs/first-three-production.md"},
+  "assets":[{"id":"strips-and-number-line","componentIds":["*"],"kind":"procedural","license":"LiberiaLearn-original","provenance":"Original procedural primitives; authored source media unchanged."}],
+  "rounds":[],"disagreements":[],
+  "runtimeExtensions":[{"id":"first-three-manipulatives","capability":"Atomic invariant-preserving subdivision and registered learning tools","proposal":"docs/architecture/runtime-extensions/first-three-manipulatives.md","status":"IMPLEMENTED","reviewers":[],"tests":"__tests__/interactive-labs/first-three-models.test.ts"}],
+  "tradeoffs":[{"what":"Two wholes, 12 parts per strip and 24 common intervals","why":"Exact arithmetic, readable mobile controls and fixed budgets. Unsupported cases are rejected rather than approximated."}]
+}

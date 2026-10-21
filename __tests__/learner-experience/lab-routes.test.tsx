@@ -48,15 +48,15 @@ describe("lab route migration", () => {
     act(() => root.unmount());
   });
 
-  it("the internal prototype route 404s in production and without the review harness", () => {
+  it("the internal prototype route 404s in production and without the review harness", async () => {
     const saved = { ...process.env };
     try {
       process.env.LAB_REVIEW_HARNESS = "1";
       (process.env as Record<string, string>).NODE_ENV = "production";
-      expect(() => LessonExperiencePrototypePage({ params: { experienceId: "proto-g8-hydroelectric-power" }, searchParams: {} })).toThrow("NOT_FOUND");
+      await expect(LessonExperiencePrototypePage({ params: { experienceId: "proto-g8-hydroelectric-power" }, searchParams: {} })).rejects.toThrow("NOT_FOUND");
       (process.env as Record<string, string>).NODE_ENV = "development";
       delete process.env.LAB_REVIEW_HARNESS;
-      expect(() => LessonExperiencePrototypePage({ params: { experienceId: "proto-g8-hydroelectric-power" }, searchParams: {} })).toThrow("NOT_FOUND");
+      await expect(LessonExperiencePrototypePage({ params: { experienceId: "proto-g8-hydroelectric-power" }, searchParams: {} })).rejects.toThrow("NOT_FOUND");
     } finally {
       process.env = saved;
     }

@@ -5,6 +5,7 @@ import { deriveSimulation, explainState, isComponentRevealed, protectionStatus }
 import { formatVariable, stepVariable } from "@/lib/interactive-labs/v2/fidelity/variables";
 import { ProtectionReset } from "./ProtectionReset";
 import { guidedPrompt } from "@/lib/interactive-labs/v2/fidelity/guidance";
+import { LearningTools } from "./LearningTools";
 
 type Props = { definition: InteractiveLabDefinition<LabState>; state: LabState; activeCheck: LearningCheck | undefined; dispatch: (action: LabAction) => void; onStartRail?: (railId: string) => void };
 
@@ -26,6 +27,7 @@ export function labTaskPrompt(definition: InteractiveLabDefinition<LabState>, st
 export function LabControlPanel({ definition, state, activeCheck, dispatch, onStartRail }: Props) {
   const spec = definition.fidelity, fidelity = state.fidelity;
   const [heldFace, setHeldFace] = useState<string | null>(null);
+  const independent = !!spec?.independentAssessment && (state.mode === "ASSESSMENT" || state.mode === "COMPLETE");
   const [pendingSlot, setPendingSlot] = useState<string | null>(null);
   const modes = spec?.modes ?? MODES;
   const guidedIndex = fidelity?.guidedStepIndex ?? 0;
@@ -34,20 +36,20 @@ export function LabControlPanel({ definition, state, activeCheck, dispatch, onSt
   const modeOwnsTask = state.mode === "GUIDED" || state.mode === "CHALLENGE";
   const target = modeOwnsTask ? undefined : activeCheck?.fidelity;
   const taskPrompt = labTaskPrompt(definition, state, activeCheck);
-  const explanation = spec && fidelity ? explainState(spec, fidelity, definition.grade) : [];
+  const explanation = spec && fidelity && !independent ? explainState(spec, fidelity, definition.grade) : [];
   // R3 interaction P1: a check made while the plant is still tripped fails for that reason, not the learner's arithmetic.
   const protection = spec && state.fidelity ? protectionStatus(spec, state.fidelity) : null;
   const trippedHint = protection?.latched ? (protection.blocker ?? `Your setting may be right, but the plant is still tripped. Press ${protection.resetLabel}, then check again.`) : null;
-  const hint = state.lastFeedback === "incorrect" ? trippedHint ?? (activeCheck?.hints.length ? activeCheck.hints[Math.min(activeCheck.hints.length - 1, Math.max(0, state.retries - 1))] : null) : null;
+  const hint = !independent && state.lastFeedback === "incorrect" ? trippedHint ?? (activeCheck?.hints.length ? activeCheck.hints[Math.min(activeCheck.hints.length - 1, Math.max(0, state.retries - 1))] : null) : null;
 
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap gap-2" role="group" aria-label="Lab mode">
-        {modes.map((mode) => <button key={mode} type="button" aria-pressed={state.mode === mode} onClick={() => dispatch({ type: "mode", mode })} className={chip(state.mode === mode)}>{mode[0] + mode.slice(1).toLowerCase()}</button>)}
+        {modes.map((mode) => <button key={mode} type="button" disabled={independent && mode !== state.mode} aria-pressed={state.mode === mode} onClick={() => dispatch({ type: "mode", mode })} className={`${chip(state.mode === mode)} disabled:opacity-40`}>{mode[0] + mode.slice(1).toLowerCase()}</button>)}
       </div>
 
-      {(explanation.length > 0 || Object.keys(simulation?.quantities ?? {}).length > 0) && (
-        <section aria-label="What is happening" aria-live="polite" className="max-h-[20vh] overflow-y-auto rounded-2xl border border-white/10 bg-slate-950/95 p-3 shadow-xl backdrop-blur">
+      {!independent && (explanation.length > 0 || Object.keys(simulation?.quantities ?? {}).length > 0) && (
+        <section tabIndex={0} aria-label="What is happening" aria-live="polite" className="max-h-[20vh] overflow-y-auto rounded-2xl border border-white/10 bg-slate-950/95 p-3 shadow-xl backdrop-blur focus-visible:outline focus-visible:outline-2 focus-visible:outline-cyan-300">
           <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-400">What is happening</h3>
           {/* R3 visual P1: the cue shows on every screen size; a fade marks the cut-off line. */}
           <p className="mt-1 text-[10px] text-slate-400">Scroll this panel for more details</p>
@@ -67,6 +69,7 @@ export function LabControlPanel({ definition, state, activeCheck, dispatch, onSt
         </section>
       )}
 
+      {spec?.learningTools && <LearningTools spec={spec} state={state} dispatch={dispatch} />}
       <section aria-label="Your task">
         <p className="text-sm text-slate-400">{state.mode === "GUIDED" ? `Guided step ${guidedIndex + 1}` : state.mode === "CHALLENGE" ? "Challenge objective" : "Your next task"}</p>
         <h2 className="mt-1 text-lg font-bold text-white">{taskPrompt}</h2>
@@ -130,7 +133,7 @@ export function LabControlPanel({ definition, state, activeCheck, dispatch, onSt
 
       {spec && fidelity && (
         <>
-          {spec.variables.some((variable) => variable.learnerControlled) && (
+          {!spec.learningTools && spec.variables.some((variable) => variable.learnerControlled) && (
             <section aria-label="Controls" className="space-y-3">
               <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-400">Controls</h3>
               <ProtectionReset definition={definition} state={state} dispatch={dispatch} surface="panel" />
@@ -191,7 +194,7 @@ export function LabControlPanel({ definition, state, activeCheck, dispatch, onSt
               </div>
             </details>}
             </details>
-            {fidelity.inspectedComponentId && <p className="text-xs text-slate-300">{spec.components.find((component) => component.id === fidelity.inspectedComponentId)?.description ?? ""}</p>}
+            {!independent && fidelity.inspectedComponentId && <p className="text-xs text-slate-300">{spec.components.find((component) => component.id === fidelity.inspectedComponentId)?.description ?? ""}</p>}
           </section>
 
           <section aria-label="Camera" className="flex flex-wrap gap-2">

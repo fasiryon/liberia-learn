@@ -1,7 +1,7 @@
 // Renderer-agnostic scene presentation. WebGL (HIGH/STANDARD/LOW) and the SVG fallback draw the same list,
 // which is what keeps FALLBACK_2D instructionally equivalent.
 import type { CapabilityProfile, GeometryKind, InteractiveLabDefinition, LabState, Transform } from "../types";
-import type { ExplanationLine, FidelityAction, FidelityState, FlowNode, HighFidelitySpec } from "./types";
+import type { ExplanationLine, FidelityAction, FidelityState, FlowNode, HighFidelitySpec, ParticleTranslation } from "./types";
 import type { GeometrySilhouette, ParametricDescriptor } from "./geometry/types";
 import { resolveGeometryVariant } from "./geometry/builders";
 import { assemblyOf, deriveSimulation, explainState, isAssemblyOpen, isComponentRevealed } from "./engine";
@@ -37,6 +37,7 @@ export type RenderItem = {
   inFocus: boolean;
   detail?: "decor";
   spin?: ItemSpin;
+  translation?: ParticleTranslation;
   /** RX-005c: the action this control part would dispatch now (null = disabled), and whether it is selected. */
   /** A19 / G3: the status glyph and text a status lamp carries besides its colour. */
   status?: { glyph: string; text: string };
@@ -150,7 +151,15 @@ export function buildRenderList(input: { definition: InteractiveLabDefinition<La
     const inFocus = focusOf(component.id, rootObject?.id ?? assembly?.id);
     if (!inFocus && !budget.fadeContext) continue;
     const rootMatrix = rootObject ? multiply(translate(...rootObject.transform.position), rotate(...objectRotation(state, rootObject.id, rootObject.transform.rotation))) : IDENTITY;
-    const baseLocal = componentLocalTransform(spec, display, component.id, component.transform);
+    const componentState = simulation.componentStates[component.id];
+    if (componentState?.alpha !== undefined && (!Number.isFinite(componentState.alpha) || componentState.alpha < 0 || componentState.alpha > 1)) throw new Error("simulation_alpha_invalid");
+    if (componentState?.alpha === 0) continue;
+    if (componentState?.position && (componentState.position.length !== 3 || componentState.position.some(v => !Number.isFinite(v) || Math.abs(v) > 1000))) throw new Error("simulation_position_invalid");
+    if (componentState?.scale && (componentState.scale.length !== 3 || componentState.scale.some(v => !Number.isFinite(v) || v <= 0 || v > 1000))) throw new Error("simulation_scale_invalid");
+    const translation = componentState?.translation;
+    if (translation && (!Number.isInteger(translation.seed) || Math.abs(translation.seed) > 2147483647 || !Number.isFinite(translation.frequency) || translation.frequency < 0 || translation.frequency > 20 || translation.amplitude.length !== 3 || translation.amplitude.some(v => !Number.isFinite(v) || v < 0 || v > 10))) throw new Error("simulation_translation_invalid");
+    const authoredLocal = componentLocalTransform(spec, display, component.id, component.transform);
+    const baseLocal = { ...authoredLocal, ...(componentState?.position ? { position: componentState.position } : {}), ...(componentState?.scale ? { scale: componentState.scale } : {}) };
     // R3 science P1: a fill state shortens the part along x from its left end, so a gauge segment's length carries MW.
     const fill = simulation.componentStates[component.id]?.fill;
     const localTransform = typeof fill === "number" && Number.isFinite(fill) && fill < 1
@@ -163,11 +172,10 @@ export function buildRenderList(input: { definition: InteractiveLabDefinition<La
     const pending = !!component.control && input.pendingControlId === component.id;
     const highlighted = fidelity.inspectedComponentId === component.id || guided.includes(component.id) || pending;
     const resolvedGeometry = component.geometryVariants ? resolveGeometryVariant(component.geometryVariants, profile) : undefined;
-    const componentState = simulation.componentStates[component.id];
     // Internal mechanisms retain their instructional materials; the housing lamp and HUD carry unit status.
     const warningStatus = componentState?.status === "tripped" || componentState?.status === "out-for-repair";
     const visual = statusVisual(component.internal && !warningStatus ? undefined : componentState?.status);
-    items.push({ id: component.id, label: component.label, kind: "component", geometry: component.geometry, ...(resolvedGeometry?.descriptor ? { parametricGeometry: resolvedGeometry.descriptor } : {}), ...(resolvedGeometry?.silhouette ? { fallbackSilhouette: resolvedGeometry.silhouette } : {}), matrix, center: transformPoint(matrix, [0, 0, 0]), ...(component.labelOffset ? { labelOffset: component.labelOffset } : {}), ...(component.mobileLabel === false ? { mobileLabel: false } : {}), color: componentState?.color ?? visual.color ?? component.material.color, alpha: !inFocus ? 0.12 : removed ? 0.35 : component.material.opacity ?? 0.96, emissive: Math.max(componentState?.intensity ?? 0, visual.emissive), clip: removed && cutaway ? cutaway.plane : null, highlighted, selectable: component.detail !== "decor" && component.selectable !== false && !removed && isComponentRevealed(spec, fidelity, component.id), showLabel: component.detail !== "decor" && component.showLabel !== false && fidelity.labelsVisible && component.selectable !== false && !removed, inFocus, detail: component.detail, spin , ...(cutaway?.revealsComponentIds.includes(component.id) ? { revealed: true as const } : {}), ...(visual.cue && !component.internal ? { status: visual.cue } : {}), ...(component.semanticCues?.includes("label") ? { labelCritical: true as const } : {}), ...(component.control ? { control: { label: component.control.label, group: component.control.group ?? component.control.variableId, variableId: component.control.variableId, kind: component.control.kind, action: controlAction(spec, fidelity, component.control), selected: controlSelected(fidelity, component.control), pending, ...(component.control.kind === "drag-variable" ? { dragAxis: dragAxisEnds(component.control, transformPoint(matrix, [0, 0, 0])) } : {}) } } : {}) });
+    items.push({ ...(translation ? { translation } : {}), id: component.id, label: component.label, kind: "component", geometry: component.geometry, ...(resolvedGeometry?.descriptor ? { parametricGeometry: resolvedGeometry.descriptor } : {}), ...(resolvedGeometry?.silhouette ? { fallbackSilhouette: resolvedGeometry.silhouette } : {}), matrix, center: transformPoint(matrix, [0, 0, 0]), ...(component.labelOffset ? { labelOffset: component.labelOffset } : {}), ...(component.mobileLabel === false ? { mobileLabel: false } : {}), color: componentState?.color ?? visual.color ?? component.material.color, alpha: !inFocus ? 0.12 : removed ? 0.35 : componentState?.alpha ?? component.material.opacity ?? 0.96, emissive: Math.max(componentState?.intensity ?? 0, visual.emissive), clip: removed && cutaway ? cutaway.plane : null, highlighted, selectable: component.detail !== "decor" && component.selectable !== false && !removed && isComponentRevealed(spec, fidelity, component.id), showLabel: component.detail !== "decor" && component.showLabel !== false && fidelity.labelsVisible && component.selectable !== false && !removed, inFocus, detail: component.detail, spin , ...(cutaway?.revealsComponentIds.includes(component.id) ? { revealed: true as const } : {}), ...(visual.cue && !component.internal ? { status: visual.cue } : {}), ...(component.semanticCues?.includes("label") ? { labelCritical: true as const } : {}), ...(component.control ? { control: { label: component.control.label, group: component.control.group ?? component.control.variableId, variableId: component.control.variableId, kind: component.control.kind, action: controlAction(spec, fidelity, component.control), selected: controlSelected(fidelity, component.control), pending, ...(component.control.kind === "drag-variable" ? { dragAxis: dragAxisEnds(component.control, transformPoint(matrix, [0, 0, 0])) } : {}) } } : {}) });
   }
 
   // Inspection hides instructional route overlays; simulation, motion and water surfaces remain authoritative.

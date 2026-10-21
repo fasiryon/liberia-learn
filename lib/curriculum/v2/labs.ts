@@ -25,7 +25,10 @@ export function resolveLabProposal(input: {
   proposal: CandidateLabProposal;
   scenes: readonly CandidateScene[];
   lesson: Readonly<{ lessonId: string; version: string }>;
-  context: AuthoringContext;
+  context: Pick<AuthoringContext, "grade" | "prerequisiteConceptIds"> & Readonly<{
+    objectives: readonly Readonly<{ id: string }>[];
+    concepts: readonly Readonly<{ id: string }>[];
+  }>;
 }): ResolvedLabLink {
   const { proposal, context } = input;
   const fail = (code: string): never => { throw new LabProposalError(code, proposal.id); };

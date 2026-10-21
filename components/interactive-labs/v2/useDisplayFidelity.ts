@@ -21,8 +21,8 @@ export function useDisplayFidelity(definition: InteractiveLabDefinition<LabState
     if (!active) return;
     const target = state.fidelity;
     const simulation = deriveSimulation(spec, target);
-    const hasActiveVisibleFlow = animateFlows && !reducedMotion && spec.flows.some((flow) =>
-      !target.hiddenFlowIds.includes(flow.id) && simulation.flows[flow.id]?.active);
+    const hasActiveVisibleFlow = !reducedMotion && (animateFlows && spec.flows.some((flow) =>
+      !target.hiddenFlowIds.includes(flow.id) && simulation.flows[flow.id]?.active) || Object.values(simulation.componentStates).some(part => part.translation && part.translation.frequency > 0 && part.translation.amplitude.some(a => a > 0)));
     let frame = 0, last = performance.now(), lastPaint = 0;
     let lastReviewTime: number | undefined, reviewClockSeen = false, lastPublishedReviewTime: number | undefined;
     const tick = (now: number) => {
