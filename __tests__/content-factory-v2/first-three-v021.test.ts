@@ -23,8 +23,11 @@ describe("V0.2.1 runtime correction", () => {
 });
 
 describe.skipIf(!fs.existsSync(root))("exact restricted V0.2.1 authoring and C13 amendment", () => {
-  const policy = loadPinnedContractPolicy("V0.2.1");
+  // Pinned contract objects are local git history; load them only once the restricted gate runs.
+  let cached: ReturnType<typeof loadPinnedContractPolicy> | undefined;
+  const pinnedPolicy = () => (cached ??= loadPinnedContractPolicy("V0.2.1"));
   it("retains FT-A001 and applies FT-A002 without altering the historical policy", () => {
+    const policy = pinnedPolicy();
     expect(policy.contract.designation).toBe("liberialearn-first-ten-modernization-contract/1.0.0+FT-A001+FT-A002");
     expect(loadPinnedContractPolicy().contract.designation).toBe("liberialearn-first-ten-modernization-contract/1.0.0+FT-A001");
     expect(JSON.stringify(policy.contract.contract)).toContain("Three items (ft01-a3-q1, ft01-a3-q2, ft01-a3-q4)");
@@ -35,7 +38,7 @@ describe.skipIf(!fs.existsSync(root))("exact restricted V0.2.1 authoring and C13
     expect(createHash("sha256").update(JSON.stringify(input)).digest("hex")).toBe(V021_CANONICAL_INPUTS[id]);
     expect(resolveAuthoredRuntime(input)?.authoredGeneration).toBe("V0.2.1");
     expect(resolveAuthoredRuntime({ ...input, cohortCommit: "0".repeat(40) })).toBeNull();
-    const attribution = assessmentAttribution(input, policy.statedPrimary);
+    const attribution = assessmentAttribution(input, pinnedPolicy().statedPrimary);
     expect(attribution.releaseBlockers).toEqual([]);
     expect(attribution.canonicalMasteryMutation).toBe(false);
     const mixed = attribution.tasks.filter(t => t.attribution === "TASK_ONLY");
