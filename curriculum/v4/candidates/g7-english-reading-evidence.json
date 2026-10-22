@@ -1,0 +1,196 @@
+{
+  "contractVersion": "candidate-lesson-v2/1.1.0",
+  "title": "Reading for evidence: the town pump",
+  "estimatedMinutes": 45,
+  "ageBand": "JUNIOR_SECONDARY",
+  "instruction": {
+    "standard": "liberialearn-v4-instruction/1.0.0",
+    "retention": {
+      "delayDays": 7,
+      "prompts": [
+        "Read a short paragraph and quote the one sentence that best supports a claim about it. Explain your choice.",
+        "Use context clues to explain the meaning of an unfamiliar word in a new passage."
+      ]
+    }
+  },
+  "pedagogy": { "primaryStrategy": "GUIDED_TO_INDEPENDENT", "rationale": "Sustained reading of one original text, then vocabulary in context and guided questions, then independent evidence selection, then a claim-evidence-explanation paragraph that the learner revises." },
+  "prerequisiteAssumptions": ["Reads a short informational text of about 250 words.", "Knows what a sentence and a paragraph are."],
+  "misconceptions": [
+    { "id": "m-context-ignored", "objectiveId": "ll-g7-eng-read-infer", "description": "Guesses a word's meaning from how it sounds instead of from the sentences around it.", "response": "Read the sentence before and after the word, and ask what meaning fits there." },
+    { "id": "m-opinion-as-evidence", "objectiveId": "ll-g7-eng-cite-evidence", "description": "Gives an opinion or a retelling instead of words from the text as evidence.", "response": "Evidence is words from the text, in quotation marks, that show the claim is true." },
+    { "id": "m-quote-without-explanation", "objectiveId": "ll-g7-eng-evidence-paragraph", "description": "Drops in a quotation without explaining how it supports the claim.", "response": "After the quotation, explain in your own words what it shows and why it supports the claim." }
+  ],
+  "scenes": [
+    {
+      "id": "why-evidence", "type": "INTRO", "title": "How do you know?", "purpose": "HOOK_PHENOMENON", "objectiveIds": [],
+      "learnerAction": "Think about how you would prove something you say about a story.",
+      "content": { "body": "When you say something about a text, a good reader asks: how do you know? The answer is **evidence**: words from the text that show your idea is true.\n\nToday you will read a short story about a town pump, explain words from their context, and write a paragraph that proves a claim with evidence." },
+      "interaction": { "kind": "NONE" }, "tools": { "requested": [], "prohibited": [] }, "hints": [], "misconceptionIds": [], "evidence": { "kind": "NONE" },
+      "accessibility": { "textAlternative": "Evidence is the words from a text that show an idea about it is true. In this lesson you read a story about a town pump, explain words from context, and write a paragraph that proves a claim with evidence.", "keyboardPath": "Read the scene, then press Continue.", "reducedMotion": "NOT_APPLICABLE" },
+      "offline": { "mode": "FULL_OFFLINE", "note": "Part of the cached lesson." }, "completion": "VIEWED",
+      "teaching": { "phase": "ORIENT", "blocks": [
+        { "type": "CALLOUT", "tone": "TIP", "title": "Read with a question", "text": "As you read, ask: who solved the problem, and how?" }
+      ] }
+    },
+    {
+      "id": "read", "type": "MEDIA", "title": "Read: The Town Pump", "purpose": "ACTIVATE_PRIOR_KNOWLEDGE", "objectiveIds": ["ll-g7-eng-read-infer"],
+      "learnerAction": "Read the whole story once, opening any underlined word to see its meaning in context.",
+      "content": { "body": "Read the whole story once. Words with a dotted line have a meaning you can open." },
+      "interaction": { "kind": "NONE" }, "tools": { "requested": [], "prohibited": [] }, "hints": [], "misconceptionIds": ["m-context-ignored"], "evidence": { "kind": "NONE" },
+      "accessibility": { "textAlternative": "The story of a town in Bong County whose hand pump was broken for three weeks. Kebeh walked to the creek for water each morning. At a town meeting the old men said the pump was too old to fix, but Ma Lorpu disagreed and asked every family to contribute money, rope or time. The blacksmith made a new handle and two students recorded every gift in a notebook. On Saturday the town worked together and clean water flowed again. The committee agreed each family would check the pump once a month. Now Kebeh carries books instead of buckets.", "keyboardPath": "Read the passage; Tab to a glossary word and press Enter to open its meaning.", "reducedMotion": "NOT_APPLICABLE" },
+      "offline": { "mode": "FULL_OFFLINE", "note": "The passage is part of the cached lesson." }, "completion": "VIEWED",
+      "teaching": { "phase": "READ", "blocks": [
+        { "type": "READING_PASSAGE", "id": "town-pump-passage", "title": "The Town Pump", "paragraphs": [
+          "For three weeks, the hand pump in the middle of town had been broken. Every morning before school, Kebeh walked to the creek with two buckets. The path was steep and muddy, and after the rain the water was brown.",
+          "At the town meeting, the old men said the pump was too old to fix. Kebeh's aunt, Ma Lorpu, disagreed. \"A pump is not old,\" she said. \"It is only waiting for someone to look after it.\"",
+          "Ma Lorpu asked each family to contribute what they could. Some families gave money, some gave rope, and some gave their time. The blacksmith offered to make a new handle. Two students from the junior high school wrote down every gift in a notebook, so that everyone could see where the money went.",
+          "On Saturday, the town worked together. By the afternoon, clean water was flowing again. The new pump committee agreed that each family would check the pump once a month. Ma Lorpu called this plan maintenance.",
+          "Kebeh still leaves home early, but now she carries books instead of buckets."
+        ], "glossary": [
+          { "term": "contribute", "meaning": "to give something, such as money, things or time, to help a shared plan" },
+          { "term": "committee", "meaning": "a small group of people chosen to look after a job for everyone" },
+          { "term": "maintenance", "meaning": "regular care that keeps something working" }
+        ], "origin": { "kind": "ORIGINAL_FOR_LIBERIALEARN", "license": "LiberiaLearn original text", "attribution": "Written for this LiberiaLearn lesson; any resemblance to a real town is general, not factual." } }
+      ] }
+    },
+    {
+      "id": "understand", "type": "CHECK_UNDERSTANDING", "title": "Understand: words and meaning", "purpose": "GUIDED_PRACTICE", "objectiveIds": ["ll-g7-eng-read-infer"],
+      "learnerAction": "Answer questions about words in context, what happened, and why, using a hint if needed.",
+      "content": { "body": "Look back at the story as often as you like. A hint is in the help panel." },
+      "interaction": { "kind": "NONE" }, "tools": { "requested": [], "prohibited": ["dictionary"] }, "hints": ["For a word question, read the sentences before and after the word. For a why question, look for what the people wanted."], "misconceptionIds": ["m-context-ignored"], "evidence": { "kind": "NONE" },
+      "accessibility": { "textAlternative": "Three questions: what maintenance means in paragraph 4 (regular care that keeps the pump working); why Kebeh walked to the creek (the pump was broken); and why the students wrote every gift in a notebook (so everyone could see where the money went and trust the plan).", "keyboardPath": "Choose one option for each question with the arrow keys and Space.", "reducedMotion": "NOT_APPLICABLE" },
+      "offline": { "mode": "FULL_OFFLINE", "note": "Checked on the device." }, "completion": "VIEWED",
+      "pedagogy": { "strategy": "GUIDED_TO_INDEPENDENT", "representation": "VERBAL", "scaffoldLevel": "PARTIAL" },
+      "teaching": { "phase": "UNDERSTAND", "blocks": [
+        { "type": "CHECK", "id": "understand-checks", "items": [
+          { "id": "maintenance", "prompt": "In paragraph 4, the committee agreed that each family would check the pump once a month. Ma Lorpu \"called this plan maintenance.\" What does maintenance mean here?", "options": [
+            { "id": "care", "text": "Regular care that keeps something working", "feedback": "Yes. Checking the pump once a month is regular care so it does not break again." },
+            { "id": "repair", "text": "Fixing something only after it breaks", "feedback": "The plan is to check the pump every month, while it is still working. That is regular care, not only repair." },
+            { "id": "money", "text": "The money families give", "feedback": "Money is in paragraph 3. In paragraph 4 the plan is about checking the pump each month." }
+          ], "formativeKey": { "expectedOptionId": "care" }, "misconceptionId": "m-context-ignored" },
+          { "id": "why-creek", "prompt": "Why did Kebeh walk to the creek every morning?", "options": [
+            { "id": "pump-broken", "text": "The town's hand pump was broken", "feedback": "Yes. The first sentence says the pump had been broken for three weeks." },
+            { "id": "likes-creek", "text": "She liked the walk to the creek", "feedback": "The story says the path was steep and muddy. She went because she needed water." },
+            { "id": "clean-water", "text": "The creek had cleaner water", "feedback": "The story says the creek water was brown after the rain." }
+          ], "formativeKey": { "expectedOptionId": "pump-broken" } },
+          { "id": "why-notebook", "prompt": "Why did the students write down every gift in a notebook?", "options": [
+            { "id": "trust", "text": "So everyone could see where the money went and trust the plan", "feedback": "Yes. The story says they wrote it down \"so that everyone could see where the money went.\"" },
+            { "id": "homework", "text": "Because it was their homework", "feedback": "The story does not say that. Look at the words after \"so that\" in paragraph 3." },
+            { "id": "pay-back", "text": "So the families could be paid back later", "feedback": "Nothing in the story says the gifts would be paid back. Read the reason given after \"so that\"." }
+          ], "formativeKey": { "expectedOptionId": "trust" } }
+        ] }
+      ] }
+    },
+    {
+      "id": "analyze", "type": "PRACTICE", "title": "Analyze: find the evidence", "purpose": "INDEPENDENT_PRACTICE", "objectiveIds": ["ll-g7-eng-cite-evidence"],
+      "learnerAction": "Select the sentences that prove a claim, choose the best quotation, and diagnose a weak answer.",
+      "content": { "body": "Work on your own now. Evidence must come from the story itself." },
+      "interaction": { "kind": "NONE" }, "tools": { "requested": [], "prohibited": [] }, "hints": [], "misconceptionIds": ["m-opinion-as-evidence"], "evidence": { "kind": "NONE" },
+      "accessibility": { "textAlternative": "Task 1: select the sentences from the story that show the whole town helped fix the pump. Task 2: choose the quotation that best supports the claim that Ma Lorpu did not give up. Task 3: Aminata answered a question with her own opinion instead of words from the text; explain what is wrong.", "keyboardPath": "Select sentences with Space; choose one option for each question.", "reducedMotion": "NOT_APPLICABLE" },
+      "offline": { "mode": "FULL_OFFLINE", "note": "Checked on the device." }, "completion": "VIEWED",
+      "pedagogy": { "strategy": "GUIDED_TO_INDEPENDENT", "representation": "VERBAL", "scaffoldLevel": "NONE" },
+      "teaching": { "phase": "ANALYZE", "blocks": [
+        { "type": "SOURCE_EVIDENCE", "id": "town-helped", "source": { "title": "The Town Pump (sentences from the story)", "kind": "PASSAGE", "origin": { "kind": "ORIGINAL_FOR_LIBERIALEARN", "license": "LiberiaLearn original text", "attribution": "Written for this LiberiaLearn lesson" } }, "question": "Which sentences show that the whole town helped fix the pump?", "sentences": [
+          { "id": "e1", "text": "Every morning before school, Kebeh walked to the creek with two buckets.", "supports": false, "why": "This shows the problem, not the town helping to fix it." },
+          { "id": "e2", "text": "Some families gave money, some gave rope, and some gave their time.", "supports": true, "why": "Many families each gave something to the repair." },
+          { "id": "e3", "text": "The blacksmith offered to make a new handle.", "supports": true, "why": "Another member of the town helped with his skill." },
+          { "id": "e4", "text": "At the town meeting, the old men said the pump was too old to fix.", "supports": false, "why": "This shows doubt about the repair, not help with it." },
+          { "id": "e5", "text": "On Saturday, the town worked together.", "supports": true, "why": "This says directly that the town worked together." },
+          { "id": "e6", "text": "Kebeh still leaves home early, but now she carries books instead of buckets.", "supports": false, "why": "This shows the result for Kebeh, not who helped." }
+        ], "minSelect": 3 },
+        { "type": "CHECK", "id": "best-quote", "items": [
+          { "id": "lorpu-determined", "prompt": "Claim: Ma Lorpu did not give up on the pump. Which quotation best supports this claim?", "options": [
+            { "id": "not-old", "text": "\"A pump is not old,\" she said. \"It is only waiting for someone to look after it.\"", "feedback": "Yes. Even after the old men said it could not be fixed, she insisted it could." },
+            { "id": "flowing", "text": "\"By the afternoon, clean water was flowing again.\"", "feedback": "This shows the result, but it does not show Ma Lorpu herself refusing to give up." },
+            { "id": "my-opinion", "text": "Ma Lorpu seems like a strong woman.", "feedback": "This is an opinion, not words from the story. Evidence must be quoted from the text." }
+          ], "formativeKey": { "expectedOptionId": "not-old" }, "misconceptionId": "m-opinion-as-evidence" }
+        ] },
+        { "type": "MISTAKE_ANALYSIS", "id": "aminata-evidence", "problem": "Question: What evidence shows that the pump will keep working in the future?", "attempt": { "name": "Aminata", "steps": ["I think the pump will keep working because people in towns are usually careful."] }, "question": "What is wrong with Aminata's answer?", "options": [
+          { "id": "opinion", "text": "It is her opinion, not evidence from the story", "feedback": "Yes. The evidence is in paragraph 4: \"each family would check the pump once a month.\"" },
+          { "id": "too-short", "text": "It is too short", "feedback": "A short answer can be strong if it quotes the text. The problem is where her reason comes from." },
+          { "id": "nothing", "text": "Nothing: it answers the question", "feedback": "It gives a reason, but the reason is not from the story. Look for the monthly checking plan in paragraph 4." }
+        ], "formativeKey": { "expectedOptionId": "opinion" }, "correction": ["Quote the story: \"each family would check the pump once a month.\"", "Then explain: regular checks catch problems before the pump breaks."], "misconceptionId": "m-opinion-as-evidence" },
+        { "type": "STEP_REVEAL", "id": "model-paragraph", "question": "Watch a strong answer being built to the question: Why does the town now have clean water?", "steps": [
+          { "text": "**Claim:** The town has clean water because the people worked together to repair the pump." },
+          { "text": "**Evidence:** The story says, \"Some families gave money, some gave rope, and some gave their time.\"" },
+          { "text": "**Explanation:** This shows that no single person fixed the pump; every family gave what it could, and together it was enough." },
+          { "text": "**Check:** the claim answers the question, the evidence is quoted, and the explanation says what the quotation shows." }
+        ] }
+      ] }
+    },
+    {
+      "id": "construct", "type": "PRACTICE", "title": "Construct: write a claim with evidence", "purpose": "APPLY", "objectiveIds": ["ll-g7-eng-evidence-paragraph"],
+      "learnerAction": "Build a claim sentence, then write a paragraph with a claim, a quotation and an explanation.",
+      "content": { "body": "Write your own paragraph. Build the claim first, then prove it with words from the story and explain them." },
+      "interaction": { "kind": "NONE" }, "tools": { "requested": [], "prohibited": [] }, "hints": [], "misconceptionIds": ["m-quote-without-explanation"], "evidence": { "kind": "NONE" },
+      "accessibility": { "textAlternative": "Task 1: build the sentence 'The town fixed the pump because families worked together' from word tiles. Task 2: write a paragraph with a claim about the story, a quotation from the story in quotation marks, and an explanation of how the quotation supports the claim.", "keyboardPath": "Choose tiles in order with Tab and Space; type in each box of the organizer.", "reducedMotion": "NOT_APPLICABLE" },
+      "offline": { "mode": "FULL_OFFLINE", "note": "Writing stays on this device." }, "completion": "VIEWED",
+      "pedagogy": { "strategy": "GUIDED_TO_INDEPENDENT", "representation": "VERBAL", "scaffoldLevel": "NONE" },
+      "teaching": { "phase": "CONSTRUCT", "blocks": [
+        { "type": "SENTENCE_BUILDER", "id": "claim-sentence", "prompt": "Build a claim sentence about why the pump works again.", "tiles": ["because", "the", "worked", "fixed", "families", "pump", "The", "town", "together"], "formativeKey": { "orders": [["The", "town", "fixed", "the", "pump", "because", "families", "worked", "together"]] } },
+        { "type": "WRITING_ORGANIZER", "id": "evidence-paragraph", "prompt": "Write a paragraph that answers: Who was most important in fixing the pump, and why?", "sourceBlockId": "town-pump-passage", "fields": [
+          { "id": "claim", "label": "Claim", "guidance": "Answer the question in one sentence.", "minWords": 8 },
+          { "id": "evidence", "label": "Evidence", "guidance": "Quote words from the story in quotation marks.", "minWords": 6 },
+          { "id": "explanation", "label": "Explanation", "guidance": "Explain how the quotation proves your claim.", "minWords": 15 }
+        ], "checklist": ["My claim answers the question.", "My evidence is quoted from the story in quotation marks.", "My explanation says what the quotation shows, in my own words."] }
+      ] }
+    },
+    {
+      "id": "revise", "type": "CHECK_UNDERSTANDING", "title": "Revise: make the explanation stronger", "purpose": "REFLECT", "objectiveIds": ["ll-g7-eng-evidence-paragraph"],
+      "learnerAction": "Choose the revisions that make a paragraph stronger, then improve your own.",
+      "content": { "body": "Good writers revise. Compare these choices, then go back and improve your own explanation if it needs it." },
+      "interaction": { "kind": "NONE" }, "tools": { "requested": [], "prohibited": [] }, "hints": [], "misconceptionIds": ["m-quote-without-explanation"], "evidence": { "kind": "NONE" },
+      "accessibility": { "textAlternative": "A paragraph claims Ma Lorpu was the most important person and quotes her words, but stops there. The best revision adds an explanation of what her words show. A second question asks which piece of evidence is strongest.", "keyboardPath": "Choose one option for each question with the arrow keys and Space.", "reducedMotion": "NOT_APPLICABLE" },
+      "offline": { "mode": "FULL_OFFLINE", "note": "Checked on the device." }, "completion": "VIEWED",
+      "teaching": { "phase": "REVISE", "blocks": [
+        { "type": "CHECK", "id": "revise-checks", "items": [
+          { "id": "add-explanation", "prompt": "Kollie wrote: \"Ma Lorpu was the most important person. She said, 'It is only waiting for someone to look after it.'\" What would improve it most?", "options": [
+            { "id": "explain", "text": "Add a sentence explaining that her words changed the town's mind and led to the plan", "feedback": "Yes. A quotation needs an explanation that connects it to the claim." },
+            { "id": "second-quote", "text": "Add another quotation with no explanation", "feedback": "More quotations without explanation still leave the reader to guess why they matter." },
+            { "id": "remove-quote", "text": "Remove the quotation", "feedback": "The quotation is good evidence. Keep it and explain it." }
+          ], "formativeKey": { "expectedOptionId": "explain" }, "misconceptionId": "m-quote-without-explanation" },
+          { "id": "strongest-evidence", "prompt": "Claim: the people of the town worked as a team. Which evidence is strongest?", "options": [
+            { "id": "team-quote", "text": "\"Some families gave money, some gave rope, and some gave their time.\"", "feedback": "Yes. It shows many different people each giving something." },
+            { "id": "pump-broken", "text": "\"For three weeks, the hand pump in the middle of town had been broken.\"", "feedback": "This describes the problem, not the teamwork." },
+            { "id": "opinion", "text": "Towns in Liberia always work as a team.", "feedback": "This is a general opinion, not evidence from the story." }
+          ], "formativeKey": { "expectedOptionId": "team-quote" }, "misconceptionId": "m-opinion-as-evidence" }
+        ] }
+      ] }
+    },
+    {
+      "id": "remember", "type": "REVIEW", "title": "Remember", "purpose": "REVIEW", "objectiveIds": ["ll-g7-eng-read-infer", "ll-g7-eng-cite-evidence", "ll-g7-eng-evidence-paragraph"],
+      "learnerAction": "Recall the parts of an evidence paragraph.",
+      "content": { "body": "Say each point aloud before the check.", "keyPoints": ["Use the sentences around a word to work out its meaning.", "Evidence is words quoted from the text, not your opinion.", "Claim, evidence, explanation: explain what the evidence shows."] },
+      "interaction": { "kind": "NONE" }, "tools": { "requested": [], "prohibited": [] }, "hints": [], "misconceptionIds": [], "evidence": { "kind": "NONE" },
+      "accessibility": { "textAlternative": "Use the sentences around a word to work out its meaning. Evidence is quoted from the text. An evidence paragraph has a claim, evidence and an explanation. A question asks what comes after the quotation in an evidence paragraph: the explanation.", "keyboardPath": "Choose one option with the arrow keys and Space.", "reducedMotion": "NOT_APPLICABLE" },
+      "offline": { "mode": "FULL_OFFLINE", "note": "Part of the cached lesson." }, "completion": "VIEWED",
+      "teaching": { "phase": "RETRIEVE", "blocks": [
+        { "type": "CHECK", "id": "retrieve-cee", "items": [
+          { "id": "after-quote", "prompt": "In an evidence paragraph, what comes after the quotation?", "options": [
+            { "id": "explanation", "text": "An explanation of what it shows", "feedback": "Yes: claim, evidence, explanation." },
+            { "id": "new-claim", "text": "A new claim", "feedback": "First finish proving the claim you made: explain the evidence." },
+            { "id": "nothing", "text": "Nothing: the quotation speaks for itself", "feedback": "Readers need to be told how the quotation proves the claim." }
+          ], "formativeKey": { "expectedOptionId": "explanation" } }
+        ] }
+      ] }
+    },
+    {
+      "id": "show-what-you-know", "type": "MASTERY_CHECK", "title": "Show what you know", "purpose": "ASSESS_MASTERY", "objectiveIds": ["ll-g7-eng-read-infer", "ll-g7-eng-cite-evidence", "ll-g7-eng-evidence-paragraph"],
+      "learnerAction": "Read a new passage and answer the assessment questions on your own.",
+      "content": { "body": "Now read a new passage and show what you can do on your own. The assessment system and your teacher check it, not this lesson." },
+      "interaction": { "kind": "ASSESSMENT_HANDOFF", "assessmentRequestId": "reading-mastery" }, "tools": { "requested": [], "prohibited": ["dictionary"] }, "hints": [], "misconceptionIds": [],
+      "evidence": { "kind": "MASTERY_RESPONSE", "evidenceType": "QUIZ", "responses": [
+        { "responseKey": "reading-mastery-infer", "objectiveId": "ll-g7-eng-read-infer", "responseType": "ASSESSMENT_RESPONSE", "scaffoldLevel": "NONE" },
+        { "responseKey": "reading-mastery-cite", "objectiveId": "ll-g7-eng-cite-evidence", "responseType": "ASSESSMENT_RESPONSE", "scaffoldLevel": "NONE" },
+        { "responseKey": "reading-mastery-write", "objectiveId": "ll-g7-eng-evidence-paragraph", "responseType": "ASSESSMENT_RESPONSE", "scaffoldLevel": "NONE" }
+      ] },
+      "accessibility": { "textAlternative": "The assessment gives a new passage with reading questions and a short evidence paragraph to write on your own. It is delivered by the assessment player.", "keyboardPath": "Answer each assessment question, then submit.", "reducedMotion": "NOT_APPLICABLE" },
+      "offline": { "mode": "FULL_OFFLINE", "note": "Responses are kept until the device is online; the assessment authority scores them." }, "completion": "ALL_ANSWERED",
+      "teaching": { "phase": "ASSESS", "blocks": [] }
+    }
+  ],
+  "assessmentRequests": [
+    { "id": "reading-mastery", "objectiveIds": ["ll-g7-eng-read-infer", "ll-g7-eng-cite-evidence", "ll-g7-eng-evidence-paragraph"], "interaction": "FREE_RESPONSE", "evidenceType": "QUIZ", "difficulty": "CORE", "misconceptionIds": ["m-context-ignored", "m-opinion-as-evidence", "m-quote-without-explanation"], "tools": { "requested": [], "prohibited": ["dictionary"] }, "offline": "FULL_OFFLINE" }
+  ],
+  "labProposals": []
+}

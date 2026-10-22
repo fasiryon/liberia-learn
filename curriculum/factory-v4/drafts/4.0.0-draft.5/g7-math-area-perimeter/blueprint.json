@@ -1,0 +1,125 @@
+{
+  "schemaVersion": "unit-blueprint/2.2.0",
+  "blueprintId": "g7-math-area-perimeter-v4",
+  "version": "4.0.0",
+  "contentHash": "58e3cc544b46177ca5d5d611862a1ea40f37576775b43dda9fe3eeef53861791",
+  "grade": 7,
+  "subject": "MATH",
+  "unitId": "g7-math-area-perimeter",
+  "title": "g7-math-area-perimeter",
+  "repositoryCommit": "1268773a649fd3d570450ec15c8d5c9eb93d0cf2",
+  "sources": [
+    {
+      "id": "v4-reference-inputs",
+      "version": "1.0.0",
+      "sha256": "88b7a18ecd3ad9d0e080ad918e3e7bb29227b0f2e0a7672d72416e6c0d323ba5",
+      "sourceRef": "curriculum/factory-v4/draft5-inputs.json"
+    }
+  ],
+  "objectives": [
+    {
+      "id": "ll-g7-math-ap-rectangles",
+      "kind": "LIBERIALEARN_MASTERY",
+      "statement": "Calculate the area and perimeter of rectangles with correct units, and decide which one a real-world problem needs.",
+      "sourceId": "v4-reference-inputs",
+      "sourcePointer": "moe-math-g7-s2-p5-geometry-act3",
+      "scope": "REQUIRED",
+      "mapping": "PROPOSED"
+    },
+    {
+      "id": "ll-g7-math-ap-triangles",
+      "kind": "LIBERIALEARN_MASTERY",
+      "statement": "Calculate the area of a triangle from its base and perpendicular height, and its perimeter from its three sides.",
+      "sourceId": "v4-reference-inputs",
+      "sourcePointer": "moe-math-g7-s2-p5-geometry-act3",
+      "scope": "REQUIRED",
+      "mapping": "PROPOSED"
+    }
+  ],
+  "outcomes": [
+    {
+      "id": "g7-math-area-perimeter-outcome",
+      "objectiveIds": [
+        "ll-g7-math-ap-rectangles",
+        "ll-g7-math-ap-triangles"
+      ],
+      "demonstration": "Produce and explain an independent response and transfer it to a new context."
+    }
+  ],
+  "prerequisites": [],
+  "misconceptions": [],
+  "sequence": [
+    {
+      "resourceId": "g7-math-area-perimeter-lesson",
+      "dependsOn": [],
+      "objectiveIds": [
+        "ll-g7-math-ap-rectangles",
+        "ll-g7-math-ap-triangles"
+      ],
+      "scaffold": "FULL"
+    }
+  ],
+  "resources": [
+    {
+      "id": "g7-math-area-perimeter-lesson",
+      "kind": "LESSON",
+      "role": "LESSON_AUTHOR",
+      "objectiveIds": [
+        "ll-g7-math-ap-rectangles",
+        "ll-g7-math-ap-triangles"
+      ],
+      "dependsOn": [],
+      "audience": "REVIEWER_ONLY"
+    }
+  ],
+  "assessmentPlan": [
+    {
+      "id": "g7-math-area-perimeter-practice",
+      "resourceId": "g7-math-area-perimeter-lesson",
+      "itemIds": [],
+      "kind": "SHORT_CONSTRUCTED_RESPONSE",
+      "objectiveIds": [
+        "ll-g7-math-ap-rectangles",
+        "ll-g7-math-ap-triangles"
+      ],
+      "scaffold": "NONE",
+      "timing": "IN_LESSON",
+      "context": "REHEARSED",
+      "scoring": "NOT_SCORED",
+      "source": "EXCELLENCE_PLAN",
+      "ref": "REFERENCE_LESSON_ONLY_ASSESSMENT_PENDING"
+    }
+  ],
+  "support": {
+    "differentiation": [
+      "Use the text equivalent and paper model with a teacher."
+    ],
+    "accessibility": [
+      "Scene keyboard paths and block text equivalents."
+    ],
+    "offline": {
+      "mode": "TEXT_PAPER_CAPTURE_ONLY",
+      "requirements": [
+        "Paper, pencil and printed text alternatives."
+      ],
+      "maxBytes": 2000000
+    }
+  },
+  "provenance": [
+    {
+      "id": "v4-reference-inputs",
+      "version": "1.0.0",
+      "sha256": "88b7a18ecd3ad9d0e080ad918e3e7bb29227b0f2e0a7672d72416e6c0d323ba5",
+      "sourceRef": "curriculum/factory-v4/draft5-inputs.json"
+    }
+  ],
+  "legacy": [],
+  "unresolved": [
+    "REFERENCE_LESSON_ONLY_FULL_EXCELLENCE_PACKAGE_PENDING",
+    "PROTECTED_ASSESSMENT_RECONCILIATION_REQUIRED",
+    "PREREQUISITE_DIAGNOSTIC_AND_MISCONCEPTION_ITEM_BINDINGS_PENDING",
+    "AUTHENTIC_SOURCE_COMPARISON_AND_RIGHTS_REVIEW_REQUIRED",
+    "MANUAL_ACCESSIBILITY_AND_OFFLINE_RUNTIME_QA_REQUIRED"
+  ],
+  "instructionStandard": "liberialearn-v4-instruction/1.0.0"
+}

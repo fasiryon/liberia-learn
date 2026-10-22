@@ -7,6 +7,10 @@ import { NumberBuilder, PlaceValueChart } from "@/components/experience/demo/Pla
 import { PLACES, formatNumber, type PlaceId } from "@/lib/learner-experience/demo/placeValue";
 import { checkSequence, checkSort, diagnosePlacement, digitCardsFor, moveItem, placementFeedback } from "@/lib/learner-experience/teaching/checks";
 import type { TeachingBlock } from "@/lib/learner-experience/teaching/contract";
+import { MathExpression } from "@/components/experience/MathText";
+import { AreaModelBlock, ArrayModelBlock, FractionCompareBlock, FractionEquivalenceBlock, FractionModelBlock, FractionNumberLineBlock, MistakeAnalysisBlock, NumericResponseBlock, ShapeModelBlock, WorkedSolutionBlock } from "./v4/MathBlocks";
+import { DataPlotBlock, ParticleModelBlock, PredictObserveBlock } from "./v4/ScienceBlocks";
+import { MapExplorerBlock, ReadingPassageBlock, SentenceBuilderBlock, SourceEvidenceBlock, WritingOrganizerBlock } from "./v4/HumanitiesLanguageBlocks";
 
 /**
  * Reusable visual learning blocks (Student Experience V3 P1). Each block is keyboard, touch and
@@ -34,6 +38,30 @@ export function TeachingBlockView({ block, onDone }: { block: TeachingBlock; onD
       <p className="ll4-callout-title">{block.tone === "MISTAKE" ? <AlertTriangle size={18} aria-hidden="true" /> : <Lightbulb size={18} aria-hidden="true" />} {block.title}</p>
       <p><InlineText text={block.text} /></p>
     </aside>;
+    // Interactive Learning V4 blocks (one registry for every subject).
+    case "CHECK": return <ChoiceCheck block={{ type: "CHOICE_CHECK", id: block.id, items: block.items.map((item) => {
+      const correctIndex = item.options.findIndex((option) => option.id === item.formativeKey.expectedOptionId);
+      return { id: item.id, prompt: item.prompt, options: item.options.map((option) => option.text), correctIndex, feedback: { correct: item.options[correctIndex].feedback, incorrect: "Look again." }, optionFeedback: item.options.map((option) => option.feedback), hint: item.hint };
+    }) }} onDone={onDone} />;
+    case "EQUATION": return <figure className="ll5-equation"><MathExpression tex={block.tex} display />{block.caption && <figcaption><InlineText text={block.caption} /></figcaption>}</figure>;
+    case "WORKED_SOLUTION": return <WorkedSolutionBlock block={block} onDone={onDone} />;
+    case "NUMERIC_RESPONSE": return <NumericResponseBlock block={block} onDone={onDone} />;
+    case "MISTAKE_ANALYSIS": return <MistakeAnalysisBlock block={block} onDone={onDone} />;
+    case "SHAPE_MODEL": return <ShapeModelBlock block={block} />;
+    case "FRACTION_MODEL": return <FractionModelBlock block={block} onDone={onDone} />;
+    case "FRACTION_EQUIVALENCE": return <FractionEquivalenceBlock block={block} />;
+    case "FRACTION_NUMBER_LINE": return <FractionNumberLineBlock block={block} onDone={onDone} />;
+    case "FRACTION_COMPARE": return <FractionCompareBlock block={block} onDone={onDone} />;
+    case "ARRAY_MODEL": return <ArrayModelBlock block={block} />;
+    case "AREA_MODEL": return <AreaModelBlock block={block} onDone={onDone} />;
+    case "PARTICLE_MODEL": return <ParticleModelBlock block={block} />;
+    case "PREDICT_OBSERVE": return <PredictObserveBlock block={block} onDone={onDone} />;
+    case "DATA_PLOT": return <DataPlotBlock block={block} />;
+    case "MAP_EXPLORER": return <MapExplorerBlock block={block} onDone={onDone} />;
+    case "SOURCE_EVIDENCE": return <SourceEvidenceBlock block={block} onDone={onDone} />;
+    case "READING_PASSAGE": return <ReadingPassageBlock block={block} />;
+    case "SENTENCE_BUILDER": return <SentenceBuilderBlock block={block} onDone={onDone} />;
+    case "WRITING_ORGANIZER": return <WritingOrganizerBlock block={block} onDone={onDone} />;
   }
 }
 
@@ -156,18 +184,18 @@ export function ChoiceCheck({ block, onDone }: { block: Extract<TeachingBlock, {
       const answered = chosen !== undefined;
       const right = chosen === item.correctIndex;
       return <fieldset key={item.id} className="ll3-panel ll4-question" data-practice={item.id}>
-        <legend className="sr-only">Question {itemIndex + 1}: {item.prompt}</legend>
-        <p aria-hidden="true" className="ll4-question-prompt"><span className="ll4-question-num">{itemIndex + 1}</span>{item.prompt}</p>
+        <legend className="sr-only">Question {itemIndex + 1}: <InlineText text={item.prompt} /></legend>
+        <p aria-hidden="true" className="ll4-question-prompt"><span className="ll4-question-num">{itemIndex + 1}</span><span><InlineText text={item.prompt} /></span></p>
         <div className="ll4-options">{item.options.map((option, optionIndex) => <label key={option} className="ll3-choice" data-selected={chosen === optionIndex ? "" : undefined} data-verdict={chosen === optionIndex ? (right ? "right" : "retry") : undefined}>
           <input type="radio" name={`${block.id}-${item.id}`} checked={chosen === optionIndex} onChange={() => setAnswers((current) => ({ ...current, [item.id]: optionIndex }))} />
           <span className="ll4-option-letter" aria-hidden="true">{String.fromCharCode(65 + optionIndex)}</span>
-          <span>{option}</span>
+          <span><InlineText text={option} /></span>
         </label>)}</div>
         {item.hint && !answered && (hints[item.id]
           ? <p className="ll4-hint"><Lightbulb size={16} aria-hidden="true" /> <InlineText text={item.hint} /></p>
           : <div><button type="button" className="ll4-link-btn" onClick={() => setHints((current) => ({ ...current, [item.id]: true }))}>Show a hint</button></div>)}
         <p role="status" className={answered ? "ll3-feedback" : "sr-only"} data-result={answered ? (right ? "right" : "retry") : undefined}>
-          {!answered ? "" : right ? <><strong>Correct.</strong> {item.optionFeedback?.[chosen] ?? item.feedback.correct}</> : <><strong>Not yet.</strong> {item.optionFeedback?.[chosen] ?? item.feedback.incorrect} Try another answer.</>}
+          {!answered ? "" : right ? <><strong>Correct.</strong> <InlineText text={item.optionFeedback?.[chosen] ?? item.feedback.correct} /></> : <><strong>Not yet.</strong> <InlineText text={item.optionFeedback?.[chosen] ?? item.feedback.incorrect} /> Try another answer.</>}
         </p>
       </fieldset>;
     })}

@@ -1,0 +1,164 @@
+{
+  "manifestVersion": "factory-v4-candidate/1.0.0",
+  "candidateVersion": "4.0.0-draft.4",
+  "contractVersion": "visual-teaching-block/4.0.0-draft.1",
+  "key": "g7-civics-counties-capitals",
+  "lessonId": "cv4-cand-g7-civics-counties-capitals",
+  "grade": 7,
+  "subject": "CIVICS",
+  "title": "Generated: Read a schematic county map",
+  "state": "DRAFT",
+  "approved": false,
+  "published": false,
+  "released": false,
+  "learnerDeliverable": false,
+  "audience": "REVIEWER_ONLY",
+  "contentOrigin": "DETERMINISTIC_FACTORY_EXECUTOR_WITH_SYNTHETIC_TEACHING_CONTEXTS",
+  "generation": {
+    "executor": "factory-v4-lesson-author/1.0.0",
+    "role": "LESSON_AUTHOR",
+    "referenceFixtureCopied": false,
+    "modelCalls": 0
+  },
+  "sourceLineage": {
+    "kind": "FIRST_TEN_BOUND",
+    "contentId": "wk_mca7a_fri_p4",
+    "contentPk": "cmm7xs89200e9vo70t6qdlgho",
+    "legacyTitle": "Exploring the Counties and Capitals of Liberia",
+    "revisionId": "cmss8ptit002jvo540275dfvw",
+    "legacyBodySha256": "c7a1257c9520d452a623f474bc8c3b7987366a55e6c5a98947fdbeba1f5fb242",
+    "firstTenKey": "ft01-g7-civics-counties-capitals",
+    "contract": "liberialearn-first-ten-modernization-contract/1.0.0+FT-A001+FT-A002",
+    "specSha256": "648ec61a72e2ddff147444dadae75aff321866cfc660498a792b6a3b48e7a28b",
+    "baseline": {
+      "label": "first-three V0.2.1",
+      "packageDigest": "fd9de92735c99937cf0cc3fe0d1d85ce493bb9936d5d4b6b9d215f3cf31ab7b9",
+      "lessonResourceDigest": "401dd3406f576c5fcc0de8643071d32e3581c2030b0f669854a737cec1b4da25",
+      "manifestSha256": "cceab5702960bde4b5cc1b8d8b076ee613a1e67bc7262fc3837513c9ef18d9c7",
+      "root": "C:/restricted-authoring/review-packages/first-three-v021-final",
+      "handoff": "docs/architecture/content-factory/FIRST_THREE_V021_CANDIDATES_HANDOFF.md (PR #195)",
+      "read": false
+    },
+    "snapshot": {
+      "path": "artifacts/curriculum-cleanup-v1/snapshot.json",
+      "capturedAt": "2026-09-26T09:07:15.873Z",
+      "fileSha256": "ef89632f6b447011b9092fb17501a8eac52555783aa45d3c16a52d275ebaa16c",
+      "rowSha256": "0f91b323605e9a2fc96bbf310f31c7cd65f3796be0989caacff5f315f2740bec"
+    },
+    "learnerReferences": "first-ten dependencies: 1 scheduled work, 13 progress records, 3 learning events, 1 lesson plan (retained, never rewritten)."
+  },
+  "sourceVerification": "REPOSITORY_PINS_VERIFIED_REMOTE_RIGHTS_AND_LEGACY_BODY_NOT_ATTESTED",
+  "inputPins": {
+    "manifestSha256": "60883779051198a7bdbc8a389d97c186376fc7b050599fdb32aa4c72f9aa01a2",
+    "frontendCommit": "1268773a649fd3d570450ec15c8d5c9eb93d0cf2",
+    "candidate": {
+      "path": "curriculum/v4/candidates/g7-civics-counties-capitals.json",
+      "sha256": "d5c48a23c2b09bfa3e66cd0b6be221ab62ae0d4c6212a67d2a26c573751807ea"
+    }
+  },
+  "candidateSha256": "1256eb142ba1bfda3b18a788c7dcdbe1fdb7523447f63ef5a42fe7ff42999796",
+  "blueprintHash": "e058da594b8e9606b61c4fd8bbd98b18e2c2eee64a2b3b1fa62777c96bae1178",
+  "learnerProjectionSha256": "82fb57cc20fc0ba65e6911eea94aefdeb0f544ea7d3f5c73df7df1db378c465e",
+  "academicSchema": {
+    "valid": true,
+    "errors": []
+  },
+  "visualInstruction": {
+    "valid": true,
+    "family": "HUMANITIES",
+    "balance": {
+      "explanationSeconds": 267,
+      "activitySeconds": 700,
+      "activityShare": 0.724
+    },
+    "practice": {
+      "ft01-o1": {
+        "visuals": 1,
+        "workedExamples": 0,
+        "guided": 3,
+        "independent": 2,
+        "mistakes": 0,
+        "transfer": 3
+      },
+      "ft01-o2": {
+        "visuals": 1,
+        "workedExamples": 0,
+        "guided": 3,
+        "independent": 2,
+        "mistakes": 0,
+        "transfer": 3
+      },
+      "ft01-o3": {
+        "visuals": 1,
+        "workedExamples": 0,
+        "guided": 3,
+        "independent": 2,
+        "mistakes": 0,
+        "transfer": 3
+      }
+    },
+    "totals": {
+      "visuals": 3,
+      "workedExamples": 0,
+      "guided": 9,
+      "independent": 6,
+      "mistakes": 0,
+      "transfer": 9,
+      "problems": 8
+    },
+    "advisories": []
+  },
+  "accessibility": {
+    "schema": "PASS",
+    "blockBindings": 6,
+    "manualScreenReaderReview": "PENDING"
+  },
+  "offline": {
+    "mode": "TEXT_PAPER_CAPTURE_ONLY",
+    "protectedKeysCached": false,
+    "runtimeColdStartAndReconnect": "PENDING"
+  },
+  "protectedAssessment": {
+    "included": false,
+    "restrictedKeyComparison": "PENDING_AUTHORIZED_OWNER_INPUT",
+    "canonicalMasteryMutation": false
+  },
+  "factoryStatus": "REVISION_REQUIRED",
+  "releaseBlockers": [
+    "MOE_OBJECTIVE_UNBOUND",
+    "ONTOLOGY_RELEASE_MISSING",
+    "V4_HUMAN_REVIEW_REQUIRED",
+    "V021_BASELINE_RECONCILIATION",
+    "excellence:BP-COVERAGE",
+    "excellence:BP-PRODUCTION",
+    "excellence:BP-REASONING",
+    "excellence:BP-SELECTED-SHARE",
+    "excellence:BP-RETENTION",
+    "excellence:BP-TRANSFER",
+    "excellence:BP-EXTENSION",
+    "REFERENCE_LESSON_ONLY_FULL_EXCELLENCE_PACKAGE_PENDING",
+    "PROTECTED_ASSESSMENT_RECONCILIATION_REQUIRED",
+    "PREREQUISITE_DIAGNOSTIC_AND_MISCONCEPTION_ITEM_BINDINGS_PENDING",
+    "AUTHENTIC_SOURCE_COMPARISON_AND_RIGHTS_REVIEW_REQUIRED",
+    "MANUAL_ACCESSIBILITY_AND_OFFLINE_RUNTIME_QA_REQUIRED",
+    "OBJECTIVE_MAPPING_PROPOSED:ft01-o1",
+    "OBJECTIVE_MAPPING_PROPOSED:ft01-o2",
+    "OBJECTIVE_MAPPING_PROPOSED:ft01-o3",
+    "EXACT_REVISION_HUMAN_REVIEW_REQUIRED",
+    "EXPLICIT_RELEASE_AUTHORIZATION_REQUIRED",
+    "RETENTION_POLICY_APPROVAL_REQUIRED",
+    "ASSESSMENT_ITEMS_PENDING",
+    "RESTRICTED_KEY_COMPARISON_PENDING",
+    "FRONTEND_GENERATED_PACKAGE_CONSUMPTION_QA_PENDING"
+  ],
+  "files": {
+    "candidate.json": "4b0f9abdaa29729ba8080f2b2f693cbd7079806a8558a53c5f0b744f5a021849",
+    "visual-teaching.json": "bc7607be2520e1067d37462d41ae7f3e043274d7816e5b4ce8dced525cfcd8e2",
+    "blueprint.json": "6efa6ade7a76a8273a7b066680233d7b8d907d89a9ae2a1f3eb6b58e5c58e765",
+    "factory-artifact.json": "86dbf137fda4ef2efc902033197bb5ed3d767c422ce279210a1273883d64ec60",
+    "learner-projection.json": "868f265a1271e2ffe897d423d36403c7effbc1ba28566af36f103b70a895c999",
+    "factory-receipt.json": "ce6a5fc8ae0ddbbf14e5f5030b6d843f1fcdc055a23cf0b9375bd0a2160598d1",
+    "paper-alternative.txt": "3d7b1b13da4fb6681d23235e3de91f89c063585b7490c199f773c8e5e50bd357"
+  },
+  "packageHash": "7d148212fffa9bcc48bb22b11c69671160b0c17c2ca49c4020f9c1d86e7b7c9c"
+}

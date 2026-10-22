@@ -1,0 +1,540 @@
+{
+  "contractVersion": "visual-teaching-block/4.0.0-draft.1",
+  "registryVersion": "teaching-blocks/1.1.0",
+  "instructionStandard": "liberialearn-v4-instruction/1.0.0",
+  "candidateSha256": "3bdd1015c189843cae8ad1eb2c116fd04c110ec87d12738d648803e3b41d488a",
+  "state": "DRAFT",
+  "approved": false,
+  "published": false,
+  "released": false,
+  "audience": "REVIEWER_ONLY",
+  "objectives": [
+    {
+      "id": "ll-g7-math-ap-rectangles",
+      "statement": "Calculate the area and perimeter of rectangles with correct units, and decide which one a real-world problem needs.",
+      "standards": [
+        {
+          "reference": "moe-math-g7-s2-p5-geometry-act3",
+          "statement": "Assist learners to find the perimeter and area of a given polygon and present it to the class.",
+          "relation": "ALIGNS_WITH",
+          "mapping": "PROPOSED"
+        },
+        {
+          "reference": "moe-math-g5-s2-p4-measurement-obj5",
+          "statement": "Find perimeters of polygons.",
+          "relation": "BUILDS_ON",
+          "mapping": "PROPOSED"
+        },
+        {
+          "reference": "moe-math-g6-s2-p4-uii-measurement-con4",
+          "statement": "Find areas, volume, perimeter, and circumstance by measurement and using formulae.",
+          "relation": "BUILDS_ON",
+          "mapping": "PROPOSED"
+        }
+      ]
+    },
+    {
+      "id": "ll-g7-math-ap-triangles",
+      "statement": "Calculate the area of a triangle from its base and perpendicular height, and its perimeter from its three sides.",
+      "standards": [
+        {
+          "reference": "moe-math-g7-s2-p5-geometry-act3",
+          "statement": "Assist learners to find the perimeter and area of a given polygon and present it to the class.",
+          "relation": "ALIGNS_WITH",
+          "mapping": "PROPOSED"
+        },
+        {
+          "reference": "moe-math-g7-s2-p5-geometry-obj3",
+          "statement": "Identify and write examples of the kinds and properties of angles and polygons.",
+          "relation": "ALIGNS_WITH",
+          "mapping": "PROPOSED"
+        },
+        {
+          "reference": "moe-math-g6-s2-p4-uii-measurement-con4",
+          "statement": "Find areas, volume, perimeter, and circumstance by measurement and using formulae.",
+          "relation": "BUILDS_ON",
+          "mapping": "PROPOSED"
+        }
+      ]
+    }
+  ],
+  "blocks": [
+    {
+      "sceneId": "generated-1",
+      "slot": "blocks",
+      "index": 0,
+      "type": "SHAPE_MODEL",
+      "blockSha256": "962164355462043b46ce8fc78eb0d7e80c9947c7fb6a451564d444c9c96dbf00",
+      "objectiveIds": [
+        "ll-g7-math-ap-rectangles",
+        "ll-g7-math-ap-triangles"
+      ],
+      "instructionalPurpose": "A labelled rectangle, triangle or composite shape: count unit squares, shade the area, trace the perimeter, show the height. Learner action: Use the model, complete its task, and explain what the representation shows.",
+      "misconceptionIds": [
+        "generated-math-misconception"
+      ],
+      "responseSignals": [],
+      "accessibility": {
+        "textAlternative": "A rectangle 8 m long and 5 m wide. Area 40 square m; perimeter 26 m. Area covers the inside; perimeter follows the edge.",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: A rectangle 8 m long and 5 m wide. Area 40 square m; perimeter 26 m. Area covers the inside; perimeter follows the edge.",
+        "responsePrompt": "Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "NONE",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/lessonAuthor.ts",
+          "sha256": "adad66e123a6d53744c9aca1791860b13b363de0caefeccededb519fc9da937a",
+          "license": "Original authored deterministic recipe; internal review only",
+          "attribution": "LiberiaLearn Content Factory V4 executor; synthetic scenarios and illustrative data",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "generated-1",
+      "slot": "blocks",
+      "index": 1,
+      "type": "SHAPE_MODEL",
+      "blockSha256": "fc05b80a4110eee4dff0aa53948817cfeac132a585ae4e5fd27b832d0ee7748a",
+      "objectiveIds": [
+        "ll-g7-math-ap-rectangles",
+        "ll-g7-math-ap-triangles"
+      ],
+      "instructionalPurpose": "A labelled rectangle, triangle or composite shape: count unit squares, shade the area, trace the perimeter, show the height. Learner action: Use the model, complete its task, and explain what the representation shows.",
+      "misconceptionIds": [
+        "generated-math-misconception"
+      ],
+      "responseSignals": [],
+      "accessibility": {
+        "textAlternative": "A triangle with a base of 6 m and a perpendicular height of 4 m, measured at a right angle to the base. Its other two sides are 5 m and 5 m. Use perpendicular height, not a sloping side.",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: A triangle with a base of 6 m and a perpendicular height of 4 m, measured at a right angle to the base. Its other two sides are 5 m and 5 m. Use perpendicular height, not a sloping side.",
+        "responsePrompt": "Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "NONE",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/lessonAuthor.ts",
+          "sha256": "adad66e123a6d53744c9aca1791860b13b363de0caefeccededb519fc9da937a",
+          "license": "Original authored deterministic recipe; internal review only",
+          "attribution": "LiberiaLearn Content Factory V4 executor; synthetic scenarios and illustrative data",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "generated-2",
+      "slot": "blocks",
+      "index": 0,
+      "type": "WORKED_SOLUTION",
+      "blockSha256": "5049ad4d837f3c1beaea411f607ccae911b8ef76617713cfb81b9cc998f05190",
+      "objectiveIds": [
+        "ll-g7-math-ap-rectangles",
+        "ll-g7-math-ap-triangles"
+      ],
+      "instructionalPurpose": "Watch a problem solved one step at a time, with the diagram following each step. Learner action: Use the model, complete its task, and explain what the representation shows.",
+      "misconceptionIds": [
+        "generated-math-misconception"
+      ],
+      "responseSignals": [],
+      "accessibility": {
+        "textAlternative": "An 8 m by 5 m garden needs mulch and fencing. A rectangle 8 m long and 5 m wide. Area 40 square m; perimeter 26 m. Step 1: Count 5 rows of 8 unit squares. A = 8 × 5 = 40 m² Step 2: Add all four sides. P = 2(8 + 5) = 26 m",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: An 8 m by 5 m garden needs mulch and fencing. A rectangle 8 m long and 5 m wide. Area 40 square m; perimeter 26 m. Step 1: Count 5 rows of 8 unit squares. A = 8 × 5 = 40 m² Step 2: Add all four sides. P = 2(8 + 5) = 26 m",
+        "responsePrompt": "Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "MODEL",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/lessonAuthor.ts",
+          "sha256": "adad66e123a6d53744c9aca1791860b13b363de0caefeccededb519fc9da937a",
+          "license": "Original authored deterministic recipe; internal review only",
+          "attribution": "LiberiaLearn Content Factory V4 executor; synthetic scenarios and illustrative data",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "generated-2",
+      "slot": "blocks",
+      "index": 1,
+      "type": "WORKED_SOLUTION",
+      "blockSha256": "60e71db25ee96c7d48cd433efcde959944e88b3174f037c42ec4bfe3bbdacd69",
+      "objectiveIds": [
+        "ll-g7-math-ap-rectangles",
+        "ll-g7-math-ap-triangles"
+      ],
+      "instructionalPurpose": "Watch a problem solved one step at a time, with the diagram following each step. Learner action: Use the model, complete its task, and explain what the representation shows.",
+      "misconceptionIds": [
+        "generated-math-misconception"
+      ],
+      "responseSignals": [],
+      "accessibility": {
+        "textAlternative": "Find both measurements of the triangular bed. A triangle with a base of 6 m and a perpendicular height of 4 m, measured at a right angle to the base. Its other two sides are 5 m and 5 m. Step 1: Halve the base-by-height rectangle. A = 1/2 × 6 × 4 = 12 m² Step 2: Add the three boundary lengths, not the height. P = 6 + 5 + 5 = 16 m",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Find both measurements of the triangular bed. A triangle with a base of 6 m and a perpendicular height of 4 m, measured at a right angle to the base. Its other two sides are 5 m and 5 m. Step 1: Halve the base-by-height rectangle. A = 1/2 × 6 × 4 = 12 m² Step 2: Add the three boundary lengths, not the height. P = 6 + 5 + 5 = 16 m",
+        "responsePrompt": "Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "MODEL",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/lessonAuthor.ts",
+          "sha256": "adad66e123a6d53744c9aca1791860b13b363de0caefeccededb519fc9da937a",
+          "license": "Original authored deterministic recipe; internal review only",
+          "attribution": "LiberiaLearn Content Factory V4 executor; synthetic scenarios and illustrative data",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "generated-3",
+      "slot": "blocks",
+      "index": 0,
+      "type": "NUMERIC_RESPONSE",
+      "blockSha256": "150c0a12eb7ea7ea31084115ecab4f267b3771975aeeacc36565e751ae579531",
+      "objectiveIds": [
+        "ll-g7-math-ap-rectangles",
+        "ll-g7-math-ap-triangles"
+      ],
+      "instructionalPurpose": "Type a numeric answer with its unit and get feedback that names the mistake. Learner action: Use the model, complete its task, and explain what the representation shows.",
+      "misconceptionIds": [
+        "generated-math-misconception"
+      ],
+      "responseSignals": [
+        {
+          "misconceptionId": "generated-math-misconception",
+          "responsePattern": "guided-rectangle-area:NUMBER:26",
+          "feedback": "You measured the edge. Area counts squares covering the inside."
+        },
+        {
+          "misconceptionId": "generated-math-misconception",
+          "responsePattern": "guided-rectangle-edge:NUMBER:36",
+          "feedback": "You covered the inside. Perimeter measures every side of the boundary."
+        }
+      ],
+      "accessibility": {
+        "textAlternative": "Find the area and the perimeter. Explain why their units differ. A rectangle 9 m long and 4 m wide. Area: write your answer with its unit. Perimeter: write your answer with its unit.",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Find the area and the perimeter. Explain why their units differ. A rectangle 9 m long and 4 m wide. Area: write your answer with its unit. Perimeter: write your answer with its unit.",
+        "responsePrompt": "Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/lessonAuthor.ts",
+          "sha256": "adad66e123a6d53744c9aca1791860b13b363de0caefeccededb519fc9da937a",
+          "license": "Original authored deterministic recipe; internal review only",
+          "attribution": "LiberiaLearn Content Factory V4 executor; synthetic scenarios and illustrative data",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "generated-3",
+      "slot": "blocks",
+      "index": 1,
+      "type": "NUMERIC_RESPONSE",
+      "blockSha256": "5b35cade81300f53e2668fba1a99f8ec43bac172966e56253323cfe02fd9295d",
+      "objectiveIds": [
+        "ll-g7-math-ap-rectangles",
+        "ll-g7-math-ap-triangles"
+      ],
+      "instructionalPurpose": "Type a numeric answer with its unit and get feedback that names the mistake. Learner action: Use the model, complete its task, and explain what the representation shows.",
+      "misconceptionIds": [
+        "generated-math-misconception"
+      ],
+      "responseSignals": [
+        {
+          "misconceptionId": "generated-math-misconception",
+          "responsePattern": "guided-triangle-area:NUMBER:16",
+          "feedback": "You measured the edge. Area counts squares covering the inside."
+        },
+        {
+          "misconceptionId": "generated-math-misconception",
+          "responsePattern": "guided-triangle-edge:NUMBER:12",
+          "feedback": "You covered the inside. Perimeter measures every side of the boundary."
+        }
+      ],
+      "accessibility": {
+        "textAlternative": "Find the area and the perimeter. Explain why their units differ. A triangle with a base of 6 m and a perpendicular height of 4 m, measured at a right angle to the base. Its other two sides are 5 m and 5 m.. Area: write your answer with its unit. Perimeter: write your answer with its unit.",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Find the area and the perimeter. Explain why their units differ. A triangle with a base of 6 m and a perpendicular height of 4 m, measured at a right angle to the base. Its other two sides are 5 m and 5 m.. Area: write your answer with its unit. Perimeter: write your answer with its unit.",
+        "responsePrompt": "Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/lessonAuthor.ts",
+          "sha256": "adad66e123a6d53744c9aca1791860b13b363de0caefeccededb519fc9da937a",
+          "license": "Original authored deterministic recipe; internal review only",
+          "attribution": "LiberiaLearn Content Factory V4 executor; synthetic scenarios and illustrative data",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "generated-4",
+      "slot": "blocks",
+      "index": 0,
+      "type": "NUMERIC_RESPONSE",
+      "blockSha256": "f5700ee88000ace7db3e029551758ade4ce8861b98014bef47fbad94ce7aa0cd",
+      "objectiveIds": [
+        "ll-g7-math-ap-rectangles",
+        "ll-g7-math-ap-triangles"
+      ],
+      "instructionalPurpose": "Type a numeric answer with its unit and get feedback that names the mistake. Learner action: Use the model, complete its task, and explain what the representation shows.",
+      "misconceptionIds": [
+        "generated-math-misconception"
+      ],
+      "responseSignals": [
+        {
+          "misconceptionId": "generated-math-misconception",
+          "responsePattern": "independent-rectangle-area:NUMBER:36",
+          "feedback": "You measured the edge. Area counts squares covering the inside."
+        },
+        {
+          "misconceptionId": "generated-math-misconception",
+          "responsePattern": "independent-rectangle-edge:NUMBER:77",
+          "feedback": "You covered the inside. Perimeter measures every side of the boundary."
+        }
+      ],
+      "accessibility": {
+        "textAlternative": "Find the area and the perimeter. Explain why their units differ. A rectangle 11 m long and 7 m wide. Area: write your answer with its unit. Perimeter: write your answer with its unit.",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Find the area and the perimeter. Explain why their units differ. A rectangle 11 m long and 7 m wide. Area: write your answer with its unit. Perimeter: write your answer with its unit.",
+        "responsePrompt": "Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/lessonAuthor.ts",
+          "sha256": "adad66e123a6d53744c9aca1791860b13b363de0caefeccededb519fc9da937a",
+          "license": "Original authored deterministic recipe; internal review only",
+          "attribution": "LiberiaLearn Content Factory V4 executor; synthetic scenarios and illustrative data",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "generated-4",
+      "slot": "blocks",
+      "index": 1,
+      "type": "NUMERIC_RESPONSE",
+      "blockSha256": "0bae3f4e09baa047d294f81a567e4c7fc7763727be9e8840f4056e69978d2ad0",
+      "objectiveIds": [
+        "ll-g7-math-ap-rectangles",
+        "ll-g7-math-ap-triangles"
+      ],
+      "instructionalPurpose": "Type a numeric answer with its unit and get feedback that names the mistake. Learner action: Use the model, complete its task, and explain what the representation shows.",
+      "misconceptionIds": [
+        "generated-math-misconception"
+      ],
+      "responseSignals": [
+        {
+          "misconceptionId": "generated-math-misconception",
+          "responsePattern": "independent-triangle-area:NUMBER:36",
+          "feedback": "You measured the edge. Area counts squares covering the inside."
+        },
+        {
+          "misconceptionId": "generated-math-misconception",
+          "responsePattern": "independent-triangle-edge:NUMBER:60",
+          "feedback": "You covered the inside. Perimeter measures every side of the boundary."
+        }
+      ],
+      "accessibility": {
+        "textAlternative": "Find the area and the perimeter. Explain why their units differ. A triangle with a base of 10 m and a perpendicular height of 12 m, measured at a right angle to the base. Its other two sides are 13 m and 13 m.. Area: write your answer with its unit. Perimeter: write your answer with its unit.",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Find the area and the perimeter. Explain why their units differ. A triangle with a base of 10 m and a perpendicular height of 12 m, measured at a right angle to the base. Its other two sides are 13 m and 13 m.. Area: write your answer with its unit. Perimeter: write your answer with its unit.",
+        "responsePrompt": "Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/lessonAuthor.ts",
+          "sha256": "adad66e123a6d53744c9aca1791860b13b363de0caefeccededb519fc9da937a",
+          "license": "Original authored deterministic recipe; internal review only",
+          "attribution": "LiberiaLearn Content Factory V4 executor; synthetic scenarios and illustrative data",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "generated-5",
+      "slot": "blocks",
+      "index": 0,
+      "type": "MISTAKE_ANALYSIS",
+      "blockSha256": "f0685e31ed51bc40df2186393d7c74172c1a4aa22790a5160031ff6947a496d2",
+      "objectiveIds": [
+        "ll-g7-math-ap-rectangles",
+        "ll-g7-math-ap-triangles"
+      ],
+      "instructionalPurpose": "Diagnose a worked attempt that contains a common misconception. Learner action: Use the model, complete its task, and explain what the representation shows.",
+      "misconceptionIds": [
+        "generated-math-misconception"
+      ],
+      "responseSignals": [
+        {
+          "misconceptionId": "generated-math-misconception",
+          "responsePattern": "OPTION:keep",
+          "feedback": "Check what each quantity in the model means."
+        }
+      ],
+      "accessibility": {
+        "textAlternative": "A 10 m by 4 m plot needs fencing. A learner wrote: Buy 40 metres of fencing because 10 times 4 is 40. Which diagnosis explains the mistake? Options: Multiplying side lengths finds area; fencing needs the sum of all boundary lengths.; The method already matches the model..",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: A 10 m by 4 m plot needs fencing. A learner wrote: Buy 40 metres of fencing because 10 times 4 is 40. Which diagnosis explains the mistake? Options: Multiplying side lengths finds area; fencing needs the sum of all boundary lengths.; The method already matches the model..",
+        "responsePrompt": "Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/lessonAuthor.ts",
+          "sha256": "adad66e123a6d53744c9aca1791860b13b363de0caefeccededb519fc9da937a",
+          "license": "Original authored deterministic recipe; internal review only",
+          "attribution": "LiberiaLearn Content Factory V4 executor; synthetic scenarios and illustrative data",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "generated-6",
+      "slot": "blocks",
+      "index": 0,
+      "type": "NUMERIC_RESPONSE",
+      "blockSha256": "f9fd91fcd1093bf989a5a04d6b31390f8740f964bfbe5c7e68abde8bda1f7eff",
+      "objectiveIds": [
+        "ll-g7-math-ap-rectangles",
+        "ll-g7-math-ap-triangles"
+      ],
+      "instructionalPurpose": "Type a numeric answer with its unit and get feedback that names the mistake. Learner action: Explain why the doorway changes the skirting length but does not remove a rectangle from the floor covering.",
+      "misconceptionIds": [
+        "generated-math-misconception"
+      ],
+      "responseSignals": [],
+      "accessibility": {
+        "textAlternative": "Find the quantities for a new job. Floor covering in square metres: write your answer. Skirting board in metres: write your answer.",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Find the quantities for a new job. Floor covering in square metres: write your answer. Skirting board in metres: write your answer.",
+        "responsePrompt": "Explain why the doorway changes the skirting length but does not remove a rectangle from the floor covering. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/lessonAuthor.ts",
+          "sha256": "adad66e123a6d53744c9aca1791860b13b363de0caefeccededb519fc9da937a",
+          "license": "Original authored deterministic recipe; internal review only",
+          "attribution": "LiberiaLearn Content Factory V4 executor; synthetic scenarios and illustrative data",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    }
+  ],
+  "assessmentBoundary": {
+    "player": "ASSESSMENT_PLAYER_V2",
+    "scoring": "SERVER_AUTHORITY",
+    "protectedKeysIncluded": false,
+    "canonicalMasteryMutation": false,
+    "offlineEvidence": "CAPTURE_ONLY_NOT_OFFICIAL"
+  }
+}

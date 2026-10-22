@@ -1,0 +1,161 @@
+{
+  "manifestVersion": "factory-v4-candidate/1.0.0",
+  "candidateVersion": "4.0.0-draft.4",
+  "contractVersion": "visual-teaching-block/4.0.0-draft.1",
+  "key": "g7-english-reading-evidence",
+  "lessonId": "cv4-cand-g7-english-reading-evidence",
+  "grade": 7,
+  "subject": "ENGLISH",
+  "title": "Generated: Read for an evidence-based inference",
+  "state": "DRAFT",
+  "approved": false,
+  "published": false,
+  "released": false,
+  "learnerDeliverable": false,
+  "audience": "REVIEWER_ONLY",
+  "contentOrigin": "DETERMINISTIC_FACTORY_EXECUTOR_WITH_SYNTHETIC_TEACHING_CONTEXTS",
+  "generation": {
+    "executor": "factory-v4-lesson-author/1.0.0",
+    "role": "LESSON_AUTHOR",
+    "referenceFixtureCopied": false,
+    "modelCalls": 0
+  },
+  "sourceLineage": {
+    "kind": "SOURCE_ROW_ONLY",
+    "contentId": "english-g7-waec-style-reading-and-writing-performance",
+    "contentPk": "cmn9kgxde004ivotgtqr8fqgo",
+    "legacyTitle": "Mastering Reading Comprehension and Writing Skills for WAEC",
+    "revisionId": "cmss8r8o200e7vo546w0divyw",
+    "snapshot": {
+      "path": "artifacts/curriculum-cleanup-v1/snapshot.json",
+      "capturedAt": "2026-09-26T09:07:15.873Z",
+      "fileSha256": "ef89632f6b447011b9092fb17501a8eac52555783aa45d3c16a52d275ebaa16c",
+      "rowSha256": "98d8b0db6b323d7d208c9e05d24931ae4438b32a058fe2b198cb158c2406e950"
+    }
+  },
+  "sourceVerification": "REPOSITORY_PINS_VERIFIED_REMOTE_RIGHTS_AND_LEGACY_BODY_NOT_ATTESTED",
+  "inputPins": {
+    "manifestSha256": "60883779051198a7bdbc8a389d97c186376fc7b050599fdb32aa4c72f9aa01a2",
+    "frontendCommit": "1268773a649fd3d570450ec15c8d5c9eb93d0cf2",
+    "candidate": {
+      "path": "curriculum/v4/candidates/g7-english-reading-evidence.json",
+      "sha256": "2048eee394a6b2b600967d4542c26f34091a7f75b3021d0d279d90b0af5a271d"
+    }
+  },
+  "candidateSha256": "e35d9cb14806d57867ff76d49cec9703f165e8f9e543c8bbdf7fa004d56b66eb",
+  "blueprintHash": "d87db7fcfff61382d154faf7dea506ef276854431683173ef540bc571ac4d67b",
+  "learnerProjectionSha256": "bfc3ff58c1c5dd881a2c724e9187dccffcb59e20648996a44f197483e77b086c",
+  "academicSchema": {
+    "valid": true,
+    "errors": []
+  },
+  "visualInstruction": {
+    "valid": true,
+    "family": "LANGUAGE",
+    "balance": {
+      "explanationSeconds": 105,
+      "activitySeconds": 860,
+      "activityShare": 0.891
+    },
+    "practice": {
+      "ll-g7-eng-read-infer": {
+        "visuals": 1,
+        "workedExamples": 0,
+        "guided": 2,
+        "independent": 2,
+        "mistakes": 0,
+        "transfer": 3
+      },
+      "ll-g7-eng-cite-evidence": {
+        "visuals": 1,
+        "workedExamples": 0,
+        "guided": 2,
+        "independent": 2,
+        "mistakes": 0,
+        "transfer": 3
+      },
+      "ll-g7-eng-evidence-paragraph": {
+        "visuals": 1,
+        "workedExamples": 0,
+        "guided": 2,
+        "independent": 2,
+        "mistakes": 0,
+        "transfer": 3
+      }
+    },
+    "totals": {
+      "visuals": 3,
+      "workedExamples": 0,
+      "guided": 6,
+      "independent": 6,
+      "mistakes": 0,
+      "transfer": 9,
+      "problems": 7
+    },
+    "advisories": [
+      {
+        "code": "v4_activity_share_outside_target",
+        "severity": "ADVISORY",
+        "detail": "89% activity (target 65–75%); do not pad with repetitive questions to reach it."
+      },
+      {
+        "code": "v4_explanation_too_thin",
+        "severity": "ADVISORY",
+        "detail": "Very little explanation; confirm learners are taught before they practise."
+      }
+    ]
+  },
+  "accessibility": {
+    "schema": "PASS",
+    "blockBindings": 6,
+    "manualScreenReaderReview": "PENDING"
+  },
+  "offline": {
+    "mode": "TEXT_PAPER_CAPTURE_ONLY",
+    "protectedKeysCached": false,
+    "runtimeColdStartAndReconnect": "PENDING"
+  },
+  "protectedAssessment": {
+    "included": false,
+    "restrictedKeyComparison": "PENDING_AUTHORIZED_OWNER_INPUT",
+    "canonicalMasteryMutation": false
+  },
+  "factoryStatus": "REVISION_REQUIRED",
+  "releaseBlockers": [
+    "MOE_OBJECTIVE_UNBOUND",
+    "ONTOLOGY_RELEASE_MISSING",
+    "V4_HUMAN_REVIEW_REQUIRED",
+    "LEGACY_BODY_NOT_COMPARED",
+    "excellence:BP-COVERAGE",
+    "excellence:BP-PRODUCTION",
+    "excellence:BP-REASONING",
+    "excellence:BP-SELECTED-SHARE",
+    "excellence:BP-RETENTION",
+    "excellence:BP-TRANSFER",
+    "excellence:BP-EXTENSION",
+    "REFERENCE_LESSON_ONLY_FULL_EXCELLENCE_PACKAGE_PENDING",
+    "PROTECTED_ASSESSMENT_RECONCILIATION_REQUIRED",
+    "PREREQUISITE_DIAGNOSTIC_AND_MISCONCEPTION_ITEM_BINDINGS_PENDING",
+    "AUTHENTIC_SOURCE_COMPARISON_AND_RIGHTS_REVIEW_REQUIRED",
+    "MANUAL_ACCESSIBILITY_AND_OFFLINE_RUNTIME_QA_REQUIRED",
+    "OBJECTIVE_MAPPING_PROPOSED:ll-g7-eng-read-infer",
+    "OBJECTIVE_MAPPING_PROPOSED:ll-g7-eng-cite-evidence",
+    "OBJECTIVE_MAPPING_PROPOSED:ll-g7-eng-evidence-paragraph",
+    "EXACT_REVISION_HUMAN_REVIEW_REQUIRED",
+    "EXPLICIT_RELEASE_AUTHORIZATION_REQUIRED",
+    "RETENTION_POLICY_APPROVAL_REQUIRED",
+    "ASSESSMENT_ITEMS_PENDING",
+    "RESTRICTED_KEY_COMPARISON_PENDING",
+    "FRONTEND_GENERATED_PACKAGE_CONSUMPTION_QA_PENDING"
+  ],
+  "files": {
+    "candidate.json": "b32a0c28755fd1d803abeaf392c87979f0a6dc9a533292d2a93eb5cf850c0099",
+    "visual-teaching.json": "68ba7da74acf30e7b157f3525b12018868cd43148d68e40b0e3b705a62a308f3",
+    "blueprint.json": "8e68c7b3e29bc68f0142b4b98328079633a74e3778e229a3e0901ab397f8dedb",
+    "factory-artifact.json": "bc902af6b784e3512b9ce2dc0251f5d48b195ecc768f4fb92b0e23c8f84ca82c",
+    "learner-projection.json": "10a3a4253cc3be2a7b1dd22da66fb42946c0bf3e316b84c0f02686e23addef63",
+    "factory-receipt.json": "e8f53f5d96f3a5fd3ed83c9c22c511706686bec2d68301dc45249da17ed4ffcf",
+    "paper-alternative.txt": "ed4553f5baab1568732d53fb02cead1cca507533c39b86ae7cf57fc33f53d812"
+  },
+  "packageHash": "1a7a010de44cd1dcc77ab36bf32b7daa7a54c36f07bfe7a02d250a127470ea3d"
+}

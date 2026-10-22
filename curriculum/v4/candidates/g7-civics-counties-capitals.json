@@ -1,0 +1,183 @@
+{
+  "contractVersion": "candidate-lesson-v2/1.1.0",
+  "title": "Liberia's counties and their capitals",
+  "estimatedMinutes": 40,
+  "ageBand": "JUNIOR_SECONDARY",
+  "instruction": {
+    "standard": "liberialearn-v4-instruction/1.0.0",
+    "retention": {
+      "delayDays": 7,
+      "prompts": [
+        "Name the capitals of Nimba, Montserrado, Lofa and Maryland counties without looking at the map.",
+        "Explain the difference between Liberia's national capital and the capital of Montserrado County."
+      ]
+    }
+  },
+  "pedagogy": { "primaryStrategy": "INQUIRY", "rationale": "Learners explore the county map, investigate a short source about what a county capital is, compare easily confused pairs, reason about location from the map, and apply it to their own county." },
+  "prerequisiteAssumptions": ["Reads compass directions and a map key.", "Knows that a country is divided into smaller administrative areas."],
+  "misconceptions": [
+    { "id": "ft01-m1", "objectiveId": "ft01-o2", "description": "The largest or best-known town is the capital (Ganta for Nimba).", "response": "Ganta is Nimba's biggest trading town, but the county is administered from Sanniquellie." },
+    { "id": "ft01-m2", "objectiveId": "ft01-o2", "description": "Monrovia is the capital of Montserrado as well as of Liberia, or the national capital is also every county's capital.", "response": "Liberia's capital and Montserrado's county seat are different roles." },
+    { "id": "ft01-m3", "objectiveId": "ft01-o3", "description": "Counties that are next to each other in a list are next to each other on the map (Maryland and Sinoe).", "response": "Look at the map: Grand Kru lies between them." },
+    { "id": "ft01-m4", "objectiveId": "ft01-o1", "description": "Confusing the four 'Grand' counties (Bassa, Cape Mount, Gedeh, Kru) and their capitals.", "response": "A position cue: Cape Mount far west, Bassa central coast, Kru south-east coast, Gedeh east interior." },
+    { "id": "ft01-m5", "objectiveId": "ft01-o2", "description": "The capital governs the county.", "response": "The capital is the town where the county administration sits; the town does not govern the county." }
+  ],
+  "scenes": [
+    {
+      "id": "your-county", "type": "INTRO", "title": "Fifteen counties, fifteen capitals", "purpose": "HOOK_PHENOMENON", "objectiveIds": [],
+      "learnerAction": "Think about which county you live in and what its capital is.",
+      "content": { "body": "Liberia is divided into 15 counties. Each county has a capital, the town where the county's administration offices are.\n\nThe capital is not always the biggest or best-known town in the county. Today you will find every county on a map, learn its capital, and use the map to reason about where places are." },
+      "interaction": { "kind": "NONE" }, "tools": { "requested": [], "prohibited": [] }, "hints": [], "misconceptionIds": [], "evidence": { "kind": "NONE" },
+      "accessibility": { "textAlternative": "Liberia has 15 counties. Each county has a capital, the town where the county administration offices are. The capital is not always the largest town.", "keyboardPath": "Read the scene, then press Continue.", "reducedMotion": "NOT_APPLICABLE" },
+      "offline": { "mode": "FULL_OFFLINE", "note": "Part of the cached lesson." }, "completion": "VIEWED",
+      "teaching": { "phase": "ORIENT", "blocks": [
+        { "type": "CALLOUT", "tone": "TIP", "title": "About this map", "text": "The map in this lesson is a **schematic**: one square for each county, placed near its real position so that north, south, east and west read correctly. It does not show real borders or distances." }
+      ] }
+    },
+    {
+      "id": "explore-map", "type": "INTERACTIVE_DIAGRAM", "title": "Explore the counties", "purpose": "EXPLAIN_CONCEPT", "objectiveIds": ["ft01-o1"],
+      "learnerAction": "Choose counties on the map to read each one's capital and position.",
+      "content": { "body": "Choose any county to see its capital and where it is. Start with your own county, then explore the coast and the north." },
+      "interaction": { "kind": "NONE" }, "tools": { "requested": [], "prohibited": [] }, "hints": [], "misconceptionIds": ["ft01-m4"], "evidence": { "kind": "NONE" },
+      "accessibility": { "textAlternative": "Liberia's 15 counties and their capitals: Bomi, Tubmanburg; Bong, Gbarnga; Gbarpolu, Bopolu; Grand Bassa, Buchanan; Grand Cape Mount, Robertsport; Grand Gedeh, Zwedru; Grand Kru, Barclayville; Lofa, Voinjama; Margibi, Kakata; Maryland, Harper; Montserrado, Bensonville; Nimba, Sanniquellie; River Cess, Cestos City; River Gee, Fish Town; Sinoe, Greenville. Lofa is in the far north-west and Maryland in the far south-east. Monrovia, the national capital, is in Montserrado County.", "keyboardPath": "Use Tab or the arrow keys to move between counties and Enter to choose one; the list below the map has the same information.", "reducedMotion": "NOT_APPLICABLE" },
+      "offline": { "mode": "FULL_OFFLINE", "note": "The schematic map is drawn on the device." }, "completion": "VIEWED",
+      "pedagogy": { "strategy": "INQUIRY", "representation": "PICTORIAL", "scaffoldLevel": "FULL" },
+      "teaching": { "phase": "EXPLORE", "blocks": [], "visual": { "type": "MAP_EXPLORER", "id": "explore-counties", "map": "LIBERIA_COUNTIES_SCHEMATIC" } }
+    },
+    {
+      "id": "investigate-capitals", "type": "PRACTICE", "title": "Investigate: what makes a town a capital?", "purpose": "INVESTIGATE", "objectiveIds": ["ft01-o1", "ft01-o2"],
+      "learnerAction": "Find a county on the map, then select the sentences in a source that answer a question.",
+      "content": { "body": "Read the short source, then find the evidence. Use the hint in the help panel if you are stuck." },
+      "interaction": { "kind": "NONE" }, "tools": { "requested": [], "prohibited": [] }, "hints": ["A capital is chosen as the place where the county is run from. Size and fame are a different question."], "misconceptionIds": ["ft01-m1", "ft01-m2", "ft01-m5"], "evidence": { "kind": "NONE" },
+      "accessibility": { "textAlternative": "Task 1: find the county whose capital is Sanniquellie; it is Nimba. Task 2: a short source explains that Sanniquellie is Nimba's capital while Ganta is its largest trading town, and that Monrovia is Liberia's national capital while Bensonville is the capital of Montserrado County. Select the sentences that show a capital is not always the biggest or best-known town.", "keyboardPath": "Move between counties with the arrow keys and press Enter to choose; select sentences with Space.", "reducedMotion": "NOT_APPLICABLE" },
+      "offline": { "mode": "FULL_OFFLINE", "note": "Checked on the device." }, "completion": "VIEWED",
+      "pedagogy": { "strategy": "INQUIRY", "representation": "MIXED", "scaffoldLevel": "PARTIAL" },
+      "teaching": { "phase": "INVESTIGATE", "blocks": [
+        { "type": "STEP_REVEAL", "id": "model-locate", "question": "Watch how to describe where a county is, using Nimba as the example.", "steps": [
+          { "text": "**Start from a place you know:** Monrovia, on the coast in Montserrado County." },
+          { "text": "**Give a direction:** on the map, Nimba is north-east of Monrovia, in the north of Liberia." },
+          { "text": "**Name neighbours from the map:** Bong is to its west and Grand Gedeh to its south-east." },
+          { "text": "**Name its capital, not its biggest town:** Nimba's capital is Sanniquellie. Ganta is its largest trading town." }
+        ] },
+        { "type": "MAP_EXPLORER", "id": "find-nimba", "map": "LIBERIA_COUNTIES_SCHEMATIC", "task": { "prompt": "Find the county whose capital is Sanniquellie.", "formativeKey": { "regionId": "nimba" }, "success": "Yes: Sanniquellie is the capital of Nimba County, in the north near the border with Guinea and Côte d'Ivoire." } },
+        { "type": "SOURCE_EVIDENCE", "id": "capital-source", "source": { "title": "Capitals and big towns", "kind": "PASSAGE", "origin": { "kind": "ORIGINAL_FOR_LIBERIALEARN", "license": "LiberiaLearn original text", "attribution": "Written for this LiberiaLearn lesson", "note": "Facts follow the first-ten source registry (SRC-WP-NIMBA, SRC-WP-BENSONVILLE, SRC-WP-COUNTIES); a reviewer confirms them." } }, "question": "Which sentences show that a county capital is not always the biggest or best-known town?", "sentences": [
+          { "id": "s1", "text": "Every county in Liberia has a capital, where the county's administration offices are.", "supports": false, "why": "This defines a capital, but it does not compare a capital with a bigger town." },
+          { "id": "s2", "text": "In Nimba County, Ganta is the largest trading town, with a busy market.", "supports": true, "why": "Ganta is Nimba's biggest town, and the next sentence shows it is not the capital." },
+          { "id": "s3", "text": "But Nimba County is run from Sanniquellie, its capital.", "supports": true, "why": "Together with the Ganta sentence, this shows the capital is not the biggest town." },
+          { "id": "s4", "text": "Monrovia is the capital of Liberia, the seat of the national government.", "supports": true, "why": "Monrovia is the best-known city in Montserrado, and the next sentence shows it is not the county capital." },
+          { "id": "s5", "text": "The capital of Montserrado County is Bensonville, also called Bentol.", "supports": true, "why": "Montserrado's county capital is not Monrovia, the most famous city in the county." },
+          { "id": "s6", "text": "Many people travel between counties to trade and visit family.", "supports": false, "why": "This is about travel, not about which town is the capital." }
+        ], "minSelect": 3 },
+        { "type": "MISTAKE_ANALYSIS", "id": "capital-governs", "problem": "What is a county capital?", "attempt": { "name": "Kpana", "steps": ["Sanniquellie governs Nimba County.", "So the people of Sanniquellie make the rules for the whole county."] }, "question": "What is wrong with Kpana's idea?", "options": [
+          { "id": "seat", "text": "A capital is where the county administration sits; the town does not govern the county", "feedback": "Yes. Sanniquellie is the seat of Nimba's county administration. Being the capital does not give the town's people power over the county." },
+          { "id": "wrong-town", "text": "Ganta governs Nimba, not Sanniquellie", "feedback": "Ganta is the biggest town, but no town governs a county. Sanniquellie is the capital, where the administration sits." },
+          { "id": "right", "text": "Nothing: the capital rules the county", "feedback": "A capital is a place, not a ruler. It is where the county administration's offices are." }
+        ], "formativeKey": { "expectedOptionId": "seat" }, "correction": ["A county capital is the town where the county administration's offices are.", "The town itself does not govern the county."], "misconceptionId": "ft01-m5" }
+      ] }
+    },
+    {
+      "id": "compare", "type": "PRACTICE", "title": "Compare: capitals that are easy to mix up", "purpose": "INDEPENDENT_PRACTICE", "objectiveIds": ["ft01-o1", "ft01-o2"],
+      "learnerAction": "Compare easily confused towns and match the four Grand counties to their capitals and positions.",
+      "content": { "body": "Work on your own. Use the map if you need it." },
+      "interaction": { "kind": "NONE" }, "tools": { "requested": [], "prohibited": [] }, "hints": [], "misconceptionIds": ["ft01-m1", "ft01-m2", "ft01-m4"], "evidence": { "kind": "NONE" },
+      "accessibility": { "textAlternative": "Question 1: what is the capital of Nimba County? Sanniquellie, not Ganta. Question 2: what is the capital of Montserrado County? Bensonville, not Monrovia. Sorting: Robertsport and the far west coast belong to Grand Cape Mount; Buchanan and the central coast port to Grand Bassa; Zwedru and the eastern interior to Grand Gedeh; Barclayville and the south-east coast to Grand Kru.", "keyboardPath": "Choose one option for each question; sort each card by choosing it and then a county.", "reducedMotion": "NOT_APPLICABLE" },
+      "offline": { "mode": "FULL_OFFLINE", "note": "Checked on the device." }, "completion": "VIEWED",
+      "pedagogy": { "strategy": "RETRIEVAL_PRACTICE", "representation": "VERBAL", "scaffoldLevel": "NONE" },
+      "teaching": { "phase": "COMPARE", "blocks": [
+        { "type": "CHECK", "id": "confusable-capitals", "items": [
+          { "id": "nimba-capital", "prompt": "What is the capital of Nimba County?", "options": [
+            { "id": "sanniquellie", "text": "Sanniquellie", "feedback": "Yes. Nimba County is administered from Sanniquellie." },
+            { "id": "ganta", "text": "Ganta", "feedback": "Ganta is Nimba's biggest trading town, but the county is administered from Sanniquellie." },
+            { "id": "gbarnga", "text": "Gbarnga", "feedback": "Gbarnga is the capital of Bong County, Nimba's neighbour to the west." }
+          ], "formativeKey": { "expectedOptionId": "sanniquellie" }, "misconceptionId": "ft01-m1" },
+          { "id": "montserrado-capital", "prompt": "What is the capital of Montserrado County?", "options": [
+            { "id": "bensonville", "text": "Bensonville (Bentol)", "feedback": "Yes. Monrovia is Liberia's national capital; Bensonville is the capital of Montserrado County." },
+            { "id": "monrovia", "text": "Monrovia", "feedback": "Monrovia is in Montserrado and is the capital of Liberia, but the county's capital is Bensonville. They are different roles." },
+            { "id": "kakata", "text": "Kakata", "feedback": "Kakata is the capital of Margibi County, east of Montserrado." }
+          ], "formativeKey": { "expectedOptionId": "bensonville" }, "misconceptionId": "ft01-m2" }
+        ] },
+        { "type": "SORT", "id": "grand-counties", "prompt": "Match each capital and position to its Grand county.", "misconceptionId": "ft01-m4", "groups": [{ "id": "cape-mount", "label": "Grand Cape Mount" }, { "id": "bassa", "label": "Grand Bassa" }, { "id": "gedeh", "label": "Grand Gedeh" }, { "id": "kru", "label": "Grand Kru" }], "cards": [
+          { "id": "robertsport", "text": "Robertsport", "group": "cape-mount", "why": "Robertsport is the capital of Grand Cape Mount." },
+          { "id": "far-west", "text": "Far west coast, beside Sierra Leone", "group": "cape-mount", "why": "Grand Cape Mount is the westernmost coastal county, bordering Sierra Leone." },
+          { "id": "buchanan", "text": "Buchanan", "group": "bassa", "why": "Buchanan, a port city, is the capital of Grand Bassa." },
+          { "id": "central-coast", "text": "Central coast, south-east of Monrovia", "group": "bassa", "why": "Grand Bassa lies on the central coast." },
+          { "id": "zwedru", "text": "Zwedru", "group": "gedeh", "why": "Zwedru is the capital of Grand Gedeh." },
+          { "id": "east-interior", "text": "Eastern interior, bordering Côte d'Ivoire", "group": "gedeh", "why": "Grand Gedeh is inland in the east, on the border with Côte d'Ivoire." },
+          { "id": "barclayville", "text": "Barclayville", "group": "kru", "why": "Barclayville is the capital of Grand Kru." },
+          { "id": "southeast-coast", "text": "South-east coast, between Sinoe and Maryland", "group": "kru", "why": "Grand Kru lies on the coast between Sinoe and Maryland." }
+        ] }
+      ] }
+    },
+    {
+      "id": "reason", "type": "PRACTICE", "title": "Reason with the map", "purpose": "APPLY", "objectiveIds": ["ft01-o3"],
+      "learnerAction": "Use the map to answer questions about position and route, and justify each answer from the map.",
+      "content": { "body": "Use the map as evidence. A list of counties is not a map: neighbours in a list may be far apart." },
+      "interaction": { "kind": "NONE" }, "tools": { "requested": [], "prohibited": [] }, "hints": [], "misconceptionIds": ["ft01-m3"], "evidence": { "kind": "NONE" },
+      "accessibility": { "textAlternative": "Task 1: travelling along the coast from Greenville in Sinoe to Harper in Maryland, which county do you pass through? Grand Kru. Task 2: from Gbarnga in Bong, in which direction is Voinjama in Lofa? North-west.", "keyboardPath": "Move between counties with the arrow keys and press Enter to choose; choose one option for the question.", "reducedMotion": "NOT_APPLICABLE" },
+      "offline": { "mode": "FULL_OFFLINE", "note": "Checked on the device." }, "completion": "VIEWED",
+      "pedagogy": { "strategy": "STRUCTURED_PROBLEM_SOLVING", "representation": "PICTORIAL", "scaffoldLevel": "NONE" },
+      "teaching": { "phase": "REASON", "blocks": [
+        { "type": "MAP_EXPLORER", "id": "coast-route", "map": "LIBERIA_COUNTIES_SCHEMATIC", "task": { "prompt": "You travel along the coast from Greenville (Sinoe) to Harper (Maryland). Which county do you pass through between them?", "formativeKey": { "regionId": "grand-kru" }, "success": "Yes: Grand Kru lies between Sinoe and Maryland, so Sinoe and Maryland are not neighbours." } },
+        { "type": "CHECK", "id": "direction-check", "items": [
+          { "id": "voinjama-direction", "prompt": "Look at the map. From Gbarnga (Bong County), in which direction is Voinjama (Lofa County)?", "options": [
+            { "id": "northwest", "text": "North-west", "feedback": "Yes. Lofa is above Bong on the map and to its left: north-west." },
+            { "id": "southeast", "text": "South-east", "feedback": "South-east of Bong is the coast. Lofa is at the top of the map." },
+            { "id": "east", "text": "East", "feedback": "East of Bong is Nimba. Look up and to the left for Lofa." }
+          ], "formativeKey": { "expectedOptionId": "northwest" }, "misconceptionId": "ft01-m3" }
+        ] }
+      ] }
+    },
+    {
+      "id": "apply-own-county", "type": "PRACTICE", "title": "Apply it: describe a county's position", "purpose": "APPLY", "objectiveIds": ["ft01-o1", "ft01-o3"],
+      "learnerAction": "Identify a county from clues, then describe your own county's position using the map.",
+      "content": { "body": "Use the map to work out a county from clues. Then describe your own county as you would to a visitor." },
+      "interaction": { "kind": "NONE" }, "tools": { "requested": [], "prohibited": [] }, "hints": [], "misconceptionIds": [], "evidence": { "kind": "NONE" },
+      "accessibility": { "textAlternative": "Task 1: which county is in the far south-east corner of Liberia, on the coast and bordering Côte d'Ivoire? Maryland, capital Harper. Task 2: describe the position of your own county with its capital, a compass direction from Monrovia and two neighbouring counties.", "keyboardPath": "Choose a county on the map; then type in each box of the organizer.", "reducedMotion": "NOT_APPLICABLE" },
+      "offline": { "mode": "FULL_OFFLINE", "note": "Checked on the device; writing stays on this device." }, "completion": "VIEWED",
+      "pedagogy": { "strategy": "STRUCTURED_PROBLEM_SOLVING", "representation": "VERBAL", "scaffoldLevel": "NONE" },
+      "teaching": { "phase": "APPLY", "blocks": [
+        { "type": "MAP_EXPLORER", "id": "find-maryland", "map": "LIBERIA_COUNTIES_SCHEMATIC", "task": { "prompt": "Which county is in the far south-east corner of Liberia, on the coast and bordering Côte d'Ivoire?", "formativeKey": { "regionId": "maryland" }, "success": "Yes: Maryland, whose capital is Harper." } },
+        { "type": "WRITING_ORGANIZER", "id": "describe-county", "prompt": "Describe where your own county is for a visitor who has never been to Liberia.", "fields": [
+          { "id": "county", "label": "County and capital", "guidance": "Name your county and its capital.", "minWords": 4 },
+          { "id": "direction", "label": "Direction from Monrovia", "guidance": "Use a compass direction, such as north-east of Monrovia.", "minWords": 5 },
+          { "id": "neighbours", "label": "Neighbours", "guidance": "Name two neighbouring counties and say where they are from yours.", "minWords": 8 }
+        ], "checklist": ["I named the county capital, not just the biggest town.", "I used a compass direction.", "I named two neighbouring counties from the map, not from a list."] }
+      ] }
+    },
+    {
+      "id": "remember", "type": "REVIEW", "title": "Remember", "purpose": "REVIEW", "objectiveIds": ["ft01-o1", "ft01-o2", "ft01-o3"],
+      "learnerAction": "Recall the key ideas about counties and capitals.",
+      "content": { "body": "Say each point aloud before the check.", "keyPoints": ["Liberia has 15 counties, each with a capital where its administration sits.", "A capital is not always the biggest town: Sanniquellie, not Ganta, is Nimba's capital.", "Monrovia is the national capital; Bensonville is Montserrado's capital.", "Use the map, not a list, to decide which counties are neighbours."] },
+      "interaction": { "kind": "NONE" }, "tools": { "requested": [], "prohibited": [] }, "hints": [], "misconceptionIds": [], "evidence": { "kind": "NONE" },
+      "accessibility": { "textAlternative": "Liberia has 15 counties, each with a capital where its administration sits. Nimba's capital is Sanniquellie, not Ganta. Monrovia is the national capital and Bensonville is Montserrado's capital. Use the map to decide neighbours. A question asks for the capital of Lofa County: Voinjama.", "keyboardPath": "Choose one option with the arrow keys and Space.", "reducedMotion": "NOT_APPLICABLE" },
+      "offline": { "mode": "FULL_OFFLINE", "note": "Part of the cached lesson." }, "completion": "VIEWED",
+      "teaching": { "phase": "RETRIEVE", "blocks": [
+        { "type": "CHECK", "id": "retrieve-lofa", "items": [
+          { "id": "lofa-capital", "prompt": "What is the capital of Lofa County?", "options": [
+            { "id": "voinjama", "text": "Voinjama", "feedback": "Yes." },
+            { "id": "bopolu", "text": "Bopolu", "feedback": "Bopolu is the capital of Gbarpolu, Lofa's neighbour to the south-west." },
+            { "id": "tubmanburg", "text": "Tubmanburg", "feedback": "Tubmanburg is the capital of Bomi County." }
+          ], "formativeKey": { "expectedOptionId": "voinjama" } }
+        ] }
+      ] }
+    },
+    {
+      "id": "show-what-you-know", "type": "MASTERY_CHECK", "title": "Show what you know", "purpose": "ASSESS_MASTERY", "objectiveIds": ["ft01-o1", "ft01-o2", "ft01-o3"],
+      "learnerAction": "Answer the assessment questions on your own, including a map task.",
+      "content": { "body": "Now show what you know on your own. The assessment system checks your answers, not this lesson." },
+      "interaction": { "kind": "ASSESSMENT_HANDOFF", "assessmentRequestId": "counties-mastery" }, "tools": { "requested": [], "prohibited": [] }, "hints": [], "misconceptionIds": [],
+      "evidence": { "kind": "MASTERY_RESPONSE", "evidenceType": "QUIZ", "responses": [
+        { "responseKey": "counties-mastery-locate", "objectiveId": "ft01-o1", "responseType": "ASSESSMENT_RESPONSE", "scaffoldLevel": "NONE" },
+        { "responseKey": "counties-mastery-capital-role", "objectiveId": "ft01-o2", "responseType": "ASSESSMENT_RESPONSE", "scaffoldLevel": "NONE" },
+        { "responseKey": "counties-mastery-reason", "objectiveId": "ft01-o3", "responseType": "ASSESSMENT_RESPONSE", "scaffoldLevel": "NONE" }
+      ] },
+      "accessibility": { "textAlternative": "The assessment asks you to locate counties, name their capitals and reason about location on your own. It is delivered by the assessment player.", "keyboardPath": "Answer each assessment question, then submit.", "reducedMotion": "NOT_APPLICABLE" },
+      "offline": { "mode": "FULL_OFFLINE", "note": "Responses are kept until the device is online; the assessment authority scores them." }, "completion": "ALL_ANSWERED",
+      "teaching": { "phase": "ASSESS", "blocks": [] }
+    }
+  ],
+  "assessmentRequests": [
+    { "id": "counties-mastery", "objectiveIds": ["ft01-o1", "ft01-o2", "ft01-o3"], "interaction": "DIAGRAM_LABELING", "evidenceType": "QUIZ", "difficulty": "CORE", "misconceptionIds": ["ft01-m1", "ft01-m2", "ft01-m3", "ft01-m4"], "tools": { "requested": [], "prohibited": [] }, "offline": "FULL_OFFLINE" }
+  ],
+  "labProposals": []
+}

@@ -1,0 +1,23 @@
+{
+  "source": {
+    "kind": "SYNTHETIC_RECONSTRUCTION",
+    "note": "Reconstructed in the format of hero lesson hero-math-g7-geometry-area-and-perimeter-of-polygons (sections 5 and 7) to reproduce the notation the founder's screenshots show. The real body lives only in the production database and was not read. Not curriculum; used only for before/after rendering.",
+    "contentId": "v4-notation-reconstruction-g7-geometry"
+  },
+  "response": {
+    "metadata": { "contentId": "v4-notation-reconstruction-g7-geometry", "grade": 7, "subject": "MATH", "version": "1.0.0", "moeAlignments": [] },
+    "payload": {
+      "title": "Calculating Area and Perimeter of Polygons (notation reconstruction)",
+      "grade": 7,
+      "subject": "MATH",
+      "objectives": ["Calculate the area and perimeter of rectangles and triangles."],
+      "activities": [],
+      "body": "## 5. Worked Example 1 — The School Football Field\n\nA rectangular football field at a school in Gbarnga is 90 meters long and 45 meters wide. To find the area we use the formula A_{\\text{rectangle}} = l \\times w. Substituting the values, A = 90 \\times 45 = 4050 \\text{ m}^2. The groundskeeper needs enough grass seed to cover 4050 square meters. To find how much rope is needed to go around the field, we calculate the perimeter using P_{\\text{rectangle}} = 2(l + w). So P = 2(90 + 45) = 2 \\times 135 = 270 \\text{ m}. This means 270 meters of rope are needed, which is an important consideration when budgeting for school sports equipment and planning the maintenance of community facilities in Liberia.\n\n## 6. Guided Practice\n\nA classroom is 8 m long and 6 m wide. Find its area and perimeter using the formulas above.\n\n## 7. Worked Example 2 — Triangular Garden Bed\n\nThe area of a triangle is found using \\(A_{\\text{triangle}} = \\frac{1}{2}bh\\), where b is the base and h is the height. For a garden bed with a base of 10 m and a height of 12 m, A = \\\\frac{1}{2} \\\\times 10 \\\\times 12 = 60 \\\\text{ m}^2. The perimeter of the triangle is $P = a + b + c$, so with sides 13 m, 13 m and 10 m, $P = 13 + 13 + 10 = 36\\text{ m}$. A trader who sells palm oil for L$500 a gallon might use these skills to plan a market stall.",
+      "body_standard": "## 5. Worked Example 1 — The School Football Field\n\nA rectangular football field at a school in Gbarnga is 90 meters long and 45 meters wide. To find the area we use the formula A_{\\text{rectangle}} = l \\times w. Substituting the values, A = 90 \\times 45 = 4050 \\text{ m}^2. The groundskeeper needs enough grass seed to cover 4050 square meters. To find how much rope is needed to go around the field, we calculate the perimeter using P_{\\text{rectangle}} = 2(l + w). So P = 2(90 + 45) = 2 \\times 135 = 270 \\text{ m}. This means 270 meters of rope are needed, which is an important consideration when budgeting for school sports equipment and planning the maintenance of community facilities in Liberia.\n\n## 6. Guided Practice\n\nA classroom is 8 m long and 6 m wide. Find its area and perimeter using the formulas above.\n\n## 7. Worked Example 2 — Triangular Garden Bed\n\nThe area of a triangle is found using \\(A_{\\text{triangle}} = \\frac{1}{2}bh\\), where b is the base and h is the height. For a garden bed with a base of 10 m and a height of 12 m, A = \\\\frac{1}{2} \\\\times 10 \\\\times 12 = 60 \\\\text{ m}^2. The perimeter of the triangle is $P = a + b + c$, so with sides 13 m, 13 m and 10 m, $P = 13 + 13 + 10 = 36\\text{ m}$. A trader who sells palm oil for L$500 a gallon might use these skills to plan a market stall.",
+      "body_block": "",
+      "moeAlignments": [], "labs": [], "pseudoLabs": [], "simulationDefinitions": [], "takeawaySummary": "", "problemSets": [], "studentReady": true
+    },
+    "audio": { "status": "NOT_GENERATED" },
+    "offlineManifest": null
+  }
+}

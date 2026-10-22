@@ -1,0 +1,841 @@
+{
+  "id": "g7-math-area-perimeter-lesson",
+  "version": "4.0.0",
+  "payload": {
+    "kind": "LESSON",
+    "candidate": {
+      "contractVersion": "candidate-lesson-v2/1.1.0",
+      "title": "Generated: Covering and fencing",
+      "instruction": {
+        "standard": "liberialearn-v4-instruction/1.0.0",
+        "retention": {
+          "delayDays": 7,
+          "prompts": [
+            "After seven days, independently explain: Calculate the area and perimeter of rectangles with correct units, and decide which one a real-world problem needs.",
+            "Apply the idea to a new context and justify the evidence or calculations used. This is a request for a governed retention task, not a scheduled or scored item."
+          ]
+        }
+      },
+      "estimatedMinutes": 45,
+      "ageBand": "JUNIOR_SECONDARY",
+      "pedagogy": {
+        "primaryStrategy": "GUIDED_TO_INDEPENDENT",
+        "rationale": "Generate representations and worked reasoning from a versioned subject plan, then fade support before independent work and transfer."
+      },
+      "prerequisiteAssumptions": [
+        "Can read or access the text equivalent and explain a response in writing or speech."
+      ],
+      "misconceptions": [
+        {
+          "id": "generated-math-misconception",
+          "objectiveId": "ll-g7-math-ap-rectangles",
+          "description": "Uses an operation that does not match the representation or its unit.",
+          "response": "Compare the claim with the labelled representation and explain what evidence would support it."
+        }
+      ],
+      "scenes": [
+        {
+          "id": "generated-1",
+          "type": "EXPLANATION",
+          "title": "Covering and fencing",
+          "purpose": "EXPLAIN_CONCEPT",
+          "objectiveIds": [
+            "ll-g7-math-ap-rectangles",
+            "ll-g7-math-ap-triangles"
+          ],
+          "learnerAction": "Use the model, complete its task, and explain what the representation shows.",
+          "content": {
+            "body": "Synthetic school-garden demonstration. Count square metres inside the rectangle and trace metres around its boundary. A triangle with base 6 m and perpendicular height 4 m fills half a 6-by-4 rectangle. Its sloping sides are 5 m each."
+          },
+          "interaction": {
+            "kind": "NONE"
+          },
+          "tools": {
+            "requested": [],
+            "prohibited": []
+          },
+          "hints": [],
+          "misconceptionIds": [
+            "generated-math-misconception"
+          ],
+          "evidence": {
+            "kind": "NONE"
+          },
+          "accessibility": {
+            "textAlternative": "Synthetic school-garden demonstration. Count square metres inside the rectangle and trace metres around its boundary. A triangle with base 6 m and perpendicular height 4 m fills half a 6-by-4 rectangle. Its sloping sides are 5 m each. A rectangle 8 m long and 5 m wide. Area 40 square m; perimeter 26 m. Area covers the inside; perimeter follows the edge. A triangle with a base of 6 m and a perpendicular height of 4 m, measured at a right angle to the base. Its other two sides are 5 m and 5 m. Use perpendicular height, not a sloping side.",
+            "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+            "reducedMotion": "STATIC_EQUIVALENT"
+          },
+          "offline": {
+            "mode": "FULL_OFFLINE",
+            "note": "Models and formative checks use cached lesson data. Paper responses are capture only; no official grade is produced."
+          },
+          "completion": "VIEWED",
+          "pedagogy": {
+            "strategy": "GUIDED_TO_INDEPENDENT",
+            "representation": "MIXED",
+            "scaffoldLevel": "FULL"
+          },
+          "teaching": {
+            "phase": "VISUALIZE",
+            "blocks": [
+              {
+                "type": "SHAPE_MODEL",
+                "id": "garden-model",
+                "shape": {
+                  "kind": "RECTANGLE",
+                  "length": 8,
+                  "width": 5,
+                  "unit": "m"
+                },
+                "views": [
+                  "GRID",
+                  "AREA",
+                  "PERIMETER"
+                ],
+                "explore": true,
+                "caption": "Area covers the inside; perimeter follows the edge."
+              },
+              {
+                "type": "SHAPE_MODEL",
+                "id": "triangle-model",
+                "shape": {
+                  "kind": "TRIANGLE",
+                  "base": 6,
+                  "height": 4,
+                  "apexOffset": 3,
+                  "unit": "m",
+                  "sideLabels": [
+                    5,
+                    5
+                  ]
+                },
+                "views": [
+                  "HEIGHT",
+                  "AREA"
+                ],
+                "explore": false,
+                "caption": "Use perpendicular height, not a sloping side."
+              }
+            ]
+          }
+        },
+        {
+          "id": "generated-2",
+          "type": "GUIDED_EXAMPLE",
+          "title": "Explain both measurements",
+          "purpose": "MODEL_WORKED_EXAMPLE",
+          "objectiveIds": [
+            "ll-g7-math-ap-rectangles",
+            "ll-g7-math-ap-triangles"
+          ],
+          "learnerAction": "Use the model, complete its task, and explain what the representation shows.",
+          "content": {
+            "body": "Watch the method before trying a new garden. Multiplication counts square units. Addition measures the boundary. The same number can never stand for both measurements without stating its unit."
+          },
+          "interaction": {
+            "kind": "NONE"
+          },
+          "tools": {
+            "requested": [],
+            "prohibited": []
+          },
+          "hints": [],
+          "misconceptionIds": [
+            "generated-math-misconception"
+          ],
+          "evidence": {
+            "kind": "NONE"
+          },
+          "accessibility": {
+            "textAlternative": "Watch the method before trying a new garden. Multiplication counts square units. Addition measures the boundary. The same number can never stand for both measurements without stating its unit. An 8 m by 5 m garden needs mulch and fencing. A rectangle 8 m long and 5 m wide. Area 40 square m; perimeter 26 m. Step 1: Count 5 rows of 8 unit squares. A = 8 × 5 = 40 m² Step 2: Add all four sides. P = 2(8 + 5) = 26 m Find both measurements of the triangular bed. A triangle with a base of 6 m and a perpendicular height of 4 m, measured at a right angle to the base. Its other two sides are 5 m and 5 m. Step 1: Halve the base-by-height rectangle. A = 1/2 × 6 × 4 = 12 m² Step 2: Add the three boundary lengths, not the height. P = 6 + 5 + 5 = 16 m",
+            "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+            "reducedMotion": "STATIC_EQUIVALENT"
+          },
+          "offline": {
+            "mode": "FULL_OFFLINE",
+            "note": "Models and formative checks use cached lesson data. Paper responses are capture only; no official grade is produced."
+          },
+          "completion": "VIEWED",
+          "pedagogy": {
+            "strategy": "GUIDED_TO_INDEPENDENT",
+            "representation": "MIXED",
+            "scaffoldLevel": "FULL"
+          },
+          "teaching": {
+            "phase": "DEMONSTRATE",
+            "blocks": [
+              {
+                "type": "WORKED_SOLUTION",
+                "id": "rectangle-worked",
+                "problem": "An 8 m by 5 m garden needs mulch and fencing.",
+                "shape": {
+                  "kind": "RECTANGLE",
+                  "length": 8,
+                  "width": 5,
+                  "unit": "m"
+                },
+                "steps": [
+                  {
+                    "text": "Count 5 rows of 8 unit squares.",
+                    "tex": "A=8\\times5=40\\text{ m}^2",
+                    "views": [
+                      "AREA"
+                    ]
+                  },
+                  {
+                    "text": "Add all four sides.",
+                    "tex": "P=2(8+5)=26\\text{ m}",
+                    "views": [
+                      "PERIMETER"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "WORKED_SOLUTION",
+                "id": "triangle-worked",
+                "problem": "Find both measurements of the triangular bed.",
+                "shape": {
+                  "kind": "TRIANGLE",
+                  "base": 6,
+                  "height": 4,
+                  "apexOffset": 3,
+                  "unit": "m",
+                  "sideLabels": [
+                    5,
+                    5
+                  ]
+                },
+                "steps": [
+                  {
+                    "text": "Halve the base-by-height rectangle.",
+                    "tex": "A=\\frac{1}{2}\\times6\\times4=12\\text{ m}^2",
+                    "views": [
+                      "HEIGHT",
+                      "AREA"
+                    ]
+                  },
+                  {
+                    "text": "Add the three boundary lengths, not the height.",
+                    "tex": "P=6+5+5=16\\text{ m}",
+                    "views": [
+                      "PERIMETER"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "generated-3",
+          "type": "PRACTICE",
+          "title": "Try both shapes with support",
+          "purpose": "GUIDED_PRACTICE",
+          "objectiveIds": [
+            "ll-g7-math-ap-rectangles",
+            "ll-g7-math-ap-triangles"
+          ],
+          "learnerAction": "Use the model, complete its task, and explain what the representation shows.",
+          "content": {
+            "body": "State what must be measured before choosing a method. Units are part of your answer."
+          },
+          "interaction": {
+            "kind": "NONE"
+          },
+          "tools": {
+            "requested": [],
+            "prohibited": []
+          },
+          "hints": [],
+          "misconceptionIds": [
+            "generated-math-misconception"
+          ],
+          "evidence": {
+            "kind": "NONE"
+          },
+          "accessibility": {
+            "textAlternative": "State what must be measured before choosing a method. Units are part of your answer. Find the area and the perimeter. Explain why their units differ. A rectangle 9 m long and 4 m wide. Area: write your answer with its unit. Perimeter: write your answer with its unit. Find the area and the perimeter. Explain why their units differ. A triangle with a base of 6 m and a perpendicular height of 4 m, measured at a right angle to the base. Its other two sides are 5 m and 5 m.. Area: write your answer with its unit. Perimeter: write your answer with its unit.",
+            "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+            "reducedMotion": "STATIC_EQUIVALENT"
+          },
+          "offline": {
+            "mode": "FULL_OFFLINE",
+            "note": "Models and formative checks use cached lesson data. Paper responses are capture only; no official grade is produced."
+          },
+          "completion": "VIEWED",
+          "pedagogy": {
+            "strategy": "GUIDED_TO_INDEPENDENT",
+            "representation": "MIXED",
+            "scaffoldLevel": "PARTIAL"
+          },
+          "teaching": {
+            "phase": "SOLVE_WITH_SUPPORT",
+            "blocks": [
+              {
+                "type": "NUMERIC_RESPONSE",
+                "id": "guided-rectangle",
+                "mode": "GUIDED",
+                "prompt": "Find the area and the perimeter. Explain why their units differ.",
+                "shape": {
+                  "kind": "RECTANGLE",
+                  "length": 9,
+                  "width": 4,
+                  "unit": "m"
+                },
+                "parts": [
+                  {
+                    "id": "guided-rectangle-area",
+                    "label": "Area",
+                    "quantity": "AREA",
+                    "unit": {
+                      "kind": "AREA",
+                      "base": "m"
+                    },
+                    "formativeKey": {
+                      "value": 36
+                    },
+                    "misconceptions": [
+                      {
+                        "value": 26,
+                        "feedback": "You measured the edge. Area counts squares covering the inside.",
+                        "misconceptionId": "generated-math-misconception"
+                      }
+                    ]
+                  },
+                  {
+                    "id": "guided-rectangle-edge",
+                    "label": "Perimeter",
+                    "quantity": "PERIMETER",
+                    "unit": {
+                      "kind": "LENGTH",
+                      "base": "m"
+                    },
+                    "formativeKey": {
+                      "value": 26
+                    },
+                    "misconceptions": [
+                      {
+                        "value": 36,
+                        "feedback": "You covered the inside. Perimeter measures every side of the boundary.",
+                        "misconceptionId": "generated-math-misconception"
+                      }
+                    ]
+                  }
+                ],
+                "hints": [
+                  "Trace the edge for perimeter; shade the inside for area.",
+                  "A triangle occupies half its base-by-height rectangle."
+                ],
+                "afterAttempt": [
+                  "Area = 36 square metres. Perimeter = 26 metres.",
+                  "Explain which measurement would buy fencing and which would buy ground covering."
+                ]
+              },
+              {
+                "type": "NUMERIC_RESPONSE",
+                "id": "guided-triangle",
+                "mode": "GUIDED",
+                "prompt": "Find the area and the perimeter. Explain why their units differ.",
+                "shape": {
+                  "kind": "TRIANGLE",
+                  "base": 6,
+                  "height": 4,
+                  "apexOffset": 3,
+                  "unit": "m",
+                  "sideLabels": [
+                    5,
+                    5
+                  ]
+                },
+                "parts": [
+                  {
+                    "id": "guided-triangle-area",
+                    "label": "Area",
+                    "quantity": "AREA",
+                    "unit": {
+                      "kind": "AREA",
+                      "base": "m"
+                    },
+                    "formativeKey": {
+                      "value": 12
+                    },
+                    "misconceptions": [
+                      {
+                        "value": 16,
+                        "feedback": "You measured the edge. Area counts squares covering the inside.",
+                        "misconceptionId": "generated-math-misconception"
+                      }
+                    ]
+                  },
+                  {
+                    "id": "guided-triangle-edge",
+                    "label": "Perimeter",
+                    "quantity": "PERIMETER",
+                    "unit": {
+                      "kind": "LENGTH",
+                      "base": "m"
+                    },
+                    "formativeKey": {
+                      "value": 16
+                    },
+                    "misconceptions": [
+                      {
+                        "value": 12,
+                        "feedback": "You covered the inside. Perimeter measures every side of the boundary.",
+                        "misconceptionId": "generated-math-misconception"
+                      }
+                    ]
+                  }
+                ],
+                "hints": [
+                  "Trace the edge for perimeter; shade the inside for area.",
+                  "A triangle occupies half its base-by-height rectangle."
+                ],
+                "afterAttempt": [
+                  "Area = 12 square metres. Perimeter = 16 metres.",
+                  "Explain which measurement would buy fencing and which would buy ground covering."
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "generated-4",
+          "type": "PRACTICE",
+          "title": "Measure new plots independently",
+          "purpose": "INDEPENDENT_PRACTICE",
+          "objectiveIds": [
+            "ll-g7-math-ap-rectangles",
+            "ll-g7-math-ap-triangles"
+          ],
+          "learnerAction": "Use the model, complete its task, and explain what the representation shows.",
+          "content": {
+            "body": "Solve each problem independently and justify the units. Feedback appears only after an attempt."
+          },
+          "interaction": {
+            "kind": "NONE"
+          },
+          "tools": {
+            "requested": [],
+            "prohibited": []
+          },
+          "hints": [],
+          "misconceptionIds": [
+            "generated-math-misconception"
+          ],
+          "evidence": {
+            "kind": "NONE"
+          },
+          "accessibility": {
+            "textAlternative": "Solve each problem independently and justify the units. Feedback appears only after an attempt. Find the area and the perimeter. Explain why their units differ. A rectangle 11 m long and 7 m wide. Area: write your answer with its unit. Perimeter: write your answer with its unit. Find the area and the perimeter. Explain why their units differ. A triangle with a base of 10 m and a perpendicular height of 12 m, measured at a right angle to the base. Its other two sides are 13 m and 13 m.. Area: write your answer with its unit. Perimeter: write your answer with its unit.",
+            "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+            "reducedMotion": "STATIC_EQUIVALENT"
+          },
+          "offline": {
+            "mode": "FULL_OFFLINE",
+            "note": "Models and formative checks use cached lesson data. Paper responses are capture only; no official grade is produced."
+          },
+          "completion": "VIEWED",
+          "pedagogy": {
+            "strategy": "GUIDED_TO_INDEPENDENT",
+            "representation": "MIXED",
+            "scaffoldLevel": "NONE"
+          },
+          "teaching": {
+            "phase": "PRACTICE_INDEPENDENTLY",
+            "blocks": [
+              {
+                "type": "NUMERIC_RESPONSE",
+                "id": "independent-rectangle",
+                "mode": "INDEPENDENT",
+                "prompt": "Find the area and the perimeter. Explain why their units differ.",
+                "shape": {
+                  "kind": "RECTANGLE",
+                  "length": 11,
+                  "width": 7,
+                  "unit": "m"
+                },
+                "parts": [
+                  {
+                    "id": "independent-rectangle-area",
+                    "label": "Area",
+                    "quantity": "AREA",
+                    "unit": {
+                      "kind": "AREA",
+                      "base": "m"
+                    },
+                    "formativeKey": {
+                      "value": 77
+                    },
+                    "misconceptions": [
+                      {
+                        "value": 36,
+                        "feedback": "You measured the edge. Area counts squares covering the inside.",
+                        "misconceptionId": "generated-math-misconception"
+                      }
+                    ]
+                  },
+                  {
+                    "id": "independent-rectangle-edge",
+                    "label": "Perimeter",
+                    "quantity": "PERIMETER",
+                    "unit": {
+                      "kind": "LENGTH",
+                      "base": "m"
+                    },
+                    "formativeKey": {
+                      "value": 36
+                    },
+                    "misconceptions": [
+                      {
+                        "value": 77,
+                        "feedback": "You covered the inside. Perimeter measures every side of the boundary.",
+                        "misconceptionId": "generated-math-misconception"
+                      }
+                    ]
+                  }
+                ],
+                "hints": [],
+                "afterAttempt": [
+                  "Area = 77 square metres. Perimeter = 36 metres.",
+                  "Explain which measurement would buy fencing and which would buy ground covering."
+                ]
+              },
+              {
+                "type": "NUMERIC_RESPONSE",
+                "id": "independent-triangle",
+                "mode": "INDEPENDENT",
+                "prompt": "Find the area and the perimeter. Explain why their units differ.",
+                "shape": {
+                  "kind": "TRIANGLE",
+                  "base": 10,
+                  "height": 12,
+                  "apexOffset": 5,
+                  "unit": "m",
+                  "sideLabels": [
+                    13,
+                    13
+                  ]
+                },
+                "parts": [
+                  {
+                    "id": "independent-triangle-area",
+                    "label": "Area",
+                    "quantity": "AREA",
+                    "unit": {
+                      "kind": "AREA",
+                      "base": "m"
+                    },
+                    "formativeKey": {
+                      "value": 60
+                    },
+                    "misconceptions": [
+                      {
+                        "value": 36,
+                        "feedback": "You measured the edge. Area counts squares covering the inside.",
+                        "misconceptionId": "generated-math-misconception"
+                      }
+                    ]
+                  },
+                  {
+                    "id": "independent-triangle-edge",
+                    "label": "Perimeter",
+                    "quantity": "PERIMETER",
+                    "unit": {
+                      "kind": "LENGTH",
+                      "base": "m"
+                    },
+                    "formativeKey": {
+                      "value": 36
+                    },
+                    "misconceptions": [
+                      {
+                        "value": 60,
+                        "feedback": "You covered the inside. Perimeter measures every side of the boundary.",
+                        "misconceptionId": "generated-math-misconception"
+                      }
+                    ]
+                  }
+                ],
+                "hints": [],
+                "afterAttempt": [
+                  "Area = 60 square metres. Perimeter = 36 metres.",
+                  "Explain which measurement would buy fencing and which would buy ground covering."
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "generated-5",
+          "type": "EXPLANATION",
+          "title": "Diagnose the garden estimate",
+          "purpose": "ADDRESS_MISCONCEPTION",
+          "objectiveIds": [
+            "ll-g7-math-ap-rectangles",
+            "ll-g7-math-ap-triangles"
+          ],
+          "learnerAction": "Use the model, complete its task, and explain what the representation shows.",
+          "content": {
+            "body": "Inspect the claim and explain which measurement the method actually produces."
+          },
+          "interaction": {
+            "kind": "NONE"
+          },
+          "tools": {
+            "requested": [],
+            "prohibited": []
+          },
+          "hints": [],
+          "misconceptionIds": [
+            "generated-math-misconception"
+          ],
+          "evidence": {
+            "kind": "NONE"
+          },
+          "accessibility": {
+            "textAlternative": "Inspect the claim and explain which measurement the method actually produces. A 10 m by 4 m plot needs fencing. A learner wrote: Buy 40 metres of fencing because 10 times 4 is 40. Which diagnosis explains the mistake? Options: Multiplying side lengths finds area; fencing needs the sum of all boundary lengths.; The method already matches the model..",
+            "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+            "reducedMotion": "STATIC_EQUIVALENT"
+          },
+          "offline": {
+            "mode": "FULL_OFFLINE",
+            "note": "Models and formative checks use cached lesson data. Paper responses are capture only; no official grade is produced."
+          },
+          "completion": "VIEWED",
+          "pedagogy": {
+            "strategy": "GUIDED_TO_INDEPENDENT",
+            "representation": "MIXED",
+            "scaffoldLevel": "FULL"
+          },
+          "teaching": {
+            "phase": "ANALYZE_MISTAKE",
+            "blocks": [
+              {
+                "type": "MISTAKE_ANALYSIS",
+                "id": "garden-mistake",
+                "problem": "A 10 m by 4 m plot needs fencing.",
+                "attempt": {
+                  "name": "A learner",
+                  "steps": [
+                    "Buy 40 metres of fencing because 10 times 4 is 40."
+                  ]
+                },
+                "question": "Which diagnosis explains the mistake?",
+                "options": [
+                  {
+                    "id": "model",
+                    "text": "Multiplying side lengths finds area; fencing needs the sum of all boundary lengths.",
+                    "feedback": "Use the representation to explain why this method needs to change."
+                  },
+                  {
+                    "id": "keep",
+                    "text": "The method already matches the model.",
+                    "feedback": "Check what each quantity in the model means."
+                  }
+                ],
+                "formativeKey": {
+                  "expectedOptionId": "model"
+                },
+                "correction": [
+                  "Multiplying side lengths finds area; fencing needs the sum of all boundary lengths.",
+                  "Rebuild the model and explain a method that agrees with it."
+                ],
+                "misconceptionId": "generated-math-misconception"
+              }
+            ]
+          }
+        },
+        {
+          "id": "generated-6",
+          "type": "PRACTICE",
+          "title": "Transfer to a floor plan",
+          "purpose": "INDEPENDENT_PRACTICE",
+          "objectiveIds": [
+            "ll-g7-math-ap-rectangles",
+            "ll-g7-math-ap-triangles"
+          ],
+          "learnerAction": "Explain why the doorway changes the skirting length but does not remove a rectangle from the floor covering.",
+          "content": {
+            "body": "A synthetic classroom extension has a rectangular floor 12 m by 6 m. A doorway removes 2 m from the skirting board boundary. Determine floor covering and skirting board needed."
+          },
+          "interaction": {
+            "kind": "FREE_RESPONSE",
+            "prompts": [
+              {
+                "id": "generated-6-response-0",
+                "prompt": "Explain why the doorway changes the skirting length but does not remove a rectangle from the floor covering.",
+                "minLength": 20
+              }
+            ]
+          },
+          "tools": {
+            "requested": [],
+            "prohibited": []
+          },
+          "hints": [],
+          "misconceptionIds": [
+            "generated-math-misconception"
+          ],
+          "evidence": {
+            "kind": "NONE"
+          },
+          "accessibility": {
+            "textAlternative": "A synthetic classroom extension has a rectangular floor 12 m by 6 m. A doorway removes 2 m from the skirting board boundary. Determine floor covering and skirting board needed. Find the quantities for a new job. Floor covering in square metres: write your answer. Skirting board in metres: write your answer. Explain why the doorway changes the skirting length but does not remove a rectangle from the floor covering.",
+            "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+            "reducedMotion": "STATIC_EQUIVALENT"
+          },
+          "offline": {
+            "mode": "FULL_OFFLINE",
+            "note": "Models and formative checks use cached lesson data. Paper responses are capture only; no official grade is produced."
+          },
+          "completion": "ALL_RESPONSES_WRITTEN",
+          "pedagogy": {
+            "strategy": "GUIDED_TO_INDEPENDENT",
+            "representation": "MIXED",
+            "scaffoldLevel": "NONE"
+          },
+          "teaching": {
+            "phase": "APPLY",
+            "blocks": [
+              {
+                "type": "NUMERIC_RESPONSE",
+                "id": "floor-transfer",
+                "mode": "INDEPENDENT",
+                "prompt": "Find the quantities for a new job.",
+                "parts": [
+                  {
+                    "id": "floor-transfer-0",
+                    "label": "Floor covering in square metres",
+                    "quantity": "OTHER",
+                    "unit": {
+                      "kind": "NONE",
+                      "base": ""
+                    },
+                    "formativeKey": {
+                      "value": 72,
+                      "tolerance": 1e-9
+                    },
+                    "misconceptions": []
+                  },
+                  {
+                    "id": "floor-transfer-1",
+                    "label": "Skirting board in metres",
+                    "quantity": "OTHER",
+                    "unit": {
+                      "kind": "NONE",
+                      "base": ""
+                    },
+                    "formativeKey": {
+                      "value": 34,
+                      "tolerance": 1e-9
+                    },
+                    "misconceptions": []
+                  }
+                ],
+                "hints": [],
+                "afterAttempt": [
+                  "Floor covering in square metres: 72. Explain how the model and your calculation agree.",
+                  "Skirting board in metres: 34. Explain how the model and your calculation agree."
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "generated-assess",
+          "type": "MASTERY_CHECK",
+          "title": "Independent assessment handoff",
+          "purpose": "ASSESS_MASTERY",
+          "objectiveIds": [
+            "ll-g7-math-ap-rectangles",
+            "ll-g7-math-ap-triangles"
+          ],
+          "learnerAction": "Complete the governed assessment independently when an authorized draft form is supplied.",
+          "content": {
+            "body": "Only Assessment Player V2 can collect and score governed assessment responses. This draft has no approved form or official score."
+          },
+          "interaction": {
+            "kind": "ASSESSMENT_HANDOFF",
+            "assessmentRequestId": "generated-mastery"
+          },
+          "tools": {
+            "requested": [],
+            "prohibited": []
+          },
+          "hints": [],
+          "misconceptionIds": [],
+          "evidence": {
+            "kind": "MASTERY_RESPONSE",
+            "evidenceType": "QUIZ",
+            "responses": [
+              {
+                "responseKey": "assessment-0",
+                "objectiveId": "ll-g7-math-ap-rectangles",
+                "responseType": "ASSESSMENT_RESPONSE",
+                "scaffoldLevel": "NONE"
+              },
+              {
+                "responseKey": "assessment-1",
+                "objectiveId": "ll-g7-math-ap-triangles",
+                "responseType": "ASSESSMENT_RESPONSE",
+                "scaffoldLevel": "NONE"
+              }
+            ]
+          },
+          "accessibility": {
+            "textAlternative": "The lesson requests a separate independent assessment. This draft contains no governed assessment questions or protected scoring material.",
+            "keyboardPath": "Use the assessment player's labelled questions and Submit control when an authorized form is available.",
+            "reducedMotion": "NOT_APPLICABLE"
+          },
+          "offline": {
+            "mode": "FULL_OFFLINE",
+            "note": "No assessment form is cached by this draft. Paper work is capture only and cannot establish an official grade."
+          },
+          "completion": "ALL_ANSWERED",
+          "teaching": {
+            "phase": "ASSESS",
+            "blocks": []
+          }
+        }
+      ],
+      "assessmentRequests": [
+        {
+          "id": "generated-mastery",
+          "objectiveIds": [
+            "ll-g7-math-ap-rectangles",
+            "ll-g7-math-ap-triangles"
+          ],
+          "interaction": "FREE_RESPONSE",
+          "evidenceType": "QUIZ",
+          "difficulty": "CORE",
+          "misconceptionIds": [
+            "generated-math-misconception"
+          ],
+          "tools": {
+            "requested": [],
+            "prohibited": []
+          },
+          "offline": "FULL_OFFLINE"
+        }
+      ],
+      "labProposals": []
+    }
+  },
+  "role": "LESSON_AUTHOR",
+  "author": {
+    "kind": "AI",
+    "agentId": "factory-demo:LESSON_AUTHOR",
+    "modelFamily": "deterministic-local-demo",
+    "sessionId": "LESSON_AUTHOR"
+  },
+  "blueprint": {
+    "blueprintId": "g7-math-area-perimeter-v4",
+    "version": "4.0.0",
+    "contentHash": "cd4cfbc4c23903d974143fa94bd911c53d351bcb196eddbf75459ea170542f9f"
+  },
+  "dependencies": [],
+  "contentHash": "f5958e661a331d0f45056a73a793d32c1aa7793d7920bd4735ecda928d1bc4f9"
+}

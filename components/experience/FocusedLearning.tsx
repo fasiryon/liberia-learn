@@ -2,7 +2,7 @@
 
 import { useEffect, useId, useRef, useState, type ReactNode, type Ref } from "react";
 import Link from "next/link";
-import { ChevronLeft, ChevronRight, PanelRightClose, PanelRightOpen } from "lucide-react";
+import { ChevronLeft, ChevronRight, LifeBuoy, PanelLeftClose, PanelLeftOpen, PanelRightClose, PanelRightOpen } from "lucide-react";
 import { ContentsDrawer } from "./ContentsDrawer";
 import "./lesson.css";
 
@@ -31,6 +31,22 @@ export function FocusedHeader({ backHref, backLabel, title, context, extra, prog
   </header>;
 }
 
+/** Rail open/closed, remembered for this tab only (a layout preference, never learner data). */
+function useRailPreference(key: string, initial: boolean) {
+  const [open, setOpen] = useState(initial);
+  useEffect(() => {
+    try { const saved = window.sessionStorage.getItem(key); if (saved === "open" || saved === "closed") setOpen(saved === "open"); } catch { /* storage unavailable */ }
+  }, [key]);
+  const change = (next: boolean) => { setOpen(next); try { window.sessionStorage.setItem(key, next ? "open" : "closed"); } catch { /* storage unavailable */ } };
+  return [open, change] as const;
+}
+
+/**
+ * Interactive Learning V4 workspace: contents rail (left, ~208px), a wide learning canvas, and a tools rail
+ * (right, ~232px). Either rail collapses and its width returns to the canvas; the learner's place is kept
+ * (rails only change layout). Below 1024px contents is a drawer; below 1280px the tools rail is a drawer too, so
+ * neither squeezes the canvas or stacks under the lesson.
+ */
 export function LearningStage({ outline, outlineLabel = "Lesson outline", outlineSummary, support, supportLabel = "Lesson help", children, bottomSpace, mainId, mainLabelledBy }: {
   outline?: ReactNode;
   outlineLabel?: string;
@@ -44,8 +60,19 @@ export function LearningStage({ outline, outlineLabel = "Lesson outline", outlin
   mainId?: string;
   mainLabelledBy?: string;
 }) {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useRailPreference("ll-stage-support", true);
+  const [outlineOpen, setOutlineOpen] = useRailPreference("ll-stage-outline", true);
   const supportId = useId();
+  const outlineId = useId();
+  const outlineShowRef = useRef<HTMLButtonElement>(null);
+  const outlineHideRef = useRef<HTMLButtonElement>(null);
+  const outlineToggled = useRef(false);
+  const toggleOutline = (next: boolean) => { outlineToggled.current = true; setOutlineOpen(next); };
+  useEffect(() => {
+    if (!outlineToggled.current) return;
+    outlineToggled.current = false;
+    (outlineOpen ? outlineHideRef.current : outlineShowRef.current)?.focus();
+  }, [outlineOpen]);
   const showRef = useRef<HTMLButtonElement>(null);
   const hideRef = useRef<HTMLButtonElement>(null);
   const toggled = useRef(false);
@@ -56,12 +83,19 @@ export function LearningStage({ outline, outlineLabel = "Lesson outline", outlin
     toggled.current = false;
     (open ? hideRef.current : showRef.current)?.focus();
   }, [open]);
-  return <div className="ll3-stage" data-outline={outline ? "" : undefined} data-support={support ? (open ? "open" : "closed") : undefined} style={bottomSpace ? { paddingBottom: bottomSpace + 32 } : undefined}>
-    {outline && <nav className="ll3-stage-outline" aria-label={outlineLabel}><div>{outline}</div></nav>}
+  return <div className="ll3-stage" data-workspace="" data-outline={outline ? (outlineOpen ? "" : "closed") : undefined} data-support={support ? (open ? "open" : "closed") : undefined} style={bottomSpace ? { paddingBottom: bottomSpace + 32 } : undefined}>
+    {outline && outlineOpen && <nav className="ll3-stage-outline" id={outlineId} aria-label={outlineLabel}><div>
+      <div className="ll5-rail-head"><span>Contents</span><button ref={outlineHideRef} type="button" className="ll5-rail-toggle" aria-expanded={true} aria-controls={outlineId} onClick={() => toggleOutline(false)}><PanelLeftClose size={16} aria-hidden="true" /> Hide</button></div>
+      {outline}
+    </div></nav>}
     <main className="ll3-stage-main" id={mainId} aria-labelledby={mainLabelledBy}>
-      {/* Below 1024px the outline rail is a Contents drawer instead of a column squeezing the stage. */}
-      {outline && <ContentsDrawer label="Contents" summary={outlineSummary} className="ll4-stage-drawer"><nav aria-label={outlineLabel}>{outline}</nav></ContentsDrawer>}
-      {support && !open && <div className="mb-4 flex justify-end"><button ref={showRef} type="button" className="ll3-support-toggle" aria-expanded={false} aria-controls={supportId} onClick={() => toggle(true)}><PanelRightOpen size={18} aria-hidden="true" /> Show {supportLabel.toLowerCase()}</button></div>}
+      {/* Below 1024px the outline rail is a Contents drawer, and below 1280px the help rail is a drawer, so neither squeezes the canvas. */}
+      {(outline || support) && <div className="ll5-stage-bar">
+        {outline && <ContentsDrawer label="Contents" summary={outlineSummary} className="ll4-stage-drawer"><nav aria-label={outlineLabel}>{outline}</nav></ContentsDrawer>}
+        {outline && !outlineOpen && <button ref={outlineShowRef} type="button" className="ll3-support-toggle ll5-outline-show" aria-expanded={false} onClick={() => toggleOutline(true)}><PanelLeftOpen size={18} aria-hidden="true" /> Show contents</button>}
+        {support && <ContentsDrawer label={supportLabel} className="ll5-support-drawer" closeOnSelect={false} icon={<LifeBuoy size={18} aria-hidden="true" />}><div className="ll3-support ll5-support-sheet">{support}</div></ContentsDrawer>}
+        {support && !open && <button ref={showRef} type="button" className="ll3-support-toggle ll5-support-show" aria-expanded={false} aria-controls={supportId} onClick={() => toggle(true)}><PanelRightOpen size={18} aria-hidden="true" /> Show {supportLabel.toLowerCase()}</button>}
+      </div>}
       {children}
     </main>
     {support && <aside className="ll3-stage-support" id={supportId} aria-label={supportLabel} hidden={!open}>

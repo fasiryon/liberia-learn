@@ -10,6 +10,7 @@
  * long body into one giant slide; it is never the canonical lesson structure.
  */
 import { parseToSlides } from "@/lib/lessons/parseToSlides";
+import { validateBlock } from "./teaching/registry";
 import { isKeylessFormative, SCENE_TYPES, LESSON_EXPERIENCE_CONTRACT_VERSION, type AgeBand, type FormativeItem, type LessonExperience, type Scene, type SceneSource } from "./types";
 
 export class SceneContractError extends Error {}
@@ -57,6 +58,14 @@ export function validateLessonExperience(experience: LessonExperience): void {
     if (rule === "ALL_RESPONSES_WRITTEN" && kind !== "FREE_RESPONSE") fail(`scene_completion_mismatch:${scene.id}`);
     if (rule === "LAB_RETURNED_OR_FALLBACK" && kind !== "LAB_LAUNCH") fail(`scene_completion_mismatch:${scene.id}`);
     if (scene.type === "MASTERY_CHECK" && (kind !== "ASSESSMENT_HANDOFF" || scene.evidence.kind !== "MASTERY_RESPONSE")) fail(`scene_mastery_requires_assessment_handoff:${scene.id}`);
+    // V4 visual teaching blocks: registered and valid, and never on a mastery scene (no formative key reaches mastery).
+    if (scene.teaching) {
+      if (scene.type === "MASTERY_CHECK" && (scene.teaching.blocks.length > 0 || scene.teaching.visual)) fail(`scene_mastery_teaching_blocks:${scene.id}`);
+      for (const block of [...scene.teaching.blocks, ...(scene.teaching.visual ? [scene.teaching.visual] : [])]) {
+        const problems = validateBlock(block).problems;
+        if (problems.length) fail(`scene_teaching_block_invalid:${scene.id}:${problems[0]}`);
+      }
+    }
     // Mastery evidence only ever comes through the assessment seam, so no mastery key can ship in a formative item.
     if (scene.evidence.kind === "MASTERY_RESPONSE" && kind !== "ASSESSMENT_HANDOFF") fail(`scene_mastery_evidence_requires_assessment_handoff:${scene.id}`);
     // A keyless (server-judged) item has nothing to check here; an authored key must point at an option.

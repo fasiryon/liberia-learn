@@ -1,0 +1,81 @@
+{
+  "version": "factory-v4-reference-inputs/1.0.0",
+  "encoding": "UTF8_LF",
+  "frontendCommit": "1268773a649fd3d570450ec15c8d5c9eb93d0cf2",
+  "sources": [
+    {
+      "path": "curriculum/structured/moe-structured-v1.json",
+      "sha256": "3d04bdb944fa9cb9eb18b3a791bf4fb9ddf5243de2827dd3412da23fdb1d08b1",
+      "authenticity": "AUTHENTIC_SOURCE",
+      "license": "MOE curriculum archive; redistribution clearance pending",
+      "attribution": "Liberia Ministry of Education; repository parsed extract, UNREVIEWED and NOT_CLAIMED",
+      "rights": "REVIEW_ONLY"
+    },
+    {
+      "path": "lib/curriculum/v4/candidates.ts",
+      "sha256": "8a352e78d1063590c5f20616dc24666e58c72ab3c6e3be6ca38ec5f57dc7915c",
+      "authenticity": "SYNTHETIC_DEMONSTRATION",
+      "license": "Repository draft; review only",
+      "attribution": "Interactive Learning V4 owner; authored source lineage and proposed MOE mapping",
+      "rights": "REVIEW_ONLY"
+    },
+    {
+      "path": "lib/learner-experience/teaching/models/liberiaCounties.ts",
+      "sha256": "b1f991c1b1cbde29a585ff2a7b67ca2740043d3e92b32e997c145a0e71d724c9",
+      "authenticity": "SYNTHETIC_DEMONSTRATION",
+      "license": "Repository schematic; rights and geography review pending",
+      "attribution": "Interactive Learning V4 owner; schematic model, not survey boundaries",
+      "rights": "REVIEW_ONLY"
+    },
+    {
+      "path": "lib/content-factory/v4/draft5/lessonAuthor.ts",
+      "sha256": "6edd5dd7a19f20093a23f9de165172a9f385ddac6e01526e10d84ddf06899328",
+      "license": "Original deterministic recipe; internal review only",
+      "attribution": "LiberiaLearn Content Factory V4 draft.5 revision",
+      "authenticity": "SYNTHETIC_DEMONSTRATION",
+      "rights": "REVIEW_ONLY"
+    },
+    {
+      "path": "lib/content-factory/v4/draft5/lessons.ts",
+      "sha256": "91e47ae673536a546616933480101435829bb6da73c73bfac3545e0d6b689c68",
+      "license": "Original deterministic recipe; internal review only",
+      "attribution": "LiberiaLearn Content Factory V4 draft.5 revision",
+      "authenticity": "SYNTHETIC_DEMONSTRATION",
+      "rights": "REVIEW_ONLY"
+    },
+    {
+      "path": "lib/curriculum/v4/factoryProjection.ts",
+      "sha256": "ac0276aa5dc86b381f600470c17ae510907dabd1e604b98e4f6d80cd89becd78",
+      "license": "Original deterministic recipe; internal review only",
+      "attribution": "LiberiaLearn Content Factory V4 draft.5 revision",
+      "authenticity": "SYNTHETIC_DEMONSTRATION",
+      "rights": "REVIEW_ONLY"
+    }
+  ],
+  "candidates": [
+    {
+      "path": "curriculum/v4/candidates/g7-civics-counties-capitals.json",
+      "sha256": "d5c48a23c2b09bfa3e66cd0b6be221ab62ae0d4c6212a67d2a26c573751807ea"
+    },
+    {
+      "path": "curriculum/v4/candidates/g7-english-reading-evidence.json",
+      "sha256": "2048eee394a6b2b600967d4542c26f34091a7f75b3021d0d279d90b0af5a271d"
+    },
+    {
+      "path": "curriculum/v4/candidates/g7-math-area-perimeter.json",
+      "sha256": "76f4e26278aca2a3b73523dd8b8574381b09e459a791354e40a7e3cc3c95ce20"
+    },
+    {
+      "path": "curriculum/v4/candidates/g7-math-fractions.json",
+      "sha256": "95c5b2995430c27ca7237e3e8c7e5864ad81aa566c039ddd2ec856e5625ce22f"
+    },
+    {
+      "path": "curriculum/v4/candidates/g7-science-states-of-matter.json",
+      "sha256": "d9a0aae7d276cd1c9480ac39e1a4c2211227666742ea7cee70cee27b9d06fc4a"
+    },
+    {
+      "path": "curriculum/v4/candidates/math-multiplication-models.json",
+      "sha256": "a3c629af5a246f6db6c0ac2d7bba901b08ea15326408196227f92378ac12ae17"
+    }
+  ]
+}

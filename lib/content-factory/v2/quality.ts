@@ -7,7 +7,10 @@ import { parseCandidateAssessmentV2 } from "@/lib/assessment/v2/parse";
 import { projectItemForLearner, protectedStrings, assertLearnerSafe } from "@/lib/assessment/v2/projection";
 import { evaluateAssessmentBlueprint } from "@/lib/curriculum/excellence/assessmentBlueprint";
 import { EXCELLENCE_RUBRIC_V1 } from "@/lib/curriculum/excellence/standard";
-import { blueprintRef, digest, parseBlueprint, type UnitBlueprint } from "./blueprint";
+import { blueprintRef, digest, parseBlueprint, UNIT_BLUEPRINT_V4_VERSION, type UnitBlueprint } from "./blueprint";
+import { CANDIDATE_LESSON_V2_CONTRACT_V4 } from "@/lib/curriculum/v2/contract";
+import { evaluateV4Standard } from "@/lib/curriculum/v4/standard";
+import { subjectFamily, validateBlock } from "@/lib/learner-experience/teaching/registry";
 import type { AssessmentCandidate, FactoryArtifact, QualityReport, ResourceDraft, ResourcePayload } from "./types";
 
 const nonempty = z.string().trim().min(1).max(16000);
@@ -75,7 +78,16 @@ export function validateArtifact(blueprint: UnitBlueprint, artifact: FactoryArti
         if (!scene.accessibility.textAlternative.trim() || !scene.accessibility.keyboardPath.trim()) fail("scene_accessibility_missing");
         if (scene.offline.mode !== "FULL_OFFLINE" && !scene.fallback) fail("offline_fallback_missing");
       }
-      for (const objectiveId of plan.objectiveIds) {
+      const v4 = blueprint.schemaVersion === UNIT_BLUEPRINT_V4_VERSION;
+      if (v4) {
+        if (candidate.contractVersion !== CANDIDATE_LESSON_V2_CONTRACT_V4) fail("v4_lesson_contract_required");
+        for (const scene of candidate.scenes) for (const block of [...(scene.teaching?.blocks ?? []), ...(scene.teaching?.visual ? [scene.teaching.visual] : [])]) {
+          for (const problem of validateBlock(block, { subject: blueprint.subject, grade: blueprint.grade }).problems) fail(`v4_${problem}`);
+        }
+        for (const problem of evaluateV4Standard(candidate, { subject: blueprint.subject, grade: blueprint.grade }).problems) if (problem.severity !== "ADVISORY") fail(`v4_standard_${problem.code}`);
+      }
+      // Other V4 families use their own guided/independent instructional pattern.
+      if (!v4 || subjectFamily(blueprint.subject) === "MATHEMATICS") for (const objectiveId of plan.objectiveIds) {
         const scenes = candidate.scenes.filter(s => s.objectiveIds.includes(objectiveId));
         const model = scenes.findIndex(s => s.purpose === "MODEL_WORKED_EXAMPLE");
         const guided = scenes.findIndex(s => s.purpose === "GUIDED_PRACTICE");

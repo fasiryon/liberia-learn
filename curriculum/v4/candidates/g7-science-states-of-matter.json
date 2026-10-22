@@ -1,0 +1,215 @@
+{
+  "contractVersion": "candidate-lesson-v2/1.1.0",
+  "title": "States of matter: what particles do",
+  "estimatedMinutes": 45,
+  "ageBand": "JUNIOR_SECONDARY",
+  "instruction": {
+    "standard": "liberialearn-v4-instruction/1.0.0",
+    "retention": {
+      "delayDays": 7,
+      "prompts": [
+        "Draw the particles of ice, liquid water and water vapour. Label how they are arranged and how they move.",
+        "Explain why a cold drink stays at about 0 °C while there is still ice in it."
+      ]
+    }
+  },
+  "pedagogy": { "primaryStrategy": "INQUIRY", "rationale": "Learners commit to a prediction, run the particle model as an experiment, read evidence from a heating curve, and only then explain with the particle model and apply it to everyday Liberian situations." },
+  "prerequisiteAssumptions": ["Reads a thermometer in °C.", "Knows that all matter is made of tiny particles."],
+  "misconceptions": [
+    { "id": "ft04-m1", "objectiveId": "ft04-o2", "description": "The bubbles in boiling water are air.", "response": "The large bubbles in boiling water are water vapour forming inside the liquid. The first tiny bubbles when you start heating are dissolved air coming out." },
+    { "id": "ft04-m2", "objectiveId": "ft04-o3", "description": "The temperature keeps rising while ice melts, or a mixture can get hotter than its hottest part.", "response": "While ice is melting, the energy goes into changing state and the temperature stays near 0 °C." },
+    { "id": "ft04-m3", "objectiveId": "ft04-o2", "description": "Water on a cold bottle leaks through the plastic.", "response": "Water vapour from the air condenses on the cold surface." },
+    { "id": "ft04-m4", "objectiveId": "ft04-o2", "description": "Evaporation only happens at 100 °C.", "response": "Evaporation happens at the surface at any temperature; boiling happens throughout the liquid at the boiling point." },
+    { "id": "ft04-m5", "objectiveId": "ft04-o1", "description": "The particles themselves expand or melt.", "response": "The particles stay the same; their spacing and motion change." },
+    { "id": "ft04-m6", "objectiveId": "ft04-o3", "description": "Melting is a chemical reaction.", "response": "No new substance forms, and the change reverses." }
+  ],
+  "scenes": [
+    {
+      "id": "cold-drink", "type": "INTRO", "title": "Ice in a cold drink", "purpose": "HOOK_PHENOMENON", "objectiveIds": [],
+      "learnerAction": "Think about what is happening to the ice, the water and the air around a cold drink.",
+      "content": { "body": "On a hot afternoon in Monrovia, Garmai puts ice in a cup of juice. The ice slowly disappears, the drink stays cold, and drops of water appear on the outside of the cup.\n\nToday you will use a particle model to explain all three things, and test your ideas like a scientist." },
+      "interaction": { "kind": "NONE" }, "tools": { "requested": [], "prohibited": [] }, "hints": [], "misconceptionIds": [], "evidence": { "kind": "NONE" },
+      "accessibility": { "textAlternative": "Ice in a cup of juice on a hot day melts slowly, the drink stays cold, and drops of water form on the outside of the cup. The lesson explains these with the particle model.", "keyboardPath": "Read the scene, then press Continue.", "reducedMotion": "NOT_APPLICABLE" },
+      "offline": { "mode": "FULL_OFFLINE", "note": "Part of the cached lesson." }, "completion": "VIEWED",
+      "teaching": { "phase": "ORIENT", "blocks": [
+        { "type": "CALLOUT", "tone": "TIP", "title": "Think like a scientist", "text": "First predict. Then test. Then look at the evidence. Only then explain." }
+      ] }
+    },
+    {
+      "id": "predict", "type": "CHECK_UNDERSTANDING", "title": "Predict: what happens to the particles?", "purpose": "PREDICT", "objectiveIds": ["ft04-o1"],
+      "learnerAction": "Make a prediction, run the model from ice to water, and explain what you saw.",
+      "content": { "body": "Before you look, decide what you think will happen. There is no penalty for a wrong prediction: scientists learn from them." },
+      "interaction": { "kind": "NONE" }, "tools": { "requested": [], "prohibited": [] }, "hints": [], "misconceptionIds": ["ft04-m5"], "evidence": { "kind": "NONE" },
+      "accessibility": { "textAlternative": "Prediction: when ice at minus 20 degrees Celsius is warmed to 20 degrees Celsius, what happens to its particles? After predicting, the model shows the particles moving faster and moving out of their fixed pattern so they can slide past one another. The particles themselves do not change size or melt.", "keyboardPath": "Choose a prediction, press Run the experiment, then type your explanation.", "reducedMotion": "STATIC_EQUIVALENT" },
+      "offline": { "mode": "FULL_OFFLINE", "note": "The simulation runs on the device; a still picture and text replace motion when motion is reduced." }, "completion": "VIEWED",
+      "pedagogy": { "strategy": "INQUIRY", "representation": "PICTORIAL", "scaffoldLevel": "FULL" },
+      "teaching": { "phase": "PREDICT", "blocks": [
+        { "type": "PREDICT_OBSERVE", "id": "predict-melting", "prompt": "Ice at −20 °C is warmed to 20 °C. What will happen to its particles?", "options": [
+          { "id": "faster", "text": "They move faster and break out of their fixed pattern", "feedback": "Your prediction matches the model: energy makes the particles move more, until they can slide past one another." },
+          { "id": "melt", "text": "The particles themselves melt into smaller particles", "feedback": "In the model the particles stay exactly the same size. What changes is how they move and how they are arranged." },
+          { "id": "stop", "text": "They stop moving", "feedback": "Watch the model: warming gives particles more energy, so they move more, not less." }
+        ], "formativeKey": { "expectedOptionId": "faster" }, "simulation": { "startC": -20, "endC": 20 }, "observation": "As the temperature rises the particles vibrate faster. At 0 °C they leave their fixed pattern and slide past one another: the ice has become liquid water. The particles did not grow, shrink or melt.", "explainPrompt": "In one or two sentences, explain what changed for the particles, and what did not change.", "explainMinChars": 40 }
+      ] }
+    },
+    {
+      "id": "experiment", "type": "INTERACTIVE_DIAGRAM", "title": "Experiment: heat and cool water", "purpose": "INVESTIGATE", "objectiveIds": ["ft04-o1", "ft04-o2"],
+      "learnerAction": "Change the temperature from −40 °C to 140 °C and record how the particles behave in each state; then sort real examples.",
+      "content": { "body": "Use the model as your experiment. Move the temperature slowly and watch three things: how close the particles are, how they move, and whether the water keeps its shape.", "keyPoints": ["Solid: packed in a pattern, vibrating in place; keeps its shape.", "Liquid: close together, sliding past one another; takes the container's shape.", "Gas: far apart, moving fast in all directions; fills its container."] },
+      "interaction": { "kind": "NONE" }, "tools": { "requested": [], "prohibited": [] }, "hints": [], "misconceptionIds": ["ft04-m5"], "evidence": { "kind": "NONE" },
+      "accessibility": { "textAlternative": "A model of water particles at a chosen temperature. Below 0 degrees Celsius it is ice: particles packed in a regular pattern, vibrating in place, keeping their own shape. From 0 to 100 degrees it is liquid water: particles close together, sliding past one another, taking the shape of the container. From 100 degrees it is water vapour: particles far apart, moving quickly in all directions and filling the container. Real examples are then sorted into solids, liquids and gases.", "keyboardPath": "Use the temperature slider with the arrow keys, or the Cooler and Warmer buttons; sort each card by choosing it and then a group.", "reducedMotion": "STATIC_EQUIVALENT" },
+      "offline": { "mode": "FULL_OFFLINE", "note": "The simulation runs on the device." }, "completion": "VIEWED",
+      "pedagogy": { "strategy": "INQUIRY", "representation": "PICTORIAL", "scaffoldLevel": "PARTIAL" },
+      "teaching": { "phase": "EXPERIMENT", "blocks": [
+        { "type": "SORT", "id": "sort-states", "prompt": "Sort each example by its state at room temperature.", "groups": [{ "id": "solid", "label": "Solid" }, { "id": "liquid", "label": "Liquid" }, { "id": "gas", "label": "Gas" }], "cards": [
+          { "id": "stone", "text": "A stone from the creek", "group": "solid", "why": "It keeps its own shape and volume: its particles are fixed in place." },
+          { "id": "ice-block", "text": "An ice block from the freezer", "group": "solid", "why": "Ice is solid water: its particles vibrate in a fixed pattern." },
+          { "id": "rice", "text": "A grain of rice", "group": "solid", "why": "Each grain keeps its shape. A bag of rice pours, but every grain is solid." },
+          { "id": "rain", "text": "Rain water in a bucket", "group": "liquid", "why": "It takes the shape of the bucket but keeps its volume." },
+          { "id": "coconut", "text": "Coconut water", "group": "liquid", "why": "It flows and takes the shape of the cup." },
+          { "id": "kerosene", "text": "Kerosene in a lamp", "group": "liquid", "why": "It flows and fills the bottom of the lamp, keeping its volume." },
+          { "id": "football-air", "text": "The air inside a football", "group": "gas", "why": "Air spreads out to fill the whole ball, whatever its shape." },
+          { "id": "smell", "text": "The smell of fried plantain spreading across a room", "group": "gas", "why": "You smell particles that have spread through the air as a gas." }
+        ] }
+      ], "visual": { "type": "PARTICLE_MODEL", "id": "water-model", "substance": "WATER", "startC": 25, "minC": -40, "maxC": 140, "caption": "A particle model of pure water at sea-level air pressure. Particles are drawn as circles to show arrangement and motion, not real size." } }
+    },
+    {
+      "id": "observe", "type": "CHECK_UNDERSTANDING", "title": "Observe: a heating curve", "purpose": "CHECK_UNDERSTANDING", "objectiveIds": ["ft04-o2", "ft04-o3"],
+      "learnerAction": "Read the temperature readings and use them as evidence.",
+      "content": { "body": "A class heated crushed ice in a pot and read a thermometer every minute. Look for where the temperature stops rising." },
+      "interaction": { "kind": "NONE" }, "tools": { "requested": [], "prohibited": [] }, "hints": [], "misconceptionIds": ["ft04-m1", "ft04-m2"], "evidence": { "kind": "NONE" },
+      "accessibility": { "textAlternative": "Temperature readings while heating crushed ice: minus 10 degrees at the start, 0 degrees from minute 2 to minute 5 while the ice melts, rising steadily to 100 degrees by minute 11, then staying at 100 degrees while the water boils. Two flat parts show where the state is changing.", "keyboardPath": "Read the table under the graph; choose one option for each question.", "reducedMotion": "NOT_APPLICABLE" },
+      "offline": { "mode": "FULL_OFFLINE", "note": "Graph and table are drawn on the device." }, "completion": "VIEWED",
+      "pedagogy": { "strategy": "INQUIRY", "representation": "MIXED", "scaffoldLevel": "MINIMAL" },
+      "teaching": { "phase": "OBSERVE", "blocks": [
+        { "type": "CHECK", "id": "read-curve", "items": [
+          { "id": "flat-zero", "prompt": "From minute 2 to minute 5 the temperature stays at 0 °C, even though the pot is still being heated. What is the best explanation?", "options": [
+            { "id": "melting", "text": "The energy is changing ice into liquid water", "feedback": "Yes. While the ice melts, the energy separates particles from their fixed pattern instead of making them move faster, so the temperature holds." },
+            { "id": "stopped", "text": "The stove stopped heating the pot", "feedback": "The class kept heating. The evidence is that the temperature rises again once all the ice has melted." },
+            { "id": "broken", "text": "The thermometer stopped working", "feedback": "It works again from minute 6, and the flat part happens at exactly 0 °C, the melting point of ice." }
+          ], "formativeKey": { "expectedOptionId": "melting" }, "misconceptionId": "ft04-m2" },
+          { "id": "flat-hundred", "prompt": "From minute 11 the temperature stays at 100 °C and big bubbles rise. What are the big bubbles?", "options": [
+            { "id": "vapour", "text": "Water vapour forming inside the boiling water", "feedback": "Yes. At the boiling point liquid water turns into vapour throughout the liquid, and the vapour rises as bubbles." },
+            { "id": "air", "text": "Air that was trapped in the water", "feedback": "The first tiny bubbles when heating starts are dissolved air. The big bubbles at 100 °C are water vapour." },
+            { "id": "heat", "text": "Bubbles of heat", "feedback": "Heat is energy, not a substance, so it cannot make bubbles. Something in the water is changing state." }
+          ], "formativeKey": { "expectedOptionId": "vapour" }, "misconceptionId": "ft04-m1" }
+        ] }
+      ], "visual": { "type": "DATA_PLOT", "id": "heating-curve", "title": "Heating crushed ice", "x": { "label": "Time", "unit": "min" }, "y": { "label": "Temperature", "unit": "°C" }, "series": [
+        { "x": 0, "y": -10 }, { "x": 1, "y": -4 }, { "x": 2, "y": 0 }, { "x": 3, "y": 0 }, { "x": 4, "y": 0 }, { "x": 5, "y": 0 }, { "x": 6, "y": 12 }, { "x": 7, "y": 30 },
+        { "x": 8, "y": 48 }, { "x": 9, "y": 66 }, { "x": 10, "y": 84 }, { "x": 11, "y": 100 }, { "x": 12, "y": 100 }, { "x": 13, "y": 100 }
+      ], "data": { "kind": "ILLUSTRATIVE", "note": "Illustrative readings that show the shape of a heating curve for water at sea level. A class's own readings will differ." }, "caption": "The two flat parts are where the state changes: melting at 0 °C and boiling at 100 °C." } }
+    },
+    {
+      "id": "explain", "type": "EXPLANATION", "title": "Explain: changes of state", "purpose": "EXPLAIN_CONCEPT", "objectiveIds": ["ft04-o2"],
+      "learnerAction": "Explore the changes of state, then explain two everyday observations with them.",
+      "content": { "body": "Each change of state happens when particles gain or lose energy. Gaining energy: **melting** (solid to liquid) and **evaporating** or **boiling** (liquid to gas). Losing energy: **condensing** (gas to liquid) and **freezing** (liquid to solid).\n\nEvaporation happens at the surface at any temperature. Boiling happens all through the liquid, only at the boiling point." },
+      "interaction": { "kind": "NONE" }, "tools": { "requested": [], "prohibited": [] }, "hints": ["Ask: are the particles gaining energy or losing it? Where does the change happen: at the surface or all through the liquid?"], "misconceptionIds": ["ft04-m3", "ft04-m4"], "evidence": { "kind": "NONE" },
+      "accessibility": { "textAlternative": "Changes of state: melting turns a solid to a liquid and evaporating or boiling turns a liquid to a gas, when particles gain energy. Condensing turns a gas to a liquid and freezing turns a liquid to a solid, when particles lose energy. Evaporation happens at the surface at any temperature; boiling happens throughout the liquid at the boiling point. Two questions: why washing dries on a line at 30 degrees, and why drops form on a cold bottle.", "keyboardPath": "Choose each stage of the cycle with Tab and Enter; choose one option for each question.", "reducedMotion": "NOT_APPLICABLE" },
+      "offline": { "mode": "FULL_OFFLINE", "note": "Part of the cached lesson." }, "completion": "VIEWED",
+      "pedagogy": { "strategy": "DIRECT_INSTRUCTION", "representation": "MIXED", "scaffoldLevel": "PARTIAL" },
+      "teaching": { "phase": "EXPLAIN", "blocks": [
+        { "type": "STEP_REVEAL", "id": "model-explanation", "question": "Watch a scientist explain the drops on Garmai's cold cup with the particle model.", "steps": [
+          { "text": "**Observe:** drops of water appear on the outside of the cold cup, not on a warm cup beside it." },
+          { "text": "**Name the change:** water vapour in the air is becoming liquid water. That is condensing." },
+          { "text": "**Energy:** vapour particles that touch the cold cup lose energy, so they slow down and come close together." },
+          { "text": "**Conclude:** the drops come from the air, not through the cup. The same particles are now a liquid." }
+        ] },
+        { "type": "CHECK", "id": "explain-everyday", "items": [
+          { "id": "washing", "prompt": "Washing on a line in the sun dries at about 30 °C. How can the water leave the clothes when water boils at 100 °C?", "options": [
+            { "id": "evaporates", "text": "It evaporates: surface particles escape at any temperature", "feedback": "Yes. Some particles at the surface have enough energy to escape as vapour. Sun and wind speed this up." },
+            { "id": "boils", "text": "The clothes get hot enough to boil the water", "feedback": "Clothes on a line do not reach 100 °C. Evaporation needs no boiling." },
+            { "id": "soaks", "text": "The water soaks into the rope", "feedback": "The rope would be dripping. The water goes into the air as vapour." }
+          ], "formativeKey": { "expectedOptionId": "evaporates" }, "misconceptionId": "ft04-m4" },
+          { "id": "bottle", "prompt": "Drops of water appear on the outside of a cold bottle of water. Where do they come from?", "options": [
+            { "id": "condense", "text": "Water vapour in the air condenses on the cold surface", "feedback": "Yes. The vapour particles lose energy on the cold bottle and become liquid water." },
+            { "id": "leak", "text": "Water leaks through the plastic", "feedback": "A sealed bottle of juice also gets wet outside, and the drops are pure water. They come from the air." },
+            { "id": "melt", "text": "The plastic is melting", "feedback": "The bottle is cold, not hot, and the drops are water." }
+          ], "formativeKey": { "expectedOptionId": "condense" }, "misconceptionId": "ft04-m3" }
+        ] }
+      ], "visual": { "type": "PROCESS_CYCLE", "id": "state-cycle", "title": "Changes of state of water", "stages": [
+        { "id": "melting", "label": "Melting", "detail": "Ice gains energy at 0 °C. Particles leave their fixed pattern: solid becomes liquid." },
+        { "id": "evaporating", "label": "Evaporating and boiling", "detail": "Liquid particles gain energy and escape as vapour: at the surface at any temperature (evaporation), or all through the liquid at 100 °C (boiling)." },
+        { "id": "condensing", "label": "Condensing", "detail": "Vapour loses energy, for example on a cold surface. Particles come close together: gas becomes liquid." },
+        { "id": "freezing", "label": "Freezing", "detail": "Liquid water loses energy at 0 °C. Particles settle into a fixed pattern: liquid becomes solid." }
+      ] } }
+    },
+    {
+      "id": "explain-mistakes", "type": "CHECK_UNDERSTANDING", "title": "Explain: fix two wrong ideas", "purpose": "ADDRESS_MISCONCEPTION", "objectiveIds": ["ft04-o1", "ft04-o3"],
+      "learnerAction": "Diagnose a wrong explanation and decide whether melting is a chemical change.",
+      "content": { "body": "Use the particle model to check other people's explanations." },
+      "interaction": { "kind": "NONE" }, "tools": { "requested": [], "prohibited": [] }, "hints": ["Ask whether the particles change, or only how they are arranged and how they move."], "misconceptionIds": ["ft04-m5", "ft04-m6"], "evidence": { "kind": "NONE" },
+      "accessibility": { "textAlternative": "Tamba wrote that when ice melts its particles melt into smaller, softer particles. The particle model shows the particles stay the same; only their arrangement and motion change. A second question asks whether melting is a chemical change: it is not, because no new substance forms and the water can be frozen again.", "keyboardPath": "Choose one option for each question with the arrow keys and Space.", "reducedMotion": "NOT_APPLICABLE" },
+      "offline": { "mode": "FULL_OFFLINE", "note": "Checked on the device." }, "completion": "VIEWED",
+      "teaching": { "phase": "EXPLAIN", "blocks": [
+        { "type": "MISTAKE_ANALYSIS", "id": "tamba-particles", "problem": "Explain what happens to the particles when ice melts.", "attempt": { "name": "Tamba", "steps": ["The ice particles get warm and melt into smaller, softer particles.", "That is why water can flow."] }, "question": "What is wrong with Tamba's explanation?", "options": [
+          { "id": "particles-same", "text": "The particles do not change; their arrangement and motion do", "feedback": "Yes. Water particles in ice and in liquid water are the same. They leave their fixed pattern and slide past one another, so the water flows." },
+          { "id": "too-short", "text": "Nothing is wrong, it just needs more detail", "feedback": "Look at the model again: the particles stayed the same size. Tamba's main idea is the problem." },
+          { "id": "bigger", "text": "The particles get bigger, not smaller", "feedback": "They do not change size at all. Only the spaces between them and their motion change." }
+        ], "formativeKey": { "expectedOptionId": "particles-same" }, "correction": ["The particles stay the same.", "When ice melts, particles gain energy, leave their fixed pattern and slide past one another."], "misconceptionId": "ft04-m5" },
+        { "type": "CHECK", "id": "physical-change", "items": [
+          { "id": "melting-chemical", "prompt": "Is melting ice a chemical change?", "options": [
+            { "id": "physical", "text": "No: it is a physical change that can be reversed by freezing", "feedback": "Yes. No new substance forms: the water can be frozen back into ice." },
+            { "id": "chemical", "text": "Yes: a new substance, water, is made", "feedback": "Ice and liquid water are the same substance in two states. Freezing turns it back." }
+          ], "formativeKey": { "expectedOptionId": "physical" }, "misconceptionId": "ft04-m6" }
+        ] }
+      ] }
+    },
+    {
+      "id": "apply", "type": "PRACTICE", "title": "Apply it: the cold drink and the school uniform", "purpose": "APPLY", "objectiveIds": ["ft04-o2", "ft04-o3"],
+      "learnerAction": "Apply the particle model to two new situations and write an evidence-based explanation.",
+      "content": { "body": "Use the model and the evidence to explain new situations on your own." },
+      "interaction": { "kind": "NONE" }, "tools": { "requested": [], "prohibited": [] }, "hints": [], "misconceptionIds": [], "evidence": { "kind": "NONE" },
+      "accessibility": { "textAlternative": "Question: what is the temperature of Garmai's drink while there is still ice in it? About 0 degrees Celsius. Writing task: explain, with a claim, evidence and reasoning, why a wet school uniform dries on a line on a sunny day.", "keyboardPath": "Choose one option, then type in each box of the writing organizer.", "reducedMotion": "NOT_APPLICABLE" },
+      "offline": { "mode": "FULL_OFFLINE", "note": "Checked on the device; writing stays on this device." }, "completion": "VIEWED",
+      "pedagogy": { "strategy": "STRUCTURED_PROBLEM_SOLVING", "representation": "VERBAL", "scaffoldLevel": "NONE" },
+      "teaching": { "phase": "APPLY", "blocks": [
+        { "type": "CHECK", "id": "apply-drink", "items": [
+          { "id": "drink-temperature", "prompt": "Garmai's juice still has some ice floating in it. About what temperature is the drink?", "options": [
+            { "id": "zero", "text": "About 0 °C", "feedback": "Yes. While ice is still melting, the mixture stays near the melting point of ice." },
+            { "id": "room", "text": "About 30 °C, the temperature of the room", "feedback": "The drink warms towards room temperature only after all the ice has melted." },
+            { "id": "between", "text": "It keeps rising while the ice melts", "feedback": "The heating curve showed the opposite: while ice melts, the temperature holds at 0 °C." }
+          ], "formativeKey": { "expectedOptionId": "zero" }, "misconceptionId": "ft04-m2" }
+        ] },
+        { "type": "WRITING_ORGANIZER", "id": "uniform-cer", "prompt": "Explain why a wet school uniform dries on a line on a sunny day. Use a claim, evidence and reasoning with the particle model.", "fields": [
+          { "id": "claim", "label": "Claim", "guidance": "Say what happens to the water in one sentence.", "minWords": 6 },
+          { "id": "evidence", "label": "Evidence", "guidance": "What can you observe? Think about the uniform, the sun and the wind.", "minWords": 8 },
+          { "id": "reasoning", "label": "Reasoning", "guidance": "Use particles and energy to explain the evidence.", "minWords": 12 }
+        ], "checklist": ["My claim names the change of state.", "My evidence is something I could see or measure.", "My reasoning says what the particles do and where their energy comes from.", "I did not say the water boils."] }
+      ] }
+    },
+    {
+      "id": "remember", "type": "REVIEW", "title": "Remember", "purpose": "REVIEW", "objectiveIds": ["ft04-o1", "ft04-o2", "ft04-o3"],
+      "learnerAction": "Recall the particle model and the changes of state.",
+      "content": { "body": "Say each point aloud before the check.", "keyPoints": ["The particles stay the same; their arrangement, spacing and motion change.", "Gaining energy: melting, evaporating, boiling. Losing energy: condensing, freezing.", "While a substance changes state, its temperature holds."] },
+      "interaction": { "kind": "NONE" }, "tools": { "requested": [], "prohibited": [] }, "hints": [], "misconceptionIds": [], "evidence": { "kind": "NONE" },
+      "accessibility": { "textAlternative": "Particles stay the same while their arrangement, spacing and motion change. Melting, evaporating and boiling need energy; condensing and freezing release it. While a substance changes state its temperature holds. A question asks which change happens when water vapour touches a cold window: condensing.", "keyboardPath": "Choose one option with the arrow keys and Space.", "reducedMotion": "NOT_APPLICABLE" },
+      "offline": { "mode": "FULL_OFFLINE", "note": "Part of the cached lesson." }, "completion": "VIEWED",
+      "teaching": { "phase": "RETRIEVE", "blocks": [
+        { "type": "CHECK", "id": "retrieve-condensing", "items": [
+          { "id": "window", "prompt": "Water vapour touches a cold car window and forms drops. Which change of state is this?", "options": [
+            { "id": "condensing", "text": "Condensing", "feedback": "Yes: gas becomes liquid as the particles lose energy." },
+            { "id": "evaporating", "text": "Evaporating", "feedback": "Evaporating goes the other way, from liquid to gas." },
+            { "id": "melting", "text": "Melting", "feedback": "Melting turns a solid into a liquid." }
+          ], "formativeKey": { "expectedOptionId": "condensing" } }
+        ] }
+      ] }
+    },
+    {
+      "id": "show-what-you-know", "type": "MASTERY_CHECK", "title": "Show what you know", "purpose": "ASSESS_MASTERY", "objectiveIds": ["ft04-o1", "ft04-o2", "ft04-o3"],
+      "learnerAction": "Answer the assessment questions on your own.",
+      "content": { "body": "Now show what you can explain on your own. The assessment system checks your answers, not this lesson." },
+      "interaction": { "kind": "ASSESSMENT_HANDOFF", "assessmentRequestId": "matter-mastery" }, "tools": { "requested": [], "prohibited": [] }, "hints": [], "misconceptionIds": [],
+      "evidence": { "kind": "MASTERY_RESPONSE", "evidenceType": "QUIZ", "responses": [
+        { "responseKey": "matter-mastery-model", "objectiveId": "ft04-o1", "responseType": "ASSESSMENT_RESPONSE", "scaffoldLevel": "NONE" },
+        { "responseKey": "matter-mastery-changes", "objectiveId": "ft04-o2", "responseType": "ASSESSMENT_RESPONSE", "scaffoldLevel": "NONE" },
+        { "responseKey": "matter-mastery-predict", "objectiveId": "ft04-o3", "responseType": "ASSESSMENT_RESPONSE", "scaffoldLevel": "NONE" }
+      ] },
+      "accessibility": { "textAlternative": "The assessment asks you to describe states of matter with the particle model and to explain changes of state on your own. It is delivered by the assessment player.", "keyboardPath": "Answer each assessment question, then submit.", "reducedMotion": "NOT_APPLICABLE" },
+      "offline": { "mode": "FULL_OFFLINE", "note": "Responses are kept until the device is online; the assessment authority scores them." }, "completion": "ALL_ANSWERED",
+      "teaching": { "phase": "ASSESS", "blocks": [] }
+    }
+  ],
+  "assessmentRequests": [
+    { "id": "matter-mastery", "objectiveIds": ["ft04-o1", "ft04-o2", "ft04-o3"], "interaction": "SINGLE_CHOICE", "evidenceType": "QUIZ", "difficulty": "CORE", "misconceptionIds": ["ft04-m1", "ft04-m2", "ft04-m4", "ft04-m5"], "tools": { "requested": [], "prohibited": [] }, "offline": "FULL_OFFLINE" }
+  ],
+  "labProposals": []
+}

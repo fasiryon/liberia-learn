@@ -1,0 +1,1763 @@
+{
+  "generatedAt": "2026-10-22T15:28:39.703Z",
+  "harness": "Next.js dev server, real route /lab-review/v4-lessons (4.0.0-draft.5)",
+  "lessons": {
+    "g7-civics-counties-capitals@1440": {
+      "scenes": [
+        {
+          "overflow": false,
+          "id": "generated-1",
+          "phase": "EXPLORE",
+          "gatedUntilDone": false,
+          "completed": true,
+          "mathElements": 0,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "READING_PASSAGE:county-register",
+              "notes": []
+            }
+          ],
+          "screenshot": "shots/g7-civics-counties-capitals--1440--01-generated-1.png"
+        },
+        {
+          "overflow": false,
+          "id": "generated-2",
+          "phase": "INVESTIGATE",
+          "gatedUntilDone": true,
+          "completed": true,
+          "mathElements": 0,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "CHECK:montserrado-capital",
+              "notes": [
+                {
+                  "wrongChoice": [
+                    "Not yet. Compare this claim with the model and its evidence. Try another answer."
+                  ]
+                }
+              ]
+            },
+            {
+              "block": "CHECK:nimba-capital",
+              "notes": [
+                {
+                  "wrongChoice": [
+                    "Not yet. Compare this claim with the model and its evidence. Try another answer."
+                  ]
+                }
+              ]
+            }
+          ],
+          "screenshot": "shots/g7-civics-counties-capitals--1440--02-generated-2.png"
+        },
+        {
+          "overflow": false,
+          "id": "generated-3",
+          "phase": "COMPARE",
+          "gatedUntilDone": null,
+          "completed": true,
+          "mathElements": 0,
+          "rawTexVisible": false,
+          "notes": [],
+          "screenshot": "shots/g7-civics-counties-capitals--1440--03-generated-3.png"
+        },
+        {
+          "overflow": false,
+          "id": "generated-4",
+          "phase": "REASON",
+          "gatedUntilDone": true,
+          "completed": true,
+          "mathElements": 0,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "SOURCE_EVIDENCE:county-evidence",
+              "notes": [
+                {
+                  "wrongEvidence": [
+                    "Not yet. 1 of your sentences does not answer the question."
+                  ]
+                }
+              ]
+            }
+          ],
+          "screenshot": "shots/g7-civics-counties-capitals--1440--04-generated-4.png"
+        },
+        {
+          "overflow": false,
+          "id": "generated-5",
+          "phase": "APPLY",
+          "gatedUntilDone": true,
+          "completed": true,
+          "mathElements": 0,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "WRITING_ORGANIZER:county-transfer",
+              "notes": [
+                {
+                  "draftNotes": "Notes for revisingEvery part is there. Now check your work against the list below."
+                }
+              ]
+            }
+          ],
+          "screenshot": "shots/g7-civics-counties-capitals--1440--05-generated-5.png"
+        },
+        {
+          "overflow": false,
+          "id": "generated-assess",
+          "phase": null,
+          "gatedUntilDone": null,
+          "completed": true,
+          "mathElements": 0,
+          "rawTexVisible": false,
+          "notes": [],
+          "screenshot": "shots/g7-civics-counties-capitals--1440--06-generated-assess.png"
+        }
+      ],
+      "finished": true,
+      "writesBefore": 0,
+      "status": 200,
+      "newWrites": []
+    },
+    "g7-math-area-perimeter@1440": {
+      "scenes": [
+        {
+          "overflow": false,
+          "id": "generated-1",
+          "phase": "VISUALIZE",
+          "gatedUntilDone": false,
+          "completed": true,
+          "mathElements": 2,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "SHAPE_MODEL:garden-model",
+              "notes": []
+            },
+            {
+              "block": "SHAPE_MODEL:triangle-model",
+              "notes": []
+            }
+          ],
+          "screenshot": "shots/g7-math-area-perimeter--1440--01-generated-1.png"
+        },
+        {
+          "overflow": false,
+          "id": "generated-2",
+          "phase": "DEMONSTRATE",
+          "gatedUntilDone": true,
+          "completed": true,
+          "mathElements": 12,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "WORKED_SOLUTION:rectangle-worked",
+              "notes": []
+            },
+            {
+              "block": "WORKED_SOLUTION:triangle-worked",
+              "notes": []
+            }
+          ],
+          "screenshot": "shots/g7-math-area-perimeter--1440--02-generated-2.png"
+        },
+        {
+          "overflow": false,
+          "id": "generated-3",
+          "phase": "SOLVE_WITH_SUPPORT",
+          "gatedUntilDone": true,
+          "completed": true,
+          "mathElements": 0,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "NUMERIC_RESPONSE:guided-rectangle",
+              "notes": [
+                {
+                  "attempt": "wrong 26",
+                  "feedback": [
+                    "Not yet. That is the perimeter: the distance around the outside. Area counts the squares that cover the inside."
+                  ]
+                },
+                {
+                  "attempt": "right number, wrong unit",
+                  "feedback": [
+                    "Not yet. The number is right, but area is measured in square units (square metres), because it counts squares that cover the inside."
+                  ]
+                },
+                {
+                  "solutionShown": true
+                }
+              ]
+            },
+            {
+              "block": "NUMERIC_RESPONSE:guided-triangle",
+              "notes": [
+                {
+                  "attempt": "wrong 18",
+                  "feedback": [
+                    "Not yet. That is the perimeter: the distance around the outside. Area counts the squares that cover the inside."
+                  ]
+                },
+                {
+                  "attempt": "right number, wrong unit",
+                  "feedback": [
+                    "Not yet. The number is right, but area is measured in square units (square metres), because it counts squares that cover the inside."
+                  ]
+                },
+                {
+                  "solutionShown": true
+                }
+              ]
+            },
+            {
+              "block": "CHECK:units-reason",
+              "notes": [
+                {
+                  "wrongChoice": [
+                    "Not yet. The size of the number does not determine the unit. A 2 m by 2 m square has area 4 square metres and perimeter 8 metres. Try another answer."
+                  ]
+                }
+              ]
+            }
+          ],
+          "screenshot": "shots/g7-math-area-perimeter--1440--03-generated-3.png"
+        },
+        {
+          "overflow": false,
+          "id": "generated-4",
+          "phase": "PRACTICE_INDEPENDENTLY",
+          "gatedUntilDone": true,
+          "completed": true,
+          "mathElements": 0,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "NUMERIC_RESPONSE:independent-rectangle",
+              "notes": [
+                {
+                  "attempt": "wrong 36",
+                  "feedback": [
+                    "Not yet. That is the perimeter: the distance around the outside. Area counts the squares that cover the inside."
+                  ]
+                },
+                {
+                  "solutionHiddenAfterOneWrong": true
+                },
+                {
+                  "attempt": "right number, wrong unit",
+                  "feedback": [
+                    "Not yet. The number is right, but area is measured in square units (square metres), because it counts squares that cover the inside."
+                  ]
+                },
+                {
+                  "solutionShown": true
+                }
+              ]
+            },
+            {
+              "block": "NUMERIC_RESPONSE:independent-triangle",
+              "notes": [
+                {
+                  "attempt": "wrong 36",
+                  "feedback": [
+                    "Not yet. That is the perimeter: the distance around the outside. Area counts the squares that cover the inside."
+                  ]
+                },
+                {
+                  "solutionHiddenAfterOneWrong": true
+                },
+                {
+                  "attempt": "right number, wrong unit",
+                  "feedback": [
+                    "Not yet. The number is right, but area is measured in square units (square metres), because it counts squares that cover the inside."
+                  ]
+                },
+                {
+                  "solutionShown": true
+                }
+              ]
+            }
+          ],
+          "screenshot": "shots/g7-math-area-perimeter--1440--04-generated-4.png"
+        },
+        {
+          "overflow": false,
+          "id": "generated-5",
+          "phase": "ANALYZE_MISTAKE",
+          "gatedUntilDone": true,
+          "completed": true,
+          "mathElements": 0,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "MISTAKE_ANALYSIS:garden-mistake",
+              "notes": [
+                {
+                  "wrongDiagnosis": [
+                    "Not yet. A closed plot has four boundary sides. Count the opposite length and width too. Try another answer."
+                  ]
+                },
+                {
+                  "correctionShown": true
+                }
+              ]
+            }
+          ],
+          "screenshot": "shots/g7-math-area-perimeter--1440--05-generated-5.png"
+        },
+        {
+          "overflow": false,
+          "id": "generated-6",
+          "phase": "APPLY",
+          "gatedUntilDone": true,
+          "completed": true,
+          "mathElements": 0,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "NUMERIC_RESPONSE:floor-transfer",
+              "notes": [
+                {
+                  "attempt": "wrong 73",
+                  "feedback": [
+                    "Not yet. You are close. Check your arithmetic one step at a time."
+                  ]
+                },
+                {
+                  "solutionHiddenAfterOneWrong": true
+                },
+                {
+                  "solutionShown": true
+                }
+              ]
+            }
+          ],
+          "screenshot": "shots/g7-math-area-perimeter--1440--06-generated-6.png"
+        },
+        {
+          "overflow": false,
+          "id": "generated-assess",
+          "phase": null,
+          "gatedUntilDone": null,
+          "completed": true,
+          "mathElements": 0,
+          "rawTexVisible": false,
+          "notes": [],
+          "screenshot": "shots/g7-math-area-perimeter--1440--07-generated-assess.png"
+        }
+      ],
+      "finished": true,
+      "writesBefore": 0,
+      "status": 200,
+      "newWrites": []
+    },
+    "g7-math-area-perimeter@360": {
+      "scenes": [
+        {
+          "overflow": false,
+          "id": "generated-1",
+          "phase": "VISUALIZE",
+          "gatedUntilDone": false,
+          "completed": true,
+          "mathElements": 2,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "SHAPE_MODEL:garden-model",
+              "notes": []
+            },
+            {
+              "block": "SHAPE_MODEL:triangle-model",
+              "notes": []
+            }
+          ],
+          "screenshot": "shots/g7-math-area-perimeter--360--01-generated-1.png"
+        },
+        {
+          "overflow": false,
+          "id": "generated-2",
+          "phase": "DEMONSTRATE",
+          "gatedUntilDone": true,
+          "completed": true,
+          "mathElements": 12,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "WORKED_SOLUTION:rectangle-worked",
+              "notes": []
+            },
+            {
+              "block": "WORKED_SOLUTION:triangle-worked",
+              "notes": []
+            }
+          ],
+          "screenshot": "shots/g7-math-area-perimeter--360--02-generated-2.png"
+        },
+        {
+          "overflow": false,
+          "id": "generated-3",
+          "phase": "SOLVE_WITH_SUPPORT",
+          "gatedUntilDone": true,
+          "completed": true,
+          "mathElements": 0,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "NUMERIC_RESPONSE:guided-rectangle",
+              "notes": [
+                {
+                  "attempt": "wrong 26",
+                  "feedback": [
+                    "Not yet. That is the perimeter: the distance around the outside. Area counts the squares that cover the inside."
+                  ]
+                },
+                {
+                  "attempt": "right number, wrong unit",
+                  "feedback": [
+                    "Not yet. The number is right, but area is measured in square units (square metres), because it counts squares that cover the inside."
+                  ]
+                },
+                {
+                  "solutionShown": true
+                }
+              ]
+            },
+            {
+              "block": "NUMERIC_RESPONSE:guided-triangle",
+              "notes": [
+                {
+                  "attempt": "wrong 18",
+                  "feedback": [
+                    "Not yet. That is the perimeter: the distance around the outside. Area counts the squares that cover the inside."
+                  ]
+                },
+                {
+                  "attempt": "right number, wrong unit",
+                  "feedback": [
+                    "Not yet. The number is right, but area is measured in square units (square metres), because it counts squares that cover the inside."
+                  ]
+                },
+                {
+                  "solutionShown": true
+                }
+              ]
+            },
+            {
+              "block": "CHECK:units-reason",
+              "notes": [
+                {
+                  "wrongChoice": [
+                    "Not yet. The size of the number does not determine the unit. A 2 m by 2 m square has area 4 square metres and perimeter 8 metres. Try another answer."
+                  ]
+                }
+              ]
+            }
+          ],
+          "screenshot": "shots/g7-math-area-perimeter--360--03-generated-3.png"
+        },
+        {
+          "overflow": false,
+          "id": "generated-4",
+          "phase": "PRACTICE_INDEPENDENTLY",
+          "gatedUntilDone": true,
+          "completed": true,
+          "mathElements": 0,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "NUMERIC_RESPONSE:independent-rectangle",
+              "notes": [
+                {
+                  "attempt": "wrong 36",
+                  "feedback": [
+                    "Not yet. That is the perimeter: the distance around the outside. Area counts the squares that cover the inside."
+                  ]
+                },
+                {
+                  "solutionHiddenAfterOneWrong": true
+                },
+                {
+                  "attempt": "right number, wrong unit",
+                  "feedback": [
+                    "Not yet. The number is right, but area is measured in square units (square metres), because it counts squares that cover the inside."
+                  ]
+                },
+                {
+                  "solutionShown": true
+                }
+              ]
+            },
+            {
+              "block": "NUMERIC_RESPONSE:independent-triangle",
+              "notes": [
+                {
+                  "attempt": "wrong 36",
+                  "feedback": [
+                    "Not yet. That is the perimeter: the distance around the outside. Area counts the squares that cover the inside."
+                  ]
+                },
+                {
+                  "solutionHiddenAfterOneWrong": true
+                },
+                {
+                  "attempt": "right number, wrong unit",
+                  "feedback": [
+                    "Not yet. The number is right, but area is measured in square units (square metres), because it counts squares that cover the inside."
+                  ]
+                },
+                {
+                  "solutionShown": true
+                }
+              ]
+            }
+          ],
+          "screenshot": "shots/g7-math-area-perimeter--360--04-generated-4.png"
+        },
+        {
+          "overflow": false,
+          "id": "generated-5",
+          "phase": "ANALYZE_MISTAKE",
+          "gatedUntilDone": true,
+          "completed": true,
+          "mathElements": 0,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "MISTAKE_ANALYSIS:garden-mistake",
+              "notes": [
+                {
+                  "wrongDiagnosis": [
+                    "Not yet. A closed plot has four boundary sides. Count the opposite length and width too. Try another answer."
+                  ]
+                },
+                {
+                  "correctionShown": true
+                }
+              ]
+            }
+          ],
+          "screenshot": "shots/g7-math-area-perimeter--360--05-generated-5.png"
+        },
+        {
+          "overflow": false,
+          "id": "generated-6",
+          "phase": "APPLY",
+          "gatedUntilDone": true,
+          "completed": true,
+          "mathElements": 0,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "NUMERIC_RESPONSE:floor-transfer",
+              "notes": [
+                {
+                  "attempt": "wrong 73",
+                  "feedback": [
+                    "Not yet. You are close. Check your arithmetic one step at a time."
+                  ]
+                },
+                {
+                  "solutionHiddenAfterOneWrong": true
+                },
+                {
+                  "solutionShown": true
+                }
+              ]
+            }
+          ],
+          "screenshot": "shots/g7-math-area-perimeter--360--06-generated-6.png"
+        },
+        {
+          "overflow": false,
+          "id": "generated-assess",
+          "phase": null,
+          "gatedUntilDone": null,
+          "completed": true,
+          "mathElements": 0,
+          "rawTexVisible": false,
+          "notes": [],
+          "screenshot": "shots/g7-math-area-perimeter--360--07-generated-assess.png"
+        }
+      ],
+      "finished": true,
+      "writesBefore": 0,
+      "status": 200,
+      "newWrites": []
+    },
+    "g7-math-area-perimeter@390": {
+      "scenes": [
+        {
+          "overflow": false,
+          "id": "generated-1",
+          "phase": "VISUALIZE",
+          "gatedUntilDone": false,
+          "completed": true,
+          "mathElements": 2,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "SHAPE_MODEL:garden-model",
+              "notes": []
+            },
+            {
+              "block": "SHAPE_MODEL:triangle-model",
+              "notes": []
+            }
+          ],
+          "screenshot": "shots/g7-math-area-perimeter--390--01-generated-1.png"
+        },
+        {
+          "overflow": false,
+          "id": "generated-2",
+          "phase": "DEMONSTRATE",
+          "gatedUntilDone": true,
+          "completed": true,
+          "mathElements": 12,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "WORKED_SOLUTION:rectangle-worked",
+              "notes": []
+            },
+            {
+              "block": "WORKED_SOLUTION:triangle-worked",
+              "notes": []
+            }
+          ],
+          "screenshot": "shots/g7-math-area-perimeter--390--02-generated-2.png"
+        },
+        {
+          "overflow": false,
+          "id": "generated-3",
+          "phase": "SOLVE_WITH_SUPPORT",
+          "gatedUntilDone": true,
+          "completed": true,
+          "mathElements": 0,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "NUMERIC_RESPONSE:guided-rectangle",
+              "notes": [
+                {
+                  "attempt": "wrong 26",
+                  "feedback": [
+                    "Not yet. That is the perimeter: the distance around the outside. Area counts the squares that cover the inside."
+                  ]
+                },
+                {
+                  "attempt": "right number, wrong unit",
+                  "feedback": [
+                    "Not yet. The number is right, but area is measured in square units (square metres), because it counts squares that cover the inside."
+                  ]
+                },
+                {
+                  "solutionShown": true
+                }
+              ]
+            },
+            {
+              "block": "NUMERIC_RESPONSE:guided-triangle",
+              "notes": [
+                {
+                  "attempt": "wrong 18",
+                  "feedback": [
+                    "Not yet. That is the perimeter: the distance around the outside. Area counts the squares that cover the inside."
+                  ]
+                },
+                {
+                  "attempt": "right number, wrong unit",
+                  "feedback": [
+                    "Not yet. The number is right, but area is measured in square units (square metres), because it counts squares that cover the inside."
+                  ]
+                },
+                {
+                  "solutionShown": true
+                }
+              ]
+            },
+            {
+              "block": "CHECK:units-reason",
+              "notes": [
+                {
+                  "wrongChoice": [
+                    "Not yet. The size of the number does not determine the unit. A 2 m by 2 m square has area 4 square metres and perimeter 8 metres. Try another answer."
+                  ]
+                }
+              ]
+            }
+          ],
+          "screenshot": "shots/g7-math-area-perimeter--390--03-generated-3.png"
+        },
+        {
+          "overflow": false,
+          "id": "generated-4",
+          "phase": "PRACTICE_INDEPENDENTLY",
+          "gatedUntilDone": true,
+          "completed": true,
+          "mathElements": 0,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "NUMERIC_RESPONSE:independent-rectangle",
+              "notes": [
+                {
+                  "attempt": "wrong 36",
+                  "feedback": [
+                    "Not yet. That is the perimeter: the distance around the outside. Area counts the squares that cover the inside."
+                  ]
+                },
+                {
+                  "solutionHiddenAfterOneWrong": true
+                },
+                {
+                  "attempt": "right number, wrong unit",
+                  "feedback": [
+                    "Not yet. The number is right, but area is measured in square units (square metres), because it counts squares that cover the inside."
+                  ]
+                },
+                {
+                  "solutionShown": true
+                }
+              ]
+            },
+            {
+              "block": "NUMERIC_RESPONSE:independent-triangle",
+              "notes": [
+                {
+                  "attempt": "wrong 36",
+                  "feedback": [
+                    "Not yet. That is the perimeter: the distance around the outside. Area counts the squares that cover the inside."
+                  ]
+                },
+                {
+                  "solutionHiddenAfterOneWrong": true
+                },
+                {
+                  "attempt": "right number, wrong unit",
+                  "feedback": [
+                    "Not yet. The number is right, but area is measured in square units (square metres), because it counts squares that cover the inside."
+                  ]
+                },
+                {
+                  "solutionShown": true
+                }
+              ]
+            }
+          ],
+          "screenshot": "shots/g7-math-area-perimeter--390--04-generated-4.png"
+        },
+        {
+          "overflow": false,
+          "id": "generated-5",
+          "phase": "ANALYZE_MISTAKE",
+          "gatedUntilDone": true,
+          "completed": true,
+          "mathElements": 0,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "MISTAKE_ANALYSIS:garden-mistake",
+              "notes": [
+                {
+                  "wrongDiagnosis": [
+                    "Not yet. A closed plot has four boundary sides. Count the opposite length and width too. Try another answer."
+                  ]
+                },
+                {
+                  "correctionShown": true
+                }
+              ]
+            }
+          ],
+          "screenshot": "shots/g7-math-area-perimeter--390--05-generated-5.png"
+        },
+        {
+          "overflow": false,
+          "id": "generated-6",
+          "phase": "APPLY",
+          "gatedUntilDone": true,
+          "completed": true,
+          "mathElements": 0,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "NUMERIC_RESPONSE:floor-transfer",
+              "notes": [
+                {
+                  "attempt": "wrong 73",
+                  "feedback": [
+                    "Not yet. You are close. Check your arithmetic one step at a time."
+                  ]
+                },
+                {
+                  "solutionHiddenAfterOneWrong": true
+                },
+                {
+                  "solutionShown": true
+                }
+              ]
+            }
+          ],
+          "screenshot": "shots/g7-math-area-perimeter--390--06-generated-6.png"
+        },
+        {
+          "overflow": false,
+          "id": "generated-assess",
+          "phase": null,
+          "gatedUntilDone": null,
+          "completed": true,
+          "mathElements": 0,
+          "rawTexVisible": false,
+          "notes": [],
+          "screenshot": "shots/g7-math-area-perimeter--390--07-generated-assess.png"
+        }
+      ],
+      "finished": true,
+      "writesBefore": 0,
+      "status": 200,
+      "newWrites": []
+    },
+    "g7-math-area-perimeter@768": {
+      "scenes": [
+        {
+          "overflow": false,
+          "id": "generated-1",
+          "phase": "VISUALIZE",
+          "gatedUntilDone": false,
+          "completed": true,
+          "mathElements": 2,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "SHAPE_MODEL:garden-model",
+              "notes": []
+            },
+            {
+              "block": "SHAPE_MODEL:triangle-model",
+              "notes": []
+            }
+          ],
+          "screenshot": "shots/g7-math-area-perimeter--768--01-generated-1.png"
+        },
+        {
+          "overflow": false,
+          "id": "generated-2",
+          "phase": "DEMONSTRATE",
+          "gatedUntilDone": true,
+          "completed": true,
+          "mathElements": 12,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "WORKED_SOLUTION:rectangle-worked",
+              "notes": []
+            },
+            {
+              "block": "WORKED_SOLUTION:triangle-worked",
+              "notes": []
+            }
+          ],
+          "screenshot": "shots/g7-math-area-perimeter--768--02-generated-2.png"
+        },
+        {
+          "overflow": false,
+          "id": "generated-3",
+          "phase": "SOLVE_WITH_SUPPORT",
+          "gatedUntilDone": true,
+          "completed": true,
+          "mathElements": 0,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "NUMERIC_RESPONSE:guided-rectangle",
+              "notes": [
+                {
+                  "attempt": "wrong 26",
+                  "feedback": [
+                    "Not yet. That is the perimeter: the distance around the outside. Area counts the squares that cover the inside."
+                  ]
+                },
+                {
+                  "attempt": "right number, wrong unit",
+                  "feedback": [
+                    "Not yet. The number is right, but area is measured in square units (square metres), because it counts squares that cover the inside."
+                  ]
+                },
+                {
+                  "solutionShown": true
+                }
+              ]
+            },
+            {
+              "block": "NUMERIC_RESPONSE:guided-triangle",
+              "notes": [
+                {
+                  "attempt": "wrong 18",
+                  "feedback": [
+                    "Not yet. That is the perimeter: the distance around the outside. Area counts the squares that cover the inside."
+                  ]
+                },
+                {
+                  "attempt": "right number, wrong unit",
+                  "feedback": [
+                    "Not yet. The number is right, but area is measured in square units (square metres), because it counts squares that cover the inside."
+                  ]
+                },
+                {
+                  "solutionShown": true
+                }
+              ]
+            },
+            {
+              "block": "CHECK:units-reason",
+              "notes": [
+                {
+                  "wrongChoice": [
+                    "Not yet. The size of the number does not determine the unit. A 2 m by 2 m square has area 4 square metres and perimeter 8 metres. Try another answer."
+                  ]
+                }
+              ]
+            }
+          ],
+          "screenshot": "shots/g7-math-area-perimeter--768--03-generated-3.png"
+        },
+        {
+          "overflow": false,
+          "id": "generated-4",
+          "phase": "PRACTICE_INDEPENDENTLY",
+          "gatedUntilDone": true,
+          "completed": true,
+          "mathElements": 0,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "NUMERIC_RESPONSE:independent-rectangle",
+              "notes": [
+                {
+                  "attempt": "wrong 36",
+                  "feedback": [
+                    "Not yet. That is the perimeter: the distance around the outside. Area counts the squares that cover the inside."
+                  ]
+                },
+                {
+                  "solutionHiddenAfterOneWrong": true
+                },
+                {
+                  "attempt": "right number, wrong unit",
+                  "feedback": [
+                    "Not yet. The number is right, but area is measured in square units (square metres), because it counts squares that cover the inside."
+                  ]
+                },
+                {
+                  "solutionShown": true
+                }
+              ]
+            },
+            {
+              "block": "NUMERIC_RESPONSE:independent-triangle",
+              "notes": [
+                {
+                  "attempt": "wrong 36",
+                  "feedback": [
+                    "Not yet. That is the perimeter: the distance around the outside. Area counts the squares that cover the inside."
+                  ]
+                },
+                {
+                  "solutionHiddenAfterOneWrong": true
+                },
+                {
+                  "attempt": "right number, wrong unit",
+                  "feedback": [
+                    "Not yet. The number is right, but area is measured in square units (square metres), because it counts squares that cover the inside."
+                  ]
+                },
+                {
+                  "solutionShown": true
+                }
+              ]
+            }
+          ],
+          "screenshot": "shots/g7-math-area-perimeter--768--04-generated-4.png"
+        },
+        {
+          "overflow": false,
+          "id": "generated-5",
+          "phase": "ANALYZE_MISTAKE",
+          "gatedUntilDone": true,
+          "completed": true,
+          "mathElements": 0,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "MISTAKE_ANALYSIS:garden-mistake",
+              "notes": [
+                {
+                  "wrongDiagnosis": [
+                    "Not yet. A closed plot has four boundary sides. Count the opposite length and width too. Try another answer."
+                  ]
+                },
+                {
+                  "correctionShown": true
+                }
+              ]
+            }
+          ],
+          "screenshot": "shots/g7-math-area-perimeter--768--05-generated-5.png"
+        },
+        {
+          "overflow": false,
+          "id": "generated-6",
+          "phase": "APPLY",
+          "gatedUntilDone": true,
+          "completed": true,
+          "mathElements": 0,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "NUMERIC_RESPONSE:floor-transfer",
+              "notes": [
+                {
+                  "attempt": "wrong 73",
+                  "feedback": [
+                    "Not yet. You are close. Check your arithmetic one step at a time."
+                  ]
+                },
+                {
+                  "solutionHiddenAfterOneWrong": true
+                },
+                {
+                  "solutionShown": true
+                }
+              ]
+            }
+          ],
+          "screenshot": "shots/g7-math-area-perimeter--768--06-generated-6.png"
+        },
+        {
+          "overflow": false,
+          "id": "generated-assess",
+          "phase": null,
+          "gatedUntilDone": null,
+          "completed": true,
+          "mathElements": 0,
+          "rawTexVisible": false,
+          "notes": [],
+          "screenshot": "shots/g7-math-area-perimeter--768--07-generated-assess.png"
+        }
+      ],
+      "finished": true,
+      "writesBefore": 0,
+      "status": 200,
+      "newWrites": []
+    },
+    "g7-math-area-perimeter@1024": {
+      "scenes": [
+        {
+          "overflow": false,
+          "id": "generated-1",
+          "phase": "VISUALIZE",
+          "gatedUntilDone": false,
+          "completed": true,
+          "mathElements": 2,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "SHAPE_MODEL:garden-model",
+              "notes": []
+            },
+            {
+              "block": "SHAPE_MODEL:triangle-model",
+              "notes": []
+            }
+          ],
+          "screenshot": "shots/g7-math-area-perimeter--1024--01-generated-1.png"
+        },
+        {
+          "overflow": false,
+          "id": "generated-2",
+          "phase": "DEMONSTRATE",
+          "gatedUntilDone": true,
+          "completed": true,
+          "mathElements": 12,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "WORKED_SOLUTION:rectangle-worked",
+              "notes": []
+            },
+            {
+              "block": "WORKED_SOLUTION:triangle-worked",
+              "notes": []
+            }
+          ],
+          "screenshot": "shots/g7-math-area-perimeter--1024--02-generated-2.png"
+        },
+        {
+          "overflow": false,
+          "id": "generated-3",
+          "phase": "SOLVE_WITH_SUPPORT",
+          "gatedUntilDone": true,
+          "completed": true,
+          "mathElements": 0,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "NUMERIC_RESPONSE:guided-rectangle",
+              "notes": [
+                {
+                  "attempt": "wrong 26",
+                  "feedback": [
+                    "Not yet. That is the perimeter: the distance around the outside. Area counts the squares that cover the inside."
+                  ]
+                },
+                {
+                  "attempt": "right number, wrong unit",
+                  "feedback": [
+                    "Not yet. The number is right, but area is measured in square units (square metres), because it counts squares that cover the inside."
+                  ]
+                },
+                {
+                  "solutionShown": true
+                }
+              ]
+            },
+            {
+              "block": "NUMERIC_RESPONSE:guided-triangle",
+              "notes": [
+                {
+                  "attempt": "wrong 18",
+                  "feedback": [
+                    "Not yet. That is the perimeter: the distance around the outside. Area counts the squares that cover the inside."
+                  ]
+                },
+                {
+                  "attempt": "right number, wrong unit",
+                  "feedback": [
+                    "Not yet. The number is right, but area is measured in square units (square metres), because it counts squares that cover the inside."
+                  ]
+                },
+                {
+                  "solutionShown": true
+                }
+              ]
+            },
+            {
+              "block": "CHECK:units-reason",
+              "notes": [
+                {
+                  "wrongChoice": [
+                    "Not yet. The size of the number does not determine the unit. A 2 m by 2 m square has area 4 square metres and perimeter 8 metres. Try another answer."
+                  ]
+                }
+              ]
+            }
+          ],
+          "screenshot": "shots/g7-math-area-perimeter--1024--03-generated-3.png"
+        },
+        {
+          "overflow": false,
+          "id": "generated-4",
+          "phase": "PRACTICE_INDEPENDENTLY",
+          "gatedUntilDone": true,
+          "completed": true,
+          "mathElements": 0,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "NUMERIC_RESPONSE:independent-rectangle",
+              "notes": [
+                {
+                  "attempt": "wrong 36",
+                  "feedback": [
+                    "Not yet. That is the perimeter: the distance around the outside. Area counts the squares that cover the inside."
+                  ]
+                },
+                {
+                  "solutionHiddenAfterOneWrong": true
+                },
+                {
+                  "attempt": "right number, wrong unit",
+                  "feedback": [
+                    "Not yet. The number is right, but area is measured in square units (square metres), because it counts squares that cover the inside."
+                  ]
+                },
+                {
+                  "solutionShown": true
+                }
+              ]
+            },
+            {
+              "block": "NUMERIC_RESPONSE:independent-triangle",
+              "notes": [
+                {
+                  "attempt": "wrong 36",
+                  "feedback": [
+                    "Not yet. That is the perimeter: the distance around the outside. Area counts the squares that cover the inside."
+                  ]
+                },
+                {
+                  "solutionHiddenAfterOneWrong": true
+                },
+                {
+                  "attempt": "right number, wrong unit",
+                  "feedback": [
+                    "Not yet. The number is right, but area is measured in square units (square metres), because it counts squares that cover the inside."
+                  ]
+                },
+                {
+                  "solutionShown": true
+                }
+              ]
+            }
+          ],
+          "screenshot": "shots/g7-math-area-perimeter--1024--04-generated-4.png"
+        },
+        {
+          "overflow": false,
+          "id": "generated-5",
+          "phase": "ANALYZE_MISTAKE",
+          "gatedUntilDone": true,
+          "completed": true,
+          "mathElements": 0,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "MISTAKE_ANALYSIS:garden-mistake",
+              "notes": [
+                {
+                  "wrongDiagnosis": [
+                    "Not yet. A closed plot has four boundary sides. Count the opposite length and width too. Try another answer."
+                  ]
+                },
+                {
+                  "correctionShown": true
+                }
+              ]
+            }
+          ],
+          "screenshot": "shots/g7-math-area-perimeter--1024--05-generated-5.png"
+        },
+        {
+          "overflow": false,
+          "id": "generated-6",
+          "phase": "APPLY",
+          "gatedUntilDone": true,
+          "completed": true,
+          "mathElements": 0,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "NUMERIC_RESPONSE:floor-transfer",
+              "notes": [
+                {
+                  "attempt": "wrong 73",
+                  "feedback": [
+                    "Not yet. You are close. Check your arithmetic one step at a time."
+                  ]
+                },
+                {
+                  "solutionHiddenAfterOneWrong": true
+                },
+                {
+                  "solutionShown": true
+                }
+              ]
+            }
+          ],
+          "screenshot": "shots/g7-math-area-perimeter--1024--06-generated-6.png"
+        },
+        {
+          "overflow": false,
+          "id": "generated-assess",
+          "phase": null,
+          "gatedUntilDone": null,
+          "completed": true,
+          "mathElements": 0,
+          "rawTexVisible": false,
+          "notes": [],
+          "screenshot": "shots/g7-math-area-perimeter--1024--07-generated-assess.png"
+        }
+      ],
+      "finished": true,
+      "writesBefore": 0,
+      "status": 200,
+      "newWrites": []
+    },
+    "g7-math-area-perimeter@1920": {
+      "scenes": [
+        {
+          "overflow": false,
+          "id": "generated-1",
+          "phase": "VISUALIZE",
+          "gatedUntilDone": false,
+          "completed": true,
+          "mathElements": 2,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "SHAPE_MODEL:garden-model",
+              "notes": []
+            },
+            {
+              "block": "SHAPE_MODEL:triangle-model",
+              "notes": []
+            }
+          ],
+          "screenshot": "shots/g7-math-area-perimeter--1920--01-generated-1.png"
+        },
+        {
+          "overflow": false,
+          "id": "generated-2",
+          "phase": "DEMONSTRATE",
+          "gatedUntilDone": true,
+          "completed": true,
+          "mathElements": 12,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "WORKED_SOLUTION:rectangle-worked",
+              "notes": []
+            },
+            {
+              "block": "WORKED_SOLUTION:triangle-worked",
+              "notes": []
+            }
+          ],
+          "screenshot": "shots/g7-math-area-perimeter--1920--02-generated-2.png"
+        },
+        {
+          "overflow": false,
+          "id": "generated-3",
+          "phase": "SOLVE_WITH_SUPPORT",
+          "gatedUntilDone": true,
+          "completed": true,
+          "mathElements": 0,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "NUMERIC_RESPONSE:guided-rectangle",
+              "notes": [
+                {
+                  "attempt": "wrong 26",
+                  "feedback": [
+                    "Not yet. That is the perimeter: the distance around the outside. Area counts the squares that cover the inside."
+                  ]
+                },
+                {
+                  "attempt": "right number, wrong unit",
+                  "feedback": [
+                    "Not yet. The number is right, but area is measured in square units (square metres), because it counts squares that cover the inside."
+                  ]
+                },
+                {
+                  "solutionShown": true
+                }
+              ]
+            },
+            {
+              "block": "NUMERIC_RESPONSE:guided-triangle",
+              "notes": [
+                {
+                  "attempt": "wrong 18",
+                  "feedback": [
+                    "Not yet. That is the perimeter: the distance around the outside. Area counts the squares that cover the inside."
+                  ]
+                },
+                {
+                  "attempt": "right number, wrong unit",
+                  "feedback": [
+                    "Not yet. The number is right, but area is measured in square units (square metres), because it counts squares that cover the inside."
+                  ]
+                },
+                {
+                  "solutionShown": true
+                }
+              ]
+            },
+            {
+              "block": "CHECK:units-reason",
+              "notes": [
+                {
+                  "wrongChoice": [
+                    "Not yet. The size of the number does not determine the unit. A 2 m by 2 m square has area 4 square metres and perimeter 8 metres. Try another answer."
+                  ]
+                }
+              ]
+            }
+          ],
+          "screenshot": "shots/g7-math-area-perimeter--1920--03-generated-3.png"
+        },
+        {
+          "overflow": false,
+          "id": "generated-4",
+          "phase": "PRACTICE_INDEPENDENTLY",
+          "gatedUntilDone": true,
+          "completed": true,
+          "mathElements": 0,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "NUMERIC_RESPONSE:independent-rectangle",
+              "notes": [
+                {
+                  "attempt": "wrong 36",
+                  "feedback": [
+                    "Not yet. That is the perimeter: the distance around the outside. Area counts the squares that cover the inside."
+                  ]
+                },
+                {
+                  "solutionHiddenAfterOneWrong": true
+                },
+                {
+                  "attempt": "right number, wrong unit",
+                  "feedback": [
+                    "Not yet. The number is right, but area is measured in square units (square metres), because it counts squares that cover the inside."
+                  ]
+                },
+                {
+                  "solutionShown": true
+                }
+              ]
+            },
+            {
+              "block": "NUMERIC_RESPONSE:independent-triangle",
+              "notes": [
+                {
+                  "attempt": "wrong 36",
+                  "feedback": [
+                    "Not yet. That is the perimeter: the distance around the outside. Area counts the squares that cover the inside."
+                  ]
+                },
+                {
+                  "solutionHiddenAfterOneWrong": true
+                },
+                {
+                  "attempt": "right number, wrong unit",
+                  "feedback": [
+                    "Not yet. The number is right, but area is measured in square units (square metres), because it counts squares that cover the inside."
+                  ]
+                },
+                {
+                  "solutionShown": true
+                }
+              ]
+            }
+          ],
+          "screenshot": "shots/g7-math-area-perimeter--1920--04-generated-4.png"
+        },
+        {
+          "overflow": false,
+          "id": "generated-5",
+          "phase": "ANALYZE_MISTAKE",
+          "gatedUntilDone": true,
+          "completed": true,
+          "mathElements": 0,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "MISTAKE_ANALYSIS:garden-mistake",
+              "notes": [
+                {
+                  "wrongDiagnosis": [
+                    "Not yet. A closed plot has four boundary sides. Count the opposite length and width too. Try another answer."
+                  ]
+                },
+                {
+                  "correctionShown": true
+                }
+              ]
+            }
+          ],
+          "screenshot": "shots/g7-math-area-perimeter--1920--05-generated-5.png"
+        },
+        {
+          "overflow": false,
+          "id": "generated-6",
+          "phase": "APPLY",
+          "gatedUntilDone": true,
+          "completed": true,
+          "mathElements": 0,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "NUMERIC_RESPONSE:floor-transfer",
+              "notes": [
+                {
+                  "attempt": "wrong 73",
+                  "feedback": [
+                    "Not yet. You are close. Check your arithmetic one step at a time."
+                  ]
+                },
+                {
+                  "solutionHiddenAfterOneWrong": true
+                },
+                {
+                  "solutionShown": true
+                }
+              ]
+            }
+          ],
+          "screenshot": "shots/g7-math-area-perimeter--1920--06-generated-6.png"
+        },
+        {
+          "overflow": false,
+          "id": "generated-assess",
+          "phase": null,
+          "gatedUntilDone": null,
+          "completed": true,
+          "mathElements": 0,
+          "rawTexVisible": false,
+          "notes": [],
+          "screenshot": "shots/g7-math-area-perimeter--1920--07-generated-assess.png"
+        }
+      ],
+      "finished": true,
+      "writesBefore": 0,
+      "status": 200,
+      "newWrites": []
+    }
+  },
+  "payload": [
+    {
+      "url": "/lab-review/v4-lessons/factory%404.0.0-draft.5%40g7-civics-counties-capitals",
+      "bytes": 32889,
+      "canaryHits": [],
+      "nonEmptyGovernedItems": 0
+    },
+    {
+      "url": "/lab-review/v4-lessons/factory%404.0.0-draft.5%40g7-math-area-perimeter",
+      "bytes": 42038,
+      "canaryHits": [],
+      "nonEmptyGovernedItems": 0
+    },
+    {
+      "url": "/lab-review/v4-lessons/factory%404.0.0-draft.5%40g7-math-area-perimeter?_rsc=25idd",
+      "bytes": 31762,
+      "canaryHits": [],
+      "nonEmptyGovernedItems": 0
+    },
+    {
+      "url": "/lab-review/v4-lessons/factory%404.0.0-draft.5%40g7-math-area-perimeter",
+      "bytes": 42038,
+      "canaryHits": [],
+      "nonEmptyGovernedItems": 0
+    },
+    {
+      "url": "/lab-review/v4-lessons/factory%404.0.0-draft.5%40g7-math-area-perimeter",
+      "bytes": 42038,
+      "canaryHits": [],
+      "nonEmptyGovernedItems": 0
+    },
+    {
+      "url": "/lab-review/v4-lessons/factory%404.0.0-draft.5%40g7-math-area-perimeter",
+      "bytes": 42038,
+      "canaryHits": [],
+      "nonEmptyGovernedItems": 0
+    },
+    {
+      "url": "/lab-review/v4-lessons/factory%404.0.0-draft.5%40g7-math-area-perimeter",
+      "bytes": 42038,
+      "canaryHits": [],
+      "nonEmptyGovernedItems": 0
+    },
+    {
+      "url": "/lab-review/v4-lessons/factory%404.0.0-draft.5%40g7-math-area-perimeter",
+      "bytes": 42038,
+      "canaryHits": [],
+      "nonEmptyGovernedItems": 0
+    },
+    {
+      "url": "/lab-review/v4-lessons",
+      "bytes": 49753,
+      "canaryHits": [],
+      "nonEmptyGovernedItems": 0
+    },
+    {
+      "url": "/lab-review/v4-lessons",
+      "bytes": 49753,
+      "canaryHits": [],
+      "nonEmptyGovernedItems": 0
+    },
+    {
+      "url": "/lab-review/v4-lessons/factory%40latest%40g7-math-area-perimeter",
+      "bytes": 13771,
+      "canaryHits": [],
+      "nonEmptyGovernedItems": 0
+    },
+    {
+      "url": "/lab-review/v4-lessons/factory%404.0.0-draft.99%40g7-math-area-perimeter",
+      "bytes": 13819,
+      "canaryHits": [],
+      "nonEmptyGovernedItems": 0
+    },
+    {
+      "url": "/lab-review/v4-lessons/factory%404.0.0-draft.5%40..%2Fg7-math-area-perimeter",
+      "bytes": 13839,
+      "canaryHits": [],
+      "nonEmptyGovernedItems": 0
+    },
+    {
+      "url": "/lab-review/v4-lessons/factory%404.0.0-draft.5%40unknown",
+      "bytes": 13723,
+      "canaryHits": [],
+      "nonEmptyGovernedItems": 0
+    }
+  ],
+  "hosts": {
+    "127.0.0.1:3215": 168
+  },
+  "responsive": [],
+  "errors": [],
+  "writes": [],
+  "axe": {
+    "g7-civics-counties-capitals/generated-1": {
+      "violations": [],
+      "incomplete": 0
+    },
+    "g7-civics-counties-capitals/generated-2": {
+      "violations": [],
+      "incomplete": 0
+    },
+    "g7-civics-counties-capitals/generated-3": {
+      "violations": [],
+      "incomplete": 0
+    },
+    "g7-civics-counties-capitals/generated-4": {
+      "violations": [],
+      "incomplete": 0
+    },
+    "g7-civics-counties-capitals/generated-5": {
+      "violations": [],
+      "incomplete": 0
+    },
+    "g7-civics-counties-capitals/generated-assess": {
+      "violations": [],
+      "incomplete": 0
+    },
+    "g7-math-area-perimeter/generated-1": {
+      "violations": [],
+      "incomplete": 1
+    },
+    "g7-math-area-perimeter/generated-2": {
+      "violations": [],
+      "incomplete": 1
+    },
+    "g7-math-area-perimeter/generated-3": {
+      "violations": [],
+      "incomplete": 1
+    },
+    "g7-math-area-perimeter/generated-4": {
+      "violations": [],
+      "incomplete": 1
+    },
+    "g7-math-area-perimeter/generated-5": {
+      "violations": [],
+      "incomplete": 0
+    },
+    "g7-math-area-perimeter/generated-6": {
+      "violations": [],
+      "incomplete": 0
+    },
+    "g7-math-area-perimeter/generated-assess": {
+      "violations": [],
+      "incomplete": 0
+    },
+    "gallery": {
+      "violations": [],
+      "incomplete": 0
+    }
+  },
+  "gallery": [
+    {
+      "width": 390,
+      "status": 200,
+      "factoryLabel": true,
+      "fixtureLabel": true,
+      "mentionsVersion": true,
+      "links": [
+        "/lab-review/v4-lessons/factory@4.0.0-draft.5@g7-math-area-perimeter",
+        "/lab-review/v4-lessons/factory@4.0.0-draft.5@g7-math-area-perimeter",
+        "/lab-review/v4-lessons/factory@4.0.0-draft.4@g7-math-area-perimeter",
+        "/lab-review/v4-lessons/factory@4.0.0-draft.4@g7-math-fractions",
+        "/lab-review/v4-lessons/factory@4.0.0-draft.4@g7-math-fractions",
+        "/lab-review/v4-lessons/factory@4.0.0-draft.4@math-multiplication-models",
+        "/lab-review/v4-lessons/factory@4.0.0-draft.4@math-multiplication-models",
+        "/lab-review/v4-lessons/factory@4.0.0-draft.4@g7-science-states-of-matter",
+        "/lab-review/v4-lessons/factory@4.0.0-draft.4@g7-science-states-of-matter",
+        "/lab-review/v4-lessons/factory@4.0.0-draft.5@g7-civics-counties-capitals",
+        "/lab-review/v4-lessons/factory@4.0.0-draft.5@g7-civics-counties-capitals",
+        "/lab-review/v4-lessons/factory@4.0.0-draft.4@g7-civics-counties-capitals",
+        "/lab-review/v4-lessons/factory@4.0.0-draft.4@g7-english-reading-evidence",
+        "/lab-review/v4-lessons/factory@4.0.0-draft.4@g7-english-reading-evidence",
+        "/lab-review/v4-lessons/g7-math-area-perimeter",
+        "/lab-review/v4-lessons/g7-math-fractions",
+        "/lab-review/v4-lessons/math-multiplication-models",
+        "/lab-review/v4-lessons/g7-science-states-of-matter",
+        "/lab-review/v4-lessons/g7-civics-counties-capitals",
+        "/lab-review/v4-lessons/g7-english-reading-evidence"
+      ],
+      "overflow": false,
+      "axe": null
+    },
+    {
+      "width": 1440,
+      "status": 200,
+      "factoryLabel": true,
+      "fixtureLabel": true,
+      "mentionsVersion": true,
+      "links": [
+        "/lab-review/v4-lessons/factory@4.0.0-draft.5@g7-math-area-perimeter",
+        "/lab-review/v4-lessons/factory@4.0.0-draft.5@g7-math-area-perimeter",
+        "/lab-review/v4-lessons/factory@4.0.0-draft.4@g7-math-area-perimeter",
+        "/lab-review/v4-lessons/factory@4.0.0-draft.4@g7-math-fractions",
+        "/lab-review/v4-lessons/factory@4.0.0-draft.4@g7-math-fractions",
+        "/lab-review/v4-lessons/factory@4.0.0-draft.4@math-multiplication-models",
+        "/lab-review/v4-lessons/factory@4.0.0-draft.4@math-multiplication-models",
+        "/lab-review/v4-lessons/factory@4.0.0-draft.4@g7-science-states-of-matter",
+        "/lab-review/v4-lessons/factory@4.0.0-draft.4@g7-science-states-of-matter",
+        "/lab-review/v4-lessons/factory@4.0.0-draft.5@g7-civics-counties-capitals",
+        "/lab-review/v4-lessons/factory@4.0.0-draft.5@g7-civics-counties-capitals",
+        "/lab-review/v4-lessons/factory@4.0.0-draft.4@g7-civics-counties-capitals",
+        "/lab-review/v4-lessons/factory@4.0.0-draft.4@g7-english-reading-evidence",
+        "/lab-review/v4-lessons/factory@4.0.0-draft.4@g7-english-reading-evidence",
+        "/lab-review/v4-lessons/g7-math-area-perimeter",
+        "/lab-review/v4-lessons/g7-math-fractions",
+        "/lab-review/v4-lessons/math-multiplication-models",
+        "/lab-review/v4-lessons/g7-science-states-of-matter",
+        "/lab-review/v4-lessons/g7-civics-counties-capitals",
+        "/lab-review/v4-lessons/g7-english-reading-evidence"
+      ],
+      "overflow": false,
+      "axe": {
+        "violations": [],
+        "incomplete": 0
+      }
+    }
+  ],
+  "rejections": [
+    {
+      "selection": "factory@latest@g7-math-area-perimeter",
+      "status": 200,
+      "playerRendered": false
+    },
+    {
+      "selection": "factory@4.0.0-draft.99@g7-math-area-perimeter",
+      "status": 200,
+      "playerRendered": false
+    },
+    {
+      "selection": "factory@4.0.0-draft.5@../g7-math-area-perimeter",
+      "status": 200,
+      "playerRendered": false
+    },
+    {
+      "selection": "factory@4.0.0-draft.5@unknown",
+      "status": 200,
+      "playerRendered": false
+    }
+  ]
+}

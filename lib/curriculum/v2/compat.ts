@@ -109,6 +109,8 @@ export function toLessonExperience(lesson: LessonProjectionSource): LessonExperi
       offline: { mode: OFFLINE[scene.offline.mode], fallback: scene.fallback?.content ?? scene.offline.note },
       evidence,
       completion,
+      // V4 blocks are learner-safe formative content (validated; never present on a mastery scene).
+      ...(scene.teaching && scene.type !== "MASTERY_CHECK" ? { teaching: scene.teaching } : {}),
     };
   });
   return {

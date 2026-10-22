@@ -5,6 +5,7 @@
  */
 import type { LessonExperience, Scene } from "./types";
 import { isLabReturnObservation, type LabReturnObservation } from "./labLaunch";
+import { blockRequiresCompletion } from "./teaching/registry";
 
 /** v2: lab state is kept per LAB scene (v1 kept one lab state per lesson). */
 export const EXPERIENCE_PROGRESS_VERSION = 2 as const;
@@ -68,7 +69,28 @@ export function sceneIndexOf(experience: LessonExperience, progress: ExperienceP
 }
 
 /** Whether the scene's completion rule is met by the learner's progress. */
+/**
+ * Marker for a finished V4 teaching block. It lives in `revealed` (position state), never in `responses`, so the
+ * evidence envelope (which reads responses) can never carry it: finishing a block is not evidence.
+ */
+export const blockDoneKey = (blockId: string) => `v4-block:${blockId}`;
+
+export function markBlockDone(progress: ExperienceProgress, sceneId: string, blockId: string): ExperienceProgress {
+  return revealStep(progress, sceneId, blockDoneKey(blockId));
+}
+
+/** V4 teaching blocks the learner must finish on this scene before Continue. */
+export function pendingTeachingBlocks(scene: Scene, progress: ExperienceProgress): string[] {
+  if (!scene.teaching) return [];
+  const revealed = progress.revealed[scene.id] ?? [];
+  return [...scene.teaching.blocks, ...(scene.teaching.visual ? [scene.teaching.visual] : [])]
+    .filter((block) => blockRequiresCompletion(block))
+    .map((block) => (block as { id: string }).id)
+    .filter((id) => !revealed.includes(blockDoneKey(id)));
+}
+
 export function isSceneComplete(scene: Scene, progress: ExperienceProgress): boolean {
+  if (pendingTeachingBlocks(scene, progress).length > 0) return false;
   const responses = progress.responses[scene.id] ?? {};
   switch (scene.completion.kind) {
     case "VIEWED": return true;

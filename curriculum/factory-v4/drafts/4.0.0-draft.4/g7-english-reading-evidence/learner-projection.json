@@ -1,0 +1,479 @@
+{
+  "contractVersion": "lesson-experience/1.0.0",
+  "id": "cv4-cand-g7-english-reading-evidence",
+  "version": "4.0.0-draft.1",
+  "title": "Generated: Read for an evidence-based inference",
+  "subject": "ENGLISH",
+  "grade": 7,
+  "ageBand": "JUNIOR_SECONDARY",
+  "authority": {
+    "status": "CURRICULUM_V2_DRAFT",
+    "note": "Interactive Learning V4 DRAFT candidate for english-g7-waec-style-reading-and-writing-performance. Not bound to an MOE objective or release, not reviewed, not approved, not published.",
+    "candidateContentIds": [
+      "english-g7-waec-style-reading-and-writing-performance"
+    ],
+    "releaseId": null,
+    "releaseIdentity": null
+  },
+  "objectives": [
+    {
+      "id": "ll-g7-eng-read-infer",
+      "statement": "Read an informational text, explain words from context, and answer literal and inferential questions about it.",
+      "conceptId": "ll-g7-eng-read-infer",
+      "standardCodes": [],
+      "skillIds": []
+    },
+    {
+      "id": "ll-g7-eng-cite-evidence",
+      "statement": "Select and quote the sentences in a text that support an answer, and explain how they support it.",
+      "conceptId": "ll-g7-eng-cite-evidence",
+      "standardCodes": [],
+      "skillIds": []
+    },
+    {
+      "id": "ll-g7-eng-evidence-paragraph",
+      "statement": "Write and revise a short paragraph that makes a claim about a text, supports it with quoted evidence and explains it.",
+      "conceptId": "ll-g7-eng-evidence-paragraph",
+      "standardCodes": [],
+      "skillIds": []
+    }
+  ],
+  "scenes": [
+    {
+      "id": "generated-1",
+      "type": "EXPLANATION",
+      "title": "Read for an evidence-based inference",
+      "objectiveIds": [
+        "ll-g7-eng-read-infer",
+        "ll-g7-eng-cite-evidence",
+        "ll-g7-eng-evidence-paragraph"
+      ],
+      "content": {
+        "body": "This original synthetic story is a demonstration, not an account of a real school. Read the actions carefully before deciding what they show about cooperation. Keep the author's words distinct from your interpretation."
+      },
+      "interaction": {
+        "kind": "NONE"
+      },
+      "tools": {
+        "allowed": [],
+        "prohibited": []
+      },
+      "accessibility": {
+        "textAlternative": "This original synthetic story is a demonstration, not an account of a real school. Read the actions carefully before deciding what they show about cooperation. Keep the author's words distinct from your interpretation. The seed library. When the dry season ended, Satta found three empty seed tins beside the school garden. She asked each family to bring a small share of seeds. On Friday, the class labelled the tins and wrote down who had contributed. A younger pupil worried that only families with money could help. Satta pointed to the list. Some families had given seeds, some had cleaned tins, and others had taught the class when to plant. By the next week, every pupil could borrow seeds and promise to return some after the harvest.",
+        "keyboardOperable": true,
+        "reducedMotionSafe": true,
+        "captionsRequired": false
+      },
+      "offline": {
+        "mode": "FULL",
+        "fallback": "Models and formative checks use cached lesson data. Paper responses are capture only; no official grade is produced."
+      },
+      "evidence": {
+        "kind": "NONE"
+      },
+      "completion": {
+        "kind": "VIEWED"
+      },
+      "teaching": {
+        "phase": "READ",
+        "blocks": [
+          {
+            "type": "READING_PASSAGE",
+            "id": "seed-passage",
+            "title": "The seed library",
+            "paragraphs": [
+              "When the dry season ended, Satta found three empty seed tins beside the school garden. She asked each family to bring a small share of seeds. On Friday, the class labelled the tins and wrote down who had contributed.",
+              "A younger pupil worried that only families with money could help. Satta pointed to the list. Some families had given seeds, some had cleaned tins, and others had taught the class when to plant. By the next week, every pupil could borrow seeds and promise to return some after the harvest."
+            ],
+            "glossary": [
+              {
+                "term": "contributed",
+                "meaning": "gave something to help a shared effort"
+              },
+              {
+                "term": "harvest",
+                "meaning": "the crop gathered when it is ready"
+              }
+            ],
+            "origin": {
+              "kind": "ORIGINAL_FOR_LIBERIALEARN",
+              "license": "Original synthetic demonstration; internal review only",
+              "attribution": "LiberiaLearn Content Factory V4 deterministic author"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "generated-2",
+      "type": "PRACTICE",
+      "title": "Check meaning with support",
+      "objectiveIds": [
+        "ll-g7-eng-read-infer",
+        "ll-g7-eng-cite-evidence",
+        "ll-g7-eng-evidence-paragraph"
+      ],
+      "content": {
+        "body": "Worked inference: the contribution list includes seeds, work and knowledge. Those different contributions support the claim that help can take several forms. A strong inference joins an exact detail to a reason, rather than treating an opinion as a quotation."
+      },
+      "interaction": {
+        "kind": "NONE"
+      },
+      "tools": {
+        "allowed": [],
+        "prohibited": []
+      },
+      "accessibility": {
+        "textAlternative": "Worked inference: the contribution list includes seeds, work and knowledge. Those different contributions support the claim that help can take several forms. A strong inference joins an exact detail to a reason, rather than treating an opinion as a quotation. What does contributed mean in this story? Options: Gave something to help the shared effort.; Paid money in every case.. Which detail supports several ways to help? Options: Some cleaned tins and others taught when to plant.; The dry season ended..",
+        "keyboardOperable": true,
+        "reducedMotionSafe": true,
+        "captionsRequired": false
+      },
+      "offline": {
+        "mode": "FULL",
+        "fallback": "Models and formative checks use cached lesson data. Paper responses are capture only; no official grade is produced."
+      },
+      "evidence": {
+        "kind": "NONE"
+      },
+      "completion": {
+        "kind": "VIEWED"
+      },
+      "teaching": {
+        "phase": "UNDERSTAND",
+        "blocks": [
+          {
+            "type": "CHECK",
+            "id": "vocabulary-check",
+            "items": [
+              {
+                "id": "vocabulary-check-item",
+                "prompt": "What does contributed mean in this story?",
+                "options": [
+                  {
+                    "id": "reason",
+                    "text": "Gave something to help the shared effort.",
+                    "feedback": "The story includes seeds, work and knowledge, so contribution is broader than payment."
+                  },
+                  {
+                    "id": "other",
+                    "text": "Paid money in every case.",
+                    "feedback": "Compare this claim with the model and its evidence."
+                  }
+                ],
+                "formativeKey": {
+                  "expectedOptionId": "reason"
+                },
+                "misconceptionId": "generated-english-misconception"
+              }
+            ]
+          },
+          {
+            "type": "CHECK",
+            "id": "inference-check",
+            "items": [
+              {
+                "id": "inference-check-item",
+                "prompt": "Which detail supports several ways to help?",
+                "options": [
+                  {
+                    "id": "reason",
+                    "text": "Some cleaned tins and others taught when to plant.",
+                    "feedback": "The varied actions support the inference; a seasonal detail does not establish it."
+                  },
+                  {
+                    "id": "other",
+                    "text": "The dry season ended.",
+                    "feedback": "Compare this claim with the model and its evidence."
+                  }
+                ],
+                "formativeKey": {
+                  "expectedOptionId": "reason"
+                },
+                "misconceptionId": "generated-english-misconception"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "generated-3",
+      "type": "PRACTICE",
+      "title": "Annotate evidence independently",
+      "objectiveIds": [
+        "ll-g7-eng-read-infer",
+        "ll-g7-eng-cite-evidence",
+        "ll-g7-eng-evidence-paragraph"
+      ],
+      "content": {
+        "body": "Select evidence that supports the claim that cooperation includes more than money. Separate relevant details from background information."
+      },
+      "interaction": {
+        "kind": "FREE_RESPONSE",
+        "prompts": [
+          {
+            "id": "generated-3-response-0",
+            "prompt": "Explain how one selected detail supports the claim. State an alternative inference the passage does not establish.",
+            "minLength": 20
+          }
+        ]
+      },
+      "tools": {
+        "allowed": [],
+        "prohibited": []
+      },
+      "accessibility": {
+        "textAlternative": "Select evidence that supports the claim that cooperation includes more than money. Separate relevant details from background information. The seed library. Some families had given seeds, some had cleaned tins, and others had taught the class when to plant. By the next week, every pupil could borrow seeds and promise to return some after the harvest. When the dry season ended, Satta found three empty seed tins beside the school garden. Which details support more than one form of contribution? Explain how one selected detail supports the claim. State an alternative inference the passage does not establish.",
+        "keyboardOperable": true,
+        "reducedMotionSafe": true,
+        "captionsRequired": false
+      },
+      "offline": {
+        "mode": "FULL",
+        "fallback": "Models and formative checks use cached lesson data. Paper responses are capture only; no official grade is produced."
+      },
+      "evidence": {
+        "kind": "NONE"
+      },
+      "completion": {
+        "kind": "ALL_RESPONSES_WRITTEN"
+      },
+      "teaching": {
+        "phase": "ANALYZE",
+        "blocks": [
+          {
+            "type": "SOURCE_EVIDENCE",
+            "id": "seed-annotation",
+            "source": {
+              "title": "The seed library",
+              "kind": "PASSAGE",
+              "origin": {
+                "kind": "ORIGINAL_FOR_LIBERIALEARN",
+                "license": "Original synthetic demonstration; internal review only",
+                "attribution": "LiberiaLearn Content Factory V4 deterministic author"
+              }
+            },
+            "question": "Which details support more than one form of contribution?",
+            "sentences": [
+              {
+                "id": "work",
+                "text": "Some families had given seeds, some had cleaned tins, and others had taught the class when to plant.",
+                "supports": true,
+                "why": "This names materials, work and knowledge."
+              },
+              {
+                "id": "access",
+                "text": "By the next week, every pupil could borrow seeds and promise to return some after the harvest.",
+                "supports": true,
+                "why": "Shared access shows the result of different contributions."
+              },
+              {
+                "id": "season",
+                "text": "When the dry season ended, Satta found three empty seed tins beside the school garden.",
+                "supports": false,
+                "why": "This establishes the setting but does not show the range of contributions."
+              }
+            ],
+            "minSelect": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "generated-4",
+      "type": "PRACTICE",
+      "title": "Write an independent paragraph",
+      "objectiveIds": [
+        "ll-g7-eng-read-infer",
+        "ll-g7-eng-cite-evidence",
+        "ll-g7-eng-evidence-paragraph"
+      ],
+      "content": {
+        "body": "Write a claim, quote an exact detail, and explain how it supports your inference. Do not copy the model explanation. You are writing about this story, not making claims about all Liberian schools."
+      },
+      "interaction": {
+        "kind": "NONE"
+      },
+      "tools": {
+        "allowed": [],
+        "prohibited": []
+      },
+      "accessibility": {
+        "textAlternative": "Write a claim, quote an exact detail, and explain how it supports your inference. Do not copy the model explanation. You are writing about this story, not making claims about all Liberian schools. Explain how the seed library depends on different contributions. Claim: State your conclusion precisely. Evidence and reasoning: Quote or describe relevant evidence and explain the link to your claim.",
+        "keyboardOperable": true,
+        "reducedMotionSafe": true,
+        "captionsRequired": false
+      },
+      "offline": {
+        "mode": "FULL",
+        "fallback": "Models and formative checks use cached lesson data. Paper responses are capture only; no official grade is produced."
+      },
+      "evidence": {
+        "kind": "NONE"
+      },
+      "completion": {
+        "kind": "VIEWED"
+      },
+      "teaching": {
+        "phase": "CONSTRUCT",
+        "blocks": [
+          {
+            "type": "WRITING_ORGANIZER",
+            "id": "seed-writing",
+            "prompt": "Explain how the seed library depends on different contributions.",
+            "sourceBlockId": "seed-passage",
+            "fields": [
+              {
+                "id": "claim",
+                "label": "Claim",
+                "guidance": "State your conclusion precisely.",
+                "minWords": 8
+              },
+              {
+                "id": "evidence",
+                "label": "Evidence and reasoning",
+                "guidance": "Quote or describe relevant evidence and explain the link to your claim.",
+                "minWords": 15
+              }
+            ],
+            "checklist": [
+              "My evidence supports my claim.",
+              "I explained the reasoning and checked an alternative."
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "generated-5",
+      "type": "PRACTICE",
+      "title": "Revise for precision and evidence",
+      "objectiveIds": [
+        "ll-g7-eng-read-infer",
+        "ll-g7-eng-cite-evidence",
+        "ll-g7-eng-evidence-paragraph"
+      ],
+      "content": {
+        "body": "Reread your first paragraph. Check that the quotation occurs in the passage and that your explanation follows from it. Replace an unsupported generalisation with a precise claim, and explain the effect of your change."
+      },
+      "interaction": {
+        "kind": "FREE_RESPONSE",
+        "prompts": [
+          {
+            "id": "generated-5-response-0",
+            "prompt": "Give your original sentence, its revision, and the reason the revision is better supported.",
+            "minLength": 20
+          }
+        ]
+      },
+      "tools": {
+        "allowed": [],
+        "prohibited": []
+      },
+      "accessibility": {
+        "textAlternative": "Reread your first paragraph. Check that the quotation occurs in the passage and that your explanation follows from it. Replace an unsupported generalisation with a precise claim, and explain the effect of your change. Produce a revised paragraph, then explain one change that improves its reasoning. Claim: State your conclusion precisely. Evidence and reasoning: Quote or describe relevant evidence and explain the link to your claim. Give your original sentence, its revision, and the reason the revision is better supported.",
+        "keyboardOperable": true,
+        "reducedMotionSafe": true,
+        "captionsRequired": false
+      },
+      "offline": {
+        "mode": "FULL",
+        "fallback": "Models and formative checks use cached lesson data. Paper responses are capture only; no official grade is produced."
+      },
+      "evidence": {
+        "kind": "NONE"
+      },
+      "completion": {
+        "kind": "ALL_RESPONSES_WRITTEN"
+      },
+      "teaching": {
+        "phase": "REVISE",
+        "blocks": [
+          {
+            "type": "WRITING_ORGANIZER",
+            "id": "seed-revision",
+            "prompt": "Produce a revised paragraph, then explain one change that improves its reasoning.",
+            "sourceBlockId": "seed-passage",
+            "fields": [
+              {
+                "id": "claim",
+                "label": "Claim",
+                "guidance": "State your conclusion precisely.",
+                "minWords": 8
+              },
+              {
+                "id": "evidence",
+                "label": "Evidence and reasoning",
+                "guidance": "Quote or describe relevant evidence and explain the link to your claim.",
+                "minWords": 15
+              }
+            ],
+            "checklist": [
+              "My evidence supports my claim.",
+              "I explained the reasoning and checked an alternative."
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "generated-assess",
+      "type": "MASTERY_CHECK",
+      "title": "Independent assessment handoff",
+      "objectiveIds": [
+        "ll-g7-eng-read-infer",
+        "ll-g7-eng-cite-evidence",
+        "ll-g7-eng-evidence-paragraph"
+      ],
+      "content": {
+        "body": "Only Assessment Player V2 can collect and score governed assessment responses. This draft has no approved form or official score."
+      },
+      "interaction": {
+        "kind": "ASSESSMENT_HANDOFF",
+        "assessment": {
+          "assessmentId": "cv4-cand-g7-english-reading-evidence--generated-mastery",
+          "assessmentVersion": "4.0.0-draft.1",
+          "player": "ASSESSMENT_PLAYER_V2",
+          "scoring": "SERVER_AUTHORITY",
+          "objectiveIds": [
+            "ll-g7-eng-read-infer",
+            "ll-g7-eng-cite-evidence",
+            "ll-g7-eng-evidence-paragraph"
+          ],
+          "items": []
+        }
+      },
+      "tools": {
+        "allowed": [],
+        "prohibited": []
+      },
+      "accessibility": {
+        "textAlternative": "The lesson requests a separate independent assessment. This draft contains no governed assessment questions or protected scoring material.",
+        "keyboardOperable": true,
+        "reducedMotionSafe": true,
+        "captionsRequired": false
+      },
+      "offline": {
+        "mode": "FULL",
+        "fallback": "No assessment form is cached by this draft. Paper work is capture only and cannot establish an official grade."
+      },
+      "evidence": {
+        "kind": "MASTERY_RESPONSE",
+        "evidenceType": "QUIZ",
+        "objectiveIds": [
+          "ll-g7-eng-read-infer",
+          "ll-g7-eng-cite-evidence",
+          "ll-g7-eng-evidence-paragraph"
+        ]
+      },
+      "completion": {
+        "kind": "ALL_ANSWERED"
+      }
+    }
+  ],
+  "offline": {
+    "packageable": true,
+    "requiredAssets": []
+  }
+}

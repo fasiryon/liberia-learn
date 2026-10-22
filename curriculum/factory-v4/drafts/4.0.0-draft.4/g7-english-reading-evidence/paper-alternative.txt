@@ -1,0 +1,23 @@
+generated-1/blocks/0
+The seed library. When the dry season ended, Satta found three empty seed tins beside the school garden. She asked each family to bring a small share of seeds. On Friday, the class labelled the tins and wrote down who had contributed. A younger pupil worried that only families with money could help. Satta pointed to the list. Some families had given seeds, some had cleaned tins, and others had taught the class when to plant. By the next week, every pupil could borrow seeds and promise to return some after the harvest.
+Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores.
+
+generated-2/blocks/0
+What does contributed mean in this story? Options: Gave something to help the shared effort.; Paid money in every case..
+Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores.
+
+generated-2/blocks/1
+Which detail supports several ways to help? Options: Some cleaned tins and others taught when to plant.; The dry season ended..
+Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores.
+
+generated-3/blocks/0
+The seed library. Some families had given seeds, some had cleaned tins, and others had taught the class when to plant. By the next week, every pupil could borrow seeds and promise to return some after the harvest. When the dry season ended, Satta found three empty seed tins beside the school garden. Which details support more than one form of contribution?
+Explain how one selected detail supports the claim. State an alternative inference the passage does not establish. Write your response and reasoning on paper. Responses are capture only, never official scores.
+
+generated-4/blocks/0
+Explain how the seed library depends on different contributions. Claim: State your conclusion precisely. Evidence and reasoning: Quote or describe relevant evidence and explain the link to your claim.
+Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores.
+
+generated-5/blocks/0
+Produce a revised paragraph, then explain one change that improves its reasoning. Claim: State your conclusion precisely. Evidence and reasoning: Quote or describe relevant evidence and explain the link to your claim.
+Give your original sentence, its revision, and the reason the revision is better supported. Write your response and reasoning on paper. Responses are capture only, never official scores.

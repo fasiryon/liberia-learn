@@ -1,0 +1,633 @@
+{
+  "id": "math-multiplication-models-lesson",
+  "version": "4.0.0",
+  "payload": {
+    "kind": "LESSON",
+    "candidate": {
+      "contractVersion": "candidate-lesson-v2/1.1.0",
+      "title": "Generated: Equal groups and area",
+      "instruction": {
+        "standard": "liberialearn-v4-instruction/1.0.0",
+        "retention": {
+          "delayDays": 7,
+          "prompts": [
+            "After seven days, independently explain: Represent a multiplication as equal groups, an array and repeated addition, and explain why they show the same product.",
+            "Apply the idea to a new context and justify the evidence or calculations used. This is a request for a governed retention task, not a scheduled or scored item."
+          ]
+        }
+      },
+      "estimatedMinutes": 45,
+      "ageBand": "UPPER_PRIMARY",
+      "pedagogy": {
+        "primaryStrategy": "GUIDED_TO_INDEPENDENT",
+        "rationale": "Generate representations and worked reasoning from a versioned subject plan, then fade support before independent work and transfer."
+      },
+      "prerequisiteAssumptions": [
+        "Can read or access the text equivalent and explain a response in writing or speech."
+      ],
+      "misconceptions": [
+        {
+          "id": "generated-math-misconception",
+          "objectiveId": "v4-demo-mult-models",
+          "description": "Uses an operation that does not match the representation or its unit.",
+          "response": "Compare the claim with the labelled representation and explain what evidence would support it."
+        }
+      ],
+      "scenes": [
+        {
+          "id": "generated-1",
+          "type": "EXPLANATION",
+          "title": "Equal groups and area",
+          "purpose": "EXPLAIN_CONCEPT",
+          "objectiveIds": [
+            "v4-demo-mult-models",
+            "v4-demo-mult-area-model"
+          ],
+          "learnerAction": "Use the model, complete its task, and explain what the representation shows.",
+          "content": {
+            "body": "Synthetic school-supply demonstration. Each row has the same number of counters. The number of rows times the size of each row counts all the counters. Splitting a rectangular array preserves the total and exposes place value."
+          },
+          "interaction": {
+            "kind": "NONE"
+          },
+          "tools": {
+            "requested": [],
+            "prohibited": []
+          },
+          "hints": [],
+          "misconceptionIds": [
+            "generated-math-misconception"
+          ],
+          "evidence": {
+            "kind": "NONE"
+          },
+          "accessibility": {
+            "textAlternative": "Synthetic school-supply demonstration. Each row has the same number of counters. The number of rows times the size of each row counts all the counters. Splitting a rectangular array preserves the total and exposes place value. 7 rows of 4 dots: 7 × 4 = 28. Explain why each representation has the same total. Watch the rectangle split into tens and ones. Find 24 × 6 by splitting it into parts.",
+            "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+            "reducedMotion": "STATIC_EQUIVALENT"
+          },
+          "offline": {
+            "mode": "FULL_OFFLINE",
+            "note": "Models and formative checks use cached lesson data. Paper responses are capture only; no official grade is produced."
+          },
+          "completion": "VIEWED",
+          "pedagogy": {
+            "strategy": "GUIDED_TO_INDEPENDENT",
+            "representation": "MIXED",
+            "scaffoldLevel": "FULL"
+          },
+          "teaching": {
+            "phase": "VISUALIZE",
+            "blocks": [
+              {
+                "type": "ARRAY_MODEL",
+                "id": "multiplication-groups",
+                "rows": 7,
+                "columns": 4,
+                "views": [
+                  "GROUPS",
+                  "ARRAY",
+                  "GRID"
+                ],
+                "adjustable": true,
+                "caption": "Explain why each representation has the same total."
+              },
+              {
+                "type": "AREA_MODEL",
+                "id": "multiplication-area",
+                "mode": "SHOW",
+                "factorA": 24,
+                "factorB": 6,
+                "splitA": [
+                  20,
+                  4
+                ],
+                "prompt": "Watch the rectangle split into tens and ones."
+              }
+            ]
+          }
+        },
+        {
+          "id": "generated-2",
+          "type": "GUIDED_EXAMPLE",
+          "title": "Use the distributive property",
+          "purpose": "MODEL_WORKED_EXAMPLE",
+          "objectiveIds": [
+            "v4-demo-mult-models",
+            "v4-demo-mult-area-model"
+          ],
+          "learnerAction": "Use the model, complete its task, and explain what the representation shows.",
+          "content": {
+            "body": "Both partial rectangles must be counted. Multiplication distributes over addition because the two non-overlapping rectangles cover exactly the original array."
+          },
+          "interaction": {
+            "kind": "NONE"
+          },
+          "tools": {
+            "requested": [],
+            "prohibited": []
+          },
+          "hints": [],
+          "misconceptionIds": [
+            "generated-math-misconception"
+          ],
+          "evidence": {
+            "kind": "NONE"
+          },
+          "accessibility": {
+            "textAlternative": "Both partial rectangles must be counted. Multiplication distributes over addition because the two non-overlapping rectangles cover exactly the original array. Find 24 × 6. Step 1: Split the first factor by place value. 24 = 20 + 4 Step 2: Multiply both parts, then add their products. 20 × 6 + 4 × 6 = 120 + 24 = 144",
+            "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+            "reducedMotion": "STATIC_EQUIVALENT"
+          },
+          "offline": {
+            "mode": "FULL_OFFLINE",
+            "note": "Models and formative checks use cached lesson data. Paper responses are capture only; no official grade is produced."
+          },
+          "completion": "VIEWED",
+          "pedagogy": {
+            "strategy": "GUIDED_TO_INDEPENDENT",
+            "representation": "MIXED",
+            "scaffoldLevel": "FULL"
+          },
+          "teaching": {
+            "phase": "DEMONSTRATE",
+            "blocks": [
+              {
+                "type": "WORKED_SOLUTION",
+                "id": "multiplication-worked",
+                "problem": "Find $24\\times6$.",
+                "steps": [
+                  {
+                    "text": "Split the first factor by place value.",
+                    "tex": "24=20+4"
+                  },
+                  {
+                    "text": "Multiply both parts, then add their products.",
+                    "tex": "20\\times6+4\\times6=120+24=144"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "generated-3",
+          "type": "PRACTICE",
+          "title": "Multiply with support",
+          "purpose": "GUIDED_PRACTICE",
+          "objectiveIds": [
+            "v4-demo-mult-models",
+            "v4-demo-mult-area-model"
+          ],
+          "learnerAction": "Use the model, complete its task, and explain what the representation shows.",
+          "content": {
+            "body": "Separate tens and ones. Label both partial products before combining them."
+          },
+          "interaction": {
+            "kind": "NONE"
+          },
+          "tools": {
+            "requested": [],
+            "prohibited": []
+          },
+          "hints": [],
+          "misconceptionIds": [
+            "generated-math-misconception"
+          ],
+          "evidence": {
+            "kind": "NONE"
+          },
+          "accessibility": {
+            "textAlternative": "Separate tens and ones. Label both partial products before combining them. Use equal groups or a split array. 23 times 4: write your answer. 16 times 5: write your answer.",
+            "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+            "reducedMotion": "STATIC_EQUIVALENT"
+          },
+          "offline": {
+            "mode": "FULL_OFFLINE",
+            "note": "Models and formative checks use cached lesson data. Paper responses are capture only; no official grade is produced."
+          },
+          "completion": "VIEWED",
+          "pedagogy": {
+            "strategy": "GUIDED_TO_INDEPENDENT",
+            "representation": "MIXED",
+            "scaffoldLevel": "PARTIAL"
+          },
+          "teaching": {
+            "phase": "SOLVE_WITH_SUPPORT",
+            "blocks": [
+              {
+                "type": "NUMERIC_RESPONSE",
+                "id": "multiply-guided",
+                "mode": "GUIDED",
+                "prompt": "Use equal groups or a split array.",
+                "parts": [
+                  {
+                    "id": "multiply-guided-0",
+                    "label": "23 times 4",
+                    "quantity": "OTHER",
+                    "unit": {
+                      "kind": "NONE",
+                      "base": ""
+                    },
+                    "formativeKey": {
+                      "value": 92,
+                      "tolerance": 1e-9
+                    },
+                    "misconceptions": [
+                      {
+                        "value": 83,
+                        "feedback": "Compare your operation with what the model represents. Explain each part before calculating again.",
+                        "misconceptionId": "generated-math-misconception"
+                      }
+                    ]
+                  },
+                  {
+                    "id": "multiply-guided-1",
+                    "label": "16 times 5",
+                    "quantity": "OTHER",
+                    "unit": {
+                      "kind": "NONE",
+                      "base": ""
+                    },
+                    "formativeKey": {
+                      "value": 80,
+                      "tolerance": 1e-9
+                    },
+                    "misconceptions": [
+                      {
+                        "value": 56,
+                        "feedback": "Compare your operation with what the model represents. Explain each part before calculating again.",
+                        "misconceptionId": "generated-math-misconception"
+                      }
+                    ]
+                  }
+                ],
+                "hints": [
+                  "Name the quantities and represent them before calculating.",
+                  "Use the worked model, then check your result with a second representation."
+                ],
+                "afterAttempt": [
+                  "23 times 4: 92. Explain how the model and your calculation agree.",
+                  "16 times 5: 80. Explain how the model and your calculation agree."
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "generated-4",
+          "type": "PRACTICE",
+          "title": "Choose your own method",
+          "purpose": "INDEPENDENT_PRACTICE",
+          "objectiveIds": [
+            "v4-demo-mult-models",
+            "v4-demo-mult-area-model"
+          ],
+          "learnerAction": "Use the model, complete its task, and explain what the representation shows.",
+          "content": {
+            "body": "Compute both products and give a place-value reason for your method."
+          },
+          "interaction": {
+            "kind": "NONE"
+          },
+          "tools": {
+            "requested": [],
+            "prohibited": []
+          },
+          "hints": [],
+          "misconceptionIds": [
+            "generated-math-misconception"
+          ],
+          "evidence": {
+            "kind": "NONE"
+          },
+          "accessibility": {
+            "textAlternative": "Compute both products and give a place-value reason for your method. Solve independently. 32 times 4: write your answer. 17 times 8: write your answer.",
+            "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+            "reducedMotion": "STATIC_EQUIVALENT"
+          },
+          "offline": {
+            "mode": "FULL_OFFLINE",
+            "note": "Models and formative checks use cached lesson data. Paper responses are capture only; no official grade is produced."
+          },
+          "completion": "VIEWED",
+          "pedagogy": {
+            "strategy": "GUIDED_TO_INDEPENDENT",
+            "representation": "MIXED",
+            "scaffoldLevel": "NONE"
+          },
+          "teaching": {
+            "phase": "PRACTICE_INDEPENDENTLY",
+            "blocks": [
+              {
+                "type": "NUMERIC_RESPONSE",
+                "id": "multiply-independent",
+                "mode": "INDEPENDENT",
+                "prompt": "Solve independently.",
+                "parts": [
+                  {
+                    "id": "multiply-independent-0",
+                    "label": "32 times 4",
+                    "quantity": "OTHER",
+                    "unit": {
+                      "kind": "NONE",
+                      "base": ""
+                    },
+                    "formativeKey": {
+                      "value": 128,
+                      "tolerance": 1e-9
+                    },
+                    "misconceptions": [
+                      {
+                        "value": 122,
+                        "feedback": "Compare your operation with what the model represents. Explain each part before calculating again.",
+                        "misconceptionId": "generated-math-misconception"
+                      }
+                    ]
+                  },
+                  {
+                    "id": "multiply-independent-1",
+                    "label": "17 times 8",
+                    "quantity": "OTHER",
+                    "unit": {
+                      "kind": "NONE",
+                      "base": ""
+                    },
+                    "formativeKey": {
+                      "value": 136,
+                      "tolerance": 1e-9
+                    },
+                    "misconceptions": [
+                      {
+                        "value": 87,
+                        "feedback": "Compare your operation with what the model represents. Explain each part before calculating again.",
+                        "misconceptionId": "generated-math-misconception"
+                      }
+                    ]
+                  }
+                ],
+                "hints": [],
+                "afterAttempt": [
+                  "32 times 4: 128. Explain how the model and your calculation agree.",
+                  "17 times 8: 136. Explain how the model and your calculation agree."
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "generated-5",
+          "type": "EXPLANATION",
+          "title": "Find the missing product",
+          "purpose": "ADDRESS_MISCONCEPTION",
+          "objectiveIds": [
+            "v4-demo-mult-models",
+            "v4-demo-mult-area-model"
+          ],
+          "learnerAction": "Use the model, complete its task, and explain what the representation shows.",
+          "content": {
+            "body": "Check that every part of the original array has been counted."
+          },
+          "interaction": {
+            "kind": "NONE"
+          },
+          "tools": {
+            "requested": [],
+            "prohibited": []
+          },
+          "hints": [],
+          "misconceptionIds": [
+            "generated-math-misconception"
+          ],
+          "evidence": {
+            "kind": "NONE"
+          },
+          "accessibility": {
+            "textAlternative": "Check that every part of the original array has been counted. Find 24 times 6. A learner wrote: 20 times 6 plus 4 equals 124. Which diagnosis explains the mistake? Options: The four ones must also be multiplied by six; add 120 and 24.; The method already matches the model..",
+            "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+            "reducedMotion": "STATIC_EQUIVALENT"
+          },
+          "offline": {
+            "mode": "FULL_OFFLINE",
+            "note": "Models and formative checks use cached lesson data. Paper responses are capture only; no official grade is produced."
+          },
+          "completion": "VIEWED",
+          "pedagogy": {
+            "strategy": "GUIDED_TO_INDEPENDENT",
+            "representation": "MIXED",
+            "scaffoldLevel": "FULL"
+          },
+          "teaching": {
+            "phase": "ANALYZE_MISTAKE",
+            "blocks": [
+              {
+                "type": "MISTAKE_ANALYSIS",
+                "id": "multiply-mistake",
+                "problem": "Find 24 times 6.",
+                "attempt": {
+                  "name": "A learner",
+                  "steps": [
+                    "20 times 6 plus 4 equals 124."
+                  ]
+                },
+                "question": "Which diagnosis explains the mistake?",
+                "options": [
+                  {
+                    "id": "model",
+                    "text": "The four ones must also be multiplied by six; add 120 and 24.",
+                    "feedback": "Use the representation to explain why this method needs to change."
+                  },
+                  {
+                    "id": "keep",
+                    "text": "The method already matches the model.",
+                    "feedback": "Check what each quantity in the model means."
+                  }
+                ],
+                "formativeKey": {
+                  "expectedOptionId": "model"
+                },
+                "correction": [
+                  "The four ones must also be multiplied by six; add 120 and 24.",
+                  "Rebuild the model and explain a method that agrees with it."
+                ],
+                "misconceptionId": "generated-math-misconception"
+              }
+            ]
+          }
+        },
+        {
+          "id": "generated-6",
+          "type": "PRACTICE",
+          "title": "Transfer to seating",
+          "purpose": "INDEPENDENT_PRACTICE",
+          "objectiveIds": [
+            "v4-demo-mult-models",
+            "v4-demo-mult-area-model"
+          ],
+          "learnerAction": "Explain why you multiply before removing the reserved chairs, and check the result with a second method.",
+          "content": {
+            "body": "Synthetic community-meeting plan. There are 18 rows of 7 chairs. Reserve 12 chairs for presenters."
+          },
+          "interaction": {
+            "kind": "FREE_RESPONSE",
+            "prompts": [
+              {
+                "id": "generated-6-response-0",
+                "prompt": "Explain why you multiply before removing the reserved chairs, and check the result with a second method.",
+                "minLength": 20
+              }
+            ]
+          },
+          "tools": {
+            "requested": [],
+            "prohibited": []
+          },
+          "hints": [],
+          "misconceptionIds": [
+            "generated-math-misconception"
+          ],
+          "evidence": {
+            "kind": "NONE"
+          },
+          "accessibility": {
+            "textAlternative": "Synthetic community-meeting plan. There are 18 rows of 7 chairs. Reserve 12 chairs for presenters. How many chairs remain for the audience? Audience chairs: write your answer. Explain why you multiply before removing the reserved chairs, and check the result with a second method.",
+            "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+            "reducedMotion": "STATIC_EQUIVALENT"
+          },
+          "offline": {
+            "mode": "FULL_OFFLINE",
+            "note": "Models and formative checks use cached lesson data. Paper responses are capture only; no official grade is produced."
+          },
+          "completion": "ALL_RESPONSES_WRITTEN",
+          "pedagogy": {
+            "strategy": "GUIDED_TO_INDEPENDENT",
+            "representation": "MIXED",
+            "scaffoldLevel": "NONE"
+          },
+          "teaching": {
+            "phase": "APPLY",
+            "blocks": [
+              {
+                "type": "NUMERIC_RESPONSE",
+                "id": "seating-transfer",
+                "mode": "INDEPENDENT",
+                "prompt": "How many chairs remain for the audience?",
+                "parts": [
+                  {
+                    "id": "seating-transfer-0",
+                    "label": "Audience chairs",
+                    "quantity": "OTHER",
+                    "unit": {
+                      "kind": "NONE",
+                      "base": ""
+                    },
+                    "formativeKey": {
+                      "value": 114,
+                      "tolerance": 1e-9
+                    },
+                    "misconceptions": []
+                  }
+                ],
+                "hints": [],
+                "afterAttempt": [
+                  "Audience chairs: 114. Explain how the model and your calculation agree."
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "generated-assess",
+          "type": "MASTERY_CHECK",
+          "title": "Independent assessment handoff",
+          "purpose": "ASSESS_MASTERY",
+          "objectiveIds": [
+            "v4-demo-mult-models",
+            "v4-demo-mult-area-model"
+          ],
+          "learnerAction": "Complete the governed assessment independently when an authorized draft form is supplied.",
+          "content": {
+            "body": "Only Assessment Player V2 can collect and score governed assessment responses. This draft has no approved form or official score."
+          },
+          "interaction": {
+            "kind": "ASSESSMENT_HANDOFF",
+            "assessmentRequestId": "generated-mastery"
+          },
+          "tools": {
+            "requested": [],
+            "prohibited": []
+          },
+          "hints": [],
+          "misconceptionIds": [],
+          "evidence": {
+            "kind": "MASTERY_RESPONSE",
+            "evidenceType": "QUIZ",
+            "responses": [
+              {
+                "responseKey": "assessment-0",
+                "objectiveId": "v4-demo-mult-models",
+                "responseType": "ASSESSMENT_RESPONSE",
+                "scaffoldLevel": "NONE"
+              },
+              {
+                "responseKey": "assessment-1",
+                "objectiveId": "v4-demo-mult-area-model",
+                "responseType": "ASSESSMENT_RESPONSE",
+                "scaffoldLevel": "NONE"
+              }
+            ]
+          },
+          "accessibility": {
+            "textAlternative": "The lesson requests a separate independent assessment. This draft contains no governed assessment questions or protected scoring material.",
+            "keyboardPath": "Use the assessment player's labelled questions and Submit control when an authorized form is available.",
+            "reducedMotion": "NOT_APPLICABLE"
+          },
+          "offline": {
+            "mode": "FULL_OFFLINE",
+            "note": "No assessment form is cached by this draft. Paper work is capture only and cannot establish an official grade."
+          },
+          "completion": "ALL_ANSWERED",
+          "teaching": {
+            "phase": "ASSESS",
+            "blocks": []
+          }
+        }
+      ],
+      "assessmentRequests": [
+        {
+          "id": "generated-mastery",
+          "objectiveIds": [
+            "v4-demo-mult-models",
+            "v4-demo-mult-area-model"
+          ],
+          "interaction": "FREE_RESPONSE",
+          "evidenceType": "QUIZ",
+          "difficulty": "CORE",
+          "misconceptionIds": [
+            "generated-math-misconception"
+          ],
+          "tools": {
+            "requested": [],
+            "prohibited": []
+          },
+          "offline": "FULL_OFFLINE"
+        }
+      ],
+      "labProposals": []
+    }
+  },
+  "role": "LESSON_AUTHOR",
+  "author": {
+    "kind": "AI",
+    "agentId": "factory-demo:LESSON_AUTHOR",
+    "modelFamily": "deterministic-local-demo",
+    "sessionId": "LESSON_AUTHOR"
+  },
+  "blueprint": {
+    "blueprintId": "math-multiplication-models-v4",
+    "version": "4.0.0",
+    "contentHash": "94298db4bc847ab89f08688df0467f4203d88079b1ad1fb01f5f06f45edb8c0c"
+  },
+  "dependencies": [],
+  "contentHash": "be5a78d82e3945ff4ed2b1872292d7d867eb263aa6b89f1fd5f01c304d722563"
+}

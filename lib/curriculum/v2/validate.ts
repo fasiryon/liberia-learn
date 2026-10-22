@@ -7,7 +7,9 @@
  * Static checks cannot judge pedagogy: they catch structural failure, not teaching quality.
  */
 import type { AuthoringContext } from "./authoringContext";
-import { V2_LIMITS, type CandidateLessonV2, type CandidateScene, type ReviewGap } from "./contract";
+import { evaluateV4Standard } from "@/lib/curriculum/v4/standard";
+import { TEACHING_BLOCK_REGISTRY, blockId, validateBlock, type VisualBlock } from "@/lib/learner-experience/teaching/registry";
+import { CANDIDATE_LESSON_V2_CONTRACT_V4, V2_LIMITS, type CandidateLessonV2, type CandidateScene, type ReviewGap } from "./contract";
 import { RENDERABLE_INTERACTIONS } from "./deliverability";
 import { isCanonicalToolId, toolFitsContext } from "./tools";
 
@@ -38,6 +40,16 @@ export function evidenceCollectable(scene: CandidateScene): boolean {
   // Lab results reach the evidence envelope only as LAB_OBSERVATION; any other kind is never emitted.
   if (kind === "LAB_LAUNCH") return scene.evidence.kind === "LAB_OBSERVATION";
   return !RENDERABLE_INTERACTIONS.has(kind) && scene.fallback?.kind === "FREE_RESPONSE" && scene.evidence.kind !== "NONE" && scene.evidence.responses.length === 1;
+}
+
+/** V4 teaching blocks of a scene (main column and visual column). */
+export function sceneBlocks(scene: CandidateScene): readonly VisualBlock[] {
+  return scene.teaching ? [...scene.teaching.blocks, ...(scene.teaching.visual ? [scene.teaching.visual] : [])] : [];
+}
+
+/** A scene whose teaching blocks ask the learner to do something counts as a learner action. */
+export function hasLearnerBlocks(scene: CandidateScene): boolean {
+  return sceneBlocks(scene).some((block) => TEACHING_BLOCK_REGISTRY[block.type].interactive && TEACHING_BLOCK_REGISTRY[block.type].engagement !== "EXPLANATION");
 }
 
 export function words(text: string): number {
@@ -76,6 +88,12 @@ export function validateCandidateAgainstContext(candidate: CandidateLessonV2, co
       }
     }
     for (const media of scene.media ?? []) unique(`${scene.id}/${media.id}`, "media");
+    for (const block of sceneBlocks(scene)) {
+      const id = blockId(block);
+      if (id) unique(id, "block");
+      // Registry fit for this lesson's subject and grade (schema and model consistency were checked by the parser).
+      for (const problem of validateBlock(block, { subject: context.subject, grade: context.grade }).problems) error(problem);
+    }
     if (scene.evidence.kind !== "NONE") scene.evidence.responses.forEach((response) => unique(`${scene.id}/${response.responseKey}`, "response"));
   }
 
@@ -111,7 +129,7 @@ export function validateCandidateAgainstContext(candidate: CandidateLessonV2, co
     if (interaction.kind === "LAB_LAUNCH" && (scene.type !== "LAB" || !labIds.has(interaction.labCandidateId))) error(`lab_launch_invalid:${scene.id}`);
     if (scene.type === "LAB" && interaction.kind !== "LAB_LAUNCH") error(`lab_scene_requires_lab_launch:${scene.id}`);
     if (interaction.kind === "ASSESSMENT_HANDOFF" && !assessmentIds.has(interaction.assessmentRequestId)) error(`assessment_request_unknown:${scene.id}`);
-    if (LEARNER_ACTION_KINDS.has(interaction.kind) && firstLearnerAction < 0) firstLearnerAction = index;
+    if ((LEARNER_ACTION_KINDS.has(interaction.kind) || hasLearnerBlocks(scene)) && firstLearnerAction < 0) firstLearnerAction = index;
     // Evidence: valid objectives, explicit response → objective mapping for every collected response.
     if (scene.evidence.kind !== "NONE") {
       if (!evidenceCollectable(scene)) error(`evidence_not_collectable:${scene.id}`);
@@ -168,7 +186,7 @@ export function validateCandidateAgainstContext(candidate: CandidateLessonV2, co
 
   // Objective coverage: each target objective is taught with a learner action and evidenced.
   for (const objective of context.objectives) {
-    const taught = candidate.scenes.some((scene) => scene.objectiveIds.includes(objective.id) && LEARNER_ACTION_KINDS.has(scene.interaction.kind));
+    const taught = candidate.scenes.some((scene) => scene.objectiveIds.includes(objective.id) && (LEARNER_ACTION_KINDS.has(scene.interaction.kind) || hasLearnerBlocks(scene)));
     const evidenced = candidate.scenes.some((scene) => scene.evidence.kind !== "NONE" && evidenceCollectable(scene) && scene.evidence.responses.some((response) => response.objectiveId === objective.id));
     if (!taught) error(`objective_not_taught:${objective.id}`);
     if (!evidenced) gap("OBJECTIVE_NOT_EVIDENCED", "BLOCKING", `${objective.id} has no evidence opportunity.`);
@@ -184,6 +202,14 @@ export function validateCandidateAgainstContext(candidate: CandidateLessonV2, co
   for (const proposal of candidate.labProposals) {
     const scene = candidate.scenes.find((candidateScene) => candidateScene.id === proposal.placementSceneId);
     if (!scene || scene.interaction.kind !== "LAB_LAUNCH" || scene.interaction.labCandidateId !== proposal.id) error(`lab_placement_invalid:${proposal.id}`);
+  }
+
+  // Interactive Learning V4: the instructional standard (lib/curriculum/v4/standard.ts).
+  if (candidate.contractVersion === CANDIDATE_LESSON_V2_CONTRACT_V4) {
+    for (const problem of evaluateV4Standard(candidate, context).problems) {
+      if (problem.severity === "ERROR") error(problem.sceneId ? `${problem.code}:${problem.sceneId}` : problem.code);
+      else gap(problem.code.toUpperCase(), problem.severity, problem.detail, problem.sceneId);
+    }
   }
 
   return { errors: [...new Set(errors)], gaps };

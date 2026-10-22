@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent, type ReactNode, type RefObject } from "react";
 import { ContentsDrawer } from "./ContentsDrawer";
 import "./lesson.css";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import { AUDIENCE_LABEL, SECTION_ROLE_LABEL, labelledParagraph, numbersInBlocks, sectionAudience, sectionRole, teachingParts, type LessonBlock, type LessonSection } from "@/lib/learner-experience/lessonText";
 import { expandedForm, formatNumber, wordForm } from "@/lib/learner-experience/demo/placeValue";
 import { PlaceValueChart } from "./demo/PlaceValueTools";
@@ -48,6 +48,10 @@ export function LegacyReading({ sections, objectives, tools, after, html, title,
 }) {
   const playlist = !html && sections.length > 1;
   const [current, setCurrent] = useState(0);
+  // Contents rail open or hidden (wide screens), remembered for this tab; hiding it returns its width to the stage.
+  const [railOpen, setRailOpen] = useState(true);
+  useEffect(() => { try { if (window.sessionStorage.getItem("ll-read-rail") === "closed") setRailOpen(false); } catch { /* storage unavailable */ } }, []);
+  const setRail = (next: boolean) => { setRailOpen(next); try { window.sessionStorage.setItem("ll-read-rail", next ? "open" : "closed"); } catch { /* storage unavailable */ } };
   const changed = useRef(false);
   const railRef = useRef<HTMLOListElement>(null);
   const stageRef = useRef<HTMLElement>(null);
@@ -127,15 +131,16 @@ export function LegacyReading({ sections, objectives, tools, after, html, title,
   const section = sections[current];
   const previous = current > 0 ? sections[current - 1] : null;
   const next = current < sections.length - 1 ? sections[current + 1] : null;
-  return <div className="ll4-read" data-reading-layout="playlist" data-section-index={current} data-section-count={sections.length}>
+  return <div className="ll4-read" data-reading-layout="playlist" data-rail={railOpen ? "open" : "closed"} data-section-index={current} data-section-count={sections.length}>
     <ContentsDrawer label="Contents" className="ll4-read-drawer" summary={<>{current + 1} of {sections.length} · <InlineText text={section.title} /></>}>
       <nav aria-label="Lesson contents"><ol className="ll3-outline-list ll4-playlist">{entries(false)}</ol></nav>
     </ContentsDrawer>
-    <nav className="ll4-read-rail" aria-label="Lesson contents">
-      <p className="ll4-rail-head"><span>Contents</span><span>{current + 1} / {sections.length}</span></p>
+    {railOpen && <nav className="ll4-read-rail" aria-label="Lesson contents">
+      <p className="ll4-rail-head"><span>Contents <span className="ll5-rail-count">{current + 1}/{sections.length}</span></span><button type="button" className="ll5-rail-toggle" aria-expanded={true} onClick={() => setRail(false)}><PanelLeftClose size={16} aria-hidden="true" /> Hide</button></p>
       <ol ref={railRef} className="ll3-outline-list ll4-playlist" onKeyDown={onRailKey}>{entries(true)}</ol>
-    </nav>
+    </nav>}
     <article ref={stageRef} className="ll4-read-stage" aria-label={`${title}: reading`}>
+      {!railOpen && <div className="ll5-read-show"><button type="button" className="ll3-support-toggle" aria-expanded={false} onClick={() => setRail(true)}><PanelLeftOpen size={18} aria-hidden="true" /> Show contents ({current + 1} / {sections.length})</button></div>}
       {sections.map((candidate, index) => {
         const role = sectionRole(candidate.title, index);
         return <section key={candidate.id} id={candidate.id} hidden={index !== current} className="ll3-section ll4-read-section" data-role={role} data-read-section={candidate.id} aria-labelledby={`${candidate.id}-h`}>

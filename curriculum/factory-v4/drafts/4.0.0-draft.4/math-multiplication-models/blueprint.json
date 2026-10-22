@@ -1,0 +1,125 @@
+{
+  "schemaVersion": "unit-blueprint/2.2.0",
+  "blueprintId": "math-multiplication-models-v4",
+  "version": "4.0.0",
+  "contentHash": "94298db4bc847ab89f08688df0467f4203d88079b1ad1fb01f5f06f45edb8c0c",
+  "grade": 5,
+  "subject": "MATH",
+  "unitId": "math-multiplication-models",
+  "title": "math-multiplication-models",
+  "repositoryCommit": "1268773a649fd3d570450ec15c8d5c9eb93d0cf2",
+  "sources": [
+    {
+      "id": "v4-reference-inputs",
+      "version": "1.0.0",
+      "sha256": "60883779051198a7bdbc8a389d97c186376fc7b050599fdb32aa4c72f9aa01a2",
+      "sourceRef": "curriculum/factory-v4/reference-inputs.json"
+    }
+  ],
+  "objectives": [
+    {
+      "id": "v4-demo-mult-models",
+      "kind": "LIBERIALEARN_MASTERY",
+      "statement": "Represent a multiplication as equal groups, an array and repeated addition, and explain why they show the same product.",
+      "sourceId": "v4-reference-inputs",
+      "sourcePointer": "moe-math-g5-s1-p1-multiplication-and-division-of-wh-ole-numbers-an-obj2",
+      "scope": "REQUIRED",
+      "mapping": "PROPOSED"
+    },
+    {
+      "id": "v4-demo-mult-area-model",
+      "kind": "LIBERIALEARN_MASTERY",
+      "statement": "Multiply a two-digit number by a one- or two-digit number with an area model, splitting by place value.",
+      "sourceId": "v4-reference-inputs",
+      "sourcePointer": "moe-math-g5-s1-p1-multiplication-and-division-of-wh-ole-numbers-an-obj2",
+      "scope": "REQUIRED",
+      "mapping": "PROPOSED"
+    }
+  ],
+  "outcomes": [
+    {
+      "id": "math-multiplication-models-outcome",
+      "objectiveIds": [
+        "v4-demo-mult-models",
+        "v4-demo-mult-area-model"
+      ],
+      "demonstration": "Produce and explain an independent response and transfer it to a new context."
+    }
+  ],
+  "prerequisites": [],
+  "misconceptions": [],
+  "sequence": [
+    {
+      "resourceId": "math-multiplication-models-lesson",
+      "dependsOn": [],
+      "objectiveIds": [
+        "v4-demo-mult-models",
+        "v4-demo-mult-area-model"
+      ],
+      "scaffold": "FULL"
+    }
+  ],
+  "resources": [
+    {
+      "id": "math-multiplication-models-lesson",
+      "kind": "LESSON",
+      "role": "LESSON_AUTHOR",
+      "objectiveIds": [
+        "v4-demo-mult-models",
+        "v4-demo-mult-area-model"
+      ],
+      "dependsOn": [],
+      "audience": "REVIEWER_ONLY"
+    }
+  ],
+  "assessmentPlan": [
+    {
+      "id": "math-multiplication-models-practice",
+      "resourceId": "math-multiplication-models-lesson",
+      "itemIds": [],
+      "kind": "SHORT_CONSTRUCTED_RESPONSE",
+      "objectiveIds": [
+        "v4-demo-mult-models",
+        "v4-demo-mult-area-model"
+      ],
+      "scaffold": "NONE",
+      "timing": "IN_LESSON",
+      "context": "REHEARSED",
+      "scoring": "NOT_SCORED",
+      "source": "EXCELLENCE_PLAN",
+      "ref": "REFERENCE_LESSON_ONLY_ASSESSMENT_PENDING"
+    }
+  ],
+  "support": {
+    "differentiation": [
+      "Use the text equivalent and paper model with a teacher."
+    ],
+    "accessibility": [
+      "Scene keyboard paths and block text equivalents."
+    ],
+    "offline": {
+      "mode": "TEXT_PAPER_CAPTURE_ONLY",
+      "requirements": [
+        "Paper, pencil and printed text alternatives."
+      ],
+      "maxBytes": 2000000
+    }
+  },
+  "provenance": [
+    {
+      "id": "v4-reference-inputs",
+      "version": "1.0.0",
+      "sha256": "60883779051198a7bdbc8a389d97c186376fc7b050599fdb32aa4c72f9aa01a2",
+      "sourceRef": "curriculum/factory-v4/reference-inputs.json"
+    }
+  ],
+  "legacy": [],
+  "unresolved": [
+    "REFERENCE_LESSON_ONLY_FULL_EXCELLENCE_PACKAGE_PENDING",
+    "PROTECTED_ASSESSMENT_RECONCILIATION_REQUIRED",
+    "PREREQUISITE_DIAGNOSTIC_AND_MISCONCEPTION_ITEM_BINDINGS_PENDING",
+    "AUTHENTIC_SOURCE_COMPARISON_AND_RIGHTS_REVIEW_REQUIRED",
+    "MANUAL_ACCESSIBILITY_AND_OFFLINE_RUNTIME_QA_REQUIRED"
+  ],
+  "instructionStandard": "liberialearn-v4-instruction/1.0.0"
+}

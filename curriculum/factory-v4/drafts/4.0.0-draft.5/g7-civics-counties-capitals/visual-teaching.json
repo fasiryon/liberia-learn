@@ -1,0 +1,291 @@
+{
+  "contractVersion": "visual-teaching-block/4.0.0-draft.1",
+  "registryVersion": "teaching-blocks/1.1.0",
+  "instructionStandard": "liberialearn-v4-instruction/1.0.0",
+  "candidateSha256": "48566d00ca83595d2439dd0cbf97d9ee468096e491237f9e8a7993f3784f22f5",
+  "state": "DRAFT",
+  "approved": false,
+  "published": false,
+  "released": false,
+  "audience": "REVIEWER_ONLY",
+  "objectives": [
+    {
+      "id": "ft01-o1",
+      "statement": "Identify Liberia's fifteen county-capital pairs in a name register, without inferring geographic locations from entry order.",
+      "standards": [
+        {
+          "reference": "moe-social-studies-g7-s1-p1-the-earth-and-the-solar-system-semester-one-act6",
+          "statement": "Draw the map of Liberia and plot in the tribes according to the political sub-divisions.",
+          "relation": "CONTENT_REFERENCE",
+          "mapping": "PROPOSED"
+        },
+        {
+          "reference": "moe-social-studies-g5-s1-p1-geography-con6",
+          "statement": "Ivory Coast on the East. Counties of Liberia:",
+          "relation": "CONTENT_REFERENCE",
+          "mapping": "PROPOSED"
+        }
+      ]
+    },
+    {
+      "id": "ft01-o2",
+      "statement": "Distinguish county capitals from well-known cities and the national capital using Nimba and Montserrado as examples.",
+      "standards": [
+        {
+          "reference": "moe-social-studies-g7-s1-p1-the-earth-and-the-solar-system-semester-one-act6",
+          "statement": "Draw the map of Liberia and plot in the tribes according to the political sub-divisions.",
+          "relation": "CONTENT_REFERENCE",
+          "mapping": "PROPOSED"
+        }
+      ]
+    },
+    {
+      "id": "ft01-o3",
+      "statement": "Explain which administrative claims a county-capital register supports and request geographic and road sources for route planning.",
+      "standards": [
+        {
+          "reference": "moe-social-studies-g7-s1-p1-the-earth-and-the-solar-system-semester-one-act6",
+          "statement": "Draw the map of Liberia and plot in the tribes according to the political sub-divisions.",
+          "relation": "CONTENT_REFERENCE",
+          "mapping": "PROPOSED"
+        }
+      ]
+    }
+  ],
+  "blocks": [
+    {
+      "sceneId": "generated-1",
+      "slot": "blocks",
+      "index": 0,
+      "type": "READING_PASSAGE",
+      "blockSha256": "a254880b579476ae5481d4b00db303d4bd38b41b108e300b8afe39b1e32088b3",
+      "objectiveIds": [
+        "ft01-o1",
+        "ft01-o2",
+        "ft01-o3"
+      ],
+      "instructionalPurpose": "Sustained reading with words explained in context. Learner action: Read the county-capital pairs; distinguish county names from capital names without inferring geography.",
+      "misconceptionIds": [
+        "generated-civics-misconception"
+      ],
+      "responseSignals": [],
+      "accessibility": {
+        "textAlternative": "Liberia county-capital register. Lofa: Voinjama. Gbarpolu: Bopolu. Grand Cape Mount: Robertsport. Bomi: Tubmanburg. Montserrado: Bensonville. Bong: Gbarnga. Nimba: Sanniquellie. Margibi: Kakata. Grand Bassa: Buchanan. River Cess: Cestos City. Grand Gedeh: Zwedru. Sinoe: Greenville. River Gee: Fish Town. Grand Kru: Barclayville. Maryland: Harper.",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Liberia county-capital register. Lofa: Voinjama. Gbarpolu: Bopolu. Grand Cape Mount: Robertsport. Bomi: Tubmanburg. Montserrado: Bensonville. Bong: Gbarnga. Nimba: Sanniquellie. Margibi: Kakata. Grand Bassa: Buchanan. River Cess: Cestos City. Grand Gedeh: Zwedru. Sinoe: Greenville. River Gee: Fish Town. Grand Kru: Barclayville. Maryland: Harper.",
+        "responsePrompt": "Read the county-capital pairs; distinguish county names from capital names without inferring geography. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "NONE",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/draft5/lessonAuthor.ts",
+          "sha256": "6edd5dd7a19f20093a23f9de165172a9f385ddac6e01526e10d84ddf06899328",
+          "license": "Original deterministic recipe; internal review only",
+          "attribution": "LiberiaLearn Content Factory V4 draft.5 revision",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "generated-2",
+      "slot": "blocks",
+      "index": 0,
+      "type": "CHECK",
+      "blockSha256": "b79e68564281b24cde075624f37f3f22acc2e035c5551fef0751f09b4b502790",
+      "objectiveIds": [
+        "ft01-o1",
+        "ft01-o2",
+        "ft01-o3"
+      ],
+      "instructionalPurpose": "Choose an answer and get feedback written for that choice. Learner action: Identify the capitals of Montserrado and Nimba using the register, and compare them with well-known cities.",
+      "misconceptionIds": [
+        "generated-civics-misconception"
+      ],
+      "responseSignals": [
+        {
+          "misconceptionId": "generated-civics-misconception",
+          "responsePattern": "montserrado-capital-item:OPTION:other",
+          "feedback": "Compare this claim with the model and its evidence."
+        }
+      ],
+      "accessibility": {
+        "textAlternative": "Which city is Montserrado County's capital? Options: Bensonville; Monrovia.",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Which city is Montserrado County's capital? Options: Bensonville; Monrovia.",
+        "responsePrompt": "Identify the capitals of Montserrado and Nimba using the register, and compare them with well-known cities. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/draft5/lessonAuthor.ts",
+          "sha256": "6edd5dd7a19f20093a23f9de165172a9f385ddac6e01526e10d84ddf06899328",
+          "license": "Original deterministic recipe; internal review only",
+          "attribution": "LiberiaLearn Content Factory V4 draft.5 revision",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "generated-2",
+      "slot": "blocks",
+      "index": 1,
+      "type": "CHECK",
+      "blockSha256": "0da284de1bfd53f5a3b6398a4f62f57366ad4ca0d1fade0387f1fa665b98643d",
+      "objectiveIds": [
+        "ft01-o1",
+        "ft01-o2",
+        "ft01-o3"
+      ],
+      "instructionalPurpose": "Choose an answer and get feedback written for that choice. Learner action: Identify the capitals of Montserrado and Nimba using the register, and compare them with well-known cities.",
+      "misconceptionIds": [
+        "generated-civics-misconception"
+      ],
+      "responseSignals": [
+        {
+          "misconceptionId": "generated-civics-misconception",
+          "responsePattern": "nimba-capital-item:OPTION:other",
+          "feedback": "Compare this claim with the model and its evidence."
+        }
+      ],
+      "accessibility": {
+        "textAlternative": "Which city is Nimba County's capital? Options: Sanniquellie; Ganta.",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Which city is Nimba County's capital? Options: Sanniquellie; Ganta.",
+        "responsePrompt": "Identify the capitals of Montserrado and Nimba using the register, and compare them with well-known cities. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/draft5/lessonAuthor.ts",
+          "sha256": "6edd5dd7a19f20093a23f9de165172a9f385ddac6e01526e10d84ddf06899328",
+          "license": "Original deterministic recipe; internal review only",
+          "attribution": "LiberiaLearn Content Factory V4 draft.5 revision",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "generated-4",
+      "slot": "blocks",
+      "index": 0,
+      "type": "SOURCE_EVIDENCE",
+      "blockSha256": "8b107dae945442edcc9e794a0346e66cab70643433f2e4da860aa34728eafc59",
+      "objectiveIds": [
+        "ft01-o1",
+        "ft01-o2",
+        "ft01-o3"
+      ],
+      "instructionalPurpose": "Select the sentences in a source that answer a question, with a reason for each. Learner action: Select evidence that supports administrative pairings and excludes unsupported travel claims.",
+      "misconceptionIds": [
+        "generated-civics-misconception"
+      ],
+      "responseSignals": [],
+      "accessibility": {
+        "textAlternative": "Synthetic register-interpretation exercise. Each entry pairs a county name with its capital name. Entry order cannot establish a road route or neighbouring counties. Consecutive entries must be neighbouring counties. Which statements correctly describe the evidence this register provides?",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Synthetic register-interpretation exercise. Each entry pairs a county name with its capital name. Entry order cannot establish a road route or neighbouring counties. Consecutive entries must be neighbouring counties. Which statements correctly describe the evidence this register provides?",
+        "responsePrompt": "Select evidence that supports administrative pairings and excludes unsupported travel claims. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/draft5/lessonAuthor.ts",
+          "sha256": "6edd5dd7a19f20093a23f9de165172a9f385ddac6e01526e10d84ddf06899328",
+          "license": "Original deterministic recipe; internal review only",
+          "attribution": "LiberiaLearn Content Factory V4 draft.5 revision",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "generated-5",
+      "slot": "blocks",
+      "index": 0,
+      "type": "WRITING_ORGANIZER",
+      "blockSha256": "1042a65ba0f6f068e89eb47a7d65e3d6f415facb8da741451a843eea920e231b",
+      "objectiveIds": [
+        "ft01-o1",
+        "ft01-o2",
+        "ft01-o3"
+      ],
+      "instructionalPurpose": "Plan and write a response part by part, then revise against a checklist. Learner action: Name Bong's capital, state what the register establishes, and request the geographic and current road sources needed for delivery.",
+      "misconceptionIds": [
+        "generated-civics-misconception"
+      ],
+      "responseSignals": [],
+      "accessibility": {
+        "textAlternative": "Use the register to name the county capital, distinguish established facts from unknowns, and request a valid geographic map and current road information. Claim: State your conclusion precisely. Evidence and reasoning: Quote or describe relevant evidence and explain the link to your claim.",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Use the register to name the county capital, distinguish established facts from unknowns, and request a valid geographic map and current road information. Claim: State your conclusion precisely. Evidence and reasoning: Quote or describe relevant evidence and explain the link to your claim.",
+        "responsePrompt": "Name Bong's capital, state what the register establishes, and request the geographic and current road sources needed for delivery. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "NONE",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/draft5/lessonAuthor.ts",
+          "sha256": "6edd5dd7a19f20093a23f9de165172a9f385ddac6e01526e10d84ddf06899328",
+          "license": "Original deterministic recipe; internal review only",
+          "attribution": "LiberiaLearn Content Factory V4 draft.5 revision",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    }
+  ],
+  "assessmentBoundary": {
+    "player": "ASSESSMENT_PLAYER_V2",
+    "scoring": "SERVER_AUTHORITY",
+    "protectedKeysIncluded": false,
+    "canonicalMasteryMutation": false,
+    "offlineEvidence": "CAPTURE_ONLY_NOT_OFFICIAL"
+  }
+}

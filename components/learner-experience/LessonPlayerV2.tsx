@@ -8,13 +8,16 @@ import type { AgeBand, LessonExperience, Scene } from "@/lib/learner-experience/
 import { isLinkStudentVisible, type LearningExperienceLink } from "@/lib/learner-experience/links";
 import type { LabExperience } from "@/lib/learner-experience/labExperience";
 import type { SceneToolView } from "@/lib/learner-experience/tools";
-import { advance, applyLabReturn, chooseLabFallback, goToScene, isSceneComplete, markLabLaunched, pendingLabSceneId, percentComplete, recordResponse, restoreProgress, retreat, revealStep, sceneIndexOf, type ExperienceProgress } from "@/lib/learner-experience/progress";
+import { advance, applyLabReturn, chooseLabFallback, goToScene, isSceneComplete, markBlockDone, markLabLaunched, pendingLabSceneId, pendingTeachingBlocks, percentComplete, recordResponse, restoreProgress, retreat, revealStep, sceneIndexOf, type ExperienceProgress } from "@/lib/learner-experience/progress";
+import { PHASE_LABEL } from "@/lib/learner-experience/teaching/instruction";
 import { buildLabLaunchHref, buildStudentLabLaunchHref, isLabReturnObservation, labReturnStorageKey, type LabLaunchContext, type LabReturnObservation } from "@/lib/learner-experience/labLaunch";
 import { buildEvidenceEnvelope, type ExperienceEvidenceEnvelope } from "@/lib/learner-experience/evidenceHandoff";
 import { isSafeRuntimeId, type EvidenceChannel, type EvidenceReceipt, type LessonRouteTarget, type LessonRuntimeAvailability, type LessonRuntimeIdentity, type RuntimeLabLink } from "@/lib/learner-experience/lessonRuntime";
 import { loadExperienceProgress, saveExperienceProgress } from "@/lib/learner-experience/progressStore";
 import { TOOL_COMPONENTS } from "@/components/toolkit/toolComponents";
-import { AssessmentHandoffSeam, DiagramReveal, FormativeCheck, ReflectionPrompts, SceneBody, SceneMediaList } from "./SceneViews";
+import { AssessmentHandoffSeam, DiagramReveal, FormativeCheck, ReflectionPrompts, SceneBody, SceneMediaList, SceneTeachingBlocks, teachingSources } from "./SceneViews";
+import { TeachingBlockView } from "@/components/experience/teaching/TeachingBlocks";
+import { BlockLessonContext } from "@/components/experience/teaching/v4/shared";
 import { LabScene, type LabSceneView } from "./LabScene";
 import { LearningStage, StageFooter } from "@/components/experience/FocusedLearning";
 import { AskTutorButton } from "@/components/experience/AskTutorButton";
@@ -210,7 +213,9 @@ export function LessonPlayerV2({ experience, links = NO_LINKS, labs = NO_LABS, t
   const objectives = useMemo(() => experience.objectives.filter((objective) => scene.objectiveIds.includes(objective.id)), [experience.objectives, scene.objectiveIds]);
   const tools = toolsByScene[scene.id] ?? [];
   // A real picture or diagram (same-origin asset) earns the visual column; text alternatives stay in flow.
-  const hasVisual = (scene.media ?? []).some((media) => (media.kind === "IMAGE" || media.kind === "DIAGRAM") && media.ref.startsWith("/") && !media.ref.startsWith("//"));
+  const hasVisual = (scene.media ?? []).some((media) => (media.kind === "IMAGE" || media.kind === "DIAGRAM") && media.ref.startsWith("/") && !media.ref.startsWith("//")) || Boolean(scene.teaching?.visual);
+  // V4 visual teaching blocks: reading passages are offered to writing blocks for quotation checks.
+  const blockLesson = useMemo(() => ({ sources: teachingSources(experience) }), [experience]);
 
   // Move focus to the heading only when the scene changes (never on an answer or keystroke), so keyboard and
   // screen-reader users land on the new scene. The first scene keeps normal page focus unless it is a lab return.
@@ -225,6 +230,8 @@ export function LessonPlayerV2({ experience, links = NO_LINKS, labs = NO_LABS, t
   }, [scene.id, loaded, returnSceneId]);
 
   const update = useCallback((change: (current: ExperienceProgress) => ExperienceProgress) => setProgress((current) => (current ? change(current) : current)), []);
+  // A finished V4 block is a position marker for Continue, never a response or evidence.
+  const onBlockDone = useCallback((blockId: string, done: boolean) => { if (done) update((current) => markBlockDone(current, scene.id, blockId)); }, [update, scene.id]);
 
   const launchLab = async () => {
     if (!progress || !lab || !lab.launchable) return;
@@ -335,7 +342,7 @@ export function LessonPlayerV2({ experience, links = NO_LINKS, labs = NO_LABS, t
           <Link href={exitHref} aria-label="Leave lesson" className="inline-flex min-h-[var(--pdv2-target,44px)] min-w-[var(--pdv2-target,44px)] items-center justify-center rounded-xl border border-[var(--ll-border)]"><ChevronLeft size={20} aria-hidden="true" /></Link>
           <div className="min-w-0 flex-1">
             <p className="truncate text-base font-semibold leading-6">{experience.title}</p>
-            <p className="text-sm text-[var(--ll-text-muted)]">Scene {index + 1} of {experience.scenes.length} · {TYPE_LABEL[scene.type]}</p>
+            <p className="text-sm text-[var(--ll-text-muted)]">Scene {index + 1} of {experience.scenes.length} · {scene.teaching ? PHASE_LABEL[scene.teaching.phase] : TYPE_LABEL[scene.type]}</p>
           </div>
           {readOnly && <span className="shrink-0 rounded-full border border-[var(--ll-border)] px-3 py-1 text-xs text-[var(--ll-text-muted)]">Saved copy</span>}
           {!runtime && experience.authority.status !== "APPROVED_RELEASE" && <span className="hidden shrink-0 rounded-full border border-[var(--ll-border)] px-3 py-1 text-xs text-[var(--ll-text-muted)] sm:inline">Internal prototype</span>}
@@ -370,7 +377,8 @@ export function LessonPlayerV2({ experience, links = NO_LINKS, labs = NO_LABS, t
         supportLabel="Lesson help"
         support={contextPanel}
       >
-        <article aria-labelledby="scene-title" className="ll3-scene" data-has-visual={hasVisual ? "" : undefined}>
+        <BlockLessonContext.Provider value={blockLesson}>
+        <article aria-labelledby="scene-title" className="ll3-scene" data-has-visual={hasVisual ? "" : undefined} data-instruction-phase={scene.teaching?.phase}>
           {runtime && (readOnly || restartedForNewVersion || !online) && (
             <div role="status" className="space-y-2 rounded-2xl border border-[var(--ll-border)] bg-[var(--ll-surface)] p-4 text-sm leading-6 text-[var(--ll-text)]" data-runtime-notice>
               {readOnly && <p>You are using a saved copy of this lesson. You can read and practise, but nothing is sent from it and labs cannot open. Connect to the internet to open the current version.</p>}
@@ -379,7 +387,7 @@ export function LessonPlayerV2({ experience, links = NO_LINKS, labs = NO_LABS, t
             </div>
           )}
           <div>
-            <p className="ll3-scene-kind">{TYPE_LABEL[scene.type]}</p>
+            <p className="ll3-scene-kind">{scene.teaching ? PHASE_LABEL[scene.teaching.phase] : TYPE_LABEL[scene.type]}</p>
             <h1 id="scene-title" ref={headingRef} tabIndex={-1} className="ll3-scene-title">{scene.title}</h1>
           </div>
           {runtime && index === 0 && experience.objectives.length > 0 && (
@@ -392,16 +400,18 @@ export function LessonPlayerV2({ experience, links = NO_LINKS, labs = NO_LABS, t
             <div className="ll3-scene-text">
               <SceneBody scene={scene} ageBand={band} />
               {!hasVisual && <SceneMediaList scene={scene} />}
+              <SceneTeachingBlocks key={scene.id} scene={scene} onDone={onBlockDone} />
               <DiagramReveal scene={scene} progress={progress} onReveal={(stepId) => update((current) => revealStep(current, scene.id, stepId))} />
               <FormativeCheck scene={scene} progress={progress} onAnswer={(itemId, value) => update((current) => recordResponse(current, scene.id, itemId, value))} />
               {scene.type === "LAB" && <LabScene scene={scene} view={lab?.view ?? null} launchable={!!lab?.launchable} progress={progress} online={online} onLaunch={() => void launchLab()} onFallback={() => update((current) => chooseLabFallback(current, scene.id))} />}
               <ReflectionPrompts scene={scene} progress={progress} onWrite={(promptId, text) => update((current) => recordResponse(current, scene.id, promptId, text))} />
               <AssessmentHandoffSeam scene={scene} progress={progress} submitted={submittedOrLocked} note={assessmentNote} onAnswer={(itemId, value) => update((current) => recordResponse(current, scene.id, itemId, value))} />
             </div>
-            {hasVisual && <div className="ll3-scene-visual"><SceneMediaList scene={scene} /></div>}
+            {hasVisual && <div className="ll3-scene-visual"><SceneMediaList scene={scene} />{scene.teaching?.visual && <TeachingBlockView key={`${scene.id}-visual`} block={scene.teaching.visual} onDone={onBlockDone} />}</div>}
           </div>
           {finished && <FinishedPanel finished={finished} runtime={runtime} exitHref={exitHref} online={online} onRetry={retrySend} />}
         </article>
+        </BlockLessonContext.Provider>
       </LearningStage>
 
       <StageFooter
@@ -410,7 +420,7 @@ export function LessonPlayerV2({ experience, links = NO_LINKS, labs = NO_LABS, t
         total={experience.scenes.length}
         onPrevious={() => update((current) => retreat(experience, current))}
         previousDisabled={index === 0}
-        hint={!complete ? BLOCKED_HINT[scene.completion.kind] || undefined : undefined}
+        hint={!complete ? (pendingTeachingBlocks(scene, progress).length > 0 ? "Finish the activities in this scene to continue." : BLOCKED_HINT[scene.completion.kind] || undefined) : undefined}
         hintId="continue-hint"
         states={experience.scenes.map((candidate, candidateIndex) => candidateIndex === index ? "current" : progress.completedSceneIds.includes(candidate.id) ? "done" : "todo")}
         next={isLast ? (
