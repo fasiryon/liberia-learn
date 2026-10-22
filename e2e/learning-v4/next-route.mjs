@@ -43,6 +43,8 @@ const experience = JSON.parse(await fs.readFile(`${pkg}/learner-projection.json`
 const manifest = JSON.parse(await fs.readFile(`${pkg}/manifest.json`, "utf8"));
 const SELECTION = `factory@${VERSION}@${KEY}`;
 
+// Never drive a server this run did not start (an orphaned dev server would answer instead).
+if (await fetch(BASE, { signal: AbortSignal.timeout(2000) }).then(() => true, () => false)) throw Error(`port ${PORT} is already in use; stop that server first`);
 const server = spawn(process.platform === "win32" ? "npx.cmd" : "npx", ["next", "dev", "-p", String(PORT)], { env, shell: process.platform === "win32", stdio: ["ignore", "pipe", "pipe"] });
 let serverLog = "";
 server.stdout.on("data", (chunk) => { serverLog += chunk; }); server.stderr.on("data", (chunk) => { serverLog += chunk; });
