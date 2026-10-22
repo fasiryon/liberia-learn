@@ -1,0 +1,365 @@
+{
+  "version": "v4-r7-repair-validation/1.0.0",
+  "implementationCommits": [
+    "d0428bed8e558e783c1c4dae1cda12e694c8a788",
+    "ecc454e58eac759c98b7a672ddf4583a58743558"
+  ],
+  "frozenDraft4": {
+    "comparedTo": "198edc566",
+    "files": 49,
+    "rawBytesEqual": true
+  },
+  "receiptPins": [
+    {
+      "candidateVersion": "4.0.0-draft.4",
+      "receiptSha256": "ba0bacf12e36d3968e442d4bfa50dfc73eb9bcc5e9848d1c166bfa0a91d71e45"
+    },
+    {
+      "candidateVersion": "4.0.0-draft.5",
+      "receiptSha256": "eea568feea89d043bd01585276d6314ee6aa9db8ac4ba75429bb34a5abce7a2a"
+    }
+  ],
+  "candidates": [
+    {
+      "version": "4.0.0-draft.4",
+      "key": "g7-math-area-perimeter",
+      "route": "/lab-review/v4-lessons/factory@4.0.0-draft.4@g7-math-area-perimeter",
+      "packageHash": "ad195ec26b8e269cf2e2ec9672e3fbc72b3ebf290a8911ad17f71364b7716905",
+      "candidateFileSha256": "b2ece48f1cd57e09143582cc27a32666e42abbf4793f76038a693156c3562b74",
+      "candidateCanonicalSha256": "3bdd1015c189843cae8ad1eb2c116fd04c110ec87d12738d648803e3b41d488a",
+      "projectionCanonicalSha256": "a9128cc58cd6e4643f320870bb8f93f17f164f62977ce7bfdd75eb850c136d28",
+      "projectionFileSha256": "65d6f40029af24d5f81d55e6f3c27fe9edb9dd0a02e9a19f2a10f28b54dca038",
+      "manifestSha256": "b61c37f3d5259a979b57c1fc45b0233501b7fbe62bbc4daff0ad1736152da610"
+    },
+    {
+      "version": "4.0.0-draft.4",
+      "key": "g7-math-fractions",
+      "route": "/lab-review/v4-lessons/factory@4.0.0-draft.4@g7-math-fractions",
+      "packageHash": "61cb2277a93d15edfc84401cc1ad71ca2fada086040b45c83ec6e86fdc9c8f5e",
+      "candidateFileSha256": "168a3506a83ae226cd20f970073d3a393cdf145911dad00309e835167a50943a",
+      "candidateCanonicalSha256": "89ffd523f087ae6e03fd560680e788845f7c0f9e73a993dccedd2bdfda6c4791",
+      "projectionCanonicalSha256": "a0765419a9d125b4d2201e0bd8477f1e1df0785222bd9b3048e761212224efa6",
+      "projectionFileSha256": "5fd0988ffc3fa0f1fce5b18c897392bd72f96a6437ade16d28a51d10c869b8c0",
+      "manifestSha256": "d1934517dfa61ee8daeb34a43a044ebdc2bdd631baf46850fc2332316c8db1b4"
+    },
+    {
+      "version": "4.0.0-draft.4",
+      "key": "math-multiplication-models",
+      "route": "/lab-review/v4-lessons/factory@4.0.0-draft.4@math-multiplication-models",
+      "packageHash": "8cdf4d8b666eaf7e818b403bf48f8a981ba55c2715a2e3b7ce361c0abcb7935c",
+      "candidateFileSha256": "9850330f670b0c2f1f0bc6aaf7e2529dadfff5071e008f8d49153ea869cdacc6",
+      "candidateCanonicalSha256": "e7cb4ff774a05c2888a0c8ff353f4c9861274750b368309a2199fc352591a43c",
+      "projectionCanonicalSha256": "e6f99e27f5ee38a3488ee796c4ce13a671c65d29120c3cd6071c86d48a6c89a8",
+      "projectionFileSha256": "acf8466609d896b29a5dd5a7039553ab41444e927d10eb92e54505855a656a34",
+      "manifestSha256": "7b63fd7ac0528d6e1317615a6d1bc4a83876f0a0bbe286d2d12d3c76f0036eee"
+    },
+    {
+      "version": "4.0.0-draft.4",
+      "key": "g7-science-states-of-matter",
+      "route": "/lab-review/v4-lessons/factory@4.0.0-draft.4@g7-science-states-of-matter",
+      "packageHash": "928c58752705d571f2d69ef602b4d47562537a0fb97289839b085bf88f5964ef",
+      "candidateFileSha256": "dbb7442591f219b3ec28960cee2cb8a9af60ecebf66883412cc489c97207590b",
+      "candidateCanonicalSha256": "dd170c9a5ad3dc20ed799db43d10d797bc67a7f86314035f390baca4a058f4b0",
+      "projectionCanonicalSha256": "f198e443ce4d82cb540fe1de5149e8601b85df4e78ece1bd900124c3176414ff",
+      "projectionFileSha256": "2342004919d0b897bbafdd0c4107e7e93fac2a2b8e0b863f082a3bdfa3813f8a",
+      "manifestSha256": "f4231a4e0f14bfc5a31aa1ab541037ef1634f7130b50db4c0255693e849df872"
+    },
+    {
+      "version": "4.0.0-draft.4",
+      "key": "g7-civics-counties-capitals",
+      "route": "/lab-review/v4-lessons/factory@4.0.0-draft.4@g7-civics-counties-capitals",
+      "packageHash": "7d148212fffa9bcc48bb22b11c69671160b0c17c2ca49c4020f9c1d86e7b7c9c",
+      "candidateFileSha256": "4b0f9abdaa29729ba8080f2b2f693cbd7079806a8558a53c5f0b744f5a021849",
+      "candidateCanonicalSha256": "1256eb142ba1bfda3b18a788c7dcdbe1fdb7523447f63ef5a42fe7ff42999796",
+      "projectionCanonicalSha256": "82fb57cc20fc0ba65e6911eea94aefdeb0f544ea7d3f5c73df7df1db378c465e",
+      "projectionFileSha256": "868f265a1271e2ffe897d423d36403c7effbc1ba28566af36f103b70a895c999",
+      "manifestSha256": "6043c320070cbde837765221b9c4ffee748fa61f2b34b54e25aca35aae7d04c8"
+    },
+    {
+      "version": "4.0.0-draft.4",
+      "key": "g7-english-reading-evidence",
+      "route": "/lab-review/v4-lessons/factory@4.0.0-draft.4@g7-english-reading-evidence",
+      "packageHash": "1a7a010de44cd1dcc77ab36bf32b7daa7a54c36f07bfe7a02d250a127470ea3d",
+      "candidateFileSha256": "b32a0c28755fd1d803abeaf392c87979f0a6dc9a533292d2a93eb5cf850c0099",
+      "candidateCanonicalSha256": "e35d9cb14806d57867ff76d49cec9703f165e8f9e543c8bbdf7fa004d56b66eb",
+      "projectionCanonicalSha256": "bfc3ff58c1c5dd881a2c724e9187dccffcb59e20648996a44f197483e77b086c",
+      "projectionFileSha256": "10a3a4253cc3be2a7b1dd22da66fb42946c0bf3e316b84c0f02686e23addef63",
+      "manifestSha256": "efd4bc570ac80be974814feed0964e6a56d056edaafe6c58b77cdada58a25a8e"
+    },
+    {
+      "version": "4.0.0-draft.5",
+      "key": "g7-math-area-perimeter",
+      "route": "/lab-review/v4-lessons/factory@4.0.0-draft.5@g7-math-area-perimeter",
+      "packageHash": "7dedcc121174a439db4e3f3d38e04e3b705ff6362647f4afa59afd30ba2d0770",
+      "candidateFileSha256": "042aa2a6252258158b9ef4088f095cea23c5f2123027e7e938d1c0e78d9ab17b",
+      "candidateCanonicalSha256": "638a8d389a0659cc58b93e110f009bb698d6b4818ab7640dfa6e653fcc680681",
+      "projectionCanonicalSha256": "bb77ab457a3d7f025fc7d2846bf8bcf88a8694872b0782df7d9b3c4e08bf6640",
+      "projectionFileSha256": "4f2ac292628a9d164fc025ae534fbd2ed9b782d6187ed2d995f424644cce5841",
+      "manifestSha256": "1013cf827d571dc657b2fe25892642b3b94e09449776e2b9205b5ab6323b30ea"
+    },
+    {
+      "version": "4.0.0-draft.5",
+      "key": "g7-civics-counties-capitals",
+      "route": "/lab-review/v4-lessons/factory@4.0.0-draft.5@g7-civics-counties-capitals",
+      "packageHash": "1da85c7ac63953499cf3f6500cc7f3c34691c1e266d9fee71937c490c17074d9",
+      "candidateFileSha256": "6670ea90bb3d2d4d4dae6f46c85c5de8b4c9b9a51a9a48e4f74cd67c245b686b",
+      "candidateCanonicalSha256": "48566d00ca83595d2439dd0cbf97d9ee468096e491237f9e8a7993f3784f22f5",
+      "projectionCanonicalSha256": "83fcebd4a715282925669d97e9d58e6d086b72a39a71ecb9db18d659ab3522f7",
+      "projectionFileSha256": "c6e11292d57cbe5b2b6ffb93fb02dd9f67f74a9b0eae34c8520d268ed8aa378e",
+      "manifestSha256": "cb10937b09ef6c0b0ea5fd194a22645ad4e66c9f63bd0daaaf324dd0faa7871c"
+    }
+  ],
+  "validation": {
+    "factoryTests": {
+      "passed": 101
+    },
+    "validateChanged": {
+      "typeCheck": "PASS on joined snapshot 75f866065 and in npm run build",
+      "changedTests": 101,
+      "relatedTests": 96,
+      "exitCode": 0
+    },
+    "browserDraft4": {
+      "candidateVersion": "4.0.0-draft.4",
+      "sourceDriverSha256": "248eb44d638054027906d02705096a40a65460f7051af0471d6e2d8a1beb6487",
+      "manifests": [
+        {
+          "key": "g7-math-area-perimeter",
+          "manifestSha256": "b61c37f3d5259a979b57c1fc45b0233501b7fbe62bbc4daff0ad1736152da610",
+          "learnerProjectionSha256": "65d6f40029af24d5f81d55e6f3c27fe9edb9dd0a02e9a19f2a10f28b54dca038"
+        },
+        {
+          "key": "g7-math-fractions",
+          "manifestSha256": "d1934517dfa61ee8daeb34a43a044ebdc2bdd631baf46850fc2332316c8db1b4",
+          "learnerProjectionSha256": "5fd0988ffc3fa0f1fce5b18c897392bd72f96a6437ade16d28a51d10c869b8c0"
+        },
+        {
+          "key": "math-multiplication-models",
+          "manifestSha256": "7b63fd7ac0528d6e1317615a6d1bc4a83876f0a0bbe286d2d12d3c76f0036eee",
+          "learnerProjectionSha256": "acf8466609d896b29a5dd5a7039553ab41444e927d10eb92e54505855a656a34"
+        },
+        {
+          "key": "g7-science-states-of-matter",
+          "manifestSha256": "f4231a4e0f14bfc5a31aa1ab541037ef1634f7130b50db4c0255693e849df872",
+          "learnerProjectionSha256": "2342004919d0b897bbafdd0c4107e7e93fac2a2b8e0b863f082a3bdfa3813f8a"
+        },
+        {
+          "key": "g7-civics-counties-capitals",
+          "manifestSha256": "6043c320070cbde837765221b9c4ffee748fa61f2b34b54e25aca35aae7d04c8",
+          "learnerProjectionSha256": "868f265a1271e2ffe897d423d36403c7effbc1ba28566af36f103b70a895c999"
+        },
+        {
+          "key": "g7-english-reading-evidence",
+          "manifestSha256": "efd4bc570ac80be974814feed0964e6a56d056edaafe6c58b77cdada58a25a8e",
+          "learnerProjectionSha256": "10a3a4253cc3be2a7b1dd22da66fb42946c0bf3e316b84c0f02686e23addef63"
+        }
+      ],
+      "runs": 7,
+      "completed": 7,
+      "scenes": 46,
+      "axeViolations": 0,
+      "axeIncomplete": 11,
+      "pageErrors": [],
+      "writes": [],
+      "issues": []
+    },
+    "browserDraft5": {
+      "candidateVersion": "4.0.0-draft.5",
+      "sourceDriverSha256": "248eb44d638054027906d02705096a40a65460f7051af0471d6e2d8a1beb6487",
+      "manifests": [
+        {
+          "key": "g7-math-area-perimeter",
+          "manifestSha256": "1013cf827d571dc657b2fe25892642b3b94e09449776e2b9205b5ab6323b30ea",
+          "learnerProjectionSha256": "4f2ac292628a9d164fc025ae534fbd2ed9b782d6187ed2d995f424644cce5841"
+        },
+        {
+          "key": "g7-civics-counties-capitals",
+          "manifestSha256": "cb10937b09ef6c0b0ea5fd194a22645ad4e66c9f63bd0daaaf324dd0faa7871c",
+          "learnerProjectionSha256": "c6e11292d57cbe5b2b6ffb93fb02dd9f67f74a9b0eae34c8520d268ed8aa378e"
+        }
+      ],
+      "runs": 3,
+      "completed": 3,
+      "scenes": 20,
+      "axeViolations": 0,
+      "axeIncomplete": 4,
+      "pageErrors": [],
+      "writes": [],
+      "issues": []
+    },
+    "offlineLoadedDraft5": {
+      "specificGeometryFeedbackObserved": true,
+      "candidateVersion": "4.0.0-draft.5",
+      "offlineAfterLoad": true,
+      "sourceDriverSha256": "248eb44d638054027906d02705096a40a65460f7051af0471d6e2d8a1beb6487",
+      "manifests": [
+        {
+          "key": "g7-math-area-perimeter",
+          "manifestSha256": "1013cf827d571dc657b2fe25892642b3b94e09449776e2b9205b5ab6323b30ea",
+          "learnerProjectionSha256": "4f2ac292628a9d164fc025ae534fbd2ed9b782d6187ed2d995f424644cce5841"
+        },
+        {
+          "key": "g7-civics-counties-capitals",
+          "manifestSha256": "cb10937b09ef6c0b0ea5fd194a22645ad4e66c9f63bd0daaaf324dd0faa7871c",
+          "learnerProjectionSha256": "c6e11292d57cbe5b2b6ffb93fb02dd9f67f74a9b0eae34c8520d268ed8aa378e"
+        }
+      ],
+      "runs": 3,
+      "completed": 3,
+      "scenes": 20,
+      "axeViolations": 0,
+      "axeIncomplete": 4,
+      "pageErrors": [],
+      "writes": [],
+      "issues": []
+    },
+    "deterministicRegeneration": {
+      "perCandidateIndependentBuilds": 2,
+      "committedBytesMatch": true,
+      "repeatWritesPreserveMtimes": true,
+      "bundledCliExit": 0
+    },
+    "typescript": {
+      "exitCode": 0,
+      "snapshot": "75f866065e14423b0df916c4db7162cabe0ffad0",
+      "log": "C:/liberia-learn/.task-worktrees/v4-final/artifacts/v4-final/tsc-75f866065.log",
+      "includes": "T2 ecc454e58 and T1 equality-narrowing follow-up"
+    },
+    "productionBuild": {
+      "snapshot": "75f866065e14423b0df916c4db7162cabe0ffad0",
+      "command": "npm run build",
+      "exitCode": 0,
+      "log": "C:/liberia-learn/.task-worktrees/v4-r7-build/artifacts-r7-production-build.log",
+      "logFileSha256": "f2cf0273af6e6e5bf10b619895a268edaacfe727f65fd2fa63bd7ae7ecf0f9b9",
+      "staticPages": 392,
+      "environment": "one CPU; no .env.local; unreachable localhost database URLs; no font mock",
+      "warnings": [
+        "Existing lint, dependency and optional-service warnings.",
+        "Windows EPERM copying junctioned node_modules into standalone output; this run does not certify standalone packaging."
+      ]
+    },
+    "actualNextPage": {
+      "snapshot": "d0e434bbc350488c723a56b0c8098bd9b658f596",
+      "owner": "Chief of Staff independent QA",
+      "harness": "Actual gated Next.js dev route, authenticated synthetic reviewer, local throwaway Postgres",
+      "testCondition": "Service workers allowed; only the app-wide PWA toast is hidden by test CSS. No force clicks or relaxed assertions. See COS-R7-RESPONSIVE-RESOLVED.md.",
+      "versions": [
+        {
+          "version": "4.0.0-draft.4",
+          "evidencePath": "C:/liberia-learn/.task-worktrees/v4-final/artifacts/cos-v4/next-route/4.0.0-draft.4/evidence.json",
+          "evidenceFileSha256": "2c79e2d9290a4ff463570ac9c4aab9b6ee1abb79014d5921044cd6b818729b1f",
+          "runs": 11,
+          "completed": 11,
+          "scenes": 74,
+          "axeViolations": 0,
+          "pageErrors": 0,
+          "networkWrites": 0,
+          "overflow": 0,
+          "blockErrors": 0,
+          "payloadCanaries": 0,
+          "nonEmptyGovernedItems": 0,
+          "dbWriteStatements": 0,
+          "hosts": {
+            "127.0.0.1:3215": 224
+          }
+        },
+        {
+          "version": "4.0.0-draft.5",
+          "evidencePath": "C:/liberia-learn/.task-worktrees/v4-final/artifacts/cos-v4/next-route/4.0.0-draft.5/evidence.json",
+          "evidenceFileSha256": "744b742a4ea2aaaa6e7ada70da06a7bcd2b8f6d3dc97583bad168fb6ac979d6e",
+          "runs": 7,
+          "completed": 7,
+          "scenes": 48,
+          "axeViolations": 0,
+          "pageErrors": 0,
+          "networkWrites": 0,
+          "overflow": 0,
+          "blockErrors": 0,
+          "payloadCanaries": 0,
+          "nonEmptyGovernedItems": 0,
+          "dbWriteStatements": 0,
+          "hosts": {
+            "127.0.0.1:3215": 168
+          }
+        }
+      ]
+    },
+    "production404": {
+      "snapshot": "75f866065e14423b0df916c4db7162cabe0ffad0",
+      "mode": "next start after npm run build",
+      "LAB_REVIEW_HARNESS": "1",
+      "database": "unreachable localhost only; no env file",
+      "rows": [
+        {
+          "path": "/lab-review/v4-lessons",
+          "authenticatedSyntheticReviewer": false,
+          "status": 404,
+          "playerRendered": false
+        },
+        {
+          "path": "/lab-review/v4-lessons/factory@4.0.0-draft.5@g7-math-area-perimeter",
+          "authenticatedSyntheticReviewer": false,
+          "status": 404,
+          "playerRendered": false
+        },
+        {
+          "path": "/lab-review/v4-lessons",
+          "authenticatedSyntheticReviewer": true,
+          "status": 404,
+          "playerRendered": false
+        },
+        {
+          "path": "/lab-review/v4-lessons/factory@4.0.0-draft.5@g7-math-area-perimeter",
+          "authenticatedSyntheticReviewer": true,
+          "status": 404,
+          "playerRendered": false
+        }
+      ],
+      "exitCode": 0,
+      "evidencePath": "C:/liberia-learn/.task-worktrees/v4-r7-build/artifacts-r7-production-404.json"
+    },
+    "independentFullSuite": {
+      "owner": "Chief of Staff",
+      "snapshot": "d0e434bbc350488c723a56b0c8098bd9b658f596",
+      "filesPassed": 820,
+      "filesSkipped": 2,
+      "testsPassed": 8395,
+      "testsSkipped": 19,
+      "exitCode": 0,
+      "log": "C:/liberia-learn/.task-worktrees/v4-final/artifacts/v4-final/vitest-full-d0e434bbc.log"
+    }
+  },
+  "limits": [
+    "All packages remain reviewer-only DRAFT, REVISION_REQUIRED; no publication or academic approval.",
+    "Cold service-worker installation, manual screen-reader/device checks and protected-key comparison with authorized governed resources remain pending.",
+    "Real Next page requires the existing root ConsentGate SELECT against synthetic local Postgres. No production database may be used.",
+    "The app-wide PWA lifecycle toast can intercept clicks; the independent responsive rerun suppresses that single element and does not certify its UX.",
+    "npm run build and compiled next start pass. Windows standalone output copying warns EPERM on the shared node_modules junction; deployment packaging remains a separate platform gate."
+  ],
+  "actions": {
+    "pushed": false,
+    "mergedByT2": false,
+    "deployed": false,
+    "studentRecordsModified": false,
+    "published": false
+  },
+  "additionalFactualReview": {
+    "source": "https://assets.publishing.service.gov.uk/media/5a81506ee5274a2e87dbcf2e/Liberia_Administrative_Divisions.pdf",
+    "date": "2015-03",
+    "scope": "All fifteen county-centre names agree with the retained register. Supplementary engineering check, not current qualified curriculum attestation. No map reused."
+  },
+  "sourceManifests": [
+    {
+      "version": "4.0.0-draft.4",
+      "path": "curriculum/factory-v4/reference-inputs.json",
+      "fileSha256": "40492a9f02b51e4b03cc1216c0ac12967698cb0970d8b36d96496deb130d04ea",
+      "canonicalSha256": "60883779051198a7bdbc8a389d97c186376fc7b050599fdb32aa4c72f9aa01a2"
+    },
+    {
+      "version": "4.0.0-draft.5",
+      "path": "curriculum/factory-v4/draft5-inputs.json",
+      "fileSha256": "18200cbc9039dabe8803fd79959c02314c52b347cc802a26b5e7a2eaf6e428a3",
+      "canonicalSha256": "88b7a18ecd3ad9d0e080ad918e3e7bb29227b0f2e0a7672d72416e6c0d323ba5"
+    }
+  ]
+}
