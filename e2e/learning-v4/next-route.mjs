@@ -4,7 +4,7 @@
 // driver from run.mjs (read at run time so that file stays byte-identical for the T2/CoS adapters), opens the reference
 // fixture, and confirms invalid selections play nothing. Records screenshots, axe, layout, requests and payload canaries.
 // Usage: node e2e/learning-v4/next-route.mjs   (port 3217; writes artifacts/learning-v4/next-route)
-import { spawn } from "node:child_process";
+import { spawn, spawnSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import fs from "node:fs/promises";
 import { createRequire } from "node:module";
@@ -43,10 +43,12 @@ const experience = JSON.parse(await fs.readFile(`${pkg}/learner-projection.json`
 const manifest = JSON.parse(await fs.readFile(`${pkg}/manifest.json`, "utf8"));
 const SELECTION = `factory@${VERSION}@${KEY}`;
 
+// Never drive a server this run did not start (an orphaned dev server would answer instead).
+if (await fetch(BASE, { signal: AbortSignal.timeout(2000) }).then(() => true, () => false)) throw Error(`port ${PORT} is already in use; stop that server first`);
 const server = spawn(process.platform === "win32" ? "npx.cmd" : "npx", ["next", "dev", "-p", String(PORT)], { env, shell: process.platform === "win32", stdio: ["ignore", "pipe", "pipe"] });
 let serverLog = "";
 server.stdout.on("data", (chunk) => { serverLog += chunk; }); server.stderr.on("data", (chunk) => { serverLog += chunk; });
-const stop = () => { try { process.platform === "win32" ? spawn("taskkill", ["/pid", String(server.pid), "/T", "/F"]) : server.kill("SIGTERM"); } catch { /* already gone */ } };
+const stop = () => { try { process.platform === "win32" ? spawnSync("taskkill", ["/pid", String(server.pid), "/T", "/F"]) : server.kill("SIGTERM"); } catch { /* already gone */ } };
 for (let i = 0; i < 240 && !/Ready in|started server/i.test(serverLog); i++) await new Promise((resolve) => setTimeout(resolve, 1000));
 
 const evidence = { generatedAt: new Date().toISOString(), route: ROUTE, selection: SELECTION, versionsOnDisk: versions, manifest: { candidateVersion: manifest.candidateVersion, packageHash: manifest.packageHash, learnerProjectionSha256: manifest.learnerProjectionSha256 }, gallery: {}, plays: {}, reference: {}, invalid: {}, canaries: {}, axe: {}, errors: [], writes: [], hosts: [] };
@@ -57,7 +59,7 @@ const reviewerToken = await encode({ secret: env.NEXTAUTH_SECRET, token: { id: R
 const browser = await chromium.launch({ headless: true });
 
 async function newPage(width, height) {
-  const context = await browser.newContext({ viewport: { width, height }, reducedMotion: "reduce", serviceWorkers: "block" });
+  const context = await browser.newContext({ viewport: { width, height }, reducedMotion: "reduce", serviceWorkers: "block", bypassCSP: true }); // CSP bypass only so axe can be injected
   await context.addCookies([{ name: "next-auth.session-token", value: reviewerToken, url: BASE, httpOnly: true, sameSite: "Lax" }]);
   const page = await context.newPage();
   page.setDefaultTimeout(60000); page.setDefaultNavigationTimeout(300000);
