@@ -3,8 +3,10 @@ import { createHash } from "crypto";
 import { canonicalizeJson } from "@/lib/curriculum/provenance/hash";
 import { ASSESSMENT_EVIDENCE_KINDS } from "@/lib/curriculum/excellence/assessmentBlueprint";
 import { SCAFFOLD_LEVELS } from "@/lib/curriculum/v2/contract";
+import { V4_INSTRUCTION_STANDARD } from "@/lib/learner-experience/teaching/instruction";
 
 export const UNIT_BLUEPRINT_VERSION = "unit-blueprint/2.1.0" as const;
+export const UNIT_BLUEPRINT_V4_VERSION = "unit-blueprint/2.2.0" as const;
 export const FACTORY_ROLES = ["CURRICULUM_ARCHITECT", "LEARNING_SCIENCE_DESIGNER", "LESSON_AUTHOR", "ASSESSMENT_DESIGNER", "PROJECT_PRACTICAL_DESIGNER", "MEDIA_ACCESSIBILITY", "INDEPENDENT_QUALITY_REVIEWER", "GOVERNANCE_RELEASE"] as const;
 export type FactoryRole = typeof FACTORY_ROLES[number];
 export const RESOURCE_KINDS = ["DESIGN_NOTE", "LESSON", "CLASSWORK", "HOMEWORK", "QUIZ", "SUMMATIVE", "PRACTICAL", "PROJECT", "TEACHER_GUIDE", "ANSWER_KEY", "RUBRIC", "WORKSHEET", "ACCESSIBLE_ASSET", "RETENTION", "TRANSFER", "EXTENSION"] as const;
@@ -18,7 +20,7 @@ export const exactPinSchema = z.strictObject({ id, version: id, sha256, sourceRe
 export type ExactPin = z.infer<typeof exactPinSchema>;
 
 export const unitBlueprintSchema = z.strictObject({
-  schemaVersion: z.enum(["unit-blueprint/2.0.0", UNIT_BLUEPRINT_VERSION]), blueprintId: id, version, contentHash: sha256,
+  schemaVersion: z.enum(["unit-blueprint/2.0.0", UNIT_BLUEPRINT_VERSION, UNIT_BLUEPRINT_V4_VERSION]), blueprintId: id, version, contentHash: sha256,
   grade: z.number().int().min(1).max(12), subject: id, unitId: id, title: text,
   repositoryCommit: z.string().regex(/^[a-f0-9]{40}$/), sources: z.array(exactPinSchema).min(1),
   objectives: z.array(z.strictObject({ id, kind: z.enum(["NATIONAL", "LIBERIALEARN_MASTERY", "GLOBAL_EXCELLENCE", "LIBERIALEARN_EXTENSION"]), statement: text,
@@ -46,6 +48,7 @@ export const unitBlueprintSchema = z.strictObject({
   legacy: z.array(z.strictObject({ databaseId: id, contentId: id, revisionId: id, revisionNumber: z.number().int().nonnegative(), snapshotSha256: sha256, inventoryPin: exactPinSchema })),
   legacyLeads: z.array(z.strictObject({ identifier: id, reportedNamespace: z.literal("REVISION_ID_IN_PR191"), subject: id, reportedTitle: text, verification: z.literal("UNVERIFIED_REFERENCE_ONLY") })).optional(),
   unresolved: z.array(text),
+  instructionStandard: z.literal(V4_INSTRUCTION_STANDARD).optional(),
 });
 export type UnitBlueprint = z.infer<typeof unitBlueprintSchema>;
 export type BlueprintRef = Pick<UnitBlueprint, "blueprintId" | "version" | "contentHash">;
@@ -64,6 +67,7 @@ export function blueprintRef(blueprint: UnitBlueprint): BlueprintRef {
 /** Parse before generation. References and sequencing are validated as one contract. */
 export function parseBlueprint(input: unknown): UnitBlueprint {
   const b = unitBlueprintSchema.parse(input);
+  if ((b.schemaVersion === UNIT_BLUEPRINT_V4_VERSION) !== (b.instructionStandard === V4_INSTRUCTION_STANDARD)) throw new Error("instruction_standard_requires_blueprint_2_2");
   if (b.schemaVersion === "unit-blueprint/2.0.0" && b.objectives.some(o => o.kind === "LIBERIALEARN_MASTERY" || o.kind === "GLOBAL_EXCELLENCE")) throw new Error("objective_layers_require_blueprint_2_1");
   if (b.contentHash !== blueprintHash(b)) throw new Error("blueprint_hash_mismatch");
   const unique = (values: string[]) => { if (new Set(values).size !== values.length) throw new Error("duplicate_identity"); };

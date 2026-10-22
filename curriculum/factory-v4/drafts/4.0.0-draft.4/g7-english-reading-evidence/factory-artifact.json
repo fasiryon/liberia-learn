@@ -1,0 +1,557 @@
+{
+  "id": "g7-english-reading-evidence-lesson",
+  "version": "4.0.0",
+  "payload": {
+    "kind": "LESSON",
+    "candidate": {
+      "contractVersion": "candidate-lesson-v2/1.1.0",
+      "title": "Generated: Read for an evidence-based inference",
+      "instruction": {
+        "standard": "liberialearn-v4-instruction/1.0.0",
+        "retention": {
+          "delayDays": 7,
+          "prompts": [
+            "After seven days, independently explain: Read an informational text, explain words from context, and answer literal and inferential questions about it.",
+            "Apply the idea to a new context and justify the evidence or calculations used. This is a request for a governed retention task, not a scheduled or scored item."
+          ]
+        }
+      },
+      "estimatedMinutes": 45,
+      "ageBand": "JUNIOR_SECONDARY",
+      "pedagogy": {
+        "primaryStrategy": "GUIDED_TO_INDEPENDENT",
+        "rationale": "Generate representations and worked reasoning from a versioned subject plan, then fade support before independent work and transfer."
+      },
+      "prerequisiteAssumptions": [
+        "Can read or access the text equivalent and explain a response in writing or speech."
+      ],
+      "misconceptions": [
+        {
+          "id": "generated-english-misconception",
+          "objectiveId": "ll-g7-eng-read-infer",
+          "description": "Treats an unsupported claim as if it were established by evidence.",
+          "response": "Compare the claim with the labelled representation and explain what evidence would support it."
+        }
+      ],
+      "scenes": [
+        {
+          "id": "generated-1",
+          "type": "EXPLANATION",
+          "title": "Read for an evidence-based inference",
+          "purpose": "EXPLAIN_CONCEPT",
+          "objectiveIds": [
+            "ll-g7-eng-read-infer",
+            "ll-g7-eng-cite-evidence",
+            "ll-g7-eng-evidence-paragraph"
+          ],
+          "learnerAction": "Use the model, complete its task, and explain what the representation shows.",
+          "content": {
+            "body": "This original synthetic story is a demonstration, not an account of a real school. Read the actions carefully before deciding what they show about cooperation. Keep the author's words distinct from your interpretation."
+          },
+          "interaction": {
+            "kind": "NONE"
+          },
+          "tools": {
+            "requested": [],
+            "prohibited": []
+          },
+          "hints": [],
+          "misconceptionIds": [
+            "generated-english-misconception"
+          ],
+          "evidence": {
+            "kind": "NONE"
+          },
+          "accessibility": {
+            "textAlternative": "This original synthetic story is a demonstration, not an account of a real school. Read the actions carefully before deciding what they show about cooperation. Keep the author's words distinct from your interpretation. The seed library. When the dry season ended, Satta found three empty seed tins beside the school garden. She asked each family to bring a small share of seeds. On Friday, the class labelled the tins and wrote down who had contributed. A younger pupil worried that only families with money could help. Satta pointed to the list. Some families had given seeds, some had cleaned tins, and others had taught the class when to plant. By the next week, every pupil could borrow seeds and promise to return some after the harvest.",
+            "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+            "reducedMotion": "STATIC_EQUIVALENT"
+          },
+          "offline": {
+            "mode": "FULL_OFFLINE",
+            "note": "Models and formative checks use cached lesson data. Paper responses are capture only; no official grade is produced."
+          },
+          "completion": "VIEWED",
+          "pedagogy": {
+            "strategy": "GUIDED_TO_INDEPENDENT",
+            "representation": "MIXED",
+            "scaffoldLevel": "FULL"
+          },
+          "teaching": {
+            "phase": "READ",
+            "blocks": [
+              {
+                "type": "READING_PASSAGE",
+                "id": "seed-passage",
+                "title": "The seed library",
+                "paragraphs": [
+                  "When the dry season ended, Satta found three empty seed tins beside the school garden. She asked each family to bring a small share of seeds. On Friday, the class labelled the tins and wrote down who had contributed.",
+                  "A younger pupil worried that only families with money could help. Satta pointed to the list. Some families had given seeds, some had cleaned tins, and others had taught the class when to plant. By the next week, every pupil could borrow seeds and promise to return some after the harvest."
+                ],
+                "glossary": [
+                  {
+                    "term": "contributed",
+                    "meaning": "gave something to help a shared effort"
+                  },
+                  {
+                    "term": "harvest",
+                    "meaning": "the crop gathered when it is ready"
+                  }
+                ],
+                "origin": {
+                  "kind": "ORIGINAL_FOR_LIBERIALEARN",
+                  "license": "Original synthetic demonstration; internal review only",
+                  "attribution": "LiberiaLearn Content Factory V4 deterministic author"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "generated-2",
+          "type": "PRACTICE",
+          "title": "Check meaning with support",
+          "purpose": "GUIDED_PRACTICE",
+          "objectiveIds": [
+            "ll-g7-eng-read-infer",
+            "ll-g7-eng-cite-evidence",
+            "ll-g7-eng-evidence-paragraph"
+          ],
+          "learnerAction": "Use the model, complete its task, and explain what the representation shows.",
+          "content": {
+            "body": "Worked inference: the contribution list includes seeds, work and knowledge. Those different contributions support the claim that help can take several forms. A strong inference joins an exact detail to a reason, rather than treating an opinion as a quotation."
+          },
+          "interaction": {
+            "kind": "NONE"
+          },
+          "tools": {
+            "requested": [],
+            "prohibited": []
+          },
+          "hints": [],
+          "misconceptionIds": [
+            "generated-english-misconception"
+          ],
+          "evidence": {
+            "kind": "NONE"
+          },
+          "accessibility": {
+            "textAlternative": "Worked inference: the contribution list includes seeds, work and knowledge. Those different contributions support the claim that help can take several forms. A strong inference joins an exact detail to a reason, rather than treating an opinion as a quotation. What does contributed mean in this story? Options: Gave something to help the shared effort.; Paid money in every case.. Which detail supports several ways to help? Options: Some cleaned tins and others taught when to plant.; The dry season ended..",
+            "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+            "reducedMotion": "STATIC_EQUIVALENT"
+          },
+          "offline": {
+            "mode": "FULL_OFFLINE",
+            "note": "Models and formative checks use cached lesson data. Paper responses are capture only; no official grade is produced."
+          },
+          "completion": "VIEWED",
+          "pedagogy": {
+            "strategy": "GUIDED_TO_INDEPENDENT",
+            "representation": "MIXED",
+            "scaffoldLevel": "PARTIAL"
+          },
+          "teaching": {
+            "phase": "UNDERSTAND",
+            "blocks": [
+              {
+                "type": "CHECK",
+                "id": "vocabulary-check",
+                "items": [
+                  {
+                    "id": "vocabulary-check-item",
+                    "prompt": "What does contributed mean in this story?",
+                    "options": [
+                      {
+                        "id": "reason",
+                        "text": "Gave something to help the shared effort.",
+                        "feedback": "The story includes seeds, work and knowledge, so contribution is broader than payment."
+                      },
+                      {
+                        "id": "other",
+                        "text": "Paid money in every case.",
+                        "feedback": "Compare this claim with the model and its evidence."
+                      }
+                    ],
+                    "formativeKey": {
+                      "expectedOptionId": "reason"
+                    },
+                    "misconceptionId": "generated-english-misconception"
+                  }
+                ]
+              },
+              {
+                "type": "CHECK",
+                "id": "inference-check",
+                "items": [
+                  {
+                    "id": "inference-check-item",
+                    "prompt": "Which detail supports several ways to help?",
+                    "options": [
+                      {
+                        "id": "reason",
+                        "text": "Some cleaned tins and others taught when to plant.",
+                        "feedback": "The varied actions support the inference; a seasonal detail does not establish it."
+                      },
+                      {
+                        "id": "other",
+                        "text": "The dry season ended.",
+                        "feedback": "Compare this claim with the model and its evidence."
+                      }
+                    ],
+                    "formativeKey": {
+                      "expectedOptionId": "reason"
+                    },
+                    "misconceptionId": "generated-english-misconception"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "generated-3",
+          "type": "PRACTICE",
+          "title": "Annotate evidence independently",
+          "purpose": "EXPLAIN_CONCEPT",
+          "objectiveIds": [
+            "ll-g7-eng-read-infer",
+            "ll-g7-eng-cite-evidence",
+            "ll-g7-eng-evidence-paragraph"
+          ],
+          "learnerAction": "Explain how one selected detail supports the claim. State an alternative inference the passage does not establish.",
+          "content": {
+            "body": "Select evidence that supports the claim that cooperation includes more than money. Separate relevant details from background information."
+          },
+          "interaction": {
+            "kind": "FREE_RESPONSE",
+            "prompts": [
+              {
+                "id": "generated-3-response-0",
+                "prompt": "Explain how one selected detail supports the claim. State an alternative inference the passage does not establish.",
+                "minLength": 20
+              }
+            ]
+          },
+          "tools": {
+            "requested": [],
+            "prohibited": []
+          },
+          "hints": [],
+          "misconceptionIds": [
+            "generated-english-misconception"
+          ],
+          "evidence": {
+            "kind": "NONE"
+          },
+          "accessibility": {
+            "textAlternative": "Select evidence that supports the claim that cooperation includes more than money. Separate relevant details from background information. The seed library. Some families had given seeds, some had cleaned tins, and others had taught the class when to plant. By the next week, every pupil could borrow seeds and promise to return some after the harvest. When the dry season ended, Satta found three empty seed tins beside the school garden. Which details support more than one form of contribution? Explain how one selected detail supports the claim. State an alternative inference the passage does not establish.",
+            "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+            "reducedMotion": "STATIC_EQUIVALENT"
+          },
+          "offline": {
+            "mode": "FULL_OFFLINE",
+            "note": "Models and formative checks use cached lesson data. Paper responses are capture only; no official grade is produced."
+          },
+          "completion": "ALL_RESPONSES_WRITTEN",
+          "pedagogy": {
+            "strategy": "GUIDED_TO_INDEPENDENT",
+            "representation": "MIXED",
+            "scaffoldLevel": "NONE"
+          },
+          "teaching": {
+            "phase": "ANALYZE",
+            "blocks": [
+              {
+                "type": "SOURCE_EVIDENCE",
+                "id": "seed-annotation",
+                "source": {
+                  "title": "The seed library",
+                  "kind": "PASSAGE",
+                  "origin": {
+                    "kind": "ORIGINAL_FOR_LIBERIALEARN",
+                    "license": "Original synthetic demonstration; internal review only",
+                    "attribution": "LiberiaLearn Content Factory V4 deterministic author"
+                  }
+                },
+                "question": "Which details support more than one form of contribution?",
+                "sentences": [
+                  {
+                    "id": "work",
+                    "text": "Some families had given seeds, some had cleaned tins, and others had taught the class when to plant.",
+                    "supports": true,
+                    "why": "This names materials, work and knowledge."
+                  },
+                  {
+                    "id": "access",
+                    "text": "By the next week, every pupil could borrow seeds and promise to return some after the harvest.",
+                    "supports": true,
+                    "why": "Shared access shows the result of different contributions."
+                  },
+                  {
+                    "id": "season",
+                    "text": "When the dry season ended, Satta found three empty seed tins beside the school garden.",
+                    "supports": false,
+                    "why": "This establishes the setting but does not show the range of contributions."
+                  }
+                ],
+                "minSelect": 2
+              }
+            ]
+          }
+        },
+        {
+          "id": "generated-4",
+          "type": "PRACTICE",
+          "title": "Write an independent paragraph",
+          "purpose": "INDEPENDENT_PRACTICE",
+          "objectiveIds": [
+            "ll-g7-eng-read-infer",
+            "ll-g7-eng-cite-evidence",
+            "ll-g7-eng-evidence-paragraph"
+          ],
+          "learnerAction": "Use the model, complete its task, and explain what the representation shows.",
+          "content": {
+            "body": "Write a claim, quote an exact detail, and explain how it supports your inference. Do not copy the model explanation. You are writing about this story, not making claims about all Liberian schools."
+          },
+          "interaction": {
+            "kind": "NONE"
+          },
+          "tools": {
+            "requested": [],
+            "prohibited": []
+          },
+          "hints": [],
+          "misconceptionIds": [
+            "generated-english-misconception"
+          ],
+          "evidence": {
+            "kind": "NONE"
+          },
+          "accessibility": {
+            "textAlternative": "Write a claim, quote an exact detail, and explain how it supports your inference. Do not copy the model explanation. You are writing about this story, not making claims about all Liberian schools. Explain how the seed library depends on different contributions. Claim: State your conclusion precisely. Evidence and reasoning: Quote or describe relevant evidence and explain the link to your claim.",
+            "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+            "reducedMotion": "STATIC_EQUIVALENT"
+          },
+          "offline": {
+            "mode": "FULL_OFFLINE",
+            "note": "Models and formative checks use cached lesson data. Paper responses are capture only; no official grade is produced."
+          },
+          "completion": "VIEWED",
+          "pedagogy": {
+            "strategy": "GUIDED_TO_INDEPENDENT",
+            "representation": "MIXED",
+            "scaffoldLevel": "NONE"
+          },
+          "teaching": {
+            "phase": "CONSTRUCT",
+            "blocks": [
+              {
+                "type": "WRITING_ORGANIZER",
+                "id": "seed-writing",
+                "prompt": "Explain how the seed library depends on different contributions.",
+                "sourceBlockId": "seed-passage",
+                "fields": [
+                  {
+                    "id": "claim",
+                    "label": "Claim",
+                    "guidance": "State your conclusion precisely.",
+                    "minWords": 8
+                  },
+                  {
+                    "id": "evidence",
+                    "label": "Evidence and reasoning",
+                    "guidance": "Quote or describe relevant evidence and explain the link to your claim.",
+                    "minWords": 15
+                  }
+                ],
+                "checklist": [
+                  "My evidence supports my claim.",
+                  "I explained the reasoning and checked an alternative."
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "generated-5",
+          "type": "PRACTICE",
+          "title": "Revise for precision and evidence",
+          "purpose": "EXPLAIN_CONCEPT",
+          "objectiveIds": [
+            "ll-g7-eng-read-infer",
+            "ll-g7-eng-cite-evidence",
+            "ll-g7-eng-evidence-paragraph"
+          ],
+          "learnerAction": "Give your original sentence, its revision, and the reason the revision is better supported.",
+          "content": {
+            "body": "Reread your first paragraph. Check that the quotation occurs in the passage and that your explanation follows from it. Replace an unsupported generalisation with a precise claim, and explain the effect of your change."
+          },
+          "interaction": {
+            "kind": "FREE_RESPONSE",
+            "prompts": [
+              {
+                "id": "generated-5-response-0",
+                "prompt": "Give your original sentence, its revision, and the reason the revision is better supported.",
+                "minLength": 20
+              }
+            ]
+          },
+          "tools": {
+            "requested": [],
+            "prohibited": []
+          },
+          "hints": [],
+          "misconceptionIds": [
+            "generated-english-misconception"
+          ],
+          "evidence": {
+            "kind": "NONE"
+          },
+          "accessibility": {
+            "textAlternative": "Reread your first paragraph. Check that the quotation occurs in the passage and that your explanation follows from it. Replace an unsupported generalisation with a precise claim, and explain the effect of your change. Produce a revised paragraph, then explain one change that improves its reasoning. Claim: State your conclusion precisely. Evidence and reasoning: Quote or describe relevant evidence and explain the link to your claim. Give your original sentence, its revision, and the reason the revision is better supported.",
+            "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+            "reducedMotion": "STATIC_EQUIVALENT"
+          },
+          "offline": {
+            "mode": "FULL_OFFLINE",
+            "note": "Models and formative checks use cached lesson data. Paper responses are capture only; no official grade is produced."
+          },
+          "completion": "ALL_RESPONSES_WRITTEN",
+          "pedagogy": {
+            "strategy": "GUIDED_TO_INDEPENDENT",
+            "representation": "MIXED",
+            "scaffoldLevel": "FULL"
+          },
+          "teaching": {
+            "phase": "REVISE",
+            "blocks": [
+              {
+                "type": "WRITING_ORGANIZER",
+                "id": "seed-revision",
+                "prompt": "Produce a revised paragraph, then explain one change that improves its reasoning.",
+                "sourceBlockId": "seed-passage",
+                "fields": [
+                  {
+                    "id": "claim",
+                    "label": "Claim",
+                    "guidance": "State your conclusion precisely.",
+                    "minWords": 8
+                  },
+                  {
+                    "id": "evidence",
+                    "label": "Evidence and reasoning",
+                    "guidance": "Quote or describe relevant evidence and explain the link to your claim.",
+                    "minWords": 15
+                  }
+                ],
+                "checklist": [
+                  "My evidence supports my claim.",
+                  "I explained the reasoning and checked an alternative."
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "generated-assess",
+          "type": "MASTERY_CHECK",
+          "title": "Independent assessment handoff",
+          "purpose": "ASSESS_MASTERY",
+          "objectiveIds": [
+            "ll-g7-eng-read-infer",
+            "ll-g7-eng-cite-evidence",
+            "ll-g7-eng-evidence-paragraph"
+          ],
+          "learnerAction": "Complete the governed assessment independently when an authorized draft form is supplied.",
+          "content": {
+            "body": "Only Assessment Player V2 can collect and score governed assessment responses. This draft has no approved form or official score."
+          },
+          "interaction": {
+            "kind": "ASSESSMENT_HANDOFF",
+            "assessmentRequestId": "generated-mastery"
+          },
+          "tools": {
+            "requested": [],
+            "prohibited": []
+          },
+          "hints": [],
+          "misconceptionIds": [],
+          "evidence": {
+            "kind": "MASTERY_RESPONSE",
+            "evidenceType": "QUIZ",
+            "responses": [
+              {
+                "responseKey": "assessment-0",
+                "objectiveId": "ll-g7-eng-read-infer",
+                "responseType": "ASSESSMENT_RESPONSE",
+                "scaffoldLevel": "NONE"
+              },
+              {
+                "responseKey": "assessment-1",
+                "objectiveId": "ll-g7-eng-cite-evidence",
+                "responseType": "ASSESSMENT_RESPONSE",
+                "scaffoldLevel": "NONE"
+              },
+              {
+                "responseKey": "assessment-2",
+                "objectiveId": "ll-g7-eng-evidence-paragraph",
+                "responseType": "ASSESSMENT_RESPONSE",
+                "scaffoldLevel": "NONE"
+              }
+            ]
+          },
+          "accessibility": {
+            "textAlternative": "The lesson requests a separate independent assessment. This draft contains no governed assessment questions or protected scoring material.",
+            "keyboardPath": "Use the assessment player's labelled questions and Submit control when an authorized form is available.",
+            "reducedMotion": "NOT_APPLICABLE"
+          },
+          "offline": {
+            "mode": "FULL_OFFLINE",
+            "note": "No assessment form is cached by this draft. Paper work is capture only and cannot establish an official grade."
+          },
+          "completion": "ALL_ANSWERED",
+          "teaching": {
+            "phase": "ASSESS",
+            "blocks": []
+          }
+        }
+      ],
+      "assessmentRequests": [
+        {
+          "id": "generated-mastery",
+          "objectiveIds": [
+            "ll-g7-eng-read-infer",
+            "ll-g7-eng-cite-evidence",
+            "ll-g7-eng-evidence-paragraph"
+          ],
+          "interaction": "FREE_RESPONSE",
+          "evidenceType": "QUIZ",
+          "difficulty": "CORE",
+          "misconceptionIds": [
+            "generated-english-misconception"
+          ],
+          "tools": {
+            "requested": [],
+            "prohibited": []
+          },
+          "offline": "FULL_OFFLINE"
+        }
+      ],
+      "labProposals": []
+    }
+  },
+  "role": "LESSON_AUTHOR",
+  "author": {
+    "kind": "AI",
+    "agentId": "factory-demo:LESSON_AUTHOR",
+    "modelFamily": "deterministic-local-demo",
+    "sessionId": "LESSON_AUTHOR"
+  },
+  "blueprint": {
+    "blueprintId": "g7-english-reading-evidence-v4",
+    "version": "4.0.0",
+    "contentHash": "d87db7fcfff61382d154faf7dea506ef276854431683173ef540bc571ac4d67b"
+  },
+  "dependencies": [],
+  "contentHash": "33dcc908194309a67a5c47d965289485e218325fa6ed6143578fdf0d10fc9803"
+}

@@ -1,0 +1,164 @@
+{
+  "manifestVersion": "factory-v4-candidate/1.0.0",
+  "candidateVersion": "4.0.0-draft.4",
+  "contractVersion": "visual-teaching-block/4.0.0-draft.1",
+  "key": "g7-math-fractions",
+  "lessonId": "cv4-cand-g7-math-fractions",
+  "grade": 7,
+  "subject": "MATH",
+  "title": "Generated: Same whole, equal parts",
+  "state": "DRAFT",
+  "approved": false,
+  "published": false,
+  "released": false,
+  "learnerDeliverable": false,
+  "audience": "REVIEWER_ONLY",
+  "contentOrigin": "DETERMINISTIC_FACTORY_EXECUTOR_WITH_SYNTHETIC_TEACHING_CONTEXTS",
+  "generation": {
+    "executor": "factory-v4-lesson-author/1.0.0",
+    "role": "LESSON_AUTHOR",
+    "referenceFixtureCopied": false,
+    "modelCalls": 0
+  },
+  "sourceLineage": {
+    "kind": "FIRST_TEN_BOUND",
+    "contentId": "lesson_mca_1",
+    "contentPk": "cmlrkjnow00dmvo7o4cajgquf",
+    "legacyTitle": "Understanding and Representing Fractions in Real-Life Contexts",
+    "revisionId": "cmss8mpl0000bvo1wos7i1ew4",
+    "legacyBodySha256": "872222a2435f151d6b215488ad2c3de2cc6c130f57d68fc5d7c6898ad301314f",
+    "firstTenKey": "ft07-g7-math-fractions",
+    "contract": "liberialearn-first-ten-modernization-contract/1.0.0+FT-A001+FT-A002",
+    "specSha256": "648ec61a72e2ddff147444dadae75aff321866cfc660498a792b6a3b48e7a28b",
+    "baseline": {
+      "label": "first-three V0.2.1",
+      "packageDigest": "cc2bc9a4d5c41eeccf5a4a0f35cb3d619780f7030a021c8431495ff5a659e1aa",
+      "lessonResourceDigest": "326c912dd588d7f895559f2cb1cfc001791538874ce909798768eb57fa520a04",
+      "manifestSha256": "36da28c83688f229ac46ba5cfee72c8a74ca4a23bbbb374a60c4d80fff5db1a8",
+      "root": "C:/restricted-authoring/review-packages/first-three-v021-final",
+      "handoff": "docs/architecture/content-factory/FIRST_THREE_V021_CANDIDATES_HANDOFF.md (PR #195)",
+      "read": false
+    },
+    "snapshot": {
+      "path": "artifacts/curriculum-cleanup-v1/snapshot.json",
+      "capturedAt": "2026-09-26T09:07:15.873Z",
+      "fileSha256": "ef89632f6b447011b9092fb17501a8eac52555783aa45d3c16a52d275ebaa16c",
+      "rowSha256": "77a8650161146251841d6ae82570a26c098db5320389c52c02315217f9991e47"
+    },
+    "learnerReferences": "first-ten dependencies: 4 scheduled works, 12 progress records, 19 learning events, 1 lesson plan, 1 audio asset (retained, never rewritten)."
+  },
+  "sourceVerification": "REPOSITORY_PINS_VERIFIED_REMOTE_RIGHTS_AND_LEGACY_BODY_NOT_ATTESTED",
+  "inputPins": {
+    "manifestSha256": "60883779051198a7bdbc8a389d97c186376fc7b050599fdb32aa4c72f9aa01a2",
+    "frontendCommit": "1268773a649fd3d570450ec15c8d5c9eb93d0cf2",
+    "candidate": {
+      "path": "curriculum/v4/candidates/g7-math-fractions.json",
+      "sha256": "95c5b2995430c27ca7237e3e8c7e5864ad81aa566c039ddd2ec856e5625ce22f"
+    }
+  },
+  "candidateSha256": "89ffd523f087ae6e03fd560680e788845f7c0f9e73a993dccedd2bdfda6c4791",
+  "blueprintHash": "059c976ee8635f442990182d53e41a89b8746954b8dd6eb7ca868fa9742b6ad7",
+  "learnerProjectionSha256": "a0765419a9d125b4d2201e0bd8477f1e1df0785222bd9b3048e761212224efa6",
+  "academicSchema": {
+    "valid": true,
+    "errors": []
+  },
+  "visualInstruction": {
+    "valid": true,
+    "family": "MATHEMATICS",
+    "balance": {
+      "explanationSeconds": 249,
+      "activitySeconds": 585,
+      "activityShare": 0.701
+    },
+    "practice": {
+      "ft07-o1": {
+        "visuals": 2,
+        "workedExamples": 2,
+        "guided": 2,
+        "independent": 2,
+        "mistakes": 1,
+        "transfer": 2
+      },
+      "ft07-o2": {
+        "visuals": 2,
+        "workedExamples": 2,
+        "guided": 2,
+        "independent": 2,
+        "mistakes": 1,
+        "transfer": 2
+      },
+      "ft07-o3": {
+        "visuals": 2,
+        "workedExamples": 2,
+        "guided": 2,
+        "independent": 2,
+        "mistakes": 1,
+        "transfer": 2
+      }
+    },
+    "totals": {
+      "visuals": 6,
+      "workedExamples": 6,
+      "guided": 6,
+      "independent": 6,
+      "mistakes": 3,
+      "transfer": 6,
+      "problems": 7
+    },
+    "advisories": []
+  },
+  "accessibility": {
+    "schema": "PASS",
+    "blockBindings": 8,
+    "manualScreenReaderReview": "PENDING"
+  },
+  "offline": {
+    "mode": "TEXT_PAPER_CAPTURE_ONLY",
+    "protectedKeysCached": false,
+    "runtimeColdStartAndReconnect": "PENDING"
+  },
+  "protectedAssessment": {
+    "included": false,
+    "restrictedKeyComparison": "PENDING_AUTHORIZED_OWNER_INPUT",
+    "canonicalMasteryMutation": false
+  },
+  "factoryStatus": "REVISION_REQUIRED",
+  "releaseBlockers": [
+    "MOE_OBJECTIVE_UNBOUND",
+    "ONTOLOGY_RELEASE_MISSING",
+    "V4_HUMAN_REVIEW_REQUIRED",
+    "V021_BASELINE_RECONCILIATION",
+    "excellence:BP-COVERAGE",
+    "excellence:BP-PRODUCTION",
+    "excellence:BP-REASONING",
+    "excellence:BP-SELECTED-SHARE",
+    "excellence:BP-RETENTION",
+    "excellence:BP-TRANSFER",
+    "excellence:BP-EXTENSION",
+    "REFERENCE_LESSON_ONLY_FULL_EXCELLENCE_PACKAGE_PENDING",
+    "PROTECTED_ASSESSMENT_RECONCILIATION_REQUIRED",
+    "PREREQUISITE_DIAGNOSTIC_AND_MISCONCEPTION_ITEM_BINDINGS_PENDING",
+    "AUTHENTIC_SOURCE_COMPARISON_AND_RIGHTS_REVIEW_REQUIRED",
+    "MANUAL_ACCESSIBILITY_AND_OFFLINE_RUNTIME_QA_REQUIRED",
+    "OBJECTIVE_MAPPING_PROPOSED:ft07-o1",
+    "OBJECTIVE_MAPPING_PROPOSED:ft07-o2",
+    "OBJECTIVE_MAPPING_PROPOSED:ft07-o3",
+    "EXACT_REVISION_HUMAN_REVIEW_REQUIRED",
+    "EXPLICIT_RELEASE_AUTHORIZATION_REQUIRED",
+    "RETENTION_POLICY_APPROVAL_REQUIRED",
+    "ASSESSMENT_ITEMS_PENDING",
+    "RESTRICTED_KEY_COMPARISON_PENDING",
+    "FRONTEND_GENERATED_PACKAGE_CONSUMPTION_QA_PENDING"
+  ],
+  "files": {
+    "candidate.json": "168a3506a83ae226cd20f970073d3a393cdf145911dad00309e835167a50943a",
+    "visual-teaching.json": "0bb2b0cea06f9f2cedf1ea99c390e277fe55a826de9c02d89b19662e0986e0c5",
+    "blueprint.json": "119d43656c8a000ce7bbf951436fa0286d7e18e1c06ea95681bce193f50d2dc6",
+    "factory-artifact.json": "31a4699e75b6f5c9ea456716c76ff8aabea6041439e5bfd5ecf9b53e86cbfa24",
+    "learner-projection.json": "5fd0988ffc3fa0f1fce5b18c897392bd72f96a6437ade16d28a51d10c869b8c0",
+    "factory-receipt.json": "d894c8054e8afcb1b2959d1563b10b8e80f5ec9c30fe8952c71e98c53eb158bc",
+    "paper-alternative.txt": "d4cddb6f1100a1e7e7f9a70c972a88e3d253c096dabbeab67031e95c6e8c4bdf"
+  },
+  "packageHash": "61cb2277a93d15edfc84401cc1ad71ca2fada086040b45c83ec6e86fdc9c8f5e"
+}

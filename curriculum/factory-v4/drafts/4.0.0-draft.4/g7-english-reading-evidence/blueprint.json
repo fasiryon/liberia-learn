@@ -1,0 +1,138 @@
+{
+  "schemaVersion": "unit-blueprint/2.2.0",
+  "blueprintId": "g7-english-reading-evidence-v4",
+  "version": "4.0.0",
+  "contentHash": "d87db7fcfff61382d154faf7dea506ef276854431683173ef540bc571ac4d67b",
+  "grade": 7,
+  "subject": "ENGLISH",
+  "unitId": "g7-english-reading-evidence",
+  "title": "g7-english-reading-evidence",
+  "repositoryCommit": "1268773a649fd3d570450ec15c8d5c9eb93d0cf2",
+  "sources": [
+    {
+      "id": "v4-reference-inputs",
+      "version": "1.0.0",
+      "sha256": "60883779051198a7bdbc8a389d97c186376fc7b050599fdb32aa4c72f9aa01a2",
+      "sourceRef": "curriculum/factory-v4/reference-inputs.json"
+    }
+  ],
+  "objectives": [
+    {
+      "id": "ll-g7-eng-read-infer",
+      "kind": "LIBERIALEARN_MASTERY",
+      "statement": "Read an informational text, explain words from context, and answer literal and inferential questions about it.",
+      "sourceId": "v4-reference-inputs",
+      "sourcePointer": "moe-english-g7-s1-p1-constructing-sentences-antroduction-to-literatur-act6",
+      "scope": "REQUIRED",
+      "mapping": "PROPOSED"
+    },
+    {
+      "id": "ll-g7-eng-cite-evidence",
+      "kind": "LIBERIALEARN_MASTERY",
+      "statement": "Select and quote the sentences in a text that support an answer, and explain how they support it.",
+      "sourceId": "v4-reference-inputs",
+      "sourcePointer": "moe-english-g7-s1-p1-constructing-sentences-antroduction-to-literatur-act6",
+      "scope": "REQUIRED",
+      "mapping": "PROPOSED"
+    },
+    {
+      "id": "ll-g7-eng-evidence-paragraph",
+      "kind": "LIBERIALEARN_MASTERY",
+      "statement": "Write and revise a short paragraph that makes a claim about a text, supports it with quoted evidence and explains it.",
+      "sourceId": "v4-reference-inputs",
+      "sourcePointer": "moe-english-g7-s1-p1-constructing-sentences-antroduction-to-literatur-act6",
+      "scope": "REQUIRED",
+      "mapping": "PROPOSED"
+    }
+  ],
+  "outcomes": [
+    {
+      "id": "g7-english-reading-evidence-outcome",
+      "objectiveIds": [
+        "ll-g7-eng-read-infer",
+        "ll-g7-eng-cite-evidence",
+        "ll-g7-eng-evidence-paragraph"
+      ],
+      "demonstration": "Produce and explain an independent response and transfer it to a new context."
+    }
+  ],
+  "prerequisites": [],
+  "misconceptions": [],
+  "sequence": [
+    {
+      "resourceId": "g7-english-reading-evidence-lesson",
+      "dependsOn": [],
+      "objectiveIds": [
+        "ll-g7-eng-read-infer",
+        "ll-g7-eng-cite-evidence",
+        "ll-g7-eng-evidence-paragraph"
+      ],
+      "scaffold": "FULL"
+    }
+  ],
+  "resources": [
+    {
+      "id": "g7-english-reading-evidence-lesson",
+      "kind": "LESSON",
+      "role": "LESSON_AUTHOR",
+      "objectiveIds": [
+        "ll-g7-eng-read-infer",
+        "ll-g7-eng-cite-evidence",
+        "ll-g7-eng-evidence-paragraph"
+      ],
+      "dependsOn": [],
+      "audience": "REVIEWER_ONLY"
+    }
+  ],
+  "assessmentPlan": [
+    {
+      "id": "g7-english-reading-evidence-practice",
+      "resourceId": "g7-english-reading-evidence-lesson",
+      "itemIds": [],
+      "kind": "SHORT_CONSTRUCTED_RESPONSE",
+      "objectiveIds": [
+        "ll-g7-eng-read-infer",
+        "ll-g7-eng-cite-evidence",
+        "ll-g7-eng-evidence-paragraph"
+      ],
+      "scaffold": "NONE",
+      "timing": "IN_LESSON",
+      "context": "REHEARSED",
+      "scoring": "NOT_SCORED",
+      "source": "EXCELLENCE_PLAN",
+      "ref": "REFERENCE_LESSON_ONLY_ASSESSMENT_PENDING"
+    }
+  ],
+  "support": {
+    "differentiation": [
+      "Use the text equivalent and paper model with a teacher."
+    ],
+    "accessibility": [
+      "Scene keyboard paths and block text equivalents."
+    ],
+    "offline": {
+      "mode": "TEXT_PAPER_CAPTURE_ONLY",
+      "requirements": [
+        "Paper, pencil and printed text alternatives."
+      ],
+      "maxBytes": 2000000
+    }
+  },
+  "provenance": [
+    {
+      "id": "v4-reference-inputs",
+      "version": "1.0.0",
+      "sha256": "60883779051198a7bdbc8a389d97c186376fc7b050599fdb32aa4c72f9aa01a2",
+      "sourceRef": "curriculum/factory-v4/reference-inputs.json"
+    }
+  ],
+  "legacy": [],
+  "unresolved": [
+    "REFERENCE_LESSON_ONLY_FULL_EXCELLENCE_PACKAGE_PENDING",
+    "PROTECTED_ASSESSMENT_RECONCILIATION_REQUIRED",
+    "PREREQUISITE_DIAGNOSTIC_AND_MISCONCEPTION_ITEM_BINDINGS_PENDING",
+    "AUTHENTIC_SOURCE_COMPARISON_AND_RIGHTS_REVIEW_REQUIRED",
+    "MANUAL_ACCESSIBILITY_AND_OFFLINE_RUNTIME_QA_REQUIRED"
+  ],
+  "instructionStandard": "liberialearn-v4-instruction/1.0.0"
+}

@@ -1,0 +1,23 @@
+generated-1/blocks/0
+A schematic map of Liberia's 15 counties: Lofa (capital Voinjama), Gbarpolu (capital Bopolu), Grand Cape Mount (capital Robertsport), Bomi (capital Tubmanburg), Montserrado (capital Bensonville), Bong (capital Gbarnga), Nimba (capital Sanniquellie), Margibi (capital Kakata), Grand Bassa (capital Buchanan), River Cess (capital Cestos City), Grand Gedeh (capital Zwedru), Sinoe (capital Greenville), River Gee (capital Fish Town), Grand Kru (capital Barclayville), Maryland (capital Harper).
+Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores.
+
+generated-2/blocks/0
+Locate Bong, whose capital is Gbarnga. A schematic map of Liberia's 15 counties: Lofa (capital Voinjama), Gbarpolu (capital Bopolu), Grand Cape Mount (capital Robertsport), Bomi (capital Tubmanburg), Montserrado (capital Bensonville), Bong (capital Gbarnga), Nimba (capital Sanniquellie), Margibi (capital Kakata), Grand Bassa (capital Buchanan), River Cess (capital Cestos City), Grand Gedeh (capital Zwedru), Sinoe (capital Greenville), River Gee (capital Fish Town), Grand Kru (capital Barclayville), Maryland (capital Harper).
+Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores.
+
+generated-2/blocks/1
+Locate Montserrado, whose capital is Bensonville. A schematic map of Liberia's 15 counties: Lofa (capital Voinjama), Gbarpolu (capital Bopolu), Grand Cape Mount (capital Robertsport), Bomi (capital Tubmanburg), Montserrado (capital Bensonville), Bong (capital Gbarnga), Nimba (capital Sanniquellie), Margibi (capital Kakata), Grand Bassa (capital Buchanan), River Cess (capital Cestos City), Grand Gedeh (capital Zwedru), Sinoe (capital Greenville), River Gee (capital Fish Town), Grand Kru (capital Barclayville), Maryland (capital Harper).
+Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores.
+
+generated-2/blocks/2
+Does the drawn size of a tile establish population? Options: No; use an authoritative population table.; Yes; larger tiles always mean more residents..
+Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores.
+
+generated-4/blocks/0
+Synthetic source-comparison exercise. The map labels each county and its capital separately. The schematic does not encode population or reliable distances. A familiar-looking shape is enough to verify every administrative fact. Which statements justify checking a county-capital claim with a named source?
+Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores.
+
+generated-5/blocks/0
+Write the county and capital information you can obtain, state its verification limits, and request the additional sources needed to plan delivery. Claim: State your conclusion precisely. Evidence and reasoning: Quote or describe relevant evidence and explain the link to your claim.
+Explain why a county's capital label does not establish that a road is passable today. Write your response and reasoning on paper. Responses are capture only, never official scores.

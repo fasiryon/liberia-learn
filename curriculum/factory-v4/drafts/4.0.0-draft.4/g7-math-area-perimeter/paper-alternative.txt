@@ -1,0 +1,39 @@
+generated-1/blocks/0
+A rectangle 8 m long and 5 m wide. Area 40 square m; perimeter 26 m. Area covers the inside; perimeter follows the edge.
+Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores.
+
+generated-1/blocks/1
+A triangle with a base of 6 m and a perpendicular height of 4 m, measured at a right angle to the base. Its other two sides are 5 m and 5 m. Use perpendicular height, not a sloping side.
+Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores.
+
+generated-2/blocks/0
+An 8 m by 5 m garden needs mulch and fencing. A rectangle 8 m long and 5 m wide. Area 40 square m; perimeter 26 m. Step 1: Count 5 rows of 8 unit squares. A = 8 × 5 = 40 m² Step 2: Add all four sides. P = 2(8 + 5) = 26 m
+Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores.
+
+generated-2/blocks/1
+Find both measurements of the triangular bed. A triangle with a base of 6 m and a perpendicular height of 4 m, measured at a right angle to the base. Its other two sides are 5 m and 5 m. Step 1: Halve the base-by-height rectangle. A = 1/2 × 6 × 4 = 12 m² Step 2: Add the three boundary lengths, not the height. P = 6 + 5 + 5 = 16 m
+Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores.
+
+generated-3/blocks/0
+Find the area and the perimeter. Explain why their units differ. A rectangle 9 m long and 4 m wide. Area: write your answer with its unit. Perimeter: write your answer with its unit.
+Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores.
+
+generated-3/blocks/1
+Find the area and the perimeter. Explain why their units differ. A triangle with a base of 6 m and a perpendicular height of 4 m, measured at a right angle to the base. Its other two sides are 5 m and 5 m.. Area: write your answer with its unit. Perimeter: write your answer with its unit.
+Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores.
+
+generated-4/blocks/0
+Find the area and the perimeter. Explain why their units differ. A rectangle 11 m long and 7 m wide. Area: write your answer with its unit. Perimeter: write your answer with its unit.
+Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores.
+
+generated-4/blocks/1
+Find the area and the perimeter. Explain why their units differ. A triangle with a base of 10 m and a perpendicular height of 12 m, measured at a right angle to the base. Its other two sides are 13 m and 13 m.. Area: write your answer with its unit. Perimeter: write your answer with its unit.
+Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores.
+
+generated-5/blocks/0
+A 10 m by 4 m plot needs fencing. A learner wrote: Buy 40 metres of fencing because 10 times 4 is 40. Which diagnosis explains the mistake? Options: Multiplying side lengths finds area; fencing needs the sum of all boundary lengths.; The method already matches the model..
+Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores.
+
+generated-6/blocks/0
+Find the quantities for a new job. Floor covering in square metres: write your answer. Skirting board in metres: write your answer.
+Explain why the doorway changes the skirting length but does not remove a rectangle from the floor covering. Write your response and reasoning on paper. Responses are capture only, never official scores.

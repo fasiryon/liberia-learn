@@ -1,0 +1,148 @@
+{
+  "manifestVersion": "factory-v4-candidate/1.0.0",
+  "candidateVersion": "4.0.0-draft.4",
+  "contractVersion": "visual-teaching-block/4.0.0-draft.1",
+  "key": "math-multiplication-models",
+  "lessonId": "cv4-demo-math-multiplication-models",
+  "grade": 5,
+  "subject": "MATH",
+  "title": "Generated: Equal groups and area",
+  "state": "DRAFT",
+  "approved": false,
+  "published": false,
+  "released": false,
+  "learnerDeliverable": false,
+  "audience": "REVIEWER_ONLY",
+  "contentOrigin": "DETERMINISTIC_FACTORY_EXECUTOR_WITH_SYNTHETIC_TEACHING_CONTEXTS",
+  "generation": {
+    "executor": "factory-v4-lesson-author/1.0.0",
+    "role": "LESSON_AUTHOR",
+    "referenceFixtureCopied": false,
+    "modelCalls": 0
+  },
+  "sourceLineage": {
+    "kind": "SYNTHETIC_DEMONSTRATION",
+    "reason": "No approved source lesson teaches equal groups, arrays and the area model together; the nearest rows are listed for a curriculum owner, not bound.",
+    "relatedRows": [
+      {
+        "contentId": "math-g7-multiplication-and-division-strategies-application",
+        "title": "Multiplication and Division Strategies for Real-Life Problem Solving"
+      },
+      {
+        "contentId": "wk_krs5a_wed_p1",
+        "title": "Understanding Multiplication through Real-Life Applications"
+      }
+    ]
+  },
+  "sourceVerification": "REPOSITORY_PINS_VERIFIED_REMOTE_RIGHTS_AND_LEGACY_BODY_NOT_ATTESTED",
+  "inputPins": {
+    "manifestSha256": "60883779051198a7bdbc8a389d97c186376fc7b050599fdb32aa4c72f9aa01a2",
+    "frontendCommit": "1268773a649fd3d570450ec15c8d5c9eb93d0cf2",
+    "candidate": {
+      "path": "curriculum/v4/candidates/math-multiplication-models.json",
+      "sha256": "a3c629af5a246f6db6c0ac2d7bba901b08ea15326408196227f92378ac12ae17"
+    }
+  },
+  "candidateSha256": "e7cb4ff774a05c2888a0c8ff353f4c9861274750b368309a2199fc352591a43c",
+  "blueprintHash": "94298db4bc847ab89f08688df0467f4203d88079b1ad1fb01f5f06f45edb8c0c",
+  "learnerProjectionSha256": "e6f99e27f5ee38a3488ee796c4ce13a671c65d29120c3cd6071c86d48a6c89a8",
+  "academicSchema": {
+    "valid": true,
+    "errors": []
+  },
+  "visualInstruction": {
+    "valid": true,
+    "family": "MATHEMATICS",
+    "balance": {
+      "explanationSeconds": 140,
+      "activitySeconds": 615,
+      "activityShare": 0.815
+    },
+    "practice": {
+      "v4-demo-mult-models": {
+        "visuals": 2,
+        "workedExamples": 1,
+        "guided": 2,
+        "independent": 2,
+        "mistakes": 1,
+        "transfer": 2
+      },
+      "v4-demo-mult-area-model": {
+        "visuals": 2,
+        "workedExamples": 1,
+        "guided": 2,
+        "independent": 2,
+        "mistakes": 1,
+        "transfer": 2
+      }
+    },
+    "totals": {
+      "visuals": 4,
+      "workedExamples": 2,
+      "guided": 4,
+      "independent": 4,
+      "mistakes": 2,
+      "transfer": 4,
+      "problems": 7
+    },
+    "advisories": [
+      {
+        "code": "v4_activity_share_outside_target",
+        "severity": "ADVISORY",
+        "detail": "81% activity (target 65–75%); do not pad with repetitive questions to reach it."
+      }
+    ]
+  },
+  "accessibility": {
+    "schema": "PASS",
+    "blockBindings": 7,
+    "manualScreenReaderReview": "PENDING"
+  },
+  "offline": {
+    "mode": "TEXT_PAPER_CAPTURE_ONLY",
+    "protectedKeysCached": false,
+    "runtimeColdStartAndReconnect": "PENDING"
+  },
+  "protectedAssessment": {
+    "included": false,
+    "restrictedKeyComparison": "PENDING_AUTHORIZED_OWNER_INPUT",
+    "canonicalMasteryMutation": false
+  },
+  "factoryStatus": "REVISION_REQUIRED",
+  "releaseBlockers": [
+    "MOE_OBJECTIVE_UNBOUND",
+    "ONTOLOGY_RELEASE_MISSING",
+    "V4_HUMAN_REVIEW_REQUIRED",
+    "SYNTHETIC_DEMONSTRATION",
+    "excellence:BP-COVERAGE",
+    "excellence:BP-PRODUCTION",
+    "excellence:BP-REASONING",
+    "excellence:BP-SELECTED-SHARE",
+    "excellence:BP-RETENTION",
+    "excellence:BP-TRANSFER",
+    "excellence:BP-EXTENSION",
+    "REFERENCE_LESSON_ONLY_FULL_EXCELLENCE_PACKAGE_PENDING",
+    "PROTECTED_ASSESSMENT_RECONCILIATION_REQUIRED",
+    "PREREQUISITE_DIAGNOSTIC_AND_MISCONCEPTION_ITEM_BINDINGS_PENDING",
+    "AUTHENTIC_SOURCE_COMPARISON_AND_RIGHTS_REVIEW_REQUIRED",
+    "MANUAL_ACCESSIBILITY_AND_OFFLINE_RUNTIME_QA_REQUIRED",
+    "OBJECTIVE_MAPPING_PROPOSED:v4-demo-mult-models",
+    "OBJECTIVE_MAPPING_PROPOSED:v4-demo-mult-area-model",
+    "EXACT_REVISION_HUMAN_REVIEW_REQUIRED",
+    "EXPLICIT_RELEASE_AUTHORIZATION_REQUIRED",
+    "RETENTION_POLICY_APPROVAL_REQUIRED",
+    "ASSESSMENT_ITEMS_PENDING",
+    "RESTRICTED_KEY_COMPARISON_PENDING",
+    "FRONTEND_GENERATED_PACKAGE_CONSUMPTION_QA_PENDING"
+  ],
+  "files": {
+    "candidate.json": "9850330f670b0c2f1f0bc6aaf7e2529dadfff5071e008f8d49153ea869cdacc6",
+    "visual-teaching.json": "3c94df123f88224cdab3a4796b06cb4e5fa946de91002420ba197a0b3ec3b2f6",
+    "blueprint.json": "226c5e25fa9f3868e5474feac46d1234313308aabb74a1432e80dd0d098688f4",
+    "factory-artifact.json": "4bba12eadb0eeb78d9e537ddef494c1f25a3f1178becebf837f3c43521594100",
+    "learner-projection.json": "acf8466609d896b29a5dd5a7039553ab41444e927d10eb92e54505855a656a34",
+    "factory-receipt.json": "41ffc5a6f1dfffefc5daa6bc9af115460ad95fad7689a71caacb5a9f0438dfa8",
+    "paper-alternative.txt": "43c653fd4ffd7dd7ed156eee1b32cc42bdf658c3a2d8afc4c3a0f9702389ad58"
+  },
+  "packageHash": "8cdf4d8b666eaf7e818b403bf48f8a981ba55c2715a2e3b7ce361c0abcb7935c"
+}

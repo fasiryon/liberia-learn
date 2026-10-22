@@ -1,0 +1,109 @@
+{
+  "version": "factory-v4-validation/1.0.0",
+  "generatorCommit": "433e60395e799930a082aa4c5a08e03b6052ad22",
+  "frontendContractCommit": "1268773a649fd3d570450ec15c8d5c9eb93d0cf2",
+  "candidateVersion": "4.0.0-draft.4",
+  "contractVersion": "visual-teaching-block/4.0.0-draft.1",
+  "registryVersion": "teaching-blocks/1.1.0",
+  "candidateContract": "candidate-lesson-v2/1.1.0",
+  "blueprintContract": "unit-blueprint/2.2.0",
+  "factoryTests": {
+    "passed": 70,
+    "failed": 0,
+    "skipped": 0,
+    "report": "artifacts/content-factory-v4/factory-final.json",
+    "reportSha256": "4829e10a51de1badf22dbf997f496d0d3fcd6fc85e99a4d2b8428057d8baa9ad"
+  },
+  "authorityRegressionTests": {
+    "passed": 220,
+    "failed": 0,
+    "skipped": 4,
+    "note": "Four restricted V0.2.1 authoring cases skipped; two public V0.2.1 runtime cases pass. This targeted suite predates the additional arithmetic assertion; final factory and changed gate include it.",
+    "report": "artifacts/content-factory-v4/final-regressions.json",
+    "reportSha256": "6d957fbbd12b5a9d5e58a8b6aab5968ad1eeb1e0a2c5b08d201a6607e415a5a1"
+  },
+  "changedGate": {
+    "command": "npm.cmd run validate:changed -- --base db1790ad1",
+    "nativeExit": 0,
+    "typescript": "PASS",
+    "changedTests": {
+      "passed": 70,
+      "failed": 0
+    },
+    "relatedTests": {
+      "passed": 139,
+      "failed": 0,
+      "skipped": 15
+    },
+    "log": "artifacts/content-factory-v4/gate-native.log",
+    "logSha256": "20b9673c733d4f7672b3f6081ef9050a7c7eb8122cf75cbff53898d3b3d116b2"
+  },
+  "focusedBuild": {
+    "command": "esbuild scripts/content-factory-v4-generate.ts --bundle --platform=node --packages=external --format=cjs",
+    "exit": 0,
+    "logSha256": "2e6d31817fe1f5fd5920101b2dd29d95fe271204892a8f201faa84cbc98a7572"
+  },
+  "determinism": {
+    "fileCount": 49,
+    "bytesAndMtimesIdentical": true,
+    "inventorySha256": "4642613e98f4ae1db3e8fafc3e31013e693b991dd846f424224e501ae442726e"
+  },
+  "browser": {
+    "sourceDriverSha256": "3d5e4d8e558920f478fcba418d44f7abf7bfa1a64d65635fc0fd453ecf613310",
+    "manifests": [
+      {
+        "key": "g7-math-area-perimeter",
+        "manifestSha256": "b61c37f3d5259a979b57c1fc45b0233501b7fbe62bbc4daff0ad1736152da610",
+        "learnerProjectionSha256": "65d6f40029af24d5f81d55e6f3c27fe9edb9dd0a02e9a19f2a10f28b54dca038"
+      },
+      {
+        "key": "g7-math-fractions",
+        "manifestSha256": "d1934517dfa61ee8daeb34a43a044ebdc2bdd631baf46850fc2332316c8db1b4",
+        "learnerProjectionSha256": "5fd0988ffc3fa0f1fce5b18c897392bd72f96a6437ade16d28a51d10c869b8c0"
+      },
+      {
+        "key": "math-multiplication-models",
+        "manifestSha256": "7b63fd7ac0528d6e1317615a6d1bc4a83876f0a0bbe286d2d12d3c76f0036eee",
+        "learnerProjectionSha256": "acf8466609d896b29a5dd5a7039553ab41444e927d10eb92e54505855a656a34"
+      },
+      {
+        "key": "g7-science-states-of-matter",
+        "manifestSha256": "f4231a4e0f14bfc5a31aa1ab541037ef1634f7130b50db4c0255693e849df872",
+        "learnerProjectionSha256": "2342004919d0b897bbafdd0c4107e7e93fac2a2b8e0b863f082a3bdfa3813f8a"
+      },
+      {
+        "key": "g7-civics-counties-capitals",
+        "manifestSha256": "6043c320070cbde837765221b9c4ffee748fa61f2b34b54e25aca35aae7d04c8",
+        "learnerProjectionSha256": "868f265a1271e2ffe897d423d36403c7effbc1ba28566af36f103b70a895c999"
+      },
+      {
+        "key": "g7-english-reading-evidence",
+        "manifestSha256": "efd4bc570ac80be974814feed0964e6a56d056edaafe6c58b77cdada58a25a8e",
+        "learnerProjectionSha256": "10a3a4253cc3be2a7b1dd22da66fb42946c0bf3e316b84c0f02686e23addef63"
+      }
+    ],
+    "runs": 7,
+    "completed": 7,
+    "scenes": 46,
+    "axeViolations": 0,
+    "axeIncomplete": 10,
+    "pageErrors": [],
+    "writes": [],
+    "issues": []
+  },
+  "remaining": [
+    "QUALIFIED_HUMAN_ACADEMIC_REVIEW",
+    "MOE_OBJECTIVE_AND_ONTOLOGY_BINDINGS",
+    "GOVERNED_ASSESSMENT_DIAGNOSTIC_RETENTION_RESOURCES",
+    "RESTRICTED_KEY_AND_V021_BASELINE_RECONCILIATION",
+    "SOURCE_RIGHTS_AND_COUNTY_FACT_ATTESTATION",
+    "MANUAL_SCREEN_READER_AND_AXE_INCOMPLETE_REVIEW",
+    "COLD_OFFLINE_RECONNECT_AND_REAL_DEVICE_QA",
+    "INDEPENDENT_QA_AND_INTEGRATED_NEXT_BUILD_CI",
+    "EXPLICIT_RELEASE_AUTHORIZATION"
+  ],
+  "approved": false,
+  "released": false,
+  "published": false,
+  "productionWrites": false
+}

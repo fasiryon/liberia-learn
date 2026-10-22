@@ -1,0 +1,23 @@
+generated-1/blocks/0
+What happens to ice as it warms from -5 degrees C to 20 degrees C? Options: It melts; the particles remain water particles.; The particles themselves grow into liquid particles.. After you predict, the observation is shown. Compare your prediction with the observation and explain the role of energy.
+Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores.
+
+generated-2/blocks/0
+Change temperature and compare solid, liquid and gas representations. This is a simplified model, not measured data. Below 0 °C water is a solid: particles packed in a pattern, vibrating in place. From 0 °C to 100 °C it is a liquid: particles close together, sliding past one another. At 100 °C and above it is a gas: particles far apart, moving quickly in all directions.
+Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores.
+
+generated-3/blocks/0
+Illustrative ice heating. Time 0 min: Temperature -5 C; Time 1 min: Temperature 0 C; Time 2 min: Temperature 0 C; Time 3 min: Temperature 0 C; Time 4 min: Temperature 10 C. A plateau can indicate a phase change; these data alone do not establish how much energy was supplied.
+Describe the interval from minute 1 to minute 3 using only the plotted evidence. Explain why a temperature plateau does not mean energy transfer has stopped. Write your response and reasoning on paper. Responses are capture only, never official scores.
+
+generated-4/blocks/0
+Which explanation fits a liquid changing container shape? Options: Particles move past one another.; The particles turn into a new substance..
+Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores.
+
+generated-4/blocks/1
+Why can ice keep melting at about zero degrees C? Options: Energy changes particle arrangement during melting.; No energy reaches the ice..
+Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores.
+
+generated-5/blocks/0
+Use particles and energy to explain the droplets and propose a fair test against the leak explanation. Claim: State your conclusion precisely. Evidence and reasoning: Quote or describe relevant evidence and explain the link to your claim.
+Predict what would happen around an equally cold dry metal container, and explain how that result would distinguish two explanations. Write your response and reasoning on paper. Responses are capture only, never official scores.

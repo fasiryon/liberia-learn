@@ -1,0 +1,573 @@
+{
+  "contractVersion": "lesson-experience/1.0.0",
+  "id": "cv4-cand-g7-math-fractions",
+  "version": "4.0.0-draft.1",
+  "title": "Generated: Same whole, equal parts",
+  "subject": "MATH",
+  "grade": 7,
+  "ageBand": "JUNIOR_SECONDARY",
+  "authority": {
+    "status": "CURRICULUM_V2_DRAFT",
+    "note": "Interactive Learning V4 DRAFT candidate for lesson_mca_1. Not bound to an MOE objective or release, not reviewed, not approved, not published.",
+    "candidateContentIds": [
+      "lesson_mca_1"
+    ],
+    "releaseId": null,
+    "releaseIdentity": null
+  },
+  "objectives": [
+    {
+      "id": "ft07-o1",
+      "statement": "Represent fractions, including fractions equal to or greater than 1, on area models and a number line, naming the whole each fraction refers to.",
+      "conceptId": "ft07-o1",
+      "standardCodes": [],
+      "skillIds": []
+    },
+    {
+      "id": "ft07-o2",
+      "statement": "Add and subtract fractions with like denominators, and with related denominators (e.g. halves, quarters, eighths), by using equivalent fractions.",
+      "conceptId": "ft07-o2",
+      "standardCodes": [],
+      "skillIds": []
+    },
+    {
+      "id": "ft07-o3",
+      "statement": "Compare and order fractions using benchmarks (0, 1/2, 1), common denominators and the number line, and justify each comparison.",
+      "conceptId": "ft07-o3",
+      "standardCodes": [],
+      "skillIds": []
+    }
+  ],
+  "scenes": [
+    {
+      "id": "generated-1",
+      "type": "EXPLANATION",
+      "title": "Same whole, equal parts",
+      "objectiveIds": [
+        "ft07-o1",
+        "ft07-o2",
+        "ft07-o3"
+      ],
+      "content": {
+        "body": "Synthetic sharing demonstration. A fraction measures equal parts of one fixed whole. Repartitioning changes the names of the parts without changing the amount. Compare two thirds and three quarters only when the wholes have the same size."
+      },
+      "interaction": {
+        "kind": "NONE"
+      },
+      "tools": {
+        "allowed": [],
+        "prohibited": []
+      },
+      "accessibility": {
+        "textAlternative": "Synthetic sharing demonstration. A fraction measures equal parts of one fixed whole. Repartitioning changes the names of the parts without changing the amount. Compare two thirds and three quarters only when the wholes have the same size. A bar split into 3 equal parts with 2 shaded: 2/3. Split a whole into equal parts. 2/3 is the same amount as 4/6, 8/12. Multiply the count of parts and the count of equal pieces by the same factor.",
+        "keyboardOperable": true,
+        "reducedMotionSafe": true,
+        "captionsRequired": false
+      },
+      "offline": {
+        "mode": "FULL",
+        "fallback": "Models and formative checks use cached lesson data. Paper responses are capture only; no official grade is produced."
+      },
+      "evidence": {
+        "kind": "NONE"
+      },
+      "completion": {
+        "kind": "VIEWED"
+      },
+      "teaching": {
+        "phase": "VISUALIZE",
+        "blocks": [
+          {
+            "type": "FRACTION_MODEL",
+            "id": "fraction-whole",
+            "representation": "BAR",
+            "parts": 3,
+            "shaded": 2,
+            "interaction": "EXPLORE",
+            "caption": "Split a whole into equal parts."
+          },
+          {
+            "type": "FRACTION_EQUIVALENCE",
+            "id": "fraction-equivalent",
+            "base": {
+              "numerator": 2,
+              "denominator": 3
+            },
+            "factors": [
+              2,
+              4
+            ],
+            "caption": "Multiply the count of parts and the count of equal pieces by the same factor."
+          }
+        ]
+      }
+    },
+    {
+      "id": "generated-2",
+      "type": "GUIDED_EXAMPLE",
+      "title": "Build a common unit",
+      "objectiveIds": [
+        "ft07-o1",
+        "ft07-o2",
+        "ft07-o3"
+      ],
+      "content": {
+        "body": "A denominator names the unit being counted. Use equal-sized pieces before combining or comparing their counts. The size of the whole stays fixed."
+      },
+      "interaction": {
+        "kind": "NONE"
+      },
+      "tools": {
+        "allowed": [],
+        "prohibited": []
+      },
+      "accessibility": {
+        "textAlternative": "A denominator names the unit being counted. Use equal-sized pieces before combining or comparing their counts. The size of the whole stays fixed. Compare 2/3 and 3/4. Step 1: Use twelfths for both quantities. 2/3 = 8/12, 3/4 = 9/12 Step 2: With the same unit, compare the counts. 8/12 < 9/12 Add one half and one quarter. Step 1: Rename one half as two quarters. 1/2 = 2/4 Step 2: Count quarters, keeping the size of the pieces. 2/4 + 1/4 = 3/4",
+        "keyboardOperable": true,
+        "reducedMotionSafe": true,
+        "captionsRequired": false
+      },
+      "offline": {
+        "mode": "FULL",
+        "fallback": "Models and formative checks use cached lesson data. Paper responses are capture only; no official grade is produced."
+      },
+      "evidence": {
+        "kind": "NONE"
+      },
+      "completion": {
+        "kind": "VIEWED"
+      },
+      "teaching": {
+        "phase": "DEMONSTRATE",
+        "blocks": [
+          {
+            "type": "WORKED_SOLUTION",
+            "id": "fraction-worked",
+            "problem": "Compare $\\frac{2}{3}$ and $\\frac{3}{4}$.",
+            "steps": [
+              {
+                "text": "Use twelfths for both quantities.",
+                "tex": "\\frac{2}{3}=\\frac{8}{12},\\quad\\frac{3}{4}=\\frac{9}{12}"
+              },
+              {
+                "text": "With the same unit, compare the counts.",
+                "tex": "\\frac{8}{12}<\\frac{9}{12}"
+              }
+            ]
+          },
+          {
+            "type": "WORKED_SOLUTION",
+            "id": "fraction-add-worked",
+            "problem": "Add one half and one quarter.",
+            "steps": [
+              {
+                "text": "Rename one half as two quarters.",
+                "tex": "\\frac{1}{2}=\\frac{2}{4}"
+              },
+              {
+                "text": "Count quarters, keeping the size of the pieces.",
+                "tex": "\\frac{2}{4}+\\frac{1}{4}=\\frac{3}{4}"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "generated-3",
+      "type": "PRACTICE",
+      "title": "Combine equal pieces with support",
+      "objectiveIds": [
+        "ft07-o1",
+        "ft07-o2",
+        "ft07-o3"
+      ],
+      "content": {
+        "body": "Sketch each quantity on equal wholes, rename to a common denominator, then count pieces."
+      },
+      "interaction": {
+        "kind": "NONE"
+      },
+      "tools": {
+        "allowed": [],
+        "prohibited": []
+      },
+      "accessibility": {
+        "textAlternative": "Sketch each quantity on equal wholes, rename to a common denominator, then count pieces. Write a fraction or an equivalent decimal. One half plus one third: write your answer. Two thirds plus one sixth: write your answer.",
+        "keyboardOperable": true,
+        "reducedMotionSafe": true,
+        "captionsRequired": false
+      },
+      "offline": {
+        "mode": "FULL",
+        "fallback": "Models and formative checks use cached lesson data. Paper responses are capture only; no official grade is produced."
+      },
+      "evidence": {
+        "kind": "NONE"
+      },
+      "completion": {
+        "kind": "VIEWED"
+      },
+      "teaching": {
+        "phase": "SOLVE_WITH_SUPPORT",
+        "blocks": [
+          {
+            "type": "NUMERIC_RESPONSE",
+            "id": "fraction-guided",
+            "mode": "GUIDED",
+            "prompt": "Write a fraction or an equivalent decimal.",
+            "parts": [
+              {
+                "id": "fraction-guided-0",
+                "label": "One half plus one third",
+                "quantity": "OTHER",
+                "unit": {
+                  "kind": "NONE",
+                  "base": ""
+                },
+                "formativeKey": {
+                  "value": 0.8333333333333333,
+                  "tolerance": 1e-9
+                },
+                "misconceptions": [
+                  {
+                    "value": 0.4,
+                    "feedback": "Compare your operation with what the model represents. Explain each part before calculating again.",
+                    "misconceptionId": "generated-math-misconception"
+                  }
+                ]
+              },
+              {
+                "id": "fraction-guided-1",
+                "label": "Two thirds plus one sixth",
+                "quantity": "OTHER",
+                "unit": {
+                  "kind": "NONE",
+                  "base": ""
+                },
+                "formativeKey": {
+                  "value": 0.8333333333333333,
+                  "tolerance": 1e-9
+                },
+                "misconceptions": [
+                  {
+                    "value": 0.3333333333333333,
+                    "feedback": "Compare your operation with what the model represents. Explain each part before calculating again.",
+                    "misconceptionId": "generated-math-misconception"
+                  }
+                ]
+              }
+            ],
+            "hints": [
+              "Name the quantities and represent them before calculating.",
+              "Use the worked model, then check your result with a second representation."
+            ],
+            "afterAttempt": [
+              "One half plus one third: 0.8333333333333333. Explain how the model and your calculation agree.",
+              "Two thirds plus one sixth: 0.8333333333333333. Explain how the model and your calculation agree."
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "generated-4",
+      "type": "PRACTICE",
+      "title": "Calculate independently",
+      "objectiveIds": [
+        "ft07-o1",
+        "ft07-o2",
+        "ft07-o3"
+      ],
+      "content": {
+        "body": "Draw your own model if it helps. Explain why your result is reasonable."
+      },
+      "interaction": {
+        "kind": "NONE"
+      },
+      "tools": {
+        "allowed": [],
+        "prohibited": []
+      },
+      "accessibility": {
+        "textAlternative": "Draw your own model if it helps. Explain why your result is reasonable. Solve without hints. Three quarters plus one eighth: write your answer. Five sixths minus one third: write your answer.",
+        "keyboardOperable": true,
+        "reducedMotionSafe": true,
+        "captionsRequired": false
+      },
+      "offline": {
+        "mode": "FULL",
+        "fallback": "Models and formative checks use cached lesson data. Paper responses are capture only; no official grade is produced."
+      },
+      "evidence": {
+        "kind": "NONE"
+      },
+      "completion": {
+        "kind": "VIEWED"
+      },
+      "teaching": {
+        "phase": "PRACTICE_INDEPENDENTLY",
+        "blocks": [
+          {
+            "type": "NUMERIC_RESPONSE",
+            "id": "fraction-independent",
+            "mode": "INDEPENDENT",
+            "prompt": "Solve without hints.",
+            "parts": [
+              {
+                "id": "fraction-independent-0",
+                "label": "Three quarters plus one eighth",
+                "quantity": "OTHER",
+                "unit": {
+                  "kind": "NONE",
+                  "base": ""
+                },
+                "formativeKey": {
+                  "value": 0.875,
+                  "tolerance": 1e-9
+                },
+                "misconceptions": [
+                  {
+                    "value": 0.3333333333333333,
+                    "feedback": "Compare your operation with what the model represents. Explain each part before calculating again.",
+                    "misconceptionId": "generated-math-misconception"
+                  }
+                ]
+              },
+              {
+                "id": "fraction-independent-1",
+                "label": "Five sixths minus one third",
+                "quantity": "OTHER",
+                "unit": {
+                  "kind": "NONE",
+                  "base": ""
+                },
+                "formativeKey": {
+                  "value": 0.5,
+                  "tolerance": 1e-9
+                },
+                "misconceptions": [
+                  {
+                    "value": 1.3333333333333333,
+                    "feedback": "Compare your operation with what the model represents. Explain each part before calculating again.",
+                    "misconceptionId": "generated-math-misconception"
+                  }
+                ]
+              }
+            ],
+            "hints": [],
+            "afterAttempt": [
+              "Three quarters plus one eighth: 0.875. Explain how the model and your calculation agree.",
+              "Five sixths minus one third: 0.5. Explain how the model and your calculation agree."
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "generated-5",
+      "type": "EXPLANATION",
+      "title": "Find the changed unit",
+      "objectiveIds": [
+        "ft07-o1",
+        "ft07-o2",
+        "ft07-o3"
+      ],
+      "content": {
+        "body": "A method must preserve the size of the fraction pieces."
+      },
+      "interaction": {
+        "kind": "NONE"
+      },
+      "tools": {
+        "allowed": [],
+        "prohibited": []
+      },
+      "accessibility": {
+        "textAlternative": "A method must preserve the size of the fraction pieces. Add one half and one third. A learner wrote: One half plus one third is two fifths. Which diagnosis explains the mistake? Options: Adding denominators changes the unit; first express both quantities as sixths.; The method already matches the model..",
+        "keyboardOperable": true,
+        "reducedMotionSafe": true,
+        "captionsRequired": false
+      },
+      "offline": {
+        "mode": "FULL",
+        "fallback": "Models and formative checks use cached lesson data. Paper responses are capture only; no official grade is produced."
+      },
+      "evidence": {
+        "kind": "NONE"
+      },
+      "completion": {
+        "kind": "VIEWED"
+      },
+      "teaching": {
+        "phase": "ANALYZE_MISTAKE",
+        "blocks": [
+          {
+            "type": "MISTAKE_ANALYSIS",
+            "id": "fraction-mistake",
+            "problem": "Add one half and one third.",
+            "attempt": {
+              "name": "A learner",
+              "steps": [
+                "One half plus one third is two fifths."
+              ]
+            },
+            "question": "Which diagnosis explains the mistake?",
+            "options": [
+              {
+                "id": "model",
+                "text": "Adding denominators changes the unit; first express both quantities as sixths.",
+                "feedback": "Use the representation to explain why this method needs to change."
+              },
+              {
+                "id": "keep",
+                "text": "The method already matches the model.",
+                "feedback": "Check what each quantity in the model means."
+              }
+            ],
+            "formativeKey": {
+              "expectedOptionId": "model"
+            },
+            "correction": [
+              "Adding denominators changes the unit; first express both quantities as sixths.",
+              "Rebuild the model and explain a method that agrees with it."
+            ],
+            "misconceptionId": "generated-math-misconception"
+          }
+        ]
+      }
+    },
+    {
+      "id": "generated-6",
+      "type": "PRACTICE",
+      "title": "Transfer to seed measurements",
+      "objectiveIds": [
+        "ft07-o1",
+        "ft07-o2",
+        "ft07-o3"
+      ],
+      "content": {
+        "body": "Synthetic seed-bank task. A group has three quarters of a kilogram of seed and packs one third of a kilogram for a new garden."
+      },
+      "interaction": {
+        "kind": "FREE_RESPONSE",
+        "prompts": [
+          {
+            "id": "generated-6-response-0",
+            "prompt": "Explain how a common unit lets you subtract these quantities, and why the remainder must be smaller than three quarters.",
+            "minLength": 20
+          }
+        ]
+      },
+      "tools": {
+        "allowed": [],
+        "prohibited": []
+      },
+      "accessibility": {
+        "textAlternative": "Synthetic seed-bank task. A group has three quarters of a kilogram of seed and packs one third of a kilogram for a new garden. How much seed remains? Kilograms remaining: write your answer. Explain how a common unit lets you subtract these quantities, and why the remainder must be smaller than three quarters.",
+        "keyboardOperable": true,
+        "reducedMotionSafe": true,
+        "captionsRequired": false
+      },
+      "offline": {
+        "mode": "FULL",
+        "fallback": "Models and formative checks use cached lesson data. Paper responses are capture only; no official grade is produced."
+      },
+      "evidence": {
+        "kind": "NONE"
+      },
+      "completion": {
+        "kind": "ALL_RESPONSES_WRITTEN"
+      },
+      "teaching": {
+        "phase": "APPLY",
+        "blocks": [
+          {
+            "type": "NUMERIC_RESPONSE",
+            "id": "seed-transfer",
+            "mode": "INDEPENDENT",
+            "prompt": "How much seed remains?",
+            "parts": [
+              {
+                "id": "seed-transfer-0",
+                "label": "Kilograms remaining",
+                "quantity": "OTHER",
+                "unit": {
+                  "kind": "NONE",
+                  "base": ""
+                },
+                "formativeKey": {
+                  "value": 0.4166666666666667,
+                  "tolerance": 1e-9
+                },
+                "misconceptions": []
+              }
+            ],
+            "hints": [],
+            "afterAttempt": [
+              "Kilograms remaining: 0.4166666666666667. Explain how the model and your calculation agree."
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "generated-assess",
+      "type": "MASTERY_CHECK",
+      "title": "Independent assessment handoff",
+      "objectiveIds": [
+        "ft07-o1",
+        "ft07-o2",
+        "ft07-o3"
+      ],
+      "content": {
+        "body": "Only Assessment Player V2 can collect and score governed assessment responses. This draft has no approved form or official score."
+      },
+      "interaction": {
+        "kind": "ASSESSMENT_HANDOFF",
+        "assessment": {
+          "assessmentId": "cv4-cand-g7-math-fractions--generated-mastery",
+          "assessmentVersion": "4.0.0-draft.1",
+          "player": "ASSESSMENT_PLAYER_V2",
+          "scoring": "SERVER_AUTHORITY",
+          "objectiveIds": [
+            "ft07-o1",
+            "ft07-o2",
+            "ft07-o3"
+          ],
+          "items": []
+        }
+      },
+      "tools": {
+        "allowed": [],
+        "prohibited": []
+      },
+      "accessibility": {
+        "textAlternative": "The lesson requests a separate independent assessment. This draft contains no governed assessment questions or protected scoring material.",
+        "keyboardOperable": true,
+        "reducedMotionSafe": true,
+        "captionsRequired": false
+      },
+      "offline": {
+        "mode": "FULL",
+        "fallback": "No assessment form is cached by this draft. Paper work is capture only and cannot establish an official grade."
+      },
+      "evidence": {
+        "kind": "MASTERY_RESPONSE",
+        "evidenceType": "QUIZ",
+        "objectiveIds": [
+          "ft07-o1",
+          "ft07-o2",
+          "ft07-o3"
+        ]
+      },
+      "completion": {
+        "kind": "ALL_ANSWERED"
+      }
+    }
+  ],
+  "offline": {
+    "packageable": true,
+    "requiredAssets": []
+  }
+}

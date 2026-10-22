@@ -1,0 +1,448 @@
+{
+  "contractVersion": "visual-teaching-block/4.0.0-draft.1",
+  "registryVersion": "teaching-blocks/1.1.0",
+  "instructionStandard": "liberialearn-v4-instruction/1.0.0",
+  "candidateSha256": "89ffd523f087ae6e03fd560680e788845f7c0f9e73a993dccedd2bdfda6c4791",
+  "state": "DRAFT",
+  "approved": false,
+  "published": false,
+  "released": false,
+  "audience": "REVIEWER_ONLY",
+  "objectives": [
+    {
+      "id": "ft07-o1",
+      "statement": "Represent fractions, including fractions equal to or greater than 1, on area models and a number line, naming the whole each fraction refers to.",
+      "standards": [
+        {
+          "reference": "moe-math-g7-s1-p2-fractions-con1",
+          "statement": "Operations on fractions",
+          "relation": "CONTENT_REFERENCE",
+          "mapping": "PROPOSED"
+        },
+        {
+          "reference": "moe-math-g5-s1-p1-multiplication-and-division-of-wh-ole-numbers-an-obj7",
+          "statement": "Find equivalent fraction.",
+          "relation": "BUILDS_ON",
+          "mapping": "PROPOSED"
+        }
+      ]
+    },
+    {
+      "id": "ft07-o2",
+      "statement": "Add and subtract fractions with like denominators, and with related denominators (e.g. halves, quarters, eighths), by using equivalent fractions.",
+      "standards": [
+        {
+          "reference": "moe-math-g7-s1-p2-fractions-con1",
+          "statement": "Operations on fractions",
+          "relation": "CONTENT_REFERENCE",
+          "mapping": "PROPOSED"
+        },
+        {
+          "reference": "moe-math-g5-s1-p1-multiplication-and-division-of-wh-ole-numbers-an-obj7",
+          "statement": "Find equivalent fraction.",
+          "relation": "BUILDS_ON",
+          "mapping": "PROPOSED"
+        }
+      ]
+    },
+    {
+      "id": "ft07-o3",
+      "statement": "Compare and order fractions using benchmarks (0, 1/2, 1), common denominators and the number line, and justify each comparison.",
+      "standards": [
+        {
+          "reference": "moe-math-g7-s1-p2-fractions-con1",
+          "statement": "Operations on fractions",
+          "relation": "CONTENT_REFERENCE",
+          "mapping": "PROPOSED"
+        },
+        {
+          "reference": "moe-math-g5-s1-p1-multiplication-and-division-of-wh-ole-numbers-an-obj7",
+          "statement": "Find equivalent fraction.",
+          "relation": "BUILDS_ON",
+          "mapping": "PROPOSED"
+        }
+      ]
+    }
+  ],
+  "blocks": [
+    {
+      "sceneId": "generated-1",
+      "slot": "blocks",
+      "index": 0,
+      "type": "FRACTION_MODEL",
+      "blockSha256": "0a436a64fbf257947f070d39b964acf3c0191d6807427863baeaf0ea1c361bd8",
+      "objectiveIds": [
+        "ft07-o1",
+        "ft07-o2",
+        "ft07-o3"
+      ],
+      "instructionalPurpose": "Partition a whole and shade parts; connect the picture to the symbol. Learner action: Use the model, complete its task, and explain what the representation shows.",
+      "misconceptionIds": [
+        "generated-math-misconception"
+      ],
+      "responseSignals": [],
+      "accessibility": {
+        "textAlternative": "A bar split into 3 equal parts with 2 shaded: 2/3. Split a whole into equal parts.",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: A bar split into 3 equal parts with 2 shaded: 2/3. Split a whole into equal parts.",
+        "responsePrompt": "Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "NONE",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/lessonAuthor.ts",
+          "sha256": "adad66e123a6d53744c9aca1791860b13b363de0caefeccededb519fc9da937a",
+          "license": "Original authored deterministic recipe; internal review only",
+          "attribution": "LiberiaLearn Content Factory V4 executor; synthetic scenarios and illustrative data",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "generated-1",
+      "slot": "blocks",
+      "index": 1,
+      "type": "FRACTION_EQUIVALENCE",
+      "blockSha256": "b7de6d7fdd09d9053a2d240e016bab7b38b335276894ee091c0d920aeefaf959",
+      "objectiveIds": [
+        "ft07-o1",
+        "ft07-o2",
+        "ft07-o3"
+      ],
+      "instructionalPurpose": "Split every part again and see the same amount named differently. Learner action: Use the model, complete its task, and explain what the representation shows.",
+      "misconceptionIds": [
+        "generated-math-misconception"
+      ],
+      "responseSignals": [],
+      "accessibility": {
+        "textAlternative": "2/3 is the same amount as 4/6, 8/12. Multiply the count of parts and the count of equal pieces by the same factor.",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: 2/3 is the same amount as 4/6, 8/12. Multiply the count of parts and the count of equal pieces by the same factor.",
+        "responsePrompt": "Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "NONE",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/lessonAuthor.ts",
+          "sha256": "adad66e123a6d53744c9aca1791860b13b363de0caefeccededb519fc9da937a",
+          "license": "Original authored deterministic recipe; internal review only",
+          "attribution": "LiberiaLearn Content Factory V4 executor; synthetic scenarios and illustrative data",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "generated-2",
+      "slot": "blocks",
+      "index": 0,
+      "type": "WORKED_SOLUTION",
+      "blockSha256": "ee2f62491029344ab5aece269cde7405a35ef359bb03de8f3ad2635ef6466473",
+      "objectiveIds": [
+        "ft07-o1",
+        "ft07-o2",
+        "ft07-o3"
+      ],
+      "instructionalPurpose": "Watch a problem solved one step at a time, with the diagram following each step. Learner action: Use the model, complete its task, and explain what the representation shows.",
+      "misconceptionIds": [
+        "generated-math-misconception"
+      ],
+      "responseSignals": [],
+      "accessibility": {
+        "textAlternative": "Compare 2/3 and 3/4. Step 1: Use twelfths for both quantities. 2/3 = 8/12, 3/4 = 9/12 Step 2: With the same unit, compare the counts. 8/12 < 9/12",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Compare 2/3 and 3/4. Step 1: Use twelfths for both quantities. 2/3 = 8/12, 3/4 = 9/12 Step 2: With the same unit, compare the counts. 8/12 < 9/12",
+        "responsePrompt": "Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "MODEL",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/lessonAuthor.ts",
+          "sha256": "adad66e123a6d53744c9aca1791860b13b363de0caefeccededb519fc9da937a",
+          "license": "Original authored deterministic recipe; internal review only",
+          "attribution": "LiberiaLearn Content Factory V4 executor; synthetic scenarios and illustrative data",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "generated-2",
+      "slot": "blocks",
+      "index": 1,
+      "type": "WORKED_SOLUTION",
+      "blockSha256": "973838f3734d192b4afaa51a0bfa8f05b3c1651f6e44d4edb91e8b63db161f31",
+      "objectiveIds": [
+        "ft07-o1",
+        "ft07-o2",
+        "ft07-o3"
+      ],
+      "instructionalPurpose": "Watch a problem solved one step at a time, with the diagram following each step. Learner action: Use the model, complete its task, and explain what the representation shows.",
+      "misconceptionIds": [
+        "generated-math-misconception"
+      ],
+      "responseSignals": [],
+      "accessibility": {
+        "textAlternative": "Add one half and one quarter. Step 1: Rename one half as two quarters. 1/2 = 2/4 Step 2: Count quarters, keeping the size of the pieces. 2/4 + 1/4 = 3/4",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Add one half and one quarter. Step 1: Rename one half as two quarters. 1/2 = 2/4 Step 2: Count quarters, keeping the size of the pieces. 2/4 + 1/4 = 3/4",
+        "responsePrompt": "Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "MODEL",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/lessonAuthor.ts",
+          "sha256": "adad66e123a6d53744c9aca1791860b13b363de0caefeccededb519fc9da937a",
+          "license": "Original authored deterministic recipe; internal review only",
+          "attribution": "LiberiaLearn Content Factory V4 executor; synthetic scenarios and illustrative data",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "generated-3",
+      "slot": "blocks",
+      "index": 0,
+      "type": "NUMERIC_RESPONSE",
+      "blockSha256": "a2741f8c4ed3b9b9d602c44327f2f958b988422ded2cb048b7d6d1c4b69709c0",
+      "objectiveIds": [
+        "ft07-o1",
+        "ft07-o2",
+        "ft07-o3"
+      ],
+      "instructionalPurpose": "Type a numeric answer with its unit and get feedback that names the mistake. Learner action: Use the model, complete its task, and explain what the representation shows.",
+      "misconceptionIds": [
+        "generated-math-misconception"
+      ],
+      "responseSignals": [
+        {
+          "misconceptionId": "generated-math-misconception",
+          "responsePattern": "fraction-guided-0:NUMBER:0.4",
+          "feedback": "Compare your operation with what the model represents. Explain each part before calculating again."
+        },
+        {
+          "misconceptionId": "generated-math-misconception",
+          "responsePattern": "fraction-guided-1:NUMBER:0.3333333333333333",
+          "feedback": "Compare your operation with what the model represents. Explain each part before calculating again."
+        }
+      ],
+      "accessibility": {
+        "textAlternative": "Write a fraction or an equivalent decimal. One half plus one third: write your answer. Two thirds plus one sixth: write your answer.",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Write a fraction or an equivalent decimal. One half plus one third: write your answer. Two thirds plus one sixth: write your answer.",
+        "responsePrompt": "Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/lessonAuthor.ts",
+          "sha256": "adad66e123a6d53744c9aca1791860b13b363de0caefeccededb519fc9da937a",
+          "license": "Original authored deterministic recipe; internal review only",
+          "attribution": "LiberiaLearn Content Factory V4 executor; synthetic scenarios and illustrative data",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "generated-4",
+      "slot": "blocks",
+      "index": 0,
+      "type": "NUMERIC_RESPONSE",
+      "blockSha256": "7a420d90ba13b171619712bb911bbf2265b151be7a760809e3fe1e6b4f6176f3",
+      "objectiveIds": [
+        "ft07-o1",
+        "ft07-o2",
+        "ft07-o3"
+      ],
+      "instructionalPurpose": "Type a numeric answer with its unit and get feedback that names the mistake. Learner action: Use the model, complete its task, and explain what the representation shows.",
+      "misconceptionIds": [
+        "generated-math-misconception"
+      ],
+      "responseSignals": [
+        {
+          "misconceptionId": "generated-math-misconception",
+          "responsePattern": "fraction-independent-0:NUMBER:0.3333333333333333",
+          "feedback": "Compare your operation with what the model represents. Explain each part before calculating again."
+        },
+        {
+          "misconceptionId": "generated-math-misconception",
+          "responsePattern": "fraction-independent-1:NUMBER:1.3333333333333333",
+          "feedback": "Compare your operation with what the model represents. Explain each part before calculating again."
+        }
+      ],
+      "accessibility": {
+        "textAlternative": "Solve without hints. Three quarters plus one eighth: write your answer. Five sixths minus one third: write your answer.",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Solve without hints. Three quarters plus one eighth: write your answer. Five sixths minus one third: write your answer.",
+        "responsePrompt": "Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/lessonAuthor.ts",
+          "sha256": "adad66e123a6d53744c9aca1791860b13b363de0caefeccededb519fc9da937a",
+          "license": "Original authored deterministic recipe; internal review only",
+          "attribution": "LiberiaLearn Content Factory V4 executor; synthetic scenarios and illustrative data",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "generated-5",
+      "slot": "blocks",
+      "index": 0,
+      "type": "MISTAKE_ANALYSIS",
+      "blockSha256": "8701c1fcb896e0d52a681296bcd055c6e831c597d5b6bf02f643101981e9764d",
+      "objectiveIds": [
+        "ft07-o1",
+        "ft07-o2",
+        "ft07-o3"
+      ],
+      "instructionalPurpose": "Diagnose a worked attempt that contains a common misconception. Learner action: Use the model, complete its task, and explain what the representation shows.",
+      "misconceptionIds": [
+        "generated-math-misconception"
+      ],
+      "responseSignals": [
+        {
+          "misconceptionId": "generated-math-misconception",
+          "responsePattern": "OPTION:keep",
+          "feedback": "Check what each quantity in the model means."
+        }
+      ],
+      "accessibility": {
+        "textAlternative": "Add one half and one third. A learner wrote: One half plus one third is two fifths. Which diagnosis explains the mistake? Options: Adding denominators changes the unit; first express both quantities as sixths.; The method already matches the model..",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Add one half and one third. A learner wrote: One half plus one third is two fifths. Which diagnosis explains the mistake? Options: Adding denominators changes the unit; first express both quantities as sixths.; The method already matches the model..",
+        "responsePrompt": "Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/lessonAuthor.ts",
+          "sha256": "adad66e123a6d53744c9aca1791860b13b363de0caefeccededb519fc9da937a",
+          "license": "Original authored deterministic recipe; internal review only",
+          "attribution": "LiberiaLearn Content Factory V4 executor; synthetic scenarios and illustrative data",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "generated-6",
+      "slot": "blocks",
+      "index": 0,
+      "type": "NUMERIC_RESPONSE",
+      "blockSha256": "938a4722a681090faa00e1d3c24c8b947fca2003405954dd25f52dc9f196d865",
+      "objectiveIds": [
+        "ft07-o1",
+        "ft07-o2",
+        "ft07-o3"
+      ],
+      "instructionalPurpose": "Type a numeric answer with its unit and get feedback that names the mistake. Learner action: Explain how a common unit lets you subtract these quantities, and why the remainder must be smaller than three quarters.",
+      "misconceptionIds": [
+        "generated-math-misconception"
+      ],
+      "responseSignals": [],
+      "accessibility": {
+        "textAlternative": "How much seed remains? Kilograms remaining: write your answer.",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: How much seed remains? Kilograms remaining: write your answer.",
+        "responsePrompt": "Explain how a common unit lets you subtract these quantities, and why the remainder must be smaller than three quarters. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/lessonAuthor.ts",
+          "sha256": "adad66e123a6d53744c9aca1791860b13b363de0caefeccededb519fc9da937a",
+          "license": "Original authored deterministic recipe; internal review only",
+          "attribution": "LiberiaLearn Content Factory V4 executor; synthetic scenarios and illustrative data",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    }
+  ],
+  "assessmentBoundary": {
+    "player": "ASSESSMENT_PLAYER_V2",
+    "scoring": "SERVER_AUTHORITY",
+    "protectedKeysIncluded": false,
+    "canonicalMasteryMutation": false,
+    "offlineEvidence": "CAPTURE_ONLY_NOT_OFFICIAL"
+  }
+}
