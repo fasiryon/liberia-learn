@@ -58,10 +58,22 @@ assertLocalReview(`${BASE}/`, env);
 const reviewerToken = await encode({ secret: env.NEXTAUTH_SECRET, token: { id: REVIEWER_ID, name: "Synthetic V4 reviewer", email: "synthetic@example.invalid", role: "MOE_OFFICIAL", isPlatformAdmin: false }, maxAge: 3600 });
 const browser = await chromium.launch({ headless: true });
 
+// App-wide fixed toasts (PwaLifecycleStatus, CoS D4) sit just above the fixed footer, where Playwright's minimal
+// scroll leaves a target on narrow screens. Centre each target first, as a learner would scroll; nothing is hidden or forced.
+let centred = false;
+function centreBeforeClick(page) {
+  if (centred) return;
+  const proto = Object.getPrototypeOf(page.locator("body"));
+  const click = proto.click;
+  proto.click = async function (options) { await this.evaluate((el) => el.scrollIntoView({ block: "center", inline: "nearest" })).catch(() => undefined); return click.call(this, options); };
+  centred = true;
+}
+
 async function newPage(width, height) {
-  const context = await browser.newContext({ viewport: { width, height }, reducedMotion: "reduce", serviceWorkers: "block", bypassCSP: true }); // CSP bypass only so axe can be injected
+  const context = await browser.newContext({ viewport: { width, height }, reducedMotion: "reduce", bypassCSP: true }); // CSP bypass only so axe can be injected; service workers allowed (blocking them mounts the permanent PWA toast)
   await context.addCookies([{ name: "next-auth.session-token", value: reviewerToken, url: BASE, httpOnly: true, sameSite: "Lax" }]);
   const page = await context.newPage();
+  centreBeforeClick(page);
   page.setDefaultTimeout(60000); page.setDefaultNavigationTimeout(300000);
   page.on("pageerror", (error) => evidence.errors.push(`${width}: ${error.message}`));
   page.on("request", (request) => { const url = new URL(request.url()); if (!evidence.hosts.includes(url.host)) evidence.hosts.push(url.host); if (["POST", "PUT", "PATCH", "DELETE"].includes(request.method()) && !url.pathname.startsWith("/_next/")) evidence.writes.push(`${request.method()} ${url.pathname}`); });
