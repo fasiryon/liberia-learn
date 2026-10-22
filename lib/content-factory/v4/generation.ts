@@ -24,7 +24,7 @@ export const hash = (value: unknown) => createHash("sha256").update(canonicalize
 export const normalizedFile = (file: string) => readFileSync(file, "utf8").replace(/\r\n/g, "\n");
 export const textHash = (text: string) => createHash("sha256").update(text).digest("hex");
 const pinFile = z.strictObject({ path: z.string().min(1), sha256: z.string().regex(/^[a-f0-9]{64}$/) });
-const referenceInputsSchema = z.strictObject({
+export const referenceInputsSchema = z.strictObject({
   version: z.literal("factory-v4-reference-inputs/1.0.0"), encoding: z.literal("UTF8_LF"),
   frontendCommit: z.string().regex(/^[a-f0-9]{40}$/),
   sources: z.array(sourcePinSchema).min(1), candidates: z.array(pinFile).length(6),
@@ -32,8 +32,8 @@ const referenceInputsSchema = z.strictObject({
 export const referenceInputs = referenceInputsSchema.parse(inputs);
 
 /** Pins are committed inputs, never recalculated and trusted on a generation run. No network or DB reads. */
-export function verifyReferenceInputs(root = process.cwd()) {
-  for (const pin of [...referenceInputs.sources, ...referenceInputs.candidates]) {
+export function verifyReferenceInputs(root = process.cwd(), pins = referenceInputs) {
+  for (const pin of [...pins.sources, ...pins.candidates]) {
     const file = path.resolve(root, pin.path);
     if (!file.startsWith(path.resolve(root) + path.sep)) throw new Error("source_path_outside_repository");
     if (textHash(normalizedFile(file)) !== pin.sha256) throw new Error(`source_pin_mismatch:${pin.path}`);
@@ -85,7 +85,7 @@ export function validateV4Draft(input: unknown, lesson: { grade: number; subject
   return { candidate, academic, standard };
 }
 
-export function buildVisualSidecar(lesson: V4Lesson, candidate: CandidateLessonV2): VisualTeachingSidecar {
+export function buildVisualSidecar(lesson: V4Lesson, candidate: CandidateLessonV2, pins = referenceInputs): VisualTeachingSidecar {
   const blocks = candidate.scenes.flatMap(scene => {
     const slots = [
       ...(scene.teaching?.blocks ?? []).map((block, index) => ({ block, slot: "blocks", index })),
@@ -97,7 +97,7 @@ export function buildVisualSidecar(lesson: V4Lesson, candidate: CandidateLessonV
       const objectiveIds = scene.objectiveIds.length ? scene.objectiveIds : lesson.objectives.map(o => o.id);
       const alternative = blockTextAlternative(block);
       const signals = misconceptionSignals(block);
-      const authorPin = referenceInputs.sources.find(p => p.path.endsWith("lessonAuthor.ts"));
+      const authorPin = pins.sources.find(p => p.path.endsWith("lessonAuthor.ts"));
       if (!authorPin) throw new Error("author_source_pin_missing");
       return { sceneId: scene.id, slot, index, type: block.type, blockSha256: hash(block), objectiveIds,
         instructionalPurpose: `${entry.purpose} Learner action: ${scene.learnerAction}`,
@@ -110,7 +110,7 @@ export function buildVisualSidecar(lesson: V4Lesson, candidate: CandidateLessonV
           responsePrompt: `${scene.learnerAction} Write your response and reasoning on paper. Responses are capture only, never official scores.` },
         feedback: { policy: "FORMATIVE_ONLY", reveal: feedbackReveal(block), canonicalMasteryMutation: false },
         sourcePins: [authorPin,
-          ...(block.type === "MAP_EXPLORER" ? referenceInputs.sources.filter(p => p.path.endsWith("liberiaCounties.ts")) : [])],
+          ...(block.type === "MAP_EXPLORER" ? pins.sources.filter(p => p.path.endsWith("liberiaCounties.ts")) : [])],
       };
     });
   });
@@ -131,9 +131,9 @@ export function feedbackReveal(block: VisualBlock): "MODEL" | "NONE" | "AFTER_AT
   return blockRequiresCompletion(block) ? "AFTER_ATTEMPT" : "NONE";
 }
 
-export function validateVisualSidecar(input: unknown, lesson: V4Lesson, candidate: CandidateLessonV2) {
+export function validateVisualSidecar(input: unknown, lesson: V4Lesson, candidate: CandidateLessonV2, pins = referenceInputs) {
   const sidecar = visualTeachingSidecarSchema.parse(input);
-  if (hash(sidecar) !== hash(buildVisualSidecar(lesson, candidate))) throw new Error("visual_sidecar_binding_mismatch");
+  if (hash(sidecar) !== hash(buildVisualSidecar(lesson, candidate, pins))) throw new Error("visual_sidecar_binding_mismatch");
   return sidecar;
 }
 
@@ -143,12 +143,12 @@ export function assertV4AnswerIsolation(candidate: CandidateLessonV2, sidecar: V
   assertLearnerSafe({ candidate, sidecar }, protectedStrings(assessment.items, assessment.specs));
 }
 
-export function referenceBlueprint(lesson: V4Lesson) {
+export function referenceBlueprint(lesson: V4Lesson, pins = referenceInputs) {
   const objectiveIds = lesson.objectives.map(o => o.id), resourceId = `${lesson.key}-lesson`;
-  const pin = { id: "v4-reference-inputs", version: "1.0.0", sha256: hash(referenceInputs), sourceRef: "curriculum/factory-v4/reference-inputs.json" };
+  const pin = { id: "v4-reference-inputs", version: "1.0.0", sha256: hash(pins), sourceRef: pins === referenceInputs ? "curriculum/factory-v4/reference-inputs.json" : "curriculum/factory-v4/draft5-inputs.json" };
   return sealBlueprint({ schemaVersion: UNIT_BLUEPRINT_V4_VERSION, instructionStandard: V4_INSTRUCTION_STANDARD,
     blueprintId: `${lesson.key}-v4`, version: "4.0.0", grade: lesson.grade, subject: lesson.subject, unitId: lesson.key,
-    title: lesson.key, repositoryCommit: referenceInputs.frontendCommit, sources: [pin],
+    title: lesson.key, repositoryCommit: pins.frontendCommit, sources: [pin],
     objectives: lesson.objectives.map(o => ({ id: o.id, kind: "LIBERIALEARN_MASTERY", statement: o.statement,
       sourceId: pin.id, sourcePointer: o.moeReferences[0].moeItemId, scope: "REQUIRED", mapping: "PROPOSED" })),
     outcomes: [{ id: `${lesson.key}-outcome`, objectiveIds, demonstration: "Produce and explain an independent response and transfer it to a new context." }],
@@ -176,11 +176,11 @@ export function withV4LessonAuthor(executors: FactoryExecutors, author: FactoryE
   } };
 }
 
-export function referenceExecutors(lesson: V4Lesson): FactoryExecutors {
+export function referenceExecutors(lesson: V4Lesson, author = authorLesson): FactoryExecutors {
   const noop = async (): Promise<ResourceDraft[]> => [];
   const empty: FactoryExecutors = { CURRICULUM_ARCHITECT: noop, LEARNING_SCIENCE_DESIGNER: noop, LESSON_AUTHOR: noop,
     ASSESSMENT_DESIGNER: noop, PROJECT_PRACTICAL_DESIGNER: noop, MEDIA_ACCESSIBILITY: noop, INDEPENDENT_QUALITY_REVIEWER: noop, GOVERNANCE_RELEASE: noop };
-  return withV4LessonAuthor(empty, async () => [{ id: `${lesson.key}-lesson`, version: "4.0.0", payload: { kind: "LESSON", candidate: authorLesson(lesson) } }]);
+  return withV4LessonAuthor(empty, async () => [{ id: `${lesson.key}-lesson`, version: "4.0.0", payload: { kind: "LESSON", candidate: author(lesson) } }]);
 }
 
 export { V4_LESSONS };

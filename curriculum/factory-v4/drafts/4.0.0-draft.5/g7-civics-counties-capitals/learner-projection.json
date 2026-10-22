@@ -1,0 +1,448 @@
+{
+  "contractVersion": "lesson-experience/1.0.0",
+  "id": "cv4-cand-g7-civics-counties-capitals",
+  "version": "4.0.0-draft.5",
+  "title": "Generated: Read a county-capital register",
+  "subject": "CIVICS",
+  "grade": 7,
+  "ageBand": "JUNIOR_SECONDARY",
+  "authority": {
+    "status": "CURRICULUM_V2_DRAFT",
+    "note": "Interactive Learning V4 DRAFT candidate for wk_mca7a_fri_p4. Not bound to an MOE objective or release, not reviewed, not approved, not published.",
+    "candidateContentIds": [
+      "wk_mca7a_fri_p4"
+    ],
+    "releaseId": null,
+    "releaseIdentity": null
+  },
+  "objectives": [
+    {
+      "id": "ft01-o1",
+      "statement": "Identify Liberia's fifteen county-capital pairs in a name register, without inferring geographic locations from entry order.",
+      "conceptId": "ft01-o1",
+      "standardCodes": [],
+      "skillIds": []
+    },
+    {
+      "id": "ft01-o2",
+      "statement": "Distinguish county capitals from well-known cities and the national capital using Nimba and Montserrado as examples.",
+      "conceptId": "ft01-o2",
+      "standardCodes": [],
+      "skillIds": []
+    },
+    {
+      "id": "ft01-o3",
+      "statement": "Explain which administrative claims a county-capital register supports and request geographic and road sources for route planning.",
+      "conceptId": "ft01-o3",
+      "standardCodes": [],
+      "skillIds": []
+    }
+  ],
+  "scenes": [
+    {
+      "id": "generated-1",
+      "type": "EXPLANATION",
+      "title": "Read a county-capital register",
+      "objectiveIds": [
+        "ft01-o1",
+        "ft01-o2",
+        "ft01-o3"
+      ],
+      "content": {
+        "body": "This is a name register, not a geographic map. Its order shows no location, neighbours, direction or travel route. County-capital names are pinned repository data awaiting authoritative-source attestation before release."
+      },
+      "interaction": {
+        "kind": "NONE"
+      },
+      "tools": {
+        "allowed": [],
+        "prohibited": []
+      },
+      "accessibility": {
+        "textAlternative": "This is a name register, not a geographic map. Its order shows no location, neighbours, direction or travel route. County-capital names are pinned repository data awaiting authoritative-source attestation before release. Liberia county-capital register. Lofa: Voinjama. Gbarpolu: Bopolu. Grand Cape Mount: Robertsport. Bomi: Tubmanburg. Montserrado: Bensonville. Bong: Gbarnga. Nimba: Sanniquellie. Margibi: Kakata. Grand Bassa: Buchanan. River Cess: Cestos City. Grand Gedeh: Zwedru. Sinoe: Greenville. River Gee: Fish Town. Grand Kru: Barclayville. Maryland: Harper.",
+        "keyboardOperable": true,
+        "reducedMotionSafe": true,
+        "captionsRequired": false
+      },
+      "offline": {
+        "mode": "FULL",
+        "fallback": "Models and formative checks use cached lesson data. Paper responses are capture only; no official grade is produced."
+      },
+      "evidence": {
+        "kind": "NONE"
+      },
+      "completion": {
+        "kind": "VIEWED"
+      },
+      "teaching": {
+        "phase": "EXPLORE",
+        "blocks": [
+          {
+            "type": "READING_PASSAGE",
+            "id": "county-register",
+            "title": "Liberia county-capital register",
+            "paragraphs": [
+              "Lofa: Voinjama. Gbarpolu: Bopolu. Grand Cape Mount: Robertsport. Bomi: Tubmanburg. Montserrado: Bensonville. Bong: Gbarnga. Nimba: Sanniquellie. Margibi: Kakata. Grand Bassa: Buchanan. River Cess: Cestos City. Grand Gedeh: Zwedru. Sinoe: Greenville. River Gee: Fish Town. Grand Kru: Barclayville. Maryland: Harper."
+            ],
+            "glossary": [],
+            "origin": {
+              "kind": "ORIGINAL_FOR_LIBERIALEARN",
+              "license": "Repository reference; review only; independent attestation pending",
+              "attribution": "Pinned LiberiaLearn county-capital model. Text ordering conveys no geography."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "generated-2",
+      "type": "PRACTICE",
+      "title": "Identify administrative names",
+      "objectiveIds": [
+        "ft01-o1",
+        "ft01-o2",
+        "ft01-o3"
+      ],
+      "content": {
+        "body": "Use the register to distinguish a county from the city named as its administrative capital. The largest or best-known city need not be the capital."
+      },
+      "interaction": {
+        "kind": "NONE"
+      },
+      "tools": {
+        "allowed": [],
+        "prohibited": []
+      },
+      "accessibility": {
+        "textAlternative": "Use the register to distinguish a county from the city named as its administrative capital. The largest or best-known city need not be the capital. Which city is Montserrado County's capital? Options: Bensonville; Monrovia. Which city is Nimba County's capital? Options: Sanniquellie; Ganta.",
+        "keyboardOperable": true,
+        "reducedMotionSafe": true,
+        "captionsRequired": false
+      },
+      "offline": {
+        "mode": "FULL",
+        "fallback": "Models and formative checks use cached lesson data. Paper responses are capture only; no official grade is produced."
+      },
+      "evidence": {
+        "kind": "NONE"
+      },
+      "completion": {
+        "kind": "VIEWED"
+      },
+      "teaching": {
+        "phase": "INVESTIGATE",
+        "blocks": [
+          {
+            "type": "CHECK",
+            "id": "montserrado-capital",
+            "items": [
+              {
+                "id": "montserrado-capital-item",
+                "prompt": "Which city is Montserrado County's capital?",
+                "options": [
+                  {
+                    "id": "reason",
+                    "text": "Bensonville",
+                    "feedback": "Bensonville is the county capital. Monrovia is the national capital, located in Montserrado."
+                  },
+                  {
+                    "id": "other",
+                    "text": "Monrovia",
+                    "feedback": "Compare this claim with the model and its evidence."
+                  }
+                ],
+                "formativeKey": {
+                  "expectedOptionId": "reason"
+                },
+                "misconceptionId": "generated-civics-misconception"
+              }
+            ]
+          },
+          {
+            "type": "CHECK",
+            "id": "nimba-capital",
+            "items": [
+              {
+                "id": "nimba-capital-item",
+                "prompt": "Which city is Nimba County's capital?",
+                "options": [
+                  {
+                    "id": "reason",
+                    "text": "Sanniquellie",
+                    "feedback": "Sanniquellie is the county capital. A well-known trading city such as Ganta is not therefore the county capital."
+                  },
+                  {
+                    "id": "other",
+                    "text": "Ganta",
+                    "feedback": "Compare this claim with the model and its evidence."
+                  }
+                ],
+                "formativeKey": {
+                  "expectedOptionId": "reason"
+                },
+                "misconceptionId": "generated-civics-misconception"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "generated-3",
+      "type": "PRACTICE",
+      "title": "Compare the names independently",
+      "objectiveIds": [
+        "ft01-o1",
+        "ft01-o2",
+        "ft01-o3"
+      ],
+      "content": {
+        "body": "The register pairs Bong with Gbarnga and Montserrado with Bensonville. Compare the administrative units; do not infer their geographic positions from the text order."
+      },
+      "interaction": {
+        "kind": "FREE_RESPONSE",
+        "prompts": [
+          {
+            "id": "generated-3-response-0",
+            "prompt": "Explain how Bong and Gbarnga refer to different administrative units, using the register.",
+            "minLength": 20
+          },
+          {
+            "id": "generated-3-response-1",
+            "prompt": "Can the order of these entries show which counties a road crosses? Explain what geographic source is missing.",
+            "minLength": 20
+          }
+        ]
+      },
+      "tools": {
+        "allowed": [],
+        "prohibited": []
+      },
+      "accessibility": {
+        "textAlternative": "The register pairs Bong with Gbarnga and Montserrado with Bensonville. Compare the administrative units; do not infer their geographic positions from the text order. Explain how Bong and Gbarnga refer to different administrative units, using the register. Can the order of these entries show which counties a road crosses? Explain what geographic source is missing.",
+        "keyboardOperable": true,
+        "reducedMotionSafe": true,
+        "captionsRequired": false
+      },
+      "offline": {
+        "mode": "FULL",
+        "fallback": "Models and formative checks use cached lesson data. Paper responses are capture only; no official grade is produced."
+      },
+      "evidence": {
+        "kind": "NONE"
+      },
+      "completion": {
+        "kind": "ALL_RESPONSES_WRITTEN"
+      },
+      "teaching": {
+        "phase": "COMPARE",
+        "blocks": []
+      }
+    },
+    {
+      "id": "generated-4",
+      "type": "PRACTICE",
+      "title": "Limit a claim to its evidence",
+      "objectiveIds": [
+        "ft01-o1",
+        "ft01-o2",
+        "ft01-o3"
+      ],
+      "content": {
+        "body": "Worked reasoning: a county-capital register supports administrative name pairings. It does not show borders, direction, distance, population or routes. A scaled geographic map and current road information would be needed to plan travel."
+      },
+      "interaction": {
+        "kind": "NONE"
+      },
+      "tools": {
+        "allowed": [],
+        "prohibited": []
+      },
+      "accessibility": {
+        "textAlternative": "Worked reasoning: a county-capital register supports administrative name pairings. It does not show borders, direction, distance, population or routes. A scaled geographic map and current road information would be needed to plan travel. Synthetic register-interpretation exercise. Each entry pairs a county name with its capital name. Entry order cannot establish a road route or neighbouring counties. Consecutive entries must be neighbouring counties. Which statements correctly describe the evidence this register provides?",
+        "keyboardOperable": true,
+        "reducedMotionSafe": true,
+        "captionsRequired": false
+      },
+      "offline": {
+        "mode": "FULL",
+        "fallback": "Models and formative checks use cached lesson data. Paper responses are capture only; no official grade is produced."
+      },
+      "evidence": {
+        "kind": "NONE"
+      },
+      "completion": {
+        "kind": "VIEWED"
+      },
+      "teaching": {
+        "phase": "REASON",
+        "blocks": [
+          {
+            "type": "SOURCE_EVIDENCE",
+            "id": "county-evidence",
+            "source": {
+              "title": "Synthetic register-interpretation exercise",
+              "kind": "DOCUMENT",
+              "origin": {
+                "kind": "ORIGINAL_FOR_LIBERIALEARN",
+                "license": "Original synthetic demonstration; internal review only",
+                "attribution": "LiberiaLearn Content Factory V4 deterministic author"
+              }
+            },
+            "question": "Which statements correctly describe the evidence this register provides?",
+            "sentences": [
+              {
+                "id": "names",
+                "text": "Each entry pairs a county name with its capital name.",
+                "supports": true,
+                "why": "The register explicitly supplies administrative pairs."
+              },
+              {
+                "id": "scope",
+                "text": "Entry order cannot establish a road route or neighbouring counties.",
+                "supports": true,
+                "why": "The text has no geographic coordinates, boundaries or roads."
+              },
+              {
+                "id": "route",
+                "text": "Consecutive entries must be neighbouring counties.",
+                "supports": false,
+                "why": "List order encodes no geography; use a geographically valid map."
+              }
+            ],
+            "minSelect": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "generated-5",
+      "type": "PRACTICE",
+      "title": "Request the missing geographic evidence",
+      "objectiveIds": [
+        "ft01-o1",
+        "ft01-o2",
+        "ft01-o3"
+      ],
+      "content": {
+        "body": "Synthetic task: a school must send supplies to Bong County's office. It has the name register, but no map, current contact list or road data."
+      },
+      "interaction": {
+        "kind": "FREE_RESPONSE",
+        "prompts": [
+          {
+            "id": "generated-5-response-0",
+            "prompt": "Explain why knowing Gbarnga is Bong's capital does not tell you which counties a delivery road crosses.",
+            "minLength": 20
+          }
+        ]
+      },
+      "tools": {
+        "allowed": [],
+        "prohibited": []
+      },
+      "accessibility": {
+        "textAlternative": "Synthetic task: a school must send supplies to Bong County's office. It has the name register, but no map, current contact list or road data. Use the register to name the county capital, distinguish established facts from unknowns, and request a valid geographic map and current road information. Claim: State your conclusion precisely. Evidence and reasoning: Quote or describe relevant evidence and explain the link to your claim. Explain why knowing Gbarnga is Bong's capital does not tell you which counties a delivery road crosses.",
+        "keyboardOperable": true,
+        "reducedMotionSafe": true,
+        "captionsRequired": false
+      },
+      "offline": {
+        "mode": "FULL",
+        "fallback": "Models and formative checks use cached lesson data. Paper responses are capture only; no official grade is produced."
+      },
+      "evidence": {
+        "kind": "NONE"
+      },
+      "completion": {
+        "kind": "ALL_RESPONSES_WRITTEN"
+      },
+      "teaching": {
+        "phase": "APPLY",
+        "blocks": [
+          {
+            "type": "WRITING_ORGANIZER",
+            "id": "county-transfer",
+            "prompt": "Use the register to name the county capital, distinguish established facts from unknowns, and request a valid geographic map and current road information.",
+            "fields": [
+              {
+                "id": "claim",
+                "label": "Claim",
+                "guidance": "State your conclusion precisely.",
+                "minWords": 8
+              },
+              {
+                "id": "evidence",
+                "label": "Evidence and reasoning",
+                "guidance": "Quote or describe relevant evidence and explain the link to your claim.",
+                "minWords": 15
+              }
+            ],
+            "checklist": [
+              "My evidence supports my claim.",
+              "I explained the reasoning and checked an alternative."
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "generated-assess",
+      "type": "MASTERY_CHECK",
+      "title": "Independent assessment handoff",
+      "objectiveIds": [
+        "ft01-o1",
+        "ft01-o2",
+        "ft01-o3"
+      ],
+      "content": {
+        "body": "Only Assessment Player V2 can collect and score governed assessment responses. This draft has no approved form or official score."
+      },
+      "interaction": {
+        "kind": "ASSESSMENT_HANDOFF",
+        "assessment": {
+          "assessmentId": "cv4-cand-g7-civics-counties-capitals--generated-mastery",
+          "assessmentVersion": "4.0.0-draft.5",
+          "player": "ASSESSMENT_PLAYER_V2",
+          "scoring": "SERVER_AUTHORITY",
+          "objectiveIds": [
+            "ft01-o1",
+            "ft01-o2",
+            "ft01-o3"
+          ],
+          "items": []
+        }
+      },
+      "tools": {
+        "allowed": [],
+        "prohibited": []
+      },
+      "accessibility": {
+        "textAlternative": "The lesson requests a separate independent assessment. This draft contains no governed assessment questions or protected scoring material.",
+        "keyboardOperable": true,
+        "reducedMotionSafe": true,
+        "captionsRequired": false
+      },
+      "offline": {
+        "mode": "FULL",
+        "fallback": "No assessment form is cached by this draft. Paper work is capture only and cannot establish an official grade."
+      },
+      "evidence": {
+        "kind": "MASTERY_RESPONSE",
+        "evidenceType": "QUIZ",
+        "objectiveIds": [
+          "ft01-o1",
+          "ft01-o2",
+          "ft01-o3"
+        ]
+      },
+      "completion": {
+        "kind": "ALL_ANSWERED"
+      }
+    }
+  ],
+  "offline": {
+    "packageable": true,
+    "requiredAssets": []
+  }
+}

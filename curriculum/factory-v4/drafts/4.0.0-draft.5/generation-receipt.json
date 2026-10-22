@@ -1,0 +1,99 @@
+{
+  "version": "factory-v4-generation/1.0.0",
+  "candidateVersion": "4.0.0-draft.5",
+  "contractVersion": "visual-teaching-block/4.0.0-draft.1",
+  "inputsSha256": "88b7a18ecd3ad9d0e080ad918e3e7bb29227b0f2e0a7672d72416e6c0d323ba5",
+  "candidates": [
+    {
+      "key": "g7-math-area-perimeter",
+      "manifest": "curriculum/factory-v4/drafts/4.0.0-draft.5/g7-math-area-perimeter/manifest.json",
+      "packageHash": "7dedcc121174a439db4e3f3d38e04e3b705ff6362647f4afa59afd30ba2d0770",
+      "manifestSha256": "1013cf827d571dc657b2fe25892642b3b94e09449776e2b9205b5ab6323b30ea",
+      "factoryStatus": "REVISION_REQUIRED",
+      "releaseBlockers": [
+        "MOE_OBJECTIVE_UNBOUND",
+        "ONTOLOGY_RELEASE_MISSING",
+        "V4_HUMAN_REVIEW_REQUIRED",
+        "LEGACY_BODY_NOT_COMPARED",
+        "excellence:BP-COVERAGE",
+        "excellence:BP-PRODUCTION",
+        "excellence:BP-REASONING",
+        "excellence:BP-SELECTED-SHARE",
+        "excellence:BP-RETENTION",
+        "excellence:BP-TRANSFER",
+        "excellence:BP-EXTENSION",
+        "REFERENCE_LESSON_ONLY_FULL_EXCELLENCE_PACKAGE_PENDING",
+        "PROTECTED_ASSESSMENT_RECONCILIATION_REQUIRED",
+        "PREREQUISITE_DIAGNOSTIC_AND_MISCONCEPTION_ITEM_BINDINGS_PENDING",
+        "AUTHENTIC_SOURCE_COMPARISON_AND_RIGHTS_REVIEW_REQUIRED",
+        "MANUAL_ACCESSIBILITY_AND_OFFLINE_RUNTIME_QA_REQUIRED",
+        "OBJECTIVE_MAPPING_PROPOSED:ll-g7-math-ap-rectangles",
+        "OBJECTIVE_MAPPING_PROPOSED:ll-g7-math-ap-triangles",
+        "EXACT_REVISION_HUMAN_REVIEW_REQUIRED",
+        "EXPLICIT_RELEASE_AUTHORIZATION_REQUIRED",
+        "RETENTION_POLICY_APPROVAL_REQUIRED",
+        "ASSESSMENT_ITEMS_PENDING",
+        "RESTRICTED_KEY_COMPARISON_PENDING",
+        "FRONTEND_GENERATED_PACKAGE_CONSUMPTION_QA_PENDING"
+      ]
+    },
+    {
+      "key": "g7-civics-counties-capitals",
+      "manifest": "curriculum/factory-v4/drafts/4.0.0-draft.5/g7-civics-counties-capitals/manifest.json",
+      "packageHash": "1da85c7ac63953499cf3f6500cc7f3c34691c1e266d9fee71937c490c17074d9",
+      "manifestSha256": "cb10937b09ef6c0b0ea5fd194a22645ad4e66c9f63bd0daaaf324dd0faa7871c",
+      "factoryStatus": "REVISION_REQUIRED",
+      "releaseBlockers": [
+        "MOE_OBJECTIVE_UNBOUND",
+        "ONTOLOGY_RELEASE_MISSING",
+        "V4_HUMAN_REVIEW_REQUIRED",
+        "V021_BASELINE_RECONCILIATION",
+        "excellence:BP-COVERAGE",
+        "excellence:BP-PRODUCTION",
+        "excellence:BP-REASONING",
+        "excellence:BP-SELECTED-SHARE",
+        "excellence:BP-RETENTION",
+        "excellence:BP-TRANSFER",
+        "excellence:BP-EXTENSION",
+        "REFERENCE_LESSON_ONLY_FULL_EXCELLENCE_PACKAGE_PENDING",
+        "PROTECTED_ASSESSMENT_RECONCILIATION_REQUIRED",
+        "PREREQUISITE_DIAGNOSTIC_AND_MISCONCEPTION_ITEM_BINDINGS_PENDING",
+        "AUTHENTIC_SOURCE_COMPARISON_AND_RIGHTS_REVIEW_REQUIRED",
+        "MANUAL_ACCESSIBILITY_AND_OFFLINE_RUNTIME_QA_REQUIRED",
+        "OBJECTIVE_MAPPING_PROPOSED:ft01-o1",
+        "OBJECTIVE_MAPPING_PROPOSED:ft01-o2",
+        "OBJECTIVE_MAPPING_PROPOSED:ft01-o3",
+        "EXACT_REVISION_HUMAN_REVIEW_REQUIRED",
+        "EXPLICIT_RELEASE_AUTHORIZATION_REQUIRED",
+        "RETENTION_POLICY_APPROVAL_REQUIRED",
+        "ASSESSMENT_ITEMS_PENDING",
+        "RESTRICTED_KEY_COMPARISON_PENDING",
+        "FRONTEND_GENERATED_PACKAGE_CONSUMPTION_QA_PENDING"
+      ]
+    }
+  ],
+  "deterministic": {
+    "independentBuildsPerCandidate": 2,
+    "allBytesIdentical": true
+  },
+  "v021": {
+    "repositoryEvidenceUnchanged": [
+      {
+        "file": "docs/architecture/content-factory/evidence/first-three-v021-reconciliation.json",
+        "hash": "6f9ae1c066934b16de2b4ffb4b6290aa7f9c9ba69ecc0291e40c33f84b79ce24"
+      },
+      {
+        "file": "curriculum/factory-v2/authoring/first-three/stated-primary-objectives-v021.json",
+        "hash": "d51419b80e7e06090daf4e974f75c9b49812a29501291e7f8355d06568874b59"
+      }
+    ],
+    "restrictedPackagesAccessed": false,
+    "restrictedPackagesWritten": false
+  },
+  "productionWrites": false,
+  "providerCalls": 0,
+  "approved": false,
+  "published": false,
+  "released": false,
+  "artifactScope": "LESSON_CANDIDATES_ONLY_NOT_COMPLETE_EXCELLENCE_PACKAGES"
+}
