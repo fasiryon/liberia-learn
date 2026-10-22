@@ -1,0 +1,354 @@
+[
+  {
+    "fixture": "civics",
+    "width": 360,
+    "viewport": 360,
+    "overflow": false,
+    "stage": {
+      "left": 12,
+      "right": 12,
+      "width": 336
+    },
+    "readStage": {
+      "left": 12,
+      "right": 12,
+      "width": 336
+    },
+    "rail": null,
+    "support": null,
+    "readingColumn": {
+      "left": 12,
+      "right": 12,
+      "width": 336
+    },
+    "rawTeX": false,
+    "mathElements": 0,
+    "currencyIntact": true
+  },
+  {
+    "fixture": "civics",
+    "width": 390,
+    "viewport": 390,
+    "overflow": false,
+    "stage": {
+      "left": 12,
+      "right": 12,
+      "width": 366
+    },
+    "readStage": {
+      "left": 12,
+      "right": 12,
+      "width": 366
+    },
+    "rail": null,
+    "support": null,
+    "readingColumn": {
+      "left": 12,
+      "right": 12,
+      "width": 366
+    },
+    "rawTeX": false,
+    "mathElements": 0,
+    "currencyIntact": true
+  },
+  {
+    "fixture": "civics",
+    "width": 768,
+    "viewport": 768,
+    "overflow": false,
+    "stage": {
+      "left": 17,
+      "right": 17,
+      "width": 734
+    },
+    "readStage": {
+      "left": 17,
+      "right": 17,
+      "width": 734
+    },
+    "rail": null,
+    "support": null,
+    "readingColumn": {
+      "left": 17,
+      "right": 91,
+      "width": 660
+    },
+    "rawTeX": false,
+    "mathElements": 0,
+    "currencyIntact": true
+  },
+  {
+    "fixture": "civics",
+    "width": 1024,
+    "viewport": 1024,
+    "overflow": false,
+    "stage": {
+      "left": 23,
+      "right": 23,
+      "width": 979
+    },
+    "readStage": {
+      "left": 255,
+      "right": 23,
+      "width": 747
+    },
+    "rail": {
+      "left": 23,
+      "right": 793,
+      "width": 208
+    },
+    "support": null,
+    "readingColumn": {
+      "left": 255,
+      "right": 32,
+      "width": 737
+    },
+    "rawTeX": false,
+    "mathElements": 0,
+    "currencyIntact": true
+  },
+  {
+    "fixture": "civics",
+    "width": 1440,
+    "viewport": 1440,
+    "overflow": false,
+    "stage": {
+      "left": 32,
+      "right": 288,
+      "width": 1121
+    },
+    "readStage": {
+      "left": 264,
+      "right": 288,
+      "width": 889
+    },
+    "rail": {
+      "left": 32,
+      "right": 1200,
+      "width": 208
+    },
+    "support": {
+      "left": 1176,
+      "right": 32,
+      "width": 232
+    },
+    "readingColumn": {
+      "left": 264,
+      "right": 398,
+      "width": 778
+    },
+    "rawTeX": false,
+    "mathElements": 0,
+    "currencyIntact": true
+  },
+  {
+    "fixture": "civics",
+    "width": 1920,
+    "viewport": 1920,
+    "overflow": false,
+    "stage": {
+      "left": 132,
+      "right": 388,
+      "width": 1400
+    },
+    "readStage": {
+      "left": 364,
+      "right": 388,
+      "width": 1168
+    },
+    "rail": {
+      "left": 132,
+      "right": 1580,
+      "width": 208
+    },
+    "support": {
+      "left": 1572,
+      "right": 116,
+      "width": 232
+    },
+    "readingColumn": {
+      "left": 364,
+      "right": 778,
+      "width": 778
+    },
+    "rawTeX": false,
+    "mathElements": 0,
+    "currencyIntact": true
+  },
+  {
+    "fixture": "notation",
+    "width": 360,
+    "viewport": 360,
+    "overflow": false,
+    "stage": {
+      "left": 12,
+      "right": 12,
+      "width": 336
+    },
+    "readStage": {
+      "left": 12,
+      "right": 12,
+      "width": 336
+    },
+    "rail": null,
+    "support": null,
+    "readingColumn": {
+      "left": 34,
+      "right": 34,
+      "width": 292
+    },
+    "rawTeX": false,
+    "mathElements": 4,
+    "currencyIntact": true
+  },
+  {
+    "fixture": "notation",
+    "width": 390,
+    "viewport": 390,
+    "overflow": false,
+    "stage": {
+      "left": 12,
+      "right": 12,
+      "width": 366
+    },
+    "readStage": {
+      "left": 12,
+      "right": 12,
+      "width": 366
+    },
+    "rail": null,
+    "support": null,
+    "readingColumn": {
+      "left": 34,
+      "right": 34,
+      "width": 322
+    },
+    "rawTeX": false,
+    "mathElements": 4,
+    "currencyIntact": true
+  },
+  {
+    "fixture": "notation",
+    "width": 768,
+    "viewport": 768,
+    "overflow": false,
+    "stage": {
+      "left": 17,
+      "right": 17,
+      "width": 734
+    },
+    "readStage": {
+      "left": 17,
+      "right": 17,
+      "width": 734
+    },
+    "rail": null,
+    "support": null,
+    "readingColumn": {
+      "left": 39,
+      "right": 69,
+      "width": 660
+    },
+    "rawTeX": false,
+    "mathElements": 4,
+    "currencyIntact": true
+  },
+  {
+    "fixture": "notation",
+    "width": 1024,
+    "viewport": 1024,
+    "overflow": false,
+    "stage": {
+      "left": 23,
+      "right": 23,
+      "width": 979
+    },
+    "readStage": {
+      "left": 255,
+      "right": 23,
+      "width": 747
+    },
+    "rail": {
+      "left": 23,
+      "right": 793,
+      "width": 208
+    },
+    "support": null,
+    "readingColumn": {
+      "left": 277,
+      "right": 45,
+      "width": 703
+    },
+    "rawTeX": false,
+    "mathElements": 4,
+    "currencyIntact": true
+  },
+  {
+    "fixture": "notation",
+    "width": 1440,
+    "viewport": 1440,
+    "overflow": false,
+    "stage": {
+      "left": 32,
+      "right": 288,
+      "width": 1121
+    },
+    "readStage": {
+      "left": 264,
+      "right": 288,
+      "width": 889
+    },
+    "rail": {
+      "left": 32,
+      "right": 1200,
+      "width": 208
+    },
+    "support": {
+      "left": 1176,
+      "right": 32,
+      "width": 232
+    },
+    "readingColumn": {
+      "left": 286,
+      "right": 376,
+      "width": 778
+    },
+    "rawTeX": false,
+    "mathElements": 4,
+    "currencyIntact": true
+  },
+  {
+    "fixture": "notation",
+    "width": 1920,
+    "viewport": 1920,
+    "overflow": false,
+    "stage": {
+      "left": 132,
+      "right": 388,
+      "width": 1400
+    },
+    "readStage": {
+      "left": 364,
+      "right": 388,
+      "width": 1168
+    },
+    "rail": {
+      "left": 132,
+      "right": 1580,
+      "width": 208
+    },
+    "support": {
+      "left": 1572,
+      "right": 116,
+      "width": 232
+    },
+    "readingColumn": {
+      "left": 386,
+      "right": 756,
+      "width": 778
+    },
+    "rawTeX": false,
+    "mathElements": 4,
+    "currencyIntact": true
+  }
+]

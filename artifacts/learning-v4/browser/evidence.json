@@ -1,0 +1,2683 @@
+{
+  "generatedAt": "2026-10-21T21:33:12.363Z",
+  "harness": "e2e/product-design-v2 (Vite fixture harness, production components)",
+  "lessons": {
+    "g7-math-area-perimeter@1440": {
+      "scenes": [
+        {
+          "id": "field",
+          "phase": "ORIENT",
+          "gatedUntilDone": false,
+          "completed": true,
+          "mathElements": 0,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "SHAPE_MODEL:field-hook",
+              "notes": []
+            }
+          ],
+          "screenshot": "shots/g7-math-area-perimeter--1440--01-field.png"
+        },
+        {
+          "id": "see-it",
+          "phase": "VISUALIZE",
+          "gatedUntilDone": false,
+          "completed": true,
+          "mathElements": 9,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "EQUATION:",
+              "notes": []
+            },
+            {
+              "block": "EQUATION:",
+              "notes": []
+            },
+            {
+              "block": "CALLOUT:",
+              "notes": []
+            },
+            {
+              "block": "SHAPE_MODEL:explore-rectangle",
+              "notes": []
+            }
+          ],
+          "screenshot": "shots/g7-math-area-perimeter--1440--02-see-it.png"
+        },
+        {
+          "id": "watch-field",
+          "phase": "DEMONSTRATE",
+          "gatedUntilDone": true,
+          "completed": true,
+          "mathElements": 2,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "WORKED_SOLUTION:field-solution",
+              "notes": []
+            }
+          ],
+          "screenshot": "shots/g7-math-area-perimeter--1440--03-watch-field.png"
+        },
+        {
+          "id": "solve-classroom",
+          "phase": "SOLVE_WITH_SUPPORT",
+          "gatedUntilDone": true,
+          "completed": true,
+          "mathElements": 3,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "NUMERIC_RESPONSE:classroom-floor",
+              "notes": [
+                {
+                  "attempt": "wrong 28",
+                  "feedback": [
+                    "Not yet. That is the perimeter: the distance around the outside. Area counts the squares that cover the inside."
+                  ]
+                },
+                {
+                  "attempt": "right number, wrong unit",
+                  "feedback": [
+                    "Not yet. The number is right, but area is measured in square units (square metres), because it counts squares that cover the inside."
+                  ]
+                },
+                {
+                  "solutionShown": true
+                }
+              ]
+            },
+            {
+              "block": "NUMERIC_RESPONSE:garden-fence",
+              "notes": [
+                {
+                  "attempt": "wrong 17",
+                  "feedback": [
+                    "Not yet. You added one length and one width. That is only half of the way round. A rectangle has two lengths and two widths: 2 × (length + width)."
+                  ]
+                },
+                {
+                  "attempt": "right number, wrong unit",
+                  "feedback": [
+                    "Not yet. The number is right, but a perimeter is a length, so it is measured in m, not square units."
+                  ]
+                },
+                {
+                  "solutionShown": true
+                }
+              ]
+            }
+          ],
+          "screenshot": "shots/g7-math-area-perimeter--1440--04-solve-classroom.png"
+        },
+        {
+          "id": "alone-rice-farm",
+          "phase": "PRACTICE_INDEPENDENTLY",
+          "gatedUntilDone": true,
+          "completed": true,
+          "mathElements": 2,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "NUMERIC_RESPONSE:rice-plot",
+              "notes": [
+                {
+                  "attempt": "wrong 82",
+                  "feedback": [
+                    "Not yet. That is the perimeter: the distance around the outside. Area counts the squares that cover the inside."
+                  ]
+                },
+                {
+                  "solutionHiddenAfterOneWrong": true
+                },
+                {
+                  "attempt": "right number, wrong unit",
+                  "feedback": [
+                    "Not yet. The number is right, but area is measured in square units (square metres), because it counts squares that cover the inside."
+                  ]
+                },
+                {
+                  "solutionShown": true
+                }
+              ]
+            },
+            {
+              "block": "CHECK:rice-wire",
+              "notes": [
+                {
+                  "wrongChoice": [
+                    "Not yet. The area tells her how much ground the plot covers, for example how much seed to plant. Wire goes around the edge. Try another answer."
+                  ]
+                }
+              ]
+            }
+          ],
+          "screenshot": "shots/g7-math-area-perimeter--1440--05-alone-rice-farm.png"
+        },
+        {
+          "id": "mistake-room",
+          "phase": "ANALYZE_MISTAKE",
+          "gatedUntilDone": true,
+          "completed": true,
+          "mathElements": 6,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "MISTAKE_ANALYSIS:musa-perimeter",
+              "notes": [
+                {
+                  "wrongDiagnosis": [
+                    "Not yet. Adding one length and one width gives only half of the way round. The room has four sides. Try another answer."
+                  ]
+                },
+                {
+                  "correctionShown": true
+                }
+              ]
+            },
+            {
+              "block": "CHECK:units-check",
+              "notes": [
+                {
+                  "wrongChoice": [
+                    "Not yet. The number is right, but area counts squares, so the unit is square metres (m²). Try another answer."
+                  ]
+                }
+              ]
+            }
+          ],
+          "screenshot": "shots/g7-math-area-perimeter--1440--06-mistake-room.png"
+        },
+        {
+          "id": "see-triangle",
+          "phase": "VISUALIZE",
+          "gatedUntilDone": false,
+          "completed": true,
+          "mathElements": 7,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "EQUATION:",
+              "notes": []
+            },
+            {
+              "block": "EQUATION:",
+              "notes": []
+            },
+            {
+              "block": "CALLOUT:",
+              "notes": []
+            },
+            {
+              "block": "SHAPE_MODEL:explore-triangle",
+              "notes": []
+            }
+          ],
+          "screenshot": "shots/g7-math-area-perimeter--1440--07-see-triangle.png"
+        },
+        {
+          "id": "watch-pennant",
+          "phase": "DEMONSTRATE",
+          "gatedUntilDone": true,
+          "completed": true,
+          "mathElements": 3,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "WORKED_SOLUTION:pennant-solution",
+              "notes": []
+            }
+          ],
+          "screenshot": "shots/g7-math-area-perimeter--1440--08-watch-pennant.png"
+        },
+        {
+          "id": "solve-triangle",
+          "phase": "SOLVE_WITH_SUPPORT",
+          "gatedUntilDone": true,
+          "completed": true,
+          "mathElements": 2,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "NUMERIC_RESPONSE:garden-bed",
+              "notes": [
+                {
+                  "attempt": "wrong 120",
+                  "feedback": [
+                    "Not yet. That is base × height, the area of the whole rectangle around the triangle. The triangle is exactly half of it: ½ × base × height."
+                  ]
+                },
+                {
+                  "attempt": "right number, wrong unit",
+                  "feedback": [
+                    "Not yet. The number is right, but area is measured in square units (square metres), because it counts squares that cover the inside."
+                  ]
+                },
+                {
+                  "solutionShown": true
+                }
+              ]
+            }
+          ],
+          "screenshot": "shots/g7-math-area-perimeter--1440--09-solve-triangle.png"
+        },
+        {
+          "id": "alone-roof",
+          "phase": "PRACTICE_INDEPENDENTLY",
+          "gatedUntilDone": true,
+          "completed": true,
+          "mathElements": 2,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "NUMERIC_RESPONSE:roof-gable",
+              "notes": [
+                {
+                  "attempt": "wrong 20",
+                  "feedback": [
+                    "Not yet. You used the sloping side, 5 m, as the height. The height is the 3 m line at a right angle to the base."
+                  ]
+                },
+                {
+                  "solutionHiddenAfterOneWrong": true
+                },
+                {
+                  "attempt": "right number, wrong unit",
+                  "feedback": [
+                    "Not yet. The number is right, but area is measured in square units (square metres), because it counts squares that cover the inside."
+                  ]
+                },
+                {
+                  "solutionShown": true
+                }
+              ]
+            }
+          ],
+          "screenshot": "shots/g7-math-area-perimeter--1440--10-alone-roof.png"
+        },
+        {
+          "id": "mistake-kofi",
+          "phase": "ANALYZE_MISTAKE",
+          "gatedUntilDone": true,
+          "completed": true,
+          "mathElements": 5,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "MISTAKE_ANALYSIS:kofi-triangle",
+              "notes": [
+                {
+                  "wrongDiagnosis": [
+                    "Not yet. Look again: Kofi did multiply by one half. The mistake is in which length he used. Try another answer."
+                  ]
+                },
+                {
+                  "correctionShown": true
+                }
+              ]
+            }
+          ],
+          "screenshot": "shots/g7-math-area-perimeter--1440--11-mistake-kofi.png"
+        },
+        {
+          "id": "apply-school-grounds",
+          "phase": "APPLY",
+          "gatedUntilDone": true,
+          "completed": true,
+          "mathElements": 4,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "NUMERIC_RESPONSE:l-garden",
+              "notes": [
+                {
+                  "attempt": "wrong 72",
+                  "feedback": [
+                    "Not yet. 72 is the whole 8 m by 9 m rectangle around the garden. Part of that rectangle is not garden: add the two rectangles instead."
+                  ]
+                },
+                {
+                  "solutionHiddenAfterOneWrong": true
+                },
+                {
+                  "attempt": "right number, wrong unit",
+                  "feedback": [
+                    "Not yet. The number is right, but area is measured in square units (square metres), because it counts squares that cover the inside."
+                  ]
+                },
+                {
+                  "solutionShown": true
+                }
+              ]
+            },
+            {
+              "block": "NUMERIC_RESPONSE:flower-bed",
+              "notes": [
+                {
+                  "attempt": "wrong 49",
+                  "feedback": [
+                    "Not yet. You are close. Check your arithmetic one step at a time."
+                  ]
+                },
+                {
+                  "solutionHiddenAfterOneWrong": true
+                },
+                {
+                  "attempt": "right number, wrong unit",
+                  "feedback": [
+                    "Not yet. The number is right, but area is measured in square units (square metres), because it counts squares that cover the inside."
+                  ]
+                },
+                {
+                  "solutionShown": true
+                }
+              ]
+            }
+          ],
+          "screenshot": "shots/g7-math-area-perimeter--1440--12-apply-school-grounds.png"
+        },
+        {
+          "id": "remember",
+          "phase": "RETRIEVE",
+          "gatedUntilDone": true,
+          "completed": true,
+          "mathElements": 5,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "CHECK:retrieve-tile",
+              "notes": [
+                {
+                  "wrongChoice": [
+                    "Not yet. That is the area, 30 × 30 . The perimeter goes around the four sides. Try another answer."
+                  ]
+                }
+              ]
+            }
+          ],
+          "screenshot": "shots/g7-math-area-perimeter--1440--13-remember.png"
+        },
+        {
+          "id": "show-what-you-know",
+          "phase": null,
+          "gatedUntilDone": null,
+          "completed": true,
+          "mathElements": 0,
+          "rawTexVisible": false,
+          "notes": [],
+          "screenshot": "shots/g7-math-area-perimeter--1440--14-show-what-you-know.png"
+        }
+      ],
+      "finished": true,
+      "writesBefore": 0,
+      "newWrites": []
+    },
+    "g7-math-area-perimeter@390": {
+      "scenes": [
+        {
+          "id": "field",
+          "phase": "ORIENT",
+          "gatedUntilDone": false,
+          "completed": true,
+          "mathElements": 0,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "SHAPE_MODEL:field-hook",
+              "notes": []
+            }
+          ],
+          "screenshot": "shots/g7-math-area-perimeter--390--01-field.png"
+        },
+        {
+          "id": "see-it",
+          "phase": "VISUALIZE",
+          "gatedUntilDone": false,
+          "completed": true,
+          "mathElements": 9,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "EQUATION:",
+              "notes": []
+            },
+            {
+              "block": "EQUATION:",
+              "notes": []
+            },
+            {
+              "block": "CALLOUT:",
+              "notes": []
+            },
+            {
+              "block": "SHAPE_MODEL:explore-rectangle",
+              "notes": []
+            }
+          ],
+          "screenshot": "shots/g7-math-area-perimeter--390--02-see-it.png"
+        },
+        {
+          "id": "watch-field",
+          "phase": "DEMONSTRATE",
+          "gatedUntilDone": true,
+          "completed": true,
+          "mathElements": 2,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "WORKED_SOLUTION:field-solution",
+              "notes": []
+            }
+          ],
+          "screenshot": "shots/g7-math-area-perimeter--390--03-watch-field.png"
+        },
+        {
+          "id": "solve-classroom",
+          "phase": "SOLVE_WITH_SUPPORT",
+          "gatedUntilDone": true,
+          "completed": true,
+          "mathElements": 3,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "NUMERIC_RESPONSE:classroom-floor",
+              "notes": [
+                {
+                  "attempt": "wrong 28",
+                  "feedback": [
+                    "Not yet. That is the perimeter: the distance around the outside. Area counts the squares that cover the inside."
+                  ]
+                },
+                {
+                  "attempt": "right number, wrong unit",
+                  "feedback": [
+                    "Not yet. The number is right, but area is measured in square units (square metres), because it counts squares that cover the inside."
+                  ]
+                },
+                {
+                  "solutionShown": true
+                }
+              ]
+            },
+            {
+              "block": "NUMERIC_RESPONSE:garden-fence",
+              "notes": [
+                {
+                  "attempt": "wrong 17",
+                  "feedback": [
+                    "Not yet. You added one length and one width. That is only half of the way round. A rectangle has two lengths and two widths: 2 × (length + width)."
+                  ]
+                },
+                {
+                  "attempt": "right number, wrong unit",
+                  "feedback": [
+                    "Not yet. The number is right, but a perimeter is a length, so it is measured in m, not square units."
+                  ]
+                },
+                {
+                  "solutionShown": true
+                }
+              ]
+            }
+          ],
+          "screenshot": "shots/g7-math-area-perimeter--390--04-solve-classroom.png"
+        },
+        {
+          "id": "alone-rice-farm",
+          "phase": "PRACTICE_INDEPENDENTLY",
+          "gatedUntilDone": true,
+          "completed": true,
+          "mathElements": 2,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "NUMERIC_RESPONSE:rice-plot",
+              "notes": [
+                {
+                  "attempt": "wrong 82",
+                  "feedback": [
+                    "Not yet. That is the perimeter: the distance around the outside. Area counts the squares that cover the inside."
+                  ]
+                },
+                {
+                  "solutionHiddenAfterOneWrong": true
+                },
+                {
+                  "attempt": "right number, wrong unit",
+                  "feedback": [
+                    "Not yet. The number is right, but area is measured in square units (square metres), because it counts squares that cover the inside."
+                  ]
+                },
+                {
+                  "solutionShown": true
+                }
+              ]
+            },
+            {
+              "block": "CHECK:rice-wire",
+              "notes": [
+                {
+                  "wrongChoice": [
+                    "Not yet. The area tells her how much ground the plot covers, for example how much seed to plant. Wire goes around the edge. Try another answer."
+                  ]
+                }
+              ]
+            }
+          ],
+          "screenshot": "shots/g7-math-area-perimeter--390--05-alone-rice-farm.png"
+        },
+        {
+          "id": "mistake-room",
+          "phase": "ANALYZE_MISTAKE",
+          "gatedUntilDone": true,
+          "completed": true,
+          "mathElements": 6,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "MISTAKE_ANALYSIS:musa-perimeter",
+              "notes": [
+                {
+                  "wrongDiagnosis": [
+                    "Not yet. Adding one length and one width gives only half of the way round. The room has four sides. Try another answer."
+                  ]
+                },
+                {
+                  "correctionShown": true
+                }
+              ]
+            },
+            {
+              "block": "CHECK:units-check",
+              "notes": [
+                {
+                  "wrongChoice": [
+                    "Not yet. The number is right, but area counts squares, so the unit is square metres (m²). Try another answer."
+                  ]
+                }
+              ]
+            }
+          ],
+          "screenshot": "shots/g7-math-area-perimeter--390--06-mistake-room.png"
+        },
+        {
+          "id": "see-triangle",
+          "phase": "VISUALIZE",
+          "gatedUntilDone": false,
+          "completed": true,
+          "mathElements": 7,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "EQUATION:",
+              "notes": []
+            },
+            {
+              "block": "EQUATION:",
+              "notes": []
+            },
+            {
+              "block": "CALLOUT:",
+              "notes": []
+            },
+            {
+              "block": "SHAPE_MODEL:explore-triangle",
+              "notes": []
+            }
+          ],
+          "screenshot": "shots/g7-math-area-perimeter--390--07-see-triangle.png"
+        },
+        {
+          "id": "watch-pennant",
+          "phase": "DEMONSTRATE",
+          "gatedUntilDone": true,
+          "completed": true,
+          "mathElements": 3,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "WORKED_SOLUTION:pennant-solution",
+              "notes": []
+            }
+          ],
+          "screenshot": "shots/g7-math-area-perimeter--390--08-watch-pennant.png"
+        },
+        {
+          "id": "solve-triangle",
+          "phase": "SOLVE_WITH_SUPPORT",
+          "gatedUntilDone": true,
+          "completed": true,
+          "mathElements": 2,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "NUMERIC_RESPONSE:garden-bed",
+              "notes": [
+                {
+                  "attempt": "wrong 120",
+                  "feedback": [
+                    "Not yet. That is base × height, the area of the whole rectangle around the triangle. The triangle is exactly half of it: ½ × base × height."
+                  ]
+                },
+                {
+                  "attempt": "right number, wrong unit",
+                  "feedback": [
+                    "Not yet. The number is right, but area is measured in square units (square metres), because it counts squares that cover the inside."
+                  ]
+                },
+                {
+                  "solutionShown": true
+                }
+              ]
+            }
+          ],
+          "screenshot": "shots/g7-math-area-perimeter--390--09-solve-triangle.png"
+        },
+        {
+          "id": "alone-roof",
+          "phase": "PRACTICE_INDEPENDENTLY",
+          "gatedUntilDone": true,
+          "completed": true,
+          "mathElements": 2,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "NUMERIC_RESPONSE:roof-gable",
+              "notes": [
+                {
+                  "attempt": "wrong 20",
+                  "feedback": [
+                    "Not yet. You used the sloping side, 5 m, as the height. The height is the 3 m line at a right angle to the base."
+                  ]
+                },
+                {
+                  "solutionHiddenAfterOneWrong": true
+                },
+                {
+                  "attempt": "right number, wrong unit",
+                  "feedback": [
+                    "Not yet. The number is right, but area is measured in square units (square metres), because it counts squares that cover the inside."
+                  ]
+                },
+                {
+                  "solutionShown": true
+                }
+              ]
+            }
+          ],
+          "screenshot": "shots/g7-math-area-perimeter--390--10-alone-roof.png"
+        },
+        {
+          "id": "mistake-kofi",
+          "phase": "ANALYZE_MISTAKE",
+          "gatedUntilDone": true,
+          "completed": true,
+          "mathElements": 5,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "MISTAKE_ANALYSIS:kofi-triangle",
+              "notes": [
+                {
+                  "wrongDiagnosis": [
+                    "Not yet. Look again: Kofi did multiply by one half. The mistake is in which length he used. Try another answer."
+                  ]
+                },
+                {
+                  "correctionShown": true
+                }
+              ]
+            }
+          ],
+          "screenshot": "shots/g7-math-area-perimeter--390--11-mistake-kofi.png"
+        },
+        {
+          "id": "apply-school-grounds",
+          "phase": "APPLY",
+          "gatedUntilDone": true,
+          "completed": true,
+          "mathElements": 4,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "NUMERIC_RESPONSE:l-garden",
+              "notes": [
+                {
+                  "attempt": "wrong 72",
+                  "feedback": [
+                    "Not yet. 72 is the whole 8 m by 9 m rectangle around the garden. Part of that rectangle is not garden: add the two rectangles instead."
+                  ]
+                },
+                {
+                  "solutionHiddenAfterOneWrong": true
+                },
+                {
+                  "attempt": "right number, wrong unit",
+                  "feedback": [
+                    "Not yet. The number is right, but area is measured in square units (square metres), because it counts squares that cover the inside."
+                  ]
+                },
+                {
+                  "solutionShown": true
+                }
+              ]
+            },
+            {
+              "block": "NUMERIC_RESPONSE:flower-bed",
+              "notes": [
+                {
+                  "attempt": "wrong 49",
+                  "feedback": [
+                    "Not yet. You are close. Check your arithmetic one step at a time."
+                  ]
+                },
+                {
+                  "solutionHiddenAfterOneWrong": true
+                },
+                {
+                  "attempt": "right number, wrong unit",
+                  "feedback": [
+                    "Not yet. The number is right, but area is measured in square units (square metres), because it counts squares that cover the inside."
+                  ]
+                },
+                {
+                  "solutionShown": true
+                }
+              ]
+            }
+          ],
+          "screenshot": "shots/g7-math-area-perimeter--390--12-apply-school-grounds.png"
+        },
+        {
+          "id": "remember",
+          "phase": "RETRIEVE",
+          "gatedUntilDone": true,
+          "completed": true,
+          "mathElements": 5,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "CHECK:retrieve-tile",
+              "notes": [
+                {
+                  "wrongChoice": [
+                    "Not yet. That is the area, 30 × 30 . The perimeter goes around the four sides. Try another answer."
+                  ]
+                }
+              ]
+            }
+          ],
+          "screenshot": "shots/g7-math-area-perimeter--390--13-remember.png"
+        },
+        {
+          "id": "show-what-you-know",
+          "phase": null,
+          "gatedUntilDone": null,
+          "completed": true,
+          "mathElements": 0,
+          "rawTexVisible": false,
+          "notes": [],
+          "screenshot": "shots/g7-math-area-perimeter--390--14-show-what-you-know.png"
+        }
+      ],
+      "finished": true,
+      "writesBefore": 0,
+      "newWrites": []
+    },
+    "g7-math-fractions@1440": {
+      "scenes": [
+        {
+          "id": "kanya",
+          "phase": "ORIENT",
+          "gatedUntilDone": false,
+          "completed": true,
+          "mathElements": 2,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "FRACTION_MODEL:kanya-bar",
+              "notes": []
+            }
+          ],
+          "screenshot": "shots/g7-math-fractions--1440--01-kanya.png"
+        },
+        {
+          "id": "see-fractions",
+          "phase": "VISUALIZE",
+          "gatedUntilDone": false,
+          "completed": true,
+          "mathElements": 9,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "FRACTION_MODEL:circle-five-eighths",
+              "notes": []
+            },
+            {
+              "block": "EQUATION:",
+              "notes": []
+            },
+            {
+              "block": "CALLOUT:",
+              "notes": []
+            },
+            {
+              "block": "FRACTION_MODEL:explore-bar",
+              "notes": []
+            }
+          ],
+          "screenshot": "shots/g7-math-fractions--1440--02-see-fractions.png"
+        },
+        {
+          "id": "see-equivalent",
+          "phase": "VISUALIZE",
+          "gatedUntilDone": false,
+          "completed": true,
+          "mathElements": 4,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "EQUATION:",
+              "notes": []
+            },
+            {
+              "block": "FRACTION_EQUIVALENCE:half-split",
+              "notes": []
+            }
+          ],
+          "screenshot": "shots/g7-math-fractions--1440--03-see-equivalent.png"
+        },
+        {
+          "id": "watch-fractions",
+          "phase": "DEMONSTRATE",
+          "gatedUntilDone": true,
+          "completed": true,
+          "mathElements": 11,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "WORKED_SOLUTION:rice-addition",
+              "notes": []
+            },
+            {
+              "block": "WORKED_SOLUTION:compare-eighths",
+              "notes": []
+            }
+          ],
+          "screenshot": "shots/g7-math-fractions--1440--04-watch-fractions.png"
+        },
+        {
+          "id": "solve-models",
+          "phase": "SOLVE_WITH_SUPPORT",
+          "gatedUntilDone": true,
+          "completed": true,
+          "mathElements": 16,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "FRACTION_MODEL:shade-two-thirds",
+              "notes": [
+                {
+                  "wrongShading": [
+                    "Not yet. Your model shows 1 6 . Count the equal parts and how many are shaded."
+                  ]
+                },
+                {
+                  "shaded": "4/6",
+                  "feedback": [
+                    "Correct. 4 6 is equivalent to 2 3 : the same amount in smaller parts."
+                  ]
+                }
+              ]
+            },
+            {
+              "block": "FRACTION_NUMBER_LINE:place-three-quarters",
+              "notes": [
+                {
+                  "wrongPoint": [
+                    "Not yet. You placed the point at 1 4 . Count jumps of 1 4 from 0."
+                  ]
+                }
+              ]
+            },
+            {
+              "block": "FRACTION_COMPARE:compare-thirds-quarters",
+              "notes": [
+                {
+                  "wrongRelation": [
+                    "Not yet. Compare the shaded lengths of the two bars: they are the same size of whole."
+                  ]
+                }
+              ]
+            }
+          ],
+          "screenshot": "shots/g7-math-fractions--1440--05-solve-models.png"
+        },
+        {
+          "id": "solve-adding",
+          "phase": "SOLVE_WITH_SUPPORT",
+          "gatedUntilDone": true,
+          "completed": true,
+          "mathElements": 4,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "NUMERIC_RESPONSE:add-quarter-half",
+              "notes": [
+                {
+                  "attempt": "wrong 2/6",
+                  "feedback": [
+                    "Not yet. You added the tops and the bottoms (2/6). The parts must be the same size first: 1 2 = 2 4 , so 1 4 + 2 4 ."
+                  ]
+                },
+                {
+                  "solutionShown": true
+                }
+              ]
+            }
+          ],
+          "screenshot": "shots/g7-math-fractions--1440--06-solve-adding.png"
+        },
+        {
+          "id": "alone-fractions",
+          "phase": "PRACTICE_INDEPENDENTLY",
+          "gatedUntilDone": true,
+          "completed": true,
+          "mathElements": 15,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "NUMERIC_RESPONSE:alone-add-subtract",
+              "notes": [
+                {
+                  "attempt": "wrong 4/10",
+                  "feedback": [
+                    "Not yet. 4/10 adds the tops and the bottoms. Write the half as eighths first."
+                  ]
+                },
+                {
+                  "solutionHiddenAfterOneWrong": true
+                },
+                {
+                  "solutionShown": true
+                }
+              ]
+            },
+            {
+              "block": "FRACTION_COMPARE:alone-compare",
+              "notes": [
+                {
+                  "wrongRelation": [
+                    "Not yet. The parts are different sizes, so comparing only the numerators does not work. Give both fractions the same denominator, or compare the bars."
+                  ]
+                }
+              ]
+            },
+            {
+              "block": "FRACTION_NUMBER_LINE:alone-five-quarters",
+              "notes": [
+                {
+                  "wrongPoint": [
+                    "Not yet. A fraction can be more than 1. 5 4 is past 1 on the line."
+                  ]
+                }
+              ]
+            }
+          ],
+          "screenshot": "shots/g7-math-fractions--1440--07-alone-fractions.png"
+        },
+        {
+          "id": "mistakes",
+          "phase": "ANALYZE_MISTAKE",
+          "gatedUntilDone": true,
+          "completed": true,
+          "mathElements": 22,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "MISTAKE_ANALYSIS:jallah-adds",
+              "notes": [
+                {
+                  "wrongDiagnosis": [
+                    "Not yet. Multiplying is a different operation. The question asks for the total of the two amounts. Try another answer."
+                  ]
+                },
+                {
+                  "correctionShown": true
+                }
+              ]
+            },
+            {
+              "block": "CHECK:fraction-traps",
+              "notes": [
+                {
+                  "wrongChoice": [
+                    "Not yet. A bigger denominator means more parts, so each part is smaller. 1 8 is half of 1 4 . Try another answer."
+                  ]
+                }
+              ]
+            }
+          ],
+          "screenshot": "shots/g7-math-fractions--1440--08-mistakes.png"
+        },
+        {
+          "id": "apply-palm-oil",
+          "phase": "APPLY",
+          "gatedUntilDone": true,
+          "completed": true,
+          "mathElements": 6,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "NUMERIC_RESPONSE:palm-oil-total",
+              "notes": [
+                {
+                  "attempt": "wrong 4/6",
+                  "feedback": [
+                    "Not yet. 4/6 adds the tops and the bottoms. Write the half as quarters first."
+                  ]
+                },
+                {
+                  "solutionHiddenAfterOneWrong": true
+                },
+                {
+                  "solutionShown": true
+                }
+              ]
+            },
+            {
+              "block": "CHECK:palm-oil-bottle",
+              "notes": [
+                {
+                  "wrongChoice": [
+                    "Not yet. A total of fractions can be more than 1. 4 4 L fills the bottle and 1 4 L is left over. Try another answer."
+                  ]
+                }
+              ]
+            }
+          ],
+          "screenshot": "shots/g7-math-fractions--1440--09-apply-palm-oil.png"
+        },
+        {
+          "id": "remember",
+          "phase": "RETRIEVE",
+          "gatedUntilDone": true,
+          "completed": true,
+          "mathElements": 5,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "CHECK:retrieve-equivalent",
+              "notes": [
+                {
+                  "wrongChoice": [
+                    "Not yet. Adding 1 to the top and bottom does not keep the amount the same. Try another answer."
+                  ]
+                }
+              ]
+            }
+          ],
+          "screenshot": "shots/g7-math-fractions--1440--10-remember.png"
+        },
+        {
+          "id": "show-what-you-know",
+          "phase": null,
+          "gatedUntilDone": null,
+          "completed": true,
+          "mathElements": 0,
+          "rawTexVisible": false,
+          "notes": [],
+          "screenshot": "shots/g7-math-fractions--1440--11-show-what-you-know.png"
+        }
+      ],
+      "finished": true,
+      "writesBefore": 0,
+      "newWrites": []
+    },
+    "math-multiplication-models@1440": {
+      "scenes": [
+        {
+          "id": "oranges",
+          "phase": "ORIENT",
+          "gatedUntilDone": false,
+          "completed": true,
+          "mathElements": 1,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "ARRAY_MODEL:orange-bags",
+              "notes": []
+            }
+          ],
+          "screenshot": "shots/math-multiplication-models--1440--01-oranges.png"
+        },
+        {
+          "id": "see-four-ways",
+          "phase": "VISUALIZE",
+          "gatedUntilDone": false,
+          "completed": true,
+          "mathElements": 7,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "EQUATION:",
+              "notes": []
+            },
+            {
+              "block": "CALLOUT:",
+              "notes": []
+            },
+            {
+              "block": "ARRAY_MODEL:explore-array",
+              "notes": []
+            }
+          ],
+          "screenshot": "shots/math-multiplication-models--1440--02-see-four-ways.png"
+        },
+        {
+          "id": "watch-chairs",
+          "phase": "DEMONSTRATE",
+          "gatedUntilDone": true,
+          "completed": true,
+          "mathElements": 2,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "WORKED_SOLUTION:chairs-solution",
+              "notes": []
+            }
+          ],
+          "screenshot": "shots/math-multiplication-models--1440--03-watch-chairs.png"
+        },
+        {
+          "id": "solve-groups",
+          "phase": "SOLVE_WITH_SUPPORT",
+          "gatedUntilDone": true,
+          "completed": true,
+          "mathElements": 2,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "NUMERIC_RESPONSE:market-groups",
+              "notes": [
+                {
+                  "attempt": "wrong 11",
+                  "feedback": [
+                    "Not yet. You added 7 + 4. There are 7 piles, each with 4: that is 4 + 4 + 4 + 4 + 4 + 4 + 4."
+                  ]
+                },
+                {
+                  "solutionShown": true
+                }
+              ]
+            }
+          ],
+          "screenshot": "shots/math-multiplication-models--1440--04-solve-groups.png"
+        },
+        {
+          "id": "alone-groups",
+          "phase": "PRACTICE_INDEPENDENTLY",
+          "gatedUntilDone": true,
+          "completed": true,
+          "mathElements": 5,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "NUMERIC_RESPONSE:alone-products",
+              "notes": [
+                {
+                  "attempt": "wrong 15",
+                  "feedback": [
+                    "Not yet. 15 is 9 + 6. There are 9 bundles of 6: multiply."
+                  ]
+                },
+                {
+                  "solutionHiddenAfterOneWrong": true
+                },
+                {
+                  "solutionShown": true
+                }
+              ]
+            },
+            {
+              "block": "CHECK:match-array",
+              "notes": [
+                {
+                  "wrongChoice": [
+                    "Not yet. Count the dots: each of the 3 rows has 5, so there are more than 8. Try another answer."
+                  ]
+                }
+              ]
+            }
+          ],
+          "screenshot": "shots/math-multiplication-models--1440--05-alone-groups.png"
+        },
+        {
+          "id": "mistake-kollie",
+          "phase": "ANALYZE_MISTAKE",
+          "gatedUntilDone": true,
+          "completed": true,
+          "mathElements": 4,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "MISTAKE_ANALYSIS:kollie-adds",
+              "notes": [
+                {
+                  "wrongDiagnosis": [
+                    "Not yet. Changing the order of an addition still gives 7. The problem needs equal groups added together. Try another answer."
+                  ]
+                },
+                {
+                  "correctionShown": true
+                }
+              ]
+            }
+          ],
+          "screenshot": "shots/math-multiplication-models--1440--06-mistake-kollie.png"
+        },
+        {
+          "id": "see-area-model",
+          "phase": "VISUALIZE",
+          "gatedUntilDone": false,
+          "completed": true,
+          "mathElements": 9,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "EQUATION:",
+              "notes": []
+            },
+            {
+              "block": "AREA_MODEL:show-14-by-6",
+              "notes": []
+            }
+          ],
+          "screenshot": "shots/math-multiplication-models--1440--07-see-area-model.png"
+        },
+        {
+          "id": "watch-area-model",
+          "phase": "DEMONSTRATE",
+          "gatedUntilDone": true,
+          "completed": true,
+          "mathElements": 9,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "WORKED_SOLUTION:area-23-by-4",
+              "notes": []
+            },
+            {
+              "block": "WORKED_SOLUTION:area-24-by-13",
+              "notes": []
+            }
+          ],
+          "screenshot": "shots/math-multiplication-models--1440--08-watch-area-model.png"
+        },
+        {
+          "id": "solve-area-model",
+          "phase": "SOLVE_WITH_SUPPORT",
+          "gatedUntilDone": true,
+          "completed": true,
+          "mathElements": 5,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "AREA_MODEL:fill-16-by-7",
+              "notes": [
+                {
+                  "placeValueDropped": [
+                    "Not yet. One part has lost its place value: a 20 is 2 tens, so 20 × 4 is 80, not 8."
+                  ]
+                }
+              ]
+            }
+          ],
+          "screenshot": "shots/math-multiplication-models--1440--09-solve-area-model.png"
+        },
+        {
+          "id": "alone-area-model",
+          "phase": "PRACTICE_INDEPENDENTLY",
+          "gatedUntilDone": true,
+          "completed": true,
+          "mathElements": 7,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "AREA_MODEL:fill-25-by-12",
+              "notes": [
+                {
+                  "placeValueDropped": [
+                    "Not yet. One part has lost its place value: a 20 is 2 tens, so 20 × 4 is 80, not 8."
+                  ]
+                }
+              ]
+            }
+          ],
+          "screenshot": "shots/math-multiplication-models--1440--10-alone-area-model.png"
+        },
+        {
+          "id": "mistake-sia",
+          "phase": "ANALYZE_MISTAKE",
+          "gatedUntilDone": true,
+          "completed": true,
+          "mathElements": 17,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "MISTAKE_ANALYSIS:sia-place-value",
+              "notes": [
+                {
+                  "wrongDiagnosis": [
+                    "Not yet. Splitting 23 into 20 and 3 is a good start. The mistake comes after the split. Try another answer."
+                  ]
+                },
+                {
+                  "correctionShown": true
+                }
+              ]
+            },
+            {
+              "block": "CHECK:missed-part",
+              "notes": [
+                {
+                  "wrongChoice": [
+                    "Not yet. Draw the rectangle: it has four sections, and Musa used only two of them. Try another answer."
+                  ]
+                }
+              ]
+            }
+          ],
+          "screenshot": "shots/math-multiplication-models--1440--11-mistake-sia.png"
+        },
+        {
+          "id": "apply-school",
+          "phase": "APPLY",
+          "gatedUntilDone": true,
+          "completed": true,
+          "mathElements": 2,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "NUMERIC_RESPONSE:school-supplies",
+              "notes": [
+                {
+                  "attempt": "wrong 272",
+                  "feedback": [
+                    "Not yet. Check every part: 10 × 20 , 10 × 4 , 8 × 20 and 8 × 4 . One part may be missing."
+                  ]
+                },
+                {
+                  "solutionHiddenAfterOneWrong": true
+                },
+                {
+                  "solutionShown": true
+                }
+              ]
+            }
+          ],
+          "screenshot": "shots/math-multiplication-models--1440--12-apply-school.png"
+        },
+        {
+          "id": "remember",
+          "phase": "RETRIEVE",
+          "gatedUntilDone": true,
+          "completed": true,
+          "mathElements": 5,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "CHECK:retrieve-partials",
+              "notes": [
+                {
+                  "wrongChoice": [
+                    "Not yet. 3 × 5 is 15, but the 3 in 32 means 3 tens: 30 × 5 = 150 . Try another answer."
+                  ]
+                }
+              ]
+            }
+          ],
+          "screenshot": "shots/math-multiplication-models--1440--13-remember.png"
+        },
+        {
+          "id": "show-what-you-know",
+          "phase": null,
+          "gatedUntilDone": null,
+          "completed": true,
+          "mathElements": 0,
+          "rawTexVisible": false,
+          "notes": [],
+          "screenshot": "shots/math-multiplication-models--1440--14-show-what-you-know.png"
+        }
+      ],
+      "finished": true,
+      "writesBefore": 0,
+      "newWrites": []
+    },
+    "g7-science-states-of-matter@1440": {
+      "scenes": [
+        {
+          "id": "cold-drink",
+          "phase": "ORIENT",
+          "gatedUntilDone": false,
+          "completed": true,
+          "mathElements": 0,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "CALLOUT:",
+              "notes": []
+            }
+          ],
+          "screenshot": "shots/g7-science-states-of-matter--1440--01-cold-drink.png"
+        },
+        {
+          "id": "predict",
+          "phase": "PREDICT",
+          "gatedUntilDone": true,
+          "completed": true,
+          "mathElements": 0,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "PREDICT_OBSERVE:predict-melting",
+              "notes": [
+                {
+                  "observationHiddenBeforeRun": true
+                },
+                {
+                  "predictionFeedback": [
+                    "Not yet. In the model the particles stay exactly the same size. What changes is how they move and how they are arranged."
+                  ]
+                }
+              ]
+            }
+          ],
+          "screenshot": "shots/g7-science-states-of-matter--1440--02-predict.png"
+        },
+        {
+          "id": "experiment",
+          "phase": "EXPERIMENT",
+          "gatedUntilDone": true,
+          "completed": true,
+          "mathElements": 0,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "SORT:sort-states",
+              "notes": []
+            },
+            {
+              "block": "PARTICLE_MODEL:water-model",
+              "notes": []
+            }
+          ],
+          "screenshot": "shots/g7-science-states-of-matter--1440--03-experiment.png"
+        },
+        {
+          "id": "observe",
+          "phase": "OBSERVE",
+          "gatedUntilDone": true,
+          "completed": true,
+          "mathElements": 0,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "CHECK:read-curve",
+              "notes": [
+                {
+                  "wrongChoice": [
+                    "Not yet. The class kept heating. The evidence is that the temperature rises again once all the ice has melted. Try another answer."
+                  ]
+                }
+              ]
+            },
+            {
+              "block": "DATA_PLOT:heating-curve",
+              "notes": []
+            }
+          ],
+          "screenshot": "shots/g7-science-states-of-matter--1440--04-observe.png"
+        },
+        {
+          "id": "explain",
+          "phase": "EXPLAIN",
+          "gatedUntilDone": true,
+          "completed": true,
+          "mathElements": 0,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "STEP_REVEAL:model-explanation",
+              "notes": []
+            },
+            {
+              "block": "CHECK:explain-everyday",
+              "notes": [
+                {
+                  "wrongChoice": [
+                    "Not yet. Clothes on a line do not reach 100 °C. Evaporation needs no boiling. Try another answer."
+                  ]
+                }
+              ]
+            },
+            {
+              "block": "PROCESS_CYCLE:state-cycle",
+              "notes": []
+            }
+          ],
+          "screenshot": "shots/g7-science-states-of-matter--1440--05-explain.png"
+        },
+        {
+          "id": "explain-mistakes",
+          "phase": "EXPLAIN",
+          "gatedUntilDone": true,
+          "completed": true,
+          "mathElements": 0,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "MISTAKE_ANALYSIS:tamba-particles",
+              "notes": [
+                {
+                  "wrongDiagnosis": [
+                    "Not yet. Look at the model again: the particles stayed the same size. Tamba's main idea is the problem. Try another answer."
+                  ]
+                },
+                {
+                  "correctionShown": true
+                }
+              ]
+            },
+            {
+              "block": "CHECK:physical-change",
+              "notes": [
+                {
+                  "wrongChoice": [
+                    "Not yet. Ice and liquid water are the same substance in two states. Freezing turns it back. Try another answer."
+                  ]
+                }
+              ]
+            }
+          ],
+          "screenshot": "shots/g7-science-states-of-matter--1440--06-explain-mistakes.png"
+        },
+        {
+          "id": "apply",
+          "phase": "APPLY",
+          "gatedUntilDone": true,
+          "completed": true,
+          "mathElements": 0,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "CHECK:apply-drink",
+              "notes": [
+                {
+                  "wrongChoice": [
+                    "Not yet. The drink warms towards room temperature only after all the ice has melted. Try another answer."
+                  ]
+                }
+              ]
+            },
+            {
+              "block": "WRITING_ORGANIZER:uniform-cer",
+              "notes": [
+                {
+                  "draftNotes": "Notes for revisingEvery part is there. Now check your work against the list below."
+                }
+              ]
+            }
+          ],
+          "screenshot": "shots/g7-science-states-of-matter--1440--07-apply.png"
+        },
+        {
+          "id": "remember",
+          "phase": "RETRIEVE",
+          "gatedUntilDone": true,
+          "completed": true,
+          "mathElements": 0,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "CHECK:retrieve-condensing",
+              "notes": [
+                {
+                  "wrongChoice": [
+                    "Not yet. Evaporating goes the other way, from liquid to gas. Try another answer."
+                  ]
+                }
+              ]
+            }
+          ],
+          "screenshot": "shots/g7-science-states-of-matter--1440--08-remember.png"
+        },
+        {
+          "id": "show-what-you-know",
+          "phase": null,
+          "gatedUntilDone": null,
+          "completed": true,
+          "mathElements": 0,
+          "rawTexVisible": false,
+          "notes": [],
+          "screenshot": "shots/g7-science-states-of-matter--1440--09-show-what-you-know.png"
+        }
+      ],
+      "finished": true,
+      "writesBefore": 0,
+      "newWrites": []
+    },
+    "g7-civics-counties-capitals@1440": {
+      "scenes": [
+        {
+          "id": "your-county",
+          "phase": "ORIENT",
+          "gatedUntilDone": false,
+          "completed": true,
+          "mathElements": 0,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "CALLOUT:",
+              "notes": []
+            }
+          ],
+          "screenshot": "shots/g7-civics-counties-capitals--1440--01-your-county.png"
+        },
+        {
+          "id": "explore-map",
+          "phase": "EXPLORE",
+          "gatedUntilDone": false,
+          "completed": true,
+          "mathElements": 0,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "MAP_EXPLORER:explore-counties",
+              "notes": []
+            }
+          ],
+          "screenshot": "shots/g7-civics-counties-capitals--1440--02-explore-map.png"
+        },
+        {
+          "id": "investigate-capitals",
+          "phase": "INVESTIGATE",
+          "gatedUntilDone": true,
+          "completed": true,
+          "mathElements": 0,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "STEP_REVEAL:model-locate",
+              "notes": []
+            },
+            {
+              "block": "MAP_EXPLORER:find-nimba",
+              "notes": [
+                {
+                  "wrongCounty": "Bong",
+                  "feedback": [
+                    "Not yet. You chose Bong (capital Gbarnga). The county you need is east of Bong on the map."
+                  ]
+                }
+              ]
+            },
+            {
+              "block": "SOURCE_EVIDENCE:capital-source",
+              "notes": [
+                {
+                  "wrongEvidence": [
+                    "Not yet. 1 of your sentences does not answer the question."
+                  ]
+                }
+              ]
+            },
+            {
+              "block": "MISTAKE_ANALYSIS:capital-governs",
+              "notes": [
+                {
+                  "wrongDiagnosis": [
+                    "Not yet. Ganta is the biggest town, but no town governs a county. Sanniquellie is the capital, where the administration sits. Try another answer."
+                  ]
+                },
+                {
+                  "correctionShown": true
+                }
+              ]
+            }
+          ],
+          "screenshot": "shots/g7-civics-counties-capitals--1440--03-investigate-capitals.png"
+        },
+        {
+          "id": "compare",
+          "phase": "COMPARE",
+          "gatedUntilDone": true,
+          "completed": true,
+          "mathElements": 0,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "CHECK:confusable-capitals",
+              "notes": [
+                {
+                  "wrongChoice": [
+                    "Not yet. Ganta is Nimba's biggest trading town, but the county is administered from Sanniquellie. Try another answer."
+                  ]
+                }
+              ]
+            },
+            {
+              "block": "SORT:grand-counties",
+              "notes": []
+            }
+          ],
+          "screenshot": "shots/g7-civics-counties-capitals--1440--04-compare.png"
+        },
+        {
+          "id": "reason",
+          "phase": "REASON",
+          "gatedUntilDone": true,
+          "completed": true,
+          "mathElements": 0,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "MAP_EXPLORER:coast-route",
+              "notes": [
+                {
+                  "wrongCounty": "Sinoe",
+                  "feedback": [
+                    "Not yet. You chose Sinoe (capital Greenville). The county you need is east of Sinoe on the map."
+                  ]
+                }
+              ]
+            },
+            {
+              "block": "CHECK:direction-check",
+              "notes": [
+                {
+                  "wrongChoice": [
+                    "Not yet. South-east of Bong is the coast. Lofa is at the top of the map. Try another answer."
+                  ]
+                }
+              ]
+            }
+          ],
+          "screenshot": "shots/g7-civics-counties-capitals--1440--05-reason.png"
+        },
+        {
+          "id": "apply-own-county",
+          "phase": "APPLY",
+          "gatedUntilDone": true,
+          "completed": true,
+          "mathElements": 0,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "MAP_EXPLORER:find-maryland",
+              "notes": [
+                {
+                  "wrongCounty": "Grand Kru",
+                  "feedback": [
+                    "Not yet. You chose Grand Kru (capital Barclayville). The county you need is east of Grand Kru on the map."
+                  ]
+                }
+              ]
+            },
+            {
+              "block": "WRITING_ORGANIZER:describe-county",
+              "notes": [
+                {
+                  "draftNotes": "Notes for revisingEvery part is there. Now check your work against the list below."
+                }
+              ]
+            }
+          ],
+          "screenshot": "shots/g7-civics-counties-capitals--1440--06-apply-own-county.png"
+        },
+        {
+          "id": "remember",
+          "phase": "RETRIEVE",
+          "gatedUntilDone": true,
+          "completed": true,
+          "mathElements": 0,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "CHECK:retrieve-lofa",
+              "notes": [
+                {
+                  "wrongChoice": [
+                    "Not yet. Bopolu is the capital of Gbarpolu, Lofa's neighbour to the south-west. Try another answer."
+                  ]
+                }
+              ]
+            }
+          ],
+          "screenshot": "shots/g7-civics-counties-capitals--1440--07-remember.png"
+        },
+        {
+          "id": "show-what-you-know",
+          "phase": null,
+          "gatedUntilDone": null,
+          "completed": true,
+          "mathElements": 0,
+          "rawTexVisible": false,
+          "notes": [],
+          "screenshot": "shots/g7-civics-counties-capitals--1440--08-show-what-you-know.png"
+        }
+      ],
+      "finished": true,
+      "writesBefore": 0,
+      "newWrites": []
+    },
+    "g7-english-reading-evidence@1440": {
+      "scenes": [
+        {
+          "id": "why-evidence",
+          "phase": "ORIENT",
+          "gatedUntilDone": false,
+          "completed": true,
+          "mathElements": 0,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "CALLOUT:",
+              "notes": []
+            }
+          ],
+          "screenshot": "shots/g7-english-reading-evidence--1440--01-why-evidence.png"
+        },
+        {
+          "id": "read",
+          "phase": "READ",
+          "gatedUntilDone": false,
+          "completed": true,
+          "mathElements": 0,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "READING_PASSAGE:town-pump-passage",
+              "notes": []
+            }
+          ],
+          "screenshot": "shots/g7-english-reading-evidence--1440--02-read.png"
+        },
+        {
+          "id": "understand",
+          "phase": "UNDERSTAND",
+          "gatedUntilDone": true,
+          "completed": true,
+          "mathElements": 0,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "CHECK:understand-checks",
+              "notes": [
+                {
+                  "wrongChoice": [
+                    "Not yet. The plan is to check the pump every month, while it is still working. That is regular care, not only repair. Try another answer."
+                  ]
+                }
+              ]
+            }
+          ],
+          "screenshot": "shots/g7-english-reading-evidence--1440--03-understand.png"
+        },
+        {
+          "id": "analyze",
+          "phase": "ANALYZE",
+          "gatedUntilDone": true,
+          "completed": true,
+          "mathElements": 0,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "SOURCE_EVIDENCE:town-helped",
+              "notes": [
+                {
+                  "wrongEvidence": [
+                    "Not yet. 1 of your sentences does not answer the question."
+                  ]
+                }
+              ]
+            },
+            {
+              "block": "CHECK:best-quote",
+              "notes": [
+                {
+                  "wrongChoice": [
+                    "Not yet. This shows the result, but it does not show Ma Lorpu herself refusing to give up. Try another answer."
+                  ]
+                }
+              ]
+            },
+            {
+              "block": "MISTAKE_ANALYSIS:aminata-evidence",
+              "notes": [
+                {
+                  "wrongDiagnosis": [
+                    "Not yet. A short answer can be strong if it quotes the text. The problem is where her reason comes from. Try another answer."
+                  ]
+                },
+                {
+                  "correctionShown": true
+                }
+              ]
+            },
+            {
+              "block": "STEP_REVEAL:model-paragraph",
+              "notes": []
+            }
+          ],
+          "screenshot": "shots/g7-english-reading-evidence--1440--04-analyze.png"
+        },
+        {
+          "id": "construct",
+          "phase": "CONSTRUCT",
+          "gatedUntilDone": true,
+          "completed": true,
+          "mathElements": 0,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "SENTENCE_BUILDER:claim-sentence",
+              "notes": [
+                {
+                  "incomplete": [
+                    "Not yet. Use every tile in your sentence."
+                  ]
+                }
+              ]
+            },
+            {
+              "block": "WRITING_ORGANIZER:evidence-paragraph",
+              "notes": [
+                {
+                  "draftNotes": "Notes for revisingEvidence: your quotation matches the text. Good."
+                }
+              ]
+            }
+          ],
+          "screenshot": "shots/g7-english-reading-evidence--1440--05-construct.png"
+        },
+        {
+          "id": "revise",
+          "phase": "REVISE",
+          "gatedUntilDone": true,
+          "completed": true,
+          "mathElements": 0,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "CHECK:revise-checks",
+              "notes": [
+                {
+                  "wrongChoice": [
+                    "Not yet. More quotations without explanation still leave the reader to guess why they matter. Try another answer."
+                  ]
+                }
+              ]
+            }
+          ],
+          "screenshot": "shots/g7-english-reading-evidence--1440--06-revise.png"
+        },
+        {
+          "id": "remember",
+          "phase": "RETRIEVE",
+          "gatedUntilDone": true,
+          "completed": true,
+          "mathElements": 0,
+          "rawTexVisible": false,
+          "notes": [
+            {
+              "block": "CHECK:retrieve-cee",
+              "notes": [
+                {
+                  "wrongChoice": [
+                    "Not yet. First finish proving the claim you made: explain the evidence. Try another answer."
+                  ]
+                }
+              ]
+            }
+          ],
+          "screenshot": "shots/g7-english-reading-evidence--1440--07-remember.png"
+        },
+        {
+          "id": "show-what-you-know",
+          "phase": null,
+          "gatedUntilDone": null,
+          "completed": true,
+          "mathElements": 0,
+          "rawTexVisible": false,
+          "notes": [],
+          "screenshot": "shots/g7-english-reading-evidence--1440--08-show-what-you-know.png"
+        }
+      ],
+      "finished": true,
+      "writesBefore": 0,
+      "newWrites": []
+    }
+  },
+  "responsive": [
+    {
+      "width": 360,
+      "seeIt": {
+        "viewport": 360,
+        "horizontalOverflow": false,
+        "outline": null,
+        "main": {
+          "left": 12,
+          "width": 336
+        },
+        "support": null,
+        "sceneText": {
+          "left": 12,
+          "width": 336
+        },
+        "contentsDrawer": {
+          "left": 12,
+          "width": 336
+        },
+        "toolsDrawer": {
+          "left": 12,
+          "width": 336
+        },
+        "footer": {
+          "left": 0,
+          "width": 360
+        }
+      },
+      "solve": {
+        "viewport": 360,
+        "horizontalOverflow": false,
+        "outline": null,
+        "main": {
+          "left": 12,
+          "width": 336
+        },
+        "support": null,
+        "sceneText": {
+          "left": 12,
+          "width": 336
+        },
+        "contentsDrawer": {
+          "left": 12,
+          "width": 336
+        },
+        "toolsDrawer": {
+          "left": 12,
+          "width": 336
+        },
+        "footer": {
+          "left": 0,
+          "width": 360
+        }
+      }
+    },
+    {
+      "width": 390,
+      "seeIt": {
+        "viewport": 390,
+        "horizontalOverflow": false,
+        "outline": null,
+        "main": {
+          "left": 12,
+          "width": 366
+        },
+        "support": null,
+        "sceneText": {
+          "left": 12,
+          "width": 366
+        },
+        "contentsDrawer": {
+          "left": 12,
+          "width": 366
+        },
+        "toolsDrawer": {
+          "left": 12,
+          "width": 366
+        },
+        "footer": {
+          "left": 0,
+          "width": 390
+        }
+      },
+      "solve": {
+        "viewport": 390,
+        "horizontalOverflow": false,
+        "outline": null,
+        "main": {
+          "left": 12,
+          "width": 366
+        },
+        "support": null,
+        "sceneText": {
+          "left": 12,
+          "width": 366
+        },
+        "contentsDrawer": {
+          "left": 12,
+          "width": 366
+        },
+        "toolsDrawer": {
+          "left": 12,
+          "width": 366
+        },
+        "footer": {
+          "left": 0,
+          "width": 390
+        }
+      }
+    },
+    {
+      "width": 768,
+      "seeIt": {
+        "viewport": 768,
+        "horizontalOverflow": false,
+        "outline": null,
+        "main": {
+          "left": 17,
+          "width": 734
+        },
+        "support": null,
+        "sceneText": {
+          "left": 17,
+          "width": 734
+        },
+        "contentsDrawer": {
+          "left": 17,
+          "width": 362
+        },
+        "toolsDrawer": {
+          "left": 389,
+          "width": 362
+        },
+        "footer": {
+          "left": 0,
+          "width": 768
+        }
+      },
+      "solve": {
+        "viewport": 768,
+        "horizontalOverflow": false,
+        "outline": null,
+        "main": {
+          "left": 17,
+          "width": 734
+        },
+        "support": null,
+        "sceneText": {
+          "left": 17,
+          "width": 734
+        },
+        "contentsDrawer": {
+          "left": 17,
+          "width": 362
+        },
+        "toolsDrawer": {
+          "left": 389,
+          "width": 362
+        },
+        "footer": {
+          "left": 0,
+          "width": 768
+        }
+      },
+      "toolsDrawerOpens": true
+    },
+    {
+      "width": 1024,
+      "seeIt": {
+        "viewport": 1024,
+        "horizontalOverflow": false,
+        "outline": {
+          "left": 23,
+          "width": 208
+        },
+        "main": {
+          "left": 255,
+          "width": 747
+        },
+        "support": null,
+        "sceneText": {
+          "left": 255,
+          "width": 747
+        },
+        "contentsDrawer": null,
+        "toolsDrawer": {
+          "left": 255,
+          "width": 747
+        },
+        "footer": {
+          "left": 0,
+          "width": 1024
+        }
+      },
+      "solve": {
+        "viewport": 1024,
+        "horizontalOverflow": false,
+        "outline": {
+          "left": 23,
+          "width": 208
+        },
+        "main": {
+          "left": 255,
+          "width": 747
+        },
+        "support": null,
+        "sceneText": {
+          "left": 255,
+          "width": 747
+        },
+        "contentsDrawer": null,
+        "toolsDrawer": {
+          "left": 255,
+          "width": 747
+        },
+        "footer": {
+          "left": 0,
+          "width": 1024
+        }
+      }
+    },
+    {
+      "width": 1440,
+      "seeIt": {
+        "viewport": 1440,
+        "horizontalOverflow": false,
+        "outline": {
+          "left": 32,
+          "width": 208
+        },
+        "main": {
+          "left": 264,
+          "width": 889
+        },
+        "support": {
+          "left": 1176,
+          "width": 232
+        },
+        "sceneText": {
+          "left": 264,
+          "width": 410
+        },
+        "contentsDrawer": null,
+        "toolsDrawer": null,
+        "footer": {
+          "left": 0,
+          "width": 1440
+        }
+      },
+      "solve": {
+        "viewport": 1440,
+        "horizontalOverflow": false,
+        "outline": {
+          "left": 32,
+          "width": 208
+        },
+        "main": {
+          "left": 264,
+          "width": 889
+        },
+        "support": {
+          "left": 1176,
+          "width": 232
+        },
+        "sceneText": {
+          "left": 264,
+          "width": 889
+        },
+        "contentsDrawer": null,
+        "toolsDrawer": null,
+        "footer": {
+          "left": 0,
+          "width": 1440
+        }
+      },
+      "railsCollapsed": {
+        "viewport": 1440,
+        "horizontalOverflow": false,
+        "outline": null,
+        "main": {
+          "left": 130,
+          "width": 1180
+        },
+        "support": null,
+        "sceneText": {
+          "left": 130,
+          "width": 1180
+        },
+        "contentsDrawer": null,
+        "toolsDrawer": null,
+        "footer": {
+          "left": 0,
+          "width": 1440
+        }
+      },
+      "sceneKeptAfterCollapse": true
+    },
+    {
+      "width": 1920,
+      "seeIt": {
+        "viewport": 1920,
+        "horizontalOverflow": false,
+        "outline": {
+          "left": 116,
+          "width": 208
+        },
+        "main": {
+          "left": 358,
+          "width": 1180
+        },
+        "support": {
+          "left": 1572,
+          "width": 232
+        },
+        "sceneText": {
+          "left": 358,
+          "width": 549
+        },
+        "contentsDrawer": null,
+        "toolsDrawer": null,
+        "footer": {
+          "left": 0,
+          "width": 1920
+        }
+      },
+      "solve": {
+        "viewport": 1920,
+        "horizontalOverflow": false,
+        "outline": {
+          "left": 116,
+          "width": 208
+        },
+        "main": {
+          "left": 358,
+          "width": 1180
+        },
+        "support": {
+          "left": 1572,
+          "width": 232
+        },
+        "sceneText": {
+          "left": 358,
+          "width": 1180
+        },
+        "contentsDrawer": null,
+        "toolsDrawer": null,
+        "footer": {
+          "left": 0,
+          "width": 1920
+        }
+      }
+    }
+  ],
+  "errors": [],
+  "writes": [],
+  "axe": {
+    "g7-math-area-perimeter/field": {
+      "violations": [],
+      "incomplete": 1
+    },
+    "g7-math-area-perimeter/see-it": {
+      "violations": [],
+      "incomplete": 1
+    },
+    "g7-math-area-perimeter/watch-field": {
+      "violations": [],
+      "incomplete": 1
+    },
+    "g7-math-area-perimeter/solve-classroom": {
+      "violations": [],
+      "incomplete": 1
+    },
+    "g7-math-area-perimeter/alone-rice-farm": {
+      "violations": [],
+      "incomplete": 1
+    },
+    "g7-math-area-perimeter/mistake-room": {
+      "violations": [],
+      "incomplete": 0
+    },
+    "g7-math-area-perimeter/see-triangle": {
+      "violations": [],
+      "incomplete": 1
+    },
+    "g7-math-area-perimeter/watch-pennant": {
+      "violations": [],
+      "incomplete": 1
+    },
+    "g7-math-area-perimeter/solve-triangle": {
+      "violations": [],
+      "incomplete": 1
+    },
+    "g7-math-area-perimeter/alone-roof": {
+      "violations": [],
+      "incomplete": 1
+    },
+    "g7-math-area-perimeter/mistake-kofi": {
+      "violations": [],
+      "incomplete": 0
+    },
+    "g7-math-area-perimeter/apply-school-grounds": {
+      "violations": [],
+      "incomplete": 1
+    },
+    "g7-math-area-perimeter/remember": {
+      "violations": [],
+      "incomplete": 1
+    },
+    "g7-math-area-perimeter/show-what-you-know": {
+      "violations": [],
+      "incomplete": 0
+    },
+    "g7-math-fractions/kanya": {
+      "violations": [],
+      "incomplete": 0
+    },
+    "g7-math-fractions/see-fractions": {
+      "violations": [],
+      "incomplete": 1
+    },
+    "g7-math-fractions/see-equivalent": {
+      "violations": [],
+      "incomplete": 0
+    },
+    "g7-math-fractions/watch-fractions": {
+      "violations": [],
+      "incomplete": 1
+    },
+    "g7-math-fractions/solve-models": {
+      "violations": [],
+      "incomplete": 1
+    },
+    "g7-math-fractions/solve-adding": {
+      "violations": [],
+      "incomplete": 1
+    },
+    "g7-math-fractions/alone-fractions": {
+      "violations": [],
+      "incomplete": 1
+    },
+    "g7-math-fractions/mistakes": {
+      "violations": [],
+      "incomplete": 0
+    },
+    "g7-math-fractions/apply-palm-oil": {
+      "violations": [],
+      "incomplete": 0
+    },
+    "g7-math-fractions/remember": {
+      "violations": [],
+      "incomplete": 0
+    },
+    "g7-math-fractions/show-what-you-know": {
+      "violations": [],
+      "incomplete": 0
+    },
+    "math-multiplication-models/oranges": {
+      "violations": [],
+      "incomplete": 0
+    },
+    "math-multiplication-models/see-four-ways": {
+      "violations": [],
+      "incomplete": 1
+    },
+    "math-multiplication-models/watch-chairs": {
+      "violations": [],
+      "incomplete": 0
+    },
+    "math-multiplication-models/solve-groups": {
+      "violations": [],
+      "incomplete": 0
+    },
+    "math-multiplication-models/alone-groups": {
+      "violations": [],
+      "incomplete": 1
+    },
+    "math-multiplication-models/mistake-kollie": {
+      "violations": [],
+      "incomplete": 0
+    },
+    "math-multiplication-models/see-area-model": {
+      "violations": [],
+      "incomplete": 0
+    },
+    "math-multiplication-models/watch-area-model": {
+      "violations": [],
+      "incomplete": 0
+    },
+    "math-multiplication-models/solve-area-model": {
+      "violations": [],
+      "incomplete": 0
+    },
+    "math-multiplication-models/alone-area-model": {
+      "violations": [],
+      "incomplete": 0
+    },
+    "math-multiplication-models/mistake-sia": {
+      "violations": [],
+      "incomplete": 1
+    },
+    "math-multiplication-models/apply-school": {
+      "violations": [],
+      "incomplete": 0
+    },
+    "math-multiplication-models/remember": {
+      "violations": [],
+      "incomplete": 0
+    },
+    "math-multiplication-models/show-what-you-know": {
+      "violations": [],
+      "incomplete": 0
+    },
+    "g7-science-states-of-matter/cold-drink": {
+      "violations": [],
+      "incomplete": 0
+    },
+    "g7-science-states-of-matter/predict": {
+      "violations": [],
+      "incomplete": 0
+    },
+    "g7-science-states-of-matter/experiment": {
+      "violations": [],
+      "incomplete": 0
+    },
+    "g7-science-states-of-matter/observe": {
+      "violations": [],
+      "incomplete": 1
+    },
+    "g7-science-states-of-matter/explain": {
+      "violations": [],
+      "incomplete": 0
+    },
+    "g7-science-states-of-matter/explain-mistakes": {
+      "violations": [],
+      "incomplete": 0
+    },
+    "g7-science-states-of-matter/apply": {
+      "violations": [],
+      "incomplete": 0
+    },
+    "g7-science-states-of-matter/remember": {
+      "violations": [],
+      "incomplete": 0
+    },
+    "g7-science-states-of-matter/show-what-you-know": {
+      "violations": [],
+      "incomplete": 0
+    },
+    "g7-civics-counties-capitals/your-county": {
+      "violations": [],
+      "incomplete": 0
+    },
+    "g7-civics-counties-capitals/explore-map": {
+      "violations": [],
+      "incomplete": 1
+    },
+    "g7-civics-counties-capitals/investigate-capitals": {
+      "violations": [],
+      "incomplete": 1
+    },
+    "g7-civics-counties-capitals/compare": {
+      "violations": [],
+      "incomplete": 0
+    },
+    "g7-civics-counties-capitals/reason": {
+      "violations": [],
+      "incomplete": 1
+    },
+    "g7-civics-counties-capitals/apply-own-county": {
+      "violations": [],
+      "incomplete": 1
+    },
+    "g7-civics-counties-capitals/remember": {
+      "violations": [],
+      "incomplete": 0
+    },
+    "g7-civics-counties-capitals/show-what-you-know": {
+      "violations": [],
+      "incomplete": 0
+    },
+    "g7-english-reading-evidence/why-evidence": {
+      "violations": [],
+      "incomplete": 0
+    },
+    "g7-english-reading-evidence/read": {
+      "violations": [],
+      "incomplete": 0
+    },
+    "g7-english-reading-evidence/understand": {
+      "violations": [],
+      "incomplete": 0
+    },
+    "g7-english-reading-evidence/analyze": {
+      "violations": [],
+      "incomplete": 0
+    },
+    "g7-english-reading-evidence/construct": {
+      "violations": [],
+      "incomplete": 1
+    },
+    "g7-english-reading-evidence/revise": {
+      "violations": [],
+      "incomplete": 0
+    },
+    "g7-english-reading-evidence/remember": {
+      "violations": [],
+      "incomplete": 0
+    },
+    "g7-english-reading-evidence/show-what-you-know": {
+      "violations": [],
+      "incomplete": 0
+    }
+  },
+  "keyboard": {
+    "perimeterToggled": "true",
+    "lengthAfterTwoArrows": "8 m",
+    "readout": "AREA 𝐴 = 8 × 4 = 32 m 2 PERIMETER 𝑃 = 2 ( 8 + 4 ) = 24 m"
+  }
+}
