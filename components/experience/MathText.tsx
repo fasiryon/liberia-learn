@@ -30,10 +30,26 @@ function node(value: MathNode, key?: number | string): ReactNode {
   }
 }
 
-/** One TeX expression. `display` centres it on its own line at a larger size. */
+/** A top-level chain `a = b = c` as `a`, `= b`, `= c`; null when there is no chain to break. */
+function equalityChain(tree: MathNode): MathNode[][] | null {
+  if (tree.t !== "row") return null;
+  const parts: MathNode[][] = [[]];
+  for (const item of tree.items) { if (item.t === "op" && item.v === "=" && parts.at(-1)!.length) parts.push([]); parts.at(-1)!.push(item); }
+  return parts.length > 2 ? parts : null;
+}
+
+/**
+ * One TeX expression. `display` centres it on its own line at a larger size. MathML does not line-break, so a long
+ * displayed chain of equalities wraps between its `=` steps (one spoken expression, visually split pieces).
+ */
 export function MathExpression({ tex, display = false }: { tex: string; display?: boolean }) {
   const tree = parseTex(tex);
   const speech = texToSpeech(tree);
+  const chain = display ? equalityChain(tree) : null;
+  if (chain) return <span className="ll5-math ll5-math-chain" data-display="" role="math" aria-label={speech}>
+    {chain.map((items, index) => <math key={index} display="inline" aria-hidden="true">{node({ t: "row", items })}</math>)}
+    <span className="ll5-math-fallback" aria-hidden="true">{texToPlain(tree)}</span>
+  </span>;
   return <span className="ll5-math" data-display={display ? "" : undefined}>
     <math display={display ? "block" : "inline"} aria-label={speech} role="math">{node(tree)}</math>
     <span className="ll5-math-fallback" aria-hidden="true">{texToPlain(tree)}</span>

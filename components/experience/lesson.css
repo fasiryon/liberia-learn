@@ -143,6 +143,24 @@
 /* Gallery */
 .ll4-gallery-card { gap: 10px; }
 .ll4-card-link { color: var(--ll-text); text-decoration: underline; text-decoration-color: var(--ll-accent); text-underline-offset: 5px; }
+.ll4-card-head { display: flex; flex-wrap: wrap; gap: 8px; }
+.ll4-review-section { display: grid; gap: 12px; margin-top: 28px; }
+/* Origin is carried by the label text; the border style repeats it without relying on colour. */
+.ll4-origin[data-origin=FACTORY_GENERATED] { border: 2px solid var(--ll-accent); color: var(--ll-accent); background: var(--ll-yellow-soft, transparent); }
+.ll4-origin[data-origin=HAND_AUTHORED_FIXTURE] { border: 2px dashed var(--ll-border-strong); }
+.ll3-card[data-featured] { border-color: var(--ll-accent); }
+.ll4-versions { display: flex; flex-wrap: wrap; gap: 8px; list-style: none; margin: 0; padding: 0; }
+.ll4-version { display: inline-flex; align-items: center; min-height: 44px; padding: 0 12px; border-radius: 10px; border: 1px solid var(--ll-border-strong); color: var(--ll-text); font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums; }
+a.ll4-version:hover { border-color: var(--ll-accent); }
+.ll4-version[aria-current=page] { border: 2px solid var(--ll-accent); }
+.ll4-review-bar { display: grid; gap: 6px; padding: 10px max(16px, env(safe-area-inset-left)); border-bottom: 1px solid var(--ll-border); background: var(--ll-surface-muted); color: var(--ll-text); }
+.ll4-review-bar-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; min-width: 0; }
+.ll4-review-bar-row .ll4-card-link { display: inline-flex; align-items: center; min-height: 44px; }
+.ll4-review-details summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; }
+.ll4-review-dl { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 4px 16px; margin: 4px 0 8px; }
+.ll4-review-dl dt { font-weight: 700; }
+.ll4-review-dl dd { margin: 0; min-width: 0; overflow-wrap: anywhere; }
+@media (max-width: 479px) { .ll4-review-dl { grid-template-columns: minmax(0, 1fr); } .ll4-review-dl dd { margin-bottom: 6px; } }
 
 @media (forced-colors: active) {
   .ll4-digit-card, .ll4-word-card, .ll4-slot, .ll4-cycle-node, .ll4-timeline-dot, .ll4-callout { border: 2px solid ButtonText; }
@@ -292,6 +310,9 @@ li[data-state=open] .ll4-diagram-num { background: var(--ll-accent); border-colo
 /* Display equations scale with the viewport instead of scrolling (a scroll box would need its own tab stop). */
 .ll5-math[data-display] { display: block; margin: 10px 0; text-align: center; white-space: normal; max-width: 100%; }
 .ll5-math[data-display] math { font-size: clamp(1em, 4.4vw, 1.4em); }
+/* A displayed chain of equalities wraps between its `=` steps; each step stays whole. */
+.ll5-math-chain { display: flex; flex-wrap: wrap; justify-content: center; align-items: baseline; column-gap: .35em; row-gap: 4px; }
+.ll5-math-chain math { white-space: nowrap; }
 .ll5-math-fallback { display: none; }
 @supports not (math-depth: 1) {
   .ll5-math math { display: none; }

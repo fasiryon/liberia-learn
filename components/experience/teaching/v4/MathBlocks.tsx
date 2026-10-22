@@ -83,6 +83,12 @@ export function ShapeDiagram({ shape, views, reveal, label }: { shape: ShapeSpec
   }
   const fill = shape.kind === "COMPOSITE" ? shape.rects.map((rect) => `M${X(rect.x)},${Y(rect.y)} h${rect.w * s} v${rect.h * s} h${-rect.w * s} Z`).join(" ") : outline;
   const sides = shape.kind === "TRIANGLE" ? triangleSides(shape) : null;
+  // The height label sits low (side labels are at mid-height) on the roomier side of the height line, outside an obtuse triangle.
+  const heightLabel = shape.kind === "TRIANGLE" ? (() => {
+    const y = Y(0) + 0.7 * (Y(height) - Y(0));
+    const right = shape.apexOffset >= shape.base || (shape.apexOffset > 0 && shape.base - shape.apexOffset >= shape.apexOffset);
+    return { x: X(shape.apexOffset) + (right ? 8 : -8), y, anchor: right ? "start" as const : "end" as const };
+  })() : null;
   return <figure className="ll5-shape" data-shape={shape.kind} data-views={views.join(" ")}>
     <svg viewBox={`0 0 ${Math.round(W)} ${Math.round(H)}`} role="img" aria-label={label ?? description}>
       {shape.kind === "TRIANGLE" && on("GRID") && <rect x={X(minX)} y={Y(0)} width={width * s} height={height * s} className="ll5-shape-frame" />}
@@ -93,7 +99,7 @@ export function ShapeDiagram({ shape, views, reveal, label }: { shape: ShapeSpec
         <line x1={X(shape.apexOffset)} y1={Y(0)} x2={X(shape.apexOffset)} y2={Y(height)} />
         {(shape.apexOffset < 0 || shape.apexOffset > shape.base) && <line x1={X(Math.min(0, shape.apexOffset))} y1={Y(height)} x2={X(Math.max(shape.base, shape.apexOffset))} y2={Y(height)} className="ll5-shape-extend" />}
         <path d={`M${X(shape.apexOffset)},${Y(height) - 12} h${12} v12`} className="ll5-shape-right" />
-        <text x={X(shape.apexOffset) + 8} y={(Y(0) + Y(height)) / 2} textAnchor="start" className="ll5-shape-label">h = {formatMeasure(shape.height)} {u}</text>
+        <text x={heightLabel!.x} y={heightLabel!.y} textAnchor={heightLabel!.anchor} className="ll5-shape-label">h = {formatMeasure(shape.height)} {u}</text>
       </g>}
       {labels.map((label, index) => <text key={index} x={label.x} y={label.y} textAnchor={label.anchor ?? "middle"} className="ll5-shape-label">{label.text}</text>)}
     </svg>
