@@ -46,6 +46,11 @@ describe("factory review source selection", () => {
   unlinkSync(path.join(root, draftRoot, key, "paper-alternative.txt"));
   expect(() => loadFactoryReview(selection, root)).toThrow("factory_review_incomplete_package");
  });
+ it("rejects byte changes that only alter package line endings", () => {
+  const root = copyPackage(), file = path.join(root, draftRoot, key, "candidate.json");
+  writeFileSync(file, readFileSync(file, "utf8").replace(/\r?\n/g, "\r\n"));
+  expect(() => loadFactoryReview(selection, root)).toThrow("factory_review_file_hash:candidate.json");
+ });
  it("lists both sources separately with eight exact factory and six reference selections", () => {
   const catalogue = v4ReviewCatalogue();
   expect(catalogue.rejected).toEqual([]);

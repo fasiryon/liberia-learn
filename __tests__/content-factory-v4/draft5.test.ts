@@ -46,15 +46,17 @@ describe("versioned draft.5 content and immutable regeneration", () => {
   const guided = blocks.find(b => b.type === "NUMERIC_RESPONSE" && b.id === "guided-triangle");
   if (guided?.type !== "NUMERIC_RESPONSE") throw Error("guided_triangle_missing");
   const area = guided.parts[0], perimeter = guided.parts[1];
-  expect(diagnoseNumeric(area, "12", "m2", guided.shape).result).toBe("right");
-  expect(diagnoseNumeric(perimeter, "18", "m", guided.shape).result).toBe("right");
-  expect(diagnoseNumeric(area, "24", "m2", guided.shape).code).toBe("FORGOT_HALF");
-  const slope = diagnoseNumeric(area, "20", "m2", guided.shape);
+  const shape = { kind: "TRIANGLE" as const, base: 8, height: 3, apexOffset: 4, sideLabels: [5, 5] as const, unit: "m" };
+  expect(guided.shape).toEqual(shape);
+  expect(diagnoseNumeric(area, "12", "m2", shape).result).toBe("right");
+  expect(diagnoseNumeric(perimeter, "18", "m", shape).result).toBe("right");
+  expect(diagnoseNumeric(area, "24", "m2", shape).code).toBe("FORGOT_HALF");
+  const slope = diagnoseNumeric(area, "20", "m2", shape);
   expect(slope.code).toBe("AUTHORED");
   expect(slope.text).toContain("sloping side 5"); expect(slope.text).toContain("perpendicular height 3");
   expect(slope.misconceptionId).toBe("guided-triangle-area");
-  expect(diagnoseNumeric(perimeter, "16", "m", guided.shape).text).toContain("inside height 3");
-  expect(diagnoseNumeric(area, "12", "m", guided.shape).code).toBe("UNIT_WRONG");
+  expect(diagnoseNumeric(perimeter, "16", "m", shape).text).toContain("inside height 3");
+  expect(diagnoseNumeric(area, "12", "m", shape).code).toBe("UNIT_WRONG");
  });
  it("states honest register objectives and preserves all fifteen county-capital pairs", () => {
   const lesson = DRAFT5_PROFILE.lessons.find(l => l.subject === "CIVICS")!, candidate = authorLesson(lesson);
