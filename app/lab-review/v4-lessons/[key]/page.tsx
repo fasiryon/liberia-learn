@@ -22,7 +22,7 @@ export default function V4LessonReviewPage({ params }: { params: { key: string }
   const selection = selectionFrom(params.key);
   if (!selection) notFound();
   const loaded = loadV4Preview(selection);
-  if (!loaded.ok) {
+  if (loaded.ok === false) { // equality narrowing: the repo compiles with strict: false
     if (loaded.reason === "UNKNOWN_SELECTION") notFound();
     return <V4SelectionRejected selection={selection} reason={loaded.reason} basePath={V4_REVIEW_BASE_PATH} />;
   }
