@@ -1,0 +1,21 @@
+{
+  "databaseUrl": "127.0.0.1:55439 (local throwaway or unreachable; never production)",
+  "prismaErrors": 0,
+  "supabaseRefs": 0,
+  "statementsLogged": 130,
+  "distinctStatements": [
+    "SELECT \"public\".\"DataPolicyAcceptance\".\"id\" FROM \"public\".\"DataPolicyAcceptance\" WHERE (\"public\".\"DataPolicyAcceptance\".\"userId\" = $1 AND \"public\".\"DataPolicyAc",
+    "SELECT 1",
+    "SELECT c.oid,",
+    "SELECT c.relchecks, c.relkind, c.relhasindex, c.relhasrules, c.relhastriggers, c.relrowsecurity, c.relforcerowsecurity, false AS relhasoids, c.relispartition, '",
+    "SELECT a.attname,",
+    "SELECT c2.relname, i.indisprimary, i.indisunique, i.indisclustered, i.indisvalid, pg_catalog.pg_get_indexdef(i.indexrelid, 0, true),",
+    "SELECT pol.polname, pol.polpermissive,",
+    "SELECT oid, stxrelid::pg_catalog.regclass, stxnamespace::pg_catalog.regnamespace::pg_catalog.text AS nsp, stxname,",
+    "SELECT pubname",
+    "SELECT c.oid::pg_catalog.regclass",
+    "SELECT c.oid::pg_catalog.regclass, c.relkind, inhdetachpending, pg_catalog.pg_get_expr(c.relpartbound, c.oid)",
+    "select * from \"DataPolicyAcceptance\""
+  ],
+  "writeStatements": []
+}
