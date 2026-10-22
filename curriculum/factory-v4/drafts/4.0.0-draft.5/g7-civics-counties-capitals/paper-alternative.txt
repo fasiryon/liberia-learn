@@ -1,0 +1,19 @@
+generated-1/blocks/0
+Liberia county-capital register. Lofa: Voinjama. Gbarpolu: Bopolu. Grand Cape Mount: Robertsport. Bomi: Tubmanburg. Montserrado: Bensonville. Bong: Gbarnga. Nimba: Sanniquellie. Margibi: Kakata. Grand Bassa: Buchanan. River Cess: Cestos City. Grand Gedeh: Zwedru. Sinoe: Greenville. River Gee: Fish Town. Grand Kru: Barclayville. Maryland: Harper.
+Read the county-capital pairs; distinguish county names from capital names without inferring geography. Write your response and reasoning on paper. Responses are capture only, never official scores.
+
+generated-2/blocks/0
+Which city is Montserrado County's capital? Options: Bensonville; Monrovia.
+Identify the capitals of Montserrado and Nimba using the register, and compare them with well-known cities. Write your response and reasoning on paper. Responses are capture only, never official scores.
+
+generated-2/blocks/1
+Which city is Nimba County's capital? Options: Sanniquellie; Ganta.
+Identify the capitals of Montserrado and Nimba using the register, and compare them with well-known cities. Write your response and reasoning on paper. Responses are capture only, never official scores.
+
+generated-4/blocks/0
+Synthetic register-interpretation exercise. Each entry pairs a county name with its capital name. Entry order cannot establish a road route or neighbouring counties. Consecutive entries must be neighbouring counties. Which statements correctly describe the evidence this register provides?
+Select evidence that supports administrative pairings and excludes unsupported travel claims. Write your response and reasoning on paper. Responses are capture only, never official scores.
+
+generated-5/blocks/0
+Use the register to name the county capital, distinguish established facts from unknowns, and request a valid geographic map and current road information. Claim: State your conclusion precisely. Evidence and reasoning: Quote or describe relevant evidence and explain the link to your claim.
+Name Bong's capital, state what the register establishes, and request the geographic and current road sources needed for delivery. Write your response and reasoning on paper. Responses are capture only, never official scores.

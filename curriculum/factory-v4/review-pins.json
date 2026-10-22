@@ -1,0 +1,10 @@
+[
+  {
+    "candidateVersion": "4.0.0-draft.4",
+    "receiptSha256": "ba0bacf12e36d3968e442d4bfa50dfc73eb9bcc5e9848d1c166bfa0a91d71e45"
+  },
+  {
+    "candidateVersion": "4.0.0-draft.5",
+    "receiptSha256": "eea568feea89d043bd01585276d6314ee6aa9db8ac4ba75429bb34a5abce7a2a"
+  }
+]

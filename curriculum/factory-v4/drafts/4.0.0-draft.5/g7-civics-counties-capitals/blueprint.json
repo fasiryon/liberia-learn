@@ -1,0 +1,138 @@
+{
+  "schemaVersion": "unit-blueprint/2.2.0",
+  "blueprintId": "g7-civics-counties-capitals-v4",
+  "version": "4.0.0",
+  "contentHash": "fffb07553b82d381450d910caa45c1c4136955ab169212a7e63b5e584906adb9",
+  "grade": 7,
+  "subject": "CIVICS",
+  "unitId": "g7-civics-counties-capitals",
+  "title": "g7-civics-counties-capitals",
+  "repositoryCommit": "1268773a649fd3d570450ec15c8d5c9eb93d0cf2",
+  "sources": [
+    {
+      "id": "v4-reference-inputs",
+      "version": "1.0.0",
+      "sha256": "88b7a18ecd3ad9d0e080ad918e3e7bb29227b0f2e0a7672d72416e6c0d323ba5",
+      "sourceRef": "curriculum/factory-v4/draft5-inputs.json"
+    }
+  ],
+  "objectives": [
+    {
+      "id": "ft01-o1",
+      "kind": "LIBERIALEARN_MASTERY",
+      "statement": "Identify Liberia's fifteen county-capital pairs in a name register, without inferring geographic locations from entry order.",
+      "sourceId": "v4-reference-inputs",
+      "sourcePointer": "moe-social-studies-g7-s1-p1-the-earth-and-the-solar-system-semester-one-act6",
+      "scope": "REQUIRED",
+      "mapping": "PROPOSED"
+    },
+    {
+      "id": "ft01-o2",
+      "kind": "LIBERIALEARN_MASTERY",
+      "statement": "Distinguish county capitals from well-known cities and the national capital using Nimba and Montserrado as examples.",
+      "sourceId": "v4-reference-inputs",
+      "sourcePointer": "moe-social-studies-g7-s1-p1-the-earth-and-the-solar-system-semester-one-act6",
+      "scope": "REQUIRED",
+      "mapping": "PROPOSED"
+    },
+    {
+      "id": "ft01-o3",
+      "kind": "LIBERIALEARN_MASTERY",
+      "statement": "Explain which administrative claims a county-capital register supports and request geographic and road sources for route planning.",
+      "sourceId": "v4-reference-inputs",
+      "sourcePointer": "moe-social-studies-g7-s1-p1-the-earth-and-the-solar-system-semester-one-act6",
+      "scope": "REQUIRED",
+      "mapping": "PROPOSED"
+    }
+  ],
+  "outcomes": [
+    {
+      "id": "g7-civics-counties-capitals-outcome",
+      "objectiveIds": [
+        "ft01-o1",
+        "ft01-o2",
+        "ft01-o3"
+      ],
+      "demonstration": "Produce and explain an independent response and transfer it to a new context."
+    }
+  ],
+  "prerequisites": [],
+  "misconceptions": [],
+  "sequence": [
+    {
+      "resourceId": "g7-civics-counties-capitals-lesson",
+      "dependsOn": [],
+      "objectiveIds": [
+        "ft01-o1",
+        "ft01-o2",
+        "ft01-o3"
+      ],
+      "scaffold": "FULL"
+    }
+  ],
+  "resources": [
+    {
+      "id": "g7-civics-counties-capitals-lesson",
+      "kind": "LESSON",
+      "role": "LESSON_AUTHOR",
+      "objectiveIds": [
+        "ft01-o1",
+        "ft01-o2",
+        "ft01-o3"
+      ],
+      "dependsOn": [],
+      "audience": "REVIEWER_ONLY"
+    }
+  ],
+  "assessmentPlan": [
+    {
+      "id": "g7-civics-counties-capitals-practice",
+      "resourceId": "g7-civics-counties-capitals-lesson",
+      "itemIds": [],
+      "kind": "SHORT_CONSTRUCTED_RESPONSE",
+      "objectiveIds": [
+        "ft01-o1",
+        "ft01-o2",
+        "ft01-o3"
+      ],
+      "scaffold": "NONE",
+      "timing": "IN_LESSON",
+      "context": "REHEARSED",
+      "scoring": "NOT_SCORED",
+      "source": "EXCELLENCE_PLAN",
+      "ref": "REFERENCE_LESSON_ONLY_ASSESSMENT_PENDING"
+    }
+  ],
+  "support": {
+    "differentiation": [
+      "Use the text equivalent and paper model with a teacher."
+    ],
+    "accessibility": [
+      "Scene keyboard paths and block text equivalents."
+    ],
+    "offline": {
+      "mode": "TEXT_PAPER_CAPTURE_ONLY",
+      "requirements": [
+        "Paper, pencil and printed text alternatives."
+      ],
+      "maxBytes": 2000000
+    }
+  },
+  "provenance": [
+    {
+      "id": "v4-reference-inputs",
+      "version": "1.0.0",
+      "sha256": "88b7a18ecd3ad9d0e080ad918e3e7bb29227b0f2e0a7672d72416e6c0d323ba5",
+      "sourceRef": "curriculum/factory-v4/draft5-inputs.json"
+    }
+  ],
+  "legacy": [],
+  "unresolved": [
+    "REFERENCE_LESSON_ONLY_FULL_EXCELLENCE_PACKAGE_PENDING",
+    "PROTECTED_ASSESSMENT_RECONCILIATION_REQUIRED",
+    "PREREQUISITE_DIAGNOSTIC_AND_MISCONCEPTION_ITEM_BINDINGS_PENDING",
+    "AUTHENTIC_SOURCE_COMPARISON_AND_RIGHTS_REVIEW_REQUIRED",
+    "MANUAL_ACCESSIBILITY_AND_OFFLINE_RUNTIME_QA_REQUIRED"
+  ],
+  "instructionStandard": "liberialearn-v4-instruction/1.0.0"
+}
