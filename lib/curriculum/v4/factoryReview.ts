@@ -38,7 +38,9 @@ function read(root: string, relative: string) {
     if (lstatSync(current).isSymbolicLink()) throw Error("factory_review_symlink");
     if (current === base) break;
   }
-  return readFileSync(file, "utf8").replace(/\r\n/g, "\n");
+  const bytes = readFileSync(file), text = bytes.toString("utf8");
+  if (!Buffer.from(text, "utf8").equals(bytes)) throw Error("factory_review_invalid_utf8");
+  return text;
 }
 
 export function factoryReviewSelections() {
