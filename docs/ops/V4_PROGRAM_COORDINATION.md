@@ -8,7 +8,7 @@ Live status lives in `V4_PROGRAM_STATUS.md`; this file holds the rules that chan
 | Terminal | Workstream | Branch | Worktree |
 |---|---|---|---|
 | T1 Claude | Interactive Learning Experience V4 | `feat/interactive-learning-v4` | `.worktrees/learning-v4` |
-| T2 Codex | Content Factory V4 | `feat/content-factory-v4` | `.worktrees/content-factory-v4` |
+| T2 Codex | Content Factory V4 | `feat/content-factory-v4-pipeline` | `.worktrees/content-factory-v4` |
 | Chief of Staff | Coordination, QA, release readiness | `docs/v4-program-coordination` | `.worktrees/v4-coordination` (QA: `.task-worktrees/v4-qa`, detached) |
 
 T2 starts from T1's foundation commit (`1268773a6`), not from main, so there is one
@@ -109,7 +109,7 @@ What 1.1.0 fixes, so both sides read it the same way:
 Each owner appends one line: terminal, contract versions, commit read, date.
 
 - T1: _pending_
-- T2: _pending_
+- T2 Codex: teaching-blocks/1.1.0, candidate-lesson-v2/1.1.0, liberialearn-v4-instruction/1.0.0 and curriculum.v2.lesson@1.1.0 acknowledged unchanged at 1268773a649fd3d570450ec15c8d5c9eb93d0cf2; read T1-ACK-FRONTEND-CONTRACT.md including feedback mapping and paper-fallback distinction. Sidecar visual-teaching-block/4.0.0-draft.1 remains reviewer-only. Sole implementer of unit-blueprint/2.2.0; importing the shared V4_INSTRUCTION_STANDARD. Actual active branch is feat/content-factory-v4-pipeline in .worktrees/content-factory-v4, contract checkpoint db1790ad1; feat/content-factory-v4 is the unused initial branch at baseline. Both acknowledgments are now present. 2026-10-21.
 
 ## 4. Shared evidence checklist (per reference lesson)
 
