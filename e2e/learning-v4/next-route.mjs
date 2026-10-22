@@ -110,7 +110,7 @@ try {
       await page.locator(`[data-scene-id="${scene.id}"]`).waitFor();
       const blocks = [...(scene.teaching?.blocks ?? []), ...(scene.teaching?.visual ? [scene.teaching.visual] : [])];
       const notes = [];
-      for (const block of blocks) { try { notes.push({ block: `${block.type}:${block.id ?? ""}`, notes: await solve(page, block, {}) }); } catch (error) { notes.push({ block: `${block.type}:${block.id ?? ""}`, error: String(error.message).split("\n")[0] }); } }
+      for (const block of blocks) { try { notes.push({ block: `${block.type}:${block.id ?? ""}`, notes: await solve(page, block, {}) }); } catch (error) { notes.push({ block: `${block.type}:${block.id ?? ""}`, error: String(error.message).split("\n").filter((line, i) => i === 0 || /intercepts pointer|not visible|outside of the viewport/.test(line)).slice(0, 3).join(" | ") }); } }
       if (scene.interaction?.kind === "FREE_RESPONSE") for (const prompt of scene.interaction.prompts) {
         const box = page.locator(`[id="reflect-${prompt.id}"]`);
         notes.push({ freeResponse: prompt.prompt, labelled: await box.evaluate((node) => Boolean(node.labels?.length || node.getAttribute("aria-label") || node.getAttribute("aria-labelledby"))) });
