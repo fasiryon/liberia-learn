@@ -4,7 +4,8 @@
       "feat/mergeops-v1": false,
       "mergeops-repair-*": false,
       "mergeops-ledger-*": false,
-      "mergeops-ledger/**": false
+      "mergeops-ledger/**": false,
+      "validate/**": false
     }
   },
   "framework": "nextjs",
