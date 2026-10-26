@@ -4,17 +4,22 @@ name: Validate commit
 # heads too large to type-check or build on a developer machine. It runs the same gates as CI against the
 # selected SHA (not a branch tip), with synthetic credentials only: no secrets, no database migrations, no
 # deployment. A run is evidence for exactly the SHA it prints; it never certifies any other commit.
+# Each gate runs even when an earlier gate fails, so one run reports every gate; the job fails if any gate fails.
 
 on:
   workflow_dispatch:
     inputs:
       sha:
-        description: "Full 40-character commit SHA to validate (must already be reachable on GitHub)"
+        description: "Full 40-character commit SHA to validate (must already be reachable in this repository)"
         required: true
       browser:
         description: "Also run the CI browser checks (PWA E2E and Student Today fixtures)"
         type: boolean
         default: false
+      heap_mib:
+        description: "Node heap limit for tsc and vitest, in MiB (keep below runner RAM)"
+        required: true
+        default: "5632"
 
 permissions:
   contents: read
@@ -26,7 +31,7 @@ concurrency:
 jobs:
   validate:
     runs-on: ubuntu-latest
-    timeout-minutes: 120
+    timeout-minutes: 150
     env:
       DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/test"
       DIRECT_URL: "postgresql://postgres:postgres@localhost:5432/test"
@@ -37,35 +42,38 @@ jobs:
       RESEND_API_KEY: "re_test"
       EMAIL_FROM: "test@test.com"
       TARGET_SHA: ${{ inputs.sha }}
+      HEAP_MIB: ${{ inputs.heap_mib }}
     steps:
-      - name: Require a full commit SHA
+      - name: Require a full commit SHA and a numeric heap
         run: |
           set -euo pipefail
-          if ! printf '%s' "$TARGET_SHA" | grep -Eq '^[0-9a-f]{40}$'; then
-            echo "sha must be a full 40-character lowercase commit SHA"
-            exit 1
-          fi
+          printf '%s' "$TARGET_SHA" | grep -Eq '^[0-9a-f]{40}$' || { echo "sha must be a full 40-character lowercase SHA"; exit 1; }
+          printf '%s' "$HEAP_MIB" | grep -Eq '^[0-9]{3,5}$' || { echo "heap_mib must be a number of MiB"; exit 1; }
+          mkdir -p "$RUNNER_TEMP/validation-evidence"
+          echo "EVIDENCE=$RUNNER_TEMP/validation-evidence" >> "$GITHUB_ENV"
+          # GNU time measures each gate's peak memory; fall back to an untimed run if it is missing.
+          if [ -x /usr/bin/time ]; then echo "TIMED=/usr/bin/time -v -o" >> "$GITHUB_ENV"; else echo "TIMED=" >> "$GITHUB_ENV"; fi
       - uses: actions/checkout@v4
         with:
           ref: ${{ inputs.sha }}
           # Route-policy and provenance checks compare against pinned historical commits.
           fetch-depth: 0
           persist-credentials: false
-      - name: Confirm the exact commit under validation
+      - name: Confirm the exact commit and record the environment
         run: |
           set -euo pipefail
           actual="$(git rev-parse HEAD)"
-          if [ "$actual" != "$TARGET_SHA" ]; then
-            echo "Checked out $actual, expected $TARGET_SHA"
-            exit 1
-          fi
+          [ "$actual" = "$TARGET_SHA" ] || { echo "Checked out $actual, expected $TARGET_SHA"; exit 1; }
           {
-            echo "### Validated commit"
-            echo ""
-            echo "\`$actual\` — $(git log -1 --format=%s)"
-            echo ""
-            echo "Runner: $(nproc) CPU, $(free -g | awk '/^Mem:/{print $2}') GiB RAM; Node $(node --version)"
-          } >> "$GITHUB_STEP_SUMMARY"
+            echo "sha=$actual"
+            echo "subject=$(git log -1 --format=%s)"
+            echo "package_lock_sha256=$(sha256sum package-lock.json | cut -d' ' -f1)"
+            echo "runner_cpus=$(nproc)"
+            echo "runner_mem_total_mib=$(free -m | awk '/^Mem:/{print $2}')"
+            echo "heap_mib=$HEAP_MIB"
+            echo "workflow_sha=$GITHUB_SHA"
+            echo "run=$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/attempts/$GITHUB_RUN_ATTEMPT"
+          } | tee "$EVIDENCE/environment.txt" >> "$GITHUB_STEP_SUMMARY"
       - name: Guard _gold artifacts
         run: |
           if git ls-files | grep -E '(^|/)_gold/'; then
@@ -80,24 +88,80 @@ jobs:
         with:
           path: ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
-      - run: npm ci
-      - name: Enforce explicit API route auth and scope policy
-        run: npm run audit:api-routes
-      - run: npx tsc --noEmit
-      - run: npx vitest run --reporter=dot
-      - name: Run OS vault context security tests
-        if: hashFiles('os-vault/daemon/package.json') != ''
-        run: npm --prefix os-vault/daemon test
-      - run: npm run build
-      - name: Confirm the renderer chunk record against the Next build (RX-005 A8)
-        if: hashFiles('scripts/labs/check-next-renderer-chunk.ts') != ''
-        run: npx tsx scripts/labs/check-next-renderer-chunk.ts
+      - id: install
+        run: |
+          set -o pipefail
+          node --version | tee "$EVIDENCE/node-version.txt"
+          npm ci 2>&1 | tee "$EVIDENCE/npm-ci.log"
+      - id: routes
+        name: Enforce explicit API route auth and scope policy
+        if: always() && steps.install.outcome == 'success'
+        run: |
+          set -o pipefail
+          npm run audit:api-routes 2>&1 | tee "$EVIDENCE/audit-api-routes.log"
+      - id: types
+        name: Full TypeScript check (tsc --noEmit)
+        if: always() && steps.install.outcome == 'success'
+        run: |
+          set -o pipefail
+          ${TIMED:+$TIMED "$EVIDENCE/tsc-resources.txt"} \
+            node --max-old-space-size="$HEAP_MIB" node_modules/typescript/bin/tsc --noEmit 2>&1 | tee "$EVIDENCE/tsc.log"
+      - id: unit
+        name: Unit tests (vitest)
+        if: always() && steps.install.outcome == 'success'
+        env:
+          NODE_OPTIONS: --max-old-space-size=${{ inputs.heap_mib }}
+        run: |
+          set -o pipefail
+          ${TIMED:+$TIMED "$EVIDENCE/vitest-resources.txt"} npx vitest run --reporter=dot 2>&1 | tee "$EVIDENCE/vitest.log"
+      - id: vault
+        name: Run OS vault context security tests
+        if: always() && steps.install.outcome == 'success' && hashFiles('os-vault/daemon/package.json') != ''
+        run: |
+          set -o pipefail
+          npm --prefix os-vault/daemon test 2>&1 | tee "$EVIDENCE/os-vault.log"
+      - id: build
+        name: Production build
+        if: always() && steps.install.outcome == 'success'
+        run: |
+          set -o pipefail
+          ${TIMED:+$TIMED "$EVIDENCE/build-resources.txt"} npm run build 2>&1 | tee "$EVIDENCE/build.log"
+      - id: chunks
+        name: Confirm the renderer chunk record against the Next build (RX-005 A8)
+        if: always() && steps.build.outcome == 'success' && hashFiles('scripts/labs/check-next-renderer-chunk.ts') != ''
+        run: |
+          set -o pipefail
+          npx tsx scripts/labs/check-next-renderer-chunk.ts 2>&1 | tee "$EVIDENCE/renderer-chunk.log"
       - name: Install Chromium for PWA E2E
-        if: inputs.browser
+        if: always() && inputs.browser && steps.build.outcome == 'success'
         run: npx playwright install --with-deps chromium
-      - name: Run real-browser PWA E2E
-        if: inputs.browser
-        run: npm run test:e2e:pwa
-      - name: Validate Student Today V2 browser fixtures
-        if: inputs.browser
-        run: node e2e/product-design-v2/run.mjs
+      - id: pwa
+        name: Run real-browser PWA E2E
+        if: always() && inputs.browser && steps.build.outcome == 'success'
+        run: |
+          set -o pipefail
+          npm run test:e2e:pwa 2>&1 | tee "$EVIDENCE/pwa-e2e.log"
+      - id: today
+        name: Validate Student Today V2 browser fixtures
+        if: always() && inputs.browser && steps.build.outcome == 'success'
+        run: |
+          set -o pipefail
+          node e2e/product-design-v2/run.mjs 2>&1 | tee "$EVIDENCE/student-today.log"
+      - name: Record gate outcomes
+        if: always()
+        env:
+          OUTCOMES: >-
+            install=${{ steps.install.outcome }} routes=${{ steps.routes.outcome }} types=${{ steps.types.outcome }}
+            unit=${{ steps.unit.outcome }} vault=${{ steps.vault.outcome }} build=${{ steps.build.outcome }}
+            chunks=${{ steps.chunks.outcome }} pwa=${{ steps.pwa.outcome }} today=${{ steps.today.outcome }}
+        run: |
+          for kv in $OUTCOMES; do echo "$kv"; done | tee "$EVIDENCE/outcomes.txt" >> "$GITHUB_STEP_SUMMARY"
+          for f in "$EVIDENCE"/*-resources.txt; do
+            [ -f "$f" ] && echo "$(basename "$f" -resources.txt) max_rss_kib=$(awk -F': ' '/Maximum resident/{print $2}' "$f") exit=$(awk -F': ' '/Exit status/{print $2}' "$f")"
+          done | tee -a "$EVIDENCE/outcomes.txt" >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: validate-commit-${{ inputs.sha }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/validation-evidence
+          retention-days: 14
