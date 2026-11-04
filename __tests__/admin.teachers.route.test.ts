@@ -62,7 +62,7 @@ beforeEach(() => {
   mockTransaction.mockImplementation(async (cbOrArray: any) => {
     if (typeof cbOrArray === "function") {
       const tx = {
-        user: { update: mockUserUpdate, updateMany: vi.fn(async (args: unknown) => args) },
+        user: { update: mockUserUpdate, findUnique: vi.fn(async () => ({ passwordChangedAt: null })), updateMany: vi.fn(async () => ({ count: 1 })) /* credential version compare-and-set */ },
         teacherProfile: { update: mockTeacherProfileUpdate },
         auditLog: { create: vi.fn(async () => ({ id: "audit-1" })) }, // revokeAllSessions' required audit
       };

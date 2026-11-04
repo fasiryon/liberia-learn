@@ -1,11 +1,11 @@
-// route-policy: auth=session; scope=tenant; authority=school-admin; rationale=lists, creates, edits, deactivates and resets teachers of the admin's own school only (every lookup is scoped to admin.schoolId); deactivate disables the credential and revokes sessions, reset revokes sessions
+// route-policy: auth=session; scope=tenant; authority=school-admin; rationale=lists, creates, edits, deactivates and resets teachers of the admin's own school (roster reads and every mutation target are scoped to admin.schoolId; loginId/email uniqueness checks are deliberately global); deactivate disables the account at every provider, revokes its sessions and writes a required audit in one transaction; reset issues a new credential and revokes sessions
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { randomUUID } from "crypto";
 import { z } from "zod";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
-import { revokeAllSessions, stampCredentialChange } from "@/lib/auth/sessionRevocation";
+import { advanceSecurityStamp, revokeAllSessionsInTx } from "@/lib/auth/sessionRevocation";
 import { logAudit } from "@/lib/audit";
 import { generatePin } from "@/lib/credentials";
 import {
@@ -274,16 +274,18 @@ export async function PATCH(req: Request) {
     if (action === "deactivate") {
       // A deactivated teacher must lose every existing session and the ability to sign in with the old credential.
       // Reactivation is "resendInvite", which issues a new temporary PIN.
-      await revokeAllSessions(prisma, { userId: id, actorId: admin.id, schoolId: admin.schoolId, reason: "ACCOUNT_DISABLED", disable: true });
-      await prisma.$transaction([
-        prisma.teacherProfile.update({
+      // Atlas SR-02: ONE transaction, so the disable, the session revocation, the profile flag and the required audit
+      // either all commit or none do.
+      await prisma.$transaction(async (tx) => {
+        await revokeAllSessionsInTx(tx, { userId: id, actorId: admin.id, schoolId: admin.schoolId, reason: "ACCOUNT_DISABLED", disable: true });
+        await tx.teacherProfile.update({
           where: { userId: id },
           data: {
             permissions: mergeTeacherSettings(teacher.TeacherProfile?.permissions, { active: false }),
             updatedAt: new Date(),
           },
-        }),
-      ]);
+        });
+      });
 
       void logAudit({
         userId: admin.id,
@@ -342,8 +344,9 @@ export async function PATCH(req: Request) {
     const tempPin = generatePin();
     const hashedPwd = await bcrypt.hash(tempPin, 10);
 
-    await prisma.$transaction([
-      prisma.user.update({
+    await prisma.$transaction(async (tx) => {
+      // A new credential (which also clears a disabled marker) and a version advance that revokes every earlier session.
+      await tx.user.update({
         where: { id },
         data: {
           hashedPwd,
@@ -351,10 +354,9 @@ export async function PATCH(req: Request) {
           preferredChannel:
             (teacher.TeacherProfile?.phone ?? teacher.guardianPhoneE164) ? "SMS" : "EMAIL",
         },
-      }),
-      // An admin password reset revokes every session the teacher already holds.
-      stampCredentialChange(prisma, id),
-      prisma.teacherProfile.update({
+      });
+      await advanceSecurityStamp(tx, id);
+      await tx.teacherProfile.update({
         where: { userId: id },
         data: {
           permissions: mergeTeacherSettings(teacher.TeacherProfile?.permissions, {
@@ -366,8 +368,8 @@ export async function PATCH(req: Request) {
           }),
           updatedAt: new Date(),
         },
-      }),
-    ]);
+      });
+    });
 
     void logAudit({
       userId: admin.id,

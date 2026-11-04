@@ -1,7 +1,7 @@
-// route-policy: auth=public; scope=none; authority=reset-code; rationale=unauthenticated by design; an unexpired single-use hashed reset code authorizes one password reset of its own account only; rate-limited and audited; revokes every earlier session
+// route-policy: auth=public; scope=none; authority=reset-code; rationale=unauthenticated by design; a six-digit admin-issued code is matched as stored (not hashed); the target account comes from the record; single use is an atomic conditional claim (unused and unexpired) in the same transaction as the password change and credential version advance, which revokes every earlier session; IP rate-limited; completion audit is best effort
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
-import { stampCredentialChange } from "@/lib/auth/sessionRevocation";
+import { advanceSecurityStamp, ConcurrentCredentialChangeError } from "@/lib/auth/sessionRevocation";
 import bcrypt from "bcryptjs";
 import { isAccountRecoveryEnabled } from "@/lib/serverFlags";
 import {
@@ -92,21 +92,23 @@ export async function POST(req: Request) {
     const hash = await bcrypt.hash(password, 12);
     const changedAt = new Date();
 
-    await prisma.$transaction([
-      prisma.user.update({
-        where: { id: record.userId },
-        data: { hashedPwd: hash },
-      }),
-      // Revokes every session authenticated at or before this reset (monotonic; see lib/auth/sessionRevocation.ts).
-      stampCredentialChange(prisma, record.userId, changedAt),
-      prisma.passwordResetToken.update({
-        where: { id: record.id },
-        data: { usedAt: new Date() },
-      }),
-      prisma.session.deleteMany({
-        where: { userId: record.userId },
-      }),
-    ]);
+    // Single use, atomically (Atlas R1: two concurrent redemptions returned 200/200): claim the record only if it is still
+    // unused and unexpired; a caller that loses the claim changes nothing. The password change and the credential
+    // version advance (which revokes every earlier session) commit in the same transaction as the claim.
+    const redeemed = await prisma.$transaction(async (tx) => {
+      const claim = await tx.passwordResetToken.updateMany({
+        where: { id: record.id, usedAt: null, expiresAt: { gt: changedAt } },
+        data: { usedAt: changedAt },
+      });
+      if (claim.count !== 1) return false;
+      await tx.user.update({ where: { id: record.userId }, data: { hashedPwd: hash } });
+      await advanceSecurityStamp(tx, record.userId, changedAt);
+      await tx.session.deleteMany({ where: { userId: record.userId } });
+      return true;
+    });
+    if (!redeemed) {
+      return NextResponse.json({ error: "Reset code has already been used" }, { status: 400 });
+    }
 
     await logAudit({
       userId: record.userId,
@@ -123,6 +125,7 @@ export async function POST(req: Request) {
       { headers: getRateLimitHeaders(ipLimit) }
     );
   } catch (err: unknown) {
+    if (err instanceof ConcurrentCredentialChangeError) return NextResponse.json({ error: err.message }, { status: 409 });
     console.error("[reset-with-code]", err);
     return NextResponse.json({ error: "Internal error" }, { status: 500 });
   }

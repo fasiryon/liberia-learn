@@ -1,37 +1,53 @@
 /**
- * Server-enforced session revocation (founder-authorized P0, 2026-11-04). No schema change.
+ * Server-enforced session revocation (founder-authorized P0, 2026-11-04; Atlas REVISE R1 on 1589800a). No schema change.
  *
  * Why: next-auth v4 re-encodes the JWT with `iat = now` on every /api/auth/session and getServerSession call, so the old
- * `iat < passwordChangedAt` check was defeated by a single refresh, and the jwt callback checked nothing.
+ * `iat < passwordChangedAt` check was defeated by a single refresh. R1 also removes every dependence on clock ORDER
+ * (Atlas SR-01 pending commit, SR-06 host skew, SR-07 restored identity).
  *
  * Contract:
- *  - `authTime` (epoch ms) is stamped once, when the credential is checked, BEFORE the account row is read. It is copied
- *    into the token at sign-in and never changes afterwards.
- *  - A session is current only if: the account exists; role, school and platform-admin flag still match; the school is
- *    ACTIVE (unless platform admin); authTime is a finite number not in the future; authTime is STRICTLY later than
- *    passwordChangedAt (a tie revokes); and the absolute lifetime for the role has not passed.
- *  - Revocation = advancing `User.passwordChangedAt`. Every writer uses {@link stampCredentialChange}, which only moves it
- *    forward, so concurrent changes converge on the latest one and cannot reopen an earlier window.
+ *  - `User.passwordChangedAt` is the account's CREDENTIAL VERSION. At sign-in the token records `credStamp`, the exact
+ *    value (epoch ms, 0 when null) read in the SAME row read that verified the credential or provider identity.
+ *  - A session is current only if the account exists and is not disabled; role, school and platform-admin flag still
+ *    match; the school is ACTIVE (unless platform admin); the stored version EQUALS credStamp; authTime is valid and
+ *    the absolute lifetime has not passed; and, for a privileged account under enforced MFA, its assurance row, security
+ *    version, expiry and break-glass window are still valid.
+ *  - Every revocation (password/PIN change, reset, disable, role/school/platform change, sign-out-everywhere) calls
+ *    {@link advanceSecurityStamp}: a compare-and-set inside the caller's transaction that always produces a NEW value.
+ *    Concurrent changes serialize; the loser fails with 409 and its transaction rolls back.
  *  - Unknown or unreadable state is refused. A database error propagates; it never fails open.
  */
 import { prisma } from "@/lib/db";
 import { logAuditRequired } from "@/lib/audit";
-import { isPrivilegedAccount } from "@/lib/auth/privilegedIdentity";
+import { isPrivilegedAccount, isPrivilegedMfaEnforced } from "@/lib/auth/privilegedIdentity";
 
 export const PRIVILEGED_SESSION_MAX_AGE_MS = 8 * 60 * 60 * 1000;
-/** FOUNDER DECISION PENDING: the absolute lifetime of ordinary (student, teacher, guardian) sessions. Default 30 days. */
+/** Founder decision 2026-11-04: ordinary (student, teacher, guardian) sessions keep a 30-day absolute lifetime. */
 export const ORDINARY_SESSION_MAX_AGE_MS = 30 * 24 * 60 * 60 * 1000;
-/** Tolerated clock skew between application instances for a freshly stamped authTime. */
+/**
+ * Tolerated clock skew for a freshly stamped authTime. It bounds only the absolute LIFETIME (by at most this much);
+ * revocation itself is version equality and does not depend on any host clock.
+ */
 const FUTURE_SKEW_MS = 5 * 60 * 1000;
+
+/**
+ * A disabled account's password hash. It is never a bcrypt hash, so it can never verify, and every provider and every
+ * session refresh refuses an account carrying it. An empty hash is NOT disabled: Google-created accounts have one.
+ */
+export const DISABLED_CREDENTIAL = "!disabled";
+export const isDisabledCredential = (hashedPwd: unknown): boolean =>
+  typeof hashedPwd === "string" && hashedPwd.startsWith(DISABLED_CREDENTIAL);
 
 export type SessionRevokedCode =
   | "SESSION_IDENTITY_MISSING"
   | "SESSION_AUTH_TIME_INVALID"
+  | "SESSION_CREDENTIAL_STAMP_INVALID"
   | "SESSION_ACCOUNT_MISSING"
   | "SESSION_ACCOUNT_CHANGED"
   | "SESSION_SCHOOL_INACTIVE"
   | "SESSION_CREDENTIAL_CHANGED"
-  | "SESSION_LIFETIME_EXCEEDED";
+  | "SESSION_LIFETIME_EXCEEDED"
+  | "SESSION_PRIVILEGED_ASSURANCE_INVALID";
 
 export class SessionRevokedError extends Error {
   readonly status: 401 | 403;
@@ -41,6 +57,10 @@ export class SessionRevokedError extends Error {
     this.status = code === "SESSION_SCHOOL_INACTIVE" ? 403 : 401;
   }
 }
+export class ConcurrentCredentialChangeError extends Error {
+  readonly status = 409;
+  constructor() { super("The account changed concurrently. Try again."); this.name = "ConcurrentCredentialChangeError"; }
+}
 
 export type SessionClaims = {
   id?: unknown;
@@ -48,15 +68,29 @@ export type SessionClaims = {
   schoolId?: unknown;
   isPlatformAdmin?: unknown;
   authTime?: unknown;
+  credStamp?: unknown;
+  authProvider?: unknown;
+  securityVersion?: unknown;
+  privilegedSessionId?: unknown;
 };
+type StampValue = Date | string | null | undefined;
 export type FreshnessRow = {
-  passwordChangedAt: Date | string | null;
+  passwordChangedAt: StampValue;
   role: string;
   schoolId: string | null;
   isPlatformAdmin: boolean;
   school?: { status: string | null } | null;
   schoolStatus?: string | null;
 } | null;
+export type PrivilegedIdentityState = {
+  securityVersion: number;
+  breakGlassUntil: Date | null;
+  sessions: Array<{ securityVersion: number; expiresAt: Date; revokedAt: Date | null }>;
+} | null | undefined;
+
+/** The credential version of a row (epoch ms; 0 when never set). NaN for an unreadable value. */
+export const credentialStampOf = (row: { passwordChangedAt?: StampValue } | null | undefined): number =>
+  row?.passwordChangedAt ? new Date(row.passwordChangedAt).getTime() : 0;
 
 export const sessionMaxAgeMs = (claims: { role?: unknown; isPlatformAdmin?: unknown }) =>
   isPrivilegedAccount({ role: typeof claims.role === "string" ? claims.role : null, isPlatformAdmin: claims.isPlatformAdmin === true })
@@ -68,74 +102,122 @@ export function sessionFreshnessFailure(claims: SessionClaims, row: FreshnessRow
   if (typeof claims.id !== "string" || !claims.id) return "SESSION_IDENTITY_MISSING";
   const authTime = claims.authTime;
   if (typeof authTime !== "number" || !Number.isFinite(authTime) || authTime <= 0 || authTime > nowMs + FUTURE_SKEW_MS) return "SESSION_AUTH_TIME_INVALID";
+  const credStamp = claims.credStamp;
+  if (typeof credStamp !== "number" || !Number.isFinite(credStamp) || credStamp < 0) return "SESSION_CREDENTIAL_STAMP_INVALID";
   if (!row) return "SESSION_ACCOUNT_MISSING";
   if (row.role !== claims.role || row.schoolId !== (claims.schoolId ?? null) || row.isPlatformAdmin !== (claims.isPlatformAdmin === true)) {
     return "SESSION_ACCOUNT_CHANGED";
   }
   const schoolStatus = row.school !== undefined ? row.school?.status ?? null : row.schoolStatus ?? null;
   if (row.schoolId && !row.isPlatformAdmin && schoolStatus !== "ACTIVE") return "SESSION_SCHOOL_INACTIVE";
-  if (row.passwordChangedAt) {
-    const changedAt = new Date(row.passwordChangedAt).getTime();
-    if (!Number.isFinite(changedAt) || authTime <= changedAt) return "SESSION_CREDENTIAL_CHANGED";
-  }
+  if (credentialStampOf(row) !== credStamp) return "SESSION_CREDENTIAL_CHANGED";
   if (nowMs - authTime > sessionMaxAgeMs(claims)) return "SESSION_LIFETIME_EXCEEDED";
   return null;
 }
 
-type FreshnessReader = { user: { findUnique: (args: any) => Promise<any> } };
+/** Privileged assurance under enforced MFA: the session's own assurance row, security version, expiry and break-glass. */
+export function privilegedAssuranceFailure(claims: SessionClaims, identity: PrivilegedIdentityState, nowMs = Date.now()): SessionRevokedCode | null {
+  const assurance = identity?.sessions?.[0];
+  if (
+    !identity ||
+    !assurance ||
+    claims.securityVersion !== identity.securityVersion ||
+    assurance.securityVersion !== identity.securityVersion ||
+    assurance.revokedAt ||
+    new Date(assurance.expiresAt).getTime() <= nowMs
+  ) {
+    return "SESSION_PRIVILEGED_ASSURANCE_INVALID";
+  }
+  if (claims.authProvider === "break-glass" && (!identity.breakGlassUntil || new Date(identity.breakGlassUntil).getTime() <= nowMs)) {
+    return "SESSION_PRIVILEGED_ASSURANCE_INVALID";
+  }
+  return null;
+}
+
+type FreshnessReader = { user: { findFirst: (args: any) => Promise<any> } };
 
 /**
- * The uncached check run on EVERY jwt refresh. Throwing makes next-auth drop the session: /api/auth/session clears the
- * cookie, and getServerSession returns null, so requireUser answers 401.
+ * The uncached, authoritative check run on EVERY jwt refresh, so it covers every getServerSession caller (direct ones
+ * such as /api/moe/live included), not only requireUser. Throwing makes next-auth drop the session: /api/auth/session
+ * clears the cookie, and getServerSession returns null.
  */
 export async function assertTokenFresh(claims: SessionClaims, db: FreshnessReader = prisma, nowMs = Date.now()): Promise<void> {
   if (typeof claims.id !== "string" || !claims.id) throw new SessionRevokedError("SESSION_IDENTITY_MISSING");
-  const row = await db.user.findUnique({
-    where: { id: claims.id },
-    select: { passwordChangedAt: true, role: true, schoolId: true, isPlatformAdmin: true, school: { select: { status: true } } },
+  const privileged = isPrivilegedAccount({ role: typeof claims.role === "string" ? claims.role : null, isPlatformAdmin: claims.isPlatformAdmin === true })
+    && isPrivilegedMfaEnforced();
+  const row = await db.user.findFirst({
+    // A disabled account reads as missing.
+    where: { id: claims.id, OR: [{ hashedPwd: null }, { NOT: { hashedPwd: { startsWith: DISABLED_CREDENTIAL } } }] },
+    select: {
+      passwordChangedAt: true, role: true, schoolId: true, isPlatformAdmin: true, school: { select: { status: true } },
+      ...(privileged ? { privilegedIdentity: { select: { id: true, securityVersion: true, breakGlassUntil: true,
+        sessions: { where: { sessionId: typeof claims.privilegedSessionId === "string" ? claims.privilegedSessionId : "missing" }, take: 1,
+          select: { securityVersion: true, expiresAt: true, revokedAt: true } } } } } : {}),
+    },
   });
-  const failure = sessionFreshnessFailure(claims, row, nowMs);
+  const failure = sessionFreshnessFailure(claims, row, nowMs) ?? (privileged ? privilegedAssuranceFailure(claims, row?.privilegedIdentity, nowMs) : null);
   if (failure) throw new SessionRevokedError(failure);
 }
 
-type StampWriter = { user: { updateMany: (args: any) => any } };
+type StampTx = { user: { findUnique: (args: any) => Promise<any>; updateMany: (args: any) => Promise<{ count: number }> } };
 
 /**
- * Revoke every session of one account issued at or before `at`: move passwordChangedAt forward to `at`, never back.
- * Returns the Prisma operation so it can join a batch `$transaction([...])` or run inside an interactive one.
+ * Advance one account's credential version, revoking every session bound to the old one. Must run inside the same
+ * interactive transaction as the change it accompanies. Compare-and-set: the new value is strictly after the old one
+ * (whatever this host's clock says), and a concurrent change that got there first makes this throw, so the caller's
+ * whole transaction rolls back instead of silently reusing a version.
  */
-export function stampCredentialChange<T extends StampWriter>(db: T, userId: string, at: Date = new Date()): ReturnType<T["user"]["updateMany"]> {
-  return db.user.updateMany({
-    where: { id: userId, OR: [{ passwordChangedAt: null }, { passwordChangedAt: { lt: at } }] },
-    data: { passwordChangedAt: at },
-  });
+export async function advanceSecurityStamp(tx: StampTx, userId: string, now: Date = new Date()): Promise<Date> {
+  const current = await tx.user.findUnique({ where: { id: userId }, select: { passwordChangedAt: true } });
+  if (!current) throw Object.assign(new Error("Account not found"), { status: 404 });
+  const previous: Date | null = current.passwordChangedAt ? new Date(current.passwordChangedAt) : null;
+  const next = new Date(Math.max(now.getTime(), previous ? previous.getTime() + 1 : now.getTime()));
+  const { count } = await tx.user.updateMany({ where: { id: userId, passwordChangedAt: current.passwordChangedAt ?? null }, data: { passwordChangedAt: next } });
+  if (count !== 1) throw new ConcurrentCredentialChangeError();
+  return next;
 }
 
 export const REVOCATION_REASONS = ["INCIDENT_CONTAINMENT", "CREDENTIAL_EXPOSURE", "ACCOUNT_DISABLED", "USER_REQUEST", "ADMIN_ACTION"] as const;
 export type RevocationReason = (typeof REVOCATION_REASONS)[number];
+export type RevocationInput = { userId: string; actorId: string; schoolId: string | null; reason: RevocationReason; disable?: boolean };
+
+/** Sign out everywhere (and optionally disable) inside the caller's transaction, with the required audit row. */
+export async function revokeAllSessionsInTx(tx: any, input: RevocationInput, now: Date = new Date()): Promise<void> {
+  if (input.disable) await tx.user.update({ where: { id: input.userId }, data: { hashedPwd: DISABLED_CREDENTIAL } });
+  await advanceSecurityStamp(tx, input.userId, now);
+  await logAuditRequired({
+    userId: input.actorId,
+    action: input.disable ? "auth.account.disabled" : "auth.sessions.revoked_all",
+    resourceType: "user",
+    resourceId: input.userId,
+    schoolId: input.schoolId,
+    details: { reason: input.reason, disabled: input.disable === true },
+  }, tx);
+}
 
 type RevocationDb = { $transaction: (fn: (tx: any) => Promise<unknown>) => Promise<unknown> };
 
 /**
- * Audited per-account "sign out everywhere". With `disable`, the credential is also made unusable (an empty hash never
- * signs in), so the account cannot start a new password session either. The audit row is written in the same
- * transaction and is required: if it cannot be written, nothing changes.
+ * Audited per-account "sign out everywhere". With `disable`, the account is disabled: the disabled marker replaces the
+ * password hash, and Credentials, Google, Auth0 and every session refresh refuse it until a new credential is issued.
+ * The audit row is required and written in the same transaction: if it cannot be written, nothing changes.
  */
-export async function revokeAllSessions(
+export async function revokeAllSessions(db: RevocationDb, input: RevocationInput, now: Date = new Date()): Promise<void> {
+  await db.$transaction((tx) => revokeAllSessionsInTx(tx, input, now));
+}
+
+/**
+ * Change an existing account's role, school or platform-admin flag together with a credential version advance, so a
+ * later restoration of the old value can never resurrect an older session (Atlas SR-07). One transaction.
+ */
+export async function updateUserIdentity(
   db: RevocationDb,
-  input: { userId: string; actorId: string; schoolId: string | null; reason: RevocationReason; disable?: boolean },
-  at: Date = new Date(),
-): Promise<void> {
-  await db.$transaction(async (tx) => {
-    if (input.disable) await tx.user.update({ where: { id: input.userId }, data: { hashedPwd: "" } });
-    await stampCredentialChange(tx, input.userId, at);
-    await logAuditRequired({
-      userId: input.actorId,
-      action: input.disable ? "auth.account.disabled" : "auth.sessions.revoked_all",
-      resourceType: "user",
-      resourceId: input.userId,
-      schoolId: input.schoolId,
-      details: { reason: input.reason, disabled: input.disable === true },
-    }, tx);
+  userId: string,
+  data: { role?: any; schoolId?: string | null; isPlatformAdmin?: boolean },
+): Promise<any> {
+  return db.$transaction(async (tx) => {
+    const updated = await tx.user.update({ where: { id: userId }, data });
+    await advanceSecurityStamp(tx, userId);
+    return updated;
   });
 }

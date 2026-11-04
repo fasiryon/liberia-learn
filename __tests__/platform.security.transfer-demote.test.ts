@@ -17,6 +17,7 @@ vi.mock("@/lib/db", () => {
       findUnique: mockUserFindUnique,
       count: mockUserCount,
       update: mockUserUpdate,
+      updateMany: vi.fn(async () => ({ count: 1 })), // credential version compare-and-set
     },
     platformTransferToken: {
       create: mockTransferCreate,

@@ -1,6 +1,8 @@
+// route-policy: auth=session; scope=platform; authority=school-admin; rationale=any school ADMIN, only when DEMO_SCHOOL_IDS is configured, attaches itself and a fixed list of well-known demo accounts that have NO school to a demo school and seeds demo data there (not limited to the caller's school); each attachment advances the account's credential version
 import { NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { updateUserIdentity } from "@/lib/auth/sessionRevocation";
 
 function getConfiguredDemoSchoolId() {
   return (process.env.DEMO_SCHOOL_IDS ?? "")
@@ -37,10 +39,7 @@ export async function POST() {
         select: { id: true },
       });
       if (demoSchool) {
-        await prisma.user.update({
-          where: { id: user.id },
-          data: { schoolId: demoSchoolId },
-        });
+        await updateUserIdentity(prisma, user.id, { schoolId: demoSchoolId }); // SR-07: version advances
         schoolId = demoSchoolId;
       }
     }
@@ -76,10 +75,7 @@ export async function POST() {
         select: { id: true, schoolId: true },
       });
       if (u && !u.schoolId) {
-        await prisma.user.update({
-          where: { id: u.id },
-          data: { schoolId: school.id },
-        });
+        await updateUserIdentity(prisma, u.id, { schoolId: school.id }); // SR-07: version advances
         logs.push(`Attached ${email} to ${school.name}`);
       }
     }
