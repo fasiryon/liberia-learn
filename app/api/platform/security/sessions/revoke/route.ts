@@ -1,3 +1,4 @@
+// route-policy: auth=session; scope=platform; authority=platform-admin-step-up; rationale=allowlisted platform admin with a recent privileged step-up revokes (optionally disables) one account's sessions across schools; required audit in the same transaction
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { requireMoePlatformAdmin } from "@/lib/moeAccess";

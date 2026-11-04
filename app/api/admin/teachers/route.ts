@@ -1,3 +1,4 @@
+// route-policy: auth=session; scope=tenant; authority=school-admin; rationale=lists, creates, edits, deactivates and resets teachers of the admin's own school only (every lookup is scoped to admin.schoolId); deactivate disables the credential and revokes sessions, reset revokes sessions
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { randomUUID } from "crypto";

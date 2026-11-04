@@ -1,3 +1,4 @@
+// route-policy: auth=session; scope=record; authority=self; rationale=a signed-in teacher changes only their own password after re-entering the current one; revokes their earlier sessions
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { z } from "zod";

@@ -1,3 +1,4 @@
+// route-policy: auth=session; scope=record; authority=self; rationale=a signed-in student changes only their own PIN (account id from the session, never the request); revokes their earlier sessions
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { z } from "zod";

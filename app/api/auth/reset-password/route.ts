@@ -1,3 +1,4 @@
+// route-policy: auth=public; scope=none; authority=reset-token; rationale=unauthenticated by design; an unexpired single-use hashed reset token authorizes one password reset of its own account only; rate-limited and audited; revokes every earlier session
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { stampCredentialChange } from "@/lib/auth/sessionRevocation";
