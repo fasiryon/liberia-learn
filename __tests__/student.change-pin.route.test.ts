@@ -18,7 +18,9 @@ vi.mock("@/lib/db", () => ({
     },
     user: {
       update: mockUserUpdate,
+      updateMany: vi.fn(async (args: unknown) => args), // session revocation stamp
     },
+    $transaction: vi.fn(async (ops: unknown[]) => Promise.all(ops)),
   },
 }));
 

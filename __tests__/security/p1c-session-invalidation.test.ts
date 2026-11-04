@@ -31,6 +31,7 @@ function sessionUser(overrides: Record<string, unknown> = {}) {
     schoolId: "school-1",
     isPlatformAdmin: false,
     iat: Math.floor(Date.now() / 1000) - 60,
+    authTime: Date.now() - 60_000, // session revocation contract: immutable sign-in time
     authProvider: "auth0",
     mfaVerifiedAt: Date.now() - 30_000,
     assuranceExpiresAt: Date.now() + 60_000,

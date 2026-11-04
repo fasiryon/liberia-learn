@@ -23,6 +23,7 @@ vi.mock("@/lib/db", () => ({
       findUnique: mockUserFindUnique,
       create: mockUserCreate,
       update: mockUserUpdate,
+      updateMany: vi.fn(async (args: unknown) => args), // session revocation stamp
     },
     teacherProfile: {
       update: mockTeacherProfileUpdate,
@@ -61,8 +62,9 @@ beforeEach(() => {
   mockTransaction.mockImplementation(async (cbOrArray: any) => {
     if (typeof cbOrArray === "function") {
       const tx = {
-        user: { update: mockUserUpdate },
+        user: { update: mockUserUpdate, updateMany: vi.fn(async (args: unknown) => args) },
         teacherProfile: { update: mockTeacherProfileUpdate },
+        auditLog: { create: vi.fn(async () => ({ id: "audit-1" })) }, // revokeAllSessions' required audit
       };
       return cbOrArray(tx);
     }

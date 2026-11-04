@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
+import { stampCredentialChange } from "@/lib/auth/sessionRevocation";
 import bcrypt from "bcryptjs";
 import { isAccountRecoveryEnabled } from "@/lib/serverFlags";
 import {
@@ -95,8 +96,10 @@ export async function POST(req: Request) {
     await prisma.$transaction([
       prisma.user.update({
         where: { id: record.userId },
-        data: { hashedPwd: hash, passwordChangedAt: changedAt },
+        data: { hashedPwd: hash },
       }),
+      // Revokes every session authenticated at or before this reset (monotonic; see lib/auth/sessionRevocation.ts).
+      stampCredentialChange(prisma, record.userId, changedAt),
       prisma.passwordResetToken.update({
         where: { id: record.id },
         data: { usedAt: new Date() },

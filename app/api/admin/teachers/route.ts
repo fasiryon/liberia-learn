@@ -4,6 +4,7 @@ import { randomUUID } from "crypto";
 import { z } from "zod";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { revokeAllSessions, stampCredentialChange } from "@/lib/auth/sessionRevocation";
 import { logAudit } from "@/lib/audit";
 import { generatePin } from "@/lib/credentials";
 import {
@@ -270,6 +271,9 @@ export async function PATCH(req: Request) {
     }
 
     if (action === "deactivate") {
+      // A deactivated teacher must lose every existing session and the ability to sign in with the old credential.
+      // Reactivation is "resendInvite", which issues a new temporary PIN.
+      await revokeAllSessions(prisma, { userId: id, actorId: admin.id, schoolId: admin.schoolId, reason: "ACCOUNT_DISABLED", disable: true });
       await prisma.$transaction([
         prisma.teacherProfile.update({
           where: { userId: id },
@@ -347,6 +351,8 @@ export async function PATCH(req: Request) {
             (teacher.TeacherProfile?.phone ?? teacher.guardianPhoneE164) ? "SMS" : "EMAIL",
         },
       }),
+      // An admin password reset revokes every session the teacher already holds.
+      stampCredentialChange(prisma, id),
       prisma.teacherProfile.update({
         where: { userId: id },
         data: {

@@ -5,6 +5,7 @@ import { z } from "zod";
 import { requireRole } from "@/lib/auth";
 import { logAudit } from "@/lib/audit";
 import { prisma } from "@/lib/db";
+import { stampCredentialChange } from "@/lib/auth/sessionRevocation";
 
 const ChangePinSchema = z.object({
   pin: z.string().regex(/^\d{4,6}$/),
@@ -40,13 +41,15 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Student record not found." }, { status: 404 });
     }
 
-    await prisma.user.update({
-      where: { id: user.id },
-      data: {
-        hashedPwd,
-        mustChangePIN: false,
-      },
-    });
+    // A PIN is the student's password: revoke every session authenticated before this change, including the current
+    // one (the client signs in again with the new PIN).
+    await prisma.$transaction([
+      prisma.user.update({
+        where: { id: user.id },
+        data: { hashedPwd, mustChangePIN: false },
+      }),
+      stampCredentialChange(prisma, user.id),
+    ]);
 
     const nextPath = student.placementTests.length > 0 ? "/dashboard" : "/student/placement";
 
@@ -61,7 +64,7 @@ export async function POST(req: Request) {
       },
     });
 
-    return NextResponse.json({ ok: true, nextPath }, { status: 200 });
+    return NextResponse.json({ ok: true, nextPath, reauthenticate: true }, { status: 200 });
   } catch (err: any) {
     if (err?.status === 401 || err?.status === 403) {
       return NextResponse.json({ error: err.message }, { status: err.status });

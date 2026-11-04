@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import { z } from "zod";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { stampCredentialChange } from "@/lib/auth/sessionRevocation";
 import { logAudit } from "@/lib/audit";
 
 const ChangePasswordSchema = z.object({
@@ -41,14 +42,14 @@ export async function PATCH(req: Request) {
 
     const hashedPwd = await bcrypt.hash(newPassword, 10);
 
-    await prisma.user.update({
-      where: { id: teacher.id },
-      data: {
-        hashedPwd,
-        mustChangePIN: false,
-        passwordChangedAt: new Date(),
-      },
-    });
+    // Revokes every session authenticated before this change, including the current one: the client signs in again.
+    await prisma.$transaction([
+      prisma.user.update({
+        where: { id: teacher.id },
+        data: { hashedPwd, mustChangePIN: false },
+      }),
+      stampCredentialChange(prisma, teacher.id),
+    ]);
 
     void logAudit({
       userId: teacher.id,
@@ -58,7 +59,7 @@ export async function PATCH(req: Request) {
       resourceId: teacher.id,
     });
 
-    return NextResponse.json({ ok: true });
+    return NextResponse.json({ ok: true, reauthenticate: true });
   } catch (err: any) {
     return NextResponse.json(
       { error: err?.message ?? "Internal error" },

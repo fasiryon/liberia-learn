@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { signOut } from "next-auth/react";
 
 export default function StudentChangePinPage() {
   const router = useRouter();
@@ -28,6 +29,8 @@ export default function StudentChangePinPage() {
         return;
       }
 
+      // The PIN change revoked every earlier session (server-side), so sign in again with the new PIN.
+      if (data?.reauthenticate) { await signOut({ callbackUrl: "/login?credentialChanged=1" }); return; }
       router.push(data?.nextPath === "/student/placement" ? "/student/placement" : "/dashboard");
       router.refresh();
     } catch {
