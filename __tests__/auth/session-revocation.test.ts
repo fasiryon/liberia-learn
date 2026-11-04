@@ -162,7 +162,8 @@ describe("SR-02: a disabled account is refused by every provider and every sessi
     db.user.findUnique.mockResolvedValue({ id: "moe-1", email: "m@x.lr", role: "MOE_OFFICIAL", schoolId: null, isPlatformAdmin: false, hashedPwd: DISABLED_CREDENTIAL,
       passwordChangedAt: new Date(STAMP), privilegedIdentity: null });
     const header = Buffer.from(JSON.stringify({ alg: "none" })).toString("base64url");
-    const result = await authOptions.callbacks!.signIn!({ user: { id: "auth0|1", email: "m@x.lr" }, account: { provider: "auth0", id_token: `${header}.${claims}.sig` } } as never)
+    // signIn is typed Awaitable<string | boolean> (next-auth 4.24.15), so normalize to a Promise before catching.
+    const result = await Promise.resolve(authOptions.callbacks!.signIn!({ user: { id: "auth0|1", email: "m@x.lr" }, account: { provider: "auth0", id_token: `${header}.${claims}.sig` } } as never))
       .catch((e: unknown) => e);
     expect(result).toBe(false);
     expect(db.$transaction).not.toHaveBeenCalled(); // refused before any privileged identity is enrolled
