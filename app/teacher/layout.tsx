@@ -1,6 +1,7 @@
 import { TeacherShell } from "@/app/teacher/TeacherShell";
 import GlobalAssistantMount from "@/components/rag/GlobalAssistantMount";
 import { getOptionalUser } from "@/lib/auth";
+import { enforceAdmittedSession } from "@/lib/auth/admittedSession";
 import { prisma } from "@/lib/db";
 import { PushPermissionPrompt } from "@/components/PushPermissionPrompt";
 import { PwaInstallPrompt } from "@/components/PwaInstallPrompt";
@@ -21,6 +22,8 @@ export default async function TeacherLayout({
   children: React.ReactNode;
 }) {
   const user = await getOptionalUser();
+  // U1: middleware admitted a signed token, but the server session is gone (revoked, disabled, changed or unverifiable).
+  enforceAdmittedSession(user);
   const needsWelcome =
     user?.role === "TEACHER"
       ? !(

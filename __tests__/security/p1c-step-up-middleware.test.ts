@@ -16,6 +16,9 @@ function request(path: string, method = "GET") {
 function token(overrides: Record<string, unknown> = {}) {
   const now = Date.now();
   return {
+    id: "fixture-admin",
+    authTime: now - 10_000,
+    credStamp: 0,
     role: "ADMIN",
     isPlatformAdmin: false,
     authProvider: "auth0",
@@ -57,7 +60,7 @@ describe("P1-C middleware step-up backstop", () => {
   });
 
   it("does not impose privileged MFA on an allowed non-privileged backstop caller", async () => {
-    mockGetToken.mockResolvedValue({ role: "TEACHER", isPlatformAdmin: false } as any);
+    mockGetToken.mockResolvedValue({ id: "fixture-user", authTime: Date.now(), credStamp: 0, role: "TEACHER", isPlatformAdmin: false } as any);
     const response = await middleware(request("/api/admin/ops/approvals/request-1/approve", "POST"));
     expect(response.status).toBe(200);
     expect(response.headers.get("x-middleware-next")).toBe("1");

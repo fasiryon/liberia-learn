@@ -46,7 +46,8 @@ const mockScheduledWorkFindMany = vi.hoisted(() => vi.fn().mockResolvedValue([])
 const mockPushToUser         = vi.hoisted(() => vi.fn().mockResolvedValue({ sent: 1, failed: 0, smsFallback: 0 }));
 const mockSendSms            = vi.hoisted(() => vi.fn().mockResolvedValue({ ok: true, sid: "msg-1" }));
 
-vi.mock("@/lib/auth", () => ({ requireRole: mockRequireRole }));
+// U1: /api/league runs the authoritative server session check (requireUser) before reading data.
+vi.mock("@/lib/auth", () => ({ requireRole: mockRequireRole, requireUser: vi.fn().mockResolvedValue({ id: "student-1", role: "STUDENT" }) }));
 
 vi.mock("@/lib/db", () => ({
   prisma: {
@@ -347,8 +348,8 @@ describe("Test 6 — League cron: national and county ranks assigned correctly",
   });
 });
 
-describe("Test 7 — GET /api/league: returns public data, no auth required", () => {
-  it("returns league rows with caching header", async () => {
+describe("Test 7 — GET /api/league: returns league data to a current session", () => {
+  it("returns league rows, never shared-cached (U1: a CDN copy would bypass session revocation)", async () => {
     mockLeagueSnapshotFindMany.mockResolvedValueOnce([
       {
         id: "snap-1",
@@ -372,7 +373,7 @@ describe("Test 7 — GET /api/league: returns public data, no auth required", ()
     expect(res.status).toBe(200);
     expect(body.rows).toHaveLength(1);
     expect(body.rows[0].schoolName).toBe("Monrovia Academy");
-    expect(res.headers.get("Cache-Control")).toContain("public");
+    expect(res.headers.get("Cache-Control")).toBe("private, no-store");
   });
 });
 

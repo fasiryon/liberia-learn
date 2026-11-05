@@ -23,7 +23,7 @@ describe("portal role gates (defense in depth)", () => {
     ["ADMIN", "/student/today", "/admin"],
     ["MOE_OFFICIAL", "/guardian", "/moe/dashboard"],
   ])("%s opening %s is sent to %s", async (role, path, target) => {
-    mockGetToken.mockResolvedValue({ role, isPlatformAdmin: false } as any);
+    mockGetToken.mockResolvedValue({ id: "fixture-user", authTime: Date.now(), credStamp: 0, role, isPlatformAdmin: false } as any);
     const res = await middleware(req(path));
     expect(new URL(location(res)!).pathname).toBe(target);
   });
@@ -34,7 +34,7 @@ describe("portal role gates (defense in depth)", () => {
     ["ADMIN", "/teacher/homework/hw-1"],
     ["GUARDIAN", "/guardian/progress"],
   ])("%s may open %s", async (role, path) => {
-    mockGetToken.mockResolvedValue({ role, isPlatformAdmin: false } as any);
+    mockGetToken.mockResolvedValue({ id: "fixture-user", authTime: Date.now(), credStamp: 0, role, isPlatformAdmin: false } as any);
     const res = await middleware(req(path));
     expect(location(res)).toBeNull();
   });

@@ -33,6 +33,8 @@ vi.mock("@/lib/cache/redisCache", () => ({
 }));
 
 vi.mock("@/lib/auth", () => ({
+  // U1: the league routes run the authoritative server session check first.
+  requireUser: vi.fn().mockResolvedValue({ id: "admin-1", role: "ADMIN", schoolId: "sch-1" }),
   requireRole: vi.fn().mockResolvedValue({ id: "admin-1", role: "ADMIN", schoolId: "sch-1" }),
 }));
 

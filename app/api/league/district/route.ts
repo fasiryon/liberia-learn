@@ -1,11 +1,26 @@
+// route-policy: auth=session; scope=platform; authority=any-signed-in-role; rationale=cross-school aggregates (not limited to the caller's school), unchanged access; district league tables and per-school weekly rank/history for any signed-in role; the server session check runs first (U1) and responses are never shared-cached
 import { NextRequest, NextResponse } from "next/server";
+import { requireUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { currentWeekWindow, computeSchoolWeeklyScores, assignDistrictRanks } from "@/lib/league/weeklyScore";
 import { withRedisCache } from "@/lib/cache/redisCache";
 
 export const dynamic = "force-dynamic";
 
+/** U1: the authoritative server session check (revocation, disable, lifetime). Any failure is refused, never served. */
+async function refuseUnlessCurrentSession(): Promise<NextResponse | null> {
+  try {
+    await requireUser();
+    return null;
+  } catch (err: any) {
+    const status = err?.status === 401 || err?.status === 403 ? err.status : 500;
+    return NextResponse.json({ error: status === 500 ? "Session check failed" : "Unauthorized" }, { status, headers: { "Cache-Control": "private, no-store" } });
+  }
+}
+
 export async function GET(req: NextRequest) {
+  const refused = await refuseUnlessCurrentSession();
+  if (refused) return refused;
   const { searchParams } = new URL(req.url);
   const district = searchParams.get("district");
   const schoolId = searchParams.get("schoolId");
@@ -47,7 +62,7 @@ async function getDistrictLeaderboard(district: string) {
       rows: data,
     },
     {
-      headers: { "Cache-Control": "public, s-maxage=60, stale-while-revalidate=300" },
+      headers: { "Cache-Control": "private, no-store" },
     }
   );
 }

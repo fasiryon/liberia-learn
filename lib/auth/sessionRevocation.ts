@@ -20,15 +20,10 @@
 import { prisma } from "@/lib/db";
 import { logAuditRequired } from "@/lib/audit";
 import { isPrivilegedAccount, isPrivilegedMfaEnforced } from "@/lib/auth/privilegedIdentity";
+import { claimsShapeFailure, lifetimeExceeded } from "@/lib/auth/sessionClaims";
 
-export const PRIVILEGED_SESSION_MAX_AGE_MS = 8 * 60 * 60 * 1000;
-/** Founder decision 2026-11-04: ordinary (student, teacher, guardian) sessions keep a 30-day absolute lifetime. */
-export const ORDINARY_SESSION_MAX_AGE_MS = 30 * 24 * 60 * 60 * 1000;
-/**
- * Tolerated clock skew for a freshly stamped authTime. It bounds only the absolute LIFETIME (by at most this much);
- * revocation itself is version equality and does not depend on any host clock.
- */
-const FUTURE_SKEW_MS = 5 * 60 * 1000;
+// Lifetimes and the claim-shape rules live in the Edge-safe module so middleware (U1) and this server check cannot drift.
+export { PRIVILEGED_SESSION_MAX_AGE_MS, ORDINARY_SESSION_MAX_AGE_MS, sessionMaxAgeMs } from "@/lib/auth/sessionClaims";
 
 /**
  * A disabled account's password hash. It is never a bcrypt hash, so it can never verify, and every provider and every
@@ -92,18 +87,11 @@ export type PrivilegedIdentityState = {
 export const credentialStampOf = (row: { passwordChangedAt?: StampValue } | null | undefined): number =>
   row?.passwordChangedAt ? new Date(row.passwordChangedAt).getTime() : 0;
 
-export const sessionMaxAgeMs = (claims: { role?: unknown; isPlatformAdmin?: unknown }) =>
-  isPrivilegedAccount({ role: typeof claims.role === "string" ? claims.role : null, isPlatformAdmin: claims.isPlatformAdmin === true })
-    ? PRIVILEGED_SESSION_MAX_AGE_MS
-    : ORDINARY_SESSION_MAX_AGE_MS;
-
 /** Pure decision: null when the session is current, otherwise why it is not. */
 export function sessionFreshnessFailure(claims: SessionClaims, row: FreshnessRow, nowMs = Date.now()): SessionRevokedCode | null {
-  if (typeof claims.id !== "string" || !claims.id) return "SESSION_IDENTITY_MISSING";
-  const authTime = claims.authTime;
-  if (typeof authTime !== "number" || !Number.isFinite(authTime) || authTime <= 0 || authTime > nowMs + FUTURE_SKEW_MS) return "SESSION_AUTH_TIME_INVALID";
-  const credStamp = claims.credStamp;
-  if (typeof credStamp !== "number" || !Number.isFinite(credStamp) || credStamp < 0) return "SESSION_CREDENTIAL_STAMP_INVALID";
+  const shape = claimsShapeFailure(claims, nowMs);
+  if (shape) return shape;
+  const credStamp = claims.credStamp as number;
   if (!row) return "SESSION_ACCOUNT_MISSING";
   if (row.role !== claims.role || row.schoolId !== (claims.schoolId ?? null) || row.isPlatformAdmin !== (claims.isPlatformAdmin === true)) {
     return "SESSION_ACCOUNT_CHANGED";
@@ -111,7 +99,7 @@ export function sessionFreshnessFailure(claims: SessionClaims, row: FreshnessRow
   const schoolStatus = row.school !== undefined ? row.school?.status ?? null : row.schoolStatus ?? null;
   if (row.schoolId && !row.isPlatformAdmin && schoolStatus !== "ACTIVE") return "SESSION_SCHOOL_INACTIVE";
   if (credentialStampOf(row) !== credStamp) return "SESSION_CREDENTIAL_CHANGED";
-  if (nowMs - authTime > sessionMaxAgeMs(claims)) return "SESSION_LIFETIME_EXCEEDED";
+  if (lifetimeExceeded(claims, nowMs)) return "SESSION_LIFETIME_EXCEEDED";
   return null;
 }
 

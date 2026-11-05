@@ -1,12 +1,24 @@
+// route-policy: auth=session; scope=platform; authority=any-signed-in-role; rationale=cross-school aggregates (not limited to the caller's school), unchanged access; school-level league aggregates for any signed-in role; the server session check runs first (U1) and responses are never shared-cached
 import { NextRequest, NextResponse } from "next/server";
+import { requireUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { withRedisCache, FALLBACK_LIMIT_EXCEEDED } from "@/lib/cache/redisCache";
 import { isLeagueTableFlagEnabled } from "@/lib/flags";
 
-// Public aggregate data — CDN caches for 5min, stale-while-revalidate 1hr.
-// Removing force-dynamic so Vercel CDN can coalesce concurrent cache-miss
-// requests into a single upstream call (singleflight at the edge layer).
-export const revalidate = 300;
+// Signed-in aggregate data (middleware requires a session). U1: no shared CDN cache, because a cached response would
+// be served to a revoked session without the server check; the Redis cache below still absorbs database load.
+export const dynamic = "force-dynamic";
+
+/** U1: the authoritative server session check (revocation, disable, lifetime). Any failure is refused, never served. */
+async function refuseUnlessCurrentSession(): Promise<NextResponse | null> {
+  try {
+    await requireUser();
+    return null;
+  } catch (err: any) {
+    const status = err?.status === 401 || err?.status === 403 ? err.status : 500;
+    return NextResponse.json({ error: status === 500 ? "Session check failed" : "Unauthorized" }, { status, headers: { "Cache-Control": "private, no-store" } });
+  }
+}
 
 function currentTerm(): string {
   const now = new Date();
@@ -17,6 +29,8 @@ function currentTerm(): string {
 }
 
 export async function GET(req: NextRequest) {
+  const refused = await refuseUnlessCurrentSession();
+  if (refused) return refused;
   if (!(await isLeagueTableFlagEnabled())) {
     return NextResponse.json({ error: "league_table_disabled" }, { status: 404 });
   }
@@ -39,7 +53,7 @@ export async function GET(req: NextRequest) {
     { term, updatedAt, rows },
     {
       headers: {
-        "Cache-Control": "public, s-maxage=300, stale-while-revalidate=3600",
+        "Cache-Control": "private, no-store",
       },
     },
   );
