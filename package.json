@@ -55,17 +55,15 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.95.1",
-    "@auth/prisma-adapter": "^2.11.1",
     "@aws-sdk/client-cloudwatch": "^3.1106.0",
     "@aws-sdk/client-s3": "^3.1010.0",
     "@aws-sdk/client-sqs": "^3.1009.0",
     "@aws-sdk/s3-request-presigner": "^3.1010.0",
     "@higgsfield/client": "^0.2.1",
-    "@next-auth/prisma-adapter": "^1.0.7",
     "@prisma/client": "^6.19.0",
     "@react-pdf/renderer": "^4.3.2",
-    "@sentry/nextjs": "^10.39.0",
-    "@sentry/node": "^10.43.0",
+    "@sentry/nextjs": "10.75.2",
+    "@sentry/node": "10.75.2",
     "@swc/helpers": "^0.5.21",
     "@tiptap/extension-character-count": "^3.23.4",
     "@tiptap/extension-image": "^3.23.4",
@@ -92,7 +90,8 @@
     "jszip": "^3.10.1",
     "lucide-react": "^1.8.0",
     "next": "^14.2.35",
-    "next-auth": "^4.24.7",
+    "next-auth": "4.24.15",
+    "sharp": "0.35.5",
     "next-intl": "^4.12.0",
     "openai": "^6.9.1",
     "qrcode": "^1.5.4",
@@ -125,11 +124,13 @@
     "fake-indexeddb": "^6.2.5",
     "postcss": "^8.5.6",
     "prisma": "^6.19.0",
-    "sharp": "^0.34.5",
     "tailwindcss": "^4.1.18",
     "ts-node": "^10.9.2",
     "tsx": "^4.21.0",
     "typescript": "^5.0.0",
     "vitest": "^4.0.18"
+  },
+  "overrides": {
+    "dompurify": "3.4.17"
   }
 }
