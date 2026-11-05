@@ -60,8 +60,9 @@ beforeEach(() => {
   mockUserCount.mockResolvedValue(2);
   mockTokenUpdate.mockResolvedValue({});
   mockTransaction.mockImplementation(async (callback: any) => callback({
-    user: { update: mockUserUpdate, count: mockUserCount },
-    platformTransferToken: { update: mockTokenUpdate },
+    user: { update: mockUserUpdate, count: mockUserCount, findUnique: vi.fn(async () => ({ passwordChangedAt: null })), updateMany: vi.fn(async () => ({ count: 1 })) /* credential version compare-and-set */ },
+    // Atlas P1: the token is claimed with a conditional updateMany (single use) inside the transaction.
+    platformTransferToken: { update: mockTokenUpdate, updateMany: vi.fn(async () => ({ count: 1 })) },
   }));
   mockLogAudit.mockResolvedValue(undefined);
   mockRequirePrivilegedStepUp.mockResolvedValue({ id: "recipient-1" });

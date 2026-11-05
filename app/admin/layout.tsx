@@ -3,6 +3,7 @@ import GlobalAssistantMount from "@/components/rag/GlobalAssistantMount";
 import { LegalFooter } from "@/components/LegalFooter";
 import { AdminTourMount } from "@/components/tours/TourMount";
 import { getOptionalUser } from "@/lib/auth";
+import { enforceAdmittedSession } from "@/lib/auth/admittedSession";
 import { prisma } from "@/lib/db";
 
 export default async function AdminLayout({
@@ -11,6 +12,8 @@ export default async function AdminLayout({
   children: React.ReactNode;
 }) {
   const user = await getOptionalUser();
+  // U1: middleware admitted a signed token, but the server session is gone (revoked, disabled, changed or unverifiable).
+  enforceAdmittedSession(user);
   const showTour =
     user?.role === "ADMIN"
       ? !(

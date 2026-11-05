@@ -1,7 +1,9 @@
+// route-policy: auth=session; scope=tenant; authority=school-admin; rationale=links a guardian to a student of the admin's own school only (the student's school is checked); a guardian found by email in another school is refused, and a school-less guardian is assigned to the admin's school with a credential version advance
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { updateUserIdentity } from "@/lib/auth/sessionRevocation";
 import { logAudit } from "@/lib/audit";
 import { sendGuardianInvite } from "@/lib/email";
 import { normalizeToE164 } from "@/lib/phone";
@@ -111,10 +113,7 @@ export async function POST(req: Request) {
         { status: 403 }
       );
     } else if (!guardian.schoolId && user.schoolId) {
-      guardian = await prisma.user.update({
-        where: { id: guardian.id },
-        data: { schoolId: user.schoolId },
-      });
+      guardian = await updateUserIdentity(prisma, guardian.id, { schoolId: user.schoolId }); // SR-07: version advances
     }
 
     // Update guardian phone/channel fields if provided

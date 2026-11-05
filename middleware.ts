@@ -12,6 +12,7 @@ import {
 } from "@/lib/auth/privilegedIdentity";
 import { buildContentSecurityPolicy } from "@/lib/security/contentSecurityPolicy";
 import { assertReviewReadScope } from "@/lib/curriculum/review/access";
+import { SESSION_ADMITTED_HEADER, sessionClaimsFailure } from "@/lib/auth/sessionClaims";
 
 const PUBLIC_PATHS = [
   "/",
@@ -73,6 +74,36 @@ export function portalRoleRedirect(
   return home;
 }
 
+/**
+ * U1: getToken checks only the signature and the JWT exp. A token is admitted only if it also carries the current
+ * session contract (string id, numeric authTime and credStamp) and is within its role's absolute lifetime (30 d
+ * ordinary, 8 h privileged). Claims only, no database (Edge runtime); revocation itself is enforced server-side on
+ * every getServerSession/requireUser call. A refused token is treated as no session and its cookie is cleared.
+ */
+async function readAdmissibleToken(req: NextRequest): Promise<{ token: Record<string, unknown> | null; refused: boolean }> {
+  let token: Awaited<ReturnType<typeof getToken>>;
+  try {
+    token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+  } catch {
+    // A malformed cookie (next-auth 4.24.14 throws; 4.24.15 returns null) is refused, never an error or an admission.
+    return { token: null, refused: true };
+  }
+  if (!token) return { token: null, refused: false };
+  if (sessionClaimsFailure(token as Record<string, unknown>)) return { token: null, refused: true };
+  return { token: token as Record<string, unknown>, refused: false };
+}
+
+const SESSION_COOKIE = /^(__Secure-)?next-auth\.session-token(\.\d+)?$/;
+
+function clearSessionCookies<T extends NextResponse>(req: NextRequest, res: T): T {
+  for (const { name } of req.cookies.getAll()) {
+    if (SESSION_COOKIE.test(name)) {
+      res.cookies.set(name, "", { maxAge: 0, expires: new Date(0), path: "/", httpOnly: true, sameSite: "lax", secure: name.startsWith("__Secure-") });
+    }
+  }
+  return res;
+}
+
 function privilegedStepUpResponse(req: NextRequest, token: Record<string, unknown>) {
   if (!isPrivilegedMfaEnforced()) return null;
   if (!isSensitivePrivilegedRequest(req.nextUrl.pathname, req.method)) return null;
@@ -97,6 +128,8 @@ export async function middleware(req: NextRequest) {
   const requestHeaders = new Headers(req.headers);
   requestHeaders.set("x-nonce", nonce);
   requestHeaders.set("Content-Security-Policy", csp);
+  // Only middleware may assert that it admitted this request on a session token.
+  requestHeaders.delete(SESSION_ADMITTED_HEADER);
   const finalize = <T extends NextResponse>(response: T): T => {
     response.headers.set("Content-Security-Policy", csp);
     if (pathname === "/lab-review" || pathname.startsWith("/lab-review/")) {
@@ -106,16 +139,28 @@ export async function middleware(req: NextRequest) {
     return response;
   };
   const next = () => finalize(NextResponse.next({ request: { headers: requestHeaders } }));
+  const admit = () => {
+    requestHeaders.set(SESSION_ADMITTED_HEADER, "1");
+    return next();
+  };
+  let refusedToken = false;
+  const readToken = async () => {
+    const result = await readAdmissibleToken(req);
+    refusedToken = result.refused;
+    return result.token;
+  };
+  // A refused token's cookie is cleared on the refusal response so the browser stops presenting it.
+  const deny = <T extends NextResponse>(response: T): T => finalize(refusedToken ? clearSessionCookies(req, response) : response);
 
   // Draft review includes restricted learner projections and media. Authorize before any read,
   // including in development, and never admit this namespace in a deployed runtime.
   if (pathname === "/lab-review" || pathname.startsWith("/lab-review/")) {
     if (process.env.NODE_ENV === "production" || process.env.VERCEL || process.env.LAB_REVIEW_HARNESS !== "1") return finalize(new NextResponse(null, { status: 404 }));
-    const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
-    if (!token || typeof token.id !== "string" || typeof token.role !== "string") return finalize(new NextResponse(null, { status: 404 }));
+    const token = await readToken();
+    if (!token || typeof token.id !== "string" || typeof token.role !== "string") return deny(new NextResponse(null, { status: 404 }));
     try { assertReviewReadScope({ id: token.id, role: token.role, isPlatformAdmin: token.isPlatformAdmin === true }, null); }
     catch { return finalize(new NextResponse(null, { status: 404 })); }
-    return next();
+    return admit();
   }
 
   // Public-folder files do not inherit the preview page's production 404.
@@ -142,13 +187,13 @@ export async function middleware(req: NextRequest) {
   // silently break those flows. Checked before isPublicPath below so a
   // future PUBLIC_PATHS edit can't accidentally exempt this namespace.
   if (pathname.startsWith("/api/admin/") || pathname.startsWith("/api/platform/")) {
-    const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+    const token = await readToken();
     if (!token) {
-      return finalize(NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 }));
+      return deny(NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 }));
     }
     const stepUpResponse = privilegedStepUpResponse(req, token as any);
     if (stepUpResponse) return finalize(stepUpResponse);
-    return next();
+    return admit();
   }
 
   // Protected portals. Single getToken call.
@@ -163,20 +208,20 @@ export async function middleware(req: NextRequest) {
     pathname.startsWith("/platform/");
 
   if (isPortalRoute) {
-    const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+    const token = await readToken();
 
     if (pathname.startsWith("/moe/")) {
       if (!token) {
         const url = req.nextUrl.clone();
         url.pathname = "/moe/login";
-        return finalize(NextResponse.redirect(url));
+        return deny(NextResponse.redirect(url));
       }
       if (!isMoeAuthorized(token as any)) {
         const url = req.nextUrl.clone();
         url.pathname = roleDefaultPortal((token as any).role);
         return finalize(NextResponse.redirect(url));
       }
-      return next();
+      return admit();
     }
 
     // /admin/* and /platform/* unauthenticated requests go to /login.
@@ -184,7 +229,7 @@ export async function middleware(req: NextRequest) {
       const url = req.nextUrl.clone();
       url.pathname = "/login";
       url.searchParams.set("next", pathname);
-      return finalize(NextResponse.redirect(url));
+      return deny(NextResponse.redirect(url));
     }
 
     if (pathname === "/admin" || pathname.startsWith("/admin/")) {
@@ -193,7 +238,7 @@ export async function middleware(req: NextRequest) {
         url.pathname = "/unauthorized";
         return finalize(NextResponse.redirect(url));
       }
-      return next();
+      return admit();
     }
 
     if (pathname === "/platform" || pathname.startsWith("/platform/")) {
@@ -202,7 +247,7 @@ export async function middleware(req: NextRequest) {
         url.pathname = "/unauthorized";
         return finalize(NextResponse.redirect(url));
       }
-      return next();
+      return admit();
     }
   }
   // Allow Next internals/static + health checks
@@ -241,15 +286,15 @@ export async function middleware(req: NextRequest) {
   }
 
   // Require auth for everything else
-  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+  const token = await readToken();
   if (!token) {
     const url = req.nextUrl.clone();
     url.pathname = "/login";
     url.searchParams.set("next", pathname);
     if (req.nextUrl.pathname.startsWith("/api/")) {
-  return finalize(NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 }));
-}
-    return finalize(NextResponse.redirect(url));
+      return deny(NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 }));
+    }
+    return deny(NextResponse.redirect(url));
   }
 
   const stepUpResponse = privilegedStepUpResponse(req, token as any);
@@ -288,7 +333,7 @@ export async function middleware(req: NextRequest) {
     return finalize(NextResponse.redirect(url));
   }
 
-  return next();
+  return admit();
 }
 
 export const config = {

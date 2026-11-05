@@ -40,25 +40,25 @@ describe("middleware auth - /admin and /platform portal guards", () => {
   })
 
   it("2. /admin with STUDENT token redirects to /unauthorized", async () => {
-    mockGetToken.mockResolvedValue({ role: "STUDENT", isPlatformAdmin: false } as any)
+    mockGetToken.mockResolvedValue({ id: "fixture-user", authTime: Date.now(), credStamp: 0, role: "STUDENT", isPlatformAdmin: false } as any)
     const res = await middleware(makeReq("/admin/students"))
     expect(locationOf(res)).toContain("/unauthorized")
   })
 
   it("3. /admin with TEACHER token redirects to /unauthorized", async () => {
-    mockGetToken.mockResolvedValue({ role: "TEACHER", isPlatformAdmin: false } as any)
+    mockGetToken.mockResolvedValue({ id: "fixture-user", authTime: Date.now(), credStamp: 0, role: "TEACHER", isPlatformAdmin: false } as any)
     const res = await middleware(makeReq("/admin/teachers"))
     expect(locationOf(res)).toContain("/unauthorized")
   })
 
   it("4. /admin with ADMIN token returns next", async () => {
-    mockGetToken.mockResolvedValue({ role: "ADMIN", isPlatformAdmin: false } as any)
+    mockGetToken.mockResolvedValue({ id: "fixture-user", authTime: Date.now(), credStamp: 0, role: "ADMIN", isPlatformAdmin: false } as any)
     const res = await middleware(makeReq("/admin/dashboard"))
     expect(isNext(res)).toBe(true)
   })
 
   it("5. /admin with isPlatformAdmin token returns next", async () => {
-    mockGetToken.mockResolvedValue({ role: "TEACHER", isPlatformAdmin: true } as any)
+    mockGetToken.mockResolvedValue({ id: "fixture-user", authTime: Date.now(), credStamp: 0, role: "TEACHER", isPlatformAdmin: true } as any)
     const res = await middleware(makeReq("/admin/settings"))
     expect(isNext(res)).toBe(true)
   })
@@ -70,25 +70,25 @@ describe("middleware auth - /admin and /platform portal guards", () => {
   })
 
   it("7. /platform with ADMIN token but not platform admin redirects to /unauthorized", async () => {
-    mockGetToken.mockResolvedValue({ role: "ADMIN", isPlatformAdmin: false } as any)
+    mockGetToken.mockResolvedValue({ id: "fixture-user", authTime: Date.now(), credStamp: 0, role: "ADMIN", isPlatformAdmin: false } as any)
     const res = await middleware(makeReq("/platform/users"))
     expect(locationOf(res)).toContain("/unauthorized")
   })
 
   it("8. /platform with isPlatformAdmin token returns next", async () => {
-    mockGetToken.mockResolvedValue({ role: "ADMIN", isPlatformAdmin: true } as any)
+    mockGetToken.mockResolvedValue({ id: "fixture-user", authTime: Date.now(), credStamp: 0, role: "ADMIN", isPlatformAdmin: true } as any)
     const res = await middleware(makeReq("/platform/users"))
     expect(isNext(res)).toBe(true)
   })
 
   it("9. /moe/dashboard with MOE_OFFICIAL token returns next", async () => {
-    mockGetToken.mockResolvedValue({ role: "MOE_OFFICIAL", isPlatformAdmin: false } as any)
+    mockGetToken.mockResolvedValue({ id: "fixture-user", authTime: Date.now(), credStamp: 0, role: "MOE_OFFICIAL", isPlatformAdmin: false } as any)
     const res = await middleware(makeReq("/moe/dashboard"))
     expect(isNext(res)).toBe(true)
   })
 
   it("10. /moe/dashboard with ADMIN token redirects to role portal", async () => {
-    mockGetToken.mockResolvedValue({ role: "ADMIN", isPlatformAdmin: false } as any)
+    mockGetToken.mockResolvedValue({ id: "fixture-user", authTime: Date.now(), credStamp: 0, role: "ADMIN", isPlatformAdmin: false } as any)
     const res = await middleware(makeReq("/moe/dashboard"))
     // ADMIN is redirected to roleDefaultPortal("ADMIN") = "/admin"
     const loc = locationOf(res)
@@ -186,13 +186,13 @@ describe("middleware auth - /api/admin and /api/platform authentication backstop
     // this namespace, since some routes legitimately allow other roles
     // (e.g. TEACHER approving a TEACHER-scoped item) and enforce the real
     // check themselves. See middleware.ts's isPortalApiRoute comment.
-    mockGetToken.mockResolvedValue({ role: "TEACHER", isPlatformAdmin: false } as any)
+    mockGetToken.mockResolvedValue({ id: "fixture-user", authTime: Date.now(), credStamp: 0, role: "TEACHER", isPlatformAdmin: false } as any)
     const res = await middleware(makeReq("/api/admin/ops/approvals/req-1/approve"))
     expect(isNext(res)).toBe(true)
   })
 
   it("22. /api/platform/* with any authenticated token passes through to the route", async () => {
-    mockGetToken.mockResolvedValue({ role: "STUDENT", isPlatformAdmin: false } as any)
+    mockGetToken.mockResolvedValue({ id: "fixture-user", authTime: Date.now(), credStamp: 0, role: "STUDENT", isPlatformAdmin: false } as any)
     const res = await middleware(makeReq("/api/platform/stats"))
     expect(isNext(res)).toBe(true)
   })

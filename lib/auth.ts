@@ -22,6 +22,8 @@ import {
   isPrivilegedMfaEnforced,
 } from "@/lib/auth/privilegedIdentity";
 import { parseAuth0MfaClaims } from "@/lib/auth/auth0Claims";
+import { assertTokenFresh, credentialStampOf, isDisabledCredential, privilegedAssuranceFailure, sessionFreshnessFailure, SessionRevokedError } from "@/lib/auth/sessionRevocation";
+import { readTeacherProfileSettings } from "@/lib/teacher/profileSettings";
 
 type RawCredentialInput = {
   email?: string;
@@ -48,6 +50,7 @@ async function findUserForCredentials(credentials: Record<string, string>) {
         schoolId: true,
         isPlatformAdmin: true,
         mustChangePIN: true,
+        passwordChangedAt: true,
         privilegedIdentity: {
           select: {
             id: true,
@@ -73,6 +76,7 @@ async function findUserForCredentials(credentials: Record<string, string>) {
         schoolId: true,
         isPlatformAdmin: true,
         mustChangePIN: true,
+        passwordChangedAt: true,
         privilegedIdentity: {
           select: {
             id: true,
@@ -99,6 +103,7 @@ async function findUserForCredentials(credentials: Record<string, string>) {
       schoolId: true,
       isPlatformAdmin: true,
       mustChangePIN: true,
+      passwordChangedAt: true,
       privilegedIdentity: {
         select: {
           id: true,
@@ -128,6 +133,7 @@ type LoginFailureReason =
   | "unknown_identifier"
   | "bad_password"
   | "school_inactive"
+  | "account_disabled"
   | "privileged_mfa_required";
 
 // Support can tell a deactivated school or lockout from a mistyped PIN.
@@ -156,6 +162,9 @@ export async function authorizeCredentials(rawCredentials?: RawCredentialInput |
   };
 
   if (!credentials.password) return null;
+  // Session revocation: the authentication instant is taken BEFORE the account row is read, so a credential change
+  // that commits while this login is in flight always revokes the session it produces (authTime <= passwordChangedAt).
+  const authTime = Date.now();
   const identifier = resolveCredentialIdentifier(credentials);
   const identifierLimit = await checkRateLimit(`credentials:${identifier}`, {
     namespace: "auth",
@@ -166,6 +175,9 @@ export async function authorizeCredentials(rawCredentials?: RawCredentialInput |
 
   const user = await findUserForCredentials(credentials);
   if (!user?.hashedPwd) return recordLoginFailure("unknown_identifier");
+  if (isDisabledCredential(user.hashedPwd)) return recordLoginFailure("account_disabled", user.schoolId ?? null);
+  // Session revocation (Atlas SR-01): the version is the one read WITH the hash that is about to be verified.
+  const credStamp = credentialStampOf(user);
 
   const ok = await bcrypt.compare(credentials.password, user.hashedPwd);
   if (!ok) return recordLoginFailure("bad_password", user.schoolId ?? null);
@@ -199,6 +211,8 @@ export async function authorizeCredentials(rawCredentials?: RawCredentialInput |
       ),
       securityVersion: user.privilegedIdentity.securityVersion,
       privilegedIdentityId: user.privilegedIdentity.id,
+      authTime,
+      credStamp,
     } as any;
   }
 
@@ -211,6 +225,8 @@ export async function authorizeCredentials(rawCredentials?: RawCredentialInput |
     schoolId: user.schoolId ?? null,
     isPlatformAdmin: user.isPlatformAdmin,
     mustChangePIN: user.mustChangePIN ?? false,
+    authTime,
+    credStamp,
   } as any;
 }
 
@@ -282,6 +298,7 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async signIn({ user, account }) {
       if (account?.provider === "auth0" || account?.provider === "auth0-step-up") {
+        const authTime = Date.now(); // before the account read (session revocation contract)
         if (!user.email) return false;
         const assurance = parseAuth0MfaClaims(account.id_token);
         if (!assurance?.mfa || !assurance.emailVerified) {
@@ -300,9 +317,12 @@ export const authOptions: NextAuthOptions = {
             isPlatformAdmin: true,
             mustChangePIN: true,
             privilegedIdentity: true,
+            hashedPwd: true,
+            passwordChangedAt: true,
           },
         });
         if (!dbUser || !isPrivilegedAccount(dbUser)) return false;
+        if (isDisabledCredential(dbUser.hashedPwd)) return false; // Atlas SR-02: disabled at every provider
         if (
           dbUser.privilegedIdentity?.providerSubject &&
           dbUser.privilegedIdentity.providerSubject !== assurance.subject
@@ -363,20 +383,29 @@ export const authOptions: NextAuthOptions = {
           securityVersion: identity.securityVersion,
           privilegedIdentityId: identity.id,
           authenticatedAt: assurance.authenticatedAt.getTime(),
+          authTime,
+          credStamp: credentialStampOf(dbUser),
         });
         return true;
       }
       if (account?.provider === "google") {
+        const authTime = Date.now(); // before the account read (session revocation contract)
+        (user as any).authTime = authTime;
         if (!user.email) return false;
 
         const dbUser = await prisma.user.findUnique({
           where: { email: user.email },
-          select: { id: true, role: true, googleId: true, schoolId: true, school: { select: { googleSsoEnabled: true } } },
+          select: { id: true, role: true, googleId: true, schoolId: true, school: { select: { googleSsoEnabled: true } },
+            TeacherProfile: { select: { permissions: true } }, hashedPwd: true, passwordChangedAt: true },
         });
 
         if (dbUser) {
           if (dbUser.role !== "TEACHER") return false;
           if (dbUser.school && dbUser.school.googleSsoEnabled === false) return false;
+          // A deactivated teacher (admin "deactivate") must not start a new session through Google either.
+          if (readTeacherProfileSettings(dbUser.TeacherProfile?.permissions).active === false) return false;
+          if (isDisabledCredential(dbUser.hashedPwd)) return false; // Atlas SR-02: disabled at every provider
+          (user as any).credStamp = credentialStampOf(dbUser);
           // NR-8: a TEACHER row can theoretically exist with schoolId: null
           // (User.schoolId is nullable in schema). Never issue an active
           // session for that state — the invite/school-code flow is the
@@ -421,6 +450,7 @@ export const authOptions: NextAuthOptions = {
             schoolId: invite.schoolId,
           },
         });
+        (user as any).credStamp = credentialStampOf(newUser);
 
         await prisma.inviteToken.update({
           where: { id: invite.id },
@@ -457,9 +487,21 @@ export const authOptions: NextAuthOptions = {
           token.loginId = dbUser.loginId ?? null;
           token.mustChangePIN = dbUser.mustChangePIN ?? false;
         }
+        token.authTime = typeof (user as any)?.authTime === "number" ? (user as any).authTime : Date.now();
+        token.credStamp = typeof (user as any)?.credStamp === "number" ? (user as any).credStamp : undefined;
+        return token;
+      }
+      if (!user) {
+        // Every refresh (/api/auth/session, getServerSession, update): uncached, by account id. Throwing makes next-auth
+        // drop the session (cookie cleared on /api/auth/session; getServerSession returns null). See sessionRevocation.ts.
+        await assertTokenFresh(token as Record<string, unknown>);
         return token;
       }
       if (user) {
+        // Immutable for the life of the session; refreshes never change it (unlike iat).
+        token.authTime = typeof (user as any).authTime === "number" ? (user as any).authTime : Date.now();
+        // The credential version read with the verified credential (Atlas SR-01); absent means the session is refused.
+        token.credStamp = typeof (user as any).credStamp === "number" ? (user as any).credStamp : undefined;
         token.id = (user as any).id;
         token.role = (user as any).role;
         token.schoolId = (user as any).schoolId ?? null;
@@ -497,6 +539,8 @@ export const authOptions: NextAuthOptions = {
         (session.user as any).schoolId = (token as any).schoolId ?? null;
         (session.user as any).isPlatformAdmin = (token as any).isPlatformAdmin ?? false;
         (session.user as any).iat = (token as any).iat ?? null;
+        (session.user as any).authTime = typeof (token as any).authTime === "number" ? (token as any).authTime : null;
+        (session.user as any).credStamp = typeof (token as any).credStamp === "number" ? (token as any).credStamp : null;
         (session.user as any).loginId = (token as any).loginId ?? null;
         (session.user as any).mustChangePIN = (token as any).mustChangePIN ?? false;
         (session.user as any).authProvider = (token as any).authProvider ?? null;
@@ -520,6 +564,10 @@ export type SessionUser = {
   schoolId?: string | null;
   isPlatformAdmin?: boolean;
   iat?: number | null;
+  /** Epoch ms of the authentication itself; never refreshed (session revocation contract). */
+  authTime?: number | null;
+  /** The credential version (User.passwordChangedAt, ms; 0 when null) the session authenticated against. */
+  credStamp?: number | null;
   mustChangePIN?: boolean;
   authProvider?: string | null;
   mfaVerifiedAt?: number | null;
@@ -542,6 +590,8 @@ export async function getOptionalUser(): Promise<SessionUser | null> {
     schoolId: u.schoolId ?? null,
     isPlatformAdmin: u.isPlatformAdmin ?? false,
     iat: typeof u.iat === "number" ? u.iat : null,
+    authTime: typeof u.authTime === "number" ? u.authTime : null,
+    credStamp: typeof u.credStamp === "number" ? u.credStamp : null,
     mustChangePIN: u.mustChangePIN ?? false,
     authProvider: u.authProvider ?? null,
     mfaVerifiedAt: typeof u.mfaVerifiedAt === "number" ? u.mfaVerifiedAt : null,
@@ -590,49 +640,20 @@ async function assertSessionFresh(user: SessionUser) {
       },
     });
     if (!dbRecord) throw Object.assign(new Error("Unauthorized"), { status: 401 });
-    if (
-      dbRecord.role !== user.role ||
-      dbRecord.schoolId !== (user.schoolId ?? null) ||
-      dbRecord.isPlatformAdmin !== Boolean(user.isPlatformAdmin)
-    ) {
-      throw Object.assign(new Error("Session expired"), { status: 401 });
-    }
-    if (dbRecord.schoolId && !dbRecord.isPlatformAdmin && dbRecord.school?.status !== "ACTIVE") {
-      throw Object.assign(new Error("School inactive"), { status: 403 });
-    }
-    if (
-      user.iat &&
-      dbRecord.passwordChangedAt &&
-      user.iat * 1000 < dbRecord.passwordChangedAt.getTime()
-    ) {
-      throw Object.assign(new Error("Session expired"), { status: 401 });
-    }
+    // Identity, school, credential version (never the refreshable iat) and absolute lifetime; then the assurance.
+    const privilegedFailure = sessionFreshnessFailure(user, dbRecord);
+    if (privilegedFailure) throw new SessionRevokedError(privilegedFailure);
 
-    const identity = dbRecord.privilegedIdentity;
-    const assurance = identity?.sessions[0];
-    if (
-      !identity ||
-      !assurance ||
-      user.securityVersion !== identity.securityVersion ||
-      assurance.securityVersion !== identity.securityVersion ||
-      assurance.revokedAt ||
-      assurance.expiresAt.getTime() <= Date.now()
-    ) {
-      throw Object.assign(new Error("Session expired"), { status: 401 });
-    }
-    if (
-      user.authProvider === "break-glass" &&
-      (!identity.breakGlassUntil || identity.breakGlassUntil.getTime() <= Date.now())
-    ) {
-      throw Object.assign(new Error("Break-glass access expired"), { status: 401 });
-    }
+    const assuranceFailure = privilegedAssuranceFailure(user, dbRecord.privilegedIdentity);
+    if (assuranceFailure) throw new SessionRevokedError(assuranceFailure);
     return;
   }
 
   // Cache DB freshness check for 700s — must outlive full load-test window (83s warm + 540s test = 623s).
-  // Tradeoff: password changes and school deactivations take up to 700s to propagate.
+  // Secondary check only: the uncached jwt-refresh check (assertTokenFresh) is authoritative. The key includes the
+  // credential version, so a fresh login after a change reads its own entry; school deactivation may lag up to 700s here.
   const record = await withRedisCache<FreshnessRecord>(
-    `cache:session-fresh:${user.id}`,
+    `cache:session-fresh:${user.id}:${user.credStamp ?? "none"}`,
     700,
     async () => {
       const dbRecord = await prisma.user.findUnique({
@@ -656,23 +677,9 @@ async function assertSessionFresh(user: SessionUser) {
     }
   );
 
-  if (record.schoolId && !record.isPlatformAdmin && record.schoolStatus !== "ACTIVE") {
-    throw Object.assign(new Error("School inactive"), { status: 403 });
-  }
-
-  if (
-    record.role !== user.role ||
-    record.schoolId !== (user.schoolId ?? null) ||
-    record.isPlatformAdmin !== Boolean(user.isPlatformAdmin)
-  ) {
-    throw Object.assign(new Error("Session expired"), { status: 401 });
-  }
-
-  if (!user.iat || !record.passwordChangedAt) return;
-  const changedAtMs = new Date(record.passwordChangedAt).getTime();
-  if (user.iat * 1000 < changedAtMs) {
-    throw Object.assign(new Error("Session expired"), { status: 401 });
-  }
+  // Same rule as the uncached jwt-refresh check (which is authoritative); a token without authTime is stale.
+  const failure = sessionFreshnessFailure(user, record);
+  if (failure) throw new SessionRevokedError(failure);
 }
 
 export async function requireUser(): Promise<SessionUser> {

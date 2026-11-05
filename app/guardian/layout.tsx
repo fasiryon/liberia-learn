@@ -1,5 +1,6 @@
 import GlobalAssistantMount from "@/components/rag/GlobalAssistantMount";
 import { getOptionalUser } from "@/lib/auth";
+import { enforceAdmittedSession } from "@/lib/auth/admittedSession";
 import { prisma } from "@/lib/db";
 import { GuardianShell } from "@/app/guardian/GuardianShell";
 import { PushPermissionPrompt } from "@/components/PushPermissionPrompt";
@@ -12,6 +13,8 @@ export default async function GuardianLayout({
   children: React.ReactNode;
 }) {
   const user = await getOptionalUser();
+  // U1: middleware admitted a signed token, but the server session is gone (revoked, disabled, changed or unverifiable).
+  enforceAdmittedSession(user);
 
   const showTour =
     user?.role === "GUARDIAN"
