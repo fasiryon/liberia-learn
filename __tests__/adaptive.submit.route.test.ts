@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { createCipheriv, createHash, randomBytes } from "crypto";
 
 const mockRequireRole = vi.hoisted(() => vi.fn());
 const mockIsAdaptiveEngineEnabled = vi.hoisted(() => vi.fn());
@@ -68,6 +69,38 @@ function makeRequest(body: typeof baseBody, authoritativeAnswers = [0, 1, 2, 3, 
     body: JSON.stringify(body),
   }) as any;
   request.cookies = { get: () => ({ value: sealed.token }) };
+  return request;
+}
+
+function makeLegacyRequest(body: typeof baseBody, authoritativeAnswers = [0, 1, 2, 3, 0]) {
+  const practiceSetId = "legacy-practice-set";
+  const session = {
+    userId: "user-1",
+    strandCode: body.strandCode,
+    practiceSetId,
+    expiresAt: Date.now() + 2 * 60 * 60 * 1000,
+    questions: authoritativeAnswers.map((correctIndex, index) => ({
+      id: `legacy-question-${index}`,
+      prompt: `Legacy question ${index}`,
+      options: ["A", "B", "C", "D"],
+      correctIndex,
+      explanation: "Legacy server held explanation",
+      hintText: "Legacy hint",
+    })),
+  };
+  const iv = randomBytes(12);
+  const key = createHash("sha256")
+    .update(process.env.NEXTAUTH_SECRET || "liberialearn-local-adaptive-session")
+    .digest();
+  const cipher = createCipheriv("aes-256-gcm", key, iv);
+  const ciphertext = Buffer.concat([cipher.update(JSON.stringify(session)), cipher.final()]);
+  const token = Buffer.concat([iv, cipher.getAuthTag(), ciphertext]).toString("base64url");
+  const request = new Request("http://localhost/api/student/adaptive/submit", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ ...body, practiceSetId }),
+  }) as any;
+  request.cookies = { get: () => ({ value: token }) };
   return request;
 }
 
@@ -150,6 +183,13 @@ describe("POST /api/student/adaptive/submit", () => {
     expect(
       openAdaptivePracticeSession(sealed.token, "user-1", sealed.practiceSetId)?.correctIndices
     ).toEqual([0, 1, 2, 3, 0]);
+  });
+
+  it("accepts unexpired sessions minted with the previous question payload", async () => {
+    const response = await POST(makeLegacyRequest(baseBody));
+
+    expect(response.status).toBe(200);
+    expect(await response.json()).toMatchObject({ score: 1, passed: true });
   });
 
   it("returns a server score without writing unbound learning state", async () => {
