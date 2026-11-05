@@ -116,6 +116,17 @@ describe("middleware: claims-only refusal of signed tokens", () => {
     expect((await middleware(req("/moe/dashboard"))).headers.get("location")).toContain("/moe/login");
   });
 
+  it("refuses a malformed cookie (getToken throws on 4.24.14, returns null on 4.24.15) instead of erroring", async () => {
+    mocks.getToken.mockRejectedValue(new URIError("URI malformed"));
+    const page = await middleware(req("/student/dashboard"));
+    expect(page.headers.get("location")).toContain("/login");
+    expect(clearsSessionCookie(page)).toBe(true);
+    const api = await middleware(req("/api/admin/teachers"));
+    expect(api.status).toBe(401);
+    mocks.getToken.mockResolvedValue(null);
+    expect((await middleware(req("/api/student/today"))).status).toBe(401);
+  });
+
   it("admits a current token and marks the request as admitted", async () => {
     mocks.getToken.mockResolvedValue(token());
     const res = await middleware(req("/student/dashboard"));
