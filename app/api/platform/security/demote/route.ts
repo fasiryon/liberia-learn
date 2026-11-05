@@ -1,6 +1,8 @@
+// route-policy: auth=session; scope=platform; authority=platform-admin; rationale=an allowlisted platform admin demotes only itself while at least two platform admins exist; privileged step-up is enforced only when PRIVILEGED_MFA_ENFORCEMENT_ENABLED is set; the demotion advances its credential version; required audit in the same transaction
 import { NextResponse } from "next/server";
 import { requireMoePlatformAdmin } from "@/lib/moeAccess";
 import { prisma } from "@/lib/db";
+import { advanceSecurityStamp } from "@/lib/auth/sessionRevocation";
 import { logAuditRequired } from "@/lib/audit";
 import { requirePrivilegedStepUp } from "@/lib/auth";
 
@@ -25,6 +27,7 @@ export async function POST() {
         where: { id: user.id },
         data: { isPlatformAdmin: false },
       });
+      await advanceSecurityStamp(tx, user.id); // SR-07: a restored flag cannot resurrect this session
       await logAuditRequired({
         userId: user.id,
         action: "platform.admin.demote",

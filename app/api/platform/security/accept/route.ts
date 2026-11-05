@@ -1,7 +1,9 @@
+// route-policy: auth=session; scope=platform; authority=intended-recipient-transfer-token; rationale=only the signed-in intended recipient of an unexpired platform transfer token is promoted to platform admin (optionally demoting the sender while two admins remain); privileged step-up is enforced only when PRIVILEGED_MFA_ENFORCEMENT_ENABLED is set; each promotion or demotion advances that account's credential version; required audit in the same transaction
 import crypto from "crypto";
 import { NextResponse } from "next/server";
 import { requirePrivilegedStepUp, requireUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { advanceSecurityStamp } from "@/lib/auth/sessionRevocation";
 import { logAuditRequired } from "@/lib/audit";
 import { isMoePortalEnabled } from "@/lib/serverFlags";
 import { hashToken } from "@/lib/tokens";
@@ -56,6 +58,7 @@ export async function POST(req: Request) {
         where: { id: user.id },
         data: { isPlatformAdmin: true },
       });
+      await advanceSecurityStamp(tx, user.id); // SR-07: the new platform admin signs in again
 
       await tx.platformTransferToken.update({
         where: { id: record.id },
@@ -69,6 +72,7 @@ export async function POST(req: Request) {
             where: { id: record.createdBy },
             data: { isPlatformAdmin: false },
           });
+          await advanceSecurityStamp(tx, record.createdBy); // SR-07
         }
       }
       await logAuditRequired({

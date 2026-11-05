@@ -1,8 +1,10 @@
+// route-policy: auth=session; scope=record; authority=self; rationale=a signed-in teacher changes only their own password after re-entering the current one; revokes their earlier sessions
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { advanceSecurityStamp } from "@/lib/auth/sessionRevocation";
 import { logAudit } from "@/lib/audit";
 
 const ChangePasswordSchema = z.object({
@@ -41,13 +43,10 @@ export async function PATCH(req: Request) {
 
     const hashedPwd = await bcrypt.hash(newPassword, 10);
 
-    await prisma.user.update({
-      where: { id: teacher.id },
-      data: {
-        hashedPwd,
-        mustChangePIN: false,
-        passwordChangedAt: new Date(),
-      },
+    // Revokes every session authenticated before this change, including the current one: the client signs in again.
+    await prisma.$transaction(async (tx) => {
+      await tx.user.update({ where: { id: teacher.id }, data: { hashedPwd, mustChangePIN: false } });
+      await advanceSecurityStamp(tx, teacher.id); // compare-and-set; a concurrent change makes this 409
     });
 
     void logAudit({
@@ -58,7 +57,7 @@ export async function PATCH(req: Request) {
       resourceId: teacher.id,
     });
 
-    return NextResponse.json({ ok: true });
+    return NextResponse.json({ ok: true, reauthenticate: true });
   } catch (err: any) {
     return NextResponse.json(
       { error: err?.message ?? "Internal error" },

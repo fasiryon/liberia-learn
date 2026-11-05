@@ -39,7 +39,7 @@ describe("auth helpers", () => {
   });
 
   it("requireRole returns user when session is valid and role matches", async () => {
-    mockGetServerSession.mockResolvedValue({ user: { id: "user-1", email: "teacher@test.lr", name: "Test Teacher", role: "TEACHER", schoolId: "school-1" } } as any);
+    mockGetServerSession.mockResolvedValue({ user: { id: "user-1", email: "teacher@test.lr", name: "Test Teacher", role: "TEACHER", schoolId: "school-1", authTime: Date.now() - 60_000, credStamp: 0 } } as any);
     mockUserFindUnique.mockResolvedValue({
       passwordChangedAt: null,
       role: "TEACHER",
@@ -55,7 +55,7 @@ describe("auth helpers", () => {
   });
 
   it("requireRole throws 403 when role does not match", async () => {
-    mockGetServerSession.mockResolvedValue({ user: { id: "user-1", email: "student@test.lr", name: "Test Student", role: "STUDENT", schoolId: "school-1" } } as any);
+    mockGetServerSession.mockResolvedValue({ user: { id: "user-1", email: "student@test.lr", name: "Test Student", role: "STUDENT", schoolId: "school-1", authTime: Date.now() - 60_000, credStamp: 0 } } as any);
     mockUserFindUnique.mockResolvedValue({
       passwordChangedAt: null,
       role: "STUDENT",

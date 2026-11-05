@@ -1,7 +1,9 @@
+// route-policy: auth=public; scope=none; authority=guardian-invite-token; rationale=unauthenticated by design; a GUARDIAN_LINK invite token sets the guardian's PIN and links the invited student; single use is an atomic conditional claim in the same transaction; an existing guardian account's credential version advances
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
+import { advanceSecurityStamp } from "@/lib/auth/sessionRevocation";
 import { sendGuardianWelcome } from "@/lib/email";
 import { findInviteByToken } from "@/lib/inviteTokens";
 import { isValidPin } from "@/lib/login-identifiers";
@@ -64,7 +66,6 @@ export async function POST(req: Request) {
               role: "GUARDIAN",
               schoolId: invite.schoolId,
               hashedPwd,
-              passwordChangedAt: new Date(),
               smsOptIn: true,
               preferredChannel: "SMS",
             },
@@ -84,6 +85,9 @@ export async function POST(req: Request) {
               passwordChangedAt: new Date(),
             },
           });
+
+      // An existing account's credential and identity changed: advance its version (revokes its earlier sessions).
+      if (existingGuardian) await advanceSecurityStamp(tx, guardian.id);
 
       await tx.studentGuardian.upsert({
         where: { studentId_guardianId: { studentId: student.id, guardianId: guardian.id } },
@@ -113,7 +117,9 @@ export async function POST(req: Request) {
         },
       });
 
-      await tx.inviteToken.update({ where: { id: invite.id }, data: { usedAt: new Date() } });
+      // Single use, atomically: only the caller that claims a still-unused, unexpired invite commits; the other rolls back.
+      const claim = await tx.inviteToken.updateMany({ where: { id: invite.id, usedAt: null, expiresAt: { gt: new Date() } }, data: { usedAt: new Date() } });
+      if (claim.count !== 1) throw Object.assign(new Error("This invite has already been used."), { status: 400 });
     });
 
     if (invite.email && !invite.email.endsWith("@guardian.local")) {

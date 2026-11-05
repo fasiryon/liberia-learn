@@ -60,7 +60,7 @@ beforeEach(() => {
   mockUserCount.mockResolvedValue(2);
   mockTokenUpdate.mockResolvedValue({});
   mockTransaction.mockImplementation(async (callback: any) => callback({
-    user: { update: mockUserUpdate, count: mockUserCount },
+    user: { update: mockUserUpdate, count: mockUserCount, findUnique: vi.fn(async () => ({ passwordChangedAt: null })), updateMany: vi.fn(async () => ({ count: 1 })) /* credential version compare-and-set */ },
     platformTransferToken: { update: mockTokenUpdate },
   }));
   mockLogAudit.mockResolvedValue(undefined);

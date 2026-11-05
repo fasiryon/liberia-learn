@@ -3,6 +3,7 @@
 // MOE portal operates at national scope — no school context, no tenant switcher.
 import type { Metadata } from "next";
 import { getServerSession } from "next-auth";
+import { enforceAdmittedSession } from "@/lib/auth/admittedSession";
 import { notFound } from "next/navigation";
 import { authOptions } from "@/lib/auth";
 import { getMoePortalAllowlist, isMoePortalEnabled } from "@/lib/serverFlags";
@@ -42,6 +43,8 @@ export default async function MoeLayout({
   }
 
   const session = await getServerSession(authOptions);
+  // U1: middleware admitted a signed token, but the server session is gone (revoked, disabled, changed or unverifiable).
+  enforceAdmittedSession(session?.user ?? null, "/moe/login?reason=session_ended");
   const user = session?.user as {
     role?: string;
     name?: string | null;

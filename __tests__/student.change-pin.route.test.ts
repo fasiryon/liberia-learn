@@ -11,16 +11,21 @@ vi.mock("@/lib/auth", () => ({
   requireRole: mockRequireRole,
 }));
 
-vi.mock("@/lib/db", () => ({
-  prisma: {
+vi.mock("@/lib/db", () => {
+  const prisma: Record<string, unknown> = {
     student: {
       findFirst: mockStudentFindFirst,
     },
     user: {
       update: mockUserUpdate,
+      updateMany: vi.fn(async () => ({ count: 1 })), // credential version compare-and-set
+      findUnique: vi.fn(async () => ({ passwordChangedAt: null })),
     },
-  },
-}));
+  };
+  // Interactive transactions receive the same mock client.
+  prisma.$transaction = vi.fn(async (arg: any) => (typeof arg === "function" ? arg(prisma) : Promise.all(arg)));
+  return { prisma };
+});
 
 vi.mock("bcryptjs", () => ({
   default: {

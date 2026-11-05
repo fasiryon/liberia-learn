@@ -63,10 +63,10 @@ beforeEach(() => {
   mockGuardianConsentUpsert.mockResolvedValue({ id: "consent-1" });
   mockInviteTokenUpdate.mockResolvedValue({ id: "invite-1" });
   mockTransaction.mockImplementation(async (cb: any) => cb({
-    user: { update: mockUserUpdate, create: mockUserCreate },
+    user: { update: mockUserUpdate, create: mockUserCreate, findUnique: vi.fn(async () => ({ passwordChangedAt: null })), updateMany: vi.fn(async () => ({ count: 1 })) /* credential version compare-and-set */ },
     studentGuardian: { upsert: mockStudentGuardianUpsert },
     guardianConsent: { upsert: mockGuardianConsentUpsert },
-    inviteToken: { update: mockInviteTokenUpdate },
+    inviteToken: { update: mockInviteTokenUpdate, updateMany: vi.fn(async () => ({ count: 1 })) /* atomic single-use claim */ },
   }));
 });
 

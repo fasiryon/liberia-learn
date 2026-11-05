@@ -3,6 +3,7 @@ import OfflineBanner from "./OfflineBanner";
 import GlobalAssistantMount from "@/components/rag/GlobalAssistantMount";
 import { LegalFooter } from "@/components/LegalFooter";
 import { getOptionalUser } from "@/lib/auth";
+import { enforceAdmittedSession } from "@/lib/auth/admittedSession";
 import { prisma } from "@/lib/db";
 import { PushPermissionPrompt } from "@/components/PushPermissionPrompt";
 import { PwaInstallPrompt } from "@/components/PwaInstallPrompt";
@@ -19,6 +20,8 @@ export default async function StudentLayout({
   children: React.ReactNode;
 }) {
   const user = await getOptionalUser();
+  // U1: middleware admitted a signed token, but the server session is gone (revoked, disabled, changed or unverifiable).
+  enforceAdmittedSession(user);
   const isPlatformAdmin = user?.isPlatformAdmin === true;
 
   let showPrivacyGate = false;

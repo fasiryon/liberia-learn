@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { signOut } from "next-auth/react";
 
 export default function TeacherChangePasswordPage() {
   const router = useRouter();
@@ -35,6 +36,8 @@ export default function TeacherChangePasswordPage() {
       if (!response.ok) {
         throw new Error(data?.error ?? "Failed to change password.");
       }
+      // The password change revoked every earlier session (server-side), so sign in again with the new password.
+      if (data?.reauthenticate) { await signOut({ callbackUrl: "/login?credentialChanged=1" }); return; }
       router.push("/teacher/dashboard");
     } catch (err: any) {
       setError(err?.message ?? "Failed to change password.");

@@ -190,20 +190,20 @@ describe("middleware — /moe/dashboard auth guard", () => {
   });
 
   it("allows MOE_OFFICIAL user through /moe/dashboard", async () => {
-    mockGetToken.mockResolvedValue({ role: "MOE_OFFICIAL", isPlatformAdmin: false });
+    mockGetToken.mockResolvedValue({ id: "fixture-user", authTime: Date.now(), credStamp: 0, role: "MOE_OFFICIAL", isPlatformAdmin: false });
     const res = await middleware(makeReq("/moe/dashboard"));
     // next() — no redirect
     expect(res?.status).not.toBeGreaterThanOrEqual(300);
   });
 
   it("allows platform admin through /moe/dashboard", async () => {
-    mockGetToken.mockResolvedValue({ role: "ADMIN", isPlatformAdmin: true });
+    mockGetToken.mockResolvedValue({ id: "fixture-user", authTime: Date.now(), credStamp: 0, role: "ADMIN", isPlatformAdmin: true });
     const res = await middleware(makeReq("/moe/dashboard"));
     expect(res?.status).not.toBeGreaterThanOrEqual(300);
   });
 
   it("redirects ADMIN (non-platform-admin) from /moe/dashboard to /admin", async () => {
-    mockGetToken.mockResolvedValue({ role: "ADMIN", isPlatformAdmin: false });
+    mockGetToken.mockResolvedValue({ id: "fixture-user", authTime: Date.now(), credStamp: 0, role: "ADMIN", isPlatformAdmin: false });
     const res = await middleware(makeReq("/moe/dashboard"));
     const location = getRedirectLocation(res);
     expect(location).toContain("/admin");
@@ -211,26 +211,26 @@ describe("middleware — /moe/dashboard auth guard", () => {
   });
 
   it("redirects TEACHER from /moe/dashboard to /teacher", async () => {
-    mockGetToken.mockResolvedValue({ role: "TEACHER", isPlatformAdmin: false });
+    mockGetToken.mockResolvedValue({ id: "fixture-user", authTime: Date.now(), credStamp: 0, role: "TEACHER", isPlatformAdmin: false });
     const res = await middleware(makeReq("/moe/dashboard"));
     expect(getRedirectLocation(res)).toContain("/teacher");
   });
 
   it("redirects STUDENT from /moe/dashboard to /dashboard", async () => {
-    mockGetToken.mockResolvedValue({ role: "STUDENT", isPlatformAdmin: false });
+    mockGetToken.mockResolvedValue({ id: "fixture-user", authTime: Date.now(), credStamp: 0, role: "STUDENT", isPlatformAdmin: false });
     const res = await middleware(makeReq("/moe/dashboard"));
     expect(getRedirectLocation(res)).toContain("/dashboard");
   });
 
   it("redirects GUARDIAN from /moe/dashboard to /guardian", async () => {
-    mockGetToken.mockResolvedValue({ role: "GUARDIAN", isPlatformAdmin: false });
+    mockGetToken.mockResolvedValue({ id: "fixture-user", authTime: Date.now(), credStamp: 0, role: "GUARDIAN", isPlatformAdmin: false });
     const res = await middleware(makeReq("/moe/dashboard"));
     expect(getRedirectLocation(res)).toContain("/guardian");
   });
 
   it("non-MOE redirect prevents school-level PII exposure through /moe/*", async () => {
     // A non-MOE user hitting /moe/standards-coverage is redirected away — never reaches the route
-    mockGetToken.mockResolvedValue({ role: "ADMIN", isPlatformAdmin: false });
+    mockGetToken.mockResolvedValue({ id: "fixture-user", authTime: Date.now(), credStamp: 0, role: "ADMIN", isPlatformAdmin: false });
     const res = await middleware(makeReq("/moe/standards-coverage"));
     // Confirm redirect — route handler never executes
     expect(res?.status).toBeGreaterThanOrEqual(300);
