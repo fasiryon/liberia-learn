@@ -81,7 +81,13 @@ export function portalRoleRedirect(
  * every getServerSession/requireUser call. A refused token is treated as no session and its cookie is cleared.
  */
 async function readAdmissibleToken(req: NextRequest): Promise<{ token: Record<string, unknown> | null; refused: boolean }> {
-  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+  let token: Awaited<ReturnType<typeof getToken>>;
+  try {
+    token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+  } catch {
+    // A malformed cookie (next-auth 4.24.14 throws; 4.24.15 returns null) is refused, never an error or an admission.
+    return { token: null, refused: true };
+  }
   if (!token) return { token: null, refused: false };
   if (sessionClaimsFailure(token as Record<string, unknown>)) return { token: null, refused: true };
   return { token: token as Record<string, unknown>, refused: false };
