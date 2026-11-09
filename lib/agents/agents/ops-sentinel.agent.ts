@@ -15,6 +15,7 @@ import type { AgentDefinition } from "@/lib/agents/types";
  */
 export const opsSentinelAgent: AgentDefinition = {
   name: "ops-sentinel",
+  audience: "general",
   description: "Platform health monitoring: cron misses, migration drift, error spikes, cost cap breaches.",
   systemPromptKey: "agent.ops-sentinel.system",
   toolAllowlist: [

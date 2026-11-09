@@ -1,4 +1,4 @@
-// route-policy: auth=session; scope=platform; authority=intended-recipient-transfer-token; rationale=only the signed-in intended recipient of an unexpired platform transfer token is promoted to platform admin (optionally demoting the sender while two admins remain); privileged step-up is enforced only when PRIVILEGED_MFA_ENFORCEMENT_ENABLED is set; the token is claimed atomically (conditional update on unused, unexpired and this recipient) as the first write of the privilege/audit transaction, so a consumed or racing token gets 409 and no privileged effect; each promotion or demotion advances that account's credential version; required audit in the same transaction
+// route-policy: auth=session; scope=platform; authority=intended-recipient-transfer-token; rationale=only the signed-in intended recipient of an unexpired platform transfer token is promoted to platform admin (optionally demoting the sender while two admins remain); privileged step-up is enforced only when PRIVILEGED_MFA_ENFORCEMENT_ENABLED is set; the token is claimed atomically (conditional update on unused, unexpired and this recipient) as the first write of the privilege/audit transaction, so a consumed or racing token gets 409 and no privileged effect; each promotion or demotion advances that account's credential version; required audit in the same transaction; refused on any deployed Preview/staging after authority and before body or data work (PREVIEW_IDENTITY_FROZEN)
 import crypto from "crypto";
 import { NextResponse } from "next/server";
 import { requirePrivilegedStepUp, requireUser } from "@/lib/auth";
@@ -7,6 +7,8 @@ import { advanceSecurityStamp } from "@/lib/auth/sessionRevocation";
 import { logAuditRequired } from "@/lib/audit";
 import { isMoePortalEnabled } from "@/lib/serverFlags";
 import { hashToken } from "@/lib/tokens";
+import { previewIdentityFrozen } from "@/lib/preview/identityFreeze";
+import { previewSafeErrorResponse } from "@/lib/preview/safeError";
 
 export const dynamic = "force-dynamic";
 
@@ -17,6 +19,8 @@ export async function POST(req: Request) {
     }
     const user = await requireUser();
     await requirePrivilegedStepUp(user);
+    const frozen = previewIdentityFrozen();
+    if (frozen) return frozen;
     const body = await req.json();
     const { token, demoteSender } = body;
 
@@ -94,6 +98,8 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ ok: true, promoted: true });
   } catch (err: any) {
+    const safe = previewSafeErrorResponse(err);
+    if (safe) return safe;
     return NextResponse.json(
       { error: err?.message ?? "Failed", ...(err?.code === "TOKEN_ALREADY_USED" ? { code: "TOKEN_ALREADY_USED" } : {}) },
       { status: err?.status ?? 500 }

@@ -1,0 +1,291 @@
+{
+  "contractVersion": "visual-teaching-block/4.0.0-draft.1",
+  "registryVersion": "teaching-blocks/1.1.0",
+  "instructionStandard": "liberialearn-v4-instruction/1.0.0",
+  "candidateSha256": "500ab78193c6ffee7a6afdf6af7ced250d9d362abba2bcd71c14f26fdd0cb9b5",
+  "state": "DRAFT",
+  "approved": false,
+  "published": false,
+  "released": false,
+  "audience": "REVIEWER_ONLY",
+  "objectives": [
+    {
+      "id": "ll-g7-eng-read-infer",
+      "statement": "Read an informational text, explain words from context, and answer literal and inferential questions about it.",
+      "standards": [
+        {
+          "reference": "moe-english-g7-s1-p1-constructing-sentences-antroduction-to-literatur-act6",
+          "statement": "Learners read poem \"Mother to Son\" by Langston Hughes a) Analyze the poem b) Make connections to life citing textual evidence",
+          "relation": "CONTENT_REFERENCE",
+          "mapping": "PROPOSED"
+        },
+        {
+          "reference": "moe-english-g6-s2-p5-english-and-reading-con1",
+          "statement": "Analysis of texts Author's perspective Theme Style Tone Research Facts Corroborating evidence Information gathering",
+          "relation": "CONTENT_REFERENCE",
+          "mapping": "PROPOSED"
+        }
+      ]
+    },
+    {
+      "id": "ll-g7-eng-cite-evidence",
+      "statement": "Select and quote the sentences in a text that support an answer, and explain how they support it.",
+      "standards": [
+        {
+          "reference": "moe-english-g7-s1-p1-constructing-sentences-antroduction-to-literatur-act6",
+          "statement": "Learners read poem \"Mother to Son\" by Langston Hughes a) Analyze the poem b) Make connections to life citing textual evidence",
+          "relation": "CONTENT_REFERENCE",
+          "mapping": "PROPOSED"
+        },
+        {
+          "reference": "moe-english-g6-s2-p5-english-and-reading-con1",
+          "statement": "Analysis of texts Author's perspective Theme Style Tone Research Facts Corroborating evidence Information gathering",
+          "relation": "CONTENT_REFERENCE",
+          "mapping": "PROPOSED"
+        }
+      ]
+    },
+    {
+      "id": "ll-g7-eng-evidence-paragraph",
+      "statement": "Write and revise a short paragraph that makes a claim about a text, supports it with quoted evidence and explains it.",
+      "standards": [
+        {
+          "reference": "moe-english-g7-s1-p1-constructing-sentences-antroduction-to-literatur-act6",
+          "statement": "Learners read poem \"Mother to Son\" by Langston Hughes a) Analyze the poem b) Make connections to life citing textual evidence",
+          "relation": "CONTENT_REFERENCE",
+          "mapping": "PROPOSED"
+        }
+      ]
+    }
+  ],
+  "blocks": [
+    {
+      "sceneId": "generated-1",
+      "slot": "blocks",
+      "index": 0,
+      "type": "READING_PASSAGE",
+      "blockSha256": "0d80f7a2fc5ad4cc74a37b318a436af8b039b161cf423589b17fdd6e6164ef9a",
+      "objectiveIds": [
+        "ll-g7-eng-read-infer",
+        "ll-g7-eng-cite-evidence",
+        "ll-g7-eng-evidence-paragraph"
+      ],
+      "instructionalPurpose": "Sustained reading with words explained in context. Learner action: Use the model, complete its task, and explain what the representation shows.",
+      "misconceptionIds": [
+        "generated-english-misconception"
+      ],
+      "responseSignals": [],
+      "accessibility": {
+        "textAlternative": "How a seed library works. A seed library is a shared collection of seeds for planting. In this invented school example, families contribute in several ways. Some donate seeds; others clean storage tins or teach pupils when to plant. No family must pay money to take part. Pupils label each tin with the seed type and record each loan. The record helps the group know what is available. Borrowers return some seeds after their harvest so the collection can be used again. As a result, more pupils can borrow seeds in the next planting season. Dry storage helps protect the collection. Damp seeds may develop mould and become unsuitable for planting. Pupils inspect the tins each week and keep them in a dry cupboard. This example explains a possible system; it does not report measured results from a real school.",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: How a seed library works. A seed library is a shared collection of seeds for planting. In this invented school example, families contribute in several ways. Some donate seeds; others clean storage tins or teach pupils when to plant. No family must pay money to take part. Pupils label each tin with the seed type and record each loan. The record helps the group know what is available. Borrowers return some seeds after their harvest so the collection can be used again. As a result, more pupils can borrow seeds in the next planting season. Dry storage helps protect the collection. Damp seeds may develop mould and become unsuitable for planting. Pupils inspect the tins each week and keep them in a dry cupboard. This example explains a possible system; it does not report measured results from a real school.",
+        "responsePrompt": "Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "NONE",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/draft6/lessonAuthor.ts",
+          "sha256": "4313491d6fa001a0b915b7d0dfcd6a3c933f91b3d877b4f1bad3c90095ca1e31",
+          "license": "Original factory recipe or source verification record; review only",
+          "attribution": "LiberiaLearn draft.6; map geometry UNMIL / OCHA ROWCA via geoBoundaries, see references.json",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "generated-2",
+      "slot": "blocks",
+      "index": 0,
+      "type": "CHECK",
+      "blockSha256": "417050061c7c1cc055268fd9cd189307ef5f75d43600cf51b6255f9f87bb81c3",
+      "objectiveIds": [
+        "ll-g7-eng-read-infer",
+        "ll-g7-eng-cite-evidence",
+        "ll-g7-eng-evidence-paragraph"
+      ],
+      "instructionalPurpose": "Choose an answer and get feedback written for that choice. Learner action: Explain unsuitable in your own words using the sentences about damp seeds and planting. Write a new sentence that uses the word correctly. Why does the passage recommend a dry cupboard? Quote a relevant detail and explain the cause-and-effect link.",
+      "misconceptionIds": [
+        "generated-english-misconception"
+      ],
+      "responseSignals": [
+        {
+          "misconceptionId": "generated-english-misconception",
+          "responsePattern": "literal-record-item:OPTION:other",
+          "feedback": "No payment is required. A loan record tracks borrowing, not payments."
+        }
+      ],
+      "accessibility": {
+        "textAlternative": "What do pupils record? Options: Each loan; Only money paid by families.",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: What do pupils record? Options: Each loan; Only money paid by families.",
+        "responsePrompt": "Explain unsuitable in your own words using the sentences about damp seeds and planting. Write a new sentence that uses the word correctly. Why does the passage recommend a dry cupboard? Quote a relevant detail and explain the cause-and-effect link. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/draft6/lessonAuthor.ts",
+          "sha256": "4313491d6fa001a0b915b7d0dfcd6a3c933f91b3d877b4f1bad3c90095ca1e31",
+          "license": "Original factory recipe or source verification record; review only",
+          "attribution": "LiberiaLearn draft.6; map geometry UNMIL / OCHA ROWCA via geoBoundaries, see references.json",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "generated-3",
+      "slot": "blocks",
+      "index": 0,
+      "type": "SOURCE_EVIDENCE",
+      "blockSha256": "7ac5dcac738958eefe9e3ef373a64cfd89f87b6f1daa54d8cfee39b0d937a16e",
+      "objectiveIds": [
+        "ll-g7-eng-read-infer",
+        "ll-g7-eng-cite-evidence",
+        "ll-g7-eng-evidence-paragraph"
+      ],
+      "instructionalPurpose": "Select the sentences in a source that answer a question, with a reason for each. Learner action: For a separate claim that the system supports access in later seasons, quote a relevant sentence and explain its link. Another relevant quotation with sound reasoning is acceptable.",
+      "misconceptionIds": [
+        "generated-english-misconception"
+      ],
+      "responseSignals": [],
+      "accessibility": {
+        "textAlternative": "How a seed library works. Some donate seeds; others clean storage tins or teach pupils when to plant. As a result, more pupils can borrow seeds in the next planting season. Pupils inspect the tins each week and keep them in a dry cupboard. Which sentence explicitly names different ways families help? Select the sentence naming the family actions.",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: How a seed library works. Some donate seeds; others clean storage tins or teach pupils when to plant. As a result, more pupils can borrow seeds in the next planting season. Pupils inspect the tins each week and keep them in a dry cupboard. Which sentence explicitly names different ways families help? Select the sentence naming the family actions.",
+        "responsePrompt": "For a separate claim that the system supports access in later seasons, quote a relevant sentence and explain its link. Another relevant quotation with sound reasoning is acceptable. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/draft6/lessonAuthor.ts",
+          "sha256": "4313491d6fa001a0b915b7d0dfcd6a3c933f91b3d877b4f1bad3c90095ca1e31",
+          "license": "Original factory recipe or source verification record; review only",
+          "attribution": "LiberiaLearn draft.6; map geometry UNMIL / OCHA ROWCA via geoBoundaries, see references.json",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "generated-4",
+      "slot": "blocks",
+      "index": 0,
+      "type": "WRITING_ORGANIZER",
+      "blockSha256": "5ed2e9c92abf6225521734ab4e71a1149bb92df344e84c7de1b90be344ca2d4d",
+      "objectiveIds": [
+        "ll-g7-eng-read-infer",
+        "ll-g7-eng-cite-evidence",
+        "ll-g7-eng-evidence-paragraph"
+      ],
+      "instructionalPurpose": "Plan and write a response part by part, then revise against a checklist. Learner action: Use the model, complete its task, and explain what the representation shows.",
+      "misconceptionIds": [
+        "generated-english-misconception"
+      ],
+      "responseSignals": [],
+      "accessibility": {
+        "textAlternative": "Write 60 to 100 words with a claim, an exact quotation and an explanation. Limit your conclusion to this invented example. Answer or claim: State a precise answer to the question. Evidence and explanation: Cite the source or calculation and explain the connection. Consider what it cannot establish.",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Write 60 to 100 words with a claim, an exact quotation and an explanation. Limit your conclusion to this invented example. Answer or claim: State a precise answer to the question. Evidence and explanation: Cite the source or calculation and explain the connection. Consider what it cannot establish.",
+        "responsePrompt": "Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "NONE",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/draft6/lessonAuthor.ts",
+          "sha256": "4313491d6fa001a0b915b7d0dfcd6a3c933f91b3d877b4f1bad3c90095ca1e31",
+          "license": "Original factory recipe or source verification record; review only",
+          "attribution": "LiberiaLearn draft.6; map geometry UNMIL / OCHA ROWCA via geoBoundaries, see references.json",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "generated-5",
+      "slot": "blocks",
+      "index": 0,
+      "type": "WRITING_ORGANIZER",
+      "blockSha256": "ee176a67da48790a1478bfb9c3919f6098c341a8245d5fcca98ead9153dfc850",
+      "objectiveIds": [
+        "ll-g7-eng-read-infer",
+        "ll-g7-eng-cite-evidence",
+        "ll-g7-eng-evidence-paragraph"
+      ],
+      "instructionalPurpose": "Plan and write a response part by part, then revise against a checklist. Learner action: Give one original sentence, its revision and the reason the change improves the support. Explain whether your evidence names a cause, an action or a consequence.",
+      "misconceptionIds": [
+        "generated-english-misconception"
+      ],
+      "responseSignals": [],
+      "accessibility": {
+        "textAlternative": "Revise your paragraph for accurate quotation, precise scope and explained evidence. Different defensible revisions are welcome. Answer or claim: State a precise answer to the question. Evidence and explanation: Cite the source or calculation and explain the connection. Consider what it cannot establish.",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Revise your paragraph for accurate quotation, precise scope and explained evidence. Different defensible revisions are welcome. Answer or claim: State a precise answer to the question. Evidence and explanation: Cite the source or calculation and explain the connection. Consider what it cannot establish.",
+        "responsePrompt": "Give one original sentence, its revision and the reason the change improves the support. Explain whether your evidence names a cause, an action or a consequence. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "NONE",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/draft6/lessonAuthor.ts",
+          "sha256": "4313491d6fa001a0b915b7d0dfcd6a3c933f91b3d877b4f1bad3c90095ca1e31",
+          "license": "Original factory recipe or source verification record; review only",
+          "attribution": "LiberiaLearn draft.6; map geometry UNMIL / OCHA ROWCA via geoBoundaries, see references.json",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    }
+  ],
+  "assessmentBoundary": {
+    "player": "ASSESSMENT_PLAYER_V2",
+    "scoring": "SERVER_AUTHORITY",
+    "protectedKeysIncluded": false,
+    "canonicalMasteryMutation": false,
+    "offlineEvidence": "CAPTURE_ONLY_NOT_OFFICIAL"
+  }
+}

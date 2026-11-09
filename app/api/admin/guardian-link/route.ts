@@ -1,4 +1,4 @@
-// route-policy: auth=session; scope=tenant; authority=school-admin; rationale=links a guardian to a student of the admin's own school only (the student's school is checked); a guardian found by email in another school is refused, and a school-less guardian is assigned to the admin's school with a credential version advance
+// route-policy: auth=session; scope=tenant; authority=school-admin; rationale=links a guardian to a student of the admin's own school only (the student's school is checked); a guardian found by email in another school is refused, and a school-less guardian is assigned to the admin's school with a credential version advance; refused on any deployed Preview/staging after authority and before body or data work (PREVIEW_IDENTITY_FROZEN)
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { requireRole } from "@/lib/auth";
@@ -9,6 +9,8 @@ import { sendGuardianInvite } from "@/lib/email";
 import { normalizeToE164 } from "@/lib/phone";
 import { isGuardianLinkingEnabled } from "@/lib/serverFlags";
 import { generateTokenPair } from "@/lib/tokens";
+import { previewIdentityFrozen } from "@/lib/preview/identityFreeze";
+import { previewSafeErrorResponse } from "@/lib/preview/safeError";
 
 const E164_REGEX = /^\+[1-9]\d{7,14}$/;
 const RELATION_VALUES = ["Parent", "Guardian", "Sibling", "Other"] as const;
@@ -72,6 +74,8 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Not found" }, { status: 404 });
     }
     const user = await requireRole("ADMIN");
+    const frozen = previewIdentityFrozen();
+    if (frozen) return frozen;
     const body = await req.json();
 
     const validation = PostSchema.safeParse(body);
@@ -178,6 +182,8 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ ok: true, inviteUrl });
   } catch (err: any) {
+    const safe = previewSafeErrorResponse(err);
+    if (safe) return safe;
     const status = err?.status ?? 500;
     return NextResponse.json({ error: err?.message ?? "Internal error" }, { status });
   }

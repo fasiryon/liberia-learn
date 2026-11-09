@@ -1,5 +1,5 @@
 import { runAgent, type RunContext } from "@/lib/agents/runtime";
-import { isAgentEnabled } from "@/lib/agents/flags";
+import { resolveAgentEnabled } from "@/lib/agents/control";
 
 /**
  * Code-based schedule registry. A schedule binds an agent to a cron cadence and
@@ -45,7 +45,7 @@ export interface RunScheduledResult {
 
 export async function runScheduled(name: string): Promise<RunScheduledResult> {
   const schedule = getSchedule(name);
-  if (!isAgentEnabled(schedule.featureFlag)) {
+  if (!(await resolveAgentEnabled(schedule.agentName, schedule.featureFlag))) {
     return { ran: false, reason: "feature_disabled", count: 0, results: [] };
   }
 

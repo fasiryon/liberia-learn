@@ -1,3 +1,4 @@
+// route-policy: auth=public; scope=none; authority=invite-token; rationale=accepting an invite creates an account; refused on any deployed Preview/staging before authority or data work (PREVIEW_IDENTITY_FROZEN)
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import bcrypt from "bcryptjs";
@@ -8,6 +9,7 @@ import { findInviteByToken } from "@/lib/inviteTokens";
 import { createUniqueHumanReadableStudentId } from "@/lib/students/humanReadableId";
 import { isEnrollmentInvitesEnabled } from "@/lib/serverFlags";
 import { assertDeployedDatabaseRole } from "@/lib/auth/databaseRoles";
+import { previewIdentityFrozen } from "@/lib/preview/identityFreeze";
 
 const Schema = z.object({
   token: z.string().min(1),
@@ -16,6 +18,8 @@ const Schema = z.object({
 });
 
 export async function POST(req: Request) {
+  const frozen = previewIdentityFrozen();
+  if (frozen) return frozen;
   const traceId = crypto.randomUUID();
   try {
     const body = await req.json();

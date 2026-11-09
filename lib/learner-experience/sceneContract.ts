@@ -11,6 +11,8 @@
  */
 import { parseToSlides } from "@/lib/lessons/parseToSlides";
 import { validateBlock } from "./teaching/registry";
+import { isKnownRegistryVersion, validatePackageBlocks } from "./teaching/registries";
+import { isGatedCodeBlock, isInstructionPhase_1_1_only, isKnownInstructionStandard, isStudentStemBlock, phasesForInstructionStandard, type LessonBlock } from "./teaching/stemBlocks";
 import { isKeylessFormative, SCENE_TYPES, LESSON_EXPERIENCE_CONTRACT_VERSION, type AgeBand, type FormativeItem, type LessonExperience, type Scene, type SceneSource } from "./types";
 
 export class SceneContractError extends Error {}
@@ -27,8 +29,25 @@ export function wordCount(text: string): number {
   return text.trim() ? text.trim().split(/\s+/).length : 0;
 }
 
-export function validateLessonExperience(experience: LessonExperience): void {
+/**
+ * `registryVersion` is the Visual Teaching Block Registry the package was sealed under (its visual-teaching sidecar).
+ * Omitted, blocks are checked exactly as before (1.1.0, context-free), so existing callers and draft.6 packages are
+ * unchanged. Given, an unknown version fails closed, and 1.2.0+ blocks are checked by that registry with subject/grade
+ * fit and same-package references, plus the student rules: no code blocks, STEM blocks in `blocks` only, and activity
+ * links (GRAPH_BUILDER.sourceBlockId, DESIGN_CYCLE.measurement.tableId) inside one scene, because each scene is one
+ * ActivityScope in the player.
+ *
+ * `instructionStandard` is the V4 instruction standard the package declares. Omitted, phases are checked as before
+ * except that a phase only instruction 1.1.0 defines is refused. Given, an unknown standard fails closed and every
+ * scene phase must belong to that standard (1.0.0 packages never gain the Computing or Engineering phases).
+ */
+export function validateLessonExperience(experience: LessonExperience, options: Readonly<{ registryVersion?: string; instructionStandard?: string }> = {}): void {
   const fail = (code: string) => { throw new SceneContractError(code); };
+  const version = options.registryVersion;
+  if (version !== undefined && !isKnownRegistryVersion(version)) fail(`teaching_block_registry_unknown:${version}`);
+  const standard = options.instructionStandard;
+  if (standard !== undefined && !isKnownInstructionStandard(standard)) fail(`instruction_standard_unknown:${standard}`);
+  const versioned = version !== undefined && version !== "teaching-blocks/1.1.0";
   if (experience.contractVersion !== LESSON_EXPERIENCE_CONTRACT_VERSION) fail("experience_contract_unsupported");
   if (!experience.id || !experience.version) fail("experience_identity_required");
   if (experience.scenes.length < 2) fail("experience_requires_multiple_scenes");
@@ -60,10 +79,24 @@ export function validateLessonExperience(experience: LessonExperience): void {
     if (scene.type === "MASTERY_CHECK" && (kind !== "ASSESSMENT_HANDOFF" || scene.evidence.kind !== "MASTERY_RESPONSE")) fail(`scene_mastery_requires_assessment_handoff:${scene.id}`);
     // V4 visual teaching blocks: registered and valid, and never on a mastery scene (no formative key reaches mastery).
     if (scene.teaching) {
+      const phase: string = scene.teaching.phase;
+      if (standard === undefined ? isInstructionPhase_1_1_only(phase) : !phasesForInstructionStandard(standard).includes(phase)) {
+        fail(isInstructionPhase_1_1_only(phase) ? `scene_instruction_phase_requires_1_1:${scene.id}:${phase}` : `scene_instruction_phase_unknown:${scene.id}:${phase}`);
+      }
       if (scene.type === "MASTERY_CHECK" && (scene.teaching.blocks.length > 0 || scene.teaching.visual)) fail(`scene_mastery_teaching_blocks:${scene.id}`);
-      for (const block of [...scene.teaching.blocks, ...(scene.teaching.visual ? [scene.teaching.visual] : [])]) {
+      const blocks: readonly LessonBlock[] = [...scene.teaching.blocks, ...(scene.teaching.visual ? [scene.teaching.visual] : [])];
+      // Unversioned: exactly the pre-1.2.0 check (a code block is already unsupported by 1.1.0).
+      if (!versioned) for (const block of blocks) {
         const problems = validateBlock(block).problems;
         if (problems.length) fail(`scene_teaching_block_invalid:${scene.id}:${problems[0]}`);
+      } else {
+        if (blocks.some(isGatedCodeBlock)) fail(`scene_code_block_gated:${scene.id}`);
+        if (scene.teaching.visual && isStudentStemBlock(scene.teaching.visual)) fail(`scene_stem_block_in_visual:${scene.id}`);
+        const ids = new Set(blocks.flatMap((b) => ("id" in b ? [b.id] : [])));
+        for (const b of scene.teaching.blocks) {
+          const target = b.type === "GRAPH_BUILDER" ? b.sourceBlockId : b.type === "DESIGN_CYCLE" ? b.measurement?.tableId : undefined;
+          if (target !== undefined && !ids.has(target)) fail(`scene_activity_reference_cross_scene:${scene.id}:${"id" in b ? b.id : "?"}`);
+        }
       }
     }
     // Mastery evidence only ever comes through the assessment seam, so no mastery key can ship in a formative item.
@@ -73,6 +106,12 @@ export function validateLessonExperience(experience: LessonExperience): void {
       if (!Number.isInteger(item.correctIndex) || item.correctIndex < 0 || item.correctIndex >= item.options.length) fail(`scene_item_key_invalid:${scene.id}`);
       if (item.optionFeedback && item.optionFeedback.length !== item.options.length) fail(`scene_option_feedback_mismatch:${scene.id}`);
     }
+  }
+  // Sealed 1.2.0+: every block by that registry, with subject/grade fit and the package's own references.
+  if (versioned) {
+    const all = experience.scenes.flatMap((s) => (s.teaching ? [...s.teaching.blocks, ...(s.teaching.visual ? [s.teaching.visual] : [])] : []));
+    const problems = validatePackageBlocks(version, all, { subject: experience.subject, grade: experience.grade });
+    if (problems.length) fail(`teaching_blocks_invalid:${problems[0]}`);
   }
 }
 

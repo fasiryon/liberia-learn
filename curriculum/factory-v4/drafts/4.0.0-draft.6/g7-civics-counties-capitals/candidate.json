@@ -1,0 +1,518 @@
+{
+  "contractVersion": "candidate-lesson-v2/1.1.0",
+  "title": "Generated: Read a geographic county map",
+  "instruction": {
+    "standard": "liberialearn-v4-instruction/1.0.0",
+    "retention": {
+      "delayDays": 7,
+      "prompts": [
+        "After seven days, independently explain: Locate Liberia's fifteen counties on the supplied geographic outline map and match each with its administrative capital.",
+        "Apply the idea to a new context and justify the evidence or calculations used. This is a request for a governed retention task, not a scheduled or scored item."
+      ]
+    }
+  },
+  "estimatedMinutes": 45,
+  "ageBand": "JUNIOR_SECONDARY",
+  "pedagogy": {
+    "primaryStrategy": "GUIDED_TO_INDEPENDENT",
+    "rationale": "Generate representations and worked reasoning from a versioned subject plan, then fade support before independent work and transfer."
+  },
+  "prerequisiteAssumptions": [
+    "Can read or access the text equivalent and explain a response in writing or speech."
+  ],
+  "misconceptions": [
+    {
+      "id": "generated-civics-misconception",
+      "objectiveId": "ft01-o1",
+      "description": "Confuses administrative prominence with capital status or infers geography from a list.",
+      "response": "Use the administrative register for capital names and coordinate-derived outlines for spatial claims; request roads for routes."
+    }
+  ],
+  "scenes": [
+    {
+      "id": "generated-1",
+      "type": "PRACTICE",
+      "title": "Read a geographic county map",
+      "purpose": "EXPLAIN_CONCEPT",
+      "objectiveIds": [
+        "ft01-o1",
+        "ft01-o2",
+        "ft01-o3"
+      ],
+      "learnerAction": "On the supplied outline map, trace each county boundary and match its number to the key. Distinguish the county area from its administrative capital name.",
+      "content": {
+        "body": "Use the packet's Liberia county outline map, numbered key and north arrow. The outlines derive from pinned UNMIL/OCHA geographic coordinates via geoBoundaries, with CC BY 3.0 IGO attribution. Numbers identify county areas, not capital positions. Use the geographic outline for location tasks and the separate key for capital names."
+      },
+      "interaction": {
+        "kind": "FREE_RESPONSE",
+        "prompts": [
+          {
+            "id": "generated-1-response-0",
+            "prompt": "On the supplied outline map, trace each county boundary and match its number to the key. Distinguish the county area from its administrative capital name.",
+            "minLength": 20
+          }
+        ]
+      },
+      "tools": {
+        "requested": [],
+        "prohibited": []
+      },
+      "hints": [],
+      "misconceptionIds": [
+        "generated-civics-misconception"
+      ],
+      "evidence": {
+        "kind": "NONE"
+      },
+      "accessibility": {
+        "textAlternative": "Use the packet's Liberia county outline map, numbered key and north arrow. The outlines derive from pinned UNMIL/OCHA geographic coordinates via geoBoundaries, with CC BY 3.0 IGO attribution. Numbers identify county areas, not capital positions. Use the geographic outline for location tasks and the separate key for capital names. County-capital key for the geographic map. Bomi: Tubmanburg. Bong: Gbarnga. Gbarpolu: Bopolu. Grand Bassa: Buchanan. Grand Cape Mount: Robertsport. Grand Gedeh: Zwedru. Grand Kru: Barclayville. Lofa: Voinjama. Margibi: Kakata. Maryland: Harper. Montserrado: Bensonville, also called Bentol. Nimba: Sanniquellie. River Cess: Cestos City. River Gee: Fish Town. Sinoe: Greenville. On the supplied outline map, trace each county boundary and match its number to the key. Distinguish the county area from its administrative capital name.",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "reducedMotion": "STATIC_EQUIVALENT"
+      },
+      "offline": {
+        "mode": "FULL_OFFLINE",
+        "note": "Models and formative checks use cached lesson data. Paper responses are capture only; no official grade is produced."
+      },
+      "completion": "ALL_RESPONSES_WRITTEN",
+      "pedagogy": {
+        "strategy": "GUIDED_TO_INDEPENDENT",
+        "representation": "MIXED",
+        "scaffoldLevel": "FULL"
+      },
+      "teaching": {
+        "phase": "EXPLORE",
+        "blocks": [
+          {
+            "type": "READING_PASSAGE",
+            "id": "county-register",
+            "title": "County-capital key for the geographic map",
+            "paragraphs": [
+              "Bomi: Tubmanburg. Bong: Gbarnga. Gbarpolu: Bopolu. Grand Bassa: Buchanan. Grand Cape Mount: Robertsport. Grand Gedeh: Zwedru. Grand Kru: Barclayville. Lofa: Voinjama. Margibi: Kakata. Maryland: Harper. Montserrado: Bensonville, also called Bentol. Nimba: Sanniquellie. River Cess: Cestos City. River Gee: Fish Town. Sinoe: Greenville."
+            ],
+            "glossary": [],
+            "origin": {
+              "kind": "ORIGINAL_FOR_LIBERIALEARN",
+              "license": "Original synthetic teaching text; draft review only",
+              "attribution": "LiberiaLearn Content Factory draft.6"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "generated-2",
+      "type": "PRACTICE",
+      "title": "Learn county areas and capitals",
+      "purpose": "GUIDED_PRACTICE",
+      "objectiveIds": [
+        "ft01-o1",
+        "ft01-o2",
+        "ft01-o3"
+      ],
+      "learnerAction": "Find county numbers 8, 10 and 12 on the map. Name each county and copy its capital. Describe which lies farthest north.",
+      "content": {
+        "body": "The capital is the seat of county administration, not automatically the largest or best-known city. Montserrado's capital is Bensonville, also called Bentol. Monrovia is Liberia's national capital. Nimba's capital is Sanniquellie; Ganta is a different town. Use the geographic outline to find the county areas, then the separate register for recall."
+      },
+      "interaction": {
+        "kind": "FREE_RESPONSE",
+        "prompts": [
+          {
+            "id": "generated-2-response-0",
+            "prompt": "Find county numbers 8, 10 and 12 on the map. Name each county and copy its capital. Describe which lies farthest north.",
+            "minLength": 20
+          }
+        ]
+      },
+      "tools": {
+        "requested": [],
+        "prohibited": []
+      },
+      "hints": [],
+      "misconceptionIds": [
+        "generated-civics-misconception"
+      ],
+      "evidence": {
+        "kind": "NONE"
+      },
+      "accessibility": {
+        "textAlternative": "The capital is the seat of county administration, not automatically the largest or best-known city. Montserrado's capital is Bensonville, also called Bentol. Monrovia is Liberia's national capital. Nimba's capital is Sanniquellie; Ganta is a different town. Use the geographic outline to find the county areas, then the separate register for recall. Which is Montserrado's county capital? Options: Bensonville or Bentol; Monrovia. Which is Nimba's capital? Options: Sanniquellie; Ganta. Find county numbers 8, 10 and 12 on the map. Name each county and copy its capital. Describe which lies farthest north.",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "reducedMotion": "STATIC_EQUIVALENT"
+      },
+      "offline": {
+        "mode": "FULL_OFFLINE",
+        "note": "Models and formative checks use cached lesson data. Paper responses are capture only; no official grade is produced."
+      },
+      "completion": "ALL_RESPONSES_WRITTEN",
+      "pedagogy": {
+        "strategy": "GUIDED_TO_INDEPENDENT",
+        "representation": "MIXED",
+        "scaffoldLevel": "PARTIAL"
+      },
+      "teaching": {
+        "phase": "INVESTIGATE",
+        "blocks": [
+          {
+            "type": "CHECK",
+            "id": "montserrado-capital",
+            "items": [
+              {
+                "id": "montserrado-capital-item",
+                "prompt": "Which is Montserrado's county capital?",
+                "options": [
+                  {
+                    "id": "reason",
+                    "text": "Bensonville or Bentol",
+                    "feedback": "Bensonville is the county administrative capital; Monrovia is the national capital."
+                  },
+                  {
+                    "id": "other",
+                    "text": "Monrovia",
+                    "feedback": "You substituted the national capital for the county capital. They have different administrative roles."
+                  }
+                ],
+                "formativeKey": {
+                  "expectedOptionId": "reason"
+                },
+                "misconceptionId": "generated-civics-misconception"
+              }
+            ]
+          },
+          {
+            "type": "CHECK",
+            "id": "nimba-capital",
+            "items": [
+              {
+                "id": "nimba-capital-item",
+                "prompt": "Which is Nimba's capital?",
+                "options": [
+                  {
+                    "id": "reason",
+                    "text": "Sanniquellie",
+                    "feedback": "The administrative centre is Sanniquellie."
+                  },
+                  {
+                    "id": "other",
+                    "text": "Ganta",
+                    "feedback": "A prominent commercial town need not be the seat of county administration."
+                  }
+                ],
+                "formativeKey": {
+                  "expectedOptionId": "reason"
+                },
+                "misconceptionId": "generated-civics-misconception"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "generated-3",
+      "type": "PRACTICE",
+      "title": "Separate recall from spatial evidence",
+      "purpose": "EXPLAIN_CONCEPT",
+      "objectiveIds": [
+        "ft01-o1",
+        "ft01-o2",
+        "ft01-o3"
+      ],
+      "learnerAction": "For each map number 1 through 15, write the county and capital. Then check against the key and correct missed pairs. Use the outline to decide whether Lofa or Maryland lies farther north and whether Maryland touches the coast. Explain how the north arrow and boundary support your answer.",
+      "content": {
+        "body": "Work first from the numbered outline without the key. Use a second copy with the key to check only after answering. A county-capital table can check names, while geographic outlines support coastal location and relative position. Capital points and roads are not drawn on this map."
+      },
+      "interaction": {
+        "kind": "FREE_RESPONSE",
+        "prompts": [
+          {
+            "id": "generated-3-response-0",
+            "prompt": "For each map number 1 through 15, write the county and capital. Then check against the key and correct missed pairs.",
+            "minLength": 20
+          },
+          {
+            "id": "generated-3-response-1",
+            "prompt": "Use the outline to decide whether Lofa or Maryland lies farther north and whether Maryland touches the coast. Explain how the north arrow and boundary support your answer.",
+            "minLength": 20
+          }
+        ]
+      },
+      "tools": {
+        "requested": [],
+        "prohibited": []
+      },
+      "hints": [],
+      "misconceptionIds": [
+        "generated-civics-misconception"
+      ],
+      "evidence": {
+        "kind": "NONE"
+      },
+      "accessibility": {
+        "textAlternative": "Work first from the numbered outline without the key. Use a second copy with the key to check only after answering. A county-capital table can check names, while geographic outlines support coastal location and relative position. Capital points and roads are not drawn on this map. For each map number 1 through 15, write the county and capital. Then check against the key and correct missed pairs. Use the outline to decide whether Lofa or Maryland lies farther north and whether Maryland touches the coast. Explain how the north arrow and boundary support your answer.",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "reducedMotion": "STATIC_EQUIVALENT"
+      },
+      "offline": {
+        "mode": "FULL_OFFLINE",
+        "note": "Models and formative checks use cached lesson data. Paper responses are capture only; no official grade is produced."
+      },
+      "completion": "ALL_RESPONSES_WRITTEN",
+      "pedagogy": {
+        "strategy": "GUIDED_TO_INDEPENDENT",
+        "representation": "MIXED",
+        "scaffoldLevel": "NONE"
+      },
+      "teaching": {
+        "phase": "COMPARE",
+        "blocks": []
+      }
+    },
+    {
+      "id": "generated-4",
+      "type": "PRACTICE",
+      "title": "Bound a geographic claim",
+      "purpose": "INDEPENDENT_PRACTICE",
+      "objectiveIds": [
+        "ft01-o1",
+        "ft01-o2",
+        "ft01-o3"
+      ],
+      "learnerAction": "Explain why the map can support a north-south comparison but the name register alone cannot.",
+      "content": {
+        "body": "A geographic outline shows where county areas lie. Its labels do not establish roads, passability or which capitals a road passes. A capital may lie away from a route through its county. Give separate reasons for an administrative name and a spatial claim."
+      },
+      "interaction": {
+        "kind": "FREE_RESPONSE",
+        "prompts": [
+          {
+            "id": "generated-4-response-0",
+            "prompt": "Explain why the map can support a north-south comparison but the name register alone cannot.",
+            "minLength": 20
+          }
+        ]
+      },
+      "tools": {
+        "requested": [],
+        "prohibited": []
+      },
+      "hints": [],
+      "misconceptionIds": [
+        "generated-civics-misconception"
+      ],
+      "evidence": {
+        "kind": "NONE"
+      },
+      "accessibility": {
+        "textAlternative": "A geographic outline shows where county areas lie. Its labels do not establish roads, passability or which capitals a road passes. A capital may lie away from a route through its county. Give separate reasons for an administrative name and a spatial claim. Can this map establish a delivery road from Gbarnga to Harper? Options: No. It shows county areas but no roads or capital points.; Yes. Joining the county numbers gives the road.. Explain why the map can support a north-south comparison but the name register alone cannot.",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "reducedMotion": "STATIC_EQUIVALENT"
+      },
+      "offline": {
+        "mode": "FULL_OFFLINE",
+        "note": "Models and formative checks use cached lesson data. Paper responses are capture only; no official grade is produced."
+      },
+      "completion": "ALL_RESPONSES_WRITTEN",
+      "pedagogy": {
+        "strategy": "GUIDED_TO_INDEPENDENT",
+        "representation": "MIXED",
+        "scaffoldLevel": "NONE"
+      },
+      "teaching": {
+        "phase": "REASON",
+        "blocks": [
+          {
+            "type": "CHECK",
+            "id": "map-scope",
+            "items": [
+              {
+                "id": "map-scope-item",
+                "prompt": "Can this map establish a delivery road from Gbarnga to Harper?",
+                "options": [
+                  {
+                    "id": "reason",
+                    "text": "No. It shows county areas but no roads or capital points.",
+                    "feedback": "Use current road data and capital coordinates to plan actual travel."
+                  },
+                  {
+                    "id": "other",
+                    "text": "Yes. Joining the county numbers gives the road.",
+                    "feedback": "County numbers are identifiers. Their order has no geographic or transport meaning."
+                  }
+                ],
+                "formativeKey": {
+                  "expectedOptionId": "reason"
+                },
+                "misconceptionId": "generated-civics-misconception"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "generated-5",
+      "type": "PRACTICE",
+      "title": "Use geography without inventing a route",
+      "purpose": "INDEPENDENT_PRACTICE",
+      "objectiveIds": [
+        "ft01-o1",
+        "ft01-o2",
+        "ft01-o3"
+      ],
+      "learnerAction": "Name the data you need before claiming which counties and capitals a road passes. Do not guess a route from county numbers.",
+      "content": {
+        "body": "Synthetic school exchange: one school is in Lofa and another is in Maryland. Identify both administrative capitals. Use the outline to explain their relative location and which county is coastal. Then request the additional evidence needed to arrange transport."
+      },
+      "interaction": {
+        "kind": "FREE_RESPONSE",
+        "prompts": [
+          {
+            "id": "generated-5-response-0",
+            "prompt": "Name the data you need before claiming which counties and capitals a road passes. Do not guess a route from county numbers.",
+            "minLength": 20
+          }
+        ]
+      },
+      "tools": {
+        "requested": [],
+        "prohibited": []
+      },
+      "hints": [],
+      "misconceptionIds": [
+        "generated-civics-misconception"
+      ],
+      "evidence": {
+        "kind": "NONE"
+      },
+      "accessibility": {
+        "textAlternative": "Synthetic school exchange: one school is in Lofa and another is in Maryland. Identify both administrative capitals. Use the outline to explain their relative location and which county is coastal. Then request the additional evidence needed to arrange transport. Separate your county-capital answer, your map-based location reasoning and the transport facts still unknown. Answer or claim: State a precise answer to the question. Evidence and explanation: Cite the source or calculation and explain the connection. Consider what it cannot establish. Name the data you need before claiming which counties and capitals a road passes. Do not guess a route from county numbers.",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "reducedMotion": "STATIC_EQUIVALENT"
+      },
+      "offline": {
+        "mode": "FULL_OFFLINE",
+        "note": "Models and formative checks use cached lesson data. Paper responses are capture only; no official grade is produced."
+      },
+      "completion": "ALL_RESPONSES_WRITTEN",
+      "pedagogy": {
+        "strategy": "GUIDED_TO_INDEPENDENT",
+        "representation": "MIXED",
+        "scaffoldLevel": "NONE"
+      },
+      "teaching": {
+        "phase": "APPLY",
+        "blocks": [
+          {
+            "type": "WRITING_ORGANIZER",
+            "id": "county-transfer",
+            "prompt": "Separate your county-capital answer, your map-based location reasoning and the transport facts still unknown.",
+            "fields": [
+              {
+                "id": "claim",
+                "label": "Answer or claim",
+                "guidance": "State a precise answer to the question.",
+                "minWords": 8
+              },
+              {
+                "id": "reason",
+                "label": "Evidence and explanation",
+                "guidance": "Cite the source or calculation and explain the connection. Consider what it cannot establish.",
+                "minWords": 15
+              }
+            ],
+            "checklist": [
+              "My answer addresses the question.",
+              "I explained the evidence or calculation.",
+              "I checked the limits of my conclusion."
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "generated-assess",
+      "type": "MASTERY_CHECK",
+      "title": "Independent assessment handoff",
+      "purpose": "ASSESS_MASTERY",
+      "objectiveIds": [
+        "ft01-o1",
+        "ft01-o2",
+        "ft01-o3"
+      ],
+      "learnerAction": "Complete the governed assessment independently when an authorized draft form is supplied.",
+      "content": {
+        "body": "Only Assessment Player V2 can collect and score governed assessment responses. This draft has no approved form or official score."
+      },
+      "interaction": {
+        "kind": "ASSESSMENT_HANDOFF",
+        "assessmentRequestId": "generated-mastery"
+      },
+      "tools": {
+        "requested": [],
+        "prohibited": []
+      },
+      "hints": [],
+      "misconceptionIds": [],
+      "evidence": {
+        "kind": "MASTERY_RESPONSE",
+        "evidenceType": "QUIZ",
+        "responses": [
+          {
+            "responseKey": "assessment-0",
+            "objectiveId": "ft01-o1",
+            "responseType": "ASSESSMENT_RESPONSE",
+            "scaffoldLevel": "NONE"
+          },
+          {
+            "responseKey": "assessment-1",
+            "objectiveId": "ft01-o2",
+            "responseType": "ASSESSMENT_RESPONSE",
+            "scaffoldLevel": "NONE"
+          },
+          {
+            "responseKey": "assessment-2",
+            "objectiveId": "ft01-o3",
+            "responseType": "ASSESSMENT_RESPONSE",
+            "scaffoldLevel": "NONE"
+          }
+        ]
+      },
+      "accessibility": {
+        "textAlternative": "The lesson requests a separate independent assessment. This draft contains no governed assessment questions or protected scoring material.",
+        "keyboardPath": "Use the assessment player's labelled questions and Submit control when an authorized form is available.",
+        "reducedMotion": "NOT_APPLICABLE"
+      },
+      "offline": {
+        "mode": "FULL_OFFLINE",
+        "note": "No assessment form is cached by this draft. Paper work is capture only and cannot establish an official grade."
+      },
+      "completion": "ALL_ANSWERED",
+      "teaching": {
+        "phase": "ASSESS",
+        "blocks": []
+      }
+    }
+  ],
+  "assessmentRequests": [
+    {
+      "id": "generated-mastery",
+      "objectiveIds": [
+        "ft01-o1",
+        "ft01-o2",
+        "ft01-o3"
+      ],
+      "interaction": "FREE_RESPONSE",
+      "evidenceType": "QUIZ",
+      "difficulty": "CORE",
+      "misconceptionIds": [
+        "generated-civics-misconception"
+      ],
+      "tools": {
+        "requested": [],
+        "prohibited": []
+      },
+      "offline": "FULL_OFFLINE"
+    }
+  ],
+  "labProposals": []
+}

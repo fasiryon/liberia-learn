@@ -1,0 +1,138 @@
+{
+  "schemaVersion": "unit-blueprint/2.2.0",
+  "blueprintId": "g4-english-predict-question-summarize-v4",
+  "version": "4.0.0",
+  "contentHash": "80c1523a349fd69ffae828ca11ee8f8f1f144a04c4f48b118c0ea33da40eb196",
+  "grade": 4,
+  "subject": "ENGLISH",
+  "unitId": "g4-english-predict-question-summarize",
+  "title": "g4-english-predict-question-summarize",
+  "repositoryCommit": "efb419f47c456d5b9ef9a757a1ee3a0822e05378",
+  "sources": [
+    {
+      "id": "v4-reference-inputs",
+      "version": "1.0.0",
+      "sha256": "b0c42081820d99e0f5dd334076155db9c26140377fc15e1d8dea1ab2bf0b9c74",
+      "sourceRef": "curriculum/factory-v4/primary-english.2-inputs.json"
+    }
+  ],
+  "objectives": [
+    {
+      "id": "g4-english-predict-question-summarize-o1",
+      "kind": "LIBERIALEARN_MASTERY",
+      "statement": "Make a plausible prediction from a story detail and revise it when new information appears.",
+      "sourceId": "v4-reference-inputs",
+      "sourcePointer": "UNMAPPED_AUTHOR_OBJECTIVE:g4-english-predict-question-summarize-o1",
+      "scope": "REQUIRED",
+      "mapping": "PROPOSED"
+    },
+    {
+      "id": "g4-english-predict-question-summarize-o2",
+      "kind": "LIBERIALEARN_MASTERY",
+      "statement": "Ask a question that can guide further reading and distinguish an unanswered question from a known fact.",
+      "sourceId": "v4-reference-inputs",
+      "sourcePointer": "UNMAPPED_AUTHOR_OBJECTIVE:g4-english-predict-question-summarize-o2",
+      "scope": "REQUIRED",
+      "mapping": "PROPOSED"
+    },
+    {
+      "id": "g4-english-predict-question-summarize-o3",
+      "kind": "LIBERIALEARN_MASTERY",
+      "statement": "Write a short summary that connects the main problem, response and result without adding unsupported details.",
+      "sourceId": "v4-reference-inputs",
+      "sourcePointer": "UNMAPPED_AUTHOR_OBJECTIVE:g4-english-predict-question-summarize-o3",
+      "scope": "REQUIRED",
+      "mapping": "PROPOSED"
+    }
+  ],
+  "outcomes": [
+    {
+      "id": "g4-english-predict-question-summarize-outcome",
+      "objectiveIds": [
+        "g4-english-predict-question-summarize-o1",
+        "g4-english-predict-question-summarize-o2",
+        "g4-english-predict-question-summarize-o3"
+      ],
+      "demonstration": "Produce and explain an independent response and transfer it to a new context."
+    }
+  ],
+  "prerequisites": [],
+  "misconceptions": [],
+  "sequence": [
+    {
+      "resourceId": "g4-english-predict-question-summarize-lesson",
+      "dependsOn": [],
+      "objectiveIds": [
+        "g4-english-predict-question-summarize-o1",
+        "g4-english-predict-question-summarize-o2",
+        "g4-english-predict-question-summarize-o3"
+      ],
+      "scaffold": "FULL"
+    }
+  ],
+  "resources": [
+    {
+      "id": "g4-english-predict-question-summarize-lesson",
+      "kind": "LESSON",
+      "role": "LESSON_AUTHOR",
+      "objectiveIds": [
+        "g4-english-predict-question-summarize-o1",
+        "g4-english-predict-question-summarize-o2",
+        "g4-english-predict-question-summarize-o3"
+      ],
+      "dependsOn": [],
+      "audience": "REVIEWER_ONLY"
+    }
+  ],
+  "assessmentPlan": [
+    {
+      "id": "g4-english-predict-question-summarize-practice",
+      "resourceId": "g4-english-predict-question-summarize-lesson",
+      "itemIds": [],
+      "kind": "SHORT_CONSTRUCTED_RESPONSE",
+      "objectiveIds": [
+        "g4-english-predict-question-summarize-o1",
+        "g4-english-predict-question-summarize-o2",
+        "g4-english-predict-question-summarize-o3"
+      ],
+      "scaffold": "NONE",
+      "timing": "IN_LESSON",
+      "context": "REHEARSED",
+      "scoring": "NOT_SCORED",
+      "source": "EXCELLENCE_PLAN",
+      "ref": "REFERENCE_LESSON_ONLY_ASSESSMENT_PENDING"
+    }
+  ],
+  "support": {
+    "differentiation": [
+      "Use the text equivalent and paper model with a teacher."
+    ],
+    "accessibility": [
+      "Scene keyboard paths and block text equivalents."
+    ],
+    "offline": {
+      "mode": "TEXT_PAPER_CAPTURE_ONLY",
+      "requirements": [
+        "Paper, pencil and printed text alternatives."
+      ],
+      "maxBytes": 2000000
+    }
+  },
+  "provenance": [
+    {
+      "id": "v4-reference-inputs",
+      "version": "1.0.0",
+      "sha256": "b0c42081820d99e0f5dd334076155db9c26140377fc15e1d8dea1ab2bf0b9c74",
+      "sourceRef": "curriculum/factory-v4/primary-english.2-inputs.json"
+    }
+  ],
+  "legacy": [],
+  "unresolved": [
+    "REFERENCE_LESSON_ONLY_FULL_EXCELLENCE_PACKAGE_PENDING",
+    "PROTECTED_ASSESSMENT_RECONCILIATION_REQUIRED",
+    "PREREQUISITE_DIAGNOSTIC_AND_MISCONCEPTION_ITEM_BINDINGS_PENDING",
+    "AUTHENTIC_SOURCE_COMPARISON_AND_RIGHTS_REVIEW_REQUIRED",
+    "MANUAL_ACCESSIBILITY_AND_OFFLINE_RUNTIME_QA_REQUIRED"
+  ],
+  "instructionStandard": "liberialearn-v4-instruction/1.0.0"
+}

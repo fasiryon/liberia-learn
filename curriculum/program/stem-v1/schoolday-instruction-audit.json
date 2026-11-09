@@ -1,0 +1,245 @@
+{
+  "generatedBy": "scripts/cos-stem/audit-draft6-instruction.cjs",
+  "source": "feat/content-factory-schoolday, 4.0.0-schoolday.1-draft.2 (uncommitted, read 2026-10-23)",
+  "lessons": [
+    {
+      "lesson": "g5-civics-shared-water-decisions",
+      "title": "Make a fair school-garden water decision",
+      "min": 45,
+      "scenes": 7,
+      "bodyWords": 303,
+      "checkItems": 0,
+      "twoOptionItems": 0,
+      "optionCounts": [],
+      "scenesWithoutHints": 7,
+      "freeResponseScenes": 5,
+      "genericLearnerActions": 0,
+      "misconceptions": [
+        "reasoning-error"
+      ],
+      "blocks": {
+        "SOURCE_EVIDENCE": 1,
+        "MISTAKE_ANALYSIS": 1,
+        "WRITING_ORGANIZER": 1
+      }
+    },
+    {
+      "lesson": "g5-computing-garden-counting-rules",
+      "title": "Make, trace and debug a garden counting algorithm",
+      "min": 45,
+      "scenes": 7,
+      "bodyWords": 296,
+      "checkItems": 0,
+      "twoOptionItems": 0,
+      "optionCounts": [],
+      "scenesWithoutHints": 7,
+      "freeResponseScenes": 5,
+      "genericLearnerActions": 0,
+      "misconceptions": [
+        "reasoning-error"
+      ],
+      "blocks": {
+        "DATA_PLOT": 1,
+        "NUMERIC_RESPONSE": 1,
+        "MISTAKE_ANALYSIS": 1,
+        "WRITING_ORGANIZER": 1
+      }
+    },
+    {
+      "lesson": "g5-english-garden-water-report",
+      "title": "Read and write a garden investigation report",
+      "min": 45,
+      "scenes": 7,
+      "bodyWords": 297,
+      "checkItems": 0,
+      "twoOptionItems": 0,
+      "optionCounts": [],
+      "scenesWithoutHints": 7,
+      "freeResponseScenes": 5,
+      "genericLearnerActions": 0,
+      "misconceptions": [
+        "reasoning-error"
+      ],
+      "blocks": {
+        "READING_PASSAGE": 1,
+        "MISTAKE_ANALYSIS": 1,
+        "WRITING_ORGANIZER": 1
+      }
+    },
+    {
+      "lesson": "g5-science-garden-evidence-review",
+      "title": "Explain and improve a garden plan",
+      "min": 45,
+      "scenes": 7,
+      "bodyWords": 297,
+      "checkItems": 0,
+      "twoOptionItems": 0,
+      "optionCounts": [],
+      "scenesWithoutHints": 7,
+      "freeResponseScenes": 5,
+      "genericLearnerActions": 0,
+      "misconceptions": [
+        "reasoning-error"
+      ],
+      "blocks": {
+        "DATA_PLOT": 1,
+        "NUMERIC_RESPONSE": 1,
+        "MISTAKE_ANALYSIS": 1,
+        "WRITING_ORGANIZER": 1
+      }
+    },
+    {
+      "lesson": "g5-science-water-change-investigation",
+      "title": "Observe water loss and plan a fair comparison",
+      "min": 45,
+      "scenes": 7,
+      "bodyWords": 313,
+      "checkItems": 0,
+      "twoOptionItems": 0,
+      "optionCounts": [],
+      "scenesWithoutHints": 7,
+      "freeResponseScenes": 5,
+      "genericLearnerActions": 0,
+      "misconceptions": [
+        "reasoning-error"
+      ],
+      "blocks": {
+        "DATA_PLOT": 1,
+        "NUMERIC_RESPONSE": 1,
+        "MISTAKE_ANALYSIS": 1,
+        "WRITING_ORGANIZER": 1
+      }
+    },
+    {
+      "lesson": "g5-stem-paper-channel-design",
+      "title": "Design and improve a dry model water channel",
+      "min": 45,
+      "scenes": 7,
+      "bodyWords": 311,
+      "checkItems": 0,
+      "twoOptionItems": 0,
+      "optionCounts": [],
+      "scenesWithoutHints": 7,
+      "freeResponseScenes": 5,
+      "genericLearnerActions": 0,
+      "misconceptions": [
+        "reasoning-error"
+      ],
+      "blocks": {
+        "DATA_PLOT": 1,
+        "NUMERIC_RESPONSE": 1,
+        "MISTAKE_ANALYSIS": 1,
+        "WRITING_ORGANIZER": 1
+      }
+    },
+    {
+      "lesson": "g7-computing-water-monitor-algorithms",
+      "title": "Trace and debug a water-loss monitor",
+      "min": 45,
+      "scenes": 7,
+      "bodyWords": 305,
+      "checkItems": 0,
+      "twoOptionItems": 0,
+      "optionCounts": [],
+      "scenesWithoutHints": 7,
+      "freeResponseScenes": 5,
+      "genericLearnerActions": 0,
+      "misconceptions": [
+        "reasoning-error"
+      ],
+      "blocks": {
+        "DATA_PLOT": 1,
+        "NUMERIC_RESPONSE": 1,
+        "MISTAKE_ANALYSIS": 1,
+        "WRITING_ORGANIZER": 1
+      }
+    },
+    {
+      "lesson": "g7-english-water-evidence-report",
+      "title": "Write an evidence-based water report",
+      "min": 45,
+      "scenes": 7,
+      "bodyWords": 297,
+      "checkItems": 0,
+      "twoOptionItems": 0,
+      "optionCounts": [],
+      "scenesWithoutHints": 7,
+      "freeResponseScenes": 5,
+      "genericLearnerActions": 0,
+      "misconceptions": [
+        "reasoning-error"
+      ],
+      "blocks": {
+        "READING_PASSAGE": 1,
+        "MISTAKE_ANALYSIS": 1,
+        "WRITING_ORGANIZER": 1
+      }
+    },
+    {
+      "lesson": "g7-science-evaporation-fair-test",
+      "title": "Investigate exposed water surface area",
+      "min": 45,
+      "scenes": 7,
+      "bodyWords": 314,
+      "checkItems": 0,
+      "twoOptionItems": 0,
+      "optionCounts": [],
+      "scenesWithoutHints": 7,
+      "freeResponseScenes": 5,
+      "genericLearnerActions": 0,
+      "misconceptions": [
+        "reasoning-error"
+      ],
+      "blocks": {
+        "DATA_PLOT": 1,
+        "NUMERIC_RESPONSE": 1,
+        "MISTAKE_ANALYSIS": 1,
+        "WRITING_ORGANIZER": 1
+      }
+    },
+    {
+      "lesson": "g7-science-water-evidence-synthesis",
+      "title": "Defend a water-stewardship recommendation",
+      "min": 45,
+      "scenes": 7,
+      "bodyWords": 295,
+      "checkItems": 0,
+      "twoOptionItems": 0,
+      "optionCounts": [],
+      "scenesWithoutHints": 7,
+      "freeResponseScenes": 5,
+      "genericLearnerActions": 0,
+      "misconceptions": [
+        "reasoning-error"
+      ],
+      "blocks": {
+        "DATA_PLOT": 1,
+        "NUMERIC_RESPONSE": 1,
+        "MISTAKE_ANALYSIS": 1,
+        "WRITING_ORGANIZER": 1
+      }
+    },
+    {
+      "lesson": "g7-stem-water-cover-design",
+      "title": "Engineer and evaluate a water-container cover",
+      "min": 45,
+      "scenes": 7,
+      "bodyWords": 315,
+      "checkItems": 0,
+      "twoOptionItems": 0,
+      "optionCounts": [],
+      "scenesWithoutHints": 7,
+      "freeResponseScenes": 5,
+      "genericLearnerActions": 0,
+      "misconceptions": [
+        "reasoning-error"
+      ],
+      "blocks": {
+        "DATA_PLOT": 1,
+        "NUMERIC_RESPONSE": 1,
+        "MISTAKE_ANALYSIS": 1,
+        "WRITING_ORGANIZER": 1
+      }
+    }
+  ]
+}

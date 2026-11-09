@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 // route-policy: auth=session; scope=record; authority=student-session-enrollment; rationale=practical lab mutations require published runtime and own-school enrolled assignment
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
-import { recordPerformanceEvent } from "@/lib/intelligence/recordPerformanceEvent";
 import { logAudit } from "@/lib/audit";
 import { isVirtualLabsEnabled } from "@/lib/serverFlags";
 import { analyzeLabSession } from "@/lib/ai/lab/labAnalyzer";
@@ -82,7 +81,10 @@ export async function POST(
         gradeLevel: lab.grade,
       });
 
-      // Wrap session update + performance event write in a transaction
+      // AT-R-LAB: the AI outcome is never learner attainment here. A withheld analysis has no score; a model
+      // suggestion is kept only as a PROVISIONAL, AI-scored note inside aiAnalysis. labSession.score stays empty until
+      // a teacher reviews (PATCH /api/teacher/labs/sessions/[sessionId]), and no lab performance event is recorded
+      // from an AI analysis.
       let completedSession: Awaited<ReturnType<typeof prisma.labSession.update>>;
       try {
         completedSession = await prisma.$transaction(async (tx) => {
@@ -93,7 +95,7 @@ export async function POST(
               completedAt: new Date(),
               observations,
               conclusions,
-              score: analysis.suggestedScore,
+              score: null,
               aiAnalysis: analysis,
             },
           });
@@ -110,35 +112,8 @@ export async function POST(
         resourceType: "labSession",
         resourceId: session.id,
         schoolId: user.schoolId,
-        details: { labId, suggestedScore: analysis.suggestedScore },
+        details: { labId, analysisStatus: analysis.status, provisionalSuggestedScore: analysis.suggestedScore, scorer: analysis.scoreProvenance?.scorer ?? null },
       });
-
-      const studentRecord = await prisma.student.findUnique({
-        where: { userId: user.id },
-        select: { id: true, currentGrade: true },
-      });
-      if (studentRecord) {
-        void recordPerformanceEvent({
-          studentId: studentRecord.id,
-          schoolId: user.schoolId,
-          subject: lab.subject,
-          gradeLevel: studentRecord.currentGrade ?? lab.grade,
-          eventType: "lab",
-          score: analysis.suggestedScore / 100,
-          durationSeconds: Math.max(
-            0,
-            Math.round(
-              ((completedSession.completedAt ?? new Date()).getTime() - completedSession.startedAt.getTime()) /
-                1000
-            )
-          ),
-          attempts: 1,
-          aiAssistUsed: false,
-          lessonId: labId,
-        }).catch((eventError) => {
-          console.error("[lab.session.performanceEvent]", eventError);
-        });
-      }
 
       return NextResponse.json({ session: studentSessionSummary(completedSession) });
     }

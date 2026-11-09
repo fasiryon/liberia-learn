@@ -1,0 +1,691 @@
+{
+  "contractVersion": "lesson-experience/1.0.0",
+  "id": "schoolday:g4-social-studies-coast-inland-evidence",
+  "version": "4.0.0-schoolday-primary-social-studies.2-draft.1",
+  "title": "Coast and inland: compare places using evidence",
+  "subject": "SOCIAL_STUDIES",
+  "grade": 4,
+  "ageBand": "UPPER_PRIMARY",
+  "authority": {
+    "status": "CURRICULUM_V2_DRAFT",
+    "note": "Original LiberiaLearn instructional draft. Academic review, standards mapping, rights review and release authorization are pending.",
+    "candidateContentIds": [],
+    "releaseId": null,
+    "releaseIdentity": null
+  },
+  "objectives": [
+    {
+      "id": "g4-social-studies-coast-inland-evidence-o1",
+      "statement": "Use geographical vocabulary and a labelled sketch to compare coastal and inland landscapes in Liberia.",
+      "conceptId": "g4-social-studies-coast-inland-evidence-o1",
+      "standardCodes": [],
+      "skillIds": []
+    },
+    {
+      "id": "g4-social-studies-coast-inland-evidence-o2",
+      "statement": "Support a comparison with relevant text evidence while distinguishing observations from unsupported generalizations.",
+      "conceptId": "g4-social-studies-coast-inland-evidence-o2",
+      "standardCodes": [],
+      "skillIds": []
+    },
+    {
+      "id": "g4-social-studies-coast-inland-evidence-o3",
+      "statement": "Recommend a community reading-club site using local evidence, a counterargument and a question for further checking.",
+      "conceptId": "g4-social-studies-coast-inland-evidence-o3",
+      "standardCodes": [],
+      "skillIds": []
+    }
+  ],
+  "scenes": [
+    {
+      "id": "read-landscape",
+      "type": "EXPLANATION",
+      "title": "Read, picture and question the landscape",
+      "objectiveIds": [
+        "g4-social-studies-coast-inland-evidence-o1"
+      ],
+      "content": {
+        "body": "Read the geography passage. Say what coast and inland mean before comparing them. Sketch sea, coast and inland land. Label your sketch as a simple model without a scale. A sketch helps explain a relationship; it does not locate an actual school."
+      },
+      "interaction": {
+        "kind": "NONE"
+      },
+      "tools": {
+        "allowed": [],
+        "prohibited": []
+      },
+      "accessibility": {
+        "textAlternative": "Read the geography passage. Say what coast and inland mean before comparing them. Sketch sea, coast and inland land. Label your sketch as a simple model without a scale. A sketch helps explain a relationship; it does not locate an actual school. Reading Liberia's landscape. Liberia lies in West Africa beside the Atlantic Ocean. Coastal means near the sea. Inland means farther from the coast. Liberia has coastal lowlands, with hills and higher land farther inland. These broad descriptions do not give every place the same shape. A plain is a broad area of fairly level land. A plateau is higher land with a fairly level surface. A physical region describes landscape features. It is not the same as a county boundary. Read a map's key before using its symbols.",
+        "keyboardOperable": true,
+        "reducedMotionSafe": true,
+        "captionsRequired": false
+      },
+      "offline": {
+        "mode": "FULL",
+        "fallback": "Use the printed text, diagrams and questions with paper and pencil. Responses can be spoken and scribed."
+      },
+      "evidence": {
+        "kind": "NONE"
+      },
+      "completion": {
+        "kind": "VIEWED"
+      },
+      "teaching": {
+        "phase": "EXPLORE",
+        "blocks": [
+          {
+            "type": "READING_PASSAGE",
+            "id": "liberia-landscapes",
+            "title": "Reading Liberia's landscape",
+            "paragraphs": [
+              "Liberia lies in West Africa beside the Atlantic Ocean. Coastal means near the sea. Inland means farther from the coast. Liberia has coastal lowlands, with hills and higher land farther inland. These broad descriptions do not give every place the same shape.",
+              "A plain is a broad area of fairly level land. A plateau is higher land with a fairly level surface. A physical region describes landscape features. It is not the same as a county boundary. Read a map's key before using its symbols."
+            ],
+            "glossary": [
+              {
+                "term": "coast",
+                "meaning": "Land beside the sea."
+              },
+              {
+                "term": "inland",
+                "meaning": "Farther from the coast."
+              },
+              {
+                "term": "evidence",
+                "meaning": "Information used to support or question a claim."
+              },
+              {
+                "term": "plateau",
+                "meaning": "Higher land with a fairly level surface."
+              }
+            ],
+            "origin": {
+              "kind": "ORIGINAL_FOR_LIBERIALEARN",
+              "license": "Original educational wording; internal draft, distribution-rights review pending.",
+              "attribution": "LiberiaLearn; geography summary informed by Liberia Ministry of Local Government and FAO.",
+              "note": "Original paraphrase, not a quotation. Sources and limits are in the accompanying academic review."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "model-comparison",
+      "type": "GUIDED_EXAMPLE",
+      "title": "Model a careful comparison",
+      "objectiveIds": [
+        "g4-social-studies-coast-inland-evidence-o1",
+        "g4-social-studies-coast-inland-evidence-o2"
+      ],
+      "content": {
+        "body": "A careful comparison names a difference and explains its evidence. Coastal describes closeness to the sea. Inland describes being farther from the coast. Neither word gives an exact height. A county is an administrative area; a physical description concerns landscape. Do not draw county borders from these words."
+      },
+      "interaction": {
+        "kind": "NONE"
+      },
+      "tools": {
+        "allowed": [],
+        "prohibited": []
+      },
+      "accessibility": {
+        "textAlternative": "A careful comparison names a difference and explains its evidence. Coastal describes closeness to the sea. Inland describes being farther from the coast. Neither word gives an exact height. A county is an administrative area; a physical description concerns landscape. Do not draw county borders from these words. How can we compare without claiming too much? Step 1: Name the feature: distance from the coast. Step 2: Compare: a coastal location is nearer the sea than an inland location. Step 3: Limit: this description alone does not give an exact height or every person's work.",
+        "keyboardOperable": true,
+        "reducedMotionSafe": true,
+        "captionsRequired": false
+      },
+      "offline": {
+        "mode": "FULL",
+        "fallback": "Use the printed text, diagrams and questions with paper and pencil. Responses can be spoken and scribed."
+      },
+      "evidence": {
+        "kind": "NONE"
+      },
+      "completion": {
+        "kind": "VIEWED"
+      },
+      "teaching": {
+        "phase": "EXPLORE",
+        "blocks": [
+          {
+            "type": "STEP_REVEAL",
+            "id": "compare-model",
+            "question": "How can we compare without claiming too much?",
+            "steps": [
+              {
+                "text": "Name the feature: distance from the coast."
+              },
+              {
+                "text": "Compare: a coastal location is nearer the sea than an inland location."
+              },
+              {
+                "text": "Limit: this description alone does not give an exact height or every person's work."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "guided-geography",
+      "type": "PRACTICE",
+      "title": "Find evidence and reject an overstatement",
+      "objectiveIds": [
+        "g4-social-studies-coast-inland-evidence-o1",
+        "g4-social-studies-coast-inland-evidence-o2"
+      ],
+      "content": {
+        "body": "Use the passage to check a claim about inland land. A description can name several landforms without describing every location. Read all options before choosing. Explain which words make a claim broader than its evidence."
+      },
+      "interaction": {
+        "kind": "FREE_RESPONSE",
+        "prompts": [
+          {
+            "id": "guided-geography-response-0",
+            "prompt": "What map information would you need to compare two actual locations rather than a simple sketch?",
+            "minLength": 20
+          }
+        ]
+      },
+      "tools": {
+        "allowed": [],
+        "prohibited": []
+      },
+      "accessibility": {
+        "textAlternative": "Use the passage to check a claim about inland land. A description can name several landforms without describing every location. Read all options before choosing. Explain which words make a claim broader than its evidence. Which claim fits the passage? Options: A coast-to-inland sketch gives every county border exactly.; Inland places can have different landforms; a local map gives more detail.; Every inland home stands on a mountain.. What map information would you need to compare two actual locations rather than a simple sketch?",
+        "keyboardOperable": true,
+        "reducedMotionSafe": true,
+        "captionsRequired": false
+      },
+      "offline": {
+        "mode": "FULL",
+        "fallback": "Use the printed text, diagrams and questions with paper and pencil. Responses can be spoken and scribed."
+      },
+      "evidence": {
+        "kind": "NONE"
+      },
+      "completion": {
+        "kind": "ALL_RESPONSES_WRITTEN"
+      },
+      "teaching": {
+        "phase": "INVESTIGATE",
+        "blocks": [
+          {
+            "type": "CHECK",
+            "id": "inland-claim",
+            "items": [
+              {
+                "id": "inland-claim-item",
+                "prompt": "Which claim fits the passage?",
+                "options": [
+                  {
+                    "id": "opt-c8118c572f91",
+                    "text": "A coast-to-inland sketch gives every county border exactly.",
+                    "feedback": "Physical descriptions do not supply administrative boundaries or a geographical scale.",
+                    "misconceptionId": "physical-region-equals-county"
+                  },
+                  {
+                    "id": "opt-e2ee68853516",
+                    "text": "Inland places can have different landforms; a local map gives more detail.",
+                    "feedback": "This respects the broad description without treating every inland place as identical."
+                  },
+                  {
+                    "id": "opt-7811f6e2081c",
+                    "text": "Every inland home stands on a mountain.",
+                    "feedback": "Inland describes position away from the coast, not one height for every home.",
+                    "misconceptionId": "inland-is-always-high"
+                  }
+                ],
+                "formativeKey": {
+                  "expectedOptionId": "opt-e2ee68853516"
+                },
+                "misconceptionId": "inland-is-always-high"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "guided-observations",
+      "type": "PRACTICE",
+      "title": "Read two community records",
+      "objectiveIds": [
+        "g4-social-studies-coast-inland-evidence-o2",
+        "g4-social-studies-coast-inland-evidence-o3"
+      ],
+      "content": {
+        "body": "Read both invented records. Separate a room observation from a path observation. A dry room and an accessible path answer different questions. Select the evidence needed to discuss Club A. Keep unobserved conditions visible rather than guessing about them."
+      },
+      "interaction": {
+        "kind": "NONE"
+      },
+      "tools": {
+        "allowed": [],
+        "prohibited": []
+      },
+      "accessibility": {
+        "textAlternative": "Read both invented records. Separate a room observation from a path observation. A dry room and an accessible path answer different questions. Select the evidence needed to discuss Club A. Keep unobserved conditions visible rather than guessing about them. Two invented reading-club records. These reading clubs and observations are invented for this lesson. Club A is near the coast. Its covered room stayed dry during two observed showers. Water covered part of its path during one shower. Nobody checked the path after dark. Club B is inland beside a river. Its room had a leaking roof. Its path stayed clear during both observed showers. Nobody checked the river after prolonged rain. Both clubs want books kept dry and a route that an adult can check. Club A's invented record. The covered room stayed dry during two observed showers. Water covered part of the path during one shower. Club A is near the coast. Which two details support discussing the room and route separately? Which reason best supports checking Club A's path? Options: Every coastal path must always be unusable.; Its room was dry, so the path needs no attention.; Part of its path was covered by water in an observed shower..",
+        "keyboardOperable": true,
+        "reducedMotionSafe": true,
+        "captionsRequired": false
+      },
+      "offline": {
+        "mode": "FULL",
+        "fallback": "Use the printed text, diagrams and questions with paper and pencil. Responses can be spoken and scribed."
+      },
+      "evidence": {
+        "kind": "NONE"
+      },
+      "completion": {
+        "kind": "VIEWED"
+      },
+      "teaching": {
+        "phase": "INVESTIGATE",
+        "blocks": [
+          {
+            "type": "READING_PASSAGE",
+            "id": "club-records",
+            "title": "Two invented reading-club records",
+            "paragraphs": [
+              "These reading clubs and observations are invented for this lesson. Club A is near the coast. Its covered room stayed dry during two observed showers. Water covered part of its path during one shower. Nobody checked the path after dark.",
+              "Club B is inland beside a river. Its room had a leaking roof. Its path stayed clear during both observed showers. Nobody checked the river after prolonged rain. Both clubs want books kept dry and a route that an adult can check."
+            ],
+            "glossary": [],
+            "origin": {
+              "kind": "ORIGINAL_FOR_LIBERIALEARN",
+              "license": "Original educational wording; internal draft, distribution-rights review pending.",
+              "attribution": "Original LiberiaLearn fictional community records.",
+              "note": "Invented cases, not observations from real communities."
+            }
+          },
+          {
+            "type": "SOURCE_EVIDENCE",
+            "id": "club-a-evidence",
+            "source": {
+              "title": "Club A's invented record",
+              "kind": "PASSAGE",
+              "origin": {
+                "kind": "ORIGINAL_FOR_LIBERIALEARN",
+                "license": "Original educational wording; internal draft, distribution-rights review pending.",
+                "attribution": "Original LiberiaLearn fictional observation record.",
+                "note": "Original paraphrase, not a quotation. Sources and limits are in the accompanying academic review."
+              }
+            },
+            "question": "Which two details support discussing the room and route separately?",
+            "sentences": [
+              {
+                "id": "dry-room",
+                "text": "The covered room stayed dry during two observed showers.",
+                "supports": true,
+                "why": "This concerns the room during the observed conditions, not every possible storm."
+              },
+              {
+                "id": "covered-path",
+                "text": "Water covered part of the path during one shower.",
+                "supports": true,
+                "why": "This concerns access and needs attention even when the room stayed dry."
+              },
+              {
+                "id": "coastal-label",
+                "text": "Club A is near the coast.",
+                "supports": false,
+                "why": "The location label alone does not show whether the room or route meets the club's needs."
+              }
+            ],
+            "minSelect": 2
+          },
+          {
+            "type": "CHECK",
+            "id": "label-or-evidence",
+            "items": [
+              {
+                "id": "label-or-evidence-item",
+                "prompt": "Which reason best supports checking Club A's path?",
+                "options": [
+                  {
+                    "id": "opt-584bcee940ec",
+                    "text": "Every coastal path must always be unusable.",
+                    "feedback": "The record concerns one path and one observed condition, not every coastal route.",
+                    "misconceptionId": "one-case-describes-everywhere"
+                  },
+                  {
+                    "id": "opt-41d5912a0a5e",
+                    "text": "Its room was dry, so the path needs no attention.",
+                    "feedback": "A dry room does not establish that the route to it is clear.",
+                    "misconceptionId": "one-criterion-proves-all-needs"
+                  },
+                  {
+                    "id": "opt-c5a5514059b6",
+                    "text": "Part of its path was covered by water in an observed shower.",
+                    "feedback": "A specific route observation is relevant to access."
+                  }
+                ],
+                "formativeKey": {
+                  "expectedOptionId": "opt-c5a5514059b6"
+                },
+                "misconceptionId": "place-label-proves-safety"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "independent-compare",
+      "type": "PRACTICE",
+      "title": "Compare with two kinds of evidence",
+      "objectiveIds": [
+        "g4-social-studies-coast-inland-evidence-o1",
+        "g4-social-studies-coast-inland-evidence-o2",
+        "g4-social-studies-coast-inland-evidence-o3"
+      ],
+      "content": {
+        "body": "Work independently with both records. Compare the rooms and compare the paths. Keep their coastal or inland positions in your explanation. Use each observation only for the question it answers. Explain one thing that neither record establishes."
+      },
+      "interaction": {
+        "kind": "FREE_RESPONSE",
+        "prompts": [
+          {
+            "id": "independent-compare-response-0",
+            "prompt": "Write 30 to 60 words comparing the two rooms and paths. Include both places, two relevant observations and something still unknown.",
+            "minLength": 20
+          }
+        ]
+      },
+      "tools": {
+        "allowed": [],
+        "prohibited": []
+      },
+      "accessibility": {
+        "textAlternative": "Work independently with both records. Compare the rooms and compare the paths. Keep their coastal or inland positions in your explanation. Use each observation only for the question it answers. Explain one thing that neither record establishes. Write 30 to 60 words comparing the two rooms and paths. Include both places, two relevant observations and something still unknown.",
+        "keyboardOperable": true,
+        "reducedMotionSafe": true,
+        "captionsRequired": false
+      },
+      "offline": {
+        "mode": "FULL",
+        "fallback": "Use the printed text, diagrams and questions with paper and pencil. Responses can be spoken and scribed."
+      },
+      "evidence": {
+        "kind": "NONE"
+      },
+      "completion": {
+        "kind": "ALL_RESPONSES_WRITTEN"
+      },
+      "teaching": {
+        "phase": "COMPARE",
+        "blocks": []
+      }
+    },
+    {
+      "id": "independent-source-check",
+      "type": "PRACTICE",
+      "title": "Test the strength of a claim",
+      "objectiveIds": [
+        "g4-social-studies-coast-inland-evidence-o2",
+        "g4-social-studies-coast-inland-evidence-o3"
+      ],
+      "content": {
+        "body": "A classmate says Club A's dry room proves that every coastal building stays dry. Decide whether the conclusion follows. Then consider Club B's clear path. Does that observation settle every question about an inland site? Explain the difference between a recorded observation and a much wider claim."
+      },
+      "interaction": {
+        "kind": "FREE_RESPONSE",
+        "prompts": [
+          {
+            "id": "independent-source-check-response-0",
+            "prompt": "Explain why Club B's clear path does not settle the roof or prolonged-rain questions.",
+            "minLength": 20
+          }
+        ]
+      },
+      "tools": {
+        "allowed": [],
+        "prohibited": []
+      },
+      "accessibility": {
+        "textAlternative": "A classmate says Club A's dry room proves that every coastal building stays dry. Decide whether the conclusion follows. Then consider Club B's clear path. Does that observation settle every question about an inland site? Explain the difference between a recorded observation and a much wider claim. Which conclusion is supported about Club A's room? Options: No inland building can stay dry.; It stayed dry during the two showers described.; All coastal buildings stay dry in every storm.. Explain why Club B's clear path does not settle the roof or prolonged-rain questions.",
+        "keyboardOperable": true,
+        "reducedMotionSafe": true,
+        "captionsRequired": false
+      },
+      "offline": {
+        "mode": "FULL",
+        "fallback": "Use the printed text, diagrams and questions with paper and pencil. Responses can be spoken and scribed."
+      },
+      "evidence": {
+        "kind": "NONE"
+      },
+      "completion": {
+        "kind": "ALL_RESPONSES_WRITTEN"
+      },
+      "teaching": {
+        "phase": "COMPARE",
+        "blocks": [
+          {
+            "type": "CHECK",
+            "id": "limited-observation",
+            "items": [
+              {
+                "id": "limited-observation-item",
+                "prompt": "Which conclusion is supported about Club A's room?",
+                "options": [
+                  {
+                    "id": "opt-9f33989a8ec0",
+                    "text": "No inland building can stay dry.",
+                    "feedback": "The observations at Club A do not establish a rule about inland buildings.",
+                    "misconceptionId": "one-case-describes-everywhere"
+                  },
+                  {
+                    "id": "opt-77cef5eb034b",
+                    "text": "It stayed dry during the two showers described.",
+                    "feedback": "This states what was observed and keeps its scope clear."
+                  },
+                  {
+                    "id": "opt-b2f023a69f17",
+                    "text": "All coastal buildings stay dry in every storm.",
+                    "feedback": "The evidence does not cover every building or every storm.",
+                    "misconceptionId": "one-case-describes-everywhere"
+                  }
+                ],
+                "formativeKey": {
+                  "expectedOptionId": "opt-77cef5eb034b"
+                },
+                "misconceptionId": "one-case-describes-everywhere"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "reason-and-revise",
+      "type": "PRACTICE",
+      "title": "Weigh a counterargument",
+      "objectiveIds": [
+        "g4-social-studies-coast-inland-evidence-o3"
+      ],
+      "content": {
+        "body": "A fictional pupil chooses Club B only because it is inland. Another notices its leaking roof. A reasoned recommendation answers that counterargument. Use observations to propose what must be repaired or checked. Do not turn a provisional choice into a guarantee."
+      },
+      "interaction": {
+        "kind": "FREE_RESPONSE",
+        "prompts": [
+          {
+            "id": "reason-and-revise-response-0",
+            "prompt": "Give a provisional recommendation or explain why neither site is ready. Answer one counterargument with evidence.",
+            "minLength": 20
+          }
+        ]
+      },
+      "tools": {
+        "allowed": [],
+        "prohibited": []
+      },
+      "accessibility": {
+        "textAlternative": "A fictional pupil chooses Club B only because it is inland. Another notices its leaking roof. A reasoned recommendation answers that counterargument. Use observations to propose what must be repaired or checked. Do not turn a provisional choice into a guarantee. A club needs dry book storage and a route an adult can check. A fictional pupil wrote: Club B is inland. Therefore its room and path must meet every need. Which response best repairs the reasoning? Options: Use the roof and route observations, then name a repair or further check.; Choose Club A just because it is coastal instead.; Ignore the roof because the path was clear.. Give a provisional recommendation or explain why neither site is ready. Answer one counterargument with evidence.",
+        "keyboardOperable": true,
+        "reducedMotionSafe": true,
+        "captionsRequired": false
+      },
+      "offline": {
+        "mode": "FULL",
+        "fallback": "Use the printed text, diagrams and questions with paper and pencil. Responses can be spoken and scribed."
+      },
+      "evidence": {
+        "kind": "NONE"
+      },
+      "completion": {
+        "kind": "ALL_RESPONSES_WRITTEN"
+      },
+      "teaching": {
+        "phase": "REASON",
+        "blocks": [
+          {
+            "type": "MISTAKE_ANALYSIS",
+            "id": "site-label-mistake",
+            "problem": "A club needs dry book storage and a route an adult can check.",
+            "attempt": {
+              "name": "A fictional pupil",
+              "steps": [
+                "Club B is inland.",
+                "Therefore its room and path must meet every need."
+              ]
+            },
+            "question": "Which response best repairs the reasoning?",
+            "options": [
+              {
+                "id": "check",
+                "text": "Use the roof and route observations, then name a repair or further check.",
+                "feedback": "A location label alone cannot replace evidence about the actual room and route."
+              },
+              {
+                "id": "reverse",
+                "text": "Choose Club A just because it is coastal instead.",
+                "feedback": "Reversing the preference still uses a region label instead of local evidence.",
+                "misconceptionId": "place-label-proves-safety"
+              },
+              {
+                "id": "ignore",
+                "text": "Ignore the roof because the path was clear.",
+                "feedback": "The room and route are separate needs. Evidence about one does not settle the other.",
+                "misconceptionId": "one-criterion-proves-all-needs"
+              }
+            ],
+            "formativeKey": {
+              "expectedOptionId": "check"
+            },
+            "correction": [
+              "Compare each site against both needs, answer a counterargument and state what remains to check."
+            ],
+            "misconceptionId": "place-label-proves-safety"
+          }
+        ]
+      }
+    },
+    {
+      "id": "apply-community",
+      "type": "PRACTICE",
+      "title": "Use the method beyond these records",
+      "objectiveIds": [
+        "g4-social-studies-coast-inland-evidence-o1",
+        "g4-social-studies-coast-inland-evidence-o2",
+        "g4-social-studies-coast-inland-evidence-o3"
+      ],
+      "content": {
+        "body": "Plan questions for a reading club in your community or another African community. Use the same needs, but seek local evidence. A similar landscape does not prove identical conditions. Include people who use different routes or need step-free access. No trip or inspection is required today."
+      },
+      "interaction": {
+        "kind": "FREE_RESPONSE",
+        "prompts": [
+          {
+            "id": "apply-community-response-0",
+            "prompt": "Write three questions about a proposed room and route. Identify evidence each question needs. Explain why a plan from another country should be checked locally. Revise one sentence of your comparison using what you learned.",
+            "minLength": 20
+          }
+        ]
+      },
+      "tools": {
+        "allowed": [],
+        "prohibited": []
+      },
+      "accessibility": {
+        "textAlternative": "Plan questions for a reading club in your community or another African community. Use the same needs, but seek local evidence. A similar landscape does not prove identical conditions. Include people who use different routes or need step-free access. No trip or inspection is required today. Write three questions about a proposed room and route. Identify evidence each question needs. Explain why a plan from another country should be checked locally. Revise one sentence of your comparison using what you learned.",
+        "keyboardOperable": true,
+        "reducedMotionSafe": true,
+        "captionsRequired": false
+      },
+      "offline": {
+        "mode": "FULL",
+        "fallback": "Use the printed text, diagrams and questions with paper and pencil. Responses can be spoken and scribed."
+      },
+      "evidence": {
+        "kind": "NONE"
+      },
+      "completion": {
+        "kind": "ALL_RESPONSES_WRITTEN"
+      },
+      "teaching": {
+        "phase": "APPLY",
+        "blocks": []
+      }
+    },
+    {
+      "id": "independent-explanation",
+      "type": "MASTERY_CHECK",
+      "title": "Explain your comparison",
+      "objectiveIds": [
+        "g4-social-studies-coast-inland-evidence-o1",
+        "g4-social-studies-coast-inland-evidence-o2",
+        "g4-social-studies-coast-inland-evidence-o3"
+      ],
+      "content": {
+        "body": "Keep your comparison and the evidence behind your recommendation. What would you check next?"
+      },
+      "interaction": {
+        "kind": "ASSESSMENT_HANDOFF",
+        "assessment": {
+          "assessmentId": "schoolday:g4-social-studies-coast-inland-evidence--future-independent-explanation",
+          "assessmentVersion": "4.0.0-schoolday-primary-social-studies.2-draft.1",
+          "player": "ASSESSMENT_PLAYER_V2",
+          "scoring": "SERVER_AUTHORITY",
+          "objectiveIds": [
+            "g4-social-studies-coast-inland-evidence-o1",
+            "g4-social-studies-coast-inland-evidence-o2",
+            "g4-social-studies-coast-inland-evidence-o3"
+          ],
+          "items": []
+        }
+      },
+      "tools": {
+        "allowed": [],
+        "prohibited": []
+      },
+      "accessibility": {
+        "textAlternative": "Keep your comparison and the evidence behind your recommendation. What would you check next?",
+        "keyboardOperable": true,
+        "reducedMotionSafe": true,
+        "captionsRequired": false
+      },
+      "offline": {
+        "mode": "FULL",
+        "fallback": "Keep your comparison and the evidence behind your recommendation. What would you check next?"
+      },
+      "evidence": {
+        "kind": "MASTERY_RESPONSE",
+        "evidenceType": "QUIZ",
+        "objectiveIds": [
+          "g4-social-studies-coast-inland-evidence-o1",
+          "g4-social-studies-coast-inland-evidence-o2",
+          "g4-social-studies-coast-inland-evidence-o3"
+        ]
+      },
+      "completion": {
+        "kind": "ALL_ANSWERED"
+      }
+    }
+  ],
+  "offline": {
+    "packageable": true,
+    "requiredAssets": []
+  }
+}

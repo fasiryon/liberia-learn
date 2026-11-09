@@ -1,0 +1,38 @@
+{
+  "status": "PASS",
+  "meaning": "GAPS_REPRODUCED",
+  "prismaVersion": "6.19.2",
+  "useMiddlewarePresent": false,
+  "rootDirectUpdateBlocked": true,
+  "separateTransactionDelegate": true,
+  "transactionWrapperPresent": false,
+  "attempts": [
+    {
+      "kind": "interactive-transaction-update",
+      "applicationGuardBlocked": false,
+      "readOnlyDatabaseRefused": true,
+      "driverCode": null
+    },
+    {
+      "kind": "interactive-transaction-delete",
+      "applicationGuardBlocked": false,
+      "readOnlyDatabaseRefused": true,
+      "driverCode": null
+    },
+    {
+      "kind": "interactive-transaction-upsert",
+      "applicationGuardBlocked": false,
+      "readOnlyDatabaseRefused": true,
+      "driverCode": null
+    },
+    {
+      "kind": "raw-sql",
+      "applicationGuardBlocked": false,
+      "readOnlyDatabaseRefused": true,
+      "driverCode": "P2010"
+    }
+  ],
+  "localOnly": true,
+  "noRowsModified": true,
+  "hostedGuards": "UNKNOWN_NOT_CONNECTED"
+}

@@ -1,0 +1,613 @@
+[
+  {
+    "id": "cron-agents-tick",
+    "parent_registry_id": "cron-agents-tick",
+    "type": "scheduled automation",
+    "owner": "Platform operations",
+    "status": "implemented but unverified",
+    "production_status": "UNKNOWN",
+    "paths": [
+      "app/api/cron/agents/tick/route.ts"
+    ]
+  },
+  {
+    "id": "cron-alert-digest",
+    "parent_registry_id": "cron-alert-digest",
+    "type": "scheduled automation",
+    "owner": "Platform operations",
+    "status": "implemented but unverified",
+    "production_status": "UNKNOWN",
+    "paths": [
+      "app/api/cron/alert-digest/route.ts"
+    ]
+  },
+  {
+    "id": "cron-alert-inactive",
+    "parent_registry_id": "cron-alert-inactive",
+    "type": "scheduled automation",
+    "owner": "Platform operations",
+    "status": "implemented but unverified",
+    "production_status": "UNKNOWN",
+    "paths": [
+      "app/api/cron/alert-inactive/route.ts"
+    ]
+  },
+  {
+    "id": "cron-alert-low-grade",
+    "parent_registry_id": "cron-alert-low-grade",
+    "type": "scheduled automation",
+    "owner": "Platform operations",
+    "status": "implemented but unverified",
+    "production_status": "UNKNOWN",
+    "paths": [
+      "app/api/cron/alert-low-grade/route.ts"
+    ]
+  },
+  {
+    "id": "cron-assignment-due-reminders",
+    "parent_registry_id": "cron-assignment-due-reminders",
+    "type": "scheduled automation",
+    "owner": "Platform operations",
+    "status": "implemented but unverified",
+    "production_status": "UNKNOWN",
+    "paths": [
+      "app/api/cron/assignment-due-reminders/route.ts"
+    ]
+  },
+  {
+    "id": "cron-autonomous-dead-letter-inspection",
+    "parent_registry_id": "cron-autonomous-dead-letter-inspection",
+    "type": "scheduled automation",
+    "owner": "Platform operations",
+    "status": "implemented but unverified",
+    "production_status": "UNKNOWN",
+    "paths": [
+      "app/api/cron/autonomous/dead-letter-inspection/route.ts"
+    ]
+  },
+  {
+    "id": "cron-autonomous-evaluation-windows",
+    "parent_registry_id": "cron-autonomous-evaluation-windows",
+    "type": "scheduled automation",
+    "owner": "Platform operations",
+    "status": "implemented but unverified",
+    "production_status": "UNKNOWN",
+    "paths": [
+      "app/api/cron/autonomous/evaluation-windows/route.ts"
+    ]
+  },
+  {
+    "id": "cron-autonomous-runtime-health",
+    "parent_registry_id": "cron-autonomous-runtime-health",
+    "type": "scheduled automation",
+    "owner": "Platform operations",
+    "status": "implemented but unverified",
+    "production_status": "UNKNOWN",
+    "paths": [
+      "app/api/cron/autonomous/runtime-health/route.ts"
+    ]
+  },
+  {
+    "id": "cron-autonomous-stale-approvals",
+    "parent_registry_id": "cron-autonomous-stale-approvals",
+    "type": "scheduled automation",
+    "owner": "Platform operations",
+    "status": "implemented but unverified",
+    "production_status": "UNKNOWN",
+    "paths": [
+      "app/api/cron/autonomous/stale-approvals/route.ts"
+    ]
+  },
+  {
+    "id": "cron-autonomous-workflow-recovery",
+    "parent_registry_id": "cron-autonomous-workflow-recovery",
+    "type": "scheduled automation",
+    "owner": "Platform operations",
+    "status": "implemented but unverified",
+    "production_status": "UNKNOWN",
+    "paths": [
+      "app/api/cron/autonomous/workflow-recovery/route.ts"
+    ]
+  },
+  {
+    "id": "cron-check-ai-budget",
+    "parent_registry_id": "cron-check-ai-budget",
+    "type": "scheduled automation",
+    "owner": "Platform operations",
+    "status": "implemented but unverified",
+    "production_status": "UNKNOWN",
+    "paths": [
+      "app/api/cron/check-ai-budget/route.ts"
+    ]
+  },
+  {
+    "id": "cron-check-dlq",
+    "parent_registry_id": "cron-check-dlq",
+    "type": "scheduled automation",
+    "owner": "Platform operations",
+    "status": "implemented but unverified",
+    "production_status": "UNKNOWN",
+    "paths": [
+      "app/api/cron/check-dlq/route.ts"
+    ]
+  },
+  {
+    "id": "cron-cleanup-offline-packs",
+    "parent_registry_id": "cron-cleanup-offline-packs",
+    "type": "scheduled automation",
+    "owner": "Platform operations",
+    "status": "implemented but unverified",
+    "production_status": "UNKNOWN",
+    "paths": [
+      "app/api/cron/cleanup-offline-packs/route.ts"
+    ]
+  },
+  {
+    "id": "cron-cleanup-rejected-videos",
+    "parent_registry_id": "cron-cleanup-rejected-videos",
+    "type": "scheduled automation",
+    "owner": "Platform operations",
+    "status": "implemented but unverified",
+    "production_status": "UNKNOWN",
+    "paths": [
+      "app/api/cron/cleanup-rejected-videos/route.ts"
+    ]
+  },
+  {
+    "id": "cron-content-qa-sweep",
+    "parent_registry_id": "cron-content-qa-sweep",
+    "type": "scheduled automation",
+    "owner": "Platform operations",
+    "status": "implemented but unverified",
+    "production_status": "UNKNOWN",
+    "paths": [
+      "app/api/cron/content-qa-sweep/route.ts"
+    ]
+  },
+  {
+    "id": "cron-guardian-weekly-digest",
+    "parent_registry_id": "cron-guardian-weekly-digest",
+    "type": "scheduled automation",
+    "owner": "Platform operations",
+    "status": "implemented but unverified",
+    "production_status": "UNKNOWN",
+    "paths": [
+      "app/api/cron/guardian-weekly-digest/route.ts"
+    ]
+  },
+  {
+    "id": "cron-league-snapshot",
+    "parent_registry_id": "cron-league-snapshot",
+    "type": "scheduled automation",
+    "owner": "Platform operations",
+    "status": "implemented but unverified",
+    "production_status": "UNKNOWN",
+    "paths": [
+      "app/api/crons/league-snapshot/route.ts"
+    ]
+  },
+  {
+    "id": "cron-league-weekly-reset",
+    "parent_registry_id": "cron-league-weekly-reset",
+    "type": "scheduled automation",
+    "owner": "Platform operations",
+    "status": "implemented but unverified",
+    "production_status": "UNKNOWN",
+    "paths": [
+      "app/api/cron/league-weekly-reset/route.ts"
+    ]
+  },
+  {
+    "id": "cron-morning-brief-sweep",
+    "parent_registry_id": "cron-morning-brief-sweep",
+    "type": "scheduled automation",
+    "owner": "Platform operations",
+    "status": "implemented but unverified",
+    "production_status": "UNKNOWN",
+    "paths": [
+      "app/api/cron/morning-brief-sweep/route.ts"
+    ]
+  },
+  {
+    "id": "cron-nightly-backup",
+    "parent_registry_id": "cron-nightly-backup",
+    "type": "scheduled automation",
+    "owner": "Platform operations",
+    "status": "implemented but unverified",
+    "production_status": "UNKNOWN",
+    "paths": [
+      "app/api/cron/nightly-backup/route.ts"
+    ]
+  },
+  {
+    "id": "cron-ops-sentinel",
+    "parent_registry_id": "cron-ops-sentinel",
+    "type": "scheduled automation",
+    "owner": "Platform operations",
+    "status": "implemented but unverified",
+    "production_status": "UNKNOWN",
+    "paths": [
+      "app/api/cron/ops-sentinel/route.ts"
+    ]
+  },
+  {
+    "id": "cron-process-audio-generation",
+    "parent_registry_id": "cron-process-audio-generation",
+    "type": "scheduled automation",
+    "owner": "Platform operations",
+    "status": "implemented but unverified",
+    "production_status": "UNKNOWN",
+    "paths": [
+      "app/api/cron/process-audio-generation/route.ts"
+    ]
+  },
+  {
+    "id": "cron-process-textbook-generation",
+    "parent_registry_id": "cron-process-textbook-generation",
+    "type": "scheduled automation",
+    "owner": "Platform operations",
+    "status": "implemented but unverified",
+    "production_status": "UNKNOWN",
+    "paths": [
+      "app/api/cron/process-textbook-generation/route.ts"
+    ]
+  },
+  {
+    "id": "cron-rebuild-leaderboards",
+    "parent_registry_id": "cron-rebuild-leaderboards",
+    "type": "scheduled automation",
+    "owner": "Platform operations",
+    "status": "implemented but unverified",
+    "production_status": "UNKNOWN",
+    "paths": [
+      "app/api/cron/rebuild-leaderboards/route.ts"
+    ]
+  },
+  {
+    "id": "cron-refresh-demo-schedule",
+    "parent_registry_id": "cron-refresh-demo-schedule",
+    "type": "scheduled automation",
+    "owner": "Platform operations",
+    "status": "implemented but unverified",
+    "production_status": "UNKNOWN",
+    "paths": [
+      "app/api/cron/refresh-demo-schedule/route.ts"
+    ]
+  },
+  {
+    "id": "cron-release-stale-grades",
+    "parent_registry_id": "cron-release-stale-grades",
+    "type": "scheduled automation",
+    "owner": "Platform operations",
+    "status": "implemented but unverified",
+    "production_status": "UNKNOWN",
+    "paths": [
+      "app/api/cron/release-stale-grades/route.ts"
+    ]
+  },
+  {
+    "id": "cron-safeguarding-sla-check",
+    "parent_registry_id": "cron-safeguarding-sla-check",
+    "type": "scheduled automation",
+    "owner": "Platform operations",
+    "status": "implemented but unverified",
+    "production_status": "UNKNOWN",
+    "paths": [
+      "app/api/cron/safeguarding-sla-check/route.ts"
+    ]
+  },
+  {
+    "id": "github-canonical-clean-bootstrap",
+    "parent_registry_id": "github-canonical-clean-bootstrap",
+    "type": "scheduled automation",
+    "owner": "Developer operations",
+    "status": "implemented but unverified",
+    "production_status": "UNKNOWN",
+    "paths": [
+      ".github/workflows/canonical-clean-bootstrap.yml"
+    ]
+  },
+  {
+    "id": "github-ci",
+    "parent_registry_id": "github-ci",
+    "type": "scheduled automation",
+    "owner": "Developer operations",
+    "status": "implemented but unverified",
+    "production_status": "UNKNOWN",
+    "paths": [
+      ".github/workflows/ci.yml"
+    ]
+  },
+  {
+    "id": "github-deploy-ecs",
+    "parent_registry_id": "github-deploy-ecs",
+    "type": "scheduled automation",
+    "owner": "Developer operations",
+    "status": "implemented but unverified",
+    "production_status": "UNKNOWN",
+    "paths": [
+      ".github/workflows/deploy-ecs.yml"
+    ]
+  },
+  {
+    "id": "github-evals",
+    "parent_registry_id": "github-evals",
+    "type": "scheduled automation",
+    "owner": "Developer operations",
+    "status": "implemented but unverified",
+    "production_status": "UNKNOWN",
+    "paths": [
+      ".github/workflows/evals.yml"
+    ]
+  },
+  {
+    "id": "github-lab-review-capture",
+    "parent_registry_id": "github-lab-review-capture",
+    "type": "scheduled automation",
+    "owner": "Developer operations",
+    "status": "implemented but unverified",
+    "production_status": "UNKNOWN",
+    "paths": [
+      ".github/workflows/lab-review-capture.yml"
+    ]
+  },
+  {
+    "id": "github-lab-runtime-gate",
+    "parent_registry_id": "github-lab-runtime-gate",
+    "type": "scheduled automation",
+    "owner": "Developer operations",
+    "status": "implemented but unverified",
+    "production_status": "UNKNOWN",
+    "paths": [
+      ".github/workflows/lab-runtime-gate.yml"
+    ]
+  },
+  {
+    "id": "github-mergeops",
+    "parent_registry_id": "github-mergeops",
+    "type": "scheduled automation",
+    "owner": "Developer operations",
+    "status": "implemented but unverified",
+    "production_status": "UNKNOWN",
+    "paths": [
+      ".github/workflows/mergeops.yml"
+    ]
+  },
+  {
+    "id": "github-mergeops-safety",
+    "parent_registry_id": "github-mergeops-safety",
+    "type": "scheduled automation",
+    "owner": "Developer operations",
+    "status": "implemented but unverified",
+    "production_status": "UNKNOWN",
+    "paths": [
+      ".github/workflows/mergeops-safety.yml"
+    ]
+  },
+  {
+    "id": "github-pr-triage",
+    "parent_registry_id": "github-pr-triage",
+    "type": "scheduled automation",
+    "owner": "Developer operations",
+    "status": "configured but disabled",
+    "production_status": "UNKNOWN",
+    "paths": [
+      ".github/workflows/pr-triage.yml"
+    ]
+  },
+  {
+    "id": "github-runtime-gate",
+    "parent_registry_id": "github-runtime-gate",
+    "type": "scheduled automation",
+    "owner": "Developer operations",
+    "status": "implemented but unverified",
+    "production_status": "UNKNOWN",
+    "paths": [
+      ".github/workflows/runtime-gate.yml"
+    ]
+  },
+  {
+    "id": "sqs-generate-embeddings",
+    "parent_registry_id": "sqs-worker",
+    "type": "SQS job variant",
+    "owner": "Platform worker owner plus handler domain owner",
+    "status": "implemented but unverified",
+    "production_status": "UNKNOWN",
+    "paths": [
+      "worker/handlers/index.ts",
+      "worker/index.ts"
+    ]
+  },
+  {
+    "id": "sqs-generate-textbook",
+    "parent_registry_id": "sqs-worker",
+    "type": "SQS job variant",
+    "owner": "Platform worker owner plus handler domain owner",
+    "status": "implemented but unverified",
+    "production_status": "UNKNOWN",
+    "paths": [
+      "worker/handlers/index.ts",
+      "worker/index.ts"
+    ]
+  },
+  {
+    "id": "sqs-snapshot-analytics",
+    "parent_registry_id": "sqs-worker",
+    "type": "SQS job variant",
+    "owner": "Platform worker owner plus handler domain owner",
+    "status": "implemented but unverified",
+    "production_status": "UNKNOWN",
+    "paths": [
+      "worker/handlers/index.ts",
+      "worker/index.ts"
+    ]
+  },
+  {
+    "id": "sqs-send-sms",
+    "parent_registry_id": "sqs-worker",
+    "type": "SQS job variant",
+    "owner": "Platform worker owner plus handler domain owner",
+    "status": "implemented but unverified",
+    "production_status": "UNKNOWN",
+    "paths": [
+      "worker/handlers/index.ts",
+      "worker/index.ts"
+    ]
+  },
+  {
+    "id": "sqs-confusion-detection",
+    "parent_registry_id": "sqs-worker",
+    "type": "SQS job variant",
+    "owner": "Platform worker owner plus handler domain owner",
+    "status": "implemented but unverified",
+    "production_status": "UNKNOWN",
+    "paths": [
+      "worker/handlers/index.ts",
+      "worker/index.ts"
+    ]
+  },
+  {
+    "id": "sqs-student-import",
+    "parent_registry_id": "sqs-worker",
+    "type": "SQS job variant",
+    "owner": "Platform worker owner plus handler domain owner",
+    "status": "implemented but unverified",
+    "production_status": "UNKNOWN",
+    "paths": [
+      "worker/handlers/index.ts",
+      "worker/index.ts"
+    ]
+  },
+  {
+    "id": "sqs-oneroster-import",
+    "parent_registry_id": "sqs-worker",
+    "type": "SQS job variant",
+    "owner": "Platform worker owner plus handler domain owner",
+    "status": "implemented but unverified",
+    "production_status": "UNKNOWN",
+    "paths": [
+      "worker/handlers/index.ts",
+      "worker/index.ts"
+    ]
+  },
+  {
+    "id": "sqs-generate-course-thumbnail",
+    "parent_registry_id": "sqs-worker",
+    "type": "SQS job variant",
+    "owner": "Platform worker owner plus handler domain owner",
+    "status": "implemented but unverified",
+    "production_status": "UNKNOWN",
+    "paths": [
+      "worker/handlers/index.ts",
+      "worker/index.ts"
+    ]
+  },
+  {
+    "id": "sqs-generate-school-onboarding-kit",
+    "parent_registry_id": "sqs-worker",
+    "type": "SQS job variant",
+    "owner": "Platform worker owner plus handler domain owner",
+    "status": "implemented but unverified",
+    "production_status": "UNKNOWN",
+    "paths": [
+      "worker/handlers/index.ts",
+      "worker/index.ts"
+    ]
+  },
+  {
+    "id": "sqs-generate-certification-assets",
+    "parent_registry_id": "sqs-worker",
+    "type": "SQS job variant",
+    "owner": "Platform worker owner plus handler domain owner",
+    "status": "implemented but unverified",
+    "production_status": "UNKNOWN",
+    "paths": [
+      "worker/handlers/index.ts",
+      "worker/index.ts"
+    ]
+  },
+  {
+    "id": "sqs-curriculum-regenerate-lesson",
+    "parent_registry_id": "sqs-worker",
+    "type": "SQS job variant",
+    "owner": "Platform worker owner plus handler domain owner",
+    "status": "implemented but unverified",
+    "production_status": "UNKNOWN",
+    "paths": [
+      "worker/handlers/index.ts",
+      "worker/index.ts"
+    ]
+  },
+  {
+    "id": "sqs-curriculum-regenerate-group",
+    "parent_registry_id": "sqs-worker",
+    "type": "SQS job variant",
+    "owner": "Platform worker owner plus handler domain owner",
+    "status": "implemented but unverified",
+    "production_status": "UNKNOWN",
+    "paths": [
+      "worker/handlers/index.ts",
+      "worker/index.ts"
+    ]
+  },
+  {
+    "id": "sqs-curriculum-regenerate-resume",
+    "parent_registry_id": "sqs-worker",
+    "type": "SQS job variant",
+    "owner": "Platform worker owner plus handler domain owner",
+    "status": "implemented but unverified",
+    "production_status": "UNKNOWN",
+    "paths": [
+      "worker/handlers/index.ts",
+      "worker/index.ts"
+    ]
+  },
+  {
+    "id": "sqs-queue-readiness-probe",
+    "parent_registry_id": "sqs-worker",
+    "type": "SQS job variant",
+    "owner": "Platform worker owner plus handler domain owner",
+    "status": "implemented but unverified",
+    "production_status": "UNKNOWN",
+    "paths": [
+      "worker/handlers/index.ts",
+      "worker/index.ts"
+    ]
+  },
+  {
+    "id": "sqs-health-check",
+    "parent_registry_id": "sqs-worker",
+    "type": "SQS job variant",
+    "owner": "Platform worker owner plus handler domain owner",
+    "status": "implemented but unverified",
+    "production_status": "UNKNOWN",
+    "paths": [
+      "worker/handlers/index.ts",
+      "worker/index.ts"
+    ]
+  },
+  {
+    "id": "sqs-generate-lesson-audio",
+    "parent_registry_id": "sqs-worker",
+    "type": "SQS job variant",
+    "owner": "Platform worker owner plus handler domain owner",
+    "status": "unsupported; retry/DLQ if submitted",
+    "production_status": "UNKNOWN",
+    "paths": [
+      "worker/handlers/index.ts",
+      "worker/index.ts"
+    ]
+  },
+  {
+    "id": "sqs-autonomous-workflow-run",
+    "parent_registry_id": "sqs-worker",
+    "type": "SQS job variant",
+    "owner": "Platform worker owner plus handler domain owner",
+    "status": "unsupported; retry/DLQ if submitted",
+    "production_status": "UNKNOWN",
+    "paths": [
+      "worker/handlers/index.ts",
+      "worker/index.ts"
+    ]
+  }
+]

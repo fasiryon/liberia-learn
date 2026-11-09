@@ -1,0 +1,257 @@
+{
+  "atlas_commit": "9fff8615b19591063882ee006dff96b83ccbe4b5",
+  "application_source_commit": "887f23eccbe5b194c2e7ff93c0b09c843549a9eb",
+  "command": [
+    "node",
+    "C:\\liberia-learn\\node_modules\\vitest\\vitest.mjs",
+    "run",
+    "--config",
+    "C:\\liberia-learn\\.task-worktrees\\atlas-waec-red-20261024\\docs\\audits\\project-atlas-20261023\\post-audit\\vitest.config.ts",
+    "--reporter=json",
+    "--outputFile=C:\\liberia-learn\\.task-worktrees\\atlas-waec-red-20261024\\docs\\audits\\project-atlas-20261023\\post-audit\\scratch\\AT-R-WAEC-RED.json",
+    "waec-attempt-binding.test.ts",
+    "waec-issued-session.test.ts"
+  ],
+  "exit_code": 1,
+  "passed": 0,
+  "failed": 31,
+  "total": 31,
+  "method": "Actual route/resolver functions; synthetic authenticated identities; mocked in-memory ORM, provider and side-effect boundaries. Process environment allowlisted; fetch denied. Not a real login/database/integration/production test.",
+  "tests": [
+    {
+      "suite": "waec-attempt-binding.test.ts",
+      "name": "P1 rejects an unissued practice attempt before admitting mastery",
+      "status": "failed",
+      "failure": "AssertionError: expected [ 400, 403, 409 ] to include 200"
+    },
+    {
+      "suite": "waec-attempt-binding.test.ts",
+      "name": "P1 replaying the same answers cannot create a second mastery admission",
+      "status": "failed",
+      "failure": "AssertionError: expected 2 to be less than or equal to 1"
+    },
+    {
+      "suite": "waec-attempt-binding.test.ts",
+      "name": "P1 rejects duplicate item identities within one submission",
+      "status": "failed",
+      "failure": "AssertionError: expected 200 to be 400 // Object.is equality"
+    },
+    {
+      "suite": "waec-attempt-binding.test.ts",
+      "name": "P1 refuses an item from a different subject",
+      "status": "failed",
+      "failure": "AssertionError: expected [ 400, 403, 409 ] to include 200"
+    },
+    {
+      "suite": "waec-issued-session.test.ts",
+      "name": "honest GET cookie to POST scores once with a provisional receipt and no mastery admission",
+      "status": "failed",
+      "failure": "AssertionError: successful issuance must bind this browser to a server-issued attempt: expected null not to be null"
+    },
+    {
+      "suite": "waec-issued-session.test.ts",
+      "name": "missing or blank server secret cannot issue a token: undefined",
+      "status": "failed",
+      "failure": "AssertionError: expected 200 to be 503 // Object.is equality"
+    },
+    {
+      "suite": "waec-issued-session.test.ts",
+      "name": "missing or blank server secret cannot issue a token: ",
+      "status": "failed",
+      "failure": "AssertionError: expected 200 to be 503 // Object.is equality"
+    },
+    {
+      "suite": "waec-issued-session.test.ts",
+      "name": "missing or blank server secret cannot issue a token:    ",
+      "status": "failed",
+      "failure": "AssertionError: expected 200 to be 503 // Object.is equality"
+    },
+    {
+      "suite": "waec-issued-session.test.ts",
+      "name": "missing cookie is rejected for an otherwise valid authenticated student",
+      "status": "failed",
+      "failure": "AssertionError: expected 200 to be 400 // Object.is equality"
+    },
+    {
+      "suite": "waec-issued-session.test.ts",
+      "name": "tampered cookie is rejected before any receipt or mastery write",
+      "status": "failed",
+      "failure": "AssertionError: successful issuance must bind this browser to a server-issued attempt: expected null not to be null"
+    },
+    {
+      "suite": "waec-issued-session.test.ts",
+      "name": "expired cookie is rejected",
+      "status": "failed",
+      "failure": "AssertionError: successful issuance must bind this browser to a server-issued attempt: expected null not to be null"
+    },
+    {
+      "suite": "waec-issued-session.test.ts",
+      "name": "issued context cannot be replaced: user",
+      "status": "failed",
+      "failure": "AssertionError: successful issuance must bind this browser to a server-issued attempt: expected null not to be null"
+    },
+    {
+      "suite": "waec-issued-session.test.ts",
+      "name": "issued context cannot be replaced: student",
+      "status": "failed",
+      "failure": "AssertionError: successful issuance must bind this browser to a server-issued attempt: expected null not to be null"
+    },
+    {
+      "suite": "waec-issued-session.test.ts",
+      "name": "issued context cannot be replaced: school",
+      "status": "failed",
+      "failure": "AssertionError: successful issuance must bind this browser to a server-issued attempt: expected null not to be null"
+    },
+    {
+      "suite": "waec-issued-session.test.ts",
+      "name": "issued context cannot be replaced: grade",
+      "status": "failed",
+      "failure": "AssertionError: successful issuance must bind this browser to a server-issued attempt: expected null not to be null"
+    },
+    {
+      "suite": "waec-issued-session.test.ts",
+      "name": "issued context cannot be replaced: subject",
+      "status": "failed",
+      "failure": "AssertionError: successful issuance must bind this browser to a server-issued attempt: expected null not to be null"
+    },
+    {
+      "suite": "waec-issued-session.test.ts",
+      "name": "duplicate submitted item identities are rejected rather than counted twice",
+      "status": "failed",
+      "failure": "AssertionError: successful issuance must bind this browser to a server-issued attempt: expected null not to be null"
+    },
+    {
+      "suite": "waec-issued-session.test.ts",
+      "name": "unissued item identities are rejected",
+      "status": "failed",
+      "failure": "AssertionError: successful issuance must bind this browser to a server-issued attempt: expected null not to be null"
+    },
+    {
+      "suite": "waec-issued-session.test.ts",
+      "name": "cross-subject or edited bank rows cannot be scored against a prior issuance",
+      "status": "failed",
+      "failure": "AssertionError: successful issuance must bind this browser to a server-issued attempt: expected null not to be null"
+    },
+    {
+      "suite": "waec-issued-session.test.ts",
+      "name": "grading-content revision change invalidates the issued fingerprint",
+      "status": "failed",
+      "failure": "AssertionError: successful issuance must bind this browser to a server-issued attempt: expected null not to be null"
+    },
+    {
+      "suite": "waec-issued-session.test.ts",
+      "name": "a successful issued attempt cannot be replayed after answer review",
+      "status": "failed",
+      "failure": "AssertionError: successful issuance must bind this browser to a server-issued attempt: expected null not to be null"
+    },
+    {
+      "suite": "waec-issued-session.test.ts",
+      "name": "concurrent submissions have exactly one receipt and one success",
+      "status": "failed",
+      "failure": "AssertionError: successful issuance must bind this browser to a server-issued attempt: expected null not to be null"
+    },
+    {
+      "suite": "waec-issued-session.test.ts",
+      "name": "atomic commit failure leaves no receipt and the issued attempt can retry",
+      "status": "failed",
+      "failure": "AssertionError: successful issuance must bind this browser to a server-issued attempt: expected null not to be null"
+    },
+    {
+      "suite": "waec-issued-session.test.ts",
+      "name": "issuance projects the same validated bank revision that the token signs",
+      "status": "failed",
+      "failure": "AssertionError: successful issuance must bind this browser to a server-issued attempt: expected null not to be null"
+    },
+    {
+      "suite": "waec-issued-session.test.ts",
+      "name": "malformed chosen value is rejected: -1",
+      "status": "failed",
+      "failure": "AssertionError: successful issuance must bind this browser to a server-issued attempt: expected null not to be null"
+    },
+    {
+      "suite": "waec-issued-session.test.ts",
+      "name": "malformed chosen value is rejected: 4",
+      "status": "failed",
+      "failure": "AssertionError: successful issuance must bind this browser to a server-issued attempt: expected null not to be null"
+    },
+    {
+      "suite": "waec-issued-session.test.ts",
+      "name": "malformed chosen value is rejected: 2",
+      "status": "failed",
+      "failure": "AssertionError: successful issuance must bind this browser to a server-issued attempt: expected null not to be null"
+    },
+    {
+      "suite": "waec-issued-session.test.ts",
+      "name": "malformed chosen value is rejected: true",
+      "status": "failed",
+      "failure": "AssertionError: successful issuance must bind this browser to a server-issued attempt: expected null not to be null"
+    },
+    {
+      "suite": "waec-issued-session.test.ts",
+      "name": "an unanswered issued item remains valid and scores honestly",
+      "status": "failed",
+      "failure": "AssertionError: successful issuance must bind this browser to a server-issued attempt: expected null not to be null"
+    },
+    {
+      "suite": "waec-issued-session.test.ts",
+      "name": "missing issued items are rejected",
+      "status": "failed",
+      "failure": "AssertionError: successful issuance must bind this browser to a server-issued attempt: expected null not to be null"
+    },
+    {
+      "suite": "waec-issued-session.test.ts",
+      "name": "a student without current enrollment cannot receive an issued attempt",
+      "status": "failed",
+      "failure": "AssertionError: expected 200 to be 403 // Object.is equality"
+    }
+  ],
+  "observations": [
+    {
+      "id": "ATLAS-WAEC-UNISSUED",
+      "observed": {
+        "http": 200,
+        "masteryWrites": 1
+      }
+    },
+    {
+      "id": "ATLAS-WAEC-REPLAY",
+      "observed": {
+        "masteryWrites": 2
+      }
+    },
+    {
+      "id": "ATLAS-WAEC-DUPLICATE",
+      "observed": {
+        "http": 200,
+        "total": 2,
+        "masteryWrites": 1
+      }
+    }
+  ],
+  "mode": "current repair worktree source",
+  "source_head": "37b8941c5c8251d14a9cefa833a108015ec603e2",
+  "application_files_modified": true,
+  "test_run_modifies_application_files": false,
+  "source_delta_vs_atlas": {
+    "app/api/admin/agents/invocations/route.ts": "c14fe8f20e95eca1f06b8c578a0c292c87767872276a49ad8321896bd4731677",
+    "app/api/student/sync/route.ts": "160ce5655fb61e4b274ece27a782747f1558e3395e33ad4d636e63a7f447aeb7",
+    "lib/agents/admin/stats.ts": "39fed9e62235ad651a07ce2f70734080963f841aaa06c69a89ceba4a178211d9",
+    "lib/agents/agents/content-qa.agent.ts": "d14e83c823d083b21a27dd01874eb02528a193eee96faa3fe2bbcc0d45adc4b6",
+    "lib/agents/agents/district-update.agent.ts": "9bfe3d2338feeeac71de1187a02a731eba1efd96fae71d2457ec658f37c8ea97",
+    "lib/agents/agents/echo.agent.ts": "f287f45a3697eb02ab07f2936b47d820b07636912ecdec4e4a99527a488e8073",
+    "lib/agents/agents/liberialearn-family.agent.ts": "2443b1642facc9ae3ce19b12c513599788eca018b21fb28e3e1f552e5880513a",
+    "lib/agents/agents/moe-narrative-report.agent.ts": "ad2b4813421bbfa683326bfb437fc9b56234b1baac5f589c944914467d3373be",
+    "lib/agents/agents/morning-brief.agent.ts": "c9af29c0f9647eb596a66551b8a1120b08d44589d02058c11c9154a90ced73de",
+    "lib/agents/agents/ops-sentinel.agent.ts": "274f3bd754c0c4907cb8f6cad79a1dbf45386782e2386f6532cdc926f9690261",
+    "lib/agents/agents/teaching-runtime.agent.ts": "27ffecd03c76f409738a2bfb45b287ad8a03238ae62148e6ecee608b68db3237",
+    "lib/agents/control.ts": "b20fb5ef4dabdb56c3b0a5d794a3911e7fb6481640e6b712ae978a592ed14348",
+    "lib/agents/flags.ts": "4f6ff7d5a903132e73cc9f09c835d98ca0a0105fdc0d6e23df5d92b4da9ee370",
+    "lib/agents/moderation.ts": "f630568e2a90973ae21b4349b283f1567e53b06d32136ba0dd568fe98028a94b",
+    "lib/agents/runtime.ts": "dd0ea94acc3898a86d23e4cff819b660cc9554c6e2e351a0b766f500249cfe9c",
+    "lib/agents/scheduler.ts": "1edcbac849611f0e96d0bb00c19b51ca228750ee4474c6399db54febc8cd9644",
+    "lib/agents/triggers.ts": "503e8be32026c228c8d887d24184cce65df7e3d9842899432785cfbf11f16169",
+    "lib/agents/types.ts": "e57d07fa56617c685970809bd1de3ec0eb25f5e6607a195f67b8066dedcab41c",
+    "lib/offline-sync/policies.ts": "c563a7c90d94cbc9f474ea9e0c02defdf3dbd9ea8c298e3d0d3e32d3ac8a78d4"
+  },
+  "raw_result_sha256": "cdbcba95e8f18cfac99d302658cfb0e6f3a0eba96c2d638ff8b11a4cb7fdf534"
+}

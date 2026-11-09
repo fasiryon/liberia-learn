@@ -18,7 +18,7 @@ export interface ModerationResult {
   reason?: string;
 }
 
-export type ModerationAudience = "general" | "minor";
+export type ModerationAudience = "general" | "minor" | "guardian";
 
 export interface ModerationOptions {
   audience?: ModerationAudience;
@@ -28,12 +28,12 @@ function applyAudiencePolicy(
   result: ModerationResult,
   options?: ModerationOptions
 ): ModerationResult {
-  if (options?.audience === "minor" && result.verdict === "UNCERTAIN") {
+  if ((options?.audience === "minor" || options?.audience === "guardian") && result.verdict === "UNCERTAIN") {
     return {
       verdict: "UNSAFE",
       reason: result.reason
-        ? `minor_fail_closed:${result.reason}`
-        : "minor_fail_closed:uncertain",
+        ? `${options.audience}_fail_closed:${result.reason}`
+        : `${options.audience}_fail_closed:uncertain`,
     };
   }
 
@@ -92,7 +92,7 @@ export async function moderateText(
       options
     );
   } catch (e) {
-    logger.warn("[agent.moderation] classifier failed — failing open to UNCERTAIN", {
+    logger.warn("[agent.moderation] classifier failed; applying audience policy", {
       kind,
       message: e instanceof Error ? e.message.slice(0, 200) : String(e),
     });

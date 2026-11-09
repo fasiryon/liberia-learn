@@ -1,0 +1,31 @@
+generated-1/blocks/0
+During melting while both phases remain, what happens to temperature? Options: It stays about 0 C while heat is absorbed.; It must rise continuously whenever heat enters..
+Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores.
+
+generated-2/blocks/0
+Idealized heating of 1 kg of pure water. Net heat added 0 kJ: Temperature -10 C; Net heat added 21 kJ: Temperature 0 C; Net heat added 355 kJ: Temperature 0 C; Net heat added 773 kJ: Temperature 100 C; Net heat added 3029 kJ: Temperature 100 C; Net heat added 3049 kJ: Temperature 110 C. A-B ice warms; B-C ice and liquid coexist at 0 C; C-D liquid warms; D-E liquid and vapor coexist at 100 C; E-F vapor warms. Unequal horizontal intervals show different required energies. See the packet SVG for segment labels.
+Compare the model at 21 kJ and 355 kJ. What changed despite equal temperatures? Explain what you kept fixed. Write your response and reasoning on paper. Responses are capture only, never official scores.
+
+generated-2/blocks/1
+Which particle model explains an ice cube's shape and volume? Options: Particles vibrate about fixed positions in an open solid structure; ice has its own shape and approximately fixed volume.; Ice particles are motionless and have no space between them.. Water is poured from a cup to a bowl without spilling. What changes? Options: Its shape changes; volume stays essentially the same because close particles can move past one another.; Its particles grow and the amount of water increases to fill the bowl.. Which model describes water vapor or the gases in a classroom's air? Options: Far-apart particles move randomly and fill available space; gas has no own fixed shape or volume.; Gas particles grow larger but stay in fixed positions..
+Compare the model at 21 kJ and 355 kJ. What changed despite equal temperatures? Explain what you kept fixed. Write your response and reasoning on paper. Responses are capture only, never official scores.
+
+generated-4/blocks/0
+Why is the melting segment flat? Options: Heat changes the phase while ice and liquid coexist.; The heater has stopped transferring energy..
+Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores.
+
+generated-4/blocks/1
+A wet cloth dries at 28 C. Which explanation fits? Options: Evaporation from its surface can occur below boiling.; The cloth must secretly have reached 100 C..
+Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores.
+
+generated-4/blocks/2
+What happens when liquid water freezes at its freezing point? Options: Energy leaves the water as particles settle into the solid arrangement.; Freezing requires heat to enter the water because cold is a substance..
+Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores.
+
+generated-4/blocks/3
+Why can water take a cup's shape but ice keep its shape? Options: Liquid particles move past neighbors; solid particles vibrate about fixed positions.; Liquid particles grow to fill the cup..
+Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores.
+
+generated-5/blocks/0
+Explain condensation on the cold cup and evaporation from the cloth. Describe energy transfer and a way to reverse each physical change. Answer or claim: State a precise answer to the question. Evidence and explanation: Cite the source or calculation and explain the connection. Consider what it cannot establish.
+Propose a test that distinguishes condensation from leakage without opening the cup. State what result supports each explanation. Write your response and reasoning on paper. Responses are capture only, never official scores.

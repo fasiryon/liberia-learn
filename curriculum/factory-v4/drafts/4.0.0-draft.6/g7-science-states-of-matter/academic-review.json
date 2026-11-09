@@ -1,0 +1,187 @@
+{
+  "version": "draft6-academic-review/1.0.0",
+  "candidateVersion": "4.0.0-draft.6",
+  "candidateSha256": "5e67edd36ec5b3e0ef29be65dee3ab2e08e1f7cccf17209e4e689492eaae2126",
+  "authorship": "AI_AUTHORED_DETERMINISTIC_RECIPE",
+  "humanSubjectExpertReview": "NOT_PERFORMED",
+  "academicApproval": "PENDING_EXACT_VERSION_REVIEW",
+  "policy": {
+    "version": "factory-academic-policy/1.0.0",
+    "rules": [
+      "Bind objectives to actual instruction and response tasks, not only scene tags. Export the coverage evidence.",
+      "Worked examples show a method; guided tasks use new values and require a learner response.",
+      "Use exact rational keys for fraction arithmetic. Equivalent unreduced fractions are accepted. Finite decimals must be exactly equal unless rounding is explicitly requested.",
+      "Misconception feedback identifies the operation or inference causing the error and explains a repair.",
+      "Teach and practise two-digit by two-digit multiplication with all four place-value partial products.",
+      "Validate diagram axes, phases, plateaus, coexistence assumptions and relative energy intervals independently of text facts.",
+      "A consequence can support a consequence claim. A direct-evidence question must ask explicitly for a stated action; no compulsory disputable inference.",
+      "A geographic objective requires licensed coordinate-derived geometry; a county register proves recall only. No route claims without roads.",
+      "Automated checks provide evidence, never academic approval, rights clearance or release authority."
+    ]
+  },
+  "checks": {
+    "policy": "factory-academic-policy/1.0.0",
+    "status": "AUTOMATED_REGRESSION_CHECKS_PASS",
+    "academicApproval": false
+  },
+  "objectives": [
+    {
+      "objectiveId": "ft04-o1",
+      "statement": "Use the particle model to describe and compare solids, liquids and gases (arrangement, movement, shape and volume), with Liberian examples.",
+      "taught": [
+        "particle-properties",
+        "generated-4"
+      ],
+      "practised": [
+        "state-properties",
+        "generated-3-response-2",
+        "water-transfer"
+      ],
+      "runtimeStatus": "REVIEW_REQUIRED",
+      "masteryClaim": false
+    },
+    {
+      "objectiveId": "ft04-o2",
+      "statement": "Explain melting, freezing, evaporation, boiling and condensation as energy gained or lost by particles, and distinguish evaporation from boiling.",
+      "taught": [
+        "generated-4"
+      ],
+      "practised": [
+        "freezing-energy",
+        "evaporation-check",
+        "water-transfer"
+      ],
+      "runtimeStatus": "REVIEW_REQUIRED",
+      "masteryClaim": false
+    },
+    {
+      "objectiveId": "ft04-o3",
+      "statement": "Interpret a pure-water heating curve at fixed pressure, explain its melting plateau with latent heat, and describe reversible physical changes.",
+      "taught": [
+        "pure-water-heating",
+        "generated-4"
+      ],
+      "practised": [
+        "generated-3-response-0",
+        "generated-3-response-1",
+        "latent-heat-check",
+        "water-transfer"
+      ],
+      "runtimeStatus": "REVIEW_REQUIRED",
+      "masteryClaim": false
+    }
+  ],
+  "freeResponseAndWritingGuidance": [
+    {
+      "responseId": "generated-2-response-0",
+      "question": "Compare the model at 21 kJ and 355 kJ. What changed despite equal temperatures? Explain what you kept fixed.",
+      "acceptableReasoning": "At 21 kJ the ice has reached 0 C and melting is starting; at 355 kJ melting is complete. The interval transfers 334 kJ while temperature stays at 0 C. Mass and pressure are held fixed. At interior points of this interval, solid and liquid coexist.",
+      "feedbackTiming": "AFTER_ATTEMPT",
+      "feedback": "Use the example reasoning to locate the unsupported step; accept different wording with valid evidence. This is formative feedback, not an official mark."
+    },
+    {
+      "responseId": "generated-3-response-0",
+      "question": "Name both plateaus and the phases present at each. Which energy interval shows only liquid warming?",
+      "acceptableReasoning": "B-C, 21 to 355 kJ, is melting at 0 C with solid and liquid present. D-E, 773 to 3029 kJ, is boiling at 100 C with liquid and vapor present. C-D, 355 to 773 kJ, warms the liquid.",
+      "feedbackTiming": "AFTER_ATTEMPT",
+      "feedback": "Use the example reasoning to locate the unsupported step; accept different wording with valid evidence. This is formative feedback, not an official mark."
+    },
+    {
+      "responseId": "generated-3-response-1",
+      "question": "Does the graph establish how many minutes boiling takes? Explain from the horizontal-axis quantity.",
+      "acceptableReasoning": "No. The horizontal axis is heat in kilojoules. Time would require net heating power or measured times. A flat temperature segment does not show heating stopped.",
+      "feedbackTiming": "AFTER_ATTEMPT",
+      "feedback": "Use the example reasoning to locate the unsupported step; accept different wording with valid evidence. This is formative feedback, not an official mark."
+    },
+    {
+      "responseId": "generated-3-response-2",
+      "question": "Compare an ice cube, liquid water and water vapor by particle arrangement, motion, shape and volume. Explain what changes if water is poured into a different container, and why the same statement does not apply to a gas.",
+      "acceptableReasoning": "Ice particles vibrate about fixed positions in an open solid structure, giving a fixed shape and approximately fixed volume. Liquid particles remain close but move past neighbors, giving a changing container shape and nearly fixed volume. Vapor particles are far apart and move randomly; gas fills available space with no own fixed shape or volume. Pouring water preserves its volume if none spills, while gas expands to fill a changed container. Accept equivalent accurate explanations with examples.",
+      "feedbackTiming": "AFTER_ATTEMPT",
+      "feedback": "Use the example reasoning to locate the unsupported step; accept different wording with valid evidence. This is formative feedback, not an official mark."
+    },
+    {
+      "responseId": "generated-5-response-0",
+      "question": "Propose a test that distinguishes condensation from leakage without opening the cup. State what result supports each explanation.",
+      "acceptableReasoning": "Compare equally cold sealed containers with different contents, first drying their outsides and keeping air conditions similar. Droplets on both support condensation from surrounding air; leakage should depend on contents or a leak. Other fair, safe tests with a stated discriminating result are acceptable. Condensation releases energy to the cold surface; evaporation of outside droplets can reverse it. A drying cloth absorbs energy from its surroundings; vapor condensing can reverse vaporization.",
+      "feedbackTiming": "AFTER_ATTEMPT",
+      "feedback": "Use the example reasoning to locate the unsupported step; accept different wording with valid evidence. This is formative feedback, not an official mark."
+    },
+    {
+      "responseId": "water-transfer",
+      "question": "Explain condensation on the cold cup and evaporation from the cloth. Describe energy transfer and a way to reverse each physical change.",
+      "acceptableReasoning": "Water vapor from air condenses on the cold cup and releases energy; cloth water evaporates below boiling using energy from surroundings. Particle identity persists. Explain reversible state changes and a discriminating condensation/leak test.",
+      "feedbackTiming": "AFTER_ATTEMPT",
+      "feedback": "Check each reasoning criterion separately and request a targeted revision; do not reject a defensible alternative for differing wording."
+    }
+  ],
+  "references": {
+    "checkedAt": "2026-10-22",
+    "method": "AI author inspected primary publisher pages and government naming table; not human subject-expert review or copyright clearance",
+    "sources": [
+      {
+        "id": "pcgn-liberia-2015",
+        "url": "https://assets.publishing.service.gov.uk/media/5a81506ee5274a2e87dbcf2e/Liberia_Administrative_Divisions.pdf",
+        "publisher": "UK Permanent Committee on Geographical Names",
+        "title": "Liberia: Administrative Divisions, March 2015",
+        "use": "All fifteen administrative county-centre pairs, pages 1-5; Bensonville/Bentol alias on page 4",
+        "rights": "Facts transcribed into original register; Crown Copyright source paper not redistributed. No claim of clearance for source PDF."
+      },
+      {
+        "id": "lisgis-county-offices",
+        "url": "https://www.lisgis.gov.lr/sdc/lisgissdc.pdf",
+        "publisher": "Liberia Institute of Statistics and Geo-Information Services",
+        "use": "Search-index corroboration of county administrative offices and Bentol name. Full document retrieval timed out; not relied on as the sole naming source.",
+        "rights": "Reference only, no source PDF redistributed"
+      },
+      {
+        "id": "geoboundaries-lbr-adm1",
+        "url": "https://www.geoboundaries.org/api/current/gbOpen/LBR/ADM1/",
+        "geometryUrl": "https://media.githubusercontent.com/media/wmgeolab/geoBoundaries/9469f09/releaseData/gbOpen/LBR/ADM1/geoBoundaries-LBR-ADM1_simplified.geojson",
+        "sha256RawGeometry": "f6f4ed18e1e29532a77325f7af84a6dacc4489d94020f2fa2a8feb12a4da9b34",
+        "publisher": "William & Mary geoBoundaries, source UNMIL / OCHA ROWCA",
+        "representedYear": "2021",
+        "license": "CC BY 3.0 IGO",
+        "licenseUrl": "https://creativecommons.org/licenses/by/3.0/igo/",
+        "changes": "Source simplified geographic polygons projected at reference latitude 6.5 degrees north; numbered area labels and key added. Capital points and roads not added.",
+        "rights": "Publisher license inspected, attribution retained. Independent rights release review remains pending; no endorsement claimed."
+      },
+      {
+        "id": "openstax-phase-change",
+        "url": "https://openstax.org/books/physics/pages/11-3-phase-change-and-latent-heat",
+        "publisher": "OpenStax, Rice University",
+        "use": "Physical explanation of latent heat, phase coexistence, vaporization and evaporation below boiling. Approximate water latent heats 334 and 2256 kJ/kg. Original teaching wording and diagram, not copied figure.",
+        "rights": "Reference only. Original calculated diagram; no third-party illustration reproduced."
+      },
+      {
+        "id": "openstax-heat-capacity",
+        "url": "https://openstax.org/books/physics/pages/11-2-heat-specific-heat-and-heat-transfer",
+        "publisher": "OpenStax, Rice University",
+        "use": "Heat capacity table checked; model rounds ice 2.09 to 2.1, liquid 4.186 to 4.18 and vapor 2.02 to 2.0 kJ/kg/K. These declared approximations determine diagram intervals.",
+        "rights": "Reference only; no third-party figure copied."
+      }
+    ],
+    "scienceDiagramAssumptions": {
+      "massKg": 1,
+      "pressure": "fixed near one atmosphere",
+      "purity": "pure water",
+      "netHeat": "energy entering sample, ignoring heat loss",
+      "specificHeatKJPerKgK": {
+        "ice": 2.1,
+        "liquid": 4.18,
+        "vapor": 2
+      },
+      "latentHeatKJPerKg": {
+        "fusion": 334,
+        "vaporization": 2256
+      },
+      "limits": "Approximate constant heat capacities, equilibrium transitions. Does not predict heating time or a sweet drink's freezing point."
+    }
+  },
+  "visualContract": {
+    "asset": "heating-curve.svg",
+    "runtime": "EXISTING_DATA_PLOT",
+    "pointLabels": "A through F in SVG; numeric pairs remain in runtime plot",
+    "particleAnimation": "OMITTED_UNVALIDATED_TEMPERATURE_ONLY_MODEL"
+  }
+}

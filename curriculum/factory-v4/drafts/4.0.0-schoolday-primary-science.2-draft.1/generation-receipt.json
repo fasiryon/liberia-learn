@@ -1,0 +1,34 @@
+{
+  "version": "4.0.0-schoolday-primary-science.2-draft.1",
+  "inputsSha256": "f3f1b7bfe5efd02c777c7750e4c223499603d354c22bb5ed2dc4925dc1ec9916",
+  "independentDeterministicBuilds": 2,
+  "baselineDraft6ReceiptSha256": "c59d3623d3bd558398a50e30de62688bc066ca22238c3d188b2ef88c9cbe04ab",
+  "packages": [
+    {
+      "key": "g4-science-food-path-and-absorption",
+      "programOrderId": "GO-G04-P2-SCIENCE-U1",
+      "packageHash": "6c9bb35aa616f76c316159159dcc2b96c22618e1a628f6e14a66b294ab2c607a",
+      "candidateSha256": "b481157bde0e0a509c99220f2a80afd5ba65f97e6fa4efe23b04670d37e5c1d7"
+    }
+  ],
+  "productionWrites": false,
+  "approved": false,
+  "published": false,
+  "released": false,
+  "activated": false,
+  "previewEnabled": false,
+  "files": {
+    "g4-science-food-path-and-absorption/candidate.json": "a23af90d834c982e6c77ce2515ce0bdb0ad9c2c543fc0e9fa8bed94f03233577",
+    "g4-science-food-path-and-absorption/visual-teaching.json": "e43f6fb77df3171ac1fad65a62f3155dade4620a2944de8ac77c523d61c68a12",
+    "g4-science-food-path-and-absorption/blueprint.json": "1ca26e484bc6a1665f0908ee1da5660be67ac34fd56ee73244d0d8256e10efd4",
+    "g4-science-food-path-and-absorption/factory-artifact.json": "5987e7620d81524b3009311c875fbffd62c5c28052a943cfeef422039ff0ada8",
+    "g4-science-food-path-and-absorption/learner-projection.json": "5bebb7280617a183994be8705f5460f967944d238381c2ad549e46e3cf0fb526",
+    "g4-science-food-path-and-absorption/factory-receipt.json": "71ecf6604c7c100c5c088686c0506e1a4b4bfb18c8803ea2e8e151161f50c3db",
+    "g4-science-food-path-and-absorption/paper-alternative.txt": "c7be47b02162cacef804882e39469ff2874fa7244227df88a8d172d95ceb44f5",
+    "g4-science-food-path-and-absorption/academic-review.json": "3fa701192abd1231859cf87b826ec38507fea877d2ab268d51187a545dc93e9d",
+    "g4-science-food-path-and-absorption/teacher-guide.json": "336e177640781887c7c38c08f62d80b422d684f3ef78082aec3314d75cc067b3",
+    "g4-science-food-path-and-absorption/manifest.json": "3e57cf192fde84f0a6764dd581cd7be6cdec3c42d2d66d10a6437be19dc4d0bf",
+    "review/complete-academic-packet.json": "83bc5b4a1cccaf2268d10bd3581afad0e535f8441f3581c90008fac9613dd6cf",
+    "review/complete-academic-packet.md": "c335889bc7a5cd29cdd7fda05c1294fdbf0ab1e5ecdc7a15b065def7c1a084e7"
+  }
+}

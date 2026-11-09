@@ -21,7 +21,11 @@ vi.mock("@/lib/ai/router", () => ({
 // ── Mock prisma for route tests ───────────────────────────────────────────────
 vi.mock("@/lib/db", () => ({
   prisma: {
-    student: { findFirst: vi.fn() },
+    student: { findFirst: vi.fn(), findUnique: async () => ({ enrollments: [{ classId: "class-1", Class: { schoolId: "school-1" } }] }) },
+    // AT-SUBMIT-02: the lesson reaches the learner through an own-school enrolled class (a scheduled lesson).
+    scheduledWork: { findFirst: async () => ({ id: "work-1" }) },
+    teacherLessonAssignment: { findFirst: async () => null },
+    assignment: { findFirst: async () => null },
     curriculumContent: { findUnique: vi.fn() },
     aILiteracyExercise: { findUnique: vi.fn() },
     gradedSubmission: {
@@ -33,7 +37,7 @@ vi.mock("@/lib/db", () => ({
 }));
 
 vi.mock("@/lib/auth", () => ({
-  requireRole: vi.fn().mockResolvedValue({ id: "user-1", role: "STUDENT" }),
+  requireRole: vi.fn().mockResolvedValue({ id: "user-1", role: "STUDENT", schoolId: "school-1" }),
 }));
 
 vi.mock("@/lib/rateLimit", () => ({
@@ -301,13 +305,19 @@ describe("POST /api/grading/ai-literacy", () => {
 
   function setupMocks() {
     mockPrisma.student.findFirst.mockResolvedValue({ id: "student-1" });
+    // AT-GRADE-01 2e: a platform lesson scheduled for the learner's class, and an exercise of that lesson with the
+    // requested prompt and type.
     mockPrisma.curriculumContent.findUnique.mockResolvedValue({
+      id: "lesson-1", schoolId: null, teacherCreated: false, visibility: "public", payload: {}, 
       grade: 7,
       subject: "COMPUTER_SCIENCE",
       unitId: "unit-1",
       contentId: "CS_G7_AI",
     });
     mockPrisma.aILiteracyExercise.findUnique.mockResolvedValue({
+      lessonId: "lesson-1",
+      promptId: "prompt-1",
+      type: "ethics_scenario",
       scenario: "An AI is used to...",
       studentPromptInstruction: "Identify the issue.",
       rubric: ETHICS_RUBRIC,
@@ -353,6 +363,7 @@ describe("POST /api/grading/ai-literacy", () => {
     const res = await callRoute({
       lessonId: "lesson-1",
       exerciseId: "ex-1",
+      promptId: "prompt-1",
       exerciseType: "ethics_scenario",
       studentResponse:
         "I think the AI system is unfair because it might label students incorrectly. Teachers would benefit from early warnings but students could be harmed by false predictions. The school should require human review before taking any action based on AI predictions about students.",
@@ -366,17 +377,23 @@ describe("POST /api/grading/ai-literacy", () => {
   });
 
   it("returns idempotent response for duplicate clientSubmissionId", async () => {
-    mockPrisma.student.findFirst.mockResolvedValue({ id: "student-1" });
+    setupMocks();
+    // This learner's exact earlier request (AT-GRADE-01 2e: replay needs the same canonical request).
     mockPrisma.gradedSubmission.findUnique.mockResolvedValue({
       id: "existing-sub",
       studentId: "student-1",
       score: 0.75,
       status: "graded",
+      lessonId: "lesson-1",
+      promptId: "prompt-1",
+      exerciseType: "ai_literacy_ethics_scenario",
+      submissionText: "Long enough response about AI ethics...",
     });
 
     const res = await callRoute({
       lessonId: "lesson-1",
       exerciseId: "ex-1",
+      promptId: "prompt-1",
       exerciseType: "ethics_scenario",
       studentResponse: "Long enough response about AI ethics...",
       clientSubmissionId: "already-seen-uuid",

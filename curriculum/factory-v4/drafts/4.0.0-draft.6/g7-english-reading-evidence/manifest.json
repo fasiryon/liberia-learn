@@ -1,0 +1,164 @@
+{
+  "manifestVersion": "factory-v4-candidate/1.0.0",
+  "candidateVersion": "4.0.0-draft.6",
+  "contractVersion": "visual-teaching-block/4.0.0-draft.1",
+  "key": "g7-english-reading-evidence",
+  "lessonId": "cv4-cand-g7-english-reading-evidence",
+  "grade": 7,
+  "subject": "ENGLISH",
+  "title": "Generated: Read an informational explanation",
+  "state": "DRAFT",
+  "approved": false,
+  "published": false,
+  "released": false,
+  "learnerDeliverable": false,
+  "audience": "REVIEWER_ONLY",
+  "contentOrigin": "DETERMINISTIC_FACTORY_EXECUTOR_WITH_SYNTHETIC_TEACHING_CONTEXTS",
+  "generation": {
+    "executor": "factory-v4-lesson-author/1.2.0",
+    "role": "LESSON_AUTHOR",
+    "referenceFixtureCopied": false,
+    "modelCalls": 0
+  },
+  "sourceLineage": {
+    "kind": "SOURCE_ROW_ONLY",
+    "contentId": "english-g7-waec-style-reading-and-writing-performance",
+    "contentPk": "cmn9kgxde004ivotgtqr8fqgo",
+    "legacyTitle": "Mastering Reading Comprehension and Writing Skills for WAEC",
+    "revisionId": "cmss8r8o200e7vo546w0divyw",
+    "snapshot": {
+      "path": "artifacts/curriculum-cleanup-v1/snapshot.json",
+      "capturedAt": "2026-09-26T09:07:15.873Z",
+      "fileSha256": "ef89632f6b447011b9092fb17501a8eac52555783aa45d3c16a52d275ebaa16c",
+      "rowSha256": "98d8b0db6b323d7d208c9e05d24931ae4438b32a058fe2b198cb158c2406e950"
+    }
+  },
+  "sourceVerification": "REPOSITORY_PINS_AND_DOCUMENTED_PRIMARY_REFERENCES_CHECKED_NOT_RIGHTS_OR_ACADEMIC_APPROVAL",
+  "inputPins": {
+    "manifestSha256": "82408cd4be2afb695cddc95ec54903012e34697aeeeca786613509d219f9077e",
+    "frontendCommit": "e5d89c34f421f028428cf9e4230ab3d40ff45536",
+    "candidate": {
+      "path": "curriculum/v4/candidates/g7-english-reading-evidence.json",
+      "sha256": "2048eee394a6b2b600967d4542c26f34091a7f75b3021d0d279d90b0af5a271d"
+    }
+  },
+  "candidateSha256": "500ab78193c6ffee7a6afdf6af7ced250d9d362abba2bcd71c14f26fdd0cb9b5",
+  "blueprintHash": "d12772fc01e8f314b71186154107a8b3610053378e3b52e7e5e28a48ba5ab2a1",
+  "learnerProjectionSha256": "b15c2604ff2a8928dbfd3017c4f3088c0ff583f32bd9be5456ab28bb2f5f0413",
+  "academicSchema": {
+    "valid": true,
+    "errors": []
+  },
+  "visualInstruction": {
+    "valid": true,
+    "family": "LANGUAGE",
+    "balance": {
+      "explanationSeconds": 151,
+      "activitySeconds": 1060,
+      "activityShare": 0.875
+    },
+    "practice": {
+      "ll-g7-eng-read-infer": {
+        "visuals": 1,
+        "workedExamples": 0,
+        "guided": 3,
+        "independent": 2,
+        "mistakes": 0,
+        "transfer": 3
+      },
+      "ll-g7-eng-cite-evidence": {
+        "visuals": 1,
+        "workedExamples": 0,
+        "guided": 3,
+        "independent": 2,
+        "mistakes": 0,
+        "transfer": 3
+      },
+      "ll-g7-eng-evidence-paragraph": {
+        "visuals": 1,
+        "workedExamples": 0,
+        "guided": 3,
+        "independent": 2,
+        "mistakes": 0,
+        "transfer": 3
+      }
+    },
+    "totals": {
+      "visuals": 3,
+      "workedExamples": 0,
+      "guided": 9,
+      "independent": 6,
+      "mistakes": 0,
+      "transfer": 9,
+      "problems": 8
+    },
+    "advisories": [
+      {
+        "code": "v4_activity_share_outside_target",
+        "severity": "ADVISORY",
+        "detail": "88% activity (target 65–75%); do not pad with repetitive questions to reach it."
+      },
+      {
+        "code": "v4_explanation_too_thin",
+        "severity": "ADVISORY",
+        "detail": "Very little explanation; confirm learners are taught before they practise."
+      }
+    ]
+  },
+  "accessibility": {
+    "schema": "PASS",
+    "blockBindings": 5,
+    "manualScreenReaderReview": "PENDING"
+  },
+  "offline": {
+    "mode": "TEXT_PAPER_CAPTURE_ONLY",
+    "protectedKeysCached": false,
+    "runtimeColdStartAndReconnect": "PENDING"
+  },
+  "protectedAssessment": {
+    "included": false,
+    "restrictedKeyComparison": "PENDING_AUTHORIZED_OWNER_INPUT",
+    "canonicalMasteryMutation": false
+  },
+  "factoryStatus": "REVISION_REQUIRED",
+  "releaseBlockers": [
+    "MOE_OBJECTIVE_UNBOUND",
+    "ONTOLOGY_RELEASE_MISSING",
+    "V4_HUMAN_REVIEW_REQUIRED",
+    "LEGACY_BODY_NOT_COMPARED",
+    "excellence:BP-COVERAGE",
+    "excellence:BP-PRODUCTION",
+    "excellence:BP-REASONING",
+    "excellence:BP-SELECTED-SHARE",
+    "excellence:BP-RETENTION",
+    "excellence:BP-TRANSFER",
+    "excellence:BP-EXTENSION",
+    "REFERENCE_LESSON_ONLY_FULL_EXCELLENCE_PACKAGE_PENDING",
+    "PROTECTED_ASSESSMENT_RECONCILIATION_REQUIRED",
+    "PREREQUISITE_DIAGNOSTIC_AND_MISCONCEPTION_ITEM_BINDINGS_PENDING",
+    "AUTHENTIC_SOURCE_COMPARISON_AND_RIGHTS_REVIEW_REQUIRED",
+    "MANUAL_ACCESSIBILITY_AND_OFFLINE_RUNTIME_QA_REQUIRED",
+    "OBJECTIVE_MAPPING_PROPOSED:ll-g7-eng-read-infer",
+    "OBJECTIVE_MAPPING_PROPOSED:ll-g7-eng-cite-evidence",
+    "OBJECTIVE_MAPPING_PROPOSED:ll-g7-eng-evidence-paragraph",
+    "EXACT_REVISION_HUMAN_REVIEW_REQUIRED",
+    "EXPLICIT_RELEASE_AUTHORIZATION_REQUIRED",
+    "RETENTION_POLICY_APPROVAL_REQUIRED",
+    "ASSESSMENT_ITEMS_PENDING",
+    "RESTRICTED_KEY_COMPARISON_PENDING",
+    "FRONTEND_GENERATED_PACKAGE_CONSUMPTION_QA_PENDING",
+    "EXACT_DRAFT6_RELEASE_AUTHORIZATION_REQUIRED",
+    "CONTENT_RIGHTS_ACCESS_ACCESSIBILITY_SAFETY_REVIEW_PENDING"
+  ],
+  "files": {
+    "candidate.json": "94e387128ea180762c64f9c5d3e13ab16f9ace91e9df03ca79868962a347df2f",
+    "visual-teaching.json": "0cb749d894b816fe66d5a6cbfda73c6b9df749148eb011fed811fe38e797f4df",
+    "blueprint.json": "da8a8b841755b7f0334adfb082844d5f719b5004a6dfa295ac25ede4662f585e",
+    "factory-artifact.json": "00cd8ebb2dec994a08dec1d39c98770a40f648d87c9b33bee052a4b317305f58",
+    "learner-projection.json": "3aeadd9c48fbc39e16d737a74a7d9d064171d6a19ef097530a1ce25f7544fa07",
+    "factory-receipt.json": "00689273d59d920d150667e3dcc20bb09f45f84acdcae74c76bd391656dbbbdc",
+    "paper-alternative.txt": "64d9e0e123380f020e21c38dbae01c8f28c9a5151d173f65839c819b7b7658a0",
+    "academic-review.json": "da83fb4d4c66f3877450e511477c3dd3c6a1cf9420597f99f664fb11f6930872"
+  },
+  "packageHash": "fa54d6f4d508a81020bcf18c906a948a8c1c0e74ec1f384aa9c088acb289be19"
+}

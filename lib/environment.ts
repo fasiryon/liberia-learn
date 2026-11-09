@@ -5,6 +5,11 @@ export type AppEnvironment =
   | "development";
 
 export function getEnvironment(): AppEnvironment {
+  // A Vercel production deployment is production, whatever DEMO_MODE says: DEMO_MODE can never switch off
+  // isProduction() in production (PROD-CFG-01-CODE).
+  if (process.env.VERCEL_ENV === "production") {
+    return "production";
+  }
   if (process.env.NODE_ENV === "development") {
     return "development";
   }

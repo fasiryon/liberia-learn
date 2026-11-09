@@ -16,6 +16,7 @@ import type { AgentDefinition } from "@/lib/agents/types";
  */
 export const contentQaAgent: AgentDefinition = {
   name: "content-qa",
+  audience: "general",
   description:
     "First-pass advisory review of lesson content, video uploads, and essay/code submissions. Never publishes, approves, or finalizes anything.",
   systemPromptKey: "agent.content-qa.system",

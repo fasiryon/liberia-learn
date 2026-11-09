@@ -1,0 +1,52 @@
+TAP version 13
+# Subtest: control: ordinary unguarded identity writer is refused
+ok 1 - control: ordinary unguarded identity writer is refused
+  ---
+  duration_ms: 15.3713
+  type: 'test'
+  ...
+# Subtest: control: direct awaited authority and dominating guard are accepted
+ok 2 - control: direct awaited authority and dominating guard are accepted
+  ---
+  duration_ms: 7.1144
+  type: 'test'
+  ...
+# Subtest: delegate alias must not silently escape provisioning inventory
+ok 3 - delegate alias must not silently escape provisioning inventory
+  ---
+  duration_ms: 1.8496
+  type: 'test'
+  ...
+# Subtest: merely referring to requireRole must not establish prior authentication
+ok 4 - merely referring to requireRole must not establish prior authentication
+  ---
+  duration_ms: 2.1594
+  type: 'test'
+  ...
+# Subtest: guard in try with swallowed earlier failure must not dominate later write
+ok 5 - guard in try with swallowed earlier failure must not dominate later write
+  ---
+  duration_ms: 3.1229
+  type: 'test'
+  ...
+# Subtest: Preview auth failure must be sanitized: app/api/platform/security/transfer/route.ts
+ok 6 - Preview auth failure must be sanitized: app/api/platform/security/transfer/route.ts
+  ---
+  duration_ms: 57.326
+  type: 'test'
+  ...
+# Subtest: Preview auth failure must be sanitized: app/api/teacher/change-password/route.ts
+ok 7 - Preview auth failure must be sanitized: app/api/teacher/change-password/route.ts
+  ---
+  duration_ms: 245.3853
+  type: 'test'
+  ...
+1..7
+# tests 7
+# suites 0
+# pass 7
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1549.4792

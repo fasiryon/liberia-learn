@@ -43,6 +43,8 @@ function read(root: string, relative: string) {
   return text;
 }
 
+export { read as readFactoryPackageText };
+
 export function factoryReviewSelections() {
   return pins.flatMap(pin => {
     const receipt = readFactoryReceipt(pin.candidateVersion);

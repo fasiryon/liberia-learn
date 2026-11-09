@@ -17,7 +17,7 @@ describe("offline sync policies", () => {
     };
 
     const result = resolveAttendance(server, client);
-    expect(result).toEqual({ action: "conflict", hint: "attendance_last_write_wins_by_timestamp" });
+    expect(result).toEqual({ action: "conflict", hint: "attendance_requires_teacher_review" });
   });
 
   it("never overwrites graded submissions", () => {

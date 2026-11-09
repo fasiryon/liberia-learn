@@ -1,3 +1,4 @@
+// route-policy: auth=session; scope=tenant; authority=school-admin; rationale=confirms a staged import and creates accounts; refused on any deployed Preview/staging after authority and before body or data work (PREVIEW_IDENTITY_FROZEN)
 import { NextRequest, NextResponse } from "next/server";
 import { randomUUID } from "crypto";
 import { z } from "zod";
@@ -22,6 +23,7 @@ import {
   normalizeLoginId,
   slugifyLoginSeed,
 } from "@/lib/login-identifiers";
+import { previewIdentityFrozen } from "@/lib/preview/identityFreeze";
 
 export const dynamic = "force-dynamic";
 
@@ -194,6 +196,8 @@ async function importGuardians(
 export async function POST(req: NextRequest) {
   try {
     const user = await requireRole("ADMIN");
+    const frozen = previewIdentityFrozen();
+    if (frozen) return frozen;
     const body = bodySchema.parse(await req.json());
     const schoolId = resolveAdminSchoolScope(user, body.schoolId);
 

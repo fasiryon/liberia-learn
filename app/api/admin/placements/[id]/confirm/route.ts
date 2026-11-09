@@ -1,4 +1,4 @@
-// route-policy: auth=session; scope=tenant; authority=placement-confirm; rationale=only the school placement authority records the official placement decision that sets the learner's grade
+// route-policy: auth=session; scope=tenant; authority=placement-confirm; rationale=only an ADMIN of the learner's school (PLACEMENT_CONFIRM, role ADMIN; no platform-admin bypass of the school scope) records the official placement decision that sets the learner's grade (AT-GRADE-01-2D)
 import { NextResponse } from "next/server";
 import { requireUser } from "@/lib/auth";
 import { confirmOfficialPlacement } from "@/lib/placementAuthority/decisionService";

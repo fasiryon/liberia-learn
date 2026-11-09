@@ -1,0 +1,237 @@
+{
+  "source": "Codex branch feat/content-factory-schoolday @c33fd6fbf, curriculum/factory-v4/drafts/4.0.0-schoolday.1-draft.2 (committed 2026-10-23; read-only). Hashes are identical to the uncommitted copy first pinned.",
+  "version": "4.0.0-schoolday.1-draft.2",
+  "state": "COMMITTED_REVIEW_DRAFT",
+  "officialStatus": "NOT_APPROVED",
+  "receiptInputsSha256": "abf6cb0c3c21a3a8c6c0f154bdb0fd80771ae097843fbd025d496cba6adab36a",
+  "baselineDraft6Matches": "receipt baseline pins the same six draft.6 package and candidate hashes as draft6-pins.json",
+  "packages": [
+    {
+      "key": "g7-english-water-evidence-report",
+      "grade": 7,
+      "recordedSubject": "ENGLISH",
+      "course": "ENGLISH",
+      "unit": 5,
+      "use": "G7 Day 2",
+      "title": "Write an evidence-based water report",
+      "phases": [
+        "READ",
+        "UNDERSTAND",
+        "ORIENT",
+        "ANALYZE",
+        "CONSTRUCT",
+        "REVISE",
+        "ASSESS"
+      ],
+      "packageHash": "f0b35fbb47fbd77c56ed72e6a315699a55e7d8618144b821841e8516717410fe",
+      "candidateSha256": "c72ace42a970e1e3e8bd234644d72bd1ef7899da0404175bdb509b36fd640faf"
+    },
+    {
+      "key": "g7-science-evaporation-fair-test",
+      "grade": 7,
+      "recordedSubject": "SCIENCE",
+      "course": "SCIENCE",
+      "unit": 2,
+      "use": "G7 Day 2",
+      "title": "Investigate exposed water surface area",
+      "phases": [
+        "PREDICT",
+        "EXPERIMENT",
+        "ORIENT",
+        "OBSERVE",
+        "EXPLAIN",
+        "APPLY",
+        "ASSESS"
+      ],
+      "packageHash": "3956be4804ec6207a39b2448a2e317c140b582662db56e6aa821c6cddc7853c2",
+      "candidateSha256": "525fec639e590be6fbe1f39cbf92ca4c8781aa69fcfd622a6524bc3cc0cddaa9"
+    },
+    {
+      "key": "g7-stem-water-cover-design",
+      "grade": 7,
+      "recordedSubject": "SCIENCE",
+      "course": "ENGINEERING",
+      "unit": 6,
+      "use": "G7 Day 1 P6",
+      "title": "Engineer and evaluate a water-container cover",
+      "phases": [
+        "PREDICT",
+        "EXPERIMENT",
+        "ORIENT",
+        "OBSERVE",
+        "EXPLAIN",
+        "APPLY",
+        "ASSESS"
+      ],
+      "packageHash": "ef241d39bfaabc55ab8ab06218893f7e758f044e2eec7c3f65474ad961664406",
+      "candidateSha256": "c53617c548bdfc00ee53692263a62f5f655b48baa1d9ac546e9572dbcfda81c6"
+    },
+    {
+      "key": "g7-computing-water-monitor-algorithms",
+      "grade": 7,
+      "recordedSubject": "SCIENCE",
+      "course": "COMPUTING",
+      "unit": 3,
+      "use": "G7 Day 1 P5",
+      "title": "Trace and debug a water-loss monitor",
+      "phases": [
+        "PREDICT",
+        "EXPERIMENT",
+        "ORIENT",
+        "OBSERVE",
+        "EXPLAIN",
+        "APPLY",
+        "ASSESS"
+      ],
+      "packageHash": "50d11724521ae9bf66647c2a250b3d6c48a2c7fbbb7c648a3585bab5fe269e6e",
+      "candidateSha256": "d843dd5280d407bafca6aa3687e4389ad70e5687ccf34c331361699316b979d6"
+    },
+    {
+      "key": "g7-science-water-evidence-synthesis",
+      "grade": 7,
+      "recordedSubject": "SCIENCE",
+      "course": "SCIENCE",
+      "unit": 2,
+      "use": "G7 Day 2",
+      "title": "Defend a water-stewardship recommendation",
+      "phases": [
+        "PREDICT",
+        "EXPERIMENT",
+        "ORIENT",
+        "OBSERVE",
+        "EXPLAIN",
+        "APPLY",
+        "ASSESS"
+      ],
+      "packageHash": "831dc9e578b2cfd382601a1d3262365e2c2465be40c47b7c2f0847f7532b8406",
+      "candidateSha256": "7900980b3659889a11a273003b6ec5c1ad78f87f098067d17cb0ba1fbfc838d3"
+    },
+    {
+      "key": "g5-english-garden-water-report",
+      "grade": 5,
+      "recordedSubject": "ENGLISH",
+      "course": "ENGLISH",
+      "unit": 3,
+      "use": "G5 Day 1 P3",
+      "title": "Read and write a garden investigation report",
+      "phases": [
+        "READ",
+        "UNDERSTAND",
+        "ORIENT",
+        "ANALYZE",
+        "CONSTRUCT",
+        "REVISE",
+        "ASSESS"
+      ],
+      "packageHash": "38dc0f11753617f63994154f5d042fedce23b60d1e84b23dda294898aee81630",
+      "candidateSha256": "5fcc460f70a00e92a374ecbc57cf3302267d3eab5eb9d1a901bc088c40ee5689"
+    },
+    {
+      "key": "g5-science-water-change-investigation",
+      "grade": 5,
+      "recordedSubject": "SCIENCE",
+      "course": "SCIENCE",
+      "unit": 1,
+      "use": "G5 Day 1 P2",
+      "title": "Observe water loss and plan a fair comparison",
+      "phases": [
+        "PREDICT",
+        "EXPERIMENT",
+        "ORIENT",
+        "OBSERVE",
+        "EXPLAIN",
+        "APPLY",
+        "ASSESS"
+      ],
+      "packageHash": "ff47e58eae777c5e7e164821bb2b09a0045670f169ba4f7a139bcd845f73e838",
+      "candidateSha256": "ce0bb4c8b4c1b46411ad08c716abc077a7fb9230d50e7cd5b352ffa4cd091740"
+    },
+    {
+      "key": "g5-civics-shared-water-decisions",
+      "grade": 5,
+      "recordedSubject": "CIVICS",
+      "course": "SOCIAL_STUDIES",
+      "unit": 4,
+      "use": "G5 Day 1 P4",
+      "title": "Make a fair school-garden water decision",
+      "phases": [
+        "EXPLORE",
+        "INVESTIGATE",
+        "ORIENT",
+        "COMPARE",
+        "REASON",
+        "APPLY",
+        "ASSESS"
+      ],
+      "packageHash": "212048cede33fb7ef2854441210b557b8cbce973f4d847119daa4f538b2013f5",
+      "candidateSha256": "4e99410c8e012c855b8a0e2cf2fe1e62ed4863961bb6ec7ffbffc1f0c03c30cb"
+    },
+    {
+      "key": "g5-stem-paper-channel-design",
+      "grade": 5,
+      "recordedSubject": "SCIENCE",
+      "course": "ENGINEERING",
+      "unit": 4,
+      "use": "G5 Day 1 P6",
+      "title": "Design and improve a dry model water channel",
+      "phases": [
+        "PREDICT",
+        "EXPERIMENT",
+        "ORIENT",
+        "OBSERVE",
+        "EXPLAIN",
+        "APPLY",
+        "ASSESS"
+      ],
+      "packageHash": "be1561ca2176bffcad9b59482bfb879d9af07b039393569cb9c5f7edbf0f3886",
+      "candidateSha256": "d9b29c49fb695f3c1cb34c96fe77769486f859ce1074d1a9784746fa887b8626"
+    },
+    {
+      "key": "g5-computing-garden-counting-rules",
+      "grade": 5,
+      "recordedSubject": "SCIENCE",
+      "course": "COMPUTING",
+      "unit": 2,
+      "use": "G5 Day 1 P5",
+      "title": "Make, trace and debug a garden counting algorithm",
+      "phases": [
+        "PREDICT",
+        "EXPERIMENT",
+        "ORIENT",
+        "OBSERVE",
+        "EXPLAIN",
+        "APPLY",
+        "ASSESS"
+      ],
+      "packageHash": "a5b0aa1d98fce3750572258b0ca6f2ca31ee7c982c97ae0d60bc65193de491f4",
+      "candidateSha256": "2aa67d974b323658594e29849ca5c7d911b540c72384e8cb803f7ed0facfc3c9"
+    },
+    {
+      "key": "g5-science-garden-evidence-review",
+      "grade": 5,
+      "recordedSubject": "SCIENCE",
+      "course": "SCIENCE",
+      "unit": 6,
+      "use": "G5 Day 2",
+      "title": "Explain and improve a garden plan",
+      "phases": [
+        "PREDICT",
+        "EXPERIMENT",
+        "ORIENT",
+        "OBSERVE",
+        "EXPLAIN",
+        "APPLY",
+        "ASSESS"
+      ],
+      "packageHash": "d51839168799f056b2926cd0ccb7a58324c74ddeb9c0cda8ff8d991c3db46194",
+      "candidateSha256": "050cba83b87d2d33d1dbbe6577461089dcbec4fce993d1ee5cff790b3b4aad13"
+    }
+  ],
+  "commit": "c33fd6fbf",
+  "factoryValidation": {
+    "status": "PASS",
+    "record": "docs/qa/schoolday/VALIDATION.json @e1c4591a1: 172 factory tests passed, 6 skipped; changed gate PASS; byte-identical rerun",
+    "commit": "c33fd6fbf"
+  },
+  "hold": "HELD by T2 (docs/qa/schoolday/READINESS.md @e1c4591a1) for S1-S4 corrections; historical batch, not to be delivered"
+}

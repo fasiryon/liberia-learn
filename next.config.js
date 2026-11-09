@@ -1,6 +1,20 @@
+// Next 14 does not run the optional instrumentation hook. Enforce this before
+// plugins and independently of SKIP_ENV_VALIDATION or NODE_ENV overrides.
+if (process.env.VERCEL_ENV === "production" && process.env.DEMO_MODE === "true") {
+  throw new Error("DEMO_MODE cannot be enabled for a Production build");
+}
+
 const { withSentryConfig } = require("@sentry/nextjs");
 const createNextIntlPlugin = require("next-intl/plugin");
 const withNextIntl = createNextIntlPlugin("./i18n.ts");
+// The frozen resolved day is the existing source of these exact eight versions.
+// Trace their sealed bytes explicitly; dynamic filesystem loaders are not enough.
+const grade4Plan = require("./curriculum/program/stem-v1/resolved-days/g4-day1.json");
+const grade4PilotFiles = [...new Set(grade4Plan.blocks.flatMap(({ binding }) => {
+  const match = typeof binding?.selection === "string" && /^factory@(4\.0\.0-schoolday-[a-z0-9.-]+)@[a-z0-9-]+$/.exec(binding.selection);
+  return match ? [`./curriculum/factory-v4/drafts/${match[1]}/**/*`] : [];
+}))];
+if (grade4PilotFiles.length !== 8) throw new Error("Grade 4 pilot requires eight exact sealed package directories");
 
 // One worker is useful for sequential verification on memory-constrained machines.
 // Keep the normal build unchanged unless the operator explicitly selects it.
@@ -39,6 +53,9 @@ const nextConfig = {
     // every route rather than enumerating routes/files one at a time.
     outputFileTracingIncludes: {
       "/*": ["./lib/agents/prompts/**/*.md"],
+      "/learn/preview/*": ["./curriculum/factory-v4/drafts/4.0.0-draft.6/**/*", ...grade4PilotFiles],
+      "/learn/day": ["./curriculum/factory-v4/drafts/4.0.0-draft.6/**/*", ...grade4PilotFiles, "./curriculum/program/stem-v1/resolved-days/*.json", "./curriculum/program/stem-v1/period-matrix.json"],
+      "/api/student/learning-preview/*": ["./curriculum/factory-v4/drafts/4.0.0-draft.6/**/*", ...grade4PilotFiles],
     },
   },
   async headers() {

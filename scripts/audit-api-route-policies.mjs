@@ -36,7 +36,7 @@ function walk(directory) {
 
 function git(args) {
   try { return execFileSync("git", args, { encoding: "utf8" }).trim().split(/\r?\n/).filter(Boolean); }
-  catch { return []; }
+  catch (cause) { throw new Error("api_route_policy_git_history_unavailable", { cause }); }
 }
 
 export function changedApiRoutes() {

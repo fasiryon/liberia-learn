@@ -7,6 +7,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const mockRequireRole = vi.hoisted(() => vi.fn());
 const mockLogAudit = vi.hoisted(() => vi.fn());
+const mockLogAuditRequired = vi.hoisted(() => vi.fn());
 const mockCertificateFindUnique = vi.hoisted(() => vi.fn());
 const mockCertificateShareUpsert = vi.hoisted(() => vi.fn());
 const mockReportCardFindUnique = vi.hoisted(() => vi.fn());
@@ -19,7 +20,7 @@ const mockSendPush = vi.hoisted(() => vi.fn());
 const mockInbox = vi.hoisted(() => vi.fn());
 
 vi.mock("@/lib/auth", () => ({ requireRole: mockRequireRole }));
-vi.mock("@/lib/audit", () => ({ logAudit: mockLogAudit }));
+vi.mock("@/lib/audit", () => ({ logAudit: mockLogAudit, logAuditRequired: mockLogAuditRequired }));
 vi.mock("@/lib/push/sendPush", () => ({ sendPushToUser: mockSendPush }));
 vi.mock("@/lib/notifications/inboxService", () => ({ createInboxNotification: mockInbox }));
 vi.mock("@/lib/autonomous/signals/productSignalService", () => ({ logProductSignal: vi.fn() }));
@@ -31,6 +32,12 @@ vi.mock("@/lib/db", () => ({
     reportCard: { findUnique: mockReportCardFindUnique, updateMany: mockReportCardUpdateMany },
     student: { findUnique: mockStudentFindUnique },
     gradedSubmission: { findUnique: mockGradedFindUnique, update: mockGradedUpdate },
+    // AT-GRADE-01: the reviewer's class authority, and the review plus its audit in one transaction.
+    curriculumContent: { findUnique: async () => ({ id: "lesson-1", subject: "ENGLISH" }) },
+    enrollment: { findMany: async () => [{ classId: "class-1" }] },
+    class: { findUnique: async () => ({ schoolId: "school-1", teacherId: "teacher-1" }) },
+    teacherAssignment: { findMany: async () => [] },
+    $transaction: async (operation: (tx: unknown) => Promise<unknown>) => operation({ gradedSubmission: { update: mockGradedUpdate } }),
     $queryRaw: mockQueryRaw,
   },
 }));
@@ -92,22 +99,23 @@ describe("report card publish is single-shot under concurrency", () => {
 });
 
 describe("teacher grade overrides are audited", () => {
-  it("records previous and new score", async () => {
+  it("records previous and new score, and the reason, in the same transaction", async () => {
     mockRequireRole.mockResolvedValue({ id: "teacher-1", role: "TEACHER", schoolId: "school-1", isPlatformAdmin: false });
-    mockGradedFindUnique.mockResolvedValue({ id: "gs-1", exerciseType: "essay", score: 0.4, studentId: "s-1", student: { user: { schoolId: "school-1" } } });
+    mockGradedFindUnique.mockResolvedValue({ id: "gs-1", exerciseType: "essay", status: "graded", score: 0.4, studentId: "s-1", lessonId: "lesson-1", student: { user: { schoolId: "school-1" } } });
     mockGradedUpdate.mockResolvedValue({ id: "gs-1", score: 0.9 });
     const { PATCH } = await import("@/app/api/grading/[submissionId]/override/route");
     const res = await PATCH(
-      new Request("http://localhost/api/grading/gs-1/override", { method: "PATCH", body: JSON.stringify({ score: 0.9 }) }),
+      new Request("http://localhost/api/grading/gs-1/override", { method: "PATCH", body: JSON.stringify({ score: 0.9, reason: "Rubric evidence re-read." }) }),
       { params: { submissionId: "gs-1" } },
     );
     expect(res.status).toBe(200);
-    expect(mockLogAudit).toHaveBeenCalledWith(
+    expect(mockLogAuditRequired).toHaveBeenCalledWith(
       expect.objectContaining({
         action: "grading.submission.override",
         resourceId: "gs-1",
-        details: expect.objectContaining({ previousScore: 0.4, newScore: 0.9 }),
+        details: expect.objectContaining({ previousScore: 0.4, newScore: 0.9, reason: "Rubric evidence re-read." }),
       }),
+      expect.anything(),
     );
   });
 });

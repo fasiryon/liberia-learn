@@ -54,6 +54,12 @@ vi.mock("@/lib/db", () => ({
     pushSubscription: { findMany: vi.fn(), update: vi.fn(), deleteMany: vi.fn() },
     notificationLog: { create: vi.fn() },
     user: { findUnique: vi.fn(), findMany: vi.fn() },
+    // AT-GRADE-01: assessment analytics are class-scoped; the synthetic teacher teaches class-1.
+    class: {
+      findMany: async () => [{ id: "class-1" }],
+      findUnique: async () => ({ schoolId: "school-1", teacherId: "teacher-1" }),
+    },
+    teacherAssignment: { findMany: async () => [] },
     $queryRawUnsafe: vi.fn(),
   },
 }));
@@ -168,6 +174,8 @@ describe("Sprint 14 - Assessment attempt detail tracking", () => {
   });
 
   it("analytics returns correct correctRate per question", async () => {
+    // The previous case queues a student user it never consumes; analytics now checks the viewer's class authority.
+    mockRequireRole.mockReset();
     mockRequireRole.mockResolvedValueOnce(makeTeacherUser() as any);
     mockPrisma.curriculumContent.findUnique.mockResolvedValueOnce({
       contentId: "c1", title: "Lesson 1", subject: "MATH", grade: 6,

@@ -1,4 +1,4 @@
-// route-policy: auth=public; scope=none; authority=guardian-invite-token; rationale=unauthenticated by design; a GUARDIAN_LINK invite token sets the guardian's PIN and links the invited student; single use is an atomic conditional claim in the same transaction; an existing guardian account's credential version advances
+// route-policy: auth=public; scope=none; authority=guardian-invite-token; rationale=unauthenticated by design; a GUARDIAN_LINK invite token sets the guardian's PIN and links the invited student; single use is an atomic conditional claim in the same transaction; an existing guardian account's credential version advances; refused on any deployed Preview/staging before authority or data work (PREVIEW_IDENTITY_FROZEN)
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
@@ -7,6 +7,7 @@ import { advanceSecurityStamp } from "@/lib/auth/sessionRevocation";
 import { sendGuardianWelcome } from "@/lib/email";
 import { findInviteByToken } from "@/lib/inviteTokens";
 import { isValidPin } from "@/lib/login-identifiers";
+import { previewIdentityFrozen } from "@/lib/preview/identityFreeze";
 
 const Schema = z.object({
   token: z.string().min(1),
@@ -16,6 +17,8 @@ const Schema = z.object({
 });
 
 export async function POST(req: Request) {
+  const frozen = previewIdentityFrozen();
+  if (frozen) return frozen;
   try {
     const body = await req.json().catch(() => null);
     const parsed = Schema.safeParse(body);

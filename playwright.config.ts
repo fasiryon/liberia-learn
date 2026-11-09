@@ -4,10 +4,13 @@ process.env.PLAYWRIGHT_BASE_URL ??= "http://127.0.0.1:3100";
 
 const baseUrl = process.env.PLAYWRIGHT_BASE_URL;
 const useRemoteBaseUrl = /^https?:\/\/(?!127\.0\.0\.1(?::\d+)?\/?$)(?!localhost(?::\d+)?\/?$)/i.test(baseUrl);
+const schoolDaySuite = process.env.E2E_SYNTHETIC === "1";
+if (schoolDaySuite && (useRemoteBaseUrl || baseUrl !== "http://127.0.0.1:3100"))
+  throw Error("school_day_browser_requires_local_disposable_server");
 
 export default defineConfig({
   testDir: "./e2e",
-  testMatch: /(full-review-flow|flow-integrity|phase5-3-intelligence-actions|offline-sync|p5c-pwa-lifecycle|p5e-offline-hardening|day1-simulation|vsl-recording|messaging|wave3-verification|pre-vsl-admin|pre-vsl-student-walkthrough)\.spec\.ts/,
+  testMatch: /(full-review-flow|flow-integrity|phase5-3-intelligence-actions|offline-sync|p5c-pwa-lifecycle|p5e-offline-hardening|day1-simulation|vsl-recording|messaging|wave3-verification|pre-vsl-admin|pre-vsl-student-walkthrough|g4-school-day)\.spec\.ts/,
   workers: 1,
   timeout: 60_000,
   expect: {
@@ -37,9 +40,9 @@ export default defineConfig({
   webServer: useRemoteBaseUrl
     ? undefined
     : {
-        command: "node scripts/playwright-standalone-server.mjs",
+        command: schoolDaySuite ? "node scripts/e2e/start-school-day.cjs" : "node scripts/playwright-standalone-server.mjs",
         url: baseUrl,
-        reuseExistingServer: true,
+        reuseExistingServer: !schoolDaySuite,
         timeout: 120_000,
         env: {
           PORT: "3100",

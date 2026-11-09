@@ -4,6 +4,7 @@ import { factoryVersions, selectable, V4ReviewBar, V4SelectionRejected } from "@
 import { LessonPlayerV2 } from "@/components/learner-experience/LessonPlayerV2";
 import { isLearnerExperiencePrototypeEnabled } from "@/lib/learner-experience/prototypeRoute";
 import { loadV4Preview, V4_REVIEW_BASE_PATH, v4ReviewCatalogue } from "@/lib/curriculum/v4/preview";
+import { geographicAttachments } from "@/lib/learner-experience/geography/draft6Binding";
 
 // Interactive Learning V4 review: an unreviewed V4 DRAFT played by Lesson Player V2. Dev-only and gated like the
 // Lesson Player V2 prototype; 404 in production builds. The loader verifies the selection and never substitutes
@@ -29,8 +30,11 @@ export default function V4LessonReviewPage({ params }: { params: { key: string }
   const { entries } = v4ReviewCatalogue();
   const versions = factoryVersions(entries).get(loaded.entry.lessonKey) ?? [];
   const reference = loaded.entry.origin === "FACTORY_GENERATED" ? selectable(entries).find((entry) => entry.origin === "HAND_AUTHORED_FIXTURE" && entry.lessonKey === loaded.entry.lessonKey) ?? null : null;
+  const provenance = loaded.entry.provenance;
+  const attachments = "packageHash" in provenance && provenance.packageHash
+    ? geographicAttachments({ selection, packageHash: provenance.packageHash, candidateSha256: provenance.candidateSha256 }, loaded.experience.scenes.map((scene) => scene.id)) : {};
   return <>
     <V4ReviewBar entry={loaded.entry} versions={versions} reference={reference} basePath={V4_REVIEW_BASE_PATH} />
-    <LessonPlayerV2 experience={loaded.experience} toolsByScene={loaded.toolsByScene} exitHref={V4_REVIEW_BASE_PATH} returnSceneId={null} linkPolicy="INTERNAL_PREVIEW" />
+    <LessonPlayerV2 experience={loaded.experience} toolsByScene={loaded.toolsByScene} exitHref={V4_REVIEW_BASE_PATH} returnSceneId={null} linkPolicy="INTERNAL_PREVIEW" sceneAttachments={attachments} />
   </>;
 }

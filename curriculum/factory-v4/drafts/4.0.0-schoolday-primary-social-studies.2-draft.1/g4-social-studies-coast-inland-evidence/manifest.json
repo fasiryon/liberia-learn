@@ -1,0 +1,159 @@
+{
+  "registryVersion": "teaching-blocks/1.2.0",
+  "instructionStandard": "liberialearn-v4-instruction/1.1.0",
+  "manifestVersion": "factory-v4-candidate/1.0.0",
+  "candidateVersion": "4.0.0-schoolday-primary-social-studies.2-draft.1",
+  "contractVersion": "visual-teaching-block/4.0.0-draft.1",
+  "key": "g4-social-studies-coast-inland-evidence",
+  "lessonId": "schoolday:g4-social-studies-coast-inland-evidence",
+  "grade": 4,
+  "subject": "SOCIAL_STUDIES",
+  "title": "Coast and inland: compare places using evidence",
+  "state": "DRAFT",
+  "approved": false,
+  "published": false,
+  "released": false,
+  "learnerDeliverable": false,
+  "audience": "REVIEWER_ONLY",
+  "contentOrigin": "DETERMINISTIC_FACTORY_EXECUTOR_WITH_SYNTHETIC_TEACHING_CONTEXTS",
+  "generation": {
+    "executor": "factory-v4-primary-social-studies-author/2.0.0",
+    "role": "LESSON_AUTHOR",
+    "referenceFixtureCopied": false,
+    "modelCalls": 0
+  },
+  "sourceLineage": {
+    "kind": "ORIGINAL_FACTORY_DRAFT",
+    "authoringPlan": "lib/content-factory/v4/primarySocialStudies/revision.ts",
+    "legacyRecordsReplaced": false
+  },
+  "sourceVerification": "REPOSITORY_PINS_VERIFIED_REMOTE_RIGHTS_AND_LEGACY_BODY_NOT_ATTESTED",
+  "programOrderId": "GO-G04-P4-SOCIAL_STUDIES-U1",
+  "courseId": "stem1-g4-social-studies",
+  "unit": 1,
+  "orderKind": "LESSON",
+  "inputPins": {
+    "manifestSha256": "d9c7f0ba04a82527627b9bd30e52627a2cfa4e86cad87659171dfc7286a9de32",
+    "frontendCommit": "3e3f6cf46e2dee4da5853ef240f3c11dfd39f35b"
+  },
+  "candidateSha256": "3808f2a1237d0087852f813547ef3f7f77cef549d308dd66d737b09d1a52e1bb",
+  "blueprintHash": "acb84a171a3ab41bf6bc087ef244c85fe7b621d8508096268533dd51bb967c70",
+  "learnerProjectionSha256": "91e386d801bb00d042647bad6288d71ef13004f6f758ba37ffa3bbe07a08ef5f",
+  "academicSchema": {
+    "valid": true,
+    "errors": []
+  },
+  "visualInstruction": {
+    "valid": true,
+    "family": "HUMANITIES",
+    "balance": {
+      "explanationSeconds": 256,
+      "activitySeconds": 870,
+      "activityShare": 0.773
+    },
+    "practice": {
+      "g4-social-studies-coast-inland-evidence-o1": {
+        "visuals": 1,
+        "workedExamples": 1,
+        "guided": 2,
+        "independent": 1,
+        "mistakes": 0,
+        "transfer": 1
+      },
+      "g4-social-studies-coast-inland-evidence-o2": {
+        "visuals": 0,
+        "workedExamples": 1,
+        "guided": 4,
+        "independent": 3,
+        "mistakes": 0,
+        "transfer": 1
+      },
+      "g4-social-studies-coast-inland-evidence-o3": {
+        "visuals": 0,
+        "workedExamples": 0,
+        "guided": 2,
+        "independent": 3,
+        "mistakes": 1,
+        "transfer": 3
+      }
+    },
+    "totals": {
+      "visuals": 1,
+      "workedExamples": 2,
+      "guided": 8,
+      "independent": 7,
+      "mistakes": 1,
+      "transfer": 5,
+      "problems": 10
+    },
+    "advisories": [
+      {
+        "code": "v4_activity_share_outside_target",
+        "severity": "ADVISORY",
+        "detail": "77% activity (target 65â€“75%); do not pad with repetitive questions to reach it."
+      }
+    ]
+  },
+  "accessibility": {
+    "schema": "PASS",
+    "blockBindings": 8,
+    "manualScreenReaderReview": "PENDING"
+  },
+  "offline": {
+    "mode": "TEXT_PAPER_CAPTURE_ONLY",
+    "protectedKeysCached": false,
+    "runtimeColdStartAndReconnect": "PENDING"
+  },
+  "protectedAssessment": {
+    "included": false,
+    "restrictedKeyComparison": "PENDING_AUTHORIZED_OWNER_INPUT",
+    "canonicalMasteryMutation": false
+  },
+  "factoryStatus": "REVISION_REQUIRED",
+  "releaseBlockers": [
+    "MOE_OBJECTIVE_UNBOUND",
+    "ONTOLOGY_RELEASE_MISSING",
+    "V4_HUMAN_REVIEW_REQUIRED",
+    "excellence:BP-COVERAGE",
+    "excellence:BP-PRODUCTION",
+    "excellence:BP-REASONING",
+    "excellence:BP-SELECTED-SHARE",
+    "excellence:BP-RETENTION",
+    "excellence:BP-TRANSFER",
+    "excellence:BP-EXTENSION",
+    "REFERENCE_LESSON_ONLY_FULL_EXCELLENCE_PACKAGE_PENDING",
+    "PROTECTED_ASSESSMENT_RECONCILIATION_REQUIRED",
+    "PREREQUISITE_DIAGNOSTIC_AND_MISCONCEPTION_ITEM_BINDINGS_PENDING",
+    "AUTHENTIC_SOURCE_COMPARISON_AND_RIGHTS_REVIEW_REQUIRED",
+    "MANUAL_ACCESSIBILITY_AND_OFFLINE_RUNTIME_QA_REQUIRED",
+    "OBJECTIVE_MAPPING_PROPOSED:g4-social-studies-coast-inland-evidence-o1",
+    "OBJECTIVE_MAPPING_PROPOSED:g4-social-studies-coast-inland-evidence-o2",
+    "OBJECTIVE_MAPPING_PROPOSED:g4-social-studies-coast-inland-evidence-o3",
+    "EXACT_REVISION_HUMAN_REVIEW_REQUIRED",
+    "EXPLICIT_RELEASE_AUTHORIZATION_REQUIRED",
+    "RETENTION_POLICY_APPROVAL_REQUIRED",
+    "ASSESSMENT_ITEMS_PENDING",
+    "RESTRICTED_KEY_COMPARISON_PENDING",
+    "FRONTEND_GENERATED_PACKAGE_CONSUMPTION_QA_PENDING",
+    "COS_G3_AND_INDEPENDENT_ACADEMIC_REVIEW",
+    "LIBERIA_STANDARDS_MAPPING",
+    "RIGHTS_REVIEW",
+    "BROWSER_ACCESSIBILITY_AND_OFFLINE_QA",
+    "TIMED_REHEARSAL",
+    "EXACT_VERSION_AUTHORIZATION"
+  ],
+  "files": {
+    "candidate.json": "c64846eaa98f6ca078f268ac97eae0064379528e0e274b0b4b5d727b1cc2cf72",
+    "visual-teaching.json": "c299b3fb8843ea72aa6f68e106f9420366178c870db3258db506ea217d032343",
+    "blueprint.json": "d2db031bd2a262152df0ef921f222d461695ba214ebcad769534630353c3f828",
+    "factory-artifact.json": "4646e791b8c16dc8664b6b12505014999344a79c92b64234c43816f010ac844d",
+    "learner-projection.json": "8e2a361acadc95b6bd1119107acae4c2cb026cb0e4fec59680c1b59833a8e928",
+    "factory-receipt.json": "cc19a7e6f67de66c857d323383882f54afde10d9abf39067f76fabc84c980487",
+    "paper-alternative.txt": "8c1025a5997a582796182c70e2b245c64a91aaa89106b5a51f40b091fcbcfd11",
+    "academic-review.json": "f41d590a1391414c669d88ba9ff10e8cd60bf76c2adbd6c922f6bd6803c577d0",
+    "teacher-guide.json": "7c5525b711958cc8bdcd564efc55b335ea3dfec51e60353f6e20098ae612d808"
+  },
+  "supersedesPackage": "4.0.0-schoolday-primary-social-studies.1-draft.1@g4-social-studies-coast-inland-evidence",
+  "unicodeNormalization": "NFC",
+  "packageHash": "924e57dcc56e65c20eaedb5133c70d84a433f935c898349ac053df22b584cd04"
+}

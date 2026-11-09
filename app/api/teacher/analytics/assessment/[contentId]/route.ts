@@ -1,5 +1,7 @@
+// route-policy: auth=session; scope=record; authority=class-teacher-subject-coteacher-or-school-admin; rationale=assessment analytics for one content item: an ADMIN reads its own school's attempts; a teacher reads only attempts of classes where lib/authz/classAuthority grants class.read.learning for the content's subject (class teacher, or a co-teacher assigned that subject); attempts with no class are never in a teacher view; a missing viewer school or no class basis is refused before any attempt query (AT-GRADE-01 batch 2a)
 import { NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
+import { authorizeClassAccess } from "@/lib/authz/classAuthority";
 import { prisma } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
@@ -10,12 +12,30 @@ export async function GET(
 ) {
   try {
     const user = await requireRole("TEACHER", "ADMIN");
+    // A missing school would otherwise drop the school predicate (Prisma ignores undefined): refuse first.
+    if (!user.schoolId) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
     const lesson = await prisma.curriculumContent.findUnique({
       where: { contentId: params.contentId },
       select: { contentId: true, title: true, subject: true, grade: true },
     });
     if (!lesson) return NextResponse.json({ error: "Not found" }, { status: 404 });
+
+    // ADMIN: school-scoped oversight. TEACHER: only the classes the class-authority service grants for this subject.
+    let scope: { schoolId: string; classId?: { in: string[] } } = { schoolId: user.schoolId };
+    if (user.role !== "ADMIN") {
+      const [owned, assigned] = await Promise.all([
+        prisma.class.findMany({ where: { schoolId: user.schoolId, teacherId: user.id }, select: { id: true } }),
+        prisma.teacherAssignment.findMany({ where: { schoolId: user.schoolId, teacherId: user.id }, select: { classId: true } }),
+      ]);
+      const candidates = Array.from(new Set([...owned.map((c) => c.id), ...assigned.map((a) => a.classId)]));
+      const authorized: string[] = [];
+      for (const classId of candidates) {
+        if ((await authorizeClassAccess(user, { classId, subject: lesson.subject, fn: "class.read.learning" })).allowed) authorized.push(classId);
+      }
+      if (authorized.length === 0) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+      scope = { schoolId: user.schoolId, classId: { in: authorized } };
+    }
 
     // Get all attempt details for this content
     const details = await prisma.assessmentAttemptDetail.findMany({
@@ -25,7 +45,7 @@ export async function GET(
             path: ["contentId"],
             equals: params.contentId,
           },
-          schoolId: user.role === "ADMIN" ? user.schoolId ?? undefined : user.schoolId ?? undefined,
+          ...scope,
         },
       },
       orderBy: [{ questionIdx: "asc" }],
@@ -38,7 +58,7 @@ export async function GET(
           path: ["contentId"],
           equals: params.contentId,
         },
-        schoolId: user.schoolId ?? undefined,
+        ...scope,
       },
     });
 
@@ -48,7 +68,7 @@ export async function GET(
           path: ["contentId"],
           equals: params.contentId,
         },
-        schoolId: user.schoolId ?? undefined,
+        ...scope,
       },
       _avg: { score: true },
     });

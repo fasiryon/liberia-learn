@@ -1,0 +1,159 @@
+{
+  "registryVersion": "teaching-blocks/1.2.0",
+  "instructionStandard": "liberialearn-v4-instruction/1.1.0",
+  "manifestVersion": "factory-v4-candidate/1.0.0",
+  "candidateVersion": "4.0.0-schoolday-grade4-support.2-draft.1",
+  "contractVersion": "visual-teaching-block/4.0.0-draft.1",
+  "key": "g4-support-retrieve-reteach-retry",
+  "lessonId": "schoolday:g4-support-retrieve-reteach-retry",
+  "grade": 4,
+  "subject": "ENGLISH",
+  "title": "Recall, reconnect and try again",
+  "state": "DRAFT",
+  "approved": false,
+  "published": false,
+  "released": false,
+  "learnerDeliverable": false,
+  "audience": "REVIEWER_ONLY",
+  "contentOrigin": "DETERMINISTIC_FACTORY_EXECUTOR_WITH_SYNTHETIC_TEACHING_CONTEXTS",
+  "generation": {
+    "executor": "factory-v4-grade4-support-author/2.0.0",
+    "role": "LESSON_AUTHOR",
+    "referenceFixtureCopied": false,
+    "modelCalls": 0
+  },
+  "sourceLineage": {
+    "kind": "ORIGINAL_FACTORY_DRAFT",
+    "authoringPlan": "lib/content-factory/v4/grade4Roles/supportRevision.ts",
+    "legacyRecordsReplaced": false
+  },
+  "sourceVerification": "REPOSITORY_PINS_VERIFIED_REMOTE_RIGHTS_AND_LEGACY_BODY_NOT_ATTESTED",
+  "programOrderId": "GO-G04-SUPPORT",
+  "courseId": null,
+  "unit": null,
+  "orderKind": "DIFFERENTIATED_SUPPORT",
+  "inputPins": {
+    "manifestSha256": "ecc8f722d2342d7a48496d3c222304deaf60b99b75071c41aa5b3c8a0024b62e",
+    "frontendCommit": "4da455ffcfa8182793f3b13f469585a1e2746ac4"
+  },
+  "candidateSha256": "b475b1aa4c3d8e8c6df77a7e25356ea4cfe7f1efdade79a1d563b0a13bb59cdb",
+  "blueprintHash": "983127c8cd7682abb25bd267a2df53a2f23e94eed7b8a470b20be9652ef260e8",
+  "learnerProjectionSha256": "5c2ee20a04067b4cf2fd7d4fbe2fd19b86a38814aebd18ded001452d42c47c30",
+  "academicSchema": {
+    "valid": true,
+    "errors": []
+  },
+  "visualInstruction": {
+    "valid": true,
+    "family": "LANGUAGE",
+    "balance": {
+      "explanationSeconds": 835,
+      "activitySeconds": 1280,
+      "activityShare": 0.605
+    },
+    "practice": {
+      "g4-support-retrieve-reteach-retry-o1": {
+        "visuals": 0,
+        "workedExamples": 0,
+        "guided": 3,
+        "independent": 2,
+        "mistakes": 0,
+        "transfer": 1
+      },
+      "g4-support-retrieve-reteach-retry-o2": {
+        "visuals": 0,
+        "workedExamples": 0,
+        "guided": 3,
+        "independent": 2,
+        "mistakes": 0,
+        "transfer": 1
+      },
+      "g4-support-retrieve-reteach-retry-o3": {
+        "visuals": 0,
+        "workedExamples": 0,
+        "guided": 3,
+        "independent": 2,
+        "mistakes": 0,
+        "transfer": 1
+      }
+    },
+    "totals": {
+      "visuals": 0,
+      "workedExamples": 0,
+      "guided": 9,
+      "independent": 6,
+      "mistakes": 0,
+      "transfer": 3,
+      "problems": 12
+    },
+    "advisories": [
+      {
+        "code": "v4_activity_share_outside_target",
+        "severity": "ADVISORY",
+        "detail": "61% activity (target 65â€“75%); do not pad with repetitive questions to reach it."
+      }
+    ]
+  },
+  "accessibility": {
+    "schema": "PASS",
+    "blockBindings": 9,
+    "manualScreenReaderReview": "PENDING"
+  },
+  "offline": {
+    "mode": "TEXT_PAPER_CAPTURE_ONLY",
+    "protectedKeysCached": false,
+    "runtimeColdStartAndReconnect": "PENDING"
+  },
+  "protectedAssessment": {
+    "included": false,
+    "restrictedKeyComparison": "PENDING_AUTHORIZED_OWNER_INPUT",
+    "canonicalMasteryMutation": false
+  },
+  "factoryStatus": "REVISION_REQUIRED",
+  "releaseBlockers": [
+    "MOE_OBJECTIVE_UNBOUND",
+    "ONTOLOGY_RELEASE_MISSING",
+    "V4_HUMAN_REVIEW_REQUIRED",
+    "excellence:BP-COVERAGE",
+    "excellence:BP-PRODUCTION",
+    "excellence:BP-REASONING",
+    "excellence:BP-SELECTED-SHARE",
+    "excellence:BP-RETENTION",
+    "excellence:BP-TRANSFER",
+    "excellence:BP-EXTENSION",
+    "REFERENCE_LESSON_ONLY_FULL_EXCELLENCE_PACKAGE_PENDING",
+    "PROTECTED_ASSESSMENT_RECONCILIATION_REQUIRED",
+    "PREREQUISITE_DIAGNOSTIC_AND_MISCONCEPTION_ITEM_BINDINGS_PENDING",
+    "AUTHENTIC_SOURCE_COMPARISON_AND_RIGHTS_REVIEW_REQUIRED",
+    "MANUAL_ACCESSIBILITY_AND_OFFLINE_RUNTIME_QA_REQUIRED",
+    "OBJECTIVE_MAPPING_PROPOSED:g4-support-retrieve-reteach-retry-o1",
+    "OBJECTIVE_MAPPING_PROPOSED:g4-support-retrieve-reteach-retry-o2",
+    "OBJECTIVE_MAPPING_PROPOSED:g4-support-retrieve-reteach-retry-o3",
+    "EXACT_REVISION_HUMAN_REVIEW_REQUIRED",
+    "EXPLICIT_RELEASE_AUTHORIZATION_REQUIRED",
+    "RETENTION_POLICY_APPROVAL_REQUIRED",
+    "ASSESSMENT_ITEMS_PENDING",
+    "RESTRICTED_KEY_COMPARISON_PENDING",
+    "FRONTEND_GENERATED_PACKAGE_CONSUMPTION_QA_PENDING",
+    "COS_G3_AND_INDEPENDENT_ACADEMIC_REVIEW",
+    "LIBERIA_STANDARDS_MAPPING",
+    "RIGHTS_REVIEW",
+    "BROWSER_ACCESSIBILITY_AND_OFFLINE_QA",
+    "TIMED_REHEARSAL",
+    "EXACT_VERSION_AUTHORIZATION"
+  ],
+  "files": {
+    "candidate.json": "5ae8c13a0dc9643a7b89633b88b98382899402e7d4c45f671ae177cd22fe3f55",
+    "visual-teaching.json": "1d5542a4f6816d592c708c821f834b8f96fb717da829229167de999e6b104762",
+    "blueprint.json": "f7b57040f2b115e9eef37a428e6b0e389963abb51d238e256e57b1cdadd00b8a",
+    "factory-artifact.json": "b69346fe74499900ecfaf954505110ceb55c490ca90a7f3217411ce4864b591f",
+    "learner-projection.json": "07c87dcb04bae2fee551fee3d0cb8bed4108b9072885d1c53daa3039166aa21e",
+    "factory-receipt.json": "30641ce79aacc871617b046aa7871cb26483b536ab398b87616b05dddd66ee52",
+    "paper-alternative.txt": "7e38d5164748edd9da7bea7140629b33b2482378696f31cbd21cc8a728f117c5",
+    "academic-review.json": "6a7f19b77b427c3bf8c525279a0b7d3a6653bf47fde68d36909d3daf1587fa72",
+    "teacher-guide.json": "3bffb606d30166fd624d9ebf69955112104961bd3b9dd8e02653fbec86cdbaa8"
+  },
+  "supersedesPackage": "4.0.0-schoolday-grade4-support.1-draft.1@g4-support-retrieve-reteach-retry",
+  "unicodeNormalization": "NFC",
+  "packageHash": "936016a5f43b7f8beb9d70696b0422f25c73862d8435c335ba5f221d0d79dd25"
+}

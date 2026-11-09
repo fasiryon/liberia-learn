@@ -1,0 +1,63 @@
+﻿{
+    "offlineOnly":  true,
+    "base":  "61cae3bf0826078b4c2a00cd7c0374442c23ea59",
+    "files":  [
+                  {
+                      "sha256":  "30ad26a117e55f6067d8f259b389c2492940792ad1cedfe2a535ce8492c58993",
+                      "path":  "scripts/preview/database-preflight.sql"
+                  },
+                  {
+                      "sha256":  "6cdbbdab31fef3adb70cef7990a957cfeb2a6664e1d6543694473cc343b49781",
+                      "path":  "scripts/preview/database-preflight.mjs"
+                  },
+                  {
+                      "sha256":  "9fe99c9e63ed2df3af771cdb2fec932c14e495e9fc0990ff641419176f950ce3",
+                      "path":  "scripts/preview/database-policy.template.json"
+                  },
+                  {
+                      "sha256":  "f7f1572f8650165dd41c4572678f81ee322be22f69134cc4512dc7d51102fdd1",
+                      "path":  "scripts/preview/run-database-preflight.mjs"
+                  },
+                  {
+                      "sha256":  "3bf36a0d3eacbec608a504f68b795f9a72ba7e0fcecb1aea796cfc2130be4ed4",
+                      "path":  "scripts/preview/a2-b3-offline-metadata.test.mjs"
+                  },
+                  {
+                      "sha256":  "0ecb0d24a06e643c378e929cbc9ebd8baf04cfdfaeb3470ebeb7896d26a33526",
+                      "path":  "scripts/preview/a2-b3-focused.vitest.config.mjs"
+                  },
+                  {
+                      "sha256":  "d1244c4a8e31ca60223e5ea6a0a3bad865a7cbb573d7014a7b2b3c88db4c6325",
+                      "path":  "__tests__/preview-database-preflight.test.ts"
+                  },
+                  {
+                      "sha256":  "4b10990d99427bec6b63f2b96e94d3658438e00ed283bc9246f4bee2ddc4128a",
+                      "path":  "artifacts/t2-preview-readiness-20261102/database-preflight.sql"
+                  },
+                  {
+                      "sha256":  "3194f8cf1cb9a5dd7b980e376dde308ff0e7e646f628ce12d87cd0ba06ba0141",
+                      "path":  "artifacts/t2-preflight-repair-20261103/RED.tap"
+                  },
+                  {
+                      "sha256":  "c8356923a1613b36a05eead3b31261882308c40ee35a0d8891d30f20d3803e2d",
+                      "path":  "artifacts/t2-preflight-repair-20261103/RED-raw.tap.gz"
+                  },
+                  {
+                      "sha256":  "e631651864d1c7d3e6b091c0a6634314b5a9c31169bd20f6ffbb6f5be25c92c1",
+                      "path":  "artifacts/t2-preflight-repair-20261103/GREEN-final-topology.tap"
+                  },
+                  {
+                      "sha256":  "1dd0a10f5cf9487674eac574f5d6340a2ecb1337b9b474936509cde0419aec9a",
+                      "path":  "artifacts/t2-preflight-repair-20261103/vitest-results.json"
+                  },
+                  {
+                      "sha256":  "7b184d37a9df0f033f0e009838c1d79b00bf0f19e5e7a4e77043e7230e5720d5",
+                      "path":  "artifacts/t2-preflight-repair-20261103/validate-changed-final.log.gz"
+                  }
+              ],
+    "nodeTests":  52,
+    "validatedHead":  "9d749b87d95a31a6c71cf674f82d847d98593790",
+    "implementationCommit":  "3fa01db73a89c7a4a5fef02324cb656f7489ae98",
+    "hostedConnection":  false,
+    "vitestTests":  26
+}

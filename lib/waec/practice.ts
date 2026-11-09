@@ -4,15 +4,18 @@
  * WAEC-style practice sessions. The lesson corpus is prose (no structured questions), so
  * questions are GENERATED via routedCompletion against the WAEC syllabus topics (PATH B)
  * and CACHED in WaecPracticeItem — a growing bank so we don't regenerate each time.
- * correctIndex is never sent to clients; grading is server-side and feeds the mastery engine.
+ * Keys are withheld until issued-attempt scoring. Practice results are provisional
+ * and do not enter legacy mastery or official academic records.
  */
 import { prisma } from "@/lib/db";
 import { routedCompletion } from "@/lib/ai/routedCompletion";
 import { moderateText } from "@/lib/agents/moderation";
-import { updateMasteryProfile } from "@/lib/mastery/masteryService";
-import { gradeToBand } from "@/lib/moe/alignment-engine";
 import { getWaecSubject, getTopic, type WaecSubjectId } from "@/lib/waec/syllabus";
 import { getStudentWaecReadiness } from "@/lib/waec/readiness";
+import {
+  openPracticeSession, practiceError, practiceReceiptId, validatePracticeAnswers,
+  validatePracticeItems, verifyPracticeRevisions, type PracticeContext,
+} from "@/lib/waec/practiceSession";
 
 export type ClientQuestion = { id: string; topicId: string; topicName: string; prompt: string; options: string[] };
 export type PracticeSession = { subjectId: WaecSubjectId; subjectName: string; questions: ClientQuestion[] };
@@ -21,6 +24,8 @@ export type PracticeResult = {
   score: number; correct: number; total: number;
   topics: TopicResult[];
   review: { id: string; prompt: string; options: string[]; correctIndex: number; chosen: number | null; explanation: string | null }[];
+  evidenceStatus: "PROVISIONAL_UNBOUND";
+  masteryUpdated: false;
 };
 
 const MIN_PER_TOPIC = 3;
@@ -76,7 +81,7 @@ export async function ensureBank(subjectId: WaecSubjectId, grade = 11): Promise<
   if (!subject || subject.masterySubject === null) return;
   const topics = subject.topics.filter((t) => t.strands.length > 0);
   for (const t of topics) {
-    const count = await prisma.waecPracticeItem.count({ where: { subjectId, topicId: t.id } });
+    const count = await prisma.waecPracticeItem.count({ where: { subjectId, topicId: t.id, grade } });
     if (count < MIN_PER_TOPIC) {
       await generateForTopic(subjectId, t.id, grade).catch(() => 0);
     }
@@ -110,7 +115,7 @@ export async function buildPracticeSession(
     for (const t of ordered) {
       if (questions.length >= size) break;
       const item = await prisma.waecPracticeItem.findFirst({
-        where: { subjectId, topicId: t.id, id: { notIn: Array.from(seen) } },
+        where: { subjectId, topicId: t.id, grade, id: { notIn: Array.from(seen) } },
         orderBy: { createdAt: "asc" }, skip: round,
       });
       if (!item) continue;
@@ -122,30 +127,35 @@ export async function buildPracticeSession(
   return { subjectId, subjectName: subject.name, questions };
 }
 
-/** Grade answers server-side, update mastery per topic, return breakdown + review. */
+/** Score one issued formative attempt; its unique provisional receipt is the only write. */
 export async function gradePracticeSession(
   studentId: string, schoolId: string, subjectId: WaecSubjectId, grade: number,
-  answers: { id: string; chosen: number | null }[]
+  answers: unknown,
+  issued?: { token: string; userId: string }
 ): Promise<PracticeResult> {
-  const subject = getWaecSubject(subjectId);
-  const ids = answers.map((a) => a.id);
-  const items = await prisma.waecPracticeItem.findMany({ where: { id: { in: ids } } });
+  const context: PracticeContext = { userId: issued?.userId ?? "", studentId, schoolId, subjectId, grade };
+  const claims = openPracticeSession(issued?.token ?? "", context);
+  const submitted = validatePracticeAnswers(answers, claims);
+  const ids = claims.items.map(item => item.id);
+  const rows = await prisma.waecPracticeItem.findMany({ where: { id: { in: ids }, subjectId, grade } });
+  const items = validatePracticeItems(rows, context, ids);
+  verifyPracticeRevisions(items, claims);
   const byId = new Map(items.map((i) => [i.id, i]));
 
   const perTopic = new Map<string, { correct: number; total: number }>();
   const review: PracticeResult["review"] = [];
   let correct = 0;
 
-  for (const a of answers) {
+  for (const a of submitted) {
     const item = byId.get(a.id);
-    if (!item) continue;
+    if (!item) throw practiceError(400, "Answers must match the issued practice questions exactly.");
     const isCorrect = a.chosen === item.correctIndex;
     if (isCorrect) correct++;
     const pt = perTopic.get(item.topicId) ?? { correct: 0, total: 0 };
     pt.total++; if (isCorrect) pt.correct++;
     perTopic.set(item.topicId, pt);
     review.push({
-      id: item.id, prompt: item.prompt, options: item.options as string[],
+      id: item.id, prompt: item.prompt, options: item.options,
       correctIndex: item.correctIndex, chosen: a.chosen, explanation: item.explanation,
     });
   }
@@ -153,24 +163,31 @@ export async function gradePracticeSession(
   const total = review.length;
   const score = total > 0 ? Math.round((correct / total) * 100) : 0;
 
-  // Feed each topic's result into the mastery engine (the same service lessons use).
-  if (subject && subject.masterySubject !== null) {
-    const band = gradeToBand(grade);
-    for (const [topicId, pt] of perTopic) {
-      const strand = getTopic(topicId)?.strands[0];
-      if (!strand || pt.total === 0) continue;
-      const topicScore = pt.correct / pt.total;
-      await updateMasteryProfile({
-        studentId, schoolId, subject: strand.subject, strandKey: strand.strandKey, gradeBand: band,
-        newScore: topicScore, wasAiAssisted: false, totalAttempts: pt.total, aiAssistedAttempts: 0,
-        recentScores: [topicScore],
-      }).catch(() => null);
-    }
-  }
-
   const topics: TopicResult[] = Array.from(perTopic.entries()).map(([topicId, pt]) => ({
     topicId, topicName: getTopic(topicId)?.name ?? topicId, correct: pt.correct, total: pt.total,
   }));
 
-  return { score, correct, total, topics, review };
+  // The existing primary key makes competing creates atomic across processes.
+  // No read-before-write claim, lock, schema or mastery side effect is needed.
+  try {
+    await prisma.auditLog.create({ data: {
+      id: practiceReceiptId(claims), userId: context.userId, schoolId,
+      action: "waec.practice.provisional.scored", resourceType: "WAECPracticeAttempt", resourceId: claims.attemptId,
+      // Keep provisional practice out of every AssessmentAttempt reader,
+      // including older analytics without a status/source filter.
+      details: {
+        userId: context.userId, studentId, schoolId, subject: subjectId, grade,
+        score, correct, total, topics, answers: submitted,
+        evidenceStatus: "PROVISIONAL_UNBOUND", masteryUpdated: false, independentAssessment: false,
+        assistance: { status: "UNKNOWN", source: "not_collected" },
+        issuedAt: claims.issuedAt, expiresAt: claims.expiresAt, itemBindings: claims.items,
+      },
+    } });
+  } catch (error: unknown) {
+    if (error !== null && typeof error === "object" && "code" in error && error.code === "P2002") {
+      throw practiceError(409, "This practice attempt was already submitted. Reload to start a new attempt.");
+    }
+    throw error;
+  }
+  return { score, correct, total, topics, review, evidenceStatus: "PROVISIONAL_UNBOUND", masteryUpdated: false };
 }

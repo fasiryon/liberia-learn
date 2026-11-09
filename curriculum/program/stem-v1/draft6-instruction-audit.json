@@ -1,0 +1,154 @@
+{
+  "generatedBy": "scripts/cos-stem/audit-draft6-instruction.cjs",
+  "source": "fix/v4-pilot-security-release @5f3348b30 (draft.6 sealed at 36d2ca665)",
+  "lessons": [
+    {
+      "lesson": "g7-civics-counties-capitals",
+      "title": "Generated: Read a geographic county map",
+      "min": 45,
+      "scenes": 6,
+      "bodyWords": 248,
+      "checkItems": 3,
+      "twoOptionItems": 3,
+      "optionCounts": [
+        2
+      ],
+      "scenesWithoutHints": 6,
+      "freeResponseScenes": 5,
+      "genericLearnerActions": 0,
+      "misconceptions": [
+        "generated-civics-misconception"
+      ],
+      "blocks": {
+        "READING_PASSAGE": 1,
+        "CHECK": 3,
+        "WRITING_ORGANIZER": 1
+      }
+    },
+    {
+      "lesson": "g7-english-reading-evidence",
+      "title": "Generated: Read an informational explanation",
+      "min": 45,
+      "scenes": 6,
+      "bodyWords": 243,
+      "checkItems": 1,
+      "twoOptionItems": 1,
+      "optionCounts": [
+        2
+      ],
+      "scenesWithoutHints": 6,
+      "freeResponseScenes": 3,
+      "genericLearnerActions": 2,
+      "misconceptions": [
+        "generated-english-misconception"
+      ],
+      "blocks": {
+        "READING_PASSAGE": 1,
+        "CHECK": 1,
+        "SOURCE_EVIDENCE": 1,
+        "WRITING_ORGANIZER": 2
+      }
+    },
+    {
+      "lesson": "g7-math-area-perimeter",
+      "title": "Generated: Covering and fencing",
+      "min": 45,
+      "scenes": 7,
+      "bodyWords": 194,
+      "checkItems": 1,
+      "twoOptionItems": 0,
+      "optionCounts": [
+        3
+      ],
+      "scenesWithoutHints": 7,
+      "freeResponseScenes": 2,
+      "genericLearnerActions": 0,
+      "misconceptions": [
+        "generated-math-misconception"
+      ],
+      "blocks": {
+        "SHAPE_MODEL": 2,
+        "WORKED_SOLUTION": 2,
+        "NUMERIC_RESPONSE": 5,
+        "CHECK": 1,
+        "MISTAKE_ANALYSIS": 1
+      }
+    },
+    {
+      "lesson": "g7-math-fractions",
+      "title": "Generated: One whole, equal units",
+      "min": 45,
+      "scenes": 7,
+      "bodyWords": 246,
+      "checkItems": 5,
+      "twoOptionItems": 5,
+      "optionCounts": [
+        2
+      ],
+      "scenesWithoutHints": 7,
+      "freeResponseScenes": 4,
+      "genericLearnerActions": 2,
+      "misconceptions": [
+        "generated-math-misconception"
+      ],
+      "blocks": {
+        "FRACTION_MODEL": 2,
+        "FRACTION_NUMBER_LINE": 3,
+        "FRACTION_EQUIVALENCE": 1,
+        "WORKED_SOLUTION": 2,
+        "CHECK": 5,
+        "FRACTION_COMPARE": 1,
+        "MISTAKE_ANALYSIS": 1
+      }
+    },
+    {
+      "lesson": "g7-science-states-of-matter",
+      "title": "Generated: Predict while ice melts",
+      "min": 45,
+      "scenes": 6,
+      "bodyWords": 301,
+      "checkItems": 8,
+      "twoOptionItems": 8,
+      "optionCounts": [
+        2
+      ],
+      "scenesWithoutHints": 6,
+      "freeResponseScenes": 3,
+      "genericLearnerActions": 2,
+      "misconceptions": [
+        "generated-science-misconception"
+      ],
+      "blocks": {
+        "CHECK": 6,
+        "DATA_PLOT": 1,
+        "WRITING_ORGANIZER": 1
+      }
+    },
+    {
+      "lesson": "math-multiplication-models",
+      "title": "Generated: Split both dimensions",
+      "min": 45,
+      "scenes": 7,
+      "bodyWords": 221,
+      "checkItems": 2,
+      "twoOptionItems": 2,
+      "optionCounts": [
+        2
+      ],
+      "scenesWithoutHints": 7,
+      "freeResponseScenes": 1,
+      "genericLearnerActions": 5,
+      "misconceptions": [
+        "generated-math-misconception"
+      ],
+      "blocks": {
+        "ARRAY_MODEL": 1,
+        "AREA_MODEL": 2,
+        "WORKED_SOLUTION": 1,
+        "CHECK": 2,
+        "NUMERIC_RESPONSE": 5,
+        "MISTAKE_ANALYSIS": 1
+      }
+    }
+  ]
+}

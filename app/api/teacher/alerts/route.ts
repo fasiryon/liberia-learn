@@ -1,3 +1,4 @@
+// route-policy: auth=session; scope=record; authority=alert-owner-current-class-authority; rationale=a TEACHER or ADMIN sees, reviews, dismisses or acts on their own alerts only while lib/authz/classAuthority grants CURRENT class.read.learning for the alert's student class or encoded class (strictly parsed server-written key); summaries without individual student data are owner-only; malformed, unresolvable or unknown alerts are hidden and 404 before any write (AT-GRADE-01 batch 3, CoS ruling 9)
 import { NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import {
@@ -23,11 +24,11 @@ export async function GET(request: Request) {
       const f = validFilters.includes(filter as (typeof validFilters)[number])
         ? (filter as "all" | "reviewed" | "dismissed")
         : "all";
-      const alerts = await getAllTeacherAlerts(user.id, user.schoolId, f);
+      const alerts = await getAllTeacherAlerts(user.id, user.schoolId, f, user.role);
       return NextResponse.json({ alerts });
     }
 
-    const alerts = await getActiveTeacherAlerts(user.id, user.schoolId);
+    const alerts = await getActiveTeacherAlerts(user.id, user.schoolId, user.role);
     return NextResponse.json({ alerts });
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: err?.status || 500 });
@@ -52,9 +53,9 @@ export async function PATCH(request: Request) {
     }
 
     if (action === "reviewed") {
-      await markAlertReviewed(alertId, user.id, user.schoolId);
+      await markAlertReviewed(alertId, user.id, user.schoolId, user.role);
     } else if (action === "dismissed") {
-      await dismissTeacherAlert(alertId, user.id, user.schoolId, reason);
+      await dismissTeacherAlert(alertId, user.id, user.schoolId, reason, user.role);
     } else {
       return NextResponse.json({ error: "action must be 'reviewed' or 'dismissed'" }, { status: 400 });
     }
@@ -79,7 +80,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "alertId required" }, { status: 400 });
     }
 
-    const result = await recordTeacherAlertAction(alertId, user.id, user.schoolId, actionType);
+    const result = await recordTeacherAlertAction(alertId, user.id, user.schoolId, actionType, user.role);
     return NextResponse.json(result);
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: err?.status || 500 });

@@ -1,0 +1,4 @@
+{
+  "note": "Per production high finding: { package, commit, disposition: FIXED | NOT_REACHABLE, evidence }. Written by T2 with evidence; CoS verifies. Empty: nothing is disposed.",
+  "dispositions": []
+}

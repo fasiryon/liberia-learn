@@ -1,3 +1,4 @@
+// route-policy: auth=session; scope=platform; authority=platform-admin-step-up; rationale=resets another account MFA; refused on any deployed Preview/staging after authority and before body or data work (PREVIEW_IDENTITY_FROZEN)
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
@@ -6,6 +7,8 @@ import { requirePlatformAdmin, requirePrivilegedStepUp } from "@/lib/auth";
 import { isPrivilegedAccount } from "@/lib/auth/privilegedIdentity";
 import { resetAuth0Mfa } from "@/lib/auth/auth0Management";
 import { checkRateLimit, getRateLimitHeaders } from "@/lib/rateLimit";
+import { previewIdentityFrozen } from "@/lib/preview/identityFreeze";
+import { previewSafeErrorResponse } from "@/lib/preview/safeError";
 
 export const dynamic = "force-dynamic";
 
@@ -19,6 +22,8 @@ export async function POST(req: Request) {
     const actor = await requirePlatformAdmin();
     await requirePrivilegedStepUp(actor);
 
+    const frozen = previewIdentityFrozen();
+    if (frozen) return frozen;
     const parsed = RequestSchema.safeParse(await req.json().catch(() => null));
     if (!parsed.success) {
       return NextResponse.json(
@@ -111,6 +116,8 @@ export async function POST(req: Request) {
       reEnrollmentRequired: true,
     });
   } catch (error: any) {
+    const safe = previewSafeErrorResponse(error);
+    if (safe) return safe;
     return NextResponse.json(
       {
         error: error?.message ?? "MFA recovery reset failed",

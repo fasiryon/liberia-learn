@@ -28,8 +28,11 @@ vi.mock("@/lib/db", () => ({
     assignment: { create: mockAssignmentCreate },
     assignmentSubmission: { createMany: mockAssignmentSubmissionCreateMany },
     student: { findMany: mockStudentFindMany },
-    class: { findFirst: mockClassFindFirst },
-    enrollment: { findFirst: mockEnrollmentFindFirst },
+    // AT-GRADE-01 batch 3 (ruling 10): each handler is authorized through lib/authz/classAuthority, which reads the
+    // class and assignments; the learner's classes come from their enrollments. teacher-1 teaches class-1.
+    class: { findFirst: mockClassFindFirst, findUnique: async () => ({ id: "class-1", name: "Grade 7A", schoolId: "school-1", teacherId: "teacher-1" }) },
+    enrollment: { findFirst: mockEnrollmentFindFirst, findMany: async () => [{ classId: "class-1" }] },
+    teacherAssignment: { findMany: async () => [] },
     curriculumContent: { findUnique: mockCurriculumFindUnique },
     interventionRecommendation: { updateMany: mockInterventionUpdateMany },
     scheduledWork: { findFirst: mockScheduledWorkFindFirst },

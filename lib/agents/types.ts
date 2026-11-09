@@ -52,6 +52,8 @@ export interface AgentDefinition {
   /** Unique identifier. */
   name: string;
   description: string;
+  /** Output audience, independent of the trusted infrastructure caller role. */
+  audience?: "general" | "minor" | "guardian";
   /** promptRegistry key; the template is loaded from a file at module load. */
   systemPromptKey: string;
   /** Names of tools this agent is allowed to call. */

@@ -1,0 +1,1114 @@
+{
+  "planVersion": "stem-day-plan/1.0.0",
+  "planId": "stem1-g7-day1",
+  "grade": 7,
+  "section": "A",
+  "sectionB": {
+    "rotation": "section B takes section A's period i+3",
+    "order": [
+      "CIVICS",
+      "COMPUTING",
+      "ENGINEERING",
+      "MATH",
+      "SCIENCE",
+      "ENGLISH"
+    ]
+  },
+  "timetableMode": "STANDARD_45",
+  "timetableSource": "Codex docs/qa/draft6/SCHOOLWIDE_IMPLEMENTATION_PLAN.md @5f3348b30 (STANDARD_45 anchors). Codex owns the final bell times and fixtures; times here are derived from those anchors.",
+  "school": "LiberiaLearn Demonstration Academy (synthetic; isolated database only)",
+  "dayTheme": {
+    "title": "Water stewardship at our school",
+    "why": "One school-wide problem, how our school uses and protects water, links the Codex schoolday lessons (monitoring water loss, engineering a container cover). The four draft.6 lessons keep their own sealed contexts (seed measurement, melting ice, a seed library text, the county map). The theme is context, never a replacement for each subject's objectives."
+  },
+  "scope": "Founder direction (2026-10-23, in session with CoS): there is one track, the full STEM day. The six draft.6 lessons are extended into the day and the gaps are filled with Content Factory schoolday lessons (Codex, 4.0.0-schoolday.1). There is no separate six-lesson pilot. Draft.6 packages stay sealed and byte-identical.",
+  "pilotBoundary": "Every draft period runs only through the ungraded /learn/preview path with progressStorage=MEMORY, and only after the founder authorizes each exact package hash. The learning-preview flag is OFF. No grade, mastery, promotion, assignment or learning-history write.",
+  "sequenceMinutesBasis": "Minute splits are Chief of Staff planning estimates of each scene, not measured. They must be replaced by timed rehearsal evidence (gate G6) before any claim that a lesson fills a 45-minute period.",
+  "blocks": [
+    {
+      "slot": "ARRIVAL",
+      "start": "07:30",
+      "end": "08:00",
+      "binding": {
+        "kind": "NON_INSTRUCTIONAL"
+      }
+    },
+    {
+      "slot": "ASSEMBLY",
+      "start": "08:00",
+      "end": "08:20",
+      "binding": {
+        "kind": "TEACHER_LED",
+        "activity": "Question of the day posted in every classroom: 'How could our school keep seed safe through the rainy season?' Learners return to it in P6.",
+        "studentLabel": "Assembly (teacher-led)"
+      }
+    },
+    {
+      "slot": "P1",
+      "start": "08:20",
+      "end": "09:10",
+      "course": "MATH",
+      "unit": 2,
+      "binding": {
+        "kind": "V4_DRAFT",
+        "key": "g7-math-fractions",
+        "selection": "factory@4.0.0-draft.6@g7-math-fractions",
+        "packageHash": "ffaafcbb124def71114178a07736acf7c3609aa1debf36e413b4bdf1a5aae69a",
+        "candidateSha256": "78cfaf819d4f3c3d767299571d4a5238af57abc3a2b88a496044b0fc6799cd22",
+        "officialStatus": "NOT_APPROVED",
+        "studentLabel": "Pilot draft lesson (not yet approved) - ungraded",
+        "sequence": [
+          {
+            "minutes": 7,
+            "phase": "VISUALIZE",
+            "practice": "CONCEPT",
+            "what": "One whole, equal units: bar models of 5/4 kg and a number line"
+          },
+          {
+            "minutes": 5,
+            "phase": "DEMONSTRATE",
+            "practice": "GUIDED",
+            "what": "Worked solutions: 1/2 + 1/3 renamed in sixths; ordering 1/2, 2/3, 3/4 in twelfths"
+          },
+          {
+            "minutes": 9,
+            "phase": "SOLVE_WITH_SUPPORT",
+            "practice": "GUIDED",
+            "what": "Checks on like and related denominators; place 4/4"
+          },
+          {
+            "minutes": 10,
+            "phase": "PRACTICE_INDEPENDENTLY",
+            "practice": "INDEPENDENT",
+            "what": "Order 3/4, 1/2, 5/8; find 3/4 + 1/8 exactly; draw 6/4"
+          },
+          {
+            "minutes": 6,
+            "phase": "ANALYZE_MISTAKE",
+            "practice": "EXTENSION",
+            "what": "Diagnose a changed fraction unit"
+          },
+          {
+            "minutes": 6,
+            "phase": "APPLY",
+            "practice": "REFLECTION",
+            "what": "Measure seed exactly (theme link); explain the whole used"
+          },
+          {
+            "minutes": 2,
+            "phase": "ASSESS",
+            "practice": "REFLECTION",
+            "what": "Pilot derived view: ungraded message replaces the assessment handoff"
+          }
+        ],
+        "stemPractices": [
+          "CONCEPT_BEFORE_PROCEDURE",
+          "MATHEMATICAL_REASONING",
+          "LIBERIAN_APPLICATION",
+          "PRACTICE_CONTINUUM"
+        ],
+        "qualityFindings": [
+          "Q1",
+          "Q2",
+          "Q3",
+          "Q4",
+          "Q5"
+        ],
+        "replacementOrder": {
+          "orderId": "GO-G07-P1-MATH-U2-R",
+          "owner": "T2_CODEX",
+          "kind": "LESSON",
+          "batch": "BAND_6-8",
+          "grade": 7,
+          "courseId": "stem1-g7-math",
+          "unit": 2,
+          "unitTitle": "Fractions: one whole, equal units",
+          "performanceTask": "represent, rename and combine fractions on models and number lines",
+          "family": "MATHEMATICS",
+          "pattern": [
+            "VISUALIZE",
+            "DEMONSTRATE",
+            "SOLVE_WITH_SUPPORT",
+            "PRACTICE_INDEPENDENTLY",
+            "ANALYZE_MISTAKE",
+            "APPLY"
+          ],
+          "recordedSubject": "MATH",
+          "developmental": {
+            "band": "6-8",
+            "maxSentenceWords": 24,
+            "maxSceneBodyWords": 130,
+            "approach": "Formal reasoning, laboratory investigation, coding and structured engineering",
+            "maxSegmentMinutes": 20,
+            "maxScreenMinutesPerPeriod": 35,
+            "readAloudRequired": false,
+            "independentWritingWords": [
+              60,
+              200
+            ],
+            "requiresMovementSegment": false
+          },
+          "competencies": null,
+          "blocks": {
+            "existing": [
+              "FRACTION_COMPARE",
+              "SHAPE_MODEL",
+              "EQUATION",
+              "WORKED_SOLUTION",
+              "NUMERIC_RESPONSE",
+              "MISTAKE_ANALYSIS",
+              "DATA_PLOT"
+            ],
+            "proposed": [
+              "COORDINATE_PLANE",
+              "FUNCTION_TABLE",
+              "EQUATION_BALANCE",
+              "GRAPH_BUILDER"
+            ]
+          },
+          "labs": [],
+          "stemPractices": [
+            "CONCEPT_BEFORE_PROCEDURE",
+            "MATHEMATICAL_REASONING",
+            "LIBERIAN_APPLICATION",
+            "PRACTICE_CONTINUUM"
+          ],
+          "requirements": [
+            "Two or three measurable objectives derived from the performance task; MOE mapping recorded as PROPOSED, never claimed",
+            "At least two distinct, named misconceptions, each taught against and diagnosed by a block",
+            "Hints in every guided scene; no hints or worked steps in independent scenes",
+            "Choice items with three or more plausible options, or richer interactions",
+            "No system, policy or answer-policy text in learner-visible fields; no generator prefixes; UTF-8 text with no mojibake",
+            "Specific learner actions in every scene",
+            "Guided practice, independent work, extension and reflection, in that order",
+            "An authentic Liberian situation that needs the concept, not a name swap",
+            "Formative only: no grade, mastery or assessment keys in the learner projection",
+            "Resolve every G3 finding recorded for 4.0.0-draft.6@g7-math-fractions in curriculum/program/stem-v1/g3-audit.json; keep what that lesson does well"
+          ],
+          "gates": [
+            "G1",
+            "G2",
+            "G3",
+            "G4",
+            "G5",
+            "G6",
+            "G7",
+            "G8"
+          ],
+          "replaces": "4.0.0-draft.6@g7-math-fractions",
+          "replacementReason": "interim binding 4.0.0-draft.6 (immutable; cannot be repaired in place) cannot reach ACADEMICALLY_REVIEWED"
+        }
+      }
+    },
+    {
+      "slot": "P2",
+      "start": "09:10",
+      "end": "10:00",
+      "course": "SCIENCE",
+      "unit": 2,
+      "binding": {
+        "kind": "V4_DRAFT",
+        "key": "g7-science-states-of-matter",
+        "selection": "factory@4.0.0-draft.6@g7-science-states-of-matter",
+        "packageHash": "7863152eba2e51b818a1b304fa0b240f7b0ac0d2656406947488fbc93ae912f9",
+        "candidateSha256": "5e67edd36ec5b3e0ef29be65dee3ab2e08e1f7cccf17209e4e689492eaae2126",
+        "officialStatus": "NOT_APPROVED",
+        "studentLabel": "Pilot draft lesson (not yet approved) - ungraded",
+        "sequence": [
+          {
+            "minutes": 6,
+            "phase": "PREDICT",
+            "practice": "CONCEPT",
+            "what": "Predict: does adding heat to melting ice always raise temperature?"
+          },
+          {
+            "minutes": 12,
+            "phase": "EXPERIMENT",
+            "practice": "GUIDED",
+            "what": "Test the energy model on paper (no heating; paper model by design)"
+          },
+          {
+            "minutes": 9,
+            "phase": "OBSERVE",
+            "practice": "INDEPENDENT",
+            "what": "Interpret the heating curve (DATA_PLOT) independently"
+          },
+          {
+            "minutes": 9,
+            "phase": "EXPLAIN",
+            "practice": "GUIDED",
+            "what": "Latent heat and evaporation below 100 C"
+          },
+          {
+            "minutes": 7,
+            "phase": "APPLY",
+            "practice": "REFLECTION",
+            "what": "Cooling and reversibility; theme link: why wet seed spoils and drying matters"
+          },
+          {
+            "minutes": 2,
+            "phase": "ASSESS",
+            "practice": "REFLECTION",
+            "what": "Ungraded pilot message"
+          }
+        ],
+        "teacherExtension": "Optional, outside the sealed package and not part of pilot evidence: the registered molecule-motion lab (lib/labs/registry.ts) shows particle motion across phase changes.",
+        "stemPractices": [
+          "CONCEPT_BEFORE_PROCEDURE",
+          "SCIENTIFIC_EVIDENCE",
+          "LIBERIAN_APPLICATION",
+          "PRACTICE_CONTINUUM"
+        ],
+        "qualityFindings": [
+          "Q1",
+          "Q2",
+          "Q3",
+          "Q4",
+          "Q6"
+        ],
+        "replacementOrder": {
+          "orderId": "GO-G07-P2-SCIENCE-U2-R",
+          "owner": "T2_CODEX",
+          "kind": "LESSON",
+          "batch": "BAND_6-8",
+          "grade": 7,
+          "courseId": "stem1-g7-science",
+          "unit": 2,
+          "unitTitle": "States of matter and energy",
+          "performanceTask": "predict and explain melting, freezing and evaporation with the particle model",
+          "family": "SCIENCE",
+          "pattern": [
+            "PREDICT",
+            "EXPERIMENT",
+            "OBSERVE",
+            "EXPLAIN",
+            "APPLY"
+          ],
+          "recordedSubject": "SCIENCE",
+          "developmental": {
+            "band": "6-8",
+            "maxSentenceWords": 24,
+            "maxSceneBodyWords": 130,
+            "approach": "Formal reasoning, laboratory investigation, coding and structured engineering",
+            "maxSegmentMinutes": 20,
+            "maxScreenMinutesPerPeriod": 35,
+            "readAloudRequired": false,
+            "independentWritingWords": [
+              60,
+              200
+            ],
+            "requiresMovementSegment": false
+          },
+          "competencies": null,
+          "blocks": {
+            "existing": [
+              "PARTICLE_MODEL",
+              "PREDICT_OBSERVE",
+              "DATA_PLOT",
+              "PROCESS_CYCLE",
+              "WRITING_ORGANIZER"
+            ],
+            "proposed": [
+              "MEASUREMENT_TABLE",
+              "FAIR_TEST_PLANNER",
+              "GRAPH_BUILDER"
+            ]
+          },
+          "labs": [
+            "molecule-motion",
+            "weather-system",
+            "ecosystem-balance"
+          ],
+          "stemPractices": [
+            "SCIENTIFIC_EVIDENCE",
+            "CONCEPT_BEFORE_PROCEDURE",
+            "LIBERIAN_APPLICATION",
+            "PRACTICE_CONTINUUM"
+          ],
+          "requirements": [
+            "Two or three measurable objectives derived from the performance task; MOE mapping recorded as PROPOSED, never claimed",
+            "At least two distinct, named misconceptions, each taught against and diagnosed by a block",
+            "Hints in every guided scene; no hints or worked steps in independent scenes",
+            "Choice items with three or more plausible options, or richer interactions",
+            "No system, policy or answer-policy text in learner-visible fields; no generator prefixes; UTF-8 text with no mojibake",
+            "Specific learner actions in every scene",
+            "Guided practice, independent work, extension and reflection, in that order",
+            "An authentic Liberian situation that needs the concept, not a name swap",
+            "Formative only: no grade, mastery or assessment keys in the learner projection",
+            "Resolve every G3 finding recorded for 4.0.0-draft.6@g7-science-states-of-matter in curriculum/program/stem-v1/g3-audit.json; keep what that lesson does well"
+          ],
+          "gates": [
+            "G1",
+            "G2",
+            "G3",
+            "G4",
+            "G5",
+            "G6",
+            "G7",
+            "G8"
+          ],
+          "replaces": "4.0.0-draft.6@g7-science-states-of-matter",
+          "replacementReason": "interim binding 4.0.0-draft.6 (immutable; cannot be repaired in place) cannot reach ACADEMICALLY_REVIEWED"
+        }
+      }
+    },
+    {
+      "slot": "BREAK",
+      "start": "10:00",
+      "end": "10:20",
+      "binding": {
+        "kind": "NON_INSTRUCTIONAL"
+      }
+    },
+    {
+      "slot": "P3",
+      "start": "10:20",
+      "end": "11:10",
+      "course": "ENGLISH",
+      "unit": 1,
+      "binding": {
+        "kind": "V4_DRAFT",
+        "key": "g7-english-reading-evidence",
+        "selection": "factory@4.0.0-draft.6@g7-english-reading-evidence",
+        "packageHash": "fa54d6f4d508a81020bcf18c906a948a8c1c0e74ec1f384aa9c088acb289be19",
+        "candidateSha256": "500ab78193c6ffee7a6afdf6af7ced250d9d362abba2bcd71c14f26fdd0cb9b5",
+        "officialStatus": "NOT_APPROVED",
+        "studentLabel": "Pilot draft lesson (not yet approved) - ungraded",
+        "sequence": [
+          {
+            "minutes": 8,
+            "phase": "READ",
+            "practice": "CONCEPT",
+            "what": "Read 'How a seed library works' (invented school example) with glossary"
+          },
+          {
+            "minutes": 8,
+            "phase": "UNDERSTAND",
+            "practice": "GUIDED",
+            "what": "Read for meaning and causes"
+          },
+          {
+            "minutes": 9,
+            "phase": "ANALYZE",
+            "practice": "GUIDED",
+            "what": "Distinguish direct evidence from consequences (SOURCE_EVIDENCE)"
+          },
+          {
+            "minutes": 12,
+            "phase": "CONSTRUCT",
+            "practice": "INDEPENDENT",
+            "what": "Write a supported paragraph (WRITING_ORGANIZER)"
+          },
+          {
+            "minutes": 6,
+            "phase": "REVISE",
+            "practice": "REFLECTION",
+            "what": "Revise the reasoning against a checklist"
+          },
+          {
+            "minutes": 2,
+            "phase": "ASSESS",
+            "practice": "REFLECTION",
+            "what": "Ungraded pilot message"
+          }
+        ],
+        "stemPractices": [
+          "COMMUNICATION_AND_CRITICAL_THINKING",
+          "SCIENTIFIC_EVIDENCE",
+          "LIBERIAN_APPLICATION",
+          "PRACTICE_CONTINUUM"
+        ],
+        "qualityFindings": [
+          "Q1",
+          "Q2",
+          "Q3",
+          "Q4"
+        ],
+        "replacementOrder": {
+          "orderId": "GO-G07-P3-ENGLISH-U1-R",
+          "owner": "T2_CODEX",
+          "kind": "LESSON",
+          "batch": "BAND_6-8",
+          "grade": 7,
+          "courseId": "stem1-g7-english",
+          "unit": 1,
+          "unitTitle": "Reading for evidence",
+          "performanceTask": "select and quote evidence that supports an answer about an informational text",
+          "family": "LANGUAGE",
+          "pattern": [
+            "READ",
+            "UNDERSTAND",
+            "ANALYZE",
+            "CONSTRUCT",
+            "REVISE"
+          ],
+          "recordedSubject": "ENGLISH",
+          "developmental": {
+            "band": "6-8",
+            "maxSentenceWords": 24,
+            "maxSceneBodyWords": 130,
+            "approach": "Formal reasoning, laboratory investigation, coding and structured engineering",
+            "maxSegmentMinutes": 20,
+            "maxScreenMinutesPerPeriod": 35,
+            "readAloudRequired": false,
+            "independentWritingWords": [
+              60,
+              200
+            ],
+            "requiresMovementSegment": false
+          },
+          "competencies": null,
+          "blocks": {
+            "existing": [
+              "READING_PASSAGE",
+              "SOURCE_EVIDENCE",
+              "WRITING_ORGANIZER",
+              "SENTENCE_BUILDER"
+            ],
+            "proposed": []
+          },
+          "labs": [],
+          "stemPractices": [
+            "COMMUNICATION_AND_CRITICAL_THINKING",
+            "LIBERIAN_APPLICATION",
+            "PRACTICE_CONTINUUM"
+          ],
+          "requirements": [
+            "Two or three measurable objectives derived from the performance task; MOE mapping recorded as PROPOSED, never claimed",
+            "At least two distinct, named misconceptions, each taught against and diagnosed by a block",
+            "Hints in every guided scene; no hints or worked steps in independent scenes",
+            "Choice items with three or more plausible options, or richer interactions",
+            "No system, policy or answer-policy text in learner-visible fields; no generator prefixes; UTF-8 text with no mojibake",
+            "Specific learner actions in every scene",
+            "Guided practice, independent work, extension and reflection, in that order",
+            "An authentic Liberian situation that needs the concept, not a name swap",
+            "Formative only: no grade, mastery or assessment keys in the learner projection",
+            "Resolve every G3 finding recorded for 4.0.0-draft.6@g7-english-reading-evidence in curriculum/program/stem-v1/g3-audit.json; keep what that lesson does well"
+          ],
+          "gates": [
+            "G1",
+            "G2",
+            "G3",
+            "G4",
+            "G5",
+            "G6",
+            "G7",
+            "G8"
+          ],
+          "replaces": "4.0.0-draft.6@g7-english-reading-evidence",
+          "replacementReason": "interim binding 4.0.0-draft.6 (immutable; cannot be repaired in place) cannot reach ACADEMICALLY_REVIEWED"
+        }
+      }
+    },
+    {
+      "slot": "P4",
+      "start": "11:10",
+      "end": "12:00",
+      "course": "CIVICS",
+      "unit": 1,
+      "binding": {
+        "kind": "V4_DRAFT",
+        "key": "g7-civics-counties-capitals",
+        "selection": "factory@4.0.0-draft.6@g7-civics-counties-capitals",
+        "packageHash": "2a388b30e577b0b11518f7b71772739a03c913fe2840fcd4b7a392eec9b8c5eb",
+        "candidateSha256": "ea3ff95feafe3aee979e0a906581dbfdbab5044abf5c2bb742fd97fccda9215b",
+        "officialStatus": "NOT_APPROVED",
+        "studentLabel": "Pilot draft lesson (not yet approved) - ungraded",
+        "requiresAttachment": "T1 geographic map: sceneAttachments from lib/learner-experience/geography/draft6Binding.ts on feat/v4-civics-geographic-map @db178bb3e (rebased; founder-cited 7bdd16baf/3275d538a superseded locally); returns {} unless selection, packageHash and candidateSha256 match.",
+        "sequence": [
+          {
+            "minutes": 8,
+            "phase": "EXPLORE",
+            "practice": "CONCEPT",
+            "what": "Read the geographic county map: pointer, keyboard and list exploration"
+          },
+          {
+            "minutes": 9,
+            "phase": "INVESTIGATE",
+            "practice": "GUIDED",
+            "what": "County areas and capitals"
+          },
+          {
+            "minutes": 9,
+            "phase": "COMPARE",
+            "practice": "GUIDED",
+            "what": "Separate recall from spatial evidence"
+          },
+          {
+            "minutes": 9,
+            "phase": "REASON",
+            "practice": "INDEPENDENT",
+            "what": "Bound a geographic claim: neighbours and direction"
+          },
+          {
+            "minutes": 8,
+            "phase": "APPLY",
+            "practice": "REFLECTION",
+            "what": "Use geography without inventing a route"
+          },
+          {
+            "minutes": 2,
+            "phase": "ASSESS",
+            "practice": "REFLECTION",
+            "what": "Ungraded pilot message"
+          }
+        ],
+        "stemPractices": [
+          "COMMUNICATION_AND_CRITICAL_THINKING",
+          "LIBERIAN_APPLICATION",
+          "PRACTICE_CONTINUUM"
+        ],
+        "qualityFindings": [
+          "Q1",
+          "Q2",
+          "Q3",
+          "Q4",
+          "Q7"
+        ],
+        "replacementOrder": {
+          "orderId": "GO-G07-P4-CIVICS-U1-R",
+          "owner": "T2_CODEX",
+          "kind": "LESSON",
+          "batch": "BAND_6-8",
+          "grade": 7,
+          "courseId": "stem1-g7-civics",
+          "unit": 1,
+          "unitTitle": "Counties and capitals of Liberia",
+          "performanceTask": "locate counties and capitals on a geographic map and reason about neighbours and directions",
+          "family": "HUMANITIES",
+          "pattern": [
+            "EXPLORE",
+            "INVESTIGATE",
+            "COMPARE",
+            "REASON",
+            "APPLY"
+          ],
+          "recordedSubject": "CIVICS",
+          "developmental": {
+            "band": "6-8",
+            "maxSentenceWords": 24,
+            "maxSceneBodyWords": 130,
+            "approach": "Formal reasoning, laboratory investigation, coding and structured engineering",
+            "maxSegmentMinutes": 20,
+            "maxScreenMinutesPerPeriod": 35,
+            "readAloudRequired": false,
+            "independentWritingWords": [
+              60,
+              200
+            ],
+            "requiresMovementSegment": false
+          },
+          "competencies": null,
+          "blocks": {
+            "existing": [
+              "MAP_EXPLORER",
+              "SOURCE_EVIDENCE",
+              "SEQUENCE",
+              "DATA_PLOT",
+              "WRITING_ORGANIZER"
+            ],
+            "proposed": []
+          },
+          "labs": [],
+          "stemPractices": [
+            "COMMUNICATION_AND_CRITICAL_THINKING",
+            "LIBERIAN_APPLICATION",
+            "PRACTICE_CONTINUUM"
+          ],
+          "requirements": [
+            "Two or three measurable objectives derived from the performance task; MOE mapping recorded as PROPOSED, never claimed",
+            "At least two distinct, named misconceptions, each taught against and diagnosed by a block",
+            "Hints in every guided scene; no hints or worked steps in independent scenes",
+            "Choice items with three or more plausible options, or richer interactions",
+            "No system, policy or answer-policy text in learner-visible fields; no generator prefixes; UTF-8 text with no mojibake",
+            "Specific learner actions in every scene",
+            "Guided practice, independent work, extension and reflection, in that order",
+            "An authentic Liberian situation that needs the concept, not a name swap",
+            "Formative only: no grade, mastery or assessment keys in the learner projection",
+            "Resolve every G3 finding recorded for 4.0.0-draft.6@g7-civics-counties-capitals in curriculum/program/stem-v1/g3-audit.json; keep what that lesson does well",
+            "Keep the required attachment: T1 geographic map: sceneAttachments from lib/learner-experience/geography/draft6Binding.ts on feat/v4-civics-geographic-map @db178bb3e (rebased; founder-cited 7bdd16baf/3275d538a superseded locally); returns {} unless selection, packageHash and candidateSha256 match."
+          ],
+          "gates": [
+            "G1",
+            "G2",
+            "G3",
+            "G4",
+            "G5",
+            "G6",
+            "G7",
+            "G8"
+          ],
+          "replaces": "4.0.0-draft.6@g7-civics-counties-capitals",
+          "replacementReason": "interim binding 4.0.0-draft.6 (immutable; cannot be repaired in place) cannot reach ACADEMICALLY_REVIEWED"
+        }
+      }
+    },
+    {
+      "slot": "LUNCH",
+      "start": "12:00",
+      "end": "12:40",
+      "binding": {
+        "kind": "NON_INSTRUCTIONAL"
+      }
+    },
+    {
+      "slot": "P5",
+      "start": "12:40",
+      "end": "13:30",
+      "course": "COMPUTING",
+      "unit": 3,
+      "binding": {
+        "kind": "SCHOOLDAY_DRAFT",
+        "key": "g7-computing-water-monitor-algorithms",
+        "version": "4.0.0-schoolday.1-draft.2",
+        "selection": "factory@4.0.0-schoolday.1-draft.2@g7-computing-water-monitor-algorithms",
+        "packageHash": "50d11724521ae9bf66647c2a250b3d6c48a2c7fbbb7c648a3585bab5fe269e6e",
+        "candidateSha256": "d843dd5280d407bafca6aa3687e4389ad70e5687ccf34c331361699316b979d6",
+        "provisional": "Committed review draft at c33fd6fbf on feat/content-factory-schoolday; not sealed for release.",
+        "officialStatus": "NOT_APPROVED",
+        "studentLabel": "Pilot draft lesson (not yet approved) - ungraded",
+        "title": "Trace and debug a water-loss monitor",
+        "phases": [
+          "PREDICT",
+          "EXPERIMENT",
+          "ORIENT",
+          "OBSERVE",
+          "EXPLAIN",
+          "APPLY",
+          "ASSESS"
+        ],
+        "timing": "UNMEASURED_G6",
+        "stemPractices": [
+          "COMPUTATIONAL_THINKING",
+          "MATHEMATICAL_REASONING",
+          "LIBERIAN_APPLICATION",
+          "PRACTICE_CONTINUUM"
+        ],
+        "qualityFindings": [
+          "S1",
+          "S2",
+          "S3",
+          "S4",
+          "S5"
+        ],
+        "replacementOrder": {
+          "orderId": "GO-G07-P5-COMPUTING-U3-R",
+          "owner": "T2_CODEX",
+          "kind": "LESSON",
+          "batch": "BAND_6-8",
+          "grade": 7,
+          "courseId": "stem1-g7-computing",
+          "unit": 3,
+          "unitTitle": "Conditionals and loops in code",
+          "performanceTask": "write a program that validates a PIN with three attempts",
+          "family": "COMPUTING",
+          "pattern": [
+            "PREDICT",
+            "DECOMPOSE",
+            "DEMONSTRATE",
+            "BUILD_WITH_SUPPORT",
+            "BUILD_INDEPENDENTLY",
+            "TEST",
+            "DEBUG",
+            "APPLY"
+          ],
+          "recordedSubject": "COMPUTER_SCIENCE",
+          "developmental": {
+            "band": "6-8",
+            "maxSentenceWords": 24,
+            "maxSceneBodyWords": 130,
+            "approach": "Formal reasoning, laboratory investigation, coding and structured engineering",
+            "maxSegmentMinutes": 20,
+            "maxScreenMinutesPerPeriod": 35,
+            "readAloudRequired": false,
+            "independentWritingWords": [
+              60,
+              200
+            ],
+            "requiresMovementSegment": false
+          },
+          "competencies": {
+            "medium": "TEXT_CODE_INTRO",
+            "learnerDoes": [
+              "Design an algorithm with a flowchart or pseudocode",
+              "Write text code with variables, conditionals, loops and functions",
+              "Trace with a trace table including boundary cases",
+              "Write tests including edge cases",
+              "Debug with evidence",
+              "Analyse a dataset"
+            ],
+            "evidence": [
+              "Code or pseudocode with tests",
+              "A trace table",
+              "A corrected bug with the failing test"
+            ],
+            "blocks": {
+              "now": [
+                "MISTAKE_ANALYSIS",
+                "NUMERIC_RESPONSE",
+                "WRITING_ORGANIZER",
+                "DATA_PLOT"
+              ],
+              "needed": [
+                "CODE_TRACE",
+                "CODE_RUNNER"
+              ]
+            }
+          },
+          "blocks": {
+            "existing": [
+              "MISTAKE_ANALYSIS",
+              "STEP_REVEAL",
+              "CHECK"
+            ],
+            "proposed": [
+              "BLOCK_PROGRAM",
+              "CODE_TRACE",
+              "CODE_RUNNER"
+            ]
+          },
+          "labs": [],
+          "stemPractices": [
+            "COMPUTATIONAL_THINKING",
+            "MATHEMATICAL_REASONING",
+            "LIBERIAN_APPLICATION",
+            "PRACTICE_CONTINUUM"
+          ],
+          "requirements": [
+            "Two or three measurable objectives derived from the performance task; MOE mapping recorded as PROPOSED, never claimed",
+            "At least two distinct, named misconceptions, each taught against and diagnosed by a block",
+            "Hints in every guided scene; no hints or worked steps in independent scenes",
+            "Choice items with three or more plausible options, or richer interactions",
+            "No system, policy or answer-policy text in learner-visible fields; no generator prefixes; UTF-8 text with no mojibake",
+            "Specific learner actions in every scene",
+            "Guided practice, independent work, extension and reflection, in that order",
+            "An authentic Liberian situation that needs the concept, not a name swap",
+            "Formative only: no grade, mastery or assessment keys in the learner projection",
+            "Resolve every G3 finding recorded for 4.0.0-schoolday.1-draft.2@g7-computing-water-monitor-algorithms in curriculum/program/stem-v1/g3-audit.json; keep what that lesson does well"
+          ],
+          "gates": [
+            "G1",
+            "G2",
+            "G3",
+            "G4",
+            "G5",
+            "G6",
+            "G7",
+            "G8"
+          ],
+          "replaces": "4.0.0-schoolday.1-draft.2@g7-computing-water-monitor-algorithms",
+          "replacementReason": "interim binding 4.0.0-schoolday.1-draft.2 (held by T2 for S1-S4) cannot reach ACADEMICALLY_REVIEWED"
+        }
+      }
+    },
+    {
+      "slot": "P6",
+      "start": "13:30",
+      "end": "14:20",
+      "course": "ENGINEERING",
+      "unit": 6,
+      "binding": {
+        "kind": "SCHOOLDAY_DRAFT",
+        "key": "g7-stem-water-cover-design",
+        "version": "4.0.0-schoolday.1-draft.2",
+        "selection": "factory@4.0.0-schoolday.1-draft.2@g7-stem-water-cover-design",
+        "packageHash": "ef241d39bfaabc55ab8ab06218893f7e758f044e2eec7c3f65474ad961664406",
+        "candidateSha256": "c53617c548bdfc00ee53692263a62f5f655b48baa1d9ac546e9572dbcfda81c6",
+        "provisional": "Committed review draft at c33fd6fbf on feat/content-factory-schoolday; not sealed for release.",
+        "officialStatus": "NOT_APPROVED",
+        "studentLabel": "Pilot draft lesson (not yet approved) - ungraded",
+        "title": "Engineer and evaluate a water-container cover",
+        "phases": [
+          "PREDICT",
+          "EXPERIMENT",
+          "ORIENT",
+          "OBSERVE",
+          "EXPLAIN",
+          "APPLY",
+          "ASSESS"
+        ],
+        "timing": "UNMEASURED_G6",
+        "stemPractices": [
+          "ENGINEERING_DESIGN",
+          "SCIENTIFIC_EVIDENCE",
+          "MATHEMATICAL_REASONING",
+          "LIBERIAN_APPLICATION",
+          "PRACTICE_CONTINUUM"
+        ],
+        "qualityFindings": [
+          "S1",
+          "S2",
+          "S3",
+          "S4",
+          "S5"
+        ],
+        "replacementOrder": {
+          "orderId": "GO-G07-P6-ENGINEERING-U6-R",
+          "owner": "T2_CODEX",
+          "kind": "LESSON",
+          "batch": "BAND_6-8",
+          "grade": 7,
+          "courseId": "stem1-g7-engineering",
+          "unit": 6,
+          "unitTitle": "Prototype, test and refine",
+          "performanceTask": "run two test-refine cycles and report data",
+          "family": "ENGINEERING",
+          "pattern": [
+            "DEFINE",
+            "RESEARCH_CONSTRAINTS",
+            "DESIGN",
+            "BUILD_OR_MODEL",
+            "TEST",
+            "REFINE",
+            "COMMUNICATE"
+          ],
+          "recordedSubject": "ENGINEERING_FOUNDATIONS",
+          "developmental": {
+            "band": "6-8",
+            "maxSentenceWords": 24,
+            "maxSceneBodyWords": 130,
+            "approach": "Formal reasoning, laboratory investigation, coding and structured engineering",
+            "maxSegmentMinutes": 20,
+            "maxScreenMinutesPerPeriod": 35,
+            "readAloudRequired": false,
+            "independentWritingWords": [
+              60,
+              200
+            ],
+            "requiresMovementSegment": false
+          },
+          "competencies": {
+            "medium": "STRUCTURED_ENGINEERING",
+            "learnerDoes": [
+              "Write a design brief with measurable criteria, constraints and a budget",
+              "Use mathematics or science to predict performance",
+              "Prototype or model, test against criteria, and record data",
+              "Iterate at least once and justify trade-offs"
+            ],
+            "evidence": [
+              "A design brief",
+              "A prediction from a model or calculation",
+              "Test data against criteria",
+              "A justified trade-off"
+            ],
+            "blocks": {
+              "now": [
+                "DATA_PLOT",
+                "NUMERIC_RESPONSE",
+                "WORKED_SOLUTION",
+                "WRITING_ORGANIZER",
+                "SHAPE_MODEL"
+              ],
+              "needed": [
+                "DESIGN_CYCLE",
+                "MEASUREMENT_TABLE",
+                "BUDGET_CONSTRAINT_TABLE"
+              ]
+            }
+          },
+          "blocks": {
+            "existing": [
+              "SHAPE_MODEL",
+              "DATA_PLOT",
+              "WORKED_SOLUTION"
+            ],
+            "proposed": [
+              "DESIGN_CYCLE",
+              "MEASUREMENT_TABLE",
+              "BUDGET_CONSTRAINT_TABLE"
+            ]
+          },
+          "labs": [
+            "electric-circuit"
+          ],
+          "stemPractices": [
+            "ENGINEERING_DESIGN",
+            "MATHEMATICAL_REASONING",
+            "SCIENTIFIC_EVIDENCE",
+            "LIBERIAN_APPLICATION",
+            "PRACTICE_CONTINUUM"
+          ],
+          "requirements": [
+            "Two or three measurable objectives derived from the performance task; MOE mapping recorded as PROPOSED, never claimed",
+            "At least two distinct, named misconceptions, each taught against and diagnosed by a block",
+            "Hints in every guided scene; no hints or worked steps in independent scenes",
+            "Choice items with three or more plausible options, or richer interactions",
+            "No system, policy or answer-policy text in learner-visible fields; no generator prefixes; UTF-8 text with no mojibake",
+            "Specific learner actions in every scene",
+            "Guided practice, independent work, extension and reflection, in that order",
+            "An authentic Liberian situation that needs the concept, not a name swap",
+            "Formative only: no grade, mastery or assessment keys in the learner projection",
+            "Resolve every G3 finding recorded for 4.0.0-schoolday.1-draft.2@g7-stem-water-cover-design in curriculum/program/stem-v1/g3-audit.json; keep what that lesson does well"
+          ],
+          "gates": [
+            "G1",
+            "G2",
+            "G3",
+            "G4",
+            "G5",
+            "G6",
+            "G7",
+            "G8"
+          ],
+          "replaces": "4.0.0-schoolday.1-draft.2@g7-stem-water-cover-design",
+          "replacementReason": "interim binding 4.0.0-schoolday.1-draft.2 (held by T2 for S1-S4) cannot reach ACADEMICALLY_REVIEWED"
+        }
+      }
+    },
+    {
+      "slot": "SUPPORT",
+      "start": "14:20",
+      "end": "14:40",
+      "binding": {
+        "kind": "CONTENT_GAP",
+        "gapReason": "Pilot progress is memory-only, so no cross-lesson signal exists to target remediation; no RETENTION/retrieval set has been produced for draft.6.",
+        "studentLabel": "Support time (teacher-led)",
+        "teacherLedFallback": "Teacher uses the observation-only summary to re-teach one misconception from P1 or P2. No platform record.",
+        "productionOrder": {
+          "orderId": "PO-G7-RET-01",
+          "owner": "T2_CODEX",
+          "kind": "DIFFERENTIATED_SUPPORT",
+          "courseId": "stem1-g7-math",
+          "title": "Retrieval set for fractions and states of matter (delayed practice)",
+          "objectives": [
+            "Retrieve the meaning of the whole and equal units without the model.",
+            "Retrieve why temperature stays constant during a change of state."
+          ],
+          "sequence": [
+            {
+              "minutes": 7,
+              "phase": "PRACTICE_INDEPENDENTLY",
+              "practice": "INDEPENDENT",
+              "what": "Mixed retrieval items on fractions and changes of state, no hints"
+            },
+            {
+              "minutes": 8,
+              "phase": "SOLVE_WITH_SUPPORT",
+              "practice": "GUIDED",
+              "what": "Targeted re-teach for the item each learner missed"
+            },
+            {
+              "minutes": 5,
+              "phase": "REFLECT",
+              "practice": "REFLECTION",
+              "what": "Learner states what changed in their thinking"
+            }
+          ],
+          "blocks": {
+            "existing": [
+              "CHECK",
+              "FRACTION_NUMBER_LINE",
+              "PARTICLE_MODEL"
+            ],
+            "proposed": []
+          },
+          "misconceptions": [
+            "Adding denominators when adding fractions.",
+            "Heat always raises temperature."
+          ],
+          "evidence": "Formative only; the pilot stores nothing.",
+          "liberianContext": "Same seed-library context as the day.",
+          "pilotTarget": "Two-week window"
+        },
+        "stemPractices": [
+          "PRACTICE_CONTINUUM"
+        ]
+      }
+    },
+    {
+      "slot": "END_OF_DAY",
+      "start": "14:40",
+      "end": "14:50",
+      "binding": {
+        "kind": "CONTENT_GAP",
+        "gapReason": "No factory end-of-day activity exists yet.",
+        "studentLabel": "No approved lesson for this period yet - teacher-led session",
+        "generationOrder": {
+          "orderId": "GO-G07-EOD",
+          "owner": "T2_CODEX",
+          "kind": "END_OF_DAY_REFLECTION",
+          "batch": "BAND_6-8",
+          "grade": 7,
+          "developmental": {
+            "band": "6-8",
+            "approach": "Formal reasoning, laboratory investigation, coding and structured engineering",
+            "maxSegmentMinutes": 20,
+            "maxScreenMinutesPerPeriod": 35,
+            "readAloudRequired": false,
+            "independentWritingWords": [
+              60,
+              200
+            ],
+            "requiresMovementSegment": false
+          },
+          "requirements": [
+            "A ten-minute reflection that connects the day's STEM periods",
+            "A short written reflection and one question to carry to tomorrow",
+            "Formative only"
+          ],
+          "gates": [
+            "G1",
+            "G2",
+            "G3",
+            "G4",
+            "G5",
+            "G6",
+            "G7",
+            "G8"
+          ]
+        }
+      }
+    },
+    {
+      "slot": "DISMISSAL",
+      "start": "14:50",
+      "end": "15:00",
+      "binding": {
+        "kind": "NON_INSTRUCTIONAL"
+      }
+    }
+  ],
+  "dayTwo": [
+    {
+      "slot": "P1",
+      "course": "MATH",
+      "key": "g7-math-area-perimeter",
+      "version": "4.0.0-draft.6",
+      "packageHash": "86066251a231c08dc7a500cd02b72b32eeb5396fefed00c6c83cb459cf2fb254"
+    },
+    {
+      "slot": "P2",
+      "course": "SCIENCE",
+      "key": "g7-science-evaporation-fair-test",
+      "version": "4.0.0-schoolday.1-draft.2",
+      "packageHash": "3956be4804ec6207a39b2448a2e317c140b582662db56e6aa821c6cddc7853c2"
+    },
+    {
+      "slot": "P3",
+      "course": "ENGLISH",
+      "key": "g7-english-water-evidence-report",
+      "version": "4.0.0-schoolday.1-draft.2",
+      "packageHash": "f0b35fbb47fbd77c56ed72e6a315699a55e7d8618144b821841e8516717410fe"
+    },
+    {
+      "slot": "P4",
+      "course": "SOCIAL_STUDIES",
+      "key": null,
+      "gap": "CONTENT_GAP: no Grade 7 Social Studies lesson (live rows mislabelled; see audit finding 2)"
+    },
+    {
+      "slot": "P5",
+      "course": "COMPUTING",
+      "key": null,
+      "gap": "CONTENT_GAP: second Grade 7 computing lesson (flowchart decomposition, PO-G7-CMP-01 spec)"
+    },
+    {
+      "slot": "P6",
+      "course": "SCIENCE",
+      "key": "g7-science-water-evidence-synthesis",
+      "version": "4.0.0-schoolday.1-draft.2",
+      "packageHash": "831dc9e578b2cfd382601a1d3262365e2c2465be40c47b7c2f0847f7532b8406"
+    }
+  ],
+  "developmentalBand": "6-8"
+}

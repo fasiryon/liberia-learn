@@ -1,0 +1,14 @@
+{
+  "version": "learning-preview/1.0.0",
+  "status": "PILOT_ONLY",
+  "enabled": false,
+  "revokedAt": null,
+  "startsAt": "2026-10-22T00:00:00Z",
+  "endsAt": "2026-10-23T00:00:00Z",
+  "schoolId": "UNASSIGNED_NO_AUTHORIZATION",
+  "studentUserIds": [],
+  "classIds": ["UNASSIGNED_NO_COHORT"],
+  "canonicalRecordWrites": false,
+  "offlineDelivery": false,
+  "lessons": []
+}

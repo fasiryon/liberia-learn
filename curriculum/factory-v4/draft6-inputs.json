@@ -1,0 +1,153 @@
+{
+  "version": "factory-v4-reference-inputs/1.0.0",
+  "encoding": "UTF8_LF",
+  "frontendCommit": "e5d89c34f421f028428cf9e4230ab3d40ff45536",
+  "sources": [
+    {
+      "path": "curriculum/structured/moe-structured-v1.json",
+      "sha256": "3d04bdb944fa9cb9eb18b3a791bf4fb9ddf5243de2827dd3412da23fdb1d08b1",
+      "authenticity": "AUTHENTIC_SOURCE",
+      "license": "MOE curriculum archive; redistribution clearance pending",
+      "attribution": "Liberia Ministry of Education; repository parsed extract, UNREVIEWED and NOT_CLAIMED",
+      "rights": "REVIEW_ONLY"
+    },
+    {
+      "path": "lib/curriculum/v4/candidates.ts",
+      "sha256": "8a352e78d1063590c5f20616dc24666e58c72ab3c6e3be6ca38ec5f57dc7915c",
+      "authenticity": "SYNTHETIC_DEMONSTRATION",
+      "license": "Repository draft; review only",
+      "attribution": "Interactive Learning V4 owner; authored source lineage and proposed MOE mapping",
+      "rights": "REVIEW_ONLY"
+    },
+    {
+      "path": "lib/curriculum/v4/factoryProjection.ts",
+      "sha256": "ac0276aa5dc86b381f600470c17ae510907dabd1e604b98e4f6d80cd89becd78",
+      "license": "Original deterministic recipe; internal review only",
+      "attribution": "LiberiaLearn Content Factory V4 draft.5 revision",
+      "authenticity": "SYNTHETIC_DEMONSTRATION",
+      "rights": "REVIEW_ONLY"
+    },
+    {
+      "path": "curriculum/factory-v4/draft6-sources/county-capitals.json",
+      "sha256": "eb38cf21e8aebcf7af63f2a1b10b90c07200ededf8a61d7a63d654491f769d8d",
+      "authenticity": "SYNTHETIC_DEMONSTRATION",
+      "license": "Original factory recipe or source verification record; review only",
+      "attribution": "LiberiaLearn draft.6; map geometry UNMIL / OCHA ROWCA via geoBoundaries, see references.json",
+      "rights": "REVIEW_ONLY"
+    },
+    {
+      "path": "curriculum/factory-v4/draft6-sources/geoboundaries-metadata.json",
+      "sha256": "e23a68b30dc43b66942ef8efcece1dc6e69081f0b23b952a2375d0a28776387e",
+      "authenticity": "AUTHENTIC_SOURCE",
+      "license": "Original factory recipe or source verification record; review only",
+      "attribution": "LiberiaLearn draft.6; map geometry UNMIL / OCHA ROWCA via geoBoundaries, see references.json",
+      "rights": "REVIEW_ONLY"
+    },
+    {
+      "path": "curriculum/factory-v4/draft6-sources/liberia-counties.geojson",
+      "sha256": "f6f4ed18e1e29532a77325f7af84a6dacc4489d94020f2fa2a8feb12a4da9b34",
+      "authenticity": "AUTHENTIC_SOURCE",
+      "license": "CC BY 3.0 IGO",
+      "attribution": "LiberiaLearn draft.6; map geometry UNMIL / OCHA ROWCA via geoBoundaries, see references.json",
+      "rights": "REVIEW_ONLY"
+    },
+    {
+      "path": "curriculum/factory-v4/draft6-sources/references.json",
+      "sha256": "b86851ee72e60159c96cc9476f85c0e54449a201af4d618f78466d82f25bfc41",
+      "authenticity": "SYNTHETIC_DEMONSTRATION",
+      "license": "Original factory recipe or source verification record; review only",
+      "attribution": "LiberiaLearn draft.6; map geometry UNMIL / OCHA ROWCA via geoBoundaries, see references.json",
+      "rights": "REVIEW_ONLY"
+    },
+    {
+      "path": "lib/content-factory/v4/draft6/assets.ts",
+      "sha256": "0747bcbcbdd2dd76b0836a0ed7e180dd52e29418a3758f17eb8f66677ef2e1ca",
+      "authenticity": "SYNTHETIC_DEMONSTRATION",
+      "license": "Original factory recipe or source verification record; review only",
+      "attribution": "LiberiaLearn draft.6; map geometry UNMIL / OCHA ROWCA via geoBoundaries, see references.json",
+      "rights": "REVIEW_ONLY"
+    },
+    {
+      "path": "lib/content-factory/v4/draft6/generate.ts",
+      "sha256": "c9c8d61ab9f3a1bc7a9832d42fc20b7eb503bb18249d09ec57af617fbcb46dcd",
+      "authenticity": "SYNTHETIC_DEMONSTRATION",
+      "license": "Original factory recipe or source verification record; review only",
+      "attribution": "LiberiaLearn draft.6; map geometry UNMIL / OCHA ROWCA via geoBoundaries, see references.json",
+      "rights": "REVIEW_ONLY"
+    },
+    {
+      "path": "lib/content-factory/v4/draft6/lessonAuthor.ts",
+      "sha256": "4313491d6fa001a0b915b7d0dfcd6a3c933f91b3d877b4f1bad3c90095ca1e31",
+      "authenticity": "SYNTHETIC_DEMONSTRATION",
+      "license": "Original factory recipe or source verification record; review only",
+      "attribution": "LiberiaLearn draft.6; map geometry UNMIL / OCHA ROWCA via geoBoundaries, see references.json",
+      "rights": "REVIEW_ONLY"
+    },
+    {
+      "path": "lib/content-factory/v4/draft6/lessons.ts",
+      "sha256": "9c5a96180020be9a813d80c2539171a0c376b04963c93a04eb71e8e20597504f",
+      "authenticity": "SYNTHETIC_DEMONSTRATION",
+      "license": "Original factory recipe or source verification record; review only",
+      "attribution": "LiberiaLearn draft.6; map geometry UNMIL / OCHA ROWCA via geoBoundaries, see references.json",
+      "rights": "REVIEW_ONLY"
+    },
+    {
+      "path": "lib/content-factory/v4/draft6/quality.ts",
+      "sha256": "a28822a8faa1a682017355cc1176224001f6c48a4ec98af98dd8a41c219192e4",
+      "authenticity": "SYNTHETIC_DEMONSTRATION",
+      "license": "Original factory recipe or source verification record; review only",
+      "attribution": "LiberiaLearn draft.6; map geometry UNMIL / OCHA ROWCA via geoBoundaries, see references.json",
+      "rights": "REVIEW_ONLY"
+    },
+    {
+      "path": "lib/content-factory/v4/draft6/rational.ts",
+      "sha256": "17cac1a5cbb21b1e84563da1bbff59b1e506d2c19cde0a1470aa86ba2389e867",
+      "authenticity": "SYNTHETIC_DEMONSTRATION",
+      "license": "Original factory recipe or source verification record; review only",
+      "attribution": "LiberiaLearn draft.6; map geometry UNMIL / OCHA ROWCA via geoBoundaries, see references.json",
+      "rights": "REVIEW_ONLY"
+    },
+    {
+      "path": "lib/content-factory/v4/draft6/review.ts",
+      "sha256": "be12362db43733e4048f277482d2686a6669f995b485e8f9b65615a729582192",
+      "authenticity": "SYNTHETIC_DEMONSTRATION",
+      "license": "Original factory recipe or source verification record; review only",
+      "attribution": "LiberiaLearn draft.6; map geometry UNMIL / OCHA ROWCA via geoBoundaries, see references.json",
+      "rights": "REVIEW_ONLY"
+    },
+    {
+      "path": "lib/content-factory/v4/draft6/subjects.ts",
+      "sha256": "5136dd1c16745da8ee032a70bbb1d77615eacd50760b87d04e300efe60f2f3ef",
+      "authenticity": "SYNTHETIC_DEMONSTRATION",
+      "license": "Original factory recipe or source verification record; review only",
+      "attribution": "LiberiaLearn draft.6; map geometry UNMIL / OCHA ROWCA via geoBoundaries, see references.json",
+      "rights": "REVIEW_ONLY"
+    }
+  ],
+  "candidates": [
+    {
+      "path": "curriculum/v4/candidates/g7-civics-counties-capitals.json",
+      "sha256": "d5c48a23c2b09bfa3e66cd0b6be221ab62ae0d4c6212a67d2a26c573751807ea"
+    },
+    {
+      "path": "curriculum/v4/candidates/g7-english-reading-evidence.json",
+      "sha256": "2048eee394a6b2b600967d4542c26f34091a7f75b3021d0d279d90b0af5a271d"
+    },
+    {
+      "path": "curriculum/v4/candidates/g7-math-area-perimeter.json",
+      "sha256": "76f4e26278aca2a3b73523dd8b8574381b09e459a791354e40a7e3cc3c95ce20"
+    },
+    {
+      "path": "curriculum/v4/candidates/g7-math-fractions.json",
+      "sha256": "95c5b2995430c27ca7237e3e8c7e5864ad81aa566c039ddd2ec856e5625ce22f"
+    },
+    {
+      "path": "curriculum/v4/candidates/g7-science-states-of-matter.json",
+      "sha256": "d9a0aae7d276cd1c9480ac39e1a4c2211227666742ea7cee70cee27b9d06fc4a"
+    },
+    {
+      "path": "curriculum/v4/candidates/math-multiplication-models.json",
+      "sha256": "a3c629af5a246f6db6c0ac2d7bba901b08ea15326408196227f92378ac12ae17"
+    }
+  ]
+}

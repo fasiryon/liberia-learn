@@ -1,5 +1,7 @@
+// route-policy: auth=session; scope=record; authority=class-teacher-subject-coteacher; rationale=a TEACHER lists only class-bound exams of classes where lib/authz/classAuthority grants class.read.learning for the exam's subject (class teacher, or a co-teacher assigned that subject); attempt aggregates are those exams' only; unclassed exams (classId null) are ADMIN-only through the admin exams route; no attempt is read for an exam the teacher may not see (AT-GRADE-01-2D, CoS ruling E-A)
 import { NextResponse } from "next/server";
 import { requireUser } from "@/lib/auth";
+import { authorizeClassAccess } from "@/lib/authz/classAuthority";
 import { prisma } from "@/lib/db";
 import { handleApiError } from "@/lib/errors/apiErrorHandler";
 import { buildTeacherExamReadinessSummary } from "@/lib/outcomes/examReadiness";
@@ -25,8 +27,24 @@ export async function GET() {
       return NextResponse.json({ exams: [] });
     }
 
-    const exams = await prisma.exam.findMany({
-      where: { schoolId: user.schoolId, deletedAt: null },
+    // E-A: decide on class-bound exams' class and subject first, reading no attempt data; unclassed exams are ADMIN-only.
+    const candidates = await prisma.exam.findMany({
+      where: { schoolId: user.schoolId, deletedAt: null, classId: { not: null } },
+      select: { id: true, classId: true, subject: true },
+    });
+    const decided = new Map<string, boolean>();
+    const visible: string[] = [];
+    for (const exam of candidates) {
+      if (!exam.classId) continue;
+      const key = `${exam.classId}\u0000${exam.subject}`;
+      if (!decided.has(key)) {
+        decided.set(key, (await authorizeClassAccess(user, { classId: exam.classId, subject: exam.subject, fn: "class.read.learning" })).allowed);
+      }
+      if (decided.get(key)) visible.push(exam.id);
+    }
+
+    const exams = visible.length === 0 ? [] : await prisma.exam.findMany({
+      where: { schoolId: user.schoolId, deletedAt: null, id: { in: visible } },
       orderBy: { createdAt: "desc" },
       select: {
         id: true,

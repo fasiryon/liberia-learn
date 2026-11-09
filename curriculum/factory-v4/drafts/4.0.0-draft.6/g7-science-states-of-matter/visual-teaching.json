@@ -1,0 +1,460 @@
+{
+  "contractVersion": "visual-teaching-block/4.0.0-draft.1",
+  "registryVersion": "teaching-blocks/1.1.0",
+  "instructionStandard": "liberialearn-v4-instruction/1.0.0",
+  "candidateSha256": "5e67edd36ec5b3e0ef29be65dee3ab2e08e1f7cccf17209e4e689492eaae2126",
+  "state": "DRAFT",
+  "approved": false,
+  "published": false,
+  "released": false,
+  "audience": "REVIEWER_ONLY",
+  "objectives": [
+    {
+      "id": "ft04-o1",
+      "statement": "Use the particle model to describe and compare solids, liquids and gases (arrangement, movement, shape and volume), with Liberian examples.",
+      "standards": [
+        {
+          "reference": "moe-general-science-g7-s1-p1-scientific-knowledge-measurement-and-non-living--obj6",
+          "statement": "Discuss the state of matter and their properties",
+          "relation": "CONTENT_REFERENCE",
+          "mapping": "PROPOSED"
+        },
+        {
+          "reference": "moe-general-science-g7-s1-p1-scientific-knowledge-measurement-and-non-living--con11",
+          "statement": "Matter • Non-living matter characteristics and examples. • States of Matter • Solid, liquid and gas.",
+          "relation": "CONTENT_REFERENCE",
+          "mapping": "PROPOSED"
+        }
+      ]
+    },
+    {
+      "id": "ft04-o2",
+      "statement": "Explain melting, freezing, evaporation, boiling and condensation as energy gained or lost by particles, and distinguish evaporation from boiling.",
+      "standards": [
+        {
+          "reference": "moe-general-science-g7-s1-p1-scientific-knowledge-measurement-and-non-living--obj6",
+          "statement": "Discuss the state of matter and their properties",
+          "relation": "CONTENT_REFERENCE",
+          "mapping": "PROPOSED"
+        },
+        {
+          "reference": "moe-general-science-g7-s1-p1-scientific-knowledge-measurement-and-non-living--con11",
+          "statement": "Matter • Non-living matter characteristics and examples. • States of Matter • Solid, liquid and gas.",
+          "relation": "CONTENT_REFERENCE",
+          "mapping": "PROPOSED"
+        }
+      ]
+    },
+    {
+      "id": "ft04-o3",
+      "statement": "Interpret a pure-water heating curve at fixed pressure, explain its melting plateau with latent heat, and describe reversible physical changes.",
+      "standards": [
+        {
+          "reference": "moe-general-science-g7-s1-p1-scientific-knowledge-measurement-and-non-living--obj6",
+          "statement": "Discuss the state of matter and their properties",
+          "relation": "CONTENT_REFERENCE",
+          "mapping": "PROPOSED"
+        }
+      ]
+    }
+  ],
+  "blocks": [
+    {
+      "sceneId": "generated-1",
+      "slot": "blocks",
+      "index": 0,
+      "type": "CHECK",
+      "blockSha256": "7020b186f78a200a1132fc6819dc147216432ffa4b237ac55a508b4b1b7590f5",
+      "objectiveIds": [
+        "ft04-o1",
+        "ft04-o2",
+        "ft04-o3"
+      ],
+      "instructionalPurpose": "Choose an answer and get feedback written for that choice. Learner action: Use the model, complete its task, and explain what the representation shows.",
+      "misconceptionIds": [
+        "generated-science-misconception"
+      ],
+      "responseSignals": [
+        {
+          "misconceptionId": "generated-science-misconception",
+          "responsePattern": "melting-prediction-item:OPTION:other",
+          "feedback": "Temperature measures average kinetic energy, not all transferred energy. Melting can absorb heat without raising temperature."
+        }
+      ],
+      "accessibility": {
+        "textAlternative": "During melting while both phases remain, what happens to temperature? Options: It stays about 0 C while heat is absorbed.; It must rise continuously whenever heat enters..",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: During melting while both phases remain, what happens to temperature? Options: It stays about 0 C while heat is absorbed.; It must rise continuously whenever heat enters..",
+        "responsePrompt": "Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/draft6/lessonAuthor.ts",
+          "sha256": "4313491d6fa001a0b915b7d0dfcd6a3c933f91b3d877b4f1bad3c90095ca1e31",
+          "license": "Original factory recipe or source verification record; review only",
+          "attribution": "LiberiaLearn draft.6; map geometry UNMIL / OCHA ROWCA via geoBoundaries, see references.json",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "generated-2",
+      "slot": "blocks",
+      "index": 0,
+      "type": "DATA_PLOT",
+      "blockSha256": "c3422c42dd33b8dcc351016c872d73c2ddc3d0054a09c6a517f977af547df458",
+      "objectiveIds": [
+        "ft04-o1",
+        "ft04-o2",
+        "ft04-o3"
+      ],
+      "instructionalPurpose": "Read measurements as a table and a line graph. Learner action: Compare the model at 21 kJ and 355 kJ. What changed despite equal temperatures? Explain what you kept fixed.",
+      "misconceptionIds": [
+        "generated-science-misconception"
+      ],
+      "responseSignals": [],
+      "accessibility": {
+        "textAlternative": "Idealized heating of 1 kg of pure water. Net heat added 0 kJ: Temperature -10 C; Net heat added 21 kJ: Temperature 0 C; Net heat added 355 kJ: Temperature 0 C; Net heat added 773 kJ: Temperature 100 C; Net heat added 3029 kJ: Temperature 100 C; Net heat added 3049 kJ: Temperature 110 C. A-B ice warms; B-C ice and liquid coexist at 0 C; C-D liquid warms; D-E liquid and vapor coexist at 100 C; E-F vapor warms. Unequal horizontal intervals show different required energies. See the packet SVG for segment labels.",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Idealized heating of 1 kg of pure water. Net heat added 0 kJ: Temperature -10 C; Net heat added 21 kJ: Temperature 0 C; Net heat added 355 kJ: Temperature 0 C; Net heat added 773 kJ: Temperature 100 C; Net heat added 3029 kJ: Temperature 100 C; Net heat added 3049 kJ: Temperature 110 C. A-B ice warms; B-C ice and liquid coexist at 0 C; C-D liquid warms; D-E liquid and vapor coexist at 100 C; E-F vapor warms. Unequal horizontal intervals show different required energies. See the packet SVG for segment labels.",
+        "responsePrompt": "Compare the model at 21 kJ and 355 kJ. What changed despite equal temperatures? Explain what you kept fixed. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "NONE",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/draft6/lessonAuthor.ts",
+          "sha256": "4313491d6fa001a0b915b7d0dfcd6a3c933f91b3d877b4f1bad3c90095ca1e31",
+          "license": "Original factory recipe or source verification record; review only",
+          "attribution": "LiberiaLearn draft.6; map geometry UNMIL / OCHA ROWCA via geoBoundaries, see references.json",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "generated-2",
+      "slot": "blocks",
+      "index": 1,
+      "type": "CHECK",
+      "blockSha256": "34a1c0d90afe3e68ef3b7873e818a42bdc6351bf14d595fb29964e55f9ae3ce8",
+      "objectiveIds": [
+        "ft04-o1",
+        "ft04-o2",
+        "ft04-o3"
+      ],
+      "instructionalPurpose": "Choose an answer and get feedback written for that choice. Learner action: Compare the model at 21 kJ and 355 kJ. What changed despite equal temperatures? Explain what you kept fixed.",
+      "misconceptionIds": [
+        "generated-science-misconception"
+      ],
+      "responseSignals": [
+        {
+          "misconceptionId": "generated-science-misconception",
+          "responsePattern": "solid-properties-item:OPTION:other",
+          "feedback": "Solid particles still vibrate. Water ice has an open structure; it is not a motionless solid block at particle scale."
+        },
+        {
+          "misconceptionId": "generated-science-misconception",
+          "responsePattern": "liquid-properties-item:OPTION:other",
+          "feedback": "The water particles do not grow. A liquid takes the shape of the part of the container it occupies, not necessarily the whole container."
+        },
+        {
+          "misconceptionId": "generated-science-misconception",
+          "responsePattern": "gas-properties-item:OPTION:other",
+          "feedback": "Gas particles move rapidly in random directions and collide. They do not grow to fill the container."
+        }
+      ],
+      "accessibility": {
+        "textAlternative": "Which particle model explains an ice cube's shape and volume? Options: Particles vibrate about fixed positions in an open solid structure; ice has its own shape and approximately fixed volume.; Ice particles are motionless and have no space between them.. Water is poured from a cup to a bowl without spilling. What changes? Options: Its shape changes; volume stays essentially the same because close particles can move past one another.; Its particles grow and the amount of water increases to fill the bowl.. Which model describes water vapor or the gases in a classroom's air? Options: Far-apart particles move randomly and fill available space; gas has no own fixed shape or volume.; Gas particles grow larger but stay in fixed positions..",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Which particle model explains an ice cube's shape and volume? Options: Particles vibrate about fixed positions in an open solid structure; ice has its own shape and approximately fixed volume.; Ice particles are motionless and have no space between them.. Water is poured from a cup to a bowl without spilling. What changes? Options: Its shape changes; volume stays essentially the same because close particles can move past one another.; Its particles grow and the amount of water increases to fill the bowl.. Which model describes water vapor or the gases in a classroom's air? Options: Far-apart particles move randomly and fill available space; gas has no own fixed shape or volume.; Gas particles grow larger but stay in fixed positions..",
+        "responsePrompt": "Compare the model at 21 kJ and 355 kJ. What changed despite equal temperatures? Explain what you kept fixed. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/draft6/lessonAuthor.ts",
+          "sha256": "4313491d6fa001a0b915b7d0dfcd6a3c933f91b3d877b4f1bad3c90095ca1e31",
+          "license": "Original factory recipe or source verification record; review only",
+          "attribution": "LiberiaLearn draft.6; map geometry UNMIL / OCHA ROWCA via geoBoundaries, see references.json",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "generated-4",
+      "slot": "blocks",
+      "index": 0,
+      "type": "CHECK",
+      "blockSha256": "6cb30fb194d0233654b593be629f5d9c0c4874a70b5dc8beaf7eae8dffc48c29",
+      "objectiveIds": [
+        "ft04-o1",
+        "ft04-o2",
+        "ft04-o3"
+      ],
+      "instructionalPurpose": "Choose an answer and get feedback written for that choice. Learner action: Use the model, complete its task, and explain what the representation shows.",
+      "misconceptionIds": [
+        "generated-science-misconception"
+      ],
+      "responseSignals": [
+        {
+          "misconceptionId": "generated-science-misconception",
+          "responsePattern": "latent-heat-check-item:OPTION:other",
+          "feedback": "A flat temperature line does not mean zero energy transfer. The sample is absorbing latent heat while it melts."
+        }
+      ],
+      "accessibility": {
+        "textAlternative": "Why is the melting segment flat? Options: Heat changes the phase while ice and liquid coexist.; The heater has stopped transferring energy..",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Why is the melting segment flat? Options: Heat changes the phase while ice and liquid coexist.; The heater has stopped transferring energy..",
+        "responsePrompt": "Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/draft6/lessonAuthor.ts",
+          "sha256": "4313491d6fa001a0b915b7d0dfcd6a3c933f91b3d877b4f1bad3c90095ca1e31",
+          "license": "Original factory recipe or source verification record; review only",
+          "attribution": "LiberiaLearn draft.6; map geometry UNMIL / OCHA ROWCA via geoBoundaries, see references.json",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "generated-4",
+      "slot": "blocks",
+      "index": 1,
+      "type": "CHECK",
+      "blockSha256": "2af206aafde9ca21ea045de7d0e6fc56c025eadc4212d2d99ddad8a01621f0bc",
+      "objectiveIds": [
+        "ft04-o1",
+        "ft04-o2",
+        "ft04-o3"
+      ],
+      "instructionalPurpose": "Choose an answer and get feedback written for that choice. Learner action: Use the model, complete its task, and explain what the representation shows.",
+      "misconceptionIds": [
+        "generated-science-misconception"
+      ],
+      "responseSignals": [
+        {
+          "misconceptionId": "generated-science-misconception",
+          "responsePattern": "evaporation-check-item:OPTION:other",
+          "feedback": "Boiling and evaporation are different processes. Water can leave the surface at 28 C without vapor bubbles throughout it."
+        }
+      ],
+      "accessibility": {
+        "textAlternative": "A wet cloth dries at 28 C. Which explanation fits? Options: Evaporation from its surface can occur below boiling.; The cloth must secretly have reached 100 C..",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: A wet cloth dries at 28 C. Which explanation fits? Options: Evaporation from its surface can occur below boiling.; The cloth must secretly have reached 100 C..",
+        "responsePrompt": "Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/draft6/lessonAuthor.ts",
+          "sha256": "4313491d6fa001a0b915b7d0dfcd6a3c933f91b3d877b4f1bad3c90095ca1e31",
+          "license": "Original factory recipe or source verification record; review only",
+          "attribution": "LiberiaLearn draft.6; map geometry UNMIL / OCHA ROWCA via geoBoundaries, see references.json",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "generated-4",
+      "slot": "blocks",
+      "index": 2,
+      "type": "CHECK",
+      "blockSha256": "1b64c115d55de823dc3cb65d3b46c4742be4b2969e9faf81440f703cf0bb1d9e",
+      "objectiveIds": [
+        "ft04-o1",
+        "ft04-o2",
+        "ft04-o3"
+      ],
+      "instructionalPurpose": "Choose an answer and get feedback written for that choice. Learner action: Use the model, complete its task, and explain what the representation shows.",
+      "misconceptionIds": [
+        "generated-science-misconception"
+      ],
+      "responseSignals": [
+        {
+          "misconceptionId": "generated-science-misconception",
+          "responsePattern": "freezing-energy-item:OPTION:other",
+          "feedback": "Cold is not a substance. The water loses energy to its colder surroundings as it freezes."
+        }
+      ],
+      "accessibility": {
+        "textAlternative": "What happens when liquid water freezes at its freezing point? Options: Energy leaves the water as particles settle into the solid arrangement.; Freezing requires heat to enter the water because cold is a substance..",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: What happens when liquid water freezes at its freezing point? Options: Energy leaves the water as particles settle into the solid arrangement.; Freezing requires heat to enter the water because cold is a substance..",
+        "responsePrompt": "Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/draft6/lessonAuthor.ts",
+          "sha256": "4313491d6fa001a0b915b7d0dfcd6a3c933f91b3d877b4f1bad3c90095ca1e31",
+          "license": "Original factory recipe or source verification record; review only",
+          "attribution": "LiberiaLearn draft.6; map geometry UNMIL / OCHA ROWCA via geoBoundaries, see references.json",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "generated-4",
+      "slot": "blocks",
+      "index": 3,
+      "type": "CHECK",
+      "blockSha256": "f82da9f64b0bac2e6ada803fce5b81bcf6f804f25497f00fb3ec04acd6515bf8",
+      "objectiveIds": [
+        "ft04-o1",
+        "ft04-o2",
+        "ft04-o3"
+      ],
+      "instructionalPurpose": "Choose an answer and get feedback written for that choice. Learner action: Use the model, complete its task, and explain what the representation shows.",
+      "misconceptionIds": [
+        "generated-science-misconception"
+      ],
+      "responseSignals": [
+        {
+          "misconceptionId": "generated-science-misconception",
+          "responsePattern": "state-properties-item:OPTION:other",
+          "feedback": "The particles do not grow during melting. Their arrangement and freedom of movement change."
+        }
+      ],
+      "accessibility": {
+        "textAlternative": "Why can water take a cup's shape but ice keep its shape? Options: Liquid particles move past neighbors; solid particles vibrate about fixed positions.; Liquid particles grow to fill the cup..",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Why can water take a cup's shape but ice keep its shape? Options: Liquid particles move past neighbors; solid particles vibrate about fixed positions.; Liquid particles grow to fill the cup..",
+        "responsePrompt": "Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/draft6/lessonAuthor.ts",
+          "sha256": "4313491d6fa001a0b915b7d0dfcd6a3c933f91b3d877b4f1bad3c90095ca1e31",
+          "license": "Original factory recipe or source verification record; review only",
+          "attribution": "LiberiaLearn draft.6; map geometry UNMIL / OCHA ROWCA via geoBoundaries, see references.json",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "generated-5",
+      "slot": "blocks",
+      "index": 0,
+      "type": "WRITING_ORGANIZER",
+      "blockSha256": "1754b26bac13b24832ecd36f69ffba28f77ee9f08010e87cd985a35fe9d732c1",
+      "objectiveIds": [
+        "ft04-o1",
+        "ft04-o2",
+        "ft04-o3"
+      ],
+      "instructionalPurpose": "Plan and write a response part by part, then revise against a checklist. Learner action: Propose a test that distinguishes condensation from leakage without opening the cup. State what result supports each explanation.",
+      "misconceptionIds": [
+        "generated-science-misconception"
+      ],
+      "responseSignals": [],
+      "accessibility": {
+        "textAlternative": "Explain condensation on the cold cup and evaporation from the cloth. Describe energy transfer and a way to reverse each physical change. Answer or claim: State a precise answer to the question. Evidence and explanation: Cite the source or calculation and explain the connection. Consider what it cannot establish.",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Explain condensation on the cold cup and evaporation from the cloth. Describe energy transfer and a way to reverse each physical change. Answer or claim: State a precise answer to the question. Evidence and explanation: Cite the source or calculation and explain the connection. Consider what it cannot establish.",
+        "responsePrompt": "Propose a test that distinguishes condensation from leakage without opening the cup. State what result supports each explanation. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "NONE",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/draft6/lessonAuthor.ts",
+          "sha256": "4313491d6fa001a0b915b7d0dfcd6a3c933f91b3d877b4f1bad3c90095ca1e31",
+          "license": "Original factory recipe or source verification record; review only",
+          "attribution": "LiberiaLearn draft.6; map geometry UNMIL / OCHA ROWCA via geoBoundaries, see references.json",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    }
+  ],
+  "assessmentBoundary": {
+    "player": "ASSESSMENT_PLAYER_V2",
+    "scoring": "SERVER_AUTHORITY",
+    "protectedKeysIncluded": false,
+    "canonicalMasteryMutation": false,
+    "offlineEvidence": "CAPTURE_ONLY_NOT_OFFICIAL"
+  }
+}

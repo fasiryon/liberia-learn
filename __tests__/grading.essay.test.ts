@@ -11,7 +11,11 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 
 vi.mock("@/lib/db", () => ({
   prisma: {
-    student: { findFirst: vi.fn() },
+    student: { findFirst: vi.fn(), findUnique: async () => ({ enrollments: [{ classId: "class-1", Class: { schoolId: "school-1" } }] }) },
+    // AT-SUBMIT-02: the lesson reaches the learner through an own-school enrolled class (a scheduled lesson).
+    scheduledWork: { findFirst: async () => ({ id: "work-1" }) },
+    teacherLessonAssignment: { findFirst: async () => null },
+    assignment: { findFirst: async () => null },
     curriculumContent: { findUnique: vi.fn() },
     gradedSubmission: {
       findFirst: vi.fn(),
@@ -19,6 +23,11 @@ vi.mock("@/lib/db", () => ({
       create: vi.fn(),
       update: vi.fn(),
     },
+    enrollment: { findMany: vi.fn() },
+    class: { findUnique: vi.fn() },
+    teacherAssignment: { findMany: vi.fn() },
+    auditLog: { create: vi.fn() },
+    $transaction: vi.fn(),
   },
 }));
 
@@ -209,12 +218,18 @@ describe("POST /api/grading/essay", () => {
   beforeEach(() => vi.clearAllMocks());
 
   const mockStudent = { id: "student-1" };
+  // AT-GRADE-01 2e: a learner-visible platform lesson, scheduled for the learner's class (see the prisma mock).
   const mockLesson = {
+    id: "lesson-1",
     grade: 8,
     subject: "ENGLISH",
     title: "Essay Writing",
     unitId: "unit-essay",
     contentId: "content-essay",
+    schoolId: null,
+    teacherCreated: false,
+    visibility: "public",
+    payload: {},
   };
   const goodEssayBody = "Word ".repeat(80);
 
@@ -222,6 +237,7 @@ describe("POST /api/grading/essay", () => {
     mockPrisma.student.findFirst.mockResolvedValue(mockStudent);
     mockPrisma.curriculumContent.findUnique.mockResolvedValue(mockLesson);
     mockPrisma.gradedSubmission.findFirst.mockResolvedValue(null);
+    mockPrisma.gradedSubmission.findUnique.mockResolvedValue(null);
     mockPrisma.gradedSubmission.create.mockResolvedValue({ id: "sub-1", status: "pending" });
     mockPrisma.gradedSubmission.update.mockResolvedValue({
       id: "sub-1",
@@ -265,8 +281,10 @@ describe("POST /api/grading/essay", () => {
   });
 
   it("idempotency: same clientSubmissionId returns existing submission", async () => {
-    const existingSubmission = { id: "sub-existing", score: 0.8, status: "graded" };
-    mockPrisma.gradedSubmission.findFirst.mockResolvedValue(existingSubmission);
+    // The stored row is this learner's exact earlier request (AT-GRADE-01 2e: replay needs the same canonical request).
+    const existingSubmission = { id: "sub-existing", score: 0.8, status: "graded", studentId: "student-1", lessonId: "lesson-1",
+      promptId: null, exerciseType: "essay", submissionText: goodEssayBody };
+    mockPrisma.gradedSubmission.findUnique.mockResolvedValue(existingSubmission);
 
     const { POST } = await import("@/app/api/grading/essay/route");
     const req = new Request("http://localhost/api/grading/essay", {
@@ -282,8 +300,9 @@ describe("POST /api/grading/essay", () => {
 
     expect(res.status).toBe(200);
     expect(data.submission.id).toBe("sub-existing");
-    expect(mockPrisma.gradedSubmission.findFirst).toHaveBeenCalledWith({
-      where: { clientSubmissionId: "already-submitted", studentId: "student-1" },
+    // The key is looked up globally so a key bound to another learner is refused (409), never missed.
+    expect(mockPrisma.gradedSubmission.findUnique).toHaveBeenCalledWith({
+      where: { clientSubmissionId: "already-submitted" },
     });
     // AI must NOT be called for duplicate submissions
     expect(mockRouted).not.toHaveBeenCalled();
@@ -327,8 +346,19 @@ describe("PATCH /api/grading/[submissionId]/override — teacher override", () =
     mockPrisma.gradedSubmission.findUnique.mockResolvedValue({
       id: "sub-1",
       exerciseType: "essay",
+      status: "graded",
+      score: 0.6,
+      studentId: "student-1",
+      lessonId: "lesson-1",
       student: { user: { schoolId: "school-a" } },
     });
+    // AT-GRADE-01: teacher-1 is the class teacher of the learner's class; the review and its audit share a transaction.
+    mockPrisma.curriculumContent.findUnique.mockResolvedValue({ id: "lesson-1", subject: "ENGLISH" });
+    mockPrisma.enrollment.findMany.mockResolvedValue([{ classId: "class-a" }]);
+    mockPrisma.class.findUnique.mockResolvedValue({ schoolId: "school-a", teacherId: "teacher-1" });
+    mockPrisma.teacherAssignment.findMany.mockResolvedValue([]);
+    mockPrisma.auditLog.create.mockResolvedValue({ id: "audit-1" });
+    mockPrisma.$transaction.mockImplementation(async (operation: (tx: unknown) => Promise<unknown>) => operation(mockPrisma));
     mockPrisma.gradedSubmission.update.mockResolvedValue({
       id: "sub-1",
       score: 0.9,
@@ -337,13 +367,13 @@ describe("PATCH /api/grading/[submissionId]/override — teacher override", () =
     });
   });
 
-  it("allows TEACHER to override score", async () => {
+  it("allows the learner's class TEACHER to override score, with a reason", async () => {
     const { PATCH } = await import(
       "@/app/api/grading/[submissionId]/override/route"
     );
     const req = new Request("http://localhost/api/grading/sub-1/override", {
       method: "PATCH",
-      body: JSON.stringify({ score: 0.9, feedback: "Teacher override: excellent." }),
+      body: JSON.stringify({ score: 0.9, feedback: "Teacher override: excellent.", reason: "Rubric evidence re-read." }),
     });
     const res = await PATCH(req as any, { params: { submissionId: "sub-1" } });
     const data = await res.json();
@@ -358,6 +388,10 @@ describe("PATCH /api/grading/[submissionId]/override — teacher override", () =
     mockPrisma.gradedSubmission.findUnique.mockResolvedValue({
       id: "sub-2",
       exerciseType: "essay",
+      status: "graded",
+      score: 0.6,
+      studentId: "student-2",
+      lessonId: "lesson-1",
       student: { user: { schoolId: "school-b" } },
     });
 
@@ -366,7 +400,7 @@ describe("PATCH /api/grading/[submissionId]/override — teacher override", () =
     );
     const req = new Request("http://localhost/api/grading/sub-2/override", {
       method: "PATCH",
-      body: JSON.stringify({ score: 0.9 }),
+      body: JSON.stringify({ score: 0.9, reason: "Rubric evidence re-read." }),
     });
     const res = await PATCH(req as any, { params: { submissionId: "sub-2" } });
 
@@ -374,11 +408,15 @@ describe("PATCH /api/grading/[submissionId]/override — teacher override", () =
     expect(mockPrisma.gradedSubmission.update).not.toHaveBeenCalled();
   });
 
-  it("allows a platform admin to override a submission at any school", async () => {
+  it("refuses a platform admin at another school (no platform-admin bypass, AT-GRADE-01)", async () => {
     mockRequireRole.mockResolvedValue({ id: "platform-admin-1", role: "ADMIN", schoolId: null, isPlatformAdmin: true });
     mockPrisma.gradedSubmission.findUnique.mockResolvedValue({
       id: "sub-3",
       exerciseType: "essay",
+      status: "graded",
+      score: 0.6,
+      studentId: "student-2",
+      lessonId: "lesson-1",
       student: { user: { schoolId: "school-b" } },
     });
     mockPrisma.gradedSubmission.update.mockResolvedValue({
@@ -392,11 +430,12 @@ describe("PATCH /api/grading/[submissionId]/override — teacher override", () =
     );
     const req = new Request("http://localhost/api/grading/sub-3/override", {
       method: "PATCH",
-      body: JSON.stringify({ score: 0.85 }),
+      body: JSON.stringify({ score: 0.85, reason: "Rubric evidence re-read." }),
     });
     const res = await PATCH(req as any, { params: { submissionId: "sub-3" } });
 
-    expect(res.status).toBe(200);
+    expect(res.status).toBe(403);
+    expect(mockPrisma.gradedSubmission.update).not.toHaveBeenCalled();
   });
 
   it("rejects invalid score (> 1)", async () => {
@@ -419,7 +458,7 @@ describe("PATCH /api/grading/[submissionId]/override — teacher override", () =
     );
     const req = new Request("http://localhost/api/grading/missing/override", {
       method: "PATCH",
-      body: JSON.stringify({ score: 0.8 }),
+      body: JSON.stringify({ score: 0.8, reason: "Rubric evidence re-read." }),
     });
     const res = await PATCH(req as any, { params: { submissionId: "missing" } });
     expect(res.status).toBe(404);

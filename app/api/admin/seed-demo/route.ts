@@ -1,5 +1,6 @@
-// route-policy: auth=session; scope=platform; authority=school-admin; rationale=any school ADMIN, only when DEMO_SCHOOL_IDS is configured, attaches itself and a fixed list of well-known demo accounts that have NO school to a demo school and seeds demo data there (not limited to the caller's school); each attachment advances the account's credential version
+// route-policy: auth=session; scope=platform; authority=school-admin; rationale=any school ADMIN, only when DEMO_SCHOOL_IDS is configured, attaches itself and a fixed list of well-known demo accounts that have NO school to a demo school and seeds demo data there (not limited to the caller's school); each attachment advances the account's credential version; refused on any deployed Preview/staging after authority and before body or data work (PREVIEW_IDENTITY_FROZEN)
 import { NextResponse } from "next/server";
+import { previewIdentityFrozen } from "@/lib/preview/identityFreeze";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { updateUserIdentity } from "@/lib/auth/sessionRevocation";
@@ -14,6 +15,8 @@ function getConfiguredDemoSchoolId() {
 export async function POST() {
   try {
     const user = await requireRole("ADMIN");
+    const frozen = previewIdentityFrozen();
+    if (frozen) return frozen;
     const demoSchoolId = getConfiguredDemoSchoolId();
 
     if (!demoSchoolId) {

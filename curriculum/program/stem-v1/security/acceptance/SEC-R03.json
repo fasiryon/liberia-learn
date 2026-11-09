@@ -1,0 +1,47 @@
+{
+  "finding": "SEC-R03",
+  "decision": "PASS",
+  "implementer": "Codex: Project Atlas task",
+  "branch": "audit/project-atlas-security-triage",
+  "testCommit": "5ba8f6bc468fc14c224749d99fa10a53b53a3294",
+  "fixCommit": "b3bebe4c4e2e2390b3b7bbed86c213b7f673600f",
+  "failingBeforeFix": {
+    "commit": "5ba8f6bc468fc14c224749d99fa10a53b53a3294",
+    "command": "python docs/audits/project-atlas-20261023/post-audit/run_verification.py --finding SEC-R03 --phase RED",
+    "result": "FAIL",
+    "detail": "CoS re-run in a disposable detached worktree: 9 failed, 2 passed, exit 1 (matches Atlas)",
+    "log": "curriculum/program/stem-v1/security/acceptance/evidence/cos-SEC-R03-RED.json",
+    "logSha256": "7b09ad98a717cf0f3a5a4ee508ab6540bdc0bf55ca117036949450e0671d98e4"
+  },
+  "passingAfterFix": {
+    "commit": "b3bebe4c4e2e2390b3b7bbed86c213b7f673600f",
+    "command": "python docs/audits/project-atlas-20261023/post-audit/run_verification.py --finding SEC-R03 --phase GREEN",
+    "result": "PASS",
+    "detail": "CoS re-run: 11 passed, 0 failed, exit 0",
+    "log": "curriculum/program/stem-v1/security/acceptance/evidence/cos-SEC-R03-GREEN.json",
+    "logSha256": "18cf8d09d3e7ccfadb489c88ce35208dec397470f9a98cadd1ba7d32255279ed"
+  },
+  "testIntegrity": "The fix commit edits the two test files only in type annotations (satisfies -> explicit types); no assertion or expectation changed.",
+  "typecheck": {
+    "commit": "b3bebe4c4e2e2390b3b7bbed86c213b7f673600f",
+    "result": "PASS",
+    "basis": "Atlas evidence: tsc --noEmit exit 0 recorded at 34f93bf48, whose application tree is identical to b3bebe4c4 (git diff touches only post-audit/). The CoS independent tsc re-run was stopped by the host for low memory and was not repeated; re-run before merge."
+  },
+  "adjacentChecks": [
+    "CoS ran 10 existing repository suites at b3bebe4c4: adaptive.practice.moderation, agents/homeworkGraderModeration, agents/liberialearnFamilyAgent, agents/moderation, agents/runtime.crosscutting, agents/runtime, agents/teachingRuntimeAgent, teaching/runtime, waec.practice.moderation, wave4c.moderation: 61/61 passed",
+    "Direct moderateText callers outside runAgent (graders, lab AI, homework, essay, AI literacy, adaptive practice, WAEC, grounded answers for STUDENT) already pass audience minor and fail closed: unchanged",
+    "Regeneration branch: runLoop assigns a response only on SUCCESS, so a failed second attempt returns null; no unmoderated text can be released"
+  ],
+  "safeFailure": "For minor and guardian audiences any verdict other than SAFE (UNSAFE, UNCERTAIN from timeout or invalid JSON) blocks input before the model and output before release, including after translation; the learner or guardian receives a constant safe fallback. Internal/general agents keep their existing behaviour.",
+  "learningWorkflowPreserved": "SAFE responses pass unchanged; teaching-runtime and family agent suites pass. Caveat (not a safety gap): the classroom wrapper returns 503 on a non-SUCCESS run instead of narrating the fallback; the guardian wrapper sends the fallback. UX follow-up for T1/teaching owner.",
+  "independentReview": {
+    "reviewer": "Claude Chief of Staff (independent of the implementer)",
+    "result": "PASS",
+    "notes": "Reviewed lib/agents/moderation.ts, lib/agents/runtime.ts, lib/agents/types.ts and the eight agent audience declarations at b3bebe4c4. teaching-runtime = minor, liberialearn-family = guardian, all others general. No production, deployment or flag change. Atlas self-review (SEC-R03-INDEPENDENT_REVIEW.md) is not counted as independent."
+  },
+  "residual": [
+    "Deployment assurance unverified: whether teaching-runtime is enabled in production (env flag or AgentControl override) needs a founder-authorized read-only check (see SEC-R03 escalation).",
+    "Re-run tsc at b3bebe4c4 before merge when host memory allows."
+  ],
+  "reviewedAt": "2026-10-23T22:31:57.942Z"
+}

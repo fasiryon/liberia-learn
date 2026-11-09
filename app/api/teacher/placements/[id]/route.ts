@@ -1,4 +1,4 @@
-// route-policy: auth=session; scope=tenant; authority=placement-review; rationale=a same-school reviewer reads placement evidence and review history without official-grade authority
+// route-policy: auth=session; scope=tenant; authority=placement-review; rationale=school placement review pending founder decision (AT-GRADE-01-2D): a same-school TEACHER or ADMIN reads placement evidence and review history without official-grade authority; a learner with no school is refused
 import { NextResponse } from "next/server";
 import { requireUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";

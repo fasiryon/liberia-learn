@@ -1,0 +1,717 @@
+{
+  "contractVersion": "candidate-lesson-v2/1.1.0",
+  "title": "Generated: One whole, equal units",
+  "instruction": {
+    "standard": "liberialearn-v4-instruction/1.0.0",
+    "retention": {
+      "delayDays": 7,
+      "prompts": [
+        "After seven days, independently explain: Represent fractions, including fractions equal to or greater than 1, on area models and a number line, naming the whole each fraction refers to.",
+        "Apply the idea to a new context and justify the evidence or calculations used. This is a request for a governed retention task, not a scheduled or scored item."
+      ]
+    }
+  },
+  "estimatedMinutes": 45,
+  "ageBand": "JUNIOR_SECONDARY",
+  "pedagogy": {
+    "primaryStrategy": "GUIDED_TO_INDEPENDENT",
+    "rationale": "Generate representations and worked reasoning from a versioned subject plan, then fade support before independent work and transfer."
+  },
+  "prerequisiteAssumptions": [
+    "Can read or access the text equivalent and explain a response in writing or speech."
+  ],
+  "misconceptions": [
+    {
+      "id": "generated-math-misconception",
+      "objectiveId": "ft07-o1",
+      "description": "Adds denominators or treats a rounded decimal as an exact fraction.",
+      "response": "Preserve the whole and rename in equal-sized pieces. Distinguish exact equality from an explicitly requested approximation."
+    }
+  ],
+  "scenes": [
+    {
+      "id": "generated-1",
+      "type": "PRACTICE",
+      "title": "One whole, equal units",
+      "purpose": "EXPLAIN_CONCEPT",
+      "objectiveIds": [
+        "ft07-o1",
+        "ft07-o2",
+        "ft07-o3"
+      ],
+      "learnerAction": "Sketch 1 and 3/2 on equal bars and on a number line. Name the whole and explain why 3/2 exceeds 1.",
+      "content": {
+        "body": "Use one bar as one kilogram. Equal parts must have the same size. Five fourths fills one whole bar and one quarter of another equal bar. On a number line, each interval of length one is one whole. Locate 5/4 between 1 and 2."
+      },
+      "interaction": {
+        "kind": "FREE_RESPONSE",
+        "prompts": [
+          {
+            "id": "generated-1-response-0",
+            "prompt": "Sketch 1 and 3/2 on equal bars and on a number line. Name the whole and explain why 3/2 exceeds 1.",
+            "minLength": 20
+          }
+        ]
+      },
+      "tools": {
+        "requested": [],
+        "prohibited": []
+      },
+      "hints": [],
+      "misconceptionIds": [
+        "generated-math-misconception"
+      ],
+      "evidence": {
+        "kind": "NONE"
+      },
+      "accessibility": {
+        "textAlternative": "Use one bar as one kilogram. Equal parts must have the same size. Five fourths fills one whole bar and one quarter of another equal bar. On a number line, each interval of length one is one whole. Locate 5/4 between 1 and 2. A bar split into 4 equal parts with 4 shaded: 4/4. One whole kilogram, split into four equal quarters. A bar split into 4 equal parts with 1 shaded: 1/4. One quarter of a second equal kilogram bar. Together the two bars show 5/4 kilograms. Place 5/4. Count five quarter-steps from zero; one unit is one kilogram. A number line from 0 to 2 marked in 4ths. 2/3 is the same amount as 4/6, 8/12. The same whole and amount: 2/3 = 4/6 = 8/12. Sketch 1 and 3/2 on equal bars and on a number line. Name the whole and explain why 3/2 exceeds 1.",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "reducedMotion": "STATIC_EQUIVALENT"
+      },
+      "offline": {
+        "mode": "FULL_OFFLINE",
+        "note": "Models and formative checks use cached lesson data. Paper responses are capture only; no official grade is produced."
+      },
+      "completion": "ALL_RESPONSES_WRITTEN",
+      "pedagogy": {
+        "strategy": "GUIDED_TO_INDEPENDENT",
+        "representation": "MIXED",
+        "scaffoldLevel": "FULL"
+      },
+      "teaching": {
+        "phase": "VISUALIZE",
+        "blocks": [
+          {
+            "type": "FRACTION_MODEL",
+            "id": "whole-bar",
+            "representation": "BAR",
+            "parts": 4,
+            "shaded": 4,
+            "interaction": "EXPLORE",
+            "caption": "One whole kilogram, split into four equal quarters."
+          },
+          {
+            "type": "FRACTION_MODEL",
+            "id": "extra-quarter",
+            "representation": "BAR",
+            "parts": 4,
+            "shaded": 1,
+            "interaction": "NONE",
+            "caption": "One quarter of a second equal kilogram bar. Together the two bars show 5/4 kilograms."
+          },
+          {
+            "type": "FRACTION_NUMBER_LINE",
+            "id": "five-fourths-line",
+            "denominator": 4,
+            "wholes": 2,
+            "prompt": "Place 5/4. Count five quarter-steps from zero; one unit is one kilogram.",
+            "formativeKey": {
+              "numerator": 5,
+              "denominator": 4
+            }
+          },
+          {
+            "type": "FRACTION_EQUIVALENCE",
+            "id": "equivalent-thirds",
+            "base": {
+              "numerator": 2,
+              "denominator": 3
+            },
+            "factors": [
+              2,
+              4
+            ],
+            "caption": "The same whole and amount: 2/3 = 4/6 = 8/12."
+          }
+        ]
+      }
+    },
+    {
+      "id": "generated-2",
+      "type": "GUIDED_EXAMPLE",
+      "title": "Rename before combining",
+      "purpose": "MODEL_WORKED_EXAMPLE",
+      "objectiveIds": [
+        "ft07-o1",
+        "ft07-o2",
+        "ft07-o3"
+      ],
+      "learnerAction": "Use the model, complete its task, and explain what the representation shows.",
+      "content": {
+        "body": "An exact fraction is the primary answer. Equivalent fractions such as 5/6 and 10/12 are equally correct. A finite decimal is equivalent only when exactly equal, such as 3/4 = 0.75. Here 5/6 is not equal to 0.83. Only a question explicitly requesting rounding accepts 0.83 as an approximation to two decimal places."
+      },
+      "interaction": {
+        "kind": "NONE"
+      },
+      "tools": {
+        "requested": [],
+        "prohibited": []
+      },
+      "hints": [],
+      "misconceptionIds": [
+        "generated-math-misconception"
+      ],
+      "evidence": {
+        "kind": "NONE"
+      },
+      "accessibility": {
+        "textAlternative": "An exact fraction is the primary answer. Equivalent fractions such as 5/6 and 10/12 are equally correct. A finite decimal is equivalent only when exactly equal, such as 3/4 = 0.75. Here 5/6 is not equal to 0.83. Only a question explicitly requesting rounding accepts 0.83 as an approximation to two decimal places. Add 1/2 and 1/3 of the same kilogram. Step 1: Rename both amounts in sixths. 1/2 = 3/6, 1/3 = 2/6 Step 2: Count pieces of the same size; keep the denominator. 3/6 + 2/6 = 5/6 Order 1/2, 2/3 and 3/4. Step 1: On the same whole, use twelfths and the benchmarks zero, one half and one. 1/2 = 6/12, 2/3 = 8/12, 3/4 = 9/12 Step 2: Count equal intervals from zero. 1/2 < 2/3 < 3/4 < 1",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "reducedMotion": "STATIC_EQUIVALENT"
+      },
+      "offline": {
+        "mode": "FULL_OFFLINE",
+        "note": "Models and formative checks use cached lesson data. Paper responses are capture only; no official grade is produced."
+      },
+      "completion": "VIEWED",
+      "pedagogy": {
+        "strategy": "GUIDED_TO_INDEPENDENT",
+        "representation": "MIXED",
+        "scaffoldLevel": "FULL"
+      },
+      "teaching": {
+        "phase": "DEMONSTRATE",
+        "blocks": [
+          {
+            "type": "WORKED_SOLUTION",
+            "id": "fraction-add-worked",
+            "problem": "Add 1/2 and 1/3 of the same kilogram.",
+            "steps": [
+              {
+                "text": "Rename both amounts in sixths.",
+                "tex": "1/2=3/6,\\quad1/3=2/6"
+              },
+              {
+                "text": "Count pieces of the same size; keep the denominator.",
+                "tex": "3/6+2/6=5/6"
+              }
+            ]
+          },
+          {
+            "type": "WORKED_SOLUTION",
+            "id": "fraction-compare-worked",
+            "problem": "Order 1/2, 2/3 and 3/4.",
+            "steps": [
+              {
+                "text": "On the same whole, use twelfths and the benchmarks zero, one half and one.",
+                "tex": "1/2=6/12,\\quad2/3=8/12,\\quad3/4=9/12"
+              },
+              {
+                "text": "Count equal intervals from zero.",
+                "tex": "1/2<2/3<3/4<1"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "generated-3",
+      "type": "PRACTICE",
+      "title": "Represent and combine with support",
+      "purpose": "GUIDED_PRACTICE",
+      "objectiveIds": [
+        "ft07-o1",
+        "ft07-o2",
+        "ft07-o3"
+      ],
+      "learnerAction": "Draw 6/4 on equal area bars, mark it on a number line and name the whole. Explain why it is beyond one.",
+      "content": {
+        "body": "Draw equal wholes, rename related denominators and write an exact fraction before choosing. To add like denominators, add only the counts. To subtract, remove that many equal pieces. A denominator describes the piece size, not a second count to add."
+      },
+      "interaction": {
+        "kind": "FREE_RESPONSE",
+        "prompts": [
+          {
+            "id": "generated-3-response-0",
+            "prompt": "Draw 6/4 on equal area bars, mark it on a number line and name the whole. Explain why it is beyond one.",
+            "minLength": 20
+          }
+        ]
+      },
+      "tools": {
+        "requested": [],
+        "prohibited": []
+      },
+      "hints": [],
+      "misconceptionIds": [
+        "generated-math-misconception"
+      ],
+      "evidence": {
+        "kind": "NONE"
+      },
+      "accessibility": {
+        "textAlternative": "Draw equal wholes, rename related denominators and write an exact fraction before choosing. To add like denominators, add only the counts. To subtract, remove that many equal pieces. A denominator describes the piece size, not a second count to add. 3/8 + 2/8 = ? Options: 5/8; 5/16. 1/2 + 1/4 = ? Options: 3/4; 2/6. Place 4/4. Explain how four quarter-steps reach one whole. A number line from 0 to 2 marked in 4ths. Draw 6/4 on equal area bars, mark it on a number line and name the whole. Explain why it is beyond one.",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "reducedMotion": "STATIC_EQUIVALENT"
+      },
+      "offline": {
+        "mode": "FULL_OFFLINE",
+        "note": "Models and formative checks use cached lesson data. Paper responses are capture only; no official grade is produced."
+      },
+      "completion": "ALL_RESPONSES_WRITTEN",
+      "pedagogy": {
+        "strategy": "GUIDED_TO_INDEPENDENT",
+        "representation": "MIXED",
+        "scaffoldLevel": "PARTIAL"
+      },
+      "teaching": {
+        "phase": "SOLVE_WITH_SUPPORT",
+        "blocks": [
+          {
+            "type": "CHECK",
+            "id": "like-sum",
+            "items": [
+              {
+                "id": "like-sum-item",
+                "prompt": "3/8 + 2/8 = ?",
+                "options": [
+                  {
+                    "id": "reason",
+                    "text": "5/8",
+                    "feedback": "Three eighths plus two eighths is five eighths; the unit stays an eighth."
+                  },
+                  {
+                    "id": "other",
+                    "text": "5/16",
+                    "feedback": "You changed the size of the pieces. Three eighths plus two eighths is five eighths; the unit stays an eighth."
+                  }
+                ],
+                "formativeKey": {
+                  "expectedOptionId": "reason"
+                },
+                "misconceptionId": "generated-math-misconception"
+              }
+            ]
+          },
+          {
+            "type": "CHECK",
+            "id": "related-sum",
+            "items": [
+              {
+                "id": "related-sum-item",
+                "prompt": "1/2 + 1/4 = ?",
+                "options": [
+                  {
+                    "id": "reason",
+                    "text": "3/4",
+                    "feedback": "Rename 1/2 as 2/4, then add one quarter to make 3/4."
+                  },
+                  {
+                    "id": "other",
+                    "text": "2/6",
+                    "feedback": "You changed the size of the pieces. Rename 1/2 as 2/4, then add one quarter to make 3/4."
+                  }
+                ],
+                "formativeKey": {
+                  "expectedOptionId": "reason"
+                },
+                "misconceptionId": "generated-math-misconception"
+              }
+            ]
+          },
+          {
+            "type": "FRACTION_NUMBER_LINE",
+            "id": "guided-one",
+            "denominator": 4,
+            "wholes": 2,
+            "prompt": "Place 4/4. Explain how four quarter-steps reach one whole.",
+            "formativeKey": {
+              "numerator": 4,
+              "denominator": 4
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "generated-4",
+      "type": "PRACTICE",
+      "title": "Solve and order independently",
+      "purpose": "INDEPENDENT_PRACTICE",
+      "objectiveIds": [
+        "ft07-o1",
+        "ft07-o2",
+        "ft07-o3"
+      ],
+      "learnerAction": "Order 3/4, 1/2 and 5/8. Use benchmarks and a number line to justify. Find 3/4 + 1/8 exactly. Also draw 6/4 on equal area bars and explain what one whole means.",
+      "content": {
+        "body": "Write your reasoning before checking. Give exact fractions, including equivalent unsimplified answers. For the written tasks, compare with the feedback after your attempt and explain any correction."
+      },
+      "interaction": {
+        "kind": "FREE_RESPONSE",
+        "prompts": [
+          {
+            "id": "generated-4-response-0",
+            "prompt": "Order 3/4, 1/2 and 5/8. Use benchmarks and a number line to justify.",
+            "minLength": 20
+          },
+          {
+            "id": "generated-4-response-1",
+            "prompt": "Find 3/4 + 1/8 exactly. Also draw 6/4 on equal area bars and explain what one whole means.",
+            "minLength": 20
+          }
+        ]
+      },
+      "tools": {
+        "requested": [],
+        "prohibited": []
+      },
+      "hints": [],
+      "misconceptionIds": [
+        "generated-math-misconception"
+      ],
+      "evidence": {
+        "kind": "NONE"
+      },
+      "accessibility": {
+        "textAlternative": "Write your reasoning before checking. Give exact fractions, including equivalent unsimplified answers. For the written tasks, compare with the feedback after your attempt and explain any correction. 5/6 - 1/3 = ? Options: 1/2, equivalently 3/6; 4/3. 7/8 - 3/8 = ? Options: 1/2, equivalently 4/8; 4/0. Compare 5/8 and 3/4 of equal wholes. Compare 5/8 and 3/4. Locate 6/4 without support. A number line from 0 to 2 marked in 4ths. Order 3/4, 1/2 and 5/8. Use benchmarks and a number line to justify. Find 3/4 + 1/8 exactly. Also draw 6/4 on equal area bars and explain what one whole means.",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "reducedMotion": "STATIC_EQUIVALENT"
+      },
+      "offline": {
+        "mode": "FULL_OFFLINE",
+        "note": "Models and formative checks use cached lesson data. Paper responses are capture only; no official grade is produced."
+      },
+      "completion": "ALL_RESPONSES_WRITTEN",
+      "pedagogy": {
+        "strategy": "GUIDED_TO_INDEPENDENT",
+        "representation": "MIXED",
+        "scaffoldLevel": "NONE"
+      },
+      "teaching": {
+        "phase": "PRACTICE_INDEPENDENTLY",
+        "blocks": [
+          {
+            "type": "CHECK",
+            "id": "related-difference",
+            "items": [
+              {
+                "id": "related-difference-item",
+                "prompt": "5/6 - 1/3 = ?",
+                "options": [
+                  {
+                    "id": "reason",
+                    "text": "1/2, equivalently 3/6",
+                    "feedback": "One third is 2/6. Subtract 2/6 from 5/6 to get 3/6 = 1/2."
+                  },
+                  {
+                    "id": "other",
+                    "text": "4/3",
+                    "feedback": "You changed the size of the pieces. One third is 2/6. Subtract 2/6 from 5/6 to get 3/6 = 1/2."
+                  }
+                ],
+                "formativeKey": {
+                  "expectedOptionId": "reason"
+                },
+                "misconceptionId": "generated-math-misconception"
+              }
+            ]
+          },
+          {
+            "type": "CHECK",
+            "id": "like-difference",
+            "items": [
+              {
+                "id": "like-difference-item",
+                "prompt": "7/8 - 3/8 = ?",
+                "options": [
+                  {
+                    "id": "reason",
+                    "text": "1/2, equivalently 4/8",
+                    "feedback": "Remove three of seven eighth-pieces. Four eighths remain; a zero denominator has no meaning."
+                  },
+                  {
+                    "id": "other",
+                    "text": "4/0",
+                    "feedback": "You changed the size of the pieces. Remove three of seven eighth-pieces. Four eighths remain; a zero denominator has no meaning."
+                  }
+                ],
+                "formativeKey": {
+                  "expectedOptionId": "reason"
+                },
+                "misconceptionId": "generated-math-misconception"
+              }
+            ]
+          },
+          {
+            "type": "FRACTION_COMPARE",
+            "id": "independent-compare",
+            "a": {
+              "numerator": 5,
+              "denominator": 8
+            },
+            "b": {
+              "numerator": 3,
+              "denominator": 4
+            },
+            "prompt": "Compare 5/8 and 3/4 of equal wholes.",
+            "formativeKey": {
+              "relation": "<"
+            }
+          },
+          {
+            "type": "FRACTION_NUMBER_LINE",
+            "id": "independent-six-fourths",
+            "denominator": 4,
+            "wholes": 2,
+            "prompt": "Locate 6/4 without support.",
+            "formativeKey": {
+              "numerator": 6,
+              "denominator": 4
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "generated-5",
+      "type": "EXPLANATION",
+      "title": "Diagnose a changed fraction unit",
+      "purpose": "ADDRESS_MISCONCEPTION",
+      "objectiveIds": [
+        "ft07-o1",
+        "ft07-o2",
+        "ft07-o3"
+      ],
+      "learnerAction": "Use the model, complete its task, and explain what the representation shows.",
+      "content": {
+        "body": "Check whether a method preserves the amount and piece size."
+      },
+      "interaction": {
+        "kind": "NONE"
+      },
+      "tools": {
+        "requested": [],
+        "prohibited": []
+      },
+      "hints": [],
+      "misconceptionIds": [
+        "generated-math-misconception"
+      ],
+      "evidence": {
+        "kind": "NONE"
+      },
+      "accessibility": {
+        "textAlternative": "Check whether a method preserves the amount and piece size. Find 1/2 + 1/3. A learner wrote: 1/2 + 1/3 = 2/5 Why is this method wrong? Options: It adds denominators and changes the unit instead of renaming both fractions in sixths.; Any denominator bigger than 3 makes a sum too small..",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "reducedMotion": "STATIC_EQUIVALENT"
+      },
+      "offline": {
+        "mode": "FULL_OFFLINE",
+        "note": "Models and formative checks use cached lesson data. Paper responses are capture only; no official grade is produced."
+      },
+      "completion": "VIEWED",
+      "pedagogy": {
+        "strategy": "GUIDED_TO_INDEPENDENT",
+        "representation": "MIXED",
+        "scaffoldLevel": "FULL"
+      },
+      "teaching": {
+        "phase": "ANALYZE_MISTAKE",
+        "blocks": [
+          {
+            "type": "MISTAKE_ANALYSIS",
+            "id": "fraction-mistake",
+            "problem": "Find 1/2 + 1/3.",
+            "attempt": {
+              "name": "A learner",
+              "steps": [
+                "1/2 + 1/3 = 2/5"
+              ]
+            },
+            "question": "Why is this method wrong?",
+            "options": [
+              {
+                "id": "unit",
+                "text": "It adds denominators and changes the unit instead of renaming both fractions in sixths.",
+                "feedback": "Correct. Use 3/6 + 2/6 = 5/6."
+              },
+              {
+                "id": "bigger",
+                "text": "Any denominator bigger than 3 makes a sum too small.",
+                "feedback": "A common denominator of 6 works. The problem is preserving equivalent amounts, not making denominators smaller."
+              }
+            ],
+            "formativeKey": {
+              "expectedOptionId": "unit"
+            },
+            "correction": [
+              "Adding denominators changes the piece size.",
+              "A common unit gives 3/6 + 2/6 = 5/6."
+            ],
+            "misconceptionId": "generated-math-misconception"
+          }
+        ]
+      }
+    },
+    {
+      "id": "generated-6",
+      "type": "PRACTICE",
+      "title": "Measure seed exactly",
+      "purpose": "INDEPENDENT_PRACTICE",
+      "objectiveIds": [
+        "ft07-o1",
+        "ft07-o2",
+        "ft07-o3"
+      ],
+      "learnerAction": "Give the exact remaining mass and the approximation to two decimal places. Explain why the remainder is positive and smaller than 3/4 kg.",
+      "content": {
+        "body": "Synthetic seed-bank task. A group has 3/4 kg and packs 1/3 kg. Write the exact remainder as a fraction and justify its size. Then, as a separate estimate, round the remainder to two decimal places, using the third decimal digit and rounding a halfway value up. Write approximately equal for the estimate."
+      },
+      "interaction": {
+        "kind": "FREE_RESPONSE",
+        "prompts": [
+          {
+            "id": "generated-6-response-0",
+            "prompt": "Give the exact remaining mass and the approximation to two decimal places. Explain why the remainder is positive and smaller than 3/4 kg.",
+            "minLength": 20
+          }
+        ]
+      },
+      "tools": {
+        "requested": [],
+        "prohibited": []
+      },
+      "hints": [],
+      "misconceptionIds": [
+        "generated-math-misconception"
+      ],
+      "evidence": {
+        "kind": "NONE"
+      },
+      "accessibility": {
+        "textAlternative": "Synthetic seed-bank task. A group has 3/4 kg and packs 1/3 kg. Write the exact remainder as a fraction and justify its size. Then, as a separate estimate, round the remainder to two decimal places, using the third decimal digit and rounding a halfway value up. Write approximately equal for the estimate. After your calculation, which exact amount remains? Options: 5/12 kg, equivalently 10/24 kg; 0.42 kg exactly. Give the exact remaining mass and the approximation to two decimal places. Explain why the remainder is positive and smaller than 3/4 kg.",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "reducedMotion": "STATIC_EQUIVALENT"
+      },
+      "offline": {
+        "mode": "FULL_OFFLINE",
+        "note": "Models and formative checks use cached lesson data. Paper responses are capture only; no official grade is produced."
+      },
+      "completion": "ALL_RESPONSES_WRITTEN",
+      "pedagogy": {
+        "strategy": "GUIDED_TO_INDEPENDENT",
+        "representation": "MIXED",
+        "scaffoldLevel": "NONE"
+      },
+      "teaching": {
+        "phase": "APPLY",
+        "blocks": [
+          {
+            "type": "CHECK",
+            "id": "seed-remainder",
+            "items": [
+              {
+                "id": "seed-remainder-item",
+                "prompt": "After your calculation, which exact amount remains?",
+                "options": [
+                  {
+                    "id": "reason",
+                    "text": "5/12 kg, equivalently 10/24 kg",
+                    "feedback": "Use twelfths: 9/12 - 4/12 = 5/12 kg. Equivalent fractions are accepted."
+                  },
+                  {
+                    "id": "other",
+                    "text": "0.42 kg exactly",
+                    "feedback": "You treated a rounded estimate as an exact value. 5/12 is about 0.41666...; rounding to two places gives approximately 0.42 kg, not exact equality."
+                  }
+                ],
+                "formativeKey": {
+                  "expectedOptionId": "reason"
+                },
+                "misconceptionId": "generated-math-misconception"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "generated-assess",
+      "type": "MASTERY_CHECK",
+      "title": "Independent assessment handoff",
+      "purpose": "ASSESS_MASTERY",
+      "objectiveIds": [
+        "ft07-o1",
+        "ft07-o2",
+        "ft07-o3"
+      ],
+      "learnerAction": "Complete the governed assessment independently when an authorized draft form is supplied.",
+      "content": {
+        "body": "Only Assessment Player V2 can collect and score governed assessment responses. This draft has no approved form or official score."
+      },
+      "interaction": {
+        "kind": "ASSESSMENT_HANDOFF",
+        "assessmentRequestId": "generated-mastery"
+      },
+      "tools": {
+        "requested": [],
+        "prohibited": []
+      },
+      "hints": [],
+      "misconceptionIds": [],
+      "evidence": {
+        "kind": "MASTERY_RESPONSE",
+        "evidenceType": "QUIZ",
+        "responses": [
+          {
+            "responseKey": "assessment-0",
+            "objectiveId": "ft07-o1",
+            "responseType": "ASSESSMENT_RESPONSE",
+            "scaffoldLevel": "NONE"
+          },
+          {
+            "responseKey": "assessment-1",
+            "objectiveId": "ft07-o2",
+            "responseType": "ASSESSMENT_RESPONSE",
+            "scaffoldLevel": "NONE"
+          },
+          {
+            "responseKey": "assessment-2",
+            "objectiveId": "ft07-o3",
+            "responseType": "ASSESSMENT_RESPONSE",
+            "scaffoldLevel": "NONE"
+          }
+        ]
+      },
+      "accessibility": {
+        "textAlternative": "The lesson requests a separate independent assessment. This draft contains no governed assessment questions or protected scoring material.",
+        "keyboardPath": "Use the assessment player's labelled questions and Submit control when an authorized form is available.",
+        "reducedMotion": "NOT_APPLICABLE"
+      },
+      "offline": {
+        "mode": "FULL_OFFLINE",
+        "note": "No assessment form is cached by this draft. Paper work is capture only and cannot establish an official grade."
+      },
+      "completion": "ALL_ANSWERED",
+      "teaching": {
+        "phase": "ASSESS",
+        "blocks": []
+      }
+    }
+  ],
+  "assessmentRequests": [
+    {
+      "id": "generated-mastery",
+      "objectiveIds": [
+        "ft07-o1",
+        "ft07-o2",
+        "ft07-o3"
+      ],
+      "interaction": "FREE_RESPONSE",
+      "evidenceType": "QUIZ",
+      "difficulty": "CORE",
+      "misconceptionIds": [
+        "generated-math-misconception"
+      ],
+      "tools": {
+        "requested": [],
+        "prohibited": []
+      },
+      "offline": "FULL_OFFLINE"
+    }
+  ],
+  "labProposals": []
+}

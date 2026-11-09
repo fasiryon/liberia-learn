@@ -1,0 +1,285 @@
+{
+  "note": "Unified K-12 risk and release tracker (CoS). Source findings: Project Atlas audit 9fff8615b19591063882ee006dff96b83ccbe4b5 (docs/audits/project-atlas-20261023/RISK_REGISTER.md, snapshot 887f23ecc). cosVerified records the CoS independent static check against origin/main e5d89c34f. An OPEN finding with blocksPreview=true keeps every lesson from PREVIEW_ELIGIBLE.",
+  "findings": [
+    {
+      "id": "SEC-R01",
+      "priority": "P0",
+      "severity": "HIGH",
+      "status": "FIXED_AWAITING_MERGE",
+      "blocksPreview": true,
+      "title": "School administrators can read every school's agent invocation log",
+      "evidence": [
+        "app/api/admin/agents/invocations/route.ts:25",
+        "lib/permissions.ts:127 (ADMIN holds AGENT_PLATFORM_VIEW)",
+        "lib/agents/invocationLog.ts:32"
+      ],
+      "cosVerified": "CONFIRMED on e5d89c34f: role ADMIN passes the role check and holds AGENT_PLATFORM_VIEW; the Prisma where clause has no school scope, so any school admin can page through every school's invocations (the userId filter is caller-chosen).",
+      "owner": {
+        "repair": "Codex: Project Atlas task (audit/project-atlas-security-triage)",
+        "review": "CoS + independent security-auditor review of the diff",
+        "consulted": []
+      },
+      "files": [
+        "app/api/admin/agents/invocations/**",
+        "lib/permissions.ts (AGENT_PLATFORM_VIEW grant only)",
+        "lib/agents/invocationLog.ts"
+      ],
+      "acceptance": "Two-school synthetic fixtures: a school admin cannot see foreign or unscoped invocations or their counts, including with a spoofed userId filter; platform admin access unchanged; default response redacted.",
+      "overlap": "No active branch touches these files (git log --all since 2026-10-10).",
+      "workOrder": "artifacts/v4-coordination/COS-ATLAS-SECURITY-WORKORDER.md",
+      "founderAssignment": "CoS assignment 2026-10-23 (COS-ATLAS-SECURITY-REPLY.md)",
+      "workstreamOrder": 2,
+      "progress": [
+        "Atlas reproduced: school ADMIN HTTP 200 returns both schools' invocations and the foreign raw-input marker; a forged foreign-user filter also succeeds.",
+        "CoS acceptance PASS 2026-10-24: security/acceptance/SEC-R01.json (34f93bf48 -> 8349fae37). Awaiting founder merge authorization."
+      ]
+    },
+    {
+      "id": "SEC-R02",
+      "priority": "P0",
+      "severity": "HIGH",
+      "status": "REPAIR_IN_PROGRESS",
+      "blocksPreview": true,
+      "title": "Student offline sync can overwrite canonical attendance using device timestamps",
+      "evidence": [
+        "app/api/student/sync/route.ts:575",
+        "app/api/student/sync/route.ts:647",
+        "lib/offline-sync/policies.ts:27 (resolveAttendance: last-write-wins on clientUpdatedAt)",
+        "app/api/guardian/student/[studentId]/route.ts:70"
+      ],
+      "cosVerified": "CONFIRMED on e5d89c34f: resolveAttendance applies the client status whenever the device's clientUpdatedAt is later than the server markedAt, so a future-dated student write replaces a teacher's mark.",
+      "owner": {
+        "repair": "Codex: Project Atlas task (server authority: sync route and policies)",
+        "review": "CoS + independent security-auditor review",
+        "consulted": [
+          "T1 (offline/PWA client behaviour and how a provisional mark is shown)",
+          "T2 (synthetic school fixtures for the regression)"
+        ]
+      },
+      "files": [
+        "app/api/student/sync/route.ts (attendance branch)",
+        "lib/offline-sync/policies.ts (resolveAttendance)",
+        "app/api/guardian/student/[studentId]/route.ts (read path)"
+      ],
+      "acceptance": "A student cannot replace a teacher ABSENT with PRESENT using a future timestamp, nor write another class's meeting; learner attendance is a provisional observation only; teacher/server version wins; enrollment required.",
+      "overlap": "Preserved, inactive WIP touches app/api/student/sync/route.ts: wip/recovery-20261017/MAIN-feat-product-design-v2-learn-data @68e66a70b (also in a stash). Run git merge-tree against it before proposing the repair; never discard it. Atlas read-only merge-tree (CODEX-ATLAS-WORKORDER-ACCEPTED.md): one conflict in the sync route with that WIP (an added import and a later lab-session guard); the WIP stays preserved and is not applied.",
+      "workOrder": "artifacts/v4-coordination/COS-ATLAS-SECURITY-WORKORDER.md",
+      "founderAssignment": "CoS assignment 2026-10-23 (COS-ATLAS-SECURITY-REPLY.md)",
+      "workstreamOrder": 2,
+      "progress": [
+        "Atlas reproduced: legacy and protocol-v1 sync each replace teacher ABSENT with PRESENT; future device time accepted; creating a new canonical mark is also possible."
+      ]
+    },
+    {
+      "id": "DEP-NPM",
+      "priority": "P0",
+      "severity": "CRITICAL",
+      "status": "OPEN",
+      "blocksPreview": true,
+      "title": "Production dependency vulnerabilities (separate release gate)",
+      "evidence": [
+        "curriculum/program/stem-v1/security/gate.json"
+      ],
+      "cosVerified": "MEASURED by CoS npm audit --package-lock-only, 2026-10-23: origin/main e5d89c34f production 6 critical, 18 high; T2 remediation 5f3348b30 production 1 critical (next), 18 high. Atlas reported dependency status UNKNOWN; T2's earlier 124/7 figure is not reproduced.",
+      "owner": {
+        "repair": "T2 (dependency disposition)",
+        "review": "CoS (scripts/cos-stem/security-gate.cjs)"
+      }
+    },
+    {
+      "id": "SEC-R03",
+      "priority": "P1",
+      "severity": "HIGH",
+      "status": "FIXED_AWAITING_MERGE",
+      "blocksPreview": true,
+      "title": "Generic runtime moderation fails open (UNCERTAIN accepted) for learner-facing agents",
+      "evidence": [
+        "lib/agents/runtime.ts:320 (input moderateText without audience)",
+        "lib/agents/runtime.ts:375 (output moderateText without audience)",
+        "lib/agents/moderation.ts:27 (applyAudiencePolicy only fails closed when audience === 'minor')"
+      ],
+      "cosVerified": "CONFIRMED on e5d89c34f: runAgent calls moderateText(text, kind) with no audience, so UNCERTAIN (timeout, invalid JSON, outage) passes; only UNSAFE blocks. Learner-facing path: teaching-runtime (classroom narration) via lib/teaching/runtime.ts -> app/api/teaching/sessions/[sessionId]/turn. Exposure: runtime is gated by AGENT_TEACHING_RUNTIME_ENABLED (enabled only when exactly 'true'; documented disabled in production), BUT an AgentControl enabledOverride=true row enables it regardless (SEC-R07). Production state not verified (no production access).",
+      "owner": {
+        "repair": "Codex: Project Atlas task (security remediation workstream, audit/project-atlas-security-triage)",
+        "review": "Claude Chief of Staff (security acceptance and regression evidence) + independent security-auditor diff review",
+        "consulted": []
+      },
+      "workstreamOrder": 1,
+      "escalation": "NOT CONFIRMED as actively exposing minors. One founder-authorized read-only check settles it: production AgentControl rows for teaching-runtime / liberialearn-family and the production value of AGENT_TEACHING_RUNTIME_ENABLED. Containment if either enables teaching-runtime: set enabledOverride=false for teaching-runtime now.",
+      "files": [
+        "lib/agents/runtime.ts (moderation calls)",
+        "lib/agents/moderation.ts",
+        "lib/agents/agents/*.agent.ts (audience declaration only)",
+        "lib/agents/types.ts (additive optional AgentDefinition.audience; CoS approved 2026-10-23)"
+      ],
+      "acceptance": "Timeout, invalid JSON and UNCERTAIN cannot reach classroom narration or any learner/guardian-facing output: learner-facing agents fail closed with an approved fallback; explicit audience policy per agent; admin/internal agents unchanged.",
+      "workOrder": "artifacts/v4-coordination/COS-ATLAS-SECURITY-WORKORDER.md",
+      "founderAssignment": "Founder security ownership decision 2026-10-23",
+      "progress": [
+        "RED test commit 5ba8f6bc468fc14c224749d99fa10a53b53a3294 (CODEX-ATLAS-WAEC-BOUNDARY-REQUEST.md); repair passes 11 focused + 31 related tests per Atlas; TypeScript pending; awaiting READY hand-off.",
+        "CoS acceptance PASS 2026-10-23: security/acceptance/SEC-R03.json. Awaiting founder merge authorization; blocksPreview stays until FIXED."
+      ]
+    },
+    {
+      "id": "SEC-R07",
+      "priority": "P1",
+      "severity": "HIGH",
+      "status": "REPAIR_IN_PROGRESS",
+      "blocksPreview": false,
+      "title": "Env false is not an absolute emergency disable (DB override wins)",
+      "evidence": [
+        "lib/agents/control.ts:6"
+      ],
+      "cosVerified": "CONFIRMED on e5d89c34f: resolveAgentEnabled returns AgentControl.enabledOverride when non-null before consulting the env flag, so env false cannot stop an agent with enabledOverride=true.",
+      "owner": {
+        "repair": "Codex: Project Atlas task (security remediation workstream, audit/project-atlas-security-triage)",
+        "review": "Claude Chief of Staff + independent security-auditor diff review",
+        "consulted": []
+      },
+      "workstreamOrder": 2,
+      "files": [
+        "lib/agents/control.ts",
+        "lib/agents/flags.ts",
+        "lib/agents/admin/stats.ts (use the shared activation-state resolver, additive effectiveStateSource; CoS approved 2026-10-23)"
+      ],
+      "acceptance": "An absolute emergency disable wins over DB override and schedule, with an audited restore; effective-state source is exposed to the admin dashboard. Approved semantics: a global emergency flag and an explicitly false per-agent env flag are absolute stops on every path (runAgent, scheduler, triggers, admin stats); unset env still allows an explicit DB override; every AgentControl mutation is transactionally audited; operational restore needs deployment/operator evidence, not source.",
+      "workOrder": "artifacts/v4-coordination/COS-ATLAS-SECURITY-WORKORDER.md",
+      "founderAssignment": "Founder security ownership decision 2026-10-23"
+    },
+    {
+      "id": "SEC-R08",
+      "priority": "P1",
+      "severity": "HIGH",
+      "status": "REPAIR_IN_PROGRESS",
+      "blocksPreview": true,
+      "title": "MFA and RLS production posture unverified",
+      "evidence": [
+        "lib/auth/privilegedIdentity.ts:29",
+        "scripts/verify-rls-invariant.ts:1"
+      ],
+      "cosVerified": "CONFIRMED in code on e5d89c34f: privileged MFA enforcement is opt-in (PRIVILEGED_MFA_ENFORCEMENT_ENABLED must be 'true'); scripts/verify-rls-invariant.ts exists but is not wired into CI or any release gate. Production posture UNVERIFIED (needs deployment-bound read-only evidence).",
+      "owner": {
+        "repair": "Codex: Project Atlas task (security remediation workstream, audit/project-atlas-security-triage)",
+        "review": "Claude Chief of Staff + independent security-auditor diff review",
+        "consulted": []
+      },
+      "workstreamOrder": 3,
+      "files": [
+        "lib/auth/privilegedIdentity.ts",
+        "lib/auth.ts (privileged paths)",
+        "scripts/verify-rls-invariant.ts",
+        "CI/release-gate wiring for the RLS invariant (new file in the Atlas branch)"
+      ],
+      "acceptance": "Privileged MFA denial tests; RLS invariant wired into the release gate; no RLS-disabled/exposed public tables; bypass-role paths tenant-tested. Deployment evidence part is BLOCKED until the founder authorizes a read-only production check.",
+      "blockedPart": "Deployment-bound MFA/RLS evidence requires founder authorization for read-only production access; the code-side repair proceeds.",
+      "workOrder": "artifacts/v4-coordination/COS-ATLAS-SECURITY-WORKORDER.md",
+      "founderAssignment": "Founder security ownership decision 2026-10-23"
+    },
+    {
+      "id": "AT-R-WAEC",
+      "priority": "P1",
+      "severity": "HIGH",
+      "status": "REPAIR_IN_PROGRESS",
+      "blocksPreview": false,
+      "title": "WAEC practice marking accepts unissued, cross-subject and duplicate items and replays before mastery writes",
+      "evidence": [
+        "lib/waec/practice.ts:126 (gradePracticeSession)",
+        "app/api/student/waec/[subject]/practice/route.ts:36"
+      ],
+      "cosVerified": "CONFIRMED and wider than reported on e5d89c34f: gradePracticeSession looks items up by id with no subjectId filter (cross-subject items score and write mastery for their strands); duplicate ids count repeatedly; no server-issued attempt or replay binding; the review returns correctIndex, so a learner can replay the same items with known answers and inflate mastery via updateMasteryProfile.",
+      "owner": {
+        "repair": "Codex: Project Atlas task (security remediation workstream, audit/project-atlas-security-triage)",
+        "review": "Claude Chief of Staff (academic integrity + security acceptance) + independent security-auditor diff review",
+        "consulted": [
+          "Assessment V2 owner if the attempt model touches Assessment V2"
+        ]
+      },
+      "workstreamOrder": 4,
+      "files": [
+        "lib/waec/practice.ts",
+        "app/api/student/waec/[subject]/practice/route.ts",
+        "attempt storage: in-memory/signed issued-attempt token first; any Prisma model change needs a separate schema approval",
+        "components/waec/WaecPracticeClient.tsx (narrow res.ok and expired/replayed-attempt handling; CoS approved, T1 informed)"
+      ],
+      "acceptance": "Server-issued attempt pins student, school, subject, grade and question ids; scoring exactly once; duplicates, unissued, cross-subject ids and replays rejected; assistance provenance retained; existing practice flow still works for honest learners.",
+      "schemaNote": "If the repair needs a new Prisma model, stop and request schema approval (migration runbook + migration-validator); prefer a signed, expiring issued-attempt token with no schema change.",
+      "workOrder": "artifacts/v4-coordination/COS-ATLAS-SECURITY-WORKORDER.md",
+      "founderAssignment": "Founder security ownership decision 2026-10-23",
+      "decision": "CoS (academic integrity) 2026-10-23: signed, expiring exact-item token (HttpOnly subject-scoped cookie; no secret or answer key in the payload); exactly one AssessmentAttempt receipt per issued attempt, made race-safe without a schema change by a deterministic namespaced receipt primary key derived from a server-random issued attempt id (atomic create; P2002 -> 409; COS-ATLAS-WAEC-RECEIPT-ACCEPTED.md); a missing or empty signing secret fails closed with 503; honest practice score/review with assistance metadata; NO admission into legacy MasteryProfile until independent evidence binding is verified (same boundary as adaptive submit PROVISIONAL_UNBOUND). Reversible: re-admission needs a separate owner decision on lib/mastery/masteryService.ts.",
+      "progress": [
+        "Atlas reproduced: unissued answers update legacy mastery; the same request twice gives two updates; duplicate ids count twice; a foreign-subject item is accepted (CODEX-ATLAS-TRIAGE-CHECKPOINT.md)."
+      ]
+    },
+    {
+      "id": "AT-ADJ-01",
+      "priority": "P1",
+      "severity": "HIGH",
+      "status": "OPEN",
+      "blocksPreview": true,
+      "workstreamOrder": 7,
+      "title": "Escalation queue returns the global queue to a school-less non-platform ADMIN",
+      "evidence": [
+        "app/api/admin/agents/escalations (GET)",
+        "listEscalations(null)"
+      ],
+      "cosVerified": "REPORTED by Atlas (synthetic reproduction); CoS static check pending at READY hand-off. Whether school-less ADMIN sessions occur is unverified.",
+      "owner": {
+        "repair": "Codex: Project Atlas task (security remediation workstream, audit/project-atlas-security-triage) (assigned by CoS 2026-10-23; queued after the six authorized repairs)",
+        "review": "CoS + independent security-auditor diff review"
+      },
+      "files": [
+        "app/api/admin/agents/escalations/**",
+        "listEscalations caller scoping"
+      ],
+      "acceptance": "A non-platform ADMIN with missing school context gets 403 or an empty, school-scoped result, never the global queue; school-bound listing unchanged."
+    },
+    {
+      "id": "AT-ADJ-02",
+      "priority": "P1",
+      "severity": "HIGH",
+      "status": "OPEN",
+      "blocksPreview": true,
+      "workstreamOrder": 8,
+      "title": "Teacher attendance PATCH accepts students who are not enrolled in the meeting's class",
+      "evidence": [
+        "app/api/attendance/[meetingId] (PATCH)"
+      ],
+      "cosVerified": "REPORTED by Atlas (synthetic reproduction); CoS static check pending at READY hand-off.",
+      "owner": {
+        "repair": "Codex: Project Atlas task (security remediation workstream, audit/project-atlas-security-triage) (assigned by CoS 2026-10-23; queued after the six; same attendance-authority area as SEC-R02)",
+        "review": "CoS + independent security-auditor diff review",
+        "consulted": [
+          "T2 (synthetic school fixtures)"
+        ]
+      },
+      "files": [
+        "app/api/attendance/[meetingId]/route.ts"
+      ],
+      "acceptance": "A teacher cannot write a mark for a student who is not enrolled in the meeting's class or school; enrolled students unchanged."
+    },
+    {
+      "id": "AT-R-LAB",
+      "priority": "P1",
+      "severity": "HIGH",
+      "status": "OPEN",
+      "blocksPreview": true,
+      "title": "Virtual-lab AI refusal/zero can be recorded as learner performance",
+      "evidence": [
+        "app/api/student/labs/[labId]/session/route.ts:89",
+        "lib/intelligence/recordPerformanceEvent.ts:48"
+      ],
+      "cosVerified": "NOT_YET_VERIFIED",
+      "owner": {
+        "repair": "T1 (lab score/refusal provenance, per Atlas)",
+        "review": "CoS"
+      },
+      "progress": [
+        "Atlas reproduced: with a mocked UNCERTAIN moderator the route emits a numeric zero performance event; SAFE model suggestions enter performance events before independent admission. AI scorer provenance needs its own field distinct from student assistance. Details relayed to T1 (COS-T1-LAB-REPRO.md)."
+      ]
+    }
+  ],
+  "statusLifecycle": "OPEN -> REPAIR_IN_PROGRESS -> REPAIR_PROPOSED (implementer commit) -> COS_PASS | COS_REVISE | COS_BLOCKED (independent review, acceptance record in security/acceptance/<id>.json) -> FIXED_AWAITING_MERGE (COS_PASS; founder merge authorization pending) -> FIXED (merged under founder authorization). Only FIXED lifts blocksPreview.",
+  "notes": [
+    "2026-10-23: Atlas accepted the six-repair implementation workstream (CODEX-ATLAS-WORKORDER-ACCEPTED.md). It reports adjacent findings AT-ADJ-01/02 as separate owner assignments; CoS will register them when Atlas hands off their evidence."
+  ]
+}

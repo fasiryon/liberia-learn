@@ -1,0 +1,301 @@
+{
+  "version": "draft6-academic-review/1.0.0",
+  "candidateVersion": "4.0.0-draft.6",
+  "candidateSha256": "ea3ff95feafe3aee979e0a906581dbfdbab5044abf5c2bb742fd97fccda9215b",
+  "authorship": "AI_AUTHORED_DETERMINISTIC_RECIPE",
+  "humanSubjectExpertReview": "NOT_PERFORMED",
+  "academicApproval": "PENDING_EXACT_VERSION_REVIEW",
+  "policy": {
+    "version": "factory-academic-policy/1.0.0",
+    "rules": [
+      "Bind objectives to actual instruction and response tasks, not only scene tags. Export the coverage evidence.",
+      "Worked examples show a method; guided tasks use new values and require a learner response.",
+      "Use exact rational keys for fraction arithmetic. Equivalent unreduced fractions are accepted. Finite decimals must be exactly equal unless rounding is explicitly requested.",
+      "Misconception feedback identifies the operation or inference causing the error and explains a repair.",
+      "Teach and practise two-digit by two-digit multiplication with all four place-value partial products.",
+      "Validate diagram axes, phases, plateaus, coexistence assumptions and relative energy intervals independently of text facts.",
+      "A consequence can support a consequence claim. A direct-evidence question must ask explicitly for a stated action; no compulsory disputable inference.",
+      "A geographic objective requires licensed coordinate-derived geometry; a county register proves recall only. No route claims without roads.",
+      "Automated checks provide evidence, never academic approval, rights clearance or release authority."
+    ]
+  },
+  "checks": {
+    "policy": "factory-academic-policy/1.0.0",
+    "status": "AUTOMATED_REGRESSION_CHECKS_PASS",
+    "academicApproval": false
+  },
+  "objectives": [
+    {
+      "objectiveId": "ft01-o1",
+      "statement": "Locate Liberia's fifteen counties on the supplied geographic outline map and match each with its administrative capital.",
+      "taught": [
+        "county-register",
+        "asset:liberia-county-map.svg"
+      ],
+      "practised": [
+        "generated-2-response-0",
+        "generated-3-response-0",
+        "asset:liberia-county-outline-task.svg"
+      ],
+      "runtimeStatus": "REQUIRES_T1_GEOGRAPHIC_ASSET_INTEGRATION",
+      "masteryClaim": false
+    },
+    {
+      "objectiveId": "ft01-o2",
+      "statement": "Distinguish county capitals from the national capital and well-known towns, using Montserrado and Nimba.",
+      "taught": [
+        "generated-2"
+      ],
+      "practised": [
+        "montserrado-capital",
+        "nimba-capital"
+      ],
+      "runtimeStatus": "REQUIRES_T1_GEOGRAPHIC_ASSET_INTEGRATION",
+      "masteryClaim": false
+    },
+    {
+      "objectiveId": "ft01-o3",
+      "statement": "Use the supplied geographic map to compare north-south position and coastal location, while distinguishing these from unverified road routes.",
+      "taught": [
+        "asset:liberia-county-map.svg",
+        "generated-4"
+      ],
+      "practised": [
+        "generated-3-response-1",
+        "county-transfer"
+      ],
+      "runtimeStatus": "REQUIRES_T1_GEOGRAPHIC_ASSET_INTEGRATION",
+      "masteryClaim": false
+    }
+  ],
+  "freeResponseAndWritingGuidance": [
+    {
+      "responseId": "generated-1-response-0",
+      "question": "On the supplied outline map, trace each county boundary and match its number to the key. Distinguish the county area from its administrative capital name.",
+      "acceptableReasoning": "Use the geographic map and key together to associate each numbered polygon with its county. This is supported exploration, not an independent mastery score. County numbers label areas; no capital points are plotted.",
+      "feedbackTiming": "AFTER_ATTEMPT",
+      "feedback": "Use the example reasoning to locate the unsupported step; accept different wording with valid evidence. This is formative feedback, not an official mark."
+    },
+    {
+      "responseId": "generated-2-response-0",
+      "question": "Find county numbers 8, 10 and 12 on the map. Name each county and copy its capital. Describe which lies farthest north.",
+      "acceptableReasoning": "8 is Lofa, Voinjama; 10 is Maryland, Harper; 12 is Nimba, Sanniquellie. Lofa lies farthest north among these county areas. Recall comes from the register; position comes from the outline.",
+      "feedbackTiming": "AFTER_ATTEMPT",
+      "feedback": "Use the example reasoning to locate the unsupported step; accept different wording with valid evidence. This is formative feedback, not an official mark."
+    },
+    {
+      "responseId": "generated-3-response-0",
+      "question": "For each map number 1 through 15, write the county and capital. Then check against the key and correct missed pairs.",
+      "acceptableReasoning": "Use county-capitals.json for the complete fifteen-pair answer key, with map numbering 1 to 15. Bensonville and Bentol are accepted Montserrado capital variants; River Cess/Rivercess name variants are recognized. Mark county identification separately from capital recall. A correct name alone cannot establish spatial mastery.",
+      "feedbackTiming": "AFTER_ATTEMPT",
+      "feedback": "Use the example reasoning to locate the unsupported step; accept different wording with valid evidence. This is formative feedback, not an official mark."
+    },
+    {
+      "responseId": "generated-3-response-1",
+      "question": "Use the outline to decide whether Lofa or Maryland lies farther north and whether Maryland touches the coast. Explain how the north arrow and boundary support your answer.",
+      "acceptableReasoning": "Lofa lies farther north than Maryland. Maryland touches the Atlantic coast at Liberia's southeastern end. The outline's orientation and coastal boundary support these claims. Colors and key order are not evidence.",
+      "feedbackTiming": "AFTER_ATTEMPT",
+      "feedback": "Use the example reasoning to locate the unsupported step; accept different wording with valid evidence. This is formative feedback, not an official mark."
+    },
+    {
+      "responseId": "generated-4-response-0",
+      "question": "Explain why the map can support a north-south comparison but the name register alone cannot.",
+      "acceptableReasoning": "North-up coordinate-derived boundaries encode spatial position. An administrative register supplies name pairs without positions. A spatial comparison needs the former; a list alone cannot support it.",
+      "feedbackTiming": "AFTER_ATTEMPT",
+      "feedback": "Use the example reasoning to locate the unsupported step; accept different wording with valid evidence. This is formative feedback, not an official mark."
+    },
+    {
+      "responseId": "generated-5-response-0",
+      "question": "Name the data you need before claiming which counties and capitals a road passes. Do not guess a route from county numbers.",
+      "acceptableReasoning": "Request a current road map with route geometry, county boundaries, capital coordinates and current condition/passability information. Lofa's capital is Voinjama and Maryland's is Harper; Lofa is north of Maryland and Maryland is coastal. Do not infer that a route passes a capital just because it crosses its county.",
+      "feedbackTiming": "AFTER_ATTEMPT",
+      "feedback": "Use the example reasoning to locate the unsupported step; accept different wording with valid evidence. This is formative feedback, not an official mark."
+    },
+    {
+      "responseId": "county-transfer",
+      "question": "Separate your county-capital answer, your map-based location reasoning and the transport facts still unknown.",
+      "acceptableReasoning": "Voinjama is Lofa's capital and Harper is Maryland's. Map position puts Lofa north of Maryland; Maryland has an Atlantic coast. Current roads, capital coordinates and passability remain unknown.",
+      "feedbackTiming": "AFTER_ATTEMPT",
+      "feedback": "Check each reasoning criterion separately and request a targeted revision; do not reject a defensible alternative for differing wording."
+    }
+  ],
+  "references": {
+    "checkedAt": "2026-10-22",
+    "method": "AI author inspected primary publisher pages and government naming table; not human subject-expert review or copyright clearance",
+    "sources": [
+      {
+        "id": "pcgn-liberia-2015",
+        "url": "https://assets.publishing.service.gov.uk/media/5a81506ee5274a2e87dbcf2e/Liberia_Administrative_Divisions.pdf",
+        "publisher": "UK Permanent Committee on Geographical Names",
+        "title": "Liberia: Administrative Divisions, March 2015",
+        "use": "All fifteen administrative county-centre pairs, pages 1-5; Bensonville/Bentol alias on page 4",
+        "rights": "Facts transcribed into original register; Crown Copyright source paper not redistributed. No claim of clearance for source PDF."
+      },
+      {
+        "id": "lisgis-county-offices",
+        "url": "https://www.lisgis.gov.lr/sdc/lisgissdc.pdf",
+        "publisher": "Liberia Institute of Statistics and Geo-Information Services",
+        "use": "Search-index corroboration of county administrative offices and Bentol name. Full document retrieval timed out; not relied on as the sole naming source.",
+        "rights": "Reference only, no source PDF redistributed"
+      },
+      {
+        "id": "geoboundaries-lbr-adm1",
+        "url": "https://www.geoboundaries.org/api/current/gbOpen/LBR/ADM1/",
+        "geometryUrl": "https://media.githubusercontent.com/media/wmgeolab/geoBoundaries/9469f09/releaseData/gbOpen/LBR/ADM1/geoBoundaries-LBR-ADM1_simplified.geojson",
+        "sha256RawGeometry": "f6f4ed18e1e29532a77325f7af84a6dacc4489d94020f2fa2a8feb12a4da9b34",
+        "publisher": "William & Mary geoBoundaries, source UNMIL / OCHA ROWCA",
+        "representedYear": "2021",
+        "license": "CC BY 3.0 IGO",
+        "licenseUrl": "https://creativecommons.org/licenses/by/3.0/igo/",
+        "changes": "Source simplified geographic polygons projected at reference latitude 6.5 degrees north; numbered area labels and key added. Capital points and roads not added.",
+        "rights": "Publisher license inspected, attribution retained. Independent rights release review remains pending; no endorsement claimed."
+      },
+      {
+        "id": "openstax-phase-change",
+        "url": "https://openstax.org/books/physics/pages/11-3-phase-change-and-latent-heat",
+        "publisher": "OpenStax, Rice University",
+        "use": "Physical explanation of latent heat, phase coexistence, vaporization and evaporation below boiling. Approximate water latent heats 334 and 2256 kJ/kg. Original teaching wording and diagram, not copied figure.",
+        "rights": "Reference only. Original calculated diagram; no third-party illustration reproduced."
+      },
+      {
+        "id": "openstax-heat-capacity",
+        "url": "https://openstax.org/books/physics/pages/11-2-heat-specific-heat-and-heat-transfer",
+        "publisher": "OpenStax, Rice University",
+        "use": "Heat capacity table checked; model rounds ice 2.09 to 2.1, liquid 4.186 to 4.18 and vapor 2.02 to 2.0 kJ/kg/K. These declared approximations determine diagram intervals.",
+        "rights": "Reference only; no third-party figure copied."
+      }
+    ],
+    "scienceDiagramAssumptions": {
+      "massKg": 1,
+      "pressure": "fixed near one atmosphere",
+      "purity": "pure water",
+      "netHeat": "energy entering sample, ignoring heat loss",
+      "specificHeatKJPerKgK": {
+        "ice": 2.1,
+        "liquid": 4.18,
+        "vapor": 2
+      },
+      "latentHeatKJPerKg": {
+        "fusion": 334,
+        "vaporization": 2256
+      },
+      "limits": "Approximate constant heat capacities, equilibrium transitions. Does not predict heating time or a sweet drink's freezing point."
+    }
+  },
+  "countyCapitalKey": [
+    {
+      "number": 1,
+      "name": "Bomi",
+      "capital": "Tubmanburg",
+      "alias": null,
+      "referencePages": 0
+    },
+    {
+      "number": 2,
+      "name": "Bong",
+      "capital": "Gbarnga",
+      "alias": null,
+      "referencePages": 0
+    },
+    {
+      "number": 3,
+      "name": "Gbarpolu",
+      "capital": "Bopolu",
+      "alias": null,
+      "referencePages": 1
+    },
+    {
+      "number": 4,
+      "name": "Grand Bassa",
+      "capital": "Buchanan",
+      "alias": null,
+      "referencePages": 1
+    },
+    {
+      "number": 5,
+      "name": "Grand Cape Mount",
+      "capital": "Robertsport",
+      "alias": null,
+      "referencePages": 1
+    },
+    {
+      "number": 6,
+      "name": "Grand Gedeh",
+      "capital": "Zwedru",
+      "alias": null,
+      "referencePages": 1
+    },
+    {
+      "number": 7,
+      "name": "Grand Kru",
+      "capital": "Barclayville",
+      "alias": null,
+      "referencePages": 2
+    },
+    {
+      "number": 8,
+      "name": "Lofa",
+      "capital": "Voinjama",
+      "alias": null,
+      "referencePages": 2
+    },
+    {
+      "number": 9,
+      "name": "Margibi",
+      "capital": "Kakata",
+      "alias": null,
+      "referencePages": 2
+    },
+    {
+      "number": 10,
+      "name": "Maryland",
+      "capital": "Harper",
+      "alias": null,
+      "referencePages": 2
+    },
+    {
+      "number": 11,
+      "name": "Montserrado",
+      "capital": "Bensonville",
+      "alias": "Bentol",
+      "referencePages": 3
+    },
+    {
+      "number": 12,
+      "name": "Nimba",
+      "capital": "Sanniquellie",
+      "alias": null,
+      "referencePages": 3
+    },
+    {
+      "number": 13,
+      "name": "River Cess",
+      "capital": "Cestos City",
+      "alias": null,
+      "referencePages": 3
+    },
+    {
+      "number": 14,
+      "name": "River Gee",
+      "capital": "Fish Town",
+      "alias": null,
+      "referencePages": 4
+    },
+    {
+      "number": 15,
+      "name": "Sinoe",
+      "capital": "Greenville",
+      "alias": null,
+      "referencePages": 4
+    }
+  ],
+  "visualContract": {
+    "asset": "liberia-county-map.svg",
+    "taskAsset": "liberia-county-outline-task.svg",
+    "status": "FACTORY_ASSET_READY_T1_INTEGRATION_PENDING",
+    "regionNumbersIdentify": "COUNTY_AREAS_NOT_CAPITAL_POINTS",
+    "geographicMastery": "NOT_CLAIMED",
+    "license": "CC BY 3.0 IGO",
+    "sourceGeometrySha256": "f6f4ed18e1e29532a77325f7af84a6dacc4489d94020f2fa2a8feb12a4da9b34"
+  }
+}

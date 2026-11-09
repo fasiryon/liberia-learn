@@ -1,0 +1,223 @@
+{
+  "version": "program-academic-review/1.0.0",
+  "state": "DRAFT",
+  "authorship": "AI_AUTHORED_DETERMINISTIC_FACTORY_RECIPE",
+  "humanSubjectExpertReview": "NOT_PERFORMED",
+  "academicApproval": "PENDING_EXACT_VERSION_REVIEW",
+  "programOrderId": "GO-G04-P2-SCIENCE-U1",
+  "courseId": "stem1-g4-science",
+  "unit": 1,
+  "sourceOrder": {
+    "planId": "stem1-g4-day1",
+    "slot": "P2",
+    "grade": 4,
+    "orderId": "GO-G04-P2-SCIENCE-U1",
+    "owner": "T2_CODEX",
+    "kind": "LESSON",
+    "batch": "BAND_3-5",
+    "courseId": "stem1-g4-science",
+    "unit": 1,
+    "unitTitle": "Digestion and the human body",
+    "performanceTask": "model the path of food and the job of each organ",
+    "family": "SCIENCE",
+    "pattern": [
+      "PREDICT",
+      "EXPERIMENT",
+      "OBSERVE",
+      "EXPLAIN",
+      "APPLY"
+    ],
+    "recordedSubject": "SCIENCE",
+    "developmental": {
+      "band": "3-5",
+      "maxSentenceWords": 16,
+      "maxSceneBodyWords": 90,
+      "approach": "Conceptual foundations, guided investigations and foundational computing",
+      "maxSegmentMinutes": 15,
+      "maxScreenMinutesPerPeriod": 25,
+      "readAloudRequired": false,
+      "independentWritingWords": [
+        20,
+        80
+      ],
+      "requiresMovementSegment": false
+    },
+    "competencies": null,
+    "blocks": {
+      "existing": [
+        "PREDICT_OBSERVE",
+        "PROCESS_CYCLE",
+        "DATA_PLOT",
+        "SORT",
+        "CHECK"
+      ],
+      "proposed": [
+        "MEASUREMENT_TABLE",
+        "FAIR_TEST_PLANNER"
+      ]
+    },
+    "labs": [
+      "electric-circuit"
+    ],
+    "stemPractices": [
+      "SCIENTIFIC_EVIDENCE",
+      "CONCEPT_BEFORE_PROCEDURE",
+      "LIBERIAN_APPLICATION",
+      "PRACTICE_CONTINUUM"
+    ],
+    "requirements": [
+      "Two or three measurable objectives derived from the performance task; MOE mapping recorded as PROPOSED, never claimed",
+      "At least two distinct, named misconceptions, each taught against and diagnosed by a block",
+      "Hints in every guided scene; no hints or worked steps in independent scenes",
+      "Choice items with three or more plausible options, or richer interactions",
+      "No system, policy or answer-policy text in learner-visible fields; no generator prefixes; UTF-8 text with no mojibake",
+      "Specific learner actions in every scene",
+      "Guided practice, independent work, extension and reflection, in that order",
+      "An authentic Liberian situation that needs the concept, not a name swap",
+      "Formative only: no grade, mastery or assessment keys in the learner projection"
+    ],
+    "gates": [
+      "G1",
+      "G2",
+      "G3",
+      "G4",
+      "G5",
+      "G6",
+      "G7",
+      "G8"
+    ],
+    "status": "OPEN"
+  },
+  "objectives": [
+    {
+      "id": "g4-science-food-path-and-absorption-o1",
+      "statement": "Arrange the main stages of the digestive tract and distinguish that path from organs supplying digestive juices.",
+      "moeReferences": []
+    },
+    {
+      "id": "g4-science-food-path-and-absorption-o2",
+      "statement": "Explain absorption as digested nutrients crossing the small-intestine wall, using a counted paper model.",
+      "moeReferences": []
+    },
+    {
+      "id": "g4-science-food-path-and-absorption-o3",
+      "statement": "Use a model to explain an organ's job and identify something the model cannot show.",
+      "moeReferences": []
+    }
+  ],
+  "misconceptions": [
+    {
+      "id": "food-through-support-organs",
+      "objectiveId": "g4-science-food-path-and-absorption-o1",
+      "description": "The swallowed food route is drawn through the liver or pancreas instead of distinguishing the juices they supply.",
+      "response": "Keep the continuous food route separate from the liver and pancreas, which supply digestive juices."
+    },
+    {
+      "id": "stomach-absorbs-everything",
+      "objectiveId": "g4-science-food-path-and-absorption-o2",
+      "description": "The stomach is treated as the place where all nutrients enter the body.",
+      "response": "Most digested nutrients are absorbed through the small-intestine wall."
+    },
+    {
+      "id": "absorbed-nutrients-disappear",
+      "objectiveId": "g4-science-food-path-and-absorption-o2",
+      "description": "Nutrients that cross the wall are treated as disappearing from the model total.",
+      "response": "Keep transferred tokens visible in the body region. Count both regions to conserve the total."
+    },
+    {
+      "id": "starting-vs-remaining",
+      "objectiveId": "g4-science-food-path-and-absorption-o2",
+      "description": "The starting count is reported as still inside after tokens have crossed the wall.",
+      "response": "The starting count describes both regions together. Subtract transferred tokens to find what remains inside."
+    },
+    {
+      "id": "transferred-vs-remaining",
+      "objectiveId": "g4-science-food-path-and-absorption-o2",
+      "description": "The number transferred during a round is confused with the number remaining inside.",
+      "response": "Transferred and remaining name different groups. Track the inside count after every transfer."
+    }
+  ],
+  "answerGuidance": {
+    "route": "Mouth, esophagus, stomach, small intestine, large intestine, rectum, anus. This is a simplified route, not an exhaustive anatomical drawing; the rectum is part of the large intestine. Liver and pancreas supply digestive juices, rather than lying on the swallowed-food route.",
+    "guided": "Five of fourteen tokens remain inside and nine are in the body region; together there are still fourteen. Crossing represents absorption of already-digested nutrients, not destruction or a whole mouthful entering another organ.",
+    "independent": "After transferring five of sixteen, eleven remain. After eight more cross, three remain. Thirteen are now in the body region. Model rounds are actions with invented counts, not a measured human rate or a two-minute digestion claim.",
+    "explanation": "Select boundary crossing, and reject the claim that every pupil absorbs a meal in exactly two minutes. The model illustrates a mechanism; it does not empirically establish real physiology.",
+    "transfer": "Accept an accurate connected route excluding liver/pancreas as through-stops and an explanation that most nutrients are absorbed through the small-intestine wall. A valid limitation includes absent living tissue, digestive chemistry, scale or real timing. Require a reasoned correction of both poster errors, not just a list of organ names. Accept oral/scribed explanations. An advanced model should distinguish breakdown from crossing and include a way to check whether someone else interprets the representation correctly."
+  },
+  "teacherGuide": {
+    "proposedMinutes": 45,
+    "timingEvidence": "NOT_MEASURED",
+    "proposedScreenMinutes": 25,
+    "proposedPaperMovementMinutes": 20,
+    "segments": [
+      {
+        "minutes": 5,
+        "activity": "Record an initial route and prediction on paper"
+      },
+      {
+        "minutes": 8,
+        "activity": "Arrange the route digitally or with cards and sort support organs"
+      },
+      {
+        "minutes": 7,
+        "activity": "Model a counted boundary crossing and read the illustrative graph"
+      },
+      {
+        "minutes": 8,
+        "activity": "Operate the fourteen-token model with a partner; count both regions"
+      },
+      {
+        "minutes": 6,
+        "activity": "Interpret the fresh sixteen-token model independently"
+      },
+      {
+        "minutes": 6,
+        "activity": "Explain the represented process and its limits"
+      },
+      {
+        "minutes": 5,
+        "activity": "Revise the community poster and compare the initial route"
+      }
+    ],
+    "safety": "Use large paper marks or cards. Keep every object away from mouths. No food handling, tasting, heating, liquids, body samples or medical self-reporting. A pupil may direct a partner or use drawn marks instead of manipulating counters.",
+    "support": "Read organ labels aloud, provide two large labelled regions, and let pupils point or dictate. Keep a visible inside/body count record in guided work. Do not reveal the independent counts before an attempt.",
+    "extension": "Add separate symbols for whole food, smaller digested particles and particles crossing the wall. Ask a partner what each symbol means, revise one ambiguous symbol and identify biological features still omitted.",
+    "offline": "Print organ cards, route/sort choices, graph and questions. Pupils reorder cards and mark both regions on paper. The model uses no external audio or network asset. A teacher can read every prompt aloud.",
+    "block90Proposal": "After the 45-minute core, compare two physical model designs for 20 minutes, exchange and test their interpretations for 15 minutes, then revise and defend the poster for 10 minutes. Timing is proposed, not observed.",
+    "assessment": "No governed assessment, scoring event or official academic record is supplied. The closing handoff is explicitly unavailable.",
+    "retention": "Request a new route-and-function explanation after at least seven days. No delayed event is scheduled or claimed."
+  },
+  "references": [
+    {
+      "title": "NIDDK: Your Digestive System and How It Works",
+      "url": "https://www.niddk.nih.gov/health-information/digestive-diseases/digestive-system-how-it-works",
+      "use": "Fact-checking of the main tract route, organ jobs and absorption. Original child-level explanations; no copied prose, images or logo.",
+      "rights": "Reference link only; no external media reproduced. Exact-version source/rights review remains required."
+    },
+    {
+      "title": "OpenStax Anatomy and Physiology 2e, 23.1",
+      "url": "https://openstax.org/books/anatomy-and-physiology-2e/pages/23-1-overview-of-the-digestive-system",
+      "use": "Cross-check of tract/accessory-organ distinction and nutrient absorption. Original sequence, sort, token model and questions; no copied figure or textbook exercise.",
+      "rights": "Reference link only; no textbook prose or media reproduced."
+    },
+    {
+      "title": "Original LiberiaLearn paper absorption model",
+      "use": "All counts, graph points, school poster and activities are invented instructional representations. They are not empirical pupil observations or human measurements.",
+      "rights": "Original educational DRAFT; academic and distribution-rights review pending."
+    }
+  ],
+  "assessment": {
+    "governedFormSupplied": false,
+    "protectedKeysIncluded": false,
+    "officialRecordWrites": false,
+    "teacherReviewRequired": true
+  },
+  "remainingGates": [
+    "COS_G3_AND_INDEPENDENT_ACADEMIC_REVIEW",
+    "LIBERIA_STANDARDS_MAPPING",
+    "RIGHTS_REVIEW",
+    "BROWSER_ACCESSIBILITY_AND_OFFLINE_QA",
+    "TIMED_REHEARSAL",
+    "EXACT_VERSION_AUTHORIZATION"
+  ]
+}

@@ -1,0 +1,94 @@
+[
+  {
+    "id": "BRANCH-1",
+    "branch": "docs/stem-excellence-program-v1",
+    "source_commit": "bb6bb2879c0857a73588321f4dfb8465debd3c23",
+    "path": "docs/program/STEM_PROGRAM_V1.md",
+    "git_blob": "1381a52734c9368f2f0ad5f6bc6c434ccdc1c505",
+    "fingerprint": "35774a3d411d35277bcbb510840962dd8ebbdc7800436fa84847e44e7eb5bc38",
+    "fingerprint_kind": "sha256-raw-git-object",
+    "symbol": "branch context",
+    "line_start": 1,
+    "line_end": 30,
+    "category": "branch-documentation",
+    "related": "in-flight-work",
+    "confidence": "medium",
+    "verification": "branch document + commit metadata; runtime unverified",
+    "claim": "CoS full K-12 day program explicitly says not merged/deployed/activated; synthetic school isolated; production-content review claims must be read against mechanical baseline.",
+    "unique_recent_commits": [
+      "bb6bb2879 docs(program): progression/rigor standard, six-stage readiness, adopt T1 block names and order",
+      "8492c4e04 fix(program): keep fulfilled generation orders in the backlog (idempotent intake)",
+      "0d3e5478d feat(program): six-stage ladder, automatic coverage, progression and rigor QA",
+      "a8747d56c docs(program): reconcile Computing/Engineering patterns with T2 (TEST phase); record offline override"
+    ]
+  },
+  {
+    "id": "BRANCH-2",
+    "branch": "feat/content-factory-schoolday",
+    "source_commit": "e1c4591a18980e89be94053b8fd790b26d931ec7",
+    "path": "docs/architecture/content-factory/V4_GENERATED_CANDIDATES_HANDOFF.md",
+    "git_blob": "147c4ec15b29bf2ef8349e2a6cf66f0bb477ebe9",
+    "fingerprint": "457690954186076d9b79c96f195ed6a4ccbcf4726fab5cc3c577693303640a72",
+    "fingerprint_kind": "sha256-raw-git-object",
+    "symbol": "branch context",
+    "line_start": 1,
+    "line_end": 30,
+    "category": "branch-documentation",
+    "related": "in-flight-work",
+    "confidence": "medium",
+    "verification": "branch document + commit metadata; runtime unverified",
+    "claim": "Draft V4 packages produced by injected deterministic author executor; full bundle REVISION_REQUIRED; branch handoff is not released capability.",
+    "unique_recent_commits": [
+      "e1c4591a1 docs(content-factory): preserve validation and hold schoolday batch for academic repairs",
+      "c33fd6fbf feat(content-factory): generate Grade 7 and Grade 5 STEM schoolday review drafts",
+      "b02fc6764 docs: record draft.6 pilot evidence and activation gates",
+      "79c73d6b5 feat: prepare version-pinned controlled V4 student preview"
+    ]
+  },
+  {
+    "id": "BRANCH-3",
+    "branch": "feat/content-factory-v4-pipeline",
+    "source_commit": "198edc566d8d60cce88cb896382a3bf955c94008",
+    "path": "docs/architecture/content-factory/V4_GENERATED_CANDIDATES_HANDOFF.md",
+    "git_blob": "147c4ec15b29bf2ef8349e2a6cf66f0bb477ebe9",
+    "fingerprint": "457690954186076d9b79c96f195ed6a4ccbcf4726fab5cc3c577693303640a72",
+    "fingerprint_kind": "sha256-raw-git-object",
+    "symbol": "branch context",
+    "line_start": 1,
+    "line_end": 30,
+    "category": "branch-documentation",
+    "related": "in-flight-work",
+    "confidence": "medium",
+    "verification": "branch document + commit metadata; runtime unverified",
+    "claim": "V4 candidate workflow reuses Content Factory V2; no separate LLM agent implied.",
+    "unique_recent_commits": [
+      "198edc566 docs: freeze six generated V4 drafts and validation evidence",
+      "6a4cfd4e9 test: complete generated writing responses in V4 browser harness",
+      "433e60395 feat: generate V4 lesson drafts through existing factory roles",
+      "db1790ad1 feat: propose versioned V4 visual teaching sidecar contract"
+    ]
+  },
+  {
+    "id": "BRANCH-4",
+    "branch": "feat/learning-loop-integration-v1",
+    "source_commit": "bd8d2ed6c7478d9f036dfcdd0b47b5d0fafb2465",
+    "path": "docs/architecture/LEARNING_ORCHESTRATOR_DECISION_INTELLIGENCE_V1.md",
+    "git_blob": "67d8a2c39720ded2ee47c1bbf54a9ab2e46f5d21",
+    "fingerprint": "4276c246fa0868da8a798e4ef901ae141d9a8cf61e11881456d1065faa79f11b",
+    "fingerprint_kind": "sha256-raw-git-object",
+    "symbol": "branch context",
+    "line_start": 1,
+    "line_end": 30,
+    "category": "branch-documentation",
+    "related": "in-flight-work",
+    "confidence": "medium",
+    "verification": "branch document + commit metadata; runtime unverified",
+    "claim": "Branch carries learning foundations; unique recent commit messages describe first-ten adapter and implementation-ready handoff rather than production activation.",
+    "unique_recent_commits": [
+      "bd8d2ed6c docs(learning-loop): implementation-ready handoff for assistance ledger, lesson\u2192assessment handoff and SLM bridge",
+      "f3a2c2bc6 docs(learning-loop): record first-ten contract 1.0.0 adapter status (G11)",
+      "439bfaac1 feat(learning-loop): deterministic first-ten contract 1.0.0 \u2192 LessonLoopManifest adapter",
+      "84602d74d feat(learning-loop): assistance-ledger prototype and assessment/SLM handoff design"
+    ]
+  }
+]

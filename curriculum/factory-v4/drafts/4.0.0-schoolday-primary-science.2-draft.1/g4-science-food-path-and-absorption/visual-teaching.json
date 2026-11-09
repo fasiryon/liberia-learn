@@ -1,0 +1,467 @@
+{
+  "contractVersion": "visual-teaching-block/4.0.0-draft.1",
+  "registryVersion": "teaching-blocks/1.1.0",
+  "instructionStandard": "liberialearn-v4-instruction/1.0.0",
+  "candidateSha256": "b481157bde0e0a509c99220f2a80afd5ba65f97e6fa4efe23b04670d37e5c1d7",
+  "state": "DRAFT",
+  "approved": false,
+  "published": false,
+  "released": false,
+  "audience": "REVIEWER_ONLY",
+  "objectives": [
+    {
+      "id": "g4-science-food-path-and-absorption-o1",
+      "statement": "Arrange the main stages of the digestive tract and distinguish that path from organs supplying digestive juices.",
+      "standards": [
+        {
+          "reference": "UNMAPPED_AUTHOR_OBJECTIVE:g4-science-food-path-and-absorption-o1",
+          "statement": "Arrange the main stages of the digestive tract and distinguish that path from organs supplying digestive juices.",
+          "relation": "CONTENT_REFERENCE",
+          "mapping": "PROPOSED"
+        }
+      ]
+    },
+    {
+      "id": "g4-science-food-path-and-absorption-o2",
+      "statement": "Explain absorption as digested nutrients crossing the small-intestine wall, using a counted paper model.",
+      "standards": [
+        {
+          "reference": "UNMAPPED_AUTHOR_OBJECTIVE:g4-science-food-path-and-absorption-o2",
+          "statement": "Explain absorption as digested nutrients crossing the small-intestine wall, using a counted paper model.",
+          "relation": "CONTENT_REFERENCE",
+          "mapping": "PROPOSED"
+        }
+      ]
+    },
+    {
+      "id": "g4-science-food-path-and-absorption-o3",
+      "statement": "Use a model to explain an organ's job and identify something the model cannot show.",
+      "standards": [
+        {
+          "reference": "UNMAPPED_AUTHOR_OBJECTIVE:g4-science-food-path-and-absorption-o3",
+          "statement": "Use a model to explain an organ's job and identify something the model cannot show.",
+          "relation": "CONTENT_REFERENCE",
+          "mapping": "PROPOSED"
+        }
+      ]
+    }
+  ],
+  "blocks": [
+    {
+      "sceneId": "build-route",
+      "slot": "blocks",
+      "index": 0,
+      "type": "SEQUENCE",
+      "blockSha256": "19e602ac6fd17aa34e8bce8c398c8dc2f9024216ec238fa4d095028c2a8fa048",
+      "objectiveIds": [
+        "g4-science-food-path-and-absorption-o1",
+        "g4-science-food-path-and-absorption-o3"
+      ],
+      "instructionalPurpose": "Put events in order, then see them on a timeline. Learner action: Arrange the route, move the token through it and sort the organs into food-path or juice-supply groups. Never put model materials in your mouth.",
+      "misconceptionIds": [
+        "food-through-support-organs",
+        "stomach-absorbs-everything"
+      ],
+      "responseSignals": [],
+      "accessibility": {
+        "textAlternative": "Order the simplified main stages. The rectum is the final part of the large intestine. organ: Mouth. organ: Esophagus. organ: Stomach. organ: Small intestine. organ: Large intestine. organ part: Rectum. opening: Anus.",
+        "keyboardPath": "Tab to labelled controls and response fields. Use Enter to check an attempt. An oral response may be dictated or scribed.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Order the simplified main stages. The rectum is the final part of the large intestine. organ: Mouth. organ: Esophagus. organ: Stomach. organ: Small intestine. organ: Large intestine. organ part: Rectum. opening: Anus.",
+        "responsePrompt": "Arrange the route, move the token through it and sort the organs into food-path or juice-supply groups. Never put model materials in your mouth. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/primaryScience/lessonAuthor.ts",
+          "sha256": "766b8ce2fcd547f313f8bca51431af46bb976c04110be9ead8348d88de8a4a30",
+          "license": "Original programme authoring source; internal review only",
+          "attribution": "LiberiaLearn Content Factory; Claude Chief of Staff planning inputs",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "build-route",
+      "slot": "blocks",
+      "index": 1,
+      "type": "SORT",
+      "blockSha256": "b3dab4da0c7ee8dfb5c50d26dedc8f0d81f41a1cfbd11e8497c83c87222b835e",
+      "objectiveIds": [
+        "g4-science-food-path-and-absorption-o1",
+        "g4-science-food-path-and-absorption-o3"
+      ],
+      "instructionalPurpose": "Sort examples into categories and get a reason for each. Learner action: Arrange the route, move the token through it and sort the organs into food-path or juice-supply groups. Never put model materials in your mouth.",
+      "misconceptionIds": [
+        "food-through-support-organs",
+        "stomach-absorbs-everything"
+      ],
+      "responseSignals": [
+        {
+          "misconceptionId": "food-through-support-organs",
+          "responsePattern": "MISGROUP:route-stomach",
+          "feedback": "Food enters this part of the tube."
+        },
+        {
+          "misconceptionId": "food-through-support-organs",
+          "responsePattern": "MISGROUP:route-small",
+          "feedback": "Food moves here after the stomach."
+        },
+        {
+          "misconceptionId": "food-through-support-organs",
+          "responsePattern": "MISGROUP:supply-liver",
+          "feedback": "Bile reaches the route; the swallowed mouthful does not travel through the liver."
+        },
+        {
+          "misconceptionId": "food-through-support-organs",
+          "responsePattern": "MISGROUP:supply-pancreas",
+          "feedback": "Its digestive juices enter the small intestine."
+        }
+      ],
+      "accessibility": {
+        "textAlternative": "Separate the food route from organs supplying juices. Groups: Swallowed food passes through, Supplies juices to the route. Cards: Stomach, Small intestine, Liver, Pancreas.",
+        "keyboardPath": "Tab to labelled controls and response fields. Use Enter to check an attempt. An oral response may be dictated or scribed.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Separate the food route from organs supplying juices. Groups: Swallowed food passes through, Supplies juices to the route. Cards: Stomach, Small intestine, Liver, Pancreas.",
+        "responsePrompt": "Arrange the route, move the token through it and sort the organs into food-path or juice-supply groups. Never put model materials in your mouth. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/primaryScience/lessonAuthor.ts",
+          "sha256": "766b8ce2fcd547f313f8bca51431af46bb976c04110be9ead8348d88de8a4a30",
+          "license": "Original programme authoring source; internal review only",
+          "attribution": "LiberiaLearn Content Factory; Claude Chief of Staff planning inputs",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "model-transfer",
+      "slot": "blocks",
+      "index": 0,
+      "type": "DATA_PLOT",
+      "blockSha256": "f855a20c8aa55951acf4ba3ef01e26a6063f2b10ccf1cb046edcfbee0205f48e",
+      "objectiveIds": [
+        "g4-science-food-path-and-absorption-o2",
+        "g4-science-food-path-and-absorption-o3"
+      ],
+      "instructionalPurpose": "Read measurements as a table and a line graph. Learner action: Follow the two transfers, compare the graph with the tokens, and account for all twelve tokens in both regions.",
+      "misconceptionIds": [
+        "stomach-absorbs-everything"
+      ],
+      "responseSignals": [],
+      "accessibility": {
+        "textAlternative": "Illustrative tokens left inside the model intestine. Transfer round 0 round: Tokens inside 12 tokens; Transfer round 1 round: Tokens inside 7 tokens; Transfer round 2 round: Tokens inside 2 tokens. The ten transferred tokens still exist in the model's body region. Rounds are model actions, not minutes.",
+        "keyboardPath": "Tab to labelled controls and response fields. Use Enter to check an attempt. An oral response may be dictated or scribed.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Illustrative tokens left inside the model intestine. Transfer round 0 round: Tokens inside 12 tokens; Transfer round 1 round: Tokens inside 7 tokens; Transfer round 2 round: Tokens inside 2 tokens. The ten transferred tokens still exist in the model's body region. Rounds are model actions, not minutes.",
+        "responsePrompt": "Follow the two transfers, compare the graph with the tokens, and account for all twelve tokens in both regions. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "NONE",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/primaryScience/lessonAuthor.ts",
+          "sha256": "766b8ce2fcd547f313f8bca51431af46bb976c04110be9ead8348d88de8a4a30",
+          "license": "Original programme authoring source; internal review only",
+          "attribution": "LiberiaLearn Content Factory; Claude Chief of Staff planning inputs",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "model-transfer",
+      "slot": "blocks",
+      "index": 1,
+      "type": "WORKED_SOLUTION",
+      "blockSha256": "768e1b6e17c4658f72ba75ec3305671fe9f9e6269353dbe64c2fc1bb299e38cb",
+      "objectiveIds": [
+        "g4-science-food-path-and-absorption-o2",
+        "g4-science-food-path-and-absorption-o3"
+      ],
+      "instructionalPurpose": "Watch a problem solved one step at a time, with the diagram following each step. Learner action: Follow the two transfers, compare the graph with the tokens, and account for all twelve tokens in both regions.",
+      "misconceptionIds": [
+        "stomach-absorbs-everything"
+      ],
+      "responseSignals": [],
+      "accessibility": {
+        "textAlternative": "Where are all twelve model tokens after both transfers? Step 1: Ten tokens crossed to the body region; two remained inside the tube. 12 − 5 − 5 = 2 Step 2: Both regions still contain the original total together. 10 + 2 = 12",
+        "keyboardPath": "Tab to labelled controls and response fields. Use Enter to check an attempt. An oral response may be dictated or scribed.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Where are all twelve model tokens after both transfers? Step 1: Ten tokens crossed to the body region; two remained inside the tube. 12 − 5 − 5 = 2 Step 2: Both regions still contain the original total together. 10 + 2 = 12",
+        "responsePrompt": "Follow the two transfers, compare the graph with the tokens, and account for all twelve tokens in both regions. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "MODEL",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/primaryScience/lessonAuthor.ts",
+          "sha256": "766b8ce2fcd547f313f8bca51431af46bb976c04110be9ead8348d88de8a4a30",
+          "license": "Original programme authoring source; internal review only",
+          "attribution": "LiberiaLearn Content Factory; Claude Chief of Staff planning inputs",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "try-transfer",
+      "slot": "blocks",
+      "index": 0,
+      "type": "NUMERIC_RESPONSE",
+      "blockSha256": "2ef56274987b3aad6b9b9e3943906674bf398dfa0856f74e3ab79ee59eba5711",
+      "objectiveIds": [
+        "g4-science-food-path-and-absorption-o2",
+        "g4-science-food-path-and-absorption-o3"
+      ],
+      "instructionalPurpose": "Type a numeric answer with its unit and get feedback that names the mistake. Learner action: Move the nine tokens, record both counts and explain what the boundary crossing represents.",
+      "misconceptionIds": [
+        "starting-vs-remaining",
+        "absorbed-nutrients-disappear"
+      ],
+      "responseSignals": [
+        {
+          "misconceptionId": "starting-vs-remaining",
+          "responsePattern": "guided-model-count-0:NUMBER:14",
+          "feedback": "The nine transferred tokens are in the body region. Count only the tokens still inside the tube."
+        },
+        {
+          "misconceptionId": "absorbed-nutrients-disappear",
+          "responsePattern": "guided-model-count-1:NUMBER:5",
+          "feedback": "Five remain inside, but nine still exist in the other region. Include both regions in the total."
+        }
+      ],
+      "accessibility": {
+        "textAlternative": "Account for the paper-model tokens. Tokens still inside after nine of fourteen cross: write your answer. Total tokens in both regions: write your answer.",
+        "keyboardPath": "Tab to labelled controls and response fields. Use Enter to check an attempt. An oral response may be dictated or scribed.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Account for the paper-model tokens. Tokens still inside after nine of fourteen cross: write your answer. Total tokens in both regions: write your answer.",
+        "responsePrompt": "Move the nine tokens, record both counts and explain what the boundary crossing represents. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/primaryScience/lessonAuthor.ts",
+          "sha256": "766b8ce2fcd547f313f8bca51431af46bb976c04110be9ead8348d88de8a4a30",
+          "license": "Original programme authoring source; internal review only",
+          "attribution": "LiberiaLearn Content Factory; Claude Chief of Staff planning inputs",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "independent-model",
+      "slot": "blocks",
+      "index": 0,
+      "type": "NUMERIC_RESPONSE",
+      "blockSha256": "4c350a5c7280c950be091f5d35f9a58650345cc82663c978ae512c904d72074e",
+      "objectiveIds": [
+        "g4-science-food-path-and-absorption-o2",
+        "g4-science-food-path-and-absorption-o3"
+      ],
+      "instructionalPurpose": "Type a numeric answer with its unit and get feedback that names the mistake. Learner action: Determine the tokens left inside after each round, then explain where the rest are and why the model total stays constant.",
+      "misconceptionIds": [
+        "transferred-vs-remaining",
+        "absorbed-nutrients-disappear"
+      ],
+      "responseSignals": [
+        {
+          "misconceptionId": "transferred-vs-remaining",
+          "responsePattern": "independent-model-count-0:NUMBER:5",
+          "feedback": "Five is the count transferred. The question asks what remains inside."
+        },
+        {
+          "misconceptionId": "transferred-vs-remaining",
+          "responsePattern": "independent-model-count-1:NUMBER:8",
+          "feedback": "Eight is the second transferred group. Subtract both transferred groups from the starting count."
+        }
+      ],
+      "accessibility": {
+        "textAlternative": "Find the count still inside after each round. After the first round: write your answer. After the second round: write your answer.",
+        "keyboardPath": "Tab to labelled controls and response fields. Use Enter to check an attempt. An oral response may be dictated or scribed.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Find the count still inside after each round. After the first round: write your answer. After the second round: write your answer.",
+        "responsePrompt": "Determine the tokens left inside after each round, then explain where the rest are and why the model total stays constant. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/primaryScience/lessonAuthor.ts",
+          "sha256": "766b8ce2fcd547f313f8bca51431af46bb976c04110be9ead8348d88de8a4a30",
+          "license": "Original programme authoring source; internal review only",
+          "attribution": "LiberiaLearn Content Factory; Claude Chief of Staff planning inputs",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "explain-model",
+      "slot": "blocks",
+      "index": 0,
+      "type": "CHECK",
+      "blockSha256": "248e7e69f5c635bea576a2d9c1da2a02622674e6f95eddc16e9d256b625fe569",
+      "objectiveIds": [
+        "g4-science-food-path-and-absorption-o1",
+        "g4-science-food-path-and-absorption-o2",
+        "g4-science-food-path-and-absorption-o3"
+      ],
+      "instructionalPurpose": "Choose an answer and get feedback written for that choice. Learner action: Choose the statement that matches the model and identify a claim that would need different evidence.",
+      "misconceptionIds": [
+        "food-through-support-organs",
+        "stomach-absorbs-everything"
+      ],
+      "responseSignals": [
+        {
+          "misconceptionId": "stomach-absorbs-everything",
+          "responsePattern": "absorption-explanation-item:OPTION:opt-d5c858d2dfb1",
+          "feedback": "The token remains in the other region; the model does not destroy it."
+        },
+        {
+          "misconceptionId": "stomach-absorbs-everything",
+          "responsePattern": "absorption-explanation-item:OPTION:opt-7a8ab4fe6517",
+          "feedback": "This changes both the route and what the token represents."
+        }
+      ],
+      "accessibility": {
+        "textAlternative": "What does moving a nutrient token into the body region represent? Options: A digested nutrient crossing the small-intestine wall.; The nutrient ceasing to exist.; A whole mouthful passing directly from stomach to liver..",
+        "keyboardPath": "Tab to labelled controls and response fields. Use Enter to check an attempt. An oral response may be dictated or scribed.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: What does moving a nutrient token into the body region represent? Options: A digested nutrient crossing the small-intestine wall.; The nutrient ceasing to exist.; A whole mouthful passing directly from stomach to liver..",
+        "responsePrompt": "Choose the statement that matches the model and identify a claim that would need different evidence. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/primaryScience/lessonAuthor.ts",
+          "sha256": "766b8ce2fcd547f313f8bca51431af46bb976c04110be9ead8348d88de8a4a30",
+          "license": "Original programme authoring source; internal review only",
+          "attribution": "LiberiaLearn Content Factory; Claude Chief of Staff planning inputs",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "explain-model",
+      "slot": "blocks",
+      "index": 1,
+      "type": "CHECK",
+      "blockSha256": "71de6a7f5cea6cceab10e4864d3bb8542ec6c101d9123732686c843b3e50777d",
+      "objectiveIds": [
+        "g4-science-food-path-and-absorption-o1",
+        "g4-science-food-path-and-absorption-o2",
+        "g4-science-food-path-and-absorption-o3"
+      ],
+      "instructionalPurpose": "Choose an answer and get feedback written for that choice. Learner action: Choose the statement that matches the model and identify a claim that would need different evidence.",
+      "misconceptionIds": [
+        "food-through-support-organs",
+        "stomach-absorbs-everything"
+      ],
+      "responseSignals": [
+        {
+          "misconceptionId": "stomach-absorbs-everything",
+          "responsePattern": "model-limit-item:OPTION:opt-53af30f68e5f",
+          "feedback": "The two regions and tokens are visible parts of the model."
+        },
+        {
+          "misconceptionId": "stomach-absorbs-everything",
+          "responsePattern": "model-limit-item:OPTION:opt-cf7daeb0f74e",
+          "feedback": "The model permits you to check this count directly."
+        }
+      ],
+      "accessibility": {
+        "textAlternative": "Which claim cannot be established with this paper model? Options: The original tokens can be counted across two regions.; The specified transfers leave three of sixteen tokens inside.; Every pupil absorbs a real meal in exactly two minutes..",
+        "keyboardPath": "Tab to labelled controls and response fields. Use Enter to check an attempt. An oral response may be dictated or scribed.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Which claim cannot be established with this paper model? Options: The original tokens can be counted across two regions.; The specified transfers leave three of sixteen tokens inside.; Every pupil absorbs a real meal in exactly two minutes..",
+        "responsePrompt": "Choose the statement that matches the model and identify a claim that would need different evidence. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/primaryScience/lessonAuthor.ts",
+          "sha256": "766b8ce2fcd547f313f8bca51431af46bb976c04110be9ead8348d88de8a4a30",
+          "license": "Original programme authoring source; internal review only",
+          "attribution": "LiberiaLearn Content Factory; Claude Chief of Staff planning inputs",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    }
+  ],
+  "assessmentBoundary": {
+    "player": "ASSESSMENT_PLAYER_V2",
+    "scoring": "SERVER_AUTHORITY",
+    "protectedKeysIncluded": false,
+    "canonicalMasteryMutation": false,
+    "offlineEvidence": "CAPTURE_ONLY_NOT_OFFICIAL"
+  }
+}

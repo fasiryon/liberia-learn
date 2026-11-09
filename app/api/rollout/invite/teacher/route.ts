@@ -1,3 +1,4 @@
+// route-policy: auth=session; scope=tenant; authority=school-admin; rationale=rollout teacher invite; refused on any deployed Preview/staging after authority and before body or data work (PREVIEW_IDENTITY_FROZEN)
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import crypto from "crypto";
@@ -13,6 +14,8 @@ import {
   RATE_LIMIT_POLICIES,
   rateLimitExceededResponse,
 } from "@/lib/rateLimit";
+import { previewIdentityFrozen } from "@/lib/preview/identityFreeze";
+import { previewSafeErrorResponse } from "@/lib/preview/safeError";
 
 function getClientIp(req: Request): string {
   const forwarded = req.headers.get("x-forwarded-for");
@@ -48,6 +51,8 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
+    const frozen = previewIdentityFrozen();
+    if (frozen) return frozen;
     const body = await req.json();
     const parsed = Schema.parse(body);
 
@@ -109,6 +114,8 @@ export async function POST(req: Request) {
       emailSent: emailResult.ok,
     }, { headers: getRateLimitHeaders(rl) });
   } catch (err: any) {
+    const safe = previewSafeErrorResponse(err);
+    if (safe) return safe;
     const status = err?.status ?? 500;
     return NextResponse.json(
       { error: err?.message ?? "Internal error" },

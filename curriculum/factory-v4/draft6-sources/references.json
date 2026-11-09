@@ -1,0 +1,63 @@
+{
+  "checkedAt": "2026-10-22",
+  "method": "AI author inspected primary publisher pages and government naming table; not human subject-expert review or copyright clearance",
+  "sources": [
+    {
+      "id": "pcgn-liberia-2015",
+      "url": "https://assets.publishing.service.gov.uk/media/5a81506ee5274a2e87dbcf2e/Liberia_Administrative_Divisions.pdf",
+      "publisher": "UK Permanent Committee on Geographical Names",
+      "title": "Liberia: Administrative Divisions, March 2015",
+      "use": "All fifteen administrative county-centre pairs, pages 1-5; Bensonville/Bentol alias on page 4",
+      "rights": "Facts transcribed into original register; Crown Copyright source paper not redistributed. No claim of clearance for source PDF."
+    },
+    {
+      "id": "lisgis-county-offices",
+      "url": "https://www.lisgis.gov.lr/sdc/lisgissdc.pdf",
+      "publisher": "Liberia Institute of Statistics and Geo-Information Services",
+      "use": "Search-index corroboration of county administrative offices and Bentol name. Full document retrieval timed out; not relied on as the sole naming source.",
+      "rights": "Reference only, no source PDF redistributed"
+    },
+    {
+      "id": "geoboundaries-lbr-adm1",
+      "url": "https://www.geoboundaries.org/api/current/gbOpen/LBR/ADM1/",
+      "geometryUrl": "https://media.githubusercontent.com/media/wmgeolab/geoBoundaries/9469f09/releaseData/gbOpen/LBR/ADM1/geoBoundaries-LBR-ADM1_simplified.geojson",
+      "sha256RawGeometry": "f6f4ed18e1e29532a77325f7af84a6dacc4489d94020f2fa2a8feb12a4da9b34",
+      "publisher": "William & Mary geoBoundaries, source UNMIL / OCHA ROWCA",
+      "representedYear": "2021",
+      "license": "CC BY 3.0 IGO",
+      "licenseUrl": "https://creativecommons.org/licenses/by/3.0/igo/",
+      "changes": "Source simplified geographic polygons projected at reference latitude 6.5 degrees north; numbered area labels and key added. Capital points and roads not added.",
+      "rights": "Publisher license inspected, attribution retained. Independent rights release review remains pending; no endorsement claimed."
+    },
+    {
+      "id": "openstax-phase-change",
+      "url": "https://openstax.org/books/physics/pages/11-3-phase-change-and-latent-heat",
+      "publisher": "OpenStax, Rice University",
+      "use": "Physical explanation of latent heat, phase coexistence, vaporization and evaporation below boiling. Approximate water latent heats 334 and 2256 kJ/kg. Original teaching wording and diagram, not copied figure.",
+      "rights": "Reference only. Original calculated diagram; no third-party illustration reproduced."
+    },
+    {
+      "id": "openstax-heat-capacity",
+      "url": "https://openstax.org/books/physics/pages/11-2-heat-specific-heat-and-heat-transfer",
+      "publisher": "OpenStax, Rice University",
+      "use": "Heat capacity table checked; model rounds ice 2.09 to 2.1, liquid 4.186 to 4.18 and vapor 2.02 to 2.0 kJ/kg/K. These declared approximations determine diagram intervals.",
+      "rights": "Reference only; no third-party figure copied."
+    }
+  ],
+  "scienceDiagramAssumptions": {
+    "massKg": 1,
+    "pressure": "fixed near one atmosphere",
+    "purity": "pure water",
+    "netHeat": "energy entering sample, ignoring heat loss",
+    "specificHeatKJPerKgK": {
+      "ice": 2.1,
+      "liquid": 4.18,
+      "vapor": 2.0
+    },
+    "latentHeatKJPerKg": {
+      "fusion": 334,
+      "vaporization": 2256
+    },
+    "limits": "Approximate constant heat capacities, equilibrium transitions. Does not predict heating time or a sweet drink's freezing point."
+  }
+}

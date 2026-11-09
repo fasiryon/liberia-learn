@@ -1,0 +1,40 @@
+{
+  "proposedMinutes": 45,
+  "timingEvidence": "NOT_MEASURED",
+  "segments": [
+    {
+      "minutes": 7,
+      "activity": "Read the opening only and record a prediction/question"
+    },
+    {
+      "minutes": 5,
+      "activity": "Model a clue, prediction and unresolved question"
+    },
+    {
+      "minutes": 8,
+      "activity": "Guided source-evidence selection and questioning"
+    },
+    {
+      "minutes": 5,
+      "activity": "Reveal the ending and compare predictions"
+    },
+    {
+      "minutes": 7,
+      "activity": "Independent interpretation and summary choices"
+    },
+    {
+      "minutes": 8,
+      "activity": "Write a summary and a useful question"
+    },
+    {
+      "minutes": 5,
+      "activity": "Revise a claim with textual evidence"
+    }
+  ],
+  "support": "Read each paragraph aloud without revealing the ending early. Offer separate problem/action/result boxes and let a pupil dictate while directing the wording. Ask which sentence supports each claim; do not supply the independent answer.",
+  "extension": "Compare two plausible predictions from the opening, explain why later evidence supports one more strongly and propose a new observation that could change the recommendation.",
+  "block90Proposal": "After the 45-minute core, compare two different faithful summaries for 15 minutes, write a short alternative ending and trace which predictions it changes for 15 minutes, then peer-review and revise for 15 minutes. This is a proposed extension, not measured timing.",
+  "assessment": "No governed assessment or official score is supplied. All questions are ungraded practice; future independent assessment remains a separate request.",
+  "offline": "Print the opening and ending on separate sheets. Keep the ending covered until after prediction. Read passages and options aloud as needed; pupils select evidence or dictate responses on paper. No audio asset or device voice is promised.",
+  "retention": "Request a different short narrative after at least seven days, with the same predict/question/summarize strategy. No event is scheduled here."
+}

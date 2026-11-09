@@ -5,6 +5,7 @@ import type { ExperienceProgress } from "@/lib/learner-experience/progress";
 import { sceneBodyFor } from "@/lib/learner-experience/sceneContract";
 import { InlineText } from "@/components/experience/LessonText";
 import { TeachingBlockView } from "@/components/experience/teaching/TeachingBlocks";
+import { ActivityScope } from "@/components/experience/blocks/stem/ActivityScope";
 import type { BlockDone } from "@/components/experience/teaching/v4/shared";
 
 /** Paragraphs with inline **bold** and typeset mathematics (V4), rendered as React nodes (no HTML injection). */
@@ -18,7 +19,9 @@ export function SceneText({ text }: { text: string }) {
  */
 export function SceneTeachingBlocks({ scene, onDone }: { scene: Scene; onDone: BlockDone }) {
   if (!scene.teaching || scene.teaching.blocks.length === 0) return null;
-  return <div className="ll5-scene-blocks" data-phase={scene.teaching.phase}>{scene.teaching.blocks.map((block, index) => <TeachingBlockView key={`${scene.id}-${index}`} block={block} onDone={onDone} />)}</div>;
+  // One ActivityScope per scene: STEM blocks share learner entries in memory for this scene only; leaving the scene
+  // unmounts it (the player keys this by scene id) and discards them. Nothing in it is saved, sent or scored.
+  return <div className="ll5-scene-blocks" data-phase={scene.teaching.phase}><ActivityScope>{scene.teaching.blocks.map((block, index) => <TeachingBlockView key={`${scene.id}-${index}`} block={block} onDone={onDone} />)}</ActivityScope></div>;
 }
 
 /** Reading passages in a lesson, by block id, for writing blocks that check quotations. */

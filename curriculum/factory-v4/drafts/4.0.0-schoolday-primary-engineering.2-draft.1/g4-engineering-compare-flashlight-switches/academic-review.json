@@ -1,0 +1,257 @@
+{
+  "version": "program-academic-review/1.0.0",
+  "state": "DRAFT",
+  "authorship": "AI_AUTHORED_DETERMINISTIC_FACTORY_RECIPE",
+  "humanSubjectExpertReview": "NOT_PERFORMED",
+  "academicApproval": "PENDING_EXACT_VERSION_REVIEW",
+  "programOrderId": "GO-G04-P6-ENGINEERING-U1",
+  "courseId": "stem1-g4-engineering",
+  "unit": 1,
+  "sourceOrder": {
+    "planId": "stem1-g4-day1",
+    "slot": "P6",
+    "grade": 4,
+    "orderId": "GO-G04-P6-ENGINEERING-U1",
+    "owner": "T2_CODEX",
+    "kind": "LESSON",
+    "batch": "BAND_3-5",
+    "courseId": "stem1-g4-engineering",
+    "unit": 1,
+    "unitTitle": "Flashlight circuit",
+    "performanceTask": "design and build a working flashlight with a switch",
+    "family": "ENGINEERING",
+    "pattern": [
+      "DEFINE",
+      "RESEARCH_CONSTRAINTS",
+      "DESIGN",
+      "BUILD_OR_MODEL",
+      "TEST",
+      "REFINE",
+      "COMMUNICATE"
+    ],
+    "recordedSubject": "ENGINEERING_FOUNDATIONS",
+    "developmental": {
+      "band": "3-5",
+      "approach": "Conceptual foundations, guided investigations and foundational computing",
+      "maxSegmentMinutes": 15,
+      "maxScreenMinutesPerPeriod": 25,
+      "readAloudRequired": false,
+      "independentWritingWords": [
+        20,
+        80
+      ],
+      "requiresMovementSegment": false
+    },
+    "competencies": {
+      "medium": "DESIGN_CYCLE_WITH_MEASUREMENT",
+      "learnerDoes": [
+        "State criteria and constraints before building",
+        "Make two designs",
+        "Run a fair test and record measurements",
+        "Improve the design using the data"
+      ],
+      "evidence": [
+        "Criteria and constraints",
+        "A measurement table",
+        "A data-based improvement"
+      ],
+      "blocks": {
+        "now": [
+          "DATA_PLOT",
+          "NUMERIC_RESPONSE",
+          "WRITING_ORGANIZER",
+          "SHAPE_MODEL"
+        ],
+        "needed": [
+          "DESIGN_CYCLE",
+          "MEASUREMENT_TABLE"
+        ]
+      }
+    },
+    "blocks": {
+      "existing": [
+        "SHAPE_MODEL",
+        "DATA_PLOT"
+      ],
+      "proposed": [
+        "DESIGN_CYCLE",
+        "MEASUREMENT_TABLE"
+      ]
+    },
+    "labs": [],
+    "stemPractices": [
+      "ENGINEERING_DESIGN",
+      "MATHEMATICAL_REASONING",
+      "SCIENTIFIC_EVIDENCE",
+      "LIBERIAN_APPLICATION",
+      "PRACTICE_CONTINUUM"
+    ],
+    "requirements": [
+      "Two or three measurable objectives derived from the performance task; MOE mapping recorded as PROPOSED, never claimed",
+      "At least two distinct, named misconceptions, each taught against and diagnosed by a block",
+      "Hints in every guided scene; no hints or worked steps in independent scenes",
+      "Choice items with three or more plausible options, or richer interactions",
+      "No system, policy or answer-policy text in learner-visible fields; no generator prefixes; UTF-8 text with no mojibake",
+      "Specific learner actions in every scene",
+      "Guided practice, independent work, extension and reflection, in that order",
+      "An authentic Liberian situation that needs the concept, not a name swap",
+      "Formative only: no grade, mastery or assessment keys in the learner projection"
+    ],
+    "gates": [
+      "G1",
+      "G2",
+      "G3",
+      "G4",
+      "G5",
+      "G6",
+      "G7",
+      "G8"
+    ],
+    "status": "OPEN"
+  },
+  "objectives": [
+    {
+      "id": "g4-engineering-compare-flashlight-switches-o1",
+      "statement": "Explain how a complete conducting path and an open switch affect a compatible battery and lamp circuit.",
+      "moeReferences": []
+    },
+    {
+      "id": "g4-engineering-compare-flashlight-switches-o2",
+      "statement": "Plan a fair comparison of two contact designs, record honestly attributed observations and explain a controlled revision.",
+      "moeReferences": []
+    },
+    {
+      "id": "g4-engineering-compare-flashlight-switches-o3",
+      "statement": "Draw a two-bar graph from available closed-switch counts and justify a design choice using both closed and open observations.",
+      "moeReferences": []
+    }
+  ],
+  "misconceptions": [
+    {
+      "id": "switch-creates-energy",
+      "objectiveId": "g4-engineering-compare-flashlight-switches-o1",
+      "description": "The switch creates the energy that lights the lamp.",
+      "response": "The battery supplies energy. Closing the switch completes a conducting path; the switch does not create energy."
+    },
+    {
+      "id": "one-pass-proves-reliability",
+      "objectiveId": "g4-engineering-compare-flashlight-switches-o2",
+      "description": "One successful test proves the switch always works.",
+      "response": "Record every trial, including failures. Five trials support a limited comparison, not a guarantee."
+    },
+    {
+      "id": "change-everything-is-fair",
+      "objectiveId": "g4-engineering-compare-flashlight-switches-o2",
+      "description": "Changing several components establishes which single change caused an outcome.",
+      "response": "Change one contact feature while keeping battery, bulb, wires and procedure fixed."
+    },
+    {
+      "id": "tallest-bar-proves-best",
+      "objectiveId": "g4-engineering-compare-flashlight-switches-o3",
+      "description": "The taller closed-switch bar proves the best design without checking open-switch control.",
+      "response": "Use both closed-light and open-dark observations, and acknowledge the limits of the tests."
+    }
+  ],
+  "answerGuidance": {
+    "circuit": "A closed conducting path connects the battery and compatible lamp; opening the switch breaks the path. The switch does not create energy.",
+    "fairTest": "Change one contact feature; keep battery, lamp, wires and procedure fixed. Distinguish an observation from a prediction. Record all actual outcomes, including failures.",
+    "designComparison": "Use all five closed and five open trials per design. Accept unchanged or worse second-design results when interpreted honestly. Five trials do not prove unlimited reliability.",
+    "graph": "Paper bars are labelled Design 1 and Design 2, with closed-light successes out of five, baseline zero and scale to five. Inspect open-dark counts separately before recommending.",
+    "provenance": "Physical/group observations are MEASURED. Approved provided observations are SUPPLIED, not the learner's own tests. No dataset is present. SIMULATED remains unavailable pending scientific/model approval.",
+    "access": "Without observed group trials or reviewed provided data, sketches and test plans are partial work. Never enter invented counts, zeros or a false claim of completed physical testing."
+  },
+  "teacherGuide": {
+    "classification": "Grade 4 applied STEM learning component. Primary standard: Engineering Design. Formal classification is provisional until standards mapping is completed. No official Ministry subject claim.",
+    "paperReasoning": "Sketch and explain the complete/open circuit. From Design 1 observations, propose one controlled change before seeing Design 2 observations. Analyze both rows, draw the graph, justify a choice and identify a further test.",
+    "providedData": "Use a separate MEASUREMENT_TABLE with origin ILLUSTRATIVE and originNote: Provided by the lesson. These are not your measurements. Label SUPPLIED and record empirical adult/teacher source (who, when, kit) or constructed status, protocol and dataset hash. CoS independently reviews the dataset before use. No dataset is supplied by this input revision.",
+    "virtualData": "Only CoS-approved scientific model/version and contract-permitted use. Label SIMULATED in scene text and originNote, identify model limits, and never call it physical contact-reliability evidence. Provided virtual results follow the separately reviewed SUPPLIED dataset route.",
+    "routeHonesty": "Use the completion label analysed provided observations for the provided-data route; do not mark tested two designs fulfilled. A group observer says observed my group's test, not I built and measured. Both routes use the same reasoning rubric without penalizing access to equipment.",
+    "noEvidence": "If neither reviewed data nor observed group trials are available, offer sketch and test-plan only. Keep counts missing and the comparison incomplete; never invent counts or substitute zero.",
+    "sharedKits": "Use 3–5 learners per teacher-checked kit; rotate planner/explainer, supervised builder, observer/counter, recorder and evidence-checker. Combine roles for smaller groups and obtain each learner's reasoning. Adults make safety decisions.",
+    "assessment": "Reasoning-only formative evidence; no official grades, records or persistent mastery. Separate governed assessment remains a release dependency.",
+    "safety": "Teacher checks enclosed low-voltage batteries and a compatible bulb. No mains, loose button cells, damaged cells, direct shorts or hot wires. Stop if parts warm. Adults handle cutting and real safety decisions.",
+    "criteria": [
+      {
+        "id": "closed-light",
+        "comparison": "AT_LEAST",
+        "target": 4,
+        "unit": "trials"
+      },
+      {
+        "id": "open-dark",
+        "comparison": "AT_LEAST",
+        "target": 5,
+        "unit": "trials"
+      }
+    ],
+    "fairTest": "Change one contact feature while holding battery, bulb, wires and test procedure fixed. State what you changed, why the first results motivated it and how the second test informs the decision.",
+    "continuousActivity": "DESIGN_CYCLE and linked MEASUREMENT_TABLE remain in the same scene and ActivityScope for both attempts. Copy observations/source labels to paper before leaving. The graph is drawn on paper, not a GRAPH_BUILDER block.",
+    "recording": "Use one row per design and track every closed/open trial separately on paper before recording counts. Record integers 0–5, with missing counts left missing. The design identifiers are fixed row headers, never measurements.",
+    "graphTask": {
+      "mode": "HAND_DRAWN_STRUCTURED_RESPONSE_NOT_GRAPH_BUILDER",
+      "sourceTableId": "switch-trials",
+      "sourceValueColumn": "closed-lit",
+      "fixedLabels": [
+        "Design 1",
+        "Design 2"
+      ],
+      "valueLabel": "Successful closed-switch trials out of 5",
+      "minimum": 0,
+      "maximum": 5,
+      "integerTicks": true,
+      "instructions": "Draw two bars on paper or squared paper: Design 1 and Design 2 across the bottom; successful closed-switch trials from 0 to 5 up the side. Copy each height from the matching row, then compare both open-switch counts in the table before choosing.",
+      "responseFields": [
+        "evidence class and source reference",
+        "Design 1 bar height from row 1",
+        "Design 2 bar height from row 2",
+        "CALCULATED difference between the two counts",
+        "INFERRED comparison and choice, checking open-switch counts too"
+      ],
+      "teacherCheck": "Check both bar heights and fixed labels against the selected source table, a zero baseline and scale to 5. A missing observation is not zero; the comparison stays incomplete.",
+      "provenance": "Label the graph MEASURED when based on actual learner/group observations; SUPPLIED when using reviewed provided data; SIMULATED when based on approved model trials. Graphing does not change the source class."
+    },
+    "review": "Check both attempts, the changed contact feature, controls, both table rows, graph heights, open-dark results and justified choice. Read the pupil's individual explanation, not merely a group answer.",
+    "secondDesignFeedback": "Judge Design 2 on its own results; compare with Design 1. Do not presume that a revision improves performance. Do not grade equipment performance.",
+    "completionLabels": {
+      "physical": "performed two design tests",
+      "group": "observed my group's test",
+      "provided": "analysed provided observations",
+      "noData": "sketch and test-plan only; comparison incomplete"
+    },
+    "providedDataStatus": "NONE_INCLUDED. Separate dataset/source/hash review and separately labelled ILLUSTRATIVE table required before use. Do not auto-fill the learner-measured table.",
+    "simulatedRoute": "UNAVAILABLE until circuit-lab scientific validation and CoS model-version approval.",
+    "duration": "45 minutes is a proposed allocation, not a measured classroom rehearsal. Use shared kits and teacher-managed turns; do not rush safety or fabricate missing results.",
+    "retention": "After seven days retrieve the complete/open-path explanation and propose a controlled comparison without reopening worked support. No scheduler is activated.",
+    "learnerPaperRecord": {
+      "instructions": "Use these labels on your paper record. Record only available observations. Row 1 is Design 1; Row 2 is Design 2. Keep both original rows and your graph.",
+      "evidence": "counted (MEASURED): actual counts you observed or your group observed; name the observer/group. given to us (SUPPLIED): independently reviewed provided observations; identify the source. Never call supplied observations your own measurements.",
+      "design1": "Source label and reference: ____ . Closed-light successes out of five: ____ . Open-dark successes out of five: ____ .",
+      "revision": "Contact feature changed: ____ . My reason from Design 1 observations: ____ . Kit and procedure kept fixed: ____ .",
+      "design2": "Source label and reference: ____ . Closed-light successes out of five: ____ . Open-dark successes out of five: ____ .",
+      "graph": "Draw the two bars from the closed-light counts. Label Design 1 and Design 2. Start the scale at zero and end at five. Check the open-dark counts before choosing.",
+      "calculation": "worked out (CALCULATED): difference between the two bar heights: ____ . Show how you worked it out.",
+      "inference": "my conclusion (INFERRED): my choice or next change: ____ . Numerical reason using both designs and both criteria: ____ . Limitation or further test: ____ ."
+    }
+  },
+  "references": [
+    {
+      "title": "Original LiberiaLearn two-switch design task",
+      "use": "Original activity and feedback. Revised six-field inputs independently authorized by CoS; exact candidate academic review remains pending.",
+      "rights": "Internal draft; standards mapping and release review pending."
+    }
+  ],
+  "assessment": {
+    "governedFormSupplied": false,
+    "protectedKeysIncluded": false,
+    "officialRecordWrites": false,
+    "teacherReviewRequired": true
+  },
+  "remainingGates": [
+    "COS_G3_AND_INDEPENDENT_ACADEMIC_REVIEW",
+    "LIBERIA_STANDARDS_MAPPING",
+    "RIGHTS_REVIEW",
+    "BROWSER_ACCESSIBILITY_AND_OFFLINE_QA",
+    "TIMED_REHEARSAL",
+    "EXACT_VERSION_AUTHORIZATION"
+  ]
+}

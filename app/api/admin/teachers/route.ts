@@ -1,4 +1,4 @@
-// route-policy: auth=session; scope=tenant; authority=school-admin; rationale=lists, creates, edits, deactivates and resets teachers of the admin's own school (roster reads and every mutation target are scoped to admin.schoolId; loginId/email uniqueness checks are deliberately global); deactivate disables the account at every provider, revokes its sessions and writes a required audit in one transaction; reset issues a new credential and revokes sessions
+// route-policy: auth=session; scope=tenant; authority=school-admin; rationale=lists, creates, edits, deactivates and resets teachers of the admin's own school (roster reads and every mutation target are scoped to admin.schoolId; loginId/email uniqueness checks are deliberately global); deactivate disables the account at every provider, revokes its sessions and writes a required audit in one transaction; reset issues a new credential and revokes sessions; refused on any deployed Preview/staging after authority and before body or data work (PREVIEW_IDENTITY_FROZEN)
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { randomUUID } from "crypto";
@@ -13,6 +13,8 @@ import {
   normalizeLoginId,
   slugifyLoginSeed,
 } from "@/lib/login-identifiers";
+import { previewIdentityFrozen } from "@/lib/preview/identityFreeze";
+import { previewSafeErrorResponse } from "@/lib/preview/safeError";
 
 const CreateSchema = z.object({
   fullName: z.string().min(1),
@@ -156,6 +158,8 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "schoolId required" }, { status: 400 });
     }
 
+    const frozen = previewIdentityFrozen();
+    if (frozen) return frozen;
     const body = await req.json().catch(() => null);
     const parsed = CreateSchema.safeParse(body);
     if (!parsed.success) {
@@ -231,6 +235,8 @@ export async function POST(req: Request) {
       phone: created.guardianPhoneE164,
     });
   } catch (err: any) {
+    const safe = previewSafeErrorResponse(err);
+    if (safe) return safe;
     const status = err?.status ?? 500;
     return NextResponse.json({ error: err?.message ?? "Internal error" }, { status });
   }
@@ -243,6 +249,8 @@ export async function PATCH(req: Request) {
       return NextResponse.json({ error: "schoolId required" }, { status: 400 });
     }
 
+    const frozen = previewIdentityFrozen();
+    if (frozen) return frozen;
     const body = await req.json().catch(() => null);
     const parsed = PatchSchema.safeParse(body);
     if (!parsed.success) {
@@ -387,6 +395,8 @@ export async function PATCH(req: Request) {
       phone: teacher.TeacherProfile?.phone ?? teacher.guardianPhoneE164 ?? null,
     });
   } catch (err: any) {
+    const safe = previewSafeErrorResponse(err);
+    if (safe) return safe;
     return NextResponse.json(
       { error: err?.message ?? "Internal error" },
       { status: err?.status ?? 500 }

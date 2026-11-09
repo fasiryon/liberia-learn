@@ -1,5 +1,6 @@
-// route-policy: auth=session; scope=platform; authority=platform-admin-enforced-mfa-step-up; rationale=same-origin JSON only; requires PRIVILEGED_MFA_ENFORCEMENT_ENABLED and a recent verified MFA or break-glass step-up, otherwise unavailable; an allowlisted platform admin revokes one account's sessions across schools and optionally disables it (refused by Credentials, Google, Auth0 and every session refresh); required audit in the same transaction; each call is a new revocation, not an idempotent retry
+// route-policy: auth=session; scope=platform; authority=platform-admin-enforced-mfa-step-up; rationale=same-origin JSON only; requires PRIVILEGED_MFA_ENFORCEMENT_ENABLED and a recent verified MFA or break-glass step-up, otherwise unavailable; an allowlisted platform admin revokes one account's sessions across schools and optionally disables it (refused by Credentials, Google, Auth0 and every session refresh); required audit in the same transaction; each call is a new revocation, not an idempotent retry; refused on any deployed Preview/staging after authority and before body or data work (PREVIEW_IDENTITY_FROZEN)
 import { NextResponse } from "next/server";
+import { previewIdentityFrozen } from "@/lib/preview/identityFreeze";
 import { z } from "zod";
 import { requireMoePlatformAdmin } from "@/lib/moeAccess";
 import { hasRecentPrivilegedStepUp, isPrivilegedMfaEnforced } from "@/lib/auth/privilegedIdentity";
@@ -27,6 +28,8 @@ export async function POST(req: Request) {
   try {
     assertSameOriginJson(req);
     const actor = await requireMoePlatformAdmin();
+    const frozen = previewIdentityFrozen();
+    if (frozen) return frozen;
     if (!isPrivilegedMfaEnforced()) {
       return NextResponse.json({ error: "Unavailable until privileged MFA enforcement is enabled", code: "PRIVILEGED_MFA_REQUIRED" }, { status: 403 });
     }

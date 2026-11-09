@@ -1,0 +1,14 @@
+{
+  "result": "PASS",
+  "source_commit": "887f23eccbe5b194c2e7ff93c0b09c843549a9eb",
+  "registry_entries": 121,
+  "evidence_records": 792,
+  "main_source_records_checked": 788,
+  "unique_fingerprinted_sources": 613,
+  "markdown_links_checked": 747,
+  "required_deliverables": 10,
+  "workflow_entrypoints": 54,
+  "runtime_llm_leads_reconciled": true,
+  "validation": "JSON/CSV/schema fields/source fingerprints/line bounds/repository links/workflow owners/provider lead classification/audit-only change scope; no runtime/product/security or academic effectiveness tests",
+  "errors": []
+}

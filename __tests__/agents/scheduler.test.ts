@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
 const runAgent = vi.fn();
+vi.mock("@/lib/agents/control", () => ({ resolveAgentEnabled: async (_name: string, flag: string) => process.env[flag]?.trim() === "true" }));
 vi.mock("@/lib/agents/runtime", () => ({
   runAgent: (...a: unknown[]) => runAgent(...a),
 }));

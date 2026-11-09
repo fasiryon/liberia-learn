@@ -1,0 +1,15 @@
+# Bounded offline continuation
+
+The default policy remains `offlineDelivery: false`; the deployment flag remains OFF. Offline continuation requires an explicit policy opt-in and `offlineMaxAgeSeconds` between 60 and 1800. Each lesson's separate operator authorization binds that setting, exact package hash, school, student/class cohort, review references and any timetable bindings. Existing authorizations cannot silently authorize a change to offline access.
+
+This increment supports an already authorized lesson in the **same open tab**. It does not support an offline first visit, offline page reload or reopening after browser closure. Content and progress stay in memory; no private preview payload or student responses are written to IndexedDB, localStorage, the service-worker cache or official records.
+
+Before initial delivery the server verifies the authenticated STUDENT role, current school/class membership, exact package, seven review references, separate release authorization and its audit link. Full package delivery rechecks every sealed file. Civics must have its exact geographic attachment; the map is never substituted with text-only content.
+
+The server supplies a digest over the derived lesson, scene attachments and bundled geographic data. The browser verifies that digest with Web Crypto before admitting offline continuation. A mismatch fails closed and cannot be repaired by a later heartbeat in the same component. The digest comes from the trusted authenticated initial response; this is not a transferable signed authorization for persistent storage.
+
+An offline lease ends at the earlier of the finite pilot end or the approved offline duration measured from server issuance. Local wall-clock and monotonic-clock checks reject expiry and clock rollback. The player is unmounted at lease expiry, discarding its practice state. Hidden pages do not extend authorization. This controls application access; it cannot retract a copy of content a user has already received.
+
+On reconnect the player becomes hidden and inert until fresh uncached server authorization succeeds. Definite 401/403/404 denial unmounts it immediately. Temporary network failure cannot bypass the reconnect check. While continuously disconnected, remote cohort removal, feature-flag changes or revocation cannot be observed: the existing bounded lease can continue until its deadline. **Instantaneous remote revocation while disconnected is not promised.** Operators must account for the configured maximum offline duration when revoking access.
+
+The original packages, original offline asset bytes and source attribution remain unchanged. Derived pilot scenes still contain no assessment handoff, tools or official evidence; the prominent pilot banner identifies ungraded practice. No official grades, mastery, promotions, assignments or historical learning records are written. A durable offline cache would require a separately reviewed authorization/storage design and is not implicitly enabled by this policy.

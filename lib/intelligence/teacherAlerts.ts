@@ -1,6 +1,7 @@
 import { randomUUID } from "crypto";
 import { prisma } from "@/lib/db";
 import { logLearningEvent } from "@/lib/events/logLearningEvent";
+import { authorizeClassAccess } from "@/lib/authz/classAuthority";
 
 export type TeacherAlertType =
   | "INACTIVE_STUDENT"
@@ -425,9 +426,74 @@ export async function generateTeacherAlerts(
   });
 }
 
+// ── AT-GRADE-01 batch 3 (CoS ruling 9 + COS-BATCH3-RULINGS-20261028 C + the class-alert approval) ────────────────
+// An alert is shown, reviewed, dismissed or turned into an action only while its owner holds CURRENT class authority
+// (lib/authz/classAuthority, class.read.learning) for what it is about. TeacherAlert stores no classId, so:
+//  - student alerts: a class the student is currently enrolled in (own school);
+//  - CLASS_AVERAGE_DROPPED / ASSIGNMENT_MISSED_BY_GROUP: the class this module encoded in its own server-written
+//    idempotencyKey, parsed strictly (exact owner prefix, type and segment count; the class or assignment must exist in
+//    the caller's school). Anything malformed or unresolvable is hidden;
+//  - summaries without individual student data: owner-only;
+//  - any other type: hidden.
+const OWNER_ONLY_ALERTS = new Set(["WEAK_TOPIC_SEQUENCE_ADVISED", "CURRICULUM_GAP_AFFECTING_CLASS", "PACING_SUPPORT_NEEDED"]);
+const STUDENT_ALERTS = new Set(["INACTIVE_STUDENT", "UNRESOLVED_INTERVENTION", "REPEATED_QUIZ_FAILURE", "LOW_MASTERY"]);
+type AlertActor = { id: string; role: string; schoolId: string };
+type AlertScopeRow = { alertType: string; studentId?: string | null; idempotencyKey?: string | null };
+
+async function holdsRead(actor: AlertActor, classId: string, subject?: string): Promise<boolean> {
+  return (await authorizeClassAccess({ id: actor.id, role: actor.role as "TEACHER", schoolId: actor.schoolId }, { classId, subject, fn: "class.read.learning" })).allowed;
+}
+
+/** The parts of this module's own key for `type`, or null when it is not exactly that shape for this owner. */
+function ownKeyParts(row: AlertScopeRow, ownerId: string, type: string, segments: number): string[] | null {
+  if (typeof row.idempotencyKey !== "string") return null;
+  const parts = row.idempotencyKey.split(":");
+  if (parts.length !== segments || parts[0] !== ownerId || parts[1] !== type || parts.some((part) => part.length === 0)) return null;
+  return parts;
+}
+
+/** `row` was loaded with teacherUserId = actor.id and schoolId = actor.schoolId by every caller, so the owner is the actor. */
+async function alertVisibleTo(row: AlertScopeRow, actor: AlertActor): Promise<boolean> {
+  if (OWNER_ONLY_ALERTS.has(row.alertType)) return true;
+  if (STUDENT_ALERTS.has(row.alertType)) {
+    if (!row.studentId) return false;
+    // studentId is Student.id for most generators and may be the learner User id for quiz attempts: accept either.
+    const enrollments = await prisma.enrollment.findMany({
+      where: { OR: [{ studentId: row.studentId }, { Student: { userId: row.studentId } }], Class: { schoolId: actor.schoolId } },
+      select: { classId: true },
+    });
+    for (const classId of Array.from(new Set(enrollments.map((e) => e.classId)))) if (await holdsRead(actor, classId)) return true;
+    return false;
+  }
+  if (row.alertType === "CLASS_AVERAGE_DROPPED") {
+    const parts = ownKeyParts(row, actor.id, "CLASS_AVERAGE_DROPPED", 4);
+    if (!parts) return false;
+    const cls = await prisma.class.findUnique({ where: { id: parts[2] }, select: { schoolId: true } });
+    if (!cls || cls.schoolId !== actor.schoolId) return false;
+    return holdsRead(actor, parts[2], parts[3]);
+  }
+  if (row.alertType === "ASSIGNMENT_MISSED_BY_GROUP") {
+    const parts = ownKeyParts(row, actor.id, "ASSIGNMENT_MISSED_BY_GROUP", 3);
+    if (!parts) return false;
+    const assignment = await prisma.assignment.findFirst({ where: { id: parts[2], Class: { schoolId: actor.schoolId } }, select: { classId: true } });
+    if (!assignment) return false;
+    return holdsRead(actor, assignment.classId);
+  }
+  return false;
+}
+
+async function visibleRows<T extends AlertScopeRow>(rows: T[], actor: AlertActor): Promise<T[]> {
+  const kept: T[] = [];
+  for (const row of rows) if (await alertVisibleTo(row, actor)) kept.push(row);
+  return kept;
+}
+
+const alertNotFound = () => Object.assign(new Error("Alert not found"), { status: 404 });
+
 export async function getActiveTeacherAlerts(
   teacherUserId: string,
-  schoolId: string
+  schoolId: string,
+  role = "TEACHER"
 ): Promise<TeacherAlertItem[]> {
   const ALERT_MAX_AGE_DAYS = 14;
   const cutoff = new Date(Date.now() - ALERT_MAX_AGE_DAYS * 86_400_000);
@@ -441,7 +507,7 @@ export async function getActiveTeacherAlerts(
     },
     orderBy: [{ severity: "desc" }, { createdAt: "desc" }],
     take: 20,
-  });
+  }).then((found) => visibleRows(found, { id: teacherUserId, role, schoolId }));
 
   const SEVERITY_ORDER: Record<string, number> = {
     critical: 4,
@@ -476,7 +542,8 @@ export async function getActiveTeacherAlerts(
 export async function getAllTeacherAlerts(
   teacherUserId: string,
   schoolId: string,
-  filter: "all" | "active" | "reviewed" | "dismissed" = "all"
+  filter: "all" | "active" | "reviewed" | "dismissed" = "all",
+  role = "TEACHER"
 ): Promise<TeacherAlertItem[]> {
   const ALERT_MAX_AGE_DAYS = 30;
   const cutoff = new Date(Date.now() - ALERT_MAX_AGE_DAYS * 86_400_000);
@@ -501,19 +568,20 @@ export async function getAllTeacherAlerts(
     take: 50,
   });
 
-  return rows.map(mapTeacherAlertRow);
+  return (await visibleRows(rows, { id: teacherUserId, role, schoolId })).map(mapTeacherAlertRow);
 }
 
 export async function markAlertReviewed(
   alertId: string,
   reviewedByUserId: string,
-  schoolId: string
+  schoolId: string,
+  role = "TEACHER"
 ): Promise<void> {
   const alert = await prisma.teacherAlert.findFirst({
     where: { id: alertId, teacherUserId: reviewedByUserId, schoolId },
-    select: { id: true, schoolId: true, alertType: true },
+    select: { id: true, schoolId: true, alertType: true, teacherUserId: true, studentId: true, idempotencyKey: true },
   });
-  if (!alert) throw Object.assign(new Error("Alert not found"), { status: 404 });
+  if (!alert || !(await alertVisibleTo(alert, { id: reviewedByUserId, role, schoolId }))) throw alertNotFound();
 
   await prisma.teacherAlert.update({
     where: { id: alert.id },
@@ -533,13 +601,14 @@ export async function dismissTeacherAlert(
   alertId: string,
   dismissedByUserId: string,
   schoolId: string,
-  reason?: string
+  reason?: string,
+  role = "TEACHER"
 ): Promise<void> {
   const alert = await prisma.teacherAlert.findFirst({
     where: { id: alertId, teacherUserId: dismissedByUserId, schoolId },
-    select: { id: true, schoolId: true, alertType: true },
+    select: { id: true, schoolId: true, alertType: true, teacherUserId: true, studentId: true, idempotencyKey: true },
   });
-  if (!alert) throw Object.assign(new Error("Alert not found"), { status: 404 });
+  if (!alert || !(await alertVisibleTo(alert, { id: dismissedByUserId, role, schoolId }))) throw alertNotFound();
 
   await prisma.teacherAlert.update({
     where: { id: alert.id },
@@ -559,12 +628,13 @@ export async function recordTeacherAlertAction(
   alertId: string,
   teacherUserId: string,
   schoolId: string,
-  requestedActionType?: string
+  requestedActionType?: string,
+  role = "TEACHER"
 ): Promise<{ action: TeacherAlertActionPayload; teacherActionId: string | null }> {
   const alert = await prisma.teacherAlert.findFirst({
     where: { id: alertId, teacherUserId, schoolId },
   });
-  if (!alert) throw Object.assign(new Error("Alert not found"), { status: 404 });
+  if (!alert || !(await alertVisibleTo(alert, { id: teacherUserId, role, schoolId }))) throw alertNotFound();
 
   const action = buildTeacherAlertAction(alert);
   if (!action || action.status === "unsupported") {

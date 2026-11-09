@@ -1,0 +1,5177 @@
+{
+  "program": "stem-excellence-v1",
+  "generatedBy": "scripts/cos-stem/build-program.cjs",
+  "inventoryCapturedAt": "2026-10-16T18:44:42.884Z",
+  "batches": [
+    "4.0.0-draft.6 (SEALED)",
+    "4.0.0-schoolday.1-draft.2 (COMMITTED_REVIEW_DRAFT, HELD)"
+  ],
+  "summary": {
+    "courseGradeCells": 104,
+    "platformCells": 91,
+    "teacherLedCells": 13,
+    "units": 531,
+    "byStatus": {
+      "CANDIDATE_IN_REVIEW": 3,
+      "MISSING_HELD_ONLY": 22,
+      "MISSING_NO_CONTENT": 23,
+      "MODERNIZE_EXISTING": 31,
+      "TEACHER_LED": 13,
+      "V4_DRAFT_IN_REVIEW": 12
+    },
+    "missingCourses": 45,
+    "liveLessonsCatalogued": 1105,
+    "liveVerifiedUsable": 0,
+    "v4DraftLessons": 17,
+    "v4DraftsByVersion": {
+      "4.0.0-draft.6": 6,
+      "4.0.0-schoolday.1-draft.2": 11
+    },
+    "pilotWindowLessonTarget": 710,
+    "yearLessonTarget": 11718,
+    "stemShareOfWeek": {
+      "K-2": "15/30",
+      "3-5": "17/30",
+      "6-9": "17/30",
+      "10-12": "20/30"
+    },
+    "productionOrders": 2,
+    "generationOrders": {
+      "open": 102,
+      "fulfilled": 0
+    },
+    "schoolDay": {
+      "grades": 13,
+      "sections": 26,
+      "syntheticLearners": 520,
+      "learnerSlots": 4160,
+      "learnerSlotsByStage": {
+        "PLANNED": 4160,
+        "GENERATED": 480,
+        "FACTORY_VALIDATED": 200,
+        "ACADEMICALLY_REVIEWED": 0,
+        "PREVIEW_ELIGIBLE": 0,
+        "PUBLISHED": 0
+      },
+      "distinctLessonsInDays": {
+        "generated": 12,
+        "factoryValidated": 5,
+        "academicallyReviewed": 0
+      },
+      "gradesVerified": 0,
+      "firstVerifiedGrade": null,
+      "verdicts": {
+        "DAY_NOT_STARTED": 11,
+        "DAY_PARTIAL": 2
+      }
+    },
+    "openRisks": [
+      "DEP-NPM P0 (blocks preview): T2 (dependency disposition)",
+      "AT-ADJ-01 P1 (blocks preview): Codex: Project Atlas task (security remediation workstream, audit/project-atlas-security-triage) (assigned by CoS 2026-10-23; queued after the six authorized repairs)",
+      "AT-ADJ-02 P1 (blocks preview): Codex: Project Atlas task (security remediation workstream, audit/project-atlas-security-triage) (assigned by CoS 2026-10-23; queued after the six; same attendance-authority area as SEC-R02)",
+      "AT-R-LAB P1 (blocks preview): T1 (lab score/refusal provenance, per Atlas)"
+    ],
+    "securityGate": [
+      {
+        "commit": "e5d89c34f",
+        "ref": "origin/main",
+        "capturedAt": "2026-10-23T21:01:17.631Z",
+        "status": "OPEN",
+        "productionCritical": [
+          "@auth/core",
+          "@auth/prisma-adapter",
+          "@sentry/nextjs",
+          "dompurify",
+          "next",
+          "next-auth"
+        ],
+        "productionHighWithoutDisposition": 18
+      },
+      {
+        "commit": "5f3348b30",
+        "ref": "5f3348b30",
+        "capturedAt": "2026-10-23T21:01:32.191Z",
+        "status": "OPEN",
+        "productionCritical": [
+          "next"
+        ],
+        "productionHighWithoutDisposition": 18
+      }
+    ]
+  },
+  "matrix": [
+    {
+      "courseId": "stem1-k-english",
+      "grade": 0,
+      "gradeLabel": "K",
+      "band": "K-2",
+      "course": "ENGLISH",
+      "subject": "LITERACY",
+      "pillar": "LANGUAGE",
+      "weeklyPeriods": 8,
+      "units": 6,
+      "live": {
+        "total": 0,
+        "byTrack": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [],
+      "status": "MISSING_NO_CONTENT",
+      "requiredBlocks": {
+        "existing": [
+          "SENTENCE_BUILDER",
+          "SEQUENCE",
+          "SORT"
+        ],
+        "proposed": [
+          "PHONICS_BLENDER",
+          "AUDIO_PROMPT"
+        ]
+      },
+      "labs": [],
+      "targets": {
+        "pilotWindowLessons": 16,
+        "yearLessons": 276
+      },
+      "release": "no approved lesson version; program gates G1-G8 not started",
+      "dayPlanPeriods": [
+        {
+          "planId": "stem1-k-day1",
+          "slot": "P1",
+          "binding": "CONTENT_GAP",
+          "key": "GO-G00-P1-ENGLISH-U1"
+        }
+      ]
+    },
+    {
+      "courseId": "stem1-k-math",
+      "grade": 0,
+      "gradeLabel": "K",
+      "band": "K-2",
+      "course": "MATH",
+      "subject": "MATH",
+      "pillar": "M",
+      "weeklyPeriods": 7,
+      "units": 6,
+      "live": {
+        "total": 0,
+        "byTrack": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [],
+      "status": "MISSING_NO_CONTENT",
+      "requiredBlocks": {
+        "existing": [
+          "ARRAY_MODEL",
+          "SHAPE_MODEL",
+          "SORT",
+          "CHECK"
+        ],
+        "proposed": [
+          "TEN_FRAME_COUNTERS",
+          "AUDIO_PROMPT"
+        ]
+      },
+      "labs": [],
+      "targets": {
+        "pilotWindowLessons": 14,
+        "yearLessons": 240
+      },
+      "release": "no approved lesson version; program gates G1-G8 not started",
+      "dayPlanPeriods": [
+        {
+          "planId": "stem1-k-day1",
+          "slot": "P2",
+          "binding": "CONTENT_GAP",
+          "key": "GO-G00-P2-MATH-U1"
+        }
+      ]
+    },
+    {
+      "courseId": "stem1-k-science",
+      "grade": 0,
+      "gradeLabel": "K",
+      "band": "K-2",
+      "course": "SCIENCE",
+      "subject": "SCIENCE",
+      "pillar": "S",
+      "weeklyPeriods": 4,
+      "units": 6,
+      "live": {
+        "total": 0,
+        "byTrack": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [],
+      "status": "MISSING_NO_CONTENT",
+      "requiredBlocks": {
+        "existing": [
+          "SORT",
+          "SEQUENCE",
+          "PROCESS_CYCLE",
+          "CHECK"
+        ],
+        "proposed": [
+          "OBSERVATION_LOG",
+          "AUDIO_PROMPT"
+        ]
+      },
+      "labs": [],
+      "targets": {
+        "pilotWindowLessons": 8,
+        "yearLessons": 132
+      },
+      "release": "no approved lesson version; program gates G1-G8 not started",
+      "dayPlanPeriods": [
+        {
+          "planId": "stem1-k-day1",
+          "slot": "P3",
+          "binding": "CONTENT_GAP",
+          "key": "GO-G00-P3-SCIENCE-U1"
+        }
+      ]
+    },
+    {
+      "courseId": "stem1-k-social-studies",
+      "grade": 0,
+      "gradeLabel": "K",
+      "band": "K-2",
+      "course": "SOCIAL_STUDIES",
+      "subject": "SOCIAL_STUDIES",
+      "pillar": "HUMANITIES",
+      "weeklyPeriods": 3,
+      "units": 6,
+      "live": {
+        "total": 0,
+        "byTrack": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [],
+      "status": "MISSING_NO_CONTENT",
+      "requiredBlocks": {
+        "existing": [
+          "SORT",
+          "SEQUENCE",
+          "MAP_EXPLORER"
+        ],
+        "proposed": [
+          "AUDIO_PROMPT"
+        ]
+      },
+      "labs": [],
+      "targets": {
+        "pilotWindowLessons": 6,
+        "yearLessons": 96
+      },
+      "release": "no approved lesson version; program gates G1-G8 not started",
+      "dayPlanPeriods": [
+        {
+          "planId": "stem1-k-day1",
+          "slot": "P6",
+          "binding": "CONTENT_GAP",
+          "key": "GO-G00-P6-SOCIAL_STUDIES-U1"
+        }
+      ]
+    },
+    {
+      "courseId": "stem1-k-computing",
+      "grade": 0,
+      "gradeLabel": "K",
+      "band": "K-2",
+      "course": "COMPUTING",
+      "subject": "COMPUTER_SCIENCE",
+      "pillar": "T",
+      "weeklyPeriods": 2,
+      "units": 6,
+      "live": {
+        "total": 0,
+        "byTrack": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [],
+      "status": "MISSING_NO_CONTENT",
+      "requiredBlocks": {
+        "existing": [
+          "SEQUENCE",
+          "SORT",
+          "CHECK"
+        ],
+        "proposed": [
+          "GRID_ROBOT_PROGRAM"
+        ]
+      },
+      "labs": [],
+      "targets": {
+        "pilotWindowLessons": 4,
+        "yearLessons": 60
+      },
+      "release": "no approved lesson version; program gates G1-G8 not started",
+      "dayPlanPeriods": [
+        {
+          "planId": "stem1-k-day1",
+          "slot": "P5",
+          "binding": "CONTENT_GAP",
+          "key": "GO-G00-P5-COMPUTING-U1"
+        }
+      ]
+    },
+    {
+      "courseId": "stem1-k-engineering",
+      "grade": 0,
+      "gradeLabel": "K",
+      "band": "K-2",
+      "course": "ENGINEERING",
+      "subject": "ENGINEERING_FOUNDATIONS",
+      "pillar": "E",
+      "weeklyPeriods": 2,
+      "units": 6,
+      "live": {
+        "total": 0,
+        "byTrack": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [],
+      "status": "MISSING_NO_CONTENT",
+      "requiredBlocks": {
+        "existing": [
+          "SEQUENCE",
+          "CHECK"
+        ],
+        "proposed": [
+          "DESIGN_CYCLE",
+          "OBSERVATION_LOG"
+        ]
+      },
+      "labs": [],
+      "targets": {
+        "pilotWindowLessons": 4,
+        "yearLessons": 60
+      },
+      "release": "no approved lesson version; program gates G1-G8 not started",
+      "dayPlanPeriods": [
+        {
+          "planId": "stem1-k-day1",
+          "slot": "P4",
+          "binding": "CONTENT_GAP",
+          "key": "GO-G00-P4-ENGINEERING-U1"
+        }
+      ]
+    },
+    {
+      "courseId": "stem1-k-arts-pe",
+      "grade": 0,
+      "gradeLabel": "K",
+      "band": "K-2",
+      "course": "ARTS_PE",
+      "subject": null,
+      "pillar": "WELLBEING",
+      "weeklyPeriods": 4,
+      "units": 0,
+      "live": {
+        "total": 0,
+        "byTrack": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [],
+      "status": "TEACHER_LED",
+      "requiredBlocks": {
+        "existing": [],
+        "proposed": []
+      },
+      "labs": [],
+      "targets": {
+        "pilotWindowLessons": 0,
+        "yearLessons": 0
+      },
+      "release": "teacher-led; not platform curriculum",
+      "dayPlanPeriods": []
+    },
+    {
+      "courseId": "stem1-g1-english",
+      "grade": 1,
+      "gradeLabel": "1",
+      "band": "K-2",
+      "course": "ENGLISH",
+      "subject": "LITERACY",
+      "pillar": "LANGUAGE",
+      "weeklyPeriods": 8,
+      "units": 6,
+      "live": {
+        "total": 4,
+        "byTrack": {
+          "A": 0,
+          "B": 4,
+          "C": 0,
+          "D": 0
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [],
+      "status": "MODERNIZE_EXISTING",
+      "requiredBlocks": {
+        "existing": [
+          "SENTENCE_BUILDER",
+          "SEQUENCE",
+          "SORT"
+        ],
+        "proposed": [
+          "PHONICS_BLENDER",
+          "AUDIO_PROMPT"
+        ]
+      },
+      "labs": [],
+      "targets": {
+        "pilotWindowLessons": 16,
+        "yearLessons": 276
+      },
+      "release": "no approved lesson version; program gates G1-G8 not started",
+      "dayPlanPeriods": [
+        {
+          "planId": "stem1-g1-day1",
+          "slot": "P1",
+          "binding": "CONTENT_GAP",
+          "key": "GO-G01-P1-ENGLISH-U1"
+        }
+      ]
+    },
+    {
+      "courseId": "stem1-g1-math",
+      "grade": 1,
+      "gradeLabel": "1",
+      "band": "K-2",
+      "course": "MATH",
+      "subject": "MATH",
+      "pillar": "M",
+      "weeklyPeriods": 7,
+      "units": 6,
+      "live": {
+        "total": 0,
+        "byTrack": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [],
+      "status": "MISSING_NO_CONTENT",
+      "requiredBlocks": {
+        "existing": [
+          "ARRAY_MODEL",
+          "SHAPE_MODEL",
+          "SORT",
+          "CHECK"
+        ],
+        "proposed": [
+          "TEN_FRAME_COUNTERS",
+          "AUDIO_PROMPT"
+        ]
+      },
+      "labs": [],
+      "targets": {
+        "pilotWindowLessons": 14,
+        "yearLessons": 240
+      },
+      "release": "no approved lesson version; program gates G1-G8 not started",
+      "dayPlanPeriods": [
+        {
+          "planId": "stem1-g1-day1",
+          "slot": "P2",
+          "binding": "CONTENT_GAP",
+          "key": "GO-G01-P2-MATH-U1"
+        }
+      ]
+    },
+    {
+      "courseId": "stem1-g1-science",
+      "grade": 1,
+      "gradeLabel": "1",
+      "band": "K-2",
+      "course": "SCIENCE",
+      "subject": "SCIENCE",
+      "pillar": "S",
+      "weeklyPeriods": 4,
+      "units": 6,
+      "live": {
+        "total": 0,
+        "byTrack": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [],
+      "status": "MISSING_NO_CONTENT",
+      "requiredBlocks": {
+        "existing": [
+          "SORT",
+          "SEQUENCE",
+          "PROCESS_CYCLE",
+          "CHECK"
+        ],
+        "proposed": [
+          "OBSERVATION_LOG",
+          "AUDIO_PROMPT"
+        ]
+      },
+      "labs": [],
+      "targets": {
+        "pilotWindowLessons": 8,
+        "yearLessons": 132
+      },
+      "release": "no approved lesson version; program gates G1-G8 not started",
+      "dayPlanPeriods": [
+        {
+          "planId": "stem1-g1-day1",
+          "slot": "P3",
+          "binding": "CONTENT_GAP",
+          "key": "GO-G01-P3-SCIENCE-U1"
+        }
+      ]
+    },
+    {
+      "courseId": "stem1-g1-social-studies",
+      "grade": 1,
+      "gradeLabel": "1",
+      "band": "K-2",
+      "course": "SOCIAL_STUDIES",
+      "subject": "SOCIAL_STUDIES",
+      "pillar": "HUMANITIES",
+      "weeklyPeriods": 3,
+      "units": 6,
+      "live": {
+        "total": 18,
+        "byTrack": {
+          "A": 0,
+          "B": 9,
+          "C": 9,
+          "D": 0
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [
+        "lmv1-g1-civics-rules-rights-duties (library modernization pilot V1)"
+      ],
+      "status": "CANDIDATE_IN_REVIEW",
+      "requiredBlocks": {
+        "existing": [
+          "SORT",
+          "SEQUENCE",
+          "MAP_EXPLORER"
+        ],
+        "proposed": [
+          "AUDIO_PROMPT"
+        ]
+      },
+      "labs": [],
+      "targets": {
+        "pilotWindowLessons": 6,
+        "yearLessons": 96
+      },
+      "release": "no approved lesson version; program gates G1-G8 not started",
+      "dayPlanPeriods": [
+        {
+          "planId": "stem1-g1-day1",
+          "slot": "P6",
+          "binding": "CONTENT_GAP",
+          "key": "GO-G01-P6-SOCIAL_STUDIES-U1"
+        }
+      ]
+    },
+    {
+      "courseId": "stem1-g1-computing",
+      "grade": 1,
+      "gradeLabel": "1",
+      "band": "K-2",
+      "course": "COMPUTING",
+      "subject": "COMPUTER_SCIENCE",
+      "pillar": "T",
+      "weeklyPeriods": 2,
+      "units": 6,
+      "live": {
+        "total": 10,
+        "byTrack": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 10
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [],
+      "status": "MISSING_HELD_ONLY",
+      "requiredBlocks": {
+        "existing": [
+          "SEQUENCE",
+          "SORT",
+          "CHECK"
+        ],
+        "proposed": [
+          "GRID_ROBOT_PROGRAM"
+        ]
+      },
+      "labs": [],
+      "targets": {
+        "pilotWindowLessons": 4,
+        "yearLessons": 60
+      },
+      "release": "no approved lesson version; program gates G1-G8 not started",
+      "dayPlanPeriods": [
+        {
+          "planId": "stem1-g1-day1",
+          "slot": "P5",
+          "binding": "CONTENT_GAP",
+          "key": "GO-G01-P5-COMPUTING-U1"
+        }
+      ]
+    },
+    {
+      "courseId": "stem1-g1-engineering",
+      "grade": 1,
+      "gradeLabel": "1",
+      "band": "K-2",
+      "course": "ENGINEERING",
+      "subject": "ENGINEERING_FOUNDATIONS",
+      "pillar": "E",
+      "weeklyPeriods": 2,
+      "units": 6,
+      "live": {
+        "total": 12,
+        "byTrack": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 12
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [],
+      "status": "MISSING_HELD_ONLY",
+      "requiredBlocks": {
+        "existing": [
+          "SEQUENCE",
+          "CHECK"
+        ],
+        "proposed": [
+          "DESIGN_CYCLE",
+          "OBSERVATION_LOG"
+        ]
+      },
+      "labs": [],
+      "targets": {
+        "pilotWindowLessons": 4,
+        "yearLessons": 60
+      },
+      "release": "no approved lesson version; program gates G1-G8 not started",
+      "dayPlanPeriods": [
+        {
+          "planId": "stem1-g1-day1",
+          "slot": "P4",
+          "binding": "CONTENT_GAP",
+          "key": "GO-G01-P4-ENGINEERING-U1"
+        }
+      ]
+    },
+    {
+      "courseId": "stem1-g1-arts-pe",
+      "grade": 1,
+      "gradeLabel": "1",
+      "band": "K-2",
+      "course": "ARTS_PE",
+      "subject": null,
+      "pillar": "WELLBEING",
+      "weeklyPeriods": 4,
+      "units": 0,
+      "live": {
+        "total": 0,
+        "byTrack": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [],
+      "status": "TEACHER_LED",
+      "requiredBlocks": {
+        "existing": [],
+        "proposed": []
+      },
+      "labs": [],
+      "targets": {
+        "pilotWindowLessons": 0,
+        "yearLessons": 0
+      },
+      "release": "teacher-led; not platform curriculum",
+      "dayPlanPeriods": []
+    },
+    {
+      "courseId": "stem1-g2-english",
+      "grade": 2,
+      "gradeLabel": "2",
+      "band": "K-2",
+      "course": "ENGLISH",
+      "subject": "LITERACY",
+      "pillar": "LANGUAGE",
+      "weeklyPeriods": 8,
+      "units": 6,
+      "live": {
+        "total": 7,
+        "byTrack": {
+          "A": 0,
+          "B": 7,
+          "C": 0,
+          "D": 0
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [],
+      "status": "MODERNIZE_EXISTING",
+      "requiredBlocks": {
+        "existing": [
+          "SENTENCE_BUILDER",
+          "SEQUENCE",
+          "SORT"
+        ],
+        "proposed": [
+          "PHONICS_BLENDER",
+          "AUDIO_PROMPT"
+        ]
+      },
+      "labs": [],
+      "targets": {
+        "pilotWindowLessons": 16,
+        "yearLessons": 276
+      },
+      "release": "no approved lesson version; program gates G1-G8 not started",
+      "dayPlanPeriods": [
+        {
+          "planId": "stem1-g2-day1",
+          "slot": "P1",
+          "binding": "CONTENT_GAP",
+          "key": "GO-G02-P1-ENGLISH-U1"
+        }
+      ]
+    },
+    {
+      "courseId": "stem1-g2-math",
+      "grade": 2,
+      "gradeLabel": "2",
+      "band": "K-2",
+      "course": "MATH",
+      "subject": "MATH",
+      "pillar": "M",
+      "weeklyPeriods": 7,
+      "units": 6,
+      "live": {
+        "total": 2,
+        "byTrack": {
+          "A": 0,
+          "B": 2,
+          "C": 0,
+          "D": 0
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [],
+      "status": "MODERNIZE_EXISTING",
+      "requiredBlocks": {
+        "existing": [
+          "ARRAY_MODEL",
+          "SHAPE_MODEL",
+          "SORT",
+          "CHECK"
+        ],
+        "proposed": [
+          "TEN_FRAME_COUNTERS",
+          "AUDIO_PROMPT"
+        ]
+      },
+      "labs": [],
+      "targets": {
+        "pilotWindowLessons": 14,
+        "yearLessons": 240
+      },
+      "release": "no approved lesson version; program gates G1-G8 not started",
+      "dayPlanPeriods": [
+        {
+          "planId": "stem1-g2-day1",
+          "slot": "P2",
+          "binding": "CONTENT_GAP",
+          "key": "GO-G02-P2-MATH-U1"
+        }
+      ]
+    },
+    {
+      "courseId": "stem1-g2-science",
+      "grade": 2,
+      "gradeLabel": "2",
+      "band": "K-2",
+      "course": "SCIENCE",
+      "subject": "SCIENCE",
+      "pillar": "S",
+      "weeklyPeriods": 4,
+      "units": 6,
+      "live": {
+        "total": 1,
+        "byTrack": {
+          "A": 0,
+          "B": 1,
+          "C": 0,
+          "D": 0
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [],
+      "status": "MODERNIZE_EXISTING",
+      "requiredBlocks": {
+        "existing": [
+          "SORT",
+          "SEQUENCE",
+          "PROCESS_CYCLE",
+          "CHECK"
+        ],
+        "proposed": [
+          "OBSERVATION_LOG",
+          "AUDIO_PROMPT"
+        ]
+      },
+      "labs": [],
+      "targets": {
+        "pilotWindowLessons": 8,
+        "yearLessons": 132
+      },
+      "release": "no approved lesson version; program gates G1-G8 not started",
+      "dayPlanPeriods": [
+        {
+          "planId": "stem1-g2-day1",
+          "slot": "P3",
+          "binding": "CONTENT_GAP",
+          "key": "GO-G02-P3-SCIENCE-U1"
+        }
+      ]
+    },
+    {
+      "courseId": "stem1-g2-social-studies",
+      "grade": 2,
+      "gradeLabel": "2",
+      "band": "K-2",
+      "course": "SOCIAL_STUDIES",
+      "subject": "SOCIAL_STUDIES",
+      "pillar": "HUMANITIES",
+      "weeklyPeriods": 3,
+      "units": 6,
+      "live": {
+        "total": 11,
+        "byTrack": {
+          "A": 0,
+          "B": 11,
+          "C": 0,
+          "D": 0
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [],
+      "status": "MODERNIZE_EXISTING",
+      "requiredBlocks": {
+        "existing": [
+          "SORT",
+          "SEQUENCE",
+          "MAP_EXPLORER"
+        ],
+        "proposed": [
+          "AUDIO_PROMPT"
+        ]
+      },
+      "labs": [],
+      "targets": {
+        "pilotWindowLessons": 6,
+        "yearLessons": 96
+      },
+      "release": "no approved lesson version; program gates G1-G8 not started",
+      "dayPlanPeriods": [
+        {
+          "planId": "stem1-g2-day1",
+          "slot": "P6",
+          "binding": "CONTENT_GAP",
+          "key": "GO-G02-P6-SOCIAL_STUDIES-U1"
+        }
+      ]
+    },
+    {
+      "courseId": "stem1-g2-computing",
+      "grade": 2,
+      "gradeLabel": "2",
+      "band": "K-2",
+      "course": "COMPUTING",
+      "subject": "COMPUTER_SCIENCE",
+      "pillar": "T",
+      "weeklyPeriods": 2,
+      "units": 6,
+      "live": {
+        "total": 12,
+        "byTrack": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 12
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [],
+      "status": "MISSING_HELD_ONLY",
+      "requiredBlocks": {
+        "existing": [
+          "SEQUENCE",
+          "SORT",
+          "CHECK"
+        ],
+        "proposed": [
+          "GRID_ROBOT_PROGRAM"
+        ]
+      },
+      "labs": [],
+      "targets": {
+        "pilotWindowLessons": 4,
+        "yearLessons": 60
+      },
+      "release": "no approved lesson version; program gates G1-G8 not started",
+      "dayPlanPeriods": [
+        {
+          "planId": "stem1-g2-day1",
+          "slot": "P5",
+          "binding": "CONTENT_GAP",
+          "key": "GO-G02-P5-COMPUTING-U1"
+        }
+      ]
+    },
+    {
+      "courseId": "stem1-g2-engineering",
+      "grade": 2,
+      "gradeLabel": "2",
+      "band": "K-2",
+      "course": "ENGINEERING",
+      "subject": "ENGINEERING_FOUNDATIONS",
+      "pillar": "E",
+      "weeklyPeriods": 2,
+      "units": 6,
+      "live": {
+        "total": 13,
+        "byTrack": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 13
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [],
+      "status": "MISSING_HELD_ONLY",
+      "requiredBlocks": {
+        "existing": [
+          "SEQUENCE",
+          "CHECK"
+        ],
+        "proposed": [
+          "DESIGN_CYCLE",
+          "OBSERVATION_LOG"
+        ]
+      },
+      "labs": [],
+      "targets": {
+        "pilotWindowLessons": 4,
+        "yearLessons": 60
+      },
+      "release": "no approved lesson version; program gates G1-G8 not started",
+      "dayPlanPeriods": [
+        {
+          "planId": "stem1-g2-day1",
+          "slot": "P4",
+          "binding": "CONTENT_GAP",
+          "key": "GO-G02-P4-ENGINEERING-U1"
+        }
+      ]
+    },
+    {
+      "courseId": "stem1-g2-arts-pe",
+      "grade": 2,
+      "gradeLabel": "2",
+      "band": "K-2",
+      "course": "ARTS_PE",
+      "subject": null,
+      "pillar": "WELLBEING",
+      "weeklyPeriods": 4,
+      "units": 0,
+      "live": {
+        "total": 0,
+        "byTrack": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [],
+      "status": "TEACHER_LED",
+      "requiredBlocks": {
+        "existing": [],
+        "proposed": []
+      },
+      "labs": [],
+      "targets": {
+        "pilotWindowLessons": 0,
+        "yearLessons": 0
+      },
+      "release": "teacher-led; not platform curriculum",
+      "dayPlanPeriods": []
+    },
+    {
+      "courseId": "stem1-g3-english",
+      "grade": 3,
+      "gradeLabel": "3",
+      "band": "3-5",
+      "course": "ENGLISH",
+      "subject": "LITERACY",
+      "pillar": "LANGUAGE",
+      "weeklyPeriods": 7,
+      "units": 6,
+      "live": {
+        "total": 11,
+        "byTrack": {
+          "A": 0,
+          "B": 11,
+          "C": 0,
+          "D": 0
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [],
+      "status": "MODERNIZE_EXISTING",
+      "requiredBlocks": {
+        "existing": [
+          "READING_PASSAGE",
+          "SOURCE_EVIDENCE",
+          "SENTENCE_BUILDER",
+          "WRITING_ORGANIZER"
+        ],
+        "proposed": []
+      },
+      "labs": [],
+      "targets": {
+        "pilotWindowLessons": 14,
+        "yearLessons": 240
+      },
+      "release": "no approved lesson version; program gates G1-G8 not started",
+      "dayPlanPeriods": [
+        {
+          "planId": "stem1-g3-day1",
+          "slot": "P3",
+          "binding": "CONTENT_GAP",
+          "key": "GO-G03-P3-ENGLISH-U1"
+        }
+      ]
+    },
+    {
+      "courseId": "stem1-g3-math",
+      "grade": 3,
+      "gradeLabel": "3",
+      "band": "3-5",
+      "course": "MATH",
+      "subject": "MATH",
+      "pillar": "M",
+      "weeklyPeriods": 7,
+      "units": 6,
+      "live": {
+        "total": 0,
+        "byTrack": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [],
+      "status": "MISSING_NO_CONTENT",
+      "requiredBlocks": {
+        "existing": [
+          "ARRAY_MODEL",
+          "AREA_MODEL",
+          "FRACTION_MODEL",
+          "FRACTION_NUMBER_LINE",
+          "PLACE_VALUE_CHART",
+          "WORKED_SOLUTION",
+          "NUMERIC_RESPONSE",
+          "MISTAKE_ANALYSIS"
+        ],
+        "proposed": [
+          "GRAPH_BUILDER"
+        ]
+      },
+      "labs": [],
+      "targets": {
+        "pilotWindowLessons": 14,
+        "yearLessons": 240
+      },
+      "release": "no approved lesson version; program gates G1-G8 not started",
+      "dayPlanPeriods": [
+        {
+          "planId": "stem1-g3-day1",
+          "slot": "P1",
+          "binding": "CONTENT_GAP",
+          "key": "GO-G03-P1-MATH-U1"
+        }
+      ]
+    },
+    {
+      "courseId": "stem1-g3-science",
+      "grade": 3,
+      "gradeLabel": "3",
+      "band": "3-5",
+      "course": "SCIENCE",
+      "subject": "SCIENCE",
+      "pillar": "S",
+      "weeklyPeriods": 5,
+      "units": 6,
+      "live": {
+        "total": 5,
+        "byTrack": {
+          "A": 0,
+          "B": 5,
+          "C": 0,
+          "D": 0
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [],
+      "status": "MODERNIZE_EXISTING",
+      "requiredBlocks": {
+        "existing": [
+          "PREDICT_OBSERVE",
+          "PROCESS_CYCLE",
+          "DATA_PLOT",
+          "SORT",
+          "CHECK"
+        ],
+        "proposed": [
+          "MEASUREMENT_TABLE",
+          "FAIR_TEST_PLANNER"
+        ]
+      },
+      "labs": [],
+      "targets": {
+        "pilotWindowLessons": 10,
+        "yearLessons": 168
+      },
+      "release": "no approved lesson version; program gates G1-G8 not started",
+      "dayPlanPeriods": [
+        {
+          "planId": "stem1-g3-day1",
+          "slot": "P2",
+          "binding": "CONTENT_GAP",
+          "key": "GO-G03-P2-SCIENCE-U1"
+        }
+      ]
+    },
+    {
+      "courseId": "stem1-g3-social-studies",
+      "grade": 3,
+      "gradeLabel": "3",
+      "band": "3-5",
+      "course": "SOCIAL_STUDIES",
+      "subject": "SOCIAL_STUDIES",
+      "pillar": "HUMANITIES",
+      "weeklyPeriods": 3,
+      "units": 6,
+      "live": {
+        "total": 0,
+        "byTrack": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [],
+      "status": "MISSING_NO_CONTENT",
+      "requiredBlocks": {
+        "existing": [
+          "MAP_EXPLORER",
+          "SEQUENCE",
+          "SOURCE_EVIDENCE",
+          "SORT"
+        ],
+        "proposed": []
+      },
+      "labs": [],
+      "targets": {
+        "pilotWindowLessons": 6,
+        "yearLessons": 96
+      },
+      "release": "no approved lesson version; program gates G1-G8 not started",
+      "dayPlanPeriods": [
+        {
+          "planId": "stem1-g3-day1",
+          "slot": "P4",
+          "binding": "CONTENT_GAP",
+          "key": "GO-G03-P4-SOCIAL_STUDIES-U1"
+        }
+      ]
+    },
+    {
+      "courseId": "stem1-g3-computing",
+      "grade": 3,
+      "gradeLabel": "3",
+      "band": "3-5",
+      "course": "COMPUTING",
+      "subject": "COMPUTER_SCIENCE",
+      "pillar": "T",
+      "weeklyPeriods": 3,
+      "units": 6,
+      "live": {
+        "total": 12,
+        "byTrack": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 12
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [],
+      "status": "MISSING_HELD_ONLY",
+      "requiredBlocks": {
+        "existing": [
+          "SEQUENCE",
+          "SORT",
+          "MISTAKE_ANALYSIS"
+        ],
+        "proposed": [
+          "GRID_ROBOT_PROGRAM",
+          "BLOCK_PROGRAM"
+        ]
+      },
+      "labs": [],
+      "targets": {
+        "pilotWindowLessons": 6,
+        "yearLessons": 96
+      },
+      "release": "no approved lesson version; program gates G1-G8 not started",
+      "dayPlanPeriods": [
+        {
+          "planId": "stem1-g3-day1",
+          "slot": "P5",
+          "binding": "CONTENT_GAP",
+          "key": "GO-G03-P5-COMPUTING-U1"
+        }
+      ]
+    },
+    {
+      "courseId": "stem1-g3-engineering",
+      "grade": 3,
+      "gradeLabel": "3",
+      "band": "3-5",
+      "course": "ENGINEERING",
+      "subject": "ENGINEERING_FOUNDATIONS",
+      "pillar": "E",
+      "weeklyPeriods": 2,
+      "units": 6,
+      "live": {
+        "total": 15,
+        "byTrack": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 15
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [],
+      "status": "MISSING_HELD_ONLY",
+      "requiredBlocks": {
+        "existing": [
+          "SHAPE_MODEL",
+          "DATA_PLOT"
+        ],
+        "proposed": [
+          "DESIGN_CYCLE",
+          "MEASUREMENT_TABLE"
+        ]
+      },
+      "labs": [],
+      "targets": {
+        "pilotWindowLessons": 4,
+        "yearLessons": 60
+      },
+      "release": "no approved lesson version; program gates G1-G8 not started",
+      "dayPlanPeriods": [
+        {
+          "planId": "stem1-g3-day1",
+          "slot": "P6",
+          "binding": "CONTENT_GAP",
+          "key": "GO-G03-P6-ENGINEERING-U1"
+        }
+      ]
+    },
+    {
+      "courseId": "stem1-g3-arts-pe",
+      "grade": 3,
+      "gradeLabel": "3",
+      "band": "3-5",
+      "course": "ARTS_PE",
+      "subject": null,
+      "pillar": "WELLBEING",
+      "weeklyPeriods": 3,
+      "units": 0,
+      "live": {
+        "total": 0,
+        "byTrack": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [],
+      "status": "TEACHER_LED",
+      "requiredBlocks": {
+        "existing": [],
+        "proposed": []
+      },
+      "labs": [],
+      "targets": {
+        "pilotWindowLessons": 0,
+        "yearLessons": 0
+      },
+      "release": "teacher-led; not platform curriculum",
+      "dayPlanPeriods": []
+    },
+    {
+      "courseId": "stem1-g4-english",
+      "grade": 4,
+      "gradeLabel": "4",
+      "band": "3-5",
+      "course": "ENGLISH",
+      "subject": "LITERACY",
+      "pillar": "LANGUAGE",
+      "weeklyPeriods": 7,
+      "units": 6,
+      "live": {
+        "total": 6,
+        "byTrack": {
+          "A": 6,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [],
+      "status": "MODERNIZE_EXISTING",
+      "requiredBlocks": {
+        "existing": [
+          "READING_PASSAGE",
+          "SOURCE_EVIDENCE",
+          "SENTENCE_BUILDER",
+          "WRITING_ORGANIZER"
+        ],
+        "proposed": []
+      },
+      "labs": [],
+      "targets": {
+        "pilotWindowLessons": 14,
+        "yearLessons": 240
+      },
+      "release": "no approved lesson version; program gates G1-G8 not started",
+      "dayPlanPeriods": [
+        {
+          "planId": "stem1-g4-day1",
+          "slot": "P3",
+          "binding": "CONTENT_GAP",
+          "key": "GO-G04-P3-ENGLISH-U1"
+        }
+      ]
+    },
+    {
+      "courseId": "stem1-g4-math",
+      "grade": 4,
+      "gradeLabel": "4",
+      "band": "3-5",
+      "course": "MATH",
+      "subject": "MATH",
+      "pillar": "M",
+      "weeklyPeriods": 7,
+      "units": 6,
+      "live": {
+        "total": 0,
+        "byTrack": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [],
+      "status": "MISSING_NO_CONTENT",
+      "requiredBlocks": {
+        "existing": [
+          "ARRAY_MODEL",
+          "AREA_MODEL",
+          "FRACTION_MODEL",
+          "FRACTION_NUMBER_LINE",
+          "PLACE_VALUE_CHART",
+          "WORKED_SOLUTION",
+          "NUMERIC_RESPONSE",
+          "MISTAKE_ANALYSIS"
+        ],
+        "proposed": [
+          "GRAPH_BUILDER"
+        ]
+      },
+      "labs": [],
+      "targets": {
+        "pilotWindowLessons": 14,
+        "yearLessons": 240
+      },
+      "release": "no approved lesson version; program gates G1-G8 not started",
+      "dayPlanPeriods": [
+        {
+          "planId": "stem1-g4-day1",
+          "slot": "P1",
+          "binding": "CONTENT_GAP",
+          "key": "GO-G04-P1-MATH-U1"
+        }
+      ]
+    },
+    {
+      "courseId": "stem1-g4-science",
+      "grade": 4,
+      "gradeLabel": "4",
+      "band": "3-5",
+      "course": "SCIENCE",
+      "subject": "SCIENCE",
+      "pillar": "S",
+      "weeklyPeriods": 5,
+      "units": 6,
+      "live": {
+        "total": 0,
+        "byTrack": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [],
+      "status": "MISSING_NO_CONTENT",
+      "requiredBlocks": {
+        "existing": [
+          "PREDICT_OBSERVE",
+          "PROCESS_CYCLE",
+          "DATA_PLOT",
+          "SORT",
+          "CHECK"
+        ],
+        "proposed": [
+          "MEASUREMENT_TABLE",
+          "FAIR_TEST_PLANNER"
+        ]
+      },
+      "labs": [
+        "electric-circuit"
+      ],
+      "targets": {
+        "pilotWindowLessons": 10,
+        "yearLessons": 168
+      },
+      "release": "no approved lesson version; program gates G1-G8 not started",
+      "dayPlanPeriods": [
+        {
+          "planId": "stem1-g4-day1",
+          "slot": "P2",
+          "binding": "CONTENT_GAP",
+          "key": "GO-G04-P2-SCIENCE-U1"
+        }
+      ]
+    },
+    {
+      "courseId": "stem1-g4-social-studies",
+      "grade": 4,
+      "gradeLabel": "4",
+      "band": "3-5",
+      "course": "SOCIAL_STUDIES",
+      "subject": "SOCIAL_STUDIES",
+      "pillar": "HUMANITIES",
+      "weeklyPeriods": 3,
+      "units": 6,
+      "live": {
+        "total": 0,
+        "byTrack": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [],
+      "status": "MISSING_NO_CONTENT",
+      "requiredBlocks": {
+        "existing": [
+          "MAP_EXPLORER",
+          "SEQUENCE",
+          "SOURCE_EVIDENCE",
+          "SORT"
+        ],
+        "proposed": []
+      },
+      "labs": [],
+      "targets": {
+        "pilotWindowLessons": 6,
+        "yearLessons": 96
+      },
+      "release": "no approved lesson version; program gates G1-G8 not started",
+      "dayPlanPeriods": [
+        {
+          "planId": "stem1-g4-day1",
+          "slot": "P4",
+          "binding": "CONTENT_GAP",
+          "key": "GO-G04-P4-SOCIAL_STUDIES-U1"
+        }
+      ]
+    },
+    {
+      "courseId": "stem1-g4-computing",
+      "grade": 4,
+      "gradeLabel": "4",
+      "band": "3-5",
+      "course": "COMPUTING",
+      "subject": "COMPUTER_SCIENCE",
+      "pillar": "T",
+      "weeklyPeriods": 3,
+      "units": 6,
+      "live": {
+        "total": 11,
+        "byTrack": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 11
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [],
+      "status": "MISSING_HELD_ONLY",
+      "requiredBlocks": {
+        "existing": [
+          "SEQUENCE",
+          "SORT",
+          "MISTAKE_ANALYSIS"
+        ],
+        "proposed": [
+          "GRID_ROBOT_PROGRAM",
+          "BLOCK_PROGRAM"
+        ]
+      },
+      "labs": [],
+      "targets": {
+        "pilotWindowLessons": 6,
+        "yearLessons": 96
+      },
+      "release": "no approved lesson version; program gates G1-G8 not started",
+      "dayPlanPeriods": [
+        {
+          "planId": "stem1-g4-day1",
+          "slot": "P5",
+          "binding": "CONTENT_GAP",
+          "key": "GO-G04-P5-COMPUTING-U1"
+        }
+      ]
+    },
+    {
+      "courseId": "stem1-g4-engineering",
+      "grade": 4,
+      "gradeLabel": "4",
+      "band": "3-5",
+      "course": "ENGINEERING",
+      "subject": "ENGINEERING_FOUNDATIONS",
+      "pillar": "E",
+      "weeklyPeriods": 2,
+      "units": 6,
+      "live": {
+        "total": 9,
+        "byTrack": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 9
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [],
+      "status": "MISSING_HELD_ONLY",
+      "requiredBlocks": {
+        "existing": [
+          "SHAPE_MODEL",
+          "DATA_PLOT"
+        ],
+        "proposed": [
+          "DESIGN_CYCLE",
+          "MEASUREMENT_TABLE"
+        ]
+      },
+      "labs": [],
+      "targets": {
+        "pilotWindowLessons": 4,
+        "yearLessons": 60
+      },
+      "release": "no approved lesson version; program gates G1-G8 not started",
+      "dayPlanPeriods": [
+        {
+          "planId": "stem1-g4-day1",
+          "slot": "P6",
+          "binding": "CONTENT_GAP",
+          "key": "GO-G04-P6-ENGINEERING-U1"
+        }
+      ]
+    },
+    {
+      "courseId": "stem1-g4-arts-pe",
+      "grade": 4,
+      "gradeLabel": "4",
+      "band": "3-5",
+      "course": "ARTS_PE",
+      "subject": null,
+      "pillar": "WELLBEING",
+      "weeklyPeriods": 3,
+      "units": 0,
+      "live": {
+        "total": 0,
+        "byTrack": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [],
+      "status": "TEACHER_LED",
+      "requiredBlocks": {
+        "existing": [],
+        "proposed": []
+      },
+      "labs": [],
+      "targets": {
+        "pilotWindowLessons": 0,
+        "yearLessons": 0
+      },
+      "release": "teacher-led; not platform curriculum",
+      "dayPlanPeriods": []
+    },
+    {
+      "courseId": "stem1-g5-english",
+      "grade": 5,
+      "gradeLabel": "5",
+      "band": "3-5",
+      "course": "ENGLISH",
+      "subject": "LITERACY",
+      "pillar": "LANGUAGE",
+      "weeklyPeriods": 7,
+      "units": 6,
+      "live": {
+        "total": 76,
+        "byTrack": {
+          "A": 39,
+          "B": 36,
+          "C": 0,
+          "D": 1
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [
+        "g5-english-garden-water-report"
+      ],
+      "otherCandidates": [],
+      "status": "V4_DRAFT_IN_REVIEW",
+      "requiredBlocks": {
+        "existing": [
+          "READING_PASSAGE",
+          "SOURCE_EVIDENCE",
+          "SENTENCE_BUILDER",
+          "WRITING_ORGANIZER"
+        ],
+        "proposed": []
+      },
+      "labs": [],
+      "targets": {
+        "pilotWindowLessons": 14,
+        "yearLessons": 240
+      },
+      "release": "4.0.0-schoolday.1-draft.2 COMMITTED_REVIEW_DRAFT @c33fd6fbf (HELD by T2); human subject-expert review NOT_PERFORMED; learning-preview flag OFF; no release",
+      "dayPlanPeriods": [
+        {
+          "planId": "stem1-g5-day1",
+          "slot": "P3",
+          "binding": "SCHOOLDAY_DRAFT",
+          "key": "g5-english-garden-water-report"
+        }
+      ]
+    },
+    {
+      "courseId": "stem1-g5-math",
+      "grade": 5,
+      "gradeLabel": "5",
+      "band": "3-5",
+      "course": "MATH",
+      "subject": "MATH",
+      "pillar": "M",
+      "weeklyPeriods": 7,
+      "units": 6,
+      "live": {
+        "total": 15,
+        "byTrack": {
+          "A": 11,
+          "B": 3,
+          "C": 0,
+          "D": 1
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [
+        "math-multiplication-models"
+      ],
+      "otherCandidates": [],
+      "status": "V4_DRAFT_IN_REVIEW",
+      "requiredBlocks": {
+        "existing": [
+          "ARRAY_MODEL",
+          "AREA_MODEL",
+          "FRACTION_MODEL",
+          "FRACTION_NUMBER_LINE",
+          "PLACE_VALUE_CHART",
+          "WORKED_SOLUTION",
+          "NUMERIC_RESPONSE",
+          "MISTAKE_ANALYSIS"
+        ],
+        "proposed": [
+          "GRAPH_BUILDER"
+        ]
+      },
+      "labs": [],
+      "targets": {
+        "pilotWindowLessons": 14,
+        "yearLessons": 240
+      },
+      "release": "4.0.0-draft.6 SEALED @36d2ca665; human subject-expert review NOT_PERFORMED; learning-preview flag OFF; no release",
+      "dayPlanPeriods": [
+        {
+          "planId": "stem1-g5-day1",
+          "slot": "P1",
+          "binding": "V4_DRAFT",
+          "key": "math-multiplication-models"
+        }
+      ]
+    },
+    {
+      "courseId": "stem1-g5-science",
+      "grade": 5,
+      "gradeLabel": "5",
+      "band": "3-5",
+      "course": "SCIENCE",
+      "subject": "SCIENCE",
+      "pillar": "S",
+      "weeklyPeriods": 5,
+      "units": 6,
+      "live": {
+        "total": 22,
+        "byTrack": {
+          "A": 11,
+          "B": 10,
+          "C": 0,
+          "D": 1
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [
+        "g5-science-water-change-investigation",
+        "g5-science-garden-evidence-review"
+      ],
+      "otherCandidates": [],
+      "status": "V4_DRAFT_IN_REVIEW",
+      "requiredBlocks": {
+        "existing": [
+          "PREDICT_OBSERVE",
+          "PROCESS_CYCLE",
+          "DATA_PLOT",
+          "SORT",
+          "CHECK"
+        ],
+        "proposed": [
+          "MEASUREMENT_TABLE",
+          "FAIR_TEST_PLANNER"
+        ]
+      },
+      "labs": [
+        "weather-system"
+      ],
+      "targets": {
+        "pilotWindowLessons": 10,
+        "yearLessons": 168
+      },
+      "release": "4.0.0-schoolday.1-draft.2 COMMITTED_REVIEW_DRAFT @c33fd6fbf (HELD by T2); human subject-expert review NOT_PERFORMED; learning-preview flag OFF; no release",
+      "dayPlanPeriods": [
+        {
+          "planId": "stem1-g5-day1",
+          "slot": "P2",
+          "binding": "SCHOOLDAY_DRAFT",
+          "key": "g5-science-water-change-investigation"
+        }
+      ]
+    },
+    {
+      "courseId": "stem1-g5-social-studies",
+      "grade": 5,
+      "gradeLabel": "5",
+      "band": "3-5",
+      "course": "SOCIAL_STUDIES",
+      "subject": "SOCIAL_STUDIES",
+      "pillar": "HUMANITIES",
+      "weeklyPeriods": 3,
+      "units": 6,
+      "live": {
+        "total": 3,
+        "byTrack": {
+          "A": 2,
+          "B": 0,
+          "C": 0,
+          "D": 1
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [
+        "g5-civics-shared-water-decisions"
+      ],
+      "otherCandidates": [],
+      "status": "V4_DRAFT_IN_REVIEW",
+      "requiredBlocks": {
+        "existing": [
+          "MAP_EXPLORER",
+          "SEQUENCE",
+          "SOURCE_EVIDENCE",
+          "SORT"
+        ],
+        "proposed": []
+      },
+      "labs": [],
+      "targets": {
+        "pilotWindowLessons": 6,
+        "yearLessons": 96
+      },
+      "release": "4.0.0-schoolday.1-draft.2 COMMITTED_REVIEW_DRAFT @c33fd6fbf (HELD by T2); human subject-expert review NOT_PERFORMED; learning-preview flag OFF; no release",
+      "dayPlanPeriods": [
+        {
+          "planId": "stem1-g5-day1",
+          "slot": "P4",
+          "binding": "SCHOOLDAY_DRAFT",
+          "key": "g5-civics-shared-water-decisions"
+        }
+      ]
+    },
+    {
+      "courseId": "stem1-g5-computing",
+      "grade": 5,
+      "gradeLabel": "5",
+      "band": "3-5",
+      "course": "COMPUTING",
+      "subject": "COMPUTER_SCIENCE",
+      "pillar": "T",
+      "weeklyPeriods": 3,
+      "units": 6,
+      "live": {
+        "total": 23,
+        "byTrack": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 23
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [
+        "g5-computing-garden-counting-rules"
+      ],
+      "otherCandidates": [],
+      "status": "V4_DRAFT_IN_REVIEW",
+      "requiredBlocks": {
+        "existing": [
+          "SEQUENCE",
+          "SORT",
+          "MISTAKE_ANALYSIS"
+        ],
+        "proposed": [
+          "GRID_ROBOT_PROGRAM",
+          "BLOCK_PROGRAM"
+        ]
+      },
+      "labs": [],
+      "targets": {
+        "pilotWindowLessons": 6,
+        "yearLessons": 96
+      },
+      "release": "4.0.0-schoolday.1-draft.2 COMMITTED_REVIEW_DRAFT @c33fd6fbf (HELD by T2); human subject-expert review NOT_PERFORMED; learning-preview flag OFF; no release",
+      "dayPlanPeriods": [
+        {
+          "planId": "stem1-g5-day1",
+          "slot": "P5",
+          "binding": "SCHOOLDAY_DRAFT",
+          "key": "g5-computing-garden-counting-rules"
+        }
+      ]
+    },
+    {
+      "courseId": "stem1-g5-engineering",
+      "grade": 5,
+      "gradeLabel": "5",
+      "band": "3-5",
+      "course": "ENGINEERING",
+      "subject": "ENGINEERING_FOUNDATIONS",
+      "pillar": "E",
+      "weeklyPeriods": 2,
+      "units": 6,
+      "live": {
+        "total": 13,
+        "byTrack": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 13
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [
+        "g5-stem-paper-channel-design"
+      ],
+      "otherCandidates": [],
+      "status": "V4_DRAFT_IN_REVIEW",
+      "requiredBlocks": {
+        "existing": [
+          "SHAPE_MODEL",
+          "DATA_PLOT"
+        ],
+        "proposed": [
+          "DESIGN_CYCLE",
+          "MEASUREMENT_TABLE"
+        ]
+      },
+      "labs": [],
+      "targets": {
+        "pilotWindowLessons": 4,
+        "yearLessons": 60
+      },
+      "release": "4.0.0-schoolday.1-draft.2 COMMITTED_REVIEW_DRAFT @c33fd6fbf (HELD by T2); human subject-expert review NOT_PERFORMED; learning-preview flag OFF; no release",
+      "dayPlanPeriods": [
+        {
+          "planId": "stem1-g5-day1",
+          "slot": "P6",
+          "binding": "SCHOOLDAY_DRAFT",
+          "key": "g5-stem-paper-channel-design"
+        }
+      ]
+    },
+    {
+      "courseId": "stem1-g5-arts-pe",
+      "grade": 5,
+      "gradeLabel": "5",
+      "band": "3-5",
+      "course": "ARTS_PE",
+      "subject": null,
+      "pillar": "WELLBEING",
+      "weeklyPeriods": 3,
+      "units": 0,
+      "live": {
+        "total": 0,
+        "byTrack": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [],
+      "status": "TEACHER_LED",
+      "requiredBlocks": {
+        "existing": [],
+        "proposed": []
+      },
+      "labs": [],
+      "targets": {
+        "pilotWindowLessons": 0,
+        "yearLessons": 0
+      },
+      "release": "teacher-led; not platform curriculum",
+      "dayPlanPeriods": []
+    },
+    {
+      "courseId": "stem1-g6-english",
+      "grade": 6,
+      "gradeLabel": "6",
+      "band": "6-9",
+      "course": "ENGLISH",
+      "subject": "LITERACY",
+      "pillar": "LANGUAGE",
+      "weeklyPeriods": 6,
+      "units": 6,
+      "live": {
+        "total": 18,
+        "byTrack": {
+          "A": 11,
+          "B": 7,
+          "C": 0,
+          "D": 0
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [
+        "lmv1-g6-literacy-cause-effect (library modernization pilot V1)"
+      ],
+      "status": "CANDIDATE_IN_REVIEW",
+      "requiredBlocks": {
+        "existing": [
+          "READING_PASSAGE",
+          "SOURCE_EVIDENCE",
+          "WRITING_ORGANIZER",
+          "SENTENCE_BUILDER"
+        ],
+        "proposed": []
+      },
+      "labs": [],
+      "targets": {
+        "pilotWindowLessons": 12,
+        "yearLessons": 204
+      },
+      "release": "no approved lesson version; program gates G1-G8 not started",
+      "dayPlanPeriods": [
+        {
+          "planId": "stem1-g6-day1",
+          "slot": "P3",
+          "binding": "CONTENT_GAP",
+          "key": "GO-G06-P3-ENGLISH-U1"
+        }
+      ]
+    },
+    {
+      "courseId": "stem1-g6-math",
+      "grade": 6,
+      "gradeLabel": "6",
+      "band": "6-9",
+      "course": "MATH",
+      "subject": "MATH",
+      "pillar": "M",
+      "weeklyPeriods": 6,
+      "units": 6,
+      "live": {
+        "total": 16,
+        "byTrack": {
+          "A": 3,
+          "B": 10,
+          "C": 0,
+          "D": 3
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [
+        "lmv1-g6-math-decimal-place-value (library modernization pilot V1)"
+      ],
+      "status": "CANDIDATE_IN_REVIEW",
+      "requiredBlocks": {
+        "existing": [
+          "FRACTION_COMPARE",
+          "SHAPE_MODEL",
+          "EQUATION",
+          "WORKED_SOLUTION",
+          "NUMERIC_RESPONSE",
+          "MISTAKE_ANALYSIS",
+          "DATA_PLOT"
+        ],
+        "proposed": [
+          "COORDINATE_PLANE",
+          "FUNCTION_TABLE",
+          "EQUATION_BALANCE",
+          "GRAPH_BUILDER"
+        ]
+      },
+      "labs": [],
+      "targets": {
+        "pilotWindowLessons": 12,
+        "yearLessons": 204
+      },
+      "release": "no approved lesson version; program gates G1-G8 not started",
+      "dayPlanPeriods": [
+        {
+          "planId": "stem1-g6-day1",
+          "slot": "P1",
+          "binding": "CONTENT_GAP",
+          "key": "GO-G06-P1-MATH-U1"
+        }
+      ]
+    },
+    {
+      "courseId": "stem1-g6-science",
+      "grade": 6,
+      "gradeLabel": "6",
+      "band": "6-9",
+      "course": "SCIENCE",
+      "subject": "SCIENCE",
+      "pillar": "S",
+      "weeklyPeriods": 6,
+      "units": 6,
+      "live": {
+        "total": 7,
+        "byTrack": {
+          "A": 5,
+          "B": 2,
+          "C": 0,
+          "D": 0
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [],
+      "status": "MODERNIZE_EXISTING",
+      "requiredBlocks": {
+        "existing": [
+          "PARTICLE_MODEL",
+          "PREDICT_OBSERVE",
+          "DATA_PLOT",
+          "PROCESS_CYCLE",
+          "WRITING_ORGANIZER"
+        ],
+        "proposed": [
+          "MEASUREMENT_TABLE",
+          "FAIR_TEST_PLANNER",
+          "GRAPH_BUILDER"
+        ]
+      },
+      "labs": [
+        "molecule-motion"
+      ],
+      "targets": {
+        "pilotWindowLessons": 12,
+        "yearLessons": 204
+      },
+      "release": "no approved lesson version; program gates G1-G8 not started",
+      "dayPlanPeriods": [
+        {
+          "planId": "stem1-g6-day1",
+          "slot": "P2",
+          "binding": "CONTENT_GAP",
+          "key": "GO-G06-P2-SCIENCE-U1"
+        }
+      ]
+    },
+    {
+      "courseId": "stem1-g6-social-studies",
+      "grade": 6,
+      "gradeLabel": "6",
+      "band": "6-9",
+      "course": "SOCIAL_STUDIES",
+      "subject": "SOCIAL_STUDIES",
+      "pillar": "HUMANITIES",
+      "weeklyPeriods": 3,
+      "units": 6,
+      "live": {
+        "total": 0,
+        "byTrack": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [],
+      "status": "MISSING_NO_CONTENT",
+      "requiredBlocks": {
+        "existing": [
+          "MAP_EXPLORER",
+          "SOURCE_EVIDENCE",
+          "SEQUENCE",
+          "DATA_PLOT",
+          "WRITING_ORGANIZER"
+        ],
+        "proposed": []
+      },
+      "labs": [],
+      "targets": {
+        "pilotWindowLessons": 6,
+        "yearLessons": 96
+      },
+      "release": "no approved lesson version; program gates G1-G8 not started",
+      "dayPlanPeriods": []
+    },
+    {
+      "courseId": "stem1-g6-civics",
+      "grade": 6,
+      "gradeLabel": "6",
+      "band": "6-9",
+      "course": "CIVICS",
+      "subject": "CIVICS",
+      "pillar": "HUMANITIES",
+      "weeklyPeriods": 2,
+      "units": 3,
+      "live": {
+        "total": 5,
+        "byTrack": {
+          "A": 0,
+          "B": 5,
+          "C": 0,
+          "D": 0
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [],
+      "status": "MODERNIZE_EXISTING",
+      "requiredBlocks": {
+        "existing": [
+          "MAP_EXPLORER",
+          "SOURCE_EVIDENCE",
+          "SEQUENCE",
+          "DATA_PLOT",
+          "WRITING_ORGANIZER"
+        ],
+        "proposed": []
+      },
+      "labs": [],
+      "targets": {
+        "pilotWindowLessons": 4,
+        "yearLessons": 66
+      },
+      "release": "no approved lesson version; program gates G1-G8 not started",
+      "dayPlanPeriods": [
+        {
+          "planId": "stem1-g6-day1",
+          "slot": "P4",
+          "binding": "CONTENT_GAP",
+          "key": "GO-G06-P4-CIVICS-U1"
+        }
+      ]
+    },
+    {
+      "courseId": "stem1-g6-computing",
+      "grade": 6,
+      "gradeLabel": "6",
+      "band": "6-9",
+      "course": "COMPUTING",
+      "subject": "COMPUTER_SCIENCE",
+      "pillar": "T",
+      "weeklyPeriods": 3,
+      "units": 6,
+      "live": {
+        "total": 9,
+        "byTrack": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 9
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [],
+      "status": "MISSING_HELD_ONLY",
+      "requiredBlocks": {
+        "existing": [
+          "MISTAKE_ANALYSIS",
+          "STEP_REVEAL",
+          "CHECK"
+        ],
+        "proposed": [
+          "BLOCK_PROGRAM",
+          "CODE_TRACE",
+          "CODE_RUNNER"
+        ]
+      },
+      "labs": [],
+      "targets": {
+        "pilotWindowLessons": 6,
+        "yearLessons": 96
+      },
+      "release": "no approved lesson version; program gates G1-G8 not started",
+      "dayPlanPeriods": [
+        {
+          "planId": "stem1-g6-day1",
+          "slot": "P5",
+          "binding": "CONTENT_GAP",
+          "key": "GO-G06-P5-COMPUTING-U1"
+        }
+      ]
+    },
+    {
+      "courseId": "stem1-g6-engineering",
+      "grade": 6,
+      "gradeLabel": "6",
+      "band": "6-9",
+      "course": "ENGINEERING",
+      "subject": "ENGINEERING_FOUNDATIONS",
+      "pillar": "E",
+      "weeklyPeriods": 2,
+      "units": 6,
+      "live": {
+        "total": 13,
+        "byTrack": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 13
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [],
+      "status": "MISSING_HELD_ONLY",
+      "requiredBlocks": {
+        "existing": [
+          "SHAPE_MODEL",
+          "DATA_PLOT",
+          "WORKED_SOLUTION"
+        ],
+        "proposed": [
+          "DESIGN_CYCLE",
+          "MEASUREMENT_TABLE",
+          "BUDGET_CONSTRAINT_TABLE"
+        ]
+      },
+      "labs": [],
+      "targets": {
+        "pilotWindowLessons": 4,
+        "yearLessons": 60
+      },
+      "release": "no approved lesson version; program gates G1-G8 not started",
+      "dayPlanPeriods": [
+        {
+          "planId": "stem1-g6-day1",
+          "slot": "P6",
+          "binding": "CONTENT_GAP",
+          "key": "GO-G06-P6-ENGINEERING-U1"
+        }
+      ]
+    },
+    {
+      "courseId": "stem1-g6-arts-pe",
+      "grade": 6,
+      "gradeLabel": "6",
+      "band": "6-9",
+      "course": "ARTS_PE",
+      "subject": null,
+      "pillar": "WELLBEING",
+      "weeklyPeriods": 2,
+      "units": 0,
+      "live": {
+        "total": 0,
+        "byTrack": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [],
+      "status": "TEACHER_LED",
+      "requiredBlocks": {
+        "existing": [],
+        "proposed": []
+      },
+      "labs": [],
+      "targets": {
+        "pilotWindowLessons": 0,
+        "yearLessons": 0
+      },
+      "release": "teacher-led; not platform curriculum",
+      "dayPlanPeriods": []
+    },
+    {
+      "courseId": "stem1-g7-english",
+      "grade": 7,
+      "gradeLabel": "7",
+      "band": "6-9",
+      "course": "ENGLISH",
+      "subject": "LITERACY",
+      "pillar": "LANGUAGE",
+      "weeklyPeriods": 6,
+      "units": 6,
+      "live": {
+        "total": 108,
+        "byTrack": {
+          "A": 101,
+          "B": 6,
+          "C": 1,
+          "D": 0
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [
+        "g7-english-reading-evidence",
+        "g7-english-water-evidence-report"
+      ],
+      "otherCandidates": [
+        "cv2-cand-g7-literacy-essay-structure-argument (PR #191 v0.3.0)"
+      ],
+      "status": "V4_DRAFT_IN_REVIEW",
+      "requiredBlocks": {
+        "existing": [
+          "READING_PASSAGE",
+          "SOURCE_EVIDENCE",
+          "WRITING_ORGANIZER",
+          "SENTENCE_BUILDER"
+        ],
+        "proposed": []
+      },
+      "labs": [],
+      "targets": {
+        "pilotWindowLessons": 12,
+        "yearLessons": 204
+      },
+      "release": "4.0.0-draft.6 SEALED @36d2ca665; 4.0.0-schoolday.1-draft.2 COMMITTED_REVIEW_DRAFT @c33fd6fbf (HELD by T2); human subject-expert review NOT_PERFORMED; learning-preview flag OFF; no release",
+      "dayPlanPeriods": [
+        {
+          "planId": "stem1-g7-day1",
+          "slot": "P3",
+          "binding": "V4_DRAFT",
+          "key": "g7-english-reading-evidence"
+        }
+      ]
+    },
+    {
+      "courseId": "stem1-g7-math",
+      "grade": 7,
+      "gradeLabel": "7",
+      "band": "6-9",
+      "course": "MATH",
+      "subject": "MATH",
+      "pillar": "M",
+      "weeklyPeriods": 6,
+      "units": 6,
+      "live": {
+        "total": 40,
+        "byTrack": {
+          "A": 35,
+          "B": 4,
+          "C": 1,
+          "D": 0
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [
+        "g7-math-area-perimeter",
+        "g7-math-fractions"
+      ],
+      "otherCandidates": [
+        "cv2-cand-g7-math-number-sense-place-value (PR #191 v0.3.0)"
+      ],
+      "status": "V4_DRAFT_IN_REVIEW",
+      "requiredBlocks": {
+        "existing": [
+          "FRACTION_COMPARE",
+          "SHAPE_MODEL",
+          "EQUATION",
+          "WORKED_SOLUTION",
+          "NUMERIC_RESPONSE",
+          "MISTAKE_ANALYSIS",
+          "DATA_PLOT"
+        ],
+        "proposed": [
+          "COORDINATE_PLANE",
+          "FUNCTION_TABLE",
+          "EQUATION_BALANCE",
+          "GRAPH_BUILDER"
+        ]
+      },
+      "labs": [],
+      "targets": {
+        "pilotWindowLessons": 12,
+        "yearLessons": 204
+      },
+      "release": "4.0.0-draft.6 SEALED @36d2ca665; human subject-expert review NOT_PERFORMED; learning-preview flag OFF; no release",
+      "dayPlanPeriods": [
+        {
+          "planId": "stem1-g7-day1",
+          "slot": "P1",
+          "binding": "V4_DRAFT",
+          "key": "g7-math-fractions"
+        }
+      ]
+    },
+    {
+      "courseId": "stem1-g7-science",
+      "grade": 7,
+      "gradeLabel": "7",
+      "band": "6-9",
+      "course": "SCIENCE",
+      "subject": "SCIENCE",
+      "pillar": "S",
+      "weeklyPeriods": 6,
+      "units": 6,
+      "live": {
+        "total": 76,
+        "byTrack": {
+          "A": 27,
+          "B": 48,
+          "C": 1,
+          "D": 0
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [
+        "g7-science-states-of-matter",
+        "g7-science-evaporation-fair-test",
+        "g7-science-water-evidence-synthesis"
+      ],
+      "otherCandidates": [
+        "lmv1-g7-science-observation-inference (library modernization pilot V1)"
+      ],
+      "status": "V4_DRAFT_IN_REVIEW",
+      "requiredBlocks": {
+        "existing": [
+          "PARTICLE_MODEL",
+          "PREDICT_OBSERVE",
+          "DATA_PLOT",
+          "PROCESS_CYCLE",
+          "WRITING_ORGANIZER"
+        ],
+        "proposed": [
+          "MEASUREMENT_TABLE",
+          "FAIR_TEST_PLANNER",
+          "GRAPH_BUILDER"
+        ]
+      },
+      "labs": [
+        "molecule-motion",
+        "weather-system",
+        "ecosystem-balance"
+      ],
+      "targets": {
+        "pilotWindowLessons": 12,
+        "yearLessons": 204
+      },
+      "release": "4.0.0-draft.6 SEALED @36d2ca665; 4.0.0-schoolday.1-draft.2 COMMITTED_REVIEW_DRAFT @c33fd6fbf (HELD by T2); human subject-expert review NOT_PERFORMED; learning-preview flag OFF; no release",
+      "dayPlanPeriods": [
+        {
+          "planId": "stem1-g7-day1",
+          "slot": "P2",
+          "binding": "V4_DRAFT",
+          "key": "g7-science-states-of-matter"
+        }
+      ]
+    },
+    {
+      "courseId": "stem1-g7-social-studies",
+      "grade": 7,
+      "gradeLabel": "7",
+      "band": "6-9",
+      "course": "SOCIAL_STUDIES",
+      "subject": "SOCIAL_STUDIES",
+      "pillar": "HUMANITIES",
+      "weeklyPeriods": 3,
+      "units": 6,
+      "live": {
+        "total": 53,
+        "byTrack": {
+          "A": 8,
+          "B": 45,
+          "C": 0,
+          "D": 0
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [],
+      "status": "MODERNIZE_EXISTING",
+      "requiredBlocks": {
+        "existing": [
+          "MAP_EXPLORER",
+          "SOURCE_EVIDENCE",
+          "SEQUENCE",
+          "DATA_PLOT",
+          "WRITING_ORGANIZER"
+        ],
+        "proposed": []
+      },
+      "labs": [],
+      "targets": {
+        "pilotWindowLessons": 6,
+        "yearLessons": 96
+      },
+      "release": "no approved lesson version; program gates G1-G8 not started",
+      "dayPlanPeriods": []
+    },
+    {
+      "courseId": "stem1-g7-civics",
+      "grade": 7,
+      "gradeLabel": "7",
+      "band": "6-9",
+      "course": "CIVICS",
+      "subject": "CIVICS",
+      "pillar": "HUMANITIES",
+      "weeklyPeriods": 2,
+      "units": 6,
+      "live": {
+        "total": 83,
+        "byTrack": {
+          "A": 32,
+          "B": 51,
+          "C": 0,
+          "D": 0
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [
+        "g7-civics-counties-capitals"
+      ],
+      "otherCandidates": [],
+      "status": "V4_DRAFT_IN_REVIEW",
+      "requiredBlocks": {
+        "existing": [
+          "MAP_EXPLORER",
+          "SOURCE_EVIDENCE",
+          "SEQUENCE",
+          "DATA_PLOT",
+          "WRITING_ORGANIZER"
+        ],
+        "proposed": []
+      },
+      "labs": [],
+      "targets": {
+        "pilotWindowLessons": 4,
+        "yearLessons": 60
+      },
+      "release": "4.0.0-draft.6 SEALED @36d2ca665; human subject-expert review NOT_PERFORMED; learning-preview flag OFF; no release",
+      "dayPlanPeriods": [
+        {
+          "planId": "stem1-g7-day1",
+          "slot": "P4",
+          "binding": "V4_DRAFT",
+          "key": "g7-civics-counties-capitals"
+        }
+      ]
+    },
+    {
+      "courseId": "stem1-g7-computing",
+      "grade": 7,
+      "gradeLabel": "7",
+      "band": "6-9",
+      "course": "COMPUTING",
+      "subject": "COMPUTER_SCIENCE",
+      "pillar": "T",
+      "weeklyPeriods": 3,
+      "units": 6,
+      "live": {
+        "total": 13,
+        "byTrack": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 13
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [
+        "g7-computing-water-monitor-algorithms"
+      ],
+      "otherCandidates": [],
+      "status": "V4_DRAFT_IN_REVIEW",
+      "requiredBlocks": {
+        "existing": [
+          "MISTAKE_ANALYSIS",
+          "STEP_REVEAL",
+          "CHECK"
+        ],
+        "proposed": [
+          "BLOCK_PROGRAM",
+          "CODE_TRACE",
+          "CODE_RUNNER"
+        ]
+      },
+      "labs": [],
+      "targets": {
+        "pilotWindowLessons": 6,
+        "yearLessons": 96
+      },
+      "release": "4.0.0-schoolday.1-draft.2 COMMITTED_REVIEW_DRAFT @c33fd6fbf (HELD by T2); human subject-expert review NOT_PERFORMED; learning-preview flag OFF; no release",
+      "dayPlanPeriods": [
+        {
+          "planId": "stem1-g7-day1",
+          "slot": "P5",
+          "binding": "SCHOOLDAY_DRAFT",
+          "key": "g7-computing-water-monitor-algorithms"
+        }
+      ]
+    },
+    {
+      "courseId": "stem1-g7-engineering",
+      "grade": 7,
+      "gradeLabel": "7",
+      "band": "6-9",
+      "course": "ENGINEERING",
+      "subject": "ENGINEERING_FOUNDATIONS",
+      "pillar": "E",
+      "weeklyPeriods": 2,
+      "units": 6,
+      "live": {
+        "total": 12,
+        "byTrack": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 12
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [
+        "g7-stem-water-cover-design"
+      ],
+      "otherCandidates": [],
+      "status": "V4_DRAFT_IN_REVIEW",
+      "requiredBlocks": {
+        "existing": [
+          "SHAPE_MODEL",
+          "DATA_PLOT",
+          "WORKED_SOLUTION"
+        ],
+        "proposed": [
+          "DESIGN_CYCLE",
+          "MEASUREMENT_TABLE",
+          "BUDGET_CONSTRAINT_TABLE"
+        ]
+      },
+      "labs": [
+        "electric-circuit"
+      ],
+      "targets": {
+        "pilotWindowLessons": 4,
+        "yearLessons": 60
+      },
+      "release": "4.0.0-schoolday.1-draft.2 COMMITTED_REVIEW_DRAFT @c33fd6fbf (HELD by T2); human subject-expert review NOT_PERFORMED; learning-preview flag OFF; no release",
+      "dayPlanPeriods": [
+        {
+          "planId": "stem1-g7-day1",
+          "slot": "P6",
+          "binding": "SCHOOLDAY_DRAFT",
+          "key": "g7-stem-water-cover-design"
+        }
+      ]
+    },
+    {
+      "courseId": "stem1-g7-arts-pe",
+      "grade": 7,
+      "gradeLabel": "7",
+      "band": "6-9",
+      "course": "ARTS_PE",
+      "subject": null,
+      "pillar": "WELLBEING",
+      "weeklyPeriods": 2,
+      "units": 0,
+      "live": {
+        "total": 0,
+        "byTrack": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [],
+      "status": "TEACHER_LED",
+      "requiredBlocks": {
+        "existing": [],
+        "proposed": []
+      },
+      "labs": [],
+      "targets": {
+        "pilotWindowLessons": 0,
+        "yearLessons": 0
+      },
+      "release": "teacher-led; not platform curriculum",
+      "dayPlanPeriods": []
+    },
+    {
+      "courseId": "stem1-g8-english",
+      "grade": 8,
+      "gradeLabel": "8",
+      "band": "6-9",
+      "course": "ENGLISH",
+      "subject": "LITERACY",
+      "pillar": "LANGUAGE",
+      "weeklyPeriods": 6,
+      "units": 6,
+      "live": {
+        "total": 19,
+        "byTrack": {
+          "A": 16,
+          "B": 3,
+          "C": 0,
+          "D": 0
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [],
+      "status": "MODERNIZE_EXISTING",
+      "requiredBlocks": {
+        "existing": [
+          "READING_PASSAGE",
+          "SOURCE_EVIDENCE",
+          "WRITING_ORGANIZER",
+          "SENTENCE_BUILDER"
+        ],
+        "proposed": []
+      },
+      "labs": [],
+      "targets": {
+        "pilotWindowLessons": 12,
+        "yearLessons": 204
+      },
+      "release": "no approved lesson version; program gates G1-G8 not started",
+      "dayPlanPeriods": [
+        {
+          "planId": "stem1-g8-day1",
+          "slot": "P3",
+          "binding": "CONTENT_GAP",
+          "key": "GO-G08-P3-ENGLISH-U1"
+        }
+      ]
+    },
+    {
+      "courseId": "stem1-g8-math",
+      "grade": 8,
+      "gradeLabel": "8",
+      "band": "6-9",
+      "course": "MATH",
+      "subject": "MATH",
+      "pillar": "M",
+      "weeklyPeriods": 6,
+      "units": 6,
+      "live": {
+        "total": 8,
+        "byTrack": {
+          "A": 4,
+          "B": 4,
+          "C": 0,
+          "D": 0
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [],
+      "status": "MODERNIZE_EXISTING",
+      "requiredBlocks": {
+        "existing": [
+          "FRACTION_COMPARE",
+          "SHAPE_MODEL",
+          "EQUATION",
+          "WORKED_SOLUTION",
+          "NUMERIC_RESPONSE",
+          "MISTAKE_ANALYSIS",
+          "DATA_PLOT"
+        ],
+        "proposed": [
+          "COORDINATE_PLANE",
+          "FUNCTION_TABLE",
+          "EQUATION_BALANCE",
+          "GRAPH_BUILDER"
+        ]
+      },
+      "labs": [],
+      "targets": {
+        "pilotWindowLessons": 12,
+        "yearLessons": 204
+      },
+      "release": "no approved lesson version; program gates G1-G8 not started",
+      "dayPlanPeriods": [
+        {
+          "planId": "stem1-g8-day1",
+          "slot": "P1",
+          "binding": "CONTENT_GAP",
+          "key": "GO-G08-P1-MATH-U1"
+        }
+      ]
+    },
+    {
+      "courseId": "stem1-g8-science",
+      "grade": 8,
+      "gradeLabel": "8",
+      "band": "6-9",
+      "course": "SCIENCE",
+      "subject": "SCIENCE",
+      "pillar": "S",
+      "weeklyPeriods": 6,
+      "units": 6,
+      "live": {
+        "total": 5,
+        "byTrack": {
+          "A": 2,
+          "B": 3,
+          "C": 0,
+          "D": 0
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [],
+      "status": "MODERNIZE_EXISTING",
+      "requiredBlocks": {
+        "existing": [
+          "PARTICLE_MODEL",
+          "PREDICT_OBSERVE",
+          "DATA_PLOT",
+          "PROCESS_CYCLE",
+          "WRITING_ORGANIZER"
+        ],
+        "proposed": [
+          "MEASUREMENT_TABLE",
+          "FAIR_TEST_PLANNER",
+          "GRAPH_BUILDER"
+        ]
+      },
+      "labs": [
+        "periodic-table",
+        "chemical-reaction",
+        "gravity-explorer",
+        "wave-motion",
+        "cell-division",
+        "tectonic-plates"
+      ],
+      "targets": {
+        "pilotWindowLessons": 12,
+        "yearLessons": 204
+      },
+      "release": "no approved lesson version; program gates G1-G8 not started",
+      "dayPlanPeriods": [
+        {
+          "planId": "stem1-g8-day1",
+          "slot": "P2",
+          "binding": "CONTENT_GAP",
+          "key": "GO-G08-P2-SCIENCE-U1"
+        }
+      ]
+    },
+    {
+      "courseId": "stem1-g8-social-studies",
+      "grade": 8,
+      "gradeLabel": "8",
+      "band": "6-9",
+      "course": "SOCIAL_STUDIES",
+      "subject": "SOCIAL_STUDIES",
+      "pillar": "HUMANITIES",
+      "weeklyPeriods": 3,
+      "units": 6,
+      "live": {
+        "total": 0,
+        "byTrack": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [],
+      "status": "MISSING_NO_CONTENT",
+      "requiredBlocks": {
+        "existing": [
+          "MAP_EXPLORER",
+          "SOURCE_EVIDENCE",
+          "SEQUENCE",
+          "DATA_PLOT",
+          "WRITING_ORGANIZER"
+        ],
+        "proposed": []
+      },
+      "labs": [],
+      "targets": {
+        "pilotWindowLessons": 6,
+        "yearLessons": 96
+      },
+      "release": "no approved lesson version; program gates G1-G8 not started",
+      "dayPlanPeriods": []
+    },
+    {
+      "courseId": "stem1-g8-civics",
+      "grade": 8,
+      "gradeLabel": "8",
+      "band": "6-9",
+      "course": "CIVICS",
+      "subject": "CIVICS",
+      "pillar": "HUMANITIES",
+      "weeklyPeriods": 2,
+      "units": 6,
+      "live": {
+        "total": 5,
+        "byTrack": {
+          "A": 0,
+          "B": 5,
+          "C": 0,
+          "D": 0
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [],
+      "status": "MODERNIZE_EXISTING",
+      "requiredBlocks": {
+        "existing": [
+          "MAP_EXPLORER",
+          "SOURCE_EVIDENCE",
+          "SEQUENCE",
+          "DATA_PLOT",
+          "WRITING_ORGANIZER"
+        ],
+        "proposed": []
+      },
+      "labs": [],
+      "targets": {
+        "pilotWindowLessons": 4,
+        "yearLessons": 60
+      },
+      "release": "no approved lesson version; program gates G1-G8 not started",
+      "dayPlanPeriods": [
+        {
+          "planId": "stem1-g8-day1",
+          "slot": "P4",
+          "binding": "CONTENT_GAP",
+          "key": "GO-G08-P4-CIVICS-U1"
+        }
+      ]
+    },
+    {
+      "courseId": "stem1-g8-computing",
+      "grade": 8,
+      "gradeLabel": "8",
+      "band": "6-9",
+      "course": "COMPUTING",
+      "subject": "COMPUTER_SCIENCE",
+      "pillar": "T",
+      "weeklyPeriods": 3,
+      "units": 6,
+      "live": {
+        "total": 14,
+        "byTrack": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 14
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [],
+      "status": "MISSING_HELD_ONLY",
+      "requiredBlocks": {
+        "existing": [
+          "MISTAKE_ANALYSIS",
+          "STEP_REVEAL",
+          "CHECK"
+        ],
+        "proposed": [
+          "BLOCK_PROGRAM",
+          "CODE_TRACE",
+          "CODE_RUNNER"
+        ]
+      },
+      "labs": [],
+      "targets": {
+        "pilotWindowLessons": 6,
+        "yearLessons": 96
+      },
+      "release": "no approved lesson version; program gates G1-G8 not started",
+      "dayPlanPeriods": [
+        {
+          "planId": "stem1-g8-day1",
+          "slot": "P5",
+          "binding": "CONTENT_GAP",
+          "key": "GO-G08-P5-COMPUTING-U1"
+        }
+      ]
+    },
+    {
+      "courseId": "stem1-g8-engineering",
+      "grade": 8,
+      "gradeLabel": "8",
+      "band": "6-9",
+      "course": "ENGINEERING",
+      "subject": "ENGINEERING_FOUNDATIONS",
+      "pillar": "E",
+      "weeklyPeriods": 2,
+      "units": 6,
+      "live": {
+        "total": 9,
+        "byTrack": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 9
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [],
+      "status": "MISSING_HELD_ONLY",
+      "requiredBlocks": {
+        "existing": [
+          "SHAPE_MODEL",
+          "DATA_PLOT",
+          "WORKED_SOLUTION"
+        ],
+        "proposed": [
+          "DESIGN_CYCLE",
+          "MEASUREMENT_TABLE",
+          "BUDGET_CONSTRAINT_TABLE"
+        ]
+      },
+      "labs": [
+        "electric-circuit"
+      ],
+      "targets": {
+        "pilotWindowLessons": 4,
+        "yearLessons": 60
+      },
+      "release": "no approved lesson version; program gates G1-G8 not started",
+      "dayPlanPeriods": [
+        {
+          "planId": "stem1-g8-day1",
+          "slot": "P6",
+          "binding": "CONTENT_GAP",
+          "key": "GO-G08-P6-ENGINEERING-U1"
+        }
+      ]
+    },
+    {
+      "courseId": "stem1-g8-arts-pe",
+      "grade": 8,
+      "gradeLabel": "8",
+      "band": "6-9",
+      "course": "ARTS_PE",
+      "subject": null,
+      "pillar": "WELLBEING",
+      "weeklyPeriods": 2,
+      "units": 0,
+      "live": {
+        "total": 0,
+        "byTrack": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [],
+      "status": "TEACHER_LED",
+      "requiredBlocks": {
+        "existing": [],
+        "proposed": []
+      },
+      "labs": [],
+      "targets": {
+        "pilotWindowLessons": 0,
+        "yearLessons": 0
+      },
+      "release": "teacher-led; not platform curriculum",
+      "dayPlanPeriods": []
+    },
+    {
+      "courseId": "stem1-g9-english",
+      "grade": 9,
+      "gradeLabel": "9",
+      "band": "6-9",
+      "course": "ENGLISH",
+      "subject": "LITERACY",
+      "pillar": "LANGUAGE",
+      "weeklyPeriods": 6,
+      "units": 6,
+      "live": {
+        "total": 10,
+        "byTrack": {
+          "A": 9,
+          "B": 1,
+          "C": 0,
+          "D": 0
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [],
+      "status": "MODERNIZE_EXISTING",
+      "requiredBlocks": {
+        "existing": [
+          "READING_PASSAGE",
+          "SOURCE_EVIDENCE",
+          "WRITING_ORGANIZER",
+          "SENTENCE_BUILDER"
+        ],
+        "proposed": []
+      },
+      "labs": [],
+      "targets": {
+        "pilotWindowLessons": 12,
+        "yearLessons": 204
+      },
+      "release": "no approved lesson version; program gates G1-G8 not started",
+      "dayPlanPeriods": [
+        {
+          "planId": "stem1-g9-day1",
+          "slot": "P3",
+          "binding": "CONTENT_GAP",
+          "key": "GO-G09-P3-ENGLISH-U1"
+        }
+      ]
+    },
+    {
+      "courseId": "stem1-g9-math",
+      "grade": 9,
+      "gradeLabel": "9",
+      "band": "6-9",
+      "course": "MATH",
+      "subject": "MATH",
+      "pillar": "M",
+      "weeklyPeriods": 6,
+      "units": 6,
+      "live": {
+        "total": 3,
+        "byTrack": {
+          "A": 1,
+          "B": 0,
+          "C": 0,
+          "D": 2
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [],
+      "status": "MODERNIZE_EXISTING",
+      "requiredBlocks": {
+        "existing": [
+          "FRACTION_COMPARE",
+          "SHAPE_MODEL",
+          "EQUATION",
+          "WORKED_SOLUTION",
+          "NUMERIC_RESPONSE",
+          "MISTAKE_ANALYSIS",
+          "DATA_PLOT"
+        ],
+        "proposed": [
+          "COORDINATE_PLANE",
+          "FUNCTION_TABLE",
+          "EQUATION_BALANCE",
+          "GRAPH_BUILDER"
+        ]
+      },
+      "labs": [],
+      "targets": {
+        "pilotWindowLessons": 12,
+        "yearLessons": 204
+      },
+      "release": "no approved lesson version; program gates G1-G8 not started",
+      "dayPlanPeriods": [
+        {
+          "planId": "stem1-g9-day1",
+          "slot": "P1",
+          "binding": "CONTENT_GAP",
+          "key": "GO-G09-P1-MATH-U1"
+        }
+      ]
+    },
+    {
+      "courseId": "stem1-g9-science",
+      "grade": 9,
+      "gradeLabel": "9",
+      "band": "6-9",
+      "course": "SCIENCE",
+      "subject": "SCIENCE",
+      "pillar": "S",
+      "weeklyPeriods": 6,
+      "units": 6,
+      "live": {
+        "total": 0,
+        "byTrack": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [],
+      "status": "MISSING_NO_CONTENT",
+      "requiredBlocks": {
+        "existing": [
+          "PARTICLE_MODEL",
+          "PREDICT_OBSERVE",
+          "DATA_PLOT",
+          "PROCESS_CYCLE",
+          "WRITING_ORGANIZER"
+        ],
+        "proposed": [
+          "MEASUREMENT_TABLE",
+          "FAIR_TEST_PLANNER",
+          "GRAPH_BUILDER"
+        ]
+      },
+      "labs": [
+        "electric-circuit",
+        "ecosystem-balance",
+        "human-heart"
+      ],
+      "targets": {
+        "pilotWindowLessons": 12,
+        "yearLessons": 204
+      },
+      "release": "no approved lesson version; program gates G1-G8 not started",
+      "dayPlanPeriods": [
+        {
+          "planId": "stem1-g9-day1",
+          "slot": "P2",
+          "binding": "CONTENT_GAP",
+          "key": "GO-G09-P2-SCIENCE-U1"
+        }
+      ]
+    },
+    {
+      "courseId": "stem1-g9-social-studies",
+      "grade": 9,
+      "gradeLabel": "9",
+      "band": "6-9",
+      "course": "SOCIAL_STUDIES",
+      "subject": "SOCIAL_STUDIES",
+      "pillar": "HUMANITIES",
+      "weeklyPeriods": 3,
+      "units": 6,
+      "live": {
+        "total": 1,
+        "byTrack": {
+          "A": 1,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [],
+      "status": "MODERNIZE_EXISTING",
+      "requiredBlocks": {
+        "existing": [
+          "MAP_EXPLORER",
+          "SOURCE_EVIDENCE",
+          "SEQUENCE",
+          "DATA_PLOT",
+          "WRITING_ORGANIZER"
+        ],
+        "proposed": []
+      },
+      "labs": [],
+      "targets": {
+        "pilotWindowLessons": 6,
+        "yearLessons": 96
+      },
+      "release": "no approved lesson version; program gates G1-G8 not started",
+      "dayPlanPeriods": []
+    },
+    {
+      "courseId": "stem1-g9-civics",
+      "grade": 9,
+      "gradeLabel": "9",
+      "band": "6-9",
+      "course": "CIVICS",
+      "subject": "CIVICS",
+      "pillar": "HUMANITIES",
+      "weeklyPeriods": 2,
+      "units": 6,
+      "live": {
+        "total": 0,
+        "byTrack": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [],
+      "status": "MISSING_NO_CONTENT",
+      "requiredBlocks": {
+        "existing": [
+          "MAP_EXPLORER",
+          "SOURCE_EVIDENCE",
+          "SEQUENCE",
+          "DATA_PLOT",
+          "WRITING_ORGANIZER"
+        ],
+        "proposed": []
+      },
+      "labs": [],
+      "targets": {
+        "pilotWindowLessons": 4,
+        "yearLessons": 60
+      },
+      "release": "no approved lesson version; program gates G1-G8 not started",
+      "dayPlanPeriods": [
+        {
+          "planId": "stem1-g9-day1",
+          "slot": "P4",
+          "binding": "CONTENT_GAP",
+          "key": "GO-G09-P4-CIVICS-U1"
+        }
+      ]
+    },
+    {
+      "courseId": "stem1-g9-computing",
+      "grade": 9,
+      "gradeLabel": "9",
+      "band": "6-9",
+      "course": "COMPUTING",
+      "subject": "COMPUTER_SCIENCE",
+      "pillar": "T",
+      "weeklyPeriods": 3,
+      "units": 6,
+      "live": {
+        "total": 9,
+        "byTrack": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 9
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [],
+      "status": "MISSING_HELD_ONLY",
+      "requiredBlocks": {
+        "existing": [
+          "MISTAKE_ANALYSIS",
+          "STEP_REVEAL",
+          "CHECK"
+        ],
+        "proposed": [
+          "BLOCK_PROGRAM",
+          "CODE_TRACE",
+          "CODE_RUNNER"
+        ]
+      },
+      "labs": [],
+      "targets": {
+        "pilotWindowLessons": 6,
+        "yearLessons": 96
+      },
+      "release": "no approved lesson version; program gates G1-G8 not started",
+      "dayPlanPeriods": [
+        {
+          "planId": "stem1-g9-day1",
+          "slot": "P5",
+          "binding": "CONTENT_GAP",
+          "key": "GO-G09-P5-COMPUTING-U1"
+        }
+      ]
+    },
+    {
+      "courseId": "stem1-g9-engineering",
+      "grade": 9,
+      "gradeLabel": "9",
+      "band": "6-9",
+      "course": "ENGINEERING",
+      "subject": "ENGINEERING_FOUNDATIONS",
+      "pillar": "E",
+      "weeklyPeriods": 2,
+      "units": 6,
+      "live": {
+        "total": 13,
+        "byTrack": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 13
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [],
+      "status": "MISSING_HELD_ONLY",
+      "requiredBlocks": {
+        "existing": [
+          "SHAPE_MODEL",
+          "DATA_PLOT",
+          "WORKED_SOLUTION"
+        ],
+        "proposed": [
+          "DESIGN_CYCLE",
+          "MEASUREMENT_TABLE",
+          "BUDGET_CONSTRAINT_TABLE"
+        ]
+      },
+      "labs": [],
+      "targets": {
+        "pilotWindowLessons": 4,
+        "yearLessons": 60
+      },
+      "release": "no approved lesson version; program gates G1-G8 not started",
+      "dayPlanPeriods": [
+        {
+          "planId": "stem1-g9-day1",
+          "slot": "P6",
+          "binding": "CONTENT_GAP",
+          "key": "GO-G09-P6-ENGINEERING-U1"
+        }
+      ]
+    },
+    {
+      "courseId": "stem1-g9-arts-pe",
+      "grade": 9,
+      "gradeLabel": "9",
+      "band": "6-9",
+      "course": "ARTS_PE",
+      "subject": null,
+      "pillar": "WELLBEING",
+      "weeklyPeriods": 2,
+      "units": 0,
+      "live": {
+        "total": 0,
+        "byTrack": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [],
+      "status": "TEACHER_LED",
+      "requiredBlocks": {
+        "existing": [],
+        "proposed": []
+      },
+      "labs": [],
+      "targets": {
+        "pilotWindowLessons": 0,
+        "yearLessons": 0
+      },
+      "release": "teacher-led; not platform curriculum",
+      "dayPlanPeriods": []
+    },
+    {
+      "courseId": "stem1-g10-english",
+      "grade": 10,
+      "gradeLabel": "10",
+      "band": "10-12",
+      "course": "ENGLISH",
+      "subject": "LITERACY",
+      "pillar": "LANGUAGE",
+      "weeklyPeriods": 5,
+      "units": 6,
+      "live": {
+        "total": 12,
+        "byTrack": {
+          "A": 11,
+          "B": 1,
+          "C": 0,
+          "D": 0
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [],
+      "status": "MODERNIZE_EXISTING",
+      "requiredBlocks": {
+        "existing": [
+          "READING_PASSAGE",
+          "SOURCE_EVIDENCE",
+          "WRITING_ORGANIZER"
+        ],
+        "proposed": []
+      },
+      "labs": [],
+      "targets": {
+        "pilotWindowLessons": 10,
+        "yearLessons": 168
+      },
+      "release": "no approved lesson version; program gates G1-G8 not started",
+      "dayPlanPeriods": [
+        {
+          "planId": "stem1-g10-day1",
+          "slot": "P3",
+          "binding": "CONTENT_GAP",
+          "key": "GO-G10-P3-ENGLISH-U1"
+        }
+      ]
+    },
+    {
+      "courseId": "stem1-g10-math",
+      "grade": 10,
+      "gradeLabel": "10",
+      "band": "10-12",
+      "course": "MATH",
+      "subject": "MATH",
+      "pillar": "M",
+      "weeklyPeriods": 6,
+      "units": 6,
+      "live": {
+        "total": 1,
+        "byTrack": {
+          "A": 0,
+          "B": 1,
+          "C": 0,
+          "D": 0
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [],
+      "status": "MODERNIZE_EXISTING",
+      "requiredBlocks": {
+        "existing": [
+          "EQUATION",
+          "WORKED_SOLUTION",
+          "NUMERIC_RESPONSE",
+          "MISTAKE_ANALYSIS",
+          "DATA_PLOT"
+        ],
+        "proposed": [
+          "COORDINATE_PLANE",
+          "FUNCTION_TABLE",
+          "GRAPH_BUILDER",
+          "PROBABILITY_SIMULATOR"
+        ]
+      },
+      "labs": [],
+      "targets": {
+        "pilotWindowLessons": 12,
+        "yearLessons": 204
+      },
+      "release": "no approved lesson version; program gates G1-G8 not started",
+      "dayPlanPeriods": [
+        {
+          "planId": "stem1-g10-day1",
+          "slot": "P1",
+          "binding": "CONTENT_GAP",
+          "key": "GO-G10-P1-MATH-U1"
+        }
+      ]
+    },
+    {
+      "courseId": "stem1-g10-biology",
+      "grade": 10,
+      "gradeLabel": "10",
+      "band": "10-12",
+      "course": "BIOLOGY",
+      "subject": "SCIENCE",
+      "pillar": "S",
+      "weeklyPeriods": 3,
+      "units": 6,
+      "live": {
+        "total": 1,
+        "byTrack": {
+          "A": 1,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "sharedWithStrands": true
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [],
+      "status": "MODERNIZE_EXISTING",
+      "requiredBlocks": {
+        "existing": [
+          "PARTICLE_MODEL",
+          "PREDICT_OBSERVE",
+          "DATA_PLOT",
+          "EQUATION",
+          "WORKED_SOLUTION",
+          "NUMERIC_RESPONSE"
+        ],
+        "proposed": [
+          "MEASUREMENT_TABLE",
+          "FAIR_TEST_PLANNER",
+          "GRAPH_BUILDER",
+          "UNCERTAINTY_CALCULATOR"
+        ]
+      },
+      "labs": [
+        "human-heart",
+        "ecosystem-balance"
+      ],
+      "targets": {
+        "pilotWindowLessons": 6,
+        "yearLessons": 96
+      },
+      "release": "no approved lesson version; program gates G1-G8 not started",
+      "dayPlanPeriods": []
+    },
+    {
+      "courseId": "stem1-g10-chemistry",
+      "grade": 10,
+      "gradeLabel": "10",
+      "band": "10-12",
+      "course": "CHEMISTRY",
+      "subject": "SCIENCE",
+      "pillar": "S",
+      "weeklyPeriods": 3,
+      "units": 6,
+      "live": {
+        "total": 1,
+        "byTrack": {
+          "A": 1,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "sharedWithStrands": true
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [],
+      "status": "MODERNIZE_EXISTING",
+      "requiredBlocks": {
+        "existing": [
+          "PARTICLE_MODEL",
+          "PREDICT_OBSERVE",
+          "DATA_PLOT",
+          "EQUATION",
+          "WORKED_SOLUTION",
+          "NUMERIC_RESPONSE"
+        ],
+        "proposed": [
+          "MEASUREMENT_TABLE",
+          "FAIR_TEST_PLANNER",
+          "GRAPH_BUILDER",
+          "UNCERTAINTY_CALCULATOR"
+        ]
+      },
+      "labs": [
+        "periodic-table",
+        "molecule-motion"
+      ],
+      "targets": {
+        "pilotWindowLessons": 6,
+        "yearLessons": 96
+      },
+      "release": "no approved lesson version; program gates G1-G8 not started",
+      "dayPlanPeriods": [
+        {
+          "planId": "stem1-g10-day1",
+          "slot": "P4",
+          "binding": "CONTENT_GAP",
+          "key": "GO-G10-P4-CHEMISTRY-U1"
+        }
+      ]
+    },
+    {
+      "courseId": "stem1-g10-physics",
+      "grade": 10,
+      "gradeLabel": "10",
+      "band": "10-12",
+      "course": "PHYSICS",
+      "subject": "SCIENCE",
+      "pillar": "S",
+      "weeklyPeriods": 3,
+      "units": 6,
+      "live": {
+        "total": 1,
+        "byTrack": {
+          "A": 1,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "sharedWithStrands": true
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [],
+      "status": "MODERNIZE_EXISTING",
+      "requiredBlocks": {
+        "existing": [
+          "PARTICLE_MODEL",
+          "PREDICT_OBSERVE",
+          "DATA_PLOT",
+          "EQUATION",
+          "WORKED_SOLUTION",
+          "NUMERIC_RESPONSE"
+        ],
+        "proposed": [
+          "MEASUREMENT_TABLE",
+          "FAIR_TEST_PLANNER",
+          "GRAPH_BUILDER",
+          "UNCERTAINTY_CALCULATOR"
+        ]
+      },
+      "labs": [
+        "gravity-explorer"
+      ],
+      "targets": {
+        "pilotWindowLessons": 6,
+        "yearLessons": 96
+      },
+      "release": "no approved lesson version; program gates G1-G8 not started",
+      "dayPlanPeriods": [
+        {
+          "planId": "stem1-g10-day1",
+          "slot": "P2",
+          "binding": "CONTENT_GAP",
+          "key": "GO-G10-P2-PHYSICS-U1"
+        }
+      ]
+    },
+    {
+      "courseId": "stem1-g10-computing",
+      "grade": 10,
+      "gradeLabel": "10",
+      "band": "10-12",
+      "course": "COMPUTING",
+      "subject": "COMPUTER_SCIENCE",
+      "pillar": "T",
+      "weeklyPeriods": 3,
+      "units": 6,
+      "live": {
+        "total": 18,
+        "byTrack": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 18
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [],
+      "status": "MISSING_HELD_ONLY",
+      "requiredBlocks": {
+        "existing": [
+          "MISTAKE_ANALYSIS",
+          "STEP_REVEAL"
+        ],
+        "proposed": [
+          "CODE_TRACE",
+          "CODE_RUNNER"
+        ]
+      },
+      "labs": [],
+      "targets": {
+        "pilotWindowLessons": 6,
+        "yearLessons": 96
+      },
+      "release": "no approved lesson version; program gates G1-G8 not started",
+      "dayPlanPeriods": [
+        {
+          "planId": "stem1-g10-day1",
+          "slot": "P5",
+          "binding": "CONTENT_GAP",
+          "key": "GO-G10-P5-COMPUTING-U1"
+        }
+      ]
+    },
+    {
+      "courseId": "stem1-g10-engineering",
+      "grade": 10,
+      "gradeLabel": "10",
+      "band": "10-12",
+      "course": "ENGINEERING",
+      "subject": "ENGINEERING_FOUNDATIONS",
+      "pillar": "E",
+      "weeklyPeriods": 2,
+      "units": 6,
+      "live": {
+        "total": 18,
+        "byTrack": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 18
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [],
+      "status": "MISSING_HELD_ONLY",
+      "requiredBlocks": {
+        "existing": [
+          "DATA_PLOT",
+          "EQUATION",
+          "WORKED_SOLUTION"
+        ],
+        "proposed": [
+          "DESIGN_CYCLE",
+          "MEASUREMENT_TABLE",
+          "BUDGET_CONSTRAINT_TABLE"
+        ]
+      },
+      "labs": [],
+      "targets": {
+        "pilotWindowLessons": 4,
+        "yearLessons": 60
+      },
+      "release": "no approved lesson version; program gates G1-G8 not started",
+      "dayPlanPeriods": [
+        {
+          "planId": "stem1-g10-day1",
+          "slot": "P6",
+          "binding": "CONTENT_GAP",
+          "key": "GO-G10-P6-ENGINEERING-U1"
+        }
+      ]
+    },
+    {
+      "courseId": "stem1-g10-social-studies",
+      "grade": 10,
+      "gradeLabel": "10",
+      "band": "10-12",
+      "course": "SOCIAL_STUDIES",
+      "subject": "SOCIAL_STUDIES",
+      "pillar": "HUMANITIES",
+      "weeklyPeriods": 2,
+      "units": 6,
+      "live": {
+        "total": 13,
+        "byTrack": {
+          "A": 0,
+          "B": 0,
+          "C": 13,
+          "D": 0
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [],
+      "status": "MISSING_HELD_ONLY",
+      "requiredBlocks": {
+        "existing": [
+          "SOURCE_EVIDENCE",
+          "SEQUENCE",
+          "DATA_PLOT",
+          "WRITING_ORGANIZER"
+        ],
+        "proposed": []
+      },
+      "labs": [],
+      "targets": {
+        "pilotWindowLessons": 4,
+        "yearLessons": 60
+      },
+      "release": "no approved lesson version; program gates G1-G8 not started",
+      "dayPlanPeriods": []
+    },
+    {
+      "courseId": "stem1-g10-civics",
+      "grade": 10,
+      "gradeLabel": "10",
+      "band": "10-12",
+      "course": "CIVICS",
+      "subject": "CIVICS",
+      "pillar": "HUMANITIES",
+      "weeklyPeriods": 1,
+      "units": 2,
+      "live": {
+        "total": 0,
+        "byTrack": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [],
+      "status": "MISSING_NO_CONTENT",
+      "requiredBlocks": {
+        "existing": [
+          "SOURCE_EVIDENCE",
+          "SEQUENCE",
+          "DATA_PLOT",
+          "WRITING_ORGANIZER"
+        ],
+        "proposed": []
+      },
+      "labs": [],
+      "targets": {
+        "pilotWindowLessons": 2,
+        "yearLessons": 32
+      },
+      "release": "no approved lesson version; program gates G1-G8 not started",
+      "dayPlanPeriods": []
+    },
+    {
+      "courseId": "stem1-g10-arts-pe",
+      "grade": 10,
+      "gradeLabel": "10",
+      "band": "10-12",
+      "course": "ARTS_PE",
+      "subject": null,
+      "pillar": "WELLBEING",
+      "weeklyPeriods": 2,
+      "units": 0,
+      "live": {
+        "total": 0,
+        "byTrack": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [],
+      "status": "TEACHER_LED",
+      "requiredBlocks": {
+        "existing": [],
+        "proposed": []
+      },
+      "labs": [],
+      "targets": {
+        "pilotWindowLessons": 0,
+        "yearLessons": 0
+      },
+      "release": "teacher-led; not platform curriculum",
+      "dayPlanPeriods": []
+    },
+    {
+      "courseId": "stem1-g11-english",
+      "grade": 11,
+      "gradeLabel": "11",
+      "band": "10-12",
+      "course": "ENGLISH",
+      "subject": "LITERACY",
+      "pillar": "LANGUAGE",
+      "weeklyPeriods": 5,
+      "units": 6,
+      "live": {
+        "total": 10,
+        "byTrack": {
+          "A": 10,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [],
+      "status": "MODERNIZE_EXISTING",
+      "requiredBlocks": {
+        "existing": [
+          "READING_PASSAGE",
+          "SOURCE_EVIDENCE",
+          "WRITING_ORGANIZER"
+        ],
+        "proposed": []
+      },
+      "labs": [],
+      "targets": {
+        "pilotWindowLessons": 10,
+        "yearLessons": 168
+      },
+      "release": "no approved lesson version; program gates G1-G8 not started",
+      "dayPlanPeriods": [
+        {
+          "planId": "stem1-g11-day1",
+          "slot": "P3",
+          "binding": "CONTENT_GAP",
+          "key": "GO-G11-P3-ENGLISH-U1"
+        }
+      ]
+    },
+    {
+      "courseId": "stem1-g11-math",
+      "grade": 11,
+      "gradeLabel": "11",
+      "band": "10-12",
+      "course": "MATH",
+      "subject": "MATH",
+      "pillar": "M",
+      "weeklyPeriods": 6,
+      "units": 6,
+      "live": {
+        "total": 0,
+        "byTrack": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [],
+      "status": "MISSING_NO_CONTENT",
+      "requiredBlocks": {
+        "existing": [
+          "EQUATION",
+          "WORKED_SOLUTION",
+          "NUMERIC_RESPONSE",
+          "MISTAKE_ANALYSIS",
+          "DATA_PLOT"
+        ],
+        "proposed": [
+          "COORDINATE_PLANE",
+          "FUNCTION_TABLE",
+          "GRAPH_BUILDER",
+          "PROBABILITY_SIMULATOR"
+        ]
+      },
+      "labs": [],
+      "targets": {
+        "pilotWindowLessons": 12,
+        "yearLessons": 204
+      },
+      "release": "no approved lesson version; program gates G1-G8 not started",
+      "dayPlanPeriods": [
+        {
+          "planId": "stem1-g11-day1",
+          "slot": "P1",
+          "binding": "CONTENT_GAP",
+          "key": "GO-G11-P1-MATH-U1"
+        }
+      ]
+    },
+    {
+      "courseId": "stem1-g11-biology",
+      "grade": 11,
+      "gradeLabel": "11",
+      "band": "10-12",
+      "course": "BIOLOGY",
+      "subject": "SCIENCE",
+      "pillar": "S",
+      "weeklyPeriods": 3,
+      "units": 6,
+      "live": {
+        "total": 0,
+        "byTrack": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "sharedWithStrands": true
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [],
+      "status": "MISSING_NO_CONTENT",
+      "requiredBlocks": {
+        "existing": [
+          "PARTICLE_MODEL",
+          "PREDICT_OBSERVE",
+          "DATA_PLOT",
+          "EQUATION",
+          "WORKED_SOLUTION",
+          "NUMERIC_RESPONSE"
+        ],
+        "proposed": [
+          "MEASUREMENT_TABLE",
+          "FAIR_TEST_PLANNER",
+          "GRAPH_BUILDER",
+          "UNCERTAINTY_CALCULATOR"
+        ]
+      },
+      "labs": [
+        "cell-division"
+      ],
+      "targets": {
+        "pilotWindowLessons": 6,
+        "yearLessons": 96
+      },
+      "release": "no approved lesson version; program gates G1-G8 not started",
+      "dayPlanPeriods": [
+        {
+          "planId": "stem1-g11-day1",
+          "slot": "P4",
+          "binding": "CONTENT_GAP",
+          "key": "GO-G11-P4-BIOLOGY-U1"
+        }
+      ]
+    },
+    {
+      "courseId": "stem1-g11-chemistry",
+      "grade": 11,
+      "gradeLabel": "11",
+      "band": "10-12",
+      "course": "CHEMISTRY",
+      "subject": "SCIENCE",
+      "pillar": "S",
+      "weeklyPeriods": 3,
+      "units": 6,
+      "live": {
+        "total": 0,
+        "byTrack": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "sharedWithStrands": true
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [],
+      "status": "MISSING_NO_CONTENT",
+      "requiredBlocks": {
+        "existing": [
+          "PARTICLE_MODEL",
+          "PREDICT_OBSERVE",
+          "DATA_PLOT",
+          "EQUATION",
+          "WORKED_SOLUTION",
+          "NUMERIC_RESPONSE"
+        ],
+        "proposed": [
+          "MEASUREMENT_TABLE",
+          "FAIR_TEST_PLANNER",
+          "GRAPH_BUILDER",
+          "UNCERTAINTY_CALCULATOR"
+        ]
+      },
+      "labs": [
+        "chemical-reaction"
+      ],
+      "targets": {
+        "pilotWindowLessons": 6,
+        "yearLessons": 96
+      },
+      "release": "no approved lesson version; program gates G1-G8 not started",
+      "dayPlanPeriods": [
+        {
+          "planId": "stem1-g11-day1",
+          "slot": "P2",
+          "binding": "CONTENT_GAP",
+          "key": "GO-G11-P2-CHEMISTRY-U1"
+        }
+      ]
+    },
+    {
+      "courseId": "stem1-g11-physics",
+      "grade": 11,
+      "gradeLabel": "11",
+      "band": "10-12",
+      "course": "PHYSICS",
+      "subject": "SCIENCE",
+      "pillar": "S",
+      "weeklyPeriods": 3,
+      "units": 6,
+      "live": {
+        "total": 0,
+        "byTrack": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "sharedWithStrands": true
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [],
+      "status": "MISSING_NO_CONTENT",
+      "requiredBlocks": {
+        "existing": [
+          "PARTICLE_MODEL",
+          "PREDICT_OBSERVE",
+          "DATA_PLOT",
+          "EQUATION",
+          "WORKED_SOLUTION",
+          "NUMERIC_RESPONSE"
+        ],
+        "proposed": [
+          "MEASUREMENT_TABLE",
+          "FAIR_TEST_PLANNER",
+          "GRAPH_BUILDER",
+          "UNCERTAINTY_CALCULATOR"
+        ]
+      },
+      "labs": [
+        "wave-motion",
+        "electric-circuit",
+        "pendulum-lab"
+      ],
+      "targets": {
+        "pilotWindowLessons": 6,
+        "yearLessons": 96
+      },
+      "release": "no approved lesson version; program gates G1-G8 not started",
+      "dayPlanPeriods": []
+    },
+    {
+      "courseId": "stem1-g11-computing",
+      "grade": 11,
+      "gradeLabel": "11",
+      "band": "10-12",
+      "course": "COMPUTING",
+      "subject": "COMPUTER_SCIENCE",
+      "pillar": "T",
+      "weeklyPeriods": 3,
+      "units": 6,
+      "live": {
+        "total": 22,
+        "byTrack": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 22
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [],
+      "status": "MISSING_HELD_ONLY",
+      "requiredBlocks": {
+        "existing": [
+          "MISTAKE_ANALYSIS",
+          "STEP_REVEAL"
+        ],
+        "proposed": [
+          "CODE_TRACE",
+          "CODE_RUNNER"
+        ]
+      },
+      "labs": [],
+      "targets": {
+        "pilotWindowLessons": 6,
+        "yearLessons": 96
+      },
+      "release": "no approved lesson version; program gates G1-G8 not started",
+      "dayPlanPeriods": [
+        {
+          "planId": "stem1-g11-day1",
+          "slot": "P5",
+          "binding": "CONTENT_GAP",
+          "key": "GO-G11-P5-COMPUTING-U1"
+        }
+      ]
+    },
+    {
+      "courseId": "stem1-g11-engineering",
+      "grade": 11,
+      "gradeLabel": "11",
+      "band": "10-12",
+      "course": "ENGINEERING",
+      "subject": "ENGINEERING_FOUNDATIONS",
+      "pillar": "E",
+      "weeklyPeriods": 2,
+      "units": 6,
+      "live": {
+        "total": 21,
+        "byTrack": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 21
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [],
+      "status": "MISSING_HELD_ONLY",
+      "requiredBlocks": {
+        "existing": [
+          "DATA_PLOT",
+          "EQUATION",
+          "WORKED_SOLUTION"
+        ],
+        "proposed": [
+          "DESIGN_CYCLE",
+          "MEASUREMENT_TABLE",
+          "BUDGET_CONSTRAINT_TABLE"
+        ]
+      },
+      "labs": [],
+      "targets": {
+        "pilotWindowLessons": 4,
+        "yearLessons": 60
+      },
+      "release": "no approved lesson version; program gates G1-G8 not started",
+      "dayPlanPeriods": [
+        {
+          "planId": "stem1-g11-day1",
+          "slot": "P6",
+          "binding": "CONTENT_GAP",
+          "key": "GO-G11-P6-ENGINEERING-U1"
+        }
+      ]
+    },
+    {
+      "courseId": "stem1-g11-social-studies",
+      "grade": 11,
+      "gradeLabel": "11",
+      "band": "10-12",
+      "course": "SOCIAL_STUDIES",
+      "subject": "SOCIAL_STUDIES",
+      "pillar": "HUMANITIES",
+      "weeklyPeriods": 2,
+      "units": 6,
+      "live": {
+        "total": 13,
+        "byTrack": {
+          "A": 0,
+          "B": 0,
+          "C": 13,
+          "D": 0
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [],
+      "status": "MISSING_HELD_ONLY",
+      "requiredBlocks": {
+        "existing": [
+          "SOURCE_EVIDENCE",
+          "SEQUENCE",
+          "DATA_PLOT",
+          "WRITING_ORGANIZER"
+        ],
+        "proposed": []
+      },
+      "labs": [],
+      "targets": {
+        "pilotWindowLessons": 4,
+        "yearLessons": 60
+      },
+      "release": "no approved lesson version; program gates G1-G8 not started",
+      "dayPlanPeriods": []
+    },
+    {
+      "courseId": "stem1-g11-civics",
+      "grade": 11,
+      "gradeLabel": "11",
+      "band": "10-12",
+      "course": "CIVICS",
+      "subject": "CIVICS",
+      "pillar": "HUMANITIES",
+      "weeklyPeriods": 1,
+      "units": 2,
+      "live": {
+        "total": 0,
+        "byTrack": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [],
+      "status": "MISSING_NO_CONTENT",
+      "requiredBlocks": {
+        "existing": [
+          "SOURCE_EVIDENCE",
+          "SEQUENCE",
+          "DATA_PLOT",
+          "WRITING_ORGANIZER"
+        ],
+        "proposed": []
+      },
+      "labs": [],
+      "targets": {
+        "pilotWindowLessons": 2,
+        "yearLessons": 32
+      },
+      "release": "no approved lesson version; program gates G1-G8 not started",
+      "dayPlanPeriods": []
+    },
+    {
+      "courseId": "stem1-g11-arts-pe",
+      "grade": 11,
+      "gradeLabel": "11",
+      "band": "10-12",
+      "course": "ARTS_PE",
+      "subject": null,
+      "pillar": "WELLBEING",
+      "weeklyPeriods": 2,
+      "units": 0,
+      "live": {
+        "total": 0,
+        "byTrack": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [],
+      "status": "TEACHER_LED",
+      "requiredBlocks": {
+        "existing": [],
+        "proposed": []
+      },
+      "labs": [],
+      "targets": {
+        "pilotWindowLessons": 0,
+        "yearLessons": 0
+      },
+      "release": "teacher-led; not platform curriculum",
+      "dayPlanPeriods": []
+    },
+    {
+      "courseId": "stem1-g12-english",
+      "grade": 12,
+      "gradeLabel": "12",
+      "band": "10-12",
+      "course": "ENGLISH",
+      "subject": "LITERACY",
+      "pillar": "LANGUAGE",
+      "weeklyPeriods": 5,
+      "units": 6,
+      "live": {
+        "total": 18,
+        "byTrack": {
+          "A": 10,
+          "B": 8,
+          "C": 0,
+          "D": 0
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [],
+      "status": "MODERNIZE_EXISTING",
+      "requiredBlocks": {
+        "existing": [
+          "READING_PASSAGE",
+          "SOURCE_EVIDENCE",
+          "WRITING_ORGANIZER"
+        ],
+        "proposed": []
+      },
+      "labs": [],
+      "targets": {
+        "pilotWindowLessons": 10,
+        "yearLessons": 168
+      },
+      "release": "no approved lesson version; program gates G1-G8 not started",
+      "dayPlanPeriods": [
+        {
+          "planId": "stem1-g12-day1",
+          "slot": "P3",
+          "binding": "CONTENT_GAP",
+          "key": "GO-G12-P3-ENGLISH-U1"
+        }
+      ]
+    },
+    {
+      "courseId": "stem1-g12-math",
+      "grade": 12,
+      "gradeLabel": "12",
+      "band": "10-12",
+      "course": "MATH",
+      "subject": "MATH",
+      "pillar": "M",
+      "weeklyPeriods": 6,
+      "units": 6,
+      "live": {
+        "total": 16,
+        "byTrack": {
+          "A": 0,
+          "B": 16,
+          "C": 0,
+          "D": 0
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [],
+      "status": "MODERNIZE_EXISTING",
+      "requiredBlocks": {
+        "existing": [
+          "EQUATION",
+          "WORKED_SOLUTION",
+          "NUMERIC_RESPONSE",
+          "MISTAKE_ANALYSIS",
+          "DATA_PLOT"
+        ],
+        "proposed": [
+          "COORDINATE_PLANE",
+          "FUNCTION_TABLE",
+          "GRAPH_BUILDER",
+          "PROBABILITY_SIMULATOR"
+        ]
+      },
+      "labs": [],
+      "targets": {
+        "pilotWindowLessons": 12,
+        "yearLessons": 204
+      },
+      "release": "no approved lesson version; program gates G1-G8 not started",
+      "dayPlanPeriods": [
+        {
+          "planId": "stem1-g12-day1",
+          "slot": "P1",
+          "binding": "CONTENT_GAP",
+          "key": "GO-G12-P1-MATH-U1"
+        }
+      ]
+    },
+    {
+      "courseId": "stem1-g12-biology",
+      "grade": 12,
+      "gradeLabel": "12",
+      "band": "10-12",
+      "course": "BIOLOGY",
+      "subject": "SCIENCE",
+      "pillar": "S",
+      "weeklyPeriods": 3,
+      "units": 6,
+      "live": {
+        "total": 11,
+        "byTrack": {
+          "A": 0,
+          "B": 11,
+          "C": 0,
+          "D": 0
+        },
+        "sharedWithStrands": true
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [],
+      "status": "MODERNIZE_EXISTING",
+      "requiredBlocks": {
+        "existing": [
+          "PARTICLE_MODEL",
+          "PREDICT_OBSERVE",
+          "DATA_PLOT",
+          "EQUATION",
+          "WORKED_SOLUTION",
+          "NUMERIC_RESPONSE"
+        ],
+        "proposed": [
+          "MEASUREMENT_TABLE",
+          "FAIR_TEST_PLANNER",
+          "GRAPH_BUILDER",
+          "UNCERTAINTY_CALCULATOR"
+        ]
+      },
+      "labs": [],
+      "targets": {
+        "pilotWindowLessons": 6,
+        "yearLessons": 96
+      },
+      "release": "no approved lesson version; program gates G1-G8 not started",
+      "dayPlanPeriods": [
+        {
+          "planId": "stem1-g12-day1",
+          "slot": "P2",
+          "binding": "CONTENT_GAP",
+          "key": "GO-G12-P2-BIOLOGY-U1"
+        }
+      ]
+    },
+    {
+      "courseId": "stem1-g12-chemistry",
+      "grade": 12,
+      "gradeLabel": "12",
+      "band": "10-12",
+      "course": "CHEMISTRY",
+      "subject": "SCIENCE",
+      "pillar": "S",
+      "weeklyPeriods": 3,
+      "units": 6,
+      "live": {
+        "total": 11,
+        "byTrack": {
+          "A": 0,
+          "B": 11,
+          "C": 0,
+          "D": 0
+        },
+        "sharedWithStrands": true
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [],
+      "status": "MODERNIZE_EXISTING",
+      "requiredBlocks": {
+        "existing": [
+          "PARTICLE_MODEL",
+          "PREDICT_OBSERVE",
+          "DATA_PLOT",
+          "EQUATION",
+          "WORKED_SOLUTION",
+          "NUMERIC_RESPONSE"
+        ],
+        "proposed": [
+          "MEASUREMENT_TABLE",
+          "FAIR_TEST_PLANNER",
+          "GRAPH_BUILDER",
+          "UNCERTAINTY_CALCULATOR"
+        ]
+      },
+      "labs": [],
+      "targets": {
+        "pilotWindowLessons": 6,
+        "yearLessons": 96
+      },
+      "release": "no approved lesson version; program gates G1-G8 not started",
+      "dayPlanPeriods": []
+    },
+    {
+      "courseId": "stem1-g12-physics",
+      "grade": 12,
+      "gradeLabel": "12",
+      "band": "10-12",
+      "course": "PHYSICS",
+      "subject": "SCIENCE",
+      "pillar": "S",
+      "weeklyPeriods": 3,
+      "units": 6,
+      "live": {
+        "total": 11,
+        "byTrack": {
+          "A": 0,
+          "B": 11,
+          "C": 0,
+          "D": 0
+        },
+        "sharedWithStrands": true
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [],
+      "status": "MODERNIZE_EXISTING",
+      "requiredBlocks": {
+        "existing": [
+          "PARTICLE_MODEL",
+          "PREDICT_OBSERVE",
+          "DATA_PLOT",
+          "EQUATION",
+          "WORKED_SOLUTION",
+          "NUMERIC_RESPONSE"
+        ],
+        "proposed": [
+          "MEASUREMENT_TABLE",
+          "FAIR_TEST_PLANNER",
+          "GRAPH_BUILDER",
+          "UNCERTAINTY_CALCULATOR"
+        ]
+      },
+      "labs": [],
+      "targets": {
+        "pilotWindowLessons": 6,
+        "yearLessons": 96
+      },
+      "release": "no approved lesson version; program gates G1-G8 not started",
+      "dayPlanPeriods": [
+        {
+          "planId": "stem1-g12-day1",
+          "slot": "P4",
+          "binding": "CONTENT_GAP",
+          "key": "GO-G12-P4-PHYSICS-U1"
+        }
+      ]
+    },
+    {
+      "courseId": "stem1-g12-computing",
+      "grade": 12,
+      "gradeLabel": "12",
+      "band": "10-12",
+      "course": "COMPUTING",
+      "subject": "COMPUTER_SCIENCE",
+      "pillar": "T",
+      "weeklyPeriods": 3,
+      "units": 6,
+      "live": {
+        "total": 24,
+        "byTrack": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 24
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [],
+      "status": "MISSING_HELD_ONLY",
+      "requiredBlocks": {
+        "existing": [
+          "MISTAKE_ANALYSIS",
+          "STEP_REVEAL"
+        ],
+        "proposed": [
+          "CODE_TRACE",
+          "CODE_RUNNER"
+        ]
+      },
+      "labs": [],
+      "targets": {
+        "pilotWindowLessons": 6,
+        "yearLessons": 96
+      },
+      "release": "no approved lesson version; program gates G1-G8 not started",
+      "dayPlanPeriods": [
+        {
+          "planId": "stem1-g12-day1",
+          "slot": "P5",
+          "binding": "CONTENT_GAP",
+          "key": "GO-G12-P5-COMPUTING-U1"
+        }
+      ]
+    },
+    {
+      "courseId": "stem1-g12-engineering",
+      "grade": 12,
+      "gradeLabel": "12",
+      "band": "10-12",
+      "course": "ENGINEERING",
+      "subject": "ENGINEERING_FOUNDATIONS",
+      "pillar": "E",
+      "weeklyPeriods": 2,
+      "units": 6,
+      "live": {
+        "total": 19,
+        "byTrack": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 19
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [],
+      "status": "MISSING_HELD_ONLY",
+      "requiredBlocks": {
+        "existing": [
+          "DATA_PLOT",
+          "EQUATION",
+          "WORKED_SOLUTION"
+        ],
+        "proposed": [
+          "DESIGN_CYCLE",
+          "MEASUREMENT_TABLE",
+          "BUDGET_CONSTRAINT_TABLE"
+        ]
+      },
+      "labs": [],
+      "targets": {
+        "pilotWindowLessons": 4,
+        "yearLessons": 60
+      },
+      "release": "no approved lesson version; program gates G1-G8 not started",
+      "dayPlanPeriods": [
+        {
+          "planId": "stem1-g12-day1",
+          "slot": "P6",
+          "binding": "CONTENT_GAP",
+          "key": "GO-G12-P6-ENGINEERING-U1"
+        }
+      ]
+    },
+    {
+      "courseId": "stem1-g12-social-studies",
+      "grade": 12,
+      "gradeLabel": "12",
+      "band": "10-12",
+      "course": "SOCIAL_STUDIES",
+      "subject": "SOCIAL_STUDIES",
+      "pillar": "HUMANITIES",
+      "weeklyPeriods": 2,
+      "units": 6,
+      "live": {
+        "total": 19,
+        "byTrack": {
+          "A": 0,
+          "B": 6,
+          "C": 13,
+          "D": 0
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [],
+      "status": "MODERNIZE_EXISTING",
+      "requiredBlocks": {
+        "existing": [
+          "SOURCE_EVIDENCE",
+          "SEQUENCE",
+          "DATA_PLOT",
+          "WRITING_ORGANIZER"
+        ],
+        "proposed": []
+      },
+      "labs": [],
+      "targets": {
+        "pilotWindowLessons": 4,
+        "yearLessons": 60
+      },
+      "release": "no approved lesson version; program gates G1-G8 not started",
+      "dayPlanPeriods": []
+    },
+    {
+      "courseId": "stem1-g12-civics",
+      "grade": 12,
+      "gradeLabel": "12",
+      "band": "10-12",
+      "course": "CIVICS",
+      "subject": "CIVICS",
+      "pillar": "HUMANITIES",
+      "weeklyPeriods": 1,
+      "units": 2,
+      "live": {
+        "total": 9,
+        "byTrack": {
+          "A": 0,
+          "B": 9,
+          "C": 0,
+          "D": 0
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [],
+      "status": "MODERNIZE_EXISTING",
+      "requiredBlocks": {
+        "existing": [
+          "SOURCE_EVIDENCE",
+          "SEQUENCE",
+          "DATA_PLOT",
+          "WRITING_ORGANIZER"
+        ],
+        "proposed": []
+      },
+      "labs": [],
+      "targets": {
+        "pilotWindowLessons": 2,
+        "yearLessons": 32
+      },
+      "release": "no approved lesson version; program gates G1-G8 not started",
+      "dayPlanPeriods": []
+    },
+    {
+      "courseId": "stem1-g12-arts-pe",
+      "grade": 12,
+      "gradeLabel": "12",
+      "band": "10-12",
+      "course": "ARTS_PE",
+      "subject": null,
+      "pillar": "WELLBEING",
+      "weeklyPeriods": 2,
+      "units": 0,
+      "live": {
+        "total": 0,
+        "byTrack": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0
+        },
+        "sharedWithStrands": false
+      },
+      "verifiedUsable": 0,
+      "v4Drafts": [],
+      "otherCandidates": [],
+      "status": "TEACHER_LED",
+      "requiredBlocks": {
+        "existing": [],
+        "proposed": []
+      },
+      "labs": [],
+      "targets": {
+        "pilotWindowLessons": 0,
+        "yearLessons": 0
+      },
+      "release": "teacher-led; not platform curriculum",
+      "dayPlanPeriods": []
+    }
+  ]
+}

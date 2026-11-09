@@ -25,7 +25,11 @@ function isGrade(value: unknown): value is number {
   return Number.isInteger(value) && (value as number) >= 1 && (value as number) <= 12;
 }
 
-/** Loads a placement the actor may act on; other schools' placements are 404. */
+/**
+ * Loads a placement the actor may act on; other schools' placements, and learners with no school, are 404. There is no
+ * platform-admin bypass of the school scope (founder decision 1, AT-GRADE-01-2D): a platform role is not school
+ * placement authority.
+ */
 async function loadScopedPlacement(actor: Actor, placementId: string) {
   const placement = await prisma.placementTest.findUnique({
     where: { id: placementId },
@@ -45,7 +49,7 @@ async function loadScopedPlacement(actor: Actor, placementId: string) {
   });
   const schoolId = placement?.student.user.schoolId ?? null;
   if (!placement || !schoolId) throw fail(404, "Placement not found", "placement_not_found");
-  if (!actor.isPlatformAdmin && (!actor.schoolId || actor.schoolId !== schoolId)) {
+  if (!actor.schoolId || actor.schoolId !== schoolId) {
     throw fail(404, "Placement not found", "placement_not_found");
   }
   return { placement, schoolId };
@@ -109,7 +113,9 @@ export async function confirmOfficialPlacement(
   placementId: string,
   input: { finalGrade?: unknown; reason?: unknown }
 ) {
-  if (!hasPermission(actor, PERMISSIONS.PLACEMENT_CONFIRM)) throw fail(403, "Forbidden", "placement_confirm_forbidden");
+  // The official grade stays with the school ADMIN: hasPermission grants every permission to a platform-flagged account
+  // of any role, so the role is checked as well (AT-GRADE-01-2D).
+  if (!hasPermission(actor, PERMISSIONS.PLACEMENT_CONFIRM) || actor.role !== "ADMIN") throw fail(403, "Forbidden", "placement_confirm_forbidden");
   const { placement, schoolId } = await loadScopedPlacement(actor, placementId);
   if (!isGrade(input.finalGrade)) throw fail(400, "finalGrade must be between 1 and 12", "invalid_final_grade");
   const finalGrade = input.finalGrade;

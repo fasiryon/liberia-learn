@@ -1,7 +1,7 @@
 /**
  * GET /api/admin/agents/invocations
  *
- * Paginated agent invocation log with filters. Admin / platform-admin only.
+ * Paginated global raw invocation log. Platform-admin only.
  *
  * Query params:
  *   agentName - exact match
@@ -14,6 +14,7 @@
  * Returns { total, page, pageSize, pages, invocations[] }
  */
 import { NextRequest, NextResponse } from "next/server";
+// route-policy: auth=session; scope=platform; authority=platform-admin; rationale=global raw invocation diagnostics require authenticated platform administration
 import { requireUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { assertPermission, PERMISSIONS } from "@/lib/permissions";
@@ -23,7 +24,7 @@ const PAGE_SIZE = 50;
 export async function GET(req: NextRequest) {
   try {
     const user = await requireUser();
-    if (user.role !== "ADMIN" && !user.isPlatformAdmin) {
+    if (!user.isPlatformAdmin) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
     assertPermission(user, PERMISSIONS.AGENT_PLATFORM_VIEW);

@@ -1,0 +1,635 @@
+{
+  "contractVersion": "visual-teaching-block/4.0.0-draft.1",
+  "registryVersion": "teaching-blocks/1.1.0",
+  "instructionStandard": "liberialearn-v4-instruction/1.0.0",
+  "candidateSha256": "ed0a518f060509276607c67910fdc00513a9793f6cf7dedadcd2dbbe5dadbe9a",
+  "state": "DRAFT",
+  "approved": false,
+  "published": false,
+  "released": false,
+  "audience": "REVIEWER_ONLY",
+  "objectives": [
+    {
+      "id": "v4-demo-mult-models",
+      "statement": "Represent a multiplication as equal groups, an array and repeated addition, and explain why they show the same product.",
+      "standards": [
+        {
+          "reference": "moe-math-g5-s1-p1-multiplication-and-division-of-wh-ole-numbers-an-obj2",
+          "statement": "Multiply and divide whole numbers and decimals.",
+          "relation": "CONTENT_REFERENCE",
+          "mapping": "PROPOSED"
+        },
+        {
+          "reference": "moe-math-g5-s1-p1-multiplication-and-division-of-wh-ole-numbers-an-con1",
+          "statement": "Properties of multiplication",
+          "relation": "CONTENT_REFERENCE",
+          "mapping": "PROPOSED"
+        }
+      ]
+    },
+    {
+      "id": "v4-demo-mult-area-model",
+      "statement": "Multiply a two-digit number by a one- or two-digit number with an area model, splitting by place value.",
+      "standards": [
+        {
+          "reference": "moe-math-g5-s1-p1-multiplication-and-division-of-wh-ole-numbers-an-obj2",
+          "statement": "Multiply and divide whole numbers and decimals.",
+          "relation": "CONTENT_REFERENCE",
+          "mapping": "PROPOSED"
+        },
+        {
+          "reference": "moe-math-g5-s1-p1-multiplication-and-division-of-wh-ole-numbers-an-con1",
+          "statement": "Properties of multiplication",
+          "relation": "CONTENT_REFERENCE",
+          "mapping": "PROPOSED"
+        }
+      ]
+    }
+  ],
+  "blocks": [
+    {
+      "sceneId": "generated-1",
+      "slot": "blocks",
+      "index": 0,
+      "type": "ARRAY_MODEL",
+      "blockSha256": "e366dece067a20f9dced0aa791b7df8b4553414acc13dac0a4fdb341382b9fcd",
+      "objectiveIds": [
+        "v4-demo-mult-models",
+        "v4-demo-mult-area-model"
+      ],
+      "instructionalPurpose": "See one multiplication as equal groups, an array, an area grid and repeated addition. Learner action: Use the model, complete its task, and explain what the representation shows.",
+      "misconceptionIds": [
+        "generated-math-misconception"
+      ],
+      "responseSignals": [],
+      "accessibility": {
+        "textAlternative": "7 rows of 4 dots: 7 × 4 = 28. Seven groups of four and seven rows of four count the same 28 items.",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: 7 rows of 4 dots: 7 × 4 = 28. Seven groups of four and seven rows of four count the same 28 items.",
+        "responsePrompt": "Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "NONE",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/draft6/lessonAuthor.ts",
+          "sha256": "4313491d6fa001a0b915b7d0dfcd6a3c933f91b3d877b4f1bad3c90095ca1e31",
+          "license": "Original factory recipe or source verification record; review only",
+          "attribution": "LiberiaLearn draft.6; map geometry UNMIL / OCHA ROWCA via geoBoundaries, see references.json",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "generated-1",
+      "slot": "blocks",
+      "index": 1,
+      "type": "AREA_MODEL",
+      "blockSha256": "5db43de97a39b46d52ec9cd2ab5f26c3273d63b92473a9ffce1769d1a6b16fb9",
+      "objectiveIds": [
+        "v4-demo-mult-models",
+        "v4-demo-mult-area-model"
+      ],
+      "instructionalPurpose": "Split a multiplication by place value and fill in the partial products. Learner action: Use the model, complete its task, and explain what the representation shows.",
+      "misconceptionIds": [
+        "generated-math-misconception"
+      ],
+      "responseSignals": [],
+      "accessibility": {
+        "textAlternative": "Trace the four partial rectangles and describe their dimensions. Find 24 × 13 by splitting it into parts.",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Trace the four partial rectangles and describe their dimensions. Find 24 × 13 by splitting it into parts.",
+        "responsePrompt": "Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "NONE",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/draft6/lessonAuthor.ts",
+          "sha256": "4313491d6fa001a0b915b7d0dfcd6a3c933f91b3d877b4f1bad3c90095ca1e31",
+          "license": "Original factory recipe or source verification record; review only",
+          "attribution": "LiberiaLearn draft.6; map geometry UNMIL / OCHA ROWCA via geoBoundaries, see references.json",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "generated-2",
+      "slot": "blocks",
+      "index": 0,
+      "type": "WORKED_SOLUTION",
+      "blockSha256": "1d319b0db411b435b19b130d316999dce428d4b03c97d7ad529ba3f8c471516f",
+      "objectiveIds": [
+        "v4-demo-mult-models",
+        "v4-demo-mult-area-model"
+      ],
+      "instructionalPurpose": "Watch a problem solved one step at a time, with the diagram following each step. Learner action: Use the model, complete its task, and explain what the representation shows.",
+      "misconceptionIds": [
+        "generated-math-misconception"
+      ],
+      "responseSignals": [],
+      "accessibility": {
+        "textAlternative": "24 x 13 Step 1: Split both factors. (20 + 4)(10 + 3) Step 2: Calculate every rectangle. 200 + 60 + 40 + 12 = 312 Step 3: Regroup as algorithm rows. 24 × 3 + 24 × 10 = 72 + 240 = 312",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: 24 x 13 Step 1: Split both factors. (20 + 4)(10 + 3) Step 2: Calculate every rectangle. 200 + 60 + 40 + 12 = 312 Step 3: Regroup as algorithm rows. 24 × 3 + 24 × 10 = 72 + 240 = 312",
+        "responsePrompt": "Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "MODEL",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/draft6/lessonAuthor.ts",
+          "sha256": "4313491d6fa001a0b915b7d0dfcd6a3c933f91b3d877b4f1bad3c90095ca1e31",
+          "license": "Original factory recipe or source verification record; review only",
+          "attribution": "LiberiaLearn draft.6; map geometry UNMIL / OCHA ROWCA via geoBoundaries, see references.json",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "generated-3",
+      "slot": "blocks",
+      "index": 0,
+      "type": "CHECK",
+      "blockSha256": "838ae574766f187a94d9672016f4b0e4dae25ada07b9832f7011307116cf9b37",
+      "objectiveIds": [
+        "v4-demo-mult-models",
+        "v4-demo-mult-area-model"
+      ],
+      "instructionalPurpose": "Choose an answer and get feedback written for that choice. Learner action: Use the model, complete its task, and explain what the representation shows.",
+      "misconceptionIds": [
+        "generated-math-misconception"
+      ],
+      "responseSignals": [
+        {
+          "misconceptionId": "generated-math-misconception",
+          "responsePattern": "groups-guided-item:OPTION:other",
+          "feedback": "Adding the group count and group size does not count the items in every group."
+        }
+      ],
+      "accessibility": {
+        "textAlternative": "Which sum represents seven groups of four? Options: 4 + 4 + 4 + 4 + 4 + 4 + 4; 7 + 4.",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Which sum represents seven groups of four? Options: 4 + 4 + 4 + 4 + 4 + 4 + 4; 7 + 4.",
+        "responsePrompt": "Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/draft6/lessonAuthor.ts",
+          "sha256": "4313491d6fa001a0b915b7d0dfcd6a3c933f91b3d877b4f1bad3c90095ca1e31",
+          "license": "Original factory recipe or source verification record; review only",
+          "attribution": "LiberiaLearn draft.6; map geometry UNMIL / OCHA ROWCA via geoBoundaries, see references.json",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "generated-3",
+      "slot": "blocks",
+      "index": 1,
+      "type": "AREA_MODEL",
+      "blockSha256": "2a88a0e6b45f527b4315077c00aab119dd56647945cd583d200366c5292114c7",
+      "objectiveIds": [
+        "v4-demo-mult-models",
+        "v4-demo-mult-area-model"
+      ],
+      "instructionalPurpose": "Split a multiplication by place value and fill in the partial products. Learner action: Use the model, complete its task, and explain what the representation shows.",
+      "misconceptionIds": [
+        "generated-math-misconception"
+      ],
+      "responseSignals": [],
+      "accessibility": {
+        "textAlternative": "Fill all four partial products, then add them. Find 23 × 14 by splitting it into parts.",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Fill all four partial products, then add them. Find 23 × 14 by splitting it into parts.",
+        "responsePrompt": "Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/draft6/lessonAuthor.ts",
+          "sha256": "4313491d6fa001a0b915b7d0dfcd6a3c933f91b3d877b4f1bad3c90095ca1e31",
+          "license": "Original factory recipe or source verification record; review only",
+          "attribution": "LiberiaLearn draft.6; map geometry UNMIL / OCHA ROWCA via geoBoundaries, see references.json",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "generated-3",
+      "slot": "blocks",
+      "index": 2,
+      "type": "NUMERIC_RESPONSE",
+      "blockSha256": "4cdff3fa54f44cb5199f31a879140276884ad441e787d8e0049f0be7d0442705",
+      "objectiveIds": [
+        "v4-demo-mult-models",
+        "v4-demo-mult-area-model"
+      ],
+      "instructionalPurpose": "Type a numeric answer with its unit and get feedback that names the mistake. Learner action: Use the model, complete its task, and explain what the representation shows.",
+      "misconceptionIds": [
+        "generated-math-misconception"
+      ],
+      "responseSignals": [
+        {
+          "misconceptionId": "generated-math-misconception",
+          "responsePattern": "guided-product-one-total:NUMBER:212",
+          "feedback": "You counted only tens-times-tens and ones-times-ones. Include 20 times 4 and 3 times 10 too."
+        },
+        {
+          "misconceptionId": "generated-math-misconception",
+          "responsePattern": "guided-product-one-total:NUMBER:115",
+          "feedback": "The 1 tens in 14 means 10, not 1. Preserve place value in the tens partial product."
+        }
+      ],
+      "accessibility": {
+        "textAlternative": "Calculate 23 times 14. Explain how every partial rectangle is counted. Total: write your answer.",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Calculate 23 times 14. Explain how every partial rectangle is counted. Total: write your answer.",
+        "responsePrompt": "Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/draft6/lessonAuthor.ts",
+          "sha256": "4313491d6fa001a0b915b7d0dfcd6a3c933f91b3d877b4f1bad3c90095ca1e31",
+          "license": "Original factory recipe or source verification record; review only",
+          "attribution": "LiberiaLearn draft.6; map geometry UNMIL / OCHA ROWCA via geoBoundaries, see references.json",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "generated-3",
+      "slot": "blocks",
+      "index": 3,
+      "type": "NUMERIC_RESPONSE",
+      "blockSha256": "2eb59361e124ad5a168df6cc5aabeeda63968ff78b9c98bea29c68dfc5944002",
+      "objectiveIds": [
+        "v4-demo-mult-models",
+        "v4-demo-mult-area-model"
+      ],
+      "instructionalPurpose": "Type a numeric answer with its unit and get feedback that names the mistake. Learner action: Use the model, complete its task, and explain what the representation shows.",
+      "misconceptionIds": [
+        "generated-math-misconception"
+      ],
+      "responseSignals": [
+        {
+          "misconceptionId": "generated-math-misconception",
+          "responsePattern": "guided-product-two-total:NUMBER:112",
+          "feedback": "You counted only tens-times-tens and ones-times-ones. Include 10 times 2 and 6 times 10 too."
+        },
+        {
+          "misconceptionId": "generated-math-misconception",
+          "responsePattern": "guided-product-two-total:NUMBER:48",
+          "feedback": "The 1 tens in 12 means 10, not 1. Preserve place value in the tens partial product."
+        }
+      ],
+      "accessibility": {
+        "textAlternative": "Calculate 16 times 12. Explain how every partial rectangle is counted. Total: write your answer.",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Calculate 16 times 12. Explain how every partial rectangle is counted. Total: write your answer.",
+        "responsePrompt": "Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/draft6/lessonAuthor.ts",
+          "sha256": "4313491d6fa001a0b915b7d0dfcd6a3c933f91b3d877b4f1bad3c90095ca1e31",
+          "license": "Original factory recipe or source verification record; review only",
+          "attribution": "LiberiaLearn draft.6; map geometry UNMIL / OCHA ROWCA via geoBoundaries, see references.json",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "generated-4",
+      "slot": "blocks",
+      "index": 0,
+      "type": "CHECK",
+      "blockSha256": "83b84dfaff5575597c7a31ac27410026ce0f82d233d230425383d289a3baa76c",
+      "objectiveIds": [
+        "v4-demo-mult-models",
+        "v4-demo-mult-area-model"
+      ],
+      "instructionalPurpose": "Choose an answer and get feedback written for that choice. Learner action: Use the model, complete its task, and explain what the representation shows.",
+      "misconceptionIds": [
+        "generated-math-misconception"
+      ],
+      "responseSignals": [
+        {
+          "misconceptionId": "generated-math-misconception",
+          "responsePattern": "groups-independent-item:OPTION:other",
+          "feedback": "Adding row count and items per row leaves most items uncounted."
+        }
+      ],
+      "accessibility": {
+        "textAlternative": "Which multiplication and sum represent six rows of five? Options: 6 x 5 = 5 + 5 + 5 + 5 + 5 + 5 = 30; 6 + 5 = 11.",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Which multiplication and sum represent six rows of five? Options: 6 x 5 = 5 + 5 + 5 + 5 + 5 + 5 = 30; 6 + 5 = 11.",
+        "responsePrompt": "Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/draft6/lessonAuthor.ts",
+          "sha256": "4313491d6fa001a0b915b7d0dfcd6a3c933f91b3d877b4f1bad3c90095ca1e31",
+          "license": "Original factory recipe or source verification record; review only",
+          "attribution": "LiberiaLearn draft.6; map geometry UNMIL / OCHA ROWCA via geoBoundaries, see references.json",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "generated-4",
+      "slot": "blocks",
+      "index": 1,
+      "type": "NUMERIC_RESPONSE",
+      "blockSha256": "3bb82f38eb1a85c5de253e599946e05e0d7bdfcba7cc63345b8d019845b1646e",
+      "objectiveIds": [
+        "v4-demo-mult-models",
+        "v4-demo-mult-area-model"
+      ],
+      "instructionalPurpose": "Type a numeric answer with its unit and get feedback that names the mistake. Learner action: Use the model, complete its task, and explain what the representation shows.",
+      "misconceptionIds": [
+        "generated-math-misconception"
+      ],
+      "responseSignals": [
+        {
+          "misconceptionId": "generated-math-misconception",
+          "responsePattern": "independent-product-one-total:NUMBER:608",
+          "feedback": "You counted only tens-times-tens and ones-times-ones. Include 30 times 4 and 2 times 20 too."
+        },
+        {
+          "misconceptionId": "generated-math-misconception",
+          "responsePattern": "independent-product-one-total:NUMBER:192",
+          "feedback": "The 2 tens in 24 means 20, not 2. Preserve place value in the tens partial product."
+        }
+      ],
+      "accessibility": {
+        "textAlternative": "Calculate 32 times 24. Explain how every partial rectangle is counted. Total: write your answer.",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Calculate 32 times 24. Explain how every partial rectangle is counted. Total: write your answer.",
+        "responsePrompt": "Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/draft6/lessonAuthor.ts",
+          "sha256": "4313491d6fa001a0b915b7d0dfcd6a3c933f91b3d877b4f1bad3c90095ca1e31",
+          "license": "Original factory recipe or source verification record; review only",
+          "attribution": "LiberiaLearn draft.6; map geometry UNMIL / OCHA ROWCA via geoBoundaries, see references.json",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "generated-4",
+      "slot": "blocks",
+      "index": 2,
+      "type": "NUMERIC_RESPONSE",
+      "blockSha256": "10f4e1faeee5803bbeaf1a862c90248a56603c794c32c104b97c78ca8af42a34",
+      "objectiveIds": [
+        "v4-demo-mult-models",
+        "v4-demo-mult-area-model"
+      ],
+      "instructionalPurpose": "Type a numeric answer with its unit and get feedback that names the mistake. Learner action: Use the model, complete its task, and explain what the representation shows.",
+      "misconceptionIds": [
+        "generated-math-misconception"
+      ],
+      "responseSignals": [
+        {
+          "misconceptionId": "generated-math-misconception",
+          "responsePattern": "independent-product-two-total:NUMBER:156",
+          "feedback": "You counted only tens-times-tens and ones-times-ones. Include 10 times 8 and 7 times 10 too."
+        },
+        {
+          "misconceptionId": "generated-math-misconception",
+          "responsePattern": "independent-product-two-total:NUMBER:153",
+          "feedback": "The 1 tens in 18 means 10, not 1. Preserve place value in the tens partial product."
+        }
+      ],
+      "accessibility": {
+        "textAlternative": "Calculate 17 times 18. Explain how every partial rectangle is counted. Total: write your answer.",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Calculate 17 times 18. Explain how every partial rectangle is counted. Total: write your answer.",
+        "responsePrompt": "Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/draft6/lessonAuthor.ts",
+          "sha256": "4313491d6fa001a0b915b7d0dfcd6a3c933f91b3d877b4f1bad3c90095ca1e31",
+          "license": "Original factory recipe or source verification record; review only",
+          "attribution": "LiberiaLearn draft.6; map geometry UNMIL / OCHA ROWCA via geoBoundaries, see references.json",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "generated-5",
+      "slot": "blocks",
+      "index": 0,
+      "type": "MISTAKE_ANALYSIS",
+      "blockSha256": "8f172c5a90add17776fe70aede3487e855be8f7a8dfe0fc29b22c18b5d86732d",
+      "objectiveIds": [
+        "v4-demo-mult-models",
+        "v4-demo-mult-area-model"
+      ],
+      "instructionalPurpose": "Diagnose a worked attempt that contains a common misconception. Learner action: Use the model, complete its task, and explain what the representation shows.",
+      "misconceptionIds": [
+        "generated-math-misconception"
+      ],
+      "responseSignals": [
+        {
+          "misconceptionId": "generated-math-misconception",
+          "responsePattern": "OPTION:round",
+          "feedback": "These are exact whole-number counts. Rounding does not recover omitted rectangles."
+        }
+      ],
+      "accessibility": {
+        "textAlternative": "24 x 13 A learner wrote: 20 x 10 + 4 x 3 = 212 Which diagnosis accounts for the missing area? Options: The 20 x 3 and 4 x 10 rectangles were left out.; The total should be rounded to 300 because both factors have two digits..",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: 24 x 13 A learner wrote: 20 x 10 + 4 x 3 = 212 Which diagnosis accounts for the missing area? Options: The 20 x 3 and 4 x 10 rectangles were left out.; The total should be rounded to 300 because both factors have two digits..",
+        "responsePrompt": "Use the model, complete its task, and explain what the representation shows. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/draft6/lessonAuthor.ts",
+          "sha256": "4313491d6fa001a0b915b7d0dfcd6a3c933f91b3d877b4f1bad3c90095ca1e31",
+          "license": "Original factory recipe or source verification record; review only",
+          "attribution": "LiberiaLearn draft.6; map geometry UNMIL / OCHA ROWCA via geoBoundaries, see references.json",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "generated-6",
+      "slot": "blocks",
+      "index": 0,
+      "type": "NUMERIC_RESPONSE",
+      "blockSha256": "849d014415a0dd630f501732dfa62003840ea36f325ee91823ac0f3e4a2f5509",
+      "objectiveIds": [
+        "v4-demo-mult-models",
+        "v4-demo-mult-area-model"
+      ],
+      "instructionalPurpose": "Type a numeric answer with its unit and get feedback that names the mistake. Learner action: How many audience chairs remain after reserving 12? Explain the order of operations and check with an estimate.",
+      "misconceptionIds": [
+        "generated-math-misconception"
+      ],
+      "responseSignals": [
+        {
+          "misconceptionId": "generated-math-misconception",
+          "responsePattern": "seating-total-total:NUMBER:132",
+          "feedback": "You counted only tens-times-tens and ones-times-ones. Include 10 times 4 and 8 times 10 too."
+        },
+        {
+          "misconceptionId": "generated-math-misconception",
+          "responsePattern": "seating-total-total:NUMBER:90",
+          "feedback": "The 1 tens in 14 means 10, not 1. Preserve place value in the tens partial product."
+        }
+      ],
+      "accessibility": {
+        "textAlternative": "Calculate 18 times 14. Explain how every partial rectangle is counted. Total: write your answer.",
+        "keyboardPath": "Tab to each labelled control. Use arrow keys and Space to select; type responses; activate Check or Show next step with Enter.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Calculate 18 times 14. Explain how every partial rectangle is counted. Total: write your answer.",
+        "responsePrompt": "How many audience chairs remain after reserving 12? Explain the order of operations and check with an estimate. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/draft6/lessonAuthor.ts",
+          "sha256": "4313491d6fa001a0b915b7d0dfcd6a3c933f91b3d877b4f1bad3c90095ca1e31",
+          "license": "Original factory recipe or source verification record; review only",
+          "attribution": "LiberiaLearn draft.6; map geometry UNMIL / OCHA ROWCA via geoBoundaries, see references.json",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    }
+  ],
+  "assessmentBoundary": {
+    "player": "ASSESSMENT_PLAYER_V2",
+    "scoring": "SERVER_AUTHORITY",
+    "protectedKeysIncluded": false,
+    "canonicalMasteryMutation": false,
+    "offlineEvidence": "CAPTURE_ONLY_NOT_OFFICIAL"
+  }
+}

@@ -1,6 +1,7 @@
 import type { PrismaClient } from "@prisma/client";
 import { SCHOOL_DEFS, seedNationalDemo } from "@/scripts/seed-demo";
 import { isProduction, isStaging } from "@/lib/environment";
+import { previewAutomationDisabled } from "@/lib/previewSideEffects";
 
 export function getDemoSchoolIdsFromEnv(): string[] {
   return (process.env.DEMO_SCHOOL_IDS ?? "")
@@ -18,6 +19,25 @@ export function canRunDemoResetInCurrentEnv(): boolean {
     return isLiveDemoResetEnabled();
   }
   return true;
+}
+
+/**
+ * A deployed Preview with DEMO_MODE classifies as demo, not staging. Its synthetic data
+ * is changed only by the operator setup, so demo mutation there needs the staging opt-in.
+ * Checked after authority so refusals stay authenticated.
+ */
+export function isDemoMutationAllowedForDeployment(): boolean {
+  return !previewAutomationDisabled() || isLiveDemoResetEnabled();
+}
+
+/**
+ * The schools a demo operation may touch: DEMO_SCHOOL_IDS when configured (every entry must be a seeded demo school),
+ * otherwise every seeded demo school (SCHOOL_DEFS). Never a real school (PROD-CFG-01-CODE).
+ */
+export function resolveDemoSchoolScope(): { schoolIds: string[]; unknown: string[] } {
+  const configured = getDemoSchoolIdsFromEnv();
+  if (configured.length === 0) return { schoolIds: SCHOOL_DEFS.map((school) => school.id), unknown: [] };
+  return { schoolIds: configured, unknown: validateDemoSchoolIds(configured) };
 }
 
 export function validateDemoSchoolIds(schoolIds: string[]): string[] {

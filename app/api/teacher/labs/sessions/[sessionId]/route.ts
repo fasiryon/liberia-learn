@@ -1,6 +1,8 @@
+// route-policy: auth=session; scope=record; authority=class-teacher-subject-coteacher-or-school-admin; rationale=one learner's lab session of a class's scheduled work: GET needs class.read.learning and PATCH (a teacher score 0-100 with feedback, an assessment judgement) needs class.assessment.review from lib/authz/classAuthority for that class (class teacher or an ADMIN of its school; a subject co-teacher only when VirtualLab.subject is exactly the assigned Subject); other teachers 403 before any lab read or write; no scheduled work, another school or unknown session 404 (AT-GRADE-01-LSID)
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { requireRole } from "@/lib/auth";
+import { requireRole, type SessionUser } from "@/lib/auth";
+import { authorizeClassAccess, isClassAccessDenied, isExactSubjectValue, type ClassFunction } from "@/lib/authz/classAuthority";
 import { prisma } from "@/lib/db";
 import { logAudit } from "@/lib/audit";
 import { isVirtualLabsEnabled } from "@/lib/serverFlags";
@@ -17,6 +19,7 @@ type AuthorizedSessionResult =
       ok: true;
       session: any;
       scheduledWork: any;
+      lab: { labId: string; title: string; payload: unknown; subject: string } | null;
     }
   | {
       ok: false;
@@ -24,11 +27,16 @@ type AuthorizedSessionResult =
       status: number;
     };
 
+/**
+ * The session, its scheduled work and its lab, when this user holds `fn` for the session's class (AT-GRADE-01-LSID):
+ * whole-class authority (class teacher or school ADMIN), or a subject co-teacher of that class when the lab's subject is
+ * exactly their assigned Subject. Unknown, unscheduled or other-school sessions are 404; no class basis is 403.
+ */
 async function resolveAuthorizedSession(
   sessionId: string,
-  userId: string,
+  user: SessionUser,
   schoolId: string,
-  role: string
+  fn: ClassFunction
 ): Promise<AuthorizedSessionResult> {
   const session = await prisma.labSession.findUnique({
     where: { id: sessionId },
@@ -56,12 +64,21 @@ async function resolveAuthorizedSession(
     return { ok: false, error: "Not found", status: 404 };
   }
 
-  const isAdminUser = role === "ADMIN";
-  if (!isAdminUser && scheduledWork.class.teacherId !== userId) {
+  // Whole-class authority, or a co-teacher of this class (subject_required) decided by the lab's exact subject.
+  const classAccess = await authorizeClassAccess(user, { classId: scheduledWork.classId, fn });
+  if (isClassAccessDenied(classAccess) && classAccess.reason !== "subject_required") {
+    return { ok: false, error: "Forbidden", status: 403 };
+  }
+  const lab = await prisma.virtualLab.findUnique({
+    where: { labId: session.labId },
+    select: { labId: true, title: true, payload: true, subject: true },
+  });
+  if (!classAccess.allowed && !(lab && isExactSubjectValue(lab.subject) &&
+      (await authorizeClassAccess(user, { classId: scheduledWork.classId, subject: lab.subject, fn })).allowed)) {
     return { ok: false, error: "Forbidden", status: 403 };
   }
 
-  return { ok: true, session, scheduledWork };
+  return { ok: true, session, scheduledWork, lab };
 }
 
 export async function GET(
@@ -78,15 +95,12 @@ export async function GET(
       return NextResponse.json({ error: "No school context" }, { status: 400 });
     }
 
-    const authorized = await resolveAuthorizedSession(params.sessionId, user.id, user.schoolId, user.role);
+    const authorized = await resolveAuthorizedSession(params.sessionId, user, user.schoolId, "class.read.learning");
     if ("error" in authorized) {
       return NextResponse.json({ error: authorized.error }, { status: authorized.status });
     }
 
-    const lab = await prisma.virtualLab.findUnique({
-      where: { labId: authorized.session.labId },
-      select: { labId: true, title: true, payload: true },
-    });
+    const lab = authorized.lab ? { labId: authorized.lab.labId, title: authorized.lab.title, payload: authorized.lab.payload } : null;
 
     return NextResponse.json({
       session: authorized.session,
@@ -112,7 +126,8 @@ export async function PATCH(
       return NextResponse.json({ error: "No school context" }, { status: 400 });
     }
 
-    const authorized = await resolveAuthorizedSession(params.sessionId, user.id, user.schoolId, user.role);
+    // A teacher score is an assessment judgement (CoS ruling): class.assessment.review, not class.feedback.
+    const authorized = await resolveAuthorizedSession(params.sessionId, user, user.schoolId, "class.assessment.review");
     if ("error" in authorized) {
       return NextResponse.json({ error: authorized.error }, { status: authorized.status });
     }

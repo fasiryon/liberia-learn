@@ -6,6 +6,7 @@ const mockIsVirtualLabsEnabled = vi.hoisted(() => vi.fn());
 const mockLabSessionFindUnique = vi.hoisted(() => vi.fn());
 const mockScheduledWorkFindUnique = vi.hoisted(() => vi.fn());
 const mockVirtualLabFindUnique = vi.hoisted(() => vi.fn());
+const mockClassFindUnique = vi.hoisted(() => vi.fn());
 const mockLabSessionUpdate = vi.hoisted(() => vi.fn());
 
 vi.mock("@/lib/auth", () => ({
@@ -36,6 +37,9 @@ vi.mock("@/lib/db", () => ({
     virtualLab: {
       findUnique: mockVirtualLabFindUnique,
     },
+    // AT-GRADE-01-LSID: the route decides through lib/authz/classAuthority, which reads the class and assignments.
+    class: { findUnique: mockClassFindUnique },
+    teacherAssignment: { findMany: async () => [] },
   },
 }));
 
@@ -65,6 +69,7 @@ const SESSION = {
 };
 const SCHEDULED_WORK = {
   id: "scheduled-1",
+  classId: "class-1",
   class: { teacherId: "teacher-1", schoolId: "school-1", name: "JSS 1 Science" },
 };
 
@@ -75,6 +80,7 @@ describe("teacher lab review route", () => {
     mockRequireRole.mockResolvedValue(TEACHER);
     mockLabSessionFindUnique.mockResolvedValue(SESSION);
     mockScheduledWorkFindUnique.mockResolvedValue(SCHEDULED_WORK);
+    mockClassFindUnique.mockResolvedValue({ schoolId: "school-1", teacherId: "teacher-1" });
     mockVirtualLabFindUnique.mockResolvedValue({
       labId: "lab-1",
       title: "Leaf Growth Investigation",
@@ -89,6 +95,7 @@ describe("teacher lab review route", () => {
       ...SCHEDULED_WORK,
       class: { ...SCHEDULED_WORK.class, teacherId: "teacher-other" },
     });
+    mockClassFindUnique.mockResolvedValue({ schoolId: "school-1", teacherId: "teacher-other" });
 
     const response = await GET(makeRequest("GET", "http://localhost/api/teacher/labs/sessions/session-1"), {
       params: { sessionId: "session-1" },

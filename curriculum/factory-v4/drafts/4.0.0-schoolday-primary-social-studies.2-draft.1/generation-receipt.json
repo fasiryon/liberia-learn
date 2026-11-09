@@ -1,0 +1,34 @@
+{
+  "version": "4.0.0-schoolday-primary-social-studies.2-draft.1",
+  "inputsSha256": "d9c7f0ba04a82527627b9bd30e52627a2cfa4e86cad87659171dfc7286a9de32",
+  "independentDeterministicBuilds": 2,
+  "baselineDraft6ReceiptSha256": "c59d3623d3bd558398a50e30de62688bc066ca22238c3d188b2ef88c9cbe04ab",
+  "packages": [
+    {
+      "key": "g4-social-studies-coast-inland-evidence",
+      "programOrderId": "GO-G04-P4-SOCIAL_STUDIES-U1",
+      "packageHash": "924e57dcc56e65c20eaedb5133c70d84a433f935c898349ac053df22b584cd04",
+      "candidateSha256": "3808f2a1237d0087852f813547ef3f7f77cef549d308dd66d737b09d1a52e1bb"
+    }
+  ],
+  "productionWrites": false,
+  "approved": false,
+  "published": false,
+  "released": false,
+  "activated": false,
+  "previewEnabled": false,
+  "files": {
+    "g4-social-studies-coast-inland-evidence/candidate.json": "c64846eaa98f6ca078f268ac97eae0064379528e0e274b0b4b5d727b1cc2cf72",
+    "g4-social-studies-coast-inland-evidence/visual-teaching.json": "c299b3fb8843ea72aa6f68e106f9420366178c870db3258db506ea217d032343",
+    "g4-social-studies-coast-inland-evidence/blueprint.json": "d2db031bd2a262152df0ef921f222d461695ba214ebcad769534630353c3f828",
+    "g4-social-studies-coast-inland-evidence/factory-artifact.json": "4646e791b8c16dc8664b6b12505014999344a79c92b64234c43816f010ac844d",
+    "g4-social-studies-coast-inland-evidence/learner-projection.json": "8e2a361acadc95b6bd1119107acae4c2cb026cb0e4fec59680c1b59833a8e928",
+    "g4-social-studies-coast-inland-evidence/factory-receipt.json": "cc19a7e6f67de66c857d323383882f54afde10d9abf39067f76fabc84c980487",
+    "g4-social-studies-coast-inland-evidence/paper-alternative.txt": "8c1025a5997a582796182c70e2b245c64a91aaa89106b5a51f40b091fcbcfd11",
+    "g4-social-studies-coast-inland-evidence/academic-review.json": "f41d590a1391414c669d88ba9ff10e8cd60bf76c2adbd6c922f6bd6803c577d0",
+    "g4-social-studies-coast-inland-evidence/teacher-guide.json": "7c5525b711958cc8bdcd564efc55b335ea3dfec51e60353f6e20098ae612d808",
+    "g4-social-studies-coast-inland-evidence/manifest.json": "092e6eed8b611a804dc99cbc563c7c1af92d66afa11c9842bc09e8759757c455",
+    "review/complete-academic-packet.json": "3c9d3f47e2ef379f18d4313a72d319b91a1693f436a1c2e9db1e093cbe47ff81",
+    "review/complete-academic-packet.md": "e0e7ac911ae611aad6c332da2aaad0c2ffa3e1d1cbfae119c62fc6e10bb20953"
+  }
+}

@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/db";
 import { listAgents } from "@/lib/agents/registry";
 import { getAllControls } from "@/lib/agents/control";
-import { isAgentEnabled } from "@/lib/agents/flags";
+import { isAgentEnabled, getAgentActivationState, type AgentActivationSource } from "@/lib/agents/flags";
 import { dayKeyUTC } from "@/lib/agents/costAccounting";
 import type { AgentRole } from "@/lib/agents/types";
 
@@ -16,6 +16,7 @@ export interface AgentStatRow {
   envEnabled: boolean;
   override: boolean | null;
   effectiveEnabled: boolean;
+  effectiveStateSource: AgentActivationSource;
   invocationCount: number;
   costThisWeekUSD: number;
 }
@@ -40,6 +41,7 @@ export async function listAgentsWithStats(now: Date = new Date()): Promise<Agent
   return listAgents().map((a) => {
     const envEnabled = isAgentEnabled(a.featureFlag);
     const override = controls[a.name] ?? null;
+    const state = getAgentActivationState(a.featureFlag, override, envEnabled);
     return {
       name: a.name,
       description: a.description,
@@ -48,7 +50,8 @@ export async function listAgentsWithStats(now: Date = new Date()): Promise<Agent
       featureFlag: a.featureFlag,
       envEnabled,
       override,
-      effectiveEnabled: override !== null ? override : envEnabled,
+      effectiveEnabled: state.enabled,
+      effectiveStateSource: state.source,
       invocationCount: countByAgent.get(a.name) ?? 0,
       costThisWeekUSD: weekCostByAgent.get(a.name) ?? 0,
     };

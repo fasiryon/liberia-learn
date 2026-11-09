@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-// route-policy: auth=session; scope=tenant; authority=teacher-admin-governed-override; rationale=human choice is restricted to server-derived published candidates and assigned classes
+// route-policy: auth=session; scope=record; authority=class-teacher-math-coteacher-or-school-admin; rationale=a human override, restricted to server-derived published candidates, for a Grade 4 learner reached only through a class the learner is enrolled in where lib/authz/classAuthority grants class.read.learning with subject MATH (class teacher or MATH co-teacher), or by an ADMIN of the learner's school; others get the non-disclosing 404 before any decision is written (AT-GRADE-01 batch 3, CoS ruling 8)
 import { requireRole } from "@/lib/auth";
-import { prisma } from "@/lib/db";
 import { decideGrade4LearningAction } from "@/lib/learning-authority/learningDecisionStore";
-import { listAuthorizedClassIdsForTeacher } from "@/lib/records/schoolOperations";
+import { findStudentThroughClassAuthority } from "@/lib/authz/studentClassAccess";
 
 export const dynamic = "force-dynamic";
 
@@ -18,12 +17,8 @@ export async function POST(req: NextRequest) {
       Object.keys(body).some((key) => !["studentId", "candidateId", "reason", "idempotencyKey"].includes(key))) {
       return NextResponse.json({ error: "invalid_override_payload" }, { status: 400 });
     }
-    const classIds = actor.role === "TEACHER" ? await listAuthorizedClassIdsForTeacher(actor.id, actor.schoolId) : null;
-    const student = await prisma.student.findFirst({
-      where: { id: body.studentId, currentGrade: 4, user: { schoolId: actor.schoolId },
-        ...(classIds ? { enrollments: { some: { Class: { schoolId: actor.schoolId, id: { in: classIds } } } } } : {}) },
-      select: { id: true, userId: true },
-    });
+    // CoS ruling 8: the class teacher or a co-teacher assigned MATH for the learner's class; an ADMIN school-scoped.
+    const student = await findStudentThroughClassAuthority(actor, body.studentId, { fn: "class.read.learning", subject: "MATH", studentWhere: { currentGrade: 4 } });
     if (!student) return NextResponse.json({ error: "student_not_found" }, { status: 404 });
     const result = await decideGrade4LearningAction({
       schoolId: actor.schoolId, studentId: student.id, studentUserId: student.userId,

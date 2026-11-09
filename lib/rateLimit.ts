@@ -78,6 +78,14 @@ function isBuildPhase() {
 }
 
 function isProductionEnvironment() {
+  // Deployment identity wins over DEMO_MODE and test flags. Preview is isolated,
+  // and its deliberately absent production Redis must not make login impossible.
+  if (process.env.VERCEL_ENV === "production") return true;
+  if (["preview", "staging"].includes(process.env.VERCEL_ENV ?? "")) return false;
+  const disposableUrls = ["postgresql://postgres:postgres@localhost:5432/e2e", "postgresql://postgres:postgres@127.0.0.1:5432/e2e"];
+  if (!process.env.VERCEL_ENV && !process.env.VERCEL && process.env.CI === "true" &&
+      process.env.E2E_SYNTHETIC === "1" && disposableUrls.includes(process.env.DATABASE_URL ?? "") &&
+      process.env.DIRECT_URL === process.env.DATABASE_URL) return false;
   return process.env.NODE_ENV === "production";
 }
 

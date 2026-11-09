@@ -1,0 +1,712 @@
+{
+  "contractVersion": "lesson-experience/1.0.0",
+  "id": "schoolday:g4-science-food-path-and-absorption",
+  "version": "4.0.0-schoolday-primary-science.2-draft.1",
+  "title": "Model food's path and explain absorption",
+  "subject": "SCIENCE",
+  "grade": 4,
+  "ageBand": "UPPER_PRIMARY",
+  "authority": {
+    "status": "CURRICULUM_V2_DRAFT",
+    "note": "Original LiberiaLearn instructional draft. Academic review, standards mapping, rights review and release authorization are pending.",
+    "candidateContentIds": [],
+    "releaseId": null,
+    "releaseIdentity": null
+  },
+  "objectives": [
+    {
+      "id": "g4-science-food-path-and-absorption-o1",
+      "statement": "Arrange the main stages of the digestive tract and distinguish that path from organs supplying digestive juices.",
+      "conceptId": "g4-science-food-path-and-absorption-o1",
+      "standardCodes": [],
+      "skillIds": []
+    },
+    {
+      "id": "g4-science-food-path-and-absorption-o2",
+      "statement": "Explain absorption as digested nutrients crossing the small-intestine wall, using a counted paper model.",
+      "conceptId": "g4-science-food-path-and-absorption-o2",
+      "standardCodes": [],
+      "skillIds": []
+    },
+    {
+      "id": "g4-science-food-path-and-absorption-o3",
+      "statement": "Use a model to explain an organ's job and identify something the model cannot show.",
+      "conceptId": "g4-science-food-path-and-absorption-o3",
+      "standardCodes": [],
+      "skillIds": []
+    }
+  ],
+  "scenes": [
+    {
+      "id": "predict-path",
+      "type": "PRACTICE",
+      "title": "Where does a mouthful go?",
+      "objectiveIds": [
+        "g4-science-food-path-and-absorption-o1",
+        "g4-science-food-path-and-absorption-o2",
+        "g4-science-food-path-and-absorption-o3"
+      ],
+      "content": {
+        "body": "A fictional school group in Buchanan is preparing a poster about what happens after eating rice. Before using the poster, sketch your own idea of the route. Keep your first drawing so that you can later explain a change."
+      },
+      "interaction": {
+        "kind": "FREE_RESPONSE",
+        "prompts": [
+          {
+            "id": "predict-path-response-0",
+            "prompt": "What route do you predict, and where might useful parts leave it? Label one uncertainty in your first model.",
+            "minLength": 20
+          }
+        ]
+      },
+      "tools": {
+        "allowed": [],
+        "prohibited": []
+      },
+      "accessibility": {
+        "textAlternative": "A fictional school group in Buchanan is preparing a poster about what happens after eating rice. Before using the poster, sketch your own idea of the route. Keep your first drawing so that you can later explain a change. What route do you predict, and where might useful parts leave it? Label one uncertainty in your first model.",
+        "keyboardOperable": true,
+        "reducedMotionSafe": true,
+        "captionsRequired": false
+      },
+      "offline": {
+        "mode": "FULL",
+        "fallback": "Use the printed text, diagrams and questions with paper and pencil. Responses can be spoken and scribed."
+      },
+      "evidence": {
+        "kind": "NONE"
+      },
+      "completion": {
+        "kind": "ALL_RESPONSES_WRITTEN"
+      },
+      "teaching": {
+        "phase": "PREDICT",
+        "blocks": []
+      }
+    },
+    {
+      "id": "build-route",
+      "type": "EXPLANATION",
+      "title": "Build a connected food route",
+      "objectiveIds": [
+        "g4-science-food-path-and-absorption-o1",
+        "g4-science-food-path-and-absorption-o3"
+      ],
+      "content": {
+        "body": "Use large paper cards and a paper food token. Move the token from mouth to anus through the route you arrange. Chewing starts breakdown; the esophagus moves food; the stomach mixes it. Digestion continues in the small intestine, where most nutrients are absorbed. The large intestine absorbs water. Its rectum stores stool before it leaves through the anus. The liver and pancreas supply juices; swallowed food does not pass through them."
+      },
+      "interaction": {
+        "kind": "NONE"
+      },
+      "tools": {
+        "allowed": [],
+        "prohibited": []
+      },
+      "accessibility": {
+        "textAlternative": "Use large paper cards and a paper food token. Move the token from mouth to anus through the route you arrange. Chewing starts breakdown; the esophagus moves food; the stomach mixes it. Digestion continues in the small intestine, where most nutrients are absorbed. The large intestine absorbs water. Its rectum stores stool before it leaves through the anus. The liver and pancreas supply juices; swallowed food does not pass through them. Order the simplified main stages. The rectum is the final part of the large intestine. organ: Mouth. organ: Esophagus. organ: Stomach. organ: Small intestine. organ: Large intestine. organ part: Rectum. opening: Anus. Separate the food route from organs supplying juices. Groups: Swallowed food passes through, Supplies juices to the route. Cards: Stomach, Small intestine, Liver, Pancreas.",
+        "keyboardOperable": true,
+        "reducedMotionSafe": true,
+        "captionsRequired": false
+      },
+      "offline": {
+        "mode": "FULL",
+        "fallback": "Use the printed text, diagrams and questions with paper and pencil. Responses can be spoken and scribed."
+      },
+      "evidence": {
+        "kind": "NONE"
+      },
+      "completion": {
+        "kind": "VIEWED"
+      },
+      "teaching": {
+        "phase": "EXPERIMENT",
+        "blocks": [
+          {
+            "type": "SEQUENCE",
+            "id": "food-route",
+            "prompt": "Order the simplified main stages. The rectum is the final part of the large intestine.",
+            "events": [
+              {
+                "id": "mouth",
+                "label": "Mouth",
+                "marker": "organ",
+                "detail": "Chewing and saliva start digestion."
+              },
+              {
+                "id": "esophagus",
+                "label": "Esophagus",
+                "marker": "organ",
+                "detail": "Moves swallowed food toward the stomach."
+              },
+              {
+                "id": "stomach",
+                "label": "Stomach",
+                "marker": "organ",
+                "detail": "Mixes food with digestive juices."
+              },
+              {
+                "id": "small-intestine",
+                "label": "Small intestine",
+                "marker": "organ",
+                "detail": "Digestion continues and most nutrient absorption occurs."
+              },
+              {
+                "id": "large-intestine",
+                "label": "Large intestine",
+                "marker": "organ",
+                "detail": "Absorbs water and forms stool."
+              },
+              {
+                "id": "rectum",
+                "label": "Rectum",
+                "marker": "organ part",
+                "detail": "The end of the large intestine stores stool."
+              },
+              {
+                "id": "anus",
+                "label": "Anus",
+                "marker": "opening",
+                "detail": "Stool leaves the tract here."
+              }
+            ]
+          },
+          {
+            "type": "SORT",
+            "id": "route-or-juices",
+            "prompt": "Separate the food route from organs supplying juices.",
+            "misconceptionId": "food-through-support-organs",
+            "groups": [
+              {
+                "id": "path",
+                "label": "Swallowed food passes through"
+              },
+              {
+                "id": "supply",
+                "label": "Supplies juices to the route"
+              }
+            ],
+            "cards": [
+              {
+                "id": "route-stomach",
+                "text": "Stomach",
+                "group": "path",
+                "why": "Food enters this part of the tube."
+              },
+              {
+                "id": "route-small",
+                "text": "Small intestine",
+                "group": "path",
+                "why": "Food moves here after the stomach."
+              },
+              {
+                "id": "supply-liver",
+                "text": "Liver",
+                "group": "supply",
+                "why": "Bile reaches the route; the swallowed mouthful does not travel through the liver."
+              },
+              {
+                "id": "supply-pancreas",
+                "text": "Pancreas",
+                "group": "supply",
+                "why": "Its digestive juices enter the small intestine."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "model-transfer",
+      "type": "GUIDED_EXAMPLE",
+      "title": "Crossing a wall does not mean disappearing",
+      "objectiveIds": [
+        "g4-science-food-path-and-absorption-o2",
+        "g4-science-food-path-and-absorption-o3"
+      ],
+      "content": {
+        "body": "Draw two regions: inside the small intestine, and the rest of the body. Use twelve large paper tokens for already-digested nutrients. Move five across the boundary, then five more. Keep transferred tokens in the body region. This represents absorption, not whole food leaving the stomach. The counts are invented for the model; they are not a human absorption rate."
+      },
+      "interaction": {
+        "kind": "NONE"
+      },
+      "tools": {
+        "allowed": [],
+        "prohibited": []
+      },
+      "accessibility": {
+        "textAlternative": "Draw two regions: inside the small intestine, and the rest of the body. Use twelve large paper tokens for already-digested nutrients. Move five across the boundary, then five more. Keep transferred tokens in the body region. This represents absorption, not whole food leaving the stomach. The counts are invented for the model; they are not a human absorption rate. Illustrative tokens left inside the model intestine. Transfer round 0 round: Tokens inside 12 tokens; Transfer round 1 round: Tokens inside 7 tokens; Transfer round 2 round: Tokens inside 2 tokens. The ten transferred tokens still exist in the model's body region. Rounds are model actions, not minutes. Where are all twelve model tokens after both transfers? Step 1: Ten tokens crossed to the body region; two remained inside the tube. 12 − 5 − 5 = 2 Step 2: Both regions still contain the original total together. 10 + 2 = 12",
+        "keyboardOperable": true,
+        "reducedMotionSafe": true,
+        "captionsRequired": false
+      },
+      "offline": {
+        "mode": "FULL",
+        "fallback": "Use the printed text, diagrams and questions with paper and pencil. Responses can be spoken and scribed."
+      },
+      "evidence": {
+        "kind": "NONE"
+      },
+      "completion": {
+        "kind": "VIEWED"
+      },
+      "teaching": {
+        "phase": "ORIENT",
+        "blocks": [
+          {
+            "type": "DATA_PLOT",
+            "id": "model-token-count",
+            "title": "Illustrative tokens left inside the model intestine",
+            "x": {
+              "label": "Transfer round",
+              "unit": "round"
+            },
+            "y": {
+              "label": "Tokens inside",
+              "unit": "tokens"
+            },
+            "series": [
+              {
+                "x": 0,
+                "y": 12
+              },
+              {
+                "x": 1,
+                "y": 7
+              },
+              {
+                "x": 2,
+                "y": 2
+              }
+            ],
+            "data": {
+              "kind": "ILLUSTRATIVE",
+              "note": "Invented paper-model counts, not measurements of human digestion."
+            },
+            "caption": "The ten transferred tokens still exist in the model's body region. Rounds are model actions, not minutes."
+          },
+          {
+            "type": "WORKED_SOLUTION",
+            "id": "account-for-tokens",
+            "problem": "Where are all twelve model tokens after both transfers?",
+            "steps": [
+              {
+                "text": "Ten tokens crossed to the body region; two remained inside the tube.",
+                "tex": "12-5-5=2"
+              },
+              {
+                "text": "Both regions still contain the original total together.",
+                "tex": "10+2=12"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "try-transfer",
+      "type": "PRACTICE",
+      "title": "Operate and check your own paper model",
+      "objectiveIds": [
+        "g4-science-food-path-and-absorption-o2",
+        "g4-science-food-path-and-absorption-o3"
+      ],
+      "content": {
+        "body": "Use fourteen large paper tokens, drawn marks or counters too large to swallow. Mark an inside region and a body region. Move nine tokens across the wall. Keep every token visible. A crossing changes its region, not whether it exists. Starting, transferred and remaining counts describe different groups. Count both regions before answering. A partner may move tokens while you direct. Keep objects away from mouths."
+      },
+      "interaction": {
+        "kind": "FREE_RESPONSE",
+        "prompts": [
+          {
+            "id": "try-transfer-response-0",
+            "prompt": "Explain what one crossing models. Name one thing these paper tokens do not show about a real intestine.",
+            "minLength": 20
+          }
+        ]
+      },
+      "tools": {
+        "allowed": [],
+        "prohibited": []
+      },
+      "accessibility": {
+        "textAlternative": "Use fourteen large paper tokens, drawn marks or counters too large to swallow. Mark an inside region and a body region. Move nine tokens across the wall. Keep every token visible. A crossing changes its region, not whether it exists. Starting, transferred and remaining counts describe different groups. Count both regions before answering. A partner may move tokens while you direct. Keep objects away from mouths. Account for the paper-model tokens. Tokens still inside after nine of fourteen cross: write your answer. Total tokens in both regions: write your answer. Explain what one crossing models. Name one thing these paper tokens do not show about a real intestine.",
+        "keyboardOperable": true,
+        "reducedMotionSafe": true,
+        "captionsRequired": false
+      },
+      "offline": {
+        "mode": "FULL",
+        "fallback": "Use the printed text, diagrams and questions with paper and pencil. Responses can be spoken and scribed."
+      },
+      "evidence": {
+        "kind": "NONE"
+      },
+      "completion": {
+        "kind": "ALL_RESPONSES_WRITTEN"
+      },
+      "teaching": {
+        "phase": "EXPERIMENT",
+        "blocks": [
+          {
+            "type": "NUMERIC_RESPONSE",
+            "id": "guided-model-count",
+            "mode": "GUIDED",
+            "prompt": "Account for the paper-model tokens.",
+            "parts": [
+              {
+                "id": "guided-model-count-0",
+                "label": "Tokens still inside after nine of fourteen cross",
+                "quantity": "OTHER",
+                "unit": {
+                  "kind": "NONE",
+                  "base": ""
+                },
+                "formativeKey": {
+                  "value": 5
+                },
+                "misconceptions": [
+                  {
+                    "value": 14,
+                    "feedback": "The nine transferred tokens are in the body region. Count only the tokens still inside the tube.",
+                    "misconceptionId": "starting-vs-remaining"
+                  }
+                ]
+              },
+              {
+                "id": "guided-model-count-1",
+                "label": "Total tokens in both regions",
+                "quantity": "OTHER",
+                "unit": {
+                  "kind": "NONE",
+                  "base": ""
+                },
+                "formativeKey": {
+                  "value": 14
+                },
+                "misconceptions": [
+                  {
+                    "value": 5,
+                    "feedback": "Five remain inside, but nine still exist in the other region. Include both regions in the total.",
+                    "misconceptionId": "absorbed-nutrients-disappear"
+                  }
+                ]
+              }
+            ],
+            "hints": [
+              "Track both regions, then check that their counts add to the starting total."
+            ],
+            "afterAttempt": [
+              "Tokens still inside after nine of fourteen cross: 5. The nine transferred tokens are in the body region. Count only the tokens still inside the tube.",
+              "Total tokens in both regions: 14. Five remain inside, but nine still exist in the other region. Include both regions in the total."
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "independent-model",
+      "type": "PRACTICE",
+      "title": "Interpret a new model independently",
+      "objectiveIds": [
+        "g4-science-food-path-and-absorption-o2",
+        "g4-science-food-path-and-absorption-o3"
+      ],
+      "content": {
+        "body": "A different paper model starts with sixteen nutrient tokens inside. Five cross during the first round, then eight more cross during the second. Use a drawing or paper tokens independently. These specified movements describe a model, not observations of a real person's digestion."
+      },
+      "interaction": {
+        "kind": "FREE_RESPONSE",
+        "prompts": [
+          {
+            "id": "independent-model-response-0",
+            "prompt": "Where are the tokens that crossed? Explain what the model can show about absorption and why it cannot tell you a real digestion time.",
+            "minLength": 20
+          }
+        ]
+      },
+      "tools": {
+        "allowed": [],
+        "prohibited": []
+      },
+      "accessibility": {
+        "textAlternative": "A different paper model starts with sixteen nutrient tokens inside. Five cross during the first round, then eight more cross during the second. Use a drawing or paper tokens independently. These specified movements describe a model, not observations of a real person's digestion. Find the count still inside after each round. After the first round: write your answer. After the second round: write your answer. Where are the tokens that crossed? Explain what the model can show about absorption and why it cannot tell you a real digestion time.",
+        "keyboardOperable": true,
+        "reducedMotionSafe": true,
+        "captionsRequired": false
+      },
+      "offline": {
+        "mode": "FULL",
+        "fallback": "Use the printed text, diagrams and questions with paper and pencil. Responses can be spoken and scribed."
+      },
+      "evidence": {
+        "kind": "NONE"
+      },
+      "completion": {
+        "kind": "ALL_RESPONSES_WRITTEN"
+      },
+      "teaching": {
+        "phase": "OBSERVE",
+        "blocks": [
+          {
+            "type": "NUMERIC_RESPONSE",
+            "id": "independent-model-count",
+            "mode": "INDEPENDENT",
+            "prompt": "Find the count still inside after each round.",
+            "parts": [
+              {
+                "id": "independent-model-count-0",
+                "label": "After the first round",
+                "quantity": "OTHER",
+                "unit": {
+                  "kind": "NONE",
+                  "base": ""
+                },
+                "formativeKey": {
+                  "value": 11
+                },
+                "misconceptions": [
+                  {
+                    "value": 5,
+                    "feedback": "Five is the count transferred. The question asks what remains inside.",
+                    "misconceptionId": "transferred-vs-remaining"
+                  }
+                ]
+              },
+              {
+                "id": "independent-model-count-1",
+                "label": "After the second round",
+                "quantity": "OTHER",
+                "unit": {
+                  "kind": "NONE",
+                  "base": ""
+                },
+                "formativeKey": {
+                  "value": 3
+                },
+                "misconceptions": [
+                  {
+                    "value": 8,
+                    "feedback": "Eight is the second transferred group. Subtract both transferred groups from the starting count.",
+                    "misconceptionId": "transferred-vs-remaining"
+                  }
+                ]
+              }
+            ],
+            "hints": [],
+            "afterAttempt": [
+              "After the first round: 11. Five is the count transferred. The question asks what remains inside.",
+              "After the second round: 3. Eight is the second transferred group. Subtract both transferred groups from the starting count."
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "explain-model",
+      "type": "PRACTICE",
+      "title": "Separate a model from evidence about a body",
+      "objectiveIds": [
+        "g4-science-food-path-and-absorption-o1",
+        "g4-science-food-path-and-absorption-o2",
+        "g4-science-food-path-and-absorption-o3"
+      ],
+      "content": {
+        "body": "Compare your first route with the organ model. Explain a change using the job of an organ. The token model helps show a transfer across a wall. It does not reproduce living tissue or measure how quickly a person's body absorbs a meal."
+      },
+      "interaction": {
+        "kind": "NONE"
+      },
+      "tools": {
+        "allowed": [],
+        "prohibited": []
+      },
+      "accessibility": {
+        "textAlternative": "Compare your first route with the organ model. Explain a change using the job of an organ. The token model helps show a transfer across a wall. It does not reproduce living tissue or measure how quickly a person's body absorbs a meal. What does moving a nutrient token into the body region represent? Options: A digested nutrient crossing the small-intestine wall.; The nutrient ceasing to exist.; A whole mouthful passing directly from stomach to liver.. Which claim cannot be established with this paper model? Options: The original tokens can be counted across two regions.; The specified transfers leave three of sixteen tokens inside.; Every pupil absorbs a real meal in exactly two minutes..",
+        "keyboardOperable": true,
+        "reducedMotionSafe": true,
+        "captionsRequired": false
+      },
+      "offline": {
+        "mode": "FULL",
+        "fallback": "Use the printed text, diagrams and questions with paper and pencil. Responses can be spoken and scribed."
+      },
+      "evidence": {
+        "kind": "NONE"
+      },
+      "completion": {
+        "kind": "VIEWED"
+      },
+      "teaching": {
+        "phase": "EXPLAIN",
+        "blocks": [
+          {
+            "type": "CHECK",
+            "id": "absorption-explanation",
+            "items": [
+              {
+                "id": "absorption-explanation-item",
+                "prompt": "What does moving a nutrient token into the body region represent?",
+                "options": [
+                  {
+                    "id": "opt-7ccaeb16ea98",
+                    "text": "A digested nutrient crossing the small-intestine wall.",
+                    "feedback": "The boundary between the two regions represents the wall across which absorption occurs."
+                  },
+                  {
+                    "id": "opt-d5c858d2dfb1",
+                    "text": "The nutrient ceasing to exist.",
+                    "feedback": "The token remains in the other region; the model does not destroy it."
+                  },
+                  {
+                    "id": "opt-7a8ab4fe6517",
+                    "text": "A whole mouthful passing directly from stomach to liver.",
+                    "feedback": "This changes both the route and what the token represents."
+                  }
+                ],
+                "formativeKey": {
+                  "expectedOptionId": "opt-7ccaeb16ea98"
+                },
+                "misconceptionId": "stomach-absorbs-everything"
+              }
+            ]
+          },
+          {
+            "type": "CHECK",
+            "id": "model-limit",
+            "items": [
+              {
+                "id": "model-limit-item",
+                "prompt": "Which claim cannot be established with this paper model?",
+                "options": [
+                  {
+                    "id": "opt-53af30f68e5f",
+                    "text": "The original tokens can be counted across two regions.",
+                    "feedback": "The two regions and tokens are visible parts of the model."
+                  },
+                  {
+                    "id": "opt-cf7daeb0f74e",
+                    "text": "The specified transfers leave three of sixteen tokens inside.",
+                    "feedback": "The model permits you to check this count directly."
+                  },
+                  {
+                    "id": "opt-ade3022f7db3",
+                    "text": "Every pupil absorbs a real meal in exactly two minutes.",
+                    "feedback": "Model transfer rounds are not a measurement of anyone's digestion time."
+                  }
+                ],
+                "formativeKey": {
+                  "expectedOptionId": "opt-ade3022f7db3"
+                },
+                "misconceptionId": "stomach-absorbs-everything"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "poster-transfer",
+      "type": "PRACTICE",
+      "title": "Improve the Buchanan school group's poster",
+      "objectiveIds": [
+        "g4-science-food-path-and-absorption-o1",
+        "g4-science-food-path-and-absorption-o2",
+        "g4-science-food-path-and-absorption-o3"
+      ],
+      "content": {
+        "body": "The fictional poster says: Food passes through the liver before reaching the stomach. The stomach absorbs all nutrients. Use the route and transfer models to replace both claims. Explain the corrections so a younger reader could follow them, while keeping the diagram's limits clear."
+      },
+      "interaction": {
+        "kind": "FREE_RESPONSE",
+        "prompts": [
+          {
+            "id": "poster-transfer-response-0",
+            "prompt": "Correct the two poster claims using the connected route and the job of the small intestine. State one limitation. For an advanced challenge, design a clearer model that distinguishes breaking food down from absorbing the resulting nutrients, and explain how you would check its clarity.",
+            "minLength": 20
+          }
+        ]
+      },
+      "tools": {
+        "allowed": [],
+        "prohibited": []
+      },
+      "accessibility": {
+        "textAlternative": "The fictional poster says: Food passes through the liver before reaching the stomach. The stomach absorbs all nutrients. Use the route and transfer models to replace both claims. Explain the corrections so a younger reader could follow them, while keeping the diagram's limits clear. Correct the two poster claims using the connected route and the job of the small intestine. State one limitation. For an advanced challenge, design a clearer model that distinguishes breaking food down from absorbing the resulting nutrients, and explain how you would check its clarity.",
+        "keyboardOperable": true,
+        "reducedMotionSafe": true,
+        "captionsRequired": false
+      },
+      "offline": {
+        "mode": "FULL",
+        "fallback": "Use the printed text, diagrams and questions with paper and pencil. Responses can be spoken and scribed."
+      },
+      "evidence": {
+        "kind": "NONE"
+      },
+      "completion": {
+        "kind": "ALL_RESPONSES_WRITTEN"
+      },
+      "teaching": {
+        "phase": "APPLY",
+        "blocks": []
+      }
+    },
+    {
+      "id": "independent-explanation",
+      "type": "MASTERY_CHECK",
+      "title": "Independent assessment unavailable",
+      "objectiveIds": [
+        "g4-science-food-path-and-absorption-o1",
+        "g4-science-food-path-and-absorption-o2",
+        "g4-science-food-path-and-absorption-o3"
+      ],
+      "content": {
+        "body": "No independent assessment is available in this draft."
+      },
+      "interaction": {
+        "kind": "ASSESSMENT_HANDOFF",
+        "assessment": {
+          "assessmentId": "schoolday:g4-science-food-path-and-absorption--future-independent-explanation",
+          "assessmentVersion": "4.0.0-schoolday-primary-science.2-draft.1",
+          "player": "ASSESSMENT_PLAYER_V2",
+          "scoring": "SERVER_AUTHORITY",
+          "objectiveIds": [
+            "g4-science-food-path-and-absorption-o1",
+            "g4-science-food-path-and-absorption-o2",
+            "g4-science-food-path-and-absorption-o3"
+          ],
+          "items": []
+        }
+      },
+      "tools": {
+        "allowed": [],
+        "prohibited": []
+      },
+      "accessibility": {
+        "textAlternative": "No independent assessment is available in this draft.",
+        "keyboardOperable": true,
+        "reducedMotionSafe": true,
+        "captionsRequired": false
+      },
+      "offline": {
+        "mode": "FULL",
+        "fallback": "No independent assessment is available in this draft."
+      },
+      "evidence": {
+        "kind": "MASTERY_RESPONSE",
+        "evidenceType": "QUIZ",
+        "objectiveIds": [
+          "g4-science-food-path-and-absorption-o1",
+          "g4-science-food-path-and-absorption-o2",
+          "g4-science-food-path-and-absorption-o3"
+        ]
+      },
+      "completion": {
+        "kind": "ALL_ANSWERED"
+      }
+    }
+  ],
+  "offline": {
+    "packageable": true,
+    "requiredAssets": []
+  }
+}

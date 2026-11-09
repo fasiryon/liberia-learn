@@ -17,6 +17,7 @@ import type { AgentDefinition } from "@/lib/agents/types";
  */
 export const moeNarrativeReportAgent: AgentDefinition = {
   name: "moe-narrative-report",
+  audience: "general",
   description:
     "Generates DRAFT narrative progress reports for MOE officials (national/district/school scope) grounded in existing MOE dashboard data. Never publishes or sends anything.",
   systemPromptKey: "agent.moe-narrative-report.system",

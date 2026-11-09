@@ -1,0 +1,139 @@
+{
+  "schemaVersion": "unit-blueprint/2.2.0",
+  "blueprintId": "g4-engineering-compare-flashlight-switches-v4",
+  "version": "4.0.0",
+  "contentHash": "e8005e8481a98168d8ccc65bda6ec8db9d92c4de9bd8abb268c29f0638ca555b",
+  "grade": 4,
+  "subject": "ENGINEERING_FOUNDATIONS",
+  "unitId": "g4-engineering-compare-flashlight-switches",
+  "title": "g4-engineering-compare-flashlight-switches",
+  "repositoryCommit": "a26ec4e3ad4cbd4419902eeb6da4e5f7500e977e",
+  "sources": [
+    {
+      "id": "v4-reference-inputs",
+      "version": "1.0.0",
+      "sha256": "8d49e6862a01673549db9ac1ad159ae385ca6aa50adfb3e46330fa6cf1191ba0",
+      "sourceRef": "curriculum/factory-v4/primary-engineering.2-inputs.json"
+    }
+  ],
+  "objectives": [
+    {
+      "id": "g4-engineering-compare-flashlight-switches-o1",
+      "kind": "LIBERIALEARN_MASTERY",
+      "statement": "Explain how a complete conducting path and an open switch affect a compatible battery and lamp circuit.",
+      "sourceId": "v4-reference-inputs",
+      "sourcePointer": "UNMAPPED_AUTHOR_OBJECTIVE:g4-engineering-compare-flashlight-switches-o1",
+      "scope": "REQUIRED",
+      "mapping": "PROPOSED"
+    },
+    {
+      "id": "g4-engineering-compare-flashlight-switches-o2",
+      "kind": "LIBERIALEARN_MASTERY",
+      "statement": "Plan a fair comparison of two contact designs, record honestly attributed observations and explain a controlled revision.",
+      "sourceId": "v4-reference-inputs",
+      "sourcePointer": "UNMAPPED_AUTHOR_OBJECTIVE:g4-engineering-compare-flashlight-switches-o2",
+      "scope": "REQUIRED",
+      "mapping": "PROPOSED"
+    },
+    {
+      "id": "g4-engineering-compare-flashlight-switches-o3",
+      "kind": "LIBERIALEARN_MASTERY",
+      "statement": "Draw a two-bar graph from available closed-switch counts and justify a design choice using both closed and open observations.",
+      "sourceId": "v4-reference-inputs",
+      "sourcePointer": "UNMAPPED_AUTHOR_OBJECTIVE:g4-engineering-compare-flashlight-switches-o3",
+      "scope": "REQUIRED",
+      "mapping": "PROPOSED"
+    }
+  ],
+  "outcomes": [
+    {
+      "id": "g4-engineering-compare-flashlight-switches-outcome",
+      "objectiveIds": [
+        "g4-engineering-compare-flashlight-switches-o1",
+        "g4-engineering-compare-flashlight-switches-o2",
+        "g4-engineering-compare-flashlight-switches-o3"
+      ],
+      "demonstration": "Produce and explain an independent response and transfer it to a new context."
+    }
+  ],
+  "prerequisites": [],
+  "misconceptions": [],
+  "sequence": [
+    {
+      "resourceId": "g4-engineering-compare-flashlight-switches-lesson",
+      "dependsOn": [],
+      "objectiveIds": [
+        "g4-engineering-compare-flashlight-switches-o1",
+        "g4-engineering-compare-flashlight-switches-o2",
+        "g4-engineering-compare-flashlight-switches-o3"
+      ],
+      "scaffold": "FULL"
+    }
+  ],
+  "resources": [
+    {
+      "id": "g4-engineering-compare-flashlight-switches-lesson",
+      "kind": "LESSON",
+      "role": "LESSON_AUTHOR",
+      "objectiveIds": [
+        "g4-engineering-compare-flashlight-switches-o1",
+        "g4-engineering-compare-flashlight-switches-o2",
+        "g4-engineering-compare-flashlight-switches-o3"
+      ],
+      "dependsOn": [],
+      "audience": "REVIEWER_ONLY"
+    }
+  ],
+  "assessmentPlan": [
+    {
+      "id": "g4-engineering-compare-flashlight-switches-practice",
+      "resourceId": "g4-engineering-compare-flashlight-switches-lesson",
+      "itemIds": [],
+      "kind": "SHORT_CONSTRUCTED_RESPONSE",
+      "objectiveIds": [
+        "g4-engineering-compare-flashlight-switches-o1",
+        "g4-engineering-compare-flashlight-switches-o2",
+        "g4-engineering-compare-flashlight-switches-o3"
+      ],
+      "scaffold": "NONE",
+      "timing": "IN_LESSON",
+      "context": "REHEARSED",
+      "scoring": "NOT_SCORED",
+      "source": "EXCELLENCE_PLAN",
+      "ref": "REFERENCE_LESSON_ONLY_ASSESSMENT_PENDING"
+    }
+  ],
+  "support": {
+    "differentiation": [
+      "Use the text equivalent and paper model with a teacher."
+    ],
+    "accessibility": [
+      "Scene keyboard paths and block text equivalents."
+    ],
+    "offline": {
+      "mode": "TEXT_PAPER_CAPTURE_ONLY",
+      "requirements": [
+        "Paper, pencil and printed text alternatives."
+      ],
+      "maxBytes": 2000000
+    }
+  },
+  "provenance": [
+    {
+      "id": "v4-reference-inputs",
+      "version": "1.0.0",
+      "sha256": "8d49e6862a01673549db9ac1ad159ae385ca6aa50adfb3e46330fa6cf1191ba0",
+      "sourceRef": "curriculum/factory-v4/primary-engineering.2-inputs.json"
+    }
+  ],
+  "legacy": [],
+  "unresolved": [
+    "REFERENCE_LESSON_ONLY_FULL_EXCELLENCE_PACKAGE_PENDING",
+    "PROTECTED_ASSESSMENT_RECONCILIATION_REQUIRED",
+    "PREREQUISITE_DIAGNOSTIC_AND_MISCONCEPTION_ITEM_BINDINGS_PENDING",
+    "AUTHENTIC_SOURCE_COMPARISON_AND_RIGHTS_REVIEW_REQUIRED",
+    "MANUAL_ACCESSIBILITY_AND_OFFLINE_RUNTIME_QA_REQUIRED"
+  ],
+  "instructionStandard": "liberialearn-v4-instruction/1.1.0",
+  "teachingRegistryVersion": "teaching-blocks/1.3.0"
+}

@@ -1,0 +1,4 @@
+import {defineConfig} from 'vitest/config';
+import {fileURLToPath} from 'node:url';
+const root=fileURLToPath(new URL('../../',import.meta.url));
+export default defineConfig({root,envDir:false,resolve:{alias:{'@':root}},test:{environment:'node',globals:true,maxWorkers:1,fileParallelism:false,include:['__tests__/preview-upload-boundary.test.ts','__tests__/preview-build-demo-boundary.test.ts','__tests__/preview-cron-boundary.test.ts','__tests__/preview-cron-middleware.test.ts','__tests__/preview-auth-providers.test.ts','__tests__/auth.loginFailureDiagnostics.test.ts','__tests__/preview-rate-limit-boundary.test.ts','__tests__/rateLimit.distributed.test.ts','__tests__/rateLimit.upstash-allowed.test.ts','__tests__/rateLimit.invites.test.ts','__tests__/preview-seed-target.test.ts','__tests__/preview-setup-console-boundary.test.ts','__tests__/preview-demo-authority.test.ts','__tests__/security/prod-cfg-01.test.ts','__tests__/environment.test.ts']}});

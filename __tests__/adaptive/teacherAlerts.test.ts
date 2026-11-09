@@ -7,6 +7,12 @@ const mockUpdate = vi.fn();
 
 vi.mock("@/lib/db", () => ({
   prisma: {
+    // AT-GRADE-01 batch 3 (ruling 9): alerts follow current class authority (lib/authz/classAuthority); the synthetic
+    // students are enrolled in class-1, which teacher-1 teaches in school-1.
+    enrollment: { findMany: async () => [{ classId: "class-1" }] },
+    class: { findUnique: async () => ({ id: "class-1", schoolId: "school-1", teacherId: "teacher-1" }) },
+    teacherAssignment: { findMany: async () => [] },
+    assignment: { findFirst: async () => ({ classId: "class-1" }) },
     teacherAlert: {
       createMany: (...args: any[]) => mockCreateMany(...args),
       findMany: (...args: any[]) => mockFindMany(...args),
@@ -45,7 +51,7 @@ function mockAtRiskStudent(overrides: object = {}) {
 beforeEach(() => {
   vi.clearAllMocks();
   mockFindMany.mockResolvedValue([]);
-  mockFindFirst.mockResolvedValue({ id: "alert-1", schoolId: SCHOOL_ID, alertType: "INACTIVE_STUDENT" });
+  mockFindFirst.mockResolvedValue({ id: "alert-1", schoolId: SCHOOL_ID, alertType: "INACTIVE_STUDENT", studentId: "stu-1" });
   mockCreateMany.mockResolvedValue({ count: 1 });
   mockUpdate.mockResolvedValue({ teacherUserId: TEACHER_ID, schoolId: SCHOOL_ID, alertType: "INACTIVE_STUDENT" });
 });
@@ -219,7 +225,7 @@ describe("markAlertReviewed", () => {
 
 describe("dismissTeacherAlert", () => {
   it("updates alert status to DISMISSED with reason", async () => {
-    mockFindFirst.mockResolvedValue({ id: "alert-2", schoolId: SCHOOL_ID, alertType: "INACTIVE_STUDENT" });
+    mockFindFirst.mockResolvedValue({ id: "alert-2", schoolId: SCHOOL_ID, alertType: "INACTIVE_STUDENT", studentId: "stu-1" });
     await dismissTeacherAlert("alert-2", TEACHER_ID, SCHOOL_ID, "Not applicable this week");
 
     expect(mockUpdate).toHaveBeenCalledWith(

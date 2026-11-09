@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-// route-policy: auth=session; scope=tenant; authority=teacher-admin-governed-review; rationale=misconception decisions require same-school human authority and canonical evidence references
+// route-policy: auth=session; scope=record; authority=class-teacher-math-coteacher-or-school-admin; rationale=misconception reads and governed reviews for a Grade 4 learner reached only through a class the learner is enrolled in where lib/authz/classAuthority grants class.read.learning with subject MATH (class teacher or MATH co-teacher), or by an ADMIN of the learner's school; others get the non-disclosing 404; canonical evidence references required (AT-GRADE-01 batch 3, CoS ruling 8)
 import { requireRole } from "@/lib/auth";
-import { prisma } from "@/lib/db";
 import {
   GRADE4_MATH_ONTOLOGY_RELEASE,
   deterministicReleaseIdentity,
@@ -12,24 +11,13 @@ import {
 } from "@/lib/learning-state/masteryWriter";
 import { GRADE4_MATH_MISCONCEPTION_POLICY } from "@/lib/learning-state/misconceptionPolicy";
 import { toDecisionModelLearnerState } from "@/lib/learning-state/studentLearningModel";
-import { listAuthorizedClassIdsForTeacher } from "@/lib/records/schoolOperations";
+import { findStudentThroughClassAuthority } from "@/lib/authz/studentClassAccess";
 
 export const dynamic = "force-dynamic";
 
 async function findAuthorizedStudent(actor: { id: string; role: string; schoolId: string }, studentId: string) {
-  const authorizedClassIds = actor.role === "TEACHER"
-    ? await listAuthorizedClassIdsForTeacher(actor.id, actor.schoolId)
-    : null;
-  return prisma.student.findFirst({
-    where: {
-      id: studentId,
-      user: { schoolId: actor.schoolId },
-      ...(authorizedClassIds ? {
-        enrollments: { some: { Class: { schoolId: actor.schoolId, id: { in: authorizedClassIds } } } },
-      } : {}),
-    },
-    select: { id: true, userId: true },
-  });
+  // CoS ruling 8: the class teacher or a co-teacher assigned MATH for the learner's class; an ADMIN school-scoped.
+  return findStudentThroughClassAuthority(actor, studentId, { fn: "class.read.learning", subject: "MATH" });
 }
 
 export async function GET(req: NextRequest) {

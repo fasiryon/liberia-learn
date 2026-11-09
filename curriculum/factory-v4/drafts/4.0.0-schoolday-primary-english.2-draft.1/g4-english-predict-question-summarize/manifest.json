@@ -1,0 +1,156 @@
+{
+  "manifestVersion": "factory-v4-candidate/1.0.0",
+  "candidateVersion": "4.0.0-schoolday-primary-english.2-draft.1",
+  "contractVersion": "visual-teaching-block/4.0.0-draft.1",
+  "key": "g4-english-predict-question-summarize",
+  "lessonId": "schoolday:g4-english-predict-question-summarize",
+  "grade": 4,
+  "subject": "ENGLISH",
+  "title": "Read, predict and revise with evidence",
+  "state": "DRAFT",
+  "approved": false,
+  "published": false,
+  "released": false,
+  "learnerDeliverable": false,
+  "audience": "REVIEWER_ONLY",
+  "contentOrigin": "DETERMINISTIC_FACTORY_EXECUTOR_WITH_SYNTHETIC_TEACHING_CONTEXTS",
+  "generation": {
+    "executor": "factory-v4-primary-english-author/2.0.0",
+    "role": "LESSON_AUTHOR",
+    "referenceFixtureCopied": false,
+    "modelCalls": 0
+  },
+  "sourceLineage": {
+    "kind": "ORIGINAL_FACTORY_DRAFT",
+    "authoringPlan": "lib/content-factory/v4/primaryEnglish2/lessonAuthor.ts",
+    "legacyRecordsReplaced": false
+  },
+  "sourceVerification": "REPOSITORY_PINS_VERIFIED_REMOTE_RIGHTS_AND_LEGACY_BODY_NOT_ATTESTED",
+  "programOrderId": "GO-G04-P3-ENGLISH-U1",
+  "courseId": "stem1-g4-english",
+  "unit": 1,
+  "orderKind": "LESSON",
+  "inputPins": {
+    "manifestSha256": "b0c42081820d99e0f5dd334076155db9c26140377fc15e1d8dea1ab2bf0b9c74",
+    "frontendCommit": "efb419f47c456d5b9ef9a757a1ee3a0822e05378"
+  },
+  "candidateSha256": "c28b735becfc291cdd5da0e91a1452ff5abc156bbb776ec7d937ebd6d631fdd0",
+  "blueprintHash": "80c1523a349fd69ffae828ca11ee8f8f1f144a04c4f48b118c0ea33da40eb196",
+  "learnerProjectionSha256": "4bf42ff50e9cfabecf9085aa49c74d854f687934f2358a07a6692311846f7a48",
+  "academicSchema": {
+    "valid": true,
+    "errors": []
+  },
+  "visualInstruction": {
+    "valid": true,
+    "family": "LANGUAGE",
+    "balance": {
+      "explanationSeconds": 183,
+      "activitySeconds": 580,
+      "activityShare": 0.76
+    },
+    "practice": {
+      "g4-english-predict-question-summarize-o1": {
+        "visuals": 2,
+        "workedExamples": 0,
+        "guided": 2,
+        "independent": 2,
+        "mistakes": 0,
+        "transfer": 2
+      },
+      "g4-english-predict-question-summarize-o2": {
+        "visuals": 2,
+        "workedExamples": 0,
+        "guided": 2,
+        "independent": 2,
+        "mistakes": 0,
+        "transfer": 2
+      },
+      "g4-english-predict-question-summarize-o3": {
+        "visuals": 1,
+        "workedExamples": 0,
+        "guided": 2,
+        "independent": 2,
+        "mistakes": 0,
+        "transfer": 2
+      }
+    },
+    "totals": {
+      "visuals": 5,
+      "workedExamples": 0,
+      "guided": 6,
+      "independent": 6,
+      "mistakes": 0,
+      "transfer": 6,
+      "problems": 8
+    },
+    "advisories": [
+      {
+        "code": "v4_activity_share_outside_target",
+        "severity": "ADVISORY",
+        "detail": "76% activity (target 65–75%); do not pad with repetitive questions to reach it."
+      }
+    ]
+  },
+  "accessibility": {
+    "schema": "PASS",
+    "blockBindings": 7,
+    "manualScreenReaderReview": "PENDING"
+  },
+  "offline": {
+    "mode": "TEXT_PAPER_CAPTURE_ONLY",
+    "protectedKeysCached": false,
+    "runtimeColdStartAndReconnect": "PENDING"
+  },
+  "protectedAssessment": {
+    "included": false,
+    "restrictedKeyComparison": "PENDING_AUTHORIZED_OWNER_INPUT",
+    "canonicalMasteryMutation": false
+  },
+  "factoryStatus": "REVISION_REQUIRED",
+  "releaseBlockers": [
+    "MOE_OBJECTIVE_UNBOUND",
+    "ONTOLOGY_RELEASE_MISSING",
+    "V4_HUMAN_REVIEW_REQUIRED",
+    "excellence:BP-COVERAGE",
+    "excellence:BP-PRODUCTION",
+    "excellence:BP-REASONING",
+    "excellence:BP-SELECTED-SHARE",
+    "excellence:BP-RETENTION",
+    "excellence:BP-TRANSFER",
+    "excellence:BP-EXTENSION",
+    "REFERENCE_LESSON_ONLY_FULL_EXCELLENCE_PACKAGE_PENDING",
+    "PROTECTED_ASSESSMENT_RECONCILIATION_REQUIRED",
+    "PREREQUISITE_DIAGNOSTIC_AND_MISCONCEPTION_ITEM_BINDINGS_PENDING",
+    "AUTHENTIC_SOURCE_COMPARISON_AND_RIGHTS_REVIEW_REQUIRED",
+    "MANUAL_ACCESSIBILITY_AND_OFFLINE_RUNTIME_QA_REQUIRED",
+    "OBJECTIVE_MAPPING_PROPOSED:g4-english-predict-question-summarize-o1",
+    "OBJECTIVE_MAPPING_PROPOSED:g4-english-predict-question-summarize-o2",
+    "OBJECTIVE_MAPPING_PROPOSED:g4-english-predict-question-summarize-o3",
+    "EXACT_REVISION_HUMAN_REVIEW_REQUIRED",
+    "EXPLICIT_RELEASE_AUTHORIZATION_REQUIRED",
+    "RETENTION_POLICY_APPROVAL_REQUIRED",
+    "ASSESSMENT_ITEMS_PENDING",
+    "RESTRICTED_KEY_COMPARISON_PENDING",
+    "FRONTEND_GENERATED_PACKAGE_CONSUMPTION_QA_PENDING",
+    "COS_G3_AND_INDEPENDENT_ACADEMIC_REVIEW",
+    "LIBERIA_STANDARDS_MAPPING",
+    "RIGHTS_REVIEW",
+    "BROWSER_ACCESSIBILITY_AND_OFFLINE_QA",
+    "TIMED_REHEARSAL",
+    "EXACT_VERSION_AUTHORIZATION"
+  ],
+  "files": {
+    "candidate.json": "41f5eedbe5c77c988d0d8deea5c69febc9700c1cfea85d951455f135de17e141",
+    "visual-teaching.json": "a0fdca1cddb37bc805118d5fce70ea5215e37dc14255d2e2f40d9cde73a46374",
+    "blueprint.json": "3000bd38d6c973156efb4bf1c8204e6f3f546cb72219fc18933672d2fd0f4770",
+    "factory-artifact.json": "179787531642b2ed8fb5cb07fe9c9bd0cd046224fcaf82995b9b4a486ddb1b81",
+    "learner-projection.json": "2ca5260eaae0f51556394eae41d32a1d1990d94ad07f19a42f62b458f89e50df",
+    "factory-receipt.json": "5f41a0cdb776a8cb99e440627da5ad012f18dc85501c934800fd84521fcd11d8",
+    "paper-alternative.txt": "403a0da0c6684655b6713762a9d8f382a866eab636ab63e2a54a82ac40e45597",
+    "academic-review.json": "182d9a4cceb99831d7560ba692328f851bb80501f14548114f577513c85d57e5",
+    "teacher-guide.json": "eaaa0d173064aa4047ec9fbb8a7d50f2d2ff2f2ff6ec5bd82901851dfb80b21f"
+  },
+  "unicodeNormalization": "NFC",
+  "packageHash": "39c9cafb634914512bd4cf396cdb454b2770a9057e5bd93734a6787e8757f0e6"
+}

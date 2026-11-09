@@ -16,7 +16,11 @@ vi.stubGlobal("fetch", vi.fn());
 
 vi.mock("@/lib/db", () => ({
   prisma: {
-    student: { findFirst: vi.fn() },
+    student: { findFirst: vi.fn(), findUnique: async () => ({ enrollments: [{ classId: "class-1", Class: { schoolId: "school-1" } }] }) },
+    // AT-SUBMIT-02: the lesson reaches the learner through an own-school enrolled class (a scheduled lesson).
+    scheduledWork: { findFirst: async () => ({ id: "work-1" }) },
+    teacherLessonAssignment: { findFirst: async () => null },
+    assignment: { findFirst: async () => null },
     curriculumContent: { findUnique: vi.fn() },
     gradedSubmission: {
       findUnique: vi.fn(),
@@ -28,7 +32,7 @@ vi.mock("@/lib/db", () => ({
 }));
 
 vi.mock("@/lib/auth", () => ({
-  requireRole: vi.fn().mockResolvedValue({ id: "user-1", role: "STUDENT" }),
+  requireRole: vi.fn().mockResolvedValue({ id: "user-1", role: "STUDENT", schoolId: "school-1" }),
 }));
 
 vi.mock("@/lib/rateLimit", () => ({
@@ -171,8 +175,9 @@ describe("POST /api/grading/code", () => {
     process.env.JUDGE0_API_HOST = "judge0-ce.p.rapidapi.com";
 
     mockPrisma.student.findFirst.mockResolvedValue({ id: "student-1" });
+    // AT-GRADE-01 2e: a learner-visible platform lesson, scheduled for the learner's class (see the prisma mock).
     mockPrisma.curriculumContent.findUnique.mockResolvedValue({
-      grade: 8, subject: "CS", unitId: "unit-cs", contentId: "content-cs",
+      id: "lesson-1", schoolId: null, teacherCreated: false, visibility: "public", payload: {}, grade: 8, subject: "CS", unitId: "unit-cs", contentId: "content-cs",
     });
     mockPrisma.gradedSubmission.findUnique.mockResolvedValue(null);
     mockPrisma.gradedSubmission.create.mockResolvedValue({ id: "sub-1", status: "pending" });
@@ -245,7 +250,9 @@ describe("POST /api/grading/code", () => {
   });
 
   it("idempotency: same clientSubmissionId returns existing submission", async () => {
-    const existing = { id: "sub-existing", studentId: "student-1", score: 0.5, status: "graded" };
+    // This learner's exact earlier request (AT-GRADE-01 2e: replay needs the same canonical request).
+    const existing = { id: "sub-existing", studentId: "student-1", score: 0.5, status: "graded",
+      lessonId: "lesson-1", promptId: "already-sent", exerciseType: "code", submissionText: "print('hello')" };
     mockPrisma.gradedSubmission.findUnique.mockResolvedValueOnce(existing);
 
     const { POST } = await import("@/app/api/grading/code/route");

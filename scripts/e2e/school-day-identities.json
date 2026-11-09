@@ -1,0 +1,23 @@
+{
+  "SCHOOL_DAY_IDS": {
+    "school": "g4-e2e-school",
+    "foreignSchool": "g4-e2e-foreign-school",
+    "class": "g4-e2e-class",
+    "student": "g4-e2e-student",
+    "studentUser": "g4-e2e-student-user",
+    "teacher": "g4-e2e-teacher",
+    "foreignTeacher": "g4-e2e-foreign-teacher",
+    "authority": "g4-e2e-synthetic-authority",
+    "admin": "g4-e2e-school-admin",
+    "policy": "g4-e2e-policy"
+  },
+  "SCHOOL_DAY_EMAILS": {
+    "student": "g4-student@example.invalid",
+    "teacher": "g4-teacher@example.invalid",
+    "foreignTeacher": "g4-foreign-teacher@example.invalid",
+    "authority": "g4-authority@example.invalid",
+    "admin": "g4-admin@example.invalid",
+    "student2": "g4-student2@example.invalid",
+    "student3": "g4-student3@example.invalid"
+  }
+}

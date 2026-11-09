@@ -1,0 +1,103 @@
+{
+  "atlas_commit": "9fff8615b19591063882ee006dff96b83ccbe4b5",
+  "application_source_commit": "887f23eccbe5b194c2e7ff93c0b09c843549a9eb",
+  "command": [
+    "node",
+    "C:\\liberia-learn\\node_modules\\vitest\\vitest.mjs",
+    "run",
+    "--config",
+    "C:\\liberia-learn\\.task-worktrees\\project-atlas-20261023\\docs\\audits\\project-atlas-20261023\\post-audit\\vitest.config.ts",
+    "--reporter=json",
+    "--outputFile=C:\\liberia-learn\\.task-worktrees\\project-atlas-20261023\\docs\\audits\\project-atlas-20261023\\post-audit\\scratch\\SEC-R07-RED.json",
+    "emergency-disable.test.ts"
+  ],
+  "exit_code": 1,
+  "passed": 1,
+  "failed": 9,
+  "total": 10,
+  "method": "Actual route/resolver functions; synthetic authenticated identities; mocked in-memory ORM, provider and side-effect boundaries. Process environment allowlisted; fetch denied. Not a real login/database/integration/production test.",
+  "tests": [
+    {
+      "suite": "emergency-disable.test.ts",
+      "name": "global emergency disable wins over a true database override",
+      "status": "failed",
+      "failure": "AssertionError: expected true to be false // Object.is equality"
+    },
+    {
+      "suite": "emergency-disable.test.ts",
+      "name": "an explicit false agent env flag wins over its true override",
+      "status": "failed",
+      "failure": "AssertionError: expected true to be false // Object.is equality"
+    },
+    {
+      "suite": "emergency-disable.test.ts",
+      "name": "control: an unset flag permits an intentional database override",
+      "status": "passed",
+      "failure": null
+    },
+    {
+      "suite": "emergency-disable.test.ts",
+      "name": "actual runAgent never reaches the model during emergency stop",
+      "status": "failed",
+      "failure": "AssertionError: expected 'SUCCESS' to be 'FEATURE_DISABLED' // Object.is equality"
+    },
+    {
+      "suite": "emergency-disable.test.ts",
+      "name": "a scheduled run cannot bypass emergency stop or build its contexts",
+      "status": "failed",
+      "failure": "AssertionError: expected true to be false // Object.is equality"
+    },
+    {
+      "suite": "emergency-disable.test.ts",
+      "name": "a triggered run cannot bypass emergency stop or build its contexts",
+      "status": "failed",
+      "failure": "AssertionError: expected 1 to be +0 // Object.is equality"
+    },
+    {
+      "suite": "emergency-disable.test.ts",
+      "name": "a database-disabled schedule and trigger stop before context builders",
+      "status": "failed",
+      "failure": "AssertionError: expected true to be false // Object.is equality"
+    },
+    {
+      "suite": "emergency-disable.test.ts",
+      "name": "admin stats expose the same effective state and its source",
+      "status": "failed",
+      "failure": "AssertionError: expected { name: 'atlas-emergency-agent', \u2026(9) } to match object { effectiveEnabled: false, \u2026(1) }"
+    },
+    {
+      "suite": "emergency-disable.test.ts",
+      "name": "restoring a control is transactionally audited with its actor",
+      "status": "failed",
+      "failure": "AssertionError: expected \"vi.fn()\" to be called 2 times, but got 0 times"
+    },
+    {
+      "suite": "emergency-disable.test.ts",
+      "name": "a failed audit rolls back a requested restore",
+      "status": "failed",
+      "failure": "Error: promise resolved \"undefined\" instead of rejecting"
+    }
+  ],
+  "observations": [],
+  "mode": "current repair worktree source",
+  "source_head": "bd7b2ae570442abd5d8a44ced3ffcc8622111c8e",
+  "application_files_modified": true,
+  "test_run_modifies_application_files": false,
+  "source_delta_vs_atlas": {
+    "app/api/admin/agents/invocations/route.ts": "c14fe8f20e95eca1f06b8c578a0c292c87767872276a49ad8321896bd4731677",
+    "app/api/student/sync/route.ts": "160ce5655fb61e4b274ece27a782747f1558e3395e33ad4d636e63a7f447aeb7",
+    "lib/agents/agents/content-qa.agent.ts": "d14e83c823d083b21a27dd01874eb02528a193eee96faa3fe2bbcc0d45adc4b6",
+    "lib/agents/agents/district-update.agent.ts": "9bfe3d2338feeeac71de1187a02a731eba1efd96fae71d2457ec658f37c8ea97",
+    "lib/agents/agents/echo.agent.ts": "f287f45a3697eb02ab07f2936b47d820b07636912ecdec4e4a99527a488e8073",
+    "lib/agents/agents/liberialearn-family.agent.ts": "2443b1642facc9ae3ce19b12c513599788eca018b21fb28e3e1f552e5880513a",
+    "lib/agents/agents/moe-narrative-report.agent.ts": "ad2b4813421bbfa683326bfb437fc9b56234b1baac5f589c944914467d3373be",
+    "lib/agents/agents/morning-brief.agent.ts": "c9af29c0f9647eb596a66551b8a1120b08d44589d02058c11c9154a90ced73de",
+    "lib/agents/agents/ops-sentinel.agent.ts": "274f3bd754c0c4907cb8f6cad79a1dbf45386782e2386f6532cdc926f9690261",
+    "lib/agents/agents/teaching-runtime.agent.ts": "27ffecd03c76f409738a2bfb45b287ad8a03238ae62148e6ecee608b68db3237",
+    "lib/agents/moderation.ts": "f630568e2a90973ae21b4349b283f1567e53b06d32136ba0dd568fe98028a94b",
+    "lib/agents/runtime.ts": "ad30be24c50d23eba8f6ca03d54e4e88e9b50f8ee6d84a7a505f7776c1aa7f8f",
+    "lib/agents/types.ts": "e57d07fa56617c685970809bd1de3ec0eb25f5e6607a195f67b8066dedcab41c",
+    "lib/offline-sync/policies.ts": "c563a7c90d94cbc9f474ea9e0c02defdf3dbd9ea8c298e3d0d3e32d3ac8a78d4"
+  },
+  "raw_result_sha256": "fed9772f9b5c1a786067b6f4bfaeca945201d6d2e10a365990f2a25322aec285"
+}

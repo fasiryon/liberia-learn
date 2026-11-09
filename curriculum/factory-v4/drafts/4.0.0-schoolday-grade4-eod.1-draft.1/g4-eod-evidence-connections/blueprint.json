@@ -1,0 +1,140 @@
+{
+  "schemaVersion": "unit-blueprint/2.2.0",
+  "blueprintId": "g4-eod-evidence-connections-v4",
+  "version": "4.0.0",
+  "contentHash": "10b6a12db0900c159664cbd7d2cfd810277280c765f9dd5adc34a212c5ac32b0",
+  "grade": 4,
+  "subject": "ENGLISH",
+  "unitId": "g4-eod-evidence-connections",
+  "title": "g4-eod-evidence-connections",
+  "repositoryCommit": "ea3c033e4a6d1de2499633f92a86d322c74e207b",
+  "sources": [
+    {
+      "id": "v4-reference-inputs",
+      "version": "1.0.0",
+      "sha256": "37ebeb608bad49b515b1de81f11c14c3d41d266a7fc74ee7bec5ae299a045748",
+      "sourceRef": "curriculum/factory-v4/grade4-eod.1-inputs.json"
+    }
+  ],
+  "objectives": [
+    {
+      "id": "g4-eod-evidence-connections-o1",
+      "kind": "LIBERIALEARN_MASTERY",
+      "statement": "Connect two activities actually attempted using specific evidence.",
+      "sourceId": "v4-reference-inputs",
+      "sourcePointer": "UNMAPPED_AUTHOR_OBJECTIVE:g4-eod-evidence-connections-o1",
+      "scope": "REQUIRED",
+      "mapping": "PROPOSED"
+    },
+    {
+      "id": "g4-eod-evidence-connections-o2",
+      "kind": "LIBERIALEARN_MASTERY",
+      "statement": "Explain a justified revision or uncertainty without inventing completed work.",
+      "sourceId": "v4-reference-inputs",
+      "sourcePointer": "UNMAPPED_AUTHOR_OBJECTIVE:g4-eod-evidence-connections-o2",
+      "scope": "REQUIRED",
+      "mapping": "PROPOSED"
+    },
+    {
+      "id": "g4-eod-evidence-connections-o3",
+      "kind": "LIBERIALEARN_MASTERY",
+      "statement": "Ask a useful next question and say how evidence could help answer it.",
+      "sourceId": "v4-reference-inputs",
+      "sourcePointer": "UNMAPPED_AUTHOR_OBJECTIVE:g4-eod-evidence-connections-o3",
+      "scope": "REQUIRED",
+      "mapping": "PROPOSED"
+    }
+  ],
+  "outcomes": [
+    {
+      "id": "g4-eod-evidence-connections-outcome",
+      "objectiveIds": [
+        "g4-eod-evidence-connections-o1",
+        "g4-eod-evidence-connections-o2",
+        "g4-eod-evidence-connections-o3"
+      ],
+      "demonstration": "Produce and explain an independent response and transfer it to a new context."
+    }
+  ],
+  "prerequisites": [],
+  "misconceptions": [],
+  "sequence": [
+    {
+      "resourceId": "g4-eod-evidence-connections-lesson",
+      "dependsOn": [],
+      "objectiveIds": [
+        "g4-eod-evidence-connections-o1",
+        "g4-eod-evidence-connections-o2",
+        "g4-eod-evidence-connections-o3"
+      ],
+      "scaffold": "FULL"
+    }
+  ],
+  "resources": [
+    {
+      "id": "g4-eod-evidence-connections-lesson",
+      "kind": "LESSON",
+      "role": "LESSON_AUTHOR",
+      "objectiveIds": [
+        "g4-eod-evidence-connections-o1",
+        "g4-eod-evidence-connections-o2",
+        "g4-eod-evidence-connections-o3"
+      ],
+      "dependsOn": [],
+      "audience": "REVIEWER_ONLY"
+    }
+  ],
+  "assessmentPlan": [
+    {
+      "id": "g4-eod-evidence-connections-practice",
+      "resourceId": "g4-eod-evidence-connections-lesson",
+      "itemIds": [],
+      "kind": "SHORT_CONSTRUCTED_RESPONSE",
+      "objectiveIds": [
+        "g4-eod-evidence-connections-o1",
+        "g4-eod-evidence-connections-o2",
+        "g4-eod-evidence-connections-o3"
+      ],
+      "scaffold": "NONE",
+      "timing": "IN_LESSON",
+      "context": "REHEARSED",
+      "scoring": "NOT_SCORED",
+      "source": "EXCELLENCE_PLAN",
+      "ref": "REFERENCE_LESSON_ONLY_ASSESSMENT_PENDING"
+    }
+  ],
+  "support": {
+    "differentiation": [
+      "Use the text equivalent and paper model with a teacher."
+    ],
+    "accessibility": [
+      "Scene keyboard paths and block text equivalents."
+    ],
+    "offline": {
+      "mode": "TEXT_PAPER_CAPTURE_ONLY",
+      "requirements": [
+        "Paper, pencil and printed text alternatives."
+      ],
+      "maxBytes": 2000000
+    }
+  },
+  "provenance": [
+    {
+      "id": "v4-reference-inputs",
+      "version": "1.0.0",
+      "sha256": "37ebeb608bad49b515b1de81f11c14c3d41d266a7fc74ee7bec5ae299a045748",
+      "sourceRef": "curriculum/factory-v4/grade4-eod.1-inputs.json"
+    }
+  ],
+  "legacy": [],
+  "unresolved": [
+    "REFERENCE_LESSON_ONLY_FULL_EXCELLENCE_PACKAGE_PENDING",
+    "PROTECTED_ASSESSMENT_RECONCILIATION_REQUIRED",
+    "PREREQUISITE_DIAGNOSTIC_AND_MISCONCEPTION_ITEM_BINDINGS_PENDING",
+    "AUTHENTIC_SOURCE_COMPARISON_AND_RIGHTS_REVIEW_REQUIRED",
+    "MANUAL_ACCESSIBILITY_AND_OFFLINE_RUNTIME_QA_REQUIRED"
+  ],
+  "instructionStandard": "liberialearn-v4-instruction/1.1.0",
+  "teachingRegistryVersion": "teaching-blocks/1.2.0",
+  "instructionalRole": "END_OF_DAY_REFLECTION"
+}

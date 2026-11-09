@@ -1,0 +1,138 @@
+{
+  "schemaVersion": "unit-blueprint/2.2.0",
+  "blueprintId": "g4-science-food-path-and-absorption-v4",
+  "version": "4.0.0",
+  "contentHash": "fdcd0c09d008cb210c820beccb0425ebdc4a626e331ecab438b75dd039bbf282",
+  "grade": 4,
+  "subject": "SCIENCE",
+  "unitId": "g4-science-food-path-and-absorption",
+  "title": "g4-science-food-path-and-absorption",
+  "repositoryCommit": "18684b3b9159ddc8487ca150b19ebfe6fa929b61",
+  "sources": [
+    {
+      "id": "v4-reference-inputs",
+      "version": "1.0.0",
+      "sha256": "f3f1b7bfe5efd02c777c7750e4c223499603d354c22bb5ed2dc4925dc1ec9916",
+      "sourceRef": "curriculum/factory-v4/primary-science.2-inputs.json"
+    }
+  ],
+  "objectives": [
+    {
+      "id": "g4-science-food-path-and-absorption-o1",
+      "kind": "LIBERIALEARN_MASTERY",
+      "statement": "Arrange the main stages of the digestive tract and distinguish that path from organs supplying digestive juices.",
+      "sourceId": "v4-reference-inputs",
+      "sourcePointer": "UNMAPPED_AUTHOR_OBJECTIVE:g4-science-food-path-and-absorption-o1",
+      "scope": "REQUIRED",
+      "mapping": "PROPOSED"
+    },
+    {
+      "id": "g4-science-food-path-and-absorption-o2",
+      "kind": "LIBERIALEARN_MASTERY",
+      "statement": "Explain absorption as digested nutrients crossing the small-intestine wall, using a counted paper model.",
+      "sourceId": "v4-reference-inputs",
+      "sourcePointer": "UNMAPPED_AUTHOR_OBJECTIVE:g4-science-food-path-and-absorption-o2",
+      "scope": "REQUIRED",
+      "mapping": "PROPOSED"
+    },
+    {
+      "id": "g4-science-food-path-and-absorption-o3",
+      "kind": "LIBERIALEARN_MASTERY",
+      "statement": "Use a model to explain an organ's job and identify something the model cannot show.",
+      "sourceId": "v4-reference-inputs",
+      "sourcePointer": "UNMAPPED_AUTHOR_OBJECTIVE:g4-science-food-path-and-absorption-o3",
+      "scope": "REQUIRED",
+      "mapping": "PROPOSED"
+    }
+  ],
+  "outcomes": [
+    {
+      "id": "g4-science-food-path-and-absorption-outcome",
+      "objectiveIds": [
+        "g4-science-food-path-and-absorption-o1",
+        "g4-science-food-path-and-absorption-o2",
+        "g4-science-food-path-and-absorption-o3"
+      ],
+      "demonstration": "Produce and explain an independent response and transfer it to a new context."
+    }
+  ],
+  "prerequisites": [],
+  "misconceptions": [],
+  "sequence": [
+    {
+      "resourceId": "g4-science-food-path-and-absorption-lesson",
+      "dependsOn": [],
+      "objectiveIds": [
+        "g4-science-food-path-and-absorption-o1",
+        "g4-science-food-path-and-absorption-o2",
+        "g4-science-food-path-and-absorption-o3"
+      ],
+      "scaffold": "FULL"
+    }
+  ],
+  "resources": [
+    {
+      "id": "g4-science-food-path-and-absorption-lesson",
+      "kind": "LESSON",
+      "role": "LESSON_AUTHOR",
+      "objectiveIds": [
+        "g4-science-food-path-and-absorption-o1",
+        "g4-science-food-path-and-absorption-o2",
+        "g4-science-food-path-and-absorption-o3"
+      ],
+      "dependsOn": [],
+      "audience": "REVIEWER_ONLY"
+    }
+  ],
+  "assessmentPlan": [
+    {
+      "id": "g4-science-food-path-and-absorption-practice",
+      "resourceId": "g4-science-food-path-and-absorption-lesson",
+      "itemIds": [],
+      "kind": "SHORT_CONSTRUCTED_RESPONSE",
+      "objectiveIds": [
+        "g4-science-food-path-and-absorption-o1",
+        "g4-science-food-path-and-absorption-o2",
+        "g4-science-food-path-and-absorption-o3"
+      ],
+      "scaffold": "NONE",
+      "timing": "IN_LESSON",
+      "context": "REHEARSED",
+      "scoring": "NOT_SCORED",
+      "source": "EXCELLENCE_PLAN",
+      "ref": "REFERENCE_LESSON_ONLY_ASSESSMENT_PENDING"
+    }
+  ],
+  "support": {
+    "differentiation": [
+      "Use the text equivalent and paper model with a teacher."
+    ],
+    "accessibility": [
+      "Scene keyboard paths and block text equivalents."
+    ],
+    "offline": {
+      "mode": "TEXT_PAPER_CAPTURE_ONLY",
+      "requirements": [
+        "Paper, pencil and printed text alternatives."
+      ],
+      "maxBytes": 2000000
+    }
+  },
+  "provenance": [
+    {
+      "id": "v4-reference-inputs",
+      "version": "1.0.0",
+      "sha256": "f3f1b7bfe5efd02c777c7750e4c223499603d354c22bb5ed2dc4925dc1ec9916",
+      "sourceRef": "curriculum/factory-v4/primary-science.2-inputs.json"
+    }
+  ],
+  "legacy": [],
+  "unresolved": [
+    "REFERENCE_LESSON_ONLY_FULL_EXCELLENCE_PACKAGE_PENDING",
+    "PROTECTED_ASSESSMENT_RECONCILIATION_REQUIRED",
+    "PREREQUISITE_DIAGNOSTIC_AND_MISCONCEPTION_ITEM_BINDINGS_PENDING",
+    "AUTHENTIC_SOURCE_COMPARISON_AND_RIGHTS_REVIEW_REQUIRED",
+    "MANUAL_ACCESSIBILITY_AND_OFFLINE_RUNTIME_QA_REQUIRED"
+  ],
+  "instructionStandard": "liberialearn-v4-instruction/1.0.0"
+}

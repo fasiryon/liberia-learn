@@ -1,3 +1,4 @@
+// route-policy: auth=session; scope=tenant; authority=school-admin; rationale=creates a student account; GET roster read unchanged; refused on any deployed Preview/staging after authority and before body or data work (PREVIEW_IDENTITY_FROZEN)
 import { NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
@@ -9,6 +10,8 @@ import { generatePin } from "@/lib/credentials";
 import { normalizeCredentialPhone, slugifyLoginSeed } from "@/lib/login-identifiers";
 import { generateStudentId } from "@/lib/studentId";
 import { createUniqueHumanReadableStudentId } from "@/lib/students/humanReadableId";
+import { previewIdentityFrozen } from "@/lib/preview/identityFreeze";
+import { previewSafeErrorResponse } from "@/lib/preview/safeError";
 
 export const dynamic = "force-dynamic";
 
@@ -93,6 +96,8 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "schoolId required" }, { status: 400 });
     }
 
+    const frozen = previewIdentityFrozen();
+    if (frozen) return frozen;
     const body = await req.json().catch(() => null);
     const parsed = CreateSchema.safeParse(body);
     if (!parsed.success) {
@@ -227,6 +232,8 @@ export async function POST(req: Request) {
       phone: phoneE164,
     });
   } catch (err: any) {
+    const safe = previewSafeErrorResponse(err);
+    if (safe) return safe;
     const status = err?.status ?? 500;
     return NextResponse.json({ error: err?.message ?? "Internal error" }, { status });
   }

@@ -1,0 +1,308 @@
+{
+  "generatedAt": "2026-10-22T21:06:12.373Z",
+  "implementationCommit": "79c73d6b5f57c162e8d9ce0d51a992f4af1da46c",
+  "prerequisiteCommits": [
+    "36d2ca665de6e76f7abe00383158e7286ee40f85",
+    "fe951d3965757e840c8d4f9055a179038bad2768"
+  ],
+  "version": "4.0.0-draft.6",
+  "immutableFileDigestsVerified": 60,
+  "packages": [
+    {
+      "key": "g7-math-area-perimeter",
+      "packageHash": "86066251a231c08dc7a500cd02b72b32eeb5396fefed00c6c83cb459cf2fb254",
+      "candidateSha256": "e7680a05c7804009443063cc602beb9af5c355df132380b2a405494a01506965",
+      "projectionSha256": "036d236c696e4af81d3a52b9e2c5966f3bd5a12696de99507ce80d3bb278b2cd",
+      "academicStatus": "FOUNDER_REPORTED_CONDITIONAL_AI_ACCEPTANCE",
+      "pilotActive": false,
+      "officiallyPublishable": false
+    },
+    {
+      "key": "g7-math-fractions",
+      "packageHash": "ffaafcbb124def71114178a07736acf7c3609aa1debf36e413b4bdf1a5aae69a",
+      "candidateSha256": "78cfaf819d4f3c3d767299571d4a5238af57abc3a2b88a496044b0fc6799cd22",
+      "projectionSha256": "02c14c06eea66bce61d081ead056a78f4bbaea003b663a4e4bf31ee6de747c62",
+      "academicStatus": "FOUNDER_REPORTED_CONDITIONAL_AI_ACCEPTANCE",
+      "pilotActive": false,
+      "officiallyPublishable": false
+    },
+    {
+      "key": "math-multiplication-models",
+      "packageHash": "7a469baccfb5d7d1e932942baf013e1848579c4efa9077a949dcebb7542d75ce",
+      "candidateSha256": "ed0a518f060509276607c67910fdc00513a9793f6cf7dedadcd2dbbe5dadbe9a",
+      "projectionSha256": "f069577bb127fe119c642f7b0e63ca7d3907f7e83abe33dae5cee5eb612ffce0",
+      "academicStatus": "FOUNDER_REPORTED_CONDITIONAL_AI_ACCEPTANCE",
+      "pilotActive": false,
+      "officiallyPublishable": false
+    },
+    {
+      "key": "g7-science-states-of-matter",
+      "packageHash": "7863152eba2e51b818a1b304fa0b240f7b0ac0d2656406947488fbc93ae912f9",
+      "candidateSha256": "5e67edd36ec5b3e0ef29be65dee3ab2e08e1f7cccf17209e4e689492eaae2126",
+      "projectionSha256": "5f2106958094f7d91a80c3f8ccc137ab911c4c76c755f6ac264cb6acda3589e4",
+      "academicStatus": "FOUNDER_REPORTED_CONDITIONAL_AI_ACCEPTANCE",
+      "pilotActive": false,
+      "officiallyPublishable": false
+    },
+    {
+      "key": "g7-civics-counties-capitals",
+      "packageHash": "2a388b30e577b0b11518f7b71772739a03c913fe2840fcd4b7a392eec9b8c5eb",
+      "candidateSha256": "ea3ff95feafe3aee979e0a906581dbfdbab5044abf5c2bb742fd97fccda9215b",
+      "projectionSha256": "f951379eabf1474e57577d7a5bcb3d226cf39e8ae9b1f5b989fdffdbed4deda6",
+      "academicStatus": "MAP_AND_ACADEMIC_VERIFICATION_PENDING",
+      "pilotActive": false,
+      "officiallyPublishable": false
+    },
+    {
+      "key": "g7-english-reading-evidence",
+      "packageHash": "fa54d6f4d508a81020bcf18c906a948a8c1c0e74ec1f384aa9c088acb289be19",
+      "candidateSha256": "500ab78193c6ffee7a6afdf6af7ced250d9d362abba2bcd71c14f26fdd0cb9b5",
+      "projectionSha256": "b15c2604ff2a8928dbfd3017c4f3088c0ff583f32bd9be5456ab28bb2f5f0413",
+      "academicStatus": "FOUNDER_REPORTED_CONDITIONAL_AI_ACCEPTANCE",
+      "pilotActive": false,
+      "officiallyPublishable": false
+    }
+  ],
+  "archive": {
+    "path": "artifacts/draft6-academic-review/4.0.0-draft.6-academic-review.zip",
+    "sha256": "8cae4476353404577225f4f18c70ab4731450b39ba3cb9e87290855861440625",
+    "bytes": 918711,
+    "entries": 80,
+    "crcAndAllEntries": "PASS_BY_VERIFY_EXPORT_SCRIPT"
+  },
+  "isolatedDatabase": {
+    "host": "127.0.0.1",
+    "port": 55447,
+    "database": "draft6_preview_validation",
+    "user": "preview_test",
+    "container": "ll-draft6-pilot-pgvector",
+    "containerId": "facbf788884f082c15207f9129d5d54a71ad6e5c3f3b2970bd1da3d90e718941",
+    "image": "pgvector/pgvector:0.8.0-pg17",
+    "postgres": "17.6",
+    "verifiedBeforeSeeding": true,
+    "activeSyntheticPilotRecordsAfterBrowser": 0
+  },
+  "fullUnitSuite": {
+    "files": "Test Files  825 passed | 3 skipped (828)",
+    "tests": "Tests  8444 passed | 30 skipped (8474)",
+    "sha256": "0174b8aa5d0ca9ff3241ecb5af95c711a0d5900e184b0dc63444da389d07b865"
+  },
+  "changed": {
+    "files": "Test Files  13 passed (13)",
+    "tests": "Tests  154 passed (154)",
+    "sha256": "fac573fe5674f5ab48fa3f56fc299eedaaa10ab79e5361aaa797bd991f3434bb",
+    "pass": true
+  },
+  "focused": {
+    "files": "Test Files  11 passed (11)",
+    "tests": "Tests  161 passed (161)",
+    "sha256": "fefcb7b767be19ed623a40b6111abfec251d337b3aee9a769291b024672c786b"
+  },
+  "recovery": {
+    "files": "Test Files  5 passed (5)",
+    "tests": "Tests  31 passed (31)",
+    "sha256": "41c88f994f336795b6f4b1625c2a74f7bac518e98b165e0bb67a36274e429987"
+  },
+  "security": {
+    "vulnerabilities": {
+      "info": 0,
+      "low": 2,
+      "moderate": 30,
+      "high": 85,
+      "critical": 7,
+      "total": 124
+    },
+    "dependencyFilesChanged": false,
+    "activationRecommendation": "HOLD_FOR_SECURITY_REVIEW"
+  },
+  "browser": {
+    "isolatedDatabase": {
+      "database": "draft6_preview_validation",
+      "username": "preview_test"
+    },
+    "base": "http://127.0.0.1:3046",
+    "selection": "factory@4.0.0-draft.6@g7-math-area-perimeter",
+    "packageHash": "86066251a231c08dc7a500cd02b72b32eeb5396fefed00c6c83cb459cf2fb254",
+    "status": "PASS",
+    "authenticatedStudent": true,
+    "realLessonPlayer": true,
+    "mobileNoOverflow": true,
+    "civicsDenied": true,
+    "encodedSelectionSameExactIdentity": true,
+    "malformedSelectionDenied": true,
+    "offlineMemoryPreserved": true,
+    "retainedScene": "generated-2",
+    "revocationHTTP": 404,
+    "openPlayerRemovalMs": 1412,
+    "officialRecordsUnchanged": true,
+    "nonReadRequests": 0,
+    "pageErrors": [],
+    "requests": [
+      {
+        "url": "http://127.0.0.1:3046/learn/preview/factory@4.0.0-draft.6@g7-math-area-perimeter",
+        "method": "GET"
+      },
+      {
+        "url": "http://127.0.0.1:3046/_next/static/css/f38901f344d96d62.css",
+        "method": "GET"
+      },
+      {
+        "url": "http://127.0.0.1:3046/_next/static/css/da6e9b4a73108890.css",
+        "method": "GET"
+      },
+      {
+        "url": "http://127.0.0.1:3046/_next/static/css/978890d3fb26a185.css",
+        "method": "GET"
+      },
+      {
+        "url": "http://127.0.0.1:3046/_next/static/chunks/webpack-ebd51c1457029dce.js",
+        "method": "GET"
+      },
+      {
+        "url": "http://127.0.0.1:3046/_next/static/chunks/1dd3208c-7f29503da1fef773.js",
+        "method": "GET"
+      },
+      {
+        "url": "http://127.0.0.1:3046/_next/static/chunks/1528-af1450ea11c81192.js",
+        "method": "GET"
+      },
+      {
+        "url": "http://127.0.0.1:3046/_next/static/chunks/main-app-72c7ba833ded27ca.js",
+        "method": "GET"
+      },
+      {
+        "url": "http://127.0.0.1:3046/_next/static/chunks/6340-27b96f5cfc9399b5.js",
+        "method": "GET"
+      },
+      {
+        "url": "http://127.0.0.1:3046/_next/static/chunks/app/layout-72137746ddaba0f5.js",
+        "method": "GET"
+      },
+      {
+        "url": "http://127.0.0.1:3046/_next/static/chunks/app/error-ab14c14046506e6e.js",
+        "method": "GET"
+      },
+      {
+        "url": "http://127.0.0.1:3046/_next/static/chunks/app/page-074d4c2febd58e2f.js",
+        "method": "GET"
+      },
+      {
+        "url": "http://127.0.0.1:3046/_next/static/chunks/262-983952b8c0f3bcf5.js",
+        "method": "GET"
+      },
+      {
+        "url": "http://127.0.0.1:3046/_next/static/chunks/app/global-error-f293a15150bf713d.js",
+        "method": "GET"
+      },
+      {
+        "url": "http://127.0.0.1:3046/_next/static/chunks/5716-298d9f65b773a899.js",
+        "method": "GET"
+      },
+      {
+        "url": "http://127.0.0.1:3046/_next/static/chunks/9595-ccceb7d9742b19b5.js",
+        "method": "GET"
+      },
+      {
+        "url": "http://127.0.0.1:3046/_next/static/chunks/3890-db6f1a662e55e6b5.js",
+        "method": "GET"
+      },
+      {
+        "url": "http://127.0.0.1:3046/_next/static/chunks/875-a868725541ff1140.js",
+        "method": "GET"
+      },
+      {
+        "url": "http://127.0.0.1:3046/_next/static/chunks/6594-e08923a5d009798d.js",
+        "method": "GET"
+      },
+      {
+        "url": "http://127.0.0.1:3046/_next/static/chunks/6632-717ddcc62eff1caf.js",
+        "method": "GET"
+      },
+      {
+        "url": "http://127.0.0.1:3046/_next/static/chunks/7441-df82c7a0cbd99d7b.js",
+        "method": "GET"
+      },
+      {
+        "url": "http://127.0.0.1:3046/_next/static/chunks/app/learn/preview/%5Bselection%5D/page-157607dd3b0f0e14.js",
+        "method": "GET"
+      },
+      {
+        "url": "http://127.0.0.1:3046/_next/static/media/e4af272ccee01ff0-s.p.woff2",
+        "method": "GET"
+      },
+      {
+        "url": "http://127.0.0.1:3046/api/student/learning-preview/factory%404.0.0-draft.6%40g7-math-area-perimeter?accessOnly=1",
+        "method": "GET"
+      },
+      {
+        "url": "http://127.0.0.1:3046/student/lessons?_rsc=16dg4",
+        "method": "GET"
+      },
+      {
+        "url": "http://127.0.0.1:3046/api/student/learning-preview/factory%404.0.0-draft.6%40g7-math-area-perimeter?accessOnly=1",
+        "method": "GET"
+      },
+      {
+        "url": "http://127.0.0.1:3046/api/student/learning-preview/factory%404.0.0-draft.6%40g7-math-area-perimeter?accessOnly=1",
+        "method": "GET"
+      },
+      {
+        "url": "http://127.0.0.1:3046/api/student/learning-preview/factory%404.0.0-draft.6%40g7-math-area-perimeter?accessOnly=1",
+        "method": "GET"
+      }
+    ]
+  },
+  "productionBuild": {
+    "completed": true,
+    "standaloneWindowsSymlinkWarning": true,
+    "logSha256": "56fa4902e219e939b59e4d9be0be58f317fa1090ea92f84780f5492e1169c63d"
+  },
+  "pwa": {
+    "summary": "14 passed (37.0s)",
+    "logSha256": "f4982c9476740ff06515805f81cadb3f4283ec68ebe5ee10dda2e93f23147133"
+  },
+  "fixtures": {
+    "completed": true,
+    "logSha256": "2499b286c4dee14d718a288e172f87f54878b71db2abcbf6334d3207f1922b3e"
+  },
+  "vault": {
+    "pass": 4,
+    "skippedWindowsSymlinks": 2,
+    "logSha256": "7e5ebd46ac84b47deeca8c09f38265e279f784eda440df61718f3c6e342fba31"
+  },
+  "renderer": {
+    "chunks": [
+      "static/chunks/9d78c252.de4417eff09b16c4.js"
+    ],
+    "next": {
+      "storageBytes": 356678,
+      "transferBytes": 70317
+    },
+    "esbuild": {
+      "storageBytes": 609291,
+      "transferBytes": 132842
+    },
+    "allowance": 0.15
+  },
+  "packageTracing": [
+    {
+      "file": ".next/server/app/learn/preview/[selection]/page.js.nft.json",
+      "draft6Files": 61,
+      "receiptIncluded": true
+    },
+    {
+      "file": ".next/server/app/api/student/learning-preview/[key]/route.js.nft.json",
+      "draft6Files": 61,
+      "receiptIncluded": true
+    }
+  ],
+  "officialDeliveryPolicyChanged": false,
+  "schemaChanged": false,
+  "generatedDraft7": false,
+  "featureFlagDefault": "OFF",
+  "committedExample": "disabled, no students, no lesson hashes",
+  "realApprovalsCreated": false,
+  "claudeAcknowledgement": "SUPPLIED_CODE_READ_ONLY_AI_REVIEW_RECEIVED_FINDINGS_ADDRESSED_FINAL_OWNER_REVIEW_PENDING",
+  "hostedCI": "NOT_RUN_NO_PUSH_AUTHORIZED",
+  "recommendation": "HOLD_FOR_REMAINING_GATES"
+}

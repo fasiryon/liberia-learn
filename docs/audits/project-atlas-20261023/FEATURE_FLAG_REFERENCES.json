@@ -1,0 +1,4259 @@
+[
+  {
+    "path": "__tests__/agents/agentTickRoute.test.ts",
+    "line": 13,
+    "name": "AGENT_CRON_ENABLED",
+    "git_blob": "0a5eed87227595af30626565315915c8d1f99239",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/agents/agentTickRoute.test.ts",
+    "line": 16,
+    "name": "AGENT_CRON_ENABLED",
+    "git_blob": "0a5eed87227595af30626565315915c8d1f99239",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/agents/agentTickRoute.test.ts",
+    "line": 30,
+    "name": "AGENT_CRON_ENABLED",
+    "git_blob": "0a5eed87227595af30626565315915c8d1f99239",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/agents/agentTickRoute.test.ts",
+    "line": 40,
+    "name": "AGENT_CRON_ENABLED",
+    "git_blob": "0a5eed87227595af30626565315915c8d1f99239",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/agents/echoAgent.e2e.test.ts",
+    "line": 58,
+    "name": "AGENT_ECHO_ENABLED",
+    "git_blob": "9502f09f627870bec9bcd12687edc3ca6f68e0f1",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/agents/echoAgent.e2e.test.ts",
+    "line": 104,
+    "name": "AGENT_ECHO_ENABLED",
+    "git_blob": "9502f09f627870bec9bcd12687edc3ca6f68e0f1",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/agents/runtime.crosscutting.test.ts",
+    "line": 96,
+    "name": "AGENT_CC_ENABLED",
+    "git_blob": "0d37075d5bdd60193dd8e4c9f5a541863aba4d09",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/agents/runtime.test.ts",
+    "line": 92,
+    "name": "AGENT_RT_TEST_ENABLED",
+    "git_blob": "906aa7ee5e42e3a285600a1d4c49195394abaf7f",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/agents/runtime.test.ts",
+    "line": 126,
+    "name": "AGENT_RT_TEST_ENABLED",
+    "git_blob": "906aa7ee5e42e3a285600a1d4c49195394abaf7f",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/agents/scheduler.test.ts",
+    "line": 40,
+    "name": "AGENT_SCHED_TEST_ENABLED",
+    "git_blob": "f64f1b0b470e5055bd27f7cb7386feabecc2ba05",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/agents/scheduler.test.ts",
+    "line": 44,
+    "name": "AGENT_SCHED_TEST_ENABLED",
+    "git_blob": "f64f1b0b470e5055bd27f7cb7386feabecc2ba05",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/agents/triggers.test.ts",
+    "line": 31,
+    "name": "AGENT_TRIG_TEST_ENABLED",
+    "git_blob": "a7293884da8b01286dfd8592db856efad60908b0",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/agents/triggers.test.ts",
+    "line": 60,
+    "name": "AGENT_TRIG_TEST_ENABLED",
+    "git_blob": "a7293884da8b01286dfd8592db856efad60908b0",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/agents/triggers.test.ts",
+    "line": 71,
+    "name": "AGENT_TRIG_TEST_ENABLED",
+    "git_blob": "a7293884da8b01286dfd8592db856efad60908b0",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.actions.test.ts",
+    "line": 99,
+    "name": "ENABLE_ACTION_GOVERNANCE",
+    "git_blob": "f23dbf8d3fade7cdfe91ddc3f3d6c1016d123c14",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.actions.test.ts",
+    "line": 100,
+    "name": "ENABLE_ACTION_EXECUTION",
+    "git_blob": "f23dbf8d3fade7cdfe91ddc3f3d6c1016d123c14",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.actions.test.ts",
+    "line": 143,
+    "name": "ENABLE_ACTION_GOVERNANCE",
+    "git_blob": "f23dbf8d3fade7cdfe91ddc3f3d6c1016d123c14",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.actions.test.ts",
+    "line": 169,
+    "name": "ENABLE_ACTION_GOVERNANCE",
+    "git_blob": "f23dbf8d3fade7cdfe91ddc3f3d6c1016d123c14",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.detectors.test.ts",
+    "line": 79,
+    "name": "ENABLE_DETECTOR_RECOMMENDATIONS",
+    "git_blob": "41d1c37261160f7eda810027b22c7c1befe96abd",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.detectors.test.ts",
+    "line": 156,
+    "name": "ENABLE_DETECTOR_RECOMMENDATIONS",
+    "git_blob": "41d1c37261160f7eda810027b22c7c1befe96abd",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.evaluationMemory.test.ts",
+    "line": 70,
+    "name": "ENABLE_AUTONOMOUS_EVALUATION",
+    "git_blob": "6986d4aeef7f7da6ff8c27029749ac1a1522f813",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.evaluationMemory.test.ts",
+    "line": 71,
+    "name": "ENABLE_AUTONOMOUS_MEMORY",
+    "git_blob": "6986d4aeef7f7da6ff8c27029749ac1a1522f813",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.evaluationMemory.test.ts",
+    "line": 72,
+    "name": "ENABLE_FALSE_POSITIVE_REVIEW",
+    "git_blob": "6986d4aeef7f7da6ff8c27029749ac1a1522f813",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.evaluationMemory.test.ts",
+    "line": 84,
+    "name": "ENABLE_AUTONOMOUS_EVALUATION",
+    "git_blob": "6986d4aeef7f7da6ff8c27029749ac1a1522f813",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.evaluationMemory.test.ts",
+    "line": 125,
+    "name": "ENABLE_AUTONOMOUS_MEMORY",
+    "git_blob": "6986d4aeef7f7da6ff8c27029749ac1a1522f813",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.evaluationMemory.test.ts",
+    "line": 141,
+    "name": "ENABLE_AUTONOMOUS_MEMORY",
+    "git_blob": "6986d4aeef7f7da6ff8c27029749ac1a1522f813",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.executionHardening.test.ts",
+    "line": 74,
+    "name": "ENABLE_LOW_RISK_AUTONOMY",
+    "git_blob": "1676f600615256175814fdb1a1fd9b03369c24af",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.executionHardening.test.ts",
+    "line": 75,
+    "name": "ENABLE_ACTION_EXECUTION",
+    "git_blob": "1676f600615256175814fdb1a1fd9b03369c24af",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.executionHardening.test.ts",
+    "line": 78,
+    "name": "ENABLE_APPROVAL_EXPIRATION_WORKER",
+    "git_blob": "1676f600615256175814fdb1a1fd9b03369c24af",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.executionHardening.test.ts",
+    "line": 79,
+    "name": "ENABLE_ACTION_ROLLBACK",
+    "git_blob": "1676f600615256175814fdb1a1fd9b03369c24af",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.executionHardening.test.ts",
+    "line": 118,
+    "name": "ENABLE_LOW_RISK_AUTONOMY",
+    "git_blob": "1676f600615256175814fdb1a1fd9b03369c24af",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.executionHardening.test.ts",
+    "line": 156,
+    "name": "ENABLE_LOW_RISK_AUTONOMY",
+    "git_blob": "1676f600615256175814fdb1a1fd9b03369c24af",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.executionHardening.test.ts",
+    "line": 157,
+    "name": "ENABLE_ACTION_EXECUTION",
+    "git_blob": "1676f600615256175814fdb1a1fd9b03369c24af",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.executionHardening.test.ts",
+    "line": 180,
+    "name": "ENABLE_LOW_RISK_AUTONOMY",
+    "git_blob": "1676f600615256175814fdb1a1fd9b03369c24af",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.executionHardening.test.ts",
+    "line": 181,
+    "name": "ENABLE_ACTION_EXECUTION",
+    "git_blob": "1676f600615256175814fdb1a1fd9b03369c24af",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.optimization.test.ts",
+    "line": 85,
+    "name": "ENABLE_AUTONOMOUS_OPTIMIZATION",
+    "git_blob": "9cf5682d0aba4772570ca3f7f549abaf523fb260",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.optimization.test.ts",
+    "line": 95,
+    "name": "ENABLE_AUTONOMOUS_OPTIMIZATION",
+    "git_blob": "9cf5682d0aba4772570ca3f7f549abaf523fb260",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.optimization.test.ts",
+    "line": 113,
+    "name": "ENABLE_AUTONOMOUS_OPTIMIZATION",
+    "git_blob": "9cf5682d0aba4772570ca3f7f549abaf523fb260",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.optimization.test.ts",
+    "line": 123,
+    "name": "ENABLE_AUTONOMOUS_OPTIMIZATION",
+    "git_blob": "9cf5682d0aba4772570ca3f7f549abaf523fb260",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.optimization.test.ts",
+    "line": 139,
+    "name": "ENABLE_AUTONOMOUS_OPTIMIZATION",
+    "git_blob": "9cf5682d0aba4772570ca3f7f549abaf523fb260",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.optimization.test.ts",
+    "line": 150,
+    "name": "ENABLE_AUTONOMOUS_OPTIMIZATION",
+    "git_blob": "9cf5682d0aba4772570ca3f7f549abaf523fb260",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.optimization.test.ts",
+    "line": 174,
+    "name": "ENABLE_AUTONOMOUS_OPTIMIZATION",
+    "git_blob": "9cf5682d0aba4772570ca3f7f549abaf523fb260",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.phase11.manualRuntime.test.tsx",
+    "line": 64,
+    "name": "ENABLE_RUNTIME_DASHBOARD",
+    "git_blob": "ad4ddd86cf20c6c7507cd2203ed8b636468eaa5a",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.phase11.manualRuntime.test.tsx",
+    "line": 65,
+    "name": "ENABLE_APPROVAL_EXPIRATION_WORKER",
+    "git_blob": "ad4ddd86cf20c6c7507cd2203ed8b636468eaa5a",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.phase11.manualRuntime.test.tsx",
+    "line": 66,
+    "name": "ENABLE_IMPLEMENTATION_WORKFLOW",
+    "git_blob": "ad4ddd86cf20c6c7507cd2203ed8b636468eaa5a",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.phase11.manualRuntime.test.tsx",
+    "line": 67,
+    "name": "ENABLE_WORKFLOW_RECOVERY_CRON",
+    "git_blob": "ad4ddd86cf20c6c7507cd2203ed8b636468eaa5a",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.phase11.manualRuntime.test.tsx",
+    "line": 68,
+    "name": "ENABLE_RUNTIME_HEALTH_CRON",
+    "git_blob": "ad4ddd86cf20c6c7507cd2203ed8b636468eaa5a",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.phase11.manualRuntime.test.tsx",
+    "line": 69,
+    "name": "ENABLE_DEAD_LETTER_INSPECTION_CRON",
+    "git_blob": "ad4ddd86cf20c6c7507cd2203ed8b636468eaa5a",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.phase11.manualRuntime.test.tsx",
+    "line": 96,
+    "name": "ENABLE_RUNTIME_DASHBOARD",
+    "git_blob": "ad4ddd86cf20c6c7507cd2203ed8b636468eaa5a",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.phase11.manualRuntime.test.tsx",
+    "line": 97,
+    "name": "ENABLE_APPROVAL_EXPIRATION_WORKER",
+    "git_blob": "ad4ddd86cf20c6c7507cd2203ed8b636468eaa5a",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.phase11.manualRuntime.test.tsx",
+    "line": 98,
+    "name": "ENABLE_IMPLEMENTATION_WORKFLOW",
+    "git_blob": "ad4ddd86cf20c6c7507cd2203ed8b636468eaa5a",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.phase11.manualRuntime.test.tsx",
+    "line": 99,
+    "name": "ENABLE_WORKFLOW_RECOVERY_CRON",
+    "git_blob": "ad4ddd86cf20c6c7507cd2203ed8b636468eaa5a",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.phase11.manualRuntime.test.tsx",
+    "line": 100,
+    "name": "ENABLE_RUNTIME_HEALTH_CRON",
+    "git_blob": "ad4ddd86cf20c6c7507cd2203ed8b636468eaa5a",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.phase11.manualRuntime.test.tsx",
+    "line": 101,
+    "name": "ENABLE_DEAD_LETTER_INSPECTION_CRON",
+    "git_blob": "ad4ddd86cf20c6c7507cd2203ed8b636468eaa5a",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.phase11.manualRuntime.test.tsx",
+    "line": 186,
+    "name": "ENABLE_DEAD_LETTER_INSPECTION_CRON",
+    "git_blob": "ad4ddd86cf20c6c7507cd2203ed8b636468eaa5a",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.phase12.runtimeVisibility.test.tsx",
+    "line": 57,
+    "name": "ENABLE_RUNTIME_DASHBOARD",
+    "git_blob": "3ed07a2edcb46cfd206032f4bf73da159b59a724",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.phase12.runtimeVisibility.test.tsx",
+    "line": 58,
+    "name": "ENABLE_WORKFLOW_RECOVERY_CRON",
+    "git_blob": "3ed07a2edcb46cfd206032f4bf73da159b59a724",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.phase12.runtimeVisibility.test.tsx",
+    "line": 59,
+    "name": "ENABLE_RUNTIME_HEALTH_CRON",
+    "git_blob": "3ed07a2edcb46cfd206032f4bf73da159b59a724",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.phase12.runtimeVisibility.test.tsx",
+    "line": 60,
+    "name": "ENABLE_DEAD_LETTER_INSPECTION_CRON",
+    "git_blob": "3ed07a2edcb46cfd206032f4bf73da159b59a724",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.phase12.runtimeVisibility.test.tsx",
+    "line": 61,
+    "name": "ENABLE_APPROVAL_EXPIRATION_WORKER",
+    "git_blob": "3ed07a2edcb46cfd206032f4bf73da159b59a724",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.phase12.runtimeVisibility.test.tsx",
+    "line": 62,
+    "name": "ENABLE_IMPLEMENTATION_WORKFLOW",
+    "git_blob": "3ed07a2edcb46cfd206032f4bf73da159b59a724",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.phase12.runtimeVisibility.test.tsx",
+    "line": 118,
+    "name": "ENABLE_RUNTIME_DASHBOARD",
+    "git_blob": "3ed07a2edcb46cfd206032f4bf73da159b59a724",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.phase12.runtimeVisibility.test.tsx",
+    "line": 119,
+    "name": "ENABLE_WORKFLOW_RECOVERY_CRON",
+    "git_blob": "3ed07a2edcb46cfd206032f4bf73da159b59a724",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.phase12.runtimeVisibility.test.tsx",
+    "line": 120,
+    "name": "ENABLE_RUNTIME_HEALTH_CRON",
+    "git_blob": "3ed07a2edcb46cfd206032f4bf73da159b59a724",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.phase12.runtimeVisibility.test.tsx",
+    "line": 121,
+    "name": "ENABLE_DEAD_LETTER_INSPECTION_CRON",
+    "git_blob": "3ed07a2edcb46cfd206032f4bf73da159b59a724",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.phase12.runtimeVisibility.test.tsx",
+    "line": 122,
+    "name": "ENABLE_APPROVAL_EXPIRATION_WORKER",
+    "git_blob": "3ed07a2edcb46cfd206032f4bf73da159b59a724",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.phase12.runtimeVisibility.test.tsx",
+    "line": 123,
+    "name": "ENABLE_IMPLEMENTATION_WORKFLOW",
+    "git_blob": "3ed07a2edcb46cfd206032f4bf73da159b59a724",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.phase12.runtimeVisibility.test.tsx",
+    "line": 231,
+    "name": "ENABLE_RUNTIME_DASHBOARD",
+    "git_blob": "3ed07a2edcb46cfd206032f4bf73da159b59a724",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.phase13.signals.test.ts",
+    "line": 53,
+    "name": "ENABLE_AUTONOMOUS_SIGNAL_INTEGRATION",
+    "git_blob": "e25b845f8c7e7f6febbac6b871980175140dc1cc",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.phase13.signals.test.ts",
+    "line": 119,
+    "name": "ENABLE_AUTONOMOUS_SIGNAL_INTEGRATION",
+    "git_blob": "e25b845f8c7e7f6febbac6b871980175140dc1cc",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.phase14.predictions.test.ts",
+    "line": 20,
+    "name": "ENABLE_PREDICTIVE_INTELLIGENCE",
+    "git_blob": "bdd94903a379aff692779d4ea084d55a0234a551",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.phase14.predictions.test.ts",
+    "line": 21,
+    "name": "ENABLE_AUTONOMOUS_MEMORY",
+    "git_blob": "bdd94903a379aff692779d4ea084d55a0234a551",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.phase14.predictions.test.ts",
+    "line": 64,
+    "name": "ENABLE_PREDICTIVE_INTELLIGENCE",
+    "git_blob": "bdd94903a379aff692779d4ea084d55a0234a551",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.phase14.predictions.test.ts",
+    "line": 65,
+    "name": "ENABLE_AUTONOMOUS_MEMORY",
+    "git_blob": "bdd94903a379aff692779d4ea084d55a0234a551",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.phase14.predictions.test.ts",
+    "line": 70,
+    "name": "ENABLE_PREDICTIVE_INTELLIGENCE",
+    "git_blob": "bdd94903a379aff692779d4ea084d55a0234a551",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.phase14.predictions.test.ts",
+    "line": 88,
+    "name": "ENABLE_PREDICTIVE_INTELLIGENCE",
+    "git_blob": "bdd94903a379aff692779d4ea084d55a0234a551",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.phase14.predictions.test.ts",
+    "line": 99,
+    "name": "ENABLE_PREDICTIVE_INTELLIGENCE",
+    "git_blob": "bdd94903a379aff692779d4ea084d55a0234a551",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.phase14.predictions.test.ts",
+    "line": 118,
+    "name": "ENABLE_PREDICTIVE_INTELLIGENCE",
+    "git_blob": "bdd94903a379aff692779d4ea084d55a0234a551",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.phase14.predictions.test.ts",
+    "line": 141,
+    "name": "ENABLE_PREDICTIVE_INTELLIGENCE",
+    "git_blob": "bdd94903a379aff692779d4ea084d55a0234a551",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.phase15.predictionReview.test.ts",
+    "line": 16,
+    "name": "ENABLE_PREDICTIVE_INTELLIGENCE",
+    "git_blob": "c68c9035012d9a927ef0bce1fe97e57dcdeaa5a8",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.phase15.predictionReview.test.ts",
+    "line": 17,
+    "name": "ENABLE_PREDICTIVE_INTELLIGENCE",
+    "git_blob": "c68c9035012d9a927ef0bce1fe97e57dcdeaa5a8",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.phase15.predictionReview.test.ts",
+    "line": 17,
+    "name": "ENABLE_PREDICTION_REVIEW_WORKFLOW",
+    "git_blob": "c68c9035012d9a927ef0bce1fe97e57dcdeaa5a8",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.phase15.predictionReview.test.ts",
+    "line": 73,
+    "name": "ENABLE_PREDICTIVE_INTELLIGENCE",
+    "git_blob": "c68c9035012d9a927ef0bce1fe97e57dcdeaa5a8",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.phase15.predictionReview.test.ts",
+    "line": 74,
+    "name": "ENABLE_PREDICTION_REVIEW_WORKFLOW",
+    "git_blob": "c68c9035012d9a927ef0bce1fe97e57dcdeaa5a8",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.phase15.predictionReview.test.ts",
+    "line": 79,
+    "name": "ENABLE_PREDICTIVE_INTELLIGENCE",
+    "git_blob": "c68c9035012d9a927ef0bce1fe97e57dcdeaa5a8",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.phase15.predictionReview.test.ts",
+    "line": 93,
+    "name": "ENABLE_PREDICTIVE_INTELLIGENCE",
+    "git_blob": "c68c9035012d9a927ef0bce1fe97e57dcdeaa5a8",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.phase15.predictionReview.test.ts",
+    "line": 115,
+    "name": "ENABLE_PREDICTIVE_INTELLIGENCE",
+    "git_blob": "c68c9035012d9a927ef0bce1fe97e57dcdeaa5a8",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.phase15.predictionReview.test.ts",
+    "line": 133,
+    "name": "ENABLE_PREDICTIVE_INTELLIGENCE",
+    "git_blob": "c68c9035012d9a927ef0bce1fe97e57dcdeaa5a8",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.phase15.predictionReview.test.ts",
+    "line": 146,
+    "name": "ENABLE_PREDICTIVE_INTELLIGENCE",
+    "git_blob": "c68c9035012d9a927ef0bce1fe97e57dcdeaa5a8",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.phase15.predictionReview.test.ts",
+    "line": 147,
+    "name": "ENABLE_PREDICTION_REVIEW_WORKFLOW",
+    "git_blob": "c68c9035012d9a927ef0bce1fe97e57dcdeaa5a8",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.phase7.implementation.test.ts",
+    "line": 126,
+    "name": "ENABLE_IMPLEMENTATION_WORKFLOW",
+    "git_blob": "8953192c6715b23db7540bb30ccbff98b08b9d52",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.phase7.implementation.test.ts",
+    "line": 127,
+    "name": "ENABLE_AUTONOMOUS_OPTIMIZATION",
+    "git_blob": "8953192c6715b23db7540bb30ccbff98b08b9d52",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.phase7.implementation.test.ts",
+    "line": 154,
+    "name": "ENABLE_IMPLEMENTATION_WORKFLOW",
+    "git_blob": "8953192c6715b23db7540bb30ccbff98b08b9d52",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.phase7.implementation.test.ts",
+    "line": 155,
+    "name": "ENABLE_AUTONOMOUS_OPTIMIZATION",
+    "git_blob": "8953192c6715b23db7540bb30ccbff98b08b9d52",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.phase7.implementation.test.ts",
+    "line": 165,
+    "name": "ENABLE_IMPLEMENTATION_WORKFLOW",
+    "git_blob": "8953192c6715b23db7540bb30ccbff98b08b9d52",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.phase7.implementation.test.ts",
+    "line": 166,
+    "name": "ENABLE_AUTONOMOUS_OPTIMIZATION",
+    "git_blob": "8953192c6715b23db7540bb30ccbff98b08b9d52",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.phase7.implementation.test.ts",
+    "line": 184,
+    "name": "ENABLE_IMPLEMENTATION_WORKFLOW",
+    "git_blob": "8953192c6715b23db7540bb30ccbff98b08b9d52",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.phase7.implementation.test.ts",
+    "line": 185,
+    "name": "ENABLE_AUTONOMOUS_OPTIMIZATION",
+    "git_blob": "8953192c6715b23db7540bb30ccbff98b08b9d52",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.phase7.implementation.test.ts",
+    "line": 197,
+    "name": "ENABLE_IMPLEMENTATION_WORKFLOW",
+    "git_blob": "8953192c6715b23db7540bb30ccbff98b08b9d52",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.phase7.implementation.test.ts",
+    "line": 198,
+    "name": "ENABLE_AUTONOMOUS_OPTIMIZATION",
+    "git_blob": "8953192c6715b23db7540bb30ccbff98b08b9d52",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.phase7.implementation.test.ts",
+    "line": 211,
+    "name": "ENABLE_IMPLEMENTATION_WORKFLOW",
+    "git_blob": "8953192c6715b23db7540bb30ccbff98b08b9d52",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.phase7.implementation.test.ts",
+    "line": 219,
+    "name": "ENABLE_IMPLEMENTATION_WORKFLOW",
+    "git_blob": "8953192c6715b23db7540bb30ccbff98b08b9d52",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.phase7.implementation.test.ts",
+    "line": 228,
+    "name": "ENABLE_IMPLEMENTATION_WORKFLOW",
+    "git_blob": "8953192c6715b23db7540bb30ccbff98b08b9d52",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.phase7.implementation.test.ts",
+    "line": 244,
+    "name": "ENABLE_IMPLEMENTATION_WORKFLOW",
+    "git_blob": "8953192c6715b23db7540bb30ccbff98b08b9d52",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.phase7.implementation.test.ts",
+    "line": 270,
+    "name": "ENABLE_IMPLEMENTATION_WORKFLOW",
+    "git_blob": "8953192c6715b23db7540bb30ccbff98b08b9d52",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.phase7.implementation.test.ts",
+    "line": 288,
+    "name": "ENABLE_IMPLEMENTATION_WORKFLOW",
+    "git_blob": "8953192c6715b23db7540bb30ccbff98b08b9d52",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.phase7.implementation.test.ts",
+    "line": 296,
+    "name": "ENABLE_IMPLEMENTATION_WORKFLOW",
+    "git_blob": "8953192c6715b23db7540bb30ccbff98b08b9d52",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.phase7.implementation.test.ts",
+    "line": 315,
+    "name": "ENABLE_IMPLEMENTATION_WORKFLOW",
+    "git_blob": "8953192c6715b23db7540bb30ccbff98b08b9d52",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.phase7.implementation.test.ts",
+    "line": 329,
+    "name": "ENABLE_IMPLEMENTATION_WORKFLOW",
+    "git_blob": "8953192c6715b23db7540bb30ccbff98b08b9d52",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.phase7.implementation.test.ts",
+    "line": 339,
+    "name": "ENABLE_IMPLEMENTATION_WORKFLOW",
+    "git_blob": "8953192c6715b23db7540bb30ccbff98b08b9d52",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.phase7.implementation.test.ts",
+    "line": 348,
+    "name": "ENABLE_IMPLEMENTATION_WORKFLOW",
+    "git_blob": "8953192c6715b23db7540bb30ccbff98b08b9d52",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.phase7.implementation.test.ts",
+    "line": 367,
+    "name": "ENABLE_IMPLEMENTATION_WORKFLOW",
+    "git_blob": "8953192c6715b23db7540bb30ccbff98b08b9d52",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.phase7.implementation.test.ts",
+    "line": 376,
+    "name": "ENABLE_IMPLEMENTATION_WORKFLOW",
+    "git_blob": "8953192c6715b23db7540bb30ccbff98b08b9d52",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.phase7.implementation.test.ts",
+    "line": 396,
+    "name": "ENABLE_IMPLEMENTATION_WORKFLOW",
+    "git_blob": "8953192c6715b23db7540bb30ccbff98b08b9d52",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.phase7.implementation.test.ts",
+    "line": 415,
+    "name": "ENABLE_IMPLEMENTATION_WORKFLOW",
+    "git_blob": "8953192c6715b23db7540bb30ccbff98b08b9d52",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.phase7.implementation.test.ts",
+    "line": 425,
+    "name": "ENABLE_IMPLEMENTATION_WORKFLOW",
+    "git_blob": "8953192c6715b23db7540bb30ccbff98b08b9d52",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.phase7.implementation.test.ts",
+    "line": 445,
+    "name": "ENABLE_IMPLEMENTATION_WORKFLOW",
+    "git_blob": "8953192c6715b23db7540bb30ccbff98b08b9d52",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.phase7.implementation.test.ts",
+    "line": 459,
+    "name": "ENABLE_IMPLEMENTATION_WORKFLOW",
+    "git_blob": "8953192c6715b23db7540bb30ccbff98b08b9d52",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.phase7.implementation.test.ts",
+    "line": 460,
+    "name": "ENABLE_AUTONOMOUS_OPTIMIZATION",
+    "git_blob": "8953192c6715b23db7540bb30ccbff98b08b9d52",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.phase7.implementation.test.ts",
+    "line": 476,
+    "name": "ENABLE_IMPLEMENTATION_WORKFLOW",
+    "git_blob": "8953192c6715b23db7540bb30ccbff98b08b9d52",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.phase7.implementation.test.ts",
+    "line": 477,
+    "name": "ENABLE_AUTONOMOUS_OPTIMIZATION",
+    "git_blob": "8953192c6715b23db7540bb30ccbff98b08b9d52",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.phase7.implementation.test.ts",
+    "line": 498,
+    "name": "ENABLE_IMPLEMENTATION_WORKFLOW",
+    "git_blob": "8953192c6715b23db7540bb30ccbff98b08b9d52",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.phase7.implementation.test.ts",
+    "line": 499,
+    "name": "ENABLE_AUTONOMOUS_OPTIMIZATION",
+    "git_blob": "8953192c6715b23db7540bb30ccbff98b08b9d52",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.phase7.implementation.test.ts",
+    "line": 515,
+    "name": "ENABLE_IMPLEMENTATION_WORKFLOW",
+    "git_blob": "8953192c6715b23db7540bb30ccbff98b08b9d52",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.phase7.implementation.test.ts",
+    "line": 516,
+    "name": "ENABLE_AUTONOMOUS_OPTIMIZATION",
+    "git_blob": "8953192c6715b23db7540bb30ccbff98b08b9d52",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.phase8.feedbackLoop.test.ts",
+    "line": 81,
+    "name": "ENABLE_IMPLEMENTATION_WORKFLOW",
+    "git_blob": "c272a2178f6482e15635966ea0457b0259ef42bd",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.phase8.feedbackLoop.test.ts",
+    "line": 82,
+    "name": "ENABLE_AUTONOMOUS_MEMORY",
+    "git_blob": "c272a2178f6482e15635966ea0457b0259ef42bd",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.phase8.feedbackLoop.test.ts",
+    "line": 97,
+    "name": "ENABLE_IMPLEMENTATION_WORKFLOW",
+    "git_blob": "c272a2178f6482e15635966ea0457b0259ef42bd",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.phase8.feedbackLoop.test.ts",
+    "line": 98,
+    "name": "ENABLE_AUTONOMOUS_MEMORY",
+    "git_blob": "c272a2178f6482e15635966ea0457b0259ef42bd",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous.phase8.feedbackLoop.test.ts",
+    "line": 105,
+    "name": "ENABLE_IMPLEMENTATION_WORKFLOW",
+    "git_blob": "c272a2178f6482e15635966ea0457b0259ef42bd",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous/phase9.runtime.test.ts",
+    "line": 61,
+    "name": "ENABLE_AUTONOMOUS_DEGRADED_MODE",
+    "git_blob": "594fdc60705dba4f40972a976dad5d042ed439c9",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous/phase9.runtime.test.ts",
+    "line": 134,
+    "name": "ENABLE_WORKFLOW_RECOVERY_CRON",
+    "git_blob": "594fdc60705dba4f40972a976dad5d042ed439c9",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous/phase9.runtime.test.ts",
+    "line": 139,
+    "name": "ENABLE_WORKFLOW_RECOVERY_CRON",
+    "git_blob": "594fdc60705dba4f40972a976dad5d042ed439c9",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous/phase9.runtime.test.ts",
+    "line": 143,
+    "name": "ENABLE_WORKFLOW_RECOVERY_CRON",
+    "git_blob": "594fdc60705dba4f40972a976dad5d042ed439c9",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous/phase9.runtime.test.ts",
+    "line": 152,
+    "name": "ENABLE_WORKFLOW_RECOVERY_CRON",
+    "git_blob": "594fdc60705dba4f40972a976dad5d042ed439c9",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous/phase9.runtime.test.ts",
+    "line": 156,
+    "name": "ENABLE_WORKFLOW_RECOVERY_CRON",
+    "git_blob": "594fdc60705dba4f40972a976dad5d042ed439c9",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous/phase9.runtime.test.ts",
+    "line": 166,
+    "name": "ENABLE_WORKFLOW_RECOVERY_CRON",
+    "git_blob": "594fdc60705dba4f40972a976dad5d042ed439c9",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous/phase9.runtime.test.ts",
+    "line": 170,
+    "name": "ENABLE_WORKFLOW_RECOVERY_CRON",
+    "git_blob": "594fdc60705dba4f40972a976dad5d042ed439c9",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous/phase9.runtime.test.ts",
+    "line": 180,
+    "name": "ENABLE_WORKFLOW_RECOVERY_CRON",
+    "git_blob": "594fdc60705dba4f40972a976dad5d042ed439c9",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous/phase9.runtime.test.ts",
+    "line": 184,
+    "name": "ENABLE_WORKFLOW_RECOVERY_CRON",
+    "git_blob": "594fdc60705dba4f40972a976dad5d042ed439c9",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous/phase9.runtime.test.ts",
+    "line": 194,
+    "name": "ENABLE_WORKFLOW_RECOVERY_CRON",
+    "git_blob": "594fdc60705dba4f40972a976dad5d042ed439c9",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous/phase9.runtime.test.ts",
+    "line": 232,
+    "name": "ENABLE_DEAD_LETTER_INSPECTION_CRON",
+    "git_blob": "594fdc60705dba4f40972a976dad5d042ed439c9",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous/phase9.runtime.test.ts",
+    "line": 237,
+    "name": "ENABLE_DEAD_LETTER_INSPECTION_CRON",
+    "git_blob": "594fdc60705dba4f40972a976dad5d042ed439c9",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous/phase9.runtime.test.ts",
+    "line": 307,
+    "name": "ENABLE_AUTONOMOUS_CRON",
+    "git_blob": "594fdc60705dba4f40972a976dad5d042ed439c9",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous/phase9.runtime.test.ts",
+    "line": 318,
+    "name": "ENABLE_AUTONOMOUS_CRON",
+    "git_blob": "594fdc60705dba4f40972a976dad5d042ed439c9",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous/phase9.runtime.test.ts",
+    "line": 323,
+    "name": "ENABLE_AUTONOMOUS_CRON",
+    "git_blob": "594fdc60705dba4f40972a976dad5d042ed439c9",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous/phase9.runtime.test.ts",
+    "line": 324,
+    "name": "ENABLE_DEAD_LETTER_INSPECTION_CRON",
+    "git_blob": "594fdc60705dba4f40972a976dad5d042ed439c9",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous/phase9.runtime.test.ts",
+    "line": 334,
+    "name": "ENABLE_AUTONOMOUS_CRON",
+    "git_blob": "594fdc60705dba4f40972a976dad5d042ed439c9",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous/phase9.runtime.test.ts",
+    "line": 335,
+    "name": "ENABLE_DEAD_LETTER_INSPECTION_CRON",
+    "git_blob": "594fdc60705dba4f40972a976dad5d042ed439c9",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous/phase9.runtime.test.ts",
+    "line": 399,
+    "name": "ENABLE_WORKFLOW_RECOVERY_CRON",
+    "git_blob": "594fdc60705dba4f40972a976dad5d042ed439c9",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/autonomous/phase9.runtime.test.ts",
+    "line": 405,
+    "name": "ENABLE_WORKFLOW_RECOVERY_CRON",
+    "git_blob": "594fdc60705dba4f40972a976dad5d042ed439c9",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/canva.env-health.test.ts",
+    "line": 28,
+    "name": "ENABLE_CANVA_COURSE_THUMBNAILS",
+    "git_blob": "7249a36d4527dd97535219140084b7c2b1546a11",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/canva.env-health.test.ts",
+    "line": 29,
+    "name": "ENABLE_SCHOOL_ONBOARDING_KITS",
+    "git_blob": "7249a36d4527dd97535219140084b7c2b1546a11",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/canva.env-health.test.ts",
+    "line": 30,
+    "name": "ENABLE_CERTIFICATION_ASSET_GENERATION",
+    "git_blob": "7249a36d4527dd97535219140084b7c2b1546a11",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/canva.env-health.test.ts",
+    "line": 31,
+    "name": "ENABLE_HIGGSFIELD_VIDEO_GENERATION",
+    "git_blob": "7249a36d4527dd97535219140084b7c2b1546a11",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/canva.env-health.test.ts",
+    "line": 59,
+    "name": "ENABLE_CANVA_COURSE_THUMBNAILS",
+    "git_blob": "7249a36d4527dd97535219140084b7c2b1546a11",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/canva.env-health.test.ts",
+    "line": 60,
+    "name": "ENABLE_SCHOOL_ONBOARDING_KITS",
+    "git_blob": "7249a36d4527dd97535219140084b7c2b1546a11",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/canva.env-health.test.ts",
+    "line": 61,
+    "name": "ENABLE_CERTIFICATION_ASSET_GENERATION",
+    "git_blob": "7249a36d4527dd97535219140084b7c2b1546a11",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/canva.env-health.test.ts",
+    "line": 62,
+    "name": "ENABLE_HIGGSFIELD_VIDEO_GENERATION",
+    "git_blob": "7249a36d4527dd97535219140084b7c2b1546a11",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/curriculum.regenerationScheduler.test.ts",
+    "line": 32,
+    "name": "ENABLE_CURRICULUM_REGEN_SCHEDULER",
+    "git_blob": "871178afc8a3716f0668482c2bd6e68eebddd2d7",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/curriculum.regenerationScheduler.test.ts",
+    "line": 46,
+    "name": "ENABLE_CURRICULUM_REGEN_SCHEDULER",
+    "git_blob": "871178afc8a3716f0668482c2bd6e68eebddd2d7",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/curriculum.regenerationScheduler.test.ts",
+    "line": 57,
+    "name": "ENABLE_CURRICULUM_REGEN_SCHEDULER",
+    "git_blob": "871178afc8a3716f0668482c2bd6e68eebddd2d7",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/dr/healthCheck.test.ts",
+    "line": 51,
+    "name": "ENABLE_MOE_PORTAL",
+    "git_blob": "3bb13664010396e513ae235208c7284a78ad7d31",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/dr/healthCheck.test.ts",
+    "line": 120,
+    "name": "ENABLE_MOE_PORTAL",
+    "git_blob": "3bb13664010396e513ae235208c7284a78ad7d31",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/dr/healthCheck.test.ts",
+    "line": 127,
+    "name": "ENABLE_MOE_PORTAL",
+    "git_blob": "3bb13664010396e513ae235208c7284a78ad7d31",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/feature-flags.test.ts",
+    "line": 12,
+    "name": "NEXT_PUBLIC_ENABLE_GUIDED_ONBOARDING",
+    "git_blob": "04550bbd4b9ab2a0f344b3667f8372447777d089",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/feature-flags.test.ts",
+    "line": 13,
+    "name": "NEXT_PUBLIC_ENABLE_ACCESSIBILITY_MODE",
+    "git_blob": "04550bbd4b9ab2a0f344b3667f8372447777d089",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/feature-flags.test.ts",
+    "line": 21,
+    "name": "NEXT_PUBLIC_ENABLE_GUIDED_ONBOARDING",
+    "git_blob": "04550bbd4b9ab2a0f344b3667f8372447777d089",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/feature-flags.test.ts",
+    "line": 26,
+    "name": "NEXT_PUBLIC_ENABLE_GUIDED_ONBOARDING",
+    "git_blob": "04550bbd4b9ab2a0f344b3667f8372447777d089",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/feature-flags.test.ts",
+    "line": 31,
+    "name": "NEXT_PUBLIC_ENABLE_GUIDED_ONBOARDING",
+    "git_blob": "04550bbd4b9ab2a0f344b3667f8372447777d089",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/feature-flags.test.ts",
+    "line": 36,
+    "name": "NEXT_PUBLIC_ENABLE_GUIDED_ONBOARDING",
+    "git_blob": "04550bbd4b9ab2a0f344b3667f8372447777d089",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/feature-flags.test.ts",
+    "line": 41,
+    "name": "NEXT_PUBLIC_ENABLE_ACCESSIBILITY_MODE",
+    "git_blob": "04550bbd4b9ab2a0f344b3667f8372447777d089",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/feature-flags.test.ts",
+    "line": 47,
+    "name": "NEXT_PUBLIC_ENABLE_GUIDED_ONBOARDING",
+    "git_blob": "04550bbd4b9ab2a0f344b3667f8372447777d089",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/feature-flags.test.ts",
+    "line": 48,
+    "name": "NEXT_PUBLIC_ENABLE_ACCESSIBILITY_MODE",
+    "git_blob": "04550bbd4b9ab2a0f344b3667f8372447777d089",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/feature-flags.test.ts",
+    "line": 54,
+    "name": "NEXT_PUBLIC_ENABLE_GUIDED_ONBOARDING",
+    "git_blob": "04550bbd4b9ab2a0f344b3667f8372447777d089",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/feature-flags.test.ts",
+    "line": 56,
+    "name": "NEXT_PUBLIC_ENABLE_GUIDED_ONBOARDING",
+    "git_blob": "04550bbd4b9ab2a0f344b3667f8372447777d089",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/guardian.flag.test.ts",
+    "line": 10,
+    "name": "ENABLE_GUARDIAN_PORTAL",
+    "git_blob": "4422367948030c26a3148869d759b2eee9a356bb",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/guardian.flag.test.ts",
+    "line": 11,
+    "name": "NEXT_PUBLIC_ENABLE_GUARDIAN_PORTAL",
+    "git_blob": "4422367948030c26a3148869d759b2eee9a356bb",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/guardian.flag.test.ts",
+    "line": 16,
+    "name": "ENABLE_GUARDIAN_PORTAL",
+    "git_blob": "4422367948030c26a3148869d759b2eee9a356bb",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/guardian.flag.test.ts",
+    "line": 17,
+    "name": "NEXT_PUBLIC_ENABLE_GUARDIAN_PORTAL",
+    "git_blob": "4422367948030c26a3148869d759b2eee9a356bb",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/guardian.flag.test.ts",
+    "line": 28,
+    "name": "ENABLE_GUARDIAN_PORTAL",
+    "git_blob": "4422367948030c26a3148869d759b2eee9a356bb",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/guardian.flag.test.ts",
+    "line": 34,
+    "name": "NEXT_PUBLIC_ENABLE_GUARDIAN_PORTAL",
+    "git_blob": "4422367948030c26a3148869d759b2eee9a356bb",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/guardian.flag.test.ts",
+    "line": 40,
+    "name": "ENABLE_GUARDIAN_PORTAL",
+    "git_blob": "4422367948030c26a3148869d759b2eee9a356bb",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/guardian.flag.test.ts",
+    "line": 41,
+    "name": "NEXT_PUBLIC_ENABLE_GUARDIAN_PORTAL",
+    "git_blob": "4422367948030c26a3148869d759b2eee9a356bb",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/guardian.flag.test.ts",
+    "line": 47,
+    "name": "ENABLE_GUARDIAN_PORTAL",
+    "git_blob": "4422367948030c26a3148869d759b2eee9a356bb",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/guardian.flag.test.ts",
+    "line": 48,
+    "name": "NEXT_PUBLIC_ENABLE_GUARDIAN_PORTAL",
+    "git_blob": "4422367948030c26a3148869d759b2eee9a356bb",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/guardian.flag.test.ts",
+    "line": 56,
+    "name": "ENABLE_ADAPTIVE_ENGINE",
+    "git_blob": "4422367948030c26a3148869d759b2eee9a356bb",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/guardian.flag.test.ts",
+    "line": 62,
+    "name": "ENABLE_ADAPTIVE_ENGINE",
+    "git_blob": "4422367948030c26a3148869d759b2eee9a356bb",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/guardian.flag.test.ts",
+    "line": 68,
+    "name": "ENABLE_INTERVENTION_ENGINE",
+    "git_blob": "4422367948030c26a3148869d759b2eee9a356bb",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/guardian.flag.test.ts",
+    "line": 74,
+    "name": "ENABLE_INTERVENTION_WORKFLOW",
+    "git_blob": "4422367948030c26a3148869d759b2eee9a356bb",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/guardian.flag.test.ts",
+    "line": 80,
+    "name": "ENABLE_TEXTBOOK_COMPILER",
+    "git_blob": "4422367948030c26a3148869d759b2eee9a356bb",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/guardian.flag.test.ts",
+    "line": 86,
+    "name": "ENABLE_AI_ASSIGNMENT_GENERATION",
+    "git_blob": "4422367948030c26a3148869d759b2eee9a356bb",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/guardian.flag.test.ts",
+    "line": 92,
+    "name": "ENABLE_EXAM_SYSTEM",
+    "git_blob": "4422367948030c26a3148869d759b2eee9a356bb",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/health.endpoint.test.ts",
+    "line": 29,
+    "name": "ENABLE_LIVE_SMS",
+    "git_blob": "00cb3b63c3749c12733ed3af66585dc12f67fad7",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/health.endpoint.test.ts",
+    "line": 92,
+    "name": "ENABLE_LIVE_SMS",
+    "git_blob": "00cb3b63c3749c12733ed3af66585dc12f67fad7",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/health.endpoint.test.ts",
+    "line": 103,
+    "name": "ENABLE_LIVE_SMS",
+    "git_blob": "00cb3b63c3749c12733ed3af66585dc12f67fad7",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/health.endpoint.test.ts",
+    "line": 117,
+    "name": "ENABLE_LIVE_SMS",
+    "git_blob": "00cb3b63c3749c12733ed3af66585dc12f67fad7",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/health.endpoint.test.ts",
+    "line": 131,
+    "name": "ENABLE_LIVE_SMS",
+    "git_blob": "00cb3b63c3749c12733ed3af66585dc12f67fad7",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/moe.login.portal.test.ts",
+    "line": 131,
+    "name": "ENABLE_MOE_LOGIN_PORTAL",
+    "git_blob": "6ca1c9031b963080500940441c216a80b24c7e9f",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/moe.login.portal.test.ts",
+    "line": 134,
+    "name": "ENABLE_MOE_LOGIN_PORTAL",
+    "git_blob": "6ca1c9031b963080500940441c216a80b24c7e9f",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/moe.login.portal.test.ts",
+    "line": 138,
+    "name": "ENABLE_MOE_LOGIN_PORTAL",
+    "git_blob": "6ca1c9031b963080500940441c216a80b24c7e9f",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/moe.login.portal.test.ts",
+    "line": 142,
+    "name": "ENABLE_MOE_LOGIN_PORTAL",
+    "git_blob": "6ca1c9031b963080500940441c216a80b24c7e9f",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/moe.login.portal.test.ts",
+    "line": 146,
+    "name": "ENABLE_MOE_LOGIN_PORTAL",
+    "git_blob": "6ca1c9031b963080500940441c216a80b24c7e9f",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/moe.login.portal.test.ts",
+    "line": 172,
+    "name": "ENABLE_MOE_LOGIN_PORTAL",
+    "git_blob": "6ca1c9031b963080500940441c216a80b24c7e9f",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/moe.login.portal.test.ts",
+    "line": 176,
+    "name": "ENABLE_MOE_LOGIN_PORTAL",
+    "git_blob": "6ca1c9031b963080500940441c216a80b24c7e9f",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/moe.login.portal.test.ts",
+    "line": 245,
+    "name": "ENABLE_MOE_LOGIN_PORTAL",
+    "git_blob": "6ca1c9031b963080500940441c216a80b24c7e9f",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/moe.login.portal.test.ts",
+    "line": 249,
+    "name": "ENABLE_MOE_LOGIN_PORTAL",
+    "git_blob": "6ca1c9031b963080500940441c216a80b24c7e9f",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/moe.login.portal.test.ts",
+    "line": 256,
+    "name": "ENABLE_MOE_LOGIN_PORTAL",
+    "git_blob": "6ca1c9031b963080500940441c216a80b24c7e9f",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/moe.login.portal.test.ts",
+    "line": 262,
+    "name": "ENABLE_MOE_LOGIN_PORTAL",
+    "git_blob": "6ca1c9031b963080500940441c216a80b24c7e9f",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/onboarding.roles.test.ts",
+    "line": 106,
+    "name": "ENABLE_AI_TRUST_INDICATORS",
+    "git_blob": "6660b86d38bdf9513ce2310736c5f6dadb66e98b",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/onboarding.roles.test.ts",
+    "line": 107,
+    "name": "ENABLE_AI_TRUST_INDICATORS",
+    "git_blob": "6660b86d38bdf9513ce2310736c5f6dadb66e98b",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/onboarding.roles.test.ts",
+    "line": 108,
+    "name": "ENABLE_AI_TRUST_INDICATORS",
+    "git_blob": "6660b86d38bdf9513ce2310736c5f6dadb66e98b",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/onboarding.roles.test.ts",
+    "line": 111,
+    "name": "ENABLE_AI_TRUST_INDICATORS",
+    "git_blob": "6660b86d38bdf9513ce2310736c5f6dadb66e98b",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/onboarding.roles.test.ts",
+    "line": 116,
+    "name": "ENABLE_AI_COST_DASHBOARD",
+    "git_blob": "6660b86d38bdf9513ce2310736c5f6dadb66e98b",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/onboarding.roles.test.ts",
+    "line": 117,
+    "name": "ENABLE_AI_COST_DASHBOARD",
+    "git_blob": "6660b86d38bdf9513ce2310736c5f6dadb66e98b",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/onboarding.roles.test.ts",
+    "line": 118,
+    "name": "ENABLE_AI_COST_DASHBOARD",
+    "git_blob": "6660b86d38bdf9513ce2310736c5f6dadb66e98b",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/onboarding.roles.test.ts",
+    "line": 121,
+    "name": "ENABLE_AI_COST_DASHBOARD",
+    "git_blob": "6660b86d38bdf9513ce2310736c5f6dadb66e98b",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/onboarding.roles.test.ts",
+    "line": 126,
+    "name": "ENABLE_ROLE_ONBOARDING_POLISH",
+    "git_blob": "6660b86d38bdf9513ce2310736c5f6dadb66e98b",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/onboarding.roles.test.ts",
+    "line": 127,
+    "name": "ENABLE_ROLE_ONBOARDING_POLISH",
+    "git_blob": "6660b86d38bdf9513ce2310736c5f6dadb66e98b",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/onboarding.roles.test.ts",
+    "line": 128,
+    "name": "ENABLE_ROLE_ONBOARDING_POLISH",
+    "git_blob": "6660b86d38bdf9513ce2310736c5f6dadb66e98b",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/onboarding.roles.test.ts",
+    "line": 131,
+    "name": "ENABLE_ROLE_ONBOARDING_POLISH",
+    "git_blob": "6660b86d38bdf9513ce2310736c5f6dadb66e98b",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/security/p1c-credential-enforcement.test.ts",
+    "line": 24,
+    "name": "PRIVILEGED_MFA_ENFORCEMENT_ENABLED",
+    "git_blob": "dd0a2094d47df29a84f6c76ba1793334992d06e7",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/security/p1c-credential-enforcement.test.ts",
+    "line": 46,
+    "name": "PRIVILEGED_MFA_ENFORCEMENT_ENABLED",
+    "git_blob": "dd0a2094d47df29a84f6c76ba1793334992d06e7",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/security/p1c-credential-enforcement.test.ts",
+    "line": 53,
+    "name": "PRIVILEGED_MFA_ENFORCEMENT_ENABLED",
+    "git_blob": "dd0a2094d47df29a84f6c76ba1793334992d06e7",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/security/p1c-credential-enforcement.test.ts",
+    "line": 55,
+    "name": "PRIVILEGED_MFA_ENFORCEMENT_ENABLED",
+    "git_blob": "dd0a2094d47df29a84f6c76ba1793334992d06e7",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/security/p1c-privileged-identity.test.ts",
+    "line": 12,
+    "name": "PRIVILEGED_MFA_ENFORCEMENT_ENABLED",
+    "git_blob": "42c272670907a4b1ab91cb9da2a417b4d52d03f5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/security/p1c-privileged-identity.test.ts",
+    "line": 34,
+    "name": "PRIVILEGED_MFA_ENFORCEMENT_ENABLED",
+    "git_blob": "42c272670907a4b1ab91cb9da2a417b4d52d03f5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/security/p1c-privileged-identity.test.ts",
+    "line": 40,
+    "name": "PRIVILEGED_MFA_ENFORCEMENT_ENABLED",
+    "git_blob": "42c272670907a4b1ab91cb9da2a417b4d52d03f5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/security/p1c-privileged-identity.test.ts",
+    "line": 42,
+    "name": "PRIVILEGED_MFA_ENFORCEMENT_ENABLED",
+    "git_blob": "42c272670907a4b1ab91cb9da2a417b4d52d03f5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/security/p1c-session-invalidation.test.ts",
+    "line": 24,
+    "name": "PRIVILEGED_MFA_ENFORCEMENT_ENABLED",
+    "git_blob": "7ff8520b00edc238bb4beb0d338a8870cf2caa31",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/security/p1c-session-invalidation.test.ts",
+    "line": 67,
+    "name": "PRIVILEGED_MFA_ENFORCEMENT_ENABLED",
+    "git_blob": "7ff8520b00edc238bb4beb0d338a8870cf2caa31",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/security/p1c-session-invalidation.test.ts",
+    "line": 74,
+    "name": "PRIVILEGED_MFA_ENFORCEMENT_ENABLED",
+    "git_blob": "7ff8520b00edc238bb4beb0d338a8870cf2caa31",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/security/p1c-session-invalidation.test.ts",
+    "line": 76,
+    "name": "PRIVILEGED_MFA_ENFORCEMENT_ENABLED",
+    "git_blob": "7ff8520b00edc238bb4beb0d338a8870cf2caa31",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/security/p1c-step-up-middleware.test.ts",
+    "line": 10,
+    "name": "PRIVILEGED_MFA_ENFORCEMENT_ENABLED",
+    "git_blob": "98a2894cb98b56be9e6dfcc3d4e06a2c5b580947",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/security/p1c-step-up-middleware.test.ts",
+    "line": 31,
+    "name": "PRIVILEGED_MFA_ENFORCEMENT_ENABLED",
+    "git_blob": "98a2894cb98b56be9e6dfcc3d4e06a2c5b580947",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/security/p1c-step-up-middleware.test.ts",
+    "line": 36,
+    "name": "PRIVILEGED_MFA_ENFORCEMENT_ENABLED",
+    "git_blob": "98a2894cb98b56be9e6dfcc3d4e06a2c5b580947",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/security/p1c-step-up-middleware.test.ts",
+    "line": 38,
+    "name": "PRIVILEGED_MFA_ENFORCEMENT_ENABLED",
+    "git_blob": "98a2894cb98b56be9e6dfcc3d4e06a2c5b580947",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/serverFlags.aiTutor.test.ts",
+    "line": 6,
+    "name": "AI_TUTOR_ENABLED",
+    "git_blob": "b8db87fd3bcccf2efb2b61fc68b0ec6c9d35f58a",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/serverFlags.aiTutor.test.ts",
+    "line": 14,
+    "name": "AI_TUTOR_ENABLED",
+    "git_blob": "b8db87fd3bcccf2efb2b61fc68b0ec6c9d35f58a",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/serverFlags.aiTutor.test.ts",
+    "line": 21,
+    "name": "AI_TUTOR_ENABLED",
+    "git_blob": "b8db87fd3bcccf2efb2b61fc68b0ec6c9d35f58a",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/serverFlags.aiTutor.test.ts",
+    "line": 26,
+    "name": "AI_TUTOR_ENABLED",
+    "git_blob": "b8db87fd3bcccf2efb2b61fc68b0ec6c9d35f58a",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/serverFlags.aiTutor.test.ts",
+    "line": 31,
+    "name": "AI_TUTOR_ENABLED",
+    "git_blob": "b8db87fd3bcccf2efb2b61fc68b0ec6c9d35f58a",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/serverFlags.rag.test.ts",
+    "line": 6,
+    "name": "ENABLE_RAG_TUTOR",
+    "git_blob": "37ce9680f4939f5629d7fa12c7a7afd280b43a37",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/serverFlags.rag.test.ts",
+    "line": 7,
+    "name": "NEXT_PUBLIC_ENABLE_RAG_TUTOR",
+    "git_blob": "37ce9680f4939f5629d7fa12c7a7afd280b43a37",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/serverFlags.rag.test.ts",
+    "line": 15,
+    "name": "ENABLE_RAG_TUTOR",
+    "git_blob": "37ce9680f4939f5629d7fa12c7a7afd280b43a37",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/serverFlags.rag.test.ts",
+    "line": 20,
+    "name": "NEXT_PUBLIC_ENABLE_RAG_TUTOR",
+    "git_blob": "37ce9680f4939f5629d7fa12c7a7afd280b43a37",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/sms.dryRun.test.ts",
+    "line": 55,
+    "name": "ENABLE_LIVE_SMS",
+    "git_blob": "2b568724ce4df594cb823c123bf30361d8b5cb7a",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/sms.dryRun.test.ts",
+    "line": 63,
+    "name": "ENABLE_LIVE_SMS",
+    "git_blob": "2b568724ce4df594cb823c123bf30361d8b5cb7a",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/sms.dryRun.test.ts",
+    "line": 68,
+    "name": "ENABLE_LIVE_SMS",
+    "git_blob": "2b568724ce4df594cb823c123bf30361d8b5cb7a",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/sms.test.ts",
+    "line": 11,
+    "name": "ENABLE_LIVE_SMS",
+    "git_blob": "643e3929488ef8bc3c86bc889d1cfb478bb21c5d",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/teacher/gradingAssist.test.ts",
+    "line": 32,
+    "name": "ENABLE_AI_GRADING_ASSIST",
+    "git_blob": "962486062f68d22bac7d92ea7dfdec54c97af849",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/teacher/gradingAssist.test.ts",
+    "line": 81,
+    "name": "ENABLE_AI_GRADING_ASSIST",
+    "git_blob": "962486062f68d22bac7d92ea7dfdec54c97af849",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/toolkit.flags.test.ts",
+    "line": 5,
+    "name": "ENABLE_CLASSROOM_TOOLKIT",
+    "git_blob": "ccb6f648d8af52b3214dfab87fd543000ec30f4e",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/toolkit.flags.test.ts",
+    "line": 6,
+    "name": "ENABLE_TOOLKIT_CALCULATOR",
+    "git_blob": "ccb6f648d8af52b3214dfab87fd543000ec30f4e",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/toolkit.flags.test.ts",
+    "line": 7,
+    "name": "ENABLE_TOOLKIT_SCIENCE_TOOLS",
+    "git_blob": "ccb6f648d8af52b3214dfab87fd543000ec30f4e",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/toolkit.flags.test.ts",
+    "line": 8,
+    "name": "ENABLE_TOOLKIT_GEO_TOOLS",
+    "git_blob": "ccb6f648d8af52b3214dfab87fd543000ec30f4e",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/toolkit.flags.test.ts",
+    "line": 9,
+    "name": "ENABLE_TOOLKIT_TIMER",
+    "git_blob": "ccb6f648d8af52b3214dfab87fd543000ec30f4e",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/toolkit.flags.test.ts",
+    "line": 26,
+    "name": "ENABLE_CLASSROOM_TOOLKIT",
+    "git_blob": "ccb6f648d8af52b3214dfab87fd543000ec30f4e",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/toolkit.flags.test.ts",
+    "line": 27,
+    "name": "ENABLE_TOOLKIT_CALCULATOR",
+    "git_blob": "ccb6f648d8af52b3214dfab87fd543000ec30f4e",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/toolkit.flags.test.ts",
+    "line": 28,
+    "name": "ENABLE_TOOLKIT_SCIENCE_TOOLS",
+    "git_blob": "ccb6f648d8af52b3214dfab87fd543000ec30f4e",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/toolkit.flags.test.ts",
+    "line": 29,
+    "name": "ENABLE_TOOLKIT_GEO_TOOLS",
+    "git_blob": "ccb6f648d8af52b3214dfab87fd543000ec30f4e",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/toolkit.flags.test.ts",
+    "line": 30,
+    "name": "ENABLE_TOOLKIT_TIMER",
+    "git_blob": "ccb6f648d8af52b3214dfab87fd543000ec30f4e",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/toolkit.flags.test.ts",
+    "line": 35,
+    "name": "ENABLE_CLASSROOM_TOOLKIT",
+    "git_blob": "ccb6f648d8af52b3214dfab87fd543000ec30f4e",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/toolkit.flags.test.ts",
+    "line": 36,
+    "name": "ENABLE_TOOLKIT_CALCULATOR",
+    "git_blob": "ccb6f648d8af52b3214dfab87fd543000ec30f4e",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/toolkit.flags.test.ts",
+    "line": 37,
+    "name": "ENABLE_TOOLKIT_SCIENCE_TOOLS",
+    "git_blob": "ccb6f648d8af52b3214dfab87fd543000ec30f4e",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/toolkit.flags.test.ts",
+    "line": 38,
+    "name": "ENABLE_TOOLKIT_GEO_TOOLS",
+    "git_blob": "ccb6f648d8af52b3214dfab87fd543000ec30f4e",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/toolkit.flags.test.ts",
+    "line": 39,
+    "name": "ENABLE_TOOLKIT_TIMER",
+    "git_blob": "ccb6f648d8af52b3214dfab87fd543000ec30f4e",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/toolkit.flags.test.ts",
+    "line": 44,
+    "name": "ENABLE_CLASSROOM_TOOLKIT",
+    "git_blob": "ccb6f648d8af52b3214dfab87fd543000ec30f4e",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/toolkit.flags.test.ts",
+    "line": 45,
+    "name": "ENABLE_TOOLKIT_CALCULATOR",
+    "git_blob": "ccb6f648d8af52b3214dfab87fd543000ec30f4e",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/toolkit.flags.test.ts",
+    "line": 46,
+    "name": "ENABLE_TOOLKIT_SCIENCE_TOOLS",
+    "git_blob": "ccb6f648d8af52b3214dfab87fd543000ec30f4e",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/toolkit.flags.test.ts",
+    "line": 47,
+    "name": "ENABLE_TOOLKIT_GEO_TOOLS",
+    "git_blob": "ccb6f648d8af52b3214dfab87fd543000ec30f4e",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/toolkit.flags.test.ts",
+    "line": 48,
+    "name": "ENABLE_TOOLKIT_TIMER",
+    "git_blob": "ccb6f648d8af52b3214dfab87fd543000ec30f4e",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/toolkit.flags.test.ts",
+    "line": 56,
+    "name": "ENABLE_CLASSROOM_TOOLKIT",
+    "git_blob": "ccb6f648d8af52b3214dfab87fd543000ec30f4e",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/toolkit.flags.test.ts",
+    "line": 57,
+    "name": "ENABLE_TOOLKIT_CALCULATOR",
+    "git_blob": "ccb6f648d8af52b3214dfab87fd543000ec30f4e",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/toolkit.flags.test.ts",
+    "line": 58,
+    "name": "ENABLE_TOOLKIT_SCIENCE_TOOLS",
+    "git_blob": "ccb6f648d8af52b3214dfab87fd543000ec30f4e",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/toolkit.flags.test.ts",
+    "line": 59,
+    "name": "ENABLE_TOOLKIT_GEO_TOOLS",
+    "git_blob": "ccb6f648d8af52b3214dfab87fd543000ec30f4e",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/toolkit.flags.test.ts",
+    "line": 60,
+    "name": "ENABLE_TOOLKIT_TIMER",
+    "git_blob": "ccb6f648d8af52b3214dfab87fd543000ec30f4e",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/toolkit.flags.test.ts",
+    "line": 68,
+    "name": "ENABLE_CLASSROOM_TOOLKIT",
+    "git_blob": "ccb6f648d8af52b3214dfab87fd543000ec30f4e",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/toolkit.flags.test.ts",
+    "line": 69,
+    "name": "ENABLE_TOOLKIT_CALCULATOR",
+    "git_blob": "ccb6f648d8af52b3214dfab87fd543000ec30f4e",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/toolkit.flags.test.ts",
+    "line": 70,
+    "name": "ENABLE_TOOLKIT_SCIENCE_TOOLS",
+    "git_blob": "ccb6f648d8af52b3214dfab87fd543000ec30f4e",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/toolkit.flags.test.ts",
+    "line": 71,
+    "name": "ENABLE_TOOLKIT_GEO_TOOLS",
+    "git_blob": "ccb6f648d8af52b3214dfab87fd543000ec30f4e",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/toolkit.flags.test.ts",
+    "line": 72,
+    "name": "ENABLE_TOOLKIT_TIMER",
+    "git_blob": "ccb6f648d8af52b3214dfab87fd543000ec30f4e",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/toolkit.flags.test.ts",
+    "line": 80,
+    "name": "ENABLE_CLASSROOM_TOOLKIT",
+    "git_blob": "ccb6f648d8af52b3214dfab87fd543000ec30f4e",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/toolkit.flags.test.ts",
+    "line": 81,
+    "name": "ENABLE_TOOLKIT_CALCULATOR",
+    "git_blob": "ccb6f648d8af52b3214dfab87fd543000ec30f4e",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/toolkit.flags.test.ts",
+    "line": 82,
+    "name": "ENABLE_TOOLKIT_SCIENCE_TOOLS",
+    "git_blob": "ccb6f648d8af52b3214dfab87fd543000ec30f4e",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/toolkit.flags.test.ts",
+    "line": 83,
+    "name": "ENABLE_TOOLKIT_GEO_TOOLS",
+    "git_blob": "ccb6f648d8af52b3214dfab87fd543000ec30f4e",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/toolkit.flags.test.ts",
+    "line": 84,
+    "name": "ENABLE_TOOLKIT_TIMER",
+    "git_blob": "ccb6f648d8af52b3214dfab87fd543000ec30f4e",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/toolkit.registry.test.ts",
+    "line": 5,
+    "name": "ENABLE_CLASSROOM_TOOLKIT",
+    "git_blob": "58b37b43781fc4e79306c33361de72a45fce8d8c",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/toolkit.registry.test.ts",
+    "line": 6,
+    "name": "ENABLE_TOOLKIT_CALCULATOR",
+    "git_blob": "58b37b43781fc4e79306c33361de72a45fce8d8c",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/toolkit.registry.test.ts",
+    "line": 7,
+    "name": "ENABLE_TOOLKIT_SCIENCE_TOOLS",
+    "git_blob": "58b37b43781fc4e79306c33361de72a45fce8d8c",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/toolkit.registry.test.ts",
+    "line": 8,
+    "name": "ENABLE_TOOLKIT_GEO_TOOLS",
+    "git_blob": "58b37b43781fc4e79306c33361de72a45fce8d8c",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/toolkit.registry.test.ts",
+    "line": 9,
+    "name": "ENABLE_TOOLKIT_TIMER",
+    "git_blob": "58b37b43781fc4e79306c33361de72a45fce8d8c",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/toolkit.registry.test.ts",
+    "line": 13,
+    "name": "ENABLE_CLASSROOM_TOOLKIT",
+    "git_blob": "58b37b43781fc4e79306c33361de72a45fce8d8c",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/toolkit.registry.test.ts",
+    "line": 14,
+    "name": "ENABLE_TOOLKIT_CALCULATOR",
+    "git_blob": "58b37b43781fc4e79306c33361de72a45fce8d8c",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/toolkit.registry.test.ts",
+    "line": 15,
+    "name": "ENABLE_TOOLKIT_SCIENCE_TOOLS",
+    "git_blob": "58b37b43781fc4e79306c33361de72a45fce8d8c",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/toolkit.registry.test.ts",
+    "line": 16,
+    "name": "ENABLE_TOOLKIT_GEO_TOOLS",
+    "git_blob": "58b37b43781fc4e79306c33361de72a45fce8d8c",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/toolkit.registry.test.ts",
+    "line": 17,
+    "name": "ENABLE_TOOLKIT_TIMER",
+    "git_blob": "58b37b43781fc4e79306c33361de72a45fce8d8c",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/toolkit.registry.test.ts",
+    "line": 38,
+    "name": "ENABLE_CLASSROOM_TOOLKIT",
+    "git_blob": "58b37b43781fc4e79306c33361de72a45fce8d8c",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/toolkit.registry.test.ts",
+    "line": 39,
+    "name": "ENABLE_TOOLKIT_CALCULATOR",
+    "git_blob": "58b37b43781fc4e79306c33361de72a45fce8d8c",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/toolkit.registry.test.ts",
+    "line": 40,
+    "name": "ENABLE_TOOLKIT_SCIENCE_TOOLS",
+    "git_blob": "58b37b43781fc4e79306c33361de72a45fce8d8c",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/toolkit.registry.test.ts",
+    "line": 41,
+    "name": "ENABLE_TOOLKIT_GEO_TOOLS",
+    "git_blob": "58b37b43781fc4e79306c33361de72a45fce8d8c",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/toolkit.registry.test.ts",
+    "line": 42,
+    "name": "ENABLE_TOOLKIT_TIMER",
+    "git_blob": "58b37b43781fc4e79306c33361de72a45fce8d8c",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/training-center.flag.test.ts",
+    "line": 20,
+    "name": "NEXT_PUBLIC_ENABLE_TRAINING_CENTER",
+    "git_blob": "a4fa8ba90294501d3c1162505fa655c344bf8d4c",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/training-center.flag.test.ts",
+    "line": 26,
+    "name": "NEXT_PUBLIC_ENABLE_TRAINING_CENTER",
+    "git_blob": "a4fa8ba90294501d3c1162505fa655c344bf8d4c",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/training-center.flag.test.ts",
+    "line": 31,
+    "name": "NEXT_PUBLIC_ENABLE_TRAINING_CENTER",
+    "git_blob": "a4fa8ba90294501d3c1162505fa655c344bf8d4c",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/training-center.flag.test.ts",
+    "line": 36,
+    "name": "NEXT_PUBLIC_ENABLE_TRAINING_CENTER",
+    "git_blob": "a4fa8ba90294501d3c1162505fa655c344bf8d4c",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/training-center.flag.test.ts",
+    "line": 41,
+    "name": "NEXT_PUBLIC_ENABLE_TRAINING_CENTER",
+    "git_blob": "a4fa8ba90294501d3c1162505fa655c344bf8d4c",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/training-center.flag.test.ts",
+    "line": 46,
+    "name": "NEXT_PUBLIC_ENABLE_TRAINING_CENTER",
+    "git_blob": "a4fa8ba90294501d3c1162505fa655c344bf8d4c",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/training-center.flag.test.ts",
+    "line": 51,
+    "name": "NEXT_PUBLIC_ENABLE_TRAINING_CENTER",
+    "git_blob": "a4fa8ba90294501d3c1162505fa655c344bf8d4c",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/training-center.flag.test.ts",
+    "line": 53,
+    "name": "NEXT_PUBLIC_ENABLE_TRAINING_CENTER",
+    "git_blob": "a4fa8ba90294501d3c1162505fa655c344bf8d4c",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/training-center.flag.test.ts",
+    "line": 58,
+    "name": "NEXT_PUBLIC_ENABLE_TRAINING_CENTER",
+    "git_blob": "a4fa8ba90294501d3c1162505fa655c344bf8d4c",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "__tests__/training-center.flag.test.ts",
+    "line": 59,
+    "name": "NEXT_PUBLIC_ENABLE_GUIDED_ONBOARDING",
+    "git_blob": "a4fa8ba90294501d3c1162505fa655c344bf8d4c",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "app/api/admin/schools/route.ts",
+    "line": 11,
+    "name": "ENABLE_SCHOOL_ONBOARDING_KITS",
+    "git_blob": "c15c99d7046ff1254321b9bd9c751572aaf788df",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "app/api/moe/dashboard/route.ts",
+    "line": 51,
+    "name": "ENABLE_EXAM_READINESS",
+    "git_blob": "2d04a4d80e522a010b8e076b406cf7333219aeeb",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "app/api/platform/schools/route.ts",
+    "line": 9,
+    "name": "ENABLE_SCHOOL_ONBOARDING_KITS",
+    "git_blob": "cd17b32714d038e7ea2ad33e1001127c719e6dcc",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "app/api/student/exams/route.ts",
+    "line": 18,
+    "name": "ENABLE_EXAM_READINESS",
+    "git_blob": "bf74af668f973a5f99d69c0c7cda2cc374512e35",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "app/api/teacher/dashboard/route.ts",
+    "line": 267,
+    "name": "ENABLE_TEACHER_INTERVENTION_ALERTS",
+    "git_blob": "4dd447e08a6463e6001d622c8120259c50e95fec",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "app/api/teacher/exams/route.ts",
+    "line": 11,
+    "name": "ENABLE_EXAM_READINESS",
+    "git_blob": "9a49e519ddd1680d40c4c1e95eaa2e6cefb91e27",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "app/moe/curriculum/page.tsx",
+    "line": 57,
+    "name": "NEXT_PUBLIC_ENABLE_AI_TRUST_INDICATORS",
+    "git_blob": "5ac7086cee254cc599ff6087e29660f4f7c87e86",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "app/student/layout.tsx",
+    "line": 14,
+    "name": "NEXT_PUBLIC_ENABLE_ACCESSIBILITY_MODE",
+    "git_blob": "465ae2767b05531808aff0be9a7fc0c0070d4b0e",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "app/student/lessons/[id]/LessonDeliveryClient.tsx",
+    "line": 690,
+    "name": "NEXT_PUBLIC_ENABLE_AI_TUTOR",
+    "git_blob": "f537a7a507ea20d88e9df362bf32d2773b4d2bc4",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "app/teacher/TeacherShell.tsx",
+    "line": 11,
+    "name": "NEXT_PUBLIC_ENABLE_GUIDED_ONBOARDING",
+    "git_blob": "b74047c27a2579e7badcdc92c218dbac4f7ea1de",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "app/teacher/TeacherShell.tsx",
+    "line": 13,
+    "name": "NEXT_PUBLIC_ENABLE_ACCESSIBILITY_MODE",
+    "git_blob": "b74047c27a2579e7badcdc92c218dbac4f7ea1de",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "app/teacher/dashboard/page.tsx",
+    "line": 132,
+    "name": "NEXT_PUBLIC_ENABLE_ADAPTIVE_ENGINE",
+    "git_blob": "427e3decf96de00a4b589ffc095b938b0f4fe418",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "components/AiReviewButton.tsx",
+    "line": 14,
+    "name": "NEXT_PUBLIC_ENABLE_AI_TRUST_INDICATORS",
+    "git_blob": "dde4fcad2e6d49b0bb72a9dbc2fbdcbbccb9c1c0",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "components/admin/AdminNav.tsx",
+    "line": 45,
+    "name": "NEXT_PUBLIC_ENABLE_TRAINING_CENTER",
+    "git_blob": "8ef25b3b07891802942d83f6ef7afc2f033c4a92",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "docs/audits/AUDIT_GATE_1.md",
+    "line": 174,
+    "name": "ENABLE_",
+    "git_blob": "31189336822dd023fb2f1094c16c21da203b905b",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "docs/rollout/BLOCK28_MOE_PORTAL.md",
+    "line": 60,
+    "name": "ENABLE_MOE_PORTAL",
+    "git_blob": "f5233da15e520f5b42825ac6e8bb913e029e9eec",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "docs/superpowers/plans/2026-07-28-teaching-runtime-v1.md",
+    "line": 2045,
+    "name": "AGENT_TEACHING_RUNTIME_ENABLED",
+    "git_blob": "98d1d36d93be5d4c8a545311323d750942462888",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/auth/privilegedIdentity.ts",
+    "line": 30,
+    "name": "PRIVILEGED_MFA_ENFORCEMENT_ENABLED",
+    "git_blob": "11ecf84f000c859b8d535e5d2ceb807a086e5a19",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/autonomous/signals/productSignalService.ts",
+    "line": 55,
+    "name": "ENABLE_AUTONOMOUS_SIGNAL_INTEGRATION",
+    "git_blob": "8963417fe634df7793348e7185a24fd59bde00de",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/curriculum/regenerationAdmin.ts",
+    "line": 17,
+    "name": "ENABLE_CURRICULUM_REGEN_SCHEDULER",
+    "git_blob": "497d67f2ceff32b96607cab496e3c3a6054ed493",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/curriculum/review/legacyAdapter.ts",
+    "line": 17,
+    "name": "P2B_REVIEW_OPERATIONS_ENABLED",
+    "git_blob": "e6ff14980bc0f57009c47e837ae6dde67f104eb6",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/curriculum/review/legacyAdapter.ts",
+    "line": 21,
+    "name": "P2B_REVIEW_SHADOW_ENABLED",
+    "git_blob": "e6ff14980bc0f57009c47e837ae6dde67f104eb6",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/db.ts",
+    "line": 93,
+    "name": "ENABLE_RDS_DUAL_WRITE",
+    "git_blob": "62ad4bcb558b2dcb027be57a20c6ee6fec5e44de",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/featureFlags.ts",
+    "line": 17,
+    "name": "NEXT_PUBLIC_ENABLE_GUIDED_ONBOARDING",
+    "git_blob": "96509907c669f8bb5cc310cdc4bf532a31433b58",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/featureFlags.ts",
+    "line": 19,
+    "name": "NEXT_PUBLIC_ENABLE_ACCESSIBILITY_MODE",
+    "git_blob": "96509907c669f8bb5cc310cdc4bf532a31433b58",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/featureFlags.ts",
+    "line": 21,
+    "name": "NEXT_PUBLIC_ENABLE_GUARDIAN_PORTAL",
+    "git_blob": "96509907c669f8bb5cc310cdc4bf532a31433b58",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/featureFlags.ts",
+    "line": 23,
+    "name": "NEXT_PUBLIC_ENABLE_ENROLLMENT_INVITES",
+    "git_blob": "96509907c669f8bb5cc310cdc4bf532a31433b58",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/featureFlags.ts",
+    "line": 25,
+    "name": "NEXT_PUBLIC_ENABLE_ACCOUNT_RECOVERY",
+    "git_blob": "96509907c669f8bb5cc310cdc4bf532a31433b58",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/featureFlags.ts",
+    "line": 26,
+    "name": "NEXT_PUBLIC_ENABLE_RAG_TUTOR",
+    "git_blob": "96509907c669f8bb5cc310cdc4bf532a31433b58",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/featureFlags.ts",
+    "line": 28,
+    "name": "NEXT_PUBLIC_ENABLE_TRAINING_CENTER",
+    "git_blob": "96509907c669f8bb5cc310cdc4bf532a31433b58",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/featureFlags.ts",
+    "line": 30,
+    "name": "NEXT_PUBLIC_ENABLE_MASTERY_ENGINE",
+    "git_blob": "96509907c669f8bb5cc310cdc4bf532a31433b58",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/guardian/sms-service.ts",
+    "line": 73,
+    "name": "SMS_THROTTLE_ENABLED",
+    "git_blob": "b2a26ea0bbe6b487ac709e762da9cf1326882799",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/intelligence/recordPerformanceEvent.ts",
+    "line": 20,
+    "name": "ENABLE_PERFORMANCE_EVENTS",
+    "git_blob": "ed21971fafbaa1c629f5f77ac90ec4efb5402967",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "scripts/dr/healthCheck.ts",
+    "line": 112,
+    "name": "ENABLE_MOE_PORTAL",
+    "git_blob": "9d87cf48747d171c5c854ce6818eeb7aae0093fa",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "scripts/p2b-staging-e2e.ts",
+    "line": 201,
+    "name": "P2B_REVIEW_OPERATIONS_ENABLED",
+    "git_blob": "6c54fa2a6a9d4773984a94d7eabacd83d279d527",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "scripts/p2b-staging-e2e.ts",
+    "line": 201,
+    "name": "P2B_REVIEW_SHADOW_ENABLED",
+    "git_blob": "6c54fa2a6a9d4773984a94d7eabacd83d279d527",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "scripts/p2b-staging-shadow-parity.ts",
+    "line": 10,
+    "name": "P2B_REVIEW_OPERATIONS_ENABLED",
+    "git_blob": "ac2358da789027ff0a5fd6ef5504d38b9b840f6e",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "scripts/p2b-staging-shadow-parity.ts",
+    "line": 11,
+    "name": "P2B_REVIEW_SHADOW_ENABLED",
+    "git_blob": "ac2358da789027ff0a5fd6ef5504d38b9b840f6e",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "scripts/teaching-runtime-cost-sim.ts",
+    "line": 13,
+    "name": "AGENT_TEACHING_RUNTIME_ENABLED",
+    "git_blob": "6ce7bb0042828ade054b346f726b4eb4ec0a1762",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "scripts/verify-guardian-agent-e2e.ts",
+    "line": 17,
+    "name": "AGENT_GUARDIAN_ENABLED",
+    "git_blob": "bccd67b0297b0512fc5439cf800aef3f1ff860ee",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "tools/mergeops/safety.node-test.mjs",
+    "line": 93,
+    "name": "ENABLE_GRADING",
+    "git_blob": "2aa8392d37a3c533ba83c97edf04fe83e996d421",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 63,
+    "name": "OPS_AI_EXPLANATIONS_ENABLED",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 83,
+    "name": "ENABLE_GOV_EXPORTS",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 92,
+    "name": "ENABLE_GOV_STUDENT_PII_EXPORT",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 101,
+    "name": "ENABLE_GOV_NATIONAL_EXPORT",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 110,
+    "name": "ENABLE_GOV_AUDIT_SEARCH",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 122,
+    "name": "ENABLE_GOV_CIRCUIT_BREAKER",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 133,
+    "name": "AI_TUTOR_ENABLED",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 142,
+    "name": "AI_TEACHER_ASSIST_ENABLED",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 153,
+    "name": "ENABLE_RAG_TUTOR",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 153,
+    "name": "NEXT_PUBLIC_ENABLE_RAG_TUTOR",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 158,
+    "name": "ENABLE_EVAL_DB_LOGGING",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 163,
+    "name": "ENABLE_TEACHER_GENERATION",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 179,
+    "name": "ENABLE_IMPACT_ANALYTICS",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 188,
+    "name": "ENABLE_IMPACT_SNAPSHOTS",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 196,
+    "name": "ENABLE_ASSIGNMENT_TUTOR",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 204,
+    "name": "ENABLE_AI_GRADING_ASSIST",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 209,
+    "name": "ENABLE_TEACHER_AI_PLANNING",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 214,
+    "name": "ENABLE_TEACHER_INTERVENTION_ALERTS",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 219,
+    "name": "ENABLE_WEEKLY_TEACHER_REPORTS",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 224,
+    "name": "ENABLE_CERTIFICATES",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 229,
+    "name": "ENABLE_CANVA_CERTIFICATES",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 234,
+    "name": "ENABLE_CANVA_MOE_REPORTS",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 259,
+    "name": "ENABLE_SKILL_BADGES",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 264,
+    "name": "ENABLE_EXAM_READINESS",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 269,
+    "name": "ENABLE_PATHWAY_HOOKS",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 274,
+    "name": "ENABLE_MOE_POLICY_PUSH",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 279,
+    "name": "ENABLE_MOE_GOVERNANCE_WORKFLOW",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 284,
+    "name": "ENABLE_CURRICULUM_VERSION_STANDARDIZATION",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 292,
+    "name": "ENABLE_INTERVENTION_ALERTS",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 300,
+    "name": "ENABLE_AI_INTERVENTIONS",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 308,
+    "name": "ENABLE_INTERVENTION_OUTCOMES",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 316,
+    "name": "AI_INTERVENTIONS_AI_ENHANCED",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 324,
+    "name": "ENABLE_DISTRICT_INTELLIGENCE",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 370,
+    "name": "ENABLE_ADAPTIVE_ENGINE",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 374,
+    "name": "ENABLE_CONFUSION_DETECTION",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 379,
+    "name": "ENABLE_INTERVENTION_ENGINE",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 383,
+    "name": "ENABLE_PERFORMANCE_EVENTS",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 387,
+    "name": "ENABLE_PROMPT_REGISTRY",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 391,
+    "name": "ENABLE_AUDIT_IMMUTABILITY",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 395,
+    "name": "ENABLE_TEACHER_INTELLIGENCE_DASHBOARD",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 399,
+    "name": "ENABLE_GUARDIAN_PROGRESS_VIEW",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 403,
+    "name": "ENABLE_PILOT_READINESS_DASHBOARD",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 407,
+    "name": "ENABLE_PILOT_READINESS",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 412,
+    "name": "ENABLE_INTERVENTION_WORKFLOW",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 419,
+    "name": "ENABLE_CLASSROOM_TOOLKIT",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 424,
+    "name": "ENABLE_TOOLKIT_CALCULATOR",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 429,
+    "name": "ENABLE_TOOLKIT_SCIENCE_TOOLS",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 434,
+    "name": "ENABLE_TOOLKIT_GEO_TOOLS",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 439,
+    "name": "ENABLE_TOOLKIT_TIMER",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 447,
+    "name": "ENABLE_LONGITUDINAL_TRACKING",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 454,
+    "name": "ENABLE_DROPOUT_RISK",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 462,
+    "name": "AI_DROPOUT_RISK_ENABLED",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 470,
+    "name": "ENABLE_CURRICULUM_OPTIMIZATION",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 478,
+    "name": "ENABLE_CURRICULUM_OPTIMIZATION_AI",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 488,
+    "name": "ENABLE_GEO_INTELLIGENCE",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 498,
+    "name": "ENABLE_NATIONAL_INSIGHTS",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 505,
+    "name": "ENABLE_MOE_PORTAL",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 515,
+    "name": "ENABLE_MOE_LOGIN_PORTAL",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 543,
+    "name": "ENABLE_GUARDIAN_PORTAL",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 544,
+    "name": "NEXT_PUBLIC_ENABLE_GUARDIAN_PORTAL",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 550,
+    "name": "ENABLE_GUARDIAN_LINKING",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 559,
+    "name": "ENABLE_GUARDIAN_DASHBOARD",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 566,
+    "name": "ENABLE_ENROLLMENT_INVITES",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 571,
+    "name": "ENABLE_ACCOUNT_RECOVERY",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 583,
+    "name": "ENABLE_CURRICULUM_FEEDBACK",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 594,
+    "name": "ENABLE_DELIVERY_PROFILE",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 603,
+    "name": "ENABLE_LESSON_DELIVERY_TRACKING",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 612,
+    "name": "ENABLE_AB_BLOCK_SCHEDULING",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 620,
+    "name": "ENABLE_UNIT_GROUPING",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 628,
+    "name": "ENABLE_UNIT_ASSEMBLY",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 636,
+    "name": "ENABLE_TEXTBOOK_COMPILER",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 645,
+    "name": "ENABLE_ASSIGNMENT_LESSON_LINKAGE",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 654,
+    "name": "ENABLE_AI_ASSIGNMENT_GENERATION",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 663,
+    "name": "ENABLE_TOOLKIT_LESSON_INTEGRATION",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 672,
+    "name": "ENABLE_VIRTUAL_LABS",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 681,
+    "name": "ENABLE_AI_LABS",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 690,
+    "name": "ENABLE_DELIVERY_COMPLIANCE_REPORTING",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 698,
+    "name": "ENABLE_EXAM_SYSTEM",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 709,
+    "name": "ENABLE_LIVE_SMS",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 720,
+    "name": "ENABLE_AI_TRUST_INDICATORS",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 728,
+    "name": "ENABLE_AI_COST_DASHBOARD",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 736,
+    "name": "ENABLE_ROLE_ONBOARDING_POLISH",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 746,
+    "name": "ENABLE_TRAINING_CENTER",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 747,
+    "name": "NEXT_PUBLIC_ENABLE_TRAINING_CENTER",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 771,
+    "name": "TTS_STOP_GENERATION",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 776,
+    "name": "ENABLE_COST_DASHBOARD",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 784,
+    "name": "ENABLE_AI_QUALITY_DASHBOARD",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 793,
+    "name": "ENABLE_CURRICULUM_REGEN_QUEUE",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 799,
+    "name": "ENABLE_DETECTOR_EXECUTION",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 803,
+    "name": "ENABLE_DETECTOR_RECOMMENDATIONS",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 807,
+    "name": "ENABLE_DETECTOR_MOE_AGGREGATION",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 811,
+    "name": "ENABLE_GUARDIAN_RECOMMENDATIONS",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 815,
+    "name": "ENABLE_NATIONAL_TREND_ANALYSIS",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 820,
+    "name": "ENABLE_ACTION_GOVERNANCE",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 824,
+    "name": "ENABLE_ACTION_EXECUTION",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 828,
+    "name": "FORCE_AUTONOMOUS_RECOMMEND_ONLY",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 834,
+    "name": "ENABLE_LOW_RISK_AUTONOMY",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 838,
+    "name": "AUTONOMOUS_EMERGENCY_SHUTDOWN",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 842,
+    "name": "ENABLE_AUTONOMOUS_DEGRADED_MODE",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 846,
+    "name": "ENABLE_APPROVAL_EXPIRATION_WORKER",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 850,
+    "name": "ENABLE_ACTION_ROLLBACK",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 856,
+    "name": "ENABLE_AUTONOMOUS_EVALUATION",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 860,
+    "name": "ENABLE_AUTONOMOUS_MEMORY",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 866,
+    "name": "ENABLE_AUTONOMOUS_SIGNAL_INTEGRATION",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 873,
+    "name": "ENABLE_PREDICTIVE_INTELLIGENCE",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 879,
+    "name": "ENABLE_PREDICTION_REVIEW_WORKFLOW",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 883,
+    "name": "ENABLE_FALSE_POSITIVE_REVIEW",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 889,
+    "name": "ENABLE_AUTONOMOUS_OPTIMIZATION",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 896,
+    "name": "ENABLE_IMPLEMENTATION_WORKFLOW",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 904,
+    "name": "ENABLE_AUTONOMOUS_CRON",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 909,
+    "name": "ENABLE_WORKFLOW_RECOVERY_CRON",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 914,
+    "name": "ENABLE_DEAD_LETTER_INSPECTION_CRON",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 919,
+    "name": "ENABLE_RUNTIME_HEALTH_CRON",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 924,
+    "name": "ENABLE_RUNTIME_DASHBOARD",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 932,
+    "name": "ENABLE_REPLAY_CONSOLE",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 941,
+    "name": "AGENT_CRON_ENABLED",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 946,
+    "name": "P2B_REVIEW_OPERATIONS_ENABLED",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 951,
+    "name": "P2B_REVIEW_SHADOW_ENABLED",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 956,
+    "name": "P2B_AI_REVIEW_ENABLED",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  },
+  {
+    "path": "lib/serverFlags.ts",
+    "line": 966,
+    "name": "P2C_CURRICULUM_BENCHMARKING_ENABLED",
+    "git_blob": "aa7c9f94034656e022a4f921dafb861ae7a655d5",
+    "effective_production_value": "UNKNOWN",
+    "evidence_strength": "E4 source reference",
+    "registry_ids": []
+  }
+]

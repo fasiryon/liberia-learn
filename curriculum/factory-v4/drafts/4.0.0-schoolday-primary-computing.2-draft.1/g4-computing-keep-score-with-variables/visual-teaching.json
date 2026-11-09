@@ -1,0 +1,379 @@
+{
+  "contractVersion": "visual-teaching-block/4.0.0-draft.1",
+  "registryVersion": "teaching-blocks/1.2.0",
+  "instructionStandard": "liberialearn-v4-instruction/1.1.0",
+  "candidateSha256": "ec40eb4790a453ceccbccbdb32a8cfc88cd47a56808d7084e4bac2cd67db85f1",
+  "state": "DRAFT",
+  "approved": false,
+  "published": false,
+  "released": false,
+  "audience": "REVIEWER_ONLY",
+  "objectives": [
+    {
+      "id": "g4-computing-keep-score-with-variables-o1",
+      "statement": "Distinguish a variable's name, current value and an instruction that changes its value.",
+      "standards": [
+        {
+          "reference": "UNMAPPED_AUTHOR_OBJECTIVE:g4-computing-keep-score-with-variables-o1",
+          "statement": "Distinguish a variable's name, current value and an instruction that changes its value.",
+          "relation": "CONTENT_REFERENCE",
+          "mapping": "PROPOSED"
+        }
+      ]
+    },
+    {
+      "id": "g4-computing-keep-score-with-variables-o2",
+      "statement": "Trace ordered scoring instructions, distinguishing replacement from adding to the current value.",
+      "standards": [
+        {
+          "reference": "UNMAPPED_AUTHOR_OBJECTIVE:g4-computing-keep-score-with-variables-o2",
+          "statement": "Trace ordered scoring instructions, distinguishing replacement from adding to the current value.",
+          "relation": "CONTENT_REFERENCE",
+          "mapping": "PROPOSED"
+        }
+      ]
+    },
+    {
+      "id": "g4-computing-keep-score-with-variables-o3",
+      "statement": "Build, test and debug an unplugged scoring procedure using fresh event sequences.",
+      "standards": [
+        {
+          "reference": "UNMAPPED_AUTHOR_OBJECTIVE:g4-computing-keep-score-with-variables-o3",
+          "statement": "Build, test and debug an unplugged scoring procedure using fresh event sequences.",
+          "relation": "CONTENT_REFERENCE",
+          "mapping": "PROPOSED"
+        }
+      ]
+    }
+  ],
+  "blocks": [
+    {
+      "sceneId": "name-and-value",
+      "slot": "blocks",
+      "index": 0,
+      "type": "SORT",
+      "blockSha256": "c36cfdc57f7cac992ae5fd17cebbc38a956c0c06a4dbffeddaa77c02754f0846",
+      "objectiveIds": [
+        "g4-computing-keep-score-with-variables-o1"
+      ],
+      "instructionalPurpose": "Sort examples into categories and get a reason for each. Learner action: Make a name card and a separate number card. Sort the examples, then explain their different jobs.",
+      "misconceptionIds": [
+        "name-changes-with-value"
+      ],
+      "responseSignals": [
+        {
+          "misconceptionId": "name-changes-with-value",
+          "responsePattern": "MISGROUP:score-card",
+          "feedback": "This label names the store, regardless of its current number."
+        },
+        {
+          "misconceptionId": "name-changes-with-value",
+          "responsePattern": "MISGROUP:four-card",
+          "feedback": "This number can be stored under the name score."
+        },
+        {
+          "misconceptionId": "name-changes-with-value",
+          "responsePattern": "MISGROUP:add-card",
+          "feedback": "This tells the scorekeeper how to change the stored number."
+        },
+        {
+          "misconceptionId": "name-changes-with-value",
+          "responsePattern": "MISGROUP:set-card",
+          "feedback": "This replaces the stored number with 1; it is not another name."
+        }
+      ],
+      "accessibility": {
+        "textAlternative": "Sort the name, the number and the instruction. Groups: Variable name, Current value, Instruction. Cards: score, 4, Add 2 to score, Set score to 1.",
+        "keyboardPath": "Tab to labelled controls and response fields. Use Enter to check an attempt. An oral response may be dictated or scribed.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Sort the name, the number and the instruction. Groups: Variable name, Current value, Instruction. Cards: score, 4, Add 2 to score, Set score to 1.",
+        "responsePrompt": "Make a name card and a separate number card. Sort the examples, then explain their different jobs. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/support/lessonAuthor.ts",
+          "sha256": "cf4f9f9f502121c5cc3f9dce29394161f8f81af9491394cddf4ceabfb01522c0",
+          "license": "Original programme authoring source; internal review only",
+          "attribution": "LiberiaLearn Content Factory; Claude Chief of Staff planning inputs",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "model-trace",
+      "slot": "blocks",
+      "index": 0,
+      "type": "STEP_REVEAL",
+      "blockSha256": "36ce59fbcd7bfb9e8d0a6525402bc8d7139adbfe0030fa0b833db16fcc0e6db1",
+      "objectiveIds": [
+        "g4-computing-keep-score-with-variables-o1",
+        "g4-computing-keep-score-with-variables-o2"
+      ],
+      "instructionalPurpose": "Watch a worked example one step at a time. Learner action: Copy a three-column table: instruction, value before, value after. Move the number card after each instruction.",
+      "misconceptionIds": [
+        "name-changes-with-value",
+        "replacement-means-add"
+      ],
+      "responseSignals": [],
+      "accessibility": {
+        "textAlternative": "How does each instruction change score? Step 1: New game: set score to 0. There is no earlier game value to reuse. Step 2: Add 2: 0 becomes 2. Add 2 again: 2 becomes 4. Step 3: Set score to 1: 4 becomes 1, rather than 5. Step 4: Add 2: 1 becomes 3. The variable is still named score.",
+        "keyboardPath": "Tab to labelled controls and response fields. Use Enter to check an attempt. An oral response may be dictated or scribed.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: How does each instruction change score? Step 1: New game: set score to 0. There is no earlier game value to reuse. Step 2: Add 2: 0 becomes 2. Add 2 again: 2 becomes 4. Step 3: Set score to 1: 4 becomes 1, rather than 5. Step 4: Add 2: 1 becomes 3. The variable is still named score.",
+        "responsePrompt": "Copy a three-column table: instruction, value before, value after. Move the number card after each instruction. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "MODEL",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/support/lessonAuthor.ts",
+          "sha256": "cf4f9f9f502121c5cc3f9dce29394161f8f81af9491394cddf4ceabfb01522c0",
+          "license": "Original programme authoring source; internal review only",
+          "attribution": "LiberiaLearn Content Factory; Claude Chief of Staff planning inputs",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "guided-update",
+      "slot": "blocks",
+      "index": 0,
+      "type": "CHECK",
+      "blockSha256": "8c65512181d78e5879278deaa14fe5ff56206986612c4abd7a038ade6061c97c",
+      "objectiveIds": [
+        "g4-computing-keep-score-with-variables-o1",
+        "g4-computing-keep-score-with-variables-o2"
+      ],
+      "instructionalPurpose": "Choose an answer and get feedback written for that choice. Learner action: Build the instruction cards, trace them and check both decisions.",
+      "misconceptionIds": [
+        "name-changes-with-value",
+        "replacement-means-add",
+        "replacement-does-nothing"
+      ],
+      "responseSignals": [
+        {
+          "misconceptionId": "name-changes-with-value",
+          "responsePattern": "guided-name-item:OPTION:opt-2b0bff840983",
+          "feedback": "Four is the new value, not a new name for the store."
+        },
+        {
+          "misconceptionId": "name-changes-with-value",
+          "responsePattern": "guided-name-item:OPTION:opt-5f4b0c66850d",
+          "feedback": "One name can hold different values over time."
+        }
+      ],
+      "accessibility": {
+        "textAlternative": "The value changes from 1 to 4. What happens to the variable name? Options: It stays score.; It becomes four.; It needs both score and four as names..",
+        "keyboardPath": "Tab to labelled controls and response fields. Use Enter to check an attempt. An oral response may be dictated or scribed.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: The value changes from 1 to 4. What happens to the variable name? Options: It stays score.; It becomes four.; It needs both score and four as names..",
+        "responsePrompt": "Build the instruction cards, trace them and check both decisions. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/support/lessonAuthor.ts",
+          "sha256": "cf4f9f9f502121c5cc3f9dce29394161f8f81af9491394cddf4ceabfb01522c0",
+          "license": "Original programme authoring source; internal review only",
+          "attribution": "LiberiaLearn Content Factory; Claude Chief of Staff planning inputs",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "guided-update",
+      "slot": "blocks",
+      "index": 1,
+      "type": "CHECK",
+      "blockSha256": "644a7c64033c9b3c7fcbef763add25bf6d039a26a835514a14e40c9abc541096",
+      "objectiveIds": [
+        "g4-computing-keep-score-with-variables-o1",
+        "g4-computing-keep-score-with-variables-o2"
+      ],
+      "instructionalPurpose": "Choose an answer and get feedback written for that choice. Learner action: Build the instruction cards, trace them and check both decisions.",
+      "misconceptionIds": [
+        "name-changes-with-value",
+        "replacement-means-add",
+        "replacement-does-nothing"
+      ],
+      "responseSignals": [
+        {
+          "misconceptionId": "replacement-does-nothing",
+          "responsePattern": "guided-replace-item:OPTION:opt-8bb719fea862",
+          "feedback": "Seven was the value before the set instruction. The instruction changes it."
+        },
+        {
+          "misconceptionId": "replacement-means-add",
+          "responsePattern": "guided-replace-item:OPTION:opt-c7eac46debed",
+          "feedback": "Nine comes from adding 2 to 7. The instruction says set, not add."
+        }
+      ],
+      "accessibility": {
+        "textAlternative": "After the two hits, set score to 2. What is its new value? Options: 7; 2; 9.",
+        "keyboardPath": "Tab to labelled controls and response fields. Use Enter to check an attempt. An oral response may be dictated or scribed.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: After the two hits, set score to 2. What is its new value? Options: 7; 2; 9.",
+        "responsePrompt": "Build the instruction cards, trace them and check both decisions. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/support/lessonAuthor.ts",
+          "sha256": "cf4f9f9f502121c5cc3f9dce29394161f8f81af9491394cddf4ceabfb01522c0",
+          "license": "Original programme authoring source; internal review only",
+          "attribution": "LiberiaLearn Content Factory; Claude Chief of Staff planning inputs",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "guided-new-game",
+      "slot": "blocks",
+      "index": 0,
+      "type": "CHECK",
+      "blockSha256": "7255cd628ced25516be7de02390a9dd23ebbdc36a7280dae0237f0dc86d5adc3",
+      "objectiveIds": [
+        "g4-computing-keep-score-with-variables-o3"
+      ],
+      "instructionalPurpose": "Choose an answer and get feedback written for that choice. Learner action: Choose where initialization belongs, then use the cards to explain two hits in one game.",
+      "misconceptionIds": [
+        "reset-every-turn",
+        "new-game-keeps-old-score"
+      ],
+      "responseSignals": [
+        {
+          "misconceptionId": "new-game-keeps-old-score",
+          "responsePattern": "initialize-once-item:OPTION:opt-657a90c7d47a",
+          "feedback": "Without initialization, an old game's score can carry into a new game."
+        },
+        {
+          "misconceptionId": "reset-every-turn",
+          "responsePattern": "initialize-once-item:OPTION:opt-cbd832e94bde",
+          "feedback": "That erases earlier points, so two hits can look like one hit."
+        }
+      ],
+      "accessibility": {
+        "textAlternative": "Where should set score to 0 go? Options: Never, even when another game starts.; Once at the start of each new game.; Before every hit..",
+        "keyboardPath": "Tab to labelled controls and response fields. Use Enter to check an attempt. An oral response may be dictated or scribed.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: Where should set score to 0 go? Options: Never, even when another game starts.; Once at the start of each new game.; Before every hit..",
+        "responsePrompt": "Choose where initialization belongs, then use the cards to explain two hits in one game. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/support/lessonAuthor.ts",
+          "sha256": "cf4f9f9f502121c5cc3f9dce29394161f8f81af9491394cddf4ceabfb01522c0",
+          "license": "Original programme authoring source; internal review only",
+          "attribution": "LiberiaLearn Content Factory; Claude Chief of Staff planning inputs",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    },
+    {
+      "sceneId": "debug-reset",
+      "slot": "blocks",
+      "index": 0,
+      "type": "MISTAKE_ANALYSIS",
+      "blockSha256": "dbd98064b1684aaf83e78b6733f1c0e5b536f578a58b7a2584c3d4492770340a",
+      "objectiveIds": [
+        "g4-computing-keep-score-with-variables-o3"
+      ],
+      "instructionalPurpose": "Diagnose a worked attempt that contains a common misconception. Learner action: Diagnose the bug, change the cards and explain the retest results.",
+      "misconceptionIds": [
+        "reset-every-turn",
+        "name-changes-with-value"
+      ],
+      "responseSignals": [
+        {
+          "misconceptionId": "name-changes-with-value",
+          "responsePattern": "OPTION:rename",
+          "feedback": "Renaming does not stop the reset instruction from erasing previous points."
+        },
+        {
+          "misconceptionId": "reset-every-turn",
+          "responsePattern": "OPTION:bigger",
+          "feedback": "That can match two hits by accident, but each later hit still loses prior state."
+        }
+      ],
+      "accessibility": {
+        "textAlternative": "A new game starts at zero; each hit should add two points. A fictional scorekeeper wrote: Before each hit: set score to 0. After each hit: add 2 to score. After two hits, report 2. Which repair preserves earlier points? Options: Move set score to 0 to the new-game start, before all turns.; Rename score to total after every hit.; Keep resetting but add 4 after each hit..",
+        "keyboardPath": "Tab to labelled controls and response fields. Use Enter to check an attempt. An oral response may be dictated or scribed.",
+        "nonColorCue": "Use the labels, quantities and text equivalent; color is supplementary.",
+        "reducedMotion": "Use the static text equivalent and record each model state on paper."
+      },
+      "offline": {
+        "mode": "TEXT_PAPER_CAPTURE_ONLY",
+        "instructions": "Read or copy this model: A new game starts at zero; each hit should add two points. A fictional scorekeeper wrote: Before each hit: set score to 0. After each hit: add 2 to score. After two hits, report 2. Which repair preserves earlier points? Options: Move set score to 0 to the new-game start, before all turns.; Rename score to total after every hit.; Keep resetting but add 4 after each hit..",
+        "responsePrompt": "Diagnose the bug, change the cards and explain the retest results. Write your response and reasoning on paper. Responses are capture only, never official scores."
+      },
+      "feedback": {
+        "policy": "FORMATIVE_ONLY",
+        "reveal": "AFTER_ATTEMPT",
+        "canonicalMasteryMutation": false
+      },
+      "sourcePins": [
+        {
+          "path": "lib/content-factory/v4/support/lessonAuthor.ts",
+          "sha256": "cf4f9f9f502121c5cc3f9dce29394161f8f81af9491394cddf4ceabfb01522c0",
+          "license": "Original programme authoring source; internal review only",
+          "attribution": "LiberiaLearn Content Factory; Claude Chief of Staff planning inputs",
+          "authenticity": "SYNTHETIC_DEMONSTRATION",
+          "rights": "REVIEW_ONLY"
+        }
+      ]
+    }
+  ],
+  "assessmentBoundary": {
+    "player": "ASSESSMENT_PLAYER_V2",
+    "scoring": "SERVER_AUTHORITY",
+    "protectedKeysIncluded": false,
+    "canonicalMasteryMutation": false,
+    "offlineEvidence": "CAPTURE_ONLY_NOT_OFFICIAL"
+  }
+}

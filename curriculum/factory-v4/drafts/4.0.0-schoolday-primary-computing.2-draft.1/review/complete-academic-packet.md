@@ -1,0 +1,1192 @@
+# Programme batch academic review
+
+Original factory DRAFTs. No academic approval, official assessment, publication or student activation is claimed.
+
+## Keep score: name, change, trace and debug
+
+4.0.0-schoolday-primary-computing.2-draft.1 | GO-G04-P5-COMPUTING-U1 | be00b57563b01f490e99768e2787fd46271e446bf97d8a6d8c790a7f4deaba43
+
+```json
+
+{
+  "version": "program-academic-review/1.0.0",
+  "state": "DRAFT",
+  "authorship": "AI_AUTHORED_DETERMINISTIC_FACTORY_RECIPE",
+  "humanSubjectExpertReview": "NOT_PERFORMED",
+  "academicApproval": "PENDING_EXACT_VERSION_REVIEW",
+  "programOrderId": "GO-G04-P5-COMPUTING-U1",
+  "courseId": "stem1-g4-computing",
+  "unit": 1,
+  "sourceOrder": {
+    "planId": "stem1-g4-day1",
+    "slot": "P5",
+    "grade": 4,
+    "orderId": "GO-G04-P5-COMPUTING-U1",
+    "owner": "T2_CODEX",
+    "kind": "LESSON",
+    "batch": "BAND_3-5",
+    "courseId": "stem1-g4-computing",
+    "unit": 1,
+    "unitTitle": "Variables",
+    "performanceTask": "keep score in a game with a variable",
+    "family": "COMPUTING",
+    "pattern": [
+      "PREDICT",
+      "DECOMPOSE",
+      "DEMONSTRATE",
+      "BUILD_WITH_SUPPORT",
+      "BUILD_INDEPENDENTLY",
+      "TEST",
+      "DEBUG",
+      "APPLY"
+    ],
+    "recordedSubject": "COMPUTER_SCIENCE",
+    "developmental": {
+      "band": "3-5",
+      "maxSentenceWords": 16,
+      "maxSceneBodyWords": 90,
+      "approach": "Conceptual foundations, guided investigations and foundational computing",
+      "maxSegmentMinutes": 15,
+      "maxScreenMinutesPerPeriod": 25,
+      "readAloudRequired": false,
+      "independentWritingWords": [
+        20,
+        80
+      ],
+      "requiresMovementSegment": false
+    },
+    "competencies": {
+      "medium": "BLOCKS",
+      "learnerDoes": [
+        "Write a program with sequence, loops and conditionals",
+        "Name a procedure and reuse it",
+        "Trace a program step by step",
+        "Debug a logic error and explain it",
+        "Collect data and represent it"
+      ],
+      "evidence": [
+        "A working program or a full trace table",
+        "A debugged error with explanation",
+        "A test the learner chose"
+      ],
+      "blocks": {
+        "now": [
+          "SEQUENCE",
+          "MISTAKE_ANALYSIS",
+          "NUMERIC_RESPONSE",
+          "DATA_PLOT"
+        ],
+        "needed": [
+          "BLOCK_PROGRAM",
+          "GRID_ROBOT_PROGRAM"
+        ]
+      }
+    },
+    "blocks": {
+      "existing": [
+        "SEQUENCE",
+        "SORT",
+        "MISTAKE_ANALYSIS"
+      ],
+      "proposed": [
+        "GRID_ROBOT_PROGRAM",
+        "BLOCK_PROGRAM"
+      ]
+    },
+    "labs": [],
+    "stemPractices": [
+      "COMPUTATIONAL_THINKING",
+      "MATHEMATICAL_REASONING",
+      "LIBERIAN_APPLICATION",
+      "PRACTICE_CONTINUUM"
+    ],
+    "requirements": [
+      "Two or three measurable objectives derived from the performance task; MOE mapping recorded as PROPOSED, never claimed",
+      "At least two distinct, named misconceptions, each taught against and diagnosed by a block",
+      "Hints in every guided scene; no hints or worked steps in independent scenes",
+      "Choice items with three or more plausible options, or richer interactions",
+      "No system, policy or answer-policy text in learner-visible fields; no generator prefixes; UTF-8 text with no mojibake",
+      "Specific learner actions in every scene",
+      "Guided practice, independent work, extension and reflection, in that order",
+      "An authentic Liberian situation that needs the concept, not a name swap",
+      "Formative only: no grade, mastery or assessment keys in the learner projection"
+    ],
+    "gates": [
+      "G1",
+      "G2",
+      "G3",
+      "G4",
+      "G5",
+      "G6",
+      "G7",
+      "G8"
+    ],
+    "status": "OPEN"
+  },
+  "objectives": [
+    {
+      "id": "g4-computing-keep-score-with-variables-o1",
+      "statement": "Distinguish a variable's name, current value and an instruction that changes its value.",
+      "moeReferences": []
+    },
+    {
+      "id": "g4-computing-keep-score-with-variables-o2",
+      "statement": "Trace ordered scoring instructions, distinguishing replacement from adding to the current value.",
+      "moeReferences": []
+    },
+    {
+      "id": "g4-computing-keep-score-with-variables-o3",
+      "statement": "Build, test and debug an unplugged scoring procedure using fresh event sequences.",
+      "moeReferences": []
+    }
+  ],
+  "misconceptions": [
+    {
+      "id": "name-changes-with-value",
+      "objectiveId": "g4-computing-keep-score-with-variables-o1",
+      "description": "The variable's name is changed whenever its number changes.",
+      "response": "Keep the name score fixed and replace the number stored beneath it."
+    },
+    {
+      "id": "replacement-means-add",
+      "objectiveId": "g4-computing-keep-score-with-variables-o2",
+      "description": "Set score to a number is treated as adding that number.",
+      "response": "Set replaces the current value. Add uses the current value to calculate the next one."
+    },
+    {
+      "id": "reset-every-turn",
+      "objectiveId": "g4-computing-keep-score-with-variables-o3",
+      "description": "Initialization is repeated before every event, discarding the accumulated score.",
+      "response": "Initialize at new-game start and retain the updated value between events."
+    },
+    {
+      "id": "replacement-does-nothing",
+      "objectiveId": "g4-computing-keep-score-with-variables-o2",
+      "description": "A set instruction is ignored and the previous value is retained.",
+      "response": "Follow every instruction in order. Set replaces the old value even if no points were earned."
+    },
+    {
+      "id": "new-game-keeps-old-score",
+      "objectiveId": "g4-computing-keep-score-with-variables-o3",
+      "description": "A new game starts without initialization and inherits an earlier game's score.",
+      "response": "Give each new game its stated starting value before processing events."
+    }
+  ],
+  "answerGuidance": {
+    "prediction": "Two hits give4 from an initial0. Require an explanation that the previous value is retained.",
+    "model": "The worked trace is0,2,4,1,3. The variable name stays score.",
+    "guided": "Starting1, two additions of3 give4 then7; set to2 gives2, not9. Initialization belongs at each new game's start.",
+    "independent": "Initial2, hit5, hit8, reset1, hit4. A complete trace records the initial state and each event, not only the final answer.",
+    "tests": "Separate new games: no events gives2; one hit gives5; reset then hit gives4. Accept other well-defined learner tests with correct predictions. A hit then reset gives1, demonstrating that order can change the result.",
+    "debug": "Move initialization outside the repeated event procedure. Three hits from0 give2,4,6; a separate game starts again at0. Increasing the award to4 merely masks the error for one event count.",
+    "transfer": "Accept coherent new rules with named state, explicit initialization, an increase and replacement. Require two traces and evidence-based revision or justification. Do not prefill a claim that a partner test occurred."
+  },
+  "teacherGuide": {
+    "proposedMinutes": 45,
+    "timingEvidence": "NOT_MEASURED",
+    "segments": [
+      {
+        "minutes": 4,
+        "activity": "Predict and explain remembered state"
+      },
+      {
+        "minutes": 5,
+        "activity": "Separate name, value and instruction using cards"
+      },
+      {
+        "minutes": 6,
+        "activity": "Model replacement versus addition with a trace"
+      },
+      {
+        "minutes": 8,
+        "activity": "Two guided construction tasks"
+      },
+      {
+        "minutes": 6,
+        "activity": "Independent procedure and trace"
+      },
+      {
+        "minutes": 5,
+        "activity": "Choose tests and compare predictions"
+      },
+      {
+        "minutes": 5,
+        "activity": "Debug initialization and retest"
+      },
+      {
+        "minutes": 6,
+        "activity": "Partner-tested new game and reflection"
+      }
+    ],
+    "screenLimitMinutes": 25,
+    "materials": "Paper name/value/instruction cards, counters or drawn marks, pencil. No device or interpreter required.",
+    "support": "Read instructions aloud. A pupil may direct a partner or scribe who moves cards and records their decisions. Model before/after columns during guided work only. Keep independent traces unscaffolded.",
+    "extension": "Compare add-then-set with set-then-add. Explain when two event sequences produce different scores and create a counterexample to a claimed rule.",
+    "oversight": "Check the full state trace, reasons for set versus add, chosen boundary tests and actual repair. Choice success alone is insufficient evidence of the performance task.",
+    "assessment": "Formative practice only. No governed assessment, mastery attribution or official score. Independent assessment requires separately governed items.",
+    "offline": "Print scene text and cards. Use oral or written trace explanations. Do not require dragging, color, fast reading or precise motor control.",
+    "retention": "Propose a different scoring procedure after7 days, including initialization and replacement. No retrieval job is scheduled here.",
+    "expectedTraces": {
+      "guided": [
+        1,
+        4,
+        7,
+        2
+      ],
+      "independent": [
+        2,
+        5,
+        8,
+        1,
+        4
+      ],
+      "independentEvents": [
+        "hit",
+        "hit",
+        "reset",
+        "hit"
+      ],
+      "boundaryTests": {
+        "noEvents": "the learner's stated starting value",
+        "oneHit": "start value + increase",
+        "hitAfterReset": "reset value + increase"
+      },
+      "debug": {
+        "threeHitsFromZeroAtTwoPoints": [
+          0,
+          2,
+          4,
+          6
+        ],
+        "separateNewGame": 0
+      },
+      "review": "Require each intermediate state and its explanation. Correctness on one trace is not a mastery claim. Accept coherent learner games with their own stated rules."
+    }
+  },
+  "references": [
+    {
+      "title": "Original LiberiaLearn unplugged scoring activities",
+      "use": "All games, traces, instructions, choices and feedback are original teaching examples; no real pupil or observed experiment is represented.",
+      "rights": "Internal draft; exact-version academic and distribution review pending."
+    }
+  ],
+  "assessment": {
+    "governedFormSupplied": false,
+    "protectedKeysIncluded": false,
+    "officialRecordWrites": false,
+    "teacherReviewRequired": true
+  },
+  "remainingGates": [
+    "COS_G3_AND_INDEPENDENT_ACADEMIC_REVIEW",
+    "LIBERIA_STANDARDS_MAPPING",
+    "RIGHTS_REVIEW",
+    "BROWSER_ACCESSIBILITY_AND_OFFLINE_QA",
+    "TIMED_REHEARSAL",
+    "EXACT_VERSION_AUTHORIZATION"
+  ]
+}
+
+
+```
+
+```json
+
+{
+  "contractVersion": "candidate-lesson-v2/1.1.0",
+  "title": "Keep score: name, change, trace and debug",
+  "instruction": {
+    "standard": "liberialearn-v4-instruction/1.1.0",
+    "retention": {
+      "delayDays": 7,
+      "prompts": [
+        "Without the worked example, explain: Distinguish a variable's name, current value and an instruction that changes its value.",
+        "Without the worked example, explain: Trace ordered scoring instructions, distinguishing replacement from adding to the current value."
+      ]
+    }
+  },
+  "estimatedMinutes": 45,
+  "ageBand": "UPPER_PRIMARY",
+  "pedagogy": {
+    "primaryStrategy": "GUIDED_TO_INDEPENDENT",
+    "rationale": "Model a named store with cards, then build and trace scoring procedures. Test predictions against a partner's trace, repair initialization errors and transfer the procedure to a different game."
+  },
+  "prerequisiteAssumptions": [
+    "Read whole numbers to twenty, with oral support if needed.",
+    "Add small whole numbers and follow ordered instructions."
+  ],
+  "misconceptions": [
+    {
+      "id": "name-changes-with-value",
+      "objectiveId": "g4-computing-keep-score-with-variables-o1",
+      "description": "The variable's name is changed whenever its number changes.",
+      "response": "Keep the name score fixed and replace the number stored beneath it."
+    },
+    {
+      "id": "replacement-means-add",
+      "objectiveId": "g4-computing-keep-score-with-variables-o2",
+      "description": "Set score to a number is treated as adding that number.",
+      "response": "Set replaces the current value. Add uses the current value to calculate the next one."
+    },
+    {
+      "id": "reset-every-turn",
+      "objectiveId": "g4-computing-keep-score-with-variables-o3",
+      "description": "Initialization is repeated before every event, discarding the accumulated score.",
+      "response": "Initialize at new-game start and retain the updated value between events."
+    },
+    {
+      "id": "replacement-does-nothing",
+      "objectiveId": "g4-computing-keep-score-with-variables-o2",
+      "description": "A set instruction is ignored and the previous value is retained.",
+      "response": "Follow every instruction in order. Set replaces the old value even if no points were earned."
+    },
+    {
+      "id": "new-game-keeps-old-score",
+      "objectiveId": "g4-computing-keep-score-with-variables-o3",
+      "description": "A new game starts without initialization and inherits an earlier game's score.",
+      "response": "Give each new game its stated starting value before processing events."
+    }
+  ],
+  "scenes": [
+    {
+      "id": "predict-score",
+      "type": "PRACTICE",
+      "title": "Predict before playing",
+      "purpose": "EXPLAIN_CONCEPT",
+      "objectiveIds": [
+        "g4-computing-keep-score-with-variables-o1",
+        "g4-computing-keep-score-with-variables-o2"
+      ],
+      "learnerAction": "Write a prediction and explain what must be remembered between the two turns.",
+      "content": {
+        "body": "Our class invents a paper target game. Each hit earns two points. A scorekeeper must remember the total between turns. Start at zero. Predict the score after two hits before moving counters. This game is an invented teaching example."
+      },
+      "interaction": {
+        "kind": "FREE_RESPONSE",
+        "prompts": [
+          {
+            "id": "predict-score-response-0",
+            "prompt": "Predict the score after two hits. Explain what the scorekeeper must remember between turns.",
+            "minLength": 20
+          }
+        ]
+      },
+      "tools": {
+        "requested": [],
+        "prohibited": []
+      },
+      "hints": [],
+      "misconceptionIds": [],
+      "evidence": {
+        "kind": "NONE"
+      },
+      "accessibility": {
+        "textAlternative": "Our class invents a paper target game. Each hit earns two points. A scorekeeper must remember the total between turns. Start at zero. Predict the score after two hits before moving counters. This game is an invented teaching example. Predict the score after two hits. Explain what the scorekeeper must remember between turns.",
+        "keyboardPath": "Tab to labelled controls and response fields. Use Enter to check an attempt. An oral response may be dictated or scribed.",
+        "reducedMotion": "STATIC_EQUIVALENT"
+      },
+      "offline": {
+        "mode": "FULL_OFFLINE",
+        "note": "Use the printed text, diagrams and questions with paper and pencil. Responses can be spoken and scribed."
+      },
+      "completion": "ALL_RESPONSES_WRITTEN",
+      "pedagogy": {
+        "strategy": "GUIDED_TO_INDEPENDENT",
+        "representation": "MIXED",
+        "scaffoldLevel": "NONE"
+      },
+      "teaching": {
+        "phase": "PREDICT",
+        "blocks": []
+      }
+    },
+    {
+      "id": "name-and-value",
+      "type": "EXPLANATION",
+      "title": "A name stays; its value changes",
+      "purpose": "EXPLAIN_CONCEPT",
+      "objectiveIds": [
+        "g4-computing-keep-score-with-variables-o1"
+      ],
+      "learnerAction": "Make a name card and a separate number card. Sort the examples, then explain their different jobs.",
+      "content": {
+        "body": "Write score above a space on paper. Put a number card beneath it. The name identifies the store. Its current value is the number there now. An instruction tells the scorekeeper what to do. After a hit, change the number card; keep the name."
+      },
+      "interaction": {
+        "kind": "NONE"
+      },
+      "tools": {
+        "requested": [],
+        "prohibited": []
+      },
+      "hints": [],
+      "misconceptionIds": [
+        "name-changes-with-value"
+      ],
+      "evidence": {
+        "kind": "NONE"
+      },
+      "accessibility": {
+        "textAlternative": "Write score above a space on paper. Put a number card beneath it. The name identifies the store. Its current value is the number there now. An instruction tells the scorekeeper what to do. After a hit, change the number card; keep the name. Sort the name, the number and the instruction. Groups: Variable name, Current value, Instruction. Cards: score, 4, Add 2 to score, Set score to 1.",
+        "keyboardPath": "Tab to labelled controls and response fields. Use Enter to check an attempt. An oral response may be dictated or scribed.",
+        "reducedMotion": "STATIC_EQUIVALENT"
+      },
+      "offline": {
+        "mode": "FULL_OFFLINE",
+        "note": "Use the printed text, diagrams and questions with paper and pencil. Responses can be spoken and scribed."
+      },
+      "completion": "VIEWED",
+      "pedagogy": {
+        "strategy": "GUIDED_TO_INDEPENDENT",
+        "representation": "MIXED",
+        "scaffoldLevel": "NONE"
+      },
+      "teaching": {
+        "phase": "DECOMPOSE",
+        "blocks": [
+          {
+            "type": "SORT",
+            "id": "name-value-instruction",
+            "prompt": "Sort the name, the number and the instruction.",
+            "misconceptionId": "name-changes-with-value",
+            "groups": [
+              {
+                "id": "name",
+                "label": "Variable name"
+              },
+              {
+                "id": "value",
+                "label": "Current value"
+              },
+              {
+                "id": "instruction",
+                "label": "Instruction"
+              }
+            ],
+            "cards": [
+              {
+                "id": "score-card",
+                "text": "score",
+                "group": "name",
+                "why": "This label names the store, regardless of its current number."
+              },
+              {
+                "id": "four-card",
+                "text": "4",
+                "group": "value",
+                "why": "This number can be stored under the name score."
+              },
+              {
+                "id": "add-card",
+                "text": "Add 2 to score",
+                "group": "instruction",
+                "why": "This tells the scorekeeper how to change the stored number."
+              },
+              {
+                "id": "set-card",
+                "text": "Set score to 1",
+                "group": "instruction",
+                "why": "This replaces the stored number with 1; it is not another name."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "model-trace",
+      "type": "GUIDED_EXAMPLE",
+      "title": "Trace one instruction at a time",
+      "purpose": "MODEL_WORKED_EXAMPLE",
+      "objectiveIds": [
+        "g4-computing-keep-score-with-variables-o1",
+        "g4-computing-keep-score-with-variables-o2"
+      ],
+      "learnerAction": "Copy a three-column table: instruction, value before, value after. Move the number card after each instruction.",
+      "content": {
+        "body": "A trace records each instruction and its result. Set score to 0 gives 0. Add 2 gives 2; add 2 again gives 4. Set score to 1 replaces 4 with 1. Add 2 now gives 3. Setting and adding do different jobs. Order matters because each instruction uses the current state."
+      },
+      "interaction": {
+        "kind": "NONE"
+      },
+      "tools": {
+        "requested": [],
+        "prohibited": []
+      },
+      "hints": [
+        "Keep score as the label in every row.",
+        "For set, replace the old number. For add, start with the current number."
+      ],
+      "misconceptionIds": [
+        "name-changes-with-value",
+        "replacement-means-add"
+      ],
+      "evidence": {
+        "kind": "NONE"
+      },
+      "accessibility": {
+        "textAlternative": "A trace records each instruction and its result. Set score to 0 gives 0. Add 2 gives 2; add 2 again gives 4. Set score to 1 replaces 4 with 1. Add 2 now gives 3. Setting and adding do different jobs. Order matters because each instruction uses the current state. How does each instruction change score? Step 1: New game: set score to 0. There is no earlier game value to reuse. Step 2: Add 2: 0 becomes 2. Add 2 again: 2 becomes 4. Step 3: Set score to 1: 4 becomes 1, rather than 5. Step 4: Add 2: 1 becomes 3. The variable is still named score.",
+        "keyboardPath": "Tab to labelled controls and response fields. Use Enter to check an attempt. An oral response may be dictated or scribed.",
+        "reducedMotion": "STATIC_EQUIVALENT"
+      },
+      "offline": {
+        "mode": "FULL_OFFLINE",
+        "note": "Use the printed text, diagrams and questions with paper and pencil. Responses can be spoken and scribed."
+      },
+      "completion": "VIEWED",
+      "pedagogy": {
+        "strategy": "GUIDED_TO_INDEPENDENT",
+        "representation": "MIXED",
+        "scaffoldLevel": "PARTIAL"
+      },
+      "teaching": {
+        "phase": "DEMONSTRATE",
+        "blocks": [
+          {
+            "type": "STEP_REVEAL",
+            "id": "score-trace-model",
+            "question": "How does each instruction change score?",
+            "steps": [
+              {
+                "text": "New game: set score to 0. There is no earlier game value to reuse."
+              },
+              {
+                "text": "Add 2: 0 becomes 2. Add 2 again: 2 becomes 4."
+              },
+              {
+                "text": "Set score to 1: 4 becomes 1, rather than 5."
+              },
+              {
+                "text": "Add 2: 1 becomes 3. The variable is still named score."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "guided-update",
+      "type": "PRACTICE",
+      "title": "Build a trace with help",
+      "purpose": "GUIDED_PRACTICE",
+      "objectiveIds": [
+        "g4-computing-keep-score-with-variables-o1",
+        "g4-computing-keep-score-with-variables-o2"
+      ],
+      "learnerAction": "Build the instruction cards, trace them and check both decisions.",
+      "content": {
+        "body": "Use a new game that starts with one point. A hit adds three points. Follow two hits, then a card saying set score to 2. Record every new value. Point to the current number before following each instruction. Explain whether the last instruction adds or replaces."
+      },
+      "interaction": {
+        "kind": "NONE"
+      },
+      "tools": {
+        "requested": [],
+        "prohibited": []
+      },
+      "hints": [
+        "After each hit, add three to the number currently under score.",
+        "The final card says set to 2. It replaces the old number with 2."
+      ],
+      "misconceptionIds": [
+        "name-changes-with-value",
+        "replacement-means-add",
+        "replacement-does-nothing"
+      ],
+      "evidence": {
+        "kind": "NONE"
+      },
+      "accessibility": {
+        "textAlternative": "Use a new game that starts with one point. A hit adds three points. Follow two hits, then a card saying set score to 2. Record every new value. Point to the current number before following each instruction. Explain whether the last instruction adds or replaces. The value changes from 1 to 4. What happens to the variable name? Options: It stays score.; It becomes four.; It needs both score and four as names.. After the two hits, set score to 2. What is its new value? Options: 7; 2; 9.",
+        "keyboardPath": "Tab to labelled controls and response fields. Use Enter to check an attempt. An oral response may be dictated or scribed.",
+        "reducedMotion": "STATIC_EQUIVALENT"
+      },
+      "offline": {
+        "mode": "FULL_OFFLINE",
+        "note": "Use the printed text, diagrams and questions with paper and pencil. Responses can be spoken and scribed."
+      },
+      "completion": "VIEWED",
+      "pedagogy": {
+        "strategy": "GUIDED_TO_INDEPENDENT",
+        "representation": "MIXED",
+        "scaffoldLevel": "PARTIAL"
+      },
+      "teaching": {
+        "phase": "BUILD_WITH_SUPPORT",
+        "blocks": [
+          {
+            "type": "CHECK",
+            "id": "guided-name",
+            "items": [
+              {
+                "id": "guided-name-item",
+                "prompt": "The value changes from 1 to 4. What happens to the variable name?",
+                "options": [
+                  {
+                    "id": "opt-619f28d1cb48",
+                    "text": "It stays score.",
+                    "feedback": "The name identifies the same store while its content changes."
+                  },
+                  {
+                    "id": "opt-2b0bff840983",
+                    "text": "It becomes four.",
+                    "feedback": "Four is the new value, not a new name for the store.",
+                    "misconceptionId": "name-changes-with-value"
+                  },
+                  {
+                    "id": "opt-5f4b0c66850d",
+                    "text": "It needs both score and four as names.",
+                    "feedback": "One name can hold different values over time.",
+                    "misconceptionId": "name-changes-with-value"
+                  }
+                ],
+                "formativeKey": {
+                  "expectedOptionId": "opt-619f28d1cb48"
+                },
+                "misconceptionId": "name-changes-with-value"
+              }
+            ]
+          },
+          {
+            "type": "CHECK",
+            "id": "guided-replace",
+            "items": [
+              {
+                "id": "guided-replace-item",
+                "prompt": "After the two hits, set score to 2. What is its new value?",
+                "options": [
+                  {
+                    "id": "opt-8bb719fea862",
+                    "text": "7",
+                    "feedback": "Seven was the value before the set instruction. The instruction changes it.",
+                    "misconceptionId": "replacement-does-nothing"
+                  },
+                  {
+                    "id": "opt-0692a3d73842",
+                    "text": "2",
+                    "feedback": "Set to 2 replaces the current value with 2."
+                  },
+                  {
+                    "id": "opt-c7eac46debed",
+                    "text": "9",
+                    "feedback": "Nine comes from adding 2 to 7. The instruction says set, not add.",
+                    "misconceptionId": "replacement-means-add"
+                  }
+                ],
+                "formativeKey": {
+                  "expectedOptionId": "opt-0692a3d73842"
+                },
+                "misconceptionId": "replacement-means-add"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "guided-new-game",
+      "type": "PRACTICE",
+      "title": "Decide when to initialize",
+      "purpose": "GUIDED_PRACTICE",
+      "objectiveIds": [
+        "g4-computing-keep-score-with-variables-o3"
+      ],
+      "learnerAction": "Choose where initialization belongs, then use the cards to explain two hits in one game.",
+      "content": {
+        "body": "Initialization gives a variable its starting value. Place a new-game card before the event cards. Keep the score between turns. A new game needs a fresh start, even when the previous game ended with a score. Ask a partner to follow your cards literally."
+      },
+      "interaction": {
+        "kind": "NONE"
+      },
+      "tools": {
+        "requested": [],
+        "prohibited": []
+      },
+      "hints": [
+        "Ask whether another turn is a new game.",
+        "Reset once when a new game begins; use the retained score for later turns."
+      ],
+      "misconceptionIds": [
+        "reset-every-turn",
+        "new-game-keeps-old-score"
+      ],
+      "evidence": {
+        "kind": "NONE"
+      },
+      "accessibility": {
+        "textAlternative": "Initialization gives a variable its starting value. Place a new-game card before the event cards. Keep the score between turns. A new game needs a fresh start, even when the previous game ended with a score. Ask a partner to follow your cards literally. Where should set score to 0 go? Options: Never, even when another game starts.; Once at the start of each new game.; Before every hit..",
+        "keyboardPath": "Tab to labelled controls and response fields. Use Enter to check an attempt. An oral response may be dictated or scribed.",
+        "reducedMotion": "STATIC_EQUIVALENT"
+      },
+      "offline": {
+        "mode": "FULL_OFFLINE",
+        "note": "Use the printed text, diagrams and questions with paper and pencil. Responses can be spoken and scribed."
+      },
+      "completion": "VIEWED",
+      "pedagogy": {
+        "strategy": "GUIDED_TO_INDEPENDENT",
+        "representation": "MIXED",
+        "scaffoldLevel": "PARTIAL"
+      },
+      "teaching": {
+        "phase": "BUILD_WITH_SUPPORT",
+        "blocks": [
+          {
+            "type": "CHECK",
+            "id": "initialize-once",
+            "items": [
+              {
+                "id": "initialize-once-item",
+                "prompt": "Where should set score to 0 go?",
+                "options": [
+                  {
+                    "id": "opt-657a90c7d47a",
+                    "text": "Never, even when another game starts.",
+                    "feedback": "Without initialization, an old game's score can carry into a new game.",
+                    "misconceptionId": "new-game-keeps-old-score"
+                  },
+                  {
+                    "id": "opt-268d42eafa9f",
+                    "text": "Once at the start of each new game.",
+                    "feedback": "This creates a fresh game while retaining points between its turns."
+                  },
+                  {
+                    "id": "opt-cbd832e94bde",
+                    "text": "Before every hit.",
+                    "feedback": "That erases earlier points, so two hits can look like one hit.",
+                    "misconceptionId": "reset-every-turn"
+                  }
+                ],
+                "formativeKey": {
+                  "expectedOptionId": "opt-268d42eafa9f"
+                },
+                "misconceptionId": "reset-every-turn"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "independent-trace",
+      "type": "PRACTICE",
+      "title": "Build and trace a fresh game",
+      "purpose": "INDEPENDENT_PRACTICE",
+      "objectiveIds": [
+        "g4-computing-keep-score-with-variables-o1",
+        "g4-computing-keep-score-with-variables-o2",
+        "g4-computing-keep-score-with-variables-o3"
+      ],
+      "learnerAction": "Create the cards and complete your own trace without the worked example.",
+      "content": {
+        "body": "Work independently. A new game starts at two points. A hit adds three points. A reset event sets score to one. Follow hit, hit, reset, hit. Write the starting value and a row for each event. Explain what one row tells another scorekeeper."
+      },
+      "interaction": {
+        "kind": "FREE_RESPONSE",
+        "prompts": [
+          {
+            "id": "independent-trace-response-0",
+            "prompt": "Record the initial value and every later value for hit, hit, reset, hit. Explain the reset row and keep the variable name visible.",
+            "minLength": 20
+          }
+        ]
+      },
+      "tools": {
+        "requested": [],
+        "prohibited": []
+      },
+      "hints": [],
+      "misconceptionIds": [
+        "replacement-means-add",
+        "reset-every-turn"
+      ],
+      "evidence": {
+        "kind": "NONE"
+      },
+      "accessibility": {
+        "textAlternative": "Work independently. A new game starts at two points. A hit adds three points. A reset event sets score to one. Follow hit, hit, reset, hit. Write the starting value and a row for each event. Explain what one row tells another scorekeeper. Record the initial value and every later value for hit, hit, reset, hit. Explain the reset row and keep the variable name visible.",
+        "keyboardPath": "Tab to labelled controls and response fields. Use Enter to check an attempt. An oral response may be dictated or scribed.",
+        "reducedMotion": "STATIC_EQUIVALENT"
+      },
+      "offline": {
+        "mode": "FULL_OFFLINE",
+        "note": "Use the printed text, diagrams and questions with paper and pencil. Responses can be spoken and scribed."
+      },
+      "completion": "ALL_RESPONSES_WRITTEN",
+      "pedagogy": {
+        "strategy": "GUIDED_TO_INDEPENDENT",
+        "representation": "MIXED",
+        "scaffoldLevel": "NONE"
+      },
+      "teaching": {
+        "phase": "BUILD_INDEPENDENTLY",
+        "blocks": []
+      }
+    },
+    {
+      "id": "independent-tests",
+      "type": "PRACTICE",
+      "title": "Choose tests that could expose a mistake",
+      "purpose": "INDEPENDENT_PRACTICE",
+      "objectiveIds": [
+        "g4-computing-keep-score-with-variables-o2",
+        "g4-computing-keep-score-with-variables-o3"
+      ],
+      "learnerAction": "Record three predictions, run the cards and explain any difference. Add one test of your own.",
+      "content": {
+        "body": "Test your procedure with no events, one hit and a hit after a reset. Predict each result before your partner follows the cards. Start each separate test as a new game. Compare predictions with the trace. A match is evidence for that case, not proof that every possible case works."
+      },
+      "interaction": {
+        "kind": "FREE_RESPONSE",
+        "prompts": [
+          {
+            "id": "independent-tests-response-0",
+            "prompt": "For each test, show the event sequence, predicted value and observed trace. Add a different test and explain what mistake it could reveal.",
+            "minLength": 20
+          }
+        ]
+      },
+      "tools": {
+        "requested": [],
+        "prohibited": []
+      },
+      "hints": [],
+      "misconceptionIds": [
+        "reset-every-turn"
+      ],
+      "evidence": {
+        "kind": "NONE"
+      },
+      "accessibility": {
+        "textAlternative": "Test your procedure with no events, one hit and a hit after a reset. Predict each result before your partner follows the cards. Start each separate test as a new game. Compare predictions with the trace. A match is evidence for that case, not proof that every possible case works. For each test, show the event sequence, predicted value and observed trace. Add a different test and explain what mistake it could reveal.",
+        "keyboardPath": "Tab to labelled controls and response fields. Use Enter to check an attempt. An oral response may be dictated or scribed.",
+        "reducedMotion": "STATIC_EQUIVALENT"
+      },
+      "offline": {
+        "mode": "FULL_OFFLINE",
+        "note": "Use the printed text, diagrams and questions with paper and pencil. Responses can be spoken and scribed."
+      },
+      "completion": "ALL_RESPONSES_WRITTEN",
+      "pedagogy": {
+        "strategy": "GUIDED_TO_INDEPENDENT",
+        "representation": "MIXED",
+        "scaffoldLevel": "NONE"
+      },
+      "teaching": {
+        "phase": "TEST",
+        "blocks": []
+      }
+    },
+    {
+      "id": "debug-reset",
+      "type": "PRACTICE",
+      "title": "Repair the procedure, then retest",
+      "purpose": "ADDRESS_MISCONCEPTION",
+      "objectiveIds": [
+        "g4-computing-keep-score-with-variables-o3"
+      ],
+      "learnerAction": "Diagnose the bug, change the cards and explain the retest results.",
+      "content": {
+        "body": "A fictional scorekeeper resets the score before every hit. Two hits still produce only two points. A bug is a mistake in instructions or their order. Identify the instruction that loses information. Repair the procedure, then test it with three hits and with a separate new game."
+      },
+      "interaction": {
+        "kind": "FREE_RESPONSE",
+        "prompts": [
+          {
+            "id": "debug-reset-response-0",
+            "prompt": "Show the repaired cards and traces for three hits and a separate new game. Explain why changing the points per hit would not fix the reset bug.",
+            "minLength": 20
+          }
+        ]
+      },
+      "tools": {
+        "requested": [],
+        "prohibited": []
+      },
+      "hints": [],
+      "misconceptionIds": [
+        "reset-every-turn"
+      ],
+      "evidence": {
+        "kind": "NONE"
+      },
+      "accessibility": {
+        "textAlternative": "A fictional scorekeeper resets the score before every hit. Two hits still produce only two points. A bug is a mistake in instructions or their order. Identify the instruction that loses information. Repair the procedure, then test it with three hits and with a separate new game. A new game starts at zero; each hit should add two points. A fictional scorekeeper wrote: Before each hit: set score to 0. After each hit: add 2 to score. After two hits, report 2. Which repair preserves earlier points? Options: Move set score to 0 to the new-game start, before all turns.; Rename score to total after every hit.; Keep resetting but add 4 after each hit.. Show the repaired cards and traces for three hits and a separate new game. Explain why changing the points per hit would not fix the reset bug.",
+        "keyboardPath": "Tab to labelled controls and response fields. Use Enter to check an attempt. An oral response may be dictated or scribed.",
+        "reducedMotion": "STATIC_EQUIVALENT"
+      },
+      "offline": {
+        "mode": "FULL_OFFLINE",
+        "note": "Use the printed text, diagrams and questions with paper and pencil. Responses can be spoken and scribed."
+      },
+      "completion": "ALL_RESPONSES_WRITTEN",
+      "pedagogy": {
+        "strategy": "GUIDED_TO_INDEPENDENT",
+        "representation": "MIXED",
+        "scaffoldLevel": "NONE"
+      },
+      "teaching": {
+        "phase": "DEBUG",
+        "blocks": [
+          {
+            "type": "MISTAKE_ANALYSIS",
+            "id": "reset-bug",
+            "problem": "A new game starts at zero; each hit should add two points.",
+            "attempt": {
+              "name": "A fictional scorekeeper",
+              "steps": [
+                "Before each hit: set score to 0.",
+                "After each hit: add 2 to score.",
+                "After two hits, report 2."
+              ]
+            },
+            "question": "Which repair preserves earlier points?",
+            "options": [
+              {
+                "id": "initialize-start",
+                "text": "Move set score to 0 to the new-game start, before all turns.",
+                "feedback": "Now later hits use the retained score. Retest three hits and a new game."
+              },
+              {
+                "id": "rename",
+                "text": "Rename score to total after every hit.",
+                "feedback": "Renaming does not stop the reset instruction from erasing previous points.",
+                "misconceptionId": "name-changes-with-value"
+              },
+              {
+                "id": "bigger",
+                "text": "Keep resetting but add 4 after each hit.",
+                "feedback": "That can match two hits by accident, but each later hit still loses prior state.",
+                "misconceptionId": "reset-every-turn"
+              }
+            ],
+            "formativeKey": {
+              "expectedOptionId": "initialize-start"
+            },
+            "correction": [
+              "Initialize once at new-game start, then update the retained score for each event."
+            ],
+            "misconceptionId": "reset-every-turn"
+          }
+        ]
+      }
+    },
+    {
+      "id": "transfer-game",
+      "type": "PRACTICE",
+      "title": "Make a game someone else can follow",
+      "purpose": "APPLY",
+      "objectiveIds": [
+        "g4-computing-keep-score-with-variables-o1",
+        "g4-computing-keep-score-with-variables-o2",
+        "g4-computing-keep-score-with-variables-o3"
+      ],
+      "learnerAction": "Build, exchange, test and revise your procedure. Compare two event orders.",
+      "content": {
+        "body": "Invent a target game for classmates using paper tokens. Choose a starting score, an increase and an event that replaces the score. Write precise instructions. Ask a partner to follow them without extra explanations. Use their trace to find an unclear instruction or justify why a test matched."
+      },
+      "interaction": {
+        "kind": "FREE_RESPONSE",
+        "prompts": [
+          {
+            "id": "transfer-game-response-0",
+            "prompt": "Present your game cards and two traces with a changed event order. Explain one revision or a test-based reason for keeping an instruction. What stayed the same when the variable's value changed?",
+            "minLength": 20
+          }
+        ]
+      },
+      "tools": {
+        "requested": [],
+        "prohibited": []
+      },
+      "hints": [],
+      "misconceptionIds": [
+        "name-changes-with-value",
+        "replacement-means-add",
+        "reset-every-turn"
+      ],
+      "evidence": {
+        "kind": "NONE"
+      },
+      "accessibility": {
+        "textAlternative": "Invent a target game for classmates using paper tokens. Choose a starting score, an increase and an event that replaces the score. Write precise instructions. Ask a partner to follow them without extra explanations. Use their trace to find an unclear instruction or justify why a test matched. Present your game cards and two traces with a changed event order. Explain one revision or a test-based reason for keeping an instruction. What stayed the same when the variable's value changed?",
+        "keyboardPath": "Tab to labelled controls and response fields. Use Enter to check an attempt. An oral response may be dictated or scribed.",
+        "reducedMotion": "STATIC_EQUIVALENT"
+      },
+      "offline": {
+        "mode": "FULL_OFFLINE",
+        "note": "Use the printed text, diagrams and questions with paper and pencil. Responses can be spoken and scribed."
+      },
+      "completion": "ALL_RESPONSES_WRITTEN",
+      "pedagogy": {
+        "strategy": "GUIDED_TO_INDEPENDENT",
+        "representation": "MIXED",
+        "scaffoldLevel": "NONE"
+      },
+      "teaching": {
+        "phase": "APPLY",
+        "blocks": []
+      }
+    },
+    {
+      "id": "independent-explanation",
+      "type": "MASTERY_CHECK",
+      "title": "Explain your scoring procedure",
+      "purpose": "ASSESS_MASTERY",
+      "objectiveIds": [
+        "g4-computing-keep-score-with-variables-o1",
+        "g4-computing-keep-score-with-variables-o2",
+        "g4-computing-keep-score-with-variables-o3"
+      ],
+      "learnerAction": "Use your trace to explain how your procedure handles a new game and a later event.",
+      "content": {
+        "body": "Keep your trace and explain one change you made after testing."
+      },
+      "interaction": {
+        "kind": "ASSESSMENT_HANDOFF",
+        "assessmentRequestId": "future-independent-explanation"
+      },
+      "tools": {
+        "requested": [],
+        "prohibited": []
+      },
+      "hints": [],
+      "misconceptionIds": [],
+      "evidence": {
+        "kind": "MASTERY_RESPONSE",
+        "evidenceType": "QUIZ",
+        "responses": [
+          {
+            "responseKey": "future-0",
+            "objectiveId": "g4-computing-keep-score-with-variables-o1",
+            "responseType": "ASSESSMENT_RESPONSE",
+            "scaffoldLevel": "NONE"
+          },
+          {
+            "responseKey": "future-1",
+            "objectiveId": "g4-computing-keep-score-with-variables-o2",
+            "responseType": "ASSESSMENT_RESPONSE",
+            "scaffoldLevel": "NONE"
+          },
+          {
+            "responseKey": "future-2",
+            "objectiveId": "g4-computing-keep-score-with-variables-o3",
+            "responseType": "ASSESSMENT_RESPONSE",
+            "scaffoldLevel": "NONE"
+          }
+        ]
+      },
+      "accessibility": {
+        "textAlternative": "Keep your trace and explain one change you made after testing.",
+        "keyboardPath": "Use the independently supplied assessment controls when available.",
+        "reducedMotion": "NOT_APPLICABLE"
+      },
+      "offline": {
+        "mode": "FULL_OFFLINE",
+        "note": "Keep your trace and explain one change you made after testing."
+      },
+      "completion": "ALL_ANSWERED",
+      "teaching": {
+        "phase": "ASSESS",
+        "blocks": []
+      }
+    }
+  ],
+  "assessmentRequests": [
+    {
+      "id": "future-independent-explanation",
+      "objectiveIds": [
+        "g4-computing-keep-score-with-variables-o1",
+        "g4-computing-keep-score-with-variables-o2",
+        "g4-computing-keep-score-with-variables-o3"
+      ],
+      "interaction": "FREE_RESPONSE",
+      "evidenceType": "QUIZ",
+      "difficulty": "CORE",
+      "misconceptionIds": [
+        "name-changes-with-value",
+        "replacement-means-add",
+        "reset-every-turn",
+        "replacement-does-nothing",
+        "new-game-keeps-old-score"
+      ],
+      "tools": {
+        "requested": [],
+        "prohibited": []
+      },
+      "offline": "FULL_OFFLINE"
+    }
+  ],
+  "labProposals": []
+}
+
+
+```
+
+Keep score: name, change, trace and debug
+
+Predict before playing
+
+Our class invents a paper target game. Each hit earns two points. A scorekeeper must remember the total between turns. Start at zero. Predict the score after two hits before moving counters. This game is an invented teaching example. Predict the score after two hits. Explain what the scorekeeper must remember between turns.
+
+Predict the score after two hits. Explain what the scorekeeper must remember between turns.
+Response: __________________________
+
+A name stays; its value changes
+
+Write score above a space on paper. Put a number card beneath it. The name identifies the store. Its current value is the number there now. An instruction tells the scorekeeper what to do. After a hit, change the number card; keep the name. Sort the name, the number and the instruction. Groups: Variable name, Current value, Instruction. Cards: score, 4, Add 2 to score, Set score to 1.
+
+Trace one instruction at a time
+
+A trace records each instruction and its result. Set score to 0 gives 0. Add 2 gives 2; add 2 again gives 4. Set score to 1 replaces 4 with 1. Add 2 now gives 3. Setting and adding do different jobs. Order matters because each instruction uses the current state. How does each instruction change score? Step 1: New game: set score to 0. There is no earlier game value to reuse. Step 2: Add 2: 0 becomes 2. Add 2 again: 2 becomes 4. Step 3: Set score to 1: 4 becomes 1, rather than 5. Step 4: Add 2: 1 becomes 3. The variable is still named score.
+
+Keep score as the label in every row.
+
+For set, replace the old number. For add, start with the current number.
+
+Build a trace with help
+
+Use a new game that starts with one point. A hit adds three points. Follow two hits, then a card saying set score to 2. Record every new value. Point to the current number before following each instruction. Explain whether the last instruction adds or replaces. The value changes from 1 to 4. What happens to the variable name? Options: It stays score.; It becomes four.; It needs both score and four as names.. After the two hits, set score to 2. What is its new value? Options: 7; 2; 9.
+
+After each hit, add three to the number currently under score.
+
+The final card says set to 2. It replaces the old number with 2.
+
+Decide when to initialize
+
+Initialization gives a variable its starting value. Place a new-game card before the event cards. Keep the score between turns. A new game needs a fresh start, even when the previous game ended with a score. Ask a partner to follow your cards literally. Where should set score to 0 go? Options: Never, even when another game starts.; Once at the start of each new game.; Before every hit..
+
+Ask whether another turn is a new game.
+
+Reset once when a new game begins; use the retained score for later turns.
+
+Build and trace a fresh game
+
+Work independently. A new game starts at two points. A hit adds three points. A reset event sets score to one. Follow hit, hit, reset, hit. Write the starting value and a row for each event. Explain what one row tells another scorekeeper. Record the initial value and every later value for hit, hit, reset, hit. Explain the reset row and keep the variable name visible.
+
+Record the initial value and every later value for hit, hit, reset, hit. Explain the reset row and keep the variable name visible.
+Response: __________________________
+
+Choose tests that could expose a mistake
+
+Test your procedure with no events, one hit and a hit after a reset. Predict each result before your partner follows the cards. Start each separate test as a new game. Compare predictions with the trace. A match is evidence for that case, not proof that every possible case works. For each test, show the event sequence, predicted value and observed trace. Add a different test and explain what mistake it could reveal.
+
+For each test, show the event sequence, predicted value and observed trace. Add a different test and explain what mistake it could reveal.
+Response: __________________________
+
+Repair the procedure, then retest
+
+A fictional scorekeeper resets the score before every hit. Two hits still produce only two points. A bug is a mistake in instructions or their order. Identify the instruction that loses information. Repair the procedure, then test it with three hits and with a separate new game. A new game starts at zero; each hit should add two points. A fictional scorekeeper wrote: Before each hit: set score to 0. After each hit: add 2 to score. After two hits, report 2. Which repair preserves earlier points? Options: Move set score to 0 to the new-game start, before all turns.; Rename score to total after every hit.; Keep resetting but add 4 after each hit.. Show the repaired cards and traces for three hits and a separate new game. Explain why changing the points per hit would not fix the reset bug.
+
+Show the repaired cards and traces for three hits and a separate new game. Explain why changing the points per hit would not fix the reset bug.
+Response: __________________________
+
+Make a game someone else can follow
+
+Invent a target game for classmates using paper tokens. Choose a starting score, an increase and an event that replaces the score. Write precise instructions. Ask a partner to follow them without extra explanations. Use their trace to find an unclear instruction or justify why a test matched. Present your game cards and two traces with a changed event order. Explain one revision or a test-based reason for keeping an instruction. What stayed the same when the variable's value changed?
+
+Present your game cards and two traces with a changed event order. Explain one revision or a test-based reason for keeping an instruction. What stayed the same when the variable's value changed?
+Response: __________________________
+
+Explain your scoring procedure
+
+Keep your trace and explain one change you made after testing.

@@ -1,0 +1,35 @@
+{
+  "proposedMinutes": 45,
+  "timingEvidence": "NOT_MEASURED",
+  "segments": [
+    {
+      "minutes": 5,
+      "activity": "Inspect and physically represent the arrangement or place values"
+    },
+    {
+      "minutes": 8,
+      "activity": "Link the area model with column multiplication and name each carried quantity"
+    },
+    {
+      "minutes": 12,
+      "activity": "Guided practice with specific hints and feedback"
+    },
+    {
+      "minutes": 10,
+      "activity": "Independent fresh problems"
+    },
+    {
+      "minutes": 5,
+      "activity": "Diagnose and explain a plausible error"
+    },
+    {
+      "minutes": 5,
+      "activity": "Transfer and explain a connection"
+    }
+  ],
+  "support": "Use labelled hundreds/tens/ones cards and one partial product at a time. Accept a scribed explanation while the pupil directs the quantities and regrouping.",
+  "extension": "Calculate 312×7=2184 and 609×5=3045 with two valid partitions. Explain every regrouped quantity, including zero places.",
+  "block90Proposal": "After the 45-minute core: compare two partitions for 312×7 and 609×5 for 20 minutes, peer-audit the place values for 15 minutes, then defend why regrouping preserves the total for 10 minutes.",
+  "assessment": "The draft requests future independent assessment design but supplies no governed form or protected scoring items. Practice is formative; no official records may be written.",
+  "retention": "Request fresh equal-group or place-value problems at least seven days later. No retention event is scheduled or fabricated here."
+}

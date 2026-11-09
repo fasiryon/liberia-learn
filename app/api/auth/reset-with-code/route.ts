@@ -1,4 +1,4 @@
-// route-policy: auth=public; scope=none; authority=reset-code; rationale=unauthenticated by design; a six-digit admin-issued code is matched as stored (not hashed); the target account comes from the record; single use is an atomic conditional claim (unused and unexpired) in the same transaction as the password change and credential version advance, which revokes every earlier session; IP rate-limited; completion audit is best effort
+// route-policy: auth=public; scope=none; authority=reset-code; rationale=unauthenticated by design; a six-digit admin-issued code is matched as stored (not hashed); the target account comes from the record; single use is an atomic conditional claim (unused and unexpired) in the same transaction as the password change and credential version advance, which revokes every earlier session; IP rate-limited; completion audit is best effort; refused on any deployed Preview/staging before authority or data work (PREVIEW_IDENTITY_FROZEN)
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { advanceSecurityStamp, ConcurrentCredentialChangeError } from "@/lib/auth/sessionRevocation";
@@ -12,6 +12,7 @@ import {
 } from "@/lib/rateLimit";
 import { logAudit } from "@/lib/audit";
 import crypto from "crypto";
+import { previewIdentityFrozen } from "@/lib/preview/identityFreeze";
 
 function getClientIp(req: Request): string {
   const forwarded = req.headers.get("x-forwarded-for");
@@ -20,6 +21,8 @@ function getClientIp(req: Request): string {
 }
 
 export async function POST(req: Request) {
+  const frozen = previewIdentityFrozen();
+  if (frozen) return frozen;
   const traceId = crypto.randomUUID();
   try {
     if (!isAccountRecoveryEnabled()) {

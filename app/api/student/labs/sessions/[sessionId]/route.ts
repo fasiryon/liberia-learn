@@ -6,6 +6,7 @@ import { logAudit } from "@/lib/audit";
 import { isVirtualLabsEnabled } from "@/lib/serverFlags";
 import { enqueue } from "@/lib/offline/offlineQueue";
 import { loadAuthorizedPracticalSessions, studentSessionSummary } from "@/lib/student/labEligibility";
+import { isLockedForStudent, labelStudentScore } from "@/lib/labs/labReview";
 
 export const dynamic = "force-dynamic";
 
@@ -32,6 +33,10 @@ export async function PATCH(
     if (!(await loadAuthorizedPracticalSessions(user, { sessionId })).length) {
       return NextResponse.json({ error: "Lab unavailable" }, { status: 404 });
     }
+    // AT-LAB-STUDENT-SCORE: a submitted or reviewed lab belongs to the teacher's review now.
+    if (isLockedForStudent(session)) {
+      return NextResponse.json({ error: "This lab is already submitted. Your teacher reviews it now." }, { status: 409 });
+    }
 
     const body = await req.json();
     const { observations, conclusions, score, completedAt } = body;
@@ -43,9 +48,9 @@ export async function PATCH(
     const updated = await prisma.labSession.update({
       where: { id: sessionId },
       data: {
-        observations: observations !== undefined ? observations : undefined,
+        // The student's score is a labelled observation, never labSession.score (teacher-only).
+        observations: score !== undefined ? labelStudentScore(session.observations, observations, score) : observations !== undefined ? observations : undefined,
         conclusions: conclusions !== undefined ? conclusions : undefined,
-        score: score !== undefined ? score : undefined,
         completedAt: completedAt ? new Date(completedAt) : undefined,
         masteryUpdated: false,
       },

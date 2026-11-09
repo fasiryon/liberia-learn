@@ -1,0 +1,34 @@
+{
+  "version": "4.0.0-schoolday-primary-english.2-draft.1",
+  "inputsSha256": "b0c42081820d99e0f5dd334076155db9c26140377fc15e1d8dea1ab2bf0b9c74",
+  "independentDeterministicBuilds": 2,
+  "baselineDraft6ReceiptSha256": "c59d3623d3bd558398a50e30de62688bc066ca22238c3d188b2ef88c9cbe04ab",
+  "packages": [
+    {
+      "key": "g4-english-predict-question-summarize",
+      "programOrderId": "GO-G04-P3-ENGLISH-U1",
+      "packageHash": "39c9cafb634914512bd4cf396cdb454b2770a9057e5bd93734a6787e8757f0e6",
+      "candidateSha256": "c28b735becfc291cdd5da0e91a1452ff5abc156bbb776ec7d937ebd6d631fdd0"
+    }
+  ],
+  "productionWrites": false,
+  "approved": false,
+  "published": false,
+  "released": false,
+  "activated": false,
+  "previewEnabled": false,
+  "files": {
+    "g4-english-predict-question-summarize/candidate.json": "41f5eedbe5c77c988d0d8deea5c69febc9700c1cfea85d951455f135de17e141",
+    "g4-english-predict-question-summarize/visual-teaching.json": "a0fdca1cddb37bc805118d5fce70ea5215e37dc14255d2e2f40d9cde73a46374",
+    "g4-english-predict-question-summarize/blueprint.json": "3000bd38d6c973156efb4bf1c8204e6f3f546cb72219fc18933672d2fd0f4770",
+    "g4-english-predict-question-summarize/factory-artifact.json": "179787531642b2ed8fb5cb07fe9c9bd0cd046224fcaf82995b9b4a486ddb1b81",
+    "g4-english-predict-question-summarize/learner-projection.json": "2ca5260eaae0f51556394eae41d32a1d1990d94ad07f19a42f62b458f89e50df",
+    "g4-english-predict-question-summarize/factory-receipt.json": "5f41a0cdb776a8cb99e440627da5ad012f18dc85501c934800fd84521fcd11d8",
+    "g4-english-predict-question-summarize/paper-alternative.txt": "403a0da0c6684655b6713762a9d8f382a866eab636ab63e2a54a82ac40e45597",
+    "g4-english-predict-question-summarize/academic-review.json": "182d9a4cceb99831d7560ba692328f851bb80501f14548114f577513c85d57e5",
+    "g4-english-predict-question-summarize/teacher-guide.json": "eaaa0d173064aa4047ec9fbb8a7d50f2d2ff2f2ff6ec5bd82901851dfb80b21f",
+    "g4-english-predict-question-summarize/manifest.json": "27d8fba56cc68b1ae65dbfab1d337e5474c2feda6e6b7a1b58ae71cf6d9482a2",
+    "review/complete-academic-packet.json": "794de32ebbfe1dd2ab41527b43507f569ab38dea34db2c644e59cd8af5e078be",
+    "review/complete-academic-packet.md": "9922e92c3d83e0f68da26d37a7479c0a26eabd5940abd4aa4fb81f42dd93f439"
+  }
+}

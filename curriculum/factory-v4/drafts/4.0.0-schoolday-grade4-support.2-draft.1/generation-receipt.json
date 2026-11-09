@@ -1,0 +1,34 @@
+{
+  "version": "4.0.0-schoolday-grade4-support.2-draft.1",
+  "inputsSha256": "ecc8f722d2342d7a48496d3c222304deaf60b99b75071c41aa5b3c8a0024b62e",
+  "independentDeterministicBuilds": 2,
+  "baselineDraft6ReceiptSha256": "c59d3623d3bd558398a50e30de62688bc066ca22238c3d188b2ef88c9cbe04ab",
+  "packages": [
+    {
+      "key": "g4-support-retrieve-reteach-retry",
+      "programOrderId": "GO-G04-SUPPORT",
+      "packageHash": "936016a5f43b7f8beb9d70696b0422f25c73862d8435c335ba5f221d0d79dd25",
+      "candidateSha256": "b475b1aa4c3d8e8c6df77a7e25356ea4cfe7f1efdade79a1d563b0a13bb59cdb"
+    }
+  ],
+  "productionWrites": false,
+  "approved": false,
+  "published": false,
+  "released": false,
+  "activated": false,
+  "previewEnabled": false,
+  "files": {
+    "g4-support-retrieve-reteach-retry/candidate.json": "5ae8c13a0dc9643a7b89633b88b98382899402e7d4c45f671ae177cd22fe3f55",
+    "g4-support-retrieve-reteach-retry/visual-teaching.json": "1d5542a4f6816d592c708c821f834b8f96fb717da829229167de999e6b104762",
+    "g4-support-retrieve-reteach-retry/blueprint.json": "f7b57040f2b115e9eef37a428e6b0e389963abb51d238e256e57b1cdadd00b8a",
+    "g4-support-retrieve-reteach-retry/factory-artifact.json": "b69346fe74499900ecfaf954505110ceb55c490ca90a7f3217411ce4864b591f",
+    "g4-support-retrieve-reteach-retry/learner-projection.json": "07c87dcb04bae2fee551fee3d0cb8bed4108b9072885d1c53daa3039166aa21e",
+    "g4-support-retrieve-reteach-retry/factory-receipt.json": "30641ce79aacc871617b046aa7871cb26483b536ab398b87616b05dddd66ee52",
+    "g4-support-retrieve-reteach-retry/paper-alternative.txt": "7e38d5164748edd9da7bea7140629b33b2482378696f31cbd21cc8a728f117c5",
+    "g4-support-retrieve-reteach-retry/academic-review.json": "6a7f19b77b427c3bf8c525279a0b7d3a6653bf47fde68d36909d3daf1587fa72",
+    "g4-support-retrieve-reteach-retry/teacher-guide.json": "3bffb606d30166fd624d9ebf69955112104961bd3b9dd8e02653fbec86cdbaa8",
+    "g4-support-retrieve-reteach-retry/manifest.json": "95db592a3dc0fce9560a677ac04ab9d2d18d56d5498b2997ab59131685bb18d7",
+    "review/complete-academic-packet.json": "4b0db14f4048847591f83f0ff52935d85f70adb4e1f58d4cb77d6ab8a2464466",
+    "review/complete-academic-packet.md": "feb4c72b5d74f0447d996bdb017fb43690e74f7b58ec6a026a7053d6d8d7c8f9"
+  }
+}

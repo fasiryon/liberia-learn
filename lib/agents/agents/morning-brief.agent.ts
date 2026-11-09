@@ -17,6 +17,7 @@ import type { AgentDefinition } from "@/lib/agents/types";
  */
 export const morningBriefAgent: AgentDefinition = {
   name: "morning-brief",
+  audience: "general",
   description:
     "Generates a short daily in-app brief for one teacher (students needing intervention, certificate unlocks close, ungraded work) grounded in the existing Sprint 7.2 differentiation rollup. Never sends or notifies anyone.",
   systemPromptKey: "agent.morning-brief.system",

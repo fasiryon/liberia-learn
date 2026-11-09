@@ -1,0 +1,182 @@
+{
+  "registryVersion": "teaching-blocks/1.3.0",
+  "instructionStandard": "liberialearn-v4-instruction/1.1.0",
+  "manifestVersion": "factory-v4-candidate/1.0.0",
+  "candidateVersion": "4.0.0-schoolday-primary-engineering.2-draft.1",
+  "contractVersion": "visual-teaching-block/4.0.0-draft.1",
+  "key": "g4-engineering-compare-flashlight-switches",
+  "lessonId": "schoolday:g4-engineering-compare-flashlight-switches",
+  "grade": 4,
+  "subject": "ENGINEERING_FOUNDATIONS",
+  "title": "STEM Design: compare two flashlight switches",
+  "state": "DRAFT",
+  "approved": false,
+  "published": false,
+  "released": false,
+  "learnerDeliverable": false,
+  "audience": "REVIEWER_ONLY",
+  "contentOrigin": "DETERMINISTIC_FACTORY_EXECUTOR_WITH_SYNTHETIC_TEACHING_CONTEXTS",
+  "generation": {
+    "executor": "factory-v4-primary-engineering-author/2.0.0",
+    "role": "LESSON_AUTHOR",
+    "referenceFixtureCopied": false,
+    "modelCalls": 0
+  },
+  "sourceLineage": {
+    "kind": "ORIGINAL_FACTORY_DRAFT",
+    "authoringPlan": "lib/content-factory/v4/primaryEngineering/revision.ts",
+    "legacyRecordsReplaced": false
+  },
+  "sourceVerification": "REPOSITORY_PINS_VERIFIED_REMOTE_RIGHTS_AND_LEGACY_BODY_NOT_ATTESTED",
+  "programOrderId": "GO-G04-P6-ENGINEERING-U1",
+  "courseId": "stem1-g4-engineering",
+  "unit": 1,
+  "orderKind": "LESSON",
+  "inputPins": {
+    "manifestSha256": "8d49e6862a01673549db9ac1ad159ae385ca6aa50adfb3e46330fa6cf1191ba0",
+    "frontendCommit": "a26ec4e3ad4cbd4419902eeb6da4e5f7500e977e"
+  },
+  "candidateSha256": "68529397f37a3f68b7b0d6ab985f95c947bc71bef42f557c05d340daca014229",
+  "blueprintHash": "e8005e8481a98168d8ccc65bda6ec8db9d92c4de9bd8abb268c29f0638ca555b",
+  "learnerProjectionSha256": "e89db7d8927df1e1d026e041a43001e10289d7046e36b5db1134ee74810380cb",
+  "academicSchema": {
+    "valid": true,
+    "errors": []
+  },
+  "visualInstruction": {
+    "valid": true,
+    "family": "ENGINEERING",
+    "balance": {
+      "explanationSeconds": 162,
+      "activitySeconds": 2040,
+      "activityShare": 0.926
+    },
+    "practice": {
+      "g4-engineering-compare-flashlight-switches-o1": {
+        "visuals": 0,
+        "workedExamples": 0,
+        "guided": 6,
+        "independent": 2,
+        "mistakes": 0,
+        "transfer": 2
+      },
+      "g4-engineering-compare-flashlight-switches-o2": {
+        "visuals": 0,
+        "workedExamples": 0,
+        "guided": 6,
+        "independent": 2,
+        "mistakes": 0,
+        "transfer": 2
+      },
+      "g4-engineering-compare-flashlight-switches-o3": {
+        "visuals": 0,
+        "workedExamples": 0,
+        "guided": 6,
+        "independent": 2,
+        "mistakes": 0,
+        "transfer": 2
+      }
+    },
+    "totals": {
+      "visuals": 0,
+      "workedExamples": 0,
+      "guided": 18,
+      "independent": 6,
+      "mistakes": 0,
+      "transfer": 6,
+      "problems": 15
+    },
+    "advisories": [
+      {
+        "code": "v4_paragraph_long",
+        "severity": "ADVISORY",
+        "detail": "A 62-word paragraph; consider splitting it or showing it.",
+        "sceneId": "build"
+      },
+      {
+        "code": "v4_paragraph_long",
+        "severity": "ADVISORY",
+        "detail": "A 67-word paragraph; consider splitting it or showing it.",
+        "sceneId": "investigation"
+      },
+      {
+        "code": "v4_paragraph_long",
+        "severity": "ADVISORY",
+        "detail": "A 62-word paragraph; consider splitting it or showing it.",
+        "sceneId": "refine"
+      },
+      {
+        "code": "v4_activity_share_outside_target",
+        "severity": "ADVISORY",
+        "detail": "93% activity (target 65â€“75%); do not pad with repetitive questions to reach it."
+      },
+      {
+        "code": "v4_explanation_too_thin",
+        "severity": "ADVISORY",
+        "detail": "Very little explanation; confirm learners are taught before they practise."
+      }
+    ]
+  },
+  "accessibility": {
+    "schema": "PASS",
+    "blockBindings": 7,
+    "manualScreenReaderReview": "PENDING"
+  },
+  "offline": {
+    "mode": "TEXT_PAPER_CAPTURE_ONLY",
+    "protectedKeysCached": false,
+    "runtimeColdStartAndReconnect": "PENDING"
+  },
+  "protectedAssessment": {
+    "included": false,
+    "restrictedKeyComparison": "PENDING_AUTHORIZED_OWNER_INPUT",
+    "canonicalMasteryMutation": false
+  },
+  "factoryStatus": "REVISION_REQUIRED",
+  "releaseBlockers": [
+    "MOE_OBJECTIVE_UNBOUND",
+    "ONTOLOGY_RELEASE_MISSING",
+    "V4_HUMAN_REVIEW_REQUIRED",
+    "excellence:BP-COVERAGE",
+    "excellence:BP-PRODUCTION",
+    "excellence:BP-REASONING",
+    "excellence:BP-SELECTED-SHARE",
+    "excellence:BP-RETENTION",
+    "excellence:BP-TRANSFER",
+    "excellence:BP-EXTENSION",
+    "REFERENCE_LESSON_ONLY_FULL_EXCELLENCE_PACKAGE_PENDING",
+    "PROTECTED_ASSESSMENT_RECONCILIATION_REQUIRED",
+    "PREREQUISITE_DIAGNOSTIC_AND_MISCONCEPTION_ITEM_BINDINGS_PENDING",
+    "AUTHENTIC_SOURCE_COMPARISON_AND_RIGHTS_REVIEW_REQUIRED",
+    "MANUAL_ACCESSIBILITY_AND_OFFLINE_RUNTIME_QA_REQUIRED",
+    "OBJECTIVE_MAPPING_PROPOSED:g4-engineering-compare-flashlight-switches-o1",
+    "OBJECTIVE_MAPPING_PROPOSED:g4-engineering-compare-flashlight-switches-o2",
+    "OBJECTIVE_MAPPING_PROPOSED:g4-engineering-compare-flashlight-switches-o3",
+    "EXACT_REVISION_HUMAN_REVIEW_REQUIRED",
+    "EXPLICIT_RELEASE_AUTHORIZATION_REQUIRED",
+    "RETENTION_POLICY_APPROVAL_REQUIRED",
+    "ASSESSMENT_ITEMS_PENDING",
+    "RESTRICTED_KEY_COMPARISON_PENDING",
+    "FRONTEND_GENERATED_PACKAGE_CONSUMPTION_QA_PENDING",
+    "COS_G3_AND_INDEPENDENT_ACADEMIC_REVIEW",
+    "LIBERIA_STANDARDS_MAPPING",
+    "RIGHTS_REVIEW",
+    "BROWSER_ACCESSIBILITY_AND_OFFLINE_QA",
+    "TIMED_REHEARSAL",
+    "EXACT_VERSION_AUTHORIZATION"
+  ],
+  "files": {
+    "candidate.json": "5606ae0b83ddb169b6539d823978830a707b6c1265d146b0d6ed1f346c4a0fe6",
+    "visual-teaching.json": "202e55a1961e1dcc874151cd50bf26f85df41aea0f6e151b5c0bcff31db0441c",
+    "blueprint.json": "736b635783721f6193927e7146af3ee27d19753aa7bfd07f17cc06c4cd8b8cf9",
+    "factory-artifact.json": "fb5d88b1e4f7e02c1b8ecb8fb738e237e27ffe5a0053d60ac05fd0da4a25b5c9",
+    "learner-projection.json": "dfd81e5d5e6608ef5e1b35b471a145f7d200b86990aa9c404c651c9357c02392",
+    "factory-receipt.json": "815f4916d569e4793809cdaca58355819f164bc6076a8e23cf2a2bf8d17a3a66",
+    "paper-alternative.txt": "aae62983704864255e98429254dfd0b74616b5be7869c8c38a6014a8e226198e",
+    "academic-review.json": "7a34f4409481c579562ada8761c8a7fd13613fd483f17b5a7e676da16da44b65",
+    "teacher-guide.json": "bacd8047d84715373aa5b974ef9a917222d5a7e390808002aaf944276d698dce"
+  },
+  "supersedesPackage": "4.0.0-schoolday-primary-engineering.1-draft.1@g4-engineering-compare-flashlight-switches",
+  "unicodeNormalization": "NFC",
+  "packageHash": "202106a8bffa0afb8c05aa9338db458b5b913483f70a222c2bc1b8a579b7a7a1"
+}

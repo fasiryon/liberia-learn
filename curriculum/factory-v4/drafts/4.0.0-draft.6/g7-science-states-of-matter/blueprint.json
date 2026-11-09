@@ -1,0 +1,138 @@
+{
+  "schemaVersion": "unit-blueprint/2.2.0",
+  "blueprintId": "g7-science-states-of-matter-v4",
+  "version": "4.0.0",
+  "contentHash": "82eb4e9c80ce49859d65ac111cca8ca3e72e264b428b2a045b238ff3e6b5012e",
+  "grade": 7,
+  "subject": "SCIENCE",
+  "unitId": "g7-science-states-of-matter",
+  "title": "g7-science-states-of-matter",
+  "repositoryCommit": "e5d89c34f421f028428cf9e4230ab3d40ff45536",
+  "sources": [
+    {
+      "id": "v4-reference-inputs",
+      "version": "1.0.0",
+      "sha256": "82408cd4be2afb695cddc95ec54903012e34697aeeeca786613509d219f9077e",
+      "sourceRef": "curriculum/factory-v4/draft6-inputs.json"
+    }
+  ],
+  "objectives": [
+    {
+      "id": "ft04-o1",
+      "kind": "LIBERIALEARN_MASTERY",
+      "statement": "Use the particle model to describe and compare solids, liquids and gases (arrangement, movement, shape and volume), with Liberian examples.",
+      "sourceId": "v4-reference-inputs",
+      "sourcePointer": "moe-general-science-g7-s1-p1-scientific-knowledge-measurement-and-non-living--obj6",
+      "scope": "REQUIRED",
+      "mapping": "PROPOSED"
+    },
+    {
+      "id": "ft04-o2",
+      "kind": "LIBERIALEARN_MASTERY",
+      "statement": "Explain melting, freezing, evaporation, boiling and condensation as energy gained or lost by particles, and distinguish evaporation from boiling.",
+      "sourceId": "v4-reference-inputs",
+      "sourcePointer": "moe-general-science-g7-s1-p1-scientific-knowledge-measurement-and-non-living--obj6",
+      "scope": "REQUIRED",
+      "mapping": "PROPOSED"
+    },
+    {
+      "id": "ft04-o3",
+      "kind": "LIBERIALEARN_MASTERY",
+      "statement": "Interpret a pure-water heating curve at fixed pressure, explain its melting plateau with latent heat, and describe reversible physical changes.",
+      "sourceId": "v4-reference-inputs",
+      "sourcePointer": "moe-general-science-g7-s1-p1-scientific-knowledge-measurement-and-non-living--obj6",
+      "scope": "REQUIRED",
+      "mapping": "PROPOSED"
+    }
+  ],
+  "outcomes": [
+    {
+      "id": "g7-science-states-of-matter-outcome",
+      "objectiveIds": [
+        "ft04-o1",
+        "ft04-o2",
+        "ft04-o3"
+      ],
+      "demonstration": "Produce and explain an independent response and transfer it to a new context."
+    }
+  ],
+  "prerequisites": [],
+  "misconceptions": [],
+  "sequence": [
+    {
+      "resourceId": "g7-science-states-of-matter-lesson",
+      "dependsOn": [],
+      "objectiveIds": [
+        "ft04-o1",
+        "ft04-o2",
+        "ft04-o3"
+      ],
+      "scaffold": "FULL"
+    }
+  ],
+  "resources": [
+    {
+      "id": "g7-science-states-of-matter-lesson",
+      "kind": "LESSON",
+      "role": "LESSON_AUTHOR",
+      "objectiveIds": [
+        "ft04-o1",
+        "ft04-o2",
+        "ft04-o3"
+      ],
+      "dependsOn": [],
+      "audience": "REVIEWER_ONLY"
+    }
+  ],
+  "assessmentPlan": [
+    {
+      "id": "g7-science-states-of-matter-practice",
+      "resourceId": "g7-science-states-of-matter-lesson",
+      "itemIds": [],
+      "kind": "SHORT_CONSTRUCTED_RESPONSE",
+      "objectiveIds": [
+        "ft04-o1",
+        "ft04-o2",
+        "ft04-o3"
+      ],
+      "scaffold": "NONE",
+      "timing": "IN_LESSON",
+      "context": "REHEARSED",
+      "scoring": "NOT_SCORED",
+      "source": "EXCELLENCE_PLAN",
+      "ref": "REFERENCE_LESSON_ONLY_ASSESSMENT_PENDING"
+    }
+  ],
+  "support": {
+    "differentiation": [
+      "Use the text equivalent and paper model with a teacher."
+    ],
+    "accessibility": [
+      "Scene keyboard paths and block text equivalents."
+    ],
+    "offline": {
+      "mode": "TEXT_PAPER_CAPTURE_ONLY",
+      "requirements": [
+        "Paper, pencil and printed text alternatives."
+      ],
+      "maxBytes": 2000000
+    }
+  },
+  "provenance": [
+    {
+      "id": "v4-reference-inputs",
+      "version": "1.0.0",
+      "sha256": "82408cd4be2afb695cddc95ec54903012e34697aeeeca786613509d219f9077e",
+      "sourceRef": "curriculum/factory-v4/draft6-inputs.json"
+    }
+  ],
+  "legacy": [],
+  "unresolved": [
+    "REFERENCE_LESSON_ONLY_FULL_EXCELLENCE_PACKAGE_PENDING",
+    "PROTECTED_ASSESSMENT_RECONCILIATION_REQUIRED",
+    "PREREQUISITE_DIAGNOSTIC_AND_MISCONCEPTION_ITEM_BINDINGS_PENDING",
+    "AUTHENTIC_SOURCE_COMPARISON_AND_RIGHTS_REVIEW_REQUIRED",
+    "MANUAL_ACCESSIBILITY_AND_OFFLINE_RUNTIME_QA_REQUIRED"
+  ],
+  "instructionStandard": "liberialearn-v4-instruction/1.0.0"
+}

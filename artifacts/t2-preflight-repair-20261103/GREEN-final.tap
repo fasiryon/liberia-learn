@@ -1,0 +1,322 @@
+﻿TAP version 13
+# Subtest: synthetic reviewed runtime catalog with full mock migration ledger passes
+ok 1 - synthetic reviewed runtime catalog with full mock migration ledger passes
+  ---
+  duration_ms: 40.0609
+  type: 'test'
+  ...
+# Subtest: refuses runtime owns a table even with re-fingerprinted synthetic metadata
+ok 2 - refuses runtime owns a table even with re-fingerprinted synthetic metadata
+  ---
+  duration_ms: 28.9449
+  type: 'test'
+  ...
+# Subtest: refuses runtime inherits owner even with re-fingerprinted synthetic metadata
+ok 3 - refuses runtime inherits owner even with re-fingerprinted synthetic metadata
+  ---
+  duration_ms: 25.7197
+  type: 'test'
+  ...
+# Subtest: refuses schema CREATE even with re-fingerprinted synthetic metadata
+ok 4 - refuses schema CREATE even with re-fingerprinted synthetic metadata
+  ---
+  duration_ms: 30.8199
+  type: 'test'
+  ...
+# Subtest: refuses PUBLIC schema CREATE even with re-fingerprinted synthetic metadata
+ok 5 - refuses PUBLIC schema CREATE even with re-fingerprinted synthetic metadata
+  ---
+  duration_ms: 24.0125
+  type: 'test'
+  ...
+# Subtest: refuses database TEMP even with re-fingerprinted synthetic metadata
+ok 6 - refuses database TEMP even with re-fingerprinted synthetic metadata
+  ---
+  duration_ms: 23.8093
+  type: 'test'
+  ...
+# Subtest: refuses BYPASSRLS membership even with re-fingerprinted synthetic metadata
+ok 7 - refuses BYPASSRLS membership even with re-fingerprinted synthetic metadata
+  ---
+  duration_ms: 25.045
+  type: 'test'
+  ...
+# Subtest: refuses role admin option even with re-fingerprinted synthetic metadata
+ok 8 - refuses role admin option even with re-fingerprinted synthetic metadata
+  ---
+  duration_ms: 34.9281
+  type: 'test'
+  ...
+# Subtest: refuses SET replication role even with re-fingerprinted synthetic metadata
+ok 9 - refuses SET replication role even with re-fingerprinted synthetic metadata
+  ---
+  duration_ms: 28.6542
+  type: 'test'
+  ...
+# Subtest: refuses RLS disabled even with re-fingerprinted synthetic metadata
+ok 10 - refuses RLS disabled even with re-fingerprinted synthetic metadata
+  ---
+  duration_ms: 32.5475
+  type: 'test'
+  ...
+# Subtest: refuses FORCE RLS absent even with re-fingerprinted synthetic metadata
+ok 11 - refuses FORCE RLS absent even with re-fingerprinted synthetic metadata
+  ---
+  duration_ms: 32.3726
+  type: 'test'
+  ...
+# Subtest: refuses missing policy even with re-fingerprinted synthetic metadata
+ok 12 - refuses missing policy even with re-fingerprinted synthetic metadata
+  ---
+  duration_ms: 24.8623
+  type: 'test'
+  ...
+# Subtest: refuses runtime User update even with re-fingerprinted synthetic metadata
+ok 13 - refuses runtime User update even with re-fingerprinted synthetic metadata
+  ---
+  duration_ms: 32.1074
+  type: 'test'
+  ...
+# Subtest: refuses runtime audit delete even with re-fingerprinted synthetic metadata
+ok 14 - refuses runtime audit delete even with re-fingerprinted synthetic metadata
+  ---
+  duration_ms: 27.6521
+  type: 'test'
+  ...
+# Subtest: refuses runtime audit truncate even with re-fingerprinted synthetic metadata
+ok 15 - refuses runtime audit truncate even with re-fingerprinted synthetic metadata
+  ---
+  duration_ms: 29.6841
+  type: 'test'
+  ...
+# Subtest: refuses runtime trigger privilege even with re-fingerprinted synthetic metadata
+ok 16 - refuses runtime trigger privilege even with re-fingerprinted synthetic metadata
+  ---
+  duration_ms: 27.1277
+  type: 'test'
+  ...
+# Subtest: refuses column credential update even with re-fingerprinted synthetic metadata
+ok 17 - refuses column credential update even with re-fingerprinted synthetic metadata
+  ---
+  duration_ms: 25.4432
+  type: 'test'
+  ...
+# Subtest: refuses PUBLIC data grant even with re-fingerprinted synthetic metadata
+ok 18 - refuses PUBLIC data grant even with re-fingerprinted synthetic metadata
+  ---
+  duration_ms: 26.5418
+  type: 'test'
+  ...
+# Subtest: refuses provider default privilege even with re-fingerprinted synthetic metadata
+ok 19 - refuses provider default privilege even with re-fingerprinted synthetic metadata
+  ---
+  duration_ms: 24.9124
+  type: 'test'
+  ...
+# Subtest: refuses runtime grant option even with re-fingerprinted synthetic metadata
+ok 20 - refuses runtime grant option even with re-fingerprinted synthetic metadata
+  ---
+  duration_ms: 31.1435
+  type: 'test'
+  ...
+# Subtest: refuses missing immutable trigger even with re-fingerprinted synthetic metadata
+ok 21 - refuses missing immutable trigger even with re-fingerprinted synthetic metadata
+  ---
+  duration_ms: 26.1319
+  type: 'test'
+  ...
+# Subtest: refuses disabled immutable trigger even with re-fingerprinted synthetic metadata
+ok 22 - refuses disabled immutable trigger even with re-fingerprinted synthetic metadata
+  ---
+  duration_ms: 32.5661
+  type: 'test'
+  ...
+# Subtest: refuses reachable guard owner even with re-fingerprinted synthetic metadata
+ok 23 - refuses reachable guard owner even with re-fingerprinted synthetic metadata
+  ---
+  duration_ms: 27.061
+  type: 'test'
+  ...
+# Subtest: refuses unsafe callable function even with re-fingerprinted synthetic metadata
+ok 24 - refuses unsafe callable function even with re-fingerprinted synthetic metadata
+  ---
+  duration_ms: 25.5283
+  type: 'test'
+  ...
+# Subtest: refuses incomplete migration even with re-fingerprinted synthetic metadata
+ok 25 - refuses incomplete migration even with re-fingerprinted synthetic metadata
+  ---
+  duration_ms: 26.127
+  type: 'test'
+  ...
+# Subtest: refuses rolled-back migration even with re-fingerprinted synthetic metadata
+ok 26 - refuses rolled-back migration even with re-fingerprinted synthetic metadata
+  ---
+  duration_ms: 42.9049
+  type: 'test'
+  ...
+# Subtest: refuses missing migration even with re-fingerprinted synthetic metadata
+ok 27 - refuses missing migration even with re-fingerprinted synthetic metadata
+  ---
+  duration_ms: 29.7675
+  type: 'test'
+  ...
+# Subtest: refuses changed checksum even with re-fingerprinted synthetic metadata
+ok 28 - refuses changed checksum even with re-fingerprinted synthetic metadata
+  ---
+  duration_ms: 24.309
+  type: 'test'
+  ...
+# Subtest: refuses duplicate migration even with re-fingerprinted synthetic metadata
+ok 29 - refuses duplicate migration even with re-fingerprinted synthetic metadata
+  ---
+  duration_ms: 24.4961
+  type: 'test'
+  ...
+# Subtest: refuses unapproved policy even with re-fingerprinted synthetic metadata
+ok 30 - refuses unapproved policy even with re-fingerprinted synthetic metadata
+  ---
+  duration_ms: 25.3171
+  type: 'test'
+  ...
+# Subtest: unknown policy expression and trigger-body changes require new reviewed hashes
+ok 31 - unknown policy expression and trigger-body changes require new reviewed hashes
+  ---
+  duration_ms: 54.6584
+  type: 'test'
+  ...
+# Subtest: mock collector executes only read-only setup plus SELECT catalog queries
+ok 32 - mock collector executes only read-only setup plus SELECT catalog queries
+  ---
+  duration_ms: 29.3329
+  type: 'test'
+  ...
+# Subtest: catalog-denial output does not leak underlying driver data
+ok 33 - catalog-denial output does not leak underlying driver data
+  ---
+  duration_ms: 0.9426
+  type: 'test'
+  ...
+# Subtest: runtime policy writes remain blocked even with reviewed fingerprints
+ok 34 - runtime policy writes remain blocked even with reviewed fingerprints
+  ---
+  duration_ms: 32.7594
+  type: 'test'
+  ...
+# Subtest: Atlas P1: inherited column UPDATE cannot pass even when fingerprinted
+ok 35 - Atlas P1: inherited column UPDATE cannot pass even when fingerprinted
+  ---
+  duration_ms: 23.6299
+  type: 'test'
+  ...
+# Subtest: Atlas P1: inherited column SELECT WITH GRANT OPTION cannot pass
+ok 36 - Atlas P1: inherited column SELECT WITH GRANT OPTION cannot pass
+  ---
+  duration_ms: 27.8123
+  type: 'test'
+  ...
+# Subtest: Atlas P1: public table name cannot authorize writes in another schema
+ok 37 - Atlas P1: public table name cannot authorize writes in another schema
+  ---
+  duration_ms: 24.8682
+  type: 'test'
+  ...
+# Subtest: Atlas P1: collector inventories custom-schema security-definer functions
+ok 38 - Atlas P1: collector inventories custom-schema security-definer functions
+  ---
+  duration_ms: 24.885
+  type: 'test'
+  ...
+# Subtest: Atlas P1: every object inventory is schema-qualified and covers non-system schemas
+ok 39 - Atlas P1: every object inventory is schema-qualified and covers non-system schemas
+  ---
+  duration_ms: 0.7758
+  type: 'test'
+  ...
+# Subtest: a passive non-public schema is inventoried without granting runtime access
+ok 40 - a passive non-public schema is inventoried without granting runtime access
+  ---
+  duration_ms: 24.7878
+  type: 'test'
+  ...
+# Subtest: allowed inherited column SELECT is represented but cannot be delegated
+ok 41 - allowed inherited column SELECT is represented but cannot be delegated
+  ---
+  duration_ms: 24.8364
+  type: 'test'
+  ...
+# Subtest: refuses missing-column-effective
+ok 42 - refuses missing-column-effective
+  ---
+  duration_ms: 25.7638
+  type: 'test'
+  ...
+# Subtest: refuses missing-column-grant-options
+ok 43 - refuses missing-column-grant-options
+  ---
+  duration_ms: 25.1422
+  type: 'test'
+  ...
+# Subtest: refuses missing-column-acl
+ok 44 - refuses missing-column-acl
+  ---
+  duration_ms: 25.5274
+  type: 'test'
+  ...
+# Subtest: refuses inherited-table-grant-option
+ok 45 - refuses inherited-table-grant-option
+  ---
+  duration_ms: 26.7916
+  type: 'test'
+  ...
+# Subtest: refuses nonpublic-policy-spoof
+ok 46 - refuses nonpublic-policy-spoof
+  ---
+  duration_ms: 25.0592
+  type: 'test'
+  ...
+# Subtest: refuses nonpublic-trigger-spoof
+ok 47 - refuses nonpublic-trigger-spoof
+  ---
+  duration_ms: 24.3093
+  type: 'test'
+  ...
+# Subtest: refuses inherited-schema-create
+ok 48 - refuses inherited-schema-create
+  ---
+  duration_ms: 25.4475
+  type: 'test'
+  ...
+# Subtest: refuses owned-enum
+ok 49 - refuses owned-enum
+  ---
+  duration_ms: 23.5376
+  type: 'test'
+  ...
+# Subtest: refuses nonpublic-user-read
+ok 50 - refuses nonpublic-user-read
+  ---
+  duration_ms: 23.2194
+  type: 'test'
+  ...
+# Subtest: refuses callable-aggregate
+ok 51 - refuses callable-aggregate
+  ---
+  duration_ms: 25.6607
+  type: 'test'
+  ...
+# Subtest: refuses old-policy-version
+ok 52 - refuses old-policy-version
+  ---
+  duration_ms: 23.5998
+  type: 'test'
+  ...
+1..52
+# tests 52
+# suites 0
+# pass 52
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1608.7912

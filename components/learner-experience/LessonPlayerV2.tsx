@@ -9,7 +9,7 @@ import { isLinkStudentVisible, type LearningExperienceLink } from "@/lib/learner
 import type { LabExperience } from "@/lib/learner-experience/labExperience";
 import type { SceneToolView } from "@/lib/learner-experience/tools";
 import { advance, applyLabReturn, chooseLabFallback, goToScene, isSceneComplete, markBlockDone, markLabLaunched, pendingLabSceneId, pendingTeachingBlocks, percentComplete, recordResponse, restoreProgress, retreat, revealStep, sceneIndexOf, type ExperienceProgress } from "@/lib/learner-experience/progress";
-import { PHASE_LABEL } from "@/lib/learner-experience/teaching/instruction";
+import { lessonPhaseLabel } from "@/lib/learner-experience/teaching/stemBlocks";
 import { buildLabLaunchHref, buildStudentLabLaunchHref, isLabReturnObservation, labReturnStorageKey, type LabLaunchContext, type LabReturnObservation } from "@/lib/learner-experience/labLaunch";
 import { buildEvidenceEnvelope, type ExperienceEvidenceEnvelope } from "@/lib/learner-experience/evidenceHandoff";
 import { isSafeRuntimeId, type EvidenceChannel, type EvidenceReceipt, type LessonRouteTarget, type LessonRuntimeAvailability, type LessonRuntimeIdentity, type RuntimeLabLink } from "@/lib/learner-experience/lessonRuntime";
@@ -18,6 +18,8 @@ import { TOOL_COMPONENTS } from "@/components/toolkit/toolComponents";
 import { AssessmentHandoffSeam, DiagramReveal, FormativeCheck, ReflectionPrompts, SceneBody, SceneMediaList, SceneTeachingBlocks, teachingSources } from "./SceneViews";
 import { TeachingBlockView } from "@/components/experience/teaching/TeachingBlocks";
 import { BlockLessonContext } from "@/components/experience/teaching/v4/shared";
+import { GeographicCountyMap } from "@/components/experience/geography/GeographicCountyMap";
+import type { GeoSceneAttachment } from "@/lib/learner-experience/geography/draft6Binding";
 import { LabScene, type LabSceneView } from "./LabScene";
 import { LearningStage, StageFooter } from "@/components/experience/FocusedLearning";
 import { AskTutorButton } from "@/components/experience/AskTutorButton";
@@ -67,6 +69,7 @@ export type LessonPlayerRuntime = Readonly<{
 
 /** What happened when the learner finished. Never a score and never mastery. */
 type FinishState =
+  | Readonly<{ status: "PILOT_ONLY" }>
   | Readonly<{ status: "PROTOTYPE"; envelope: ExperienceEvidenceEnvelope }>
   | Readonly<{ status: "PRESENTATION_ONLY" }>
   | Readonly<{ status: "READ_ONLY" }>
@@ -82,6 +85,8 @@ export type LessonPlayerV2Props = {
   toolsByScene: Readonly<Record<string, readonly SceneToolView[]>>;
   basePath?: string;
   exitHref: string;
+  /** B1: where a finished pilot lesson returns (the school day, opening the next period). Defaults to exitHref. */
+  finishHref?: string;
   /** From the URL after a lab return: the scene to restore. */
   returnSceneId: string | null;
   ageBand?: AgeBand;
@@ -91,12 +96,17 @@ export type LessonPlayerV2Props = {
    */
   linkPolicy?: "STUDENT" | "INTERNAL_PREVIEW";
   runtime?: LessonPlayerRuntime;
+  /** Controlled pilot sessions never read or persist device learning history. */
+  progressStorage?: "DEVICE" | "MEMORY";
+  /** Hash-bound delivery attachments (the geographic county map) shown beside a scene; they never gate Continue. */
+  sceneAttachments?: Readonly<Record<string, readonly GeoSceneAttachment[]>>;
 };
 
 const NO_LINKS: readonly LearningExperienceLink[] = [];
 const NO_LABS: Readonly<Record<string, LabExperience>> = {};
+const NO_ATTACHMENTS: Readonly<Record<string, readonly GeoSceneAttachment[]>> = {};
 
-export function LessonPlayerV2({ experience, links = NO_LINKS, labs = NO_LABS, toolsByScene, basePath, exitHref, returnSceneId, ageBand, linkPolicy = "STUDENT", runtime }: LessonPlayerV2Props) {
+export function LessonPlayerV2({ experience, links = NO_LINKS, labs = NO_LABS, toolsByScene, basePath, exitHref, finishHref, returnSceneId, ageBand, linkPolicy = "STUDENT", runtime, progressStorage = "DEVICE", sceneAttachments = NO_ATTACHMENTS }: LessonPlayerV2Props) {
   const router = useRouter();
   const online = useOnline();
   const band = ageBand ?? experience.ageBand;
@@ -139,7 +149,7 @@ export function LessonPlayerV2({ experience, links = NO_LINKS, labs = NO_LABS, t
     let cancelled = false;
     const experience = experienceRef.current;
     void (async () => {
-      const saved = await loadExperienceProgress(experience.id).catch(() => null);
+      const saved = progressStorage === "MEMORY" ? null : await loadExperienceProgress(experience.id).catch(() => null);
       // A superseded run must not consume the one-shot lab hand-back slot.
       if (cancelled) return;
       let next = restoreProgress(experience, saved);
@@ -169,11 +179,11 @@ export function LessonPlayerV2({ experience, links = NO_LINKS, labs = NO_LABS, t
       if (!cancelled) setProgress(next);
     })();
     return () => { cancelled = true; };
-  }, [identityKey, returnSceneId]);
+  }, [identityKey, returnSceneId, progressStorage]);
 
   useEffect(() => {
-    if (progress) void saveExperienceProgress(progress).catch(() => undefined);
-  }, [progress]);
+    if (progress && progressStorage === "DEVICE") void saveExperienceProgress(progress).catch(() => undefined);
+  }, [progress, progressStorage]);
 
   // Global status toasts lift above the fixed Previous / Continue bar, measured (it grows when the hint shows).
   const [footerHeight, setFooterHeight] = useState(96);
@@ -213,7 +223,8 @@ export function LessonPlayerV2({ experience, links = NO_LINKS, labs = NO_LABS, t
   const objectives = useMemo(() => experience.objectives.filter((objective) => scene.objectiveIds.includes(objective.id)), [experience.objectives, scene.objectiveIds]);
   const tools = toolsByScene[scene.id] ?? [];
   // A real picture or diagram (same-origin asset) earns the visual column; text alternatives stay in flow.
-  const hasVisual = (scene.media ?? []).some((media) => (media.kind === "IMAGE" || media.kind === "DIAGRAM") && media.ref.startsWith("/") && !media.ref.startsWith("//")) || Boolean(scene.teaching?.visual);
+  const attachments = sceneAttachments[scene.id] ?? [];
+  const hasVisual = (scene.media ?? []).some((media) => (media.kind === "IMAGE" || media.kind === "DIAGRAM") && media.ref.startsWith("/") && !media.ref.startsWith("//")) || Boolean(scene.teaching?.visual) || attachments.length > 0;
   // V4 visual teaching blocks: reading passages are offered to writing blocks for quotation checks.
   const blockLesson = useMemo(() => ({ sources: teachingSources(experience) }), [experience]);
 
@@ -242,7 +253,7 @@ export function LessonPlayerV2({ experience, links = NO_LINKS, labs = NO_LABS, t
     if (!context) return;
     const launched = markLabLaunched(progress, scene.id);
     setProgress(launched);
-    await saveExperienceProgress(launched).catch(() => undefined);
+    if (progressStorage === "DEVICE") await saveExperienceProgress(launched).catch(() => undefined);
     router.push(runtime ? buildStudentLabLaunchHref(runtime.target, context) : buildLabLaunchHref(basePath ?? "", context));
   };
 
@@ -264,6 +275,7 @@ export function LessonPlayerV2({ experience, links = NO_LINKS, labs = NO_LABS, t
     if (!progress || !complete) return;
     const done = advance(experience, progress);
     update(() => done);
+    if (progressStorage === "MEMORY" && !runtime) { setFinished({ status: "PILOT_ONLY" }); return; }
     // Governed handoff: observations only. The existing authority decides what happens next.
     const envelope = buildEvidenceEnvelope(experience, done, links, labs);
     if (!runtime) { setFinished({ status: "PROTOTYPE", envelope }); return; }
@@ -315,8 +327,8 @@ export function LessonPlayerV2({ experience, links = NO_LINKS, labs = NO_LABS, t
           <li>{tutorAllowed && runtime && !readOnly
             ? <><AskTutorButton identity={tutorIdentity} /><p className="mt-1 text-[var(--ll-text-muted)]">{online ? "The tutor answers about this scene. Your place here is kept." : "The tutor needs a connection."}</p></>
             : <p>{!tutorAllowed ? "Work independently on this task. Tutor help is available in learning scenes." : "Tutor help requires an authorized online lesson."}</p>}</li>
-          {!runtime && <li className="flex gap-2 text-[var(--ll-text-muted)]"><Flag size={14} className="mt-1 shrink-0" aria-hidden="true" /> Need your teacher? Released lessons connect here to the existing &quot;Flag for teacher&quot; path.</li>}
-          <li className="text-[var(--ll-text-muted)]">{online ? "Your place is saved on this device." : `Offline: ${scene.offline.fallback}`}</li>
+          {!runtime && progressStorage === "DEVICE" && <li className="flex gap-2 text-[var(--ll-text-muted)]"><Flag size={14} className="mt-1 shrink-0" aria-hidden="true" /> Need your teacher? Released lessons connect here to the existing &quot;Flag for teacher&quot; path.</li>}
+          <li className="text-[var(--ll-text-muted)]">{progressStorage === "MEMORY" ? "Pilot practice stays in this open session only. Nothing is saved or graded." : online ? "Your place is saved on this device." : `Offline: ${scene.offline.fallback}`}</li>
         </ul>
       </section>
     </div>
@@ -337,12 +349,12 @@ export function LessonPlayerV2({ experience, links = NO_LINKS, labs = NO_LABS, t
       data-age-band={band}
       className="ll-lesson-v2 min-h-dvh bg-[var(--ll-bg)] text-[var(--ll-text)]"
     >
-      <header className="sticky z-30 border-b border-[var(--ll-border)] bg-[var(--ll-bg)]/95 backdrop-blur" style={{ top: "env(safe-area-inset-top, 0px)" }}>
+      <header className="ll3-player-header sticky z-30 border-b border-[var(--ll-border)] bg-[var(--ll-bg)]/95 backdrop-blur" style={{ top: "env(safe-area-inset-top, 0px)" }}>
         <div className="ll3-focus-bar">
           <Link href={exitHref} aria-label="Leave lesson" className="inline-flex min-h-[var(--pdv2-target,44px)] min-w-[var(--pdv2-target,44px)] items-center justify-center rounded-xl border border-[var(--ll-border)]"><ChevronLeft size={20} aria-hidden="true" /></Link>
           <div className="min-w-0 flex-1">
             <p className="truncate text-base font-semibold leading-6">{experience.title}</p>
-            <p className="text-sm text-[var(--ll-text-muted)]">Scene {index + 1} of {experience.scenes.length} · {scene.teaching ? PHASE_LABEL[scene.teaching.phase] : TYPE_LABEL[scene.type]}</p>
+            <p className="text-sm text-[var(--ll-text-muted)]">Scene {index + 1} of {experience.scenes.length} · {scene.teaching ? lessonPhaseLabel(scene.teaching.phase) : TYPE_LABEL[scene.type]}</p>
           </div>
           {readOnly && <span className="shrink-0 rounded-full border border-[var(--ll-border)] px-3 py-1 text-xs text-[var(--ll-text-muted)]">Saved copy</span>}
           {!runtime && experience.authority.status !== "APPROVED_RELEASE" && <span className="hidden shrink-0 rounded-full border border-[var(--ll-border)] px-3 py-1 text-xs text-[var(--ll-text-muted)] sm:inline">Internal prototype</span>}
@@ -387,7 +399,7 @@ export function LessonPlayerV2({ experience, links = NO_LINKS, labs = NO_LABS, t
             </div>
           )}
           <div>
-            <p className="ll3-scene-kind">{scene.teaching ? PHASE_LABEL[scene.teaching.phase] : TYPE_LABEL[scene.type]}</p>
+            <p className="ll3-scene-kind">{scene.teaching ? lessonPhaseLabel(scene.teaching.phase) : TYPE_LABEL[scene.type]}</p>
             <h1 id="scene-title" ref={headingRef} tabIndex={-1} className="ll3-scene-title">{scene.title}</h1>
           </div>
           {runtime && index === 0 && experience.objectives.length > 0 && (
@@ -400,16 +412,17 @@ export function LessonPlayerV2({ experience, links = NO_LINKS, labs = NO_LABS, t
             <div className="ll3-scene-text">
               <SceneBody scene={scene} ageBand={band} />
               {!hasVisual && <SceneMediaList scene={scene} />}
-              <SceneTeachingBlocks key={scene.id} scene={scene} onDone={onBlockDone} />
+              {/* Keyed by lesson revision and scene: a new lesson or scene remounts its ActivityScope, so no learner value carries over. */}
+              <SceneTeachingBlocks key={`${identityKey}:${scene.id}`} scene={scene} onDone={onBlockDone} />
               <DiagramReveal scene={scene} progress={progress} onReveal={(stepId) => update((current) => revealStep(current, scene.id, stepId))} />
               <FormativeCheck scene={scene} progress={progress} onAnswer={(itemId, value) => update((current) => recordResponse(current, scene.id, itemId, value))} />
               {scene.type === "LAB" && <LabScene scene={scene} view={lab?.view ?? null} launchable={!!lab?.launchable} progress={progress} online={online} onLaunch={() => void launchLab()} onFallback={() => update((current) => chooseLabFallback(current, scene.id))} />}
               <ReflectionPrompts scene={scene} progress={progress} onWrite={(promptId, text) => update((current) => recordResponse(current, scene.id, promptId, text))} />
               <AssessmentHandoffSeam scene={scene} progress={progress} submitted={submittedOrLocked} note={assessmentNote} onAnswer={(itemId, value) => update((current) => recordResponse(current, scene.id, itemId, value))} />
             </div>
-            {hasVisual && <div className="ll3-scene-visual"><SceneMediaList scene={scene} />{scene.teaching?.visual && <TeachingBlockView key={`${scene.id}-visual`} block={scene.teaching.visual} onDone={onBlockDone} />}</div>}
+            {hasVisual && <div className="ll3-scene-visual"><SceneMediaList scene={scene} />{scene.teaching?.visual && <TeachingBlockView key={`${scene.id}-visual`} block={scene.teaching.visual} onDone={onBlockDone} />}{attachments.map((attachment, i) => <GeographicCountyMap key={`${scene.id}-geo-${i}`} attachment={attachment} />)}</div>}
           </div>
-          {finished && <FinishedPanel finished={finished} runtime={runtime} exitHref={exitHref} online={online} onRetry={retrySend} />}
+          {finished && <FinishedPanel finished={finished} runtime={runtime} exitHref={exitHref} finishHref={finishHref} online={online} onRetry={retrySend} />}
         </article>
         </BlockLessonContext.Provider>
       </LearningStage>
@@ -444,7 +457,8 @@ const DISPOSITION_LABEL: Record<string, string> = {
 };
 
 /** Lesson end. Shows only what is true: what was sent (and the server's answer), or that nothing was. */
-function FinishedPanel({ finished, runtime, exitHref, online, onRetry }: { finished: FinishState; runtime?: LessonPlayerRuntime; exitHref: string; online: boolean; onRetry: () => void }) {
+function FinishedPanel({ finished, runtime, exitHref, finishHref, online, onRetry }: { finished: FinishState; runtime?: LessonPlayerRuntime; exitHref: string; finishHref?: string; online: boolean; onRetry: () => void }) {
+  const dayReturn = finished.status === "PILOT_ONLY" && !runtime && !!finishHref;
   const completion = runtime?.serverCompletion ? new Date(runtime.serverCompletion.completedAt) : null;
   const headingRef = useRef<HTMLHeadingElement>(null);
   // Finish is pressed in the fixed footer: bring the outcome into view (it is below the questions on a phone).
@@ -456,6 +470,7 @@ function FinishedPanel({ finished, runtime, exitHref, online, onRetry }: { finis
   return (
     <section role="status" aria-labelledby="handoff-title" data-finish-state={finished.status} className="mt-6 rounded-2xl border border-[var(--ll-accent)] bg-[var(--ll-surface)] p-5">
       <h2 id="handoff-title" ref={headingRef} tabIndex={-1} className="text-lg font-semibold outline-none">Lesson finished</h2>
+      {finished.status === "PILOT_ONLY" && <p className="mt-2 text-base leading-7">Pilot practice finished. Nothing was saved, submitted or graded. No official learning record changed.</p>}
       {finished.status === "PROTOTYPE" && <>
         <p className="mt-2 text-base leading-7">Your answers and lab work are ready as {finished.envelope.observations.length} observations for your learning plan. Your next step is chosen by your learning plan, not by this lesson.</p>
         <p className="mt-2 text-xs leading-5 text-[var(--ll-text-muted)]" data-evidence-dispositions={finished.envelope.observations.map((o) => o.disposition).join(" ")}>
@@ -478,7 +493,7 @@ function FinishedPanel({ finished, runtime, exitHref, online, onRetry }: { finis
         )}
       </>}
       {completion && !Number.isNaN(completion.getTime()) && <p className="mt-2 text-sm leading-6 text-[var(--ll-text-muted)]" data-server-completion>Your class record shows this lesson as completed.</p>}
-      <Link href={runtime ? exitHref : "/student/learn"} className="mt-4 inline-flex min-h-[var(--pdv2-target,48px)] items-center rounded-xl bg-[var(--ll-accent)] px-5 py-3 text-base font-semibold text-[var(--ll-bg)]">{runtime ? "Back to my lessons" : "See my next step"}</Link>
+      <Link href={dayReturn ? finishHref! : runtime || finished.status === "PILOT_ONLY" ? exitHref : "/student/learn"} data-finish-return={dayReturn ? "school-day" : undefined} className="mt-4 inline-flex min-h-[var(--pdv2-target,48px)] items-center rounded-xl bg-[var(--ll-accent)] px-5 py-3 text-base font-semibold text-[var(--ll-bg)]">{dayReturn ? "Back to my school day" : runtime || finished.status === "PILOT_ONLY" ? "Back to my lessons" : "See my next step"}</Link>
     </section>
   );
 }

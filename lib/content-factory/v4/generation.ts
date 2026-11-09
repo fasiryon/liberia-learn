@@ -143,9 +143,9 @@ export function assertV4AnswerIsolation(candidate: CandidateLessonV2, sidecar: V
   assertLearnerSafe({ candidate, sidecar }, protectedStrings(assessment.items, assessment.specs));
 }
 
-export function referenceBlueprint(lesson: V4Lesson, pins = referenceInputs) {
+export function referenceBlueprint(lesson: V4Lesson, pins = referenceInputs, inputPath?: string) {
   const objectiveIds = lesson.objectives.map(o => o.id), resourceId = `${lesson.key}-lesson`;
-  const pin = { id: "v4-reference-inputs", version: "1.0.0", sha256: hash(pins), sourceRef: pins === referenceInputs ? "curriculum/factory-v4/reference-inputs.json" : "curriculum/factory-v4/draft5-inputs.json" };
+  const pin = { id: "v4-reference-inputs", version: "1.0.0", sha256: hash(pins), sourceRef: inputPath ?? (pins === referenceInputs ? "curriculum/factory-v4/reference-inputs.json" : "curriculum/factory-v4/draft5-inputs.json") };
   return sealBlueprint({ schemaVersion: UNIT_BLUEPRINT_V4_VERSION, instructionStandard: V4_INSTRUCTION_STANDARD,
     blueprintId: `${lesson.key}-v4`, version: "4.0.0", grade: lesson.grade, subject: lesson.subject, unitId: lesson.key,
     title: lesson.key, repositoryCommit: pins.frontendCommit, sources: [pin],

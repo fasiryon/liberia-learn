@@ -7,6 +7,8 @@ import { NumberBuilder, PlaceValueChart } from "@/components/experience/demo/Pla
 import { PLACES, formatNumber, type PlaceId } from "@/lib/learner-experience/demo/placeValue";
 import { checkSequence, checkSort, diagnosePlacement, digitCardsFor, moveItem, placementFeedback } from "@/lib/learner-experience/teaching/checks";
 import type { TeachingBlock } from "@/lib/learner-experience/teaching/contract";
+import { isStudentStemBlock, type StudentStemBlock } from "@/lib/learner-experience/teaching/stemBlocks";
+import { StemBlockView } from "@/components/experience/blocks/stem/StemBlockView";
 import { MathExpression } from "@/components/experience/MathText";
 import { AreaModelBlock, ArrayModelBlock, FractionCompareBlock, FractionEquivalenceBlock, FractionModelBlock, FractionNumberLineBlock, MistakeAnalysisBlock, NumericResponseBlock, ShapeModelBlock, WorkedSolutionBlock } from "./v4/MathBlocks";
 import { DataPlotBlock, ParticleModelBlock, PredictObserveBlock } from "./v4/ScienceBlocks";
@@ -22,7 +24,9 @@ export type BlockDone = (blockId: string, done: boolean) => void;
 
 const placeIndex = (place?: PlaceId) => (place ? PLACES.findIndex((candidate) => candidate.id === place) : null);
 
-export function TeachingBlockView({ block, onDone }: { block: TeachingBlock; onDone: BlockDone }) {
+export function TeachingBlockView({ block, onDone }: { block: TeachingBlock | StudentStemBlock; onDone: BlockDone }) {
+  // teaching-blocks/1.2.0+ STEM blocks (sealed packages only; the scene contract admits them by registry version).
+  if (isStudentStemBlock(block)) return <StemBlockView block={block} onDone={onDone} />;
   switch (block.type) {
     case "GROUPED_NUMBER": return <GroupedNumber value={block.value} caption={block.caption} />;
     case "PLACE_VALUE_CHART": return <figure className="ll3-figure ll4-figure"><PlaceValueChart value={block.value} highlight={placeIndex(block.highlight)} caption={`Place-value chart for ${formatNumber(block.value)}`} /><figcaption><InlineText text={block.caption} /></figcaption></figure>;

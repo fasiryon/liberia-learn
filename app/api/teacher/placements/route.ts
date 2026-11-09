@@ -1,3 +1,4 @@
+// route-policy: auth=session; scope=tenant; authority=placement-review; rationale=school placement review pending founder decision (AT-GRADE-01-2D): a TEACHER or ADMIN of the learners' school lists placement results (PLACEMENT_REVIEW); never changes a grade; teacher access is neither narrowed nor widened until the founder rules
 import { NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";

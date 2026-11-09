@@ -1,9 +1,12 @@
+// route-policy: auth=session; scope=tenant; authority=school-admin; rationale=issues account invites; GET read unchanged; refused on any deployed Preview/staging after authority and before body or data work (PREVIEW_IDENTITY_FROZEN)
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { logAudit } from "@/lib/audit";
 import { randomBytes } from "crypto";
+import { previewIdentityFrozen } from "@/lib/preview/identityFreeze";
+import { previewSafeErrorResponse } from "@/lib/preview/safeError";
 
 const CreateInviteSchema = z.object({
   email: z.string().email().toLowerCase(),
@@ -18,6 +21,8 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "School context required" }, { status: 400 });
     }
 
+    const frozen = previewIdentityFrozen();
+    if (frozen) return frozen;
     const body = await req.json().catch(() => null);
     const parsed = CreateInviteSchema.safeParse(body);
     if (!parsed.success) {
@@ -65,6 +70,8 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ id: invite.id, email, role, expiresAt, token }, { status: 201 });
   } catch (err: any) {
+    const safe = previewSafeErrorResponse(err);
+    if (safe) return safe;
     return NextResponse.json({ error: err?.message ?? "Failed" }, { status: err?.status ?? 500 });
   }
 }

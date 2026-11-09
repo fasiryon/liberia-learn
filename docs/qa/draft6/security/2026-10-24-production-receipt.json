@@ -1,0 +1,37 @@
+{
+  "capturedAt": "2026-10-24T06:17:16.594Z",
+  "command": "npm audit --package-lock-only --omit=dev --json",
+  "exitCode": 1,
+  "lockSha256": "9006871421a998ed66044af92485e61b4ee1d2194de36c16635d1249f3fffcca",
+  "counts": {
+    "info": 0,
+    "low": 0,
+    "moderate": 32,
+    "high": 18,
+    "critical": 1,
+    "total": 51
+  },
+  "critical": [
+    "next"
+  ],
+  "high": [
+    "@prisma/config",
+    "@tiptap/core",
+    "africastalking",
+    "axios",
+    "brace-expansion",
+    "browserslist",
+    "deepmerge-ts",
+    "fast-uri",
+    "follow-redirects",
+    "joi",
+    "lodash",
+    "nanoid",
+    "postcss",
+    "prisma",
+    "prosemirror-view",
+    "source-map-js",
+    "undici",
+    "zod"
+  ]
+}

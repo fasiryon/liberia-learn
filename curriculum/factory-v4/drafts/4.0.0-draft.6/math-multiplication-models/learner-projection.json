@@ -1,0 +1,675 @@
+{
+  "contractVersion": "lesson-experience/1.0.0",
+  "id": "cv4-demo-math-multiplication-models",
+  "version": "4.0.0-draft.6",
+  "title": "Generated: Split both dimensions",
+  "subject": "MATH",
+  "grade": 5,
+  "ageBand": "UPPER_PRIMARY",
+  "authority": {
+    "status": "CURRICULUM_V2_DRAFT",
+    "note": "Interactive Learning V4 synthetic demonstration. Not curriculum; never delivered to students.",
+    "candidateContentIds": [],
+    "releaseId": null,
+    "releaseIdentity": null
+  },
+  "objectives": [
+    {
+      "id": "v4-demo-mult-models",
+      "statement": "Represent a multiplication as equal groups, an array and repeated addition, and explain why they show the same product.",
+      "conceptId": "v4-demo-mult-models",
+      "standardCodes": [],
+      "skillIds": []
+    },
+    {
+      "id": "v4-demo-mult-area-model",
+      "statement": "Multiply a two-digit number by a one- or two-digit number with an area model, splitting by place value.",
+      "conceptId": "v4-demo-mult-area-model",
+      "standardCodes": [],
+      "skillIds": []
+    }
+  ],
+  "scenes": [
+    {
+      "id": "generated-1",
+      "type": "EXPLANATION",
+      "title": "Split both dimensions",
+      "objectiveIds": [
+        "v4-demo-mult-models",
+        "v4-demo-mult-area-model"
+      ],
+      "content": {
+        "body": "Synthetic supply model. Seven equal groups of four contain 28 items: 4 + 4 + 4 + 4 + 4 + 4 + 4 = 28. The group count, row count and repeated-addition count agree. For larger products, a 24 by 13 rectangle splits at 20 + 4 and 10 + 3. Each unit square represents one item. Count all four smaller rectangles, not only two opposite corners."
+      },
+      "interaction": {
+        "kind": "NONE"
+      },
+      "tools": {
+        "allowed": [],
+        "prohibited": []
+      },
+      "accessibility": {
+        "textAlternative": "Synthetic supply model. Seven equal groups of four contain 28 items: 4 + 4 + 4 + 4 + 4 + 4 + 4 = 28. The group count, row count and repeated-addition count agree. For larger products, a 24 by 13 rectangle splits at 20 + 4 and 10 + 3. Each unit square represents one item. Count all four smaller rectangles, not only two opposite corners. 7 rows of 4 dots: 7 × 4 = 28. Seven groups of four and seven rows of four count the same 28 items. Trace the four partial rectangles and describe their dimensions. Find 24 × 13 by splitting it into parts.",
+        "keyboardOperable": true,
+        "reducedMotionSafe": true,
+        "captionsRequired": false
+      },
+      "offline": {
+        "mode": "FULL",
+        "fallback": "Models and formative checks use cached lesson data. Paper responses are capture only; no official grade is produced."
+      },
+      "evidence": {
+        "kind": "NONE"
+      },
+      "completion": {
+        "kind": "VIEWED"
+      },
+      "teaching": {
+        "phase": "VISUALIZE",
+        "blocks": [
+          {
+            "type": "ARRAY_MODEL",
+            "id": "equal-groups",
+            "rows": 7,
+            "columns": 4,
+            "views": [
+              "GROUPS",
+              "ARRAY",
+              "GRID"
+            ],
+            "adjustable": true,
+            "caption": "Seven groups of four and seven rows of four count the same 28 items."
+          },
+          {
+            "type": "AREA_MODEL",
+            "id": "two-digit-area",
+            "mode": "SHOW",
+            "factorA": 24,
+            "factorB": 13,
+            "splitA": [
+              20,
+              4
+            ],
+            "splitB": [
+              10,
+              3
+            ],
+            "prompt": "Trace the four partial rectangles and describe their dimensions."
+          }
+        ]
+      }
+    },
+    {
+      "id": "generated-2",
+      "type": "GUIDED_EXAMPLE",
+      "title": "Four partial products",
+      "objectiveIds": [
+        "v4-demo-mult-models",
+        "v4-demo-mult-area-model"
+      ],
+      "content": {
+        "body": "The distributive property counts every non-overlapping part. The compact algorithm groups the same four parts into 24 x 3 and 24 x 10. The second row is tens; it represents 240, not 24."
+      },
+      "interaction": {
+        "kind": "NONE"
+      },
+      "tools": {
+        "allowed": [],
+        "prohibited": []
+      },
+      "accessibility": {
+        "textAlternative": "The distributive property counts every non-overlapping part. The compact algorithm groups the same four parts into 24 x 3 and 24 x 10. The second row is tens; it represents 240, not 24. 24 x 13 Step 1: Split both factors. (20 + 4)(10 + 3) Step 2: Calculate every rectangle. 200 + 60 + 40 + 12 = 312 Step 3: Regroup as algorithm rows. 24 × 3 + 24 × 10 = 72 + 240 = 312",
+        "keyboardOperable": true,
+        "reducedMotionSafe": true,
+        "captionsRequired": false
+      },
+      "offline": {
+        "mode": "FULL",
+        "fallback": "Models and formative checks use cached lesson data. Paper responses are capture only; no official grade is produced."
+      },
+      "evidence": {
+        "kind": "NONE"
+      },
+      "completion": {
+        "kind": "VIEWED"
+      },
+      "teaching": {
+        "phase": "DEMONSTRATE",
+        "blocks": [
+          {
+            "type": "WORKED_SOLUTION",
+            "id": "multiply-worked",
+            "problem": "24 x 13",
+            "steps": [
+              {
+                "text": "Split both factors.",
+                "tex": "(20+4)(10+3)"
+              },
+              {
+                "text": "Calculate every rectangle.",
+                "tex": "200+60+40+12=312"
+              },
+              {
+                "text": "Regroup as algorithm rows.",
+                "tex": "24\\times3+24\\times10=72+240=312"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "generated-3",
+      "type": "PRACTICE",
+      "title": "Fill the four rectangles",
+      "objectiveIds": [
+        "v4-demo-mult-models",
+        "v4-demo-mult-area-model"
+      ],
+      "content": {
+        "body": "Split each factor into tens and ones. Complete the area model before entering a total; use the labels to explain your partial products."
+      },
+      "interaction": {
+        "kind": "NONE"
+      },
+      "tools": {
+        "allowed": [],
+        "prohibited": []
+      },
+      "accessibility": {
+        "textAlternative": "Split each factor into tens and ones. Complete the area model before entering a total; use the labels to explain your partial products. Which sum represents seven groups of four? Options: 4 + 4 + 4 + 4 + 4 + 4 + 4; 7 + 4. Fill all four partial products, then add them. Find 23 × 14 by splitting it into parts. Calculate 23 times 14. Explain how every partial rectangle is counted. Total: write your answer. Calculate 16 times 12. Explain how every partial rectangle is counted. Total: write your answer.",
+        "keyboardOperable": true,
+        "reducedMotionSafe": true,
+        "captionsRequired": false
+      },
+      "offline": {
+        "mode": "FULL",
+        "fallback": "Models and formative checks use cached lesson data. Paper responses are capture only; no official grade is produced."
+      },
+      "evidence": {
+        "kind": "NONE"
+      },
+      "completion": {
+        "kind": "VIEWED"
+      },
+      "teaching": {
+        "phase": "SOLVE_WITH_SUPPORT",
+        "blocks": [
+          {
+            "type": "CHECK",
+            "id": "groups-guided",
+            "items": [
+              {
+                "id": "groups-guided-item",
+                "prompt": "Which sum represents seven groups of four?",
+                "options": [
+                  {
+                    "id": "reason",
+                    "text": "4 + 4 + 4 + 4 + 4 + 4 + 4",
+                    "feedback": "Seven equal addends of four count 28 items."
+                  },
+                  {
+                    "id": "other",
+                    "text": "7 + 4",
+                    "feedback": "Adding the group count and group size does not count the items in every group."
+                  }
+                ],
+                "formativeKey": {
+                  "expectedOptionId": "reason"
+                },
+                "misconceptionId": "generated-math-misconception"
+              }
+            ]
+          },
+          {
+            "type": "AREA_MODEL",
+            "id": "guided-area",
+            "mode": "FILL",
+            "factorA": 23,
+            "factorB": 14,
+            "splitA": [
+              20,
+              3
+            ],
+            "splitB": [
+              10,
+              4
+            ],
+            "prompt": "Fill all four partial products, then add them."
+          },
+          {
+            "type": "NUMERIC_RESPONSE",
+            "id": "guided-product-one",
+            "mode": "GUIDED",
+            "prompt": "Calculate 23 times 14. Explain how every partial rectangle is counted.",
+            "parts": [
+              {
+                "id": "guided-product-one-total",
+                "label": "Total",
+                "quantity": "OTHER",
+                "unit": {
+                  "kind": "NONE",
+                  "base": ""
+                },
+                "formativeKey": {
+                  "value": 322
+                },
+                "misconceptions": [
+                  {
+                    "value": 212,
+                    "feedback": "You counted only tens-times-tens and ones-times-ones. Include 20 times 4 and 3 times 10 too.",
+                    "misconceptionId": "generated-math-misconception"
+                  },
+                  {
+                    "value": 115,
+                    "feedback": "The 1 tens in 14 means 10, not 1. Preserve place value in the tens partial product.",
+                    "misconceptionId": "generated-math-misconception"
+                  }
+                ]
+              }
+            ],
+            "hints": [
+              "Split 23 into 20 + 3, and 14 into 10 + 4.",
+              "Multiply each part of one factor by each part of the other, then add four products."
+            ],
+            "afterAttempt": [
+              "20 x 10 = 200; 20 x 4 = 80; 3 x 10 = 30; 3 x 4 = 12. Total 322.",
+              "Each partial rectangle occurs once, with no gap or overlap."
+            ]
+          },
+          {
+            "type": "NUMERIC_RESPONSE",
+            "id": "guided-product-two",
+            "mode": "GUIDED",
+            "prompt": "Calculate 16 times 12. Explain how every partial rectangle is counted.",
+            "parts": [
+              {
+                "id": "guided-product-two-total",
+                "label": "Total",
+                "quantity": "OTHER",
+                "unit": {
+                  "kind": "NONE",
+                  "base": ""
+                },
+                "formativeKey": {
+                  "value": 192
+                },
+                "misconceptions": [
+                  {
+                    "value": 112,
+                    "feedback": "You counted only tens-times-tens and ones-times-ones. Include 10 times 2 and 6 times 10 too.",
+                    "misconceptionId": "generated-math-misconception"
+                  },
+                  {
+                    "value": 48,
+                    "feedback": "The 1 tens in 12 means 10, not 1. Preserve place value in the tens partial product.",
+                    "misconceptionId": "generated-math-misconception"
+                  }
+                ]
+              }
+            ],
+            "hints": [
+              "Split 16 into 10 + 6, and 12 into 10 + 2.",
+              "Multiply each part of one factor by each part of the other, then add four products."
+            ],
+            "afterAttempt": [
+              "10 x 10 = 100; 10 x 2 = 20; 6 x 10 = 60; 6 x 2 = 12. Total 192.",
+              "Each partial rectangle occurs once, with no gap or overlap."
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "generated-4",
+      "type": "PRACTICE",
+      "title": "Multiply two-digit numbers independently",
+      "objectiveIds": [
+        "v4-demo-mult-models",
+        "v4-demo-mult-area-model"
+      ],
+      "content": {
+        "body": "Choose an area model, partial products or the compact algorithm. Show your method on paper, then enter the total. Explain why the tens row has its place value."
+      },
+      "interaction": {
+        "kind": "NONE"
+      },
+      "tools": {
+        "allowed": [],
+        "prohibited": []
+      },
+      "accessibility": {
+        "textAlternative": "Choose an area model, partial products or the compact algorithm. Show your method on paper, then enter the total. Explain why the tens row has its place value. Which multiplication and sum represent six rows of five? Options: 6 x 5 = 5 + 5 + 5 + 5 + 5 + 5 = 30; 6 + 5 = 11. Calculate 32 times 24. Explain how every partial rectangle is counted. Total: write your answer. Calculate 17 times 18. Explain how every partial rectangle is counted. Total: write your answer.",
+        "keyboardOperable": true,
+        "reducedMotionSafe": true,
+        "captionsRequired": false
+      },
+      "offline": {
+        "mode": "FULL",
+        "fallback": "Models and formative checks use cached lesson data. Paper responses are capture only; no official grade is produced."
+      },
+      "evidence": {
+        "kind": "NONE"
+      },
+      "completion": {
+        "kind": "VIEWED"
+      },
+      "teaching": {
+        "phase": "PRACTICE_INDEPENDENTLY",
+        "blocks": [
+          {
+            "type": "CHECK",
+            "id": "groups-independent",
+            "items": [
+              {
+                "id": "groups-independent-item",
+                "prompt": "Which multiplication and sum represent six rows of five?",
+                "options": [
+                  {
+                    "id": "reason",
+                    "text": "6 x 5 = 5 + 5 + 5 + 5 + 5 + 5 = 30",
+                    "feedback": "Count five items in each of six equal rows."
+                  },
+                  {
+                    "id": "other",
+                    "text": "6 + 5 = 11",
+                    "feedback": "Adding row count and items per row leaves most items uncounted."
+                  }
+                ],
+                "formativeKey": {
+                  "expectedOptionId": "reason"
+                },
+                "misconceptionId": "generated-math-misconception"
+              }
+            ]
+          },
+          {
+            "type": "NUMERIC_RESPONSE",
+            "id": "independent-product-one",
+            "mode": "INDEPENDENT",
+            "prompt": "Calculate 32 times 24. Explain how every partial rectangle is counted.",
+            "parts": [
+              {
+                "id": "independent-product-one-total",
+                "label": "Total",
+                "quantity": "OTHER",
+                "unit": {
+                  "kind": "NONE",
+                  "base": ""
+                },
+                "formativeKey": {
+                  "value": 768
+                },
+                "misconceptions": [
+                  {
+                    "value": 608,
+                    "feedback": "You counted only tens-times-tens and ones-times-ones. Include 30 times 4 and 2 times 20 too.",
+                    "misconceptionId": "generated-math-misconception"
+                  },
+                  {
+                    "value": 192,
+                    "feedback": "The 2 tens in 24 means 20, not 2. Preserve place value in the tens partial product.",
+                    "misconceptionId": "generated-math-misconception"
+                  }
+                ]
+              }
+            ],
+            "hints": [],
+            "afterAttempt": [
+              "30 x 20 = 600; 30 x 4 = 120; 2 x 20 = 40; 2 x 4 = 8. Total 768.",
+              "Each partial rectangle occurs once, with no gap or overlap."
+            ]
+          },
+          {
+            "type": "NUMERIC_RESPONSE",
+            "id": "independent-product-two",
+            "mode": "INDEPENDENT",
+            "prompt": "Calculate 17 times 18. Explain how every partial rectangle is counted.",
+            "parts": [
+              {
+                "id": "independent-product-two-total",
+                "label": "Total",
+                "quantity": "OTHER",
+                "unit": {
+                  "kind": "NONE",
+                  "base": ""
+                },
+                "formativeKey": {
+                  "value": 306
+                },
+                "misconceptions": [
+                  {
+                    "value": 156,
+                    "feedback": "You counted only tens-times-tens and ones-times-ones. Include 10 times 8 and 7 times 10 too.",
+                    "misconceptionId": "generated-math-misconception"
+                  },
+                  {
+                    "value": 153,
+                    "feedback": "The 1 tens in 18 means 10, not 1. Preserve place value in the tens partial product.",
+                    "misconceptionId": "generated-math-misconception"
+                  }
+                ]
+              }
+            ],
+            "hints": [],
+            "afterAttempt": [
+              "10 x 10 = 100; 10 x 8 = 80; 7 x 10 = 70; 7 x 8 = 56. Total 306.",
+              "Each partial rectangle occurs once, with no gap or overlap."
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "generated-5",
+      "type": "EXPLANATION",
+      "title": "Recover the missing rectangles",
+      "objectiveIds": [
+        "v4-demo-mult-models",
+        "v4-demo-mult-area-model"
+      ],
+      "content": {
+        "body": "Compare the attempt with the full rectangle."
+      },
+      "interaction": {
+        "kind": "NONE"
+      },
+      "tools": {
+        "allowed": [],
+        "prohibited": []
+      },
+      "accessibility": {
+        "textAlternative": "Compare the attempt with the full rectangle. 24 x 13 A learner wrote: 20 x 10 + 4 x 3 = 212 Which diagnosis accounts for the missing area? Options: The 20 x 3 and 4 x 10 rectangles were left out.; The total should be rounded to 300 because both factors have two digits..",
+        "keyboardOperable": true,
+        "reducedMotionSafe": true,
+        "captionsRequired": false
+      },
+      "offline": {
+        "mode": "FULL",
+        "fallback": "Models and formative checks use cached lesson data. Paper responses are capture only; no official grade is produced."
+      },
+      "evidence": {
+        "kind": "NONE"
+      },
+      "completion": {
+        "kind": "VIEWED"
+      },
+      "teaching": {
+        "phase": "ANALYZE_MISTAKE",
+        "blocks": [
+          {
+            "type": "MISTAKE_ANALYSIS",
+            "id": "multiply-mistake",
+            "problem": "24 x 13",
+            "attempt": {
+              "name": "A learner",
+              "steps": [
+                "20 x 10 + 4 x 3 = 212"
+              ]
+            },
+            "question": "Which diagnosis accounts for the missing area?",
+            "options": [
+              {
+                "id": "missing",
+                "text": "The 20 x 3 and 4 x 10 rectangles were left out.",
+                "feedback": "Those rectangles contribute 60 + 40; 212 + 100 = 312."
+              },
+              {
+                "id": "round",
+                "text": "The total should be rounded to 300 because both factors have two digits.",
+                "feedback": "These are exact whole-number counts. Rounding does not recover omitted rectangles."
+              }
+            ],
+            "formativeKey": {
+              "expectedOptionId": "missing"
+            },
+            "correction": [
+              "Count all four rectangles.",
+              "200 + 60 + 40 + 12 = 312."
+            ],
+            "misconceptionId": "generated-math-misconception"
+          }
+        ]
+      }
+    },
+    {
+      "id": "generated-6",
+      "type": "PRACTICE",
+      "title": "Plan meeting seats",
+      "objectiveIds": [
+        "v4-demo-mult-models",
+        "v4-demo-mult-area-model"
+      ],
+      "content": {
+        "body": "Synthetic meeting plan. There are 18 rows with 14 chairs in each row. Reserve 12 chairs for presenters. Find the total and then the number available for the audience. Check whether your answer fits an estimate of 20 rows with 14 chairs."
+      },
+      "interaction": {
+        "kind": "FREE_RESPONSE",
+        "prompts": [
+          {
+            "id": "generated-6-response-0",
+            "prompt": "How many audience chairs remain after reserving 12? Explain the order of operations and check with an estimate.",
+            "minLength": 20
+          }
+        ]
+      },
+      "tools": {
+        "allowed": [],
+        "prohibited": []
+      },
+      "accessibility": {
+        "textAlternative": "Synthetic meeting plan. There are 18 rows with 14 chairs in each row. Reserve 12 chairs for presenters. Find the total and then the number available for the audience. Check whether your answer fits an estimate of 20 rows with 14 chairs. Calculate 18 times 14. Explain how every partial rectangle is counted. Total: write your answer. How many audience chairs remain after reserving 12? Explain the order of operations and check with an estimate.",
+        "keyboardOperable": true,
+        "reducedMotionSafe": true,
+        "captionsRequired": false
+      },
+      "offline": {
+        "mode": "FULL",
+        "fallback": "Models and formative checks use cached lesson data. Paper responses are capture only; no official grade is produced."
+      },
+      "evidence": {
+        "kind": "NONE"
+      },
+      "completion": {
+        "kind": "ALL_RESPONSES_WRITTEN"
+      },
+      "teaching": {
+        "phase": "APPLY",
+        "blocks": [
+          {
+            "type": "NUMERIC_RESPONSE",
+            "id": "seating-total",
+            "mode": "INDEPENDENT",
+            "prompt": "Calculate 18 times 14. Explain how every partial rectangle is counted.",
+            "parts": [
+              {
+                "id": "seating-total-total",
+                "label": "Total",
+                "quantity": "OTHER",
+                "unit": {
+                  "kind": "NONE",
+                  "base": ""
+                },
+                "formativeKey": {
+                  "value": 252
+                },
+                "misconceptions": [
+                  {
+                    "value": 132,
+                    "feedback": "You counted only tens-times-tens and ones-times-ones. Include 10 times 4 and 8 times 10 too.",
+                    "misconceptionId": "generated-math-misconception"
+                  },
+                  {
+                    "value": 90,
+                    "feedback": "The 1 tens in 14 means 10, not 1. Preserve place value in the tens partial product.",
+                    "misconceptionId": "generated-math-misconception"
+                  }
+                ]
+              }
+            ],
+            "hints": [],
+            "afterAttempt": [
+              "10 x 10 = 100; 10 x 4 = 40; 8 x 10 = 80; 8 x 4 = 32. Total 252.",
+              "Each partial rectangle occurs once, with no gap or overlap."
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "generated-assess",
+      "type": "MASTERY_CHECK",
+      "title": "Independent assessment handoff",
+      "objectiveIds": [
+        "v4-demo-mult-models",
+        "v4-demo-mult-area-model"
+      ],
+      "content": {
+        "body": "Only Assessment Player V2 can collect and score governed assessment responses. This draft has no approved form or official score."
+      },
+      "interaction": {
+        "kind": "ASSESSMENT_HANDOFF",
+        "assessment": {
+          "assessmentId": "cv4-demo-math-multiplication-models--generated-mastery",
+          "assessmentVersion": "4.0.0-draft.6",
+          "player": "ASSESSMENT_PLAYER_V2",
+          "scoring": "SERVER_AUTHORITY",
+          "objectiveIds": [
+            "v4-demo-mult-models",
+            "v4-demo-mult-area-model"
+          ],
+          "items": []
+        }
+      },
+      "tools": {
+        "allowed": [],
+        "prohibited": []
+      },
+      "accessibility": {
+        "textAlternative": "The lesson requests a separate independent assessment. This draft contains no governed assessment questions or protected scoring material.",
+        "keyboardOperable": true,
+        "reducedMotionSafe": true,
+        "captionsRequired": false
+      },
+      "offline": {
+        "mode": "FULL",
+        "fallback": "No assessment form is cached by this draft. Paper work is capture only and cannot establish an official grade."
+      },
+      "evidence": {
+        "kind": "MASTERY_RESPONSE",
+        "evidenceType": "QUIZ",
+        "objectiveIds": [
+          "v4-demo-mult-models",
+          "v4-demo-mult-area-model"
+        ]
+      },
+      "completion": {
+        "kind": "ALL_ANSWERED"
+      }
+    }
+  ],
+  "offline": {
+    "packageable": true,
+    "requiredAssets": []
+  }
+}

@@ -1,0 +1,92 @@
+/* STEM blocks (teaching-blocks/1.2.0 DRAFT prototypes). Tokens from learning-v3.css. No fixed or sticky positioning. */
+.ll8-code, .ll8-block { display: grid; gap: 12px; padding: 16px; border-radius: 16px; background: var(--ll-surface); border: 1px solid var(--ll-border); color: var(--ll-text); min-width: 0; }
+.ll8-title { margin: 0; font-size: 20px; }
+.ll8-muted { color: var(--ll-text-muted); font-size: 14px; margin: 0; }
+.ll8-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.ll8-listing { list-style: none; margin: 0; padding: 8px 0; border-radius: 12px; background: var(--ll-bg); overflow-x: auto; font-family: ui-monospace, Consolas, monospace; font-size: 15px; }
+.ll8-listing li { display: flex; gap: 12px; padding: 2px 12px; min-height: 26px; }
+.ll8-listing li[aria-current=step] { background: var(--ll-yellow-soft); box-shadow: inset 4px 0 0 var(--ll-accent); }
+.ll8-listing code { white-space: pre; }
+.ll8-ln { color: var(--ll-text-muted); min-width: 2ch; text-align: right; user-select: none; }
+.ll8-field { display: grid; gap: 6px; font-weight: 600; }
+.ll8-field textarea, .ll8-editor { width: 100%; padding: 10px; border-radius: 12px; border: 1px solid var(--ll-border-strong, #85887c); background: var(--ll-bg); color: var(--ll-text); font: inherit; }
+.ll8-editor { font-family: ui-monospace, Consolas, monospace; font-size: 15px; white-space: pre; overflow-x: auto; tab-size: 4; }
+.ll8-controls { display: flex; flex-wrap: wrap; gap: 8px; }
+.ll8-state { display: grid; gap: 12px; }
+@media (min-width: 720px) { .ll8-state { grid-template-columns: minmax(200px, 1fr) minmax(0, 1.4fr); align-items: start; } }
+.ll8-vars { border-collapse: collapse; width: 100%; } .ll8-vars caption { text-align: left; font-weight: 700; padding-bottom: 6px; }
+.ll8-vars th, .ll8-vars td { padding: 4px 8px; border-bottom: 1px solid var(--ll-border); text-align: left; overflow-wrap: anywhere; }
+.ll8-label { margin: 0 0 4px; font-weight: 700; }
+.ll8-output { margin: 0; padding: 10px; min-height: 44px; border-radius: 12px; background: var(--ll-bg); white-space: pre-wrap; overflow-wrap: anywhere; font-family: ui-monospace, Consolas, monospace; }
+.ll8-feedback { margin: 0; padding: 8px 12px; border-left: 4px solid var(--ll-accent); background: var(--ll-surface-muted); border-radius: 8px; }
+.ll8-error { margin: 0; padding: 8px 12px; border-left: 4px solid #e58a7a; background: var(--ll-surface-muted); border-radius: 8px; }
+.ll8-tests { margin: 0; padding-left: 20px; display: grid; gap: 4px; } .ll8-tests li[data-pass] strong { color: var(--ll-success); }
+@media (forced-colors: active) { .ll8-listing li[aria-current=step] { outline: 2px solid Highlight; } }
+
+/* GRID_ROBOT_PROGRAM: large targets for K-5. */
+.ll8-robot { --pdv2-target: 56px; }
+.ll8-grid { display: grid; gap: 4px; max-width: 420px; }
+.ll8-cell { aspect-ratio: 1; display: grid; place-items: center; border-radius: 8px; background: var(--ll-surface-muted); border: 1px solid var(--ll-border); color: var(--ll-accent); font-size: 20px; }
+.ll8-cell[data-path] { background: var(--ll-yellow-soft); }
+.ll8-cell[data-rock] { color: var(--ll-text-muted); }
+.ll8-palette { display: flex; flex-wrap: wrap; gap: 8px; }
+.ll8-move { min-width: 88px; flex-direction: column; gap: 2px; }
+.ll8-program { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.ll8-program li { display: flex; align-items: center; gap: 4px; padding: 4px 4px 4px 10px; border-radius: 10px; border: 1px solid var(--ll-border); background: var(--ll-surface-muted); }
+.ll8-program li[aria-current=step] { border-color: var(--ll-accent); }
+.ll8-program li[data-failed] { border-color: #e58a7a; border-width: 2px; }
+.ll8-remove { min-width: 44px; min-height: 44px; border: 0; border-radius: 8px; background: none; color: var(--ll-text); font-size: 20px; cursor: pointer; }
+.ll8-remove:focus-visible { outline: 3px solid var(--ll-accent); }
+
+/* MEASUREMENT_TABLE: a real table; the origin is always visible; scrolls inside its own region on narrow screens. */
+.ll8-origin { margin: 0; padding: 8px 12px; border-radius: 8px; background: var(--ll-surface-muted); font-weight: 600; }
+.ll8-origin[data-origin=ILLUSTRATIVE] { border-left: 4px solid var(--ll-text-muted); }
+.ll8-origin[data-origin=MEASURED_BY_LEARNER] { border-left: 4px solid var(--ll-accent); }
+.ll8-tablewrap { overflow-x: auto; max-width: 100%; border-radius: 12px; }
+.ll8-tablewrap:focus-visible { outline: 3px solid var(--ll-accent); }
+.ll8-mtable { border-collapse: collapse; min-width: 100%; }
+.ll8-mtable th, .ll8-mtable td { padding: 6px 8px; border: 1px solid var(--ll-border); text-align: left; vertical-align: top; }
+.ll8-mtable thead th { background: var(--ll-surface-muted); }
+.ll8-mtable td[data-given] { color: var(--ll-text-muted); }
+.ll8-unit { font-weight: 400; color: var(--ll-text-muted); }
+.ll8-cellinput { width: 100%; min-width: 7ch; min-height: 44px; padding: 6px 8px; border-radius: 8px; border: 1px solid var(--ll-border-strong, #85887c); background: var(--ll-bg); color: var(--ll-text); font: inherit; }
+.ll8-cellinput[aria-invalid=true] { border-color: #e58a7a; border-width: 2px; }
+.ll8-cellerror { display: block; margin-top: 4px; font-size: 14px; color: var(--ll-text); }
+.ll8-derived { display: grid; gap: 8px; margin: 0; }
+@media (min-width: 560px) { .ll8-derived { grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); } }
+.ll8-derived dt { font-weight: 700; } .ll8-derived dd { margin: 0; }
+
+/* DESIGN_CYCLE: brief beside limits; numbered stages; each stage opens only when the one before is done. */
+.ll8-design-brief { display: grid; gap: 12px; } .ll8-design-brief ul { margin: 0; padding-left: 20px; }
+@media (min-width: 720px) { .ll8-design-brief { grid-template-columns: 1.4fr 1fr; } }
+.ll8-stages { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.ll8-stage { min-height: 44px; padding: 6px 12px; border-radius: 10px; border: 1px solid var(--ll-border); background: var(--ll-surface-muted); color: var(--ll-text); font: inherit; cursor: pointer; }
+.ll8-stage[aria-current=step] { border-color: var(--ll-accent); border-width: 2px; font-weight: 700; }
+.ll8-stage:disabled { cursor: not-allowed; opacity: 0.6; }
+.ll8-stage:focus-visible { outline: 3px solid var(--ll-accent); }
+.ll8-stagebody { display: grid; gap: 10px; }
+.ll8-check { display: flex; gap: 10px; align-items: flex-start; min-height: 44px; padding: 6px 0; }
+.ll8-check input { width: 24px; height: 24px; flex: none; }
+.ll8-checks { border: 0; margin: 0; padding: 0; display: grid; gap: 4px; }
+.ll8-testplan, .ll8-results { margin: 0; padding-left: 20px; display: grid; gap: 4px; }
+.ll8-results li[data-met] strong { color: var(--ll-success); }
+.ll8-history summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; }
+@media (forced-colors: active) { .ll8-stage[aria-current=step] { outline: 2px solid Highlight; } .ll8-cellinput[aria-invalid=true] { outline: 2px solid Mark; } }
+
+/* GRAPH_BUILDER: SVG chart with a text summary and a points list. Colours follow the theme tokens. */
+.ll8-axes { display: grid; gap: 8px; } @media (min-width: 560px) { .ll8-axes { grid-template-columns: 1fr 1fr; } }
+.ll8-axes select { min-height: 44px; padding: 6px 8px; border-radius: 8px; border: 1px solid var(--ll-border-strong, #85887c); background: var(--ll-bg); color: var(--ll-text); font: inherit; }
+.ll8-chart { margin: 0; display: grid; gap: 6px; } .ll8-chart svg { width: 100%; max-width: 560px; height: auto; color: var(--ll-text); }
+.ll8-grid-line { stroke: var(--ll-border); stroke-width: 1; } .ll8-axis { stroke: currentColor; stroke-width: 1.5; }
+.ll8-tick { fill: currentColor; font-size: 11px; } .ll8-axis-label { fill: currentColor; font-size: 12px; font-weight: 600; }
+.ll8-bar { fill: var(--ll-accent); } .ll8-line { fill: none; stroke: var(--ll-accent); stroke-width: 2.5; } .ll8-dot { fill: var(--ll-accent); stroke: var(--ll-bg); stroke-width: 1.5; }
+@media (forced-colors: active) { .ll8-bar, .ll8-dot { fill: CanvasText; } .ll8-line { stroke: CanvasText; } }
+
+/* OBSERVATION_LOG and AUDIO_PROMPT: K-2, large targets, one thing at a time. */
+.ll8-observe, .ll8-audio { --pdv2-target: 56px; }
+.ll8-entries { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+.ll8-entries > li { display: grid; gap: 8px; padding: 12px; border-radius: 12px; border: 1px solid var(--ll-border); background: var(--ll-bg); }
+.ll8-pad { display: grid; gap: 8px; justify-items: start; }
+.ll8-pad canvas { width: 100%; max-width: 420px; aspect-ratio: 8 / 5; border-radius: 12px; border: 2px dashed var(--ll-border-strong, #85887c); background: var(--ll-surface); color: var(--ll-text); touch-action: none; }
+.ll8-audio-text { margin: 0; font-size: 20px; line-height: 1.5; }
+.ll8-listen { min-height: 56px; gap: 8px; }

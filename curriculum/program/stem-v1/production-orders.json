@@ -1,0 +1,108 @@
+{
+  "program": "stem-excellence-v1",
+  "generatedBy": "scripts/cos-stem/build-program.cjs",
+  "inventoryCapturedAt": "2026-10-16T18:44:42.884Z",
+  "batches": [
+    "4.0.0-draft.6 (SEALED)",
+    "4.0.0-schoolday.1-draft.2 (COMMITTED_REVIEW_DRAFT, HELD)"
+  ],
+  "orders": [
+    {
+      "planId": "stem1-g5-day1",
+      "slot": "SUPPORT",
+      "grade": 5,
+      "orderId": "PO-G5-RET-01",
+      "owner": "T2_CODEX",
+      "kind": "DIFFERENTIATED_SUPPORT",
+      "courseId": "stem1-g5-math",
+      "title": "Retrieval set: partial products",
+      "objectives": [
+        "Retrieve the four partial products of a two-digit by two-digit multiplication without the model.",
+        "Explain the place value of each partial product."
+      ],
+      "sequence": [
+        {
+          "minutes": 7,
+          "phase": "PRACTICE_INDEPENDENTLY",
+          "practice": "INDEPENDENT",
+          "what": "Mixed partial-product retrieval, no hints"
+        },
+        {
+          "minutes": 8,
+          "phase": "SOLVE_WITH_SUPPORT",
+          "practice": "GUIDED",
+          "what": "Targeted re-teach with AREA_MODEL"
+        },
+        {
+          "minutes": 5,
+          "phase": "REFLECT",
+          "practice": "REFLECTION",
+          "what": "Learner explains one corrected error"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "AREA_MODEL",
+          "NUMERIC_RESPONSE",
+          "CHECK"
+        ],
+        "proposed": []
+      },
+      "misconceptions": [
+        "Multiplying only tens by tens and ones by ones (missing two partial products)."
+      ],
+      "evidence": "Formative only; the pilot stores nothing.",
+      "liberianContext": "Seating and market quantities.",
+      "pilotTarget": "Two-week window"
+    },
+    {
+      "planId": "stem1-g7-day1",
+      "slot": "SUPPORT",
+      "grade": 7,
+      "orderId": "PO-G7-RET-01",
+      "owner": "T2_CODEX",
+      "kind": "DIFFERENTIATED_SUPPORT",
+      "courseId": "stem1-g7-math",
+      "title": "Retrieval set for fractions and states of matter (delayed practice)",
+      "objectives": [
+        "Retrieve the meaning of the whole and equal units without the model.",
+        "Retrieve why temperature stays constant during a change of state."
+      ],
+      "sequence": [
+        {
+          "minutes": 7,
+          "phase": "PRACTICE_INDEPENDENTLY",
+          "practice": "INDEPENDENT",
+          "what": "Mixed retrieval items on fractions and changes of state, no hints"
+        },
+        {
+          "minutes": 8,
+          "phase": "SOLVE_WITH_SUPPORT",
+          "practice": "GUIDED",
+          "what": "Targeted re-teach for the item each learner missed"
+        },
+        {
+          "minutes": 5,
+          "phase": "REFLECT",
+          "practice": "REFLECTION",
+          "what": "Learner states what changed in their thinking"
+        }
+      ],
+      "blocks": {
+        "existing": [
+          "CHECK",
+          "FRACTION_NUMBER_LINE",
+          "PARTICLE_MODEL"
+        ],
+        "proposed": []
+      },
+      "misconceptions": [
+        "Adding denominators when adding fractions.",
+        "Heat always raises temperature."
+      ],
+      "evidence": "Formative only; the pilot stores nothing.",
+      "liberianContext": "Same seed-library context as the day.",
+      "pilotTarget": "Two-week window"
+    }
+  ]
+}

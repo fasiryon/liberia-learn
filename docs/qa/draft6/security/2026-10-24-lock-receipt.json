@@ -1,0 +1,16 @@
+{
+  "capturedAt": "2026-10-24T06:15:19.681Z",
+  "command": "node npm-cli.js audit --package-lock-only --json --registry=https://registry.npmjs.org",
+  "exitCode": 1,
+  "sourceCommit": "5f3348b305eac9e840f59f444a31e6f90727831a",
+  "workingTreeChange": "sharp 0.35.5 moved from devDependencies to dependencies",
+  "lockSha256": "9006871421a998ed66044af92485e61b4ee1d2194de36c16635d1249f3fffcca",
+  "counts": {
+    "info": 0,
+    "low": 1,
+    "moderate": 34,
+    "high": 23,
+    "critical": 1,
+    "total": 59
+  }
+}

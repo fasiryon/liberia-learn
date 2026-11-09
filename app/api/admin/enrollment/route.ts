@@ -1,3 +1,4 @@
+// route-policy: auth=session; scope=tenant; authority=school-admin; rationale=academic enrollment read, create and status change; POST/PATCH refused on any deployed Preview/staging after authority and before body or data work (PREVIEW_RECORDS_FROZEN)
 import { NextRequest, NextResponse } from "next/server";
 import { randomUUID } from "crypto";
 import { requireUser } from "@/lib/auth";
@@ -13,6 +14,7 @@ import {
 } from "@/lib/records/systemOfRecord";
 import { prisma } from "@/lib/db";
 import { generateEnrollmentLetter } from "@/lib/canva/templates/enrollmentLetter";
+import { previewRecordsFrozen } from "@/lib/preview/recordsFreeze";
 
 export const dynamic = "force-dynamic";
 
@@ -40,6 +42,8 @@ export async function POST(req: NextRequest) {
       throw Object.assign(new Error("Forbidden"), { status: 403 });
     }
 
+    const frozen = previewRecordsFrozen();
+    if (frozen) return frozen;
     const body = createAcademicEnrollmentSchema.parse(await req.json());
     const schoolId = resolveAdminSchoolScope(user, body.schoolId);
     const enrollment = await createAcademicEnrollmentForSchool(schoolId, body);
@@ -105,6 +109,8 @@ export async function PATCH(req: NextRequest) {
       throw Object.assign(new Error("Forbidden"), { status: 403 });
     }
 
+    const frozen = previewRecordsFrozen();
+    if (frozen) return frozen;
     const body = updateAcademicEnrollmentSchema.parse(await req.json());
     const schoolId = resolveAdminSchoolScope(user, body.schoolId);
     const enrollment = await updateAcademicEnrollmentStatusForSchool(schoolId, body.enrollmentId, body.status);

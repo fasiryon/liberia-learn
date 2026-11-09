@@ -5,7 +5,7 @@
  */
 import type { LessonExperience, Scene } from "./types";
 import { isLabReturnObservation, type LabReturnObservation } from "./labLaunch";
-import { blockRequiresCompletion } from "./teaching/registry";
+import { lessonBlockRequiresCompletion } from "./teaching/stemBlocks";
 
 /** v2: lab state is kept per LAB scene (v1 kept one lab state per lesson). */
 export const EXPERIENCE_PROGRESS_VERSION = 2 as const;
@@ -84,7 +84,7 @@ export function pendingTeachingBlocks(scene: Scene, progress: ExperienceProgress
   if (!scene.teaching) return [];
   const revealed = progress.revealed[scene.id] ?? [];
   return [...scene.teaching.blocks, ...(scene.teaching.visual ? [scene.teaching.visual] : [])]
-    .filter((block) => blockRequiresCompletion(block))
+    .filter((block) => lessonBlockRequiresCompletion(block))
     .map((block) => (block as { id: string }).id)
     .filter((id) => !revealed.includes(blockDoneKey(id)));
 }

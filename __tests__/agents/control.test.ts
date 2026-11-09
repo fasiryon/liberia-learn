@@ -3,16 +3,22 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 const findUnique = vi.fn();
 const upsert = vi.fn();
 const isAgentEnabled = vi.fn();
+const auditCreate = vi.fn();
 
 vi.mock("@/lib/db", () => ({
   prisma: {
+    $transaction: (callback: (tx: unknown) => Promise<unknown>) => callback({
+      agentControl: { findUnique: (...a: unknown[]) => findUnique(...a), upsert: (...a: unknown[]) => upsert(...a) },
+      auditLog: { create: (...a: unknown[]) => auditCreate(...a) },
+    }),
     agentControl: {
       findUnique: (...a: unknown[]) => findUnique(...a),
       upsert: (...a: unknown[]) => upsert(...a),
     },
   },
 }));
-vi.mock("@/lib/agents/flags", () => ({
+vi.mock("@/lib/agents/flags", async () => ({
+  ...await vi.importActual<typeof import("@/lib/agents/flags")>("@/lib/agents/flags"),
   isAgentEnabled: (...a: unknown[]) => isAgentEnabled(...a),
 }));
 
@@ -28,7 +34,7 @@ describe("resolveAgentEnabled", () => {
     findUnique.mockResolvedValue({ enabledOverride: true });
     isAgentEnabled.mockReturnValue(false);
     expect(await resolveAgentEnabled("echo", "AGENT_ECHO_ENABLED")).toBe(true);
-    expect(isAgentEnabled).not.toHaveBeenCalled();
+    expect(isAgentEnabled).toHaveBeenCalledWith("AGENT_ECHO_ENABLED");
   });
 
   it("uses a false override even when the env flag is on", async () => {
@@ -57,7 +63,7 @@ describe("resolveAgentEnabled", () => {
 });
 
 describe("setAgentControl", () => {
-  beforeEach(() => upsert.mockReset());
+  beforeEach(() => { upsert.mockReset(); findUnique.mockResolvedValue(null); auditCreate.mockResolvedValue({ id: "audit" }); });
   it("upserts the override with the actor", async () => {
     upsert.mockResolvedValue({});
     await setAgentControl("echo", false, "admin-1");

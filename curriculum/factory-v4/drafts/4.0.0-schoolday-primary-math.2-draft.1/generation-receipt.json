@@ -1,0 +1,34 @@
+{
+  "version": "4.0.0-schoolday-primary-math.2-draft.1",
+  "inputsSha256": "39e41fc4561620ffaafd95c4b8c99903477b809b9a7669a2845f9a0519b6283e",
+  "independentDeterministicBuilds": 2,
+  "baselineDraft6ReceiptSha256": "c59d3623d3bd558398a50e30de62688bc066ca22238c3d188b2ef88c9cbe04ab",
+  "packages": [
+    {
+      "key": "g4-math-three-digit-products",
+      "programOrderId": "GO-G04-P1-MATH-U1",
+      "packageHash": "df24c30a680e745006ef124f671a26cccb1bdf64a8ec9f79b3273e8ba4d98eb2",
+      "candidateSha256": "4fe423deb164b80ee63f4144d15cd34fcf206b879c244f4631b2d136616fb2dc"
+    }
+  ],
+  "productionWrites": false,
+  "approved": false,
+  "published": false,
+  "released": false,
+  "activated": false,
+  "previewEnabled": false,
+  "files": {
+    "g4-math-three-digit-products/candidate.json": "c0d4fa46329c0bc6b86147708125934d00e49a1877186e70c886144c2920dddc",
+    "g4-math-three-digit-products/visual-teaching.json": "c46eec39d2ba069a97b8033a6d1b0aaac250040f191a680db4950af560aaf3af",
+    "g4-math-three-digit-products/blueprint.json": "bc811e388bb380c3b338ce87851bcd70bc793c3f1014c6d1ce3570366fac97b2",
+    "g4-math-three-digit-products/factory-artifact.json": "d2a6f8555266f803ab687cefc896414239d9ff161dbf7e9fd7cb786f20edb932",
+    "g4-math-three-digit-products/learner-projection.json": "11a6394c1f58ebd58e6ebe1205173ce812398d87f3586099b706fa9e6d223046",
+    "g4-math-three-digit-products/factory-receipt.json": "44c04f4dd1e36b8920394b8d82738c11e46d52a80cda534ea1c9f29b7ca985cc",
+    "g4-math-three-digit-products/paper-alternative.txt": "5761a1d5cc1781bd3ccbdf3a02511b56d7a821f8b7478c3507bcf32accae0cae",
+    "g4-math-three-digit-products/academic-review.json": "126e14473591fde4368577a67060782d3cbc535e50e8ab6907eabdd5e3bfb0b3",
+    "g4-math-three-digit-products/teacher-guide.json": "a4f57c07f59e5454e5c973b8e2a08187e25f8cda5f3ad38b3a9845509b4de9ff",
+    "g4-math-three-digit-products/manifest.json": "587b2f25c3719dfa0dad48277fbdf8e727dd3abc863b882b5b755813a43e4d9e",
+    "review/complete-academic-packet.json": "04cab813e29a5944b4128bc33a455bac44e0f0a56c1d60d1ab60a3464ca9e1e9",
+    "review/complete-academic-packet.md": "2a7123a3d45a564a728c1cc6555b785f37f1b2b2e944980cf15b6c3c47921564"
+  }
+}

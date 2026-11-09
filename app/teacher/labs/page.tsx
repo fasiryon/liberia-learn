@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { isTeacherReviewed } from "@/lib/labs/labReview";
 
 export const dynamic = "force-dynamic";
 
@@ -37,6 +38,7 @@ export default async function TeacherLabsPage() {
             startedAt: true,
             completedAt: true,
             score: true,
+            teacherFeedback: true,
             student: { select: { name: true, email: true } },
           },
           orderBy: { startedAt: "desc" },
@@ -91,7 +93,7 @@ export default async function TeacherLabsPage() {
                         {(workMap.get(session.id)?.scheduledDate ?? session.startedAt).toLocaleDateString()}
                       </td>
                       <td className="px-4 py-3">{session.completedAt ? "Submitted" : "In progress"}</td>
-                      <td className="px-4 py-3">{session.score ?? "Pending"}</td>
+                      <td className="px-4 py-3">{isTeacherReviewed(session) ? session.score : "Pending review"}</td>
                       <td className="px-4 py-3">
                         <Link
                           href={`/teacher/labs/sessions/${session.id}`}
