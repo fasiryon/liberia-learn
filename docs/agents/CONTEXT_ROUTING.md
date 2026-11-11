@@ -5,7 +5,7 @@ reading list.
 
 | Task | Load |
 | --- | --- |
-| Sprint or national rollout planning | The relevant current-status section in `docs/roadmaps/CURRENT_EXECUTION_STATE.md`, then the relevant section of `docs/roadmaps/NATIONAL_ROLLOUT_EXECUTION_PLAN.md` |
+| Sprint or national rollout planning | `docs/roadmaps/ENGINEERING_STATE.md` (authoritative; `CURRENT_EXECUTION_STATE.md` is superseded history), then the relevant section of `docs/roadmaps/NATIONAL_ROLLOUT_EXECUTION_PLAN.md` |
 | Backlog selection | `docs/roadmaps/CONSOLIDATED_BACKLOG.md` |
 | Schema or migration work | The migration runbook under `docs/ops/` that applies to the change, plus `docs/agents/ADVISOR_ESCALATION_CONTRACT.md` |
 | Security, RBAC, tenant, audit, privacy, or child safety | The specific applicable document under `docs/security/` or `docs/agents/` |

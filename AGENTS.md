@@ -7,7 +7,7 @@ Read `docs/agents/CORE_AGENT_RULES.md` for rules that apply to every task. Use
 current task. Do not load roadmap, database, deployment, security, curriculum,
 or AI documentation by default.
 
-For sprint work, resume from the current-state document and obey its sprint
+For sprint work, resume from `docs/roadmaps/ENGINEERING_STATE.md` (the authoritative current-state document) and obey its sprint
 order and named gates. Sprint rules do not apply to ordinary scoped tasks.
 
 Report the outcome, files changed, validation performed, and next step when a
