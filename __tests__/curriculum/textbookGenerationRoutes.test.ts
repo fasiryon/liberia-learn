@@ -45,7 +45,7 @@ function makeRequest(body: unknown, headers: Record<string, string> = {}) {
 describe("textbook generation admin routes", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockRequireRole.mockResolvedValue({ id: "admin-1", role: "ADMIN" });
+    mockRequireRole.mockResolvedValue({ id: "admin-1", role: "ADMIN", isPlatformAdmin: true });
     mockGetCronRunSummary.mockResolvedValue({
       lastRunAt: null,
       jobsProcessedToday: 0,

@@ -1,5 +1,6 @@
+// route-policy: auth=session; scope=platform; authority=platform-admin; rationale=global content and cost operations require a canonical platform ADMIN before domain work
 import { NextResponse } from "next/server";
-import { requireRole } from "@/lib/auth";
+import { requirePlatformContentAdmin } from "@/lib/auth/platformContentAuthority";
 import { prisma } from "@/lib/db";
 import { processLessonMedia } from "@/lib/media/processLesson";
 import { signMediaUrl } from "@/lib/media/blobStorage";
@@ -11,7 +12,7 @@ export const dynamic = "force-dynamic";
 
 export async function POST(_req: Request, { params }: { params: Promise<{ contentId: string }> }) {
   try {
-    const user = await requireRole("ADMIN");
+    const user = await requirePlatformContentAdmin();
     const { contentId } = await params;
     const lesson = await prisma.curriculumContent.findUnique({
       where: { contentId },

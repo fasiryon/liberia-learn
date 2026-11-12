@@ -1,5 +1,6 @@
+// route-policy: auth=session; scope=platform; authority=platform-admin; rationale=global content and cost operations require a canonical platform ADMIN before domain work
 import { NextResponse } from "next/server";
-import { requireRole } from "@/lib/auth";
+import { requirePlatformContentAdmin } from "@/lib/auth/platformContentAuthority";
 import { getAudioQueueStatus } from "@/lib/audio/audioGenerationQueue";
 import { getCronRunSummary, isAutoModeEnabled } from "@/lib/automation/cronRunLog";
 
@@ -7,7 +8,7 @@ export const dynamic = "force-dynamic";
 
 export async function GET(req: Request) {
   try {
-    await requireRole("ADMIN");
+    await requirePlatformContentAdmin();
     const { searchParams } = new URL(req.url);
     const gradeParam = searchParams.get("grade");
     const subjectParam = searchParams.get("subject");

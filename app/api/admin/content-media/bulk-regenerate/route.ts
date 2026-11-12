@@ -1,5 +1,6 @@
+// route-policy: auth=session; scope=platform; authority=platform-admin; rationale=global content and cost operations require a canonical platform ADMIN before domain work
 import { NextResponse } from "next/server";
-import { requireRole } from "@/lib/auth";
+import { requirePlatformContentAdmin } from "@/lib/auth/platformContentAuthority";
 import { prisma } from "@/lib/db";
 import { processLessonMedia } from "@/lib/media/processLesson";
 import { logAssetGenerationTelemetry } from "@/lib/assets/generationTelemetry";
@@ -13,7 +14,7 @@ const MAX_BULK = 25; // synchronous cap to avoid function timeouts
 
 export async function POST(req: Request) {
   try {
-    const user = await requireRole("ADMIN");
+    const user = await requirePlatformContentAdmin();
     const body = await req.json().catch(() => ({}));
     const subject = String(body?.subject ?? "").toUpperCase();
     const limit = Math.min(MAX_BULK, Math.max(1, parseInt(String(body?.limit ?? "10"), 10) || 10));
