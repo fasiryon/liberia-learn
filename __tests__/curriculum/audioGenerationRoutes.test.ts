@@ -52,7 +52,7 @@ function makeGetRequest(search = "") {
 describe("POST /api/admin/audio-generation/enqueue", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockRequireRole.mockResolvedValue({ id: "admin-1", role: "ADMIN" });
+    mockRequireRole.mockResolvedValue({ id: "admin-1", role: "ADMIN", isPlatformAdmin: true });
     mockGetCronRunSummary.mockResolvedValue({
       lastRunAt: null,
       jobsProcessedToday: 0,
@@ -98,7 +98,7 @@ describe("POST /api/admin/audio-generation/enqueue", () => {
 describe("POST /api/admin/audio-generation/process", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockRequireRole.mockResolvedValue({ id: "admin-1", role: "ADMIN" });
+    mockRequireRole.mockResolvedValue({ id: "admin-1", role: "ADMIN", isPlatformAdmin: true });
   });
 
   it("rejects unauthenticated requests", async () => {
@@ -143,7 +143,7 @@ describe("POST /api/admin/audio-generation/process", () => {
 describe("GET /api/admin/audio-generation/status", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockRequireRole.mockResolvedValue({ id: "admin-1", role: "ADMIN" });
+    mockRequireRole.mockResolvedValue({ id: "admin-1", role: "ADMIN", isPlatformAdmin: true });
   });
 
   it("rejects unauthenticated requests", async () => {
@@ -178,7 +178,7 @@ describe("GET /api/admin/audio-generation/status", () => {
 describe("POST /api/admin/audio-generation/retry", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockRequireRole.mockResolvedValue({ id: "admin-1", role: "ADMIN" });
+    mockRequireRole.mockResolvedValue({ id: "admin-1", role: "ADMIN", isPlatformAdmin: true });
   });
 
   it("rejects unauthenticated requests", async () => {

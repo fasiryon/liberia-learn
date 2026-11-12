@@ -1,5 +1,6 @@
+// route-policy: auth=session; scope=platform; authority=platform-admin; rationale=global content and cost operations require a canonical platform ADMIN before domain work
 import { NextResponse } from "next/server";
-import { requireRole } from "@/lib/auth";
+import { requirePlatformContentAdmin } from "@/lib/auth/platformContentAuthority";
 import { prisma } from "@/lib/db";
 import { queueLessonAudioGeneration } from "@/lib/lessons/audioGeneration";
 
@@ -12,7 +13,7 @@ function payloadText(payload: unknown) {
 
 export async function POST(req: Request) {
   try {
-    const user = await requireRole("ADMIN");
+    const user = await requirePlatformContentAdmin();
     const body = await req.json().catch(() => ({}));
     const limit = Math.min(100, Math.max(1, Number(body?.limit ?? 50)));
     const lessons = await prisma.curriculumContent.findMany({
