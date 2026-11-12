@@ -1,4 +1,4 @@
-// route-policy: auth=public; scope=none; authority=guardian-invite-token; rationale=unauthenticated by design; a GUARDIAN_LINK invite token sets the guardian's PIN and links the invited student; single use is an atomic conditional claim in the same transaction; an existing guardian account's credential version advances; refused on any deployed Preview/staging before authority or data work (PREVIEW_IDENTITY_FROZEN)
+// route-policy: auth=public; scope=none; authority=guardian-invite-token; rationale=unauthenticated by design; a GUARDIAN_LINK invite can set a same-school non-platform GUARDIAN's PIN only through a conditional write in the claim transaction; no role or school rebinding; single-use claim and credential version advance commit atomically; refused on any deployed Preview/staging before authority or data work (PREVIEW_IDENTITY_FROZEN)
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
@@ -51,46 +51,27 @@ export async function POST(req: Request) {
       ? await prisma.user.findUnique({ where: { email: invite.email } })
       : null;
 
-    const phone = existingGuardian?.guardianPhoneE164;
-    if (!phone) {
+    if (!existingGuardian || !existingGuardian.guardianPhoneE164) {
       return NextResponse.json({ error: "This link has expired. Please contact your child's school." }, { status: 400 });
     }
+    const phone = existingGuardian.guardianPhoneE164;
 
     const hashedPwd = await bcrypt.hash(pin, 10);
-    const email = invite.email ?? `${phone.replace(/\D/g, "")}@guardian.local`;
-
     await prisma.$transaction(async (tx) => {
-      const guardian = existingGuardian
-        ? await tx.user.update({
-            where: { id: existingGuardian.id },
-            data: {
-              name: fullName.trim(),
-              email,
-              role: "GUARDIAN",
-              schoolId: invite.schoolId,
-              hashedPwd,
-              smsOptIn: true,
-              preferredChannel: "SMS",
-            },
-          })
-        : await tx.user.create({
-            data: {
-              email,
-              name: fullName.trim(),
-              role: "GUARDIAN",
-              schoolId: invite.schoolId,
-              hashedPwd,
-              guardianCountryCode: "+231",
-              guardianPhone: phone,
-              guardianPhoneE164: phone,
-              smsOptIn: true,
-              preferredChannel: "SMS",
-              passwordChangedAt: new Date(),
-            },
-          });
+      // The phone precondition already requires an existing account. Check its CURRENT authority in
+      // the write itself: a concurrent role/school/platform change must not turn an invite into a reset.
+      const guardian = existingGuardian;
+      const updated = await tx.user.updateMany({
+        where: { id: guardian.id, email: guardian.email, role: "GUARDIAN", schoolId: invite.schoolId,
+          isPlatformAdmin: false, guardianPhoneE164: phone },
+        data: { name: fullName.trim(), hashedPwd, smsOptIn: true, preferredChannel: "SMS" },
+      });
+      if (updated.count !== 1) {
+        throw Object.assign(new Error("This link has expired. Please contact your child's school."), { status: 400 });
+      }
 
       // An existing account's credential and identity changed: advance its version (revokes its earlier sessions).
-      if (existingGuardian) await advanceSecurityStamp(tx, guardian.id);
+      await advanceSecurityStamp(tx, guardian.id);
 
       await tx.studentGuardian.upsert({
         where: { studentId_guardianId: { studentId: student.id, guardianId: guardian.id } },
