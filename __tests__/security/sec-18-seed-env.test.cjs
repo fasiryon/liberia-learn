@@ -5,7 +5,7 @@ const { execFileSync } = require('node:child_process');
 const vm = require('node:vm');
 const ts = require('typescript');
 
-const seedPaths = ['prisma/seed.ts', 'prisma/seeds/cha-demo.ts'];
+const seedPaths = ['prisma/seed.ts', 'prisma/seeds/cha-demo.ts', 'scripts/seed-demo.ts'];
 for (const path of seedPaths) {
   const source = readFileSync(path, 'utf8');
   const ast = ts.createSourceFile(path, source, ts.ScriptTarget.Latest, true);
@@ -32,6 +32,19 @@ test('legacy seed requires both environment inputs before hashing or writes', ()
   assert.ok(source.includes('process.env.SEED_STUDENT_PASSWORD'));
   assert.ok(source.indexOf('throw new Error(') < source.indexOf('await bcrypt.hash('));
 });
+
+for (const supplied of [{}, { SEED_TEACHER_PASSWORD: 'synthetic-teacher' }, { SEED_STUDENT_PASSWORD: 'synthetic-student' }, { SEED_TEACHER_PASSWORD: ' ', SEED_STUDENT_PASSWORD: 'synthetic-student' }]) {
+  test('legacy seed missing configuration refuses before hashing or writes', async () => {
+    const source = readFileSync('prisma/scripts/seed.ts', 'utf8');
+    const ast = ts.createSourceFile('seed.ts', source, ts.ScriptTarget.Latest, true);
+    const main = ast.statements.find(node => ts.isFunctionDeclaration(node) && node.name?.text === 'main');
+    const code = ts.transpileModule(main.getText(ast), { compilerOptions: { target: ts.ScriptTarget.ES2020 } }).outputText;
+    let effects = 0;
+    const context = { process: { env: supplied }, console: { log() {} }, bcrypt: { hash() { effects++; throw Error('Unexpected hash'); } }, prisma: new Proxy({}, { get() { effects++; throw Error('Unexpected database operation'); } }) };
+    await assert.rejects(vm.runInNewContext(code + '\nmain()', context), /SEED_.*PASSWORD.*required/);
+    assert.equal(effects, 0);
+  });
+}
 
 test('smoke script refuses missing demo credentials before any network call', () => {
   const command = `$env:NODE_ENV='development'; $env:DEMO_MODE='false'; $env:DEMO_SEED_PASSWORD=''; $env:E2E_DEMO_STUDENT_EMAIL='student@example.invalid'; $env:E2E_DEMO_TEACHER_EMAIL='teacher@example.invalid'; $env:E2E_DEMO_ADMIN_EMAIL='admin@example.invalid'; $env:E2E_DEMO_MOE_EMAIL='moe@example.invalid'; $env:DEMO_MOE_PASSWORD='synthetic-private-input'; $global:networkCalls=0; function global:Invoke-WebRequest { $global:networkCalls++; throw 'NETWORK_FORBIDDEN' }; $refused=$false; try { & ./scripts/smoke-test.ps1 } catch { $refused=$_.Exception.Message -match 'DEMO_SEED_PASSWORD.*required' }; if (!$refused -or $global:networkCalls -ne 0) { exit 1 }`;
