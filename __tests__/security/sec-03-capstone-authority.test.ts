@@ -27,7 +27,13 @@ vi.mock("@/lib/db", () => {
   return { prisma: { capstoneProject, portfolioItem, student,
     $transaction: async (work: (tx: unknown) => Promise<unknown>) => {
       const before = { status: m.status, portfolio: [...m.portfolio] };
-      m.tx = { capstoneProject, portfolioItem, student, $queryRaw: async () => [m.actor] };
+      m.tx = { capstoneProject, portfolioItem, student, $queryRaw: async (sql: { strings: readonly string[] }) => {
+        const query = sql.strings.join("");
+        if (query.includes('FROM "Enrollment"')) return [{ classId: "class-1" }];
+        if (query.includes('FROM "Class"')) return [{ subject: "MATH" }];
+        if (query.includes('FROM "Student"')) return [{ id: "student-1", userId: "student-user" }];
+        return [m.actor];
+      } };
       try { return await work(m.tx); } catch (error) { m.status = before.status; m.portfolio = before.portfolio; throw error; }
     },
   } };

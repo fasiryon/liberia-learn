@@ -8,12 +8,13 @@ const {
   mockBuildPortfolioSummary,
 } = vi.hoisted(() => {
   const mockPrisma = {
+    $transaction: vi.fn(), $queryRaw: vi.fn(),
     student: { findUnique: vi.fn() },
     school: { findUnique: vi.fn() },
     enrollment: { findFirst: vi.fn() },
     certificate: { findMany: vi.fn() },
     learningEvent: { findMany: vi.fn() },
-    capstoneProject: { findUnique: vi.fn(), findMany: vi.fn(), create: vi.fn(), update: vi.fn() },
+    capstoneProject: { findUnique: vi.fn(), findUniqueOrThrow: vi.fn(), findMany: vi.fn(), create: vi.fn(), update: vi.fn(), updateMany: vi.fn() },
     portfolioShare: { findUnique: vi.fn(), findFirst: vi.fn(), create: vi.fn() },
     portfolioItem: { create: vi.fn() },
     discussionPost: { findMany: vi.fn() },
@@ -28,6 +29,7 @@ const {
 });
 
 vi.mock("@/lib/db", () => ({ prisma: mockPrisma }));
+vi.mock("@/lib/audit", () => ({ logAuditRequired: vi.fn().mockResolvedValue(undefined) }));
 vi.mock("@/lib/auth", () => ({ requireUser: mockRequireUser, authOptions: {} }));
 vi.mock("@/lib/push/sendPush", () => ({ sendPushToUser: mockSendPushToUser }));
 vi.mock("@/lib/portfolio/buildPortfolio", () => ({ buildPortfolioSummary: mockBuildPortfolioSummary }));
@@ -206,13 +208,22 @@ describe("POST /api/student/capstone/[id]/submit", () => {
 describe("PATCH /api/teacher/capstone/[id]/review", () => {
   beforeEach(() => {
     mockRequireUser.mockResolvedValue(TEACHER_USER);
+    mockPrisma.$transaction.mockImplementation(async work => work(mockPrisma));
+    mockPrisma.$queryRaw.mockImplementation(async (sql: { strings: readonly string[] }) => {
+      const query = sql.strings.join("");
+      if (query.includes('FROM "Enrollment"')) return [{ classId: "class-1" }];
+      if (query.includes('FROM "Class"')) return [{ schoolId: "s1", teacherId: "t1", subject: "MATH" }];
+      if (query.includes('FROM "Student"')) return [{ id: "st1", userId: "u1" }];
+      return [{ id: "t1" }];
+    });
+    mockPrisma.capstoneProject.updateMany.mockResolvedValue({ count: 1 });
   });
 
   it("approves and creates PortfolioItem", async () => {
-    mockPrisma.capstoneProject.findUnique.mockResolvedValueOnce({ id: "cp1", studentId: "st1", title: "Cap", status: "SUBMITTED" });
-    mockPrisma.capstoneProject.update.mockResolvedValueOnce({ id: "cp1", status: "APPROVED" });
+    mockPrisma.capstoneProject.findUnique.mockResolvedValueOnce({ id: "cp1", studentId: "st1", title: "Cap", status: "SUBMITTED",
+      Student: { userId: "u1", deletedAt: null, user: { schoolId: "s1" } } });
+    mockPrisma.capstoneProject.findUniqueOrThrow.mockResolvedValueOnce({ id: "cp1", status: "APPROVED" });
     mockPrisma.portfolioItem.create.mockResolvedValueOnce({ id: "pi1" });
-    mockPrisma.student.findUnique.mockResolvedValueOnce({ userId: "u1" });
 
     const req = new Request("http://localhost/", {
       method: "PATCH",
@@ -226,9 +237,9 @@ describe("PATCH /api/teacher/capstone/[id]/review", () => {
   });
 
   it("rejects and fires push to student", async () => {
-    mockPrisma.capstoneProject.findUnique.mockResolvedValueOnce({ id: "cp1", studentId: "st1", title: "Cap", status: "SUBMITTED" });
-    mockPrisma.capstoneProject.update.mockResolvedValueOnce({ id: "cp1", status: "REJECTED" });
-    mockPrisma.student.findUnique.mockResolvedValueOnce({ userId: "u1" });
+    mockPrisma.capstoneProject.findUnique.mockResolvedValueOnce({ id: "cp1", studentId: "st1", title: "Cap", status: "SUBMITTED",
+      Student: { userId: "u1", deletedAt: null, user: { schoolId: "s1" } } });
+    mockPrisma.capstoneProject.findUniqueOrThrow.mockResolvedValueOnce({ id: "cp1", status: "REJECTED" });
 
     const req = new Request("http://localhost/", {
       method: "PATCH",
@@ -253,16 +264,17 @@ describe("PATCH /api/teacher/capstone/[id]/review", () => {
   });
 
   it("rejects without creating PortfolioItem", async () => {
-    mockPrisma.capstoneProject.findUnique.mockResolvedValueOnce({ id: "cp1", studentId: "st1", title: "Cap", status: "SUBMITTED" });
-    mockPrisma.capstoneProject.update.mockResolvedValueOnce({ id: "cp1", status: "REJECTED" });
-    mockPrisma.student.findUnique.mockResolvedValueOnce({ userId: "u1" });
+    mockPrisma.capstoneProject.findUnique.mockResolvedValueOnce({ id: "cp1", studentId: "st1", title: "Cap", status: "SUBMITTED",
+      Student: { userId: "u1", deletedAt: null, user: { schoolId: "s1" } } });
+    mockPrisma.capstoneProject.findUniqueOrThrow.mockResolvedValueOnce({ id: "cp1", status: "REJECTED" });
 
     const req = new Request("http://localhost/", {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ decision: "REJECTED", feedback: "Missing analysis section" }),
     });
-    await teacherReview(req as any, { params: { id: "cp1" } } as any);
+    const res = await teacherReview(req as any, { params: { id: "cp1" } } as any);
+    expect(res.status).toBe(200);
     expect(mockPrisma.portfolioItem.create).not.toHaveBeenCalled();
   });
 });
