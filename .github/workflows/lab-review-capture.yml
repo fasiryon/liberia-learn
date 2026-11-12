@@ -100,7 +100,7 @@ jobs:
     runs-on: ubuntu-24.04
     services:
       review-postgres:
-        image: pgvector/pgvector:0.8.0-pg17 # the real schema needs pgvector (same pin as canonical-clean-bootstrap)
+        image: pgvector/pgvector:0.8.0-pg17@sha256:40b404964359299eefdd5f8518facf1886c562848cf4de13b6eaf91cb70c2b87 # the real schema needs pgvector; pinned by digest (multi-arch index)
         env:
           POSTGRES_PASSWORD: lab-review-admin-local
           POSTGRES_DB: lab_review_fixture
@@ -125,7 +125,7 @@ jobs:
       # Local synthetic consent only; application sessions retain normal reviewer authentication.
       DATABASE_URL: "postgresql://lab_review_reader:lab-review-read-only-local@localhost:5432/lab_review_fixture"
       DIRECT_URL: "postgresql://lab_review_reader:lab-review-read-only-local@localhost:5432/lab_review_fixture"
-      NEXTAUTH_SECRET: "ci-secret-not-real"
+      NEXTAUTH_SECRET: "lab-review-fixture-ci-not-real" # fixture marker: reviewer-session refuses any other secret
       NEXTAUTH_URL: "http://localhost:3000"
       OPENAI_API_KEY: "sk-test"
       GROQ_API_KEY: "gsk-test"

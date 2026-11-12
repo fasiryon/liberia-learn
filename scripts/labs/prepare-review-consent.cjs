@@ -4,9 +4,9 @@
 const fs = require('node:fs');
 const { execFileSync } = require('node:child_process');
 const { PrismaClient } = require('@prisma/client');
-function assertReviewFixtureDatabase(value) {
+function assertReviewFixtureDatabase(value, env = process.env) {
   const url = new URL(value);
-  if (!['postgres:', 'postgresql:'].includes(url.protocol) || !['localhost', '127.0.0.1'].includes(url.hostname) || url.pathname !== '/lab_review_fixture' || process.env.NODE_ENV === 'production' || process.env.VERCEL || process.env.LAB_REVIEW_HARNESS !== '1') throw new Error('Only the isolated local lab_review_fixture database is permitted');
+  if (!['postgres:', 'postgresql:'].includes(url.protocol) || !['localhost', '127.0.0.1'].includes(url.hostname) || url.pathname !== '/lab_review_fixture' || url.search || url.hash || env.NODE_ENV === 'production' || env.VERCEL || env.LAB_REVIEW_HARNESS !== '1') throw new Error('Only the isolated local lab_review_fixture database is permitted');
   return url;
 }
 /** Must match scripts/labs/reviewer-session.cjs: credStamp 0 <=> passwordChangedAt null; schoolId null; not a platform admin. */
@@ -19,14 +19,15 @@ const FIXTURE_GRANTS = Object.freeze([
   'GRANT SELECT ON ALL TABLES IN SCHEMA public TO lab_review_reader',
   'ALTER ROLE lab_review_reader SET default_transaction_read_only = on',
 ]);
-const CAN_WRITE_USER = `SELECT (has_table_privilege(current_user, '"User"', 'INSERT') OR has_table_privilege(current_user, '"User"', 'UPDATE')
-  OR has_table_privilege(current_user, '"User"', 'DELETE')) AS can_write`;
+/** Number of public tables the current role could INSERT, UPDATE, DELETE or TRUNCATE (must be 0 for the app role). */
+const WRITABLE_TABLES = `SELECT COUNT(*)::int AS writable FROM information_schema.tables t WHERE t.table_schema = 'public' AND t.table_type = 'BASE TABLE'
+  AND (has_table_privilege(current_user, format('%I.%I', t.table_schema, t.table_name), 'INSERT') OR has_table_privilege(current_user, format('%I.%I', t.table_schema, t.table_name), 'UPDATE') OR has_table_privilege(current_user, format('%I.%I', t.table_schema, t.table_name), 'DELETE') OR has_table_privilege(current_user, format('%I.%I', t.table_schema, t.table_name), 'TRUNCATE'))`;
 async function prepareReviewFixture(env = process.env) {
   const adminUrl = env.REVIEW_FIXTURE_ADMIN_URL;
   if (!adminUrl) throw new Error('REVIEW_FIXTURE_ADMIN_URL is required');
-  assertReviewFixtureDatabase(adminUrl);
+  assertReviewFixtureDatabase(adminUrl, env);
   const appUrl = env.DATABASE_URL;
-  if (!appUrl || assertReviewFixtureDatabase(appUrl).username !== 'lab_review_reader') throw new Error('Application fixture role must be lab_review_reader');
+  if (!appUrl || assertReviewFixtureDatabase(appUrl, env).username !== 'lab_review_reader') throw new Error('Application fixture role must be lab_review_reader');
   const policy = fs.readFileSync('lib/policy/policyVersion.ts', 'utf8');
   const version = policy.match(/CURRENT_POLICY_VERSION = "([a-zA-Z0-9-]+)"/)?.[1];
   const key = policy.match(/DATA_POLICY_KEY = "([a-zA-Z0-9_]+)"/)?.[1];
@@ -50,8 +51,8 @@ async function prepareReviewFixture(env = process.env) {
   try {
     const setting = await app.$queryRawUnsafe("SELECT current_setting('transaction_read_only') AS read_only");
     if (setting[0]?.read_only !== 'on') throw new Error('Fixture application connection must be read-only');
-    const writes = await app.$queryRawUnsafe(CAN_WRITE_USER);
-    if (writes[0]?.can_write !== false) throw new Error('Fixture application role must not be able to write');
+    const writes = await app.$queryRawUnsafe(WRITABLE_TABLES);
+    if (writes[0]?.writable !== 0) throw new Error('Fixture application role must not be able to write any table');
     const reviewer = await app.user.findUnique({ where: { id: SYNTHETIC_REVIEWER_ROW.id }, select: { role: true, schoolId: true, passwordChangedAt: true } });
     if (!reviewer || reviewer.role !== 'MOE_OFFICIAL' || reviewer.schoolId !== null || reviewer.passwordChangedAt !== null) throw new Error('Synthetic reviewer fixture missing or changed');
     const accepted = await app.dataPolicyAcceptance.findFirst({ where: { userId: SYNTHETIC_REVIEWER_ROW.id, policyKey: key, policyVersion: version }, select: { id: true } });
@@ -59,5 +60,5 @@ async function prepareReviewFixture(env = process.env) {
   } finally { await app.$disconnect(); }
   console.log('Local synthetic reviewer and consent verified; application database role is read-only.');
 }
-module.exports = { assertReviewFixtureDatabase, prepareReviewFixture, SYNTHETIC_REVIEWER_ROW, FIXTURE_GRANTS };
+module.exports = { assertReviewFixtureDatabase, prepareReviewFixture, SYNTHETIC_REVIEWER_ROW, FIXTURE_GRANTS, WRITABLE_TABLES };
 if (require.main === module) prepareReviewFixture().catch(error => { console.error(error.message); process.exitCode = 1; });
