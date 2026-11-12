@@ -36,6 +36,7 @@ beforeEach(() => {
     isPlatformAdmin: false, guardianPhoneE164: "+231770000111", hashedPwd: "original-hash" };
   m.beforeTransaction = () => {};
   m.hash.mockResolvedValue("synthetic-new-hash");
+  m.welcome.mockResolvedValue({ ok: true });
   m.student.mockResolvedValue({ id: "student-1", user: { schoolId: "school-A" } });
   m.update.mockImplementation(async ({ data }) => { Object.assign(m.user, data); return { ...m.user }; });
   // Boundary adapter for conditional-write behavior only. Native PostgreSQL proves locking/rollback separately.
