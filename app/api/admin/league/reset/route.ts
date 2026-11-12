@@ -1,3 +1,4 @@
+// route-policy: auth=session; scope=platform; authority=platform-admin; rationale=only a platform ADMIN may compute and write national league snapshots
 import { NextRequest, NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
@@ -10,7 +11,9 @@ import {
 export const dynamic = "force-dynamic";
 
 export async function POST(req: NextRequest) {
-  await requireRole("ADMIN");
+  try {
+  const user = await requireRole("ADMIN");
+  if (user.isPlatformAdmin !== true) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
   const window = previousWeekWindow();
   const scores = await computeSchoolWeeklyScores(window);
@@ -56,4 +59,8 @@ export async function POST(req: NextRequest) {
     week_end: window.weekEnd.toISOString(),
     snapshots_written: snapshotCount,
   });
+  } catch (error: unknown) {
+    const status = error && typeof error === "object" && "status" in error && typeof error.status === "number" ? error.status : 500;
+    return NextResponse.json({ error: status >= 500 ? "National snapshot reset failed" : "Forbidden" }, { status });
+  }
 }
