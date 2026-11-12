@@ -68,7 +68,8 @@ describe.skipIf(!admitted)("SEC-12 native curriculum approval boundary", () => {
     });
     it(`${name}: approved administrator reaches existing input validation`, async () => {
       h.userId = "admin-A";
-      expect((await routes.find(([key]) => key === name)![1](req())).status).toBe(400);
+      const input = name === "import" ? new Request("http://localhost/api/admin/curriculum/import", { method: "POST", body: new FormData() }) : req();
+      expect((await routes.find(([key]) => key === name)![1](input)).status).toBe(400);
     });
   }
   it("authorized scheduling durably preserves school, actor and audit evidence", async () => {
