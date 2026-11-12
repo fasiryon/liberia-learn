@@ -1,3 +1,4 @@
+// route-policy: auth=session; scope=tenant; authority=school-admin; rationale=an ADMIN reads aggregate 7-day teacher-sentiment counts for its own school only; a foreign schoolId from a non-platform ADMIN is refused with 403 before any read (ADMIN-SENTIMENT-01)
 import { NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
@@ -8,7 +9,11 @@ export async function GET(request: Request) {
   try {
     const user = await requireRole("ADMIN");
     const url = new URL(request.url);
-    const schoolId = url.searchParams.get("schoolId") ?? user.schoolId;
+    const requestedSchoolId = url.searchParams.get("schoolId");
+    if (!user.isPlatformAdmin && requestedSchoolId && requestedSchoolId !== user.schoolId) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+    const schoolId = user.isPlatformAdmin ? requestedSchoolId ?? user.schoolId : user.schoolId;
     if (!schoolId) return NextResponse.json({ sentiment: null });
 
     const cutoff = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
