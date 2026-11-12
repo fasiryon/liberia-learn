@@ -74,7 +74,7 @@ concurrency:
 
 jobs:
   plan:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 5
     outputs:
       profiles: ${{ steps.plan.outputs.profiles }}
@@ -97,7 +97,7 @@ jobs:
 
   capture:
     needs: plan
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     services:
       review-postgres:
         image: postgres:16
