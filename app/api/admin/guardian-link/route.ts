@@ -102,6 +102,11 @@ export async function POST(req: Request) {
     const email = guardianEmail.trim().toLowerCase();
     let guardian = await prisma.user.findUnique({ where: { email } });
 
+    // A guardian invite is never authority to edit or re-credential a staff/platform account.
+    if (guardian && (guardian.role !== "GUARDIAN" || guardian.isPlatformAdmin)) {
+      return NextResponse.json({ error: "Account cannot receive a guardian invite" }, { status: 403 });
+    }
+
     if (!guardian) {
       guardian = await prisma.user.create({
         data: {
