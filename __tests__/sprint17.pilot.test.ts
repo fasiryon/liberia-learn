@@ -242,7 +242,7 @@ describe("Language preference", () => {
 // ── Canva status ──────────────────────────────────────────────────────────────
 describe("Canva status API", () => {
   it("returns connected: false when token not set", async () => {
-    mockRequireRole.mockResolvedValue(adminUser);
+    mockRequireRole.mockResolvedValue({ ...adminUser, isPlatformAdmin: true });
     mockHasCanvaMcpAuthorizationToken.mockReturnValue(false);
     const res = await canvaStatus();
     expect(res.status).toBe(200);
@@ -251,7 +251,7 @@ describe("Canva status API", () => {
   });
 
   it("returns connected: true when token is set", async () => {
-    mockRequireRole.mockResolvedValue(adminUser);
+    mockRequireRole.mockResolvedValue({ ...adminUser, isPlatformAdmin: true });
     mockHasCanvaMcpAuthorizationToken.mockReturnValue(true);
     const res = await canvaStatus();
     expect(res.status).toBe(200);
