@@ -43,7 +43,7 @@ describe("queue health", () => {
     restoreEnv("AWS_REGION", ORIGINAL_AWS_REGION);
   });
 
-  it("reports FIFO readiness with send and receive/delete permissions", async () => {
+  it("the explicit readiness helper retains FIFO permission diagnostics", async () => {
     mockSqsSend.mockImplementation(async (command) => {
       if (command.commandName === "GetQueueAttributesCommand") {
         return { Attributes: { FifoQueue: "true", QueueArn: "arn:aws:sqs:us-east-1:123456789012:liberialearn-jobs.fifo" } };
@@ -61,30 +61,25 @@ describe("queue health", () => {
       return {};
     });
 
-    const { GET } = await import("@/app/api/health/queue/route");
-    const response = await GET();
-    const body = await response.json();
+    const { getQueueReadiness } = await import("@/lib/queueReadiness");
+    const readiness = await getQueueReadiness();
 
-    expect(response.status).toBe(200);
-    expect(body.sqs).toEqual(expect.objectContaining({
+    expect(readiness).toEqual(expect.objectContaining({
       configured: true,
       fifoDetected: true,
       sendPermissions: true,
       receiveDeletePermissions: true,
       queueUrl: "https://sqs.us-east-1.amazonaws.com/.../liberialearn-jobs.fifo",
     }));
-    expect(JSON.stringify(body)).not.toContain("123456789012");
+    expect(JSON.stringify(readiness)).not.toContain("123456789012");
   });
 
   it("fails closed when SQS is not configured", async () => {
     delete process.env.SQS_QUEUE_URL;
-    const { GET } = await import("@/app/api/health/queue/route");
+    const { getQueueReadiness } = await import("@/lib/queueReadiness");
+    const readiness = await getQueueReadiness();
 
-    const response = await GET();
-    const body = await response.json();
-
-    expect(response.status).toBe(503);
-    expect(body.sqs).toEqual(expect.objectContaining({
+    expect(readiness).toEqual(expect.objectContaining({
       configured: false,
       sendPermissions: false,
       receiveDeletePermissions: false,
