@@ -82,56 +82,44 @@ describe("Canva MCP env health", () => {
     expect(JSON.stringify(health)).not.toContain("secret-test-key");
   });
 
-  it("health endpoint returns booleans and host metadata only", async () => {
+  it("public liveness omits provider and infrastructure metadata", async () => {
     process.env.ANTHROPIC_API_KEY = "secret-test-key";
 
     const response = await GET();
     const body = await response.json();
 
     expect(response.status).toBe(200);
-    expect(body.anthropicEnvDetected).toBe(true);
-    expect(body.canvaMcpConfigured).toBe(true);
-    expect(body.canvaMcpReady).toBe(true);
-    expect(body.canvaMcpUrlHost).toBe("mcp.canva.com");
-    expect(body.databaseMigration.ready).toBe(true);
-    expect(body.sqs).toEqual(expect.objectContaining({ configured: true, reachable: true }));
-    expect(body.higgsfield).toEqual(expect.objectContaining({
-      configured: true,
-      ready: true,
-    }));
+    expect(body).toEqual({ status: "alive" });
+    expect(mockQueryRawUnsafe).not.toHaveBeenCalled();
+    expect(mockSqsSend).not.toHaveBeenCalled();
     expect(JSON.stringify(body)).not.toContain("secret-test-key");
     expect(JSON.stringify(body)).not.toContain("higgsfield-test-secret");
   });
 
-  it("fails closed with structured 503 when Anthropic env is missing", async () => {
+  it("reports liveness without consulting missing Anthropic configuration", async () => {
     delete process.env.ANTHROPIC_API_KEY;
 
     const response = await GET();
     const body = await response.json();
 
-    expect(response.status).toBe(503);
-    expect(body).toEqual(expect.objectContaining({
-      ok: false,
-      status: "unavailable",
-      code: "ASSET_PIPELINE_UNAVAILABLE",
-      anthropicEnvDetected: false,
-      serverSideOnly: true,
-    }));
+    expect(response.status).toBe(200);
+    expect(body).toEqual({ status: "alive" });
+    expect(mockQueryRawUnsafe).not.toHaveBeenCalled();
+    expect(mockSqsSend).not.toHaveBeenCalled();
     expect(JSON.stringify(body)).not.toMatch(/API_KEY|secret-test-key|sk-/);
   });
 
-  it("reports missing credentials as not ready without leaking secrets", async () => {
+  it("keeps provider credentials out of the liveness contract", async () => {
     process.env.ANTHROPIC_API_KEY = "secret-test-key";
     delete process.env.HIGGSFIELD_CREDENTIALS;
 
     const response = await GET();
     const body = await response.json();
 
-    expect(response.status).toBe(503);
-    expect(body.higgsfield).toEqual(expect.objectContaining({
-      configured: false,
-      ready: false,
-    }));
+    expect(response.status).toBe(200);
+    expect(body).toEqual({ status: "alive" });
+    expect(mockQueryRawUnsafe).not.toHaveBeenCalled();
+    expect(mockSqsSend).not.toHaveBeenCalled();
     expect(JSON.stringify(body)).not.toContain("higgsfield-test-secret");
   });
 });
