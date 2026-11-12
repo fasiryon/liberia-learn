@@ -5,9 +5,11 @@ import { requireMoeActor } from "@/lib/moe/authority";
 import { isMoeGovernanceWorkflowEnabled, isMoePolicyPushEnabled } from "@/lib/serverFlags";
 import { transitionMoeDirective, type DirectiveStatus } from "@/lib/moe/policyGovernance";
 
+import { isMoePortalEnabled } from "@/lib/serverFlags";
 export const dynamic = "force-dynamic";
 
 export async function PATCH(req: NextRequest, { params }: { params: { directiveId: string } }) {
+  if (!isMoePortalEnabled()) return NextResponse.json({ error: "MOE portal is disabled" }, { status: 404 });
   try {
     if (!isMoePolicyPushEnabled() || !isMoeGovernanceWorkflowEnabled()) {
       throw Object.assign(new Error("MOE policy governance workflow is disabled"), { status: 503 });

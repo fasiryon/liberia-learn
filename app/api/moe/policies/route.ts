@@ -7,12 +7,14 @@ import { requireMoeActor } from "@/lib/moe/authority";
 import { isMoeGovernanceWorkflowEnabled, isMoePolicyPushEnabled } from "@/lib/serverFlags";
 import { createMoeDirective, listMoeDirectives, type DirectiveTargetScope } from "@/lib/moe/policyGovernance";
 
+import { isMoePortalEnabled } from "@/lib/serverFlags";
 export const dynamic = "force-dynamic";
 const policyPrisma = prisma as typeof prisma & {
   policyConfig: typeof prisma extends object ? any : never;
 };
 
 export async function GET() {
+  if (!isMoePortalEnabled()) return NextResponse.json({ error: "MOE portal is disabled" }, { status: 404 });
   try {
     const { user, scope } = await requireMoeActor({ allowDistrict: true });
     assertPermission(
@@ -33,6 +35,7 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
+  if (!isMoePortalEnabled()) return NextResponse.json({ error: "MOE portal is disabled" }, { status: 404 });
   try {
     const { user, scope } = await requireMoeActor({ allowDistrict: true });
     assertPermission(user, PERMISSIONS.POLICY_CONTROL);

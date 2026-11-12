@@ -5,9 +5,11 @@ import { handleApiError } from "@/lib/errors/apiErrorHandler";
 import { withRedisCache } from "@/lib/cache/redisCache";
 import { isMoeSuperRole } from "@/lib/moe/rbac";
 
+import { isMoePortalEnabled } from "@/lib/serverFlags";
 export const dynamic = "force-dynamic";
 
 export async function GET(_req?: Request) {
+  if (!isMoePortalEnabled()) return NextResponse.json({ error: "MOE portal is disabled" }, { status: 404 });
   try {
     const user = await requireUser();
     if (!user.isPlatformAdmin && !isMoeSuperRole(user.role)) {

@@ -10,9 +10,11 @@ import { updateCurriculumReleaseProjectionMany } from "@/lib/curriculum/mutation
 import { isP2bReviewOperationsEnabled } from "@/lib/serverFlags";
 import { assertMoeReleaseReady } from "@/lib/curriculum/review/legacyAdapter";
 
+import { isMoePortalEnabled } from "@/lib/serverFlags";
 export const dynamic = "force-dynamic";
 
 export async function POST(req: NextRequest) {
+  if (!isMoePortalEnabled()) return NextResponse.json({ error: "MOE portal is disabled" }, { status: 404 });
   try {
     const { user } = await requireMoeActor();
     assertPermission(user, PERMISSIONS.CURRICULUM_OVERRIDE);

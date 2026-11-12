@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { requireUser } from "@/lib/auth";
 import { getNationalWaecReadiness } from "@/lib/waec/aggregate";
 
+import { isMoePortalEnabled } from "@/lib/serverFlags";
 export const dynamic = "force-dynamic";
 
 // National aggregate: MOE roles only. School admins use the school/class
@@ -10,6 +11,7 @@ export const dynamic = "force-dynamic";
 const ALLOWED = new Set(["MOE_OFFICIAL", "MOE_SUPER_ADMIN"]);
 
 export async function GET() {
+  if (!isMoePortalEnabled()) return NextResponse.json({ error: "MOE portal is disabled" }, { status: 404 });
   try {
     const user = await requireUser();
     if (!ALLOWED.has(user.role) && !user.isPlatformAdmin) {
