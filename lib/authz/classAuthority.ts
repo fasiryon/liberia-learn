@@ -13,6 +13,7 @@
  */
 import type { SessionUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { Prisma } from "@prisma/client";
 
 // D1 co-teacher functions: instructional access (read.learning), feedback, assessment review, and lesson support
 // (lesson.support: assigning class work such as linking a lab to scheduled work, AT-GRADE-01 batch 2b).
@@ -50,9 +51,30 @@ export async function authorizeClassAccess(
   user: Pick<SessionUser, "id" | "role" | "schoolId">,
   request: Readonly<{ classId: string; subject?: string | null; fn: ClassFunction; now?: Date }>,
 ): Promise<ClassAuthorityDecision> {
+  return decideClassAccess(prisma, user, request, false);
+}
+
+/** Same call contract as the later GAM/Records authority line; locks live until the caller commits. */
+export async function authorizeClassAccessWithClient(
+  db: Pick<Prisma.TransactionClient, "class" | "teacherAssignment" | "$queryRaw">,
+  user: Pick<SessionUser, "id" | "role" | "schoolId">,
+  request: Readonly<{ classId: string; subject?: string | null; fn: ClassFunction; now?: Date }>,
+): Promise<ClassAuthorityDecision> {
+  return decideClassAccess(db, user, request, true);
+}
+
+async function decideClassAccess(
+  db: Pick<Prisma.TransactionClient, "class" | "teacherAssignment" | "$queryRaw">,
+  user: Pick<SessionUser, "id" | "role" | "schoolId">,
+  request: Readonly<{ classId: string; subject?: string | null; fn: ClassFunction; now?: Date }>,
+  lockRows: boolean,
+): Promise<ClassAuthorityDecision> {
   if (!user.schoolId) return deny("no_viewer_school");
   if (!request.classId) return deny("class_missing");
-  const cls = await prisma.class.findUnique({ where: { id: request.classId }, select: { schoolId: true, teacherId: true } });
+  const cls = lockRows
+    ? (await db.$queryRaw<Array<{ schoolId: string; teacherId: string | null }>>(Prisma.sql`
+        SELECT "schoolId","teacherId" FROM "Class" WHERE "id"=${request.classId} AND "schoolId"=${user.schoolId} FOR SHARE`))[0]
+    : await db.class.findUnique({ where: { id: request.classId }, select: { schoolId: true, teacherId: true } });
   if (!cls) return deny("class_missing");
   if (!cls.schoolId || cls.schoolId !== user.schoolId) return deny("cross_school");
   const teacherOnly = (CLASS_TEACHER_ONLY_FUNCTIONS as readonly string[]).includes(request.fn);
@@ -61,7 +83,10 @@ export async function authorizeClassAccess(
   if (user.role !== "TEACHER") return deny("role_not_permitted");
   if (cls.teacherId && cls.teacherId === user.id) return { allowed: true, basis: "CLASS_TEACHER" };
   if (teacherOnly) return deny("class_teacher_only");
-  const assignments = await prisma.teacherAssignment.findMany({
+  const assignments = lockRows ? await db.$queryRaw<Array<{ subject: string }>>(Prisma.sql`
+    SELECT "subject"::text AS "subject" FROM "TeacherAssignment"
+    WHERE "schoolId"=${user.schoolId} AND "teacherId"=${user.id} AND "classId"=${request.classId} FOR SHARE`)
+    : await db.teacherAssignment.findMany({
     where: { schoolId: user.schoolId, teacherId: user.id, classId: request.classId },
     select: { subject: true },
   });
