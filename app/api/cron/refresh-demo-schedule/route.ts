@@ -24,9 +24,12 @@ function getThisWeekDates(): Date[] {
   return Array.from({ length: 7 }, (_, i) => new Date(monday.getTime() + i * 86400000));
 }
 
+// route-policy: auth=cron; scope=none; authority=required-header-secret; rationale=missing configuration and URL credentials never authorize demo schedule reads or writes
 export async function GET(req: NextRequest) {
-  const secret = req.headers.get("x-cron-secret") ?? req.nextUrl.searchParams.get("secret");
-  if (secret !== process.env.CRON_SECRET) {
+  const expected = process.env.CRON_SECRET;
+  const explicit = req.headers.get("x-cron-secret");
+  const authorized = explicit !== null ? explicit === expected : req.headers.get("authorization") === `Bearer ${expected}`;
+  if (!expected?.trim() || !authorized) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
