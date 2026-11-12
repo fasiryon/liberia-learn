@@ -1,3 +1,5 @@
+> **SUPERSEDED (2026-11-11).** This document was last updated on 2026-09-19 and is kept as historical record only. The authoritative current engineering state is [`ENGINEERING_STATE.md`](ENGINEERING_STATE.md). Do not resume work from this file.
+
 # CURRENT EXECUTION STATE
 
 ## Mastery / Retention / Misconception Calibration V1: IMPLEMENTATION COMPLETE
