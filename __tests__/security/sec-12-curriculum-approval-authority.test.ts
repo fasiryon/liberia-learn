@@ -109,7 +109,7 @@ it("authorized admin cannot schedule a foreign school's class", async () => {
   expect(m.effects).toEqual(["SQL:class.lookup"]); expect(m.audits).toEqual([]);
 });
 it("teacher-specific authoring still accepts a teacher and reaches its existing schema validation", async () => {
-  m.actor = actor("TEACHER", false); expect((await teacherGenerate(request())).status).toBe(400); expect(m.parses).toBe(1); expect(m.effects).toEqual([]);
+  m.actor = actor("TEACHER", false); expect((await teacherGenerate(request())).status).toBe(422); expect(m.parses).toBe(1); expect(m.effects).toEqual([]);
 });
 it("teacher-specific authoring source remains byte-identical to the bound base", () => {
   const path = "app/api/teacher/generate-lesson/route.ts";
