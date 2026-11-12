@@ -1,4 +1,4 @@
-﻿// prisma/seeds/cha-demo.ts
+// prisma/seeds/cha-demo.ts
 // CHA High Academy demo accounts for MOE pilot demonstrations.
 // Idempotent â€” safe to re-run. Uses upsert everywhere.
 // Accounts match the official demo handout exactly.
@@ -10,7 +10,6 @@ import { CHA_DEMO_SCHOOL_ID, CHA_DEMO_STUDENT_LOGIN_ID, chaDemoStudentEmail } fr
 
 const prisma = new PrismaClient();
 
-const LOCAL_DEMO_SEED_PASSWORD = "local-demo-password-change-me";
 const DEMO_ADMIN_EMAIL = process.env.E2E_DEMO_ADMIN_EMAIL ?? ["admin", "cha.edu.lr"].join("@");
 const DEMO_TEACHER_EMAIL = process.env.E2E_DEMO_TEACHER_EMAIL ?? ["teacher1", "cha.edu.lr"].join("@");
 const DEMO_GUARDIAN_EMAIL = process.env.E2E_DEMO_GUARDIAN_EMAIL ?? ["guardian1", "cha.family.lr"].join("@");
@@ -18,11 +17,8 @@ const DEMO_MOE_EMAIL = process.env.E2E_DEMO_MOE_EMAIL ?? ["official1", "moe.gov.
 
 function getDemoSeedPassword(): string {
   const password = process.env.DEMO_SEED_PASSWORD?.trim();
-  if (password) return password;
-  if (process.env.NODE_ENV === "production" || process.env.DEMO_MODE === "true") {
-    throw new Error("DEMO_SEED_PASSWORD is required for production/demo seed runs.");
-  }
-  return LOCAL_DEMO_SEED_PASSWORD;
+  if (!password) throw new Error("DEMO_SEED_PASSWORD is required for demo seeding.");
+  return password;
 }
 
 function getMoeSeedPassword(): string {

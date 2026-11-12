@@ -21,7 +21,7 @@ npx dotenv -e .env.production -- npx tsx scripts/generate-load-test-tokens.ts
 npx dotenv -e .env.production -- npx tsx scripts/export-load-test-credentials.ts
 ```
 
-- Pool: 1,000 students (`lt-sXX-uYYY@loadtest.liberialearn.internal`), password `LoadTest2026!`
+- Pool: 1,000 students (`lt-sXX-uYYY@loadtest.liberialearn.internal`), password `<set via env / password manager>`
 - Each user has a `Student` row (required for tutor + quiz APIs)
 - Tokens: `load-tests/fixtures/student-tokens.json` (gitignored)
 
@@ -71,3 +71,5 @@ npm run build
 ```
 
 Commit message: `feat: NR-5 complete — k6 peak + AI burst gate`
+
+Credential configuration: set `LOAD_TEST_PASSWORD` through the authorized secret store. The exporter writes only Git-ignored `load-tests/fixtures/load-test.env`, never this tracked sample. Never include exported passwords in evidence or commits.

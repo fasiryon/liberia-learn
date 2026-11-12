@@ -1,7 +1,8 @@
+import { rehearsalBaseUrl, rehearsalPassword } from "./rehearsal-credentials.cjs";
 import { test, type Page } from "@playwright/test"
 
-const BASE = "https://liberia-learn.vercel.app"
-const PASS = "DemoSeed2026!"
+const BASE = rehearsalBaseUrl();
+const MOE_PASSWORD = rehearsalPassword("official1@moe.gov.lr");
 
 // ─── helpers ─────────────────────────────────────────────────────────────────
 
@@ -110,11 +111,12 @@ async function signInAs(
   loginUrl = `${BASE}/login`,
   accent = "#22d3ee"
 ) {
+  const password = rehearsalPassword(email);
   await load(page, loginUrl)
   await waitFor(page, "input[type='email']")
   await showRole(page, role, accent)
   await page.fill("input[type='email']", email)
-  await page.fill("input[type='password']", PASS)
+  await page.fill("input[type='password']", password)
   await page.click("button[type='submit']")
   await page.waitForLoadState("load")
   await page.waitForLoadState("networkidle", { timeout: 15000 }).catch(() => {})
@@ -358,7 +360,7 @@ test("LiberiaLearn VSL Recording", async ({ page }) => {
   await waitFor(page, "input[type='email']", 20000)
   await showRole(page, "MINISTRY OF EDUCATION", "#22d3ee")
   await page.fill("input[type='email']", "official1@moe.gov.lr")
-  await page.fill("input[type='password']", PASS)
+  await page.fill("input[type='password']", MOE_PASSWORD)
   await page.click("button[type='submit']")
   await page.waitForLoadState("load")
   await page.waitForLoadState("networkidle", { timeout: 15000 }).catch(() => {})

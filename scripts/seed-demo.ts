@@ -45,7 +45,6 @@ type SeedNationalDemoOptions = {
   logger?: DemoSeedLogger;
 };
 
-const LOCAL_DEMO_SEED_PASSWORD = "local-demo-password-change-me";
 const DEMO_MOE_EMAILS = [
   process.env.E2E_DEMO_MOE_EMAIL ?? ["official1", "moe.gov.lr"].join("@"),
   process.env.E2E_DEMO_MOE_SECONDARY_EMAIL ?? ["official2", "moe.gov.lr"].join("@"),
@@ -53,11 +52,8 @@ const DEMO_MOE_EMAILS = [
 
 function getDemoSeedPassword(): string {
   const password = process.env.DEMO_SEED_PASSWORD?.trim();
-  if (password) return password;
-  if (process.env.NODE_ENV === "production" || process.env.DEMO_MODE === "true") {
-    throw new Error("DEMO_SEED_PASSWORD is required for production/demo seed runs.");
-  }
-  return LOCAL_DEMO_SEED_PASSWORD;
+  if (!password) throw new Error("DEMO_SEED_PASSWORD is required for demo seeding.");
+  return password;
 }
 
 function getMoeSeedPassword(): string {

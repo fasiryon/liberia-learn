@@ -1,3 +1,4 @@
+import { requiredSecret } from "./security/required-secret.cjs";
 /**
  * NR-3: Load-Test Identity Pool.
  *
@@ -40,7 +41,7 @@ const TOTAL_SCHOOLS = 50
 const EXISTING_SCHOOLS = 10
 const STUDENTS_PER_EXISTING_SCHOOL = 100
 const STUDENTS_PER_NEW_SCHOOL = 20
-const LOAD_TEST_PASSWORD = "LoadTest2026!"
+const LOAD_TEST_PASSWORD = requiredSecret("LOAD_TEST_PASSWORD");
 
 function studentsForSchool(schoolIndex: number): number {
   return schoolIndex <= EXISTING_SCHOOLS ? STUDENTS_PER_EXISTING_SCHOOL : STUDENTS_PER_NEW_SCHOOL
@@ -56,7 +57,7 @@ async function withRetry<T>(fn: () => Promise<T>, label: string, attempts = 5): 
     } catch (err) {
       if (attempt === attempts) throw err
       const delayMs = 500 * attempt
-      console.warn(`\n[retry ${attempt}/${attempts}] ${label}: ${(err as Error).message?.split("\n")[0]}`)
+      console.warn(`Retrying seed operation, attempt ${attempt}/${attempts}`)
       await new Promise((resolve) => setTimeout(resolve, delayMs))
     }
   }
@@ -164,4 +165,4 @@ async function main() {
   console.log(`Load-test Student rows: ${finalStudentCount} (created this run: ${totalStudentsCreated})`)
 }
 
-main().catch(console.error).finally(() => prisma.$disconnect())
+main().catch(() => { console.error("Seed operation failed; no credential details emitted"); process.exitCode = 1; }).finally(() => prisma.$disconnect())

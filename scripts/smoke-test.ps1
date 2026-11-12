@@ -70,10 +70,7 @@ if ([string]::IsNullOrWhiteSpace($studentEmail) -or [string]::IsNullOrWhiteSpace
 }
 $demoPassword = $env:DEMO_SEED_PASSWORD
 if ([string]::IsNullOrWhiteSpace($demoPassword)) {
-    if ($env:NODE_ENV -eq "production" -or $env:DEMO_MODE -eq "true") {
-        throw "DEMO_SEED_PASSWORD is required for production/demo smoke tests."
-    }
-    $demoPassword = "local-demo-password-change-me"
+    throw "DEMO_SEED_PASSWORD is required for smoke testing."
 }
 $moePassword = $env:DEMO_MOE_PASSWORD
 if ([string]::IsNullOrWhiteSpace($moePassword)) {

@@ -1,3 +1,4 @@
+import { rehearsalBaseUrl, rehearsalPassword } from "./rehearsal-credentials.cjs";
 /**
  * Wave 3 Verification
  *
@@ -13,15 +14,15 @@ import os from "os";
 import fs from "fs";
 import JSZip from "jszip";
 
-const BASE = "https://liberia-learn.vercel.app";
-const PASS = "DemoSeed2026!";
+const BASE = rehearsalBaseUrl();
 const SS_DIR = path.join(process.cwd(), "wave3-screenshots");
 
 async function signIn(page: Page, email: string) {
+  const password = rehearsalPassword(email);
   await page.goto(`${BASE}/login`);
   await page.waitForSelector("input[type='email']", { timeout: 15_000 });
   await page.fill("input[type='email']", email);
-  await page.fill("input[type='password']", PASS);
+  await page.fill("input[type='password']", password);
   await page.click("button[type='submit']");
   await page.waitForLoadState("networkidle");
   await page.waitForTimeout(1500);

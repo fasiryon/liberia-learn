@@ -240,7 +240,7 @@ postgresql://postgres.[ref]:[password]@aws-1-us-east-2.pooler.supabase.com:6543/
 | Schools created | 10 (lt-school-01 through lt-school-10) |
 | Students created | 1,000 (100 per school) |
 | Email pattern | `lt-sXX-uYYY@loadtest.liberialearn.internal` |
-| Password | LoadTest2026! (bcrypt hash stored in DB) |
+| Password | <set via env / password manager> (bcrypt hash stored in DB) |
 | Token fixture | `load-tests/fixtures/student-tokens.json` (gitignored) |
 | Seed script | `scripts/seed-load-test-users.ts` |
 | Token script | `scripts/generate-load-test-tokens.ts` |
@@ -264,3 +264,5 @@ All 4 scenarios updated to use `SharedArray` token pool:
 5. **ENGLISH content**: Only G5 and G7 have ENGLISH lessons — 10-grade desert needs NR-13 sprint
 6. **ENGINEERING_FOUNDATIONS**: Complete 12-grade desert — NR-13 scope
 7. **COMPUTER_SCIENCE**: Only G5 has CS lessons — 11-grade desert — NR-13 scope
+
+Credential configuration: set `LOAD_TEST_PASSWORD` through the authorized secret store. The exporter writes only Git-ignored `load-tests/fixtures/load-test.env`, never this tracked sample. Never include exported passwords in evidence or commits.

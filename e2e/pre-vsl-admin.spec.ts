@@ -1,3 +1,4 @@
+import { rehearsalBaseUrl, rehearsalPassword } from "./rehearsal-credentials.cjs";
 /**
  * Pre-VSL admin operations: league reset + digest preview
  * Run: npx playwright test e2e/pre-vsl-admin.spec.ts --reporter=list
@@ -5,14 +6,14 @@
 
 import { test, expect } from "@playwright/test";
 
-const BASE = "https://liberia-learn.vercel.app";
-const PASS = "DemoSeed2026!";
+const BASE = rehearsalBaseUrl();
 
 async function signIn(page: any, email: string) {
+  const password = rehearsalPassword(email);
   await page.goto(`${BASE}/login`);
   await page.waitForSelector("input[type='email']", { timeout: 15_000 });
   await page.fill("input[type='email']", email);
-  await page.fill("input[type='password']", PASS);
+  await page.fill("input[type='password']", password);
   await page.click("button[type='submit']");
   await page.waitForLoadState("networkidle");
 }
