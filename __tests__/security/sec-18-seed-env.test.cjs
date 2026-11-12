@@ -54,7 +54,7 @@ test('smoke script refuses missing demo credentials before any network call', ()
 });
 
 test('SEC-18 additional seed families are absent from tracked source', () => {
-  const historical = path => execFileSync('git', ['show', 'ae265966e8b7ca325f8100b793d80aba9444ffde:' + path], { stdio: ['ignore', 'pipe', 'ignore'] }).toString();
+  const historical = path => execFileSync('git', ['show', '4662b14ac47e561ec628ec327499fd1a87eef5ef:' + path], { stdio: ['ignore', 'pipe', 'ignore'] }).toString();
   const values = [ /const LOCAL_DEMO_SEED_PASSWORD = ["']([^"']+)["']/.exec(historical('prisma/seed.ts'))[1], ...Array.from(historical('prisma/scripts/seed.ts').matchAll(/bcrypt\.hash\(["']([^"']+)["']/g), match => match[1]) ];
   const paths = execFileSync('git', ['ls-files', '-z']).toString().split('\0').filter(Boolean);
   const hits = [];
