@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { NextRequest } from "next/server";
-type Actor = { id: string; role: string; isPlatformAdmin: boolean; authTime: number; credStamp: number };
+type Actor = { id: string; role: string; isPlatformAdmin: boolean; authTime: number; credStamp: number; privilegedSessionId?: string };
 type State = { id: string; state: string; codeVerifier: string; expiresAt: Date };
 const m = vi.hoisted(() => ({ actor: null as Actor | null, stepUp: true, states: new Map<string, State>(),
   save: vi.fn(), consume: vi.fn(), exchange: vi.fn(), read: vi.fn(), claim: vi.fn() }));
@@ -76,6 +76,25 @@ describe("SEC-06 platform-only, session-bound OAuth lifecycle", () => {
     const response = await publicCallback(callbackRequest()); expect(response.status).toBe(200);
     expect(m.exchange).toHaveBeenCalledWith({ code: "synthetic-code", codeVerifier: "synthetic-verifier" });
     expect(m.states.size).toBe(0);
+  });
+  it("admin initialization can use the configured public callback", async () => {
+    expect((await adminStart()).status).toBe(200);
+    expect((await publicCallback(callbackRequest())).status).toBe(200);
+    expect(m.exchange).toHaveBeenCalledTimes(1);
+  });
+  it("public initialization can use the admin callback without losing its session binding", async () => {
+    await publicStart(); const response = await adminCallback(callbackRequest());
+    expect(response.status).toBe(307); expect(response.headers.get("location")).toContain("connected=true");
+    expect(m.exchange).toHaveBeenCalledTimes(1);
+  });
+  it.each(["authTime", "credStamp"] as const)("refuses unreadable session %s before saving state", async field => {
+    m.actor = { ...platform(), [field]: Number.NaN }; expect((await publicStart()).status).toBe(403);
+    expect(m.save).not.toHaveBeenCalled();
+  });
+  it("refuses a different privileged session", async () => {
+    await publicStart(); m.actor = { ...platform(), privilegedSessionId: "different-mfa-session" };
+    expect((await publicCallback(callbackRequest())).status).toBe(400);
+    expect(m.states.size).toBe(1); expect(m.exchange).not.toHaveBeenCalled();
   });
   it.each(["id", "authTime", "credStamp"] as const)("refuses another session's %s without consuming its state", async field => {
     await publicStart(); const actor = platform();
