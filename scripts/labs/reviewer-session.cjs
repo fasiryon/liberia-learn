@@ -7,7 +7,11 @@ function assertLocalReview(baseUrl, env = process.env) {
 }
 async function createLocalReviewerToken(baseUrl, env = process.env) {
   assertLocalReview(baseUrl, env);
-  return encode({ secret: env.NEXTAUTH_SECRET, token: { id: 'synthetic-MOE_OFFICIAL', name: 'Synthetic lab reviewer', email: 'synthetic@example.invalid', role: 'MOE_OFFICIAL', isPlatformAdmin: false }, maxAge: 3600 });
+  // Current session contract (U1/R1): authTime and credStamp are required at the edge, and assertTokenFresh matches them
+  // against the synthetic row that prepare-review-consent seeds ONLY into the loopback /lab_review_fixture database.
+  // credStamp 0 = credentialStampOf(a row whose passwordChangedAt is null).
+  return encode({ secret: env.NEXTAUTH_SECRET, token: { id: 'synthetic-MOE_OFFICIAL', name: 'Synthetic lab reviewer', email: 'synthetic@example.invalid',
+    role: 'MOE_OFFICIAL', isPlatformAdmin: false, schoolId: null, authTime: Date.now(), credStamp: 0 }, maxAge: 3600 });
 }
 module.exports = { assertLocalReview, createLocalReviewerToken };
 if (require.main === module) createLocalReviewerToken(process.env.NEXTAUTH_URL ?? 'http://localhost:3000').then(token => process.stdout.write(`next-auth.session-token=${token}`)).catch(error => { console.error(error.message); process.exitCode = 1; });

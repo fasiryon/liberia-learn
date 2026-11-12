@@ -39,9 +39,9 @@ describe("authenticated local lab review tools", () => {
     const db = (row: unknown) => ({ user: { findFirst: async () => row } });
     const seeded = { ...SYNTHETIC_REVIEWER_ROW, school: null };
     await expect(assertTokenFresh(claims, db(seeded))).resolves.toBeUndefined();
-    await expect(assertTokenFresh(claims, db(null))).rejects.toThrow(/SESSION_ACCOUNT_MISSING/);
-    await expect(assertTokenFresh(claims, db({ ...seeded, passwordChangedAt: new Date("2026-11-11T00:00:00Z") }))).rejects.toThrow(/SESSION_CREDENTIAL_CHANGED/);
-    await expect(assertTokenFresh(claims, db({ ...seeded, role: "TEACHER" }))).rejects.toThrow(/SESSION_ACCOUNT_CHANGED/);
+    await expect(assertTokenFresh(claims, db(null))).rejects.toMatchObject({ code: "SESSION_ACCOUNT_MISSING" });
+    await expect(assertTokenFresh(claims, db({ ...seeded, passwordChangedAt: new Date("2026-11-11T00:00:00Z") }))).rejects.toMatchObject({ code: "SESSION_CREDENTIAL_CHANGED" });
+    await expect(assertTokenFresh(claims, db({ ...seeded, role: "TEACHER" }))).rejects.toMatchObject({ code: "SESSION_ACCOUNT_CHANGED" });
   });
   it("L-CRED-1: the privileged synthetic row is seeded only into the loopback /lab_review_fixture database", async () => {
     const appUrl = "postgresql://lab_review_reader:x@127.0.0.1:5432/lab_review_fixture";

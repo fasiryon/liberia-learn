@@ -100,7 +100,7 @@ jobs:
     runs-on: ubuntu-24.04
     services:
       review-postgres:
-        image: postgres:16
+        image: pgvector/pgvector:0.8.0-pg17 # the real schema needs pgvector (same pin as canonical-clean-bootstrap)
         env:
           POSTGRES_PASSWORD: lab-review-admin-local
           POSTGRES_DB: lab_review_fixture
