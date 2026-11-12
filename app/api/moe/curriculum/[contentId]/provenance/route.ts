@@ -1,3 +1,4 @@
+// route-policy: auth=session; scope=record; authority=moe-scope; rationale=MOE portal flag and existing canonical role or permission scope gate all domain work
 import { NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { getCurriculumProvenanceExplanation } from "@/lib/curriculum/provenance/reader";

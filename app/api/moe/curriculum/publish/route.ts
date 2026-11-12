@@ -1,3 +1,4 @@
+// route-policy: auth=session; scope=national; authority=elevated; rationale=MOE portal flag and existing canonical role or permission scope gate all domain work
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { logAudit } from "@/lib/audit";
