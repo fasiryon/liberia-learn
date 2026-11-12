@@ -70,6 +70,7 @@ vi.mock("@/lib/db", () => ({
     },
     student: {
       findUnique: vi.fn(),
+      findFirst: vi.fn(),
       findMany: vi.fn(),
     },
     class: {
@@ -184,6 +185,7 @@ describe("POST /api/student/meetings/[meetingId]/join", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockRequireRole.mockResolvedValue(STUDENT_USER as any);
+    mockPrisma.student.findFirst.mockResolvedValue({ id: "s1" });
   });
 
   it("records MeetingAttendee and returns joinUrl", async () => {
@@ -191,6 +193,8 @@ describe("POST /api/student/meetings/[meetingId]/join", () => {
 
     mockPrisma.meeting.findUnique.mockResolvedValue({
       id: "m1",
+      classId: "c1",
+      Class: { id: "c1", schoolId: "school-1", subject: "MATH" },
       liveStatus: "LIVE",
       joinUrl: "https://meet.jit.si/ll-c1",
     });
@@ -209,6 +213,8 @@ describe("POST /api/student/meetings/[meetingId]/join", () => {
 
     mockPrisma.meeting.findUnique.mockResolvedValue({
       id: "m1",
+      classId: "c1",
+      Class: { id: "c1", schoolId: "school-1", subject: "MATH" },
       liveStatus: "SCHEDULED",
       joinUrl: null,
     });
