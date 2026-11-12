@@ -7,6 +7,10 @@ const mockCanvaStateCreate = vi.hoisted(() => vi.fn());
 const mockCanvaStateDelete = vi.hoisted(() => vi.fn());
 const mockCanvaStateDeleteMany = vi.hoisted(() => vi.fn());
 const mockCanvaStateFindUnique = vi.hoisted(() => vi.fn());
+const platformSession = vi.hoisted(() => ({ id: "synthetic-platform", role: "ADMIN" as const,
+  isPlatformAdmin: true, authTime: 1_800_000_000_000, credStamp: 0 }));
+vi.mock("@/lib/auth", () => ({ requirePlatformAdmin: async () => platformSession,
+  requirePrivilegedStepUp: async () => platformSession }));
 
 vi.mock("@/lib/db", () => ({
   prisma: {
@@ -94,10 +98,14 @@ describe("Canva OAuth PKCE", () => {
       encryptedTokenCapture.value = create.encryptedTokenSet;
       return { id: "credential-1" };
     });
+    const { saveBoundCanvaOAuthState } = await import("@/lib/canva/oauthSession");
+    await saveBoundCanvaOAuthState({ state: "test-state", codeVerifier: "test-verifier", session: platformSession });
+    const savedPayload = mockCanvaStateCreate.mock.calls.at(-1)![0].data.codeVerifier;
+    mockCanvaStateDeleteMany.mockResolvedValue({ count: 1 });
     mockCanvaStateFindUnique.mockResolvedValue({
       id: "state-1",
       state: "test-state",
-      codeVerifier: "test-verifier",
+      codeVerifier: savedPayload,
       createdAt: new Date(),
       expiresAt: new Date(Date.now() + 60_000),
     });
@@ -147,9 +155,12 @@ describe("Canva OAuth PKCE", () => {
         state: "test-state",
       },
     });
-    expect(mockCanvaStateDelete).toHaveBeenCalledWith({
+    expect(mockCanvaStateDeleteMany).toHaveBeenCalledWith({
       where: {
+        id: "state-1",
         state: "test-state",
+        codeVerifier: savedPayload,
+        expiresAt: { gt: expect.any(Date) },
       },
     });
     expect(encryptedTokenCapture.value).toBeDefined();
@@ -176,7 +187,7 @@ describe("Canva OAuth PKCE", () => {
     expect(response.status).toBe(400);
     expect(body).toMatchObject({
       ok: false,
-      error: "Canva OAuth state was not found or has already been used",
+      error: "Canva authorization failed",
     });
   });
 
@@ -200,13 +211,9 @@ describe("Canva OAuth PKCE", () => {
     expect(response.status).toBe(400);
     expect(body).toMatchObject({
       ok: false,
-      error: "Canva OAuth state has expired. Please reconnect Canva.",
+      error: "Canva authorization failed",
     });
-    expect(mockCanvaStateDelete).toHaveBeenCalledWith({
-      where: {
-        state: "expired-state",
-      },
-    });
+    expect(mockCanvaStateDeleteMany).not.toHaveBeenCalled();
   });
 
   it("round-trips a stored credential and returns the access token for MCP use", async () => {

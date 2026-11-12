@@ -1,16 +1,16 @@
+// route-policy: auth=session; scope=platform; authority=platform-admin-step-up; rationale=only a stepped-up platform ADMIN may initialize the shared platform OAuth credential; state binds to the initiating session
 import { NextResponse } from "next/server";
-import { requireRole } from "@/lib/auth";
 import {
   hasCanvaOAuthClientConfig,
   getCanvaOAuthConfig,
   createCanvaPkcePair,
-  saveCanvaOAuthState,
   buildCanvaAuthorizationUrl,
 } from "@/lib/canva/canvaOAuth";
+import { requireCanvaPlatformSession, saveBoundCanvaOAuthState, canvaOAuthErrorStatus } from "@/lib/canva/oauthSession";
 
 export async function GET() {
   try {
-    await requireRole("ADMIN");
+    const session = await requireCanvaPlatformSession();
 
     if (!hasCanvaOAuthClientConfig()) {
       return NextResponse.json(
@@ -21,14 +21,14 @@ export async function GET() {
 
     const { clientId, redirectUri } = getCanvaOAuthConfig();
     const { codeVerifier, codeChallenge, state } = createCanvaPkcePair();
-    await saveCanvaOAuthState({ state, codeVerifier });
+    await saveBoundCanvaOAuthState({ state, codeVerifier, session });
     const url = buildCanvaAuthorizationUrl({ clientId, redirectUri, codeChallenge, state });
 
-    return NextResponse.json({ url: url.toString() });
-  } catch (err: any) {
+    return NextResponse.json({ url: url.toString() }, { headers: { "Cache-Control": "private, no-store" } });
+  } catch (err: unknown) {
     return NextResponse.json(
-      { error: err.message ?? "Internal error" },
-      { status: err.status ?? 500 }
+      { error: "Canva authorization unavailable" },
+      { status: canvaOAuthErrorStatus(err), headers: { "Cache-Control": "private, no-store" } }
     );
   }
 }
