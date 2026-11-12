@@ -10,7 +10,7 @@ vi.mock("@/lib/auth", () => ({ requireRole: async (role: string) => {
 vi.mock("@/lib/db", () => ({ prisma: { student: { findFirst: m.student }, homework: { findFirst: m.homework },
   homeworkSubmission: { upsert: m.submit } } }));
 import { POST } from "@/app/api/student/homework/submit/route";
-const submit = (redirect = "/assignments") => {
+const submit = (redirect: string | Blob = "/assignments") => {
   const body = new FormData(); body.set("homeworkId", "homework-1"); body.set("redirectTo", redirect); body.set("answer_0", "Synthetic answer");
   return POST(new Request("http://localhost/api/student/homework/submit", { method: "POST", body }))
     .catch(() => new Response("uncaught route exception", { status: 500 }));
@@ -20,6 +20,10 @@ beforeEach(() => {
   m.tenant = "school-A"; m.student.mockResolvedValue({ id: "student-1" }); m.homework.mockResolvedValue({ id: "homework-1" });
 });
 describe("SEC-04 homework ownership and redirects", () => {
+  it("refuses a File redirect without coercion or a submission write", async () => {
+    expect((await submit(new File(["/assignments"], "redirect.txt"))).status).toBe(400);
+    expect(m.submit).not.toHaveBeenCalled();
+  });
   it("refuses unavailable homework without writing", async () => {
     m.homework.mockResolvedValue(null); expect((await submit()).status).toBe(404); expect(m.submit).not.toHaveBeenCalled();
   });

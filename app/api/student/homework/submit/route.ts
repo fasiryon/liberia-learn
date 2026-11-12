@@ -23,7 +23,7 @@ export async function POST(req: Request) {
   const homeworkId = formData.get("homeworkId");
   const rawRedirect = formData.get("redirectTo");
   if (rawRedirect !== null && typeof rawRedirect !== "string") return NextResponse.json({ error: "Invalid redirect" }, { status: 400 });
-  const redirectTo = rawRedirect || "/assignments";
+  const redirectTo = typeof rawRedirect === "string" && rawRedirect ? rawRedirect : "/assignments";
   if (!redirectTo.startsWith("/") || redirectTo.startsWith("//") || redirectTo.includes("\\")) {
     return NextResponse.json({ error: "Invalid redirect" }, { status: 400 });
   }
