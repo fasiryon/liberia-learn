@@ -373,7 +373,18 @@ async function main() {
           return { scrollHeight, scrollWidth: doc.scrollWidth, clientHeight: doc.clientHeight, clientWidth: doc.clientWidth, bodyHeight: document.body.scrollHeight,
             // What decides the full-page height: the unclipped elements reaching furthest down, and everything within 40 px of the bottom.
             lowestUnclipped: [...extent].sort((a, b) => b.bottom - a.bottom).slice(0, 8),
-            nearDocumentBottom: extent.filter((e) => e.bottom >= scrollHeight - 40) };
+            nearDocumentBottom: extent.filter((e) => e.bottom >= scrollHeight - 40),
+            // r3 (run3: B scrolled to 1102 with no counted box below main's 1086): boxes the filters above cannot see.
+            scrollingElementHeight: document.scrollingElement?.scrollHeight ?? null,
+            topLevel: [...Array.from(doc.children), ...Array.from(document.body.children)].map((el) => {
+              const r = el.getBoundingClientRect(), cs = getComputedStyle(el);
+              return { el: el.tagName.toLowerCase(), id: el.id || null, shadowHost: !!(el as Element & { shadowRoot?: ShadowRoot | null }).shadowRoot, display: cs.display, position: cs.position,
+                top: Math.round(r.top + window.scrollY), bottom: Math.round(r.bottom + window.scrollY), height: Math.round(r.height), width: Math.round(r.width), marginBottom: cs.marginBottom };
+            }),
+            strayText: [...Array.from(doc.childNodes), ...Array.from(document.body.childNodes)].filter((n) => n.nodeType === Node.TEXT_NODE && (n.textContent ?? "").trim()).map((n) => (n.textContent ?? "").trim().slice(0, 80)),
+            belowMain: (() => { const main = document.querySelector("main"); const mainBottom = main ? main.getBoundingClientRect().bottom + window.scrollY : 0;
+              return Array.from(document.querySelectorAll("*")).filter((el) => el.getBoundingClientRect().bottom + window.scrollY > mainBottom + 0.5)
+                .slice(0, 20).map((el) => { const r = el.getBoundingClientRect(), cs = getComputedStyle(el); return { el: `${el.tagName.toLowerCase()}.${String(el.getAttribute("class") ?? "").slice(0, 60)}`, position: cs.position, display: cs.display, transform: cs.transform, bottom: Math.round(r.bottom + window.scrollY), height: Math.round(r.height) }; }); })() };
         });
         await page.screenshot({ path: still, fullPage: fullPageFor(viewport), animations: "disabled", caret: "hide", timeout: SCREENSHOT_TIMEOUT_MS });
         captures.push({ file: still, scenario: scenario.id, storyboardScene: scenario.storyboardScene, stage: scenario.stage, profile, viewport, kind: "still", reducedMotion: stillReducedMotion });
