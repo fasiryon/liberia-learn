@@ -5,7 +5,7 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { execFileSync } from "node:child_process";
 import { readFileSync, writeFileSync, mkdirSync, mkdtempSync } from "node:fs";
-import { join } from "node:path";
+import { join, dirname } from "node:path";
 import { randomUUID, createHash } from "node:crypto";
 import type { PrismaClient } from "@prisma/client";
 let admitted = false;
@@ -32,8 +32,13 @@ describe.skipIf(!admitted)("SEC-27 native build secret and runtime database cont
     // Execute the exact mount/export prefix from the actual build RUN; only the
     // expensive npm command becomes a presence assertion in this offline probe.
     const prefix = command.slice(0, -"npm run build".length);
-    const fixture = `FROM pgvector/pgvector:0.8.0-pg17\n${prefix}test -n "$SENTRY_AUTH_TOKEN"\n`;
+    const fixture = `FROM pgvector/pgvector:0.8.0-pg17\nCOPY . /probe-context/\n${prefix}test -n "$SENTRY_AUTH_TOKEN"\n`;
     writeFileSync(join(context, "Dockerfile"), fixture);
+    writeFileSync(join(context, ".dockerignore"), readFileSync(".dockerignore"));
+    writeFileSync(join(context, "safe.marker"), "synthetic public context control");
+    for (const path of [".aws/credentials", ".agents/private", ".codex/auth.json", ".task-worktrees/task/private", "nested/.envfixture", ".envfixture"]) {
+      const target = join(context, path); mkdirSync(dirname(target), { recursive: true }); writeFileSync(target, canary);
+    }
     const image = `ll-sec27-probe:${Date.now()}`;
     run(["build", "--builder", "default", "--pull=false", "--network=none", "--no-cache", "--secret", "id=SENTRY_AUTH_TOKEN,env=T2_SEC27_CANARY", "-t", image, context], { T2_SEC27_CANARY: canary });
     probe = { image, context }; return probe;
@@ -59,7 +64,7 @@ describe.skipIf(!admitted)("SEC-27 native build secret and runtime database cont
     const { image, context } = getProbe(); const config = JSON.parse(run(["image", "inspect", image]))[0];
     const history = run(["history", "--no-trunc", image]); expect(JSON.stringify(config)).not.toContain(canary); expect(history).not.toContain(canary);
     for (const key of keys) expect((config.Config.Env ?? []).some((entry: string) => entry.startsWith(key + "="))).toBe(false);
-    run(["run", "--rm", "--network=none", "--memory=128m", "--entrypoint=sh", image, "-c", "test ! -e /run/secrets/SENTRY_AUTH_TOKEN"]);
+    run(["run", "--rm", "--network=none", "--memory=128m", "--entrypoint=sh", image, "-c", "test ! -e /run/secrets/SENTRY_AUTH_TOKEN && test -f /probe-context/safe.marker && test ! -e /probe-context/.aws && test ! -e /probe-context/.agents && test ! -e /probe-context/.codex && test ! -e /probe-context/.task-worktrees && test ! -e /probe-context/nested/.envfixture && test ! -e /probe-context/.envfixture"]);
     writeFileSync(join(context, "proof.json"), JSON.stringify({ image, candidate: execFileSync("git", ["rev-parse", "HEAD"], { encoding: "utf8" }).trim(), dockerfileSha256: createHash("sha256").update(source).digest("hex"), transport: "local default Docker builder; cached image; network none; synthetic canary only", secretRetained: false }, null, 2));
   }, 90000);
   it("runtime-only database injection reaches the own disposable database", () => {

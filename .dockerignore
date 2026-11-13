@@ -4,6 +4,12 @@ node_modules
 **/.next
 .git
 .env*
+**/.env*
+.aws
+.agents
+.codex
+.codex-auto-resume
+.task-worktrees
 coverage
 __tests__
 *.test.*
