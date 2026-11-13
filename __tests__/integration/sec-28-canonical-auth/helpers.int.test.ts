@@ -12,6 +12,7 @@ if (process.env.LL_SEC_28_DB_TEST === "1" && !admitted) throw Error("SEC-28 requ
 describe.skipIf(!admitted)("SEC-28 native legacy helper authority", () => {
   let db: PrismaClient; let helpers: typeof import("@/lib/auth-helpers");
   beforeAll(async () => {
+    vi.stubGlobal("fetch", () => { throw Error("No external calls"); });
     ({ prisma: db } = await import("@/lib/db")); helpers = await import("@/lib/auth-helpers");
     for (const suffix of ["A", "B"]) await db.school.create({ data: { id: `school-${suffix}`, name: `Synthetic ${suffix}` } });
   });
@@ -22,7 +23,7 @@ describe.skipIf(!admitted)("SEC-28 native legacy helper authority", () => {
       update: { role: "TEACHER", schoolId: "school-A", isPlatformAdmin: false, passwordChangedAt: null } });
     h.token = { id: "user-A", email: "teacher@example.invalid", role: "TEACHER", schoolId: "school-A", isPlatformAdmin: false, authTime: Date.now() - 1000, credStamp: 0 };
   });
-  afterAll(async () => { vi.unstubAllEnvs(); await db?.$disconnect(); });
+  afterAll(async () => { vi.unstubAllEnvs(); vi.unstubAllGlobals(); await db?.$disconnect(); });
   for (const name of ["auth", "role"]) {
     const call = () => name === "auth" ? helpers.requireAuth() : helpers.requireRole(["TEACHER"]);
     const denied = async (status: number) => { const result = await call(); expect(result).toHaveProperty("status", status); };
