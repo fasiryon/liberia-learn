@@ -1,4 +1,4 @@
-import { enqueueJob, JobType } from "@/lib/queue";
+import { enqueueJobOrThrow, JobType } from "@/lib/queue";
 import {
   buildQueueDeduplicationId,
   buildQueueGroupId,
@@ -29,7 +29,8 @@ export async function enqueueWorkflowRun(workflowRun: {
   idempotencyKey?: string | null;
   attempt?: number | null;
 }) {
-  await enqueueJob(
+  // The created run stays durable for the recovery cron; the caller must not treat it as queued.
+  await enqueueJobOrThrow(
     JobType.AUTONOMOUS_WORKFLOW_RUN,
     {
       workflowRunId: workflowRun.id,
