@@ -30,16 +30,36 @@ describe("AWS unavailable: existing embedding failure fallback", () => {
   it.each([
     "app/api/admin/curriculum/approve/route.ts", "app/api/admin/curriculum/generate/route.ts",
     "app/api/admin/curriculum/generate-full-pack/route.ts", "app/api/teacher/lessons/route.ts",
-  ])("%s must handle rejected SDK delivery like its existing failure branch", async path => {
+  ])("%s defers a rejected embedding job without any paid provider call (founder DEFER 2026-11-13)", async path => {
+    // Founder decision 2026-11-13 (AWS suspension): no paid inline embedding fallback. The rejected job is
+    // recorded as DEFERRED for later authorized processing, never silently discarded or falsely reported done.
     const embedLesson = vi.fn(async () => undefined);
+    const syncCurriculumContentRagChunks = vi.fn(async () => undefined);
+    const deferLessonEmbedding = vi.fn(async () => undefined);
     const run = runInNewContext(embeddingBranch(path), {
       enqueueJob, isQueueConfigured, JobType, queueConfigured: true,
       record: { id: "synthetic-row", contentId: "synthetic-content" }, recordId: "synthetic-row", contentId: "synthetic-content",
-      logger: { warn: vi.fn() }, embedLesson, syncCurriculumContentRagChunks: vi.fn(async () => undefined),
+      user: { id: "synthetic-actor", schoolId: "synthetic-school" }, actor: { userId: "synthetic-actor", schoolId: "synthetic-school" },
+      logger: { warn: vi.fn() }, embedLesson, syncCurriculumContentRagChunks, deferLessonEmbedding,
     });
     await run(); expect(h.send).toHaveBeenCalledOnce();
-    // The existing fallback is synthetic here. A reviewed fix may instead
-    // expose durable deferral; it must not silently discard the rejected job.
-    expect(embedLesson).toHaveBeenCalledOnce();
+    expect(embedLesson).not.toHaveBeenCalled();
+    expect(syncCurriculumContentRagChunks).not.toHaveBeenCalled();
+    expect(deferLessonEmbedding).toHaveBeenCalledOnce();
+    expect(deferLessonEmbedding).toHaveBeenCalledWith(expect.objectContaining({
+      lessonId: "synthetic-row", contentId: "synthetic-content", actorUserId: "synthetic-actor", schoolId: "synthetic-school",
+    }));
+  });
+  it("control: an accepted embedding job is neither deferred nor embedded inline", async () => {
+    h.send.mockResolvedValue({});
+    const embedLesson = vi.fn(async () => undefined);
+    const deferLessonEmbedding = vi.fn(async () => undefined);
+    const run = runInNewContext(embeddingBranch("app/api/admin/curriculum/approve/route.ts"), {
+      enqueueJob, isQueueConfigured, JobType, queueConfigured: true,
+      record: { id: "synthetic-row", contentId: "synthetic-content" }, user: { id: "synthetic-actor", schoolId: "synthetic-school" },
+      logger: { warn: vi.fn() }, embedLesson, syncCurriculumContentRagChunks: vi.fn(), deferLessonEmbedding,
+    });
+    await run();
+    expect(embedLesson).not.toHaveBeenCalled(); expect(deferLessonEmbedding).not.toHaveBeenCalled();
   });
 });
