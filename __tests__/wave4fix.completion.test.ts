@@ -196,6 +196,7 @@ describe("POST /api/student/teacher-lessons/[contentId]/complete", () => {
 describe("GET /api/moe/teacher-lessons — topAssigned", () => {
   beforeEach(() => {
     vi.resetModules();
+    vi.doMock("@/lib/serverFlags", () => ({ isMoePortalEnabled: () => true }));
   });
   afterEach(() => {
     vi.resetAllMocks();

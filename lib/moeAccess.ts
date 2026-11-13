@@ -6,7 +6,7 @@ function normalizeEmail(value?: string | null) {
 }
 
 function isAllowlistedEmail(email: string, allowlist: string[]): boolean {
-  if (allowlist.length === 0) return true;
+  if (allowlist.length === 0) return false;
   const normalized = normalizeEmail(email);
   if (!normalized) return false;
 
@@ -27,9 +27,9 @@ export async function requireMoePortalUser(): Promise<SessionUser> {
     throw Object.assign(new Error("Not found"), { status: 404 });
   }
 
-  const user = await requireRole("ADMIN", "DISTRICT_ADMIN");
+  const user = await requireRole("ADMIN");
 
-  if (user.role === "ADMIN" && !user.isPlatformAdmin) {
+  if (user.isPlatformAdmin !== true) {
     throw Object.assign(new Error("Forbidden — platform admin required"), { status: 403 });
   }
 
