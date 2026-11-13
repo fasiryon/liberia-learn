@@ -117,6 +117,14 @@ describe('cookie jar',()=>{
     jar.absorb({status:200,headers:{'set-cookie':['__Secure-next-auth.session-token=t; Path=/']},body:''});expect(jar.hasSession()).toBe(true);
     jar.absorb({status:200,headers:{'set-cookie':['__Secure-next-auth.session-token=; Max-Age=0']},body:''});expect(jar.hasSession()).toBe(false);
   });
+  it('judges Expires on the injected clock, never the wall clock (the fixture NOW must not age out)',()=>{
+    const at=Date.parse('2020-01-01T00:00:00Z'),expires=new Date(at+3600_000).toUTCString();
+    const jar=new CookieJar(()=>at);
+    jar.absorb({status:200,headers:{'set-cookie':[`__Secure-next-auth.session-token=t; Expires=${expires}`]},body:''});expect(jar.hasSession()).toBe(true);
+    expect(jar.snapshot().hasSession()).toBe(true);
+    const later=new CookieJar(()=>at+7200_000);
+    later.absorb({status:200,headers:{'set-cookie':[`__Secure-next-auth.session-token=t; Expires=${expires}`]},body:''});expect(later.hasSession()).toBe(false);
+  });
 });
 
 describe('authorization gate refuses before any network or prompt',()=>{

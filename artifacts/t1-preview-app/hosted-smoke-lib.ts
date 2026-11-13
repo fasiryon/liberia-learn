@@ -43,17 +43,19 @@ export function validateDeploymentUrl(raw:string):string{
 
 export class CookieJar{
   private cookies=new Map<string,string>();
+  /** Expiry is judged on the same clock as the rest of the smoke (injected; Date.now by default), never a second clock. */
+  constructor(private now:()=>number=Date.now){}
   absorb(response:HttpResponse){
     for(const line of response.headers['set-cookie']??[]){
       const [pair,...attrs]=line.split(';');const eq=pair.indexOf('=');if(eq<1)continue;
       const name=pair.slice(0,eq).trim(),value=pair.slice(eq+1).trim();
-      const expired=attrs.some(a=>/^\s*max-age=0\s*$/i.test(a)||(/^\s*expires=/i.test(a)&&Date.parse(a.split('=').slice(1).join('='))<=Date.now()));
+      const expired=attrs.some(a=>/^\s*max-age=0\s*$/i.test(a)||(/^\s*expires=/i.test(a)&&Date.parse(a.split('=').slice(1).join('='))<=this.now()));
       if(!value||expired)this.cookies.delete(name);else this.cookies.set(name,value);
     }
   }
   header(){return [...this.cookies].map(([k,v])=>`${k}=${v}`).join('; ');}
   hasSession(){return [...this.cookies.keys()].some(k=>SESSION_COOKIE.test(k));}
-  snapshot(){const copy=new CookieJar();copy.cookies=new Map(this.cookies);return copy;}
+  snapshot(){const copy=new CookieJar(this.now);copy.cookies=new Map(this.cookies);return copy;}
 }
 
 const first=(r:HttpResponse,name:string)=>r.headers[name.toLowerCase()]?.[0]??'';
@@ -113,7 +115,7 @@ export class Smoke{
 
   async signIn(role:Role,password:string){
     if(!APPROVED_ROLES.includes(role))throw Error('smoke_unapproved_account');
-    const jar=new CookieJar();
+    const jar=new CookieJar(this.now);
     const csrf=json(await this.request({method:'GET',path:'/api/auth/csrf'},jar))?.csrfToken;
     if(typeof csrf!=='string'){this.record(`SIGN_IN:${role}`,false,'csrf_missing');return null;}
     const r=await this.request({method:'POST',path:'/api/auth/callback/credentials',form:{csrfToken:csrf,email:EMAILS[role],password,callbackUrl:'/',json:'true'}},jar);
