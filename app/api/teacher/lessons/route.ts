@@ -1,3 +1,4 @@
+import { deferLessonEmbedding } from "@/lib/ai/rag/embeddingDeferral";
 import { randomUUID } from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
@@ -80,7 +81,8 @@ function isTeacherGenerationDisabled() {
 async function runBestEffortAiWork(
   recordId: string,
   contentId: string,
-  status: string
+  status: string,
+  actor: { userId: string; schoolId: string | null }
 ) {
   const queueConfigured = isQueueConfigured();
 
@@ -90,15 +92,17 @@ async function runBestEffortAiWork(
         lessonId: recordId,
         contentId,
       });
-      // A rejected or unconfigured send takes the same inline fallback as a thrown send.
+      // A rejected send is deferred (no inline paid embedding).
       if (!accepted) throw new Error("Queue did not accept the embedding job");
-    } catch (queueError) {
-      logger.warn("[QUEUE] Falling back to inline embedding generation", { error: queueError });
-      try {
-        await embedLesson(recordId);
-      } catch (embeddingError) {
-        logger.warn("[RAG] Best-effort teacher lesson embedding failed", { error: embeddingError });
-      }
+    } catch {
+      // Founder DEFER 2026-11-13: no paid inline embedding while the queue is unavailable.
+      await deferLessonEmbedding({
+        lessonId: recordId,
+        contentId: contentId,
+        actorUserId: actor.userId,
+        schoolId: actor.schoolId ?? null,
+        source: "teacher.lessons",
+      });
     }
   } else {
     try {
@@ -288,7 +292,7 @@ export async function POST(req: NextRequest) {
       }).catch((error) => logger.warn("[CANVA] course thumbnail enqueue failed", { error }));
     }
 
-    await runBestEffortAiWork(record.id, record.contentId, record.status);
+    await runBestEffortAiWork(record.id, record.contentId, record.status, { userId: user.id, schoolId: user.schoolId ?? null });
 
     let scheduledWorkId: string | null = null;
     if (record.status === "published") {
