@@ -1,16 +1,16 @@
 // Golden validation (CoS 1.3.0 ruling, required before freezing): the six sealed draft.6 packages and the three reviewed
 // Grade 4 packages (math.2, science.2, english.2) validate exactly as they do today when routed through the new
 // version dispatcher. Each package is pinned by its packageHash, and its learner projection by the manifest's own hash.
-// The Grade 4 packages are read from T2's commit c6c060130 without copying them into this tree.
+// The Grade 4 packages were sealed in T2's commit c6c060130 and are now in this tree byte-identically. They are read
+// from the working tree, not from git history (a shallow CI checkout has no c6c060130); their integrity is pinned by
+// packageHash and by the manifest's own file hashes below.
 import crypto from "node:crypto";
-import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import { describe, expect, it } from "vitest";
 import { validateBlock } from "@/lib/learner-experience/teaching/registry";
 import { KNOWN_REGISTRY_VERSIONS, registryForVersion, validatePackageBlocks } from "@/lib/learner-experience/teaching/registries";
 import { validateLessonExperience } from "@/lib/learner-experience/sceneContract";
 
-const T2_G4_COMMIT = "c6c060130";
 const PACKAGES = [
   { version: "4.0.0-draft.6", key: "g7-civics-counties-capitals", packageHash: "2a388b30e577b0b11518f7b71772739a03c913fe2840fcd4b7a392eec9b8c5eb" },
   { version: "4.0.0-draft.6", key: "g7-english-reading-evidence", packageHash: "fa54d6f4d508a81020bcf18c906a948a8c1c0e74ec1f384aa9c088acb289be19" },
@@ -18,16 +18,16 @@ const PACKAGES = [
   { version: "4.0.0-draft.6", key: "g7-math-fractions", packageHash: "ffaafcbb124def71114178a07736acf7c3609aa1debf36e413b4bdf1a5aae69a" },
   { version: "4.0.0-draft.6", key: "g7-science-states-of-matter", packageHash: "7863152eba2e51b818a1b304fa0b240f7b0ac0d2656406947488fbc93ae912f9" },
   { version: "4.0.0-draft.6", key: "math-multiplication-models", packageHash: "7a469baccfb5d7d1e932942baf013e1848579c4efa9077a949dcebb7542d75ce" },
-  { version: "4.0.0-schoolday-primary-math.2-draft.1", key: "g4-math-three-digit-products", packageHash: "df24c30a680e745006ef124f671a26cccb1bdf64a8ec9f79b3273e8ba4d98eb2", commit: T2_G4_COMMIT },
-  { version: "4.0.0-schoolday-primary-science.2-draft.1", key: "g4-science-food-path-and-absorption", packageHash: "6c9bb35aa616f76c316159159dcc2b96c22618e1a628f6e14a66b294ab2c607a", commit: T2_G4_COMMIT },
-  { version: "4.0.0-schoolday-primary-english.2-draft.1", key: "g4-english-predict-question-summarize", packageHash: "39c9cafb634914512bd4cf396cdb454b2770a9057e5bd93734a6787e8757f0e6", commit: T2_G4_COMMIT },
+  { version: "4.0.0-schoolday-primary-math.2-draft.1", key: "g4-math-three-digit-products", packageHash: "df24c30a680e745006ef124f671a26cccb1bdf64a8ec9f79b3273e8ba4d98eb2"},
+  { version: "4.0.0-schoolday-primary-science.2-draft.1", key: "g4-science-food-path-and-absorption", packageHash: "6c9bb35aa616f76c316159159dcc2b96c22618e1a628f6e14a66b294ab2c607a"},
+  { version: "4.0.0-schoolday-primary-english.2-draft.1", key: "g4-english-predict-question-summarize", packageHash: "39c9cafb634914512bd4cf396cdb454b2770a9057e5bd93734a6787e8757f0e6"},
 ] as const;
 
 const sha = (s: string) => crypto.createHash("sha256").update(s).digest("hex");
 function read(p: (typeof PACKAGES)[number], file: string): string {
   const path = `curriculum/factory-v4/drafts/${p.version}/${p.key}/${file}`;
-  // A missing pinned commit is a failure, not a skip: golden evidence must be complete.
-  return "commit" in p ? execFileSync("git", ["show", `${p.commit}:${path}`], { encoding: "utf8" }) : fs.readFileSync(path, "utf8");
+  // A missing package is a failure (readFileSync throws), not a skip: golden evidence must be complete.
+  return fs.readFileSync(path, "utf8");
 }
 type Block = { type: string };
 function load(p: (typeof PACKAGES)[number]) {

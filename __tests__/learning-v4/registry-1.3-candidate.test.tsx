@@ -2,7 +2,8 @@
 // teaching-blocks/1.3.0 CANDIDATE (for CoS contract review): DESIGN_CYCLE may name its MEASUREMENT_TABLE. 1.1.0 and
 // 1.2.0 stay byte-identical; a 1.3.0 DESIGN_CYCLE without the link is a 1.2.0 one. Runtime: each tested design becomes a
 // table row in the same ActivityScope, then a graph over designs. Memory only; nothing is scored or recorded.
-import { execFileSync } from "node:child_process";
+import { createHash } from "node:crypto";
+import { readFileSync } from "node:fs";
 import { act } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeAll, describe, expect, it } from "vitest";
@@ -32,8 +33,14 @@ const { measurement: _link, ...DESIGN_1_2 } = DESIGN;
 
 describe("1.3.0 contract candidate", () => {
   it("leaves the frozen 1.1.0 and 1.2.0 registry files and instruction 1.1.0 byte-identical to the school-day head", () => {
-    for (const f of ["lib/learner-experience/teaching/registry.ts", "lib/learner-experience/teaching/registry-1.2.ts", "lib/learner-experience/teaching/instruction-1.1.ts"])
-      expect(execFileSync("git", ["diff", "309d3e9d", "--", f], { encoding: "utf8" })).toBe("");
+    // The bytes at the school-day head 309d3e9d, pinned by sha256 so the check needs no git history (shallow CI checkout).
+    const FROZEN_AT_309D3E9D: Record<string, string> = {
+      "lib/learner-experience/teaching/registry.ts": "1d772ecf457b6d8eac4200d59b435eede9d626a3c5401437e5da22dcd34e2e0f",
+      "lib/learner-experience/teaching/registry-1.2.ts": "98ce9aac082dba78e278e594312d53d131e7e3982e99f82cb3d0eae760297020",
+      "lib/learner-experience/teaching/instruction-1.1.ts": "3bdffea2862335d825a1fbdc210619e3a287834a955a7a4b15342fc1683f3936",
+    };
+    for (const [f, sha256] of Object.entries(FROZEN_AT_309D3E9D))
+      expect(createHash("sha256").update(readFileSync(f)).digest("hex"), f).toBe(sha256);
   });
   it("a linked cycle is 1.3.0 only; 1.2.0 still refuses the new field", () => {
     expect(validateBlock_1_3(DESIGN, { subject: "ENGINEERING", grade: 4 }).problems).toEqual([]);
