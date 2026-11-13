@@ -58,5 +58,5 @@ describe.skipIf(!admitted)("SEC-24 native message attachment contract", () => {
   it("missing canonical school context cannot authorize sending", async () => {
     await db.user.update({ where: { id: "student-user" }, data: { schoolId: null } }); await unchanged(payload(), 403);
   });
-  it.each([null, [], "synthetic"])("malformed body refuses without persistence (%j)", async body => { await unchanged(body); });
+  it.each([[null], [[]], ["synthetic"]])("malformed body refuses without persistence (%j)", async body => { await unchanged(body); });
 });
