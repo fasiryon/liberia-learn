@@ -1,6 +1,8 @@
+// route-policy: auth=session; scope=tenant; authority=curriculum-approve; rationale=admin curriculum operations require approval permission before parsing or effects
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { requireRole } from "@/lib/auth";
+import { assertPermission, PERMISSIONS } from "@/lib/permissions";
 import { prisma } from "@/lib/db";
 import { logAudit } from "@/lib/audit";
 import { liberianize } from "@/lib/localization/liberia-context";
@@ -41,6 +43,7 @@ const RequestSchema = z.object({
 export async function POST(req: Request) {
   try {
     const user = await requireRole("TEACHER", "ADMIN");
+    assertPermission(user, PERMISSIONS.CURRICULUM_APPROVE);
     const rateLimit = await checkRateLimit(user.id, {
       windowMs: RATE_LIMIT_POLICIES.ADMIN.windowMs,
       limit: RATE_LIMIT_POLICIES.ADMIN.limit,

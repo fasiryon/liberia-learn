@@ -1,5 +1,7 @@
+// route-policy: auth=session; scope=tenant; authority=curriculum-approve; rationale=admin curriculum operations require approval permission before parsing or effects
 import { NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
+import { assertPermission, PERMISSIONS } from "@/lib/permissions";
 import { prisma } from "@/lib/db";
 import { logAudit } from "@/lib/audit";
 import { isAbBlockSchedulingEnabled, isAssignmentLessonLinkageEnabled, isVirtualLabsEnabled } from "@/lib/serverFlags";
@@ -17,6 +19,7 @@ export const dynamic = "force-dynamic";
 export async function POST(req: Request) {
   try {
     const user = await requireRole("TEACHER", "ADMIN");
+    assertPermission(user, PERMISSIONS.CURRICULUM_APPROVE);
     const body = await req.json();
     const { contentId, classId, scheduledDate, startTime, endTime, periodNumber, classFormat } = body;
 
