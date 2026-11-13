@@ -355,6 +355,19 @@ async function main() {
         const threeRequestViolation = (profile === "LOW" || profile === "FALLBACK_2D") && issues.threeChunkRequests.length > 0;
         // A9: every web font settled before the still, so text never rasterises with a fallback face in one run only.
         await page.evaluate(() => document.fonts.ready.then(() => true));
+        // Diagnostic only (PR #202 lab gate: one full-page still was 16 px taller in one of two runs with every shared
+        // row pixel-identical): the document extent and the five elements reaching furthest down, recorded beside the
+        // still. Never part of the comparison.
+        const layout = await page.evaluate(() => {
+          const doc = document.documentElement;
+          const extent = Array.from(document.querySelectorAll("body *")).map((el) => {
+            const r = el.getBoundingClientRect(), cs = getComputedStyle(el);
+            const tag = el.tagName.toLowerCase(), attrs = Array.from(el.attributes).filter((a) => a.name.startsWith("data-") || a.name === "role" || a.name === "id").map((a) => `${a.name}=${a.value.slice(0, 40)}`);
+            return { el: `${tag}${attrs.length ? `[${attrs.join(" ")}]` : ""}.${String(el.getAttribute("class") ?? "").split(/\s+/).slice(0, 4).join(".")}`, position: cs.position, display: cs.display,
+              bottom: Math.round(r.bottom + window.scrollY), top: Math.round(r.top + window.scrollY), height: Math.round(r.height), width: Math.round(r.width) };
+          }).filter((e) => e.height > 0 || e.width > 0).sort((a, b) => b.bottom - a.bottom).slice(0, 5);
+          return { scrollHeight: doc.scrollHeight, scrollWidth: doc.scrollWidth, clientHeight: doc.clientHeight, clientWidth: doc.clientWidth, bodyHeight: document.body.scrollHeight, lowest: extent };
+        });
         await page.screenshot({ path: still, fullPage: fullPageFor(viewport), animations: "disabled", caret: "hide", timeout: SCREENSHOT_TIMEOUT_MS });
         captures.push({ file: still, scenario: scenario.id, storyboardScene: scenario.storyboardScene, stage: scenario.stage, profile, viewport, kind: "still", reducedMotion: stillReducedMotion });
         // R4 P1-1: a shader that fails to compile still counts draws, so parity alone cannot catch it.
@@ -371,7 +384,7 @@ async function main() {
           status: failure ? "FAIL" : "PASS", ...(failure ? { failureReason: failure } : {}),
           framePlan: frameProbe, frameParity, threeChunkRequests: issues.threeChunkRequests, controlHitTargets,
           actualProfile: identity.actualProfile, downgradePath: identity.downgradePath, actualRenderer: identity.actualRenderer, framesRendered: identity.framesRendered, drawCalls: identity.drawCalls,
-          ...opened, warnings: issues.consoleErrors, consoleErrors: issues.consoleErrors, pageErrors: issues.pageErrors });
+          ...opened, layout, warnings: issues.consoleErrors, consoleErrors: issues.consoleErrors, pageErrors: issues.pageErrors });
         writeManifest();
         if (failure) { console.error(`FAIL ${base}: ${failure}`); if (!identity.verdict.ok) continue; }
       } catch (cause) {
