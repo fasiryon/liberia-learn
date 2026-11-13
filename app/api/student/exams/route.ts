@@ -1,4 +1,4 @@
-// route-policy: auth=session; scope=tenant; authority=student-own-school-grade; rationale=lists published, non-deleted exams for the learner's school and grade with keys and explanations withheld
+// route-policy: auth=session; scope=tenant; authority=student-roster-and-academic-enrollment; rationale=lists only own-school grade exams with the roster and year eligibility required to start; keys and explanations withheld
 import { NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/db";
@@ -40,6 +40,16 @@ export async function GET() {
         grade: student.currentGrade,
         status: "PUBLISHED",
         deletedAt: null,
+        AND: [
+          { OR: [
+            { classId: null },
+            { class: { is: { schoolId: student.user.schoolId, enrollments: { some: { studentId: student.id } } } } },
+          ] },
+          { OR: [
+            { academicYearId: null },
+            { academicYear: { is: { enrollments: { some: { studentId: student.id, schoolId: student.user.schoolId } } } } },
+          ] },
+        ],
       },
       include: { questions: { orderBy: { id: "asc" } }, _count: { select: { questions: true } } },
       orderBy: { createdAt: "desc" },
