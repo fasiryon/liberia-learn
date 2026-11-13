@@ -705,13 +705,13 @@ export async function requireUser(): Promise<SessionUser> {
   try {
     await assertSessionFresh(user);
   } catch (err: any) {
-    // Re-throw auth/authz rejections (401 session expired, 403 inactive school).
-    // Swallow DB/Redis infrastructure errors during cold starts: the JWT is still
-    // cryptographically valid and the route's own FALLBACK_LIMIT_EXCEEDED shield
-    // handles any subsequent DB unavailability. Without this, concurrent cold-start
-    // requests that fail the Prisma connection during assertSessionFresh bubble up
-    // as HTTP 500 instead of returning a degraded 200.
-    if (err?.status === 401 || err?.status === 403 || isPrivilegedAccount(user)) throw err;
+    // Preserve explicit authentication/authority denials. An infrastructure
+    // failure cannot establish current authority, even for an otherwise valid JWT.
+    if (err?.status === 401 || err?.status === 403) throw err;
+    throw Object.assign(new Error("Authentication verification unavailable"), {
+      status: 503,
+      code: "AUTH_VERIFICATION_UNAVAILABLE",
+    });
   }
   return user;
 }
