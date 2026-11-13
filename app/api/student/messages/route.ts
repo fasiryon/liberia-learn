@@ -30,6 +30,7 @@ function readAttachment(input: Record<string, unknown>) {
   const invalid = () => Object.assign(new Error("Invalid attachment metadata"), { status: 400 });
   if (typeof attachmentUrl !== "string" || typeof attachmentName !== "string" || typeof attachmentType !== "string" ||
       attachmentUrl.length > 2048 || !/^https:\/\//i.test(attachmentUrl) || /[\s\\]/.test(attachmentUrl) ||
+      /[\x00-\x1f\x7f]/.test(attachmentUrl) ||
       !attachmentName.trim() || attachmentName.length > 255 || /[\x00-\x1f\x7f]/.test(attachmentName) ||
       !["image/jpeg", "image/png", "image/gif", "application/pdf"].includes(attachmentType)) {
     throw invalid();
