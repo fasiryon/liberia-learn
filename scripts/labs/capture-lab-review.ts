@@ -356,17 +356,24 @@ async function main() {
         // A9: every web font settled before the still, so text never rasterises with a fallback face in one run only.
         await page.evaluate(() => document.fonts.ready.then(() => true));
         // Diagnostic only (PR #202 lab gate: one full-page still was 16 px taller in one of two runs with every shared
-        // row pixel-identical): the document extent and the five elements reaching furthest down, recorded beside the
-        // still. Never part of the comparison.
+        // row pixel-identical): the document extent and the UNCLIPPED elements that decide it, recorded beside the still
+        // (r2: clipped inner content no longer dominates the ranking). Never part of the comparison.
         const layout = await page.evaluate(() => {
-          const doc = document.documentElement;
-          const extent = Array.from(document.querySelectorAll("body *")).map((el) => {
+          const doc = document.documentElement, scrollHeight = doc.scrollHeight;
+          // Only elements that can extend the document: no ancestor up to <html> clips or scrolls its overflow.
+          const unclipped = (el: Element) => { for (let a = el.parentElement; a && a !== doc; a = a.parentElement) { const cs = getComputedStyle(a); if (cs.overflowX !== "visible" || cs.overflowY !== "visible") return false; } return true; };
+          const describe = (el: Element) => {
             const r = el.getBoundingClientRect(), cs = getComputedStyle(el);
-            const tag = el.tagName.toLowerCase(), attrs = Array.from(el.attributes).filter((a) => a.name.startsWith("data-") || a.name === "role" || a.name === "id").map((a) => `${a.name}=${a.value.slice(0, 40)}`);
-            return { el: `${tag}${attrs.length ? `[${attrs.join(" ")}]` : ""}.${String(el.getAttribute("class") ?? "").split(/\s+/).slice(0, 4).join(".")}`, position: cs.position, display: cs.display,
+            const attrs = Array.from(el.attributes).filter((a) => a.name.startsWith("data-") || a.name === "role" || a.name === "id" || a.name === "aria-live").map((a) => `${a.name}=${a.value.slice(0, 40)}`);
+            return { el: `${el.tagName.toLowerCase()}${attrs.length ? `[${attrs.join(" ")}]` : ""}.${String(el.getAttribute("class") ?? "").split(/\s+/).slice(0, 4).join(".")}`,
+              text: (el.textContent ?? "").trim().slice(0, 60), position: cs.position, display: cs.display, visibility: cs.visibility, opacity: cs.opacity,
               bottom: Math.round(r.bottom + window.scrollY), top: Math.round(r.top + window.scrollY), height: Math.round(r.height), width: Math.round(r.width) };
-          }).filter((e) => e.height > 0 || e.width > 0).sort((a, b) => b.bottom - a.bottom).slice(0, 5);
-          return { scrollHeight: doc.scrollHeight, scrollWidth: doc.scrollWidth, clientHeight: doc.clientHeight, clientWidth: doc.clientWidth, bodyHeight: document.body.scrollHeight, lowest: extent };
+          };
+          const extent = Array.from(document.querySelectorAll("body *")).filter((el) => { const r = el.getBoundingClientRect(); return (r.height > 0 || r.width > 0) && unclipped(el); }).map(describe);
+          return { scrollHeight, scrollWidth: doc.scrollWidth, clientHeight: doc.clientHeight, clientWidth: doc.clientWidth, bodyHeight: document.body.scrollHeight,
+            // What decides the full-page height: the unclipped elements reaching furthest down, and everything within 40 px of the bottom.
+            lowestUnclipped: [...extent].sort((a, b) => b.bottom - a.bottom).slice(0, 8),
+            nearDocumentBottom: extent.filter((e) => e.bottom >= scrollHeight - 40) };
         });
         await page.screenshot({ path: still, fullPage: fullPageFor(viewport), animations: "disabled", caret: "hide", timeout: SCREENSHOT_TIMEOUT_MS });
         captures.push({ file: still, scenario: scenario.id, storyboardScene: scenario.storyboardScene, stage: scenario.stage, profile, viewport, kind: "still", reducedMotion: stillReducedMotion });
