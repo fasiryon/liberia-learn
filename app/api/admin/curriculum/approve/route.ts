@@ -1,3 +1,4 @@
+import { deferLessonEmbedding } from "@/lib/ai/rag/embeddingDeferral";
 import { NextResponse } from "next/server";
 import { requireUser } from "@/lib/auth";
 import { assertPermission, PERMISSIONS } from "@/lib/permissions";
@@ -98,22 +99,18 @@ export async function POST(req: Request) {
             lessonId: record.id,
             contentId: record.contentId,
           });
-          // A rejected or unconfigured send takes the same inline fallback as a thrown send.
+          // A rejected send is deferred (no inline paid embedding).
           if (!accepted) throw new Error("Queue did not accept the embedding job");
-      } catch (queueError) {
-        logger.warn("[QUEUE] Falling back to inline embedding generation", { error: queueError });
-
-        try {
-          await syncCurriculumContentRagChunks(record.id);
-        } catch (syncError) {
-          logger.warn("[RAG] Best-effort approval chunk sync failed", { error: syncError });
-        }
-
-        try {
-          await embedLesson(record.id);
-        } catch (embeddingError) {
-          logger.warn("[RAG] Best-effort approval embedding failed", { error: embeddingError });
-        }
+      } catch {
+        // Founder DEFER 2026-11-13: no paid inline embedding while the queue is unavailable.
+        await deferLessonEmbedding({
+          lessonId: record.id,
+          contentId: record.contentId,
+          actorUserId: user.id,
+          schoolId: user.schoolId ?? null,
+          source: "admin.curriculum.approve",
+          removeStaleChunks: true,
+        });
       }
     } else {
       try {
