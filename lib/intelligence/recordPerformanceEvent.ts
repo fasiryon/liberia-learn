@@ -60,19 +60,26 @@ export async function recordPerformanceEvent(params: {
       },
     });
 
+    const runInline = () =>
+      void runConfusionDetectionForStudent(params.studentId, params.schoolId).catch((error) => {
+        console.error("[intelligence.performanceEvent] confusion detection failed", error);
+      });
+
     if (isQueueConfigured()) {
+      // Deterministic detector (no model call): when the queue does not accept the job, run it inline.
       void enqueueJob(JobType.CONFUSION_DETECTION, {
         studentId: params.studentId,
         schoolId: params.schoolId,
+      }).then((accepted) => {
+        if (!accepted) runInline();
       }).catch((error) => {
         console.error("[intelligence.performanceEvent] failed to enqueue confusion detection", error);
+        runInline();
       });
       return;
     }
 
-    void runConfusionDetectionForStudent(params.studentId, params.schoolId).catch((error) => {
-      console.error("[intelligence.performanceEvent] confusion detection failed", error);
-    });
+    runInline();
   } catch (error) {
     console.error("[intelligence.performanceEvent] failed to record performance event", error);
   }
