@@ -11,6 +11,10 @@ type AdaptivePracticeSession = {
   userId: string;
 };
 
+type LegacyAdaptivePracticeSession = Omit<AdaptivePracticeSession, "correctIndices"> & {
+  questions: PracticeQuestion[];
+};
+
 type AdaptivePracticeSessionInput = Pick<AdaptivePracticeSession, "strandCode" | "userId"> & {
   questions: PracticeQuestion[];
 };
@@ -43,18 +47,29 @@ export function openAdaptivePracticeSession(token: string, userId: string, pract
     const raw = Buffer.from(token, "base64url");
     const decipher = createDecipheriv("aes-256-gcm", key(), raw.subarray(0, 12));
     decipher.setAuthTag(raw.subarray(12, 28));
-    const session = JSON.parse(
+    const parsed = JSON.parse(
       Buffer.concat([decipher.update(raw.subarray(28)), decipher.final()]).toString()
-    ) as AdaptivePracticeSession;
+    ) as AdaptivePracticeSession | LegacyAdaptivePracticeSession;
+    const correctIndices = "correctIndices" in parsed && Array.isArray(parsed.correctIndices)
+      ? parsed.correctIndices
+      : "questions" in parsed && Array.isArray(parsed.questions)
+        ? parsed.questions.map((question) => question?.correctIndex)
+        : null;
     if (
-      session.expiresAt < Date.now() ||
-      session.userId !== userId ||
-      session.practiceSetId !== practiceSetId ||
-      !Array.isArray(session.correctIndices) ||
-      session.correctIndices.length === 0 ||
-      session.correctIndices.some((index) => !Number.isInteger(index) || index < 0)
+      parsed.expiresAt < Date.now() ||
+      parsed.userId !== userId ||
+      parsed.practiceSetId !== practiceSetId ||
+      !correctIndices ||
+      correctIndices.length === 0 ||
+      correctIndices.some((index) => !Number.isInteger(index) || index < 0)
     ) return null;
-    return session;
+    return {
+      correctIndices,
+      expiresAt: parsed.expiresAt,
+      practiceSetId: parsed.practiceSetId,
+      strandCode: parsed.strandCode,
+      userId: parsed.userId,
+    };
   } catch {
     return null;
   }
