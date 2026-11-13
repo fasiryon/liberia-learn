@@ -14,7 +14,9 @@ export function useFixedBandHeight<T extends HTMLElement>(variable: `--${string}
     observer.current = null;
     const root = document.documentElement;
     if (!node) { root.style.removeProperty(variable); return; }
-    const sync = () => root.style.setProperty(variable, `${Math.ceil(node.getBoundingClientRect().height) + gap}px`);
+    // A band that takes no space (not laid out, hidden, collapsed) reserves none: never the gap alone.
+    const sync = () => { const height = Math.ceil(node.getBoundingClientRect().height);
+      if (height > 0) root.style.setProperty(variable, `${height + gap}px`); else root.style.removeProperty(variable); };
     sync();
     if (typeof ResizeObserver === "function") { observer.current = new ResizeObserver(sync); observer.current.observe(node); }
   }, [variable, gap]);
