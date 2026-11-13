@@ -5,7 +5,7 @@ import { composeGuardianDigest, mostRecentWeekWindow } from "@/lib/notifications
 import { logger } from "@/lib/logger";
 import {previewAutomationDisabled} from "@/lib/previewSideEffects";
 
-// route-policy: auth=cron; scope=none; authority=legacy-optional-secret; rationale=Preview refuses all work; outside Preview the existing optional bearer-secret comparison remains unchanged.
+// route-policy: auth=cron; scope=none; authority=required-header-secret; rationale=Preview refuses all work and missing or blank CRON_SECRET never authorizes SMS or database work.
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 300;
@@ -13,11 +13,9 @@ export const maxDuration = 300;
 export async function GET(req: Request) {
   if(previewAutomationDisabled())return NextResponse.json({error:"Preview automation is disabled"},{status:401});
   const cronSecret = process.env.CRON_SECRET;
-  if (cronSecret) {
-    const auth = req.headers.get("authorization");
-    if (auth !== `Bearer ${cronSecret}`) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+  const auth = req.headers.get("authorization");
+  if (!cronSecret?.trim() || auth !== `Bearer ${cronSecret}`) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   const { weekStart, weekEnd } = mostRecentWeekWindow(new Date());
