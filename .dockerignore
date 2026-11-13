@@ -17,6 +17,7 @@ __tests__
 .worktrees
 load-tests
 docs
+!docs/architecture/content-factory/evidence/first-three-v021-reconciliation.json
 archive
 FactoryArtifacts
 os-vault
